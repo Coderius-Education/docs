@@ -322,13 +322,18 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
     const bewaarder = bewaarderRef.current;
     if (!bewaarder) return;
     const aantal = bewaarder.lijst().length;
+    // Alleen wat er nu is: een upload die klaar is terwijl de vraag openstaat,
+    // telde de docent niet mee.
+    const nu = new Date();
     const ja = await bevestig(`Alle ${aantal} beoordelingen verwijderen?`, {
       bevestigLabel: 'Alles verwijderen',
       gevaarlijk: true,
     });
     if (!ja) return;
-    sluitRapport();
-    await bewaarder.verwijderAlles();
+    // Het open rapport hoort er alleen bij als het al bestond.
+    const open = actiefIdRef.current ? bewaarder.get(actiefIdRef.current) : undefined;
+    if (!open || open.aangemaakt <= nu.getTime()) sluitRapport();
+    await bewaarder.verwijderAlles(nu);
   }, [sluitRapport]);
 
   const ideUrl = config.ide?.url;
@@ -370,8 +375,13 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
       const naam = (id && bewaarderRef.current?.get(id)?.naam) || '';
       const bestand = pdfNaamMetLeerling(config.pdfFilename(new Date()), naam);
+      // De versie die in de PDF komt. Typt de docent tijdens de export nog
+      // iets, dan staat dat niet in de PDF; dan geen "Verwijder deze
+      // beoordeling", want daarmee zou die wijziging verdwijnen.
+      const versie = id ? bewaarderRef.current?.get(id)?.bijgewerkt : undefined;
       const gelukt = await exportReportToPdf(el, styles.exporting, bestand);
-      if (gelukt && id && id === actiefIdRef.current) setPdfKlaarVoor(id);
+      const ongewijzigd = id && bewaarderRef.current?.get(id)?.bijgewerkt === versie;
+      if (gelukt && id && id === actiefIdRef.current && ongewijzigd) setPdfKlaarVoor(id);
     } catch {
       setPdfError('Het opslaan als PDF is mislukt. Probeer het opnieuw.');
     } finally {

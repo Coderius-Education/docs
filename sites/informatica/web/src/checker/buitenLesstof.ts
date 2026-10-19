@@ -60,7 +60,9 @@ const tussenQuotes = (m: string) => `${m[0]}${blanco(m.slice(1, -1))}${m[m.lengt
 
 // --- HTML ------------------------------------------------------------------
 
-const TAG = /<([a-zA-Z][a-zA-Z0-9-]*)((?:\s+[^<>]*?)?)\s*\/?>/g;
+// Een attribuutwaarde tussen aanhalingstekens mag < en > bevatten
+// (onclick="lijst.forEach(x => tel(x))"); die sluit de tag niet af.
+const TAG = /<([a-zA-Z][a-zA-Z0-9-]*)((?:\s+(?:"[^"]*"|'[^']*'|[^\s"'<>/]|\/(?!>))+)*)\s*\/?>/g;
 const ATTRIBUUT = /([^\s"'=<>/]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|[^\s"'>]+))?/g;
 
 function attribuutLabel(naam: string): string {

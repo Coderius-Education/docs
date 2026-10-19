@@ -230,6 +230,20 @@ describe('stukkenUit — de code van een lespagina', () => {
   });
 });
 
+describe('HTML met < of > in een attribuut', () => {
+  it('ziet de tag en de code in onclick, ook met => erin', () => {
+    const files = project({
+      'index.html':
+        '<button onclick="lijst.forEach(x => tel(x))">Tel</button>\n<p title="a < b">x</p>',
+    });
+    expect(labels(files)).toEqual(
+      expect.arrayContaining(['JavaScript|=> (arrow-functie)', 'JavaScript|.forEach()']),
+    );
+    const tags = buitenLesstof(files).filter((v) => v.groep === 'HTML-elementen');
+    expect(tags.map((v) => v.label)).not.toContain('<b>');
+  });
+});
+
 describe('rekenen met toewijzing', () => {
   it('houdt += en *= uit elkaar, zodat *= niet onder += verdwijnt', () => {
     const files = project({ 'app.js': 'let prijs = 10;\nprijs *= 1.21;\nprijs /= 2;' });
@@ -286,5 +300,29 @@ describe('de lesstof-plugin', () => {
       expect(existsSync(vast), pad).toBe(true);
     }
     expect(lesstofWatchPaden(SITE)).toContain(join(SITE, 'src/pages/cheatsheet.mdx'));
+  });
+});
+
+describe('stukkenUit — fout-voorbeelden', () => {
+  it('slaat een blok over met de marker niet-compileren, of met een foutmelding eronder', () => {
+    const bron = [
+      '{/* niet-compileren: fout-voorbeeld */}',
+      '```js',
+      'fetch(1)',
+      '```',
+      '',
+      '```js',
+      'setTimeout(f)',
+      '```',
+      '',
+      '```text',
+      'Uncaught TypeError: x is not a function',
+      '```',
+      '',
+      '```js',
+      'alert(1)',
+      '```',
+    ].join('\n');
+    expect(stukkenUit(bron).map((s) => s.tekst.trim())).toEqual(['alert(1)']);
   });
 });

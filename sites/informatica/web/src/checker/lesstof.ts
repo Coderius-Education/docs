@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { NIET_COMPILEREN } from '@coderius/shared/codeblokken';
 import { GROEPEN, type Lesstof, type Stuk, constructiesIn } from './buitenLesstof';
 
 // Wat de lessen behandelen: elke herkende constructie in de code van de
@@ -32,11 +33,17 @@ function bestanden(pad: string): string[] {
 /** De code op een lespagina: codeblokken en startcode in MDX-exports. */
 export function stukkenUit(bron: string): Stuk[] {
   const stukken: Stuk[] = [];
+  let vorigEind = 0;
   for (const m of bron.matchAll(/```(html|css|js|javascript)\b[^\n]*\n([\s\S]*?)```/g)) {
+    const begin = m.index ?? 0;
+    const ervoor = bron.slice(vorigEind, begin);
+    vorigEind = begin + m[0].length;
     // Een fout-voorbeeld ("getElementByID met een hoofdletter D") is geen
-    // lesstof: het blok erna is dan de foutmelding van de browser.
-    const erna = bron.slice((m.index ?? 0) + m[0].length);
-    if (/^\s*```\n[^`]*?(?:fout|Error)/.test(erna)) continue;
+    // lesstof. Herkend aan de marker die ook de compileercheck gebruikt, of
+    // aan het blok erna: de foutmelding van de browser.
+    if (ervoor.includes(NIET_COMPILEREN)) continue;
+    const erna = bron.slice(vorigEind);
+    if (/^\s*```[^\n]*\r?\n[^`]*?(?:fout|error)/i.test(erna)) continue;
     stukken.push({ soort: m[1] === 'javascript' ? 'js' : (m[1] as Stuk['soort']), tekst: m[2] });
   }
   for (const m of bron.matchAll(/export const \w*?(Html|Css|Js) = `([\s\S]*?)(?<!\\)`;/g)) {

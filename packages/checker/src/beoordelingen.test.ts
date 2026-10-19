@@ -328,6 +328,18 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     expect(await ids(nep.echt)).toEqual([]);
   });
 
+  it('verwijdert bij alles verwijderen niet wat er pas bij kwam toen de vraag openstond', async () => {
+    const opslag = geheugenOpslag();
+    const { b } = bewaarder(opslag);
+    b.nieuw('Sam', project('Sam'), null); // 9:00
+    const vraagGesteld = new Date(2026, 9, 19, 9, 0, 30);
+    const laat = b.nieuw('Laat', project('Laat'), null); // 9:01, tijdens de vraag
+    expect(await b.verwijderAlles(vraagGesteld)).toBe(true);
+    await stil(b);
+    expect(b.lijst().map((x) => x.naam)).toEqual(['Laat']);
+    expect(await ids(opslag)).toEqual([laat.id]);
+  });
+
   it('laat een leesfout staan, ook als bewaren daarna lukt', async () => {
     const nep = nepOpslag();
     nep.gedrag.leesFout = true;
@@ -357,6 +369,36 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     // het geheugen blijft hangen: open() vindt niets.
     expect(fouten.filter((f) => f !== null)).toEqual([]);
     expect(await b.open(sam.id)).toBeNull();
+  });
+
+  it('houdt de waarschuwing zolang een andere leerling nog alleen in het geheugen staat', async () => {
+    const nep = nepOpslag();
+    const { b, fouten } = bewaarder(nep.opslag);
+    nep.gedrag.nieuwFout = new DOMException('vol', 'QuotaExceededError');
+    b.nieuw('Groot', project('Groot'), null);
+    await stil(b);
+    nep.gedrag.nieuwFout = null;
+    // Een kleine leerling past wel; Groot staat nog steeds niet in de opslag.
+    b.nieuw('Klein', project('Klein'), null);
+    await stil(b);
+    expect(fouten.at(-1)).toContain('vol');
+  });
+
+  it('meldt een schrijffout ook als er al een leesfout staat, en valt daarna terug', async () => {
+    const nep = nepOpslag();
+    nep.gedrag.leesFout = true;
+    const { b, fouten } = bewaarder(nep.opslag);
+    await b.klaar;
+    const sam = b.nieuw('Sam', project('Sam'), null);
+    await stil(b);
+    nep.gedrag.bewaarFoutBij = sam.id;
+    b.wijzig(sam.id, { notes: 'x' });
+    await stil(b);
+    expect(fouten.at(-1)).toBe(opslagMelding(new Error('bewaren mislukt')));
+    nep.gedrag.bewaarFoutBij = null;
+    b.wijzig(sam.id, { notes: 'y' });
+    await stil(b);
+    expect(fouten.at(-1)).toBe(LEESFOUT);
   });
 
   it('meldt het als de bewaarde beoordelingen niet te lezen zijn, in plaats van een lege lijst', async () => {

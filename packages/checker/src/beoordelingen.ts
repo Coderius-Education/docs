@@ -178,8 +178,10 @@ export class Bewaarder {
   private readonly alleenHier = new Map<string, Project>();
   private rij: Promise<unknown> = Promise.resolve();
   private schrijfGepland = false;
-  /** Welke soort fout er nu gemeld staat. */
-  private foutSoort: 'lezen' | 'schrijven' | null = null;
+  /** De lijst kon niet worden ingelezen; blijft tot de pagina herlaadt. */
+  private leesfout = false;
+  /** De laatste schrijf- of wisfout, tot alles wat wachtte toch bewaard is. */
+  private schrijffout: string | null = null;
   /** Klaar als de bestaande beoordelingen zijn ingelezen (of dat mislukte). */
   readonly klaar: Promise<void>;
 
@@ -285,11 +287,21 @@ export class Bewaarder {
     return this.verwijderIds([id]);
   }
 
-  async verwijderAlles(): Promise<boolean> {
+  /**
+   * Verwijdert alles wat er was op `tot` (meestal: toen de docent de
+   * vraag kreeg). Een upload die klaar is terwijl het venster openstaat,
+   * hoorde niet bij wat hij bevestigde en blijft staan.
+   */
+  async verwijderAlles(tot: Date = this.nu()): Promise<boolean> {
     // Eerst alles inlezen: anders blijven beoordelingen staan die nog niet in
     // de lijst stonden, en verschijnen ze daarna weer.
     await this.klaar;
-    return this.verwijderIds(Array.from(this.cache.keys()));
+    const grens = tot.getTime();
+    return this.verwijderIds(
+      Array.from(this.cache.values())
+        .filter((b) => b.aangemaakt <= grens)
+        .map((b) => b.id),
+    );
   }
 
   /** Wacht tot alles in de rij klaar is, en sluit de opslag. */
@@ -365,17 +377,30 @@ export class Bewaarder {
   }
 
   private meldFout(soort: 'lezen' | 'schrijven', melding: string): void {
-    // Een leesfout gaat voor: die zegt dat de lijst misschien niet compleet is.
-    if (this.foutSoort === 'lezen' && soort !== 'lezen') return;
-    this.foutSoort = soort;
-    this.opties.onFout(melding);
+    if (soort === 'lezen') this.leesfout = true;
+    else this.schrijffout = melding;
+    this.toonFout();
   }
 
-  /** Bewaren of wissen lukte weer: een oude schrijffout hoeft niet te blijven staan. */
+  /**
+   * Bewaren of wissen lukte: een oude schrijffout mag weg, maar alleen als
+   * er niets meer wacht. Staat een andere leerling nog alleen in het
+   * geheugen, dan blijft de waarschuwing staan.
+   */
   private hersteld(): void {
-    if (this.foutSoort !== 'schrijven') return;
-    this.foutSoort = null;
-    this.opties.onFout(null);
+    if (this.schrijffout === null) return;
+    if (this.teSchrijven.size > 0 || this.alleenHier.size > 0) return;
+    this.schrijffout = null;
+    this.toonFout();
+  }
+
+  /**
+   * Een schrijffout gaat voor: "dit staat alleen op je scherm" is dringender
+   * dan "de lijst is misschien niet compleet". Is hij opgelost en staat er
+   * nog een leesfout, dan komt die terug.
+   */
+  private toonFout(): void {
+    this.opties.onFout(this.schrijffout ?? (this.leesfout ? LEESFOUT : null));
   }
 
   private async herlaad(): Promise<void> {
