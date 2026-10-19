@@ -217,6 +217,19 @@ describe('aansluiten', () => {
     expect(zonder).toEqual([]);
   });
 
+  it('na het bouwen zet de baanles de robot weer aan, vóór de upload', () => {
+    // Bij stap 4 van Bouwen gaat de robot uit. Het aanzetten stond in het
+    // blok over de servo op 90°, en dat verhuisde naar de armles. De baanles
+    // liet de leerling uploaden met de robot nog uit; draaide de as dan
+    // niet, dan zocht hij de fout bij de sensor.
+    expect(tekst('bouwen')).toMatch(/uit met de knop \*\*ON\/OFF\*\*/);
+    const hout = tekst('hout');
+    const aan = hout.search(/aan met \*\*ON\/OFF\*\*/);
+    const upload = hout.search(/Upload/);
+    expect(aan).toBeGreaterThan(-1);
+    expect(aan).toBeLessThan(upload);
+  });
+
   it('het signaalpinnetje is het pinnetje bij de naam van de pin', () => {
     // Boven de kolommen staat alleen <GND en <5V. Welke van de drie het
     // signaal is, moest de leerling raden.

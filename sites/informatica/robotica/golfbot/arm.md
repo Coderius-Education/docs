@@ -86,6 +86,8 @@ Bij allebei geldt: de servo staat op 90°, en zo moet het blijven tot de arm op 
 
 ## Keuze 1: de arm namaken \{#namaken}
 
+Staat je servo op 90° en zit het tandwiel erop? Zo niet, begin dan bij [Eerst de servo op 90°](#servo-op-90).
+
 In stap 12 komt de zwarte verbinder op de as, aan de voorkant. Daar komt de arm aan.
 
 <figure>
@@ -166,6 +168,8 @@ In stap 12 komt de zwarte verbinder op de as, aan de voorkant. Daar komt de arm 
 *Bouwstappen: ClickGolfer-werkboek, ©Stichting Leaphy.*
 
 ## Keuze 2: de arm zelf maken \{#zelf-maken}
+
+Staat je servo op 90° en zit het tandwiel erop? Zo niet, begin dan bij [Eerst de servo op 90°](#servo-op-90).
 
 Elk ontwerp is goed, als je arm aan deze eisen voldoet:
 
@@ -256,7 +260,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfbot is net anders.
 
 **Oorzaak:** de arm ging op de as terwijl de servo niet op 90° stond.
 
-**Oplossing:** haal de arm van de as, zet de servo op 90° zoals bij [Eerst de servo op 90°](site:robotica/golfbot/arm#servo-op-90), en zet de arm er weer op: bij een nagemaakte arm zoals op het plaatje van stap 12, bij een zelfgemaakte arm zo dat hij naar beneden hangt, bij de bal.
+**Oplossing:** haal de arm van de as en zet de servo op 90°, zoals bij [Eerst de servo op 90°](site:robotica/golfbot/arm#servo-op-90). Zet de arm er dan weer op. Een nagemaakte arm zet je erop zoals op het plaatje van stap 12. Een zelfgemaakte arm hangt naar beneden, bij de bal.
 
 </Probleem>
 

@@ -11,7 +11,7 @@ Dit heb je nodig:
 
 - de plankjes van je docent: de bodemplaat, de lange helling met het ronde gat, een klein steunplankje, een gebogen zijplankje en een blokje voor de sensor;
 - de sensor, een kleine schroef van je docent en een schroevendraaier, om de sensor vast te zetten;
-- de toren van je Golfbot;
+- je toren, met de servo erin;
 - een bal (vraag je docent welke).
 
 Werk de foto's van boven naar beneden af. Zo groeit de baan onder je handen in elkaar.
@@ -72,7 +72,7 @@ Let op: op dit plaatje loopt de oranje draad van de sensor langs de rij van A4. 
 
 Op tafel hield je de bal zelf voor de sensor. Nu zit de sensor vast, en ligt de bal in de halve ronding. Kijk of je robot hem daar ook ziet.
 
-Upload het programma uit [Zie de bal, sla de bal](site:robotica/golfbot/bal-slaan) en leg een bal in de halve ronding. Draait de lange as van de servo even heen en weer? Dan ziet de sensor de bal. Haal de bal weg: dan staat de as stil.
+Je robot staat nog uit van het bouwen. Zet hem aan met **ON/OFF**. Upload dan het programma uit [Zie de bal, sla de bal](site:robotica/golfbot/bal-slaan) en leg een bal in de halve ronding. Draait de lange as van de servo even heen en weer? Dan ziet de sensor de bal. Haal de bal weg: dan staat de as stil.
 
 ## Er gaat iets mis
 

@@ -27,7 +27,7 @@ Links in Easybloqs staat een rij groepen. Klik op een groep, dan zie je de blokk
 | Groep | Wat erin zit |
 |---|---|
 | **Sensoren** | blokken die iets meten, zoals **Lees anapin** |
-| **Actuatoren** | blokken die iets doen, zoals **Toon op scherm**, **Servo** en de blokken voor een lampje |
+| **Actuatoren** | blokken die iets doen, zoals **Toon op scherm**, **Servo** en **Zet PWM** |
 | **Denk stappen** | **als … dan**, **herhaal voor altijd** en **duurt** |
 | **Getal blokken** | getallen, en vergelijken zoals **`<`** |
 

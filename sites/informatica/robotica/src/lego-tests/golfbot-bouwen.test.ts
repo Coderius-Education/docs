@@ -244,6 +244,19 @@ describe('de arm', () => {
     expect(blok).toMatch(/titel: 'De arm zelf maken'[^}]*naar: '#zelf-maken'/);
   });
 
+  it('wie via een kaart naar zijn keuze springt, ziet daar eerst de servo op 90°', () => {
+    // De kaarten bovenaan springen over het gezamenlijke begin heen: de servo
+    // op 90° en het tandwiel van stap 11. Wie klikte, zette de arm op een
+    // willekeurige stand.
+    const inhoud = tekst('arm.md');
+    for (const kop of ['## Keuze 1', '## Keuze 2']) {
+      const begin = inhoud.indexOf(kop);
+      const eerste = inhoud.slice(begin).split('\n\n')[1];
+      expect(eerste, kop).toMatch(/servo op 90°/);
+      expect(eerste, kop).toMatch(/\]\(#servo-op-90\)/);
+    }
+  });
+
   it('een eigen arm zit met een asgat op de as, en wordt getest voordat hij op de baan komt', () => {
     // In een rond gat draait de as door: dan beweegt de arm niet.
     const inhoud = tekst('arm.md');
@@ -283,7 +296,7 @@ describe('de houten baan', () => {
     const inhoud = tekst('hout.md');
     expect(inhoud).not.toMatch(/^## Hole in one$/m);
     expect(inhoud).toMatch(/^## Ziet de sensor de bal op de baan\?$/m);
-    expect(inhoud).toMatch(/de toren van je Golfbot/);
+    expect(inhoud).toMatch(/^- je toren, met de servo erin;$/m);
   });
 });
 

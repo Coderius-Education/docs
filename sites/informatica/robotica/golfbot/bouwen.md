@@ -98,8 +98,8 @@ Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft
 Je toren staat. De servo zit erin, en de lange as van stap 10 steekt erdoorheen. Daar komt straks de arm aan.
 
 <Voorspel soort="Controlevraag" vraag="Waarom moet het snoertje van de servo in stap 4 omhoog wijzen?">
-  <Keuze uitleg="De servo past er ook andersom in. Daarom moet je er juist op letten.">Anders past de servo niet tussen de balken</Keuze>
-  <Keuze uitleg="Hoe snel de servo draait, hangt niet af van hoe hij in de toren zit.">Anders draait de servo langzamer</Keuze>
+  <Keuze uitleg="De servo past er ook andersom in. Daarom moet je er juist op letten.">Omdat de servo er anders niet tussen de balken past</Keuze>
+  <Keuze uitleg="Hoe snel de servo draait, hangt niet af van hoe hij in de toren zit.">Met het snoertje omlaag draait hij langzamer</Keuze>
   <Keuze goed uitleg="Andersom draait de as de andere kant op, en dan haalt de arm naar voren uit in plaats van naar achteren.">Anders zit de servo andersom, en slaat de arm straks de verkeerde kant op</Keuze>
   <Uitleg>
 

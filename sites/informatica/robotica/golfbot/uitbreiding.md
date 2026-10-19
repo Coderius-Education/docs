@@ -67,7 +67,7 @@ Upload je programma en laat je Golfbot slaan. Gaat de bal in het gat, dan wordt 
 <Voorspel soort="Controlevraag" vraag="De bal gaat in het gat en het lampje wordt groen. Dan haal je de bal eruit. Wat doet het lampje?">
   <Keuze uitleg="Het lampje volgt wat de tweede sensor nu ziet. Denk na over wat er in de anders-tak staat.">Het blijft groen, want er was een hole in one</Keuze>
   <Keuze goed uitleg="Zonder bal is het getal op A1 niet meer kleiner dan je grens. Dan doet je robot de anders-tak, en die zet groen op 0.">Het gaat uit</Keuze>
-  <Keuze uitleg="Er staat nergens een duurt tussen aan en uit, dus het lampje knippert niet vanzelf.">Het knippert een paar keer en gaat dan uit</Keuze>
+  <Keuze uitleg="Er staat nergens een duurt tussen aan en uit, dus het lampje knippert niet vanzelf.">Eerst knippert het een paar keer, dan gaat het uit</Keuze>
   <Uitleg>
 
 Het lampje gaat uit. Je robot kijkt in herhaal voor altijd steeds opnieuw naar de tweede sensor. Ligt er geen bal meer, dan zet de anders-tak groen uit.
