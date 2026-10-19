@@ -17,12 +17,17 @@ import { describe, expect, it } from 'vitest';
 
 const ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
+// @babel/core heeft geen eigen typen; dit is het stukje dat de test gebruikt.
+interface Babel {
+  transformSync(code: string, opties: Record<string, unknown>): { code?: string | null } | null;
+}
+
 /** De preset en @babel/core zoals een site ze bij het bouwen vindt. */
 function babelVoor(site: string) {
   const vanSite = createRequire(join(site, 'package.json'));
   const presetPad = vanSite.resolve('@docusaurus/babel/preset');
   const vanPreset = createRequire(presetPad);
-  const babel = vanPreset('@babel/core') as typeof import('@babel/core');
+  const babel = vanPreset('@babel/core') as Babel;
   const preset = vanPreset(presetPad).default;
   return (code: string) =>
     babel.transformSync(code, {
