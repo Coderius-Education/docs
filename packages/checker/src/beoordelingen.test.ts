@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
-  type Bak,
+  BEWAARTERMIJN_DAGEN,
   type Beoordeling,
   Bewaarder,
+  LEESFOUT,
   type Opslag,
   type Project,
   aangevuld,
@@ -10,7 +11,7 @@ import {
   geheugenOpslag,
   opslagMelding,
   pdfNaamMetLeerling,
-  ruimOp,
+  verlopen,
 } from './beoordelingen';
 import type { ProjectFiles } from './types';
 
@@ -18,10 +19,11 @@ import type { ProjectFiles } from './types';
 // tests leggen vast dat een beoordeling blijft staan als er een volgende
 // leerling bij komt, dat hij met project en al weer opengaat, en dat de
 // vinkjes en opmerkingen van leerling A nooit bij leerling B terechtkomen.
-// Daarnaast de fouten die een review in de eerste versie vond: een vinkje
-// vlak na de upload dat verloren ging, een upload terwijl de opslag nog
-// openging, een project dat achterbleef als het bewaren halverwege mislukte,
-// en verwijderen dat stil halverwege stopte.
+// Daarnaast de fouten die twee reviews vonden: een vinkje vlak na de upload
+// dat verloren ging, een upload terwijl de opslag nog openging, een project
+// dat achterbleef als het bewaren halverwege mislukte, verwijderen dat stil
+// halverwege stopte, een leesfout die een lege lijst gaf zonder melding, en
+// een mislukte schrijfactie die de wijzigingen van andere leerlingen meenam.
 
 const files = (naam: string): ProjectFiles => ({
   'index.html': {
@@ -35,18 +37,18 @@ const files = (naam: string): ProjectFiles => ({
 
 const project = (naam: string): Project => ({ files: files(naam), warnings: [] });
 
-/** Een klok die elke keer een minuut verder staat, vanaf 19 oktober 9:00. */
-function klok() {
+/** Een klok die elke keer een minuut verder staat, vanaf `start`. */
+function klok(start = new Date(2026, 9, 19, 9, 0)) {
   let minuut = 0;
-  return () => new Date(2026, 9, 19, 9, minuut++);
+  return () => new Date(start.getTime() + 60_000 * minuut++);
 }
 
-function bewaarder(opslag: Opslag | Promise<Opslag> = geheugenOpslag()) {
+function bewaarder(opslag: Opslag | Promise<Opslag> = geheugenOpslag(), nu = klok()) {
   const fouten: string[] = [];
   const b = new Bewaarder(Promise.resolve(opslag), {
     onLijst: () => {},
     onFout: (m) => fouten.push(m),
-    nu: klok(),
+    nu,
   });
   return { b, fouten };
 }
@@ -57,40 +59,44 @@ const stil = (b: Bewaarder) => b.open('niets');
 /** Een geheugenopslag die telt, kan wachten en kan falen. */
 function nepOpslag() {
   const echt = geheugenOpslag();
-  const teller = { beoordelingSchrijf: 0 };
+  const teller = { bewaarBeoordeling: 0 };
   const gedrag = {
-    beoordelingFout: null as unknown,
+    nieuwFout: null as unknown,
+    bewaarFoutBij: null as string | null,
     wisFoutBij: null as string | null,
-    wachtProject: null as Promise<void> | null,
-    /** Houdt de eerstvolgende schrijfactie van een beoordeling vast. */
-    houdBeoordeling: null as { gestart: () => void; los: Promise<void> } | null,
+    leesFout: false,
+    wachtNieuw: null as Promise<void> | null,
+    /** Houdt de eerstvolgende bewaarNieuw vast, nadat hij is begonnen. */
+    houdNieuw: null as { gestart: () => void; los: Promise<void> } | null,
   };
-  const beoordelingen: Bak<Beoordeling> = {
-    ...echt.beoordelingen,
-    schrijf: async (id, w) => {
-      teller.beoordelingSchrijf++;
-      if (gedrag.beoordelingFout) throw gedrag.beoordelingFout;
-      const houd = gedrag.houdBeoordeling;
+  const opslag: Opslag = {
+    alleBeoordelingen: async () => {
+      if (gedrag.leesFout) throw new Error('lezen mislukt');
+      return echt.alleBeoordelingen();
+    },
+    leesProject: (id) => echt.leesProject(id),
+    bewaarNieuw: async (b, p) => {
+      if (gedrag.wachtNieuw) await gedrag.wachtNieuw;
+      const houd = gedrag.houdNieuw;
       if (houd) {
-        gedrag.houdBeoordeling = null;
+        gedrag.houdNieuw = null;
         houd.gestart();
         await houd.los;
       }
-      await echt.beoordelingen.schrijf(id, w);
+      if (gedrag.nieuwFout) throw gedrag.nieuwFout;
+      await echt.bewaarNieuw(b, p);
+    },
+    bewaarBeoordeling: async (b) => {
+      teller.bewaarBeoordeling++;
+      if (b.id === gedrag.bewaarFoutBij) throw new Error('bewaren mislukt');
+      await echt.bewaarBeoordeling(b);
     },
     wis: async (id) => {
       if (id === gedrag.wisFoutBij) throw new Error('wissen mislukt');
-      await echt.beoordelingen.wis(id);
+      await echt.wis(id);
     },
   };
-  const projecten: Bak<Project> = {
-    ...echt.projecten,
-    schrijf: async (id, w) => {
-      if (gedrag.wachtProject) await gedrag.wachtProject;
-      await echt.projecten.schrijf(id, w);
-    },
-  };
-  return { opslag: { beoordelingen, projecten } as Opslag, echt, teller, gedrag };
+  return { opslag, echt, teller, gedrag };
 }
 
 function uitgesteld() {
@@ -100,6 +106,8 @@ function uitgesteld() {
   });
   return { p, los };
 }
+
+const ids = async (o: Opslag) => (await o.alleBeoordelingen()).map((b) => b.id).sort();
 
 describe('Bewaarder: beoordelingen bewaren', () => {
   it('houdt de vorige leerling als er een volgende bij komt, en opent hem met project', async () => {
@@ -130,6 +138,7 @@ describe('Bewaarder: beoordelingen bewaren', () => {
       handmatig: [],
       notes: '',
       track: 'a',
+      vragen: [],
     });
   });
 
@@ -153,14 +162,14 @@ describe('Bewaarder: beoordelingen bewaren', () => {
   it('bewaart een vinkje dat de docent zet terwijl het project nog wordt weggeschreven', async () => {
     const nep = nepOpslag();
     const wacht = uitgesteld();
-    nep.gedrag.wachtProject = wacht.p;
+    nep.gedrag.wachtNieuw = wacht.p;
     const { b } = bewaarder(nep.opslag);
     const sam = b.nieuw('Sam', project('Sam'), null);
     b.wijzig(sam.id, { handmatig: ['uitleg'] });
     b.wijzig(sam.id, { notes: 'Snel getypt' });
     wacht.los();
     await stil(b);
-    expect(await nep.echt.beoordelingen.lees(sam.id)).toMatchObject({
+    expect((await nep.echt.alleBeoordelingen())[0]).toMatchObject({
       handmatig: ['uitleg'],
       notes: 'Snel getypt',
     });
@@ -170,14 +179,14 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     const nep = nepOpslag();
     const gestart = uitgesteld();
     const los = uitgesteld();
-    nep.gedrag.houdBeoordeling = { gestart: gestart.los, los: los.p };
+    nep.gedrag.houdNieuw = { gestart: gestart.los, los: los.p };
     const { b } = bewaarder(nep.opslag);
     const sam = b.nieuw('Sam', project('Sam'), null);
     await gestart.p;
     b.wijzig(sam.id, { notes: 'Tijdens het schrijven' });
     los.los();
     await stil(b);
-    expect((await nep.echt.beoordelingen.lees(sam.id))?.notes).toBe('Tijdens het schrijven');
+    expect((await nep.echt.alleBeoordelingen())[0].notes).toBe('Tijdens het schrijven');
   });
 
   it('raakt een upload niet kwijt die binnenkomt terwijl de opslag nog opengaat', async () => {
@@ -192,8 +201,8 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     expect(b.get(sam.id)?.notes).toBe('Vroeg');
     open(echt);
     await stil(b);
-    expect((await echt.beoordelingen.lees(sam.id))?.notes).toBe('Vroeg');
-    expect(await echt.projecten.lees(sam.id)).toBeDefined();
+    expect((await echt.alleBeoordelingen())[0].notes).toBe('Vroeg');
+    expect(await echt.leesProject(sam.id)).toBeDefined();
   });
 
   it('voegt een rij toetsaanslagen samen tot een paar schrijfacties', async () => {
@@ -201,33 +210,83 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     const { b } = bewaarder(nep.opslag);
     const sam = b.nieuw('Sam', project('Sam'), null);
     await stil(b);
-    nep.teller.beoordelingSchrijf = 0;
+    nep.teller.bewaarBeoordeling = 0;
     const tekst = 'Legt de canvas goed uit.';
     for (let i = 1; i <= tekst.length; i++) b.wijzig(sam.id, { notes: tekst.slice(0, i) });
     await stil(b);
-    expect(nep.teller.beoordelingSchrijf).toBeLessThanOrEqual(2);
-    expect((await nep.echt.beoordelingen.lees(sam.id))?.notes).toBe(tekst);
+    expect(nep.teller.bewaarBeoordeling).toBeLessThanOrEqual(2);
+    expect((await nep.echt.alleBeoordelingen())[0].notes).toBe(tekst);
   });
 
-  it('laat geen project achter als het bewaren halverwege mislukt, en meldt waarom', async () => {
+  it('bewaart beoordeling en project samen of niet: een volle opslag laat niets achter', async () => {
     const nep = nepOpslag();
-    nep.gedrag.beoordelingFout = new DOMException('vol', 'QuotaExceededError');
+    nep.gedrag.nieuwFout = new DOMException('vol', 'QuotaExceededError');
     const { b, fouten } = bewaarder(nep.opslag);
     const sam = b.nieuw('Sam', project('Sam'), null);
+    b.wijzig(sam.id, { notes: 'Hoort niet in de opslag' });
     await stil(b);
-    expect(await nep.echt.projecten.sleutels()).toEqual([]);
+    expect(await nep.echt.alleBeoordelingen()).toEqual([]);
+    expect(await nep.echt.leesProject(sam.id)).toBeUndefined();
     expect(fouten).toEqual([opslagMelding(new DOMException('vol', 'QuotaExceededError'))]);
     expect(fouten[0]).toContain('vol');
     // Op deze pagina blijft Sam wel te openen, tot de pagina sluit.
     expect((await b.open(sam.id))?.project.files['index.html'].content).toBe('<h1>Sam</h1>');
   });
 
-  it('ruimt bij het openen projecten op waar geen beoordeling meer bij hoort', async () => {
-    const opslag = geheugenOpslag();
-    await opslag.projecten.schrijf('wees', project('x'));
-    const { b } = bewaarder(opslag);
+  it('schrijft de andere leerlingen gewoon weg als één schrijfactie mislukt, en probeert die later opnieuw', async () => {
+    const nep = nepOpslag();
+    const { b, fouten } = bewaarder(nep.opslag);
+    const sam = b.nieuw('Sam', project('Sam'), null);
+    const noor = b.nieuw('Noor', project('Noor'), null);
+    await stil(b);
+    nep.gedrag.bewaarFoutBij = sam.id;
+    b.wijzig(sam.id, { notes: 'Sam later' });
+    b.wijzig(noor.id, { notes: 'Noor nu' });
+    await stil(b);
+    const opgeslagen = async (id: string) =>
+      (await nep.echt.alleBeoordelingen()).find((x) => x.id === id)?.notes;
+    expect(await opgeslagen(noor.id)).toBe('Noor nu');
+    expect(await opgeslagen(sam.id)).toBe('');
+    expect(fouten).toHaveLength(1);
+
+    // De opslag werkt weer; de volgende wijziging neemt Sam mee.
+    nep.gedrag.bewaarFoutBij = null;
+    b.wijzig(noor.id, { notes: 'Noor nog eens' });
+    await stil(b);
+    expect(await opgeslagen(sam.id)).toBe('Sam later');
+  });
+
+  it('meldt het als de bewaarde beoordelingen niet te lezen zijn, in plaats van een lege lijst', async () => {
+    const nep = nepOpslag();
+    nep.gedrag.leesFout = true;
+    const { b, fouten } = bewaarder(nep.opslag);
     await b.klaar;
-    expect(await opslag.projecten.sleutels()).toEqual([]);
+    expect(fouten).toEqual([LEESFOUT]);
+  });
+
+  it(`gooit een beoordeling weg die ${BEWAARTERMIJN_DAGEN} dagen niet is gewijzigd`, async () => {
+    const opslag = geheugenOpslag();
+    const { b } = bewaarder(opslag, klok(new Date(2026, 9, 1, 9, 0)));
+    const oud = b.nieuw('Oud', project('Oud'), null);
+    await stil(b);
+    const { b: twaalfDagen } = bewaarder(opslag, klok(new Date(2026, 9, 13, 9, 0)));
+    const recent = twaalfDagen.nieuw('Recent', project('Recent'), null);
+    await stil(twaalfDagen);
+
+    const { b: later } = bewaarder(opslag, klok(new Date(2026, 9, 16, 9, 0)));
+    await later.klaar;
+    expect(later.lijst().map((x) => x.naam)).toEqual(['Recent']);
+    expect(await ids(opslag)).toEqual([recent.id]);
+    expect(await opslag.leesProject(oud.id)).toBeUndefined();
+  });
+
+  it('verlopen telt vanaf de laatste wijziging', () => {
+    const nu = new Date(2026, 9, 19, 12, 0);
+    const dag = 24 * 60 * 60 * 1000;
+    expect(verlopen({ bijgewerkt: nu.getTime() - (BEWAARTERMIJN_DAGEN - 1) * dag }, nu)).toBe(
+      false,
+    );
+    expect(verlopen({ bijgewerkt: nu.getTime() - (BEWAARTERMIJN_DAGEN + 1) * dag }, nu)).toBe(true);
   });
 
   it('verwijdert de beoordeling én het project', async () => {
@@ -236,8 +295,8 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     const sam = b.nieuw('Sam', project('Sam'), null);
     expect(await b.verwijder(sam.id)).toBe(true);
     expect(b.lijst()).toEqual([]);
-    expect(await opslag.beoordelingen.sleutels()).toEqual([]);
-    expect(await opslag.projecten.sleutels()).toEqual([]);
+    expect(await ids(opslag)).toEqual([]);
+    expect(await opslag.leesProject(sam.id)).toBeUndefined();
   });
 
   it('zegt het als alles verwijderen halverwege mislukt, en toont wat er nog staat', async () => {
@@ -253,7 +312,7 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     expect(fouten).toHaveLength(1);
     // De lijst liegt niet: Noor staat er nog, de anderen zijn echt weg.
     expect(b.lijst().map((x) => x.naam)).toEqual(['Noor']);
-    expect(await nep.echt.beoordelingen.sleutels()).toEqual([noor.id]);
+    expect(await ids(nep.echt)).toEqual([noor.id]);
   });
 
   it('schrijft een verwijderde beoordeling niet alsnog terug', async () => {
@@ -263,8 +322,8 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     b.wijzig(sam.id, { notes: 'x' });
     await b.verwijder(sam.id);
     await stil(b);
-    expect(await opslag.beoordelingen.sleutels()).toEqual([]);
-    expect(await opslag.projecten.sleutels()).toEqual([]);
+    expect(await ids(opslag)).toEqual([]);
+    expect(await opslag.leesProject(sam.id)).toBeUndefined();
   });
 
   it('bewaart de vragen voor het mondeling, en vult ze aan bij een oudere beoordeling', async () => {
@@ -273,15 +332,14 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     const oud = {
       id: 'oud',
       naam: 'Oud',
-      aangemaakt: 1,
-      bijgewerkt: 1,
+      aangemaakt: Date.now(),
+      bijgewerkt: Date.now(),
       handmatig: [],
       notes: '',
       track: null,
-    };
-    await opslag.beoordelingen.schrijf('oud', oud as unknown as Beoordeling);
-    await opslag.projecten.schrijf('oud', project('Oud'));
-    const { b } = bewaarder(opslag);
+    } as unknown as Beoordeling;
+    await opslag.bewaarNieuw(oud, project('Oud'));
+    const { b } = bewaarder(opslag, () => new Date());
     await b.klaar;
     expect(b.get('oud')?.vragen).toEqual([]);
 
@@ -296,17 +354,8 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     };
     b.wijzig('oud', { vragen: [vraag] });
     await stil(b);
-    expect((await opslag.beoordelingen.lees('oud'))?.vragen).toEqual([vraag]);
-    expect(aangevuld(oud as unknown as Beoordeling).vragen).toEqual([]);
-  });
-
-  it('ruimOp laat projecten met een beoordeling staan', async () => {
-    const opslag = geheugenOpslag();
-    const { b } = bewaarder(opslag);
-    const sam = b.nieuw('Sam', project('Sam'), null);
-    await stil(b);
-    await ruimOp(opslag);
-    expect(await opslag.projecten.sleutels()).toEqual([sam.id]);
+    expect((await opslag.alleBeoordelingen())[0].vragen).toEqual([vraag]);
+    expect(aangevuld(oud).vragen).toEqual([]);
   });
 });
 

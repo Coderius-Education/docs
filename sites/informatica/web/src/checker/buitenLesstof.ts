@@ -1,6 +1,5 @@
-import { MAX_PLEKKEN, blanco, plekkenIn } from '@coderius/checker/plekken';
+import { MAX_PLEKKEN, blanco, plekkenIn, regelBegins } from '@coderius/checker/plekken';
 import type { ProjectFiles, Vondst } from '@coderius/checker/types';
-import LESSTOF from './lesstof.json';
 
 // Wat een project gebruikt dat de lessen niet behandelen. De nakijker scoort
 // alleen de concepten uit curriculum.ts; een <canvas>, een @keyframes of een
@@ -438,36 +437,47 @@ export function constructiesIn(stukken: Stuk[]): Telling {
   return t;
 }
 
-const BEKEND = new Set(
-  Object.entries(LESSTOF as Record<string, string[]>).flatMap(([groep, labels]) =>
-    labels.map((label) => sleutel(groep, label)),
-  ),
-);
+/** Wat de lessen behandelen, per groep (zie lesstof.ts). */
+export type Lesstof = Record<string, string[]>;
 
 const SOORT_VAN_KIND: Record<string, Soort | undefined> = { html: 'html', css: 'css', js: 'js' };
 
-/** De vondsten voor het rapport: wat het project gebruikt en de lessen niet. */
-export function buitenLesstof(files: ProjectFiles): Vondst[] {
-  const perSleutel = new Map<string, Vondst>();
-  const paden = Object.values(files).sort((a, b) => a.path.localeCompare(b.path));
-  for (const f of paden) {
-    const soort = SOORT_VAN_KIND[f.kind];
-    if (!soort || f.content === null) continue;
-    for (const [k, { n, posities }] of constructiesIn([{ soort, tekst: f.content }])) {
-      if (BEKEND.has(k)) continue;
-      const [groep, ...rest] = k.split('|');
-      const label = rest.join('|');
-      const vondst = perSleutel.get(k) ?? { groep, label, count: 0, files: [], plekken: [] };
-      vondst.count += n;
-      vondst.files.push(f.path);
-      const plekken = vondst.plekken ?? [];
-      plekken.push(...plekkenIn(f.path, f.content, posities, MAX_PLEKKEN - plekken.length));
-      vondst.plekken = plekken;
-      perSleutel.set(k, vondst);
-    }
-  }
-  const volgorde = (g: string) => GROEPEN.indexOf(g as Groep);
-  return Array.from(perSleutel.values()).sort(
-    (a, b) => volgorde(a.groep) - volgorde(b.groep) || a.label.localeCompare(b.label),
+/**
+ * De zoeker voor het rapport: wat een project gebruikt en de lessen niet.
+ * `lesstof` komt bij het bouwen uit lesstof-plugin.ts, in tests uit
+ * berekenLesstof().
+ */
+export function maakBuitenLesstof(lesstof: Lesstof): (files: ProjectFiles) => Vondst[] {
+  const bekend = new Set(
+    Object.entries(lesstof).flatMap(([groep, labels]) => labels.map((l) => sleutel(groep, l))),
   );
+  return (files) => {
+    const perSleutel = new Map<string, Vondst>();
+    const paden = Object.values(files).sort((a, b) => a.path.localeCompare(b.path));
+    for (const f of paden) {
+      const soort = SOORT_VAN_KIND[f.kind];
+      if (!soort || f.content === null) continue;
+      let begins: number[] | null = null;
+      for (const [k, { n, posities }] of constructiesIn([{ soort, tekst: f.content }])) {
+        if (bekend.has(k)) continue;
+        const [groep, ...rest] = k.split('|');
+        const label = rest.join('|');
+        const vondst = perSleutel.get(k) ?? { groep, label, count: 0, files: [], plekken: [] };
+        vondst.count += n;
+        vondst.files.push(f.path);
+        const plekken = vondst.plekken ?? [];
+        if (plekken.length < MAX_PLEKKEN) {
+          // Regelstarts één keer per bestand, en pas als er een vondst is.
+          begins ??= regelBegins(f.content);
+          plekken.push(...plekkenIn(f.path, begins, posities, MAX_PLEKKEN - plekken.length));
+        }
+        vondst.plekken = plekken;
+        perSleutel.set(k, vondst);
+      }
+    }
+    const volgorde = (g: string) => GROEPEN.indexOf(g as Groep);
+    return Array.from(perSleutel.values()).sort(
+      (a, b) => volgorde(a.groep) - volgorde(b.groep) || a.label.localeCompare(b.label),
+    );
+  };
 }

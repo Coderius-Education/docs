@@ -1,4 +1,4 @@
-import { MAX_PLEKKEN, plekkenIn } from './plekken';
+import { MAX_PLEKKEN, plekkenIn, regelBegins } from './plekken';
 import type { CheckReport, CheckerConfig, ConceptMatch, Plek, ProjectFiles } from './types';
 
 // Analyseert een geüpload project tegen de conceptenlijst van een site. Puur
@@ -55,6 +55,22 @@ export function analyze(
     bucket.push({ path: f.path, content: f.content });
   }
   const allPaths = values.map((f) => f.path).sort((a, b) => a.localeCompare(b));
+  // Alleen een tekstbestand kan als code open; een foto of geluid niet.
+  const leesbaar = new Set(
+    values
+      .filter((f) => f.content !== null && config.textKinds.includes(f.kind))
+      .map((f) => f.path),
+  );
+  // Regelstarts één keer per bestand, en alleen als er iets te vinden is.
+  const begins = new Map<string, number[]>();
+  const beginsVan = (path: string, content: string) => {
+    let b = begins.get(path);
+    if (!b) {
+      b = regelBegins(content);
+      begins.set(path, b);
+    }
+    return b;
+  };
 
   const concepts: ConceptMatch[] = config.concepts.map((c) => {
     if (c.detect.type === 'handmatig') {
@@ -64,7 +80,10 @@ export function analyze(
       const re = withoutGlobal(c.detect.pattern);
       const paden = allPaths.filter((p) => re.test(p));
       const used = paden.length > 0;
-      const plekken = paden.slice(0, MAX_PLEKKEN).map((bestand) => ({ bestand, regel: 1 }));
+      const plekken = paden
+        .filter((p) => leesbaar.has(p))
+        .slice(0, MAX_PLEKKEN)
+        .map((bestand) => ({ bestand, regel: 1 }));
       return { id: c.id, count: used ? 1 : 0, used, plekken };
     }
     const kinds = c.detect.in ?? config.textKinds;
@@ -75,7 +94,10 @@ export function analyze(
       for (const { path, content } of textByKind[kind] ?? []) {
         const posities = Array.from(content.matchAll(patroon), (m) => m.index ?? 0);
         count += posities.length;
-        plekken.push(...plekkenIn(path, content, posities, MAX_PLEKKEN - plekken.length));
+        if (posities.length === 0 || plekken.length >= MAX_PLEKKEN) continue;
+        plekken.push(
+          ...plekkenIn(path, beginsVan(path, content), posities, MAX_PLEKKEN - plekken.length),
+        );
       }
     }
     return { id: c.id, count, used: count >= (c.detect.minCount ?? 1), plekken };

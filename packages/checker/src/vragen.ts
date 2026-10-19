@@ -76,20 +76,37 @@ export interface Fragment {
   ontbreekt: boolean;
 }
 
+// De regels per bestand, één keer gesplitst. Een ProjectFile verandert niet
+// zolang het project open is, dus het object zelf is de sleutel. Elke
+// toetsaanslag in een notitie rendert alle vragen opnieuw, en splitste anders
+// elke keer het hele bestand.
+const regelsPerBestand = new WeakMap<object, string[]>();
+
+/** De regels van een bestand, zonder Windows-regeleinde; null als het er niet is. */
+export function regelsVan(files: ProjectFiles, bestand: string): string[] | null {
+  const f = files[bestand];
+  if (!f || f.content == null) return null;
+  let regels = regelsPerBestand.get(f);
+  if (!regels) {
+    regels = f.content.split('\n').map((r) => r.replace(/\r$/, ''));
+    regelsPerBestand.set(f, regels);
+  }
+  return regels;
+}
+
 /** De regels van een vraag uit het project, hooguit `max` stuks. */
 export function fragment(
   files: ProjectFiles,
   v: Pick<Vraag, 'bestand' | 'van' | 'tot'>,
   max = 12,
 ): Fragment {
-  const inhoud = files[v.bestand]?.content;
-  if (inhoud == null) return { regels: [], meer: 0, ontbreekt: true };
-  const alle = inhoud.split('\n');
+  const alle = regelsVan(files, v.bestand);
+  if (alle === null) return { regels: [], meer: 0, ontbreekt: true };
   if (v.van > alle.length) return { regels: [], meer: 0, ontbreekt: true };
   const tot = Math.min(v.tot, alle.length);
   const regels = [];
   for (let nr = v.van; nr <= Math.min(tot, v.van + max - 1); nr++) {
-    regels.push({ nr, tekst: alle[nr - 1].replace(/\r$/, '') });
+    regels.push({ nr, tekst: alle[nr - 1] });
   }
   return { regels, meer: tot - v.van + 1 - regels.length, ontbreekt: false };
 }

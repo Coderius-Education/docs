@@ -28,16 +28,16 @@ export function regelVan(begins: number[], positie: number): number {
 
 /**
  * Zet posities in een bestand om naar plekken: één per regel, op volgorde,
- * en hooguit `ruimte` stuks (wat er al in de lijst zit telt mee).
+ * en hooguit `ruimte` stuks (wat er al in de lijst zit telt mee). De
+ * regelstarts (`regelBegins`) berekent de aanroeper één keer per bestand.
  */
 export function plekkenIn(
   bestand: string,
-  tekst: string,
+  begins: number[],
   posities: number[],
   ruimte: number,
 ): Plek[] {
   if (ruimte <= 0 || posities.length === 0) return [];
-  const begins = regelBegins(tekst);
   const regels = Array.from(new Set(posities.map((p) => regelVan(begins, p)))).sort(
     (a, b) => a - b,
   );

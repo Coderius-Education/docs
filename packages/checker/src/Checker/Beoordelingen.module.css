@@ -95,3 +95,10 @@
 .alles {
   padding: 0;
 }
+
+.open:disabled,
+.verwijder:disabled,
+.alles:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}

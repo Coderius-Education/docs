@@ -33,21 +33,21 @@ export interface Project {
   warnings: string[];
 }
 
-export interface Bak<T> {
-  alle(): Promise<T[]>;
-  sleutels(): Promise<string[]>;
-  lees(id: string): Promise<T | undefined>;
-  schrijf(id: string, waarde: T): Promise<void>;
-  wis(id: string): Promise<void>;
-}
-
 /**
- * Twee bakken: de beoordeling en het project apart, zodat een getypte
- * opmerking niet elke keer het hele project (met foto's) herschrijft.
+ * De opslag achter de Bewaarder. Beoordeling en project staan apart, zodat
+ * een getypte opmerking niet elke keer het hele project (met foto's)
+ * herschrijft; maar een nieuwe beoordeling en het wissen gaan over allebei
+ * tegelijk, in één transactie. Zo kan er nooit een project zonder
+ * beoordeling achterblijven, ook niet als de opslag halverwege vol raakt.
  */
 export interface Opslag {
-  beoordelingen: Bak<Beoordeling>;
-  projecten: Bak<Project>;
+  alleBeoordelingen(): Promise<Beoordeling[]>;
+  leesProject(id: string): Promise<Project | undefined>;
+  /** Beoordeling en project samen: allebei bewaard, of geen van beide. */
+  bewaarNieuw(beoordeling: Beoordeling, project: Project): Promise<void>;
+  bewaarBeoordeling(beoordeling: Beoordeling): Promise<void>;
+  /** Beoordeling en project samen weg. */
+  wis(id: string): Promise<void>;
   /** Sluit de verbinding (IndexedDB); een geheugenopslag heeft niets te sluiten. */
   sluit?: () => void;
 }
@@ -112,6 +112,23 @@ export function pasAan(beoordeling: Beoordeling, wijziging: Wijziging, nu: Date)
   return nieuw;
 }
 
+/**
+ * Hoe lang een beoordeling zonder wijziging blijft staan. Ze staan in de
+ * browser, en op een gedeelde schoolcomputer kan iedereen die het (openbare)
+ * docentwachtwoord kent de pagina openen; een mondeling en de PDF erna zijn
+ * in twee weken ruim klaar.
+ */
+export const BEWAARTERMIJN_DAGEN = 14;
+const BEWAARTERMIJN_MS = BEWAARTERMIJN_DAGEN * 24 * 60 * 60 * 1000;
+
+/** Is deze beoordeling langer dan de bewaartermijn niet gewijzigd? */
+export function verlopen(b: Pick<Beoordeling, 'bijgewerkt'>, nu: Date): boolean {
+  return nu.getTime() - b.bijgewerkt > BEWAARTERMIJN_MS;
+}
+
+export const LEESFOUT =
+  'De bewaarde beoordelingen konden niet worden gelezen. Ze staan er waarschijnlijk nog; herlaad de pagina om het opnieuw te proberen.';
+
 /** Een foutmelding voor de docent bij een mislukte schrijf- of wisactie. */
 export function opslagMelding(fout: unknown): string {
   const naam = fout instanceof DOMException || fout instanceof Error ? fout.name : '';
@@ -150,13 +167,13 @@ export class Bewaarder {
   private readonly cache = new Map<string, Beoordeling>();
   /** Gewijzigd maar nog niet weggeschreven. */
   private readonly teSchrijven = new Set<string>();
-  /** Nieuw, maar het project staat nog niet in de opslag. */
+  /** Nieuw, maar nog niet in de opslag; nieuw() schrijft de laatste versie. */
   private readonly zonderProject = new Set<string>();
   /** Projecten die niet bewaard konden worden; blijven tot de pagina sluit. */
   private readonly alleenHier = new Map<string, Project>();
   private rij: Promise<unknown> = Promise.resolve();
   private schrijfGepland = false;
-  /** Klaar als de bestaande beoordelingen zijn ingelezen. */
+  /** Klaar als de bestaande beoordelingen zijn ingelezen (of dat mislukte). */
   readonly klaar: Promise<void>;
 
   constructor(opslag: Promise<Opslag>, opties: BewaarderOpties) {
@@ -164,9 +181,21 @@ export class Bewaarder {
     this.opties = opties;
     this.nu = opties.nu ?? (() => new Date());
     this.klaar = this.inRij(async (o) => {
-      await ruimOp(o);
-      for (const b of await o.beoordelingen.alle()) {
-        if (!this.cache.has(b.id)) this.cache.set(b.id, aangevuld(b));
+      let opgeslagen: Beoordeling[];
+      try {
+        opgeslagen = await o.alleBeoordelingen();
+      } catch {
+        this.opties.onFout(LEESFOUT);
+        return;
+      }
+      const nu = this.nu();
+      for (const b of opgeslagen) {
+        if (verlopen(b, nu)) {
+          // Opruimen mag mislukken: dan probeert de volgende keer het weer.
+          await o.wis(b.id).catch(() => undefined);
+        } else if (!this.cache.has(b.id)) {
+          this.cache.set(b.id, aangevuld(b));
+        }
       }
       this.meld();
     }).catch(() => undefined);
@@ -197,19 +226,12 @@ export class Bewaarder {
     this.zonderProject.add(b.id);
     this.meld();
     this.inRij(async (o) => {
-      if (!this.cache.has(b.id)) return; // al weer verwijderd
-      await o.projecten.schrijf(b.id, project);
-      try {
-        // De nieuwste versie: de docent kan al iets hebben aangevinkt.
-        await o.beoordelingen.schrijf(b.id, this.cache.get(b.id) ?? b);
-      } catch (fout) {
-        // Geen project zonder beoordeling achterlaten: dat ziet niemand
-        // meer, en het neemt wel ruimte in.
-        await o.projecten.wis(b.id).catch(() => undefined);
-        throw fout;
-      }
-      // Een wijziging tijdens het wegschrijven hierboven staat in
-      // teSchrijven en gaat met de volgende schrijfactie mee.
+      const laatste = this.cache.get(b.id);
+      if (!laatste) return; // al weer verwijderd
+      // De nieuwste versie: de docent kan al iets hebben aangevinkt. Een
+      // wijziging tijdens het wegschrijven staat in teSchrijven en gaat met
+      // de volgende schrijfactie mee.
+      await o.bewaarNieuw(laatste, project);
       this.zonderProject.delete(b.id);
     }).catch((fout) => {
       // Niet bewaard, maar op deze pagina blijft de beoordeling bruikbaar.
@@ -227,20 +249,7 @@ export class Bewaarder {
     this.cache.set(id, nieuw);
     this.teSchrijven.add(id);
     this.meld();
-    if (!this.schrijfGepland) {
-      this.schrijfGepland = true;
-      this.inRij(async (o) => {
-        this.schrijfGepland = false;
-        const ids = Array.from(this.teSchrijven);
-        this.teSchrijven.clear();
-        for (const i of ids) {
-          const b = this.cache.get(i);
-          // Zonder project in de opslag nog niet: dat doet nieuw() zelf, met
-          // de nieuwste versie.
-          if (b && !this.zonderProject.has(i)) await o.beoordelingen.schrijf(i, b);
-        }
-      }).catch((fout) => this.opties.onFout(opslagMelding(fout)));
-    }
+    this.planSchrijven();
     return nieuw;
   }
 
@@ -248,7 +257,7 @@ export class Bewaarder {
   open(id: string): Promise<{ beoordeling: Beoordeling; project: Project } | null> {
     return this.inRij(async (o) => {
       const beoordeling = this.cache.get(id);
-      const project = this.alleenHier.get(id) ?? (await o.projecten.lees(id));
+      const project = this.alleenHier.get(id) ?? (await o.leesProject(id));
       return beoordeling && project ? { beoordeling, project } : null;
     });
   }
@@ -274,6 +283,31 @@ export class Bewaarder {
     o?.sluit?.();
   }
 
+  private planSchrijven(): void {
+    if (this.schrijfGepland) return;
+    this.schrijfGepland = true;
+    this.inRij(async (o) => {
+      this.schrijfGepland = false;
+      const ids = Array.from(this.teSchrijven);
+      this.teSchrijven.clear();
+      let fout: unknown = null;
+      for (const i of ids) {
+        const b = this.cache.get(i);
+        // Nog niet in de opslag: dat doet nieuw() zelf, met de nieuwste versie.
+        if (!b || this.zonderProject.has(i) || this.alleenHier.has(i)) continue;
+        try {
+          await o.bewaarBeoordeling(b);
+        } catch (f) {
+          // Terug in de rij: de volgende schrijfactie probeert hem opnieuw,
+          // en de andere beoordelingen in deze ronde gaan gewoon door.
+          this.teSchrijven.add(i);
+          fout ??= f;
+        }
+      }
+      if (fout) throw fout;
+    }).catch((fout) => this.opties.onFout(opslagMelding(fout)));
+  }
+
   private async verwijderIds(ids: string[]): Promise<boolean> {
     for (const id of ids) {
       this.cache.delete(id);
@@ -285,11 +319,7 @@ export class Bewaarder {
     try {
       await this.inRij(async (o) => {
         const mislukt: unknown[] = [];
-        for (const id of ids) {
-          // Eerst de beoordeling: zonder die verschijnt het project nergens.
-          await o.beoordelingen.wis(id).catch((f) => mislukt.push(f));
-          await o.projecten.wis(id).catch((f) => mislukt.push(f));
-        }
+        for (const id of ids) await o.wis(id).catch((f) => mislukt.push(f));
         if (mislukt.length > 0) throw mislukt[0];
       });
       return true;
@@ -304,7 +334,7 @@ export class Bewaarder {
 
   private async herlaad(): Promise<void> {
     await this.inRij(async (o) => {
-      const opgeslagen = await o.beoordelingen.alle();
+      const opgeslagen = await o.alleBeoordelingen();
       for (const b of opgeslagen) if (!this.cache.has(b.id)) this.cache.set(b.id, aangevuld(b));
       this.meld();
     }).catch(() => undefined);
@@ -322,33 +352,26 @@ export class Bewaarder {
   }
 }
 
-/**
- * Gooit projecten weg waar geen beoordeling meer bij hoort. Die ontstaan
- * als het wegschrijven halverwege mislukt (opslag vol); niemand ziet ze,
- * maar ze nemen wel ruimte in.
- */
-export async function ruimOp(opslag: Opslag): Promise<void> {
-  const beoordelingen = new Set(await opslag.beoordelingen.sleutels());
-  for (const id of await opslag.projecten.sleutels()) {
-    if (!beoordelingen.has(id)) await opslag.projecten.wis(id);
-  }
-}
-
 /** Een opslag in het geheugen: voor tests, en als IndexedDB niet werkt. */
 export function geheugenOpslag(): Opslag {
-  const bak = <T>(): Bak<T> => {
-    const m = new Map<string, T>();
-    return {
-      alle: async () => Array.from(m.values(), (v) => structuredClone(v)),
-      sleutels: async () => Array.from(m.keys()),
-      lees: async (id) => (m.has(id) ? structuredClone(m.get(id) as T) : undefined),
-      schrijf: async (id, waarde) => {
-        m.set(id, structuredClone(waarde));
-      },
-      wis: async (id) => {
-        m.delete(id);
-      },
-    };
+  const beoordelingen = new Map<string, Beoordeling>();
+  const projecten = new Map<string, Project>();
+  return {
+    alleBeoordelingen: async () => Array.from(beoordelingen.values(), (b) => structuredClone(b)),
+    leesProject: async (id) => {
+      const p = projecten.get(id);
+      return p ? structuredClone(p) : undefined;
+    },
+    bewaarNieuw: async (b, p) => {
+      beoordelingen.set(b.id, structuredClone(b));
+      projecten.set(b.id, structuredClone(p));
+    },
+    bewaarBeoordeling: async (b) => {
+      beoordelingen.set(b.id, structuredClone(b));
+    },
+    wis: async (id) => {
+      beoordelingen.delete(id);
+      projecten.delete(id);
+    },
   };
-  return { beoordelingen: bak<Beoordeling>(), projecten: bak<Project>() };
 }

@@ -98,12 +98,8 @@ describe('analyze — pad-concepten', () => {
     const cfg = config([concept('main', { type: 'path', pattern: /(^|\/)main\.py$/g })]);
     const report = analyze(files, cfg);
 
-    expect(matchOf(report, 'main')).toEqual({
-      id: 'main',
-      count: 1,
-      used: true,
-      plekken: [{ bestand: 'src/main.py', regel: 1 }],
-    });
+    // Zonder ingelezen inhoud kan het bestand niet als code open: geen plek.
+    expect(matchOf(report, 'main')).toEqual({ id: 'main', count: 1, used: true, plekken: [] });
   });
 
   it('scoort twee projecten achter elkaar hetzelfde met dezelfde config', () => {
@@ -279,6 +275,21 @@ describe('analyze — plekken', () => {
     );
     expect(matchOf(report, 'kleur')?.count).toBe(80);
     expect(matchOf(report, 'kleur')?.plekken).toHaveLength(50);
+  });
+
+  it('een pad-concept wijst alleen een tekstbestand aan, geen foto of geluid', () => {
+    const files = projectFiles(
+      file('static/foto.png', 'image', 'data:image/png;base64,AAAA'),
+      file('static/stijl.css', 'css', 'p {}'),
+    );
+    const report = analyze(
+      files,
+      config([concept('static', { type: 'path', pattern: /^static\// })]),
+    );
+    expect(matchOf(report, 'static')).toMatchObject({
+      used: true,
+      plekken: [{ bestand: 'static/stijl.css', regel: 1 }],
+    });
   });
 
   it('crasht niet op een patroon zonder g-vlag', () => {

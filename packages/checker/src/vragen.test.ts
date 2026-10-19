@@ -5,6 +5,7 @@ import {
   fragment,
   nieuweVraag,
   plekLabel,
+  regelsVan,
   verplaatsVraag,
   verwijderVraag,
   wijzigVraag,
@@ -76,6 +77,11 @@ describe('fragment', () => {
     const f = fragment(files, { bestand: 'app.js', van: 1, tot: 3 }, 2);
     expect(f.regels.map((r) => r.nr)).toEqual([1, 2]);
     expect(f.meer).toBe(1);
+  });
+
+  it('splitst een bestand één keer, ook als alle vragen opnieuw renderen', () => {
+    const eerste = regelsVan(files, 'app.js');
+    expect(regelsVan(files, 'app.js')).toBe(eerste);
   });
 
   it('zegt het als het bestand of de regel er niet (meer) is', () => {

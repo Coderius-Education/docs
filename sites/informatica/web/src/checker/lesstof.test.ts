@@ -1,57 +1,17 @@
-import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { describe, expect, it } from 'vitest';
-import { GROEPEN, type Stuk, buitenLesstof, constructiesIn, sleutel } from './buitenLesstof';
-import LESSTOF from './lesstof.json';
+import { GROEPEN, maakBuitenLesstof } from './buitenLesstof';
+import { berekenLesstof, stukkenUit } from './lesstof';
 
-// lesstof.json is wat de nakijker "behandeld in de lessen" noemt. Het hoort
-// precies te zijn wat de code van de lessen en de cheatsheet gebruikt: staat
-// er iets te weinig in, dan krijgt een docent een gespreksvraag over iets dat
-// gewoon in les 3 stond; staat er te veel in, dan verdwijnt een echte vondst.
-// Deze test rekent de lijst na. Na een wijziging in de lessen schrijf je hem
-// opnieuw met
-//
-//   LESSTOF_SCHRIJVEN=1 pnpm vitest run sites/informatica/web/src/checker/lesstof.test.ts
+// De lesstof is wat de nakijker "behandeld in de lessen" noemt: elke
+// herkende constructie in de code van de lessen en de cheatsheet. De
+// lesstof-plugin berekent hem bij het bouwen; deze tests doen hetzelfde
+// vanuit de bron, en kijken of een project daarbuiten goed wordt gemeld.
 
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
-const BRONNEN = [join(SITE, 'docs'), join(SITE, 'src/pages/cheatsheet.mdx')];
-
-function bestanden(pad: string): string[] {
-  if (!statSync(pad).isDirectory()) return [pad];
-  return readdirSync(pad).flatMap((naam) => bestanden(join(pad, naam)));
-}
-
-/** De code op een lespagina: codeblokken en startcode in MDX-exports. */
-function stukkenUit(bron: string): Stuk[] {
-  const stukken: Stuk[] = [];
-  for (const m of bron.matchAll(/```(html|css|js|javascript)\b[^\n]*\n([\s\S]*?)```/g)) {
-    // Een fout-voorbeeld ("getElementByID met een hoofdletter D") is geen
-    // lesstof: het blok erna is dan de foutmelding van de browser.
-    const erna = bron.slice((m.index ?? 0) + m[0].length);
-    if (/^\s*```\n[^`]*?(?:fout|Error)/.test(erna)) continue;
-    stukken.push({ soort: m[1] === 'javascript' ? 'js' : (m[1] as Stuk['soort']), tekst: m[2] });
-  }
-  for (const m of bron.matchAll(/export const \w*?(Html|Css|Js) = `([\s\S]*?)(?<!\\)`;/g)) {
-    const soort = m[1].toLowerCase() as Stuk['soort'];
-    stukken.push({ soort, tekst: m[2].replace(/\\([`$\\])/g, '$1') });
-  }
-  return stukken;
-}
-
-function lesstofUitDeLessen(): Record<string, string[]> {
-  const stukken = BRONNEN.flatMap(bestanden)
-    .filter((pad) => /\.mdx?$/.test(pad))
-    .flatMap((pad) => stukkenUit(readFileSync(pad, 'utf8')));
-  const perGroep: Record<string, string[]> = Object.fromEntries(GROEPEN.map((g) => [g, []]));
-  for (const k of constructiesIn(stukken).keys()) {
-    const [groep, ...rest] = k.split('|');
-    perGroep[groep].push(rest.join('|'));
-  }
-  for (const labels of Object.values(perGroep)) labels.sort();
-  return perGroep;
-}
+const LESSTOF = berekenLesstof(SITE);
+const buitenLesstof = maakBuitenLesstof(LESSTOF);
 
 function project(bestanden: Record<string, string>): ProjectFiles {
   return Object.fromEntries(
@@ -70,44 +30,24 @@ function project(bestanden: Record<string, string>): ProjectFiles {
 
 const labels = (files: ProjectFiles) => buitenLesstof(files).map((v) => `${v.groep}|${v.label}`);
 
-describe('lesstof.json', () => {
-  const berekend = lesstofUitDeLessen();
-
-  if (process.env.LESSTOF_SCHRIJVEN) {
-    writeFileSync(
-      fileURLToPath(new URL('./lesstof.json', import.meta.url)),
-      `${JSON.stringify(berekend, null, 2)}\n`,
-    );
-  }
-
-  it('is precies wat de code van de lessen en de cheatsheet gebruikt', () => {
-    const lijst = LESSTOF as Record<string, string[]>;
-    const inJson = new Set(
-      Object.entries(lijst).flatMap(([g, ls]) => ls.map((l) => sleutel(g, l))),
-    );
-    const inLessen = new Set(
-      Object.entries(berekend).flatMap(([g, ls]) => ls.map((l) => sleutel(g, l))),
-    );
-    const erbij = [...inLessen].filter((k) => !inJson.has(k));
-    const eraf = [...inJson].filter((k) => !inLessen.has(k));
-    expect(
-      { erbij, eraf },
-      'lesstof.json loopt niet gelijk met de lessen; schrijf hem opnieuw (zie de kop van deze test)',
-    ).toEqual({ erbij: [], eraf: [] });
-  });
-
+describe('de lesstof uit de lessen', () => {
   it('vindt de basis die elke les gebruikt', () => {
     // Een kapotte extractie zou de lijst leeg laten en elk project vol
     // vondsten zetten.
-    expect(berekend['HTML-elementen']).toEqual(expect.arrayContaining(['<p>', '<h1>', '<body>']));
-    expect(berekend['CSS-eigenschappen']).toEqual(expect.arrayContaining(['color', 'margin']));
-    expect(berekend.JavaScript).toEqual(expect.arrayContaining(['.addEventListener()']));
+    expect(LESSTOF['HTML-elementen']).toEqual(expect.arrayContaining(['<p>', '<h1>', '<body>']));
+    expect(LESSTOF['CSS-eigenschappen']).toEqual(expect.arrayContaining(['color', 'margin']));
+    expect(LESSTOF.JavaScript).toEqual(expect.arrayContaining(['.addEventListener()']));
   });
 
-  it('kent geen naamloze of arrow-functies, want die staan niet in de lessen', () => {
+  it('kent geen arrow-functies, want die staan niet in de lessen', () => {
     // Afspraak uit web/CLAUDE.md: alle functies in het lesmateriaal hebben een
     // naam. Een arrow-functie in een project is dus altijd een vondst.
-    expect(berekend.JavaScript).not.toContain('=> (arrow-functie)');
+    expect(LESSTOF.JavaScript).not.toContain('=> (arrow-functie)');
+  });
+
+  it('telt een fout-voorbeeld uit de lessen niet mee', () => {
+    // inline-onclick.mdx toont getElementByID als fout, met de foutmelding eronder.
+    expect(LESSTOF.JavaScript).not.toContain('document.getElementByID');
   });
 });
 

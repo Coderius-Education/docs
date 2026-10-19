@@ -58,7 +58,9 @@ export function CodeWeergave({ files, textKinds, open, onSluit, onMarkeer }: Cod
       setPlekNr(0);
       // Zonder plekken: het startbestand van een website, anders het eerste.
       const start = bestanden.find((b) => /(^|\/)index\.html?$/i.test(b)) ?? bestanden[0];
-      setBestand(eerste?.bestand ?? open.bestand ?? start ?? null);
+      // Alleen een bestand dat als tekst is ingelezen kan open.
+      const gevraagd = eerste?.bestand ?? open.bestand;
+      setBestand(gevraagd && bestanden.includes(gevraagd) ? gevraagd : (start ?? null));
       setDoel(eerste?.regel ?? null);
       setSelectie(null);
       setVraag('');

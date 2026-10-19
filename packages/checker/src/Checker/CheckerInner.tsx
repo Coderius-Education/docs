@@ -48,12 +48,9 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   const [report, setReport] = useState<CheckReport | null>(null);
   const [files, setFiles] = useState<ProjectFiles | null>(null);
   const [ideError, setIdeError] = useState<string | null>(null);
-  const [notes, setNotes] = useState('');
   const [exporting, setExporting] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [activeLevel, setActiveLevel] = useState<Level | null>(null);
-  const [track, setTrack] = useState<string | null>(config.tracks?.[0]?.id ?? null);
-  const [handmatigAan, setHandmatigAan] = useState<Set<string>>(() => new Set());
   const reportRef = useRef<HTMLDivElement>(null);
 
   // Bewaarde beoordelingen (alleen in de docentweergave). De Bewaarder is de
@@ -71,18 +68,29 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   // veld volgt daarom alleen bij openen en uploaden de bewaarde naam, niet
   // bij elke wijziging.
   const [naamVeld, setNaamVeld] = useState('');
-  const [pdfKlaar, setPdfKlaar] = useState(false);
+  // Voor welke beoordeling de laatste PDF is gemaakt; alleen daar hoort de
+  // knop "Verwijder deze beoordeling" bij.
+  const [pdfKlaarVoor, setPdfKlaarVoor] = useState<string | null>(null);
+
+  // Vinkjes, opmerkingen en leerroute staan in de beoordeling zelf (de
+  // Bewaarder), niet in een eigen kopie hier: één bron, dus wat je ziet is
+  // wat er bewaard en geprint wordt.
+  const notes = actief?.notes ?? '';
+  const handmatigAan = useMemo(() => new Set(actief?.handmatig ?? []), [actief?.handmatig]);
+  // De leerroute van een nieuwe upload: de laatst gekozen, of de eerste.
+  const laatsteTrackRef = useRef<string | null>(config.tracks?.[0]?.id ?? null);
+  const track = actief?.track ?? laatsteTrackRef.current;
 
   // UploadZone roept onLoaded aan nadat het inlezen klaar is, met de
   // callback van het moment waarop het bestand werd losgelaten. De naam en
   // de leerroute lezen we daarom uit een ref: wat de docent tijdens het
   // inlezen typt, telt mee.
   const nieuweNaamRef = useRef('');
-  const trackRef = useRef(track);
-  trackRef.current = track;
   // Elke upload en elke klik op een beoordeling krijgt een nummer; een
   // openactie die klaar is nadat er al iets nieuwers gebeurde, doet niets.
   const verzoekRef = useRef(0);
+  // Bezig met een PDF: dan wacht alles wat een andere leerling zou openen.
+  const exporterendRef = useRef(false);
 
   useEffect(() => {
     if (!isDocent) return;
@@ -110,7 +118,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
     const id = actiefIdRef.current;
     if (!id) return;
     bewaarderRef.current?.wijzig(id, wijziging);
-    setPdfKlaar(false);
+    setPdfKlaarVoor(null);
   }, []);
 
   // De codeweergave: welke plekken open staan, of null als hij dicht is.
@@ -148,30 +156,25 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
 
   const toggleHandmatig = useCallback(
     (id: string) => {
-      const volgende = new Set(handmatigAan);
+      // Uit de Bewaarder, zodat twee snelle klikken op elkaar voortbouwen.
+      const huidig = actiefIdRef.current && bewaarderRef.current?.get(actiefIdRef.current);
+      const volgende = new Set(huidig ? huidig.handmatig : []);
       if (volgende.has(id)) volgende.delete(id);
       else volgende.add(id);
-      setHandmatigAan(volgende);
       bewaar({ handmatig: Array.from(volgende) });
     },
-    [handmatigAan, bewaar],
+    [bewaar],
   );
 
   const kiesTrack = useCallback(
     (id: string) => {
-      setTrack(id);
+      laatsteTrackRef.current = id;
       bewaar({ track: id });
     },
     [bewaar],
   );
 
-  const wijzigNotes = useCallback(
-    (tekst: string) => {
-      setNotes(tekst);
-      bewaar({ notes: tekst });
-    },
-    [bewaar],
-  );
+  const wijzigNotes = useCallback((tekst: string) => bewaar({ notes: tekst }), [bewaar]);
 
   // Eén afgeleid rapport waarin de aangevinkte handmatige concepten als
   // "toegepast" gelden. Zo hoeven computeLevelSummary en ReportView niets van
@@ -194,9 +197,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   // niveausamenvatting, dus dat verandert stilletjes een score.
   const wisBeoordeling = useCallback(() => {
     setCodeOpen(null);
-    setHandmatigAan(new Set());
-    setNotes('');
-    setPdfKlaar(false);
+    setPdfKlaarVoor(null);
     zetActief(null);
   }, [zetActief]);
 
@@ -227,7 +228,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       const b = bewaarder.nieuw(
         nieuweNaamRef.current,
         { files: loadedFiles, warnings },
-        trackRef.current,
+        laatsteTrackRef.current,
       );
       zetActief(b.id);
       setNaamVeld(b.naam);
@@ -239,6 +240,8 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
 
   const handleError = useCallback(
     (message: string) => {
+      // Ook een openactie die nog loopt hoort hierna niets meer te tonen.
+      verzoekRef.current++;
       setError(message);
       setReport(null);
       setFiles(null);
@@ -250,7 +253,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   const openBeoordeling = useCallback(
     async (id: string) => {
       const bewaarder = bewaarderRef.current;
-      if (!bewaarder || id === actiefIdRef.current) return;
+      if (!bewaarder || id === actiefIdRef.current || exporterendRef.current) return;
       const verzoek = ++verzoekRef.current;
       const gevonden = await bewaarder.open(id);
       if (verzoek !== verzoekRef.current) return;
@@ -260,14 +263,11 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       }
       const { beoordeling, project } = gevonden;
       toonProject(project.files, project.warnings);
-      setHandmatigAan(new Set(beoordeling.handmatig));
-      setNotes(beoordeling.notes);
-      setTrack(beoordeling.track ?? config.tracks?.[0]?.id ?? null);
-      setPdfKlaar(false);
+      setPdfKlaarVoor(null);
       zetActief(beoordeling.id);
       setNaamVeld(beoordeling.naam);
     },
-    [config, toonProject, zetActief],
+    [toonProject, zetActief],
   );
 
   const sluitRapport = useCallback(() => {
@@ -330,23 +330,30 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
 
   const handleExportPdf = useCallback(async () => {
     const el = reportRef.current;
-    if (!el) return;
-    setPdfError(null);
-    // De PDF bevat altijd het volledige rapport: zet een actief filter uit en
-    // wacht één frame zodat de DOM alle punten toont vóór de capture.
-    setActiveLevel(null);
-    await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+    if (!el || exporterendRef.current) return;
+    // Zolang de PDF wordt gemaakt, kan er geen andere leerling open of bij
+    // komen: anders kwam het rapport van de een met de knop "Verwijder deze
+    // beoordeling" van de ander in beeld.
+    exporterendRef.current = true;
     setExporting(true);
+    const id = actiefIdRef.current;
+    setPdfError(null);
     try {
-      const naam = actief?.naam ?? '';
+      // De PDF bevat altijd het volledige rapport: zet een actief filter uit en
+      // wacht één frame zodat de DOM alle punten toont vóór de capture.
+      setActiveLevel(null);
+      await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+      const naam = (id && bewaarderRef.current?.get(id)?.naam) || '';
       const bestand = pdfNaamMetLeerling(config.pdfFilename(new Date()), naam);
-      setPdfKlaar(await exportReportToPdf(el, styles.exporting, bestand));
+      const gelukt = await exportReportToPdf(el, styles.exporting, bestand);
+      if (gelukt && id && id === actiefIdRef.current) setPdfKlaarVoor(id);
     } catch {
       setPdfError('Het opslaan als PDF is mislukt. Probeer het opnieuw.');
     } finally {
+      exporterendRef.current = false;
       setExporting(false);
     }
-  }, [config, actief]);
+  }, [config]);
 
   const content = (
     <div className={styles.container}>
@@ -360,6 +367,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
               onVerwijder={verwijderBeoordeling}
               onVerwijderAlles={verwijderAlles}
               opslagFout={opslagFout}
+              bezig={exporting}
             />
             <h2 className={styles.nieuwKop}>Nieuwe beoordeling</h2>
             <label className={styles.naamLabel} htmlFor="nieuwe-leerling">
@@ -382,7 +390,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
           config={config}
           onLoaded={handleLoaded}
           onError={handleError}
-          busy={busy}
+          busy={busy || exporting}
           setBusy={setBusy}
         />
         {config.privacyNote && <p className={styles.privacy}>{config.privacyNote}</p>}
@@ -514,7 +522,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
                 {pdfError}
               </p>
             )}
-            {pdfKlaar && actief && (
+            {actief && pdfKlaarVoor === actief.id && (
               <p className={`${styles.pdfKlaar} ${styles.noPrint}`}>
                 PDF opgeslagen. Klaar met {actief.naam}?{' '}
                 <button

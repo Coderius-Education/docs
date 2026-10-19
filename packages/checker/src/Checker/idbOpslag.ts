@@ -1,20 +1,17 @@
-import type { Bak, Beoordeling, Opslag, Project } from '../beoordelingen';
+import type { Beoordeling, Opslag, Project } from '../beoordelingen';
+import { wachtOpTransactie } from '../transactie';
 
 // De opslag van beoordelingen in IndexedDB: blijft staan na herladen en na
 // het sluiten van de browser, en verlaat de computer van de docent niet.
 // localStorage is te klein voor een project met foto's (5 MB per origin, en
 // die origin delen alle cursussen van het vak).
+//
+// Elke actie is pas klaar als de transactie is afgerond, niet als het
+// verzoek slaagt: een volle opslag meldt zich vaak pas bij het afronden.
 
 const VERSIE = 1;
 const BEOORDELINGEN = 'beoordelingen';
 const PROJECTEN = 'projecten';
-
-function verzoek<T>(r: IDBRequest<T>): Promise<T> {
-  return new Promise((resolve, reject) => {
-    r.onsuccess = () => resolve(r.result);
-    r.onerror = () => reject(r.error);
-  });
-}
 
 function openDatabase(naam: string): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -30,22 +27,6 @@ function openDatabase(naam: string): Promise<IDBDatabase> {
   });
 }
 
-function bak<T>(db: IDBDatabase, store: string): Bak<T> {
-  const met = <R>(modus: IDBTransactionMode, doe: (s: IDBObjectStore) => IDBRequest<R>) =>
-    verzoek(doe(db.transaction(store, modus).objectStore(store)));
-  return {
-    alle: () => met('readonly', (s) => s.getAll() as IDBRequest<T[]>),
-    sleutels: async () => (await met('readonly', (s) => s.getAllKeys())).map((k) => String(k)),
-    lees: (id) => met('readonly', (s) => s.get(id) as IDBRequest<T | undefined>),
-    schrijf: async (id, waarde) => {
-      await met('readwrite', (s) => s.put(waarde, id));
-    },
-    wis: async (id) => {
-      await met('readwrite', (s) => s.delete(id));
-    },
-  };
-}
-
 /**
  * Opent de opslag, of gooit als de browser geen IndexedDB toestaat (een
  * privévenster in sommige browsers, of geblokkeerde sitegegevens). De
@@ -58,9 +39,37 @@ export async function idbOpslag(naam: string): Promise<Opslag> {
   // dit tabblad hem vrij in plaats van hem te blokkeren; anders valt de
   // nieuwe pagina terug op geheugen en ziet de docent zijn lijst niet.
   db.onversionchange = () => db.close();
+
+  const tx = (stores: string[], modus: IDBTransactionMode) => db.transaction(stores, modus);
+
   return {
-    beoordelingen: bak<Beoordeling>(db, BEOORDELINGEN),
-    projecten: bak<Project>(db, PROJECTEN),
+    alleBeoordelingen: async () => {
+      const t = tx([BEOORDELINGEN], 'readonly');
+      const r = t.objectStore(BEOORDELINGEN).getAll() as IDBRequest<Beoordeling[]>;
+      return (await wachtOpTransactie(t, r)) ?? [];
+    },
+    leesProject: async (id) => {
+      const t = tx([PROJECTEN], 'readonly');
+      const r = t.objectStore(PROJECTEN).get(id) as IDBRequest<Project | undefined>;
+      return wachtOpTransactie(t, r);
+    },
+    bewaarNieuw: async (b, p) => {
+      const t = tx([BEOORDELINGEN, PROJECTEN], 'readwrite');
+      t.objectStore(PROJECTEN).put(p, b.id);
+      t.objectStore(BEOORDELINGEN).put(b, b.id);
+      await wachtOpTransactie(t);
+    },
+    bewaarBeoordeling: async (b) => {
+      const t = tx([BEOORDELINGEN], 'readwrite');
+      t.objectStore(BEOORDELINGEN).put(b, b.id);
+      await wachtOpTransactie(t);
+    },
+    wis: async (id) => {
+      const t = tx([BEOORDELINGEN, PROJECTEN], 'readwrite');
+      t.objectStore(BEOORDELINGEN).delete(id);
+      t.objectStore(PROJECTEN).delete(id);
+      await wachtOpTransactie(t);
+    },
     sluit: () => db.close(),
   };
 }

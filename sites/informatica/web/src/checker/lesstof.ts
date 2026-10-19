@@ -1,0 +1,52 @@
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import { GROEPEN, type Lesstof, type Stuk, constructiesIn } from './buitenLesstof';
+
+// Wat de lessen behandelen: elke herkende constructie in de code van de
+// lessen en de cheatsheet. Berekend bij het bouwen (lesstof-plugin.ts), dus
+// een les die iets nieuws gebruikt haalt het vanzelf van de lijst buiten de
+// lesstof. Eerst stond de lijst als bestand in de repo, met een test die hem
+// naliep; dan viel CI om bij elke lesbewerking in docs-management, en een
+// docent kan daar het commando om hem opnieuw te maken niet draaien.
+//
+// Alleen voor node (de plugin en de tests): leest de lessen van schijf.
+
+/** De bronnen van de lesstof, vanaf de map van de site. */
+export const LESSTOF_BRONNEN = ['docs', 'src/pages/cheatsheet.mdx'];
+
+function bestanden(pad: string): string[] {
+  if (!statSync(pad).isDirectory()) return [pad];
+  return readdirSync(pad).flatMap((naam) => bestanden(join(pad, naam)));
+}
+
+/** De code op een lespagina: codeblokken en startcode in MDX-exports. */
+export function stukkenUit(bron: string): Stuk[] {
+  const stukken: Stuk[] = [];
+  for (const m of bron.matchAll(/```(html|css|js|javascript)\b[^\n]*\n([\s\S]*?)```/g)) {
+    // Een fout-voorbeeld ("getElementByID met een hoofdletter D") is geen
+    // lesstof: het blok erna is dan de foutmelding van de browser.
+    const erna = bron.slice((m.index ?? 0) + m[0].length);
+    if (/^\s*```\n[^`]*?(?:fout|Error)/.test(erna)) continue;
+    stukken.push({ soort: m[1] === 'javascript' ? 'js' : (m[1] as Stuk['soort']), tekst: m[2] });
+  }
+  for (const m of bron.matchAll(/export const \w*?(Html|Css|Js) = `([\s\S]*?)(?<!\\)`;/g)) {
+    const soort = m[1].toLowerCase() as Stuk['soort'];
+    stukken.push({ soort, tekst: m[2].replace(/\\([`$\\])/g, '$1') });
+  }
+  return stukken;
+}
+
+/** De lesstof van een site, per groep gesorteerd. */
+export function berekenLesstof(siteDir: string): Lesstof {
+  const stukken = LESSTOF_BRONNEN.map((b) => join(siteDir, b))
+    .flatMap(bestanden)
+    .filter((pad) => /\.mdx?$/.test(pad))
+    .flatMap((pad) => stukkenUit(readFileSync(pad, 'utf8')));
+  const perGroep: Lesstof = Object.fromEntries(GROEPEN.map((g) => [g, []]));
+  for (const k of constructiesIn(stukken).keys()) {
+    const [groep, ...rest] = k.split('|');
+    perGroep[groep].push(rest.join('|'));
+  }
+  for (const labels of Object.values(perGroep)) labels.sort();
+  return perGroep;
+}

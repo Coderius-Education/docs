@@ -1,7 +1,6 @@
 import type { CheckerConfig, Concept } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
 import { SITES_BY_ID } from '@coderius/shared/sites';
-import { buitenLesstof } from './buitenLesstof';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
 
 // Web-configuratie voor de gedeelde nakijker. De conceptdata komt 1-op-1 uit
@@ -99,5 +98,6 @@ export const webConfig: CheckerConfig = {
     'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',
 
   concepts: [...htmlConcepts, ...cssConcepts, ...jsConcepts],
-  buitenLesstof,
+  // buitenLesstof zet de docentpagina erbij, met de lesstof die
+  // lesstof-plugin.ts bij het bouwen berekent; de leerling ziet het niet.
 };

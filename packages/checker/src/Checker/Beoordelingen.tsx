@@ -1,4 +1,4 @@
-import type { Beoordeling } from '../beoordelingen';
+import { BEWAARTERMIJN_DAGEN, type Beoordeling } from '../beoordelingen';
 import styles from './Beoordelingen.module.css';
 
 // De lijst van bewaarde beoordelingen in de docentweergave. Een docent neemt
@@ -13,6 +13,8 @@ interface BeoordelingenProps {
   onVerwijderAlles: () => void;
   /** Gezet als de browser niet wil bewaren; dan staat alles alleen in deze pagina. */
   opslagFout: string | null;
+  /** Bezig met een PDF: niets openen of verwijderen tot die klaar is. */
+  bezig?: boolean;
 }
 
 const TIJD = new Intl.DateTimeFormat('nl-NL', {
@@ -30,6 +32,7 @@ export function Beoordelingen({
   onVerwijder,
   onVerwijderAlles,
   opslagFout,
+  bezig = false,
 }: BeoordelingenProps) {
   return (
     <section className={styles.section} aria-labelledby="mijn-beoordelingen">
@@ -41,7 +44,8 @@ export function Beoordelingen({
       ) : (
         <p className={styles.uitleg}>
           Elke upload wordt een beoordeling die blijft staan, ook als je de pagina sluit. Ze staan
-          alleen in deze browser, op deze computer. Verwijder ze als je de PDF hebt.
+          alleen in deze browser, op deze computer. Verwijder ze als je de PDF hebt; na{' '}
+          {BEWAARTERMIJN_DAGEN} dagen zonder wijziging verdwijnt een beoordeling vanzelf.
         </p>
       )}
       {lijst.length === 0 ? (
@@ -58,6 +62,7 @@ export function Beoordelingen({
                     className={styles.open}
                     onClick={() => onOpen(b.id)}
                     aria-current={actief ? 'true' : undefined}
+                    disabled={bezig}
                   >
                     <span className={styles.naam}>{b.naam}</span>
                     <span className={styles.tijd}>
@@ -68,6 +73,7 @@ export function Beoordelingen({
                     type="button"
                     className={styles.verwijder}
                     onClick={() => onVerwijder(b)}
+                    disabled={bezig}
                     aria-label={`Beoordeling van ${b.naam} verwijderen`}
                   >
                     Verwijderen
@@ -77,7 +83,12 @@ export function Beoordelingen({
             })}
           </ul>
           {lijst.length > 1 && (
-            <button type="button" className={styles.alles} onClick={onVerwijderAlles}>
+            <button
+              type="button"
+              className={styles.alles}
+              onClick={onVerwijderAlles}
+              disabled={bezig}
+            >
               Alle beoordelingen verwijderen
             </button>
           )}

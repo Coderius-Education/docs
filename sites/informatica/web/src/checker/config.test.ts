@@ -5,9 +5,12 @@ import { analyze } from '@coderius/checker/matchConcepts';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
 import { describe, expect, it } from 'vitest';
+import { maakBuitenLesstof } from './buitenLesstof';
 import { webConfig } from './config';
+import { berekenLesstof } from './lesstof';
 
 const FIXTURES = fileURLToPath(new URL('./__fixtures__', import.meta.url));
+const SITE = fileURLToPath(new URL('../..', import.meta.url));
 
 // Leest een voorbeeldproject van schijf en zet het om naar de vorm die de
 // checker na een upload heeft. Bewust zonder readUploadedFiles: die is apart
@@ -159,12 +162,19 @@ describe('webConfig — voorbeeldprojecten scoren', () => {
 });
 
 describe('webConfig — buiten de lesstof', () => {
+  // Zoals de docentpagina hem samenstelt, met de lesstof uit de lessen.
+  const docentConfig = { ...webConfig, buitenLesstof: maakBuitenLesstof(berekenLesstof(SITE)) };
+
+  it('de leerling krijgt de zoeker niet mee', () => {
+    expect(webConfig.buitenLesstof).toBeUndefined();
+  });
+
   it('meldt niets bij een project dat alleen lesstof gebruikt', () => {
-    expect(analyze(leesFixture('goed'), webConfig).buitenLesstof).toEqual([]);
+    expect(analyze(leesFixture('goed'), docentConfig).buitenLesstof).toEqual([]);
   });
 
   it('meldt de arrow-functie uit de valkuilen, die geen les gebruikt', () => {
-    const vondsten = analyze(leesFixture('valkuilen'), webConfig).buitenLesstof;
+    const vondsten = analyze(leesFixture('valkuilen'), docentConfig).buitenLesstof;
     expect(vondsten.map((v) => v.label)).toContain('=> (arrow-functie)');
   });
 });
