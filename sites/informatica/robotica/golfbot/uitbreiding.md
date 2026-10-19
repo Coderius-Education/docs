@@ -27,16 +27,21 @@ Bedenk eerst waar het hoofd vast komt, en meet hoe groot het daar mag zijn. Een 
 Gaat de bal in het gat, dan wordt een lampje groen. Daarvoor heb je nodig:
 
 - een tweede **IR-sensor**, die ziet of de bal in het gat ging;
-- het **RGB-ledje** van Leaphy: een klein bordje met één lampje dat elke kleur kan maken;
-- draadjes, en je docent, die zegt waar de tweede sensor op de baan vast komt.
+- de **RGB-led trio** van Leaphy: een bordje met een lampje dat rood, groen en blauw kan branden, met vier pinnetjes;
+- drie losse draadjes, en je docent, die zegt waar de tweede sensor op de baan vast komt.
+
+### Waarom niet het blok Led?
+
+In **Actuatoren** staat een blok **Led**, met Rood, Groen en Blauw. Dat blok hoort bij de RGB-led trio, maar je kunt het hier niet gebruiken. Het stuurt de pinnen **D11** (rood), **D10** (groen) en **D9** (blauw) aan, met de min op **D8**. Op D9 zit je servo al. Daarom sluit je het lampje met draadjes aan, en laat je blauw weg.
 
 ### Aansluiten
 
 Zet je robot uit met **ON/OFF**.
 
 1. Sluit de tweede sensor aan op de rij van **A1**, net als de eerste bij [de IR-sensor](site:robotica/golfbot/ir-sensor): VCC op 5V, GND op GND, en de oranje draad op het signaal van **A1**. De eerste sensor blijft op A0.
-2. Het ledje heeft drie pinnetjes: een voor 5V, een voor GND en een voor het signaal. Bij het signaal staat meestal **DIN** of **IN**. Sluit het signaal aan op het signaal van **D2**, en de andere twee op 5V en GND. Zie je niet welk pinnetje welk is, vraag het dan je docent.
-3. Zet de tweede sensor vast op de plek waar de bal na een hole in one blijft liggen. Die plek verschilt per baan: je docent zegt waar hij komt.
+2. Kijk welk pinnetje van het lampje rood is, welk groen en welk de min. Meestal staat het op het bordje; zie je het niet, vraag het dan je docent.
+3. Sluit rood aan op het signaal van **D11**, groen op het signaal van **D10**, en de min op GND. Het blauwe pinnetje sluit je niet aan.
+4. Zet de tweede sensor vast op de plek waar de bal na een hole in one blijft liggen. Die plek verschilt per baan: je docent zegt waar hij komt.
 
 Zet je robot daarna weer aan met **ON/OFF**.
 
@@ -48,26 +53,24 @@ De tweede sensor heeft een eigen grens nodig, want hij kijkt naar een andere ple
 
 Je bouwt verder op het programma uit [Zie de bal, sla de bal](site:robotica/golfbot/bal-slaan), met de eerste sensor op **A0** en de servo op **D9**.
 
-1. Klik op de groep **Actuatoren**. Onderaan staat het kopje **Led strip**: klik erop, dan zie je de blokken voor het ledje.
-2. Sleep **Ledstrip - Stel in** in het Leaphy-blok, helemaal bovenaan, boven herhaal voor altijd. Er staat eerst Pin 0 en Leds 0. Klik op de getallen en typ bij Pin **2** en bij Leds **1**: je ledje zit op D2, en het is er één.
-3. Sleep uit **Denk stappen** het tweede blok **als**, dat met **anders**, in herhaal voor altijd, onder je eerste als … dan.
-4. Zet in het gat achter **als** een vergelijkblok met **Lees anapin A1** `<` je nieuwe grens, net als bij de eerste sensor.
-5. Sleep **Ledstrip - Zet aan - Led** in het gat bij **dan**. Er staat eerst overal 0. Laat Led op 0 staan, en typ bij G **255**.
-6. Sleep nog een **Ledstrip - Zet aan - Led** in het gat bij **anders**, en laat daar alles op 0 staan.
+1. Sleep uit **Denk stappen** het tweede blok **als**, dat met **anders**, in herhaal voor altijd, onder je eerste als … dan.
+2. Zet in het gat achter **als** een vergelijkblok met **Lees anapin A1** `<` je nieuwe grens, net als bij de eerste sensor.
+3. Sleep uit **Actuatoren** het blok **Zet PWM** in het gat bij **dan**. Een nieuw blok staat eerst op **Zet PWM 3 op 0**. Klik op de 3 en kies **10**, en typ **255** in plaats van 0: dan gaat groen aan.
+4. Sleep nog een **Zet PWM** in het gat bij **anders**. Kies ook hier **10**, en laat de 0 staan: dan gaat groen uit.
 
-<Blokken programma={holeInOne} beschrijving="Leaphy, met daarin Ledstrip - Stel in Pin 2 Leds 1, en daaronder herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms. Daaronder: als Lees anapin A1 kleiner is dan 300, dan Ledstrip - Zet aan - Led 0 R 0 G 255 B 0, anders Ledstrip - Zet aan - Led 0 R 0 G 0 B 0." />
+<Blokken programma={holeInOne} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms. Daaronder: als Lees anapin A1 kleiner is dan 300, dan Zet PWM 10 op 255, anders Zet PWM 10 op 0." />
 
-De R, G en B staan voor rood, groen en blauw. Elk getal gaat van 0 (uit) tot 255 (zo fel mogelijk), en samen maken ze de kleur: alleen G op 255 is groen, alles op 0 is uit. Led 0 is het eerste lampje, want de telling begint bij 0. Jouw ledje heeft er maar één.
+**Zet PWM 10 op 255** zet groen aan, **Zet PWM 10 op 0** zet het weer uit. Gebruik voor groen alleen 0 en 255. Een getal ertussen, zoals 100, werkt op D10 niet zolang de servo op D9 zit: die twee pinnen delen in de Arduino een klokje, en dat gebruikt de servo al.
 
 Upload je programma en laat je Golfbot slaan. Gaat de bal in het gat, dan wordt het lampje groen.
 
 <Voorspel soort="Controlevraag" vraag="De bal gaat in het gat en het lampje wordt groen. Dan haal je de bal eruit. Wat doet het lampje?">
   <Keuze uitleg="Het lampje volgt wat de tweede sensor nu ziet. Denk na over wat er in de anders-tak staat.">Het blijft groen, want er was een hole in one</Keuze>
-  <Keuze goed uitleg="Zonder bal is het getal op A1 niet meer kleiner dan je grens. Dan doet je robot de anders-tak, en die zet alles op 0.">Het gaat uit</Keuze>
+  <Keuze goed uitleg="Zonder bal is het getal op A1 niet meer kleiner dan je grens. Dan doet je robot de anders-tak, en die zet groen op 0.">Het gaat uit</Keuze>
   <Keuze uitleg="Er staat nergens een duurt tussen aan en uit, dus het lampje knippert niet vanzelf.">Het knippert een paar keer en gaat dan uit</Keuze>
   <Uitleg>
 
-Het lampje gaat uit. Je robot kijkt in herhaal voor altijd steeds opnieuw naar de tweede sensor. Ligt er geen bal meer, dan zet de anders-tak het lampje uit.
+Het lampje gaat uit. Je robot kijkt in herhaal voor altijd steeds opnieuw naar de tweede sensor. Ligt er geen bal meer, dan zet de anders-tak groen uit.
 
   </Uitleg>
 </Voorspel>
@@ -75,7 +78,7 @@ Het lampje gaat uit. Je robot kijkt in herhaal voor altijd steeds opnieuw naar d
 <details>
 <summary>Wil je meer?</summary>
 
-Laat het lampje een feestje vieren: wissel groen af met een andere kleur, met een **duurt** ertussen. Of laat het rood branden zolang er geen bal in het gat ligt.
+Laat het lampje rood branden zolang er geen bal in het gat ligt: zet in de anders-tak ook **Zet PWM 11 op 255**, en in de dan-tak **Zet PWM 11 op 0**. Voor rood mag je elk getal van 0 tot 255 kiezen, want D11 deelt zijn klokje niet met de servo. Hoe groter het getal, hoe feller.
 
 </details>
 
@@ -83,11 +86,11 @@ Laat het lampje een feestje vieren: wissel groen af met een andere kleur, met ee
 
 <Probleem titel="Het lampje gaat nooit aan.">
 
-**Oorzaak:** het ledje krijgt geen signaal. In **Ledstrip - Stel in** staat een andere pin dan D2, of Leds staat nog op 0, of de draad van het signaal zit niet op D2.
+**Oorzaak:** groen krijgt geen stroom. In **Zet PWM** staat een andere pin dan 10, of het groene pinnetje zit niet op het signaal van D10, of de min zit niet op GND.
 
-**Zelf vinden:** zet in het Leaphy-blok, direct onder **Ledstrip - Stel in**, een **Ledstrip - Zet aan - Led** met G op 255, en upload. Blijft het lampje nu ook uit, dan ligt het aan het ledje of de draden, en niet aan de sensor.
+**Zelf vinden:** zet in het Leaphy-blok, boven herhaal voor altijd, een **Zet PWM 10 op 255**, en upload. Blijft het lampje nu ook uit, dan ligt het aan de draadjes, en niet aan de sensor.
 
-**Oplossing:** typ bij Pin **2** en bij Leds **1**, en kijk of het signaal van het ledje op het signaal van **D2** zit.
+**Oplossing:** kies in **Zet PWM** pin **10**, en kijk of groen op het signaal van **D10** zit en de min op GND.
 
 </Probleem>
 
@@ -106,6 +109,14 @@ Laat het lampje een feestje vieren: wissel groen af met een andere kleur, met ee
 **Oorzaak:** je grens voor de tweede sensor is te hoog: het getal zonder bal is al kleiner dan de grens. Of in je tweede als-blok staat nog **A0**, en dan kijkt het lampje naar de bal bij de arm.
 
 **Oplossing:** kijk of er in het tweede als-blok **Lees anapin A1** staat, en kies een grens die tussen het getal met en zonder bal ligt.
+
+</Probleem>
+
+<Probleem titel="De arm trilt of doet raar sinds het lampje erbij is.">
+
+**Oorzaak:** je gebruikt het blok **Led**. Dat stuurt ook D9 aan, en daar zit je servo.
+
+**Oplossing:** haal het blok Led weg en gebruik **Zet PWM** op pin 10, zoals hierboven.
 
 </Probleem>
 

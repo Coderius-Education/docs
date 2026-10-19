@@ -401,35 +401,40 @@ describe('de uitbreiding', () => {
     expect(inhoud).toMatch(/\*\*TinkerCAD\*\*/);
   });
 
-  it('het ledje zit op de pin die het programma instelt, met één led', () => {
-    // Ledstrip - Stel in krijgt de pin als getal. Staat er in de tekst een
-    // andere pin dan in de blokken, dan brandt er niets.
-    type B = { type?: string; inputs?: Record<string, { block?: { fields?: { NUM?: number } } }> };
-    const strips: B[] = [];
+  it('de RGB-led trio: niet het blok Led, want dat stuurt ook D9 aan, en daar zit de servo', () => {
+    // Het blok Led stuurt op de Arduino Nano D11, D10 en D9 aan, met de min
+    // op D8 (leaphy-webbased-svelte, generators/arduino/leaphy_original.ts).
+    // Met de servo op D9 gaat dat mis; daarom rood en groen met draadjes op
+    // D11 en D10, en blauw los.
+    for (const pin of ['D11', 'D10', 'D9', 'D8']) expect(inhoud).toContain(`**${pin}**`);
+    expect(inhoud).toMatch(/\*\*RGB-led trio\*\*/);
+    expect(inhoud).toMatch(/Op D9 zit je servo al/);
+    expect(inhoud).toMatch(/Het blauwe pinnetje sluit je niet aan/);
+    expect(inhoud).not.toMatch(/Ledstrip/);
+  });
+
+  it('het programma zet groen met Zet PWM op D10, en alleen op 0 of 255', () => {
+    // De servobibliotheek gebruikt de timer van D9 en D10. analogWrite met 0
+    // of 255 wordt dan een gewone digitalWrite en werkt; een getal ertussen
+    // niet. Op D11 mag alles.
+    type B = {
+      type?: string;
+      fields?: { PIN?: string };
+      inputs?: { NUM?: { block?: { fields?: { NUM?: number } } } };
+    };
+    const pwm: B[] = [];
     const loop = (w: unknown) => {
       if (!w || typeof w !== 'object') return;
-      if ((w as B).type === 'leaphy_led_set_strip') strips.push(w as B);
+      if ((w as B).type === 'leaphy_io_analogwrite') pwm.push(w as B);
       for (const k of Object.values(w)) loop(k);
     };
     loop(JSON.parse(readFileSync(join(CLICK, 'blokken', 'hole-in-one.json'), 'utf8')));
-    expect(strips).toHaveLength(1);
-    const pin = strips[0].inputs?.LED_SET_PIN?.block?.fields?.NUM;
-    expect(strips[0].inputs?.LED_SET_LEDS?.block?.fields?.NUM).toBe(1);
-    expect(inhoud).toContain(`signaal van **D${pin}**`);
-    expect(inhoud).toContain(`typ bij Pin **${pin}** en bij Leds **1**`);
-    // Op D9 zit de servo; daar mag het ledje niet.
-    expect(pin).not.toBe(9);
-  });
-
-  it('de ledstrip-blokken beginnen in Easybloqs op 0, en de les zegt wat je verandert', () => {
-    // In de toolbox van Easybloqs (leaphy-webbased-svelte, toolbox.ts) staan
-    // alle getallen van de Led strip-blokken op 0. Het kopje Led strip is
-    // dichtgeklapt, dus de les zegt dat je erop klikt.
-    expect(inhoud).toMatch(/Er staat eerst Pin 0 en Leds 0/);
-    expect(inhoud).toMatch(/Er staat eerst overal 0/);
-    expect(inhoud).toMatch(/kopje \*\*Led strip\*\*: klik erop/);
-    // Led 0 is het eerste lampje: FastLED telt vanaf 0.
-    expect(inhoud).toMatch(/de telling begint bij 0/);
+    expect(pwm.map((b) => [b.fields?.PIN, b.inputs?.NUM?.block?.fields?.NUM])).toEqual([
+      ['10', 255],
+      ['10', 0],
+    ]);
+    expect(inhoud).toMatch(/groen op het signaal van \*\*D10\*\*/);
+    expect(inhoud).toMatch(/Gebruik voor groen alleen 0 en 255/);
   });
 
   it('de tweede sensor zit op A1 en heeft een eigen grens', () => {

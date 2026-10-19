@@ -104,6 +104,14 @@ describe('een blok dat in Easybloqs anders begint dan in de les', () => {
       eerst: /eerst 1000/,
       kies: (ms) => new RegExp(`typ ${ms}\\b`),
     },
+    {
+      // Het pinveld van Zet PWM biedt op de Nano alleen 3, 5, 6, 9, 10 en 11
+      // (pinSelector.ts), en begint dus op 3.
+      type: 'leaphy_io_analogwrite',
+      anders: (b) => (b.fields?.PIN !== '3' ? String(b.fields?.PIN) : undefined),
+      eerst: /\*\*Zet PWM 3 op 0\*\*/,
+      kies: (pin) => new RegExp(`kies \\*\\*${pin}\\*\\*`),
+    },
   ];
 
   it.each(BEGIN.map((b) => [b.type, b] as const))(

@@ -306,8 +306,7 @@ describe('de volgorde van de route', () => {
       controls_if: ['Denk stappen', 'als … dan'],
       time_delay: ['Denk stappen', 'duurt'],
       logic_compare: ['Getal blokken', '`<`'],
-      leaphy_led_set_strip: ['Actuatoren', 'Ledstrip - Stel in'],
-      leaphy_led_set_basic: ['Actuatoren', 'Ledstrip - Zet aan'],
+      leaphy_io_analogwrite: ['Actuatoren', 'Zet PWM'],
     };
     const gezien = new Set<string>();
     const zonder: string[] = [];

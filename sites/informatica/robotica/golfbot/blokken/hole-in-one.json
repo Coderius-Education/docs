@@ -9,32 +9,111 @@
         "inputs": {
           "STACK": {
             "block": {
-              "type": "leaphy_led_set_strip",
+              "type": "controls_repeat_forever",
               "inputs": {
-                "LED_SET_PIN": {
+                "DO": {
                   "block": {
-                    "type": "math_number",
-                    "fields": {
-                      "NUM": 2
-                    }
-                  }
-                },
-                "LED_SET_LEDS": {
-                  "block": {
-                    "type": "math_number",
-                    "fields": {
-                      "NUM": 1
-                    }
-                  }
-                }
-              },
-              "next": {
-                "block": {
-                  "type": "controls_repeat_forever",
-                  "inputs": {
-                    "DO": {
+                    "type": "controls_if",
+                    "inputs": {
+                      "IF0": {
+                        "block": {
+                          "type": "logic_compare",
+                          "fields": {
+                            "OP": "LT"
+                          },
+                          "inputs": {
+                            "A": {
+                              "block": {
+                                "type": "analog_read",
+                                "fields": {
+                                  "PIN": "A0"
+                                }
+                              }
+                            },
+                            "B": {
+                              "block": {
+                                "type": "math_number",
+                                "fields": {
+                                  "NUM": 300
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "DO0": {
+                        "block": {
+                          "type": "leaphy_servo_write",
+                          "fields": {
+                            "SERVO_PIN": "9"
+                          },
+                          "inputs": {
+                            "SERVO_ANGLE": {
+                              "block": {
+                                "type": "math_number",
+                                "fields": {
+                                  "NUM": 0
+                                }
+                              }
+                            }
+                          },
+                          "next": {
+                            "block": {
+                              "type": "time_delay",
+                              "inputs": {
+                                "DELAY_TIME_MILI": {
+                                  "block": {
+                                    "type": "math_number",
+                                    "fields": {
+                                      "NUM": 500
+                                    }
+                                  }
+                                }
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "leaphy_servo_write",
+                                  "fields": {
+                                    "SERVO_PIN": "9"
+                                  },
+                                  "inputs": {
+                                    "SERVO_ANGLE": {
+                                      "block": {
+                                        "type": "math_number",
+                                        "fields": {
+                                          "NUM": 90
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "next": {
+                                    "block": {
+                                      "type": "time_delay",
+                                      "inputs": {
+                                        "DELAY_TIME_MILI": {
+                                          "block": {
+                                            "type": "math_number",
+                                            "fields": {
+                                              "NUM": 2000
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "next": {
                       "block": {
                         "type": "controls_if",
+                        "extraState": {
+                          "hasElse": true
+                        },
                         "inputs": {
                           "IF0": {
                             "block": {
@@ -47,7 +126,7 @@
                                   "block": {
                                     "type": "analog_read",
                                     "fields": {
-                                      "PIN": "A0"
+                                      "PIN": "A1"
                                     }
                                   }
                                 },
@@ -64,178 +143,34 @@
                           },
                           "DO0": {
                             "block": {
-                              "type": "leaphy_servo_write",
+                              "type": "leaphy_io_analogwrite",
                               "fields": {
-                                "SERVO_PIN": "9"
+                                "PIN": "10"
                               },
                               "inputs": {
-                                "SERVO_ANGLE": {
+                                "NUM": {
                                   "block": {
                                     "type": "math_number",
                                     "fields": {
-                                      "NUM": 0
-                                    }
-                                  }
-                                }
-                              },
-                              "next": {
-                                "block": {
-                                  "type": "time_delay",
-                                  "inputs": {
-                                    "DELAY_TIME_MILI": {
-                                      "block": {
-                                        "type": "math_number",
-                                        "fields": {
-                                          "NUM": 500
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "next": {
-                                    "block": {
-                                      "type": "leaphy_servo_write",
-                                      "fields": {
-                                        "SERVO_PIN": "9"
-                                      },
-                                      "inputs": {
-                                        "SERVO_ANGLE": {
-                                          "block": {
-                                            "type": "math_number",
-                                            "fields": {
-                                              "NUM": 90
-                                            }
-                                          }
-                                        }
-                                      },
-                                      "next": {
-                                        "block": {
-                                          "type": "time_delay",
-                                          "inputs": {
-                                            "DELAY_TIME_MILI": {
-                                              "block": {
-                                                "type": "math_number",
-                                                "fields": {
-                                                  "NUM": 2000
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
+                                      "NUM": 255
                                     }
                                   }
                                 }
                               }
                             }
-                          }
-                        },
-                        "next": {
-                          "block": {
-                            "type": "controls_if",
-                            "extraState": {
-                              "hasElse": true
-                            },
-                            "inputs": {
-                              "IF0": {
-                                "block": {
-                                  "type": "logic_compare",
-                                  "fields": {
-                                    "OP": "LT"
-                                  },
-                                  "inputs": {
-                                    "A": {
-                                      "block": {
-                                        "type": "analog_read",
-                                        "fields": {
-                                          "PIN": "A1"
-                                        }
-                                      }
-                                    },
-                                    "B": {
-                                      "block": {
-                                        "type": "math_number",
-                                        "fields": {
-                                          "NUM": 300
-                                        }
-                                      }
-                                    }
-                                  }
-                                }
+                          },
+                          "ELSE": {
+                            "block": {
+                              "type": "leaphy_io_analogwrite",
+                              "fields": {
+                                "PIN": "10"
                               },
-                              "DO0": {
-                                "block": {
-                                  "type": "leaphy_led_set_basic",
-                                  "inputs": {
-                                    "LED_SET_LED": {
-                                      "block": {
-                                        "type": "math_number",
-                                        "fields": {
-                                          "NUM": 0
-                                        }
-                                      }
-                                    },
-                                    "LED_BASIC_RED": {
-                                      "block": {
-                                        "type": "math_number",
-                                        "fields": {
-                                          "NUM": 0
-                                        }
-                                      }
-                                    },
-                                    "LED_BASIC_GREEN": {
-                                      "block": {
-                                        "type": "math_number",
-                                        "fields": {
-                                          "NUM": 255
-                                        }
-                                      }
-                                    },
-                                    "LED_BASIC_BLUE": {
-                                      "block": {
-                                        "type": "math_number",
-                                        "fields": {
-                                          "NUM": 0
-                                        }
-                                      }
-                                    }
-                                  }
-                                }
-                              },
-                              "ELSE": {
-                                "block": {
-                                  "type": "leaphy_led_set_basic",
-                                  "inputs": {
-                                    "LED_SET_LED": {
-                                      "block": {
-                                        "type": "math_number",
-                                        "fields": {
-                                          "NUM": 0
-                                        }
-                                      }
-                                    },
-                                    "LED_BASIC_RED": {
-                                      "block": {
-                                        "type": "math_number",
-                                        "fields": {
-                                          "NUM": 0
-                                        }
-                                      }
-                                    },
-                                    "LED_BASIC_GREEN": {
-                                      "block": {
-                                        "type": "math_number",
-                                        "fields": {
-                                          "NUM": 0
-                                        }
-                                      }
-                                    },
-                                    "LED_BASIC_BLUE": {
-                                      "block": {
-                                        "type": "math_number",
-                                        "fields": {
-                                          "NUM": 0
-                                        }
-                                      }
+                              "inputs": {
+                                "NUM": {
+                                  "block": {
+                                    "type": "math_number",
+                                    "fields": {
+                                      "NUM": 0
                                     }
                                   }
                                 }
