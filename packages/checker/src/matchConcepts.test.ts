@@ -321,3 +321,77 @@ describe('regelVan', () => {
     expect(blanco('/*x\ny*/')).toBe('   \n   ');
   });
 });
+
+describe('analyze — onderdelen en extra concepten', () => {
+  it('noemt welke onderdelen van een concept gevonden zijn', () => {
+    const files = projectFiles(file('a.html', 'html', '<ul><li>x</li><li>y</li></ul>'));
+    const report = analyze(
+      files,
+      config([
+        concept('lijsten', {
+          type: 'regex',
+          pattern: /(?<d0><ol\b)|(?<d1><ul\b)|(?<d2><li\b)/g,
+          delen: ['ol', 'ul', 'li'],
+        }),
+      ]),
+    );
+    expect(matchOf(report, 'lijsten')).toMatchObject({ used: true, count: 3, delen: ['li', 'ul'] });
+  });
+
+  it('neemt met delen: true de eerste groep als onderdeel', () => {
+    const files = projectFiles(file('a.css', 'css', 'p { color: red; }\nh1, h2 { margin: 0; }'));
+    const report = analyze(
+      files,
+      config([
+        concept('tags', {
+          type: 'regex',
+          pattern: /(?:^|[,\n])\s*([a-z][a-z0-9]*)(?=\s*[{,])/g,
+          delen: true,
+        }),
+      ]),
+    );
+    expect(matchOf(report, 'tags')?.delen).toEqual(['h1', 'h2', 'p']);
+  });
+
+  it('neemt met delen: true de groep die iets vond, ook in een later alternatief', () => {
+    const files = projectFiles(
+      file(
+        'a.js',
+        'js',
+        "knop.addEventListener('mouseover', f);\nveld.addEventListener('click', g);",
+      ),
+      file('a.html', 'html', '<button onclick="f()">'),
+    );
+    const report = analyze(
+      files,
+      config([
+        concept('events', {
+          type: 'regex',
+          pattern: /\bon([a-z]{3,})\s*=\s*["']|\baddEventListener\s*\(\s*['"]([a-z]+)/g,
+          delen: true,
+        }),
+      ]),
+    );
+    expect(matchOf(report, 'events')?.delen).toEqual(['click', 'mouseover']);
+  });
+
+  it('herkent extra concepten apart; die tellen niet mee bij de concepten', () => {
+    const files = projectFiles(file('a.css', 'css', 'p { padding: 4px; }'));
+    const report = analyze(files, {
+      ...config([concept('kleur', { type: 'regex', pattern: /color\s*:/g })]),
+      extra: [
+        {
+          id: 'padding',
+          subject: 'alles',
+          group: 'Box',
+          label: 'padding',
+          detect: { type: 'regex', pattern: /padding\s*:/g },
+        },
+      ],
+    });
+    expect(report.concepts.map((c) => c.id)).toEqual(['kleur']);
+    expect(report.extra).toEqual([
+      { id: 'padding', count: 1, used: true, plekken: [{ bestand: 'a.css', regel: 1 }] },
+    ]);
+  });
+});

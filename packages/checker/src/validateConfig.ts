@@ -31,6 +31,28 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
     }
   }
 
+  for (const extra of config.extra ?? []) {
+    // Extra concepten delen de id-ruimte: het rapport zoekt matches op id.
+    if (config.concepts.some((c) => c.id === extra.id)) {
+      problems.push(`Extra concept '${extra.id}' heeft dezelfde id als een concept uit de tabel.`);
+    }
+  }
+
+  for (const concept of [...config.concepts, ...(config.extra ?? [])]) {
+    const { detect } = concept;
+    if (detect.type === 'regex' && Array.isArray(detect.delen)) {
+      // Elk onderdeel heeft een benoemde groep d0, d1, …; anders wordt het
+      // nooit als gevonden gemeld.
+      detect.delen.forEach((deel, i) => {
+        if (!detect.pattern.source.includes(`(?<d${i}>`)) {
+          problems.push(
+            `Concept '${concept.id}': onderdeel '${deel}' heeft geen groep d${i} in het patroon.`,
+          );
+        }
+      });
+    }
+  }
+
   for (const concept of config.concepts) {
     if (seenIds.has(concept.id)) {
       problems.push(`Concept-id '${concept.id}' komt meer dan één keer voor.`);

@@ -32,6 +32,14 @@ export type ConceptDetect =
        * met een andere drempel.
        */
       minCount?: number;
+      /**
+       * Een concept met onderdelen ("ol & ul, li", "flexbox of grid"): het
+       * rapport noemt welke onderdelen gevonden zijn. Een lijst namen hoort bij
+       * benoemde groepen d0, d1, … in het patroon (de eerste die past, telt);
+       * `true` neemt de eerste gewone groep die iets vond, zoals de tagnaam van
+       * een selector.
+       */
+      delen?: string[] | true;
     }
   | {
       /** "Aanwezig" als een bestandspad hierop matcht (mappenstructuur-check). */
@@ -89,6 +97,8 @@ export interface ConceptMatch {
   id: string;
   count: number;
   used: boolean;
+  /** Welke onderdelen gevonden zijn, als het concept `delen` heeft. */
+  delen?: string[];
   /**
    * Waar het concept staat, hooguit MAX_PLEKKEN regels. Leeg voor een
    * handmatig concept; voor een pad-concept de eerste regel van elk
@@ -110,6 +120,12 @@ export interface FileKindInfo {
 export interface CheckerConfig {
   /** Onderwerpen (bv. FastAPI, HTML, Database) in weergavevolgorde. */
   subjects: SubjectInfo[];
+  /**
+   * Optioneel: concepten die de nakijker herkent maar die niet meetellen
+   * voor het niveau, omdat ze niet in de tabel van de docent staan. Het
+   * rapport toont de gebruikte apart, onder "Ook gebruikt".
+   */
+  extra?: ExtraConcept[];
   /**
    * Leerroutes waartussen de docent kan schakelen. Weglaten = één route, en
    * dan gedraagt alles zich als voorheen. De eerste track is de startwaarde.
@@ -161,6 +177,9 @@ export interface Vondst {
   plekken?: Plek[];
 }
 
+/** Een concept zonder niveau: wordt herkend en getoond, telt niet mee. */
+export type ExtraConcept = Omit<Concept, 'level' | 'bloom'>;
+
 export interface CheckReport {
   fileStats: {
     total: number;
@@ -168,6 +187,8 @@ export interface CheckReport {
     skippedTooLarge: number;
   };
   concepts: ConceptMatch[];
+  /** De extra concepten (zie CheckerConfig.extra); leeg zonder. */
+  extra?: ConceptMatch[];
   /** Leeg als de config geen `buitenLesstof` heeft. */
   buitenLesstof: Vondst[];
   warnings: string[];

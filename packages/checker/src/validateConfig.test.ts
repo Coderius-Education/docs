@@ -45,6 +45,24 @@ describe('validateCheckerConfig', () => {
     expect(problemen.join('\n')).toContain('storageKey');
   });
 
+  it('meldt een onderdeel zonder groep in het patroon', () => {
+    const c = concept({
+      id: 'lijst',
+      detect: { type: 'regex', pattern: /(?<d0><ul\b)|<ol\b/g, in: ['html'], delen: ['ul', 'ol'] },
+    });
+    expect(validateCheckerConfig(config([c])).join('\n')).toContain("onderdeel 'ol'");
+  });
+
+  it('meldt een extra concept met dezelfde id als een concept uit de tabel', () => {
+    const c = concept({ id: 'dubbel' });
+    const problemen = validateCheckerConfig(
+      config([c], {
+        extra: [{ id: 'dubbel', subject: 'html', group: 'G', label: 'x', detect: c.detect }],
+      }),
+    );
+    expect(problemen.join('\n')).toContain("'dubbel'");
+  });
+
   it('meldt een patroon zonder g-vlag', () => {
     const problems = validateCheckerConfig(
       config([

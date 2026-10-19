@@ -173,3 +173,8 @@
 .chipKnop:hover {
   text-decoration-style: solid;
 }
+
+/* Welke onderdelen van een concept gevonden zijn ("ul, li"). */
+.chipDelen {
+  font-weight: 400;
+}

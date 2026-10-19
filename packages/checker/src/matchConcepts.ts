@@ -1,5 +1,12 @@
 import { MAX_PLEKKEN, plekkenIn, regelBegins } from './plekken';
-import type { CheckReport, CheckerConfig, ConceptMatch, Plek, ProjectFiles } from './types';
+import type {
+  CheckReport,
+  CheckerConfig,
+  Concept,
+  ConceptMatch,
+  Plek,
+  ProjectFiles,
+} from './types';
 
 // Analyseert een geüpload project tegen de conceptenlijst van een site. Puur
 // een functie over ProjectFiles + config; geen DOM of netwerk. Regex-concepten
@@ -78,7 +85,7 @@ export function analyze(
     return b;
   };
 
-  const concepts: ConceptMatch[] = config.concepts.map((c) => {
+  const meet = (c: Pick<Concept, 'id' | 'detect'>): ConceptMatch => {
     if (c.detect.type === 'handmatig') {
       return { id: c.id, count: 0, used: false, plekken: [] };
     }
@@ -93,29 +100,51 @@ export function analyze(
         .map((bestand) => ({ bestand, regel: 1 }));
       return { id: c.id, count: used ? 1 : 0, used, plekken };
     }
+    const { delen } = c.detect;
     const kinds = c.detect.in ?? config.textKinds;
     const patroon = withGlobal(c.detect.pattern);
-    if (!metPlekken) {
+    const minimum = c.detect.minCount ?? 1;
+    const gevonden = new Set<string>();
+    const noteerDeel = (m: RegExpMatchArray) => {
+      if (delen === true) {
+        const deel = m.slice(1).find((g) => g !== undefined && g !== '');
+        if (deel) gevonden.add(deel.toLowerCase());
+      } else if (delen) {
+        const i = delen.findIndex((_, j) => m.groups?.[`d${j}`] !== undefined);
+        if (i !== -1) gevonden.add(delen[i]);
+      }
+    };
+    const metDelen = (m: ConceptMatch): ConceptMatch =>
+      delen ? { ...m, delen: Array.from(gevonden).sort((a, b) => a.localeCompare(b)) } : m;
+    if (!metPlekken && !delen) {
       let n = 0;
       for (const kind of kinds) {
         for (const { content } of textByKind[kind] ?? []) n += content.match(patroon)?.length ?? 0;
       }
-      return { id: c.id, count: n, used: n >= (c.detect.minCount ?? 1) };
+      return { id: c.id, count: n, used: n >= minimum };
     }
     let count = 0;
     const plekken: Plek[] = [];
     for (const kind of kinds) {
       for (const { path, content } of textByKind[kind] ?? []) {
-        const posities = Array.from(content.matchAll(patroon), (m) => m.index ?? 0);
-        count += posities.length;
-        if (posities.length === 0 || plekken.length >= MAX_PLEKKEN) continue;
+        const treffers = Array.from(content.matchAll(patroon));
+        for (const m of treffers) noteerDeel(m);
+        count += treffers.length;
+        if (!metPlekken || treffers.length === 0 || plekken.length >= MAX_PLEKKEN) continue;
+        const posities = treffers.map((m) => m.index ?? 0);
         plekken.push(
           ...plekkenIn(path, beginsVan(path, content), posities, MAX_PLEKKEN - plekken.length),
         );
       }
     }
-    return { id: c.id, count, used: count >= (c.detect.minCount ?? 1), plekken };
-  });
+    const match: ConceptMatch = metPlekken
+      ? { id: c.id, count, used: count >= minimum, plekken }
+      : { id: c.id, count, used: count >= minimum };
+    return metDelen(match);
+  };
+
+  const concepts = config.concepts.map(meet);
+  const extra = (config.extra ?? []).map(meet);
 
   const warnings: string[] = [];
   const hasAnyText = config.textKinds.some((k) => (textByKind[k]?.length ?? 0) > 0);
@@ -128,6 +157,7 @@ export function analyze(
   return {
     fileStats: { total: values.length, byKind, skippedTooLarge },
     concepts,
+    extra,
     buitenLesstof: (opties.buitenLesstof ?? true) ? (config.buitenLesstof?.(files) ?? []) : [],
     warnings,
   };

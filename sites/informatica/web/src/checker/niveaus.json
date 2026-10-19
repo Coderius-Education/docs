@@ -1,0 +1,162 @@
+{
+  "onderwerpen": [
+    {
+      "id": "html",
+      "label": "HTML"
+    },
+    {
+      "id": "css",
+      "label": "CSS"
+    },
+    {
+      "id": "js",
+      "label": "JavaScript"
+    }
+  ],
+  "concepten": [
+    {
+      "id": "css-tag-selector",
+      "onderwerp": "css",
+      "concept": "tag selector (p, h)",
+      "niveau": "basis"
+    },
+    {
+      "id": "css-class",
+      "onderwerp": "css",
+      "concept": "class",
+      "niveau": "basis"
+    },
+    {
+      "id": "css-pseudoclass",
+      "onderwerp": "css",
+      "concept": "pseudoclass",
+      "niveau": "basis"
+    },
+    {
+      "id": "html-koppen",
+      "onderwerp": "html",
+      "concept": "h1-h6",
+      "niveau": "basis"
+    },
+    {
+      "id": "html-lijsten",
+      "onderwerp": "html",
+      "concept": "ol & ul, li",
+      "niveau": "basis"
+    },
+    {
+      "id": "html-img",
+      "onderwerp": "html",
+      "concept": "img",
+      "niveau": "basis"
+    },
+    {
+      "id": "html-a",
+      "onderwerp": "html",
+      "concept": "a",
+      "niveau": "basis"
+    },
+    {
+      "id": "html-opbouw",
+      "onderwerp": "html",
+      "concept": "opbouw (header, main, footer)",
+      "niveau": "basis"
+    },
+    {
+      "id": "js-get-element-by-id",
+      "onderwerp": "js",
+      "concept": "document.getElementById()",
+      "niveau": "basis"
+    },
+    {
+      "id": "js-style",
+      "onderwerp": "js",
+      "concept": "DOM-stijl aanpassen via .style",
+      "niveau": "basis"
+    },
+    {
+      "id": "js-script-tag",
+      "onderwerp": "js",
+      "concept": "script tag",
+      "niveau": "basis"
+    },
+    {
+      "id": "js-script-js",
+      "onderwerp": "js",
+      "concept": "script.js",
+      "niveau": "basis"
+    },
+    {
+      "id": "js-prompt-alert",
+      "onderwerp": "js",
+      "concept": "prompt & alert",
+      "niveau": "basis"
+    },
+    {
+      "id": "css-id",
+      "onderwerp": "css",
+      "concept": "id",
+      "niveau": "gevorderd"
+    },
+    {
+      "id": "css-flexbox-grid",
+      "onderwerp": "css",
+      "concept": "flexbox of grid",
+      "niveau": "gevorderd"
+    },
+    {
+      "id": "css-media-query",
+      "onderwerp": "css",
+      "concept": "media query",
+      "niveau": "gevorderd"
+    },
+    {
+      "id": "html-forms",
+      "onderwerp": "html",
+      "concept": "forms",
+      "niveau": "gevorderd"
+    },
+    {
+      "id": "js-functies",
+      "onderwerp": "js",
+      "concept": "functies",
+      "niveau": "gevorderd"
+    },
+    {
+      "id": "js-add-event-listener",
+      "onderwerp": "js",
+      "concept": "addEventListener",
+      "niveau": "gevorderd"
+    },
+    {
+      "id": "js-events",
+      "onderwerp": "js",
+      "concept": "events",
+      "niveau": "gevorderd"
+    },
+    {
+      "id": "js-if-else",
+      "onderwerp": "js",
+      "concept": "if else",
+      "niveau": "gevorderd"
+    },
+    {
+      "id": "js-formulier-data",
+      "onderwerp": "js",
+      "concept": "formulier data ophalen",
+      "niveau": "gevorderd"
+    },
+    {
+      "id": "js-arrays",
+      "onderwerp": "js",
+      "concept": "arrays",
+      "niveau": "gevorderd"
+    },
+    {
+      "id": "js-loops",
+      "onderwerp": "js",
+      "concept": "loops",
+      "niveau": "gevorderd"
+    }
+  ]
+}

@@ -129,6 +129,9 @@ function SubjectSection({
                       {match.used && match.count > 1 && (
                         <span className={styles.chipCount}> ({match.count}×)</span>
                       )}
+                      {match.used && (match.delen?.length ?? 0) > 0 && (
+                        <span className={styles.chipDelen}>: {match.delen?.join(', ')}</span>
+                      )}
                     </>
                   );
                   return (
@@ -153,6 +156,75 @@ function SubjectSection({
             </div>
           );
         })}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Wat de leerling gebruikt dat wel in de lessen staat maar niet in de tabel
+ * van de docent: herkend en getoond, maar zonder niveau, en het telt niet
+ * mee in de samenvatting.
+ */
+function OokGebruikt({
+  report,
+  config,
+  onToonPlekken,
+}: {
+  report: CheckReport;
+  config: CheckerConfig;
+  onToonPlekken?: (titel: string, plekken: Plek[]) => void;
+}) {
+  const gebruikt = new Set((report.extra ?? []).filter((m) => m.used).map((m) => m.id));
+  const matches = new Map((report.extra ?? []).map((m) => [m.id, m]));
+  const perOnderwerp = config.subjects
+    .map((s) => ({
+      onderwerp: s,
+      concepten: (config.extra ?? []).filter((c) => c.subject === s.id && gebruikt.has(c.id)),
+    }))
+    .filter((g) => g.concepten.length > 0);
+  if (perOnderwerp.length === 0) return null;
+  return (
+    <section className={styles.section}>
+      <h2>
+        Ook gebruikt <span className={styles.progress}>telt niet mee voor het niveau</span>
+      </h2>
+      <div className={styles.groupGrid}>
+        {perOnderwerp.map(({ onderwerp, concepten }) => (
+          <div className={styles.groupCard} key={onderwerp.id}>
+            <div className={styles.groupHeader}>
+              <span className={styles.groupTitle}>{onderwerp.label}</span>
+            </div>
+            <ul className={styles.chipList}>
+              {concepten.map((c) => {
+                const m = matches.get(c.id);
+                const plekken = m?.plekken ?? [];
+                const label = (
+                  <>
+                    {c.label}
+                    {m && m.count > 1 && <span className={styles.chipCount}> ({m.count}×)</span>}
+                  </>
+                );
+                return (
+                  <li key={c.id} className={styles.chip}>
+                    {onToonPlekken && plekken.length > 0 ? (
+                      <button
+                        type="button"
+                        className={styles.chipKnop}
+                        onClick={() => onToonPlekken(c.label, plekken)}
+                        title="Toon waar dit in de code staat"
+                      >
+                        {label}
+                      </button>
+                    ) : (
+                      label
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -190,6 +262,8 @@ export function ReportView({
           onToonPlekken={onToonPlekken}
         />
       ))}
+
+      <OokGebruikt report={report} config={config} onToonPlekken={onToonPlekken} />
 
       <BuitenLesstof vondsten={report.buitenLesstof} onToonPlekken={onToonPlekken} />
     </div>
