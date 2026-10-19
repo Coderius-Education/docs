@@ -349,31 +349,29 @@ function zonderCommentaarEnTekst(js: string): string {
     .replace(/`(?:[^`\\$]|\\.|\$(?!\{))*`/g, '``');
 }
 
+// Eén keer opgebouwd; matchAll werkt op een kopie, dus hergebruik is veilig.
+const JS_OBJECT_RE = new RegExp(
+  `(?<![\\w$.])(${JS_OBJECTEN.join('|')})\\.([A-Za-z_$][\\w$]*)`,
+  'g',
+);
+const JS_FUNCTIE_RE = new RegExp(`(?<![\\w$.])(${JS_FUNCTIES.join('|')})\\s*\\(`, 'g');
+// Leden na een punt, maar niet na een van de objecten hierboven: die hebben
+// hun eigen label (document.querySelector, niet .querySelector). En niet na
+// .classList: classList.remove() is iets anders dan element.remove().
+const JS_LID_RE = new RegExp(
+  `(?<!\\b(?:${JS_OBJECTEN.join('|')})|\\.classList)\\.(${JS_LEDEN.join('|')})\\b(\\s*\\()?`,
+  'g',
+);
+
 function jsConstructies(js: string, t: Telling): void {
   const bron = zonderCommentaarEnTekst(js);
   for (const { label, patroon } of JS_SYNTAX) {
     const n = bron.match(patroon)?.length ?? 0;
     if (n > 0) tel(t, 'JavaScript', label, n);
   }
-  for (const m of bron.matchAll(
-    new RegExp(`(?<![\\w$.])(${JS_OBJECTEN.join('|')})\\.([A-Za-z_$][\\w$]*)`, 'g'),
-  )) {
-    tel(t, 'JavaScript', `${m[1]}.${m[2]}`);
-  }
-  for (const m of bron.matchAll(new RegExp(`(?<![\\w$.])(${JS_FUNCTIES.join('|')})\\s*\\(`, 'g'))) {
-    tel(t, 'JavaScript', `${m[1]}()`);
-  }
-  // Leden na een punt, maar niet na een van de objecten hierboven: die
-  // hebben hun eigen label (document.querySelector, niet .querySelector). En
-  // niet na .classList: classList.remove() is iets anders dan element.remove().
-  for (const m of bron.matchAll(
-    new RegExp(
-      `(?<!\\b(?:${JS_OBJECTEN.join('|')})|\\.classList)\\.(${JS_LEDEN.join('|')})\\b(\\s*\\()?`,
-      'g',
-    ),
-  )) {
-    tel(t, 'JavaScript', `.${m[1]}${m[2] ? '()' : ''}`);
-  }
+  for (const m of bron.matchAll(JS_OBJECT_RE)) tel(t, 'JavaScript', `${m[1]}.${m[2]}`);
+  for (const m of bron.matchAll(JS_FUNCTIE_RE)) tel(t, 'JavaScript', `${m[1]}()`);
+  for (const m of bron.matchAll(JS_LID_RE)) tel(t, 'JavaScript', `.${m[1]}${m[2] ? '()' : ''}`);
 }
 
 // --- Samen -----------------------------------------------------------------

@@ -35,6 +35,7 @@ function bak<T>(db: IDBDatabase, store: string): Bak<T> {
     verzoek(doe(db.transaction(store, modus).objectStore(store)));
   return {
     alle: () => met('readonly', (s) => s.getAll() as IDBRequest<T[]>),
+    sleutels: async () => (await met('readonly', (s) => s.getAllKeys())).map((k) => String(k)),
     lees: (id) => met('readonly', (s) => s.get(id) as IDBRequest<T | undefined>),
     schrijf: async (id, waarde) => {
       await met('readwrite', (s) => s.put(waarde, id));
@@ -53,8 +54,13 @@ function bak<T>(db: IDBDatabase, store: string): Bak<T> {
 export async function idbOpslag(naam: string): Promise<Opslag> {
   if (typeof indexedDB === 'undefined') throw new Error('Geen IndexedDB in deze browser.');
   const db = await openDatabase(naam);
+  // Wil een nieuwere versie van de pagina de database bijwerken, dan geeft
+  // dit tabblad hem vrij in plaats van hem te blokkeren; anders valt de
+  // nieuwe pagina terug op geheugen en ziet de docent zijn lijst niet.
+  db.onversionchange = () => db.close();
   return {
     beoordelingen: bak<Beoordeling>(db, BEOORDELINGEN),
     projecten: bak<Project>(db, PROJECTEN),
+    sluit: () => db.close(),
   };
 }

@@ -11,7 +11,20 @@ function withoutGlobal(re: RegExp): RegExp {
   return re.global ? new RegExp(re.source, re.flags.replace('g', '')) : re;
 }
 
-export function analyze(files: ProjectFiles, config: CheckerConfig): CheckReport {
+export interface AnalyzeOpties {
+  /**
+   * Zoek ook wat buiten de lesstof valt (standaard aan). Alleen de
+   * docentweergave toont dat; de leerlingweergave zet het uit, zodat een
+   * leerling niet wacht op een scan waar hij niets van ziet.
+   */
+  buitenLesstof?: boolean;
+}
+
+export function analyze(
+  files: ProjectFiles,
+  config: CheckerConfig,
+  opties: AnalyzeOpties = {},
+): CheckReport {
   const values = Object.values(files);
 
   const byKind: Record<string, number> = {};
@@ -67,7 +80,7 @@ export function analyze(files: ProjectFiles, config: CheckerConfig): CheckReport
   return {
     fileStats: { total: values.length, byKind, skippedTooLarge },
     concepts,
-    buitenLesstof: config.buitenLesstof?.(files) ?? [],
+    buitenLesstof: (opties.buitenLesstof ?? true) ? (config.buitenLesstof?.(files) ?? []) : [],
     warnings,
   };
 }

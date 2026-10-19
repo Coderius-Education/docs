@@ -216,4 +216,21 @@ describe('analyze — buiten de lesstof', () => {
     ]);
     expect(matchOf(report, 'p')?.used).toBe(false);
   });
+
+  it('zoekt niet als de weergave er niets mee doet (leerling)', () => {
+    let gezocht = false;
+    const report = analyze(
+      projectFiles(file('a.html', 'html', '<canvas></canvas>')),
+      {
+        ...config([]),
+        buitenLesstof: () => {
+          gezocht = true;
+          return [{ groep: 'HTML-elementen', label: '<canvas>', count: 1, files: ['a.html'] }];
+        },
+      },
+      { buitenLesstof: false },
+    );
+    expect(report.buitenLesstof).toEqual([]);
+    expect(gezocht).toBe(false);
+  });
 });

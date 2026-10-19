@@ -2,16 +2,11 @@ import { bevestig } from '@coderius/shared/dialoog';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   type Beoordeling,
-  type Opslag,
+  Bewaarder,
   type Wijziging,
-  bewaarNieuw,
   databaseNaam,
   geheugenOpslag,
-  lijst,
-  open,
-  pasAan,
   pdfNaamMetLeerling,
-  verwijder,
 } from '../beoordelingen';
 import { analyze } from '../matchConcepts';
 import type { CheckReport, CheckerConfig, Level, ProjectFiles } from '../types';
@@ -57,58 +52,62 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   const [handmatigAan, setHandmatigAan] = useState<Set<string>>(() => new Set());
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // Bewaarde beoordelingen (alleen in de docentweergave). `actiefRef` loopt
-  // synchroon mee met `actief`, zodat twee snelle wijzigingen op elkaar
-  // voortbouwen in plaats van allebei op de versie van vóór de eerste.
-  const [opslag, setOpslag] = useState<Opslag | null>(null);
+  // Bewaarde beoordelingen (alleen in de docentweergave). De Bewaarder is de
+  // enige die de opslag aanraakt; de pagina werkt met zijn lijst, en de open
+  // beoordeling is alleen een id in die lijst.
+  const bewaarderRef = useRef<Bewaarder | null>(null);
   const [opslagFout, setOpslagFout] = useState<string | null>(null);
   const [beoordelingen, setBeoordelingen] = useState<Beoordeling[]>([]);
-  const [actief, setActief] = useState<Beoordeling | null>(null);
-  const actiefRef = useRef<Beoordeling | null>(null);
+  const [actiefId, setActiefId] = useState<string | null>(null);
+  const actiefIdRef = useRef<string | null>(null);
+  const actief = beoordelingen.find((b) => b.id === actiefId) ?? null;
   const [nieuweNaam, setNieuweNaam] = useState('');
   // Het naamveld van de open beoordeling mag even leeg zijn terwijl de docent
-  // een nieuwe naam typt; bewaard wordt alleen een naam die niet leeg is.
+  // een nieuwe naam typt; bewaard wordt alleen een naam die niet leeg is. Het
+  // veld volgt daarom alleen bij openen en uploaden de bewaarde naam, niet
+  // bij elke wijziging.
   const [naamVeld, setNaamVeld] = useState('');
   const [pdfKlaar, setPdfKlaar] = useState(false);
 
+  // UploadZone roept onLoaded aan nadat het inlezen klaar is, met de
+  // callback van het moment waarop het bestand werd losgelaten. De naam en
+  // de leerroute lezen we daarom uit een ref: wat de docent tijdens het
+  // inlezen typt, telt mee.
+  const nieuweNaamRef = useRef('');
+  const trackRef = useRef(track);
+  trackRef.current = track;
+  // Elke upload en elke klik op een beoordeling krijgt een nummer; een
+  // openactie die klaar is nadat er al iets nieuwers gebeurde, doet niets.
+  const verzoekRef = useRef(0);
+
   useEffect(() => {
     if (!isDocent) return;
-    let weg = false;
-    idbOpslag(databaseNaam(config))
-      .then(async (o) => {
-        const alle = await lijst(o);
-        if (weg) return;
-        setOpslag(o);
-        setBeoordelingen(alle);
-      })
-      .catch(() => {
-        if (weg) return;
-        setOpslag(geheugenOpslag());
-        setOpslagFout(OPSLAG_FOUT);
-      });
+    const opslag = idbOpslag(databaseNaam(config)).catch(() => {
+      setOpslagFout(OPSLAG_FOUT);
+      return geheugenOpslag();
+    });
+    const bewaarder = new Bewaarder(opslag, {
+      onLijst: setBeoordelingen,
+      onFout: setOpslagFout,
+    });
+    bewaarderRef.current = bewaarder;
     return () => {
-      weg = true;
+      bewaarderRef.current = null;
+      bewaarder.sluit();
     };
   }, [config, isDocent]);
 
-  const zetActief = useCallback((b: Beoordeling | null) => {
-    actiefRef.current = b;
-    setActief(b);
-    setNaamVeld(b?.naam ?? '');
-    if (b) setBeoordelingen((prev) => [b, ...prev.filter((x) => x.id !== b.id)]);
+  const zetActief = useCallback((id: string | null) => {
+    actiefIdRef.current = id;
+    setActiefId(id);
   }, []);
 
-  const bewaar = useCallback(
-    (wijziging: Wijziging) => {
-      const huidig = actiefRef.current;
-      if (!opslag || !huidig) return;
-      const nieuw = pasAan(huidig, wijziging, new Date());
-      zetActief(nieuw);
-      setPdfKlaar(false);
-      opslag.beoordelingen.schrijf(nieuw.id, nieuw).catch(() => setOpslagFout(OPSLAG_FOUT));
-    },
-    [opslag, zetActief],
-  );
+  const bewaar = useCallback((wijziging: Wijziging) => {
+    const id = actiefIdRef.current;
+    if (!id) return;
+    bewaarderRef.current?.wijzig(id, wijziging);
+    setPdfKlaar(false);
+  }, []);
 
   const toggleLevel = useCallback((level: Level) => {
     setActiveLevel((prev) => (prev === level ? null : level));
@@ -173,27 +172,35 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       setFiles(loadedFiles);
       setIdeError(null);
       setActiveLevel(null);
-      const result = analyze(loadedFiles, config);
+      // Buiten de lesstof ziet alleen de docent; de leerling hoeft er niet
+      // op te wachten.
+      const result = analyze(loadedFiles, config, { buitenLesstof: isDocent });
       result.warnings = [...warnings, ...result.warnings];
       setReport(result);
     },
-    [config],
+    [config, isDocent],
   );
 
   const handleLoaded = useCallback(
     (loadedFiles: ProjectFiles, warnings: string[]) => {
+      verzoekRef.current++;
       wisBeoordeling();
       toonProject(loadedFiles, warnings);
-      if (!isDocent || !opslag) return;
-      // Elke upload in de docentweergave wordt meteen een bewaarde
-      // beoordeling; de volgende upload laat hem staan.
-      const naam = nieuweNaam;
+      const bewaarder = bewaarderRef.current;
+      if (!isDocent || !bewaarder) return;
+      // Elke upload in de docentweergave wordt meteen een beoordeling; de
+      // Bewaarder schrijft hem weg, de volgende upload laat hem staan.
+      const b = bewaarder.nieuw(
+        nieuweNaamRef.current,
+        { files: loadedFiles, warnings },
+        trackRef.current,
+      );
+      zetActief(b.id);
+      setNaamVeld(b.naam);
+      nieuweNaamRef.current = '';
       setNieuweNaam('');
-      bewaarNieuw(opslag, naam, { files: loadedFiles, warnings }, new Date(), track)
-        .then(zetActief)
-        .catch(() => setOpslagFout(OPSLAG_FOUT));
     },
-    [isDocent, opslag, nieuweNaam, track, toonProject, wisBeoordeling, zetActief],
+    [isDocent, toonProject, wisBeoordeling, zetActief],
   );
 
   const handleError = useCallback(
@@ -208,11 +215,13 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
 
   const openBeoordeling = useCallback(
     async (id: string) => {
-      if (!opslag || id === actiefRef.current?.id) return;
-      const gevonden = await open(opslag, id);
+      const bewaarder = bewaarderRef.current;
+      if (!bewaarder || id === actiefIdRef.current) return;
+      const verzoek = ++verzoekRef.current;
+      const gevonden = await bewaarder.open(id);
+      if (verzoek !== verzoekRef.current) return;
       if (!gevonden) {
         setError('Deze beoordeling is niet meer compleet en kan niet open.');
-        setBeoordelingen(await lijst(opslag));
         return;
       }
       const { beoordeling, project } = gevonden;
@@ -221,46 +230,47 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       setNotes(beoordeling.notes);
       setTrack(beoordeling.track ?? config.tracks?.[0]?.id ?? null);
       setPdfKlaar(false);
-      zetActief(beoordeling);
+      zetActief(beoordeling.id);
+      setNaamVeld(beoordeling.naam);
     },
-    [opslag, config, toonProject, zetActief],
+    [config, toonProject, zetActief],
   );
+
+  const sluitRapport = useCallback(() => {
+    verzoekRef.current++;
+    wisBeoordeling();
+    setReport(null);
+    setFiles(null);
+  }, [wisBeoordeling]);
 
   const verwijderBeoordeling = useCallback(
     async (b: Beoordeling) => {
-      if (!opslag) return;
+      const bewaarder = bewaarderRef.current;
+      if (!bewaarder) return;
       const ja = await bevestig(
         `De beoordeling van ${b.naam} verwijderen? Dat kan niet ongedaan.`,
-        {
-          bevestigLabel: 'Verwijderen',
-          gevaarlijk: true,
-        },
+        { bevestigLabel: 'Verwijderen', gevaarlijk: true },
       );
       if (!ja) return;
-      await verwijder(opslag, b.id);
-      setBeoordelingen((prev) => prev.filter((x) => x.id !== b.id));
-      if (actiefRef.current?.id === b.id) {
-        wisBeoordeling();
-        setReport(null);
-        setFiles(null);
-      }
+      if (actiefIdRef.current === b.id) sluitRapport();
+      // Mislukt het, dan meldt de Bewaarder dat en toont hij wat er nog staat.
+      await bewaarder.verwijder(b.id);
     },
-    [opslag, wisBeoordeling],
+    [sluitRapport],
   );
 
   const verwijderAlles = useCallback(async () => {
-    if (!opslag) return;
-    const ja = await bevestig(`Alle ${beoordelingen.length} beoordelingen verwijderen?`, {
+    const bewaarder = bewaarderRef.current;
+    if (!bewaarder) return;
+    const aantal = bewaarder.lijst().length;
+    const ja = await bevestig(`Alle ${aantal} beoordelingen verwijderen?`, {
       bevestigLabel: 'Alles verwijderen',
       gevaarlijk: true,
     });
     if (!ja) return;
-    for (const b of beoordelingen) await verwijder(opslag, b.id);
-    setBeoordelingen([]);
-    wisBeoordeling();
-    setReport(null);
-    setFiles(null);
-  }, [opslag, beoordelingen, wisBeoordeling]);
+    sluitRapport();
+    await bewaarder.verwijderAlles();
+  }, [sluitRapport]);
 
   const ideUrl = config.ide?.url;
   const entry = files && ideUrl ? pickEntry(files) : null;
@@ -294,7 +304,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
     await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
     setExporting(true);
     try {
-      const naam = actiefRef.current?.naam ?? '';
+      const naam = actief?.naam ?? '';
       const bestand = pdfNaamMetLeerling(config.pdfFilename(new Date()), naam);
       setPdfKlaar(await exportReportToPdf(el, styles.exporting, bestand));
     } catch {
@@ -302,7 +312,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
     } finally {
       setExporting(false);
     }
-  }, [config]);
+  }, [config, actief]);
 
   const content = (
     <div className={styles.container}>
@@ -325,7 +335,10 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
               id="nieuwe-leerling"
               className={styles.naamInput}
               value={nieuweNaam}
-              onChange={(e) => setNieuweNaam(e.target.value)}
+              onChange={(e) => {
+                nieuweNaamRef.current = e.target.value;
+                setNieuweNaam(e.target.value);
+              }}
               placeholder="Bijvoorbeeld Sam, 5V2"
               autoComplete="off"
             />
