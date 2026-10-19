@@ -9,9 +9,13 @@ sidebar_custom_props:
 
 ## Stap 1: Thonny installeren
 Volg deze stappen om Thonny te installeren:
-- Ga naar [thonny.org](https://thonny.org/).
-- Kies je besturingssysteem (waarschijnlijk Windows) en download het bestand dat begint met "Installer with 64-bit Python ...".
-- Installeer het programma en open het.
+
+1. Had je Thonny 4 al? Verwijder die dan eerst, via **Instellingen** → **Apps**. Thonny 5 kan anders een foutmelding geven bij het opstarten.
+2. Ga naar [thonny.org](https://thonny.org/).
+3. Download bij **Windows** het bestand dat eindigt op **-x64.exe**, bijvoorbeeld `thonny-5.0.0-x64.exe`. Neem dat bestand ook als je laptop een Arm-processor heeft, zoals een Snapdragon: niet elk onderdeel van coderius-play bestaat voor Arm. Op een Mac neem je het bestand dat eindigt op **-arm64.pkg** (een Mac met een Apple-chip, M1 of nieuwer) of **-x64.pkg** (een oudere Mac met Intel).
+4. Installeer het programma en open het.
+
+Thonny 5 werkt op Windows 10 en 11, en heeft Python al ingebouwd. Python apart installeren hoeft niet.
 
 
 ## Stap 2: coderius-play installeren

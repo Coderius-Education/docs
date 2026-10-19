@@ -18,7 +18,9 @@ Op deze pagina installeren we **Thonny** als fallback en lokaal alternatief. Die
 
 ## Stap 1: download Thonny
 
-Ga naar [thonny.org](https://thonny.org/) en kies je besturingssysteem (meestal Windows). Download het bestand dat begint met **"Installer with 64-bit Python..."**.
+Ga naar [thonny.org](https://thonny.org/) en kies je besturingssysteem (meestal Windows). Download het bestand dat eindigt op **-x64.exe**, bijvoorbeeld `thonny-5.0.0-x64.exe`. Heeft je laptop een Arm-processor, zoals een Snapdragon? Neem dan het bestand dat eindigt op **-arm64.exe**.
+
+Had je Thonny 4 al? Verwijder die dan eerst, via **Instellingen** → **Apps**. Thonny 5 kan anders een foutmelding geven bij het opstarten.
 
 ## Stap 2: installeren
 
