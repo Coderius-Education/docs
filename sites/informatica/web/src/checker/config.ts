@@ -8,7 +8,7 @@ import type {
 } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
 import { SITES_BY_ID } from '@coderius/shared/sites';
-import { alleenJavaScript, alleenOpmaak } from './code';
+import { alleenCss, alleenJavaScript, alleenOpmaak, alleenTags } from './code';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
 import niveaus from './niveaus.json';
 
@@ -59,6 +59,14 @@ const JS_CODE = 'js-code';
 const JS_TEKST = 'js-tekst';
 // De HTML zonder commentaar en zonder de inhoud van <script> en <style>.
 const HTML_OPMAAK = 'html-opmaak';
+// De tags: de opmaak zonder commentaar, plus HTML in tekst in JavaScript
+// (`innerHTML = "<ul>…"`). Een tag in een HTML-commentaar telde eerst mee,
+// en `i<li.length` in een script telde als <li>.
+const HTML_TAGS = 'html-tags';
+// De CSS uit .css-bestanden, <style>-blokken en style-attributen, zonder
+// commentaar en tekst. CSS in een HTML-bestand telde eerst helemaal niet,
+// en weggecommentarieerde CSS wel.
+const CSS_CODE = 'css-code';
 
 // Elk concept uit de lessen, met zijn herkenning.
 
@@ -68,14 +76,14 @@ const LESCONCEPTEN: ExtraConcept[] = [
     subject: 'html',
     group: e.group,
     label: e.label,
-    detect: regex(new RegExp(`<(${e.tags.join('|')})\\b`, 'gi'), 'html'),
+    detect: regex(new RegExp(`<(${e.tags.join('|')})\\b`, 'gi'), HTML_TAGS),
   })),
   ...CSS_TECHNIQUES.map((t) => ({
     id: t.id,
     subject: 'css',
     group: t.group,
     label: t.label,
-    detect: regex(t.pattern, 'css'),
+    detect: regex(t.pattern, CSS_CODE),
   })),
   ...JS_TECHNIQUES.map((t) => ({
     id: t.id,
@@ -102,7 +110,7 @@ function tags(...namen: string[]): ConceptDetect {
   return {
     type: 'regex',
     pattern: new RegExp(`<(${namen.join('|')})\\b`, 'gi'),
-    in: ['html'],
+    in: [HTML_TAGS],
     delen: true,
   };
 }
@@ -148,7 +156,7 @@ function onderdelen(kinds: string[], flags: string, delen: [string, RegExp][]): 
 
 /** Een selector in een CSS-bestand. */
 function selector(pattern: RegExp): Extract<ConceptDetect, { type: 'regex' }> {
-  return { type: 'regex', pattern, in: ['css'] };
+  return { type: 'regex', pattern, in: [CSS_CODE] };
 }
 
 interface Herkenning {
@@ -163,16 +171,19 @@ const HERKENNING: Record<string, Herkenning> = {
   // --- CSS ---
   // Een selector die met een tagnaam begint, vóór de `{`: `p {`, `h1, h2 {`,
   // `nav a {`, ook direct na een commentaar. De keyframe-stappen `from` en
-  // `to` zijn geen tags.
+  // `to` zijn geen tags, en de soorten media uit `@media screen, print {`
+  // ook niet.
   //
-  // De selectorpatronen kijken vooruit naar de `{`, maar niet voorbij een
-  // `*/`: anders telt `/* style.css */` boven `body {` als class, en
-  // `/* kleur #ccc */` als id.
+  // Commentaar en tekst zijn er in css-code al uit: `/* style.css */` boven
+  // `body {` telt niet als class, `/* kleur #ccc */` niet als id, en
+  // `content: ".kaart {"` niet als selector. Het `*/` in de patronen houdt
+  // dat ook vast als iemand ze op gewone CSS loslaat.
   'css-tag-selector': {
     detect: {
       type: 'regex',
-      pattern: /(?:^|[{};,/])\s*(?!(?:from|to)\b)([a-z][a-z0-9]*)\b(?=(?:(?!\*\/)[^{};])*\{)/g,
-      in: ['css'],
+      pattern:
+        /(?:^|[{};,/])\s*(?!(?:from|to|screen|print|all|only|and|not)\b)([a-z][a-z0-9]*)\b(?=(?:(?!\*\/)[^{};])*\{)/g,
+      in: [CSS_CODE],
       delen: true,
     },
     dekt: [],
@@ -187,9 +198,14 @@ const HERKENNING: Record<string, Herkenning> = {
     dekt: ['css-class-selector'],
   },
   // Elke pseudoclass telt, ook een die de lessen niet behandelen (`:focus`),
-  // maar een pseudo-element (`::before`) niet.
+  // maar een pseudo-element (`::before`) niet. Achter de naam mag één paar
+  // haakjes (`:nth-child(2)`, `:not(.x)`), daarna geen haakje meer tot de
+  // `{`: zo is `@media (orientation:landscape) {` geen pseudoclass.
   'css-pseudoclass': {
-    detect: { ...selector(/(?<!:)(:[a-z][a-z-]*)(?=(?:(?!\*\/)[^{};])*\{)/g), delen: true },
+    detect: {
+      ...selector(/(?<!:)(:[a-z][a-z-]*)(?=(?:\([^)]*\))?(?:(?!\*\/)[^{};()])*\{)/g),
+      delen: true,
+    },
     dekt: ['css-hover', 'css-first-child', 'css-last-child', 'css-nth-child'],
   },
   'css-id': {
@@ -231,14 +247,14 @@ const HERKENNING: Record<string, Herkenning> = {
   // --- JavaScript ---
   'js-get-element-by-id': uitLessen('js-get-element-by-id'),
   'js-style': uitLessen('js-style'),
-  'js-script-tag': { detect: { type: 'regex', pattern: /<script\b/gi, in: ['html'] }, dekt: [] },
+  'js-script-tag': { detect: { type: 'regex', pattern: /<script\b/gi, in: [HTML_TAGS] }, dekt: [] },
   // Een eigen JavaScript-bestand, gekoppeld met `<script src="…">`. Een
   // bibliotheek van een andere site (`src="https://…"`) is geen eigen bestand.
   'js-script-js': {
     detect: {
       type: 'regex',
       pattern: /<script\b[^>]*\bsrc\s*=\s*(?!["']?(?:https?:|\/\/))/gi,
-      in: ['html'],
+      in: [HTML_TAGS],
     },
     dekt: [],
   },
@@ -358,6 +374,8 @@ export const webConfig: CheckerConfig = {
       maak: (t, soort) => alleenJavaScript(t, soort, { tekstLaten: true }),
     },
     { kind: HTML_OPMAAK, van: ['html'], maak: alleenOpmaak },
+    { kind: HTML_TAGS, van: ['html', 'js'], maak: alleenTags },
+    { kind: CSS_CODE, van: ['css', 'html'], maak: alleenCss },
   ],
   imageKinds: ['image'],
   accept: '.zip,.html,.htm,.css,.js,.png,.jpg,.jpeg,.gif,.svg,.webp,.ico',

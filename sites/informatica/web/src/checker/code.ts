@@ -184,3 +184,63 @@ export function zonderCommentaarEnTekst(js: string, { tekstLaten = false } = {})
   }
   return uit;
 }
+
+/**
+ * Poetst commentaar en tekst tussen aanhalingstekens uit CSS: een regel die
+ * is weggecommentarieerd telt niet, en `content: ".kaart {"` is geen
+ * selector. Alles wordt spaties van dezelfde lengte, met de regeleinden erin.
+ */
+export function zonderCssCommentaarEnTekst(css: string): string {
+  return css.replace(/\/\*[\s\S]*?(?:\*\/|$)|"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/g, (m) =>
+    m.startsWith('/*') ? blanco(m) : m[0] + blanco(m.slice(1, -1)) + m[m.length - 1],
+  );
+}
+
+/**
+ * Alleen de CSS uit een bestand, op zijn eigen plek: een .css-bestand
+ * helemaal, uit HTML de inhoud van elk `<style>` en elk `style="…"`. Zo telt
+ * CSS in een HTML-bestand net zo goed mee als in een los bestand. Een
+ * `style`-attribuut wordt een declaratieblok `*{…}` op de plek van `="` en
+ * de sluitende quote; `*` is geen tag, dus het telt niet als tagselector.
+ * Commentaar en tekst tussen aanhalingstekens gaan eruit.
+ */
+export function alleenCss(inhoud: string, soort: string): string {
+  if (soort !== 'html') return zonderCssCommentaarEnTekst(inhoud);
+  const uit = blanco(inhoud).split('');
+  for (const stuk of splitsHtml(inhoud)) {
+    if (stuk.soort !== 'css') continue;
+    // splitsHtml zet een style-attribuut als `x{…}`; hier wordt dat `*{…}`.
+    const tekst = /^x\{[\s\S]*\}$/.test(stuk.tekst) ? `*${stuk.tekst.slice(1)}` : stuk.tekst;
+    const css = zonderCssCommentaarEnTekst(tekst);
+    for (let i = 0; i < css.length; i++) uit[(stuk.begin ?? 0) + i] = css[i];
+  }
+  return uit.join('');
+}
+
+/**
+ * De tags van een bestand: uit HTML de opmaak zonder commentaar, plus de
+ * HTML in tekst tussen aanhalingstekens in JavaScript (`innerHTML =
+ * "<ul>…"`); uit een .js-bestand alleen die tekst. Een tag in een
+ * HTML-commentaar telt niet, en een vergelijking als `i<li.length` in een
+ * script ook niet: dat is code, geen tekst. Bouwt een leerling een
+ * formulier met innerHTML, dan heeft hij wel een formulier gemaakt.
+ */
+export function alleenTags(inhoud: string, soort: string): string {
+  const uit = (soort === 'html' ? alleenOpmaak(inhoud) : blanco(inhoud)).split('');
+  if (soort === 'html') {
+    // De JavaScript in een on…-attribuut is code, geen opmaak.
+    for (const stuk of splitsHtml(inhoud)) {
+      if (stuk.soort !== 'js') continue;
+      for (let i = 0; i < stuk.tekst.length; i++) {
+        const plek = (stuk.begin ?? 0) + i;
+        if (uit[plek] !== '\n') uit[plek] = ' ';
+      }
+    }
+  }
+  // Wat er met tekst wél staat en zonder tekst niet, is tekst tussen
+  // aanhalingstekens.
+  const code = alleenJavaScript(inhoud, soort);
+  const metTekst = alleenJavaScript(inhoud, soort, { tekstLaten: true });
+  for (let i = 0; i < metTekst.length; i++) if (metTekst[i] !== code[i]) uit[i] = metTekst[i];
+  return uit.join('');
+}
