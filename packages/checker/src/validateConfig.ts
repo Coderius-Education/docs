@@ -53,6 +53,39 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
     }
   }
 
+  const afgeleid = new Set<string>();
+  for (const a of config.afgeleid ?? []) {
+    if (kindIds.has(a.kind) || afgeleid.has(a.kind)) {
+      problems.push(`Afgeleide soort '${a.kind}' heeft de naam van een andere bestandssoort.`);
+    }
+    afgeleid.add(a.kind);
+    for (const van of a.van) {
+      if (!config.textKinds.includes(van)) {
+        problems.push(
+          `Afgeleide soort '${a.kind}' komt uit '${van}', maar die soort wordt niet als tekst ingelezen.`,
+        );
+      }
+    }
+  }
+
+  for (const concept of [...config.concepts, ...(config.extra ?? [])]) {
+    const { detect } = concept;
+    if (detect.type !== 'regex') continue;
+    for (const kind of detect.in ?? []) {
+      if (afgeleid.has(kind)) continue;
+      if (!kindIds.has(kind)) {
+        problems.push(
+          `Concept '${concept.id}' zoekt in bestandssoort '${kind}', die niet in fileKinds staat.`,
+        );
+      }
+      if (!config.textKinds.includes(kind)) {
+        problems.push(
+          `Concept '${concept.id}' zoekt in '${kind}', maar die soort wordt niet als tekst ingelezen.`,
+        );
+      }
+    }
+  }
+
   for (const concept of config.concepts) {
     if (seenIds.has(concept.id)) {
       problems.push(`Concept-id '${concept.id}' komt meer dan één keer voor.`);
@@ -92,18 +125,6 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
       const { minCount } = concept.detect;
       if (minCount !== undefined && (!Number.isInteger(minCount) || minCount < 1)) {
         problems.push(`Concept '${concept.id}' heeft een minCount die geen geheel getal ≥ 1 is.`);
-      }
-      for (const kind of concept.detect.in ?? []) {
-        if (!kindIds.has(kind)) {
-          problems.push(
-            `Concept '${concept.id}' zoekt in bestandssoort '${kind}', die niet in fileKinds staat.`,
-          );
-        }
-        if (!config.textKinds.includes(kind)) {
-          problems.push(
-            `Concept '${concept.id}' zoekt in '${kind}', maar die soort wordt niet als tekst ingelezen.`,
-          );
-        }
       }
     }
   }

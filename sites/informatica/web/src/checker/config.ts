@@ -7,6 +7,7 @@ import type {
 } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
 import { SITES_BY_ID } from '@coderius/shared/sites';
+import { alleenJavaScript, alleenOpmaak } from './buitenLesstof';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
 import niveaus from './niveaus.json';
 
@@ -44,9 +45,21 @@ function regex(pattern: RegExp, ...kinds: string[]): ConceptDetect {
   return { type: 'regex', pattern, in: kinds };
 }
 
-// Elk concept uit de lessen, met zijn herkenning. JavaScript zoeken we ook in
-// de HTML: de les over de script-tag zet de code in een `<script>`-blok, en een
-// `onclick="alert(...)"` is ook JavaScript.
+// JavaScript zoeken we alleen waar JavaScript staat: in een .js-bestand, en in
+// HTML in een `<script>`-blok of een `on…="…"`-attribuut. Commentaar en tekst
+// tussen aanhalingstekens tellen niet mee. Eerst liepen de patronen over de
+// hele HTML en over commentaar: "let op" in een alinea telde als `let`,
+// `getElementById()` in een uitleg als de methode, en `alert("if (x)")` als
+// een if. De afgeleide soorten zijn even lang als het bestand, dus een vondst
+// houdt zijn regelnummer.
+const JS_CODE = 'js-code';
+// Hetzelfde, maar met de tekst tussen aanhalingstekens erin: de naam van een
+// event staat daar (`addEventListener('click', …)`).
+const JS_TEKST = 'js-tekst';
+// De HTML zonder commentaar en zonder de inhoud van <script> en <style>.
+const HTML_OPMAAK = 'html-opmaak';
+
+// Elk concept uit de lessen, met zijn herkenning.
 
 const LESCONCEPTEN: ExtraConcept[] = [
   ...HTML_ELEMENTS.map((e) => ({
@@ -71,9 +84,7 @@ const LESCONCEPTEN: ExtraConcept[] = [
     // Het onclick-attribuut heeft geen patroon in curriculum.ts; het staat
     // in de HTML, niet in de broncode.
     detect:
-      t.id === 'js-onclick-attribute'
-        ? regex(/onclick\s*=/gi, 'html')
-        : regex(t.pattern, 'js', 'html'),
+      t.id === 'js-onclick-attribute' ? regex(/onclick\s*=/gi, 'html') : regex(t.pattern, JS_CODE),
   })),
 ];
 
@@ -118,6 +129,19 @@ function eenVan(...ids: string[]): ConceptDetect {
     pattern: new RegExp(bronnen.map((b, i) => `(?<d${i}>${b})`).join('|'), 'g'),
     in: Array.from(soorten),
     delen: delen.map((c) => c.label),
+  };
+}
+
+/**
+ * Een rij met onderdelen die elk een eigen patroon hebben: elk patroon wordt
+ * een benoemde groep, zodat het rapport zegt welk onderdeel er staat.
+ */
+function onderdelen(kinds: string[], flags: string, delen: [string, RegExp][]): ConceptDetect {
+  return {
+    type: 'regex',
+    pattern: new RegExp(delen.map(([, re], i) => `(?<d${i}>${re.source})`).join('|'), flags),
+    in: kinds,
+    delen: delen.map(([label]) => label),
   };
 }
 
@@ -218,24 +242,65 @@ const HERKENNING: Record<string, Herkenning> = {
     dekt: [],
   },
   'js-prompt-alert': uitLessen('js-prompt', 'js-alert'),
-  'js-functies': uitLessen('js-function'),
+  // Elke functie die de leerling zelf maakt. De lessen gebruiken alleen
+  // `function naam()`, maar een arrow-functie, een naamloze functie of een
+  // methode in een object is net zo goed een eigen functie. Buiten de
+  // lesstof noemt de eerste twee daarnaast als iets wat de lessen niet
+  // behandelen.
+  'js-functies': {
+    detect: onderdelen([JS_CODE], 'gm', [
+      ['function naam()', /\bfunction\s+[\w$]+\s*\(/],
+      ['function ()', /\bfunction\s*\(/],
+      ['=>', /=>/],
+      // `spring() {` aan het begin van een regel, maar niet `if (x) {`.
+      [
+        'methode',
+        /^[ \t]*(?!(?:if|for|while|switch|catch|function|return)\b)[\w$]+[ \t]*\([^()\n]*\)[ \t]*\{/,
+      ],
+    ]),
+    dekt: ['js-function'],
+  },
   'js-add-event-listener': uitLessen('js-add-event-listener'),
-  // Een event koppelen, als attribuut (`onclick="…"`) of met
-  // addEventListener; het rapport noemt welke events. HTML is
+  // Een event koppelen: als attribuut in een tag (`<button onclick="…">`),
+  // als eigenschap (`knop.onclick = …`) of met addEventListener; het rapport
+  // noemt welke events. Het attribuut zoeken we alleen ín een tag: eerst
+  // telde `let onderwerp = "…"` als het event "derwerp". HTML is
   // hoofdletterongevoelig, dus `onClick="…"` telt ook.
   'js-events': {
     detect: {
       type: 'regex',
-      pattern: /\bon([a-z]{3,})\s*=\s*["']|\baddEventListener\s*\(\s*['"]([a-z]+)/gi,
-      in: ['html', 'js'],
+      pattern:
+        /<[a-z][^>]*?\son([a-z]{3,})\s*=|\.on([a-z]{3,})\s*=(?!=)|\baddEventListener\s*\(\s*['"]([a-z]+)/gi,
+      in: [HTML_OPMAAK, JS_TEKST],
       delen: true,
     },
     dekt: ['js-onclick-attribute'],
   },
   'js-if-else': uitLessen('js-if-else'),
-  'js-formulier-data': uitLessen('js-value', 'js-number'),
-  'js-arrays': uitLessen('js-array-literal', 'js-array-push'),
-  'js-loops': uitLessen('js-for', 'js-while'),
+  // De waarde uit een invoerveld. `Number(…)` hoort er niet bij: dat zet
+  // ook het antwoord op een prompt om, en dan telde een programma zonder
+  // formulier als "formulier data ophalen".
+  'js-formulier-data': uitLessen('js-value'),
+  // Een lijst tussen blokhaken, ook als argument (`toon([1, 2])`) of als
+  // antwoord van een functie; het patroon uit de lessen eist `= [`. Niet
+  // `lijst[0]`: daar staat een naam vóór de blokhaak.
+  'js-arrays': {
+    detect: onderdelen([JS_CODE], 'g', [
+      ['array ([...])', /(?:[=(,:>[]|\b(?:return|of)\b)\s*\[/],
+      ['.push()', /\.push\s*\(/],
+      ['new Array()', /\bnew\s+Array\s*\(/],
+    ]),
+    dekt: ['js-array-literal', 'js-array-push'],
+  },
+  // Elke herhaling: for (ook for … of), while, en forEach op een lijst.
+  'js-loops': {
+    detect: onderdelen([JS_CODE], 'g', [
+      ['for-loop', /\bfor\s*\(/],
+      ['while-loop', /\bwhile\s*\(/],
+      ['forEach()', /\.forEach\s*\(/],
+    ]),
+    dekt: ['js-for', 'js-while'],
+  },
 };
 
 const NIVEAUS: Record<string, Level> = { basis: 'basis', gevorderd: 'gevorderd' };
@@ -279,6 +344,15 @@ export const webConfig: CheckerConfig = {
 
   classify,
   textKinds: ['html', 'css', 'js'],
+  afgeleid: [
+    { kind: JS_CODE, van: ['js', 'html'], maak: (t, soort) => alleenJavaScript(t, soort) },
+    {
+      kind: JS_TEKST,
+      van: ['js', 'html'],
+      maak: (t, soort) => alleenJavaScript(t, soort, { tekstLaten: true }),
+    },
+    { kind: HTML_OPMAAK, van: ['html'], maak: alleenOpmaak },
+  ],
   imageKinds: ['image'],
   accept: '.zip,.html,.htm,.css,.js,.png,.jpg,.jpeg,.gif,.svg,.webp,.ico',
 

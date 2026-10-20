@@ -67,6 +67,18 @@ export function analyze(
     }
     bucket.push({ path: f.path, content: f.content });
   }
+  for (const a of config.afgeleid ?? []) {
+    const bucket: { path: string; content: string }[] = [];
+    for (const van of a.van) {
+      for (const f of textByKind[van] ?? []) {
+        const content = a.maak(f.content, van);
+        // Een andere lengte zou de regelnummers laten verschuiven; dan liever
+        // niets dan een plek in de verkeerde regel.
+        if (content.length === f.content.length) bucket.push({ path: f.path, content });
+      }
+    }
+    textByKind[a.kind] = bucket;
+  }
   const allPaths = values.map((f) => f.path).sort((a, b) => a.localeCompare(b));
   // Alleen een tekstbestand kan als code open; een foto of geluid niet.
   const leesbaar = new Set(

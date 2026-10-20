@@ -115,6 +115,36 @@ export function splitsHtml(html: string, begin = 0): Stuk[] {
   return stukken;
 }
 
+/**
+ * Alleen de JavaScript uit een bestand, op zijn eigen plek: een .js-bestand
+ * helemaal, uit HTML de inhoud van elk `<script>` en elk `on…="…"`. Al het
+ * andere, en het commentaar, wordt spaties; met `tekstLaten` blijft tekst
+ * tussen aanhalingstekens staan, anders gaat die ook weg. De uitkomst is even
+ * lang als het bestand, met de regeleinden op hun plek, zodat een vondst het
+ * goede regelnummer houdt. Zo zoekt de nakijker een JavaScript-patroon niet
+ * in een alinea ("let op"), een commentaar of een string.
+ */
+export function alleenJavaScript(
+  inhoud: string,
+  soort: string,
+  { tekstLaten = false } = {},
+): string {
+  const poets = (js: string) => zonderCommentaarEnTekst(js, { tekstLaten });
+  if (soort !== 'html') return poets(inhoud);
+  const uit = blanco(inhoud).split('');
+  for (const stuk of splitsHtml(inhoud)) {
+    if (stuk.soort !== 'js') continue;
+    const js = poets(stuk.tekst);
+    for (let i = 0; i < js.length; i++) uit[(stuk.begin ?? 0) + i] = js[i];
+  }
+  return uit.join('');
+}
+
+/** Een HTML-bestand zonder commentaar en zonder de inhoud van `<style>` en `<script>`. */
+export function alleenOpmaak(html: string): string {
+  return splitsHtml(html).find((s) => s.soort === 'html')?.tekst ?? blanco(html);
+}
+
 function htmlConstructies(html: string, begin: number, t: Telling): void {
   for (const tag of html.matchAll(TAG)) {
     const plek = begin + (tag.index ?? 0);
@@ -390,8 +420,12 @@ const JS_LEDEN = [
  * in een template literal blijft staan, want dat is gewone code; de backticks
  * ook, zodat de template literal zelf herkend blijft. Alles wordt spaties van
  * dezelfde lengte, met de regeleinden erin, zodat posities kloppen.
+ *
+ * Met `tekstLaten` blijft de tekst tussen aanhalingstekens staan en gaat
+ * alleen het commentaar weg: de naam van een event staat tussen
+ * aanhalingstekens (`addEventListener('click', …)`).
  */
-export function zonderCommentaarEnTekst(js: string): string {
+export function zonderCommentaarEnTekst(js: string, { tekstLaten = false } = {}): string {
   let uit = '';
   let i = 0;
   // Per open ${ … } in een template: hoeveel { er binnen nog open staan.
@@ -400,12 +434,17 @@ export function zonderCommentaarEnTekst(js: string): string {
     uit += blanco(js.slice(i, eind));
     i = eind;
   };
+  const tekstTot = (eind: number) => {
+    if (tekstLaten) uit += js.slice(i, eind);
+    else uit += blanco(js.slice(i, eind));
+    i = eind;
+  };
   const inTemplate = () => {
     // In de tekst van een template literal, tot de sluitende ` of een ${.
     while (i < js.length) {
       const c = js[i];
       if (c === '\\') {
-        blancoTot(Math.min(i + 2, js.length));
+        tekstTot(Math.min(i + 2, js.length));
       } else if (c === '`') {
         uit += '`';
         i++;
@@ -416,7 +455,7 @@ export function zonderCommentaarEnTekst(js: string): string {
         templates.push(0);
         return;
       } else {
-        blancoTot(i + 1);
+        tekstTot(i + 1);
       }
     }
   };
@@ -434,7 +473,8 @@ export function zonderCommentaarEnTekst(js: string): string {
       let j = i + 1;
       while (j < js.length && js[j] !== c && js[j] !== '\n') j += js[j] === '\\' ? 2 : 1;
       const dicht = js[j] === c;
-      uit += c + blanco(js.slice(i + 1, j)) + (dicht ? c : '');
+      const binnen = js.slice(i + 1, j);
+      uit += c + (tekstLaten ? binnen : blanco(binnen)) + (dicht ? c : '');
       i = dicht ? j + 1 : j;
     } else if (c === '`') {
       uit += '`';

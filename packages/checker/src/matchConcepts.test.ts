@@ -375,6 +375,33 @@ describe('analyze — onderdelen en extra concepten', () => {
     expect(matchOf(report, 'events')?.delen).toEqual(['click', 'mouseover']);
   });
 
+  it('zoekt in een afgeleide soort, met de regelnummers van het echte bestand', () => {
+    // Alleen de tweede regel is code; de rest wordt spaties, met de
+    // regeleinden erin.
+    const html = '<p>if (dit) is tekst</p>\n<script>if (x) {}</script>';
+    const alleenScript = (t: string) =>
+      t.replace(/<script>([\s\S]*?)<\/script>|[^\n]/g, (m, js) =>
+        js === undefined ? ' ' : `        ${js}         `,
+      );
+    const report = analyze(projectFiles(file('index.html', 'html', html)), {
+      ...config([concept('als', { type: 'regex', pattern: /\bif\s*\(/g, in: ['js-code'] })]),
+      afgeleid: [{ kind: 'js-code', van: ['html'], maak: alleenScript }],
+    });
+    expect(matchOf(report, 'als')).toMatchObject({
+      count: 1,
+      used: true,
+      plekken: [{ bestand: 'index.html', regel: 2 }],
+    });
+  });
+
+  it('slaat een afgeleide tekst met een andere lengte over, zodat geen plek verschuift', () => {
+    const report = analyze(projectFiles(file('a.js', 'js', 'if (x) {}')), {
+      ...config([concept('als', { type: 'regex', pattern: /\bif\s*\(/g, in: ['kort'] })]),
+      afgeleid: [{ kind: 'kort', van: ['js'], maak: (t) => t.trim().slice(1) }],
+    });
+    expect(matchOf(report, 'als')?.used).toBe(false);
+  });
+
   it('herkent extra concepten apart; die tellen niet mee bij de concepten', () => {
     const files = projectFiles(file('a.css', 'css', 'p { padding: 4px; }'));
     const report = analyze(files, {

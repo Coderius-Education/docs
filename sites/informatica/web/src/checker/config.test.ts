@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { maakBuitenLesstof } from './buitenLesstof';
 import { webConfig } from './config';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
-import { berekenLesstof } from './lesstof';
+import { berekenLesstof, stukkenUit } from './lesstof';
 import niveaus from './niveaus.json';
 
 const FIXTURES = fileURLToPath(new URL('./__fixtures__', import.meta.url));
@@ -189,19 +189,19 @@ describe('webConfig — voorbeeldprojecten scoren', () => {
     expect(delen.get('js-events')).toEqual(['click']);
   });
 
-  it('telt code in commentaar en in strings mee — bekende beperking', () => {
-    // BEVROREN GEDRAG, geen gewenst gedrag. De detectie is puur op reguliere
-    // expressies zonder parser, dus weggecommentarieerde code telt gewoon mee.
-    // Netjes oplossen vraagt een echte HTML/CSS/JS-parser; dat staat niet in
-    // verhouding tot een checklist-tool. Deze test legt vast wat er nú gebeurt,
-    // zodat een toekomstige wijziging een bewuste keuze is.
+  it('JavaScript in commentaar telt niet; HTML en CSS in commentaar wel — bekende beperking', () => {
+    // BEVROREN GEDRAG voor HTML en CSS: de detectie is op reguliere
+    // expressies, en weggecommentarieerde CSS of een tag in een
+    // HTML-commentaar telt mee. Voor JavaScript niet meer: die patronen lopen
+    // over de code zonder commentaar en zonder tekst tussen aanhalingstekens
+    // (alleenJavaScript in buitenLesstof.ts).
     const report = analyze(leesFixture('valkuilen'), webConfig);
     const perId = new Map([...report.concepts, ...(report.extra ?? [])].map((c) => [c.id, c]));
 
-    // Weggecommentarieerde CSS en JS tellen mee.
+    // Weggecommentarieerde CSS telt mee, een weggecommentarieerde alert niet.
     expect(perId.get('css-color')?.used).toBe(true);
-    expect(perId.get('js-prompt-alert')?.delen).toEqual(['alert()']);
-    // Een <select> die alleen in een HTML-commentaar staat, telt ook mee, net
+    expect(perId.get('js-prompt-alert')?.used).toBe(false);
+    // Een <select> die alleen in een HTML-commentaar staat, telt mee, net
     // als HTML-tags binnen een JavaScript-string.
     expect(perId.get('html-forms')?.delen).toEqual(['form', 'input', 'select']);
 
@@ -209,8 +209,9 @@ describe('webConfig — voorbeeldprojecten scoren', () => {
     // lessen eist `{` of `,` direct na de naam; de rij uit de tabel niet.
     expect(perId.get('css-class')?.used).toBe(true);
     expect(perId.get('css-pseudoclass')?.delen).toEqual([':hover']);
-    // `(x) => [x]` telt niet als array: het patroon eist `= [`.
-    expect(perId.get('js-arrays')?.used).toBe(false);
+    // `(x) => [x]` is een functie die een array maakt.
+    expect(perId.get('js-functies')?.delen).toEqual(['=>']);
+    expect(perId.get('js-arrays')?.delen).toEqual(['array ([...])']);
   });
 });
 
@@ -322,5 +323,197 @@ describe('webConfig — buiten de lesstof', () => {
   it('meldt de arrow-functie uit de valkuilen, die geen les gebruikt', () => {
     const vondsten = analyze(leesFixture('valkuilen'), docentConfig).buitenLesstof;
     expect(vondsten.map((v) => v.label)).toContain('=> (arrow-functie)');
+  });
+});
+
+describe('webConfig — JavaScript wordt herkend waar het staat', () => {
+  // Elk geval is een klein leerlingprogramma met wat de nakijker moet zien.
+  // De eerste versie liep in 16 van deze gevallen fout: patronen liepen over
+  // de hele HTML en over commentaar en strings, `let onderwerp = …` telde als
+  // event, `Number(prompt())` als formulier, en een arrow-functie, `forEach`
+  // of een array als argument werden gemist.
+  const GEVALLEN: [string, Record<string, string>, Record<string, boolean>][] = [
+    [
+      'een Nederlandse variabele die met "on" begint',
+      { 'a.js': 'let onderwerp = "wiskunde";\nlet online = "ja";' },
+      { 'js-events': false },
+    ],
+    ['een event als eigenschap', { 'a.js': 'knop.onclick = toon;' }, { 'js-events': true }],
+    [
+      'een vergelijking met .onclick is geen koppeling',
+      { 'a.js': 'if (knop.onclick == null) {}' },
+      { 'js-events': false },
+    ],
+    [
+      'een arrow-functie',
+      { 'a.js': 'const groet = () => {\n  alert("hoi");\n};' },
+      { 'js-functies': true },
+    ],
+    [
+      'een naamloze functie',
+      { 'a.js': 'const groet = function () {\n  alert("hoi");\n};' },
+      { 'js-functies': true },
+    ],
+    [
+      'een methode in een object',
+      { 'a.js': 'const speler = {\n  spring() {\n    y++;\n  },\n};' },
+      { 'js-functies': true },
+    ],
+    [
+      'een if is geen methode',
+      { 'a.js': 'if (x) {\n  y++;\n}\nwhile (x) {\n}' },
+      { 'js-functies': false },
+    ],
+    ['een async function', { 'a.js': 'async function laad() {}' }, { 'js-functies': true }],
+    [
+      'Number(prompt()) is geen formulier',
+      { 'a.js': 'let leeftijd = Number(prompt("Hoe oud?"));' },
+      { 'js-formulier-data': false, 'js-prompt-alert': true },
+    ],
+    [
+      'de waarde van een invoerveld',
+      { 'a.js': 'let naam = document.getElementById("naam").value;' },
+      { 'js-formulier-data': true, 'js-get-element-by-id': true },
+    ],
+    [
+      'een for in commentaar',
+      { 'a.js': '// for (let i = 0; i < 3; i++) {}\nalert("x");' },
+      { 'js-loops': false },
+    ],
+    ['een if in een string', { 'a.js': 'alert("if (je wilt) kan het");' }, { 'js-if-else': false }],
+    [
+      '"let op" in een alinea',
+      { 'index.html': '<p>Je moet hier wel even let op de kleur.</p>' },
+      { 'js-let': false },
+    ],
+    [
+      'getElementById in uitleg',
+      { 'index.html': '<p>Gebruik getElementById() om iets te vinden.</p>' },
+      { 'js-get-element-by-id': false },
+    ],
+    [
+      '.value in uitleg',
+      { 'index.html': '<p>De .value van een veld</p>' },
+      { 'js-formulier-data': false },
+    ],
+    [
+      'een stylesheet met style in de naam',
+      { 'index.html': '<link rel="stylesheet" href="main.style.css">' },
+      { 'js-style': false },
+    ],
+    [
+      'een if in een HTML-commentaar',
+      { 'index.html': '<!-- <script>if (oud) {}</script> -->' },
+      { 'js-if-else': false },
+    ],
+    [
+      'getElementById in commentaar',
+      { 'a.js': '/* document.getElementById("x") */' },
+      { 'js-get-element-by-id': false },
+    ],
+    ['forEach', { 'a.js': 'lijst.forEach(toon);' }, { 'js-loops': true }],
+    ['for … of', { 'a.js': 'for (const x of lijst) { toon(x); }' }, { 'js-loops': true }],
+    ['while zonder spatie', { 'a.js': 'while(x < 3){x++}' }, { 'js-loops': true }],
+    ['een lege array', { 'a.js': 'const lijst = [];' }, { 'js-arrays': true }],
+    ['een array als argument', { 'a.js': 'toon([1, 2, 3]);' }, { 'js-arrays': true }],
+    ['een array na of', { 'a.js': 'for (const x of [1, 2]) {}' }, { 'js-arrays': true }],
+    [
+      'lijst[0] maakt geen array',
+      { 'a.js': 'let eerste = lijst[0];\nconst [a, b] = paar;' },
+      { 'js-arrays': false },
+    ],
+    [
+      'JavaScript in een script-blok',
+      { 'index.html': '<script>\nif (x > 3) { alert("ja"); }\n</script>' },
+      { 'js-if-else': true, 'js-prompt-alert': true },
+    ],
+    [
+      'een alert in een onclick-attribuut',
+      { 'index.html': '<button onclick="alert(\'hoi\')">Klik</button>' },
+      { 'js-events': true, 'js-prompt-alert': true },
+    ],
+    [
+      'een submit-event',
+      { 'a.js': "form.addEventListener('submit', verstuur);" },
+      { 'js-events': true, 'js-add-event-listener': true },
+    ],
+    [
+      'style.setProperty',
+      { 'a.js': "el.style.setProperty('color', 'red');" },
+      { 'js-style': true },
+    ],
+  ];
+
+  it.each(GEVALLEN)('%s', (_naam, bestanden, verwacht) => {
+    const report = analyze(project(bestanden), webConfig);
+    const alle = new Map([...report.concepts, ...(report.extra ?? [])].map((m) => [m.id, m.used]));
+    for (const [id, moet] of Object.entries(verwacht)) {
+      expect(alle.has(id), `onbekend concept ${id}`).toBe(true);
+      expect(alle.get(id), id).toBe(moet);
+    }
+  });
+
+  it('een vondst in een script-blok wijst naar de goede regel van het HTML-bestand', () => {
+    const html = '<!DOCTYPE html>\n<p>tekst</p>\n<script>\n  let a = 1;\n  if (a) {}\n</script>';
+    const report = analyze(project({ 'index.html': html }), webConfig);
+    expect(report.concepts.find((c) => c.id === 'js-if-else')?.plekken).toEqual([
+      { bestand: 'index.html', regel: 5 },
+    ]);
+  });
+
+  it('de afgeleide teksten zijn zo lang als het bestand', () => {
+    const html =
+      '<p>let op</p>\n<script>\n// x\nlet s = "a\\"b";\n</script>\n<b onclick="f(\'x\')">x</b>';
+    for (const a of webConfig.afgeleid ?? []) {
+      for (const soort of a.van) {
+        const uit = a.maak(html, soort);
+        expect(uit.length, `${a.kind} uit ${soort}`).toBe(html.length);
+        expect(uit.split('\n').length, `${a.kind} uit ${soort}`).toBe(html.split('\n').length);
+      }
+    }
+  });
+
+  it('noemt welke soort functie, lus of array het is', () => {
+    const report = analyze(
+      project({
+        'a.js':
+          'function a() {}\nconst b = () => 1;\nfor (;;) {}\nlijst.forEach(a);\nlijst.push(1);',
+      }),
+      webConfig,
+    );
+    const delen = new Map(report.concepts.map((c) => [c.id, c.delen]));
+    expect(delen.get('js-functies')).toEqual(['=>', 'function naam()']);
+    expect(delen.get('js-loops')).toEqual(['for-loop', 'forEach()']);
+    expect(delen.get('js-arrays')).toEqual(['.push()']);
+  });
+});
+
+describe('webConfig — elke js-basics-les laat zien wat ze aanleert', () => {
+  // De code van een les, als project geüpload, moet de rij uit de tabel
+  // opleveren die die les aanleert. Zo merkt een strenger patroon het meteen
+  // als het de code van de lessen zelf niet meer herkent.
+  const LES_RIJ: Record<string, string[]> = {
+    'tekst-veranderen': ['js-get-element-by-id'],
+    'inline-onclick': ['js-events'],
+    'inline-stijl': ['js-style'],
+    'script-tag': ['js-script-tag'],
+    scriptjs: ['js-script-js'],
+    'prompt-alert': ['js-prompt-alert'],
+    events: ['js-add-event-listener', 'js-events'],
+    'if-else': ['js-if-else'],
+    'formulier-data': ['js-formulier-data'],
+    arrays: ['js-arrays'],
+    loops: ['js-loops'],
+  };
+
+  it.each(Object.entries(LES_RIJ))('%s', (les, rijen) => {
+    const bron = readFileSync(join(SITE, 'docs', 'js-basics', `${les}.mdx`), 'utf8');
+    const bestanden: Record<string, string> = {};
+    stukkenUit(bron).forEach((stuk, i) => {
+      bestanden[`stuk${i}.${stuk.soort}`] = stuk.tekst;
+    });
+    const report = analyze(project(bestanden), webConfig);
+    const gebruikt = new Set(report.concepts.filter((c) => c.used).map((c) => c.id));
+    expect(rijen.filter((id) => !gebruikt.has(id))).toEqual([]);
   });
 });
