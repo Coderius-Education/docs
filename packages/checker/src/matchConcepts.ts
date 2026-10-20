@@ -58,8 +58,15 @@ export function analyze(
   // Groepeer de bestanden per kind, zodat een regex-concept alleen de
   // relevante bestandssoorten scant.
   const textByKind: Record<string, { path: string; content: string }[]> = {};
+  const bibliotheken: string[] = [];
+  let tekstbestanden = 0;
   for (const f of values) {
     if (f.content === null || !config.textKinds.includes(f.kind)) continue;
+    tekstbestanden++;
+    if (config.bibliotheek?.(f.path, f.content)) {
+      bibliotheken.push(f.path);
+      continue;
+    }
     let bucket = textByKind[f.kind];
     if (!bucket) {
       bucket = [];
@@ -159,18 +166,30 @@ export function analyze(
   const extra = (config.extra ?? []).map(meet);
 
   const warnings: string[] = [];
-  const hasAnyText = config.textKinds.some((k) => (textByKind[k]?.length ?? 0) > 0);
-  if (!hasAnyText) {
+  if (tekstbestanden === 0) {
     warnings.push(
       'Geen leesbare codebestanden gevonden — controleer of je de juiste map of zip hebt geüpload.',
     );
   }
+  if (bibliotheken.length > 0) {
+    const lijst = bibliotheken.sort((a, b) => a.localeCompare(b));
+    const namen =
+      lijst.length === 1 ? lijst[0] : `${lijst.slice(0, -1).join(', ')} en ${lijst.at(-1)}`;
+    warnings.push(
+      `Niet meegeteld: ${namen}. ${lijst.length === 1 ? 'Dat is een bibliotheek' : 'Dat zijn bibliotheken'}, geen eigen code.`,
+    );
+  }
+  const eigen = new Set(bibliotheken);
+  const eigenBestanden: ProjectFiles = Object.fromEntries(
+    values.filter((f) => !eigen.has(f.path)).map((f) => [f.path, f]),
+  );
 
   return {
     fileStats: { total: values.length, byKind, skippedTooLarge },
     concepts,
     extra,
-    buitenLesstof: (opties.buitenLesstof ?? true) ? (config.buitenLesstof?.(files) ?? []) : [],
+    buitenLesstof:
+      (opties.buitenLesstof ?? true) ? (config.buitenLesstof?.(eigenBestanden) ?? []) : [],
     warnings,
   };
 }

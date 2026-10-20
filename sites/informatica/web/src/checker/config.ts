@@ -1,3 +1,4 @@
+import { lijktBibliotheek } from '@coderius/checker/bibliotheek';
 import type {
   CheckerConfig,
   Concept,
@@ -7,7 +8,7 @@ import type {
 } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
 import { SITES_BY_ID } from '@coderius/shared/sites';
-import { alleenJavaScript, alleenOpmaak } from './buitenLesstof';
+import { alleenJavaScript, alleenOpmaak } from './code';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
 import niveaus from './niveaus.json';
 
@@ -252,10 +253,11 @@ const HERKENNING: Record<string, Herkenning> = {
       ['function naam()', /\bfunction\s+[\w$]+\s*\(/],
       ['function ()', /\bfunction\s*\(/],
       ['=>', /=>/],
-      // `spring() {` aan het begin van een regel, maar niet `if (x) {`.
+      // `spring() {` aan het begin van een regel, maar niet `if (x) {`; ook
+      // `static maak() {` en `async laad() {`.
       [
         'methode',
-        /^[ \t]*(?!(?:if|for|while|switch|catch|function|return)\b)[\w$]+[ \t]*\([^()\n]*\)[ \t]*\{/,
+        /^[ \t]*(?:(?:static|async|get|set)[ \t]+)*(?!(?:if|for|while|switch|catch|function|return)\b)[\w$]+[ \t]*\([^()\n]*\)[ \t]*\{/,
       ],
     ]),
     dekt: ['js-function'],
@@ -264,13 +266,14 @@ const HERKENNING: Record<string, Herkenning> = {
   // Een event koppelen: als attribuut in een tag (`<button onclick="…">`),
   // als eigenschap (`knop.onclick = …`) of met addEventListener; het rapport
   // noemt welke events. Het attribuut zoeken we alleen ín een tag: eerst
-  // telde `let onderwerp = "…"` als het event "derwerp". HTML is
-  // hoofdletterongevoelig, dus `onClick="…"` telt ook.
+  // telde `let onderwerp = "…"` als het event "derwerp". Een waarde tussen
+  // aanhalingstekens mag een > bevatten (`value="a>b"`), net als in
+  // splitsHtml. HTML is hoofdletterongevoelig, dus `onClick="…"` telt ook.
   'js-events': {
     detect: {
       type: 'regex',
       pattern:
-        /<[a-z][^>]*?\son([a-z]{3,})\s*=|\.on([a-z]{3,})\s*=(?!=)|\baddEventListener\s*\(\s*['"]([a-z]+)/gi,
+        /<[a-z](?:"[^"]*"|'[^']*'|[^>"'])*?\son([a-z]{3,})\s*=|\.on([a-z]{3,})\s*=(?!=)|\baddEventListener\s*\(\s*['"]([a-z]+)/gi,
       in: [HTML_OPMAAK, JS_TEKST],
       delen: true,
     },
@@ -344,6 +347,9 @@ export const webConfig: CheckerConfig = {
 
   classify,
   textKinds: ['html', 'css', 'js'],
+  // jQuery, Bootstrap en andere meegeleverde bibliotheken tellen niet als
+  // eigen code; het rapport noemt ze.
+  bibliotheek: lijktBibliotheek,
   afgeleid: [
     { kind: JS_CODE, van: ['js', 'html'], maak: (t, soort) => alleenJavaScript(t, soort) },
     {

@@ -402,6 +402,43 @@ describe('analyze — onderdelen en extra concepten', () => {
     expect(matchOf(report, 'als')?.used).toBe(false);
   });
 
+  it('telt een bibliotheek niet mee, en noemt hem in een waarschuwing', () => {
+    // Een project met alleen een kop en jQuery kreeg anders functies, lussen
+    // en events op toegepast.
+    const files = projectFiles(
+      file('index.html', 'html', '<h1>Hoi</h1>'),
+      file('js/jquery.min.js', 'js', 'function a(){for(;;){}}'),
+      file('css/bootstrap.min.css', 'css', 'a:hover{}'),
+    );
+    const report = analyze(files, {
+      ...config([
+        concept('functie', { type: 'regex', pattern: /function/g }),
+        concept('kop', { type: 'regex', pattern: /<h1/g }),
+      ]),
+      bibliotheek: (pad) => pad.includes('.min.'),
+      buitenLesstof: (f) =>
+        Object.keys(f).map((p) => ({ groep: 'x', label: p, count: 1, files: [p] })),
+    });
+    expect(matchOf(report, 'functie')?.used).toBe(false);
+    expect(matchOf(report, 'kop')?.used).toBe(true);
+    expect(report.buitenLesstof.map((v) => v.label)).toEqual(['index.html']);
+    expect(report.warnings).toContain(
+      'Niet meegeteld: css/bootstrap.min.css en js/jquery.min.js. Dat zijn bibliotheken, geen eigen code.',
+    );
+    // Het bestandsoverzicht telt ze wel: ze zitten in het project.
+    expect(report.fileStats.total).toBe(3);
+  });
+
+  it('meldt niet dat er geen code is als er alleen een bibliotheek is', () => {
+    const report = analyze(projectFiles(file('jquery.min.js', 'js', 'x')), {
+      ...config([]),
+      bibliotheek: () => true,
+    });
+    expect(report.warnings).toEqual([
+      'Niet meegeteld: jquery.min.js. Dat is een bibliotheek, geen eigen code.',
+    ]);
+  });
+
   it('herkent extra concepten apart; die tellen niet mee bij de concepten', () => {
     const files = projectFiles(file('a.css', 'css', 'p { padding: 4px; }'));
     const report = analyze(files, {

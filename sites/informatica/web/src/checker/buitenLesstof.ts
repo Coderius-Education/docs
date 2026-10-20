@@ -1,5 +1,8 @@
 import { MAX_PLEKKEN, blanco, plekkenIn, regelBegins } from '@coderius/checker/plekken';
 import type { ProjectFiles, Vondst } from '@coderius/checker/types';
+import { ATTRIBUUT, type Soort, type Stuk, TAG, splitsHtml, zonderCommentaarEnTekst } from './code';
+
+export type { Soort, Stuk } from './code';
 
 // Wat een project gebruikt dat de lessen niet behandelen. De nakijker scoort
 // alleen de concepten uit curriculum.ts; een <canvas>, een @keyframes of een
@@ -14,15 +17,6 @@ import type { ProjectFiles, Vondst } from '@coderius/checker/types';
 // na. Alles wat een project gebruikt en niet in lesstof.json staat, is een
 // vondst. Een nieuwe les die iets introduceert, haalt het zo vanzelf van de
 // lijst.
-
-export type Soort = 'html' | 'css' | 'js';
-
-export interface Stuk {
-  soort: Soort;
-  tekst: string;
-  /** Waar het stuk in het bestand begint, voor de regelnummers (standaard 0). */
-  begin?: number;
-}
 
 export const GROEPEN = [
   'HTML-elementen',
@@ -60,89 +54,11 @@ const tussenQuotes = (m: string) => `${m[0]}${blanco(m.slice(1, -1))}${m[m.lengt
 
 // --- HTML ------------------------------------------------------------------
 
-// Een attribuutwaarde tussen aanhalingstekens mag < en > bevatten
-// (onclick="lijst.forEach(x => tel(x))"); die sluit de tag niet af.
-const TAG = /<([a-zA-Z][a-zA-Z0-9-]*)((?:\s+(?:"[^"]*"|'[^']*'|[^\s"'<>/]|\/(?!>))+)*)\s*\/?>/g;
-const ATTRIBUUT = /([^\s"'=<>/]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|[^\s"'>]+))?/g;
-
 function attribuutLabel(naam: string): string {
   const n = naam.toLowerCase();
   if (n.startsWith('data-')) return 'data-*';
   if (n.startsWith('aria-')) return 'aria-*';
   return n;
-}
-
-/**
- * Splitst een HTML-bestand in stukken: de opmaak zelf, de inhoud van elk
- * `<style>` en `style="…"` als CSS, en die van elk `<script>` en elk
- * `on…="…"` als JavaScript. Zo telt CSS in een `<style>`-blok net zo goed mee
- * als CSS in een los bestand.
- */
-export function splitsHtml(html: string, begin = 0): Stuk[] {
-  const stukken: Stuk[] = [];
-  let rest = html.replace(/<!--[\s\S]*?-->/g, blanco);
-  rest = rest.replace(
-    /(<style\b[^>]*>)([\s\S]*?)(<\/style\s*>)/gi,
-    (_m, open: string, css: string, dicht: string, plek: number) => {
-      stukken.push({ soort: 'css', tekst: css, begin: begin + plek + open.length });
-      return open + blanco(css) + dicht;
-    },
-  );
-  rest = rest.replace(
-    /(<script\b[^>]*>)([\s\S]*?)(<\/script\s*>)/gi,
-    (_m, open: string, js: string, dicht: string, plek: number) => {
-      stukken.push({ soort: 'js', tekst: js, begin: begin + plek + open.length });
-      return open + blanco(js) + dicht;
-    },
-  );
-  for (const tag of rest.matchAll(TAG)) {
-    const attrBegin = (tag.index ?? 0) + 1 + tag[1].length;
-    for (const a of (tag[2] ?? '').matchAll(ATTRIBUUT)) {
-      const naam = a[1].toLowerCase();
-      const waarde = a[2] ?? a[3];
-      if (waarde === undefined) continue;
-      const waardeBegin = begin + attrBegin + (a.index ?? 0) + a[0].search(/["']/) + 1;
-      if (naam === 'style') {
-        // Een declaratieblok zonder selector; de 'x{' ervoor valt precies
-        // vóór de waarde, zodat de posities kloppen.
-        stukken.push({ soort: 'css', tekst: `x{${waarde}}`, begin: waardeBegin - 2 });
-      } else if (naam.startsWith('on')) {
-        stukken.push({ soort: 'js', tekst: waarde, begin: waardeBegin });
-      }
-    }
-  }
-  stukken.push({ soort: 'html', tekst: rest, begin });
-  return stukken;
-}
-
-/**
- * Alleen de JavaScript uit een bestand, op zijn eigen plek: een .js-bestand
- * helemaal, uit HTML de inhoud van elk `<script>` en elk `on…="…"`. Al het
- * andere, en het commentaar, wordt spaties; met `tekstLaten` blijft tekst
- * tussen aanhalingstekens staan, anders gaat die ook weg. De uitkomst is even
- * lang als het bestand, met de regeleinden op hun plek, zodat een vondst het
- * goede regelnummer houdt. Zo zoekt de nakijker een JavaScript-patroon niet
- * in een alinea ("let op"), een commentaar of een string.
- */
-export function alleenJavaScript(
-  inhoud: string,
-  soort: string,
-  { tekstLaten = false } = {},
-): string {
-  const poets = (js: string) => zonderCommentaarEnTekst(js, { tekstLaten });
-  if (soort !== 'html') return poets(inhoud);
-  const uit = blanco(inhoud).split('');
-  for (const stuk of splitsHtml(inhoud)) {
-    if (stuk.soort !== 'js') continue;
-    const js = poets(stuk.tekst);
-    for (let i = 0; i < js.length; i++) uit[(stuk.begin ?? 0) + i] = js[i];
-  }
-  return uit.join('');
-}
-
-/** Een HTML-bestand zonder commentaar en zonder de inhoud van `<style>` en `<script>`. */
-export function alleenOpmaak(html: string): string {
-  return splitsHtml(html).find((s) => s.soort === 'html')?.tekst ?? blanco(html);
 }
 
 function htmlConstructies(html: string, begin: number, t: Telling): void {
@@ -411,96 +327,6 @@ const JS_LEDEN = [
   'catch',
   'json',
 ];
-
-/**
- * Poetst commentaar en tekst tussen aanhalingstekens weg: tekst kan alles
- * bevatten ("Klik => hier") en telt niet mee. Eén doorloop, van links naar
- * rechts, zodat wat het eerst begint wint: een // in een string is geen
- * commentaar, en een " in commentaar opent geen string. De code tussen ${ }
- * in een template literal blijft staan, want dat is gewone code; de backticks
- * ook, zodat de template literal zelf herkend blijft. Alles wordt spaties van
- * dezelfde lengte, met de regeleinden erin, zodat posities kloppen.
- *
- * Met `tekstLaten` blijft de tekst tussen aanhalingstekens staan en gaat
- * alleen het commentaar weg: de naam van een event staat tussen
- * aanhalingstekens (`addEventListener('click', …)`).
- */
-export function zonderCommentaarEnTekst(js: string, { tekstLaten = false } = {}): string {
-  let uit = '';
-  let i = 0;
-  // Per open ${ … } in een template: hoeveel { er binnen nog open staan.
-  const templates: number[] = [];
-  const blancoTot = (eind: number) => {
-    uit += blanco(js.slice(i, eind));
-    i = eind;
-  };
-  const tekstTot = (eind: number) => {
-    if (tekstLaten) uit += js.slice(i, eind);
-    else uit += blanco(js.slice(i, eind));
-    i = eind;
-  };
-  const inTemplate = () => {
-    // In de tekst van een template literal, tot de sluitende ` of een ${.
-    while (i < js.length) {
-      const c = js[i];
-      if (c === '\\') {
-        tekstTot(Math.min(i + 2, js.length));
-      } else if (c === '`') {
-        uit += '`';
-        i++;
-        return;
-      } else if (c === '$' && js[i + 1] === '{') {
-        uit += '${';
-        i += 2;
-        templates.push(0);
-        return;
-      } else {
-        tekstTot(i + 1);
-      }
-    }
-  };
-  while (i < js.length) {
-    const c = js[i];
-    const volgende = js[i + 1];
-    if (c === '/' && volgende === '/') {
-      const eind = js.indexOf('\n', i);
-      blancoTot(eind === -1 ? js.length : eind);
-    } else if (c === '/' && volgende === '*') {
-      const eind = js.indexOf('*/', i + 2);
-      blancoTot(eind === -1 ? js.length : eind + 2);
-    } else if (c === '"' || c === "'") {
-      // Tot de sluitende quote (of het regeleinde, als hij ontbreekt).
-      let j = i + 1;
-      while (j < js.length && js[j] !== c && js[j] !== '\n') j += js[j] === '\\' ? 2 : 1;
-      const dicht = js[j] === c;
-      const binnen = js.slice(i + 1, j);
-      uit += c + (tekstLaten ? binnen : blanco(binnen)) + (dicht ? c : '');
-      i = dicht ? j + 1 : j;
-    } else if (c === '`') {
-      uit += '`';
-      i++;
-      inTemplate();
-    } else if (templates.length > 0 && c === '{') {
-      templates[templates.length - 1]++;
-      uit += c;
-      i++;
-    } else if (templates.length > 0 && c === '}') {
-      uit += c;
-      i++;
-      const open = templates.length - 1;
-      if (templates[open] === 0) {
-        templates.pop();
-        inTemplate();
-      } else {
-        templates[open]--;
-      }
-    } else {
-      uit += c;
-      i++;
-    }
-  }
-  return uit;
-}
 
 // Eén keer opgebouwd; matchAll werkt op een kopie, dus hergebruik is veilig.
 const JS_OBJECT_RE = new RegExp(

@@ -320,6 +320,22 @@ describe('webConfig — buiten de lesstof', () => {
     expect(analyze(leesFixture('goed'), docentConfig).buitenLesstof).toEqual([]);
   });
 
+  it('een meegeleverde bibliotheek levert geen vondsten op, en het rapport noemt hem', () => {
+    // jQuery staat vol met constructies die de lessen niet behandelen
+    // (class, new, de ternary); die schreef de leerling niet zelf.
+    const files = {
+      ...leesFixture('goed'),
+      ...project({
+        'js/jquery.min.js': '/*! jQuery */\nclass A{} new A(); x ? a : b; y = () => 1;',
+      }),
+    };
+    const report = analyze(files, docentConfig);
+    expect(report.buitenLesstof).toEqual([]);
+    expect(report.warnings).toContain(
+      'Niet meegeteld: js/jquery.min.js. Dat is een bibliotheek, geen eigen code.',
+    );
+  });
+
   it('meldt de arrow-functie uit de valkuilen, die geen les gebruikt', () => {
     const vondsten = analyze(leesFixture('valkuilen'), docentConfig).buitenLesstof;
     expect(vondsten.map((v) => v.label)).toContain('=> (arrow-functie)');
@@ -365,6 +381,51 @@ describe('webConfig — JavaScript wordt herkend waar het staat', () => {
       { 'js-functies': false },
     ],
     ['een async function', { 'a.js': 'async function laad() {}' }, { 'js-functies': true }],
+    [
+      'een static methode',
+      { 'a.js': 'class Speler {\n  static maak() {\n    return 1;\n  }\n}' },
+      { 'js-functies': true },
+    ],
+    [
+      'een async methode',
+      { 'a.js': 'const api = {\n  async laad() {\n  },\n};' },
+      { 'js-functies': true },
+    ],
+    [
+      'een event na een attribuut met >',
+      { 'index.html': '<input value="a>b" onclick="f()">' },
+      { 'js-events': true },
+    ],
+    [
+      'jQuery naast eigen HTML telt niet als eigen JavaScript',
+      {
+        'index.html': '<h1>Hoi</h1>\n<script src="js/jquery.min.js"></script>',
+        'js/jquery.min.js':
+          '/*! jQuery v3.7.1 */\n!function(e){for(var i=0;i<3;i++){if(e.style){}}var t=[];e.addEventListener("load",f)}(window);',
+      },
+      {
+        'js-functies': false,
+        'js-loops': false,
+        'js-arrays': false,
+        'js-if-else': false,
+        'js-events': false,
+        'js-script-js': true,
+      },
+    ],
+    [
+      'Bootstrap naast eigen CSS telt niet als eigen CSS',
+      {
+        'style.css': 'body { margin: 0; }',
+        'css/bootstrap.min.css':
+          '.btn:hover{color:red}@media (min-width:576px){.row{display:flex}}',
+      },
+      {
+        'css-pseudoclass': false,
+        'css-media-query': false,
+        'css-flexbox-grid': false,
+        'css-tag-selector': true,
+      },
+    ],
     [
       'Number(prompt()) is geen formulier',
       { 'a.js': 'let leeftijd = Number(prompt("Hoe oud?"));' },

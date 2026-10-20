@@ -145,6 +145,14 @@ export interface CheckerConfig {
    * een JavaScript-patroon niet in een alinea of een commentaar.
    */
   afgeleid?: AfgeleideSoort[];
+  /**
+   * Optioneel: is dit bestand een bibliotheek die de leerling meelevert, en
+   * geen eigen code? Zo'n bestand telt niet mee voor de concepten en niet
+   * voor Buiten de lesstof; het rapport noemt het in een waarschuwing.
+   * `lijktBibliotheek` uit `bibliotheek.ts` herkent jQuery, Bootstrap en
+   * geminificeerde bestanden.
+   */
+  bibliotheek?: (path: string, content: string) => boolean;
   /** Kinds die als data-URL worden ingelezen (optioneel; bv. afbeeldingen). */
   imageKinds?: string[];
   /** Accept-attribuut voor de bestandskiezer. */

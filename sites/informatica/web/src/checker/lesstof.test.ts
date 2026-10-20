@@ -3,7 +3,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { describe, expect, it } from 'vitest';
-import { GROEPEN, maakBuitenLesstof, zonderCommentaarEnTekst } from './buitenLesstof';
+import { GROEPEN, maakBuitenLesstof } from './buitenLesstof';
+import { zonderCommentaarEnTekst } from './code';
 import { berekenLesstof, lesstofWatchPaden, stukkenUit } from './lesstof';
 import { LESSTOF_PLUGIN } from './lesstof-plugin';
 
