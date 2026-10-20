@@ -29,6 +29,31 @@ describe('lijktBibliotheek', () => {
     expect(lijktBibliotheek('js/vendor.js', `var a=1;${'b();'.repeat(400)}`)).toBe(true);
   });
 
+  it('herkent ook een licentiekop met @license of na @charset', () => {
+    expect(
+      lijktBibliotheek(
+        'js/three.module.js',
+        '/**\n * @license\n * Copyright 2010-2024 Three.js Authors\n * SPDX-License-Identifier: MIT\n */\nconst REVISION = "160";',
+      ),
+    ).toBe(true);
+    expect(
+      lijktBibliotheek(
+        'js/vue.global.js',
+        '/**\n* vue v3.4.21\n* (c) 2018-present Yuxi (Evan) You and Vue contributors\n* @license MIT\n**/\nvar Vue = (function (exports) {',
+      ),
+    ).toBe(true);
+    expect(
+      lijktBibliotheek(
+        'css/animate.css',
+        '@charset "UTF-8";/*!\n * animate.css - https://animate.style/\n * Licensed under the Hippocratic License 2.1\n */\n:root { --animate-duration: 1s; }',
+      ),
+    ).toBe(true);
+    // Een eigen bestand met een gewoon commentaar en @charset blijft eigen werk.
+    expect(
+      lijktBibliotheek('css/style.css', '@charset "UTF-8";\n/* Mijn stijl */\nbody { margin: 0; }'),
+    ).toBe(false);
+  });
+
   it('laat eigen code staan, ook met een naam die op een bibliotheek lijkt', () => {
     // Een eigen bestand mag nooit wegvallen.
     for (const naam of [

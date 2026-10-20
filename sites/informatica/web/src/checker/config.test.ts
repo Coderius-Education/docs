@@ -395,6 +395,11 @@ describe('webConfig — JavaScript wordt herkend waar het staat', () => {
       { 'js-events': true },
     ],
     [
+      'een event na een alinea met een losse "',
+      { 'index.html': '<p>Typ dan a = "hallo</p>\n<button onclick="f()">Klik</button>' },
+      { 'js-events': true },
+    ],
+    [
       'jQuery naast eigen HTML telt niet als eigen JavaScript',
       {
         'index.html': '<h1>Hoi</h1>\n<script src="js/jquery.min.js"></script>',

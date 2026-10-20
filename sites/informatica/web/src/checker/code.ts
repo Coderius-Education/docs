@@ -252,11 +252,17 @@ export function alleenTags(inhoud: string, soort: string): string {
  * eerstvolgende `<` of `>`. Een patroon dat een waarde overslaat, kon over
  * een `>` heen lezen, en liep bij een tag zonder `>` door tot het eind van
  * het bestand: bij veel open tags kwadratisch.
+ *
+ * Alleen binnen een tag: tekst op de pagina is geen waarde. Een losse `"` in
+ * een alinea (`Typ a = "hallo`) poetste eerst alles weg tot de eerstvolgende
+ * `"` in een tag, en dan verdween het `onclick` van de knop eronder.
  */
 export function alleenOpmaakZonderWaarden(html: string): string {
-  return alleenOpmaak(html).replace(
-    /=(\s*)("[^"]*"|'[^']*')/g,
-    (_m, ruimte: string, waarde: string) =>
-      `=${ruimte}${waarde[0]}${blanco(waarde.slice(1, -1))}${waarde[0]}`,
+  return alleenOpmaak(html).replace(TAG, (tag) =>
+    tag.replace(
+      /=(\s*)("[^"]*"|'[^']*')/g,
+      (_m, ruimte: string, waarde: string) =>
+        `=${ruimte}${waarde[0]}${blanco(waarde.slice(1, -1))}${waarde[0]}`,
+    ),
   );
 }

@@ -16,11 +16,16 @@ const BEKEND =
 // geschreven code niet.
 const LANGE_REGEL = 1000;
 
+// Hoe ver de licentiekop van het begin mag staan.
+const KOP = 500;
+
 export function lijktBibliotheek(path: string, content: string): boolean {
   const naam = path.slice(path.lastIndexOf('/') + 1);
   if (!/\.(?:js|mjs|css)$/i.test(naam)) return false;
   if (/\.min\.(?:js|css)$/i.test(naam) || BEKEND.test(naam)) return true;
-  // Bibliotheken beginnen met een licentiekop die bewaard moet blijven: /*!
-  if (content.trimStart().startsWith('/*!')) return true;
+  // Bibliotheken beginnen met een licentiekop: /*! (die een minifier laat
+  // staan) of een commentaar met @license. Niet altijd op de eerste regel:
+  // animate.css zet er @charset voor, en three.js en Vue openen met /**.
+  if (/\/\*!|@license\b/.test(content.slice(0, KOP))) return true;
   return content.split('\n').some((regel) => regel.length > LANGE_REGEL);
 }
