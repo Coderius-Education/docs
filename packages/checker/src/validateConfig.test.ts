@@ -101,6 +101,27 @@ describe('validateCheckerConfig', () => {
     expect(problems.join(' ')).toContain("'scss'");
   });
 
+  it('accepteert een detect.in met een afgeleide soort', () => {
+    const problems = validateCheckerConfig({
+      ...config([concept({ detect: { type: 'regex', pattern: /iets/g, in: ['js-code'] } })]),
+      afgeleid: [{ kind: 'js-code', van: ['html'], maak: (t) => t }],
+    });
+    expect(problems).toEqual([]);
+  });
+
+  it('meldt een afgeleide soort met de naam van een bestandssoort, of uit een soort zonder tekst', () => {
+    const problems = validateCheckerConfig({
+      ...config([]),
+      afgeleid: [
+        { kind: 'html', van: ['html'], maak: (t) => t },
+        { kind: 'uit-plaatjes', van: ['image'], maak: (t) => t },
+      ],
+    });
+    expect(problems).toHaveLength(2);
+    expect(problems.join(' ')).toContain("'html'");
+    expect(problems.join(' ')).toContain("'image'");
+  });
+
   it('meldt een detect.in die wel bestaat maar niet als tekst wordt gelezen', () => {
     const problems = validateCheckerConfig(
       config([concept({ detect: { type: 'regex', pattern: /iets/g, in: ['image'] } })]),

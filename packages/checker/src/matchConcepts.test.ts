@@ -375,6 +375,95 @@ describe('analyze — onderdelen en extra concepten', () => {
     expect(matchOf(report, 'events')?.delen).toEqual(['click', 'mouseover']);
   });
 
+  it('telt met concepten: false alleen de bestanden, zonder afgeleide teksten', () => {
+    let gemaakt = 0;
+    const report = analyze(
+      projectFiles(file('index.html', 'html', '<h1>x</h1>'), file('a.png', 'image', null)),
+      {
+        ...config([concept('kop', { type: 'regex', pattern: /<h1/g })]),
+        afgeleid: [
+          {
+            kind: 'iets',
+            van: ['html'],
+            maak: (t) => {
+              gemaakt++;
+              return t;
+            },
+          },
+        ],
+      },
+      { concepten: false, plekken: false, buitenLesstof: false },
+    );
+    expect(gemaakt).toBe(0);
+    expect(report.concepts).toEqual([]);
+    expect(report.fileStats.total).toBe(2);
+    expect(report.warnings).toEqual([]);
+  });
+
+  it('zoekt in een afgeleide soort, met de regelnummers van het echte bestand', () => {
+    // Alleen de tweede regel is code; de rest wordt spaties, met de
+    // regeleinden erin.
+    const html = '<p>if (dit) is tekst</p>\n<script>if (x) {}</script>';
+    const alleenScript = (t: string) =>
+      t.replace(/<script>([\s\S]*?)<\/script>|[^\n]/g, (m, js) =>
+        js === undefined ? ' ' : `        ${js}         `,
+      );
+    const report = analyze(projectFiles(file('index.html', 'html', html)), {
+      ...config([concept('als', { type: 'regex', pattern: /\bif\s*\(/g, in: ['js-code'] })]),
+      afgeleid: [{ kind: 'js-code', van: ['html'], maak: alleenScript }],
+    });
+    expect(matchOf(report, 'als')).toMatchObject({
+      count: 1,
+      used: true,
+      plekken: [{ bestand: 'index.html', regel: 2 }],
+    });
+  });
+
+  it('slaat een afgeleide tekst met een andere lengte over, zodat geen plek verschuift', () => {
+    const report = analyze(projectFiles(file('a.js', 'js', 'if (x) {}')), {
+      ...config([concept('als', { type: 'regex', pattern: /\bif\s*\(/g, in: ['kort'] })]),
+      afgeleid: [{ kind: 'kort', van: ['js'], maak: (t) => t.trim().slice(1) }],
+    });
+    expect(matchOf(report, 'als')?.used).toBe(false);
+  });
+
+  it('telt een bibliotheek niet mee, en noemt hem in een waarschuwing', () => {
+    // Een project met alleen een kop en jQuery kreeg anders functies, lussen
+    // en events op toegepast.
+    const files = projectFiles(
+      file('index.html', 'html', '<h1>Hoi</h1>'),
+      file('js/jquery.min.js', 'js', 'function a(){for(;;){}}'),
+      file('css/bootstrap.min.css', 'css', 'a:hover{}'),
+    );
+    const report = analyze(files, {
+      ...config([
+        concept('functie', { type: 'regex', pattern: /function/g }),
+        concept('kop', { type: 'regex', pattern: /<h1/g }),
+      ]),
+      bibliotheek: (pad) => pad.includes('.min.'),
+      buitenLesstof: (f) =>
+        Object.keys(f).map((p) => ({ groep: 'x', label: p, count: 1, files: [p] })),
+    });
+    expect(matchOf(report, 'functie')?.used).toBe(false);
+    expect(matchOf(report, 'kop')?.used).toBe(true);
+    expect(report.buitenLesstof.map((v) => v.label)).toEqual(['index.html']);
+    expect(report.warnings).toContain(
+      'Niet meegeteld: css/bootstrap.min.css en js/jquery.min.js. Dat zijn bibliotheken, geen eigen code.',
+    );
+    // Het bestandsoverzicht telt ze wel: ze zitten in het project.
+    expect(report.fileStats.total).toBe(3);
+  });
+
+  it('meldt niet dat er geen code is als er alleen een bibliotheek is', () => {
+    const report = analyze(projectFiles(file('jquery.min.js', 'js', 'x')), {
+      ...config([]),
+      bibliotheek: () => true,
+    });
+    expect(report.warnings).toEqual([
+      'Niet meegeteld: jquery.min.js. Dat is een bibliotheek, geen eigen code.',
+    ]);
+  });
+
   it('herkent extra concepten apart; die tellen niet mee bij de concepten', () => {
     const files = projectFiles(file('a.css', 'css', 'p { padding: 4px; }'));
     const report = analyze(files, {

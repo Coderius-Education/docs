@@ -1,3 +1,4 @@
+import { lijktBibliotheek } from '@coderius/checker/bibliotheek';
 import type {
   CheckerConfig,
   Concept,
@@ -7,6 +8,7 @@ import type {
 } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
 import { SITES_BY_ID } from '@coderius/shared/sites';
+import { alleenCss, alleenJavaScript, alleenOpmaakZonderWaarden, alleenTags } from './code';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
 import niveaus from './niveaus.json';
 
@@ -44,9 +46,30 @@ function regex(pattern: RegExp, ...kinds: string[]): ConceptDetect {
   return { type: 'regex', pattern, in: kinds };
 }
 
-// Elk concept uit de lessen, met zijn herkenning. JavaScript zoeken we ook in
-// de HTML: de les over de script-tag zet de code in een `<script>`-blok, en een
-// `onclick="alert(...)"` is ook JavaScript.
+// JavaScript zoeken we alleen waar JavaScript staat: in een .js-bestand, en in
+// HTML in een `<script>`-blok of een `on…="…"`-attribuut. Commentaar en tekst
+// tussen aanhalingstekens tellen niet mee. Eerst liepen de patronen over de
+// hele HTML en over commentaar: "let op" in een alinea telde als `let`,
+// `getElementById()` in een uitleg als de methode, en `alert("if (x)")` als
+// een if. De afgeleide soorten zijn even lang als het bestand, dus een vondst
+// houdt zijn regelnummer.
+const JS_CODE = 'js-code';
+// Hetzelfde, maar met de tekst tussen aanhalingstekens erin: de naam van een
+// event staat daar (`addEventListener('click', …)`).
+const JS_TEKST = 'js-tekst';
+// De HTML zonder commentaar, zonder de inhoud van <script> en <style>, en
+// zonder de waarden van attributen: voor een patroon dat in een tag zoekt.
+const HTML_OPMAAK = 'html-opmaak';
+// De tags: de opmaak zonder commentaar, plus HTML in tekst in JavaScript
+// (`innerHTML = "<ul>…"`). Een tag in een HTML-commentaar telde eerst mee,
+// en `i<li.length` in een script telde als <li>.
+const HTML_TAGS = 'html-tags';
+// De CSS uit .css-bestanden, <style>-blokken en style-attributen, zonder
+// commentaar en tekst. CSS in een HTML-bestand telde eerst helemaal niet,
+// en weggecommentarieerde CSS wel.
+const CSS_CODE = 'css-code';
+
+// Elk concept uit de lessen, met zijn herkenning.
 
 const LESCONCEPTEN: ExtraConcept[] = [
   ...HTML_ELEMENTS.map((e) => ({
@@ -54,14 +77,14 @@ const LESCONCEPTEN: ExtraConcept[] = [
     subject: 'html',
     group: e.group,
     label: e.label,
-    detect: regex(new RegExp(`<(${e.tags.join('|')})\\b`, 'gi'), 'html'),
+    detect: regex(new RegExp(`<(${e.tags.join('|')})\\b`, 'gi'), HTML_TAGS),
   })),
   ...CSS_TECHNIQUES.map((t) => ({
     id: t.id,
     subject: 'css',
     group: t.group,
     label: t.label,
-    detect: regex(t.pattern, 'css'),
+    detect: regex(t.pattern, CSS_CODE),
   })),
   ...JS_TECHNIQUES.map((t) => ({
     id: t.id,
@@ -71,9 +94,7 @@ const LESCONCEPTEN: ExtraConcept[] = [
     // Het onclick-attribuut heeft geen patroon in curriculum.ts; het staat
     // in de HTML, niet in de broncode.
     detect:
-      t.id === 'js-onclick-attribute'
-        ? regex(/onclick\s*=/gi, 'html')
-        : regex(t.pattern, 'js', 'html'),
+      t.id === 'js-onclick-attribute' ? regex(/onclick\s*=/gi, 'html') : regex(t.pattern, JS_CODE),
   })),
 ];
 
@@ -90,7 +111,7 @@ function tags(...namen: string[]): ConceptDetect {
   return {
     type: 'regex',
     pattern: new RegExp(`<(${namen.join('|')})\\b`, 'gi'),
-    in: ['html'],
+    in: [HTML_TAGS],
     delen: true,
   };
 }
@@ -121,9 +142,22 @@ function eenVan(...ids: string[]): ConceptDetect {
   };
 }
 
+/**
+ * Een rij met onderdelen die elk een eigen patroon hebben: elk patroon wordt
+ * een benoemde groep, zodat het rapport zegt welk onderdeel er staat.
+ */
+function onderdelen(kinds: string[], flags: string, delen: [string, RegExp][]): ConceptDetect {
+  return {
+    type: 'regex',
+    pattern: new RegExp(delen.map(([, re], i) => `(?<d${i}>${re.source})`).join('|'), flags),
+    in: kinds,
+    delen: delen.map(([label]) => label),
+  };
+}
+
 /** Een selector in een CSS-bestand. */
 function selector(pattern: RegExp): Extract<ConceptDetect, { type: 'regex' }> {
-  return { type: 'regex', pattern, in: ['css'] };
+  return { type: 'regex', pattern, in: [CSS_CODE] };
 }
 
 interface Herkenning {
@@ -138,16 +172,19 @@ const HERKENNING: Record<string, Herkenning> = {
   // --- CSS ---
   // Een selector die met een tagnaam begint, vóór de `{`: `p {`, `h1, h2 {`,
   // `nav a {`, ook direct na een commentaar. De keyframe-stappen `from` en
-  // `to` zijn geen tags.
+  // `to` zijn geen tags, en de soorten media uit `@media screen, print {`
+  // ook niet.
   //
-  // De selectorpatronen kijken vooruit naar de `{`, maar niet voorbij een
-  // `*/`: anders telt `/* style.css */` boven `body {` als class, en
-  // `/* kleur #ccc */` als id.
+  // Commentaar en tekst zijn er in css-code al uit: `/* style.css */` boven
+  // `body {` telt niet als class, `/* kleur #ccc */` niet als id, en
+  // `content: ".kaart {"` niet als selector. Het `*/` in de patronen houdt
+  // dat ook vast als iemand ze op gewone CSS loslaat.
   'css-tag-selector': {
     detect: {
       type: 'regex',
-      pattern: /(?:^|[{};,/])\s*(?!(?:from|to)\b)([a-z][a-z0-9]*)\b(?=(?:(?!\*\/)[^{};])*\{)/g,
-      in: ['css'],
+      pattern:
+        /(?:^|[{};,/])\s*(?!(?:from|to|screen|print|all|only|and|not)\b)([a-z][a-z0-9]*)\b(?=(?:(?!\*\/)[^{};])*\{)/g,
+      in: [CSS_CODE],
       delen: true,
     },
     dekt: [],
@@ -162,9 +199,14 @@ const HERKENNING: Record<string, Herkenning> = {
     dekt: ['css-class-selector'],
   },
   // Elke pseudoclass telt, ook een die de lessen niet behandelen (`:focus`),
-  // maar een pseudo-element (`::before`) niet.
+  // maar een pseudo-element (`::before`) niet. Achter de naam mag één paar
+  // haakjes (`:nth-child(2)`, `:not(.x)`), daarna geen haakje meer tot de
+  // `{`: zo is `@media (orientation:landscape) {` geen pseudoclass.
   'css-pseudoclass': {
-    detect: { ...selector(/(?<!:)(:[a-z][a-z-]*)(?=(?:(?!\*\/)[^{};])*\{)/g), delen: true },
+    detect: {
+      ...selector(/(?<!:)(:[a-z][a-z-]*)(?=(?:\([^)]*\))?(?:(?!\*\/)[^{};()])*\{)/g),
+      delen: true,
+    },
     dekt: ['css-hover', 'css-first-child', 'css-last-child', 'css-nth-child'],
   },
   'css-id': {
@@ -206,36 +248,81 @@ const HERKENNING: Record<string, Herkenning> = {
   // --- JavaScript ---
   'js-get-element-by-id': uitLessen('js-get-element-by-id'),
   'js-style': uitLessen('js-style'),
-  'js-script-tag': { detect: { type: 'regex', pattern: /<script\b/gi, in: ['html'] }, dekt: [] },
+  'js-script-tag': { detect: { type: 'regex', pattern: /<script\b/gi, in: [HTML_TAGS] }, dekt: [] },
   // Een eigen JavaScript-bestand, gekoppeld met `<script src="…">`. Een
   // bibliotheek van een andere site (`src="https://…"`) is geen eigen bestand.
   'js-script-js': {
     detect: {
       type: 'regex',
       pattern: /<script\b[^>]*\bsrc\s*=\s*(?!["']?(?:https?:|\/\/))/gi,
-      in: ['html'],
+      in: [HTML_TAGS],
     },
     dekt: [],
   },
   'js-prompt-alert': uitLessen('js-prompt', 'js-alert'),
-  'js-functies': uitLessen('js-function'),
+  // Elke functie die de leerling zelf maakt. De lessen gebruiken alleen
+  // `function naam()`, maar een arrow-functie, een naamloze functie of een
+  // methode in een object is net zo goed een eigen functie. Buiten de
+  // lesstof noemt de eerste twee daarnaast als iets wat de lessen niet
+  // behandelen.
+  'js-functies': {
+    detect: onderdelen([JS_CODE], 'gm', [
+      ['function naam()', /\bfunction\s+[\w$]+\s*\(/],
+      ['function ()', /\bfunction\s*\(/],
+      ['=>', /=>/],
+      // `spring() {` aan het begin van een regel, maar niet `if (x) {`; ook
+      // `static maak() {` en `async laad() {`.
+      [
+        'methode',
+        /^[ \t]*(?:(?:static|async|get|set)[ \t]+)*(?!(?:if|for|while|switch|catch|function|return)\b)[\w$]+[ \t]*\([^()\n]*\)[ \t]*\{/,
+      ],
+    ]),
+    dekt: ['js-function'],
+  },
   'js-add-event-listener': uitLessen('js-add-event-listener'),
-  // Een event koppelen, als attribuut (`onclick="…"`) of met
-  // addEventListener; het rapport noemt welke events. HTML is
-  // hoofdletterongevoelig, dus `onClick="…"` telt ook.
+  // Een event koppelen: als attribuut in een tag (`<button onclick="…">`),
+  // als eigenschap (`knop.onclick = …`) of met addEventListener; het rapport
+  // noemt welke events. Het attribuut zoeken we alleen ín een tag: eerst
+  // telde `let onderwerp = "…"` als het event "derwerp". In html-opmaak zijn
+  // de waarden van attributen spaties, dus een `>` in een waarde
+  // (`value="a>b"`) sluit de tag niet af, en het patroon stopt bij de
+  // eerstvolgende < of >. HTML is hoofdletterongevoelig, dus `onClick="…"`
+  // telt ook.
   'js-events': {
     detect: {
       type: 'regex',
-      pattern: /\bon([a-z]{3,})\s*=\s*["']|\baddEventListener\s*\(\s*['"]([a-z]+)/gi,
-      in: ['html', 'js'],
+      pattern:
+        /<[a-z][^<>]*?\son([a-z]{3,})\s*=|\.on([a-z]{3,})\s*=(?!=)|\baddEventListener\s*\(\s*['"]([a-z]+)/gi,
+      in: [HTML_OPMAAK, JS_TEKST],
       delen: true,
     },
     dekt: ['js-onclick-attribute'],
   },
   'js-if-else': uitLessen('js-if-else'),
-  'js-formulier-data': uitLessen('js-value', 'js-number'),
-  'js-arrays': uitLessen('js-array-literal', 'js-array-push'),
-  'js-loops': uitLessen('js-for', 'js-while'),
+  // De waarde uit een invoerveld. `Number(…)` hoort er niet bij: dat zet
+  // ook het antwoord op een prompt om, en dan telde een programma zonder
+  // formulier als "formulier data ophalen".
+  'js-formulier-data': uitLessen('js-value'),
+  // Een lijst tussen blokhaken, ook als argument (`toon([1, 2])`) of als
+  // antwoord van een functie; het patroon uit de lessen eist `= [`. Niet
+  // `lijst[0]`: daar staat een naam vóór de blokhaak.
+  'js-arrays': {
+    detect: onderdelen([JS_CODE], 'g', [
+      ['array ([...])', /(?:[=(,:>[]|\b(?:return|of)\b)\s*\[/],
+      ['.push()', /\.push\s*\(/],
+      ['new Array()', /\bnew\s+Array\s*\(/],
+    ]),
+    dekt: ['js-array-literal', 'js-array-push'],
+  },
+  // Elke herhaling: for (ook for … of), while, en forEach op een lijst.
+  'js-loops': {
+    detect: onderdelen([JS_CODE], 'g', [
+      ['for-loop', /\bfor\s*\(/],
+      ['while-loop', /\bwhile\s*\(/],
+      ['forEach()', /\.forEach\s*\(/],
+    ]),
+    dekt: ['js-for', 'js-while'],
+  },
 };
 
 const NIVEAUS: Record<string, Level> = { basis: 'basis', gevorderd: 'gevorderd' };
@@ -279,6 +366,20 @@ export const webConfig: CheckerConfig = {
 
   classify,
   textKinds: ['html', 'css', 'js'],
+  // jQuery, Bootstrap en andere meegeleverde bibliotheken tellen niet als
+  // eigen code; het rapport noemt ze.
+  bibliotheek: lijktBibliotheek,
+  afgeleid: [
+    { kind: JS_CODE, van: ['js', 'html'], maak: (t, soort) => alleenJavaScript(t, soort) },
+    {
+      kind: JS_TEKST,
+      van: ['js', 'html'],
+      maak: (t, soort) => alleenJavaScript(t, soort, { tekstLaten: true }),
+    },
+    { kind: HTML_OPMAAK, van: ['html'], maak: alleenOpmaakZonderWaarden },
+    { kind: HTML_TAGS, van: ['html', 'js'], maak: alleenTags },
+    { kind: CSS_CODE, van: ['css', 'html'], maak: alleenCss },
+  ],
   imageKinds: ['image'],
   accept: '.zip,.html,.htm,.css,.js,.png,.jpg,.jpeg,.gif,.svg,.webp,.ico',
 

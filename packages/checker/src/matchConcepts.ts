@@ -37,6 +37,13 @@ export interface AnalyzeOpties {
    * code openen; de leerlingweergave zet het uit en telt alleen.
    */
   plekken?: boolean;
+  /**
+   * Zoek de concepten (standaard aan). De leerlingweergave toont alleen het
+   * bestandsoverzicht en zet dit uit: de afgeleide teksten en alle patronen
+   * kostten bij een groot project ruim een seconde, waarin het scherm
+   * vastzat, voor een uitkomst die niemand zag.
+   */
+  concepten?: boolean;
 }
 
 export function analyze(
@@ -46,6 +53,7 @@ export function analyze(
 ): CheckReport {
   const values = Object.values(files);
   const metPlekken = opties.plekken ?? true;
+  const metConcepten = opties.concepten ?? true;
 
   const byKind: Record<string, number> = {};
   for (const k of config.fileKinds) byKind[k.id] = 0;
@@ -58,14 +66,33 @@ export function analyze(
   // Groepeer de bestanden per kind, zodat een regex-concept alleen de
   // relevante bestandssoorten scant.
   const textByKind: Record<string, { path: string; content: string }[]> = {};
+  const bibliotheken: string[] = [];
+  let tekstbestanden = 0;
   for (const f of values) {
     if (f.content === null || !config.textKinds.includes(f.kind)) continue;
+    tekstbestanden++;
+    if (config.bibliotheek?.(f.path, f.content)) {
+      bibliotheken.push(f.path);
+      continue;
+    }
     let bucket = textByKind[f.kind];
     if (!bucket) {
       bucket = [];
       textByKind[f.kind] = bucket;
     }
     bucket.push({ path: f.path, content: f.content });
+  }
+  for (const a of metConcepten ? (config.afgeleid ?? []) : []) {
+    const bucket: { path: string; content: string }[] = [];
+    for (const van of a.van) {
+      for (const f of textByKind[van] ?? []) {
+        const content = a.maak(f.content, van);
+        // Een andere lengte zou de regelnummers laten verschuiven; dan liever
+        // niets dan een plek in de verkeerde regel.
+        if (content.length === f.content.length) bucket.push({ path: f.path, content });
+      }
+    }
+    textByKind[a.kind] = bucket;
   }
   const allPaths = values.map((f) => f.path).sort((a, b) => a.localeCompare(b));
   // Alleen een tekstbestand kan als code open; een foto of geluid niet.
@@ -143,22 +170,34 @@ export function analyze(
     return metDelen(match);
   };
 
-  const concepts = config.concepts.map(meet);
-  const extra = (config.extra ?? []).map(meet);
+  const concepts = metConcepten ? config.concepts.map(meet) : [];
+  const extra = metConcepten ? (config.extra ?? []).map(meet) : [];
 
   const warnings: string[] = [];
-  const hasAnyText = config.textKinds.some((k) => (textByKind[k]?.length ?? 0) > 0);
-  if (!hasAnyText) {
+  if (tekstbestanden === 0) {
     warnings.push(
       'Geen leesbare codebestanden gevonden — controleer of je de juiste map of zip hebt geüpload.',
     );
   }
+  if (bibliotheken.length > 0) {
+    const lijst = bibliotheken.sort((a, b) => a.localeCompare(b));
+    const namen =
+      lijst.length === 1 ? lijst[0] : `${lijst.slice(0, -1).join(', ')} en ${lijst.at(-1)}`;
+    warnings.push(
+      `Niet meegeteld: ${namen}. ${lijst.length === 1 ? 'Dat is een bibliotheek' : 'Dat zijn bibliotheken'}, geen eigen code.`,
+    );
+  }
+  const eigen = new Set(bibliotheken);
+  const eigenBestanden: ProjectFiles = Object.fromEntries(
+    values.filter((f) => !eigen.has(f.path)).map((f) => [f.path, f]),
+  );
 
   return {
     fileStats: { total: values.length, byKind, skippedTooLarge },
     concepts,
     extra,
-    buitenLesstof: (opties.buitenLesstof ?? true) ? (config.buitenLesstof?.(files) ?? []) : [],
+    buitenLesstof:
+      (opties.buitenLesstof ?? true) ? (config.buitenLesstof?.(eigenBestanden) ?? []) : [],
     warnings,
   };
 }

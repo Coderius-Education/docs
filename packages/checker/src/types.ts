@@ -138,6 +138,21 @@ export interface CheckerConfig {
   classify: (path: string) => string;
   /** Kinds waarvan de inhoud als tekst wordt gelezen. */
   textKinds: string[];
+  /**
+   * Optioneel: soorten tekst die de config zelf maakt uit de bestanden, en
+   * waarin een concept kan zoeken met `detect.in`. Bijvoorbeeld "alleen de
+   * JavaScript uit dit HTML-bestand, zonder commentaar en tekst". Zo zoekt
+   * een JavaScript-patroon niet in een alinea of een commentaar.
+   */
+  afgeleid?: AfgeleideSoort[];
+  /**
+   * Optioneel: is dit bestand een bibliotheek die de leerling meelevert, en
+   * geen eigen code? Zo'n bestand telt niet mee voor de concepten en niet
+   * voor Buiten de lesstof; het rapport noemt het in een waarschuwing.
+   * `lijktBibliotheek` uit `bibliotheek.ts` herkent jQuery, Bootstrap en
+   * geminificeerde bestanden.
+   */
+  bibliotheek?: (path: string, content: string) => boolean;
   /** Kinds die als data-URL worden ingelezen (optioneel; bv. afbeeldingen). */
   imageKinds?: string[];
   /** Accept-attribuut voor de bestandskiezer. */
@@ -175,6 +190,20 @@ export interface Vondst {
   files: string[];
   /** De regels waar het staat, hooguit MAX_PLEKKEN. */
   plekken?: Plek[];
+}
+
+/**
+ * Een afgeleide soort: per bestand van een van de soorten in `van` een nieuwe
+ * tekst. Die tekst moet even lang blijven, met elk regeleinde op zijn plek,
+ * want de regelnummers van een vondst wijzen naar het echte bestand. Wat
+ * wegvalt, wordt spaties.
+ */
+export interface AfgeleideSoort {
+  /** De naam waaronder een concept hem in `detect.in` noemt. */
+  kind: string;
+  /** Van welke bestandssoorten hij gemaakt wordt. */
+  van: string[];
+  maak: (inhoud: string, soort: string) => string;
 }
 
 /** Een concept zonder niveau: wordt herkend en getoond, telt niet mee. */
