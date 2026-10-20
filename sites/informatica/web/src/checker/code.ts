@@ -244,3 +244,19 @@ export function alleenTags(inhoud: string, soort: string): string {
   for (let i = 0; i < metTekst.length; i++) if (metTekst[i] !== code[i]) uit[i] = metTekst[i];
   return uit.join('');
 }
+
+/**
+ * De opmaak, met de waarde van elk attribuut tussen aanhalingstekens als
+ * spaties. Zo staat er binnen een tag geen `<` of `>` meer, en kan een
+ * patroon dat in een tag zoekt (een `on…=`-attribuut) stoppen bij de
+ * eerstvolgende `<` of `>`. Een patroon dat een waarde overslaat, kon over
+ * een `>` heen lezen, en liep bij een tag zonder `>` door tot het eind van
+ * het bestand: bij veel open tags kwadratisch.
+ */
+export function alleenOpmaakZonderWaarden(html: string): string {
+  return alleenOpmaak(html).replace(
+    /=(\s*)("[^"]*"|'[^']*')/g,
+    (_m, ruimte: string, waarde: string) =>
+      `=${ruimte}${waarde[0]}${blanco(waarde.slice(1, -1))}${waarde[0]}`,
+  );
+}

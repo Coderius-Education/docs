@@ -512,6 +512,17 @@ describe('webConfig — JavaScript wordt herkend waar het staat', () => {
     }
   });
 
+  it('blijft snel bij heel veel open tags', () => {
+    // Het patroon voor een event-attribuut sloeg eerst aanhalingstekens over
+    // en las bij een tag zonder > door tot het eind van het bestand: 20.000
+    // open tags kostten 0,8 seconde, en dat groeide kwadratisch. Met de
+    // waarden weg stopt het bij de eerstvolgende < of >.
+    const html = '<a title="x" '.repeat(60000);
+    const begin = performance.now();
+    analyze(project({ 'index.html': html }), webConfig);
+    expect(performance.now() - begin).toBeLessThan(1000);
+  });
+
   it('een vondst in een script-blok wijst naar de goede regel van het HTML-bestand', () => {
     const html = '<!DOCTYPE html>\n<p>tekst</p>\n<script>\n  let a = 1;\n  if (a) {}\n</script>';
     const report = analyze(project({ 'index.html': html }), webConfig);

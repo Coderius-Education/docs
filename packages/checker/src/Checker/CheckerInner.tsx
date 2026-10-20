@@ -218,7 +218,13 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       setActiveLevel(null);
       // Buiten de lesstof ziet alleen de docent; de leerling hoeft er niet
       // op te wachten.
-      const result = analyze(loadedFiles, config, { buitenLesstof: isDocent, plekken: isDocent });
+      // De leerling ziet alleen het bestandsoverzicht; de concepten zoeken
+      // kost bij een groot project ruim een seconde.
+      const result = analyze(loadedFiles, config, {
+        buitenLesstof: isDocent,
+        plekken: isDocent,
+        concepten: isDocent,
+      });
       result.warnings = [...warnings, ...result.warnings];
       setReport(result);
     },

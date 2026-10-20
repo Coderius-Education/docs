@@ -8,7 +8,7 @@ import type {
 } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
 import { SITES_BY_ID } from '@coderius/shared/sites';
-import { alleenCss, alleenJavaScript, alleenOpmaak, alleenTags } from './code';
+import { alleenCss, alleenJavaScript, alleenOpmaakZonderWaarden, alleenTags } from './code';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
 import niveaus from './niveaus.json';
 
@@ -57,7 +57,8 @@ const JS_CODE = 'js-code';
 // Hetzelfde, maar met de tekst tussen aanhalingstekens erin: de naam van een
 // event staat daar (`addEventListener('click', …)`).
 const JS_TEKST = 'js-tekst';
-// De HTML zonder commentaar en zonder de inhoud van <script> en <style>.
+// De HTML zonder commentaar, zonder de inhoud van <script> en <style>, en
+// zonder de waarden van attributen: voor een patroon dat in een tag zoekt.
 const HTML_OPMAAK = 'html-opmaak';
 // De tags: de opmaak zonder commentaar, plus HTML in tekst in JavaScript
 // (`innerHTML = "<ul>…"`). Een tag in een HTML-commentaar telde eerst mee,
@@ -282,14 +283,16 @@ const HERKENNING: Record<string, Herkenning> = {
   // Een event koppelen: als attribuut in een tag (`<button onclick="…">`),
   // als eigenschap (`knop.onclick = …`) of met addEventListener; het rapport
   // noemt welke events. Het attribuut zoeken we alleen ín een tag: eerst
-  // telde `let onderwerp = "…"` als het event "derwerp". Een waarde tussen
-  // aanhalingstekens mag een > bevatten (`value="a>b"`), net als in
-  // splitsHtml. HTML is hoofdletterongevoelig, dus `onClick="…"` telt ook.
+  // telde `let onderwerp = "…"` als het event "derwerp". In html-opmaak zijn
+  // de waarden van attributen spaties, dus een `>` in een waarde
+  // (`value="a>b"`) sluit de tag niet af, en het patroon stopt bij de
+  // eerstvolgende < of >. HTML is hoofdletterongevoelig, dus `onClick="…"`
+  // telt ook.
   'js-events': {
     detect: {
       type: 'regex',
       pattern:
-        /<[a-z](?:"[^"]*"|'[^']*'|[^>"'])*?\son([a-z]{3,})\s*=|\.on([a-z]{3,})\s*=(?!=)|\baddEventListener\s*\(\s*['"]([a-z]+)/gi,
+        /<[a-z][^<>]*?\son([a-z]{3,})\s*=|\.on([a-z]{3,})\s*=(?!=)|\baddEventListener\s*\(\s*['"]([a-z]+)/gi,
       in: [HTML_OPMAAK, JS_TEKST],
       delen: true,
     },
@@ -373,7 +376,7 @@ export const webConfig: CheckerConfig = {
       van: ['js', 'html'],
       maak: (t, soort) => alleenJavaScript(t, soort, { tekstLaten: true }),
     },
-    { kind: HTML_OPMAAK, van: ['html'], maak: alleenOpmaak },
+    { kind: HTML_OPMAAK, van: ['html'], maak: alleenOpmaakZonderWaarden },
     { kind: HTML_TAGS, van: ['html', 'js'], maak: alleenTags },
     { kind: CSS_CODE, van: ['css', 'html'], maak: alleenCss },
   ],

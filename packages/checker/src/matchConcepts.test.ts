@@ -375,6 +375,31 @@ describe('analyze — onderdelen en extra concepten', () => {
     expect(matchOf(report, 'events')?.delen).toEqual(['click', 'mouseover']);
   });
 
+  it('telt met concepten: false alleen de bestanden, zonder afgeleide teksten', () => {
+    let gemaakt = 0;
+    const report = analyze(
+      projectFiles(file('index.html', 'html', '<h1>x</h1>'), file('a.png', 'image', null)),
+      {
+        ...config([concept('kop', { type: 'regex', pattern: /<h1/g })]),
+        afgeleid: [
+          {
+            kind: 'iets',
+            van: ['html'],
+            maak: (t) => {
+              gemaakt++;
+              return t;
+            },
+          },
+        ],
+      },
+      { concepten: false, plekken: false, buitenLesstof: false },
+    );
+    expect(gemaakt).toBe(0);
+    expect(report.concepts).toEqual([]);
+    expect(report.fileStats.total).toBe(2);
+    expect(report.warnings).toEqual([]);
+  });
+
   it('zoekt in een afgeleide soort, met de regelnummers van het echte bestand', () => {
     // Alleen de tweede regel is code; de rest wordt spaties, met de
     // regeleinden erin.

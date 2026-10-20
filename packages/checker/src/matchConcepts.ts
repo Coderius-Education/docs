@@ -37,6 +37,13 @@ export interface AnalyzeOpties {
    * code openen; de leerlingweergave zet het uit en telt alleen.
    */
   plekken?: boolean;
+  /**
+   * Zoek de concepten (standaard aan). De leerlingweergave toont alleen het
+   * bestandsoverzicht en zet dit uit: de afgeleide teksten en alle patronen
+   * kostten bij een groot project ruim een seconde, waarin het scherm
+   * vastzat, voor een uitkomst die niemand zag.
+   */
+  concepten?: boolean;
 }
 
 export function analyze(
@@ -46,6 +53,7 @@ export function analyze(
 ): CheckReport {
   const values = Object.values(files);
   const metPlekken = opties.plekken ?? true;
+  const metConcepten = opties.concepten ?? true;
 
   const byKind: Record<string, number> = {};
   for (const k of config.fileKinds) byKind[k.id] = 0;
@@ -74,7 +82,7 @@ export function analyze(
     }
     bucket.push({ path: f.path, content: f.content });
   }
-  for (const a of config.afgeleid ?? []) {
+  for (const a of metConcepten ? (config.afgeleid ?? []) : []) {
     const bucket: { path: string; content: string }[] = [];
     for (const van of a.van) {
       for (const f of textByKind[van] ?? []) {
@@ -162,8 +170,8 @@ export function analyze(
     return metDelen(match);
   };
 
-  const concepts = config.concepts.map(meet);
-  const extra = (config.extra ?? []).map(meet);
+  const concepts = metConcepten ? config.concepts.map(meet) : [];
+  const extra = metConcepten ? (config.extra ?? []).map(meet) : [];
 
   const warnings: string[] = [];
   if (tekstbestanden === 0) {
