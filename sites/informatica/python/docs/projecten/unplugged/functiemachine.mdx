@@ -1,0 +1,166 @@
+---
+sidebar_position: 5
+description: Speel functies na met briefjes en een kladblaadje per functie, en voel het verschil tussen return en print.
+---
+
+# De functiemachine
+
+<Handout>
+
+Een functie is een machine: je stopt er iets in, en er komt iets uit. In
+dit rollenspel is elke functie een leerling. Je ziet dan precies wat er
+heen gaat, wat er terugkomt, en wat er alleen op het scherm komt.
+
+## Wat je nodig hebt
+
+- Een groepje van vijf, met deze rollen: het hoofdprogramma, `verdubbel`,
+  `toon_dubbel`, `plus_een` en het scherm.
+- Per rol een kladblaadje, en een stapel briefjes en een pen voor iedereen.
+- Ongeveer 25 minuten.
+
+## De spelregels
+
+1. Een aanroep zoals `verdubbel(4)`: wie aanroept, schrijft de 4 op een
+   briefje en geeft het aan `verdubbel`. Daarna wacht hij, en doet niets
+   tot hij iets terugkrijgt.
+2. De functie schrijft op haar eigen kladblaadje: `getal = 4`. Dat is
+   haar parameter. Niemand anders kijkt op dat kladblaadje.
+3. `return`: de functie schrijft de uitkomst op een briefje en geeft
+   het terug. Daarna is ze klaar, en gooit ze haar kladblaadje weg.
+4. `print`: de functie roept het hardop naar het scherm. Het scherm
+   schrijft het op het bord. Er gaat niets terug naar wie aanriep.
+5. Geen `return`? Dan geeft de functie aan het eind een leeg briefje
+   terug. Python schrijft daar `None` op.
+
+## Ronde 1
+
+```python
+def verdubbel(getal):
+    return getal * 2
+
+
+def toon_dubbel(getal):
+    print(getal * 2)
+
+
+def plus_een(getal):
+    return verdubbel(getal) + 1
+
+
+a = verdubbel(4)
+b = toon_dubbel(4)
+c = plus_een(5)
+print(a, b, c)
+```
+
+Gok eerst wat er op het scherm komt: ______
+
+Speel het nu. Het hoofdprogramma begint bovenaan bij `a = …`. Vul per
+aanroep een rij in.
+
+<div className="handout-teltabel">
+
+| Aanroep | Briefje heen | Briefje terug | Op het scherm |
+|---|:---:|:---:|:---:|
+| `verdubbel(4)` | | | |
+| `toon_dubbel(4)` | | | |
+| `plus_een(5)` | | | |
+| `verdubbel(…)`, door `plus_een` | | | |
+| `print(a, b, c)` | | | |
+
+</div>
+
+## Ronde 2: wiens kladblaadje?
+
+```python
+def tel_op(getal):
+    totaal = getal + 10
+    return totaal
+
+
+totaal = 1
+uitkomst = tel_op(5)
+print(totaal, uitkomst)
+```
+
+Gok eerst: ______ Speel het daarna. Het hoofdprogramma schrijft `totaal`
+op zijn eigen kladblaadje, `tel_op` ook.
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. `toon_dubbel` liet 8 op het scherm komen. Waarom staat er dan in `b`
+   geen 8?
+2. Terwijl `verdubbel` werkte voor `plus_een`, wie stond er toen te
+   wachten, en op wie?
+3. In ronde 2 bestaat `totaal` twee keer. Waarom raakt het ene het andere
+   niet?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+**Ronde 1.** `toon_dubbel` roept 8 naar het scherm en geeft een leeg
+briefje terug. `plus_een` geeft 5 aan `verdubbel`, wacht op de 10, en
+geeft 11 terug. Het hoofdprogramma wacht ondertussen op `plus_een`.
+
+```python
+def verdubbel(getal):
+    return getal * 2
+
+
+def toon_dubbel(getal):
+    print(getal * 2)
+
+
+def plus_een(getal):
+    return verdubbel(getal) + 1
+
+
+a = verdubbel(4)
+b = toon_dubbel(4)
+c = plus_een(5)
+print(a, b, c)
+```
+
+Uitvoer:
+
+```
+8
+8 None 11
+```
+
+De eerste 8 roept `toon_dubbel`. In `b` staat `None`: het lege briefje.
+
+**Ronde 2.** Elke functie heeft haar eigen kladblaadje. De `totaal` van
+`tel_op` staat op een ander blaadje dan die van het hoofdprogramma, en dat
+blaadje gaat weg zodra de functie klaar is.
+
+```python
+def tel_op(getal):
+    totaal = getal + 10
+    return totaal
+
+
+totaal = 1
+uitkomst = tel_op(5)
+print(totaal, uitkomst)   # 1 15
+```
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [8 Functies](site:python/docs/functies/functies),
+  [9a Parameters](site:python/docs/functies/09a-parameters),
+  [9b Return](site:python/docs/functies/09b-return) en
+  [9c Scope](site:python/docs/functies/09c-scope).
+- In het project [Tien groene flessen](site:python/docs/projecten/tien-groene-flessen/stap-1-print)
+  roept de ene functie de andere aan, net als `plus_een` hier.
+
+</div>
+
+</Handout>

@@ -1,0 +1,168 @@
+---
+sidebar_position: 6
+description: Speel een lijst na met een rij genummerde bekertjes, en ontdek waarom tellen bij 0 begint en wat append, pop en insert doen.
+---
+
+# Een rij bekertjes
+
+<Handout>
+
+Een lijst is een rij bekertjes op tafel. Elk bekertje heeft een plek, en
+de plekken tellen vanaf 0. In elk bekertje zit één briefje met een waarde.
+Jij bent Python, en schuift met bekertjes.
+
+## Wat je nodig hebt
+
+- Per tweetal zes bekertjes (of zes vakjes op een vel papier), briefjes en
+  een pen.
+- Ongeveer 20 minuten.
+
+## De spelregels
+
+1. De plek van een bekertje is hoeveel bekertjes er links van staan.
+   Het eerste heeft er geen links van zich: plek 0.
+2. `snoep[1]`: kijk in het bekertje op plek 1. `snoep[-1]`: kijk in
+   het laatste bekertje.
+3. `append`: zet een nieuw bekertje achteraan de rij.
+4. `pop()`: haal het laatste bekertje weg, en geef het briefje eruit
+   terug.
+5. `insert(0, …)`: zet een nieuw bekertje op plek 0. Alle andere
+   schuiven één plek op.
+6. `len`: tel de bekertjes.
+
+## Deel 1
+
+Zet eerst drie bekertjes neer, met `drop`, `chips` en `koek`.
+
+```python
+snoep = ["drop", "chips", "koek"]
+snoep.append("ijs")
+print(snoep[1])
+print(snoep[-1])
+eruit = snoep.pop()
+snoep.insert(0, "fruit")
+print(snoep)
+print(len(snoep))
+```
+
+Gok eerst wat `print(snoep[1])` geeft: ______
+
+Speel het daarna. Schrijf na elke regel de rij op, van links naar rechts.
+
+<div className="handout-teltabel">
+
+| Na regel | De rij bekertjes | Op het scherm |
+|:---:|---|---|
+| 1 | | |
+| 2 | | |
+| 3 | | |
+| 4 | | |
+| 5 | | |
+| 6 | | |
+| 7 | | |
+| 8 | | |
+
+</div>
+
+## Deel 2: een bekertje dat er niet is
+
+Na deel 1 staan er vier bekertjes. Wat gebeurt er bij deze regel?
+
+{/* niet-draaien: valt expres om; het antwoordblad toont de melding */}
+
+```python
+snoep = ["fruit", "drop", "chips", "koek"]
+print(snoep[4])
+```
+
+Mijn gok: ______
+
+## Deel 3: twee etiketten op één rij
+
+Heb je [Etiketten op waarden](site:python/docs/projecten/unplugged/etiketten)
+gedaan? Plak dan een etiket `a` op de rij bekertjes.
+
+```python
+a = [1, 2, 3]
+b = a
+b.append(4)
+print(a)
+```
+
+Mijn gok: ______ Speel het: waar plak je etiket `b`?
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. Waarom heeft `chips` plek 1 en niet plek 2?
+2. Er staan vier bekertjes. Wat is de hoogste plek die bestaat?
+3. In deel 3 voeg je iets toe aan `b`, maar ook `a` verandert. Hoe zie je
+   dat aan de etiketten?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+**Deel 1.** `chips` heeft één bekertje links van zich, dus plek 1. Na
+`pop()` zit het laatste bekertje met `ijs` in `eruit`, en `insert` schuift
+de rest op.
+
+```python
+snoep = ["drop", "chips", "koek"]
+snoep.append("ijs")
+print(snoep[1])
+print(snoep[-1])
+eruit = snoep.pop()
+snoep.insert(0, "fruit")
+print(snoep)
+print(len(snoep))
+```
+
+Uitvoer:
+
+```
+chips
+ijs
+['fruit', 'drop', 'chips', 'koek']
+4
+```
+
+**Deel 2.** Vier bekertjes hebben de plekken 0, 1, 2 en 3. Plek 4 is er
+niet, en dan stopt Python met een fout:
+
+```python
+snoep = ["fruit", "drop", "chips", "koek"]
+print(snoep[4])
+```
+
+Uitvoer:
+
+```
+IndexError: list index out of range
+```
+
+**Deel 3.** `b = a` maakt geen nieuwe rij: etiket `b` komt op dezelfde
+rij als `a`. Wat je via `b` toevoegt, staat dus ook in `a`.
+
+```python
+a = [1, 2, 3]
+b = a
+b.append(4)
+print(a)   # [1, 2, 3, 4]
+```
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [10a Lijsten](site:python/docs/data/10a-lijsten-basis) en
+  [10b Lijst-methoden](site:python/docs/data/10b-lijst-methoden).
+- Waarom het etiketten zijn en geen doosjes, begon in
+  [Etiketten op waarden](site:python/docs/projecten/unplugged/etiketten).
+
+</div>
+
+</Handout>

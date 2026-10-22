@@ -1,0 +1,152 @@
+---
+sidebar_position: 7
+description: Speel een dictionary na met enveloppen als kluisjes, met een naam erop in plaats van een nummer.
+---
+
+# Kluisjes met naamkaartjes
+
+<Handout>
+
+Een lijst is een rij bekertjes met nummers. Een dictionary is een kast met
+kluisjes, en op elk kluisje staat een naam. Je zoekt niet op plek, maar op
+naam. Jullie spelen de kast na.
+
+## Wat je nodig hebt
+
+- Per tweetal vijf enveloppen (de kluisjes), briefjes en een pen.
+- Ongeveer 15 minuten.
+
+## De spelregels
+
+{/* foutmelding-van: kluis = {"Noor": "boek"}\nkluis["Sam"] */}
+
+1. **`kluis["Sam"]`**: zoek de envelop met `Sam` erop en kijk wat erin zit.
+   Is er geen envelop met die naam, dan stopt Python met een `KeyError`.
+2. **`kluis["Ali"] = "pen"`**: is er al een envelop `Ali`? Vervang wat
+   erin zit. Zo niet, schrijf `Ali` op een nieuwe envelop en stop er `pen`
+   in.
+3. **`"Bo" in kluis`**: is er een envelop met `Bo` erop? Dan is het `True`.
+   Je opent niets.
+4. **`.items()`**: loop de enveloppen langs, in de volgorde waarin ze
+   erbij kwamen, en lees steeds de naam en wat erin zit.
+
+## Speel het programma
+
+```python
+kluis = {"Sam": "gum", "Noor": "boek"}
+kluis["Ali"] = "pen"
+kluis["Sam"] = "liniaal"
+print(kluis["Noor"])
+print(len(kluis))
+for naam, ding in kluis.items():
+    print(naam, ding)
+```
+
+Gok eerst: hoeveel kluisjes zijn er aan het eind? ______
+
+<div className="handout-teltabel">
+
+| Na regel | De kluisjes (naam: inhoud) | Op het scherm |
+|:---:|---|---|
+| 1 | | |
+| 2 | | |
+| 3 | | |
+| 4 | | |
+| 5 | | |
+| 6 en 7 | | |
+
+</div>
+
+## Een kluisje dat er niet is
+
+Wat doen deze twee programma's? Gok eerst, speel het dan.
+
+{/* niet-draaien: valt expres om; het antwoordblad toont de melding */}
+
+```python
+kluis = {"Sam": "liniaal", "Noor": "boek", "Ali": "pen"}
+print(kluis["Bo"])
+```
+
+```python
+kluis = {"Sam": "liniaal", "Noor": "boek", "Ali": "pen"}
+if "Bo" in kluis:
+    print(kluis["Bo"])
+else:
+    print("Bo heeft geen kluisje.")
+```
+
+Mijn gok bij het eerste: ______ Bij het tweede: ______
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. Regel 3 zet iets in kluisje `Sam`. Kwam er een kluisje bij?
+2. Bij een lijst schrijf je `snoep[0]`. Wat zou `kluis[0]` doen, en
+   waarom?
+3. Wanneer kies je een dictionary in plaats van een lijst?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+**Het programma.** Regel 3 vervangt de inhoud van kluisje `Sam`: er komt
+geen kluisje bij. Aan het eind zijn er drie.
+
+```python
+kluis = {"Sam": "gum", "Noor": "boek"}
+kluis["Ali"] = "pen"
+kluis["Sam"] = "liniaal"
+print(kluis["Noor"])
+print(len(kluis))
+for naam, ding in kluis.items():
+    print(naam, ding)
+```
+
+Uitvoer:
+
+```
+boek
+3
+Sam liniaal
+Noor boek
+Ali pen
+```
+
+**Een kluisje dat er niet is.** Het eerste programma stopt:
+
+```python
+kluis = {"Sam": "liniaal", "Noor": "boek", "Ali": "pen"}
+print(kluis["Bo"])
+```
+
+Uitvoer:
+
+```
+KeyError: 'Bo'
+```
+
+Het tweede kijkt eerst met `in`, en opent alleen een kluisje dat er is. Het
+print `Bo heeft geen kluisje.`
+
+{/* foutmelding-van: kluis = {"Sam": "liniaal"}\nkluis[0] */}
+
+**Bespreek na.** Vraag 2: `kluis[0]` zoekt een kluisje met de naam `0`,
+en dat is er niet: weer een `KeyError`. Vraag 3: als je iets op naam
+opzoekt, zoals een woord in een woordenlijst.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [11a Dictionaries](site:python/docs/data/11a-dictionaries-basis)
+  en [11b Door een dictionary lopen](site:python/docs/data/11b-itereren-dictionaries).
+- In het project [Woordjes overhoren](site:python/docs/projecten/woordjes-overhoren/stap-1-dictionary)
+  is de woordenlijst zo'n kast met kluisjes.
+
+</div>
+
+</Handout>
