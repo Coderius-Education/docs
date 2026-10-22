@@ -128,7 +128,9 @@ const RUNNERS = {
   },
   fullstack: {
     site: 'fullstack',
-    leest: ['{site}/docs/'],
+    // Naast de codeblokken draait de job het controlescript voor leerlingen
+    // tegen het referentieproject en een kapotte kopie (src/controle/draai.py).
+    leest: ['{site}/docs/', '{site}/static/controleer.py', '{site}/src/controle/'],
     alles: [...COMPILEER, '{site}/src/code-tests/schrijf.ts'],
   },
   godot: {

@@ -2,6 +2,8 @@
 title: Project checken
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 import { Checker } from '@coderius/checker/Checker';
 import { fullstackConfig } from '@site/src/checker/config';
 
@@ -18,3 +20,47 @@ Heb je je FastAPI-project af, of ben je een eind op weg? Upload je projectbestan
 - Een **hele map** met je project
 
 <Checker config={fullstackConfig} variant="leerling" />
+
+## Je server controleren
+
+De nakijker hierboven leest je bestanden. Of je server ook doet wat de les belooft, zie je pas als hij draait. Daarvoor is er een klein Python-script dat je server per hoofdstuk nakijkt.
+
+1. Download <a href={useBaseUrl('/controleer.py')} download>controleer.py</a> en zet het in je projectmap, naast `main.py`.
+2. Start je server in de terminal van VS Code met `fastapi dev main.py`.
+3. Open een tweede terminal met het plusje (+) rechtsboven in het terminalpaneel.
+4. Typ daar `python controleer.py` en de naam van het hoofdstuk:
+
+```bash
+python controleer.py formulieren
+```
+
+Draait je server op een andere poort, zet het adres er dan achter: `python controleer.py formulieren --adres http://127.0.0.1:8001`.
+
+| Hoofdstuk | Typ |
+|:---|:---|
+| Je eerste server | `eerste-server` |
+| Losse pagina's en routes | `paginas` |
+| Eén route voor veel pagina's | `veel-paginas` |
+| CSS en afbeeldingen | `css-en-afbeeldingen` |
+| Templates en formulieren | `formulieren` |
+| Berichten opslaan | `berichten-opslaan` |
+| Berichten tonen | `berichten-tonen` |
+| Berichten verwijderen | `berichten-verwijderen` |
+| Accounts | `accounts` |
+
+Gegevens opslaan (SqliteDict) staat er niet bij: die lessen zijn losse scripts, zonder server. Typ je `python controleer.py` zonder hoofdstuk, dan toont het script deze lijst.
+
+Elke regel is één controle. Een ✓ betekent dat je server doet wat de les belooft. Bij een ✗ staat eronder wat er mis is, wat je eraan kunt doen en een link naar de uitleg. Onderaan staat hoeveel controles goed gingen. Een eerder hoofdstuk kun je later opnieuw controleren: je project groeit, maar wat toen werkte, hoort te blijven werken.
+
+```
+✓ Het formulier op /groet past bij POST /groet (naam).
+✗ Het formulier op /naam mist het veld naam.
+    POST /verstuur verwacht naam; het formulier stuurt voornaam. Maak het name-attribuut letter voor letter gelijk aan de parameter in Python.
+```
+
+Vanaf Berichten opslaan schrijft het script in je databases. Het zegt vooraf wat het toevoegt:
+
+- een bericht met `controle-` en vier cijfers erin. Kan je server al verwijderen, dan haalt het script het daarna weer weg.
+- het account `controle-0000`, als je gastenboek om een wachtwoord vraagt. Dat blijft staan, want een account verwijderen zit niet in de cursus.
+- bij `berichten-opslaan` ook een naam in `namen.db`. Daarna zet het de naam terug die er stond.
+- bij `accounts` elke keer een nieuw account met `controle-` en vier cijfers, want dat hoofdstuk controleert ook het registreren.

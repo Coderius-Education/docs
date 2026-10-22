@@ -291,6 +291,13 @@ jobs:
   # kapotte voorbeelden — de FOUT/GOED-blokken in troubleshooting en losse
   # fragmenten uit een handler — slaan we over met de marker
   # `{/* niet-compileren: reden */}`.
+  #
+  # Daarna het controlescript voor leerlingen (static/controleer.py): het
+  # draait met uvicorn tegen het eindproject van de basis
+  # (src/controle/referentie/), dat elk hoofdstuk goed moet hebben, en tegen
+  # een kopie met bekende fouten (src/controle/kapot.py), waarin elke fout
+  # zijn ✗ moet geven. Op Python 3.10, de oudste die het script belooft, en
+  # met dezelfde packages als de installatieles.
   fullstack:
     needs: plan
     if: needs.plan.outputs.fullstack == 'true'
@@ -317,6 +324,16 @@ jobs:
 
       - name: Codevoorbeelden compileren
         run: python3 scripts/compileer-blokken.py sites/informatica/fullstack/code-tests/extracted --alleen changed.json
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.10'
+
+      - name: Packages van de cursus installeren
+        run: python -m pip install "fastapi[standard]" sqlitedict
+
+      - name: Controlescript tegen het referentieproject en een kapotte kopie
+        run: python sites/informatica/fullstack/src/controle/draai.py
 
   # Play gaat een stap verder dan compileren: elk speeltuin-blok wordt echt
   # uitgevoerd tegen de gebundelde wheel uit static/whl/ — dezelfde die de
