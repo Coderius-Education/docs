@@ -17,28 +17,30 @@ goed je was: `Geraden in 3 pogingen.` Daarvoor tel je mee.
 
 ## Opdracht: hoeveel pogingen?
 
+Plak je programma uit stap 2 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 2](site:python/docs/projecten/raad-het-getal/stap-2-while).
+
 Tel elke gok, en zeg bij een goede gok hoeveel pogingen het waren.
 
-{/* invoer: 50 | 25 | 37 */}
+Verwachte uitvoer als je 50, 25 en 37 typt:
 
-<CodeExercise>{`geheim = 37
-gok = 0
-while gok != geheim:
-    gok = int(input("Raad een getal van 1 tot 100: "))
-    if gok > geheim:
-        print("Te hoog.")
-    elif gok < geheim:
-        print("Te laag.")
-    else:
-        print("Geraden.")`}</CodeExercise>
+```
+Raad een getal van 1 tot 100: 50
+Te hoog.
+Raad een getal van 1 tot 100: 25
+Te laag.
+Raad een getal van 1 tot 100: 37
+Geraden in 3 pogingen.
+```
+
+<CodeExercise>{`# Plak hier je programma uit stap 2`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Een teller heeft twee regels nodig: één boven de loop die hem op 0 zet, en
-één in de loop die er 1 bij doet. Doe dat direct na de `input`, want elke
-gok telt, ook een foute. Zet het aantal daarna in de tekst met
-`f"Geraden in {pogingen} pogingen."`.
+Een teller heeft twee plekken in je programma: één waar hij begint, en
+één waar er 1 bij komt. Welke van de twee hoort in de loop, en welke
+erboven? Elke gok telt, ook een foute.
 
 </details>
 
@@ -85,5 +87,7 @@ en daarna komt er 1 bij. Zo telt hij nooit verder dan 1. Een teller begint
 dus altijd boven de loop.
 
 </details>
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 4: een geheim getal](site:python/docs/projecten/raad-het-getal/stap-4-random).

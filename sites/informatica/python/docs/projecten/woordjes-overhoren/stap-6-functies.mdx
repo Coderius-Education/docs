@@ -25,6 +25,9 @@ twee keer maken. Met functies schrijf je het overhoren één keer.
 
 ## Opdracht: `vraag` en `overhoor`
 
+Plak je programma uit stap 5 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 5](site:python/docs/projecten/woordjes-overhoren/stap-5-rondes).
+
 1. Schrijf een functie `vraag(woord, vertaling, taal)`. Die stelt één
    vraag, zegt `Goed.` of `Fout, het is …`, en geeft met `return` terug of
    het antwoord goed was: `True` of `False`.
@@ -33,44 +36,45 @@ twee keer maken. Met functies schrijf je het overhoren één keer.
 3. Overhoor eerst Engels en dan Frans, en print na elke taal
    `Engels: klaar na 2 rondes.` (met de goede taal en het goede aantal).
 
-Typ bij Engels `house`, `three`, `cat` en `tree`. Typ bij Frans `maison`,
-`arbre` en `chat`.
+Verwachte uitvoer als je bij Engels `house`, `three`, `cat` en `tree` typt,
+en bij Frans `maison`, `arbre` en `chat`:
 
-{/* invoer: house | three | cat | tree */}
+```
+Ronde 1
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+Ronde 2
+Wat is boom in het Engels? tree
+Goed.
+Engels: klaar na 2 rondes.
+Ronde 1
+Wat is huis in het Frans? maison
+Goed.
+Wat is boom in het Frans? arbre
+Goed.
+Wat is kat in het Frans? chat
+Goed.
+Frans: klaar na 1 rondes.
+```
 
-<CodeExercise>{`woorden = {"huis": "house", "boom": "tree", "kat": "cat"}
-
-te_doen = []
-for nederlands in woorden:
-    te_doen.append(nederlands)
-
-ronde = 0
-while len(te_doen) > 0:
-    ronde += 1
-    print(f"Ronde {ronde}")
-    fout = []
-    for nederlands in te_doen:
-        engels = woorden[nederlands]
-        antwoord = input(f"Wat is {nederlands} in het Engels? ")
-        if antwoord.lower() == engels:
-            print("Goed.")
-        else:
-            print(f"Fout, het is {engels}.")
-            fout.append(nederlands)
-    te_doen = fout
-print(f"Klaar na {ronde} rondes.")`}</CodeExercise>
+<CodeExercise>{`# Plak hier je programma uit stap 5`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Begin met `vraag`: dat zijn de regels van `antwoord = input(…)` tot en met
-de `else`. Zet `return True` onder `Goed.` en `return False` onder de
-foutmelding. `nederlands` en `engels` heten in de functie `woord` en
-`vertaling`, want ze zijn niet meer altijd Nederlands en Engels.
+Begin met `vraag`. Zoek in je programma het stuk dat één woord vraagt en
+nakijkt: dat wordt de functie. Waar je nu `Goed.` of `Fout` print, weet je
+ook wat de functie moet teruggeven. Binnen de functie zijn de woorden niet
+meer altijd Nederlands en Engels, dus kies namen die bij elke taal passen.
 
-Daarna `overhoor`: de rest van je programma, met `return ronde` in plaats
-van de laatste print. In de ronde wordt het nakijken één regel:
-`if not vraag(woord, woorden[woord], taal):`, en daaronder de `append`.
+Daarna `overhoor`: dat zijn de rondes. Het nakijken in de ronde doet nu
+`vraag` voor je, en wat `vraag` teruggeeft, zegt of het woord in de lijst
+met fouten moet. Kijk in And, or en elif hoe je met `not` een voorwaarde
+omdraait.
 
 </details>
 

@@ -19,6 +19,9 @@ het hoogste getal verschilt. Dat hoogste getal wordt dus een parameter.
 
 ## Opdracht: `speel(hoogste)`
 
+Plak je programma uit stap 5 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 5](site:python/docs/projecten/raad-het-getal/stap-5-break).
+
 Maak van je spel een functie `speel(hoogste)`:
 
 1. Het geheime getal gaat van 1 tot en met `hoogste`, en de vraag noemt
@@ -26,37 +29,30 @@ Maak van je spel een functie `speel(hoogste)`:
 2. Na het spel geeft de functie met `return` het aantal pogingen terug.
 
 Speel daarna eerst een makkelijk spel en dan een moeilijk, en print
-hoeveel pogingen het samen waren: `Samen 3 pogingen.`
+hoeveel pogingen het samen waren. Een spel kan zo gaan:
 
-{/* invoer met zaad 3: 50 | 25 | stop */}
+```
+Raad een getal van 1 tot 10: 5
+Te laag.
+Raad een getal van 1 tot 10: 8
+Geraden in 2 pogingen.
+Raad een getal van 1 tot 1000: 500
+Te laag.
+Raad een getal van 1 tot 1000: stop
+Jammer. Het getal was 628.
+Samen 3 pogingen.
+```
 
-<CodeExercise>{`import random
-
-geheim = random.randint(1, 100)
-gok = 0
-pogingen = 0
-while gok != geheim:
-    tekst = input("Raad een getal van 1 tot 100: ")
-    if tekst == "stop":
-        print(f"Jammer. Het getal was {geheim}.")
-        break
-    gok = int(tekst)
-    pogingen += 1
-    if gok > geheim:
-        print("Te hoog.")
-    elif gok < geheim:
-        print("Te laag.")
-    else:
-        print(f"Geraden in {pogingen} pogingen.")`}</CodeExercise>
+<CodeExercise>{`# Plak hier je programma uit stap 5`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Zet `def speel(hoogste):` boven het spel en spring alles daaronder één keer
-in. `import random` blijft bovenaan, buiten de functie. Op twee plekken
-staat nu nog 100: in `randint` en in de vraag. Daar komt `hoogste`. De
-`return pogingen` staat onder de loop, op dezelfde inspringing als
-`while`, want hij hoort pas te gebeuren als het spel voorbij is.
+Alles wat bij één spel hoort, gaat de functie in. Moet de import daar ook
+in, of kan hij erboven blijven? Zoek daarna de plekken waar nu 100 staat.
+Het aantal pogingen geef je pas terug als het spel voorbij is: waar in je
+functie is dat? De twee spellen en de som staan onder de functie, niet
+erin.
 
 </details>
 

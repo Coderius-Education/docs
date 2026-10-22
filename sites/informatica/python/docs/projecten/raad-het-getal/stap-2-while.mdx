@@ -19,27 +19,31 @@ Dat is werk voor een `while`-loop.
 
 ## Opdracht: raden tot het goed is
 
-Zet het vragen en het antwoorden in een `while`-loop die doorgaat zolang
-de gok niet goed is. Typ als test 50, 25 en 37.
+Plak je programma uit stap 1 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 1](site:python/docs/projecten/raad-het-getal/stap-1-een-gok).
 
-{/* invoer: 50 */}
+Laat het programma blijven vragen en antwoorden, tot de gok goed is.
 
-<CodeExercise>{`geheim = 37
-gok = int(input("Raad een getal van 1 tot 100: "))
-if gok > geheim:
-    print("Te hoog.")
-elif gok < geheim:
-    print("Te laag.")
-else:
-    print("Geraden.")`}</CodeExercise>
+Verwachte uitvoer als je 50, 25 en 37 typt:
+
+```
+Raad een getal van 1 tot 100: 50
+Te hoog.
+Raad een getal van 1 tot 100: 25
+Te laag.
+Raad een getal van 1 tot 100: 37
+Geraden.
+```
+
+<CodeExercise>{`# Plak hier je programma uit stap 1`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-De voorwaarde is `gok != geheim`. Python kijkt daar al naar vóór de eerste
-ronde, dus `gok` moet dan al een waarde hebben. Geef hem boven de loop een
-waarde die nooit het geheim is, zoals 0. Alles vanaf de `input` gaat de
-loop in.
+Bedenk eerst welke regels elke ronde opnieuw moeten gebeuren: die gaan de
+loop in. De voorwaarde van de loop zegt wanneer er nog geraden moet
+worden. Python kijkt al vóór de eerste ronde naar die voorwaarde, dus de
+gok moet dan al een waarde hebben. Kies er een die nooit het geheim is.
 
 </details>
 
@@ -87,5 +91,7 @@ fout, dan blijft de voorwaarde voor altijd waar: een oneindige loop.
 
 **Oplossing:** druk op Stop, en zet de regel met `input` in de loop. Die
 regel is de update-stap van je loop.
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 3: pogingen tellen](site:python/docs/projecten/raad-het-getal/stap-3-pogingen).

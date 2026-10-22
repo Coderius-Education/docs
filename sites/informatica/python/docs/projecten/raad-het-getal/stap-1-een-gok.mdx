@@ -26,29 +26,37 @@ Raad een getal van 1 tot 100: 31
 Geraden in 4 pogingen.
 ```
 
-Je begint met één gok, en een geheim getal dat vaststaat: 37.
+Dat programma schrijf je zelf, in zes stappen. Je begint met één gok, en
+een geheim getal dat vaststaat: 37.
 
 ## Opdracht: te hoog, te laag of geraden
 
-Het programma hieronder vraagt al om een gok. Druk op Uitvoeren en typ 50.
-Pas het dan aan, zodat het zegt of de gok te hoog is, te laag, of goed:
+Schrijf een programma dat:
 
-- is de gok groter dan 37, dan print je `Te hoog.`
-- kleiner dan 37: `Te laag.`
-- precies 37: `Geraden.`
+1. het geheime getal 37 in een variabele bewaart;
+2. de speler om een gok vraagt met `Raad een getal van 1 tot 100: `;
+3. zegt of die gok te hoog is (`Te hoog.`), te laag (`Te laag.`) of goed
+   (`Geraden.`).
 
-{/* invoer: 50 */}
+Verwachte uitvoer als je 50 typt:
 
-<CodeExercise>{`geheim = 37
-gok = int(input("Raad een getal van 1 tot 100: "))
-print(f"Je raadt {gok}.")`}</CodeExercise>
+```
+Raad een getal van 1 tot 100: 50
+Te hoog.
+```
+
+Probeer daarna ook 20 en 37, zodat je alle drie de antwoorden een keer ziet.
+
+<CodeExercise>{`# Schrijf hier je programma`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Er zijn drie mogelijkheden, dus je hebt `if`, `elif` en `else` nodig.
-Vergelijk `gok` met `geheim`, niet met 37: in stap 4 kiest de computer
-het getal zelf, en dan staat er geen 37 meer.
+Wat de speler typt, is tekst, en tekst kun je niet met een getal
+vergelijken. Kijk in Tekst naar getal hoe je er een getal van maakt. Er
+zijn drie mogelijke antwoorden, dus je hebt drie takken nodig. Vergelijk
+met je variabele, niet met 37 zelf: in stap 4 kiest de computer het getal,
+en dan staat er geen 37 meer.
 
 </details>
 
@@ -75,8 +83,6 @@ Raad een getal van 1 tot 100: 50
 Te hoog.
 ```
 
-Probeer ook 20 en 37, zodat je alle drie de antwoorden een keer ziet.
-
 </details>
 
 ## Er gaat iets mis
@@ -90,6 +96,9 @@ TypeError: '>' not supported between instances of 'str' and 'int'
 **Oorzaak:** je bent `int()` om de `input()` vergeten. Dan is `gok` tekst,
 en tekst kan Python niet met een getal vergelijken.
 
-**Oplossing:** zet `int(…)` om de `input(…)`, zoals in de startcode.
+**Oplossing:** maak van de invoer een getal met `int()`.
+
+In de volgende stap bouw je verder op dit programma. Kopieer je programma
+voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 2: blijven raden](site:python/docs/projecten/raad-het-getal/stap-2-while).

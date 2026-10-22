@@ -35,27 +35,32 @@ Engels woord. Het Nederlandse woord is de sleutel, het Engelse de waarde.
 
 ## Opdracht: alle woorden
 
-Het programma hieronder vraagt alleen naar `huis`. Laat het met een
-for-loop elk woord uit `woorden` vragen. Typ als test `house`, `three` en
-`cat`.
+De woordenlijst staat al in het veld. Schrijf eronder een programma dat
+elk woord uit de lijst vraagt, en zegt of het antwoord goed is. Bij een
+fout zegt het wat het goede woord was.
 
-{/* invoer: house */}
+Verwachte uitvoer als je `house`, `three` en `cat` typt:
+
+```
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+```
 
 <CodeExercise>{`woorden = {"huis": "house", "boom": "tree", "kat": "cat"}
 
-antwoord = input("Wat is huis in het Engels? ")
-if antwoord == "house":
-    print("Goed.")
-else:
-    print("Fout, het is house.")`}</CodeExercise>
+# Schrijf hier je programma`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-`for nederlands, engels in woorden.items():` geeft je elke ronde een paar:
-het Nederlandse woord en het Engelse. Zet de vraag en de `if` in de loop,
-en vervang `"huis"` en `"house"` door die twee variabelen. In de vraag en
-in `Fout, het is …` heb je een f-string nodig.
+Elk woord gaat op dezelfde manier, dus je hebt een loop nodig. In Door een
+dictionary lopen staat hoe je in elke ronde de sleutel én de waarde
+krijgt. Welke van de twee komt in de vraag, en met welke vergelijk je het
+antwoord?
 
 </details>
 
@@ -91,5 +96,7 @@ woord erbij is nu één paar in `woorden`; de rest van het programma blijft
 hetzelfde.
 
 </details>
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 2: de score](site:python/docs/projecten/woordjes-overhoren/stap-2-score).

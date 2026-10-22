@@ -37,33 +37,38 @@ print(random.randint(1, 6))`}</CodeExercise>
 
 ## Opdracht: de computer kiest
 
+Plak je programma uit stap 3 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 3](site:python/docs/projecten/raad-het-getal/stap-3-pogingen).
+
 Laat de computer een geheim getal van 1 tot en met 100 kiezen in plaats
-van 37. De rest van je programma hoeft niet te veranderen.
+van 37. De rest van je programma hoeft niet te veranderen. Een spel kan
+dan zo gaan:
 
-{/* invoer: 50 | 25 | 37 */}
+```
+Raad een getal van 1 tot 100: 50
+Te hoog.
+Raad een getal van 1 tot 100: 25
+Te laag.
+Raad een getal van 1 tot 100: 37
+Te hoog.
+Raad een getal van 1 tot 100: 31
+Geraden in 4 pogingen.
+```
 
-<CodeExercise>{`geheim = 37
-gok = 0
-pogingen = 0
-while gok != geheim:
-    gok = int(input("Raad een getal van 1 tot 100: "))
-    pogingen += 1
-    if gok > geheim:
-        print("Te hoog.")
-    elif gok < geheim:
-        print("Te laag.")
-    else:
-        print(f"Geraden in {pogingen} pogingen.")`}</CodeExercise>
+Bij jou is het geheime getal waarschijnlijk anders, dus ook wat de
+computer zegt.
+
+<CodeExercise>{`# Plak hier je programma uit stap 3`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Twee regels veranderen: `import random` komt helemaal bovenaan, en
-`geheim = 37` wordt `geheim = random.randint(1, 100)`.
+Kijk naar de dobbelsteen hierboven: wat moet je anders doen voor een getal
+van 1 tot en met 100? En waar in je programma moet de module erbij komen?
 
-Wil je testen of je programma klopt, zet dan tijdelijk `print(geheim)`
-onder die regel. Dan weet je wat je moet raden. Haal hem weg als het werkt,
-anders is er niets meer te raden.
+Wil je testen of je programma klopt, print dan tijdelijk het geheim. Dan
+weet je wat je moet raden. Haal die regel weg als het werkt, anders is er
+niets meer te raden.
 
 </details>
 
@@ -102,9 +107,6 @@ Raad een getal van 1 tot 100: 31
 Geraden in 4 pogingen.
 ```
 
-Bij jou is het geheime getal waarschijnlijk anders, dus ook wat de
-computer zegt.
-
 </details>
 
 ## Er gaat iets mis
@@ -119,5 +121,7 @@ NameError: name 'random' is not defined. Did you forget to import 'random'?
 ontbreekt, of staat onder de plek waar je hem gebruikt.
 
 **Oplossing:** zet `import random` op de eerste regel van je programma.
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 5: stoppen met stop](site:python/docs/projecten/raad-het-getal/stap-5-break).

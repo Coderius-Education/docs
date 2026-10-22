@@ -17,25 +17,32 @@ deed: `Je had 2 van de 3 goed.`
 
 ## Opdracht: hoeveel goed?
 
-Tel de goede antwoorden, en print na de loop de score.
+Plak je programma uit stap 1 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 1](site:python/docs/projecten/woordjes-overhoren/stap-1-dictionary).
 
-{/* invoer: house | three | cat */}
+Tel de goede antwoorden, en print na de laatste vraag de score.
 
-<CodeExercise>{`woorden = {"huis": "house", "boom": "tree", "kat": "cat"}
+Verwachte uitvoer als je `house`, `three` en `cat` typt:
 
-for nederlands, engels in woorden.items():
-    antwoord = input(f"Wat is {nederlands} in het Engels? ")
-    if antwoord == engels:
-        print("Goed.")
-    else:
-        print(f"Fout, het is {engels}.")`}</CodeExercise>
+```
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+Je had 2 van de 3 goed.
+```
+
+<CodeExercise>{`# Plak hier je programma uit stap 1`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Zet `goed = 0` boven de loop, en doe er in de `if` 1 bij. Het aantal woorden
-hoef je niet zelf te tellen: `len()` werkt ook op een dictionary, en geeft
-het aantal paren. Zo klopt de score nog als je er woorden bij zet.
+Een teller begint vóór de loop, en gaat omhoog bij een goed antwoord. De 3
+in de score hoef je niet zelf te tellen: `len()` werkt ook op een
+dictionary, en geeft het aantal paren. Dan klopt de score nog als je er
+woorden bij zet.
 
 </details>
 
@@ -83,5 +90,7 @@ ingesprongen staat, hoort bij de loop en gebeurt elke ronde. De score hoort
 er één keer na.
 
 </details>
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 3: hoofdletters](site:python/docs/projecten/woordjes-overhoren/stap-3-hoofdletters).

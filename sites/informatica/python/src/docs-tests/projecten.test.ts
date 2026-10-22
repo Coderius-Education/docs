@@ -25,6 +25,13 @@ function projectmappen(map: string): string[] {
 
 const projecten = projectmappen(PROJECTEN).map((pad) => relative(PROJECTEN, pad));
 
+// In deze projecten schrijft de leerling elke stap zelf. De startcode is
+// leeg (stap 1: alleen de gegevens), stap 2 en verder beginnen met zijn eigen
+// programma uit de stap ervoor, en de tip wijst de weg zonder de regels voor
+// te zeggen. Eerst stond de oplossing van de vorige stap in het veld en de
+// nieuwe regels in de tip, en dan typte de leerling alleen over.
+const ZELF_SCHRIJVEN = ['raad-het-getal', 'woordjes-overhoren'];
+
 describe('projecten in de python-cursus', () => {
   it('er is minstens één project, en de navbar heeft een link Projecten', () => {
     expect(projecten.length).toBeGreaterThan(0);
@@ -82,6 +89,43 @@ describe('projecten in de python-cursus', () => {
           expect(s.tekst, s.naam).toMatch(/^sidebar_label: 'Stap \d+: .+'$/m);
         }
       });
+
+      if (ZELF_SCHRIJVEN.includes(project)) {
+        it('de leerling schrijft de code zelf: geen code in de startcode of de tip', () => {
+          stappen.forEach((s, i) => {
+            const opdracht = s.tekst.slice(s.tekst.search(/^## Opdracht/m));
+            const startcode = opdracht.match(/<CodeExercise>\{`([\s\S]*?)`\}<\/CodeExercise>/)?.[1];
+            expect(startcode, s.naam).toBeDefined();
+            // Alleen commentaar, en in stap 1 de gegevens waar het programma mee werkt.
+            const code = (startcode ?? '')
+              .split('\n')
+              .filter((r) => r.trim() !== '' && !r.trim().startsWith('#'));
+            if (i === 0) {
+              expect(
+                code.every((r) => /^\w+ = [{["\d]/.test(r)),
+                s.naam,
+              ).toBe(true);
+            } else {
+              expect(code, s.naam).toEqual([]);
+              expect(startcode, s.naam).toContain(`# Plak hier je programma uit stap ${i}`);
+            }
+            const tip = s.tekst.match(
+              /<summary>Klik hier voor een tip\.<\/summary>([\s\S]*?)<\/details>/,
+            )?.[1];
+            expect(tip, s.naam).not.toMatch(/```/);
+            // Een tip noemt hooguit een naam (`len()`), geen regel code.
+            for (const stuk of tip?.match(/`[^`]+`/g) ?? []) {
+              expect(stuk, `${s.naam}: ${stuk}`).not.toMatch(/[=:]|\w\(.+\)/);
+            }
+          });
+        });
+
+        it('de editor bewaart niets, dus elke stap zegt: kopieer je programma', () => {
+          for (const s of stappen.slice(0, -1)) {
+            expect(s.tekst, s.naam).toContain('Kopieer je programma');
+          }
+        });
+      }
 
       it('de projectkiezer kent het project, met de eerste stap en het aantal stappen', () => {
         const eerste = `/docs/projecten/${project}/${stappen[0].naam.replace(/\.mdx$/, '')}`;
