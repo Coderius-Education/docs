@@ -29,6 +29,10 @@ describe('de print-CSS van de hand-outs', () => {
     }
   });
 
+  it('op papier is de tekst zwart, ook in donkere modus', () => {
+    expect(css).toMatch(/body\.handout-page,\s*body\.handout-page \* \{\s*color: #000 !important;/);
+  });
+
   it('de component zet @page neer bij het openen en haalt hem weg bij het sluiten', () => {
     expect(component).toMatch(/PAGINA = '@page \{ size: A4; margin: 10mm 12mm; \}'/);
     expect(component).toMatch(/document\.head\.appendChild\(pagina\)/);

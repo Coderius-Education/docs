@@ -220,6 +220,14 @@
     break-inside: avoid;
   }
 
+  /* Papier is wit, ook als de site in donkere modus staat: dan printte de
+     tekst lichtgrijs (rgb 226, 234, 230) op wit, bijna onleesbaar. Op
+     papier is zwart altijd goed, ook voor de gekleurde code. */
+  body.handout-page,
+  body.handout-page * {
+    color: #000 !important;
+  }
+
   /* Een programma met de regel eronder waarop de leerling zijn gok schrijft:
      zonder dit stond het programma onderaan de ene pagina en "Mijn gok:
      ______" bovenaan de volgende. */
