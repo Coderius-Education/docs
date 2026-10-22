@@ -239,6 +239,10 @@ Zoeken en vanzelf verversen gaan niet samen: de `<div>` die elke tien seconden v
 
 Bij htmx zie je fouten niet op de pagina. Een 404, een 500 of een server die uit staat: htmx laat het doel dan met rust, en op het scherm gebeurt niets. Kijk daarom bij elk probleem eerst in het tabblad **Netwerk**. htmx meldt de fout ook in het tabblad **Console**, met een rode regel als `Response Status Error Code 404 from /bericht/…`; dat tabblad leer je kennen in [Console en Elementen](site:fullstack/docs/FastAPI/in-de-browser/devtools-console). Een rode regel in Netwerk zegt wat er mis is: 404 is een verkeerd pad in `hx-get` of `hx-post`, 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait, 405 een `@app.post` waar `hx-delete` op wijst.
 
+:::tip[Controleer je server]
+Laat je server draaien en typ in een tweede terminal `python controleer.py zonder-herladen`. Het script kijkt of `/tijd` en de recepten die je bouwde een stukje HTML teruggeven, zonder omleiding; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
+:::
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - De omleiding

@@ -31,9 +31,10 @@ from html.parser import HTMLParser
 
 CURSUS = "https://informatica.coderius.nl/fullstack"
 
-# De hoofdstukken van de basis die een server hebben, in de volgorde van de
-# cursus. De sleutel is de map van het hoofdstuk, de waarde de titel in de
-# zijbalk. Gegevens opslaan (sqlitedict) heeft geen server en staat er niet in.
+# De hoofdstukken die een server hebben, in de volgorde van de cursus: de
+# basis, de uitbreidingen en Afronden. De sleutel is de map van het hoofdstuk,
+# de waarde de titel in de zijbalk. Gegevens opslaan (sqlitedict) heeft geen
+# server en staat er niet in.
 HOOFDSTUKKEN = {
     "eerste-server": "Je eerste server",
     "paginas": "Losse pagina's en routes",
@@ -44,6 +45,10 @@ HOOFDSTUKKEN = {
     "berichten-tonen": "Berichten tonen",
     "berichten-verwijderen": "Berichten verwijderen",
     "accounts": "Accounts",
+    "zonder-herladen": "Uitbreiding: zonder herladen (htmx)",
+    "in-de-browser": "Uitbreiding: JavaScript in de browser",
+    "onthouden": "Uitbreiding: onthouden (cookies en sessies)",
+    "afronden": "Afronden",
 }
 
 # Waar de uitleg staat bij elke fout: een pagina van de cursus, met een anker
@@ -87,6 +92,26 @@ UITLEG = {
     "inloggen-422": "docs/FastAPI/accounts/inloggen#422-na-verstuur",
     "inloggen": "docs/FastAPI/accounts/inloggen#de-controle",
     "inloggen-401": "docs/FastAPI/accounts/inloggen#401-met-het-goede-wachtwoord",
+    "htmx-bestand": "docs/FastAPI/zonder-herladen/htmx#waar-het-bestand-komt",
+    "htmx-knop": "docs/FastAPI/zonder-herladen/htmx#een-knop-en-een-lege-alinea",
+    "htmx-endpoint": "docs/FastAPI/zonder-herladen/htmx#het-endpoint",
+    "htmx-mis": "docs/FastAPI/zonder-herladen/htmx-overzicht#er-gaat-iets-mis",
+    "htmx-formulier": "docs/FastAPI/zonder-herladen/htmx-overzicht#een-formulier-versturen",
+    "htmx-verversen": "docs/FastAPI/zonder-herladen/htmx-overzicht#een-stuk-van-de-pagina-verversen",
+    "htmx-verwijderen": "docs/FastAPI/zonder-herladen/htmx-overzicht#verwijderen",
+    "htmx-zoeken": "docs/FastAPI/zonder-herladen/htmx-overzicht#zoeken-terwijl-je-typt",
+    "js-bestand": "docs/FastAPI/in-de-browser/javascript#waar-het-bestand-komt",
+    "js-mis": "docs/troubleshooting#uitbreiding-javascript-in-de-browser",
+    "lengte": "docs/FastAPI/in-de-browser/server-of-browser#de-derde-vraag-mag-je-het-geloven",
+    "sessie-inloggen": "docs/FastAPI/onthouden/sessies#inloggen-maakt-een-sessie",
+    "sessie-formulier": "docs/FastAPI/onthouden/sessies#het-formulier-inloggen-of-schrijven",
+    "sessie-bericht": "docs/FastAPI/onthouden/sessies#een-bericht-op-naam-van-de-sessie",
+    "sessie-mis": "docs/troubleshooting#uitbreiding-onthouden-cookies-en-sessies",
+    "foutpagina": "docs/FastAPI/afronden/foutpagina#de-handler-bouwen",
+    "foutpagina-andere": "docs/FastAPI/afronden/foutpagina#een-handler-voor-404",
+    "foutpagina-200": "docs/FastAPI/afronden/foutpagina#netwerk-zegt-200-bij-je-foutpagina",
+    "foutpagina-500": "docs/FastAPI/afronden/foutpagina#elk-onbekend-adres-geeft-internal-server-error",
+    "foutpagina-json": "docs/FastAPI/afronden/foutpagina#een-onbekend-adres-geeft-nog-steeds-json",
 }
 
 WACHTTIJD = 10
@@ -117,6 +142,7 @@ class Antwoord:
     status: int
     headers: dict
     tekst: str
+    cookies: list = field(default_factory=list)  # de namen uit Set-Cookie
 
     @property
     def soort(self) -> str:
@@ -130,6 +156,11 @@ class Antwoord:
     def is_json(self) -> bool:
         return "application/json" in self.soort
 
+    @property
+    def is_stukje(self) -> bool:
+        """Een stukje HTML voor htmx: geen hele pagina en geen omleiding."""
+        return 200 <= self.status < 300 and "<html" not in self.tekst.lower() and not self.is_json
+
     def json(self):
         try:
             return json.loads(self.tekst)
@@ -142,8 +173,12 @@ class Antwoord:
 
     @property
     def niet_gevonden(self) -> bool:
-        """Een 404 omdat geen endpoint bij het pad past, niet een 404 van je eigen code."""
-        if self.status != 404:
+        """Een 404 omdat geen endpoint bij het pad past, niet een 404 van je eigen code.
+
+        Met een eigen 404-pagina (Afronden) zijn die twee niet uit elkaar te
+        houden; zo'n 404 telt dan als een 404 van je eigen code.
+        """
+        if self.status != 404 or self.is_html:
             return False
         detail = (self.json() or {}).get("detail") if self.is_json else None
         return detail is None or detail == "Not Found"
@@ -157,24 +192,34 @@ class NietDoorsturen(urllib.request.HTTPRedirectHandler):
 class Server:
     def __init__(self, adres: str):
         self.adres = adres.rstrip("/")
+        # Een browser met een koekjestrommel, en een zonder: om te zien wat
+        # je server doet als iemand zonder (of met een verzonnen) cookie komt.
+        self.koekjes = http.cookiejar.CookieJar()
         self.opener = urllib.request.build_opener(
             urllib.request.ProxyHandler({}),
-            urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()),
+            urllib.request.HTTPCookieProcessor(self.koekjes),
             NietDoorsturen(),
         )
+        self.kaal = urllib.request.build_opener(urllib.request.ProxyHandler({}), NietDoorsturen())
         self._routes = None
         self._routes_geladen = False
 
-    def verzoek(self, methode: str, pad: str, velden: dict | None = None) -> Antwoord:
+    def verzoek(
+        self, methode: str, pad: str, velden: dict | None = None, cookie: str | None = None
+    ) -> Antwoord:
+        """Een verzoek; met `cookie` (ook "") zonder de koekjestrommel, met alleen die cookie."""
         data = urllib.parse.urlencode(velden).encode() if velden is not None else None
         req = urllib.request.Request(self.adres + pad, data=data, method=methode)
         if data is not None:
             req.add_header("Content-Type", "application/x-www-form-urlencoded")
+        if cookie:
+            req.add_header("Cookie", cookie)
+        opener = self.opener if cookie is None else self.kaal
         try:
-            with self.opener.open(req, timeout=WACHTTIJD) as r:
-                return Antwoord(r.status, _kop(r.headers), r.read().decode("utf-8", "replace"))
+            with opener.open(req, timeout=WACHTTIJD) as r:
+                return _antwoord(r.status, r.headers, r.read())
         except urllib.error.HTTPError as e:
-            return Antwoord(e.code, _kop(e.headers), e.read().decode("utf-8", "replace"))
+            return _antwoord(e.code, e.headers, e.read())
         except (urllib.error.URLError, ConnectionError, socket.timeout, TimeoutError) as e:
             reden = getattr(e, "reason", e)
             traag = isinstance(reden, (socket.timeout, TimeoutError))
@@ -183,8 +228,11 @@ class Server:
     def get(self, pad: str) -> Antwoord:
         return self.verzoek("GET", pad)
 
-    def post(self, pad: str, velden: dict) -> Antwoord:
-        return self.verzoek("POST", pad, velden)
+    def post(self, pad: str, velden: dict, cookie: str | None = None) -> Antwoord:
+        return self.verzoek("POST", pad, velden, cookie)
+
+    def cookie(self, naam: str) -> str | None:
+        return next((k.value for k in self.koekjes if k.name == naam), None)
 
     # De routes uit /openapi.json, of None als die uit staat.
     @property
@@ -201,10 +249,11 @@ class Server:
         return self._routes
 
     def _route(self, methode: str, pad: str):
-        """De route uit /openapi.json; de naam tussen {} telt niet mee."""
-        kaal = re.sub(r"\{[^}]*\}", "{}", pad)
+        """De route uit /openapi.json bij een pad als /bericht/{sleutel} of /bericht/b_17."""
+        pad = re.sub(r"\{[^}]*\}", "x", pad.split("?")[0])
         for (m, p), velden in (self.routes or {}).items():
-            if m == methode and re.sub(r"\{[^}]*\}", "{}", p) == kaal:
+            patroon = "^" + re.sub(r"\\\{[^}]*\\\}", "[^/]+", re.escape(p)) + "$"
+            if m == methode and re.match(patroon, pad):
                 return velden
         return None
 
@@ -215,6 +264,10 @@ class Server:
         voorbeeld = re.sub(r"\{[^}]+\}", "controle", pad)
         if methode == "GET":
             return not self.get(voorbeeld).niet_gevonden
+        if methode != "POST":
+            # Nooit een echte sleutel: een DELETE zou het bericht weghalen.
+            r = self.verzoek(methode, voorbeeld.rsplit("/", 1)[0] + "/bestaat-niet-controle")
+            return r.status != 405 and not r.niet_gevonden
         # Een POST zonder velden: een endpoint met verplichte velden weigert
         # hem met 422 voordat je code draait.
         r = self.post(voorbeeld, {})
@@ -249,8 +302,10 @@ class Server:
         return " Wel: " + ", ".join(f"{methode} {p}" for p in toon) + meer + "."
 
 
-def _kop(headers) -> dict:
-    return {k.lower(): v for k, v in headers.items()}
+def _antwoord(status: int, headers, inhoud: bytes) -> Antwoord:
+    cookies = [c.split("=", 1)[0].strip() for c in headers.get_all("Set-Cookie") or []]
+    kop = {k.lower(): v for k, v in headers.items()}
+    return Antwoord(status, kop, inhoud.decode("utf-8", "replace"), cookies)
 
 
 def _velden_uit_spec(spec: dict, info: dict) -> list[str]:
@@ -273,6 +328,10 @@ class Formulier:
     methode: str
     velden: list[str] = field(default_factory=list)
     waarden: dict = field(default_factory=dict)
+    htmx: bool = False  # hx-post in plaats van method en action
+
+
+HX = ("get", "post", "delete", "put", "patch")
 
 
 class Pagina(HTMLParser):
@@ -284,13 +343,26 @@ class Pagina(HTMLParser):
         self.links: list[str] = []
         self.stylesheets: list[str] = []
         self.afbeeldingen: list[str] = []
+        self.scripts: list[str] = []
+        self.ids: set[str] = set()
+        self.hx: list[tuple[str, str]] = []  # (methode, pad) uit hx-get, hx-post, …
         self._open: Formulier | None = None
         self.feed(html)
 
     def handle_starttag(self, tag, attrs):
         a = {k: (v or "") for k, v in attrs}
+        if a.get("id"):
+            self.ids.add(a["id"])
+        for m in HX:
+            if a.get(f"hx-{m}"):
+                self.hx.append((m.upper(), a[f"hx-{m}"]))
+        if tag == "script" and a.get("src"):
+            self.scripts.append(a["src"])
         if tag == "form":
-            self._open = Formulier(a.get("action"), a.get("method", "get").lower())
+            if a.get("hx-post"):
+                self._open = Formulier(a["hx-post"], "post", htmx=True)
+            else:
+                self._open = Formulier(a.get("action"), a.get("method", "get").lower())
             self.formulieren.append(self._open)
         elif tag in ("input", "textarea", "select", "button") and self._open and a.get("name"):
             self._open.velden.append(a["name"])
@@ -336,6 +408,7 @@ class Controle:
         # accounts maakt een nieuw account met de marker als naam.
         self.account_naam = VAST_ACCOUNT
         self.account = False
+        self.ingelogd = False
         self.schrijver = self.marker
         self.achteraf: list[str] = []
 
@@ -460,8 +533,12 @@ class Controle:
     def gastenboek_velden(self) -> list[str] | None:
         return self.s.velden("POST", "/gastenboek")
 
+    def sessies(self) -> bool:
+        """Vanaf Sessies komt de naam uit de sessie: inloggen gaat via /inloggen."""
+        return self.s.bestaat("POST", "/inloggen") and "naam" not in (self.gastenboek_velden() or ["naam"])
+
     def heeft_account_nodig(self) -> bool:
-        return "wachtwoord" in (self.gastenboek_velden() or [])
+        return "wachtwoord" in (self.gastenboek_velden() or []) or self.sessies()
 
     def zorg_voor_account(self):
         if self.account or not self.s.bestaat("POST", "/registreer"):
@@ -469,11 +546,30 @@ class Controle:
         r = self.s.post("/registreer", {"naam": self.account_naam, "wachtwoord": self.wachtwoord})
         self.account = r.status in (200, 302, 303, 307, 400)
 
+    def log_in(self, naam: str | None = None, wachtwoord: str | None = None) -> Antwoord:
+        r = self.s.post("/inloggen", {"naam": naam or self.account_naam, "wachtwoord": wachtwoord or self.wachtwoord})
+        self.ingelogd = r.status < 400 and naam is None and wachtwoord is None
+        return r
+
+    def zorg_voor_toegang(self):
+        """Een account, en met sessies ook een sessie, zodat het script mag schrijven."""
+        if not self.heeft_account_nodig():
+            return
+        self.zorg_voor_account()
+        if self.sessies() and not self.ingelogd:
+            self.log_in()
+
+    def gastenboek_htmx(self) -> bool:
+        """Verstuurt het formulier op /gastenboek met hx-post (het htmx-recept)?"""
+        self.zorg_voor_toegang()
+        r = self.s.get("/gastenboek")
+        return any(f.htmx and lokaal("/gastenboek", f.actie or "") == "/gastenboek" for f in Pagina(r.tekst).formulieren)
+
     def plaats_bericht(self, tekst: str, naam: str | None = None, wachtwoord: str | None = None) -> Antwoord:
         verwacht = self.gastenboek_velden() or ["naam", "bericht"]
-        met_account = "wachtwoord" in verwacht
-        if met_account and wachtwoord is None:
-            self.zorg_voor_account()
+        met_account = "wachtwoord" in verwacht or self.sessies()
+        if met_account and wachtwoord is None and naam is None:
+            self.zorg_voor_toegang()
         self.schrijver = naam or (self.account_naam if met_account else self.marker)
         velden = {}
         for v in verwacht:
@@ -512,7 +608,7 @@ class Controle:
         ]
         kandidaten += [
             urllib.parse.unquote(h.split("/bericht/", 1)[1])
-            for h in pagina.links
+            for h in pagina.links + [p for m, p in pagina.hx if m == "DELETE"]
             if (lokaal("/berichten", h) or "").startswith("/bericht/")
         ]
         kandidaten = [k for k in dict.fromkeys(kandidaten) if k]
@@ -535,7 +631,7 @@ class Controle:
         teksten = [t for t in dict.fromkeys(teksten) if t in lijst]
         if not teksten:
             return
-        if not self.s.bestaat("POST", "/verwijderen"):
+        if not self.kan_verwijderen():
             wat = "Het bericht" if len(teksten) == 1 else "De berichten"
             blijft = "blijft" if len(teksten) == 1 else "blijven"
             self.achteraf.append(
@@ -546,7 +642,7 @@ class Controle:
         weg = 0
         for tekst in teksten:
             sleutel = self.sleutel_van(tekst)
-            if sleutel and self.s.post("/verwijderen", {"sleutel": sleutel}).status < 400:
+            if sleutel and self.verwijder(sleutel).status < 400:
                 weg += 1
         if weg == len(teksten):
             wat = "het bericht is" if weg == 1 else "de berichten zijn"
@@ -555,6 +651,14 @@ class Controle:
             self.achteraf.append(
                 f"Niet alle berichten met {self.marker} konden weg; verwijder ze zelf op /berichten."
             )
+
+    def kan_verwijderen(self) -> bool:
+        return self.s.bestaat("POST", "/verwijderen") or self.s.bestaat("DELETE", "/bericht/{sleutel}")
+
+    def verwijder(self, sleutel: str) -> Antwoord:
+        if self.s.bestaat("POST", "/verwijderen"):
+            return self.s.post("/verwijderen", {"sleutel": sleutel})
+        return self.s.verzoek("DELETE", "/bericht/" + urllib.parse.quote(sleutel, safe=""))
 
     def meld_schrijven(self, *delen: str):
         delen = [d for d in delen if d]
@@ -565,11 +669,13 @@ class Controle:
     def account_deel(self) -> str:
         if not self.heeft_account_nodig():
             return ""
+        if self.sessies():
+            return f"het account {self.account_naam} in gebruikers.db en sessies in sessies.db (blijven staan)"
         return f"het account {self.account_naam} in gebruikers.db (blijft staan)"
 
     def berichten_deel(self, aantal: int) -> str:
         wat = "een bericht" if aantal == 1 else "twee berichten"
-        weg = " (daarna weer weg)" if self.s.bestaat("POST", "/verwijderen") else ""
+        weg = " (daarna weer weg)" if self.kan_verwijderen() else ""
         return f"{wat} met {self.marker} in gastenboek.db{weg}"
 
     def bericht_tekst(self, nummer: int = 1) -> str:
@@ -867,6 +973,7 @@ def berichten_opslaan(c: Controle):
             else:
                 c.achteraf.append(f"In namen.db staat nu de naam {c.marker}.")
 
+    c.zorg_voor_toegang()
     c.formulier(
         "/gastenboek",
         "/gastenboek",
@@ -875,6 +982,7 @@ def berichten_opslaan(c: Controle):
     )
     if c.gastenboek_velden() is None:
         return
+    htmx = c.gastenboek_htmx()
 
     teksten = [c.bericht_tekst(1), c.bericht_tekst(2)]
     geplaatst = []
@@ -885,7 +993,10 @@ def berichten_opslaan(c: Controle):
         if r.status < 400:
             geplaatst.append(tekst)
     r = eerste
-    if r.status == 303 and r.locatie == "/berichten":
+    if htmx:
+        # Het htmx-recept: de pagina blijft staan, dus geen omleiding.
+        htmx_antwoord(c, r, "POST /gastenboek", "htmx-formulier")
+    elif r.status == 303 and r.locatie == "/berichten":
         c.ok("POST /gastenboek stuurt door naar /berichten (303).")
     elif r.status in (302, 303, 307):
         if r.status != 303:
@@ -1011,7 +1122,7 @@ def _berichten_tonen(c: Controle, tekst: str):
 def berichten_verwijderen(c: Controle):
     # Eerst zonder te schrijven: bestaat het endpoint?
     verwacht = c.s.velden("POST", "/verwijderen")
-    if verwacht is None:
+    if verwacht is None and not c.s.bestaat("DELETE", "/bericht/{sleutel}"):
         c.geen_endpoint("POST", "/verwijderen", "verwijderen")
         return
     c.meld_schrijven(c.account_deel(), c.berichten_deel(1))
@@ -1023,12 +1134,19 @@ def berichten_verwijderen(c: Controle):
         c.ruim_op([tekst])
 
 
-def _berichten_verwijderen(c: Controle, tekst: str, verwacht: list[str]):
-
+def _berichten_verwijderen(c: Controle, tekst: str, verwacht: list[str] | None):
     b = c.s.get("/berichten")
-    formulieren = [
-        f for f in Pagina(b.tekst).formulieren if lokaal("/berichten", f.actie or "/berichten") == "/verwijderen"
-    ]
+    pagina = Pagina(b.tekst)
+    formulieren = [f for f in pagina.formulieren if lokaal("/berichten", f.actie or "/berichten") == "/verwijderen"]
+    knoppen = [p for m, p in pagina.hx if m == "DELETE"]
+    if not formulieren and knoppen:
+        # Het htmx-recept Verwijderen: een knop met hx-delete in plaats van het formulier.
+        c.ok("Bij de berichten staat een knop die verwijdert met hx-delete.")
+        htmx_verwijderen(c, tekst)
+        return
+    if formulieren and verwacht is None:
+        c.geen_endpoint("POST", "/verwijderen", "verwijderen")
+        raise Stop("zonder POST /verwijderen valt de rest niet te controleren")
     if not formulieren:
         c.fout(
             "Op /berichten staat geen formulier naar /verwijderen.",
@@ -1092,7 +1210,12 @@ def accounts(c: Controle):
     c.account_naam = c.marker
     kan_registreren = c.s.bestaat("POST", "/registreer")
     c.meld_schrijven(
-        f"het account {c.marker} in gebruikers.db (blijft staan)" if kan_registreren else "",
+        (
+            f"het account {c.marker} in gebruikers.db"
+            + (" en sessies in sessies.db (blijven staan)" if c.sessies() else " (blijft staan)")
+        )
+        if kan_registreren
+        else "",
         c.berichten_deel(1) if kan_registreren and c.heeft_account_nodig() else "",
     )
     c.formulier("/registreer", "/registreer", "registreer-formulier", bij_velden="registreer-422")
@@ -1121,6 +1244,11 @@ def accounts(c: Controle):
                 "registreer",
             )
 
+    if c.sessies():
+        # Vanaf Sessies log je één keer in via /inloggen, en controleert die
+        # het wachtwoord; het gastenboek vraagt er dan niet meer om.
+        accounts_met_sessies(c)
+        return
     c.formulier("/gastenboek", "/gastenboek", "inloggen-formulier", bij_velden="inloggen-422")
     if c.gastenboek_velden() is None:
         return
@@ -1182,6 +1310,398 @@ def accounts(c: Controle):
     c.ruim_op(opgeslagen)
 
 
+def accounts_met_sessies(c: Controle):
+    c.formulier("/gastenboek", "/inloggen", "sessie-formulier", bij_velden="inloggen-422")
+    if not c.account:
+        c.zorg_voor_account()
+    r = c.log_in(wachtwoord="fout-wachtwoord")
+    if r.status == 401:
+        c.ok("Inloggen met een fout wachtwoord geeft 401.")
+    else:
+        c.fout(
+            f"Inloggen met een fout wachtwoord geeft {r.status} in plaats van 401.",
+            "Vergelijk in /inloggen het opgeslagen wachtwoord met wat er binnenkwam, en stop met "
+            "raise HTTPException(status_code=401, …) als ze verschillen.",
+            "sessie-inloggen",
+        )
+    r = c.log_in(naam=f"{c.marker}-onbekend", wachtwoord="een-wachtwoord")
+    if r.status == 401:
+        c.ok("Inloggen met een naam zonder account geeft 401.")
+    else:
+        c.fout(
+            f"Inloggen met een naam zonder account geeft {r.status} in plaats van 401.",
+            "Haal het wachtwoord op met gebruikers.get(naam): een naam zonder account geeft None, en dat is nooit gelijk.",
+            "sessie-inloggen",
+        )
+    tekst = c.bericht_tekst(1)
+    r = c.plaats_bericht(tekst)
+    if r.status < 400 and tekst in c.s.get("/berichten").tekst:
+        c.ok("Na het inloggen met het goede wachtwoord komt je bericht op /berichten.")
+    else:
+        c.fout(
+            "Na het inloggen met het goede wachtwoord komt je bericht niet op /berichten.",
+            c.status_zin(r, "POST /gastenboek"),
+            "sessie-bericht",
+        )
+    c.ruim_op([tekst])
+
+
+# ── Uitbreidingen en Afronden ────────────────────────────────────────────────
+
+
+def htmx_antwoord(c: Controle, r: Antwoord, wat: str, sleutel: str) -> bool:
+    """Geeft een htmx-endpoint een stukje HTML, en geen omleiding of hele pagina?"""
+    if r.status in (301, 302, 303, 307, 308):
+        c.fout(
+            f"{wat} stuurt door naar {r.locatie or 'een andere pagina'} ({r.status}).",
+            "htmx volgt een omleiding en zet dan de hele pagina in het doel. "
+            "Geef een HTMLResponse of een template met alleen het stukje terug.",
+            sleutel,
+        )
+    elif r.status >= 400:
+        c.fout(f"{wat} doet het niet.", c.status_zin(r, wat), sleutel)
+    elif not r.is_stukje:
+        c.fout(
+            f"{wat} geeft een hele pagina terug, geen stukje HTML.",
+            "htmx zet het antwoord in het doel; met <html> erin staat je pagina dubbel. Geef alleen het stukje terug.",
+            sleutel,
+        )
+    else:
+        c.ok(f"{wat} geeft een stukje HTML terug, zonder omleiding.")
+        return True
+    return False
+
+
+def scripts_laden(c: Controle, pad: str, scripts: list[str], wat: str, sleutel: str) -> bool:
+    for doel in scripts:
+        r = c.s.get(doel)
+        if r.status != 200 or "javascript" not in r.soort:
+            reden = f"status {r.status}" if r.status != 200 else f"het type is {r.soort or 'onbekend'}"
+            c.fout(
+                f"{doel} op {pad} laadt niet ({reden}).",
+                "Kijk of het bestand in static/js/ staat en of src in de <script>-tag precies dat pad heeft.",
+                sleutel,
+            )
+            return False
+    c.ok(f"{wat} op {pad} laadt ({opsomming(scripts)}).")
+    return True
+
+
+def hx_wijst(c: Controle, pad: str, pagina: Pagina, sleutel: str) -> bool:
+    """Wijst elke hx-get, hx-post en hx-delete op de pagina naar een endpoint?"""
+    doelen = [(m, d) for m, d in ((m, lokaal(pad, p)) for m, p in pagina.hx) if d]
+    kapot = [f"hx-{m.lower()} {d}" for m, d in dict.fromkeys(doelen) if not c.s.bestaat(m, d)]
+    if kapot:
+        c.fout(
+            f"Op {pad} wijst {opsomming(kapot)} naar een endpoint dat je server niet heeft.",
+            "Het pad in hx-get, hx-post of hx-delete en de methode moeten passen bij een @app.get, @app.post of "
+            "@app.delete; anders staat er in Netwerk een 404 of 405.",
+            sleutel,
+        )
+        return False
+    soorten = opsomming(sorted({f"hx-{m.lower()}" for m, _ in doelen}))
+    c.ok(f"Elke {soorten} op {pad} wijst naar een endpoint van je server.")
+    return True
+
+
+def htmx_verwijderen(c: Controle, tekst: str):
+    sleutel = c.sleutel_van(tekst)
+    if not sleutel:
+        c.fout(
+            "De knop bij je nieuwe bericht wijst niet naar /bericht/<sleutel>.",
+            'Zet de sleutel in de knop: hx-delete="/bericht/{{ sleutel }}".',
+            "htmx-verwijderen",
+        )
+        return
+    pad = "/bericht/" + urllib.parse.quote(sleutel, safe="")
+    if not htmx_antwoord(c, c.s.verzoek("DELETE", pad), "DELETE /bericht/<sleutel>", "htmx-verwijderen"):
+        return
+    if tekst in c.s.get("/berichten").tekst:
+        c.fout(
+            "Na DELETE /bericht/<sleutel> staat het bericht nog op /berichten.",
+            "Haal het bericht weg met del db[sleutel], en vergeet db.commit() niet.",
+            "htmx-verwijderen",
+        )
+    else:
+        c.ok("Na DELETE /bericht/<sleutel> is het bericht weg.")
+    r = c.s.verzoek("DELETE", pad)
+    if r.status == 404:
+        c.ok("Een bericht dat al weg is nog een keer verwijderen geeft 404.")
+    else:
+        c.fout(
+            f"Een bericht dat al weg is nog een keer verwijderen geeft {r.status} in plaats van 404.",
+            'Kijk eerst of de sleutel er is: if sleutel not in db: raise HTTPException(status_code=404, …).',
+            "htmx-verwijderen",
+        )
+
+
+def zonder_herladen(c: Controle):
+    r = c.s.get("/tijd")
+    if r.niet_gevonden:
+        c.geen_endpoint("GET", "/tijd", "htmx-endpoint")
+    else:
+        htmx_antwoord(c, r, "GET /tijd", "htmx-endpoint")
+
+    r = c.pagina("/", "htmx-knop", "Je homepage")
+    if r is not None:
+        pagina = Pagina(r.tekst)
+        htmx = [d for d in (lokaal("/", s) for s in pagina.scripts) if d and "htmx" in d]
+        if htmx:
+            scripts_laden(c, "/", htmx, "htmx", "htmx-bestand")
+        else:
+            c.fout(
+                "Op / staat geen <script> voor htmx.",
+                'Zet <script src="/static/js/htmx.min.js"></script> in de <head>; zonder doet een knop met hx-get niets.',
+                "htmx-bestand",
+            )
+        if pagina.hx:
+            hx_wijst(c, "/", pagina, "htmx-mis")
+        else:
+            c.fout(
+                "Op / staat geen knop met hx-get.",
+                'Zet een knop op je homepage: <button hx-get="/tijd" hx-target="#uitkomst">.',
+                "htmx-knop",
+            )
+
+    # De recepten zijn een keuze: alleen wat er staat, wordt gecontroleerd.
+    b = c.s.get("/berichten")
+    lijst = Pagina(b.tekst) if b.is_html else Pagina("")
+    verversen = c.s.bestaat("GET", "/berichten/lijst")
+    verwijderen = c.s.bestaat("DELETE", "/bericht/{sleutel}") or any(m == "DELETE" for m, _ in lijst.hx)
+    zoeken = verversen and 'name="term"' in b.tekst
+    if c.gastenboek_velden() is not None:
+        c.meld_schrijven(c.account_deel(), c.berichten_deel(1))
+    formulier = c.gastenboek_velden() is not None and c.gastenboek_htmx()
+    if not (verversen or verwijderen or formulier):
+        print("De htmx-recepten (formulier, verversen, verwijderen, zoeken) heb je niet gebouwd; die zijn een keuze.")
+        return
+    tekst = c.bericht_tekst()
+    r = c.bericht_erin(tekst)
+    try:
+        if formulier:
+            htmx_antwoord(c, r, "POST /gastenboek", "htmx-formulier")
+        # Nu met een bericht erin, dus ook met de knoppen per bericht.
+        lijst = Pagina(c.s.get("/berichten").tekst)
+        if lijst.hx:
+            hx_wijst(c, "/berichten", lijst, "htmx-mis")
+        if verversen:
+            r = c.s.get("/berichten/lijst")
+            if htmx_antwoord(c, r, "GET /berichten/lijst", "htmx-verversen") and tekst not in r.tekst:
+                c.fout(
+                    "Je nieuwe bericht staat niet in /berichten/lijst.",
+                    "Stuur in /berichten/lijst dezelfde berichten mee als in /berichten: list(db.items()).",
+                    "htmx-verversen",
+                )
+        if zoeken:
+            wel = c.s.get("/berichten/lijst?term=" + urllib.parse.quote(c.marker))
+            niet = c.s.get("/berichten/lijst?term=" + urllib.parse.quote(f"{c.marker}-niet"))
+            if tekst in wel.tekst and tekst not in niet.tekst:
+                c.ok("Zoeken met /berichten/lijst?term= toont alleen de berichten met dat woord.")
+            else:
+                c.fout(
+                    "Zoeken met /berichten/lijst?term= toont niet alleen de berichten met dat woord.",
+                    'Geef het endpoint een parameter term: str = "" en houd alleen de berichten waar term in staat.',
+                    "htmx-zoeken",
+                )
+        if verwijderen:
+            htmx_verwijderen(c, tekst)
+    finally:
+        c.ruim_op([tekst])
+
+
+def in_de_browser(c: Controle):
+    c.meld_schrijven(
+        c.account_deel(), f"een te lang bericht met {c.marker}, als je server het niet weigert (daarna weer weg)"
+    )
+    c.zorg_voor_toegang()
+    r = c.pagina("/gastenboek", "js-bestand", "Je gastenboek")
+    if r is not None:
+        pagina = Pagina(r.tekst)
+        alle = [d for d in (lokaal("/gastenboek", s) for s in pagina.scripts) if d]
+        eigen = [d for d in alle if "htmx" not in d]
+        if not eigen:
+            c.fout(
+                "Op /gastenboek staat geen eigen JavaScript-bestand.",
+                'Koppel je script in de <head>: <script src="/static/js/app.js" defer></script>.',
+                "js-bestand",
+            )
+        elif scripts_laden(c, "/gastenboek", alle, "JavaScript", "js-bestand"):
+            gezocht = []
+            for doel in eigen:
+                code = c.s.get(doel).tekst
+                gezocht += re.findall(r"querySelector\(\s*[\"']#([\w-]+)[\"']\s*\)", code)
+                gezocht += re.findall(r"getElementById\(\s*[\"']([\w-]+)[\"']\s*\)", code)
+            gezocht = list(dict.fromkeys(gezocht))
+            mist = [f"#{i}" for i in gezocht if i not in pagina.ids]
+            if mist:
+                c.fout(
+                    f"Je JavaScript zoekt {opsomming(mist)}, maar dat staat niet op /gastenboek.",
+                    "Dan staat er in de Console Cannot read properties of null. Geef het element in je HTML dat id.",
+                    "js-mis",
+                )
+            elif gezocht:
+                c.ok(f"Wat je JavaScript zoekt, staat op /gastenboek ({opsomming('#' + i for i in gezocht)}).")
+
+    if c.gastenboek_velden() is None:
+        c.geen_endpoint("POST", "/gastenboek", "lengte")
+        return
+    te_lang = f"Te lang bericht van het controlescript ({c.marker}) ".ljust(81, "x")
+    r = c.plaats_bericht(te_lang)
+    if r.status == 400:
+        c.ok("Een bericht van 81 tekens geeft 400.")
+    else:
+        c.fout(
+            f"Een bericht van 81 tekens geeft {r.status} in plaats van 400.",
+            "maxlength in je HTML is geen controle. Zet bovenaan in POST /gastenboek: if len(bericht) > 80: "
+            'raise HTTPException(status_code=400, detail="Bericht is te lang").',
+            "lengte",
+        )
+        c.ruim_op([te_lang])
+
+
+def onthouden(c: Controle):
+    if not c.s.bestaat("POST", "/inloggen"):
+        c.geen_endpoint("POST", "/inloggen", "sessie-inloggen")
+        return
+    c.meld_schrijven(c.account_deel(), c.berichten_deel(1))
+    c.zorg_voor_account()
+    c.formulier("/gastenboek", "/inloggen", "sessie-formulier")
+
+    r = c.log_in(wachtwoord="fout-wachtwoord")
+    if r.status == 401 and "sessie_id" not in r.cookies:
+        c.ok("Inloggen met een fout wachtwoord geeft 401, zonder cookie.")
+    else:
+        c.fout(
+            f"Inloggen met een fout wachtwoord geeft {r.status}"
+            + (" en een cookie sessie_id." if "sessie_id" in r.cookies else " in plaats van 401."),
+            "Controleer het wachtwoord vóór je een sessie maakt, en stop met raise HTTPException(status_code=401, …).",
+            "sessie-inloggen",
+        )
+
+    r = c.log_in()
+    if r.status in (302, 303) and r.locatie == "/gastenboek" and "sessie_id" in r.cookies:
+        c.ok("Inloggen stuurt door naar /gastenboek en zet de cookie sessie_id.")
+    elif r.status < 400 and "sessie_id" not in r.cookies:
+        c.fout(
+            "Inloggen zet geen cookie sessie_id.",
+            "Zet set_cookie op het antwoord dat je ook echt returnt: antwoord = RedirectResponse(…), "
+            "antwoord.set_cookie(key=\"sessie_id\", …), return antwoord.",
+            "sessie-inloggen",
+        )
+    elif r.status < 400:
+        c.fout(
+            f"Inloggen geeft {r.status} in plaats van een 303 naar /gastenboek.",
+            'Stuur na het inloggen door met RedirectResponse(url="/gastenboek", status_code=303).',
+            "sessie-inloggen",
+        )
+    else:
+        c.fout("Inloggen met het goede wachtwoord lukt niet.", c.status_zin(r, "POST /inloggen"), "sessie-inloggen")
+
+    g = c.s.get("/gastenboek")
+    schrijven = [f for f in Pagina(g.tekst).formulieren if lokaal("/gastenboek", f.actie or "/gastenboek") == "/gastenboek"]
+    if c.account_naam in g.tekst and schrijven:
+        c.ok(f"Na het inloggen weet /gastenboek wie je bent ({c.account_naam}).")
+    else:
+        c.fout(
+            "Na het inloggen weet /gastenboek niet wie je bent: je ziet weer het inlogformulier.",
+            "Staat de cookie sessie_id er wel, kijk dan of sessies.commit() in je /inloggen staat, en of "
+            "GET /gastenboek de naam uit sessies.get(sessie_id, {}) meestuurt.",
+            "sessie-mis",
+        )
+
+    opgeslagen = []
+    for wat, cookie in (("zonder sessie", ""), ("met een verzonnen sessie_id", f"sessie_id=verzonnen-{c.marker}")):
+        tekst = c.bericht_tekst(2)
+        r = c.s.post("/gastenboek", {"bericht": tekst}, cookie=cookie)
+        if r.status == 401:
+            c.ok(f"Een bericht {wat} geeft 401.")
+        else:
+            if r.status < 400:
+                opgeslagen.append(tekst)
+            c.fout(
+                f"Een bericht {wat} geeft {r.status} in plaats van 401.",
+                "Zoek de sessie op met sessies.get(sessie_id, {}), en stop met "
+                'raise HTTPException(status_code=401, detail="Log eerst in") als die leeg is.',
+                "sessie-bericht",
+            )
+
+    tekst = c.bericht_tekst(1)
+    c.ingelogd = c.s.cookie("sessie_id") is not None
+    r = c.plaats_bericht(tekst)
+    b = c.s.get("/berichten").tekst
+    if r.status < 400:
+        opgeslagen.append(tekst)
+    if r.status < 400 and tekst in b and c.account_naam in b.replace(tekst, ""):
+        c.ok(f"Met een sessie komt je bericht op /berichten, op naam van {c.account_naam}.")
+    else:
+        c.fout(
+            "Met een sessie komt je bericht niet op /berichten, op de naam uit de sessie.",
+            c.status_zin(r, "POST /gastenboek") + ' Neem de naam uit de sessie: mijn["naam"].',
+            "sessie-bericht",
+        )
+    c.ruim_op(opgeslagen)
+
+
+def afronden(c: Controle):
+    pad = f"/bestaat-niet-{c.marker}"
+    r = c.s.get(pad)
+    if r.status == 404 and r.is_html:
+        c.ok(f"Een onbekend adres geeft je eigen pagina, met 404 ({pad}).")
+    elif r.status == 404:
+        c.fout(
+            "Een onbekend adres geeft nog JSON.",
+            "Maak een handler met @app.exception_handler(404) die 404.html teruggeeft.",
+            "foutpagina-json",
+        )
+    elif r.status == 500:
+        c.fout(
+            "Een onbekend adres geeft 500 Internal Server Error.",
+            "Staat er TemplateNotFound in je terminal? Zet 404.html in de map templates/, niet in static/.",
+            "foutpagina-500",
+        )
+    elif r.status == 200:
+        c.fout(
+            "Een onbekend adres geeft je pagina met status 200.",
+            "Geef de status mee: templates.TemplateResponse(request, \"404.html\", {…}, status_code=404).",
+            "foutpagina-200",
+        )
+    else:
+        c.fout("Een onbekend adres doet het niet.", c.status_zin(r, f"GET {pad}"), "foutpagina")
+
+    if c.s.bestaat("GET", "/bericht/{sleutel}"):
+        r = c.s.get(f"/bericht/bestaat-niet-{c.marker}")
+        if r.status == 404 and r.is_html:
+            c.ok("Je eigen raise HTTPException(status_code=404) gaat ook door de handler.")
+        else:
+            c.fout(
+                f"Een bericht dat niet bestaat geeft {r.status} met {r.soort or 'iets zonder type'}.",
+                "Gebruik @app.exception_handler(404): die vangt ook je eigen raise HTTPException(status_code=404).",
+                "foutpagina",
+            )
+
+    json_blijft = []
+    r = c.s.post("/", {})
+    json_blijft.append(("405", r.status == 405, r))
+    vorm = "/registreer" if c.s.bestaat("POST", "/registreer") else "/verstuur"
+    r = c.s.post(vorm, {})
+    json_blijft.append(("422", r.status == 422, r))
+    if c.sessies():
+        json_blijft.append(("401", True, c.log_in(naam=f"{c.marker}-onbekend", wachtwoord="x")))
+    elif "wachtwoord" in (c.gastenboek_velden() or []):
+        r = c.plaats_bericht(c.bericht_tekst(), naam=f"{c.marker}-onbekend", wachtwoord="x")
+        json_blijft.append(("401", True, r))
+    mis = [code for code, juist, r in json_blijft if not (juist and r.status == int(code) and r.is_json)]
+    if mis:
+        c.fout(
+            f"Een {opsomming(mis)} is geen JSON meer.",
+            "Maak een handler voor 404 alleen, met @app.exception_handler(404). Een handler voor elke fout maakt "
+            "van een verkeerde methode of een fout wachtwoord een Niet gevonden.",
+            "foutpagina-andere",
+        )
+    else:
+        c.ok(f"Andere fouten blijven JSON ({opsomming(code for code, _, _ in json_blijft)}).")
+
+
 CONTROLES = {
     "eerste-server": eerste_server,
     "paginas": paginas,
@@ -1192,6 +1712,10 @@ CONTROLES = {
     "berichten-tonen": berichten_tonen,
     "berichten-verwijderen": berichten_verwijderen,
     "accounts": accounts,
+    "zonder-herladen": zonder_herladen,
+    "in-de-browser": in_de_browser,
+    "onthouden": onthouden,
+    "afronden": afronden,
 }
 
 

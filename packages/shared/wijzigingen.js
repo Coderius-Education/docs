@@ -129,8 +129,14 @@ const RUNNERS = {
   fullstack: {
     site: 'fullstack',
     // Naast de codeblokken draait de job het controlescript voor leerlingen
-    // tegen het referentieproject en een kapotte kopie (src/controle/draai.py).
-    leest: ['{site}/docs/', '{site}/static/controleer.py', '{site}/src/controle/'],
+    // tegen het referentieproject en kapotte kopieën (src/controle/draai.py);
+    // het eindproject met de uitbreidingen neemt static/htmx/htmx.min.js mee.
+    leest: [
+      '{site}/docs/',
+      '{site}/static/controleer.py',
+      '{site}/static/htmx/',
+      '{site}/src/controle/',
+    ],
     alles: [...COMPILEER, '{site}/src/code-tests/schrijf.ts'],
   },
   godot: {

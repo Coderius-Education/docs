@@ -207,6 +207,8 @@ describe('plan', () => {
       `${MAP.fullstack}/static/controleer.py`,
       `${MAP.fullstack}/src/controle/draai.py`,
       `${MAP.fullstack}/src/controle/kapot.py`,
+      `${MAP.fullstack}/src/controle/uitbreidingen.py`,
+      `${MAP.fullstack}/static/htmx/htmx.min.js`,
       `${MAP.fullstack}/src/controle/referentie/templates/berichten.html`,
     ]) {
       const p = planVoor({ [pad]: [[3, 3]] }, [MAP.fullstack]);

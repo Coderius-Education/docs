@@ -7,12 +7,12 @@ import { describe, expect, it } from 'vitest';
 import sidebars from '../../sidebars';
 
 // static/controleer.py kijkt de draaiende server van een leerling na, per
-// hoofdstuk van de basis, en wijst bij elke fout naar de uitleg. Het script
-// draait bij de leerling, buiten de site, dus de links erin zijn volledige
-// URL's en de hoofdstukken een eigen lijst. Deze test houdt die gelijk met de
-// registry, de docs en sidebars.ts. Of de controles zelf kloppen, draait
-// draai.py met uvicorn tegen het referentieproject en een kapotte kopie (job
-// fullstack in CI).
+// hoofdstuk van de basis, de uitbreidingen en Afronden, en wijst bij elke
+// fout naar de uitleg. Het script draait bij de leerling, buiten de site, dus
+// de links erin zijn volledige URL's en de hoofdstukken een eigen lijst. Deze
+// test houdt die gelijk met de registry, de docs en sidebars.ts. Of de
+// controles zelf kloppen, draait draai.py met uvicorn tegen de
+// referentieprojecten en kapotte kopieën (job fullstack in CI).
 
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
 const DOCS = join(SITE, 'docs');
@@ -43,10 +43,21 @@ const basis = api
 const lesTekst = (id: string) => readFileSync(join(DOCS, `${id}.mdx`), 'utf8');
 const STAND = /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python\n([\s\S]*?)```/;
 
+// Alle categorieën van de FastAPI-route: de basis, de uitbreidingen en Afronden.
+const categorieen = api.filter((i): i is Exclude<Item, string> => typeof i !== 'string');
+
 // Een categorie heeft een server als een van haar lessen een stand van
-// main.py met een endpoint heeft; SqliteDict (losse scripts) heeft dat niet.
-const metServer = basis
-  .filter((c) => plat(c.items).some((id) => STAND.exec(lesTekst(id))?.[1].includes('@app.')))
+// main.py met een endpoint heeft (de basis), of in de hoofdtekst een
+// python-blok met een endpoint of een handler (de uitbreidingen, die alleen
+// laten zien wat erbij komt). SqliteDict (losse scripts) heeft geen van twee.
+const hoofdtekst = (id: string) => lesTekst(id).split('\n## Opdrachten\n')[0];
+const heeftServer = (id: string) =>
+  STAND.exec(lesTekst(id))?.[1].includes('@app.') ||
+  [...hoofdtekst(id).matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].some((m) =>
+    m[1].includes('@app.'),
+  );
+const metServer = categorieen
+  .filter((c) => plat(c.items).some(heeftServer))
   .map((c) => ({ map: plat(c.items)[0].split('/')[1], label: c.label }));
 
 describe('controleer.py en de cursus', () => {
@@ -54,7 +65,7 @@ describe('controleer.py en de cursus', () => {
     // Een tip vlak voor de opdrachten, in de laatste les van het hoofdstuk
     // met een eigen stand van main.py. Zonder zo'n tip vindt een leerling
     // het script alleen als hij toevallig op Project checken komt.
-    for (const c of basis) {
+    for (const c of categorieen) {
       const map = plat(c.items)[0].split('/')[1];
       if (!metServer.some((m) => m.map === map)) continue;
       const tip = new RegExp(
@@ -72,7 +83,7 @@ describe('controleer.py en de cursus', () => {
     expect(`${cursus}/`).toBe(SITES_BY_ID.fullstack.url);
   });
 
-  it('de hoofdstukken zijn de categorieën van de basis met een server, in volgorde', () => {
+  it('de hoofdstukken zijn de categorieën met een server, in volgorde', () => {
     expect(metServer.map((c) => c.map)).not.toContain('sqlitedict');
     expect(dictUitScript('HOOFDSTUKKEN')).toEqual(metServer.map((c) => [c.map, c.label]));
     expect(dictUitScript('CONTROLES').map(([k]) => k)).toEqual(metServer.map((c) => c.map));
@@ -143,8 +154,10 @@ function ankers(tekst: string): string[] {
   return uit;
 }
 
-// Het referentieproject is het eindproject van de basis, letterlijk uit de
-// lessen: main.py is de laatste stand, en elk ander bestand de laatste
+// Het eindproject met de uitbreidingen bouwt uitbreidingen.py op, met de code
+// uit de lessen zelf; draai.py eist dat elk endpoint uit een uitbreiding erin
+// staat. Het referentieproject is het eindproject van de basis, letterlijk uit
+// de lessen: main.py is de laatste stand, en elk ander bestand de laatste
 // volledige versie die een les in de hoofdtekst toont (met <Bestand pad=…>).
 describe('het referentieproject volgt de lessen', () => {
   const lessen = basis.flatMap((c) => plat(c.items));

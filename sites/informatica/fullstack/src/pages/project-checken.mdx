@@ -47,10 +47,14 @@ Draait je server op een andere poort, zet het adres er dan achter: `python contr
 | Berichten tonen | `berichten-tonen` |
 | Berichten verwijderen | `berichten-verwijderen` |
 | Accounts | `accounts` |
+| Uitbreiding: zonder herladen (htmx) | `zonder-herladen` |
+| Uitbreiding: JavaScript in de browser | `in-de-browser` |
+| Uitbreiding: onthouden (cookies en sessies) | `onthouden` |
+| Afronden | `afronden` |
 
 Gegevens opslaan (SqliteDict) staat er niet bij: die lessen zijn losse scripts, zonder server. Typ je `python controleer.py` zonder hoofdstuk, dan toont het script deze lijst.
 
-Elke regel is één controle. Een ✓ betekent dat je server doet wat de les belooft. Bij een ✗ staat eronder wat er mis is, wat je eraan kunt doen en een link naar de uitleg. Onderaan staat hoeveel controles goed gingen. Een eerder hoofdstuk kun je later opnieuw controleren: je project groeit, maar wat toen werkte, hoort te blijven werken.
+Elke regel is één controle. Een ✓ betekent dat je server doet wat de les belooft. Bij een ✗ staat eronder wat er mis is, wat je eraan kunt doen en een link naar de uitleg. Onderaan staat hoeveel controles goed gingen. Een eerder hoofdstuk kun je later opnieuw controleren: je project groeit, maar wat toen werkte, hoort te blijven werken. Logt je gastenboek sinds de uitbreiding over sessies in via `/inloggen`, dan logt het script daar ook in. Van de htmx-recepten controleert het alleen wat je bouwde.
 
 ```
 ✓ Het formulier op /groet past bij POST /groet (naam).
@@ -61,6 +65,7 @@ Elke regel is één controle. Een ✓ betekent dat je server doet wat de les bel
 Vanaf Berichten opslaan schrijft het script in je databases. Het zegt vooraf wat het toevoegt:
 
 - een bericht met `controle-` en vier cijfers erin. Kan je server al verwijderen, dan haalt het script het daarna weer weg.
-- het account `controle-0000`, als je gastenboek om een wachtwoord vraagt. Dat blijft staan, want een account verwijderen zit niet in de cursus.
+- het account `controle-0000`, als je gastenboek om een wachtwoord of een sessie vraagt. Dat blijft staan, want een account verwijderen zit niet in de cursus.
+- een sessie in `sessies.db` voor elke keer dat het inlogt, vanaf de uitbreiding over sessies. Die blijven staan, net als het account.
 - bij `berichten-opslaan` ook een naam in `namen.db`. Daarna zet het de naam terug die er stond.
 - bij `accounts` elke keer een nieuw account met `controle-` en vier cijfers, want dat hoofdstuk controleert ook het registreren.
