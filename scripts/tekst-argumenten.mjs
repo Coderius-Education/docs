@@ -23,3 +23,25 @@ export function leesArgumenten(argumenten, siteIds) {
     bestanden: losse.filter((a) => !siteIds.has(a)),
   };
 }
+
+/**
+ * Welke sites en bestanden de controle doet. Een site-id neemt de hele site,
+ * een bestand alleen zichzelf (en dus zijn site). Samen tellen ze op: eerst
+ * hielden ze elkaar tegen, en dan gaf `python fullstack/…/a.mdx` "Geen
+ * lestekst" voor een bestand dat wel lestekst is.
+ *
+ * @param {{ id: string, dir: string }[]} alleSites
+ * @param {string[]} sites site-id's uit de argumenten
+ * @param {Set<string>} bestanden paden vanaf de root
+ */
+export function kies(alleSites, sites, bestanden) {
+  const geen = !sites.length && !bestanden.size;
+  const heel = (id) => geen || sites.includes(id);
+  return {
+    sites: alleSites.filter(
+      ({ id, dir }) => heel(id) || [...bestanden].some((b) => b.startsWith(`${dir}/`)),
+    ),
+    /** Hoort dit bestand van deze site bij de controle? */
+    telt: (id, pad) => heel(id) || bestanden.has(pad),
+  };
+}

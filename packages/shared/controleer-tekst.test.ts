@@ -1,7 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { leesArgumenten } from '../../scripts/tekst-argumenten.mjs';
+import { kies, leesArgumenten } from '../../scripts/tekst-argumenten.mjs';
 
 // scripts/controleer-tekst.mjs neemt een site-id of lesbestanden. Twee
 // fouten gaven een vals beeld: het eerste argument werd altijd overgeslagen
@@ -49,6 +49,31 @@ describe('de argumenten van controleer-tekst', () => {
       sites: ['fullstack'],
       bestanden: ['docs/a.mdx'],
     });
+  });
+});
+
+describe('welke sites en bestanden meedoen', () => {
+  const ALLE = [
+    { id: 'fullstack', dir: 'sites/informatica/fullstack' },
+    { id: 'python', dir: 'sites/informatica/python' },
+    { id: 'web', dir: 'sites/informatica/web' },
+  ];
+  const ids = (k: ReturnType<typeof kies>) => k.sites.map((s) => s.id);
+
+  it('zonder argumenten alles', () => {
+    const k = kies(ALLE, [], new Set());
+    expect(ids(k)).toEqual(['fullstack', 'python', 'web']);
+    expect(k.telt('web', 'sites/informatica/web/docs/a.mdx')).toBe(true);
+  });
+
+  it('een site en een bestand van een andere site tellen op', () => {
+    // Eerst hielden ze elkaar tegen: het bestand viel weg met "Geen lestekst".
+    const bestand = 'sites/informatica/fullstack/docs/a.mdx';
+    const k = kies(ALLE, ['python'], new Set([bestand]));
+    expect(ids(k)).toEqual(['fullstack', 'python']);
+    expect(k.telt('fullstack', bestand)).toBe(true);
+    expect(k.telt('fullstack', 'sites/informatica/fullstack/docs/b.mdx')).toBe(false);
+    expect(k.telt('python', 'sites/informatica/python/docs/c.mdx')).toBe(true);
   });
 });
 

@@ -30,7 +30,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { leesArgumenten } from './tekst-argumenten.mjs';
+import { kies, leesArgumenten } from './tekst-argumenten.mjs';
 
 const require = createRequire(import.meta.url);
 const { controleer } = require('../packages/shared/stijl.js');
@@ -93,14 +93,9 @@ function lesbestanden(map) {
 
 // Uit de registry: elke site staat in sites/<vak>/<id> (de homepage in
 // sites/home, zonder docs/ of src/pages/, dus die levert niets op).
+const keuze = kies(alleSiteMappen(), alleenSites, alleenBestanden);
 function sites() {
-  return alleSiteMappen()
-    .filter(({ id }) => !alleenSites.length || alleenSites.includes(id))
-    .filter(
-      ({ dir }) =>
-        !alleenBestanden.size || [...alleenBestanden].some((b) => b.startsWith(`${dir}/`)),
-    )
-    .sort((a, b) => a.id.localeCompare(b.id));
+  return [...keuze.sites].sort((a, b) => a.id.localeCompare(b.id));
 }
 
 const inActions = process.env.GITHUB_ACTIONS === 'true';
@@ -122,7 +117,7 @@ for (const { id: site, dir } of sites()) {
 
     for (const pad of bestanden) {
       const relatief = relative(ROOT, pad).split('\\').join('/');
-      if (alleenBestanden.size && !alleenBestanden.has(relatief)) continue;
+      if (!keuze.telt(site, relatief)) continue;
       gezien.add(relatief);
       if (regels && !regels[relatief]?.length) continue;
       const alle = controleer(readFileSync(pad, 'utf8'), { bestand: relatief });
