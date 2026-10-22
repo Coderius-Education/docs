@@ -112,6 +112,15 @@ export const activiteiten: Activiteit[] = [
     link: { to: '/docs/projecten/woordjes-overhoren/stap-1-dictionary' },
   },
   {
+    id: 'spirograaf',
+    titel: 'Spirograaf',
+    soort: 'project',
+    wat: 'Kleurrijke patronen uit één vorm die je steeds een stukje draait en herhaalt.',
+    stappen: 6,
+    concepten: ['03b', '06a', '06b', '08', '09a', '10a'],
+    link: { to: '/docs/projecten/spirograaf/stap-1-for-loop' },
+  },
+  {
     id: 'staafdiagram',
     titel: 'Staafdiagram',
     soort: 'project',

@@ -1,0 +1,141 @@
+---
+sidebar_position: 6
+sidebar_label: 'Stap 6: input'
+description: Laat de gebruiker met input kiezen hoeveel zijden de vorm heeft en hoe snel hij groeit.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 6: Jij kiest (input)
+
+:::info
+Deze stap gebruikt `input()` en `int()`, uit [Tekst naar getal](site:python/docs/basis/03b-tekst-naar-getal).
+:::
+
+Elke keer dat je een ander patroon wilt, pas je nu de getallen in je code
+aan. Handiger is het als het programma ernaar vraagt. Dan probeer je in een
+minuut tien spirografen uit, zonder één regel te veranderen.
+
+`input()` geeft altijd tekst, en `int()` maakt daar een getal van:
+
+{/* invoer: 5 */}
+
+```python
+zijden = int(input("Hoeveel zijden? "))
+print(360 / zijden)
+```
+
+Uitvoer als je 5 typt:
+
+```
+Hoeveel zijden? 5
+72.0
+```
+
+## Opdracht: de gebruiker kiest
+
+Plak je programma uit stap 5 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 5](site:python/docs/projecten/spirograaf/stap-5-range).
+
+Laat het programma eerst twee vragen stellen:
+
+1. `Hoeveel zijden? ` bepaalt welke vorm de schildpad tekent;
+2. `Hoeveel groeit elke vorm? ` bepaalt hoeveel groter elke volgende bloem
+   wordt.
+
+Daarna tekent het de spirograaf met die getallen. Typ je 4 en 10, dan krijg
+je de spiraal van stap 5 terug:
+
+```
+Hoeveel zijden? 4
+Hoeveel groeit elke vorm? 10
+```
+
+![Dezelfde spiraal van vierkanten als in stap 5: zes gekleurde armen op zwart](./img/stap-5-spiraal.svg)
+
+Probeer daarna ook 3 en 5, 6 en 20, en 8 en 15. Hoe kleiner de groei, hoe
+meer bloemen er komen.
+
+<CodeExercise>{`# Plak hier je programma uit stap 5`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De twee vragen komen boven de loop die de bloemen tekent, elk met een eigen
+variabele. Een `range` werkt alleen met hele getallen, dus wat de gebruiker
+typt, moet je eerst omzetten. Zet daarna je variabelen op de plekken waar nu
+4 en 10 staan.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer: 4 | 10 */}
+
+```python
+import turtle
+
+kleuren = ["red", "orange", "yellow", "lime", "deepskyblue", "magenta"]
+
+def vorm(zijden, lengte):
+    for zijde in range(zijden):
+        turtle.forward(lengte)
+        turtle.left(360 / zijden)
+
+def bloem(zijden, lengte):
+    for kleur in kleuren:
+        turtle.pencolor(kleur)
+        vorm(zijden, lengte)
+        turtle.left(60)
+
+zijden = int(input("Hoeveel zijden? "))
+groei = int(input("Hoeveel groeit elke vorm? "))
+
+turtle.bgcolor("black")
+turtle.pensize(2)
+for lengte in range(20, 160, groei):
+    bloem(zijden, lengte)
+    turtle.left(5)
+```
+
+Uitvoer bij 4 en 10:
+
+```
+Hoeveel zijden? 4
+Hoeveel groeit elke vorm? 10
+```
+
+De groei is de stapgrootte van de `range`. Bij een groei van 5 gaat de loop
+28 keer rond, bij 20 maar 7 keer.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: range(20, 160, "10") */}
+
+```
+TypeError: 'str' object cannot be interpreted as an integer
+```
+
+**Oorzaak:** je bent `int()` om de `input()` vergeten. Dan is `groei` de
+tekst `"10"`, en een `range` kan niet tellen in stappen van een tekst.
+
+**Oplossing:** zet `int()` om elke `input()` waarmee je wilt rekenen of
+tellen.
+
+## Verder bouwen
+
+Je spirograaf werkt. Wil je verder, kies dan iets uit dit lijstje:
+
+- Laat de gebruiker ook kiezen hoeveel graden de schildpad na elke bloem
+  draait. Wat gebeurt er bij 0, en bij 30?
+- Typt iemand 0 bij de groei, dan valt het programma om. Vang dat op met een
+  `if`, en kies dan zelf een groei.
+- Maak een tweede lijst met kleuren, bijvoorbeeld alleen blauw en groen, en
+  laat de gebruiker kiezen welke lijst hij wil.
+- Teken met `penup` en `goto` drie kleine spirografen naast elkaar, elk met
+  een andere vorm.
+
+Terug naar [het overzicht van de projecten](site:python/docs/projecten).

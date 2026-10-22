@@ -360,6 +360,8 @@ Spawnen
 spawnt
 spelernaam
 Speltimer
+spirograaf
+spirografen
 sqlitedict
 SSRN
 stagede
