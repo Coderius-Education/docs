@@ -67,6 +67,7 @@ const PER_JOB = {
     'cspell-woorden.txt',
     'scripts/controleer-tekst.mjs',
     'scripts/controleer-tekst-alles.mjs',
+    'scripts/tekst-argumenten.mjs',
     'packages/shared/stijl.js',
   ],
   crosslinks: ['scripts/controleer-cross-links.mjs', 'scripts/links-in-bron.mjs'],

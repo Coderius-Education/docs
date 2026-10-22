@@ -30,6 +30,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { leesArgumenten } from './tekst-argumenten.mjs';
 
 const require = createRequire(import.meta.url);
 const { controleer } = require('../packages/shared/stijl.js');
@@ -46,25 +47,15 @@ const OVERSLAAN = new Set([
   'extracted',
 ]);
 
-const argumenten = process.argv.slice(2);
-const streng = argumenten.includes('--streng');
-const regelsVlag = argumenten.indexOf('--regels');
-const regelsPad = regelsVlag === -1 ? undefined : argumenten[regelsVlag + 1];
-// Zonder --regels is regelsVlag -1, en dan sloeg `i !== regelsVlag + 1` het
-// eerste argument over: `controleer-tekst.mjs fullstack` controleerde alles.
-const losse = argumenten.filter(
-  (a, i) => !a.startsWith('--') && (regelsVlag === -1 || i !== regelsVlag + 1),
-);
-
-// Een los argument is een site-id of een lesbestand. Eerst nam het script
-// alleen een site-id, en gaf het bij een bestandsnaam stil "0 fouten": geen
-// site heette zo. Wie een pagina wilde controleren, kreeg zo een vals groen.
 const SITE_IDS = new Set(alleSiteMappen().map(({ id }) => id));
-const alleenSites = losse.filter((a) => SITE_IDS.has(a));
+const {
+  streng,
+  regelsPad,
+  sites: alleenSites,
+  bestanden,
+} = leesArgumenten(process.argv.slice(2), SITE_IDS);
 const alleenBestanden = new Set(
-  losse
-    .filter((a) => !SITE_IDS.has(a))
-    .map((a) => relative(ROOT, resolve(a)).split('\\').join('/')),
+  bestanden.map((a) => relative(ROOT, resolve(a)).split('\\').join('/')),
 );
 for (const bestand of alleenBestanden) {
   if (!/\.mdx?$/.test(bestand) || !existsSync(join(ROOT, bestand))) {
