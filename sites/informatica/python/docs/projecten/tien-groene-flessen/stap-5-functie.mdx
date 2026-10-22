@@ -34,24 +34,22 @@ Hier komt het couplet van 1.
 
 ## Opdracht: `couplet(flessen)`
 
-Verhuis alles uit je loop van stap 4, behalve `print()`, naar de functie
-`couplet`. De loop roept daarna alleen nog `couplet(flessen)` aan en print
-de lege regel.
+Plak je programma uit stap 4 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 4](site:python/docs/projecten/tien-groene-flessen/stap-4-if).
 
-<CodeExercise>{`def couplet(flessen):
-    # zet hier je couplet uit stap 4
-    print(f"Hier komt het couplet van {flessen}.")
+Maak een functie `couplet(flessen)` die één couplet print. De loop roept
+daarna alleen nog die functie aan en print de lege regel. De uitvoer blijft
+precies hetzelfde als in stap 4.
 
-for flessen in range(3, 0, -1):
-    couplet(flessen)
-    print()`}</CodeExercise>
+<CodeExercise>{`# Plak hier je programma uit stap 4`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Alles wat nu in de functie staat, moet vier spaties inspringen onder
-`def`. De `if`-regels en de `print`-regels uit stap 4 stonden al vier
-spaties in onder `for`; in de functie blijven ze op dezelfde plek.
+Welke regels in je loop horen bij één couplet, en welke bij het aftellen?
+Die eerste groep verhuist naar de functie. Alles in de functie springt in
+onder `def`. De functie moet boven de loop staan, want Python moet hem
+kennen voordat de loop hem aanroept.
 
 </details>
 
@@ -125,5 +123,7 @@ erbij welke bekende naam je misschien bedoelde, maar hier zit hij ernaast:
 `complex` heeft niets met je lied te maken.
 
 **Oplossing:** zet de `def` bovenaan, en de aanroepen eronder.
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 6: een functie die tekst teruggeeft](site:python/docs/projecten/tien-groene-flessen/stap-6-return).

@@ -24,19 +24,33 @@ for flessen in range(10, 0, -1):
 
 ## Opdracht: tien coupletten
 
-Zet je couplet uit stap 2 in de loop, zodat Python het hele lied print, met
-een lege regel na elk couplet. De regel `flessen = 10` heb je dan niet meer
-nodig: de loop geeft `flessen` elke ronde zelf een waarde.
+Plak je programma uit stap 2 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 2](site:python/docs/projecten/tien-groene-flessen/stap-2-variabele).
 
-<CodeExercise>{`for flessen in range(10, 0, -1):
-    # zet hier je couplet
-    print()`}</CodeExercise>
+Laat Python met een loop het hele lied printen, van 10 flessen tot en met
+1, met een lege regel na elk couplet. Het begin van de verwachte uitvoer:
+
+```
+10 groene flessen staan aan de muur,
+10 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 9 groene flessen aan de muur.
+
+9 groene flessen staan aan de muur,
+9 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 8 groene flessen aan de muur.
+```
+
+<CodeExercise>{`# Plak hier je programma uit stap 2`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Kopieer de vier `print`-regels uit stap 2 in de loop, boven `print()`, en
-laat ze vier spaties inspringen. Dan horen ze bij de loop.
+Het couplet gaat in de loop: wat ingesprongen staat, gebeurt elke ronde.
+De regel die `flessen` op 10 zet, heb je dan niet meer nodig, want de loop
+geeft `flessen` elke ronde zelf een waarde. Vergeet de lege regel na elk
+couplet niet.
 
 </details>
 
@@ -102,5 +116,7 @@ tot vóór 0 levert geen enkel getal op, dus de loop draait nul keer. Er komt
 geen foutmelding: Python vindt een lege loop prima.
 
 **Oplossing:** geef de stap mee, `range(10, 0, -1)`.
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 4: één fles is anders](site:python/docs/projecten/tien-groene-flessen/stap-4-if).

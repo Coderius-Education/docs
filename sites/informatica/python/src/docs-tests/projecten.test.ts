@@ -30,7 +30,7 @@ const projecten = projectmappen(PROJECTEN).map((pad) => relative(PROJECTEN, pad)
 // programma uit de stap ervoor, en de tip wijst de weg zonder de regels voor
 // te zeggen. Eerst stond de oplossing van de vorige stap in het veld en de
 // nieuwe regels in de tip, en dan typte de leerling alleen over.
-const ZELF_SCHRIJVEN = ['raad-het-getal', 'woordjes-overhoren'];
+const ZELF_SCHRIJVEN = ['tien-groene-flessen', 'raad-het-getal', 'woordjes-overhoren'];
 
 describe('projecten in de python-cursus', () => {
   it('er is minstens één project, en de navbar heeft een link Projecten', () => {

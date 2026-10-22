@@ -21,10 +21,13 @@ dan staan er 2 dikke boeken op de plank.
 
 ## Opdracht: `lied(start, enkelvoud, meervoud, plek)`
 
-Hieronder staat je programma uit stap 7. Pas het aan, en vervang de
-aanroep onderaan door deze, die het lied hierboven moet zingen:
+Plak je programma uit stap 7 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 7](site:python/docs/projecten/tien-groene-flessen/stap-7-lied).
 
-{/* niet-draaien: de aanroep leunt op het programma in de oefening eronder */}
+Pas het aan, en vervang de aanroep onderaan door deze, die het lied
+hierboven moet zingen:
+
+{/* niet-draaien: de aanroep leunt op je eigen programma */}
 
 ```python
 lied(3, "dik boek", "dikke boeken", "op de plank")
@@ -34,36 +37,7 @@ Het woord `enkelvoud` gebruik je bij één ding ("1 dik boek", "één dik boek
 valt"), `meervoud` bij de rest ("3 dikke boeken", "geen dikke boeken meer").
 Bedenk daarna een eigen versie, en laat hem zingen.
 
-<CodeExercise>{`def aantal(flessen):
-    if flessen == 0:
-        return "geen groene flessen meer"
-    elif flessen == 1:
-        return "1 groene fles"
-    else:
-        return f"{flessen} groene flessen"
-
-
-def staan(flessen):
-    if flessen == 1:
-        return "staat"
-    else:
-        return "staan"
-
-
-def couplet(flessen):
-    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
-    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
-    print("en als er één groene fles valt,")
-    print(f"dan {staan(flessen - 1)} er {aantal(flessen - 1)} aan de muur.")
-
-
-def lied(start):
-    for flessen in range(start, 0, -1):
-        couplet(flessen)
-        print()
-
-
-lied(3)`}</CodeExercise>
+<CodeExercise>{`# Plak hier je programma uit stap 7`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>

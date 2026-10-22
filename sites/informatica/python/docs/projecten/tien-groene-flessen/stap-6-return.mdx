@@ -35,43 +35,33 @@ zou schrijven, ook tussen de accolades van een f-string.
 
 ## Opdracht: `aantal(flessen)`
 
-`staan` en het couplet staan al klaar. Schrijf de functie `aantal`, die
-voor elk aantal flessen de goede woorden teruggeeft:
+Plak je programma uit stap 5 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 5](site:python/docs/projecten/tien-groene-flessen/stap-5-functie).
+
+Vervang `nu` en `straks` door twee functies die tekst teruggeven:
+
+1. `staan(flessen)`, zoals hierboven: `"staat"` bij één fles, anders
+   `"staan"`.
+2. `aantal(flessen)`, die voor elk aantal flessen de goede woorden
+   teruggeeft:
 
 | `aantal(3)` | `aantal(1)` | `aantal(0)` |
 |:---:|:---:|:---:|
 | `"3 groene flessen"` | `"1 groene fles"` | `"geen groene flessen meer"` |
 
-Nu geeft hij altijd de gewone vorm terug, dus de laatste twee coupletten
-kloppen nog niet.
+Het couplet gebruikt daarna alleen nog die twee functies, en de `if`-regels
+in `couplet` verdwijnen. De uitvoer blijft hetzelfde als in stap 5.
 
-<CodeExercise>{`def aantal(flessen):
-    return f"{flessen} groene flessen"
-
-
-def staan(flessen):
-    if flessen == 1:
-        return "staat"
-    else:
-        return "staan"
-
-
-def couplet(flessen):
-    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
-    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
-    print("en als er één groene fles valt,")
-    print(f"dan {staan(flessen - 1)} er {aantal(flessen - 1)} aan de muur.")
-
-
-for flessen in range(3, 0, -1):
-    couplet(flessen)
-    print()`}</CodeExercise>
+<CodeExercise>{`# Plak hier je programma uit stap 5`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Er zijn drie gevallen: 0, 1 en al het andere. Schrijf ze als `if`, `elif`
-en `else`, met in elk geval een eigen `return`.
+Begin met `aantal`. Er zijn drie gevallen: nul, één en al het andere, en
+elk geval krijgt een eigen `return`. Test hem los voordat je verdergaat,
+door een paar keer te printen wat hij teruggeeft. Daarna het couplet: de
+eerste regel noemt `aantal` en `staan` van het aantal flessen nu, de
+laatste regel die van één fles minder.
 
 </details>
 
@@ -130,5 +120,7 @@ Het couplet is nu vier regels zonder één `if`. Alles wat met enkelvoud en
 meervoud te maken heeft, zit in `aantal` en `staan`.
 
 </details>
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 7: het hele lied als functie](site:python/docs/projecten/tien-groene-flessen/stap-7-lied).

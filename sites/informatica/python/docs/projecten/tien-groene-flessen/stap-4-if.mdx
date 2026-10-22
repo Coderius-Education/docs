@@ -23,35 +23,48 @@ gewone te lezen.
 
 ## Opdracht: een kloppend lied
 
-Maak twee variabelen die per ronde de goede tekst krijgen:
+Plak je programma uit stap 3 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 3](site:python/docs/projecten/tien-groene-flessen/stap-3-for-loop).
+
+Laat het lied kloppen bij één fles en bij nul flessen. Werk met twee
+variabelen die per ronde de goede tekst krijgen, en print het couplet met
+die twee:
 
 1. `nu`: wat er aan het begin van het couplet aan de muur staat, zoals
    `"3 groene flessen staan"` of `"1 groene fles staat"`.
 2. `straks`: wat er na de val overblijft, zoals `"staan er 2 groene flessen"`,
    `"staat er 1 groene fles"` of `"staan er geen groene flessen meer"`.
 
-Het couplet print ze al. Jij schrijft de `if`-regels die ze vullen.
+Verwachte uitvoer als de loop bij 3 begint:
 
-<CodeExercise>{`for flessen in range(3, 0, -1):
-    nu = f"{flessen} groene flessen staan"
-    straks = f"staan er {flessen - 1} groene flessen"
-    # schrijf hier je if-regels
+```
+3 groene flessen staan aan de muur,
+3 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 2 groene flessen aan de muur.
 
-    print(f"{nu} aan de muur,")
-    print(f"{nu} aan de muur,")
-    print("en als er één groene fles valt,")
-    print(f"dan {straks} aan de muur.")
-    print()`}</CodeExercise>
+2 groene flessen staan aan de muur,
+2 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staat er 1 groene fles aan de muur.
+
+1 groene fles staat aan de muur,
+1 groene fles staat aan de muur,
+en als er één groene fles valt,
+dan staan er geen groene flessen meer aan de muur.
+```
+
+<CodeExercise>{`# Plak hier je programma uit stap 3`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-De gewone tekst staat er al. Je hoeft alleen de uitzonderingen te
-schrijven: een `if` die `nu` of `straks` een andere waarde geeft,
-overschrijft de gewone. Voor `nu` is er één uitzondering: `flessen == 1`.
-Voor `straks` zijn er twee: er blijft er één over (`flessen - 1 == 1`) of
-er blijft niets over (`flessen - 1 == 0`). Twee uitzonderingen op dezelfde
-variabele schrijf je met `if` en `elif`.
+Geef `nu` en `straks` eerst de gewone tekst, met het aantal erin. Daarna
+schrijf je alleen nog de uitzonderingen: een `if` die een variabele een
+andere waarde geeft, overschrijft de gewone. Voor `nu` is er één
+uitzondering. Voor `straks` zijn er twee: er blijft er één over, of er
+blijft niets over. Twee uitzonderingen op dezelfde variabele schrijf je met
+`if` en `elif`.
 
 </details>
 
@@ -98,5 +111,7 @@ dan staan er geen groene flessen meer aan de muur.
 Klopt het? Zet de 3 dan terug op 10.
 
 </details>
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 5: een functie voor één couplet](site:python/docs/projecten/tien-groene-flessen/stap-5-functie).
