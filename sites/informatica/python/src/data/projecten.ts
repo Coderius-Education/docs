@@ -130,6 +130,16 @@ export const activiteiten: Activiteit[] = [
     link: { to: '/docs/projecten/spirograaf/stap-1-for-loop' },
   },
   {
+    id: 'schildpaddenrace',
+    titel: 'Schildpaddenrace',
+    soort: 'project',
+    wat: 'Vier schildpadden racen met willekeurige stappen naar de finish, en de winnaar zegt het zelf.',
+    stappen: 6,
+    concepten: ['04a', '05b', '06a', '06d', '07', '09d', '10a'],
+    lessen: ['02', '03', '04a', '05a', '05b', '06a', '06d', '07', '09d', '10a'],
+    link: { to: '/docs/projecten/schildpaddenrace/stap-1-random' },
+  },
+  {
     id: 'pixel-art',
     titel: 'Pixel art',
     soort: 'project',
