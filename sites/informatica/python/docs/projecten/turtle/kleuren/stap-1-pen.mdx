@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 sidebar_label: 'Stap 1: pencolor en pensize'
-description: Geef de lijn van de schildpad een kleur en een dikte.
+description: Geef de lijn van de schildpad een kleur en een dikte, en kies een kleur voor de achtergrond.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
@@ -27,6 +27,20 @@ turtle.forward(100)
 
 Beide gelden vanaf de regel waar ze staan, tot je een andere kleur of dikte
 kiest.
+
+De derde kleur is die van de achtergrond. `turtle.bgcolor("lightblue")`
+kleurt niet een lijn, maar het hele vlak achter je tekening:
+
+```python
+import turtle
+
+turtle.bgcolor("lightblue")
+turtle.pencolor("red")
+turtle.forward(100)
+```
+
+Een rode lijn op een lichtblauwe achtergrond. Ook hier kun je elke kleur
+kiezen die `pencolor` kent.
 
 ## Opdracht: een blauw vierkant
 
