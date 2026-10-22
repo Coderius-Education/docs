@@ -302,6 +302,7 @@ VARIEERT_RE = re.compile(r"\{/\*\s*uitvoer-varieert:.*?\*/\}\s*$")
 # sitecustomize hieronder doet dat net zo, zodat een uitvoerblok onder zo'n
 # programma te vergelijken is. Een zaad zet random vast: dan is het geheime
 # getal in CI elke keer hetzelfde, en in de browser niet.
+PLAATJE_RE = re.compile(r"\{/\*\s*turtle-plaatje[^*]*\*/\}$")
 INVOER_RE = re.compile(
     r"\{/\*\s*invoer(?:\s+met\s+zaad\s+(?P<zaad>\d+))?:\s*(?P<antwoorden>.*?)\s*\*/\}\s*$"
 )
@@ -429,6 +430,9 @@ def zelftest() -> None:
     invoer = lees_invoer('tekst\n\n{/* invoer met zaad 3: 12 | Sam */}')
     assert invoer == (("12", "Sam"), 3), invoer
     assert lees_invoer("{/* invoer: 7 */}") == (("7",), None)
+    # Boven een doelplaatje staat de invoer-marker boven de plaatje-marker.
+    ervoor = PLAATJE_RE.sub("", "{/* invoer: 4 | 10 */}\n{/* turtle-plaatje: img/a.svg */}").rstrip()
+    assert lees_invoer(ervoor) == (("4", "10"), None), ervoor
     assert lees_invoer("{/* niet-draaien: vraagt om invoer */}") is None
     code = (
         "import random\n"
@@ -566,7 +570,13 @@ def verzamel():
                 else template_ontsnap(m.group("oefcode"))
             )
             regel = tekst[: m.start()].count("\n") + 1
-            ervoor = tekst[: m.start()].rstrip()
+            # De marker van een doelplaatje (turtle-plaatjes.test.ts) staat
+            # direct boven de oplossing; een invoer-marker mag erboven staan.
+            # Een zaad op die marker zet random hier ook vast, net als in de
+            # plaatjestest.
+            plaatje = PLAATJE_RE.search(tekst[: m.start()].rstrip())
+            plaatje_zaad = re.search(r"met zaad (\d+):", plaatje.group(0)) if plaatje else None
+            ervoor = PLAATJE_RE.sub("", tekst[: m.start()].rstrip()).rstrip()
             if NIET_COMPILEREN_RE.search(ervoor):
                 vorige = None
                 continue
@@ -630,6 +640,8 @@ def verzamel():
                 soort = "draai"
             varieert = bool(VARIEERT_RE.search(ervoor))
             invoer = lees_invoer(ervoor)
+            if plaatje_zaad:
+                invoer = (invoer[0] if invoer else (), int(plaatje_zaad.group(1)))
             if invoer is not None and soort == "compileer":
                 # Antwoorden klaarzetten heeft alleen zin als het blok draait.
                 soort = "draai"
