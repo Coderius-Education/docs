@@ -112,6 +112,16 @@ export const activiteiten: Activiteit[] = [
     link: { to: '/docs/projecten/woordjes-overhoren/stap-1-dictionary' },
   },
   {
+    id: 'staafdiagram',
+    titel: 'Staafdiagram',
+    soort: 'project',
+    wat: 'Een staafdiagram van echte gegevens, op schaal, met getallen, namen en kleuren.',
+    stappen: 6,
+    concepten: ['04a', '05b', '05c', '06a', '08', '09a', '10a', '11a', '11b'],
+    lessen: ['03', '04a', '05b', '05c', '06a', '07', '08', '09a', '10a', '11a', '11b'],
+    link: { to: '/docs/projecten/staafdiagram/stap-1-staaf' },
+  },
+  {
     id: 'turtle-lijnen',
     titel: 'Lijnen en hoeken',
     soort: 'turtle',
