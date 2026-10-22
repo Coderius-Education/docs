@@ -8,6 +8,8 @@ Alles wat je nodig hebt, staat al in je `main.py`: de map `templates` met de reg
 
 ### Formulier (`static/pages/groet_form.html`):
 
+<Bestand pad="static/pages/groet_form.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -23,6 +25,8 @@ Alles wat je nodig hebt, staat al in je `main.py`: de map `templates` met de reg
 
 ### Template (`templates/groet_resultaat.html`):
 
+<Bestand pad="templates/groet_resultaat.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -36,6 +40,8 @@ Alles wat je nodig hebt, staat al in je `main.py`: de map `templates` met de reg
 Op de plek van `{{ naam }}` zet Jinja2 de waarde uit Python.
 
 ### Endpoints (`main.py`):
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -81,6 +87,8 @@ Krijg je de foutmelding **TemplateNotFound**? Controleer of je template in de ma
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -201,32 +209,41 @@ async def groet_verwerk(request: Request, naam: str = Form(...)):
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag='Je verandert in het formulier name="naam" in name="voornaam". De functie en de template laat je zoals ze zijn. Wat krijg je na het versturen?'>
+  <Keuze uitleg="Dan zou de naam wel bij de template aankomen. Kijk welke naam de functie uit het formulier verwacht, en of die nog meekomt.">Hallo Sam!</Keuze>
+  <Keuze uitleg="Zo ver komt het niet: de template wordt nooit ingevuld. Kijk wat FastAPI doet voordat je functie begint.">Hallo !</Keuze>
+  <Keuze goed uitleg="De functie vraagt met Form(...) om een veld naam. Het formulier stuurt alleen voornaam, dus FastAPI weigert het verzoek voordat je functie begint.">Een 422 met een melding dat het veld naam ontbreekt</Keuze>
+  <Uitleg>
+
+  De naam in `name="…"` moet precies de naam van de parameter met `Form(...)` zijn. Mist er een, dan antwoordt FastAPI zelf met een 422. In het tabblad Netwerk zie je die status, en in de reactie staat welk veld ontbrak.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Vier keer dezelfde naam
 
 De naam uit het formulier gaat vier keer over: `name="naam"` in het formulier, `naam: str = Form(...)` in de functie, de sleutel `"naam"` in het dictionary en `{{ naam }}` in de template. Iemand verandert één ervan:
 
+<Bestand pad="main.py" />
+
 {/* niet-compileren: fragment uit een handler */}
 ```python
 return templates.TemplateResponse(request, "groet_resultaat.html", {"voornaam": naam})
 ```
 
-**Vraag:** wat zie je na het versturen van het formulier?
+<Voorspel vraag="Wat zie je na het versturen van het formulier?">
+  <Keuze uitleg="Dan moet de naam ergens aankomen waar de template hem zoekt. Kijk om welke naam de template vraagt, en of die in het dictionary staat.">Hallo Sam!</Keuze>
+  <Keuze goed uitleg="De template vraagt om naam, maar het dictionary heeft alleen voornaam. Jinja2 laat de plek dan leeg, zonder foutmelding.">Hallo !</Keuze>
+  <Keuze uitleg="Het formulier en de functie gebruiken nog allebei naam, dus FastAPI krijgt wat hij verwacht. Het gaat pas later mis.">Een 422</Keuze>
+  <Keuze uitleg="Een dictionary in Python geeft een KeyError, maar Jinja2 doet dat niet bij een naam die ontbreekt. Wat doet hij dan wel?">Een KeyError in de terminal</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Het is "Hallo !": een lege plek en geen foutmelding. Juist dat maakt deze fout lastig. Zie je een lege plek in je pagina, vergelijk dan de naam in `{{ }}` met de sleutels in het dictionary.
 
-Om welke naam vraagt de template? Staat die in het dictionary?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-"Hallo !". De template vraagt om `naam`, maar het dictionary heeft alleen `voornaam`. Jinja2 laat de plek dan leeg, zonder foutmelding.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -246,7 +263,8 @@ Je hebt nodig: een HTML formulier met `name="eten"`, een template met `{{ eten }
 <details>
 <summary>Antwoord</summary>
 
-`static/pages/eten_form.html`:
+<Bestand pad="static/pages/eten_form.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -260,7 +278,8 @@ Je hebt nodig: een HTML formulier met `name="eten"`, een template met `{{ eten }
 </html>
 ```
 
-`templates/eten_resultaat.html`:
+<Bestand pad="templates/eten_resultaat.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -270,6 +289,8 @@ Je hebt nodig: een HTML formulier met `name="eten"`, een template met `{{ eten }
     </body>
 </html>
 ```
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/favoriet-eten")
@@ -301,7 +322,8 @@ Je hebt een formulier met drie `<input>`-velden nodig, een GET die het formulier
 <details>
 <summary>Antwoord</summary>
 
-`static/pages/profielkaart_form.html`:
+<Bestand pad="static/pages/profielkaart_form.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -317,7 +339,8 @@ Je hebt een formulier met drie `<input>`-velden nodig, een GET die het formulier
 </html>
 ```
 
-`templates/profielkaart.html`:
+<Bestand pad="templates/profielkaart.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -328,6 +351,8 @@ Je hebt een formulier met drie `<input>`-velden nodig, een GET die het formulier
     </body>
 </html>
 ```
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/profielkaart")

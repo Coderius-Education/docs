@@ -101,7 +101,11 @@ describe('leerling-doorloop van de FastAPI-route', () => {
       return deel
         .split(/\n(?=### Opdracht )/)
         .filter(
-          (b) => /^### Opdracht \d+: (?!Run)/.test(b) && !b.includes('<summary>Antwoord</summary>'),
+          (b) =>
+            /^### Opdracht \d+: (?!Run)/.test(b) &&
+            !b.includes('<summary>Antwoord</summary>') &&
+            // Een losse vraag (<Voorspel>) geeft zelf het antwoord, met uitleg.
+            !b.includes('<Voorspel'),
         )
         .map((b) => `${id}: ${b.split('\n')[0]}`);
     });
