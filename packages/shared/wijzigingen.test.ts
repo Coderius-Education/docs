@@ -209,6 +209,8 @@ describe('plan', () => {
       `${MAP.fullstack}/src/controle/kapot.py`,
       `${MAP.fullstack}/src/controle/uitbreidingen.py`,
       `${MAP.fullstack}/static/htmx/htmx.min.js`,
+      // draai.py leest de volgorde van de lessen uit de sidebar.
+      `${MAP.fullstack}/sidebars.ts`,
       `${MAP.fullstack}/src/controle/referentie/templates/berichten.html`,
     ]) {
       const p = planVoor({ [pad]: [[3, 3]] }, [MAP.fullstack]);
