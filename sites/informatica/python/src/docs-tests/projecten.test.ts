@@ -98,7 +98,10 @@ function stappenVan(map: string): string[] {
 
 /** Een pagina zonder het blok Maak het je eigen: ideeën leren niets aan. */
 function zonderEigen(tekst: string): string {
-  return tekst.replace(/^## Maak het je eigen[\s\S]*?(?=^## |^Door naar|^Terug naar|(?![\s\S]))/m, '');
+  return tekst.replace(
+    /^## Maak het je eigen[\s\S]*?(?=^## |^Door naar|^Terug naar|(?![\s\S]))/m,
+    '',
+  );
 }
 
 function commandosVanDeLijn(tot?: string): string[] {
@@ -106,7 +109,9 @@ function commandosVanDeLijn(tot?: string): string[] {
   const eind = tot ? volgorde.indexOf(tot) + 1 : volgorde.length;
   return volgorde
     .slice(0, eind)
-    .flatMap((map) => stappenVan(join(LIJN, map)).flatMap((t) => commandos(codeVan(zonderEigen(t)))));
+    .flatMap((map) =>
+      stappenVan(join(LIJN, map)).flatMap((t) => commandos(codeVan(zonderEigen(t)))),
+    );
 }
 
 describe('de turtle-lijn', () => {
