@@ -267,6 +267,26 @@ describe('de tekening', () => {
     expect(soorten(tekening.gebeurtenissen, 'vorm')).toHaveLength(1);
   });
 
+  it('een schildpad die eindeloos tekent, stopt met een melding in plaats van de tab te bevriezen', () => {
+    // De speeltuin heeft geen stopknop. Een les beloofde er een, en een
+    // oneindige loop liet de tab vastlopen, met de code van de leerling erin.
+    const code = 'import turtle\nwhile True:\n    turtle.forward(1)\n';
+    let melding = '';
+    try {
+      draai(code);
+    } catch (e) {
+      melding = String((e as { stderr?: string }).stderr);
+    }
+    expect(melding).toContain(
+      'RuntimeError: De schildpad heeft al 50000 bewegingen gemaakt. Loopt je loop eindeloos door?',
+    );
+    // Een grote maar eindige tekening haalt de grens niet.
+    const { tekening } = draai(
+      'import turtle\nfor i in range(20000):\n    turtle.forward(1)\n    turtle.left(1)\n',
+    );
+    expect(soorten(tekening.gebeurtenissen, 'ga').length).toBeGreaterThan(19000);
+  });
+
   it('na goto blijven hele getallen heel, zoals in CPython', () => {
     const { uitvoer } = draai(
       'import turtle\nturtle.goto(100, 50)\nprint(turtle.xcor(), turtle.ycor())\nturtle.setx(7)\nprint(turtle.xcor())\n',

@@ -111,6 +111,13 @@ def _getal(waarde):
     return int(waarde) if waarde == int(waarde) else waarde
 
 
+# De speeltuin draait Python in de tab zelf en heeft geen stopknop: een
+# schildpad die eindeloos tekent, liet de tab vastlopen, en dan was de code
+# van de leerling weg. Ruim boven de grootste tekening in de lessen houdt de
+# module er zelf mee op, met een melding die zegt waar het aan ligt.
+_MAX_GEBEURTENISSEN = 50000
+
+
 class _Scherm:
     def __init__(self):
         self._gebeurtenissen = []
@@ -119,6 +126,11 @@ class _Scherm:
         self._direct = False
 
     def _voeg_toe(self, gebeurtenis):
+        if len(self._gebeurtenissen) >= _MAX_GEBEURTENISSEN:
+            raise RuntimeError(
+                "De schildpad heeft al " + str(_MAX_GEBEURTENISSEN)
+                + " bewegingen gemaakt. Loopt je loop eindeloos door?"
+            )
         self._gebeurtenissen.append(gebeurtenis)
         return len(self._gebeurtenissen) - 1
 
