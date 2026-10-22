@@ -31,16 +31,16 @@ In de lessen zelf staat de voorkennis per les in een dichtgeklapt blok, zodat ee
 
 ## Didactische aanpak (PRIMM)
 
-Elke les volgt hetzelfde vaste patroon — de **PRIMM-methode** — afgesloten met een troubleshooting-sectie:
+Elke les volgt hetzelfde vaste patroon, de **PRIMM-methode**, en sluit af met een sectie over wat er mis kan gaan:
 
-1. **Predict** — je leerling voorspelt wat een endpoint of stuk code doet.
-2. **Run** — je leerling draait het en controleert die voorspelling.
-3. **Investigate** — kleine experimenten met het verzoek of het antwoord.
-4. **Modify** — een opdracht die voortbouwt op de bestaande handler.
-5. **Make** — een vrijere opdracht waarin je leerling zelf een endpoint bouwt.
-6. **Er gaat iets mis** — veelvoorkomende fouten, met oorzaak en oplossing.
+1. Predict: je leerling voorspelt wat een endpoint of stuk code doet.
+2. Run: je leerling draait het en controleert die voorspelling.
+3. Investigate: kleine experimenten met het verzoek of het antwoord.
+4. Modify: een opdracht die voortbouwt op de bestaande handler.
+5. Make: een vrijere opdracht waarin je leerling zelf een endpoint bouwt.
+6. Er gaat iets mis: veelvoorkomende fouten, met oorzaak en oplossing.
 
-Tips en antwoorden staan in `<details>`-blokken. Laat je leerlingen eerst zelf proberen voordat ze openklikken.
+Een Predict is een meerkeuzevraag die meteen zegt of het antwoord klopt. Tips en antwoorden van de andere opdrachten staan in `<details>`-blokken; laat je leerlingen eerst zelf proberen voordat ze openklikken.
 
 ## Klassikaal gebruik & differentiatie
 
@@ -53,7 +53,7 @@ Tips en antwoorden staan in `<details>`-blokken. Laat je leerlingen eerst zelf p
 
 De lessen staan in de **FastAPI**-sidebar en bouwen op elkaar voort. Die begint met een [startpagina](site:fullstack/docs/FastAPI): wat je leerlingen aan het eind hebben (een nagebouwd plaatje van het gastenboek), de voorkennis uit de andere cursussen, en de route als kaart met per blok een zin en de lessen. Daarna komt [Installatie](site:fullstack/docs/FastAPI/eerste-server/installatie); de [Cheatsheet](site:fullstack/docs/cheatsheet) en [Er gaat iets mis](site:fullstack/docs/troubleshooting) zijn naslag en staan in de navbar. [Projectstructuur](site:fullstack/docs/FastAPI/projectstructuur), met de mappen van het project per les, staat bovenaan de cheatsheet.
 
-De sidebar heeft twee delen. De **basis** (Je eerste server, Losse pagina's en routes, Eén route voor veel pagina's, CSS en afbeeldingen, Templates en formulieren, Gegevens opslaan, Berichten opslaan, Berichten tonen, Berichten verwijderen, Accounts) eindigt met een werkend gastenboek: een formulier, opslaan, een overzicht, een detailpagina, een nette 404 en accounts met een wachtwoord. Wat volgt zijn drie **uitbreidingen** (htmx, JavaScript, cookies en sessies) en een afronding. Die maken het gastenboek mooier, maar zijn niet nodig om het te laten werken. Heb je weinig tijd, dan kun je na de basis stoppen; wie verder gaat, volgt de uitbreidingen op volgorde, want "Server of browser?" vergelijkt de server met htmx en JavaScript.
+De sidebar heeft twee delen. De **basis** eindigt met een werkend gastenboek: een formulier, opslaan, een overzicht, een detailpagina, een nette 404 en accounts met een wachtwoord. Hij loopt van Je eerste server via Losse pagina's en routes, Eén route voor veel pagina's, CSS en afbeeldingen, Templates en formulieren, Gegevens opslaan en de drie categorieën met berichten naar Accounts. Wat volgt zijn drie **uitbreidingen** (htmx, JavaScript, cookies en sessies) en een afronding. Die maken het gastenboek mooier, maar zijn niet nodig om het te laten werken. Heb je weinig tijd, dan kun je na de basis stoppen; wie verder gaat, volgt de uitbreidingen op volgorde, want "Server of browser?" vergelijkt de server met htmx en JavaScript.
 
 Vijf keer onderweg staat een diagram van de hele keten, browser links en server rechts, met per stap een link naar de les. Het begint kaal [bij het eerste verzoek](site:fullstack/docs/FastAPI/eerste-server/verzoek-eerste), direct na het eerste endpoint, en groeit mee. [Bij één pagina](site:fullstack/docs/FastAPI/css-en-afbeeldingen/verzoek-static), aan het eind van CSS en afbeeldingen, komen de losse verzoeken voor CSS en afbeeldingen erbij. [Bij klikken en versturen](site:fullstack/docs/FastAPI/accounts/verzoek-get), aan het eind van de basis, de database en de template, en bij een formulier de omleiding. [Zonder herladen](site:fullstack/docs/FastAPI/zonder-herladen/verzoek-htmx), aan het eind van de htmx-uitbreiding, wordt die omleiding een stuk HTML als antwoord; [bij een sessie](site:fullstack/docs/FastAPI/onthouden/verzoek-sessie), direct na de les Sessies, komt de cookie erbij. [Hoe een verzoek werkt](site:fullstack/docs/FastAPI/afronden/hoe-een-verzoek-werkt) bundelt ze bij het afronden met een tabel "waar hoort jouw code".
 
@@ -108,7 +108,7 @@ Vanaf "JavaScript erbij" komt de browserkant in beeld. Je leerlingen kennen Java
 
 Daarop volgt "Onthouden", drie lessen die het sterkst zijn als je ze achter elkaar plant. In de eerste onthoudt een cookie de naam, en veranderen je leerlingen die cookie in een andere naam: de server neemt het klakkeloos over, en alleen het wachtwoord uit Inloggen houdt ze nog tegen. In de tweede loggen ze één keer in. `/inloggen` maakt een sessie, er gaat alleen een sessie-id naar de bezoeker, en de naam bij een bericht komt voortaan uit de sessie in plaats van uit het formulier. Daarmee wordt "eigenaar van een bericht" iets wat de server zelf weet, en kunnen ze verwijderen afschermen met een 403. Het is voor veel leerlingen het eerste moment waarop beveiliging concreet wordt: de verwijderknop verbergen is niet hetzelfde als verwijderen onmogelijk maken.
 
-"Cookie of sessie?" sluit dat blok af zoals "Server of browser?" het vorige afsluit — niet met nieuwe techniek, maar met de vraag wanneer je wat kiest. De kern is dat een sessie ook gewoon een cookie is; het verschil zit in wát erin staat. Leerlingen die alles voor de zekerheid een sessie willen maken, vinden daar het tegenargument: een voorkeur die niemand kan schaden hoort in een gewone cookie.
+"Cookie of sessie?" sluit dat blok af zoals "Server of browser?" het vorige afsluit: niet met nieuwe techniek, maar met de vraag wanneer je wat kiest. De kern is dat een sessie ook een cookie is; het verschil zit in wát erin staat. Leerlingen die alles voor de zekerheid een sessie willen maken, vinden daar het tegenargument: een voorkeur die niemand kan schaden hoort in een gewone cookie.
 
 Daarna sluit de cursus af met een eigen 404-pagina, een overzicht van alle diagrammen en de server openzetten voor het netwerk, zodat de klas elkaars project kan bezoeken. De 404-les zet drie manieren naast elkaar (een handler voor 404, een handler voor elke HTTP-fout die de rest doorgeeft, en een pagina in het eigen endpoint) en werkt de handler voor 404 uit. Een handler voor alle fouten is bewust geen optie: dan lijkt een fout in de code van een leerling een ontbrekende pagina, en zoekt hij op de verkeerde plek. In een opdracht zien je leerlingen dat zelf gebeuren.
 
