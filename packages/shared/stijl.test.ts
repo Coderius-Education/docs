@@ -35,6 +35,16 @@ describe('maskeren', () => {
     ).toEqual([]);
   });
 
+  it('laat imports bovenaan een MDX-pagina met rust', () => {
+    // Drie import-regels op rij gaven herhaalde-opening.
+    const tekst =
+      "import useBaseUrl from '@docusaurus/useBaseUrl';\nimport { Checker } from '@coderius/checker/Checker';\nimport {\n  fullstackConfig,\n} from '@site/src/checker/config';\n\nLopende tekst.\n";
+    expect(namen(tekst)).toEqual([]);
+    expect(alleenProza(tekst)).not.toContain('import');
+    // Een zin die met import begint, blijft proza.
+    expect(alleenProza('import je module, en draai hem.\n')).toContain('import je module');
+  });
+
   it('laat startcode in een MDX-export met rust', () => {
     // web-docs hoist de startcode van de oefenvelden naar exports bovenin;
     // een <button>Klik Mij!</button> dáárin is code, geen lestekst.
