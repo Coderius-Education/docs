@@ -77,6 +77,12 @@ Markers, direct boven het blok, net als in de play-cursus:
     {/* niet-compileren: reden */}    helemaal overslaan (bewuste syntaxfout)
     {/* uitvoer-varieert: reden */}   wel draaien, de beloofde uitvoer niet
                                       vergelijken (een set heeft geen volgorde)
+    {/* invoer: 50 | 25 | 37 */}      draaien alsof de leerling 50, 25 en 37
+                                      intypt; zoals in de speeltuin komt elk
+                                      antwoord achter zijn vraag in de
+                                      uitvoer. `invoer met zaad 3: …` zet ook
+                                      random vast, zodat een "geheim getal"
+                                      in CI elke keer hetzelfde is
     {/* niet-draaien: startcode; … */} de startcode van een opdracht: die
                                       draait wél, precies zoals een leerling
                                       hem als eerste draait, en moet dan op
@@ -211,8 +217,11 @@ def turtle_py() -> str:
     return tekst[begin : tekst.rindex("`")]
 
 
-def omgeving() -> dict[str, str]:
-    """De omgeving van elk blok: die van de site, plus de turtle van de speeltuin."""
+def omgeving(invoer=None) -> dict[str, str]:
+    """De omgeving van elk blok: die van de site, plus de turtle van de speeltuin.
+
+    Met `invoer` (uit lees_invoer) ook de antwoorden op input() en het zaad.
+    """
     if not _TURTLE_MAP:
         map_ = tempfile.mkdtemp(prefix="coderius-turtle-")
         atexit.register(shutil.rmtree, map_, True)
@@ -221,10 +230,30 @@ def omgeving() -> dict[str, str]:
             "_m = types.ModuleType('turtle')\n"
             f"exec(compile({turtle_py()!r}, '<turtle>', 'exec'), _m.__dict__)\n"
             "sys.modules['turtle'] = _m\n"
+            # Zie INVOER_RE: de antwoorden van een invoer-marker, en het zaad.
+            "import builtins, json, os\n"
+            "if 'CODERIUS_INVOER' in os.environ:\n"
+            "    _antwoorden = iter(json.loads(os.environ['CODERIUS_INVOER']))\n"
+            "    def _invoer(vraag=''):\n"
+            "        try:\n"
+            "            antwoord = next(_antwoorden)\n"
+            "        except StopIteration:\n"
+            "            raise EOFError('de invoer-marker heeft geen antwoorden meer') from None\n"
+            "        print(str(vraag) + antwoord)\n"
+            "        return antwoord\n"
+            "    builtins.input = _invoer\n"
+            "if 'CODERIUS_ZAAD' in os.environ:\n"
+            "    import random\n"
+            "    random.seed(int(os.environ['CODERIUS_ZAAD']))\n"
         )
         _TURTLE_MAP.append(map_)
     env = {**os.environ, **SITE["env"]}
     env["PYTHONPATH"] = os.pathsep.join(p for p in (_TURTLE_MAP[0], env.get("PYTHONPATH", "")) if p)
+    if invoer is not None:
+        antwoorden, zaad = invoer
+        env["CODERIUS_INVOER"] = json.dumps(antwoorden)
+        if zaad is not None:
+            env["CODERIUS_ZAAD"] = str(zaad)
     return env
 
 
@@ -266,6 +295,25 @@ NIET_COMPILEREN_RE = re.compile(r"\{/\*\s*niet-compileren:.*?\*/\}\s*$")
 # Sommige uitvoer ligt niet vast: een set heeft geen volgorde, dus het getoonde
 # resultaat is een voorbeeld en geen belofte. Zo'n blok draait wel gewoon.
 VARIEERT_RE = re.compile(r"\{/\*\s*uitvoer-varieert:.*?\*/\}\s*$")
+# Een programma dat om invoer vraagt, kon alleen compileren: een blok met
+# input() hing in CI of viel om op EOFError. Met deze marker typt de controle
+# de antwoorden in, zoals een leerling dat doet. De speeltuin zet het antwoord
+# achter de vraag in de uitvoer (INVOER_PY in packages/python-runner), en de
+# sitecustomize hieronder doet dat net zo, zodat een uitvoerblok onder zo'n
+# programma te vergelijken is. Een zaad zet random vast: dan is het geheime
+# getal in CI elke keer hetzelfde, en in de browser niet.
+INVOER_RE = re.compile(
+    r"\{/\*\s*invoer(?:\s+met\s+zaad\s+(?P<zaad>\d+))?:\s*(?P<antwoorden>.*?)\s*\*/\}\s*$"
+)
+
+
+def lees_invoer(ervoor: str) -> tuple[tuple[str, ...], int | None] | None:
+    """De antwoorden (en het zaad) uit een invoer-marker direct boven een blok."""
+    m = INVOER_RE.search(ervoor)
+    if not m:
+        return None
+    antwoorden = tuple(a.strip() for a in m.group("antwoorden").split("|"))
+    return antwoorden, int(m.group("zaad")) if m.group("zaad") else None
 
 # Alleen een commentaar achter een print() op dezelfde regel telt als belofte.
 BELOFTE_RE = re.compile(r"^\s*print\(.*\)\s+#\s*(.+?)\s*$")
@@ -375,6 +423,34 @@ def zelftest() -> None:
         env=omgeving(),
     )
     assert r.stdout == "(10.00,0.00)\n", r.stderr
+    # Een invoer-marker typt de antwoorden in, en ze staan achter de vraag,
+    # zoals in de speeltuin. Zonder marker staat er een niet-draaien boven
+    # een input()-blok; met marker draait hij toch.
+    invoer = lees_invoer('tekst\n\n{/* invoer met zaad 3: 12 | Sam */}')
+    assert invoer == (("12", "Sam"), 3), invoer
+    assert lees_invoer("{/* invoer: 7 */}") == (("7",), None)
+    assert lees_invoer("{/* niet-draaien: vraagt om invoer */}") is None
+    code = (
+        "import random\n"
+        "a = int(input('Getal? '))\n"
+        "print(a * 2, input('Naam? '))\n"
+        "print(random.randint(1, 1000))\n"
+    )
+    zelfde = [
+        subprocess.run(
+            [sys.executable, "-c", code], capture_output=True, text=True, env=omgeving(invoer)
+        ).stdout
+        for _ in range(2)
+    ]
+    assert zelfde[0] == zelfde[1], zelfde
+    assert zelfde[0].startswith("Getal? 12\nNaam? Sam\n24 Sam\n"), zelfde[0]
+    r = subprocess.run(
+        [sys.executable, "-c", "input(); input()"],
+        capture_output=True,
+        text=True,
+        env=omgeving((("1",), None)),
+    )
+    assert "EOFError: de invoer-marker heeft geen antwoorden meer" in r.stderr, r.stderr
 
 
 def inspring_weg(code: str) -> str:
@@ -416,7 +492,8 @@ def melding_van(kaalcode: str) -> str | None:
 def verzamel():
     """(blokken, claims, fouten).
 
-    Elk blok is (bron, regel, code, soort, verwacht, varieert, voorplak, afh);
+    Elk blok is (bron, regel, code, soort, verwacht, varieert, voorplak, afh,
+    invoer); invoer komt uit lees_invoer, of is None;
     voorplak is het aantal regels dat draaien-met ervoor heeft geplakt (0 als
     er niets geplakt is). `afh` zijn de (pad, eerste, laatste regel) waar het
     oordeel over dit blok van afhangt, voor `--alleen`: het blok zelf, zijn
@@ -460,7 +537,8 @@ def verzamel():
                     )
                     uitvoer = (bron_pad, *regels_van(tekst, m.start(), m.end()))
                     blokken[vorige[1]] = rij[:3] + (
-                        soort, inspring_weg(m.group("kaalcode")), rij[5], rij[6], rij[7] + (uitvoer,)
+                        soort, inspring_weg(m.group("kaalcode")), rij[5], rij[6], rij[7] + (uitvoer,),
+                        rij[8],
                     )
                 melding = melding_van(m.group("kaalcode"))
                 if melding and not gepaard:
@@ -523,7 +601,7 @@ def verzamel():
                 if boven is None:
                     blokken.append(
                         (bron, regel, "raise SyntaxError('draaien-met zonder blok erboven')",
-                         "draai", None, False, 0, afh)
+                         "draai", None, False, 0, afh, None)
                     )
                     vorige = None
                     continue
@@ -536,7 +614,7 @@ def verzamel():
             if STARTCODE_RE.search(ervoor):
                 # Draait wel, maar wordt anders beoordeeld: zie draai_startcode.
                 soort = "startcode"
-            elif NIET_DRAAIEN_RE.search(ervoor):
+            elif NIET_DRAAIEN_RE.search(ervoor) and not INVOER_RE.search(ervoor):
                 # Expliciet uitgezet; een uitvoerblok eronder mag dat niet
                 # meer terugdraaien.
                 soort = "compileer-marker"
@@ -551,7 +629,11 @@ def verzamel():
             else:
                 soort = "draai"
             varieert = bool(VARIEERT_RE.search(ervoor))
-            blokken.append((bron, regel, kaalcode, soort, None, varieert, voorplak, afh))
+            invoer = lees_invoer(ervoor)
+            if invoer is not None and soort == "compileer":
+                # Antwoorden klaarzetten heeft alleen zin als het blok draait.
+                soort = "draai"
+            blokken.append((bron, regel, kaalcode, soort, None, varieert, voorplak, afh, invoer))
             # De keten mag alleen gevoed worden door blokken die op zichzelf
             # kunnen bestaan: een fragment dat zelf niet compileert (een losse
             # return-regel) zou elk volgend draaien-met-blok meeslepen.
@@ -710,7 +792,7 @@ def compileer(bron, regel, code) -> str | None:
         return f"{bron}:{regel + (e.lineno or 1)}: {e.msg}"
 
 
-def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None:
+def draai(bron, regel, code, verwacht, varieert=False, voorplak=0, invoer=None) -> str | None:
     # Bij draaien-met telt het voorgeplakte blok mee in de regelnummers van
     # Python; door de startregel te verschuiven wijst een fout in het blok
     # zélf weer naar de juiste documentregel, en de melding zegt erbij dat er
@@ -729,7 +811,7 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0) -> str | None
                 text=True,
                 timeout=TIJDSLIMIET,
                 cwd=werkmap,
-                env=omgeving(),
+                env=omgeving(invoer),
             )
     except subprocess.TimeoutExpired:
         return f"{bron}:{regel}: blok draait na {TIJDSLIMIET}s nog — een lus zonder eind?"
@@ -1051,7 +1133,9 @@ def main() -> int:
     fouten = fouten_vooraf
     fouten += [f for b in te_compileren if (f := compileer(b[0], b[1], b[2]))]
     with ThreadPoolExecutor(max_workers=8) as pool:
-        resultaten = pool.map(lambda b: draai(b[0], b[1], b[2], b[4], b[5], b[6]), te_draaien)
+        resultaten = pool.map(
+            lambda b: draai(b[0], b[1], b[2], b[4], b[5], b[6], b[8]), te_draaien
+        )
         fouten += [f for f in resultaten if f]
         fouten += [f for f in pool.map(lambda b: draai_startcode(b[0], b[1], b[2]), startcodes) if f]
         fouten += [f for f in pool.map(controleer_claim, claims) if f]
