@@ -223,10 +223,6 @@ Zoeken en vanzelf verversen gaan niet samen: de `<div>` die elke tien seconden v
 | `hx-swap="outerHTML"` | vervang het doel zelf | |
 | `hx-swap="beforeend"` | zet het antwoord achter wat er al staat | |
 
-## Er gaat iets mis
-
-Bij htmx zie je fouten niet op de pagina. Een 404, een 500 of een server die uit staat: htmx laat het doel dan met rust, en op het scherm gebeurt niets. Kijk daarom bij elk probleem eerst in het tabblad **Netwerk**. htmx meldt de fout ook in het tabblad **Console**, met een rode regel als `Response Status Error Code 404 from /bericht/…`; dat tabblad leer je kennen in [Console en Elementen](site:fullstack/docs/FastAPI/in-de-browser/devtools-console). Een rode regel in Netwerk zegt wat er mis is: 404 is een verkeerd pad in `hx-get` of `hx-post`, 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait, 405 een `@app.post` waar `hx-delete` op wijst.
-
 <Voorspel soort="Controlevraag" vraag="Je klikt in het verversrecept op Ververs. Wat zet htmx in #berichten-lijst?">
   <Keuze uitleg="Die pagina krijg je op /berichten. Kijk welke template het endpoint /berichten/lijst teruggeeft.">De hele `berichten.html`, met kop en al</Keuze>
   <Keuze goed uitleg="Het endpoint vult de lijst-template op de server in, en htmx krijgt alleen die ingevulde HTML.">Alleen de lijst, al ingevuld door Jinja2</Keuze>
@@ -238,6 +234,10 @@ Bij htmx zie je fouten niet op de pagina. Een 404, een 500 of een server die uit
 
   </Uitleg>
 </Voorspel>
+
+## Er gaat iets mis
+
+Bij htmx zie je fouten niet op de pagina. Een 404, een 500 of een server die uit staat: htmx laat het doel dan met rust, en op het scherm gebeurt niets. Kijk daarom bij elk probleem eerst in het tabblad **Netwerk**. htmx meldt de fout ook in het tabblad **Console**, met een rode regel als `Response Status Error Code 404 from /bericht/…`; dat tabblad leer je kennen in [Console en Elementen](site:fullstack/docs/FastAPI/in-de-browser/devtools-console). Een rode regel in Netwerk zegt wat er mis is: 404 is een verkeerd pad in `hx-get` of `hx-post`, 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait, 405 een `@app.post` waar `hx-delete` op wijst.
 
 ## Opdrachten
 

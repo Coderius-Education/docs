@@ -4,14 +4,16 @@ Typt een bezoeker een adres dat niet bestaat, dan ziet hij `{"detail":"Not Found
 
 ## Twee soorten 404
 
-<details>
-<summary>Voorspel: wat zie je op `/bestaat-niet`, en wat op `/bericht/onzin`?</summary>
+<Voorspel vraag="Je gastenboek heeft de 404 uit Een 404 sturen. Wat zie je op /bestaat-niet, en wat op /bericht/onzin?">
+  <Keuze goed uitleg="Bij /bestaat-niet hoort geen endpoint, dus FastAPI stuurt zelf een 404. Het andere pad hoort wel bij een endpoint, en dat stuurt zijn eigen 404 met raise HTTPException.">Op `/bestaat-niet` `{"detail":"Not Found"}`, op `/bericht/onzin` `{"detail":"Dit bericht bestaat niet"}`</Keuze>
+  <Keuze uitleg="Het tweede pad past bij de route met een sleutel erin. Welke tekst gaf jij aan HTTPException mee?">Twee keer `{"detail":"Not Found"}`</Keuze>
+  <Keuze uitleg="Je endpoint vangt de onbekende sleutel af met een if. Een 500 komt pas als je code zelf omvalt.">Op `/bericht/onzin` een 500</Keuze>
+  <Uitleg>
 
-Op `/bestaat-niet` staat `{"detail":"Not Found"}`. Bij dat pad hoort geen endpoint, dus FastAPI stuurt zelf een 404.
+  De eerste 404 komt van FastAPI zelf, de tweede van jouw code: [Een 404 sturen: als het item niet bestaat](site:fullstack/docs/FastAPI/berichten-tonen/niet-gevonden).
 
-Op `/bericht/onzin` staat `{"detail":"Dit bericht bestaat niet"}`. Dat pad hoort wel bij een endpoint, en dat stuurt de 404 met `raise HTTPException` uit [Een 404 sturen: als het item niet bestaat](site:fullstack/docs/FastAPI/berichten-tonen/niet-gevonden).
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 Allebei zijn het een 404, en allebei moeten ze straks je eigen pagina tonen. Een andere fout, zoals een fout wachtwoord (401) of een fout in je code (500), moet blijven wat hij is.
 
@@ -149,6 +151,17 @@ Zit er een fout in je Python, dan krijgt de bezoeker `Internal Server Error`, me
 
 Je wilt daar misschien ook een nette pagina voor, met een handler voor `Exception`, die elke fout in Python opvangt. Doe dat niet terwijl je nog bouwt. Je browser toont dan een pagina die er goed uitziet, en jij zoekt de fout op de verkeerde plek. Wat er dan gebeurt, zie je in opdracht 3.
 
+<Voorspel soort="Controlevraag" vraag="Je zet 404.html per ongeluk in static/pages/ in plaats van in templates/. De handler laat je zoals hij is. Wat zie je in Netwerk als je /bestaat-niet opent?">
+  <Keuze uitleg="De handler draait wel, en vraagt om een template. Waar zoekt Jinja2 die, en wat gebeurt er als hij hem niet vindt?">Je eigen pagina met een 404, want het bestand bestaat</Keuze>
+  <Keuze uitleg="Je handler vangt elke 404, dus FastAPI stuurt zijn eigen JSON niet meer. Wat doet je handler zelf?">De JSON van FastAPI, met een 404</Keuze>
+  <Keuze goed uitleg="Jinja2 zoekt alleen in de map templates en geeft een TemplateNotFound. Een fout in je handler is een fout in je Python-code.">Een 500, en in de terminal staat `TemplateNotFound`</Keuze>
+  <Uitleg>
+
+  Een template hoort in `templates/`, want daar zoekt `Jinja2Templates(directory="templates")`. In `static/` staat wat de browser zoals het is krijgt, zonder dat Jinja2 het invult. Zie je een 500 waar je een 404 verwachtte, kijk dan eerst in de terminal.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
 
 ### Netwerk zegt 200 bij je foutpagina
@@ -186,17 +199,6 @@ jinja2.exceptions.TemplateNotFound: '404.html' not found in search path: 'templa
 **Oorzaak:** je handler is voor `HTTPException` uit `fastapi`, in plaats van voor `404` of voor `StarletteHTTPException`. Die vangt alleen je eigen `raise HTTPException`. Een adres zonder endpoint geeft FastAPI zelf, met de `HTTPException` uit Starlette, en daar komt je handler niet langs.
 
 **Oplossing:** gebruik `@app.exception_handler(404)`.
-
-<Voorspel soort="Controlevraag" vraag="Je zet 404.html per ongeluk in static/pages/ in plaats van in templates/. De handler laat je zoals hij is. Wat zie je in Netwerk als je /bestaat-niet opent?">
-  <Keuze uitleg="De handler draait wel, en vraagt om een template. Waar zoekt Jinja2 die, en wat gebeurt er als hij hem niet vindt?">Je eigen pagina met een 404, want het bestand bestaat</Keuze>
-  <Keuze uitleg="Je handler vangt elke 404, dus FastAPI stuurt zijn eigen JSON niet meer. Wat doet je handler zelf?">De JSON van FastAPI, met een 404</Keuze>
-  <Keuze goed uitleg="Jinja2 zoekt alleen in de map templates en geeft een TemplateNotFound. Een fout in je handler is een fout in je Python-code.">Een 500, en in de terminal staat `TemplateNotFound`</Keuze>
-  <Uitleg>
-
-  Een template hoort in `templates/`, want daar zoekt `Jinja2Templates(directory="templates")`. In `static/` staat wat de browser zoals het is krijgt, zonder dat Jinja2 het invult. Zie je een 500 waar je een 404 verwachtte, kijk dan eerst in de terminal.
-
-  </Uitleg>
-</Voorspel>
 
 ## Opdrachten
 

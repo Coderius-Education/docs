@@ -12,6 +12,8 @@ Een gastenboek zonder berichten toont nu een kop, een lege lijst en een link. Ee
 
 Vervang in `templates/berichten.html` de `<ul>` met de lus door dit blok:
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 {% if berichten %}
     <ul>
@@ -28,6 +30,8 @@ Vervang in `templates/berichten.html` de `<ul>` met de lus door dit blok:
 
 <details>
 <summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
+
+<Bestand pad="templates/berichten.html" />
 
 ```html
 <!DOCTYPE html>
@@ -85,6 +89,8 @@ Speel eerst zonder computer Jinja, met `{% for %}` en `{% if %}`: [Template invu
 
 ### Opdracht 1: Predict - Leeg of niet?
 
+<Bestand pad="templates/namen.html" />
+
 ```html
 {% if namen %}
     <p>Er staan namen in de lijst.</p>
@@ -140,6 +146,8 @@ Verander de tekst in het lege geval zo dat "Schrijf de eerste" een link wordt na
 <details>
 <summary>Antwoord</summary>
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 {% else %}
     <p>Nog geen berichten. <a href="/gastenboek">Schrijf de eerste</a>.</p>
@@ -163,6 +171,8 @@ De berichten komen binnen in de volgorde waarin ze zijn opgeslagen, dus het laat
 
 <details>
 <summary>Antwoord</summary>
+
+<Bestand pad="templates/berichten.html" />
 
 ```html
 {% if berichten %}

@@ -43,6 +43,27 @@ leeftijd = 16
 
 Heb je in de vorige les meer opgeslagen, zoals een woonplaats, dan staat die er ook bij en telt het een sleutel meer. Bewaar dit script: in de lessen hierna kijk je er steeds mee wat je server heeft opgeslagen. Verander alleen de bestandsnaam tussen de haakjes, bijvoorbeeld in `"gastenboek.db"`.
 
+Test jezelf. In `mijn_data.db` staan `naam` en `leeftijd`. Je draait dit script:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    db["klas"] = "4B"
+```
+
+<Voorspel soort="Controlevraag" vraag="Daarna draai je bekijk_db.py. Wat is de eerste regel die het print?">
+  <Keuze uitleg="Dan zou klas in het bestand staan. Kijk welke regel het script mist.">3 sleutels</Keuze>
+  <Keuze goed uitleg="Het script schrijft klas nooit weg, want commit() ontbreekt. In het bestand staan nog alleen naam en leeftijd.">2 sleutels</Keuze>
+  <Keuze uitleg="Een wijziging zonder commit() gaat verloren, maar wat er al in het bestand stond, blijft staan.">0 sleutels</Keuze>
+  <Keuze uitleg="SqliteDict waarschuwt niet als je commit() vergeet. Het script loopt gewoon tot het eind.">Een foutmelding, want commit() ontbreekt</Keuze>
+  <Uitleg>
+
+  `bekijk_db.py` laat zien wat er echt in het bestand staat, niet wat je script probeerde op te slaan. Zie je een sleutel niet terug, kijk dan eerst of er een `db.commit()` onder staat.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
 
 ### AttributeError na het with-blok
@@ -82,27 +103,6 @@ for sleutel, waarde in paren:
 **Oorzaak:** je draait `bekijk_db.py` vanuit een andere map. Net als in [Gegevens opslaan met SqliteDict](site:fullstack/docs/FastAPI/sqlitedict/database#er-gaat-iets-mis) maakt SqliteDict daar stil een nieuwe, lege `mijn_data.db` aan.
 
 **Oplossing:** start het script vanuit de terminal in je projectmap, en gooi de lege `mijn_data.db` in de andere map weg.
-
-Test jezelf. In `mijn_data.db` staan `naam` en `leeftijd`. Je draait dit script:
-
-```python
-from sqlitedict import SqliteDict
-
-with SqliteDict("mijn_data.db") as db:
-    db["klas"] = "4B"
-```
-
-<Voorspel soort="Controlevraag" vraag="Daarna draai je bekijk_db.py. Wat is de eerste regel die het print?">
-  <Keuze uitleg="Dan zou klas in het bestand staan. Kijk welke regel het script mist.">3 sleutels</Keuze>
-  <Keuze goed uitleg="Het script schrijft klas nooit weg, want commit() ontbreekt. In het bestand staan nog alleen naam en leeftijd.">2 sleutels</Keuze>
-  <Keuze uitleg="Een wijziging zonder commit() gaat verloren, maar wat er al in het bestand stond, blijft staan.">0 sleutels</Keuze>
-  <Keuze uitleg="SqliteDict waarschuwt niet als je commit() vergeet. Het script loopt gewoon tot het eind.">Een foutmelding, want commit() ontbreekt</Keuze>
-  <Uitleg>
-
-  `bekijk_db.py` laat zien wat er echt in het bestand staat, niet wat je script probeerde op te slaan. Zie je een sleutel niet terug, kijk dan eerst of er een `db.commit()` onder staat.
-
-  </Uitleg>
-</Voorspel>
 
 ## Opdrachten
 

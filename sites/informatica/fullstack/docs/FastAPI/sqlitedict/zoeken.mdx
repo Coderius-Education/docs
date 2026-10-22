@@ -16,12 +16,16 @@ with SqliteDict("mijn_data.db") as db:
         print("Geen email opgeslagen")
 ```
 
-<details>
-<summary>Voorspel: wat print dit?</summary>
+<Voorspel vraag="Onder email heb je nooit iets bewaard. Wat print dit script?">
+  <Keuze goed uitleg="De sleutel staat niet in db, dus de if is niet waar en Python doet wat onder else staat.">`Geen email opgeslagen`</Keuze>
+  <Keuze uitleg="Python komt nooit bij db['email']: de if kijkt eerst, en de sleutel is er niet.">Een `KeyError`</Keuze>
+  <Keuze uitleg="Een sleutel die er niet is, heeft geen waarde, ook geen lege. Kijk welke tak van de if draait.">Een lege regel</Keuze>
+  <Uitleg>
 
-`Geen email opgeslagen`. Onder `"email"` heb je nooit iets bewaard, dus `"email" in db` is `False` en Python doet wat onder `else` staat. Er komt geen `KeyError`, want Python komt nooit bij `db["email"]`.
+  Er komt geen `KeyError`, want `db["email"]` staat in de tak die niet draait.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 `in` kijkt alleen naar de sleutels, net als bij een dictionary.
 
@@ -64,26 +68,6 @@ Jan
 
 Met `in` kies je tussen twee dingen die je script kan doen. Met `get` krijg je altijd een waarde terug, en die kun je meteen gebruiken.
 
-## Er gaat iets mis
-
-### None in je uitvoer
-
-```
-None
-```
-
-**Oorzaak:** je vroeg met `get` om een sleutel die er niet is, zonder standaardwaarde. Dan geeft `get` `None`, en `print` zet dat als woord in je terminal.
-
-**Oplossing:** geef een standaardwaarde mee die past bij wat je wilt laten zien: `db.get("email", "geen email")`.
-
-### De standaardwaarde, terwijl de sleutel er wel staat
-
-Je script print `onbekend`, maar `bekijk_db.py` laat een naam zien.
-
-**Oorzaak:** de sleutel in je `get` is net anders dan die in de database, bijvoorbeeld `"Naam"` in plaats van `"naam"`. Met `db["Naam"]` had je een `KeyError` gekregen, maar `get` geeft zonder foutmelding de standaardwaarde. Zo merk je een tikfout pas als je de uitvoer goed leest.
-
-**Oplossing:** schrijf de sleutel precies zoals bij het opslaan, hoofdletters meegeteld. Kijk met `bekijk_db.py` uit [Alles bekijken: len en items](site:fullstack/docs/FastAPI/sqlitedict/bekijken) welke sleutels er echt in staan.
-
 Test jezelf. In `mijn_data.db` staan `naam` en `leeftijd`. Je draait dit script:
 
 ```python
@@ -104,6 +88,26 @@ with SqliteDict("mijn_data.db") as db:
 
   </Uitleg>
 </Voorspel>
+
+## Er gaat iets mis
+
+### None in je uitvoer
+
+```
+None
+```
+
+**Oorzaak:** je vroeg met `get` om een sleutel die er niet is, zonder standaardwaarde. Dan geeft `get` `None`, en `print` zet dat als woord in je terminal.
+
+**Oplossing:** geef een standaardwaarde mee die past bij wat je wilt laten zien: `db.get("email", "geen email")`.
+
+### De standaardwaarde, terwijl de sleutel er wel staat
+
+Je script print `onbekend`, maar `bekijk_db.py` laat een naam zien.
+
+**Oorzaak:** de sleutel in je `get` is net anders dan die in de database, bijvoorbeeld `"Naam"` in plaats van `"naam"`. Met `db["Naam"]` had je een `KeyError` gekregen, maar `get` geeft zonder foutmelding de standaardwaarde. Zo merk je een tikfout pas als je de uitvoer goed leest.
+
+**Oplossing:** schrijf de sleutel precies zoals bij het opslaan, hoofdletters meegeteld. Kijk met `bekijk_db.py` uit [Alles bekijken: len en items](site:fullstack/docs/FastAPI/sqlitedict/bekijken) welke sleutels er echt in staan.
 
 ## Opdrachten
 

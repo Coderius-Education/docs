@@ -90,12 +90,16 @@ async def dobbelsteen(request: Request):
 
 </CodeUitleg>
 
-<details>
-<summary>Voorspel: wat zie je als je de pagina drie keer herlaadt?</summary>
+<Voorspel vraag="Je gaat naar /dobbelsteen en herlaadt de pagina drie keer. Wat zie je?">
+  <Keuze uitleg="Dat zou gebeuren als de worp één keer werd gegooid, bij het starten van de server. Kijk waar random.randint staat.">Drie keer hetzelfde getal</Keuze>
+  <Keuze goed uitleg="Bij elk verzoek draait de functie opnieuw, gooit opnieuw en vult de template opnieuw in.">Steeds een getal van 1 tot en met 6, vaak een ander</Keuze>
+  <Keuze uitleg="De browser krijgt de ingevulde HTML, nooit de template zelf. Jinja draait op de server.">De tekst `{{ worp }}`</Keuze>
+  <Uitleg>
 
-Steeds een ander getal, bijvoorbeeld "Je gooide een 4.", dan een 1, dan een 6. Bij elk verzoek draait de functie opnieuw, gooit opnieuw, en vult de template opnieuw in. Met een `FileResponse` zou je drie keer precies hetzelfde zien.
+  Bijvoorbeeld "Je gooide een 4.", dan een 1, dan een 6. Met een `FileResponse` zou je drie keer precies hetzelfde zien, want dan stuurt de server een vast bestand.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Ga naar [http://127.0.0.1:8000/dobbelsteen](http://127.0.0.1:8000/dobbelsteen) en herlaad een paar keer.
 
@@ -160,6 +164,18 @@ Is een waarde zelf een dictionary, dan haal je er in de template een onderdeel u
 ```
 
 In Python schrijf je `speler["naam"]`; in een template mag `speler.naam`. Dat kom je weer tegen als je de berichten uit je database op een pagina zet.
+
+<Voorspel soort="Controlevraag" vraag="Je zet dobbelsteen.html per ongeluk in static/pages/ in plaats van in templates/. Het endpoint laat je zoals het is. Wat gebeurt er als je naar /dobbelsteen gaat?">
+  <Keuze uitleg="Het endpoint vraagt nog steeds een template op. Jinja2 zoekt daarvoor alleen in de map die je aan Jinja2Templates gaf.">De pagina met een getal, want FastAPI vindt het bestand toch</Keuze>
+  <Keuze uitleg="Zo gaat een bestand uit static naar de browser, maar dan via een adres onder /static. Het endpoint /dobbelsteen stuurt geen bestand, het vult een template in.">De pagina met letterlijk `{{ worp }}` erin</Keuze>
+  <Keuze uitleg="Een lege plek krijg je als een naam niet in het dictionary staat. Hier gaat het eerder mis: welk bestand moet Jinja2 invullen?">`Je gooide een .`</Keuze>
+  <Keuze goed uitleg="Jinja2 vindt dobbelsteen.html niet in templates/. Dat is een fout in de server, dus de browser krijgt een 500.">Internal Server Error, en in de terminal TemplateNotFound</Keuze>
+  <Uitleg>
+
+  Een template hoort in `templates/`, want daar zoekt `Jinja2Templates(directory="templates")`. In `static/` staan bestanden die zonder invullen naar de browser gaan. Zie je `TemplateNotFound`, kijk dan eerst in welke map het bestand staat.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -300,18 +316,6 @@ async def dobbelsteen(request: Request):
 ```
 
 </details>
-
-<Voorspel soort="Controlevraag" vraag="Je zet dobbelsteen.html per ongeluk in static/pages/ in plaats van in templates/. Het endpoint laat je zoals het is. Wat gebeurt er als je naar /dobbelsteen gaat?">
-  <Keuze uitleg="Het endpoint vraagt nog steeds een template op. Jinja2 zoekt daarvoor alleen in de map die je aan Jinja2Templates gaf.">De pagina met een getal, want FastAPI vindt het bestand toch</Keuze>
-  <Keuze uitleg="Zo gaat een bestand uit static naar de browser, maar dan via een adres onder /static. Het endpoint /dobbelsteen stuurt geen bestand, het vult een template in.">De pagina met letterlijk `{{ worp }}` erin</Keuze>
-  <Keuze uitleg="Een lege plek krijg je als een naam niet in het dictionary staat. Hier gaat het eerder mis: welk bestand moet Jinja2 invullen?">`Je gooide een .`</Keuze>
-  <Keuze goed uitleg="Jinja2 vindt dobbelsteen.html niet in templates/. Dat is een fout in de server, dus de browser krijgt een 500.">Internal Server Error, en in de terminal TemplateNotFound</Keuze>
-  <Uitleg>
-
-  Een template hoort in `templates/`, want daar zoekt `Jinja2Templates(directory="templates")`. In `static/` staan bestanden die zonder invullen naar de browser gaan. Zie je `TemplateNotFound`, kijk dan eerst in welke map het bestand staat.
-
-  </Uitleg>
-</Voorspel>
 
 :::tip[Eerst op papier]
 Sorteer eerst zonder computer welke regels op de server draaien en welke in de browser: [Welke taal, waar?](site:fullstack/docs/unplugged/welke-taal-waar). Je docent kan de hand-out printen.

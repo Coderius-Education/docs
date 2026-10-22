@@ -80,6 +80,29 @@ describe('losse vragen en labels in de FastAPI-route', () => {
     expect(fout).toEqual([]);
   });
 
+  it('de controlevraag staat niet in Er gaat iets mis', () => {
+    // Daar las hij als een van de fouten. Hij hoort bij de uitleg: na de
+    // laatste sectie ervan, vóór de fouten en de opdrachten.
+    const verkeerd = lessen
+      .filter(({ tekst }) =>
+        [...tekst.matchAll(/^## Er gaat iets mis\n([\s\S]*?)(?=^## |$(?![\s\S]))/gm)].some((m) =>
+          m[1].includes('soort="Controlevraag"'),
+        ),
+      )
+      .map(({ id }) => id);
+    expect(verkeerd).toEqual([]);
+  });
+
+  it('een voorspelvraag in de hoofdtekst is ook een <Voorspel>', () => {
+    // Een open uitklapblok "Voorspel: …" liet de leerling het antwoord lezen
+    // zonder eerst te kiezen; zes stonden er nog na het omzetten van de
+    // Predict-opdrachten.
+    const open = lessen
+      .filter(({ tekst }) => /<summary>Voorspel\b/.test(tekst))
+      .map(({ id }) => id);
+    expect(open).toEqual([]);
+  });
+
   it('elke les met code heeft een controlevraag', () => {
     const zonder = lessen
       .filter(({ tekst }) => blokken(tekst).some((b) => TALEN.includes(b.taal)))

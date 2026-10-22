@@ -50,12 +50,16 @@ Binnen het blok gedraagt `db` zich als een dictionary: een sleutel, een waarde.
 
 </CodeUitleg>
 
-<details>
-<summary>Voorspel: wat zie je in de terminal, en wat verandert er in je map?</summary>
+<Voorspel vraag="Je draait python test_db.py. Wat zie je in de terminal, en wat verandert er in je map?">
+  <Keuze goed uitleg="De print staat na het with-blok, en SqliteDict maakt het bestand aan omdat het nog niet bestond.">`Data opgeslagen`, en er staat een nieuw bestand `mijn_data.db`</Keuze>
+  <Keuze uitleg="SqliteDict maakt een bestand dat nog niet bestaat zelf aan. Er komt dus geen foutmelding.">Een foutmelding, want `mijn_data.db` bestaat nog niet</Keuze>
+  <Keuze uitleg="De print in het script schrijft wel iets in de terminal. Kijk naar de laatste regel.">Niets in de terminal, wel een nieuw bestand</Keuze>
+  <Uitleg>
 
-In de terminal staat `Data opgeslagen`. In de Verkenner van VS Code staat een nieuw bestand `mijn_data.db`, naast `test_db.py`. Daar staan de naam en de leeftijd nu in.
+  In de Verkenner van VS Code staat het nieuwe bestand naast `test_db.py`. Daar staan de naam en de leeftijd nu in.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Draai `python test_db.py` en kijk of je voorspelling klopte.
 
@@ -86,6 +90,29 @@ Jan
 Een database slaat wijzigingen niet meteen op in het bestand. Met `db.commit()` zeg je: "Sla nu alles echt op." Vergeet je dat, dan verdwijnen je wijzigingen zodra de database sluit, aan het eind van het `with`-blok. Vergelijk het met een Word-document: je moet op "Opslaan" klikken, anders ben je je werk kwijt.
 
 </details>
+
+Test jezelf met een script dat na `commit()` nog iets verandert:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("proef.db") as db:
+    db["naam"] = "Piet"
+    db.commit()
+    db["naam"] = "Sara"
+```
+
+<Voorspel soort="Controlevraag" vraag="Het bestand proef.db bestaat nog niet. Je draait dit script. Wat staat er daarna onder de sleutel naam in proef.db?">
+  <Keuze uitleg="Dat is de laatste waarde in je programma. Kijk wat er na die regel nog gebeurt voordat het with-blok sluit.">Sara</Keuze>
+  <Keuze goed uitleg="De eerste commit() schreef de eerste naam weg. De tweede wijziging krijgt geen commit() meer, dus die verdwijnt als het blok sluit.">Piet</Keuze>
+  <Keuze uitleg="Een wijziging zonder commit() gaat verloren, maar wat al weggeschreven is, blijft staan.">Niets, want het script eindigt niet met commit()</Keuze>
+  <Keuze uitleg="Onder één sleutel staat één waarde, net als in een gewone dictionary.">Allebei de namen</Keuze>
+  <Uitleg>
+
+  Alleen wat vóór `commit()` gebeurt, komt in het bestand. Zet `db.commit()` daarom altijd onder je laatste wijziging, binnen het `with`-blok.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -137,29 +164,6 @@ KeyError: 'Naam'
 **Oorzaak:** een sleutel moet letter voor letter gelijk zijn, hoofdletters meegeteld. Je sloeg op onder `"naam"` en vraagt om `"Naam"`.
 
 **Oplossing:** schrijf de sleutel bij het uitlezen precies zoals bij het opslaan. Wil je zien welke sleutels er echt in staan, dan helpt het script uit [Alles bekijken: len en items](site:fullstack/docs/FastAPI/sqlitedict/bekijken).
-
-Test jezelf met een script dat na `commit()` nog iets verandert:
-
-```python
-from sqlitedict import SqliteDict
-
-with SqliteDict("proef.db") as db:
-    db["naam"] = "Piet"
-    db.commit()
-    db["naam"] = "Sara"
-```
-
-<Voorspel soort="Controlevraag" vraag="Het bestand proef.db bestaat nog niet. Je draait dit script. Wat staat er daarna onder de sleutel naam in proef.db?">
-  <Keuze uitleg="Dat is de laatste waarde in je programma. Kijk wat er na die regel nog gebeurt voordat het with-blok sluit.">Sara</Keuze>
-  <Keuze goed uitleg="De eerste commit() schreef de eerste naam weg. De tweede wijziging krijgt geen commit() meer, dus die verdwijnt als het blok sluit.">Piet</Keuze>
-  <Keuze uitleg="Een wijziging zonder commit() gaat verloren, maar wat al weggeschreven is, blijft staan.">Niets, want het script eindigt niet met commit()</Keuze>
-  <Keuze uitleg="Onder één sleutel staat één waarde, net als in een gewone dictionary.">Allebei de namen</Keuze>
-  <Uitleg>
-
-  Alleen wat vóór `commit()` gebeurt, komt in het bestand. Zet `db.commit()` daarom altijd onder je laatste wijziging, binnen het `with`-blok.
-
-  </Uitleg>
-</Voorspel>
 
 ## Opdrachten
 

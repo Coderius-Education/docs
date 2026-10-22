@@ -50,28 +50,6 @@ Draai ook `bekijk_db.py`. Daar staat Sara op één regel, naast de sleutels die 
 sara = {'klas': '4B', 'vakken': ['informatica', 'wiskunde']}
 ```
 
-## Er gaat iets mis
-
-### KeyError met de naam van een veld
-
-```
-KeyError: 'naam'
-```
-
-**Oorzaak:** de sleutel bestaat wel, maar het veld in de dictionary niet. `db["sara"]["naam"]` vraagt om een veld `naam`, en de dictionary van Sara heeft alleen `klas` en `vakken`.
-
-**Oplossing:** kijk met `bekijk_db.py` welke velden er echt in staan. Ontbreekt een veld soms, gebruik dan `get` op de dictionary: `sara.get("naam", "onbekend")`.
-
-### TypeError: string indices must be integers
-
-```
-TypeError: string indices must be integers, not 'str'
-```
-
-**Oorzaak:** onder de sleutel staat tekst, geen dictionary. `db["naam"]["klas"]` haalt eerst `"Jan"` op, en vraagt daarna aan die tekst om een veld `klas`. Een stuk tekst heeft geen velden.
-
-**Oplossing:** kijk met `bekijk_db.py` wat er onder de sleutel staat. Alleen waar `{…}` achter de `=` staat, kun je een veld opvragen.
-
 Test jezelf met dit script:
 
 ```python
@@ -94,6 +72,28 @@ with SqliteDict("mijn_data.db") as db:
 
   </Uitleg>
 </Voorspel>
+
+## Er gaat iets mis
+
+### KeyError met de naam van een veld
+
+```
+KeyError: 'naam'
+```
+
+**Oorzaak:** de sleutel bestaat wel, maar het veld in de dictionary niet. `db["sara"]["naam"]` vraagt om een veld `naam`, en de dictionary van Sara heeft alleen `klas` en `vakken`.
+
+**Oplossing:** kijk met `bekijk_db.py` welke velden er echt in staan. Ontbreekt een veld soms, gebruik dan `get` op de dictionary: `sara.get("naam", "onbekend")`.
+
+### TypeError: string indices must be integers
+
+```
+TypeError: string indices must be integers, not 'str'
+```
+
+**Oorzaak:** onder de sleutel staat tekst, geen dictionary. `db["naam"]["klas"]` haalt eerst `"Jan"` op, en vraagt daarna aan die tekst om een veld `klas`. Een stuk tekst heeft geen velden.
+
+**Oplossing:** kijk met `bekijk_db.py` wat er onder de sleutel staat. Alleen waar `{…}` achter de `=` staat, kun je een veld opvragen.
 
 ## Opdrachten
 
