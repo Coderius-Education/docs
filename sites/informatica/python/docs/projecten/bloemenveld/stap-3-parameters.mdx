@@ -46,9 +46,9 @@ stuks. Teken daarmee drie bloemen:
 3. een paarse (`"purple"`) met 12 blaadjes op `(150, 0)`.
 
 De regel `blaadjes = 8` boven de functie kan weg: het aantal komt nu uit
-de aanroep.
+de aanroep. De functie `gras()` en de blauwe lucht blijven zoals ze zijn.
 
-![Drie bloemen naast elkaar: een rode met vijf blaadjes, een oranje met acht en een paarse met twaalf, elk met een gouden hart](./img/stap-3-drie-bloemen.svg)
+![Drie bloemen naast elkaar: een rode met vijf blaadjes, een oranje met acht en een paarse met twaalf, elk met een gouden hart, boven een strook gras](./img/stap-3-drie-bloemen.svg)
 
 <CodeExercise>{`# Plak hier je programma uit stap 2`}</CodeExercise>
 
@@ -85,6 +85,19 @@ def bloem(x, y, kleur, blaadjes):
         turtle.left(360 / blaadjes)
     turtle.dot(25, "gold")
 
+def gras():
+    turtle.penup()
+    turtle.goto(-300, -160)
+    turtle.fillcolor("yellowgreen")
+    turtle.begin_fill()
+    turtle.goto(300, -160)
+    turtle.goto(300, -260)
+    turtle.goto(-300, -260)
+    turtle.goto(-300, -160)
+    turtle.end_fill()
+
+turtle.bgcolor("skyblue")
+gras()
 bloem(-150, 0, "red", 5)
 bloem(0, 0, "orange", 8)
 bloem(150, 0, "purple", 12)

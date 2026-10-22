@@ -51,7 +51,7 @@ plaats van `print`.
 Plak je programma uit stap 2 in het veld. Ben je het kwijt, neem dan de
 oplossing van [stap 2](site:python/docs/projecten/pixel-art/stap-2-rij).
 
-Zet deze smiley in je programma:
+Kopieer deze smiley naar je programma:
 
 ```python
 smiley = [
@@ -72,9 +72,6 @@ smiley = [
 Teken hem met een for-loop over de lijst, in plaats van de zes losse
 aanroepen voor het hart. De bovenste regel begint op `(-100, 100)`, en elke
 volgende regel 20 lager.
-
-Bij zoveel vakjes duurt het even voordat de tekening klaar is. Zet
-`turtle.speed(0)` bovenaan, dan zie je meteen het eindresultaat.
 
 ![Een zwarte smiley van pixels: een ronde rand met twee ogen en een lachende mond](./img/stap-3-smiley.svg)
 
@@ -128,7 +125,6 @@ smiley = [
     "...####...",
 ]
 
-turtle.speed(0)
 turtle.hideturtle()
 y = 100
 for regel in smiley:
@@ -150,6 +146,32 @@ hoogte 100, en tekent de schildpad alle regels over elkaar heen.
 
 **Oplossing:** zet `y = 100` boven de loop. In de loop hoort alleen de regel
 die er 20 van afhaalt.
+
+**Naast je smiley staan losse vakjes, een ervan ver naar rechts, en de ogen
+zijn maar één vakje hoog.**
+
+**Oorzaak:** achter een regel in de lijst mist een komma:
+
+```python
+smiley = [
+    "#..#..#..#"
+    "#........#",
+]
+
+print(smiley)
+```
+
+Uitvoer:
+
+```
+['#..#..#..##........#']
+```
+
+Van twee teksten zonder komma ertussen maakt Python één lange tekst, zonder
+foutmelding. Je lijst heeft dan een regel minder, en die ene regel is
+twintig tekens lang.
+
+**Oplossing:** zet achter elke regel in de lijst een komma.
 
 Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 

@@ -9,8 +9,12 @@ import CodeExercise from '@site/src/components/CodeExercise';
 # Stap 1: Een ring van cirkels (for-loop)
 
 :::info
-Deze stap gebruikt de for-loop uit [For-loop](site:python/docs/herhalen/06a-for-loop), en
-`turtle.circle` uit [Cirkels en bogen](site:python/docs/projecten/turtle/cirkels/stap-1-cirkel).
+Dit project komt na [Tekenen met turtle](site:python/docs/projecten/turtle): je
+tekent met commando's die je daar hebt geleerd. `forward` en `left` ken je uit
+[Een schildpad die tekent](site:python/docs/projecten/turtle/lijnen/stap-1-forward),
+`circle` uit [Een zon](site:python/docs/projecten/turtle/cirkels/stap-1-cirkel).
+Nieuw uit de cursus is in deze stap de for-loop, uit
+[For-loop](site:python/docs/herhalen/06a-for-loop).
 :::
 
 Teken een vorm, draai een klein stukje, en teken hem nog een keer. Doe dat
@@ -29,16 +33,17 @@ for i in range(4):
     turtle.left(90)
 ```
 
-Elke cirkel begint en eindigt op hetzelfde punt, in het midden. Na de cirkel
-draait de schildpad 90 graden, dus de volgende cirkel ligt een kwartslag
-verder. Vier keer 90 graden is precies één keer rond.
+De schildpad begint in het punt waar de vier cirkels elkaar raken, en elke
+cirkel begint en eindigt daar. Na de cirkel draait de schildpad 90 graden,
+dus de volgende cirkel ligt een kwartslag verder. Vier keer 90 graden is
+precies één keer rond.
 
 ## Opdracht: 36 cirkels
 
 Teken 36 cirkels met een straal van 100. Draai na elke cirkel 10 graden naar
 links.
 
-![Een ring van 36 zwarte cirkels die elkaar in het midden raken, samen een ronde rozet](./img/stap-1-ring.svg)
+![Een ring van 36 zwarte cirkels die allemaal door het middelpunt van de tekening gaan, samen een ronde rozet](./img/stap-1-ring.svg)
 
 <CodeExercise>{`import turtle`}</CodeExercise>
 

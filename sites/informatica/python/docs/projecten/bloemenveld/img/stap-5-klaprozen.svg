@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-285.57 -200 537.97 400" role="img">
-<title>Tien rode bloemen met vijf tot negen blaadjes op groene stelen van verschillende lengte, verspreid over de breedte</title>
-<rect x="-285.57" y="-200" width="537.97" height="400" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-320 -200 640 480" role="img">
+<title>Tien rode bloemen met vijf tot negen blaadjes op groene stelen van verschillende lengte, verspreid over de breedte, in een strook gras</title>
+<rect x="-320" y="-200" width="640" height="480" fill="skyblue"/>
+<polygon points="-300,160 300,160 300,260 -300,260 -300,160" fill="yellowgreen" fill-rule="evenodd"/>
 <line x1="-3" y1="180" x2="-3" y2="87" stroke="forestgreen" stroke-width="5" stroke-linecap="round"/>
 <polygon points="-3,87 9.36,85.04 20.51,79.36 29.36,70.51 35.04,59.36 37,47 24.64,48.96 13.49,54.64 4.64,63.49 -1.04,74.64 -3,87" fill="red" fill-rule="evenodd"/>
 <line x1="-3" y1="87" x2="9.36" y2="85.04" stroke="black" stroke-width="1" stroke-linecap="round"/>

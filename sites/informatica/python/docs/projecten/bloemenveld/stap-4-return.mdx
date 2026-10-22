@@ -9,12 +9,13 @@ import CodeExercise from '@site/src/components/CodeExercise';
 # Stap 4: Bloemen met een steel (return)
 
 :::info
-Deze stap gebruikt `return`, uit [Return](site:python/docs/functies/09b-return).
+Deze stap gebruikt `return`, uit [Return](site:python/docs/functies/09b-return),
+en `pencolor` en `pensize`, uit [Kleur en dikte](site:python/docs/projecten/turtle/kleuren/stap-1-pen).
 :::
 
-Je bloemen zweven nog in de lucht. Ze krijgen een steel, en de bloem komt
-bovenop. Waar dat is, hangt af van hoe lang de steel is. De functie die
-de steel tekent, weet het, en geeft het terug met `return`:
+Je bloemen zweven nog boven het gras. Ze krijgen een steel, en de bloem
+komt bovenop. Waar dat is, hangt af van hoe lang de steel is. De functie
+die de steel tekent, weet het, en geeft het terug met `return`:
 
 ```python
 def boven(y, lengte):
@@ -41,10 +42,10 @@ Schrijf een functie `steel(x, y, lengte)` die:
 3. met `return` de y teruggeeft van de bovenkant van de steel.
 
 Teken daarmee je drie bloemen van stap 3 op een steel. Elke steel begint
-op een y van -180. De rode krijgt een steel van 150 lang, de oranje van
-220 en de paarse van 100.
+op een y van -180, een stukje in het gras. De rode krijgt een steel van
+150 lang, de oranje van 220 en de paarse van 100.
 
-![Een rode, een oranje en een paarse bloem, elk op een groene steel van een andere lengte](./img/stap-4-stelen.svg)
+![Een rode, een oranje en een paarse bloem, elk op een groene steel van een andere lengte, in een strook gras onder een blauwe lucht](./img/stap-4-stelen.svg)
 
 <CodeExercise>{`# Plak hier je programma uit stap 3`}</CodeExercise>
 
@@ -93,6 +94,19 @@ def steel(x, y, lengte):
     turtle.pensize(1)
     return y + lengte
 
+def gras():
+    turtle.penup()
+    turtle.goto(-300, -160)
+    turtle.fillcolor("yellowgreen")
+    turtle.begin_fill()
+    turtle.goto(300, -160)
+    turtle.goto(300, -260)
+    turtle.goto(-300, -260)
+    turtle.goto(-300, -160)
+    turtle.end_fill()
+
+turtle.bgcolor("skyblue")
+gras()
 top = steel(-150, -180, 150)
 bloem(-150, top, "red", 5)
 top = steel(0, -180, 220)
@@ -102,8 +116,8 @@ bloem(150, top, "purple", 12)
 turtle.hideturtle()
 ```
 
-De steel komt eerst, de bloem daarna. Zo ligt de bloem over het eind van
-de steel heen.
+Eerst het gras, dan de steel, en de bloem als laatste. Zo staat de steel
+in het gras, en ligt de bloem over het eind van de steel heen.
 
 </details>
 
@@ -117,11 +131,25 @@ TypeError: turtle.Vec2D() argument after * must be an iterable, not int
 
 **Oorzaak:** de regel met `return` ontbreekt in `steel`. Een functie
 zonder `return` geeft `None` terug: geen waarde. Dan is `top` gelijk aan
-`None`, en krijgt `goto` in `bloem` geen y. De melding gaat over de
-binnenkant van turtle, maar de fout zit in jouw functie. Zet een
-`print(top)` onder de aanroep, dan zie je `None` staan.
+`None`, en krijgt `bloem` die `None` mee als y.
+
+De melding wijst naar de regel met `goto` in `bloem`, want daar loopt het
+vast: `goto` kan niet naar een y die `None` is. Maar `bloem` doet niets
+fout. De fout zit eerder, in `steel`, die geen y teruggaf. Zet een
+`print(top)` onder de aanroep van `steel`, dan zie je `None` staan.
 
 **Oplossing:** zet `return y + lengte` als laatste regel in `steel`.
+
+**Er lopen dunne zwarte lijnen schuin door je tekening.**
+
+**Oorzaak:** in `steel` staat geen `penup()` vóór de eerste `goto`. Dan
+trekt de schildpad een lijn van waar hij stond naar het begin van de
+steel: van het hart van de vorige bloem naar de voet van de volgende.
+Bij de eerste steel zie je niets, want na `gras()` staat de pen nog
+omhoog.
+
+**Oplossing:** zet in `steel` de pen omhoog, loop naar `(x, y)`, en zet
+de pen pas daar weer neer, net zoals `bloem` doet.
 
 Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 

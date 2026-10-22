@@ -64,16 +64,16 @@ import turtle
 import random
 
 turtle.penup()
-turtle.goto(100, 130)
+turtle.goto(80, 130)
 turtle.pendown()
-turtle.goto(100, -130)
+turtle.goto(80, -130)
 
 turtle.penup()
-turtle.goto(-200, 0)
+turtle.goto(-220, 0)
 turtle.pendown()
 turtle.pencolor("red")
 
-while turtle.xcor() < 100:
+while turtle.xcor() < 80:
     turtle.forward(random.randint(1, 20))
 ```
 
@@ -84,7 +84,7 @@ onwaar. Daarom stopt de loop altijd.
 
 ## Er gaat iets mis
 
-{/* foutmelding-van: import turtle\nturtle.xcor < 100 */}
+{/* foutmelding-van: import turtle\nturtle.xcor < 80 */}
 
 ```
 TypeError: '<' not supported between instances of 'function' and 'int'
@@ -96,6 +96,25 @@ functie kan Python niet met een getal vergelijken.
 
 **Oplossing:** zet de haakjes erachter, `turtle.xcor()`. Pas dan voert
 Python de functie uit en krijg je een getal terug.
+
+Vanaf stap 3 heeft elke schildpad een eigen naam. Vergeet je de haakjes
+dan, bij `rood.xcor`, dan staat er `'method'` in plaats van `'function'`.
+Het is dezelfde fout, met dezelfde oplossing.
+
+{/* foutmelding-van: import turtle\nturtle.goto(-220, 0)\nwhile turtle.xcor() != 80:\n    turtle.forward(7) */}
+
+```
+RuntimeError: De schildpad heeft al 50000 bewegingen gemaakt. Loopt je loop eindeloos door?
+```
+
+**Oorzaak:** je schreef `while turtle.xcor() != 80:`, dus "zolang hij niet
+op de finish staat". Maar met stappen van 1 tot en met 20 springt de
+schildpad meestal over de 80 heen, in ongeveer negen van de tien races.
+Dan is `xcor()` nooit precies 80, blijft de vraag waar en loopt hij door,
+ver voorbij de streep. Na 50000 bewegingen houdt de speeltuin ermee op.
+
+**Oplossing:** vraag of hij er nog vóór staat, met `<`. Dan stopt de loop
+ook als de schildpad over de 80 heen springt.
 
 Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 

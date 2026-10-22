@@ -10,6 +10,8 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 :::info
 Deze stap gebruikt een dictionary, uit [Dictionaries](site:python/docs/data/11a-dictionaries-basis).
+De functie `rij` leest die dictionary van buiten de functie, zoals in
+[Scope](site:python/docs/functies/09c-scope).
 :::
 
 Met alleen zwart blijft je pixel art wat kaal. Geef daarom elke kleur een
@@ -30,6 +32,10 @@ De letter is de sleutel, de kleur de waarde. Je kunt de sleutel ook in een
 variabele stoppen, zoals `teken`: dan zoekt Python de kleur op van het teken
 dat er op dat moment in zit. Dat is precies wat er in `rij` gebeurt.
 
+De dictionary zet je buiten de functies, onder `rij`. Toch mag `rij` hem
+gebruiken, zonder dat je hem als parameter meegeeft: een functie mag lezen wat
+erbuiten staat. Hij moet alleen bestaan op het moment dat je `rij` aanroept.
+
 ## Opdracht: een aardbei
 
 Plak je programma uit stap 3 in het veld. Ben je het kwijt, neem dan de
@@ -37,8 +43,8 @@ oplossing van [stap 3](site:python/docs/projecten/pixel-art/stap-3-plaatje).
 
 Pas `rij` aan, zodat elk teken behalve `.` een vakje wordt, in de kleur die
 in `kleuren` bij dat teken hoort. Zet de dictionary van hierboven in je
-programma, en teken deze aardbei in plaats van de smiley. De bovenste regel
-begint op `(-100, 120)`.
+programma, kopieer deze aardbei erbij, en teken hem in plaats van de smiley.
+De bovenste regel begint op `(-100, 120)`.
 
 ```python
 aardbei = [
@@ -66,7 +72,9 @@ aardbei = [
 
 De vraag in `rij` is niet meer of een teken een `#` is, maar of het géén `.`
 is. De kleur van het vakje zoek je op in `kleuren`, met het teken als
-sleutel. De smiley werkt daarna nog steeds: `#` staat ook in de dictionary.
+sleutel. `kleuren` hoef je niet mee te geven aan `rij`: de functie leest
+hem van buiten. De smiley werkt daarna nog steeds, want `#` staat ook in de
+dictionary.
 
 </details>
 
@@ -111,7 +119,6 @@ aardbei = [
     "....RR....",
 ]
 
-turtle.speed(0)
 turtle.hideturtle()
 y = 120
 for regel in aardbei:
@@ -119,9 +126,8 @@ for regel in aardbei:
     y = y - 20
 ```
 
-`rij` gebruikt `kleuren`, maar krijgt die niet mee als parameter. Dat mag:
-een functie kan een variabele van buiten lezen, zolang die bestaat als je
-de functie aanroept.
+`rij` staat boven `kleuren`, maar dat geeft niets: Python kijkt pas in
+`kleuren` als `rij` draait, en dan bestaat de dictionary al.
 
 </details>
 

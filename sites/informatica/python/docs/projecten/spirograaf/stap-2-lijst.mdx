@@ -10,7 +10,8 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 :::info
 Deze stap gebruikt een loop over een lijst, uit [Lijsten](site:python/docs/data/10a-lijsten-basis).
-`pencolor` en `pensize` ken je uit [Kleur en dikte](site:python/docs/projecten/turtle/kleuren/stap-1-pen).
+`pencolor`, `pensize` en `bgcolor` ken je uit
+[Een gekleurde pen](site:python/docs/projecten/turtle/kleuren/stap-1-pen).
 :::
 
 Zwart op wit is mooi, maar een spirograaf wordt pas echt wat met kleur. Zet
@@ -41,9 +42,9 @@ for kleur in kleuren:
     turtle.forward(100)
     turtle.left(120)`}</CodeExercise>
 
-Dit tekent een driehoek met drie gekleurde zijden. De loop gaat drie keer
-rond, omdat er drie kleuren in de lijst staan. Nieuw is **`bgcolor`**: dat
-kleurt de hele achtergrond. Op zwart lichten de kleuren op.
+Dit tekent een driehoek met drie gekleurde zijden, op een zwarte
+achtergrond. De loop gaat drie keer rond, omdat er drie kleuren in de lijst
+staan, en elke ronde zet `pencolor` de pen op de kleur van die ronde.
 
 ## Opdracht: een bloem van zes kleuren
 
@@ -60,7 +61,7 @@ Verander je programma zo, dat het:
 
 De zes cirkels liggen samen één keer rond, als de blaadjes van een bloem.
 
-![Zes cirkels in rood, oranje, geel, groen, blauw en paars op een zwarte achtergrond, als een bloem met zes blaadjes](./img/stap-2-bloem.svg)
+![Zes cirkels in rood, oranje, geel, groen, blauw en magenta op een zwarte achtergrond, als een bloem met zes blaadjes](./img/stap-2-bloem.svg)
 
 <CodeExercise>{`# Plak hier je programma uit stap 1`}</CodeExercise>
 

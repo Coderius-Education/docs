@@ -9,11 +9,14 @@ import CodeExercise from '@site/src/components/CodeExercise';
 # Stap 2: Een rij uit tekst (for over een tekst)
 
 :::info
-Deze stap gebruikt de for-loop uit [For-loop](site:python/docs/herhalen/06a-for-loop) en `if` uit [If en else](site:python/docs/beslissen/05b-if-else). Nieuw is dat de loop over de tekens van een tekst gaat.
+Deze stap gebruikt `if` uit [If en else](site:python/docs/beslissen/05b-if-else).
+Nieuw is een for-loop over de tekens van een tekst; die staat hieronder.
 :::
 
-Je for-loops liepen tot nu toe over `range`. Een for-loop kan ook over een
-tekst lopen, teken voor teken:
+Een for-loop kan over `range` lopen, en over een lijst, zoals in
+[Lijsten](site:python/docs/data/10a-lijsten-basis). Hij kan ook over een
+tekst lopen. Net zoals hij bij een lijst elk element langsgaat, gaat hij bij
+een tekst elk teken langs:
 
 ```python
 for teken in "#.#":
@@ -48,7 +51,8 @@ elk volgend teken 20 stappen verder naar rechts.
 
 Teken daarna het hart, met één aanroep van `rij` per regel. De bovenste
 regel begint op `(-70, 60)`, en elke volgende regel 20 lager. De bloem uit
-stap 1 heb je niet meer nodig.
+stap 1 heb je niet meer nodig. Kopieer de regels van het hart uit het blok
+hieronder, dan typ je geen punt te veel of te weinig.
 
 ```
 .##.##.

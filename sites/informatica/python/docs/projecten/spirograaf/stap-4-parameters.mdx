@@ -78,14 +78,13 @@ en 120.
 ```python
 import turtle
 
-kleuren = ["red", "orange", "yellow", "lime", "deepskyblue", "magenta"]
-
 def vorm(zijden, lengte):
     for zijde in range(zijden):
         turtle.forward(lengte)
         turtle.left(360 / zijden)
 
 def bloem(zijden, lengte):
+    kleuren = ["red", "orange", "yellow", "lime", "deepskyblue", "magenta"]
     for kleur in kleuren:
         turtle.pencolor(kleur)
         vorm(zijden, lengte)
@@ -104,6 +103,23 @@ door aan `vorm`. Probeer ook eens `bloem(3, 150)` of `bloem(8, 60)`.
 </details>
 
 ## Er gaat iets mis
+
+### Een melding over twee parameters
+
+{/* foutmelding-van: def bloem(zijden, lengte): pass\nbloem() */}
+
+```
+TypeError: bloem() missing 2 required positional arguments: 'zijden' and 'lengte'
+```
+
+**Oorzaak:** je gaf `bloem` in de `def` twee parameters, maar in de loop
+onderaan staat nog de aanroep uit stap 3: `bloem()`, zonder getallen. Python
+noemt de twee parameters die hij niet kan vullen.
+
+**Oplossing:** geef bij de aanroep twee getallen mee, in de volgorde van de
+`def`: `bloem(5, 120)`.
+
+### Cirkels in plaats van vijfhoeken
 
 Je verwacht vijfhoeken, maar je krijgt weer cirkels.
 

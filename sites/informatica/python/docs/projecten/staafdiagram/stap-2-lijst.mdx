@@ -56,10 +56,10 @@ verder naar rechts.
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Bewaar de plek van de volgende staaf in een variabele `x`. Die begint vóór
-de loop op de plek van de eerste staaf. In de loop teken je een staaf op
-plek `x`, met het getal van deze ronde als hoogte, en daarna schuif je `x`
-op naar de plek van de volgende.
+Bewaar de plek van de volgende staaf in een variabele `plek`. Die begint
+vóór de loop op de plek van de eerste staaf. In de loop teken je een staaf
+op `plek`, met het getal van deze ronde als hoogte, en daarna schuif je
+`plek` op naar de volgende.
 
 </details>
 
@@ -86,15 +86,16 @@ def staaf(x, hoogte):
         turtle.left(90)
     turtle.end_fill()
 
-x = -200
+plek = -200
 for waarde in minuten:
-    staaf(x, waarde)
-    x += 80
+    staaf(plek, waarde)
+    plek += 80
 turtle.hideturtle()
 ```
 
-Komt er een getal bij in de lijst, dan komt er een staaf bij. De rest van
-het programma blijft hetzelfde.
+Bij `staaf(plek, waarde)` krijgt de parameter `x` van `staaf` de waarde van
+`plek`, en `hoogte` die van `waarde`. Komt er een getal bij in de lijst, dan
+komt er een staaf bij. De rest van het programma blijft hetzelfde.
 
 </details>
 
@@ -102,13 +103,13 @@ het programma blijft hetzelfde.
 
 **Je ziet maar één staaf, met streepjes erin.**
 
-**Oorzaak:** `x = -200` staat in de loop in plaats van erboven. Dan begint
-`x` elke ronde opnieuw op -200, en tekent de schildpad alle vijf de staven
+**Oorzaak:** `plek = -200` staat in de loop in plaats van erboven. Dan
+begint `plek` elke ronde opnieuw op -200, en tekent de schildpad alle vijf de staven
 op dezelfde plek, over elkaar heen. De streepjes zijn de bovenkanten van de
 lagere staven.
 
-**Oplossing:** zet `x = -200` boven de loop. Dan krijgt `x` één keer een
-beginwaarde, en schuift hij in de loop steeds verder.
+**Oplossing:** zet `plek = -200` boven de loop. Dan krijgt `plek` één keer
+een beginwaarde, en schuift hij in de loop steeds verder.
 
 Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 

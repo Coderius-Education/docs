@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
-<title>Een rode, een oranje en een paarse bloem, elk op een groene steel van een andere lengte</title>
-<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-320 -200 640 480" role="img">
+<title>Een rode, een oranje en een paarse bloem, elk op een groene steel van een andere lengte, in een strook gras onder een blauwe lucht</title>
+<rect x="-320" y="-200" width="640" height="480" fill="skyblue"/>
+<polygon points="-300,160 300,160 300,260 -300,260 -300,160" fill="yellowgreen" fill-rule="evenodd"/>
 <line x1="-150" y1="180" x2="-150" y2="30" stroke="forestgreen" stroke-width="5" stroke-linecap="round"/>
 <polygon points="-150,30 -137.64,28.04 -126.49,22.36 -117.64,13.51 -111.96,2.36 -110,-10 -122.36,-8.04 -133.51,-2.36 -142.36,6.49 -148.04,17.64 -150,30" fill="red" fill-rule="evenodd"/>
 <line x1="-150" y1="30" x2="-137.64" y2="28.04" stroke="black" stroke-width="1" stroke-linecap="round"/>

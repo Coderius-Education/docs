@@ -1,53 +1,83 @@
 ---
 sidebar_position: 5
-sidebar_label: 'Stap 5: return'
-description: Schrijf een functie spiegel die een tekst omgedraaid teruggeeft, en teken een vlinder uit alleen zijn linkerhelft.
+sidebar_label: 'Stap 5: tekst aan elkaar plakken'
+description: Plak teksten aan elkaar met +, bouw van elke regel het spiegelbeeld op, en teken een vlinder uit alleen zijn linkerhelft.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
 
-# Stap 5: Spiegelen (return)
+# Stap 5: Spiegelen (tekst aan elkaar plakken)
 
 :::info
-Deze stap gebruikt `return`, uit [Return](site:python/docs/functies/09b-return).
+Nieuw in deze stap is tekst aan elkaar plakken met `+`. Daar is geen les voor;
+het staat hieronder. De loop over de tekens van een tekst ken je uit
+[stap 2](site:python/docs/projecten/pixel-art/stap-2-rij).
 :::
 
-Een vlinder is links en rechts hetzelfde, alleen gespiegeld. Dan hoef je
-maar de helft op te schrijven, en maakt de computer de andere helft. Dat
-doet een functie die een tekst omdraait. Die functie tekent zelf niets: hij
-geeft de omgedraaide tekst terug met `return`, zodat je er verder mee kunt
-werken.
+Een vlinder is links en rechts hetzelfde, alleen gespiegeld. Dan hoef je maar
+de helft op te schrijven, en maakt de computer de andere helft. Daarvoor draai
+je elke regel om, en plak je die achter de regel zelf. Van `"BYR"` maak je zo
+`"BYRRYB"`.
 
-Zo ziet een functie eruit die een tekst teruggeeft:
+Met `+` plak je twee teksten aan elkaar:
 
 ```python
-def dubbel(regel):
-    return regel + regel
+links = "BYR"
+print(links + "#")   # BYR#
+print("#" + links)   # #BYR
+```
 
-print(dubbel("#."))
+Wat links van de `+` staat, komt vooraan.
+
+Een tekst kun je ook in een loop opbouwen, teken voor teken. Je begint met een
+lege tekst: `""`, twee aanhalingstekens met niets ertussen. Elke ronde plak je
+er een teken bij:
+
+```python
+opgebouwd = ""
+for teken in "BYR":
+    opgebouwd = opgebouwd + teken
+    print(opgebouwd)
 ```
 
 Uitvoer:
 
 ```
-#.#.
+B
+BY
+BYR
 ```
 
-`dubbel` print zelf niets. Hij plakt de tekst twee keer aan elkaar en geeft
-het resultaat terug, en `print` laat het zien. In plaats van printen kun je
-het resultaat ook doorgeven aan een andere functie, zoals `rij`.
+In de eerste ronde is `opgebouwd` nog leeg, en plakt Python er `B` achter.
+Daarna komt `Y` achter `B`, en dan `R` achter `BY`. Klik in het veld hieronder
+op Stap voor stap, en blader door de rondes: je ziet `opgebouwd` per ronde
+een teken langer worden.
+
+<CodeExercise>{`opgebouwd = ""
+for teken in "BYR":
+    opgebouwd = opgebouwd + teken
+    print(opgebouwd)`}</CodeExercise>
+
+Stap voor stap werkt ook op je hele tekenprogramma, maar daar heb je weinig
+aan: de knop stopt na 1000 stappen, en de vlinder hieronder kost er bijna
+drie keer zoveel. In dit kleine veld zie je alles.
 
 ## Opdracht: een vlinder
 
 Plak je programma uit stap 4 in het veld. Ben je het kwijt, neem dan de
 oplossing van [stap 4](site:python/docs/projecten/pixel-art/stap-4-kleuren).
 
-Schrijf een functie `spiegel(regel)` die `regel` omgedraaid teruggeeft. Test
-hem eerst los: `print(spiegel("BYR"))` moet `RYB` geven.
+Schrijf een functie `spiegelrij(regel, x, y)` die een regel tekent met zijn
+spiegelbeeld erachter:
 
-Teken daarna een vlinder. In de lijst staat alleen de linkerhelft; teken
-van elke regel de regel zelf met zijn spiegelbeeld erachter. De vlinder is
-blauw, dus zet ook `"B": "blue"` in `kleuren`. De bovenste regel begint op
+1. Eerst bouwt hij in een loop het spiegelbeeld van `regel` op: dezelfde
+   tekens, in omgekeerde volgorde. Bij `"BYR"` is dat `"RYB"`.
+2. Daarna roept hij `rij` aan, met `regel` en het spiegelbeeld aan elkaar
+   geplakt.
+
+Teken daarmee deze vlinder, met een loop over de lijst zoals in stap 3. In de
+lijst staat alleen de linkerhelft. Kopieer hem naar je programma. De vlinder
+is blauw, dus zet ook `"B": "blue"` in `kleuren`. De bovenste regel begint op
 `(-140, 120)`.
 
 ```python
@@ -74,10 +104,10 @@ vlinder = [
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Begin in `spiegel` met een lege tekst. Loop over de tekens van `regel`, en
-zet elk teken vóór wat je al hebt, niet erachter. Pas als de loop klaar is,
-geef je het resultaat terug. In de loop over de vlinder geef je aan `rij`
-niet alleen `regel` mee, maar `regel` met het spiegelbeeld eraan vast.
+Begin in `spiegelrij` met een lege tekst, net als hierboven. Het verschil zit
+in de plek waar het nieuwe teken komt. Hierboven kwam het achteraan, en dan
+krijg je dezelfde volgorde terug. Voor een spiegelbeeld zet je elk nieuw teken
+vooraan, vóór wat je al hebt. Pas als de loop klaar is, roep je `rij` aan.
 
 </details>
 
@@ -105,11 +135,11 @@ def rij(regel, x, y):
             vakje(x, y, kleuren[teken])
         x = x + 20
 
-def spiegel(regel):
+def spiegelrij(regel, x, y):
     omgedraaid = ""
     for teken in regel:
         omgedraaid = teken + omgedraaid
-    return omgedraaid
+    rij(regel + omgedraaid, x, y)
 
 kleuren = {"#": "black", "R": "red", "G": "green", "Y": "yellow", "B": "blue"}
 
@@ -128,46 +158,56 @@ vlinder = [
     "..BB...",
 ]
 
-turtle.speed(0)
 turtle.hideturtle()
 y = 120
 for regel in vlinder:
-    rij(regel + spiegel(regel), -140, y)
+    spiegelrij(regel, -140, y)
     y = y - 20
 ```
 
-Bij `"BYR"` is `omgedraaid` na elke ronde `"B"`, dan `"YB"` en dan
-`"RYB"`: elk nieuw teken komt vooraan. Wil je dat zien gebeuren, zet dan
-alleen de functie en `print(spiegel("BYR"))` in een veld, en klik op Stap
-voor stap.
+Bij `"BYR"` is `omgedraaid` na elke ronde `"B"`, dan `"YB"` en dan `"RYB"`:
+elk nieuw teken komt vooraan. Wil je dat zien gebeuren, verander dan in het
+kleine veld bovenaan deze pagina `opgebouwd + teken` in `teken + opgebouwd`,
+en klik op Stap voor stap.
 
 </details>
 
 ## Er gaat iets mis
 
-{/* foutmelding-van: blok-erboven */}
+**Je vlinder heeft twee linkerhelften: beide vleugels wijzen dezelfde kant op,
+en er staan twee lijfjes.**
+
+**Oorzaak:** in `spiegelrij` staat `omgedraaid = omgedraaid + teken`. Dan komt
+elk teken achteraan, en krijg je de regel zelf terug in plaats van zijn
+spiegelbeeld.
+
+**Oplossing:** zet het nieuwe teken vooraan: `omgedraaid = teken + omgedraaid`.
+
+{/* foutmelding-van: blok-eronder */}
+
+```
+UnboundLocalError: cannot access local variable 'omgedraaid' where it is not associated with a value
+```
+
+**Oorzaak:** je bent de regel `omgedraaid = ""` vergeten:
+
+{/* niet-draaien: valt expres om, de melding staat erboven */}
 
 ```python
-def spiegel(regel):
-    omgedraaid = ""
+def spiegelrij(regel, x, y):
     for teken in regel:
         omgedraaid = teken + omgedraaid
-    print(omgedraaid)
+    rij(regel + omgedraaid, x, y)
 
-regel = "BYR"
-print(regel + spiegel(regel))
+spiegelrij("BYR", 0, 0)
 ```
 
-```
-TypeError: can only concatenate str (not "NoneType") to str
-```
+In de eerste ronde wil Python `teken` vóór `omgedraaid` plakken, maar
+`omgedraaid` heeft dan nog geen waarde.
 
-**Oorzaak:** `spiegel` print het spiegelbeeld, maar geeft het niet terug.
-Een functie zonder `return` geeft `None` terug, en tekst plus `None` kan
-Python niet aan elkaar plakken.
-
-**Oplossing:** vervang `print(omgedraaid)` door `return omgedraaid`.
+**Oplossing:** geef `omgedraaid` boven de loop de lege tekst als beginwaarde:
+`omgedraaid = ""`.
 
 Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
-Door naar [stap 6: groot en klein](site:python/docs/projecten/pixel-art/stap-6-groot-en-klein).
+Door naar [stap 6: een ruimtemannetje](site:python/docs/projecten/pixel-art/stap-6-ruimtemannetje).

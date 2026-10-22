@@ -9,7 +9,19 @@ import CodeExercise from '@site/src/components/CodeExercise';
 # Stap 1: Eén staaf (parameters)
 
 :::info
-Deze stap gebruikt functies met parameters, uit [Functies](site:python/docs/functies/functies) en [Parameters](site:python/docs/functies/09a-parameters). Het tekenen ken je uit de turtle-projecten: [een rechthoek](site:python/docs/projecten/turtle/vierkant/stap-2-rechthoek), [inkleuren](site:python/docs/projecten/turtle/kleuren/stap-2-vullen) en [naar een punt met goto](site:python/docs/projecten/turtle/dobbelsteen/stap-1-goto).
+Dit project komt na [de turtle-lijn](site:python/docs/projecten/turtle), en
+tekent met commando's die je daar leerde:
+
+- `forward` en `left` uit [Lijnen en hoeken](site:python/docs/projecten/turtle/lijnen/stap-1-forward);
+- `penup` en `pendown` uit [Een raam](site:python/docs/projecten/turtle/een-huis/stap-2-raam);
+- `goto` uit [Naar een punt](site:python/docs/projecten/turtle/dobbelsteen/stap-1-goto);
+- `dot` en `hideturtle` uit [De stippen](site:python/docs/projecten/turtle/dobbelsteen/stap-2-stippen);
+- `fillcolor`, `begin_fill` en `end_fill` uit [Inkleuren](site:python/docs/projecten/turtle/kleuren/stap-2-vullen).
+
+Uit de cursus gebruikt deze stap functies met parameters, uit
+[Functies](site:python/docs/functies/functies) en
+[Parameters](site:python/docs/functies/09a-parameters). Hoe je een
+rechthoek tekent, zag je bij [de rechthoek](site:python/docs/projecten/turtle/vierkant/stap-2-rechthoek).
 :::
 
 Een klas hield een week lang bij hoeveel minuten ze per dag op hun telefoon
@@ -17,9 +29,9 @@ zaten, per soort app. In een rij getallen zie je weinig. In een
 staafdiagram zie je in één oogopslag waar de tijd naartoe gaat. Aan het eind
 van dit project tekent je programma dit:
 
-![Een staafdiagram met vijf staven: chatten 65 min, video's 110 min, gamen 80 min, muziek 45 min en foto's 30 min. Video's is de hoogste en rood, chatten en gamen zijn oranje, muziek en foto's groen.](./img/stap-6-kleuren.svg)
+![Een staafdiagram met vijf staven: chatten 65 min, video's 110 min, gamen 80 min, muziek 45 min en foto's 30 min. Video's is de hoogste en rood, chatten en gamen zijn oranje, muziek en foto's groen.](./img/stap-8-kleuren.svg)
 
-Dat programma schrijf je zelf, in zes stappen. Aan het eind tekent het ook
+Dat programma schrijf je zelf, in acht stappen. Aan het eind tekent het ook
 jouw eigen gegevens. Je begint met één staaf.
 
 Een staaf is een ingekleurde rechthoek, en je tekent er veel. Dat wordt een
@@ -53,7 +65,7 @@ Teken er drie mee: `staaf(-200, 65)`, `staaf(-120, 110)` en
 `staaf(-40, 80)`. Verstop aan het eind de schildpad met
 `turtle.hideturtle()`, dan staat hij niet in je diagram.
 
-![Drie lichtblauwe staven naast elkaar op dezelfde hoogte, de middelste het hoogst](./img/stap-1-drie-staven.svg)
+![Drie lichtblauwe staven naast elkaar op dezelfde grond, de middelste het hoogst](./img/stap-1-drie-staven.svg)
 
 <CodeExercise>{`import turtle`}</CodeExercise>
 

@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-320 -200 640 420" role="img">
-<title>Een veld met tien bloemen in rood, oranje, geel, roze, paars en wit, op groene stelen, boven een strook gras onder een blauwe lucht</title>
-<rect x="-320" y="-200" width="640" height="420" fill="skyblue"/>
-<line x1="-300" y1="200" x2="300" y2="200" stroke="yellowgreen" stroke-width="80" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-320 -200 640 480" role="img">
+<title>Een veld met tien bloemen in rood, oranje, geel, roze, paars en wit, op groene stelen, in een strook gras onder een blauwe lucht</title>
+<rect x="-320" y="-200" width="640" height="480" fill="skyblue"/>
+<polygon points="-300,160 300,160 300,260 -300,260 -300,160" fill="yellowgreen" fill-rule="evenodd"/>
 <line x1="193" y1="180" x2="193" y2="26" stroke="forestgreen" stroke-width="5" stroke-linecap="round"/>
 <polygon points="193,26 205.36,24.04 216.51,18.36 225.36,9.51 231.04,-1.64 233,-14 220.64,-12.04 209.49,-6.36 200.64,2.49 194.96,13.64 193,26" fill="white" fill-rule="evenodd"/>
 <line x1="193" y1="26" x2="205.36" y2="24.04" stroke="black" stroke-width="1" stroke-linecap="round"/>

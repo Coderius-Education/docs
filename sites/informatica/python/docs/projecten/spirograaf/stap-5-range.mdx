@@ -66,14 +66,13 @@ mee als lengte?
 ```python
 import turtle
 
-kleuren = ["red", "orange", "yellow", "lime", "deepskyblue", "magenta"]
-
 def vorm(zijden, lengte):
     for zijde in range(zijden):
         turtle.forward(lengte)
         turtle.left(360 / zijden)
 
 def bloem(zijden, lengte):
+    kleuren = ["red", "orange", "yellow", "lime", "deepskyblue", "magenta"]
     for kleur in kleuren:
         turtle.pencolor(kleur)
         vorm(zijden, lengte)
@@ -81,14 +80,21 @@ def bloem(zijden, lengte):
 
 turtle.bgcolor("black")
 turtle.pensize(2)
-for lengte in range(20, 160, 10):
-    bloem(4, lengte)
+for grootte in range(20, 160, 10):
+    bloem(4, grootte)
     turtle.left(5)
 ```
 
 Dat zijn 14 bloemen van zes vierkanten: 84 vierkanten in één tekening. Elke
 kleur draait zijn eigen arm naar buiten, omdat elk vierkant net iets groter
 is en net iets verder gedraaid dan het vorige van die kleur.
+
+De loopvariabele heet `grootte`, zodat je hem niet verwart met de parameter
+`lengte` van `bloem` en `vorm`.
+
+Druk je bij dit programma op Stap voor stap, dan stopt die na 1000 stappen,
+in de negende bloem. De eerste acht kun je dus helemaal volgen, en je ziet
+`grootte` elke ronde 10 groter worden. De hele spiraal zie je met Uitvoeren.
 
 </details>
 
@@ -97,7 +103,7 @@ is en net iets verder gedraaid dan het vorige van die kleur.
 Alle vierkanten zijn even groot, en er ontstaat geen spiraal.
 
 **Oorzaak:** in de loop staat nog een vast getal, zoals `bloem(4, 100)`. De
-loopvariabele `lengte` verandert elke ronde wel, maar je gebruikt hem
+loopvariabele `grootte` verandert elke ronde wel, maar je gebruikt hem
 nergens.
 
 **Oplossing:** geef de loopvariabele mee aan `bloem`, op de plek van de

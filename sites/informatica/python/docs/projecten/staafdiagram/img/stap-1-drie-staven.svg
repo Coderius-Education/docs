@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
-<title>Drie lichtblauwe staven naast elkaar op dezelfde hoogte, de middelste het hoogst</title>
+<title>Drie lichtblauwe staven naast elkaar op dezelfde grond, de middelste het hoogst</title>
 <rect x="-250" y="-200" width="500" height="400" fill="white"/>
 <polygon points="-200,100 -140,100 -140,35 -200,35 -200,100" fill="skyblue" fill-rule="evenodd"/>
 <line x1="-200" y1="100" x2="-140" y2="100" stroke="black" stroke-width="1" stroke-linecap="round"/>

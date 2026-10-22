@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 sidebar_label: 'Stap 3: f-strings'
-description: Zet boven elke staaf het getal, met turtle.write en een f-string.
+description: Zet boven elke staaf het aantal minuten, met turtle.write en een f-string.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
@@ -13,41 +13,40 @@ Deze stap gebruikt een f-string, uit [Slimme berichten met f-strings](site:pytho
 :::
 
 Je ziet welke staaf het hoogst is, maar niet hoeveel minuten het zijn. Met
-`turtle.write()` zet de schildpad tekst in de tekening, op de plek waar hij
-staat:
+`turtle.write()` zet de schildpad tekst in de tekening. De tekst begint
+waar de schildpad staat en loopt naar rechts, met de onderkant van de
+letters op zijn hoogte. De schildpad zelf blijft staan.
 
 ```python
 import turtle
 
 waarde = 110
-turtle.write(f"{waarde} min", align="center")
+turtle.write(f"{waarde} min")
 ```
 
-De f-string maakt van het getal de tekst `110 min`. Met
-`align="center"` staat het midden van de tekst bij de schildpad, en de
-onderkant van de letters op zijn hoogte. De schildpad zelf blijft staan.
+De f-string maakt van het getal de tekst `110 min`. Die komt rechts van het
+midden van het venster te staan, want daar begint de schildpad.
 
 ## Opdracht: minuten boven elke staaf
 
 Plak je programma uit stap 2 in het veld. Ben je het kwijt, neem dan de
 oplossing van [stap 2](site:python/docs/projecten/staafdiagram/stap-2-lijst).
 
-1. Schrijf een functie `schrijf(x, y, tekst)`. Die tilt de pen op, gaat
-   naar het punt `(x, y)` en schrijft daar de tekst, in het midden
-   uitgelijnd.
-2. Zet daarmee boven elke staaf het aantal minuten, zoals `110 min`. De
-   tekst staat in het midden boven de staaf, 5 hoger dan de bovenkant.
+Zet boven elke staaf het aantal minuten, zoals `110 min`. De tekst begint
+bij de linkerkant van de staaf, 5 hoger dan de bovenkant. Til de pen op
+voordat de schildpad erheen gaat, anders trekt hij een streep.
 
-![Vijf lichtblauwe staven, met boven elke staaf het aantal minuten: 65 min, 110 min, 80 min, 45 min en 30 min](./img/stap-3-getallen.svg)
+![Vijf lichtblauwe staven, met boven elke staaf het aantal minuten, links uitgelijnd: 65 min, 110 min, 80 min, 45 min en 30 min](./img/stap-3-getallen.svg)
 
 <CodeExercise>{`# Plak hier je programma uit stap 2`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Een staaf is 60 breed, dus het midden ligt 30 rechts van `x`. De grond ligt
-op -100, dus de bovenkant van een staaf ligt de hoogte boven -100. Roep
-`schrijf` in de loop aan, na de staaf, met de f-string als tekst.
+De linkerkant van de staaf is `plek`. De grond ligt op -100, dus de
+bovenkant van een staaf ligt de hoogte boven -100. In de loop, na de staaf,
+gaat de pen omhoog, gaat de schildpad naar het punt boven de staaf, en
+schrijft hij daar de f-string.
 
 </details>
 
@@ -74,16 +73,13 @@ def staaf(x, hoogte):
         turtle.left(90)
     turtle.end_fill()
 
-def schrijf(x, y, tekst):
-    turtle.penup()
-    turtle.goto(x, y)
-    turtle.write(tekst, align="center")
-
-x = -200
+plek = -200
 for waarde in minuten:
-    staaf(x, waarde)
-    schrijf(x + 30, -100 + waarde + 5, f"{waarde} min")
-    x += 80
+    staaf(plek, waarde)
+    turtle.penup()
+    turtle.goto(plek, -100 + waarde + 5)
+    turtle.write(f"{waarde} min")
+    plek += 80
 turtle.hideturtle()
 ```
 
@@ -109,4 +105,4 @@ er zelf tekst van.
 
 Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
-Door naar [stap 4: namen erbij](site:python/docs/projecten/staafdiagram/stap-4-dictionary).
+Door naar [stap 4: in het midden](site:python/docs/projecten/staafdiagram/stap-4-midden).

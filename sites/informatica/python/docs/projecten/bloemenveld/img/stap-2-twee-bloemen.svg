@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
-<title>Twee dezelfde roze bloemen met een gouden hart naast elkaar</title>
-<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-320 -200 640 480" role="img">
+<title>Twee dezelfde roze bloemen met een gouden hart naast elkaar, boven een strook gras onder een blauwe lucht</title>
+<rect x="-320" y="-200" width="640" height="480" fill="skyblue"/>
+<polygon points="-300,160 300,160 300,260 -300,260 -300,160" fill="yellowgreen" fill-rule="evenodd"/>
 <polygon points="-100,0 -87.64,-1.96 -76.49,-7.64 -67.64,-16.49 -61.96,-27.64 -60,-40 -72.36,-38.04 -83.51,-32.36 -92.36,-23.51 -98.04,-12.36 -100,0" fill="pink" fill-rule="evenodd"/>
 <line x1="-100" y1="0" x2="-87.64" y2="-1.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
 <line x1="-87.64" y1="-1.96" x2="-76.49" y2="-7.64" stroke="black" stroke-width="1" stroke-linecap="round"/>

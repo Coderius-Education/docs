@@ -54,24 +54,25 @@ stap, dan zie je Python heen en weer gaan tussen de twee loops.
 Plak je programma uit stap 2 in het veld. Ben je het kwijt, neem dan de
 oplossing van [stap 2](site:python/docs/projecten/spirograaf/stap-2-lijst).
 
-Zet het tekenen van de bloem in een functie `bloem()`. Teken daarmee zes
-bloemen, en draai na elke bloem 10 graden naar links. Maak de pen 2 breed,
-want er komen veel lijnen bij.
+Zet het tekenen van de bloem in een functie `bloem()`: de lijst `kleuren`
+en de loop erover gaan allebei de functie in. Teken daarmee zes bloemen, en
+draai na elke bloem 10 graden naar links. Maak de pen 2 breed, want er komen
+veel lijnen bij.
 
 Zo heb je weer 36 cirkels, net als in stap 1, maar nu in zes kleuren die
 rondom terugkomen.
 
-![Een ronde rozet van 36 cirkels op zwart, met de kleuren rood, oranje, geel, groen, blauw en paars die als vlakken rond het midden liggen](./img/stap-3-rozet.svg)
+![Een ronde rozet van 36 cirkels op zwart, met de kleuren rood, oranje, geel, groen, blauw en magenta die als vlakken rond het midden liggen](./img/stap-3-rozet.svg)
 
 <CodeExercise>{`# Plak hier je programma uit stap 2`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-De loop over de kleuren gaat helemaal de functie in, één stap verder
-ingesprongen. De lijst `kleuren`, de achtergrond en de pen blijven buiten de
-functie. Onderaan komt een nieuwe loop die zes keer gaat. Wat moet er in elke
-ronde gebeuren?
+De lijst en de loop over de kleuren gaan de functie in, één stap verder
+ingesprongen. De achtergrond en de pen blijven buiten de functie: die hoeven
+maar één keer. Onderaan komt een nieuwe loop die zes keer gaat. Wat moet er
+in elke ronde gebeuren?
 
 </details>
 
@@ -83,9 +84,8 @@ ronde gebeuren?
 ```python
 import turtle
 
-kleuren = ["red", "orange", "yellow", "lime", "deepskyblue", "magenta"]
-
 def bloem():
+    kleuren = ["red", "orange", "yellow", "lime", "deepskyblue", "magenta"]
     for kleur in kleuren:
         turtle.pencolor(kleur)
         turtle.circle(100)
@@ -98,13 +98,16 @@ for i in range(6):
     turtle.left(10)
 ```
 
-Na één bloem kijkt de schildpad weer naar rechts. Draai je dan 10 graden,
-dan ligt de volgende bloem net naast de vorige. Elke kleur heeft zo zes
+Na een bloem kijkt de schildpad weer dezelfde kant op als ervoor, want zes
+keer 60 graden is één keer rond. Draai je dan 10 graden, dan ligt de
+volgende bloem net naast de vorige. Elke kleur heeft zo zes
 cirkels vlak naast elkaar, en die vormen samen een gekleurd vlak.
 
 </details>
 
 ## Er gaat iets mis
+
+### Een melding over bloem
 
 {/* foutmelding-van: bloem() */}
 
@@ -116,8 +119,20 @@ NameError: name 'bloem' is not defined
 leest je programma van boven naar beneden. Bij de aanroep heeft hij de
 functie nog niet gezien.
 
-**Oplossing:** zet de functie bovenaan, onder de lijst `kleuren`, en de loop
+**Oplossing:** zet de functie bovenaan, onder `import turtle`, en de loop
 die hem aanroept eronder.
+
+### Alleen een zwart vlak
+
+Je programma geeft geen fout, maar je ziet alleen de zwarte achtergrond,
+zonder één cirkel.
+
+**Oorzaak:** de `def` zet de functie alleen klaar. Hij tekent pas als je hem
+aanroept, met haakjes: `bloem()`. Staat er in je loop `bloem` zonder haakjes,
+of ben je de loop onderaan vergeten, dan roept niets de functie aan.
+
+**Oplossing:** zet `bloem()` met haakjes in de loop onderaan, vóór
+`turtle.left(10)`.
 
 Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 

@@ -9,17 +9,17 @@ import CodeExercise from '@site/src/components/CodeExercise';
 # Stap 1: Eén schildpad (random)
 
 :::info
-Deze stap gebruikt `import` uit [Modules importeren](site:python/docs/modules/09d-modules) en de for-loop uit [For-loop](site:python/docs/herhalen/06a-for-loop). De turtle-commando's `forward`, `penup`, `goto` en `pencolor` ken je uit [Tekenen met turtle](site:python/docs/projecten/turtle).
+Dit project komt na de lijn [Tekenen met turtle](site:python/docs/projecten/turtle); maak die eerst af. Daaruit ken je `forward` ([Lijnen en hoeken](site:python/docs/projecten/turtle/lijnen/stap-1-forward)), `penup` en `pendown` ([Een huis](site:python/docs/projecten/turtle/een-huis/stap-2-raam)), `goto` ([Een dobbelsteen](site:python/docs/projecten/turtle/dobbelsteen/stap-1-goto)) en `pencolor` ([Kleur en dikte](site:python/docs/projecten/turtle/kleuren/stap-1-pen)). Uit de cursus gebruik je `import` uit [Modules importeren](site:python/docs/modules/09d-modules) en de for-loop uit [For-loop](site:python/docs/herhalen/06a-for-loop).
 :::
 
 Vier schildpadden racen naar een finishlijn. Niemand weet vooraf wie er
 wint, want elke stap is een verrassing: soms een flinke sprong, soms maar
-een klein stapje. Aan het eind staat de winnaar in beeld. Zo kan een race
+een klein stapje. Aan het eind zegt de winnaar het zelf. Zo kan een race
 straks aflopen:
 
-![Vier gekleurde lijnen van links naar een zwarte finishlijn; de blauwe is er net overheen en heeft geschreven: Gewonnen in 27 rondes](./img/stap-6-uitslag.svg)
+![Vier gekleurde lijnen van links naar een zwarte finishlijn; de oranje is er net overheen, heeft een dikke stip op de streep en schreef erachter: Gewonnen in 29 rondes](./img/stap-8-uitslag.svg)
 
-Dat programma schrijf je zelf, in zes stappen. Je begint met één
+Dat programma schrijf je zelf, in acht stappen. Je begint met één
 schildpad.
 
 ## Willekeurige getallen
@@ -51,9 +51,9 @@ turtle.forward(random.randint(1, 200))`}</CodeExercise>
 
 Schrijf een programma dat:
 
-1. een finishlijn tekent, van `(100, 130)` recht naar beneden tot
-   `(100, -130)`;
-2. de schildpad zonder te tekenen naar de start brengt, op `(-200, 0)`;
+1. een finishlijn tekent, van `(80, 130)` recht naar beneden tot
+   `(80, -130)`;
+2. de schildpad zonder te tekenen naar de start brengt, op `(-220, 0)`;
 3. de pen van de schildpad rood maakt;
 4. de schildpad 20 stappen vooruit laat zetten, elke stap met een
    willekeurige lengte van 1 tot en met 20.
@@ -87,12 +87,12 @@ import turtle
 import random
 
 turtle.penup()
-turtle.goto(100, 130)
+turtle.goto(80, 130)
 turtle.pendown()
-turtle.goto(100, -130)
+turtle.goto(80, -130)
 
 turtle.penup()
-turtle.goto(-200, 0)
+turtle.goto(-220, 0)
 turtle.pendown()
 turtle.pencolor("red")
 
@@ -102,6 +102,16 @@ for stap in range(20):
 
 In elke ronde van de loop kiest `randint` een nieuw getal. Daarom is elke
 stap anders lang.
+
+</details>
+
+<details>
+<summary>Haalt hij ooit de finish?</summary>
+
+Bijna nooit. Een stap is gemiddeld 10,5 lang, dus twintig stappen brengen
+de schildpad gemiddeld 210 ver, en de finish ligt 300 verderop. Hij haalt
+het alleen als bijna elke stap groot uitvalt: ongeveer één keer op de
+5000 keer Uitvoeren. In stap 2 laat je hem doorlopen tot hij er is.
 
 </details>
 

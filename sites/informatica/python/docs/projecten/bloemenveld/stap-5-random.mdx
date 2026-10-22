@@ -39,9 +39,9 @@ for keer in range(3):
 Plak je programma uit stap 4 in het veld. Ben je het kwijt, neem dan de
 oplossing van [stap 4](site:python/docs/projecten/bloemenveld/stap-4-return).
 
-Haal de drie bloemen onder je functies weg. Teken in plaats daarvan met
-een for-loop tien rode bloemen op een steel. Elke steel begint op een y
-van -180, en per bloem kiest de computer:
+Haal de drie bloemen onder `gras()` weg; de lucht en het gras blijven.
+Teken in plaats daarvan met een for-loop tien rode bloemen op een steel.
+Elke steel begint op een y van -180, en per bloem kiest de computer:
 
 1. de x, van -220 tot en met 220;
 2. de lengte van de steel, van 60 tot en met 220;
@@ -50,13 +50,12 @@ van -180, en per bloem kiest de computer:
 Jouw veld ziet er anders uit dan het plaatje, want de computer kiest elke
 keer andere getallen. Druk een paar keer op Uitvoeren: elk veld is nieuw.
 
-![Tien rode bloemen met vijf tot negen blaadjes op groene stelen van verschillende lengte, verspreid over de breedte](./img/stap-5-klaprozen.svg)
+Loopt er bij jou een steel over een bloem heen? Dat klopt met je
+programma. De schildpad tekent bloem na bloem, en net als bij het gras
+ligt wat later komt bovenop. Een steel van een latere bloem loopt dan
+over een bloem die er al stond.
 
-:::tip
-Tien bloemen tekenen duurt een tijdje. Met `turtle.speed(0)` bovenaan je
-programma tekent de schildpad zo snel als hij kan, en zie je meteen het
-hele veld.
-:::
+![Tien rode bloemen met vijf tot negen blaadjes op groene stelen van verschillende lengte, verspreid over de breedte, in een strook gras](./img/stap-5-klaprozen.svg)
 
 <CodeExercise>{`# Plak hier je programma uit stap 4`}</CodeExercise>
 
@@ -104,7 +103,19 @@ def steel(x, y, lengte):
     turtle.pensize(1)
     return y + lengte
 
-turtle.speed(0)
+def gras():
+    turtle.penup()
+    turtle.goto(-300, -160)
+    turtle.fillcolor("yellowgreen")
+    turtle.begin_fill()
+    turtle.goto(300, -160)
+    turtle.goto(300, -260)
+    turtle.goto(-300, -260)
+    turtle.goto(-300, -160)
+    turtle.end_fill()
+
+turtle.bgcolor("skyblue")
+gras()
 for keer in range(10):
     x = random.randint(-220, 220)
     lengte = random.randint(60, 220)
@@ -114,8 +125,8 @@ for keer in range(10):
 turtle.hideturtle()
 ```
 
-De functies zijn niet veranderd. Alleen wat eronder staat is nieuw: de
-loop kiest de getallen, en de functies tekenen ermee.
+De functies zijn niet veranderd. Alleen de loop onder `gras()` is nieuw: hij
+kiest de getallen, en de functies tekenen ermee.
 
 </details>
 

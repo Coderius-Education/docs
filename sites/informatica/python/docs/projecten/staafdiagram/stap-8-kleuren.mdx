@@ -1,12 +1,12 @@
 ---
-sidebar_position: 6
-sidebar_label: 'Stap 6: elif'
+sidebar_position: 8
+sidebar_label: 'Stap 8: elif'
 description: Kleur elke staaf naar het aantal minuten met if, elif en else, en teken daarna je eigen gegevens.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
 
-# Stap 6: Kleur naar het aantal (elif)
+# Stap 8: Kleur naar het aantal (elif)
 
 :::info
 Deze stap gebruikt `elif`, uit [And, or en elif](site:python/docs/beslissen/05c-and-or-elif).
@@ -37,8 +37,8 @@ is niet meer dan 90, wel meer dan 60: oranje.
 
 ## Opdracht: rood, oranje of groen
 
-Plak je programma uit stap 5 in het veld. Ben je het kwijt, neem dan de
-oplossing van [stap 5](site:python/docs/projecten/staafdiagram/stap-5-schalen).
+Plak je programma uit stap 7 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 7](site:python/docs/projecten/staafdiagram/stap-7-schalen).
 
 Geef `staaf` een derde parameter `kleur`, en kies voor elke staaf een
 kleur:
@@ -47,9 +47,9 @@ kleur:
 - meer dan 60 minuten: `"orange"`;
 - de rest: `"limegreen"`.
 
-![Het staafdiagram met vijf staven: video's is rood, chatten en gamen zijn oranje, muziek en foto's zijn groen](./img/stap-6-kleuren.svg)
+![Het staafdiagram met vijf staven: video's is rood, chatten en gamen zijn oranje, muziek en foto's zijn groen](./img/stap-8-kleuren.svg)
 
-<CodeExercise>{`# Plak hier je programma uit stap 5`}</CodeExercise>
+<CodeExercise>{`# Plak hier je programma uit stap 7`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -64,7 +64,7 @@ hoogte van de staaf.
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-{/* turtle-plaatje: img/stap-6-kleuren.svg */}
+{/* turtle-plaatje: img/stap-8-kleuren.svg */}
 
 ```python
 import turtle
@@ -100,7 +100,7 @@ for naam, waarde in minuten.items():
     if waarde > hoogste:
         hoogste = waarde
 
-x = -200
+plek = -200
 for naam, waarde in minuten.items():
     hoogte = waarde / hoogste * 200
     if waarde > 90:
@@ -109,10 +109,10 @@ for naam, waarde in minuten.items():
         kleur = "orange"
     else:
         kleur = "limegreen"
-    staaf(x, hoogte, kleur)
-    schrijf(x + 30, -100 + hoogte + 5, f"{waarde} min")
-    schrijf(x + 30, -118, naam)
-    x += 80
+    staaf(plek, hoogte, kleur)
+    schrijf(plek + 30, -100 + hoogte + 5, f"{waarde} min")
+    schrijf(plek + 30, -118, naam)
+    plek += 80
 turtle.hideturtle()
 ```
 
@@ -132,6 +132,15 @@ video's wordt oranje, en de tak voor rood komt nooit aan de beurt.
 **Oplossing:** zet de strengste voorwaarde bovenaan: eerst meer dan 90,
 dan meer dan 60.
 
+**Chatten en gamen zijn rood in plaats van oranje.**
+
+**Oorzaak:** je vergeleek met de hoogte van de staaf in plaats van met de
+minuten, bijvoorbeeld `if hoogte > 90:`. Sinds stap 7 is de hoogte geen
+aantal minuten meer: chatten is 65 minuten, maar zijn staaf is ongeveer 118
+hoog. Dat is meer dan 90, dus rood.
+
+**Oplossing:** vergelijk in elke tak `waarde`, het aantal minuten.
+
 ## Jouw eigen gegevens
 
 Je programma tekent elke dictionary met getallen, hoeveel paren er ook in
@@ -142,9 +151,19 @@ staan. Verzamel nu je eigen gegevens. Een paar ideeën:
 - Wat is de lievelingssnack van je klas? Turf het, en tel per snack.
 - Hoeveel stappen zette je deze week per dag?
 
-Zet ze in de dictionary in plaats van de minuten. Passen de grenzen voor
-rood en oranje niet bij je getallen, kies dan andere, of laat de kleuren
-weg.
+Dan pas je drie dingen aan:
+
+1. Zet je gegevens in de dictionary, in plaats van de minuten. Past de naam
+   `minuten` er niet meer bij, bijvoorbeeld omdat je stappen telt, verander
+   hem dan overal: waar je de dictionary maakt en in beide loops.
+2. Verander `min` in de f-string in jouw eenheid, zoals `stappen`. Turf je
+   snacks, dan heb je geen eenheid nodig en haal je het weg.
+3. Kies grenzen voor rood en oranje die bij je getallen passen, of laat de
+   kleuren weg.
+
+Zet er minstens één getal boven 0 in. Zijn alle getallen 0, dan blijft
+`hoogste` 0, en deelt je programma door 0, net als bij de eerste fout in
+[stap 7](site:python/docs/projecten/staafdiagram/stap-7-schalen#er-gaat-iets-mis).
 
 ## Verder bouwen
 

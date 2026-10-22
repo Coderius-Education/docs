@@ -1,15 +1,19 @@
 ---
 sidebar_position: 2
 sidebar_label: 'Stap 2: een functie'
-description: Zet de bloem in een functie bloem(), en teken er twee naast elkaar.
+description: Zet de bloem in een functie bloem(), teken er twee naast elkaar, en zet ze met een functie gras() in een landschap.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
 
-# Stap 2: Twee bloemen (een functie)
+# Stap 2: Twee bloemen in het gras (een functie)
 
 :::info
 Deze stap gebruikt functies, uit [Functies](site:python/docs/functies/functies).
+Uit de turtle-lijn komen `penup` en `pendown`
+([Een huis](site:python/docs/projecten/turtle/een-huis/stap-2-raam)), `goto`
+([Een dobbelsteen](site:python/docs/projecten/turtle/dobbelsteen/stap-1-goto))
+en `bgcolor` ([Kleur en dikte](site:python/docs/projecten/turtle/kleuren/stap-1-pen)).
 :::
 
 Een veld heeft meer dan één bloem. Je kunt de regels van je bloem
@@ -35,7 +39,7 @@ Alles wat onder `def hart():` inspringt, hoort bij de functie. Er gebeurt
 pas iets als je hem aanroept. Hier gebeurt dat twee keer, dus zie je twee
 stippen.
 
-## Opdracht: twee bloemen naast elkaar
+## Opdracht: twee bloemen in het gras
 
 Plak je programma uit stap 1 in het veld. Ben je het kwijt, neem dan de
 oplossing van [stap 1](site:python/docs/projecten/bloemenveld/stap-1-for-loop).
@@ -45,7 +49,19 @@ waar de schildpad staat. Teken er daarna twee: één met het midden op
 `(-100, 0)` en één op `(100, 0)`. Tussen de bloemen loopt de schildpad
 zonder een lijn te trekken.
 
-![Twee dezelfde roze bloemen met een gouden hart naast elkaar](./img/stap-2-twee-bloemen.svg)
+Zet je bloemen daarna in een landschap:
+
+1. Maak de lucht blauw met `turtle.bgcolor("skyblue")`.
+2. Schrijf een tweede functie, `gras()`, die een rechthoek tekent,
+   ingekleurd met `"yellowgreen"`. De linkerbovenhoek staat op
+   `(-300, -160)`, de rechteronderhoek op `(300, -260)`. Houd de pen
+   omhoog: de schildpad kleurt de rechthoek dan wel in, maar trekt er
+   geen zwarte lijn omheen.
+3. Roep `gras()` aan voordat je de bloemen tekent. Wat de schildpad later
+   tekent, ligt bovenop wat er al staat. Nu maakt dat nog niet uit, maar
+   in stap 4 staan je bloemen met hun steel in het gras.
+
+![Twee dezelfde roze bloemen met een gouden hart naast elkaar, boven een strook gras onder een blauwe lucht](./img/stap-2-twee-bloemen.svg)
 
 <CodeExercise>{`# Plak hier je programma uit stap 1`}</CodeExercise>
 
@@ -57,6 +73,11 @@ het hart. De variabele `blaadjes` mag erboven blijven staan. Onder de
 functie loop je met de pen omhoog naar de eerste plek, zet je de pen
 weer neer, en roep je `bloem` aan. Voor de tweede bloem doe je dat nog
 een keer.
+
+Het gras teken je zoals het vierkant in
+[Een dobbelsteen](site:python/docs/projecten/turtle/dobbelsteen/stap-1-goto):
+met een `goto` naar elke hoek. Begin in de linkerbovenhoek, en zet
+`begin_fill` en `end_fill` om de vier `goto`'s heen.
 
 </details>
 
@@ -82,6 +103,19 @@ def bloem():
         turtle.left(360 / blaadjes)
     turtle.dot(25, "gold")
 
+def gras():
+    turtle.penup()
+    turtle.goto(-300, -160)
+    turtle.fillcolor("yellowgreen")
+    turtle.begin_fill()
+    turtle.goto(300, -160)
+    turtle.goto(300, -260)
+    turtle.goto(-300, -260)
+    turtle.goto(-300, -160)
+    turtle.end_fill()
+
+turtle.bgcolor("skyblue")
+gras()
 turtle.penup()
 turtle.goto(-100, 0)
 turtle.pendown()
@@ -110,8 +144,17 @@ NameError: name 'bloem' is not defined
 Python leest je programma van boven naar beneden, en kent de functie op
 die plek nog niet.
 
-**Oplossing:** zet de functie bovenaan, direct onder `import turtle` en
+**Oplossing:** zet de functies bovenaan, direct onder `import turtle` en
 `blaadjes = 8`, en de aanroepen eronder.
+
+**Er staat geen bloem, en er komt ook geen foutmelding.**
+
+**Oorzaak:** je schreef `bloem` zonder haakjes. Python kent die naam,
+dus het geeft geen fout, maar zonder `()` roep je de functie niet aan.
+De schildpad loopt wel naar de plek, maar tekent daar niets.
+
+**Oplossing:** schrijf `bloem()`, met haakjes. Dat geldt voor `gras()`
+ook.
 
 Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 

@@ -1,33 +1,37 @@
 ---
 sidebar_position: 4
-sidebar_label: 'Stap 4: lijsten'
-description: Zet vier schildpadden en hun kleuren in een lijst, en laat ze met een for-loop om de beurt een stap zetten.
+sidebar_label: 'Stap 4: een lijst'
+description: Doe mee met vier schildpadden, zet ze in een lijst, en breng ze met een for-loop over die lijst naar hun baan.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
 
-# Stap 4: Vier schildpadden (lijsten)
+# Stap 4: Vier schildpadden (een lijst)
 
 :::info
-Deze stap gebruikt lijsten uit [Lijsten](site:python/docs/data/10a-lijsten-basis).
+Deze stap gebruikt lijsten uit [Lijsten](site:python/docs/data/10a-lijsten-basis), en in het voorbeeld `right` uit [Lijnen en hoeken](site:python/docs/projecten/turtle/lijnen/stap-2-right). Een loop over een lijst met een variabele die elke ronde verandert, deed je al in [Een regenboog](site:python/docs/projecten/turtle/regenboog/stap-2-regenboog).
 :::
 
-Voor twee schildpadden schreef je alles twee keer: vijf regels om ze klaar
-te zetten, en twee regels in de loop. Met vier wordt het vier keer, en met
-tien tien keer. Dat kan korter: zet de schildpadden in een lijst.
+Voor twee schildpadden schreef je alles twee keer. Met vier wordt het
+klaarzetten lang: elke schildpad moet met de pen omhoog naar zijn baan, en
+daar de pen weer omlaag. Dat stuk is voor elke schildpad hetzelfde, en dus
+werk voor een loop.
 
-In een lijst mag alles staan, ook schildpadden. Met een index haal je er
-één uit, en met een for-loop loop je ze allemaal langs:
+Daarvoor zet je de schildpadden in een lijst. In een lijst mag alles staan,
+ook schildpadden:
 
 ```python
 import turtle
 
-kleuren = ["red", "blue", "orange"]
-schildpadden = [turtle.Turtle(), turtle.Turtle(), turtle.Turtle()]
+rood = turtle.Turtle()
+rood.pencolor("red")
+rood.left(30)
 
-for i in range(3):
-    schildpadden[i].pencolor(kleuren[i])
-    schildpadden[i].left(120 * i)
+blauw = turtle.Turtle()
+blauw.pencolor("blue")
+blauw.right(30)
+
+schildpadden = [rood, blauw]
 
 for schildpad in schildpadden:
     schildpad.forward(100)
@@ -35,40 +39,38 @@ for schildpad in schildpadden:
 
 <CodeExercise>{`import turtle
 
-kleuren = ["red", "blue", "orange"]
-schildpadden = [turtle.Turtle(), turtle.Turtle(), turtle.Turtle()]
+rood = turtle.Turtle()
+rood.pencolor("red")
+rood.left(30)
 
-for i in range(3):
-    schildpadden[i].pencolor(kleuren[i])
-    schildpadden[i].left(120 * i)
+blauw = turtle.Turtle()
+blauw.pencolor("blue")
+blauw.right(30)
+
+schildpadden = [rood, blauw]
 
 for schildpad in schildpadden:
     schildpad.forward(100)`}</CodeExercise>
 
-De eerste loop gaat over de nummers 0, 1 en 2. Bij elk nummer `i` hoort
-één schildpad, `schildpadden[i]`, en één kleur, `kleuren[i]`. Zo krijgt
-schildpad 0 de kleur `red`, schildpad 1 `blue` en schildpad 2 `orange`.
-Daar heb je de index nodig, want je zoekt in twee lijsten tegelijk.
+De loop gaat de lijst langs: eerst is `schildpad` de rode, daarna de
+blauwe. Elk loopt 100 stappen, in zijn eigen richting en met zijn eigen
+kleur.
 
-De tweede loop heeft geen nummer nodig: elke schildpad zet 100 stappen,
-in de richting waarin hij staat.
-
-## Opdracht: een race met vier
+## Opdracht: vier op een rij
 
 Plak je programma uit stap 3 in het veld. Ben je het kwijt, neem dan de
 oplossing van [stap 3](site:python/docs/projecten/schildpaddenrace/stap-3-tweede-schildpad).
 
-Vervang `rood` en `blauw` door vier schildpadden in een lijst, met de
-kleuren uit deze lijst:
+Pas je programma zo aan dat:
 
-```python
-kleuren = ["red", "blue", "orange", "purple"]
-```
-
-De rode begint op `(-200, 90)`, en elke volgende baan ligt 60 lager: de
-blauwe op `(-200, 30)`, de oranje op `(-200, -30)` en de paarse op
-`(-200, -90)`. In de race zet elke schildpad om de beurt een stap, en de
-race stopt na de ronde waarin er één over de streep is gegaan.
+1. er vier schildpadden meedoen: `rood`, `blauw`, `oranje` en `paars`, met
+   een pen in de kleur `"red"`, `"blue"`, `"orange"` en `"purple"`;
+2. ze in een lijst `schildpadden` staan;
+3. een for-loop over die lijst ze naar de start brengt: de rode op
+   `(-220, 90)`, en elke volgende baan 60 lager, dus de blauwe op
+   `(-220, 30)`, de oranje op `(-220, -30)` en de paarse op `(-220, -90)`;
+4. ze in de race om de beurt een stap zetten, net als in stap 3, zolang ze
+   alle vier nog vóór de streep staan.
 
 ![Vier gekleurde lijnen naar de finishlijn; de rode en de oranje zijn er allebei net overheen](./img/stap-4-vier-schildpadden.svg)
 
@@ -79,11 +81,11 @@ Bij jou loopt de race anders dan op het plaatje.
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Zet je de kleuren met een loop, dan heb je `range` en een index nodig,
-zoals in het voorbeeld. Voor de banen kun je een variabele `y` bijhouden
-die elke ronde 60 kleiner wordt. In de race komen de twee stukken voor
-`rood` en `blauw` samen in één loop over de lijst, binnen de
-`while`.
+De kleur geef je elke schildpad meteen als je hem maakt, zoals in stap 3.
+In de loop over de lijst doe je alleen wat voor elke schildpad hetzelfde
+is. Alleen de hoogte van de baan verschilt: houd die bij in een variabele
+`y` die na elke schildpad 60 kleiner wordt, zoals bij de regenboog. De
+race schrijf je nog met vier regels, één per schildpad.
 
 </details>
 
@@ -97,52 +99,51 @@ import turtle
 import random
 
 turtle.penup()
-turtle.goto(100, 130)
+turtle.goto(80, 130)
 turtle.pendown()
-turtle.goto(100, -130)
+turtle.goto(80, -130)
 turtle.hideturtle()
 
-kleuren = ["red", "blue", "orange", "purple"]
-schildpadden = [turtle.Turtle(), turtle.Turtle(), turtle.Turtle(), turtle.Turtle()]
+rood = turtle.Turtle()
+rood.pencolor("red")
+blauw = turtle.Turtle()
+blauw.pencolor("blue")
+oranje = turtle.Turtle()
+oranje.pencolor("orange")
+paars = turtle.Turtle()
+paars.pencolor("purple")
+
+schildpadden = [rood, blauw, oranje, paars]
 
 y = 90
-for i in range(4):
-    schildpadden[i].pencolor(kleuren[i])
-    schildpadden[i].penup()
-    schildpadden[i].goto(-200, y)
-    schildpadden[i].pendown()
+for schildpad in schildpadden:
+    schildpad.penup()
+    schildpad.goto(-220, y)
+    schildpad.pendown()
     y -= 60
 
-bezig = True
-while bezig:
-    for schildpad in schildpadden:
-        schildpad.forward(random.randint(1, 20))
-        if schildpad.xcor() >= 100:
-            bezig = False
+while rood.xcor() < 80 and blauw.xcor() < 80 and oranje.xcor() < 80 and paars.xcor() < 80:
+    rood.forward(random.randint(1, 20))
+    blauw.forward(random.randint(1, 20))
+    oranje.forward(random.randint(1, 20))
+    paars.forward(random.randint(1, 20))
 ```
 
-Wil je zes schildpadden, dan voeg je twee kleuren en twee keer
-`turtle.Turtle()` toe, en maak je van `range(4)` `range(6)`. De race zelf
-hoeft niet te veranderen.
+De regel met `while` is lang, maar hij zegt hetzelfde als in stap 3: de
+race gaat door zolang niemand over de streep is.
 
 </details>
 
 ## Er gaat iets mis
 
-{/* foutmelding-van: kleuren = ["red", "blue", "orange"]\nkleuren[3] */}
+**Alle vier de schildpadden lopen bovenaan, in dezelfde baan.**
 
-```
-IndexError: list index out of range
-```
+**Oorzaak:** `y -= 60` staat niet ingesprongen. Dan hoort hij niet bij de
+for-loop maar komt hij erna, en is `y` voor elke schildpad nog 90.
 
-**Oorzaak:** de loop vraagt om een plek die er niet is. Staan er drie
-kleuren in je lijst, dan zijn de indexen 0, 1 en 2. Bij `range(4)` vraagt
-de laatste ronde om `kleuren[3]`. Hetzelfde gebeurt als je een
-`turtle.Turtle()` te weinig in de lijst zet.
-
-**Oplossing:** zorg dat er net zoveel kleuren als schildpadden zijn, en dat
-`range` niet verder telt dan dat aantal.
+**Oplossing:** spring `y -= 60` in, net als de regels erboven. Dan wordt
+`y` na elke schildpad 60 kleiner.
 
 Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
-Door naar [stap 5: de winnaar](site:python/docs/projecten/schildpaddenrace/stap-5-break).
+Door naar [stap 5: om de beurt](site:python/docs/projecten/schildpaddenrace/stap-5-loop-in-loop).
