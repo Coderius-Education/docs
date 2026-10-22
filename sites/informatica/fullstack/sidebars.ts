@@ -156,13 +156,6 @@ const sidebars: SidebarsConfig = {
       ],
     },
   ],
-  // Eerst de startpagina (het ene idee, de spelregel, de statuscodes) en het
-  // gereedschap (httpx). Dan per zwakheid een categorie met kleine lessen, van
-  // makkelijk naar moeilijk: zichtbaar (wat je server laat zien, nog zonder
-  // aanval), invoer, xss, dos, toegang, cookies, wachtwoorden.
-  // DoS staat vroeg, want het is één decorator en een for-loop; Wachtwoorden
-  // staat achteraan en gebruikt de limiet uit DoS. Ingeklapt, zodat de sidebar
-  // een kaart blijft; Docusaurus klapt de reeks open waar de leerling in zit.
   // Hand-outs zonder computer, in de volgorde van de lessen waar ze bij horen.
   // Een eigen sidebar, zodat op een hand-out alleen de hand-outs in beeld
   // staan. Geen navbar-link: met een item erbij liep de navbar op 1280 breed
@@ -178,6 +171,13 @@ const sidebars: SidebarsConfig = {
     'unplugged/postbode',
     'unplugged/vertrouw-de-bezoeker',
   ],
+  // Eerst de startpagina (het ene idee, de spelregel, de statuscodes) en het
+  // gereedschap (httpx). Dan per zwakheid een categorie met kleine lessen, van
+  // makkelijk naar moeilijk: zichtbaar (wat je server laat zien, nog zonder
+  // aanval), invoer, xss, dos, toegang, cookies, wachtwoorden.
+  // DoS staat vroeg, want het is één decorator en een for-loop; Wachtwoorden
+  // staat achteraan en gebruikt de limiet uit DoS. Ingeklapt, zodat de sidebar
+  // een kaart blijft; Docusaurus klapt de reeks open waar de leerling in zit.
   veiligheidSidebar: [
     'veiligheid/index',
     'veiligheid/gereedschap',
