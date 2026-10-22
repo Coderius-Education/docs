@@ -55,6 +55,14 @@ export default createConfig({
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Tutorial' },
         { type: 'docSidebar', sidebarId: 'projectenSidebar', position: 'left', label: 'Projecten' },
+        // De unplugged hand-outs staan in de projecten-sidebar, maar een docent
+        // zoekt ze los: zonder computer, om te printen.
+        {
+          to: '/docs/projecten/unplugged',
+          label: 'Unplugged',
+          position: 'left',
+          activeBaseRegex: '/docs/projecten/unplugged',
+        },
         { to: '/playground', label: 'Playground', position: 'left' },
         { to: '/cheatsheet', label: 'Cheatsheet', position: 'left' },
         { to: '/begrippenlijst', label: 'Begrippenlijst', position: 'left' },

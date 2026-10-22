@@ -131,6 +131,12 @@ describe('de unplugged hand-outs', () => {
     });
   }
 
+  it('de navbar heeft een link Unplugged naar het overzicht', () => {
+    const config = readFileSync(join(SITE, 'docusaurus.config.ts'), 'utf8');
+    expect(config).toMatch(/to: '\/docs\/projecten\/unplugged',\s*label: 'Unplugged'/);
+    expect(readdirSync(UNPLUGGED)).toContain('index.mdx');
+  });
+
   it('elke unplugged kaart in de projectkiezer heeft een hand-out', () => {
     for (const a of activiteiten.filter((x) => x.soort === 'unplugged')) {
       const slug = 'to' in a.link ? a.link.to.split('/').at(-1) : undefined;
