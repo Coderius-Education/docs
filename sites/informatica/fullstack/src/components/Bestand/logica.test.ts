@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { UITLEG, bestandInfo } from './logica';
 
@@ -30,5 +31,16 @@ describe('bestandInfo', () => {
 
   it('een pad dat nergens past, is een fout in de les', () => {
     expect(() => bestandInfo('home.html')).toThrow(/static\/ of templates\//);
+  });
+});
+
+describe('de stijl van het label', () => {
+  it('trekt het codeblok niet over zich heen', () => {
+    // Een negatieve ondermarge schoof het codeblok over het label, en dan
+    // bleef van het pad maar een halve regel zichtbaar.
+    const css = readFileSync(new URL('./styles.module.css', import.meta.url), 'utf8');
+    const marge = css.match(/\.bestand \{[^}]*\bmargin:\s*([^;]+);/)?.[1] ?? '';
+    expect(marge).not.toBe('');
+    expect(marge).not.toMatch(/-/);
   });
 });
