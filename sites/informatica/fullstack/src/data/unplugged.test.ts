@@ -58,9 +58,11 @@ describe('de unplugged hand-outs van fullstack', () => {
     expect([...lijst.slice(1)].sort()).toEqual(handouts.map((h) => `unplugged/${h.slug}`).sort());
   });
 
-  it('de navbar heeft een link Unplugged naar de eigen sidebar', () => {
-    const config = readFileSync(join(SITE, 'docusaurus.config.ts'), 'utf8');
-    expect(config).toMatch(/sidebarId: 'unpluggedSidebar',[^}]*label: 'Unplugged'/);
+  it('de docentenhandleiding wijst naar het overzicht', () => {
+    // Geen navbar-link: die liep op 1280 breed over twee regels. Een docent
+    // vindt de hand-outs via zijn handleiding.
+    const docenten = readFileSync(join(SITE, 'src', 'pages', 'docenten.mdx'), 'utf8');
+    expect(docenten).toContain('](site:fullstack/docs/unplugged)');
   });
 
   it('het overzicht en de docentenhandleiding noemen elke hand-out', () => {
@@ -93,7 +95,11 @@ describe('de unplugged hand-outs van fullstack', () => {
         const scherm = rest.match(/<div className="handout-alleen-scherm">([\s\S]*?)<\/div>/)?.[1];
         expect(scherm, 'een handout-alleen-scherm-blok').toBeDefined();
         expect(scherm).toMatch(/^## Verder op de site$/m);
-        const lessen = [...(scherm ?? '').matchAll(/\]\(site:fullstack(\/docs\/(?:FastAPI|veiligheid)\/[^)\s]+)\)/g)];
+        const lessen = [
+          ...(scherm ?? '').matchAll(
+            /\]\(site:fullstack(\/docs\/(?:FastAPI|veiligheid)\/[^)\s]+)\)/g,
+          ),
+        ];
         expect(lessen.length, 'minstens één link naar een les').toBeGreaterThan(0);
         for (const [, pad] of lessen) expect(bestaat(pad), pad).toBe(true);
       });
@@ -132,7 +138,9 @@ describe('de unplugged hand-outs van fullstack', () => {
 describe('welke taal, waar?', () => {
   const tekst = handouts.find((h) => h.slug === 'welke-taal-waar')?.tekst ?? '';
   const { blad, rest } = splits(tekst);
-  const knipblad = rest.match(/<div className="handout-paginawissel handout-knipblad">([\s\S]*?)<\/div>/)?.[1] ?? '';
+  const knipblad =
+    rest.match(/<div className="handout-paginawissel handout-knipblad">([\s\S]*?)<\/div>/)?.[1] ??
+    '';
 
   it('de stroken op het knipblad zijn precies de stroken in de antwoorden, geschud', () => {
     const stroken = [...knipblad.matchAll(/^\| (\d+ `.+`) \|$/gm)].map((m) => m[1]);

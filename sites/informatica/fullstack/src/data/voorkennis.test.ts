@@ -92,12 +92,16 @@ const ZONDER_BLOK: Record<string, string> = {
   'troubleshooting.md': 'naslag',
   'unplugged/index.mdx': 'overzicht van de hand-outs',
   'unplugged/postbode.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
-  'unplugged/template-invullen.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
-  'unplugged/verzoek-rollenspel.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
-  'unplugged/vertrouw-de-bezoeker.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
+  'unplugged/template-invullen.mdx':
+    'hand-out zonder computer; Verder op de site linkt naar de lessen',
+  'unplugged/verzoek-rollenspel.mdx':
+    'hand-out zonder computer; Verder op de site linkt naar de lessen',
+  'unplugged/vertrouw-de-bezoeker.mdx':
+    'hand-out zonder computer; Verder op de site linkt naar de lessen',
   'unplugged/volg-de-naam.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
   'unplugged/welke-route.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
-  'unplugged/welke-taal-waar.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
+  'unplugged/welke-taal-waar.mdx':
+    'hand-out zonder computer; Verder op de site linkt naar de lessen',
   'veiligheid/dos/dos-en-ddos.mdx': 'begrippen, uitgelegd in de les zelf',
   'veiligheid/dos/limiet.mdx': 'slowapi wordt in de les zelf uitgelegd',
   'veiligheid/dos/praktijk.mdx': 'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',

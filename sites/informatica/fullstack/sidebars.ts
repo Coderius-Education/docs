@@ -164,7 +164,10 @@ const sidebars: SidebarsConfig = {
   // staat achteraan en gebruikt de limiet uit DoS. Ingeklapt, zodat de sidebar
   // een kaart blijft; Docusaurus klapt de reeks open waar de leerling in zit.
   // Hand-outs zonder computer, in de volgorde van de lessen waar ze bij horen.
-  // Een eigen sidebar en navbar-link: een docent zoekt ze los, om te printen.
+  // Een eigen sidebar, zodat op een hand-out alleen de hand-outs in beeld
+  // staan. Geen navbar-link: met een item erbij liep de navbar op 1280 breed
+  // over twee regels. De ingangen zijn de docentenhandleiding en de tip
+  // Eerst op papier in de les.
   unpluggedSidebar: [
     'unplugged/index',
     'unplugged/verzoek-rollenspel',
