@@ -171,9 +171,11 @@ function routes(files: ProjectFiles): { routes: Route[]; zeker: boolean } {
 
 /** Past een adres uit HTML bij een routepad met `{parameters}`? */
 function past(adres: string, routepad: string): boolean {
-  const schoon = adres.split(/[?#]/)[0];
-  const a = schoon.split('/');
-  const r = routepad.split('/');
+  // Eén slash aan het eind maakt niet uit: FastAPI stuurt `/gastenboek/` met
+  // een 307 door naar `/gastenboek`, en een POST blijft dan een POST.
+  const zonderSlash = (pad: string) => (pad.length > 1 ? pad.replace(/\/$/, '') : pad);
+  const a = zonderSlash(adres.split(/[?#]/)[0]).split('/');
+  const r = zonderSlash(routepad).split('/');
   const stukPast = (deel: string, i: number) =>
     /^\{.+\}$/.test(deel) || deel === a[i] || a[i] === '\u0000';
   // {pad:path} pakt de rest van het adres, slashes inbegrepen.
@@ -291,7 +293,14 @@ function controleerLinks(
       const mount = statisch.find((s) => doel === s.prefix || doel.startsWith(`${s.prefix}/`));
       if (mount) {
         if (doel.includes('{')) continue;
-        const rest = decodeURI(doel.split(/[?#]/)[0].slice(mount.prefix.length + 1));
+        // Een losse % (`100%.png`) laat decodeURI een URIError gooien, en dan
+        // kwam er voor niemand een rapport. Zo'n link laat hij met rust.
+        let rest: string;
+        try {
+          rest = decodeURI(doel.split(/[?#]/)[0].slice(mount.prefix.length + 1));
+        } catch {
+          continue;
+        }
         const pad = `${mount.map}${rest}`;
         if (rest !== '' && !(pad in files)) {
           fouten.push({
@@ -373,12 +382,13 @@ function templateNamen(tekst: string): { naam: string; regel: number }[] | null 
   for (const m of tekst.matchAll(/\{%-?\s*for\s+([\w\s,()]+?)\s+in\b/g))
     for (const n of m[1].match(/\w+/g) ?? []) lokaal.add(n);
   for (const m of tekst.matchAll(/\{%-?\s*(?:set|with)\s+(\w+)/g)) lokaal.add(m[1]);
+  // Een naam in een {% if %} mag ontbreken: Jinja leest hem dan als niet
+  // waar, zonder fout. `{% if fout %}<p>{{ fout }}</p>{% endif %}` met een
+  // dictionary zonder fout is een gewoon patroon, geen vergissing.
+  for (const m of tekst.matchAll(/\{%-?\s*(?:if|elif)\s+(?:not\s+)?([A-Za-z_]\w*)/g))
+    lokaal.add(m[1]);
   const uit: { naam: string; regel: number }[] = [];
-  const patronen = [
-    /\{\{-?\s*([A-Za-z_]\w*)/g,
-    /\{%-?\s*(?:if|elif)\s+(?:not\s+)?([A-Za-z_]\w*)/g,
-    /\{%-?\s*for\s+[\w\s,()]+?\s+in\s+([A-Za-z_]\w*)/g,
-  ];
+  const patronen = [/\{\{-?\s*([A-Za-z_]\w*)/g, /\{%-?\s*for\s+[\w\s,()]+?\s+in\s+([A-Za-z_]\w*)/g];
   for (const re of patronen)
     for (const m of tekst.matchAll(re)) {
       const naam = m[1];
@@ -484,7 +494,17 @@ export function samenhang(files: ProjectFiles): Samenhangfout[] {
   }
   // Zonder routes (alleen HTML, of een router met prefix) weet hij niet
   // welke links goed zijn; static-bestanden kan hij dan nog wel nalopen.
-  controleerLinks(lijst.length > 0 && zeker ? lijst : null, fouten, files, statischeMappen(files));
+  // Een StaticFiles op `/` serveert elk pad dat geen route heeft: welke link
+  // dan een bestand of een route is, weet hij niet, dus die links laat hij
+  // met rust. De andere mounts loopt hij gewoon na.
+  const mappen = statischeMappen(files);
+  const opWortel = mappen.some((m) => m.prefix === '');
+  controleerLinks(
+    lijst.length > 0 && zeker && !opWortel ? lijst : null,
+    fouten,
+    files,
+    mappen.filter((m) => m.prefix !== ''),
+  );
   controleerTemplates(lijst, fouten, files);
   controleerBestandsantwoorden(fouten, files);
   return fouten;

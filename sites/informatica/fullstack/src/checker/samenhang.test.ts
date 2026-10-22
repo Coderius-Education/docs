@@ -222,6 +222,59 @@ async def verwijder(sleutel: str):
     });
   });
 
+  describe('wat de review vond: geen valse melding, geen crash', () => {
+    it('een losse % in een static-link laat de controle niet crashen', () => {
+      const files = compleetMet((p) => {
+        p['templates/berichten.html'] = p['templates/berichten.html'].replace(
+          '/static/logo.png',
+          '/static/100%.png',
+        );
+      });
+      expect(() => samenhang(files)).not.toThrow();
+      // En de rest van het rapport komt er nog: een fout elders blijft staan.
+      const metFout = compleetMet((p) => {
+        p['templates/berichten.html'] = p['templates/berichten.html']
+          .replace('/static/logo.png', '/static/100%.png')
+          .replace('/static/css/style.css', '/static/css/stijl.css');
+      });
+      expect(titels(metFout)).toEqual([
+        '/static/css/stijl.css wijst naar een bestand dat er niet is',
+      ]);
+    });
+
+    it('een naam die alleen in {% if %} staat, mag in het dictionary ontbreken', () => {
+      const files = compleetMet((p) => {
+        p['templates/bericht.html'] = p['templates/bericht.html'].replace(
+          '<h1>',
+          '{% if fout %}<p>{{ fout }}</p>{% endif %}<h1>',
+        );
+      });
+      expect(samenhang(files)).toEqual([]);
+    });
+
+    it('een StaticFiles op / maakt van een link naar een route geen ontbrekend bestand', () => {
+      const files = compleetMet((p) => {
+        p['main.py'] +=
+          '\napp.mount("/", StaticFiles(directory="static", html=True), name="site")\n';
+      });
+      expect(samenhang(files)).toEqual([]);
+    });
+
+    it('een slash aan het eind van action of link is geen andere route', () => {
+      const files = compleetMet((p) => {
+        p['static/pages/gastenboek_form.html'] = p['static/pages/gastenboek_form.html'].replace(
+          'action="/gastenboek"',
+          'action="/gastenboek/"',
+        );
+        p['templates/bericht.html'] = p['templates/bericht.html'].replace(
+          'href="/berichten"',
+          'href="/berichten/"',
+        );
+      });
+      expect(samenhang(files)).toEqual([]);
+    });
+  });
+
   describe('links en bestanden', () => {
     it('een static-bestand dat er niet is', () => {
       const files = compleetMet((p) => {
