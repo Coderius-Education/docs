@@ -157,10 +157,10 @@ const sidebars: SidebarsConfig = {
     },
   ],
   // Hand-outs zonder computer, in de volgorde van de lessen waar ze bij horen.
-  // Een eigen sidebar, zodat op een hand-out alleen de hand-outs in beeld
-  // staan. Geen navbar-link: met een item erbij liep de navbar op 1280 breed
-  // over twee regels. De ingangen zijn de docentenhandleiding en de tip
-  // Eerst op papier in de les.
+  // Een eigen sidebar met een navbar-link Unplugged, zodat op een hand-out
+  // alleen de hand-outs in beeld staan. Om op 1280 breed op één regel te
+  // passen, staan de navbar-items tot 1440 breed wat dichter op elkaar
+  // (src/css/custom.css).
   unpluggedSidebar: [
     'unplugged/index',
     'unplugged/verzoek-rollenspel',

@@ -1,0 +1,113 @@
+/* De zoekbalk blijft bovenaan staan terwijl je door de lijst scrolt. */
+.zoeker {
+  margin: 0.5rem 0 1.5rem;
+}
+
+.balk {
+  position: sticky;
+  top: calc(var(--ifm-navbar-height) + 0.5rem);
+  z-index: 2;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  background: var(--ifm-background-color);
+}
+
+.veld {
+  flex: 1;
+  min-width: 0;
+  padding: 0.65rem 0.9rem;
+  font-size: 1rem;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 10px;
+  background: var(--ifm-background-surface-color);
+  color: inherit;
+}
+
+.veld:focus {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 1px;
+  border-color: var(--ifm-color-primary);
+}
+
+.knop {
+  flex: none;
+  padding: 0 0.9rem;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 10px;
+  background: var(--ifm-background-surface-color);
+  color: inherit;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.knop:hover {
+  border-color: var(--ifm-color-primary);
+}
+
+.telling {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.leeg {
+  color: var(--ifm-color-emphasis-800);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-900);
+  text-decoration: none;
+}
+
+.chip:hover {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.aantal {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Het label met de code achter een cheatsheet-vraag. */
+.label {
+  margin-left: auto;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+/* Op een smal scherm één rij die je opzij schuift, anders vullen de chips
+   het halve scherm. */
+@media (max-width: 996px) {
+  .chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+
+  .chip {
+    flex: none;
+  }
+
+  /* Een lang label ("ophalen, aanpassen, terugzetten") paste niet naast de
+     vraag en maakte de pagina breder dan het scherm. */
+  .label {
+    white-space: normal;
+  }
+}

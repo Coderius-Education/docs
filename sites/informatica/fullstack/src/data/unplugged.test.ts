@@ -58,9 +58,9 @@ describe('de unplugged hand-outs van fullstack', () => {
     expect([...lijst.slice(1)].sort()).toEqual(handouts.map((h) => `unplugged/${h.slug}`).sort());
   });
 
-  it('de docentenhandleiding wijst naar het overzicht', () => {
-    // Geen navbar-link: die liep op 1280 breed over twee regels. Een docent
-    // vindt de hand-outs via zijn handleiding.
+  it('de navbar heeft een link Unplugged, en de docentenhandleiding wijst naar het overzicht', () => {
+    const config = readFileSync(join(SITE, 'docusaurus.config.ts'), 'utf8');
+    expect(config).toMatch(/sidebarId: 'unpluggedSidebar',[^}]*label: 'Unplugged'/);
     const docenten = readFileSync(join(SITE, 'src', 'pages', 'docenten.mdx'), 'utf8');
     expect(docenten).toContain('](site:fullstack/docs/unplugged)');
   });

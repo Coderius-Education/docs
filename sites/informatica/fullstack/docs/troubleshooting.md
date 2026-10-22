@@ -1,6 +1,10 @@
+import NaslagZoeker from '@site/src/components/NaslagZoeker';
+
 # Er gaat iets mis
 
-Klik op je probleem om de oplossing te zien. De koppen volgen de hoofdstukken van de cursus; fouten die in elk hoofdstuk kunnen voorkomen, staan onderaan bij Algemeen.
+Plak je foutmelding in het zoekveld hieronder, of klik op je probleem om de oplossing te zien. De koppen volgen de hoofdstukken van de cursus; fouten die in elk hoofdstuk kunnen voorkomen, staan onderaan bij Algemeen.
+
+<NaslagZoeker soort="fouten" />
 
 ## Je eerste server
 

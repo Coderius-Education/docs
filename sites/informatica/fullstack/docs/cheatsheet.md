@@ -1,7 +1,11 @@
+import NaslagZoeker from '@site/src/components/NaslagZoeker';
+
 # Cheatsheet
 
-Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in de volgorde van de lessen; klik er een aan om hem te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](site:fullstack/docs/FastAPI/projectstructuur); alles over de database bij [SqliteDict op een rij](site:fullstack/docs/FastAPI/sqlitedict/op-een-rij).
+Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in de volgorde van de lessen. Zoek met het veld hieronder, of klik een onderwerp aan om het te openen. Welk bestand in welke map hoort, staat bij [Projectstructuur](site:fullstack/docs/FastAPI/projectstructuur); alles over de database bij [SqliteDict op een rij](site:fullstack/docs/FastAPI/sqlitedict/op-een-rij).
 
+
+<NaslagZoeker soort="cheatsheet" />
 
 ## FastAPI
 
