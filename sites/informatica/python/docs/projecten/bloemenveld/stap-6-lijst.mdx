@@ -1,0 +1,164 @@
+---
+sidebar_position: 6
+sidebar_label: 'Stap 6: een lijst'
+description: Zet kleuren in een lijst, kies er met random.choice een per bloem, en zet het veld in het gras onder een blauwe lucht.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 6: Een bont bloemenveld (een lijst)
+
+:::info
+Deze stap gebruikt een lijst, uit [Lijsten](site:python/docs/data/10a-lijsten-basis).
+:::
+
+Een veld met alleen rode bloemen is een veld klaprozen. Voor een bont
+veld zet je kleuren in een lijst, en laat je de computer er per bloem een
+uit kiezen. Dat doet `random.choice`:
+
+{/* uitvoer-varieert: random kiest elke keer een andere kleur */}
+
+```python
+import random
+
+kleuren = ["red", "orange", "yellow"]
+print(random.choice(kleuren))
+```
+
+`choice` pakt een willekeurig element uit de lijst. Druk een paar keer op
+Uitvoeren: soms komt dezelfde kleur twee keer na elkaar, net als bij een
+dobbelsteen.
+
+<CodeExercise>{`import random
+
+kleuren = ["red", "orange", "yellow"]
+print(random.choice(kleuren))`}</CodeExercise>
+
+## Opdracht: jouw bloemenveld
+
+Plak je programma uit stap 5 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 5](site:python/docs/projecten/bloemenveld/stap-5-random).
+
+Maak er jouw eigen bloemenveld van:
+
+1. Zet minstens vier kleuren in een lijst, en geef elke bloem een
+   willekeurige kleur uit die lijst. Kies je eigen kleuren; het plaatje
+   gebruikt `"red"`, `"orange"`, `"yellow"`, `"deeppink"`,
+   `"mediumpurple"` en `"white"`.
+2. Maak de lucht blauw met `turtle.bgcolor("skyblue")`. Die regel kleurt
+   de hele achtergrond.
+3. Schrijf een functie `gras()` die een lijn van 80 dik tekent in
+   `"yellowgreen"`, van `(-300, -200)` naar `(300, -200)`. Roep hem aan
+   voordat je de bloemen tekent.
+
+Jouw veld ziet er anders uit dan het plaatje: andere plekken, en
+misschien andere kleuren.
+
+![Een veld met tien bloemen in rood, oranje, geel, roze, paars en wit, op groene stelen, boven een strook gras onder een blauwe lucht](./img/stap-6-bloemenveld.svg)
+
+<CodeExercise>{`# Plak hier je programma uit stap 5`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De lijst hoeft maar één keer te bestaan, dus die zet je boven de loop. De
+kleur kies je in de loop, net als de plek. Waar nu `"red"` staat, komt
+de gekozen kleur. Het gras komt vóór de loop, anders ligt het over de
+onderkant van je stelen heen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* turtle-plaatje met zaad 786: img/stap-6-bloemenveld.svg */}
+
+```python
+import turtle
+import random
+
+def bloem(x, y, kleur, blaadjes):
+    turtle.penup()
+    turtle.goto(x, y)
+    turtle.pendown()
+    turtle.fillcolor(kleur)
+    for blad in range(blaadjes):
+        turtle.begin_fill()
+        turtle.circle(40, 90)
+        turtle.left(90)
+        turtle.circle(40, 90)
+        turtle.left(90)
+        turtle.end_fill()
+        turtle.left(360 / blaadjes)
+    turtle.dot(25, "gold")
+
+def steel(x, y, lengte):
+    turtle.penup()
+    turtle.goto(x, y)
+    turtle.pendown()
+    turtle.pencolor("forestgreen")
+    turtle.pensize(5)
+    turtle.goto(x, y + lengte)
+    turtle.pencolor("black")
+    turtle.pensize(1)
+    return y + lengte
+
+def gras():
+    turtle.penup()
+    turtle.goto(-300, -200)
+    turtle.pendown()
+    turtle.pencolor("yellowgreen")
+    turtle.pensize(80)
+    turtle.goto(300, -200)
+
+kleuren = ["red", "orange", "yellow", "deeppink", "mediumpurple", "white"]
+
+turtle.speed(0)
+turtle.bgcolor("skyblue")
+gras()
+for keer in range(10):
+    x = random.randint(-220, 220)
+    lengte = random.randint(60, 220)
+    blaadjes = random.randint(5, 9)
+    top = steel(x, -180, lengte)
+    bloem(x, top, random.choice(kleuren), blaadjes)
+turtle.hideturtle()
+```
+
+Het gras laat de pen dik en groen achter, maar dat geeft niets: `steel`
+zet de pen zelf goed voordat hij tekent.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: import turtle\nturtle.fillcolor("orange" "yellow") */}
+
+```
+turtle.TurtleGraphicsError: bad color string: orangeyellow
+```
+
+**Oorzaak:** er ontbreekt een komma in je lijst, zoals in
+`["red", "orange" "yellow"]`. Twee teksten zonder komma ertussen plakt
+Python aan elkaar, tot `"orangeyellow"`, en die kleur bestaat niet. De
+fout komt niet bij elke run: alleen als `choice` net die kapotte kleur
+kiest. Daarom kan je programma drie keer goed gaan en de vierde keer
+omvallen.
+
+**Oplossing:** zet een komma tussen elke twee kleuren in de lijst.
+
+## Verder bouwen
+
+Je bloemenveld werkt. Wil je verder, kies dan iets uit dit lijstje:
+
+- Geef `bloem` een parameter `grootte` voor de bogen van de blaadjes, en
+  laat de computer ook die kiezen.
+- Laat de stelen niet allemaal op -180 beginnen, maar ergens in het gras.
+  Dan lijken sommige bloemen verder weg te staan.
+- Zet een zon in de lucht met een grote gele stip.
+- Maak een functie `veld(aantal)` die een veld van `aantal` bloemen
+  tekent, en probeer een veld van 3 en een van 30.
+- Kies het aantal blaadjes uit een lijst, bijvoorbeeld 5, 8 en 13, in
+  plaats van met `randint`.
+
+Terug naar [het overzicht van de projecten](site:python/docs/projecten).

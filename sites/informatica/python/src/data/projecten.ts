@@ -112,6 +112,15 @@ export const activiteiten: Activiteit[] = [
     link: { to: '/docs/projecten/woordjes-overhoren/stap-1-dictionary' },
   },
   {
+    id: 'bloemenveld',
+    titel: 'Bloemenveld',
+    soort: 'project',
+    wat: 'Van één turtle-bloem naar een veld vol bloemen op plekken en in kleuren die de computer kiest.',
+    stappen: 6,
+    concepten: ['06a', '08', '09a', '09b', '09d', '10a'],
+    link: { to: '/docs/projecten/bloemenveld/stap-1-for-loop' },
+  },
+  {
     id: 'spirograaf',
     titel: 'Spirograaf',
     soort: 'project',

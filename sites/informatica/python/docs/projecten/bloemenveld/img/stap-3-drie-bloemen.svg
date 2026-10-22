@@ -1,0 +1,282 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
+<title>Drie bloemen naast elkaar: een rode met vijf blaadjes, een oranje met acht en een paarse met twaalf, elk met een gouden hart</title>
+<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<polygon points="-150,0 -137.64,-1.96 -126.49,-7.64 -117.64,-16.49 -111.96,-27.64 -110,-40 -122.36,-38.04 -133.51,-32.36 -142.36,-23.51 -148.04,-12.36 -150,0" fill="red" fill-rule="evenodd"/>
+<line x1="-150" y1="0" x2="-137.64" y2="-1.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-137.64" y1="-1.96" x2="-126.49" y2="-7.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-126.49" y1="-7.64" x2="-117.64" y2="-16.49" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-117.64" y1="-16.49" x2="-111.96" y2="-27.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-111.96" y1="-27.64" x2="-110" y2="-40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-110" y1="-40" x2="-122.36" y2="-38.04" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-122.36" y1="-38.04" x2="-133.51" y2="-32.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-133.51" y1="-32.36" x2="-142.36" y2="-23.51" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-142.36" y1="-23.51" x2="-148.04" y2="-12.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-148.04" y1="-12.36" x2="-150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="-150,0 -148.04,-12.36 -150,-24.72 -155.68,-35.87 -164.53,-44.72 -175.68,-50.4 -177.64,-38.04 -175.68,-25.68 -170,-14.53 -161.15,-5.68 -150,0" fill="red" fill-rule="evenodd"/>
+<line x1="-150" y1="0" x2="-148.04" y2="-12.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-148.04" y1="-12.36" x2="-150" y2="-24.72" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-150" y1="-24.72" x2="-155.68" y2="-35.87" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-155.68" y1="-35.87" x2="-164.53" y2="-44.72" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-164.53" y1="-44.72" x2="-175.68" y2="-50.4" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-175.68" y1="-50.4" x2="-177.64" y2="-38.04" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-177.64" y1="-38.04" x2="-175.68" y2="-25.68" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-175.68" y1="-25.68" x2="-170" y2="-14.53" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-170" y1="-14.53" x2="-161.15" y2="-5.68" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-161.15" y1="-5.68" x2="-150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="-150,0 -161.15,-5.68 -173.51,-7.64 -185.87,-5.68 -197.02,0 -205.87,8.85 -194.72,14.53 -182.36,16.49 -170,14.53 -158.85,8.85 -150,0" fill="red" fill-rule="evenodd"/>
+<line x1="-150" y1="0" x2="-161.15" y2="-5.68" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-161.15" y1="-5.68" x2="-173.51" y2="-7.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-173.51" y1="-7.64" x2="-185.87" y2="-5.68" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-185.87" y1="-5.68" x2="-197.02" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-197.02" y1="0" x2="-205.87" y2="8.85" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-205.87" y1="8.85" x2="-194.72" y2="14.53" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-194.72" y1="14.53" x2="-182.36" y2="16.49" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-182.36" y1="16.49" x2="-170" y2="14.53" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-170" y1="14.53" x2="-158.85" y2="8.85" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-158.85" y1="8.85" x2="-150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="-150,0 -158.85,8.85 -164.53,20 -166.49,32.36 -164.53,44.72 -158.85,55.87 -150,47.02 -144.32,35.87 -142.36,23.51 -144.32,11.15 -150,0" fill="red" fill-rule="evenodd"/>
+<line x1="-150" y1="0" x2="-158.85" y2="8.85" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-158.85" y1="8.85" x2="-164.53" y2="20" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-164.53" y1="20" x2="-166.49" y2="32.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-166.49" y1="32.36" x2="-164.53" y2="44.72" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-164.53" y1="44.72" x2="-158.85" y2="55.87" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-158.85" y1="55.87" x2="-150" y2="47.02" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-150" y1="47.02" x2="-144.32" y2="35.87" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-144.32" y1="35.87" x2="-142.36" y2="23.51" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-142.36" y1="23.51" x2="-144.32" y2="11.15" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-144.32" y1="11.15" x2="-150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="-150,0 -144.32,11.15 -135.47,20 -124.32,25.68 -111.96,27.64 -99.6,25.68 -105.28,14.53 -114.13,5.68 -125.28,0 -137.64,-1.96 -150,0" fill="red" fill-rule="evenodd"/>
+<line x1="-150" y1="0" x2="-144.32" y2="11.15" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-144.32" y1="11.15" x2="-135.47" y2="20" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-135.47" y1="20" x2="-124.32" y2="25.68" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-124.32" y1="25.68" x2="-111.96" y2="27.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-111.96" y1="27.64" x2="-99.6" y2="25.68" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-99.6" y1="25.68" x2="-105.28" y2="14.53" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-105.28" y1="14.53" x2="-114.13" y2="5.68" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-114.13" y1="5.68" x2="-125.28" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-125.28" y1="0" x2="-137.64" y2="-1.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-137.64" y1="-1.96" x2="-150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<circle cx="-150" cy="0" r="12.5" fill="gold"/>
+<polygon points="0,0 12.36,-1.96 23.51,-7.64 32.36,-16.49 38.04,-27.64 40,-40 27.64,-38.04 16.49,-32.36 7.64,-23.51 1.96,-12.36 0,0" fill="orange" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="12.36" y2="-1.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="12.36" y1="-1.96" x2="23.51" y2="-7.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="23.51" y1="-7.64" x2="32.36" y2="-16.49" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="32.36" y1="-16.49" x2="38.04" y2="-27.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="38.04" y1="-27.64" x2="40" y2="-40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="40" y1="-40" x2="27.64" y2="-38.04" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="27.64" y1="-38.04" x2="16.49" y2="-32.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="16.49" y1="-32.36" x2="7.64" y2="-23.51" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="7.64" y1="-23.51" x2="1.96" y2="-12.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="1.96" y1="-12.36" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 7.36,-10.12 11.22,-22.03 11.22,-34.54 7.36,-46.44 0,-56.57 -7.36,-46.44 -11.22,-34.54 -11.22,-22.03 -7.36,-10.12 0,0" fill="orange" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="7.36" y2="-10.12" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="7.36" y1="-10.12" x2="11.22" y2="-22.03" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="11.22" y1="-22.03" x2="11.22" y2="-34.54" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="11.22" y1="-34.54" x2="7.36" y2="-46.44" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="7.36" y1="-46.44" x2="0" y2="-56.57" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="-56.57" x2="-7.36" y2="-46.44" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-7.36" y1="-46.44" x2="-11.22" y2="-34.54" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-11.22" y1="-34.54" x2="-11.22" y2="-22.03" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-11.22" y1="-22.03" x2="-7.36" y2="-10.12" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-7.36" y1="-10.12" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 -1.96,-12.36 -7.64,-23.51 -16.49,-32.36 -27.64,-38.04 -40,-40 -38.04,-27.64 -32.36,-16.49 -23.51,-7.64 -12.36,-1.96 0,0" fill="orange" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="-1.96" y2="-12.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-1.96" y1="-12.36" x2="-7.64" y2="-23.51" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-7.64" y1="-23.51" x2="-16.49" y2="-32.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-16.49" y1="-32.36" x2="-27.64" y2="-38.04" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-27.64" y1="-38.04" x2="-40" y2="-40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-40" y1="-40" x2="-38.04" y2="-27.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-38.04" y1="-27.64" x2="-32.36" y2="-16.49" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-32.36" y1="-16.49" x2="-23.51" y2="-7.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-23.51" y1="-7.64" x2="-12.36" y2="-1.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-12.36" y1="-1.96" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 -10.12,-7.36 -22.03,-11.22 -34.54,-11.22 -46.44,-7.36 -56.57,0 -46.44,7.36 -34.54,11.22 -22.03,11.22 -10.12,7.36 0,0" fill="orange" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="-10.12" y2="-7.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-10.12" y1="-7.36" x2="-22.03" y2="-11.22" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-22.03" y1="-11.22" x2="-34.54" y2="-11.22" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-34.54" y1="-11.22" x2="-46.44" y2="-7.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-46.44" y1="-7.36" x2="-56.57" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-56.57" y1="0" x2="-46.44" y2="7.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-46.44" y1="7.36" x2="-34.54" y2="11.22" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-34.54" y1="11.22" x2="-22.03" y2="11.22" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-22.03" y1="11.22" x2="-10.12" y2="7.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-10.12" y1="7.36" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 -12.36,1.96 -23.51,7.64 -32.36,16.49 -38.04,27.64 -40,40 -27.64,38.04 -16.49,32.36 -7.64,23.51 -1.96,12.36 0,0" fill="orange" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="-12.36" y2="1.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-12.36" y1="1.96" x2="-23.51" y2="7.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-23.51" y1="7.64" x2="-32.36" y2="16.49" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-32.36" y1="16.49" x2="-38.04" y2="27.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-38.04" y1="27.64" x2="-40" y2="40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-40" y1="40" x2="-27.64" y2="38.04" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-27.64" y1="38.04" x2="-16.49" y2="32.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-16.49" y1="32.36" x2="-7.64" y2="23.51" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-7.64" y1="23.51" x2="-1.96" y2="12.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-1.96" y1="12.36" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 -7.36,10.12 -11.22,22.03 -11.22,34.54 -7.36,46.44 0,56.57 7.36,46.44 11.22,34.54 11.22,22.03 7.36,10.12 0,0" fill="orange" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="-7.36" y2="10.12" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-7.36" y1="10.12" x2="-11.22" y2="22.03" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-11.22" y1="22.03" x2="-11.22" y2="34.54" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-11.22" y1="34.54" x2="-7.36" y2="46.44" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="-7.36" y1="46.44" x2="0" y2="56.57" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="0" y1="56.57" x2="7.36" y2="46.44" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="7.36" y1="46.44" x2="11.22" y2="34.54" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="11.22" y1="34.54" x2="11.22" y2="22.03" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="11.22" y1="22.03" x2="7.36" y2="10.12" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="7.36" y1="10.12" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 1.96,12.36 7.64,23.51 16.49,32.36 27.64,38.04 40,40 38.04,27.64 32.36,16.49 23.51,7.64 12.36,1.96 0,0" fill="orange" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="1.96" y2="12.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="1.96" y1="12.36" x2="7.64" y2="23.51" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="7.64" y1="23.51" x2="16.49" y2="32.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="16.49" y1="32.36" x2="27.64" y2="38.04" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="27.64" y1="38.04" x2="40" y2="40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="40" y1="40" x2="38.04" y2="27.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="38.04" y1="27.64" x2="32.36" y2="16.49" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="32.36" y1="16.49" x2="23.51" y2="7.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="23.51" y1="7.64" x2="12.36" y2="1.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="12.36" y1="1.96" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="0,0 10.12,7.36 22.03,11.22 34.54,11.22 46.44,7.36 56.57,0 46.44,-7.36 34.54,-11.22 22.03,-11.22 10.12,-7.36 0,0" fill="orange" fill-rule="evenodd"/>
+<line x1="0" y1="0" x2="10.12" y2="7.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="10.12" y1="7.36" x2="22.03" y2="11.22" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="22.03" y1="11.22" x2="34.54" y2="11.22" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="34.54" y1="11.22" x2="46.44" y2="7.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="46.44" y1="7.36" x2="56.57" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="56.57" y1="0" x2="46.44" y2="-7.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="46.44" y1="-7.36" x2="34.54" y2="-11.22" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="34.54" y1="-11.22" x2="22.03" y2="-11.22" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="22.03" y1="-11.22" x2="10.12" y2="-7.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="10.12" y1="-7.36" x2="0" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<circle cx="0" cy="0" r="12.5" fill="gold"/>
+<polygon points="150,0 162.36,-1.96 173.51,-7.64 182.36,-16.49 188.04,-27.64 190,-40 177.64,-38.04 166.49,-32.36 157.64,-23.51 151.96,-12.36 150,0" fill="#a020f0" fill-rule="evenodd"/>
+<line x1="150" y1="0" x2="162.36" y2="-1.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="162.36" y1="-1.96" x2="173.51" y2="-7.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="173.51" y1="-7.64" x2="182.36" y2="-16.49" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="182.36" y1="-16.49" x2="188.04" y2="-27.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="188.04" y1="-27.64" x2="190" y2="-40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="190" y1="-40" x2="177.64" y2="-38.04" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="177.64" y1="-38.04" x2="166.49" y2="-32.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="166.49" y1="-32.36" x2="157.64" y2="-23.51" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="157.64" y1="-23.51" x2="151.96" y2="-12.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="151.96" y1="-12.36" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,0 159.73,-7.88 166.54,-18.37 169.78,-30.46 169.13,-42.96 164.64,-54.64 154.92,-46.77 148.1,-36.27 144.86,-24.18 145.52,-11.68 150,0" fill="#a020f0" fill-rule="evenodd"/>
+<line x1="150" y1="0" x2="159.73" y2="-7.88" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="159.73" y1="-7.88" x2="166.54" y2="-18.37" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="166.54" y1="-18.37" x2="169.78" y2="-30.46" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="169.78" y1="-30.46" x2="169.13" y2="-42.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="169.13" y1="-42.96" x2="164.64" y2="-54.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="164.64" y1="-54.64" x2="154.92" y2="-46.77" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="154.92" y1="-46.77" x2="148.1" y2="-36.27" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="148.1" y1="-36.27" x2="144.86" y2="-24.18" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="144.86" y1="-24.18" x2="145.52" y2="-11.68" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="145.52" y1="-11.68" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,0 154.48,-11.68 155.14,-24.18 151.9,-36.27 145.08,-46.77 135.36,-54.64 130.87,-42.96 130.22,-30.46 133.46,-18.37 140.27,-7.88 150,0" fill="#a020f0" fill-rule="evenodd"/>
+<line x1="150" y1="0" x2="154.48" y2="-11.68" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="154.48" y1="-11.68" x2="155.14" y2="-24.18" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="155.14" y1="-24.18" x2="151.9" y2="-36.27" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="151.9" y1="-36.27" x2="145.08" y2="-46.77" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="145.08" y1="-46.77" x2="135.36" y2="-54.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="135.36" y1="-54.64" x2="130.87" y2="-42.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="130.87" y1="-42.96" x2="130.22" y2="-30.46" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="130.22" y1="-30.46" x2="133.46" y2="-18.37" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="133.46" y1="-18.37" x2="140.27" y2="-7.88" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="140.27" y1="-7.88" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,0 148.04,-12.36 142.36,-23.51 133.51,-32.36 122.36,-38.04 110,-40 111.96,-27.64 117.64,-16.49 126.49,-7.64 137.64,-1.96 150,0" fill="#a020f0" fill-rule="evenodd"/>
+<line x1="150" y1="0" x2="148.04" y2="-12.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="148.04" y1="-12.36" x2="142.36" y2="-23.51" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="142.36" y1="-23.51" x2="133.51" y2="-32.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="133.51" y1="-32.36" x2="122.36" y2="-38.04" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="122.36" y1="-38.04" x2="110" y2="-40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="110" y1="-40" x2="111.96" y2="-27.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="111.96" y1="-27.64" x2="117.64" y2="-16.49" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="117.64" y1="-16.49" x2="126.49" y2="-7.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="126.49" y1="-7.64" x2="137.64" y2="-1.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="137.64" y1="-1.96" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,0 142.12,-9.73 131.63,-16.54 119.54,-19.78 107.04,-19.13 95.36,-14.64 103.23,-4.92 113.73,1.9 125.82,5.14 138.32,4.48 150,0" fill="#a020f0" fill-rule="evenodd"/>
+<line x1="150" y1="0" x2="142.12" y2="-9.73" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="142.12" y1="-9.73" x2="131.63" y2="-16.54" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="131.63" y1="-16.54" x2="119.54" y2="-19.78" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="119.54" y1="-19.78" x2="107.04" y2="-19.13" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="107.04" y1="-19.13" x2="95.36" y2="-14.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="95.36" y1="-14.64" x2="103.23" y2="-4.92" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="103.23" y1="-4.92" x2="113.73" y2="1.9" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="113.73" y1="1.9" x2="125.82" y2="5.14" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="125.82" y1="5.14" x2="138.32" y2="4.48" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="138.32" y1="4.48" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,0 138.32,-4.48 125.82,-5.14 113.73,-1.9 103.23,4.92 95.36,14.64 107.04,19.13 119.54,19.78 131.63,16.54 142.12,9.73 150,0" fill="#a020f0" fill-rule="evenodd"/>
+<line x1="150" y1="0" x2="138.32" y2="-4.48" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="138.32" y1="-4.48" x2="125.82" y2="-5.14" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="125.82" y1="-5.14" x2="113.73" y2="-1.9" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="113.73" y1="-1.9" x2="103.23" y2="4.92" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="103.23" y1="4.92" x2="95.36" y2="14.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="95.36" y1="14.64" x2="107.04" y2="19.13" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="107.04" y1="19.13" x2="119.54" y2="19.78" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="119.54" y1="19.78" x2="131.63" y2="16.54" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="131.63" y1="16.54" x2="142.12" y2="9.73" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="142.12" y1="9.73" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,0 137.64,1.96 126.49,7.64 117.64,16.49 111.96,27.64 110,40 122.36,38.04 133.51,32.36 142.36,23.51 148.04,12.36 150,0" fill="#a020f0" fill-rule="evenodd"/>
+<line x1="150" y1="0" x2="137.64" y2="1.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="137.64" y1="1.96" x2="126.49" y2="7.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="126.49" y1="7.64" x2="117.64" y2="16.49" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="117.64" y1="16.49" x2="111.96" y2="27.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="111.96" y1="27.64" x2="110" y2="40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="110" y1="40" x2="122.36" y2="38.04" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="122.36" y1="38.04" x2="133.51" y2="32.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="133.51" y1="32.36" x2="142.36" y2="23.51" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="142.36" y1="23.51" x2="148.04" y2="12.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="148.04" y1="12.36" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,0 140.27,7.88 133.46,18.37 130.22,30.46 130.87,42.96 135.36,54.64 145.08,46.77 151.9,36.27 155.14,24.18 154.48,11.68 150,0" fill="#a020f0" fill-rule="evenodd"/>
+<line x1="150" y1="0" x2="140.27" y2="7.88" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="140.27" y1="7.88" x2="133.46" y2="18.37" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="133.46" y1="18.37" x2="130.22" y2="30.46" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="130.22" y1="30.46" x2="130.87" y2="42.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="130.87" y1="42.96" x2="135.36" y2="54.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="135.36" y1="54.64" x2="145.08" y2="46.77" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="145.08" y1="46.77" x2="151.9" y2="36.27" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="151.9" y1="36.27" x2="155.14" y2="24.18" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="155.14" y1="24.18" x2="154.48" y2="11.68" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="154.48" y1="11.68" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,0 145.52,11.68 144.86,24.18 148.1,36.27 154.92,46.77 164.64,54.64 169.13,42.96 169.78,30.46 166.54,18.37 159.73,7.88 150,0" fill="#a020f0" fill-rule="evenodd"/>
+<line x1="150" y1="0" x2="145.52" y2="11.68" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="145.52" y1="11.68" x2="144.86" y2="24.18" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="144.86" y1="24.18" x2="148.1" y2="36.27" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="148.1" y1="36.27" x2="154.92" y2="46.77" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="154.92" y1="46.77" x2="164.64" y2="54.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="164.64" y1="54.64" x2="169.13" y2="42.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="169.13" y1="42.96" x2="169.78" y2="30.46" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="169.78" y1="30.46" x2="166.54" y2="18.37" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="166.54" y1="18.37" x2="159.73" y2="7.88" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="159.73" y1="7.88" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,0 151.96,12.36 157.64,23.51 166.49,32.36 177.64,38.04 190,40 188.04,27.64 182.36,16.49 173.51,7.64 162.36,1.96 150,0" fill="#a020f0" fill-rule="evenodd"/>
+<line x1="150" y1="0" x2="151.96" y2="12.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="151.96" y1="12.36" x2="157.64" y2="23.51" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="157.64" y1="23.51" x2="166.49" y2="32.36" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="166.49" y1="32.36" x2="177.64" y2="38.04" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="177.64" y1="38.04" x2="190" y2="40" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="190" y1="40" x2="188.04" y2="27.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="188.04" y1="27.64" x2="182.36" y2="16.49" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="182.36" y1="16.49" x2="173.51" y2="7.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="173.51" y1="7.64" x2="162.36" y2="1.96" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="162.36" y1="1.96" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,0 157.88,9.73 168.37,16.54 180.46,19.78 192.96,19.13 204.64,14.64 196.77,4.92 186.27,-1.9 174.18,-5.14 161.68,-4.48 150,0" fill="#a020f0" fill-rule="evenodd"/>
+<line x1="150" y1="0" x2="157.88" y2="9.73" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="157.88" y1="9.73" x2="168.37" y2="16.54" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="168.37" y1="16.54" x2="180.46" y2="19.78" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="180.46" y1="19.78" x2="192.96" y2="19.13" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="192.96" y1="19.13" x2="204.64" y2="14.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="204.64" y1="14.64" x2="196.77" y2="4.92" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="196.77" y1="4.92" x2="186.27" y2="-1.9" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="186.27" y1="-1.9" x2="174.18" y2="-5.14" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="174.18" y1="-5.14" x2="161.68" y2="-4.48" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="161.68" y1="-4.48" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<polygon points="150,0 161.68,4.48 174.18,5.14 186.27,1.9 196.77,-4.92 204.64,-14.64 192.96,-19.13 180.46,-19.78 168.37,-16.54 157.88,-9.73 150,0" fill="#a020f0" fill-rule="evenodd"/>
+<line x1="150" y1="0" x2="161.68" y2="4.48" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="161.68" y1="4.48" x2="174.18" y2="5.14" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="174.18" y1="5.14" x2="186.27" y2="1.9" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="186.27" y1="1.9" x2="196.77" y2="-4.92" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="196.77" y1="-4.92" x2="204.64" y2="-14.64" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="204.64" y1="-14.64" x2="192.96" y2="-19.13" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="192.96" y1="-19.13" x2="180.46" y2="-19.78" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="180.46" y1="-19.78" x2="168.37" y2="-16.54" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="168.37" y1="-16.54" x2="157.88" y2="-9.73" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<line x1="157.88" y1="-9.73" x2="150" y2="0" stroke="black" stroke-width="1" stroke-linecap="round"/>
+<circle cx="150" cy="0" r="12.5" fill="gold"/>
+</svg>
