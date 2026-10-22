@@ -1,0 +1,91 @@
+---
+sidebar_position: 2
+sidebar_label: 'Stap 2: while'
+description: Laat de speler blijven raden tot het getal goed is, met een while-loop.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 2: Blijven raden (while)
+
+:::info
+Deze stap gebruikt de while-loop uit [While-loop](site:python/docs/herhalen/while-loop).
+:::
+
+Na één gok stopt je programma, ook als hij fout was. Je wilt dat het
+blijft vragen tot het getal geraden is. Hoe vaak dat is, weet je van
+tevoren niet: de ene speler heeft het na drie keer, de andere na tien.
+Dat is werk voor een `while`-loop.
+
+## Opdracht: raden tot het goed is
+
+Zet het vragen en het antwoorden in een `while`-loop die doorgaat zolang
+de gok niet goed is. Typ als test 50, 25 en 37.
+
+{/* invoer: 50 */}
+
+<CodeExercise>{`geheim = 37
+gok = int(input("Raad een getal van 1 tot 100: "))
+if gok > geheim:
+    print("Te hoog.")
+elif gok < geheim:
+    print("Te laag.")
+else:
+    print("Geraden.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De voorwaarde is `gok != geheim`. Python kijkt daar al naar vóór de eerste
+ronde, dus `gok` moet dan al een waarde hebben. Geef hem boven de loop een
+waarde die nooit het geheim is, zoals 0. Alles vanaf de `input` gaat de
+loop in.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer: 50 | 25 | 37 */}
+
+```python
+geheim = 37
+gok = 0
+while gok != geheim:
+    gok = int(input("Raad een getal van 1 tot 100: "))
+    if gok > geheim:
+        print("Te hoog.")
+    elif gok < geheim:
+        print("Te laag.")
+    else:
+        print("Geraden.")
+```
+
+Uitvoer bij 50, 25 en 37:
+
+```
+Raad een getal van 1 tot 100: 50
+Te hoog.
+Raad een getal van 1 tot 100: 25
+Te laag.
+Raad een getal van 1 tot 100: 37
+Geraden.
+```
+
+Na `Geraden.` is `gok` gelijk aan `geheim`. De voorwaarde is dan niet meer
+waar, en de loop stopt.
+
+</details>
+
+## Er gaat iets mis
+
+**Het programma print steeds `Te hoog.` en vraagt niets meer.**
+
+**Oorzaak:** de `input` staat boven de loop in plaats van erin. Dan krijgt
+`gok` één keer een waarde en verandert hij nooit meer. Is die eerste gok
+fout, dan blijft de voorwaarde voor altijd waar: een oneindige loop.
+
+**Oplossing:** druk op Stop, en zet de regel met `input` in de loop. Die
+regel is de update-stap van je loop.
+
+Door naar [stap 3: pogingen tellen](site:python/docs/projecten/raad-het-getal/stap-3-pogingen).

@@ -1,0 +1,107 @@
+---
+sidebar_position: 5
+sidebar_label: 'Stap 5: break'
+description: Laat de speler opgeven door stop te typen, en verlaat de loop dan met break.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 5: Opgeven (break)
+
+:::info
+Deze stap gebruikt `break` uit [Stoppen met break](site:python/docs/herhalen/06d-break).
+:::
+
+Wie het niet meer weet, zit nu vast: het spel stopt pas bij het goede
+getal. Een speler moet kunnen opgeven door `stop` te typen. Dan zegt de
+computer wat het geheim was, en is het spel voorbij.
+
+## Opdracht: stop typen
+
+Laat het spel stoppen als de speler `stop` typt, met de tekst
+`Jammer. Het getal was 31.` (met het geheime getal van dat spel).
+
+{/* invoer met zaad 3: 50 | 25 | 37 | 31 */}
+
+<CodeExercise>{`import random
+
+geheim = random.randint(1, 100)
+gok = 0
+pogingen = 0
+while gok != geheim:
+    gok = int(input("Raad een getal van 1 tot 100: "))
+    pogingen += 1
+    if gok > geheim:
+        print("Te hoog.")
+    elif gok < geheim:
+        print("Te laag.")
+    else:
+        print(f"Geraden in {pogingen} pogingen.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Bewaar wat de speler typt eerst als tekst: `tekst = input(…)`, zonder
+`int()`. Kijk dan of die tekst `"stop"` is. Zo ja: print het geheim en
+verlaat de loop met `break`. Pas daarna maak je er met `int(tekst)` een
+getal van.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer met zaad 3: 50 | 25 | stop */}
+
+```python
+import random
+
+geheim = random.randint(1, 100)
+gok = 0
+pogingen = 0
+while gok != geheim:
+    tekst = input("Raad een getal van 1 tot 100: ")
+    if tekst == "stop":
+        print(f"Jammer. Het getal was {geheim}.")
+        break
+    gok = int(tekst)
+    pogingen += 1
+    if gok > geheim:
+        print("Te hoog.")
+    elif gok < geheim:
+        print("Te laag.")
+    else:
+        print(f"Geraden in {pogingen} pogingen.")
+```
+
+Een spel kan zo gaan:
+
+```
+Raad een getal van 1 tot 100: 50
+Te hoog.
+Raad een getal van 1 tot 100: 25
+Te laag.
+Raad een getal van 1 tot 100: stop
+Jammer. Het getal was 31.
+```
+
+`stop` telt niet als poging: `break` stapt uit de loop voordat de teller
+erbij komt.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: int("stop") */}
+
+```
+ValueError: invalid literal for int() with base 10: 'stop'
+```
+
+**Oorzaak:** `int()` staat nog om de `input()`. Dan probeert Python van
+`stop` een getal te maken voordat je `if` er iets van kan zeggen.
+
+**Oplossing:** bewaar de invoer eerst als tekst, kijk of het `stop` is, en
+maak er pas daarna een getal van met `int(tekst)`.
+
+Door naar [stap 6: een functie](site:python/docs/projecten/raad-het-getal/stap-6-functie).

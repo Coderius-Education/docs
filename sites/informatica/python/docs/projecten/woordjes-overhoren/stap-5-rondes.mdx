@@ -1,0 +1,134 @@
+---
+sidebar_position: 5
+sidebar_label: 'Stap 5: while'
+description: Vraag de foute woorden steeds opnieuw, in rondes, tot je alles goed hebt, met een while-loop.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 5: Tot je alles kent (while)
+
+:::info
+Deze stap gebruikt de while-loop uit [While-loop](site:python/docs/herhalen/while-loop).
+:::
+
+Een woord dat je in de tweede ronde wéér fout hebt, komt niet meer terug.
+Je wilt rondes: elke ronde vraagt de woorden die nog niet goed gingen, tot
+er geen meer over zijn. Hoeveel rondes dat worden, weet je van tevoren
+niet, dus dat wordt een `while`-loop.
+
+## Opdracht: rondes
+
+Bouw het programma om, zodat het werkt zoals hieronder:
+
+1. Een lijst `te_doen` begint met alle Nederlandse woorden.
+2. Zolang er iets in `te_doen` staat, print je `Ronde 1`, `Ronde 2`, enzovoort,
+   en vraag je elk woord uit `te_doen`.
+3. De woorden die fout gaan, worden de `te_doen` van de volgende ronde.
+4. Aan het eind print je `Klaar na 2 rondes.`, met het echte aantal.
+
+De score uit stap 2 kan weg: wie doorgaat tot alles goed is, eindigt altijd
+op 3 van de 3. Het aantal rondes zegt nu hoe goed je de woorden kende.
+
+Typ als test `house`, `three` en `cat`, en daarna `tree`.
+
+{/* invoer: house | three | cat | tree */}
+
+<CodeExercise>{`woorden = {"huis": "house", "boom": "tree", "kat": "cat"}
+
+goed = 0
+fout = []
+for nederlands, engels in woorden.items():
+    antwoord = input(f"Wat is {nederlands} in het Engels? ")
+    if antwoord.lower() == engels:
+        print("Goed.")
+        goed += 1
+    else:
+        print(f"Fout, het is {engels}.")
+        fout.append(nederlands)
+print(f"Je had {goed} van de {len(woorden)} goed.")
+
+print("Nog een keer de fouten:")
+for nederlands in fout:
+    engels = woorden[nederlands]
+    antwoord = input(f"Wat is {nederlands} in het Engels? ")
+    if antwoord.lower() == engels:
+        print("Goed.")
+    else:
+        print(f"Fout, het is {engels}.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Vul `te_doen` met een for-loop over `woorden`: zo'n loop geeft je de
+sleutels, en die voeg je toe met `append`. De tweede helft van je programma
+is al bijna één ronde. Zet die in `while len(te_doen) > 0:`, begin elke
+ronde met een lege `fout`, en loop over `te_doen` in plaats van over
+`fout`. Als laatste regel van de ronde komt `te_doen = fout`. Tel de
+rondes met een teller die aan het begin van elke ronde 1 omhooggaat.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer: house | three | cat | tree */}
+
+```python
+woorden = {"huis": "house", "boom": "tree", "kat": "cat"}
+
+te_doen = []
+for nederlands in woorden:
+    te_doen.append(nederlands)
+
+ronde = 0
+while len(te_doen) > 0:
+    ronde += 1
+    print(f"Ronde {ronde}")
+    fout = []
+    for nederlands in te_doen:
+        engels = woorden[nederlands]
+        antwoord = input(f"Wat is {nederlands} in het Engels? ")
+        if antwoord.lower() == engels:
+            print("Goed.")
+        else:
+            print(f"Fout, het is {engels}.")
+            fout.append(nederlands)
+    te_doen = fout
+print(f"Klaar na {ronde} rondes.")
+```
+
+Uitvoer bij `house`, `three`, `cat` en `tree`:
+
+```
+Ronde 1
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+Ronde 2
+Wat is boom in het Engels? tree
+Goed.
+Klaar na 2 rondes.
+```
+
+`te_doen = fout` is de update-stap van de while-loop. Gaat er in een
+ronde niets fout, dan is `fout` leeg, en daarmee `te_doen` ook. Dan stopt
+de loop.
+
+</details>
+
+## Er gaat iets mis
+
+**Het programma vraagt steeds dezelfde woorden, ook als je ze goed hebt.**
+
+**Oorzaak:** `fout = []` staat boven de while-loop in plaats van erin. Dan
+begint `fout` niet elke ronde leeg, en blijven de fouten van de eerste
+ronde in de lijst staan.
+
+**Oplossing:** druk op Stop, en zet `fout = []` in de while-loop, aan het
+begin van de ronde.
+
+Door naar [stap 6: functies](site:python/docs/projecten/woordjes-overhoren/stap-6-functies).

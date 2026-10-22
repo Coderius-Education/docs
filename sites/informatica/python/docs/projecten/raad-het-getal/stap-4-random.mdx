@@ -1,0 +1,123 @@
+---
+sidebar_position: 4
+sidebar_label: 'Stap 4: de module random'
+description: Laat de computer zelf een geheim getal kiezen met random.randint.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 4: Een echt geheim (de module random)
+
+:::info
+Deze stap gebruikt `import` uit [Modules importeren](site:python/docs/modules/09d-modules).
+:::
+
+Het geheim is altijd 37. Wie het spel één keer heeft gespeeld, raadt het
+de tweede keer meteen. De computer moet zelf een getal kiezen, en elke keer
+een ander.
+
+Daarvoor heeft Python de module **`random`**. De functie `randint` daarin
+geeft een willekeurig geheel getal:
+
+{/* uitvoer-varieert: random kiest elke keer een ander getal */}
+
+```python
+import random
+
+print(random.randint(1, 6))
+```
+
+Dat is een dobbelsteen: elke keer dat je op Uitvoeren drukt, komt er een
+getal van 1 tot en met 6. Let op het verschil met `range`: bij `randint`
+kan het tweede getal zelf ook uitkomen, dus 6 is een mogelijke worp.
+
+<CodeExercise>{`import random
+
+print(random.randint(1, 6))`}</CodeExercise>
+
+## Opdracht: de computer kiest
+
+Laat de computer een geheim getal van 1 tot en met 100 kiezen in plaats
+van 37. De rest van je programma hoeft niet te veranderen.
+
+{/* invoer: 50 | 25 | 37 */}
+
+<CodeExercise>{`geheim = 37
+gok = 0
+pogingen = 0
+while gok != geheim:
+    gok = int(input("Raad een getal van 1 tot 100: "))
+    pogingen += 1
+    if gok > geheim:
+        print("Te hoog.")
+    elif gok < geheim:
+        print("Te laag.")
+    else:
+        print(f"Geraden in {pogingen} pogingen.")`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Twee regels veranderen: `import random` komt helemaal bovenaan, en
+`geheim = 37` wordt `geheim = random.randint(1, 100)`.
+
+Wil je testen of je programma klopt, zet dan tijdelijk `print(geheim)`
+onder die regel. Dan weet je wat je moet raden. Haal hem weg als het werkt,
+anders is er niets meer te raden.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer met zaad 3: 50 | 25 | 37 | 31 */}
+
+```python
+import random
+
+geheim = random.randint(1, 100)
+gok = 0
+pogingen = 0
+while gok != geheim:
+    gok = int(input("Raad een getal van 1 tot 100: "))
+    pogingen += 1
+    if gok > geheim:
+        print("Te hoog.")
+    elif gok < geheim:
+        print("Te laag.")
+    else:
+        print(f"Geraden in {pogingen} pogingen.")
+```
+
+Een spel kan zo gaan:
+
+```
+Raad een getal van 1 tot 100: 50
+Te hoog.
+Raad een getal van 1 tot 100: 25
+Te laag.
+Raad een getal van 1 tot 100: 37
+Te hoog.
+Raad een getal van 1 tot 100: 31
+Geraden in 4 pogingen.
+```
+
+Bij jou is het geheime getal waarschijnlijk anders, dus ook wat de
+computer zegt.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: geheim = random.randint(1, 100) */}
+
+```
+NameError: name 'random' is not defined. Did you forget to import 'random'?
+```
+
+**Oorzaak:** je gebruikt `random.randint`, maar de regel `import random`
+ontbreekt, of staat onder de plek waar je hem gebruikt.
+
+**Oplossing:** zet `import random` op de eerste regel van je programma.
+
+Door naar [stap 5: stoppen met stop](site:python/docs/projecten/raad-het-getal/stap-5-break).
