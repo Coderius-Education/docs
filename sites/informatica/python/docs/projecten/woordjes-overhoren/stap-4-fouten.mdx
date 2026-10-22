@@ -1,0 +1,120 @@
+---
+sidebar_position: 4
+sidebar_label: 'Stap 4: een lijst met append'
+description: Bewaar de foute woorden in een lijst, en vraag ze daarna nog een keer.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 4: De fouten opnieuw (een lijst)
+
+:::info
+Deze stap gebruikt een lijst met `.append()` uit [Lijsten](site:python/docs/data/10a-lijsten-basis) en [Lijst-methoden](site:python/docs/data/10b-lijst-methoden), en een waarde opzoeken met `woorden[sleutel]` uit [Dictionaries](site:python/docs/data/11a-dictionaries-basis).
+:::
+
+Een woord dat je fout had, moet je oefenen. Daarom vraagt het programma
+de foute woorden na de eerste ronde nog een keer. Daarvoor moet het
+onthouden welke woorden fout gingen.
+
+## Opdracht: nog een keer de fouten
+
+Plak je programma uit stap 3 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 3](site:python/docs/projecten/woordjes-overhoren/stap-3-hoofdletters).
+
+Vraag na de score de woorden die fout gingen nog een keer, met hetzelfde
+`Goed.` of `Fout, het is …`.
+
+Verwachte uitvoer als je `house`, `three` en `cat` typt, en daarna `tree`:
+
+```
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+Je had 2 van de 3 goed.
+Nog een keer de fouten:
+Wat is boom in het Engels? tree
+Goed.
+```
+
+<CodeExercise>{`# Plak hier je programma uit stap 3`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Het programma moet onthouden welke woorden fout gingen. Daar is een lijst
+voor, die leeg begint en groeit bij elke fout. Bewaar het Nederlandse
+woord: met de Nederlandse sleutel kun je het Engelse woord altijd weer
+opzoeken in de dictionary. Voor de tweede ronde loop je over die lijst.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer: house | three | cat | tree */}
+
+```python
+woorden = {"huis": "house", "boom": "tree", "kat": "cat"}
+
+goed = 0
+fout = []
+for nederlands, engels in woorden.items():
+    antwoord = input(f"Wat is {nederlands} in het Engels? ")
+    if antwoord.lower() == engels:
+        print("Goed.")
+        goed += 1
+    else:
+        print(f"Fout, het is {engels}.")
+        fout.append(nederlands)
+print(f"Je had {goed} van de {len(woorden)} goed.")
+
+print("Nog een keer de fouten:")
+for nederlands in fout:
+    engels = woorden[nederlands]
+    antwoord = input(f"Wat is {nederlands} in het Engels? ")
+    if antwoord.lower() == engels:
+        print("Goed.")
+    else:
+        print(f"Fout, het is {engels}.")
+```
+
+Uitvoer bij `house`, `three`, `cat` en `tree`:
+
+```
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+Je had 2 van de 3 goed.
+Nog een keer de fouten:
+Wat is boom in het Engels? tree
+Goed.
+```
+
+Het vragen en nakijken staat nu twee keer in je programma. Dat ruim je in
+stap 6 op.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: woorden = {"boom": "tree"}\nwoorden["tree"] */}
+
+```
+KeyError: 'tree'
+```
+
+**Oorzaak:** je bewaarde het Engelse woord in `fout` in plaats van het
+Nederlandse. In de tweede ronde zoek je dan `woorden["tree"]` op, maar de
+sleutels van `woorden` zijn de Nederlandse woorden.
+
+**Oplossing:** schrijf `fout.append(nederlands)`.
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
+Door naar [stap 5: tot je alles kent](site:python/docs/projecten/woordjes-overhoren/stap-5-rondes).

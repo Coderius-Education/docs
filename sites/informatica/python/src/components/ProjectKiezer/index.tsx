@@ -25,7 +25,8 @@ import styles from './styles.module.css';
 // dertig activiteiten te scrollen. Binnen een tabblad kiest hij een concept
 // dat hij wil oefenen; de chips tonen alleen de concepten van dat tabblad.
 // De turtle-projecten zijn een lijn die je van boven naar beneden doet, dus
-// die staan genummerd. Tabs rendert alle panelen in de HTML van de build;
+// die staan genummerd. De unplugged hand-outs en de algoritmes staan als
+// rijen. Tabs rendert alle panelen in de HTML van de build;
 // het tabblad staat in de URL (?soort=turtle).
 
 type Vorm = 'kaarten' | 'lijn' | 'lijst';
@@ -38,6 +39,7 @@ const GROEPEN: { id: string; titel: string; soorten: Soort[]; vorm: Vorm }[] = [
     vorm: 'kaarten',
   },
   { id: 'turtle', titel: 'Turtle', soorten: ['turtle'], vorm: 'lijn' },
+  { id: 'unplugged', titel: 'Unplugged', soorten: ['unplugged'], vorm: 'lijst' },
   { id: 'algoritmes', titel: 'Algoritmes', soorten: ['algoritme'], vorm: 'lijst' },
 ];
 
@@ -236,7 +238,7 @@ function Groep({
           ))}
         </div>
       )}
-      {vorm === 'lijst' && (
+      {items.some((a) => a.soort === 'algoritme') && (
         <p className={styles.onder}>
           Hoe de algoritmes op de lessen voortbouwen, zie je op de{' '}
           <SiteLink site="algorithms" to="/conceptenkaart">

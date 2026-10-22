@@ -1,0 +1,174 @@
+---
+sidebar_position: 1
+description: Voer een programma met variabelen uit met kaartjes en etiketten, en ontdek wat b = a echt doet.
+---
+
+# Etiketten op waarden
+
+<Handout>
+
+Een variabele geeft een waarde een naam. Op papier maak je dat zichtbaar:
+de waarde staat op een kaartje, de naam is een etiket dat je erop plakt.
+Jij bent de computer, en voert een programma regel voor regel uit.
+
+## Wat je nodig hebt
+
+- Per tweetal een stapel lege kaartjes (een A4 in achten gescheurd is ook
+  goed), een vel post-its of strookjes papier voor de etiketten, en een pen.
+- Ongeveer 20 minuten.
+
+## De spelregels
+
+1. **Rechts van de `=` staat een berekening of een waarde?** Reken hem uit,
+   schrijf de uitkomst op een nieuw kaartje en leg het op tafel.
+2. **Rechts staat alleen een naam?** Dan komt er geen nieuw kaartje: je
+   gebruikt het kaartje waar dat etiket op zit.
+3. **Links van de `=` staat een naam.** Schrijf hem op een etiket en plak
+   het op het kaartje uit regel 1 of 2. Zat dat etiket al ergens anders,
+   haal het daar eerst weg. Een naam heeft maar één etiket.
+4. **`print(a)`** lees je van het kaartje waar etiket `a` op zit. Schrijf
+   op wat er op het scherm komt.
+5. Een kaartje zonder etiket gaat van tafel: niemand kan er nog bij.
+
+## Programma 1
+
+<div className="handout-samen">
+
+```python
+a = 5
+b = a
+a = a + 1
+print(a)
+print(b)
+```
+
+Gok eerst, zonder kaartjes: wat komt er op het scherm?
+
+Mijn gok: `print(a)` geeft ______ en `print(b)` geeft ______
+
+</div>
+
+Speel het nu met kaartjes. Schrijf na elke regel op welk etiket op welk
+kaartje zit.
+
+<div className="handout-teltabel">
+
+| Regel | Kaartjes met hun etiketten | Op het scherm |
+|:---:|---|---|
+| 1 | | |
+| 2 | | |
+| 3 | | |
+| 4 | | |
+| 5 | | |
+
+</div>
+
+## Programma 2
+
+Twee variabelen ruilen van waarde. Klopt dit programma?
+
+<div className="handout-samen">
+
+```python
+x = 3
+y = 8
+x = y
+y = x
+print(x, y)
+```
+
+Mijn gok: ______
+
+</div>
+
+Speel het met kaartjes. Kwam er uit wat je wilde? Zo niet: bedenk een
+programma dat `x` en `y` echt laat ruilen. Je mag een derde etiket
+gebruiken.
+
+<Schrijflijnen n={4} />
+
+## Programma 3
+
+<div className="handout-samen">
+
+```python
+naam = "Sam"
+groet = "Hoi " + naam
+naam = "Noor"
+print(groet)
+```
+
+Mijn gok: ______
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. In programma 1 verandert `b` niet mee als `a` verandert. Hoe zie je dat
+   aan de kaartjes?
+2. In wiskunde kan `a = a + 1` nooit kloppen. Waarom is het in Python geen
+   probleem?
+3. Waarom geeft programma 2 twee keer hetzelfde getal?
+4. In programma 3 verandert `naam`, maar `groet` niet. Welke regel van de
+   spelregels zorgt daarvoor?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+**Programma 1.** Na regel 2 zitten `a` en `b` op hetzelfde kaartje 5. Regel 3
+rekent `a + 1` uit, dat is een nieuw kaartje 6, en etiket `a` verhuist
+daarnaartoe. Etiket `b` blijft op de 5.
+
+```python
+a = 5
+b = a
+a = a + 1
+print(a)   # 6
+print(b)   # 5
+```
+
+**Programma 2.** Na `x = y` zitten `x` en `y` allebei op kaartje 8, en het
+kaartje 3 heeft geen etiket meer: dat is weg. `y = x` verandert dan niets.
+Met een derde etiket bewaar je het kaartje 3 eerst:
+
+```python
+x = 3
+y = 8
+hulp = x
+x = y
+y = hulp
+print(x, y)   # 8 3
+```
+
+**Programma 3.** `"Hoi " + naam` is een berekening, dus een nieuw kaartje
+`"Hoi Sam"`. Daarna verhuist alleen het etiket `naam`.
+
+```python
+naam = "Sam"
+groet = "Hoi " + naam
+naam = "Noor"
+print(groet)   # Hoi Sam
+```
+
+**Bespreek na.** Vraag 2: `=` betekent in Python niet "is gelijk aan",
+maar "plak dit etiket op". Eerst rekent Python de rechterkant uit met de
+oude waarde van `a`, daarna verhuist het etiket.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- Variabelen in de les: [2 Jij als variabele](site:python/docs/basis/jij-als-variabele)
+  en [3 De rekenmachine](site:python/docs/basis/rekenmachine).
+- Bij lijsten zie je waarom het etiketten zijn en geen doosjes: in
+  [Een rij bekertjes](site:python/docs/projecten/unplugged/bekertjes)
+  plak je twee etiketten op dezelfde lijst.
+
+</div>
+
+</Handout>

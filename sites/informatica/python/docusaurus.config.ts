@@ -2,16 +2,19 @@ import { createConfig } from '@coderius/shared/config';
 import { REPO_URL } from '@coderius/shared/sites';
 import type { PluginOptions } from '@docusaurus/plugin-content-docs';
 import { omleidingen } from './src/data/omleidingen';
-import { zonderProjecten } from './src/sidebar/zonderProjecten';
+import { zonderProjecten, zonderUnplugged } from './src/sidebar/zonderProjecten';
 
 // De Tutorial-sidebar wordt uit heel docs/ gegenereerd; de projecten staan in
-// hun eigen sidebar (zie sidebars.ts) en gaan hier uit de Tutorial.
+// hun eigen sidebar (zie sidebars.ts) en gaan hier uit de Tutorial. Zo gaan
+// de unplugged hand-outs uit de projecten-sidebar: die hebben er zelf een.
 const sidebarItemsGenerator: PluginOptions['sidebarItemsGenerator'] = async ({
   defaultSidebarItemsGenerator,
   ...args
 }) => {
   const items = await defaultSidebarItemsGenerator(args);
-  return args.item.dirName === '.' ? zonderProjecten(items) : items;
+  if (args.item.dirName === '.') return zonderProjecten(items);
+  if (args.item.dirName === 'projecten') return zonderUnplugged(items);
+  return items;
 };
 
 export default createConfig({
@@ -55,6 +58,8 @@ export default createConfig({
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Tutorial' },
         { type: 'docSidebar', sidebarId: 'projectenSidebar', position: 'left', label: 'Projecten' },
+        // Een docent zoekt de hand-outs los, om te printen: eigen sidebar.
+        { type: 'docSidebar', sidebarId: 'unpluggedSidebar', position: 'left', label: 'Unplugged' },
         { to: '/playground', label: 'Playground', position: 'left' },
         { to: '/cheatsheet', label: 'Cheatsheet', position: 'left' },
         { to: '/begrippenlijst', label: 'Begrippenlijst', position: 'left' },

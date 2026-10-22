@@ -31,18 +31,32 @@ Tussen de accolades mag je ook rekenen. `{flessen - 1}` wordt `9` als
 
 ## Opdracht: één couplet voor elk aantal
 
-Schrijf het hele couplet met `flessen`: geen 10 of 9 meer in je `print`-regels.
-Werkt het? Verander dan `10` in `7` en draai opnieuw: je krijgt het couplet
+Plak je programma uit stap 1 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 1](site:python/docs/projecten/tien-groene-flessen/stap-1-print).
+
+Maak van je twee coupletten één couplet, geschreven met `flessen`: geen 10
+of 9 meer in je `print`-regels. Met `flessen` op 10 is de verwachte
+uitvoer:
+
+```
+10 groene flessen staan aan de muur,
+10 groene flessen staan aan de muur,
+en als er één groene fles valt,
+dan staan er 9 groene flessen aan de muur.
+```
+
+Werkt het? Zet `flessen` dan op 7 en draai opnieuw: je krijgt het couplet
 van zeven flessen, zonder dat je verder iets aanpast.
 
-<CodeExercise>{`flessen = 10
-print(f"{flessen} groene flessen staan aan de muur,")`}</CodeExercise>
+<CodeExercise>{`# Plak hier je programma uit stap 1`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-De laatste regel noemt het aantal dat overblijft: één minder dan
-`flessen`. Reken dat uit tussen de accolades.
+Het tweede couplet heb je niet meer nodig: dat is hetzelfde couplet met een
+ander getal. Welke getallen in het eerste couplet hangen af van het aantal
+flessen? De laatste regel noemt het aantal dat overblijft: één minder dan
+`flessen`, en dat kun je tussen de accolades uitrekenen.
 
 </details>
 
@@ -69,5 +83,7 @@ dan staan er 9 groene flessen aan de muur.
 De derde regel verandert nooit, dus die heeft geen f-string nodig.
 
 </details>
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 3: het hele lied](site:python/docs/projecten/tien-groene-flessen/stap-3-for-loop).

@@ -1,0 +1,102 @@
+---
+sidebar_position: 1
+sidebar_label: 'Stap 1: door een dictionary lopen'
+description: Zet je woordjes in een dictionary en overhoor ze allemaal met een for-loop over items.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 1: Alle woordjes vragen (door een dictionary lopen)
+
+:::info
+Deze stap gebruikt een dictionary en `.items()` uit [Dictionaries](site:python/docs/data/11a-dictionaries-basis) en [Door een dictionary lopen](site:python/docs/data/11b-itereren-dictionaries), en `input()` uit [Tekst naar getal](site:python/docs/basis/03b-tekst-naar-getal).
+:::
+
+Je bouwt een programma dat je woordjes overhoort. Het vraagt elk woord,
+zegt of je het goed had, en vraagt de woorden die fout gingen opnieuw, tot
+je ze allemaal kent. Aan het eind van dit project ziet dat er zo uit:
+
+```
+Ronde 1
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+Ronde 2
+Wat is boom in het Engels? tree
+Goed.
+Engels: klaar na 2 rondes.
+```
+
+Een woordenlijst is een dictionary: bij elk Nederlands woord hoort één
+Engels woord. Het Nederlandse woord is de sleutel, het Engelse de waarde.
+
+## Opdracht: alle woorden
+
+De woordenlijst staat al in het veld. Schrijf eronder een programma dat
+elk woord uit de lijst vraagt, en zegt of het antwoord goed is. Bij een
+fout zegt het wat het goede woord was.
+
+Verwachte uitvoer als je `house`, `three` en `cat` typt:
+
+```
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+```
+
+<CodeExercise>{`woorden = {"huis": "house", "boom": "tree", "kat": "cat"}
+
+# Schrijf hier je programma`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Elk woord gaat op dezelfde manier, dus je hebt een loop nodig. In Door een
+dictionary lopen staat hoe je in elke ronde de sleutel én de waarde
+krijgt. Welke van de twee komt in de vraag, en met welke vergelijk je het
+antwoord?
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer: house | three | cat */}
+
+```python
+woorden = {"huis": "house", "boom": "tree", "kat": "cat"}
+
+for nederlands, engels in woorden.items():
+    antwoord = input(f"Wat is {nederlands} in het Engels? ")
+    if antwoord == engels:
+        print("Goed.")
+    else:
+        print(f"Fout, het is {engels}.")
+```
+
+Uitvoer bij `house`, `three` en `cat`:
+
+```
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+```
+
+De woorden komen in de volgorde waarin ze in de dictionary staan. Een
+woord erbij is nu één paar in `woorden`; de rest van het programma blijft
+hetzelfde.
+
+</details>
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
+Door naar [stap 2: de score](site:python/docs/projecten/woordjes-overhoren/stap-2-score).

@@ -1,0 +1,121 @@
+---
+sidebar_position: 8
+description: Speel Raad het getal in tweetallen, zoek de beste manier van raden, en schrijf de stappen op voordat je het programma bouwt.
+---
+
+# Raad het getal in tweetallen
+
+<Handout>
+
+Voordat je het programma Raad het getal bouwt, speel je het zelf. Eén van
+jullie is de computer, de ander raadt. Zo ontdek je welke stappen het
+programma moet doen, en hoe je het slimst raadt.
+
+## Wat je nodig hebt
+
+- Per tweetal een geprinte hand-out, een pen, en een briefje om het geheime
+  getal op te schrijven.
+- Ongeveer 20 minuten.
+
+## De spelregels
+
+1. De computer schrijft een getal van 1 tot en met 100 op een briefje, en
+   houdt het verborgen.
+2. De rader zegt een getal. De computer zegt alleen `Te hoog.`, `Te laag.`
+   of `Geraden.`
+3. Schrijf elke gok en elk antwoord op. Ga door tot het getal geraden is.
+4. Speel drie spellen, en wissel na elk spel van rol.
+
+<div className="handout-teltabel">
+
+| Poging | Spel 1 | Spel 2 | Spel 3 |
+|:---:|:---:|:---:|:---:|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
+| 4 | | | |
+| 5 | | | |
+| 6 | | | |
+| 7 | | | |
+| 8 | | | |
+| Pogingen | | | |
+
+</div>
+
+## De beste manier
+
+1. Met welk getal begin je het liefst? Waarom?
+2. Na `Te hoog.` bij 50: tussen welke getallen zit het geheim nu?
+3. Hoeveel pogingen heb je hooguit nodig als je altijd slim raadt?
+   Schrijf op hoe je dat uitrekent.
+
+<Schrijflijnen n={4} />
+
+## Van spel naar programma
+
+Schrijf in gewone woorden de stappen van de computer op. Gebruik deze
+woorden waar ze passen: *herhaal zolang*, *als … anders*, *tel*.
+
+<Schrijflijnen n={8} />
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. Welke stap van de computer gebeurt steeds opnieuw, en wanneer stopt
+   hij?
+2. Wat moet de computer onthouden om aan het eind `Geraden in 4 pogingen.`
+   te kunnen zeggen?
+3. Een rader wil opgeven. Welke regel moet er in het spel bij?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+**De beste manier.** Begin in het midden, bij 50. Elk antwoord valt dan de
+helft af: na `Te hoog.` bij 50 zit het geheim tussen 1 en 49. Wat er over
+is, wordt per gok de helft: 100, 50, 25, 12, 6, 3, 1. Bij de zevende gok is
+er nog maar één getal over.
+
+Dat halveren kun je Python laten tellen:
+
+```python
+over = 100
+gokken = 0
+while over >= 1:
+    over = over / 2
+    gokken = gokken + 1
+print(gokken)   # 7
+```
+
+Zet `over = 1000`, en het worden er 10.
+
+**Van spel naar programma.** Bijvoorbeeld:
+
+1. Kies een geheim getal.
+2. Herhaal zolang de gok niet goed is:
+   - vraag een gok, en tel er één bij;
+   - als de gok te hoog is, zeg `Te hoog.`, als hij te laag is
+     `Te laag.`, anders `Geraden.`
+3. Zeg hoeveel pogingen het waren.
+
+**Bespreek na.** Vraag 2: een teller die bij elke gok omhooggaat. Vraag 3:
+"als de rader stop zegt, vertel het geheim en stop met herhalen". In het
+programma is dat `break`.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [7 While-loop](site:python/docs/herhalen/while-loop) en
+  [6d Stoppen met break](site:python/docs/herhalen/06d-break).
+- Bouw het spel in het project
+  [Raad het getal](site:python/docs/projecten/raad-het-getal/stap-1-een-gok).
+- Slim raden heet binair zoeken. Hoe computers het gebruiken, lees je in
+  [Binair zoeken](site:algorithms/docs/binair-zoeken/01-concept).
+
+</div>
+
+</Handout>

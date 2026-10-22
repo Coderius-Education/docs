@@ -1,0 +1,126 @@
+---
+sidebar_position: 5
+sidebar_label: 'Stap 5: while'
+description: Vraag de foute woorden steeds opnieuw, in rondes, tot je alles goed hebt, met een while-loop.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 5: Tot je alles kent (while)
+
+:::info
+Deze stap gebruikt de while-loop uit [While-loop](site:python/docs/herhalen/while-loop).
+:::
+
+Een woord dat je in de tweede ronde wéér fout hebt, komt niet meer terug.
+Je wilt rondes: elke ronde vraagt de woorden die nog niet goed gingen, tot
+er geen meer over zijn. Hoeveel rondes dat worden, weet je van tevoren
+niet, dus dat wordt een `while`-loop.
+
+## Opdracht: rondes
+
+Plak je programma uit stap 4 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 4](site:python/docs/projecten/woordjes-overhoren/stap-4-fouten).
+
+Laat het programma in rondes vragen. Ronde 1 vraagt alle woorden. Elke
+volgende ronde vraagt alleen de woorden die in de ronde ervoor fout
+gingen. Zijn er geen fouten meer, dan ben je klaar, en zegt het programma
+na hoeveel rondes.
+
+De score uit stap 2 kan weg: wie doorgaat tot alles goed is, eindigt altijd
+op 3 van de 3. Het aantal rondes zegt nu hoe goed je de woorden kende.
+
+Verwachte uitvoer als je `house`, `three` en `cat` typt, en daarna `tree`:
+
+```
+Ronde 1
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+Ronde 2
+Wat is boom in het Engels? tree
+Goed.
+Klaar na 2 rondes.
+```
+
+<CodeExercise>{`# Plak hier je programma uit stap 4`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Houd een lijst bij met de woorden die nog gevraagd moeten worden. Aan het
+begin zijn dat alle woorden uit de dictionary. Een ronde vraagt die lijst
+af en verzamelt de fouten in een nieuwe lijst, en die nieuwe lijst is wat
+de volgende ronde moet vragen. Je tweede ronde uit stap 4 lijkt al op zo'n
+ronde. De while-loop gaat door zolang er nog woorden te vragen zijn.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer: house | three | cat | tree */}
+
+```python
+woorden = {"huis": "house", "boom": "tree", "kat": "cat"}
+
+te_doen = []
+for nederlands in woorden:
+    te_doen.append(nederlands)
+
+ronde = 0
+while len(te_doen) > 0:
+    ronde += 1
+    print(f"Ronde {ronde}")
+    fout = []
+    for nederlands in te_doen:
+        engels = woorden[nederlands]
+        antwoord = input(f"Wat is {nederlands} in het Engels? ")
+        if antwoord.lower() == engels:
+            print("Goed.")
+        else:
+            print(f"Fout, het is {engels}.")
+            fout.append(nederlands)
+    te_doen = fout
+print(f"Klaar na {ronde} rondes.")
+```
+
+Uitvoer bij `house`, `three`, `cat` en `tree`:
+
+```
+Ronde 1
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+Ronde 2
+Wat is boom in het Engels? tree
+Goed.
+Klaar na 2 rondes.
+```
+
+`te_doen = fout` is de update-stap van de while-loop. Gaat er in een
+ronde niets fout, dan is `fout` leeg, en daarmee `te_doen` ook. Dan stopt
+de loop.
+
+</details>
+
+## Er gaat iets mis
+
+**Het programma vraagt steeds dezelfde woorden, ook als je ze goed hebt.**
+
+**Oorzaak:** `fout = []` staat boven de while-loop in plaats van erin. Dan
+begint `fout` niet elke ronde leeg, en blijven de fouten van de eerste
+ronde in de lijst staan.
+
+**Oplossing:** druk op Stop, en zet `fout = []` in de while-loop, aan het
+begin van de ronde.
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
+Door naar [stap 6: functies](site:python/docs/projecten/woordjes-overhoren/stap-6-functies).

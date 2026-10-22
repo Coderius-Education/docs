@@ -1,0 +1,96 @@
+---
+sidebar_position: 2
+sidebar_label: 'Stap 2: een teller'
+description: Tel hoeveel woorden goed zijn, en print de score met len van de dictionary.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 2: De score (een teller)
+
+:::info
+Deze stap gebruikt een teller met `+=` uit [While-loop](site:python/docs/herhalen/while-loop), en een f-string uit [Slimme berichten met f-strings](site:python/docs/tekst/04a-f-strings).
+:::
+
+Na de laatste vraag is het programma stil. Je wilt weten hoe je het
+deed: `Je had 2 van de 3 goed.`
+
+## Opdracht: hoeveel goed?
+
+Plak je programma uit stap 1 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 1](site:python/docs/projecten/woordjes-overhoren/stap-1-dictionary).
+
+Tel de goede antwoorden, en print na de laatste vraag de score.
+
+Verwachte uitvoer als je `house`, `three` en `cat` typt:
+
+```
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+Je had 2 van de 3 goed.
+```
+
+<CodeExercise>{`# Plak hier je programma uit stap 1`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Een teller begint vóór de loop, en gaat omhoog bij een goed antwoord. De 3
+in de score hoef je niet zelf te tellen: `len()` werkt ook op een
+dictionary, en geeft het aantal paren. Dan klopt de score nog als je er
+woorden bij zet.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer: house | three | cat */}
+
+```python
+woorden = {"huis": "house", "boom": "tree", "kat": "cat"}
+
+goed = 0
+for nederlands, engels in woorden.items():
+    antwoord = input(f"Wat is {nederlands} in het Engels? ")
+    if antwoord == engels:
+        print("Goed.")
+        goed += 1
+    else:
+        print(f"Fout, het is {engels}.")
+print(f"Je had {goed} van de {len(woorden)} goed.")
+```
+
+Uitvoer bij `house`, `three` en `cat`:
+
+```
+Wat is huis in het Engels? house
+Goed.
+Wat is boom in het Engels? three
+Fout, het is tree.
+Wat is kat in het Engels? cat
+Goed.
+Je had 2 van de 3 goed.
+```
+
+</details>
+
+## Voorspel
+
+<details>
+<summary>Je zet de print van de score één keer in, zodat hij in de loop staat. Wat zie je dan?</summary>
+
+Na elk woord een score: eerst `Je had 1 van de 3 goed.`, dan nog eens
+`Je had 1 van de 3 goed.` en tot slot `Je had 2 van de 3 goed.` Alles wat
+ingesprongen staat, hoort bij de loop en gebeurt elke ronde. De score hoort
+er één keer na.
+
+</details>
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
+Door naar [stap 3: hoofdletters](site:python/docs/projecten/woordjes-overhoren/stap-3-hoofdletters).

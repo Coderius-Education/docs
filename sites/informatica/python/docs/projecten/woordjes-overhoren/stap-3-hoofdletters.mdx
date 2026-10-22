@@ -1,0 +1,99 @@
+---
+sidebar_position: 3
+sidebar_label: 'Stap 3: lower'
+description: Reken House en HOUSE ook goed, door het antwoord met lower in kleine letters te zetten.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 3: Hoofdletters (lower)
+
+:::info
+Deze stap gebruikt `.lower()` uit [String-methoden](site:python/docs/tekst/04b-string-methoden).
+:::
+
+Typ eens `House` met een hoofdletter. Het programma zegt
+`Fout, het is house.` Dat voelt oneerlijk: het woord klopt, alleen de
+hoofdletter niet. Voor Python zijn `"House"` en `"house"` twee
+verschillende teksten, want een hoofdletter is een ander teken dan een
+kleine letter.
+
+## Opdracht: hoofdletters tellen niet
+
+Plak je programma uit stap 2 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 2](site:python/docs/projecten/woordjes-overhoren/stap-2-score).
+
+Reken een antwoord ook goed als er hoofdletters in staan.
+
+Verwachte uitvoer als je `House`, `Tree` en `CAT` typt:
+
+```
+Wat is huis in het Engels? House
+Goed.
+Wat is boom in het Engels? Tree
+Goed.
+Wat is kat in het Engels? CAT
+Goed.
+Je had 3 van de 3 goed.
+```
+
+<CodeExercise>{`# Plak hier je programma uit stap 2`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De woorden in de dictionary staan allemaal in kleine letters. Wat moet je
+met het antwoord doen voordat je het vergelijkt? Kijk welke methode in
+String-methoden daarbij past.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer: House | Tree | CAT */}
+
+```python
+woorden = {"huis": "house", "boom": "tree", "kat": "cat"}
+
+goed = 0
+for nederlands, engels in woorden.items():
+    antwoord = input(f"Wat is {nederlands} in het Engels? ")
+    if antwoord.lower() == engels:
+        print("Goed.")
+        goed += 1
+    else:
+        print(f"Fout, het is {engels}.")
+print(f"Je had {goed} van de {len(woorden)} goed.")
+```
+
+Uitvoer bij `House`, `Tree` en `CAT`:
+
+```
+Wat is huis in het Engels? House
+Goed.
+Wat is boom in het Engels? Tree
+Goed.
+Wat is kat in het Engels? CAT
+Goed.
+Je had 3 van de 3 goed.
+```
+
+`.lower()` verandert `antwoord` zelf niet: hij geeft een nieuwe tekst in
+kleine letters, en die vergelijk je.
+
+</details>
+
+## Er gaat iets mis
+
+**Elk antwoord is fout, ook `house`.**
+
+**Oorzaak:** je schreef `antwoord.lower` zonder haakjes. Dan roep je de
+methode niet aan, en vergelijk je de methode zelf met `"house"`. Een
+methode is nooit gelijk aan een tekst, dus het antwoord is altijd fout.
+
+**Oplossing:** zet de haakjes erachter: `antwoord.lower()`.
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
+Door naar [stap 4: de fouten opnieuw](site:python/docs/projecten/woordjes-overhoren/stap-4-fouten).

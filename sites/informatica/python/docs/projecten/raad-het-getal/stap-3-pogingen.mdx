@@ -1,0 +1,93 @@
+---
+sidebar_position: 3
+sidebar_label: 'Stap 3: een teller'
+description: Tel hoeveel keer de speler raadt, en zeg het aan het eind met een f-string.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 3: Pogingen tellen (een teller)
+
+:::info
+Deze stap gebruikt een teller met `+=` uit [While-loop](site:python/docs/herhalen/while-loop), en een f-string uit [Slimme berichten met f-strings](site:python/docs/tekst/04a-f-strings).
+:::
+
+`Geraden.` is wat kaal. Een spel wordt pas spannend als je kunt zien hoe
+goed je was: `Geraden in 3 pogingen.` Daarvoor tel je mee.
+
+## Opdracht: hoeveel pogingen?
+
+Plak je programma uit stap 2 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 2](site:python/docs/projecten/raad-het-getal/stap-2-while).
+
+Tel elke gok, en zeg bij een goede gok hoeveel pogingen het waren.
+
+Verwachte uitvoer als je 50, 25 en 37 typt:
+
+```
+Raad een getal van 1 tot 100: 50
+Te hoog.
+Raad een getal van 1 tot 100: 25
+Te laag.
+Raad een getal van 1 tot 100: 37
+Geraden in 3 pogingen.
+```
+
+<CodeExercise>{`# Plak hier je programma uit stap 2`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Een teller heeft twee plekken in je programma: één waar hij begint, en
+één waar er 1 bij komt. Welke van de twee hoort in de loop, en welke
+erboven? Elke gok telt, ook een foute.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer: 50 | 25 | 37 */}
+
+```python
+geheim = 37
+gok = 0
+pogingen = 0
+while gok != geheim:
+    gok = int(input("Raad een getal van 1 tot 100: "))
+    pogingen += 1
+    if gok > geheim:
+        print("Te hoog.")
+    elif gok < geheim:
+        print("Te laag.")
+    else:
+        print(f"Geraden in {pogingen} pogingen.")
+```
+
+Uitvoer bij 50, 25 en 37:
+
+```
+Raad een getal van 1 tot 100: 50
+Te hoog.
+Raad een getal van 1 tot 100: 25
+Te laag.
+Raad een getal van 1 tot 100: 37
+Geraden in 3 pogingen.
+```
+
+</details>
+
+## Voorspel
+
+<details>
+<summary>Je zet `pogingen = 0` in de loop, direct boven de input. Wat zegt het programma na drie gokken?</summary>
+
+`Geraden in 1 pogingen.` Elke ronde zet die regel de teller terug op 0,
+en daarna komt er 1 bij. Zo telt hij nooit verder dan 1. Een teller begint
+dus altijd boven de loop.
+
+</details>
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
+Door naar [stap 4: een geheim getal](site:python/docs/projecten/raad-het-getal/stap-4-random).

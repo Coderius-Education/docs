@@ -1,0 +1,108 @@
+---
+sidebar_position: 1
+sidebar_label: 'Stap 1: input en if'
+description: Vraag om een gok met input, en zeg met if en elif of hij te hoog, te laag of goed is.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 1: Eén gok (input en if)
+
+:::info
+Deze stap gebruikt `input()` en `int()` uit [Tekst naar getal](site:python/docs/basis/03b-tekst-naar-getal), en `if` en `elif` uit [If en else](site:python/docs/beslissen/05b-if-else) en [And, or en elif](site:python/docs/beslissen/05c-and-or-elif).
+:::
+
+De computer denkt aan een getal van 1 tot 100. Jij raadt, en na elke gok
+zegt hij of het hoger of lager moet. Een spel kan straks zo gaan:
+
+```
+Raad een getal van 1 tot 100: 50
+Te hoog.
+Raad een getal van 1 tot 100: 25
+Te laag.
+Raad een getal van 1 tot 100: 37
+Te hoog.
+Raad een getal van 1 tot 100: 31
+Geraden in 4 pogingen.
+```
+
+:::tip[Eerst op papier]
+Speel het spel eerst in tweetallen, zonder computer: [Raad het getal in tweetallen](site:python/docs/projecten/unplugged/raad-het-getal). Dan weet je welke stappen het programma moet doen.
+:::
+
+Dat programma schrijf je zelf, in zes stappen. Je begint met één gok, en
+een geheim getal dat vaststaat: 37.
+
+## Opdracht: te hoog, te laag of geraden
+
+Schrijf een programma dat:
+
+1. het geheime getal 37 in een variabele bewaart;
+2. de speler om een gok vraagt met `Raad een getal van 1 tot 100: `;
+3. zegt of die gok te hoog is (`Te hoog.`), te laag (`Te laag.`) of goed
+   (`Geraden.`).
+
+Verwachte uitvoer als je 50 typt:
+
+```
+Raad een getal van 1 tot 100: 50
+Te hoog.
+```
+
+Probeer daarna ook 20 en 37, zodat je alle drie de antwoorden een keer ziet.
+
+<CodeExercise>{`# Schrijf hier je programma`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Wat de speler typt, is tekst, en tekst kun je niet met een getal
+vergelijken. Kijk in Tekst naar getal hoe je er een getal van maakt. Er
+zijn drie mogelijke antwoorden, dus je hebt drie takken nodig. Vergelijk
+met je variabele, niet met 37 zelf: in stap 4 kiest de computer het getal,
+en dan staat er geen 37 meer.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer: 50 */}
+
+```python
+geheim = 37
+gok = int(input("Raad een getal van 1 tot 100: "))
+if gok > geheim:
+    print("Te hoog.")
+elif gok < geheim:
+    print("Te laag.")
+else:
+    print("Geraden.")
+```
+
+Uitvoer bij 50:
+
+```
+Raad een getal van 1 tot 100: 50
+Te hoog.
+```
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: gok = "50"\nprint(gok > 37) */}
+
+```
+TypeError: '>' not supported between instances of 'str' and 'int'
+```
+
+**Oorzaak:** je bent `int()` om de `input()` vergeten. Dan is `gok` tekst,
+en tekst kan Python niet met een getal vergelijken.
+
+**Oplossing:** maak van de invoer een getal met `int()`.
+
+In de volgende stap bouw je verder op dit programma. Kopieer je programma
+voordat je verdergaat: de editor bewaart het niet.
+
+Door naar [stap 2: blijven raden](site:python/docs/projecten/raad-het-getal/stap-2-while).

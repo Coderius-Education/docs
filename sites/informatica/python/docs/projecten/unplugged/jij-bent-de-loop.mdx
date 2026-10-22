@@ -1,0 +1,195 @@
+---
+sidebar_position: 4
+description: Voer drie loops met de hand uit in een tracetabel, en vergelijk daarna met Stap voor stap in de playground.
+---
+
+# Jij bent de loop
+
+<Handout>
+
+Een loop doet steeds hetzelfde, maar de variabelen veranderen elke ronde.
+Wat er tussen twee `print`-regels gebeurt, zie je niet op het scherm. Op
+papier wel: in een tracetabel schrijf je per ronde op wat elke variabele
+is.
+
+## Wat je nodig hebt
+
+- Een geprinte hand-out en een potlood per leerling. Werk eerst alleen,
+  vergelijk dan met je buur.
+- Ongeveer 25 minuten.
+
+## Zo werkt het
+
+1. Gok eerst wat het programma print, en schrijf je gok op.
+2. Voer het programma uit alsof jij Python bent. Na elke ronde vul je één
+   rij van de tabel in.
+3. Klopt je gok? Zo niet: in welke ronde ging het anders dan je dacht?
+
+## Programma 1
+
+<div className="handout-samen">
+
+```python
+punten = 0
+for ronde in range(1, 5):
+    punten = punten + ronde * 2
+    if punten > 10:
+        print("Over de 10 in ronde", ronde)
+print("Eindstand:", punten)
+```
+
+Mijn gok: ______
+
+</div>
+
+<div className="handout-teltabel">
+
+| `ronde` | `punten` aan het eind van de ronde | `punten > 10`? | Op het scherm |
+|:---:|:---:|:---:|---|
+| | | | |
+| | | | |
+| | | | |
+| | | | |
+| na de loop | | | |
+
+</div>
+
+## Programma 2
+
+<div className="handout-samen">
+
+```python
+getal = 1
+stappen = 0
+while getal < 50:
+    getal = getal * 3
+    stappen = stappen + 1
+print(getal, stappen)
+```
+
+Mijn gok: ______
+
+</div>
+
+<div className="handout-teltabel">
+
+| Ronde | `getal < 50`? (aan het begin) | `getal` | `stappen` |
+|:---:|:---:|:---:|:---:|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
+| 4 | | | |
+| 5 | | | |
+
+</div>
+
+## Programma 3
+
+Dit programma zou moeten tellen hoe vaak de loop draait.
+
+<div className="handout-samen">
+
+```python
+for ronde in range(3):
+    teller = 0
+    teller = teller + 1
+print(teller)
+```
+
+Mijn gok: ______ Klopt het programma? Zo niet, wat moet er anders?
+
+</div>
+
+<Schrijflijnen n={3} />
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. In programma 1 staat de `print` maar één keer in de code. Hoe vaak komt
+   hij op het scherm?
+2. Programma 2 stopt bij `getal < 50`, maar `getal` is aan het eind groter
+   dan 50. Hoe kan dat?
+3. Wat is de regel voor een teller: waar zet je hem op 0?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+Zo kijk je je tabel na: het programma met een `print` op elke plek waar jij
+een rij invulde. Dat is ook een manier om zelf een fout te zoeken.
+
+**Programma 1.** De `print` staat in de loop, dus hij komt in elke ronde
+waarin `punten > 10` waar is: in ronde 3 en 4.
+
+```python
+punten = 0
+for ronde in range(1, 5):
+    punten = punten + ronde * 2
+    print("ronde", ronde, "punten", punten, punten > 10)
+    if punten > 10:
+        print("Over de 10 in ronde", ronde)
+print("Eindstand:", punten)
+```
+
+Uitvoer:
+
+```
+ronde 1 punten 2 False
+ronde 2 punten 6 False
+ronde 3 punten 12 True
+Over de 10 in ronde 3
+ronde 4 punten 20 True
+Over de 10 in ronde 4
+Eindstand: 20
+```
+
+**Programma 2.** De voorwaarde kijkt Python alleen aan het begin van een
+ronde. In ronde 4 is `getal` 27, dus de ronde begint, en daarin wordt het
+81. Pas aan het begin van ronde 5 is `getal < 50` niet meer waar.
+
+```python
+getal = 1
+stappen = 0
+while getal < 50:
+    print("begin van de ronde:", getal, getal < 50)
+    getal = getal * 3
+    stappen = stappen + 1
+print(getal, stappen)
+```
+
+Uitvoer:
+
+```
+begin van de ronde: 1 True
+begin van de ronde: 3 True
+begin van de ronde: 9 True
+begin van de ronde: 27 True
+81 4
+```
+
+**Programma 3.** Het print `1`: elke ronde zet `teller = 0` de teller terug.
+Een teller begint vóór de loop:
+
+```python
+teller = 0
+for ronde in range(3):
+    teller = teller + 1
+print(teller)   # 3
+```
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- Plak een programma in de [playground](site:python/playground) en druk
+  op Stap voor stap. Je ziet dan per stap de variabelen, net als in je
+  tabel.
+- In de les: [6a For-loop](site:python/docs/herhalen/06a-for-loop) en
+  [7 While-loop](site:python/docs/herhalen/while-loop).
+
+</div>
+
+</Handout>

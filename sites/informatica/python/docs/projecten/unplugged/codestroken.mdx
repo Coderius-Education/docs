@@ -1,0 +1,202 @@
+---
+sidebar_position: 3
+description: Knip regels code los en leg ze in de goede volgorde en op de goede inspringing, zodat het programma de uitvoer geeft die erbij staat.
+---
+
+# Codestroken leggen
+
+<Handout>
+
+Drie programma's, in stroken geknipt. Elke strook is één regel, zonder
+inspringing. Leg de stroken in de goede volgorde, en schuif ze naar rechts
+waar ze moeten inspringen. Bij elke puzzel zit één strook die je niet nodig
+hebt.
+
+## Wat je nodig hebt
+
+- Per tweetal een geprinte hand-out en een schaar.
+- De stroken staan op het knipblad, de laatste pagina. Print die enkelzijdig
+  of los, anders knip je door wat er op de achterkant staat.
+- Ongeveer 20 minuten.
+
+## Zo werkt het
+
+1. Knip de stroken van één puzzel los van het knipblad, en schud ze.
+2. Leg ze onder elkaar. Een strook die bij een `for`, `while` of `if` hoort,
+   schuif je een duimbreedte naar rechts: dat is vier spaties inspringen.
+3. Lees jullie programma regel voor regel, als Python. Komt precies de
+   uitvoer eruit die bij de puzzel staat? Dan ben je klaar.
+4. Welke strook bleef over? Schrijf op waarom hij er niet in hoort.
+
+## Puzzel 1
+
+De uitvoer moet zijn:
+
+```
+1
+3
+6
+10
+15
+Totaal: 15
+```
+
+## Puzzel 2
+
+De uitvoer moet zijn:
+
+```
+10
+8
+6
+4
+2
+Op!
+```
+
+## Puzzel 3
+
+De uitvoer moet zijn:
+
+```
+4 is groot
+5 is groot
+6 is groot
+Klaar
+```
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. In puzzel 1 hoort één `print` in de loop en één erbuiten. Hoe zie je
+   aan de uitvoer welke welke is?
+2. Wat zou puzzel 1 printen als `print(totaal)` niet zou inspringen?
+3. Waarom hoort `while snoepjes >= 0:` niet in puzzel 2? Wat zou er extra
+   op het scherm komen?
+4. In puzzel 3 springt de laatste `print` twee keer in. Waarom twee keer?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+**Puzzel 1.** Over blijft `for getal in range(5):`. Die begint bij 0 en
+stopt bij 4, en dan komt er `Totaal: 10` uit.
+
+```python
+totaal = 0
+for getal in range(1, 6):
+    totaal = totaal + getal
+    print(totaal)
+print(f"Totaal: {totaal}")
+```
+
+Uitvoer:
+
+```
+1
+3
+6
+10
+15
+Totaal: 15
+```
+
+**Puzzel 2.** Over blijft `while snoepjes >= 0:`. Daarmee draait de loop
+ook nog als er 0 snoepjes zijn, en staat er een 0 boven `Op!`.
+
+```python
+snoepjes = 10
+while snoepjes > 0:
+    print(snoepjes)
+    snoepjes = snoepjes - 2
+print("Op!")
+```
+
+Uitvoer:
+
+```
+10
+8
+6
+4
+2
+Op!
+```
+
+**Puzzel 3.** Over blijft `if getal >= 3:`. Daarmee zou ook `3 is groot`
+op het scherm komen.
+
+```python
+for getal in range(1, 7):
+    if getal > 3:
+        print(f"{getal} is groot")
+print("Klaar")
+```
+
+Uitvoer:
+
+```
+4 is groot
+5 is groot
+6 is groot
+Klaar
+```
+
+**Bespreek na.** Vraag 2: zonder inspringing print `print(totaal)` maar één
+keer, na de loop: `15`, en dan `Totaal: 15`. Vraag 4: de `print` hoort bij
+de `if`, en die `if` hoort zelf al bij de `for`.
+
+</Antwoordblad>
+
+<div className="handout-paginawissel handout-knipblad">
+
+## Knipblad
+
+### Puzzel 1
+
+| Stroken |
+|---|
+| `print(totaal)` |
+| `for getal in range(5):` |
+| `totaal = 0` |
+| `print(f"Totaal: {totaal}")` |
+| `totaal = totaal + getal` |
+| `for getal in range(1, 6):` |
+
+### Puzzel 2
+
+| Stroken |
+|---|
+| `snoepjes = snoepjes - 2` |
+| `print("Op!")` |
+| `while snoepjes >= 0:` |
+| `snoepjes = 10` |
+| `print(snoepjes)` |
+| `while snoepjes > 0:` |
+
+### Puzzel 3
+
+| Stroken |
+|---|
+| `print("Klaar")` |
+| `if getal > 3:` |
+| `for getal in range(1, 7):` |
+| `print(f"{getal} is groot")` |
+| `if getal >= 3:` |
+
+</div>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [6a For-loop](site:python/docs/herhalen/06a-for-loop),
+  [6b Range met start en stappen](site:python/docs/herhalen/06b-range-stappen)
+  en [7 While-loop](site:python/docs/herhalen/while-loop).
+- Typ een puzzel over in de [playground](site:python/playground) en druk
+  op Stap voor stap: dan zie je welke regel Python wanneer uitvoert.
+
+</div>
+
+</Handout>

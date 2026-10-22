@@ -200,6 +200,7 @@ linkertak
 linkset
 loopen
 Loopen
+losgeknipte
 mapnaam
 mapnamen
 mapstructuur
@@ -400,6 +401,8 @@ tokenbeveiliging
 tokengeneratie
 tokenveld
 tokenvelden
+tracetabel
+tracetabellen
 tscn
 Tussenwaarden
 tutorialpagina

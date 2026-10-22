@@ -1,0 +1,139 @@
+---
+sidebar_position: 6
+sidebar_label: 'Stap 6: een functie met return'
+description: Maak van het spel een functie met het hoogste getal als parameter, en geef het aantal pogingen terug.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 6: Makkelijk en moeilijk (een functie)
+
+:::info
+Deze stap gebruikt een functie met een parameter en `return`, uit [Functies](site:python/docs/functies/functies), [Parameters](site:python/docs/functies/09a-parameters) en [Return](site:python/docs/functies/09b-return).
+:::
+
+Van 1 tot 100 is voor een beginner best lastig, en voor een kampioen te
+makkelijk. Het spel krijgt twee niveaus: makkelijk, van 1 tot 10, en
+moeilijk, van 1 tot 1000. Het spel zelf is bij allebei hetzelfde, alleen
+het hoogste getal verschilt. Dat hoogste getal wordt dus een parameter.
+
+## Opdracht: `speel(hoogste)`
+
+Plak je programma uit stap 5 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 5](site:python/docs/projecten/raad-het-getal/stap-5-break).
+
+Maak van je spel een functie `speel(hoogste)`:
+
+1. Het geheime getal gaat van 1 tot en met `hoogste`, en de vraag noemt
+   dat getal: `Raad een getal van 1 tot 10: `.
+2. Na het spel geeft de functie met `return` het aantal pogingen terug.
+
+Speel daarna eerst een makkelijk spel en dan een moeilijk, en print
+hoeveel pogingen het samen waren. Een spel kan zo gaan:
+
+```
+Raad een getal van 1 tot 10: 5
+Te laag.
+Raad een getal van 1 tot 10: 8
+Geraden in 2 pogingen.
+Raad een getal van 1 tot 1000: 500
+Te laag.
+Raad een getal van 1 tot 1000: stop
+Jammer. Het getal was 628.
+Samen 3 pogingen.
+```
+
+<CodeExercise>{`# Plak hier je programma uit stap 5`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Alles wat bij één spel hoort, gaat de functie in. Moet de import daar ook
+in, of kan hij erboven blijven? Zoek daarna de plekken waar nu 100 staat.
+Het aantal pogingen geef je pas terug als het spel voorbij is: waar in je
+functie is dat? De twee spellen en de som staan onder de functie, niet
+erin.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* invoer met zaad 9: 5 | 8 | 500 | stop */}
+
+```python
+import random
+
+
+def speel(hoogste):
+    geheim = random.randint(1, hoogste)
+    gok = 0
+    pogingen = 0
+    while gok != geheim:
+        tekst = input(f"Raad een getal van 1 tot {hoogste}: ")
+        if tekst == "stop":
+            print(f"Jammer. Het getal was {geheim}.")
+            break
+        gok = int(tekst)
+        pogingen += 1
+        if gok > geheim:
+            print("Te hoog.")
+        elif gok < geheim:
+            print("Te laag.")
+        else:
+            print(f"Geraden in {pogingen} pogingen.")
+    return pogingen
+
+
+makkelijk = speel(10)
+moeilijk = speel(1000)
+print(f"Samen {makkelijk + moeilijk} pogingen.")
+```
+
+Een spel kan zo gaan:
+
+```
+Raad een getal van 1 tot 10: 5
+Te laag.
+Raad een getal van 1 tot 10: 8
+Geraden in 2 pogingen.
+Raad een getal van 1 tot 1000: 500
+Te laag.
+Raad een getal van 1 tot 1000: stop
+Jammer. Het getal was 628.
+Samen 3 pogingen.
+```
+
+Elke aanroep van `speel` kiest zijn eigen geheim, want `geheim` bestaat
+alleen binnen de functie.
+
+</details>
+
+## Slim raden
+
+<details>
+<summary>Van 1 tot 100 heb je nooit meer dan 7 pogingen nodig, als je slim raadt. Hoe raad je dan?</summary>
+
+Raad steeds het midden van wat er nog over is. Begin bij 50. Is dat te
+hoog, dan zit het getal tussen 1 en 49, en raad je 25. Wat er overblijft,
+wordt zo bij elke gok de helft: 100, 50, 25, 12, 6, 3, 1. Bij de zevende
+gok is er nog maar één getal over.
+
+Van 1 tot 1000 lukt het zo in tien gokken. Deze manier van zoeken heet
+binair zoeken, en computers gebruiken hem om snel iets te vinden in een
+gesorteerde lijst. Hoe dat werkt, lees je in
+[Binair zoeken](site:algorithms/docs/binair-zoeken/01-concept).
+
+</details>
+
+## Verder bouwen
+
+Je spel werkt. Wil je verder, kies dan iets uit dit lijstje:
+
+- Bij één poging staat er `Geraden in 1 pogingen.` Laat het dan
+  `Geraden in 1 poging.` zeggen.
+- Laat de speler na een spel kiezen of hij nog een keer wil.
+- Houd de beste score bij: het kleinste aantal pogingen tot nu toe.
+- Geef de speler maximaal 7 pogingen. Daarna is het spel verloren.
+
+Terug naar [het overzicht van de projecten](site:python/docs/projecten).

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { zonderProjecten } from './zonderProjecten';
+import { zonderProjecten, zonderUnplugged } from './zonderProjecten';
 
 describe('zonderProjecten', () => {
   it('haalt de projecten uit de Tutorial-sidebar en laat de lessen staan', () => {
@@ -28,5 +28,26 @@ describe('zonderProjecten', () => {
   it('herkent een projectcategorie ook aan zijn link', () => {
     const items = [{ type: 'category', items: [], link: { type: 'doc', id: 'projecten/index' } }];
     expect(zonderProjecten(items)).toEqual([]);
+  });
+
+  it('haalt de unplugged hand-outs uit de projecten-sidebar, de projecten blijven', () => {
+    const items = [
+      { type: 'doc', id: 'projecten/index' },
+      {
+        type: 'category',
+        label: 'Tien groene flessen',
+        items: [{ type: 'doc', id: 'projecten/tien-groene-flessen/stap-1-print' }],
+      },
+      {
+        type: 'category',
+        label: 'Unplugged',
+        link: { type: 'doc', id: 'projecten/unplugged/index' },
+        items: [{ type: 'doc', id: 'projecten/unplugged/etiketten' }],
+      },
+    ];
+    expect(zonderUnplugged(items).map((i) => ('label' in i ? i.label : i.id))).toEqual([
+      'projecten/index',
+      'Tien groene flessen',
+    ]);
   });
 });

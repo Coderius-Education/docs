@@ -1,0 +1,166 @@
+---
+sidebar_position: 2
+description: Speel een if-elif-else na met poortwachters en getallenkaartjes, en ontdek waarom de volgorde van elif ertoe doet.
+---
+
+# De beslismachine
+
+<Handout>
+
+Een `if` met `elif` en `else` is een rij poortwachters. Een kaartje komt
+bij de eerste, en die zegt ja of nee. Bij ja is het klaar, bij nee gaat het
+door naar de volgende. Jullie zijn de poortwachters.
+
+## Wat je nodig hebt
+
+- Per groepje van vier: tien lege kaartjes, een pen, en drie blaadjes op
+  tafel met `if`, `elif` en `else` erop.
+- Ongeveer 20 minuten.
+
+## Zo werkt het
+
+1. Elke poortwachter krijgt één blaadje en leest zijn voorwaarde hardop.
+2. Iemand legt een kaartje bij `if`. Is de voorwaarde waar, dan zegt die
+   poortwachter wat het programma print, en is het kaartje klaar.
+3. Is hij niet waar, dan schuift het kaartje door naar `elif`, en daarna
+   naar `else`. Bij `else` is het altijd ja.
+4. Een kaartje dat klaar is, komt nooit meer bij een volgende poortwachter.
+
+## Machine 1: het cijfer
+
+```python
+cijfer = 8.5
+if cijfer >= 5.5:
+    print("voldoende")
+elif cijfer >= 8:
+    print("goed")
+else:
+    print("onvoldoende")
+```
+
+Schrijf op de kaartjes: 4, 5.5, 7, 8.5 en 9.9. Gok eerst bij welk kaartje
+`goed` op het scherm komt. Laat dan elk kaartje door de machine gaan.
+
+<div className="handout-teltabel">
+
+| Cijfer | Mijn gok | Wie zegt ja? | Op het scherm |
+|:---:|:---:|:---:|:---:|
+| 4 | | | |
+| 5.5 | | | |
+| 7 | | | |
+| 8.5 | | | |
+| 9.9 | | | |
+
+</div>
+
+Er is een kaartje dat de machine nooit bij `goed` laat uitkomen. Verander
+de volgorde van de poortwachters, zodat 8.5 en 9.9 `goed` krijgen en de
+rest blijft kloppen. Schrijf de nieuwe machine op.
+
+<Schrijflijnen n={6} />
+
+## Machine 2: de kermis
+
+```python
+leeftijd = 13
+lengte = 150
+if leeftijd >= 12 and lengte >= 140:
+    print("Je mag in de achtbaan.")
+elif leeftijd >= 12 or lengte >= 140:
+    print("Je mag in de botsauto's.")
+else:
+    print("Je mag in de draaimolen.")
+```
+
+Elk kaartje is nu een bezoeker met twee getallen: leeftijd en lengte.
+
+<div className="handout-teltabel">
+
+| Leeftijd | Lengte | Wie zegt ja? | Op het scherm |
+|:---:|:---:|:---:|:---:|
+| 13 | 150 cm | | |
+| 10 | 145 cm | | |
+| 14 | 130 cm | | |
+| 9 | 120 cm | | |
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. Waarom kwam bij machine 1 niemand ooit bij `goed`?
+2. Welke regel kun je maken over de volgorde: komt de strengste voorwaarde
+   eerst of laatst?
+3. In machine 2 staat bij `elif` het woord `or`. Kan een bezoeker die door
+   `elif` komt ook allebei de eisen halen? Waarom niet?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+**Machine 1.** De eerste poortwachter zegt al ja bij alles vanaf 5.5, dus
+8.5 en 9.9 komen nooit bij `elif`. Zet de strengste voorwaarde voorop:
+
+```python
+for cijfer in [4, 5.5, 7, 8.5, 9.9]:
+    if cijfer >= 8:
+        print(cijfer, "goed")
+    elif cijfer >= 5.5:
+        print(cijfer, "voldoende")
+    else:
+        print(cijfer, "onvoldoende")
+```
+
+Uitvoer:
+
+```
+4 onvoldoende
+5.5 voldoende
+7 voldoende
+8.5 goed
+9.9 goed
+```
+
+Met de oude volgorde krijgen 8.5 en 9.9 `voldoende`, en de rest is
+hetzelfde.
+
+**Machine 2.**
+
+```python
+bezoekers = [[13, 150], [10, 145], [14, 130], [9, 120]]
+for leeftijd, lengte in bezoekers:
+    if leeftijd >= 12 and lengte >= 140:
+        print(leeftijd, lengte, "achtbaan")
+    elif leeftijd >= 12 or lengte >= 140:
+        print(leeftijd, lengte, "botsauto's")
+    else:
+        print(leeftijd, lengte, "draaimolen")
+```
+
+Uitvoer:
+
+```
+13 150 achtbaan
+10 145 botsauto's
+14 130 botsauto's
+9 120 draaimolen
+```
+
+**Bespreek na.** Vraag 3: wie allebei de eisen haalt, is al door `if`
+opgevangen. Bij `elif` komt dus alleen wie er hooguit één haalt.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [5b If en else](site:python/docs/beslissen/05b-if-else) en
+  [5c And, or en elif](site:python/docs/beslissen/05c-and-or-elif).
+- In het project [Raad het getal](site:python/docs/projecten/raad-het-getal/stap-1-een-gok)
+  bouw je zelf een machine met drie poortwachters.
+
+</div>
+
+</Handout>

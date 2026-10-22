@@ -1,0 +1,276 @@
+---
+sidebar_position: 9
+description: Zestien stellingen over variabelen, beslissen, herhalen, functies en lijsten. Omcirkel waar of niet waar, en leg uit waarom.
+---
+
+# Waar of niet waar?
+
+<Handout>
+
+Zestien stellingen over Python, van variabelen tot dictionaries. Omcirkel
+per stelling **W** (waar) of **N** (niet waar), en schrijf in één zin
+waarom. Werk eerst alleen, vergelijk dan met je buur. Ben je het oneens,
+dan beslist Python: probeer het in de [playground](site:python/playground).
+
+## Wat je nodig hebt
+
+- Een geprinte hand-out en een pen per leerling.
+- Ongeveer 25 minuten. Je kunt ook alleen de stellingen doen van de
+  hoofdstukken die je al hebt gehad.
+
+{/* stijl-uitzondering: vet-overdaad W / N is het vakje dat de leerling per stelling omcirkelt */}
+
+<div className="handout-vragen handout-waarom">
+
+## Variabelen
+
+1. **W / N** Na `a = 4`, `b = a` en `a = 9` is `b` gelijk aan 9.
+2. **W / N** `x = x + 1` is een fout, want `x` kan nooit gelijk zijn aan
+   `x + 1`.
+3. **W / N** `"5" + "5"` geeft `"55"`.
+
+</div>
+
+{/* stijl-uitzondering: vet-overdaad W / N is het vakje dat de leerling per stelling omcirkelt */}
+
+<div className="handout-vragen handout-waarom">
+
+## Beslissen
+
+4. **W / N** Bij `if`, `elif` en `else` voert Python hooguit één tak uit.
+5. **W / N** Met `if a > 5:` en daaronder `elif a > 3:` print een
+   programma met `a = 7` iets in allebei de takken.
+6. **W / N** `x > 3 and x < 10` is waar als `x` 10 is.
+
+</div>
+
+{/* stijl-uitzondering: vet-overdaad W / N is het vakje dat de leerling per stelling omcirkelt */}
+
+<div className="handout-vragen handout-waarom">
+
+## Herhalen
+
+7. **W / N** `range(1, 5)` geeft de getallen 1 tot en met 5.
+8. **W / N** Een while-loop kan nul keer draaien.
+9. **W / N** `break` stopt alleen de ronde waarin hij staat; daarna gaat
+   de loop door.
+
+</div>
+
+{/* stijl-uitzondering: vet-overdaad W / N is het vakje dat de leerling per stelling omcirkelt */}
+
+<div className="handout-vragen handout-waarom">
+
+## Functies
+
+10. **W / N** Een functie zonder `return` geeft `None` terug.
+11. **W / N** Een variabele die je in een functie maakt, kun je daarna
+    buiten de functie gebruiken.
+12. **W / N** Na `return` voert de functie de regels eronder nog uit.
+
+</div>
+
+{/* stijl-uitzondering: vet-overdaad W / N is het vakje dat de leerling per stelling omcirkelt */}
+
+<div className="handout-vragen handout-waarom">
+
+## Lijsten en dictionaries
+
+{/* foutmelding-los: stelling 16 is expres niet waar; antwoord 16 laat zien wanneer de KeyError wel komt */}
+
+13. **W / N** `lijst[1]` is het eerste element van een lijst.
+14. **W / N** `lijst[-1]` is het laatste element van een lijst.
+15. **W / N** In een dictionary zoek je een waarde op met de sleutel, niet
+    met een plek.
+16. **W / N** `kluis["x"] = 1` geeft een `KeyError` als `"x"` nog niet in
+    `kluis` staat.
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. Bij welke stelling was je het met je buur het langst oneens? Wie had
+   gelijk, en hoe bewees Python het?
+2. Kies een stelling die niet waar is, en maak er een ware stelling van.
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+Bij elke stelling staat een stukje code dat het laat zien.
+
+**1. Niet waar.** `b` blijft op de 4 zitten; alleen het etiket `a`
+verhuist.
+
+```python
+a = 4
+b = a
+a = 9
+print(b)   # 4
+```
+
+**2. Niet waar.** `=` betekent "geef deze naam aan". Python rekent eerst
+`x + 1` uit, en geeft `x` dan die nieuwe waarde.
+
+```python
+x = 3
+x = x + 1
+print(x)   # 4
+```
+
+**3. Waar.** Met aanhalingstekens is het tekst, en `+` plakt tekst aan
+elkaar.
+
+```python
+print("5" + "5")   # 55
+```
+
+**4. Waar.** Zodra één tak waar is, slaat Python de rest over.
+
+**5. Niet waar.** `a > 5` is al waar, dus de `elif` komt niet aan de beurt.
+
+```python
+a = 7
+if a > 5:
+    print("groter dan 5")
+elif a > 3:
+    print("groter dan 3")
+```
+
+Uitvoer:
+
+```
+groter dan 5
+```
+
+**6. Niet waar.** `x < 10` is niet waar bij 10, en `and` eist dat allebei
+waar is.
+
+```python
+x = 10
+print(x > 3 and x < 10)   # False
+```
+
+**7. Niet waar.** `range` stopt vóór het tweede getal.
+
+```python
+print(list(range(1, 5)))   # [1, 2, 3, 4]
+```
+
+**8. Waar.** Is de voorwaarde meteen niet waar, dan begint de eerste ronde
+niet eens.
+
+```python
+getal = 10
+while getal < 5:
+    print("in de loop")
+print("klaar")   # klaar
+```
+
+**9. Niet waar.** `break` stopt de hele loop. De ronde overslaan doet
+`continue`.
+
+```python
+for getal in range(1, 6):
+    if getal == 3:
+        break
+    print(getal)
+```
+
+Uitvoer:
+
+```
+1
+2
+```
+
+**10. Waar.**
+
+```python
+def groet():
+    print("Hoi")
+
+
+uitkomst = groet()
+print(uitkomst)
+```
+
+Uitvoer:
+
+```
+Hoi
+None
+```
+
+**11. Niet waar.** De variabele staat op het kladblaadje van de functie,
+en dat is weg zodra de functie klaar is.
+
+{/* foutmelding-van: blok-eronder */}
+
+```
+NameError: name 'binnen' is not defined
+```
+
+{/* niet-draaien: valt expres om; de melding staat erboven */}
+
+```python
+def maak():
+    binnen = 5
+
+
+maak()
+print(binnen)
+```
+
+**12. Niet waar.** `return` beëindigt de functie meteen.
+
+```python
+def test():
+    return 1
+    print("dit zie je nooit")
+
+
+print(test())   # 1
+```
+
+**13. Niet waar.** Tellen begint bij 0, dus `lijst[0]` is het eerste.
+
+**14. Waar.**
+
+```python
+lijst = ["a", "b", "c"]
+print(lijst[1])    # b
+print(lijst[-1])   # c
+```
+
+**15. Waar.**
+
+{/* foutmelding-van: kluis = {}\nkluis["x"] */}
+
+**16. Niet waar.** Iets in een nieuw kluisje zetten mag altijd. Alleen
+lézen uit een kluisje dat er niet is, geeft een `KeyError`.
+
+```python
+kluis = {}
+kluis["x"] = 1
+print(kluis)   # {'x': 1}
+```
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- Een stelling fout? Lees de les nog eens: [2 Jij als variabele](site:python/docs/basis/jij-als-variabele),
+  [5c And, or en elif](site:python/docs/beslissen/05c-and-or-elif),
+  [6d Stoppen met break](site:python/docs/herhalen/06d-break),
+  [9b Return](site:python/docs/functies/09b-return),
+  [9c Scope](site:python/docs/functies/09c-scope) of
+  [10a Lijsten](site:python/docs/data/10a-lijsten-basis).
+
+</div>
+
+</Handout>
