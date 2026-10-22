@@ -275,6 +275,93 @@ async def verwijder(sleutel: str):
     });
   });
 
+  describe('tweede review: commentaar, onbekende routes en mounts, dubbele velden', () => {
+    it('uitgecommentarieerde HTML en Jinja tellen niet mee', () => {
+      const files = compleetMet((p) => {
+        p['static/pages/gastenboek_form.html'] = p['static/pages/gastenboek_form.html']
+          .replace(
+            '<form method="post"',
+            '<!-- <form method="post" action="/oud"><input name="x"></form> -->\n        <form method="post"',
+          )
+          .replace(
+            '<button type="submit">',
+            '<!-- <input name="oud"> -->\n            <button type="submit">',
+          );
+        p['templates/bericht.html'] = p['templates/bericht.html'].replace(
+          '<h1>',
+          '{# <p>{{ oud }}</p> #}<h1>',
+        );
+      });
+      expect(samenhang(files)).toEqual([]);
+    });
+
+    it('commentaar verschuift de regelnummers niet', () => {
+      const files = compleetMet((p) => {
+        p['static/pages/gastenboek_form.html'] = p['static/pages/gastenboek_form.html']
+          .replace('<form method="post"', '<!--\nweg\n-->\n        <form method="post"')
+          .replace('name="naam"', 'name="voornaam"');
+      });
+      expect(samenhang(files)[0].plekken[0]).toEqual({
+        bestand: 'static/pages/gastenboek_form.html',
+        regel: 8,
+      });
+    });
+
+    it('een route die hij niet kan lezen, maakt hem stil over routes', () => {
+      for (const extra of [
+        '\n@app.api_route("/zoek", methods=["GET", "POST"])\nasync def zoek():\n    return {}\n',
+        '\n@app.get(path="/over")\nasync def over():\n    return {}\n',
+        '\nPAD = "/over"\n\n\n@app.get(PAD)\nasync def over():\n    return {}\n',
+        '\napp.add_api_route("/over", lambda: {})\n',
+      ]) {
+        const files = compleetMet((p) => {
+          p['main.py'] += extra;
+          p['templates/bericht.html'] = p['templates/bericht.html'].replace(
+            'href="/berichten"',
+            'href="/over"',
+          );
+        });
+        expect(samenhang(files), extra).toEqual([]);
+      }
+    });
+
+    it('een map die berekend wordt, is geen ontbrekende route', () => {
+      const files = compleetMet((p) => {
+        p['main.py'] = p['main.py'].replace(
+          'StaticFiles(directory="static")',
+          'StaticFiles(directory=Path(__file__).parent / "static")',
+        );
+        p['templates/berichten.html'] = p['templates/berichten.html'].replace(
+          '<h1>Gastenboek</h1>',
+          '<h1>Gastenboek</h1>\n        <a href="/static/pages/over.html">Over</a>',
+        );
+      });
+      expect(samenhang(files)).toEqual([]);
+    });
+
+    it('een voorvoegsel dat hij niet kan lezen, maakt hem stil over links', () => {
+      const files = compleetMet((p) => {
+        p['main.py'] +=
+          '\nWORTEL = "/"\napp.mount(WORTEL, StaticFiles(directory="site"), name="site")\n';
+        p['templates/bericht.html'] = p['templates/bericht.html'].replace(
+          'href="/berichten"',
+          'href="/over.html"',
+        );
+      });
+      expect(samenhang(files)).toEqual([]);
+    });
+
+    it('radioknoppen met één naam geven één melding', () => {
+      const files = compleetMet((p) => {
+        p['static/pages/gastenboek_form.html'] = p['static/pages/gastenboek_form.html'].replace(
+          '<button type="submit">',
+          '<input type="radio" name="kleur" value="a"><input type="radio" name="kleur" value="b">\n            <button type="submit">',
+        );
+      });
+      expect(titels(files)).toEqual(['Het veld "kleur" komt nergens aan']);
+    });
+  });
+
   describe('links en bestanden', () => {
     it('een static-bestand dat er niet is', () => {
       const files = compleetMet((p) => {

@@ -1,3 +1,4 @@
+import { blanco, regelBegins, regelVan as regelIn } from '@coderius/checker/plekken';
 import type { Plek, ProjectFiles, Samenhangfout } from '@coderius/checker/types';
 
 // Samenhang: wat tussen twee bestanden niet aansluit. Een beginner schrijft
@@ -40,10 +41,33 @@ interface Formulier {
 
 const MAP_VAN = (pad: string) => (pad.includes('/') ? pad.slice(0, pad.lastIndexOf('/') + 1) : '');
 
+// Per tekst één keer de regelbegins, en dan zoeken: eerst telde elke treffer
+// opnieuw vanaf het begin van het bestand. samenhang() leegt de cache.
+const begins = new Map<string, number[]>();
+
 export function regelVan(tekst: string, index: number): number {
-  let n = 1;
-  for (let i = 0; i < index && i < tekst.length; i++) if (tekst[i] === '\n') n++;
-  return n;
+  let lijst = begins.get(tekst);
+  if (!lijst) {
+    lijst = regelBegins(tekst);
+    begins.set(tekst, lijst);
+  }
+  return regelIn(lijst, index);
+}
+
+/**
+ * HTML- en Jinja-commentaar wordt spaties, met behoud van posities: een
+ * uitgecommentarieerd formulier of `{# {{ oud }} #}` gaf anders meldingen
+ * over code die niet meer meedoet.
+ */
+function zonderCommentaar(files: ProjectFiles): ProjectFiles {
+  return Object.fromEntries(
+    Object.entries(files).map(([pad, f]) => [
+      pad,
+      f.kind === 'html' && f.content
+        ? { ...f, content: f.content.replace(/<!--[\s\S]*?-->|\{#[\s\S]*?#\}/g, blanco) }
+        : f,
+    ]),
+  );
 }
 
 /** De index van het haakje dat het haakje op `open` sluit, met strings overgeslagen. */
@@ -137,7 +161,13 @@ function routes(files: ProjectFiles): { routes: Route[]; zeker: boolean } {
   for (const f of Object.values(files)) {
     if (f.kind !== 'py' || !f.content) continue;
     const tekst = f.content;
-    if (/\binclude_router\s*\(|\bAPIRouter\s*\(/.test(tekst)) zeker = false;
+    if (/\binclude_router\s*\(|\bAPIRouter\s*\(|\badd_api_route\s*\(/.test(tekst)) zeker = false;
+    // Elke decorator moet een pad als tekst hebben: bij @app.api_route(…),
+    // @app.get(path="/x") of @app.get(PAD) weet hij niet welke route het is,
+    // en dan meldde hij valse 404's bij formulieren en links.
+    const alle = tekst.match(/^@\w+\.(get|post|put|delete|patch|api_route)\(/gm)?.length ?? 0;
+    const herkend = tekst.match(/^@\w+\.(get|post|put|delete|patch)\(\s*["']/gm)?.length ?? 0;
+    if (alle !== herkend) zeker = false;
     const deco = /^@\w+\.(get|post|put|delete|patch)\(\s*(["'])(.*?)\2/gm;
     for (const m of tekst.matchAll(deco)) {
       const def = /^(?:async\s+)?def\s+(\w+)\s*\(/m;
@@ -256,6 +286,8 @@ function controleerFormulieren(lijst: Route[], fouten: Samenhangfout[], files: P
     if (form.methode !== 'POST' || route.velden === null) continue;
     const namen = new Set(form.velden.map((v) => v.naam));
     const params = new Set(route.velden.map((v) => v.naam));
+    // Radioknoppen delen een naam: één melding per naam, niet per knop.
+    const gemeld = new Set<string>();
     for (const p of route.velden) {
       if (!p.verplicht || namen.has(p.naam)) continue;
       fouten.push({
@@ -265,7 +297,8 @@ function controleerFormulieren(lijst: Route[], fouten: Samenhangfout[], files: P
       });
     }
     for (const v of form.velden) {
-      if (params.has(v.naam)) continue;
+      if (params.has(v.naam) || gemeld.has(v.naam)) continue;
+      gemeld.add(v.naam);
       fouten.push({
         titel: `Het veld "${v.naam}" komt nergens aan`,
         uitleg: `Het formulier stuurt name="${v.naam}", maar ${route.functie}() heeft geen parameter ${v.naam} met Form(...). FastAPI gooit wat je daar invult weg, zonder melding.`,
@@ -292,7 +325,9 @@ function controleerLinks(
       const regel = regelVan(tekst, m.index ?? 0);
       const mount = statisch.find((s) => doel === s.prefix || doel.startsWith(`${s.prefix}/`));
       if (mount) {
-        if (doel.includes('{')) continue;
+        // Een berekende map (BASE_DIR / "static"): welk bestand erbij hoort,
+        // weet hij niet. Het is wel een bestand en geen route.
+        if (doel.includes('{') || mount.map === null) continue;
         // Een losse % (`100%.png`) laat decodeURI een URIError gooien, en dan
         // kwam er voor niemand een rapport. Zo'n link laat hij met rust.
         let rest: string;
@@ -326,28 +361,49 @@ function controleerLinks(
 
 interface Statisch {
   prefix: string;
-  map: string;
+  /** De map in het project, of null als die berekend wordt (BASE_DIR / "static"). */
+  map: string | null;
   bestand: string;
   regel: number;
 }
 
-function statischeMappen(files: ProjectFiles): Statisch[] {
-  const uit: Statisch[] = [];
+/**
+ * De StaticFiles-mounts. `zeker` is false als een mount een voorvoegsel heeft
+ * dat geen letterlijke tekst is: dan kan elk pad een bestand zijn.
+ */
+function statischeMappen(files: ProjectFiles): { mappen: Statisch[]; zeker: boolean } {
+  const mappen: Statisch[] = [];
+  let zeker = true;
   for (const f of Object.values(files)) {
     if (f.kind !== 'py' || !f.content) continue;
-    const re =
-      /\.mount\(\s*["']([^"']+)["']\s*,\s*StaticFiles\(\s*directory\s*=\s*["']([^"']+)["']/g;
-    for (const m of f.content.matchAll(re)) {
-      const map = m[2].replace(/^\.\//, '').replace(/\/$/, '');
-      uit.push({
-        prefix: m[1].replace(/\/$/, ''),
-        map: `${MAP_VAN(f.path)}${map}/`,
+    const tekst = f.content;
+    for (const m of tekst.matchAll(/\.mount\(/g)) {
+      const open = (m.index ?? 0) + m[0].length - 1;
+      const sluit = sluitHaakje(tekst, open);
+      if (sluit === -1) continue;
+      const args = splitsArgumenten(tekst.slice(open + 1, sluit)).map((a) => a.deel.trim());
+      const statisch = args.find((a) => /^(app\s*=\s*)?StaticFiles\(/.test(a));
+      if (!statisch) continue;
+      const prefix = args[0]?.match(/^["']([^"']*)["']$/)?.[1];
+      if (prefix === undefined) {
+        zeker = false;
+        continue;
+      }
+      const dir =
+        statisch.match(/\bdirectory\s*=\s*["']([^"']+)["']/)?.[1] ??
+        statisch.match(/^(?:app\s*=\s*)?StaticFiles\(\s*["']([^"']+)["']/)?.[1];
+      mappen.push({
+        prefix: prefix.replace(/\/$/, ''),
+        map:
+          dir === undefined
+            ? null
+            : `${MAP_VAN(f.path)}${dir.replace(/^\.\//, '').replace(/\/$/, '')}/`,
         bestand: f.path,
-        regel: regelVan(f.content, m.index ?? 0),
+        regel: regelVan(tekst, m.index ?? 0),
       });
     }
   }
-  return uit;
+  return { mappen, zeker };
 }
 
 const JINJA_INGEBOUWD = new Set([
@@ -486,7 +542,9 @@ function controleerBestandsantwoorden(fouten: Samenhangfout[], files: ProjectFil
   }
 }
 
-export function samenhang(files: ProjectFiles): Samenhangfout[] {
+export function samenhang(project: ProjectFiles): Samenhangfout[] {
+  begins.clear();
+  const files = zonderCommentaar(project);
   const fouten: Samenhangfout[] = [];
   const { routes: lijst, zeker } = routes(files);
   if (lijst.length > 0 && zeker) {
@@ -497,15 +555,16 @@ export function samenhang(files: ProjectFiles): Samenhangfout[] {
   // Een StaticFiles op `/` serveert elk pad dat geen route heeft: welke link
   // dan een bestand of een route is, weet hij niet, dus die links laat hij
   // met rust. De andere mounts loopt hij gewoon na.
-  const mappen = statischeMappen(files);
+  const { mappen, zeker: mountsZeker } = statischeMappen(files);
   const opWortel = mappen.some((m) => m.prefix === '');
   controleerLinks(
-    lijst.length > 0 && zeker && !opWortel ? lijst : null,
+    lijst.length > 0 && zeker && mountsZeker && !opWortel ? lijst : null,
     fouten,
     files,
     mappen.filter((m) => m.prefix !== ''),
   );
   controleerTemplates(lijst, fouten, files);
   controleerBestandsantwoorden(fouten, files);
+  begins.clear();
   return fouten;
 }
