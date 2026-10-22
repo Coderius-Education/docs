@@ -3,6 +3,14 @@ import { useEffect } from 'react';
 import styles from './styles.module.css';
 import './handout.css';
 
+// Vaste, gelijke printmarges (browsers verschillen in hun standaard); samen
+// met de kolommen bepaalt dit dat een compacte hand-out op één dubbelzijdig
+// vel past. Een @page-regel kun je niet tot één pagina beperken met een
+// selector, en in handout.css gold hij voor elke pagina van de site, ook voor
+// een les die iemand print. Daarom zet de hand-out hem zelf neer, zolang hij
+// open staat.
+export const PAGINA = '@page { size: A4; margin: 10mm 12mm; }';
+
 type HandoutProps = {
   children: React.ReactNode;
   /** Tekst op de printknop. */
@@ -26,6 +34,10 @@ export default function Handout({
 }: HandoutProps): React.ReactElement {
   useEffect(() => {
     document.body.classList.add('handout-page');
+    const pagina = document.createElement('style');
+    pagina.dataset.handoutPagina = '';
+    pagina.textContent = PAGINA;
+    document.head.appendChild(pagina);
     if (compact) document.body.classList.add('handout-compact');
     // Een antwoordblad (<details className="handout-antwoorden">) staat op
     // het scherm dicht, zodat een leerling die de hand-out opent de
@@ -48,6 +60,7 @@ export default function Handout({
     window.addEventListener('afterprint', sluiten);
     return () => {
       document.body.classList.remove('handout-page');
+      pagina.remove();
       document.body.classList.remove('handout-compact');
       window.removeEventListener('beforeprint', openen);
       window.removeEventListener('afterprint', sluiten);

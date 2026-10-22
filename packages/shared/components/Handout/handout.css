@@ -219,12 +219,32 @@
   body.handout-compact .handout-vragen ol > li {
     break-inside: avoid;
   }
-}
 
-/* Vaste, gelijke printmarges (browsers verschillen in hun standaard);
-   samen met de kolommen bepaalt dit dat een compacte hand-out op één
-   dubbelzijdig vel past. */
-@page {
-  size: A4;
-  margin: 10mm 12mm;
+  /* Een programma met de regel eronder waarop de leerling zijn gok schrijft:
+     zonder dit stond het programma onderaan de ene pagina en "Mijn gok:
+     ______" bovenaan de volgende. */
+  body.handout-page .handout-samen {
+    break-inside: avoid;
+  }
+
+  /* Een knipblad (de stroken van Codestroken leggen) is de laatste pagina,
+     met cellen die hoog genoeg zijn om langs te knippen. Het moet op één
+     pagina passen: liep het door, dan stonden de stroken van de laatste
+     puzzel op de achterkant van die van de eerste. */
+  body.handout-page .handout-knipblad {
+    --ifm-table-cell-padding: 0.25rem 10px;
+  }
+
+  body.handout-page .handout-knipblad table td {
+    height: 1.7em;
+    font-size: 11pt;
+  }
+
+  body.handout-page .handout-knipblad h3 {
+    margin: 0.6em 0 0.2em;
+  }
+
+  body.handout-page .handout-knipblad table {
+    margin-bottom: 0.4em;
+  }
 }

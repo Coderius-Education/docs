@@ -73,7 +73,7 @@ export const activiteiten: Activiteit[] = [
     titel: 'Tien groene flessen',
     soort: 'project',
     wat: 'Van vijftig losse print-regels naar één aanroep lied(10).',
-    stappen: 8,
+    stappen: 9,
     concepten: ['01', '02', '04a', '05b', '05c', '06a', '06b', '08', '09a', '09b'],
     link: { to: '/docs/projecten/tien-groene-flessen/stap-1-print' },
   },
@@ -318,7 +318,7 @@ export const activiteiten: Activiteit[] = [
     soort: 'unplugged',
     wat: 'Zestien stellingen over variabelen, beslissen, herhalen, functies en lijsten.',
     concepten: ['02', '05c', '06d', '09b', '09c', '10a', '11a'],
-    lessen: ['02', '05b', '05c', '06a', '06d', '07', '08', '09b', '09c', '10a', '11a'],
+    lessen: ['02', '05b', '05c', '06a', '06d', '07', '08', '09b', '09c', '10a', '11a', '11b'],
     link: { to: '/docs/projecten/unplugged/waar-of-niet-waar' },
   },
   {

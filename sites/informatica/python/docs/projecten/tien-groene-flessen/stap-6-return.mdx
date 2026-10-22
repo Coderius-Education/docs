@@ -1,20 +1,19 @@
 ---
 sidebar_position: 6
 sidebar_label: 'Stap 6: return'
-description: Schrijf functies die een stukje tekst teruggeven met return, zodat het couplet zelf geen if meer nodig heeft.
+description: Schrijf twee functies die een stukje tekst teruggeven met return, en test ze los.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
 
-# Stap 6: Een functie die tekst teruggeeft (return)
+# Stap 6: Functies die tekst teruggeven (return)
 
 :::info
 Deze stap gebruikt `return`, uit [Return](site:python/docs/functies/09b-return).
 :::
 
 In je couplet staan nu twee variabelen, met daaronder drie regels `if` en
-`elif`. Kijk
-wat die regels doen: ze zoeken de goede woorden bij een aantal
+`elif`. Kijk wat die regels doen: ze zoeken de goede woorden bij een aantal
 flessen. "3 groene flessen", "1 groene fles", "geen groene flessen meer".
 Dat kan een functie doen die de tekst teruggeeft in plaats van hem te
 printen:
@@ -33,12 +32,13 @@ print(staan(4))   # staan
 Een functie met `return` kun je gebruiken waar je anders een stukje tekst
 zou schrijven, ook tussen de accolades van een f-string.
 
-## Opdracht: `aantal(flessen)`
+## Opdracht: `aantal` en `staan`
 
 Plak je programma uit stap 5 in het veld. Ben je het kwijt, neem dan de
 oplossing van [stap 5](site:python/docs/projecten/tien-groene-flessen/stap-5-functie).
 
-Vervang `nu` en `straks` door twee functies die tekst teruggeven:
+Schrijf boven `couplet` twee functies die tekst teruggeven. Het couplet
+blijft in deze stap zoals het is; dat pas je in stap 7 aan.
 
 1. `staan(flessen)`, zoals hierboven: `"staat"` bij één fles, anders
    `"staan"`.
@@ -49,19 +49,24 @@ Vervang `nu` en `straks` door twee functies die tekst teruggeven:
 |:---:|:---:|:---:|
 | `"3 groene flessen"` | `"1 groene fles"` | `"geen groene flessen meer"` |
 
-Het couplet gebruikt daarna alleen nog die twee functies, en de `if`-regels
-in `couplet` verdwijnen. De uitvoer blijft hetzelfde als in stap 5.
+Test ze los: zet onderaan je programma tijdelijk een paar `print`-regels
+die laten zien wat de functies teruggeven. Onder het lied verwacht je dan:
+
+```
+3 groene flessen
+1 groene fles
+geen groene flessen meer
+staat
+```
 
 <CodeExercise>{`# Plak hier je programma uit stap 5`}</CodeExercise>
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Begin met `aantal`. Er zijn drie gevallen: nul, één en al het andere, en
-elk geval krijgt een eigen `return`. Test hem los voordat je verdergaat,
-door een paar keer te printen wat hij teruggeeft. Daarna het couplet: de
-eerste regel noemt `aantal` en `staan` van het aantal flessen nu, de
-laatste regel die van één fles minder.
+Voor `aantal` zijn er drie gevallen: nul, één en al het andere. Elk geval
+krijgt een eigen `return`. Kijk naar `staan` hierboven: zo ziet een functie
+met twee gevallen eruit.
 
 </details>
 
@@ -86,10 +91,19 @@ def staan(flessen):
 
 
 def couplet(flessen):
-    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
-    print(f"{aantal(flessen)} {staan(flessen)} aan de muur,")
+    nu = f"{flessen} groene flessen staan"
+    straks = f"staan er {flessen - 1} groene flessen"
+    if flessen == 1:
+        nu = "1 groene fles staat"
+    if flessen - 1 == 1:
+        straks = "staat er 1 groene fles"
+    elif flessen - 1 == 0:
+        straks = "staan er geen groene flessen meer"
+
+    print(f"{nu} aan de muur,")
+    print(f"{nu} aan de muur,")
     print("en als er één groene fles valt,")
-    print(f"dan {staan(flessen - 1)} er {aantal(flessen - 1)} aan de muur.")
+    print(f"dan {straks} aan de muur.")
 
 
 for flessen in range(3, 0, -1):
@@ -97,30 +111,22 @@ for flessen in range(3, 0, -1):
     print()
 ```
 
-Uitvoer:
+De testregels eronder, met wat ze printen:
 
-```
-3 groene flessen staan aan de muur,
-3 groene flessen staan aan de muur,
-en als er één groene fles valt,
-dan staan er 2 groene flessen aan de muur.
+{/* draaien-met: blok-erboven */}
 
-2 groene flessen staan aan de muur,
-2 groene flessen staan aan de muur,
-en als er één groene fles valt,
-dan staat er 1 groene fles aan de muur.
-
-1 groene fles staat aan de muur,
-1 groene fles staat aan de muur,
-en als er één groene fles valt,
-dan staan er geen groene flessen meer aan de muur.
+```python
+print(aantal(3))   # 3 groene flessen
+print(aantal(1))   # 1 groene fles
+print(aantal(0))   # geen groene flessen meer
+print(staan(1))    # staat
 ```
 
-Het couplet is nu vier regels zonder één `if`. Alles wat met enkelvoud en
-meervoud te maken heeft, zit in `aantal` en `staan`.
+Kloppen ze? Haal de testregels dan weg. Het lied zelf is nog niet
+veranderd: dat doe je in stap 7.
 
 </details>
 
 Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
-Door naar [stap 7: het hele lied als functie](site:python/docs/projecten/tien-groene-flessen/stap-7-lied).
+Door naar [stap 7: het couplet met functies](site:python/docs/projecten/tien-groene-flessen/stap-7-couplet).

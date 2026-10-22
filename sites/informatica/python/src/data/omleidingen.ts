@@ -45,4 +45,14 @@ export const omleidingen: Omleiding[] = [
     van: '/docs/projecten/turtle/een-huis/stap-2-huis',
     naar: '/docs/projecten/turtle/een-huis/stap-1-huis',
   },
+  // Tien groene flessen kreeg een stap erbij: stap 6 (aantal en staan
+  // schrijven) en stap 7 (het couplet ermee) waren eerst één stap.
+  {
+    van: '/docs/projecten/tien-groene-flessen/stap-7-lied',
+    naar: '/docs/projecten/tien-groene-flessen/stap-8-lied',
+  },
+  {
+    van: '/docs/projecten/tien-groene-flessen/stap-8-zelf',
+    naar: '/docs/projecten/tien-groene-flessen/stap-9-zelf',
+  },
 ];

@@ -104,6 +104,21 @@ describe('de unplugged hand-outs', () => {
         expect(naarLes.length, 'minstens één link naar een les').toBeGreaterThan(0);
       });
 
+      it('een gokregel blijft op papier bij zijn programma', () => {
+        // Een regel met ______ onder een programma brak bij het printen los:
+        // het programma onderaan de ene pagina, de gok bovenaan de volgende.
+        const samen = [...rest.matchAll(/<div className="handout-samen">([\s\S]*?)<\/div>/g)].map(
+          (m) => ({ van: m.index ?? 0, tot: (m.index ?? 0) + m[0].length, inhoud: m[1] }),
+        );
+        // Op plek, niet op tekst: "Mijn gok: ______" staat op meer plekken.
+        const losseGokken = [...rest.matchAll(/^(?!\|).*______.*$/gm)]
+          .filter((m) => !samen.some((b) => (m.index ?? 0) > b.van && (m.index ?? 0) < b.tot))
+          .map((m) => m[0]);
+        expect(losseGokken).toEqual([]);
+        for (const b of samen)
+          expect(b.inhoud, 'een programma in het blok').toMatch(/^```python$/m);
+      });
+
       it('het antwoordblad laat Python het narekenen', () => {
         // Een programma met een beloofde uitvoer: een commentaar achter een
         // print, of een uitvoerblok eronder. Dat legt de blokcontrole naast
@@ -156,9 +171,24 @@ describe('de unplugged hand-outs', () => {
 describe('codestroken', () => {
   const tekst = handouts.find((h) => h.slug === 'codestroken')?.tekst ?? '';
   const { blad, rest } = splits(tekst);
-  const puzzels = rest.split(/^## Puzzel \d+$/m).slice(1);
+  // De stroken staan op een los knipblad, de laatste pagina: wie ze uit een
+  // dubbelzijdige print knipt, knipt anders door de puzzel op de achterkant.
+  const knipblad =
+    rest.match(/<div className="handout-paginawissel handout-knipblad">([\s\S]*?)<\/div>/)?.[1] ??
+    '';
+  const zonderKnipblad = rest.replace(knipblad, '');
+  const puzzels = zonderKnipblad.split(/^## Puzzel \d+$/m).slice(1);
+  const strokenPer = knipblad.split(/^### Puzzel \d+$/m).slice(1);
   const oplossingen = python(blad);
   const uitvoer = kaal(blad);
+
+  it('alle stroken staan op het knipblad, per puzzel', () => {
+    expect(knipblad, 'een knipblad').not.toBe('');
+    expect(strokenPer.length).toBe(puzzels.length);
+    expect(zonderKnipblad).not.toMatch(/^\| `.+` \|$/m);
+    // Het knipblad komt na het antwoordblad: de laatste pagina.
+    expect(tekst.indexOf('handout-knipblad')).toBeGreaterThan(tekst.indexOf('</Antwoordblad>'));
+  });
 
   it('heeft bij elke puzzel een oplossing met uitvoer', () => {
     expect(puzzels.length).toBe(3);
@@ -168,7 +198,7 @@ describe('codestroken', () => {
 
   puzzels.forEach((puzzel, i) => {
     it(`puzzel ${i + 1}: de stroken zijn de oplossing plus één strook te veel`, () => {
-      const stroken = [...puzzel.matchAll(/^\| `(.+)` \|$/gm)].map((m) => m[1]);
+      const stroken = [...strokenPer[i].matchAll(/^\| `(.+)` \|$/gm)].map((m) => m[1]);
       const regels = oplossingen[i]
         .split('\n')
         .map((r) => r.trim())
