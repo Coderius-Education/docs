@@ -1,0 +1,158 @@
+---
+description: Een server onthoudt niets tussen twee verzoeken. Speel na hoe een cookie en een sessie dat oplossen, en waarom een naam in een cookie niet genoeg is.
+---
+
+# Een postbode zonder geheugen
+
+<Handout>
+
+Een server is een postbode zonder geheugen. Elk verzoek is een brief, en
+zodra het antwoord weg is, is hij de brief vergeten. Hij weet alleen wat op
+de brief staat en wat in zijn schrift staat: de database. Hoe weet zo'n
+server dan dat jij bent ingelogd? Jullie spelen het na, in drie rondes.
+
+## Wat je nodig hebt
+
+- Per groepje van drie: strookjes papier voor de brieven, een envelop als
+  koekjestrommel, een schrift voor de server en een pen per persoon.
+- Ongeveer 25 minuten.
+
+## De rollen
+
+1. **Sam** speelt de browser. Hij schrijft brieven aan de server en bewaart
+   in de koekjestrommel wat de server hem vraagt te bewaren. Elke brief aan
+   de server krijgt alles uit de trommel mee.
+2. **De server** leest de brief, mag in zijn schrift kijken en schrijven, en
+   schrijft een antwoord. Daarna draait hij de brief om: hij weet niets meer.
+3. **Alex** is een andere bezoeker. Hij heeft geen wachtwoord van Sam, maar
+   hij mag brieven schrijven met wat hij wil erop.
+
+In het schrift van de server staat al: `sam: welkom123`. Een bericht slaat de
+server alleen op als hij weet van wie het is. Weet hij dat niet, dan antwoordt
+hij `401 Log eerst in`.
+
+## Ronde 1: zonder cookies
+
+Sam stuurt twee brieven na elkaar.
+
+1. `POST /inloggen` met `naam=sam` en `wachtwoord=welkom123`
+2. `POST /gastenboek` met `bericht=Hoi`
+
+<div className="handout-samen">
+
+Gok eerst: weet de server bij brief 2 dat die van Sam komt? ______
+
+</div>
+
+## Ronde 2: een cookie met de naam
+
+Nu antwoordt de server op een goede inlog met: "bewaar `naam=sam`". Sam
+stopt dat in de trommel, en stuurt het bij elke brief mee. De server gelooft
+de naam op de brief. Speel Sams twee brieven opnieuw. Daarna schrijft Alex
+één brief: `POST /gastenboek` met `bericht=Ik vind dit gastenboek saai`, en hij schrijft er
+zelf `naam=sam` bij.
+
+<div className="handout-samen">
+
+Gok eerst: van wie komt het bericht van Alex, volgens het gastenboek? ______
+
+</div>
+
+## Ronde 3: een sessie
+
+Nu doet de server het anders. Bij een goede inlog gooit hij drie keer met
+een dobbelsteen en schrijft hij die cijfers in zijn schrift, bijvoorbeeld
+`sessie 352 is van sam`. Sam krijgt alleen het nummer: "bewaar
+`sessie_id=352`". Bij een bericht zoekt de server het nummer op in zijn
+schrift. Staat het er niet, dan weet hij niet van wie de brief is.
+
+Speel Sams brieven opnieuw. Daarna probeert Alex het twee keer: één keer met
+`sessie_id=sam`, en één keer met een nummer dat hij zelf verzint.
+
+<div className="handout-samen">
+
+Gok eerst: lukt het Alex? ______
+
+</div>
+
+<div className="handout-teltabel">
+
+| Ronde | Brief | Mee uit de trommel | Wat de server weet | Antwoord |
+|:---:|---|---|---|---|
+| 1 | Sam: inloggen | | | |
+| 1 | Sam: bericht | | | |
+| 2 | Sam: bericht | | | |
+| 2 | Alex: bericht | | | |
+| 3 | Sam: bericht | | | |
+| 3 | Alex: bericht | | | |
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. In ronde 1 logt Sam goed in, en toch weet de server het bij de volgende
+   brief niet meer. Wat doet het gastenboek in de basis van de cursus
+   daarom bij elk bericht?
+2. Wat ging er mis in ronde 2? Wie bepaalt wat er in een cookie staat?
+3. Waarom werkt ronde 3 wel? Wat zou het makkelijker maken voor Alex?
+4. Waarom gooit een echte server niet drie keer, maar met
+   `secrets.token_hex(16)`?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+| Ronde | Brief | Mee uit de trommel | Wat de server weet | Antwoord |
+|:---:|---|---|---|---|
+| 1 | Sam: inloggen | niets | naam en wachtwoord kloppen | goed ingelogd |
+| 1 | Sam: bericht | niets | alleen `bericht=Hoi` | `401 Log eerst in` |
+| 2 | Sam: bericht | `naam=sam` | "dit is sam" | bericht van sam opgeslagen |
+| 2 | Alex: bericht | `naam=sam`, zelf geschreven | "dit is sam" | bericht van sam opgeslagen |
+| 3 | Sam: bericht | `sessie_id=352` | 352 staat in het schrift: sam | bericht van sam opgeslagen |
+| 3 | Alex: bericht | een verzonnen nummer | het staat niet in het schrift | `401 Log eerst in` |
+
+Zo zoekt de server in ronde 3, met een dictionary als schrift:
+
+```python
+sessies = {"352": {"naam": "sam"}}
+
+for sessie_id in ["352", "sam", "614"]:
+    mijn = sessies.get(sessie_id, {})
+    print(sessie_id, mijn.get("naam"))
+```
+
+Uitvoer:
+
+```
+352 sam
+sam None
+614 None
+```
+
+**Bespreek na.** Vraag 1: elk bericht stuurt het wachtwoord opnieuw mee: een
+kleine inlog per bericht. Vraag 2: de server geloofde wat er op de brief
+stond. Een cookie staat in de browser, en wat in de browser staat, kan de
+bezoeker zelf schrijven. Vraag 3: het nummer zegt zelf niets; alleen het
+schrift van de server weet bij wie het hoort. Met maar drie dobbelstenen zijn
+er 216 nummers, en die kan Alex allemaal proberen. Vraag 4: `token_hex(16)`
+maakt 32 tekens uit 16 mogelijkheden per teken. Dat zijn zoveel nummers dat
+niemand er een raadt.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen),
+  [Onthouden met een cookie](site:fullstack/docs/FastAPI/onthouden/cookies),
+  [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies) en
+  [Cookie of sessie?](site:fullstack/docs/FastAPI/onthouden/cookie-of-sessie).
+- Wat er met een sessie nog mis kan gaan, staat in de reeks
+  [Cookies afschermen](site:fullstack/docs/veiligheid/cookies/zwakheid).
+
+</div>
+
+</Handout>

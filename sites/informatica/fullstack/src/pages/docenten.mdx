@@ -114,6 +114,39 @@ Daarna sluit de cursus af met een eigen 404-pagina, een overzicht van alle diagr
 
 Wat hier bewust níét in zit, is `fetch`: JavaScript dat zelf data ophaalt bij een endpoint. Dat vraagt `async`/`await`, JSON verwerken en objecten — stof die de web-cursus nog niet behandelt. Het blok "Zonder herladen" vult dat gat met htmx: de server stuurt HTML, niet JSON. Leerlingen die toch `fetch` willen kun je die kant op sturen; de cursus bouwt er niet op.
 
+### Unplugged
+
+Onder [Unplugged](site:fullstack/docs/unplugged) staan werkvormen zonder
+computer, elk met een printknop. In een webproject gebeurt veel tussen de
+bestanden en tussen browser en server, en dat zie je op het scherm niet. Op
+papier wel. De antwoorden staan op het scherm dicht en komen bij het printen
+op een losse pagina. De les waar een werkvorm bij hoort, wijst ernaar met een
+tip *Eerst op papier* vlak voor de opdrachten.
+
+| Werkvorm | Bij | Misvatting |
+|---|---|---|
+| [Het verzoek-rollenspel](site:fullstack/docs/unplugged/verzoek-rollenspel) | Doorsturen na opslaan | één klik is één verzoek; de server onthoudt het vorige verzoek |
+| [Welke route antwoordt?](site:fullstack/docs/unplugged/welke-route) | Query-parameters | de functienaam bepaalt welke code draait; elke route die past, draait |
+| [Welke taal, waar?](site:fullstack/docs/unplugged/welke-taal-waar) (print het knipblad, de laatste pagina, apart en enkelzijdig) | Templates met Jinja2 | de browser draait Python en Jinja; JavaScript kan bij de database |
+| [Volg de naam](site:fullstack/docs/unplugged/volg-de-naam) | Een formulier beantwoorden met een template | een naam die in één bestand klopt, klopt overal |
+| [Template invullen](site:fullstack/docs/unplugged/template-invullen) | Nog niets? if en else | een ontbrekende sleutel geeft een foutmelding; de browser ziet de `{% for %}` |
+| [Een postbode zonder geheugen](site:fullstack/docs/unplugged/postbode) | Cookie of sessie? | de server weet na het inloggen wie je bent; een cookie is te vertrouwen |
+| [Vertrouw de bezoeker niet](site:fullstack/docs/unplugged/vertrouw-de-bezoeker) | Wie mag wat | `maxlength` en een verborgen knop zijn een controle |
+
+### Losse vragen en terugkoppeling
+
+Elke Predict-opdracht in de lessen is een meerkeuzevraag die meteen zegt of
+het antwoord klopt, met bij elk fout antwoord waarom niet. Elke les met code
+heeft daarnaast één controlevraag vóór de opdrachten. Boven elk codeblok
+staat in welk bestand het hoort en of het op de server of in de browser
+draait, met een eigen kleur per taal.
+
+De nakijker op [Project checken](site:fullstack/project-checken) laat je
+leerlingen ook zien waar hun bestanden niet op elkaar aansluiten: een
+formulierveld zonder parameter, een `{{ naam }}` die het dictionary niet
+meegeeft, een `action` of link zonder route, een bestand in `static/` dat er
+niet is. Juist die fouten geven geen foutmelding in de terminal.
+
 ### De reeks Veiligheid
 
 Naast de FastAPI-sidebar staat een tweede sidebar, **Veiligheid**. De meeste reeksen passen na de hele FastAPI-route, dus ook na de drie uitbreidingen: ze bouwen op formulieren, templates, htmx, sessies en `HTTPException`, en je leerlingen hebben dan een eigen gastenboek om te beschermen. Invoer kan al direct na de basis; de verwijzingen naar Server of browser? zijn daar optioneel. Elke reeks werkt in een eigen map met een eigen virtual environment, zodat het gastenboek van de leerling heel blijft; hoe dat gaat staat in [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks). De route begint met een [startpagina](site:fullstack/docs/veiligheid) (het ene idee, de spelregel, een kaart en een overzicht van statuscodes) en een les [Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap), waarin ze met `httpx` verzoeken sturen zonder browser. Daarna volgen de reeksen, van makkelijk naar moeilijk. De eerste, Wat je server laat zien, heeft nog geen aanval. Je leerlingen kijken wat FastAPI zelf op `/docs` zet, en vinden daar het test-endpoint `GET /sessies` uit Sessies terug. Daarna zien ze wat er in hun `.db`-bestanden staat, voordat ze een zip of een repository delen. Te veel verzoeken staat als vierde, want een limiet is één regel boven een endpoint. Wachtwoorden staat achteraan: die reeks is het langst, en zet de limiet uit Te veel verzoeken op het inloggen. Elke reeks gaat van de zwakheid die de leerling zelf nadoet, via de oplossing in FastAPI, naar wat er in de praktijk nog gebeurt, inclusief wat de wet zegt. De reeksen zijn los te volgen; alleen Cookies bouwt op de server uit Wie mag wat. Wie mag wat en Cookies afschermen gebruiken de accounts uit de basis: in hun scripts registreren Sara en Alex, loggen ze in, en is de eigenaar van een bericht wie onder die naam inlogde. Wachtwoorden laat met de `/registreer` en de controle uit de basis zien waarom gewone tekst onveilig is, en maakt ze daarna veilig.

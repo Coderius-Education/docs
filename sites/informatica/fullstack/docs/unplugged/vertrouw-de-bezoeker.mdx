@@ -1,0 +1,141 @@
+---
+description: Een bezoeker kan elk verzoek zelf schrijven, buiten je formulier om. Zoek bij zes brieven de controle die de server beschermt.
+---
+
+# Vertrouw de bezoeker niet
+
+<Handout>
+
+Je formulier heeft een `maxlength` en een knop Verwijderen die alleen bij je
+eigen berichten staat. Maar een bezoeker hoeft je formulier niet te
+gebruiken: met een script schrijft hij elk verzoek zelf. De server ziet
+alleen het verzoek, niet hoe het gemaakt is. Daarom hoort elke controle die
+moet gelden op de server.
+
+## Wat je nodig hebt
+
+- Per tweetal een geprinte hand-out en een pen.
+- Ongeveer 20 minuten.
+
+## De server, nog zonder controles
+
+```python
+@app.post("/bericht")
+async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": mijn.get("naam"), "bericht": bericht}
+        db.commit()
+    return {"bericht": "Opgeslagen"}
+
+
+@app.delete("/bericht/{sleutel}")
+async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    with SqliteDict("gastenboek.db") as db:
+        del db[sleutel]
+        db.commit()
+    return {"bericht": "Verwijderd"}
+```
+
+De berichten staan op `/berichten` in een template, met `{{ bericht.bericht }}`.
+
+## De controles
+
+Dit zijn de controles waaruit je kiest. Er zit er één tussen die een script
+niet tegenhoudt.
+
+<div className="handout-vragen">
+
+- A: `bericht: str = Form(..., max_length=280)`
+- B: `if not bericht.strip():` met een `400`
+- C: `if not mijn:` met een `401 Log eerst in`
+- D: `bericht = db.get(sleutel)`, en dan
+  `if bericht is None or bericht["naam"] != mijn.get("naam"):` met een `403`
+- E: `maxlength="280"` op het veld in het formulier
+- F: niets erbij: de template regelt het al
+
+</div>
+
+## De brieven van Alex
+
+Alex is ingelogd als `alex`, en schrijft deze verzoeken met een script.
+Schrijf per brief op wat de server zonder controles doet, en welke controle
+hem tegenhoudt.
+
+<div className="handout-teltabel">
+
+| Nr | Het verzoek | Zonder controles | Controle |
+|:---:|---|---|:---:|
+| 1 | `POST /bericht` met een bericht van 5000 tekens | | |
+| 2 | `POST /bericht` met een bericht van alleen spaties | | |
+| 3 | `POST /bericht` zonder cookie | | |
+| 4 | `DELETE /bericht/bericht_17`, een bericht van Sara | | |
+| 5 | `POST /bericht` met het bericht `<b>vet</b>` | | |
+| 6 | `POST /bericht` met een extra veld `naam=sara` | | |
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. Welke controle bleef over, en waarom houdt die een script niet tegen?
+   Waarom zet je hem er toch op?
+2. Bij brief 6 stuurt Alex zelf een naam mee. Waarom komt er toch `alex` bij
+   het bericht te staan?
+3. Bij brief 4 zou je de knop Verwijderen ook kunnen verbergen bij berichten
+   van een ander. Waarom is dat geen slot?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+| Nr | Zonder controles | Controle |
+|:---:|---|:---:|
+| 1 | slaat het hele bericht op | A, met een `422` |
+| 2 | slaat een leeg bericht op | B, met een `400` |
+| 3 | slaat het op, met als naam `None` | C, met een `401` |
+| 4 | verwijdert het bericht van Sara | D, met een `403` |
+| 5 | slaat het op; de template laat `<b>vet</b>` als tekst zien | F |
+| 6 | slaat het op met de naam uit de sessie, `alex` | F |
+
+Bij brief 5 zie je wat de template doet, zonder server:
+
+```python
+from jinja2 import Environment
+
+omgeving = Environment(autoescape=True)
+template = omgeving.from_string("<p>{{ bericht }}</p>")
+print(template.render(bericht="<b>vet</b>"))   # <p>&lt;b&gt;vet&lt;/b&gt;</p>
+```
+
+`Jinja2Templates` van FastAPI zet `autoescape` aan voor elk `.html`-bestand.
+
+**Bespreek na.** Vraag 1: E, `maxlength`. Die staat in het formulier in de
+browser, en een script gebruikt het formulier niet. Hij helpt wel een
+gewone bezoeker, die meteen ziet dat het te lang is. Vraag 2: de functie
+heeft geen parameter `naam`, dus FastAPI laat dat veld liggen. De naam komt
+uit de sessie, en die schrijft de server zelf. Vraag 3: een verborgen knop
+verbergt alleen de knop. Het verzoek `DELETE /bericht/bericht_17` kan Alex
+nog steeds sturen.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de route Veiligheid: [maxlength is geen controle](site:fullstack/docs/veiligheid/invoer/maxlength),
+  [De inhoud controleren](site:fullstack/docs/veiligheid/invoer/inhoud),
+  [Templates escapen vanzelf](site:fullstack/docs/veiligheid/xss/templates) en
+  [De controle met 403](site:fullstack/docs/veiligheid/toegang/controle).
+- Een script als Alex schrijf je zelf in
+  [Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap),
+  alleen tegen je eigen server.
+
+</div>
+
+</Handout>

@@ -1,0 +1,157 @@
+---
+description: Speel Jinja met pen en papier. Vul een template in met een dictionary en schrijf de HTML op die de browser krijgt.
+---
+
+# Template invullen
+
+<Handout>
+
+Een template is HTML met gaten erin. Op de server vult Jinja de gaten met wat
+in het dictionary staat, en de browser krijgt alleen het resultaat. Vandaag
+ben jij Jinja: je krijgt een template en een dictionary, en je schrijft de
+HTML op die eruit komt.
+
+## Wat je nodig hebt
+
+- Een geprinte hand-out en een pen per leerling.
+- Ongeveer 20 minuten. Werk eerst alleen, vergelijk dan met je buur.
+
+## De spelregels
+
+1. **`{{ naam }}`**: zoek de sleutel `naam` in het dictionary en schrijf de
+   waarde op. Is er geen sleutel `naam`, dan schrijf je niets.
+2. **`{{ speler.naam }}`**: zoek eerst `speler`, en daarin `naam`.
+3. **`{% for a, b in lijst %}` … `{% endfor %}`**: schrijf wat ertussen staat
+   één keer voor elk element van de lijst. Elk element is een paar; `a` is
+   het eerste deel, `b` het tweede.
+4. **`{% if lijst %}` … `{% else %}` … `{% endif %}`**: een lege lijst telt
+   als niet waar. Schrijf alleen het stuk dat geldt.
+5. Alles wat geen `{{ }}` of `{% %}` is, schrijf je over zoals het er staat.
+   Lege regels mag je weglaten.
+
+## Template 1
+
+<div className="handout-samen">
+
+```html
+<h1>{{ titel }}</h1>
+<p>Welkom, {{ speler.naam }}. Je hebt {{ speler.punten }} punten.</p>
+<p>Je staat op plek {{ plek }}.</p>
+```
+
+```python
+{"titel": "Dobbelspel", "speler": {"naam": "Sam", "punten": 12}}
+```
+
+Wat de browser krijgt:
+
+<Schrijflijnen n={3} />
+
+</div>
+
+## Template 2
+
+<div className="handout-samen">
+
+```html
+<ul>
+{% for sleutel, bericht in berichten %}
+    <li><a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}</li>
+{% endfor %}
+</ul>
+```
+
+```python
+{"berichten": [("bericht_1", {"naam": "Sam", "bericht": "Hoi"}), ("bericht_2", {"naam": "Noor", "bericht": "Leuk"})]}
+```
+
+Gok eerst: hoeveel `<li>` komen er in de browser? ______
+
+<Schrijflijnen n={4} />
+
+</div>
+
+## Template 3
+
+<div className="handout-samen">
+
+```html
+{% if berichten %}
+<p>Er staan berichten in het gastenboek.</p>
+{% else %}
+<p>Nog geen berichten. Schrijf de eerste.</p>
+{% endif %}
+```
+
+Vul hem twee keer in. Eerst met `{"berichten": []}`, dan met
+`{"berichten": [("bericht_1", {"naam": "Sam", "bericht": "Hoi"})]}`.
+
+Met de lege lijst: ______
+
+Met één bericht: ______
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. In template 1 staat `{{ plek }}`, maar `plek` zit niet in het dictionary.
+   Wat zag je, en wat zou de bezoeker denken?
+2. Waar komt een lijst van paren als in template 2 vandaan in je gastenboek?
+3. Klik je in de browser op Paginabron bekijken, zie je dan ergens
+   `{% for %}` staan? Waarom niet?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+**Template 1.** `plek` staat niet in het dictionary, dus die plek blijft leeg.
+
+```python
+from jinja2 import Template
+
+template = Template("<p>Welkom, {{ speler.naam }}. Je hebt {{ speler.punten }} punten.</p><p>Je staat op plek {{ plek }}.</p>")
+print(template.render({"titel": "Dobbelspel", "speler": {"naam": "Sam", "punten": 12}}))
+```
+
+Uitvoer, met de kop `<h1>Dobbelspel</h1>` erboven:
+
+```
+<p>Welkom, Sam. Je hebt 12 punten.</p><p>Je staat op plek .</p>
+```
+
+**Template 2.** Twee `<li>`, één per paar in de lijst.
+
+```html
+<ul>
+    <li><a href="/bericht/bericht_1">Sam</a>: Hoi</li>
+    <li><a href="/bericht/bericht_2">Noor</a>: Leuk</li>
+</ul>
+```
+
+**Template 3.** Met de lege lijst: `<p>Nog geen berichten. Schrijf de
+eerste.</p>`. Met één bericht: `<p>Er staan berichten in het gastenboek.</p>`.
+
+**Bespreek na.** Vraag 1: `Je staat op plek .`, met een gat. De bezoeker
+denkt dat de site kapot is, maar er komt geen foutmelding: zo'n fout vind je
+alleen door de sleutels in het dictionary naast de namen in de template te
+leggen. Vraag 2: uit `list(db.items())`, in de les over één bericht tonen.
+Elk paar is een sleutel en een bericht. Vraag 3: nee. Jinja draait op de
+server, en de browser krijgt alleen de ingevulde HTML.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [Templates met Jinja2](site:fullstack/docs/FastAPI/formulieren/templates),
+  [Alles tonen: een for-lus in je template](site:fullstack/docs/FastAPI/berichten-tonen/lijst_tonen)
+  en [Nog niets? if en else in je template](site:fullstack/docs/FastAPI/berichten-tonen/leeg).
+- Waar een naam vandaan komt voordat hij in de template staat, volg je in
+  [Volg de naam](site:fullstack/docs/unplugged/volg-de-naam).
+
+</div>
+
+</Handout>

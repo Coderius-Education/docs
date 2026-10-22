@@ -67,6 +67,7 @@ export default createConfig({
           label: 'Veiligheid',
         },
         { type: 'doc', docId: 'starten', position: 'left', label: 'Hoe start ik?' },
+        { type: 'docSidebar', sidebarId: 'unpluggedSidebar', position: 'left', label: 'Unplugged' },
         { type: 'doc', docId: 'cheatsheet', position: 'left', label: 'Cheatsheet' },
         { type: 'doc', docId: 'troubleshooting', position: 'left', label: 'Er gaat iets mis' },
         { to: '/project-checken', label: 'Project checken', position: 'left' },

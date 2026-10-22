@@ -1,0 +1,147 @@
+---
+description: Speel de router van FastAPI. Zoek bij elk verzoek de functie die antwoordt, met de waarden van de parameters, of de statuscode als er geen past.
+---
+
+# Welke route antwoordt?
+
+<Handout>
+
+Bij elk verzoek zoekt FastAPI de functie die erbij hoort: dezelfde methode,
+en een pad dat past. Een plekhouder als `{naam}` past op elk stuk pad. Wat er
+na het vraagteken staat, gaat naar de parameters die niet in het pad staan.
+Jij bent nu FastAPI.
+
+## Wat je nodig hebt
+
+- Per tweetal een geprinte hand-out en een pen.
+- Ongeveer 20 minuten.
+
+## De spelregels
+
+1. Loop de routes van boven naar beneden langs. De eerste die past, wint;
+   de rest kijk je niet meer aan.
+2. Past geen enkel pad: `404`. Past het pad wel, maar alleen bij een andere
+   methode: `405`.
+3. Ontbreekt een parameter zonder standaardwaarde, of is `vier` geen `int`:
+   `422`. De functie draait dan niet.
+4. Een waarde na het vraagteken waar geen parameter voor is, laat FastAPI
+   liggen.
+
+## De routes
+
+```python
+@app.get("/")
+async def home():
+    return {"pagina": "home"}
+
+
+@app.get("/dier/{naam}")
+async def dier(naam: str):
+    return {"dier": naam}
+
+
+@app.get("/dier/kat")
+async def kat():
+    return {"dier": "de kat van de juf"}
+
+
+@app.get("/dubbel")
+async def dubbel(getal: int):
+    return {"dubbel": getal * 2}
+
+
+@app.get("/zoek")
+async def zoek(term: str = ""):
+    return {"term": term}
+
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    return {"naam": naam, "bericht": bericht}
+```
+
+## De verzoeken
+
+Schrijf bij elk verzoek de functie en de waarden van de parameters, of de
+statuscode als er geen functie draait.
+
+<div className="handout-teltabel">
+
+| Nr | Verzoek | Functie en parameters, of status |
+|:---:|---|---|
+| 1 | `GET /dier/hond` | |
+| 2 | `GET /dier/kat` | |
+| 3 | `GET /dier` | |
+| 4 | `GET /dier/kat/klein` | |
+| 5 | `GET /Dier/hond` | |
+| 6 | `GET /dubbel?getal=4` | |
+| 7 | `GET /dubbel?getal=vier` | |
+| 8 | `GET /dubbel` | |
+| 9 | `GET /zoek` | |
+| 10 | `GET /zoek?term=kat&kleur=rood` | |
+| 11 | `GET /gastenboek` | |
+| 12 | `POST /gastenboek` met alleen het veld `naam` | |
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. De functie `kat()` draait nooit. Hoe zorg je dat `/dier/kat` wel bij haar
+   uitkomt?
+2. Waarom geeft verzoek 8 een `422`, en verzoek 9 niet?
+3. Bij welke verzoeken draait jouw code helemaal niet? Wat betekent dat voor
+   een `print()` in je functie?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+| Nr | Antwoord |
+|:---:|---|
+| 1 | `dier`, met `naam = "hond"` |
+| 2 | `dier`, met `naam = "kat"`: de plekhouder staat hoger en wint |
+| 3 | `404`: `/dier/{naam}` heeft een stuk pad na `/dier/` nodig |
+| 4 | `404`: een plekhouder past op één stuk pad, zonder `/` |
+| 5 | `404`: een pad is hoofdlettergevoelig |
+| 6 | `dubbel`, met `getal = 4` (een `int`) |
+| 7 | `422`: `vier` is geen `int` |
+| 8 | `422`: `getal` heeft geen standaardwaarde |
+| 9 | `zoek`, met `term = ""` |
+| 10 | `zoek`, met `term = "kat"`; `kleur` laat FastAPI liggen |
+| 11 | `405`: `/gastenboek` bestaat alleen als `POST` |
+| 12 | `422`: het veld `bericht` ontbreekt |
+
+Nagespeeld met een programma, voor verzoek 2, 4 en 7:
+
+```python
+from fastapi.testclient import TestClient
+
+klant = TestClient(app)
+print(klant.get("/dier/kat").json())                  # {'dier': 'kat'}
+print(klant.get("/dier/kat/klein").status_code)       # 404
+print(klant.get("/dubbel?getal=vier").status_code)    # 422
+```
+
+**Bespreek na.** Vraag 1: zet `@app.get("/dier/kat")` boven
+`@app.get("/dier/{naam}")`. Vraag 2: `term` heeft een standaardwaarde, `""`,
+en `getal` niet. Vraag 3: bij elke `404`, `405` en `422`. FastAPI stopt
+voordat je functie begint, dus een `print()` erin zie je niet in de
+terminal; alleen de regel met de statuscode.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [Eén route voor veel pagina's](site:fullstack/docs/FastAPI/veel-paginas/path-parameters),
+  [Een waarde na een vraagteken](site:fullstack/docs/FastAPI/veel-paginas/query-parameters)
+  en [Een formulier versturen (POST)](site:fullstack/docs/FastAPI/formulieren/forms).
+- De statuscodes op een rij staan op
+  [de startpagina van Veiligheid](site:fullstack/docs/veiligheid#statuscodes).
+
+</div>
+
+</Handout>

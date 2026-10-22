@@ -163,6 +163,18 @@ const sidebars: SidebarsConfig = {
   // DoS staat vroeg, want het is één decorator en een for-loop; Wachtwoorden
   // staat achteraan en gebruikt de limiet uit DoS. Ingeklapt, zodat de sidebar
   // een kaart blijft; Docusaurus klapt de reeks open waar de leerling in zit.
+  // Hand-outs zonder computer, in de volgorde van de lessen waar ze bij horen.
+  // Een eigen sidebar en navbar-link: een docent zoekt ze los, om te printen.
+  unpluggedSidebar: [
+    'unplugged/index',
+    'unplugged/verzoek-rollenspel',
+    'unplugged/welke-route',
+    'unplugged/welke-taal-waar',
+    'unplugged/volg-de-naam',
+    'unplugged/template-invullen',
+    'unplugged/postbode',
+    'unplugged/vertrouw-de-bezoeker',
+  ],
   veiligheidSidebar: [
     'veiligheid/index',
     'veiligheid/gereedschap',
