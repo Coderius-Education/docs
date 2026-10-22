@@ -18,6 +18,7 @@ import { FileStats } from './FileStats';
 import { LevelSummary } from './LevelSummary';
 import { PhotoStrip } from './PhotoStrip';
 import { ReportView } from './ReportView';
+import { Samenhang } from './Samenhang';
 import { TeacherGate } from './TeacherGate';
 import { UploadZone } from './UploadZone';
 import { Vragen } from './Vragen';
@@ -449,6 +450,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
             <FileStats report={report} config={config} />
             {ideButton}
           </div>
+          <Samenhang fouten={report.samenhang ?? []} onToonPlekken={toonPlekken} />
           {ideError && (
             <p className={`${styles.error} ${styles.noPrint}`} role="alert">
               {ideError}
@@ -579,7 +581,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
         </div>
       )}
 
-      {isDocent && files && (
+      {files && (
         <CodeWeergave
           files={files}
           textKinds={config.textKinds}

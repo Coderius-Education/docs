@@ -177,6 +177,24 @@ export interface CheckerConfig {
    * mee in de niveausamenvatting.
    */
   buitenLesstof?: (files: ProjectFiles) => Vondst[];
+  /**
+   * Optioneel: wat tussen twee bestanden niet aansluit, zoals een formulierveld
+   * dat de functie niet verwacht of een `{{ naam }}` die het dictionary niet
+   * meegeeft. Zulke fouten geven vaak geen melding: een lege plek, een 422 of
+   * een 404 in een ander bestand dan waar de fout zit. Het rapport toont ze
+   * ook aan de leerling, want het is terugkoppeling op zijn eigen code.
+   */
+  samenhang?: (files: ProjectFiles) => Samenhangfout[];
+}
+
+/** Iets dat tussen twee bestanden van het project niet aansluit. */
+export interface Samenhangfout {
+  /** Kort: wat er niet klopt, bv. 'Formulierveld zonder parameter'. */
+  titel: string;
+  /** Een of twee zinnen: wat de leerling ziet en wat hij aanpast. */
+  uitleg: string;
+  /** De regels aan beide kanten, zodat je ze naast elkaar kunt leggen. */
+  plekken: Plek[];
 }
 
 /** Iets in het project dat het lesmateriaal niet behandelt. */
@@ -220,5 +238,10 @@ export interface CheckReport {
   extra?: ConceptMatch[];
   /** Leeg als de config geen `buitenLesstof` heeft. */
   buitenLesstof: Vondst[];
+  /**
+   * Leeg als de config geen `samenhang` heeft. Optioneel, want een bewaarde
+   * beoordeling van vóór deze controle heeft hem niet.
+   */
+  samenhang?: Samenhangfout[];
   warnings: string[];
 }

@@ -198,6 +198,7 @@ export function analyze(
     extra,
     buitenLesstof:
       (opties.buitenLesstof ?? true) ? (config.buitenLesstof?.(eigenBestanden) ?? []) : [],
+    samenhang: config.samenhang?.(eigenBestanden) ?? [],
     warnings,
   };
 }
