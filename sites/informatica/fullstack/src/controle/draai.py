@@ -308,6 +308,53 @@ def randgevallen(werk: Path):
                 f"rand-json ({'met' if openapi else 'zonder'} openapi): geen regel {verwacht!r}",
                 uit,
             )
+    # Een relatieve link naar een bericht (href="bericht/…", zonder slash):
+    # die werkt in de browser, en gaf in sleutel_van een IndexError.
+    rel = maak_kopie(werk / "rand-relatief")
+    vervang(rel, "templates/berichten.html", 'href="/bericht/{{ sleutel }}"', 'href="bericht/{{ sleutel }}"')
+    with Server(rel) as s:
+        for h in ("berichten-tonen", "berichten-verwijderen"):
+            code, uit = controleer(h, "--adres", s.adres)
+            eis(code == 0, f"rand-relatief, {h}: exit-code {code}, verwacht 0", uit)
+
+    # Zonder openapi en met een eigen 404-pagina telde eerst elk GET-pad als
+    # bestaand; dan kreeg een recept dat de leerling niet bouwde een ✗.
+    zr = maak_kopie(werk / "rand-zonder-recept", openapi=False, eind=True)
+    main = zr / "main.py"
+    main.write_text(
+        re.sub(r'\n@app\.get\("/berichten/lijst"\)[\s\S]*?(?=\n@app|\Z)', "\n", main.read_text(encoding="utf-8")),
+        encoding="utf-8",
+    )
+    sjabloon = zr / "templates/berichten.html"
+    sjabloon.write_text(
+        re.sub(r"<input type=\"search\"[\s\S]*?Ververs</button>\n", "", sjabloon.read_text(encoding="utf-8")),
+        encoding="utf-8",
+    )
+    eis("/berichten/lijst" not in main.read_text(encoding="utf-8") + sjabloon.read_text(encoding="utf-8"),
+        "rand-zonder-recept: het recept verversen staat er nog")
+    with Server(zr) as s:
+        code, uit = controleer("zonder-herladen", "--adres", s.adres)
+        eis(code == 0, f"rand-zonder-recept: exit-code {code}, verwacht 0", uit)
+
+    # Afronden plaatst een bericht met een onbekende naam; een server die dat
+    # toelaat, slaat het op. Het script zegt dat vooraf en ruimt het op.
+    af = maak_kopie(werk / "rand-afronden")
+    vervang(af, "main.py", "    if opgeslagen != wachtwoord:", "    if False:")
+    with Server(af) as s:
+        code, uit = controleer("afronden", "--adres", s.adres)
+        over = urllib.request.urlopen(s.adres + "/berichten", timeout=10).read().decode()
+        eis("Deze controle voegt toe" in uit, "rand-afronden: niet vooraf gezegd dat het schrijft", uit)
+        eis("controle-" not in over, "rand-afronden: er bleef een bericht controle-… staan", uit)
+
+    # Zonder openapi kost elke vraag naar een route een echt verzoek. Eerst
+    # stelde het script ze steeds opnieuw: 19 keer een 422 in de terminal van
+    # de leerling bij Berichten opslaan, nu 7.
+    vz = maak_kopie(werk / "rand-verzoeken", openapi=False)
+    with Server(vz) as s:
+        controleer("berichten-opslaan", "--adres", s.adres)
+    aantal = len(re.findall(r'" 422', (vz / "uvicorn.log").read_text(encoding="utf-8")))
+    eis(aantal <= 10, f"rand-verzoeken: {aantal} keer een 422, verwacht hoogstens 10")
+
     # Een server die niet start: uvicorn moet weg zijn en het log dicht.
     stuk = werk / "rand-start-niet"
     stuk.mkdir()
@@ -322,7 +369,7 @@ def randgevallen(werk: Path):
         "rand-start-niet: uvicorn draait nog of het log staat nog open",
     )
     if len(fouten) == eerder:
-        print("✓ randgevallen: een string als JSON, dubbele berichten opruimen, een JSON-body, een server die niet start")
+        print("✓ randgevallen: negen servers die anders zijn dan de les, en een server die niet start")
 
 
 def kapot(werk: Path, openapi: bool):

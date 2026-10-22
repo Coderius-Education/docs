@@ -214,6 +214,10 @@ class Server:
         self._routes = None
         self._routes_geladen = False
         self._json_routes: set[tuple[str, str]] = set()
+        # De routes veranderen niet tijdens een controle. Zonder openapi kost
+        # elke vraag een echt verzoek, en die werden steeds opnieuw gesteld:
+        # een tiental 422's per bericht in de terminal van de leerling.
+        self._onthouden: dict[tuple[str, str, str], object] = {}
 
     def verzoek(
         self, methode: str, pad: str, velden: dict | None = None, cookie: str | None = None
@@ -271,24 +275,51 @@ class Server:
                 return velden
         return None
 
+    def _onthoud(self, soort: str, methode: str, pad: str, vraag):
+        sleutel = (soort, methode, pad)
+        if sleutel not in self._onthouden:
+            self._onthouden[sleutel] = vraag()
+        return self._onthouden[sleutel]
+
+    def _geen_route(self, r: Antwoord, pad: str) -> bool:
+        """Is deze 404 er een omdat geen endpoint bij het pad past?
+
+        Met een eigen 404-pagina (Afronden) is elke 404 HTML, ook die van een
+        pad zonder route, en dan telde eerst elk pad als bestaand. OPTIONS
+        beslist: een pad met een route geeft 405 (en die blijft JSON), een
+        pad zonder route 404.
+        """
+        if r.status != 404:
+            return False
+        if not r.is_html:
+            return r.niet_gevonden
+        return self.verzoek("OPTIONS", pad).status == 404
+
     def bestaat(self, methode: str, pad: str) -> bool:
         """Heeft de server een endpoint voor deze methode en dit pad?"""
         if self.routes is not None:
             return self._route(methode, pad) is not None
+        return self._onthoud("bestaat", methode, pad, lambda: self._bestaat(methode, pad))
+
+    def _bestaat(self, methode: str, pad: str) -> bool:
         voorbeeld = re.sub(r"\{[^}]+\}", "controle", pad)
         if methode == "GET":
-            return not self.get(voorbeeld).niet_gevonden
+            return not self._geen_route(self.get(voorbeeld), voorbeeld)
         if methode != "POST":
             # Nooit een echte sleutel: een DELETE zou het bericht weghalen.
-            r = self.verzoek(methode, voorbeeld.rsplit("/", 1)[0] + "/bestaat-niet-controle")
-            return r.status != 405 and not r.niet_gevonden
+            proef = voorbeeld.rsplit("/", 1)[0] + "/bestaat-niet-controle"
+            r = self.verzoek(methode, proef)
+            return r.status != 405 and not self._geen_route(r, proef)
         # Een POST zonder velden: een endpoint met verplichte velden weigert
         # hem met 422 voordat je code draait.
         r = self.post(voorbeeld, {})
-        return r.status not in (404, 405)
+        return r.status != 405 and not self._geen_route(r, voorbeeld)
 
     def verwacht_json(self, methode: str, pad: str) -> bool:
         """Verwacht dit endpoint een JSON-body (een Pydantic-model) in plaats van formuliervelden?"""
+        return self._onthoud("json", methode, pad, lambda: self._verwacht_json(methode, pad))
+
+    def _verwacht_json(self, methode: str, pad: str) -> bool:
         if self.routes is not None:
             kaal = re.sub(r"\{[^}]*\}", "x", pad.split("?")[0])
             return any(
@@ -305,8 +336,11 @@ class Server:
         """De verplichte formuliervelden van een endpoint; None als het niet bestaat."""
         if self.routes is not None:
             return self._route(methode, pad)
+        return self._onthoud("velden", methode, pad, lambda: self._velden(pad))
+
+    def _velden(self, pad: str) -> list[str] | None:
         r = self.post(pad, {})
-        if r.status in (404, 405):
+        if r.status == 405 or self._geen_route(r, pad):
             return None
         detail = als_dict(r.json()).get("detail") if r.status == 422 else None
         if not isinstance(detail, list):
@@ -649,10 +683,13 @@ class Controle:
             for f in pagina.formulieren
             if lokaal("/berichten", f.actie or "/berichten") == "/verwijderen"
         ]
+        # Splits het pad dat lokaal() teruggeeft, niet de href zelf: een
+        # relatieve link als href="bericht/abc" werkt in de browser, maar heeft
+        # geen "/bericht/" om op te splitsen en gaf een IndexError.
         kandidaten += [
-            urllib.parse.unquote(h.split("/bericht/", 1)[1])
-            for h in pagina.links + [p for m, p in pagina.hx if m == "DELETE"]
-            if (lokaal("/berichten", h) or "").startswith("/bericht/")
+            urllib.parse.unquote(d.split("?", 1)[0].split("/bericht/", 1)[1])
+            for d in (lokaal("/berichten", h) for h in pagina.links + [p for m, p in pagina.hx if m == "DELETE"])
+            if d and d.startswith("/bericht/")
         ]
         kandidaten = [k for k in dict.fromkeys(kandidaten) if k]
         if self.s.bestaat("GET", "/bericht/{sleutel}"):
@@ -1736,8 +1773,14 @@ def afronden(c: Controle):
     if c.sessies():
         json_blijft.append(("401", True, c.log_in(naam=f"{c.marker}-onbekend", wachtwoord="x")))
     elif "wachtwoord" in (c.gastenboek_velden() or []):
-        r = c.plaats_bericht(c.bericht_tekst(), naam=f"{c.marker}-onbekend", wachtwoord="x")
+        # Een server die een onbekende naam toelaat, slaat dit bericht op: zeg
+        # dat vooraf, en ruim het daarna op, net als de andere hoofdstukken.
+        tekst = c.bericht_tekst()
+        c.meld_schrijven(f"alleen als je server een onbekende naam toelaat: {c.berichten_deel(1)}")
+        r = c.plaats_bericht(tekst, naam=f"{c.marker}-onbekend", wachtwoord="x")
         json_blijft.append(("401", True, r))
+        if r.status < 400:
+            c.ruim_op([tekst])
     mis = [code for code, juist, r in json_blijft if not (juist and r.status == int(code) and r.is_json)]
     if mis:
         c.fout(
