@@ -13,11 +13,17 @@ import { draaiTurtle } from '../../../../../packages/python-runner/src/turtle/dr
 // het codeblok van de oplossing; deze test draait dat blok en legt het
 // resultaat naast het bestand.
 //
+// Een tekening met random: {/* turtle-plaatje met zaad 7: img/naam.svg */}
+// zet random.seed(7) vóór de oplossing. Zo blijft het plaatje vast, zonder
+// dat er een seed in de oplossing van de leerling staat; de les zegt erbij
+// dat zijn tekening anders mag zijn.
+//
 // Een plaatje bijwerken: SCHRIJF_PLAATJES=1 pnpm exec vitest run turtle-plaatjes
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 const SCHRIJF = process.env.SCHRIJF_PLAATJES === '1';
-const MARKER = /\{\/\*\s*turtle-plaatje:\s*(\S+)\s*\*\/\}\s*\n+```python\n([\s\S]*?)\n```/g;
+const MARKER =
+  /\{\/\*\s*turtle-plaatje(?: met zaad (\d+))?:\s*(\S+)\s*\*\/\}\s*\n+```python\n([\s\S]*?)\n```/g;
 
 function mdxBestanden(map: string): string[] {
   return readdirSync(map).flatMap((naam) => {
@@ -40,9 +46,9 @@ const plaatjes = mdxBestanden(DOCS).flatMap((bestand) => {
   return [...tekst.matchAll(MARKER)].map((m) => ({
     bestand,
     tekst,
-    pad: join(dirname(bestand), m[1]),
-    verwijzing: m[1],
-    code: m[2],
+    pad: join(dirname(bestand), m[2]),
+    verwijzing: m[2],
+    code: m[1] ? `import random\nrandom.seed(${m[1]})\n${m[3]}` : m[3],
   }));
 });
 

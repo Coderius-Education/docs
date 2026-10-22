@@ -30,7 +30,16 @@ const projecten = projectmappen(PROJECTEN).map((pad) => relative(PROJECTEN, pad)
 // programma uit de stap ervoor, en de tip wijst de weg zonder de regels voor
 // te zeggen. Eerst stond de oplossing van de vorige stap in het veld en de
 // nieuwe regels in de tip, en dan typte de leerling alleen over.
-const ZELF_SCHRIJVEN = ['tien-groene-flessen', 'raad-het-getal', 'woordjes-overhoren'];
+const ZELF_SCHRIJVEN = [
+  'tien-groene-flessen',
+  'raad-het-getal',
+  'woordjes-overhoren',
+  'bloemenveld',
+  'spirograaf',
+  'schildpaddenrace',
+  'pixel-art',
+  'staafdiagram',
+];
 
 describe('projecten in de python-cursus', () => {
   it('er is minstens één project, en de navbar heeft een link Projecten', () => {
@@ -96,13 +105,14 @@ describe('projecten in de python-cursus', () => {
             const opdracht = s.tekst.slice(s.tekst.search(/^## Opdracht/m));
             const startcode = opdracht.match(/<CodeExercise>\{`([\s\S]*?)`\}<\/CodeExercise>/)?.[1];
             expect(startcode, s.naam).toBeDefined();
-            // Alleen commentaar, en in stap 1 de gegevens waar het programma mee werkt.
+            // Alleen commentaar, en in stap 1 de gegevens waar het programma mee
+            // werkt, en een import (een turtle-project begint met import turtle).
             const code = (startcode ?? '')
               .split('\n')
               .filter((r) => r.trim() !== '' && !r.trim().startsWith('#'));
             if (i === 0) {
               expect(
-                code.every((r) => /^\w+ = [{["\d]/.test(r)),
+                code.every((r) => /^\w+ = [{["\d]/.test(r) || /^import \w+$/.test(r)),
                 s.naam,
               ).toBe(true);
             } else {
