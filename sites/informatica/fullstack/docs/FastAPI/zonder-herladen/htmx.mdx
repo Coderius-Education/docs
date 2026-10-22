@@ -32,11 +32,15 @@ Het bestand komt van [htmx.org](https://htmx.org/docs/#installing). Staat het in
 
 Open `static/pages/home.html` uit [HTML in bestanden](site:fullstack/docs/FastAPI/paginas/html_bestanden). Wat er al in staat, zoals je `<title>` en de `<link>` naar je stylesheet, blijft staan. Zet in de `<head>` deze regel erbij:
 
+<Bestand pad="static/pages/home.html" />
+
 ```html
 <script src="/static/js/htmx.min.js"></script>
 ```
 
 En zet in de `<body>`, onder je kop, een knop met een lege `<p>` erbij:
+
+<Bestand pad="static/pages/home.html" />
 
 ```html
 <button hx-get="/tijd" hx-target="#uitkomst">Hoe laat is het?</button>
@@ -48,6 +52,8 @@ De script-tag geldt alleen voor de pagina waar hij in staat. Gebruik je later `h
 **`hx-get`** doet wat een link doet, een GET naar `/tijd`, met één verschil: htmx stuurt het verzoek, en de browser blijft op de pagina. **`hx-target`** zegt waar het antwoord van de server komt: in het element met id `uitkomst`.
 
 ## Het endpoint
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -95,27 +101,34 @@ Het type is `xhr`: een verzoek dat een script stuurde, geen pagina die de browse
 Gebeurt er niets bij een klik? Dan is htmx niet geladen: kijk in Netwerk of `htmx.min.js` een 200 kreeg, en of de script-tag in de `<head>` staat. Verschijnt er een hele pagina onder de knop? Dan geeft je endpoint een pagina of een omleiding terug in plaats van een stukje. htmx volgt een omleiding net als de browser, en zet dan de hele pagina waar hij uitkomt in het doel. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
+<Voorspel soort="Controlevraag" vraag='Je klikt op de knop en ziet "Het is nu 14:32:07". Waar wordt die tijd opgezocht?'>
+  <Keuze uitleg="htmx stuurt alleen het verzoek en zet het antwoord neer. Kijk in welk bestand datetime.now() staat.">In de browser, door htmx</Keuze>
+  <Keuze goed uitleg="De functie tijd() vraagt de klok van de server en stuurt de zin terug. htmx doet alleen het verzoek en het neerzetten.">Op de server, in de functie `tijd()` in `main.py`</Keuze>
+  <Keuze uitleg="De pagina laadt bij een klik niet opnieuw. Wat zag je in Netwerk: een nieuwe home.html, of iets anders?">In `home.html`, dat de browser opnieuw ophaalt</Keuze>
+  <Keuze uitleg="home.html staat in static/ en is geen template, dus Jinja2 komt er niet aan te pas. Welk endpoint antwoordt op /tijd?">Jinja2 vult de tijd in `home.html` in</Keuze>
+  <Uitleg>
+
+  Je ziet de klok van de computer waar je server draait. Zet je je server later op een andere computer, dan zie je de tijd van die computer. htmx is alleen de bode: bij een klik stuurt het een verzoek naar `/tijd`, en de zin die terugkomt zet het in `#uitkomst`.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Twee keer klikken
 
 Je klikt twee keer op de knop, met een paar seconden ertussen.
 
-**Vraag:** hoeveel regels staan er in de terminal, en hoeveel tijden staan er op de pagina?
+<Voorspel vraag="Hoeveel regels staan er in de terminal, en hoeveel tijden staan er op de pagina?">
+  <Keuze uitleg="Elke klik stuurt wel een verzoek. Maar zet htmx het nieuwe antwoord onder het oude, of in de plaats ervan?">Twee regels in de terminal, twee tijden op de pagina</Keuze>
+  <Keuze goed uitleg="Elke klik is een nieuw verzoek, en elk antwoord vervangt wat er in #uitkomst stond.">Twee regels in de terminal, één tijd op de pagina</Keuze>
+  <Keuze uitleg="De tweede tijd is anders dan de eerste. Wie zocht die op, en hoe kwam hij bij je pagina?">Eén regel in de terminal, één tijd op de pagina</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  `hx-target` zegt niet "zet erbij", maar "zet erin". De tweede tijd staat er dus in plaats van de eerste, niet eronder. Wil je ze onder elkaar, dan kan dat met `hx-swap`, dat je in de [htmx-recepten](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht) tegenkomt.
 
-Elke klik is een verzoek. En `hx-target` zegt niet "zet erbij", maar "zet erin".
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Twee regels in de terminal, één tijd op de pagina. Elke klik stuurt een nieuw verzoek, en elk antwoord vervangt wat er in `#uitkomst` stond. De tweede tijd staat er dus in plaats van de eerste, niet eronder.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -146,6 +159,8 @@ Een nieuw endpoint met een nieuw pad, bijvoorbeeld `/aantal-zin`. `/aantal` heb 
 <details>
 <summary>Antwoord</summary>
 
+<Bestand pad="main.py" />
+
 ```python
 @app.get("/aantal-zin")
 async def aantal_zin():
@@ -153,6 +168,8 @@ async def aantal_zin():
         aantal = len(db)
     return HTMLResponse(f"Er staan {aantal} berichten in het gastenboek.")
 ```
+
+<Bestand pad="static/pages/home.html" />
 
 ```html
 <button hx-get="/aantal-zin" hx-target="#uitkomst">Hoeveel berichten?</button>
@@ -175,6 +192,8 @@ Zet `hx-get` op de `<p>` zelf, en zeg met `hx-trigger="every 1s"` wanneer het ve
 
 <details>
 <summary>Antwoord</summary>
+
+<Bestand pad="static/pages/home.html" />
 
 ```html
 <p hx-get="/tijd" hx-trigger="every 1s">Even geduld</p>

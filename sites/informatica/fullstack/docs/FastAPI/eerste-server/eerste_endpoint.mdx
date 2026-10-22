@@ -107,6 +107,18 @@ async def info():
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag='Je verandert de naam van de functie info in over_mij. De regel @app.get("/info") erboven laat je staan. Je slaat op en gaat naar /info. Wat krijg je?'>
+  <Keuze uitleg="Een 404 krijg je als geen enkel endpoint bij het pad past. Kijk welke regel bepaalt bij welk pad een functie hoort.">`{"detail":"Not Found"}`, want de functie info bestaat niet meer</Keuze>
+  <Keuze goed uitleg="Het pad in de decorator bepaalt wanneer de functie draait. Hoe de functie heet, ziet de browser nooit.">Dezelfde JSON als eerst</Keuze>
+  <Keuze uitleg="Een NameError krijg je als Python een naam gebruikt die nog niet bestaat. Nergens in main.py staat nog info als naam die Python moet opzoeken.">Een `NameError` in de terminal, en de server start niet</Keuze>
+  <Keuze uitleg="De sleutels in de JSON komen uit de dictionary die je teruggeeft, niet uit de naam van de functie.">`{"over_mij": {"naam": "Jouw Naam", "leeftijd": 16}}`</Keuze>
+  <Uitleg>
+
+  De browser kent alleen het pad. `@app.get("/info")` koppelt dat pad aan de functie eronder, hoe die functie ook heet. Op `/over_mij` krijg je daarentegen een 404, want zo'n pad staat in geen enkele decorator.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat zie je?
@@ -117,29 +129,21 @@ async def school():
     return {"school": "Mijn school", "vak": "Informatica"}
 ```
 
-**Vraag:** Wat zie je als je naar `/school` gaat?
+<Voorspel vraag="Wat zie je als je naar /school gaat?">
+  <Keuze uitleg="De functie geeft een dictionary terug, geen HTML. Een kop maakt de browser alleen van HTML.">Een kop met Mijn school en daaronder Informatica</Keuze>
+  <Keuze goed uitleg="De functie geeft een dictionary terug, en FastAPI stuurt die als JSON naar de browser.">`{"school": "Mijn school", "vak": "Informatica"}`</Keuze>
+  <Keuze uitleg="Het pad in de decorator past precies bij het adres dat je intypt, dus FastAPI vindt dit endpoint.">`{"detail":"Not Found"}`</Keuze>
+  <Keuze uitleg="Python zet de dictionary niet zelf om in tekst voor de browser. Kijk wat er over de return-regel staat in de uitleg bij main.py.">De Python-code van de functie</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Elke dictionary die je functie teruggeeft, zet FastAPI om naar JSON. Daar hoef je zelf niets voor te doen. In opdracht 2 kijk je of het klopt.
 
-De functie returnt een Python dictionary. Wat doet FastAPI standaard met een dictionary?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```json
-{"school": "Mijn school", "vak": "Informatica"}
-```
-
-FastAPI zet de dictionary automatisch om naar JSON.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
-Voeg het `/school` endpoint toe aan je `main.py`, sla op en ga naar `http://127.0.0.1:8000/school`. Zie je hetzelfde als in het antwoord hierboven?
+Voeg het `/school` endpoint toe aan je `main.py`, sla op en ga naar `http://127.0.0.1:8000/school`. Zie je de JSON uit het goede antwoord van opdracht 1?
 
 ### Opdracht 3: Investigate - Dubbele URL
 

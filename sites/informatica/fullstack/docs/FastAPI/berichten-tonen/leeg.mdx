@@ -12,6 +12,8 @@ Een gastenboek zonder berichten toont nu een kop, een lege lijst en een link. Ee
 
 Vervang in `templates/berichten.html` de `<ul>` met de lus door dit blok:
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 {% if berichten %}
     <ul>
@@ -28,6 +30,8 @@ Vervang in `templates/berichten.html` de `<ul>` met de lus door dit blok:
 
 <details>
 <summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
+
+<Bestand pad="templates/berichten.html" />
 
 ```html
 <!DOCTYPE html>
@@ -65,9 +69,27 @@ Je endpoint `/berichten` hoeft niet te veranderen: de template kijkt zelf of de 
 3. Herlaad `/berichten`. Nu staat er "Nog geen berichten. Wees de eerste."
 4. Stop de server. SqliteDict heeft intussen een nieuwe, lege `gastenboek.db` gemaakt: gooi die weg, hernoem `gastenboek-bewaar.db` terug naar `gastenboek.db` en start opnieuw. De volgende lessen bouwen op je berichten voort.
 
+<Voorspel soort="Controlevraag" vraag="Je hebt gastenboek.db hernoemd, zoals bij stap 2 van Testen, en opent /berichten. Wat krijgt de browser van je server?">
+  <Keuze uitleg="Zonder bestand maakt SqliteDict een nieuwe, lege database aan. Je endpoint loopt dus zonder fout door tot de template.">Een `500`, omdat `gastenboek.db` niet bestaat</Keuze>
+  <Keuze uitleg="Dan moest de browser zelf kiezen tussen de twee stukken, en een browser kent geen Jinja2. Wie leest de if?">De hele template, met `{% if %}`, `{% else %}` en beide stukken erin</Keuze>
+  <Keuze goed uitleg="De lijst is leeg, dus de if is niet waar. Jinja2 schrijft op de server alleen het stuk onder else, en laat de ul weg.">De kop, "Nog geen berichten. Wees de eerste." en de link, zonder `<ul>`</Keuze>
+  <Keuze uitleg="Een if kiest één van de twee stukken. Komt de ul dan ook nog in de HTML?">Een lege `<ul>`, met "Nog geen berichten. Wees de eerste." eronder</Keuze>
+  <Uitleg>
+
+  Net als de for-lus draait de if op de server. De browser krijgt alleen het stuk dat Jinja2 koos, en weet niet dat er ooit een `{% if %}` stond. Je endpoint hoefde er niets voor te doen: het stuurde een lege lijst mee, en de template besliste.
+
+  </Uitleg>
+</Voorspel>
+
+:::tip[Eerst op papier]
+Speel eerst zonder computer Jinja, met `{% for %}` en `{% if %}`: [Template invullen](site:fullstack/docs/unplugged/template-invullen). Je docent kan de hand-out printen.
+:::
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Leeg of niet?
+
+<Bestand pad="templates/namen.html" />
 
 ```html
 {% if namen %}
@@ -77,21 +99,17 @@ Je endpoint `/berichten` hoeft niet te veranderen: de template kijkt zelf of de 
 {% endif %}
 ```
 
-**Vraag:** wat zie je als je endpoint `{"namen": []}` meestuurt? En bij `{"namen": [""]}`, een lijst met één lege tekst erin?
+<Voorspel vraag="Wat zie je als je endpoint een lege lijst meestuurt als namen? En bij een lijst met één lege tekst erin?">
+  <Keuze uitleg="Een lege tekst lijkt op niets, maar de if kijkt naar de lijst zelf. Hoeveel items heeft een lijst met één lege tekst?">Twee keer "De lijst is leeg."</Keuze>
+  <Keuze goed uitleg="Een lege lijst telt als niet waar. De tweede lijst heeft één item, en dan telt hij als waar, wat dat item ook is.">Bij `[]` "De lijst is leeg.", bij `[""]` "Er staan namen in de lijst."</Keuze>
+  <Keuze uitleg="Een lijst zonder items telt in een if als niet waar, net als in Python. Welk stuk toont Jinja2 dan?">Twee keer "Er staan namen in de lijst."</Keuze>
+  <Keuze uitleg="Een if met een lege lijst is niet waar, meer niet. Jinja2 kiest dan een van de twee stukken, zonder foutmelding.">Een foutmelding bij `[]`, want er is niets om te tonen</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  De if kijkt alleen of er iets in de lijst staat, niet wat. Een lege tekst is ook een item. Wil je weten of de namen zelf leeg zijn, dan moet je ze een voor een bekijken.
 
-Een lijst telt als niet waar als er niets in staat. Telt een lege tekst als niets, of als één ding?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Bij `[]` zie je "De lijst is leeg." Bij `[""]` zie je "Er staan namen in de lijst.": de lijst heeft één item, ook al is dat een lege tekst. Het gaat om de lijst, niet om wat erin staat.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -128,6 +146,8 @@ Verander de tekst in het lege geval zo dat "Schrijf de eerste" een link wordt na
 <details>
 <summary>Antwoord</summary>
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 {% else %}
     <p>Nog geen berichten. <a href="/gastenboek">Schrijf de eerste</a>.</p>
@@ -151,6 +171,8 @@ De berichten komen binnen in de volgorde waarin ze zijn opgeslagen, dus het laat
 
 <details>
 <summary>Antwoord</summary>
+
+<Bestand pad="templates/berichten.html" />
 
 ```html
 {% if berichten %}

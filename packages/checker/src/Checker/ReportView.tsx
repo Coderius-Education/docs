@@ -4,6 +4,7 @@ import type { CheckReport, CheckerConfig, Concept, ConceptMatch, Level, Plek } f
 import { BuitenLesstof } from './BuitenLesstof';
 import { FileStats } from './FileStats';
 import styles from './ReportView.module.css';
+import { Samenhang } from './Samenhang';
 
 interface ReportViewProps {
   report: CheckReport;
@@ -264,6 +265,8 @@ export function ReportView({
       ))}
 
       <OokGebruikt report={report} config={config} onToonPlekken={onToonPlekken} />
+
+      <Samenhang fouten={report.samenhang ?? []} onToonPlekken={onToonPlekken} />
 
       <BuitenLesstof vondsten={report.buitenLesstof} onToonPlekken={onToonPlekken} />
     </div>

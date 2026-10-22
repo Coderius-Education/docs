@@ -14,6 +14,8 @@ In [Een formulier opslaan](site:fullstack/docs/FastAPI/berichten-opslaan/naam-op
 
 ### Formulier (`static/pages/gastenboek_form.html`)
 
+<Bestand pad="static/pages/gastenboek_form.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -31,6 +33,8 @@ In [Een formulier opslaan](site:fullstack/docs/FastAPI/berichten-opslaan/naam-op
 ### Endpoints (`main.py`, onder de endpoints van de naam)
 
 Zet `import time` bovenaan je `main.py`, bij de andere imports.
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -86,6 +90,8 @@ Blijft je data niet bewaard? Kijk dan of je `db.commit()` niet bent vergeten. Me
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -244,25 +250,35 @@ async def berichten():
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag='Je verstuurt twee berichten via het formulier. Daarna draai je bekijk_db.py met "gastenboek.db" tussen de haakjes. Wat zie je?'>
+  <Keuze uitleg="naam en bericht zijn de velden van het formulier. In de database komen ze terug in de waarde. Wat is hier de sleutel?">Twee sleutels: naam en bericht</Keuze>
+  <Keuze uitleg="laatste_naam staat in namen.db. Het gastenboek schrijft naar een eigen bestand.">Drie sleutels: laatste_naam en de twee berichten</Keuze>
+  <Keuze uitleg="Kijk naar regel 8 van het endpoint. Is de sleutel bij elk bericht hetzelfde?">Eén sleutel, met beide berichten erin</Keuze>
+  <Keuze goed uitleg="Regel 8 maakt bij elk bericht een nieuwe sleutel met time.time_ns(), en regel 9 zet de velden uit het formulier in een dictionary.">Twee sleutels die met bericht_ beginnen, elk met een dictionary</Keuze>
+  <Uitleg>
+
+  Wat in het formulier `name="naam"` en `name="bericht"` heet, komt via `Form(...)` in je functie en daarna als velden in de waarde. De sleutel bedenkt je server zelf. Die heb je later nodig om één bericht aan te wijzen.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Hoeveel berichten?
 
-Iemand haalt `time.time_ns()` weg en schrijft `sleutel = "bericht"`. Daarna verstuurt iemand drie berichten. Wat laat `/berichten` zien?
+Iemand haalt `time.time_ns()` weg en schrijft `sleutel = "bericht"`. Daarna verstuurt iemand drie berichten.
 
-<details>
-<summary>Tip</summary>
+<Voorspel vraag="Wat laat /berichten zien?">
+  <Keuze uitleg="Elk bericht krijgt nu dezelfde sleutel. Hoeveel waarden passen onder één sleutel?">Alle drie de berichten</Keuze>
+  <Keuze uitleg="Elk bericht krijgt een commit(). Wat doet een nieuwe waarde met wat er al onder die sleutel stond?">Alleen het eerste bericht</Keuze>
+  <Keuze uitleg="SqliteDict waarschuwt niet als een sleutel al bestaat. Hij doet hetzelfde als een gewone dictionary.">Een foutmelding, want de sleutel bestaat al</Keuze>
+  <Keuze goed uitleg="Alle drie gaan onder de sleutel bericht, dus elk nieuw bericht overschrijft het vorige.">Alleen het laatste bericht</Keuze>
+  <Uitleg>
 
-Hoeveel verschillende sleutels zijn er dan?
+  Dit gebeurde ook met `laatste_naam` in de vorige les. Een vaste sleutel bewaart één ding; `time.time_ns()` geeft elk bericht een eigen sleutel.
 
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Eén bericht: het laatste. Alle drie gaan onder de sleutel `bericht`, dus elk nieuw bericht overschrijft het vorige.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -292,6 +308,8 @@ Maak een endpoint `/aantal` dat teruggeeft hoeveel berichten er in het gastenboe
 
 <details>
 <summary>Antwoord</summary>
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/aantal")

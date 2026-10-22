@@ -6,6 +6,8 @@ Verwijderen gaat net als opslaan: een formulier met een POST, en daarna met een 
 
 De sleutels staan sinds [Eén item tonen: de sleutel uit de URL](site:fullstack/docs/FastAPI/berichten-tonen/detailpagina) al in je lijst. Zet het endpoint voor verwijderen onder je andere endpoints:
 
+<Bestand pad="main.py" />
+
 <CodeUitleg>
 
 ```python showLineNumbers
@@ -36,6 +38,8 @@ Daarna stuur je de bezoeker terug naar de lijst, met 303, zoals na het opslaan.
 
 In `templates/berichten.html` krijgt elk bericht een eigen formuliertje, onder de link. Vervang de for-lus binnen de `<ul>` door deze:
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 {% for sleutel, bericht in berichten %}
     <li>
@@ -54,6 +58,8 @@ Een `<input type="hidden">` ziet de bezoeker niet, maar hij gaat wel mee met het
 <summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
 
 Alleen het formulier in de `<li>` is nieuw; de rest is zoals in [Eén item tonen: de sleutel uit de URL](site:fullstack/docs/FastAPI/berichten-tonen/detailpagina).
+
+<Bestand pad="templates/berichten.html" />
 
 ```html
 <!DOCTYPE html>
@@ -98,6 +104,8 @@ Alleen het formulier in de `<li>` is nieuw; de rest is zoals in [Eén item tonen
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -282,9 +290,27 @@ async def bericht_detail(request: Request, sleutel: str):
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag='Je verandert in berichten.html het verborgen veld in name="id". Je endpoint laat je zoals het is. Wat gebeurt er als je op Verwijderen klikt?'>
+  <Keuze uitleg="De functie vraagt met Form(...) om een veld met een bepaalde naam. Stuurt het formulier dat veld nog mee?">Het bericht verdwijnt, en je staat weer op de lijst</Keuze>
+  <Keuze uitleg="Die controle staat binnen je functie. Komt FastAPI wel zo ver, als het veld dat hij verwacht ontbreekt?">Er gebeurt niets: `if sleutel in db` vangt het op en je staat weer op de lijst</Keuze>
+  <Keuze goed uitleg="De functie verwacht een veld sleutel, en het formulier stuurt alleen id. FastAPI weigert het verzoek voordat je functie begint.">Een `422`, en het bericht blijft staan</Keuze>
+  <Keuze uitleg="Een 404 krijg je bij een adres zonder route. Het formulier gaat nog steeds naar /verwijderen, en die route bestaat.">Een `404`, want er is geen bericht met die naam</Keuze>
+  <Uitleg>
+
+  De sleutel gaat drie keer over: als `{{ sleutel }}` in de template, als `name="sleutel"` in het formulier en als de parameter `sleutel` in je functie. De browser stuurt alleen wat in `name` staat. Klopt dat niet met de parameter, dan zie je in Netwerk een `422`, met in de reactie welk veld ontbrak.
+
+  </Uitleg>
+</Voorspel>
+
+:::tip[Controleer je server]
+Laat je server draaien en typ in een tweede terminal `python controleer.py berichten-verwijderen`. Het script kijkt of alles uit dit hoofdstuk werkt; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
+:::
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat ziet de bezoeker?
+
+<Bestand antwoord />
 
 ```html
 <form method="post" action="/verwijderen">
@@ -293,21 +319,17 @@ async def bericht_detail(request: Request, sleutel: str):
 </form>
 ```
 
-**Vraag:** wat ziet de bezoeker van dit formulier op de pagina? En wat komt er binnen bij `/verwijderen` als hij op de knop klikt?
+<Voorspel vraag="Wat ziet de bezoeker van dit formulier op de pagina? En wat komt er binnen bij /verwijderen als hij op de knop klikt?">
+  <Keuze uitleg="Kijk naar het type van de input. Niet elk invoerveld staat op het scherm.">Een tekstvak met `bericht_17` erin, en de knop</Keuze>
+  <Keuze uitleg="Een veld hoeft niet zichtbaar te zijn om mee te gaan. Wat bepaalt of een veld meegaat: of je het ziet, of dat het een name heeft?">Alleen de knop, en er komt niets binnen, want de bezoeker vulde niets in</Keuze>
+  <Keuze goed uitleg="Een veld met type hidden staat niet op het scherm, maar gaat wel mee met zijn name en zijn value.">Alleen de knop, en bij `/verwijderen` komt `sleutel` binnen met `"bericht_17"`</Keuze>
+  <Keuze uitleg="Het formulier stuurt alleen de velden met een name, met hun value. Welke value staat er in het verborgen veld?">De knop, en bij `/verwijderen` komt het hele bericht binnen</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Het verborgen veld zie je niet op de pagina, maar het staat wel in de HTML. Wie de broncode van de pagina bekijkt (Ctrl+U), ziet hem staan. Verborgen is dus niet geheim: zet er nooit iets in wat een bezoeker niet mag weten.
 
-Een `<input>` met `type="hidden"` staat wel in de HTML, maar niet op het scherm.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Alleen de knop Verwijderen. Het verborgen veld zie je niet, maar het gaat wel mee: bij `/verwijderen` komt `sleutel` binnen met de waarde `"bericht_17"`. Wie de broncode van de pagina bekijkt (Ctrl+U), ziet hem wel staan.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -345,6 +367,8 @@ Stuur door naar `/berichten?verwijderd=1`. Het stuk na het vraagteken kun je in 
 <details>
 <summary>Antwoord</summary>
 
+<Bestand pad="main.py" />
+
 {/* route-dubbel: antwoord vervangt GET /berichten uit Eén item tonen, met een melding erbij */}
 ```python
 @app.get("/berichten")
@@ -367,6 +391,9 @@ async def verwijderen(sleutel: str = Form(...)):
 ```
 
 In `templates/berichten.html`, onder de `<h1>`:
+
+<Bestand pad="templates/berichten.html" />
+
 ```html
 {% if verwijderd %}
     <p>Bericht verwijderd</p>

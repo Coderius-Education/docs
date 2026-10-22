@@ -1,0 +1,63 @@
+/* Site-specifieke aanvullingen op de gedeelde Coderius-huisstijl
+   (packages/shared/css/). Kleuren en letters komen uit de huisstijl. */
+
+/* De navbar heeft hier veel items (FastAPI, Veiligheid, Hoe start ik?,
+   Unplugged, Cheatsheet, Er gaat iets mis, Project checken). Met de gewone
+   ruimte ertussen liepen ze op 1280 breed over twee regels; tot 1440 breed
+   staan ze wat dichter op elkaar. Onder 997 klapt de navbar in een menu. */
+@media (min-width: 997px) and (max-width: 1439px) {
+  :root:not(#\#):not(#\#) {
+    --ifm-navbar-item-padding-horizontal: 0.55rem;
+  }
+}
+
+/* De naslagpagina's (Cheatsheet, Er gaat iets mis): met de zoeker erop
+   (NaslagZoeker zet data-naslag) worden de uitklapblokken compacte rijen in
+   plaats van losse blauwe kaarten, zodat er meer onderwerpen in beeld
+   staan. */
+html:has([data-naslag]) .theme-doc-markdown details:not(#\#):not(#\#) {
+  margin: -1px 0 0;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 0;
+  background: var(--ifm-background-surface-color);
+  box-shadow: none;
+  --ifm-alert-border-color: var(--ifm-color-emphasis-200);
+  color: inherit;
+}
+
+/* NaslagZoeker zet data-rand op de eerste en laatste zichtbare rij van een
+   hoofdstuk, ook als er bij het zoeken rijen verborgen zijn. */
+html:has([data-naslag]) .theme-doc-markdown details[data-rand~="eerste"]:not(#\#):not(#\#) {
+  margin-top: 0;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+html:has([data-naslag]) .theme-doc-markdown details[data-rand~="laatste"]:not(#\#):not(#\#) {
+  margin-bottom: 1rem;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+html:has([data-naslag]) .theme-doc-markdown details[open]:not(#\#):not(#\#) {
+  background: var(--ifm-background-color);
+}
+
+html:has([data-naslag]) .theme-doc-markdown details > summary:not(#\#):not(#\#) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  font-weight: 500;
+}
+
+html:has([data-naslag]) .theme-doc-markdown details > summary:hover:not(#\#):not(#\#) {
+  color: var(--ifm-color-primary);
+}
+
+html:has([data-naslag]) .theme-doc-markdown h2:not(#\#):not(#\#) {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.4rem;
+}

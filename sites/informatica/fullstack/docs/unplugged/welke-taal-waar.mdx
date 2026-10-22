@@ -1,0 +1,157 @@
+---
+description: Sorteer stroken code op de plek waar ze draaien, server of browser, en ontdek dat de browser nooit Python of Jinja te zien krijgt.
+---
+
+# Welke taal, waar?
+
+<Handout>
+
+In een webproject staan vier talen door elkaar: Python, HTML met Jinja, CSS
+en JavaScript. Ze draaien niet op dezelfde plek. Een deel draait op de
+server, een deel in de browser van de bezoeker, en Jinja zit ertussenin. Wie
+weet waar een regel draait, weet ook wat hij wel en niet kan.
+
+## Wat je nodig hebt
+
+- Per tweetal een geprinte hand-out, een schaar en een pen.
+- De stroken staan op het knipblad, de laatste pagina. Print die enkelzijdig
+  of los, anders knip je door wat er op de achterkant staat.
+- Ongeveer 20 minuten.
+
+## Zo werkt het
+
+1. Knip de twaalf stroken los en schud ze.
+2. Leg elke strook in een van de drie vakken hieronder. Twijfel je, leg hem
+   op de streep en bespreek hem straks.
+3. Schrijf bij elke strook in het vak het nummer op.
+
+<div className="handout-teltabel">
+
+| Draait op de server | De server vult het in, de browser krijgt het resultaat | Gaat zoals het is naar de browser |
+|---|---|---|
+| | | |
+| | | |
+| | | |
+| | | |
+| | | |
+
+</div>
+
+## Wat ziet de bezoeker?
+
+Een bezoeker kan in de browser alles bekijken wat de server stuurt: met
+Paginabron bekijken, of in het tabblad Netwerk.
+
+<div className="handout-samen">
+
+Welke stroken kan de bezoeker daar letterlijk terugvinden? Schrijf de
+nummers op.
+
+Mijn gok: ______
+
+</div>
+
+## Waar hoort het?
+
+Schrijf achter elke wens: server of browser.
+
+<div className="handout-vragen">
+
+1. Onder het berichtveld telt een teller mee terwijl je typt.
+2. Een nieuw bericht komt in `gastenboek.db`.
+3. Een bericht mag niet langer zijn dan 80 tekens, ook niet als iemand de
+   pagina omzeilt.
+4. De kop wordt donkerblauw.
+5. Op `/berichten` staat elk bericht in een eigen `<li>`.
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. Strook 4 is HTML, maar staat niet in het vak van de browser. Waarom niet?
+2. Kan JavaScript in de browser `gastenboek.db` lezen? Waarom wel of niet?
+3. Wens 3 kun je ook met `maxlength` in het formulier doen. Waarom is dat
+   niet genoeg?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+**Sorteren.**
+
+| Strook | Waar |
+|---|---|
+| 1 `@app.get("/berichten")` | server |
+| 2 `with SqliteDict("gastenboek.db") as db:` | server |
+| 3 `{% for sleutel, bericht in berichten %}` | de server vult het in |
+| 4 `<li>{{ bericht.naam }}</li>` | de server vult het in |
+| 5 `<form method="post" action="/gastenboek">` | browser |
+| 6 `h1 { color: darkblue; }` | browser |
+| 7 `teller.textContent = 80 - veld.value.length;` | browser |
+| 8 `return RedirectResponse(url="/berichten", status_code=303)` | server |
+| 9 `<link rel="stylesheet" href="/static/css/style.css">` | browser |
+| 10 `veld.addEventListener("input", tel);` | browser |
+| 11 `{% if berichten %}` | de server vult het in |
+| 12 `naam: str = Form(...)` | server |
+
+**Wat ziet de bezoeker?** 5, 6, 7, 9 en 10: HTML, CSS en JavaScript gaan
+zoals ze zijn naar de browser. Van strook 4 ziet hij alleen het resultaat,
+bijvoorbeeld `<li>Sam</li>`. Jinja-regels als 3 en 11 komen er nooit aan, en
+Python ook niet.
+
+Zo vult de server strook 3, 4 en 11 in, en dit is alles wat de browser krijgt:
+
+```python
+from jinja2 import Template
+
+template = Template("{% if berichten %}{% for sleutel, bericht in berichten %}<li>{{ bericht.naam }}</li>{% endfor %}{% endif %}")
+print(template.render(berichten=[("bericht_1", {"naam": "Sam"})]))   # <li>Sam</li>
+```
+
+**Waar hoort het?** 1 browser (JavaScript), 2 server, 3 server, 4 browser
+(CSS), 5 server (Jinja vult de lijst in).
+
+**Bespreek na.** Vraag 1: de `{{ }}` is van Jinja, en Jinja draait op de
+server. De browser krijgt de `<li>` pas als de naam al is ingevuld. Vraag 2:
+nee. De database staat op de computer van de server, en de browser krijgt
+alleen wat de server stuurt. Vraag 3: `maxlength` staat in de browser, en
+alles in de browser kan de bezoeker veranderen of overslaan. Een controle die
+moet gelden, hoort op de server.
+
+</Antwoordblad>
+
+<div className="handout-paginawissel handout-knipblad">
+
+## Knipblad
+
+| Stroken |
+|---|
+| 1 `@app.get("/berichten")` |
+| 6 `h1 { color: darkblue; }` |
+| 11 `{% if berichten %}` |
+| 4 `<li>{{ bericht.naam }}</li>` |
+| 9 `<link rel="stylesheet" href="/static/css/style.css">` |
+| 2 `with SqliteDict("gastenboek.db") as db:` |
+| 7 `teller.textContent = 80 - veld.value.length;` |
+| 12 `naam: str = Form(...)` |
+| 5 `<form method="post" action="/gastenboek">` |
+| 3 `{% for sleutel, bericht in berichten %}` |
+| 10 `veld.addEventListener("input", tel);` |
+| 8 `return RedirectResponse(url="/berichten", status_code=303)` |
+
+</div>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [Templates met Jinja2](site:fullstack/docs/FastAPI/formulieren/templates)
+  en [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser).
+- Boven elk codeblok in de lessen staat welk bestand het is en waar het
+  draait, in dezelfde drie soorten als de vakken hierboven.
+
+</div>
+
+</Handout>

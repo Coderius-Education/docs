@@ -44,6 +44,21 @@ Voor een voorkeur die niemand kan schaden is dat allemaal onnodig: welke taal, w
 
 Je server draait nu met sessies. Kijk nog één keer in het tabblad **App** naar je cookies en denk terug aan de vorige twee lessen: bij de cookie-aanpak stond je naam er leesbaar in, in `sessie_id` staat een rij tekens die niets verraadt.
 
+<Voorspel soort="Controlevraag" vraag="Je bent ingelogd in je gastenboek met sessies. Je stopt fastapi dev en start hem opnieuw. Daarna herlaad je /gastenboek. Wat zie je?">
+  <Keuze uitleg="Dat geldt voor iets wat alleen in het geheugen van Python staat. Waar bewaart jouw server de sessies?">Het inlogformulier, want een herstart wist alle sessies</Keuze>
+  <Keuze uitleg="De browser merkt niets van een herstart van je server. Hoe lang bewaart hij de cookie volgens max_age?">Het inlogformulier, want de browser gooit de cookie weg</Keuze>
+  <Keuze goed uitleg="De browser stuurt hetzelfde sessie-id mee, en dat staat nog in sessies.db.">Je bent nog ingelogd</Keuze>
+  <Uitleg>
+
+  Een sessie heeft twee helften: het sessie-id in de cookie bij de bezoeker, en de naam in `sessies.db` op je server. Een herstart raakt geen van beide. Pas als je `sessies.db` weggooit of de cookie verwijdert in App, moet je opnieuw inloggen.
+
+  </Uitleg>
+</Voorspel>
+
+:::tip[Eerst op papier]
+Speel eerst zonder computer na waarom een naam in een cookie niet genoeg is, en een sessie wel: [Een postbode zonder geheugen](site:fullstack/docs/unplugged/postbode). Je docent kan de hand-out printen.
+:::
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wie wint?
@@ -52,23 +67,17 @@ Twee sites bewaren allebei je naam. Site A zet `naam=Jan` in een cookie. Site B 
 
 Je opent bij allebei de ontwikkelaarstools en verandert de cookie in de naam van iemand anders.
 
-**Vraag:** bij welke site sta je daarna als die ander te boek?
+<Voorspel vraag="Bij welke site sta je daarna als die ander te boek?">
+  <Keuze uitleg="Bij B heb je een sessie-id veranderd, geen naam. Past jouw nieuwe waarde op een sessie die de server kent?">Alleen bij site B</Keuze>
+  <Keuze uitleg="Bij een van de twee staat in de cookie alleen een nummer. Kan de server daar de naam vinden die jij typte?">Bij allebei</Keuze>
+  <Keuze uitleg="Een van de twee sites leest de naam rechtstreeks uit wat de browser meestuurt. Welke?">Bij geen van beide</Keuze>
+  <Keuze goed uitleg="Site A leest de naam rechtstreeks uit de cookie, dus jouw wijziging is meteen waar.">Alleen bij site A</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Bij site B verandert er niets: je hebt een sessie-id gewijzigd dat nu nergens meer op past, dus de server behandelt je als een nieuwe bezoeker met een leeg formulier. Je komt niet in de sessie van die ander terecht. Daarvoor zou je het sessie-id van die ander moeten raden, en dat zijn 32 willekeurige tekens.
 
-Bij welke van de twee komt de naam die de pagina toont uit iets wat jij zojuist hebt getypt?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Bij site A. Die leest de naam rechtstreeks uit de cookie, dus jouw wijziging is meteen waar.
-
-Bij site B verandert er niets: je hebt een sessie-id gewijzigd dat nu nergens meer op past, dus de server behandelt je als een nieuwe bezoeker met een leeg formulier. Je komt niet in de sessie van die ander terecht. Daarvoor zou je het sessie-id van die ander moeten raden, en dat zijn 32 willekeurige tekens.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run - Kijk wat er over de lijn gaat
 
@@ -112,6 +121,8 @@ Dit is een voorkeur die niemand kan schaden, dus een cookie volstaat en heb je g
 
 Een nieuw endpoint dat de keuze onthoudt:
 
+<Bestand pad="main.py" />
+
 ```python
 @app.get("/volgorde/{keuze}")
 async def volgorde(keuze: str):
@@ -122,6 +133,8 @@ async def volgorde(keuze: str):
 
 In je `GET /berichten` komen twee dingen bij. Zet de parameter `volgorde: str = Cookie(default="nieuw")` erbij, naast wat er al staat. En zet direct na het ophalen van `alle_berichten`:
 
+<Bestand pad="main.py" />
+
 ```python
 if volgorde != "oud":
     alle_berichten = list(reversed(alle_berichten))
@@ -130,6 +143,9 @@ if volgorde != "oud":
 Gebruik je `berichten_lijst.html` uit de htmx-recepten, geef `GET /berichten/lijst` dan dezelfde twee aanpassingen, anders springt de lijst na Ververs terug.
 
 In `templates/berichten.html`, bijvoorbeeld boven de lijst:
+
+<Bestand pad="templates/berichten.html" />
+
 ```html
 <a href="/volgorde/nieuw">Nieuwste eerst</a>
 <a href="/volgorde/oud">Oudste eerst</a>
@@ -153,6 +169,8 @@ Twee dingen dus: `del sessies[sessie_id]` op de server en `delete_cookie` op het
 <details>
 <summary>Antwoord</summary>
 
+<Bestand pad="main.py" />
+
 ```python
 @app.post("/uitloggen")
 async def uitloggen(sessie_id: str = Cookie(default="")):
@@ -167,6 +185,8 @@ async def uitloggen(sessie_id: str = Cookie(default="")):
 ```
 
 En de knop in `gastenboek.html`, binnen het `{% if naam %}`-blok, onder het formulier om te schrijven. Wie niet is ingelogd, ziet hem dan niet:
+
+<Bestand pad="templates/gastenboek.html" />
 
 ```html
 <form method="post" action="/uitloggen">

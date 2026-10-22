@@ -5,6 +5,8 @@
  *
  *     node scripts/controleer-tekst.mjs            alle sites
  *     node scripts/controleer-tekst.mjs play       alleen die site
+ *     node scripts/controleer-tekst.mjs sites/informatica/play/docs/a.mdx
+ *                                                  alleen die bestanden
  *     node scripts/controleer-tekst.mjs --streng   fouten laten falen
  *     node scripts/controleer-tekst.mjs --regels changed.json
  *                                                  alleen gewijzigde regels
@@ -24,10 +26,11 @@
  * niemand nog iets kan mergen. Met --streng tellen fouten wél mee.
  */
 
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { join, relative } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { kies, leesArgumenten } from './tekst-argumenten.mjs';
 
 const require = createRequire(import.meta.url);
 const { controleer } = require('../packages/shared/stijl.js');
@@ -44,11 +47,25 @@ const OVERSLAAN = new Set([
   'extracted',
 ]);
 
-const argumenten = process.argv.slice(2);
-const streng = argumenten.includes('--streng');
-const regelsVlag = argumenten.indexOf('--regels');
-const regelsPad = regelsVlag === -1 ? undefined : argumenten[regelsVlag + 1];
-const alleenSite = argumenten.find((a, i) => !a.startsWith('--') && i !== regelsVlag + 1);
+const SITE_IDS = new Set(alleSiteMappen().map(({ id }) => id));
+const {
+  streng,
+  regelsPad,
+  sites: alleenSites,
+  bestanden,
+} = leesArgumenten(process.argv.slice(2), SITE_IDS);
+const alleenBestanden = new Set(
+  bestanden.map((a) => relative(ROOT, resolve(a)).split('\\').join('/')),
+);
+for (const bestand of alleenBestanden) {
+  if (!/\.mdx?$/.test(bestand) || !existsSync(join(ROOT, bestand))) {
+    console.error(
+      `Onbekend argument: ${bestand}. Geef een site-id (${[...SITE_IDS].sort().join(', ')}) of een .md/.mdx-bestand.`,
+    );
+    process.exit(2);
+  }
+}
+const gezien = new Set();
 
 /**
  * Per bestand de gewijzigde regels, of null als alles telt.
@@ -76,10 +93,9 @@ function lesbestanden(map) {
 
 // Uit de registry: elke site staat in sites/<vak>/<id> (de homepage in
 // sites/home, zonder docs/ of src/pages/, dus die levert niets op).
+const keuze = kies(alleSiteMappen(), alleenSites, alleenBestanden);
 function sites() {
-  return alleSiteMappen()
-    .filter(({ id }) => !alleenSite || id === alleenSite)
-    .sort((a, b) => a.id.localeCompare(b.id));
+  return [...keuze.sites].sort((a, b) => a.id.localeCompare(b.id));
 }
 
 const inActions = process.env.GITHUB_ACTIONS === 'true';
@@ -101,6 +117,8 @@ for (const { id: site, dir } of sites()) {
 
     for (const pad of bestanden) {
       const relatief = relative(ROOT, pad).split('\\').join('/');
+      if (!keuze.telt(site, relatief)) continue;
+      gezien.add(relatief);
       if (regels && !regels[relatief]?.length) continue;
       const alle = controleer(readFileSync(pad, 'utf8'), { bestand: relatief });
       const meldingen = regels ? opGewijzigdeRegels(alle, regels[relatief]) : alle;
@@ -125,6 +143,14 @@ for (const { id: site, dir } of sites()) {
   }
 
   if (telling.fout || telling.waarschuwing) perSite.set(site, telling);
+}
+
+const buiten = [...alleenBestanden].filter((b) => !gezien.has(b));
+if (buiten.length) {
+  console.error(
+    `Geen lestekst (docs/ of src/pages/ van een site): ${buiten.join(', ')}. Die controleert dit script niet.`,
+  );
+  process.exit(2);
 }
 
 const tabel = [...perSite.entries()]

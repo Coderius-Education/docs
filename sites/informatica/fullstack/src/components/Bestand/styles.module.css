@@ -1,0 +1,56 @@
+/* Het label sluit aan op het codeblok eronder: zelfde breedte, geen ruimte
+   ertussen, en een gekleurde streep links per taal. */
+.bestand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.75rem;
+  margin: 1.25rem 0 0;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-bottom: none;
+  border-left-width: 4px;
+  border-radius: var(--ifm-code-border-radius) var(--ifm-code-border-radius) 0 0;
+  background: var(--ifm-color-emphasis-100);
+  font-size: 0.85rem;
+}
+
+.pad {
+  font-family: var(--ifm-font-family-monospace);
+  font-weight: 600;
+}
+
+.plek {
+  color: var(--ifm-color-emphasis-700);
+}
+
+.python {
+  border-left-color: #3572a5;
+}
+
+.html {
+  border-left-color: #e34c26;
+}
+
+.jinja {
+  border-left-color: #b41717;
+}
+
+.css {
+  border-left-color: #663399;
+}
+
+.js {
+  border-left-color: #b8860b;
+}
+
+.anders {
+  border-left-color: var(--ifm-color-emphasis-500);
+}
+
+/* Het codeblok eronder sluit aan: geen ronde hoeken bovenaan. */
+.bestand + * pre,
+.bestand + div[class*="codeBlockContainer"] {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}

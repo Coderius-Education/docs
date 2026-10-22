@@ -13,6 +13,8 @@ Je gastenboek slaat berichten op, maar om ze te zien moet je nog naar `/berichte
 
 Tot nu toe vulde je template één waarde in met `{{ naam }}`. Met `{% for %}` herhaalt Jinja2 een stuk HTML voor elk item in een lijst:
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 <ul>
     {% for bericht in berichten %}
@@ -26,6 +28,8 @@ Dit werkt net als een for-lus in Python, alleen sluit je de lus af met `{% endfo
 ## De data meesturen
 
 In [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel) gaf `/berichten` de berichten nog als JSON terug. Vervang dat endpoint door deze versie, die alle berichten ophaalt en meestuurt onder de naam die de template gebruikt:
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -54,7 +58,7 @@ De lijst gaat mee onder de naam `berichten`, en dat is precies de naam die de te
 
 ## Compleet voorbeeld
 
-`templates/berichten.html`:
+<Bestand pad="templates/berichten.html" />
 
 ```html
 <!DOCTYPE html>
@@ -91,6 +95,8 @@ Blijft de lijst leeg terwijl er wel data in je database staat? Dan komt de lijst
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -253,9 +259,23 @@ async def berichten(request: Request):
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag="Er staan twee berichten in je database. Welke HTML krijgt de browser als hij /berichten opent?">
+  <Keuze uitleg="Dan moest de browser de lus zelf draaien, en een browser kent geen Jinja2. Kijk wie TemplateResponse aanroept, en waar dat gebeurt.">De template zoals hij is, met `{% for %}` en `{% endfor %}` erin</Keuze>
+  <Keuze goed uitleg="Jinja2 draait de lus op de server, binnen TemplateResponse. Wat de browser krijgt, is het resultaat daarvan.">Een `<ul>` met twee `<li>`'s, met de namen en berichten al ingevuld</Keuze>
+  <Keuze uitleg="Zo werkte je oude /berichten. Kijk wat de nieuwe versie teruggeeft in plaats van de lijst zelf.">De berichten als JSON</Keuze>
+  <Keuze uitleg="De browser krijgt geen lijst met berichten om zelf in te vullen. Waar gebeurt het invullen dan?">Een lege `<ul>`, die de browser daarna met de berichten vult</Keuze>
+  <Uitleg>
+
+  Een template is een recept voor de server. Jinja2 vult het in, en de browser ziet alleen de gewone HTML die eruit komt. Open maar eens Netwerk, klik op de regel `berichten` en kijk bij Reactie: je vindt er geen enkele `{% %}`.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Hoeveel regels?
+
+<Bestand pad="main.py" />
 
 {/* niet-compileren: fragment uit een handler */}
 ```python
@@ -263,7 +283,8 @@ namen = ["Jan", "Sarah", "Piet"]
 return templates.TemplateResponse(request, "namen.html", {"namen": namen})
 ```
 
-Template:
+<Bestand pad="templates/namen.html" />
+
 ```html
 <h1>Bezoekers</h1>
 {% for naam in namen %}
@@ -271,21 +292,16 @@ Template:
 {% endfor %}
 ```
 
-**Vraag:** hoeveel `<h1>` en hoeveel `<p>` staan er straks op de pagina?
+<Voorspel vraag="Hoeveel h1-koppen en hoeveel p-alinea's staan er straks op de pagina?">
+  <Keuze uitleg="Jinja2 herhaalt niet de hele template. Kijk waar de h1 staat ten opzichte van for en endfor.">Drie `<h1>` en drie `<p>`</Keuze>
+  <Keuze goed uitleg="De h1 staat boven de for, dus die schrijft Jinja2 één keer. De p staat binnen de lus en komt er voor elke naam.">Eén `<h1>` en drie `<p>`</Keuze>
+  <Keuze uitleg="De p staat tussen for en endfor. Hoe vaak draait de lus bij een lijst met drie namen?">Eén `<h1>` en één `<p>` met alle drie de namen erin</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Alles tussen `{% for %}` en `{% endfor %}` schrijft Jinja2 per item opnieuw, wat erbuiten staat maar één keer. Daar maak je gebruik van in opdracht 5, bij een tabel met één kopregel.
 
-Jinja2 herhaalt alleen wat tússen `{% for %}` en `{% endfor %}` staat. De rest staat er één keer.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Eén `<h1>` en drie `<p>`. De `<h1>` staat buiten de lus, dus die komt er maar één keer.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -322,6 +338,8 @@ Jinja2 houdt zelf bij hoeveel keer de lus gedraaid heeft. Binnen een `{% for %}`
 <details>
 <summary>Antwoord</summary>
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 <ul>
     {% for bericht in berichten %}
@@ -347,6 +365,8 @@ De `<tr>` met de kopjes hoort buiten de lus. Alleen de `<tr>` met de data herhaa
 
 <details>
 <summary>Antwoord</summary>
+
+<Bestand pad="templates/berichten.html" />
 
 ```html
 <table>

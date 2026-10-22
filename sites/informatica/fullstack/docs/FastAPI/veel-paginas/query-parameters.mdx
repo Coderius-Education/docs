@@ -137,6 +137,26 @@ async def zoek(term: str):
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag='In home.html zet je een link met href="/zoek?woord=kat". Je endpoint is nog zoek(term: str). Welke statuscode staat er in Netwerk als je op de link klikt?'>
+  <Keuze uitleg="FastAPI koppelt een query-parameter op naam, niet op plek. Heet de naam in de URL zoals de parameter in de functie?">200, met `{"je_zocht":"kat"}`</Keuze>
+  <Keuze uitleg="Het pad is /zoek, en dat endpoint bestaat. Wat na het vraagteken staat, telt niet mee bij het zoeken naar een route.">404</Keuze>
+  <Keuze goed uitleg="De functie vraagt om term, en die staat niet in de URL. FastAPI weigert het verzoek voordat je functie draait.">422</Keuze>
+  <Keuze uitleg="Je functie draait niet eens, dus er kan in je code niets misgaan. Wie weigert het verzoek dan?">500</Keuze>
+  <Uitleg>
+
+  In de reactie staat `"loc":["query","term"]`: in de query ontbreekt `term`. De naam na het vraagteken in je HTML en de naam van de parameter in Python moeten precies gelijk zijn. `woord` telt niet, ook al staat er een waarde achter.
+
+  </Uitleg>
+</Voorspel>
+
+:::tip[Controleer je server]
+Laat je server draaien en typ in een tweede terminal `python controleer.py veel-paginas`. Het script kijkt of alles uit dit hoofdstuk werkt; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
+:::
+
+:::tip[Eerst op papier]
+Speel eerst zonder computer de router van FastAPI: [Welke route antwoordt?](site:fullstack/docs/unplugged/welke-route). Je docent kan de hand-out printen.
+:::
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Welke waarde?
@@ -147,21 +167,17 @@ async def hallo(naam: str = "Bezoeker"):
     return {"bericht": f"Hallo {naam}!"}
 ```
 
-**Vraag:** wat krijg je op `/hallo?naam=Jan`? En op `/hallo`, zonder vraagteken?
+<Voorspel vraag="Op /hallo?naam=Jan groet de server Jan. Wat krijg je op /hallo, zonder vraagteken?">
+  <Keuze uitleg="Die weigering krijg je als een parameter ontbreekt die moet. Kijk wat er achter naam in de functie staat.">Een 422</Keuze>
+  <Keuze goed uitleg="Staat naam niet in de URL, dan gebruikt Python de standaardwaarde, net als bij een gewone functie.">`{"bericht":"Hallo Bezoeker!"}`</Keuze>
+  <Keuze uitleg="Een lege tekst krijg je met een lege standaardwaarde, of met ?naam= zonder iets erachter. Hier staat er iets anders achter naam.">`{"bericht":"Hallo !"}`, zonder naam</Keuze>
+  <Keuze uitleg="Het pad /hallo bestaat, ook zonder vraagteken. Wat na het vraagteken staat, telt niet mee bij het zoeken naar een route.">Een 404</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  `/hallo?naam=Jan` geeft `{"bericht":"Hallo Jan!"}`, en `/hallo` geeft `{"bericht":"Hallo Bezoeker!"}`. Haal je de standaardwaarde weg, dan wordt de tweede een 422.
 
-Achter `naam` staat een standaardwaarde. Wanneer gebruikt Python die?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-`/hallo?naam=Jan` geeft `{"bericht":"Hallo Jan!"}`. Op `/hallo` staat er geen naam in de URL, dus krijgt `naam` de standaardwaarde: `{"bericht":"Hallo Bezoeker!"}`. Zonder die standaardwaarde had je een 422 gekregen.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 

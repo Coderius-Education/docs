@@ -16,6 +16,11 @@ const MASKERS = [
   // MDX-exports met startcode (web-docs hoist die naar de kop van de pagina,
   // zodat drie velden dezelfde literal delen): ook code, geen lestekst.
   /export const \w+ = `[\s\S]*?`;/g,
+  // ESM-imports bovenaan een MDX-pagina: drie op een rij telden als drie
+  // zinnen die met hetzelfde woord beginnen. Alleen de volledige vorm met
+  // `from '…'`, zodat een zin die met "import" begint proza blijft.
+  /^import\s[^\n]*?\sfrom\s+['"][^'"\n]+['"];?[ \t]*$/gm,
+  /^import\s*\{[^}]*\}\s*from\s+['"][^'"\n]+['"];?[ \t]*$/gm,
   /\{`[\s\S]*?`\}/g, // <CodeExercise>{`…`}</CodeExercise>
   /`[^`\n]*`/g, // inline code
   /<code>[\s\S]*?<\/code>/g, // HTML-code, in <summary>'s en tabellen

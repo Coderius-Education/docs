@@ -8,6 +8,8 @@ Voor elk recept geldt hetzelfde. De pagina met de `hx-`-attributen heeft de scri
 
 Het gastenboekformulier zonder herladen. Het staat in `static/pages/gastenboek_form.html` uit [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel), en dat bestand heeft nog geen `<head>`. Zet er een `<head>` met de script-tag bij, boven de `<body>`:
 
+<Bestand pad="static/pages/gastenboek_form.html" />
+
 ```html
 <head>
     <script src="/static/js/htmx.min.js"></script>
@@ -15,6 +17,8 @@ Het gastenboekformulier zonder herladen. Het staat in `static/pages/gastenboek_f
 ```
 
 Vervang in de `<form>`-tag `method` en `action` door `hx-post` en `hx-target`, en zet onder het formulier een lege `<p>` erbij. De velden en de knop blijven zoals ze waren:
+
+<Bestand pad="static/pages/gastenboek_form.html" />
 
 ```html
 <form hx-post="/gastenboek" hx-target="#antwoord">
@@ -27,6 +31,8 @@ Vervang in de `<form>`-tag `method` en `action` door `hx-post` en `hx-target`, e
 ```
 
 In het endpoint uit [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen) verandert één regel: vervang de `return`.
+
+<Bestand pad="main.py" />
 
 {/* route-dubbel: vervangt POST /gastenboek uit Inloggen; alleen de return verandert */}
 ```python
@@ -59,6 +65,8 @@ Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de v
 
 Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`. Knip het hele `{% if berichten %}`-blok uit je `berichten.html` en zet het in dat nieuwe bestand. Neem alles mee wat je lijst al had: de link naar de detailpagina uit [Eén item tonen](site:fullstack/docs/FastAPI/berichten-tonen/detailpagina) en het formuliertje om te verwijderen uit [Een bericht verwijderen: een verborgen veld](site:fullstack/docs/FastAPI/berichten-verwijderen/verwijderen). Zo ziet het er dan ongeveer uit:
 
+<Bestand pad="templates/berichten_lijst.html" />
+
 ```html
 {% if berichten %}
     <ul>
@@ -79,6 +87,8 @@ Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin
 
 Het endpoint is nieuw, met een eigen pad:
 
+<Bestand pad="main.py" />
+
 ```python
 @app.get("/berichten/lijst")
 async def berichten_lijst(request: Request):
@@ -92,6 +102,8 @@ async def berichten_lijst(request: Request):
 ```
 
 In `berichten.html` zet je de script-tag van htmx in de `<head>`. Op de plek waar het `{% if %}`-blok stond, komen de knop en een `<div>` met een id:
+
+<Bestand pad="templates/berichten.html" />
 
 ```html
 <button hx-get="/berichten/lijst" hx-target="#berichten-lijst">Ververs</button>
@@ -107,6 +119,8 @@ In `berichten.html` zet je de script-tag van htmx in de `<head>`. Op de plek waa
 
 Als anderen tegelijk berichten schrijven, wil je die zien verschijnen zonder F5. Dat gebeurt als je je server openzet voor de klas, wat je later doet in [Laat het aan anderen zien](site:fullstack/docs/FastAPI/afronden/laat-het-zien). Met **`hx-trigger`** kies je wanneer het verzoek gaat:
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 <div id="berichten-lijst" hx-get="/berichten/lijst" hx-trigger="every 10s">
     {% include "berichten_lijst.html" %}
@@ -118,6 +132,8 @@ Zonder `hx-target` komt het antwoord in het element zelf. Elke tien seconden kom
 ## Verwijderen
 
 GET haalt op, POST stuurt in. HTTP kent meer werkwoorden, en **DELETE** zegt precies wat het doet. Een formulier zonder htmx kan alleen GET en POST; htmx kan ze allemaal.
+
+<Bestand pad="main.py" />
 
 ```python
 @app.delete("/bericht/{sleutel}")
@@ -131,6 +147,8 @@ async def bericht_verwijderen(sleutel: str):
 ```
 
 In `berichten_lijst.html` krijgt elke `<li>` een id, en vervang je het formuliertje door een knop. De link naar de detailpagina blijft staan:
+
+<Bestand pad="templates/berichten_lijst.html" />
 
 ```html
 <li id="bericht-{{ sleutel }}">
@@ -148,6 +166,8 @@ Het antwoord is leeg, en dat is de bedoeling. **`hx-swap`** zegt hoe het antwoor
 
 Een zoekveld dat de server vraagt om berichten met een woord erin. Het komt in `berichten.html`, boven de `<div id="berichten-lijst">` uit het verversrecept:
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 <input type="search" name="term" placeholder="Zoek een woord"
        hx-get="/berichten/lijst" hx-target="#berichten-lijst"
@@ -155,6 +175,8 @@ Een zoekveld dat de server vraagt om berichten met een woord erin. Het komt in `
 ```
 
 Een `<input>` met `hx-get` stuurt zijn eigen waarde mee als query-parameter, dus `/berichten/lijst?term=hoi`. Vervang het endpoint van hierboven door deze versie, met een parameter erbij:
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/berichten/lijst")
@@ -175,6 +197,8 @@ async def berichten_lijst(request: Request, term: str = ""):
 De for-lus houdt alleen de berichten waar de zoekterm in staat. `lower()` maakt van een tekst kleine letters, zodat `Hoi` ook gevonden wordt als je `hoi` typt. `delay:300ms` wacht tot je even stopt met typen, anders gaat er bij elke letter een verzoek. En `changed` slaat toetsen over die de tekst niet veranderen, zoals de pijltjes.
 
 Vindt de server niets, dan komt het `{% else %}`-blok in beeld. Daar staat "Nog geen berichten. Wees de eerste.", en dat klopt niet als er wel berichten zijn maar geen enkele past. Daarom gaat `term` mee naar de template. Vervang in `berichten_lijst.html` het `{% else %}`-blok door:
+
+<Bestand pad="templates/berichten_lijst.html" />
 
 ```html
 {% else %}
@@ -199,9 +223,25 @@ Zoeken en vanzelf verversen gaan niet samen: de `<div>` die elke tien seconden v
 | `hx-swap="outerHTML"` | vervang het doel zelf | |
 | `hx-swap="beforeend"` | zet het antwoord achter wat er al staat | |
 
+<Voorspel soort="Controlevraag" vraag="Je klikt in het verversrecept op Ververs. Wat zet htmx in #berichten-lijst?">
+  <Keuze uitleg="Die pagina krijg je op /berichten. Kijk welke template het endpoint /berichten/lijst teruggeeft.">De hele `berichten.html`, met kop en al</Keuze>
+  <Keuze goed uitleg="Het endpoint vult de lijst-template op de server in, en htmx krijgt alleen die ingevulde HTML.">Alleen de lijst, al ingevuld door Jinja2</Keuze>
+  <Keuze uitleg="De browser kent geen Jinja2. Wie vult de for-lus in voordat het antwoord vertrekt?">De lijst-template met de for-lus er nog in, en de browser vult hem in</Keuze>
+  <Keuze uitleg="include werkt bij elk antwoord dat de server met deze template maakt, niet alleen bij de eerste keer. Wat geeft /berichten/lijst terug?">Niets, want include werkt alleen bij het eerste laden</Keuze>
+  <Uitleg>
+
+  Jinja2 draait op de server, ook bij een verzoek van htmx. De browser krijgt nooit een `{% for %}` te zien, alleen de `<ul>` die eruit kwam. Daarom kan `berichten_lijst.html` twee keer dienen: via `{% include %}` in de hele pagina, en los als antwoord op een klik.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
 
 Bij htmx zie je fouten niet op de pagina. Een 404, een 500 of een server die uit staat: htmx laat het doel dan met rust, en op het scherm gebeurt niets. Kijk daarom bij elk probleem eerst in het tabblad **Netwerk**. htmx meldt de fout ook in het tabblad **Console**, met een rode regel als `Response Status Error Code 404 from /bericht/…`; dat tabblad leer je kennen in [Console en Elementen](site:fullstack/docs/FastAPI/in-de-browser/devtools-console). Een rode regel in Netwerk zegt wat er mis is: 404 is een verkeerd pad in `hx-get` of `hx-post`, 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait, 405 een `@app.post` waar `hx-delete` op wijst.
+
+:::tip[Controleer je server]
+Laat je server draaien en typ in een tweede terminal `python controleer.py zonder-herladen`. Het script kijkt of `/tijd` en de recepten die je bouwde een stukje HTML teruggeven, zonder omleiding; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
+:::
 
 ## Opdrachten
 
@@ -209,21 +249,17 @@ Bij htmx zie je fouten niet op de pagina. Een 404, een 500 of een server die uit
 
 Je zet het gastenboekformulier om naar `hx-post`, maar laat in het endpoint `return RedirectResponse(url="/berichten", status_code=303)` staan.
 
-**Vraag:** wat komt er in `#antwoord`?
+<Voorspel vraag="Wat komt er in #antwoord?">
+  <Keuze uitleg="htmx doet met een omleiding wat de browser ermee doet. En wat htmx binnenkrijgt, zet hij in het doel.">Niets, want htmx volgt geen omleiding</Keuze>
+  <Keuze uitleg="Het verzoek ging via htmx, en dan blijft de browser op de pagina staan. Waar zet htmx alles wat binnenkomt?">Niets, de browser gaat naar /berichten zoals zonder htmx</Keuze>
+  <Keuze goed uitleg="htmx volgt de omleiding, krijgt de complete pagina van /berichten terug en zet die in het doel.">Je hele berichtenpagina, met kop en al</Keuze>
+  <Keuze uitleg="Een 303 is geen foutcode maar een omleiding, dus htmx gaat gewoon verder. Waar komt hij uit?">Een rode regel met 303 in Netwerk, en verder niets</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Er staat een tweede pagina midden in je formulierpagina. Daarom geeft een endpoint voor htmx een stukje terug, nooit een omleiding. Zie je ooit een hele pagina in een doel, kijk dan in Netwerk: daar staat de 303 met de GET erachter.
 
-htmx doet met een omleiding wat de browser ermee doet, en zet daarna alles wat binnenkomt in het doel.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Je hele berichtenpagina, met kop en al, in de `<p>` onder het formulier. htmx volgt de omleiding, krijgt de complete pagina van `/berichten` terug en zet die in het doel. Een endpoint voor htmx geeft een stukje terug, nooit een omleiding.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run - Het formulier
 
@@ -272,6 +308,8 @@ Een DELETE-endpoint op `/berichten` dat alle sleutels weghaalt. Het doel is de h
 <details>
 <summary>Antwoord</summary>
 
+<Bestand pad="main.py" />
+
 ```python
 @app.delete("/berichten")
 async def alles_wissen(request: Request):
@@ -281,6 +319,8 @@ async def alles_wissen(request: Request):
         db.commit()
     return templates.TemplateResponse(request, "berichten_lijst.html", {"berichten": []})
 ```
+
+<Bestand pad="templates/berichten.html" />
 
 ```html
 <button hx-delete="/berichten" hx-target="#berichten-lijst" hx-confirm="Alle berichten verwijderen?">Alles wissen</button>

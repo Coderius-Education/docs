@@ -22,6 +22,8 @@ je-project/
     └── dobbelsteen.html
 ```
 
+<Bestand pad="templates/dobbelsteen.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -33,6 +35,8 @@ je-project/
 ```
 
 `{{ worp }}` is een open plek. Wat daar komt te staan, beslist Python. In je `main.py` komen daarvoor drie dingen bij: `import random` helemaal bovenaan, `Request` en `Jinja2Templates` bij de imports, en onder `app.mount` de regel `templates = …`. De bovenkant van je `main.py` ziet er dan zo uit:
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -56,6 +60,8 @@ templates = Jinja2Templates(directory="templates")
 </CodeUitleg>
 
 Zet het endpoint onder je andere endpoints:
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -84,12 +90,16 @@ async def dobbelsteen(request: Request):
 
 </CodeUitleg>
 
-<details>
-<summary>Voorspel: wat zie je als je de pagina drie keer herlaadt?</summary>
+<Voorspel vraag="Je gaat naar /dobbelsteen en herlaadt de pagina drie keer. Wat zie je?">
+  <Keuze uitleg="Dat zou gebeuren als de worp één keer werd gegooid, bij het starten van de server. Kijk waar random.randint staat.">Drie keer hetzelfde getal</Keuze>
+  <Keuze goed uitleg="Bij elk verzoek draait de functie opnieuw, gooit opnieuw en vult de template opnieuw in.">Steeds een getal van 1 tot en met 6, vaak een ander</Keuze>
+  <Keuze uitleg="De browser krijgt de ingevulde HTML, nooit de template zelf. Jinja draait op de server.">De tekst `{{ worp }}`</Keuze>
+  <Uitleg>
 
-Steeds een ander getal, bijvoorbeeld "Je gooide een 4.", dan een 1, dan een 6. Bij elk verzoek draait de functie opnieuw, gooit opnieuw, en vult de template opnieuw in. Met een `FileResponse` zou je drie keer precies hetzelfde zien.
+  Bijvoorbeeld "Je gooide een 4.", dan een 1, dan een 6. Met een `FileResponse` zou je drie keer precies hetzelfde zien, want dan stuurt de server een vast bestand.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Ga naar [http://127.0.0.1:8000/dobbelsteen](http://127.0.0.1:8000/dobbelsteen) en herlaad een paar keer.
 
@@ -102,6 +112,8 @@ GET /dobbelsteen
 ```
 
 En dit is het antwoord dat de browser kreeg:
+
+<Bestand antwoord />
 
 ```html
 <!DOCTYPE html>
@@ -119,6 +131,8 @@ Nergens staat `{{ worp }}`. Jinja2 vult de template in op de server, en de brows
 
 Elke sleutel in het dictionary is een naam die de template kan gebruiken. Stuur je er twee mee, dan heb je twee open plekken:
 
+<Bestand pad="main.py" />
+
 {/* niet-compileren: fragment uit de handler hierboven */}
 ```python
 return templates.TemplateResponse(
@@ -128,22 +142,40 @@ return templates.TemplateResponse(
 )
 ```
 
+<Bestand pad="templates/dobbelsteen.html" />
+
 ```html
 <p>{{ speler }} gooide een {{ worp }}.</p>
 ```
 
 Is een waarde zelf een dictionary, dan haal je er in de template een onderdeel uit met een punt:
 
+<Bestand pad="main.py" />
+
 {/* niet-compileren: fragment uit een handler */}
 ```python
 {"speler": {"naam": "Sam", "punten": 12}}
 ```
+
+<Bestand pad="templates/dobbelsteen.html" />
 
 ```html
 <p>{{ speler.naam }} heeft {{ speler.punten }} punten.</p>
 ```
 
 In Python schrijf je `speler["naam"]`; in een template mag `speler.naam`. Dat kom je weer tegen als je de berichten uit je database op een pagina zet.
+
+<Voorspel soort="Controlevraag" vraag="Je zet dobbelsteen.html per ongeluk in static/pages/ in plaats van in templates/. Het endpoint laat je zoals het is. Wat gebeurt er als je naar /dobbelsteen gaat?">
+  <Keuze uitleg="Het endpoint vraagt nog steeds een template op. Jinja2 zoekt daarvoor alleen in de map die je aan Jinja2Templates gaf.">De pagina met een getal, want FastAPI vindt het bestand toch</Keuze>
+  <Keuze uitleg="Zo gaat een bestand uit static naar de browser, maar dan via een adres onder /static. Het endpoint /dobbelsteen stuurt geen bestand, het vult een template in.">De pagina met letterlijk `{{ worp }}` erin</Keuze>
+  <Keuze uitleg="Een lege plek krijg je als een naam niet in het dictionary staat. Hier gaat het eerder mis: welk bestand moet Jinja2 invullen?">`Je gooide een .`</Keuze>
+  <Keuze goed uitleg="Jinja2 vindt dobbelsteen.html niet in templates/. Dat is een fout in de server, dus de browser krijgt een 500.">Internal Server Error, en in de terminal TemplateNotFound</Keuze>
+  <Uitleg>
+
+  Een template hoort in `templates/`, want daar zoekt `Jinja2Templates(directory="templates")`. In `static/` staan bestanden die zonder invullen naar de browser gaan. Zie je `TemplateNotFound`, kijk dan eerst in welke map het bestand staat.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -156,6 +188,8 @@ Je gooide een .
 **Oorzaak:** de naam in de template staat niet in het dictionary. Jinja2 geeft dan geen foutmelding, maar laat de plek leeg.
 
 **Oplossing:** vergelijk de naam tussen `{{ }}` letter voor letter met de sleutel in het dictionary.
+
+<Bestand pad="main.py" />
 
 {/* niet-compileren: fragment uit een handler, toont de fout */}
 ```python
@@ -182,6 +216,8 @@ Meer uitleg: [Er gaat iets mis](site:fullstack/docs/troubleshooting#templates-ji
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -281,18 +317,24 @@ async def dobbelsteen(request: Request):
 
 </details>
 
+:::tip[Eerst op papier]
+Sorteer eerst zonder computer welke regels op de server draaien en welke in de browser: [Welke taal, waar?](site:fullstack/docs/unplugged/welke-taal-waar). Je docent kan de hand-out printen.
+:::
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat zie je?
 
-Template:
+<Bestand pad="templates/welkom.html" />
+
 ```html
 <h1>Welkom {{ naam }}</h1>
 <p>Leeftijd: {{ leeftijd }}</p>
 <p>Klas: {{ klas }}</p>
 ```
 
-Python:
+<Bestand pad="main.py" />
+
 {/* niet-compileren: fragment uit een handler */}
 ```python
 return templates.TemplateResponse(request, "welkom.html", {
@@ -300,27 +342,17 @@ return templates.TemplateResponse(request, "welkom.html", {
 })
 ```
 
-**Vraag:** wat zie je op de pagina?
+<Voorspel vraag="Wat zie je op de pagina?">
+  <Keuze uitleg="Dan zou Jinja2 niet op hoofdletters letten. Zoek bij elke open plek de sleutel met precies dezelfde naam, letter voor letter.">Drie regels, de laatste is Klas: 3B</Keuze>
+  <Keuze goed uitleg="De template vraagt om klas, het dictionary heeft Klas. Voor Jinja2 zijn dat twee verschillende namen.">Drie regels, maar achter Klas staat niets</Keuze>
+  <Keuze uitleg="Jinja2 stopt niet bij een naam die hij niet kent. Kijk in Er gaat iets mis wat hij dan wel doet.">Internal Server Error</Keuze>
+  <Keuze uitleg="De regel met Klas staat gewoon in de template, en Jinja2 vult alleen de open plekken in. De rest van de HTML blijft staan.">Twee regels: Welkom Jan en Leeftijd 16</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Op de pagina staan `Welkom Jan`, `Leeftijd: 16` en `Klas:` met niets erachter. Een naam die niet in het dictionary staat, wordt een lege plek, zonder foutmelding. Een verschil van één hoofdletter is genoeg.
 
-Zoek bij elke `{{ }}` de sleutel met precies dezelfde naam in het dictionary, letter voor letter.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```
-Welkom Jan
-Leeftijd: 16
-Klas:
-```
-
-In het dictionary staat `Klas` met een hoofdletter, en de template vraagt om `klas`. Voor Jinja2 zijn dat twee verschillende namen, dus die plek blijft leeg, zonder foutmelding.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -329,6 +361,8 @@ Maak de map `templates`, het bestand `dobbelsteen.html` en het endpoint `/dobbel
 ### Opdracht 3: Investigate - De oude schrijfwijze
 
 Veel voorbeelden die je online vindt, zetten `request` ín het dictionary in plaats van ervoor. Probeer dat eens:
+
+<Bestand pad="main.py" />
 
 {/* niet-compileren: fragment uit een handler */}
 ```python
@@ -360,7 +394,8 @@ Reken alles uit in Python en stuur drie waarden mee. De template telt niet zelf 
 <details>
 <summary>Antwoord</summary>
 
-`templates/twee.html`:
+<Bestand pad="templates/twee.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -369,6 +404,8 @@ Reken alles uit in Python en stuur drie waarden mee. De template telt niet zelf 
     </body>
 </html>
 ```
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/twee")
@@ -398,7 +435,8 @@ Stuur `{"ik": {"naam": …, "leeftijd": …, "hobby": …}}` mee. In de template
 <details>
 <summary>Antwoord</summary>
 
-`templates/kaart.html`:
+<Bestand pad="templates/kaart.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -409,6 +447,8 @@ Stuur `{"ik": {"naam": …, "leeftijd": …, "hobby": …}}` mee. In de template
     </body>
 </html>
 ```
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/kaart")

@@ -116,9 +116,14 @@ describe('SqliteDict eerst in een script', () => {
         expect(opdrachten, stap).toMatch(new RegExp(`### Opdracht \\d+: ${stap}`));
       }
       expect(opdrachten).toMatch(/### Opdracht \d+: (Modify|Make)/);
-      const aantal = opdrachten.match(/^### Opdracht /gm)?.length ?? 0;
-      const antwoorden = opdrachten.match(/<summary>Antwoord<\/summary>/g)?.length ?? 0;
-      expect(antwoorden).toBe(aantal);
+      // Per opdracht een antwoord: een uitklapblok, of bij een Predict een
+      // <Voorspel>, die zijn antwoord zelf toont na een keuze.
+      const zonder = opdrachten
+        .split(/^(?=### Opdracht )/m)
+        .filter((o) => o.startsWith('### Opdracht '))
+        .filter((o) => !/<summary>Antwoord<\/summary>|<Voorspel\b/.test(o))
+        .map((o) => o.split('\n')[0]);
+      expect(zonder).toEqual([]);
     },
   );
 

@@ -156,6 +156,21 @@ const sidebars: SidebarsConfig = {
       ],
     },
   ],
+  // Hand-outs zonder computer, in de volgorde van de lessen waar ze bij horen.
+  // Een eigen sidebar met een navbar-link Unplugged, zodat op een hand-out
+  // alleen de hand-outs in beeld staan. Om op 1280 breed op één regel te
+  // passen, staan de navbar-items tot 1440 breed wat dichter op elkaar
+  // (src/css/custom.css).
+  unpluggedSidebar: [
+    'unplugged/index',
+    'unplugged/verzoek-rollenspel',
+    'unplugged/welke-route',
+    'unplugged/welke-taal-waar',
+    'unplugged/volg-de-naam',
+    'unplugged/template-invullen',
+    'unplugged/postbode',
+    'unplugged/vertrouw-de-bezoeker',
+  ],
   // Eerst de startpagina (het ene idee, de spelregel, de statuscodes) en het
   // gereedschap (httpx). Dan per zwakheid een categorie met kleine lessen, van
   // makkelijk naar moeilijk: zichtbaar (wat je server laat zien, nog zonder

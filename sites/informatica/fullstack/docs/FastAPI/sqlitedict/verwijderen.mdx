@@ -30,14 +30,41 @@ Eerst kijken of hij er is, met `in` uit [Bestaat de sleutel? in en get](site:ful
 
 </CodeUitleg>
 
-<details>
-<summary>Voorspel: wat print het de eerste keer, en wat de tweede keer?</summary>
+<Voorspel vraag="Je draait dit script twee keer na elkaar. Wat print het de eerste keer, en wat de tweede keer?">
+  <Keuze goed uitleg="De eerste keer staat de leeftijd er nog. De tweede keer is hij al weg, dus de if is niet waar.">Eerst `Leeftijd verwijderd`, dan `Er was geen leeftijd`</Keuze>
+  <Keuze uitleg="Na de eerste keer staat de verwijdering in het bestand, want db.commit() schreef hem weg.">Twee keer `Leeftijd verwijderd`</Keuze>
+  <Keuze uitleg="De if kijkt eerst met in, dus Python komt de tweede keer niet bij del.">Eerst `Leeftijd verwijderd`, dan een `KeyError`</Keuze>
+  <Uitleg>
 
-De eerste keer `Leeftijd verwijderd`. De tweede keer `Er was geen leeftijd`: de sleutel is dan al weg, dus `"leeftijd" in db` is `False`.
+  Dankzij `in` vóór `del` mag het script zo vaak draaien als je wilt, zonder om te vallen.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Draai het twee keer en kijk of je voorspelling klopte. Draai daarna `bekijk_db.py`: de leeftijd staat er niet meer in.
+
+Test jezelf. In `mijn_data.db` staan `naam` en `leeftijd`. Je draait dit script:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    del db["leeftijd"]
+db.commit()
+print("Leeftijd verwijderd")
+```
+
+<Voorspel soort="Controlevraag" vraag="Het script print Leeftijd verwijderd. Wat laat bekijk_db.py daarna zien?">
+  <Keuze uitleg="Die zin print je script zelf, wat er ook in het bestand gebeurt. Kijk waar db.commit() staat.">Alleen naam</Keuze>
+  <Keuze goed uitleg="db.commit() staat na het with-blok. Dan is de database al dicht en is het verwijderen al weggegooid.">Nog steeds naam en leeftijd</Keuze>
+  <Keuze uitleg="SqliteDict geeft hier geen foutmelding. Het script print toch ook gewoon zijn laatste regel?">Een foutmelding op de regel met db.commit()</Keuze>
+  <Keuze uitleg="del haalt één sleutel weg, niet de hele database.">0 sleutels</Keuze>
+  <Uitleg>
+
+  `db.commit()` hoort binnen het `with`-blok, direct onder de `del`. Wat je script print, zegt niets over wat er in het bestand staat; dat zie je met `bekijk_db.py`.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -89,26 +116,17 @@ with SqliteDict("mijn_data.db") as db:
     print("Woonplaats" in db)
 ```
 
-**Vraag:** welke twee regels print dit?
+<Voorspel vraag="Welke twee regels print dit, van boven naar beneden?">
+  <Keuze uitleg="Tel de regel met hobby ook mee: die zet een nieuwe sleutel in de database.">`2` · `False`</Keuze>
+  <Keuze uitleg="del haalt woonplaats echt weg, en commit() schrijft dat naar het bestand.">`4` · `False`</Keuze>
+  <Keuze uitleg="Kijk naar de eerste letter in de laatste regel. Heet de sleutel zo?">`3` · `True`</Keuze>
+  <Keuze goed uitleg="Er gaat één sleutel weg en er komt er één bij. Woonplaats met een hoofdletter is een andere sleutel dan woonplaats.">`3` · `False`</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Na het script staan `naam`, `leeftijd` en `hobby` erin. `"Woonplaats" in db` was ook `False` geweest als de woonplaats er nog stond: een sleutel moet letter voor letter kloppen.
 
-Er gaat één sleutel weg en er komt één bij. En let op de hoofdletter in de laatste regel.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```
-3
-False
-```
-
-Drie sleutels: `naam`, `leeftijd` en `hobby`. `"Woonplaats" in db` is `False`, en dat zou ook zo zijn als de woonplaats er nog stond: de sleutel heet `woonplaats`, met een kleine letter.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 

@@ -142,6 +142,18 @@ async def styled():
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag="In de string van /pagina sluit je de kop per ongeluk af met een h2-tag in plaats van een h1-tag. Je slaat op en herlaadt /pagina. Wat gebeurt er?">
+  <Keuze uitleg="Python kijkt alleen of de string netjes open en dicht gaat met de drie aanhalingstekens. Wat er tussen staat, leest Python niet.">De server start niet, met een `SyntaxError` in de terminal</Keuze>
+  <Keuze uitleg="Een 500 krijg je als de Python-code van je functie misgaat. Die geeft hier gewoon een string terug.">De browser toont `Internal Server Error`</Keuze>
+  <Keuze goed uitleg="Voor Python is de HTML gewoon tekst. Pas de browser leest de tags, en die sluit de kop zelf af.">Je krijgt de pagina met status 200, en de kop staat er zoals altijd</Keuze>
+  <Keuze uitleg="FastAPI controleert wat er in het verzoek staat, niet de tekst die jouw functie terugstuurt.">FastAPI weigert de pagina met een 422</Keuze>
+  <Uitleg>
+
+  De HTML in je string draait niet op de server. Python stuurt hem als tekst mee, en pas de browser maakt er een pagina van. Een fout in je HTML zie je daarom nooit in de terminal: je ziet hem in de browser, als de pagina er anders uitziet dan je bedoelde.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - JSON of HTML?
@@ -152,21 +164,17 @@ async def titel():
     return {"titel": "<h1>Hallo</h1>"}
 ```
 
-**Vraag:** Zie je een heading of JSON?
+<Voorspel vraag="Wat zie je op /titel?">
+  <Keuze uitleg="Er staat wel een h1-tag in de tekst, maar kijk wat er in de decorator ontbreekt. Wat doet FastAPI dan met een dictionary?">Een grote kop met Hallo</Keuze>
+  <Keuze goed uitleg="Zonder response_class=HTMLResponse maakt FastAPI JSON van de dictionary, en de tags zijn daarin gewone tekens.">JSON met de tags erin als tekst</Keuze>
+  <Keuze uitleg="JSON laat tekst staan zoals hij is, ook de punthaken. FastAPI haalt er niets uit.">`{"titel": "Hallo"}`, zonder de tags</Keuze>
+  <Keuze uitleg="Een dictionary met tekst erin is voor FastAPI geen probleem. Een 500 krijg je pas als er in je code iets misgaat.">Een 500 Internal Server Error</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Je ziet `{"titel":"<h1>Hallo</h1>"}`. De browser maakt alleen een kop van HTML, en dan moet de server er ook HTML van zeggen. Dat doet `response_class=HTMLResponse`, met een string en niet met een dictionary.
 
-Kijk of er `response_class=HTMLResponse` staat. Wat doet FastAPI als dat er niet staat?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Je ziet JSON: `{"titel": "<h1>Hallo</h1>"}`. Zonder `response_class=HTMLResponse` maakt FastAPI JSON van wat je functie teruggeeft.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 

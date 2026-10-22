@@ -1,5 +1,6 @@
 import type { CheckerConfig } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
+import { samenhang } from './samenhang';
 
 // Conceptenlijst voor de fullstack-nakijker, afgeleid van
 // sites/fullstack/docs/cheatsheet.md (koppen: FastAPI, HTML, JavaScript,
@@ -35,6 +36,7 @@ function todayStamp(d: Date): string {
 }
 
 export const fullstackConfig: CheckerConfig = {
+  samenhang,
   subjects: [
     { id: 'fastapi', label: 'FastAPI' },
     { id: 'html', label: 'HTML' },

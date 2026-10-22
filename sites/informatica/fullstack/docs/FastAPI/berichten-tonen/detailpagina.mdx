@@ -12,6 +12,8 @@ Je lijst toont alle berichten onder elkaar, op één pagina. Op echte websites k
 
 In [Eén route voor veel pagina's: path-parameters](site:fullstack/docs/FastAPI/veel-paginas/path-parameters) gaf `/dier/{naam}` elk dier een eigen pagina. Een bericht krijgt op dezelfde manier een eigen adres, met de sleutel uit de database in het pad. Een vraagteken, zoals `/zoek?term=python` uit [Een waarde na een vraagteken: query-parameters](site:fullstack/docs/FastAPI/veel-paginas/query-parameters), kan ook, maar voor één item is een path-parameter gebruikelijker. Zet dit endpoint onder je andere endpoints:
 
+<Bestand pad="main.py" />
+
 ```python
 @app.get("/bericht/{sleutel}")
 async def bericht_detail(request: Request, sleutel: str):
@@ -23,6 +25,8 @@ Ga je naar `/bericht/bericht_17` dan krijg je `{"je_vroeg_om":"bericht_17"}`, ne
 ## Het bericht opzoeken
 
 Met die sleutel kun je het bericht uit de database halen. Vervang je endpoint door deze versie:
+
+<Bestand pad="main.py" />
 
 {/* route-dubbel: vervangt de eerste versie van GET /bericht/{sleutel} hierboven */}
 ```python
@@ -41,6 +45,8 @@ async def bericht_detail(request: Request, sleutel: str):
 
 De template `templates/bericht.html` toont één bericht, met een link terug naar de lijst:
 
+<Bestand pad="templates/bericht.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -55,6 +61,8 @@ De template `templates/bericht.html` toont één bericht, met een link terug naa
 ## Linken vanuit de lijst
 
 Om naar een bericht te linken, heeft de lijst zijn sleutel nodig. Tot nu toe stuurde `/berichten` alleen de berichten mee, via `db.values()`. Met **`db.items()`** gaan de sleutels mee. Vervang je endpoint `/berichten`:
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -79,6 +87,8 @@ async def berichten(request: Request):
 
 In `templates/berichten.html` loop je nu over twee dingen tegelijk, en wordt de naam een link met de sleutel erin. Vervang de for-lus binnen de `<ul>` door deze:
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 {% for sleutel, bericht in berichten %}
     <li><a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}</li>
@@ -93,6 +103,8 @@ Heb je in een opdracht `berichten` ook buiten deze lus gebruikt, zoals `berichte
 <summary>Zo ziet je `templates/berichten.html` er nu uit</summary>
 
 Het `{% if %}`-blok uit [Nog niets? if en else in je template](site:fullstack/docs/FastAPI/berichten-tonen/leeg) blijft staan; alleen de lus binnen de `<ul>` is nieuw.
+
+<Bestand pad="templates/berichten.html" />
 
 ```html
 <!DOCTYPE html>
@@ -132,6 +144,8 @@ Wat er gebeurt bij een sleutel die niet bestaat, probeer je uit in opdracht 3. E
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -304,27 +318,35 @@ async def bericht_detail(request: Request, sleutel: str):
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag='Je typt in berichten.html per ongeluk href="/berichten/{{ sleutel }}", met een s. Wat krijg je als je op een naam klikt?'>
+  <Keuze uitleg="FastAPI raadt niet wat je bedoelt. Hij zoekt een route die precies op het hele pad past.">Het bericht, want de server snapt wat je bedoelt</Keuze>
+  <Keuze uitleg="Dat zie je als je eigen functie draait met een sleutel die niet bestaat. Vergelijk het pad met dat in @app.get: draait je functie hier wel?">"Bericht van" met lege plekken, en status `200`</Keuze>
+  <Keuze goed uitleg="Geen enkele route past op /berichten/ met iets erachter. FastAPI antwoordt dan zelf, nog voordat een functie van jou draait.">Een `404` met `Not Found`</Keuze>
+  <Keuze uitleg="Een route past op het hele pad, niet op het begin ervan. Is /berichten/bericht_17 hetzelfde pad als /berichten?">De lijst, want het adres begint met `/berichten`</Keuze>
+  <Uitleg>
+
+  De link in de template en het pad in `@app.get("/bericht/{sleutel}")` moeten bij elkaar passen. De template schrijft het adres, de browser vraagt het op, en FastAPI zoekt de route die erbij hoort. Klopt één letter niet, dan staat er in Netwerk een `404`.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Waar kom je uit?
 
 In je database staat een bericht van Sam onder de sleutel `bericht_1767225600123456789`. Je klikt op `/berichten` op de naam Sam.
 
-**Vraag:** welke URL staat er daarna in de adresbalk, en welke waarde krijgt `sleutel` in je functie?
+<Voorspel vraag="Welke URL staat er daarna in de adresbalk, en welke waarde krijgt sleutel in je functie?">
+  <Keuze uitleg="Sam is wat je op het scherm ziet: de tekst van de link. Kijk wat er in de href staat.">`/bericht/Sam`, en `sleutel` is `"Sam"`</Keuze>
+  <Keuze uitleg="De browser krijgt de link al ingevuld. Wie zet er iets op de plek van de dubbele accolades, en wanneer?">`/bericht/{{ sleutel }}`, en `sleutel` is leeg</Keuze>
+  <Keuze goed uitleg="De href bevat de sleutel uit de lus. FastAPI pakt het stuk na /bericht/ en geeft het als tekst aan je functie.">`/bericht/bericht_1767225600123456789`, en `sleutel` is `"bericht_1767225600123456789"`</Keuze>
+  <Keuze uitleg="In een URL staat alleen tekst. Het bericht zelf moet je functie daarna nog opzoeken in de database.">`/bericht/bericht_1767225600123456789`, en `sleutel` is het hele bericht van Sam</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  De template zette de sleutel in de link, en FastAPI haalt hem er bij `{sleutel}` weer uit. Wat de bezoeker ziet (de naam) en wat er in de URL staat (de sleutel) zijn dus twee verschillende dingen.
 
-Kijk naar de `href` in je template: `/bericht/{{ sleutel }}`.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-De adresbalk toont `/bericht/bericht_1767225600123456789`, en `sleutel` is de tekst `"bericht_1767225600123456789"`. De template zette de sleutel in de link, en FastAPI haalt hem er bij `{sleutel}` weer uit.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -355,7 +377,8 @@ Loop in je endpoint door `db.values()` en zet elk bericht met `bericht["naam"] =
 <details>
 <summary>Antwoord</summary>
 
-`templates/van.html`:
+<Bestand pad="templates/van.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -370,6 +393,8 @@ Loop in je endpoint door `db.values()` en zet elk bericht met `bericht["naam"] =
     </body>
 </html>
 ```
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/van/{naam}")

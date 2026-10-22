@@ -1,0 +1,197 @@
+---
+description: Speel met briefjes na wat er tussen browser en server heen en weer gaat, en ontdek dat één klik vaak meer dan één verzoek is.
+---
+
+# Het verzoek-rollenspel
+
+<Handout>
+
+Een browser en een server praten met briefjes. De browser schrijft een
+verzoek, de server schrijft een antwoord, en verder weten ze niets van
+elkaar. Jullie spelen dat na, met echte briefjes, en houden bij wat het
+tabblad Netwerk zou laten zien.
+
+## Wat je nodig hebt
+
+- Per groepje van drie: een stapel strookjes papier, een pen per persoon en
+  deze hand-out.
+- Ongeveer 25 minuten.
+
+## De rollen
+
+1. **De browser** krijgt de opdracht van de bezoeker ("typ dit adres", "klik
+   op die link") en schrijft een verzoek op een strookje: de methode (`GET`
+   of `POST`), het pad, en bij een formulier de velden. Daarna geeft hij het
+   strookje aan de server en wacht.
+2. **De server** mag alleen kijken naar het strookje en naar de kaart met
+   `main.py` hieronder. Hij zoekt de functie die bij de methode en het pad
+   hoort, en schrijft een antwoord: een statuscode en wat erin zit. Staat er
+   geen functie bij, dan antwoordt hij `404`.
+3. **Netwerk** schrijft elk verzoek in de tabel: één regel per strookje dat
+   naar de server gaat.
+
+Leest de browser in een antwoord een `<link>` of een `<img>`, dan schrijft hij
+meteen een nieuw verzoek voor dat bestand. Staat er in een antwoord "ga naar …",
+dan doet hij dat ook, zonder dat de bezoeker iets doet.
+
+## De kaart van de server
+
+```python
+@app.get("/")
+async def home():
+    return FileResponse("static/pages/home.html")
+
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        alle_berichten = list(db.values())
+    return {"berichten": alle_berichten}
+
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return RedirectResponse(url="/berichten", status_code=303)
+
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+```
+
+In de map `static` staan `css/style.css`, `pages/home.html` en
+`pages/gastenboek_form.html`. In `home.html` staat:
+
+```html
+<link rel="stylesheet" href="/static/css/style.css">
+<img src="/static/img/kat.jpg" alt="Een kat">
+<a href="/over">Over mij</a>
+```
+
+## Ronde 1: een adres typen
+
+<div className="handout-samen">
+
+De bezoeker typt `127.0.0.1:8000/` en drukt op Enter.
+
+Gok eerst: hoeveel regels komen er in Netwerk? ______
+
+</div>
+
+Speel het. Netwerk schrijft mee.
+
+<div className="handout-teltabel">
+
+| Nr | Methode | Pad | Status | Wat zat erin? |
+|:---:|---|---|:---:|---|
+| 1 | | | | |
+| 2 | | | | |
+| 3 | | | | |
+| 4 | | | | |
+
+</div>
+
+## Ronde 2: op de link klikken
+
+<div className="handout-samen">
+
+De bezoeker klikt op Over mij.
+
+Gok eerst: welke status krijgt de browser? ______
+
+</div>
+
+## Ronde 3: een formulier versturen
+
+Op `gastenboek_form.html` staat een formulier met `method="post"` en
+`action="/gastenboek"`, en de velden `naam` en `bericht`. De bezoeker vult
+`Sam` en `Hoi` in en klikt op Verstuur. Wie de server speelt, schrijft het
+bericht ook in een schrift: dat is `gastenboek.db`.
+
+<div className="handout-samen">
+
+Gok eerst: hoeveel regels komen er in Netwerk bij deze ene klik? ______
+
+</div>
+
+<div className="handout-teltabel">
+
+| Nr | Methode | Pad | Status | Wat zat erin? |
+|:---:|---|---|:---:|---|
+| 1 | | | | |
+| 2 | | | | |
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. In ronde 1 typte de bezoeker één adres. Waarom kwamen er meer verzoeken?
+2. Welk verzoek uit ronde 1 kreeg een `404`, en wat ziet de bezoeker daarvan?
+3. In ronde 3 klikte de bezoeker één keer. Wie bedacht het tweede verzoek?
+4. Zat de server tussen twee verzoeken op de browser te wachten? Wat wist hij
+   bij het tweede verzoek nog van het eerste?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+**Ronde 1.** Drie regels. De browser vraagt eerst de pagina, en leest daarin
+een `<link>` en een `<img>`: voor elk bestand een nieuw verzoek. De link naar
+`/over` vraagt hij nog niet: dat gebeurt pas bij een klik.
+
+| Nr | Methode | Pad | Status | Wat zat erin? |
+|:---:|---|---|:---:|---|
+| 1 | `GET` | `/` | `200` | `home.html` |
+| 2 | `GET` | `/static/css/style.css` | `200` | de CSS |
+| 3 | `GET` | `/static/img/kat.jpg` | `404` | niets: er is geen map `img` |
+
+Regel 4 blijft leeg. In je terminal zie je soms nog `GET /favicon.ico` met
+een `404`: dat vraagt de browser uit zichzelf, voor het icoontje op het
+tabblad.
+
+**Ronde 2.** `404`. Er is geen functie voor `GET /over`, en de server
+antwoordt met `{"detail":"Not Found"}`.
+
+**Ronde 3.** Twee regels voor één klik.
+
+| Nr | Methode | Pad | Status | Wat zat erin? |
+|:---:|---|---|:---:|---|
+| 1 | `POST` | `/gastenboek` | `303` | "ga naar `/berichten`" |
+| 2 | `GET` | `/berichten` | `200` | `{"berichten": [{"naam": "Sam", "bericht": "Hoi"}]}` |
+
+Zo ziet het er uit als programma, met hetzelfde antwoord:
+
+```python
+from fastapi.testclient import TestClient
+
+klant = TestClient(app)
+antwoord = klant.post("/gastenboek", data={"naam": "Sam", "bericht": "Hoi"}, follow_redirects=False)
+print(antwoord.status_code)              # 303
+print(antwoord.headers["location"])      # /berichten
+```
+
+**Bespreek na.** Vraag 2: de bezoeker ziet de pagina wel, met een kapot
+plaatje en de alt-tekst. Een `404` op een los bestand zie je alleen in
+Netwerk. Vraag 3: de server, met de `303`; de browser volgt hem zonder te
+vragen. Vraag 4: nee. Elk verzoek is een los briefje, en de server weet
+alleen wat erop staat en wat in de database staat. Daarom moet een server
+later met cookies werken om te weten wie je bent.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [Zo werkt het: je eerste verzoek](site:fullstack/docs/FastAPI/eerste-server/verzoek-eerste),
+  [Kijken wat de browser doet](site:fullstack/docs/FastAPI/eerste-server/devtools-netwerk)
+  en [Doorsturen na opslaan](site:fullstack/docs/FastAPI/berichten-opslaan/redirect).
+- Wat de server onthoudt tussen twee briefjes speel je na in
+  [Een postbode zonder geheugen](site:fullstack/docs/unplugged/postbode).
+
+</div>
+
+</Handout>

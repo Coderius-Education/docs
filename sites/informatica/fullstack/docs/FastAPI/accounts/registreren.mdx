@@ -12,6 +12,8 @@ In je gastenboek typt iedereen zelf een naam. Wie "Sara" intypt, is voor je serv
 
 Maak `static/pages/registreer.html`:
 
+<Bestand pad="static/pages/registreer.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -31,6 +33,8 @@ Een veld met `type="password"` toont puntjes in plaats van letters. Dat is allee
 ## Het account opslaan
 
 Een account is een sleutel en een waarde, net als alles in SqliteDict: de naam is de sleutel, het wachtwoord de waarde. Het komt in een eigen database, `gebruikers.db`, naast `gastenboek.db`. Zet onder je andere endpoints:
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -79,6 +83,18 @@ Daarna door naar het gastenboek, met 303, net als na een bericht in [Doorsturen 
 2. Je komt uit op het gastenboek. Daar vraagt nog niets om je wachtwoord: dat komt in de volgende les.
 3. Ga terug naar `/registreer` en maak nog een keer een account `sara`. Nu staat er `{"detail":"Deze naam is al bezet"}`, en het tabblad Netwerk toont status `400`.
 
+<Voorspel soort="Controlevraag" vraag="Je maakt een account met een naam die nog vrij is. In Netwerk staat eerst de regel van POST /registreer. Welke statuscode heeft die regel?">
+  <Keuze uitleg="Een 200 hoort bij een antwoord dat zelf de pagina is. Wat geeft je endpoint terug na het opslaan?">`200`</Keuze>
+  <Keuze goed uitleg="De RedirectResponse met status_code=303 stuurt de browser door. Daarna volgt een tweede regel: de GET naar /gastenboek, met 200.">`303`</Keuze>
+  <Keuze uitleg="Die komt alleen als de naam al in gebruikers.db staat. Hier is de naam nog vrij.">`400`</Keuze>
+  <Keuze uitleg="Dan ontbrak er een veld. Het formulier stuurt naam en wachtwoord allebei mee, met dezelfde namen als de parameters.">`422`</Keuze>
+  <Uitleg>
+
+  Eén klik op Account maken geeft twee verzoeken: het formulier gaat met een POST naar `/registreer`, en die stuurt de browser met een 303 door naar `/gastenboek`. Zie je in Netwerk maar één regel, met een andere code, dan ging er in het endpoint iets mis.
+
+  </Uitleg>
+</Voorspel>
+
 ## Kijk in je database
 
 Je server houdt de terminal bezet. Open er een tweede met het plusje (+) rechtsboven in het terminalpaneel van VS Code. Verander in `bekijk_db.py` uit [Alles bekijken: len en items](site:fullstack/docs/FastAPI/sqlitedict/bekijken) de bestandsnaam in `"gebruikers.db"` en draai het daar:
@@ -116,6 +132,8 @@ Zo bewaar je een wachtwoord op een echte site nooit. Hoe het wel moet, leer je l
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -319,21 +337,16 @@ async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
 
 Iemand maakt een account `Sara`, met een hoofdletter. Daarna maakt iemand anders een account `sara`.
 
-**Vraag:** krijgt de tweede `Deze naam is al bezet`, of staan er daarna twee accounts in `gebruikers.db`?
+<Voorspel vraag="Krijgt de tweede de melding dat de naam al bezet is, of staan er daarna twee accounts in gebruikers.db?">
+  <Keuze uitleg="Voor een mens is het dezelfde naam. Maar hoe vergelijkt in een sleutel: als woord, of letter voor letter?">De tweede krijgt `Deze naam is al bezet`</Keuze>
+  <Keuze goed uitleg="Een sleutel moet letter voor letter gelijk zijn, en S is een andere letter dan s. De controle met in is dus niet waar.">Er staan twee accounts in `gebruikers.db`</Keuze>
+  <Keuze uitleg="Overschrijven gebeurt alleen onder precies dezelfde sleutel. Is dat hier zo?">De registratie van `sara` overschrijft het account `Sara`</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  `"sara" in gebruikers` is `False` als alleen `Sara` erin staat. Voor je server zijn het twee mensen, en bij het inloggen moet Sara straks precies de naam typen die ze bij het registreren koos.
 
-Een sleutel in SqliteDict moet letter voor letter gelijk zijn. Telt een hoofdletter mee?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Twee accounts. `"sara" in gebruikers` is `False` als alleen `Sara` erin staat, want de sleutels verschillen in één letter. Voor je server zijn het twee mensen.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -373,6 +386,8 @@ Laat `/registreer` een wachtwoord korter dan 8 tekens weigeren, met status 400 e
 
 Zet deze regels bovenaan in je `registreer`, vóór het `with`-blok:
 
+<Bestand pad="main.py" />
+
 {/* niet-compileren: losse regels uit een handler */}
 ```python
     if len(wachtwoord) < 8:
@@ -396,6 +411,8 @@ Maak een endpoint `/leden` dat alle namen met een account teruggeeft, zonder hun
 
 <details>
 <summary>Antwoord</summary>
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/leden")

@@ -53,13 +53,16 @@ const ATTR = String.raw`\s+[A-Za-z]+(?:=(?:"[^"]*"|'[^']*'|\{[^}]*\}))?`;
 const VOORSPEL = new RegExp(String.raw`<Voorspel((?:${ATTR})*)\s*>([\s\S]*?)</Voorspel>`, 'g');
 const KEUZE = new RegExp(String.raw`<Keuze((?:${ATTR})*)\s*>([\s\S]*?)</Keuze>`, 'g');
 
+// Loopt de attributen op volgorde af. Zoeken naar `\sgoed` in de hele tekst
+// vond ook het woord in `uitleg="de string goed open"`, en dan had een
+// foute keuze ineens `goed`.
 function attribuut(attrs: string, naam: string): string | true | undefined {
-  const m = attrs.match(
-    new RegExp(String.raw`\s${naam}(?:=(?:"([^"]*)"|'([^']*)'|\{([^}]*)\}))?(?=\s|$)`),
-  );
-  if (!m) return undefined;
-  if (m[1] === undefined && m[2] === undefined && m[3] === undefined) return true;
-  return m[1] ?? m[2] ?? m[3];
+  for (const m of attrs.matchAll(/\s+([A-Za-z]+)(?:=(?:"([^"]*)"|'([^']*)'|\{([^}]*)\}))?/g)) {
+    if (m[1] !== naam) continue;
+    if (m[2] === undefined && m[3] === undefined && m[4] === undefined) return true;
+    return m[2] ?? m[3] ?? m[4];
+  }
+  return undefined;
 }
 
 interface Blok {
@@ -183,6 +186,14 @@ describe('de guard leest <Voorspel> zoals een schrijver hem typt', () => {
       },
     ]);
     expect(fouten(bron)).toEqual([]);
+  });
+
+  it('leest goed niet uit de tekst van een uitleg', () => {
+    expect(
+      fouten(
+        `<Voorspel vraag="?"><Keuze goed uitleg="a">x</Keuze><Keuze uitleg="Je zet de string goed open.">y</Keuze></Voorspel>`,
+      ),
+    ).toEqual([]);
   });
 
   it('meldt twee goede keuzes, één keuze en een keuze zonder uitleg', () => {

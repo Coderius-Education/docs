@@ -31,6 +31,8 @@ Je hoeft niets aan `main.py` te veranderen. De regel `app.mount("/static", Stati
 
 De teller in deze les komt op het gastenboekformulier, `static/pages/gastenboek_form.html`. Koppel je script in de `<head>` van dat bestand, onder de script-tag van htmx als die er staat. Heeft het bestand nog geen `<head>`, omdat je het formulierrecept uit de [htmx-recepten](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht) niet bouwde, zet er dan een boven de `<body>`:
 
+<Bestand pad="static/pages/gastenboek_form.html" />
+
 ```html
 <script src="/static/js/app.js" defer></script>
 ```
@@ -39,17 +41,23 @@ De teller in deze les komt op het gastenboekformulier, `static/pages/gastenboek_
 
 Op het gastenboekformulier laat je zien hoeveel tekens er nog over zijn. Je formulier blijft zoals het is, met `hx-post` als je het htmx-recept bouwde of met `method` en `action` als je dat niet deed. Er veranderen twee dingen. Het berichtveld krijgt een `id` en een `maxlength`:
 
+<Bestand pad="static/pages/gastenboek_form.html" />
+
 ```html
 <input type="text" id="bericht-veld" name="bericht" placeholder="Je bericht" maxlength="80" required>
 ```
 
 En zet direct onder dat veld een plek waar de teller kan staan:
 
+<Bestand pad="static/pages/gastenboek_form.html" />
+
 ```html
 <p id="teller">80 tekens over</p>
 ```
 
 De code komt in `static/js/app.js`:
+
+<Bestand pad="static/js/app.js" />
 
 ```js
 const veld = document.querySelector("#bericht-veld");
@@ -64,6 +72,8 @@ veld.addEventListener("input", function () {
 Bij elke toetsaanslag stuurt de browser een `input`-event, en jouw functie past de tekst aan.
 
 Staat `hx-on::after-request="this.reset()"` uit de htmx-recepten op je formulier, dan maakt htmx het veld leeg zonder `input`-event, en blijft de teller op het oude getal staan. Zet dan onderaan in `app.js`:
+
+<Bestand pad="static/js/app.js" />
 
 ```js
 document.querySelector("form").addEventListener("reset", function () {
@@ -91,27 +101,35 @@ Daarin verschilt dit van alles wat je hiervoor bouwde. Een formulier versturen b
 Doet de teller niets? Druk op **F12** en kies het tabblad **Console**: daar staat elke fout uit je JavaScript in het rood. Staat er `Cannot read properties of null`, dan vindt je script het element niet. De Console leer je in de volgende les, [Console en Elementen](site:fullstack/docs/FastAPI/in-de-browser/devtools-console), goed kennen. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
+<Voorspel soort="Controlevraag" vraag="Je zet app.js per ongeluk direct in static/, niet in static/js/. De script-tag laat je zoals hij is. Wat zie je in Netwerk als je het formulier laadt?">
+  <Keuze uitleg="app.mount geeft de hele map static door, maar het pad na /static/ moet precies kloppen. Wat staat er in static/js/?">Een 200, want de server zoekt `app.js` overal in `static/`</Keuze>
+  <Keuze uitleg="Een 500 betekent dat Python crasht. Hier draait geen functie van jou: wat antwoordt de server op een bestand dat er niet is?">Een 500, met een foutmelding in de terminal</Keuze>
+  <Keuze uitleg="De browser kent de mappen op jouw computer niet. Hij vraagt het pad uit de script-tag gewoon aan de server.">Geen verzoek voor `app.js`, want de browser ziet zelf dat het bestand er niet is</Keuze>
+  <Keuze goed uitleg="Het pad in de script-tag wijst naar static/js/, en daar staat niets meer.">Een 404 voor `app.js`, en de teller doet niets</Keuze>
+  <Uitleg>
+
+  De `src` in je script-tag en de plek in je project moeten kloppen: `/static/js/app.js` is het bestand `static/js/app.js`. Klopt het niet, dan stuurt de server een 404 en heeft de browser geen script om te draaien. In de terminal staat dan een regel met `GET /static/js/app.js` en `404`.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat ziet de server?
 
 Je typt het woord "hallo" in het berichtveld, letter voor letter.
 
-**Vraag:** hoeveel verzoeken ziet je server in de terminal?
+<Voorspel vraag="Hoeveel verzoeken ziet je server in de terminal?">
+  <Keuze uitleg="Elke letter geeft een input-event. Maar stuurt jouw functie in app.js iets naar de server, of past hij alleen de pagina aan?">Vijf, één per letter</Keuze>
+  <Keuze uitleg="Er gaat geen formulier weg, en er wacht geen hx-trigger. Wat doet de code in app.js bij een toetsaanslag?">Eén, als je stopt met typen</Keuze>
+  <Keuze uitleg="Die twee verzoeken gingen al toen de pagina laadde, voordat je begon te typen.">Twee: één voor de pagina en één voor `app.js`</Keuze>
+  <Keuze goed uitleg="De pagina en app.js waren al opgehaald, en elke toetsaanslag handelt de browser zelf af.">Nul</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Alle vijf de toetsaanslagen handelt code af die al in de browser zit. Daarom hoort een teller in de browser: twintig letters via de server zouden twintig verzoeken zijn, ook met htmx.
 
-Kijk naar wat er gebeurt bij een toetsaanslag: verandert er iets aan de pagina die de server heeft gestuurd, of vraagt de browser een nieuwe pagina op?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Nul. De pagina en `app.js` waren al opgehaald voordat je begon te typen. Alle vijf de toetsaanslagen handelt code af die al in de browser zit.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -143,6 +161,8 @@ Laat de teller rood worden zodra er nog minder dan tien tekens over zijn, en wee
 
 <details>
 <summary>Antwoord</summary>
+
+<Bestand pad="static/js/app.js" />
 
 ```js
 const veld = document.querySelector("#bericht-veld");
@@ -182,11 +202,15 @@ Koppel niet `app.js` op de berichtenpagina: daar staat geen `#bericht-veld`, dus
 
 In de `<head>` van `berichten.html`:
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 <script src="/static/js/berichten.js" defer></script>
 ```
 
 In de `<body>`, boven de lijst. De `<form>`-tag is dezelfde als op je gastenboekformulier. Bouwde je het htmx-recept, dan is dat de versie met `hx-post` en een `<p id="antwoord">` eronder, want je endpoint geeft dan een zin terug en geen omleiding. Zet in dat geval ook `<script src="/static/js/htmx.min.js"></script>` in deze `<head>`:
+
+<Bestand pad="templates/berichten.html" />
 
 ```html
 <button id="klap-knop">Nieuw bericht</button>
@@ -203,7 +227,7 @@ Zonder het htmx-recept schrijf je `method="post" action="/gastenboek"` in plaats
 
 Met `hx-post` verschijnt na Verstuur alleen de zin met "Bedankt", en staat je nieuwe bericht pas in de lijst na Ververs of F5. Zonder htmx stuurt de omleiding je terug naar `/berichten`, en staat het er meteen.
 
-In `static/js/berichten.js`:
+<Bestand pad="static/js/berichten.js" />
 
 ```js
 const knop = document.querySelector("#klap-knop");

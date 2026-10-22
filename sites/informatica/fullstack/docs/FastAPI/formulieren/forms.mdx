@@ -12,6 +12,8 @@ Tot nu toe stuurde de browser alleen GET-verzoeken: hij haalt iets op, en wat hi
 
 Maak `static/pages/naam_form.html`:
 
+<Bestand pad="static/pages/naam_form.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -35,6 +37,8 @@ Maak `static/pages/naam_form.html`:
 ## De endpoints
 
 Zet `Form` bij je imports, uit `fastapi`, net als `FastAPI` zelf. Zet daarna twee endpoints onder je andere endpoints: één dat het formulier toont, en één dat het verstuurde formulier ontvangt:
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -105,6 +109,8 @@ Zie je `"msg":"Field required"` in je browser, en een 422 in je terminal? Contro
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -213,9 +219,23 @@ async def ontvang_naam(naam: str = Form(...)):
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag='Je verandert in naam_form.html action="/verstuur" in action="/naam". De endpoints in main.py laat je zoals ze zijn. Wat krijg je na het versturen?'>
+  <Keuze uitleg="Het pad /naam bestaat wel, maar het formulier verstuurt met POST. Kijk welke methode het endpoint op /naam kent.">Het formulier opnieuw, want /naam toont het formulier</Keuze>
+  <Keuze uitleg="Dat antwoord komt van ontvang_naam, en die hangt aan /verstuur. Het formulier gaat daar niet meer naartoe.">Het bericht met Hallo en je naam</Keuze>
+  <Keuze uitleg="Een 404 krijg je bij een pad dat helemaal niet bestaat. Voor /naam staat wel een endpoint in main.py.">Een 404 Not Found</Keuze>
+  <Keuze goed uitleg="Op /naam staat alleen een @app.get. Een POST naar dat pad weigert FastAPI zelf, nog voordat er een functie draait.">Een 405 Method Not Allowed</Keuze>
+  <Uitleg>
+
+  De `action` en `method` in de HTML moeten samen precies op een endpoint in `main.py` passen: hetzelfde pad en dezelfde methode. Klopt het pad maar niet de methode, dan zie je in Netwerk een 405.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat zie je?
+
+<Bestand pad="static/pages/begroeting_form.html" />
 
 ```html
 <form method="post" action="/begroeting">
@@ -224,6 +244,8 @@ async def ontvang_naam(naam: str = Form(...)):
 </form>
 ```
 
+<Bestand pad="main.py" />
+
 {/* route-dubbel: voorspelvraag, met een eigen pad zodat uitproberen niet botst met het project */}
 ```python
 @app.post("/begroeting")
@@ -231,21 +253,17 @@ async def begroeting(naam: str = Form(...)):
     return {"groet": f"Hallo {naam}!"}
 ```
 
-**Vraag:** Je vult "Sarah" in. Wat zie je?
+<Voorspel vraag="Je vult Sarah in en klikt op Verstuur. Wat zie je?">
+  <Keuze uitleg="Kijk wat de functie teruggeeft: geen HTML, maar een dictionary. Wat maakt FastAPI daarvan?">Een pagina met alleen de zin `Hallo Sarah!`</Keuze>
+  <Keuze uitleg="Dat stuurt /verstuur terug. Dit formulier gaat naar een ander endpoint, en dat heeft een eigen sleutel in zijn dictionary.">`{"bericht":"Hallo Sarah!"}`</Keuze>
+  <Keuze uitleg="Een 405 krijg je als de methode niet klopt. Vergelijk method en action in het formulier met de regel boven de functie.">Een 405 Method Not Allowed</Keuze>
+  <Keuze goed uitleg="Het formulier stuurt naam=Sarah met POST naar /begroeting, en de functie geeft een dictionary terug. FastAPI maakt daar JSON van.">`{"groet":"Hallo Sarah!"}`</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  De sleutel in het antwoord komt uit het dictionary in je functie, niet uit het formulier. Het formulier bepaalt alleen wat er in `naam` komt.
 
-Kijk wat de functie teruggeeft. De waarde van `naam` wordt `"Sarah"`, dus wat wordt de f-string dan?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-`{"groet":"Hallo Sarah!"}`
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -294,7 +312,8 @@ Maak een HTML bestand met een `<form method="post" action="/kleur">` en een `<in
 <details>
 <summary>Antwoord</summary>
 
-`static/pages/kleur_form.html`:
+<Bestand pad="static/pages/kleur_form.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -307,6 +326,8 @@ Maak een HTML bestand met een `<form method="post" action="/kleur">` en een `<in
     </body>
 </html>
 ```
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/kleur")
@@ -335,7 +356,8 @@ Je hebt twee `<input>` velden nodig in je HTML (`name="naam"` en `name="leeftijd
 <details>
 <summary>Antwoord</summary>
 
-`static/pages/aanmelden_form.html`:
+<Bestand pad="static/pages/aanmelden_form.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -349,6 +371,8 @@ Je hebt twee `<input>` velden nodig in je HTML (`name="naam"` en `name="leeftijd
     </body>
 </html>
 ```
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/aanmelden")

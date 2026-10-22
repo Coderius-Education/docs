@@ -50,6 +50,29 @@ Draai ook `bekijk_db.py`. Daar staat Sara op één regel, naast de sleutels die 
 sara = {'klas': '4B', 'vakken': ['informatica', 'wiskunde']}
 ```
 
+Test jezelf met dit script:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    db["ali"] = {"klas": "4A"}
+    db["ali"] = {"vakken": ["biologie"]}
+    db.commit()
+```
+
+<Voorspel soort="Controlevraag" vraag="Welke regel over ali laat bekijk_db.py daarna zien?">
+  <Keuze uitleg="SqliteDict voegt twee dictionaries niet samen. Wat gebeurt er als je een nieuwe waarde onder een bestaande sleutel zet?">`ali = {'klas': '4A', 'vakken': ['biologie']}`</Keuze>
+  <Keuze uitleg="Allebei de regels staan vóór commit(), dus allebei komen ze aan. Welke draait als laatste?">`ali = {'klas': '4A'}`</Keuze>
+  <Keuze goed uitleg="De tweede regel zet een hele nieuwe dictionary onder dezelfde sleutel. De eerste is dan weg, met klas en al.">`ali = {'vakken': ['biologie']}`</Keuze>
+  <Keuze uitleg="Onder één sleutel staat één waarde, ook als die waarde een dictionary is.">Twee regels met ali</Keuze>
+  <Uitleg>
+
+  Met `db["ali"] = …` vervang je altijd de hele waarde. Wil je één veld erbij zetten en de rest houden, dan haal je de dictionary eerst op. Dat leer je in de volgende les.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
 
 ### KeyError met de naam van een veld
@@ -90,27 +113,17 @@ with SqliteDict("klas.db") as db:
     print(len(db["sara"]["vakken"]))
 ```
 
-**Vraag:** welke drie regels print dit?
+<Voorspel vraag="Welke drie regels print dit, van boven naar beneden?">
+  <Keuze uitleg="len(db) telt de sleutels van de database, niet de velden in de dictionaries.">`4` · `4A` · `2`</Keuze>
+  <Keuze uitleg="De laatste regel gaat over Sara, niet over Ali. Hoeveel vakken staan er in haar lijst?">`2` · `4A` · `1`</Keuze>
+  <Keuze uitleg='Met db["ali"] krijg je de hele dictionary, maar daarachter vraag je nog één veld op.'>`2` · `{'klas': '4A', 'vakken': ['biologie']}` · `2`</Keuze>
+  <Keuze goed uitleg="Twee sleutels in de database, het veld klas van Ali, en twee vakken in de lijst van Sara.">`2` · `4A` · `2`</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  `len` telt wat er direct in zit. Bij de database zijn dat de sleutels `sara` en `ali`; bij een lijst de dingen in die lijst.
 
-Wat telt `len` bij de database, en wat bij een lijst?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```
-2
-4A
-2
-```
-
-`len(db)` telt de sleutels, niet de velden: `sara` en `ali`. De laatste regel telt de vakken van Sara.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 

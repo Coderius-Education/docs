@@ -522,10 +522,14 @@ describe('webConfig — JavaScript wordt herkend waar het staat', () => {
     // en las bij een tag zonder > door tot het eind van het bestand: 20.000
     // open tags kostten 0,8 seconde, en dat groeide kwadratisch. Met de
     // waarden weg stopt het bij de eerstvolgende < of >.
+    // De grens is ruim: kwadratisch kost 60.000 tags zo'n 7 seconden, lineair
+    // een halve seconde op een rustige machine. Op een drukke CI-runner, met
+    // de andere tests ernaast, liep die halve seconde op tot 1,3 seconde, en
+    // dan viel een grens van 1000 ms om zonder dat er iets kwadratisch was.
     const html = '<a title="x" '.repeat(60000);
     const begin = performance.now();
     analyze(project({ 'index.html': html }), webConfig);
-    expect(performance.now() - begin).toBeLessThan(1000);
+    expect(performance.now() - begin).toBeLessThan(3000);
   });
 
   it('een vondst in een script-blok wijst naar de goede regel van het HTML-bestand', () => {

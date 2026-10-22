@@ -67,6 +67,7 @@ const PER_JOB = {
     'cspell-woorden.txt',
     'scripts/controleer-tekst.mjs',
     'scripts/controleer-tekst-alles.mjs',
+    'scripts/tekst-argumenten.mjs',
     'packages/shared/stijl.js',
   ],
   crosslinks: ['scripts/controleer-cross-links.mjs', 'scripts/links-in-bron.mjs'],
@@ -128,7 +129,17 @@ const RUNNERS = {
   },
   fullstack: {
     site: 'fullstack',
-    leest: ['{site}/docs/'],
+    // Naast de codeblokken draait de job het controlescript voor leerlingen
+    // tegen het referentieproject en kapotte kopieën (src/controle/draai.py);
+    // het eindproject met de uitbreidingen neemt static/htmx/htmx.min.js mee,
+    // en sidebars.ts zegt welke les bij welk hoofdstuk hoort.
+    leest: [
+      '{site}/docs/',
+      '{site}/sidebars.ts',
+      '{site}/static/controleer.py',
+      '{site}/static/htmx/',
+      '{site}/src/controle/',
+    ],
     alles: [...COMPILEER, '{site}/src/code-tests/schrijf.ts'],
   },
   godot: {

@@ -6,11 +6,15 @@ Je gastenboek werkt, maar na het versturen van een bericht sta je op een doodlop
 
 Met `RedirectResponse` stuur je de browser door naar een andere URL. Zet hem bij je imports:
 
+<Bestand pad="main.py" />
+
 ```python
 from fastapi.responses import RedirectResponse
 ```
 
 Vervang dan je POST-endpoint `/gastenboek` uit [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel). Alleen de laatste regel verandert:
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -57,6 +61,8 @@ Krijg je **405 Method Not Allowed** meteen na het versturen? Dan mist `status_co
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -215,9 +221,31 @@ async def berichten():
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag="Je verstuurt een bericht met het endpoint uit deze les en kijkt in het tabblad Netwerk. Welke verzoeken zie je?">
+  <Keuze uitleg="Het bericht moet eerst naar de server. Welk verzoek gaat aan deze GET vooraf?">Alleen GET /berichten met 200</Keuze>
+  <Keuze uitleg="Zo gaat het bij een 307. Welke methode gebruikt de browser na een 303?">POST /gastenboek met 303, daarna POST /berichten met 405</Keuze>
+  <Keuze uitleg="Het endpoint stuurt geen pagina terug maar een opdracht om door te gaan. Dat zie je aan de statuscode.">Alleen POST /gastenboek met 200</Keuze>
+  <Keuze goed uitleg="De POST slaat het bericht op en krijgt een 303 terug. Daarop vraagt de browser zelf de berichten op, met een GET.">POST /gastenboek met 303, daarna GET /berichten met 200</Keuze>
+  <Uitleg>
+
+  Eén klik op Verstuur geeft twee verzoeken. De eerste gaat naar je POST-endpoint, de tweede naar je GET-endpoint. Omdat het laatste verzoek een GET is, vraagt F5 niet meer of je het formulier opnieuw wilt versturen.
+
+  </Uitleg>
+</Voorspel>
+
+:::tip[Controleer je server]
+Laat je server draaien en typ in een tweede terminal `python controleer.py berichten-opslaan`. Het script kijkt of alles uit dit hoofdstuk werkt; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
+:::
+
+:::tip[Eerst op papier]
+Speel na wat er bij één klik heen en weer gaat, met briefjes en zonder computer: [Het verzoek-rollenspel](site:fullstack/docs/unplugged/verzoek-rollenspel). Je docent kan de hand-out printen.
+:::
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Waar kom je uit?
+
+<Bestand pad="main.py" />
 
 {/* route-dubbel: voorspelvraag, met eigen paden zodat uitproberen niet botst met het project */}
 ```python
@@ -230,21 +258,17 @@ async def bedankt():
     return {"bericht": "Bedankt"}
 ```
 
-**Vraag:** welke URL staat er in de adresbalk nadat je het formulier hebt verstuurd?
+<Voorspel vraag="Welke URL staat er in de adresbalk nadat je het formulier hebt verstuurd?">
+  <Keuze uitleg="Daar ging het formulier naartoe. Maar wat doet de browser met het antwoord van dat endpoint?">`/inschrijven`</Keuze>
+  <Keuze goed uitleg="De browser volgt de redirect met een GET, alsof je er zelf naartoe ging.">`/bedankt`</Keuze>
+  <Keuze uitleg="Een redirect neemt de velden van het formulier niet mee. De URL is precies wat je in RedirectResponse zet.">`/bedankt?naam=Sam`</Keuze>
+  <Keuze uitleg="Een 405 krijg je met de standaard 307. Kijk welke statuscode hier staat.">Geen nieuwe URL, want je krijgt een 405</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Een redirect verandert niet alleen wat je ziet, maar ook wat er in de adresbalk staat. Van `/inschrijven` zie je niets terug: het antwoord daarvan was alleen de opdracht om door te gaan.
 
-Een redirect verandert niet alleen wat je ziet, maar ook wat er in de adresbalk staat.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-`/bedankt`. De browser volgt de redirect en vraagt die pagina op alsof je er zelf naartoe was gegaan. Van `/inschrijven` zie je niets terug.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -275,13 +299,18 @@ Een bezoeker komt hier via een gewone link, dus het is een `@app.get`. Een redir
 <details>
 <summary>Antwoord</summary>
 
+<Bestand pad="main.py" />
+
 ```python
 @app.get("/annuleren")
 async def annuleren():
     return RedirectResponse(url="/berichten")
 ```
 
-In `static/pages/gastenboek_form.html`, onder het formulier:
+Zet onder het formulier:
+
+<Bestand pad="static/pages/gastenboek_form.html" />
+
 ```html
 <a href="/annuleren">Annuleren</a>
 ```

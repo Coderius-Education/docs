@@ -43,6 +43,27 @@ leeftijd = 16
 
 Heb je in de vorige les meer opgeslagen, zoals een woonplaats, dan staat die er ook bij en telt het een sleutel meer. Bewaar dit script: in de lessen hierna kijk je er steeds mee wat je server heeft opgeslagen. Verander alleen de bestandsnaam tussen de haakjes, bijvoorbeeld in `"gastenboek.db"`.
 
+Test jezelf. In `mijn_data.db` staan `naam` en `leeftijd`. Je draait dit script:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    db["klas"] = "4B"
+```
+
+<Voorspel soort="Controlevraag" vraag="Daarna draai je bekijk_db.py. Wat is de eerste regel die het print?">
+  <Keuze uitleg="Dan zou klas in het bestand staan. Kijk welke regel het script mist.">3 sleutels</Keuze>
+  <Keuze goed uitleg="Het script schrijft klas nooit weg, want commit() ontbreekt. In het bestand staan nog alleen naam en leeftijd.">2 sleutels</Keuze>
+  <Keuze uitleg="Een wijziging zonder commit() gaat verloren, maar wat er al in het bestand stond, blijft staan.">0 sleutels</Keuze>
+  <Keuze uitleg="SqliteDict waarschuwt niet als je commit() vergeet. Het script loopt gewoon tot het eind.">Een foutmelding, want commit() ontbreekt</Keuze>
+  <Uitleg>
+
+  `bekijk_db.py` laat zien wat er echt in het bestand staat, niet wat je script probeerde op te slaan. Zie je een sleutel niet terug, kijk dan eerst of er een `db.commit()` onder staat.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
 
 ### AttributeError na het with-blok
@@ -102,27 +123,17 @@ with SqliteDict("dieren.db") as db:
         print(sleutel, "=", waarde)
 ```
 
-**Vraag:** hoeveel sleutels telt dit, en wat staat er bij `kat`?
+<Voorspel vraag="Hoeveel sleutels telt dit, en wat staat er bij kat?">
+  <Keuze uitleg="Onder één sleutel staat altijd één waarde, net als in een dictionary.">3 sleutels, met twee keer kat</Keuze>
+  <Keuze uitleg="Het aantal klopt. Kijk welke van de twee regels met kat als laatste draait.">2 sleutels, kat = miauw</Keuze>
+  <Keuze goed uitleg="De tweede regel met kat overschrijft de eerste. Er blijven twee verschillende sleutels over.">2 sleutels, kat = mauw</Keuze>
+  <Keuze uitleg="len telt de sleutels, niet de regels waarin je iets opslaat.">3 sleutels, kat = mauw</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Onder het aantal staan `hond = woef` en daarna `kat = mauw`. Dat `kat` onderaan staat, komt door SqliteDict: een sleutel die een nieuwe waarde krijgt, schuift naar achteren.
 
-Onder één sleutel staat altijd één waarde.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```
-2 sleutels
-hond = woef
-kat = mauw
-```
-
-Twee sleutels: de tweede `db["kat"] = …` overschrijft de eerste. Dat `kat` onderaan staat, komt door SqliteDict: een sleutel die een nieuwe waarde krijgt, schuift naar achteren.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 

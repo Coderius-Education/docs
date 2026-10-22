@@ -16,12 +16,16 @@ with SqliteDict("mijn_data.db") as db:
         print("Geen email opgeslagen")
 ```
 
-<details>
-<summary>Voorspel: wat print dit?</summary>
+<Voorspel vraag="Onder email heb je nooit iets bewaard. Wat print dit script?">
+  <Keuze goed uitleg="De sleutel staat niet in db, dus de if is niet waar en Python doet wat onder else staat.">`Geen email opgeslagen`</Keuze>
+  <Keuze uitleg="Python komt nooit bij db['email']: de if kijkt eerst, en de sleutel is er niet.">Een `KeyError`</Keuze>
+  <Keuze uitleg="Een sleutel die er niet is, heeft geen waarde, ook geen lege. Kijk welke tak van de if draait.">Een lege regel</Keuze>
+  <Uitleg>
 
-`Geen email opgeslagen`. Onder `"email"` heb je nooit iets bewaard, dus `"email" in db` is `False` en Python doet wat onder `else` staat. Er komt geen `KeyError`, want Python komt nooit bij `db["email"]`.
+  Er komt geen `KeyError`, want `db["email"]` staat in de tak die niet draait.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 `in` kijkt alleen naar de sleutels, net als bij een dictionary.
 
@@ -64,6 +68,27 @@ Jan
 
 Met `in` kies je tussen twee dingen die je script kan doen. Met `get` krijg je altijd een waarde terug, en die kun je meteen gebruiken.
 
+Test jezelf. In `mijn_data.db` staan `naam` en `leeftijd`. Je draait dit script:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    print(db.get("email", "geen@example.com"))
+```
+
+<Voorspel soort="Controlevraag" vraag="Het script print geen@example.com. Daarna draai je bekijk_db.py. Wat zie je?">
+  <Keuze uitleg="get leest alleen. Om iets op te slaan zet je een waarde onder een sleutel met =, en daarna volgt commit().">Drie sleutels, met email = geen@example.com</Keuze>
+  <Keuze uitleg="None zie je alleen in je uitvoer, bij get zonder standaardwaarde. Wat doet get met het bestand?">Drie sleutels, met email = None</Keuze>
+  <Keuze goed uitleg="get geeft de standaardwaarde terug aan je script, maar zet hem niet in de database.">Er staan nog steeds alleen naam en leeftijd in</Keuze>
+  <Keuze uitleg="bekijk_db.py vraagt niet naar email. Het loopt alleen langs de sleutels die er zijn.">Een KeyError, want email bestaat niet</Keuze>
+  <Uitleg>
+
+  `get` en `in` kijken alleen. Wat er in het bestand staat, verandert pas met `db[sleutel] = waarde` en `db.commit()`.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
 
 ### None in je uitvoer
@@ -100,28 +125,17 @@ with SqliteDict("mijn_data.db") as db:
     print(db.get("hobby", "geen hobby"))
 ```
 
-**Vraag:** welke vier regels print dit?
+<Voorspel vraag="Welke vier regels print dit, van boven naar beneden?">
+  <Keuze uitleg="in kijkt alleen naar de sleutels. Is Jan een sleutel of een waarde?">`True` · `True` · `16` · `geen hobby`</Keuze>
+  <Keuze goed uitleg="Jan is een waarde, geen sleutel. De leeftijd bestaat, en een hobby niet.">`True` · `False` · `16` · `geen hobby`</Keuze>
+  <Keuze uitleg="De standaardwaarde gebruikt get alleen als de sleutel er niet is. Staat leeftijd in de database?">`True` · `False` · `0` · `geen hobby`</Keuze>
+  <Keuze uitleg="None krijg je van get zonder standaardwaarde. Hier geef je er wel een mee.">`True` · `False` · `16` · `None`</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  `in` kijkt alleen naar de sleutels, nooit naar de waarden. De standaardwaarde van `get` doet pas iets als de sleutel ontbreekt.
 
-Kijkt `in` naar de sleutels of naar de waarden?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```
-True
-False
-16
-geen hobby
-```
-
-`"Jan" in db` is `False`: `Jan` is een waarde, geen sleutel. De leeftijd bestaat, dus de `0` doet niets. Een hobby staat er niet in, dus daar komt de standaardwaarde.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 

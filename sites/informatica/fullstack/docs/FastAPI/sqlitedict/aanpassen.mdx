@@ -10,9 +10,6 @@ Sara gaat naar 5B. In een gewone dictionary pas je dat aan op de plek zelf, met 
 
 ## Op de plek zelf aanpassen?
 
-<details>
-<summary>Voorspel: wat print dit script?</summary>
-
 ```python
 from sqlitedict import SqliteDict
 
@@ -24,11 +21,16 @@ with SqliteDict("mijn_data.db") as db:
     print(db["sara"]["klas"])
 ```
 
-`4B`, niet `5B`. En je krijgt geen foutmelding.
+<Voorspel vraag="Wat print dit script?">
+  <Keuze uitleg="Dat zou kloppen bij een gewone dictionary. Bij SqliteDict geeft db['sara'] elke keer een nieuwe dictionary uit het bestand.">`5B`</Keuze>
+  <Keuze goed uitleg="De eerste regel in het with-blok past een kopie aan, en die gebruik je daarna nergens meer. Het bestand weet daar niets van.">`4B`, zonder foutmelding</Keuze>
+  <Keuze uitleg="Python mag een waarde in een dictionary aanpassen, dus er is geen reden voor een fout. Wat er in het bestand staat, is een andere vraag.">Een foutmelding</Keuze>
+  <Uitleg>
 
-Elke keer dat je `db["sara"]` schrijft, leest SqliteDict de waarde uit het bestand en maakt hij er een nieuwe dictionary van. Op de eerste regel in het `with`-blok pas je zo'n nieuwe dictionary aan, en daarna gebruik je hem nergens meer. Het bestand weet daar niets van.
+  Elke keer dat je `db["sara"]` schrijft, leest SqliteDict de waarde uit het bestand en maakt hij er een nieuwe dictionary van.
 
-</details>
+  </Uitleg>
+</Voorspel>
 
 Draai het script zelf, en kijk of je voorspelling klopte. Een gewone dictionary in Python onthoudt zo'n wijziging wel. SqliteDict niet: ophalen geeft een **kopie**.
 
@@ -74,6 +76,28 @@ sara = {'klas': '5B', 'vakken': ['informatica', 'wiskunde', 'biologie']}
 ```
 
 Onthoud die drie stappen: ophalen, aanpassen, terugzetten.
+
+Test jezelf. Na `aanpassen.py` zit Sara in 5B. Je draait dit script:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    sara = db["sara"]
+    sara["klas"] = "6B"
+    db.commit()
+```
+
+<Voorspel soort="Controlevraag" vraag="Welke klas laat bekijk_db.py daarna bij Sara zien?">
+  <Keuze uitleg="sara is een kopie in je programma, en commit() schrijft alleen weg wat in de database veranderde. Komt die kopie ooit terug in de database?">6B</Keuze>
+  <Keuze goed uitleg='Het script past de kopie aan, maar zet hem niet terug met db["sara"] = sara. Voor de database is er dan niets veranderd.'>5B</Keuze>
+  <Keuze uitleg="SqliteDict merkt niet dat je een kopie aanpast. Het script loopt zonder fout tot het eind.">Een foutmelding, want je past een kopie aan</Keuze>
+  <Uitleg>
+
+  Ophalen en aanpassen is niet genoeg. Pas de derde stap, terugzetten, geeft `commit()` iets om weg te schrijven.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -123,21 +147,17 @@ with SqliteDict("scores.db") as db:
     print(db["piet"]["scores"])
 ```
 
-**Vraag:** wat print dit: `[10, 20, 30]`, `[10, 30]` of `[10]`?
+<Voorspel vraag="Wat print dit?">
+  <Keuze uitleg="Beide keren werkt append op een dictionary. Welke van de twee gaat daarna terug in de database?">`[10, 20, 30]`</Keuze>
+  <Keuze uitleg="De eerste append gaat in een kopie die je meteen weer kwijt bent. Welke append gebeurt in een variabele die je terugzet?">`[10, 20]`</Keuze>
+  <Keuze goed uitleg="De 20 gaat in een kopie die niemand terugzet. De 30 gaat in piet, en piet gaat terug in de database.">`[10, 30]`</Keuze>
+  <Keuze uitleg="Eén van de twee keren append zet zijn dictionary wel terug, en daarna volgt commit().">`[10]`</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Elke `db["piet"]` geeft een nieuwe kopie uit het bestand. Alleen wat je in een variabele aanpast en daarna terugzet, komt in de database.
 
-Welke van de twee keer `append` gebeurt op een dictionary die daarna wordt teruggezet?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-`[10, 30]`. De `20` gaat in een kopie die niemand terugzet. De `30` gaat in `piet`, en `piet` gaat terug in de database.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 

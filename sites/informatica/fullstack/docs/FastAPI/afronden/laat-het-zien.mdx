@@ -73,27 +73,34 @@ Dat valt buiten deze cursus, maar het is dezelfde `main.py`. Wat je hier hebt ge
 Kan je klasgenoot er niet bij? Meestal mist `--host 0.0.0.0`, of zitten jullie niet op hetzelfde netwerk. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
+<Voorspel soort="Controlevraag" vraag="Je klasgenoot is ingelogd op jouw gastenboek. Hij haalt in Elementen de maxlength van het berichtveld weg en verstuurt een bericht van 200 tekens. Wat ziet hij in Netwerk?">
+  <Keuze uitleg="Dat zou gelden als alleen de HTML de grens bewaakte. Wat staat er bovenaan je POST /gastenboek?">Een 303, en het lange bericht staat in je gastenboek</Keuze>
+  <Keuze uitleg="Hij haalde het attribuut weg in zijn eigen browser. Wat houdt het versturen dan nog tegen?">Niets, want zijn browser stuurt het bericht niet</Keuze>
+  <Keuze goed uitleg="De controle in je endpoint draait op jouw computer, en daar kan hij niet bij.">Een 400 met `Bericht is te lang`</Keuze>
+  <Keuze uitleg="Een 422 stuurt FastAPI als een veld ontbreekt. Het veld bericht is er wel, het is alleen lang.">Een 422, want het bericht past niet in het formulier</Keuze>
+  <Uitleg>
+
+  Zijn browser is van hem, je server van jou. Wat in de HTML staat, kan hij aanpassen; wat in `main.py` staat, niet. Daarom doen je controles in Python nu echt werk.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wie kan erbij?
 
 Je server draait op `127.0.0.1:8000`. Je klasgenoot zit op hetzelfde wifi-netwerk en typt `http://127.0.0.1:8000` in zijn browser.
 
-**Vraag:** wat ziet hij?
+<Voorspel vraag="Wat ziet hij?">
+  <Keuze uitleg="Hetzelfde netwerk helpt pas als hij het adres van jouw computer typt. Wat betekent deze computer als iemand anders het intypt?">Jouw gastenboek, want jullie zitten op hetzelfde netwerk</Keuze>
+  <Keuze uitleg="Een 404 komt van een server die het verzoek wel kreeg. Komt zijn verzoek bij jouw server aan?">Een 404, want jouw server kent hem niet</Keuze>
+  <Keuze goed uitleg="127.0.0.1 verwijst altijd naar de machine waar je het intypt, dus zijn browser zoekt op zijn eigen laptop.">Niet jouw gastenboek, maar wat er op zijn eigen computer draait</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Meestal draait er op zijn computer geen server, en dan krijgt hij een foutmelding dat de verbinding is geweigerd. Wil je dat hij bij jouw server komt, dan heeft hij het adres van jouw computer op het netwerk nodig.
 
-Wat betekent "deze computer" als iemand anders het intypt?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Zijn eigen computer, niet die van jou. `127.0.0.1` verwijst altijd naar de machine waar je het intypt. Draait daar geen server, dan krijgt hij een foutmelding dat de verbinding is geweigerd.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run - Samen testen
 

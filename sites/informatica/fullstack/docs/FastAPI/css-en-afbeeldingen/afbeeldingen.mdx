@@ -29,6 +29,8 @@ je-project/
 
 In je HTML gebruik je de `<img>` tag:
 
+<Bestand pad="static/pages/foto.html" />
+
 ```html
 <img src="/static/kat.jpg" alt="Een kat">
 ```
@@ -39,6 +41,8 @@ In je HTML gebruik je de `<img>` tag:
 ## Compleet voorbeeld
 
 Maak `static/pages/foto.html`:
+
+<Bestand pad="static/pages/foto.html" />
 
 ```html
 <!DOCTYPE html>
@@ -54,7 +58,9 @@ Maak `static/pages/foto.html`:
 </html>
 ```
 
-En in `main.py`:
+Zet in `main.py` een endpoint erbij:
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/foto")
@@ -79,6 +85,8 @@ Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 from fastapi import FastAPI
@@ -165,29 +173,43 @@ async def foto():
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag='Je zet kat.jpg in een nieuwe map static/img. In foto.html laat je src="/static/kat.jpg" staan. Wat zie je op /foto?'>
+  <Keuze uitleg="StaticFiles zoekt niet in de hele map. Hij kijkt alleen op de plek die het adres na /static aanwijst.">De foto, want FastAPI vindt hem in de map static</Keuze>
+  <Keuze uitleg="Het endpoint voor /foto en foto.html zijn niet veranderd. Kijk welk verzoek er wel misgaat.">Een 404 in plaats van de pagina</Keuze>
+  <Keuze goed uitleg="Het adres in src wijst naar een bestand dat op die plek niet meer staat. Alleen dat ene verzoek mislukt.">De pagina met de alt-tekst, en in Netwerk een 404 bij kat.jpg</Keuze>
+  <Keuze uitleg="Een 500 krijg je als er in een endpoint van jou iets misgaat. Voor het plaatje draait geen functie van jou.">Een 500, en een foutmelding in de terminal</Keuze>
+  <Uitleg>
+
+  Het adres in `src` volgt de mappen in `static` precies: `static/img/kat.jpg` staat op `/static/img/kat.jpg`. Verplaats je een bestand, pas dan ook het adres in je HTML aan.
+
+  </Uitleg>
+</Voorspel>
+
+:::tip[Controleer je server]
+Laat je server draaien en typ in een tweede terminal `python controleer.py css-en-afbeeldingen`. Het script kijkt of alles uit dit hoofdstuk werkt; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
+:::
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat zie je?
+
+<Bestand pad="static/pages/foto.html" />
 
 ```html
 <img src="/static/logo.png" alt="Logo">
 ```
 
-**Vraag:** Wat zie je als `logo.png` niet bestaat in de static folder?
+<Voorspel vraag="Wat zie je als logo.png niet in de map static staat?">
+  <Keuze uitleg="Het HTML-bestand en de afbeelding zijn twee aparte verzoeken. Gaat het eerste ook mis als alleen het tweede mislukt?">Een 404 in plaats van de hele pagina</Keuze>
+  <Keuze uitleg="Er draait geen code van jou voor de afbeelding, en FastAPI stuurt bij een onbekend bestand zelf een antwoord. De server crasht niet.">Een 500 Internal Server Error</Keuze>
+  <Keuze goed uitleg="De pagina laadt gewoon. Alleen de afbeelding komt niet, en daarvoor in de plaats toont de browser de tekst uit alt.">Op de plek van de afbeelding een kapot icoontje met de tekst Logo</Keuze>
+  <Keuze uitleg="De browser laat wel iets zien op de plek van een afbeelding die niet komt. Waar is het alt-attribuut voor?">De pagina, en op die plek helemaal niets</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  In Netwerk staat de pagina met 200, en `logo.png` met 404. De browser vult het gat zo goed als hij kan, met de tekst uit `alt`.
 
-De browser kan de afbeelding niet laden. Waarvoor is het `alt` attribuut bedoeld?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Je ziet de alt-tekst "Logo" en het icoon van een kapotte afbeelding. De pagina laadt wel, de afbeelding niet.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -196,6 +218,8 @@ Ga naar `http://127.0.0.1:8000/static/kat.jpg`. Zie je alleen de afbeelding, zon
 ### Opdracht 3: Investigate - Zonder alt
 
 Wat zie je als je het `alt` attribuut weglaat en het bestand niet bestaat? Probeer het uit.
+
+<Bestand pad="static/pages/foto.html" />
 
 ```html
 <img src="/static/bestaat_niet.jpg">
@@ -222,7 +246,8 @@ Zet een `.jpg` of `.png` bestand in `static/` en verwijs ernaar met `<img src="/
 <details>
 <summary>Antwoord</summary>
 
-`static/pages/mijn_foto.html`:
+<Bestand pad="static/pages/mijn_foto.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -232,6 +257,8 @@ Zet een `.jpg` of `.png` bestand in `static/` en verwijs ernaar met `<img src="/
     </body>
 </html>
 ```
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/mijn_foto")
@@ -255,7 +282,8 @@ Zet drie afbeeldingen in je `static`-map. Gebruik voor elke foto een `<h3>` gevo
 <details>
 <summary>Antwoord</summary>
 
-`static/pages/galerij.html`:
+<Bestand pad="static/pages/galerij.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -273,6 +301,8 @@ Zet drie afbeeldingen in je `static`-map. Gebruik voor elke foto een `<h3>` gevo
     </body>
 </html>
 ```
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/galerij")

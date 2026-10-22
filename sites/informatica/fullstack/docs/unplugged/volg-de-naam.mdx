@@ -1,0 +1,211 @@
+---
+description: Volg een naam van het formulier via main.py naar de template, verbind wat bij elkaar hoort met een lijn, en vind waar de ketting breekt.
+---
+
+# Volg de naam
+
+<Handout>
+
+Wat een bezoeker in een formulier typt, gaat door drie bestanden: het
+formulier stuurt het met een `name`, de functie in `main.py` vangt het met een
+parameter, het dictionary geeft het door met een sleutel, en de template zet
+het neer met `{{ }}`. Elke schakel moet dezelfde naam hebben. Breekt er één,
+dan zegt Python niets: de browser laat een fout zien, of een lege plek.
+
+## Wat je nodig hebt
+
+- Per tweetal een geprinte hand-out, een pen en twee kleuren markeerstift.
+- Ongeveer 20 minuten.
+
+## Zo werkt het
+
+1. Zoek in elke ketting de naam in het formulier. Trek een lijn naar de plek
+   in `main.py` waar dezelfde naam staat, en van daar verder naar de template.
+2. Een lijn die nergens heen kan: zet daar een kruis, in de tweede kleur.
+3. Schrijf op wat de bezoeker te zien krijgt als hij `Sam` invult en op
+   Verstuur klikt.
+
+Ketting A doen jullie samen, als voorbeeld. Daar loopt de lijn helemaal door.
+
+## Ketting A
+
+<div className="handout-samen">
+
+```html
+<form method="post" action="/groet">
+    <input type="text" name="naam">
+    <button type="submit">Verstuur</button>
+</form>
+```
+
+```python
+@app.post("/groet")
+async def groet(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(request, "groet.html", {"naam": naam})
+```
+
+```html
+<p>Hallo {{ naam }}</p>
+```
+
+De bezoeker ziet: ______
+
+</div>
+
+## Ketting B
+
+<div className="handout-samen">
+
+```html
+<form method="post" action="/groet">
+    <input type="text" name="voornaam">
+    <button type="submit">Verstuur</button>
+</form>
+```
+
+```python
+@app.post("/groet")
+async def groet(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(request, "groet.html", {"naam": naam})
+```
+
+```html
+<p>Hallo {{ naam }}</p>
+```
+
+De bezoeker ziet: ______
+
+</div>
+
+## Ketting C
+
+<div className="handout-samen">
+
+```html
+<form method="post" action="/groet">
+    <input type="text" name="naam">
+    <button type="submit">Verstuur</button>
+</form>
+```
+
+```python
+@app.post("/groet")
+async def groet(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(request, "groet.html", {"voornaam": naam})
+```
+
+```html
+<p>Hallo {{ naam }}</p>
+```
+
+De bezoeker ziet: ______
+
+</div>
+
+## Ketting D
+
+<div className="handout-samen">
+
+```html
+<form method="post" action="/groeten">
+    <input type="text" name="naam">
+    <button type="submit">Verstuur</button>
+</form>
+```
+
+```python
+@app.post("/groet")
+async def groet(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(request, "groet.html", {"naam": naam})
+```
+
+```html
+<p>Hallo {{ naam }}</p>
+```
+
+De bezoeker ziet: ______
+
+</div>
+
+## Ketting E
+
+<div className="handout-samen">
+
+```html
+<form method="post" action="/groet">
+    <input type="text" name="naam">
+    <button type="submit">Verstuur</button>
+</form>
+```
+
+```python
+@app.post("/groet")
+async def groet(request: Request, naam: str = Form(...)):
+    return templates.TemplateResponse(request, "groet.html", {"naam": "naam"})
+```
+
+```html
+<p>Hallo {{ naam }}</p>
+```
+
+De bezoeker ziet: ______
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. Bij welke kettingen krijgt de bezoeker een foutmelding, en bij welke een
+   pagina die er bijna goed uitziet? Welke van de twee is lastiger te vinden?
+2. In ketting C kun je het op twee plekken herstellen. Welke twee?
+3. In ketting E staat de naam `naam` op alle plekken. Waarom gaat het toch
+   mis?
+4. De functie heet in alle kettingen `groet`. Maakt die naam iets uit voor de
+   ketting?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+| Ketting | Waar breekt hij? | De bezoeker ziet |
+|:---:|---|---|
+| A | nergens | `Hallo Sam` |
+| B | `name="voornaam"` hoort bij geen parameter | `422 Unprocessable Entity`: het veld `naam` ontbreekt |
+| C | de sleutel `"voornaam"` hoort bij geen `{{ }}` | `Hallo `, met een lege plek, en status `200` |
+| D | `action="/groeten"` hoort bij geen route | `404 Not Found` |
+| E | `"naam"` met aanhalingstekens is tekst, niet de variabele | `Hallo naam`, wat je ook invult |
+
+Zo zie je ketting C en E zonder server, met dezelfde template:
+
+```python
+from jinja2 import Template
+
+template = Template("<p>Hallo {{ naam }}</p>")
+print(template.render({"voornaam": "Sam"}))   # <p>Hallo </p>
+print(template.render({"naam": "naam"}))      # <p>Hallo naam</p>
+print(template.render({"naam": "Sam"}))       # <p>Hallo Sam</p>
+```
+
+**Bespreek na.** Vraag 1: B en D geven een foutmelding. C en E geven een
+gewone pagina met status `200`, en die zijn lastiger: er staat nergens dat er
+iets mis is. Vraag 2: maak de sleutel `"naam"`, of maak in de template
+`{{ voornaam }}`. Vraag 3: `"naam"` is de tekst n-a-a-m. Zonder
+aanhalingstekens is het de variabele, met daarin wat de bezoeker typte.
+Vraag 4: nee. De ketting loopt via de `name`, de parameter, de sleutel en de
+`{{ }}`. De functienaam kiest de server zelf, en niemand anders ziet hem.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [Een formulier versturen (POST)](site:fullstack/docs/FastAPI/formulieren/forms)
+  en [Een formulier beantwoorden met een template](site:fullstack/docs/FastAPI/formulieren/post_met_templates).
+- De nakijker op [Project checken](site:fullstack/project-checken) zoekt dezelfde gebroken
+  kettingen in je eigen project, en wijst beide regels aan.
+
+</div>
+
+</Handout>

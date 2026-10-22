@@ -202,6 +202,23 @@ describe('plan', () => {
     expect(p.vitest.bestanden).toContain('packages/shared/codeblokken.js');
   });
 
+  it('het controlescript van fullstack laat de fullstack-job draaien', () => {
+    for (const pad of [
+      `${MAP.fullstack}/static/controleer.py`,
+      `${MAP.fullstack}/src/controle/draai.py`,
+      `${MAP.fullstack}/src/controle/kapot.py`,
+      `${MAP.fullstack}/src/controle/uitbreidingen.py`,
+      `${MAP.fullstack}/static/htmx/htmx.min.js`,
+      // draai.py leest de volgorde van de lessen uit de sidebar.
+      `${MAP.fullstack}/sidebars.ts`,
+      `${MAP.fullstack}/src/controle/referentie/templates/berichten.html`,
+    ]) {
+      const p = planVoor({ [pad]: [[3, 3]] }, [MAP.fullstack]);
+      expect(p.runners.fullstack, pad).toEqual({ draaien: true, alles: false });
+      expect(p.runners.robotica.draaien, pad).toBe(false);
+    }
+  });
+
   it('de runner zelf laat alleen die runner alles doen', () => {
     const p = planVoor({ 'scripts/draai-python-blokken.py': [[300, 301]] }, []);
     expect(p.runners.python).toEqual({ draaien: true, alles: true });

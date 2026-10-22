@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gastenboek</title>
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <h1>Gastenboek</h1>
+
+        {% if berichten %}
+            <ul>
+                {% for sleutel, bericht in berichten %}
+                    <li>
+                        <a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}
+                        <form method="post" action="/verwijderen">
+                            <input type="hidden" name="sleutel" value="{{ sleutel }}">
+                            <button type="submit">Verwijderen</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nog geen berichten. Wees de eerste.</p>
+        {% endif %}
+
+        <a href="/gastenboek">Nieuw bericht</a>
+    </body>
+</html>

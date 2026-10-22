@@ -27,6 +27,8 @@ je-project/
 
 Er komen twee regels bij in je `main.py`: een import bovenaan, en direct onder `app = FastAPI()` de regel met `app.mount`. Je endpoints blijven staan. De bovenkant ziet er dan zo uit:
 
+<Bestand pad="main.py" />
+
 <CodeUitleg>
 
 ```python showLineNumbers
@@ -52,6 +54,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 Maak `static/css/style.css`:
 
+<Bestand pad="static/css/style.css" />
+
 ```css
 h1 {
     color: blue;
@@ -65,6 +69,8 @@ p {
 ## CSS koppelen aan je pagina
 
 Zet in `static/pages/home.html` een `<link>` in de `<head>`. De rest van je pagina blijft staan:
+
+<Bestand pad="static/pages/home.html" />
 
 ```html
 <!DOCTYPE html>
@@ -107,6 +113,8 @@ In het tabblad Netwerk uit [Kijken wat de browser doet](site:fullstack/docs/Fast
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 from fastapi import FastAPI
@@ -189,31 +197,41 @@ async def zoek(term: str):
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag='Je zet in home.html href="/css/style.css" in plaats van href="/static/css/style.css". Je herlaadt / met Netwerk open. Wat zie je?'>
+  <Keuze uitleg="Het bestand staat wel in static/css op je schijf, maar de browser vraagt een adres aan je server. Welke adressen hangt app.mount aan de map static?">Een blauwe kop, en bij style.css status 200</Keuze>
+  <Keuze goed uitleg="De pagina zelf komt van je endpoint voor /. Het tweede verzoek gaat naar een adres dat de server niet kent.">De pagina met status 200, en bij style.css een 404</Keuze>
+  <Keuze uitleg="Het verzoek voor de pagina en het verzoek voor de CSS zijn twee aparte regels. Het endpoint voor / is niet veranderd.">Bij / een 404, en geen pagina</Keuze>
+  <Keuze uitleg="Er draait geen code van jou voor dit adres, dus er kan ook niets in misgaan. Wat stuurt FastAPI bij een adres dat hij niet kent?">Bij style.css een 500, en een foutmelding in de terminal</Keuze>
+  <Uitleg>
+
+  De kop is dan niet blauw, want de browser kreeg geen CSS. Het adres in `href` moet beginnen met het adres uit `app.mount`, hier `/static`. Daarna volgt het pad binnen de map `static` op je schijf.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat gebeurt er?
 
 Je hebt twee pagina's, `home.html` en `about.html`, en in allebei staat dezelfde regel:
 
+<Bestand pad="static/pages/about.html" />
+
 ```html
 <link rel="stylesheet" href="/static/css/style.css">
 ```
 
-**Vraag:** wat gebeurt er met `about.html` als je de kleur in `style.css` aanpast?
+<Voorspel vraag="Wat gebeurt er met about.html als je de kleur in style.css aanpast?">
+  <Keuze uitleg="Beide pagina's hebben dezelfde regel. Waarom zou de ene het bestand wel ophalen en de andere niet?">Niets, alleen home.html verandert</Keuze>
+  <Keuze goed uitleg="Beide pagina's laden hetzelfde bestand van hetzelfde adres, dus ze krijgen allebei de nieuwe kleur.">Hij krijgt de nieuwe kleur mee</Keuze>
+  <Keuze uitleg="Een HTML-pagina bewaart de CSS niet zelf. Hij heeft alleen een link, en bij het laden haalt de browser het bestand op.">Niets, want about.html heeft zijn eigen kopie van de CSS</Keuze>
+  <Keuze uitleg="StaticFiles leest het bestand bij elk verzoek opnieuw van je schijf. De server hoeft er niets voor te doen.">Pas na een herstart van de server</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Eén bestand, en elke pagina met deze `<link>` volgt het. Zie je de nieuwe kleur niet meteen, denk dan aan de cache uit Als je wijziging niet doorkomt.
 
-Beide pagina's laden hetzelfde bestand. Wat betekent dat als je dat ene bestand aanpast?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-`about.html` verandert mee. Elke pagina met deze `<link>` laadt hetzelfde bestand, dus ze krijgen allemaal de nieuwe kleur.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -251,7 +269,8 @@ Je hoeft niets aan `main.py` of `home.html` te veranderen: alleen `style.css` ve
 <details>
 <summary>Antwoord</summary>
 
-`static/css/style.css`:
+<Bestand pad="static/css/style.css" />
+
 ```css
 h1 { color: darkblue; }
 p { font-size: 18px; }
@@ -274,13 +293,15 @@ Maak `static/css/about.css` en zet in `about.html` een `<link>` naar `/static/cs
 <details>
 <summary>Antwoord</summary>
 
-`static/css/about.css`:
+<Bestand pad="static/css/about.css" />
+
 ```css
 h1 { color: green; }
 body { background-color: lightblue; }
 ```
 
-`static/pages/about.html`:
+<Bestand pad="static/pages/about.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
