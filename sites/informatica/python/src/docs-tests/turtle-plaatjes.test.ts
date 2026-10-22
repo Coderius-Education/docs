@@ -13,11 +13,29 @@ import { draaiTurtle } from '../../../../../packages/python-runner/src/turtle/dr
 // het codeblok van de oplossing; deze test draait dat blok en legt het
 // resultaat naast het bestand.
 //
+// Een tekening met random: {/* turtle-plaatje met zaad 7: img/naam.svg */}
+// zet random.seed(7) voordat de oplossing draait. Zo blijft het plaatje vast,
+// zonder dat er een seed in de oplossing van de leerling staat; de les zegt
+// erbij dat zijn tekening anders mag zijn. Het zaad gaat via draaiTurtle en
+// niet als regels vóór de code: een vergeten `import random` valt zo om, en
+// een regelnummer in een fout klopt.
+//
+// Een oplossing die om invoer vraagt, krijgt de invoer-marker van het
+// blokkenscript erboven: {/* invoer: 4 | 10 */} op de regel boven de
+// plaatje-marker. Beide controles typen dan dezelfde antwoorden in.
+//
+// Stap voor stap neemt hoogstens 1000 stappen op (trace/recorder.ts). Raadt
+// een pagina die knop aan terwijl een oplossing op die pagina meer stappen
+// kost, dan zegt de pagina dat hij na 1000 stappen stopt: anders denkt de
+// leerling dat zijn programma halverwege ophoudt.
+//
 // Een plaatje bijwerken: SCHRIJF_PLAATJES=1 pnpm exec vitest run turtle-plaatjes
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 const SCHRIJF = process.env.SCHRIJF_PLAATJES === '1';
-const MARKER = /\{\/\*\s*turtle-plaatje:\s*(\S+)\s*\*\/\}\s*\n+```python\n([\s\S]*?)\n```/g;
+const MARKER =
+  /(?:\{\/\*\s*invoer:\s*([^*]*?)\s*\*\/\}\s*\n)?\{\/\*\s*turtle-plaatje(?: met zaad (\d+))?:\s*(\S+)\s*\*\/\}\s*\n+```python\n([\s\S]*?)\n```/g;
+const MAX_STAPPEN = 1000;
 
 function mdxBestanden(map: string): string[] {
   return readdirSync(map).flatMap((naam) => {
@@ -40,9 +58,13 @@ const plaatjes = mdxBestanden(DOCS).flatMap((bestand) => {
   return [...tekst.matchAll(MARKER)].map((m) => ({
     bestand,
     tekst,
-    pad: join(dirname(bestand), m[1]),
-    verwijzing: m[1],
-    code: m[2],
+    pad: join(dirname(bestand), m[3]),
+    verwijzing: m[3],
+    code: m[4],
+    opties: {
+      zaad: m[2] ? Number(m[2]) : undefined,
+      invoer: m[1] ? m[1].split('|').map((a) => a.trim()) : undefined,
+    },
   }));
 });
 
@@ -67,7 +89,13 @@ describe('de doelplaatjes van de turtle-projecten', () => {
       ).not.toBeNull();
       const alt = afbeelding?.[1] ?? '';
 
-      const { tekening } = draaiTurtle(p.code);
+      const { tekening, stappen } = draaiTurtle(p.code, p.opties);
+      if (stappen > MAX_STAPPEN && /Stap voor stap/.test(p.tekst)) {
+        expect(
+          p.tekst,
+          `${relative(DOCS, p.bestand)} raadt Stap voor stap aan, maar deze oplossing kost ${stappen} stappen; zeg dat de knop na 1000 stappen stopt`,
+        ).toMatch(/1000 stappen/);
+      }
       const svg = naarSvg(tekening, undefined, alt);
       if (SCHRIJF) writeFileSync(p.pad, svg);
       expect(existsSync(p.pad), `${naam} ontbreekt; maak hem met SCHRIJF_PLAATJES=1`).toBe(true);

@@ -78,7 +78,7 @@ while lengte < 300:
 
 ## Er gaat iets mis
 
-{/* niet-draaien: een oneindige loop, die hier nooit zou stoppen */}
+{/* niet-draaien: een oneindige loop, die pas na 50000 bewegingen stopt */}
 
 ```python
 import turtle
@@ -90,14 +90,19 @@ while lengte < 200:
     turtle.left(90)
 ```
 
-De schildpad blijft rondjes lopen over hetzelfde vierkantje, en je programma
-stopt nooit. In de speeltuin loopt je browsertab dan vast.
+De schildpad blijft rondjes lopen over hetzelfde vierkantje. Na 50000
+bewegingen houdt de speeltuin ermee op, met deze melding:
+
+{/* foutmelding-van: blok-erboven */}
+
+```
+RuntimeError: De schildpad heeft al 50000 bewegingen gemaakt. Loopt je loop eindeloos door?
+```
 
 **Oorzaak:** `lengte += 5` ontbreekt. `lengte` blijft 5, dus `lengte < 200`
 blijft voor altijd waar.
 
 **Oplossing:** zorg dat de loop iets verandert aan wat de vraag bovenaan
-controleert. Kopieer je code eerst naar een kladblok voordat je een while-loop
-probeert, dan ben je hem niet kwijt als de tab vastloopt.
+controleert.
 
 Door naar [stap 2: stippen tot de rand](site:python/docs/projecten/turtle/spiraal/stap-2-tot-de-rand).

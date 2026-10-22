@@ -1,0 +1,149 @@
+---
+sidebar_position: 4
+sidebar_label: 'Stap 4: een lijst'
+description: Doe mee met vier schildpadden, zet ze in een lijst, en breng ze met een for-loop over die lijst naar hun baan.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 4: Vier schildpadden (een lijst)
+
+:::info
+Deze stap gebruikt lijsten uit [Lijsten](site:python/docs/data/10a-lijsten-basis), en in het voorbeeld `right` uit [Lijnen en hoeken](site:python/docs/projecten/turtle/lijnen/stap-2-right). Een loop over een lijst met een variabele die elke ronde verandert, deed je al in [Een regenboog](site:python/docs/projecten/turtle/regenboog/stap-2-regenboog).
+:::
+
+Voor twee schildpadden schreef je alles twee keer. Met vier wordt het
+klaarzetten lang: elke schildpad moet met de pen omhoog naar zijn baan, en
+daar de pen weer omlaag. Dat stuk is voor elke schildpad hetzelfde, en dus
+werk voor een loop.
+
+Daarvoor zet je de schildpadden in een lijst. In een lijst mag alles staan,
+ook schildpadden:
+
+```python
+import turtle
+
+rood = turtle.Turtle()
+rood.pencolor("red")
+rood.left(30)
+
+blauw = turtle.Turtle()
+blauw.pencolor("blue")
+blauw.right(30)
+
+schildpadden = [rood, blauw]
+
+for schildpad in schildpadden:
+    schildpad.forward(100)
+```
+
+<CodeExercise>{`import turtle
+
+rood = turtle.Turtle()
+rood.pencolor("red")
+rood.left(30)
+
+blauw = turtle.Turtle()
+blauw.pencolor("blue")
+blauw.right(30)
+
+schildpadden = [rood, blauw]
+
+for schildpad in schildpadden:
+    schildpad.forward(100)`}</CodeExercise>
+
+De loop gaat de lijst langs: eerst is `schildpad` de rode, daarna de
+blauwe. Elk loopt 100 stappen, in zijn eigen richting en met zijn eigen
+kleur.
+
+## Opdracht: vier op een rij
+
+Plak je programma uit stap 3 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 3](site:python/docs/projecten/schildpaddenrace/stap-3-tweede-schildpad).
+
+Pas je programma zo aan dat:
+
+1. er vier schildpadden meedoen: `rood`, `blauw`, `oranje` en `paars`, met
+   een pen in de kleur `"red"`, `"blue"`, `"orange"` en `"purple"`;
+2. ze in een lijst `schildpadden` staan;
+3. een for-loop over die lijst ze naar de start brengt: de rode op
+   `(-220, 90)`, en elke volgende baan 60 lager, dus de blauwe op
+   `(-220, 30)`, de oranje op `(-220, -30)` en de paarse op `(-220, -90)`;
+4. ze in de race om de beurt een stap zetten, net als in stap 3, zolang ze
+   alle vier nog vóór de streep staan.
+
+![Vier gekleurde lijnen naar de finishlijn; de rode en de oranje zijn er allebei net overheen](./img/stap-4-vier-schildpadden.svg)
+
+Bij jou loopt de race anders dan op het plaatje.
+
+<CodeExercise>{`# Plak hier je programma uit stap 3`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+De kleur geef je elke schildpad meteen als je hem maakt, zoals in stap 3.
+In de loop over de lijst doe je alleen wat voor elke schildpad hetzelfde
+is. Alleen de hoogte van de baan verschilt: houd die bij in een variabele
+`y` die na elke schildpad 60 kleiner wordt, zoals bij de regenboog. De
+race schrijf je nog met vier regels, één per schildpad.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* turtle-plaatje met zaad 12: img/stap-4-vier-schildpadden.svg */}
+
+```python
+import turtle
+import random
+
+turtle.penup()
+turtle.goto(80, 130)
+turtle.pendown()
+turtle.goto(80, -130)
+turtle.hideturtle()
+
+rood = turtle.Turtle()
+rood.pencolor("red")
+blauw = turtle.Turtle()
+blauw.pencolor("blue")
+oranje = turtle.Turtle()
+oranje.pencolor("orange")
+paars = turtle.Turtle()
+paars.pencolor("purple")
+
+schildpadden = [rood, blauw, oranje, paars]
+
+y = 90
+for schildpad in schildpadden:
+    schildpad.penup()
+    schildpad.goto(-220, y)
+    schildpad.pendown()
+    y -= 60
+
+while rood.xcor() < 80 and blauw.xcor() < 80 and oranje.xcor() < 80 and paars.xcor() < 80:
+    rood.forward(random.randint(1, 20))
+    blauw.forward(random.randint(1, 20))
+    oranje.forward(random.randint(1, 20))
+    paars.forward(random.randint(1, 20))
+```
+
+De regel met `while` is lang, maar hij zegt hetzelfde als in stap 3: de
+race gaat door zolang niemand over de streep is.
+
+</details>
+
+## Er gaat iets mis
+
+**Alle vier de schildpadden lopen bovenaan, in dezelfde baan.**
+
+**Oorzaak:** `y -= 60` staat niet ingesprongen. Dan hoort hij niet bij de
+for-loop maar komt hij erna, en is `y` voor elke schildpad nog 90.
+
+**Oplossing:** spring `y -= 60` in, net als de regels erboven. Dan wordt
+`y` na elke schildpad 60 kleiner.
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
+Door naar [stap 5: om de beurt](site:python/docs/projecten/schildpaddenrace/stap-5-loop-in-loop).

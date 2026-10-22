@@ -139,29 +139,36 @@ export function filterTraceback(raw: string): string {
 // synchroon: Python wacht op het antwoord. Een eigen venster (dialoog.ts) is
 // asynchroon, en daar kan Python alleen op wachten met JSPI (stack switching,
 // run_sync). Chrome en Edge hebben dat sinds versie 137. Waar het ontbreekt
-// (Safari, oudere browsers), vraagt input() via stdin en window.prompt; iets
-// anders kan de browser dan niet.
-function promptStdin(): string {
-  const answer = window.prompt('Invoer (input):');
+// (Safari, oudere browsers), vraagt input() het met window.prompt; iets
+// anders kan de browser dan niet. Ook dan staat de vraag van het programma in
+// dat venster, en komt het antwoord achter de vraag in de uitvoer: eerst kwam
+// er twee keer "Invoer (input):" zonder vraag, en wist een leerling met twee
+// input()-regels niet welke vraag welke was.
+function vraagDirect(tekst: string): string {
+  const answer = window.prompt(tekst || 'Je programma wacht op invoer.');
   return answer === null ? '' : answer;
 }
 
+// Stdin blijft voor wie sys.stdin zelf leest.
+function promptStdin(): string {
+  return vraagDirect('');
+}
+
 // Vervangt builtins.input door een versie die het eigen venster gebruikt als
-// run_sync kan. Onder een eigen bestandsnaam, zodat de Stapper deze functie
+// run_sync kan, en anders window.prompt met de vraag erin. Onder een eigen bestandsnaam, zodat de Stapper deze functie
 // niet als leerlingcode opneemt. Het antwoord komt, zoals in een terminal,
 // achter de vraag in de uitvoer te staan.
 export const INVOER_PY = `
 import builtins
 from pyodide.ffi import can_run_sync, run_sync
-from coderius_invoer import vraag as _coderius_vraag
-
-_coderius_oude_input = builtins.input
+from coderius_invoer import vraag as _coderius_vraag, vraag_direct as _coderius_vraag_direct
 
 def _coderius_input(prompt=""):
-    if not can_run_sync():
-        return _coderius_oude_input(prompt)
     tekst = str(prompt)
-    antwoord = run_sync(_coderius_vraag(tekst))
+    if can_run_sync():
+        antwoord = run_sync(_coderius_vraag(tekst))
+    else:
+        antwoord = _coderius_vraag_direct(tekst)
     print(tekst + antwoord)
     return antwoord
 
@@ -184,7 +191,7 @@ const metEigenInvoer = new WeakSet<PyodideInterface>();
 function zetInvoer(pyodide: PyodideInterface): void {
   pyodide.setStdin({ stdin: promptStdin });
   if (metEigenInvoer.has(pyodide) || !pyodide.registerJsModule) return;
-  pyodide.registerJsModule('coderius_invoer', { vraag: vraagInvoer });
+  pyodide.registerJsModule('coderius_invoer', { vraag: vraagInvoer, vraag_direct: vraagDirect });
   pyodide.runPython(INVOER_PY, { filename: '<coderius-invoer>' });
   metEigenInvoer.add(pyodide);
 }

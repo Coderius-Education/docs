@@ -60,11 +60,17 @@ function metStdinBewaking(pyodide: PyodideInterface): PyodideInterface {
 
 describe('runPython en runPythonStream met echte Pyodide in node', () => {
   let pyodide: PyodideInterface;
+  const vragen: string[] = [];
 
   beforeAll(async () => {
     setPyodideLoader(laadLokalePyodide);
     // input() gaat via window.prompt; in node bestaat window niet.
-    vi.stubGlobal('window', { prompt: () => 'Sam' });
+    vi.stubGlobal('window', {
+      prompt: (vraag: string) => {
+        vragen.push(vraag);
+        return 'Sam';
+      },
+    });
     pyodide = await getPyodide();
   }, 90_000);
 
@@ -108,11 +114,17 @@ describe('runPython en runPythonStream met echte Pyodide in node', () => {
   });
 
   it('runPython laat input() het antwoord van window.prompt gebruiken', async () => {
+    // Zonder JSPI (Safari) staat de vraag in het venster en het antwoord
+    // achter de vraag in de uitvoer, net als met het eigen venster. Eerst
+    // vroeg het venster twee keer "Invoer (input):" zonder vraag.
+    await runPython(pyodide, 'pass');
+    vragen.length = 0;
     const result = await runPython(
       metStdinBewaking(pyodide),
-      'naam = input("Naam: ")\nprint("Hoi " + naam)',
+      'naam = input("Naam: ")\nklas = input("Klas: ")\nprint("Hoi " + naam)',
     );
-    expect(result).toBe('Naam: Hoi Sam\n');
+    expect(vragen).toEqual(['Naam: ', 'Klas: ']);
+    expect(result).toBe('Naam: Sam\nKlas: Sam\nHoi Sam\n');
   });
 
   it('runPythonStream laat input() hetzelfde antwoord gebruiken', async () => {
@@ -121,7 +133,7 @@ describe('runPython en runPythonStream met echte Pyodide in node', () => {
       onStdout: (t) => stdout.push(t),
       onStderr: () => {},
     });
-    expect(stdout.join('')).toBe('Hoi Sam\n');
+    expect(stdout.join('')).toBe('Sam\nHoi Sam\n');
   });
 
   it('vervangt input() door de versie met het eigen venster', async () => {
@@ -296,6 +308,7 @@ describe('input() met JSPI wacht op het eigen venster', () => {
       const vragen = [];
       py.registerJsModule('coderius_invoer', {
         vraag: (tekst) => { vragen.push(tekst); return new Promise((r) => setTimeout(() => r('Sam'), 10)); },
+        vraag_direct: () => { throw new Error('met JSPI hoort input() het eigen venster te gebruiken'); },
       });
       py.runPython(process.env.INVOER_PY, { filename: '<coderius-invoer>' });
       await py.runPythonAsync('naam = input("Naam: ")\\nprint("Hoi " + naam)');

@@ -330,6 +330,7 @@ rondklikt
 rondstuitert
 rondtrip
 Roychowdhury
+ruimtemannetje
 rvspaleis
 Rxiv
 schaakengine
@@ -360,6 +361,8 @@ Spawnen
 spawnt
 spelernaam
 Speltimer
+spirograaf
+spirografen
 sqlitedict
 SSRN
 stagede

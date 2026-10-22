@@ -1,0 +1,150 @@
+---
+sidebar_position: 3
+sidebar_label: 'Stap 3: turtle.Turtle()'
+description: Maak een tweede schildpad met turtle.Turtle(), en laat de twee om de beurt een stap zetten zolang ze allebei nog vóór de streep staan.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 3: Een tegenstander (turtle.Turtle)
+
+:::info
+Deze stap gebruikt `and` uit [And, or en elif](site:python/docs/beslissen/05c-and-or-elif), `left` uit [Lijnen en hoeken](site:python/docs/projecten/turtle/lijnen/stap-1-forward) en `hideturtle` uit [Een dobbelsteen](site:python/docs/projecten/turtle/dobbelsteen/stap-2-stippen). Nieuw is `turtle.Turtle()`: dat staat hieronder.
+:::
+
+Een race in je eentje is niet spannend. Er moet een tegenstander bij.
+
+Met `turtle.forward` stuurde je steeds dezelfde schildpad. Wil je er meer,
+dan maak je ze zelf, met **`turtle.Turtle()`**. Elke aanroep geeft een
+nieuwe schildpad, die je in een variabele bewaart. Daarna schrijf je die
+naam voor het commando, op de plek van `turtle`:
+
+```python
+import turtle
+
+rood = turtle.Turtle()
+rood.pencolor("red")
+rood.forward(100)
+
+blauw = turtle.Turtle()
+blauw.pencolor("blue")
+blauw.left(90)
+blauw.forward(100)
+```
+
+<CodeExercise>{`import turtle
+
+rood = turtle.Turtle()
+rood.pencolor("red")
+rood.forward(100)
+
+blauw = turtle.Turtle()
+blauw.pencolor("blue")
+blauw.left(90)
+blauw.forward(100)`}</CodeExercise>
+
+Elke schildpad begint in het midden, kijkt naar rechts en heeft een eigen
+pen. `blauw.left(90)` draait alleen de blauwe: de rode loopt rechtdoor.
+
+Die punt ken je uit [String-methoden](site:python/docs/tekst/04b-string-methoden),
+van `tekst.upper()`. `rood.forward(100)` is ook een methode: een functie
+die bij één waarde hoort, hier bij de rode schildpad.
+
+## Opdracht: twee schildpadden
+
+Plak je programma uit stap 2 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 2](site:python/docs/projecten/schildpaddenrace/stap-2-while).
+
+Pas je programma zo aan dat:
+
+1. de schildpad van `turtle` alleen nog de finishlijn tekent, en daarna
+   verdwijnt;
+2. er twee nieuwe schildpadden zijn: `rood` met een rode pen, die begint op
+   `(-220, 30)`, en `blauw` met een blauwe pen, die begint op `(-220, -30)`;
+3. ze om de beurt een stap van 1 tot en met 20 zetten, eerst rood en dan
+   blauw;
+4. de race doorgaat zolang ze allebei nog vóór de streep staan.
+
+![Een rode en een blauwe lijn naast elkaar naar de finishlijn; de blauwe is er net overheen, de rode staat er vlak voor](./img/stap-3-twee-schildpadden.svg)
+
+Bij jou kan rood ook winnen: elke race loopt anders.
+
+<CodeExercise>{`# Plak hier je programma uit stap 2`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Verbergen ging met `hideturtle`. Elke nieuwe schildpad heeft zijn eigen
+pen, dus `penup` en `pendown` doe je voor elk apart. De vraag van de
+`while` gaat nu over twee schildpadden, en allebei moeten ze nog vóór de
+streep staan.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* turtle-plaatje met zaad 5: img/stap-3-twee-schildpadden.svg */}
+
+```python
+import turtle
+import random
+
+turtle.penup()
+turtle.goto(80, 130)
+turtle.pendown()
+turtle.goto(80, -130)
+turtle.hideturtle()
+
+rood = turtle.Turtle()
+rood.pencolor("red")
+rood.penup()
+rood.goto(-220, 30)
+rood.pendown()
+
+blauw = turtle.Turtle()
+blauw.pencolor("blue")
+blauw.penup()
+blauw.goto(-220, -30)
+blauw.pendown()
+
+while rood.xcor() < 80 and blauw.xcor() < 80:
+    rood.forward(random.randint(1, 20))
+    blauw.forward(random.randint(1, 20))
+```
+
+Is rood over de streep, dan zet blauw in die ronde nog zijn stap. Pas
+daarna stelt de `while` zijn vraag opnieuw, en dan is het antwoord nee.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: import turtle\nrood = turtle.Turtle\nrood.pencolor("red") */}
+
+```
+AttributeError: 'str' object has no attribute '_penkleur_invoer'
+```
+
+**Oorzaak:** je schreef `rood = turtle.Turtle`, zonder haakjes. Dan maak je
+geen schildpad, maar geef je `turtle.Turtle` zelf een tweede naam. Bij
+`rood.pencolor("red")` zoekt Python dan de schildpad op de verkeerde plek:
+hij denkt dat `"red"` de schildpad is, en een tekst heeft geen pen. Vandaar
+die vreemde melding.
+
+**Oplossing:** zet de haakjes erachter, `turtle.Turtle()`, met een
+hoofdletter T. Pas dan komt er een nieuwe schildpad.
+
+**Er lopen schuine lijnen vanuit het midden naar het begin van de banen.**
+
+**Oorzaak:** een nieuwe schildpad begint in het midden, met zijn pen
+omlaag. `turtle.penup()` zet alleen de pen van de schildpad van `turtle`
+omhoog, niet die van `rood` of `blauw`. Loopt een nieuwe schildpad dan met
+`goto` naar de start, dan tekent hij onderweg.
+
+**Oplossing:** geef elke nieuwe schildpad zijn eigen `penup` vóór de
+`goto`, en `pendown` erna.
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
+Door naar [stap 4: vier schildpadden](site:python/docs/projecten/schildpaddenrace/stap-4-lijsten).

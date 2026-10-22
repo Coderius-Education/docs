@@ -128,14 +128,16 @@ vast.
 **Oplossing:** zet vóór de `goto` een `penup()`, en erna een `pendown()`.
 Vergeet je die tweede, dan tekent `huis(80)` niets meer, behalve de kleur.
 
-## Mogelijke uitbreidingen
+## Maak het je eigen
+
+Nieuwe dingen in de straat krijgen elk een eigen functie, net als het huis.
 
 - Geef `huis()` een tweede parameter `kleur`, en kies met `if` en `elif` per
   huis een andere kleur, zoals bij het verkeerslicht.
 - Zet bomen tussen de huizen: een dikke bruine lijn met een groene stip
   erop, in een eigen functie `boom(x)`.
-- Een zon met `turtle.dot(60, "gold")`, en de naam van je straat met
-  `turtle.write("Schildpadstraat", font=("Arial", 16, "normal"))`.
-- Een deur en ramen in `huis()`, met hun eigen functies `deur()` en `raam()`.
+- Geef elk huis een deur en een raam, met hun eigen functies `deur()` en
+  `raam()`. Geef ze de plek en de grootte van het huis mee, dan groeien ze
+  mee.
 
 Door naar het volgende project: [Een regenboog](site:python/docs/projecten/turtle/regenboog/stap-1-stippen).

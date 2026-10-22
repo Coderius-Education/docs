@@ -1,0 +1,131 @@
+---
+sidebar_position: 2
+sidebar_label: 'Stap 2: for over een tekst'
+description: Laat een for-loop over de tekens van een tekst lopen, en maak van elke # een zwart vakje.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 2: Een rij uit tekst (for over een tekst)
+
+:::info
+Deze stap gebruikt `if` uit [If en else](site:python/docs/beslissen/05b-if-else).
+Nieuw is een for-loop over de tekens van een tekst; die staat hieronder.
+:::
+
+Een for-loop kan over `range` lopen, en over een lijst, zoals in
+[Lijsten](site:python/docs/data/10a-lijsten-basis). Hij kan ook over een
+tekst lopen. Net zoals hij bij een lijst elk element langsgaat, gaat hij bij
+een tekst elk teken langs:
+
+```python
+for teken in "#.#":
+    print(teken)
+```
+
+Uitvoer:
+
+```
+#
+.
+#
+```
+
+Elke ronde krijgt `teken` het volgende teken uit de tekst. Ook een `.` of
+een spatie telt als teken. Probeer het zelf met een langere tekst:
+
+<CodeExercise>{`for teken in "..##..":
+    print(teken)`}</CodeExercise>
+
+Precies dit heb je nodig voor één rij van een plaatje: loop langs de
+tekens, en teken bij elke `#` een vakje.
+
+## Opdracht: een hart van zes rijen
+
+Plak je programma uit stap 1 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 1](site:python/docs/projecten/pixel-art/stap-1-vakje).
+
+Schrijf een functie `rij(regel, x, y)` die één regel tekst tekent: bij een
+`#` een zwart vakje, bij een `.` niets. Het eerste teken komt op `(x, y)`,
+elk volgend teken 20 stappen verder naar rechts.
+
+Teken daarna het hart, met één aanroep van `rij` per regel. De bovenste
+regel begint op `(-70, 60)`, en elke volgende regel 20 lager. De bloem uit
+stap 1 heb je niet meer nodig. Kopieer de regels van het hart uit het blok
+hieronder, dan typ je geen punt te veel of te weinig.
+
+```
+.##.##.
+#######
+#######
+.#####.
+..###..
+...#...
+```
+
+![Een zwart pixelhart van zeven vakjes breed en zes hoog](./img/stap-2-hart.svg)
+
+<CodeExercise>{`# Plak hier je programma uit stap 1`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Binnen `rij` loop je over de tekens van `regel`. Na elk teken schuift
+`x` een vakje op, ook na een `.`: een leeg vakje neemt net zo goed ruimte
+in. Dat optellen hoort dus niet in de `if`. Voor het hart roep je `rij`
+zes keer aan, met steeds een andere regel en een andere `y`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* turtle-plaatje: img/stap-2-hart.svg */}
+
+```python
+import turtle
+
+def vakje(x, y, kleur):
+    turtle.penup()
+    turtle.goto(x, y)
+    turtle.fillcolor(kleur)
+    turtle.begin_fill()
+    for zijde in range(4):
+        turtle.forward(20)
+        turtle.left(90)
+    turtle.end_fill()
+
+def rij(regel, x, y):
+    for teken in regel:
+        if teken == "#":
+            vakje(x, y, "black")
+        x = x + 20
+
+turtle.hideturtle()
+rij(".##.##.", -70, 60)
+rij("#######", -70, 40)
+rij("#######", -70, 20)
+rij(".#####.", -70, 0)
+rij("..###..", -70, -20)
+rij("...#...", -70, -40)
+```
+
+`x` begint bij de waarde die je meegeeft, en krijgt elke ronde 20 erbij.
+Zo weet `vakje` steeds waar het volgende vakje moet komen.
+
+</details>
+
+## Er gaat iets mis
+
+**Het hart is scheef: de gaten zijn weg, en elke rij plakt tegen de
+linkerkant.**
+
+**Oorzaak:** `x = x + 20` staat in de `if`. Dan schuift `x` alleen op na
+een `#`, en neemt een `.` geen ruimte meer in.
+
+**Oplossing:** laat die regel even ver inspringen als de `if` zelf, zodat
+hij elke ronde gebeurt.
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
+Door naar [stap 3: een heel plaatje](site:python/docs/projecten/pixel-art/stap-3-plaatje).

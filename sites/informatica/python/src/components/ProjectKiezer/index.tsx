@@ -92,7 +92,13 @@ function Concepten({
 
 function Vanaf({ activiteit }: { activiteit: Activiteit }): React.JSX.Element {
   const les = vanafLes(activiteit);
-  return <span title={`Vanaf les ${les.label}`}>vanaf les {les.id.replace(/^0/, '')}</span>;
+  const lijn = activiteit.naTurtleLijn ? ' en de turtle-lijn' : '';
+  return (
+    <span title={`Vanaf les ${les.label}${lijn}`}>
+      vanaf les {les.id.replace(/^0/, '')}
+      {lijn}
+    </span>
+  );
 }
 
 function Kaart({

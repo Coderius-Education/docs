@@ -37,6 +37,8 @@ export type Activiteit = {
   concepten: string[];
   /** Alles wat hij nodig heeft; weglaten betekent: alleen de concepten. */
   lessen?: string[];
+  /** Een groot turtle-project: het bouwt op de commando's van de turtle-lijn. */
+  naTurtleLijn?: boolean;
   link: Link;
 };
 
@@ -110,6 +112,61 @@ export const activiteiten: Activiteit[] = [
       '11b',
     ],
     link: { to: '/docs/projecten/woordjes-overhoren/stap-1-dictionary' },
+  },
+  {
+    id: 'bloemenveld',
+    titel: 'Bloemenveld',
+    soort: 'project',
+    wat: 'Van één turtle-bloem naar een veld vol bloemen op plekken en in kleuren die de computer kiest.',
+    stappen: 6,
+    concepten: ['06a', '08', '09a', '09b', '09d', '10a'],
+    lessen: ['02', '03', '06a', '08', '09a', '09b', '09d', '10a'],
+    naTurtleLijn: true,
+    link: { to: '/docs/projecten/bloemenveld/stap-1-for-loop' },
+  },
+  {
+    id: 'spirograaf',
+    titel: 'Spirograaf',
+    soort: 'project',
+    wat: 'Kleurrijke patronen uit één vorm die je steeds een stukje draait en herhaalt.',
+    stappen: 6,
+    concepten: ['03b', '06a', '06b', '08', '09a', '10a'],
+    lessen: ['01', '02', '03', '03b', '06a', '06b', '08', '09a', '10a'],
+    naTurtleLijn: true,
+    link: { to: '/docs/projecten/spirograaf/stap-1-for-loop' },
+  },
+  {
+    id: 'schildpaddenrace',
+    titel: 'Schildpaddenrace',
+    soort: 'project',
+    wat: 'Vier schildpadden racen met willekeurige stappen naar de finish, en de winnaar zegt het zelf.',
+    stappen: 8,
+    concepten: ['04a', '05c', '06a', '06d', '07', '09d', '10a'],
+    lessen: ['02', '03', '04a', '04b', '05a', '05b', '05c', '06a', '06d', '07', '09d', '10a'],
+    naTurtleLijn: true,
+    link: { to: '/docs/projecten/schildpaddenrace/stap-1-random' },
+  },
+  {
+    id: 'pixel-art',
+    titel: 'Pixel art',
+    soort: 'project',
+    wat: 'Maak van regels tekst een kleurige tekening van vakjes, en ontwerp je eigen figuur.',
+    stappen: 7,
+    concepten: ['06a', '08', '09a', '09b', '10a', '11a'],
+    lessen: ['02', '03', '05a', '05b', '06a', '08', '09a', '09b', '09c', '10a', '11a'],
+    naTurtleLijn: true,
+    link: { to: '/docs/projecten/pixel-art/stap-1-vakje' },
+  },
+  {
+    id: 'staafdiagram',
+    titel: 'Staafdiagram',
+    soort: 'project',
+    wat: 'Een staafdiagram van echte gegevens, op schaal, met getallen, namen en kleuren.',
+    stappen: 8,
+    concepten: ['04a', '05b', '05c', '06a', '08', '09a', '10a', '11a', '11b'],
+    lessen: ['02', '03', '04a', '05a', '05b', '05c', '06a', '07', '08', '09a', '10a', '11a', '11b'],
+    naTurtleLijn: true,
+    link: { to: '/docs/projecten/staafdiagram/stap-1-staaf' },
   },
   {
     id: 'turtle-lijnen',
