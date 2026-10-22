@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-250 -200 500 400" role="img">
+<title>Een kleine bloem van vijf vakjes: een geel vakje in het midden met een rood vakje erboven, eronder, links en rechts</title>
+<rect x="-250" y="-200" width="500" height="400" fill="white"/>
+<polygon points="0,0 20,0 20,-20 0,-20 0,0" fill="yellow" fill-rule="evenodd"/>
+<polygon points="-20,0 0,0 0,-20 -20,-20 -20,0" fill="red" fill-rule="evenodd"/>
+<polygon points="20,0 40,0 40,-20 20,-20 20,0" fill="red" fill-rule="evenodd"/>
+<polygon points="0,-20 20,-20 20,-40 0,-40 0,-20" fill="red" fill-rule="evenodd"/>
+<polygon points="0,20 20,20 20,0 0,0 0,20" fill="red" fill-rule="evenodd"/>
+</svg>

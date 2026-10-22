@@ -121,6 +121,16 @@ export const activiteiten: Activiteit[] = [
     link: { to: '/docs/projecten/spirograaf/stap-1-for-loop' },
   },
   {
+    id: 'pixel-art',
+    titel: 'Pixel art',
+    soort: 'project',
+    wat: 'Maak van regels tekst een kleurige tekening van vakjes, en ontwerp je eigen figuur.',
+    stappen: 6,
+    concepten: ['06a', '08', '09a', '09b', '10a', '11a'],
+    lessen: ['02', '05a', '05b', '06a', '08', '09a', '09b', '10a', '11a'],
+    link: { to: '/docs/projecten/pixel-art/stap-1-vakje' },
+  },
+  {
     id: 'staafdiagram',
     titel: 'Staafdiagram',
     soort: 'project',

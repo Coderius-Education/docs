@@ -1,0 +1,173 @@
+---
+sidebar_position: 5
+sidebar_label: 'Stap 5: return'
+description: Schrijf een functie spiegel die een tekst omgedraaid teruggeeft, en teken een vlinder uit alleen zijn linkerhelft.
+---
+
+import CodeExercise from '@site/src/components/CodeExercise';
+
+# Stap 5: Spiegelen (return)
+
+:::info
+Deze stap gebruikt `return`, uit [Return](site:python/docs/functies/09b-return).
+:::
+
+Een vlinder is links en rechts hetzelfde, alleen gespiegeld. Dan hoef je
+maar de helft op te schrijven, en maakt de computer de andere helft. Dat
+doet een functie die een tekst omdraait. Die functie tekent zelf niets: hij
+geeft de omgedraaide tekst terug met `return`, zodat je er verder mee kunt
+werken.
+
+Zo ziet een functie eruit die een tekst teruggeeft:
+
+```python
+def dubbel(regel):
+    return regel + regel
+
+print(dubbel("#."))
+```
+
+Uitvoer:
+
+```
+#.#.
+```
+
+`dubbel` print zelf niets. Hij plakt de tekst twee keer aan elkaar en geeft
+het resultaat terug, en `print` laat het zien. In plaats van printen kun je
+het resultaat ook doorgeven aan een andere functie, zoals `rij`.
+
+## Opdracht: een vlinder
+
+Plak je programma uit stap 4 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 4](site:python/docs/projecten/pixel-art/stap-4-kleuren).
+
+Schrijf een functie `spiegel(regel)` die `regel` omgedraaid teruggeeft. Test
+hem eerst los: `print(spiegel("BYR"))` moet `RYB` geven.
+
+Teken daarna een vlinder. In de lijst staat alleen de linkerhelft; teken
+van elke regel de regel zelf met zijn spiegelbeeld erachter. De vlinder is
+blauw, dus zet ook `"B": "blue"` in `kleuren`. De bovenste regel begint op
+`(-140, 120)`.
+
+```python
+vlinder = [
+    "....#..",
+    ".....#.",
+    "BBB...#",
+    "BYYB..#",
+    "BYRYB.#",
+    "BYYYBB#",
+    ".BBBBB#",
+    "...BBB#",
+    "..BYYB#",
+    ".BYRYB#",
+    ".BYYB.#",
+    "..BB...",
+]
+```
+
+![Een blauwe vlinder van pixels met gele en rode vlekken op de vleugels, een zwart lijf en twee voelsprieten](./img/stap-5-vlinder.svg)
+
+<CodeExercise>{`# Plak hier je programma uit stap 4`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Begin in `spiegel` met een lege tekst. Loop over de tekens van `regel`, en
+zet elk teken vóór wat je al hebt, niet erachter. Pas als de loop klaar is,
+geef je het resultaat terug. In de loop over de vlinder geef je aan `rij`
+niet alleen `regel` mee, maar `regel` met het spiegelbeeld eraan vast.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+{/* turtle-plaatje: img/stap-5-vlinder.svg */}
+
+```python
+import turtle
+
+def vakje(x, y, kleur):
+    turtle.penup()
+    turtle.goto(x, y)
+    turtle.fillcolor(kleur)
+    turtle.begin_fill()
+    for zijde in range(4):
+        turtle.forward(20)
+        turtle.left(90)
+    turtle.end_fill()
+
+def rij(regel, x, y):
+    for teken in regel:
+        if teken != ".":
+            vakje(x, y, kleuren[teken])
+        x = x + 20
+
+def spiegel(regel):
+    omgedraaid = ""
+    for teken in regel:
+        omgedraaid = teken + omgedraaid
+    return omgedraaid
+
+kleuren = {"#": "black", "R": "red", "G": "green", "Y": "yellow", "B": "blue"}
+
+vlinder = [
+    "....#..",
+    ".....#.",
+    "BBB...#",
+    "BYYB..#",
+    "BYRYB.#",
+    "BYYYBB#",
+    ".BBBBB#",
+    "...BBB#",
+    "..BYYB#",
+    ".BYRYB#",
+    ".BYYB.#",
+    "..BB...",
+]
+
+turtle.speed(0)
+turtle.hideturtle()
+y = 120
+for regel in vlinder:
+    rij(regel + spiegel(regel), -140, y)
+    y = y - 20
+```
+
+Bij `"BYR"` is `omgedraaid` na elke ronde `"B"`, dan `"YB"` en dan
+`"RYB"`: elk nieuw teken komt vooraan. Wil je dat zien gebeuren, zet dan
+alleen de functie en `print(spiegel("BYR"))` in een veld, en klik op Stap
+voor stap.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+def spiegel(regel):
+    omgedraaid = ""
+    for teken in regel:
+        omgedraaid = teken + omgedraaid
+    print(omgedraaid)
+
+regel = "BYR"
+print(regel + spiegel(regel))
+```
+
+```
+TypeError: can only concatenate str (not "NoneType") to str
+```
+
+**Oorzaak:** `spiegel` print het spiegelbeeld, maar geeft het niet terug.
+Een functie zonder `return` geeft `None` terug, en tekst plus `None` kan
+Python niet aan elkaar plakken.
+
+**Oplossing:** vervang `print(omgedraaid)` door `return omgedraaid`.
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
+Door naar [stap 6: groot en klein](site:python/docs/projecten/pixel-art/stap-6-groot-en-klein).
