@@ -180,8 +180,18 @@ class Antwoord:
         """
         if self.status != 404 or self.is_html:
             return False
-        detail = (self.json() or {}).get("detail") if self.is_json else None
+        detail = als_dict(self.json()).get("detail") if self.is_json else None
         return detail is None or detail == "Not Found"
+
+
+def als_dict(waarde) -> dict:
+    """JSON van de server als dictionary, of een lege als het iets anders is.
+
+    Een endpoint dat `return naam` doet, geeft een JSON-string terug; `.get`
+    daarop gaf een AttributeError, en dan zag de leerling een traceback in
+    plaats van een ✗.
+    """
+    return waarde if isinstance(waarde, dict) else {}
 
 
 class NietDoorsturen(urllib.request.HTTPRedirectHandler):
@@ -203,6 +213,7 @@ class Server:
         self.kaal = urllib.request.build_opener(urllib.request.ProxyHandler({}), NietDoorsturen())
         self._routes = None
         self._routes_geladen = False
+        self._json_routes: set[tuple[str, str]] = set()
 
     def verzoek(
         self, methode: str, pad: str, velden: dict | None = None, cookie: str | None = None
@@ -246,6 +257,9 @@ class Server:
                 for pad, methodes in spec["paths"].items():
                     for methode, info in methodes.items():
                         self._routes[(methode.upper(), pad)] = _velden_uit_spec(spec, info)
+                        inhoud = (info.get("requestBody") or {}).get("content") or {}
+                        if "application/json" in inhoud:
+                            self._json_routes.add((methode.upper(), pad))
         return self._routes
 
     def _route(self, methode: str, pad: str):
@@ -273,6 +287,20 @@ class Server:
         r = self.post(voorbeeld, {})
         return r.status not in (404, 405)
 
+    def verwacht_json(self, methode: str, pad: str) -> bool:
+        """Verwacht dit endpoint een JSON-body (een Pydantic-model) in plaats van formuliervelden?"""
+        if self.routes is not None:
+            kaal = re.sub(r"\{[^}]*\}", "x", pad.split("?")[0])
+            return any(
+                m == methode and re.match("^" + re.sub(r"\\\{[^}]*\\\}", "[^/]+", re.escape(p)) + "$", kaal)
+                for m, p in self._json_routes
+            )
+        r = self.post(pad, {})
+        detail = als_dict(r.json()).get("detail") if r.status == 422 else None
+        return isinstance(detail, list) and any(
+            isinstance(d, dict) and d.get("type") == "missing" and d.get("loc") == ["body"] for d in detail
+        )
+
     def velden(self, methode: str, pad: str) -> list[str] | None:
         """De verplichte formuliervelden van een endpoint; None als het niet bestaat."""
         if self.routes is not None:
@@ -280,13 +308,19 @@ class Server:
         r = self.post(pad, {})
         if r.status in (404, 405):
             return None
-        detail = (r.json() or {}).get("detail") if r.status == 422 else None
+        detail = als_dict(r.json()).get("detail") if r.status == 422 else None
         if not isinstance(detail, list):
             return []
+        # Een hele JSON-body die ontbreekt, heeft loc ["body"] zonder veldnaam;
+        # d["loc"][1] gaf daar een IndexError.
         return [
             str(d["loc"][1])
             for d in detail
-            if isinstance(d, dict) and d.get("type") == "missing" and d.get("loc", [""])[0] == "body"
+            if isinstance(d, dict)
+            and d.get("type") == "missing"
+            and isinstance(d.get("loc"), list)
+            and len(d["loc"]) > 1
+            and d["loc"][0] == "body"
         ]
 
     def wel(self, methode: str, pad: str) -> str:
@@ -439,13 +473,13 @@ class Controle:
             return f"{wat} geeft 422: {self.veld_fout(r)}"
         if r.status == 405:
             return f"{wat} geeft 405 Method Not Allowed: dit pad bestaat, maar niet voor deze methode."
-        detail = (r.json() or {}).get("detail") if r.is_json else None
+        detail = als_dict(r.json()).get("detail") if r.is_json else None
         if isinstance(detail, str):
             return f"{wat} geeft status {r.status}: {detail}."
         return f"{wat} geeft status {r.status}."
 
     def veld_fout(self, r: Antwoord) -> str:
-        detail = (r.json() or {}).get("detail") if r.is_json else None
+        detail = als_dict(r.json()).get("detail") if r.is_json else None
         if isinstance(detail, list):
             soort = {"body": "het veld {}", "query": "?{}= in de URL"}
             mist = [
@@ -516,6 +550,14 @@ class Controle:
         if verwacht is None:
             self.geen_endpoint("POST", actie, sleutel)
             return False
+        if self.s.verwacht_json("POST", actie):
+            self.fout(
+                f"POST {actie} verwacht JSON, geen formulier.",
+                "Een formulier stuurt losse velden. Geef je endpoint een parameter met Form(...) "
+                "voor elk veld, zoals in de les, in plaats van een model.",
+                sleutel,
+            )
+            return False
         mist = [v for v in verwacht if v not in form.velden]
         if mist:
             heeft = opsomming(form.velden) or "geen velden"
@@ -526,7 +568,8 @@ class Controle:
                 bij_velden or sleutel,
             )
             return False
-        self.ok(f"Het formulier op {pad} past bij POST {actie} ({opsomming(verwacht)}).")
+        welke = f" ({opsomming(verwacht)})" if verwacht else ""
+        self.ok(f"Het formulier op {pad} past bij POST {actie}{welke}.")
         return True
 
     # Het gastenboek
@@ -639,13 +682,18 @@ class Controle:
                 "verwijderen bouw je in Berichten verwijderen."
             )
             return
-        weg = 0
+        # Dezelfde tekst kan vaker zijn opgeslagen (twee pogingen die de server
+        # allebei aannam). Per tekst verwijdert hij daarom tot hij weg is, en
+        # pas daarna kijkt hij wat er nog staat; eerst telde hij één
+        # verwijdering per tekst en meldde dan "opgeruimd" met een kopie erin.
         for tekst in teksten:
-            sleutel = self.sleutel_van(tekst)
-            if sleutel and self.verwijder(sleutel).status < 400:
-                weg += 1
-        if weg == len(teksten):
-            wat = "het bericht is" if weg == 1 else "de berichten zijn"
+            for _ in range(10):
+                sleutel = self.sleutel_van(tekst)
+                if not sleutel or self.verwijder(sleutel).status >= 400:
+                    break
+        over = self.s.get("/berichten").tekst
+        if not any(t in over for t in teksten):
+            wat = "het bericht is" if len(teksten) == 1 else "de berichten zijn"
             self.achteraf.append(f"Opgeruimd: {wat} weer verwijderd.")
         else:
             self.achteraf.append(
@@ -950,7 +998,7 @@ def berichten_opslaan(c: Controle):
     c.formulier("/opslaan", "/opslaan", "formulier-mis")
     if c.s.bestaat("POST", "/opslaan"):
         oud = c.s.get("/toon_naam")
-        vorige = (oud.json() or {}).get("naam") if oud.status == 200 and oud.is_json else None
+        vorige = als_dict(oud.json()).get("naam") if oud.status == 200 and oud.is_json else None
         r = c.s.post("/opslaan", {"naam": c.marker})
         if r.status >= 400:
             c.fout("POST /opslaan doet het niet.", c.status_zin(r, "POST /opslaan"), "opslaan-mis")

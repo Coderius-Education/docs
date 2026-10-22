@@ -41,6 +41,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import urllib.request
 from pathlib import Path
 
 HIER = Path(__file__).resolve().parent
@@ -110,10 +111,11 @@ class Server:
         self.proces = None
 
     def __enter__(self):
+        self.logbestand = self.log.open("w")
         self.proces = subprocess.Popen(
             [sys.executable, "-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", str(self.poort)],
             cwd=self.map,
-            stdout=self.log.open("w"),
+            stdout=self.logbestand,
             stderr=subprocess.STDOUT,
         )
         for _ in range(100):
@@ -124,14 +126,22 @@ class Server:
                     return self
             except OSError:
                 time.sleep(0.1)
+        # Zonder __exit__ (dat draait alleen na een gelukte __enter__) bleef een
+        # uvicorn die niet luisterde achter, met de poort en het logbestand.
+        self.stop()
         raise SystemExit(f"uvicorn start niet in {self.map}:\n{self.log.read_text()}")
 
     def __exit__(self, *_):
+        self.stop()
+
+    def stop(self):
         self.proces.terminate()
         try:
             self.proces.wait(timeout=10)
         except subprocess.TimeoutExpired:
             self.proces.kill()
+            self.proces.wait()
+        self.logbestand.close()
 
     @property
     def adres(self) -> str:
@@ -148,7 +158,11 @@ def controleer(*args: str) -> tuple[int, str]:
         env=env,
         timeout=120,
     )
-    return r.returncode, r.stdout + r.stderr
+    uit = r.stdout + r.stderr
+    # Een traceback is nooit een antwoord voor een leerling: het script hoort
+    # elke vreemde server met een ✓ of ✗ te beantwoorden.
+    eis("Traceback (most recent call last)" not in uit, f"traceback bij {' '.join(args)}", uit)
+    return r.returncode, uit
 
 
 fouten: list[str] = []
@@ -243,6 +257,74 @@ def varianten(werk: Path):
         print("✓ eindproject met het htmx-formulier: elk hoofdstuk goed")
 
 
+def vervang(map_: Path, bestand: str, oud: str, nieuw: str):
+    pad = map_ / bestand
+    tekst = pad.read_text(encoding="utf-8")
+    if tekst.count(oud) != 1:
+        raise SystemExit(f"{bestand}: {oud!r} staat er {tekst.count(oud)} keer in, verwacht 1 keer")
+    pad.write_text(tekst.replace(oud, nieuw), encoding="utf-8")
+
+
+def randgevallen(werk: Path):
+    """Servers die anders zijn dan de les, maar die het script netjes moet afhandelen."""
+    eerder = len(fouten)
+
+    # /toon_naam die alleen de naam teruggeeft (een JSON-string): eerst een
+    # AttributeError op .get.
+    a = maak_kopie(werk / "rand-toon-naam")
+    vervang(a, "main.py", '    return {"naam": naam}\n\n@app.get("/gastenboek")', '    return naam\n\n@app.get("/gastenboek")')
+    with Server(a) as s:
+        code, uit = controleer("berichten-opslaan", "--adres", s.adres)
+        eis(code == 0, f"rand-toon-naam: exit-code {code}, verwacht 0", uit)
+
+    # Een gastenboek dat berichten zonder sessie aanneemt: beide pogingen
+    # slaan hetzelfde op, en het opruimen moet ze allebei weghalen.
+    b = maak_kopie(werk / "rand-zonder-401", eind=True)
+    vervang(b, "main.py", '    if not mijn:\n        raise HTTPException(status_code=401, detail="Log eerst in")\n\n    with SqliteDict("gastenboek.db") as db:\n        db[f"bericht_{time.time_ns()}"] = {"naam": mijn["naam"]', '    with SqliteDict("gastenboek.db") as db:\n        db[f"bericht_{time.time_ns()}"] = {"naam": mijn.get("naam", "")')
+    with Server(b) as s:
+        code, uit = controleer("onthouden", "--adres", s.adres)
+        eis(code == 1, f"rand-zonder-401: exit-code {code}, verwacht 1", uit)
+        over = urllib.request.urlopen(s.adres + "/berichten", timeout=10).read().decode()
+        eis("controle-" not in over, "rand-zonder-401: er bleef een bericht controle-… staan", uit)
+
+    # Een endpoint met een Pydantic-model in plaats van Form: geen formulier
+    # past erbij. Zonder openapi gaf de 422 met loc ["body"] een IndexError.
+    for openapi in (True, False):
+        c = maak_kopie(werk / f"rand-json-{openapi}", openapi=openapi)
+        vervang(
+            c,
+            "main.py",
+            '@app.post("/gastenboek")\nasync def gastenboek_opslaan(\n    naam: str = Form(...),\n    wachtwoord: str = Form(...),\n    bericht: str = Form(...),\n):\n',
+            "class Bericht(BaseModel):\n    naam: str\n    wachtwoord: str\n    bericht: str\n\n\n"
+            '@app.post("/gastenboek")\nasync def gastenboek_opslaan(invoer: Bericht):\n'
+            "    naam, wachtwoord, bericht = invoer.naam, invoer.wachtwoord, invoer.bericht\n",
+        )
+        vervang(c, "main.py", "from fastapi import", "from pydantic import BaseModel\nfrom fastapi import")
+        with Server(c) as s:
+            code, uit = controleer("berichten-opslaan", "--adres", s.adres)
+            verwacht = "✗ POST /gastenboek verwacht JSON, geen formulier."
+            eis(
+                code == 1 and any(r.startswith(verwacht) for r in uit.splitlines()),
+                f"rand-json ({'met' if openapi else 'zonder'} openapi): geen regel {verwacht!r}",
+                uit,
+            )
+    # Een server die niet start: uvicorn moet weg zijn en het log dicht.
+    stuk = werk / "rand-start-niet"
+    stuk.mkdir()
+    (stuk / "main.py").write_text("app = (\n", encoding="utf-8")
+    server = Server(stuk)
+    try:
+        server.__enter__()
+    except SystemExit:
+        pass
+    eis(
+        server.proces.poll() is not None and server.logbestand.closed,
+        "rand-start-niet: uvicorn draait nog of het log staat nog open",
+    )
+    if len(fouten) == eerder:
+        print("✓ randgevallen: een string als JSON, dubbele berichten opruimen, een JSON-body, een server die niet start")
+
+
 def kapot(werk: Path, openapi: bool):
     soort = "met openapi" if openapi else "zonder openapi"
     eerder = len(fouten)
@@ -327,6 +409,7 @@ def main() -> int:
             referentie(werk, openapi)
             kapot(werk, openapi)
         varianten(werk)
+        randgevallen(werk)
         standen(werk)
     if fouten:
         print(f"\n{len(fouten)} fout(en)")
