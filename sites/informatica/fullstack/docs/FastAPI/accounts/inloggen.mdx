@@ -8,6 +8,8 @@ Een server onthoudt niets tussen twee verzoeken, dus bij je volgende bericht her
 
 Vervang `static/pages/gastenboek_form.html` uit [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel) door deze versie, met een wachtwoordveld en een link naar het registreren:
 
+<Bestand pad="static/pages/gastenboek_form.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -27,6 +29,8 @@ Vervang `static/pages/gastenboek_form.html` uit [Elk bericht bewaren: een eigen 
 ## De controle
 
 Vervang je `POST /gastenboek` uit [Doorsturen na opslaan (redirect)](site:fullstack/docs/FastAPI/berichten-opslaan/redirect) door deze versie. Het opslaan blijft hetzelfde; er komt een controle boven:
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -76,6 +80,18 @@ Een fout wachtwoord en een naam zonder account krijgen dezelfde melding, en dat 
 2. Verstuur nog een bericht als `sara`, nu met een fout wachtwoord. Je ziet `{"detail":"Naam of wachtwoord klopt niet"}`, en het tabblad Netwerk toont status `401`.
 3. Probeer een naam zonder account, zoals `piet`. Je krijgt precies dezelfde melding.
 
+<Voorspel soort="Controlevraag" vraag="Sara typt haar wachtwoord in het gastenboek en klikt op Verstuur. Wat controleert of dat wachtwoord klopt?">
+  <Keuze uitleg="Een veld met type password toont alleen puntjes op het scherm. Het controleert niets, en het wachtwoord gaat leesbaar mee.">Het wachtwoordveld in de browser, door `type="password"`</Keuze>
+  <Keuze uitleg="SqliteDict bewaart en geeft terug wat je vraagt. Vergelijken doet het niet; welke regel doet dat wel?">SqliteDict, die in `gebruikers.db` een fout wachtwoord weigert</Keuze>
+  <Keuze uitleg="Een bericht met een fout wachtwoord komt niet eens in gastenboek.db. Waar stopt het dan al?">De template `berichten.html`, die alleen berichten met een goed wachtwoord toont</Keuze>
+  <Keuze goed uitleg="Je endpoint haalt het opgeslagen wachtwoord op en vergelijkt het met wat er binnenkwam. Pas als die twee gelijk zijn, gaat het bericht de database in.">Je endpoint `POST /gastenboek`, op de server</Keuze>
+  <Uitleg>
+
+  Het formulier stuurt de naam en het wachtwoord naar je server, en daar valt de beslissing, met de `if` vóór het opslaan. Zo moet het ook: wat in de browser gebeurt, kan een bezoeker zelf veranderen of overslaan.
+
+  </Uitleg>
+</Voorspel>
+
 ## Wat nog niet af is
 
 Je gastenboek heeft nu accounts, en een bericht komt er alleen in als het wachtwoord klopt. Drie dingen zijn nog niet zoals op een echte site:
@@ -110,6 +126,8 @@ Je gastenboek heeft nu accounts, en een bericht komt er alleen in als het wachtw
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -322,21 +340,17 @@ async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
 
 Alex heeft een account met het wachtwoord `maan456`. Hij vult in het gastenboek de naam `sara` in, met zijn eigen wachtwoord.
 
-**Vraag:** wat gebeurt er?
+<Voorspel vraag="Wat gebeurt er als Alex op Verstuur klikt?">
+  <Keuze uitleg="Dan zou de server alleen kijken of het wachtwoord bij een account hoort. Bij welke naam zoekt gebruikers.get het wachtwoord op?">Zijn bericht komt in de lijst, onder de naam sara</Keuze>
+  <Keuze uitleg="De server verandert de naam die je typt niet. Hij zoekt het wachtwoord op bij precies die naam.">Zijn bericht komt in de lijst, onder de naam alex</Keuze>
+  <Keuze uitleg="Die melding hoort bij registreren. Hier maak je geen account, je controleert er een.">Een `400`, want de naam sara is al bezet</Keuze>
+  <Keuze goed uitleg="De server haalt het wachtwoord van sara op, welkom123, en vergelijkt het met wat Alex typte. Die twee verschillen.">Een `401`, en er komt geen bericht bij</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Alex ziet `Naam of wachtwoord klopt niet`. Zijn eigen wachtwoord helpt hem alleen bij zijn eigen naam. In Netwerk staat bij `POST /gastenboek` de status `401`, en er volgt geen tweede regel naar `/berichten`.
 
-Welk wachtwoord haalt `gebruikers.get(naam)` op, als `naam` gelijk is aan `sara`?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Hij krijgt `401` met `Naam of wachtwoord klopt niet`, en er komt geen bericht bij. De server haalt het wachtwoord van Sara op, `welkom123`, en dat is niet wat Alex typte. Zijn eigen wachtwoord helpt hem alleen bij zijn eigen naam.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -373,6 +387,8 @@ Loop met een for-lus door `db.values()` van `gastenboek.db`, en zet de tekst van
 
 <details>
 <summary>Antwoord</summary>
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/gebruiker/{naam}")

@@ -86,21 +86,17 @@ Blijft de lijst leeg? Loop de vier oorzaken bij [Als de lijst leeg is](#als-de-l
 
 Je typt `http://127.0.0.1:8000/info` in de adresbalk en drukt op Enter, met Netwerk open.
 
-**Vraag:** hoeveel regels komen erbij in de lijst?
+<Voorspel vraag="Hoeveel regels komen erbij in de lijst?">
+  <Keuze uitleg="Netwerk toont elk verzoek dat de browser stuurt, ook als het antwoord JSON is. Er gaat dus wel iets over de lijn.">Geen, want JSON is geen pagina</Keuze>
+  <Keuze goed uitleg="De browser vraagt alleen /info op, en in de JSON staat niets wat hij daarna nog apart moet ophalen.">Eén regel</Keuze>
+  <Keuze uitleg="Het verzoek en het antwoord horen bij elkaar. Denk aan het herladen van /: hoeveel regels kwamen daar bij, en wat zag je toen je erop klikte?">Twee: een voor het verzoek en een voor het antwoord</Keuze>
+  <Keuze uitleg="De browser haalt alleen apart op wat er in een antwoord staat, zoals een stylesheet in HTML. Staat er in deze JSON zoiets? En het icoontje laat Netwerk meestal niet zien.">Drie of meer, want de browser haalt ook opmaak en een icoontje op</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Elk adres dat de browser opvraagt, is een eigen regel. Bij een HTML-pagina met CSS en een afbeelding worden dat er meer; dat zie je bij [Zo werkt het: CSS en afbeeldingen](site:fullstack/docs/FastAPI/css-en-afbeeldingen/verzoek-static).
 
-Wat stuurt je endpoint terug: een pagina met bestanden erin, of alleen tekst?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Eén. Je endpoint stuurt JSON, en daar staat niets in dat de browser nog apart moet ophalen. Bij een HTML-pagina met CSS en een afbeelding wordt dat anders; dat zie je bij [Zo werkt het: CSS en afbeeldingen](site:fullstack/docs/FastAPI/css-en-afbeeldingen/verzoek-static).
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 

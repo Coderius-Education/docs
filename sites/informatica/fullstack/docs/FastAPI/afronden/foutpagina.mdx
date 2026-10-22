@@ -28,6 +28,8 @@ Je kunt de handler ook aan `FastAPI()` meegeven, als `app = FastAPI(exception_ha
 
 **Een handler voor elke HTTP-fout.** Een handler voor `StarletteHTTPException` krijgt elke fout die FastAPI of jij met een statuscode stuurt: 404, maar ook 401 en 405. Daarom kijkt hij zelf naar de code, en geeft hij de rest door aan de handler die FastAPI normaal gebruikt:
 
+<Bestand pad="main.py" />
+
 ```python
 from fastapi.exception_handlers import http_exception_handler
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -49,6 +51,8 @@ De `await` wacht op het antwoord van die andere handler. Meer hoef je er hier ni
 Vergeet je de `if` en de laatste regel, dan toont je server bij een fout wachtwoord of een verkeerde methode ook "Niet gevonden", met status 404. Een bezoeker zoekt dan naar een pagina die er wel is.
 
 **Een pagina in je eigen endpoint.** In `bericht_detail` kun je in plaats van `raise HTTPException` zelf de pagina teruggeven:
+
+<Bestand pad="main.py" />
 
 {/* niet-compileren: alleen de if uit bericht_detail, ingesprongen */}
 ```python
@@ -77,7 +81,9 @@ De handler voor 404 doet wat je wilt, met de minste code, en raakt de andere fou
 
 ## De handler bouwen
 
-Maak `templates/404.html`:
+Maak een nieuwe template:
+
+<Bestand pad="templates/404.html" />
 
 ```html
 <!DOCTYPE html>
@@ -95,6 +101,8 @@ Maak `templates/404.html`:
 ```
 
 Zet de handler onder je andere endpoints:
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -149,6 +157,8 @@ Je wilt daar misschien ook een nette pagina voor, met een handler voor `Exceptio
 
 **Oplossing:** geef de status mee als laatste argument:
 
+<Bestand pad="main.py" />
+
 {/* niet-compileren: alleen de return uit de handler, ingesprongen */}
 ```python
     return templates.TemplateResponse(
@@ -177,27 +187,33 @@ jinja2.exceptions.TemplateNotFound: '404.html' not found in search path: 'templa
 
 **Oplossing:** gebruik `@app.exception_handler(404)`.
 
+<Voorspel soort="Controlevraag" vraag="Je zet 404.html per ongeluk in static/pages/ in plaats van in templates/. De handler laat je zoals hij is. Wat zie je in Netwerk als je /bestaat-niet opent?">
+  <Keuze uitleg="De handler draait wel, en vraagt om een template. Waar zoekt Jinja2 die, en wat gebeurt er als hij hem niet vindt?">Je eigen pagina met een 404, want het bestand bestaat</Keuze>
+  <Keuze uitleg="Je handler vangt elke 404, dus FastAPI stuurt zijn eigen JSON niet meer. Wat doet je handler zelf?">De JSON van FastAPI, met een 404</Keuze>
+  <Keuze goed uitleg="Jinja2 zoekt alleen in de map templates en geeft een TemplateNotFound. Een fout in je handler is een fout in je Python-code.">Een 500, en in de terminal staat `TemplateNotFound`</Keuze>
+  <Uitleg>
+
+  Een template hoort in `templates/`, want daar zoekt `Jinja2Templates(directory="templates")`. In `static/` staat wat de browser zoals het is krijgt, zonder dat Jinja2 het invult. Zie je een 500 waar je een 404 verwachtte, kijk dan eerst in de terminal.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Een verkeerde methode
 
 `/verwijderen` bestaat alleen als POST. Iemand typt het adres in zijn adresbalk, en de browser stuurt een GET.
 
-**Vraag:** ziet hij je 404-pagina?
+<Voorspel vraag="Ziet hij je 404-pagina?">
+  <Keuze uitleg="Het pad bestaat wel, alleen voor een andere soort verzoek. Stuurt FastAPI dan een 404?">Ja, want voor een GET bestaat `/verwijderen` niet</Keuze>
+  <Keuze uitleg="Een 422 komt pas als FastAPI je functie wil aanroepen en een veld mist. Kijkt hij eerst naar de velden, of eerst naar de methode?">Nee, hij krijgt een 422, want het veld `sleutel` ontbreekt</Keuze>
+  <Keuze goed uitleg="Het pad bestaat, alleen niet voor GET. Dat is een andere fout dan een 404, en je handler is alleen voor 404.">Nee, hij krijgt een 405 met `Method Not Allowed`</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Dezelfde 405 zag je in [Doorsturen na opslaan (redirect)](site:fullstack/docs/FastAPI/berichten-opslaan/redirect). Je handler verandert alleen wat er bij een 404 gebeurt; een 401, een 405 en een 500 blijven wat ze waren.
 
-Welke statuscode stuurt FastAPI als het pad wel bestaat, maar niet voor deze soort verzoek?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Nee. Hij krijgt `{"detail":"Method Not Allowed"}` met status 405, zoals in [Doorsturen na opslaan (redirect)](site:fullstack/docs/FastAPI/berichten-opslaan/redirect). Je handler is alleen voor 404, en het pad bestaat.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -237,6 +253,8 @@ De melding staat in `fout.detail`. Geef hem mee aan de template, net als het pad
 <details>
 <summary>Antwoord</summary>
 
+<Bestand pad="main.py" />
+
 ```python
 @app.exception_handler(404)
 async def niet_gevonden(request: Request, fout):
@@ -252,6 +270,8 @@ async def niet_gevonden(request: Request, fout):
 ```
 
 In `templates/404.html`, onder de kop:
+
+<Bestand pad="templates/404.html" />
 
 ```html
 <p>{{ melding }}</p>

@@ -18,6 +18,8 @@ je-project/
 
 Maak `static/pages/home.html`:
 
+<Bestand pad="static/pages/home.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -34,6 +36,8 @@ Maak `static/pages/home.html`:
 ## FileResponse gebruiken
 
 Zet `FileResponse` bij de imports, en vervang je endpoint voor `/` uit [Je eerste endpoint](site:fullstack/docs/FastAPI/eerste-server/eerste_endpoint) door een versie die `home.html` teruggeeft. Laat je andere endpoints staan. Zo ziet de bovenkant van je `main.py` eruit:
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -71,6 +75,8 @@ Zie je de pagina niet? Kijk of het pad in `FileResponse("...")` precies klopt en
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 from fastapi import FastAPI
@@ -123,9 +129,23 @@ async def styled():
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag="Je server draait met de main.py van deze les. Je typt 127.0.0.1:8000/static/pages/home.html in de adresbalk. Wat krijg je?">
+  <Keuze uitleg="Het bestand staat wel op die plek op je schijf, maar de browser vraagt geen bestanden. Hij vraagt een pad aan je server. Welke paden kent je server?">De pagina uit home.html</Keuze>
+  <Keuze goed uitleg="Geen enkel endpoint heeft dit pad. Het pad in FileResponse is een plek op je schijf, geen adres voor de browser.">`{"detail":"Not Found"}`, een 404</Keuze>
+  <Keuze uitleg="Een 500 krijg je als een endpoint draait en daarbinnen iets misgaat. Draait er hier een endpoint?">Een 500 Internal Server Error</Keuze>
+  <Keuze uitleg="De browser toont geen Python-code en geen bestanden van je schijf. Hij toont alleen wat de server terugstuurt.">De tekst van main.py</Keuze>
+  <Uitleg>
+
+  Er zijn twee soorten paden. `static/pages/home.html` in `FileResponse` is een plek op je schijf, en die kent alleen Python. `/` in `@app.get("/")` is het adres dat de browser gebruikt. Voorlopig komt de browser alleen bij een bestand via een endpoint dat het terugstuurt.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat gebeurt er?
+
+<Bestand pad="main.py" />
 
 {/* route-dubbel: voorspelvraag; het endpoint /contact maak je pas in Links tussen pagina's */}
 ```python
@@ -134,21 +154,17 @@ async def contact():
     return FileResponse("static/pages/contact.html")
 ```
 
-**Vraag:** Wat gebeurt er als `contact.html` niet bestaat?
+<Voorspel vraag="Wat gebeurt er op /contact als contact.html niet bestaat?">
+  <Keuze uitleg="Een 404 stuurt FastAPI zelf als er geen endpoint bij het pad past. Is dat hier zo?">Een 404 Not Found</Keuze>
+  <Keuze goed uitleg="Het endpoint bestaat en draait. Pas daarbinnen gaat het mis: FileResponse kan het bestand niet vinden, en een fout in de server is een 500.">Een 500 Internal Server Error</Keuze>
+  <Keuze uitleg="FastAPI maakt geen bestanden voor je aan. Hij leest alleen wat er al op je schijf staat.">Niets: de browser toont een lege pagina</Keuze>
+  <Keuze uitleg="Python leest het pad pas als iemand /contact opvraagt, niet bij het starten. Tot dan merkt de server niets.">De server start niet</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Een 404 betekent dat de server niet weet wat je bedoelt. Een 500 betekent dat hij het wel weet, maar dat het op de server misging. In opdracht 3 zie je in de terminal welke regel dat vertelt.
 
-FastAPI probeert het bestand te openen. Wat kan er misgaan als het bestand er niet is?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Je krijgt een 500 Internal Server Error: het endpoint bestaat, maar het bestand dat het moet sturen niet. Een 500 betekent dat het op de server misging.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -185,7 +201,8 @@ Maak het bestand in `static/pages/` en een tweede functie in `main.py` met een e
 <details>
 <summary>Antwoord</summary>
 
-`static/pages/favoriet.html`:
+<Bestand pad="static/pages/favoriet.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -195,6 +212,8 @@ Maak het bestand in `static/pages/` en een tweede functie in `main.py` met een e
     </body>
 </html>
 ```
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/favoriet")
@@ -218,7 +237,8 @@ Alles tussen de drie aanhalingstekens gaat naar het bestand. In Python blijft al
 <details>
 <summary>Antwoord</summary>
 
-`static/pages/styled.html`:
+<Bestand pad="static/pages/styled.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -237,6 +257,8 @@ Alles tussen de drie aanhalingstekens gaat naar het bestand. In Python blijft al
 ```
 
 Vervang je endpoint `/styled` uit HTML tonen door:
+
+<Bestand pad="main.py" />
 
 {/* route-dubbel: vervangt GET /styled uit HTML tonen */}
 ```python

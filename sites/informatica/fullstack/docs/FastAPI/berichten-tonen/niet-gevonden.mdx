@@ -15,6 +15,8 @@ Iemand kan een URL intypen die nergens op slaat, of een bericht opvragen dat net
 
 Zeg liever expliciet dat het niet bestaat, met `HTTPException`. Zet hem bij je imports en vervang je endpoint nog een keer:
 
+<Bestand pad="main.py" />
+
 <CodeUitleg>
 
 {/* route-dubbel: vervangt GET /bericht/{sleutel} uit Eén item tonen */}
@@ -64,6 +66,8 @@ Krijg je een pagina met lege plekken in plaats van een 404? Dan staat je `if ber
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -240,6 +244,18 @@ async def bericht_detail(request: Request, sleutel: str):
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag="Iemand opent /bericht/onzin. Wat krijgt de browser van je server?">
+  <Keuze uitleg="Na raise draait de regel met TemplateResponse niet meer. Wie maakt dan het antwoord, en in welke vorm?">De template `bericht.html` met lege plekken, en status `404`</Keuze>
+  <Keuze uitleg="De tekst komt wel van jou, maar kijk welke code je aan HTTPException meegaf. Die code zet FastAPI in het antwoord.">Een HTML-pagina met jouw melding, en status `200`</Keuze>
+  <Keuze goed uitleg="FastAPI vangt de HTTPException op en maakt er zelf een antwoord van: JSON met jouw detail, en de code die je meegaf.">JSON met jouw melding, en status `404`</Keuze>
+  <Keuze uitleg="Een raise met HTTPException is geen crash. FastAPI vangt hem op en stuurt een nette fout terug.">Een `500`, want `raise` laat de server crashen</Keuze>
+  <Uitleg>
+
+  Bij een bestaand bericht maakt `TemplateResponse` HTML, bij een onbekende sleutel komt er JSON terug. Allebei komen ze uit dezelfde functie. Welke het wordt, beslist de `if` in Python, op de server. De template merkt er niets van.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Twee keer niet gevonden
@@ -249,24 +265,20 @@ Je endpoint `/bericht/{sleutel}` staat er, met de controle op `None`. Je gaat na
 1. `/bericht/onzin`
 2. `/bericht/onzin/meer`
 
-**Vraag:** krijg je twee keer hetzelfde te zien?
+<Voorspel vraag="Krijg je bij deze twee adressen hetzelfde te zien?">
+  <Keuze uitleg="Die melding komt uit je eigen functie. Draait je functie bij allebei? Zoek bij elk adres de route die erop past.">Ja, twee keer `{"detail":"Dit bericht bestaat niet"}`</Keuze>
+  <Keuze uitleg="Dat was voor je de controle op None toevoegde. Wat doet raise nu bij een sleutel die niet bestaat?">Ja, twee keer een pagina met lege plekken en status `200`</Keuze>
+  <Keuze goed uitleg="Het eerste adres past op je route en krijgt jouw melding. Het tweede past op geen enkele route, en dan antwoordt FastAPI zelf.">Twee keer 404, maar met een andere tekst</Keuze>
+  <Keuze uitleg="Een path-parameter houdt op bij een schuine streep. Past het tweede adres dan nog op je route?">Ja: bij het tweede adres is `sleutel` gelijk aan `onzin/meer`, en dat bericht bestaat ook niet</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  1. `/bericht/onzin` past op je route. Je functie draait, vindt niets en stuurt jouw 404: `{"detail":"Dit bericht bestaat niet"}`.
+  2. `/bericht/onzin/meer` past op geen enkele route. Je functie draait niet, en FastAPI stuurt zelf `{"detail":"Not Found"}`.
 
-Zoek bij elk adres het endpoint dat erbij past. Draait je eigen functie bij allebei?
+  Aan de tekst bij een 404 zie je dus of je eigen functie draaide.
 
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Nee. Allebei geven ze een 404, maar met een andere tekst:
-
-1. `/bericht/onzin` past op je route. Je functie draait, vindt niets en stuurt jouw 404: `{"detail":"Dit bericht bestaat niet"}`.
-2. `/bericht/onzin/meer` past op geen enkele route. Je functie draait niet, en FastAPI stuurt zelf `{"detail":"Not Found"}`.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -304,7 +316,8 @@ Maak een endpoint `/welkom/{naam}` dat een template toont met "Welkom, [naam]". 
 <details>
 <summary>Antwoord</summary>
 
-`templates/welkom.html`:
+<Bestand pad="templates/welkom.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -313,6 +326,8 @@ Maak een endpoint `/welkom/{naam}` dat een template toont met "Welkom, [naam]". 
     </body>
 </html>
 ```
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/welkom/{naam}")
@@ -338,6 +353,8 @@ Schrijf `nummer: int` als type. FastAPI zet de tekst uit de URL dan om naar een 
 
 <details>
 <summary>Antwoord</summary>
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/bericht-nummer/{nummer}")

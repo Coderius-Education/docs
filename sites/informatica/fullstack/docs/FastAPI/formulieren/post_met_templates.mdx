@@ -210,7 +210,7 @@ async def groet_verwerk(request: Request, naam: str = Form(...)):
 </details>
 
 <Voorspel soort="Controlevraag" vraag='Je verandert in het formulier name="naam" in name="voornaam". De functie en de template laat je zoals ze zijn. Wat krijg je na het versturen?'>
-  <Keuze uitleg="Dan zou de naam wel bij de template aankomen. Kijk welke naam de functie uit het formulier verwacht, en of die nog meekomt.">Hallo Sam!</Keuze>
+  <Keuze uitleg="Dan zou de naam wel bij de template aankomen. Kijk welke naam de functie uit het formulier verwacht, en of die nog meekomt.">`Hallo Sam!`</Keuze>
   <Keuze uitleg="Zo ver komt het niet: de template wordt nooit ingevuld. Kijk wat FastAPI doet voordat je functie begint.">Hallo !</Keuze>
   <Keuze goed uitleg="De functie vraagt met Form(...) om een veld naam. Het formulier stuurt alleen voornaam, dus FastAPI weigert het verzoek voordat je functie begint.">Een 422 met een melding dat het veld naam ontbreekt</Keuze>
   <Uitleg>
@@ -234,7 +234,7 @@ return templates.TemplateResponse(request, "groet_resultaat.html", {"voornaam": 
 ```
 
 <Voorspel vraag="Wat zie je na het versturen van het formulier?">
-  <Keuze uitleg="Dan moet de naam ergens aankomen waar de template hem zoekt. Kijk om welke naam de template vraagt, en of die in het dictionary staat.">Hallo Sam!</Keuze>
+  <Keuze uitleg="Dan moet de naam ergens aankomen waar de template hem zoekt. Kijk om welke naam de template vraagt, en of die in het dictionary staat.">`Hallo Sam!`</Keuze>
   <Keuze goed uitleg="De template vraagt om naam, maar het dictionary heeft alleen voornaam. Jinja2 laat de plek dan leeg, zonder foutmelding.">Hallo !</Keuze>
   <Keuze uitleg="Het formulier en de functie gebruiken nog allebei naam, dus FastAPI krijgt wat hij verwacht. Het gaat pas later mis.">Een 422</Keuze>
   <Keuze uitleg="Een dictionary in Python geeft een KeyError, maar Jinja2 doet dat niet bij een naam die ontbreekt. Wat doet hij dan wel?">Een KeyError in de terminal</Keuze>

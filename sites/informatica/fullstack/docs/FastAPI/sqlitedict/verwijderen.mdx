@@ -70,6 +70,29 @@ Na `del` print je script dat de leeftijd weg is, maar `bekijk_db.py` laat hem no
 
 **Oplossing:** zet `db.commit()` direct onder de `del`, binnen het `with`-blok.
 
+Test jezelf. In `mijn_data.db` staan `naam` en `leeftijd`. Je draait dit script:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("mijn_data.db") as db:
+    del db["leeftijd"]
+db.commit()
+print("Leeftijd verwijderd")
+```
+
+<Voorspel soort="Controlevraag" vraag="Het script print Leeftijd verwijderd. Wat laat bekijk_db.py daarna zien?">
+  <Keuze uitleg="Die zin print je script zelf, wat er ook in het bestand gebeurt. Kijk waar db.commit() staat.">Alleen naam</Keuze>
+  <Keuze goed uitleg="db.commit() staat na het with-blok. Dan is de database al dicht en is het verwijderen al weggegooid.">Nog steeds naam en leeftijd</Keuze>
+  <Keuze uitleg="SqliteDict geeft hier geen foutmelding. Het script print toch ook gewoon zijn laatste regel?">Een foutmelding op de regel met db.commit()</Keuze>
+  <Keuze uitleg="del haalt één sleutel weg, niet de hele database.">0 sleutels</Keuze>
+  <Uitleg>
+
+  `db.commit()` hoort binnen het `with`-blok, direct onder de `del`. Wat je script print, zegt niets over wat er in het bestand staat; dat zie je met `bekijk_db.py`.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Hoeveel sleutels?
@@ -89,26 +112,17 @@ with SqliteDict("mijn_data.db") as db:
     print("Woonplaats" in db)
 ```
 
-**Vraag:** welke twee regels print dit?
+<Voorspel vraag="Welke twee regels print dit, van boven naar beneden?">
+  <Keuze uitleg="Tel de regel met hobby ook mee: die zet een nieuwe sleutel in de database.">`2` · `False`</Keuze>
+  <Keuze uitleg="del haalt woonplaats echt weg, en commit() schrijft dat naar het bestand.">`4` · `False`</Keuze>
+  <Keuze uitleg="Kijk naar de eerste letter in de laatste regel. Heet de sleutel zo?">`3` · `True`</Keuze>
+  <Keuze goed uitleg="Er gaat één sleutel weg en er komt er één bij. Woonplaats met een hoofdletter is een andere sleutel dan woonplaats.">`3` · `False`</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Na het script staan `naam`, `leeftijd` en `hobby` erin. `"Woonplaats" in db` was ook `False` geweest als de woonplaats er nog stond: een sleutel moet letter voor letter kloppen.
 
-Er gaat één sleutel weg en er komt één bij. En let op de hoofdletter in de laatste regel.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```
-3
-False
-```
-
-Drie sleutels: `naam`, `leeftijd` en `hobby`. `"Woonplaats" in db` is `False`, en dat zou ook zo zijn als de woonplaats er nog stond: de sleutel heet `woonplaats`, met een kleine letter.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 

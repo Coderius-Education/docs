@@ -6,6 +6,8 @@ Wat een bezoeker in een formulier invult, zet je nu in een database. Dan staat h
 
 ### Formulier (`static/pages/naam_opslaan.html`):
 
+<Bestand pad="static/pages/naam_opslaan.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -23,11 +25,15 @@ Wat een bezoeker in een formulier invult, zet je nu in een database. Dan staat h
 
 Zet bij je imports bovenaan:
 
+<Bestand pad="main.py" />
+
 ```python
 from sqlitedict import SqliteDict
 ```
 
 En onder je andere endpoints:
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -61,6 +67,8 @@ Het antwoord komt ná het `with`-blok: de database is dan al netjes gesloten.
 
 ## Data terug lezen
 
+<Bestand pad="main.py" />
+
 <CodeUitleg>
 
 ```python showLineNumbers
@@ -88,6 +96,8 @@ async def toon_naam():
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -226,27 +236,35 @@ async def toon_naam():
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag='Je verandert in /toon_naam alleen de sleutel, in db.get("naam", "Nog niets opgeslagen"). Je slaat Jan op via het formulier en gaat naar /toon_naam. Wat staat er in het antwoord achter naam?'>
+  <Keuze uitleg="Dan moest Jan onder de sleutel naam staan. Onder welke sleutel zet /opslaan hem?">Jan</Keuze>
+  <Keuze goed uitleg="/opslaan zet de naam onder laatste_naam. get zoekt onder een andere sleutel, vindt niets en geeft de standaardwaarde.">Nog niets opgeslagen</Keuze>
+  <Keuze uitleg="Zo gaat het met db[...] en een sleutel die er niet is. Wat doet get dan?">Niets, je krijgt een 500 Internal Server Error</Keuze>
+  <Keuze uitleg="Een 422 krijg je als een formulierveld ontbreekt. /toon_naam is een GET zonder formulier, en een sleutel in de database is geen formulierveld.">Niets, je krijgt een 422</Keuze>
+  <Uitleg>
+
+  De sleutel verbindt de twee endpoints. `/opslaan` en `/toon_naam` moeten precies dezelfde sleutel gebruiken, en een verschil geeft geen foutmelding. Kijk bij twijfel met `bekijk_db.py` welke sleutel er echt in `namen.db` staat.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Twee namen
 
 Je slaat op `/opslaan` eerst "Jan" op, en daarna "Sarah". Daarna ga je naar `/toon_naam`.
 
-**Vraag:** welke naam of namen zie je?
+<Voorspel vraag="Welke naam of namen zie je?">
+  <Keuze uitleg="Kijk onder welke sleutel elke naam terechtkomt. Hoeveel waarden passen onder één sleutel?">Jan en Sarah</Keuze>
+  <Keuze uitleg="De tweede keer opslaan krijgt ook een commit(). Wat staat er als laatste onder de sleutel?">Alleen Jan</Keuze>
+  <Keuze uitleg="Die standaardwaarde geeft get alleen als de sleutel er niet is. Na de eerste keer opslaan staat hij er wel.">Nog niets opgeslagen</Keuze>
+  <Keuze goed uitleg="Beide namen gaan onder de sleutel laatste_naam. De tweede overschrijft de eerste.">Alleen Sarah</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Een sleutel die altijd hetzelfde is, bewaart maar één ding. Voor een gastenboek wil je elk bericht houden. Daarom krijgt in de volgende les elk bericht een eigen sleutel.
 
-Onder welke sleutel komt elke naam terecht?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Alleen "Sarah". Allebei gaan ze onder de sleutel `laatste_naam`, en een nieuwe waarde onder dezelfde sleutel overschrijft de oude.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -284,7 +302,8 @@ Gebruik `<input type="number" name="score">` in je HTML en `score: int = Form(..
 <details>
 <summary>Antwoord</summary>
 
-`static/pages/score_form.html`:
+<Bestand pad="static/pages/score_form.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -297,6 +316,8 @@ Gebruik `<input type="number" name="score">` in je HTML en `score: int = Form(..
     </body>
 </html>
 ```
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/score")

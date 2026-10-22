@@ -71,20 +71,34 @@ Dubbelklik op een tekst of een attribuut en je kunt hem aanpassen. Verander `80 
 Blijft de Console leeg terwijl je typt? Kijk of je het bestand hebt opgeslagen en herlaad zonder cache (zie [Als je wijziging niet doorkomt](site:fullstack/docs/FastAPI/css-en-afbeeldingen/static_files#als-je-wijziging-niet-doorkomt)). Staat er een rode regel, klik dan op de bestandsnaam rechts: die brengt je naar de regel die de fout maakt. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
+<Voorspel soort="Controlevraag" vraag="Je maakt een tikfout in app.js, en de teller doet niets meer. Waar zie je de foutmelding?">
+  <Keuze uitleg="De server stuurt app.js alleen op, als bestand. Wie voert de code uit, en waar meldt die het als het misgaat?">De terminal waar `fastapi dev` draait</Keuze>
+  <Keuze uitleg="De server stuurde app.js gewoon op, dus dat verzoek ging goed. De fout ontstaat pas daarna, als de code draait.">Netwerk, als rode regel met status 500</Keuze>
+  <Keuze goed uitleg="JavaScript draait in de browser, en de browser meldt zijn fouten daar, met bestand en regelnummer.">In de Console, als rode regel met `app.js` en een regelnummer</Keuze>
+  <Keuze uitleg="De browser toont een fout in JavaScript niet op de pagina zelf. Je bezoeker ziet alleen dat er niets gebeurt.">Op de pagina, onder het formulier</Keuze>
+  <Uitleg>
+
+  Een fout in Python zoek je in de terminal, een fout in JavaScript in de Console. Doet iets op je pagina niets, vraag je dan eerst af waar de code draait: op de server of in de browser.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Blijft het staan?
 
 Je verandert in Elementen de kop van je gastenboekformulier in "Mijn gastenboek" en herlaadt de pagina.
 
-**Vraag:** wat staat er na het herladen?
+<Voorspel vraag="Wat staat er na het herladen?">
+  <Keuze uitleg="Je wijziging zag je wel meteen op de pagina. Maar wat paste je aan: het bestand in je project, of wat er in je browser staat?">"Mijn gastenboek"</Keuze>
+  <Keuze goed uitleg="Elementen past alleen de kopie in jouw browser aan. Bij het herladen komt de pagina opnieuw van de server.">De oude kop</Keuze>
+  <Keuze uitleg="Een herstart maakt niet uit: de server kreeg je wijziging nooit te zien. Waar zat die wijziging dan?">"Mijn gastenboek", tot je de server herstart</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Antwoord</summary>
+  De server stuurt `gastenboek_form.html` zoals het in je project staat, bij elke keer laden. Elementen is handig om iets uit te proberen; wil je het houden, verander het dan in het bestand zelf.
 
-De oude kop. Elementen past alleen de kopie in jouw browser aan. Bij het herladen vraagt de browser de pagina opnieuw aan de server, en die stuurt `gastenboek_form.html` zoals hij altijd doet.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 

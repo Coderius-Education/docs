@@ -138,6 +138,29 @@ KeyError: 'Naam'
 
 **Oplossing:** schrijf de sleutel bij het uitlezen precies zoals bij het opslaan. Wil je zien welke sleutels er echt in staan, dan helpt het script uit [Alles bekijken: len en items](site:fullstack/docs/FastAPI/sqlitedict/bekijken).
 
+Test jezelf met een script dat na `commit()` nog iets verandert:
+
+```python
+from sqlitedict import SqliteDict
+
+with SqliteDict("proef.db") as db:
+    db["naam"] = "Piet"
+    db.commit()
+    db["naam"] = "Sara"
+```
+
+<Voorspel soort="Controlevraag" vraag="Het bestand proef.db bestaat nog niet. Je draait dit script. Wat staat er daarna onder de sleutel naam in proef.db?">
+  <Keuze uitleg="Dat is de laatste waarde in je programma. Kijk wat er na die regel nog gebeurt voordat het with-blok sluit.">Sara</Keuze>
+  <Keuze goed uitleg="De eerste commit() schreef de eerste naam weg. De tweede wijziging krijgt geen commit() meer, dus die verdwijnt als het blok sluit.">Piet</Keuze>
+  <Keuze uitleg="Een wijziging zonder commit() gaat verloren, maar wat al weggeschreven is, blijft staan.">Niets, want het script eindigt niet met commit()</Keuze>
+  <Keuze uitleg="Onder één sleutel staat één waarde, net als in een gewone dictionary.">Allebei de namen</Keuze>
+  <Uitleg>
+
+  Alleen wat vóór `commit()` gebeurt, komt in het bestand. Zet `db.commit()` daarom altijd onder je laatste wijziging, binnen het `with`-blok.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wat gebeurt er?
@@ -153,21 +176,17 @@ with SqliteDict("test.db") as db:
     print(db["score"])
 ```
 
-**Vraag:** wat print dit?
+<Voorspel vraag="Wat print dit?">
+  <Keuze uitleg="Het tweede with-blok opent de database gewoon opnieuw. Dat mag zo vaak als je wilt.">Een foutmelding, want de database is na het eerste blok al dicht</Keuze>
+  <Keuze uitleg="SqliteDict maakt alleen een lege database als het bestand nog niet bestaat. Wie heeft test.db al gemaakt?">Niets, want het tweede blok begint met een lege database</Keuze>
+  <Keuze uitleg="Een KeyError krijg je als de sleutel niet in het bestand staat. Wat deed commit() in het eerste blok?">KeyError: 'score'</Keuze>
+  <Keuze goed uitleg="Het eerste blok zette de score met commit() in test.db. Het tweede blok opent hetzelfde bestand en leest hem terug.">`100`</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  De data staat in het bestand, niet in het `with`-blok. Elk blok dat `test.db` opent, ook in een ander script, ziet wat er met `db.commit()` is weggeschreven.
 
-`commit()` schrijft de data naar het bestand. Daarna opent het programma dat bestand opnieuw. Staat de data er dan nog?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-`100`. De data staat in het bestand, want `db.commit()` heeft hem daar weggeschreven.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run - Een tweede keer opslaan
 

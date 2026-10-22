@@ -12,6 +12,8 @@ Wil je toch iets onthouden tussen twee verzoeken, dan moet je die informatie erg
 
 Tot nu toe gaf je endpoint alleen inhoud terug. Een antwoord kan ook opdrachten voor de browser bevatten, en `set_cookie` is er daar een van. Vervang je `POST /gastenboek` door deze versie. De controle op de lengte uit [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser) en die op het wachtwoord uit [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen) blijven bovenaan staan:
 
+<Bestand pad="main.py" />
+
 <CodeUitleg>
 
 {/* route-dubbel: vervangt POST /gastenboek uit Inloggen of het htmx-recept, nu met een cookie */}
@@ -61,6 +63,8 @@ Gebruik je het htmx-formulier uit de [htmx-recepten](site:fullstack/docs/FastAPI
 
 Vanaf nu stuurt de browser die cookie mee bij elk verzoek aan jouw server. Je vraagt hem op met `Cookie`, net zoals je formuliervelden met `Form` opvraagt. Vervang je `GET /gastenboek`, dat tot nu toe een `FileResponse` gaf:
 
+<Bestand pad="main.py" />
+
 <CodeUitleg>
 
 {/* route-dubbel: vervangt GET /gastenboek uit Elk bericht bewaren, nu met een template */}
@@ -79,6 +83,8 @@ async def gastenboek_form(request: Request, naam: str = Cookie(default="")):
 </CodeUitleg>
 
 Je formulier was tot nu toe een vast bestand, `static/pages/gastenboek_form.html`. Om er een naam in te kunnen zetten moet het een **template** worden: verplaats het hele bestand naar `templates/gastenboek.html`, met de `<head>` en de script-tags die er misschien al in staan, en zet de waarde in het naamveld. Alleen dat veld verandert: `value="{{ naam }}"` komt erbij. Zonder htmx en JavaScript ziet het formulier er dan zo uit:
+
+<Bestand pad="templates/gastenboek.html" />
 
 ```html
 <form method="post" action="/gastenboek">
@@ -101,27 +107,34 @@ Bij een eerste bezoek is `{{ naam }}` leeg en zie je een leeg veld. Daarna staat
 Blijft het veld leeg terwijl je wel een bericht hebt verstuurd? Controleer of `set_cookie` op het antwoord staat dat je ook echt returnt. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
+<Voorspel soort="Controlevraag" vraag="Je hebt al eens een bericht geschreven en opent later opnieuw /gastenboek. Hoe komt je naam in het naamveld?">
+  <Keuze uitleg="Elk verzoek staat op zichzelf: na het antwoord weet je server niets meer van je vorige bezoek. Waar staat je naam dan wel?">Je server onthoudt de naam van je vorige verzoek</Keuze>
+  <Keuze uitleg="In GET /gastenboek staat geen SqliteDict. Waar haalt de functie naam dan vandaan?">GET /gastenboek zoekt je laatste bericht op in `gastenboek.db`</Keuze>
+  <Keuze goed uitleg="De browser bewaarde de cookie van set_cookie en stuurt hem bij elk verzoek terug. Cookie() leest hem uit, en de template zet hem in het veld.">De browser stuurt de cookie mee en Jinja2 zet de naam in `value`</Keuze>
+  <Keuze uitleg="Een cookie en een formulierveld weten niets van elkaar, ook niet als ze hetzelfde heten. Waarom moest het formulier een template worden?">De cookie heet ook naam, dus de browser zet hem vanzelf in het veld</Keuze>
+  <Uitleg>
+
+  Drie plekken werken samen. De browser bewaart de cookie en stuurt hem mee. `Cookie(default="")` in `main.py` haalt hem uit het verzoek. `value="{{ naam }}"` in `templates/gastenboek.html` zet hem in het veld. Mist er één, dan blijft het veld leeg.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Wie stuurt wat?
 
 Je hebt een cookie met je naam. Je vraagt daarna drie pagina's op: `/berichten`, `/gastenboek` en `/bericht/bericht_123`.
 
-**Vraag:** bij hoeveel van die drie verzoeken stuurt de browser de cookie mee?
+<Voorspel vraag="Bij hoeveel van die drie verzoeken stuurt de browser de cookie mee?">
+  <Keuze uitleg="Je Python-code leest hem daar uit. Maar wie beslist of hij meegaat: jouw endpoint, of de browser die hem bewaart?">Eén, alleen bij `/gastenboek`</Keuze>
+  <Keuze uitleg="set_cookie zet hem één keer. Lees nog eens wat de browser vanaf dan met de cookie doet.">Geen, want de server zet geen nieuwe cookie</Keuze>
+  <Keuze goed uitleg="De browser stuurt de cookie bij elk verzoek aan jouw server mee, of je endpoint er iets mee doet of niet.">Alle drie</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Dat je hem alleen in `/gastenboek` uitleest, verandert niets aan wat de browser stuurt. Ook een verzoek voor je CSS-bestand of een afbeelding krijgt hem mee.
 
-Bepaalt jouw Python-code wanneer een cookie meegaat, of de browser?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Alle drie. De browser stuurt de cookie bij elk verzoek aan jouw server mee, of je endpoint er nu iets mee doet of niet. Dat je hem alleen in `/gastenboek` uitleest, verandert daar niets aan.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -154,6 +167,8 @@ Naast `set_cookie` bestaat er ook `delete_cookie`, met alleen de naam van de coo
 <details>
 <summary>Antwoord</summary>
 
+<Bestand pad="main.py" />
+
 ```python
 @app.get("/vergeet")
 async def vergeet():
@@ -162,7 +177,8 @@ async def vergeet():
     return antwoord
 ```
 
-In `templates/gastenboek.html`:
+<Bestand pad="templates/gastenboek.html" />
+
 ```html
 <a href="/vergeet">Ik ben iemand anders</a>
 ```
@@ -187,7 +203,8 @@ De template weet al of `naam` gevuld is. Met `{% if naam %}` kun je daarop reage
 <details>
 <summary>Antwoord</summary>
 
-In `templates/gastenboek.html`:
+<Bestand pad="templates/gastenboek.html" />
+
 ```html
 {% if naam %}
     <h1>Welkom terug, {{ naam }}</h1>

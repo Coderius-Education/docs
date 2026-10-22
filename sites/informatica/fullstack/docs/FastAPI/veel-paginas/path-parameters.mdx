@@ -185,6 +185,18 @@ async def dier(naam: str):
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag="Je server draait met de main.py van deze les, en je gaat met Netwerk open naar /dier/olifant. Welke statuscode staat er?">
+  <Keuze uitleg="Een 404 stuurt FastAPI als er geen endpoint bij het pad past. Past /dier/olifant bij een route?">404, want olifant staat niet in `DIEREN`</Keuze>
+  <Keuze goed uitleg="De route past, de functie draait, en get geeft de tekst na de komma. De server stuurt dus gewoon een pagina terug.">200</Keuze>
+  <Keuze uitleg="Zo gaat het met vierkante haken. Kijk hoe deze versie de zin uit de dictionary haalt.">500, want de sleutel bestaat niet</Keuze>
+  <Keuze uitleg="Een 422 krijg je als er een parameter ontbreekt of niet past. Hier staat er een woord op de plek van naam, en dat is precies wat str vraagt.">422, want olifant past niet bij de route</Keuze>
+  <Uitleg>
+
+  Je ziet "Dit dier staat nog niet op de site.", met status 200. Voor de server is dat een gewone pagina. Een 404 voor een dier dat er niet is, stuur je pas zelf als je dat later leert.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Welke waarde komt binnen?
@@ -195,21 +207,17 @@ async def groet(naam: str):
     return {"bericht": f"Hallo {naam}"}
 ```
 
-**Vraag:** wat krijg je te zien op `/groet/Sarah`? En op `/groet/naam`?
+<Voorspel vraag="Op /groet/Sarah groet de server Sarah. Wat krijg je op /groet/naam?">
+  <Keuze uitleg="Op de plek van de accolades in het pad mag elk woord staan. Waarom zou FastAPI dit woord weigeren?">Een 404</Keuze>
+  <Keuze uitleg="De accolades staan alleen in je code. In de f-string zet Python de waarde van de parameter op die plek, wat er ook in de URL stond.">`{"bericht":"Hallo {naam}"}`, met de accolades erin</Keuze>
+  <Keuze goed uitleg="Wat in de URL op de plek van de plekhouder staat, komt binnen als waarde. Ook het woord naam is dan gewoon tekst.">`{"bericht":"Hallo naam"}`</Keuze>
+  <Keuze uitleg="De parameter heeft geen standaardwaarde, en het pad heeft al een stuk na /groet/. Er ontbreekt dus niets.">Een 422</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  `/groet/Sarah` geeft `{"bericht":"Hallo Sarah"}` en `/groet/naam` geeft `{"bericht":"Hallo naam"}`. De naam tussen de accolades zegt alleen in welke parameter de waarde terechtkomt.
 
-De accolades zijn een plekhouder, geen letterlijke tekst. Wat je ook intypt, dát komt binnen.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-`/groet/Sarah` geeft `{"bericht":"Hallo Sarah"}` en `/groet/naam` geeft `{"bericht":"Hallo naam"}`. Ook het woord "naam" is hier niets meer dan een waarde.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 

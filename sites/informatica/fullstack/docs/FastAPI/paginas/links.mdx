@@ -13,6 +13,8 @@ Je pagina's staan nog los van elkaar. Met de `<a>` tag verbind je ze.
 
 Met `<a>` maak je een klikbare link:
 
+<Bestand pad="static/pages/home.html" />
+
 ```html
 <a href="/about">Ga naar Over Mij</a>
 ```
@@ -28,7 +30,8 @@ Gebruik `href="/about"`, het endpoint, en niet de naam van het bestand. Wat er m
 
 Twee pagina's die naar elkaar linken. Vervang je `home.html` door deze versie, met een link, en maak er een pagina `about.html` bij.
 
-**`static/pages/home.html`:**
+<Bestand pad="static/pages/home.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -42,7 +45,8 @@ Twee pagina's die naar elkaar linken. Vervang je `home.html` door deze versie, m
 </html>
 ```
 
-**`static/pages/about.html`:**
+<Bestand pad="static/pages/about.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -53,7 +57,9 @@ Twee pagina's die naar elkaar linken. Vervang je `home.html` door deze versie, m
 </html>
 ```
 
-**`main.py`:** je endpoint voor `/` heb je al. Zet er een endpoint voor `/about` onder:
+Je endpoint voor `/` heb je al. Zet in `main.py` een endpoint voor `/about` eronder:
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/about")
@@ -71,6 +77,8 @@ Krijg je een 404 als je op een link klikt? Dan bestaat het endpoint waarschijnli
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 from fastapi import FastAPI
@@ -127,29 +135,39 @@ async def about():
 
 </details>
 
+<Voorspel soort="Controlevraag" vraag='Je verandert in main.py de regel @app.get("/about") in @app.get("/over"). De functie heet nog about, en in home.html staat nog href="/about". Wat gebeurt er als je op Ga naar Over Mij klikt?'>
+  <Keuze uitleg="De functie heet wel zo, maar de browser ziet die naam nooit. Welk pad heeft het endpoint nu?">Over Mij, want de functie heet nog about</Keuze>
+  <Keuze uitleg="Het endpoint werkt nog, maar op een ander adres. De browser gaat niet zoeken naar een pad dat erop lijkt.">De pagina Over Mij, op het adres /over</Keuze>
+  <Keuze goed uitleg="De link vraagt /about, en geen endpoint heeft dat pad meer. FastAPI stuurt dan zelf een 404.">Je ziet `{"detail":"Not Found"}`, met status 404 in Netwerk</Keuze>
+  <Keuze uitleg="about.html bestaat nog en de functie is in orde. Een 500 krijg je pas als er in een endpoint iets misgaat.">Een 500 Internal Server Error</Keuze>
+  <Uitleg>
+
+  Het pad in `href` en het pad in `@app.get(...)` moeten precies gelijk zijn. Pas je er een aan, pas dan ook de andere aan. De naam van de functie en de naam van het bestand doen daarbij niet mee.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Waar ga je heen?
+
+<Bestand pad="static/pages/home.html" />
 
 ```html
 <a href="/contact">Neem contact op</a>
 ```
 
-**Vraag:** Welk endpoint roept de browser aan als je hierop klikt?
+<Voorspel vraag="Welk pad vraagt de browser aan je server als je op deze link klikt?">
+  <Keuze goed uitleg="De browser neemt de waarde van href en vraagt dat pad op. Je server heeft er dus een endpoint met precies dit pad voor nodig.">`/contact`</Keuze>
+  <Keuze uitleg="De browser kent je bestanden niet. Hij vraagt alleen wat er letterlijk in href staat.">`/static/pages/contact.html`</Keuze>
+  <Keuze uitleg="Een link is altijd een nieuw verzoek aan de server. De browser heeft zelf geen pagina klaarliggen.">Geen: de browser opent de pagina zelf, zonder de server</Keuze>
+  <Keuze uitleg="De tekst tussen de tags is alleen wat je ziet om op te klikken. Waar de link heen gaat, staat ergens anders.">`/neem-contact-op`</Keuze>
+  <Uitleg>
 
-<details>
-<summary>Tip</summary>
+  Een link is een verzoek met de methode GET naar het pad in `href`. Wil je dat er iets komt, dan heb je in Python een `@app.get("/contact")` nodig. Zonder dat endpoint krijg je een 404.
 
-Kijk naar de waarde van `href`. Dat is het pad waar de browser naartoe gaat.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-De browser gaat naar `/contact`. Je hebt dus een `@app.get("/contact")` endpoint nodig in Python.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run
 
@@ -181,6 +199,9 @@ Je hebt één nieuw HTML-bestand en één nieuw endpoint nodig. Zet op elke pagi
 <summary>Antwoord</summary>
 
 Drie HTML bestanden in `static/pages/` met elk links naar de andere twee, bijvoorbeeld `home.html`:
+
+<Bestand pad="static/pages/home.html" />
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -193,6 +214,9 @@ Drie HTML bestanden in `static/pages/` met elk links naar de andere twee, bijvoo
 ```
 
 De endpoints voor `/` en `/about` heb je al. Er komt er één bij:
+
+<Bestand pad="main.py" />
+
 ```python
 @app.get("/contact")
 async def contact():
@@ -203,7 +227,9 @@ async def contact():
 
 ### Opdracht 5: Make - Navigatie menu
 
-Zet op elke pagina dezelfde drie links bovenaan:
+Zet op elke pagina dezelfde drie links bovenaan, bijvoorbeeld in `home.html`:
+
+<Bestand pad="static/pages/home.html" />
 
 ```html
 <nav>
@@ -223,7 +249,9 @@ Kopieer het `<nav>` blok naar elke HTML pagina, bovenaan de `<body>`. Zo heeft e
 <details>
 <summary>Antwoord</summary>
 
-Zet in elk HTML bestand (home.html, about.html, contact.html) hetzelfde navigatie-blok:
+Zet in elk HTML bestand (home.html, about.html, contact.html) hetzelfde navigatie-blok. Zo ziet `home.html` eruit:
+
+<Bestand pad="static/pages/home.html" />
 
 ```html
 <!DOCTYPE html>

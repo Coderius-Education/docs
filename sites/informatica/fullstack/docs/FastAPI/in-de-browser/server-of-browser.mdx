@@ -28,6 +28,8 @@ Werk dat vaak gebeurt hoort daarom in de browser, ook als je het in Python zou k
 
 In je formulier staat:
 
+<Bestand pad="static/pages/gastenboek_form.html" />
+
 ```html
 <input type="text" name="bericht" maxlength="80" required>
 ```
@@ -35,6 +37,8 @@ In je formulier staat:
 Dat ziet eruit als een regel: berichten zijn nooit langer dan 80 tekens. Maar `maxlength` is een instructie aan de browser, en de browser is van de bezoeker. Wie het formulier omzeilt en rechtstreeks naar je endpoint stuurt, komt met 500 tekens binnen, en jouw Python-code slaat het op zonder klagen.
 
 Wil je echt een grens, dan moet Python die zelf controleren. Zet deze controle bovenaan in je POST-endpoint `/gastenboek`, boven de controle van het wachtwoord uit [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen); de rest van de functie blijft zoals hij was:
+
+<Bestand pad="main.py" />
 
 {/* route-dubbel: toont alleen de controle bovenaan het bestaande POST /gastenboek */}
 ```python
@@ -66,6 +70,18 @@ Moet iets bewaard blijven of zichtbaar zijn voor anderen, dan hoort het op de se
 
 De middelste kolom is wat je in [Zonder herladen met htmx](site:fullstack/docs/FastAPI/zonder-herladen/htmx) deed. Het is nog steeds de server, met dezelfde endpoints, database en controles; alleen de pagina blijft staan. Voor de hoofdvraag maakt dat niets uit.
 
+<Voorspel soort="Controlevraag" vraag="Je wilt dat geen enkel bericht langer is dan 80 tekens, ook niet als iemand je formulier omzeilt. In welk bestand zet je die grens?">
+  <Keuze uitleg="Die helpt een gewone bezoeker, maar de HTML staat op zijn computer. Wat gebeurt er als hij het attribuut weghaalt?">Met `maxlength="80"` in `gastenboek_form.html`</Keuze>
+  <Keuze uitleg="JavaScript draait ook in de browser van de bezoeker. Wie het formulier omzeilt, slaat je script net zo goed over.">In `app.js`, dat het versturen tegenhoudt</Keuze>
+  <Keuze goed uitleg="Daar komt elk bericht langs, hoe het ook verstuurd is, en daar kan de bezoeker niet bij.">In `main.py`, in je `POST /gastenboek`</Keuze>
+  <Keuze uitleg="Dan is het bericht al opgeslagen. Het staat in je database, ook als de pagina het niet toont.">`berichten.html`, die lange berichten niet toont</Keuze>
+  <Uitleg>
+
+  Alles in `static/` en alles wat een template oplevert, gaat naar de browser, en daar heeft de bezoeker het voor het zeggen. Alleen je Python-code draait op jouw computer. Een grens die moet gelden, zet je dus in het endpoint, met een 400 als het bericht te lang is. De `maxlength` mag blijven staan als hulp.
+
+  </Uitleg>
+</Voorspel>
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Waar hoort het?
@@ -77,22 +93,20 @@ Voor elk van deze vier: server of browser?
 3. De achtergrondkleur van de pagina wisselt tussen licht en donker als je op een knop klikt.
 4. Bijhouden hoe vaak een bericht is bekeken.
 
-<details>
-<summary>Tip</summary>
+<Voorspel vraag="Welke verdeling klopt?">
+  <Keuze uitleg="Bij 4 tel je de keren van alle bezoekers samen. Kan de browser van één bezoeker weten wat de anderen deden?">1, 3 en 4 in de browser, 2 op de server</Keuze>
+  <Keuze uitleg="Het bericht bij 1 stond al op de pagina. Moet de server er dan nog iets voor doen?">3 in de browser, 1, 2 en 4 op de server</Keuze>
+  <Keuze goed uitleg="Wat bewaard moet blijven of wat anderen zien, gaat naar de server. Wat alleen deze bezoeker nu ziet, doet de browser.">1 en 3 in de browser, 2 en 4 op de server</Keuze>
+  <Keuze uitleg="Een licht of donker scherm geldt alleen voor deze bezoeker, nu. Moet dat bewaard blijven, of moeten anderen het zien?">1 in de browser, 2, 3 en 4 op de server</Keuze>
+  <Uitleg>
 
-Stel bij elk geval de hoofdvraag: moet dit bewaard blijven, of moet iemand anders dit kunnen zien?
+  1. **Browser.** Het bericht stond er al; je laat het alleen zien.
+  2. **Server.** Het moet bewaard blijven en anderen moeten het lezen.
+  3. **Browser.** Het geldt alleen voor deze bezoeker. Wil je dat de site je keuze onthoudt tot de volgende keer, dan wordt het lastiger, want dan moet je hem ergens bewaren.
+  4. **Server.** Een teller die van alle bezoekers samen optelt kan alleen op één plek staan, en dat is jouw database.
 
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-1. **Browser.** Het bericht stond er al; je laat het alleen zien.
-2. **Server.** Het moet bewaard blijven en anderen moeten het lezen.
-3. **Browser.** Het geldt alleen voor deze bezoeker en hoeft niet bewaard te blijven. Wil je dat de site je keuze onthoudt tot de volgende keer, dan wordt het lastiger, want dan moet je hem ergens bewaren.
-4. **Server.** Een teller die van alle bezoekers samen optelt kan alleen op één plek staan, en dat is jouw database.
-
-</details>
+  </Uitleg>
+</Voorspel>
 
 ### Opdracht 2: Run - Omzeil je eigen formulier
 
@@ -136,17 +150,23 @@ De lijstitems staan al in de HTML. Met `lijst.querySelectorAll("li")` haal je ze
 
 Zet in `templates/berichten.html`, boven je lijst:
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 <button id="omdraai-knop">Omdraaien</button>
 ```
 
 En in `static/js/berichten.js`. Maakte je dat bestand niet in opdracht 5 van [JavaScript erbij](site:fullstack/docs/FastAPI/in-de-browser/javascript), maak het dan nu en koppel het in de `<head>` van `berichten.html`:
 
+<Bestand pad="templates/berichten.html" />
+
 ```html
 <script src="/static/js/berichten.js" defer></script>
 ```
 
 Staat er al code in het bestand, zet dit eronder:
+
+<Bestand pad="static/js/berichten.js" />
 
 ```js
 const omdraaiKnop = document.querySelector("#omdraai-knop");
