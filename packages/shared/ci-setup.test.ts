@@ -88,7 +88,7 @@ describe('Node en pnpm via .github/actions/node-pnpm', () => {
     expect(actie).toContain('corepack enable');
     expect(actie).toContain("COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'");
     expect(actie).toMatch(
-      /key: pnpm-store-\$\{\{ runner\.os \}\}-node22-\$\{\{ hashFiles\('pnpm-lock\.yaml'\) \}\}/,
+      /key: pnpm-store-\$\{\{ runner\.os \}\}-\$\{\{ hashFiles\('\.nvmrc'\) \}\}-\$\{\{ hashFiles\('pnpm-lock\.yaml'\) \}\}/,
     );
   });
 
@@ -96,6 +96,18 @@ describe('Node en pnpm via .github/actions/node-pnpm', () => {
   // Haalt hij de store op, dan kost dat meer dan downloaden (8 s tegen 7 s in
   // CI), en bewaart hij hem als eerste, dan krijgt elke job daarna een halve
   // store: bij een treffer op de sleutel bewaart actions/cache niets meer.
+  // site-hash.mjs telt .nvmrc mee in de sleutel van een gebouwde site. CI
+  // gebruikte Node 22 uit de action terwijl .nvmrc 20 zei: een andere Node
+  // veranderde die sleutel dan niet, en voorraad gaf oude builds door.
+  it('Node komt uit .nvmrc, het bestand dat site-hash meetelt', () => {
+    expect(actie).toContain('node-version-file: .nvmrc');
+    expect(actie).not.toMatch(/^\s*node-version:/m);
+    expect(workflow).not.toMatch(/node-version/);
+    const nvmrc = readFileSync(join(ROOT, '.nvmrc'), 'utf8').trim();
+    expect(nvmrc).toMatch(/^\d+$/);
+    expect(Number(nvmrc)).toBeGreaterThanOrEqual(22);
+  });
+
   it('een install van één site haalt de pnpm-store niet op en bewaart hem niet', () => {
     const storeStappen = actie
       .split('\n    - ')

@@ -1,6 +1,6 @@
 name: Node en pnpm
 description: >-
-  Node 22, pnpm uit package.json via corepack, de pnpm-store uit de cache, en
+  Node uit .nvmrc, pnpm uit package.json via corepack, de pnpm-store uit de cache, en
   een install. Eén plek voor wat elke job deed met pnpm/action-setup,
   setup-node en pnpm install.
 
@@ -29,9 +29,13 @@ inputs:
 runs:
   using: composite
   steps:
+    # De versie staat in .nvmrc, en alleen daar: site-hash.mjs telt dat
+    # bestand mee in de sleutel van een gebouwde site. Stond hij hier, dan
+    # bleef die sleutel gelijk na een andere Node, en gaf voorraad builds van
+    # de oude Node aan cross-links.
     - uses: actions/setup-node@v5
       with:
-        node-version: 22
+        node-version-file: .nvmrc
         # De store-cache doen we hieronder zelf.
         package-manager-cache: false
 
@@ -60,8 +64,8 @@ runs:
       uses: actions/cache@v5
       with:
         path: ${{ steps.store.outputs.pad }}
-        key: pnpm-store-${{ runner.os }}-node22-${{ hashFiles('pnpm-lock.yaml') }}
-        restore-keys: pnpm-store-${{ runner.os }}-node22-
+        key: pnpm-store-${{ runner.os }}-${{ hashFiles('.nvmrc') }}-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: pnpm-store-${{ runner.os }}-${{ hashFiles('.nvmrc') }}-
 
     - name: Install dependencies
       if: inputs.pnpm == 'true' && inputs.install == 'true'
