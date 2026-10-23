@@ -145,6 +145,29 @@ export function hrefsUit(html, paginaUrl) {
   return uit;
 }
 
+/**
+ * Attributen met een adres zonder aanhalingstekens, in echte tags. Dit script
+ * leest alleen `href="…"` en slaat zulke adressen dus stil over. De
+ * html-minifier van swc (Docusaurus Faster) laat de aanhalingstekens weg waar
+ * het kan, maar niet bij een waarde met `&` of een spatie: dan vond het script
+ * nog honderden links, sloeg het de rest over en bleef het groen. Wat in een
+ * codevoorbeeld staat (`&lt;img src=x&gt;`) is geen tag, en de inhoud van
+ * script en style telt niet mee.
+ * @param {string} html
+ * @returns {string[]} per treffer de tag en het attribuut, zoals `<a href`
+ */
+export function zonderAanhalingstekens(html) {
+  const uit = [];
+  const zonderScripts = html.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, '');
+  for (const m of zonderScripts.matchAll(/<([a-zA-Z][\w-]*)\b([^>]*)>/g)) {
+    // Een aangehaalde waarde mag ` src=` bevatten; die telt niet.
+    const attributen = m[2].replace(/"[^"]*"|'[^']*'/g, '""');
+    const a = /(?:^|\s)(href|src|poster|data-obj-src|data-obj-mtl)=(?!["'])/.exec(attributen);
+    if (a) uit.push(`<${m[1].toLowerCase()} ${a[1]}`);
+  }
+  return uit;
+}
+
 /** Naam van de tag waarin het attribuut op positie `index` staat. */
 function tagVoor(html, index) {
   const start = html.lastIndexOf('<', index);
@@ -303,6 +326,17 @@ export function controleer(builds) {
   let overgeslagen = 0;
   for (const [site, buildMap] of builds) {
     for (const bestand of htmlBestanden(buildMap)) {
+      const html = readFileSync(bestand, 'utf8');
+      const ongelezen = zonderAanhalingstekens(html);
+      if (ongelezen.length)
+        kapot.push({
+          site,
+          bron: relative(buildMap, bestand),
+          href: `${ongelezen[0]}=… (${ongelezen.length}×)`,
+          doelSite: site,
+          reden:
+            'adres zonder aanhalingstekens: dit script leest alleen href="…" en slaat het over',
+        });
       const registry = [...ALLE_SITES, HOME].find((s) => s.id === site);
       const bronPad = relative(buildMap, bestand)
         .split('\\')
@@ -310,7 +344,7 @@ export function controleer(builds) {
         // Alleen een heel index.html-segment: h-index.html is een eigen pagina.
         .replace(/(^|\/)index\.html$/, '$1');
       const paginaUrl = registry ? new URL(bronPad, registry.url).href : undefined;
-      for (const link of hrefsUit(readFileSync(bestand, 'utf8'), paginaUrl)) {
+      for (const link of hrefsUit(html, paginaUrl)) {
         // Een oud subdomein of een aangeplakte host is kapot, of de doelsite
         // nu gebouwd is of niet.
         if (link.oudDomein || link.misvormd || link.nietOmgezet) {
@@ -394,10 +428,8 @@ if (isHoofdscript) {
   const { gecontroleerd, overgeslagen } = resultaat;
   // Elke cursus linkt naar andere cursussen (de footer, de navbar). Vindt het
   // script er geen één, dan leest het de HTML niet meer, en dat mag niet
-  // groen ogen: het leest alleen `href="…"`, en een html-minifier die de
-  // aanhalingstekens weglaat (die van swc in Docusaurus Faster) liet hem stil
-  // niets controleren. Zonder aanhalingstekens lezen kan niet: dan telt
-  // `<img src=x>` in een codevoorbeeld als link.
+  // groen ogen. Een adres zonder aanhalingstekens meldt controleer() per
+  // pagina (zonderAanhalingstekens); dit vangt wat dat nog mist.
   if (gecontroleerd === 0) {
     console.error(
       'Geen enkele link gevonden in de gebouwde sites: leest het script de HTML nog goed?',

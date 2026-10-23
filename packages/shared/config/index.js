@@ -367,8 +367,11 @@ function createConfig(course = {}) {
     // koude build is drie tot zeven keer zo snel als met webpack (robotica
     // 61 s tegen 13 s), en de pagina's zijn gelijk (de DOM van elke pagina
     // van alle veertien sites, op de namen van de assets na). Twee
-    // onderdelen staan bewust uit, zie FASTER bovenaan.
-    future: { v4: true, faster: FASTER, ...future },
+    // onderdelen staan bewust uit, zie FASTER bovenaan. `faster` komt na
+    // `...future`, zodat een site hem niet kan overschrijven: met
+    // `faster: true` stond de html-minifier van swc weer aan, voor alleen die
+    // site.
+    future: { v4: true, ...future, faster: FASTER },
     i18n: { defaultLocale: 'nl', locales: ['nl'] },
     ...rest,
     // ---- door de factory beheerd (niet overschrijfbaar via ...rest) ----

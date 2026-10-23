@@ -71,10 +71,13 @@ cache (`scripts/site-hash.mjs`, job `voorraad`). Docusaurus bouwt met Rspack
 (Docusaurus Faster, `FASTER` in `packages/shared/config`): koud drie tot
 zeven keer zo snel als webpack, en elke build byte voor byte gelijk. Er is
 dus geen bundler-cache tussen runs (`ci-setup.test.ts`). Twee onderdelen
-staan uit: de HTML-minifier van swc laat aanhalingstekens weg, en dan leest
-`controleer-cross-links.mjs` geen enkele `href="…"` meer; vindt die nul links,
-dan faalt hij. En de persistente cache van Rspack geeft andere chunk-namen dan
-een koude build. De blokrunners krijgen
+staan uit, en een site kan ze niet aanzetten (`createConfig` zet `faster` na
+`...future`): de HTML-minifier van swc laat aanhalingstekens weg, behalve bij
+een waarde met `&` of een spatie, en dan leest `controleer-cross-links.mjs`
+nog maar een deel van de links (752 van de 7343 in robotica). Daarom meldt het
+script elke pagina met een `href` of `src` zonder aanhalingstekens in een echte
+tag als fout, en faalt het als het nergens een link vindt. En de persistente
+cache van Rspack geeft andere chunk-namen dan een koude build. De blokrunners krijgen
 `--alleen changed.json` en doen alleen de blokken op gewijzigde regels plus
 wat erop doorbouwt (`draaien-met`); de tekstcontrole krijgt `--regels`. Een
 globaal bestand (lockfile, root-config, `.github/`, de registry) of de

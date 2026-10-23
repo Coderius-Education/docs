@@ -94,6 +94,20 @@ describe('createConfig — Docusaurus Faster', () => {
     expect(FASTER.swcHtmlMinimizer).toBe(false);
   });
 
+  it('een site kan Faster niet zelf aanzetten of anders instellen', () => {
+    // future: { faster: true } zette de html-minifier van swc weer aan voor
+    // die ene site, en dan las de controle op links tussen cursussen zijn
+    // pagina's maar half.
+    for (const faster of [true, false, { swcHtmlMinimizer: true }]) {
+      const config = createConfig({ siteId: 'python', title: 'x', future: { faster } });
+      expect(config.future.faster).toBe(FASTER);
+    }
+    // Andere future-vlaggen mag een site wel zetten.
+    expect(createConfig({ siteId: 'python', title: 'x', future: { v4: false } }).future.v4).toBe(
+      false,
+    );
+  });
+
   it('zonder persistente cache: elke build byte voor byte gelijk', () => {
     expect(FASTER.rspackPersistentCache).toBe(false);
   });
