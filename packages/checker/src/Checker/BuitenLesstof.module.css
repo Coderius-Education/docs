@@ -2,7 +2,13 @@
   margin-bottom: 2rem;
 }
 
-.section h2 {
+/* Onder de rijen van een onderwerp: wat ruimte erboven, geen eigen marge
+   eronder, want de sectie van het onderwerp heeft die al. */
+.inOnderwerp {
+  margin-top: 1rem;
+}
+
+.titel {
   display: flex;
   align-items: baseline;
   gap: 0.5rem;

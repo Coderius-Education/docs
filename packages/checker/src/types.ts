@@ -208,6 +208,12 @@ export interface Vondst {
   files: string[];
   /** De regels waar het staat, hooguit MAX_PLEKKEN. */
   plekken?: Plek[];
+  /**
+   * Het onderwerp (een id uit `subjects`) waar de vondst bij hoort. Het rapport
+   * zet hem dan onder dat onderwerp, naast de rijen ervan; zonder onderwerp
+   * staat hij in een eigen sectie onderaan.
+   */
+  onderwerp?: string;
 }
 
 /**

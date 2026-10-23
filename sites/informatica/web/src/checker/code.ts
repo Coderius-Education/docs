@@ -266,3 +266,19 @@ export function alleenOpmaakZonderWaarden(html: string): string {
     ),
   );
 }
+
+/**
+ * Alleen de tags van de opmaak, met de waarden als spaties, en de tekst op de
+ * pagina ook. Voor een patroon dat ín een tag zoekt naast een patroon voor
+ * CSS: een `#kop {` in een alinea over CSS is geen selector.
+ */
+export function alleenTagsZonderWaarden(html: string): string {
+  const opmaak = alleenOpmaakZonderWaarden(html);
+  let uit = '';
+  let vanaf = 0;
+  for (const m of opmaak.matchAll(TAG)) {
+    uit += blanco(opmaak.slice(vanaf, m.index)) + m[0];
+    vanaf = (m.index ?? 0) + m[0].length;
+  }
+  return uit + blanco(opmaak.slice(vanaf));
+}

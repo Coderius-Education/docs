@@ -8,7 +8,13 @@ import type {
 } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
 import { SITES_BY_ID } from '@coderius/shared/sites';
-import { alleenCss, alleenJavaScript, alleenOpmaakZonderWaarden, alleenTags } from './code';
+import {
+  alleenCss,
+  alleenJavaScript,
+  alleenOpmaakZonderWaarden,
+  alleenTags,
+  alleenTagsZonderWaarden,
+} from './code';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
 import niveaus from './niveaus.json';
 
@@ -64,6 +70,8 @@ const HTML_OPMAAK = 'html-opmaak';
 // (`innerHTML = "<ul>…"`). Een tag in een HTML-commentaar telde eerst mee,
 // en `i<li.length` in een script telde als <li>.
 const HTML_TAGS = 'html-tags';
+// Alleen de tags van de opmaak, zonder waarden en zonder de tekst ertussen.
+const HTML_IN_TAGS = 'html-in-tags';
 // De CSS uit .css-bestanden, <style>-blokken en style-attributen, zonder
 // commentaar en tekst. CSS in een HTML-bestand telde eerst helemaal niet,
 // en weggecommentarieerde CSS wel.
@@ -209,8 +217,20 @@ const HERKENNING: Record<string, Herkenning> = {
     },
     dekt: ['css-hover', 'css-first-child', 'css-last-child', 'css-nth-child'],
   },
+  // De rij "id" is een element een id geven en het daarmee aanwijzen: een
+  // `id="…"` in een tag, of een selector `#naam`. Eerst telde alleen de
+  // selector, en stond "id" uit bij een pagina vol `id="…"` die de leerling
+  // met getElementById of een anker gebruikt. Het attribuut zoeken we alleen
+  // ín een tag, in de opmaak (in CSS staat geen `<`); de selector alleen vóór
+  // een `{`, zoals class.
   'css-id': {
-    detect: selector(/#[a-zA-Z_-][\w-]*(?=(?:(?!\*\/)[^{};])*\{)/g),
+    detect: {
+      type: 'regex',
+      pattern:
+        /(?<d0><[a-zA-Z][^<>]*?\sid\s*=)|(?<d1>#[a-zA-Z_-][\w-]*(?=(?:(?!\*\/)[^{};])*\{))/gi,
+      in: [HTML_IN_TAGS, CSS_CODE],
+      delen: ['id="…"', '#naam'],
+    },
     dekt: ['css-id-selector'],
   },
   'css-flexbox-grid': uitLessen(
@@ -377,6 +397,7 @@ export const webConfig: CheckerConfig = {
       maak: (t, soort) => alleenJavaScript(t, soort, { tekstLaten: true }),
     },
     { kind: HTML_OPMAAK, van: ['html'], maak: alleenOpmaakZonderWaarden },
+    { kind: HTML_IN_TAGS, van: ['html'], maak: alleenTagsZonderWaarden },
     { kind: HTML_TAGS, van: ['html', 'js'], maak: alleenTags },
     { kind: CSS_CODE, van: ['css', 'html'], maak: alleenCss },
   ],

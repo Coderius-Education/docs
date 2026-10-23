@@ -1,6 +1,15 @@
 import clsx from 'clsx';
 import { levelVoor } from '../conceptLevel';
-import type { CheckReport, CheckerConfig, Concept, ConceptMatch, Level, Plek } from '../types';
+import type {
+  CheckReport,
+  CheckerConfig,
+  Concept,
+  ConceptMatch,
+  Level,
+  Plek,
+  Vondst,
+} from '../types';
+import { vondstenPerOnderwerp } from '../vondsten';
 import { BuitenLesstof } from './BuitenLesstof';
 import { FileStats } from './FileStats';
 import styles from './ReportView.module.css';
@@ -58,17 +67,20 @@ function groupConcepts(
 function SubjectSection({
   title,
   groups,
+  vondsten,
   track,
   onToggleHandmatig,
   onToonPlekken,
 }: {
   title: string;
   groups: Group[];
+  /** Wat dit onderwerp gebruikt buiten de lesstof (alleen voor de docent). */
+  vondsten: Vondst[];
   track: string | null;
   onToggleHandmatig?: (id: string) => void;
   onToonPlekken?: (titel: string, plekken: Plek[]) => void;
 }) {
-  if (groups.length === 0) return null;
+  if (groups.length === 0 && vondsten.length === 0) return null;
   const total = groups.reduce((sum, g) => sum + g.items.length, 0);
   const usedTotal = groups.reduce((sum, g) => sum + g.items.filter((i) => i.match.used).length, 0);
 
@@ -76,9 +88,11 @@ function SubjectSection({
     <section className={styles.section}>
       <h2>
         {title}{' '}
-        <span className={styles.progress}>
-          {usedTotal} / {total} toegepast
-        </span>
+        {total > 0 && (
+          <span className={styles.progress}>
+            {usedTotal} / {total} toegepast
+          </span>
+        )}
       </h2>
       <div className={styles.groupGrid}>
         {groups.map((g) => {
@@ -158,6 +172,7 @@ function SubjectSection({
           );
         })}
       </div>
+      <BuitenLesstof vondsten={vondsten} onToonPlekken={onToonPlekken} inOnderwerp />
     </section>
   );
 }
@@ -240,6 +255,12 @@ export function ReportView({
   onToonPlekken,
 }: ReportViewProps) {
   const matches = new Map(report.concepts.map((m) => [m.id, m]));
+  // Buiten de lesstof staat bij zijn onderwerp, naast de rijen HTML of CSS;
+  // wat geen onderwerp heeft, krijgt een eigen sectie onderaan.
+  const buiten = vondstenPerOnderwerp(
+    report.buitenLesstof,
+    config.subjects.map((s) => s.id),
+  );
 
   return (
     <div className={styles.report}>
@@ -258,6 +279,7 @@ export function ReportView({
           key={subject.id}
           title={subject.label}
           groups={groupConcepts(config.concepts, matches, subject.id, activeLevel, track)}
+          vondsten={buiten.per.get(subject.id) ?? []}
           track={track}
           onToggleHandmatig={onToggleHandmatig}
           onToonPlekken={onToonPlekken}
@@ -268,7 +290,7 @@ export function ReportView({
 
       <Samenhang fouten={report.samenhang ?? []} onToonPlekken={onToonPlekken} />
 
-      <BuitenLesstof vondsten={report.buitenLesstof} onToonPlekken={onToonPlekken} />
+      <BuitenLesstof vondsten={buiten.los} onToonPlekken={onToonPlekken} />
     </div>
   );
 }
