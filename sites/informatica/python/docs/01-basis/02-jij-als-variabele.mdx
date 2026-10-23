@@ -35,17 +35,19 @@ Verander je later `naam = "Sara"`, dan veranderen beide regels mee. Dat is de kr
 
 ## Tekst of getal?
 
-Tekst (een **string**) krijgt aanhalingstekens. Getallen (een **integer**) niet:
+Tekst (een **string**) krijgt aanhalingstekens. Getallen niet. Een heel getal heet een **integer**, een getal met een punt een **float**:
 
 ```python
 naam = "Alex"
 leeftijd = 15
+lengte = 1.72
 
 print(type(naam))      # <class 'str'>
 print(type(leeftijd))  # <class 'int'>
+print(type(lengte))    # <class 'float'>
 ```
 
-`type()` vertelt je welk soort waarde een variabele bevat. Onthoud: tekst met aanhalingstekens, getallen zonder.
+`type()` vertelt je welk soort waarde een variabele bevat. Onthoud: tekst met aanhalingstekens, getallen zonder. Een kommagetal schrijf je in Python met een punt: `1.72`, niet `1,72`.
 
 ## Variabelen veranderen
 
@@ -60,6 +62,90 @@ print(score)   # 10
 ```
 
 De variabele onthoudt alleen de **laatst** toegewezen waarde.
+
+```python
+a = 5
+b = a
+a = 8
+print(b)
+```
+
+<Voorspel vraag="Wat print dit programma?">
+  <Keuze goed uitleg="b kreeg de waarde die a op dat moment had, en dat was 5. Een nieuwe waarde in a verandert b niet.">`5`</Keuze>
+  <Keuze uitleg="b = a maakt geen blijvende koppeling: b krijgt alleen de waarde die a op dat moment heeft.">`8`</Keuze>
+  <Keuze uitleg="print(b) zet de waarde van b op het scherm, niet de naam.">`b`</Keuze>
+  <Uitleg>
+
+  Je ziet `5`. Op regel 2 krijgt `b` de waarde van `a`, en dat is dan 5. Op regel 3 krijgt `a` een nieuwe waarde, maar `b` houdt de zijne.
+
+  </Uitleg>
+</Voorspel>
+
+## Tekst en variabele samen
+
+Zet je in `print()` een komma tussen twee dingen, dan zet Python ze achter elkaar met een spatie ertussen:
+
+```python
+naam = "Alex"
+print("Hallo", naam)
+```
+
+Uitvoer:
+
+```
+Hallo Alex
+```
+
+## Er gaat iets mis
+
+**Een tikfout in de naam**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+naam = "Sara"
+print(Naam)
+```
+
+Uitvoer:
+
+```
+NameError: name 'Naam' is not defined. Did you mean: 'naam'?
+```
+
+Voor Python zijn `naam` en `Naam` twee verschillende namen. Gebruik precies dezelfde naam als bij het `=`-teken.
+
+**Een variabele gebruiken voordat hij bestaat**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+print(leeftijd)
+leeftijd = 15
+```
+
+Uitvoer:
+
+```
+NameError: name 'leeftijd' is not defined
+```
+
+Python voert je code van boven naar beneden uit. Op regel 1 bestaat `leeftijd` nog niet. Zet de regel met het `=`-teken bovenaan.
+
+**Aanhalingstekens om de naam**
+
+```python
+naam = "Sara"
+print("naam")
+```
+
+Uitvoer:
+
+```
+naam
+```
+
+Geen foutmelding, maar wel het verkeerde woord. Met aanhalingstekens is `"naam"` tekst, en die zet `print()` letterlijk neer. Wil je de waarde zien, schrijf dan `print(naam)`.
 
 :::tip[Eerst op papier]
 Speel dit eerst na zonder computer, met kaartjes en etiketten: [Etiketten op waarden](site:python/docs/projecten/unplugged/etiketten). Je docent kan de hand-out printen.
@@ -152,7 +238,7 @@ print(hobby)`}</CodeExercise>
 
 ## Opdracht 2.3: Visitekaartje met labels
 
-Maak het visitekaartje uit opdracht 2.2 af met een titel, labels en een afsluitzin. Combineer tekst en variabele met een komma binnen `print()` — Python zet er automatisch een spatie tussen.
+Maak het visitekaartje uit opdracht 2.2 af met een titel, labels en een afsluitzin. Zet tekst en variabele met een komma in één `print()`, zoals in [Tekst en variabele samen](#tekst-en-variabele-samen).
 
 Verwachte uitvoer:
 
@@ -191,7 +277,7 @@ print("Hobby:", hobby)
 print("Tot ziens!")
 ```
 
-In de volgende les laten we Python voor je **rekenen**, en daarna leer je f-strings waarmee deze uitvoer nog netter wordt.
+In de [volgende les](site:python/docs/basis/rekenmachine) laat je Python voor je **rekenen**. Met [f-strings](site:python/docs/tekst/04a-f-strings) wordt deze uitvoer later nog netter.
 
 <CodeExercise>{`naam = "Alex Jansen"
 leeftijd = 15

@@ -14,7 +14,7 @@ Deze les gebruikt `break`, uit [Stoppen met break](site:python/docs/herhalen/06d
 Vraag je iemand om een getal, dan wil je het meestal opnieuw vragen als het
 misgaat, in plaats van op te geven. Dat doe je met `try` in een loop:
 
-{/* niet-draaien: vraagt om invoer */}
+{/* invoer: tien | 10 */}
 
 ```python
 while True:
@@ -26,6 +26,15 @@ while True:
         print("Dat is geen getal, probeer het nog eens.")
 
 print(f"Volgend jaar ben je {leeftijd + 1}.")
+```
+
+Uitvoer bij `tien` en dan `10`:
+
+```
+Hoe oud ben je? tien
+Dat is geen getal, probeer het nog eens.
+Hoe oud ben je? 10
+Volgend jaar ben je 11.
 ```
 
 - `while True:` blijft eindeloos herhalen.

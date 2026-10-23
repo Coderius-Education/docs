@@ -7,23 +7,41 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 3b Tekst naar getal
 
-Met `input()` vraag je de gebruiker om iets te typen. Wat hij typt, komt in
-een variabele:
+Met `input()` vraag je de gebruiker om iets te typen. Wat diegene typt, komt
+in een variabele:
 
-{/* niet-draaien: vraagt om invoer */}
-
-```python
-naam = input("Hoe heet je? ")
-print("Hoi", naam)
-```
-
-{/* niet-draaien: vraagt om invoer */}
+{/* invoer: Sam */}
 
 <CodeExercise>{`naam = input("Hoe heet je? ")
 print("Hoi", naam)`}</CodeExercise>
 
+Uitvoer als je `Sam` typt:
+
+```
+Hoe heet je? Sam
+Hoi Sam
+```
+
 Wat `input()` teruggeeft, is altijd tekst. Ook als iemand `15` typt, krijg je
 de tekst `"15"`, met aanhalingstekens, zoals in les 2.
+
+{/* niet-draaien: voorspelvraag; valt expres om op tekst plus een getal */}
+
+```python
+leeftijd = input("Hoe oud ben je? ")
+print(leeftijd + 1)
+```
+
+<Voorspel vraag="Je typt 15. Wat gebeurt er?">
+  <Keuze uitleg="Dan zou leeftijd een getal moeten zijn, maar input() geeft tekst.">Je ziet `16`</Keuze>
+  <Keuze uitleg="Tekst aan tekst plakken kan wel, maar 1 is een getal en geen tekst.">Je ziet `151`</Keuze>
+  <Keuze goed uitleg="leeftijd is tekst, ook al typte je een getal. Tekst plus een getal kan Python niet uitrekenen.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Python stopt met een foutmelding: je probeert tekst en een getal op te tellen. Hieronder zie je hoe je van de tekst een getal maakt.
+
+  </Uitleg>
+</Voorspel>
 
 ## Van tekst naar getal
 
@@ -48,11 +66,18 @@ Uitvoer:
 
 Met een echte vraag ziet dat er zo uit:
 
-{/* niet-draaien: vraagt om invoer */}
+{/* invoer: 15 */}
 
 ```python
 leeftijd = int(input("Hoe oud ben je? "))
 print("Volgend jaar ben je", leeftijd + 1)
+```
+
+Uitvoer als je `15` typt:
+
+```
+Hoe oud ben je? 15
+Volgend jaar ben je 16
 ```
 
 `input()` levert de tekst, en `int()` maakt er meteen een getal van.
@@ -101,8 +126,7 @@ je in [Try en except](site:python/docs/fouten/16a-try-en-except).
 
 ## Opdracht 3b.1: Dubbel zo oud
 
-In `tekst` staat een leeftijd als tekst. Print hoe oud de persoon is als hij
-twee keer zo oud is.
+In `tekst` staat een leeftijd als tekst. Print het dubbele van die leeftijd.
 
 Verwachte uitvoer:
 
@@ -189,10 +213,11 @@ van 8 stukjes dat zijn. Typ 12 als het programma erom vraagt.
 Verwachte uitvoer bij 12:
 
 ```
+Hoeveel stukjes wil je? 12
 Dat is 1.5 pizza.
 ```
 
-{/* niet-draaien: vraagt om invoer */}
+{/* invoer: 12 */}
 
 <CodeExercise>{`stukjes = input("Hoeveel stukjes wil je? ")
 print("Dat is", stukjes, "pizza.")`}</CodeExercise>
@@ -208,11 +233,18 @@ Druk eerst op Uitvoeren: je ziet 12 staan, niet 1.5. Zet `int()` om de
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-{/* niet-draaien: vraagt om invoer */}
+{/* invoer: 12 */}
 
 ```python
 stukjes = int(input("Hoeveel stukjes wil je? "))
 print("Dat is", stukjes / 8, "pizza.")
+```
+
+Uitvoer bij 12:
+
+```
+Hoeveel stukjes wil je? 12
+Dat is 1.5 pizza.
 ```
 
 </details>

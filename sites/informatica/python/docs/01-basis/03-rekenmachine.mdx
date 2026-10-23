@@ -1,6 +1,6 @@
 ---
 sidebar_position: 4
-description: Reken in Python met +, -, * en /. Combineer variabelen in een berekening en houd rekening met de rekenvolgorde.
+description: Reken in Python met +, -, * en /, deel met rest met // en %, combineer variabelen in een berekening en houd rekening met de rekenvolgorde.
 ---
 
 import CodeExercise from '@site/src/components/CodeExercise';
@@ -43,14 +43,79 @@ Uitvoer: `Totaal: 50.0`.
 
 ## Rekenvolgorde
 
-Net als bij wiskunde: `*` en `/` gaan vóór `+` en `-`. Met haakjes stuur je de volgorde:
+```python
+print(2 + 3 * 4)
+```
+
+<Voorspel vraag="Wat print dit programma?">
+  <Keuze uitleg="Dan reken je van links naar rechts: eerst 2 + 3. Python doet eerst de vermenigvuldiging.">`20`</Keuze>
+  <Keuze goed uitleg="Eerst 3 * 4 is 12, daarna 2 + 12.">`14`</Keuze>
+  <Keuze uitleg="Er staan geen aanhalingstekens omheen, dus Python rekent het uit.">`2 + 3 * 4`</Keuze>
+  <Uitleg>
+
+  Je ziet `14`. Net als bij wiskunde gaan `*` en `/` vóór `+` en `-`.
+
+  </Uitleg>
+</Voorspel>
+
+Wil je toch eerst optellen, zet dan haakjes:
 
 ```python
-print(2 + 3 * 4)    # 14  (eerst 3 * 4)
-print((2 + 3) * 4)  # 20  (haakjes eerst)
+print((2 + 3) * 4)  # 20
 ```
 
 Bij twijfel: zet haakjes om duidelijk te maken wat eerst moet.
+
+## Delen met rest \{#delen-met-rest}
+
+Je verdeelt 17 snoepjes over 5 kinderen. Met `/` krijg je `3.4`, maar een snoepje breek je niet. `//` geeft hoeveel hele keren het past, en `%` wat er overblijft:
+
+```python
+print(17 // 5)   # 3
+print(17 % 5)    # 2
+```
+
+Ieder kind krijgt er 3, en er blijven er 2 over. Met `% 2` zie je of een getal even is: de rest is dan `0`.
+
+```python
+print(14 % 2)    # 0
+print(15 % 2)    # 1
+```
+
+## Er gaat iets mis
+
+**De rekenvolgorde vergeten**
+
+```python
+a = 6
+b = 8
+gemiddelde = a + b / 2
+print(gemiddelde)
+```
+
+Uitvoer:
+
+```
+10.0
+```
+
+Het gemiddelde van 6 en 8 is 7, maar Python deelt eerst `b` door 2 en telt daarna `a` erbij op. Geen foutmelding, wel een fout antwoord. Met haakjes klopt het: `(a + b) / 2` geeft `7.0`.
+
+**Delen door nul**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+print(10 / 0)
+```
+
+Uitvoer:
+
+```
+ZeroDivisionError: division by zero
+```
+
+Delen door nul kan niet, ook niet in Python. Het programma stopt op die regel.
 
 ---
 
@@ -137,7 +202,7 @@ Quotiënt: 2.5
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Maak vier extra variabelen (`som`, `verschil`, `product`, `quotient`) en print ze één voor één. Een lege `print()` zonder argumenten geeft een witregel.
+Maak vier extra variabelen (`som`, `verschil`, `product`, `quotient`) en print ze één voor één. Een lege `print()` zonder argumenten geeft een witregel. De getallen staan netjes onder elkaar doordat er in de tekst extra spaties staan: `"Som:     "` heeft er vijf achter de dubbele punt.
 
 </details>
 
@@ -163,7 +228,7 @@ print("Product: ", product)
 print("Quotiënt:", quotient)
 ```
 
-Functioneel werkt het, maar `print("Som:", som)` is nog niet super netjes. In de volgende les leer je **f-strings** waarmee je tekst en variabelen tot één gladde zin vlecht.
+Het werkt, maar die spaties tellen is gepruts. Met [f-strings](site:python/docs/tekst/04a-f-strings) zet je tekst en variabelen makkelijker in één zin.
 
 <CodeExercise>{`a = 10
 b = 4
@@ -181,5 +246,49 @@ print("Som:     ", som)
 print("Verschil:", verschil)
 print("Product: ", product)
 print("Quotiënt:", quotient)`}</CodeExercise>
+
+</details>
+
+---
+
+## Opdracht 3.4: Snoep verdelen
+
+Je verdeelt 23 snoepjes eerlijk over 4 kinderen. Print hoeveel ieder kind krijgt en hoeveel er overblijven.
+
+Verwachte uitvoer:
+
+```
+Ieder krijgt: 5
+Over: 3
+```
+
+<CodeExercise>{`snoepjes = 23
+kinderen = 4
+`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Hoeveel hele keren past 4 in 23? Dat geeft `//`. Wat er overblijft, geeft `%`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+snoepjes = 23
+kinderen = 4
+
+print("Ieder krijgt:", snoepjes // kinderen)
+print("Over:", snoepjes % kinderen)
+```
+
+Uitvoer:
+
+```
+Ieder krijgt: 5
+Over: 3
+```
 
 </details>
