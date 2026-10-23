@@ -78,30 +78,76 @@ describe('de poort naar de hostingbackend', () => {
 // De blokrunners (godot, fullstack, python, …) draaien de codevoorbeelden uit
 // de lessen. Ze telden eerst niet mee voor de verplichte check build: een PR
 // met kapotte voorbeelden werd groen, en nu de builds niet meer op de tests
-// wachten was build zelfs groen terwijl fullstack nog liep.
+// wachten was build zelfs groen terwijl fullstack nog liep. Daarom geldt het
+// voor elke job in de workflow: hij telt mee, of hij staat hieronder met een
+// reden. Zo valt ook een nieuwe job op die niemand aan build-klaar toevoegde.
 describe('de verplichte check build', () => {
-  const ANDERS: Record<string, string> = {
+  const TELT_NIET: Record<string, string> = {
     tekst: 'nog niet-blokkerend (schrijfgids §17)',
-    voorraad: 'vult alleen de cache; cross-links oordeelt over wat hij oplevert',
+  };
+  // Zijn oordeel staat vast in plaats van uit het plan te komen.
+  const VAST: Record<string, string> = {
+    plan: 'true', // altijd nodig
+    voorraad: 'false', // vult alleen de cache; cross-links oordeelt
   };
 
-  it('telt elke job die het plan aanzet, met het plan als maat voor overgeslagen', () => {
-    const klaar = job('build-klaar');
-    const needs = klaar.match(/^ {4}needs: \[(.+)\]$/m)?.[1].split(', ') ?? [];
-    const doorPlan = [
-      ...workflow.matchAll(
-        /\n {2}([a-z-]+):\n {4}needs: plan\n {4}if: needs\.plan\.outputs\.([a-z]+) == 'true'/g,
-      ),
-    ].filter(([, naam]) => !(naam in ANDERS));
-    expect(doorPlan.map(([, naam]) => naam)).toEqual(
-      expect.arrayContaining(['godot', 'robotica', 'fullstack', 'play', 'python', 'algorithms']),
+  const jobs = [...workflow.slice(workflow.indexOf('\njobs:\n')).matchAll(/^ {2}([a-z-]+):$/gm)]
+    .map((m) => m[1])
+    .filter((naam) => naam !== 'build-klaar');
+
+  /** De plan-uitvoer die een job aanzet, uit zijn `if:` (ook over meer regels). */
+  function aanzetter(naam: string): string | undefined {
+    const blok = job(naam);
+    const als = blok.match(/^ {4}if: [\s\S]*?(?=\n {4}[a-z-]+:)/m)?.[0] ?? '';
+    return als.match(/needs\.plan\.outputs\.([a-z]+) == 'true'/)?.[1];
+  }
+
+  const klaar = job('build-klaar');
+  const needs = klaar.match(/^ {4}needs: \[(.+)\]$/m)?.[1].split(', ') ?? [];
+  const env = Object.fromEntries(
+    [...klaar.matchAll(/^ {10}([A-Z_]+): \$\{\{ (.+) \}\}$/gm)].map((m) => [m[1], m[2]]),
+  );
+  const oordelen = Object.fromEntries(
+    [...klaar.matchAll(/^ {10}oordeel ([a-z-]+) "\$([A-Z_]+)" (\S+)$/gm)].map((m) => [
+      m[1],
+      { resultaat: m[2], nodig: m[3] },
+    ]),
+  );
+
+  it('vindt de jobs, ook de blokrunners', () => {
+    expect(jobs).toEqual(
+      expect.arrayContaining([
+        'plan',
+        'test',
+        'build',
+        'publiceer',
+        'cross-links',
+        'godot',
+        'fullstack',
+      ]),
     );
-    for (const [, naam, uitvoer] of doorPlan) {
-      const groot = naam.toUpperCase().replace(/-/g, '');
-      expect(needs, naam).toContain(naam);
-      expect(klaar, naam).toContain(`${groot}: \${{ needs.${naam}.result }}`);
-      expect(klaar, naam).toContain(`NODIG_${groot}: \${{ needs.plan.outputs.${uitvoer} }}`);
-      expect(klaar, naam).toContain(`oordeel ${naam} "$${groot}" "$NODIG_${groot}"`);
-    }
   });
+
+  it('telt elke job mee, behalve met een reden', () => {
+    const vergeten = jobs.filter((naam) => !(naam in TELT_NIET) && !needs.includes(naam));
+    expect(vergeten).toEqual([]);
+    for (const naam of Object.keys(TELT_NIET)) expect(needs, naam).not.toContain(naam);
+  });
+
+  it.each(jobs.filter((naam) => !(naam in TELT_NIET)))(
+    '%s: oordeel op zijn eigen resultaat, en overgeslagen alleen als het plan hem niet nodig vond',
+    (naam) => {
+      const oordeel = oordelen[naam];
+      expect(oordeel, `oordeel ${naam} in build-klaar`).toBeDefined();
+      expect(env[oordeel.resultaat]).toBe(`needs.${naam}.result`);
+      if (naam in VAST) {
+        expect(oordeel.nodig).toBe(VAST[naam]);
+        return;
+      }
+      const uitvoer = aanzetter(naam);
+      expect(uitvoer, `${naam} hangt aan een plan-uitvoer`).toBeDefined();
+      const nodig = oordeel.nodig.match(/^"\$([A-Z_]+)"$/)?.[1] ?? '';
+      expect(env[nodig], naam).toBe(`needs.plan.outputs.${uitvoer}`);
+    },
+  );
 });
