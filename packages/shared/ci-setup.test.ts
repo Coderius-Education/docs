@@ -92,6 +92,26 @@ describe('Node en pnpm via .github/actions/node-pnpm', () => {
     );
   });
 
+  // Een install van één site heeft maar een deel van de pnpm-store nodig.
+  // Haalt hij de store op, dan kost dat meer dan downloaden (8 s tegen 7 s in
+  // CI), en bewaart hij hem als eerste, dan krijgt elke job daarna een halve
+  // store: bij een treffer op de sleutel bewaart actions/cache niets meer.
+  it('een install van één site haalt de pnpm-store niet op en bewaart hem niet', () => {
+    const storeStappen = actie
+      .split('\n    - ')
+      .filter((stap) => /pnpm store path|actions\/cache@/.test(stap));
+    expect(storeStappen).toHaveLength(2);
+    for (const stap of storeStappen) expect(stap).toContain("inputs.map == ''");
+
+    for (const naam of ['build', 'voorraad']) {
+      for (const stap of stappen(naam)) {
+        if (stap.uses !== './.github/actions/node-pnpm') continue;
+        const eigenInstall = !/^\s*map: /m.test(stap.tekst);
+        if (eigenInstall) expect(stap.tekst, naam).toContain("store: 'false'");
+      }
+    }
+  });
+
   // Eerst stond er --filter "./<map>...". Voor pnpm is dat alleen de map,
   // zonder de workspace-packages ervan: elke site-build viel om op de letters
   // van packages/shared. Daarom laat deze test pnpm zelf kiezen.

@@ -44,14 +44,19 @@ runs:
         corepack enable
         echo "pnpm $(pnpm --version)"
 
+    # Niet bij een install van één site (`map`). Die heeft maar een deel van
+    # de store nodig: 322 MB terughalen kostte 8 s, alles downloaden 7 s. En
+    # bewaart zo'n job de store als eerste, dan krijgt elke job daarna een
+    # halve store, tot de lockfile weer verandert (bij een treffer op de
+    # sleutel bewaart actions/cache niets meer).
     - name: Map van de pnpm-store
       id: store
-      if: inputs.pnpm == 'true' && inputs.store == 'true'
+      if: inputs.pnpm == 'true' && inputs.store == 'true' && inputs.map == ''
       shell: bash
       run: echo "pad=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
 
     - name: pnpm-store uit de cache
-      if: inputs.pnpm == 'true' && inputs.store == 'true'
+      if: inputs.pnpm == 'true' && inputs.store == 'true' && inputs.map == ''
       uses: actions/cache@v5
       with:
         path: ${{ steps.store.outputs.pad }}

@@ -531,10 +531,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # De store hier al, de install pas na de sleutels (zie hieronder).
+      # De install pas na de sleutels (zie hieronder), en zonder de
+      # pnpm-store uit de cache: zie `map` in .github/actions/node-pnpm.
       - name: Node en pnpm
         uses: ./.github/actions/node-pnpm
         with:
+          store: 'false'
           install: 'false'
 
       # Vóór de install, net als in `voorraad`: zo kan niets wat de install
@@ -625,7 +627,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # pnpm voor site-hash.mjs; de store en de install alleen bij een misser.
+      # pnpm voor site-hash.mjs; de install alleen bij een misser.
       - name: Node en pnpm
         uses: ./.github/actions/node-pnpm
         with:
