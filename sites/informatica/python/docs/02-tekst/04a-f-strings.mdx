@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 4a Slimme berichten met f-strings
 
-Je rekenmachine uit de vorige les werkte, maar `print("Som:", som)` was nog niet zo netjes. Met een **f-string** weef je tekst en variabelen tot één gladde zin.
+Je rekenmachine uit [les 3](site:python/docs/basis/rekenmachine) werkte, maar al die spaties in `"Som:     "` tellen was gepruts. Met een **f-string** zet je tekst en variabelen in één zin.
 
 ## Een f-string maken
 
@@ -34,7 +34,53 @@ leeftijd = 15
 print(f"Volgend jaar ben ik {leeftijd + 1} jaar.")
 ```
 
-Tussen de accolades mag elke geldige Python-uitdrukking staan: een variabele, een berekening, of zelfs een functie-aanroep (dat komt later).
+Uitvoer:
+
+```
+Volgend jaar ben ik 16 jaar.
+```
+
+Tussen de accolades mag elke Python-uitdrukking staan: een variabele, een berekening, of een functie zoals `len()` uit de [volgende les](site:python/docs/tekst/04b-string-methoden).
+
+```python
+naam = "Alex"
+
+print("Hallo, {naam}")
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Python vult alleen iets in als er een f voor de aanhalingstekens staat.">`Hallo, Alex`</Keuze>
+  <Keuze goed uitleg="Zonder f is het een gewone tekst, en de accolades zijn dan gewone tekens.">`Hallo, {naam}`</Keuze>
+  <Keuze uitleg="Python klaagt niet: een tekst met accolades is een geldige tekst.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet `Hallo, {naam}`, accolades en al. Pas met de `f` ervoor, `f"Hallo, {naam}"`, zet Python de waarde van `naam` op die plek.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+**De f vergeten**
+
+Zie je in je uitvoer `{naam}` staan in plaats van de naam, dan mist de `f` voor de aanhalingstekens. Python geeft geen foutmelding, dus deze fout zie je alleen aan de uitvoer.
+
+**Tekst en een getal met + aan elkaar plakken**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+leeftijd = 15
+print("Ik ben " + leeftijd + " jaar oud.")
+```
+
+Uitvoer:
+
+```
+TypeError: can only concatenate str (not "int") to str
+```
+
+Met `+` plak je alleen tekst aan tekst, en `leeftijd` is een getal. Een f-string heeft daar geen last van: `print(f"Ik ben {leeftijd} jaar oud.")`.
 
 ---
 

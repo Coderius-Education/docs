@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 6a For-loop
 
-Je kunt nu beslissingen maken met `if`/`else`. Maar wat als je tien keer hetzelfde wilt doen — bijvoorbeeld de getallen 0 t/m 9 printen? Met een `for`-loop laat je Python het werk herhalen.
+Wil je tien keer hetzelfde doen, bijvoorbeeld de getallen 0 tot en met 9 printen, dan hoef je geen tien regels te typen. Met een `for`-loop herhaalt Python het werk voor je.
 
 :::tip[Opwarmen]
 - Op [lightbot.lu](https://lightbot.lu) programmeer je een robotje met blokjes in plaats van tekst. Je merkt al snel dat je dezelfde stappen steeds opnieuw neerlegt, en dat is precies wat een for-loop je bespaart.
@@ -21,15 +21,16 @@ for i in range(5):
     print(i)
 ```
 
-Uitvoer:
+<Voorspel vraag="Welke getallen zet dit programma op het scherm?">
+  <Keuze uitleg="Kijk nog eens bij welk getal range begint te tellen.">`1`, `2`, `3`, `4` en `5`</Keuze>
+  <Keuze uitleg="Het begin klopt, maar range(5) geeft vijf getallen, geen zes.">`0`, `1`, `2`, `3`, `4` en `5`</Keuze>
+  <Keuze goed uitleg="range(5) geeft vijf getallen, beginnend bij 0.">`0`, `1`, `2`, `3` en `4`</Keuze>
+  <Uitleg>
 
-```
-0
-1
-2
-3
-4
-```
+  Je ziet `0` tot en met `4`, elk op een eigen regel: vijf rondes, en in elke ronde print de loop één getal.
+
+  </Uitleg>
+</Voorspel>
 
 - `range(5)` betekent: "geef vijf getallen, beginnend bij 0" — dus `0, 1, 2, 3, 4`.
 - `i` is de **loop-variabele**. Python vult hem elke ronde met het volgende getal.
@@ -37,7 +38,66 @@ Uitvoer:
 
 **Let op:** `range(5)` stopt bij **4**, niet bij 5. De stop-waarde is *exclusief*. Wil je tot en met 5 tellen? Gebruik `range(6)`.
 
-De naam `i` is geen wet — die variabele mag je elke gewenste naam geven, zoals `teller` of `getal`. `i` is traditie (van *index*).
+De naam `i` is geen wet: je mag de variabele ook `teller` of `getal` noemen. `i` is traditie (van *index*).
+
+## Er gaat iets mis
+
+**De dubbele punt vergeten**
+
+{/* niet-compileren: bewuste syntaxfout, de dubbele punt ontbreekt */}
+
+```python
+for i in range(5)
+    print(i)
+```
+
+Uitvoer:
+
+{/* foutmelding-van: for i in range(5)\n    print(i) */}
+
+```
+SyntaxError: expected ':'
+```
+
+Net als bij `if` staat achter de `for`-regel een dubbele punt.
+
+**range vergeten**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+for i in 5:
+    print(i)
+```
+
+Uitvoer:
+
+```
+TypeError: 'int' object is not iterable
+```
+
+Een `for`-loop loopt iets af, en een los getal valt niet af te lopen. Met `range(5)` maak je er vijf getallen van.
+
+**Een regel te veel ingesprongen**
+
+```python
+for i in range(3):
+    print(i)
+    print("Klaar")
+```
+
+Uitvoer:
+
+```
+0
+Klaar
+1
+Klaar
+2
+Klaar
+```
+
+Geen foutmelding, maar `Klaar` staat drie keer op het scherm. Alles wat inspringt hoort bij de loop. Moet een regel één keer na de loop, laat hem dan niet inspringen.
 
 :::tip[Eerst op papier]
 Speel dit eerst na zonder computer, met losgeknipte regels code: [Codestroken leggen](site:python/docs/projecten/unplugged/codestroken). Je docent kan de hand-out printen.
@@ -54,7 +114,7 @@ Schrijf een `for`-loop die **5 keer** `"Hoera!"` print.
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-De loop-variabele heb je niet nodig in de print — gewoon `print("Hoera!")` binnen de loop.
+De loop-variabele heb je niet nodig in de print: zet `print("Hoera!")` in de loop.
 
 </details>
 
@@ -73,7 +133,7 @@ for i in range(5):
 
 ---
 
-## Opdracht 6a.2: Aftellen tot klaar
+## Opdracht 6a.2: Tellen tot klaar
 
 Print de getallen 0 t/m 4 met een for-loop, en print daarna `"Klaar!"`.
 

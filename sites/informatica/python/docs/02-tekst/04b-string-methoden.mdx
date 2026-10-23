@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 4b String-methoden
 
-Je kunt nu variabelen netjes in tekst verweven. In deze les leer je hoe je die tekst ook kunt **veranderen**: in hoofdletters zetten, een woord vervangen, of het aantal letters tellen.
+Met een f-string zet je variabelen in een tekst. Je kunt die tekst ook **veranderen**: in hoofdletters zetten, een woord vervangen, of het aantal letters tellen.
 
 ## Methoden aanroepen met een punt
 
@@ -22,20 +22,53 @@ print(tekst.capitalize())                  # Hallo wereld
 print(tekst.replace("wereld", "python"))   # hallo python
 ```
 
-Daarnaast is er `len()` voor de lengte van een string. Die werkt **zonder** punt — je geeft de string als argument mee:
+Voor de lengte van een string is er `len()`. Die werkt **zonder** punt: je zet de string tussen de haakjes.
 
 ```python
 tekst = "hallo wereld"
 
-print(len(tekst))   # 12 (inclusief de spatie)
+print(len(tekst))   # 12  (de spatie telt mee)
 ```
 
-Deze methoden veranderen `tekst` **niet**. Wil je het resultaat bewaren? Sla het op in een variabele:
-
-{/* niet-draaien: fragment; tekst komt uit het blok erboven */}
 ```python
-naam = naam.upper()
+tekst = "hallo"
+tekst.upper()
+print(tekst)
 ```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="tekst.upper() maakt wel een tekst in hoofdletters, maar die bewaart niemand.">`HALLO`</Keuze>
+  <Keuze goed uitleg="Een methode maakt een nieuwe tekst en laat tekst zelf zoals hij was.">`hallo`</Keuze>
+  <Keuze uitleg="De regel tekst.upper() is in orde; Python gooit het resultaat alleen weg.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet `hallo`. Een methode verandert `tekst` niet, hij geeft een nieuwe tekst terug. Wil je die bewaren, zet hem dan in een variabele: `tekst = tekst.upper()`.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+**len met een punt**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+tekst = "hallo"
+print(tekst.len())
+```
+
+Uitvoer:
+
+```
+AttributeError: 'str' object has no attribute 'len'
+```
+
+`len()` is geen methode van een tekst. Je schrijft hem ervoor, met de tekst tussen de haakjes: `len(tekst)`.
+
+**De haakjes vergeten**
+
+Schrijf je `print(tekst.upper)` zonder `()` erachter, dan krijg je geen foutmelding maar een vreemde regel als `<built-in method upper of str object at 0x…>`. Python laat dan de methode zelf zien in plaats van hem uit te voeren. Zet de haakjes erachter: `tekst.upper()`.
 
 ---
 
@@ -130,7 +163,7 @@ We hopen je te zien!
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Voor de naam: `{naam.upper()}` binnen de f-string. Voor de andere variabelen gewoon `{evenement}` en `{datum}`.
+Voor de naam: `{naam.upper()}` binnen de f-string. Voor de andere variabelen `{evenement}` en `{datum}`.
 
 </details>
 

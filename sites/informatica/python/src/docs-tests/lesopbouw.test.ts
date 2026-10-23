@@ -41,16 +41,6 @@ const metCode = lessen
   .filter((les) => /```python|<CodeExercise/.test(les.tekst));
 
 const ACHTERSTAND_VOORSPEL = [
-  '04a',
-  '04b',
-  '05a',
-  '05b',
-  '05c',
-  '06a',
-  '06b',
-  '06c',
-  '06d',
-  '07',
   '08',
   '09a',
   '09b',
@@ -91,15 +81,6 @@ const ACHTERSTAND_VOORSPEL = [
 ];
 
 const ACHTERSTAND_FOUTEN = [
-  '04a',
-  '04b',
-  '05a',
-  '05b',
-  '05c',
-  '06a',
-  '06b',
-  '06c',
-  '07',
   '08',
   '09a',
   '09b',
@@ -218,12 +199,16 @@ describe('het goede antwoord van elke voorspelvraag', () => {
     // "Je typt 15." in de vraag is wat input() krijgt.
     const invoer = v.vraag.match(/[Jj]e typt (\S+?)[.?]/)?.[1] ?? '';
     const r = spawnSync('python3', ['-c', v.code], { input: `${invoer}\n`, encoding: 'utf8' });
-    const uitvoer = r.stdout.trim();
+    const regels = r.stdout.trim() === '' ? [] : r.stdout.trim().split('\n');
+    // Een keuze noemt de uitvoer als waarden in backticks, één per regel:
+    // "`0`, `1` en `2`" is drie regels. "Niets" is geen uitvoer, "Een
+    // foutmelding" een programma dat omvalt.
     const klopt = (tekst: string) => {
       if (/foutmelding/i.test(tekst)) return r.status !== 0;
-      const waarde = tekst.match(/`([^`]*)`/)?.[1];
-      if (waarde === undefined) throw new Error(`keuze "${tekst}" noemt geen waarde in backticks`);
-      return r.status === 0 && uitvoer === waarde;
+      if (/^niets\b/i.test(tekst)) return r.status === 0 && regels.length === 0;
+      const waarden = [...tekst.matchAll(/`([^`]*)`/g)].map((w) => w[1]);
+      if (waarden.length === 0) throw new Error(`keuze "${tekst}" noemt geen waarde in backticks`);
+      return r.status === 0 && JSON.stringify(regels) === JSON.stringify(waarden);
     };
     expect(keuzes.filter((k) => klopt(k.tekst)).map((k) => k.tekst)).toEqual(
       keuzes.filter((k) => k.goed).map((k) => k.tekst),

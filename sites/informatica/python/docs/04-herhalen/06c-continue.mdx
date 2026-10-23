@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 6c Een ronde overslaan met continue
 
-Soms wil je in een loop bepaalde rondes overslaan. Kijk wat dit doet:
+Soms wil je in een loop bepaalde rondes overslaan. Wat denk je dat dit doet?
 
 ```python
 for i in range(6):
@@ -16,19 +16,16 @@ for i in range(6):
     print(i)
 ```
 
-Uitvoer:
+<Voorspel vraag="Welke getallen zet dit programma op het scherm?">
+  <Keuze uitleg="continue stopt niet de hele loop. Na de 3 gaat hij verder.">`0`, `1` en `2`</Keuze>
+  <Keuze goed uitleg="Bij i == 3 slaat continue de print over, en daarna gaat de loop door met 4.">`0`, `1`, `2`, `4` en `5`</Keuze>
+  <Keuze uitleg="De print staat ná continue, dus in de ronde van de 3 komt Python er niet aan toe.">`0`, `1`, `2`, `3`, `4` en `5`</Keuze>
+  <Uitleg>
 
-```
-0
-1
-2
-4
-5
-```
+  De 3 ontbreekt. **`continue`** zegt: stop met déze ronde en ga meteen door met de volgende. Wat in de loop ná `continue` staat (hier de `print`), slaat Python die ronde over, en de loop zelf draait door.
 
-De 3 ontbreekt. **`continue`** zegt: stop met déze ronde en ga meteen
-door met de volgende. Alles wat in de loop ná `continue` staat (hier de
-`print`) wordt die ronde overgeslagen — de loop zelf draait gewoon door.
+  </Uitleg>
+</Voorspel>
 
 ## Waarom is dit handig?
 
@@ -44,11 +41,44 @@ for i in range(6):
 
 Bij één regel maakt dat weinig uit. Maar hoe meer code er in de loop
 staat, hoe fijner het is om bovenaan te zeggen "deze ronde niet" en
-daarna gewoon verder te schrijven zonder extra inspringen.
+daarna verder te schrijven zonder extra inspringen.
 
 **Let op:** verwar `continue` niet met het verwante `break`, dat de
 **hele loop** stopt in plaats van één ronde over te slaan. Dat is de
 [volgende les](site:python/docs/herhalen/06d-break).
+
+## Er gaat iets mis
+
+**continue buiten de loop**
+
+{/* niet-compileren: bewuste syntaxfout, continue staat buiten de loop */}
+
+```python
+for i in range(3):
+    print(i)
+continue
+```
+
+Uitvoer:
+
+{/* foutmelding-van: for i in range(3):\n    print(i)\ncontinue */}
+
+```
+SyntaxError: 'continue' not properly in loop
+```
+
+`continue` hoort in een loop, en die van jou springt niet ver genoeg in. Meestal hoort hij bij de `if` in de loop.
+
+**continue na de print**
+
+```python
+for i in range(6):
+    print(i)
+    if i == 3:
+        continue
+```
+
+Geen foutmelding, maar de 3 staat er toch: de `print` is al geweest als `continue` aan de beurt is. Zet de controle met `continue` bóven wat je wilt overslaan.
 
 ---
 
