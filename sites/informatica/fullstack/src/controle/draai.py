@@ -29,11 +29,18 @@ Verder één keer:
 
 Daarnaast: zonder server exit-code 2 met een melding hoe je hem start, en
 zonder (of met een onbekend) hoofdstuk de lijst.
+
+Elk onderdeel, en elke stand uit 4 apart, draait als taak in een eigen
+proces, met een eigen server op een eigen poort: na elkaar duurde dit 76 s,
+over acht processen op vier cores 19 s. `--processen 1` draait alles in dit
+proces, na elkaar. De uitvoer komt per taak, in een vaste volgorde.
 """
 
 from __future__ import annotations
 
 import ast
+import contextlib
+import io
 import os
 import re
 import socket
@@ -42,6 +49,7 @@ import sys
 import tempfile
 import time
 import urllib.request
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 HIER = Path(__file__).resolve().parent
@@ -111,6 +119,17 @@ class Server:
         self.proces = None
 
     def __enter__(self):
+        # Met taken in meer processen kan een ander proces de vrije poort net
+        # pakken voordat uvicorn hem neemt; dan een nieuwe poort.
+        for _ in range(3):
+            if self.start():
+                return self
+            if "address already in use" not in self.log.read_text().lower():
+                break
+            self.poort = vrije_poort()
+        raise SystemExit(f"uvicorn start niet in {self.map}:\n{self.log.read_text()}")
+
+    def start(self) -> bool:
         self.logbestand = self.log.open("w")
         self.proces = subprocess.Popen(
             [sys.executable, "-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", str(self.poort)],
@@ -123,13 +142,13 @@ class Server:
                 break
             try:
                 with socket.create_connection(("127.0.0.1", self.poort), timeout=0.2):
-                    return self
+                    return True
             except OSError:
                 time.sleep(0.1)
         # Zonder __exit__ (dat draait alleen na een gelukte __enter__) bleef een
         # uvicorn die niet luisterde achter, met de poort en het logbestand.
         self.stop()
-        raise SystemExit(f"uvicorn start niet in {self.map}:\n{self.log.read_text()}")
+        return False
 
     def __exit__(self, *_):
         self.stop()
@@ -389,13 +408,15 @@ def kapot(werk: Path, openapi: bool):
         print(f"✓ kapot {soort}: elke fout gevonden ({len(FOUTEN)} fouten)")
 
 
-def standen(werk: Path):
-    eerder = len(fouten)
+def standen(werk: Path) -> list[tuple]:
+    """Zet de stand na elke les van de basis klaar, en geeft per les en per
+    stap uit uitbreidingen.py een taak die de hoofdstukken nakijkt die dan af
+    zijn. Wat in een vroeg hoofdstuk goed was, moet goed blijven."""
     _, af_bij = volgorde()
     eis(set(af_bij) == set(hoofdstukken()), f"hoofdstukken met een stand of stap: {sorted(af_bij)}")
 
+    taken: list[tuple] = []
     bestanden: dict[str, str] = {}
-    aantal = 0
     for les in lessen_van_de_basis():
         tekst = (SITE / "docs" / f"{les}.mdx").read_text(encoding="utf-8")
         for pad, taal, code in BESTAND.findall(tekst.split("\n## Opdrachten\n")[0]):
@@ -412,12 +433,15 @@ def standen(werk: Path):
             (map_ / pad).write_text(code, encoding="utf-8")
         (map_ / "static").mkdir(exist_ok=True)
         (map_ / "static" / "kat.jpg").write_bytes((HIER / "referentie" / "static" / "kat.jpg").read_bytes())
-        aantal += alle_goed(map_, af_op(les), f"stand na {les}")
+        taken.append((alle_goed, map_, af_op(les), f"stand na {les}"))
     for les, _ in STAPPEN:
-        map_ = uitbreidingen.maak(werk / "standen" / les.replace("/", "_"), tot=les)
-        aantal += alle_goed(map_, af_op(les), f"stand na {les}")
-    if len(fouten) == eerder:
-        print(f"✓ het project groeit: {aantal} keer een af hoofdstuk op de stand van een latere les goed")
+        taken.append((stap_nalopen, werk, les))
+    return taken
+
+
+def stap_nalopen(werk: Path, les: str) -> int:
+    map_ = uitbreidingen.maak(werk / "standen" / les.replace("/", "_"), tot=les)
+    return alle_goed(map_, af_op(les), f"stand na {les}")
 
 
 def endpoints_in_het_eindproject(werk: Path):
@@ -441,7 +465,30 @@ def endpoints_in_het_eindproject(werk: Path):
         print(f"✓ alle {len(laatste)} endpoints uit de uitbreidingen staan letterlijk in het eindproject")
 
 
+def taak(functie, *args) -> tuple[str, list[str], object]:
+    """Draai één onderdeel: wat het print, zijn eigen fouten en wat het
+    teruggeeft. Met `--processen 1` draait dit in het hoofdproces, dus de
+    fouten van daarvoor gaan even opzij en daarna terug."""
+    eerder = fouten[:]
+    fouten.clear()
+    try:
+        uitvoer = io.StringIO()
+        with contextlib.redirect_stdout(uitvoer):
+            waarde = functie(*args)
+        return uitvoer.getvalue(), list(fouten), waarde
+    finally:
+        fouten[:] = eerder
+
+
+def proef_fout():
+    eis(False, "proef: deze fout hoort terug te komen")
+
+
 def main() -> int:
+    processen = 2 * (os.cpu_count() or 1)
+    if "--processen" in sys.argv:
+        processen = int(sys.argv[sys.argv.index("--processen") + 1])
+
     eis(len(hoofdstukken()) > 0, "geen hoofdstukken gevonden in controleer.py")
     eis(
         {f.hoofdstuk for f in FOUTEN} == set(hoofdstukken()),
@@ -451,13 +498,47 @@ def main() -> int:
         werk = Path(tmp)
         sleutels_bestaan()
         endpoints_in_het_eindproject(werk)
-        zonder_server()
-        for openapi in (True, False):
-            referentie(werk, openapi)
-            kapot(werk, openapi)
-        varianten(werk)
-        randgevallen(werk)
-        standen(werk)
+        voor_de_standen = len(fouten)
+        stand_taken = standen(werk)
+        taken = [
+            (zonder_server,),
+            *((f, werk, openapi) for openapi in (True, False) for f in (referentie, kapot)),
+            (varianten, werk),
+            (randgevallen, werk),
+        ]
+
+        with contextlib.ExitStack() as stapel:
+            if processen > 1:
+                pool = stapel.enter_context(ProcessPoolExecutor(processen))
+                start = lambda t: pool.submit(taak, *t)  # noqa: E731
+                klaar = lambda f: f.result()  # noqa: E731
+            else:
+                start = lambda t: t  # noqa: E731
+                klaar = lambda t: taak(*t)  # noqa: E731
+            # Een fout in een ander proces komt alleen terug als taak() hem
+            # meegeeft. Deze proef moet er precies één opleveren; anders zou
+            # elke fout in een proces stil verdwijnen en dit script groen zijn.
+            proef = start((proef_fout,))
+            lopend = [start(t) for t in taken]
+            stand_lopend = [start(t) for t in stand_taken]
+
+            _, proeffouten, _ = klaar(proef)
+            eis(
+                proeffouten == ["proef: deze fout hoort terug te komen"],
+                f"een fout uit een taak komt niet terug: {proeffouten}",
+            )
+            for f in lopend:
+                uitvoer, nieuw, _ = klaar(f)
+                print(uitvoer, end="")
+                fouten.extend(nieuw)
+            aantal = 0
+            for f in stand_lopend:
+                uitvoer, nieuw, waarde = klaar(f)
+                print(uitvoer, end="")
+                fouten.extend(nieuw)
+                aantal += waarde
+        if len(fouten) == voor_de_standen:
+            print(f"✓ het project groeit: {aantal} keer een af hoofdstuk op de stand van een latere les goed")
     if fouten:
         print(f"\n{len(fouten)} fout(en)")
         return 1
