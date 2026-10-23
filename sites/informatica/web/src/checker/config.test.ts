@@ -59,6 +59,9 @@ function project(bestanden: Record<string, string>): ProjectFiles {
   return files;
 }
 
+const pagina = (body: string, head = '') =>
+  `<!DOCTYPE html>\n<html lang="nl">\n<head>\n<title>x</title>\n${head}\n</head>\n<body>\n${body}\n</body>\n</html>`;
+
 function rij(files: ProjectFiles, id: string) {
   const m = analyze(files, webConfig).concepts.find((c) => c.id === id);
   if (!m) throw new Error(`geen rij '${id}' in webConfig`);
@@ -153,6 +156,8 @@ describe('webConfig — voorbeeldprojecten scoren', () => {
         'js-functies',
         'js-events',
         'js-if-else',
+        // <p id="uitvoer">: een id telt ook zonder #-selector.
+        'css-id',
         // Ook gebruikt, telt niet mee:
         'html-p',
         'html-nav',
@@ -166,7 +171,6 @@ describe('webConfig — voorbeeldprojecten scoren', () => {
       // Even belangrijk: de checker vinkt niet zomaar alles aan.
       [
         'css-pseudoclass',
-        'css-id',
         'css-flexbox-grid',
         'css-media-query',
         'html-forms',
@@ -229,6 +233,33 @@ describe('webConfig — herkenning per rij', () => {
     const selectors = '.kaart h2 { margin: 0 }\n#menu:hover { color: red }';
     expect(rij(project({ 'a.css': selectors }), 'css-class').used).toBe(true);
     expect(rij(project({ 'a.css': selectors }), 'css-id').used).toBe(true);
+  });
+
+  it('telt een id-attribuut als id, ook zonder #-selector', () => {
+    // Een pagina vol id="…" voor getElementById of een anker stond eerst op
+    // "id: niet toegepast": alleen de selector #naam telde.
+    const attribuut = rij(project({ 'index.html': pagina('<div id="menu">x</div>') }), 'css-id');
+    expect(attribuut.used).toBe(true);
+    expect(attribuut.delen).toEqual(['id="…"']);
+    const hoofdletters = project({ 'index.html': pagina('<P ID="kop">x</P>') });
+    expect(rij(hoofdletters, 'css-id').used).toBe(true);
+    const allebei = project({
+      'index.html': pagina('<div id="menu">x</div>'),
+      'style.css': '#menu { color: red; }',
+    });
+    expect(rij(allebei, 'css-id').delen).toEqual(['#naam', 'id="…"']);
+  });
+
+  it('telt geen id in een ander attribuut, een waarde, commentaar of tekst', () => {
+    for (const html of [
+      '<p data-id="3">x</p>',
+      '<input name="id">',
+      '<a href="#top">naar boven</a>',
+      '<!-- <div id="oud">x</div> -->',
+      '<p>Met #kop { color: red } kies je het element met id kop.</p>',
+    ]) {
+      expect(rij(project({ 'index.html': pagina(html) }), 'css-id').used, html).toBe(false);
+    }
   });
 
   it('telt tekst in een CSS-commentaar niet als selector', () => {
@@ -619,8 +650,6 @@ describe('webConfig — HTML en CSS worden herkend waar ze staan', () => {
   // eerste versie liep in 10 van deze gevallen fout: CSS in een HTML-bestand
   // telde niet, weggecommentarieerde CSS en HTML wel, en een vergelijking in
   // een script telde als tag.
-  const pagina = (body: string, head = '') =>
-    `<!DOCTYPE html>\n<html lang="nl">\n<head>\n<title>x</title>\n${head}\n</head>\n<body>\n${body}\n</body>\n</html>`;
   const GEVALLEN: [string, Record<string, string>, Record<string, boolean>][] = [
     [
       'CSS in een <style>-blok',
