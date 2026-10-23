@@ -5,17 +5,22 @@
  * cache-sleutel voor de gebouwde site (`site-<os>-<id>-<hash>`), zodat
  * cross-links een site die niet veranderde uit de cache kan halen.
  *
- *     node scripts/site-hash.mjs python            de hash
- *     node scripts/site-hash.mjs python --lijst    de mappen en bestanden erin
- *     node scripts/site-hash.mjs python --omgeving de hash van de bouwomgeving
+ *     node scripts/site-hash.mjs python             de hash
+ *     node scripts/site-hash.mjs python --lijst     de mappen en bestanden erin
+ *     node scripts/site-hash.mjs python --omgeving  de hash van de bouwomgeving
+ *     node scripts/site-hash.mjs python --sleutels  allebei, als regels voor
+ *                                                   $GITHUB_OUTPUT
  *
- * De bouwomgeving is hetzelfde zonder de inhoud van de site: lessen
- * (.md/.mdx), afbeeldingen en andere media, en alles onder static/. CI
- * gebruikt die als sleutel voor de webpack-cache van Docusaurus: webpack
- * controleert zelf de inhoud van elke module (een gewijzigde les wordt
- * opnieuw vertaald), maar niet de code die vertaalt (remark-plugins,
- * loaders, de config). Verandert daar iets, dan is de sleutel anders en
- * bouwt CI zonder cache.
+ * De bouwomgeving is de sleutel van de webpack-cache van Docusaurus in CI.
+ * Webpack controleert zelf de inhoud van elke module die hij bundelt (een
+ * les, een component, een afbeelding, data), maar niet de code die vertaalt:
+ * remark-plugins, loaders, de config, babel. Nagemeten: een gewijzigde
+ * remark-plugin gaf met de cache 0 van de 248 pagina's met de nieuwe link,
+ * zonder cache alle 248. De bouwomgeving telt daarom alleen code die Node
+ * zelf laadt tijdens de build: .js, .mjs, .cjs en .ts, niet .tsx, en niet
+ * in static/ (die gaat ongewijzigd mee) of in een test. Plus de lockfile en
+ * de root-config. Een les, component, stijl of _category_.json verandert
+ * de sleutel dus niet; een plugin, config of de registry wel.
  *
  * Deterministisch: de getrackte bestanden komen uit de git-index (pad, modus
  * en blob-hash, gesorteerd), dus de volgorde van de schijf doet er niet toe.
@@ -54,8 +59,11 @@ function git(...args) {
   return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 });
 }
 
-/** { dir: { naam, deps } } voor elk workspace-package. */
+let workspaceCache = null;
+
+/** { dir: { naam, deps } } voor elk workspace-package (één keer per proces). */
 function workspace() {
+  if (workspaceCache) return workspaceCache;
   const uit = execFileSync('pnpm', ['-r', 'ls', '--depth', '-1', '--json'], {
     cwd: ROOT,
     encoding: 'utf8',
@@ -75,31 +83,28 @@ function workspace() {
       .map(([naam]) => naam);
     pakketten[dir] = { naam: pkg.name, deps };
   }
+  workspaceCache = pakketten;
   return pakketten;
 }
 
-// Inhoud van een site, die webpack zelf op inhoud controleert: lessen,
-// afbeeldingen en andere media, en de map static/.
-const INHOUD =
-  /\.(mdx?|png|jpe?g|gif|svg|webp|avif|ico|pdf|zip|whl|glb|gltf|stl|mp3|mp4|webm|wav)$/i;
+// Code die Node laadt tijdens de build, en dus niet door webpack op inhoud
+// wordt gecontroleerd. Zie de bouwomgeving bovenaan.
+const CODE = /\.(c|m)?js$|\.ts$/;
+const GEEN_BUILD = /(^|\/)(static|__fixtures__|docs-tests)\/|\.test\.(c|m)?[jt]s$/;
 
-export function isInhoud(pad, dir) {
-  return pad.startsWith(`${dir}/`) && (INHOUD.test(pad) || pad.startsWith(`${dir}/static/`));
+/** Telt dit bestand mee in de bouwomgeving? */
+export function inBouwomgeving(pad) {
+  if (ROOT_BESTANDEN.includes(pad)) return true;
+  return CODE.test(pad) && !GEEN_BUILD.test(pad);
 }
 
-export function siteHash(id, { omgeving = false } = {}) {
-  const dir = siteDir(id);
-  const mappen = workspaceAfhankelijkheden(workspace(), dir);
-  const paden = [...mappen, ...ROOT_BESTANDEN];
+function hashVan(paden, telt) {
   const hash = createHash('sha256');
-  const telt = (pad) => !omgeving || !isInhoud(pad, dir);
   // Pad, modus en blob-hash van elk getrackt bestand.
-  const index = git('ls-files', '-s', '-z', '--', ...paden)
+  const regels = git('ls-files', '-s', '-z', '--', ...paden)
     .split('\0')
-    .filter((regel) => regel && telt(regel.slice(regel.indexOf('\t') + 1)))
-    .map((regel) => `${regel}\0`)
-    .join('');
-  hash.update(index);
+    .filter((regel) => regel && telt(regel.slice(regel.indexOf('\t') + 1)));
+  hash.update(regels.map((regel) => `${regel}\0`).join(''));
   // Afwijkend in de werkmap (gewijzigd of nieuw): op inhoud.
   const afwijkend = new Set(
     [
@@ -112,19 +117,41 @@ export function siteHash(id, { omgeving = false } = {}) {
     if (existsSync(join(ROOT, pad))) hash.update(readFileSync(join(ROOT, pad)));
     else hash.update('\0weg\0');
   }
-  return { hash: hash.digest('hex').slice(0, 32), mappen, aantal: index.split('\0').length - 1 };
+  return { hash: hash.digest('hex').slice(0, 32), aantal: regels.length };
+}
+
+/**
+ * De hash van alles waar de build van de site van afhangt, of met
+ * `omgeving` alleen van de bouwomgeving.
+ */
+export function siteHash(id, { omgeving = false } = {}) {
+  const mappen = workspaceAfhankelijkheden(workspace(), siteDir(id));
+  const paden = [...mappen, ...ROOT_BESTANDEN];
+  return { ...hashVan(paden, omgeving ? inBouwomgeving : () => true), mappen };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const id = process.argv[2];
-  if (!id) {
-    console.error('gebruik: node scripts/site-hash.mjs <site-id> [--lijst]');
+  const vlag = (naam) => process.argv.includes(naam);
+  if (!id || id.startsWith('--')) {
+    console.error(
+      'gebruik: node scripts/site-hash.mjs <site-id> [--omgeving] [--lijst] [--sleutels]',
+    );
     process.exit(2);
   }
-  const { hash, mappen, aantal } = siteHash(id, { omgeving: process.argv.includes('--omgeving') });
-  if (process.argv.includes('--lijst')) {
-    console.log([...mappen, ...ROOT_BESTANDEN].join('\n'));
-    console.log(`${aantal} getrackte bestanden`);
+  if (vlag('--sleutels')) {
+    console.log(`sitehash=${siteHash(id).hash}`);
+    console.log(`omgevinghash=${siteHash(id, { omgeving: true }).hash}`);
+  } else {
+    const { hash, mappen, aantal } = siteHash(id, { omgeving: vlag('--omgeving') });
+    if (vlag('--lijst')) {
+      console.log([...mappen, ...ROOT_BESTANDEN].join('\n'));
+      console.log(
+        vlag('--omgeving')
+          ? `${aantal} getrackte bestanden in de bouwomgeving (code die Node laadt, zie bovenaan)`
+          : `${aantal} getrackte bestanden`,
+      );
+    }
+    console.log(hash);
   }
-  console.log(hash);
 }

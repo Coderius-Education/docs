@@ -569,6 +569,11 @@ jobs:
       !cancelled() && needs.plan.outputs.build == 'true'
       && (needs.test.result == 'success' || needs.test.result == 'skipped')
     runs-on: ubuntu-latest
+    # actions: write voor het opruimen van oude webpack-caches (alleen op
+    # main; op een PR uit een fork is het token toch alleen-lezen).
+    permissions:
+      contents: read
+      actions: write
     strategy:
       fail-fast: false
       matrix:
@@ -589,46 +594,81 @@ jobs:
 
       # Vóór de install, net als in `voorraad`: zo kan niets wat de install
       # neerzet de sleutel laten verschillen.
+      # Eén keer site-hash.mjs voor beide sleutels: de gebouwde site en de
+      # webpack-cache. `docusaurus` is false voor een site die met iets anders
+      # bouwt (home: Vite); die heeft geen webpack-cache.
       - name: Map en cache-sleutels van ${{ matrix.site }}
         id: map
         run: |
-          echo "dir=$(node scripts/sites-json.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
-          echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
-          echo "webpack=webpack-${{ runner.os }}-node$(node -p process.versions.node)-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }} --omgeving)" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          dir=$(node scripts/sites-json.mjs ${{ matrix.site }})
+          eval "$(node scripts/site-hash.mjs ${{ matrix.site }} --sleutels)"
+          {
+            echo "dir=$dir"
+            echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$sitehash"
+            echo "webpack=webpack-${{ runner.os }}-${{ matrix.site }}-node$(node -p process.versions.node)-$omgevinghash"
+            echo "webpack-prefix=webpack-${{ runner.os }}-${{ matrix.site }}-node"
+            echo "docusaurus=$(node -p "/^docusaurus /.test(require('./$dir/package.json').scripts.build)")"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       # De webpack-cache van Docusaurus maakt een build drie tot vier keer zo
-      # snel (robotica 70 s koud, 20 s warm), met dezelfde bestanden als een
+      # snel (robotica 70 s koud, 19 s warm), met dezelfde bestanden als een
       # koude build. Webpack vertaalt elke module opnieuw waarvan de inhoud
-      # veranderde; de sleutel is de bouwomgeving (scripts/site-hash.mjs
-      # --omgeving: alles behalve lessen, media en static/), want de code die
-      # vertaalt controleert webpack niet. Een volledige run (nacht, handmatig,
-      # een globaal bestand) bouwt koud en bewaart een verse cache: zo staat er
-      # elke nacht een build zonder cache naast. Na de install, want die maakt
+      # veranderde, maar ziet een gewijzigde plugin of config niet; daarom is
+      # de sleutel de bouwomgeving (scripts/site-hash.mjs, zie daar), zonder
+      # terugval op een andere omgeving. Na de install, want die maakt
       # node_modules van de site.
+      #
+      # Een volledige run (nacht, handmatig, een globaal bestand) bouwt koud:
+      # zo staat er elke nacht een build zonder cache naast. Hij kijkt alleen
+      # of de cache al bestaat (lookup-only), om te weten of hij hem moet
+      # bewaren.
       - name: Webpack-cache van ${{ matrix.site }}
         id: webpack
-        if: needs.plan.outputs.volledig != 'true'
+        if: steps.map.outputs.docusaurus == 'true'
         uses: actions/cache/restore@v5
         with:
           path: ${{ steps.map.outputs.dir }}/node_modules/.cache/webpack
-          key: ${{ steps.map.outputs.webpack }}-${{ github.run_id }}
-          restore-keys: ${{ steps.map.outputs.webpack }}-
+          key: ${{ steps.map.outputs.webpack }}
+          lookup-only: ${{ needs.plan.outputs.volledig == 'true' }}
 
       - name: Build ${{ matrix.site }}
         run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
 
-      # Op main en 's nachts altijd, zodat de volgende run een recente cache
-      # vindt; op een PR alleen als er geen was (dan heeft de volgende push
-      # van die PR er wel een).
+      # Eén cache per site en bouwomgeving, alleen op main (ook niet bij een
+      # handmatige run op een branch): een PR leest die van main, en bewaart
+      # zelf niets (een PR-cache is alleen voor die PR,
+      # en een PR die packages raakt, zou per push GB's bewaren). Bestaat de
+      # sleutel al, dan niets; een nieuwe sleutel ruimt de oude van deze site
+      # op, zodat de webpack-caches de gebouwde sites en de pnpm-store niet
+      # uit de 10 GB van de repo drukken.
       - name: Webpack-cache bewaren
-        if: github.event_name != 'pull_request' || steps.webpack.outputs.cache-matched-key == ''
+        id: bewaren
+        if: >-
+          steps.map.outputs.docusaurus == 'true' && github.ref == 'refs/heads/main'
+          && github.event_name != 'pull_request' && steps.webpack.outputs.cache-hit != 'true'
         uses: actions/cache/save@v5
         with:
           path: ${{ steps.map.outputs.dir }}/node_modules/.cache/webpack
-          key: ${{ steps.map.outputs.webpack }}-${{ github.run_id }}
+          key: ${{ steps.map.outputs.webpack }}
+
+      - name: Oude webpack-caches van ${{ matrix.site }} weg
+        if: steps.bewaren.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREFIX: ${{ steps.map.outputs.webpack-prefix }}
+          HUIDIG: ${{ steps.map.outputs.webpack }}
+        run: |
+          set -euo pipefail
+          gh cache list --repo "$GITHUB_REPOSITORY" --key "$PREFIX" --limit 100 --json key --jq '.[].key' \
+            | { grep -vxF "$HUIDIG" || true; } \
+            | while read -r oud; do
+                echo "weg: $oud"
+                gh cache delete --repo "$GITHUB_REPOSITORY" "$oud"
+              done
 
       # Voor cross-links in een latere run waarin deze site niet verandert. De
       # sleutel is een hash van alles waar de build van afhangt
@@ -668,12 +708,22 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      # Eén keer site-hash.mjs voor beide sleutels: de gebouwde site en de
+      # webpack-cache. `docusaurus` is false voor een site die met iets anders
+      # bouwt (home: Vite); die heeft geen webpack-cache.
       - name: Map en cache-sleutels van ${{ matrix.site }}
         id: map
         run: |
-          echo "dir=$(node scripts/sites-json.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
-          echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
-          echo "webpack=webpack-${{ runner.os }}-node$(node -p process.versions.node)-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }} --omgeving)" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          dir=$(node scripts/sites-json.mjs ${{ matrix.site }})
+          eval "$(node scripts/site-hash.mjs ${{ matrix.site }} --sleutels)"
+          {
+            echo "dir=$dir"
+            echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$sitehash"
+            echo "webpack=webpack-${{ runner.os }}-${{ matrix.site }}-node$(node -p process.versions.node)-$omgevinghash"
+            echo "webpack-prefix=webpack-${{ runner.os }}-${{ matrix.site }}-node"
+            echo "docusaurus=$(node -p "/^docusaurus /.test(require('./$dir/package.json').scripts.build)")"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Uit de cache
         id: cache
@@ -689,12 +739,11 @@ jobs:
       # Zoals in `build`: alleen de webpack-cache terug, niet bewaren; deze
       # site verandert in deze run niet.
       - name: Webpack-cache van ${{ matrix.site }}
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true' && steps.map.outputs.docusaurus == 'true'
         uses: actions/cache/restore@v5
         with:
           path: ${{ steps.map.outputs.dir }}/node_modules/.cache/webpack
-          key: ${{ steps.map.outputs.webpack }}-${{ github.run_id }}
-          restore-keys: ${{ steps.map.outputs.webpack }}-
+          key: ${{ steps.map.outputs.webpack }}
 
       - name: Build ${{ matrix.site }} (niet in de cache)
         if: steps.cache.outputs.cache-hit != 'true'
