@@ -5,8 +5,17 @@
  * cache-sleutel voor de gebouwde site (`site-<os>-<id>-<hash>`), zodat
  * cross-links een site die niet veranderde uit de cache kan halen.
  *
- *     node scripts/site-hash.mjs python          de hash
- *     node scripts/site-hash.mjs python --lijst  de mappen en bestanden erin
+ *     node scripts/site-hash.mjs python            de hash
+ *     node scripts/site-hash.mjs python --lijst    de mappen en bestanden erin
+ *     node scripts/site-hash.mjs python --omgeving de hash van de bouwomgeving
+ *
+ * De bouwomgeving is hetzelfde zonder de inhoud van de site: lessen
+ * (.md/.mdx), afbeeldingen en andere media, en alles onder static/. CI
+ * gebruikt die als sleutel voor de webpack-cache van Docusaurus: webpack
+ * controleert zelf de inhoud van elke module (een gewijzigde les wordt
+ * opnieuw vertaald), maar niet de code die vertaalt (remark-plugins,
+ * loaders, de config). Verandert daar iets, dan is de sleutel anders en
+ * bouwt CI zonder cache.
  *
  * Deterministisch: de getrackte bestanden komen uit de git-index (pad, modus
  * en blob-hash, gesorteerd), dus de volgorde van de schijf doet er niet toe.
@@ -35,6 +44,10 @@ const ROOT_BESTANDEN = [
   'package.json',
   'pnpm-workspace.yaml',
   'tsconfig.base.json',
+  // Welke browsers babel bedient, en de pnpm-instellingen: raken elke build.
+  '.browserslistrc',
+  '.npmrc',
+  '.nvmrc',
 ];
 
 function git(...args) {
@@ -65,19 +78,34 @@ function workspace() {
   return pakketten;
 }
 
-export function siteHash(id) {
-  const mappen = workspaceAfhankelijkheden(workspace(), siteDir(id));
+// Inhoud van een site, die webpack zelf op inhoud controleert: lessen,
+// afbeeldingen en andere media, en de map static/.
+const INHOUD =
+  /\.(mdx?|png|jpe?g|gif|svg|webp|avif|ico|pdf|zip|whl|glb|gltf|stl|mp3|mp4|webm|wav)$/i;
+
+export function isInhoud(pad, dir) {
+  return pad.startsWith(`${dir}/`) && (INHOUD.test(pad) || pad.startsWith(`${dir}/static/`));
+}
+
+export function siteHash(id, { omgeving = false } = {}) {
+  const dir = siteDir(id);
+  const mappen = workspaceAfhankelijkheden(workspace(), dir);
   const paden = [...mappen, ...ROOT_BESTANDEN];
   const hash = createHash('sha256');
+  const telt = (pad) => !omgeving || !isInhoud(pad, dir);
   // Pad, modus en blob-hash van elk getrackt bestand.
-  const index = git('ls-files', '-s', '-z', '--', ...paden);
+  const index = git('ls-files', '-s', '-z', '--', ...paden)
+    .split('\0')
+    .filter((regel) => regel && telt(regel.slice(regel.indexOf('\t') + 1)))
+    .map((regel) => `${regel}\0`)
+    .join('');
   hash.update(index);
   // Afwijkend in de werkmap (gewijzigd of nieuw): op inhoud.
   const afwijkend = new Set(
     [
       ...git('ls-files', '-m', '-z', '--', ...paden).split('\0'),
       ...git('ls-files', '-o', '--exclude-standard', '-z', '--', ...paden).split('\0'),
-    ].filter(Boolean),
+    ].filter((pad) => pad && telt(pad)),
   );
   for (const pad of [...afwijkend].sort()) {
     hash.update(`\0${pad}\0`);
@@ -93,7 +121,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     console.error('gebruik: node scripts/site-hash.mjs <site-id> [--lijst]');
     process.exit(2);
   }
-  const { hash, mappen, aantal } = siteHash(id);
+  const { hash, mappen, aantal } = siteHash(id, { omgeving: process.argv.includes('--omgeving') });
   if (process.argv.includes('--lijst')) {
     console.log([...mappen, ...ROOT_BESTANDEN].join('\n'));
     console.log(`${aantal} getrackte bestanden`);

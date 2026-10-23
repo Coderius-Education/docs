@@ -589,17 +589,46 @@ jobs:
 
       # Vóór de install, net als in `voorraad`: zo kan niets wat de install
       # neerzet de sleutel laten verschillen.
-      - name: Map en cache-sleutel van ${{ matrix.site }}
+      - name: Map en cache-sleutels van ${{ matrix.site }}
         id: map
         run: |
           echo "dir=$(node scripts/sites-json.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
           echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
+          echo "webpack=webpack-${{ runner.os }}-node$(node -p process.versions.node)-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }} --omgeving)" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # De webpack-cache van Docusaurus maakt een build drie tot vier keer zo
+      # snel (robotica 70 s koud, 20 s warm), met dezelfde bestanden als een
+      # koude build. Webpack vertaalt elke module opnieuw waarvan de inhoud
+      # veranderde; de sleutel is de bouwomgeving (scripts/site-hash.mjs
+      # --omgeving: alles behalve lessen, media en static/), want de code die
+      # vertaalt controleert webpack niet. Een volledige run (nacht, handmatig,
+      # een globaal bestand) bouwt koud en bewaart een verse cache: zo staat er
+      # elke nacht een build zonder cache naast. Na de install, want die maakt
+      # node_modules van de site.
+      - name: Webpack-cache van ${{ matrix.site }}
+        id: webpack
+        if: needs.plan.outputs.volledig != 'true'
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ steps.map.outputs.dir }}/node_modules/.cache/webpack
+          key: ${{ steps.map.outputs.webpack }}-${{ github.run_id }}
+          restore-keys: ${{ steps.map.outputs.webpack }}-
+
       - name: Build ${{ matrix.site }}
         run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
+
+      # Op main en 's nachts altijd, zodat de volgende run een recente cache
+      # vindt; op een PR alleen als er geen was (dan heeft de volgende push
+      # van die PR er wel een).
+      - name: Webpack-cache bewaren
+        if: github.event_name != 'pull_request' || steps.webpack.outputs.cache-matched-key == ''
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ steps.map.outputs.dir }}/node_modules/.cache/webpack
+          key: ${{ steps.map.outputs.webpack }}-${{ github.run_id }}
 
       # Voor cross-links in een latere run waarin deze site niet verandert. De
       # sleutel is een hash van alles waar de build van afhangt
@@ -639,11 +668,12 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - name: Map en cache-sleutel van ${{ matrix.site }}
+      - name: Map en cache-sleutels van ${{ matrix.site }}
         id: map
         run: |
           echo "dir=$(node scripts/sites-json.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
           echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
+          echo "webpack=webpack-${{ runner.os }}-node$(node -p process.versions.node)-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }} --omgeving)" >> "$GITHUB_OUTPUT"
 
       - name: Uit de cache
         id: cache
@@ -655,6 +685,16 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
+
+      # Zoals in `build`: alleen de webpack-cache terug, niet bewaren; deze
+      # site verandert in deze run niet.
+      - name: Webpack-cache van ${{ matrix.site }}
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ steps.map.outputs.dir }}/node_modules/.cache/webpack
+          key: ${{ steps.map.outputs.webpack }}-${{ github.run_id }}
+          restore-keys: ${{ steps.map.outputs.webpack }}-
 
       - name: Build ${{ matrix.site }} (niet in de cache)
         if: steps.cache.outputs.cache-hit != 'true'

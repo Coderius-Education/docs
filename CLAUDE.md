@@ -62,7 +62,14 @@ CI doet alleen wat een wijziging raakt. De job `plan` draait
 gewijzigde regels, de geraakte sites (pnpm `--filter "...[<base>]"`, dus ook
 sites die van een gewijzigd package afhangen) en welke jobs draaien. De
 build-matrix bevat alleen geraakte sites; `cross-links` haalt de rest uit de
-cache (`scripts/site-hash.mjs`, job `voorraad`). De blokrunners krijgen
+cache (`scripts/site-hash.mjs`, job `voorraad`). Elke site-build krijgt de
+webpack-cache van Docusaurus terug: drie tot vier keer zo snel, met dezelfde
+bestanden als een koude build. De sleutel is de bouwomgeving
+(`site-hash.mjs --omgeving`: alles behalve lessen, media en `static/`), want
+webpack controleert de inhoud van elke module zelf, maar niet de code die
+vertaalt; een plugin, config of gedeeld package erbij geeft een nieuwe sleutel.
+Een volledige run bouwt koud en bewaart een verse cache;
+`packages/shared/ci-cache.test.ts` bewaakt de stappen. De blokrunners krijgen
 `--alleen changed.json` en doen alleen de blokken op gewijzigde regels plus
 wat erop doorbouwt (`draaien-met`); de tekstcontrole krijgt `--regels`. Een
 globaal bestand (lockfile, root-config, `.github/`, de registry) of de
