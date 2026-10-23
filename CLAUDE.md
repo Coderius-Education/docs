@@ -101,8 +101,12 @@ Voor welke browsers de sites gebouwd worden staat in één bestand,
 Zonder dat bestand zette de babel-preset van Docusaurus alles om naar ES5 in
 losse modus, en dan wordt `[...x]` `[].concat(x)`: een Map, Set of string
 wordt een lijst met één element. Dat zie je alleen in de browser, want node
-draait de bron zonder omzetting. `packages/shared/browsers.test.ts` draait de
-preset vanuit elke site en voert het resultaat uit.
+draait de bron zonder omzetting. Sinds Docusaurus Faster vertaalt niet babel
+maar de swc in Rspack (`builtin:swc-loader`) de code, met dezelfde
+browserslist. `packages/shared/browsers.test.ts` bouwt vanuit elke site een
+proefbestand met de vertaler die de build gebruikt (Rspack met de loader en
+de minifier van Docusaurus, of babel als `swcJsLoader` uit staat) en voert
+het resultaat uit.
 
 ## Huisstijl
 
