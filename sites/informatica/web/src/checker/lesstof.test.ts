@@ -3,8 +3,9 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { describe, expect, it } from 'vitest';
-import { GROEPEN, maakBuitenLesstof } from './buitenLesstof';
+import { GROEPEN, ONDERWERP, maakBuitenLesstof } from './buitenLesstof';
 import { zonderCommentaarEnTekst } from './code';
+import { webConfig } from './config';
 import { berekenLesstof, lesstofWatchPaden, stukkenUit } from './lesstof';
 import { LESSTOF_PLUGIN } from './lesstof-plugin';
 
@@ -79,6 +80,7 @@ describe('buitenLesstof — wat een project meer gebruikt', () => {
       count: 2,
       files: ['index.html'],
       plekken: [{ bestand: 'index.html', regel: 1 }],
+      onderwerp: 'html',
     });
     expect(labels(files)).toEqual(
       expect.arrayContaining(['CSS-at-regels|@keyframes', 'JavaScript|=> (arrow-functie)']),
@@ -134,6 +136,24 @@ describe('buitenLesstof — wat een project meer gebruikt', () => {
     expect(labels(files)).toEqual(
       expect.arrayContaining(['HTML-attributen|data-*', 'CSS-eigenschappen|--*']),
     );
+  });
+
+  it('geeft elke vondst het onderwerp van het rapport waar hij onder staat', () => {
+    // Het rapport zet Buiten de lesstof per onderwerp, naast de rijen HTML,
+    // CSS en JavaScript; eerst stond alles in één sectie onderaan.
+    const onderwerpen = webConfig.subjects.map((s) => s.id);
+    for (const g of GROEPEN) expect(onderwerpen, g).toContain(ONDERWERP[g]);
+    const files = project({
+      'app.js': 'fetch("x");',
+      'index.html': '<canvas></canvas>',
+      'style.css': 'p { transform: none; }',
+    });
+    const perOnderwerp = Object.fromEntries(
+      buitenLesstof(files).map((v) => [`${v.groep}|${v.label}`, v.onderwerp]),
+    );
+    expect(perOnderwerp['HTML-elementen|<canvas>']).toBe('html');
+    expect(perOnderwerp['CSS-eigenschappen|transform']).toBe('css');
+    expect(Object.values(perOnderwerp)).toContain('js');
   });
 
   it('zet de vondsten op groep, in de volgorde van het rapport', () => {

@@ -30,6 +30,21 @@ export const GROEPEN = [
 
 export type Groep = (typeof GROEPEN)[number];
 
+/**
+ * Bij welk onderwerp van het rapport (de ids in niveaus.json) een groep
+ * hoort: het rapport zet de vondsten dan in het blok HTML, CSS of
+ * JavaScript, naast de rijen van dat onderwerp.
+ */
+export const ONDERWERP: Record<Groep, string> = {
+  'HTML-elementen': 'html',
+  'HTML-attributen': 'html',
+  'CSS-eigenschappen': 'css',
+  'CSS-selectoren': 'css',
+  'CSS-at-regels': 'css',
+  'CSS-waarden': 'css',
+  JavaScript: 'js',
+};
+
 /** Sleutel van een constructie: groep en label, zoals in lesstof.json. */
 export const sleutel = (groep: string, label: string) => `${groep}|${label}`;
 
@@ -400,7 +415,14 @@ export function maakBuitenLesstof(lesstof: Lesstof): (files: ProjectFiles) => Vo
         if (bekend.has(k)) continue;
         const [groep, ...rest] = k.split('|');
         const label = rest.join('|');
-        const vondst = perSleutel.get(k) ?? { groep, label, count: 0, files: [], plekken: [] };
+        const vondst = perSleutel.get(k) ?? {
+          groep,
+          label,
+          count: 0,
+          files: [],
+          plekken: [],
+          onderwerp: ONDERWERP[groep as Groep],
+        };
         vondst.count += n;
         vondst.files.push(f.path);
         const plekken = vondst.plekken ?? [];
