@@ -569,14 +569,16 @@ jobs:
           key: ${{ steps.map.outputs.sleutel }}
 
       # Nog niet voor de hostingbackend (die pakt `<site>-static`): voor
-      # cross-links en voor `publiceer`. Kort bewaard, net als de voorraad.
+      # cross-links en voor `publiceer`. Even lang bewaard als `wijzigingen`:
+      # draait iemand een rode test later opnieuw, dan publiceert `publiceer`
+      # deze bundle alsnog, en die moet er dan nog zijn.
       - name: Upload gebouwde bundle
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.site }}-gebouwd
           path: ${{ steps.map.outputs.dir }}/build
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 7
 
   # De poort voor de hostingbackend. Die haalt `<site>-static` óók op als de
   # run is mislukt (bewust: met fail-fast:false mag één kapotte site de andere

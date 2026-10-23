@@ -45,6 +45,21 @@ describe('de poort naar de hostingbackend', () => {
     expect(elders).not.toMatch(/name: \$\{\{ matrix\.site \}\}-static/);
   });
 
+  // Een rode test die iemand later opnieuw draait, laat `publiceer` daarna
+  // de bundle uit de eerste poging ophalen. Eerst bleef die één dag bestaan:
+  // na een weekend publiceerde de herhaling niets meer. De test zelf heeft
+  // `wijzigingen` nodig, dus zo lang moet de bundle minstens blijven.
+  it('de gebouwde bundle blijft even lang als wijzigingen, voor een latere herhaling', () => {
+    const bewaard = (naam: string) =>
+      Number(
+        workflow.match(
+          new RegExp(`name: ${naam}\\n(?:\\s+[a-z-]+: .+\\n)*?\\s+retention-days: (\\d+)`),
+        )?.[1],
+      );
+    expect(bewaard('wijzigingen')).toBeGreaterThanOrEqual(7);
+    expect(bewaard('\\$\\{\\{ matrix\\.site \\}\\}-gebouwd')).toBe(bewaard('wijzigingen'));
+  });
+
   it('cross-links gebruikt de gebouwde bundles en wacht dus niet op de tests', () => {
     const crossLinks = job('cross-links');
     expect(crossLinks).toMatch(/^ {4}needs: \[plan, build, voorraad\]$/m);
