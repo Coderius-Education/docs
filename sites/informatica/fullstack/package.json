@@ -18,6 +18,7 @@
     "@coderius/checker": "workspace:*",
     "@coderius/shared": "workspace:*",
     "@docusaurus/core": "catalog:",
+    "@docusaurus/faster": "catalog:",
     "@docusaurus/preset-classic": "catalog:",
     "@mdx-js/react": "catalog:",
     "clsx": "catalog:",

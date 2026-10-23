@@ -35,6 +35,12 @@ const ROOT_BESTANDEN = [
   'package.json',
   'pnpm-workspace.yaml',
   'tsconfig.base.json',
+  // Welke browsers babel en swc bedienen, en de pnpm-instellingen: raken
+  // elke build. Eerst telden ze niet mee, en kon cross-links na een andere
+  // .browserslistrc een oude build uit de cache halen.
+  '.browserslistrc',
+  '.npmrc',
+  '.nvmrc',
 ];
 
 function git(...args) {
@@ -89,7 +95,7 @@ export function siteHash(id) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const id = process.argv[2];
-  if (!id) {
+  if (!id || id.startsWith('--')) {
     console.error('gebruik: node scripts/site-hash.mjs <site-id> [--lijst]');
     process.exit(2);
   }

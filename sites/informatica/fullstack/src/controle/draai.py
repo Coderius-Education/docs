@@ -29,11 +29,19 @@ Verder één keer:
 
 Daarnaast: zonder server exit-code 2 met een melding hoe je hem start, en
 zonder (of met een onbekend) hoofdstuk de lijst.
+
+Elk onderdeel, en elke stand uit 4 apart, draait als taak in een eigen
+proces, met een eigen server op een eigen poort: na elkaar duurde dit 76 s,
+over acht processen op vier cores 19 s. `--processen 1` draait alles in dit
+proces, na elkaar. De uitvoer komt per taak, in een vaste volgorde.
 """
 
 from __future__ import annotations
 
 import ast
+import contextlib
+import io
+import json
 import os
 import re
 import socket
@@ -42,6 +50,7 @@ import sys
 import tempfile
 import time
 import urllib.request
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 HIER = Path(__file__).resolve().parent
@@ -97,35 +106,44 @@ def sleutels_bestaan():
         print(f"✓ alle {gebruikt} uitleg-sleutels in het script bestaan")
 
 
-def vrije_poort() -> int:
-    with socket.socket() as s:
-        s.bind(("127.0.0.1", 0))
-        return s.getsockname()[1]
+# Hoe lang uvicorn mag doen over opstarten. Met de taken in meer processen
+# draaien er zo'n zestien Python-processen op vier cores, en dan kost het
+# importeren van FastAPI soms seconden; 10 s was na elkaar ruim, nu krap.
+OPSTARTEN = 30
+LUISTERT = re.compile(r"Uvicorn running on http://127\.0\.0\.1:(\d+)")
 
 
 class Server:
+    """uvicorn in `map_`, op een poort die uvicorn zelf kiest (`--port 0`).
+
+    Eerst koos dit script een vrije poort, liet hem los en startte uvicorn
+    erop. Met taken in meer processen kon een andere server die poort er net
+    tussendoor pakken: dan faalde deze uvicorn, maar luisterde er wel iets,
+    en controleerde de taak stil het project van een andere taak. Nu bindt
+    uvicorn de poort zelf, en leest dit script hem uit de log.
+    """
+
     def __init__(self, map_: Path):
         self.map = map_
-        self.poort = vrije_poort()
+        self.poort: int | None = None
         self.log = map_ / "uvicorn.log"
         self.proces = None
 
     def __enter__(self):
         self.logbestand = self.log.open("w")
         self.proces = subprocess.Popen(
-            [sys.executable, "-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", str(self.poort)],
+            [sys.executable, "-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", "0"],
             cwd=self.map,
             stdout=self.logbestand,
             stderr=subprocess.STDOUT,
         )
-        for _ in range(100):
-            if self.proces.poll() is not None:
-                break
-            try:
-                with socket.create_connection(("127.0.0.1", self.poort), timeout=0.2):
-                    return self
-            except OSError:
-                time.sleep(0.1)
+        tot = time.monotonic() + OPSTARTEN
+        while time.monotonic() < tot and self.proces.poll() is None:
+            m = LUISTERT.search(self.log.read_text(encoding="utf-8", errors="replace"))
+            if m:
+                self.poort = int(m.group(1))
+                return self
+            time.sleep(0.05)
         # Zonder __exit__ (dat draait alleen na een gelukte __enter__) bleef een
         # uvicorn die niet luisterde achter, met de poort en het logbestand.
         self.stop()
@@ -179,7 +197,11 @@ def eis(voorwaarde: bool, melding: str, uitvoer: str = ""):
 
 def zonder_server():
     eerder = len(fouten)
-    code, uit = controleer("formulieren", "--adres", f"http://127.0.0.1:{vrije_poort()}")
+    # Een poort waar zeker niets luistert: gebonden, maar zonder listen(), en
+    # zolang de controle loopt kan geen andere taak er een server op starten.
+    with socket.socket() as bezet:
+        bezet.bind(("127.0.0.1", 0))
+        code, uit = controleer("formulieren", "--adres", f"http://127.0.0.1:{bezet.getsockname()[1]}")
     eis(code == 2, f"zonder server: exit-code {code}, verwacht 2", uit)
     eis("fastapi dev main.py" in uit, "zonder server: geen melding hoe je de server start", uit)
     code, uit = controleer()
@@ -188,6 +210,28 @@ def zonder_server():
     eis(code == 2 and "formulieren" in uit, "onbekend hoofdstuk: geen lijst of geen exit-code 2", uit)
     if len(fouten) == eerder:
         print("✓ zonder server en zonder hoofdstuk")
+
+
+def eigen_server(werk: Path):
+    """Elke server antwoordt met zijn eigen project, ook als er meer tegelijk
+    draaien. Een server die een andere taak zijn poort gaf, controleerde eerst
+    stil het verkeerde project."""
+    eerder = len(fouten)
+    with contextlib.ExitStack() as stapel:
+        servers = []
+        for naam in ("a", "b", "c"):
+            map_ = werk / f"eigen-{naam}"
+            map_.mkdir()
+            (map_ / "main.py").write_text(
+                f'from fastapi import FastAPI\n\napp = FastAPI()\n\n\n@app.get("/wie")\ndef wie():\n    return "{naam}"\n',
+                encoding="utf-8",
+            )
+            servers.append((naam, stapel.enter_context(Server(map_))))
+        for naam, s in servers:
+            antwoord = json.loads(urllib.request.urlopen(s.adres + "/wie", timeout=10).read())
+            eis(antwoord == naam, f"server {naam} op poort {s.poort} antwoordt als server {antwoord!r}")
+    if len(fouten) == eerder:
+        print("✓ elke server antwoordt met zijn eigen project")
 
 
 def lessen_van_de_basis() -> list[str]:
@@ -389,13 +433,15 @@ def kapot(werk: Path, openapi: bool):
         print(f"✓ kapot {soort}: elke fout gevonden ({len(FOUTEN)} fouten)")
 
 
-def standen(werk: Path):
-    eerder = len(fouten)
+def standen(werk: Path) -> list[tuple]:
+    """Zet de stand na elke les van de basis klaar, en geeft per les en per
+    stap uit uitbreidingen.py een taak die de hoofdstukken nakijkt die dan af
+    zijn. Wat in een vroeg hoofdstuk goed was, moet goed blijven."""
     _, af_bij = volgorde()
     eis(set(af_bij) == set(hoofdstukken()), f"hoofdstukken met een stand of stap: {sorted(af_bij)}")
 
+    taken: list[tuple] = []
     bestanden: dict[str, str] = {}
-    aantal = 0
     for les in lessen_van_de_basis():
         tekst = (SITE / "docs" / f"{les}.mdx").read_text(encoding="utf-8")
         for pad, taal, code in BESTAND.findall(tekst.split("\n## Opdrachten\n")[0]):
@@ -412,12 +458,15 @@ def standen(werk: Path):
             (map_ / pad).write_text(code, encoding="utf-8")
         (map_ / "static").mkdir(exist_ok=True)
         (map_ / "static" / "kat.jpg").write_bytes((HIER / "referentie" / "static" / "kat.jpg").read_bytes())
-        aantal += alle_goed(map_, af_op(les), f"stand na {les}")
+        taken.append((alle_goed, map_, af_op(les), f"stand na {les}"))
     for les, _ in STAPPEN:
-        map_ = uitbreidingen.maak(werk / "standen" / les.replace("/", "_"), tot=les)
-        aantal += alle_goed(map_, af_op(les), f"stand na {les}")
-    if len(fouten) == eerder:
-        print(f"✓ het project groeit: {aantal} keer een af hoofdstuk op de stand van een latere les goed")
+        taken.append((stap_nalopen, werk, les))
+    return taken
+
+
+def stap_nalopen(werk: Path, les: str) -> int:
+    map_ = uitbreidingen.maak(werk / "standen" / les.replace("/", "_"), tot=les)
+    return alle_goed(map_, af_op(les), f"stand na {les}")
 
 
 def endpoints_in_het_eindproject(werk: Path):
@@ -441,7 +490,47 @@ def endpoints_in_het_eindproject(werk: Path):
         print(f"✓ alle {len(laatste)} endpoints uit de uitbreidingen staan letterlijk in het eindproject")
 
 
+def taak(functie, *args) -> tuple[str, list[str], object]:
+    """Draai één onderdeel: wat het print, zijn eigen fouten en wat het
+    teruggeeft. Met `--processen 1` draait dit in het hoofdproces, dus de
+    fouten van daarvoor gaan even opzij en daarna terug."""
+    # De uitvoer komt pas als de taak klaar is. Hangt er een, dan staat in de
+    # log (stderr komt meteen) welke taken begonnen zijn.
+    # Eén write per regel: met print() kwamen regels van twee processen soms
+    # door elkaar op één regel.
+    sys.stderr.write(" ".join(["…", functie.__name__, *filter(None, map(korte_naam, args))]) + "\n")
+    sys.stderr.flush()
+    eerder = fouten[:]
+    fouten.clear()
+    try:
+        uitvoer = io.StringIO()
+        with contextlib.redirect_stdout(uitvoer):
+            waarde = functie(*args)
+        return uitvoer.getvalue(), list(fouten), waarde
+    finally:
+        fouten[:] = eerder
+
+
+def korte_naam(arg) -> str:
+    if isinstance(arg, Path):
+        # De werkmap zelf zegt niets; een map erin wel (de stand van een les).
+        return "" if arg.name.startswith("controleer-fullstack-") else arg.name
+    if isinstance(arg, bool):
+        return "met openapi" if arg else "zonder openapi"
+    if isinstance(arg, list):
+        return f"({len(arg)} hoofdstukken)"
+    return str(arg)
+
+
+def proef_fout():
+    eis(False, "proef: deze fout hoort terug te komen")
+
+
 def main() -> int:
+    processen = 2 * (os.cpu_count() or 1)
+    if "--processen" in sys.argv:
+        processen = int(sys.argv[sys.argv.index("--processen") + 1])
+
     eis(len(hoofdstukken()) > 0, "geen hoofdstukken gevonden in controleer.py")
     eis(
         {f.hoofdstuk for f in FOUTEN} == set(hoofdstukken()),
@@ -451,13 +540,52 @@ def main() -> int:
         werk = Path(tmp)
         sleutels_bestaan()
         endpoints_in_het_eindproject(werk)
-        zonder_server()
-        for openapi in (True, False):
-            referentie(werk, openapi)
-            kapot(werk, openapi)
-        varianten(werk)
-        randgevallen(werk)
-        standen(werk)
+        voor_de_standen = len(fouten)
+        stand_taken = standen(werk)
+        standen_ok = len(fouten) == voor_de_standen
+        taken = [
+            (eigen_server, werk),
+            (zonder_server,),
+            *((f, werk, openapi) for openapi in (True, False) for f in (referentie, kapot)),
+            (varianten, werk),
+            (randgevallen, werk),
+        ]
+
+        with contextlib.ExitStack() as stapel:
+            if processen > 1:
+                pool = stapel.enter_context(ProcessPoolExecutor(processen))
+                start = lambda t: pool.submit(taak, *t)  # noqa: E731
+                klaar = lambda f: f.result()  # noqa: E731
+            else:
+                start = lambda t: t  # noqa: E731
+                klaar = lambda t: taak(*t)  # noqa: E731
+            # Een fout in een ander proces komt alleen terug als taak() hem
+            # meegeeft. Deze proef moet er precies één opleveren; anders zou
+            # elke fout in een proces stil verdwijnen en dit script groen zijn.
+            proef = start((proef_fout,))
+            lopend = [start(t) for t in taken]
+            stand_lopend = [start(t) for t in stand_taken]
+
+            _, proeffouten, _ = klaar(proef)
+            eis(
+                proeffouten == ["proef: deze fout hoort terug te komen"],
+                f"een fout uit een taak komt niet terug: {proeffouten}",
+            )
+            for f in lopend:
+                uitvoer, nieuw, _ = klaar(f)
+                print(uitvoer, end="")
+                fouten.extend(nieuw)
+            aantal = 0
+            for f in stand_lopend:
+                uitvoer, nieuw, waarde = klaar(f)
+                print(uitvoer, end="")
+                fouten.extend(nieuw)
+                standen_ok = standen_ok and not nieuw
+                aantal += waarde
+        # Alleen de standen tellen hier: een fout in een ander onderdeel liet
+        # eerst ook dit vinkje weg.
+        if standen_ok:
+            print(f"✓ het project groeit: {aantal} keer een af hoofdstuk op de stand van een latere les goed")
     if fouten:
         print(f"\n{len(fouten)} fout(en)")
         return 1

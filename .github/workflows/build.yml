@@ -67,14 +67,13 @@ jobs:
           fetch-depth: 0
           filter: blob:none
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
+      # Geen install en geen store: het plan heeft alleen pnpm nodig (voor
+      # `--filter "...[<base>]"`).
+      - name: Node en pnpm
+        uses: ./.github/actions/node-pnpm
         with:
-          node-version: 22
-          # Deze job installeert niets; zonder pnpm-store faalt de automatische
-          # cache van setup-node v5 in zijn post-stap (Path Validation Error).
-          package-manager-cache: false
+          store: 'false'
+          install: 'false'
 
       - name: Plan
         id: plan
@@ -101,14 +100,15 @@ jobs:
           path: changed.json
           retention-days: 7
 
-  # Aparte, kleine job omdat `build` erop wacht. De nakijker bepaalt wat een
-  # leerling als beoordeling ziet, en een scoringsfout geeft geen foutmelding —
-  # die telt gewoon stil iets verkeerd. Zulke code mag niet gedeployd worden.
+  # Aparte, kleine job omdat `publiceer` erop wacht. De nakijker bepaalt wat
+  # een leerling als beoordeling ziet, en een scoringsfout geeft geen
+  # foutmelding — die telt gewoon stil iets verkeerd. Zulke code mag niet
+  # gedeployd worden. De builds wachten er niet op: die draaien tegelijk, en
+  # alleen het publiceren als `<site>-static` wacht.
   #
   # Bewust niet samen met lint en typecheck in één job: dan zou een tsc-fout in
   # een willekeurige site de artifacts van alle veertien tegenhouden, en zou de
-  # trage typecheck (~30s) elke build vertragen. De installatie hier kost 12s en
-  # loopt parallel aan checks, dus dit kost vrijwel geen doorlooptijd.
+  # trage typecheck (~30s) het publiceren vertragen.
   #
   # Incrementeel: `vitest related` op de gewijzigde code, plus de tests die
   # lestekst of andere bestanden lezen in plaats van importeren (die ziet
@@ -121,12 +121,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
 
       # De stap-voor-stap-opnemer is Python die in de browser in Pyodide draait.
       # Zijn test draait hem tegen een echte CPython, en die hoort dezelfde
@@ -136,9 +132,6 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
       - uses: actions/download-artifact@v6
         with:
@@ -160,8 +153,8 @@ jobs:
   # doet twee dingen: elk blok compileren, en de zeven tussenstanden van het
   # bewegingsscript echt uitvoeren om te zien of ze doen wat de les belooft.
   #
-  # Blokkeert `build` bewust niet: dit gaat over de inhoud van de lessen, niet
-  # over of de site bouwt.
+  # Telt mee voor de verplichte check `build` (zie build-klaar), maar houdt de
+  # artifacts niet tegen: alleen de tests doen dat (zie publiceer).
   #
   # Met --alleen compileert hij alleen de blokken die de wijziging raakt, en
   # slaat hij de gedragstest over van een tussenstand die niet veranderde.
@@ -174,15 +167,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
 
       # v5 draait op Node 24; v4 werd door de runner geforceerd op Node 24 en
       # gaf daar een deprecation-waarschuwing over. Inputs en de cache-hit
@@ -256,8 +242,8 @@ jobs:
   # uitgevoerd — er is geen board in CI. Deze job compileert elk python-blok
   # uit de docs (puur syntactisch, CPython volstaat daarvoor); een typefout of
   # kapot voorbeeld valt zo hier op in plaats van bij een leerling die hem
-  # overtypt. Blokkeert `build` bewust niet: dit gaat over de inhoud van de
-  # lessen, niet over of de site bouwt.
+  # overtypt. Telt mee voor de verplichte check `build` (zie build-klaar),
+  # maar houdt de artifacts niet tegen.
   robotica:
     needs: plan
     if: needs.plan.outputs.robotica == 'true'
@@ -265,15 +251,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
 
       - name: Codeblokken uit de docs halen
         run: pnpm --filter @coderius/robotica-docs lego:extract
@@ -305,15 +284,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
 
       - name: Codeblokken uit de docs halen
         run: pnpm --filter @coderius/fullstack-docs code:extract
@@ -430,10 +402,12 @@ jobs:
   #             er eerst uit; een uitroepteken in print("Klaar!") is geen
   #             stijlfout.
   #
-  # De achterstand uit de migratie is weggewerkt, dus deze job faalt weer op
+  # De achterstand uit de migratie is weggewerkt, dus deze job wordt rood op
   # een onbekend woord of een stijlfout (--streng). Stijlwaarschuwingen tellen
-  # niet mee; die staan als annotatie in de diff. Bewust geen poort voor
-  # `build`: dit gaat over de tekst, niet over of de site bouwt.
+  # niet mee; die staan als annotatie in de diff. Bewust niet blokkerend: hij
+  # telt niet mee voor de verplichte check `build`, dus een spel- of
+  # stijlfout houdt een merge niet tegen. Dat is een keuze van de
+  # opdrachtgever, geen achterstand (ci-poort.test.ts).
   #
   # De regels zelf zijn getest in packages/shared/stijl.test.ts, en die test
   # loopt in de `test`-job wél blokkerend mee. Zo kan een regel niet stilletjes
@@ -450,15 +424,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
 
       - uses: actions/download-artifact@v6
         with:
@@ -514,15 +481,8 @@ jobs:
           fetch-depth: 0
           filter: blob:none
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
 
       - uses: actions/download-artifact@v6
         with:
@@ -554,20 +514,13 @@ jobs:
             fi
           fi
 
+  # Bouwt elke geraakte site, tegelijk met de tests: de bundle heet hier
+  # `<site>-gebouwd`, en pas `publiceer` (na groene tests) zet hem als
+  # `<site>-static` klaar voor de hostingbackend. Eerst wachtte de build op
+  # de tests (een minuut), terwijl alleen het publiceren erop hoeft te wachten.
   build:
-    # Alleen op de tests wachten, niet op lint of typecheck. De hostingbackend
-    # haalt de artifacts namelijk óók op als de run is mislukt (bewust: met
-    # fail-fast:false mag één kapotte site de andere niet blokkeren), dus zonder
-    # deze afhankelijkheid zou een nakijker met rode tests alsnog live gaan.
-    # Raakt de wijziging geen test, dan is `test` overgeslagen en mag de build
-    # gewoon door.
-    #
-    # Lint en typecheck blijven bewust buiten deze poort: die falen op eigen
-    # kracht de run, en zo blijft zichtbaar welke sites nog wél bouwen.
-    needs: [plan, test]
-    if: >-
-      !cancelled() && needs.plan.outputs.build == 'true'
-      && (needs.test.result == 'success' || needs.test.result == 'skipped')
+    needs: plan
+    if: needs.plan.outputs.build == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -580,12 +533,13 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
+      # De install pas na de sleutels (zie hieronder), en zonder de
+      # pnpm-store uit de cache: zie `map` in .github/actions/node-pnpm.
+      - name: Node en pnpm
+        uses: ./.github/actions/node-pnpm
         with:
-          node-version: 22
-          cache: pnpm
+          store: 'false'
+          install: 'false'
 
       # Vóór de install, net als in `voorraad`: zo kan niets wat de install
       # neerzet de sleutel laten verschillen.
@@ -595,8 +549,14 @@ jobs:
           echo "dir=$(node scripts/sites-json.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
           echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
 
+      # Alleen deze site en de workspace-packages waar hij van afhangt; de
+      # andere sites en de gereedschappen van de root (vitest, biome, cspell)
+      # heeft een build niet nodig. De accolades zijn nodig: "./map..." is
+      # voor pnpm alleen de map, zonder packages/shared en zijn letters.
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        env:
+          MAP: ${{ steps.map.outputs.dir }}
+        run: pnpm install --frozen-lockfile --filter "{./$MAP}..."
 
       - name: Build ${{ matrix.site }}
         run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
@@ -610,11 +570,50 @@ jobs:
           path: ${{ steps.map.outputs.dir }}/build
           key: ${{ steps.map.outputs.sleutel }}
 
+      # Nog niet voor de hostingbackend (die pakt `<site>-static`): voor
+      # cross-links en voor `publiceer`. Even lang bewaard als `wijzigingen`:
+      # draait iemand een rode test later opnieuw, dan publiceert `publiceer`
+      # deze bundle alsnog, en die moet er dan nog zijn.
+      - name: Upload gebouwde bundle
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.site }}-gebouwd
+          path: ${{ steps.map.outputs.dir }}/build
+          if-no-files-found: error
+          retention-days: 7
+
+  # De poort voor de hostingbackend. Die haalt `<site>-static` óók op als de
+  # run is mislukt (bewust: met fail-fast:false mag één kapotte site de andere
+  # niet blokkeren), dus een nakijker met rode tests zou zonder deze poort
+  # alsnog live gaan. Hier komt een bundle pas als `<site>-static` als zijn
+  # build en de tests groen zijn; raakt de wijziging geen test, dan is `test`
+  # overgeslagen en mag hij gewoon door.
+  #
+  # Lint en typecheck blijven bewust buiten deze poort: die falen op eigen
+  # kracht de run, en zo blijft zichtbaar welke sites nog wél bouwen.
+  publiceer:
+    needs: [plan, test, build]
+    if: >-
+      !cancelled() && needs.plan.outputs.build == 'true'
+      && (needs.test.result == 'success' || needs.test.result == 'skipped')
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        site: ${{ fromJSON(needs.plan.outputs.sites) }}
+    steps:
+      # Faalde de build van deze site, dan is er geen bundle; de download
+      # faalt dan, en deze site wordt niet gepubliceerd. De andere wel.
+      - uses: actions/download-artifact@v6
+        with:
+          name: ${{ matrix.site }}-gebouwd
+          path: bundle
+
       - name: Upload static bundle
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.site }}-static
-          path: ${{ steps.map.outputs.dir }}/build
+          path: bundle
           if-no-files-found: error
 
   # De sites die deze wijziging niet raakt, voor cross-links: uit de cache van
@@ -632,12 +631,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
+      # pnpm voor site-hash.mjs; de install alleen bij een misser.
+      - name: Node en pnpm
+        uses: ./.github/actions/node-pnpm
         with:
-          node-version: 22
-          cache: pnpm
+          store: 'false'
+          install: 'false'
 
       - name: Map en cache-sleutel van ${{ matrix.site }}
         id: map
@@ -654,7 +653,9 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: pnpm install --frozen-lockfile
+        uses: ./.github/actions/node-pnpm
+        with:
+          map: ${{ steps.map.outputs.dir }}
 
       - name: Build ${{ matrix.site }} (niet in de cache)
         if: steps.cache.outputs.cache-hit != 'true'
@@ -695,17 +696,13 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # Het script heeft geen dependencies, maar setup-node leest `packageManager`
-      # uit package.json en wil pnpm voor zijn cache; zonder deze stap breekt hij
-      # daarop af nog vóór het script draait.
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
+      # Het script heeft geen dependencies: alleen Node, geen pnpm.
+      - name: Node
+        uses: ./.github/actions/node-pnpm
         with:
-          node-version: 22
-          # Deze job installeert niets; zonder pnpm-store faalt de automatische
-          # cache van setup-node v5 in zijn post-stap (Path Validation Error).
-          package-manager-cache: false
+          pnpm: 'false'
+          store: 'false'
+          install: 'false'
 
       # Matcht een patroon precies één artifact, dan pakt download-artifact
       # dat uit in `path` zelf en niet in `path/<naam>`. Een PR die één site
@@ -715,7 +712,7 @@ jobs:
       - uses: actions/download-artifact@v6
         if: needs.plan.outputs.build == 'true'
         with:
-          pattern: '*-static'
+          pattern: '*-gebouwd'
           path: geraakt
 
       - uses: actions/download-artifact@v6
@@ -742,7 +739,7 @@ jobs:
               done
             fi
           }
-          verdeel geraakt "$GERAAKT" -static
+          verdeel geraakt "$GERAAKT" -gebouwd
           verdeel voorraad "${ONGEWIJZIGD:-[]}" -voorraad
           ls builds
 
@@ -759,28 +756,45 @@ jobs:
   # Een job die het plan niet nodig had is `skipped`, en dat telt als geslaagd;
   # `failure` en `cancelled` tellen als mislukt. Wat het plan wél nodig had
   # maar toch is overgeslagen, telt ook als mislukt: dan viel er iets ervoor
-  # om (een rode test houdt de build tegen), en dat mag niet groen ogen.
+  # om (een rode test houdt `publiceer` tegen), en dat mag niet groen ogen.
   build-klaar:
     name: build
     # Ook `checks` (lint + typecheck) telt mee: een tsc-fout houdt de artifacts
     # niet tegen (die job draait los van `build`), maar maakt deze verplichte
-    # check wel rood, zodat hij niet gemerged wordt.
-    needs: [plan, test, build, voorraad, checks, cross-links]
+    # check wel rood, zodat hij niet gemerged wordt. Hetzelfde geldt voor de
+    # blokrunners (de codevoorbeelden in de lessen); eerst telden die niet,
+    # en kon een PR met kapotte voorbeelden groen worden. `tekst` blijft
+    # erbuiten: een spel- of stijlfout mag een merge niet tegenhouden (keuze
+    # van de opdrachtgever; schrijfgids §17).
+    needs: [plan, test, build, publiceer, voorraad, checks, cross-links, godot, robotica, fullstack, play, python, algorithms]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Plan, tests, site-builds, lint, typecheck en cross-site links groen?
+      - name: Plan, tests, codevoorbeelden, site-builds, publiceren, lint, typecheck en cross-site links groen?
         env:
           PLAN: ${{ needs.plan.result }}
           TEST: ${{ needs.test.result }}
           BUILD: ${{ needs.build.result }}
+          PUBLICEER: ${{ needs.publiceer.result }}
           VOORRAAD: ${{ needs.voorraad.result }}
           CHECKS: ${{ needs.checks.result }}
           CROSSLINKS: ${{ needs.cross-links.result }}
+          GODOT: ${{ needs.godot.result }}
+          ROBOTICA: ${{ needs.robotica.result }}
+          FULLSTACK: ${{ needs.fullstack.result }}
+          PLAY: ${{ needs.play.result }}
+          PYTHON: ${{ needs.python.result }}
+          ALGORITHMS: ${{ needs.algorithms.result }}
           NODIG_TEST: ${{ needs.plan.outputs.test }}
           NODIG_BUILD: ${{ needs.plan.outputs.build }}
           NODIG_CHECKS: ${{ needs.plan.outputs.checks }}
           NODIG_CROSSLINKS: ${{ needs.plan.outputs.crosslinks }}
+          NODIG_GODOT: ${{ needs.plan.outputs.godot }}
+          NODIG_ROBOTICA: ${{ needs.plan.outputs.robotica }}
+          NODIG_FULLSTACK: ${{ needs.plan.outputs.fullstack }}
+          NODIG_PLAY: ${{ needs.plan.outputs.play }}
+          NODIG_PYTHON: ${{ needs.plan.outputs.python }}
+          NODIG_ALGORITHMS: ${{ needs.plan.outputs.algorithms }}
         run: |
           fout=0
           # oordeel <job> <resultaat> <nodig volgens het plan>
@@ -800,7 +814,14 @@ jobs:
           oordeel plan "$PLAN" true
           oordeel test "$TEST" "$NODIG_TEST"
           oordeel build "$BUILD" "$NODIG_BUILD"
+          oordeel publiceer "$PUBLICEER" "$NODIG_BUILD"
           oordeel voorraad "$VOORRAAD" false
           oordeel checks "$CHECKS" "$NODIG_CHECKS"
           oordeel cross-links "$CROSSLINKS" "$NODIG_CROSSLINKS"
+          oordeel godot "$GODOT" "$NODIG_GODOT"
+          oordeel robotica "$ROBOTICA" "$NODIG_ROBOTICA"
+          oordeel fullstack "$FULLSTACK" "$NODIG_FULLSTACK"
+          oordeel play "$PLAY" "$NODIG_PLAY"
+          oordeel python "$PYTHON" "$NODIG_PYTHON"
+          oordeel algorithms "$ALGORITHMS" "$NODIG_ALGORITHMS"
           exit $fout

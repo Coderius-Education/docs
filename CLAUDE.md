@@ -61,12 +61,30 @@ CI doet alleen wat een wijziging raakt. De job `plan` draait
 `packages/shared/wijzigingen.js`) en schrijft `changed.json`: per bestand de
 gewijzigde regels, de geraakte sites (pnpm `--filter "...[<base>]"`, dus ook
 sites die van een gewijzigd package afhangen) en welke jobs draaien. De
-build-matrix bevat alleen geraakte sites; `cross-links` haalt de rest uit de
-cache (`scripts/site-hash.mjs`, job `voorraad`). De blokrunners krijgen
+build-matrix bevat alleen geraakte sites, en bouwt tegelijk met de tests:
+een build uploadt `<site>-gebouwd`, en pas de job `publiceer` maakt daar na
+groene tests `<site>-static` van, het artifact dat de hostingbackend ophaalt
+(`packages/shared/ci-poort.test.ts`). Node, pnpm (via corepack) en de
+pnpm-store zet elke job op met `.github/actions/node-pnpm`; een site-build
+installeert alleen zijn eigen site. `cross-links` haalt de rest uit de
+cache (`scripts/site-hash.mjs`, job `voorraad`). Docusaurus bouwt met Rspack
+(Docusaurus Faster, `FASTER` in `packages/shared/config`): koud drie tot
+zeven keer zo snel als webpack, en elke build byte voor byte gelijk. Er is
+dus geen bundler-cache tussen runs (`ci-setup.test.ts`). Twee onderdelen
+staan uit, en een site kan ze niet aanzetten (`createConfig` zet `faster` na
+`...future`): de HTML-minifier van swc laat aanhalingstekens weg, behalve bij
+een waarde met `&` of een spatie, en dan leest `controleer-cross-links.mjs`
+nog maar een deel van de links (752 van de 7343 in robotica). Daarom meldt het
+script elke pagina met een `href` of `src` zonder aanhalingstekens in een echte
+tag als fout, en faalt het als het nergens een link vindt. En de persistente
+cache van Rspack geeft andere chunk-namen dan een koude build. De blokrunners krijgen
 `--alleen changed.json` en doen alleen de blokken op gewijzigde regels plus
 wat erop doorbouwt (`draaien-met`); de tekstcontrole krijgt `--regels`. Een
 globaal bestand (lockfile, root-config, `.github/`, de registry) of de
-nachtelijke run draait alles. Een nieuwe runner of een nieuw bestand dat een
+nachtelijke run draait alles. De verplichte check `build` (job `build-klaar`) wacht
+op elke job die het plan aanzet, ook de blokrunners; alleen `tekst` telt
+bewust niet mee: een spel- of stijlfout mag een merge niet tegenhouden
+(`ci-poort.test.ts`). Een nieuwe runner of een nieuw bestand dat een
 job leest: zet het in `RUNNERS`, `PER_JOB` of `GLOBAAL` in
 `wijzigingen.js`, anders slaat CI hem stil over.
 
@@ -87,8 +105,12 @@ Voor welke browsers de sites gebouwd worden staat in één bestand,
 Zonder dat bestand zette de babel-preset van Docusaurus alles om naar ES5 in
 losse modus, en dan wordt `[...x]` `[].concat(x)`: een Map, Set of string
 wordt een lijst met één element. Dat zie je alleen in de browser, want node
-draait de bron zonder omzetting. `packages/shared/browsers.test.ts` draait de
-preset vanuit elke site en voert het resultaat uit.
+draait de bron zonder omzetting. Sinds Docusaurus Faster vertaalt niet babel
+maar de swc in Rspack (`builtin:swc-loader`) de code, met dezelfde
+browserslist. `packages/shared/browsers.test.ts` bouwt vanuit elke site een
+proefbestand met de vertaler die de build gebruikt (Rspack met de loader en
+de minifier van Docusaurus, of babel als `swcJsLoader` uit staat) en voert
+het resultaat uit.
 
 ## Huisstijl
 

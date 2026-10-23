@@ -1,0 +1,80 @@
+name: Node en pnpm
+description: >-
+  Node uit .nvmrc, pnpm uit package.json via corepack, de pnpm-store uit de cache, en
+  een install. Eén plek voor wat elke job deed met pnpm/action-setup,
+  setup-node en pnpm install.
+
+# Eerst deed elke job pnpm/action-setup (4 tot 8 s: pnpm via npm) en
+# setup-node met `cache: pnpm`. Corepack zit in Node en haalt de pnpm uit
+# `packageManager` in een seconde; de store-cache staat hier zelf, zodat een
+# job zonder install (plan, cross-links) hem niet hoeft op te halen. Een
+# site-build installeert met `map` alleen die site en wat hij nodig heeft.
+
+inputs:
+  pnpm:
+    description: pnpm via corepack aanzetten.
+    default: 'true'
+  store:
+    description: De pnpm-store uit de cache halen (en bij een misser bewaren).
+    default: 'true'
+  install:
+    description: pnpm install --frozen-lockfile draaien.
+    default: 'true'
+  map:
+    description: >-
+      Alleen de site in deze map (bijvoorbeeld `sites/informatica/python`)
+      installeren, met de workspace-packages waar hij van afhangt.
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    # De versie staat in .nvmrc, en alleen daar: site-hash.mjs telt dat
+    # bestand mee in de sleutel van een gebouwde site. Stond hij hier, dan
+    # bleef die sleutel gelijk na een andere Node, en gaf voorraad builds van
+    # de oude Node aan cross-links.
+    - uses: actions/setup-node@v5
+      with:
+        node-version-file: .nvmrc
+        # De store-cache doen we hieronder zelf.
+        package-manager-cache: false
+
+    - name: pnpm via corepack
+      if: inputs.pnpm == 'true'
+      shell: bash
+      env:
+        COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
+      run: |
+        corepack enable
+        echo "pnpm $(pnpm --version)"
+
+    # Niet bij een install van één site (`map`). Die heeft maar een deel van
+    # de store nodig: 322 MB terughalen kostte 8 s, alles downloaden 7 s. En
+    # bewaart zo'n job de store als eerste, dan krijgt elke job daarna een
+    # halve store, tot de lockfile weer verandert (bij een treffer op de
+    # sleutel bewaart actions/cache niets meer).
+    - name: Map van de pnpm-store
+      id: store
+      if: inputs.pnpm == 'true' && inputs.store == 'true' && inputs.map == ''
+      shell: bash
+      run: echo "pad=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+    - name: pnpm-store uit de cache
+      if: inputs.pnpm == 'true' && inputs.store == 'true' && inputs.map == ''
+      uses: actions/cache@v5
+      with:
+        path: ${{ steps.store.outputs.pad }}
+        key: pnpm-store-${{ runner.os }}-${{ hashFiles('.nvmrc') }}-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: pnpm-store-${{ runner.os }}-${{ hashFiles('.nvmrc') }}-
+
+    - name: Install dependencies
+      if: inputs.pnpm == 'true' && inputs.install == 'true'
+      shell: bash
+      env:
+        MAP: ${{ inputs.map }}
+      run: |
+        if [ -n "$MAP" ]; then
+          pnpm install --frozen-lockfile --filter "{./$MAP}..."
+        else
+          pnpm install --frozen-lockfile
+        fi

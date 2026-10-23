@@ -343,14 +343,12 @@ de nummering van één cursus; dat staat daarom per site in een test —
 `sites/informatica/play/src/docs-tests/opdrachten.test.ts` is het voorbeeld, en die draait
 blokkerend mee.
 
-De job is voorlopig niet-blokkerend: de gemigreerde sites hebben nog een
-achterstand van 255 onbekende woorden en 647 stijlmeldingen (227 fouten en 420
-waarschuwingen). De meldingen staan wel als annotatie in de diff van je pull
-request, dus nieuwe tekst valt meteen op. Zodra de achterstand weg is kan
-`continue-on-error` eruit en `--streng` erbij, en tellen de fouten mee.
-
-Eén site staat al op nul fouten: `play`. Gebruik die als maat voor wat haalbaar
-is.
+De achterstand uit de migratie is weggewerkt: elke site staat op nul fouten,
+en de job draait met `--streng`. Een spel- of stijlfout op een gewijzigde regel
+maakt hem dus rood, en de melding staat als annotatie in de diff van je pull
+request. De job telt bewust niet mee voor de verplichte check `build`: een
+spel- of stijlfout houdt een merge niet tegen. Los hem wel op, of markeer een
+terechte uitzondering (zie hieronder).
 
 ### Een terechte uitzondering markeren
 

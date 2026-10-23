@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -11,6 +12,7 @@ import {
   doelVan,
   hrefsUit,
   siteVanHost,
+  zonderAanhalingstekens,
 } from '../../scripts/controleer-cross-links.mjs';
 
 // De cross-links-job in CI is de laatste verdediging tegen kapotte links
@@ -79,6 +81,77 @@ describe('hrefsUit', () => {
         pad: '/python/stap-4-venv',
       },
     ]);
+  });
+});
+
+describe('controleer-cross-links.mjs — geen enkele link is een fout', () => {
+  it('faalt als de builds er wel zijn maar het script er geen link in leest', () => {
+    // Met de html-minifier van swc stond er href=https://… zonder
+    // aanhalingstekens, en vond het script stil geen enkele link meer.
+    const map = mkdtempSync(join(tmpdir(), 'cross-links-leeg-'));
+    try {
+      mkdirSync(join(map, 'editor-static'), { recursive: true });
+      writeFileSync(
+        join(map, 'editor-static', 'index.html'),
+        '<html><body><a href=https://informatica.coderius.nl/python/>x</a></body></html>',
+      );
+      const r = spawnSync('node', ['scripts/controleer-cross-links.mjs', map], {
+        cwd: fileURLToPath(new URL('../..', import.meta.url)),
+        encoding: 'utf8',
+      });
+      expect(r.status).toBe(1);
+      expect(r.stderr).toContain('Geen enkele link gevonden');
+    } finally {
+      rmSync(map, { recursive: true, force: true });
+    }
+  });
+});
+
+// De html-minifier van swc laat aanhalingstekens weg waar het kan, maar niet
+// bij een waarde met & of een spatie. Met die minifier aan vond het script nog
+// honderden links (752 in robotica, tegen 7343 zonder), sloeg het de rest stil
+// over en bleef het groen; de controle op nul links ging niet af. En één site
+// zo viel weg tussen de sites uit de cache, die wel goed gelezen worden.
+describe('zonderAanhalingstekens — wat dit script niet kan lezen, is een fout', () => {
+  it('vindt een adres zonder aanhalingstekens in een echte tag', () => {
+    expect(zonderAanhalingstekens('<a href=/python/docs/a>x</a>')).toEqual(['<a href']);
+    expect(zonderAanhalingstekens('<link rel=preload href=/x.js as=script>')).toEqual([
+      '<link href',
+    ]);
+    expect(zonderAanhalingstekens('<img alt="" src=/img/a.png>')).toEqual(['<img src']);
+  });
+
+  it('laat aangehaalde adressen, codevoorbeelden en scripts met rust', () => {
+    expect(zonderAanhalingstekens('<a href="/a" target=_blank>x</a>')).toEqual([]);
+    expect(zonderAanhalingstekens("<a href='/a'>x</a>")).toEqual([]);
+    // Een codevoorbeeld uit de DVWA-lessen: escaped, dus geen tag.
+    expect(zonderAanhalingstekens('<code>&lt;img src=x onerror=alert(1)&gt;</code>')).toEqual([]);
+    // ` src=` binnen een aangehaalde waarde is geen attribuut.
+    expect(zonderAanhalingstekens('<a title="kijk src=x" href="/a">x</a>')).toEqual([]);
+    expect(zonderAanhalingstekens('<script>const s = "<img src=x>";</script>')).toEqual([]);
+  });
+
+  it('meldt het per pagina, ook als een andere site de links goed heeft', () => {
+    const root = mkdtempSync(join(tmpdir(), 'cross-links-aanhalingstekens-'));
+    try {
+      mkdirSync(join(root, 'editor-static'), { recursive: true });
+      mkdirSync(join(root, 'python-static'), { recursive: true });
+      writeFileSync(
+        join(root, 'editor-static', 'index.html'),
+        '<a href="/editor/?x=1&amp;y=2">ok</a><a href=/python/bestaat-niet/>weg</a>',
+      );
+      writeFileSync(join(root, 'python-static', 'index.html'), '<a href="/python/">ok</a>');
+      const { kapot, gecontroleerd } = controleer(buildsIn(root));
+      expect(gecontroleerd).toBeGreaterThan(0);
+      expect(kapot).toEqual([
+        expect.objectContaining({
+          site: 'editor',
+          reden: expect.stringContaining('zonder aanhalingstekens'),
+        }),
+      ]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });
 
