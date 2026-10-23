@@ -135,6 +135,8 @@ class TestPythonRunner(unittest.TestCase):
         (root / "docs" / "les.md").write_text(LES_PYTHON)
         cls.mod.ROOT = root
         cls.mod.DOCS = root / "docs"
+        # De nep-site heeft alleen docs/, geen hulppagina of andere extra's.
+        cls.mod.SITE = {**cls.mod.SITE, "extra": ()}
         cls.blokken, cls.claims, _ = cls.mod.verzamel()
 
     @classmethod

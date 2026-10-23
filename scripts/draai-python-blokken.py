@@ -146,8 +146,10 @@ SITES = {
         # Pagina's buiten docs/ die net zo goed meldingen en uitvoer beloven.
         # De hulppagina citeerde een TypeError die Python niet zo zegt, en
         # beweerde dat een niet-ingesprongen print één keer print (het is een
-        # IndentationError); niemand liep hem na.
-        "extra": (site_dir("python") / "src" / "pages" / "hulp.mdx",),
+        # IndentationError); niemand liep hem na. Relatief aan de map van de
+        # site, zodat ze meeverhuizen met DOCS (de tests zetten DOCS in een
+        # tijdelijke map). Een pagina die er niet meer is, valt om.
+        "extra": ("src/pages/hulp.mdx",),
         "component": r"<CodeExercise>\{`(?P<oefcode>.*?)`\}</CodeExercise>",
         "component_tag": r"<CodeExercise\b",
         "python_versie": (3, 13),
@@ -527,7 +529,8 @@ def verzamel():
     tag_re = re.compile(SITE["component_tag"])
     fence_weg = re.compile(r"^```.*?^```[^\n]*$", re.S | re.M)
 
-    for pad in sorted(DOCS.rglob("*.mdx")) + sorted(DOCS.rglob("*.md")) + list(SITE.get("extra", ())):
+    extra = [DOCS.parent / p for p in SITE.get("extra", ())]
+    for pad in sorted(DOCS.rglob("*.mdx")) + sorted(DOCS.rglob("*.md")) + extra:
         tekst = pad.read_text()
         bron = pad.relative_to(ROOT)
         bron_pad = bron.as_posix()
