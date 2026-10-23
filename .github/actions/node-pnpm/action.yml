@@ -8,7 +8,7 @@ description: >-
 # setup-node met `cache: pnpm`. Corepack zit in Node en haalt de pnpm uit
 # `packageManager` in een seconde; de store-cache staat hier zelf, zodat een
 # job zonder install (plan, cross-links) hem niet hoeft op te halen. Een
-# site-build installeert met `filter` alleen die site en wat hij nodig heeft.
+# site-build installeert met `map` alleen die site en wat hij nodig heeft.
 
 inputs:
   pnpm:
@@ -20,10 +20,10 @@ inputs:
   install:
     description: pnpm install --frozen-lockfile draaien.
     default: 'true'
-  filter:
+  map:
     description: >-
-      Alleen deze projecten installeren, als pnpm-filter (bijvoorbeeld
-      `./sites/informatica/python...`: de site en zijn workspace-packages).
+      Alleen de site in deze map (bijvoorbeeld `sites/informatica/python`)
+      installeren, met de workspace-packages waar hij van afhangt.
     default: ''
 
 runs:
@@ -62,10 +62,10 @@ runs:
       if: inputs.pnpm == 'true' && inputs.install == 'true'
       shell: bash
       env:
-        FILTER: ${{ inputs.filter }}
+        MAP: ${{ inputs.map }}
       run: |
-        if [ -n "$FILTER" ]; then
-          pnpm install --frozen-lockfile --filter "$FILTER"
+        if [ -n "$MAP" ]; then
+          pnpm install --frozen-lockfile --filter "{./$MAP}..."
         else
           pnpm install --frozen-lockfile
         fi

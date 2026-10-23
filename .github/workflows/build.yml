@@ -547,9 +547,12 @@ jobs:
 
       # Alleen deze site en de workspace-packages waar hij van afhangt; de
       # andere sites en de gereedschappen van de root (vitest, biome, cspell)
-      # heeft een build niet nodig.
+      # heeft een build niet nodig. De accolades zijn nodig: "./map..." is
+      # voor pnpm alleen de map, zonder packages/shared en zijn letters.
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --filter "./${{ steps.map.outputs.dir }}..."
+        env:
+          MAP: ${{ steps.map.outputs.dir }}
+        run: pnpm install --frozen-lockfile --filter "{./$MAP}..."
 
       - name: Build ${{ matrix.site }}
         run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
@@ -646,7 +649,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         uses: ./.github/actions/node-pnpm
         with:
-          filter: ./${{ steps.map.outputs.dir }}...
+          map: ${{ steps.map.outputs.dir }}
 
       - name: Build ${{ matrix.site }} (niet in de cache)
         if: steps.cache.outputs.cache-hit != 'true'

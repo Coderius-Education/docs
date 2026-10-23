@@ -1,10 +1,15 @@
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 // Hoe build.yml Node en pnpm opzet. De stappen van een job worden als tekst
 // gelezen, zonder YAML-parser, net als in ci-poort.test.ts.
 
 type Stap = { tekst: string; name: string; uses: string; if: string };
+
+const ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
 const workflow = readFileSync(
   new URL('../../.github/workflows/build.yml', import.meta.url),
@@ -85,17 +90,40 @@ describe('Node en pnpm via .github/actions/node-pnpm', () => {
     expect(actie).toMatch(
       /key: pnpm-store-\$\{\{ runner\.os \}\}-node22-\$\{\{ hashFiles\('pnpm-lock\.yaml'\) \}\}/,
     );
-    expect(actie).toContain('pnpm install --frozen-lockfile --filter "$FILTER"');
   });
 
-  it('een site-build installeert alleen die site en zijn packages', () => {
+  // Eerst stond er --filter "./<map>...". Voor pnpm is dat alleen de map,
+  // zonder de workspace-packages ervan: elke site-build viel om op de letters
+  // van packages/shared. Daarom laat deze test pnpm zelf kiezen.
+  it('een site-build installeert de site en elk workspace-package dat hij gebruikt', () => {
     const s = stappen('build');
-    expect(s[plek(s, 'Install dependencies')].tekst).toContain(
-      'pnpm install --frozen-lockfile --filter "./${{ steps.map.outputs.dir }}..."',
-    );
+    const install = s[plek(s, 'Install dependencies')].tekst;
+    expect(install).toContain('MAP: ${{ steps.map.outputs.dir }}');
+    const inBuild = install.match(/pnpm install --frozen-lockfile --filter "([^"]+)"/)?.[1];
+    const inActie = actie.match(/pnpm install --frozen-lockfile --filter "([^"]+)"/)?.[1];
+    expect(inBuild).toBe('{./$MAP}...');
+    expect(inActie).toBe(inBuild);
     const v = stappen('voorraad');
-    expect(v[plek(v, 'Install dependencies')].tekst).toContain(
-      'filter: ./${{ steps.map.outputs.dir }}...',
-    );
-  });
+    expect(v[plek(v, 'Install dependencies')].tekst).toContain('map: ${{ steps.map.outputs.dir }}');
+
+    for (const id of ['python', 'ctf', 'fullstack', 'home']) {
+      const map = execFileSync('node', ['scripts/sites-json.mjs', id], {
+        cwd: ROOT,
+        encoding: 'utf8',
+      }).trim();
+      const filter = (inBuild ?? '').replace('$MAP', map);
+      const gekozen = JSON.parse(
+        execFileSync('pnpm', ['list', '--json', '--depth', '-1', '--filter', filter], {
+          cwd: ROOT,
+          encoding: 'utf8',
+        }),
+      ).map((p: { name: string }) => p.name);
+      const pakket = JSON.parse(readFileSync(join(ROOT, map, 'package.json'), 'utf8'));
+      const workspace = Object.entries({ ...pakket.dependencies, ...pakket.devDependencies })
+        .filter(([, versie]) => String(versie).startsWith('workspace:'))
+        .map(([naam]) => naam);
+      expect(workspace, id).toContain('@coderius/shared');
+      for (const naam of [pakket.name, ...workspace]) expect(gekozen, id).toContain(naam);
+    }
+  }, 30_000);
 });
