@@ -50,7 +50,7 @@ function draai(opzet: Record<string, string[]>, geraakt: string[], ongewijzigd: 
 
 describe('cross-links: één map per site', () => {
   it('download-artifact krijgt per patroon een eigen map, niet builds/', () => {
-    expect(workflow).toMatch(/pattern: '\*-static'\n\s+path: geraakt/);
+    expect(workflow).toMatch(/pattern: '\*-gebouwd'\n\s+path: geraakt/);
     expect(workflow).toMatch(/pattern: '\*-voorraad'\n\s+path: voorraad/);
   });
 
@@ -69,7 +69,7 @@ describe('cross-links: één map per site', () => {
 
   it('één ongewijzigde site, los uitgepakt, ook', () => {
     const uit = draai(
-      { 'geraakt/p-static': ['i'], 'geraakt/q-static': ['j'], voorraad: ['index.html'] },
+      { 'geraakt/p-gebouwd': ['i'], 'geraakt/q-gebouwd': ['j'], voorraad: ['index.html'] },
       ['p', 'q'],
       ['r'],
     );
@@ -77,7 +77,7 @@ describe('cross-links: één map per site', () => {
   });
 
   it('zonder voorraad blijft het bij de geraakte sites', () => {
-    const uit = draai({ 'geraakt/p-static': ['i'], 'geraakt/q-static': ['j'] }, ['p', 'q'], []);
+    const uit = draai({ 'geraakt/p-gebouwd': ['i'], 'geraakt/q-gebouwd': ['j'] }, ['p', 'q'], []);
     expect(uit).toEqual({ 'p-static': ['i'], 'q-static': ['j'] });
   });
 });

@@ -67,14 +67,13 @@ jobs:
           fetch-depth: 0
           filter: blob:none
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
+      # Geen install en geen store: het plan heeft alleen pnpm nodig (voor
+      # `--filter "...[<base>]"`).
+      - name: Node en pnpm
+        uses: ./.github/actions/node-pnpm
         with:
-          node-version: 22
-          # Deze job installeert niets; zonder pnpm-store faalt de automatische
-          # cache van setup-node v5 in zijn post-stap (Path Validation Error).
-          package-manager-cache: false
+          store: 'false'
+          install: 'false'
 
       - name: Plan
         id: plan
@@ -101,14 +100,15 @@ jobs:
           path: changed.json
           retention-days: 7
 
-  # Aparte, kleine job omdat `build` erop wacht. De nakijker bepaalt wat een
-  # leerling als beoordeling ziet, en een scoringsfout geeft geen foutmelding —
-  # die telt gewoon stil iets verkeerd. Zulke code mag niet gedeployd worden.
+  # Aparte, kleine job omdat `publiceer` erop wacht. De nakijker bepaalt wat
+  # een leerling als beoordeling ziet, en een scoringsfout geeft geen
+  # foutmelding — die telt gewoon stil iets verkeerd. Zulke code mag niet
+  # gedeployd worden. De builds wachten er niet op: die draaien tegelijk, en
+  # alleen het publiceren als `<site>-static` wacht.
   #
   # Bewust niet samen met lint en typecheck in één job: dan zou een tsc-fout in
   # een willekeurige site de artifacts van alle veertien tegenhouden, en zou de
-  # trage typecheck (~30s) elke build vertragen. De installatie hier kost 12s en
-  # loopt parallel aan checks, dus dit kost vrijwel geen doorlooptijd.
+  # trage typecheck (~30s) het publiceren vertragen.
   #
   # Incrementeel: `vitest related` op de gewijzigde code, plus de tests die
   # lestekst of andere bestanden lezen in plaats van importeren (die ziet
@@ -121,12 +121,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
 
       # De stap-voor-stap-opnemer is Python die in de browser in Pyodide draait.
       # Zijn test draait hem tegen een echte CPython, en die hoort dezelfde
@@ -136,9 +132,6 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
       - uses: actions/download-artifact@v6
         with:
@@ -174,15 +167,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
 
       # v5 draait op Node 24; v4 werd door de runner geforceerd op Node 24 en
       # gaf daar een deprecation-waarschuwing over. Inputs en de cache-hit
@@ -265,15 +251,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
 
       - name: Codeblokken uit de docs halen
         run: pnpm --filter @coderius/robotica-docs lego:extract
@@ -305,15 +284,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
 
       - name: Codeblokken uit de docs halen
         run: pnpm --filter @coderius/fullstack-docs code:extract
@@ -450,15 +422,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
 
       - uses: actions/download-artifact@v6
         with:
@@ -514,15 +479,8 @@ jobs:
           fetch-depth: 0
           filter: blob:none
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
 
       - uses: actions/download-artifact@v6
         with:
@@ -554,26 +512,14 @@ jobs:
             fi
           fi
 
+  # Bouwt elke geraakte site, tegelijk met de tests: de bundle heet hier
+  # `<site>-gebouwd`, en pas `publiceer` (na groene tests) zet hem als
+  # `<site>-static` klaar voor de hostingbackend. Eerst wachtte de build op
+  # de tests (een minuut), terwijl alleen het publiceren erop hoeft te wachten.
   build:
-    # Alleen op de tests wachten, niet op lint of typecheck. De hostingbackend
-    # haalt de artifacts namelijk óók op als de run is mislukt (bewust: met
-    # fail-fast:false mag één kapotte site de andere niet blokkeren), dus zonder
-    # deze afhankelijkheid zou een nakijker met rode tests alsnog live gaan.
-    # Raakt de wijziging geen test, dan is `test` overgeslagen en mag de build
-    # gewoon door.
-    #
-    # Lint en typecheck blijven bewust buiten deze poort: die falen op eigen
-    # kracht de run, en zo blijft zichtbaar welke sites nog wél bouwen.
-    needs: [plan, test]
-    if: >-
-      !cancelled() && needs.plan.outputs.build == 'true'
-      && (needs.test.result == 'success' || needs.test.result == 'skipped')
+    needs: plan
+    if: needs.plan.outputs.build == 'true'
     runs-on: ubuntu-latest
-    # actions: write voor het opruimen van oude webpack-caches (alleen op
-    # main; op een PR uit een fork is het token toch alleen-lezen).
-    permissions:
-      contents: read
-      actions: write
     strategy:
       fail-fast: false
       matrix:
@@ -585,90 +531,28 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
+      # De store hier al, de install pas na de sleutels (zie hieronder).
+      - name: Node en pnpm
+        uses: ./.github/actions/node-pnpm
         with:
-          node-version: 22
-          cache: pnpm
+          install: 'false'
 
       # Vóór de install, net als in `voorraad`: zo kan niets wat de install
       # neerzet de sleutel laten verschillen.
-      # Eén keer site-hash.mjs voor beide sleutels: de gebouwde site en de
-      # webpack-cache. `docusaurus` is false voor een site die met iets anders
-      # bouwt (home: Vite); die heeft geen webpack-cache.
-      - name: Map en cache-sleutels van ${{ matrix.site }}
+      - name: Map en cache-sleutel van ${{ matrix.site }}
         id: map
         run: |
-          set -euo pipefail
-          dir=$(node scripts/sites-json.mjs ${{ matrix.site }})
-          eval "$(node scripts/site-hash.mjs ${{ matrix.site }} --sleutels)"
-          {
-            echo "dir=$dir"
-            echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$sitehash"
-            echo "webpack=webpack-${{ runner.os }}-${{ matrix.site }}-node$(node -p process.versions.node)-$omgevinghash"
-            echo "webpack-prefix=webpack-${{ runner.os }}-${{ matrix.site }}-node"
-            echo "docusaurus=$(node -p "/^docusaurus /.test(require('./$dir/package.json').scripts.build)")"
-          } >> "$GITHUB_OUTPUT"
+          echo "dir=$(node scripts/sites-json.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
+          echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
 
+      # Alleen deze site en de workspace-packages waar hij van afhangt; de
+      # andere sites en de gereedschappen van de root (vitest, biome, cspell)
+      # heeft een build niet nodig.
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      # De webpack-cache van Docusaurus maakt een build drie tot vier keer zo
-      # snel (robotica 70 s koud, 19 s warm), met dezelfde bestanden als een
-      # koude build. Webpack vertaalt elke module opnieuw waarvan de inhoud
-      # veranderde, maar ziet een gewijzigde plugin of config niet; daarom is
-      # de sleutel de bouwomgeving (scripts/site-hash.mjs, zie daar), zonder
-      # terugval op een andere omgeving. Na de install, want die maakt
-      # node_modules van de site.
-      #
-      # Een volledige run (nacht, handmatig, een globaal bestand) bouwt koud:
-      # zo staat er elke nacht een build zonder cache naast. Hij kijkt alleen
-      # of de cache al bestaat (lookup-only), om te weten of hij hem moet
-      # bewaren.
-      - name: Webpack-cache van ${{ matrix.site }}
-        id: webpack
-        if: steps.map.outputs.docusaurus == 'true'
-        uses: actions/cache/restore@v5
-        with:
-          path: ${{ steps.map.outputs.dir }}/node_modules/.cache/webpack
-          key: ${{ steps.map.outputs.webpack }}
-          lookup-only: ${{ needs.plan.outputs.volledig == 'true' }}
+        run: pnpm install --frozen-lockfile --filter "./${{ steps.map.outputs.dir }}..."
 
       - name: Build ${{ matrix.site }}
         run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
-
-      # Eén cache per site en bouwomgeving, alleen op main (ook niet bij een
-      # handmatige run op een branch): een PR leest die van main, en bewaart
-      # zelf niets (een PR-cache is alleen voor die PR,
-      # en een PR die packages raakt, zou per push GB's bewaren). Bestaat de
-      # sleutel al, dan niets; een nieuwe sleutel ruimt de oude van deze site
-      # op, zodat de webpack-caches de gebouwde sites en de pnpm-store niet
-      # uit de 10 GB van de repo drukken.
-      - name: Webpack-cache bewaren
-        id: bewaren
-        if: >-
-          steps.map.outputs.docusaurus == 'true' && github.ref == 'refs/heads/main'
-          && github.event_name != 'pull_request' && steps.webpack.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v5
-        with:
-          path: ${{ steps.map.outputs.dir }}/node_modules/.cache/webpack
-          key: ${{ steps.map.outputs.webpack }}
-
-      - name: Oude webpack-caches van ${{ matrix.site }} weg
-        if: steps.bewaren.outcome == 'success'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PREFIX: ${{ steps.map.outputs.webpack-prefix }}
-          HUIDIG: ${{ steps.map.outputs.webpack }}
-        run: |
-          set -euo pipefail
-          gh cache list --repo "$GITHUB_REPOSITORY" --key "$PREFIX" --limit 100 --json key --jq '.[].key' \
-            | { grep -vxF "$HUIDIG" || true; } \
-            | while read -r oud; do
-                echo "weg: $oud"
-                gh cache delete --repo "$GITHUB_REPOSITORY" "$oud"
-              done
 
       # Voor cross-links in een latere run waarin deze site niet verandert. De
       # sleutel is een hash van alles waar de build van afhangt
@@ -679,11 +563,48 @@ jobs:
           path: ${{ steps.map.outputs.dir }}/build
           key: ${{ steps.map.outputs.sleutel }}
 
+      # Nog niet voor de hostingbackend (die pakt `<site>-static`): voor
+      # cross-links en voor `publiceer`. Kort bewaard, net als de voorraad.
+      - name: Upload gebouwde bundle
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.site }}-gebouwd
+          path: ${{ steps.map.outputs.dir }}/build
+          if-no-files-found: error
+          retention-days: 1
+
+  # De poort voor de hostingbackend. Die haalt `<site>-static` óók op als de
+  # run is mislukt (bewust: met fail-fast:false mag één kapotte site de andere
+  # niet blokkeren), dus een nakijker met rode tests zou zonder deze poort
+  # alsnog live gaan. Hier komt een bundle pas als `<site>-static` als zijn
+  # build en de tests groen zijn; raakt de wijziging geen test, dan is `test`
+  # overgeslagen en mag hij gewoon door.
+  #
+  # Lint en typecheck blijven bewust buiten deze poort: die falen op eigen
+  # kracht de run, en zo blijft zichtbaar welke sites nog wél bouwen.
+  publiceer:
+    needs: [plan, test, build]
+    if: >-
+      !cancelled() && needs.plan.outputs.build == 'true'
+      && (needs.test.result == 'success' || needs.test.result == 'skipped')
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        site: ${{ fromJSON(needs.plan.outputs.sites) }}
+    steps:
+      # Faalde de build van deze site, dan is er geen bundle; de download
+      # faalt dan, en deze site wordt niet gepubliceerd. De andere wel.
+      - uses: actions/download-artifact@v6
+        with:
+          name: ${{ matrix.site }}-gebouwd
+          path: bundle
+
       - name: Upload static bundle
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.site }}-static
-          path: ${{ steps.map.outputs.dir }}/build
+          path: bundle
           if-no-files-found: error
 
   # De sites die deze wijziging niet raakt, voor cross-links: uit de cache van
@@ -701,29 +622,18 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
+      # pnpm voor site-hash.mjs; de store en de install alleen bij een misser.
+      - name: Node en pnpm
+        uses: ./.github/actions/node-pnpm
         with:
-          node-version: 22
-          cache: pnpm
+          store: 'false'
+          install: 'false'
 
-      # Eén keer site-hash.mjs voor beide sleutels: de gebouwde site en de
-      # webpack-cache. `docusaurus` is false voor een site die met iets anders
-      # bouwt (home: Vite); die heeft geen webpack-cache.
-      - name: Map en cache-sleutels van ${{ matrix.site }}
+      - name: Map en cache-sleutel van ${{ matrix.site }}
         id: map
         run: |
-          set -euo pipefail
-          dir=$(node scripts/sites-json.mjs ${{ matrix.site }})
-          eval "$(node scripts/site-hash.mjs ${{ matrix.site }} --sleutels)"
-          {
-            echo "dir=$dir"
-            echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$sitehash"
-            echo "webpack=webpack-${{ runner.os }}-${{ matrix.site }}-node$(node -p process.versions.node)-$omgevinghash"
-            echo "webpack-prefix=webpack-${{ runner.os }}-${{ matrix.site }}-node"
-            echo "docusaurus=$(node -p "/^docusaurus /.test(require('./$dir/package.json').scripts.build)")"
-          } >> "$GITHUB_OUTPUT"
+          echo "dir=$(node scripts/sites-json.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
+          echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
 
       - name: Uit de cache
         id: cache
@@ -734,16 +644,9 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: pnpm install --frozen-lockfile
-
-      # Zoals in `build`: alleen de webpack-cache terug, niet bewaren; deze
-      # site verandert in deze run niet.
-      - name: Webpack-cache van ${{ matrix.site }}
-        if: steps.cache.outputs.cache-hit != 'true' && steps.map.outputs.docusaurus == 'true'
-        uses: actions/cache/restore@v5
+        uses: ./.github/actions/node-pnpm
         with:
-          path: ${{ steps.map.outputs.dir }}/node_modules/.cache/webpack
-          key: ${{ steps.map.outputs.webpack }}
+          filter: ./${{ steps.map.outputs.dir }}...
 
       - name: Build ${{ matrix.site }} (niet in de cache)
         if: steps.cache.outputs.cache-hit != 'true'
@@ -784,17 +687,13 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # Het script heeft geen dependencies, maar setup-node leest `packageManager`
-      # uit package.json en wil pnpm voor zijn cache; zonder deze stap breekt hij
-      # daarop af nog vóór het script draait.
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v5
+      # Het script heeft geen dependencies: alleen Node, geen pnpm.
+      - name: Node
+        uses: ./.github/actions/node-pnpm
         with:
-          node-version: 22
-          # Deze job installeert niets; zonder pnpm-store faalt de automatische
-          # cache van setup-node v5 in zijn post-stap (Path Validation Error).
-          package-manager-cache: false
+          pnpm: 'false'
+          store: 'false'
+          install: 'false'
 
       # Matcht een patroon precies één artifact, dan pakt download-artifact
       # dat uit in `path` zelf en niet in `path/<naam>`. Een PR die één site
@@ -804,7 +703,7 @@ jobs:
       - uses: actions/download-artifact@v6
         if: needs.plan.outputs.build == 'true'
         with:
-          pattern: '*-static'
+          pattern: '*-gebouwd'
           path: geraakt
 
       - uses: actions/download-artifact@v6
@@ -831,7 +730,7 @@ jobs:
               done
             fi
           }
-          verdeel geraakt "$GERAAKT" -static
+          verdeel geraakt "$GERAAKT" -gebouwd
           verdeel voorraad "${ONGEWIJZIGD:-[]}" -voorraad
           ls builds
 
@@ -854,15 +753,16 @@ jobs:
     # Ook `checks` (lint + typecheck) telt mee: een tsc-fout houdt de artifacts
     # niet tegen (die job draait los van `build`), maar maakt deze verplichte
     # check wel rood, zodat hij niet gemerged wordt.
-    needs: [plan, test, build, voorraad, checks, cross-links]
+    needs: [plan, test, build, publiceer, voorraad, checks, cross-links]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Plan, tests, site-builds, lint, typecheck en cross-site links groen?
+      - name: Plan, tests, site-builds, publiceren, lint, typecheck en cross-site links groen?
         env:
           PLAN: ${{ needs.plan.result }}
           TEST: ${{ needs.test.result }}
           BUILD: ${{ needs.build.result }}
+          PUBLICEER: ${{ needs.publiceer.result }}
           VOORRAAD: ${{ needs.voorraad.result }}
           CHECKS: ${{ needs.checks.result }}
           CROSSLINKS: ${{ needs.cross-links.result }}
@@ -889,6 +789,7 @@ jobs:
           oordeel plan "$PLAN" true
           oordeel test "$TEST" "$NODIG_TEST"
           oordeel build "$BUILD" "$NODIG_BUILD"
+          oordeel publiceer "$PUBLICEER" "$NODIG_BUILD"
           oordeel voorraad "$VOORRAAD" false
           oordeel checks "$CHECKS" "$NODIG_CHECKS"
           oordeel cross-links "$CROSSLINKS" "$NODIG_CROSSLINKS"

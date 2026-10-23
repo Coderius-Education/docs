@@ -61,17 +61,20 @@ CI doet alleen wat een wijziging raakt. De job `plan` draait
 `packages/shared/wijzigingen.js`) en schrijft `changed.json`: per bestand de
 gewijzigde regels, de geraakte sites (pnpm `--filter "...[<base>]"`, dus ook
 sites die van een gewijzigd package afhangen) en welke jobs draaien. De
-build-matrix bevat alleen geraakte sites; `cross-links` haalt de rest uit de
-cache (`scripts/site-hash.mjs`, job `voorraad`). Elke Docusaurus-build krijgt de
-webpack-cache terug (home bouwt met Vite en niet): drie tot vier keer zo snel,
-met dezelfde bestanden als een koude build. Webpack controleert de inhoud van
-elke module zelf, maar ziet een gewijzigde plugin of config niet (nagemeten: 0
-van 248 pagina's met de nieuwe link). De sleutel is daarom de bouwomgeving,
-`site-hash.mjs --omgeving`: de .js/.mjs/.cjs/.ts-code die Node laadt plus de
-root-config; een les, component, stijl of `_category_.json` telt niet. Eén
-cache per site en omgeving, alleen bewaard op main, en een nieuwe ruimt de oude
-op; een volledige run bouwt koud. `packages/shared/ci-cache.test.ts` en
-`site-hash.test.ts` bewaken de stappen en de sleutel. De blokrunners krijgen
+build-matrix bevat alleen geraakte sites, en bouwt tegelijk met de tests:
+een build uploadt `<site>-gebouwd`, en pas de job `publiceer` maakt daar na
+groene tests `<site>-static` van, het artifact dat de hostingbackend ophaalt
+(`packages/shared/ci-poort.test.ts`). Node, pnpm (via corepack) en de
+pnpm-store zet elke job op met `.github/actions/node-pnpm`; een site-build
+installeert alleen zijn eigen site. `cross-links` haalt de rest uit de
+cache (`scripts/site-hash.mjs`, job `voorraad`). Docusaurus bouwt met Rspack
+(Docusaurus Faster, `FASTER` in `packages/shared/config`): koud drie tot
+zeven keer zo snel als webpack, en elke build byte voor byte gelijk. Er is
+dus geen bundler-cache tussen runs (`ci-setup.test.ts`). Twee onderdelen
+staan uit: de HTML-minifier van swc laat aanhalingstekens weg, en dan leest
+`controleer-cross-links.mjs` geen enkele `href="…"` meer; vindt die nul links,
+dan faalt hij. En de persistente cache van Rspack geeft andere chunk-namen dan
+een koude build. De blokrunners krijgen
 `--alleen changed.json` en doen alleen de blokken op gewijzigde regels plus
 wat erop doorbouwt (`draaien-met`); de tekstcontrole krijgt `--regels`. Een
 globaal bestand (lockfile, root-config, `.github/`, de registry) of de
