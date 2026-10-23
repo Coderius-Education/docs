@@ -166,24 +166,6 @@ function withSiteLinks(presets, plugins, siteId) {
 }
 
 /**
- * Bouwt een volledige Docusaurus-config uit de site-specifieke onderdelen plus
- * de gedeelde standaarden. Wat een site meegeeft wint; de factory zorgt voor:
- *  - gedeelde brand-assets via staticDirectories (img/merk/: merk, tegel en
- *    woordmerk per cursus, gegenereerd uit huisstijl/)
- *  - navbar-merk, naam en favicon van de cursus uit de huisstijl
- *  - gedeelde merk-CSS vóór de site-CSS
- *  - de CC BY-NC 4.0 copyright als de footer er geen heeft
- *  - transpilatie van @coderius/* workspace-componenten
- *  - static-mappen van sharedPackages worden automatisch mee-geserveerd
- *  - sensible defaults (i18n nl, onBrokenLinks throw, future.v4, prism-thema)
- *
- * Handige extra's: geef `description`/`keywords` mee i.p.v. zelf headTags te
- * schrijven, en `omleidingen` ([{ van, naar }]) als een les verhuist: op elk
- * oud adres komt dan na de build een pagina die doorstuurt. Bewaarde de
- * cursus op zijn oude subdomein iets in de browser, geef dan `oudeOpslag` mee
- * (zie oude-opslag.js): de leerling kan dat werk dan overzetten.
- */
-/**
  * Docusaurus Faster, op twee onderdelen na:
  *  - swcHtmlMinimizer: die laat aanhalingstekens weg (`href=/python/…`), en
  *    de CI-controle op links tussen cursussen (controleer-cross-links.mjs)
@@ -206,6 +188,24 @@ const FASTER = {
   ssgWorkerThreads: true,
 };
 
+/**
+ * Bouwt een volledige Docusaurus-config uit de site-specifieke onderdelen plus
+ * de gedeelde standaarden. Wat een site meegeeft wint; de factory zorgt voor:
+ *  - gedeelde brand-assets via staticDirectories (img/merk/: merk, tegel en
+ *    woordmerk per cursus, gegenereerd uit huisstijl/)
+ *  - navbar-merk, naam en favicon van de cursus uit de huisstijl
+ *  - gedeelde merk-CSS vóór de site-CSS
+ *  - de CC BY-NC 4.0 copyright als de footer er geen heeft
+ *  - transpilatie van @coderius/* workspace-componenten
+ *  - static-mappen van sharedPackages worden automatisch mee-geserveerd
+ *  - sensible defaults (i18n nl, onBrokenLinks throw, future.v4, prism-thema)
+ *
+ * Handige extra's: geef `description`/`keywords` mee i.p.v. zelf headTags te
+ * schrijven, en `omleidingen` ([{ van, naar }]) als een les verhuist: op elk
+ * oud adres komt dan na de build een pagina die doorstuurt. Bewaarde de
+ * cursus op zijn oude subdomein iets in de browser, geef dan `oudeOpslag` mee
+ * (zie oude-opslag.js): de leerling kan dat werk dan overzetten.
+ */
 function createConfig(course = {}) {
   const managed = loadSettings(process.cwd());
   const site = managed ? applySettings(course, managed, process.cwd()) : course;
