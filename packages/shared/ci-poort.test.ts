@@ -53,7 +53,40 @@ describe('de poort naar de hostingbackend', () => {
 
   it('de verplichte check build telt publiceer mee, als de build nodig was', () => {
     const klaar = job('build-klaar');
-    expect(klaar).toContain('needs: [plan, test, build, publiceer, voorraad, checks, cross-links]');
+    expect(klaar).toMatch(
+      /^ {4}needs: \[plan, test, build, publiceer, voorraad, checks, cross-links[,\]]/m,
+    );
     expect(klaar).toContain('oordeel publiceer "$PUBLICEER" "$NODIG_BUILD"');
+  });
+});
+
+// De blokrunners (godot, fullstack, python, …) draaien de codevoorbeelden uit
+// de lessen. Ze telden eerst niet mee voor de verplichte check build: een PR
+// met kapotte voorbeelden werd groen, en nu de builds niet meer op de tests
+// wachten was build zelfs groen terwijl fullstack nog liep.
+describe('de verplichte check build', () => {
+  const ANDERS: Record<string, string> = {
+    tekst: 'nog niet-blokkerend (schrijfgids §17)',
+    voorraad: 'vult alleen de cache; cross-links oordeelt over wat hij oplevert',
+  };
+
+  it('telt elke job die het plan aanzet, met het plan als maat voor overgeslagen', () => {
+    const klaar = job('build-klaar');
+    const needs = klaar.match(/^ {4}needs: \[(.+)\]$/m)?.[1].split(', ') ?? [];
+    const doorPlan = [
+      ...workflow.matchAll(
+        /\n {2}([a-z-]+):\n {4}needs: plan\n {4}if: needs\.plan\.outputs\.([a-z]+) == 'true'/g,
+      ),
+    ].filter(([, naam]) => !(naam in ANDERS));
+    expect(doorPlan.map(([, naam]) => naam)).toEqual(
+      expect.arrayContaining(['godot', 'robotica', 'fullstack', 'play', 'python', 'algorithms']),
+    );
+    for (const [, naam, uitvoer] of doorPlan) {
+      const groot = naam.toUpperCase().replace(/-/g, '');
+      expect(needs, naam).toContain(naam);
+      expect(klaar, naam).toContain(`${groot}: \${{ needs.${naam}.result }}`);
+      expect(klaar, naam).toContain(`NODIG_${groot}: \${{ needs.plan.outputs.${uitvoer} }}`);
+      expect(klaar, naam).toContain(`oordeel ${naam} "$${groot}" "$NODIG_${groot}"`);
+    }
   });
 });

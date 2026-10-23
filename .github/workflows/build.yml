@@ -755,12 +755,15 @@ jobs:
     name: build
     # Ook `checks` (lint + typecheck) telt mee: een tsc-fout houdt de artifacts
     # niet tegen (die job draait los van `build`), maar maakt deze verplichte
-    # check wel rood, zodat hij niet gemerged wordt.
-    needs: [plan, test, build, publiceer, voorraad, checks, cross-links]
+    # check wel rood, zodat hij niet gemerged wordt. Hetzelfde geldt voor de
+    # blokrunners (de codevoorbeelden in de lessen); eerst telden die niet,
+    # en kon een PR met kapotte voorbeelden groen worden. `tekst` blijft
+    # erbuiten: die is nog niet-blokkerend (schrijfgids §17).
+    needs: [plan, test, build, publiceer, voorraad, checks, cross-links, godot, robotica, fullstack, play, python, algorithms]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Plan, tests, site-builds, publiceren, lint, typecheck en cross-site links groen?
+      - name: Plan, tests, codevoorbeelden, site-builds, publiceren, lint, typecheck en cross-site links groen?
         env:
           PLAN: ${{ needs.plan.result }}
           TEST: ${{ needs.test.result }}
@@ -769,10 +772,22 @@ jobs:
           VOORRAAD: ${{ needs.voorraad.result }}
           CHECKS: ${{ needs.checks.result }}
           CROSSLINKS: ${{ needs.cross-links.result }}
+          GODOT: ${{ needs.godot.result }}
+          ROBOTICA: ${{ needs.robotica.result }}
+          FULLSTACK: ${{ needs.fullstack.result }}
+          PLAY: ${{ needs.play.result }}
+          PYTHON: ${{ needs.python.result }}
+          ALGORITHMS: ${{ needs.algorithms.result }}
           NODIG_TEST: ${{ needs.plan.outputs.test }}
           NODIG_BUILD: ${{ needs.plan.outputs.build }}
           NODIG_CHECKS: ${{ needs.plan.outputs.checks }}
           NODIG_CROSSLINKS: ${{ needs.plan.outputs.crosslinks }}
+          NODIG_GODOT: ${{ needs.plan.outputs.godot }}
+          NODIG_ROBOTICA: ${{ needs.plan.outputs.robotica }}
+          NODIG_FULLSTACK: ${{ needs.plan.outputs.fullstack }}
+          NODIG_PLAY: ${{ needs.plan.outputs.play }}
+          NODIG_PYTHON: ${{ needs.plan.outputs.python }}
+          NODIG_ALGORITHMS: ${{ needs.plan.outputs.algorithms }}
         run: |
           fout=0
           # oordeel <job> <resultaat> <nodig volgens het plan>
@@ -796,4 +811,10 @@ jobs:
           oordeel voorraad "$VOORRAAD" false
           oordeel checks "$CHECKS" "$NODIG_CHECKS"
           oordeel cross-links "$CROSSLINKS" "$NODIG_CROSSLINKS"
+          oordeel godot "$GODOT" "$NODIG_GODOT"
+          oordeel robotica "$ROBOTICA" "$NODIG_ROBOTICA"
+          oordeel fullstack "$FULLSTACK" "$NODIG_FULLSTACK"
+          oordeel play "$PLAY" "$NODIG_PLAY"
+          oordeel python "$PYTHON" "$NODIG_PYTHON"
+          oordeel algorithms "$ALGORITHMS" "$NODIG_ALGORITHMS"
           exit $fout

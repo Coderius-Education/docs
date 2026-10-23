@@ -78,7 +78,9 @@ een koude build. De blokrunners krijgen
 `--alleen changed.json` en doen alleen de blokken op gewijzigde regels plus
 wat erop doorbouwt (`draaien-met`); de tekstcontrole krijgt `--regels`. Een
 globaal bestand (lockfile, root-config, `.github/`, de registry) of de
-nachtelijke run draait alles. Een nieuwe runner of een nieuw bestand dat een
+nachtelijke run draait alles. De verplichte check `build` (job `build-klaar`) wacht
+op elke job die het plan aanzet, ook de blokrunners; alleen `tekst` telt nog
+niet mee (`ci-poort.test.ts`). Een nieuwe runner of een nieuw bestand dat een
 job leest: zet het in `RUNNERS`, `PER_JOB` of `GLOBAAL` in
 `wijzigingen.js`, anders slaat CI hem stil over.
 
