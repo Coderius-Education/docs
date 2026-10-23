@@ -7,9 +7,9 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 12 Tuples
 
-Bij het loopen door een dictionary zag je al `for sleutel, waarde in ...` —
-twee namen die samen één paar opvangen. Dat paar heeft een naam: kijk wat
-hier gebeurt.
+Bij het lopen door een dictionary zag je al `for sleutel, waarde in ...`:
+twee namen die samen één paar opvangen. Dat paar heeft een naam. Kijk wat
+hier gebeurt:
 
 ```python
 punt = (3, 5)
@@ -20,8 +20,25 @@ print(punt[1])   # 5
 
 `punt` is een **tuple**: een vast rijtje waardes dat bij elkaar hoort,
 tussen ronde haakjes. Opvragen werkt met een index, net als bij een
-lijst. Het verschil: een tuple kun je na het maken **niet meer
-veranderen** — geen `append`, geen toewijzen aan `punt[0]`.
+lijst.
+
+{/* niet-draaien: valt expres om; de voorspelvraag eronder vraagt waarom */}
+```python
+punt = (3, 5)
+punt[0] = 4
+print(punt)
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Bij een lijst zou dit werken. Een tuple is daarin anders.">`(4, 5)`</Keuze>
+  <Keuze uitleg="Python slaat de regel met punt[0] niet stil over.">`(3, 5)`</Keuze>
+  <Keuze goed uitleg="Een tuple kun je na het maken niet meer veranderen, dus deze regel valt om.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je krijgt een foutmelding. Dat is het verschil met een lijst: een tuple **ligt vast**. Geen `append`, en ook niet toewijzen aan `punt[0]`.
+
+  </Uitleg>
+</Voorspel>
 
 ## Uitpakken
 
@@ -38,13 +55,14 @@ print(f"x is {x}, y is {y}")   # x is 3, y is 5
 {/* foutmelding-van: a, b = (1, 2, 3) */}
 
 Het aantal namen links moet gelijk zijn aan het aantal waardes in de
-tuple, anders krijg je een `ValueError`. Dit is precies wat er in de
-vorige les gebeurde bij `for sleutel, waarde in leerling.items()`: elke
-ronde levert `.items()` een tuple, die je meteen uitpakt in twee namen.
+tuple, anders krijg je een `ValueError`. Dit is precies wat er in
+[Door een dictionary lopen](site:python/docs/data/11b-itereren-dictionaries)
+gebeurde bij `for sleutel, waarde in leerling.items()`: elke ronde levert
+`.items()` een tuple, die je meteen uitpakt in twee namen.
 
 ## Twee waardes returnen
 
-Een functie kan maar één ding teruggeven — maar dat ene ding mag een
+Een functie kan maar één ding teruggeven, maar dat ene ding mag een
 tuple zijn. Zo geef je toch twee waardes terug:
 
 ```python
@@ -61,7 +79,7 @@ De aanroeper pakt hem direct uit. Wat `//` en `%` doen, staat in
 
 ## De swap
 
-Twee variabelen wisselen kan met een hulpvariabele — maar met een tuple
+Twee variabelen wisselen kan met een hulpvariabele, maar met een tuple
 gaat het in één regel:
 
 ```python
@@ -87,6 +105,41 @@ overschrijven begint.
 Vuistregel: een rij dingen van hetzelfde soort (namen, getallen) is een
 lijst; een klein groepje waardes dat samen één ding beschrijft (een
 coördinaat, een naam-met-score) is een tuple.
+
+## Er gaat iets mis
+
+**Een tuple veranderen**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+punt = (3, 5)
+punt[0] = 4
+```
+
+Uitvoer:
+
+```
+TypeError: 'tuple' object does not support item assignment
+```
+
+Een tuple ligt vast. Moet de waarde veranderen, maak dan een nieuwe tuple: `punt = (4, 5)`. Of kies een lijst als je de waardes vaak aanpast.
+
+**Te veel waardes om uit te pakken**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+x, y = (1, 2, 3)
+```
+
+Uitvoer:
+
+```
+ValueError: too many values to unpack (expected 2)
+```
+
+Links staan twee namen, rechts drie waardes. Zet links evenveel namen als er waardes zijn: `x, y, z = (1, 2, 3)`.
 
 ---
 
@@ -241,8 +294,8 @@ print(f"eerste: {eerste}, laatste: {laatste}")`}</CodeExercise>
 
 ## En nu?
 
-Nog één datatype: in [les 13](site:python/docs/data/sets) leer je de **set** — een
-verzameling zonder dubbelen, handig om bij te houden wat je al gehad
+Nog één datatype: in de [volgende les](site:python/docs/data/sets) leer je de **set**,
+een verzameling zonder dubbelen, handig om bij te houden wat je al gehad
 hebt.
 
 :::info[Waar kom je dit later weer tegen?]

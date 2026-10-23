@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 11b Door een dictionary lopen
 
-Je kunt nu dictionaries maken en waardes opzoeken met een sleutel. In deze les leer je hoe je **door** een dictionary loopt en hoe je veilig controleert of een sleutel bestaat.
+Je kunt nu dictionaries maken en waardes opzoeken met een sleutel. Je kunt ook **door** een dictionary lopen, en vooraf controleren of een sleutel bestaat.
 
 ## Loopen over de sleutels
 
@@ -62,7 +62,62 @@ else:
     print("Geen naam bekend.")
 ```
 
-`in` controleert **sleutels**, niet waardes.
+```python
+leerling = {"naam": "Sara", "klas": "3B"}
+
+print("Sara" in leerling)
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Sara staat wel in de dictionary, maar als waarde. Kijk waar in naar kijkt.">`True`</Keuze>
+  <Keuze goed uitleg="in kijkt alleen naar de sleutels, en de sleutels zijn naam en klas.">`False`</Keuze>
+  <Keuze uitleg="in op een dictionary mag; je krijgt een boolean terug.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet `False`. `in` controleert **sleutels**, niet waardes. `"naam" in leerling` is wel `True`.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+**Twee namen zonder .items()**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+leerling = {"naam": "Sara", "klas": "3B"}
+
+for sleutel, waarde in leerling:
+    print(sleutel, waarde)
+```
+
+Uitvoer:
+
+```
+ValueError: too many values to unpack (expected 2)
+```
+
+Zonder `.items()` krijg je per ronde alleen een sleutel, zoals `"naam"`. Die probeert Python over twee namen te verdelen, en dat lukt niet. Schrijf `for sleutel, waarde in leerling.items():`.
+
+**De haakjes achter items vergeten**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+leerling = {"naam": "Sara", "klas": "3B"}
+
+for sleutel, waarde in leerling.items:
+    print(sleutel, waarde)
+```
+
+Uitvoer:
+
+```
+TypeError: 'builtin_function_or_method' object is not iterable
+```
+
+`.items` zonder haakjes is de methode zelf, niet de paren die hij geeft. Zet de haakjes erachter: `leerling.items()`.
 
 ---
 
@@ -160,7 +215,7 @@ print("====================")`}</CodeExercise>
 
 ## Opdracht 11b.3: Digitaal winkelmandje
 
-Dit is de eindbaas van de basiscursus. Bouw een winkelmandje met twee dictionaries: een `winkel` (product → prijs) en een `mandje` (product → aantal). Schrijf een functie `bereken_totaal(winkel, mandje)` die met `.items()` door het mandje loopt en de totaalprijs **teruggeeft** met `return`. Print daarnaast een kassabon.
+Bouw een winkelmandje met twee dictionaries: een `winkel` (product → prijs) en een `mandje` (product → aantal). Schrijf een functie `bereken_totaal(winkel, mandje)` die met `.items()` door het mandje loopt en de totaalprijs **teruggeeft** met `return`. Print daarnaast een kassabon.
 
 Verwachte uitvoer:
 
@@ -180,9 +235,9 @@ Totaal: 16.7 euro
 
 Drie stappen binnen de loop van `bereken_totaal`:
 
-1. `prijs = winkel[product]` — zoek de prijs op.
-2. `regel = prijs * aantal` — bereken de regelprijs.
-3. `totaal += regel` — tel op.
+1. `prijs = winkel[product]`: zoek de prijs op.
+2. `regel = prijs * aantal`: bereken de regelprijs.
+3. `totaal += regel`: tel op.
 
 Daarna `return totaal`.
 
@@ -259,7 +314,7 @@ Variabelen, beslissen, herhalen, functies, lijsten en dictionaries: test jezelf 
 
 ## En nu?
 
-Dat paar dat `.items()` elke ronde teruggeeft heeft een naam: een tuple. In [les 12](site:python/docs/data/tuples) leer je hoe je tuples maakt, uitpakt en gebruikt om twee waardes tegelijk te returnen.
+In de [volgende les](site:python/docs/data/11c-geneste-dictionaries) zet je dictionaries en lijsten in elkaar. Het paar dat `.items()` elke ronde teruggeeft heeft ook een naam: een tuple. Daarover gaat [les 12](site:python/docs/data/tuples).
 
 :::info[Waar kom je dit later weer tegen?]
 Bij [dijkstra](site:algorithms/docs/dijkstra/bouwen/07-kies-volgende) loopt `kies_volgende` met `.items()` langs alle knopen om de dichtstbijzijnde onbezochte te vinden.

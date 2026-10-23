@@ -46,6 +46,26 @@ print(klas["Alex"]["cijfers"][0]) # 9
 Lees het van links naar rechts: eerst zoek je `"Alex"` op in `klas`, in wat
 daaruit komt zoek je `"cijfers"` op, en van die lijst neem je plek `0`.
 
+```python
+klas = {
+    "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
+    "Alex": {"leeftijd": 14, "cijfers": [9, 5, 8]},
+}
+
+print(klas["Sara"]["cijfers"][2])
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Dat is een cijfer van Alex. Kijk welke naam er als eerste sleutel staat.">`8`</Keuze>
+  <Keuze uitleg="Plek 2 is niet de tweede plek: een lijst begint bij 0.">`8` en `6`</Keuze>
+  <Keuze goed uitleg="Eerst Sara, dan haar cijfers [7, 8, 6], en daarvan plek 2: het derde cijfer.">`6`</Keuze>
+  <Uitleg>
+
+  Je ziet `6`. `klas["Sara"]` is Sara's dictionary, `["cijfers"]` haalt daar de lijst `[7, 8, 6]` uit, en `[2]` is de derde plek in die lijst.
+
+  </Uitleg>
+</Voorspel>
+
 ## Aanpassen en toevoegen
 
 Aanpassen gaat op dezelfde manier. Aan de lijst met cijfers voeg je met
