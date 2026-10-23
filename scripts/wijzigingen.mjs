@@ -34,6 +34,7 @@ const {
   parseDiff,
   binnenWijziging,
   volledigOpNamen,
+  blokkenNodig,
 } = require('../packages/shared/wijzigingen.js');
 const { alleSiteMappen } = require('../packages/shared/sites.js');
 
@@ -148,6 +149,7 @@ function outputs(p) {
     ...p.jobs,
     typecheck: p.pakketten.length > 0,
     ...Object.fromEntries(Object.entries(p.runners).map(([n, r]) => [n, r.draaien])),
+    blokken: blokkenNodig(p),
   };
   return Object.entries(regels).map(([k, v]) => `${k}=${v}`);
 }

@@ -86,7 +86,13 @@ op elke job die het plan aanzet, ook de blokrunners; alleen `tekst` telt
 bewust niet mee: een spel- of stijlfout mag een merge niet tegenhouden
 (`ci-poort.test.ts`). Een nieuwe runner of een nieuw bestand dat een
 job leest: zet het in `RUNNERS`, `PER_JOB` of `GLOBAAL` in
-`wijzigingen.js`, anders slaat CI hem stil over.
+`wijzigingen.js`, anders slaat CI hem stil over. De blokrunners draaien
+tegelijk in één job, `blokken` (elk met een eigen venv); alleen wat in
+`EIGEN_JOB` staat (fullstack, die alle cores gebruikt) heeft een eigen job. Vijf losse jobs maakten de
+eerste golf van een brede run groter dan de twintig runners die GitHub
+tegelijk geeft, en dan wachtte `test` een halve minuut. Een nieuwe runner
+krijgt een vlag, een functie en een plek in de lus van `blokken`;
+`ci-poort.test.ts` eist dat.
 
 ## Een les verhuizen
 

@@ -58,6 +58,7 @@ jobs:
       godot: ${{ steps.plan.outputs.godot }}
       robotica: ${{ steps.plan.outputs.robotica }}
       fullstack: ${{ steps.plan.outputs.fullstack }}
+      blokken: ${{ steps.plan.outputs.blokken }}
     steps:
       # De hele geschiedenis, maar zonder blobs: git merge-base en pnpm's
       # `[<base>]`-filter hebben alleen commits en trees nodig, en git diff
@@ -146,35 +147,59 @@ jobs:
       - name: Test (blokrunners)
         run: python3 -m unittest discover -s scripts -p 'test_*.py'
 
-  # De godot-cursus laat leerlingen elk script zelf opbouwen, dus staan de
-  # tussenstanden alleen in de lestekst. Niets in de docusaurus-build leest die
-  # codeblokken: een typefout of een API die in 4.7 niet meer bestaat, komt pas
-  # bij een leerling in de klas aan het licht. Deze job draait Godot headless en
-  # doet twee dingen: elk blok compileren, en de zeven tussenstanden van het
-  # bewegingsscript echt uitvoeren om te zien of ze doen wat de les belooft.
+  # Vijf blokrunners in één job, tegelijk. Elk draait de codevoorbeelden uit
+  # de lessen van één cursus:
   #
-  # Telt mee voor de verplichte check `build` (zie build-klaar), maar houdt de
-  # artifacts niet tegen: alleen de tests doen dat (zie publiceer).
+  #   python      elk blok draait, de beloofde uitvoer (commentaar achter een
+  #               print, of een uitvoerblok eronder) wordt vergeleken, en de
+  #               geciteerde foutmeldingen worden gereproduceerd. Op 3.13, de
+  #               Python van Pyodide 0.29.4 in de speeltuin.
+  #   algorithms  dezelfde controle, op 3.12 met numpy en matplotlib gepind op
+  #               de versies uit static/pyodide/pyodide-lock.json (--pins).
+  #   play        elk speeltuin-blok draait echt tegen de gebundelde wheel uit
+  #               static/whl/, met precies de pygame/numpy die de wheel pint.
+  #   robotica    elk MicroPython-blok compileert; er is geen board in CI.
+  #   godot       Godot headless: elk blok compileren, de zeven tussenstanden
+  #               van het bewegingsscript echt uitvoeren, en elk menu-item uit
+  #               de lessen opzoeken in de editor-binary. De godot-cursus laat
+  #               leerlingen elk script zelf opbouwen, dus staan de
+  #               tussenstanden alleen in de lestekst; niets anders leest ze.
   #
-  # Met --alleen compileert hij alleen de blokken die de wijziging raakt, en
-  # slaat hij de gedragstest over van een tussenstand die niet veranderde.
-  godot:
+  # Eerst waren het vijf jobs. Samen met vijftien site-builds en de andere
+  # jobs waren dat er 24 in de eerste golf van een brede run, terwijl GitHub er
+  # twintig tegelijk draait: vier jobs, waaronder `test`, wachtten zo'n 28 s op
+  # een runner. Play en algorithms pinnen een andere numpy, dus elke runner
+  # met pip krijgt een eigen venv. Bewust kapotte voorbeelden dragen een
+  # niet-draaien- of niet-compileren-marker.
+  #
+  # Met --alleen draaien alleen de blokken rond de gewijzigde regels, plus wat
+  # erop doorbouwt (draaien-met); godot slaat dan ook de gedragstest over van
+  # een tussenstand die niet veranderde. De vlaggen heten BLOK_…, want node-gyp
+  # leest een variabele PYTHON als het pad naar Python. Telt mee voor de
+  # verplichte check `build` (zie build-klaar), maar houdt de artifacts niet
+  # tegen.
+  blokken:
     needs: plan
-    if: needs.plan.outputs.godot == 'true'
+    if: needs.plan.outputs.blokken == 'true'
     runs-on: ubuntu-latest
     env:
+      BLOK_PYTHON: ${{ needs.plan.outputs.python }}
+      BLOK_ALGORITHMS: ${{ needs.plan.outputs.algorithms }}
+      BLOK_PLAY: ${{ needs.plan.outputs.play }}
+      BLOK_ROBOTICA: ${{ needs.plan.outputs.robotica }}
+      BLOK_GODOT: ${{ needs.plan.outputs.godot }}
       GODOT_VERSIE: 4.7.2-stable
     steps:
       - uses: actions/checkout@v5
 
+      # Alleen robotica en godot halen hun blokken met pnpm uit de docs.
       - name: Node, pnpm en dependencies
+        if: env.BLOK_ROBOTICA == 'true' || env.BLOK_GODOT == 'true'
         uses: ./.github/actions/node-pnpm
 
-      # v5 draait op Node 24; v4 werd door de runner geforceerd op Node 24 en
-      # gaf daar een deprecation-waarschuwing over. Inputs en de cache-hit
-      # output zijn ongewijzigd.
       - name: Cache Godot
         id: godot-cache
+        if: env.BLOK_GODOT == 'true'
         uses: actions/cache@v5
         with:
           path: ~/godot-bin
@@ -183,7 +208,7 @@ jobs:
       # De bestandsnaam van het asset is per release wel eens veranderd, dus
       # zoeken we hem op in plaats van hem te raden.
       - name: Download Godot
-        if: steps.godot-cache.outputs.cache-hit != 'true'
+        if: env.BLOK_GODOT == 'true' && steps.godot-cache.outputs.cache-hit != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -197,75 +222,95 @@ jobs:
           mv "$(find /tmp/godot -type f -name 'Godot_v*' | head -1)" ~/godot-bin/godot
           chmod +x ~/godot-bin/godot
 
-      - name: Godot-versie
-        run: ~/godot-bin/godot --headless --version
+      - uses: actions/setup-python@v6
+        with:
+          python-version: |
+            3.12
+            3.13
 
       - uses: actions/download-artifact@v6
         with:
           name: wijzigingen
 
-      - name: Codeblokken uit de docs halen
-        run: pnpm --filter @coderius/godot-docs godot:extract --alleen "$GITHUB_WORKSPACE/changed.json"
-
-      # Eerste run bouwt de importcache op; die eindigt zelf met een exitcode
-      # die niets over de tests zegt, vandaar de tweede run.
-      - name: Project importeren
-        run: ~/godot-bin/godot --headless --path sites/informatica/godot/godot-tests --import || true
-
-      # Geen --quit-after: die stopt met code 0 en zou een echte fout maskeren.
-      # De runner sluit zelf af; `timeout` is alleen de vangnet tegen vastlopen.
-      - name: Codevoorbeelden testen
-        run: timeout 300 ~/godot-bin/godot --headless --path sites/informatica/godot/godot-tests
-
-      # Een hernoemd menu-item verandert niets aan de code en niets aan de
-      # build; het valt pas op als een leerling naar een knop zoekt die er niet
-      # meer is. De editor-binary bevat al zijn eigen labels, dus die zoeken we
-      # er gewoon in op.
-      - name: UI-labels uit de lessen bestaan in deze Godot-versie
+      - name: Codevoorbeelden van python, algorithms, play, robotica en godot
         run: |
           set -uo pipefail
-          strings -n 2 ~/godot-bin/godot > /tmp/godot-strings.txt
-          mist=0
-          while IFS= read -r label; do
-            [ -z "$label" ] && continue
-            # Substring, geen hele regel: Godot hangt er soms iets achter,
-            # zoals "Add Child Node..." of "Physics Layer 0".
-            if ! grep -qF "$label" /tmp/godot-strings.txt; then
-              echo "::error::label '$label' komt niet voor in Godot ${GODOT_VERSIE}"
-              mist=$((mist + 1))
-            fi
-          done < sites/informatica/godot/godot-tests/extracted/labels.txt
-          echo "$(wc -l < sites/informatica/godot/godot-tests/extracted/labels.txt) labels gecontroleerd, $mist niet gevonden."
-          exit $((mist > 0))
+          logs="$RUNNER_TEMP/blokken"
+          mkdir -p "$logs"
+          # venv <naam> <python> [pip-argumenten…]: een eigen venv per runner.
+          venv() {
+            local map="$RUNNER_TEMP/venv-$1" python=$2
+            shift 2
+            "$python" -m venv "$map" && { [ $# -eq 0 ] || "$map/bin/pip" install -q "$@"; }
+          }
+          python_() {
+            python3.13 scripts/draai-python-blokken.py --alleen changed.json
+          }
+          algorithms_() {
+            # shellcheck disable=SC2046
+            venv algorithms python3.12 $(python3.12 scripts/draai-python-blokken.py algorithms --pins) &&
+              "$RUNNER_TEMP/venv-algorithms/bin/python" scripts/draai-python-blokken.py algorithms --alleen changed.json
+          }
+          play_() {
+            # shellcheck disable=SC2046
+            venv play python3.12 $(python3.12 scripts/draai-play-blokken.py --pins) &&
+              "$RUNNER_TEMP/venv-play/bin/python" scripts/draai-play-blokken.py --alleen changed.json
+          }
+          robotica_() {
+            pnpm --filter @coderius/robotica-docs lego:extract &&
+              python3.13 scripts/compileer-blokken.py sites/informatica/robotica/lego-tests/extracted --alleen changed.json
+          }
+          godot_() {
+            local tests=sites/informatica/godot/godot-tests
+            ~/godot-bin/godot --headless --version &&
+              pnpm --filter @coderius/godot-docs godot:extract --alleen "$GITHUB_WORKSPACE/changed.json" &&
+              # De eerste run bouwt de importcache op en eindigt met een
+              # exitcode die niets over de tests zegt, vandaar de tweede.
+              { ~/godot-bin/godot --headless --path "$tests" --import || true; } &&
+              # Geen --quit-after: die stopt met code 0 en zou een echte fout
+              # maskeren. `timeout` is alleen het vangnet tegen vastlopen.
+              timeout 300 ~/godot-bin/godot --headless --path "$tests" &&
+              godot_labels "$tests/extracted/labels.txt"
+          }
+          # Een hernoemd menu-item verandert niets aan de code en niets aan de
+          # build; het valt pas op als een leerling naar een knop zoekt die er
+          # niet meer is. De editor-binary bevat zijn eigen labels, dus die
+          # zoeken we er gewoon in op (een substring: Godot hangt er soms iets
+          # achter, zoals "Add Child Node...").
+          godot_labels() {
+            local mist=0 label
+            strings -n 2 ~/godot-bin/godot > "$RUNNER_TEMP/godot-strings.txt"
+            while IFS= read -r label; do
+              [ -z "$label" ] && continue
+              if ! grep -qF "$label" "$RUNNER_TEMP/godot-strings.txt"; then
+                echo "::error::label '$label' komt niet voor in Godot ${GODOT_VERSIE}"
+                mist=$((mist + 1))
+              fi
+            done < "$1"
+            echo "$(wc -l < "$1") labels gecontroleerd, $mist niet gevonden."
+            [ "$mist" -eq 0 ]
+          }
+          runners=()
+          declare -A pid
+          for naam in python algorithms play robotica godot; do
+            aan="BLOK_${naam^^}"
+            [ "${!aan}" = true ] || continue
+            runners+=("$naam")
+            "${naam}_" > "$logs/$naam.log" 2>&1 &
+            pid[$naam]=$!
+          done
+          fout=0
+          for naam in "${runners[@]}"; do
+            if wait "${pid[$naam]}"; then uitkomst=geslaagd; else uitkomst=mislukt; fout=1; fi
+            echo "::group::$naam ($uitkomst)"
+            cat "$logs/$naam.log"
+            echo "::endgroup::"
+            if [ "$uitkomst" = mislukt ]; then echo "::error::blokrunner $naam is mislukt; zie de groep $naam hierboven"; fi
+          done
+          exit $fout
 
-  # De robotica-lessen bevatten MicroPython die verder nergens wordt
-  # uitgevoerd — er is geen board in CI. Deze job compileert elk python-blok
-  # uit de docs (puur syntactisch, CPython volstaat daarvoor); een typefout of
-  # kapot voorbeeld valt zo hier op in plaats van bij een leerling die hem
-  # overtypt. Telt mee voor de verplichte check `build` (zie build-klaar),
-  # maar houdt de artifacts niet tegen.
-  robotica:
-    needs: plan
-    if: needs.plan.outputs.robotica == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Node, pnpm en dependencies
-        uses: ./.github/actions/node-pnpm
-
-      - name: Codeblokken uit de docs halen
-        run: pnpm --filter @coderius/robotica-docs lego:extract
-
-      - uses: actions/download-artifact@v6
-        with:
-          name: wijzigingen
-
-      - name: Codevoorbeelden compileren
-        run: python3 scripts/compileer-blokken.py sites/informatica/robotica/lego-tests/extracted --alleen changed.json
-
-  # Zelfde verhaal voor de fullstack-cursus: python-blokken die nergens worden
-  # uitgevoerd. Extractie én compilatie deelt deze job met robotica
+  # De fullstack-cursus: python-blokken die nergens worden uitgevoerd.
+  # Extractie én compilatie deelt deze job met robotica (in `blokken`)
   # (packages/shared/codeblokken.js en scripts/compileer-blokken.py). Bewust
   # kapotte voorbeelden — de FOUT/GOED-blokken in troubleshooting en losse
   # fragmenten uit een handler — slaan we over met de marker
@@ -277,6 +322,10 @@ jobs:
   # een kopie met bekende fouten (src/controle/kapot.py), waarin elke fout
   # zijn ✗ moet geven. Op Python 3.10, de oudste die het script belooft, en
   # met dezelfde packages als de installatieles.
+  #
+  # Een eigen job, niet in `blokken`: het controlescript start twee processen
+  # per core, en naast de andere runners duurde het daar 90 s in plaats van
+  # een kleine minuut.
   fullstack:
     needs: plan
     if: needs.plan.outputs.fullstack == 'true'
@@ -307,87 +356,6 @@ jobs:
       - name: Controlescript tegen het referentieproject en een kapotte kopie
         run: python sites/informatica/fullstack/src/controle/draai.py
 
-  # Play gaat een stap verder dan compileren: elk speeltuin-blok wordt echt
-  # uitgevoerd tegen de gebundelde wheel uit static/whl/ — dezelfde die de
-  # browser serveert. Kale blokken worden alleen gecompileerd. Bewust kapotte
-  # lesvoorbeelden dragen een niet-draaien/niet-compileren-marker.
-  play:
-    needs: plan
-    if: needs.plan.outputs.play == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-
-      # De gebundelde wheel pint zijn dependencies exact. Installeren we hier
-      # iets anders, dan test deze job een andere pygame/numpy dan de browser
-      # draait — en dat is precies wat de job hoort uit te sluiten. --pins leest
-      # de versies uit de METADATA van de wheel zelf.
-      - name: Play-dependencies installeren
-        run: pip install $(python3 scripts/draai-play-blokken.py --pins)
-
-      - uses: actions/download-artifact@v6
-        with:
-          name: wijzigingen
-
-      - name: Codevoorbeelden uitvoeren tegen de gebundelde wheel
-        run: python3 scripts/draai-play-blokken.py --alleen changed.json
-
-  # De python-cursus zegt bij veel voorbeelden wát er op het scherm komt: als
-  # commentaar achter de print-regel, of als uitvoerblok eronder. Die belofte is
-  # na te lopen, en dat is een sterkere controle dan "het draait": een blok dat
-  # iets anders print dan de les zegt, laat een leerling denken dat híj de fout
-  # maakt. Zo stond er in de les over len() een 11 bij een string van 12 tekens.
-  #
-  # Met --alleen draaien alleen de blokken rond de gewijzigde regels, plus wat
-  # erop doorbouwt (draaien-met) en de losse foutmeldingen ernaast.
-  python:
-    needs: plan
-    if: needs.plan.outputs.python == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.13'
-
-      - uses: actions/download-artifact@v6
-        with:
-          name: wijzigingen
-
-      - name: Codevoorbeelden uitvoeren en de beloofde uitvoer vergelijken
-        run: python3 scripts/draai-python-blokken.py --alleen changed.json
-
-  # Dezelfde controle als de python-cursus, maar dan voor algorithms: elk blok
-  # draait of compileert, beloofde uitvoer wordt vergeleken, en de geciteerde
-  # foutmeldingen worden tegen echte CPython gereproduceerd. De runners op de
-  # site draaien Pyodide 0.27.4 (Python 3.12) met numpy en matplotlib uit
-  # static/pyodide/ — dus test deze job op 3.12 en met precies die versies;
-  # --pins leest ze uit pyodide-lock.json van de site zelf.
-  algorithms:
-    needs: plan
-    if: needs.plan.outputs.algorithms == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-
-      - name: Browser-versies van numpy en matplotlib installeren
-        run: pip install $(python3 scripts/draai-python-blokken.py algorithms --pins)
-
-      - uses: actions/download-artifact@v6
-        with:
-          name: wijzigingen
-
-      - name: Codevoorbeelden uitvoeren en de beloofde uitvoer vergelijken
-        run: python3 scripts/draai-python-blokken.py algorithms --alleen changed.json
 
   # Lestekst is het product van deze repo, maar niets controleerde hem. Een
   # typefout, een emoji, een "u" in plaats van "je" of een alinea vol vet:
@@ -766,7 +734,7 @@ jobs:
     # en kon een PR met kapotte voorbeelden groen worden. `tekst` blijft
     # erbuiten: een spel- of stijlfout mag een merge niet tegenhouden (keuze
     # van de opdrachtgever; schrijfgids §17).
-    needs: [plan, test, build, publiceer, voorraad, checks, cross-links, godot, robotica, fullstack, play, python, algorithms]
+    needs: [plan, test, build, publiceer, voorraad, checks, cross-links, fullstack, blokken]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -779,22 +747,14 @@ jobs:
           VOORRAAD: ${{ needs.voorraad.result }}
           CHECKS: ${{ needs.checks.result }}
           CROSSLINKS: ${{ needs.cross-links.result }}
-          GODOT: ${{ needs.godot.result }}
-          ROBOTICA: ${{ needs.robotica.result }}
           FULLSTACK: ${{ needs.fullstack.result }}
-          PLAY: ${{ needs.play.result }}
-          PYTHON: ${{ needs.python.result }}
-          ALGORITHMS: ${{ needs.algorithms.result }}
+          BLOKKEN: ${{ needs.blokken.result }}
           NODIG_TEST: ${{ needs.plan.outputs.test }}
           NODIG_BUILD: ${{ needs.plan.outputs.build }}
           NODIG_CHECKS: ${{ needs.plan.outputs.checks }}
           NODIG_CROSSLINKS: ${{ needs.plan.outputs.crosslinks }}
-          NODIG_GODOT: ${{ needs.plan.outputs.godot }}
-          NODIG_ROBOTICA: ${{ needs.plan.outputs.robotica }}
           NODIG_FULLSTACK: ${{ needs.plan.outputs.fullstack }}
-          NODIG_PLAY: ${{ needs.plan.outputs.play }}
-          NODIG_PYTHON: ${{ needs.plan.outputs.python }}
-          NODIG_ALGORITHMS: ${{ needs.plan.outputs.algorithms }}
+          NODIG_BLOKKEN: ${{ needs.plan.outputs.blokken }}
         run: |
           fout=0
           # oordeel <job> <resultaat> <nodig volgens het plan>
@@ -818,10 +778,6 @@ jobs:
           oordeel voorraad "$VOORRAAD" false
           oordeel checks "$CHECKS" "$NODIG_CHECKS"
           oordeel cross-links "$CROSSLINKS" "$NODIG_CROSSLINKS"
-          oordeel godot "$GODOT" "$NODIG_GODOT"
-          oordeel robotica "$ROBOTICA" "$NODIG_ROBOTICA"
           oordeel fullstack "$FULLSTACK" "$NODIG_FULLSTACK"
-          oordeel play "$PLAY" "$NODIG_PLAY"
-          oordeel python "$PYTHON" "$NODIG_PYTHON"
-          oordeel algorithms "$ALGORITHMS" "$NODIG_ALGORITHMS"
+          oordeel blokken "$BLOKKEN" "$NODIG_BLOKKEN"
           exit $fout
