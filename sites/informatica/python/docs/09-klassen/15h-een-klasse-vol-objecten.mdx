@@ -83,14 +83,16 @@ asiel.neem_op(Hond("Max", 1))
 print(asiel.jonger_dan(5))
 ```
 
-Uitvoer:
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze goed uitleg="jonger_dan geeft één lijst met namen terug, en print zet die lijst op het scherm.">`['Rex', 'Max']`</Keuze>
+  <Keuze uitleg="jonger_dan print zelf niets. Hij geeft één lijst terug, en die print je in één keer.">`Rex` en `Max`</Keuze>
+  <Keuze uitleg="jonger_dan print zelf niets, maar de print eromheen wel.">Niets</Keuze>
+  <Uitleg>
 
-```
-['Rex', 'Max']
-```
+  Je ziet de lijst `['Rex', 'Max']`. Wie `asiel` gebruikt, hoeft niet te weten hoe de honden bewaard worden: `neem_op` en `jonger_dan` aanroepen is genoeg, het asiel regelt de rest.
 
-Wie `asiel` gebruikt, hoeft niet te weten hoe de honden bewaard worden. Hij
-roept `neem_op` en `jonger_dan` aan, en het asiel regelt de rest.
+  </Uitleg>
+</Voorspel>
 
 ---
 
@@ -213,9 +215,9 @@ Geef `Afspeellijst` nog een methode `langste()` die het `Nummer`-object
 teruggeeft dat het langst duurt. Print daarna de titel en de duur in
 minuten en seconden.
 
-Daarvoor gebruik je twee rekentekens die je in les 12 al zag. `//` deelt en
-gooit de rest weg: `224 // 60` is `3`. `%` geeft juist die rest: `224 % 60`
-is `44`. De seconden schrijf je altijd met twee cijfers: met `:02` in een
+Daarvoor gebruik je `//` en `%` uit [Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest).
+`//` deelt en gooit de rest weg: `224 // 60` is `3`. `%` geeft juist die
+rest: `224 % 60` is `44`. De seconden schrijf je altijd met twee cijfers: met `:02` in een
 f-string wordt `f"{4:02}"` de tekst `04`.
 
 Verwachte uitvoer:

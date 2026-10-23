@@ -26,15 +26,16 @@ rex.verjaar()
 rex.verjaar()
 ```
 
-Uitvoer:
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="De methode verandert self.leeftijd in het object zelf, en dat blijft zo na de aanroep.">`Hoera, Rex is nu 4.` en `Hoera, Rex is nu 4.`</Keuze>
+  <Keuze goed uitleg="De eerste aanroep maakt Rex 4, en die 4 bewaart het object. De tweede aanroep telt daar 1 bij.">`Hoera, Rex is nu 4.` en `Hoera, Rex is nu 5.`</Keuze>
+  <Keuze uitleg="self.leeftijd += 1 werkt in een methode net zo als buiten de klasse.">Een foutmelding</Keuze>
+  <Uitleg>
 
-```
-Hoera, Rex is nu 4.
-Hoera, Rex is nu 5.
-```
+  Rex wordt eerst 4 en dan 5: wat de methode in `self.leeftijd` zet, blijft in het object staan. Wie de hond gebruikt, hoeft niet te weten hoe een verjaardag werkt. `verjaar()` aanroepen is genoeg, de hond regelt de rest.
 
-Het voordeel: wie de hond gebruikt, hoeft niet te weten hoe een verjaardag
-werkt. Hij roept `verjaar()` aan en de hond regelt het.
+  </Uitleg>
+</Voorspel>
 
 ## Een methode met een parameter
 

@@ -65,6 +65,31 @@ Uitvoer:
 mee bij `Hond("Rex")`. Hetzelfde kan met een getal, zoals een score die
 op 0 begint.
 
+```python
+class Hond:
+    def __init__(self, naam):
+        self.naam = naam
+        self.trucjes = []
+
+
+rex = Hond("Rex")
+bello = Hond("Bello")
+rex.trucjes.append("zitten")
+
+print(bello.trucjes)
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Alleen rex heeft iets geleerd. Bello kreeg bij het maken een eigen lijst.">`['zitten']`</Keuze>
+  <Keuze goed uitleg="Elke hond krijgt in __init__ een eigen, nieuwe lege lijst.">`[]`</Keuze>
+  <Keuze uitleg="Bello heeft wel een attribuut trucjes: __init__ gaf het hem bij het maken.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet `[]`. `__init__` draait voor elke nieuwe hond opnieuw, dus elke hond krijgt zijn eigen lege lijst. Wat Rex leert, staat alleen in de lijst van Rex.
+
+  </Uitleg>
+</Voorspel>
+
 ---
 
 ## Er gaat iets mis

@@ -7,9 +7,39 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 15k Objecten inlezen uit JSON
 
-In 15j schreef je objecten weg als dictionaries. Lees je ze weer in, dan
-krijg je die dictionaries terug, geen honden. Een losse functie maakt er
-weer een `Hond` van:
+In 15j schreef je objecten weg als dictionaries. Wat krijg je terug als je
+ze weer inleest?
+
+{/* niet-draaien: valt expres om; de voorspelvraag eronder vraagt waarom */}
+
+```python
+import json
+
+tekst = '{"naam": "Bello", "leeftijd": 7}'
+bello = json.loads(tekst)
+print(bello.naam)
+```
+
+<Voorspel vraag="Wat gebeurt er als je dit uitvoert?">
+  <Keuze uitleg="json.loads weet niets van honden of attributen. Hij geeft terug wat er in de JSON staat.">`Bello`</Keuze>
+  <Keuze goed uitleg="json.loads geeft een dictionary terug, en een dictionary heeft geen attribuut naam.">Een foutmelding</Keuze>
+  <Keuze uitleg="print(bello.naam) vraagt een attribuut op, en dat bestaat hier niet.">Niets</Keuze>
+  <Uitleg>
+
+  Python stopt met een foutmelding:
+
+  {/* foutmelding-van: blok-erboven */}
+
+  ```
+  AttributeError: 'dict' object has no attribute 'naam'
+  ```
+
+  Je krijgt de dictionaries terug, geen honden. `bello["naam"]` werkt wel, maar dan heb je niets aan je klasse.
+
+  </Uitleg>
+</Voorspel>
+
+Een losse functie maakt er weer een `Hond` van:
 
 ```python
 import json

@@ -68,8 +68,33 @@ Uitvoer:
 De oudste hond is Bello.
 ```
 
-`oudste` is geen kopie, maar hetzelfde object als in de lijst. Verander je
-`oudste.naam`, dan verandert de hond in de lijst mee.
+`oudste` wijst naar een van de honden uit de lijst. Wat gebeurt er als je via
+`oudste` iets verandert?
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+honden = [Hond("Rex", 3), Hond("Bello", 7)]
+oudste = honden[1]
+oudste.naam = "Bella"
+
+print(honden[1].naam)
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="oudste = honden[1] maakt geen kopie van de hond. Er is maar één hond Bello.">`Bello`</Keuze>
+  <Keuze goed uitleg="oudste en honden[1] zijn hetzelfde object, dus de nieuwe naam zie je via allebei.">`Bella`</Keuze>
+  <Keuze uitleg="Een attribuut veranderen kan via elke naam die naar het object wijst.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet `Bella`. `oudste` is geen kopie, maar hetzelfde object als in de lijst. Verander je `oudste.naam`, dan verandert de hond in de lijst mee.
+
+  </Uitleg>
+</Voorspel>
 
 ---
 
