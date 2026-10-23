@@ -42,11 +42,16 @@ except FileNotFoundError:
 print(scores)
 ```
 
-Uitvoer:
+<Voorspel vraag="scores.json bestaat nog niet. Wat zet dit programma op het scherm?">
+  <Keuze goed uitleg="open() valt om, except FileNotFoundError vangt dat af, en scores wordt een lege lijst.">`[]`</Keuze>
+  <Keuze uitleg="De fout van open() staat in een try, en except vangt precies die fout af.">Een foutmelding</Keuze>
+  <Keuze uitleg="Na het try-blok staat nog een print, en die draait altijd.">Niets</Keuze>
+  <Uitleg>
 
-```
-[]
-```
+  Je ziet een lege lijst. `open()` lukt niet, Python springt naar het `except`-blok, en daarna print hij `scores`.
+
+  </Uitleg>
+</Voorspel>
 
 Na het spel schrijf je `scores` weg zoals in 14f. De volgende keer bestaat
 het bestand wel, en slaat Python het `except`-blok over.
@@ -80,6 +85,11 @@ json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
 Het bestand bestaat wel, maar er staat geen JSON in. Dat is een andere fout,
 en die vangt `except FileNotFoundError` niet af. In de opdracht hieronder
 vang je hem ook af.
+
+{/* foutmelding-los: de naam staat hier als wat je achter except schrijft, geen melding van Python */}
+
+Achter `except` mag je de lange naam uit de melding korter schrijven:
+`json.JSONDecodeError`, zonder `decoder` ertussen.
 
 ---
 
@@ -177,8 +187,8 @@ print(scores)`}</CodeExercise>
 
 {/* foutmelding-los: de namen staan hier als wat je achter except schrijft, geen melding van Python */}
 
-De fout heet in het `except`-blok `json.JSONDecodeError`. Zet hem samen met
-`FileNotFoundError` tussen haakjes, zoals in 16b.
+Zet `json.JSONDecodeError` samen met `FileNotFoundError` tussen haakjes,
+zoals in 16b.
 
 </details>
 

@@ -10,6 +10,8 @@ import CodeExercise from '@site/src/components/CodeExercise';
 Tot nu toe kwamen de fouten van Python zelf. Je kunt er ook zelf een opwerpen,
 met `raise`. Dat doe je als je functie iets krijgt waar hij niets mee kan:
 
+{/* niet-draaien: valt expres om op zet_leeftijd(-3); de voorspelvraag eronder vraagt wat je ziet */}
+
 ```python
 def zet_leeftijd(leeftijd):
     if leeftijd < 0:
@@ -21,18 +23,18 @@ print(zet_leeftijd(15))
 print(zet_leeftijd(-3))
 ```
 
-Uitvoer:
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Bij -3 komt Python niet bij return: raise stopt de functie eerst.">`15` en `-3`</Keuze>
+  <Keuze goed uitleg="De eerste aanroep gaat goed. Bij -3 werpt de functie een fout op, en niemand vangt die af.">Eerst `15`, daarna een foutmelding</Keuze>
+  <Keuze uitleg="raise is geen print. De tekst komt alleen in beeld als onderdeel van een fout.">`15`, dan `Een leeftijd kan niet negatief zijn.`</Keuze>
+  <Uitleg>
 
-```
-15
-ValueError: Een leeftijd kan niet negatief zijn.
-```
+  {/* foutmelding-los: hier kies je de fout zelf, met raise; Python meldt niets */}
 
-{/* foutmelding-los: hier kies je de fout zelf, met raise; Python meldt niets */}
+  Eerst `15`, en daarna stopt het programma met `ValueError: Een leeftijd kan niet negatief zijn.` `raise` stopt de functie meteen, net als een fout van Python zelf. De tekst tussen de haakjes is de melding die wie de functie gebruikt, te zien krijgt. `ValueError` past hier: de waarde klopt niet.
 
-`raise` stopt de functie meteen, net als een fout van Python zelf. De tekst
-tussen de haakjes is de melding die wie de functie gebruikt, te zien krijgt.
-`ValueError` past hier: de waarde klopt niet.
+  </Uitleg>
+</Voorspel>
 
 ## Afvangen wat je zelf opwerpt
 
@@ -90,6 +92,57 @@ Uitvoer:
 ```
 Te weinig saldo: 0 euro
 ```
+
+## Er gaat iets mis
+
+**Een tekst opwerpen**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+leeftijd = -3
+if leeftijd < 0:
+    raise "Een leeftijd kan niet negatief zijn."
+```
+
+Uitvoer:
+
+```
+TypeError: exceptions must derive from BaseException
+```
+
+Achter `raise` staat een fout, geen losse tekst. De tekst gaat tussen de haakjes van de fout: `raise ValueError("Een leeftijd kan niet negatief zijn.")`.
+
+**De controle te laat**
+
+```python
+class Rekening:
+    def __init__(self, eigenaar):
+        self.eigenaar = eigenaar
+        self.saldo = 0
+
+    def neem_op(self, bedrag):
+        self.saldo -= bedrag
+        if self.saldo < 0:
+            raise ValueError("Te weinig saldo.")
+
+
+rekening = Rekening("Sara")
+try:
+    rekening.neem_op(50)
+except ValueError as fout:
+    print(fout)
+print(rekening.saldo)
+```
+
+Uitvoer:
+
+```
+Te weinig saldo.
+-50
+```
+
+De fout komt wel, maar het saldo is al veranderd. Zet de controle met `raise` daarom bovenaan de methode, vóór je iets aanpast.
 
 ---
 

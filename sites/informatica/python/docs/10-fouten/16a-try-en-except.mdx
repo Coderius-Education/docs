@@ -41,12 +41,16 @@ except ValueError:
 print("Klaar.")
 ```
 
-Uitvoer:
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze goed uitleg="De fout zit in int(tekst). Python springt naar except, en daarna gaat het programma gewoon verder.">`Dat is geen getal.` en `Klaar.`</Keuze>
+  <Keuze uitleg="Na het except-blok stopt het programma niet. De regel eronder komt ook nog.">`Dat is geen getal.`</Keuze>
+  <Keuze uitleg="Juist die fout vangt except ValueError af. Het programma valt niet om.">Een foutmelding</Keuze>
+  <Uitleg>
 
-```
-Dat is geen getal.
-Klaar.
-```
+  Je ziet eerst de melding uit het `except`-blok en daarna `Klaar.`. De regel `print(getal * 2)` komt nooit aan de beurt.
+
+  </Uitleg>
+</Voorspel>
 
 ## Wat er gebeurt
 

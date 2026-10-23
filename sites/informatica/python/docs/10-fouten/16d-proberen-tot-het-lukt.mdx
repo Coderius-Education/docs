@@ -46,14 +46,59 @@ Zonder `input()` zie je hetzelfde met een lijst pogingen, alsof iemand drie
 keer iets typt:
 
 ```python
-pogingen = ["tien", "", "10"]
+pogingen = ["tien", "10", "twaalf"]
 
 for tekst in pogingen:
     try:
         leeftijd = int(tekst)
         break
     except ValueError:
-        print(f"'{tekst}' is geen getal, probeer het nog eens.")
+        print(f"'{tekst}' is geen getal.")
+
+print(f"Volgend jaar ben je {leeftijd + 1}.")
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze goed uitleg="Zodra een poging lukt, verlaat Python de loop. De derde poging blijft liggen.">`'tien' is geen getal.` en `Volgend jaar ben je 11.`</Keuze>
+  <Keuze uitleg="Na een poging die lukt, staat er break. De loop gaat dan niet verder met de volgende tekst.">`'tien' is geen getal.`, `'twaalf' is geen getal.` en `Volgend jaar ben je 11.`</Keuze>
+  <Keuze uitleg="int(tekst) staat in een try, en except vangt de fout af. Het programma gaat door met de volgende poging.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Bij `tien` lukt het niet, dus Python print de melding en probeert de volgende. Bij `10` lukt het, en `break` stopt de loop. `twaalf` komt niet meer aan de beurt.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+**break vergeten**
+
+{/* niet-draaien: deze loop stopt nooit */}
+
+```python
+while True:
+    tekst = input("Hoe oud ben je? ")
+    try:
+        leeftijd = int(tekst)
+    except ValueError:
+        print("Dat is geen getal, probeer het nog eens.")
+```
+
+Ook als je een goed getal typt, vraagt het programma opnieuw. Zonder `break` stopt een `while True`-loop nooit. Zet `break` direct onder de regel die moet lukken.
+
+**Geen enkele poging lukt**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+pogingen = ["tien", ""]
+
+for tekst in pogingen:
+    try:
+        leeftijd = int(tekst)
+        break
+    except ValueError:
+        print(f"'{tekst}' is geen getal.")
 
 print(f"Volgend jaar ben je {leeftijd + 1}.")
 ```
@@ -61,10 +106,35 @@ print(f"Volgend jaar ben je {leeftijd + 1}.")
 Uitvoer:
 
 ```
-'tien' is geen getal, probeer het nog eens.
-'' is geen getal, probeer het nog eens.
-Volgend jaar ben je 11.
+'tien' is geen getal.
+'' is geen getal.
+NameError: name 'leeftijd' is not defined
 ```
+
+Een `for`-loop houdt op als de lijst op is, ook als er nooit iets lukte. Dan heeft `leeftijd` nooit een waarde gekregen. Met `while True` heb je dat probleem niet: die vraagt door tot het lukt.
+
+**Een leeg except-blok**
+
+{/* niet-compileren: bewuste inspringfout, het except-blok is leeg */}
+
+```python
+for tekst in ["3", "vier"]:
+    try:
+        print(int(tekst))
+    except ValueError:
+
+print("Klaar")
+```
+
+Uitvoer:
+
+{/* foutmelding-van: for tekst in ["3", "vier"]:\n    try:\n        print(int(tekst))\n    except ValueError:\n\nprint("Klaar") */}
+
+```
+IndentationError: expected an indented block after 'except' statement on line 4
+```
+
+Onder `except` moet minstens één ingesprongen regel staan. In een loop kun je daar `continue` zetten: ga door met de volgende.
 
 ---
 
@@ -92,7 +162,7 @@ print(f"Samen: {som}")`}</CodeExercise>
 <summary>Klik hier voor een tip.</summary>
 
 Zet `som += int(tekst)` in een `try`. In het `except`-blok hoeft niets te
-gebeuren, maar een blok mag niet leeg zijn: schrijf daar `continue`.
+gebeuren; zet er `continue` neer, zoals in Er gaat iets mis.
 
 </details>
 

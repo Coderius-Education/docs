@@ -23,14 +23,17 @@ except ZeroDivisionError:
     print("Er zijn nog geen spelers.")
 ```
 
-Uitvoer:
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="De tekst 120 is wel een getal. Wat misgaat, is het delen.">`Het totaal is geen getal.`</Keuze>
+  <Keuze goed uitleg="int(totaal) lukt, maar delen door aantal niet, want aantal is 0.">`Er zijn nog geen spelers.`</Keuze>
+  <Keuze uitleg="Python doet hoogstens één except-blok: het eerste dat bij de fout past.">`Het totaal is geen getal.` en `Er zijn nog geen spelers.`</Keuze>
+  <Uitleg>
 
-```
-Er zijn nog geen spelers.
-```
+  Elke fout krijgt zijn eigen `except`-blok, met zijn eigen melding. Python
+  kijkt van boven naar beneden welk blok past, en doet alleen dat ene.
 
-Elke fout krijgt zijn eigen `except`-blok, met zijn eigen melding. Python
-kijkt van boven naar beneden welk blok past, en doet alleen dat ene.
+  </Uitleg>
+</Voorspel>
 
 ## Twee fouten, één blok
 
@@ -81,6 +84,48 @@ Dat is geen getal.
 van `tekst`. Zonder de kale `except` had Python dat gezegd, met een
 `NameError`. Nu zoek je op de verkeerde plek. Noem daarom altijd de fout die
 je verwacht.
+
+## Er gaat iets mis
+
+**Twee fouten zonder haakjes**
+
+{/* niet-compileren: bewuste syntaxfout, de haakjes ontbreken */}
+
+```python
+try:
+    getal = int("twaalf")
+except ValueError, ZeroDivisionError:
+    print("Dat kan ik niet uitrekenen.")
+```
+
+Uitvoer:
+
+{/* foutmelding-van: try:\n    getal = int("twaalf")\nexcept ValueError, ZeroDivisionError:\n    print("x") */}
+
+```
+SyntaxError: multiple exception types must be parenthesized
+```
+
+Meer dan één fout achter `except` zet je tussen haakjes: `except (ValueError, ZeroDivisionError):`.
+
+**Een tikfout in de naam**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+try:
+    getal = int("twaalf")
+except ValueEror:
+    print("Dat is geen getal.")
+```
+
+Uitvoer:
+
+```
+NameError: name 'ValueEror' is not defined. Did you mean: 'ValueError'?
+```
+
+Python kijkt pas naar de naam achter `except` als er echt iets misgaat. Gaat alles goed, dan merk je de tikfout dus niet. Kopieer de naam daarom uit de foutmelding.
 
 ---
 
