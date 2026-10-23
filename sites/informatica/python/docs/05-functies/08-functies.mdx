@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 8 Functies
 
-Je kunt nu beslissingen maken en code herhalen. Maar wat als je hetzelfde stuk code op meerdere plekken in je programma wilt gebruiken? Daarvoor zijn **functies**: je geeft een blok code een naam, en daarna kan je het zo vaak aanroepen als je wilt.
+Wil je hetzelfde stuk code op meer plekken in je programma gebruiken, dan schrijf je het één keer als **functie**: je geeft een blok code een naam, en daarna roep je het aan zo vaak als je wilt.
 
 ## Een functie maken en aanroepen
 
@@ -29,10 +29,26 @@ Hallo!
 ```
 
 - `def groet():` definieert de functie. Python onthoudt hem, maar voert nog niets uit.
-- `groet()` roept de functie aan — pas dan wordt de code binnenin uitgevoerd.
+- `groet()` roept de functie aan. Pas dan voert Python de code binnenin uit.
 - De code binnen de functie springt **4 spaties** in.
 
-De haakjes zijn essentieel: zonder haakjes (`groet` zonder `()`) verwijs je alleen naar de functie, je voert hem niet uit. Geen foutmelding, maar ook geen output. Dat is een van de meest sluipende beginnersfouten.
+```python
+def groet():
+    print("Hallo!")
+
+print("Klaar")
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="def maakt de functie alleen. Zonder aanroep draait de code erin nooit.">`Hallo!` en `Klaar`</Keuze>
+  <Keuze goed uitleg="De functie bestaat, maar niemand roept hem aan. Alleen de laatste regel draait.">`Klaar`</Keuze>
+  <Keuze uitleg="Een functie die je niet aanroept is geen fout. Python onthoudt hem en gaat door.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet alleen `Klaar`. `def` is een recept opschrijven, `groet()` is het recept uitvoeren. Zonder die aanroep komt `Hallo!` nooit op het scherm.
+
+  </Uitleg>
+</Voorspel>
 
 ## Functies mogen functies aanroepen
 
@@ -56,7 +72,39 @@ Uitvoer:
 ====================
 ```
 
-Eén kleine functie (`lijn`) gebruik je twee keer binnen een grotere functie (`welkom`). Dat is de kracht: schrijf het stukje één keer, hergebruik het oneindig vaak.
+Eén kleine functie (`lijn`) gebruik je twee keer binnen een grotere functie (`welkom`). Je schrijft de lijn één keer en gebruikt hem zo vaak als je wilt.
+
+## Er gaat iets mis
+
+**De haakjes vergeten**
+
+```python
+def groet():
+    print("Hallo!")
+
+groet
+```
+
+Er gebeurt niets, en je krijgt ook geen foutmelding. Zonder `()` noem je de functie alleen; je roept hem niet aan. Schrijf `groet()`.
+
+**Aanroepen voordat de functie bestaat**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+groet()
+
+def groet():
+    print("Hallo!")
+```
+
+Uitvoer:
+
+```
+NameError: name 'groet' is not defined
+```
+
+Python leest van boven naar beneden. Op de eerste regel bestaat `groet` nog niet. Zet de `def` boven de plek waar je de functie aanroept.
 
 ---
 
@@ -142,6 +190,8 @@ vierkant()`}</CodeExercise>
 
 Maak een tekening van een huis door **kleine functies te combineren**: `dak()`, `muur()` en `deur()`. Roep ze allemaal aan binnen één `huis()`-functie, met twee muren tussen het dak en de deur.
 
+In het dak staat een backslash (`\`). Die heeft in een tekst een speciale betekenis, dus schrijf je hem dubbel: `print("   /\\")` zet `   /\` op het scherm.
+
 Verwachte uitvoer:
 
 ```
@@ -158,7 +208,7 @@ Verwachte uitvoer:
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Een backslash in een string schrijf je als `\\`. Dus `print("   /\\")` print `   /\`. In `huis()` roep je `dak()`, `muur()`, `muur()`, `deur()` aan.
+Elke functie print een of meer regels. In `huis()` roep je `dak()`, `muur()`, `muur()` en `deur()` aan.
 
 </details>
 
@@ -186,7 +236,7 @@ def huis():
 huis()
 ```
 
-In de volgende les leer je hoe je informatie aan een functie **meegeeft** met parameters, zodat dezelfde functie verschillende dingen kan doen.
+In de [volgende les](site:python/docs/functies/09a-parameters) leer je hoe je informatie aan een functie **meegeeft** met parameters, zodat dezelfde functie verschillende dingen kan doen.
 
 <CodeExercise>{`def dak():
     print("   /\\\\")

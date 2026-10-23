@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 6b Range met start en stappen
 
-Je kunt `range(n)` gebruiken om n keer te herhalen — altijd vanaf `0`. In deze les leer je `range` met een **begin-getal** en een **stapgrootte**.
+Met `range(n)` herhaal je n keer, en je begint altijd bij `0`. Geef je `range` een **begin-getal** en een **stapgrootte** mee, dan kies je zelf waar je begint en hoe groot de stappen zijn.
 
 ## range(start, stop)
 
@@ -28,7 +28,7 @@ Uitvoer:
 5
 ```
 
-`range(1, 6)` begint bij **1** en stopt vóór **6**. Het einde is altijd exclusief — een klassieker om in de val te lopen.
+`range(1, 6)` begint bij **1** en stopt vóór **6**. Het einde doet zelf nooit mee, en daar trapt bijna iedereen een keer in.
 
 ## range(start, stop, step)
 
@@ -50,14 +50,59 @@ Uitvoer:
 10
 ```
 
-Stappen van 2 — handig voor even getallen. Een **negatieve** stap telt achteruit:
+Met stappen van 2 krijg je de even getallen. Een **negatieve** stap telt achteruit:
 
 ```python
 for i in range(10, 0, -1):
     print(i)
 ```
 
-Dit print `10, 9, 8, ..., 1`. De stop-waarde (`0`) wordt zelf niet meer geprint, want exclusief.
+Dit print `10, 9, 8, ..., 1`. De stopwaarde `0` doet ook hier niet mee.
+
+```python
+for i in range(5, 0):
+    print(i)
+```
+
+<Voorspel vraag="Welke getallen zet dit programma op het scherm?">
+  <Keuze uitleg="Om achteruit te tellen heeft range een stap van -1 nodig. Die staat er niet.">`5`, `4`, `3`, `2` en `1`</Keuze>
+  <Keuze uitleg="Ook achteruit doet de stopwaarde niet mee. En zonder -1 telt range niet achteruit.">`5`, `4`, `3`, `2`, `1` en `0`</Keuze>
+  <Keuze goed uitleg="Zonder stap telt range omhoog, en van 5 omhoog kom je nooit bij 0.">Niets</Keuze>
+  <Uitleg>
+
+  Je ziet niets, en ook geen foutmelding. Zonder derde getal telt `range` met stappen van 1 omhoog. Van 5 naar 0 omhoog tellen kan niet, dus de loop draait geen enkele ronde. Achteruit tellen doe je met `range(5, 0, -1)`.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+**Eén te weinig**
+
+```python
+for i in range(1, 10):
+    print(i)
+```
+
+Je wilde 1 tot en met 10, maar de 10 komt niet op het scherm. De stopwaarde doet niet mee, dus voor 1 tot en met 10 schrijf je `range(1, 11)`.
+
+**Delen met /**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+hoogte = 10
+for i in range(hoogte / 2):
+    print(i)
+```
+
+Uitvoer:
+
+```
+TypeError: 'float' object cannot be interpreted as an integer
+```
+
+`/` geeft altijd een kommagetal, ook bij `10 / 2`: dat is `5.0`. `range` wil een heel getal. Gebruik `//`, dat heel deelt: `range(hoogte // 2)`. Zie [Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest).
 
 ---
 
@@ -129,7 +174,7 @@ for i in range(1, 11):
 
 ## Opdracht 6b.3: Driehoek van sterretjes
 
-Teken met `hoogte = 5` een driehoek van sterretjes. Per regel komt er één sterretje bij.
+Teken met `hoogte = 5` een driehoek van sterretjes. Per regel komt er één sterretje bij. Een tekst kun je daarvoor vermenigvuldigen met een getal: `print("*" * 3)` zet `***` op het scherm.
 
 Verwachte uitvoer:
 
@@ -146,7 +191,7 @@ Verwachte uitvoer:
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Je kunt strings vermenigvuldigen: `"*" * 3` geeft `"***"`. Gebruik dus `"*" * i` in je print, met `range(1, hoogte + 1)`.
+Laat `i` lopen van 1 tot en met `hoogte` met `range(1, hoogte + 1)`, en print in elke ronde `"*" * i`.
 
 </details>
 
@@ -160,7 +205,7 @@ for i in range(1, hoogte + 1):
     print("*" * i)
 ```
 
-Met `for` herhaal je een vast aantal keer. In de volgende les leer je de **while-loop**: doorgaan zolang een voorwaarde `True` is, ook als je niet weet hoe vaak.
+Met `for` herhaal je een vast aantal keer. In de [volgende les](site:python/docs/herhalen/06c-continue) sla je met `continue` een ronde over. Daarna komen `break` en de [while-loop](site:python/docs/herhalen/while-loop): doorgaan zolang een voorwaarde `True` is, ook als je niet weet hoe vaak.
 
 <CodeExercise>{`hoogte = 5
 

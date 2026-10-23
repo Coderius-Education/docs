@@ -52,16 +52,16 @@ print(rex)
 print(f"Vandaag komt {rex} logeren.")
 ```
 
-Uitvoer:
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="In de f-string staat {rex}, het hele object. Python vraagt dan dezelfde tekst als print.">`Rex (3 jaar)` en `Vandaag komt Rex logeren.`</Keuze>
+  <Keuze goed uitleg="print en de f-string vragen allebei __str__ om de tekst van het object.">`Rex (3 jaar)` en `Vandaag komt Rex (3 jaar) logeren.`</Keuze>
+  <Keuze uitleg="__str__ roep je niet zelf aan. Python doet dat, ook in een f-string.">Een foutmelding</Keuze>
+  <Uitleg>
 
-```
-Rex (3 jaar)
-Vandaag komt Rex (3 jaar) logeren.
-```
+  Twee keer dezelfde tekst voor de hond: ook in een f-string gebruikt Python `__str__`. De twee lage streepjes voor en na de naam zeggen dat Python deze methode zelf aanroept, net als `__init__`. Jij roept hem nooit direct aan.
 
-Ook in een f-string gebruikt Python `__str__`. De twee lage streepjes voor
-en na de naam zeggen dat Python deze methode zelf aanroept, net als
-`__init__`. Jij roept hem nooit direct aan.
+  </Uitleg>
+</Voorspel>
 
 ## In een loop
 

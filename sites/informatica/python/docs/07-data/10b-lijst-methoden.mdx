@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 10b Lijst-methoden
 
-Je kunt nu een lijst maken, opvragen en doorlopen. In deze les leer je hoe je een lijst **verandert**: elementen toevoegen, verwijderen of invoegen.
+Je kunt nu een lijst maken, opvragen en doorlopen. Met methoden **verander** je een lijst: elementen toevoegen, verwijderen of invoegen.
 
 ## De belangrijkste methoden
 
@@ -19,6 +19,7 @@ Net als bij strings hebben lijsten methoden die je met een punt aanroept:
 | `lijst.insert(i, x)` | Voeg `x` toe op positie `i` |
 | `lijst.remove(x)` | Verwijder de eerste `x` uit de lijst |
 | `lijst.pop()` | Verwijder het laatste element en geef het terug |
+| `lijst.pop(i)` | Verwijder het element op positie `i` en geef het terug |
 
 ```python
 dieren = ["kat", "hond", "vis"]
@@ -36,9 +37,7 @@ print(dieren)            # ['kat', 'vis']
 
 `.remove("hond")` geeft niets terug; `.pop()` geeft het verwijderde element wél terug, zodat je het kunt opvangen.
 
-{/* foutmelding-van: ["kat"].remove("hond") */}
-
-Probeer je iets te verwijderen dat niet bestaat (`dieren.remove("hond")` als er geen hond meer in zit)? Dan krijg je een `ValueError`. Wil je veilig zijn: check eerst met `if "hond" in dieren:`.
+Anders dan bij een tekst veranderen deze methoden de lijst zelf. `"hallo".upper()` liet de tekst zoals hij was, `dieren.append("vogel")` verandert `dieren`.
 
 ## Handige ingebouwde functies
 
@@ -54,7 +53,52 @@ print(max(getallen))      # 5
 print(sorted(getallen))   # [1, 1, 3, 4, 5]
 ```
 
-`sorted()` geeft een gesorteerde **kopie** terug — de originele lijst blijft hetzelfde.
+```python
+getallen = [3, 1, 2]
+
+sorted(getallen)
+print(getallen)
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="sorted() maakt wel een gesorteerde lijst, maar die bewaart niemand.">`[1, 2, 3]`</Keuze>
+  <Keuze goed uitleg="sorted() geeft een nieuwe lijst terug en laat getallen zoals hij was.">`[3, 1, 2]`</Keuze>
+  <Keuze uitleg="De regel sorted(getallen) is in orde; Python gooit het resultaat alleen weg.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet `[3, 1, 2]`. `sorted()` is geen methode van de lijst maar een functie, en die geeft een gesorteerde **kopie** terug. Wil je die bewaren, zet hem dan in een variabele: `gesorteerd = sorted(getallen)`.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+**Iets weghalen dat er niet in zit**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+dieren = ["kat", "vis"]
+dieren.remove("hond")
+```
+
+Uitvoer:
+
+```
+ValueError: list.remove(x): x not in list
+```
+
+Er zit geen hond in de lijst. Controleer het eerst: `if "hond" in dieren:`.
+
+**Het resultaat van append bewaren**
+
+```python
+dieren = ["kat", "vis"]
+dieren = dieren.append("hond")
+print(dieren)   # None
+```
+
+Geen foutmelding, maar je lijst is weg. `append` verandert de lijst zelf en geeft niets terug, dus `dieren` wordt `None`. Schrijf alleen `dieren.append("hond")`, zonder `dieren =` ervoor.
 
 ---
 
@@ -151,9 +195,11 @@ print(f"Aantal voldoendes: {aantal_voldoende}")`}</CodeExercise>
 
 Bouw een to-do lijst met drie functies:
 
-- `toon_taken(taken)` — print alle taken genummerd
-- `voeg_toe(taken, taak)` — voegt een taak toe
-- `verwijder(taken, nummer)` — verwijdert de taak op die plek (de gebruiker telt vanaf 1)
+- `toon_taken(taken)`: print alle taken genummerd
+- `voeg_toe(taken, taak)`: voegt een taak toe
+- `verwijder(taken, nummer)`: verwijdert de taak op die plek (de gebruiker telt vanaf 1)
+
+De functies krijgen de lijst als parameter en veranderen hem met `append` en `pop`. Dat werkt zonder `global` en zonder `return`: je maakt geen nieuwe variabele, je past de lijst aan die je meekreeg.
 
 Verwachte uitvoer:
 
@@ -177,7 +223,7 @@ Toegevoegd: Kamer opruimen
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-- `voeg_toe`: één regel — `taken.append(taak)`.
+- `voeg_toe`: één regel, `taken.append(taak)`.
 - `verwijder`: `taken.pop(nummer - 1)`. De `-1` is nodig omdat de gebruiker bij `1` begint te tellen, maar Python bij `0`.
 
 </details>
@@ -210,7 +256,7 @@ verwijder(mijn_taken, 2)
 toon_taken(mijn_taken)
 ```
 
-Een lijst werkt met posities (`[0]`, `[1]`, ...). In de volgende les leer je **dictionaries**: waardes opzoeken via een **naam** in plaats van een nummer.
+Een lijst werkt met posities (`[0]`, `[1]`, ...). In de [volgende les](site:python/docs/data/11a-dictionaries-basis) leer je **dictionaries**: waardes opzoeken via een **naam** in plaats van een nummer.
 
 <CodeExercise>{`def toon_taken(taken):
     print("=== Mijn To-Do Lijst ===")

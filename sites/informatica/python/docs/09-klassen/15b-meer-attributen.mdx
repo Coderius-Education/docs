@@ -58,8 +58,30 @@ waarschijnlijk bedoelde, zoals je hieronder ziet. En de klasse legt in
 `__init__` vast welke attributen elke hond heeft, zodat geen enkele hond er
 een mist.
 
-Bij het toewijzen helpt Python je niet: `rex.lefetijd = 4` maakt stil een
-nieuw attribuut, net zoals `rex["lefetijd"] = 4` stil een nieuwe sleutel maakt.
+Bij het toewijzen helpt Python je niet:
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+
+rex = Hond("Rex", 3)
+rex.lefetijd = 4
+print(rex.leeftijd)
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Kijk goed naar de naam op de regel met = 4. Daar staat een ander attribuut.">`4`</Keuze>
+  <Keuze goed uitleg="rex.lefetijd = 4 maakt een nieuw attribuut met een tikfout erin. leeftijd zelf blijft staan.">`3`</Keuze>
+  <Keuze uitleg="Bij lezen meldt Python een onbekend attribuut, maar bij een = maakt hij het stil aan.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet `3`. `rex.lefetijd = 4` maakt stil een nieuw attribuut, net zoals `rex["lefetijd"] = 4` stil een nieuwe sleutel maakt. De echte `leeftijd` blijft 3.
+
+  </Uitleg>
+</Voorspel>
 
 ---
 

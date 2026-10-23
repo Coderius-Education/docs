@@ -18,7 +18,7 @@ def groet():
 groet()
 ```
 
-Uitvoer: `Hallo Sam`. De variabele `naam` staat buiten de functie, en `groet()` komt er gewoon bij.
+Uitvoer: `Hallo Sam`. De variabele `naam` staat buiten de functie, en `groet()` kan hem toch lezen.
 
 Veranderen is een ander verhaal.
 
@@ -35,19 +35,24 @@ tel_op()
 print(teller)
 ```
 
-<details>
-<summary>Klik hier voor het antwoord.</summary>
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Dan zou de functie de teller van buiten veranderen. Kijk wat Python doet met een naam waar binnen de functie een = achter staat.">`1`</Keuze>
+  <Keuze uitleg="Dan zou de functie een eigen teller maken en de buitenste met rust laten. Maar welke waarde heeft die eigen teller op de rechterkant?">`0`</Keuze>
+  <Keuze goed uitleg="Binnen de functie is teller een eigen, lokale variabele, en die heeft nog geen waarde als Python teller + 1 uitrekent.">Een foutmelding</Keuze>
+  <Uitleg>
 
-Het programma stopt met een foutmelding:
+  Het programma stopt met een foutmelding:
 
-{/* foutmelding-van: blok-erboven */}
-```
-UnboundLocalError: cannot access local variable 'teller' where it is not associated with a value
-```
+  {/* foutmelding-van: teller = 0\ndef tel_op():\n    teller = teller + 1\ntel_op() */}
 
-Werk je met Python 3.10 of ouder, dan staat er `local variable 'teller' referenced before assignment`. Dezelfde fout, andere bewoording.
+  ```
+  UnboundLocalError: cannot access local variable 'teller' where it is not associated with a value
+  ```
 
-</details>
+  Werk je met Python 3.10 of ouder, dan staat er `local variable 'teller' referenced before assignment`. Dezelfde fout, andere bewoording.
+
+  </Uitleg>
+</Voorspel>
 
 ## Waarom dat misgaat
 
@@ -275,7 +280,7 @@ Alex
 Sam
 ```
 
-Binnen `begroet` maakt de regel `naam = "Alex"` een nieuwe, lokale `naam`. Die verdwijnt zodra de functie klaar is, dus de `naam` van buiten staat daarna nog gewoon op `"Sam"`.
+Binnen `begroet` maakt de regel `naam = "Alex"` een nieuwe, lokale `naam`. Die verdwijnt zodra de functie klaar is, dus de `naam` van buiten staat daarna nog op `"Sam"`.
 
 {/* foutmelding-los: hier staat juist dat die fout niet optreedt; het blok erboven draait en bewijst het */}
 

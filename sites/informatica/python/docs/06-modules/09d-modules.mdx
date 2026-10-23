@@ -15,7 +15,7 @@ time.sleep(2)
 print("Af!")
 ```
 
-Klik op Uitvoeren. Er gebeurt eerst even niets, en dan staan allebei de regels er. Die wachttijd is `sleep`: een functie die je programma stillegt, en die je niet zelf hoeft te schrijven — hij zit al in Python.
+Klik op Uitvoeren. Er gebeurt eerst even niets, en dan staan allebei de regels er. Die wachttijd is `sleep`: een functie die je programma stillegt. Je hoeft hem niet zelf te schrijven, hij zit al in Python.
 
 :::note
 In deze editor verschijnt je uitvoer pas als het hele programma klaar is, dus je ziet beide regels tegelijk. Draai je hetzelfde bestand op je eigen computer, dan zie je `Klaar voor de start` meteen en `Af!` twee seconden later.
@@ -68,7 +68,24 @@ Allebei pauzeren ze een seconde. Het verschil zit in wat je daarna typt:
 
 De eerste vorm is duidelijker: `time.sleep` vertelt meteen waar die functie vandaan komt. De tweede is korter, en handig als je één functie heel vaak gebruikt.
 
-**Let op:** kies je `from time import sleep`, dan werkt `time.sleep(1)` níét meer — je hebt de module zelf immers niet gehaald.
+{/* niet-draaien: valt expres om; de voorspelvraag eronder vraagt waarom */}
+```python
+from time import sleep
+
+time.sleep(1)
+print("Klaar")
+```
+
+<Voorspel vraag="Wat gebeurt er als je dit uitvoert?">
+  <Keuze uitleg="sleep is er wel, maar kijk welke naam er op de regel met time.sleep staat.">Na een seconde staat er `Klaar`</Keuze>
+  <Keuze goed uitleg="Met from time import sleep haal je alleen sleep op. De naam time kent Python dan niet.">Een foutmelding</Keuze>
+  <Keuze uitleg="Python stopt niet stil: een naam die hij niet kent, meldt hij.">Niets</Keuze>
+  <Uitleg>
+
+  Je krijgt een foutmelding: Python kent `time` niet. Kies je `from time import sleep`, dan schrijf je `sleep(1)`. Wil je `time.sleep(1)` schrijven, dan heb je `import time` nodig.
+
+  </Uitleg>
+</Voorspel>
 
 ## Import staat bovenaan
 
@@ -230,7 +247,7 @@ zeg_langzaam("Eerst dit", 0.5)
 zeg_langzaam("En dan dit", 1)
 ```
 
-De pauze verschilt per aanroep, want `seconden` is gewoon een parameter. Zo bouw je met een kant-en-klare functie je eigen functie.
+De pauze verschilt per aanroep, want `seconden` is een parameter. Zo bouw je met een kant-en-klare functie je eigen functie.
 
 <CodeExercise>{`import time
 

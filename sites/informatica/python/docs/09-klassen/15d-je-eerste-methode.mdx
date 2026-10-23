@@ -26,12 +26,16 @@ rex.blaf()
 bello.blaf()
 ```
 
-Uitvoer:
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze goed uitleg="self is steeds het object vóór de punt: eerst rex, dan bello.">`Rex zegt: Woef!` en `Bello zegt: Woef!`</Keuze>
+  <Keuze uitleg="self is niet de laatst gemaakte hond, maar de hond waarop je de methode aanroept.">`Bello zegt: Woef!` en `Bello zegt: Woef!`</Keuze>
+  <Keuze uitleg="blaf heeft de parameter self, maar die vult Python zelf in. Je hoeft niets mee te geven.">Een foutmelding</Keuze>
+  <Uitleg>
 
-```
-Rex zegt: Woef!
-Bello zegt: Woef!
-```
+  Elke hond blaft met zijn eigen naam. Hoe Python dat doet, lees je hieronder bij `self`.
+
+  </Uitleg>
+</Voorspel>
 
 De methode springt in onder `class`, net als `__init__`. Je roept hem aan met
 een punt, net als een attribuut, maar met haakjes erachter: `rex.blaf()`.

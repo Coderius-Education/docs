@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 5c And, or en elif
 
-Je kunt nu kiezen tussen twee paden met `if`/`else`. In deze les voeg je twee dingen toe: meerdere voorwaarden combineren met `and` en `or`, en meer dan twee takken met `elif`.
+Met `if`/`else` kies je tussen twee paden. Met `and` en `or` combineer je voorwaarden, en met `elif` maak je meer dan twee takken.
 
 ## Twee voorwaarden combineren: and en or
 
@@ -15,6 +15,7 @@ Je kunt nu kiezen tussen twee paden met `if`/`else`. In deze les voeg je twee di
 |:--------:|-----------------|
 | `and`    | Als **beide** voorwaarden `True` zijn |
 | `or`     | Als **minstens één** voorwaarde `True` is |
+| `not`    | Als de voorwaarde **niet** `True` is: `not True` is `False` |
 
 ```python
 leeftijd = 16
@@ -26,7 +27,7 @@ else:
     print("Sorry, je mag er niet in.")
 ```
 
-Vraag jezelf bij twijfel: "moet allebei, of mag één?" — dat bepaalt of je `and` of `or` kiest.
+Twijfel je tussen `and` en `or`? Vraag je dan af: moet het allebei, of is één genoeg?
 
 ## Meer dan twee takken: elif
 
@@ -45,9 +46,68 @@ else:
 
 Python kijkt de voorwaarden **van boven naar beneden** na en stopt zodra er één `True` is. De andere takken worden dan niet meer gecheckt. Je kunt zoveel `elif`-takken plaatsen als je wilt.
 
+```python
+score = 90
+
+if score >= 55:
+    print("Voldoende")
+elif score >= 80:
+    print("Uitstekend")
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze goed uitleg="90 is 55 of meer, dus de eerste tak klopt al. Daarna kijkt Python niet verder.">`Voldoende`</Keuze>
+  <Keuze uitleg="90 is wel 80 of meer, maar Python komt nooit bij die tak: de eerste klopte al.">`Uitstekend`</Keuze>
+  <Keuze uitleg="Van een if met elif voert Python hoogstens één tak uit.">`Voldoende` en `Uitstekend`</Keuze>
+  <Uitleg>
+
+  Je ziet `Voldoende`, ook al is 90 uitstekend. Zet daarom de strengste voorwaarde bovenaan: eerst `>= 80`, dan `>= 55`.
+
+  </Uitleg>
+</Voorspel>
+
 :::tip[Eerst op papier]
 Speel dit eerst na zonder computer, met getallenkaartjes en poortwachters: [De beslismachine](site:python/docs/projecten/unplugged/beslismachine). Je docent kan de hand-out printen.
 :::
+
+## Er gaat iets mis
+
+**De variabele maar één keer genoemd**
+
+{/* niet-compileren: bewuste syntaxfout, na and ontbreekt de variabele */}
+
+```python
+leeftijd = 15
+if leeftijd >= 12 and <= 19:
+    print("Tiener")
+```
+
+Uitvoer:
+
+{/* foutmelding-van: leeftijd = 15\nif leeftijd >= 12 and <= 19:\n    print("Tiener") */}
+
+```
+SyntaxError: invalid syntax
+```
+
+Aan elke kant van `and` staat een hele vergelijking. Schrijf `leeftijd >= 12 and leeftijd <= 19`.
+
+**or met maar één vergelijking**
+
+```python
+kleur = "groen"
+
+if kleur == "rood" or "blauw":
+    print("Mooie kleur")
+```
+
+Uitvoer:
+
+```
+Mooie kleur
+```
+
+Geen foutmelding, en toch klopt het niet: groen is geen rood of blauw. Python leest dit als `kleur == "rood"` of `"blauw"`, en een tekst die niet leeg is telt als `True`. Vergelijk aan beide kanten: `kleur == "rood" or kleur == "blauw"`.
 
 ---
 
@@ -189,7 +249,7 @@ else:
     print(f"Welkom {naam}!")
 ```
 
-In de volgende les leer je de **for-loop**: een rijtje getallen of namen aflopen zonder elke regel zelf te typen.
+In de [volgende les](site:python/docs/herhalen/06a-for-loop) leer je de **for-loop**: een rijtje getallen of namen aflopen zonder elke regel zelf te typen.
 
 <CodeExercise>{`naam = "Alex"
 leeftijd = 12

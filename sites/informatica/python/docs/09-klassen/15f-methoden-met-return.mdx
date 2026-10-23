@@ -35,9 +35,31 @@ Uitvoer:
 In hondenjaren is Rex 21.
 ```
 
-`blaf()` uit 15d print zelf iets. `hondenjaren()` print niets: hij geeft een
-getal terug, en jij kiest wat je ermee doet. Je kunt het printen, maar ook
-vergelijken of verder mee rekenen.
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def hondenjaren(self):
+        return self.leeftijd * 7
+
+
+rex = Hond("Rex", 3)
+rex.hondenjaren()
+print("Klaar")
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="return zet niets op het scherm. Het getal komt terug, maar niemand doet er iets mee.">`21` en `Klaar`</Keuze>
+  <Keuze goed uitleg="hondenjaren geeft 21 terug, en die waarde wordt nergens geprint of bewaard.">`Klaar`</Keuze>
+  <Keuze uitleg="Een waarde teruggeven en er niets mee doen mag gewoon.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet alleen `Klaar`. `blaf()` uit 15d print zelf iets. `hondenjaren()` print niets: hij geeft een getal terug, en jij kiest wat je ermee doet. Je kunt het printen, maar ook vergelijken of er verder mee rekenen.
+
+  </Uitleg>
+</Voorspel>
 
 ## Een methode die ja of nee zegt
 
@@ -69,6 +91,8 @@ Max is nog een puppy.
 
 ## Er gaat iets mis
 
+**`print` in plaats van `return`**
+
 ```python
 class Hond:
     def __init__(self, naam, leeftijd):
@@ -93,6 +117,33 @@ In hondenjaren is Rex None.
 De methode print het getal zelf, en geeft daarna niets terug. Niets heet in
 Python `None`, en dat komt in je zin terecht. Schrijf `return` in plaats van
 `print`.
+
+**De haakjes vergeten in een `if`**
+
+```python
+class Hond:
+    def __init__(self, naam, leeftijd):
+        self.naam = naam
+        self.leeftijd = leeftijd
+
+    def is_puppy(self):
+        return self.leeftijd < 1
+
+
+rex = Hond("Rex", 3)
+if rex.is_puppy:
+    print(f"{rex.naam} is nog een puppy.")
+```
+
+Uitvoer:
+
+```
+Rex is nog een puppy.
+```
+
+Rex is 3, en toch staat het er. Zonder haakjes roep je de methode niet aan:
+`rex.is_puppy` is de methode zelf, en voor een `if` telt die als waar.
+Schrijf `if rex.is_puppy():`.
 
 ---
 

@@ -27,14 +27,29 @@ kan bij jou anders zijn.
 
 ## Een set maken
 
-Met accolades, net als een dictionary — maar zonder dubbele punten:
+Met accolades, net als een dictionary, maar zonder dubbele punten:
 
 ```python
 kleuren = {"rood", "groen", "blauw"}
 ```
 
-**Let op:** `{}` maakt een lege *dictionary*, geen lege set. Een lege
-set maak je met `set()`:
+{/* niet-draaien: valt expres om; de voorspelvraag eronder vraagt waarom */}
+```python
+leeg = {}
+leeg.add("A")
+print(leeg)
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Dat zou kloppen als leeg een set was. Kijk wat lege accolades maken.">`{'A'}`</Keuze>
+  <Keuze uitleg="Python slaat de regel met add niet stil over.">`{}`</Keuze>
+  <Keuze goed uitleg="Lege accolades maken een lege dictionary, en een dictionary heeft geen add.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je krijgt een foutmelding. `{}` maakt een lege *dictionary*, geen lege set. Een lege set maak je met `set()`:
+
+  </Uitleg>
+</Voorspel>
 
 ```python
 leeg = set()
@@ -59,7 +74,7 @@ bezocht.remove("B")         # haal weg
 print(bezocht)              # {'A'}
 ```
 
-`add` op iets dat er al in zit is geen fout — de set blijft
+`add` op iets dat er al in zit is geen fout: de set blijft
 onveranderd. Precies daarom is een set zo handig om bij te houden wat
 je al gehad hebt.
 
@@ -74,6 +89,42 @@ je al gehad hebt.
 
 Vuistregel: gaat het om de **volgorde** of om **posities**, kies een
 lijst. Gaat het alleen om de vraag *"zit dit erin?"*, kies een set.
+
+## Er gaat iets mis
+
+**add op lege accolades**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+bezocht = {}
+bezocht.add("A")
+```
+
+Uitvoer:
+
+```
+AttributeError: 'dict' object has no attribute 'add'
+```
+
+`{}` is een lege dictionary. Begin een set met `bezocht = set()`.
+
+**Een set opvragen met een plek**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+kleuren = {"rood", "groen", "blauw"}
+print(kleuren[0])
+```
+
+Uitvoer:
+
+```
+TypeError: 'set' object is not subscriptable
+```
+
+Een set heeft geen volgorde, dus ook geen plek 0. Wil je weten of iets erin zit, gebruik dan `in`: `"rood" in kleuren`.
 
 ---
 
@@ -230,12 +281,16 @@ print(samen)`}</CodeExercise>
 
 ## En nu?
 
-Gefeliciteerd. Je hebt de basis van Python onder de knie: variabelen,
-rekenen, tekst, beslissingen, herhaling, functies, lijsten, tuples,
-dictionaries en sets. Hiermee kun je echte programma's bouwen.
+Je kent nu de basis van Python: variabelen, rekenen, tekst, beslissingen,
+herhaling, functies, lijsten, tuples, dictionaries en sets. Hiermee kun je
+echte programma's bouwen.
 
-Klaar om iets **visueels** te maken — animaties, kleine games, dingen
-die bewegen? Ga dan verder met [**play-docs**](site:play/).
+In de [volgende les](site:python/docs/bestanden/14a-tekstbestand-schrijven)
+bewaar je gegevens in een bestand, zodat ze er na het afsluiten van je
+programma nog zijn.
+
+Wil je liever iets **visueels** maken, zoals animaties, kleine games en
+dingen die bewegen? Kijk dan bij [**play-docs**](site:play/).
 Daar leer je hoe je met de `play`-bibliotheek vormen tekent, ze laat
 bewegen en reageert op toetsenbord en muis. Alle Python die je hier
 hebt geleerd, gebruik je daar opnieuw.

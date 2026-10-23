@@ -14,7 +14,9 @@ import CodeExercise from '@site/src/components/CodeExercise';
 ]} />
 
 In [14f](site:python/docs/bestanden/14f-json-bestand) schreef je dictionaries en lijsten naar een
-bestand. Een object van je eigen klasse lukt zo niet:
+bestand. Lukt dat ook met een object van je eigen klasse?
+
+{/* niet-draaien: valt expres om; de voorspelvraag eronder vraagt waarom */}
 
 ```python
 import json
@@ -30,15 +32,24 @@ rex = Hond("Rex", 3)
 print(json.dumps(rex))
 ```
 
-Uitvoer:
+<Voorspel vraag="Wat gebeurt er als je dit uitvoert?">
+  <Keuze uitleg="json weet niet welke attributen een Hond heeft, en zoekt dat ook niet zelf uit.">`{"naam": "Rex", "leeftijd": 3}`</Keuze>
+  <Keuze goed uitleg="JSON kent geen Hond. Python weigert het object om te zetten.">Een foutmelding</Keuze>
+  <Keuze uitleg="json.dumps gebruikt __str__ niet, en deze hond heeft er ook geen.">`Rex`</Keuze>
+  <Uitleg>
 
-```
-TypeError: Object of type Hond is not JSON serializable
-```
+  Python stopt met een foutmelding:
 
-JSON kent tekst, getallen, `true`/`false`, `null`, lijsten en
-dictionaries. Een `Hond` kent hij niet. Je zet het object dus eerst zelf om
-naar een dictionary.
+  {/* foutmelding-van: blok-erboven */}
+
+  ```
+  TypeError: Object of type Hond is not JSON serializable
+  ```
+
+  JSON kent tekst, getallen, `true`/`false`, `null`, lijsten en dictionaries. Een `Hond` kent hij niet. Je zet het object dus eerst zelf om naar een dictionary.
+
+  </Uitleg>
+</Voorspel>
 
 ## Van object naar dictionary
 

@@ -22,7 +22,7 @@ Python voert je code **van boven naar beneden** uit. Elke regel is één instruc
 ```python
 print("Hallo!")
 print("Ik leer Python.")
-print("Dit is makkelijk.")
+print("Dit is mijn eerste programma.")
 ```
 
 Uitvoer:
@@ -30,10 +30,81 @@ Uitvoer:
 ```
 Hallo!
 Ik leer Python.
-Dit is makkelijk.
+Dit is mijn eerste programma.
 ```
 
-Tekst moet altijd tussen aanhalingstekens staan. Vergeet je ze, dan denkt Python dat je een variabele bedoelt — en geeft een foutmelding.
+Tekst moet altijd tussen aanhalingstekens staan. Vergeet je ze, dan geeft Python een foutmelding. Hieronder zie je welke.
+
+```python
+print("5 + 3")
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Python rekent alleen als de som niet tussen aanhalingstekens staat.">`8`</Keuze>
+  <Keuze goed uitleg="Alles tussen aanhalingstekens is tekst, en print() zet tekst precies zo op het scherm.">`5 + 3`</Keuze>
+  <Keuze uitleg="De aanhalingstekens vertellen Python waar de tekst begint en eindigt. Op het scherm komen ze niet.">`"5 + 3"`</Keuze>
+  <Uitleg>
+
+  Je ziet `5 + 3`. Voor Python is het tekst, net als `"Hallo!"`. Zonder aanhalingstekens, `print(5 + 3)`, rekent Python wel: dat doe je in [De rekenmachine](site:python/docs/basis/rekenmachine).
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+**Aanhalingstekens vergeten**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+print(Hallo)
+```
+
+Uitvoer:
+
+```
+NameError: name 'Hallo' is not defined
+```
+
+Zonder aanhalingstekens is `Hallo` voor Python geen tekst maar een naam, en die naam kent hij niet. Zet de tekst tussen aanhalingstekens: `print("Hallo")`.
+
+{/* foutmelding-van: print(Hallo, wereld!) */}
+
+Staan er meer woorden zonder aanhalingstekens, zoals in `print(Hallo, wereld!)`, dan snapt Python de regel helemaal niet. Dan krijg je een `SyntaxError`.
+
+**Het aanhalingsteken aan het eind vergeten**
+
+{/* niet-compileren: bewuste syntaxfout, het aanhalingsteken aan het eind ontbreekt */}
+
+```python
+print("Hallo)
+```
+
+Uitvoer:
+
+{/* foutmelding-van: print("Hallo) */}
+
+```
+SyntaxError: unterminated string literal (detected at line 1)
+```
+
+Python zoekt het aanhalingsteken dat de tekst afsluit, en vindt het niet. Elke tekst heeft er twee: één aan het begin en één aan het eind.
+
+**Print met een hoofdletter**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+Print("Hallo")
+```
+
+Uitvoer:
+
+```
+NameError: name 'Print' is not defined. Did you mean: 'print'?
+```
+
+Voor Python zijn `print` en `Print` twee verschillende namen, en alleen `print` met een kleine letter bestaat. De melding raadt zelf al wat je bedoelde.
 
 ---
 
@@ -82,7 +153,7 @@ Muziek maken
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Drie `print()`-regels, elk met je eigen gegevens tussen aanhalingstekens. Getallen mag je ook tussen aanhalingstekens zetten — het is dan gewoon tekst.
+Drie `print()`-regels, elk met je eigen gegevens tussen aanhalingstekens. Getallen mag je ook tussen aanhalingstekens zetten: dan zijn ze tekst.
 
 </details>
 
@@ -139,7 +210,7 @@ print("Hobby: Muziek maken")
 print("Tot ziens!")
 ```
 
-In de volgende les ga je dit visitekaartje verbeteren met **variabelen** — dan hoef je niet meer alle gegevens in elke `print()` opnieuw te typen.
+In de [volgende les](site:python/docs/basis/jij-als-variabele) ga je dit visitekaartje verbeteren met **variabelen** — dan hoef je niet meer alle gegevens in elke `print()` opnieuw te typen.
 
 <CodeExercise>{`print("=== Mijn Visitekaartje ===")
 print("Naam: Alex Jansen")

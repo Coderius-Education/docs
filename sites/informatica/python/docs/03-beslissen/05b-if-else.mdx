@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 5b If en else
 
-Je kunt nu vergelijkingen maken die `True` of `False` opleveren. In deze les laat je je programma daar **iets mee doen** met `if` en `else`.
+Een vergelijking geeft `True` of `False`. Met `if` en `else` laat je je programma daar **iets mee doen**.
 
 ## if en else
 
@@ -24,7 +24,7 @@ else:
 
 {/* foutmelding-van: if True:\nprint("hoi") */}
 
-De regels ná `if` en `else` springen **4 spaties** in. Die inspringing is geen opmaak — het is verplicht in Python en vertelt welke regels bij het blok horen. Laat je het weg, dan krijg je een `IndentationError`.
+De regels ná `if` en `else` springen **4 spaties** in. Die inspringing is geen opmaak: Python ziet eraan welke regels bij het blok horen. Laat je hem weg, dan krijg je een `IndentationError`.
 
 ## if zonder else
 
@@ -39,7 +39,88 @@ if score >= 50:
 print("Je score was:", score)
 ```
 
-De tweede `print` springt niet in en wordt dus **altijd** uitgevoerd — hij staat buiten het `if`-blok.
+De tweede `print` springt niet in. Hij staat buiten het `if`-blok, dus Python voert hem **altijd** uit.
+
+```python
+score = 40
+
+if score >= 50:
+    print("Geslaagd")
+print("Klaar")
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="40 is niet 50 of meer, dus de ingesprongen regel slaat Python over.">`Geslaagd` en `Klaar`</Keuze>
+  <Keuze goed uitleg="Alleen de ingesprongen regel hoort bij de if. De regel met Klaar staat erbuiten en draait altijd.">`Klaar`</Keuze>
+  <Keuze uitleg="De laatste regel springt niet in, dus de if heeft er geen invloed op.">Niets</Keuze>
+  <Uitleg>
+
+  Je ziet alleen `Klaar`. De voorwaarde is `False`, dus Python slaat het ingesprongen blok over en gaat verder met de eerste regel die niet inspringt.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+**De dubbele punt vergeten**
+
+{/* niet-compileren: bewuste syntaxfout, de dubbele punt ontbreekt */}
+
+```python
+leeftijd = 15
+if leeftijd >= 18
+    print("Volwassen")
+```
+
+Uitvoer:
+
+{/* foutmelding-van: leeftijd = 15\nif leeftijd >= 18\n    print("Volwassen") */}
+
+```
+SyntaxError: expected ':'
+```
+
+Achter de voorwaarde van een `if`, en achter `else`, staat altijd een dubbele punt.
+
+**Niet ingesprongen**
+
+{/* niet-compileren: bewuste inspringfout */}
+
+```python
+leeftijd = 15
+if leeftijd >= 18:
+print("Volwassen")
+```
+
+Uitvoer:
+
+{/* foutmelding-van: leeftijd = 15\nif leeftijd >= 18:\nprint("Volwassen") */}
+
+```
+IndentationError: expected an indented block after 'if' statement on line 2
+```
+
+Na de dubbele punt verwacht Python een regel die 4 spaties inspringt.
+
+**= in plaats van ==**
+
+{/* niet-compileren: bewuste syntaxfout, = in plaats van == */}
+
+```python
+leeftijd = 18
+if leeftijd = 18:
+    print("Gefeliciteerd")
+```
+
+Uitvoer:
+
+{/* foutmelding-van: leeftijd = 18\nif leeftijd = 18:\n    print("Gefeliciteerd") */}
+
+```
+SyntaxError: invalid syntax. Maybe you meant '==' or ':=' instead of '='?
+```
+
+Met één `=` geef je een variabele een waarde. Vergelijken doe je met `==`. Python raadt het in de melding zelf al.
 
 ---
 
@@ -165,7 +246,7 @@ else:
     print(f"Helaas {naam}, een {cijfer} is niet genoeg.")
 ```
 
-In de volgende les leer je hoe je **drie of meer** mogelijkheden afhandelt en hoe je twee voorwaarden combineert.
+In de [volgende les](site:python/docs/beslissen/05c-and-or-elif) leer je hoe je **drie of meer** mogelijkheden afhandelt en hoe je twee voorwaarden combineert.
 
 <CodeExercise>{`naam = "Alex"
 cijfer = 6.5

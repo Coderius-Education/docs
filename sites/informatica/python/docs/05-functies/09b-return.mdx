@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 9b Return
 
-Je functies met parameters tonen iets op het scherm. Maar wat als je het resultaat **wilt gebruiken** voor verdere berekeningen of beslissingen? Daarvoor is `return`: een functie geeft een waarde terug, en die kun je opslaan of doorrekenen.
+Je functies met parameters tonen iets op het scherm. Wil je met het resultaat **verder rekenen**, dan laat je de functie het teruggeven met `return`. Die waarde kun je opslaan of in een berekening gebruiken.
 
 ## Een waarde teruggeven
 
@@ -26,7 +26,26 @@ print(verdubbel(7) + 1)      # 15
 
 ## print versus return
 
-Dit verschil is essentieel — en een van de meest gemaakte fouten door beginners:
+```python
+def verdubbel(getal):
+    print(getal * 2)
+
+x = verdubbel(5)
+print(x)
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="De functie print 10, maar geeft niets terug. Dus x krijgt geen 10.">`10` en `10`</Keuze>
+  <Keuze uitleg="print(x) staat er ook, en die zet ook iets op het scherm.">`10`</Keuze>
+  <Keuze goed uitleg="De functie print 10, en geeft daarna niets terug. x wordt None.">`10` en `None`</Keuze>
+  <Uitleg>
+
+  Eerst print de functie `10`. Hij heeft geen `return`, dus `x` krijgt `None`: letterlijk "geen waarde". Met `return getal * 2` in plaats van `print` zou `x` wel `10` zijn.
+
+  </Uitleg>
+</Voorspel>
+
+Het verschil tussen `print` en `return` op een rij:
 
 | | `print()` | `return` |
 |--|----------|----------|
@@ -34,7 +53,41 @@ Dit verschil is essentieel — en een van de meest gemaakte fouten door beginner
 | Kun je het opslaan? | Nee | Ja: `x = mijn_functie(...)` |
 | Geschikt voor | Output tonen | Berekeningen, beslissingen |
 
-Een functie zónder `return` levert automatisch `None` op — letterlijk "geen waarde". Stelregel: als je een functie maakt om een **waarde te berekenen**, hoort er een `return` in. Toont de functie alleen iets, dan is `print()` genoeg.
+Een functie zónder `return` levert `None` op. Maak je een functie om een **waarde te berekenen**, dan hoort er een `return` in. Toont de functie alleen iets, dan is `print()` genoeg.
+
+## Er gaat iets mis
+
+**Rekenen met een functie zonder return**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+def verdubbel(getal):
+    print(getal * 2)
+
+print(verdubbel(5) + 1)
+```
+
+Uitvoer:
+
+```
+10
+TypeError: unsupported operand type(s) for +: 'NoneType' and 'int'
+```
+
+De functie print `10` en geeft `None` terug, en bij `None` kun je geen 1 optellen. Vervang de `print` in de functie door `return`.
+
+**Code na return**
+
+```python
+def verdubbel(getal):
+    return getal * 2
+    print("Klaar met verdubbelen")
+
+print(verdubbel(5))   # 10
+```
+
+`Klaar met verdubbelen` komt nooit op het scherm. Bij `return` stopt de functie meteen, dus wat eronder staat draait niet. Zet zo'n regel boven de `return`.
 
 :::tip[Eerst op papier]
 Speel dit eerst na zonder computer, als rollenspel met briefjes: [De functiemachine](site:python/docs/projecten/unplugged/functiemachine). Je docent kan de hand-out printen.

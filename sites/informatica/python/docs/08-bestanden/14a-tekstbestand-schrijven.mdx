@@ -58,8 +58,9 @@ bestand tot je de pagina herlaadt: daarna is het weg.
 
 ## `"w"` begint opnieuw
 
-Open je een bestand dat al bestaat met `"w"`, dan gooit Python de oude inhoud
-weg:
+Wat gebeurt er als je een bestand dat al bestaat nog een keer opent met
+`"w"`? De laatste twee regels laten zien wat er daarna in het bestand staat;
+hoe dat lezen werkt, zie je in 14b.
 
 ```python
 with open("boodschappen.txt", "w") as bestand:
@@ -68,10 +69,21 @@ with open("boodschappen.txt", "w") as bestand:
 
 with open("boodschappen.txt", "w") as bestand:
     bestand.write("appels\n")
+
+with open("boodschappen.txt") as bestand:
+    print(bestand.read())
 ```
 
-Nu staat er alleen nog `appels` in. Hoe je iets onderaan toevoegt, zie je in
-les 14c.
+<Voorspel vraag="Wat staat er aan het eind in boodschappen.txt?">
+  <Keuze uitleg="Zo werkt toevoegen, maar dat doet w niet. Kijk wat w doet met een bestand dat al bestaat.">`melk`, `brood` en `appels`</Keuze>
+  <Keuze goed uitleg="Met w begint Python met een leeg bestand. De oude inhoud is weg.">`appels`</Keuze>
+  <Keuze uitleg="Het tweede blok schrijft ook iets, en dat komt in hetzelfde bestand.">`melk` en `brood`</Keuze>
+  <Uitleg>
+
+  Er staat alleen nog `appels` in. Open je een bestand dat al bestaat met `"w"`, dan gooit Python de oude inhoud weg. Hoe je iets onderaan toevoegt, zie je in [14c](site:python/docs/bestanden/14c-regels-toevoegen).
+
+  </Uitleg>
+</Voorspel>
 
 ---
 

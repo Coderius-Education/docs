@@ -19,17 +19,62 @@ except ValueError as fout:
     print(f"Dat lukte niet: {fout}")
 ```
 
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="De naam van de fout staat er niet bij. Je krijgt alleen de uitleg die Python erachter zet.">`Dat lukte niet: ValueError: invalid literal for int() with base 10: 'twaalf'`</Keuze>
+  <Keuze goed uitleg="Tussen de accolades komt de tekst die bij deze fout hoort.">`Dat lukte niet: invalid literal for int() with base 10: 'twaalf'`</Keuze>
+  <Keuze uitleg="Tussen de accolades staat de variabele fout, en Python zet de waarde ervan in de tekst, niet de naam.">`Dat lukte niet: fout`</Keuze>
+  <Uitleg>
+
+  {/* foutmelding-van: int("twaalf") */}
+
+  `fout` is de fout zelf. Print je hem, dan zie je de melding die Python
+  anders onderaan de foutmelding had gezet, zonder de naam `ValueError`
+  ervoor. De naam van de variabele kies je zelf; `fout` is gebruikelijk.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+**De fout aan tekst plakken met +**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+try:
+    getal = int("twaalf")
+except ValueError as fout:
+    print("Dat lukte niet: " + fout)
+```
+
 Uitvoer:
 
 ```
-Dat lukte niet: invalid literal for int() with base 10: 'twaalf'
+TypeError: can only concatenate str (not "ValueError") to str
 ```
 
-{/* foutmelding-van: int("twaalf") */}
+`fout` is geen tekst maar een fout. Met `+` plak je alleen tekst aan tekst. Zet hem in een f-string: `f"Dat lukte niet: {fout}"`.
 
-`fout` is de fout zelf. Print je hem, dan zie je de melding die Python
-anders onderaan de foutmelding had gezet, zonder de naam `ValueError`
-ervoor. De naam van de variabele kies je zelf; `fout` is gebruikelijk.
+**as vergeten**
+
+{/* niet-compileren: bewuste syntaxfout, het woord as ontbreekt */}
+
+```python
+try:
+    getal = int("twaalf")
+except ValueError fout:
+    print(fout)
+```
+
+Uitvoer:
+
+{/* foutmelding-van: try:\n    getal = int("twaalf")\nexcept ValueError fout:\n    print(fout) */}
+
+```
+SyntaxError: invalid syntax
+```
+
+Tussen de naam van de fout en je variabele staat het woord `as`: `except ValueError as fout:`.
 
 ---
 

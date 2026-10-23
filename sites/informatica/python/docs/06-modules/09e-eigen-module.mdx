@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 9e Je eigen module
 
-In [9d](site:python/docs/modules/09d-modules) haalde je `time` binnen: een module die iemand anders schreef. Een module is niets bijzonders — het is gewoon een Python-bestand. Dus kun je er zelf een maken.
+In [9d](site:python/docs/modules/09d-modules) haalde je `time` binnen: een module die iemand anders schreef. Een module is niets anders dan een Python-bestand, dus je kunt er zelf een maken.
 
 Twee bestanden, in dezelfde map:
 
@@ -31,7 +31,16 @@ print(rekenen.optellen(2, 3))
 print(rekenen.verdubbel(10))
 ```
 
-Draai je `main.py`, dan zie je `5` en `20`. De functies staan in het ene bestand en worden gebruikt in het andere.
+<Voorspel vraag="Beide bestanden staan in dezelfde map. Wat zie je als je main.py draait?">
+  <Keuze goed uitleg="import rekenen haalt de functies uit rekenen.py binnen, en main.py roept ze aan.">`5` en `20`</Keuze>
+  <Keuze uitleg="De functies hoeven niet in main.py te staan. Na import rekenen kun je ze gebruiken als rekenen.optellen.">Een foutmelding</Keuze>
+  <Keuze uitleg="rekenen.py roept zijn functies niet zelf aan, maar main.py doet dat wel, met print eromheen.">Niets</Keuze>
+  <Uitleg>
+
+  Je ziet `5` en `20`. De functies staan in het ene bestand en je gebruikt ze in het andere.
+
+  </Uitleg>
+</Voorspel>
 
 :::note
 Dit is de eerste les zonder oefenvenster bij de voorbeelden. Dat komt doordat er hier twee bestanden nodig zijn en het venster er maar één heeft. Maak deze bestanden dus in je eigen editor.
@@ -83,7 +92,7 @@ Zolang je programma tien regels is, hoeft dit niet. Het wordt handig zodra:
 - je dezelfde functies in **meer dan één programma** wilt gebruiken. Schrijf ze één keer, importeer ze overal.
 - je bestand zo lang wordt dat je moet scrollen om iets terug te vinden.
 
-Zo werkt elke bibliotheek die je gebruikt: `time` is ook gewoon een bestand met functies erin, alleen niet één die jij hebt getypt.
+Zo werkt elke bibliotheek die je gebruikt: `time` is ook een bestand met functies erin, alleen niet één die jij hebt getypt.
 
 ## Er gaat iets mis
 
@@ -115,7 +124,7 @@ Maak je een bestand `random.py`, dan vindt Python jóuw bestand in plaats van de
 AttributeError: module 'random' has no attribute 'randint'…
 ```
 
-Python zegt hier eigenlijk: die module heb ik gevonden, maar er zit niet in wat je vraagt. Logisch, want hij kijkt in jouw bestand. Achter die regel zet hij nog het volledige pad van je eigen `random.py` met de tip om hem te hernoemen — precies de oplossing hieronder.
+Python zegt hier: die module heb ik gevonden, maar er zit niet in wat je vraagt. Logisch, want hij kijkt in jouw bestand. Achter die regel zet hij nog het volledige pad van je eigen `random.py` met de tip om hem te hernoemen — precies de oplossing hieronder.
 
 **Oplossing:** geef je bestand een andere naam. `mijn_random.py` mag wel.
 

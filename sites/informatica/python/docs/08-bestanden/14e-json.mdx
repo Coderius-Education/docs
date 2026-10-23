@@ -22,6 +22,25 @@ JSON is tekst die er bijna precies zo uitziet als een Python-dictionary of
 ```python
 import json
 
+print(json.dumps({"klaar": True, "naam": 'Sara'}))
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Zo print Python zelf een dictionary. dumps maakt er JSON-tekst van, en die ziet er net iets anders uit.">`{'klaar': True, 'naam': 'Sara'}`</Keuze>
+  <Keuze goed uitleg="JSON schrijft true met een kleine letter en zet tekst altijd tussen dubbele aanhalingstekens.">`{"klaar": true, "naam": "Sara"}`</Keuze>
+  <Keuze uitleg="De aanhalingstekens kloppen, maar kijk nog eens hoe JSON een boolean schrijft.">`{"klaar": True, "naam": "Sara"}`</Keuze>
+  <Uitleg>
+
+  Je ziet `{"klaar": true, "naam": "Sara"}`. Dat is geen dictionary meer maar tekst, in de vorm van JSON.
+
+  </Uitleg>
+</Voorspel>
+
+Met `indent=2` zet `dumps` elke sleutel op een eigen regel:
+
+```python
+import json
+
 leerling = {"naam": "Sara", "klas": "3B", "actief": True, "hobby": None}
 
 tekst = json.dumps(leerling, indent=2)
@@ -39,8 +58,8 @@ Uitvoer:
 }
 ```
 
-Met `indent=2` krijg je elke sleutel op een eigen regel, twee spaties
-ingesprongen. Kijk ook naar de kleine verschillen met Python: JSON schrijft
+Elke sleutel staat op een eigen regel, twee spaties ingesprongen. Kijk ook
+naar de kleine verschillen met Python: JSON schrijft
 `true` en `false` met een kleine letter, `None` heet `null`, en tekst staat
 altijd tussen dubbele aanhalingstekens.
 
@@ -163,3 +182,50 @@ Uitvoer:
 
 </details>
 
+---
+
+## Opdracht 14e.2: Terug naar Python
+
+De startcode heeft een stukje JSON-tekst. Maak er een dictionary van en print
+de naam met het gemiddelde van de cijfers.
+
+Verwachte uitvoer:
+
+```
+Noor haalde gemiddeld 8.0
+```
+
+<CodeExercise>{`import json
+
+tekst = '{"naam": "Noor", "cijfers": [7, 9, 8]}'
+
+# Schrijf hier je code`}</CodeExercise>
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+`json.loads(tekst)` geeft een dictionary. Het gemiddelde is de som van de
+cijfers gedeeld door hoeveel het er zijn, met `sum()` en `len()`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import json
+
+tekst = '{"naam": "Noor", "cijfers": [7, 9, 8]}'
+
+gegevens = json.loads(tekst)
+gemiddelde = sum(gegevens["cijfers"]) / len(gegevens["cijfers"])
+print(f"{gegevens['naam']} haalde gemiddeld {gemiddelde}")
+```
+
+Uitvoer:
+
+```
+Noor haalde gemiddeld 8.0
+```
+
+</details>

@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 11a Dictionaries
 
-Een lijst slaat waardes op een **positie** op (0, 1, 2, ...). Maar wat als je waardes wilt opzoeken via een **naam**? Bijvoorbeeld een telefoonboek waar je een naam intypt en een nummer terugkrijgt. Daarvoor is een **dictionary**.
+Een lijst slaat waardes op een **positie** op (0, 1, 2, ...). Wil je een waarde opzoeken met een **naam**, zoals in een telefoonboek waar je een naam opzoekt en een nummer vindt, dan gebruik je een **dictionary**.
 
 ## Een dictionary maken
 
@@ -28,7 +28,25 @@ print(leerling["leeftijd"])  # 15
 - De **waarde** staat rechts (`"Sara"`).
 - Met `dictionary[sleutel]` haal je de waarde op.
 
-Lookup via een naam is veel leesbaarder dan via een nummer: `leerling["naam"]` is meteen duidelijk, `leerling[0]` (bij een lijst) is dat niet.
+Opzoeken met een naam leest makkelijker dan met een nummer: bij `leerling["naam"]` zie je meteen wat je krijgt.
+
+{/* niet-draaien: valt expres om; de voorspelvraag eronder vraagt waarom */}
+```python
+leerling = {"naam": "Sara", "leeftijd": 15}
+
+print(leerling[0])
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Een dictionary heeft geen plekken die bij 0 beginnen. Hij kent alleen zijn sleutels.">`Sara`</Keuze>
+  <Keuze uitleg="Met blokhaken vraag je een waarde op, nooit een sleutel. En 0 is geen sleutel van deze dictionary.">`naam`</Keuze>
+  <Keuze goed uitleg="0 is geen sleutel van leerling, dus Python vindt niets en stopt.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je krijgt een foutmelding. Een dictionary zoekt op sleutel, niet op plek. De sleutels hier zijn `"naam"` en `"leeftijd"`, dus `leerling["naam"]` werkt en `leerling[0]` niet.
+
+  </Uitleg>
+</Voorspel>
 
 ## Toevoegen en wijzigen
 
@@ -42,9 +60,41 @@ leerling["hobby"] = "muziek"     # voegt nieuwe sleutel toe
 
 Bestaat de sleutel al, dan wordt de waarde overschreven. Bestaat hij nog niet, dan wordt hij toegevoegd.
 
-{/* foutmelding-van: {"naam": "Sam"}["leeftijd"] */}
+## Er gaat iets mis
 
-Vraag je een sleutel op die niet bestaat? Dan krijg je een `KeyError` met de naam van de gezochte sleutel — handig om te debuggen. Hoe je dat vooraf checkt, leer je in de volgende les.
+**Een sleutel die niet bestaat**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+leerling = {"naam": "Sara"}
+print(leerling["leeftijd"])
+```
+
+Uitvoer:
+
+```
+KeyError: 'leeftijd'
+```
+
+De melding noemt de sleutel die Python zocht. Controleer de spelling, of voeg de sleutel eerst toe. Hoe je vooraf kijkt of een sleutel bestaat, leer je in de [volgende les](site:python/docs/data/11b-itereren-dictionaries).
+
+**De aanhalingstekens om de sleutel vergeten**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+leerling = {"naam": "Sara"}
+print(leerling[naam])
+```
+
+Uitvoer:
+
+```
+NameError: name 'naam' is not defined
+```
+
+Zonder aanhalingstekens zoekt Python een variabele `naam`, en die is er niet. De sleutel is de tekst `"naam"`: `leerling["naam"]`.
 
 :::tip[Eerst op papier]
 Speel dit eerst na zonder computer, met enveloppen als kluisjes: [Kluisjes met naamkaartjes](site:python/docs/projecten/unplugged/kluisjes). Je docent kan de hand-out printen.
@@ -175,7 +225,7 @@ for leerling in klas:
     print(f"{leerling['naam']} zit in klas {leerling['klas']}")
 ```
 
-In de volgende les leer je hoe je **door een dictionary loopt** en hoe je veilig controleert of een sleutel bestaat.
+In de [volgende les](site:python/docs/data/11b-itereren-dictionaries) leer je hoe je **door een dictionary loopt** en hoe je veilig controleert of een sleutel bestaat.
 
 <CodeExercise>{`leerling1 = {"naam": "Sara", "klas": "3B"}
 leerling2 = {"naam": "Alex", "klas": "3A"}

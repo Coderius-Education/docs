@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 10a Lijsten
 
-Een variabele houdt één waarde vast. Maar wat als je tien waardes wilt opslaan — bijvoorbeeld een boodschappenlijstje, een klassenlijst of een rij cijfers? Daarvoor heb je een **lijst** (Engels: *list*).
+Een variabele houdt één waarde vast. Wil je tien waardes bewaren, zoals een boodschappenlijstje, een klassenlijst of een rij cijfers, dan gebruik je een **lijst** (Engels: *list*).
 
 ## Een lijst maken
 
@@ -22,6 +22,23 @@ print(len(kleuren))    # 3
 
 `len()` geeft het aantal elementen in de lijst.
 
+```python
+kleuren = ["rood", "groen", "blauw"]
+
+print(kleuren[1])
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Dat zou kloppen als Python bij 1 begon te tellen. Hij begint ergens anders.">`rood`</Keuze>
+  <Keuze goed uitleg="Python telt de plekken vanaf 0. Plek 1 is dus het tweede element.">`groen`</Keuze>
+  <Keuze uitleg="Plek 1 is niet het laatste element. Er zijn drie plekken, en Python begint bij 0.">`blauw`</Keuze>
+  <Uitleg>
+
+  Je ziet `groen`. Het eerste element staat op plek 0, het tweede op plek 1. Hieronder zie je hoe dat verder gaat.
+
+  </Uitleg>
+</Voorspel>
+
 ## Een element opzoeken
 
 Elk element heeft een **positie** (index). Python begint met tellen vanaf **0**:
@@ -35,9 +52,7 @@ print(kleuren[2])    # blauw      (derde)
 print(kleuren[-1])   # blauw      (laatste — handige truc)
 ```
 
-{/* foutmelding-van: ["rood", "groen", "blauw"][3] */}
-
-`-1` is altijd het laatste element, `-2` het voorlaatste, enzovoort. Vraag je een index op die niet bestaat (bijvoorbeeld `kleuren[3]` op een lijst van 3 elementen), dan krijg je `IndexError: list index out of range`.
+`-1` is altijd het laatste element, `-2` het voorlaatste, enzovoort.
 
 ## Door een lijst loopen
 
@@ -59,6 +74,42 @@ blauw
 ```
 
 In elke ronde krijgt `kleur` automatisch de volgende waarde uit de lijst.
+
+## Er gaat iets mis
+
+**Een plek die niet bestaat**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+kleuren = ["rood", "groen", "blauw"]
+print(kleuren[3])
+```
+
+Uitvoer:
+
+```
+IndexError: list index out of range
+```
+
+Drie elementen staan op plek 0, 1 en 2. Plek 3 bestaat niet. Het laatste element is `kleuren[2]`, of `kleuren[-1]`.
+
+**Ronde haakjes in plaats van blokhaken**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+kleuren = ["rood", "groen", "blauw"]
+print(kleuren(0))
+```
+
+Uitvoer:
+
+```
+TypeError: 'list' object is not callable
+```
+
+Met ronde haakjes roep je een functie aan, en een lijst is geen functie. Een element opzoeken doe je met blokhaken: `kleuren[0]`.
 
 :::tip[Eerst op papier]
 Speel dit eerst na zonder computer, met een rij bekertjes: [Een rij bekertjes](site:python/docs/projecten/unplugged/bekertjes). Je docent kan de hand-out printen.
@@ -171,7 +222,7 @@ for cijfer in cijfers:
 print(f"Het hoogste cijfer is: {hoogste}")
 ```
 
-In de volgende les leer je hoe je een lijst **verandert** — elementen toevoegen, verwijderen of invoegen.
+In de [volgende les](site:python/docs/data/10b-lijst-methoden) leer je hoe je een lijst **verandert**: elementen toevoegen, verwijderen of invoegen.
 
 <CodeExercise>{`cijfers = [7, 4, 8, 5, 9, 3, 6]
 
