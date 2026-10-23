@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -79,6 +80,29 @@ describe('hrefsUit', () => {
         pad: '/python/stap-4-venv',
       },
     ]);
+  });
+});
+
+describe('controleer-cross-links.mjs — geen enkele link is een fout', () => {
+  it('faalt als de builds er wel zijn maar het script er geen link in leest', () => {
+    // Met de html-minifier van swc stond er href=https://… zonder
+    // aanhalingstekens, en vond het script stil geen enkele link meer.
+    const map = mkdtempSync(join(tmpdir(), 'cross-links-leeg-'));
+    try {
+      mkdirSync(join(map, 'editor-static'), { recursive: true });
+      writeFileSync(
+        join(map, 'editor-static', 'index.html'),
+        '<html><body><a href=https://informatica.coderius.nl/python/>x</a></body></html>',
+      );
+      const r = spawnSync('node', ['scripts/controleer-cross-links.mjs', map], {
+        cwd: fileURLToPath(new URL('../..', import.meta.url)),
+        encoding: 'utf8',
+      });
+      expect(r.status).toBe(1);
+      expect(r.stderr).toContain('Geen enkele link gevonden');
+    } finally {
+      rmSync(map, { recursive: true, force: true });
+    }
   });
 });
 

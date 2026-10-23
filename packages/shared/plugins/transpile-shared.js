@@ -20,8 +20,8 @@ const path = require('node:path');
  * deze plugin helpt daar NIET (Docusaurus negeert resolve.alias uit
  * configureWebpack). De oplossing zit aan de bron: gedeelde packages importeren
  * geen theme-common (ze lezen de kleurmodus van het `data-theme`-attribuut), en
- * de workspace gebruikt overal dezelfde (klassieke webpack-) bundler zodat pnpm
- * geen rspack-variant van theme-common bijmaakt.
+ * elke site gebruikt dezelfde bundler (rspack, via Docusaurus Faster in
+ * packages/shared/config). getJSLoader geeft onder rspack de swc-loader.
  */
 function resolvePackageDir(name, siteDir) {
   const resolvers = [];

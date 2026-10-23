@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 // de root van de vak-host, en daar staat de homepage.
 
 const require = createRequire(import.meta.url);
-const { createConfig } = require('./config');
+const { createConfig, FASTER } = require('./config');
 
 type NavItem = { label: string; href?: string; to?: string; type?: string; items?: NavItem[] };
 
@@ -70,5 +70,25 @@ describe('createConfig — de Cursussen-dropdown toont alleen het eigen vak', ()
     expect(
       items.filter((i) => /https:\/\/(?!informatica\.)[a-z]+\.coderius\.nl/.test(i.href ?? '')),
     ).toEqual([]);
+  });
+});
+
+describe('createConfig — Docusaurus Faster', () => {
+  // Rspack, swc en lightningcss bouwen drie tot zeven keer zo snel, met
+  // dezelfde pagina's. Twee onderdelen staan uit, en dat moet zo blijven.
+  it('staat aan voor elke site', () => {
+    const config = createConfig({ siteId: 'python', title: 'x' });
+    expect(config.future.faster).toBe(FASTER);
+    expect(FASTER.rspackBundler).toBe(true);
+  });
+
+  it('zonder de html-minifier van swc: die haalt de aanhalingstekens weg', () => {
+    // scripts/controleer-cross-links.mjs leest `href="…"`; met `href=/python/…`
+    // vond hij geen enkele link meer, en bleef de CI-job toch groen.
+    expect(FASTER.swcHtmlMinimizer).toBe(false);
+  });
+
+  it('zonder persistente cache: elke build byte voor byte gelijk', () => {
+    expect(FASTER.rspackPersistentCache).toBe(false);
   });
 });

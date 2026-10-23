@@ -392,6 +392,18 @@ if (isHoofdscript) {
 
   const resultaat = controleer(builds);
   const { gecontroleerd, overgeslagen } = resultaat;
+  // Elke cursus linkt naar andere cursussen (de footer, de navbar). Vindt het
+  // script er geen één, dan leest het de HTML niet meer, en dat mag niet
+  // groen ogen: het leest alleen `href="…"`, en een html-minifier die de
+  // aanhalingstekens weglaat (die van swc in Docusaurus Faster) liet hem stil
+  // niets controleren. Zonder aanhalingstekens lezen kan niet: dan telt
+  // `<img src=x>` in een codevoorbeeld als link.
+  if (gecontroleerd === 0) {
+    console.error(
+      'Geen enkele link gevonden in de gebouwde sites: leest het script de HTML nog goed?',
+    );
+    process.exit(1);
+  }
   const kapot = ankerModus === 'fout' ? [...resultaat.kapot, ...resultaat.ankers] : resultaat.kapot;
   const waarschuwingen = ankerModus === 'fout' ? [] : resultaat.ankers;
   meld(kapot, 'kapotte link(s)', 'error', annotaties);

@@ -183,6 +183,29 @@ function withSiteLinks(presets, plugins, siteId) {
  * cursus op zijn oude subdomein iets in de browser, geef dan `oudeOpslag` mee
  * (zie oude-opslag.js): de leerling kan dat werk dan overzetten.
  */
+/**
+ * Docusaurus Faster, op twee onderdelen na:
+ *  - swcHtmlMinimizer: die laat aanhalingstekens weg (`href=/python/…`), en
+ *    de CI-controle op links tussen cursussen (controleer-cross-links.mjs)
+ *    leest `href="…"`. Met die minifier controleerde hij stil niets meer.
+ *  - rspackPersistentCache: een build uit de cache scheelt maar een paar
+ *    seconden op een koude rspack-build, en geeft andere chunk-namen dan een
+ *    koude build. Koud is elke build byte voor byte gelijk.
+ * lightningcss houdt de volgorde van de CSS-regels uit de bron aan. De
+ * minifier van webpack (clean-css met restructureRules) verplaatste regels:
+ * zo verloor de actieve knop van de web-editor van zijn gewone stijl.
+ */
+const FASTER = {
+  swcJsLoader: true,
+  swcJsMinimizer: true,
+  swcHtmlMinimizer: false,
+  lightningCssMinimizer: true,
+  mdxCrossCompilerCache: true,
+  rspackBundler: true,
+  rspackPersistentCache: false,
+  ssgWorkerThreads: true,
+};
+
 function createConfig(course = {}) {
   const managed = loadSettings(process.cwd());
   const site = managed ? applySettings(course, managed, process.cwd()) : course;
@@ -340,11 +363,12 @@ function createConfig(course = {}) {
     baseUrl: '/',
     organizationName: 'Coderius-Education',
     onBrokenLinks: 'throw',
-    // v4-compat aan, en de rspack ("faster") bundler standaard uit: onze
-    // transpile-plugin voor gedeelde componenten leunt op de klassieke
-    // webpack-loader (utils.getJSLoader). Sites zonder gedeelde componenten
-    // mogen faster weer aanzetten via future.faster.
-    future: { v4: true, faster: false, ...future },
+    // v4-compat aan, en Docusaurus Faster (rspack, swc, lightningcss): een
+    // koude build is drie tot zeven keer zo snel als met webpack (robotica
+    // 61 s tegen 13 s), en de pagina's zijn gelijk (de DOM van elke pagina
+    // van alle veertien sites, op de namen van de assets na). Twee
+    // onderdelen staan bewust uit, zie FASTER bovenaan.
+    future: { v4: true, faster: FASTER, ...future },
     i18n: { defaultLocale: 'nl', locales: ['nl'] },
     ...rest,
     // ---- door de factory beheerd (niet overschrijfbaar via ...rest) ----
@@ -380,4 +404,4 @@ function createConfig(course = {}) {
   };
 }
 
-module.exports = { createConfig, withSiteLinks, prismThemes, CC_BY_NC };
+module.exports = { createConfig, withSiteLinks, prismThemes, CC_BY_NC, FASTER };
