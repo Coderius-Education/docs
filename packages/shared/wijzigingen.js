@@ -89,7 +89,8 @@ const COMPILEER = [
 const RUNNERS = {
   python: {
     site: 'python',
-    leest: ['{site}/docs/'],
+    // De hulppagina loopt het blokken-script ook na (SITES in het script).
+    leest: ['{site}/docs/', '{site}/src/pages/hulp.mdx'],
     alles: [
       'scripts/draai-python-blokken.py',
       'scripts/alleen.py',

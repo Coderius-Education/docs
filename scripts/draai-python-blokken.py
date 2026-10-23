@@ -143,6 +143,11 @@ ROOT = Path(__file__).resolve().parent.parent
 SITES = {
     "python": {
         "docs": site_dir("python") / "docs",
+        # Pagina's buiten docs/ die net zo goed meldingen en uitvoer beloven.
+        # De hulppagina citeerde een TypeError die Python niet zo zegt, en
+        # beweerde dat een niet-ingesprongen print één keer print (het is een
+        # IndentationError); niemand liep hem na.
+        "extra": (site_dir("python") / "src" / "pages" / "hulp.mdx",),
         "component": r"<CodeExercise>\{`(?P<oefcode>.*?)`\}</CodeExercise>",
         "component_tag": r"<CodeExercise\b",
         "python_versie": (3, 13),
@@ -191,6 +196,12 @@ def kies_site(naam: str) -> None:
     BLOK_RE = re.compile(
         r"(?P<py>^```python[^\n]*\n(?P<pycode>.*?)^```)"
         r"|(?P<kaal>^```\n(?P<kaalcode>.*?)^```)"
+        # Een fence in een andere taal (```text, ```bash) slaan we over, maar
+        # hij moet wel als geheel gelezen worden. Eerst stond hij er niet in:
+        # dan las de regex zijn sluitende ``` als een nieuw kaal blok, en was
+        # vanaf daar elke opening een sluiting. De hulppagina viel zo stil
+        # helemaal uit de controle.
+        r"|(?P<anders>^```[^\n]+\n.*?^```)"
         rf"|(?P<oef>{SITE['component']})",
         re.S | re.M,
     )
@@ -390,6 +401,12 @@ def zelftest() -> None:
     Zonder deze regels zou de controle nog steeds groen zijn — met minder
     blokken die meedoen. Dat is precies de regressie die je niet ziet.
     """
+    # Een fence in een andere taal mag de rest van het bestand niet verschuiven.
+    soorten = [
+        next(k for k in ("py", "kaal", "anders") if t.group(k) is not None)
+        for t in BLOK_RE.finditer("```text\nx\n```\n\n```python\nprint(1)\n```\n\n```\n1\n```\n")
+    ]
+    assert soorten == ["anders", "py", "kaal"], soorten
     assert template_ontsnap(r"print('a\\nb')") == r"print('a\nb')"
     assert template_ontsnap(r"\`") == "`"
     assert template_ontsnap(r"\${x}") == "${x}"
@@ -510,7 +527,7 @@ def verzamel():
     tag_re = re.compile(SITE["component_tag"])
     fence_weg = re.compile(r"^```.*?^```[^\n]*$", re.S | re.M)
 
-    for pad in sorted(DOCS.rglob("*.mdx")) + sorted(DOCS.rglob("*.md")):
+    for pad in sorted(DOCS.rglob("*.mdx")) + sorted(DOCS.rglob("*.md")) + list(SITE.get("extra", ())):
         tekst = pad.read_text()
         bron = pad.relative_to(ROOT)
         bron_pad = bron.as_posix()
@@ -524,6 +541,9 @@ def verzamel():
         erboven_afh: tuple = ()
 
         for m in BLOK_RE.finditer(tekst):
+            if m.group("anders") is not None:
+                vorige = None
+                continue
             if m.group("kaal") is not None:
                 # Een kale fence vlak onder een python-blok is zijn uitvoer.
                 # Twee dingen verbreken die band: te veel tekst ertussen, en een
