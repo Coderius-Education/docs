@@ -41,6 +41,7 @@ from __future__ import annotations
 import ast
 import contextlib
 import io
+import json
 import os
 import re
 import socket
@@ -105,50 +106,48 @@ def sleutels_bestaan():
         print(f"✓ alle {gebruikt} uitleg-sleutels in het script bestaan")
 
 
-def vrije_poort() -> int:
-    with socket.socket() as s:
-        s.bind(("127.0.0.1", 0))
-        return s.getsockname()[1]
+# Hoe lang uvicorn mag doen over opstarten. Met de taken in meer processen
+# draaien er zo'n zestien Python-processen op vier cores, en dan kost het
+# importeren van FastAPI soms seconden; 10 s was na elkaar ruim, nu krap.
+OPSTARTEN = 30
+LUISTERT = re.compile(r"Uvicorn running on http://127\.0\.0\.1:(\d+)")
 
 
 class Server:
+    """uvicorn in `map_`, op een poort die uvicorn zelf kiest (`--port 0`).
+
+    Eerst koos dit script een vrije poort, liet hem los en startte uvicorn
+    erop. Met taken in meer processen kon een andere server die poort er net
+    tussendoor pakken: dan faalde deze uvicorn, maar luisterde er wel iets,
+    en controleerde de taak stil het project van een andere taak. Nu bindt
+    uvicorn de poort zelf, en leest dit script hem uit de log.
+    """
+
     def __init__(self, map_: Path):
         self.map = map_
-        self.poort = vrije_poort()
+        self.poort: int | None = None
         self.log = map_ / "uvicorn.log"
         self.proces = None
 
     def __enter__(self):
-        # Met taken in meer processen kan een ander proces de vrije poort net
-        # pakken voordat uvicorn hem neemt; dan een nieuwe poort.
-        for _ in range(3):
-            if self.start():
-                return self
-            if "address already in use" not in self.log.read_text().lower():
-                break
-            self.poort = vrije_poort()
-        raise SystemExit(f"uvicorn start niet in {self.map}:\n{self.log.read_text()}")
-
-    def start(self) -> bool:
         self.logbestand = self.log.open("w")
         self.proces = subprocess.Popen(
-            [sys.executable, "-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", str(self.poort)],
+            [sys.executable, "-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", "0"],
             cwd=self.map,
             stdout=self.logbestand,
             stderr=subprocess.STDOUT,
         )
-        for _ in range(100):
-            if self.proces.poll() is not None:
-                break
-            try:
-                with socket.create_connection(("127.0.0.1", self.poort), timeout=0.2):
-                    return True
-            except OSError:
-                time.sleep(0.1)
+        tot = time.monotonic() + OPSTARTEN
+        while time.monotonic() < tot and self.proces.poll() is None:
+            m = LUISTERT.search(self.log.read_text(encoding="utf-8", errors="replace"))
+            if m:
+                self.poort = int(m.group(1))
+                return self
+            time.sleep(0.05)
         # Zonder __exit__ (dat draait alleen na een gelukte __enter__) bleef een
         # uvicorn die niet luisterde achter, met de poort en het logbestand.
         self.stop()
-        return False
+        raise SystemExit(f"uvicorn start niet in {self.map}:\n{self.log.read_text()}")
 
     def __exit__(self, *_):
         self.stop()
@@ -198,7 +197,11 @@ def eis(voorwaarde: bool, melding: str, uitvoer: str = ""):
 
 def zonder_server():
     eerder = len(fouten)
-    code, uit = controleer("formulieren", "--adres", f"http://127.0.0.1:{vrije_poort()}")
+    # Een poort waar zeker niets luistert: gebonden, maar zonder listen(), en
+    # zolang de controle loopt kan geen andere taak er een server op starten.
+    with socket.socket() as bezet:
+        bezet.bind(("127.0.0.1", 0))
+        code, uit = controleer("formulieren", "--adres", f"http://127.0.0.1:{bezet.getsockname()[1]}")
     eis(code == 2, f"zonder server: exit-code {code}, verwacht 2", uit)
     eis("fastapi dev main.py" in uit, "zonder server: geen melding hoe je de server start", uit)
     code, uit = controleer()
@@ -207,6 +210,28 @@ def zonder_server():
     eis(code == 2 and "formulieren" in uit, "onbekend hoofdstuk: geen lijst of geen exit-code 2", uit)
     if len(fouten) == eerder:
         print("✓ zonder server en zonder hoofdstuk")
+
+
+def eigen_server(werk: Path):
+    """Elke server antwoordt met zijn eigen project, ook als er meer tegelijk
+    draaien. Een server die een andere taak zijn poort gaf, controleerde eerst
+    stil het verkeerde project."""
+    eerder = len(fouten)
+    with contextlib.ExitStack() as stapel:
+        servers = []
+        for naam in ("a", "b", "c"):
+            map_ = werk / f"eigen-{naam}"
+            map_.mkdir()
+            (map_ / "main.py").write_text(
+                f'from fastapi import FastAPI\n\napp = FastAPI()\n\n\n@app.get("/wie")\ndef wie():\n    return "{naam}"\n',
+                encoding="utf-8",
+            )
+            servers.append((naam, stapel.enter_context(Server(map_))))
+        for naam, s in servers:
+            antwoord = json.loads(urllib.request.urlopen(s.adres + "/wie", timeout=10).read())
+            eis(antwoord == naam, f"server {naam} op poort {s.poort} antwoordt als server {antwoord!r}")
+    if len(fouten) == eerder:
+        print("✓ elke server antwoordt met zijn eigen project")
 
 
 def lessen_van_de_basis() -> list[str]:
@@ -469,6 +494,12 @@ def taak(functie, *args) -> tuple[str, list[str], object]:
     """Draai één onderdeel: wat het print, zijn eigen fouten en wat het
     teruggeeft. Met `--processen 1` draait dit in het hoofdproces, dus de
     fouten van daarvoor gaan even opzij en daarna terug."""
+    # De uitvoer komt pas als de taak klaar is. Hangt er een, dan staat in de
+    # log (stderr komt meteen) welke taken begonnen zijn.
+    # Eén write per regel: met print() kwamen regels van twee processen soms
+    # door elkaar op één regel.
+    sys.stderr.write(" ".join(["…", functie.__name__, *filter(None, map(korte_naam, args))]) + "\n")
+    sys.stderr.flush()
     eerder = fouten[:]
     fouten.clear()
     try:
@@ -478,6 +509,17 @@ def taak(functie, *args) -> tuple[str, list[str], object]:
         return uitvoer.getvalue(), list(fouten), waarde
     finally:
         fouten[:] = eerder
+
+
+def korte_naam(arg) -> str:
+    if isinstance(arg, Path):
+        # De werkmap zelf zegt niets; een map erin wel (de stand van een les).
+        return "" if arg.name.startswith("controleer-fullstack-") else arg.name
+    if isinstance(arg, bool):
+        return "met openapi" if arg else "zonder openapi"
+    if isinstance(arg, list):
+        return f"({len(arg)} hoofdstukken)"
+    return str(arg)
 
 
 def proef_fout():
@@ -500,7 +542,9 @@ def main() -> int:
         endpoints_in_het_eindproject(werk)
         voor_de_standen = len(fouten)
         stand_taken = standen(werk)
+        standen_ok = len(fouten) == voor_de_standen
         taken = [
+            (eigen_server, werk),
             (zonder_server,),
             *((f, werk, openapi) for openapi in (True, False) for f in (referentie, kapot)),
             (varianten, werk),
@@ -536,8 +580,11 @@ def main() -> int:
                 uitvoer, nieuw, waarde = klaar(f)
                 print(uitvoer, end="")
                 fouten.extend(nieuw)
+                standen_ok = standen_ok and not nieuw
                 aantal += waarde
-        if len(fouten) == voor_de_standen:
+        # Alleen de standen tellen hier: een fout in een ander onderdeel liet
+        # eerst ook dit vinkje weg.
+        if standen_ok:
             print(f"✓ het project groeit: {aantal} keer een af hoofdstuk op de stand van een latere les goed")
     if fouten:
         print(f"\n{len(fouten)} fout(en)")
