@@ -153,8 +153,8 @@ jobs:
   # doet twee dingen: elk blok compileren, en de zeven tussenstanden van het
   # bewegingsscript echt uitvoeren om te zien of ze doen wat de les belooft.
   #
-  # Blokkeert `build` bewust niet: dit gaat over de inhoud van de lessen, niet
-  # over of de site bouwt.
+  # Telt mee voor de verplichte check `build` (zie build-klaar), maar houdt de
+  # artifacts niet tegen: alleen de tests doen dat (zie publiceer).
   #
   # Met --alleen compileert hij alleen de blokken die de wijziging raakt, en
   # slaat hij de gedragstest over van een tussenstand die niet veranderde.
@@ -242,8 +242,8 @@ jobs:
   # uitgevoerd — er is geen board in CI. Deze job compileert elk python-blok
   # uit de docs (puur syntactisch, CPython volstaat daarvoor); een typefout of
   # kapot voorbeeld valt zo hier op in plaats van bij een leerling die hem
-  # overtypt. Blokkeert `build` bewust niet: dit gaat over de inhoud van de
-  # lessen, niet over of de site bouwt.
+  # overtypt. Telt mee voor de verplichte check `build` (zie build-klaar),
+  # maar houdt de artifacts niet tegen.
   robotica:
     needs: plan
     if: needs.plan.outputs.robotica == 'true'
@@ -402,10 +402,12 @@ jobs:
   #             er eerst uit; een uitroepteken in print("Klaar!") is geen
   #             stijlfout.
   #
-  # De achterstand uit de migratie is weggewerkt, dus deze job faalt weer op
+  # De achterstand uit de migratie is weggewerkt, dus deze job wordt rood op
   # een onbekend woord of een stijlfout (--streng). Stijlwaarschuwingen tellen
-  # niet mee; die staan als annotatie in de diff. Bewust geen poort voor
-  # `build`: dit gaat over de tekst, niet over of de site bouwt.
+  # niet mee; die staan als annotatie in de diff. Bewust niet blokkerend: hij
+  # telt niet mee voor de verplichte check `build`, dus een spel- of
+  # stijlfout houdt een merge niet tegen. Dat is een keuze van de
+  # opdrachtgever, geen achterstand (ci-poort.test.ts).
   #
   # De regels zelf zijn getest in packages/shared/stijl.test.ts, en die test
   # loopt in de `test`-job wél blokkerend mee. Zo kan een regel niet stilletjes
@@ -754,7 +756,7 @@ jobs:
   # Een job die het plan niet nodig had is `skipped`, en dat telt als geslaagd;
   # `failure` en `cancelled` tellen als mislukt. Wat het plan wél nodig had
   # maar toch is overgeslagen, telt ook als mislukt: dan viel er iets ervoor
-  # om (een rode test houdt de build tegen), en dat mag niet groen ogen.
+  # om (een rode test houdt `publiceer` tegen), en dat mag niet groen ogen.
   build-klaar:
     name: build
     # Ook `checks` (lint + typecheck) telt mee: een tsc-fout houdt de artifacts
@@ -762,7 +764,8 @@ jobs:
     # check wel rood, zodat hij niet gemerged wordt. Hetzelfde geldt voor de
     # blokrunners (de codevoorbeelden in de lessen); eerst telden die niet,
     # en kon een PR met kapotte voorbeelden groen worden. `tekst` blijft
-    # erbuiten: die is nog niet-blokkerend (schrijfgids §17).
+    # erbuiten: een spel- of stijlfout mag een merge niet tegenhouden (keuze
+    # van de opdrachtgever; schrijfgids §17).
     needs: [plan, test, build, publiceer, voorraad, checks, cross-links, godot, robotica, fullstack, play, python, algorithms]
     if: always()
     runs-on: ubuntu-latest

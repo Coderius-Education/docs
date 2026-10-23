@@ -83,7 +83,7 @@ describe('de poort naar de hostingbackend', () => {
 // reden. Zo valt ook een nieuwe job op die niemand aan build-klaar toevoegde.
 describe('de verplichte check build', () => {
   const TELT_NIET: Record<string, string> = {
-    tekst: 'nog niet-blokkerend (schrijfgids §17)',
+    tekst: 'een spel- of stijlfout mag een merge niet tegenhouden (keuze van de opdrachtgever)',
   };
   // Zijn oordeel staat vast in plaats van uit het plan te komen.
   const VAST: Record<string, string> = {

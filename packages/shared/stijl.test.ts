@@ -1,10 +1,11 @@
 import { REGELNAMEN, alleenProza, controleer } from '@coderius/shared/stijl';
 import { describe, expect, it } from 'vitest';
 
-// De stijlcontrole zelf is niet-blokkerend in CI: de gemigreerde sites hebben
-// nog een achterstand. Deze test is dat wél. Zonder blokkerende test kan een
-// regex stilletjes stukgaan en blijft de job groen terwijl hij niets meer
-// vindt — precies de situatie die de job moest oplossen.
+// De stijlcontrole zelf (job `tekst`) telt bewust niet mee voor de verplichte
+// check: een stijlfout mag een merge niet tegenhouden. Deze test doet dat wél.
+// Zonder blokkerende test kan een regex stilletjes stukgaan en blijft de job
+// groen terwijl hij niets meer vindt — precies de situatie die de job moest
+// oplossen.
 
 /** De namen van de regels die op dit fragment afgaan. */
 function namen(tekst: string): string[] {
