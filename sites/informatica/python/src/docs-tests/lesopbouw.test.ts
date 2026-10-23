@@ -18,8 +18,8 @@ import { lessen } from '../data/lessen';
 //   tussengevoegd, beloofde les 3 nog f-strings in de volgende les, en 6b
 //   beloofde de while-loop terwijl eerst continue en break kwamen.
 //
-// De lessen die nog niet zijn doorgelopen staan als exacte achterstand in de
-// lijsten hieronder: een les die bijgewerkt is, hoort eruit.
+// Sinds de doorloop van alle hoofdstukken heeft elke les ze; een nieuwe les
+// zonder valt om.
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 
@@ -41,35 +41,6 @@ const metCode = lessen
   .map((les) => ({ ...les, tekst: readFileSync(les.bestand, 'utf8') }))
   .filter((les) => /```python|<CodeExercise/.test(les.tekst));
 
-const ACHTERSTAND_VOORSPEL = [
-  '10a',
-  '10b',
-  '11a',
-  '11b',
-  '11c',
-  '12',
-  '13',
-  '15a',
-  '15b',
-  '15c',
-  '15d',
-  '15e',
-  '15f',
-  '15g',
-  '15h',
-  '15i',
-  '15j',
-  '15k',
-  '16a',
-  '16b',
-  '16c',
-  '16d',
-  '16e',
-  '16f',
-];
-
-const ACHTERSTAND_FOUTEN = ['10a', '10b', '11a', '11b', '12', '13', '16b', '16c', '16d', '16f'];
-
 /** Alles vóór de eerste opdracht: daar hoort een voorspelvraag te staan. */
 const voorDeOpdrachten = (tekst: string) => tekst.split(/^#{2,3} Opdracht/m)[0];
 
@@ -78,18 +49,18 @@ describe('elke les heeft wat het kader vraagt', () => {
     expect(metCode.length).toBeGreaterThan(40);
   });
 
-  it('een <Voorspel> vóór de opdrachten, op de achterstand na', () => {
+  it('een <Voorspel> vóór de opdrachten', () => {
     const zonder = metCode
       .filter((les) => !voorDeOpdrachten(les.tekst).includes('<Voorspel'))
       .map((les) => les.id);
-    expect(zonder).toEqual(ACHTERSTAND_VOORSPEL);
+    expect(zonder).toEqual([]);
   });
 
-  it('een sectie "## Er gaat iets mis", op de achterstand na', () => {
+  it('een sectie "## Er gaat iets mis"', () => {
     const zonder = metCode
       .filter((les) => !/^## Er gaat iets mis/m.test(les.tekst))
       .map((les) => les.id);
-    expect(zonder).toEqual(ACHTERSTAND_FOUTEN);
+    expect(zonder).toEqual([]);
   });
 });
 
