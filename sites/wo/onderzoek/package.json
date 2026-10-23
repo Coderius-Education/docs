@@ -16,6 +16,7 @@
   "dependencies": {
     "@coderius/shared": "workspace:*",
     "@docusaurus/core": "catalog:",
+    "@docusaurus/faster": "catalog:",
     "@docusaurus/preset-classic": "catalog:",
     "@docusaurus/theme-mermaid": "catalog:",
     "@easyops-cn/docusaurus-search-local": "catalog:",

@@ -19,6 +19,7 @@
     "@coderius/checker": "workspace:*",
     "@coderius/shared": "workspace:*",
     "@docusaurus/core": "catalog:",
+    "@docusaurus/faster": "catalog:",
     "@docusaurus/preset-classic": "catalog:",
     "@leaphy-robotics/leaphy-blocks": "4.0.0",
     "@mdx-js/react": "catalog:",

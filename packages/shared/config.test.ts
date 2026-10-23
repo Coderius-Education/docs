@@ -1,5 +1,9 @@
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { HOME, SITES, SITES_BY_ID, SUBJECTS_BY_ID } from '@coderius/shared/sites';
+import { siteMappenOpSchijf } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 
 // createConfig leest host en pad van een cursus uit de registry: elke cursus
@@ -18,6 +22,8 @@ function dropdown(config: { themeConfig: { navbar: { items: NavItem[] } } }): Na
   );
   return menu?.items ?? [];
 }
+
+const ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
 describe('createConfig — host en pad uit de registry', () => {
   it('zet url op de vak-host en baseUrl op het pad van de cursus', () => {
@@ -90,5 +96,23 @@ describe('createConfig — Docusaurus Faster', () => {
 
   it('zonder persistente cache: elke build byte voor byte gelijk', () => {
     expect(FASTER.rspackPersistentCache).toBe(false);
+  });
+
+  // @docusaurus/core zoekt @docusaurus/faster als optionele peer, binnen de
+  // site die core gebruikt. Eerst stond het pakket in geen enkele
+  // package.json en kwam het alleen via de lockfile mee; een update van
+  // Docusaurus kon het dan weglaten of een andere versie dan core geven.
+  it('elke Docusaurus-site heeft @docusaurus/faster, in de versie van core', () => {
+    const workspace = readFileSync(join(ROOT, 'pnpm-workspace.yaml'), 'utf8');
+    const versie = (naam: string) => workspace.match(new RegExp(`^ {2}'${naam}': (.+)$`, 'm'))?.[1];
+    expect(versie('@docusaurus/faster')).toBeDefined();
+    expect(versie('@docusaurus/faster')).toBe(versie('@docusaurus/core'));
+
+    const zonder = siteMappenOpSchijf(ROOT)
+      .map(({ map }) => JSON.parse(readFileSync(join(map, 'package.json'), 'utf8')))
+      .filter((pkg) => pkg.dependencies?.['@docusaurus/core'])
+      .filter((pkg) => pkg.dependencies['@docusaurus/faster'] !== 'catalog:')
+      .map((pkg) => pkg.name);
+    expect(zonder).toEqual([]);
   });
 });

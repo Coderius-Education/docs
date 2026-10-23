@@ -8,6 +8,9 @@ packages:
 # "catalog:" so every site builds against the same toolchain.
 catalog:
   '@docusaurus/core': 3.10.1
+  # Docusaurus Faster (rspack, swc, lightningcss), zie packages/shared/config.
+  # Altijd dezelfde versie als core.
+  '@docusaurus/faster': 3.10.1
   '@docusaurus/preset-classic': 3.10.1
   '@docusaurus/plugin-content-docs': 3.10.1
   '@docusaurus/plugin-pwa': 3.10.1
