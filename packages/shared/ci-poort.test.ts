@@ -1,5 +1,9 @@
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
+
+const require = createRequire(import.meta.url);
+const { RUNNERS, EIGEN_JOB, blokkenNodig } = require('./wijzigingen.js');
 
 // De hostingbackend haalt elke `<site>-static` uit een run op, ook uit een
 // mislukte run. De builds draaien tegelijk met de tests en uploaden
@@ -123,7 +127,7 @@ describe('de verplichte check build', () => {
         'publiceer',
         'cross-links',
         'godot',
-        'fullstack',
+        'blokken',
       ]),
     );
   });
@@ -150,4 +154,40 @@ describe('de verplichte check build', () => {
       expect(env[nodig], naam).toBe(`needs.plan.outputs.${uitvoer}`);
     },
   );
+});
+
+// Vijf blokrunners draaien samen in de job `blokken`, de rest heeft een eigen
+// job. Een runner die nergens draait, valt niet op: zijn job is er gewoon
+// niet. Daarom moet elke runner uit RUNNERS een plek hebben.
+describe('elke blokrunner draait ergens', () => {
+  const blokken = job('blokken');
+  const inBlokken = Object.keys(RUNNERS).filter((naam: string) => !EIGEN_JOB.includes(naam));
+  const lus = blokken.match(/for naam in ([a-z ]+); do/)?.[1].split(' ') ?? [];
+
+  it('een runner met een eigen job heeft die job', () => {
+    for (const naam of EIGEN_JOB) {
+      expect(job(naam)).toMatch(new RegExp(`if: needs\\.plan\\.outputs\\.${naam} == 'true'`));
+    }
+  });
+
+  it.each(inBlokken)('%s: vlag uit het plan, een functie en een plek in de lus', (naam) => {
+    expect(blokken).toContain(`BLOK_${naam.toUpperCase()}: \${{ needs.plan.outputs.${naam} }}`);
+    expect(blokken).toMatch(new RegExp(`^ {10}${naam}_\\(\\) \\{$`, 'm'));
+    expect(lus).toContain(naam);
+  });
+
+  it('de lus kent geen runner die niet in RUNNERS staat', () => {
+    expect([...lus].sort()).toEqual([...inBlokken].sort());
+  });
+
+  it('blokken draait als één van zijn runners nodig is, en niet voor godot alleen', () => {
+    const met = (aan: string[]) => ({
+      runners: Object.fromEntries(
+        Object.keys(RUNNERS).map((n: string) => [n, { draaien: aan.includes(n), alles: false }]),
+      ),
+    });
+    expect(blokkenNodig(met([]))).toBe(false);
+    expect(blokkenNodig(met(['godot']))).toBe(false);
+    for (const naam of inBlokken) expect(blokkenNodig(met([naam])), naam).toBe(true);
+  });
 });

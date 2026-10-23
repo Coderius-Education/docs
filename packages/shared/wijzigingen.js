@@ -159,6 +159,16 @@ const RUNNERS = {
   },
 };
 
+// Runners met een eigen job in build.yml. De rest draait samen in de job
+// `blokken`: vijf losse jobs maakten de eerste golf van een brede run groter
+// dan de twintig runners die GitHub tegelijk geeft. Godot houdt een eigen job,
+// met zijn eigen binary.
+const EIGEN_JOB = ['godot'];
+
+/** Moet de job `blokken` draaien: is een runner zonder eigen job nodig? */
+const blokkenNodig = (p) =>
+  Object.entries(p.runners).some(([naam, r]) => !EIGEN_JOB.includes(naam) && r.draaien);
+
 const CODE = /\.(?:[cm]?[jt]sx?)$/;
 const LESBESTAND = /^sites\/[^/]+\/[^/]+\/(?:docs|src\/pages)\/.*\.mdx?$/;
 const LEEST_BESTANDEN = /readFileSync|readdirSync|readFile\b|readdir\b|globSync|alleLesbestanden/;
@@ -477,6 +487,8 @@ module.exports = {
   GLOBAAL,
   PER_JOB,
   RUNNERS,
+  EIGEN_JOB,
+  blokkenNodig,
   parseDiff,
   overlapt,
   binnenWijziging,
