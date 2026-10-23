@@ -33,8 +33,29 @@ brood
 kaas
 ```
 
-Onder `kaas` zie je nog een lege regel. Waar die vandaan komt, zie je
-hieronder.
+Onder `kaas` zie je nog een lege regel. Waar komt die vandaan? `len()` telt
+hoeveel tekens er in een tekst staan:
+
+```python
+with open("woord.txt", "w") as bestand:
+    bestand.write("kaas\n")
+
+with open("woord.txt") as bestand:
+    inhoud = bestand.read()
+
+print(len(inhoud))
+```
+
+<Voorspel vraag="Welk getal zet dit programma op het scherm?">
+  <Keuze uitleg="kaas heeft vier letters, maar read() geeft alles terug wat in het bestand staat, ook wat je achter kaas schreef.">`4`</Keuze>
+  <Keuze goed uitleg="In het bestand staat kaas met de enter erachter, en die enter telt als één teken.">`5`</Keuze>
+  <Keuze uitleg="De enter is één teken, ook al schrijf je hem in je code als twee tekens.">`6`</Keuze>
+  <Uitleg>
+
+  `inhoud` is `"kaas\n"`: vier letters en de enter die je erin schreef. Die enter is de lege regel onder `kaas`: hij zit nog in de tekst, en `print` zet er zelf nog een achter.
+
+  </Uitleg>
+</Voorspel>
 
 ## Regel voor regel
 

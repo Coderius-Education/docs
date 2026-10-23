@@ -37,6 +37,28 @@ De `"a"` staat voor *append*, toevoegen. Net als `.append()` bij een lijst
 komt het nieuwe achteraan. Bestaat het bestand nog niet, dan maakt `"a"` het
 aan, net als `"w"`.
 
+```python
+with open("logboek.txt", "w") as bestand:
+    bestand.write("maandag")
+
+with open("logboek.txt", "a") as bestand:
+    bestand.write("dinsdag")
+
+with open("logboek.txt") as bestand:
+    print(bestand.read())
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="a begint geen nieuwe regel. Het schrijft precies wat je meegeeft, direct achter wat er al staat.">`maandag` en `dinsdag`</Keuze>
+  <Keuze goed uitleg="a schrijft achter wat er al staat, en er staat geen enter tussen.">`maandagdinsdag`</Keuze>
+  <Keuze uitleg="Dat zou gebeuren met w. Met a blijft de oude inhoud staan.">`dinsdag`</Keuze>
+  <Uitleg>
+
+  Je ziet `maandagdinsdag`, aan elkaar. `"a"` begint niet zelf op een nieuwe regel, net zoals `write` dat in 14a niet deed. Wil je elke dag op een eigen regel, zet dan `\n` achter elke regel die je schrijft.
+
+  </Uitleg>
+</Voorspel>
+
 ## In een functie
 
 Voeg je vaak een regel toe, dan zet je dat in een functie. Elke aanroep opent

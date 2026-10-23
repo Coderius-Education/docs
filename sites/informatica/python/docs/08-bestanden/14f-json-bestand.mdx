@@ -67,6 +67,32 @@ Sara: 120
 Alex: 95
 ```
 
+Sla je twee keer iets op in hetzelfde bestand, wat lees je dan in?
+
+```python
+import json
+
+with open("namen.json", "w") as bestand:
+    json.dump(["Sara"], bestand)
+
+with open("namen.json", "w") as bestand:
+    json.dump(["Alex"], bestand)
+
+with open("namen.json") as bestand:
+    print(json.load(bestand))
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="json.dump voegt niets samen. Het schrijft de lijst die je meegeeft, en w begint met een leeg bestand.">`['Sara', 'Alex']`</Keuze>
+  <Keuze goed uitleg="Het tweede blok opent het bestand met w, en dan is de oude lijst weg.">`['Alex']`</Keuze>
+  <Keuze uitleg="Het tweede blok schrijft ook in namen.json, en dat komt na het eerste.">`['Sara']`</Keuze>
+  <Uitleg>
+
+  Je ziet `['Alex']`. Met `"w"` begint het bestand weer leeg, net als in 14a. Wil je een lijst in een bestand aanvullen, lees hem dan eerst in, voeg toe en sla hem opnieuw op. Dat doe je in opdracht 14f.2.
+
+  </Uitleg>
+</Voorspel>
+
 ---
 
 ## Er gaat iets mis

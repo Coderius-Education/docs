@@ -36,6 +36,24 @@ Sara
 Die stukken zijn allemaal tekst, ook `'120'`. Om ermee te rekenen maak je er
 eerst een getal van met `int()`.
 
+```python
+regel = "Sara;120"
+delen = regel.split(";")
+
+print(delen[1] * 2)
+```
+
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Dat zou kloppen als delen[1] een getal was. Wat voor waarde geeft split terug?">`240`</Keuze>
+  <Keuze goed uitleg="split geeft stukken tekst terug, en tekst keer 2 zet die tekst twee keer achter elkaar.">`120120`</Keuze>
+  <Keuze uitleg="Tekst keer een getal mag in Python, zoals bij de sterretjes in 6b.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet `120120`. `delen[1]` is de tekst `'120'`, en tekst keer 2 herhaalt de tekst, net als `"*" * 2`. Met `int(delen[1]) * 2` krijg je wel `240`.
+
+  </Uitleg>
+</Voorspel>
+
 ## Een heel bestand
 
 Zo lees je een bestand met een score op elke regel:
