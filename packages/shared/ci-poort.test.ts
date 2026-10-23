@@ -126,7 +126,7 @@ describe('de verplichte check build', () => {
         'build',
         'publiceer',
         'cross-links',
-        'godot',
+        'fullstack',
         'blokken',
       ]),
     );
@@ -180,14 +180,14 @@ describe('elke blokrunner draait ergens', () => {
     expect([...lus].sort()).toEqual([...inBlokken].sort());
   });
 
-  it('blokken draait als één van zijn runners nodig is, en niet voor godot alleen', () => {
+  it('blokken draait als één van zijn runners nodig is, en niet voor fullstack alleen', () => {
     const met = (aan: string[]) => ({
       runners: Object.fromEntries(
         Object.keys(RUNNERS).map((n: string) => [n, { draaien: aan.includes(n), alles: false }]),
       ),
     });
     expect(blokkenNodig(met([]))).toBe(false);
-    expect(blokkenNodig(met(['godot']))).toBe(false);
+    expect(blokkenNodig(met(['fullstack']))).toBe(false);
     for (const naam of inBlokken) expect(blokkenNodig(met([naam])), naam).toBe(true);
   });
 });

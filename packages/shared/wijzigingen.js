@@ -161,9 +161,10 @@ const RUNNERS = {
 
 // Runners met een eigen job in build.yml. De rest draait samen in de job
 // `blokken`: vijf losse jobs maakten de eerste golf van een brede run groter
-// dan de twintig runners die GitHub tegelijk geeft. Godot houdt een eigen job,
-// met zijn eigen binary.
-const EIGEN_JOB = ['godot'];
+// dan de twintig runners die GitHub tegelijk geeft. Fullstack houdt een eigen
+// job: zijn controlescript start twee processen per core, en naast de andere
+// runners duurde het 90 s in plaats van een kleine minuut.
+const EIGEN_JOB = ['fullstack'];
 
 /** Moet de job `blokken` draaien: is een runner zonder eigen job nodig? */
 const blokkenNodig = (p) =>

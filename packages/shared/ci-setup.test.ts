@@ -68,7 +68,7 @@ describe('Node en pnpm via .github/actions/node-pnpm', () => {
     for (const naam of [
       'plan',
       'test',
-      'godot',
+      'fullstack',
       'blokken',
       'tekst',
       'checks',

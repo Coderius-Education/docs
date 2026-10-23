@@ -88,7 +88,7 @@ bewust niet mee: een spel- of stijlfout mag een merge niet tegenhouden
 job leest: zet het in `RUNNERS`, `PER_JOB` of `GLOBAAL` in
 `wijzigingen.js`, anders slaat CI hem stil over. De blokrunners draaien
 tegelijk in één job, `blokken` (elk met een eigen venv); alleen wat in
-`EIGEN_JOB` staat (godot) heeft een eigen job. Vijf losse jobs maakten de
+`EIGEN_JOB` staat (fullstack, die alle cores gebruikt) heeft een eigen job. Vijf losse jobs maakten de
 eerste golf van een brede run groter dan de twintig runners die GitHub
 tegelijk geeft, en dan wachtte `test` een halve minuut. Een nieuwe runner
 krijgt een vlag, een functie en een plek in de lus van `blokken`;
