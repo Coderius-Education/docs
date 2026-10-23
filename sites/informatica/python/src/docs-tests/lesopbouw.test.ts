@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -41,13 +42,6 @@ const metCode = lessen
   .filter((les) => /```python|<CodeExercise/.test(les.tekst));
 
 const ACHTERSTAND_VOORSPEL = [
-  '08',
-  '09a',
-  '09b',
-  '09c',
-  '09d',
-  '09e',
-  '09f',
   '10a',
   '10b',
   '11a',
@@ -80,21 +74,7 @@ const ACHTERSTAND_VOORSPEL = [
   '16f',
 ];
 
-const ACHTERSTAND_FOUTEN = [
-  '08',
-  '09a',
-  '09b',
-  '10a',
-  '10b',
-  '11a',
-  '11b',
-  '12',
-  '13',
-  '16b',
-  '16c',
-  '16d',
-  '16f',
-];
+const ACHTERSTAND_FOUTEN = ['10a', '10b', '11a', '11b', '12', '13', '16b', '16c', '16d', '16f'];
 
 /** Alles vóór de eerste opdracht: daar hoort een voorspelvraag te staan. */
 const voorDeOpdrachten = (tekst: string) => tekst.split(/^#{2,3} Opdracht/m)[0];
@@ -173,13 +153,35 @@ describe('invoer en operatoren', () => {
 // een uitvoerblok; het blokken-script ziet hem niet, want de vraag staat tussen
 // de code en het antwoord. Deze test draait het blok direct boven elke
 // <Voorspel> en eist dat precies de goede keuze klopt.
+/**
+ * De modules die een les tot dan toe als eigen bestand liet zien: een blok met
+ * de kop **`rekenen.py`** erboven. Staat dezelfde naam er twee keer, dan telt
+ * de laatste versie, net als wanneer de leerling het bestand overschrijft.
+ * main.py is het programma zelf en hoort niet in de map.
+ */
+function bestandenVoor(tekst: string): Map<string, string> {
+  const bestanden = new Map<string, string>();
+  for (const m of tekst.matchAll(
+    /^\*\*`(\w+\.py)`\*\*\s*\n(?:\s*\{\/\*[\s\S]*?\*\/\}\s*\n)*\s*```python\n([\s\S]*?)```/gm,
+  )) {
+    if (m[1] !== 'main.py') bestanden.set(m[1], m[2]);
+  }
+  return bestanden;
+}
+
 describe('het goede antwoord van elke voorspelvraag', () => {
   const vragen = metCode.flatMap((les) =>
     [
       ...les.tekst.matchAll(
         /```python\n((?:(?!```)[\s\S])*?)```\s*<Voorspel vraag="([^"]*)"[^>]*>([\s\S]*?)<\/Voorspel>/g,
       ),
-    ].map((m) => ({ les: les.id, code: m[1], vraag: m[2], binnen: m[3] })),
+    ].map((m) => ({
+      les: les.id,
+      code: m[1],
+      vraag: m[2],
+      binnen: m[3],
+      bestanden: bestandenVoor(les.tekst.slice(0, m.index)),
+    })),
   );
 
   it('elke voorspelvraag staat direct onder het blok dat hij bevraagt', () => {
@@ -198,7 +200,16 @@ describe('het goede antwoord van elke voorspelvraag', () => {
     }));
     // "Je typt 15." in de vraag is wat input() krijgt.
     const invoer = v.vraag.match(/[Jj]e typt (\S+?)[.?]/)?.[1] ?? '';
-    const r = spawnSync('python3', ['-c', v.code], { input: `${invoer}\n`, encoding: 'utf8' });
+    // Het programma draait in een lege map met de modules van de les erin,
+    // zoals "twee bestanden in dezelfde map" in Je eigen module.
+    const map = mkdtempSync(join(tmpdir(), 'voorspel-'));
+    for (const [naam, code] of v.bestanden) writeFileSync(join(map, naam), code);
+    const r = spawnSync('python3', ['-c', v.code], {
+      cwd: map,
+      input: `${invoer}\n`,
+      encoding: 'utf8',
+    });
+    rmSync(map, { recursive: true, force: true });
     const regels = r.stdout.trim() === '' ? [] : r.stdout.trim().split('\n');
     // Een keuze noemt de uitvoer als waarden in backticks, één per regel:
     // "`0`, `1` en `2`" is drie regels. "Niets" is geen uitvoer, "Een

@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 9a Parameters
 
-Je functies uit de vorige les deden altijd precies hetzelfde. Met een **parameter** geef je informatie mee aan een functie — dan kan dezelfde functie verschillende dingen doen.
+Je functies uit de vorige les deden altijd precies hetzelfde. Met een **parameter** geef je een functie informatie mee, en dan kan dezelfde functie verschillende dingen doen.
 
 ## Een parameter meegeven
 
@@ -29,7 +29,7 @@ Hallo, Alex!
 ```
 
 - `naam` (tussen de haakjes van `def begroet`) is de **parameter**.
-- `"Sara"` en `"Alex"` zijn de **argumenten** — de waardes die je meegeeft bij de aanroep.
+- `"Sara"` en `"Alex"` zijn de **argumenten**: de waardes die je meegeeft bij de aanroep.
 
 ## Meerdere parameters
 
@@ -42,11 +42,63 @@ def adres(straat, nummer):
 adres("Hoofdstraat", 12)
 ```
 
-De volgorde van de argumenten moet overeenkomen met de volgorde van de parameters: het eerste argument vult de eerste parameter, het tweede vult de tweede, enzovoort.
+```python
+def adres(straat, nummer):
+    print(f"{straat} {nummer}")
 
-{/* foutmelding-van: def adres(straat, nummer): pass\nadres("Hoofdstraat") */}
+adres(12, "Hoofdstraat")
+```
 
-Vergeet je een argument? Dan krijg je `TypeError: adres() missing 1 required positional argument: 'nummer'`. Python noemt de functie en de parameter die hij mist, want raden welk nummer je bedoelt kan hij niet.
+<Voorspel vraag="Wat zet dit programma op het scherm?">
+  <Keuze uitleg="Python kijkt niet wat er bij straat of nummer past. Hij vult de parameters op volgorde.">`Hoofdstraat 12`</Keuze>
+  <Keuze goed uitleg="Het eerste argument gaat naar de eerste parameter: straat wordt 12.">`12 Hoofdstraat`</Keuze>
+  <Keuze uitleg="Een getal als straat is vreemd, maar Python ziet daar geen fout in.">Een foutmelding</Keuze>
+  <Uitleg>
+
+  Je ziet `12 Hoofdstraat`. Het eerste argument vult de eerste parameter, het tweede de tweede, enzovoort. Let dus op de volgorde als je een functie aanroept.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+**Een argument vergeten**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+def adres(straat, nummer):
+    print(f"{straat} {nummer}")
+
+adres("Hoofdstraat")
+```
+
+Uitvoer:
+
+```
+TypeError: adres() missing 1 required positional argument: 'nummer'
+```
+
+Python noemt de functie en de parameter die hij mist. Raden welk nummer je bedoelt kan hij niet.
+
+**Een argument te veel**
+
+{/* foutmelding-van: blok-erboven */}
+
+```python
+def begroet(naam):
+    print(f"Hallo, {naam}!")
+
+begroet("Sara", "Alex")
+```
+
+Uitvoer:
+
+```
+TypeError: begroet() takes 1 positional argument but 2 were given
+```
+
+`begroet` heeft één parameter, dus hij neemt één argument. Wil je twee mensen begroeten, roep hem dan twee keer aan.
 
 ---
 

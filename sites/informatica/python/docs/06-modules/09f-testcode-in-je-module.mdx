@@ -41,16 +41,16 @@ import rekenen
 print(rekenen.verdubbel(10))
 ```
 
-Uitvoer:
+<Voorspel vraag="Wat zie je als je main.py draait?">
+  <Keuze uitleg="main.py print alleen 20, maar bij import draait rekenen.py ook helemaal mee, print en al.">`20`</Keuze>
+  <Keuze goed uitleg="Eerst draait rekenen.py bij de import, met zijn print. Daarna print main.py.">`8` en `20`</Keuze>
+  <Keuze uitleg="De import staat bovenaan, dus wat rekenen.py doet, gebeurt eerst.">`20` en `8`</Keuze>
+  <Uitleg>
 
-```
-8
-20
-```
+  Je ziet eerst `8` en dan `20`. Bij `import rekenen` voert Python het hele bestand `rekenen.py` uit, van boven naar beneden. De `def` maakt de functie, en de `print` onderaan draait ook: niets houdt hem tegen.
 
-Waar komt die `8` vandaan? Bij `import rekenen` voert Python het hele
-bestand `rekenen.py` uit, van boven naar beneden. De `def` maakt de functie,
-en de `print` onderaan draait ook: niets houdt hem tegen.
+  </Uitleg>
+</Voorspel>
 
 ## `if __name__ == "__main__":`
 
