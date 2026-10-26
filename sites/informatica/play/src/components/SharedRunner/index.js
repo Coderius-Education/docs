@@ -48,6 +48,7 @@ export function schedule(code) {
 function initIframe(codes) {
   iframe = document.createElement('iframe');
   iframe.setAttribute('aria-hidden', 'true');
+  iframe.setAttribute('title', 'Speeltuin');
   // Bewust zonder allow-same-origin: alle informatica-cursussen delen één
   // origin, en leerlingcode hoort niet bij hun opslag te kunnen. De wheels
   // komen via deze pagina (zie wielen.js en handleMessage).
@@ -101,12 +102,14 @@ function positionOverSlot(slotEl) {
   iframe.style.height = `${rect.height}px`;
   iframe.style.visibility = 'visible';
   iframe.style.pointerEvents = 'auto';
+  iframe.removeAttribute('aria-hidden');
 }
 
 function hideIframe() {
   if (!iframe) return;
   iframe.style.visibility = 'hidden';
   iframe.style.pointerEvents = 'none';
+  iframe.setAttribute('aria-hidden', 'true');
   iframe.style.width = '0';
   iframe.style.height = '0';
 }
@@ -150,6 +153,9 @@ export function requestRun({ ownerId, slotEl, code, mode, lineOffset, ingevoegd,
   currentOwner = { id: ownerId, slotEl, listeners };
   positionOverSlot(slotEl);
   startTracking(slotEl);
+  // Zonder focus bleef die na een klik op ▶ in de pagina: een pijltje of een
+  // spatie scrolde dan de pagina, en het spel kreeg de toets niet.
+  iframe.focus();
 
   const requestId = nextRequestId++;
   currentRequestId = requestId;

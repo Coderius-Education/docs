@@ -381,6 +381,15 @@ let booting = (async () => {
   }
 })();
 
+// Een pijltje of Page Down dat de iframe niet zelf gebruikt, kan een browser
+// doorgeven aan de pagina, en dan scrolt die mee. pygame krijgt de toets toch:
+// preventDefault houdt alleen het scrollen tegen. Spatie staat er bewust niet
+// bij; zonder keypress krijgt een tekstveld van play geen spaties meer.
+const SCROLTOETSEN = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', 'Home', 'End'];
+window.addEventListener('keydown', (e) => {
+  if (SCROLTOETSEN.includes(e.key)) e.preventDefault();
+}, true);
+
 window.addEventListener('message', async (e) => {
   if (!isBerichtVanOuder(e, window.parent)) return;
   if (!e.data || !e.data.type) return;
