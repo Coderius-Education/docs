@@ -206,6 +206,18 @@ describe('de bootstrap van de speeltuin past op de wheel', () => {
     expect(aanroepen.filter((naam) => !symbolen.has(naam))).toEqual([]);
   });
 
+  // Een mislukte reset verdween eerst in een lege catch: play bleef half
+  // opgeruimd en niemand zag waarom de volgende run niet startte.
+  it('een mislukte reset komt in de console', () => {
+    const aanroepen = [
+      ...engine.matchAll(
+        /runPythonAsync\('await __pygbag_reset\(\)'\);\s*\}\s*catch \(e\) \{([^}]*)\}/g,
+      ),
+    ];
+    expect(aanroepen).toHaveLength(2);
+    for (const m of aanroepen) expect(m[1]).toMatch(/console\.error/);
+  });
+
   // Tot en met 3.4 verving de bootstrap play's start_program en patchte hij
   // play.loop, omdat play zelf niet in de browser kon draaien. Sinds 3.5.0 kan
   // dat wel, en zo'n patch zou het browserpad van play omzeilen: de taken die

@@ -20,7 +20,7 @@ function functie(naam: string): string {
 
 describe('de speeltuin krijgt de toetsen', () => {
   it('een run geeft de iframe de focus', () => {
-    expect(functie('requestRun')).toMatch(/iframe\.focus\(\)/);
+    expect(functie('requestRun')).toMatch(/iframe\.focus\(\{ preventScroll: true \}\)/);
   });
 
   // Een element met focus hoort niet aria-hidden te zijn: een schermlezer ziet

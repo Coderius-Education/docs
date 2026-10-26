@@ -272,23 +272,29 @@ async def __pygbag_reset():
     play.reset_program() doet het werk: hij annuleert de taken van play, laat
     ze hun finally afmaken en zet play terug zoals na import play, ook na een
     run die nooit startte. In de browser moet je erop wachten; een volgende
-    run die eerder begint, weigert play. draai-play-blokken.py speelt deze
-    reset na tegen de wheel en controleert de eindstand.
+    run die eerder begint, weigert play. Een fout daarin gaat door naar de
+    pagina, die hem in de console zet; het canvas wordt hoe dan ook zwart.
+    draai-play-blokken.py speelt deze reset na tegen de wheel en controleert
+    de eindstand.
     """
     import gc
     try:
         import play
-    except Exception: return
-    await play.reset_program()
+    except ImportError:
+        play = None
     try:
-        import pygame
-        if pygame.display.get_init():
-            s = pygame.display.get_surface()
-            if s:
-                s.fill((0, 0, 0))
-                pygame.display.flip()
-    except Exception: pass
-    gc.collect()
+        if play is not None:
+            await play.reset_program()
+    finally:
+        try:
+            import pygame
+            if pygame.display.get_init():
+                s = pygame.display.get_surface()
+                if s:
+                    s.fill((0, 0, 0))
+                    pygame.display.flip()
+        except Exception: pass
+        gc.collect()
 `;
 
 export function buildSharedRunnerSrcDoc(codes) {
@@ -408,7 +414,7 @@ window.addEventListener('message', async (e) => {
       // aannemen: wat het oude programma tijdens het afbreken nog print
       // (een finally, een laatste frame) hoort bij de oude run, niet bij
       // de nieuwe console.
-      try { await pyodide.runPythonAsync('await __pygbag_reset()'); } catch (e) {}
+      try { await pyodide.runPythonAsync('await __pygbag_reset()'); } catch (e) { console.error('__pygbag_reset:', e); }
       CURRENT_OFFSET = lineOffset || 0;
       CURRENT_INGEVOEGD = ingevoegd || [];
       CURRENT_REQUEST = requestId;
@@ -420,7 +426,7 @@ window.addEventListener('message', async (e) => {
       console.error(err);
     }
   } else if (type === 'stop') {
-    try { await pyodide.runPythonAsync('await __pygbag_reset()'); } catch (e) {}
+    try { await pyodide.runPythonAsync('await __pygbag_reset()'); } catch (e) { console.error('__pygbag_reset:', e); }
     post('stopped', { requestId });
   }
 });

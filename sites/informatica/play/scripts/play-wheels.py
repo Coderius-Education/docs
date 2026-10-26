@@ -144,15 +144,18 @@ def main() -> None:
         pymunk_naam = f"pymunk-{pin.group(1)}-{pymunk_tags}"
         pymunk = pypi_wheel("pymunk", pin.group(1), pymunk_naam, tmp)
 
-        # Eerst engine.js controleren: valt dat om, dan staan de oude wheels
-        # er nog en wijst engine.js er nog naar.
+        # Eerst engine.js controleren, dan de nieuwe wheels schrijven, dan
+        # engine.js, en pas daarna de oude weghalen: valt een stap om, dan
+        # wijst engine.js nog naar wheels die er staan.
         engine = zet_in_engine(ENGINE.read_text(), "PLAY_WHEEL", play.name)
         engine = zet_in_engine(engine, "PYMUNK_WHEEL", pymunk.name)
-        for oud in [*WHL.glob("coderius_play-*.whl"), *WHL.glob("pymunk-*.whl")]:
-            oud.unlink()
+        oude = [*WHL.glob("coderius_play-*.whl"), *WHL.glob("pymunk-*.whl")]
         for wheel in (play, pymunk):
             (WHL / wheel.name).write_bytes(wheel.read_bytes())
         ENGINE.write_text(engine)
+        for oud in oude:
+            if oud.name not in (play.name, pymunk.name):
+                oud.unlink()
     herkomst = {
         "coderius_play": {
             "bestand": play.name,

@@ -424,6 +424,25 @@ async def tik():
     eis(globals_list.program_state is ProgramState.RUNNING, "na een gestopt programma start de volgende run niet")
     await __pygbag_reset()
 
+    # Faalt reset_program(), dan hoort de fout bij de pagina te komen (die zet
+    # hem in de console) en wordt het canvas toch zwart.
+    echte_reset = play.reset_program
+
+    def kapotte_reset():
+        raise RuntimeError("proef")
+
+    play.reset_program = kapotte_reset
+    scherm = pygame.display.get_surface()
+    scherm.fill((255, 255, 255))
+    try:
+        await __pygbag_reset()
+        fouten.append("een fout in reset_program() verdwijnt in de reset")
+    except RuntimeError:
+        pass
+    finally:
+        play.reset_program = echte_reset
+    eis(tuple(scherm.get_at((0, 0)))[:3] == (0, 0, 0), "na een mislukte reset is het canvas niet zwart")
+
 
 asyncio.run(main())
 for fout in fouten:
@@ -459,9 +478,9 @@ def pins() -> dict[str, str]:
     """De versies die de gebundelde wheel eist, voor deze Python."""
     # Niet uit de bestandsnaam afleiden: een build uit de play-repo draagt een
     # build-tag (coderius_play-3.5.0-0master7a7db94-…), de dist-info niet.
-    wheel = zipfile.ZipFile(wheel_pad())
-    naam = next(n for n in wheel.namelist() if n.endswith(".dist-info/METADATA"))
-    metadata = wheel.read(naam).decode()
+    with zipfile.ZipFile(wheel_pad()) as wheel:
+        naam = next(n for n in wheel.namelist() if n.endswith(".dist-info/METADATA"))
+        metadata = wheel.read(naam).decode()
     uit = {}
     for regel in metadata.splitlines():
         if not regel.startswith("Requires-Dist:"):

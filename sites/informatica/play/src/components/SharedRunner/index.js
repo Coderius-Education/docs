@@ -154,8 +154,9 @@ export function requestRun({ ownerId, slotEl, code, mode, lineOffset, ingevoegd,
   positionOverSlot(slotEl);
   startTracking(slotEl);
   // Zonder focus bleef die na een klik op ▶ in de pagina: een pijltje of een
-  // spatie scrolde dan de pagina, en het spel kreeg de toets niet.
-  iframe.focus();
+  // spatie scrolde dan de pagina, en het spel kreeg de toets niet. Zonder
+  // scrollen: de runner staat al in beeld, de pagina hoort niet te verspringen.
+  iframe.focus({ preventScroll: true });
 
   const requestId = nextRequestId++;
   currentRequestId = requestId;
