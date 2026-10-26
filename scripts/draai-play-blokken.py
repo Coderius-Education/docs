@@ -321,6 +321,13 @@ wheel_map, engine = sys.argv[1], sys.argv[2]
 sys.path.insert(0, wheel_map)
 bron = open(engine, encoding="utf-8").read()
 reset = bron.split("const PYTHON_RESET = `\\\n", 1)[1].split("`;", 1)[0]
+# Dit harnas leest de brontekst van de template literal; de browser krijgt de
+# string die JavaScript ervan maakt. Die zijn alleen gelijk zolang er geen
+# backslash of ${ in staat: een \n in een Python-string zou in de browser een
+# echte regelovergang worden, en een SyntaxError die niemand ziet.
+if "\\" in reset or "${" in reset:
+    print("de reset bevat een backslash of ${; dan draait de browser andere Python dan dit harnas")
+    sys.exit(1)
 
 import pygame
 import play
@@ -425,10 +432,13 @@ sys.exit(1 if fouten else 0)
 """
 
 # De gebundelde wheel pint zijn eigen afhankelijkheden. Draait CI tegen andere
-# versies dan de browser krijgt, dan zegt een groene job niets over wat een
-# leerling ziet — en dat is precies de drift die deze repo elders al twee keer
-# heeft opgeleverd. Vandaar: de wheel is de bron, hier én in de workflow
-# (`pip install $(python3 scripts/draai-play-blokken.py --pins)`).
+# versies dan een leerling installeert, dan zegt een groene job niets over wat
+# hij ziet — en dat is precies de drift die deze repo elders al twee keer heeft
+# opgeleverd. Vandaar: de wheel is de bron, hier én in de workflow
+# (`pip install $(python3 scripts/draai-play-blokken.py --pins)`). Dat zijn de
+# versies van een installatie op de eigen computer. De speeltuin krijgt alleen
+# pymunk zoals gepind; numpy en pygame-ce komen daar van Pyodide (in 0.29.4
+# numpy 2.2.5 en pygame-ce 2.5.6.dev2, dat niet op PyPI staat).
 PAKKETTEN = ("pygame-ce", "numpy", "pymunk")
 
 
@@ -614,7 +624,11 @@ def controleer_reset(wheel_map: str) -> list[str]:
             return [f"{ENGINE.relative_to(ROOT)}: de reset-controle draait na 60s nog"]
     if r.returncode == 0:
         return []
-    meldingen = r.stdout.strip().splitlines() or r.stderr.strip().splitlines()[-1:]
+    meldingen = (
+        r.stdout.strip().splitlines()
+        or r.stderr.strip().splitlines()[-1:]
+        or [f"het harnas stopte met exitcode {r.returncode}, zonder uitvoer"]
+    )
     return [f"{ENGINE.relative_to(ROOT)}: __pygbag_reset: {m}" for m in meldingen]
 
 
@@ -640,15 +654,18 @@ def main() -> int:
     with tempfile.TemporaryDirectory() as wheel_map:
         zipfile.ZipFile(wheel_pad()).extractall(wheel_map)
 
-        fouten = controleer_reset(wheel_map)
-        for naam, code in ZELFTEST.items():
-            if fout := draai(Path(f"zelftest: {naam}"), 1, code, wheel_map):
-                fouten.append(f"draai-play-blokken.py: harnas: {fout}")
-        fouten += [f for b in te_compileren if (f := compileer(b[0], b[1], b[2]))]
+        fouten = [f for b in te_compileren if (f := compileer(b[0], b[1], b[2]))]
+
+        def zelftest(naam: str, code: str) -> str | None:
+            fout = draai(Path(f"zelftest: {naam}"), 1, code, wheel_map)
+            return fout and f"draai-play-blokken.py: harnas: {fout}"
 
         with ThreadPoolExecutor(max_workers=8) as pool:
+            reset = pool.submit(controleer_reset, wheel_map)
+            zelftesten = [pool.submit(zelftest, n, c) for n, c in ZELFTEST.items()]
             resultaten = pool.map(lambda b: draai(b[0], b[1], b[2], wheel_map), te_draaien)
             fouten += [f for f in resultaten if f]
+            fouten += reset.result() + [f for t in zelftesten if (f := t.result())]
 
     for fout in fouten:
         print(fout)

@@ -51,6 +51,13 @@ describe('de wheels van de speeltuin en hun herkomst', () => {
     expect(delen(bestand)).toHaveLength(bron === 'pypi' ? 5 : 6);
   });
 
+  // De navbar wijst naar wat er nieuw is; na 3.5.0 stond daar nog "v3.4".
+  it('de navbar noemt de versie van de play-wheel', () => {
+    const config = readFileSync(join(SITE, 'docusaurus.config.ts'), 'utf8');
+    const [groot, klein] = herkomst.coderius_play.versie.split('.');
+    expect(config).toContain(`label: 'Nieuw: v${groot}.${klein}'`);
+  });
+
   it('de pymunk-wheel is de versie die de play-wheel pint', () => {
     const metadata = execFileSync(
       'unzip',

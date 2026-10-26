@@ -59,7 +59,7 @@ export default createConfig({
         { href: '/docs/pygame-ce/je_eerste_programma', label: 'pygame-ce', position: 'left' },
         { to: '/speeltuin', label: 'Speeltuin', position: 'left' },
         { to: '/spel-checken', label: 'Spel checken', position: 'left' },
-        { href: '/docs/cheatsheet#play-package', label: 'Nieuw: v3.4', position: 'right' },
+        { href: '/docs/cheatsheet#play-package', label: 'Nieuw: v3.5', position: 'right' },
         { href: '/docs/voor-de-docent/bug', label: 'Foutje gevonden?', position: 'right' },
         {
           // Bewust de play-library en niet de docs-monorepo: op deze site is de

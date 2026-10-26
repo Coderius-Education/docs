@@ -73,7 +73,9 @@ def uit_map(map_: Path, doel: Path) -> tuple[Path, str]:
     if git("status", "--porcelain"):
         fout(f"{map_} heeft niet-gecommitte wijzigingen; bouw alleen uit een commit")
     commit = git("rev-parse", "--short", "HEAD")
+    # Een losse commit (detached HEAD) heeft geen branch; dan alleen de commit.
     branch = git("rev-parse", "--abbrev-ref", "HEAD")
+    branch = "" if branch == "HEAD" else branch
     # Niet in de checkout zelf bouwen: setuptools hergebruikt een oude
     # build/lib, die git niet ziet (genegeerd), en dan gaat een module die in
     # deze commit verdween toch mee. Een export bevat precies de commit.
@@ -93,11 +95,14 @@ def uit_map(map_: Path, doel: Path) -> tuple[Path, str]:
     # Een build-tag begint met een cijfer en bevat geen streepje.
     tag = "0" + re.sub(r"[^A-Za-z0-9]", "", branch) + commit
     naam = f"coderius_play-{versie}-{tag}-py3-none-any.whl"
-    return wheel.rename(doel / naam), f"Coderius-Education/play {branch} @ {commit}"
+    # De herkomst noemt de repo waar de commit vandaan komt, ook bij een fork.
+    remote = git("remote", "get-url", "origin")
+    # https://github.com/eigenaar/play(.git) of git@github.com:eigenaar/play.git
+    repo = "/".join(re.sub(r"\.git$", "", remote.rstrip("/")).replace(":", "/").split("/")[-2:])
+    return wheel.rename(doel / naam), f"{repo} {branch or 'commit'} @ {commit}"
 
 
-def zet_in_engine(constante: str, bestand: str) -> None:
-    engine = ENGINE.read_text()
+def zet_in_engine(engine: str, constante: str, bestand: str) -> str:
     nieuw, n = re.subn(
         rf"^const {constante} = '/whl/[^']+';$",
         f"const {constante} = '/whl/{bestand}';",
@@ -106,7 +111,7 @@ def zet_in_engine(constante: str, bestand: str) -> None:
     )
     if n != 1:
         fout(f"{constante} niet precies één keer gevonden in engine.js")
-    ENGINE.write_text(nieuw)
+    return nieuw
 
 
 def main() -> None:
@@ -139,13 +144,15 @@ def main() -> None:
         pymunk_naam = f"pymunk-{pin.group(1)}-{pymunk_tags}"
         pymunk = pypi_wheel("pymunk", pin.group(1), pymunk_naam, tmp)
 
+        # Eerst engine.js controleren: valt dat om, dan staan de oude wheels
+        # er nog en wijst engine.js er nog naar.
+        engine = zet_in_engine(ENGINE.read_text(), "PLAY_WHEEL", play.name)
+        engine = zet_in_engine(engine, "PYMUNK_WHEEL", pymunk.name)
         for oud in [*WHL.glob("coderius_play-*.whl"), *WHL.glob("pymunk-*.whl")]:
             oud.unlink()
         for wheel in (play, pymunk):
             (WHL / wheel.name).write_bytes(wheel.read_bytes())
-
-    zet_in_engine("PLAY_WHEEL", play.name)
-    zet_in_engine("PYMUNK_WHEEL", pymunk.name)
+        ENGINE.write_text(engine)
     herkomst = {
         "coderius_play": {
             "bestand": play.name,
