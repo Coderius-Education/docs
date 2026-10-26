@@ -201,8 +201,17 @@ describe('de bootstrap van de speeltuin past op de wheel', () => {
   // play.loop, omdat play zelf niet in de browser kon draaien. Sinds 3.5.0 kan
   // dat wel, en zo'n patch zou het browserpad van play omzeilen: de taken die
   // stop_program() annuleert, het geluid dat bij het stoppen ophoudt.
+  // Op setattr na stond elk patroon hieronder in de bootstrap van 3.4;
+  // setattr is dezelfde patch via een omweg.
   it('de bootstrap vervangt niets in play', () => {
-    expect(engine).not.toMatch(/^\s*play(\.[a-z_]+)+ = /m);
-    expect(engine).not.toMatch(/_play_loop\./);
+    const patches = [
+      /^\s*play(\.[a-z_]+)+\s*=[^=]/m,
+      /\bstart_program(_fn)?\s*=[^=]/,
+      /\bshould_auto_start\s*=[^=]/,
+      /\bsetattr\(\s*(play|_gl|globals_list)\b/,
+      /\b_loop\s*=[^=]/,
+      /_play_loop\./,
+    ];
+    expect(patches.filter((p) => p.test(engine)).map(String)).toEqual([]);
   });
 });

@@ -265,26 +265,34 @@ const PYTHON_RESET = `\
 async def __pygbag_reset():
     """Stop the running program and put play back in its starting state between runs.
 
-    No-op on fresh state (first run). Wat terug moet, volgt de opruiming van
-    play's eigen tests tussen twee programma's (tests/conftest.py in de
-    play-repo). Elke stap staat los, zodat één verouderde naam de rest niet
-    tegenhoudt; api.test.ts legt elke import hieronder naast de wheel.
+    Wat terug moet, volgt de opruiming van play's eigen tests tussen twee
+    programma's (clean_play_state in tests/conftest.py van de play-repo). Ook
+    een run die nooit startte laat iets achter: maakte hij een vorm en liep hij
+    daarna op een fout, dan heeft play zijn automatische start al verbruikt, en
+    zonder opruiming startte geen enkele volgende run meer. Elke stap staat
+    los, zodat één verouderde naam de rest niet tegenhoudt; daarom speelt
+    draai-play-blokken.py de reset na tegen de wheel en controleert hij de
+    eindstand, en legt api.test.ts elke import hieronder naast de wheel.
     """
     import asyncio
     import gc
     try:
         import play
         from play.globals import globals_list, ProgramState
-        if globals_list.program_state is ProgramState.NOT_STARTED:
-            return
+        from play.loop import _tasks as _play_taken
+    except Exception: return
+    if globals_list.program_state is not ProgramState.NOT_STARTED:
+        lopend = list(_play_taken)
         # Zet het programma op gestopt en annuleert in de browser elke taak
         # van play: de game loop, timers, callbacks.
-        play.stop_program()
-    except Exception: return
-    # De geannuleerde taken maken hun finally af (het geluid stoppen) voordat
-    # de volgende run begint.
-    await asyncio.sleep(0)
-    await asyncio.sleep(0)
+        try: play.stop_program()
+        except Exception: pass
+        # Wacht tot die taken hun finally af hebben (het geluid stoppen). Een
+        # taak die zijn annulering inslikt, zoals een kale except: in een
+        # async repeat_forever, krijgt een seconde; dan gaat de reset door.
+        if lopend:
+            try: await asyncio.wait(lopend, timeout=1)
+            except Exception: pass
     try: globals_list.reset()
     except Exception: pass
     try:
@@ -310,6 +318,8 @@ async def __pygbag_reset():
         from play.io.screen import screen, create_walls
         # De setters van width en height zouden de muren ook opnieuw bouwen.
         screen._width, screen._height = 800, 600
+        screen._resizable = False
+        screen.caption = "coderius-play"
         screen.update_display()
         create_walls()
     except Exception: pass
@@ -328,11 +338,21 @@ async def __pygbag_reset():
     try:
         from play.core import keyboard_state, mouse_state
         keyboard_state.pressed.clear()
-        keyboard_state.pressed_this_frame.clear()
-        mouse_state.click_happened = False
-        mouse_state.click_release_happened = False
-        mouse_state.click_owner = None
+        keyboard_state.clear()
+        mouse_state.clear()
         mouse_state.click_claimants.clear()
+    except Exception: pass
+    try:
+        from play.core.controller_loop import controller_state
+        controller_state.buttons_pressed.clear()
+        controller_state.clear()
+    except Exception: pass
+    try:
+        from play.io.mouse import mouse
+        # Een knop die in de vorige run omlaag ging en buiten het canvas
+        # omhoog kwam, telt anders in de volgende run als ingedrukt.
+        mouse.x, mouse.y = 0, 0
+        mouse._is_clicked = False
     except Exception: pass
     try:
         import pygame
@@ -341,6 +361,11 @@ async def __pygbag_reset():
             if s:
                 s.fill((0, 0, 0))
                 pygame.display.flip()
+            # Na de stop leest niemand de events van het canvas; zonder dit
+            # krijgt het eerste frame van de volgende run de klikken en
+            # toetsen van daarvoor.
+            pygame.event.pump()
+            pygame.event.clear()
     except Exception: pass
     gc.collect()
 `;

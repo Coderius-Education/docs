@@ -53,8 +53,8 @@ describe('de wheels van de speeltuin en hun herkomst', () => {
 
   it('de pymunk-wheel is de versie die de play-wheel pint', () => {
     const metadata = execFileSync(
-      'sh',
-      ['-c', `unzip -p "${join(WHL, herkomst.coderius_play.bestand)}" '*.dist-info/METADATA'`],
+      'unzip',
+      ['-p', join(WHL, herkomst.coderius_play.bestand), '*.dist-info/METADATA'],
       { encoding: 'utf8' },
     );
     expect(metadata).toMatch(/^Version: (\S+)$/m);

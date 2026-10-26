@@ -42,7 +42,7 @@ Vervang `VERSIENUMMER` door de gewenste versie, bijvoorbeeld `3.3.3`.
 <details>
   <summary>Nieuw of verbeterd in coderius-play versie 3.5</summary>
 
-Versie 3.5 maakt play betrouwbaarder. Je code hoeft niet te veranderen.
+Versie 3.5 maakt play betrouwbaarder. Drie dingen kunnen je bestaande code raken: de Python-versie, een `async def` onder `@play.repeat_forever` en een kleur die play niet kent. Ze staan hieronder bij **Python**, **Tijd** en **Fouten**.
 
 Bij **Python**: play vraagt nu Python 3.11 of nieuwer. Hij werkt ook op een Raspberry Pi en in de browser.
 

@@ -8,7 +8,7 @@ om die te vullen:
     python3 scripts/play-wheels.py --pypi 3.5.0    # na de release: de wheel van PyPI
 
 Een build uit een checkout krijgt een build-tag met branch en commit in de
-bestandsnaam (coderius_play-3.5.0-0main7a7db94-py3-none-any.whl). De service
+bestandsnaam (coderius_play-3.5.0-0master7a7db94-py3-none-any.whl). De service
 worker cachet wheels op bestandsnaam, "cache first" (src/sw.js). Had de
 branch-build dezelfde naam als de latere release, dan bleef een leerling na de
 release de branch-build uit zijn cache krijgen.
@@ -74,9 +74,18 @@ def uit_map(map_: Path, doel: Path) -> tuple[Path, str]:
         fout(f"{map_} heeft niet-gecommitte wijzigingen; bouw alleen uit een commit")
     commit = git("rev-parse", "--short", "HEAD")
     branch = git("rev-parse", "--abbrev-ref", "HEAD")
+    # Niet in de checkout zelf bouwen: setuptools hergebruikt een oude
+    # build/lib, die git niet ziet (genegeerd), en dan gaat een module die in
+    # deze commit verdween toch mee. Een export bevat precies de commit.
+    bron = doel / "bron"
+    bron.mkdir()
+    archief = subprocess.run(
+        ["git", "-C", str(map_), "archive", "HEAD"], check=True, capture_output=True
+    ).stdout
+    subprocess.run(["tar", "-x", "-C", str(bron)], input=archief, check=True)
     bouw = doel / "bouw"
     subprocess.run(
-        [sys.executable, "-m", "pip", "wheel", "--no-deps", "--quiet", "-w", str(bouw), str(map_)],
+        [sys.executable, "-m", "pip", "wheel", "--no-deps", "--quiet", "-w", str(bouw), str(bron)],
         check=True,
     )
     (wheel,) = bouw.glob("coderius_play-*-py3-none-any.whl")
