@@ -259,9 +259,18 @@ for _soort in _CT:
         # is aanroepbaar.
         _taken.append(_item[0] if isinstance(_item, tuple) and _item else _item)
 
+# Een dropdown geeft zijn when_changed (optie, plek) mee, zoals play dat zelf
+# doet: zijn eerste optie, op plek 0. Op naam raden gaf `waarde` hier 50, de
+# waarde van een slider. Sinds 3.5.0 controleert play een kleur meteen bij het
+# toekennen, en toen viel `cirkel.color = waarde` daarover; de les zelf klopte.
+_vast = {{}}
 for _sprite in list(_gl2.sprites_group):
     for _attr in ('_on_change_callbacks', '_on_submit_callbacks', '_on_click_callbacks'):
-        _taken += list(getattr(_sprite, _attr, None) or [])
+        for _fn in list(getattr(_sprite, _attr, None) or []):
+            _taken.append(_fn)
+            _opties = getattr(_sprite, '_options', None)
+            if _attr == '_on_change_callbacks' and isinstance(_opties, list):
+                _vast[id(_fn)] = [_opties[0] if _opties else None, 0]
 
 # De wekker begint hier opnieuw, en zonder de QUIT-stap: er is geen event-lus
 # meer om netjes af te sluiten. _fase op 1 zetten laat het volgende alarm dus
@@ -274,7 +283,7 @@ try:
     for _fn in _taken:
         if not callable(_fn):
             continue
-        _uit = _fn(*_argumenten(_fn))
+        _uit = _fn(*_vast.get(id(_fn), _argumenten(_fn)))
         if _inspect.isawaitable(_uit):
             _asyncio.get_event_loop().run_until_complete(_uit)
 except _Genoeg:
@@ -314,8 +323,11 @@ def _marker_geldt(marker: str) -> bool:
 
 def pins() -> dict[str, str]:
     """De versies die de gebundelde wheel eist, voor deze Python."""
-    naam = wheel_pad().name.replace("-py3-none-any.whl", "")
-    metadata = zipfile.ZipFile(wheel_pad()).read(f"{naam}.dist-info/METADATA").decode()
+    # Niet uit de bestandsnaam afleiden: een build uit de play-repo draagt een
+    # build-tag (coderius_play-3.5.0-0master7a7db94-…), de dist-info niet.
+    wheel = zipfile.ZipFile(wheel_pad())
+    naam = next(n for n in wheel.namelist() if n.endswith(".dist-info/METADATA"))
+    metadata = wheel.read(naam).decode()
     uit = {}
     for regel in metadata.splitlines():
         if not regel.startswith("Requires-Dist:"):

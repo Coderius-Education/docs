@@ -12,8 +12,8 @@
 // ABI-tag (pyemscripten_2025_0) hoort bij de abi_version van de Pyodide-versie.
 export const PYODIDE_VERSION = '0.29.4';
 const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
-const PYMUNK_WHEEL = '/whl/pymunk-7.3.0-cp313-cp313-pyemscripten_2025_0_wasm32.whl';
-const PLAY_WHEEL = '/whl/coderius_play-3.4.0-py3-none-any.whl';
+const PYMUNK_WHEEL = '/whl/pymunk-7.3.1-cp313-cp313-pyemscripten_2025_0_wasm32.whl';
+const PLAY_WHEEL = '/whl/coderius_play-3.5.0-0master7a7db94-py3-none-any.whl';
 
 // De pure helpers (geen DOM, geen Pyodide) staan in puur.js zodat ze in node
 // te testen zijn; callers importeren ze nog steeds vanaf hier.
@@ -60,46 +60,21 @@ function detectPackages(code, siteOrigin) {
 }
 
 /**
- * Build the Python bootstrap that patches coderius-play's start_program
- * to work cooperatively with the browser event loop.
+ * Build the Python bootstrap for play mode.
+ *
+ * Sinds 3.5.0 draait play zelf in de browser: get_loop() neemt de loop van de
+ * pagina, en start_program() plant het spel daarop in als taak en keert terug.
+ * Tot en met 3.4 patchte deze bootstrap play.loop en verving hij
+ * start_program door een eigen versie; daarmee zou hij nu het browserpad van
+ * play omzeilen (de taken die stop_program() annuleert, het geluid dat bij
+ * het stoppen ophoudt). Hij importeert play alleen nog vooraf, zodat de
+ * eerste klik die tijd niet kost.
  */
 function buildPlayBootstrap() {
   return `
-import asyncio
-
-# Patch play's event loop management BEFORE importing play.
-# The play library calls asyncio.new_event_loop() in play/loop.py,
-# which fails in Pyodide because socket.socketpair() is unsupported.
-# We patch get_loop() to return Pyodide's existing webloop instead.
-import play.loop as _play_loop
-_original_loop = asyncio.get_event_loop()
-_play_loop._loop = _original_loop
-_play_loop._creator_pid = __import__('os').getpid()
-
 import play
 import importlib.metadata as _meta
 print("coderius-play", _meta.version("coderius-play"))
-
-def _browser_start_program():
-    # Mirrors play.api.utils.start_program (3.4: program_state-enum in plaats
-    # van de oude program_started-boolean), maar zonder run_forever — Pyodide's
-    # webloop draait al, dus de game loop wordt een taak op die loop.
-    from play.callback import callback_manager, CallbackType
-    from play.core import game_loop as _game_loop
-    from play.globals import globals_list, ProgramState
-    if globals_list.program_state is not ProgramState.NOT_STARTED:
-        return
-    globals_list.program_state = ProgramState.RUNNING
-    globals_list.should_auto_start = False
-    callback_manager.run_callbacks(CallbackType.WHEN_PROGRAM_START)
-    # Keep a handle on the task so __pygbag_reset can cancel it between runs.
-    globals_list._pygbag_task = asyncio.ensure_future(_game_loop())
-
-play.start_program = _browser_start_program
-play.api.utils.start_program = _browser_start_program
-from play.globals import globals_list as _gl
-_gl.start_program_fn = _browser_start_program
-_gl.should_auto_start = False
 `;
 }
 
@@ -287,51 +262,77 @@ try {
 // skip the 5+ second Pyodide init.
 
 const PYTHON_RESET = `\
-def __pygbag_reset():
-    """Cancel the running game loop and reset play state between runs.
+async def __pygbag_reset():
+    """Stop the running program and put play back in its starting state between runs.
 
-    No-op on fresh state (first run) — globals_list.reset() would otherwise
-    overwrite display dimensions before play has a chance to initialise.
+    No-op on fresh state (first run). Wat terug moet, volgt de opruiming van
+    play's eigen tests tussen twee programma's (tests/conftest.py in de
+    play-repo). Elke stap staat los, zodat één verouderde naam de rest niet
+    tegenhoudt; api.test.ts legt elke import hieronder naast de wheel.
     """
+    import asyncio
     import gc
     try:
+        import play
         from play.globals import globals_list, ProgramState
         if globals_list.program_state is ProgramState.NOT_STARTED:
             return
-        task = getattr(globals_list, '_pygbag_task', None)
-        if task is not None and not task.done():
-            task.cancel()
-        globals_list._pygbag_task = None
-        # Clear pymunk Space — play.globals.reset() does NOT do this and the
-        # Space is a module-level singleton in play.physics. Without this,
-        # bodies from previous runs accumulate and corrupt the simulation.
-        try:
-            from play.physics import physics_space
-            for shape in list(physics_space.shapes):
-                try: physics_space.remove(shape)
-                except Exception: pass
-            for body in list(physics_space.bodies):
-                try: physics_space.remove(body)
-                except Exception: pass
-        except Exception: pass
-        # play's own reset() empties sprites_group/walls/controllers, resets backdrop, etc.
-        globals_list.reset()
-        # Walls were created once at module-import time and removed by the
-        # shape/body cleanup above. Re-create them so the next run still has
-        # invisible screen-edge walls to bounce off.
-        try:
-            from play.io.screen import create_walls
-            create_walls()
-        except Exception: pass
+        # Zet het programma op gestopt en annuleert in de browser elke taak
+        # van play: de game loop, timers, callbacks.
+        play.stop_program()
+    except Exception: return
+    # De geannuleerde taken maken hun finally af (het geluid stoppen) voordat
+    # de volgende run begint.
+    await asyncio.sleep(0)
+    await asyncio.sleep(0)
+    try: globals_list.reset()
+    except Exception: pass
+    try:
+        from play.core.sprites_loop import _clicked_sprites
+        _clicked_sprites.clear()
+    except Exception: pass
+    try:
+        from play.api.auto_start import _cleanup_auto_start
+        _cleanup_auto_start()
+    except Exception: pass
+    try:
+        from play.physics import physics_space
+        globals_list.gravity.vertical = -100
+        globals_list.gravity.horizontal = 0
+        physics_space.gravity = (0, -100)
+        # De space hoort bij de module, niet bij globals_list: zonder dit
+        # stapelen de lichamen van eerdere runs zich op.
+        for body in list(physics_space.bodies): physics_space.remove(body)
+        for shape in list(physics_space.shapes): physics_space.remove(shape)
+        for constraint in list(physics_space.constraints): physics_space.remove(constraint)
+    except Exception: pass
+    try:
+        from play.io.screen import screen, create_walls
+        # De setters van width en height zouden de muren ook opnieuw bouwen.
+        screen._width, screen._height = 800, 600
+        screen.update_display()
+        create_walls()
     except Exception: pass
     try:
         from play.callback import callback_manager
-        if hasattr(callback_manager, 'callbacks'):
-            cbs = callback_manager.callbacks
-            if isinstance(cbs, dict):
-                for v in cbs.values():
-                    if hasattr(v, 'clear'): v.clear()
-                    elif isinstance(v, list): v.clear()
+        callback_manager.callbacks.clear()
+    except Exception: pass
+    try:
+        from play.callback.collision_callbacks import collision_registry
+        collision_registry.reset()
+    except Exception: pass
+    try:
+        from play.objects.widgets.text_input_registry import reset as _reset_text_inputs
+        _reset_text_inputs()
+    except Exception: pass
+    try:
+        from play.core import keyboard_state, mouse_state
+        keyboard_state.pressed.clear()
+        keyboard_state.pressed_this_frame.clear()
+        mouse_state.click_happened = False
+        mouse_state.click_release_happened = False
+        mouse_state.click_owner = None
+        mouse_state.click_claimants.clear()
     except Exception: pass
     try:
         import pygame
@@ -452,7 +453,7 @@ window.addEventListener('message', async (e) => {
       // aannemen: wat het oude programma tijdens het afbreken nog print
       // (een finally, een laatste frame) hoort bij de oude run, niet bij
       // de nieuwe console.
-      try { await pyodide.runPythonAsync('__pygbag_reset()'); } catch (e) {}
+      try { await pyodide.runPythonAsync('await __pygbag_reset()'); } catch (e) {}
       CURRENT_OFFSET = lineOffset || 0;
       CURRENT_INGEVOEGD = ingevoegd || [];
       CURRENT_REQUEST = requestId;
@@ -464,7 +465,7 @@ window.addEventListener('message', async (e) => {
       console.error(err);
     }
   } else if (type === 'stop') {
-    try { await pyodide.runPythonAsync('__pygbag_reset()'); } catch (e) {}
+    try { await pyodide.runPythonAsync('await __pygbag_reset()'); } catch (e) {}
     post('stopped', { requestId });
   }
 });

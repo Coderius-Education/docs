@@ -15,7 +15,7 @@ sidebar_custom_props:
 Volg [Python in VS Code](site:editor/python) om VS Code met Python werkend te krijgen.
 
 :::info
-**Let op:** Zorg ervoor dat Python 3.10 of nieuwer geïnstalleerd is op je computer. Dit is nodig om `coderius-play` te kunnen gebruiken.
+**Let op:** Zorg ervoor dat Python 3.11 of nieuwer geïnstalleerd is op je computer. Dit is nodig om `coderius-play` te kunnen gebruiken.
 :::
 
 ## coderius-play installeren

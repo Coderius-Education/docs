@@ -12,7 +12,7 @@ const BASIS = 'https://informatica.coderius.nl/play';
 
 describe('isToegestaanWiel', () => {
   it('laat alleen een wheel uit /whl/ van deze site door', () => {
-    expect(isToegestaanWiel(`${BASIS}/whl/coderius_play-3.4.0-py3-none-any.whl`, BASIS)).toBe(true);
+    expect(isToegestaanWiel(`${BASIS}/whl/coderius_play-3.5.0-py3-none-any.whl`, BASIS)).toBe(true);
     expect(isToegestaanWiel(`${BASIS}/whl/../geheim.whl`, BASIS)).toBe(false);
     expect(isToegestaanWiel(`${BASIS}/whl/x.json`, BASIS)).toBe(false);
     expect(isToegestaanWiel('https://informatica.coderius.nl/ide/whl/x.whl', BASIS)).toBe(false);

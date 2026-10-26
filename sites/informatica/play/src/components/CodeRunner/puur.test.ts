@@ -68,7 +68,7 @@ describe('isBerichtVanOuder', () => {
     // het id van de nieuwe run en belandt het alsnog in de verkeerde console.
     const doc = buildSharedRunnerSrcDoc(['import play']);
     const runHandler = doc.slice(doc.indexOf("if (type === 'run')"));
-    const reset = runHandler.indexOf("runPythonAsync('__pygbag_reset()')");
+    const reset = runHandler.indexOf("runPythonAsync('await __pygbag_reset()')");
     const overname = runHandler.indexOf('CURRENT_REQUEST = requestId');
     expect(reset).toBeGreaterThan(-1);
     expect(overname).toBeGreaterThan(reset);
