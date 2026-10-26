@@ -12,8 +12,12 @@
 // ABI-tag (pyemscripten_2025_0) hoort bij de abi_version van de Pyodide-versie.
 export const PYODIDE_VERSION = '0.29.4';
 const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
+// Eén regel per wheel: play-wheels.py, draai-play-blokken.py en de tests
+// zoeken ze zo, en een build-tag met een lange branchnaam maakt hem lang.
+// biome-ignore format: zie hierboven
 const PYMUNK_WHEEL = '/whl/pymunk-7.3.1-cp313-cp313-pyemscripten_2025_0_wasm32.whl';
-const PLAY_WHEEL = '/whl/coderius_play-3.5.0-0master7a7db94-py3-none-any.whl';
+// biome-ignore format: zie hierboven
+const PLAY_WHEEL = '/whl/coderius_play-3.5.0-0claudeinstallrequirementsv6n5yjee8fa53-py3-none-any.whl';
 
 // De pure helpers (geen DOM, geen Pyodide) staan in puur.js zodat ze in node
 // te testen zijn; callers importeren ze nog steeds vanaf hier.
@@ -265,95 +269,17 @@ const PYTHON_RESET = `\
 async def __pygbag_reset():
     """Stop the running program and put play back in its starting state between runs.
 
-    Wat terug moet, volgt de opruiming van play's eigen tests tussen twee
-    programma's (clean_play_state in tests/conftest.py van de play-repo). Ook
-    een run die nooit startte laat iets achter: maakte hij een vorm en liep hij
-    daarna op een fout, dan heeft play zijn automatische start al verbruikt, en
-    zonder opruiming startte geen enkele volgende run meer. Elke stap staat
-    los, zodat één verouderde naam de rest niet tegenhoudt; daarom speelt
-    draai-play-blokken.py de reset na tegen de wheel en controleert hij de
-    eindstand, en legt api.test.ts elke import hieronder naast de wheel.
+    play.reset_program() doet het werk: hij annuleert de taken van play, laat
+    ze hun finally afmaken en zet play terug zoals na import play, ook na een
+    run die nooit startte. In de browser moet je erop wachten; een volgende
+    run die eerder begint, weigert play. draai-play-blokken.py speelt deze
+    reset na tegen de wheel en controleert de eindstand.
     """
-    import asyncio
     import gc
     try:
         import play
-        from play.globals import globals_list, ProgramState
-        from play.loop import _tasks as _play_taken
     except Exception: return
-    if globals_list.program_state is not ProgramState.NOT_STARTED:
-        lopend = list(_play_taken)
-        # Zet het programma op gestopt en annuleert in de browser elke taak
-        # van play: de game loop, timers, callbacks.
-        try: play.stop_program()
-        except Exception: pass
-        # Wacht tot die taken hun finally af hebben (het geluid stoppen). Een
-        # taak die zijn annulering inslikt, zoals een kale except: in een
-        # async repeat_forever, krijgt een seconde; dan gaat de reset door.
-        if lopend:
-            try: await asyncio.wait(lopend, timeout=1)
-            except Exception: pass
-    try: globals_list.reset()
-    except Exception: pass
-    try:
-        from play.core.sprites_loop import _clicked_sprites
-        _clicked_sprites.clear()
-    except Exception: pass
-    try:
-        from play.api.auto_start import _cleanup_auto_start
-        _cleanup_auto_start()
-    except Exception: pass
-    try:
-        from play.physics import physics_space
-        globals_list.gravity.vertical = -100
-        globals_list.gravity.horizontal = 0
-        physics_space.gravity = (0, -100)
-        # De space hoort bij de module, niet bij globals_list: zonder dit
-        # stapelen de lichamen van eerdere runs zich op.
-        for body in list(physics_space.bodies): physics_space.remove(body)
-        for shape in list(physics_space.shapes): physics_space.remove(shape)
-        for constraint in list(physics_space.constraints): physics_space.remove(constraint)
-    except Exception: pass
-    try:
-        from play.io.screen import screen, create_walls
-        # De setters van width en height zouden de muren ook opnieuw bouwen.
-        screen._width, screen._height = 800, 600
-        screen._resizable = False
-        screen.caption = "coderius-play"
-        screen.update_display()
-        create_walls()
-    except Exception: pass
-    try:
-        from play.callback import callback_manager
-        callback_manager.callbacks.clear()
-    except Exception: pass
-    try:
-        from play.callback.collision_callbacks import collision_registry
-        collision_registry.reset()
-    except Exception: pass
-    try:
-        from play.objects.widgets.text_input_registry import reset as _reset_text_inputs
-        _reset_text_inputs()
-    except Exception: pass
-    try:
-        from play.core import keyboard_state, mouse_state
-        keyboard_state.pressed.clear()
-        keyboard_state.clear()
-        mouse_state.clear()
-        mouse_state.click_claimants.clear()
-    except Exception: pass
-    try:
-        from play.core.controller_loop import controller_state
-        controller_state.buttons_pressed.clear()
-        controller_state.clear()
-    except Exception: pass
-    try:
-        from play.io.mouse import mouse
-        # Een knop die in de vorige run omlaag ging en buiten het canvas
-        # omhoog kwam, telt anders in de volgende run als ingedrukt.
-        mouse.x, mouse.y = 0, 0
-        mouse._is_clicked = False
-    except Exception: pass
+    await play.reset_program()
     try:
         import pygame
         if pygame.display.get_init():
@@ -361,11 +287,6 @@ async def __pygbag_reset():
             if s:
                 s.fill((0, 0, 0))
                 pygame.display.flip()
-            # Na de stop leest niemand de events van het canvas; zonder dit
-            # krijgt het eerste frame van de volgende run de klikken en
-            # toetsen van daarvoor.
-            pygame.event.pump()
-            pygame.event.clear()
     except Exception: pass
     gc.collect()
 `;

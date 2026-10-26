@@ -197,6 +197,15 @@ describe('de bootstrap van de speeltuin past op de wheel', () => {
     expect(problemen).toEqual([]);
   });
 
+  // De reset roept play.reset_program() aan; zonder die functie in de wheel
+  // faalt elke reset, en dat slikt de iframe stil in.
+  it('elke play.…()-aanroep uit engine.js staat in de publieke API van de wheel', () => {
+    const symbolen = wheelSymbolen();
+    const aanroepen = [...new Set([...engine.matchAll(/\bplay\.([a-z_]+)\(/g)].map((m) => m[1]))];
+    expect(aanroepen).toContain('reset_program');
+    expect(aanroepen.filter((naam) => !symbolen.has(naam))).toEqual([]);
+  });
+
   // Tot en met 3.4 verving de bootstrap play's start_program en patchte hij
   // play.loop, omdat play zelf niet in de browser kon draaien. Sinds 3.5.0 kan
   // dat wel, en zo'n patch zou het browserpad van play omzeilen: de taken die

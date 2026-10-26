@@ -302,13 +302,13 @@ _os._exit(0)
 
 # De speeltuin draait alle runners van een pagina in één iframe, en
 # __pygbag_reset() uit engine.js zet play tussen twee runs terug in de
-# beginstand. Dit harnas speelt dat na: play in zijn browserstand (taken op de
-# lopende loop), de reset letterlijk uit engine.js, en daarna de eindstand
-# naast wat een verse play heeft. Elke stap van de reset slikt zijn eigen
-# fout in, zodat één verouderde naam de rest niet tegenhoudt; zonder deze
-# controle deed een stap na een nieuwe wheel dus stil niets. Het eerste
-# scenario is de fout uit de eerste reset voor 3.5.0: een run die een
-# vorm maakt en dan op een fout loopt, verbruikt de automatische start van
+# beginstand, met play.reset_program(). Dit harnas speelt dat na: play in zijn
+# browserstand (taken op de lopende loop), de reset letterlijk uit engine.js,
+# en daarna de eindstand naast wat een verse play heeft. Zo blijft de belofte
+# van reset_program() vastliggen voor de speeltuin, ook als play hem later
+# anders invult. Het eerste scenario is de fout uit de eerste reset voor
+# 3.5.0, toen de speeltuin nog een eigen kopie van de opruiming had: een run
+# die een vorm maakt en dan op een fout loopt, verbruikt de automatische start van
 # play, en daarna startte geen enkele run meer tot je de pagina herlaadde.
 RESET_HARNAS = r"""import asyncio
 import os
