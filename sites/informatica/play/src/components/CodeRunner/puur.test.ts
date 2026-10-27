@@ -82,6 +82,17 @@ describe('isBerichtVanOuder', () => {
     expect(controle).toBeGreaterThan(-1);
     expect(lezen).toBeGreaterThan(controle);
   });
+
+  // Twee kliks tijdens het opstarten liepen door elkaar: beide wachtten op
+  // Pyodide en gingen daarna tegelijk verder, en het tweede programma tekende
+  // over het eerste heen. In de browser nagespeeld; hier staat de rij vast.
+  it('de gedeelde iframe handelt run en stop één voor één af', () => {
+    const doc = buildSharedRunnerSrcDoc(['import play']);
+    expect(doc).toMatch(/window\.addEventListener\('message', \(e\) => \{/);
+    expect(doc).not.toMatch(/window\.addEventListener\('message', async/);
+    expect(doc).toMatch(/rij = rij\.then\(\(\) => verwerk\(bericht\)\)\.catch\(/);
+    expect(doc).toMatch(/Promise\.race\(\[programma, /);
+  });
 });
 
 describe('ensureAsync', () => {

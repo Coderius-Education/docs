@@ -319,7 +319,7 @@ os.environ["SDL_AUDIODRIVER"] = "dummy"
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 wheel_map, engine = sys.argv[1], sys.argv[2]
 sys.path.insert(0, wheel_map)
-bron = open(engine, encoding="utf-8").read()
+bron = open(engine, encoding="utf-8").read().replace("\r\n", "\n")
 reset = bron.split("const PYTHON_RESET = `\\\n", 1)[1].split("`;", 1)[0]
 # Dit harnas leest de brontekst van de template literal; de browser krijgt de
 # string die JavaScript ervan maakt. Die zijn alleen gelijk zolang er geen
@@ -517,7 +517,7 @@ def controleer_pins() -> str | None:
 
 
 def wheel_pad() -> Path:
-    m = re.search(r"PLAY_WHEEL = '/whl/([^']+)'", ENGINE.read_text())
+    m = re.search(r"PLAY_WHEEL = '/whl/([^']+)'", ENGINE.read_text(encoding="utf-8"))
     if not m:
         sys.exit("PLAY_WHEEL niet gevonden in engine.js")
     pad = SITE / "static" / "whl" / m.group(1)
@@ -679,12 +679,17 @@ def main() -> int:
             fout = draai(Path(f"zelftest: {naam}"), 1, code, wheel_map)
             return fout and f"draai-play-blokken.py: harnas: {fout}"
 
+        # De reset en het harnas veranderen alleen met engine.js, de wheel of
+        # dit script, en die zetten selectie.alles aan (RUNNERS in
+        # packages/shared/wijzigingen.js). Een les alleen raakt ze niet.
         with ThreadPoolExecutor(max_workers=8) as pool:
-            reset = pool.submit(controleer_reset, wheel_map)
-            zelftesten = [pool.submit(zelftest, n, c) for n, c in ZELFTEST.items()]
+            reset = pool.submit(controleer_reset, wheel_map) if selectie.alles else None
+            zelftesten = (
+                [pool.submit(zelftest, n, c) for n, c in ZELFTEST.items()] if selectie.alles else []
+            )
             resultaten = pool.map(lambda b: draai(b[0], b[1], b[2], wheel_map), te_draaien)
             fouten += [f for f in resultaten if f]
-            fouten += reset.result() + [f for t in zelftesten if (f := t.result())]
+            fouten += (reset.result() if reset else []) + [f for t in zelftesten if (f := t.result())]
 
     for fout in fouten:
         print(fout)

@@ -396,10 +396,24 @@ window.addEventListener('keydown', (e) => {
   if (SCROLTOETSEN.includes(e.key)) e.preventDefault();
 }, true);
 
-window.addEventListener('message', async (e) => {
+// Berichten één voor één: een run begint pas als de reset en de code van de
+// vorige klaar zijn. Zonder rij liepen twee kliks tijdens het opstarten door
+// elkaar, en tekende het tweede programma over het eerste heen.
+let rij = Promise.resolve();
+window.addEventListener('message', (e) => {
   if (!isBerichtVanOuder(e, window.parent)) return;
   if (!e.data || !e.data.type) return;
-  const { type, requestId } = e.data;
+  if (e.data.type !== 'run' && e.data.type !== 'stop') return;
+  const bericht = e.data;
+  rij = rij.then(() => verwerk(bericht)).catch((err) => console.error(err));
+});
+
+// Een programma met een eigen lus (pygame) keert niet terug; daar wacht de
+// rij niet langer op dan dit. Een play-programma is in milliseconden klaar.
+const LANGSTE_WACHT_MS = 2000;
+
+async function verwerk(bericht) {
+  const { type, requestId } = bericht;
 
   await booting;
   if (!pyodide) {
@@ -408,28 +422,31 @@ window.addEventListener('message', async (e) => {
   }
 
   if (type === 'run') {
-    const { code, lineOffset, ingevoegd } = e.data;
-    try {
-      // Eerst het vorige programma afbreken, dan pas het nieuwe requestId
-      // aannemen: wat het oude programma tijdens het afbreken nog print
-      // (een finally, een laatste frame) hoort bij de oude run, niet bij
-      // de nieuwe console.
-      try { await pyodide.runPythonAsync('await __pygbag_reset()'); } catch (e) { console.error('__pygbag_reset:', e); }
-      CURRENT_OFFSET = lineOffset || 0;
-      CURRENT_INGEVOEGD = ingevoegd || [];
-      CURRENT_REQUEST = requestId;
-      await pyodide.runPythonAsync(code, { filename: '<jouw_code>' });
-      post('run-done', { requestId });
-    } catch (err) {
-      const msg = String(err && err.message ? err.message : err);
-      post('error', { requestId, message: rewriteTraceback(msg, CURRENT_OFFSET, CURRENT_INGEVOEGD) });
-      console.error(err);
-    }
+    const { code } = bericht;
+    const offset = bericht.lineOffset || 0;
+    const ingevoegd = bericht.ingevoegd || [];
+    // Eerst het vorige programma afbreken, dan pas het nieuwe requestId
+    // aannemen: wat het oude programma tijdens het afbreken nog print
+    // (een finally, een laatste frame) hoort bij de oude run, niet bij
+    // de nieuwe console.
+    try { await pyodide.runPythonAsync('await __pygbag_reset()'); } catch (e) { console.error('__pygbag_reset:', e); }
+    CURRENT_OFFSET = offset;
+    CURRENT_INGEVOEGD = ingevoegd;
+    CURRENT_REQUEST = requestId;
+    const programma = pyodide.runPythonAsync(code, { filename: '<jouw_code>' }).then(
+      () => post('run-done', { requestId }),
+      (err) => {
+        const msg = String(err && err.message ? err.message : err);
+        post('error', { requestId, message: rewriteTraceback(msg, offset, ingevoegd) });
+        console.error(err);
+      },
+    );
+    await Promise.race([programma, new Promise((klaar) => setTimeout(klaar, LANGSTE_WACHT_MS))]);
   } else if (type === 'stop') {
     try { await pyodide.runPythonAsync('await __pygbag_reset()'); } catch (e) { console.error('__pygbag_reset:', e); }
     post('stopped', { requestId });
   }
-});
+}
 </script>
 </body>
 </html>`;

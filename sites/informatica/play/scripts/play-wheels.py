@@ -21,10 +21,12 @@ src/api-tests/wheels.test.ts legt die herkomst naast de bestanden.
 
 import argparse
 import hashlib
+import io
 import json
 import re
 import subprocess
 import sys
+import tarfile
 import tempfile
 import urllib.request
 import zipfile
@@ -84,7 +86,8 @@ def uit_map(map_: Path, doel: Path) -> tuple[Path, str]:
     archief = subprocess.run(
         ["git", "-C", str(map_), "archive", "HEAD"], check=True, capture_output=True
     ).stdout
-    subprocess.run(["tar", "-x", "-C", str(bron)], input=archief, check=True)
+    with tarfile.open(fileobj=io.BytesIO(archief)) as tar:
+        tar.extractall(bron, filter="data")
     bouw = doel / "bouw"
     subprocess.run(
         [sys.executable, "-m", "pip", "wheel", "--no-deps", "--quiet", "-w", str(bouw), str(bron)],
@@ -121,7 +124,7 @@ def main() -> None:
     bron.add_argument("--pypi", metavar="VERSIE", help="een uitgebrachte versie van PyPI")
     args = parser.parse_args()
 
-    huidige_pymunk = re.search(r"PYMUNK_WHEEL = '/whl/([^']+)'", ENGINE.read_text())
+    huidige_pymunk = re.search(r"PYMUNK_WHEEL = '/whl/([^']+)'", ENGINE.read_text(encoding="utf-8"))
     if not huidige_pymunk:
         fout("PYMUNK_WHEEL niet gevonden in engine.js")
     # pymunk-7.3.0-cp313-cp313-pyemscripten_2025_0_wasm32.whl: alles na de
@@ -147,12 +150,12 @@ def main() -> None:
         # Eerst engine.js controleren, dan de nieuwe wheels schrijven, dan
         # engine.js, en pas daarna de oude weghalen: valt een stap om, dan
         # wijst engine.js nog naar wheels die er staan.
-        engine = zet_in_engine(ENGINE.read_text(), "PLAY_WHEEL", play.name)
+        engine = zet_in_engine(ENGINE.read_text(encoding="utf-8"), "PLAY_WHEEL", play.name)
         engine = zet_in_engine(engine, "PYMUNK_WHEEL", pymunk.name)
         oude = [*WHL.glob("coderius_play-*.whl"), *WHL.glob("pymunk-*.whl")]
         for wheel in (play, pymunk):
             (WHL / wheel.name).write_bytes(wheel.read_bytes())
-        ENGINE.write_text(engine)
+        ENGINE.write_text(engine, encoding="utf-8")
         for oud in oude:
             if oud.name not in (play.name, pymunk.name):
                 oud.unlink()
@@ -170,7 +173,7 @@ def main() -> None:
             "sha256": sha256(WHL / pymunk.name),
         },
     }
-    HERKOMST.write_text(json.dumps(herkomst, indent=2, ensure_ascii=False) + "\n")
+    HERKOMST.write_text(json.dumps(herkomst, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     print(f"{play.name}  ({play_bron})")
     print(f"{pymunk.name}  (pypi)")

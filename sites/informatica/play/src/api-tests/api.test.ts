@@ -151,12 +151,13 @@ describe('lesstof en wheel spreken dezelfde taal', () => {
 });
 
 describe('de bootstrap van de speeltuin past op de wheel', () => {
-  // engine.js draagt Python mee (bootstrap en reset) die diep in play's
-  // binnenkant grijpt. Die binnenkant is geen publiek API: toen 3.4 de
+  // engine.js draagt Python mee (bootstrap en reset). Tot en met 3.4 greep die
+  // diep in play's binnenkant, en die is geen publiek API: toen 3.4 de
   // program_started-boolean verving door een program_state-enum, crashte elke
-  // browser-run op een AttributeError. Deze tests leggen de Python-strings
-  // naast de wheel, zodat zulke drift een testfout wordt in plaats van een
-  // kapotte speeltuin.
+  // browser-run op een AttributeError. Sinds play.reset_program() gebruikt
+  // engine.js alleen nog publieke namen, en vinden de eerste twee tests niets
+  // meer. Ze blijven staan: komt er weer een globals_list of een
+  // from play.… import in, dan ligt die meteen naast de wheel.
   const engine = readFileSync(ENGINE, 'utf8');
 
   it('elk globals_list-attribuut uit engine.js bestaat in globals.py', () => {
