@@ -1,9 +1,9 @@
 {
   "coderius_play": {
-    "bestand": "coderius_play-3.5.0-0claudeinstallrequirementsv6n5yj6cb6ca4-py3-none-any.whl",
+    "bestand": "coderius_play-3.5.0-0mastera8d118c-py3-none-any.whl",
     "versie": "3.5.0",
-    "bron": "Coderius-Education/play claude/install-requirements-v6n5yj @ 6cb6ca4",
-    "sha256": "a069e99d3ff22833ef0197e11810629dd8594dc4800f43387daa79bcaf714951"
+    "bron": "Coderius-Education/play master @ a8d118c",
+    "sha256": "79bc322c1d1c87a9c5446a5f422876ce120794b312eac4a3ca1f12d619fc4fe8"
   },
   "pymunk": {
     "bestand": "pymunk-7.3.1-cp313-cp313-pyemscripten_2025_0_wasm32.whl",
