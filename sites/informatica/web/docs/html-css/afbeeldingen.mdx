@@ -22,6 +22,21 @@ export const startHtml = `<!DOCTYPE html>
 </body>
 </html>`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander `width=\"300\"` in `width=\"100\"`. Wat gebeurt er met de afbeelding?",
+    antwoord: "De afbeelding wordt 100 pixels breed en ook lager. De browser past de hoogte zelf aan, zodat de hond niet uitgerekt of platgedrukt raakt.",
+  },
+  {
+    vraag: "Maak de `src` leeg, dus `src=\"\"`. Wat zie je?",
+    antwoord: "Een klein icoontje van een kapotte afbeelding met de tekst Een hond ernaast. Er is geen bestand om te laden, dus de browser toont de `alt`-tekst.",
+  },
+  {
+    vraag: "Vervang `width=\"300\"` door `height=\"200\"`. Hoe breed is de afbeelding nu?",
+    antwoord: "Nog steeds 300 pixels, net als eerst. De foto is 300 bij 200 pixels, dus bij een hoogte van 200 rekent de browser de breedte zelf uit.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -97,20 +112,15 @@ De browser kan de afbeelding niet laden en toont in plaats daarvan de **`alt` te
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 <CodeEditor
   initialHtml={startHtml}
   height="460px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer met de code:
-
-- Wat gebeurt er als je `width="300"` verandert in `width="100"`?
-- Wat zie je als je de `src` leeg maakt (`src=""`)?
-- Vervang `width="300"` door `height="200"` — wat valt je op aan de breedte?
 
 ## Modify
 

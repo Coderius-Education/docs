@@ -43,6 +43,21 @@ export const startJs = `function bereken() {
 
 document.getElementById('knop').addEventListener('click', bereken);`;
 
+export const onderzoek = [
+  {
+    vraag: "Zet aanhalingstekens om de 5: `const prijs = '5';`. Wat verandert er aan de uitkomst en aan de `typeof`-logs?",
+    antwoord: "De uitkomst blijft `Totaal: 15 euro`. De console logt nu `Prijs is een string`, maar nog steeds `Totaal is een number`: `*` kan niet plakken, dus JavaScript maakt van `'5'` een getal en rekent.",
+  },
+  {
+    vraag: "Verander `prijs * aantal` in `prijs + aantal`, eerst met en daarna zonder de aanhalingstekens om de 5. Hoe verklaar je het verschil?",
+    antwoord: "Met aanhalingstekens staat er `Totaal: 53 euro` en is het totaal een string: `+` plakt `'5'` en `3` aan elkaar. Zonder aanhalingstekens staat er `Totaal: 8 euro`, want met twee numbers telt `+` op.",
+  },
+  {
+    vraag: "Zet `console.log(17 % 5);` en `console.log(16 % 2);` onderaan script.js en klik op Run. Wat logt de console?",
+    antwoord: "Eerst `2`, dan `0`, meteen bij het laden. 17 gedeeld door 5 is 3 met rest 2, en 16 is precies deelbaar door 2, dus daar is de rest 0.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -146,7 +161,9 @@ document.getElementById('uitvoer').textContent = 'Totaal: ' + totaal + ' euro';
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -155,15 +172,8 @@ document.getElementById('uitvoer').textContent = 'Totaal: ' + totaal + ' euro';
   height="480px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Zet aanhalingstekens om de 5: `const prijs = '5';`. Wat verandert er aan de uitkomst en aan de `typeof`-logs?
-- Verander `prijs * aantal` in `prijs + aantal`, eerst mét en dan zonder die aanhalingstekens. Verklaar het verschil.
-- Wat logt `console.log(17 % 5)`? En `console.log(16 % 2)`?
 
 ## Opdracht 1: Zakgeld
 

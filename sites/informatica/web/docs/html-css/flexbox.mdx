@@ -36,6 +36,25 @@ export const startCss = `.container {
   text-align: center;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Voeg `justify-content: center` toe aan `.container`. Wat verandert er?",
+    antwoord: "De drie items schuiven samen naar het midden van de grijze balk. `justify-content` verdeelt de vrije ruimte in de rij, en `center` zet die links en rechts.",
+  },
+  {
+    vraag: "Zet `justify-content: space-between` op `.container`. Wat doet dat?",
+    antwoord: "Item 1 staat helemaal links, item 3 helemaal rechts en item 2 in het midden. De vrije ruimte komt tussen de items, niet aan de randen.",
+  },
+  {
+    vraag: "Voeg `flex-direction: column` toe aan `.container`. Hoe staan de items nu?",
+    antwoord: "Onder elkaar, en elk zo breed als de grijze container. De items volgen elkaar nu van boven naar beneden in plaats van van links naar rechts.",
+  },
+  {
+    vraag: "Zet onderaan de CSS `.item:first-child { padding: 60px 30px; }`. Hoe hoog worden item 2 en 3? Voeg daarna `align-items: center` toe aan `.container`.",
+    antwoord: "Eerst rekken item 2 en 3 uit tot de hoogte van item 1; dat doet flexbox vanzelf. Met `align-items: center` worden ze weer zo hoog als hun inhoud en staan ze in het midden naast item 1.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -93,22 +112,16 @@ De items komen **onder elkaar** te staan, in plaats van naast elkaar. `column` v
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="480px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer met de CSS:
-
-- Voeg `justify-content: center` toe aan `.container` — wat verandert er?
-- Probeer `justify-content: space-between` — wat doet dat?
-- Voeg `flex-direction: column` toe — hoe staan de items nu?
-- Wat doet `align-items: center` als je de container een vaste hoogte geeft (`height: 200px`)?
 
 ## Modify
 

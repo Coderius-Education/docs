@@ -46,6 +46,21 @@ export const startJs = `function toggle() {
 
 document.getElementById('knop').addEventListener('click', toggle);`;
 
+export const onderzoek = [
+  {
+    vraag: "Vervang `classList.toggle` door `classList.add` en klik twee keer. Wat gebeurt er?",
+    antwoord: "Na de eerste klik is de kaart goud met een oranje rand, en na de tweede klik blijft hij dat. `add` zet de klasse aan, maar uitzetten doet alleen `toggle` of `remove`.",
+  },
+  {
+    vraag: "Verander `querySelector('.kaart')` in `querySelector('h2')` en klik. Wat zie je, en waarom?",
+    antwoord: "Er verandert niets. De `<h2>` krijgt de klasse `actief` wel, maar de CSS-regel `.kaart.actief` geldt alleen voor een element met allebei de klassen, en de `<h2>` heeft geen klasse `kaart`.",
+  },
+  {
+    vraag: "Kopieer in de HTML het hele blok `<div class=\"kaart\">` tot en met `</div>` en zet de kopie eronder. Welke van de twee kaarten reageert op de knop?",
+    antwoord: "Alleen de bovenste. `querySelector` geeft het eerste element dat bij de selector past; de tweede kaart blijft grijs.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -147,7 +162,9 @@ Alleen de **eerste** `<p>` krijgt de tekst "Veranderd." — `querySelector` stop
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -156,15 +173,8 @@ Alleen de **eerste** `<p>` krijgt de tekst "Veranderd." — `querySelector` stop
   height="480px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Vervang `toggle` door `add`. Wat gebeurt er als je twee keer klikt?
-- Verander `querySelector('.kaart')` in `querySelector('h2')`. Waar komt de markering nu terecht, en waarom ziet dat er anders uit?
-- Voeg in de HTML een tweede `.kaart` toe. Welke van de twee reageert op de knop?
 
 ## Opdracht 1: Reset-knop
 

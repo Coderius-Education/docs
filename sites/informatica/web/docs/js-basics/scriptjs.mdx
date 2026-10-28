@@ -42,6 +42,21 @@ export const debugJs = `function verander() {
   console.log('De knop is geklikt.');
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Voeg binnen de functie nog twee `console.log()`-regels toe, elk met een eigen tekst. Klik op Run en dan op de knop. Verschijnen ze allemaal?",
+    antwoord: "Ja, alle drie de berichten staan onder elkaar in de console, in de volgorde van je code. Bij een klik draait de functie elke regel tussen de accolades.",
+  },
+  {
+    vraag: "Zet `console.log('Script geladen.');` buiten de functie, onderaan script.js, en klik op Run. Verschijnt dat bericht bij het laden of bij een klik?",
+    antwoord: "Bij het laden: `Script geladen.` staat al in de console voordat je op de knop drukt. Code buiten een functie draait meteen, code erbinnen pas als iemand de functie aanroept.",
+  },
+  {
+    vraag: "Klik drie keer op de knop. Hoe vaak staat `De knop is geklikt.` in de console?",
+    antwoord: "Drie keer, op drie regels. De pagina toont na elke klik dezelfde tekst, maar de console houdt elke aanroep bij. Pas een nieuwe Run maakt de console leeg.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -96,7 +111,9 @@ Eén regel: `De knop is geklikt.` De functie doet twee dingen — de paginatekst
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -105,15 +122,8 @@ Eén regel: `De knop is geklikt.` De functie doet twee dingen — de paginatekst
   height="500px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Voeg meer `console.log()`-regels toe binnen de functie. Verschijnen ze allemaal?
-- Zet een `console.log('Script geladen.')` **buiten** de functie, onderaan script.js. Wanneer verschijnt die — bij het laden of bij een klik?
-- Klik drie keer op de knop. Hoe vaak staat het bericht in de console?
 
 ## Opdracht 1: Wis-knop
 

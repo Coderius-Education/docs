@@ -34,6 +34,21 @@ export const startJs = `function toonTafel() {
 
 document.getElementById('knop').addEventListener('click', toonTafel);`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander `i <= 10` in `i <= 5`. Hoeveel regels krijg je?",
+    antwoord: "Vijf regels, van `5 × 1 = 5` tot en met `5 × 5 = 25`. Na de vijfde ronde is `i <= 5` niet meer waar, dus de loop stopt eerder.",
+  },
+  {
+    vraag: "Vervang `5 * i` door `i * i`. Welke rij getallen zie je nu?",
+    antwoord: "De uitkomsten zijn 1, 4, 9, 16 en zo verder tot en met 100: elk getal keer zichzelf. De tekst ervoor zegt nog steeds `5 × 2 = 4`, want dat stuk string heb je niet veranderd.",
+  },
+  {
+    vraag: "Zet `console.log(i);` als eerste regel in de loop en klik op de knop. Hoe loopt de teller in de console?",
+    antwoord: "De console toont 1 tot en met 10, elk getal op een eigen regel. `i` begint bij 1 en gaat na elke ronde met `i++` één omhoog, tot `i <= 10` niet meer waar is.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -126,7 +141,9 @@ De loop begint bij `i = 0` en herhaalt zolang `i < 3`: dus voor 0, 1 en 2. Bij `
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -135,15 +152,8 @@ De loop begint bij `i = 0` en herhaalt zolang `i < 3`: dus voor 0, 1 en 2. Bij `
   height="500px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Verander `i <= 10` in `i <= 5`. Hoeveel regels krijg je?
-- Vervang `5 * i` door `i * i`. Welke rij getallen zie je nu?
-- Zet een `console.log(i)` in de loop en klik. Hoe loopt de teller in de console?
 
 ## Opdracht 1: Andere tafel
 

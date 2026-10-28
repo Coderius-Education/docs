@@ -44,6 +44,21 @@ function muisWeg() {
 document.getElementById('knop').addEventListener('mouseover', muisErop);
 document.getElementById('knop').addEventListener('mouseout', muisWeg);`;
 
+export const onderzoek = [
+  {
+    vraag: "Vervang `'mouseover'` door `'click'`. Wat verandert er aan het gedrag?",
+    antwoord: "De muis op de knop zetten doet niets meer; pas als je klikt komt er `Muis erop.` te staan. Beweeg je de muis weg, dan staat er nog steeds `Muis weg.`, want die regel luistert nog naar `'mouseout'`.",
+  },
+  {
+    vraag: "Verwijder de onderste regel, de koppeling van `muisWeg`. Welke tekst blijft er staan als je de muis wegbeweegt?",
+    antwoord: "`Muis erop.` blijft staan. De functie `muisWeg` bestaat nog, maar niets roept hem meer aan: zonder listener draait een functie nooit.",
+  },
+  {
+    vraag: "Zet onderaan een extra regel die `muisWeg` ook aan het `'dblclick'`-event koppelt. Dubbelklik op de knop terwijl de muis erop staat. Wat zie je, en kan één functie bij twee events horen?",
+    antwoord: "Met `document.getElementById('knop').addEventListener('dblclick', muisWeg);` komt er bij een dubbelklik `Muis weg.` te staan, terwijl de muis nog op de knop staat. Eén functie kan dus bij twee events horen: `muisWeg` draait nu bij `'mouseout'` en bij `'dblclick'`.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -129,7 +144,9 @@ Bij het raken van de knop draait `muisErop` (via het `mouseover`-event) en komt 
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -138,15 +155,8 @@ Bij het raken van de knop draait `muisErop` (via het `mouseover`-event) en komt 
   height="480px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Vervang `'mouseover'` door `'click'` in de onderste regels. Wat verandert er aan het gedrag?
-- Verwijder de koppelregel van `muisWeg` (de onderste regel). Welke tekst blijft er staan als je de muis wegbeweegt?
-- Koppel `muisErop` óók aan het `'dblclick'`-event. Kan één functie bij twee events horen?
 
 ## Opdracht 1: Klik-listener erbij
 

@@ -65,6 +65,25 @@ p.opvallend {
   border-left-color: orange;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander `.bericht > p` in `.bericht p`, zonder `>`. Wat gebeurt er met de tekst in het citaat (`blockquote`)?",
+    antwoord: "Het citaat krijgt nu ook de groene streep links, de inspringing en de donkergrijze tekst. `.bericht p` kiest elke `p` binnen `.bericht`, ook die in de `blockquote`; `.bericht > p` kiest alleen de directe kinderen.",
+  },
+  {
+    vraag: "Wissel de regels `h2, p` en `.bericht > p` van plek in de CSS. Verandert er iets?",
+    antwoord: "Nee. De twee regels zetten verschillende eigenschappen, dus ze zitten elkaar niet in de weg. Volgorde telt pas als twee even zware selectors dezelfde eigenschap zetten.",
+  },
+  {
+    vraag: "Voeg onderaan de CSS `#belangrijk { color: purple; }` toe. Welke kleur krijgt de mededeling, en waarom wint die regel?",
+    antwoord: "Paars. Er zijn nu twee regels met `#belangrijk`; die wegen even zwaar, dus de onderste wint. Allebei winnen ze van `.bericht > p`, want een id weegt zwaarder dan een klasse.",
+  },
+  {
+    vraag: "Verwijder het hekje bij `#belangrijk` in de CSS. Wat gebeurt er met de mededeling?",
+    antwoord: "De tekst wordt donkergrijs en de streep links groen, in plaats van bruin met oranje. Zonder `#` zoekt de browser een element `<belangrijk>`, en dat bestaat niet. De gele achtergrond blijft, want die komt van `p.opvallend`.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -197,22 +216,16 @@ Omdat `.kaart p` de hoogste score heeft (11 punten), wint de kleur groen.
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="480px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het code-oefenveld hierboven:
-
-- Verander `.bericht > p` in `.bericht p` (zonder `>`). Wat gebeurt er met de tekst in het citaat (`blockquote`)?
-- Verander de volgorde van `h2, p` en `.bericht > p` in de CSS. Maakt de volgorde uit voor de uiteindelijke stijl?
-- Voeg in de CSS onderaan `#belangrijk { color: purple; }` toe. Waarom verandert de tekstkleur van de laatste paragraaf, ook al staat `.opvallend` er ook op?
-- Verwijder het hekje bij `#belangrijk` in de CSS. Wat gebeurt er nu met de mededeling?
 
 ## Modify
 

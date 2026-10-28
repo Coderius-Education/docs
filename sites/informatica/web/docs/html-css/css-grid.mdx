@@ -39,6 +39,25 @@ export const startCss = `.galerij {
   font-size: 2rem;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander `1fr 1fr 1fr` in `1fr 1fr`. Wat gebeurt er met de zes cellen?",
+    antwoord: "Ze staan nu in twee kolommen en drie rijen. Na elke twee cellen is een rij vol en begint de volgende.",
+  },
+  {
+    vraag: "Verander `1fr 1fr 1fr` in `200px 1fr 200px` en kies daarna boven het voorbeeld Breed. Wat verandert er?",
+    antwoord: "De buitenste kolommen zijn altijd 200 pixels breed, de middelste krijgt wat overblijft. In het smalle voorbeeld past dat niet en steekt het raster rechts uit. Op Breed is de middelste kolom juist de breedste.",
+  },
+  {
+    vraag: "Voeg onderaan de CSS `.cel:first-child { grid-column: span 2; }` toe. Wat doet de eerste cel nu?",
+    antwoord: "Cel 1 is twee kolommen breed. Cel 2 past er nog naast, de rest schuift op, en cel 6 staat alleen op een derde rij.",
+  },
+  {
+    vraag: "Verander `1fr 1fr 1fr` in `repeat(3, 1fr)`. Wat zie je?",
+    antwoord: "Precies hetzelfde als eerst. `repeat(3, 1fr)` is een kortere schrijfwijze voor drie keer `1fr`.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -120,22 +139,16 @@ Drie kolommen, dus de zes items vormen automatisch **twee rijen van drie**. CSS 
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="500px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer:
-
-- Verander `1fr 1fr 1fr` naar `1fr 1fr` — wat gebeurt er met de zes items?
-- Probeer `200px 1fr 200px` — wat verandert er?
-- Voeg `grid-column: span 2` toe aan `.cel:first-child` — wat doet de eerste cel nu?
-- Probeer `grid-template-columns: repeat(3, 1fr)` — wat zie je? (Hint: hetzelfde als handmatig drie keer `1fr`)
 
 ## Modify
 

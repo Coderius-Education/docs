@@ -29,6 +29,21 @@ export const startCss = `.rood {
   font-size: 1.8rem;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Verwijder `rood` uit `class=\"rood groot\"` bij de laatste paragraaf. Wat zie je?",
+    antwoord: "De tekst blijft groot, maar wordt zwart. Elke klasse in het `class`-attribuut brengt zijn eigen regels mee; haal je er één weg, dan verdwijnen alleen die.",
+  },
+  {
+    vraag: "Maak in de CSS een klasse `.onderstreept` met `text-decoration: underline` en zet hem op de eerste paragraaf met `class=\"onderstreept\"`. Wat gebeurt er?",
+    antwoord: "Alleen de eerste paragraaf krijgt een streep onder de tekst. Een klasse doet pas iets bij de elementen die hem in hun `class` hebben staan.",
+  },
+  {
+    vraag: "Zet `color: blue` in `.groot`. Welke kleur krijgt de laatste paragraaf, die `rood` en `groot` allebei heeft?",
+    antwoord: "Blauw. Twee klassen wegen even zwaar, dus wint de regel die het laatst in de CSS staat, en `.groot` staat onder `.rood`. De volgorde in het `class`-attribuut maakt niet uit.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -116,21 +131,16 @@ Beide stijlen worden **gecombineerd**: de tekst wordt zowel rood als groot. CSS 
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="480px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer:
-
-- Wat zie je als je `class="rood"` verwijdert bij de derde paragraaf?
-- Voeg een klasse `.onderstreept` toe in de CSS met `text-decoration: underline`. Pas het op één element toe.
-- Wat gebeurt er als je dezelfde eigenschap in twee klassen hebt? (bijv. `color: red` in `.rood` en `color: blue` in een andere klasse — welke wint?)
 
 ## Modify
 

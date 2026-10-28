@@ -41,6 +41,25 @@ button {
   margin-top: 1rem;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander `font-size` van `h1` naar `2em`. Verschilt dat van `2rem`, en waarom wel of niet?",
+    antwoord: "Je ziet geen verschil: allebei 32 pixels. `em` rekent met de lettergrootte van de ouder en `rem` met die van `html`, en hier zijn die allebei 16 pixels.",
+  },
+  {
+    vraag: "Zet de padding van de knop op `8px 16px` en maak daarna de `font-size` van de knop groter, bijvoorbeeld `2rem`. Wat doet de padding?",
+    antwoord: "Die groeit niet mee: de tekst wordt groter, maar de ruimte eromheen blijft 8 en 16 pixels. Met `0.5em 1em` groeide de padding wel mee, omdat `em` uitgaat van de lettergrootte van de knop zelf.",
+  },
+  {
+    vraag: "Verander bij `.balk` de `width` van `50%` naar `200px`. Kies daarna boven het voorbeeld Telefoon en dan Breed. Schaalt de balk mee?",
+    antwoord: "Nee, met `200px` is de balk op elke breedte 200 pixels. Met `50%` was hij altijd de helft van het voorbeeld, op Breed ruim 500 pixels.",
+  },
+  {
+    vraag: "Voeg bovenaan de CSS `html { font-size: 24px; }` toe. Wat schaalt mee en wat niet?",
+    antwoord: "Alles in `rem` of `em` groeit mee: de kop, de tekst, de knop met zijn padding en de ruimte boven de balk. De balk blijft 40 pixels hoog en de rand van de knop 2 pixels, want die staan in `px`. Zo gaat het ook als een bezoeker zijn standaard lettergrootte groter zet.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -128,22 +147,16 @@ De paragraaftekst wordt 1,5 keer de basisgrootte (meestal 24px). De padding op d
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="540px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer:
-
-- Verander `font-size` van `h1` naar `2em`. Verschilt dat van `2rem`, en waarom wel of niet?
-- Zet de padding van de knop op `8px 16px`. Wat gebeurt er nu als je de `font-size` van die knop verandert?
-- Geef `.balk` een `width` van `200px` in plaats van `50%`. Maak het voorbeeld daarna smaller met de knoppen erboven; welke van de twee blijft meeschalen?
-- Zet `font-size` van `html` op `24px` (voeg een `html { font-size: 24px; }`-regel toe). Wat schaalt mee en wat niet? Dat is wat er gebeurt als een bezoeker zijn standaard lettergrootte groter zet.
 
 ## Modify
 
