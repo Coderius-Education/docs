@@ -159,7 +159,11 @@ function CodeEditorInner({
   const handleRun = useCallback(() => {
     setConsoleLogs([]);
     setSrcDoc(buildDoc(html, css, js, veldId));
-  }, [html, css, js, veldId]);
+    // Ongewijzigde code geeft dezelfde srcDoc, en dan laadde het voorbeeld
+    // niet opnieuw: na drie klikken bleef de teller van variabelen na Run op
+    // 3 staan, terwijl de les "weer op 0" belooft. Run begint altijd opnieuw.
+    herlaadEigenPagina();
+  }, [html, css, js, veldId, herlaadEigenPagina]);
 
   const handleReset = useCallback(async () => {
     const zeker = await bevestig(
