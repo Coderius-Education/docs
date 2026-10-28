@@ -15,6 +15,7 @@ import { PreviewPane } from './PreviewPane';
 import { buildDoc } from './buildDoc';
 import { heeftJavaScript } from './heeftJs';
 import { VoorbeeldNavigatie } from './navigatie';
+import { type OnderzoekVraag, stukken } from './onderzoek';
 import { useDebounce } from './useDebounce';
 import { type OpslagStand, useOpslag } from './useOpslag';
 import { kanVolledigScherm, schermStand } from './volledigScherm';
@@ -65,6 +66,10 @@ interface CodeEditorProps {
   /** Maximumhoogte van het voorbeeld in gestapelde vorm; het voorbeeld
    *  groeit tot dit maximum mee met zijn inhoud. */
   previewHeight?: string;
+  /** De onderzoeksvragen van de les (Investigate). Ze staan in het veld,
+   *  boven de code, zodat de leerling niet tussen vraag en code hoeft te
+   *  scrollen; elk antwoord klapt uit. Tekst tussen backticks wordt code. */
+  onderzoek?: OnderzoekVraag[];
 }
 
 function CodeEditorInner({
@@ -76,6 +81,7 @@ function CodeEditorInner({
   debounceMs = 600,
   stacked = false,
   previewHeight = '340px',
+  onderzoek,
 }: CodeEditorProps) {
   const [activeTab, setActiveTab] = useState<Tab>('html');
   const [html, setHtml] = useState(initialHtml);
@@ -326,150 +332,153 @@ function CodeEditorInner({
         .filter(Boolean)
         .join(' ')}
     >
-      <div className={styles.editorSide} style={{ height: stacked ? 'auto' : height }}>
-        <div className={styles.tabBar}>
-          {visibleTabs.map((tab) => (
-            <button
-              type="button"
-              key={tab}
-              className={`${styles.tab} ${activeTab === tab ? styles.tabActive : ''}`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {TAB_LABELS[tab]}
-            </button>
-          ))}
-          <span className={styles.tabBarKnoppen}>
-            <OpslagMelding stand={opslag.stand} />
-            {!livePreview && (
-              <button type="button" className={styles.runButton} onClick={handleRun}>
-                ▶ Run
-              </button>
-            )}
-            {stand !== 'volledig' && (
+      {onderzoek && onderzoek.length > 0 && <Onderzoek vragen={onderzoek} />}
+      <div className={styles.werkvlak}>
+        <div className={styles.editorSide} style={{ height: stacked ? 'auto' : height }}>
+          <div className={styles.tabBar}>
+            {visibleTabs.map((tab) => (
               <button
                 type="button"
-                ref={knopRef}
-                className={styles.groterButton}
-                onClick={() => setUitgeklapt((aan) => !aan)}
-                title={
-                  uitgeklapt
-                    ? 'Terug naar de les (of druk op Escape)'
-                    : 'Gebruik het hele scherm voor dit oefenveld'
-                }
-                aria-pressed={uitgeklapt}
+                key={tab}
+                className={`${styles.tab} ${activeTab === tab ? styles.tabActive : ''}`}
+                onClick={() => setActiveTab(tab)}
               >
-                <span className={styles.groterIcoon} aria-hidden="true">
-                  {uitgeklapt ? '\u2715' : '\u21F1\u21F2'}
-                </span>
-                {uitgeklapt ? 'Sluiten (Esc)' : 'Groter'}
+                {TAB_LABELS[tab]}
               </button>
-            )}
-            {kanVolledig && (
+            ))}
+            <span className={styles.tabBarKnoppen}>
+              <OpslagMelding stand={opslag.stand} />
+              {!livePreview && (
+                <button type="button" className={styles.runButton} onClick={handleRun}>
+                  ▶ Run
+                </button>
+              )}
+              {stand !== 'volledig' && (
+                <button
+                  type="button"
+                  ref={knopRef}
+                  className={styles.groterButton}
+                  onClick={() => setUitgeklapt((aan) => !aan)}
+                  title={
+                    uitgeklapt
+                      ? 'Terug naar de les (of druk op Escape)'
+                      : 'Gebruik het hele scherm voor dit oefenveld'
+                  }
+                  aria-pressed={uitgeklapt}
+                >
+                  <span className={styles.groterIcoon} aria-hidden="true">
+                    {uitgeklapt ? '\u2715' : '\u21F1\u21F2'}
+                  </span>
+                  {uitgeklapt ? 'Sluiten (Esc)' : 'Groter'}
+                </button>
+              )}
+              {kanVolledig && (
+                <button
+                  type="button"
+                  ref={volledigKnopRef}
+                  className={stand === 'volledig' ? styles.groterButton : styles.volledigButton}
+                  onClick={wisselVolledig}
+                  title={
+                    stand === 'volledig'
+                      ? 'Terug (of druk op Escape)'
+                      : 'Ook de balken van de browser weg: het oefenveld op het hele beeldscherm'
+                  }
+                  aria-pressed={stand === 'volledig'}
+                >
+                  {stand === 'volledig' ? 'Sluiten (Esc)' : 'Volledig scherm'}
+                </button>
+              )}
               <button
                 type="button"
-                ref={volledigKnopRef}
-                className={stand === 'volledig' ? styles.groterButton : styles.volledigButton}
-                onClick={wisselVolledig}
-                title={
-                  stand === 'volledig'
-                    ? 'Terug (of druk op Escape)'
-                    : 'Ook de balken van de browser weg: het oefenveld op het hele beeldscherm'
-                }
-                aria-pressed={stand === 'volledig'}
+                className={styles.resetButton}
+                onClick={() => void handleReset()}
+                title="Terug naar startcode"
               >
-                {stand === 'volledig' ? 'Sluiten (Esc)' : 'Volledig scherm'}
+                ↺ Reset
               </button>
-            )}
-            <button
-              type="button"
-              className={styles.resetButton}
-              onClick={() => void handleReset()}
-              title="Terug naar startcode"
-            >
-              ↺ Reset
-            </button>
-          </span>
-        </div>
-        <div className={styles.paneWrapper}>
-          {!opslag.geladen ? (
-            <div className={styles.loading}>Editor laden...</div>
-          ) : (
-            <Suspense fallback={<div className={styles.loading}>Editor laden...</div>}>
-              <EditorPane
-                key={activeTab}
-                language={activeTab}
-                value={values[activeTab]}
-                onChange={handlers[activeTab]}
-                // Uitgeklapt vult de editor zijn helft van het scherm. In de
-                // gestapelde vorm meet hij zich normaal naar de code, met de
-                // height-prop als maximum; dat maximum is de lespagina-hoogte en
-                // liet uitgeklapt 150px van de editorkant leeg staan.
-                height={groot ? '100%' : height}
-                autoHeight={stacked && !groot}
-              />
-            </Suspense>
-          )}
-        </div>
-      </div>
-      <div className={styles.previewColumn} style={stacked ? undefined : { height }}>
-        <PreviewPane
-          srcDoc={srcDoc}
-          innerRef={iframeRef}
-          weg={weg}
-          onTerug={herlaadEigenPagina}
-          versie={versie}
-          // Gestapeld eindigt het voorbeeld waar zijn inhoud eindigt, zodat een
-          // veld met twee regels uitvoer geen half scherm beslaat. Uitgeklapt
-          // is dat juist verkeerd: dan bleef het voorbeeld 160px hoog terwijl
-          // er 450px voor hem klaarstond.
-          hoogte={
-            stacked && !groot
-              ? `${Math.min(Math.max(previewInhoud ?? 160, 100), Number.parseInt(previewHeight, 10))}px`
-              : undefined
-          }
-        />
-        <div className={`${styles.consolePanel} ${consoleOpen ? '' : styles.consolePanelDicht}`}>
-          <div className={styles.consolePanelHeader}>
-            <button
-              type="button"
-              className={styles.consoleToggle}
-              onClick={() => setConsoleOpen((open) => !open)}
-              aria-expanded={consoleOpen}
-              title={consoleOpen ? 'Console inklappen' : 'Console openklappen'}
-            >
-              <span aria-hidden="true">{consoleOpen ? '\u25BE' : '\u25B8'}</span> Console
-              {!consoleOpen && consoleLogs.length > 0 && ` (${consoleLogs.length})`}
-            </button>
-            {consoleOpen && consoleLogs.length > 0 && (
-              <button
-                type="button"
-                className={styles.consoleClear}
-                onClick={() => setConsoleLogs([])}
-              >
-                wissen
-              </button>
+            </span>
+          </div>
+          <div className={styles.paneWrapper}>
+            {!opslag.geladen ? (
+              <div className={styles.loading}>Editor laden...</div>
+            ) : (
+              <Suspense fallback={<div className={styles.loading}>Editor laden...</div>}>
+                <EditorPane
+                  key={activeTab}
+                  language={activeTab}
+                  value={values[activeTab]}
+                  onChange={handlers[activeTab]}
+                  // Uitgeklapt vult de editor zijn helft van het scherm. In de
+                  // gestapelde vorm meet hij zich normaal naar de code, met de
+                  // height-prop als maximum; dat maximum is de lespagina-hoogte en
+                  // liet uitgeklapt 150px van de editorkant leeg staan.
+                  height={groot ? '100%' : height}
+                  autoHeight={stacked && !groot}
+                />
+              </Suspense>
             )}
           </div>
-          {consoleOpen && (
-            <div className={styles.consolePanelBody} ref={consoleBodyRef}>
-              {consoleLogs.length === 0 ? (
-                <span className={styles.consolePlaceholder}>
-                  {jsGezien
-                    ? 'Nog geen uitvoer. Gebruik console.log() om hier iets te tonen.'
-                    : 'Nog geen JavaScript in deze pagina. Gebruik je console.log(), dan verschijnt de uitvoer hier.'}
-                </span>
-              ) : (
-                consoleLogs.map((log, i) => (
-                  <div
-                    key={`${i}-${log.text}`}
-                    className={`${styles.consoleLine} ${styles[`consoleLevel_${log.level}`]}`}
-                  >
-                    {log.text}
-                  </div>
-                ))
+        </div>
+        <div className={styles.previewColumn} style={stacked ? undefined : { height }}>
+          <PreviewPane
+            srcDoc={srcDoc}
+            innerRef={iframeRef}
+            weg={weg}
+            onTerug={herlaadEigenPagina}
+            versie={versie}
+            // Gestapeld eindigt het voorbeeld waar zijn inhoud eindigt, zodat een
+            // veld met twee regels uitvoer geen half scherm beslaat. Uitgeklapt
+            // is dat juist verkeerd: dan bleef het voorbeeld 160px hoog terwijl
+            // er 450px voor hem klaarstond.
+            hoogte={
+              stacked && !groot
+                ? `${Math.min(Math.max(previewInhoud ?? 160, 100), Number.parseInt(previewHeight, 10))}px`
+                : undefined
+            }
+          />
+          <div className={`${styles.consolePanel} ${consoleOpen ? '' : styles.consolePanelDicht}`}>
+            <div className={styles.consolePanelHeader}>
+              <button
+                type="button"
+                className={styles.consoleToggle}
+                onClick={() => setConsoleOpen((open) => !open)}
+                aria-expanded={consoleOpen}
+                title={consoleOpen ? 'Console inklappen' : 'Console openklappen'}
+              >
+                <span aria-hidden="true">{consoleOpen ? '\u25BE' : '\u25B8'}</span> Console
+                {!consoleOpen && consoleLogs.length > 0 && ` (${consoleLogs.length})`}
+              </button>
+              {consoleOpen && consoleLogs.length > 0 && (
+                <button
+                  type="button"
+                  className={styles.consoleClear}
+                  onClick={() => setConsoleLogs([])}
+                >
+                  wissen
+                </button>
               )}
             </div>
-          )}
+            {consoleOpen && (
+              <div className={styles.consolePanelBody} ref={consoleBodyRef}>
+                {consoleLogs.length === 0 ? (
+                  <span className={styles.consolePlaceholder}>
+                    {jsGezien
+                      ? 'Nog geen uitvoer. Gebruik console.log() om hier iets te tonen.'
+                      : 'Nog geen JavaScript in deze pagina. Gebruik je console.log(), dan verschijnt de uitvoer hier.'}
+                  </span>
+                ) : (
+                  consoleLogs.map((log, i) => (
+                    <div
+                      key={`${i}-${log.text}`}
+                      className={`${styles.consoleLine} ${styles[`consoleLevel_${log.level}`]}`}
+                    >
+                      {log.text}
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -480,6 +489,49 @@ function CodeEditorInner({
   // dan koppelt de editor opnieuw aan en is de leerling zijn undo-geschiedenis
   // kwijt op het moment dat hij juist meer ruimte vroeg.
   return veld;
+}
+
+// De vragen staan open, zodat de leerling ze ziet zonder te klikken; wie de
+// ruimte voor de code nodig heeft, klapt ze in. Elk antwoord klapt apart uit.
+function Onderzoek({ vragen }: { vragen: OnderzoekVraag[] }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div className={styles.onderzoek}>
+      <button
+        type="button"
+        className={styles.onderzoekKop}
+        onClick={() => setOpen((aan) => !aan)}
+        aria-expanded={open}
+      >
+        <span aria-hidden="true">{open ? '\u25BE' : '\u25B8'}</span> Onderzoek
+        {!open && ` (${vragen.length} vragen)`}
+      </button>
+      {open && (
+        <ol className={styles.onderzoekLijst}>
+          {vragen.map(({ vraag, antwoord }) => (
+            <li key={vraag}>
+              <MetCode tekst={vraag} />
+              <details className={styles.onderzoekAntwoord}>
+                <summary>Antwoord</summary>
+                <MetCode tekst={antwoord} />
+              </details>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+}
+
+function MetCode({ tekst }: { tekst: string }) {
+  return (
+    <>
+      {stukken(tekst).map((stuk, i) =>
+        // biome-ignore lint/suspicious/noArrayIndexKey: de stukken staan vast en veranderen niet van volgorde.
+        stuk.code ? <code key={i}>{stuk.tekst}</code> : <span key={i}>{stuk.tekst}</span>,
+      )}
+    </>
+  );
 }
 
 // Alleen iets te zeggen als er iets bewaard is, of juist niet kan worden.

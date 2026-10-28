@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { VIEWPORTS } from '../components/CodeEditor/PreviewPane';
+import { onderzoekVan } from './onderzoekUitLes';
 
 // Wat een les over het oefenveld belooft, kan de leerling niet nakijken — en
 // juist die beloftes verouderen stil. Drie ervan waren niet waar:
@@ -104,11 +105,20 @@ describe('een experiment wijst naar code die er staat', () => {
       }
       const startcode = `${exports.startHtml ?? ''}\n${exports.startCss ?? ''}`;
 
+      const teLezen: { kop: string; regels: string[] }[] = [];
       for (const sectie of inhoud.split(/\n## /).slice(1)) {
         const kop = sectie.split('\n')[0];
         if (!/^(Predict|Investigate|Modify)/.test(kop)) continue;
         // Alleen de opdrachttekst, niet het antwoord eronder.
-        for (const regel of sectie.split(/\n<details/)[0].split('\n')) {
+        teLezen.push({ kop, regels: sectie.split(/\n<details/)[0].split('\n') });
+      }
+      // De onderzoeksvragen staan in het oefenveld, niet in een sectie.
+      for (const { vraag } of onderzoekVan(inhoud) ?? []) {
+        teLezen.push({ kop: 'Onderzoek', regels: [vraag] });
+      }
+
+      for (const { kop, regels } of teLezen) {
+        for (const regel of regels) {
           const m = regel.match(/\b(Verander|Verwijder|Vervang|Haal)\b(.*)/i);
           if (!m) continue;
           // Na "naar", "in" of "door" staat de nieuwe waarde, niet het doel.

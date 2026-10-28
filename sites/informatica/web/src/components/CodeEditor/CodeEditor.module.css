@@ -1,11 +1,71 @@
 .container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: var(--ifm-global-radius);
   overflow: hidden;
   margin: 1.5rem 0;
   font-size: 0.9rem;
+}
+
+/* Code en voorbeeld naast elkaar; de onderzoeksvragen staan erboven, over de
+   volle breedte. */
+.werkvlak {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.onderzoek {
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-color-emphasis-100);
+  padding: 0.35rem 0.75rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+.onderzoekKop {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+}
+
+.onderzoekLijst {
+  margin: 0.3rem 0 0;
+  padding-left: 1.4rem;
+}
+
+.onderzoekLijst li + li {
+  margin-top: 0.25rem;
+}
+
+.onderzoekAntwoord {
+  display: inline;
+  margin-left: 0.4rem;
+}
+
+.onderzoekAntwoord summary {
+  display: inline;
+  cursor: pointer;
+  color: var(--ifm-color-primary);
+  font-size: 0.8rem;
+}
+
+.onderzoekAntwoord[open] {
+  display: block;
+  margin: 0.2rem 0 0.35rem;
+  padding: 0.35rem 0.6rem;
+  border-left: 3px solid var(--ifm-color-primary);
+  background: var(--ifm-background-color);
+}
+
+.onderzoekAntwoord[open] summary {
+  display: block;
+  margin-bottom: 0.2rem;
 }
 
 /* De code krijgt meer ruimte dan de preview: lesvoorbeelden zijn breed,
@@ -327,7 +387,7 @@
 
 /* Gestapelde vorm (js-basics): code bovenaan, uitvoer en console eronder
    over de volle breedte. */
-.containerStacked {
+.containerStacked .werkvlak {
   flex-direction: column;
 }
 
@@ -342,7 +402,7 @@
 }
 
 @media (max-width: 768px) {
-  .container {
+  .werkvlak {
     flex-direction: column;
   }
   .editorSide {
@@ -374,7 +434,7 @@
   flex: 1 1 50%;
 }
 
-.containerUitgeklapt.containerStacked {
+.containerUitgeklapt.containerStacked .werkvlak {
   flex-direction: column;
 }
 
