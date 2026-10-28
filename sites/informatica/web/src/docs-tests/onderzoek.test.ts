@@ -83,3 +83,32 @@ describe('de onderzoeksvragen staan in het oefenveld', () => {
     },
   );
 });
+
+describe('het paneel met de vragen', () => {
+  const bron = readFileSync(
+    fileURLToPath(new URL('../components/CodeEditor/CodeEditor.tsx', import.meta.url)),
+    'utf8',
+  );
+  const css = readFileSync(
+    fileURLToPath(new URL('../components/CodeEditor/CodeEditor.module.css', import.meta.url)),
+    'utf8',
+  );
+
+  it('staat ook in de gebouwde HTML, niet alleen in de browser', () => {
+    // De editor zit in <BrowserOnly>. Stond het paneel alleen daarbinnen, dan
+    // ontbraken de vragen in de HTML van de build: zonder JavaScript was er
+    // niets, en tot de editor geladen was ook niet. De oude Investigate-lijst
+    // was gewone tekst en stond er wel.
+    const wrapper = bron.slice(bron.indexOf('export function CodeEditor('));
+    expect(wrapper).toMatch(/<BrowserOnly fallback=\{fallback\}/);
+    expect(wrapper.slice(0, wrapper.indexOf('<BrowserOnly'))).toMatch(/<Onderzoek vragen=/);
+  });
+
+  it('drukt de code niet weg als het veld het scherm vult', () => {
+    // Groter en volledig scherm zijn zo hoog als het scherm. Met alle vijf
+    // antwoorden van pseudo-klassen open bleef er van de code 233px over.
+    expect(css).toMatch(
+      /\.containerUitgeklapt \.onderzoek\s*\{[^}]*max-height:[^}]*overflow-y:\s*auto/,
+    );
+  });
+});

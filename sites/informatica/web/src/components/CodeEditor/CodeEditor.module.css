@@ -24,6 +24,15 @@
   font-size: 0.85rem;
 }
 
+/* Groter en volledig scherm: het veld is zo hoog als het scherm, dus een
+   paneel met alle antwoorden open drukte de code tot een strook van 230px.
+   Daar schuift het paneel zelf, en houdt de code het grootste deel. */
+.containerUitgeklapt .onderzoek {
+  flex: none;
+  max-height: 35vh;
+  overflow-y: auto;
+}
+
 .onderzoekKop {
   border: none;
   background: none;

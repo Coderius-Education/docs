@@ -558,11 +558,19 @@ function OpslagMelding({ stand }: { stand: OpslagStand }) {
 }
 
 export function CodeEditor(props: CodeEditorProps) {
-  return (
-    <BrowserOnly fallback={<div className={styles.loading}>Editor laden...</div>}>
-      {() => <CodeEditorInner {...props} />}
-    </BrowserOnly>
-  );
+  // De editor bestaat alleen in de browser, maar de vragen staan ook in de
+  // gebouwde HTML: zonder JavaScript, en voordat de editor geladen is.
+  const { onderzoek } = props;
+  const fallback =
+    onderzoek && onderzoek.length > 0 ? (
+      <div className={styles.container}>
+        <Onderzoek vragen={onderzoek} />
+        <div className={styles.loading}>Editor laden...</div>
+      </div>
+    ) : (
+      <div className={styles.loading}>Editor laden...</div>
+    );
+  return <BrowserOnly fallback={fallback}>{() => <CodeEditorInner {...props} />}</BrowserOnly>;
 }
 
 export default CodeEditor;

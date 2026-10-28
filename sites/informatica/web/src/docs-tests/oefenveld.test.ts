@@ -137,4 +137,36 @@ describe('een experiment wijst naar code die er staat', () => {
 
     expect(mist.sort()).toEqual([]);
   });
+
+  it('elke onderzoeksvraag in js-basics noemt iets uit de startcode', () => {
+    // Dezelfde regel voor de vragen in het hoofdveld van js-basics. De
+    // test hierboven las alleen html-css, en bij het omzetten bleken ook in
+    // js-basics vragen niet te kloppen met de startcode. Net als daar kijkt
+    // hij naar de eerste naam tussen backticks: `namen.length` moet `namen`
+    // in de startcode vinden; een waarde tussen aanhalingstekens slaat hij over.
+    const map = fileURLToPath(new URL('../../docs/js-basics', import.meta.url));
+    const mist: string[] = [];
+    let gelezen = 0;
+
+    for (const bestand of readdirSync(map).filter((f) => f.endsWith('.mdx'))) {
+      const inhoud = readFileSync(join(map, bestand), 'utf8');
+      const startcode = [...inhoud.matchAll(/export const start\w* = `([\s\S]*?)`;/g)]
+        .map((m) => m[1])
+        .join('\n');
+      for (const { vraag } of onderzoekVan(inhoud) ?? []) {
+        gelezen += 1;
+        const m = vraag.match(/\b(Verander|Verwijder|Vervang|Haal)\b(.*)/i);
+        if (!m) continue;
+        const doel = m[2].split(/\b(?:naar|in|door)\b/)[0];
+        for (const stuk of doel.matchAll(/`([^`]+)`/g)) {
+          const naam = stuk[1].match(/^([.#]?[\w-]+)/)?.[1];
+          if (!naam || /^(px|rem|em|%|\d)/.test(naam)) continue;
+          if (!startcode.includes(naam.replace(/^[.#]/, ''))) mist.push(`${bestand}: ${stuk[1]}`);
+        }
+      }
+    }
+
+    expect(gelezen).toBeGreaterThan(40);
+    expect(mist.sort()).toEqual([]);
+  });
 });
