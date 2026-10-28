@@ -27,6 +27,21 @@ export const startHtml = `<!DOCTYPE html>
 </body>
 </html>`;
 
+export const onderzoek = [
+  {
+    vraag: "Maak de `href` van de Wikipedia-link leeg (`href=\"\"`) en klik erop. Wat gebeurt er? En als je er `href=\"#\"` van maakt?",
+    antwoord: "In beide gevallen blijf je op je eigen pagina. Met een lege `href` laadt de pagina opnieuw, en `#` springt naar de bovenkant van de pagina. Omdat je pagina kort is, zie je bij allebei niets veranderen.",
+  },
+  {
+    vraag: "Vervang de tekst `Open Google in een nieuw tabblad` door een afbeelding, bijvoorbeeld `<img src=\"https://picsum.photos/id/237/300/200\" alt=\"Een hond\" width=\"150\">`. Wat gebeurt er als je op de afbeelding klikt?",
+    antwoord: "De afbeelding is nu de link. Je muis wordt een handje als je erover beweegt, en een klik opent Google in een nieuw tabblad, net als eerst met de tekst.",
+  },
+  {
+    vraag: "Verwijder `target=\"_blank\"` bij de Google-link en klik erop. Wat verandert er?",
+    antwoord: "Google opent niet meer in een nieuw tabblad maar in het voorbeeld zelf, en erboven verschijnt de knop Terug naar je pagina. Google weigert zich in zo'n klein venster te laten tonen, dus je ziet een foutmelding in plaats van de zoekpagina.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -88,20 +103,15 @@ Wat is het verschil tussen een link met en zonder `target="_blank"`?
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 <CodeEditor
   initialHtml={startHtml}
   height="440px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer met de code:
-
-- Wat gebeurt er als je `href` leeg laat (`href=""`), en wat als je er een `#` in zet (`href="#"`)?
-- Wat zie je als je de tekst tussen de `<a>` tags vervangt door een `<img>` tag? (Afbeelding als link.)
-- Verwijder `target="_blank"` — wat verandert er?
 
 ## Modify
 

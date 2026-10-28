@@ -18,6 +18,21 @@ export const startHtml = `<!DOCTYPE html>
 </body>
 </html>`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander `<h1>` in `<h3>`, en `</h1>` in `</h3>`. Hoeveel kleiner wordt de kop?",
+    antwoord: "De kop gaat van 32 naar ongeveer 19 pixels, net iets groter dan de gewone tekst van 16 pixels. Hoe hoger het nummer, hoe kleiner de kop; vet blijft hij wel.",
+  },
+  {
+    vraag: "Verwijder de sluitingstag `</h1>`. Wat doet de browser met de rest van de pagina?",
+    antwoord: "Beide alinea's worden net zo groot en vet als de kop. Zonder sluitingstag weet de browser niet waar de kop ophoudt, dus hij rekent alles wat volgt tot de kop.",
+  },
+  {
+    vraag: "Zet in een alinea `<i>` en `</i>` om een woord heen. Wat gebeurt er met dat woord?",
+    antwoord: "Het woord komt schuin te staan (cursief), de rest van de zin blijft recht. `<i>` werkt net als `<b>`, alleen maakt hij tekst schuin in plaats van vet.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -104,22 +119,17 @@ De tekst "Hallo!" wordt **vetgedrukt** weergegeven. De tag `<b>` staat voor *bol
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
+
+Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
 
 De editor hieronder bevat een complete HTML-pagina. Bekijk de code en de preview aan de rechterkant.
 
 <CodeEditor
   initialHtml={startHtml}
   height="460px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer met de code in de editor:
-
-- Verander `<h1>` in `<h3>`. Hoeveel kleiner wordt de kop?
-- Verwijder de sluitingstag `</h1>`. Wat doet de browser met de rest van de pagina?
-- Zet ergens `<i>tekst</i>` neer en kijk wat er met dat woord gebeurt.
 
 ## Modify
 
