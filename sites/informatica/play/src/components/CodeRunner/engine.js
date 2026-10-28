@@ -17,7 +17,7 @@ const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/p
 // biome-ignore format: zie hierboven
 const PYMUNK_WHEEL = '/whl/pymunk-7.3.1-cp313-cp313-pyemscripten_2025_0_wasm32.whl';
 // biome-ignore format: zie hierboven
-const PLAY_WHEEL = '/whl/coderius_play-3.5.0-0mastera8d118c-py3-none-any.whl';
+const PLAY_WHEEL = '/whl/coderius_play-3.5.0-py3-none-any.whl';
 
 // De pure helpers (geen DOM, geen Pyodide) staan in puur.js zodat ze in node
 // te testen zijn; callers importeren ze nog steeds vanaf hier.
