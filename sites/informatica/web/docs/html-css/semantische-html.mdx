@@ -54,6 +54,21 @@ footer {
   text-align: center;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Vervang `<header>` en `</header>` door `<div>` en `</div>`, en verander in de CSS de selector `header` in `div`. Wat verandert er aan het uiterlijk?",
+    antwoord: "Niets: het blok houdt zijn lichtblauwe achtergrond en padding. Een `<header>` ziet er hetzelfde uit als een `<div>`; het verschil zit in de betekenis, voor screenreaders en zoekmachines. Pas je de CSS niet aan, dan verdwijnen achtergrond en padding wel.",
+  },
+  {
+    vraag: "Voeg binnen `<main>` een tweede `<article>` toe, met een eigen `<h2>` en `<p>`. Hoe zie je waar het ene artikel ophoudt en het volgende begint?",
+    antwoord: "Alleen aan de witruimte rond de kop. Het tweede artikel komt onder het eerste, zonder rand of achtergrond, want een `<article>` heeft van zichzelf geen opmaak.",
+  },
+  {
+    vraag: "Zet een tweede regel in `<footer>`, bijvoorbeeld een `<p>` met een link naar je favoriete site. Hoe komt die eruit te zien?",
+    antwoord: "De nieuwe regel staat ook gecentreerd op de grijze balk, en de balk wordt hoger. De stijl van `footer`, met `text-align: center`, geldt voor alles wat erin staat.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -112,21 +127,14 @@ Visueel is er **geen verschil**: allebei tonen ze "Hoofdmenu". Voor screenreader
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="540px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer:
-
-- Vervang `<header>` door `<div>` — wat verandert er aan het uiterlijk? (Tip: pas ook de CSS-selector aan.)
-- Voeg een tweede `<article>` toe binnen `<main>`.
-- Wat zou je in `<footer>` kunnen zetten? Probeer een copyright-regel of social media links.
 
 ## Modify
 

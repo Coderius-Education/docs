@@ -28,6 +28,25 @@ export const startCss = `div {
   width: 300px;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander de `border` in `5px dashed red`. Wat zie je?",
+    antwoord: "Een dikke rode streepjeslijn rond het kaartje. `5px` is de dikte, `dashed` maakt er streepjes van en `red` is de kleur.",
+  },
+  {
+    vraag: "Zet `border-radius` op `20px` en daarna op `50%`. Wat is het verschil?",
+    antwoord: "Met `20px` worden de hoeken ronder dan met `8px`. Met `50%` wordt het kaartje een ovaal: elke hoek buigt af tot halverwege de breedte en de hoogte. Een cirkel krijg je zo alleen bij een vierkant blok.",
+  },
+  {
+    vraag: "Verwijder `width: 300px`. Hoe breed wordt het kaartje?",
+    antwoord: "Zo breed als het voorbeeld. Een `div` is een blok, en een blok zonder `width` vult de hele breedte van zijn ouder.",
+  },
+  {
+    vraag: "Voeg `height: 200px` toe. Wat gebeurt er met de hoogte?",
+    antwoord: "Het kaartje wordt hoger dan de tekst nodig heeft, met lege ruimte onder de alinea. Met de padding en de rand erbij is het 244 pixels hoog, want `height` telt alleen de binnenkant.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -81,22 +100,14 @@ Het element wordt een **cirkel** of **ovaal**. Bij `50%` is elke hoekronding de 
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="460px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer:
-
-- Verander `border` naar `5px dashed red` — wat zie je?
-- Zet `border-radius` op `20px`, dan op `50%` — wat is het verschil?
-- Verwijder `width: 300px` — hoe breed wordt het kaartje?
-- Voeg `height: 200px` toe — wat gebeurt er met de hoogte?
 
 ## Modify
 

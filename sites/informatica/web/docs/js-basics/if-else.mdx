@@ -51,6 +51,21 @@ export const startJs = `function bepaalCijfer() {
 
 document.getElementById('knop').addEventListener('click', bepaalCijfer);`;
 
+export const onderzoek = [
+  {
+    vraag: "Klik op de knop en vul `95` in. Doe het daarna nog een keer met `45`. Kloppen de cijfers met de grenzen in de code?",
+    antwoord: "Bij `95` staat er `Score: 95 → A`, bij `45` staat er `Score: 45 → Onvoldoende`. 95 haalt de eerste grens, `score >= 90`. 45 haalt geen enkele grens, dus de `else`-tak draait.",
+  },
+  {
+    vraag: "Vul precies `50` in. Welke tak wint, en waarom die?",
+    antwoord: "De tak met `C`. `score >= 90` en `score >= 70` zijn `false`, en `50 >= 50` is `true`: bij groter dan of gelijk aan telt de grens zelf mee.",
+  },
+  {
+    vraag: "Wissel de volgorde om: zet de tak met `score >= 50` bovenaan. De bovenste tak begint met `if`, de rest met `else if`. Wat krijg je nu bij `95`? Verklaar het.",
+    antwoord: "`Score: 95 → C`. JavaScript stopt bij de eerste voorwaarde die `true` is, en `95 >= 50` is al waar. De takken voor `A` en `B` komen nooit meer aan de beurt.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -134,7 +149,7 @@ if (leeftijd >= 18) {
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
@@ -143,15 +158,8 @@ if (leeftijd >= 18) {
   height="540px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Vul `95` in. En daarna `45`. Kloppen de cijfers met de grenzen in de code?
-- Vul precies `50` in. Welke tak wint, en waarom die?
-- Wissel de volgorde om: zet de tak met `score >= 50` bovenaan. Wat krijg je nu bij `95`? Verklaar het.
 
 ## Opdracht 1: Extra grens
 

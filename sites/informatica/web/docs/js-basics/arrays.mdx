@@ -38,6 +38,21 @@ export const startJs = `function toonNamen() {
 
 document.getElementById('knop').addEventListener('click', toonNamen);`;
 
+export const onderzoek = [
+  {
+    vraag: "Zet een vijfde naam in de array, bijvoorbeeld `'Eva'` na `'Daan'`. Wat verandert er op de pagina zonder dat je de loop aanpast?",
+    antwoord: "Eva staat onderaan de lijst, en de console zegt `Totaal: 5 namen`. De loop loopt tot `namen.length`, en die groeit vanzelf mee met de array.",
+  },
+  {
+    vraag: "Verander `namen.length` in de loopvoorwaarde in `3`. Wie valt er af?",
+    antwoord: "Daan. De loop draait alleen voor index 0, 1 en 2, dus voor Anna, Bram en Chris. De console zegt nog wel `Totaal: 4 namen`, want die regel gebruikt `namen.length` nog.",
+  },
+  {
+    vraag: "Zet `namen.push('Emma');` op de regel direct onder de array. Waar verschijnt Emma?",
+    antwoord: "Onderaan, na Daan, en de console telt nu 5 namen. `push` zet een item achteraan de array. Zet je de regel boven de array, dan meldt de console `JavaScript fout: Uncaught ReferenceError: Cannot access 'namen' before initialization`, want de array bestaat dan nog niet.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -122,7 +137,7 @@ console.log(cijfers.length);
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
@@ -131,15 +146,8 @@ console.log(cijfers.length);
   height="460px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Zet een vijfde naam in de array. Wat verandert er op de pagina zonder dat je de loop aanpast?
-- Verander `namen.length` in de loopvoorwaarde in `3`. Wie valt er af?
-- Zet `namen.push('Emma');` op de eerste regel van de functie. Waar verschijnt Emma?
 
 ## Opdracht 1: Jouw lijst
 

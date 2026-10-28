@@ -38,6 +38,25 @@ button {
   cursor: pointer;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Klik op Run en daarna twee keer op de knop. Verandert er na de eerste klik nog iets? Waarom wel of niet?",
+    antwoord: "Na de eerste klik staat er `Geklikt.` in groen, en bij de tweede klik verandert er niets meer. De functie zet de tekst en de kleur opnieuw op precies dezelfde waarden.",
+  },
+  {
+    vraag: "Hernoem de functie in de `<script>`-tag naar `veranderTekst`, maar laat de `onclick` staan. Welke foutmelding zie je in de console onder het voorbeeld als je klikt?",
+    antwoord: "`JavaScript fout: Uncaught ReferenceError: verander is not defined`. De knop roept nog steeds `verander()` aan, maar een functie met die naam bestaat niet meer, dus de tekst op de pagina verandert niet.",
+  },
+  {
+    vraag: "Zet onderaan de `<script>`-tag, onder de sluitende `}` van de functie, een losse regel `verander();` en klik op Run. Wat zie je al voordat je op de knop klikt?",
+    antwoord: "De tekst staat meteen op `Geklikt.` in groen. Die regel roept de functie aan zodra de pagina laadt, zonder dat iemand op de knop drukt.",
+  },
+  {
+    vraag: "Haal de sluitende `}` van de functie weg en klik op Run. Voorspel eerst: wat staat er in de console, vóór en na een klik op de knop?",
+    antwoord: "Al vóór de klik staat er `JavaScript fout: Uncaught SyntaxError: Unexpected end of input`. Na een klik komt er `JavaScript fout: Uncaught ReferenceError: verander is not defined` bij. De browser kon de `<script>` niet lezen en heeft de functie dus nooit gemaakt; de tweede melding volgt uit de eerste. Los bij meer meldingen altijd de bovenste eerst op.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -126,7 +145,7 @@ Twee: de tekst én de kleur van de `<p>`. De functie voert bij een aanroep alle 
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 :::tip[JavaScript in het HTML-tabblad]
 In deze les staat de JavaScript-code in een `<script>`-tag **binnenin** de HTML. Je vindt de code in het **index.html-tabblad**, onderaan de `<body>`.
@@ -138,34 +157,8 @@ In deze les staat de JavaScript-code in een `<script>`-tag **binnenin** de HTML.
   height="480px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Klik twee keer op de knop. Verandert er na de eerste klik nog iets? Waarom (niet)?
-- Hernoem de functie in de `<script>`-tag naar `veranderTekst`, maar laat de `onclick` staan. Welke foutmelding zie je in de console onder het voorbeeld?
-- Roep de functie een tweede keer aan door onderaan de `<script>`-tag los `verander();` toe te voegen. Wat zie je al vóórdat je klikt?
-
-<details>
-<summary>Voorspel: je vergeet de sluitende `}` van de functie. Wat staat er in de console, vóór en na een klik?</summary>
-
-Al vóór de klik, zodra de pagina laadt:
-
-```
-JavaScript fout: Uncaught SyntaxError: Unexpected end of input
-```
-
-Na een klik komt er een tweede regel bij:
-
-```
-JavaScript fout: Uncaught ReferenceError: verander is not defined
-```
-
-Omdat de browser de `<script>` niet kon lezen, heeft hij de functie nooit gemaakt. De tweede melding is een gevolg van de eerste. Los bij meer meldingen altijd de bovenste eerst op.
-
-</details>
 
 ## Opdracht 1: Derde regel
 

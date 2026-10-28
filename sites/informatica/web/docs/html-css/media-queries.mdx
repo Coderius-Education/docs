@@ -43,6 +43,21 @@ export const startCss = `.kaart {
   }
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander `max-width: 500px` in `max-width: 800px` en klik op Tablet (768px). Schakelt die nu ook om?",
+    antwoord: "Ja: op Tablet wordt de kaart nu ook lichtrood, met kleinere kop en minder padding, want 768 is kleiner dan 800. Alleen Breed (1100px) houdt de lichtblauwe kaart.",
+  },
+  {
+    vraag: "Zet onderaan de CSS een tweede media query voor `max-width: 300px` die `.kaart` de `background-color: lightgreen` geeft. Waarom wordt de kaart niet groen als je op Telefoon klikt, terwijl dat de smalste knop is?",
+    antwoord: "Telefoon is 320 pixels breed, en dat is meer dan 300, dus de regel geldt niet. In de stand Vol kan het voorbeeld wel smaller zijn: op een laptopscherm is het vaak maar zo'n 280 pixels, en dan zie je wel groen.",
+  },
+  {
+    vraag: "Verander `max-width: 500px` in `min-width: 800px`. Bij welke knop wordt de kaart nu lichtrood?",
+    antwoord: "Alleen bij Breed (1100px). `min-width: 800px` geldt vanaf 800 pixels en breder, dus nu krijgt juist het brede scherm de kleine stijl, en zijn Telefoon en Tablet lichtblauw.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -121,25 +136,18 @@ Op brede schermen is `.titel` 3rem groot (zo'n 48px). Zodra de breedte onder 600
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="540px"
+  onderzoek={onderzoek}
 />
 
 :::tip[Test je media query]
 Boven het voorbeeld staan de knoppen **Telefoon** (320px), **Tablet** (768px) en **Breed** (1100px). Het voorbeeld wordt dan echt zo breed gerekend, ook al is het paneel smaller; de melding eronder zegt op welke breedte je kijkt. Zo zie je de breekpunten omschakelen zonder je browservenster aan te raken.
 :::
-
-## Investigate
-
-Experimenteer:
-
-- Verander `max-width: 500px` naar `max-width: 800px` — schakelt Tablet (768px) nu ook om?
-- Voeg een tweede media query toe voor `max-width: 300px` met `background-color: lightgreen`. Waarom zie je die kleur niet als je op Telefoon klikt, terwijl die knop toch de smalste is?
-- Wat doet `min-width: 800px` als alternatief?
 
 ## Modify
 

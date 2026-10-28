@@ -43,6 +43,25 @@ export const startCss = `.container {
   padding: 4px 10px;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Verwijder `position: relative` van `.kaart`. Waar staat de badge nu?",
+    antwoord: "Rechtsboven in het voorbeeld, tegen de rand van de pagina. Een element met `position: absolute` meet vanaf de dichtstbijzijnde ouder die zelf een `position` heeft. Zonder `relative` op `.kaart` is dat de pagina.",
+  },
+  {
+    vraag: "Voeg `top: 50px` toe aan `.kaart`. Wat gebeurt er, en blijft de plek erboven leeg?",
+    antwoord: "De kaart schuift 50px omlaag, en de badge schuift mee, want die hangt aan de kaart. De plek waar de kaart stond blijft leeg: `relative` verschuift alleen wat je ziet, de ruimte blijft gereserveerd.",
+  },
+  {
+    vraag: "Verander `position: absolute` van `.badge` naar `fixed`. Wat zie je als je scrolt? Typ eerst een paar extra `<p>`'s, zodat er iets te scrollen valt.",
+    antwoord: "De badge staat rechtsboven in het voorbeeld en blijft daar staan als je scrolt. `fixed` meet vanaf het venster, niet vanaf de kaart.",
+  },
+  {
+    vraag: "Vervang `top: 0; right: 0;` van de badge door `bottom: 0; left: 0;`. Waar komt hij?",
+    antwoord: "Linksonder in de kaart. `bottom` en `left` meten vanaf de onderkant en de linkerkant van de kaart. Laat je `top` en `right` ernaast staan, dan trekt de badge naar alle vier de randen en bedekt hij de hele kaart.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -126,22 +145,14 @@ De oude plek **blijft leeg**. `relative` schuift het element visueel, maar laat 
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="460px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer:
-
-- Verwijder `position: relative` van `.kaart` — waar gaat de badge nu staan?
-- Voeg `top: 50px` toe aan `.kaart` — wat gebeurt er en blijft de plek erboven leeg?
-- Verander `position: absolute` van `.badge` naar `fixed` — wat zie je als je scrollt (typ extra `<p>`'s om scroll mogelijk te maken)?
-- Probeer `bottom: 0; left: 0;` op de badge — waar komt hij dan?
 
 ## Modify
 

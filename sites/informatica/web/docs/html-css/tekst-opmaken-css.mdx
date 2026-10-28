@@ -30,6 +30,21 @@ p {
   font-size: 1rem;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander `color: darkblue` in `color: tomato`. Wat gebeurt er?",
+    antwoord: "De kop wordt oranjerood. De alinea's blijven grijs, want deze regel staat alleen bij `h1`.",
+  },
+  {
+    vraag: "Verander bij `h1` de `font-size` van `2rem` naar `3rem`. Wat verandert er?",
+    antwoord: "De kop wordt anderhalf keer zo groot: van 32 naar 48 pixels. `1rem` is 16 pixels, dus `3rem` is drie keer zo groot als gewone tekst.",
+  },
+  {
+    vraag: "Verander bij `p` de waarde `Arial, sans-serif` in `Georgia`. Wat doet dat?",
+    antwoord: "De alinea's krijgen een ander lettertype, met kleine streepjes aan de uiteinden van de letters, net als de kop. Arial heeft die streepjes niet, Georgia wel.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -112,7 +127,7 @@ De kop krijgt zijn standaardkleur terug — in de meeste browsers is dat zwart. 
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 Let op: de CSS schrijf je in de **style.css** tab.
 
@@ -120,15 +135,8 @@ Let op: de CSS schrijf je in de **style.css** tab.
   initialHtml={startHtml}
   initialCss={startCss}
   height="480px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer met de CSS:
-
-- Wat gebeurt er als je `color: darkblue` verandert in `color: tomato`?
-- Probeer `font-size: 3rem` — wat verandert er?
-- Wat doet `font-family: Georgia`?
 
 ## Modify
 

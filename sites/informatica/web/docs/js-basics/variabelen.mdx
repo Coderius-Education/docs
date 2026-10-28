@@ -40,6 +40,21 @@ function telOp() {
   console.log('Teller staat op:', teller);
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Klik een paar keer op de knop en klik dan opnieuw op Run. Waar staat de teller nu, en waarom?",
+    antwoord: "Weer op `0`, en de console is leeg. Run laadt de pagina opnieuw, dus `let teller = 0;` draait opnieuw en de variabele begint van voren af aan.",
+  },
+  {
+    vraag: "Verander `teller + 1` in `teller - 1`. Wat gebeurt er bij elke klik?",
+    antwoord: "De teller telt af: `-1`, `-2`, `-3` en zo verder. De console logt bij elke klik de nieuwe stand, bijvoorbeeld `Teller staat op: -1`.",
+  },
+  {
+    vraag: "Verander `let teller = 0;` in `const teller = 0;`. Welke foutmelding zie je in de console na een klik?",
+    antwoord: "De console meldt `JavaScript fout: Uncaught TypeError: Assignment to constant variable.` en de teller blijft op `0` staan. Een `const` mag na het toekennen niet meer veranderen, en `teller = teller + 1` probeert dat wel.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -103,7 +118,7 @@ Bekijk de startcode in het script.js-tabblad. Beantwoord de vraag **voordat** je
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
@@ -112,15 +127,8 @@ Bekijk de startcode in het script.js-tabblad. Beantwoord de vraag **voordat** je
   height="500px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Klik een paar keer en druk dan opnieuw op Run. Waar staat de teller nu — en waarom?
-- Verander `teller + 1` in `teller - 1`. Wat gebeurt er bij elke klik?
-- Verander `let teller = 0;` in `const teller = 0;`. Welke foutmelding zie je in de console na een klik?
 
 ## Opdracht 1: Andere start, grotere stappen
 

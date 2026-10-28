@@ -58,6 +58,21 @@ export const startJs = `function begroet() {
 
 document.getElementById('knop').addEventListener('click', begroet);`;
 
+export const onderzoek = [
+  {
+    vraag: "Vul niets in en klik op de knop. Wat komt er in de zin te staan?",
+    antwoord: "`Hoi . Over 10 jaar ben je 10 jaar.` Een leeg veld geeft een lege string, dus de naam ontbreekt. `Number('')` is `0`, en 0 plus 10 is 10.",
+  },
+  {
+    vraag: "Haal `Number(...)` rond de leeftijd weg, zodat er alleen `document.getElementById('leeftijd').value` staat. Typ `5` en klik. Welke leeftijd belooft de zin je nu, en waarom?",
+    antwoord: "`510` jaar. Zonder `Number()` is de leeftijd de string `'5'`, en `+` plakt `'5'` en `10` aan elkaar in plaats van ze op te tellen.",
+  },
+  {
+    vraag: "Zet `Number(...)` terug en haal de haakjes om `(leeftijd + 10)` weg. Typ weer `5`. Wat verandert er aan de uitkomst?",
+    antwoord: "Er staat weer `510` jaar, ook al is `leeftijd` nu een getal. JavaScript werkt de `+`-tekens van links naar rechts af: eerst plakt hij de 5 achter de tekst, daarna de 10. De haakjes laten hem eerst rekenen.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -126,7 +141,7 @@ const bericht = 'Welkom, ' + naam + '.';
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
@@ -135,19 +150,12 @@ const bericht = 'Welkom, ' + naam + '.';
   height="540px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
 
 :::tip[Waarom `type="button"` op de knop?]
 Een knop binnen een `<form>` verstuurt het formulier standaard (en herlaadt de pagina). Met `type="button"` voorkom je dat: de knop doet alleen wat de listener zegt.
 :::
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Vul niets in en klik op de knop. Wat komt er in de zin te staan?
-- Haal `Number(...)` weg rond de leeftijd en typ `5`. Welke leeftijd belooft de zin je nu, en waarom?
-- Haal de haakjes om `(leeftijd + 10)` weg. Wat verandert er aan de uitkomst?
 
 ## Opdracht 1: Extra veld
 

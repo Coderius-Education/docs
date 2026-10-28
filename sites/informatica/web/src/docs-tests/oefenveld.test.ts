@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { VIEWPORTS } from '../components/CodeEditor/PreviewPane';
+import { onderzoekVan } from './onderzoekUitLes';
 
 // Wat een les over het oefenveld belooft, kan de leerling niet nakijken — en
 // juist die beloftes verouderen stil. Drie ervan waren niet waar:
@@ -104,11 +105,20 @@ describe('een experiment wijst naar code die er staat', () => {
       }
       const startcode = `${exports.startHtml ?? ''}\n${exports.startCss ?? ''}`;
 
+      const teLezen: { kop: string; regels: string[] }[] = [];
       for (const sectie of inhoud.split(/\n## /).slice(1)) {
         const kop = sectie.split('\n')[0];
-        if (!/^(Predict|Investigate|Modify)/.test(kop)) continue;
+        if (!/^(Predict|Modify)/.test(kop)) continue;
         // Alleen de opdrachttekst, niet het antwoord eronder.
-        for (const regel of sectie.split(/\n<details/)[0].split('\n')) {
+        teLezen.push({ kop, regels: sectie.split(/\n<details/)[0].split('\n') });
+      }
+      // De onderzoeksvragen staan in het oefenveld, niet in een sectie.
+      for (const { vraag } of onderzoekVan(inhoud) ?? []) {
+        teLezen.push({ kop: 'Onderzoek', regels: [vraag] });
+      }
+
+      for (const { kop, regels } of teLezen) {
+        for (const regel of regels) {
           const m = regel.match(/\b(Verander|Verwijder|Vervang|Haal)\b(.*)/i);
           if (!m) continue;
           // Na "naar", "in" of "door" staat de nieuwe waarde, niet het doel.
@@ -125,6 +135,38 @@ describe('een experiment wijst naar code die er staat', () => {
       }
     }
 
+    expect(mist.sort()).toEqual([]);
+  });
+
+  it('elke onderzoeksvraag in js-basics noemt iets uit de startcode', () => {
+    // Dezelfde regel voor de vragen in het hoofdveld van js-basics. De
+    // test hierboven las alleen html-css, en bij het omzetten bleken ook in
+    // js-basics vragen niet te kloppen met de startcode. Net als daar kijkt
+    // hij naar de eerste naam tussen backticks: `namen.length` moet `namen`
+    // in de startcode vinden; een waarde tussen aanhalingstekens slaat hij over.
+    const map = fileURLToPath(new URL('../../docs/js-basics', import.meta.url));
+    const mist: string[] = [];
+    let gelezen = 0;
+
+    for (const bestand of readdirSync(map).filter((f) => f.endsWith('.mdx'))) {
+      const inhoud = readFileSync(join(map, bestand), 'utf8');
+      const startcode = [...inhoud.matchAll(/export const start\w* = `([\s\S]*?)`;/g)]
+        .map((m) => m[1])
+        .join('\n');
+      for (const { vraag } of onderzoekVan(inhoud) ?? []) {
+        gelezen += 1;
+        const m = vraag.match(/\b(Verander|Verwijder|Vervang|Haal)\b(.*)/i);
+        if (!m) continue;
+        const doel = m[2].split(/\b(?:naar|in|door)\b/)[0];
+        for (const stuk of doel.matchAll(/`([^`]+)`/g)) {
+          const naam = stuk[1].match(/^([.#]?[\w-]+)/)?.[1];
+          if (!naam || /^(px|rem|em|%|\d)/.test(naam)) continue;
+          if (!startcode.includes(naam.replace(/^[.#]/, ''))) mist.push(`${bestand}: ${stuk[1]}`);
+        }
+      }
+    }
+
+    expect(gelezen).toBeGreaterThan(40);
     expect(mist.sort()).toEqual([]);
   });
 });

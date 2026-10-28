@@ -56,6 +56,29 @@ li:first-child {
   color: darkgreen;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander `li:first-child` in `li:last-child`. Welk item krijgt nu de stijl?",
+    antwoord: "Het derde item wordt vet en donkergroen, en het eerste is weer zwart en niet vet. `:last-child` kiest het laatste kind van de lijst.",
+  },
+  {
+    vraag: "Verander `li:first-child` in `li:nth-child(2)`. Welk item krijgt dan de stijl?",
+    antwoord: "Het tweede item. Het getal tussen de haakjes telt vanaf 1, dus `li:nth-child(1)` doet hetzelfde als `li:first-child`.",
+  },
+  {
+    vraag: "Voeg een regel `li:hover` toe met bijvoorbeeld `background-color: yellow;`. Wat zie je als je met je muis over de items beweegt?",
+    antwoord: "Het item onder je muis krijgt een gele achtergrond over de hele breedte, en verliest die zodra je muis weggaat. `:hover` werkt op elk element, niet alleen op links.",
+  },
+  {
+    vraag: "Vervang `button:active` door `button:hover`. Wanneer wordt de knop nu oranje?",
+    antwoord: "Al zodra je muis op de knop staat, zonder te klikken. Met `:active` werd hij alleen oranje zolang je de muisknop ingedrukt hield.",
+  },
+  {
+    vraag: "Verwijder de regel `button:focus`. Klik in het voorbeeld en druk twee keer op Tab: eerst komt de link aan de beurt, dan de knop. Zie je nog waar je staat?",
+    antwoord: "Ja, maar minder duidelijk. Zonder jouw regel tekent de browser zijn eigen dunne, donkere rand om de knop, in plaats van de dikke blauwe rand van 3 pixels.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -124,25 +147,16 @@ Bekijk de CSS hieronder. Wat denk je dat er gebeurt als je:
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
-Beweeg je muis over de link, klik (en houd vast) op de knop, en klik in het invoerveld.
+Beweeg je muis over de link en klik (en houd vast) op de knop.
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="540px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer:
-
-- Verander `li:first-child` in `li:last-child` — welk item wordt nu gestijld?
-- Probeer `li:nth-child(2)` — welk item krijgt dan de stijl?
-- Voeg `:hover` toe aan de `<li>` items — wat zie je als je eroverheen beweegt?
-- Vervang `button:active` door `button:hover` — wat verandert er aan wanneer de oranje kleur verschijnt?
-- Verwijder `button:focus` en druk op Tab tot de knop aan de beurt is. Hoe weet je nu nog waar je staat?
 
 ## Modify
 

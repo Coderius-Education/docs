@@ -50,6 +50,25 @@ export const startCss = `.highlight {
   margin-right: 8px;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander `display: inline-block` op `.knop` in `display: block`. Wat verandert er aan de knoppen?",
+    antwoord: "Elke knop staat op een eigen regel en is zo breed als het voorbeeld. Een blok begint op een nieuwe regel en vult de hele breedte.",
+  },
+  {
+    vraag: "Verwijder `display: inline-block` uit `.knop` en laat de rest staan. Wat gebeurt er met het blauwe vlak van de knoppen, en met hun plek ten opzichte van het lichtblauwe vak?",
+    antwoord: "Het blauwe vlak blijft even groot, maar de knoppen schuiven omhoog en raken het lichtblauwe vak. Bij een inline-element telt padding boven en onder niet mee voor de plek op de regel, ook al zie je hem wel.",
+  },
+  {
+    vraag: "Voeg `display: block` toe aan `.highlight`. Wat gebeurt er met de gemarkeerde tekst?",
+    antwoord: "Die krijgt een eigen regel midden in de alinea, met een geel vlak over de hele breedte. Het woord Een staat erboven en de rest van de zin eronder.",
+  },
+  {
+    vraag: "Maak van `<div class=\"kader\">` een `<span class=\"kader\">`, en verander ook de afsluitende `</div>` in `</span>`. Wat verandert er?",
+    antwoord: "Het lichtblauwe vak is nu zo breed als de tekst, en de eerste knop staat ernaast op dezelfde regel. Een `span` is inline en neemt alleen de ruimte van zijn inhoud; een `div` begint altijd op een nieuwe regel.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -120,22 +139,14 @@ De `<span>` gaat zich gedragen als een blok — hij begint op een nieuwe regel e
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="540px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer:
-
-- Verander `display: inline-block` op `.knop` naar `display: block` — wat verandert er aan de knoppen?
-- Verwijder `display: inline-block` helemaal (laat de rest staan) — werkt `padding` nog goed?
-- Voeg `display: block` toe aan `.highlight` — wat gebeurt er met de gemarkeerde tekst?
-- Vergelijk `<div>` met `<span>` rondom hetzelfde stukje tekst — welke verschilt?
 
 ## Modify
 

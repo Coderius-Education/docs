@@ -31,6 +31,25 @@ p {
   font-size: 1.2rem;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Klik op Run en dan drie keer achter elkaar op Zin 1. Verandert er na de eerste klik nog iets?",
+    antwoord: "Nee. De eerste klik zet `De zon schijnt.` in de `<p>`, en elke volgende klik zet er precies dezelfde tekst in. Je ziet dus geen verschil.",
+  },
+  {
+    vraag: "Haal de aanhalingstekens rond `'Het regent.'` weg, klik op Run en dan op Zin 2. Wat zie je in de console onder het voorbeeld?",
+    antwoord: "`JavaScript fout: Uncaught SyntaxError: Unexpected identifier 'regent'`. Zonder aanhalingstekens leest de browser Het regent als code, en daar snapt hij niets van. De tekst in de `<p>` blijft staan.",
+  },
+  {
+    vraag: "Maak een knop die de `<p>` leegmaakt. Wat zet je achter `textContent =`?",
+    antwoord: "Twee aanhalingstekens zonder iets ertussen: `<button onclick=\"document.getElementById('zin').textContent = ''\">Wis</button>`. Na een klik is de `<p>` leeg, en de knoppen schuiven omhoog naar de plek waar de tekst stond.",
+  },
+  {
+    vraag: "Schrijf in de knop Zin 1 `Document` met een hoofdletter D, klik op Run en dan op Zin 1. Voorspel eerst: welke soort fout geeft de console?",
+    antwoord: "Een `TypeError`: `JavaScript fout: Uncaught TypeError: Document.getElementById is not a function`. `Document` bestaat wel in JavaScript, maar het is iets anders dan de pagina `document`, en het kent geen `getElementById`. Daarom geen `ReferenceError` (de naam is bekend) maar een `TypeError` (dit ding kan dat niet).",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -69,7 +88,7 @@ Bekijk de startcode: twee knoppen, allebei met `getElementById('zin')`.
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
@@ -77,28 +96,8 @@ Bekijk de startcode: twee knoppen, allebei met `getElementById('zin')`.
   height="420px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Klik drie keer achter elkaar op "Zin 1". Verandert er na de eerste klik nog iets?
-- Haal de aanhalingstekens rond `'Het regent.'` weg en klik op "Zin 2". Wat zie je in de console onder het voorbeeld?
-- Kun je een knop maken die de `<p>` leegmaakt?
-
-<details>
-<summary>Voorspel: je schrijft `Document` met een hoofdletter D. Welke soort fout geeft de console?</summary>
-
-Een `TypeError`:
-
-```
-JavaScript fout: Uncaught TypeError: Document.getElementById is not a function
-```
-
-`Document` bestaat wel in JavaScript, maar het is iets anders dan de pagina `document`, en het kent geen `getElementById`. Daarom geen `ReferenceError` (de naam is bekend) maar een `TypeError` (dit ding kan dat niet).
-
-</details>
 
 ## Opdracht 1: Derde knop
 

@@ -30,6 +30,21 @@ export const startHtml = `<!DOCTYPE html>
 </body>
 </html>`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander `<ul>` in `<ol>`, en `</ul>` in `</ol>`. Wat gebeurt er met de lijst met eten?",
+    antwoord: "De bolletjes voor Pizza, Pasta en Sushi worden de nummers 1, 2 en 3. Een `<ol>` is een genummerde lijst, een `<ul>` een lijst met bolletjes.",
+  },
+  {
+    vraag: "Zet een `<h4>` met eigen tekst tussen de lijst met eten en de kop Top 3 films. Zie je aan de grootte bij welke sectie hij hoort?",
+    antwoord: "De `<h4>` is maar 16 pixels, even groot als de lijsttekst en veel kleiner dan de `<h2>`-koppen van 24 pixels. Daaraan zie je dat hij een onderdeel is van de sectie erboven (Eten), en geen nieuwe sectie naast Top 3 films.",
+  },
+  {
+    vraag: "Kun je een lijst in een lijst maken? Zet een nieuwe `<ul>` met twee `<li>`-items binnen het `<li>` van Pasta, vlak voor `</li>`.",
+    antwoord: "Ja. De binnenste lijst schuift naar rechts in en krijgt open rondjes in plaats van dichte bolletjes. Zo zie je dat die items bij Pasta horen.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -99,20 +114,13 @@ De volgorde van items in een `<ul>` maakt niet uit. In een `<ol>` wel.
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
   height="480px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer met de code:
-
-- Wat gebeurt er als je `<ul>` verandert in `<ol>`?
-- Voeg een `<h4>` toe tussen twee `<h2>`-secties. Zie je aan de grootte alleen al welke bij welke sectie hoort?
-- Kun je een lijst maken binnen een lijst? Probeer het.
 
 ## Modify
 

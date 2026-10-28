@@ -32,6 +32,21 @@ export const startJs = `function vraagNaam() {
 
 document.getElementById('knop').addEventListener('click', vraagNaam);`;
 
+export const onderzoek = [
+  {
+    vraag: "Klik op Run en dan op de knop, en kies bij de prompt direct Annuleren (Cancel). Wat staat er dan op de pagina, en wat vind je daarvan?",
+    antwoord: "De alert zegt `Hallo null.` en op de pagina staat `Welkom, null.`. Bij Annuleren geeft `prompt()` de waarde `null` terug, en `+` plakt die als het woord null in de tekst. Een nette zin is dat niet.",
+  },
+  {
+    vraag: "Klik op de knop, typ niets en klik op OK. Wat zie je?",
+    antwoord: "De alert zegt `Hallo .` en de pagina toont `Welkom, .`. De prompt geeft dan een lege tekst terug: geen `null`, maar ook geen naam.",
+  },
+  {
+    vraag: "Verwijder de `alert`-regel en klik op Run en dan op de knop. Wat merk je?",
+    antwoord: "Na de prompt komt er geen tweede pop-up meer: de zin met je naam staat direct op de pagina. Met de `alert` erin wacht de code tot je op OK klikt, en pas daarna verschijnt de tekst.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -93,7 +108,7 @@ console.log(leeftijd + 4);
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
@@ -102,15 +117,8 @@ console.log(leeftijd + 4);
   height="380px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Klik op de knop en kies bij de prompt direct **Cancel**. Wat staat er dan op de pagina, en wat vind je daarvan?
-- Wat gebeurt er als je niets typt en op OK klikt?
-- Verwijder de `alert`-regel. Wat merk je bij het klikken?
 
 ## Opdracht 1: Lievelingskleur
 

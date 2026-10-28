@@ -61,6 +61,25 @@ button {
   cursor: pointer;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Typ een paar letters in het leeftijdveld. Wat gebeurt er?",
+    antwoord: "In Chrome en Edge verschijnen de meeste letters niet. Het veld laat alleen cijfers toe en een paar tekens die in een getal kunnen staan, zoals een min-teken. Dat regelt `type=\"number\"`.",
+  },
+  {
+    vraag: "Typ `onzin` in het e-mailveld en klik op Verstuur. Zegt de browser er iets van?",
+    antwoord: "In dit voorbeeld niet: het voorbeeldvenster mag geen formulieren versturen, en dan slaat de browser de controle ook over. Op een gewone webpagina krijg je een melding dat er een `@` in het e-mailadres ontbreekt. Die controle komt van `type=\"email\"`.",
+  },
+  {
+    vraag: "Verander `type=\"text\"` in `type=\"password\"` bij het naamveld. Wat zie je tijdens het typen?",
+    antwoord: "Elke letter verschijnt als een bolletje. Wat je typt staat er nog wel, maar iemand die meekijkt kan het niet lezen.",
+  },
+  {
+    vraag: "Voeg `placeholder=\"bijv. Lisa\"` toe aan het naamveld. Wat zie je in het lege veld?",
+    antwoord: "Lichtgrijze voorbeeldtekst: `bijv. Lisa`. Zodra je begint te typen verdwijnt hij; het is een hint, geen ingevulde waarde.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -143,22 +162,14 @@ De cursor springt naar het naam-veld en je kunt direct beginnen typen. Dat komt 
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="640px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer:
-
-- Probeer letters te typen in het leeftijd-veld — wat gebeurt er?
-- Vul iets onzinnigs in bij e-mail en klik op de knop — wat zegt de browser?
-- Verander `type="text"` naar `type="password"` bij het naam-veld — wat zie je tijdens typen?
-- Voeg `placeholder="bijv. Lisa"` toe aan het naam-veld — wat zie je in het lege veld?
 
 ## Modify
 

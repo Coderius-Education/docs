@@ -30,6 +30,25 @@ export const startCss = `div {
   margin: 20px;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Vergroot de `padding` naar `40px`. Wat gebeurt er?",
+    antwoord: "De lichtblauwe blokken worden groter en de tekst komt verder van de rand af. Padding is ruimte binnen het blok, dus de achtergrondkleur loopt mee.",
+  },
+  {
+    vraag: "Vergroot de `margin` naar `40px`. Wat verandert er?",
+    antwoord: "De blokken komen verder van de rand van het voorbeeld en van elkaar af. Tussen de blokken zit 40 pixels, geen 80: twee marges boven elkaar smelten samen tot de grootste.",
+  },
+  {
+    vraag: "Zet `padding: 0`. Wat zie je?",
+    antwoord: "De tekst zit tegen de linker- en de bovenrand van het lichtblauwe vak. Zonder padding is er geen ruimte meer tussen de rand en de inhoud.",
+  },
+  {
+    vraag: "Vervang `margin: 20px` door `margin: 0`. Wat gebeurt er tussen de blokken?",
+    antwoord: "Er zit niets meer tussen: de twee blokken vormen samen één lichtblauw vlak. Langs de rand van het voorbeeld blijft een smalle witte strook over, de standaardmarge van de pagina zelf.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -94,22 +113,14 @@ De tekst raakt direct de rand van de gekleurde achtergrond. Zonder padding is er
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
   height="480px"
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer met de CSS:
-
-- Wat gebeurt er als je `padding` vergroot naar `40px`?
-- Wat verandert er als je `margin` vergroot naar `40px`?
-- Probeer `padding: 0` — wat zie je?
-- Vervang `margin: 20px` door `margin: 0` — wat gebeurt er tussen de blokken?
 
 ## Modify
 

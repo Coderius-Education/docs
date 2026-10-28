@@ -32,6 +32,25 @@ p {
   font-size: 1.2rem;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Verander de tekst `'Je hebt geklikt.'` in iets anders. Wat zie je na een klik?",
+    antwoord: "Na een klik staat jouw nieuwe tekst in de `<p>`. De browser zet precies de tekst tussen de aanhalingstekens in het element.",
+  },
+  {
+    vraag: "Verander `id=\"bericht\"` in de `<p>` in `id=\"tekst\"`, maar laat de `onclick` staan. Wat gebeurt er bij een klik, en wat staat er in de console?",
+    antwoord: "De tekst verandert niet, en de console meldt `JavaScript fout: Uncaught TypeError: Cannot set properties of null (setting 'textContent')`. `getElementById('bericht')` vindt geen element meer en geeft `null` terug, en van niets kun je de tekst niet veranderen.",
+  },
+  {
+    vraag: "Zet onder de eerste `<p>` een tweede `<p>` met hetzelfde `id=\"bericht\"` en klik. Welke van de twee verandert er?",
+    antwoord: "Alleen de bovenste. `getElementById` geeft het eerste element met dat `id` en zoekt daarna niet verder. Een `id` hoort daarom maar één keer op een pagina voor te komen.",
+  },
+  {
+    vraag: "Haal de punt vóór `textContent` weg en klik. Voorspel eerst: welke soort fout geeft de console?",
+    antwoord: "Een `SyntaxError`: `JavaScript fout: Uncaught SyntaxError: Unexpected identifier 'textContent'`. Zonder punt is `getElementById('bericht')textContent` geen JavaScript meer. Unexpected identifier betekent: hier verwachtte ik geen naam, dus kijk vlak vóór het woord dat de melding noemt.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -78,15 +97,7 @@ De tekst in de `<p>` verandert van "Nog niet geklikt." naar "Je hebt geklikt.". 
 
 </details>
 
-## Probeer het zelf
-
-<CodeEditor
-  initialHtml={startHtml}
-  initialCss={startCss}
-  height="420px"
-  livePreview={false}
-  stacked
-/>
+## Probeer en onderzoek
 
 Onder het voorbeeld staat de **console**. Loopt je code vast, dan zet de browser daar een rode regel die begint met `JavaScript fout:`. Gebeurt er niets als je klikt, kijk dan eerst daar.
 
@@ -98,26 +109,14 @@ Na `JavaScript fout: Uncaught` staat altijd de soort fout. Aan die soort zie je 
 | `ReferenceError` | Deze naam ken ik niet. | Spelling, aanhalingstekens rond tekst |
 | `TypeError` | Dit ding kan dat niet. | Heb je wel iets gevonden? `null` betekent: niets. |
 
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Verander de tekst `'Je hebt geklikt.'` in iets anders. Wat zie je na een klik?
-- Verander `id="bericht"` in de `<p>` naar `id="tekst"`, maar laat de `onclick` staan. Wat gebeurt er nu bij een klik, en wat staat er in de console?
-- Geef twee `<p>`-elementen hetzelfde `id` en klik. Welke van de twee verandert er?
-
-<details>
-<summary>Voorspel: je haalt de punt vóór `textContent` weg. Welke soort fout geeft de console?</summary>
-
-Een `SyntaxError`, want `getElementById('bericht')textContent` is geen JavaScript meer:
-
-```
-JavaScript fout: Uncaught SyntaxError: Unexpected identifier 'textContent'
-```
-
-"Unexpected identifier" betekent: hier verwachtte ik geen naam. De melding noemt het woord waar het misgaat, dus je hoeft alleen vlak ervóór te kijken.
-
-</details>
+<CodeEditor
+  initialHtml={startHtml}
+  initialCss={startCss}
+  height="420px"
+  livePreview={false}
+  stacked
+  onderzoek={onderzoek}
+/>
 
 ## Opdracht 1: Eigen teksten
 

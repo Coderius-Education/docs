@@ -37,6 +37,25 @@ button {
   margin-right: 8px;
 }`;
 
+export const onderzoek = [
+  {
+    vraag: "Voeg een derde knop toe die de kleur terugzet naar zwart, met `style.color = 'black'`. Klik eerst op Rood en dan op je nieuwe knop. Wat zie je?",
+    antwoord: "De tekst is weer zwart. `style.color = 'black'` overschrijft de kleur die er stond, of dat nu rood of blauw was.",
+  },
+  {
+    vraag: "Verander `style.color = 'red'` bij de knop Rood in `style.backgroundColor = 'yellow'`. Wat zie je als je op Rood klikt, en daarna op Blauw?",
+    antwoord: "Na Rood krijgt de alinea een gele achtergrond en blijft de tekst zwart. Klik je daarna op Blauw, dan wordt de tekst blauw en blijft de achtergrond geel: elke knop verandert alleen zijn eigen eigenschap.",
+  },
+  {
+    vraag: "Verander `'blue'` in `'blauw'` en klik op Blauw. Wat gebeurt er, en staat er iets in de console?",
+    antwoord: "Er gebeurt niets en de console blijft leeg. `blauw` is geen CSS-kleur, dus de browser slaat de waarde zonder melding over. Was de tekst al rood, dan blijft hij rood.",
+  },
+  {
+    vraag: "Schrijf `Style.color` met een hoofdletter S en klik op Rood. Voorspel eerst: welke soort fout geeft de console?",
+    antwoord: "Een `TypeError`: `JavaScript fout: Uncaught TypeError: Cannot set properties of undefined (setting 'color')`. Het element heeft geen eigenschap `Style`, dus `Style` is `undefined`: niets, en van niets kun je geen kleur instellen. Het lijkt op de `null`-melding uit de vorige les: daar vond `getElementById` niets, hier vindt het element de eigenschap niet.",
+  },
+];
+
 export const makeHtml = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -84,7 +103,7 @@ De knoppen doen hetzelfde: ze passen `.style.color` aan op hetzelfde element. He
 
 </details>
 
-## Probeer het zelf
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
@@ -92,28 +111,8 @@ De knoppen doen hetzelfde: ze passen `.style.color` aan op hetzelfde element. He
   height="420px"
   livePreview={false}
   stacked
+  onderzoek={onderzoek}
 />
-
-## Investigate
-
-Experimenteer in het veld hierboven:
-
-- Voeg een derde knop toe die de kleur terugzet naar zwart: `style.color = 'black'`
-- Probeer `style.backgroundColor = 'yellow'` — wat zie je?
-- Wat gebeurt er als je `style.color = 'blauw'` schrijft in plaats van `'blue'`? Staat er iets in de console?
-
-<details>
-<summary>Voorspel: je schrijft `Style.color` met een hoofdletter S. Welke soort fout geeft de console?</summary>
-
-Een `TypeError`:
-
-```
-JavaScript fout: Uncaught TypeError: Cannot set properties of undefined (setting 'color')
-```
-
-Het element heeft geen eigenschap `Style`, dus `Style` is `undefined`: niets. Van niets kun je geen kleur instellen. Het lijkt op de `null`-melding uit [de vorige les](site:web/docs/js-basics/inline-onclick): daar vond `getElementById` niets, hier vindt het element de eigenschap niet.
-
-</details>
 
 ## Opdracht 1: Groter
 
