@@ -151,23 +151,20 @@ describe('lesstof en wheel spreken dezelfde taal', () => {
 });
 
 describe('de bootstrap van de speeltuin past op de wheel', () => {
-  // engine.js draagt Python mee (bootstrap en reset) die diep in play's
-  // binnenkant grijpt. Die binnenkant is geen publiek API: toen 3.4 de
+  // engine.js draagt Python mee (bootstrap en reset). Tot en met 3.4 greep die
+  // diep in play's binnenkant, en die is geen publiek API: toen 3.4 de
   // program_started-boolean verving door een program_state-enum, crashte elke
-  // browser-run op een AttributeError. Deze tests leggen de Python-strings
-  // naast de wheel, zodat zulke drift een testfout wordt in plaats van een
-  // kapotte speeltuin.
+  // browser-run op een AttributeError. Sinds play.reset_program() gebruikt
+  // engine.js alleen nog publieke namen, en vinden de eerste twee tests niets
+  // meer. Ze blijven staan: komt er weer een globals_list of een
+  // from play.… import in, dan ligt die meteen naast de wheel.
   const engine = readFileSync(ENGINE, 'utf8');
 
   it('elk globals_list-attribuut uit engine.js bestaat in globals.py', () => {
     const globalsPy = uitWheel('play/globals.py');
-    // _pygbag_task maakt de bootstrap zelf aan; die hoort hier niet te bestaan.
-    const eigen = new Set(['_pygbag_task']);
     const missend = [
       ...new Set([...engine.matchAll(/globals_list\.([a-zA-Z_][a-zA-Z0-9_]*)/g)].map((m) => m[1])),
-    ]
-      .filter((attr) => !eigen.has(attr))
-      .filter((attr) => !new RegExp(`\\b${attr}\\b`).test(globalsPy));
+    ].filter((attr) => !new RegExp(`\\b${attr}\\b`).test(globalsPy));
 
     expect(missend).toEqual([]);
   });
@@ -201,12 +198,42 @@ describe('de bootstrap van de speeltuin past op de wheel', () => {
     expect(problemen).toEqual([]);
   });
 
-  it('de loop-patch wijst naar bestaande namen in play/loop.py', () => {
-    const loopPy = uitWheel('play/loop.py');
-    for (const naam of [
-      ...new Set([...engine.matchAll(/_play_loop\.([a-zA-Z_]+)/g)].map((m) => m[1])),
-    ]) {
-      expect(new RegExp(`\\b${naam}\\b`).test(loopPy), naam).toBe(true);
-    }
+  // De reset roept play.reset_program() aan; zonder die functie in de wheel
+  // faalt elke reset, en dat slikt de iframe stil in.
+  it('elke play.…()-aanroep uit engine.js staat in de publieke API van de wheel', () => {
+    const symbolen = wheelSymbolen();
+    const aanroepen = [...new Set([...engine.matchAll(/\bplay\.([a-z_]+)\(/g)].map((m) => m[1]))];
+    expect(aanroepen).toContain('reset_program');
+    expect(aanroepen.filter((naam) => !symbolen.has(naam))).toEqual([]);
+  });
+
+  // Een mislukte reset verdween eerst in een lege catch: play bleef half
+  // opgeruimd en niemand zag waarom de volgende run niet startte.
+  it('een mislukte reset komt in de console', () => {
+    const aanroepen = [
+      ...engine.matchAll(
+        /runPythonAsync\('await __pygbag_reset\(\)'\);\s*\}\s*catch \(e\) \{([^}]*)\}/g,
+      ),
+    ];
+    expect(aanroepen).toHaveLength(2);
+    for (const m of aanroepen) expect(m[1]).toMatch(/console\.error/);
+  });
+
+  // Tot en met 3.4 verving de bootstrap play's start_program en patchte hij
+  // play.loop, omdat play zelf niet in de browser kon draaien. Sinds 3.5.0 kan
+  // dat wel, en zo'n patch zou het browserpad van play omzeilen: de taken die
+  // stop_program() annuleert, het geluid dat bij het stoppen ophoudt.
+  // Op setattr na stond elk patroon hieronder in de bootstrap van 3.4;
+  // setattr is dezelfde patch via een omweg.
+  it('de bootstrap vervangt niets in play', () => {
+    const patches = [
+      /^\s*play(\.[a-z_]+)+\s*=[^=]/m,
+      /\bstart_program(_fn)?\s*=[^=]/,
+      /\bshould_auto_start\s*=[^=]/,
+      /\bsetattr\(\s*(play|_gl|globals_list)\b/,
+      /\b_loop\s*=[^=]/,
+      /_play_loop\./,
+    ];
+    expect(patches.filter((p) => p.test(engine)).map(String)).toEqual([]);
   });
 });

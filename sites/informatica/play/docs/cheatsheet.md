@@ -40,6 +40,25 @@ Vervang `VERSIENUMMER` door de gewenste versie, bijvoorbeeld `3.3.3`.
 </details>
 
 <details>
+  <summary>Nieuw of verbeterd in coderius-play versie 3.5</summary>
+
+Versie 3.5 maakt play betrouwbaarder. Drie dingen kunnen je bestaande code raken: de Python-versie, een `async def` onder `@play.repeat_forever` en een kleur die play niet kent. Ze staan hieronder bij **Python**, **Tijd** en **Fouten**.
+
+Bij **Python**: play vraagt nu Python 3.11 of nieuwer. Hij werkt ook op een Raspberry Pi en in de browser.
+
+Bij **Botsingen**: `when_touching` gaat één keer per frame af, en niet meer tot tien keer. Tel je in zo'n functie punten, dan klopt de score nu. Een vorm die je met `remove()` hebt weggehaald, raakt niets meer.
+
+Bij **Muis**: een korte tik op een touchpad komt nu ook aan bij `when_clicked` van een vorm. Liggen twee vormen over elkaar, dan krijgen ze allebei de klik.
+
+Bij **Toetsenbord**: `@play.when_key_pressed(['a', 's'])` gaat af zodra je beide toetsen vasthoudt, ook als je ze niet precies tegelijk indrukt.
+
+Bij **Tijd**: een `async def` onder `@play.repeat_forever` draait elk frame, en niet meer om het andere frame.
+
+Bij **Fouten**: een fout in een gebeurtenis stopt je spel nu altijd, en je ziet alleen de eerste foutmelding. Geef je een kleur die play niet kent, dan krijg je de melding meteen op de regel waar je hem instelt.
+
+</details>
+
+<details>
   <summary>Nieuw of verbeterd in coderius-play versie 3.4</summary>
 
 Versie 3.4 voegt een familie **UI-elementen** en **video** toe.

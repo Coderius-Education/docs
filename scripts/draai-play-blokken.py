@@ -259,9 +259,18 @@ for _soort in _CT:
         # is aanroepbaar.
         _taken.append(_item[0] if isinstance(_item, tuple) and _item else _item)
 
+# Een dropdown geeft zijn when_changed (optie, plek) mee, zoals play dat zelf
+# doet: zijn eerste optie, op plek 0. Op naam raden gaf `waarde` hier 50, de
+# waarde van een slider. Sinds 3.5.0 controleert play een kleur meteen bij het
+# toekennen, en toen viel `cirkel.color = waarde` daarover; de les zelf klopte.
+_vast = {{}}
 for _sprite in list(_gl2.sprites_group):
     for _attr in ('_on_change_callbacks', '_on_submit_callbacks', '_on_click_callbacks'):
-        _taken += list(getattr(_sprite, _attr, None) or [])
+        for _fn in list(getattr(_sprite, _attr, None) or []):
+            _taken.append(_fn)
+            _opties = getattr(_sprite, '_options', None)
+            if _attr == '_on_change_callbacks' and isinstance(_opties, list):
+                _vast[id(_fn)] = [_opties[0] if _opties else None, 0]
 
 # De wekker begint hier opnieuw, en zonder de QUIT-stap: er is geen event-lus
 # meer om netjes af te sluiten. _fase op 1 zetten laat het volgende alarm dus
@@ -274,7 +283,7 @@ try:
     for _fn in _taken:
         if not callable(_fn):
             continue
-        _uit = _fn(*_argumenten(_fn))
+        _uit = _fn(*_vast.get(id(_fn), _argumenten(_fn)))
         if _inspect.isawaitable(_uit):
             _asyncio.get_event_loop().run_until_complete(_uit)
 except _Genoeg:
@@ -291,11 +300,164 @@ _os._exit(0)
 """
 
 
+# De speeltuin draait alle runners van een pagina in één iframe, en
+# __pygbag_reset() uit engine.js zet play tussen twee runs terug in de
+# beginstand, met play.reset_program(). Dit harnas speelt dat na: play in zijn
+# browserstand (taken op de lopende loop), de reset letterlijk uit engine.js,
+# en daarna de eindstand naast wat een verse play heeft. Zo blijft de belofte
+# van reset_program() vastliggen voor de speeltuin, ook als play hem later
+# anders invult. Het eerste scenario is de fout uit de eerste reset voor
+# 3.5.0, toen de speeltuin nog een eigen kopie van de opruiming had: een run
+# die een vorm maakt en dan op een fout loopt, verbruikt de automatische start van
+# play, en daarna startte geen enkele run meer tot je de pagina herlaadde.
+RESET_HARNAS = r"""import asyncio
+import os
+import sys
+
+os.environ["SDL_VIDEODRIVER"] = "dummy"
+os.environ["SDL_AUDIODRIVER"] = "dummy"
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
+wheel_map, engine = sys.argv[1], sys.argv[2]
+sys.path.insert(0, wheel_map)
+bron = open(engine, encoding="utf-8").read().replace("\r\n", "\n")
+reset = bron.split("const PYTHON_RESET = `\\\n", 1)[1].split("`;", 1)[0]
+# Dit harnas leest de brontekst van de template literal; de browser krijgt de
+# string die JavaScript ervan maakt. Die zijn alleen gelijk zolang er geen
+# backslash of ${ in staat: een \n in een Python-string zou in de browser een
+# echte regelovergang worden, en een SyntaxError die niemand ziet.
+if "\\" in reset or "${" in reset:
+    print("de reset bevat een backslash of ${; dan draait de browser andere Python dan dit harnas")
+    sys.exit(1)
+
+import pygame
+import play
+import play.loop
+from play.api.auto_start import _schedule_auto_start
+from play.callback import callback_manager
+from play.core import keyboard_state
+from play.globals import ProgramState, globals_list
+from play.io.mouse import mouse
+from play.io.screen import screen
+from play.physics import physics_space
+
+# Zo kiest play zijn browserpad: start_program() zet het spel als taak op de
+# lopende loop en keert terug, stop_program() annuleert die taken.
+play.loop.RUNS_IN_BROWSER = True
+exec(reset)
+fouten = []
+
+
+def eis(ok, tekst):
+    if not ok:
+        fouten.append(tekst)
+
+
+async def run(code, **namen):
+    '''Wat de speeltuin doet: de code van de leerling als __main__, daarna een paar beurten van de loop.'''
+    try:
+        exec(compile(code, "<jouw_code>", "exec"), {"__name__": "__main__", **namen})
+    except Exception:
+        pass
+    for _ in range(10):
+        await asyncio.sleep(0)
+
+
+async def main():
+    await __pygbag_reset()
+    muren = len(physics_space.shapes)
+
+    # Een run die een vorm maakt en dan op een fout loopt, start nooit, maar
+    # verbruikt wel de automatische start van play.
+    await run("import play\nc = play.new_circle()\nprint(onbekend)\n")
+    await __pygbag_reset()
+    await run("import play\nc = play.new_circle()\n")
+    eis(
+        globals_list.program_state is ProgramState.RUNNING,
+        "na een run die op een fout eindigde, start de volgende run niet",
+    )
+
+    klaar = []
+    await run(
+        '''
+import asyncio
+import play
+bal = play.new_circle(radius=20)
+bal.start_physics()
+play.screen.width = 400
+
+@play.when_key_pressed('a')
+def toets(key):
+    pass
+
+@play.repeat_forever
+async def tik():
+    try:
+        await play.timer(seconds=10)
+    finally:
+        for _ in range(3):
+            await asyncio.sleep(0)
+        klaar.append(True)
+''',
+        klaar=klaar,
+    )
+    eis(globals_list.program_state is ProgramState.RUNNING, "het tweede programma start niet")
+    taken = list(play.loop._tasks)
+    keyboard_state.pressed.add("a")
+    mouse._is_clicked = True
+    pygame.event.post(pygame.event.Event(pygame.KEYDOWN, {"key": pygame.K_a}))
+    await __pygbag_reset()
+
+    eis(all(t.done() for t in taken), "een taak van play draait na de reset nog")
+    eis(klaar == [True], "een geannuleerde taak kreeg zijn finally niet af")
+    eis(globals_list.program_state is ProgramState.NOT_STARTED, "program_state staat niet op NOT_STARTED")
+    eis(not globals_list.should_auto_start, "should_auto_start staat nog aan")
+    eis(not _schedule_auto_start.has_run, "de automatische start is nog verbruikt")
+    eis(len(globals_list.sprites_group) == 0, "er staan nog vormen")
+    eis(not callback_manager.callbacks, "er staan nog callbacks")
+    eis(len(physics_space.shapes) == muren, "er staan nog lichamen in de physics")
+    eis((screen.width, screen.height) == (800, 600), "het scherm is niet 800x600")
+    eis(not keyboard_state.pressed, "er staat nog een toets ingedrukt")
+    eis(not mouse._is_clicked, "de muis staat nog ingedrukt")
+    eis(not pygame.event.peek(), "er staan nog events van de vorige run in de rij")
+
+    await run("import play\nc = play.new_circle()\n")
+    eis(globals_list.program_state is ProgramState.RUNNING, "na een gestopt programma start de volgende run niet")
+    await __pygbag_reset()
+
+    # Faalt reset_program(), dan hoort de fout bij de pagina te komen (die zet
+    # hem in de console) en wordt het canvas toch zwart.
+    echte_reset = play.reset_program
+
+    def kapotte_reset():
+        raise RuntimeError("proef")
+
+    play.reset_program = kapotte_reset
+    scherm = pygame.display.get_surface()
+    scherm.fill((255, 255, 255))
+    try:
+        await __pygbag_reset()
+        fouten.append("een fout in reset_program() verdwijnt in de reset")
+    except RuntimeError:
+        pass
+    finally:
+        play.reset_program = echte_reset
+    eis(tuple(scherm.get_at((0, 0)))[:3] == (0, 0, 0), "na een mislukte reset is het canvas niet zwart")
+
+
+asyncio.run(main())
+for fout in fouten:
+    print(fout)
+sys.exit(1 if fouten else 0)
+"""
+
 # De gebundelde wheel pint zijn eigen afhankelijkheden. Draait CI tegen andere
-# versies dan de browser krijgt, dan zegt een groene job niets over wat een
-# leerling ziet — en dat is precies de drift die deze repo elders al twee keer
-# heeft opgeleverd. Vandaar: de wheel is de bron, hier én in de workflow
-# (`pip install $(python3 scripts/draai-play-blokken.py --pins)`).
+# versies dan een leerling installeert, dan zegt een groene job niets over wat
+# hij ziet — en dat is precies de drift die deze repo elders al twee keer heeft
+# opgeleverd. Vandaar: de wheel is de bron, hier én in de workflow
+# (`pip install $(python3 scripts/draai-play-blokken.py --pins)`). Dat zijn de
+# versies van een installatie op de eigen computer. De speeltuin krijgt alleen
+# pymunk zoals gepind; numpy en pygame-ce komen daar van Pyodide (in 0.29.4
+# numpy 2.2.5 en pygame-ce 2.5.6.dev2, dat niet op PyPI staat).
 PAKKETTEN = ("pygame-ce", "numpy", "pymunk")
 
 
@@ -314,8 +476,11 @@ def _marker_geldt(marker: str) -> bool:
 
 def pins() -> dict[str, str]:
     """De versies die de gebundelde wheel eist, voor deze Python."""
-    naam = wheel_pad().name.replace("-py3-none-any.whl", "")
-    metadata = zipfile.ZipFile(wheel_pad()).read(f"{naam}.dist-info/METADATA").decode()
+    # Niet uit de bestandsnaam afleiden: een build uit de play-repo draagt een
+    # build-tag (coderius_play-3.5.0-0master7a7db94-…), de dist-info niet.
+    with zipfile.ZipFile(wheel_pad()) as wheel:
+        naam = next(n for n in wheel.namelist() if n.endswith(".dist-info/METADATA"))
+        metadata = wheel.read(naam).decode()
     uit = {}
     for regel in metadata.splitlines():
         if not regel.startswith("Requires-Dist:"):
@@ -352,7 +517,7 @@ def controleer_pins() -> str | None:
 
 
 def wheel_pad() -> Path:
-    m = re.search(r"PLAY_WHEEL = '/whl/([^']+)'", ENGINE.read_text())
+    m = re.search(r"PLAY_WHEEL = '/whl/([^']+)'", ENGINE.read_text(encoding="utf-8"))
     if not m:
         sys.exit("PLAY_WHEEL niet gevonden in engine.js")
     pad = SITE / "static" / "whl" / m.group(1)
@@ -444,6 +609,48 @@ def draai(bron, regel, code, wheel_map: str) -> str | None:
     return None
 
 
+# Blokken die het harnas zelf vastpinnen, los van wat er toevallig in de
+# lessen staat. Een dropdown geeft zijn when_changed (optie, plek) mee; het
+# harnas gokte eerst op de naam van de parameter en gaf `waarde` het getal 50.
+# Sinds 3.5.0 controleert play een kleur bij het toekennen, en toen viel een
+# les over kiezen om terwijl hij klopte.
+ZELFTEST = {
+    "dropdown krijgt een optie": """import play
+
+cirkel = play.new_circle()
+menu = play.new_dropdown(options=["red", "green"])
+
+@menu.when_changed
+def gekozen(waarde, plek):
+    cirkel.color = waarde
+""",
+}
+
+def controleer_reset(wheel_map: str) -> list[str]:
+    """Speel __pygbag_reset() uit engine.js na tegen de wheel (zie RESET_HARNAS)."""
+    with tempfile.TemporaryDirectory() as werkmap:
+        harnas = Path(werkmap) / "reset_harnas.py"
+        harnas.write_text(RESET_HARNAS)
+        try:
+            r = subprocess.run(
+                [sys.executable, str(harnas), wheel_map, str(ENGINE)],
+                capture_output=True,
+                text=True,
+                timeout=60,
+                cwd=werkmap,
+            )
+        except subprocess.TimeoutExpired:
+            return [f"{ENGINE.relative_to(ROOT)}: de reset-controle draait na 60s nog"]
+    if r.returncode == 0:
+        return []
+    meldingen = (
+        r.stdout.strip().splitlines()
+        or r.stderr.strip().splitlines()[-1:]
+        or [f"het harnas stopte met exitcode {r.returncode}, zonder uitvoer"]
+    )
+    return [f"{ENGINE.relative_to(ROOT)}: __pygbag_reset: {m}" for m in meldingen]
+
+
 def main() -> int:
     selectie, _ = lees(sys.argv[1:], "play")
     if "--pins" in sys.argv:
@@ -468,9 +675,21 @@ def main() -> int:
 
         fouten = [f for b in te_compileren if (f := compileer(b[0], b[1], b[2]))]
 
+        def zelftest(naam: str, code: str) -> str | None:
+            fout = draai(Path(f"zelftest: {naam}"), 1, code, wheel_map)
+            return fout and f"draai-play-blokken.py: harnas: {fout}"
+
+        # De reset en het harnas veranderen alleen met engine.js, de wheel of
+        # dit script, en die zetten selectie.alles aan (RUNNERS in
+        # packages/shared/wijzigingen.js). Een les alleen raakt ze niet.
         with ThreadPoolExecutor(max_workers=8) as pool:
+            reset = pool.submit(controleer_reset, wheel_map) if selectie.alles else None
+            zelftesten = (
+                [pool.submit(zelftest, n, c) for n, c in ZELFTEST.items()] if selectie.alles else []
+            )
             resultaten = pool.map(lambda b: draai(b[0], b[1], b[2], wheel_map), te_draaien)
             fouten += [f for f in resultaten if f]
+            fouten += (reset.result() if reset else []) + [f for t in zelftesten if (f := t.result())]
 
     for fout in fouten:
         print(fout)

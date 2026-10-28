@@ -1,0 +1,14 @@
+{
+  "coderius_play": {
+    "bestand": "coderius_play-3.5.0-py3-none-any.whl",
+    "versie": "3.5.0",
+    "bron": "pypi",
+    "sha256": "40542dc2a73ffb467dd36d6fa17259151047d363420f3699828e45424875afe9"
+  },
+  "pymunk": {
+    "bestand": "pymunk-7.3.1-cp313-cp313-pyemscripten_2025_0_wasm32.whl",
+    "versie": "7.3.1",
+    "bron": "pypi",
+    "sha256": "4b3e8cb377d85f07390f6d177400014c438ace31cd547715e9871297937b1400"
+  }
+}

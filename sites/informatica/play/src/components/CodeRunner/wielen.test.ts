@@ -12,11 +12,24 @@ const BASIS = 'https://informatica.coderius.nl/play';
 
 describe('isToegestaanWiel', () => {
   it('laat alleen een wheel uit /whl/ van deze site door', () => {
-    expect(isToegestaanWiel(`${BASIS}/whl/coderius_play-3.4.0-py3-none-any.whl`, BASIS)).toBe(true);
+    expect(isToegestaanWiel(`${BASIS}/whl/coderius_play-3.5.0-py3-none-any.whl`, BASIS)).toBe(true);
+    // Een build uit de play-repo draagt een build-tag in zijn naam.
+    expect(
+      isToegestaanWiel(`${BASIS}/whl/coderius_play-3.5.0-0master7a7db94-py3-none-any.whl`, BASIS),
+    ).toBe(true);
     expect(isToegestaanWiel(`${BASIS}/whl/../geheim.whl`, BASIS)).toBe(false);
     expect(isToegestaanWiel(`${BASIS}/whl/x.json`, BASIS)).toBe(false);
     expect(isToegestaanWiel('https://informatica.coderius.nl/ide/whl/x.whl', BASIS)).toBe(false);
     expect(isToegestaanWiel('https://kwaad.nl/whl/x.whl', BASIS)).toBe(false);
+  });
+});
+
+describe('de wheels uit engine.js', () => {
+  it('komen door de controle', () => {
+    const engine = readFileSync(fileURLToPath(new URL('./engine.js', import.meta.url)), 'utf8');
+    const wheels = [...engine.matchAll(/^const \w+_WHEEL = '\/whl\/([^']+)';$/gm)].map((m) => m[1]);
+    expect(wheels).toHaveLength(2);
+    for (const wheel of wheels) expect(isToegestaanWiel(`${BASIS}/whl/${wheel}`, BASIS)).toBe(true);
   });
 });
 

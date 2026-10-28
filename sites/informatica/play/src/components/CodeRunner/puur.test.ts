@@ -68,7 +68,7 @@ describe('isBerichtVanOuder', () => {
     // het id van de nieuwe run en belandt het alsnog in de verkeerde console.
     const doc = buildSharedRunnerSrcDoc(['import play']);
     const runHandler = doc.slice(doc.indexOf("if (type === 'run')"));
-    const reset = runHandler.indexOf("runPythonAsync('__pygbag_reset()')");
+    const reset = runHandler.indexOf("runPythonAsync('await __pygbag_reset()')");
     const overname = runHandler.indexOf('CURRENT_REQUEST = requestId');
     expect(reset).toBeGreaterThan(-1);
     expect(overname).toBeGreaterThan(reset);
@@ -81,6 +81,17 @@ describe('isBerichtVanOuder', () => {
     const lezen = doc.indexOf('if (!e.data || !e.data.type) return;');
     expect(controle).toBeGreaterThan(-1);
     expect(lezen).toBeGreaterThan(controle);
+  });
+
+  // Twee kliks tijdens het opstarten liepen door elkaar: beide wachtten op
+  // Pyodide en gingen daarna tegelijk verder, en het tweede programma tekende
+  // over het eerste heen. In de browser nagespeeld; hier staat de rij vast.
+  it('de gedeelde iframe handelt run en stop één voor één af', () => {
+    const doc = buildSharedRunnerSrcDoc(['import play']);
+    expect(doc).toMatch(/window\.addEventListener\('message', \(e\) => \{/);
+    expect(doc).not.toMatch(/window\.addEventListener\('message', async/);
+    expect(doc).toMatch(/rij = rij\.then\(\(\) => verwerk\(bericht\)\)\.catch\(/);
+    expect(doc).toMatch(/Promise\.race\(\[programma, /);
   });
 });
 

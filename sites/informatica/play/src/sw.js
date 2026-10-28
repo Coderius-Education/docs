@@ -34,7 +34,10 @@ registerRoute(
 );
 
 // Local wheels (pymunk, coderius-play). Small but versioned by filename
-// (coderius_play-3.4.0-…whl, pymunk-7.3.0-…whl) so old versions safely fall out of cache.
+// (coderius_play-3.5.0-…whl, pymunk-7.3.1-…whl) so old versions safely fall out of cache.
+// Een play-wheel die nog niet op PyPI staat, draagt daarom een build-tag in zijn
+// naam (scripts/play-wheels.py): de release krijgt zo een andere naam en komt
+// niet achter de oude build in de cache te zitten.
 // De site staat onder een pad van de vak-host (/play/), en de scope van de
 // service worker is precies die baseUrl.
 const WHL_PREFIX = `${new URL(self.registration.scope).pathname}whl/`;

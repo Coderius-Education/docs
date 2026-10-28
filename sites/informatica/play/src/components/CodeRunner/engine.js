@@ -12,8 +12,12 @@
 // ABI-tag (pyemscripten_2025_0) hoort bij de abi_version van de Pyodide-versie.
 export const PYODIDE_VERSION = '0.29.4';
 const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
-const PYMUNK_WHEEL = '/whl/pymunk-7.3.0-cp313-cp313-pyemscripten_2025_0_wasm32.whl';
-const PLAY_WHEEL = '/whl/coderius_play-3.4.0-py3-none-any.whl';
+// Eén regel per wheel: play-wheels.py, draai-play-blokken.py en de tests
+// zoeken ze zo, en een build-tag met een lange branchnaam maakt hem lang.
+// biome-ignore format: zie hierboven
+const PYMUNK_WHEEL = '/whl/pymunk-7.3.1-cp313-cp313-pyemscripten_2025_0_wasm32.whl';
+// biome-ignore format: zie hierboven
+const PLAY_WHEEL = '/whl/coderius_play-3.5.0-py3-none-any.whl';
 
 // De pure helpers (geen DOM, geen Pyodide) staan in puur.js zodat ze in node
 // te testen zijn; callers importeren ze nog steeds vanaf hier.
@@ -60,46 +64,21 @@ function detectPackages(code, siteOrigin) {
 }
 
 /**
- * Build the Python bootstrap that patches coderius-play's start_program
- * to work cooperatively with the browser event loop.
+ * Build the Python bootstrap for play mode.
+ *
+ * Sinds 3.5.0 draait play zelf in de browser: get_loop() neemt de loop van de
+ * pagina, en start_program() plant het spel daarop in als taak en keert terug.
+ * Tot en met 3.4 patchte deze bootstrap play.loop en verving hij
+ * start_program door een eigen versie; daarmee zou hij nu het browserpad van
+ * play omzeilen (de taken die stop_program() annuleert, het geluid dat bij
+ * het stoppen ophoudt). Hij importeert play alleen nog vooraf, zodat de
+ * eerste klik die tijd niet kost.
  */
 function buildPlayBootstrap() {
   return `
-import asyncio
-
-# Patch play's event loop management BEFORE importing play.
-# The play library calls asyncio.new_event_loop() in play/loop.py,
-# which fails in Pyodide because socket.socketpair() is unsupported.
-# We patch get_loop() to return Pyodide's existing webloop instead.
-import play.loop as _play_loop
-_original_loop = asyncio.get_event_loop()
-_play_loop._loop = _original_loop
-_play_loop._creator_pid = __import__('os').getpid()
-
 import play
 import importlib.metadata as _meta
 print("coderius-play", _meta.version("coderius-play"))
-
-def _browser_start_program():
-    # Mirrors play.api.utils.start_program (3.4: program_state-enum in plaats
-    # van de oude program_started-boolean), maar zonder run_forever — Pyodide's
-    # webloop draait al, dus de game loop wordt een taak op die loop.
-    from play.callback import callback_manager, CallbackType
-    from play.core import game_loop as _game_loop
-    from play.globals import globals_list, ProgramState
-    if globals_list.program_state is not ProgramState.NOT_STARTED:
-        return
-    globals_list.program_state = ProgramState.RUNNING
-    globals_list.should_auto_start = False
-    callback_manager.run_callbacks(CallbackType.WHEN_PROGRAM_START)
-    # Keep a handle on the task so __pygbag_reset can cancel it between runs.
-    globals_list._pygbag_task = asyncio.ensure_future(_game_loop())
-
-play.start_program = _browser_start_program
-play.api.utils.start_program = _browser_start_program
-from play.globals import globals_list as _gl
-_gl.start_program_fn = _browser_start_program
-_gl.should_auto_start = False
 `;
 }
 
@@ -287,61 +266,35 @@ try {
 // skip the 5+ second Pyodide init.
 
 const PYTHON_RESET = `\
-def __pygbag_reset():
-    """Cancel the running game loop and reset play state between runs.
+async def __pygbag_reset():
+    """Stop the running program and put play back in its starting state between runs.
 
-    No-op on fresh state (first run) — globals_list.reset() would otherwise
-    overwrite display dimensions before play has a chance to initialise.
+    play.reset_program() doet het werk: hij annuleert de taken van play, laat
+    ze hun finally afmaken en zet play terug zoals na import play, ook na een
+    run die nooit startte. In de browser moet je erop wachten; een volgende
+    run die eerder begint, weigert play. Een fout daarin gaat door naar de
+    pagina, die hem in de console zet; het canvas wordt hoe dan ook zwart.
+    draai-play-blokken.py speelt deze reset na tegen de wheel en controleert
+    de eindstand.
     """
     import gc
     try:
-        from play.globals import globals_list, ProgramState
-        if globals_list.program_state is ProgramState.NOT_STARTED:
-            return
-        task = getattr(globals_list, '_pygbag_task', None)
-        if task is not None and not task.done():
-            task.cancel()
-        globals_list._pygbag_task = None
-        # Clear pymunk Space — play.globals.reset() does NOT do this and the
-        # Space is a module-level singleton in play.physics. Without this,
-        # bodies from previous runs accumulate and corrupt the simulation.
-        try:
-            from play.physics import physics_space
-            for shape in list(physics_space.shapes):
-                try: physics_space.remove(shape)
-                except Exception: pass
-            for body in list(physics_space.bodies):
-                try: physics_space.remove(body)
-                except Exception: pass
-        except Exception: pass
-        # play's own reset() empties sprites_group/walls/controllers, resets backdrop, etc.
-        globals_list.reset()
-        # Walls were created once at module-import time and removed by the
-        # shape/body cleanup above. Re-create them so the next run still has
-        # invisible screen-edge walls to bounce off.
-        try:
-            from play.io.screen import create_walls
-            create_walls()
-        except Exception: pass
-    except Exception: pass
+        import play
+    except ImportError:
+        play = None
     try:
-        from play.callback import callback_manager
-        if hasattr(callback_manager, 'callbacks'):
-            cbs = callback_manager.callbacks
-            if isinstance(cbs, dict):
-                for v in cbs.values():
-                    if hasattr(v, 'clear'): v.clear()
-                    elif isinstance(v, list): v.clear()
-    except Exception: pass
-    try:
-        import pygame
-        if pygame.display.get_init():
-            s = pygame.display.get_surface()
-            if s:
-                s.fill((0, 0, 0))
-                pygame.display.flip()
-    except Exception: pass
-    gc.collect()
+        if play is not None:
+            await play.reset_program()
+    finally:
+        try:
+            import pygame
+            if pygame.display.get_init():
+                s = pygame.display.get_surface()
+                if s:
+                    s.fill((0, 0, 0))
+                    pygame.display.flip()
+        except Exception: pass
+        gc.collect()
 `;
 
 export function buildSharedRunnerSrcDoc(codes) {
@@ -434,10 +387,33 @@ let booting = (async () => {
   }
 })();
 
-window.addEventListener('message', async (e) => {
+// Een pijltje of Page Down dat de iframe niet zelf gebruikt, kan een browser
+// doorgeven aan de pagina, en dan scrolt die mee. pygame krijgt de toets toch:
+// preventDefault houdt alleen het scrollen tegen. Spatie staat er bewust niet
+// bij; zonder keypress krijgt een tekstveld van play geen spaties meer.
+const SCROLTOETSEN = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', 'Home', 'End'];
+window.addEventListener('keydown', (e) => {
+  if (SCROLTOETSEN.includes(e.key)) e.preventDefault();
+}, true);
+
+// Berichten één voor één: een run begint pas als de reset en de code van de
+// vorige klaar zijn. Zonder rij liepen twee kliks tijdens het opstarten door
+// elkaar, en tekende het tweede programma over het eerste heen.
+let rij = Promise.resolve();
+window.addEventListener('message', (e) => {
   if (!isBerichtVanOuder(e, window.parent)) return;
   if (!e.data || !e.data.type) return;
-  const { type, requestId } = e.data;
+  if (e.data.type !== 'run' && e.data.type !== 'stop') return;
+  const bericht = e.data;
+  rij = rij.then(() => verwerk(bericht)).catch((err) => console.error(err));
+});
+
+// Een programma met een eigen lus (pygame) keert niet terug; daar wacht de
+// rij niet langer op dan dit. Een play-programma is in milliseconden klaar.
+const LANGSTE_WACHT_MS = 2000;
+
+async function verwerk(bericht) {
+  const { type, requestId } = bericht;
 
   await booting;
   if (!pyodide) {
@@ -446,28 +422,31 @@ window.addEventListener('message', async (e) => {
   }
 
   if (type === 'run') {
-    const { code, lineOffset, ingevoegd } = e.data;
-    try {
-      // Eerst het vorige programma afbreken, dan pas het nieuwe requestId
-      // aannemen: wat het oude programma tijdens het afbreken nog print
-      // (een finally, een laatste frame) hoort bij de oude run, niet bij
-      // de nieuwe console.
-      try { await pyodide.runPythonAsync('__pygbag_reset()'); } catch (e) {}
-      CURRENT_OFFSET = lineOffset || 0;
-      CURRENT_INGEVOEGD = ingevoegd || [];
-      CURRENT_REQUEST = requestId;
-      await pyodide.runPythonAsync(code, { filename: '<jouw_code>' });
-      post('run-done', { requestId });
-    } catch (err) {
-      const msg = String(err && err.message ? err.message : err);
-      post('error', { requestId, message: rewriteTraceback(msg, CURRENT_OFFSET, CURRENT_INGEVOEGD) });
-      console.error(err);
-    }
+    const { code } = bericht;
+    const offset = bericht.lineOffset || 0;
+    const ingevoegd = bericht.ingevoegd || [];
+    // Eerst het vorige programma afbreken, dan pas het nieuwe requestId
+    // aannemen: wat het oude programma tijdens het afbreken nog print
+    // (een finally, een laatste frame) hoort bij de oude run, niet bij
+    // de nieuwe console.
+    try { await pyodide.runPythonAsync('await __pygbag_reset()'); } catch (e) { console.error('__pygbag_reset:', e); }
+    CURRENT_OFFSET = offset;
+    CURRENT_INGEVOEGD = ingevoegd;
+    CURRENT_REQUEST = requestId;
+    const programma = pyodide.runPythonAsync(code, { filename: '<jouw_code>' }).then(
+      () => post('run-done', { requestId }),
+      (err) => {
+        const msg = String(err && err.message ? err.message : err);
+        post('error', { requestId, message: rewriteTraceback(msg, offset, ingevoegd) });
+        console.error(err);
+      },
+    );
+    await Promise.race([programma, new Promise((klaar) => setTimeout(klaar, LANGSTE_WACHT_MS))]);
   } else if (type === 'stop') {
-    try { await pyodide.runPythonAsync('__pygbag_reset()'); } catch (e) {}
+    try { await pyodide.runPythonAsync('await __pygbag_reset()'); } catch (e) { console.error('__pygbag_reset:', e); }
     post('stopped', { requestId });
   }
-});
+}
 </script>
 </body>
 </html>`;
