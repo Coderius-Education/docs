@@ -12,7 +12,7 @@ import { describe, expect, it } from 'vitest';
 //   onder de opdrachttekst en vóór de tip. De laatste opdracht is bouw-zelf
 //   en seedt op een make*-export.
 // - De Modify/Make-vorm (html-css): precies drie velden — het hoofdveld
-//   onder "Probeer het zelf" en één onder Modify en Make.
+//   onder "Probeer en onderzoek" en één onder Modify en Make.
 //
 // Daarnaast bewaakt dit bestand twee lessen uit de praktijk: de
 // startcode-exports staan onder de H1 (anders valt de sidebar-titel terug op

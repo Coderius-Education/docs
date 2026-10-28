@@ -108,7 +108,7 @@ describe('een experiment wijst naar code die er staat', () => {
       const teLezen: { kop: string; regels: string[] }[] = [];
       for (const sectie of inhoud.split(/\n## /).slice(1)) {
         const kop = sectie.split('\n')[0];
-        if (!/^(Predict|Investigate|Modify)/.test(kop)) continue;
+        if (!/^(Predict|Modify)/.test(kop)) continue;
         // Alleen de opdrachttekst, niet het antwoord eronder.
         teLezen.push({ kop, regels: sectie.split(/\n<details/)[0].split('\n') });
       }
