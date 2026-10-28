@@ -220,7 +220,8 @@ niet via `C`.
 
 ## Onderzoek
 
-Speel met de code:
+`kies_volgende` en `dijkstra` van hierboven staan al klaar; in het veld
+staat alleen de graph. Pas hem aan:
 
 1. Een andere startnode: `dijkstra(graph, 'D')`.
 2. Maak `A → B` veel duurder (bv. gewicht 100). Hoe verandert de
@@ -229,37 +230,7 @@ Speel met de code:
    mag die edge hoogstens hebben als `E` op afstand 6 of minder moet
    liggen?
 
-<PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
-    beste_node = None
-    kleinste = float('inf')
-    for node, d in afstanden.items():
-        if node in bezocht:
-            continue
-        if d < kleinste:
-            kleinste = d
-            beste_node = node
-    return beste_node
-
-
-def dijkstra(graph, start):
-    afstanden = {}
-    for node in graph:
-        afstanden[node] = float('inf')
-    afstanden[start] = 0
-    bezocht = set()
-    while True:
-        huidige = kies_volgende(afstanden, bezocht)
-        if huidige is None:
-            break
-        bezocht.add(huidige)
-        for buur, gewicht in graph[huidige]:
-            nieuwe = afstanden[huidige] + gewicht
-            if nieuwe < afstanden[buur]:
-                afstanden[buur] = nieuwe
-    return afstanden
-
-
-# Experimenteer hier
+<PyRunner verborgen="dijkstra-compleet" initialCode={`# Experimenteer hier
 graph = {
     'A': [('B', 4), ('C', 2)],
     'B': [('A', 4), ('D', 1)],
@@ -268,5 +239,19 @@ graph = {
 }
 
 print(dijkstra(graph, 'A'))`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+1. `{'A': 5, 'B': 1, 'C': 7, 'D': 0}`. `C` ligt nu op 7, via `B` en `A`
+   (1 + 4 + 2), en niet op 8 via de directe edge.
+2. `B` komt op 11 te staan, via `C` en `D` (2 + 8 + 1). `D` wordt 10:
+   via `B` kost hij nu 101.
+3. Hoogstens 2: `B` ligt op 4, dus `E` op 4 plus het gewicht. Zet de edge
+   in beide lijsten, `('E', 2)` bij `B` en `'E': [('B', 2)]`. Staat hij
+   alleen bij `E`, dan komt Dijkstra vanaf `A` nooit bij `E` en blijft de
+   afstand `inf`.
+
+</details>
 
 Door naar [pad reconstrueren →](site:algorithms/docs/dijkstra/11-aanpassen).
