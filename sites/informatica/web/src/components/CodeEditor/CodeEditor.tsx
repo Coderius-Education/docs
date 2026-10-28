@@ -506,6 +506,11 @@ function Onderzoek({ vragen }: { vragen: OnderzoekVraag[] }) {
         <span aria-hidden="true">{open ? '\u25BE' : '\u25B8'}</span> Onderzoek
         {!open && ` (${vragen.length} vragen)`}
       </button>
+      {/* De aanwijzing staat hier en niet als zin in elke les: daar stond hij
+          33 keer, en na de derde las niemand hem meer. */}
+      {open && (
+        <span className={styles.onderzoekHint}>Probeer eerst zelf, klap dan het antwoord uit.</span>
+      )}
       {open && (
         <ol className={styles.onderzoekLijst}>
           {vragen.map(({ vraag, antwoord }) => (

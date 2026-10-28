@@ -50,6 +50,10 @@ export const onderzoek = [
     vraag: "Verander `'blue'` in `'blauw'` en klik op Blauw. Wat gebeurt er, en staat er iets in de console?",
     antwoord: "Er gebeurt niets en de console blijft leeg. `blauw` is geen CSS-kleur, dus de browser slaat de waarde zonder melding over. Was de tekst al rood, dan blijft hij rood.",
   },
+  {
+    vraag: "Schrijf `Style.color` met een hoofdletter S en klik op Rood. Voorspel eerst: welke soort fout geeft de console?",
+    antwoord: "Een `TypeError`: `JavaScript fout: Uncaught TypeError: Cannot set properties of undefined (setting 'color')`. Het element heeft geen eigenschap `Style`, dus `Style` is `undefined`: niets, en van niets kun je geen kleur instellen. Het lijkt op de `null`-melding uit de vorige les: daar vond `getElementById` niets, hier vindt het element de eigenschap niet.",
+  },
 ];
 
 export const makeHtml = `<!DOCTYPE html>
@@ -101,8 +105,6 @@ De knoppen doen hetzelfde: ze passen `.style.color` aan op hetzelfde element. He
 
 ## Probeer en onderzoek
 
-Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
-
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
@@ -111,19 +113,6 @@ Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap 
   stacked
   onderzoek={onderzoek}
 />
-
-<details>
-<summary>Voorspel: je schrijft `Style.color` met een hoofdletter S. Welke soort fout geeft de console?</summary>
-
-Een `TypeError`:
-
-```
-JavaScript fout: Uncaught TypeError: Cannot set properties of undefined (setting 'color')
-```
-
-Het element heeft geen eigenschap `Style`, dus `Style` is `undefined`: niets. Van niets kun je geen kleur instellen. Het lijkt op de `null`-melding uit [de vorige les](site:web/docs/js-basics/inline-onclick): daar vond `getElementById` niets, hier vindt het element de eigenschap niet.
-
-</details>
 
 ## Opdracht 1: Groter
 

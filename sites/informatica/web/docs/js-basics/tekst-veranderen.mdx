@@ -44,6 +44,10 @@ export const onderzoek = [
     vraag: "Maak een knop die de `<p>` leegmaakt. Wat zet je achter `textContent =`?",
     antwoord: "Twee aanhalingstekens zonder iets ertussen: `<button onclick=\"document.getElementById('zin').textContent = ''\">Wis</button>`. Na een klik is de `<p>` leeg, en de knoppen schuiven omhoog naar de plek waar de tekst stond.",
   },
+  {
+    vraag: "Schrijf in de knop Zin 1 `Document` met een hoofdletter D, klik op Run en dan op Zin 1. Voorspel eerst: welke soort fout geeft de console?",
+    antwoord: "Een `TypeError`: `JavaScript fout: Uncaught TypeError: Document.getElementById is not a function`. `Document` bestaat wel in JavaScript, maar het is iets anders dan de pagina `document`, en het kent geen `getElementById`. Daarom geen `ReferenceError` (de naam is bekend) maar een `TypeError` (dit ding kan dat niet).",
+  },
 ];
 
 export const makeHtml = `<!DOCTYPE html>
@@ -86,8 +90,6 @@ Bekijk de startcode: twee knoppen, allebei met `getElementById('zin')`.
 
 ## Probeer en onderzoek
 
-Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap een antwoord pas uit als je het zelf hebt geprobeerd.
-
 <CodeEditor
   initialHtml={startHtml}
   initialCss={startCss}
@@ -96,19 +98,6 @@ Pas de code aan en kijk wat er gebeurt. De vragen staan boven in het veld; klap 
   stacked
   onderzoek={onderzoek}
 />
-
-<details>
-<summary>Voorspel: je schrijft `Document` met een hoofdletter D. Welke soort fout geeft de console?</summary>
-
-Een `TypeError`:
-
-```
-JavaScript fout: Uncaught TypeError: Document.getElementById is not a function
-```
-
-`Document` bestaat wel in JavaScript, maar het is iets anders dan de pagina `document`, en het kent geen `getElementById`. Daarom geen `ReferenceError` (de naam is bekend) maar een `TypeError` (dit ding kan dat niet).
-
-</details>
 
 ## Opdracht 1: Derde knop
 

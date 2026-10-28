@@ -49,6 +49,19 @@ describe('de onderzoeksvragen staan in het oefenveld', () => {
   );
 
   it.each(lessen.map((l) => [l.naam, l.inhoud]))(
+    '%s: geen Voorspel-blok onder het hoofdveld',
+    (_, inhoud) => {
+      // Onder het veld kan de leerling het al uitproberen, dus voorspellen is
+      // daar geen voorspellen meer. Zo'n vraag hoort in Predict, of als
+      // onderzoeksvraag in het paneel. De aanwijzing "probeer eerst zelf" staat
+      // in het paneel zelf, niet als vaste zin in elke les.
+      const sectie = inhoud.split(/^## Probeer en onderzoek$/m)[1]?.split(/^## /m)[0] ?? '';
+      expect(sectie).not.toMatch(/<summary>Voorspel/);
+      expect(inhoud).not.toContain('De vragen staan boven in het veld');
+    },
+  );
+
+  it.each(lessen.map((l) => [l.naam, l.inhoud]))(
     '%s: het hoofdveld draagt de vragen',
     (_, inhoud) => {
       const velden = [...inhoud.matchAll(/<CodeEditor[\s\S]*?\/>/g)].map((m) => m[0]);

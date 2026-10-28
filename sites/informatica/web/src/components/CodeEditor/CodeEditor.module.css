@@ -43,6 +43,12 @@
   cursor: pointer;
 }
 
+.onderzoekHint {
+  margin-left: 0.6rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.8rem;
+}
+
 .onderzoekLijst {
   margin: 0.3rem 0 0;
   padding-left: 1.4rem;
