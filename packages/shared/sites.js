@@ -27,6 +27,7 @@
 const SUBJECTS = [
   { id: 'informatica', label: 'Informatica', url: 'https://informatica.coderius.nl' },
   { id: 'wo', label: 'Wetenschapsoriëntatie', url: 'https://wo.coderius.nl' },
+  { id: 'techniek', label: 'Techniek', url: 'https://techniek.coderius.nl' },
 ];
 
 const SUBJECTS_BY_ID = Object.fromEntries(SUBJECTS.map((v) => [v.id, v]));
@@ -157,6 +158,14 @@ const SITES = defineSites([
     subject: 'wo',
     path: 'onderzoek',
     description: 'Leer onderzoek doen, van een scherpe vraag tot een eerlijke conclusie.',
+    requires: [],
+  },
+  {
+    id: 'hartjespuzzel',
+    label: 'Hartjespuzzel',
+    subject: 'techniek',
+    path: 'hartjespuzzel',
+    description: 'Leermateriaal: Opdracht hartjespuzzel',
     requires: [],
   },
 ]);
