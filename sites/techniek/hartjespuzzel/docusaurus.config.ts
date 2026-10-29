@@ -1,13 +1,13 @@
-import {createConfig} from '@coderius/shared/config';
-import {repoEditUrl} from '@coderius/shared/sites';
+import { createConfig } from '@coderius/shared/config';
+import { repoEditUrl } from '@coderius/shared/sites';
 
 export default createConfig({
-  title: "Opdracht hartjespuzzel",
-  tagline: "",
-  siteId: "hartjespuzzel",
-  projectName: "hartjespuzzel-docs",
+  title: 'Opdracht hartjespuzzel',
+  tagline: '',
+  siteId: 'hartjespuzzel',
+  projectName: 'hartjespuzzel-docs',
 
-  description: "Leermateriaal: Opdracht hartjespuzzel",
+  description: 'Leermateriaal: Opdracht hartjespuzzel',
 
   presets: [
     [
@@ -15,7 +15,7 @@ export default createConfig({
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: repoEditUrl("hartjespuzzel"),
+          editUrl: repoEditUrl('hartjespuzzel'),
         },
         blog: false,
       },

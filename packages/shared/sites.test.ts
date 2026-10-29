@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -126,5 +126,20 @@ describe('de registry van sites', () => {
       }
     }
     expect(kapot).toEqual([]);
+  });
+
+  // Hartjespuzzel kwam binnen zonder beide en brak elke build: zonder regel in
+  // de lockfile weigert `pnpm install --frozen-lockfile`, en zonder
+  // docenten.mdx wijst de Docenten-link die createConfig in elke navbar zet
+  // nergens heen, zodat onBrokenLinks de build afbreekt.
+  it('elke cursus heeft een regel in pnpm-lock.yaml en een docentenhandleiding', () => {
+    const lock = readFileSync(join(ROOT, 'pnpm-lock.yaml'), 'utf8');
+    const zonderLock = CURSUSSEN.map((s) => siteDir(s.id)).filter(
+      (dir) => !lock.includes(`\n  ${dir}:\n`),
+    );
+    const zonderDocenten = CURSUSSEN.map((s) => siteDir(s.id)).filter(
+      (dir) => !existsSync(join(ROOT, dir, 'src/pages/docenten.mdx')),
+    );
+    expect({ zonderLock, zonderDocenten }).toEqual({ zonderLock: [], zonderDocenten: [] });
   });
 });
