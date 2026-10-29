@@ -120,7 +120,7 @@ describe('vakken en thema', () => {
     expect(themasVoorVakken([])).toEqual(THEMAS);
     expect(themasVoorVakken(['wo'])).toEqual(['Onderzoek']);
     expect(themasVoorVakken(['informatica'])).toEqual([...THEMAS_PER_VAK.informatica]);
-    expect(themasVoorVakken(['informatica', 'wo'])).toEqual(THEMAS);
+    expect(themasVoorVakken(SUBJECTS.map((v) => v.id))).toEqual(THEMAS);
   });
 });
 

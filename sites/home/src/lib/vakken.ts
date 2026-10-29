@@ -34,5 +34,14 @@ export function inleiding(vakken: readonly string[], n: number): string {
   if (vakken.length === 1 && vakken[0] === 'wo') {
     return `${cursussen} wetenschapsoriëntatie, over onderzoek doen: van een scherpe vraag tot een eerlijke conclusie.`;
   }
+  // Een vak zonder eigen tekst (net aangemaakt in docs-management) krijgt er
+  // een met zijn naam, zodat de kop op zijn host niet de algemene tekst toont.
+  const vak = vakken.length === 1 ? SUBJECTS.find((v) => v.id === vakken[0]) : undefined;
+  if (vak) {
+    const naam = vak.label.toLowerCase();
+    return n === 1
+      ? `Eén cursus ${naam}. Open hem en begin in je browser.`
+      : `${cursussen} ${naam}. Kies er een en begin in je browser.`;
+  }
   return `${cursussen} voor het voortgezet onderwijs, van je eerste regel Python tot je eigen onderzoek. Kies er een en begin in je browser.`;
 }

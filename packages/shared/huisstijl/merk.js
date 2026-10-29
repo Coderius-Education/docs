@@ -121,6 +121,12 @@ const GLYPHS = {
   loep: [
     ['lijn', '<circle cx="-1.5" cy="-1.5" r="4.6"/><path d="M2 2l4.8 4.8" stroke-width="3"/>'],
   ],
+  hart: [
+    [
+      'vlak',
+      '<path d="M0 6.8C-3 4.6-7 1.5-7-2.2-7-4.8-5-6.6-3.2-6.6-1.6-6.6-.5-5.6 0-4.4.5-5.6 1.6-6.6 3.2-6.6 5-6.6 7-4.8 7-2.2 7 1.5 3 4.6 0 6.8z"/>',
+    ],
+  ],
 };
 
 // Midden van de rechterbladzijde.

@@ -328,6 +328,19 @@ const entries: CurriculumEntry[] = [
       havo: 1,
     },
   },
+  {
+    id: 'hartjespuzzel',
+    labels: [],
+    programmingLanguages: [],
+    projectTypes: ['Techniek'],
+    operatingSystems: ['Windows', 'Linux', 'macOS', 'ChromeOS'],
+    level: 'Beginner',
+    klas: '4 en 5+',
+    order: {
+      vwo: 1,
+      havo: 1,
+    },
+  },
 ];
 
 // Eerst alle cursussen voor beginners, dan de gevorderde; binnen een niveau in
@@ -378,6 +391,7 @@ export function voorkennisVan(activity: Activity): string {
 export const THEMAS_PER_VAK = {
   informatica: ['Python', 'Web', 'Games', 'Hardware', 'Security'],
   wo: ['Onderzoek'],
+  techniek: ['Techniek'],
 } as const;
 export type Thema = (typeof THEMAS_PER_VAK)[keyof typeof THEMAS_PER_VAK][number];
 
@@ -419,5 +433,10 @@ export function themasVan(activity: Activity): Thema[] {
   if (typen.includes('Robotics') || typen.includes('Embedded')) uit.push('Hardware');
   if (typen.includes('Cybersecurity')) uit.push('Security');
   if (typen.includes('Research')) uit.push('Onderzoek');
+  // Een thema van het eigen vak mag ook letterlijk in projectTypes staan; zo
+  // zet docs-management een nieuwe cursus onder een thema zonder regel hier.
+  for (const t of themasVanVak(activity.subject)) {
+    if (typen.includes(t) && !uit.includes(t)) uit.push(t);
+  }
   return uit;
 }
