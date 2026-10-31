@@ -1,10 +1,11 @@
 # Coderius
 
 Lesmateriaal voor informatica, wetenschapsoriëntatie en techniek in het
-voortgezet onderwijs, online op [coderius.nl](https://coderius.nl). Leerlingen lezen er niet alleen: ze
-voorspellen wat code doet, draaien hem in de browser, passen hem aan en bouwen
-zelf iets (de PRIMM-methode). Deze repo bevat alle cursussites, de homepage en
-de gedeelde onderdelen in één pnpm-monorepo.
+voortgezet onderwijs, online op [coderius.nl](https://coderius.nl).
+Leerlingen lezen er niet alleen: ze voorspellen wat code doet, draaien hem in
+de browser, passen hem aan en bouwen zelf iets (de PRIMM-methode). Deze repo
+bevat alle cursussites, de homepage en de gedeelde onderdelen in één
+pnpm-monorepo.
 
 ## Cursussen
 
@@ -66,7 +67,8 @@ Je hebt nodig:
 - Node 22 (zie `.nvmrc`);
 - pnpm 10, via corepack (`corepack enable`), dan krijg je vanzelf de versie uit
   `package.json`;
-- alleen voor de controle van codevoorbeelden: Python 3.12 en 3.13.
+- alleen voor de controle van codevoorbeelden: Python 3.13 (python) en 3.12
+  (algoritmes, play), dezelfde versies als in CI.
 
 ```sh
 corepack enable
@@ -105,8 +107,16 @@ pnpm preview-all        # eerst bouwen, dan de builds serveren
 De codevoorbeelden in de lessen worden in CI echt uitgevoerd of gecompileerd.
 Voor python en algoritmes doet `scripts/draai-python-blokken.py` dat, voor play
 `scripts/draai-play-blokken.py`; de docstring bovenin legt de markers uit
-waarmee je een blok bewust overslaat. Voor algoritmes en play geeft `--pins` de
-`pip install`-regel met de versies die ook in de browser draaien.
+waarmee je een blok bewust overslaat. Lokaal draai je ze zo:
+
+```sh
+python3.13 scripts/draai-python-blokken.py              # python
+python3.12 scripts/draai-python-blokken.py algorithms   # algoritmes
+python3.12 scripts/draai-play-blokken.py                # play
+```
+
+Voor algoritmes en play geeft `--pins` de `pip install`-regel met de versies
+die ook in de browser draaien; installeer die eerst in een eigen venv.
 
 CI doet alleen wat een wijziging raakt: de job `plan` bepaalt welke sites en
 controles nodig zijn. De verplichte check heet `build`. De job `tekst` telt
