@@ -96,6 +96,11 @@ const RUNNERS = {
       'scripts/alleen.py',
       'packages/python-runner/src/turtle/module.ts',
       '{site}/static/pyodide/pyodide-lock.json',
+      // Na CPython haalt de runner elk blok ook door de speeltuin zelf
+      // (lessen-in-pyodide.test.ts); verandert die, dan alle blokken opnieuw.
+      'packages/python-runner/src/PyodideProvider.ts',
+      'packages/python-runner/src/pyodide-in-node.ts',
+      'packages/python-runner/src/lessen-in-pyodide.test.ts',
     ],
   },
   algorithms: {

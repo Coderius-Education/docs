@@ -1,6 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
@@ -15,6 +14,7 @@ import {
   sluitVerseMain,
   tracePython,
 } from './PyodideProvider';
+import { PYODIDE_DIR, laadLokalePyodide } from './pyodide-in-node';
 
 // runPython (de gebufferde variant voor CodeExercise) liep uit de pas met
 // runPythonStream: hij zette geen stdin, dus input() vroeg de leerling niets,
@@ -23,18 +23,6 @@ import {
 // draaien de echte Pyodide in node via het npm-pakket (setPyodideLoader), plus
 // één nagemaakte Pyodide voor precies die lege-stderr-tak, die met een echte
 // Python-fout niet na te spelen is: Pyodide schrijft die altijd naar stderr.
-
-const PYODIDE_DIR = dirname(createRequire(import.meta.url).resolve('pyodide/package.json'));
-
-interface PyodideModule {
-  loadPyodide(options: { indexURL: string }): Promise<PyodideInterface>;
-}
-
-async function laadLokalePyodide(): Promise<PyodideInterface> {
-  const url = pathToFileURL(join(PYODIDE_DIR, 'pyodide.mjs')).href;
-  const mod = (await import(/* @vite-ignore */ url)) as PyodideModule;
-  return mod.loadPyodide({ indexURL: PYODIDE_DIR });
-}
 
 // Zonder eigen stdin leest Pyodide in node van de échte stdin en blokkeert het
 // proces voorgoed: een test die input() draait, hangt dan in plaats van te

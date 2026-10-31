@@ -192,9 +192,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # Alleen robotica en godot halen hun blokken met pnpm uit de docs.
+      # Robotica en godot halen hun blokken met pnpm uit de docs; python haalt
+      # zijn blokken na CPython ook door de speeltuin in Pyodide (vitest).
       - name: Node, pnpm en dependencies
-        if: env.BLOK_ROBOTICA == 'true' || env.BLOK_GODOT == 'true'
+        if: env.BLOK_ROBOTICA == 'true' || env.BLOK_GODOT == 'true' || env.BLOK_PYTHON == 'true'
         uses: ./.github/actions/node-pnpm
 
       - name: Cache Godot
@@ -243,8 +244,12 @@ jobs:
             shift 2
             "$python" -m venv "$map" && { [ $# -eq 0 ] || "$map/bin/pip" install -q "$@"; }
           }
+          # Eerst CPython, dan dezelfde blokken door runPython in Pyodide, zoals
+          # de speeltuin ze draait (lessen-in-pyodide.test.ts).
           python_() {
-            python3.13 scripts/draai-python-blokken.py --alleen changed.json
+            local blokken="$RUNNER_TEMP/python-blokken.json"
+            python3.13 scripts/draai-python-blokken.py --alleen changed.json --json "$blokken" &&
+              CODERIUS_BLOKKEN_JSON="$blokken" pnpm exec vitest run packages/python-runner/src/lessen-in-pyodide.test.ts
           }
           algorithms_() {
             # shellcheck disable=SC2046
