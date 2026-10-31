@@ -26,6 +26,7 @@ const sidebarManifest = require('../plugins/sidebar-manifest');
 const klasPlugin = require('../plugins/klas');
 const oudeOpslagPlugin = require('../plugins/oude-opslag');
 const { controleerRegels } = require('../oude-opslag');
+const { pyodideStaticDir } = require('./pyodide-runtime');
 
 /**
  * Welke site uit de registry bouwen we? De registry is de bron van waarheid
@@ -198,6 +199,8 @@ const FASTER = {
  *  - de CC BY-NC 4.0 copyright als de footer er geen heeft
  *  - transpilatie van @coderius/* workspace-componenten
  *  - static-mappen van sharedPackages worden automatisch mee-geserveerd
+ *  - de Pyodide-runtime onder <baseUrl>pyodide/, uit node_modules, voor een
+ *    site met `pyodide` als dependency (pyodide-runtime.js)
  *  - sensible defaults (i18n nl, onBrokenLinks throw, future.v4, prism-thema)
  *
  * Handige extra's: geef `description`/`keywords` mee i.p.v. zelf headTags te
@@ -383,9 +386,14 @@ function createConfig(course = {}) {
       ...(registry ? { siteId: registry.id } : {}),
       ...(oudeOpslag ? { oudeOpslag } : {}),
     },
-    staticDirectories:
-      staticDirectories ||
-      uniqueDirs(['static', SHARED_STATIC, ...packageStaticDirs(sharedPackages)]),
+    // De Pyodide-runtime komt uit node_modules (pyodide-runtime.js), naast de
+    // wheels in static/pyodide/ van de site; ook als een site eigen
+    // staticDirectories meegeeft.
+    staticDirectories: [
+      ...(staticDirectories ||
+        uniqueDirs(['static', SHARED_STATIC, ...packageStaticDirs(sharedPackages)])),
+      ...[pyodideStaticDir(process.cwd())].filter(Boolean),
+    ],
     presets: withSharedCustomCss(linkbaar.presets, merk),
     clientModules: [...LETTER_CSS, ...(rest.clientModules || [])],
     plugins: [

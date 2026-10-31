@@ -1,16 +1,20 @@
 name: Pyodide-wheels
 
-# Een site die Pyodide zelf serveert (static/pyodide/) en een pakket als
-# matplotlib nodig heeft, serveert ook de wheels van dat pakket. Die zitten
-# niet in de npm-package van Pyodide, alleen op cdn.jsdelivr.net, en die CDN
-# is niet overal bereikbaar: niet op elk schoolnetwerk, niet in elke
-# ontwikkelomgeving. Daardoor bleef algorithms jaren op Pyodide 0.27.4 staan.
+# Een site die Pyodide zelf serveert en een pakket als matplotlib nodig heeft,
+# serveert ook de wheels van dat pakket, uit static/pyodide/. De runtime zelf
+# komt bij de build uit node_modules (packages/shared/config/pyodide-runtime.js),
+# maar de wheels zitten niet in de npm-package van Pyodide, alleen op
+# cdn.jsdelivr.net, en die CDN is niet overal bereikbaar: niet op elk
+# schoolnetwerk, niet in elke ontwikkelomgeving. Daardoor bleef algorithms
+# jaren op Pyodide 0.27.4 staan.
 #
-# Deze workflow draait na elke push die een pyodide-lock.json in een site
-# verandert (een nieuwe runtime via `copy:pyodide`), niet op main. Hij draait voor elke site
-# met een script `haal:wheels` dat script met --opruimen: de wheels van de
-# nieuwe lock komen erbij, elk tegen zijn sha256 uit die lock gelegd, en die
-# van de vorige versie gaan weg. Wat verandert, commit hij op dezelfde branch.
+# Deze workflow draait na elke push die de Pyodide-versie kan veranderen (de
+# catalog in pnpm-workspace.yaml, de lockfile) of de lijst wheels van een site
+# (zijn package.json), niet op main. Hij draait voor elke site met een script
+# `haal:wheels` dat script met --opruimen: de wheels van de geïnstalleerde lock
+# komen erbij, elk tegen zijn sha256 uit die lock gelegd, en die van de vorige
+# versie gaan weg. Wat verandert, commit hij op dezelfde branch; staat alles er
+# al, dan doet hij niets.
 #
 # Een commit met GITHUB_TOKEN start geen nieuwe workflow. Daarom start deze
 # workflow daarna zelf Build sites op die branch; de checks van die run staan
@@ -24,7 +28,9 @@ on:
     # zie je meteen of ze werken. Met de hand starten (workflow_dispatch) kan
     # pas als de workflow op main staat.
     paths:
-      - 'sites/*/*/static/pyodide/pyodide-lock.json'
+      - 'pnpm-workspace.yaml'
+      - 'pnpm-lock.yaml'
+      - 'sites/*/*/package.json'
       - '.github/workflows/pyodide-wheels.yml'
       - 'packages/python-runner/scripts/haal-pyodide-wheels.mjs'
   workflow_dispatch:

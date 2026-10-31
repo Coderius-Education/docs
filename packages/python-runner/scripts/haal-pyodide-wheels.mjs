@@ -1,8 +1,9 @@
 // Haalt de wheels van één Pyodide-pakket plus alles waar het van afhangt naar
 // static/pyodide/ van de aanroepende site.
 //
-// Waarom dit naast copy-pyodide.mjs bestaat: de npm-package van Pyodide bevat
-// alléén de runtime, in geen enkele versie een wheel. Een site die matplotlib
+// De runtime zelf komt bij start en build uit node_modules
+// (packages/shared/config/pyodide-runtime.js). Maar de npm-package van Pyodide
+// bevat alléén de runtime, in geen enkele versie een wheel. Een site die matplotlib
 // of een ander pakket zelf wil serveren — want anders valt loadPackage terug op
 // de CDN die zo'n map juist vermijdt — moet die wheels apart ophalen. Dat is
 // tot nu toe met de hand gebeurd, en daardoor liep de matplotlib-set van
@@ -17,8 +18,8 @@
 //
 // Een wheel die er al staat met de goede checksum wordt niet opnieuw
 // opgehaald, dus het script mag vaker draaien. De workflow pyodide-wheels doet
-// dat na elke wijziging van een pyodide-lock.json, want cdn.jsdelivr.net is
-// niet overal bereikbaar.
+// dat na elke wijziging van de Pyodide-versie (catalog, lockfile), want
+// cdn.jsdelivr.net is niet overal bereikbaar.
 //
 // De versies en checksums komen uit de pyodide-lock.json van de geïnstalleerde
 // pyodide, dus je krijgt precies de wheels die bij díe runtime horen. Elk

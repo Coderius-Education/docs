@@ -99,7 +99,7 @@ const RUNNERS = {
       'scripts/draai-python-blokken.py',
       'scripts/alleen.py',
       'packages/python-runner/src/turtle/module.ts',
-      '{site}/static/pyodide/pyodide-lock.json',
+      // Een andere Pyodide komt via de catalog en de lockfile (globaal).
       // Na CPython haalt de runner elk blok ook door de speeltuin zelf
       // (lessen-in-pyodide.test.ts); verandert die, dan alle blokken opnieuw.
       'packages/python-runner/src/PyodideProvider.ts',
@@ -114,7 +114,8 @@ const RUNNERS = {
       'scripts/draai-python-blokken.py',
       'scripts/alleen.py',
       'packages/python-runner/src/turtle/module.ts',
-      '{site}/static/pyodide/pyodide-lock.json',
+      // De wheels bepalen de pins (numpy, matplotlib) en de Python-versie.
+      '{site}/static/pyodide/',
     ],
   },
   play: {

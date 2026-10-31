@@ -1,10 +1,11 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { gebruiktPyodide } from '@coderius/shared/config/pyodide-runtime';
 import { alleSiteMappen } from '@coderius/shared/sites';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-// Elke site serveert Pyodide zelf, uit static/pyodide/. De gedeelde lader
+// Elke site serveert Pyodide zelf, onder <baseUrl>pyodide/. De gedeelde lader
 // (getPyodide in PyodideProvider.ts) weet dat adres alleen als de site het
 // zet, met setPyodideBaseUrl in een clientModule. Tot november 2026 viel hij
 // zonder die regel stil terug op cdn.jsdelivr.net: een nieuwe cursus die hem
@@ -104,7 +105,7 @@ describe('elke site die de gedeelde lader gebruikt', () => {
     );
   });
 
-  it('zet in een clientModule het adres van zijn eigen static/pyodide/', () => {
+  it('zet in een clientModule het adres van zijn eigen Pyodide', () => {
     const zonder = gebruikers
       .filter(({ map }) => {
         const zet = clientModules(map).some(
@@ -121,10 +122,10 @@ describe('elke site die de gedeelde lader gebruikt', () => {
   });
 
   it('serveert die Pyodide ook echt', () => {
-    const zonder = gebruikers
-      .filter(({ map }) => !existsSync(join(map, 'static', 'pyodide', 'pyodide.asm.wasm')))
-      .map((s) => s.id);
-    expect(zonder, 'draai `pnpm --filter <site> copy:pyodide`').toEqual([]);
+    // createConfig zet de runtime klaar voor elke site die `pyodide` declareert
+    // (packages/shared/config/pyodide-runtime.js).
+    const zonder = gebruikers.filter(({ map }) => !gebruiktPyodide(map)).map((s) => s.id);
+    expect(zonder, 'zet `"pyodide": "catalog:"` in devDependencies').toEqual([]);
   });
 });
 

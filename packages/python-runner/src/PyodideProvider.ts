@@ -1,7 +1,8 @@
 // Singleton Pyodide loader — shared across all components on the page.
 //
-// Elke site serveert Pyodide zelf, uit static/pyodide/ (ook op een
-// schoolnetwerk dat CDN's blokkeert). Een site zet het adres met
+// Elke site serveert Pyodide zelf, onder <baseUrl>pyodide/ (ook op een
+// schoolnetwerk dat CDN's blokkeert; createConfig zet de runtime daar klaar
+// uit node_modules, zie packages/shared/config/pyodide-runtime.js). Een site zet het adres met
 // setPyodideBaseUrl() in een clientModule, vóór de componenten mounten.
 // Er is bewust geen standaard: tot november 2026 viel deze provider stil
 // terug op cdn.jsdelivr.net, en een nieuwe cursus die de regel vergat, laadde
@@ -10,8 +11,8 @@
 // build van elke site die deze lader gebruikt.
 //
 // Eén bron van waarheid voor de Pyodide-versie. Houd PYODIDE_VERSION gelijk aan
-// de `pyodide`-versie in de catalog (pnpm-workspace.yaml): de copy-pyodide-
-// scripts kopiëren díe versie naar static/pyodide/ van elke site.
+// de `pyodide`-versie in de catalog (pnpm-workspace.yaml): díe versie serveert
+// elke site.
 // play heeft een eigen constante in sites/play/src/components/CodeRunner/engine.js,
 // omdat die site zijn Pyodide in een iframe laadt en niet via deze provider.
 // Hij hoort dezelfde versie te noemen; pyodide-kopie.test.ts controleert dat.

@@ -1,6 +1,6 @@
-// Self-hosted under static/pyodide/ so it works on school networks that
-// block public CDNs. Must match the version of the files actually shipped
-// in static/pyodide/ (pyodide.js + matplotlib wheel set).
+// Self-hosted under <baseUrl>pyodide/ so it works on school networks that
+// block public CDNs. createConfig zet de runtime daar bij de build klaar uit
+// node_modules; de matplotlib-wheels staan in static/pyodide/ (haal:wheels).
 const DEFAULT_INDEX = '/pyodide/';
 
 declare global {

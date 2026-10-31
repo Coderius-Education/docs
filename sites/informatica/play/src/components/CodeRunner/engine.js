@@ -11,11 +11,11 @@
 // staat hieronder. Ga je hierin bumpen, dan moet de pymunk-wheel mee: zijn
 // ABI-tag (pyemscripten_2025_0) hoort bij de abi_version van de Pyodide-versie.
 //
-// Pyodide komt van de site zelf (static/pyodide/, met de wheels van pygame-ce,
-// numpy en cffi ernaast), niet van een CDN: een schoolnetwerk dat
-// cdn.jsdelivr.net blokkeert, blokkeerde zo de hele speeltuin. Na een bump
-// hier: `pnpm --filter @coderius/play-docs copy:pyodide`, de workflow
-// pyodide-wheels haalt de wheels erbij. De versie gaat als ?v= mee met elke
+// Pyodide komt van de site zelf (<baseUrl>pyodide/: de runtime zet createConfig
+// er bij de build uit node_modules, de wheels van pygame-ce, numpy en cffi
+// staan in static/pyodide/), niet van een CDN: een schoolnetwerk dat
+// cdn.jsdelivr.net blokkeert, blokkeerde zo de hele speeltuin. Een bump gaat
+// via de catalog; de workflow pyodide-wheels haalt daarna de wheels erbij. De versie gaat als ?v= mee met elke
 // aanvraag, zodat de service worker een nieuwe versie niet uit zijn cache
 // van de oude beantwoordt.
 export const PYODIDE_VERSION = '0.29.4';

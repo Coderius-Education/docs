@@ -121,7 +121,8 @@ foutmelding hangt af van zijn eigen regels en van de blokken eromheen.
 Het script bedient meerdere cursussen; wat per site verschilt (docs-map, het
 runbare component, de Python-versie van de Pyodide, de gepinde pakketten) staat
 in de SITES-tabel bovenaan. Voor algorithms pint CI numpy en matplotlib op de
-versies die de browser laadt, uit static/pyodide/pyodide-lock.json — draait de
+versies die de browser laadt: die van de wheels in static/pyodide/ van de site
+(pyodide-kopie.test.ts eist dat die bij de lock van de runtime horen). Draait de
 controle tegen een andere numpy, dan zegt groen niets over wat een leerling ziet.
 
 Afsluitcode 0 als alles slaagt, 1 zodra er iets misgaat.
@@ -148,7 +149,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # de named group `oefcode`. `python_versie` is de CPython van de Pyodide die de
 # site serveert — alleen op die versie worden foutmeldingsteksten beoordeeld.
 # `pins` zijn de pakketten die CI vastzet op de versie die de browser laadt,
-# afgelezen uit static/pyodide/pyodide-lock.json van de site zelf.
+# afgelezen uit de wheels in static/pyodide/ van de site zelf.
 SITES = {
     "python": {
         "docs": site_dir("python") / "docs",
@@ -1092,24 +1093,59 @@ def controleer_claim(claim) -> str | None:
     return None
 
 
+def pyodide_lock() -> dict | None:
+    """Het lock-bestand van de Pyodide die de site serveert, of None.
+
+    De runtime staat niet in git: createConfig zet hem bij start en build uit
+    het geïnstalleerde `pyodide` van de site (node_modules/pyodide). Zonder
+    `pnpm install` is er dus geen lock; de job blokken installeert node niet
+    voor algorithms alleen.
+    """
+    lock = DOCS.parent / "node_modules" / "pyodide" / "pyodide-lock.json"
+    return json.loads(lock.read_text()) if lock.exists() else None
+
+
+def wheels() -> list[Path]:
+    """De wheels die de site naast de runtime serveert (haal:wheels)."""
+    return sorted((DOCS.parent / "static" / "pyodide").glob("*.whl"))
+
+
+def _wheelnaam(naam: str) -> str:
+    return re.sub(r"[-_.]+", "_", naam).lower()
+
+
 def python_van_de_lock() -> tuple[int, int] | None:
-    """De CPython-versie die de site echt serveert, uit zijn eigen pyodide-lock."""
-    lock = DOCS.parent / "static" / "pyodide" / "pyodide-lock.json"
-    if not lock.exists():
-        return None
-    versie = json.loads(lock.read_text()).get("info", {}).get("python")
-    if not versie:
-        return None
-    delen = versie.split(".")
-    return (int(delen[0]), int(delen[1]))
+    """De CPython-versie die de site echt serveert.
+
+    Uit de lock als die er is, anders uit de ABI-tag (cp313) van de wheels:
+    pyodide-kopie.test.ts eist dat die bij de lock horen.
+    """
+    lock = pyodide_lock()
+    versie = (lock or {}).get("info", {}).get("python")
+    if versie:
+        delen = versie.split(".")
+        return (int(delen[0]), int(delen[1]))
+    for wiel in wheels():
+        m = re.search(r"-cp(\d)(\d+)-", wiel.name)
+        if m:
+            return (int(m.group(1)), int(m.group(2)))
+    return None
 
 
 def pins() -> dict[str, str]:
-    """De browser-versies van de gepinde pakketten, uit de eigen pyodide-lock."""
-    if not SITE["pins"]:
-        return {}
-    lock = json.loads((DOCS.parent / "static" / "pyodide" / "pyodide-lock.json").read_text())
-    return {naam: lock["packages"][naam]["version"] for naam in SITE["pins"]}
+    """De browser-versies van de gepinde pakketten, uit de wheels van de site."""
+    uit = {}
+    for naam in SITE["pins"]:
+        for wiel in wheels():
+            delen = wiel.name.split("-")
+            if _wheelnaam(delen[0]) == _wheelnaam(naam):
+                uit[naam] = delen[1]
+        if naam not in uit:
+            raise SystemExit(
+                f"Geen wheel voor {naam} in static/pyodide/ van {SITE_NAAM}; "
+                f"draai `pnpm --filter <site> haal:wheels`."
+            )
+    return uit
 
 
 def controleer_pins() -> str | None:
@@ -1129,7 +1165,7 @@ def controleer_pins() -> str | None:
         return None
     return (
         "De geïnstalleerde pakketten wijken af van wat de browser laadt "
-        "(static/pyodide/pyodide-lock.json):\n  "
+        "(de wheels in static/pyodide/):\n  "
         + "\n  ".join(scheef)
         + "\n\nDan test je iets anders dan een leerling ziet. Installeer met:\n  "
         + "pip install " + " ".join(f"{n}=={v}" for n, v in pins().items())
@@ -1164,7 +1200,7 @@ def main() -> int:
         return 0
 
     # De site-versie staat op drie plekken: de SITES-tabel hier, python-version
-    # in build.yml, en wat static/pyodide/ echt serveert. Drijven die uiteen,
+    # in build.yml, en wat de site echt serveert. Drijven die uiteen,
     # dan zouden de foutmeldingsteksten stilletjes niet meer vergeleken worden —
     # precies het "groen zegt niets" dat dit script moet uitsluiten. De lock is
     # de waarheid (dat ís wat de browser draait), dus daar toetsen we tegen.
@@ -1172,7 +1208,7 @@ def main() -> int:
     if lock_versie is not None and lock_versie != PYTHON_VAN_DE_SITE:
         print(
             f"SITES[{naam!r}] zegt Python {'.'.join(map(str, PYTHON_VAN_DE_SITE))}, "
-            f"maar static/pyodide/pyodide-lock.json van de site serveert "
+            f"maar de Pyodide van de site serveert "
             f"{'.'.join(map(str, lock_versie))}. Pas python_versie in de SITES-tabel "
             f"aan (en python-version van de job in build.yml).",
             file=sys.stderr,

@@ -168,10 +168,11 @@ jobs:
   #               geciteerde foutmeldingen worden gereproduceerd. Op 3.13, de
   #               Python van Pyodide 0.29.4 in de speeltuin.
   #   algorithms  dezelfde controle, ook op 3.13, met numpy en matplotlib
-  #               gepind op de versies uit static/pyodide/pyodide-lock.json
-  #               (--pins). Voor matplotlib 3.8.4 heeft PyPI geen wheel voor
-  #               3.13; pip bouwt hem uit de bron (een paar minuten), en de
-  #               pip-cache hieronder bewaart die wheel tot de lock verandert.
+  #               gepind op de versies van de wheels die de site serveert
+  #               (static/pyodide/, --pins). Voor matplotlib 3.8.4 heeft PyPI
+  #               geen wheel voor 3.13; pip bouwt hem uit de bron (een paar
+  #               minuten), en de pip-cache hieronder bewaart die wheel tot de
+  #               wheels van de site veranderen.
   #   play        elk speeltuin-blok draait echt tegen de gebundelde wheel uit
   #               static/whl/, met precies de pygame/numpy die de wheel pint.
   #   robotica    elk MicroPython-blok compileert; er is geen board in CI.
@@ -255,7 +256,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cache/pip
-          key: pip-algorithms-${{ runner.os }}-${{ hashFiles('sites/informatica/algorithms/static/pyodide/pyodide-lock.json') }}
+          key: pip-algorithms-${{ runner.os }}-${{ hashFiles('sites/informatica/algorithms/static/pyodide/*.whl') }}
 
       - name: Codevoorbeelden van python, algorithms, play, robotica en godot
         run: |

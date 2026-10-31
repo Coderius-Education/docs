@@ -171,6 +171,6 @@ Twee uitzonderingen:
   [`sites/informatica/algorithms/LICENSE.md`](sites/informatica/algorithms/LICENSE.md)
   voor de bronvermelding.
 - Meegeleverde software houdt zijn eigen licentie: Monaco
-  (`packages/editor/static/monaco`), Pyodide (`static/pyodide` van een site),
+  (`packages/editor/static/monaco`), Pyodide (uit `node_modules` bij de build, en de wheels in `static/pyodide` van een site),
   htmx (`sites/informatica/fullstack/static/htmx`) en de wheels van play en
   pymunk in `sites/informatica/play/static/whl` (beide MIT).

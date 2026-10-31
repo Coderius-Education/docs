@@ -3,129 +3,105 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { gebruiktPyodide } from '@coderius/shared/config/pyodide-runtime';
 import { alleSiteMappen } from '@coderius/shared/sites';
 import { describe, expect, it } from 'vitest';
 
-// Sommige sites serveren Pyodide zelf uit static/pyodide/ in plaats van vanaf de
-// CDN, zodat de speeltuin het ook doet op een schoolnetwerk dat CDN's blokkeert.
-// Die kopie wordt met de hand gemaakt (`pnpm --filter <site> copy:pyodide`) en
-// daarna gecommit — tientallen megabytes binair die daarna niemand meer bekijkt.
-//
-// Dat is precies hoe python-docs op een 0.28.0.dev0-snapshot achterbleef terwijl
-// de catalog al op 0.29 stond en `PYODIDE_VERSION` in PyodideProvider.ts 0.29.4
-// beloofde. Niets merkte het; het kwam boven omdat iemand toevallig het
-// lock-bestand van die kopie opensloeg.
-//
-// Deze test legt de gecommitte kopie naast de geïnstalleerde pyodide. Vergelijken
-// gaat op de checksum van de wasm en niet op een versienummer: 0.28 zet zijn
-// versie in `info.version` van pyodide-lock.json, 0.29 niet meer, dus een
-// versieveld is er simpelweg niet altijd.
+// De Pyodide van elke site. De runtime staat niet meer in git: createConfig
+// zet hem bij start en build uit het geïnstalleerde `pyodide`-pakket onder
+// <baseUrl>pyodide/ (packages/shared/config/pyodide-runtime.js). Tot november
+// 2026 stond hij als kopie in static/pyodide/ van vijf sites, en liep er een
+// zo achter: python-docs op een 0.28.0.dev0-snapshot, algorithms op 0.27.4.
+// Wat nog wel in static/pyodide/ staat, zijn de wheels die niet op npm staan
+// (haal:wheels), en die moeten bij precies die runtime horen.
 
 const ROOT = join(fileURLToPath(new URL('../../..', import.meta.url)));
-/** Map van een site (sites/<vak>/<id>), uit de registry. */
-const siteMap = (id: string) =>
-  join(ROOT, alleSiteMappen().find((s) => s.id === id)?.dir ?? `sites/_onbekend/${id}`);
-const WASM = 'pyodide.asm.wasm';
-
-// Een site die (nog) niet gelijkloopt hoort hier met een reden te staan. Zonder
-// die lijst zou deze test vandaag meteen rood zijn en dus meteen worden
-// uitgezet; mét de lijst is de achterstand zichtbaar en telbaar.
-// Leeg sinds algorithms van 0.27.4 naar 0.29.4 ging; elke site draait nu
-// dezelfde Pyodide.
-const NOG_NIET_BIJGEWERKT = new Map<string, string>([]);
+const sites = alleSiteMappen().map((s) => ({ id: s.id, map: join(ROOT, s.dir) }));
+const RUNTIME = /^(pyodide(\.asm)?\.(js|mjs|wasm)(\.map)?|python_stdlib\.zip|pyodide-lock\.json)$/;
 
 function somVan(pad: string): string {
   return createHash('sha256').update(readFileSync(pad)).digest('hex');
 }
 
-/** De sites met een eigen gecommitte Pyodide-kopie. */
-function zelfHostendeSites(): string[] {
-  return alleSiteMappen()
-    .map((s) => s.id)
-    .filter((id) => existsSync(join(siteMap(id), 'static', 'pyodide', WASM)));
-}
-
-function geinstalleerdeWasm(): string {
+/** Het lock-bestand van de geïnstalleerde Pyodide: wat elke site serveert. */
+function geinstalleerdeLock() {
   const require = createRequire(import.meta.url);
-  return join(dirname(require.resolve('pyodide/package.json')), WASM);
+  return JSON.parse(
+    readFileSync(
+      join(dirname(require.resolve('pyodide/package.json')), 'pyodide-lock.json'),
+      'utf8',
+    ),
+  );
 }
 
-describe('de zelf geserveerde Pyodide-kopieën', () => {
-  it('er zijn sites die Pyodide zelf serveren', () => {
-    // Ondergrens tegen een stille lege lijst: verhuist static/pyodide/ ooit,
-    // dan hoort dat een testfout te zijn en geen groen vinkje over niets.
-    expect(zelfHostendeSites().length).toBeGreaterThanOrEqual(3);
+/** Bronbestanden van een site, zonder tests, builds, static en node_modules. */
+function bronnen(map: string): string[] {
+  if (!existsSync(map)) return [];
+  const uit: string[] = [];
+  for (const item of readdirSync(map, { withFileTypes: true })) {
+    if (['node_modules', 'build', 'static'].includes(item.name) || item.name.startsWith('.'))
+      continue;
+    const pad = join(map, item.name);
+    if (item.isDirectory()) uit.push(...bronnen(pad));
+    else if (/\.(ts|tsx|js|mjs)$/.test(item.name) && !item.name.includes('.test.')) uit.push(pad);
+  }
+  return uit;
+}
+
+describe('de Pyodide van elke site', () => {
+  const metPyodide = sites.filter(({ map }) => gebruiktPyodide(map)).map((s) => s.id);
+
+  it('vijf sites serveren Pyodide', () => {
+    // Ondergrens tegen een stille lege lijst.
+    expect(metPyodide.sort()).toEqual(['algorithms', 'ctf', 'ide', 'play', 'python']);
   });
 
-  it('draaien dezelfde build als de geïnstalleerde pyodide', () => {
-    const verwacht = somVan(geinstalleerdeWasm());
-    const afwijkend = zelfHostendeSites()
-      .filter((site) => !NOG_NIET_BIJGEWERKT.has(site))
-      .filter((site) => somVan(join(siteMap(site), 'static', 'pyodide', WASM)) !== verwacht);
-
-    expect(afwijkend).toEqual([]);
+  it('wie Pyodide laadt, declareert het pakket', () => {
+    // Zonder `pyodide` in package.json zet createConfig de runtime niet klaar,
+    // en vraagt de site in de browser om bestanden die er niet zijn. Een site
+    // laadt Pyodide als zijn bron een adres `…pyodide/` noemt: de clientModule
+    // van python, ctf en ide, de eigen laders van algorithms en play.
+    const zonder = sites
+      .filter(({ map }) =>
+        bronnen(join(map, 'src')).some((pad) => /pyodide\/['`]/.test(readFileSync(pad, 'utf8'))),
+      )
+      .filter(({ map }) => !gebruiktPyodide(map))
+      .map((s) => s.id);
+    expect(zonder).toEqual([]);
   });
 
-  it('staan niet voor niets op de uitzonderingslijst', () => {
-    // Andersom: is een site bijgewerkt, dan moet hij van de lijst af. Anders
-    // blijft er een uitzondering staan voor een probleem dat niet meer bestaat,
-    // en dekt die stilzwijgend de volgende drift toe.
-    const verwacht = somVan(geinstalleerdeWasm());
-    const inmiddelsGelijk = [...NOG_NIET_BIJGEWERKT.keys()]
-      .filter((site) => existsSync(join(siteMap(site), 'static', 'pyodide', WASM)))
-      .filter((site) => somVan(join(siteMap(site), 'static', 'pyodide', WASM)) === verwacht);
-
-    expect(inmiddelsGelijk).toEqual([]);
+  it('zet de runtime niet meer in git, alleen wheels', () => {
+    const runtime = sites.flatMap(({ id, map }) => {
+      const pyodide = join(map, 'static', 'pyodide');
+      if (!existsSync(pyodide)) return [];
+      return readdirSync(pyodide)
+        .filter((n) => RUNTIME.test(n) || !n.endsWith('.whl'))
+        .map((n) => `${id}: static/pyodide/${n}`);
+    });
+    expect(runtime, 'de runtime komt uit node_modules (pyodide-runtime.js)').toEqual([]);
   });
 
-  it('hebben wheels die bij de Python-versie van hun eigen runtime horen', () => {
-    // De val waar algorithms in zou lopen. De npm-package van Pyodide bevat in
-    // geen enkele versie wheels, alleen de runtime; wie een pakket nodig heeft
-    // zet die wheels er met de hand bij. Vervang je dan alleen de runtime, dan
-    // staan er cp312-wheels naast een 3.13-interpreter: die laden niet, en
-    // loadPackage valt terug op de CDN die zo'n map juist vermijdt. Stil, want
-    // er komt geen foutmelding uit de build.
-    const mismatch: string[] = [];
-
-    for (const site of zelfHostendeSites()) {
-      const map = join(siteMap(site), 'static', 'pyodide');
-      const lock = JSON.parse(readFileSync(join(map, 'pyodide-lock.json'), 'utf8'));
-      const [groot, klein] = String(lock.info.python).split('.');
-      const verwacht = `cp${groot}${klein}`;
-
-      for (const bestand of readdirSync(map).filter((n) => n.endsWith('.whl'))) {
-        const tag = bestand.match(/-(cp\d{2,3})-/)?.[1];
-        // Wheels zonder ABI-tag (py3-none-any) draaien op elke versie.
-        if (tag && tag !== verwacht) {
-          mismatch.push(`${site}: ${bestand} hoort bij ${tag}, runtime is ${verwacht}`);
-        }
-      }
-    }
-
-    expect(mismatch).toEqual([]);
-  });
-
-  it('hebben de hele wheel-keten die hun haal:wheels belooft, met de checksums uit hun lock', () => {
+  it('heeft de hele wheel-keten die haal:wheels belooft, met de checksums uit de lock', () => {
     // Een runtime zonder zijn wheels bouwt gewoon: de build kijkt niet in
     // static/. Pas in de browser zegt loadPackage dat matplotlib er niet is,
-    // en dan zien vijftien lessen geen grafiek. Na een upgrade van de runtime
-    // vult de workflow pyodide-wheels de keten aan; tot die klaar is, is dit
-    // rood. Een wheel die niet bij de keten hoort (van een vorige versie) is
-    // ook een fout: die laadt nooit meer, maar staat wel op elke preview.
+    // en dan zien vijftien lessen geen grafiek. Na een upgrade vult de
+    // workflow pyodide-wheels de keten aan; tot die klaar is, is dit rood. Een
+    // wheel die niet bij de keten hoort (van een vorige versie, of voor een
+    // andere Python) is ook een fout: die laadt nooit meer.
+    const lock = geinstalleerdeLock();
     const problemen: string[] = [];
 
-    for (const site of zelfHostendeSites()) {
-      const pkg = JSON.parse(readFileSync(join(siteMap(site), 'package.json'), 'utf8'));
+    for (const { id, map } of sites) {
+      const pkg = JSON.parse(readFileSync(join(map, 'package.json'), 'utf8'));
       const haal: string | undefined = pkg.scripts?.['haal:wheels'];
-      const map = join(siteMap(site), 'static', 'pyodide');
-      const wheels = readdirSync(map).filter((n) => n.endsWith('.whl'));
+      const dir = join(map, 'static', 'pyodide');
+      const wheels = existsSync(dir) ? readdirSync(dir).filter((n) => n.endsWith('.whl')) : [];
       if (!haal) {
         // Wie wheels serveert, moet ze ook kunnen verversen.
-        if (wheels.length) problemen.push(`${site}: wheels zonder haal:wheels-script`);
+        if (wheels.length) problemen.push(`${id}: wheels zonder haal:wheels-script`);
         continue;
       }
 
-      const lock = JSON.parse(readFileSync(join(map, 'pyodide-lock.json'), 'utf8'));
       const woorden = haal.split(/\s+/);
       const pakketten = woorden
         .slice(woorden.findIndex((w) => w.endsWith('haal-pyodide-wheels.mjs')) + 1)
@@ -136,7 +112,7 @@ describe('de zelf geserveerde Pyodide-kopieën', () => {
         const naam = todo.pop() as string;
         if (keten.has(naam)) continue;
         if (!lock.packages[naam]) {
-          problemen.push(`${site}: de lock kent geen pakket ${naam}`);
+          problemen.push(`${id}: de lock kent geen pakket ${naam}`);
           continue;
         }
         keten.add(naam);
@@ -147,20 +123,21 @@ describe('de zelf geserveerde Pyodide-kopieën', () => {
         [...keten].map((n) => [lock.packages[n].file_name, lock.packages[n].sha256]),
       );
       for (const [bestand, sha] of verwacht) {
-        const pad = join(map, bestand);
-        if (!existsSync(pad)) problemen.push(`${site}: ${bestand} ontbreekt`);
-        else if (somVan(pad) !== sha)
-          problemen.push(`${site}: ${bestand} heeft een andere checksum`);
+        const pad = join(dir, bestand);
+        if (!existsSync(pad)) problemen.push(`${id}: ${bestand} ontbreekt`);
+        else if (somVan(pad) !== sha) problemen.push(`${id}: ${bestand} heeft een andere checksum`);
       }
       for (const bestand of wheels) {
-        if (!verwacht.has(bestand)) problemen.push(`${site}: ${bestand} hoort niet bij de keten`);
+        if (!verwacht.has(bestand)) problemen.push(`${id}: ${bestand} hoort niet bij de keten`);
       }
     }
 
     expect(problemen).toEqual([]);
   });
+});
 
-  it('elke vastgelegde Pyodide-versie in de bron wijst naar dezelfde build', () => {
+describe('de Pyodide-versie in de bron', () => {
+  it('elke vastgelegde versie wijst naar de geïnstalleerde build', () => {
     // play laadt Pyodide in een eigen iframe en heeft daarom een eigen constante,
     // los van die in PyodideProvider. Twee constanten betekent twee versies
     // zodra iemand er één bumpt — play liep zo lang achter op 0.27.x. Deze test
@@ -171,45 +148,21 @@ describe('de zelf geserveerde Pyodide-kopieën', () => {
       readFileSync(require.resolve('pyodide/package.json'), 'utf8'),
     ).version;
 
-    const bronnen: string[] = [];
-    const loop = (map: string): void => {
-      for (const item of readdirSync(map, { withFileTypes: true })) {
-        // static/ bevat de gekopieerde Pyodide zelf; die noemt zijn eigen versie.
-        if (['node_modules', 'build', 'static', '.docusaurus'].includes(item.name)) continue;
-        const pad = join(map, item.name);
-        if (item.isDirectory()) loop(pad);
-        // Tests overslaan: dit bestand bevat de zoekpatronen zelf, en zou
-        // zichzelf als afwijking rapporteren.
-        else if (/\.(ts|tsx|js|mjs)$/.test(item.name) && !item.name.includes('.test.'))
-          bronnen.push(pad);
-      }
-    };
-    loop(join(ROOT, 'sites'));
-    loop(join(ROOT, 'packages'));
-
     const afwijkend: string[] = [];
-    for (const pad of bronnen) {
+    for (const pad of [...bronnen(join(ROOT, 'sites')), ...bronnen(join(ROOT, 'packages'))]) {
       const tekst = readFileSync(pad, 'utf8');
       for (const m of tekst.matchAll(/PYODIDE_VERSION = '([^']+)'/g)) {
         if (m[1] !== geinstalleerd) afwijkend.push(`${pad}: PYODIDE_VERSION ${m[1]}`);
-      }
-      for (const m of tekst.matchAll(/cdn\.jsdelivr\.net\/pyodide\/v(\d+\.\d+\.\d+)/g)) {
-        if (m[1] !== geinstalleerd) afwijkend.push(`${pad}: CDN-URL v${m[1]}`);
       }
     }
 
     expect(afwijkend, `geïnstalleerd is ${geinstalleerd}`).toEqual([]);
   });
 
-  it('declareren pyodide als devDependency', () => {
-    // Zonder die declaratie hangt de kopie aan niets: geen catalog, geen
-    // lockfile-druk, geen signaal als de rest doorloopt. Zo dreef python-docs
-    // weg — de lockfile noemde pyodide daar wél, de package.json niet.
-    const zonder = zelfHostendeSites().filter((site) => {
-      const pkg = JSON.parse(readFileSync(join(siteMap(site), 'package.json'), 'utf8'));
-      return !pkg.devDependencies?.pyodide && !pkg.dependencies?.pyodide;
-    });
-
-    expect(zonder).toEqual([]);
+  it('de catalog pint pyodide exact', () => {
+    // Met een bereik (^0.29.3) kan een verse lockfile een nieuwere patch
+    // kiezen; dan krijgt elke site een andere runtime dan zijn wheels.
+    const werkruimte = readFileSync(join(ROOT, 'pnpm-workspace.yaml'), 'utf8');
+    expect(werkruimte).toMatch(/^ {2}pyodide: \d+\.\d+\.\d+$/m);
   });
 });

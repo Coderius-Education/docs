@@ -107,6 +107,25 @@ oud adres een pagina die doorstuurt, en weigert een oud adres waar weer een
 echte pagina staat. De python-cursus houdt de lijst bij in
 `src/data/omleidingen.ts`, met een test die eist dat elk doel een les is.
 
+## Pyodide
+
+Elke site die Python in de browser draait (python, ctf, ide, algorithms,
+play), serveert dezelfde Pyodide zelf onder `<baseUrl>pyodide/`: geen CDN,
+want schoolnetwerken blokkeren die. De versie staat exact in de catalog
+(`pyodide` in `pnpm-workspace.yaml`). De runtime staat niet in git: een site
+met `pyodide` als devDependency krijgt hem van `createConfig` bij start en
+build uit `node_modules` (`packages/shared/config/pyodide-runtime.js`). Wat
+niet op npm staat, de wheels van pakketten als matplotlib of pygame-ce, staat
+in `static/pyodide/` van de site en komt uit `haal:wheels`; na een upgrade
+haalt de workflow `pyodide-wheels` ze zelf op en commit ze op de branch. Een
+site die de gedeelde lader (`CodeExercise`, `PythonPlayground`, de editor)
+gebruikt, zet het adres met `setPyodideBaseUrl` in een clientModule; zonder
+die regel geeft `getPyodide` een fout. `pyodide-kopie.test.ts` en
+`pyodide-adres.test.ts` in `packages/python-runner` bewaken dat: geen runtime
+in git, de hele wheel-keten met de checksums uit de lock, overal dezelfde
+versie, en geen CDN in de bron. Upgraden is dus: de catalog bumpen, `pnpm
+install`, pushen, en de wheel-commit van de workflow afwachten.
+
 ## Browsers
 
 Voor welke browsers de sites gebouwd worden staat in één bestand,

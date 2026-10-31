@@ -4,7 +4,7 @@
 //
 // De node-tests draaien Pyodide in node en de componenttests een nagemaakte
 // Pyodide in jsdom; geen van beide laadt de site zoals een leerling hem
-// krijgt: de eigen Pyodide-kopie uit static/pyodide, de wasm, het venster
+// krijgt: de eigen Pyodide onder /python/pyodide/, de wasm, het venster
 // voor input(), en de tekening van turtle in de pagina. Dit script serveert
 // de gebouwde python-site onder zijn eigen pad, opent in Chromium de eerste
 // les met een oefenveld (CodeExercise), en doet daar wat een leerling doet.
