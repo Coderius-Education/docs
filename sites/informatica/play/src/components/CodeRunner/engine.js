@@ -10,8 +10,15 @@
 // 7.3.0 publiceert het project zelf een wasm-wheel voor Python 3.13, en die
 // staat hieronder. Ga je hierin bumpen, dan moet de pymunk-wheel mee: zijn
 // ABI-tag (pyemscripten_2025_0) hoort bij de abi_version van de Pyodide-versie.
+//
+// Pyodide komt van de site zelf (static/pyodide/, met de wheels van pygame-ce,
+// numpy en cffi ernaast), niet van een CDN: een schoolnetwerk dat
+// cdn.jsdelivr.net blokkeert, blokkeerde zo de hele speeltuin. Na een bump
+// hier: `pnpm --filter @coderius/play-docs copy:pyodide`, de workflow
+// pyodide-wheels haalt de wheels erbij. De versie gaat als ?v= mee met elke
+// aanvraag, zodat de service worker een nieuwe versie niet uit zijn cache
+// van de oude beantwoordt.
 export const PYODIDE_VERSION = '0.29.4';
-const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
 // Eén regel per wheel: play-wheels.py, draai-play-blokken.py en de tests
 // zoeken ze zo, en een build-tag met een lange branchnaam maakt hem lang.
 // biome-ignore format: zie hierboven
@@ -29,6 +36,9 @@ import {
 } from './puur';
 
 import { siteBasis } from './sitebasis';
+
+/** Waar de iframe Pyodide vandaan haalt (via de pagina, zie wielen.js). */
+const pyodideBasis = (siteOrigin) => `${siteOrigin}/pyodide/`;
 import { LAAD_WIELEN_SNIPPET } from './wielen';
 
 export { detectMode, ensureAsync, isBerichtVanOuder, rewriteTraceback } from './puur';
@@ -102,9 +112,8 @@ export function buildPrewarmSrcDoc(codes) {
 <script type="module">
 ${LAAD_WIELEN_SNIPPET}
 try {
-  const { loadPyodide } = await import('${PYODIDE_CDN}');
   // Parallel-load Pyodide's own packages with the WASM init.
-  const pyodide = await loadPyodide({ packages: [${pyodidePackagesCode}] });
+  const pyodide = await laadPyodide('${pyodideBasis(siteOrigin)}', '${PYODIDE_VERSION}', { packages: [${pyodidePackagesCode}] });
   const WHEELS = [${wheelsCode}];
   if (WHEELS.length) {
     await laadWielen(pyodide, WHEELS);
@@ -218,9 +227,8 @@ ${REWRITE_TRACEBACK_SNIPPET}
 
 try {
   loading.textContent = 'Runtime laden...';
-  const { loadPyodide } = await import('${PYODIDE_CDN}');
   // Load Pyodide's own packages in parallel with the WASM init.
-  const pyodide = await loadPyodide({ packages: [${pyodidePackagesCode}] });
+  const pyodide = await laadPyodide('${pyodideBasis(siteOrigin)}', '${PYODIDE_VERSION}', { packages: [${pyodidePackagesCode}] });
 
   // Capture print() output and show it in the visible console panel
   pyodide.setStdout({ batched: (msg) => appendConsole(msg + '\\n') });
@@ -354,8 +362,7 @@ let pyodide = null;
 let booting = (async () => {
   try {
     loading.textContent = 'Runtime laden...';
-    const { loadPyodide } = await import('${PYODIDE_CDN}');
-    pyodide = await loadPyodide({ packages: [${pyodidePackagesCode}] });
+    pyodide = await laadPyodide('${pyodideBasis(siteOrigin)}', '${PYODIDE_VERSION}', { packages: [${pyodidePackagesCode}] });
 
     pyodide.setStdout({ batched: (msg) => post('stdout', { text: msg + '\\n' }) });
     pyodide.setStderr({ batched: (msg) => post('stderr', { text: rewriteTraceback(msg, CURRENT_OFFSET, CURRENT_INGEVOEGD) + '\\n' }) });
