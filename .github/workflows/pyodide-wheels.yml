@@ -7,7 +7,7 @@ name: Pyodide-wheels
 # ontwikkelomgeving. Daardoor bleef algorithms jaren op Pyodide 0.27.4 staan.
 #
 # Deze workflow draait na elke push die een pyodide-lock.json in een site
-# verandert (een nieuwe runtime via `copy:pyodide`). Hij draait voor elke site
+# verandert (een nieuwe runtime via `copy:pyodide`), niet op main. Hij draait voor elke site
 # met een script `haal:wheels` dat script met --opruimen: de wheels van de
 # nieuwe lock komen erbij, elk tegen zijn sha256 uit die lock gelegd, en die
 # van de vorige versie gaan weg. Wat verandert, commit hij op dezelfde branch.
@@ -20,8 +20,13 @@ name: Pyodide-wheels
 on:
   push:
     branches-ignore: [main]
+    # Ook bij een wijziging van deze workflow of van het ophaalscript: dan
+    # zie je meteen of ze werken. Met de hand starten (workflow_dispatch) kan
+    # pas als de workflow op main staat.
     paths:
       - 'sites/*/*/static/pyodide/pyodide-lock.json'
+      - '.github/workflows/pyodide-wheels.yml'
+      - 'packages/python-runner/scripts/haal-pyodide-wheels.mjs'
   workflow_dispatch:
 
 concurrency:
