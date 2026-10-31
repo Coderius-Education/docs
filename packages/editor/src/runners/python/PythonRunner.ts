@@ -1,4 +1,9 @@
-import { getPyodide, runPythonStream } from '@coderius/python-runner/PyodideProvider';
+import {
+  getPyodide,
+  openVerseMain,
+  runPythonStream,
+  sluitVerseMain,
+} from '@coderius/python-runner/PyodideProvider';
 import { inhoudNaarBytes, isDataUrl } from '../../vfs/bestanden';
 import type { RunContext, Runner, RunnerState } from '../types';
 
@@ -73,8 +78,9 @@ export function createPythonRunner(): Runner {
       pyodide.runPython(RESET_USER_MODULES);
 
       // Elke run start met schone globals, zodat variabelen van een vorige
-      // run niet stiekem blijven bestaan.
-      const namespace = pyodide.toPy({ __name__: '__main__' });
+      // run niet stiekem blijven bestaan: een verse module __main__, zodat
+      // ook pickle een klasse uit de code van de leerling vindt.
+      const namespace = openVerseMain(pyodide);
       const stream = {
         onStdout: (text: string) => ctx.emit({ kind: 'stdout', text }),
         onStderr: (text: string) => ctx.emit({ kind: 'stderr', text }),
@@ -99,7 +105,7 @@ export function createPythonRunner(): Runner {
           ctx.emit({ kind: 'stderr', text: `${result.error}\n` });
         }
       } finally {
-        namespace.destroy();
+        sluitVerseMain(pyodide, namespace);
       }
     },
 

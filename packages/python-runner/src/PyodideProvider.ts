@@ -382,6 +382,25 @@ const OUDE_MAIN_PY = `
 _coderius_sys.modules['__main__'] = _coderius_echte_main
 `;
 
+/**
+ * Een verse module __main__ voor één run: geeft zijn globals terug (een
+ * PyProxy van een dict) om aan runPythonAsync of runPythonStream mee te geven,
+ * en zet hem zolang in sys.modules. Sluit af met sluitVerseMain. Een lege dict
+ * alleen is niet genoeg: dan vindt pickle een klasse van de leerling niet.
+ */
+export function openVerseMain(pyodide: PyodideInterface): { destroy?: () => void } | undefined {
+  return pyodide.runPython(VERSE_MAIN_PY) as { destroy?: () => void } | undefined;
+}
+
+/** Ruimt de globals van openVerseMain op en zet de echte __main__ terug. */
+export function sluitVerseMain(
+  pyodide: PyodideInterface,
+  namespace: { destroy?: () => void } | undefined,
+): void {
+  namespace?.destroy?.();
+  pyodide.runPython(OUDE_MAIN_PY);
+}
+
 export async function runPython(
   pyodide: PyodideInterface,
   code: string,
@@ -405,7 +424,7 @@ sys.stderr = StringIO()
   // module __main__, die zolang ook in sys.modules staat: met alleen een lege
   // dict vond pickle een klasse van de leerling niet meer ("attribute lookup
   // on __main__ failed"). input() zit in builtins en blijft gewoon werken.
-  const namespace = pyodide.runPython(VERSE_MAIN_PY) as { destroy?: () => void } | undefined;
+  const namespace = openVerseMain(pyodide);
 
   let didError = false;
   let jsError = '';
@@ -415,8 +434,7 @@ sys.stderr = StringIO()
     didError = true;
     jsError = err instanceof Error ? err.message : String(err);
   } finally {
-    namespace?.destroy?.();
-    pyodide.runPython(OUDE_MAIN_PY);
+    sluitVerseMain(pyodide, namespace);
   }
 
   // sys.stdout.getvalue()/sys.stderr.getvalue() zijn Python str's; Pyodide

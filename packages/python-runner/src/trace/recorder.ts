@@ -11,7 +11,7 @@
 //
 // De namen beginnen allemaal met _stapper_ omdat deze code in dezelfde
 // Pyodide-globals leeft als de gewone uitvoerknop. De leerlingcode zelf draait
-// juist in een verse globals-dict: elke opname begint schoon, en de leerling
+// juist in een verse module __main__: elke opname begint schoon, en de leerling
 // ziet geen enkele naam uit dit bestand terug in de variabelentabel.
 
 export const MAX_STAPPEN = 1000;
@@ -19,6 +19,7 @@ export const MAX_STAPPEN = 1000;
 export const RECORDER = `
 import json as _stapper_json
 import sys as _stapper_sys
+import types as _stapper_types
 from io import StringIO as _stapper_StringIO
 
 _STAPPER_BESTAND = '<leerling>'
@@ -139,33 +140,43 @@ def _stapper_neem_op(bron, voorwerk=None):
             'fout': {'soort': type(e).__name__, 'bericht': str(e.msg), 'regel': e.lineno or 1},
         })
 
-    globalen = {'__name__': '__main__', '__builtins__': __builtins__}
-    _STAPPER_VERBORGEN_NAMEN = set()
-    if voorwerk:
-        # Vooraf, onder een eigen bestandsnaam: de tracer volgt alleen
-        # _STAPPER_BESTAND, dus de regels hiervan komen niet in de opname,
-        # en wat het definieert blijft uit de variabelenlijst.
-        exec(compile(voorwerk, '<voorwerk>', 'exec'), globalen)
-        _STAPPER_VERBORGEN_NAMEN = set(globalen) - {'__name__', '__builtins__'}
-    echte_stdout = _stapper_sys.stdout
-    _stapper_sys.stdout = uitvoer
-    _stapper_sys.settrace(tracer)
+    # Een verse module __main__, die zolang ook in sys.modules staat: met
+    # alleen een lege dict vond pickle een klasse van de leerling niet. De
+    # opname loopt in één keer door, dus na afloop gaat terug wat er stond.
+    module = _stapper_types.ModuleType('__main__')
+    module.__builtins__ = __builtins__
+    globalen = module.__dict__
+    vorige_main = _stapper_sys.modules.get('__main__')
+    _stapper_sys.modules['__main__'] = module
     try:
-        exec(code, globalen)
-    except _StapperGenoeg:
-        pass
-    except BaseException as e:
-        # De diepste regel uit de leerlingcode, niet uit de bibliotheek eronder.
-        regel = None
-        tb = e.__traceback__
-        while tb is not None:
-            if tb.tb_frame.f_code.co_filename == _STAPPER_BESTAND:
-                regel = tb.tb_lineno
-            tb = tb.tb_next
-        fout = {'soort': type(e).__name__, 'bericht': str(e), 'regel': regel}
+        _STAPPER_VERBORGEN_NAMEN = set()
+        if voorwerk:
+            # Vooraf, onder een eigen bestandsnaam: de tracer volgt alleen
+            # _STAPPER_BESTAND, dus de regels hiervan komen niet in de opname,
+            # en wat het definieert blijft uit de variabelenlijst.
+            exec(compile(voorwerk, '<voorwerk>', 'exec'), globalen)
+            _STAPPER_VERBORGEN_NAMEN = set(globalen) - {'__name__', '__builtins__'}
+        echte_stdout = _stapper_sys.stdout
+        _stapper_sys.stdout = uitvoer
+        _stapper_sys.settrace(tracer)
+        try:
+            exec(code, globalen)
+        except _StapperGenoeg:
+            pass
+        except BaseException as e:
+            # De diepste regel uit de leerlingcode, niet uit de bibliotheek eronder.
+            regel = None
+            tb = e.__traceback__
+            while tb is not None:
+                if tb.tb_frame.f_code.co_filename == _STAPPER_BESTAND:
+                    regel = tb.tb_lineno
+                tb = tb.tb_next
+            fout = {'soort': type(e).__name__, 'bericht': str(e), 'regel': regel}
+        finally:
+            _stapper_sys.settrace(None)
+            _stapper_sys.stdout = echte_stdout
     finally:
-        _stapper_sys.settrace(None)
-        _stapper_sys.stdout = echte_stdout
+        _stapper_sys.modules['__main__'] = vorige_main
 
     return _stapper_json.dumps({
         'stappen': stappen,

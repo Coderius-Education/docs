@@ -8,9 +8,11 @@ import {
   type PyodideInterface,
   getPyodide,
   haalTekening,
+  openVerseMain,
   runPython,
   runPythonStream,
   setPyodideLoader,
+  sluitVerseMain,
   tracePython,
 } from './PyodideProvider';
 
@@ -255,6 +257,58 @@ describe('runPython en runPythonStream met echte Pyodide in node', () => {
     // Na de run staat de echte __main__ van Pyodide weer op zijn plek.
     expect(pyodide.runPython("import sys; sys.modules['__main__'].__name__")).toBe('__main__');
     expect(await runPython(pyodide, 'print(2)')).toBe('2\n');
+  });
+
+  it('stap voor stap: pickle vindt een klasse van de leerling', async () => {
+    // De opnemer had al een eigen dict als globals, maar zonder module in
+    // sys.modules gaf pickle "attribute lookup on __main__ failed".
+    const code =
+      'import pickle\nclass Hond:\n    pass\nprint(type(pickle.loads(pickle.dumps(Hond()))).__name__)';
+    const opname = await tracePython(pyodide, code);
+    expect(opname.fout).toBeNull();
+    expect(opname.uitvoer).toBe('Hond\n');
+    expect(pyodide.runPython("import sys; sys.modules['__main__'].__name__")).toBe('__main__');
+  });
+
+  it('openVerseMain: opzetcode en hoofdcode delen één schone namespace, zoals in de editor', async () => {
+    // De PythonRunner van de editor draait eerst de opzetcode van een opdracht
+    // en dan het bestand van de leerling, met dezelfde globals.
+    const run = async () => {
+      const namespace = openVerseMain(pyodide);
+      const uit: string[] = [];
+      const stream = {
+        onStdout: (t: string) => uit.push(t),
+        onStderr: (t: string) => uit.push(t),
+        globals: namespace,
+      };
+      try {
+        await runPythonStream(pyodide, 'import pickle\nclass Kat:\n    pass', stream);
+        await runPythonStream(
+          pyodide,
+          'print(type(pickle.loads(pickle.dumps(Kat()))).__name__)\nnaam = "Bo"',
+          stream,
+        );
+        await runPythonStream(pyodide, 'print(naam)', stream);
+      } finally {
+        sluitVerseMain(pyodide, namespace);
+      }
+      return uit.join('');
+    };
+    expect(await run()).toBe('Kat\nBo\n');
+    // Een volgende run begint opnieuw leeg.
+    const namespace = openVerseMain(pyodide);
+    try {
+      const result = await runPythonStream(pyodide, 'print(naam)', {
+        onStdout: () => {},
+        onStderr: () => {},
+        globals: namespace,
+      });
+      expect(result.ok).toBe(false);
+      expect(result.error).toContain("NameError: name 'naam' is not defined");
+    } finally {
+      sluitVerseMain(pyodide, namespace);
+    }
+    expect(pyodide.runPython("import sys; sys.modules['__main__'].__name__")).toBe('__main__');
   });
 
   it('een import en input() werken ook in de lege globals', async () => {
