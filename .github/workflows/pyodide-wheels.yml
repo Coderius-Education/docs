@@ -55,7 +55,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          git add -A 'sites/*/*/static/pyodide'
+          # Zonder aanhalingstekens: dan vult de shell de mappen in. Een
+          # pathspec met jokertekens moet het hele pad van een bestand dekken,
+          # en 'sites/*/*/static/pyodide' dekt dus geen enkel bestand erin.
+          git add -A -- sites/*/*/static/pyodide
           if git diff --cached --quiet; then
             echo "De wheels waren al compleet."
             exit 0
