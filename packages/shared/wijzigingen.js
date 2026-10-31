@@ -355,7 +355,7 @@ function pakketVan(pad, pakketMappen) {
  *   noemt (`--filter "...[base]"`): gewijzigd, of hangt af van iets gewijzigds
  * @param {string[]} invoer.alleMappen  mappen van alle workspace-packages
  * @param {{id: string, dir: string}[]} invoer.sites  alle sites uit de registry
- * @param {{pad: string, tekst: string}[]} invoer.tests  alle *.test.ts
+ * @param {{pad: string, tekst: string}[]} invoer.tests  alle *.test.ts en *.test.tsx
  * @param {boolean} [invoer.volledig]  alles draaien (nightly, handmatig, geen base)
  * @param {string} [invoer.reden]
  * @param {string | null} [invoer.base]

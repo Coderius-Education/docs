@@ -44,39 +44,62 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
     };
   }, []);
 
+  // Laadde Python niet (geen netwerk, een CDN dat de school blokkeert), dan
+  // probeert een klik op Uitvoeren of Stap voor stap het opnieuw. Eerst stond
+  // de knop aan maar deed hij niets, onder een foutmelding die bleef staan.
+  const zorgVoorPyodide = useCallback(async (): Promise<PyodideInterface | null> => {
+    if (pyodideRef.current) return pyodideRef.current;
+    setIsLoading(true);
+    setOutput('');
+    try {
+      const { getPyodide } = await import('../PyodideProvider');
+      pyodideRef.current = await getPyodide();
+      return pyodideRef.current;
+    } catch (err) {
+      setOutput(`Fout bij het laden van Python: ${err}`);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const execCode = useCallback(async () => {
-    if (!pyodideRef.current || isRunning) return;
+    if (isRunning) return;
+    const pyodide = await zorgVoorPyodide();
+    if (!pyodide) return;
     setIsRunning(true);
     setOutput('');
     setOpname(null);
     setTekening(null);
     try {
       const { haalTekening, runPython } = await import('../PyodideProvider');
-      const result = await runPython(pyodideRef.current, code, { turtle: true });
+      const result = await runPython(pyodide, code, { turtle: true });
       setOutput(result);
-      setTekening(haalTekening(pyodideRef.current));
+      setTekening(haalTekening(pyodide));
     } catch (err) {
       setOutput(err instanceof Error ? err.message : String(err));
     } finally {
       setIsRunning(false);
     }
-  }, [code, isRunning]);
+  }, [code, isRunning, zorgVoorPyodide]);
 
   const stapCode = useCallback(async () => {
-    if (!pyodideRef.current || isRunning) return;
+    if (isRunning) return;
+    const pyodide = await zorgVoorPyodide();
+    if (!pyodide) return;
     setIsRunning(true);
     setOutput('');
     setTekening(null);
     try {
       const { tracePython } = await import('../PyodideProvider');
       setOpnameCode(code);
-      setOpname(await tracePython(pyodideRef.current, code, undefined, { turtle: true }));
+      setOpname(await tracePython(pyodide, code, undefined, { turtle: true }));
     } catch (err) {
       setOutput(err instanceof Error ? err.message : String(err));
     } finally {
       setIsRunning(false);
     }
-  }, [code, isRunning]);
+  }, [code, isRunning, zorgVoorPyodide]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

@@ -27,7 +27,10 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@cspell/dict-nl-nl": "^2.4.2",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
     "cspell": "^10.1.0",
+    "jsdom": "^26.1.0",
     "vitest": "catalog:"
   }
 }

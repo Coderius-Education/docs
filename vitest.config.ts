@@ -7,12 +7,20 @@ import { defineConfig } from 'vitest/config';
 //
 // De tests staan bij de code die ze bewaken: de nakijk-checker en de
 // conceptenlijsten per site, de DVWA-labs, de editor-package (preview-builder,
-// bestandsboom, paden) en de python-runner. De Docusaurus-pagina's zelf worden
-// niet getest — die dekt `pnpm build` af.
+// bestandsboom, paden) en de python-runner. Een componenttest heet *.test.tsx
+// en zet bovenaan `// @vitest-environment jsdom`; de rest draait in node. De
+// Docusaurus-pagina's zelf worden niet getest — die dekt `pnpm build` af.
 export default defineConfig({
+  // Docusaurus lost `@docusaurus/BrowserOnly` en co. op in zijn eigen bundler.
+  // Een componenttest (*.test.tsx) heeft het pad nodig om hem te kunnen mocken.
+  resolve: {
+    alias: {
+      '@docusaurus/BrowserOnly': '@docusaurus/core/lib/client/exports/BrowserOnly.js',
+    },
+  },
   test: {
     environment: 'node',
-    include: ['{packages,sites}/**/*.test.ts'],
+    include: ['{packages,sites}/**/*.test.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/build/**', '**/.docusaurus/**', '**/__fixtures__/**'],
     setupFiles: ['./vitest.setup.ts'],
   },
