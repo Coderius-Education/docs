@@ -15,11 +15,22 @@
 //
 // Let op: de npm-package van Pyodide bevat alléén de runtime, geen enkele wheel
 // — niet in 0.29 en ook niet in 0.27. Een site die een pakket nodig heeft
-// (algorithms draait matplotlib) haalt die wheels apart op — daarvoor is
-// haal-pyodide-wheels.mjs hiernaast. Dit script begon met de doelmap leeggooien
-// en zou ze daarmee wissen; vandaar de controle hieronder.
+// (algorithms draait matplotlib) haalt die wheels apart op met
+// haal-pyodide-wheels.mjs hiernaast, via een script `haal:wheels`. Bij zo'n site
+// ververst dit script alleen de runtime en laat het de wheels staan; na de push
+// haalt de workflow pyodide-wheels de wheels van de nieuwe lock op en ruimt hij
+// de oude op. Staan er wheels zonder zo'n script, dan zijn ze met de hand
+// toegevoegd en weigert dit script, want wegvegen zou ze stil kwijtmaken.
 
-import { cpSync, existsSync, readdirSync, rmSync, statSync, unlinkSync } from 'node:fs';
+import {
+  cpSync,
+  existsSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  unlinkSync,
+} from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 
@@ -37,24 +48,32 @@ try {
 
 const dest = join(siteRoot, 'static', 'pyodide');
 
-// Wheels die er staan maar niet uit de npm-package komen, zijn met de hand
-// toegevoegd. Ze wegvegen breekt de site stil: loadPackage valt dan terug op de
-// CDN die deze map juist vermijdt, zonder foutmelding. Liever hier stoppen dan
-// dat later in de klas ontdekken.
+const pkg = JSON.parse(readFileSync(join(siteRoot, 'package.json'), 'utf8'));
+const haaltWheels = Boolean(pkg.scripts?.['haal:wheels']);
+
+// Wheels die er staan maar niet uit de npm-package komen. Zonder haal:wheels
+// zijn ze met de hand toegevoegd, en ze wegvegen breekt de site stil:
+// loadPackage valt dan terug op de CDN die deze map juist vermijdt, zonder
+// foutmelding. Liever hier stoppen dan dat later in de klas ontdekken.
 if (existsSync(dest)) {
   const bron = new Set(readdirSync(src));
-  const handmatig = readdirSync(dest).filter((n) => n.endsWith('.whl') && !bron.has(n));
-  if (handmatig.length > 0) {
-    console.error(`${dest} bevat ${handmatig.length} wheel(s) die niet uit de npm-package komen:`);
-    for (const naam of handmatig.slice(0, 5)) console.error(`  ${naam}`);
-    if (handmatig.length > 5) console.error(`  ... en nog ${handmatig.length - 5}`);
+  const wheels = readdirSync(dest).filter((n) => n.endsWith('.whl') && !bron.has(n));
+  if (wheels.length > 0 && !haaltWheels) {
+    console.error(`${dest} bevat ${wheels.length} wheel(s) die niet uit de npm-package komen:`);
+    for (const naam of wheels.slice(0, 5)) console.error(`  ${naam}`);
+    if (wheels.length > 5) console.error(`  ... en nog ${wheels.length - 5}`);
     console.error('');
     console.error('Die zijn met de hand toegevoegd en gaan bij een verversing verloren.');
-    console.error('Haal eerst de bijbehorende wheels van de nieuwe Pyodide-versie op,');
-    console.error('zet ze klaar, en verwijder daarna deze map zelf.');
+    console.error('Geef de site een script haal:wheels (zie algorithms), dan blijven ze');
+    console.error('staan en haalt de workflow pyodide-wheels de nieuwe op.');
     process.exit(1);
   }
-  rmSync(dest, { recursive: true, force: true });
+  for (const naam of readdirSync(dest)) {
+    if (!wheels.includes(naam)) rmSync(join(dest, naam), { recursive: true, force: true });
+  }
+  if (wheels.length > 0) {
+    console.log(`${wheels.length} wheels blijven staan; haal:wheels --opruimen ververst ze.`);
+  }
 }
 
 cpSync(src, dest, { recursive: true });

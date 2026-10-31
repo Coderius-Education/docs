@@ -1,0 +1,68 @@
+name: Pyodide-wheels
+
+# Een site die Pyodide zelf serveert (static/pyodide/) en een pakket als
+# matplotlib nodig heeft, serveert ook de wheels van dat pakket. Die zitten
+# niet in de npm-package van Pyodide, alleen op cdn.jsdelivr.net, en die CDN
+# is niet overal bereikbaar: niet op elk schoolnetwerk, niet in elke
+# ontwikkelomgeving. Daardoor bleef algorithms jaren op Pyodide 0.27.4 staan.
+#
+# Deze workflow draait na elke push die een pyodide-lock.json in een site
+# verandert (een nieuwe runtime via `copy:pyodide`). Hij draait voor elke site
+# met een script `haal:wheels` dat script met --opruimen: de wheels van de
+# nieuwe lock komen erbij, elk tegen zijn sha256 uit die lock gelegd, en die
+# van de vorige versie gaan weg. Wat verandert, commit hij op dezelfde branch.
+#
+# Een commit met GITHUB_TOKEN start geen nieuwe workflow. Daarom start deze
+# workflow daarna zelf Build sites op die branch; de checks van die run staan
+# op de nieuwe commit, ook in de pull request.
+# pyodide-kopie.test.ts is rood zolang de wheels ontbreken.
+
+on:
+  push:
+    branches-ignore: [main]
+    paths:
+      - 'sites/*/*/static/pyodide/pyodide-lock.json'
+  workflow_dispatch:
+
+concurrency:
+  group: pyodide-wheels-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  wheels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ./.github/actions/node-pnpm
+
+      - name: Wheels ophalen
+        run: |
+          set -euo pipefail
+          for pkg in sites/*/*/package.json; do
+            if node -e "process.exit(require('./$pkg').scripts?.['haal:wheels'] ? 0 : 1)"; then
+              echo "== $(dirname "$pkg")"
+              pnpm --dir "$(dirname "$pkg")" run haal:wheels --opruimen
+            fi
+          done
+
+      - name: Committen en Build sites starten
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git add -A 'sites/*/*/static/pyodide'
+          if git diff --cached --quiet; then
+            echo "De wheels waren al compleet."
+            exit 0
+          fi
+          git diff --cached --stat
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "Pyodide-wheels bij de nieuwe lock (workflow pyodide-wheels)"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          gh workflow run build.yml --ref "${GITHUB_REF_NAME}" -f volledig=false

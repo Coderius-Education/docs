@@ -30,12 +30,9 @@ const WASM = 'pyodide.asm.wasm';
 // Een site die (nog) niet gelijkloopt hoort hier met een reden te staan. Zonder
 // die lijst zou deze test vandaag meteen rood zijn en dus meteen worden
 // uitgezet; mét de lijst is de achterstand zichtbaar en telbaar.
-const NOG_NIET_BIJGEWERKT = new Map([
-  [
-    'algorithms',
-    'draait bewust op 0.27.4 (Python 3.12): de dertien met de hand toegevoegde wheels zijn cp312, en verversen breekt matplotlib in vijftien lessen — zie sites/informatica/algorithms/CLAUDE.md',
-  ],
-]);
+// Leeg sinds algorithms van 0.27.4 naar 0.29.4 ging; elke site draait nu
+// dezelfde Pyodide.
+const NOG_NIET_BIJGEWERKT = new Map<string, string>([]);
 
 function somVan(pad: string): string {
   return createHash('sha256').update(readFileSync(pad)).digest('hex');
@@ -106,6 +103,61 @@ describe('de zelf geserveerde Pyodide-kopieën', () => {
     }
 
     expect(mismatch).toEqual([]);
+  });
+
+  it('hebben de hele wheel-keten die hun haal:wheels belooft, met de checksums uit hun lock', () => {
+    // Een runtime zonder zijn wheels bouwt gewoon: de build kijkt niet in
+    // static/. Pas in de browser zegt loadPackage dat matplotlib er niet is,
+    // en dan zien vijftien lessen geen grafiek. Na een upgrade van de runtime
+    // vult de workflow pyodide-wheels de keten aan; tot die klaar is, is dit
+    // rood. Een wheel die niet bij de keten hoort (van een vorige versie) is
+    // ook een fout: die laadt nooit meer, maar staat wel op elke preview.
+    const problemen: string[] = [];
+
+    for (const site of zelfHostendeSites()) {
+      const pkg = JSON.parse(readFileSync(join(siteMap(site), 'package.json'), 'utf8'));
+      const haal: string | undefined = pkg.scripts?.['haal:wheels'];
+      const map = join(siteMap(site), 'static', 'pyodide');
+      const wheels = readdirSync(map).filter((n) => n.endsWith('.whl'));
+      if (!haal) {
+        // Wie wheels serveert, moet ze ook kunnen verversen.
+        if (wheels.length) problemen.push(`${site}: wheels zonder haal:wheels-script`);
+        continue;
+      }
+
+      const lock = JSON.parse(readFileSync(join(map, 'pyodide-lock.json'), 'utf8'));
+      const woorden = haal.split(/\s+/);
+      const pakketten = woorden
+        .slice(woorden.findIndex((w) => w.endsWith('haal-pyodide-wheels.mjs')) + 1)
+        .filter((w) => !w.startsWith('--'));
+      const keten = new Set<string>();
+      const todo = [...pakketten];
+      while (todo.length) {
+        const naam = todo.pop() as string;
+        if (keten.has(naam)) continue;
+        if (!lock.packages[naam]) {
+          problemen.push(`${site}: de lock kent geen pakket ${naam}`);
+          continue;
+        }
+        keten.add(naam);
+        todo.push(...(lock.packages[naam].depends ?? []));
+      }
+
+      const verwacht = new Map(
+        [...keten].map((n) => [lock.packages[n].file_name, lock.packages[n].sha256]),
+      );
+      for (const [bestand, sha] of verwacht) {
+        const pad = join(map, bestand);
+        if (!existsSync(pad)) problemen.push(`${site}: ${bestand} ontbreekt`);
+        else if (somVan(pad) !== sha)
+          problemen.push(`${site}: ${bestand} heeft een andere checksum`);
+      }
+      for (const bestand of wheels) {
+        if (!verwacht.has(bestand)) problemen.push(`${site}: ${bestand} hoort niet bij de keten`);
+      }
+    }
+
+    expect(problemen).toEqual([]);
   });
 
   it('elke vastgelegde Pyodide-versie in de bron wijst naar dezelfde build', () => {

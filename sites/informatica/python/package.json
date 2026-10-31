@@ -24,8 +24,7 @@
     "prism-react-renderer": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "@coderius/python-runner": "workspace:*",
-    "pyodide": "^0.29.3"
+    "@coderius/python-runner": "workspace:*"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "catalog:",

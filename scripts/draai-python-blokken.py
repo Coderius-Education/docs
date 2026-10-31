@@ -179,7 +179,7 @@ SITES = {
         # `export default String.raw\`…\``; het stuk tussen de eerste en de
         # laatste backtick is de Python. De prop staat vóór initialCode.
         "verborgen_map": site_dir("algorithms") / "src" / "components" / "PyRunner" / "verborgen",
-        "python_versie": (3, 12),
+        "python_versie": (3, 13),
         # numpy en matplotlib bepalen wat een blok print; de rest van de
         # matplotlib-keten reist als dependency mee.
         "pins": ("numpy", "matplotlib"),
