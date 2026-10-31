@@ -41,7 +41,7 @@ const PAD = process.env.CODERIUS_BLOKKEN_JSON;
 const PYTHON_VAN_PYODIDE = '3.13';
 
 /** De melding waarop runPython eindigt als de code omviel, of null. */
-export function foutVan(uitvoer: string): string | null {
+function foutVan(uitvoer: string): string | null {
   const regels = uitvoer.trimEnd().split('\n');
   const laatste = regels.at(-1)?.trim() ?? '';
   const ervoor = regels.at(-2) ?? '';
