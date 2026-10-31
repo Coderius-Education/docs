@@ -53,6 +53,27 @@ function foutVan(uitvoer: string): string | null {
   return null;
 }
 
+/**
+ * Een melding zonder het nummer van de systeemfout: Linux, macOS en Windows
+ * zeggen `[Errno 2]` bij een bestand dat er niet is, de browser (Emscripten)
+ * `[Errno 44]`. De rest van de melding is gelijk, en dat nummer kan een les
+ * niet voor beide goed hebben; de leerling let er ook niet op.
+ */
+function zonderErrno(melding: string): string {
+  return melding.replace(/\[Errno \d+\]/, '[Errno …]');
+}
+
+describe('zonderErrno', () => {
+  it('laat het nummer van een systeemfout weg, en verder niets', () => {
+    expect(zonderErrno("FileNotFoundError: [Errno 44] No such file or directory: 'a.txt'")).toBe(
+      zonderErrno("FileNotFoundError: [Errno 2] No such file or directory: 'a.txt'"),
+    );
+    expect(zonderErrno("NameError: name 'x' is not defined")).toBe(
+      "NameError: name 'x' is not defined",
+    );
+  });
+});
+
 describe('foutVan', () => {
   it('herkent de melding achter "Fout op regel"', () => {
     expect(foutVan('hoi\nFout op regel 2\nZeroDivisionError: division by zero')).toBe(
@@ -113,8 +134,8 @@ describe.skipIf(!PAD)('de lescode doet in de speeltuin wat CPython doet', () => 
         } else if (!fout) {
           afwijkingen.push(`${waar}: valt in CPython om op ${blok.fout}, in de speeltuin niet`);
         } else {
-          const verwacht = zelfdeVersie ? blok.fout : blok.fout.split(':')[0];
-          const echt = zelfdeVersie ? fout : fout.split(':')[0];
+          const verwacht = zelfdeVersie ? zonderErrno(blok.fout) : blok.fout.split(':')[0];
+          const echt = zelfdeVersie ? zonderErrno(fout) : fout.split(':')[0];
           if (echt !== verwacht)
             afwijkingen.push(`${waar}: speeltuin ${fout}, CPython ${blok.fout}`);
         }
