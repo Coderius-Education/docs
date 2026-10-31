@@ -52,6 +52,7 @@ jobs:
       checks: ${{ steps.plan.outputs.checks }}
       tekst: ${{ steps.plan.outputs.tekst }}
       crosslinks: ${{ steps.plan.outputs.crosslinks }}
+      browser: ${{ steps.plan.outputs.browser }}
       python: ${{ steps.plan.outputs.python }}
       algorithms: ${{ steps.plan.outputs.algorithms }}
       play: ${{ steps.plan.outputs.play }}
@@ -730,6 +731,58 @@ jobs:
   # `failure` en `cancelled` tellen als mislukt. Wat het plan wél nodig had
   # maar toch is overgeslagen, telt ook als mislukt: dan viel er iets ervoor
   # om (een rode test houdt `publiceer` tegen), en dat mag niet groen ogen.
+  # De Python-speeltuin in een echte browser (scripts/rooktest-speeltuin.mjs):
+  # de gebouwde python-site, met zijn eigen Pyodide en wasm, in Chromium; daar
+  # een print, lege variabelen bij elke run, input() via het venster, een
+  # turtle-tekening en Stap voor stap. De node-tests draaien Pyodide buiten de
+  # browser; dit is de enige plek waar het geheel samen draait. Nodig als de
+  # python-site gebouwd wordt (ook bij een wijziging in packages/python-runner)
+  # of als het script verandert; dan komt de build uit de cache, of wordt hij
+  # hier gebouwd.
+  browser:
+    needs: [plan, build]
+    if: >-
+      !cancelled() && needs.plan.outputs.browser == 'true'
+      && (needs.build.result == 'success' || needs.build.result == 'skipped')
+    runs-on: ubuntu-latest
+    env:
+      GEBOUWD: ${{ contains(fromJSON(needs.plan.outputs.sites), 'python') }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
+
+      - name: Map en cache-sleutel van python
+        id: map
+        run: |
+          echo "dir=$(node scripts/sites-json.mjs python)" >> "$GITHUB_OUTPUT"
+          echo "sleutel=site-${{ runner.os }}-python-$(node scripts/site-hash.mjs python)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/download-artifact@v6
+        if: env.GEBOUWD == 'true'
+        with:
+          name: python-gebouwd
+          path: ${{ steps.map.outputs.dir }}/build
+
+      - name: Uit de cache
+        id: cache
+        if: env.GEBOUWD != 'true'
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ steps.map.outputs.dir }}/build
+          key: ${{ steps.map.outputs.sleutel }}
+
+      - name: Build python (niet gebouwd en niet in de cache)
+        if: env.GEBOUWD != 'true' && steps.cache.outputs.cache-hit != 'true'
+        run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
+
+      - name: Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: De speeltuin in Chromium
+        run: node scripts/rooktest-speeltuin.mjs "${{ steps.map.outputs.dir }}/build"
+
   build-klaar:
     name: build
     # Ook `checks` (lint + typecheck) telt mee: een tsc-fout houdt de artifacts
@@ -739,11 +792,11 @@ jobs:
     # en kon een PR met kapotte voorbeelden groen worden. `tekst` blijft
     # erbuiten: een spel- of stijlfout mag een merge niet tegenhouden (keuze
     # van de opdrachtgever; schrijfgids §17).
-    needs: [plan, test, build, publiceer, voorraad, checks, cross-links, fullstack, blokken]
+    needs: [plan, test, build, publiceer, voorraad, checks, cross-links, fullstack, blokken, browser]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Plan, tests, codevoorbeelden, site-builds, publiceren, lint, typecheck en cross-site links groen?
+      - name: Plan, tests, codevoorbeelden, site-builds, publiceren, lint, typecheck, cross-site links en de speeltuin groen?
         env:
           PLAN: ${{ needs.plan.result }}
           TEST: ${{ needs.test.result }}
@@ -754,12 +807,14 @@ jobs:
           CROSSLINKS: ${{ needs.cross-links.result }}
           FULLSTACK: ${{ needs.fullstack.result }}
           BLOKKEN: ${{ needs.blokken.result }}
+          BROWSER: ${{ needs.browser.result }}
           NODIG_TEST: ${{ needs.plan.outputs.test }}
           NODIG_BUILD: ${{ needs.plan.outputs.build }}
           NODIG_CHECKS: ${{ needs.plan.outputs.checks }}
           NODIG_CROSSLINKS: ${{ needs.plan.outputs.crosslinks }}
           NODIG_FULLSTACK: ${{ needs.plan.outputs.fullstack }}
           NODIG_BLOKKEN: ${{ needs.plan.outputs.blokken }}
+          NODIG_BROWSER: ${{ needs.plan.outputs.browser }}
         run: |
           fout=0
           # oordeel <job> <resultaat> <nodig volgens het plan>
@@ -785,4 +840,5 @@ jobs:
           oordeel cross-links "$CROSSLINKS" "$NODIG_CROSSLINKS"
           oordeel fullstack "$FULLSTACK" "$NODIG_FULLSTACK"
           oordeel blokken "$BLOKKEN" "$NODIG_BLOKKEN"
+          oordeel browser "$BROWSER" "$NODIG_BROWSER"
           exit $fout

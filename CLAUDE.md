@@ -92,7 +92,10 @@ tegelijk in één job, `blokken` (elk met een eigen venv); alleen wat in
 eerste golf van een brede run groter dan de twintig runners die GitHub
 tegelijk geeft, en dan wachtte `test` een halve minuut. Een nieuwe runner
 krijgt een vlag, een functie en een plek in de lus van `blokken`;
-`ci-poort.test.ts` eist dat.
+`ci-poort.test.ts` eist dat. De job `browser` opent de gebouwde python-site in
+Chromium en doet daar wat een leerling in de speeltuin doet
+(`scripts/rooktest-speeltuin.mjs`); hij draait als de python-site gebouwd wordt,
+dus ook na een wijziging in `packages/python-runner`.
 
 ## Een les verhuizen
 

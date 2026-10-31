@@ -71,6 +71,10 @@ const PER_JOB = {
     'packages/shared/stijl.js',
   ],
   crosslinks: ['scripts/controleer-cross-links.mjs', 'scripts/links-in-bron.mjs'],
+  // De rooktest van de speeltuin in Chromium (job `browser`). Die draait ook
+  // als de python-site gebouwd wordt, dus bij elke wijziging aan de site of
+  // aan packages/python-runner.
+  browser: ['scripts/rooktest-speeltuin.mjs'],
 };
 
 const COMPILEER = [
@@ -413,7 +417,7 @@ function plan({
       sites: alleIds,
       ongewijzigd: [],
       pakketten: [...alleMappen].sort(),
-      jobs: { test: true, checks: true, lint: true, tekst: true, crosslinks: true },
+      jobs: { test: true, checks: true, lint: true, tekst: true, crosslinks: true, browser: true },
       runners: Object.fromEntries(
         Object.keys(RUNNERS).map((n) => [n, { draaien: true, alles: true }]),
       ),
@@ -465,6 +469,7 @@ function plan({
   const pythonScripts = paden.some((p) => /^scripts\/[^/]+\.py$/.test(p));
   const crosslinks = geraakteSites.length > 0 || paden.some((p) => past(p, PER_JOB.crosslinks));
   const lint = paden.some((p) => past(p, PER_JOB.lint));
+  const browser = geraakteSites.includes('python') || paden.some((p) => past(p, PER_JOB.browser));
 
   return {
     versie: 1,
@@ -481,6 +486,7 @@ function plan({
       lint,
       tekst: tekstAlles || tekstBestanden.length > 0,
       crosslinks,
+      browser,
     },
     runners,
     tekst: { alles: tekstAlles, bestanden: tekstBestanden },
