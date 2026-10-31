@@ -230,6 +230,28 @@ describe('runPython en runPythonStream met echte Pyodide in node', () => {
     expect(opname.tekening ?? null).toBeNull();
   });
 
+  // Pyodide is één instantie per pagina. Zonder eigen globals per run bleef een
+  // variabele van de vorige run bestaan, ook die van een andere oefening op
+  // dezelfde pagina, en werkte code die een variabele gebruikte voor hij hem
+  // maakte toch.
+  it('runPython begint elke run met lege globals', async () => {
+    expect(await runPython(pyodide, 'teller = 5\nprint(teller)')).toBe('5\n');
+    const tweede = await runPython(pyodide, 'print(teller)');
+    expect(tweede).toContain("NameError: name 'teller' is not defined");
+  });
+
+  it('runPython draait de code als __main__', async () => {
+    expect(await runPython(pyodide, 'if __name__ == "__main__":\n    print("hoofd")')).toBe(
+      'hoofd\n',
+    );
+  });
+
+  it('een import en input() werken ook in de lege globals', async () => {
+    expect(await runPython(pyodide, 'import math\nprint(math.floor(2.5))')).toBe('2\n');
+    // input() toont de vraag met het antwoord erachter, net als in een terminal.
+    expect(await runPython(pyodide, 'print(input("Naam? "))')).toBe('Naam? Sam\nSam\n');
+  });
+
   it('een run na een mislukte run werkt gewoon weer', async () => {
     await runPython(pyodide, 'x = 1/0');
     expect(await runPython(pyodide, 'print(2)')).toBe('2\n');

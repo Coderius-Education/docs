@@ -380,13 +380,25 @@ sys.stderr = StringIO()
   zetInvoer(pyodide);
   zetTurtle(pyodide, code, turtle);
 
+  // Elke run begint met lege globals. Pyodide is één instantie per pagina, dus
+  // zonder eigen namespace bleef een variabele van de vorige run bestaan, ook
+  // die van een andere oefening op dezelfde pagina: code die een variabele
+  // gebruikte voor hij hem maakte, werkte dan toch. `__name__` staat erin,
+  // anders slaat `if __name__ == "__main__":` stil over; input() zit in
+  // builtins en blijft gewoon werken.
+  const namespace = pyodide.runPython("{'__name__': '__main__'}") as
+    | { destroy?: () => void }
+    | undefined;
+
   let didError = false;
   let jsError = '';
   try {
-    await pyodide.runPythonAsync(code);
+    await pyodide.runPythonAsync(code, namespace ? { globals: namespace } : undefined);
   } catch (err) {
     didError = true;
     jsError = err instanceof Error ? err.message : String(err);
+  } finally {
+    namespace?.destroy?.();
   }
 
   // sys.stdout.getvalue()/sys.stderr.getvalue() zijn Python str's; Pyodide
