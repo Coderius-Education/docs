@@ -1,7 +1,7 @@
 # Coderius
 
-Lesmateriaal voor programmeren en techniek in het voortgezet onderwijs, online
-op [coderius.nl](https://coderius.nl). Leerlingen lezen er niet alleen: ze
+Lesmateriaal voor informatica, wetenschapsoriëntatie en techniek in het
+voortgezet onderwijs, online op [coderius.nl](https://coderius.nl). Leerlingen lezen er niet alleen: ze
 voorspellen wat code doet, draaien hem in de browser, passen hem aan en bouwen
 zelf iets (de PRIMM-methode). Deze repo bevat alle cursussites, de homepage en
 de gedeelde onderdelen in één pnpm-monorepo.
@@ -45,6 +45,7 @@ sites/<vak>/<cursus>/   een Docusaurus-site per cursus
   docs/                 de lessen (MDX)
   src/                  eigen componenten, pagina's (o.a. /docenten) en tests
   CLAUDE.md             afspraken die alleen voor deze cursus gelden
+                        (de meeste cursussen hebben er een)
 sites/home/             de homepage (SvelteKit)
 packages/
   shared/               config-factory, huisstijl, gedeelde componenten,
@@ -101,11 +102,11 @@ pnpm preview-all        # eerst bouwen, dan de builds serveren
 | `pnpm build` | alle sites bouwen |
 | `pnpm cross-links` | na `pnpm build`: elke link in de gebouwde HTML naar een bestaande pagina en een bestaand anker |
 
-De codevoorbeelden in de lessen worden echt uitgevoerd. Python, algoritmes en
-play hebben elk een runner in `scripts/` (`draai-python-blokken.py`,
-`draai-play-blokken.py`); de docstring bovenin legt de markers uit waarmee je
-een blok bewust overslaat, en `--pins` geeft de `pip install`-regel met de
-versies die ook in de browser draaien.
+De codevoorbeelden in de lessen worden in CI echt uitgevoerd of gecompileerd.
+Voor python en algoritmes doet `scripts/draai-python-blokken.py` dat, voor play
+`scripts/draai-play-blokken.py`; de docstring bovenin legt de markers uit
+waarmee je een blok bewust overslaat. Voor algoritmes en play geeft `--pins` de
+`pip install`-regel met de versies die ook in de browser draaien.
 
 CI doet alleen wat een wijziging raakt: de job `plan` bepaalt welke sites en
 controles nodig zijn. De verplichte check heet `build`. De job `tekst` telt
@@ -129,8 +130,8 @@ Twee afspraken die je overal tegenkomt. Een link naar een pagina schrijf je als
 maakt er een echte link van. En voorkennis uit een andere cursus noem je met
 `<Voorkennis>`, niet met een eigen info-blok.
 
-Docenten passen lessen ook aan via docs-management, de bewerkomgeving buiten
-deze repo; hun wijzigingen komen hier als pull request binnen.
+Docenten kunnen lessen ook bewerken in docs-management, een bewerkomgeving
+buiten deze repo.
 
 ## Bijdragen
 
@@ -145,6 +146,19 @@ deze repo; hun wijzigingen komen hier als pull request binnen.
 
 ## Licentie
 
-Het lesmateriaal valt onder
-[Creative Commons Naamsvermelding-NietCommercieel 4.0 Internationaal (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/deed.nl),
-zoals in de footer van elke site staat.
+Het materiaal en de code van Coderius in deze repo vallen onder
+[Creative Commons Naamsvermelding-NietCommercieel 4.0 Internationaal (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/deed.nl):
+je mag ze gebruiken, delen en aanpassen, niet commercieel en met
+naamsvermelding. De volledige tekst staat in [`LICENSE`](LICENSE); de footer
+van elke site noemt dezelfde licentie.
+
+Twee uitzonderingen:
+
+- De tracks `docs/minimax/` en `docs/cfg/` van algoritmes zijn bewerkingen van
+  CS50 AI van Harvard en vallen daarom onder CC BY-NC-SA 4.0. Zie
+  [`sites/informatica/algorithms/LICENSE.md`](sites/informatica/algorithms/LICENSE.md)
+  voor de bronvermelding.
+- Meegeleverde software houdt zijn eigen licentie: Monaco
+  (`packages/editor/static/monaco`), Pyodide (`static/pyodide` van een site),
+  htmx (`sites/informatica/fullstack/static/htmx`) en de wheels van play en
+  pymunk in `sites/informatica/play/static/whl` (beide MIT).
