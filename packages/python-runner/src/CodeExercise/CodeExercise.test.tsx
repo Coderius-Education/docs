@@ -101,7 +101,11 @@ describe('CodeExercise', () => {
     render(<CodeExercise>{'x = 1'}</CodeExercise>);
     await wachtTotGeladen();
     let klaar = () => {};
-    nep.volgende = { wacht: new Promise<void>((r) => (klaar = r)) };
+    nep.volgende = {
+      wacht: new Promise<void>((r) => {
+        klaar = r;
+      }),
+    };
     fireEvent.click(knop(/Uitvoeren/));
     expect(
       ((await screen.findByRole('button', { name: 'Bezig...' })) as HTMLButtonElement).disabled,
