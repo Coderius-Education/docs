@@ -349,6 +349,13 @@ describe('runPython als Pyodide zelf omvalt (nagemaakte Pyodide)', () => {
     expect(await runPython(pyodide, 'x')).toBe('Fout op regel 3\nRuntimeError: kapot');
   });
 
+  it('tracePython: valt de opnemer zelf om, dan een fout zonder regel in plaats van een crash', async () => {
+    const { pyodide } = nepPyodide(new Error('Traceback (most recent call last):\nMemoryError'));
+    const opname = await tracePython(pyodide, 'x = 1');
+    expect(opname.stappen).toEqual([]);
+    expect(opname.fout).toEqual({ soort: 'Fout', bericht: 'MemoryError', regel: null });
+  });
+
   it('zet een niet-Error-waarde om met String()', async () => {
     const { pyodide } = nepPyodide('gewoon een string');
     expect(await runPython(pyodide, 'x')).toBe('gewoon een string');

@@ -2,8 +2,9 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Opname, PyodideInterface } from '../PyodideProvider';
+import type { Opname } from '../PyodideProvider';
 import { setPyodideLoader } from '../PyodideProvider';
+import { type Nep, nepPyodide } from '../nep-pyodide';
 import CodeExercise from './index';
 
 // De speeltuin van de python-cursus: 654 keer gebruikt, en tot nu toe zonder
@@ -16,44 +17,6 @@ import CodeExercise from './index';
 vi.mock('@docusaurus/BrowserOnly', () => ({
   default: ({ children }: { children: () => React.ReactNode }) => <>{children()}</>,
 }));
-
-interface Nep {
-  pyodide: PyodideInterface;
-  /** Elke code die de leerling liet draaien, in volgorde. */
-  runs: string[];
-  /** Zet wat de volgende run print, op stderr zet, en of hij wacht. */
-  volgende: { stdout?: string; stderr?: string; wacht?: Promise<void>; opname?: Opname };
-}
-
-function nepPyodide(): Nep {
-  const nep: Nep = { pyodide: undefined as unknown as PyodideInterface, runs: [], volgende: {} };
-  let stdout = '';
-  let stderr = '';
-  nep.pyodide = {
-    runPython: (code) => {
-      if (code.includes('sys.stdout.getvalue()')) return stdout;
-      if (code.includes('sys.stderr.getvalue()')) return stderr;
-      return undefined;
-    },
-    runPythonAsync: async (code) => {
-      if (code.includes('_stapper_neem_op')) {
-        return JSON.stringify(nep.volgende.opname);
-      }
-      nep.runs.push(code);
-      const { wacht, stdout: uit = '', stderr: fout = '' } = nep.volgende;
-      if (wacht) await wacht;
-      stdout = uit;
-      stderr = fout;
-      if (fout) throw new Error(fout);
-      return undefined;
-    },
-    loadPackage: async () => {},
-    setStdout: () => {},
-    setStderr: () => {},
-    setStdin: () => {},
-  };
-  return nep;
-}
 
 const knop = (naam: string | RegExp) =>
   screen.getByRole('button', { name: naam }) as HTMLButtonElement;
@@ -136,6 +99,24 @@ describe('CodeExercise', () => {
     nep.volgende = { stdout: '1\n' };
     fireEvent.keyDown(editor(), { key: 'Enter', ctrlKey: true });
     await waitFor(() => expect(nep.runs).toEqual(['print(1)']));
+  });
+
+  it('een turtle-tekening komt onder de code in beeld', async () => {
+    const { container } = render(<CodeExercise>{'import turtle'}</CodeExercise>);
+    await wachtTotGeladen();
+    nep.volgende = {
+      tekening: {
+        direct: true,
+        gebeurtenissen: [
+          { t: 'nieuw', id: 0, vorm: 'classic', zichtbaar: true },
+          { t: 'ga', id: 0, x: 100, y: 0, pen: true, kleur: 'black', dikte: 1 },
+        ],
+      },
+    };
+    fireEvent.click(knop(/Uitvoeren/));
+    await waitFor(() =>
+      expect(container.querySelector('svg line, svg path, svg polyline')).not.toBeNull(),
+    );
   });
 
   it('Reset zet de begincode terug', async () => {

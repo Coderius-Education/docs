@@ -148,6 +148,18 @@ jobs:
       - name: Test (blokrunners)
         run: python3 -m unittest discover -s scripts -p 'test_*.py'
 
+      # De dekking van de python-runner, met de ondergrens uit vitest.config.ts.
+      # Alleen als zijn tests in de selectie zitten: een deelrun van andere
+      # tests zegt niets over zijn dekking.
+      - name: Dekking van de python-runner
+        run: |
+          argumenten="$(node scripts/wijzigingen.mjs vitest changed.json)"
+          if [ "$argumenten" = "run" ] || grep -q 'packages/python-runner/' <<< "$argumenten"; then
+            pnpm test:dekking
+          else
+            echo "De python-runner is niet geraakt."
+          fi
+
   # Vijf blokrunners in één job, tegelijk. Elk draait de codevoorbeelden uit
   # de lessen van één cursus:
   #

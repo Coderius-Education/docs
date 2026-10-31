@@ -22,6 +22,7 @@
     "tekst": "node scripts/controleer-tekst-alles.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:dekking": "vitest run --coverage packages/python-runner",
     "cross-links": "node scripts/controleer-cross-links.mjs"
   },
   "devDependencies": {
@@ -29,6 +30,7 @@
     "@cspell/dict-nl-nl": "^2.4.2",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",
+    "@vitest/coverage-v8": "4.1.11",
     "cspell": "^10.1.0",
     "jsdom": "^26.1.0",
     "playwright": "1.56.1",
