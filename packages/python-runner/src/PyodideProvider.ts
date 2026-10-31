@@ -1,14 +1,17 @@
 // Singleton Pyodide loader — shared across all components on the page.
 //
-// De base-URL is instelbaar zodat een site Pyodide lokaal kan serveren
-// (offline, vanuit static/pyodide/) of vanaf de CDN. Standaard: CDN.
-// Roep setPyodideBaseUrl() aan in een clientModule om dit te overschrijven.
+// Elke site serveert Pyodide zelf, uit static/pyodide/ (ook op een
+// schoolnetwerk dat CDN's blokkeert). Een site zet het adres met
+// setPyodideBaseUrl() in een clientModule, vóór de componenten mounten.
+// Er is bewust geen standaard: tot november 2026 viel deze provider stil
+// terug op cdn.jsdelivr.net, en een nieuwe cursus die de regel vergat, laadde
+// dan zonder dat iemand het merkte van de CDN. Nu geeft getPyodide een fout
+// die zegt wat er mist, en pyodide-adres.test.ts eist de regel al vóór de
+// build van elke site die deze lader gebruikt.
 //
 // Eén bron van waarheid voor de Pyodide-versie. Houd PYODIDE_VERSION gelijk aan
 // de `pyodide`-versie in de catalog (pnpm-workspace.yaml): de copy-pyodide-
-// scripts kopiëren díe versie naar static/pyodide/ van self-hostende sites.
-// De CDN-default hieronder geldt voor sites die NIET self-hosten (bijv.
-// fullstack), zodat die dezelfde Pyodide draaien als de rest.
+// scripts kopiëren díe versie naar static/pyodide/ van elke site.
 // play heeft een eigen constante in sites/play/src/components/CodeRunner/engine.js,
 // omdat die site zijn Pyodide in een iframe laadt en niet via deze provider.
 // Hij hoort dezelfde versie te noemen; pyodide-kopie.test.ts controleert dat.
@@ -17,13 +20,16 @@ import type { Tekening } from './Tekening/tekening';
 import { TURTLE_PY } from './turtle/module';
 
 export const PYODIDE_VERSION = '0.29.4';
-const DEFAULT_PYODIDE_BASE_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
-let pyodideBaseUrl = DEFAULT_PYODIDE_BASE_URL;
+let pyodideBaseUrl: string | null = null;
 
 export function setPyodideBaseUrl(url: string): void {
   // Normaliseer naar een trailing slash zodat `${base}pyodide.js` klopt.
   pyodideBaseUrl = url.endsWith('/') ? url : `${url}/`;
 }
+
+/** De melding als een site vergat te zeggen waar zijn Pyodide staat. */
+export const GEEN_PYODIDE_ADRES =
+  'Geen adres voor Pyodide: roep setPyodideBaseUrl(`${siteConfig.baseUrl}pyodide/`) aan in een clientModule van de site (zie src/pyodide-setup.ts van de python-cursus).';
 
 // Minimale vorm van de geladen Pyodide-instantie — er is geen officieel
 // @types/pyodide-pakket hier; dit dekt precies wat runPython/runPythonStream
@@ -61,30 +67,36 @@ export function setPyodideLoader(loader: PyodideLoader | null): void {
 export function getPyodide(): Promise<PyodideInterface> {
   if (pyodidePromise) return pyodidePromise;
 
-  pyodidePromise = (async () => {
-    try {
-      if (pyodideLoader) return await pyodideLoader();
-      // Only add script tag once
-      if (!(window as WindowWithPyodide).loadPyodide) {
-        const script = document.createElement('script');
-        script.src = `${pyodideBaseUrl}pyodide.js`;
-        script.async = true;
-        await new Promise<void>((res, rej) => {
-          script.onload = () => res();
-          script.onerror = () => rej(new Error('Failed to load Pyodide script'));
-          document.head.appendChild(script);
-        });
-      }
-      const loadPyodide = (window as WindowWithPyodide).loadPyodide;
-      if (!loadPyodide) throw new Error('Pyodide script loaded but window.loadPyodide is missing');
-      return await loadPyodide({ indexURL: pyodideBaseUrl });
-    } catch (err) {
-      pyodidePromise = null; // allow retry
-      throw err;
+  const poging = (async () => {
+    if (pyodideLoader) return await pyodideLoader();
+    const basis = pyodideBaseUrl;
+    if (!basis) throw new Error(GEEN_PYODIDE_ADRES);
+    // Only add script tag once
+    if (!(window as WindowWithPyodide).loadPyodide) {
+      const script = document.createElement('script');
+      script.src = `${basis}pyodide.js`;
+      script.async = true;
+      await new Promise<void>((res, rej) => {
+        script.onload = () => res();
+        script.onerror = () => rej(new Error('Failed to load Pyodide script'));
+        document.head.appendChild(script);
+      });
     }
+    const loadPyodide = (window as WindowWithPyodide).loadPyodide;
+    if (!loadPyodide) throw new Error('Pyodide script loaded but window.loadPyodide is missing');
+    return await loadPyodide({ indexURL: basis });
   })();
-
-  return pyodidePromise;
+  pyodidePromise = poging;
+  // Mislukt het laden, dan mag de volgende aanroep opnieuw proberen. Dit
+  // stond eerst als catch in de async-functie zelf, en dan liep het fout bij
+  // een fout vóór de eerste await (geen adres, een loader die meteen gooit):
+  // die catch zette pyodidePromise op null nog vóór de toewijzing hierboven,
+  // die daarna de afgewezen promise bewaarde. Elke volgende poging kreeg dan
+  // dezelfde fout, tot je de pagina herlaadde.
+  poging.catch(() => {
+    if (pyodidePromise === poging) pyodidePromise = null;
+  });
+  return poging;
 }
 
 /**
