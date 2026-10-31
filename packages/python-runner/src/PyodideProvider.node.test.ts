@@ -246,6 +246,17 @@ describe('runPython en runPythonStream met echte Pyodide in node', () => {
     );
   });
 
+  it('pickle vindt een klasse van de leerling, ook in de lege globals', async () => {
+    // Met alleen een lege dict als globals stond de klasse niet in
+    // sys.modules['__main__'], en gaf pickle "attribute lookup on __main__ failed".
+    const code =
+      'import pickle\nclass Hond:\n    pass\nprint(type(pickle.loads(pickle.dumps(Hond()))).__name__)';
+    expect(await runPython(pyodide, code)).toBe('Hond\n');
+    // Na de run staat de echte __main__ van Pyodide weer op zijn plek.
+    expect(pyodide.runPython("import sys; sys.modules['__main__'].__name__")).toBe('__main__');
+    expect(await runPython(pyodide, 'print(2)')).toBe('2\n');
+  });
+
   it('een import en input() werken ook in de lege globals', async () => {
     expect(await runPython(pyodide, 'import math\nprint(math.floor(2.5))')).toBe('2\n');
     // input() toont de vraag met het antwoord erachter, net als in een terminal.

@@ -364,6 +364,24 @@ export async function tracePython(
   }
 }
 
+// Een verse module __main__ voor één run van runPython, en de weg terug. De
+// echte __main__ is die van pyodide.globals; die moet na afloop terug, want
+// Pyodide zelf en de helpers hierboven draaien daarin. Hij wordt één keer
+// bewaard: start een tweede oefening terwijl de eerste nog op input() wacht,
+// dan staat de verse module van de eerste in sys.modules, en die mag niet als
+// "de oude" blijven hangen.
+const VERSE_MAIN_PY = `
+import sys as _coderius_sys, types as _coderius_types
+if '_coderius_echte_main' not in globals():
+    _coderius_echte_main = _coderius_sys.modules['__main__']
+_coderius_sys.modules['__main__'] = _coderius_types.ModuleType('__main__')
+_coderius_sys.modules['__main__'].__dict__
+`;
+
+const OUDE_MAIN_PY = `
+_coderius_sys.modules['__main__'] = _coderius_echte_main
+`;
+
 export async function runPython(
   pyodide: PyodideInterface,
   code: string,
@@ -383,12 +401,11 @@ sys.stderr = StringIO()
   // Elke run begint met lege globals. Pyodide is één instantie per pagina, dus
   // zonder eigen namespace bleef een variabele van de vorige run bestaan, ook
   // die van een andere oefening op dezelfde pagina: code die een variabele
-  // gebruikte voor hij hem maakte, werkte dan toch. `__name__` staat erin,
-  // anders slaat `if __name__ == "__main__":` stil over; input() zit in
-  // builtins en blijft gewoon werken.
-  const namespace = pyodide.runPython("{'__name__': '__main__'}") as
-    | { destroy?: () => void }
-    | undefined;
+  // gebruikte voor hij hem maakte, werkte dan toch. De run krijgt een verse
+  // module __main__, die zolang ook in sys.modules staat: met alleen een lege
+  // dict vond pickle een klasse van de leerling niet meer ("attribute lookup
+  // on __main__ failed"). input() zit in builtins en blijft gewoon werken.
+  const namespace = pyodide.runPython(VERSE_MAIN_PY) as { destroy?: () => void } | undefined;
 
   let didError = false;
   let jsError = '';
@@ -399,6 +416,7 @@ sys.stderr = StringIO()
     jsError = err instanceof Error ? err.message : String(err);
   } finally {
     namespace?.destroy?.();
+    pyodide.runPython(OUDE_MAIN_PY);
   }
 
   // sys.stdout.getvalue()/sys.stderr.getvalue() zijn Python str's; Pyodide
