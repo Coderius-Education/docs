@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Coderius-documentatie — monorepo van alle leersites (Docusaurus) met gedeelde resources.",
+  "license": "CC-BY-NC-4.0",
   "packageManager": "pnpm@10.15.0",
   "engines": {
     "node": ">=20.0"
