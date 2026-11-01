@@ -152,16 +152,21 @@ met Pyodide en zonder eigen PWA (play heeft er een, `src/sw.js`) van
 `createConfig` een service worker op `<baseUrl>pyodide-sw.js`
 (`packages/shared/pyodide-cache/sw.js`, plugin `plugins/pyodide-cache.js`,
 alleen in een productie-build). Hij bewaart alleen wat onder
-`<baseUrl>pyodide/` staat. `pyodide.js` vraagt hij altijd aan het netwerk, en
-is die veranderd (een nieuwe Pyodide), dan gooit hij eerst zijn hele cache weg;
-zo komt een oude wasm nooit naast een nieuwe `pyodide.js`, zonder versie in de
-laders. Een lader moet dus altijd eerst `pyodide.js` laden. Wat hij nog niet
-heeft, vraagt hij ook met `no-cache`: uit de HTTP-cache van de browser kwam na
-een upgrade anders de oude wasm-lijm, naast de nieuwe `pyodide.js`.
-`pyodide-cache.test.ts` speelt dat na, de rooktest controleert in Chromium dat
-een derde bezoek alleen `pyodide.js` nog van de server haalt. Weghalen kan
-alleen met een `sw.js` die zichzelf afmeldt; een site zonder het bestand laat
-de oude service worker gewoon staan.
+`<baseUrl>pyodide/` staat, en alleen wat klopt: de build zet de sha256 van elk
+bestand daar in de service worker (`INHOUD`), en een bestand dat die
+vingerafdruk niet heeft, geeft hij niet door en bewaart hij niet. Leerlingcode
+draait in python, ctf, ide en algorithms op de origin van de site en kan via
+`import js` in Cache Storage schrijven; zonder die controle draaide een
+vervalste `pyodide.asm.js` na één run bij elk volgend bezoek mee. Elke versie
+heeft een eigen cache, en bij het activeren gaan die van eerdere versies van
+de cursus weg. `pyodide.js` vraagt hij altijd aan het netwerk (`no-cache`);
+heeft de server al een andere dan de service worker kent, dan krijgt die
+pagina alles van het netwerk, zodat hij nooit twee versies mengt. Een lader
+moet dus altijd eerst `pyodide.js` laden. `pyodide-cache.test.ts` speelt dat
+na; de rooktest controleert in Chromium dat een derde bezoek alleen
+`pyodide.js` nog van de server haalt, en dat een vervalste `pyodide.asm.js` in
+de cache niet draait. Weghalen kan alleen met een `sw.js` die zichzelf
+afmeldt; een site zonder het bestand laat de oude service worker gewoon staan.
 
 ## Browsers
 

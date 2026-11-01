@@ -5,107 +5,152 @@
 // bewaart, hangt af van de headers van de hosting: met `no-store`, of zonder
 // ETag en Last-Modified, kwam hij bij elke les opnieuw over de lijn. Play had
 // al een eigen service worker en was daardoor na het eerste bezoek snel; de
-// andere sites niet. Deze service worker bewaart alles onder <baseUrl>pyodide/
-// in een eigen cache, wat de hosting ook stuurt.
+// andere sites niet. Deze service worker bewaart wat onder <baseUrl>pyodide/
+// staat in een eigen cache, wat de hosting ook stuurt.
 //
-// Eén regel houdt een upgrade veilig. Elke lader (getPyodide, die van
-// algorithms) haalt eerst pyodide.js op, en daarna pas de rest. Die ene
-// ingang vraagt de service worker altijd aan het netwerk (no-cache: een 304
-// als niets veranderde, en offline de bewaarde). Is hij anders dan de
-// bewaarde, dan is er een nieuwe Pyodide en gaat de hele cache weg, vóór de
-// browser de rest vraagt. Zonder bewaarde ingang (de pagina laadde Pyodide al
-// voor de service worker er was) bewaart hij niets: dan weet hij niet bij
-// welke versie de bestanden horen. Zo komt een oude wasm nooit naast een
-// nieuwe pyodide.js, en hoeft geen lader een versie mee te geven.
+// Alleen wat klopt. De build zet hieronder in INHOUD de sha256 van elk
+// bestand onder pyodide/ (plugins/pyodide-cache.js). Een bewaard bestand gaat
+// alleen naar de pagina als het die vingerafdruk heeft, en een bestand van
+// het netwerk gaat alleen de cache in als het die heeft. Leerlingcode draait
+// in python, ctf, ide en algorithms op de origin van de site en kan via
+// `import js` in Cache Storage schrijven: zonder deze controle draaide een
+// vervalste pyodide.asm.js na één run bij elk volgend bezoek mee, en dat
+// bleef zo tot de volgende Pyodide. Hetzelfde houdt na een upgrade een oude
+// wasm-lijm uit de HTTP-cache van de browser buiten de cache.
 //
-// Alles buiten <baseUrl>pyodide/ (pagina's, scripts van de site) gaat er
-// ongemoeid langs. Weghalen: zet hier een versie neer die zichzelf
-// afmeldt (self.registration.unregister()) en zijn cache wist.
+// Eén versie per keer. Elke versie van INHOUD heeft een eigen cache; bij het
+// activeren gaan de caches van eerdere versies van deze cursus weg. Heeft de
+// server al een andere pyodide.js dan deze service worker kent (er is net een
+// nieuwe Pyodide uitgerold en de browser heeft de nieuwe service worker nog
+// niet), dan komt voor die pagina alles van het netwerk, en niets uit de
+// cache: zo laadt hij nooit een mix van twee versies. Elke lader (getPyodide,
+// die van algorithms) haalt eerst pyodide.js, dus dat weet hij op tijd.
 //
-// Gewoon JavaScript zonder bundler: dit bestand gaat zoals het is naar de
-// build (plugins/pyodide-cache.js). De logica staat in maakAfhandeling, zodat
+// Alles buiten <baseUrl>pyodide/, en wat niet in INHOUD staat, gaat er
+// ongemoeid langs. Weghalen: zet hier een versie neer die zichzelf afmeldt
+// (self.registration.unregister()) en zijn caches wist.
+//
+// Gewoon JavaScript zonder bundler: dit bestand gaat, met INHOUD ingevuld,
+// naar de build. De logica staat in maakAfhandeling, zodat
 // pyodide-cache.test.ts hem in node kan naspelen.
 
-/**
- * @param {{ caches: CacheStorage, fetch: typeof fetch, scope: string, wachtOp?: (p: Promise<unknown>) => void }} omgeving
- * @returns {(request: Request) => Promise<Response> | null} null: niet voor ons
- */
-function maakAfhandeling({ caches, fetch, scope, wachtOp = () => {} }) {
-  const basis = new URL('pyodide/', scope);
-  // Alle cursussen van een vak delen één origin, en dus één Cache Storage:
-  // elke site een eigen cache.
-  const naam = `coderius-pyodide ${basis.pathname}`;
-  const ingang = new URL('pyodide.js', basis).href;
-  const sleutel = (url) => url.origin + url.pathname;
+// Bij de build vervangen door plugins/pyodide-cache.js: { bestandsnaam: sha256 }.
+const INHOUD = {};
 
-  function gelijk(a, b) {
-    if (a.byteLength !== b.byteLength) return false;
-    const x = new Uint8Array(a);
-    const y = new Uint8Array(b);
-    for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return false;
-    return true;
+async function sha256(buffer) {
+  const som = await crypto.subtle.digest('SHA-256', buffer);
+  return Array.from(new Uint8Array(som), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/** De caches van deze cursus heten `coderius-pyodide <pad> <versie>`. */
+function cacheNamen(scope, inhoud) {
+  const basis = new URL('pyodide/', scope);
+  const voorvoegsel = `coderius-pyodide ${basis.pathname}`;
+  const versie = Object.keys(inhoud)
+    .sort()
+    .map((n) => `${n}=${inhoud[n]}`)
+    .join(',');
+  // Een korte, vaste naam per INHOUD (geen crypto nodig: hoeft niet geheim).
+  let h = 0;
+  for (let i = 0; i < versie.length; i++) h = (Math.imul(31, h) + versie.charCodeAt(i)) | 0;
+  return { basis, voorvoegsel, naam: `${voorvoegsel} ${(h >>> 0).toString(16)}` };
+}
+
+/** Gooit de caches van eerdere versies van deze cursus weg, en alleen die. */
+async function ruimOp({ caches, scope, inhoud }) {
+  const { voorvoegsel, naam } = cacheNamen(scope, inhoud);
+  for (const sleutel of await caches.keys()) {
+    const vanDezeCursus = sleutel === voorvoegsel || sleutel.startsWith(`${voorvoegsel} `);
+    if (vanDezeCursus && sleutel !== naam) await caches.delete(sleutel);
+  }
+}
+
+/**
+ * @param {{ caches: CacheStorage, fetch: typeof fetch, scope: string, inhoud: Record<string, string> }} omgeving
+ * @returns {(request: Request, client?: string, wachtOp?: (p: Promise<unknown>) => void) =>
+ *   Promise<Response> | null} null: niet voor ons. wachtOp: event.waitUntil, zodat
+ *   de service worker het bewaren afmaakt.
+ */
+function maakAfhandeling({ caches, fetch, scope, inhoud }) {
+  const { basis, naam } = cacheNamen(scope, inhoud);
+  // Pagina's die een andere versie op de server zagen dan INHOUD: die krijgen
+  // alles van het netwerk. In het geheugen: een pagina laadt Pyodide binnen
+  // een paar seconden, zolang draait de service worker.
+  const andereVersie = new Set();
+
+  /** Het netwerk, buiten de HTTP-cache van de browser om (304 als niets veranderde). */
+  const netwerk = (request) => fetch(request, { cache: 'no-cache' });
+
+  /** Het bewaarde bestand, als het de vingerafdruk uit INHOUD heeft. */
+  async function uitCache(cache, sleutel, som) {
+    const bewaard = await cache.match(sleutel);
+    if (!bewaard) return null;
+    const inhoudBuffer = await bewaard.arrayBuffer();
+    if ((await sha256(inhoudBuffer)) !== som) {
+      await cache.delete(sleutel);
+      return null;
+    }
+    const kop = new Headers(bewaard.headers);
+    kop.delete('content-encoding');
+    kop.delete('content-length');
+    return new Response(inhoudBuffer, { status: 200, headers: kop });
   }
 
-  async function haalIngang(request) {
-    let netwerk;
+  async function afhandelen(request, client, wachtOp, bestand, sleutel, som) {
+    const ingang = bestand === 'pyodide.js';
+    if (!ingang && andereVersie.has(client)) return netwerk(request);
+    const cache = await caches.open(naam);
+
+    // De ingang altijd eerst aan het netwerk: zo zien we een nieuwe versie.
+    // Al het andere eerst uit de cache.
+    if (!ingang) {
+      const bewaard = await uitCache(cache, sleutel, som);
+      if (bewaard) return bewaard;
+    }
+    let antwoord;
     try {
-      netwerk = await fetch(request, { cache: 'no-cache' });
+      antwoord = await netwerk(request);
     } catch (fout) {
-      const bewaard = await (await caches.open(naam)).match(ingang);
+      // Offline: de bewaarde, als die klopt.
+      const bewaard = await uitCache(cache, sleutel, som);
       if (bewaard) return bewaard;
       throw fout;
     }
-    if (netwerk.status !== 200) return netwerk;
-    const nieuw = await netwerk.clone().arrayBuffer();
-    const cache = await caches.open(naam);
-    const oud = await cache.match(ingang);
-    if (!oud || !gelijk(await oud.arrayBuffer(), nieuw)) {
-      await caches.delete(naam);
-      await (await caches.open(naam)).put(ingang, netwerk.clone());
+    if (antwoord.status !== 200) return antwoord;
+    const klopt = (await sha256(await antwoord.clone().arrayBuffer())) === som;
+    if (klopt) {
+      wachtOp(cache.put(sleutel, antwoord.clone()).catch(() => {}));
+    } else if (ingang && client) {
+      andereVersie.add(client);
     }
-    return netwerk;
+    return antwoord;
   }
 
-  async function haalBestand(request, url) {
-    const cache = await caches.open(naam);
-    const bewaard = await cache.match(sleutel(url));
-    if (bewaard) return bewaard;
-    // Ook hier no-cache: een gewone fetch mag uit de HTTP-cache van de
-    // browser antwoorden, en die kan na een upgrade nog de oude wasm-lijm
-    // of standaardbibliotheek hebben. Bewaard naast de nieuwe pyodide.js
-    // bleef die mix staan tot de volgende versie, en dan laadt Python niet.
-    // Met no-cache vraagt de browser de server; die zegt 304 als het bestand
-    // niet veranderde.
-    const netwerk = await fetch(request, { cache: 'no-cache' });
-    if (netwerk.status === 200 && (await cache.match(ingang))) {
-      wachtOp(cache.put(sleutel(url), netwerk.clone()).catch(() => {}));
-    }
-    return netwerk;
-  }
-
-  return (request) => {
+  return (request, client = '', wachtOp = () => {}) => {
     if (request.method !== 'GET' || request.headers.has('range')) return null;
     const url = new URL(request.url);
     if (url.origin !== basis.origin || !url.pathname.startsWith(basis.pathname)) return null;
-    const antwoord = sleutel(url) === ingang ? haalIngang(request) : haalBestand(request, url);
+    const bestand = url.pathname.slice(basis.pathname.length);
+    const som = Object.hasOwn(inhoud, bestand) ? inhoud[bestand] : null;
+    if (!som) return null;
     // Gaat er iets mis met de cache (vol, geblokkeerd), dan het netwerk.
-    return antwoord.catch(() => fetch(request));
+    return afhandelen(request, client, wachtOp, bestand, url.origin + url.pathname, som).catch(() =>
+      fetch(request),
+    );
   };
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { maakAfhandeling };
+  module.exports = { INHOUD, cacheNamen, maakAfhandeling, ruimOp, sha256 };
 } else if (typeof self !== 'undefined' && self.registration) {
+  const omgeving = { caches: self.caches, scope: self.registration.scope, inhoud: INHOUD };
+  const afhandeling = maakAfhandeling({ ...omgeving, fetch: self.fetch.bind(self) });
   self.addEventListener('install', () => self.skipWaiting());
-  self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
+  self.addEventListener('activate', (event) =>
+    event.waitUntil(ruimOp(omgeving).then(() => self.clients.claim())),
+  );
   self.addEventListener('fetch', (event) => {
-    const afhandeling = maakAfhandeling({
-      caches: self.caches,
-      fetch: self.fetch.bind(self),
-      scope: self.registration.scope,
-      wachtOp: (p) => event.waitUntil(p),
-    });
-    const antwoord = afhandeling(event.request);
+    const antwoord = afhandeling(event.request, event.clientId, (p) => event.waitUntil(p));
     if (antwoord) event.respondWith(antwoord);
   });
 }

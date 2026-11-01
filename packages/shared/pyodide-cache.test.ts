@@ -1,19 +1,23 @@
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createConfig } from './config';
-import pyodideCachePlugin, { aanmelder } from './plugins/pyodide-cache';
-import { maakAfhandeling } from './pyodide-cache/sw';
+import pyodideCachePlugin, { aanmelder, serviceWorker } from './plugins/pyodide-cache';
+import { cacheNamen, maakAfhandeling, ruimOp } from './pyodide-cache/sw';
 
 // De service worker die de Pyodide van een site bewaart (pyodide-cache/sw.js).
-// Wat hier niet na te spelen is: of de browser hem aanmeldt en of hij echt
-// antwoordt. Dat is in Chromium nagelopen (zie de commit).
+// Hij geeft en bewaart alleen bestanden met de vingerafdruk die de build in
+// INHOUD zette. Dat de browser hem aanmeldt, en dat een vervalste
+// pyodide.asm.js in Cache Storage niet meer draait, toetst de rooktest in
+// Chromium (scripts/rooktest-speeltuin.mjs).
+
+const som = (tekst: string) => createHash('sha256').update(tekst).digest('hex');
 
 /** Een Cache Storage in het geheugen, met wat de service worker gebruikt. */
-function nepCaches() {
-  const winkels = new Map<string, Map<string, Response>>();
+function nepCaches(winkels = new Map<string, Map<string, Response>>()) {
   const open = async (naam: string) => {
     if (!winkels.has(naam)) winkels.set(naam, new Map());
     const winkel = winkels.get(naam) as Map<string, Response>;
@@ -22,18 +26,18 @@ function nepCaches() {
       put: async (sleutel: string, r: Response) => {
         winkel.set(sleutel, r);
       },
+      delete: async (sleutel: string) => winkel.delete(sleutel),
     };
   };
-  return {
-    winkels,
-    caches: {
-      open,
-      delete: async (naam: string) => winkels.delete(naam),
-    } as unknown as CacheStorage,
-  };
+  const caches = {
+    open,
+    keys: async () => [...winkels.keys()],
+    delete: async (naam: string) => winkels.delete(naam),
+  } as unknown as CacheStorage;
+  return { winkels, caches };
 }
 
-/** Een server met per pad een inhoud; telt wat hij uitlevert. */
+/** Een server met per pad een inhoud; telt wat hij uitlevert, en hoe. */
 function nepServer(bestanden: Record<string, string | undefined>) {
   const gevraagd: string[] = [];
   const fetch = (async (request: Request, init?: RequestInit) => {
@@ -41,158 +45,176 @@ function nepServer(bestanden: Record<string, string | undefined>) {
     gevraagd.push(init?.cache ? `${pad} (${init.cache})` : pad);
     const inhoud = bestanden[pad];
     if (inhoud === undefined) return new Response('weg', { status: 404 });
-    return new Response(inhoud, { status: 200 });
+    return new Response(inhoud, { status: 200, headers: { 'content-type': 'text/javascript' } });
   }) as typeof globalThis.fetch;
   return { bestanden, gevraagd, fetch };
 }
 
 const SCOPE = 'https://informatica.coderius.nl/python/';
-const vraag = (pad: string, init?: RequestInit) =>
-  new Request(new URL(pad, 'https://informatica.coderius.nl').href, init);
+const ORIGIN = 'https://informatica.coderius.nl';
+const vraag = (pad: string, init?: RequestInit) => new Request(new URL(pad, ORIGIN).href, init);
+const NAMEN = ['pyodide.js', 'pyodide.asm.wasm', 'python_stdlib.zip'] as const;
 
-/** Laadt Pyodide zoals een lader: eerst pyodide.js, dan de rest. */
-async function laad(afhandeling: ReturnType<typeof maakAfhandeling>, wachten: Promise<unknown>[]) {
+/** De bestanden van een Pyodide-versie, en de INHOUD die de build daarvan maakt. */
+function versie(n: number) {
+  const bestanden = Object.fromEntries(
+    NAMEN.map((naam) => [`/python/pyodide/${naam}`, `${naam} ${n}`]),
+  );
+  const inhoud = Object.fromEntries(NAMEN.map((naam) => [naam, som(`${naam} ${n}`)]));
+  return { bestanden, inhoud };
+}
+
+/** Laadt Pyodide zoals een lader dat doet: eerst pyodide.js, dan de rest. */
+async function laad(
+  afhandeling: ReturnType<typeof maakAfhandeling>,
+  client = 'tabblad',
+): Promise<Record<string, string>> {
   const uit: Record<string, string> = {};
-  for (const naam of ['pyodide.js', 'pyodide.asm.wasm', 'python_stdlib.zip']) {
-    const antwoord = afhandeling(vraag(`/python/pyodide/${naam}`));
+  for (const naam of NAMEN) {
+    const wachten: Promise<unknown>[] = [];
+    const antwoord = afhandeling(vraag(`/python/pyodide/${naam}`), client, (p) => wachten.push(p));
     if (!antwoord) throw new Error(`${naam} ging er langs`);
     uit[naam] = await (await antwoord).text();
-    await Promise.all(wachten.splice(0));
+    await Promise.all(wachten);
   }
   return uit;
 }
 
-function opstelling(bestanden: Record<string, string | undefined>) {
-  const server = nepServer(bestanden);
-  const { caches, winkels } = nepCaches();
-  const wachten: Promise<unknown>[] = [];
+/** Een service worker met INHOUD van versie `n`, tegen een server en een cache. */
+function opstelling(n = 1, server = nepServer(versie(n).bestanden), opslag = nepCaches()) {
   const afhandeling = maakAfhandeling({
-    caches,
+    caches: opslag.caches,
     fetch: server.fetch,
     scope: SCOPE,
-    wachtOp: (p) => wachten.push(p),
+    inhoud: versie(n).inhoud,
   });
-  return { server, winkels, afhandeling, laad: () => laad(afhandeling, wachten) };
+  return { server, ...opslag, afhandeling, laad: (client?: string) => laad(afhandeling, client) };
 }
 
-const VERSIE_1 = {
-  '/python/pyodide/pyodide.js': 'pyodide 1',
-  '/python/pyodide/pyodide.asm.wasm': 'wasm 1',
-  '/python/pyodide/python_stdlib.zip': 'stdlib 1',
-};
+const uitkomst = (n: number) =>
+  Object.fromEntries(NAMEN.map((naam) => [naam, `${naam} ${n}`])) as Record<string, string>;
 
 describe('de service worker voor Pyodide', () => {
   it('haalt de runtime bij een tweede bezoek uit de cache, op de ingang na', async () => {
-    const o = opstelling({ ...VERSIE_1 });
-    await o.laad();
+    const o = opstelling();
+    expect(await o.laad()).toEqual(uitkomst(1));
     o.server.gevraagd.length = 0;
 
-    expect(await o.laad()).toEqual({
-      'pyodide.js': 'pyodide 1',
-      'pyodide.asm.wasm': 'wasm 1',
-      'python_stdlib.zip': 'stdlib 1',
-    });
-    // Alleen de ingang, en die als voorwaardelijk verzoek (een 304 als hij
-    // niet veranderde): de wasm en de standaardbibliotheek niet meer.
+    expect(await o.laad('tweede')).toEqual(uitkomst(1));
+    // Alleen de ingang, buiten de HTTP-cache om (een 304 als hij niet
+    // veranderde): zo ziet hij een nieuwe versie op de server.
     expect(o.server.gevraagd).toEqual(['/python/pyodide/pyodide.js (no-cache)']);
   });
 
-  it('gooit de cache weg als pyodide.js verandert, vóór de rest geladen wordt', async () => {
-    // Een upgrade: een oude wasm naast een nieuwe pyodide.js start niet.
-    const o = opstelling({ ...VERSIE_1 });
+  it('geeft een vervalst bestand in de cache niet door, en haalt het echte', async () => {
+    // Leerlingcode op de origin van de site kan via `import js` in Cache
+    // Storage schrijven. In Chromium nagespeeld: een pyodide.asm.js met eigen
+    // JavaScript ervoor draaide daarna bij elk bezoek mee.
+    const o = opstelling();
     await o.laad();
-    Object.assign(o.server.bestanden, {
-      '/python/pyodide/pyodide.js': 'pyodide 2',
-      '/python/pyodide/pyodide.asm.wasm': 'wasm 2',
-      '/python/pyodide/python_stdlib.zip': 'stdlib 2',
-    });
+    const [naam] = [...o.winkels.keys()];
+    const wasm = `${ORIGIN}/python/pyodide/pyodide.asm.wasm`;
+    o.winkels.get(naam)?.set(wasm, new Response('kwaadaardig'));
 
-    expect(await o.laad()).toEqual({
-      'pyodide.js': 'pyodide 2',
-      'pyodide.asm.wasm': 'wasm 2',
-      'python_stdlib.zip': 'stdlib 2',
-    });
-    o.server.gevraagd.length = 0;
-    expect((await o.laad())['pyodide.asm.wasm']).toBe('wasm 2');
-    expect(o.server.gevraagd).toEqual(['/python/pyodide/pyodide.js (no-cache)']);
+    expect(await o.laad('volgend bezoek')).toEqual(uitkomst(1));
+    // En het vervalste is vervangen door het echte.
+    expect(await o.winkels.get(naam)?.get(wasm)?.clone().text()).toBe('pyodide.asm.wasm 1');
   });
 
-  it('neemt na een upgrade geen oude bestanden uit de HTTP-cache van de browser over', async () => {
-    // De browser bewaart zelf ook (Cache-Control, Last-Modified). Vroeg de
-    // service worker na een upgrade de wasm-lijm met een gewone fetch, dan
-    // kwam de oude uit die HTTP-cache, en bewaarde hij die naast de nieuwe
-    // pyodide.js, tot de volgende versie: Python laadde niet meer. In
-    // Chromium nagespeeld met max-age=3600 en met alleen Last-Modified.
-    const server = nepServer({ ...VERSIE_1 });
-    const httpCache = new Map<string, string>();
-    const browser = (async (request: Request, init?: RequestInit) => {
-      const pad = new URL(request.url).pathname;
-      const vers = init?.cache === 'no-cache' || init?.cache === 'reload';
-      if (!vers && httpCache.has(pad)) return new Response(httpCache.get(pad), { status: 200 });
-      const antwoord = await server.fetch(request, init);
-      if (antwoord.status === 200) httpCache.set(pad, await antwoord.clone().text());
-      return antwoord;
-    }) as typeof fetch;
-    const { caches } = nepCaches();
-    const wachten: Promise<unknown>[] = [];
-    const afhandeling = () =>
-      maakAfhandeling({ caches, fetch: browser, scope: SCOPE, wachtOp: (p) => wachten.push(p) });
-    await laad(afhandeling(), wachten);
-    Object.assign(server.bestanden, {
-      '/python/pyodide/pyodide.js': 'pyodide 2',
-      '/python/pyodide/pyodide.asm.wasm': 'wasm 2',
-      '/python/pyodide/python_stdlib.zip': 'stdlib 2',
-    });
-
-    const verwacht = {
-      'pyodide.js': 'pyodide 2',
-      'pyodide.asm.wasm': 'wasm 2',
-      'python_stdlib.zip': 'stdlib 2',
-    };
-    expect(await laad(afhandeling(), wachten)).toEqual(verwacht);
-    // En wat hij bewaarde: het bezoek daarna komt uit zijn cache.
-    expect(await laad(afhandeling(), wachten)).toEqual(verwacht);
+  it('bewaart van het netwerk alleen wat de vingerafdruk heeft', async () => {
+    // Bijvoorbeeld een oude wasm-lijm die de HTTP-cache van de browser na een
+    // upgrade nog gaf: die mag de cache niet in.
+    const server = nepServer({ ...versie(1).bestanden, '/python/pyodide/pyodide.asm.wasm': 'oud' });
+    const o = opstelling(1, server);
+    await o.laad();
+    const [naam] = [...o.winkels.keys()];
+    expect([...(o.winkels.get(naam)?.keys() ?? [])].sort()).toEqual([
+      `${ORIGIN}/python/pyodide/pyodide.js`,
+      `${ORIGIN}/python/pyodide/python_stdlib.zip`,
+    ]);
   });
 
-  it('bewaart niets zolang hij de ingang niet zag', async () => {
-    // De pagina laadde pyodide.js nog zonder service worker, en de rest met:
-    // dan is niet te zeggen bij welke versie die bestanden horen.
-    const o = opstelling({ ...VERSIE_1 });
-    const antwoord = o.afhandeling(vraag('/python/pyodide/pyodide.asm.wasm'));
-    expect(await (await antwoord)?.text()).toBe('wasm 1');
-    expect([...(o.winkels.values().next().value?.keys() ?? [])]).toEqual([]);
+  it('laadt alles van het netwerk als de server al een nieuwere Pyodide heeft', async () => {
+    // Net uitgerold: de server heeft versie 2, de browser nog de service
+    // worker van versie 1. Uit de cache zou dan een wasm van 1 naast een
+    // pyodide.js van 2 komen, en Python start niet.
+    const o = opstelling(1);
+    await o.laad();
+    Object.assign(o.server.bestanden, versie(2).bestanden);
+
+    expect(await o.laad('na de uitrol')).toEqual(uitkomst(2));
+    // Een ander tabblad dat nog niets laadde, ook.
+    expect(await o.laad('nog een tabblad')).toEqual(uitkomst(2));
   });
 
-  it('geeft offline de bewaarde ingang en de bewaarde runtime', async () => {
-    const o = opstelling({ ...VERSIE_1 });
+  it('gooit bij het activeren de caches van eerdere versies van deze cursus weg', async () => {
+    const opslag = nepCaches();
+    await opstelling(1, undefined, opslag).laad();
+    await opstelling(2, nepServer(versie(2).bestanden), opslag).laad();
+    // Van een andere cursus op dezelfde vak-host, en van vóór de versies.
+    const ctf = cacheNamen('https://informatica.coderius.nl/ctf/', versie(1).inhoud).naam;
+    opslag.winkels.set(ctf, new Map());
+    opslag.winkels.set('coderius-pyodide /python/pyodide/', new Map());
+
+    await ruimOp({ caches: opslag.caches, scope: SCOPE, inhoud: versie(2).inhoud });
+    expect([...opslag.winkels.keys()].sort()).toEqual(
+      [ctf, cacheNamen(SCOPE, versie(2).inhoud).naam].sort(),
+    );
+  });
+
+  it('geeft elke versie en elke cursus een eigen cache', () => {
+    const python1 = cacheNamen(SCOPE, versie(1).inhoud).naam;
+    expect(cacheNamen(SCOPE, versie(2).inhoud).naam).not.toBe(python1);
+    expect(cacheNamen('https://informatica.coderius.nl/ctf/', versie(1).inhoud).naam).not.toBe(
+      python1,
+    );
+    expect(python1.startsWith('coderius-pyodide /python/pyodide/ ')).toBe(true);
+  });
+
+  it('geeft offline de bewaarde ingang en de bewaarde runtime, als die kloppen', async () => {
+    const o = opstelling();
     await o.laad();
     const offline = maakAfhandeling({
-      caches: nepCachesVan(o.winkels) as unknown as CacheStorage,
+      caches: nepCaches(o.winkels).caches,
       fetch: (async () => {
         throw new TypeError('Failed to fetch');
       }) as typeof fetch,
       scope: SCOPE,
+      inhoud: versie(1).inhoud,
     });
-    expect(await laad(offline, [])).toEqual({
-      'pyodide.js': 'pyodide 1',
-      'pyodide.asm.wasm': 'wasm 1',
-      'python_stdlib.zip': 'stdlib 1',
-    });
+    expect(await laad(offline)).toEqual(uitkomst(1));
   });
 
-  it('bewaart een 404 niet', async () => {
-    const o = opstelling({ '/python/pyodide/pyodide.js': 'pyodide 1' });
-    await o.afhandeling(vraag('/python/pyodide/pyodide.js'));
-    const eerste = await o.afhandeling(vraag('/python/pyodide/matplotlib.whl'));
-    expect(eerste?.status).toBe(404);
-    o.server.bestanden['/python/pyodide/matplotlib.whl'] = 'wheel';
-    expect(await (await o.afhandeling(vraag('/python/pyodide/matplotlib.whl')))?.text()).toBe(
-      'wheel',
-    );
+  it('bewaart een 404 niet, en laat een bestand buiten INHOUD met rust', async () => {
+    const o = opstelling();
+    o.server.bestanden['/python/pyodide/python_stdlib.zip'] = undefined;
+    await o.laad();
+    o.server.bestanden['/python/pyodide/python_stdlib.zip'] = 'python_stdlib.zip 1';
+    expect(await o.laad('daarna')).toEqual(uitkomst(1));
+    // Een wheel die de build niet kent (of een bestand van een leerling).
+    expect(o.afhandeling(vraag('/python/pyodide/onbekend.whl'))).toBeNull();
+  });
+
+  it('valt terug op het netwerk als de cache het niet doet', async () => {
+    // Cache Storage kan vol zijn of geblokkeerd (privévenster in sommige
+    // browsers); Python moet dan gewoon laden, alleen zonder bewaren.
+    const server = nepServer(versie(1).bestanden);
+    const kapot = {
+      open: async () => {
+        throw new DOMException('quota', 'QuotaExceededError');
+      },
+    } as unknown as CacheStorage;
+    const afhandeling = maakAfhandeling({
+      caches: kapot,
+      fetch: server.fetch,
+      scope: SCOPE,
+      inhoud: versie(1).inhoud,
+    });
+    expect(await laad(afhandeling)).toEqual(uitkomst(1));
   });
 
   it('laat alles buiten pyodide/ met rust, en ook wat geen GET is', () => {
-    const o = opstelling({ ...VERSIE_1 });
+    const o = opstelling();
     expect(o.afhandeling(vraag('/python/docs/basis/'))).toBeNull();
     expect(o.afhandeling(vraag('/python/assets/js/main.js'))).toBeNull();
     // Een andere cursus op dezelfde vak-host heeft zijn eigen Pyodide.
@@ -202,73 +224,7 @@ describe('de service worker voor Pyodide', () => {
       o.afhandeling(vraag('/python/pyodide/pyodide.asm.wasm', { headers: { range: 'bytes=0-9' } })),
     ).toBeNull();
   });
-
-  it('gooit de cache niet weg als pyodide.js even niet lukt', async () => {
-    // Een 500 of 404 op de ingang is geen nieuwe versie; het volgende bezoek
-    // moet de bewaarde runtime nog hebben.
-    const o = opstelling({ ...VERSIE_1 });
-    await o.laad();
-    const ingang = o.server.bestanden['/python/pyodide/pyodide.js'];
-    o.server.bestanden['/python/pyodide/pyodide.js'] = undefined;
-    expect((await o.afhandeling(vraag('/python/pyodide/pyodide.js')))?.status).toBe(404);
-    o.server.bestanden['/python/pyodide/pyodide.js'] = ingang;
-    o.server.gevraagd.length = 0;
-    await o.laad();
-    expect(o.server.gevraagd).toEqual(['/python/pyodide/pyodide.js (no-cache)']);
-  });
-
-  it('valt terug op het netwerk als de cache het niet doet', async () => {
-    // Cache Storage kan vol zijn of geblokkeerd (privévenster in sommige
-    // browsers); Python moet dan gewoon laden, alleen zonder bewaren.
-    const server = nepServer({ ...VERSIE_1 });
-    const kapot = {
-      open: async () => {
-        throw new DOMException('quota', 'QuotaExceededError');
-      },
-      delete: async () => false,
-    } as unknown as CacheStorage;
-    const afhandeling = maakAfhandeling({ caches: kapot, fetch: server.fetch, scope: SCOPE });
-    expect(await laad(afhandeling, [])).toEqual({
-      'pyodide.js': 'pyodide 1',
-      'pyodide.asm.wasm': 'wasm 1',
-      'python_stdlib.zip': 'stdlib 1',
-    });
-  });
-
-  it('geeft elke cursus van een vak een eigen cache', async () => {
-    // Alle cursussen van informatica delen één origin, en dus één Cache Storage.
-    const { caches, winkels } = nepCaches();
-    const server = nepServer({
-      '/python/pyodide/pyodide.js': 'python',
-      '/ctf/pyodide/pyodide.js': 'ctf',
-    });
-    for (const scope of [SCOPE, 'https://informatica.coderius.nl/ctf/']) {
-      const pad = new URL('pyodide/pyodide.js', scope).pathname;
-      await maakAfhandeling({ caches, fetch: server.fetch, scope })(vraag(pad));
-    }
-    expect([...winkels.keys()].sort()).toEqual([
-      'coderius-pyodide /ctf/pyodide/',
-      'coderius-pyodide /python/pyodide/',
-    ]);
-  });
 });
-
-/** Dezelfde winkels, opnieuw geopend: zoals een service worker na een herstart. */
-function nepCachesVan(winkels: Map<string, Map<string, Response>>) {
-  return {
-    open: async (naam: string) => {
-      const winkel = winkels.get(naam) ?? new Map<string, Response>();
-      winkels.set(naam, winkel);
-      return {
-        match: async (sleutel: string) => winkel.get(sleutel)?.clone(),
-        put: async (sleutel: string, r: Response) => {
-          winkel.set(sleutel, r);
-        },
-      };
-    },
-    delete: async (naam: string) => winkels.delete(naam),
-  };
-}
 
 describe('de aanmelding', () => {
   /** Voert het aanmeldscript uit in een nagemaakte pagina. */
@@ -316,16 +272,40 @@ describe('de plugin', () => {
     expect(tags).toEqual([expect.objectContaining({ innerHTML: aanmelder('/python/') })]);
   });
 
-  it("zet de service worker naast de pagina's van de build", async () => {
+  it("zet de service worker met de vingerafdrukken naast de pagina's van de build", async () => {
     const outDir = mkdtempSync(join(tmpdir(), 'pyodide-sw-'));
     try {
+      mkdirSync(join(outDir, 'pyodide'));
+      writeFileSync(join(outDir, 'pyodide', 'pyodide.js'), 'ingang');
+      writeFileSync(join(outDir, 'pyodide', 'numpy.whl'), 'wheel');
+      // De kopieën van comprimeer.mjs tellen niet: de browser krijgt ze uitgepakt.
+      writeFileSync(join(outDir, 'pyodide', 'pyodide.js.br'), 'kopie');
       await pyodideCachePlugin(context).postBuild({ outDir });
       const sw = readFileSync(join(outDir, 'pyodide-sw.js'), 'utf8');
-      expect(sw).toBe(readFileSync(new URL('./pyodide-cache/sw.js', import.meta.url), 'utf8'));
+      const inhoud = { 'numpy.whl': som('wheel'), 'pyodide.js': som('ingang') };
+      expect(sw).toBe(serviceWorker(inhoud));
+      expect(sw).toContain(`const INHOUD = ${JSON.stringify(inhoud)};`);
       // In de browser is er geen `module`: dan moet hij zich aanmelden voor fetch.
       const luister = vi.fn();
-      new Function('self', sw)({ registration: { scope: SCOPE }, addEventListener: luister });
+      new Function('self', sw)({
+        registration: { scope: SCOPE },
+        addEventListener: luister,
+        fetch: () => {},
+        caches: {},
+      });
       expect(luister.mock.calls.map((c) => c[0])).toEqual(['install', 'activate', 'fetch']);
+    } finally {
+      rmSync(outDir, { recursive: true, force: true });
+    }
+  });
+
+  it('weigert een build zonder pyodide.js', async () => {
+    // Dan staat er een service worker zonder INHOUD, die niets bewaart.
+    const outDir = mkdtempSync(join(tmpdir(), 'pyodide-sw-'));
+    try {
+      await expect(pyodideCachePlugin(context).postBuild({ outDir })).rejects.toThrow(
+        /pyodide\.js ontbreekt/,
+      );
     } finally {
       rmSync(outDir, { recursive: true, force: true });
     }

@@ -121,7 +121,9 @@ const les = eersteLesMetOefenveld();
 console.log(`Les: ${les}`);
 
 const browser = await chromium.launch();
-const page = await browser.newPage();
+// Een eigen context: de controle van de cache opent er een tweede tabblad in.
+const context = await browser.newContext();
+const page = await context.newPage();
 const consoleFouten = [];
 page.on('pageerror', (e) => consoleFouten.push(e.message));
 // input() zonder JSPI valt terug op window.prompt.
@@ -239,6 +241,47 @@ try {
     if (runtime.length) throw new Error(`weer van de server: ${runtime.join(', ')}`);
     await draai('print("terug")');
     await verwacht('terug');
+  });
+
+  // Leerlingcode draait op de origin van de site en kan via `import js` in
+  // Cache Storage schrijven. Een vervalste pyodide.asm.js (met de headers van
+  // de echte, anders weigert de browser hem als module) draaide zonder
+  // vingerafdrukken bij elk volgend bezoek mee (pyodide-cache/sw.js).
+  await controleer('een vervalste Pyodide in de cache draait niet', async () => {
+    await draai(`import js, asyncio
+async def vervals():
+    for naam in (await js.caches.keys()).to_py():
+        if "/pyodide/" not in naam:
+            continue
+        c = await js.caches.open(naam)
+        url = js.location.origin + "${BASIS}pyodide/pyodide.asm.js"
+        r = await c.match(url)
+        if r:
+            t = await r.text()
+            maak = js.eval("(b, r) => new Response(b, { headers: r.headers })")
+            await c.put(url, maak("globalThis.__vervalst = true;" + t, r))
+            print("vervalst")
+asyncio.ensure_future(vervals())`);
+    await page.waitForFunction(
+      (el) => el.textContent.includes('vervalst'),
+      await uitvoer.elementHandle(),
+      {
+        timeout: 10_000,
+      },
+    );
+    const tabblad = await context.newPage();
+    try {
+      await tabblad.goto(`${adres}${les}`);
+      const ander = tabblad.locator('[class*="exercise_"]').first();
+      await ander.getByRole('button', { name: '▶ Uitvoeren' }).waitFor({ timeout: LADEN_MS });
+      if (await tabblad.evaluate(() => globalThis.__vervalst))
+        throw new Error('de vervalste code draaide');
+      await ander.locator('textarea').fill('print("echt")');
+      await ander.getByRole('button', { name: /Uitvoeren/ }).click();
+      await ander.locator('[class*="output_"]').getByText('echt').waitFor({ timeout: 30_000 });
+    } finally {
+      await tabblad.close();
+    }
   });
 
   await controleer('geen JavaScript-fouten op de pagina', async () => {
