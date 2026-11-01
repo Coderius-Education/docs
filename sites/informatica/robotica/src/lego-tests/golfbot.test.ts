@@ -264,6 +264,10 @@ describe('de hardware-uitleg klopt', () => {
       arm.indexOf('## Eerst testen: alleen het tandwiel'),
       arm.indexOf('## Kies je arm'),
     );
+    // Op de platte kant: plakband op een tand maakt hem dikker, en dan lopen
+    // de tanden vast of slaan ze over, precies wat het merkteken moet laten zien.
+    expect(test).toMatch(/plakband op de platte kant/);
+    expect(test).toMatch(/Plak niet op de tanden/);
     // Het plakband gaat erop vóór de upload, en de vraag komt na Servo 9 op 90.
     expect(test.indexOf('plakband')).toBeLessThan(test.indexOf('<Blokken'));
     expect(test).toMatch(/\*\*Servo 9 op 90\*\*[\s\S]*plakband[^.?]*naast elkaar/);

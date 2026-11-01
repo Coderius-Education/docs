@@ -93,7 +93,7 @@ Elke tand is een zestiende van een rondje: 22,5°, een kwart van een kwart rondj
 
 De servo zit nu in de toren, met het tandwiel erop. De arm zit er nog niet aan, dus dit is het moment om te testen. Draait er straks iets niet goed met de hele arm eraan, dan weet je niet of het aan de servo ligt, aan het tandwiel of aan de arm. Met alleen een tandwiel zie je het meteen.
 
-Plak eerst, met je robot nog uit, een klein stukje plakband op een tand van het oranje tandwiel, en een op de tand van het grijze tandwiel die daar precies naast zit. Zo zie je straks of de tanden goed in elkaar blijven grijpen.
+Plak eerst, met je robot nog uit, een klein stukje plakband op de platte kant van het oranje tandwiel, vlak bij de plek waar de twee tandwielen elkaar raken. Plak een tweede stukje op de platte kant van het grijze tandwiel, zo dat de twee stukjes naast elkaar zitten. Plak niet op de tanden zelf: dan passen ze niet meer goed in elkaar. Zo zie je straks of de tanden goed in elkaar blijven grijpen.
 
 Zet je robot weer aan met **ON/OFF** en upload het programma uit [de servo](site:robotica/golfbot/servo) dat heen en weer draait:
 
@@ -111,7 +111,10 @@ Upload daarna weer het programma **Servo 9 op 90** van hierboven, zodat de servo
 
 Is het antwoord vier keer ja, dan werkt je overbrenging. Zet je robot uit en laat de plakband zitten: zo kun je het straks met de arm eraan nog eens nakijken. Pas dan maak je de arm.
 
-Gaat er iets mis? Kijk dan bij welke stap van de overbrenging de beweging ophoudt. Draait het oranje tandwiel zelf niet, dan ligt het aan de servo: bij [de servo](site:robotica/golfbot/servo) staat onder **Er gaat iets mis** wat je dan doet. Draait het oranje wel en het grijze niet, of zitten de stukjes plakband niet meer naast elkaar, kijk dan hieronder bij **Er gaat iets mis**. Zoemt de servo alleen met het grijze tandwiel erop, dan zit het tandwiel ergens tegenaan: kijk of het vrij kan draaien.
+Gaat er iets mis? Kijk dan bij welke stap van de overbrenging de beweging ophoudt.
+
+- Draait het oranje tandwiel niet, of zoemt de servo? Haal dan het grijze tandwiel even van de as. Draait het oranje nu wel, dan zat het grijze ergens tegenaan: kijk of het vrij kan draaien. Draait het oranje ook zonder het grijze niet, dan ligt het aan de servo: bij [de servo](site:robotica/golfbot/servo) staat onder **Er gaat iets mis** wat je dan doet.
+- Draait het oranje wel en het grijze niet, of zitten de stukjes plakband niet meer naast elkaar? Kijk dan hieronder bij **Er gaat iets mis**.
 
 ## Kies je arm
 
@@ -293,7 +296,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfbot is net anders.
 
 <Probleem titel="De arm ratelt of klikt, of hangt na een paar slagen steeds schever.">
 
-**Oorzaak:** de tanden slaan over. Het grijze tandwiel zit niet ver genoeg in het oranje, of schuift bij het slaan een stukje naar buiten over de as. Bij een harde slag springen de tanden dan een tand verder, en elke tand is 22,5°.
+**Oorzaak:** de tanden slaan over. Het grijze tandwiel zit niet ver genoeg naar binnen, of schuift bij het slaan een stukje naar buiten over de as. Bij een harde slag springen de tanden dan een tand verder, en elke tand is 22,5°.
 
 **Zelf vinden:** kijk naar je stukjes plakband. Laat de arm een paar keer slaan, en upload dan **Servo 9 op 90**. Zitten de twee stukjes niet meer naast elkaar, dan zijn de tanden overgeslagen.
 
@@ -307,7 +310,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfbot is net anders.
 
 **Zelf vinden:** upload **Servo 9 op 90**. Hangt de arm dan niet recht naar beneden, bij de bal? Dan grijpt het tandwiel in de verkeerde tand.
 
-**Oplossing:** laat de servo op 90° staan, zoals bij [Eerst de servo op 90°](site:robotica/golfbot/arm#servo-op-90), en zet je robot uit. Trek het grijze tandwiel een stukje naar buiten over de as, tot zijn tanden los zijn van het oranje tandwiel. Draai de arm tot hij goed staat, en duw het grijze tandwiel weer naar binnen, met zijn tanden tussen die van het oranje. Een nagemaakte arm staat dan zoals op het plaatje van stap 12. Een zelfgemaakte arm hangt recht naar beneden, bij de bal.
+**Oplossing:** laat de servo op 90° staan, zoals bij [Eerst de servo op 90°](site:robotica/golfbot/arm#servo-op-90), en zet je robot uit. Trek het grijze tandwiel een stukje naar buiten over de as, tot zijn tanden los zijn van het oranje tandwiel. Schuift het daarbij helemaal van de as, dan is dat niet erg. Draai de arm tot hij goed staat, en duw het grijze tandwiel weer naar binnen, met zijn tanden tussen die van het oranje. Passen de tanden net niet, draai de arm dan een heel klein beetje heen en weer tot ze in elkaar schuiven. Een nagemaakte arm staat dan zoals op het plaatje van stap 12. Een zelfgemaakte arm hangt recht naar beneden, bij de bal.
 
 </Probleem>
 
