@@ -231,6 +231,53 @@ describe('de hardware-uitleg klopt', () => {
     expect(tussen).toMatch(/^## Kies je arm$/m);
   });
 
+  it('de armles beschrijft de overbrenging zoals hij gebouwd is', () => {
+    // Het grijze tandwiel van stap 11 zit niet op de servo, maar op de lange
+    // as van stap 10, en grijpt in het oranje tandwiel van de servo (in
+    // golfer.io liggen de as en de uitgang van de servo 2 noppen uit elkaar).
+    // De les zei "het tandwiel komt op de as van de servo", en een kaart zei
+    // "draait de as niet mee, dan zit hij niet goed in de servo". Wie zo
+    // denkt, zoekt bij een slippend tandwiel op de verkeerde plek.
+    const arm = tekst('arm.md');
+    expect(arm).not.toMatch(/as van de servo/);
+    const uitleg = arm.slice(
+      arm.indexOf('## Hoe de servo de arm laat draaien'),
+      arm.indexOf('## Eerst testen: alleen het tandwiel'),
+    );
+    expect(arm.indexOf('stap-11.jpg')).toBeLessThan(
+      arm.indexOf('## Hoe de servo de arm laat draaien'),
+    );
+    expect(uitleg).toMatch(/oranje tandwiel/);
+    expect(uitleg).toMatch(/\*\*overbrenging\*\*/);
+    // Eerst voorspellen welke kant het grijze tandwiel op draait, dan pas
+    // het plaatje met de pijlen.
+    expect(uitleg.indexOf('<Voorspel')).toBeGreaterThan(-1);
+    expect(uitleg.indexOf('<Voorspel')).toBeLessThan(uitleg.indexOf('overbrenging.svg'));
+    expect(existsSync(join(STATIC, 'golfbot', 'overbrenging.svg'))).toBe(true);
+    // Eén tand verkeerd is 360° / 16 tanden: zo herkent een leerling hem.
+    expect(uitleg).toMatch(/22,5°/);
+  });
+
+  it('de test met alleen het tandwiel kijkt met plakband of de tanden overslaan', () => {
+    const arm = tekst('arm.md');
+    const test = arm.slice(
+      arm.indexOf('## Eerst testen: alleen het tandwiel'),
+      arm.indexOf('## Kies je arm'),
+    );
+    // Het plakband gaat erop vóór de upload, en de vraag komt na Servo 9 op 90.
+    expect(test.indexOf('plakband')).toBeLessThan(test.indexOf('<Blokken'));
+    expect(test).toMatch(/\*\*Servo 9 op 90\*\*[\s\S]*plakband[^.?]*naast elkaar/);
+  });
+
+  it('wie een tandwiel ziet overslaan of één tand verkeerd, heeft een kaart', () => {
+    const kaarten = problemen(tekst('arm.md'));
+    const overslaan = kaarten.find((k) => /ratelt|klikt/.test(k.titel));
+    expect(overslaan?.inhoud).toMatch(/\*\*Zelf vinden:\*\*[^\n]*plakband/);
+    const scheef = kaarten.find((k) => /scheef/.test(k.titel) && !/ratelt/.test(k.titel));
+    expect(scheef?.inhoud).toMatch(/verkeerde tand/);
+    expect(scheef?.inhoud).toMatch(/22,5°/);
+  });
+
   it('de bouwpagina houdt op bij stap 10, de rest staat bij de arm', () => {
     const stappen = (bestand: string) =>
       [...tekst(bestand).matchAll(/bouwen\/stap-(\d+)\.jpg/g)].map((m) => Number(m[1]));
