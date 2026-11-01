@@ -86,7 +86,8 @@ const brotli = (inhoud) =>
  * @returns {Promise<{ bestanden: number, voor: number, gz: number, br: number }>}
  */
 async function comprimeerMap(map) {
-  const alles = bestanden(map).filter((p) => !/\.(gz|br)$/.test(p));
+  // Geen .gz of .br: die staan niet in TE_COMPRIMEREN.
+  const alles = bestanden(map);
   const totaal = { bestanden: 0, voor: 0, gz: 0, br: 0 };
 
   // De grootste eerst: die bepalen hoe lang het duurt.

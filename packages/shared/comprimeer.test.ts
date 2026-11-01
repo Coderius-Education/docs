@@ -1,5 +1,13 @@
 import { randomBytes } from 'node:crypto';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { brotliDecompressSync, gunzipSync } from 'node:zlib';
@@ -27,7 +35,7 @@ function build(bestanden: Record<string, Buffer | string>): string {
 }
 
 const tekst = '<p>Leuk dat je er bent.</p>\n'.repeat(200);
-// Een stuk wasm-achtig: herhaalde opcodes met wat ruis.
+// Een wasm-kop met daarachter iets wat goed comprimeert.
 const wasm = Buffer.concat([Buffer.from([0, 0x61, 0x73, 0x6d]), Buffer.alloc(20_000, 0x20)]);
 
 describe('comprimeerMap', () => {
@@ -55,7 +63,9 @@ describe('comprimeerMap', () => {
     ];
     const map = build({
       ...Object.fromEntries(namen.map((n) => [n, tekst])),
-      'klein.js': 'console.log(1);',
+      // Kleiner dan 1 kB, maar wel goed te comprimeren: dan beslist alleen de
+      // ondergrens, niet de regel dat een kopie kleiner moet zijn.
+      'klein.js': 'console.log(1);\n'.repeat(40),
     });
     await comprimeerMap(map);
     for (const naam of [...namen, 'klein.js']) {
@@ -87,11 +97,23 @@ describe('comprimeerMap', () => {
     }
   });
 
-  it('comprimeert een tweede keer niet zijn eigen kopieën', async () => {
-    const map = build({ 'index.html': tekst });
+  it('verandert bij een tweede run niets', async () => {
+    // De job `browser` kan een build comprimeren die al gecomprimeerd uit de
+    // cache kwam; dan geen .gz.gz, en dezelfde bestanden.
+    const map = build({ 'index.html': tekst, 'data.json': randomBytes(4096) });
     await comprimeerMap(map);
-    const tweede = await comprimeerMap(map);
-    expect(tweede.bestanden).toBe(1);
-    expect(existsSync(join(map, 'index.html.gz.gz'))).toBe(false);
+    const inhoud = () =>
+      Object.fromEntries(
+        readdirSync(map).map((n) => [n, readFileSync(join(map, n)).toString('hex')]),
+      );
+    const eerste = inhoud();
+    await comprimeerMap(map);
+    expect(inhoud()).toEqual(eerste);
+    expect(Object.keys(eerste).sort()).toEqual([
+      'data.json',
+      'index.html',
+      'index.html.br',
+      'index.html.gz',
+    ]);
   });
 });

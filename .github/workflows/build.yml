@@ -662,9 +662,13 @@ jobs:
         with:
           map: ${{ steps.map.outputs.dir }}
 
+      # Ook gecomprimeerd: deze build gaat onder dezelfde sleutel de cache in
+      # als die van de job `build`, en de job `browser` haalt hem daar weer uit.
       - name: Build ${{ matrix.site }} (niet in de cache)
         if: steps.cache.outputs.cache-hit != 'true'
-        run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
+        run: |
+          pnpm --filter "./${{ steps.map.outputs.dir }}" build
+          node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
 
       - name: Build in de cache
         if: steps.cache.outputs.cache-hit != 'true'
@@ -814,7 +818,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: De speeltuin in Chromium
-        run: node scripts/rooktest-speeltuin.mjs "${{ steps.map.outputs.dir }}/build"
+        run: node scripts/rooktest-speeltuin.mjs "${{ steps.map.outputs.dir }}/build" --eis-compressie
 
   build-klaar:
     name: build

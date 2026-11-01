@@ -210,9 +210,21 @@ const FASTER = {
  * cursus op zijn oude subdomein iets in de browser, geef dan `oudeOpslag` mee
  * (zie oude-opslag.js): de leerling kan dat werk dan overzetten.
  */
-/** Heeft de site @docusaurus/plugin-pwa, met een eigen service worker? */
-function heeftPwa(plugins) {
-  return (plugins || []).some((p) => (Array.isArray(p) ? p[0] : p) === '@docusaurus/plugin-pwa');
+/**
+ * Heeft de site een eigen service worker (@docusaurus/plugin-pwa)? Uit zijn
+ * plugins, ook als naam van een opgelost pad, of uit zijn package.json: wie
+ * de PWA als dependency heeft, gebruikt hem (play).
+ */
+function heeftPwa(plugins, siteDir) {
+  const naam = (p) => (Array.isArray(p) ? p[0] : p);
+  if ((plugins || []).some((p) => typeof naam(p) === 'string' && naam(p).includes('plugin-pwa')))
+    return true;
+  const pad = path.join(siteDir, 'package.json');
+  if (!fs.existsSync(pad)) return false;
+  const pkg = JSON.parse(fs.readFileSync(pad, 'utf8'));
+  return Boolean(
+    pkg.dependencies?.['@docusaurus/plugin-pwa'] || pkg.devDependencies?.['@docusaurus/plugin-pwa'],
+  );
 }
 
 function createConfig(course = {}) {
@@ -418,7 +430,9 @@ function createConfig(course = {}) {
       ...(oudeOpslag ? [[oudeOpslagPlugin, { siteId: registry?.id, regels: oudeOpslag }]] : []),
       // De Pyodide van de site in een eigen cache (plugins/pyodide-cache.js),
       // behalve waar een PWA dat al doet (play).
-      ...(gebruiktPyodide(process.cwd()) && !heeftPwa(plugins) ? [pyodideCachePlugin] : []),
+      ...(gebruiktPyodide(process.cwd()) && !heeftPwa(plugins, process.cwd())
+        ? [pyodideCachePlugin]
+        : []),
     ],
     themeConfig,
   };

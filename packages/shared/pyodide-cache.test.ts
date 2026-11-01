@@ -1,3 +1,5 @@
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -32,13 +34,14 @@ function nepCaches() {
 }
 
 /** Een server met per pad een inhoud; telt wat hij uitlevert. */
-function nepServer(bestanden: Record<string, string>) {
+function nepServer(bestanden: Record<string, string | undefined>) {
   const gevraagd: string[] = [];
   const fetch = (async (request: Request, init?: RequestInit) => {
     const pad = new URL(request.url).pathname;
     gevraagd.push(init?.cache ? `${pad} (${init.cache})` : pad);
-    if (!(pad in bestanden)) return new Response('weg', { status: 404 });
-    return new Response(bestanden[pad], { status: 200 });
+    const inhoud = bestanden[pad];
+    if (inhoud === undefined) return new Response('weg', { status: 404 });
+    return new Response(inhoud, { status: 200 });
   }) as typeof globalThis.fetch;
   return { bestanden, gevraagd, fetch };
 }
@@ -59,7 +62,7 @@ async function laad(afhandeling: ReturnType<typeof maakAfhandeling>, wachten: Pr
   return uit;
 }
 
-function opstelling(bestanden: Record<string, string>) {
+function opstelling(bestanden: Record<string, string | undefined>) {
   const server = nepServer(bestanden);
   const { caches, winkels } = nepCaches();
   const wachten: Promise<unknown>[] = [];
@@ -163,6 +166,38 @@ describe('de service worker voor Pyodide', () => {
     ).toBeNull();
   });
 
+  it('gooit de cache niet weg als pyodide.js even niet lukt', async () => {
+    // Een 500 of 404 op de ingang is geen nieuwe versie; het volgende bezoek
+    // moet de bewaarde runtime nog hebben.
+    const o = opstelling({ ...VERSIE_1 });
+    await o.laad();
+    const ingang = o.server.bestanden['/python/pyodide/pyodide.js'];
+    o.server.bestanden['/python/pyodide/pyodide.js'] = undefined;
+    expect((await o.afhandeling(vraag('/python/pyodide/pyodide.js')))?.status).toBe(404);
+    o.server.bestanden['/python/pyodide/pyodide.js'] = ingang;
+    o.server.gevraagd.length = 0;
+    await o.laad();
+    expect(o.server.gevraagd).toEqual(['/python/pyodide/pyodide.js (no-cache)']);
+  });
+
+  it('valt terug op het netwerk als de cache het niet doet', async () => {
+    // Cache Storage kan vol zijn of geblokkeerd (privévenster in sommige
+    // browsers); Python moet dan gewoon laden, alleen zonder bewaren.
+    const server = nepServer({ ...VERSIE_1 });
+    const kapot = {
+      open: async () => {
+        throw new DOMException('quota', 'QuotaExceededError');
+      },
+      delete: async () => false,
+    } as unknown as CacheStorage;
+    const afhandeling = maakAfhandeling({ caches: kapot, fetch: server.fetch, scope: SCOPE });
+    expect(await laad(afhandeling, [])).toEqual({
+      'pyodide.js': 'pyodide 1',
+      'pyodide.asm.wasm': 'wasm 1',
+      'python_stdlib.zip': 'stdlib 1',
+    });
+  });
+
   it('geeft elke cursus van een vak een eigen cache', async () => {
     // Alle cursussen van informatica delen één origin, en dus één Cache Storage.
     const { caches, winkels } = nepCaches();
@@ -199,11 +234,64 @@ function nepCachesVan(winkels: Map<string, Map<string, Response>>) {
 }
 
 describe('de aanmelding', () => {
-  it('meldt de service worker aan op de baseUrl, met die baseUrl als scope', () => {
-    const script = aanmelder('/python/');
-    expect(script).toContain('register("/python/pyodide-sw.js",{scope:"/python/"})');
-    // Pas na het laden: de aanmelding concurreert niet met de pagina zelf.
-    expect(script).toContain("addEventListener('load'");
+  /** Voert het aanmeldscript uit in een nagemaakte pagina. */
+  function draai(script: string, { readyState = 'loading', sw = true } = {}) {
+    const register = vi.fn(async () => ({}));
+    const luisteraars: Record<string, () => void> = {};
+    const navigator = sw ? { serviceWorker: { register } } : {};
+    const window = {
+      addEventListener: (type: string, f: () => void) => {
+        luisteraars[type] = f;
+      },
+    };
+    new Function('navigator', 'document', 'window', script)(navigator, { readyState }, window);
+    return { register, laad: () => luisteraars.load?.() };
+  }
+
+  it('meldt de service worker pas na het laden aan, op de baseUrl', () => {
+    // Na het laden: de aanmelding concurreert niet met de pagina zelf.
+    const pagina = draai(aanmelder('/python/'));
+    expect(pagina.register).not.toHaveBeenCalled();
+    pagina.laad();
+    expect(pagina.register).toHaveBeenCalledWith('/python/pyodide-sw.js', { scope: '/python/' });
+  });
+
+  it('meteen als de pagina al geladen is, en niet zonder service workers', () => {
+    expect(draai(aanmelder('/ctf/'), { readyState: 'complete' }).register).toHaveBeenCalledWith(
+      '/ctf/pyodide-sw.js',
+      { scope: '/ctf/' },
+    );
+    // Oude browsers en sommige privévensters: geen fout, geen aanmelding.
+    expect(() => draai(aanmelder('/python/'), { sw: false }).laad()).not.toThrow();
+  });
+});
+
+describe('de plugin', () => {
+  const context = { siteConfig: { baseUrl: '/python/' } } as never;
+  afterEach(() => vi.unstubAllEnvs());
+
+  it('meldt alleen in een productie-build aan', () => {
+    // In `docusaurus start` zou hij bewaren wat de ontwikkelaar net verandert.
+    vi.stubEnv('NODE_ENV', 'development');
+    expect(pyodideCachePlugin(context).injectHtmlTags()).toEqual({});
+    vi.stubEnv('NODE_ENV', 'production');
+    const tags = pyodideCachePlugin(context).injectHtmlTags().postBodyTags;
+    expect(tags).toEqual([expect.objectContaining({ innerHTML: aanmelder('/python/') })]);
+  });
+
+  it("zet de service worker naast de pagina's van de build", async () => {
+    const outDir = mkdtempSync(join(tmpdir(), 'pyodide-sw-'));
+    try {
+      await pyodideCachePlugin(context).postBuild({ outDir });
+      const sw = readFileSync(join(outDir, 'pyodide-sw.js'), 'utf8');
+      expect(sw).toBe(readFileSync(new URL('./pyodide-cache/sw.js', import.meta.url), 'utf8'));
+      // In de browser is er geen `module`: dan moet hij zich aanmelden voor fetch.
+      const luister = vi.fn();
+      new Function('self', sw)({ registration: { scope: SCOPE }, addEventListener: luister });
+      expect(luister.mock.calls.map((c) => c[0])).toEqual(['install', 'activate', 'fetch']);
+    } finally {
+      rmSync(outDir, { recursive: true, force: true });
+    }
   });
 });
 
@@ -229,8 +317,15 @@ describe('createConfig', () => {
   });
 
   it('maar niet een site met een eigen PWA, of zonder Pyodide', () => {
-    // Twee service workers op één scope: de tweede vervangt de eerste.
-    expect(heeftCache('sites/informatica/play', [['@docusaurus/plugin-pwa', {}]])).toBe(false);
+    // Twee service workers op één scope: de tweede vervangt de eerste. Play
+    // zonder zijn plugins meegegeven: zijn package.json zegt het al.
+    expect(heeftCache('sites/informatica/play')).toBe(false);
     expect(heeftCache('sites/informatica/web')).toBe(false);
+  });
+
+  it('herkent de PWA ook als opgelost pad in de plugins', () => {
+    const pwa = '/repo/node_modules/@docusaurus/plugin-pwa/lib/index.js';
+    expect(heeftCache('sites/informatica/python', [[pwa, {}]])).toBe(false);
+    expect(heeftCache('sites/informatica/python', [pwa])).toBe(false);
   });
 });

@@ -1,6 +1,6 @@
 // Rooktest van de Python-speeltuin in een echte browser.
 //
-//   node scripts/rooktest-speeltuin.mjs [map-van-de-build]
+//   node scripts/rooktest-speeltuin.mjs [map-van-de-build] [--eis-compressie]
 //
 // De node-tests draaien Pyodide in node en de componenttests een nagemaakte
 // Pyodide in jsdom; geen van beide laadt de site zoals een leerling hem
@@ -11,6 +11,8 @@
 // De job `browser` in CI draait het na de build van de python-site.
 //
 // Lokaal: `pnpm --filter ./sites/informatica/python build`, dan dit script.
+// Met `--eis-compressie` (zo draait CI het) moet de wasm als brotli binnenkomen;
+// zonder die vlag slaat het die controle over als de build geen .br heeft.
 
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
@@ -21,7 +23,13 @@ import { chromium } from 'playwright';
 const require = createRequire(import.meta.url);
 const { SITES_BY_ID, siteDir } = require('../packages/shared/sites.js');
 
-const BUILD = resolve(process.argv[2] ?? join(siteDir('python'), 'build'));
+const argumenten = process.argv.slice(2);
+const BUILD = resolve(
+  argumenten.find((a) => !a.startsWith('--')) ?? join(siteDir('python'), 'build'),
+);
+// In CI is elke build gecomprimeerd (scripts/comprimeer.mjs); daar is een
+// build zonder .br een fout, en geen reden om de controle over te slaan.
+const EIS_COMPRESSIE = argumenten.includes('--eis-compressie');
 const BASIS = `/${SITES_BY_ID.python.path}/`;
 // Pyodide laden duurt in CI zo'n tien seconden; ruim daarboven.
 const LADEN_MS = 90_000;
@@ -164,7 +172,7 @@ try {
   // `build`), dan moet Pyodide hem ook gecomprimeerd binnenkrijgen en er
   // nog steeds mee starten: met Content-Encoding en het Content-Type
   // application/wasm, zoals de hostingbackend hem hoort te sturen.
-  if (existsSync(join(BUILD, 'pyodide', 'pyodide.asm.wasm.br'))) {
+  if (EIS_COMPRESSIE || existsSync(join(BUILD, 'pyodide', 'pyodide.asm.wasm.br'))) {
     await controleer('Pyodide start met de wasm gecomprimeerd (brotli)', async () => {
       const hoe = gecomprimeerd.get(`${BASIS}pyodide/pyodide.asm.wasm`);
       if (hoe !== 'br') throw new Error(`de wasm kwam binnen als ${hoe ?? 'ongecomprimeerd'}`);
