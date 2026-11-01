@@ -70,7 +70,13 @@ function maakAfhandeling({ caches, fetch, scope, wachtOp = () => {} }) {
     const cache = await caches.open(naam);
     const bewaard = await cache.match(sleutel(url));
     if (bewaard) return bewaard;
-    const netwerk = await fetch(request);
+    // Ook hier no-cache: een gewone fetch mag uit de HTTP-cache van de
+    // browser antwoorden, en die kan na een upgrade nog de oude wasm-lijm
+    // of standaardbibliotheek hebben. Bewaard naast de nieuwe pyodide.js
+    // bleef die mix staan tot de volgende versie, en dan laadt Python niet.
+    // Met no-cache vraagt de browser de server; die zegt 304 als het bestand
+    // niet veranderde.
+    const netwerk = await fetch(request, { cache: 'no-cache' });
     if (netwerk.status === 200 && (await cache.match(ingang))) {
       wachtOp(cache.put(sleutel(url), netwerk.clone()).catch(() => {}));
     }

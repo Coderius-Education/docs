@@ -155,7 +155,9 @@ alleen in een productie-build). Hij bewaart alleen wat onder
 `<baseUrl>pyodide/` staat. `pyodide.js` vraagt hij altijd aan het netwerk, en
 is die veranderd (een nieuwe Pyodide), dan gooit hij eerst zijn hele cache weg;
 zo komt een oude wasm nooit naast een nieuwe `pyodide.js`, zonder versie in de
-laders. Een lader moet dus altijd eerst `pyodide.js` laden.
+laders. Een lader moet dus altijd eerst `pyodide.js` laden. Wat hij nog niet
+heeft, vraagt hij ook met `no-cache`: uit de HTTP-cache van de browser kwam na
+een upgrade anders de oude wasm-lijm, naast de nieuwe `pyodide.js`.
 `pyodide-cache.test.ts` speelt dat na, de rooktest controleert in Chromium dat
 een derde bezoek alleen `pyodide.js` nog van de server haalt. Weghalen kan
 alleen met een `sw.js` die zichzelf afmeldt; een site zonder het bestand laat

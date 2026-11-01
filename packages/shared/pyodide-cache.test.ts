@@ -117,6 +117,43 @@ describe('de service worker voor Pyodide', () => {
     expect(o.server.gevraagd).toEqual(['/python/pyodide/pyodide.js (no-cache)']);
   });
 
+  it('neemt na een upgrade geen oude bestanden uit de HTTP-cache van de browser over', async () => {
+    // De browser bewaart zelf ook (Cache-Control, Last-Modified). Vroeg de
+    // service worker na een upgrade de wasm-lijm met een gewone fetch, dan
+    // kwam de oude uit die HTTP-cache, en bewaarde hij die naast de nieuwe
+    // pyodide.js, tot de volgende versie: Python laadde niet meer. In
+    // Chromium nagespeeld met max-age=3600 en met alleen Last-Modified.
+    const server = nepServer({ ...VERSIE_1 });
+    const httpCache = new Map<string, string>();
+    const browser = (async (request: Request, init?: RequestInit) => {
+      const pad = new URL(request.url).pathname;
+      const vers = init?.cache === 'no-cache' || init?.cache === 'reload';
+      if (!vers && httpCache.has(pad)) return new Response(httpCache.get(pad), { status: 200 });
+      const antwoord = await server.fetch(request, init);
+      if (antwoord.status === 200) httpCache.set(pad, await antwoord.clone().text());
+      return antwoord;
+    }) as typeof fetch;
+    const { caches } = nepCaches();
+    const wachten: Promise<unknown>[] = [];
+    const afhandeling = () =>
+      maakAfhandeling({ caches, fetch: browser, scope: SCOPE, wachtOp: (p) => wachten.push(p) });
+    await laad(afhandeling(), wachten);
+    Object.assign(server.bestanden, {
+      '/python/pyodide/pyodide.js': 'pyodide 2',
+      '/python/pyodide/pyodide.asm.wasm': 'wasm 2',
+      '/python/pyodide/python_stdlib.zip': 'stdlib 2',
+    });
+
+    const verwacht = {
+      'pyodide.js': 'pyodide 2',
+      'pyodide.asm.wasm': 'wasm 2',
+      'python_stdlib.zip': 'stdlib 2',
+    };
+    expect(await laad(afhandeling(), wachten)).toEqual(verwacht);
+    // En wat hij bewaarde: het bezoek daarna komt uit zijn cache.
+    expect(await laad(afhandeling(), wachten)).toEqual(verwacht);
+  });
+
   it('bewaart niets zolang hij de ingang niet zag', async () => {
     // De pagina laadde pyodide.js nog zonder service worker, en de rest met:
     // dan is niet te zeggen bij welke versie die bestanden horen.

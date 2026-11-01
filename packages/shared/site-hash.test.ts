@@ -13,7 +13,13 @@ describe('site-hash.mjs', () => {
       cwd: fileURLToPath(new URL('../..', import.meta.url)),
       encoding: 'utf8',
     });
-    for (const bestand of ['pnpm-lock.yaml', '.browserslistrc', '.npmrc', '.nvmrc']) {
+    for (const bestand of [
+      'pnpm-lock.yaml',
+      '.browserslistrc',
+      '.npmrc',
+      '.nvmrc',
+      'scripts/comprimeer.mjs',
+    ]) {
       expect(uit.split('\n'), bestand).toContain(bestand);
     }
     expect(uit.trim().split('\n').at(-1)).toMatch(/^[0-9a-f]{32}$/);
