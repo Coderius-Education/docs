@@ -161,9 +161,14 @@ describe('de onderdelenlijst klopt met de bouwplaatjes', () => {
 });
 
 describe('de stand van de servo ligt vast als de arm op de as komt', () => {
-  // De arm komt met een verbinder op de as (stap 12, of bij een eigen arm
-  // met een stukje met een asgat), niet met het tandwiel van stap 11. Een
-  // tandwiel met een asgat op een kruisas slipt niet.
+  // De arm komt met een verbinder op de lange as (stap 12, of bij een eigen
+  // arm met een stukje met een asgat). Op diezelfde as zit het grijze
+  // tandwiel van stap 11, en dat grijpt in het oranje tandwiel van de servo.
+  // Een tandwiel met een asgat draait niet rond óp zijn kruisas; wat wel kan,
+  // is dat het in de verkeerde tand van het oranje grijpt, of dat de tanden
+  // overslaan. Tot november 2026 ging deze test ervan uit dat het tandwiel op
+  // de as van de servo zat en niets met de stand van de arm te maken had, en
+  // weerde hij het tandwiel als oorzaak op elke kaart.
 
   it('het caution-blok staat vóór het tandwiel, en de servo blijft op 90° tot de arm erop zit', () => {
     const inhoud = tekst('arm.md');
@@ -177,7 +182,7 @@ describe('de stand van de servo ligt vast als de arm op de as komt', () => {
     expect(blok).toMatch(/Zet je robot weer aan met \*\*ON\/OFF\*\* en upload/);
   });
 
-  it('nergens slipt het tandwiel, en geen kaart wijst het tandwiel aan als de arm niet goed staat', () => {
+  it('het tandwiel slipt niet op zijn as; een kaart met het tandwiel gaat over de tanden', () => {
     const fout: string[] = [];
     for (const bestand of paginas()) {
       if (/tandwiel[^.]*slipt|slipt[^.]*tandwiel/i.test(tekst(bestand))) fout.push(bestand);
@@ -188,9 +193,8 @@ describe('de stand van de servo ligt vast als de arm op de as komt', () => {
     ];
     expect(kaarten.length).toBeGreaterThan(0);
     for (const [, titel, inhoud] of kaarten) {
-      if (!/arm/.test(titel)) continue;
       const oorzaak = inhoud.match(/\*\*Oorzaak:\*\*([^\n]*)/)?.[1] ?? '';
-      expect(oorzaak, titel).not.toMatch(/tandwiel/);
+      if (/tandwiel/.test(oorzaak)) expect(oorzaak, titel).toMatch(/\btand(en)?\b|grijpt/);
     }
   });
 
