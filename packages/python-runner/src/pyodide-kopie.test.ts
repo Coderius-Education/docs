@@ -51,9 +51,11 @@ function bronnen(map: string): string[] {
 describe('de Pyodide van elke site', () => {
   const metPyodide = sites.filter(({ map }) => gebruiktPyodide(map)).map((s) => s.id);
 
-  it('vijf sites serveren Pyodide', () => {
-    // Ondergrens tegen een stille lege lijst.
-    expect(metPyodide.sort()).toEqual(['algorithms', 'ctf', 'ide', 'play', 'python']);
+  it('de sites met Python in de browser serveren Pyodide', () => {
+    // Ondergrens tegen een stille lege lijst; een nieuwe cursus mag erbij.
+    expect(metPyodide).toEqual(
+      expect.arrayContaining(['algorithms', 'ctf', 'ide', 'play', 'python']),
+    );
   });
 
   it('wie Pyodide laadt, declareert het pakket', () => {
@@ -138,11 +140,9 @@ describe('de Pyodide van elke site', () => {
 
 describe('de Pyodide-versie in de bron', () => {
   it('elke vastgelegde versie wijst naar de geïnstalleerde build', () => {
-    // play laadt Pyodide in een eigen iframe en heeft daarom een eigen constante,
-    // los van die in PyodideProvider. Twee constanten betekent twee versies
-    // zodra iemand er één bumpt — play liep zo lang achter op 0.27.x. Deze test
-    // is wat ze bij elkaar houdt; een import zou play's bundel opzadelen met een
-    // module die die site verder niet gebruikt.
+    // play noemt de versie zelf (de cachesleutel van zijn service worker), en
+    // liep zo lang achter op 0.27.x. Deze test houdt elke vastgelegde versie
+    // gelijk aan de geïnstalleerde.
     const require = createRequire(import.meta.url);
     const geinstalleerd = JSON.parse(
       readFileSync(require.resolve('pyodide/package.json'), 'utf8'),

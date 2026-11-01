@@ -123,8 +123,16 @@ gebruikt, zet het adres met `setPyodideBaseUrl` in een clientModule; zonder
 die regel geeft `getPyodide` een fout. `pyodide-kopie.test.ts` en
 `pyodide-adres.test.ts` in `packages/python-runner` bewaken dat: geen runtime
 in git, de hele wheel-keten met de checksums uit de lock, overal dezelfde
-versie, en geen CDN in de bron. Upgraden is dus: de catalog bumpen, `pnpm
-install`, pushen, en de wheel-commit van de workflow afwachten.
+versie, en geen CDN in de bron. Upgraden:
+
+1. De versie in de catalog bumpen en `pnpm install`.
+2. `PYODIDE_VERSION` in play's `engine.js` mee (de cachesleutel van zijn
+   service worker), en play's pymunk-wheel als de `abi_version` van Pyodide
+   verandert (`scripts/play-wheels.py`, zie `sites/informatica/play/CLAUDE.md`).
+3. Pushen, en de wheel-commit van de workflow afwachten. Tot die er is, is
+   `pyodide-kopie.test.ts` rood op de ontbrekende wheels.
+4. In de preview de matplotlib-lessen van algorithms en een play-voorbeeld
+   nalopen: of een grafiek of een spel er goed uitziet, ziet geen test.
 
 ## Browsers
 

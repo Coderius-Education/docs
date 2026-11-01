@@ -3,9 +3,8 @@
  * Supports two modes: "pygame" (pure pygame-ce) and "play" (coderius-play library).
  */
 
-// Deze versie hoort gelijk te lopen met PYODIDE_VERSION in
-// packages/python-runner en met de `pyodide` in de catalog; een test in dat
-// package houdt de drie naast elkaar. Play liep hier lang achter op 0.27.x
+// Deze versie hoort gelijk te lopen met de `pyodide` in de catalog;
+// pyodide-kopie.test.ts in packages/python-runner houdt ze naast elkaar. Play liep hier lang achter op 0.27.x
 // (Python 3.12), omdat de physics-wheel alleen als cp312 bestond. Sinds pymunk
 // 7.3.0 publiceert het project zelf een wasm-wheel voor Python 3.13, en die
 // staat hieronder. Ga je hierin bumpen, dan moet de pymunk-wheel mee: zijn

@@ -47,18 +47,49 @@ jobs:
   wheels:
     runs-on: ubuntu-latest
     steps:
+      # Deze job mag pushen. Het token blijft daarom niet in de git-config
+      # staan (persist-credentials) terwijl pnpm installeert: alleen de
+      # laatste stap krijgt het, voor de push.
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - uses: ./.github/actions/node-pnpm
+        with:
+          install: 'false'
 
-      - name: Wheels ophalen
+      - name: Sites met haal:wheels
+        id: sites
         run: |
           set -euo pipefail
+          mappen=""
           for pkg in sites/*/*/package.json; do
             if node -e "process.exit(require('./$pkg').scripts?.['haal:wheels'] ? 0 : 1)"; then
-              echo "== $(dirname "$pkg")"
-              pnpm --dir "$(dirname "$pkg")" run haal:wheels --opruimen
+              mappen="$mappen $(dirname "$pkg")"
             fi
+          done
+          echo "Sites:$mappen"
+          echo "mappen=$mappen" >> "$GITHUB_OUTPUT"
+
+      # Alleen die sites (en wat ze nodig hebben): het script leest de lock
+      # uit hun pyodide-pakket.
+      - name: Install
+        env:
+          MAPPEN: ${{ steps.sites.outputs.mappen }}
+        run: |
+          set -euo pipefail
+          filters=()
+          for map in $MAPPEN; do filters+=(--filter "{./$map}..."); done
+          pnpm install --frozen-lockfile "${filters[@]}"
+
+      - name: Wheels ophalen
+        env:
+          MAPPEN: ${{ steps.sites.outputs.mappen }}
+        run: |
+          set -euo pipefail
+          for map in $MAPPEN; do
+            echo "== $map"
+            pnpm --dir "$map" run haal:wheels --opruimen
           done
 
       - name: Committen en Build sites starten
@@ -78,5 +109,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m "Pyodide-wheels bij de nieuwe lock (workflow pyodide-wheels)"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${GITHUB_REF_NAME}"
           gh workflow run build.yml --ref "${GITHUB_REF_NAME}" -f volledig=false

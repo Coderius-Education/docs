@@ -10,17 +10,14 @@
 // die zegt wat er mist, en pyodide-adres.test.ts eist de regel al vóór de
 // build van elke site die deze lader gebruikt.
 //
-// Eén bron van waarheid voor de Pyodide-versie. Houd PYODIDE_VERSION gelijk aan
-// de `pyodide`-versie in de catalog (pnpm-workspace.yaml): díe versie serveert
-// elke site.
-// play heeft een eigen constante in sites/play/src/components/CodeRunner/engine.js,
-// omdat die site zijn Pyodide in een iframe laadt en niet via deze provider.
-// Hij hoort dezelfde versie te noemen; pyodide-kopie.test.ts controleert dat.
+// Welke Pyodide dat is, bepaalt de catalog (`pyodide` in pnpm-workspace.yaml):
+// dit bestand noemt geen versie. Alleen play noemt er een, in
+// sites/informatica/play/src/components/CodeRunner/engine.js, voor de
+// cachesleutel van zijn service worker; pyodide-kopie.test.ts houdt die gelijk.
 import { vraag } from '@coderius/shared/dialoog';
 import type { Tekening } from './Tekening/tekening';
 import { TURTLE_PY } from './turtle/module';
 
-export const PYODIDE_VERSION = '0.29.4';
 let pyodideBaseUrl: string | null = null;
 
 export function setPyodideBaseUrl(url: string): void {
