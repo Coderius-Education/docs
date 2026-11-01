@@ -1,6 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
@@ -8,11 +7,14 @@ import {
   type PyodideInterface,
   getPyodide,
   haalTekening,
+  openVerseMain,
   runPython,
   runPythonStream,
   setPyodideLoader,
+  sluitVerseMain,
   tracePython,
 } from './PyodideProvider';
+import { PYODIDE_DIR, laadLokalePyodide } from './pyodide-in-node';
 
 // runPython (de gebufferde variant voor CodeExercise) liep uit de pas met
 // runPythonStream: hij zette geen stdin, dus input() vroeg de leerling niets,
@@ -21,18 +23,6 @@ import {
 // draaien de echte Pyodide in node via het npm-pakket (setPyodideLoader), plus
 // één nagemaakte Pyodide voor precies die lege-stderr-tak, die met een echte
 // Python-fout niet na te spelen is: Pyodide schrijft die altijd naar stderr.
-
-const PYODIDE_DIR = dirname(createRequire(import.meta.url).resolve('pyodide/package.json'));
-
-interface PyodideModule {
-  loadPyodide(options: { indexURL: string }): Promise<PyodideInterface>;
-}
-
-async function laadLokalePyodide(): Promise<PyodideInterface> {
-  const url = pathToFileURL(join(PYODIDE_DIR, 'pyodide.mjs')).href;
-  const mod = (await import(/* @vite-ignore */ url)) as PyodideModule;
-  return mod.loadPyodide({ indexURL: PYODIDE_DIR });
-}
 
 // Zonder eigen stdin leest Pyodide in node van de échte stdin en blokkeert het
 // proces voorgoed: een test die input() draait, hangt dan in plaats van te
@@ -230,6 +220,91 @@ describe('runPython en runPythonStream met echte Pyodide in node', () => {
     expect(opname.tekening ?? null).toBeNull();
   });
 
+  // Pyodide is één instantie per pagina. Zonder eigen globals per run bleef een
+  // variabele van de vorige run bestaan, ook die van een andere oefening op
+  // dezelfde pagina, en werkte code die een variabele gebruikte voor hij hem
+  // maakte toch.
+  it('runPython begint elke run met lege globals', async () => {
+    expect(await runPython(pyodide, 'teller = 5\nprint(teller)')).toBe('5\n');
+    const tweede = await runPython(pyodide, 'print(teller)');
+    expect(tweede).toContain("NameError: name 'teller' is not defined");
+  });
+
+  it('runPython draait de code als __main__', async () => {
+    expect(await runPython(pyodide, 'if __name__ == "__main__":\n    print("hoofd")')).toBe(
+      'hoofd\n',
+    );
+  });
+
+  it('pickle vindt een klasse van de leerling, ook in de lege globals', async () => {
+    // Met alleen een lege dict als globals stond de klasse niet in
+    // sys.modules['__main__'], en gaf pickle "attribute lookup on __main__ failed".
+    const code =
+      'import pickle\nclass Hond:\n    pass\nprint(type(pickle.loads(pickle.dumps(Hond()))).__name__)';
+    expect(await runPython(pyodide, code)).toBe('Hond\n');
+    // Na de run staat de echte __main__ van Pyodide weer op zijn plek.
+    expect(pyodide.runPython("import sys; sys.modules['__main__'].__name__")).toBe('__main__');
+    expect(await runPython(pyodide, 'print(2)')).toBe('2\n');
+  });
+
+  it('stap voor stap: pickle vindt een klasse van de leerling', async () => {
+    // De opnemer had al een eigen dict als globals, maar zonder module in
+    // sys.modules gaf pickle "attribute lookup on __main__ failed".
+    const code =
+      'import pickle\nclass Hond:\n    pass\nprint(type(pickle.loads(pickle.dumps(Hond()))).__name__)';
+    const opname = await tracePython(pyodide, code);
+    expect(opname.fout).toBeNull();
+    expect(opname.uitvoer).toBe('Hond\n');
+    expect(pyodide.runPython("import sys; sys.modules['__main__'].__name__")).toBe('__main__');
+  });
+
+  it('openVerseMain: opzetcode en hoofdcode delen één schone namespace, zoals in de editor', async () => {
+    // De PythonRunner van de editor draait eerst de opzetcode van een opdracht
+    // en dan het bestand van de leerling, met dezelfde globals.
+    const run = async () => {
+      const namespace = openVerseMain(pyodide);
+      const uit: string[] = [];
+      const stream = {
+        onStdout: (t: string) => uit.push(t),
+        onStderr: (t: string) => uit.push(t),
+        globals: namespace,
+      };
+      try {
+        await runPythonStream(pyodide, 'import pickle\nclass Kat:\n    pass', stream);
+        await runPythonStream(
+          pyodide,
+          'print(type(pickle.loads(pickle.dumps(Kat()))).__name__)\nnaam = "Bo"',
+          stream,
+        );
+        await runPythonStream(pyodide, 'print(naam)', stream);
+      } finally {
+        sluitVerseMain(pyodide, namespace);
+      }
+      return uit.join('');
+    };
+    expect(await run()).toBe('Kat\nBo\n');
+    // Een volgende run begint opnieuw leeg.
+    const namespace = openVerseMain(pyodide);
+    try {
+      const result = await runPythonStream(pyodide, 'print(naam)', {
+        onStdout: () => {},
+        onStderr: () => {},
+        globals: namespace,
+      });
+      expect(result.ok).toBe(false);
+      expect(result.error).toContain("NameError: name 'naam' is not defined");
+    } finally {
+      sluitVerseMain(pyodide, namespace);
+    }
+    expect(pyodide.runPython("import sys; sys.modules['__main__'].__name__")).toBe('__main__');
+  });
+
+  it('een import en input() werken ook in de lege globals', async () => {
+    expect(await runPython(pyodide, 'import math\nprint(math.floor(2.5))')).toBe('2\n');
+    // input() toont de vraag met het antwoord erachter, net als in een terminal.
+    expect(await runPython(pyodide, 'print(input("Naam? "))')).toBe('Naam? Sam\nSam\n');
+  });
+
   it('een run na een mislukte run werkt gewoon weer', async () => {
     await runPython(pyodide, 'x = 1/0');
     expect(await runPython(pyodide, 'print(2)')).toBe('2\n');
@@ -272,6 +347,13 @@ describe('runPython als Pyodide zelf omvalt (nagemaakte Pyodide)', () => {
       new Error('Traceback (most recent call last):\n  File "<exec>", line 3\nRuntimeError: kapot'),
     );
     expect(await runPython(pyodide, 'x')).toBe('Fout op regel 3\nRuntimeError: kapot');
+  });
+
+  it('tracePython: valt de opnemer zelf om, dan een fout zonder regel in plaats van een crash', async () => {
+    const { pyodide } = nepPyodide(new Error('Traceback (most recent call last):\nMemoryError'));
+    const opname = await tracePython(pyodide, 'x = 1');
+    expect(opname.stappen).toEqual([]);
+    expect(opname.fout).toEqual({ soort: 'Fout', bericht: 'MemoryError', regel: null });
   });
 
   it('zet een niet-Error-waarde om met String()', async () => {

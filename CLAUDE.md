@@ -92,7 +92,10 @@ tegelijk in één job, `blokken` (elk met een eigen venv); alleen wat in
 eerste golf van een brede run groter dan de twintig runners die GitHub
 tegelijk geeft, en dan wachtte `test` een halve minuut. Een nieuwe runner
 krijgt een vlag, een functie en een plek in de lus van `blokken`;
-`ci-poort.test.ts` eist dat.
+`ci-poort.test.ts` eist dat. De job `browser` opent de gebouwde python-site in
+Chromium en doet daar wat een leerling in de speeltuin doet
+(`scripts/rooktest-speeltuin.mjs`); hij draait als de python-site gebouwd wordt,
+dus ook na een wijziging in `packages/python-runner`.
 
 ## Een les verhuizen
 
@@ -103,6 +106,67 @@ uitkomen. Geef de oude adressen mee als `omleidingen: [{ van, naar }]` aan
 oud adres een pagina die doorstuurt, en weigert een oud adres waar weer een
 echte pagina staat. De python-cursus houdt de lijst bij in
 `src/data/omleidingen.ts`, met een test die eist dat elk doel een les is.
+
+## Pyodide
+
+Elke site die Python in de browser draait (python, ctf, ide, algorithms,
+play), serveert dezelfde Pyodide zelf onder `<baseUrl>pyodide/`: geen CDN,
+want schoolnetwerken blokkeren die. De versie staat exact in de catalog
+(`pyodide` in `pnpm-workspace.yaml`). De runtime staat niet in git: een site
+met `pyodide` als devDependency krijgt hem van `createConfig` bij start en
+build uit `node_modules` (`packages/shared/config/pyodide-runtime.js`). Wat
+niet op npm staat, de wheels van pakketten als matplotlib of pygame-ce, staat
+in `static/pyodide/` van de site en komt uit `haal:wheels`; na een upgrade
+haalt de workflow `pyodide-wheels` ze zelf op en commit ze op de branch. Een
+site die de gedeelde lader (`CodeExercise`, `PythonPlayground`, de editor)
+gebruikt, zet het adres met `setPyodideBaseUrl` in een clientModule; zonder
+die regel geeft `getPyodide` een fout. `pyodide-kopie.test.ts` en
+`pyodide-adres.test.ts` in `packages/python-runner` bewaken dat: geen runtime
+in git, de hele wheel-keten met de checksums uit de lock, overal dezelfde
+versie, en geen CDN in de bron. Upgraden:
+
+1. De versie in de catalog bumpen en `pnpm install`. Draait de nieuwe
+   Pyodide een andere Python (3.13 → 3.14), dan ook `python_versie` in de
+   SITES-tabel van `scripts/draai-python-blokken.py` en `python-version` van
+   de job `blokken` in `build.yml`; het script stopt anders met die melding.
+2. `PYODIDE_VERSION` in play's `engine.js` mee (de cachesleutel van zijn
+   service worker), en play's pymunk-wheel als de `abi_version` van Pyodide
+   verandert (`scripts/play-wheels.py`, zie `sites/informatica/play/CLAUDE.md`).
+3. Pushen, en de wheel-commit van de workflow afwachten. Tot die er is, is
+   `pyodide-kopie.test.ts` rood op de ontbrekende wheels.
+4. In de preview de matplotlib-lessen van algorithms en een play-voorbeeld
+   nalopen: of een grafiek of een spel er goed uitziet, ziet geen test.
+
+De job `build` zet na elke site-build `.gz` en `.br` naast elk tekstbestand en
+elke wasm (`scripts/comprimeer.mjs`, logica in `packages/shared/comprimeer.js`),
+zodat ze in `<site>-static` zitten. Dat helpt alleen als de hostingbackend ze
+ook serveert (nginx `gzip_static`/`brotli_static`, Caddy `precompressed`), met
+`Content-Encoding` en het Content-Type van het origineel. Een python-les laadt
+op 20 Mbit/s dan in 4,8 s in plaats van 8,2 s; de wasm van Pyodide gaat van
+8,6 naar 2,2 MB. De rooktest in de job `browser` serveert de `.br` zoals zo'n
+server en eist dat Pyodide er gewoon mee start.
+
+Of de browser Pyodide bewaart, hangt ook af van de headers van de hosting; met
+`no-store` kwam hij bij elke les opnieuw over de lijn. Daarom krijgt elke site
+met Pyodide en zonder eigen PWA (play heeft er een, `src/sw.js`) van
+`createConfig` een service worker op `<baseUrl>pyodide-sw.js`
+(`packages/shared/pyodide-cache/sw.js`, plugin `plugins/pyodide-cache.js`,
+alleen in een productie-build). Hij bewaart alleen wat onder
+`<baseUrl>pyodide/` staat, en alleen wat klopt: de build zet de sha256 van elk
+bestand daar in de service worker (`INHOUD`), en een bestand dat die
+vingerafdruk niet heeft, geeft hij niet door en bewaart hij niet. Leerlingcode
+draait in python, ctf, ide en algorithms op de origin van de site en kan via
+`import js` in Cache Storage schrijven; zonder die controle draaide een
+vervalste `pyodide.asm.js` na één run bij elk volgend bezoek mee. Elke versie
+heeft een eigen cache, en bij het activeren gaan die van eerdere versies van
+de cursus weg. `pyodide.js` vraagt hij altijd aan het netwerk (`no-cache`);
+heeft de server al een andere dan de service worker kent, dan krijgt die
+pagina alles van het netwerk, zodat hij nooit twee versies mengt. Een lader
+moet dus altijd eerst `pyodide.js` laden. `pyodide-cache.test.ts` speelt dat
+na; de rooktest controleert in Chromium dat een derde bezoek alleen
+`pyodide.js` nog van de server haalt, en dat een vervalste `pyodide.asm.js` in
+de cache niet draait. Weghalen kan alleen met een `sw.js` die zichzelf
+afmeldt; een site zonder het bestand laat de oude service worker gewoon staan.
 
 ## Browsers
 

@@ -52,6 +52,7 @@ jobs:
       checks: ${{ steps.plan.outputs.checks }}
       tekst: ${{ steps.plan.outputs.tekst }}
       crosslinks: ${{ steps.plan.outputs.crosslinks }}
+      browser: ${{ steps.plan.outputs.browser }}
       python: ${{ steps.plan.outputs.python }}
       algorithms: ${{ steps.plan.outputs.algorithms }}
       play: ${{ steps.plan.outputs.play }}
@@ -147,6 +148,18 @@ jobs:
       - name: Test (blokrunners)
         run: python3 -m unittest discover -s scripts -p 'test_*.py'
 
+      # De dekking van de python-runner, met de ondergrens uit vitest.config.ts.
+      # Alleen als zijn tests in de selectie zitten: een deelrun van andere
+      # tests zegt niets over zijn dekking.
+      - name: Dekking van de python-runner
+        run: |
+          argumenten="$(node scripts/wijzigingen.mjs vitest changed.json)"
+          if [ "$argumenten" = "run" ] || grep -q 'packages/python-runner/' <<< "$argumenten"; then
+            pnpm test:dekking
+          else
+            echo "De python-runner is niet geraakt."
+          fi
+
   # Vijf blokrunners in één job, tegelijk. Elk draait de codevoorbeelden uit
   # de lessen van één cursus:
   #
@@ -154,8 +167,12 @@ jobs:
   #               print, of een uitvoerblok eronder) wordt vergeleken, en de
   #               geciteerde foutmeldingen worden gereproduceerd. Op 3.13, de
   #               Python van Pyodide 0.29.4 in de speeltuin.
-  #   algorithms  dezelfde controle, op 3.12 met numpy en matplotlib gepind op
-  #               de versies uit static/pyodide/pyodide-lock.json (--pins).
+  #   algorithms  dezelfde controle, ook op 3.13, met numpy en matplotlib
+  #               gepind op de versies van de wheels die de site serveert
+  #               (static/pyodide/, --pins). Voor matplotlib 3.8.4 heeft PyPI
+  #               geen wheel voor 3.13; pip bouwt hem uit de bron (een paar
+  #               minuten), en de pip-cache hieronder bewaart die wheel tot de
+  #               wheels van de site veranderen.
   #   play        elk speeltuin-blok draait echt tegen de gebundelde wheel uit
   #               static/whl/, met precies de pygame/numpy die de wheel pint.
   #   robotica    elk MicroPython-blok compileert; er is geen board in CI.
@@ -192,9 +209,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # Alleen robotica en godot halen hun blokken met pnpm uit de docs.
+      # Robotica en godot halen hun blokken met pnpm uit de docs; python haalt
+      # zijn blokken na CPython ook door de speeltuin in Pyodide (vitest).
       - name: Node, pnpm en dependencies
-        if: env.BLOK_ROBOTICA == 'true' || env.BLOK_GODOT == 'true'
+        if: env.BLOK_ROBOTICA == 'true' || env.BLOK_GODOT == 'true' || env.BLOK_PYTHON == 'true'
         uses: ./.github/actions/node-pnpm
 
       - name: Cache Godot
@@ -232,6 +250,14 @@ jobs:
         with:
           name: wijzigingen
 
+      # De wheel van matplotlib die pip voor algorithms uit de bron bouwt.
+      - name: Cache pip (algorithms)
+        if: env.BLOK_ALGORITHMS == 'true'
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/pip
+          key: pip-algorithms-${{ runner.os }}-${{ hashFiles('sites/informatica/algorithms/static/pyodide/*.whl') }}
+
       - name: Codevoorbeelden van python, algorithms, play, robotica en godot
         run: |
           set -uo pipefail
@@ -243,12 +269,16 @@ jobs:
             shift 2
             "$python" -m venv "$map" && { [ $# -eq 0 ] || "$map/bin/pip" install -q "$@"; }
           }
+          # Eerst CPython, dan dezelfde blokken door runPython in Pyodide, zoals
+          # de speeltuin ze draait (lessen-in-pyodide.test.ts).
           python_() {
-            python3.13 scripts/draai-python-blokken.py --alleen changed.json
+            local blokken="$RUNNER_TEMP/python-blokken.json"
+            python3.13 scripts/draai-python-blokken.py --alleen changed.json --json "$blokken" &&
+              CODERIUS_BLOKKEN_JSON="$blokken" pnpm exec vitest run packages/python-runner/src/lessen-in-pyodide.test.ts
           }
           algorithms_() {
             # shellcheck disable=SC2046
-            venv algorithms python3.12 $(python3.12 scripts/draai-python-blokken.py algorithms --pins) &&
+            venv algorithms python3.13 $(python3.13 scripts/draai-python-blokken.py algorithms --pins) &&
               "$RUNNER_TEMP/venv-algorithms/bin/python" scripts/draai-python-blokken.py algorithms --alleen changed.json
           }
           play_() {
@@ -529,6 +559,13 @@ jobs:
       - name: Build ${{ matrix.site }}
         run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
 
+      # .gz en .br naast elk tekstbestand en elke wasm, voor een server die
+      # vooraf gecomprimeerde bestanden serveert (packages/shared/comprimeer.js).
+      # Na de build en niet in een postBuild: die draaien tegelijk, en dan kan
+      # een bestand van een andere plugin ontbreken.
+      - name: Comprimeren
+        run: node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
+
       # Voor cross-links in een latere run waarin deze site niet verandert. De
       # sleutel is een hash van alles waar de build van afhangt
       # (scripts/site-hash.mjs), dus een treffer is dezelfde build.
@@ -625,9 +662,13 @@ jobs:
         with:
           map: ${{ steps.map.outputs.dir }}
 
+      # Ook gecomprimeerd: deze build gaat onder dezelfde sleutel de cache in
+      # als die van de job `build`, en de job `browser` haalt hem daar weer uit.
       - name: Build ${{ matrix.site }} (niet in de cache)
         if: steps.cache.outputs.cache-hit != 'true'
-        run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
+        run: |
+          pnpm --filter "./${{ steps.map.outputs.dir }}" build
+          node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
 
       - name: Build in de cache
         if: steps.cache.outputs.cache-hit != 'true'
@@ -714,6 +755,60 @@ jobs:
       - name: Links, afbeeldingen en 3D-modellen tegen de gebouwde sites
         run: node scripts/controleer-cross-links.mjs builds --annotaties --compleet
 
+  # De Python-speeltuin in een echte browser (scripts/rooktest-speeltuin.mjs):
+  # de gebouwde python-site, met zijn eigen Pyodide en wasm, in Chromium; daar
+  # een print, lege variabelen bij elke run, input() via het venster, een
+  # turtle-tekening en Stap voor stap. De node-tests draaien Pyodide buiten de
+  # browser; dit is de enige plek waar het geheel samen draait. Nodig als de
+  # python-site gebouwd wordt (ook bij een wijziging in packages/python-runner)
+  # of als het script verandert; dan komt de build uit de cache, of wordt hij
+  # hier gebouwd.
+  browser:
+    needs: [plan, build]
+    if: >-
+      !cancelled() && needs.plan.outputs.browser == 'true'
+      && (needs.build.result == 'success' || needs.build.result == 'skipped')
+    runs-on: ubuntu-latest
+    env:
+      GEBOUWD: ${{ contains(fromJSON(needs.plan.outputs.sites), 'python') }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Node, pnpm en dependencies
+        uses: ./.github/actions/node-pnpm
+
+      - name: Map en cache-sleutel van python
+        id: map
+        run: |
+          echo "dir=$(node scripts/sites-json.mjs python)" >> "$GITHUB_OUTPUT"
+          echo "sleutel=site-${{ runner.os }}-python-$(node scripts/site-hash.mjs python)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/download-artifact@v6
+        if: env.GEBOUWD == 'true'
+        with:
+          name: python-gebouwd
+          path: ${{ steps.map.outputs.dir }}/build
+
+      - name: Uit de cache
+        id: cache
+        if: env.GEBOUWD != 'true'
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ steps.map.outputs.dir }}/build
+          key: ${{ steps.map.outputs.sleutel }}
+
+      - name: Build python (niet gebouwd en niet in de cache)
+        if: env.GEBOUWD != 'true' && steps.cache.outputs.cache-hit != 'true'
+        run: |
+          pnpm --filter "./${{ steps.map.outputs.dir }}" build
+          node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
+
+      - name: Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: De speeltuin in Chromium
+        run: node scripts/rooktest-speeltuin.mjs "${{ steps.map.outputs.dir }}/build" --eis-compressie
+
   # De branch protection eist een check die exact "build" heet, maar een
   # matrix-job rapporteert alleen "build (site)" per site — die eis kon dus
   # nooit vervuld raken en mergen kon alleen met een bypass. Deze verzameljob
@@ -734,11 +829,11 @@ jobs:
     # en kon een PR met kapotte voorbeelden groen worden. `tekst` blijft
     # erbuiten: een spel- of stijlfout mag een merge niet tegenhouden (keuze
     # van de opdrachtgever; schrijfgids §17).
-    needs: [plan, test, build, publiceer, voorraad, checks, cross-links, fullstack, blokken]
+    needs: [plan, test, build, publiceer, voorraad, checks, cross-links, fullstack, blokken, browser]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Plan, tests, codevoorbeelden, site-builds, publiceren, lint, typecheck en cross-site links groen?
+      - name: Plan, tests, codevoorbeelden, site-builds, publiceren, lint, typecheck, cross-site links en de speeltuin groen?
         env:
           PLAN: ${{ needs.plan.result }}
           TEST: ${{ needs.test.result }}
@@ -749,12 +844,14 @@ jobs:
           CROSSLINKS: ${{ needs.cross-links.result }}
           FULLSTACK: ${{ needs.fullstack.result }}
           BLOKKEN: ${{ needs.blokken.result }}
+          BROWSER: ${{ needs.browser.result }}
           NODIG_TEST: ${{ needs.plan.outputs.test }}
           NODIG_BUILD: ${{ needs.plan.outputs.build }}
           NODIG_CHECKS: ${{ needs.plan.outputs.checks }}
           NODIG_CROSSLINKS: ${{ needs.plan.outputs.crosslinks }}
           NODIG_FULLSTACK: ${{ needs.plan.outputs.fullstack }}
           NODIG_BLOKKEN: ${{ needs.plan.outputs.blokken }}
+          NODIG_BROWSER: ${{ needs.plan.outputs.browser }}
         run: |
           fout=0
           # oordeel <job> <resultaat> <nodig volgens het plan>
@@ -780,4 +877,5 @@ jobs:
           oordeel cross-links "$CROSSLINKS" "$NODIG_CROSSLINKS"
           oordeel fullstack "$FULLSTACK" "$NODIG_FULLSTACK"
           oordeel blokken "$BLOKKEN" "$NODIG_BLOKKEN"
+          oordeel browser "$BROWSER" "$NODIG_BROWSER"
           exit $fout

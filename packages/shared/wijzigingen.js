@@ -50,6 +50,8 @@ const GLOBAAL = [
   'scripts/site-hash.mjs',
   'scripts/sites-json.mjs',
   'scripts/sites_registry.py',
+  // Draait na elke site-build (de .gz en .br voor de hostingbackend).
+  'scripts/comprimeer.mjs',
   'packages/shared/wijzigingen.js',
   'packages/shared/sites.js',
 ];
@@ -71,6 +73,10 @@ const PER_JOB = {
     'packages/shared/stijl.js',
   ],
   crosslinks: ['scripts/controleer-cross-links.mjs', 'scripts/links-in-bron.mjs'],
+  // De rooktest van de speeltuin in Chromium (job `browser`). Die draait ook
+  // als de python-site gebouwd wordt, dus bij elke wijziging aan de site of
+  // aan packages/python-runner.
+  browser: ['scripts/rooktest-speeltuin.mjs'],
 };
 
 const COMPILEER = [
@@ -95,7 +101,12 @@ const RUNNERS = {
       'scripts/draai-python-blokken.py',
       'scripts/alleen.py',
       'packages/python-runner/src/turtle/module.ts',
-      '{site}/static/pyodide/pyodide-lock.json',
+      // Een andere Pyodide komt via de catalog en de lockfile (globaal).
+      // Na CPython haalt de runner elk blok ook door de speeltuin zelf
+      // (lessen-in-pyodide.test.ts); verandert die, dan alle blokken opnieuw.
+      'packages/python-runner/src/PyodideProvider.ts',
+      'packages/python-runner/src/pyodide-in-node.ts',
+      'packages/python-runner/src/lessen-in-pyodide.test.ts',
     ],
   },
   algorithms: {
@@ -105,7 +116,8 @@ const RUNNERS = {
       'scripts/draai-python-blokken.py',
       'scripts/alleen.py',
       'packages/python-runner/src/turtle/module.ts',
-      '{site}/static/pyodide/pyodide-lock.json',
+      // De wheels bepalen de pins (numpy, matplotlib) en de Python-versie.
+      '{site}/static/pyodide/',
     ],
   },
   play: {
@@ -355,7 +367,7 @@ function pakketVan(pad, pakketMappen) {
  *   noemt (`--filter "...[base]"`): gewijzigd, of hangt af van iets gewijzigds
  * @param {string[]} invoer.alleMappen  mappen van alle workspace-packages
  * @param {{id: string, dir: string}[]} invoer.sites  alle sites uit de registry
- * @param {{pad: string, tekst: string}[]} invoer.tests  alle *.test.ts
+ * @param {{pad: string, tekst: string}[]} invoer.tests  alle *.test.ts en *.test.tsx
  * @param {boolean} [invoer.volledig]  alles draaien (nightly, handmatig, geen base)
  * @param {string} [invoer.reden]
  * @param {string | null} [invoer.base]
@@ -408,7 +420,7 @@ function plan({
       sites: alleIds,
       ongewijzigd: [],
       pakketten: [...alleMappen].sort(),
-      jobs: { test: true, checks: true, lint: true, tekst: true, crosslinks: true },
+      jobs: { test: true, checks: true, lint: true, tekst: true, crosslinks: true, browser: true },
       runners: Object.fromEntries(
         Object.keys(RUNNERS).map((n) => [n, { draaien: true, alles: true }]),
       ),
@@ -460,6 +472,7 @@ function plan({
   const pythonScripts = paden.some((p) => /^scripts\/[^/]+\.py$/.test(p));
   const crosslinks = geraakteSites.length > 0 || paden.some((p) => past(p, PER_JOB.crosslinks));
   const lint = paden.some((p) => past(p, PER_JOB.lint));
+  const browser = geraakteSites.includes('python') || paden.some((p) => past(p, PER_JOB.browser));
 
   return {
     versie: 1,
@@ -476,6 +489,7 @@ function plan({
       lint,
       tekst: tekstAlles || tekstBestanden.length > 0,
       crosslinks,
+      browser,
     },
     runners,
     tekst: { alles: tekstAlles, bestanden: tekstBestanden },

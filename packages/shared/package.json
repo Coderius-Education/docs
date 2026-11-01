@@ -6,6 +6,10 @@
   "type": "commonjs",
   "exports": {
     "./config": "./config/index.js",
+    "./config/pyodide-runtime": {
+      "types": "./config/pyodide-runtime.d.ts",
+      "default": "./config/pyodide-runtime.js"
+    },
     "./sites": {
       "types": "./sites.d.ts",
       "default": "./sites.js"

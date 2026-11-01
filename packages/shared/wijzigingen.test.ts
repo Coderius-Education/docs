@@ -230,6 +230,25 @@ describe('plan', () => {
     expect(p.jobs.crosslinks).toBe(false);
   });
 
+  it('de speeltuin in de browser: als de python-site gebouwd wordt, of het script verandert', () => {
+    // Een wijziging in packages/python-runner bouwt python via pnpm, en dan
+    // moet de rooktest in Chromium ook.
+    const runner = planVoor({ 'packages/python-runner/src/PyodideProvider.ts': [[3, 3]] }, [
+      MAP.python,
+      'packages/python-runner',
+    ]);
+    expect(runner.sites).toContain('python');
+    expect(runner.jobs.browser).toBe(true);
+    expect(runner.runners.python).toEqual({ draaien: true, alles: true });
+
+    const script = planVoor({ 'scripts/rooktest-speeltuin.mjs': [[3, 3]] }, []);
+    expect(script.sites).toEqual([]);
+    expect(script.jobs.browser).toBe(true);
+
+    const web = planVoor({ [`${MAP.web}/docs/html-css/position.mdx`]: [[3, 3]] }, [MAP.web]);
+    expect(web.jobs.browser).toBe(false);
+  });
+
   it('alleen sites/home', () => {
     const p = planVoor({ 'sites/home/src/routes/+page.svelte': [[8, 9]] }, ['sites/home']);
     expect(p.sites).toEqual(['home']);

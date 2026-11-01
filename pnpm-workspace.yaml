@@ -29,5 +29,5 @@ catalog:
   monaco-editor: ^0.52.2
   '@monaco-editor/react': ^4.7.0
   idb-keyval: ^6.2.2
-  pyodide: ^0.29.3
+  pyodide: 0.29.4
   vitest: ^4.1.11

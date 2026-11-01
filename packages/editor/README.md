@@ -44,8 +44,9 @@ Handige props: `readOnly`, `hiddenSetup` (onzichtbare opzetcode vóór de leerli
    "@coderius/python-runner": "workspace:*"
    ```
 
-   en `pyodide: "catalog:"` als devDependency, plus het script
-   `"copy:pyodide": "node ../../packages/python-runner/scripts/copy-pyodide.mjs"`.
+   en `pyodide: "catalog:"` als devDependency. Daarmee zet `createConfig` de
+   Pyodide-runtime bij start en build klaar onder `<baseUrl>pyodide/`, uit
+   `node_modules` (`packages/shared/config/pyodide-runtime.js`).
 
 2. In `docusaurus.config.ts`:
 
@@ -62,11 +63,14 @@ Handige props: `readOnly`, `hiddenSetup` (onzichtbare opzetcode vóór de leerli
    import {setMonacoBaseUrl} from '@coderius/editor/monaco';
    import {setPyodideBaseUrl} from '@coderius/python-runner/PyodideProvider';
 
-   setPyodideBaseUrl('/pyodide/');
-   setMonacoBaseUrl('/monaco/vs');
+   import siteConfig from '@generated/docusaurus.config';
+
+   setPyodideBaseUrl(`${siteConfig.baseUrl}pyodide/`);
+   setMonacoBaseUrl(`${siteConfig.baseUrl}monaco/vs`);
    ```
 
-4. Eén keer `pnpm --filter <site> copy:pyodide` draaien en `static/pyodide/` committen.
+   `packages/python-runner/src/pyodide-adres.test.ts` eist deze regel voor
+   elke site die de editor of de speeltuin gebruikt.
 
 ## Waarom self-hosted AMD-Monaco?
 

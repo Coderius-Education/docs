@@ -26,6 +26,8 @@ const sidebarManifest = require('../plugins/sidebar-manifest');
 const klasPlugin = require('../plugins/klas');
 const oudeOpslagPlugin = require('../plugins/oude-opslag');
 const { controleerRegels } = require('../oude-opslag');
+const { gebruiktPyodide, pyodideStaticDir } = require('./pyodide-runtime');
+const pyodideCachePlugin = require('../plugins/pyodide-cache');
 
 /**
  * Welke site uit de registry bouwen we? De registry is de bron van waarheid
@@ -198,6 +200,8 @@ const FASTER = {
  *  - de CC BY-NC 4.0 copyright als de footer er geen heeft
  *  - transpilatie van @coderius/* workspace-componenten
  *  - static-mappen van sharedPackages worden automatisch mee-geserveerd
+ *  - de Pyodide-runtime onder <baseUrl>pyodide/, uit node_modules, voor een
+ *    site met `pyodide` als dependency (pyodide-runtime.js)
  *  - sensible defaults (i18n nl, onBrokenLinks throw, future.v4, prism-thema)
  *
  * Handige extra's: geef `description`/`keywords` mee i.p.v. zelf headTags te
@@ -206,6 +210,23 @@ const FASTER = {
  * cursus op zijn oude subdomein iets in de browser, geef dan `oudeOpslag` mee
  * (zie oude-opslag.js): de leerling kan dat werk dan overzetten.
  */
+/**
+ * Heeft de site een eigen service worker (@docusaurus/plugin-pwa)? Uit zijn
+ * plugins, ook als naam van een opgelost pad, of uit zijn package.json: wie
+ * de PWA als dependency heeft, gebruikt hem (play).
+ */
+function heeftPwa(plugins, siteDir) {
+  const naam = (p) => (Array.isArray(p) ? p[0] : p);
+  if ((plugins || []).some((p) => typeof naam(p) === 'string' && naam(p).includes('plugin-pwa')))
+    return true;
+  const pad = path.join(siteDir, 'package.json');
+  if (!fs.existsSync(pad)) return false;
+  const pkg = JSON.parse(fs.readFileSync(pad, 'utf8'));
+  return Boolean(
+    pkg.dependencies?.['@docusaurus/plugin-pwa'] || pkg.devDependencies?.['@docusaurus/plugin-pwa'],
+  );
+}
+
 function createConfig(course = {}) {
   const managed = loadSettings(process.cwd());
   const site = managed ? applySettings(course, managed, process.cwd()) : course;
@@ -383,9 +404,14 @@ function createConfig(course = {}) {
       ...(registry ? { siteId: registry.id } : {}),
       ...(oudeOpslag ? { oudeOpslag } : {}),
     },
-    staticDirectories:
-      staticDirectories ||
-      uniqueDirs(['static', SHARED_STATIC, ...packageStaticDirs(sharedPackages)]),
+    // De Pyodide-runtime komt uit node_modules (pyodide-runtime.js), naast de
+    // wheels in static/pyodide/ van de site; ook als een site eigen
+    // staticDirectories meegeeft.
+    staticDirectories: [
+      ...(staticDirectories ||
+        uniqueDirs(['static', SHARED_STATIC, ...packageStaticDirs(sharedPackages)])),
+      ...[pyodideStaticDir(process.cwd())].filter(Boolean),
+    ],
     presets: withSharedCustomCss(linkbaar.presets, merk),
     clientModules: [...LETTER_CSS, ...(rest.clientModules || [])],
     plugins: [
@@ -402,6 +428,11 @@ function createConfig(course = {}) {
       [matomoPlugin, { siteId: matomoSiteId }],
       ...(omleidingen?.length ? [[omleidingenPlugin, { omleidingen }]] : []),
       ...(oudeOpslag ? [[oudeOpslagPlugin, { siteId: registry?.id, regels: oudeOpslag }]] : []),
+      // De Pyodide van de site in een eigen cache (plugins/pyodide-cache.js),
+      // behalve waar een PWA dat al doet (play).
+      ...(gebruiktPyodide(process.cwd()) && !heeftPwa(plugins, process.cwd())
+        ? [pyodideCachePlugin]
+        : []),
     ],
     themeConfig,
   };

@@ -11,8 +11,7 @@
     "clear": "docusaurus clear",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc",
-    "copy:pyodide": "node ../../../packages/python-runner/scripts/copy-pyodide.mjs"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@coderius/editor": "workspace:*",

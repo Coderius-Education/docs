@@ -9,8 +9,7 @@
     "swizzle": "docusaurus swizzle",
     "serve": "docusaurus serve",
     "clear": "docusaurus clear",
-    "typecheck": "tsc",
-    "copy:pyodide": "node ../../../packages/python-runner/scripts/copy-pyodide.mjs"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@coderius/editor": "workspace:*",

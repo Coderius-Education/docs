@@ -67,8 +67,8 @@ Je hebt nodig:
 - Node 22 (zie `.nvmrc`);
 - pnpm 10, via corepack (`corepack enable`), dan krijg je vanzelf de versie uit
   `package.json`;
-- alleen voor de controle van codevoorbeelden: Python 3.13 (python) en 3.12
-  (algoritmes, play), dezelfde versies als in CI.
+- alleen voor de controle van codevoorbeelden: Python 3.13 (python,
+  algoritmes) en 3.12 (play), dezelfde versies als in CI.
 
 ```sh
 corepack enable
@@ -111,12 +111,14 @@ waarmee je een blok bewust overslaat. Lokaal draai je ze zo:
 
 ```sh
 python3.13 scripts/draai-python-blokken.py              # python
-python3.12 scripts/draai-python-blokken.py algorithms   # algoritmes
+python3.13 scripts/draai-python-blokken.py algorithms   # algoritmes
 python3.12 scripts/draai-play-blokken.py                # play
 ```
 
 Voor algoritmes en play geeft `--pins` de `pip install`-regel met de versies
-die ook in de browser draaien; installeer die eerst in een eigen venv.
+die ook in de browser draaien; installeer die eerst in een eigen venv. Voor
+matplotlib 3.8.4 heeft PyPI geen wheel voor Python 3.13, dus pip bouwt hem uit
+de bron: dat duurt een paar minuten en vraagt een C++-compiler.
 
 CI doet alleen wat een wijziging raakt: de job `plan` bepaalt welke sites en
 controles nodig zijn. De verplichte check heet `build`. De job `tekst` telt
@@ -169,6 +171,6 @@ Twee uitzonderingen:
   [`sites/informatica/algorithms/LICENSE.md`](sites/informatica/algorithms/LICENSE.md)
   voor de bronvermelding.
 - Meegeleverde software houdt zijn eigen licentie: Monaco
-  (`packages/editor/static/monaco`), Pyodide (`static/pyodide` van een site),
+  (`packages/editor/static/monaco`), Pyodide (uit `node_modules` bij de build, en de wheels in `static/pyodide` van een site),
   htmx (`sites/informatica/fullstack/static/htmx`) en de wheels van play en
   pymunk in `sites/informatica/play/static/whl` (beide MIT).

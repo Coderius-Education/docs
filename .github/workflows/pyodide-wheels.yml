@@ -1,0 +1,129 @@
+name: Pyodide-wheels
+
+# Een site die Pyodide zelf serveert en een pakket als matplotlib nodig heeft,
+# serveert ook de wheels van dat pakket, uit static/pyodide/. De runtime zelf
+# komt bij de build uit node_modules (packages/shared/config/pyodide-runtime.js),
+# maar de wheels zitten niet in de npm-package van Pyodide, alleen op
+# cdn.jsdelivr.net, en die CDN is niet overal bereikbaar: niet op elk
+# schoolnetwerk, niet in elke ontwikkelomgeving. Daardoor bleef algorithms
+# jaren op Pyodide 0.27.4 staan.
+#
+# Deze workflow draait na elke push die de Pyodide-versie kan veranderen (de
+# catalog in pnpm-workspace.yaml, de lockfile) of de lijst wheels van een site
+# (zijn package.json), niet op main. Hij draait voor elke site met een script
+# `haal:wheels` dat script met --opruimen: de wheels van de geïnstalleerde lock
+# komen erbij, elk tegen zijn sha256 uit die lock gelegd, en die van de vorige
+# versie gaan weg. Wat verandert, commit hij op dezelfde branch; staat alles er
+# al, dan doet hij niets.
+#
+# Een commit met GITHUB_TOKEN start geen nieuwe workflow. Daarom start deze
+# workflow daarna zelf Build sites op die branch; de checks van die run staan
+# op de nieuwe commit, ook in de pull request.
+# pyodide-kopie.test.ts is rood zolang de wheels ontbreken.
+
+on:
+  push:
+    branches-ignore: [main]
+    # Ook bij een wijziging van deze workflow of van het ophaalscript: dan
+    # zie je meteen of ze werken. Met de hand starten (workflow_dispatch) kan
+    # pas als de workflow op main staat.
+    paths:
+      - 'pnpm-workspace.yaml'
+      - 'pnpm-lock.yaml'
+      - 'sites/*/*/package.json'
+      - '.github/workflows/pyodide-wheels.yml'
+      - 'packages/python-runner/scripts/haal-pyodide-wheels.mjs'
+  workflow_dispatch:
+
+concurrency:
+  group: pyodide-wheels-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  wheels:
+    runs-on: ubuntu-latest
+    steps:
+      # Deze job mag pushen. Het token blijft daarom niet in de git-config
+      # staan (persist-credentials) terwijl pnpm installeert: alleen de
+      # laatste stap krijgt het, voor de push.
+      # De top van de branch, niet de commit die deze run startte (github.sha,
+      # de standaard bij een push). Twee upgrades vlak na elkaar: de tweede run
+      # wacht op de eerste (concurrency), en ziet zo diens wheel-commit. Met
+      # github.sha zag hij die niet, ruimde hij de wheels van de eerste niet
+      # op, en bleven die naast de zijne op de branch staan.
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+          persist-credentials: false
+
+      - uses: ./.github/actions/node-pnpm
+        with:
+          install: 'false'
+
+      - name: Sites met haal:wheels
+        id: sites
+        run: |
+          set -euo pipefail
+          mappen=""
+          for pkg in sites/*/*/package.json; do
+            if node -e "process.exit(require('./$pkg').scripts?.['haal:wheels'] ? 0 : 1)"; then
+              mappen="$mappen $(dirname "$pkg")"
+            fi
+          done
+          echo "Sites:$mappen"
+          echo "mappen=$mappen" >> "$GITHUB_OUTPUT"
+
+      # Alleen die sites (en wat ze nodig hebben): het script leest de lock
+      # uit hun pyodide-pakket.
+      - name: Install
+        env:
+          MAPPEN: ${{ steps.sites.outputs.mappen }}
+        run: |
+          set -euo pipefail
+          filters=()
+          for map in $MAPPEN; do filters+=(--filter "{./$map}..."); done
+          pnpm install --frozen-lockfile "${filters[@]}"
+
+      - name: Wheels ophalen
+        env:
+          MAPPEN: ${{ steps.sites.outputs.mappen }}
+        run: |
+          set -euo pipefail
+          for map in $MAPPEN; do
+            echo "== $map"
+            pnpm --dir "$map" run haal:wheels --opruimen
+          done
+
+      - name: Committen en Build sites starten
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # Zonder aanhalingstekens: dan vult de shell de mappen in. Een
+          # pathspec met jokertekens moet het hele pad van een bestand dekken,
+          # en 'sites/*/*/static/pyodide' dekt dus geen enkel bestand erin.
+          git add -A -- sites/*/*/static/pyodide
+          if git diff --cached --quiet; then
+            echo "De wheels waren al compleet."
+            exit 0
+          fi
+          git diff --cached --stat
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "Pyodide-wheels bij de nieuwe lock (workflow pyodide-wheels)"
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          # Kwam er tijdens deze run een commit bij op de branch, dan zet de
+          # rebase de wheels daarbovenop. Zonder weigert GitHub de push (geen
+          # fast-forward), blijft de wheel-test rood, en start niets deze
+          # workflow opnieuw. Veranderde die nieuwe commit de Pyodide-versie
+          # zelf, dan staat zijn eigen run al in de rij (concurrency); die
+          # checkt de top van de branch uit, met deze wheel-commit erin, en
+          # ruimt deze wheels dus op. Beide lokaal nagespeeld met een ondiepe
+          # clone, zoals actions/checkout hem maakt.
+          git pull --rebase "$url" "$GITHUB_REF_NAME"
+          git push "$url" "HEAD:${GITHUB_REF_NAME}"
+          gh workflow run build.yml --ref "${GITHUB_REF_NAME}" -f volledig=false

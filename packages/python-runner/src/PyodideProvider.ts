@@ -1,29 +1,33 @@
 // Singleton Pyodide loader — shared across all components on the page.
 //
-// De base-URL is instelbaar zodat een site Pyodide lokaal kan serveren
-// (offline, vanuit static/pyodide/) of vanaf de CDN. Standaard: CDN.
-// Roep setPyodideBaseUrl() aan in een clientModule om dit te overschrijven.
+// Elke site serveert Pyodide zelf, onder <baseUrl>pyodide/ (ook op een
+// schoolnetwerk dat CDN's blokkeert; createConfig zet de runtime daar klaar
+// uit node_modules, zie packages/shared/config/pyodide-runtime.js). Een site zet het adres met
+// setPyodideBaseUrl() in een clientModule, vóór de componenten mounten.
+// Er is bewust geen standaard: tot november 2026 viel deze provider stil
+// terug op cdn.jsdelivr.net, en een nieuwe cursus die de regel vergat, laadde
+// dan zonder dat iemand het merkte van de CDN. Nu geeft getPyodide een fout
+// die zegt wat er mist, en pyodide-adres.test.ts eist de regel al vóór de
+// build van elke site die deze lader gebruikt.
 //
-// Eén bron van waarheid voor de Pyodide-versie. Houd PYODIDE_VERSION gelijk aan
-// de `pyodide`-versie in de catalog (pnpm-workspace.yaml): de copy-pyodide-
-// scripts kopiëren díe versie naar static/pyodide/ van self-hostende sites.
-// De CDN-default hieronder geldt voor sites die NIET self-hosten (bijv.
-// fullstack), zodat die dezelfde Pyodide draaien als de rest.
-// play heeft een eigen constante in sites/play/src/components/CodeRunner/engine.js,
-// omdat die site zijn Pyodide in een iframe laadt en niet via deze provider.
-// Hij hoort dezelfde versie te noemen; pyodide-kopie.test.ts controleert dat.
+// Welke Pyodide dat is, bepaalt de catalog (`pyodide` in pnpm-workspace.yaml):
+// dit bestand noemt geen versie. Alleen play noemt er een, in
+// sites/informatica/play/src/components/CodeRunner/engine.js, voor de
+// cachesleutel van zijn service worker; pyodide-kopie.test.ts houdt die gelijk.
 import { vraag } from '@coderius/shared/dialoog';
 import type { Tekening } from './Tekening/tekening';
 import { TURTLE_PY } from './turtle/module';
 
-export const PYODIDE_VERSION = '0.29.4';
-const DEFAULT_PYODIDE_BASE_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
-let pyodideBaseUrl = DEFAULT_PYODIDE_BASE_URL;
+let pyodideBaseUrl: string | null = null;
 
 export function setPyodideBaseUrl(url: string): void {
   // Normaliseer naar een trailing slash zodat `${base}pyodide.js` klopt.
   pyodideBaseUrl = url.endsWith('/') ? url : `${url}/`;
 }
+
+/** De melding als een site vergat te zeggen waar zijn Pyodide staat. */
+export const GEEN_PYODIDE_ADRES =
+  'Geen adres voor Pyodide: roep setPyodideBaseUrl(`${siteConfig.baseUrl}pyodide/`) aan in een clientModule van de site (zie src/pyodide-setup.ts van de python-cursus).';
 
 // Minimale vorm van de geladen Pyodide-instantie — er is geen officieel
 // @types/pyodide-pakket hier; dit dekt precies wat runPython/runPythonStream
@@ -61,30 +65,36 @@ export function setPyodideLoader(loader: PyodideLoader | null): void {
 export function getPyodide(): Promise<PyodideInterface> {
   if (pyodidePromise) return pyodidePromise;
 
-  pyodidePromise = (async () => {
-    try {
-      if (pyodideLoader) return await pyodideLoader();
-      // Only add script tag once
-      if (!(window as WindowWithPyodide).loadPyodide) {
-        const script = document.createElement('script');
-        script.src = `${pyodideBaseUrl}pyodide.js`;
-        script.async = true;
-        await new Promise<void>((res, rej) => {
-          script.onload = () => res();
-          script.onerror = () => rej(new Error('Failed to load Pyodide script'));
-          document.head.appendChild(script);
-        });
-      }
-      const loadPyodide = (window as WindowWithPyodide).loadPyodide;
-      if (!loadPyodide) throw new Error('Pyodide script loaded but window.loadPyodide is missing');
-      return await loadPyodide({ indexURL: pyodideBaseUrl });
-    } catch (err) {
-      pyodidePromise = null; // allow retry
-      throw err;
+  const poging = (async () => {
+    if (pyodideLoader) return await pyodideLoader();
+    const basis = pyodideBaseUrl;
+    if (!basis) throw new Error(GEEN_PYODIDE_ADRES);
+    // Only add script tag once
+    if (!(window as WindowWithPyodide).loadPyodide) {
+      const script = document.createElement('script');
+      script.src = `${basis}pyodide.js`;
+      script.async = true;
+      await new Promise<void>((res, rej) => {
+        script.onload = () => res();
+        script.onerror = () => rej(new Error('Failed to load Pyodide script'));
+        document.head.appendChild(script);
+      });
     }
+    const loadPyodide = (window as WindowWithPyodide).loadPyodide;
+    if (!loadPyodide) throw new Error('Pyodide script loaded but window.loadPyodide is missing');
+    return await loadPyodide({ indexURL: basis });
   })();
-
-  return pyodidePromise;
+  pyodidePromise = poging;
+  // Mislukt het laden, dan mag de volgende aanroep opnieuw proberen. Dit
+  // stond eerst als catch in de async-functie zelf, en dan liep het fout bij
+  // een fout vóór de eerste await (geen adres, een loader die meteen gooit):
+  // die catch zette pyodidePromise op null nog vóór de toewijzing hierboven,
+  // die daarna de afgewezen promise bewaarde. Elke volgende poging kreeg dan
+  // dezelfde fout, tot je de pagina herlaadde.
+  poging.catch(() => {
+    if (pyodidePromise === poging) pyodidePromise = null;
+  });
+  return poging;
 }
 
 /**
@@ -364,6 +374,43 @@ export async function tracePython(
   }
 }
 
+// Een verse module __main__ voor één run van runPython, en de weg terug. De
+// echte __main__ is die van pyodide.globals; die moet na afloop terug, want
+// Pyodide zelf en de helpers hierboven draaien daarin. Hij wordt één keer
+// bewaard: start een tweede oefening terwijl de eerste nog op input() wacht,
+// dan staat de verse module van de eerste in sys.modules, en die mag niet als
+// "de oude" blijven hangen.
+const VERSE_MAIN_PY = `
+import sys as _coderius_sys, types as _coderius_types
+if '_coderius_echte_main' not in globals():
+    _coderius_echte_main = _coderius_sys.modules['__main__']
+_coderius_sys.modules['__main__'] = _coderius_types.ModuleType('__main__')
+_coderius_sys.modules['__main__'].__dict__
+`;
+
+const OUDE_MAIN_PY = `
+_coderius_sys.modules['__main__'] = _coderius_echte_main
+`;
+
+/**
+ * Een verse module __main__ voor één run: geeft zijn globals terug (een
+ * PyProxy van een dict) om aan runPythonAsync of runPythonStream mee te geven,
+ * en zet hem zolang in sys.modules. Sluit af met sluitVerseMain. Een lege dict
+ * alleen is niet genoeg: dan vindt pickle een klasse van de leerling niet.
+ */
+export function openVerseMain(pyodide: PyodideInterface): { destroy?: () => void } | undefined {
+  return pyodide.runPython(VERSE_MAIN_PY) as { destroy?: () => void } | undefined;
+}
+
+/** Ruimt de globals van openVerseMain op en zet de echte __main__ terug. */
+export function sluitVerseMain(
+  pyodide: PyodideInterface,
+  namespace: { destroy?: () => void } | undefined,
+): void {
+  namespace?.destroy?.();
+  pyodide.runPython(OUDE_MAIN_PY);
+}
+
 export async function runPython(
   pyodide: PyodideInterface,
   code: string,
@@ -380,13 +427,24 @@ sys.stderr = StringIO()
   zetInvoer(pyodide);
   zetTurtle(pyodide, code, turtle);
 
+  // Elke run begint met lege globals. Pyodide is één instantie per pagina, dus
+  // zonder eigen namespace bleef een variabele van de vorige run bestaan, ook
+  // die van een andere oefening op dezelfde pagina: code die een variabele
+  // gebruikte voor hij hem maakte, werkte dan toch. De run krijgt een verse
+  // module __main__, die zolang ook in sys.modules staat: met alleen een lege
+  // dict vond pickle een klasse van de leerling niet meer ("attribute lookup
+  // on __main__ failed"). input() zit in builtins en blijft gewoon werken.
+  const namespace = openVerseMain(pyodide);
+
   let didError = false;
   let jsError = '';
   try {
-    await pyodide.runPythonAsync(code);
+    await pyodide.runPythonAsync(code, namespace ? { globals: namespace } : undefined);
   } catch (err) {
     didError = true;
     jsError = err instanceof Error ? err.message : String(err);
+  } finally {
+    sluitVerseMain(pyodide, namespace);
   }
 
   // sys.stdout.getvalue()/sys.stderr.getvalue() zijn Python str's; Pyodide

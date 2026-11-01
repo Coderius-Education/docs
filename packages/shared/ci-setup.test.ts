@@ -158,3 +158,46 @@ describe('Node en pnpm via .github/actions/node-pnpm', () => {
     }
   }, 30_000);
 });
+
+// Elke site-build in CI krijgt zijn .gz en .br (scripts/comprimeer.mjs) vóór
+// hij de cache in gaat of als artifact de deur uit. De cache heeft één sleutel
+// per site-hash, en wie hem ook vult (de job `build`, `voorraad` of
+// `browser`): de inhoud moet dezelfde zijn. Eerst comprimeerde `voorraad`
+// niet, en kon `browser` een build zonder .br uit de cache halen; de rooktest
+// sloeg de controle dan stil over.
+describe('comprimeren na elke site-build', () => {
+  const jobs = [...workflow.matchAll(/^ {2}([a-z-]+):$/gm)].map((m) => m[1]);
+  const bouwt = (s: Stap) => /pnpm --filter "[^"]+" build/.test(s.tekst);
+
+  it('er zijn zulke jobs', () => {
+    expect(jobs.filter((job) => stappen(job).some(bouwt)).sort()).toEqual([
+      'browser',
+      'build',
+      'voorraad',
+    ]);
+  });
+
+  it('comprimeert na de build, en vóór de cache en de upload', () => {
+    const fout: string[] = [];
+    for (const job of jobs) {
+      const v = stappen(job);
+      const build = v.findIndex(bouwt);
+      if (build === -1) continue;
+      const comprimeer = v.findIndex(
+        (s, i) => i >= build && s.tekst.includes('scripts/comprimeer.mjs'),
+      );
+      const weg = v.findIndex(
+        (s, i) => i > build && /actions\/(cache\/save|upload-artifact)@/.test(s.uses),
+      );
+      if (comprimeer === -1) fout.push(`${job}: geen comprimeer.mjs na de build`);
+      else if (weg !== -1 && weg < comprimeer)
+        fout.push(`${job}: de build gaat weg vóór het comprimeren`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('de rooktest eist de .br', () => {
+    const v = stappen('browser');
+    expect(v[plek(v, 'De speeltuin in Chromium')].tekst).toContain('--eis-compressie');
+  });
+});

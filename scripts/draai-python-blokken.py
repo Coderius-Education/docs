@@ -101,6 +101,15 @@ Aanroep vanuit de repo-root (zonder site-naam: de python-cursus):
     python3 scripts/draai-python-blokken.py algorithms
     python3 scripts/draai-python-blokken.py algorithms --pins   # pip-regel voor CI
     python3 scripts/draai-python-blokken.py --alleen changed.json
+    python3 scripts/draai-python-blokken.py --json blokken.json      # zie onder
+
+Met `--json <pad>` (alleen de python-cursus) schrijft het script daarnaast elk
+gedraaid blok weg, met wat CPython ervan maakte. Die lijst legt
+packages/python-runner/src/lessen-in-pyodide.test.ts naast de echte speeltuin:
+dezelfde code door runPython in Pyodide, met dezelfde invoer en hetzelfde zaad.
+Belooft de les een uitvoer, dan moet de browser die net zo goed geven; CPython
+alleen zegt niets over een module die Pyodide mist of een input() die daar
+anders loopt.
 
 Met `--alleen changed.json` (uit de plan-job, zie scripts/alleen.py) draaien
 alleen de blokken waarvan een regel gewijzigd is, en de blokken die erop
@@ -112,7 +121,8 @@ foutmelding hangt af van zijn eigen regels en van de blokken eromheen.
 Het script bedient meerdere cursussen; wat per site verschilt (docs-map, het
 runbare component, de Python-versie van de Pyodide, de gepinde pakketten) staat
 in de SITES-tabel bovenaan. Voor algorithms pint CI numpy en matplotlib op de
-versies die de browser laadt, uit static/pyodide/pyodide-lock.json — draait de
+versies die de browser laadt: die van de wheels in static/pyodide/ van de site
+(pyodide-kopie.test.ts eist dat die bij de lock van de runtime horen). Draait de
 controle tegen een andere numpy, dan zegt groen niets over wat een leerling ziet.
 
 Afsluitcode 0 als alles slaagt, 1 zodra er iets misgaat.
@@ -139,7 +149,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # de named group `oefcode`. `python_versie` is de CPython van de Pyodide die de
 # site serveert — alleen op die versie worden foutmeldingsteksten beoordeeld.
 # `pins` zijn de pakketten die CI vastzet op de versie die de browser laadt,
-# afgelezen uit static/pyodide/pyodide-lock.json van de site zelf.
+# afgelezen uit de wheels in static/pyodide/ van de site zelf.
 SITES = {
     "python": {
         "docs": site_dir("python") / "docs",
@@ -170,7 +180,7 @@ SITES = {
         # `export default String.raw\`…\``; het stuk tussen de eerste en de
         # laatste backtick is de Python. De prop staat vóór initialCode.
         "verborgen_map": site_dir("algorithms") / "src" / "components" / "PyRunner" / "verborgen",
-        "python_versie": (3, 12),
+        "python_versie": (3, 13),
         # numpy en matplotlib bepalen wat een blok print; de rest van de
         # matplotlib-keten reist als dependency mee.
         "pins": ("numpy", "matplotlib"),
@@ -304,6 +314,10 @@ MET_RE = re.compile(r"\{/\*\s*draaien-met:\s*blok-erboven\s*\*/\}\s*$")
 # staart van wat het blok erboven print, zou slagen zonder dat het eigen
 # blok iets print.
 STAART_MARKER = "<<eigen-blok>>"
+
+# Met --json: elk gedraaid blok met de uitvoer van CPython, voor de controle in
+# Pyodide (zie de docstring). None zonder die vlag.
+VOOR_PYODIDE: list[dict] | None = None
 NIET_COMPILEREN_RE = re.compile(r"\{/\*\s*niet-compileren:.*?\*/\}\s*$")
 # Sommige uitvoer ligt niet vast: een set heeft geen volgorde, dus het getoonde
 # resultaat is een voorbeeld en geen belofte. Zo'n blok draait wel gewoon.
@@ -855,6 +869,24 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0, invoer=None) 
         (x.strip() for x in reversed(r.stderr.strip().splitlines()) if x.strip()), ""
     )
 
+    if VOOR_PYODIDE is not None:
+        eigen_code = code.split("\n")[voorplak:]
+        VOOR_PYODIDE.append({
+            "bron": str(bron),
+            "regel": regel,
+            "code": code,
+            "invoer": list(invoer[0]) if invoer else None,
+            "zaad": invoer[1] if invoer else None,
+            # Alleen wat de les belooft hoeft de browser ook te geven. Zonder
+            # belofte (of met uitvoer-varieert) telt alleen: valt hij om, en zo
+            # ja op welke melding.
+            "belooft_uitvoer": not varieert
+            and (verwacht is not None or any(BELOFTE_RE.match(x) for x in eigen_code)),
+            "stdout": r.stdout,
+            "returncode": r.returncode,
+            "fout": laatste_fout,
+        })
+
     if varieert:
         verwacht = None
 
@@ -1061,24 +1093,59 @@ def controleer_claim(claim) -> str | None:
     return None
 
 
+def pyodide_lock() -> dict | None:
+    """Het lock-bestand van de Pyodide die de site serveert, of None.
+
+    De runtime staat niet in git: createConfig zet hem bij start en build uit
+    het geïnstalleerde `pyodide` van de site (node_modules/pyodide). Zonder
+    `pnpm install` is er dus geen lock; de job blokken installeert node niet
+    voor algorithms alleen.
+    """
+    lock = DOCS.parent / "node_modules" / "pyodide" / "pyodide-lock.json"
+    return json.loads(lock.read_text()) if lock.exists() else None
+
+
+def wheels() -> list[Path]:
+    """De wheels die de site naast de runtime serveert (haal:wheels)."""
+    return sorted((DOCS.parent / "static" / "pyodide").glob("*.whl"))
+
+
+def _wheelnaam(naam: str) -> str:
+    return re.sub(r"[-_.]+", "_", naam).lower()
+
+
 def python_van_de_lock() -> tuple[int, int] | None:
-    """De CPython-versie die de site echt serveert, uit zijn eigen pyodide-lock."""
-    lock = DOCS.parent / "static" / "pyodide" / "pyodide-lock.json"
-    if not lock.exists():
-        return None
-    versie = json.loads(lock.read_text()).get("info", {}).get("python")
-    if not versie:
-        return None
-    delen = versie.split(".")
-    return (int(delen[0]), int(delen[1]))
+    """De CPython-versie die de site echt serveert.
+
+    Uit de lock als die er is, anders uit de ABI-tag (cp313) van de wheels:
+    pyodide-kopie.test.ts eist dat die bij de lock horen.
+    """
+    lock = pyodide_lock()
+    versie = (lock or {}).get("info", {}).get("python")
+    if versie:
+        delen = versie.split(".")
+        return (int(delen[0]), int(delen[1]))
+    for wiel in wheels():
+        m = re.search(r"-cp(\d)(\d+)-", wiel.name)
+        if m:
+            return (int(m.group(1)), int(m.group(2)))
+    return None
 
 
 def pins() -> dict[str, str]:
-    """De browser-versies van de gepinde pakketten, uit de eigen pyodide-lock."""
-    if not SITE["pins"]:
-        return {}
-    lock = json.loads((DOCS.parent / "static" / "pyodide" / "pyodide-lock.json").read_text())
-    return {naam: lock["packages"][naam]["version"] for naam in SITE["pins"]}
+    """De browser-versies van de gepinde pakketten, uit de wheels van de site."""
+    uit = {}
+    for naam in SITE["pins"]:
+        for wiel in wheels():
+            delen = wiel.name.split("-")
+            if _wheelnaam(delen[0]) == _wheelnaam(naam):
+                uit[naam] = delen[1]
+        if naam not in uit:
+            raise SystemExit(
+                f"Geen wheel voor {naam} in static/pyodide/ van {SITE_NAAM}; "
+                f"draai `pnpm --filter <site> haal:wheels`."
+            )
+    return uit
 
 
 def controleer_pins() -> str | None:
@@ -1098,7 +1165,7 @@ def controleer_pins() -> str | None:
         return None
     return (
         "De geïnstalleerde pakketten wijken af van wat de browser laadt "
-        "(static/pyodide/pyodide-lock.json):\n  "
+        "(de wheels in static/pyodide/):\n  "
         + "\n  ".join(scheef)
         + "\n\nDan test je iets anders dan een leerling ziet. Installeer met:\n  "
         + "pip install " + " ".join(f"{n}=={v}" for n, v in pins().items())
@@ -1106,7 +1173,16 @@ def controleer_pins() -> str | None:
 
 
 def main() -> int:
+    global VOOR_PYODIDE
     argv = [a for a in sys.argv[1:] if a != "--pins"]
+    json_pad = None
+    if "--json" in argv:
+        i = argv.index("--json")
+        if i + 1 >= len(argv):
+            raise SystemExit("--json verwacht een pad")
+        json_pad = Path(argv[i + 1])
+        argv = argv[:i] + argv[i + 2 :]
+        VOOR_PYODIDE = []
     zonder_alleen = lees(argv, "")[1]
     naam = zonder_alleen[0] if zonder_alleen else "python"
     selectie = lees(argv, naam)[0]
@@ -1115,13 +1191,16 @@ def main() -> int:
         return 2
     kies_site(naam)
     zelftest()
+    if json_pad is not None and naam != "python":
+        print("--json geldt alleen voor de python-cursus (CodeExercise)", file=sys.stderr)
+        return 2
 
     if "--pins" in sys.argv:
         print(" ".join(f"{n}=={v}" for n, v in pins().items()))
         return 0
 
     # De site-versie staat op drie plekken: de SITES-tabel hier, python-version
-    # in build.yml, en wat static/pyodide/ echt serveert. Drijven die uiteen,
+    # in build.yml, en wat de site echt serveert. Drijven die uiteen,
     # dan zouden de foutmeldingsteksten stilletjes niet meer vergeleken worden —
     # precies het "groen zegt niets" dat dit script moet uitsluiten. De lock is
     # de waarheid (dat ís wat de browser draait), dus daar toetsen we tegen.
@@ -1129,7 +1208,7 @@ def main() -> int:
     if lock_versie is not None and lock_versie != PYTHON_VAN_DE_SITE:
         print(
             f"SITES[{naam!r}] zegt Python {'.'.join(map(str, PYTHON_VAN_DE_SITE))}, "
-            f"maar static/pyodide/pyodide-lock.json van de site serveert "
+            f"maar de Pyodide van de site serveert "
             f"{'.'.join(map(str, lock_versie))}. Pas python_versie in de SITES-tabel "
             f"aan (en python-version van de job in build.yml).",
             file=sys.stderr,
@@ -1188,6 +1267,15 @@ def main() -> int:
 
     for fout in fouten:
         print(fout)
+    if json_pad is not None:
+        VOOR_PYODIDE.sort(key=lambda b: (b["bron"], b["regel"]))
+        # De Python van CPython erbij: alleen op dezelfde versie als Pyodide
+        # mag de tekst van een foutmelding vergeleken worden, anders de soort.
+        python = ".".join(str(x) for x in sys.version_info[:2])
+        json_pad.write_text(
+            json.dumps({"python": python, "blokken": VOOR_PYODIDE}, ensure_ascii=False, indent=1)
+        )
+        print(f"--json: {len(VOOR_PYODIDE)} blokken naar {json_pad}")
     if not selectie.alles:
         print(
             f"--alleen: {len(blokken)} van {alle_blokken} blokken en {len(claims)} van "

@@ -11,8 +11,7 @@
     "clear": "docusaurus clear",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc",
-    "copy:pyodide": "node ../../../packages/python-runner/scripts/copy-pyodide.mjs"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@coderius/shared": "workspace:*",
@@ -24,8 +23,7 @@
     "prism-react-renderer": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "@coderius/python-runner": "workspace:*",
-    "pyodide": "^0.29.3"
+    "@coderius/python-runner": "workspace:*"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "catalog:",

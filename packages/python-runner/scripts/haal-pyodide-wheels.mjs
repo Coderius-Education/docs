@@ -1,8 +1,9 @@
 // Haalt de wheels van één Pyodide-pakket plus alles waar het van afhangt naar
 // static/pyodide/ van de aanroepende site.
 //
-// Waarom dit naast copy-pyodide.mjs bestaat: de npm-package van Pyodide bevat
-// alléén de runtime, in geen enkele versie een wheel. Een site die matplotlib
+// De runtime zelf komt bij start en build uit node_modules
+// (packages/shared/config/pyodide-runtime.js). Maar de npm-package van Pyodide
+// bevat alléén de runtime, in geen enkele versie een wheel. Een site die matplotlib
 // of een ander pakket zelf wil serveren — want anders valt loadPackage terug op
 // de CDN die zo'n map juist vermijdt — moet die wheels apart ophalen. Dat is
 // tot nu toe met de hand gebeurd, en daardoor liep de matplotlib-set van
@@ -12,18 +13,26 @@
 //   node ../../packages/python-runner/scripts/haal-pyodide-wheels.mjs matplotlib
 //   ... --toon        laat alleen zien wat er opgehaald zou worden
 //   ... --basis <url> ander adres dan de standaard-CDN (mirror, eigen kopie)
+//   ... --opruimen    haal ook de wheels weg die niet meer bij de keten horen
+//                     (die van de vorige Pyodide-versie)
+//
+// Een wheel die er al staat met de goede checksum wordt niet opnieuw
+// opgehaald, dus het script mag vaker draaien. De workflow pyodide-wheels doet
+// dat na elke wijziging van de Pyodide-versie (catalog, lockfile), want
+// cdn.jsdelivr.net is niet overal bereikbaar.
 //
 // De versies en checksums komen uit de pyodide-lock.json van de geïnstalleerde
 // pyodide, dus je krijgt precies de wheels die bij díe runtime horen. Elk
 // bestand wordt na het ophalen tegen zijn sha256 uit dat lock-bestand gelegd.
 
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 
 const args = process.argv.slice(2);
 const toonAlleen = args.includes('--toon');
+const opruimen = args.includes('--opruimen');
 const basisIndex = args.indexOf('--basis');
 // Let op de -1: staat er geen --basis, dan mag index 0 niet worden weggefilterd
 // als "de waarde erachter" — dat is juist de pakketnaam.
@@ -85,10 +94,22 @@ if (toonAlleen) {
 
 if (!existsSync(dest)) mkdirSync(dest, { recursive: true });
 
+const somVan = (bytes) => createHash('sha256').update(bytes).digest('hex');
+
+if (opruimen) {
+  const horenErbij = new Set([...nodig].map((naam) => lock.packages[naam].file_name));
+  for (const bestand of readdirSync(dest).filter((n) => n.endsWith('.whl'))) {
+    if (horenErbij.has(bestand)) continue;
+    rmSync(join(dest, bestand));
+    console.log(`weg: ${bestand}`);
+  }
+}
+
 let opgehaald = 0;
 for (const naam of [...nodig].sort()) {
   const pakket = lock.packages[naam];
   const doel = join(dest, pakket.file_name);
+  if (existsSync(doel) && somVan(readFileSync(doel)) === pakket.sha256) continue;
   const antwoord = await fetch(basis + pakket.file_name);
   if (!antwoord.ok) {
     console.error(`\n${pakket.file_name}: HTTP ${antwoord.status}`);
@@ -98,7 +119,7 @@ for (const naam of [...nodig].sort()) {
     process.exit(1);
   }
   const bytes = Buffer.from(await antwoord.arrayBuffer());
-  const som = createHash('sha256').update(bytes).digest('hex');
+  const som = somVan(bytes);
   if (pakket.sha256 && som !== pakket.sha256) {
     console.error(`\n${pakket.file_name}: checksum klopt niet`);
     console.error(`  verwacht ${pakket.sha256}`);
@@ -109,6 +130,7 @@ for (const naam of [...nodig].sort()) {
   opgehaald++;
 }
 
-console.log(`\n${opgehaald} wheels opgehaald en op checksum gecontroleerd.`);
-console.log('Verwijder daarna de wheels van de vorige Pyodide-versie uit die map,');
-console.log('en haal de site van de uitzonderingslijst in pyodide-kopie.test.ts.');
+console.log(`\n${opgehaald} wheels opgehaald en op checksum gecontroleerd; de rest stond er al.`);
+if (!opruimen) {
+  console.log('Wheels van een vorige Pyodide-versie ruim je op met --opruimen.');
+}

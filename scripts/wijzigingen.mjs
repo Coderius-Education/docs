@@ -77,7 +77,7 @@ function testBestanden(map) {
     if (OVERSLAAN.has(item.name)) continue;
     const pad = join(map, item.name);
     if (item.isDirectory()) uit.push(...testBestanden(pad));
-    else if (item.name.endsWith('.test.ts')) uit.push(pad);
+    else if (/\.test\.tsx?$/.test(item.name)) uit.push(pad);
   }
   return uit;
 }

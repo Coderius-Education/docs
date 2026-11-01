@@ -41,6 +41,9 @@ const ROOT_BESTANDEN = [
   '.browserslistrc',
   '.npmrc',
   '.nvmrc',
+  // Wat CI na de build met de bestanden doet: de .gz en .br zitten in de
+  // gecachete build, dus een ander script geeft een andere inhoud.
+  'scripts/comprimeer.mjs',
 ];
 
 function git(...args) {

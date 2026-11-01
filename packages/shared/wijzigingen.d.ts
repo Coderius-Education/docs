@@ -12,7 +12,14 @@ export type Plan = {
   sites: string[];
   ongewijzigd: string[];
   pakketten: string[];
-  jobs: { test: boolean; checks: boolean; lint: boolean; tekst: boolean; crosslinks: boolean };
+  jobs: {
+    test: boolean;
+    checks: boolean;
+    lint: boolean;
+    tekst: boolean;
+    crosslinks: boolean;
+    browser: boolean;
+  };
   runners: Record<string, Runner>;
   tekst: { alles: boolean; bestanden: string[] };
   vitest: { alles: boolean; bestanden: string[] };
@@ -22,7 +29,10 @@ export type Gewijzigd = Pick<Plan, 'volledig' | 'bestanden'> & Partial<Pick<Plan
 
 export declare const HEEL_BESTAND: Bereik;
 export declare const GLOBAAL: string[];
-export declare const PER_JOB: Record<'vitest' | 'lint' | 'tekst' | 'crosslinks', string[]>;
+export declare const PER_JOB: Record<
+  'vitest' | 'lint' | 'tekst' | 'crosslinks' | 'browser',
+  string[]
+>;
 export declare const RUNNERS: Record<string, { site: string; leest: string[]; alles: string[] }>;
 export declare function parseDiff(diff: string): Bestanden;
 export declare function overlapt(

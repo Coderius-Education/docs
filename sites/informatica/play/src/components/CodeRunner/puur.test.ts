@@ -23,7 +23,7 @@ import {
 // snippet, en legt deze test die twee naast elkaar. Dezelfde constructie
 // geldt voor de traceback-herschrijver. Verder pint dit bestand het gedrag
 // van ensureAsync en detectMode, en dat elke srcdoc-bouwer Pyodide van de
-// CDN met PYODIDE_VERSION laadt en de wheels via loadPackage binnenhaalt.
+// site zelf met PYODIDE_VERSION laadt en de wheels via de pagina binnenhaalt.
 
 /** Evalueert een snippet zoals de iframe dat doet en geeft de functie terug. */
 function uitSnippet<T>(snippet: string, naam: string): T {
@@ -220,7 +220,6 @@ describe('detectMode', () => {
 });
 
 describe('srcdoc-bouwers', () => {
-  const cdn = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/pyodide.mjs`;
   const bouwers: Array<[string, () => string]> = [
     ['buildPrewarmSrcDoc', () => buildPrewarmSrcDoc(['import play'])],
     ['buildSrcDoc', () => buildSrcDoc({ code: 'import play', mode: 'play' })],
@@ -228,9 +227,19 @@ describe('srcdoc-bouwers', () => {
   ];
 
   for (const [naam, bouw] of bouwers) {
-    it(`${naam} laadt Pyodide ${PYODIDE_VERSION} van de CDN en installeert de wheels`, () => {
+    it(`${naam} laadt Pyodide ${PYODIDE_VERSION} van de site zelf en installeert de wheels`, () => {
       const doc = bouw();
-      expect(doc).toContain(`await import('${cdn}')`);
+      // Geen CDN: een schoolnetwerk dat cdn.jsdelivr.net blokkeert, hield zo
+      // de hele speeltuin tegen. De iframe heeft een opaque origin, dus ook
+      // Pyodide komt via de pagina (laadPyodide in wielen.js).
+      expect(doc).not.toContain('cdn.jsdelivr.net');
+      expect(doc).not.toMatch(/await import\(/);
+      expect(doc).toMatch(
+        new RegExp(
+          `await laadPyodide\\('[^']*/pyodide/', '${PYODIDE_VERSION.replace(/\./g, '\\.')}', \\{ packages: \\[`,
+        ),
+      );
+      expect(doc).toContain('async function laadPyodide(');
       expect(doc).toMatch(
         /const WHEELS = \[[^\]]*\/whl\/pymunk-[^\]]*\/whl\/coderius_play-[^\]]*\];/,
       );
