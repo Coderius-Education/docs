@@ -146,6 +146,21 @@ op 20 Mbit/s dan in 4,8 s in plaats van 8,2 s; de wasm van Pyodide gaat van
 8,6 naar 2,2 MB. De rooktest in de job `browser` serveert de `.br` zoals zo'n
 server en eist dat Pyodide er gewoon mee start.
 
+Of de browser Pyodide bewaart, hangt ook af van de headers van de hosting; met
+`no-store` kwam hij bij elke les opnieuw over de lijn. Daarom krijgt elke site
+met Pyodide en zonder eigen PWA (play heeft er een, `src/sw.js`) van
+`createConfig` een service worker op `<baseUrl>pyodide-sw.js`
+(`packages/shared/pyodide-cache/sw.js`, plugin `plugins/pyodide-cache.js`,
+alleen in een productie-build). Hij bewaart alleen wat onder
+`<baseUrl>pyodide/` staat. `pyodide.js` vraagt hij altijd aan het netwerk, en
+is die veranderd (een nieuwe Pyodide), dan gooit hij eerst zijn hele cache weg;
+zo komt een oude wasm nooit naast een nieuwe `pyodide.js`, zonder versie in de
+laders. Een lader moet dus altijd eerst `pyodide.js` laden.
+`pyodide-cache.test.ts` speelt dat na, de rooktest controleert in Chromium dat
+een derde bezoek alleen `pyodide.js` nog van de server haalt. Weghalen kan
+alleen met een `sw.js` die zichzelf afmeldt; een site zonder het bestand laat
+de oude service worker gewoon staan.
+
 ## Browsers
 
 Voor welke browsers de sites gebouwd worden staat in één bestand,

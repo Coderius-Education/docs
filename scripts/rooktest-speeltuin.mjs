@@ -65,6 +65,8 @@ function eersteLesMetOefenveld() {
 
 /** Welk adres gecomprimeerd over de lijn ging, en hoe. */
 const gecomprimeerd = new Map();
+/** Elk adres dat de server uitleverde, voor de controle van de service worker. */
+const geserveerd = [];
 
 function serveer() {
   const server = createServer((req, res) => {
@@ -94,6 +96,7 @@ function serveer() {
         kop.vary = 'Accept-Encoding';
         gecomprimeerd.set(url, variant[0]);
       }
+      geserveerd.push(url);
       const inhoud = readFileSync(variant ? pad + variant[1] : pad);
       res.writeHead(200, kop);
       res.end(inhoud);
@@ -211,6 +214,23 @@ try {
     await veld.locator('textarea').fill('a = 1\nb = a + 1\nprint(b)');
     await veld.getByRole('button', { name: 'Stap voor stap' }).click();
     await veld.getByText(/Stap 1 van \d+/).waitFor({ timeout: 30_000 });
+  });
+
+  // De service worker van plugins/pyodide-cache.js. Bij het eerste bezoek
+  // meldt hij zich pas aan; bij het tweede ziet hij pyodide.js en bewaart hij
+  // de rest; vanaf het derde komt alleen pyodide.js nog van de server.
+  await controleer('bij een volgend bezoek komt Pyodide uit de service worker', async () => {
+    const opnieuw = async () => {
+      await page.reload();
+      await veld.getByRole('button', { name: '▶ Uitvoeren' }).waitFor({ timeout: LADEN_MS });
+    };
+    await opnieuw();
+    geserveerd.length = 0;
+    await opnieuw();
+    const runtime = geserveerd.filter((u) => /\/pyodide\/(?!pyodide\.js$)/.test(u));
+    if (runtime.length) throw new Error(`weer van de server: ${runtime.join(', ')}`);
+    await draai('print("terug")');
+    await verwacht('terug');
   });
 
   await controleer('geen JavaScript-fouten op de pagina', async () => {

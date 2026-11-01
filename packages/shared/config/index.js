@@ -26,7 +26,8 @@ const sidebarManifest = require('../plugins/sidebar-manifest');
 const klasPlugin = require('../plugins/klas');
 const oudeOpslagPlugin = require('../plugins/oude-opslag');
 const { controleerRegels } = require('../oude-opslag');
-const { pyodideStaticDir } = require('./pyodide-runtime');
+const { gebruiktPyodide, pyodideStaticDir } = require('./pyodide-runtime');
+const pyodideCachePlugin = require('../plugins/pyodide-cache');
 
 /**
  * Welke site uit de registry bouwen we? De registry is de bron van waarheid
@@ -209,6 +210,11 @@ const FASTER = {
  * cursus op zijn oude subdomein iets in de browser, geef dan `oudeOpslag` mee
  * (zie oude-opslag.js): de leerling kan dat werk dan overzetten.
  */
+/** Heeft de site @docusaurus/plugin-pwa, met een eigen service worker? */
+function heeftPwa(plugins) {
+  return (plugins || []).some((p) => (Array.isArray(p) ? p[0] : p) === '@docusaurus/plugin-pwa');
+}
+
 function createConfig(course = {}) {
   const managed = loadSettings(process.cwd());
   const site = managed ? applySettings(course, managed, process.cwd()) : course;
@@ -410,6 +416,9 @@ function createConfig(course = {}) {
       [matomoPlugin, { siteId: matomoSiteId }],
       ...(omleidingen?.length ? [[omleidingenPlugin, { omleidingen }]] : []),
       ...(oudeOpslag ? [[oudeOpslagPlugin, { siteId: registry?.id, regels: oudeOpslag }]] : []),
+      // De Pyodide van de site in een eigen cache (plugins/pyodide-cache.js),
+      // behalve waar een PWA dat al doet (play).
+      ...(gebruiktPyodide(process.cwd()) && !heeftPwa(plugins) ? [pyodideCachePlugin] : []),
     ],
     themeConfig,
   };
