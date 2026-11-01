@@ -11,6 +11,7 @@ static/pyodide/ van de site, die pyodide-kopie.test.ts tegen de lock legt.
 
 import importlib.util
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -35,6 +36,7 @@ class TestPins(unittest.TestCase):
     def site_met(self, wheels: list[str]) -> Path:
         """Een nagemaakte site met alleen wheels, zonder node_modules."""
         map_ = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, map_, True)
         (map_ / "docs").mkdir()
         (map_ / "static" / "pyodide").mkdir(parents=True)
         for naam in wheels:

@@ -109,5 +109,14 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m "Pyodide-wheels bij de nieuwe lock (workflow pyodide-wheels)"
-          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${GITHUB_REF_NAME}"
+          url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          # Kwam er tijdens deze run een commit bij op de branch, dan zet de
+          # rebase de wheels daarbovenop. Zonder weigert GitHub de push (geen
+          # fast-forward), blijft de wheel-test rood, en start niets deze
+          # workflow opnieuw. Veranderde die nieuwe commit de Pyodide-versie
+          # zelf, dan staat zijn eigen run al in de rij (concurrency) en
+          # ververst die de wheels daarna. Lokaal nagespeeld met een ondiepe
+          # clone, zoals actions/checkout hem maakt.
+          git pull --rebase "$url" "$GITHUB_REF_NAME"
+          git push "$url" "HEAD:${GITHUB_REF_NAME}"
           gh workflow run build.yml --ref "${GITHUB_REF_NAME}" -f volledig=false
