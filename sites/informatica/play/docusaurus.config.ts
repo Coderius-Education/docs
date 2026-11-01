@@ -42,6 +42,15 @@ export default createConfig({
         debug: false,
         offlineModeActivationStrategies: ['appInstalled', 'standalone', 'queryString'],
         swCustom: require.resolve('./src/sw.js'),
+        // Geen pyodide/ in de precache. De speeltuin vraagt die bestanden met
+        // ?v=<versie> (wielen.js), en src/sw.js cachet ze zo per versie. Stonden
+        // pyodide.js, pyodide.asm.js en het lock-bestand ook in de precache,
+        // dan haalde een geïnstalleerde app daar 1,2 MB van op die nooit werd
+        // gebruikt, en antwoordde de fetch-handler van de PWA (die de ?v=
+        // weglaat) nog eens op een verzoek waar de route van sw.js al op
+        // antwoordde: een InvalidStateError per bestand. De standaard
+        // (**/node_modules/**/*) blijft erbij.
+        injectManifestConfig: { globIgnores: ['**/node_modules/**/*', 'pyodide/**'] },
         pwaHead: [
           { tagName: 'link', rel: 'icon', href: '/img/merk/play-tegel.svg' },
           { tagName: 'meta', name: 'theme-color', content: '#1a1a2e' },

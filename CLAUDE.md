@@ -125,7 +125,10 @@ die regel geeft `getPyodide` een fout. `pyodide-kopie.test.ts` en
 in git, de hele wheel-keten met de checksums uit de lock, overal dezelfde
 versie, en geen CDN in de bron. Upgraden:
 
-1. De versie in de catalog bumpen en `pnpm install`.
+1. De versie in de catalog bumpen en `pnpm install`. Draait de nieuwe
+   Pyodide een andere Python (3.13 → 3.14), dan ook `python_versie` in de
+   SITES-tabel van `scripts/draai-python-blokken.py` en `python-version` van
+   de job `blokken` in `build.yml`; het script stopt anders met die melding.
 2. `PYODIDE_VERSION` in play's `engine.js` mee (de cachesleutel van zijn
    service worker), en play's pymunk-wheel als de `abi_version` van Pyodide
    verandert (`scripts/play-wheels.py`, zie `sites/informatica/play/CLAUDE.md`).

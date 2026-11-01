@@ -50,8 +50,14 @@ jobs:
       # Deze job mag pushen. Het token blijft daarom niet in de git-config
       # staan (persist-credentials) terwijl pnpm installeert: alleen de
       # laatste stap krijgt het, voor de push.
+      # De top van de branch, niet de commit die deze run startte (github.sha,
+      # de standaard bij een push). Twee upgrades vlak na elkaar: de tweede run
+      # wacht op de eerste (concurrency), en ziet zo diens wheel-commit. Met
+      # github.sha zag hij die niet, ruimde hij de wheels van de eerste niet
+      # op, en bleven die naast de zijne op de branch staan.
       - uses: actions/checkout@v5
         with:
+          ref: ${{ github.ref }}
           persist-credentials: false
 
       - uses: ./.github/actions/node-pnpm
@@ -114,8 +120,9 @@ jobs:
           # rebase de wheels daarbovenop. Zonder weigert GitHub de push (geen
           # fast-forward), blijft de wheel-test rood, en start niets deze
           # workflow opnieuw. Veranderde die nieuwe commit de Pyodide-versie
-          # zelf, dan staat zijn eigen run al in de rij (concurrency) en
-          # ververst die de wheels daarna. Lokaal nagespeeld met een ondiepe
+          # zelf, dan staat zijn eigen run al in de rij (concurrency); die
+          # checkt de top van de branch uit, met deze wheel-commit erin, en
+          # ruimt deze wheels dus op. Beide lokaal nagespeeld met een ondiepe
           # clone, zoals actions/checkout hem maakt.
           git pull --rebase "$url" "$GITHUB_REF_NAME"
           git push "$url" "HEAD:${GITHUB_REF_NAME}"

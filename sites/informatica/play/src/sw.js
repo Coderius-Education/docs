@@ -24,7 +24,10 @@ const SCOPE = new URL(self.registration.scope).pathname;
 // Pyodide van de site zelf: wasm, standaardbibliotheek, pakketten. ~15 MB.
 // De pagina haalt ze op voor de iframe (wielen.js) met ?v=<versie> erachter;
 // die zit in de cachesleutel, dus een nieuwe Pyodide komt niet achter de oude
-// in de cache te zitten, en de oude vallen er via maxEntries uit.
+// in de cache te zitten. Een oude versie (een stuk of negen bestanden) valt er
+// na 30 dagen uit (maxAgeSeconds); maxEntries is alleen een bovengrens.
+// De precache van de PWA laat pyodide/ bewust links liggen: zie
+// injectManifestConfig in docusaurus.config.ts.
 const PYODIDE_PREFIX = `${SCOPE}pyodide/`;
 registerRoute(
   ({ url }) => url.origin === self.location.origin && url.pathname.startsWith(PYODIDE_PREFIX),
