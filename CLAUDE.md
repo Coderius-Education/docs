@@ -137,6 +137,15 @@ versie, en geen CDN in de bron. Upgraden:
 4. In de preview de matplotlib-lessen van algorithms en een play-voorbeeld
    nalopen: of een grafiek of een spel er goed uitziet, ziet geen test.
 
+De job `build` zet na elke site-build `.gz` en `.br` naast elk tekstbestand en
+elke wasm (`scripts/comprimeer.mjs`, logica in `packages/shared/comprimeer.js`),
+zodat ze in `<site>-static` zitten. Dat helpt alleen als de hostingbackend ze
+ook serveert (nginx `gzip_static`/`brotli_static`, Caddy `precompressed`), met
+`Content-Encoding` en het Content-Type van het origineel. Een python-les laadt
+op 20 Mbit/s dan in 4,8 s in plaats van 8,2 s; de wasm van Pyodide gaat van
+8,6 naar 2,2 MB. De rooktest in de job `browser` serveert de `.br` zoals zo'n
+server en eist dat Pyodide er gewoon mee start.
+
 ## Browsers
 
 Voor welke browsers de sites gebouwd worden staat in één bestand,

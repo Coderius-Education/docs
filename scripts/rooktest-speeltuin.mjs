@@ -12,7 +12,7 @@
 //
 // Lokaal: `pnpm --filter ./sites/informatica/python build`, dan dit script.
 
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
 import { extname, join, resolve } from 'node:path';
@@ -63,6 +63,9 @@ function eersteLesMetOefenveld() {
   return `${BASIS}${pad.slice(BUILD.length + 1).replace(/index\.html$/, '')}`;
 }
 
+/** Welk adres gecomprimeerd over de lijn ging, en hoe. */
+const gecomprimeerd = new Map();
+
 function serveer() {
   const server = createServer((req, res) => {
     const url = decodeURIComponent((req.url ?? '/').split('?')[0]);
@@ -77,8 +80,22 @@ function serveer() {
     }
     try {
       if (statSync(pad).isDirectory()) pad = join(pad, 'index.html');
-      const inhoud = readFileSync(pad);
-      res.writeHead(200, { 'content-type': MIME[extname(pad)] ?? 'application/octet-stream' });
+      const kop = { 'content-type': MIME[extname(pad)] ?? 'application/octet-stream' };
+      // Zoals nginx met brotli_static en gzip_static: de .br of .gz naast het
+      // bestand (scripts/comprimeer.mjs), als de browser erom vraagt, met
+      // het Content-Type van het origineel.
+      const vraagt = String(req.headers['accept-encoding'] ?? '');
+      const variant = [
+        ['br', '.br'],
+        ['gzip', '.gz'],
+      ].find(([naam, ext]) => vraagt.includes(naam) && existsSync(pad + ext));
+      if (variant) {
+        kop['content-encoding'] = variant[0];
+        kop.vary = 'Accept-Encoding';
+        gecomprimeerd.set(url, variant[0]);
+      }
+      const inhoud = readFileSync(variant ? pad + variant[1] : pad);
+      res.writeHead(200, kop);
       res.end(inhoud);
     } catch {
       res.writeHead(404).end();
@@ -139,6 +156,17 @@ try {
   });
   // Zonder Python heeft de rest geen zin, en elke stap zou op zijn time-out wachten.
   if (!geladen) throw new Error('stop');
+
+  // Staat er een .br naast de wasm (scripts/comprimeer.mjs, in de job
+  // `build`), dan moet Pyodide hem ook gecomprimeerd binnenkrijgen en er
+  // nog steeds mee starten: met Content-Encoding en het Content-Type
+  // application/wasm, zoals de hostingbackend hem hoort te sturen.
+  if (existsSync(join(BUILD, 'pyodide', 'pyodide.asm.wasm.br'))) {
+    await controleer('Pyodide start met de wasm gecomprimeerd (brotli)', async () => {
+      const hoe = gecomprimeerd.get(`${BASIS}pyodide/pyodide.asm.wasm`);
+      if (hoe !== 'br') throw new Error(`de wasm kwam binnen als ${hoe ?? 'ongecomprimeerd'}`);
+    });
+  }
 
   await controleer('print komt in de uitvoer', async () => {
     await draai('print("hoi")');

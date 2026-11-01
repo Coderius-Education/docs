@@ -559,6 +559,13 @@ jobs:
       - name: Build ${{ matrix.site }}
         run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
 
+      # .gz en .br naast elk tekstbestand en elke wasm, voor een server die
+      # vooraf gecomprimeerde bestanden serveert (packages/shared/comprimeer.js).
+      # Na de build en niet in een postBuild: die draaien tegelijk, en dan kan
+      # een bestand van een andere plugin ontbreken.
+      - name: Comprimeren
+        run: node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
+
       # Voor cross-links in een latere run waarin deze site niet verandert. De
       # sleutel is een hash van alles waar de build van afhangt
       # (scripts/site-hash.mjs), dus een treffer is dezelfde build.
@@ -799,7 +806,9 @@ jobs:
 
       - name: Build python (niet gebouwd en niet in de cache)
         if: env.GEBOUWD != 'true' && steps.cache.outputs.cache-hit != 'true'
-        run: pnpm --filter "./${{ steps.map.outputs.dir }}" build
+        run: |
+          pnpm --filter "./${{ steps.map.outputs.dir }}" build
+          node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
 
       - name: Chromium
         run: pnpm exec playwright install --with-deps chromium

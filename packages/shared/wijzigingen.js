@@ -50,6 +50,8 @@ const GLOBAAL = [
   'scripts/site-hash.mjs',
   'scripts/sites-json.mjs',
   'scripts/sites_registry.py',
+  // Draait na elke site-build (de .gz en .br voor de hostingbackend).
+  'scripts/comprimeer.mjs',
   'packages/shared/wijzigingen.js',
   'packages/shared/sites.js',
 ];
