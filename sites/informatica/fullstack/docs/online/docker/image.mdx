@@ -5,22 +5,45 @@ description: Een Dockerfile beschrijft je image stap voor stap, een .dockerignor
 
 # Online zetten: je site in een image
 
-<Voorkennis items={[{site: 'linux', to: '/docs/terminal/mappen', label: 'Door mappen lopen met cd en ls'}, {site: 'linux', to: '/docs/wsl/windows-en-linux', label: 'Je project in je Linux-thuismap, en code . vanuit Ubuntu'}]} />
+<Voorkennis items={[{site: 'linux', to: '/docs/terminal/mappen', label: 'Door mappen lopen met cd en ls'}, {site: 'linux', to: '/docs/wsl/windows-en-linux', label: 'Je project in je Linux-thuismap, en code . vanuit Ubuntu'}, {site: 'linux', to: '/docs/terminal/bestanden-lezen', label: 'Een bestand lezen met cat'}, {site: 'linux', to: '/docs/wsl/ssh', label: 'Een sleutelpaar maken met ssh-keygen'}]} />
 
 Je site moet een image worden. Wat erin moet, schrijf je op in een bestand: de **Dockerfile**. Docker volgt dat recept stap voor stap, en bewaart het resultaat als image.
 
 ## Je project in Linux
 
-Docker draait in Ubuntu, dus daar haal je je project naartoe. Clone je repository in je Linux-thuismap, en open hem in VS Code. Zet je eigen adres op de plek van dat van `sam`; je vindt het op GitHub onder de groene knop **Code**.
+Docker draait in Ubuntu, dus daar haal je je project naartoe. Vanaf nu werk je alleen nog daar: je opent het project in VS Code vanuit Ubuntu, je commit en pusht vanuit Ubuntu, en je test je site in Docker. De map op Windows gebruik je niet meer. De databases die daar staan, komen niet mee, want ze staan niet in git: in Ubuntu begint je gastenboek leeg.
+
+Git in Ubuntu is een andere git dan die op Windows, en kent jou nog niet. Vertel hem eerst je naam en het e-mailadres van je GitHub-account:
+
+```bash
+git config --global user.name "Sam de Vries"
+git config --global user.email "sam@voorbeeld.nl"
+```
+
+GitHub laat je in de terminal niet inloggen met een wachtwoord. Je gebruikt daarom je ssh-sleutel uit [Inloggen op een andere computer](site:linux/docs/wsl/ssh). Laat de publieke sleutel zien:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+Heb je nog geen sleutel, maak er dan eerst een met `ssh-keygen -t ed25519`, zoals in die les. Kopieer de hele regel, en zet hem op GitHub onder je profielfoto, **Settings**, **SSH and GPG keys**, **New SSH key**. Controleer daarna of GitHub je kent:
+
+```bash
+ssh -T git@github.com
+```
+
+De eerste keer vraagt ssh of je de vingerafdruk van GitHub vertrouwt; typ `yes`. Daarna staat er `Hi sam! You've successfully authenticated, but GitHub does not provide shell access.` Dat laatste is goed: je wilde alleen weten of de sleutel werkt.
+
+Kloon nu je repository in je Linux-thuismap, met het ssh-adres. Je vindt het op GitHub onder de groene knop **Code**, bij **SSH**. Zet je eigen adres op de plek van dat van `sam`:
 
 ```bash
 cd ~
-git clone https://github.com/sam/gastenboek.git
+git clone git@github.com:sam/gastenboek.git
 cd gastenboek
 code .
 ```
 
-Je werkt vanaf nu in deze map. Een wijziging commit en push je hier, en op je Windows-map haal je hem op met pull.
+VS Code opent, en linksonder staat **WSL: Ubuntu-24.04**. Alles wat je nu verandert, verandert in Ubuntu.
 
 ## De Dockerfile
 
@@ -116,6 +139,41 @@ git push
 
 ## Er gaat iets mis
 
+### Author identity unknown
+
+```text
+Author identity unknown
+
+*** Please tell me who you are.
+```
+
+**Oorzaak:** git in Ubuntu weet nog niet wie je bent. De naam die je op Windows instelde, geldt hier niet.
+
+**Oplossing:** doe de twee regels met `git config --global` van hierboven, en commit opnieuw.
+
+### Permission denied (publickey) bij GitHub
+
+```text
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+```
+
+**Oorzaak:** GitHub kent je sleutel niet. Je zette de publieke sleutel niet op GitHub, of een andere dan die in `~/.ssh/id_ed25519.pub`.
+
+**Oplossing:** vergelijk `cat ~/.ssh/id_ed25519.pub` met de sleutel onder **SSH and GPG keys** op GitHub, en probeer `ssh -T git@github.com` opnieuw.
+
+### Username for 'https://github.com'
+
+Bij `git push` vraagt git om een gebruikersnaam en een wachtwoord, en daarna staat er `Support for password authentication was removed`.
+
+**Oorzaak:** je kloonde met het https-adres. Daarover laat GitHub je in de terminal niet met een wachtwoord inloggen.
+
+**Oplossing:** zet het adres om naar ssh, en push opnieuw:
+
+```bash
+git remote set-url origin git@github.com:sam/gastenboek.git
+```
+
 ### failed to read dockerfile
 
 ```text
@@ -152,7 +210,7 @@ DEPRECATED: The legacy builder is deprecated and will be removed in a future rel
 
 ### Opdracht 1: Run - Jouw image
 
-Clone je project in Ubuntu, maak de Dockerfile en `.dockerignore`, en bouw het image. Bouw het daarna nog een keer zonder iets te veranderen. Hoe lang duurt de tweede keer?
+Kloon je project in Ubuntu, maak de Dockerfile en `.dockerignore`, en bouw het image. Bouw het daarna nog een keer zonder iets te veranderen. Hoe lang duurt de tweede keer?
 
 <details>
 <summary>Antwoord</summary>

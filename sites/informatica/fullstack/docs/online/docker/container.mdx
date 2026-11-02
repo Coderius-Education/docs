@@ -86,7 +86,7 @@ docker: Error response from daemon: Conflict. The container name "/gastenboek" i
 docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint …: Bind for 0.0.0.0:8000 failed: port is already allocated
 ```
 
-Draait er een ander programma op die poort, zoals `fastapi dev` in Ubuntu, dan eindigt de regel met `address already in use`.
+Draait er een ander programma dan Docker op die poort, dan eindigt de regel met `address already in use`.
 
 **Oorzaak:** poort 8000 van deze computer is al bezet, door een andere container of een ander programma.
 

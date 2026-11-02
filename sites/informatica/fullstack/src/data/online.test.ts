@@ -162,6 +162,29 @@ describe('de route Online zetten', () => {
   );
 });
 
+describe('vanaf les 5 werk je alleen in WSL', () => {
+  // De doorloop van november 2026 vond dat les 5 liet klonen en pushen vanuit
+  // Ubuntu zonder git daar klaar te zetten: een verse git weigert de eerste
+  // commit (Author identity unknown), en GitHub laat over https niet inloggen
+  // met een wachtwoord. Les 7 vroeg daarna te testen met fastapi dev, dat in
+  // Ubuntu niet geinstalleerd is.
+  it('les 5 zet git klaar: naam, e-mail, een ssh-sleutel op GitHub, en klonen met ssh', () => {
+    const regels = blokken('online/docker/image', 'bash').join('\n');
+    expect(regels).toContain('git config --global user.name');
+    expect(regels).toContain('git config --global user.email');
+    expect(regels).toContain('ssh -T git@github.com');
+    expect(regels).toMatch(/^git clone git@github\.com:/m);
+    expect(regels).not.toMatch(/^git clone https:/m);
+  });
+
+  it('na les 4 start geen codeblok de site nog met fastapi dev', () => {
+    const fout = lessen
+      .slice(lessen.indexOf('online/docker/image'))
+      .filter((id) => blokken(id, 'bash').some((b) => /^fastapi dev\b/m.test(b)));
+    expect(fout).toEqual([]);
+  });
+});
+
 describe('de keten van Docker', () => {
   const dockerfile = () => {
     const laatste = blokken('online/docker/niet-als-root', 'dockerfile').find((b) =>

@@ -67,7 +67,7 @@ os.makedirs("data", exist_ok=True)
 app = FastAPI()
 ```
 
-Zonder die regel geeft je site op je laptop dezelfde fout: SqliteDict maakt een bestand, maar geen map.
+SqliteDict maakt een bestand, maar geen map. Zonder die regel start je project met `fastapi dev` niet meer, zoals je README het belooft.
 
 **2. In de Dockerfile** maak je de map, en geef je hem aan `app`. Verander de `RUN` van hierboven:
 
@@ -155,12 +155,12 @@ mkdir: cannot create directory ‘data’: File exists
 
 ### Opdracht 1: Run - Jouw site als app
 
-Doe de drie veranderingen in je eigen project, bouw het image, en laat zien dat je site draait als `app` en dat registreren en schrijven werken. Test ook op je laptop met `fastapi dev`, en commit en push.
+Doe de drie veranderingen in je eigen project, bouw het image, en laat zien dat je site draait als `app` en dat registreren en schrijven werken. Commit en push daarna.
 
 <details>
 <summary>Antwoord</summary>
 
-`docker exec gastenboek whoami` geeft `app`, en `docker exec gastenboek ls -l data` toont je databases met `app` als eigenaar. Op je laptop verschijnt een map `data` in je project, met daarin je databases; `git status` toont ze niet, dankzij `*.db` in `.gitignore`.
+`docker exec gastenboek whoami` geeft `app`, en `docker exec gastenboek ls -l data` toont je databases met `app` als eigenaar. In je projectmap in Ubuntu komen ze niet: ze staan in de container. `git status` toont daarom alleen `main.py`, de Dockerfile en `.dockerignore` als veranderd.
 
 </details>
 
