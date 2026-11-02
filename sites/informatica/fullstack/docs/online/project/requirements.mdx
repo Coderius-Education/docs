@@ -15,7 +15,7 @@ Daarom zet je in een bestand welke packages je project nodig heeft. Dat bestand 
 
 Open je project in VS Code, en typ in de terminal van VS Code (waar je virtual environment aanstaat):
 
-```bash
+```powershell
 python -m pip freeze | Out-File -Encoding ascii requirements.txt
 ```
 
@@ -125,14 +125,14 @@ Maak `requirements.txt` voor je eigen project, en zet hem in git.
 <details>
 <summary>Antwoord</summary>
 
-```bash
+```powershell
 python -m pip freeze | Out-File -Encoding ascii requirements.txt
 git add requirements.txt
 git commit -m "requirements.txt toegevoegd"
 git push
 ```
 
-Controleer op GitHub dat het bestand er staat, naast `main.py`, en dat er geen `.db`-bestanden en geen `.venv` bij staan.
+Controleer op GitHub dat het bestand er staat, naast `main.py`.
 
 </details>
 

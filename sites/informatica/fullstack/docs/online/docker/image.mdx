@@ -124,7 +124,7 @@ IMAGE                ID             DISK USAGE   CONTENT SIZE   EXTRA
 gastenboek:latest    b5897b957b4d        361MB         94.9MB
 ```
 
-Ruim 300 MB, en dat is bijna allemaal Linux en Python. Je eigen code is een paar kilobyte. Zet de Dockerfile en `.dockerignore` in git, ze horen bij je project:
+Ruim 300 MB, en dat is bijna allemaal Linux, Python en de packages uit je lijst. Je eigen code is een paar kilobyte. Zet de Dockerfile en `.dockerignore` in git, ze horen bij je project:
 
 ```bash
 git add Dockerfile .dockerignore
@@ -157,7 +157,7 @@ Author identity unknown
 
 **Oplossing:** doe de twee regels met `git config --global` van hierboven, en commit opnieuw.
 
-### Permission denied (publickey) bij GitHub
+### `Permission denied (publickey)` bij GitHub
 
 ```text
 git@github.com: Permission denied (publickey).

@@ -162,6 +162,48 @@ describe('de route Online zetten', () => {
   );
 });
 
+describe('links en codeblokken', () => {
+  // Een linktekst noemt de les waar hij uitkomt: de titel uit de sidebar of
+  // de H1, of 'les N'. "Wat er in je map staat" kwam uit op de les over
+  // .gitignore, terwijl een andere les zo heet.
+  const titels = (pad: string) => {
+    const kandidaten = [`${pad}.mdx`, `${pad}.md`, `${pad}/index.mdx`, `${pad}/index.md`];
+    const bestand = kandidaten
+      .map((k) => join(DOCS, k))
+      .find((k) => {
+        try {
+          return statSync(k).isFile();
+        } catch {
+          return false;
+        }
+      });
+    if (!bestand) return [];
+    const tekst = readFileSync(bestand, 'utf8');
+    const label = tekst.match(/^sidebar_label: '(?:\d+\. )?(.*)'$/m)?.[1] ?? '';
+    const h1 = tekst.match(/^# (.*)$/m)?.[1] ?? '';
+    return [label, h1].map((t) => t.toLowerCase());
+  };
+
+  it('een linktekst naar een les van de cursus noemt die les', () => {
+    const fout: string[] = [];
+    for (const id of ['online/index', ...lessen]) {
+      for (const m of lees(id).matchAll(/\[([^\]]+)\]\(site:fullstack\/docs\/([^)#]+)/g)) {
+        const tekst = m[1].toLowerCase();
+        if (/^les \d+/.test(tekst)) continue;
+        if (!titels(m[2]).some((t) => t.includes(tekst))) fout.push(`${id}: [${m[1]}] -> ${m[2]}`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('een commando voor PowerShell staat in een powershell-blok, niet in bash', () => {
+    const fout = lessen.filter((id) =>
+      blokken(id, 'bash').some((b) => /Out-File|\$env:|^\.\\/m.test(b)),
+    );
+    expect(fout).toEqual([]);
+  });
+});
+
 describe('vanaf les 5 werk je alleen in WSL', () => {
   // De doorloop van november 2026 vond dat les 5 liet klonen en pushen vanuit
   // Ubuntu zonder git daar klaar te zetten: een verse git weigert de eerste

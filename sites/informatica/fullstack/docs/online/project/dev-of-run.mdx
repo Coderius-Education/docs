@@ -96,12 +96,12 @@ Je klikte op `http://0.0.0.0:8000` in de terminal, en de browser zegt dat het ad
 
 ### Opdracht 1: Run - Het verschil zien
 
-Start je project met `fastapi run main.py`, verander een tekst in `main.py`, en herlaad je browser. Stop en start de server, en herlaad nog een keer.
+Start je project met `fastapi run main.py`. Verander in `main.py` een tekst die je site laat zien, zoals de `detail` van een `HTTPException`, en laat je site die tekst opnieuw tonen. Stop en start de server, en probeer het nog een keer. Doe daarna hetzelfde met een tekst in een template.
 
 <details>
 <summary>Antwoord</summary>
 
-Na de eerste keer herladen zie je de oude tekst, na de herstart de nieuwe. Een template (`templates/…html`) werkt anders: Jinja leest een template opnieuw als het bestand veranderd is, dus daar zie je een wijziging wel zonder herstart. Python-code in `main.py` nooit.
+De tekst uit `main.py` blijft de oude tot je de server opnieuw start. Een template (`templates/…html`) werkt anders: Jinja leest een template opnieuw als het bestand veranderd is, dus daar zie je een wijziging wel zonder herstart. Python-code in `main.py` nooit.
 
 </details>
 
