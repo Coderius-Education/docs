@@ -177,6 +177,18 @@ describe('vanaf les 5 werk je alleen in WSL', () => {
     expect(regels).not.toMatch(/^git clone https:/m);
   });
 
+  it('les 1 speelt op Windows: 127.0.0.1 openen, de firewall vóór de opdrachten, de melding van Windows', () => {
+    // De doorloop vond: geen adres om te openen (de terminal toont 0.0.0.0),
+    // het firewallvenster pas onder Er gaat iets mis, en de melding van Linux.
+    const tekst = lees('online/project/dev-of-run');
+    const opdrachten = tekst.indexOf('## Opdrachten');
+    expect(tekst.indexOf('Open je site op `http://127.0.0.1:8000`')).toBeGreaterThan(-1);
+    expect(tekst.indexOf('Annuleren')).toBeLessThan(tekst.indexOf('<Voorspel'));
+    expect(tekst.indexOf('Annuleren')).toBeLessThan(opdrachten);
+    expect(tekst).toContain('[Errno 10048]');
+    expect(tekst).not.toContain('[Errno 98]');
+  });
+
   it('les 5 legt de waarschuwing van pip uit, die tegen een image zonder venv in gaat', () => {
     // Bij RUN python -m pip install zegt pip: use a virtual environment
     // instead. De les zei twee alinea's eerder dat dat niet nodig is.

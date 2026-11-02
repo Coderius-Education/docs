@@ -26,7 +26,11 @@ En met `fastapi run`:
  🌐 Server started at http://0.0.0.0:8000
 ```
 
-*Production* is de stand voor echte bezoekers. Er zijn twee dingen anders.
+*Production* is de stand voor echte bezoekers. Open je site op `http://127.0.0.1:8000`, net als altijd. Klik niet op het adres in de terminal: `0.0.0.0` is geen adres om naartoe te gaan, en je browser op Windows komt er niet.
+
+De eerste keer opent Windows ook een venster van de firewall, met de vraag of Python toegang mag hebben tot het netwerk. Klik op **Annuleren**. Je hebt het niet nodig: op je eigen laptop werkt `127.0.0.1` toch. Met **Toegang toestaan** kan iedereen op hetzelfde wifi bij je site, en dat wil je nu niet.
+
+Er zijn twee dingen anders.
 
 ## Twee verschillen
 
@@ -67,22 +71,26 @@ Op je laptop wil je dat: je site is nog niet klaar voor bezoekers, en op het wif
 ### Address already in use
 
 ```text
-[Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+[Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): only one usage of each socket address (protocol/network address/port) is normally permitted
 ```
-
-Op Windows staat er `only one usage of each socket address` in plaats van `address already in use`.
 
 **Oorzaak:** er draait al een server op poort 8000, vaak je eigen `fastapi dev` in een andere terminal.
 
 **Oplossing:** stop die eerst met Ctrl+C, of kies een andere poort met `--port 8001`.
 
-### Windows vraagt of Python het netwerk op mag
+### De pagina op 0.0.0.0 laadt niet
 
-Bij de eerste `fastapi run` opent Windows een venster van de firewall, met de vraag of Python toegang mag hebben tot het netwerk.
+Je klikte op `http://0.0.0.0:8000` in de terminal, en de browser zegt dat het adres ongeldig is of niet bereikbaar.
 
-**Oorzaak:** `fastapi run` luistert op `0.0.0.0`, dus ook op het wifi. De firewall van Windows vraagt of dat mag.
+**Oorzaak:** `0.0.0.0` betekent voor een server "luister overal". Als adres om naartoe te gaan, bestaat het niet.
 
-**Oplossing:** klik op **Annuleren**. Je hebt het niet nodig: in je browser op dezelfde laptop werkt `http://127.0.0.1:8000` toch. Een klasgenoot op hetzelfde wifi kan er dan niet bij, en dat is goed.
+**Oplossing:** open `http://127.0.0.1:8000`.
+
+### Je klikte op Toegang toestaan
+
+**Oorzaak:** bij de eerste `fastapi run` vroeg de firewall van Windows of Python het netwerk op mag, en je stond het toe. Nu kan iedereen op hetzelfde wifi bij je site als hij draait met `fastapi run`.
+
+**Oplossing:** start je site op je laptop met `--host 127.0.0.1`, of met `fastapi dev`. Wil je de toestemming intrekken, zoek dan in het startmenu naar **Een app toestaan via Windows Firewall** en haal de vinkjes bij Python weg.
 
 ## Opdrachten
 
