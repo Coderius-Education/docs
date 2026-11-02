@@ -1,7 +1,7 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { useEffect, useRef, useCallback, useState } from 'react';
-import { executeCommandLine } from './commands';
-import { createFilesystem, promptPad } from './filesystem';
+import { promptPad } from './filesystem';
+import { OPDRACHTEN, maakSessie, volgDoelen } from './opdrachten';
 import styles from './styles.module.css';
 
 /**
@@ -14,19 +14,27 @@ import styles from './styles.module.css';
  *   title         - Display name in terminal header
  *   filesystem    - Additional filesystem entries to merge (for module-specific files)
  *   initialCommands - Array of commands to auto-execute on startup
+ *   opdracht      - Id van een opdracht uit opdrachten.ts ('1.4.a'): een verse
+ *                   terminal met de doelen erboven, die afvinken terwijl je typt
  */
-function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands }) {
+function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdracht }) {
+  const doelen = opdracht ? OPDRACHTEN[opdracht] : null;
+  if (opdracht && !doelen) throw new Error(`LinuxTerminal: onbekende opdracht ${opdracht}`);
   const termRef = useRef(null);
   const xtermRef = useRef(null);
   const lineBuffer = useRef('');
   const history = useRef([]);
   const historyIndex = useRef(-1);
-  const cwdRef = useRef('/home/student');
-  const fsRef = useRef(createFilesystem(extraFs));
+  const sessieRef = useRef(null);
+  if (sessieRef.current === null) {
+    sessieRef.current = maakSessie(extraFs, { clear: () => xtermRef.current?.clear() });
+  }
+  const klaarRef = useRef([]);
+  const [klaar, setKlaar] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const getPrompt = useCallback(() => {
-    const display = promptPad(cwdRef.current);
+    const display = promptPad(sessieRef.current.cwd);
     return `\x1b[1;32mstudent@oefenpc\x1b[0m:\x1b[1;34m${display}\x1b[0m$ `;
   }, []);
 
@@ -49,18 +57,11 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands }) {
       if (history.current.length > 50) history.current.pop();
       historyIndex.current = -1;
 
-      const env = {
-        cwd: cwdRef.current,
-        fs: fsRef.current,
-        setCwd: (newCwd) => {
-          cwdRef.current = newCwd;
-        },
-        clear: () => {
-          term.clear();
-        },
-      };
-
-      const results = executeCommandLine(line, env);
+      const { results, stand } = sessieRef.current.typ(line);
+      if (doelen) {
+        klaarRef.current = volgDoelen(doelen, klaarRef.current, stand);
+        setKlaar(klaarRef.current);
+      }
 
       for (const result of results) {
         if (result.output) {
@@ -76,8 +77,33 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands }) {
 
       writePrompt(term);
     },
-    [writePrompt],
+    [writePrompt, doelen],
   );
+
+  const welkom = useCallback(
+    (term) => {
+      term.writeln('\x1b[1;32m  Oefenterminal\x1b[0m');
+      term.writeln("\x1b[90m  Typ help voor een lijst met commando's.\x1b[0m");
+      term.write(getPrompt());
+    },
+    [getPrompt],
+  );
+
+  // Een verse start zonder de pagina te herladen: herladen gooit ook het werk
+  // in de andere terminals op de pagina weg.
+  const opnieuw = useCallback(() => {
+    const term = xtermRef.current;
+    if (!term) return;
+    sessieRef.current = maakSessie(extraFs, { clear: () => xtermRef.current?.clear() });
+    lineBuffer.current = '';
+    history.current = [];
+    historyIndex.current = -1;
+    klaarRef.current = [];
+    setKlaar([]);
+    term.reset();
+    welkom(term);
+    term.focus();
+  }, [extraFs, welkom]);
 
   useEffect(() => {
     let isMounted = true;
@@ -105,6 +131,8 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands }) {
         fontSize: 14,
         lineHeight: 1.2,
         convertEol: true,
+        // Bij een opdracht minder hoog: er staan er een paar op een pagina.
+        rows: doelen ? 12 : 24,
       });
 
       const fitAddon = new FitAddon();
@@ -116,10 +144,7 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands }) {
         if (isMounted) fitAddon.fit();
       });
 
-      // Welcome message
-      term.writeln('\x1b[1;32m  Oefenterminal\x1b[0m');
-      term.writeln("\x1b[90m  Typ help voor een lijst met commando's.\x1b[0m");
-      term.write(getPrompt());
+      welkom(term);
 
       // Handle keyboard input
       term.onData((data) => {
@@ -210,7 +235,9 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands }) {
         term.dispose();
       }
     };
-  }, [getPrompt, handleCommand, writePrompt, initialCommands]);
+  }, [getPrompt, handleCommand, writePrompt, initialCommands, welkom, doelen]);
+
+  const allesKlaar = doelen?.doelen.every((_, i) => klaar[i]);
 
   return (
     <div className={styles.terminal}>
@@ -220,11 +247,40 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands }) {
           <span className={styles.dotYellow} />
           <span className={styles.dotGreen} />
         </div>
-        <span className={styles.title}>{title || 'Linux Terminal'}</span>
+        <span className={styles.title}>
+          {title || (opdracht ? `Oefenterminal voor opdracht ${opdracht}` : 'Oefenterminal')}
+        </span>
       </div>
-      <div ref={termRef} className={styles.body} />
+      {doelen && (
+        <div className={styles.doelen}>
+          <ul>
+            {doelen.doelen.map((doel, i) => (
+              <li key={doel.tekst} className={klaar[i] ? styles.gehaald : undefined}>
+                <span className={styles.vinkje} aria-hidden="true">
+                  {klaar[i] ? '✓' : '○'}
+                </span>
+                <span className={styles.srOnly}>{klaar[i] ? 'Gehaald: ' : 'Nog niet: '}</span>
+                {doel.tekst}
+              </li>
+            ))}
+          </ul>
+          <p className={styles.status} aria-live="polite">
+            {allesKlaar
+              ? 'Klaar. Kijk in het antwoord hieronder of je het ook zo deed.'
+              : doelen.opVolgorde
+                ? 'Doe het in deze volgorde. Het vinkje komt zodra je het gedaan hebt.'
+                : 'Het vinkje komt zodra je het gedaan hebt.'}
+          </p>
+        </div>
+      )}
+      <div
+        ref={termRef}
+        className={doelen ? `${styles.body} ${styles.bodyOpdracht}` : styles.body}
+      />
       <div className={styles.footer}>
-        <span className={styles.footerInfo}>Gesimuleerde terminal</span>
+        <button type="button" className={styles.opnieuw} onClick={opnieuw} disabled={!isLoaded}>
+          Opnieuw beginnen
+        </button>
         <a
           className={styles.footerLink}
           href="https://bellard.org/jslinux/vm.html?url=alpine-x86.cfg&mem=256"
