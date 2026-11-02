@@ -108,7 +108,7 @@ Je krijgt één regel met de tijd, hoe lang de computer aanstaat en hoe druk hij
 
 Zolang `openssh-server` draait, kan je Ubuntu inlogpogingen ontvangen, ook met een wachtwoord. Op je eigen laptop heb je dat na deze les niet meer nodig. Zet de dienst uit, net als nginx in [6.4](site:linux/docs/wsl/diensten).
 
-Bij ssh zijn het er twee. Op Ubuntu 24.04 wacht `ssh.socket` op poort 22, en pas als er iemand inlogt, start die de dienst `ssh`. Zet je alleen `ssh` uit, dan start de socket hem bij de volgende poging gewoon weer. Zet ze daarom allebei uit:
+Bij ssh zijn het er twee. Op Ubuntu 24.04 wacht `ssh.socket` op poort 22, en pas als er iemand inlogt, start die de dienst `ssh`. Zet je alleen `ssh` uit, dan start de socket hem bij de volgende poging weer. Zet ze daarom allebei uit:
 
 ```bash
 sudo systemctl disable --now ssh.socket ssh

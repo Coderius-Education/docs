@@ -15,15 +15,27 @@ De commando's uit de [Linux-cursus](site:linux/docs) op één pagina, in de volg
 ## Rondkijken
 
 <details>
+<summary>Wie ben ik, en op welke computer? (whoami, hostname, uname)</summary>
+
+```bash
+whoami
+hostname
+uname -a
+```
+
+</details>
+
+<details>
 <summary>Waar ben ik, en wat staat hier? (pwd, ls)</summary>
 
 ```bash
 pwd
 ls
-ls -la
+ls -a
+ls /etc
 ```
 
-`-a` laat ook verborgen bestanden zien, `-l` de eigenaar, de rechten en de grootte.
+`-a` laat ook verborgen bestanden zien: alles wat met een punt begint.
 
 </details>
 
@@ -48,14 +60,15 @@ Typ de eerste letters van een commando, bestand of map en druk op Tab. Passen er
 </details>
 
 <details>
-<summary>Hoe haal ik een vorig commando terug? (pijltje omhoog, history)</summary>
+<summary>Hoe haal ik een vorig commando terug, en maak ik het scherm leeg? (history, clear)</summary>
 
 ```bash
 history
 history 5
+clear
 ```
 
-Pijltje omhoog haalt het vorige commando terug, pijltje links en rechts zetten de cursor in de regel. Ctrl+C gooit de regel weg, Ctrl+L maakt het scherm leeg.
+Pijltje omhoog haalt het vorige commando terug, pijltje links en rechts zetten de cursor in de regel. Ctrl+C gooit de regel weg, Ctrl+L maakt het scherm leeg, net als `clear`.
 
 </details>
 
@@ -74,7 +87,7 @@ wc -l /etc/passwd
 </details>
 
 <details>
-<summary>Hoe maak ik een map of een bestand? (mkdir, touch, >)</summary>
+<summary>Hoe maak ik een map of een bestand? (mkdir, touch, echo, >)</summary>
 
 ```bash
 mkdir -p project/static
@@ -91,7 +104,7 @@ Eén `>` maakt het bestand eerst leeg, `>>` zet er iets onder.
 <summary>Hoe kopieer, verplaats en verwijder ik? (cp, mv, rm)</summary>
 
 ```bash
-cp main.py main.py.bak
+cp notities.txt kopie.txt
 mv oud.txt nieuw.txt
 rm -r oude-map
 ```
@@ -119,6 +132,7 @@ echo *.txt
 <summary>Hoe zoek ik iets in een bestand? (grep, |)</summary>
 
 ```bash
+grep Failed /var/log/auth.log
 grep -i failed /var/log/auth.log
 ls /etc | grep host
 ```
@@ -152,18 +166,26 @@ ls -l /etc/passwd
 
 </details>
 
-<details>
-<summary>Hoe doe ik iets als beheerder? (sudo)</summary>
+## Linux op je eigen computer
 
-```bash
-sudo apt update
+<details>
+<summary>Hoe installeer ik Ubuntu, en welke versie staat er? (wsl --install, wsl -l -v)</summary>
+
+In een PowerShell als administrator:
+
+```powershell
+wsl --install -d Ubuntu-24.04
 ```
 
-`sudo` vraagt jouw eigen wachtwoord. Gebruik het alleen als het moet.
+Daarna, in een gewone PowerShell:
+
+```powershell
+wsl -l -v
+```
+
+Onder `VERSION` hoort `2` te staan.
 
 </details>
-
-## Linux op je eigen computer
 
 <details>
 <summary>Hoe open ik Ubuntu? (wsl ~)</summary>
@@ -179,28 +201,31 @@ Met de `~` begin je in je Linux-thuismap.
 </details>
 
 <details>
-<summary>Welke Linux staat er in WSL, en welke versie? (wsl -l -v)</summary>
-
-```powershell
-wsl -l -v
-```
-
-Onder `VERSION` hoort `2` te staan.
-
-</details>
-
-<details>
-<summary>Hoe kom ik vanuit Linux bij mijn Windows-bestanden? (/mnt/c)</summary>
+<summary>Hoe kom ik vanuit Linux bij mijn Windows-bestanden? (/mnt/c, explorer.exe, code)</summary>
 
 ```bash
 ls /mnt/c/Users
 explorer.exe .
+code .
 ```
+
+Werk aan een project in je Linux-thuismap, niet onder `/mnt/c`.
 
 </details>
 
 <details>
-<summary>Wat kan dit commando? (--help, man)</summary>
+<summary>Hoe bekijk ik een website uit Linux in mijn browser op Windows? (python3 -m http.server)</summary>
+
+```bash
+python3 -m http.server 8000
+```
+
+Open daarna `http://localhost:8000` op Windows. Ctrl+C stopt hem.
+
+</details>
+
+<details>
+<summary>Wat kan dit commando? (--help, man, type, help)</summary>
 
 ```bash
 ls --help
@@ -214,10 +239,11 @@ In `man`: spatie is verder, `/woord` zoekt, `q` stopt. Voor een commando dat in 
 </details>
 
 <details>
-<summary>Welk commando doet wat ik wil? (apropos)</summary>
+<summary>Welk commando doet wat ik wil, en hoe zet ik regels op alfabet? (apropos, sort)</summary>
 
 ```bash
 apropos sort
+sort /etc/passwd
 ```
 
 </details>
@@ -225,13 +251,16 @@ apropos sort
 ## Programma's en diensten
 
 <details>
-<summary>Hoe installeer ik een programma? (sudo apt)</summary>
+<summary>Hoe installeer ik een programma, als beheerder? (sudo, apt, tldr)</summary>
 
 ```bash
 sudo apt update
-sudo apt install tree
+sudo apt install tldr
 sudo apt upgrade
+tldr tar
 ```
+
+`sudo` vraagt jouw eigen wachtwoord. Gebruik het alleen als het moet.
 
 </details>
 
@@ -240,6 +269,7 @@ sudo apt upgrade
 
 ```bash
 nano bestand.txt
+sudo nano /etc/hosts
 ```
 
 Ctrl+O en Enter slaat op, Ctrl+X stopt.
@@ -247,10 +277,11 @@ Ctrl+O en Enter slaat op, Ctrl+X stopt.
 </details>
 
 <details>
-<summary>Wat draait er, en hoe stop ik het? (ps, kill, top)</summary>
+<summary>Wat draait er, en hoe stop ik het? (ps, pgrep, kill, pkill, top)</summary>
 
 ```bash
 ps
+ps aux
 pgrep -a sleep
 kill 734
 pkill sleep
@@ -266,10 +297,15 @@ Ctrl+C stopt wat in je eigen terminal draait. `kill -9` pas als `kill` alleen ni
 
 ```bash
 systemctl status nginx
+sudo systemctl start nginx
+sudo systemctl stop nginx
 sudo systemctl restart nginx
 sudo systemctl disable --now nginx
 sudo journalctl -u nginx -n 20
+sudo journalctl -u nginx -f
 ```
+
+`disable --now` zet hem uit en laat hem na een herstart ook uit; `-f` blijft meekijken tot je Ctrl+C drukt.
 
 </details>
 
@@ -282,7 +318,7 @@ sudo journalctl -u nginx -n 20
 ip -br a
 ```
 
-`127.0.0.1` (`localhost`) is je eigen computer.
+De `a` staat voor *address*. `127.0.0.1` (`localhost`) is je eigen computer.
 
 </details>
 
@@ -303,10 +339,36 @@ curl -I https://example.com
 
 ```bash
 ssh sam@server.voorbeeld.nl
-ssh-keygen -t ed25519
-ssh-copy-id sam@server.voorbeeld.nl
+ssh localhost uptime
+exit
 ```
 
-Je privésleutel (`~/.ssh/id_ed25519`) geef je nooit weg.
+Met een commando erachter voert ssh alleen dat uit en komt hij meteen terug. `exit` brengt je terug naar je eigen computer.
+
+</details>
+
+<details>
+<summary>Hoe log ik in met een sleutel? (ssh-keygen, ssh-copy-id, chmod 600)</summary>
+
+```bash
+ssh-keygen -t ed25519
+ssh-copy-id sam@server.voorbeeld.nl
+chmod 600 ~/.ssh/id_ed25519
+ssh-keygen -R localhost
+```
+
+Je privésleutel (`~/.ssh/id_ed25519`) geef je nooit weg. `ssh-keygen -R` vergeet een oude vingerafdruk.
+
+</details>
+
+<details>
+<summary>Hoe zet ik de ssh-dienst op mijn laptop uit? (systemctl, ssh.socket)</summary>
+
+```bash
+sudo systemctl disable --now ssh.socket ssh
+sudo systemctl enable --now ssh.socket
+```
+
+De eerste regel zet hem uit, de tweede weer aan.
 
 </details>

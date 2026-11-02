@@ -265,6 +265,7 @@ pentesters
 percipi
 PETA
 Pfungst
+pgrep
 Photopea
 photopea
 PHPSESSID
@@ -404,6 +405,7 @@ tileset
 timerkanaal
 Timsort
 tinytronics
+tldr
 toggelt
 togglen
 tokenbeveiliging
