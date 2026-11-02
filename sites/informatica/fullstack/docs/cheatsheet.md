@@ -1,4 +1,4 @@
-import NaslagZoeker from '@site/src/components/NaslagZoeker';
+import NaslagZoeker from '@coderius/shared/components/NaslagZoeker';
 
 # Cheatsheet
 

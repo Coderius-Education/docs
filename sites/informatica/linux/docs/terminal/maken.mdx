@@ -4,7 +4,7 @@ sidebar_position: 4
 
 import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
-# 1.4 Maken en schrijven
+# 2.2 Maken en schrijven
 
 <Voorkennis items={[{to: '/docs/terminal/bestanden-lezen', label: 'Bestanden lezen met cat'}]} />
 
@@ -77,11 +77,13 @@ regel twee
 
 </details>
 
-## Opdracht 1.4.a: een boodschappenlijst
+## Opdracht 2.2.a: een boodschappenlijst
 
 1. Maak in je thuismap een map `lijstjes`.
 2. Zet daarin een bestand `boodschappen.txt` met drie regels: `brood`, `kaas` en `appels`.
 3. Laat met één commando zien hoeveel regels het bestand heeft.
+
+<LinuxTerminal opdracht="2.2.a" />
 
 <details>
 <summary>Klik hier voor een tip</summary>
@@ -138,8 +140,8 @@ mkdir -p a/b
 
 ### Je bestand is leeg
 
-**Oorzaak:** je gebruikte `>` waar je `>>` bedoelde, of je schreef een commando dat een fout gaf. Een foutmelding gaat niet het bestand in maar komt op je scherm, en het bestand blijft leeg.
+**Oorzaak:** het commando voor de `>` gaf een fout, zoals `ech "hallo" > a.txt` met een typfout. Bash maakt het bestand leeg voordat het commando start. De foutmelding gaat niet het bestand in maar komt op je scherm, dus het bestand blijft leeg. Stond er al iets in, dan is dat ook weg.
 
-**Oplossing:** kijk met `cat` wat er staat, en schrijf het opnieuw.
+**Oplossing:** verbeter het commando en schrijf het bestand opnieuw. Kijk met `cat` of het nu klopt.
 
-Door naar [1.5 Kopiëren, verplaatsen en weggooien](site:linux/docs/terminal/kopieren).
+Door naar [2.3 Kopiëren, verplaatsen en weggooien](site:linux/docs/terminal/kopieren).

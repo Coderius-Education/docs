@@ -88,9 +88,16 @@ describe('operator-semantiek', () => {
   });
 });
 
-describe('bekende beperking van de simulator', () => {
-  it('ping slaagt altijd: bereikbaarheid wordt niet gecontroleerd', () => {
-    expect(executeCommand('ping 1', omgeving()).exitCode).toBe(0);
+describe('ping', () => {
+  // Eerst deed ping alsof elke host antwoordde, ook een typfout; les 7.1 leert
+  // juist dat ping laat zien of je iets kunt bereiken. Nu zegt hij eerlijk dat
+  // het hier niet kan.
+  it('werkt hier niet, wel in WSL vanaf les 7.1', () => {
+    const r = executeCommand('ping -c 3 one.one.one.on', omgeving());
+    expect(r.output).toBe(
+      'oefenterminal: ping werkt hier niet, wel op je eigen Linux, vanaf les 7.1.',
+    );
+    expect(r.exitCode).not.toBe(0);
   });
 });
 

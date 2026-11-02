@@ -1,0 +1,161 @@
+---
+sidebar_position: 7
+---
+
+# 7.1 Netwerk
+
+<Voorkennis items={[{to: '/docs/wsl/processen', label: 'Een programma stoppen met Ctrl+C'}]} />
+
+Een server staat bijna altijd ergens anders dan jij. Voordat je erop inlogt, wil je weten of je hem kunt bereiken. Drie commando's vertellen je dat: wat is mijn adres, kan ik die computer bereiken, en antwoordt de website.
+
+## Je eigen adres
+
+Elke computer in een netwerk heeft een **IP-adres**. `ip a` laat je adressen zien (`a` is kort voor `address`); met `-br` (*brief*) kort:
+
+```bash
+ip -br a
+```
+
+```
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+eth0             UP             172.27.80.14/20 fe80::215:5dff:fe3a:1b2c/64
+```
+
+Bij jou staan er andere getallen. Elke regel is een netwerkaansluiting:
+
+- `lo` (*loopback*) is de computer zelf. `127.0.0.1` heet ook `localhost`, en wijst altijd naar je eigen computer, ook zonder internet.
+- `eth0` is de aansluiting naar buiten. Het adres voor de `/` is jouw adres.
+
+Ubuntu in WSL heeft een eigen adres, anders dan dat van Windows. Typ `ipconfig` in PowerShell om het Windows-adres te zien.
+
+## Kan ik hem bereiken? ping
+
+`ping` stuurt een klein pakketje naar een andere computer en meet hoe lang het antwoord duurt:
+
+```bash
+ping -c 3 1.1.1.1
+```
+
+```
+PING 1.1.1.1 (1.1.1.1) 56(84) bytes of data.
+64 bytes from 1.1.1.1: icmp_seq=1 ttl=57 time=12.4 ms
+64 bytes from 1.1.1.1: icmp_seq=2 ttl=57 time=11.9 ms
+64 bytes from 1.1.1.1: icmp_seq=3 ttl=57 time=12.1 ms
+
+--- 1.1.1.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 11.9/12.1/12.4/0.2 ms
+```
+
+`1.1.1.1` is een bekende computer op internet. `time` is hoe lang een rondje duurde, in milliseconden. Belangrijk is de regel onderaan: `0% packet loss` betekent dat elk pakketje terugkwam. Zonder `-c 3` blijft `ping` doorgaan tot je Ctrl+C drukt.
+
+Een naam werkt ook: `ping -c 3 one.one.one.one` is dezelfde computer als `1.1.1.1`. Je computer zoekt dan eerst het adres bij die naam op. Dat opzoeken heet **DNS**. Niet elke computer antwoordt op `ping`: veel websites zetten het uit. Krijg je bij een site `100% packet loss`, dan kan hij dus best werken.
+
+## Antwoordt de website? curl
+
+`curl` haalt een pagina op, zoals een browser, maar laat de tekst zien in plaats van hem op te maken. Met `-I` zie je alleen de kop van het antwoord:
+
+```bash
+curl -I https://example.com
+```
+
+De eerste regel is de belangrijkste. Daar staat iets als `HTTP/2 200` of `HTTP/1.1 200 OK`: het getal `200` betekent dat de website antwoordde en de pagina gaf. Een `301` betekent dat hij je doorstuurt naar een ander adres, en een `404` dat de pagina er niet is. Zonder `-I` krijg je de hele HTML van de pagina.
+
+## Voorspel
+
+Je haalt de netwerkkabel uit je laptop en zet de wifi uit. Daarna typ je `ping -c 3 127.0.0.1`. Wat gebeurt er?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Het werkt, met heel korte tijden:
+
+```
+64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.041 ms
+```
+
+`127.0.0.1` is je eigen computer. Het pakketje gaat de computer niet uit, dus het netwerk maakt niet uit. Een website die je zelf draait, zoals in de fullstack-cursus, open je daarom op `localhost`.
+
+</details>
+
+## Opdracht 7.1.a: twee adressen
+
+Zoek het IP-adres van je Ubuntu in WSL op, en dat van Windows. Zijn ze hetzelfde?
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+In Ubuntu gebruik je `ip`, in PowerShell `ipconfig`. Kijk in Ubuntu naar de regel van `eth0`. In PowerShell staat het adres bij `IPv4 Address`, of op een Nederlandse Windows bij `IPv4-adres`, onder je wifi- of ethernetadapter. De adapter `vEthernet (WSL)` is de kant van Windows van het netwerkje naar Ubuntu; die laat je hier zitten.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+ip -br a
+```
+
+Ze zijn bijna altijd verschillend. WSL is een kleine computer binnen je Windows-computer, met een eigen netwerkaansluiting. Windows stuurt `localhost` wel door naar WSL: daarom opent je browser op Windows een website die in Ubuntu draait.
+
+</details>
+
+## Opdracht 7.1.b: waar zit het probleem?
+
+Een klasgenoot zegt: "Mijn internet doet het niet." Zoek met `ping` en `curl` uit, op je eigen computer, of:
+
+1. je de computer `1.1.1.1` kunt bereiken;
+2. het opzoeken van een naam werkt;
+3. een website antwoordt.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Voor 1 ping je een adres, voor 2 een naam. Lukt 1 wel en 2 niet, dan ligt het aan het opzoeken van namen, niet aan je verbinding.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+ping -c 3 1.1.1.1
+ping -c 3 one.one.one.one
+curl -I https://example.com
+```
+
+Werkt alles, dan zie je twee keer `0% packet loss`, en een `200` in de eerste regel van `curl`. Zo werk je van onder naar boven: eerst de verbinding, dan de namen, dan de website. Waar het voor het eerst misgaat, zit het probleem.
+
+Eén uitzondering: op sommige netwerken, zoals dat van een school, laat de beheerder `ping` niet door. Geeft `ping` `100% packet loss` maar krijg je bij `curl` een `200`, dan is er wel verbinding.
+
+</details>
+
+## Er gaat iets mis
+
+### Name or service not known
+
+```
+ping: one.one.one.on: Name or service not known
+```
+
+**Oorzaak:** je computer kon bij die naam geen adres vinden, door een typfout in de naam. Is er helemaal geen verbinding, dan staat er `Temporary failure in name resolution`: dan kon hij het niet eens vragen.
+
+**Oplossing:** controleer de naam. Ping daarna een adres, `ping -c 3 1.1.1.1`: werkt dat wel, dan ligt het alleen aan het opzoeken van namen.
+
+### Could not resolve host
+
+```
+curl: (6) Could not resolve host: example.con
+```
+
+**Oorzaak:** hetzelfde probleem, maar dan in `curl`: de naam bestaat niet, of er is geen verbinding.
+
+**Oplossing:** zie hierboven.
+
+### ping blijft maar doorgaan
+
+**Oorzaak:** zonder `-c` stuurt `ping` pakketjes tot je hem stopt.
+
+**Oplossing:** druk op Ctrl+C. Dan stopt hij, en zie je onderaan de samenvatting met `packet loss`.
+
+Door naar [7.2 Inloggen op een andere computer](site:linux/docs/wsl/ssh).

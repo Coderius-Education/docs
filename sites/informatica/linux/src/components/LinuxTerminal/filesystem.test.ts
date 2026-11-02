@@ -98,3 +98,13 @@ describe('createFilesystem', () => {
     expect(a).not.toBe(b);
   });
 });
+
+describe('createFilesystem met extra bestanden', () => {
+  it('kopieert ze: een sessie verandert de startbestanden niet', () => {
+    const extra = { home: { student: { map: { 'a.txt': 'a\n' } } } };
+    const fs = createFilesystem(extra) as { home: { student: { map: Record<string, string> } } };
+    fs.home.student.map['b.txt'] = 'b\n';
+    fs.home.student.map['a.txt'] = 'veranderd\n';
+    expect(extra).toEqual({ home: { student: { map: { 'a.txt': 'a\n' } } } });
+  });
+});

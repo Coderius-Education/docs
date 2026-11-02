@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# 2.2 Windows en Linux naast elkaar
+# 5.2 Windows en Linux naast elkaar
 
 <Voorkennis items={[{to: '/docs/wsl/installeren', label: 'WSL en Ubuntu installeren'}, {to: '/docs/terminal/mappen', label: 'Absolute paden en cd'}]} />
 
@@ -41,7 +41,7 @@ Nee. `~` is je Linux-thuismap, `/home/<jouw naam>`, en die staat los van Windows
 
 ## Waar zet je je projecten?
 
-Zet een project waar je in Linux aan werkt, in je Linux-thuismap, niet onder `/mnt/c`. Linux-programma's werken veel trager op de Windows-schijf, en de rechten uit [1.7](site:linux/docs/terminal/rechten) werken daar niet zoals je verwacht.
+Zet een project waar je in Linux aan werkt, in je Linux-thuismap, niet onder `/mnt/c`. Linux-programma's werken veel trager op de Windows-schijf, en de rechten uit [4.1](site:linux/docs/terminal/rechten) werken daar niet zoals je verwacht.
 
 Met VS Code werk je dan zo: installeer in VS Code de extensie **WSL** (van Microsoft), ga in Ubuntu naar je project en typ:
 
@@ -64,7 +64,7 @@ python3 -m http.server 8000
 
 Open in je browser `http://localhost:8000`. Je ziet de kop uit `index.html`. In de terminal verschijnt bij elk bezoek een regel. Stop de server met Ctrl+C.
 
-## Opdracht 2.2.a: van Windows naar Linux
+## Opdracht 5.2.a: van Windows naar Linux
 
 1. Zet op je Windows-bureaublad een tekstbestand `boodschap.txt` met een zin erin (met Kladblok).
 2. Kopieer het in Ubuntu naar je Linux-thuismap.
@@ -93,15 +93,16 @@ Staat je bureaublad in OneDrive, dan is het pad `/mnt/c/Users/Sam/OneDrive/Deskt
 
 ## Er gaat iets mis
 
-### code: command not found
+### Command 'code' not found
 
 ```
-code: command not found
+Command 'code' not found, but can be installed with:
+sudo snap install code
 ```
 
-**Oorzaak:** VS Code staat niet op Windows, of Ubuntu was al open toen je het installeerde.
+**Oorzaak:** VS Code staat niet op Windows, of Ubuntu was al open toen je het installeerde. Ubuntu weet dan alleen dat er een Linux-versie van VS Code bestaat, en stelt die voor.
 
-**Oplossing:** installeer VS Code op Windows, sluit Ubuntu en open hem opnieuw.
+**Oplossing:** volg die suggestie niet: je wilt de VS Code van Windows, met de extensie WSL. Installeer VS Code op Windows, sluit Ubuntu en open hem opnieuw.
 
 ### Een pad met een spatie
 
@@ -122,4 +123,4 @@ ls /mnt/c/Users/Sam/Mijn bestanden
 ls "/mnt/c/Users/Sam/Mijn bestanden"
 ```
 
-Door naar [2.3 Programma's installeren](site:linux/docs/wsl/apt).
+Door naar [5.3 Hulp vragen](site:linux/docs/wsl/hulp).

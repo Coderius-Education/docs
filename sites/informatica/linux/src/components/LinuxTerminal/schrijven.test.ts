@@ -76,7 +76,8 @@ describe('> en >>', () => {
   it('> zet de uitvoer in een bestand in plaats van op het scherm', () => {
     const t = terminal();
     expect(t.typ('echo hallo > groet.txt')).toBe('');
-    expect(t.typ('cat groet.txt')).toBe('hallo\n');
+    expect(t.inhoud('groet.txt')).toBe('hallo\n');
+    expect(t.typ('cat groet.txt')).toBe('hallo');
   });
 
   it('> overschrijft, >> vult aan', () => {
@@ -260,6 +261,6 @@ describe('paden en meldingen zoals bash', () => {
     expect(t.typ('ls -l')).toContain('student student');
     expect(t.typ('ls -l /etc')).toMatch(/-rw-r--r-- +1 root +root .*passwd/);
     expect(t.typ('ls -l /etc')).toMatch(/-rw-r----- +1 root +shadow .*shadow/);
-    expect(t.typ('ls -l /')).toMatch(/drwx------ +1 root +root .*root/);
+    expect(t.typ('ls -l /')).toMatch(/drwx------ +\d+ root +root .*root/);
   });
 });

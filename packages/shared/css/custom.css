@@ -236,3 +236,55 @@ html[data-klas]:not([data-klas-klaar]) .theme-doc-sidebar-menu {
 .coderius-klasbalk button:hover {
   background: var(--ifm-color-emphasis-200);
 }
+
+/* De naslagpagina's (Cheatsheet, Er gaat iets mis): met de zoeker erop
+   (packages/shared/components/NaslagZoeker; fullstack en linux)
+   (NaslagZoeker zet data-naslag) worden de uitklapblokken compacte rijen in
+   plaats van losse blauwe kaarten, zodat er meer onderwerpen in beeld
+   staan. */
+html:has([data-naslag]) .theme-doc-markdown details:not(#\#):not(#\#) {
+  margin: -1px 0 0;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 0;
+  background: var(--ifm-background-surface-color);
+  box-shadow: none;
+  --ifm-alert-border-color: var(--ifm-color-emphasis-200);
+  color: inherit;
+}
+
+/* NaslagZoeker zet data-rand op de eerste en laatste zichtbare rij van een
+   hoofdstuk, ook als er bij het zoeken rijen verborgen zijn. */
+html:has([data-naslag]) .theme-doc-markdown details[data-rand~="eerste"]:not(#\#):not(#\#) {
+  margin-top: 0;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+html:has([data-naslag]) .theme-doc-markdown details[data-rand~="laatste"]:not(#\#):not(#\#) {
+  margin-bottom: 1rem;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+html:has([data-naslag]) .theme-doc-markdown details[open]:not(#\#):not(#\#) {
+  background: var(--ifm-background-color);
+}
+
+html:has([data-naslag]) .theme-doc-markdown details > summary:not(#\#):not(#\#) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  font-weight: 500;
+}
+
+html:has([data-naslag]) .theme-doc-markdown details > summary:hover:not(#\#):not(#\#) {
+  color: var(--ifm-color-primary);
+}
+
+html:has([data-naslag]) .theme-doc-markdown h2:not(#\#):not(#\#) {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.4rem;
+}

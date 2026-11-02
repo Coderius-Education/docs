@@ -1,0 +1,188 @@
+---
+sidebar_position: 3
+---
+
+# 5.3 Hulp vragen
+
+<Voorkennis items={[{to: '/docs/wsl/installeren', label: 'Ubuntu in WSL openen'}]} />
+
+Niemand kent alle opties van alle commando's uit zijn hoofd. Wie veel met Linux werkt, zoekt ze op, en dat kan zonder de terminal te verlaten.
+
+## --help: een korte uitleg
+
+Bijna elk commando geeft een korte uitleg met `--help`. Die is vaak lang, dus kijk naar het begin:
+
+```bash
+ls --help | head -n 3
+```
+
+```
+Usage: ls [OPTION]... [FILE]...
+List information about the FILEs (the current directory by default).
+Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.
+```
+
+De eerste regel zegt hoe je het commando opschrijft. Wat tussen `[` en `]` staat mag je weglaten, en `...` betekent "zoveel als je wilt".
+
+## man: de handleiding
+
+Met `man` (*manual*) open je de hele handleiding van een commando:
+
+```bash
+man ls
+```
+
+```
+LS(1)                            User Commands                           LS(1)
+
+NAME
+       ls - list directory contents
+
+SYNOPSIS
+       ls [OPTION]... [FILE]...
+```
+
+De handleiding vult het hele venster. Zo loop je erdoor:
+
+| Toets | Wat hij doet |
+|:---:|:---|
+| spatie | een scherm verder |
+| b | een scherm terug |
+| `/woord` en Enter | zoek `woord` |
+| n | naar de volgende plek waar het staat |
+| q | terug naar de terminal |
+
+De handleidingen zijn in het Engels. Zoek dus op Engelse woorden: `/size`, niet `/grootte`.
+
+## Welk commando heb ik nodig?
+
+Weet je wat je wilt, maar niet hoe het commando heet? `apropos` zoekt in de korte beschrijvingen van alle handleidingen:
+
+```bash
+apropos sort
+```
+
+Je krijgt onder andere:
+
+```
+sort (1)             - sort lines of text files
+```
+
+Het getal tussen haakjes is het deel van de handleiding: `1` is voor commando's die je typt.
+
+## Voorspel
+
+Je wilt weten wat `cd` allemaal kan, en typt `man cd`. Wat gebeurt er?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+```
+No manual entry for cd
+```
+
+`cd` is geen los programma, maar een stuk van bash zelf: het moet de map van *de shell* veranderen, en dat kan een ander programma niet. Met `type` zie je dat:
+
+```bash
+type cd
+type cat
+```
+
+```
+cd is a shell builtin
+cat is /usr/bin/cat
+```
+
+`cat` is wel een los programma, in `/usr/bin`. Voor een ingebouwd commando als `cd` gebruik je `help`: `help cd`. Dat is een ander `help` dan in de oefenterminal: daar gaf `help` een lijst met wat de oefenterminal kent, hier gaat het over de commando's die in bash zelf zitten.
+
+</details>
+
+## Opdracht 5.3.a: leesbare groottes
+
+`ls -l` laat de grootte van een bestand in bytes zien. Zoek in de handleiding van `ls` de optie die er `1K`, `234M` of `2G` van maakt, en probeer hem uit op `/etc`.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Open `man ls` en zoek met `/` op een Engels woord dat bij "leesbaar voor mensen" past. Na een zoekopdracht brengt `n` je naar de volgende plek.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+Zoek met `/human`. Je vindt:
+
+```
+       -h, --human-readable
+              with -l and -s, print sizes like 1K 234M 2G etc.
+```
+
+Druk op `q` en probeer het:
+
+```bash
+ls -lh /etc
+```
+
+`-lh` is hetzelfde als `-l -h`: korte opties mag je achter één streepje zetten.
+
+</details>
+
+## Opdracht 5.3.b: zoek het commando
+
+Je hebt een lijst met namen en wilt die op alfabet zetten. Zoek uit welk commando dat doet, zonder het op internet op te zoeken. Probeer het daarna op `/etc/passwd`.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Zoek met `apropos` op het Engelse woord voor sorteren.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+apropos sort
+sort /etc/passwd
+```
+
+`apropos` vindt `sort (1) - sort lines of text files`. `sort /etc/passwd` zet de gebruikers op alfabet. Met `sort -r` gaat het andersom; dat vind je in `man sort`.
+
+</details>
+
+## Er gaat iets mis
+
+### No manual entry
+
+```
+No manual entry for cd
+```
+
+**Oorzaak:** er is geen handleiding met die naam. Een typfout, of het commando zit in bash zelf, zoals `cd`.
+
+**Oplossing:** kijk met `type` wat het is. Is het een `shell builtin`, gebruik dan `help` in plaats van `man`.
+
+### This system has been minimized
+
+```
+This system has been minimized by removing packages and content that are
+not required on a system that users do not log into.
+```
+
+**Oorzaak:** op sommige servers en in sommige kale versies van Ubuntu zijn de handleidingen weggehaald om ruimte te sparen.
+
+**Oplossing:** zet ze terug met `sudo unminimize`. Dat duurt even, en daarna werkt `man` weer. Wat `sudo` doet, lees je in [6.1 Programma's installeren](site:linux/docs/wsl/apt).
+
+### unrecognized option
+
+```
+ls: unrecognized option '--hlep'
+Try 'ls --help' for more information.
+```
+
+**Oorzaak:** een typfout in de optie. Het commando zegt er zelf bij waar je hulp vindt.
+
+**Oplossing:** typ wat er staat: `ls --help`.
+
+Door naar [6.1 Programma's installeren](site:linux/docs/wsl/apt).

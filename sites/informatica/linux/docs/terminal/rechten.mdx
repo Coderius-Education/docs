@@ -4,7 +4,7 @@ sidebar_position: 7
 
 import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
-# 1.7 Van wie is dit?
+# 4.1 Van wie is dit?
 
 <Voorkennis items={[{to: '/docs/terminal/bestanden-lezen', label: 'Permission denied bij cat'}]} />
 
@@ -13,8 +13,8 @@ Typ in de oefenterminal `ls -l /etc`. De `-l` staat voor *long*: je krijgt per b
 <LinuxTerminal title="Oefenterminal" />
 
 ```
--rw-r--r--  1 root    root     256 Mar 26 10:00 passwd
--rw-r-----  1 root    shadow   256 Mar 26 10:00 shadow
+-rw-r--r-- 1 root root    318 Mar 26 10:00 passwd
+-rw-r----- 1 root shadow 1024 Mar 26 10:00 shadow
 ```
 
 Twee regels uit die lijst. Elk bestand op Linux heeft een **eigenaar** (hier `root`) en een **groep** (`root` of `shadow`). `root` is de beheerder van de computer: die mag alles.
@@ -34,7 +34,7 @@ Per groepje:
 - `x` (*execute*): uitvoeren als programma, of bij een map: erin gaan;
 - `-`: dat mag niet.
 
-`passwd` heeft `rw-r--r--`: `root` mag lezen en schrijven, iedereen mag lezen. Daarom lukte `cat /etc/passwd` in les 1.3.
+`passwd` heeft `rw-r--r--`: `root` mag lezen en schrijven, iedereen mag lezen. Daarom lukte `cat /etc/passwd` in les 2.1.
 
 ## Voorspel
 
@@ -43,7 +43,7 @@ Per groepje:
 <details>
 <summary>Klik hier als je het hebt geprobeerd</summary>
 
-Nee. Voor "de rest" staat er `---`: niets. Dat is de `Permission denied` uit les 1.3. Alleen `root` en wie in de groep `shadow` zit, mag erin kijken. Zo komt geen gewone gebruiker bij de wachtwoorden.
+Nee. Voor "de rest" staat er `---`: niets. Dat is de `Permission denied` uit les 2.1. Alleen `root` en wie in de groep `shadow` zit, mag erin kijken. Zo komt geen gewone gebruiker bij de wachtwoorden.
 
 </details>
 
@@ -59,7 +59,7 @@ id
 uid=1000(student) gid=1000(student) groups=1000(student)
 ```
 
-Je zit alleen in je eigen groep `student`. Daarom mag je schrijven in je thuismap (die is van jou), maar niet in `/etc` (die is van `root`). Probeer maar:
+Je zit alleen in je eigen groep `student`. Een nieuw bestand maken is schrijven in de map: je zet er een naam bij. Je thuismap is van jou, dus daar mag dat. De map `/etc` is van `root` en heeft `rwxr-xr-x`: alleen de eigenaar heeft de `w`. Probeer maar:
 
 ```bash
 touch /etc/test.txt
@@ -69,12 +69,12 @@ touch /etc/test.txt
 touch: cannot touch '/etc/test.txt': Permission denied
 ```
 
-## Opdracht 1.7.a: rechten lezen
+## Opdracht 4.1.a: rechten lezen
 
 Lees deze regel en beantwoord de drie vragen.
 
 ```
--rwxr-x---  1 www-data www-data  1024 Mar 26 10:00 start.sh
+-rwxr-x--- 1 www-data www-data 1024 Mar 26 10:00 start.sh
 ```
 
 1. Van wie is het bestand?
@@ -111,7 +111,7 @@ touch: cannot touch '/etc/test.txt': Permission denied
 
 **Oorzaak:** jij hebt op die plek niet het recht dat het commando nodig heeft: hier schrijven in een map van `root`.
 
-**Oplossing:** werk in je thuismap. Moet het echt in `/etc`, dan doe je het als beheerder met `sudo`; dat leer je in [2.3 Programma's installeren](site:linux/docs/wsl/apt). De oefenterminal kent `sudo` niet.
+**Oplossing:** werk in je thuismap. Moet het echt in `/etc`, dan doe je het als beheerder met `sudo`; dat leer je in [6.1 Programma's installeren](site:linux/docs/wsl/apt). De oefenterminal kent `sudo` niet.
 
 ### Cannot open directory
 
@@ -123,4 +123,4 @@ ls: cannot open directory '/root': Permission denied
 
 **Oplossing:** geen. Hier is niets mis: dit is wat rechten doen.
 
-Je kent nu de terminal. In deel 2 zet je Linux op je eigen computer: [2.1 WSL installeren](site:linux/docs/wsl/installeren).
+Je kent nu de terminal. Vanaf hier werk je in Linux op je eigen computer: [5.1 WSL installeren](site:linux/docs/wsl/installeren).

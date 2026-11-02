@@ -17,23 +17,23 @@ De fullstack-cursus verwijst voor alles wat met Linux te maken heeft naar deze c
 
 | Wat | Antwoord |
 |---|---|
-| Deel 1 | Elke browser; er hoeft niets geïnstalleerd te worden |
-| Deel 2 | Windows 10 (versie 2004 of later) of 11, met het recht om WSL te installeren; virtualisatie moet aanstaan in het BIOS |
+| Thema 1 tot en met 4 | Elke browser; er hoeft niets geïnstalleerd te worden |
+| Thema 5 tot en met 7 | Windows 10 (versie 2004 of later) of 11, met het recht om WSL te installeren; virtualisatie moet aanstaan in het BIOS |
 | Account | Niet nodig |
-| Internet | Nodig om de site te openen, en in deel 2 voor de installatie en voor `apt` |
+| Internet | Nodig om de site te openen, en vanaf thema 5 voor de installatie en voor `apt` |
 
-Op laptops van school mag WSL soms niet. Ga dat na voordat je met deel 2 begint. Op een Mac of een Chromebook kunnen leerlingen deel 1 doen; deel 2 vraagt Ubuntu (WSL, of een Linux-computer).
+Op laptops van school mag WSL soms niet. Ga dat na voordat je met thema 5 begint. Op een Mac of een Chromebook kunnen leerlingen de thema's 1 tot en met 4 doen; de rest vraagt Ubuntu (WSL, of een Linux-computer).
 
 ## Didactische aanpak (PRIMM)
 
 Elke les begint met een klein voorbeeld dat de leerling zelf typt, gevolgd door een **Voorspel** met het antwoord in een uitklapblok. Daarna komen opdrachten met een tip en een antwoord, ook allebei ingeklapt. Elke les sluit af met **Er gaat iets mis**: de foutmeldingen die leerlingen echt tegenkomen, letterlijk zoals Ubuntu ze geeft, met de oorzaak en de oplossing.
 
-In deel 1 kan niets stuk: herladen zet de oefenterminal terug. In deel 2 werken leerlingen op hun eigen computer. Wijs ze op de waarschuwingen bij `rm`, `sudo` en `/etc/wsl.conf`.
+In de oefenterminal (thema 1 tot en met 4) kan niets stuk: de knop Opnieuw beginnen zet een oefenterminal terug. Elke opdracht heeft een eigen terminal met de doelen erboven, die afvinken terwijl je leerling typt. Zo ziet hij zelf of hij klaar is, en vergelijkt hij daarna zijn aanpak met het antwoord. Vanaf thema 5 werken leerlingen op hun eigen computer. Wijs ze op de waarschuwingen bij `rm`, `sudo` en `/etc/wsl.conf`.
 
 ## Klassikaal gebruik & differentiatie
 
 - **Plenair starten**: doe 1.1 samen, met de oefenterminal op het bord.
-- **Deel 2 vooruit regelen**: laat de installatie van WSL (2.1) thuis of in een aparte les doen; die vraagt een herstart en soms het BIOS.
+- **WSL vooruit regelen**: laat de installatie van WSL (5.1) thuis of in een aparte les doen; die vraagt een herstart en soms het BIOS.
 - **Snelle leerlingen** gaan door naar [Online zetten](site:fullstack/docs/online) in de fullstack-cursus, als ze die cursus volgen.
 - **Beoordelen**: laat leerlingen een foutmelding uitleggen die ze zelf kregen: wat er stond, waarom, en wat ze deden.
 
@@ -43,8 +43,13 @@ Naslag staat in de [Cheatsheet](site:linux/docs/cheatsheet).
 
 | Onderwerp | Leerdoel |
 |---|---|
-| [Deel 1: de terminal](site:linux/docs/terminal/eerste-commando) | Commando's, paden, bestanden lezen en maken, zoeken en rechten, in de browser |
-| [Deel 2: Linux op je eigen computer](site:linux/docs/wsl/installeren) | Ubuntu op Windows, `apt`, `nano`, diensten en `ssh` |
+| [1. Rondkijken](site:linux/docs/terminal/eerste-commando) | Commando's en paden, sneller typen met Tab en de geschiedenis (browser) |
+| [2. Bestanden](site:linux/docs/terminal/bestanden-lezen) | Bestanden lezen, maken, kopiëren en weggooien, ook met jokertekens (browser) |
+| [3. Zoeken](site:linux/docs/terminal/zoeken) | Zoeken in bestanden met `grep` en de pipe, bestanden vinden met `find` (browser) |
+| [4. Gebruikers en rechten](site:linux/docs/terminal/rechten) | Eigenaar, groep en rechten lezen (browser) |
+| [5. Linux op je eigen computer](site:linux/docs/wsl/installeren) | Ubuntu in WSL, Windows en Linux naast elkaar, zelf opzoeken met `man` en `--help` (WSL) |
+| [6. Programma's en diensten](site:linux/docs/wsl/apt) | `apt`, `nano`, processen met `ps` en `kill`, diensten met `systemctl` (WSL) |
+| [7. Netwerk](site:linux/docs/wsl/netwerk) | Je adres en verbinding met `ip`, `ping` en `curl`, inloggen met `ssh` (WSL) |
 
 ## Feedback & bijdragen
 

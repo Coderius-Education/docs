@@ -1,62 +1,46 @@
 ---
-sidebar_position: 6
+sidebar_position: 20
 displayed_sidebar: null
 hide_pagination: true
 ---
 
+import NaslagZoeker from '@coderius/shared/components/NaslagZoeker';
+
 # Cheatsheet
 
-De commando's uit de [Linux-cursus](site:linux/docs) op één pagina. Klik op een vraag om het antwoord te zien.
+De commando's uit de [Linux-cursus](site:linux/docs) op één pagina, in de volgorde van de thema's. Zoek met het veld hieronder, of klik een vraag aan om het antwoord te zien.
 
-## WSL
+<NaslagZoeker soort="cheatsheet" voorbeeld="Zoek, bijvoorbeeld kopiëren of grep" />
 
-<details>
-<summary>Hoe open ik Ubuntu? (<code>wsl</code>)</summary>
-
-Zoek in het startmenu naar **Ubuntu**, of typ in PowerShell:
-
-```powershell
-wsl
-```
-
-</details>
+## Rondkijken
 
 <details>
-<summary>Welke Linux staat er in WSL, en welke versie? (<code>wsl -l -v</code>)</summary>
-
-```powershell
-wsl -l -v
-```
-
-Onder `VERSION` hoort `2` te staan.
-
-</details>
-
-<details>
-<summary>Hoe kom ik vanuit Linux bij mijn Windows-bestanden? (<code>/mnt/c</code>)</summary>
+<summary>Wie ben ik, en op welke computer? (whoami, hostname, uname)</summary>
 
 ```bash
-ls /mnt/c/Users
-explorer.exe .
+whoami
+hostname
+uname -a
 ```
 
 </details>
 
-## Mappen
-
 <details>
-<summary>Waar ben ik, en wat staat hier? (<code>pwd</code>, <code>ls</code>)</summary>
+<summary>Waar ben ik, en wat staat hier? (pwd, ls)</summary>
 
 ```bash
 pwd
 ls
-ls -la
+ls -a
+ls /etc
 ```
+
+`-a` laat ook verborgen bestanden zien: alles wat met een punt begint.
 
 </details>
 
 <details>
-<summary>Hoe ga ik naar een andere map? (<code>cd</code>)</summary>
+<summary>Hoe ga ik naar een andere map? (cd)</summary>
 
 ```bash
 cd /var/log
@@ -64,12 +48,34 @@ cd ..
 cd ~
 ```
 
+`..` is de map erboven, `~` je thuismap.
+
+</details>
+
+<details>
+<summary>Hoe typ ik minder? (Tab)</summary>
+
+Typ de eerste letters van een commando, bestand of map en druk op Tab. Passen er meer, druk dan nog een keer: dan zie je wat er past.
+
+</details>
+
+<details>
+<summary>Hoe haal ik een vorig commando terug, en maak ik het scherm leeg? (history, clear)</summary>
+
+```bash
+history
+history 5
+clear
+```
+
+Pijltje omhoog haalt het vorige commando terug, pijltje links en rechts zetten de cursor in de regel. Ctrl+C gooit de regel weg, Ctrl+L maakt het scherm leeg, net als `clear`.
+
 </details>
 
 ## Bestanden
 
 <details>
-<summary>Hoe lees ik een bestand? (<code>cat</code>, <code>head</code>, <code>tail</code>, <code>wc</code>)</summary>
+<summary>Hoe lees ik een bestand? (cat, head, tail, wc)</summary>
 
 ```bash
 cat notities.txt
@@ -81,7 +87,7 @@ wc -l /etc/passwd
 </details>
 
 <details>
-<summary>Hoe maak ik een map of een bestand? (<code>mkdir</code>, <code>touch</code>, <code>&gt;</code>)</summary>
+<summary>Hoe maak ik een map of een bestand? (mkdir, touch, echo, >)</summary>
 
 ```bash
 mkdir -p project/static
@@ -95,10 +101,10 @@ Eén `>` maakt het bestand eerst leeg, `>>` zet er iets onder.
 </details>
 
 <details>
-<summary>Hoe kopieer, verplaats en verwijder ik? (<code>cp</code>, <code>mv</code>, <code>rm</code>)</summary>
+<summary>Hoe kopieer, verplaats en verwijder ik? (cp, mv, rm)</summary>
 
 ```bash
-cp main.py main.py.bak
+cp notities.txt kopie.txt
 mv oud.txt nieuw.txt
 rm -r oude-map
 ```
@@ -107,22 +113,49 @@ Er is geen prullenbak: `rm` is meteen weg.
 
 </details>
 
+<details>
+<summary>Hoe doe ik iets met veel bestanden tegelijk? (*, ?)</summary>
+
+```bash
+ls *.jpg
+mv *.jpg *.png fotos/
+echo *.txt
+```
+
+`*` past op elk stuk tekst, `?` op één teken. Kijk met `ls` of `echo` wat er past voordat je `rm` gebruikt.
+
+</details>
+
 ## Zoeken
 
 <details>
-<summary>Hoe zoek ik in een bestand? (<code>grep</code>, <code>|</code>)</summary>
+<summary>Hoe zoek ik iets in een bestand? (grep, |)</summary>
 
 ```bash
+grep Failed /var/log/auth.log
 grep -i failed /var/log/auth.log
 ls /etc | grep host
 ```
 
 </details>
 
-## Rechten
+<details>
+<summary>Hoe vind ik een bestand? (find)</summary>
+
+```bash
+find /var/www -name '*.html'
+find ~ -type d
+find / -name passwd
+```
+
+Zet een patroon met `*` altijd tussen aanhalingstekens.
+
+</details>
+
+## Gebruikers en rechten
 
 <details>
-<summary>Wie ben ik, en van wie is dit bestand? (<code>id</code>, <code>ls -l</code>)</summary>
+<summary>Wie ben ik, en van wie is dit bestand? (id, ls -l)</summary>
 
 ```bash
 id
@@ -133,64 +166,209 @@ ls -l /etc/passwd
 
 </details>
 
+## Linux op je eigen computer
+
 <details>
-<summary>Hoe doe ik iets als beheerder? (<code>sudo</code>)</summary>
+<summary>Hoe installeer ik Ubuntu, en welke versie staat er? (wsl --install, wsl -l -v)</summary>
+
+In een PowerShell als administrator:
+
+```powershell
+wsl --install -d Ubuntu-24.04
+```
+
+Daarna, in een gewone PowerShell:
+
+```powershell
+wsl -l -v
+```
+
+Onder `VERSION` hoort `2` te staan.
+
+</details>
+
+<details>
+<summary>Hoe open ik Ubuntu? (wsl ~)</summary>
+
+Zoek in het startmenu naar **Ubuntu**, of typ in PowerShell:
+
+```powershell
+wsl ~
+```
+
+Met de `~` begin je in je Linux-thuismap.
+
+</details>
+
+<details>
+<summary>Hoe kom ik vanuit Linux bij mijn Windows-bestanden? (/mnt/c, explorer.exe, code)</summary>
+
+```bash
+ls /mnt/c/Users
+explorer.exe .
+code .
+```
+
+Werk aan een project in je Linux-thuismap, niet onder `/mnt/c`.
+
+</details>
+
+<details>
+<summary>Hoe bekijk ik een website uit Linux in mijn browser op Windows? (python3 -m http.server)</summary>
+
+```bash
+python3 -m http.server 8000
+```
+
+Open daarna `http://localhost:8000` op Windows. Ctrl+C stopt hem.
+
+</details>
+
+<details>
+<summary>Wat kan dit commando? (--help, man, type, help)</summary>
+
+```bash
+ls --help
+man ls
+type cd
+help cd
+```
+
+In `man`: spatie is verder, `/woord` zoekt, `q` stopt. Voor een commando dat in bash zelf zit (`cd`), gebruik je `help`.
+
+</details>
+
+<details>
+<summary>Welk commando doet wat ik wil, en hoe zet ik regels op alfabet? (apropos, sort)</summary>
+
+```bash
+apropos sort
+sort /etc/passwd
+```
+
+</details>
+
+## Programma's en diensten
+
+<details>
+<summary>Hoe installeer ik een programma, als beheerder? (sudo, apt, tldr)</summary>
 
 ```bash
 sudo apt update
+sudo apt install tldr
+sudo apt upgrade
+tldr tar
 ```
 
 `sudo` vraagt jouw eigen wachtwoord. Gebruik het alleen als het moet.
 
 </details>
 
-## Programma's en bestanden in WSL
-
 <details>
-<summary>Hoe installeer ik een programma? (<code>sudo apt</code>)</summary>
-
-```bash
-sudo apt update
-sudo apt install tree
-sudo apt upgrade
-```
-
-</details>
-
-<details>
-<summary>Hoe bewerk ik een bestand in de terminal? (<code>nano</code>)</summary>
+<summary>Hoe bewerk ik een bestand in de terminal? (nano)</summary>
 
 ```bash
 nano bestand.txt
+sudo nano /etc/hosts
 ```
 
 Ctrl+O en Enter slaat op, Ctrl+X stopt.
 
 </details>
 
-## Diensten en andere computers
-
 <details>
-<summary>Hoe start, stop en bekijk ik een dienst? (<code>systemctl</code>, <code>journalctl</code>)</summary>
+<summary>Wat draait er, en hoe stop ik het? (ps, pgrep, kill, pkill, top)</summary>
 
 ```bash
-systemctl status nginx
-sudo systemctl restart nginx
-sudo systemctl disable --now nginx
-sudo journalctl -u nginx -n 20
+ps
+ps aux
+pgrep -a sleep
+kill 734
+pkill sleep
+top
 ```
+
+Ctrl+C stopt wat in je eigen terminal draait. `kill -9` pas als `kill` alleen niet werkt. `top` sluit je met `q`.
 
 </details>
 
 <details>
-<summary>Hoe log ik in op een andere computer? (<code>ssh</code>)</summary>
+<summary>Hoe start, stop en bekijk ik een dienst? (systemctl, journalctl)</summary>
+
+```bash
+systemctl status nginx
+sudo systemctl start nginx
+sudo systemctl stop nginx
+sudo systemctl restart nginx
+sudo systemctl disable --now nginx
+sudo journalctl -u nginx -n 20
+sudo journalctl -u nginx -f
+```
+
+`disable --now` zet hem uit en laat hem na een herstart ook uit; `-f` blijft meekijken tot je Ctrl+C drukt.
+
+</details>
+
+## Netwerk
+
+<details>
+<summary>Wat is mijn IP-adres? (ip)</summary>
+
+```bash
+ip -br a
+```
+
+De `a` staat voor *address*. `127.0.0.1` (`localhost`) is je eigen computer.
+
+</details>
+
+<details>
+<summary>Kan ik die computer bereiken, en antwoordt de website? (ping, curl)</summary>
+
+```bash
+ping -c 3 1.1.1.1
+curl -I https://example.com
+```
+
+`0% packet loss` is goed; een `200` in de eerste regel van `curl` ook.
+
+</details>
+
+<details>
+<summary>Hoe log ik in op een andere computer? (ssh)</summary>
 
 ```bash
 ssh sam@server.voorbeeld.nl
-ssh-keygen -t ed25519
-ssh-copy-id sam@server.voorbeeld.nl
+ssh localhost uptime
+exit
 ```
 
-Je privésleutel (`~/.ssh/id_ed25519`) geef je nooit weg.
+Met een commando erachter voert ssh alleen dat uit en komt hij meteen terug. `exit` brengt je terug naar je eigen computer.
+
+</details>
+
+<details>
+<summary>Hoe log ik in met een sleutel? (ssh-keygen, ssh-copy-id, chmod 600)</summary>
+
+```bash
+ssh-keygen -t ed25519
+ssh-copy-id sam@server.voorbeeld.nl
+chmod 600 ~/.ssh/id_ed25519
+ssh-keygen -R localhost
+```
+
+Je privésleutel (`~/.ssh/id_ed25519`) geef je nooit weg. `ssh-keygen -R` vergeet een oude vingerafdruk.
+
+</details>
+
+<details>
+<summary>Hoe zet ik de ssh-dienst op mijn laptop uit? (systemctl, ssh.socket)</summary>
+
+```bash
+sudo systemctl disable --now ssh.socket ssh
+sudo systemctl enable --now ssh.socket
+```
+
+De eerste regel zet hem uit, de tweede weer aan.
 
 </details>

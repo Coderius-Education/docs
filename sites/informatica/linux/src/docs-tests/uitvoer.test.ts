@@ -2,10 +2,9 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { executeCommandLine } from '../components/LinuxTerminal/commands';
-import { createFilesystem } from '../components/LinuxTerminal/filesystem';
+import { OPDRACHTEN, maakSessie } from '../components/LinuxTerminal/opdrachten';
 
-// Deel 1 belooft in elke les wat de oefenterminal laat zien: een ```bash-blok
+// Elke les in terminal/ belooft wat de oefenterminal laat zien: een ```bash-blok
 // met daaronder een ```-blok met de uitvoer. Een leerling legt die uitvoer
 // tot op de spatie naast zijn scherm. Deze test typt elk bash-blok, les voor
 // les en in volgorde, in één oefenterminal, en vergelijkt de uitvoer met het
@@ -13,12 +12,9 @@ import { createFilesystem } from '../components/LinuxTerminal/filesystem';
 // ls -l in de les een spatie meer had dan de terminal.
 //
 // Een bash-blok met een # erin (FOUT/GOED) of zonder uitvoerblok eronder
-// wordt wel getypt, maar niet vergeleken. Een opdracht die begint in een
-// "verse oefenterminal" begint hier ook met een verse.
-
-// Een kleurcode van de terminal (ESC [ … m); ESC als String.fromCharCode, want
-// biome weigert een stuurteken in een regex.
-const KLEUR = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
+// wordt wel getypt, maar niet vergeleken. Een opdracht heeft een eigen, verse
+// terminal (opdrachten.ts): het antwoord van een opdracht draait hier dus ook
+// in een verse, en na de opdracht gaat het verder in de terminal van de les.
 
 const TERMINAL = fileURLToPath(new URL('../../docs/terminal', import.meta.url));
 
@@ -42,40 +38,27 @@ function blokken(tekst: string): Blok[] {
   return uit;
 }
 
-function terminal() {
-  const env = {
-    cwd: '/home/student',
-    fs: createFilesystem(),
-    setCwd(nieuw: string) {
-      env.cwd = nieuw;
-    },
-    clear() {},
-  };
-  return (regel: string) =>
-    executeCommandLine(regel, env)
-      .map((r) => r.output.replace(/\n$/, ''))
-      .filter(Boolean)
-      .join('\n')
-      // Kleur weg: in de les staat de tekst zonder.
-      .replace(KLEUR, '');
+function terminal(bestanden?: object) {
+  const sessie = maakSessie(bestanden);
+  return (regel: string) => sessie.typ(regel).stand.uitvoer.join('\n');
 }
 
 const lessen = readdirSync(TERMINAL).filter((n) => n.endsWith('.mdx'));
 
-describe('wat deel 1 belooft, laat de oefenterminal zien', () => {
+describe('wat de lessen in terminal/ beloven, laat de oefenterminal zien', () => {
   for (const les of lessen) {
     it(les, () => {
       const lijst = blokken(readFileSync(join(TERMINAL, les), 'utf8'));
-      let typ = terminal();
+      const lesTerminal = terminal();
+      let typ = lesTerminal;
       const fout: string[] = [];
       let vergeleken = 0;
       lijst.forEach((blok, i) => {
         if (blok.taal !== 'bash') return;
-        if (
-          /verse oefenterminal/.test(blok.ervoor) ||
-          /verse oefenterminal/.test(lijst[i - 1]?.ervoor ?? '')
-        )
-          typ = terminal();
+        const kop = [...blok.ervoor.matchAll(/^## (.*)$/gm)].pop();
+        // Een opdracht begint vers, met de bestanden die er bij die opdracht staan.
+        const opdracht = kop?.[1].match(/^Opdracht (\S+):/)?.[1];
+        if (kop) typ = opdracht ? terminal(OPDRACHTEN[opdracht]?.bestanden) : lesTerminal;
         const uitvoer = blok.regels
           .map((r) => typ(r))
           .filter(Boolean)
@@ -98,7 +81,7 @@ describe('wat deel 1 belooft, laat de oefenterminal zien', () => {
     });
   }
 
-  it('de ls -l uit 1.7 staat zo in de oefenterminal', () => {
+  it('de ls -l uit 4.1 staat zo in de oefenterminal', () => {
     const les = readFileSync(join(TERMINAL, 'rechten.mdx'), 'utf8');
     const uitvoer = terminal()('ls -l /etc').split('\n');
     const blok = blokken(les).find((b) => b.regels.some((r) => r.endsWith(' passwd')));

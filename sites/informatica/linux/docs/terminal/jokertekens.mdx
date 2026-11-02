@@ -1,0 +1,196 @@
+---
+sidebar_position: 8
+---
+
+import LinuxTerminal from '@site/src/components/LinuxTerminal';
+
+# 2.4 Jokertekens
+
+<Voorkennis items={[{to: '/docs/terminal/kopieren', label: 'Kopiëren, verplaatsen en weggooien'}]} />
+
+Tien foto's naar een andere map, met tien keer `mv`? Dat hoeft niet. Maak in de terminal hieronder een paar bestanden:
+
+```bash
+mkdir fotos
+cd fotos
+touch strand.jpg zee.jpg kat.png verslag.txt
+ls *.jpg
+```
+
+```
+strand.jpg  zee.jpg
+```
+
+Het sterretje `*` is een **jokerteken**: het past op elk stuk tekst, ook op niets. `*.jpg` betekent "alles wat op `.jpg` eindigt".
+
+<LinuxTerminal title="Oefenterminal" />
+
+## De shell vult het in
+
+De **shell** is het programma dat leest wat je typt en daarna het commando start. Op Ubuntu heet hij `bash`: daarom begint een melding als `bash: whomai: command not found` met zijn naam. Niet `ls` zoekt de bestanden, maar de shell: die vervangt `*.jpg` door de namen die passen, voordat het commando start. Met `echo` zie je wat het commando dan krijgt:
+
+```bash
+echo *.jpg
+```
+
+```
+strand.jpg zee.jpg
+```
+
+Daarom werkt een jokerteken bij elk commando: `cp *.txt backup/`, `rm *.jpg`, `cat *.txt`.
+
+Het vraagteken `?` past op precies één teken:
+
+```bash
+ls ?at.png
+```
+
+```
+kat.png
+```
+
+Tussen aanhalingstekens vult de shell niets in. Dan krijgt het commando het sterretje zelf:
+
+```bash
+echo '*.jpg'
+```
+
+```
+*.jpg
+```
+
+## Veel bestanden tegelijk verplaatsen
+
+Met een jokerteken en een map aan het eind verplaats je alles in één keer:
+
+```bash
+mkdir vakantie
+mv *.jpg vakantie/
+ls
+```
+
+```
+kat.png  vakantie  verslag.txt
+```
+
+`mv *.jpg vakantie/` wordt `mv strand.jpg zee.jpg vakantie/`: twee bestanden, en het laatste woord is de map waar ze heen gaan.
+
+## Voorspel
+
+Je staat in `fotos`, met `kat.png`, `verslag.txt` en de map `vakantie`. Je typt `rm *`. Wat gebeurt er?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+`kat.png` en `verslag.txt` zijn weg, zonder vraag en zonder prullenbak. Alleen de map blijft staan, omdat `rm` zonder `-r` geen map weggooit:
+
+```
+rm: cannot remove 'vakantie': Is a directory
+```
+
+`rm *` is een van de gevaarlijkste regels die je kunt typen. Kijk daarom eerst met `ls *` (of `echo *`) wat er past, en gooi dan pas weg.
+
+</details>
+
+## Opdracht 2.4.a: foto's sorteren
+
+In de map `downloads` in je thuismap staan foto's, een liedje en een paar documenten door elkaar.
+
+1. Maak in `downloads` een map `fotos`.
+2. Verplaats alle `.jpg`- en `.png`-bestanden daarheen, met één `mv` en jokertekens.
+3. Laat zien wat er nu in `fotos` staat.
+
+<LinuxTerminal opdracht="2.4.a" />
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Na `mv` mag je meer dan één jokerteken zetten. Het laatste woord is de map waar alles heen gaat.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+cd downloads
+mkdir fotos
+mv *.jpg *.png fotos/
+ls fotos
+```
+
+```
+kat.png  vakantie1.jpg  vakantie2.jpg
+```
+
+De shell maakt van de derde regel `mv vakantie1.jpg vakantie2.jpg kat.png fotos/`.
+
+</details>
+
+## Opdracht 2.4.b: opruimen met een vangnet
+
+In de map `project` staan bestanden die op `.tmp` eindigen: rommel die een programma achterliet. Gooi ze weg, en alleen die.
+
+1. Kijk eerst met `ls` en een jokerteken welke bestanden je gaat weggooien.
+2. Gooi ze dan weg met één `rm`.
+
+<LinuxTerminal opdracht="2.4.b" />
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Gebruik bij `ls` en bij `rm` hetzelfde jokerteken. Wat `ls` laat zien, is precies wat `rm` weggooit.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+cd project
+ls *.tmp
+rm *.tmp
+```
+
+Eerst `ls`, dan pas `rm`: dat is een gewoonte die je bij elk jokerteken houdt.
+
+</details>
+
+## Er gaat iets mis
+
+### cannot access met een sterretje erin
+
+```
+ls: cannot access '*.jpeg': No such file or directory
+```
+
+**Oorzaak:** er past geen enkel bestand. Dan laat de shell het sterretje staan, en zoekt `ls` naar een bestand dat letterlijk `*.jpeg` heet. Vaak is het een andere extensie: `.jpg` in plaats van `.jpeg`.
+
+**Oplossing:** kijk met `ls` hoe de bestanden echt heten.
+
+### Een bestand is weg na mv
+
+**Oorzaak:** je vergat de map aan het eind. Met twee foto's wordt `mv *.jpg` dan `mv strand.jpg zee.jpg`: dat hernoemt `strand.jpg` naar `zee.jpg`, en de oude `zee.jpg` is weg. Met drie of meer krijg je gelukkig een fout:
+
+```
+mv: target 'zee.jpg': Not a directory
+```
+
+Staat er maar één foto, dan krijgt `mv` maar één naam, en mist hij het doel:
+
+```
+mv: missing destination file operand after 'strand.jpg'
+Try 'mv --help' for more information.
+```
+
+**Oplossing:** zet altijd een map als laatste woord, met een `/` erachter. Bestaat die map niet, dan weigert `mv` in plaats van stil iets te overschrijven.
+
+```bash
+# FOUT
+mv *.jpg
+
+# GOED
+mv *.jpg vakantie/
+```
+
+Door naar [3.1 Zoeken en doorgeven](site:linux/docs/terminal/zoeken).

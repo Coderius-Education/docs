@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# 2.4 Een bestand bewerken met nano
+# 6.2 Een bestand bewerken met nano
 
 <Voorkennis items={[{to: '/docs/wsl/apt', label: 'sudo'}]} />
 
@@ -47,7 +47,7 @@ Save modified buffer?
 
 </details>
 
-## Opdracht 2.4.a: een welkomstgroet
+## Opdracht 6.2.a: een welkomstgroet
 
 Elke keer dat je Ubuntu opent, leest de terminal het verborgen bestand `~/.bashrc`. Wat daarin staat, voert hij uit.
 
@@ -82,7 +82,7 @@ Een nieuw venster openen hoeft niet: met `source ~/.bashrc` leest de terminal he
 ### Opslaan lukt niet
 
 ```
-[ Directory '/etc' is not writable ]
+[ File '/etc/hosts' is unwritable ]
 ```
 
 Bij opslaan staat er daarna:
@@ -105,8 +105,8 @@ sudo nano /etc/hosts
 
 ### Vast in een ander programma
 
-**Oorzaak:** een ander commando opende de editor **vim**, of je typte `vi`. Ctrl+X werkt daar niet, en wat je typt doet rare dingen.
+**Oorzaak:** je typte `vi` of `vim` in plaats van `nano`, bijvoorbeeld omdat een uitleg op internet dat deed. **vim** is een andere editor. Ctrl+X werkt daar niet, en wat je typt doet rare dingen.
 
 **Oplossing:** druk op Esc, typ `:q!` en druk op Enter. vim stopt dan zonder op te slaan.
 
-Door naar [2.5 Diensten](site:linux/docs/wsl/diensten).
+Door naar [6.3 Processen](site:linux/docs/wsl/processen).

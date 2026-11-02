@@ -4,7 +4,7 @@ sidebar_position: 3
 
 import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
-# 1.3 Bestanden lezen
+# 2.1 Bestanden lezen
 
 <Voorkennis items={[{to: '/docs/terminal/mappen', label: 'Paden en cd'}]} />
 
@@ -35,9 +35,11 @@ Een logbestand van een server is al snel duizenden regels lang. Dan wil je niet 
 | `head -n 3 bestand` | de eerste drie regels |
 | `wc -l bestand` | hoeveel regels er zijn |
 
+Heeft een bestand minder dan tien regels, dan laten `head` en `tail` alles zien. Probeer ze op `/var/log/syslog`, het logboek van de hele computer: dat is langer.
+
 ## Voorspel
 
-In `/var/log/auth.log` schrijft de computer elke poging om in te loggen. Wat geeft `tail -n 1 /var/log/auth.log`, denk je: een mislukte of een gelukte poging?
+In `/var/log/auth.log` zet de computer elke poging om in te loggen onderaan erbij. Wat geeft `tail -n 1 /var/log/auth.log`, denk je: de oudste poging, of de nieuwste?
 
 <details>
 <summary>Klik hier als je het hebt geprobeerd</summary>
@@ -46,16 +48,18 @@ In `/var/log/auth.log` schrijft de computer elke poging om in te loggen. Wat gee
 Mar 26 10:15:05 oefenpc sshd[1234]: Accepted password for admin from 192.168.1.100
 ```
 
-De laatste regel is een gelukte poging (`Accepted`). Met `cat` zie je de drie mislukte pogingen erboven, binnen vier seconden vanaf hetzelfde adres. Een beheerder die dit leest, weet genoeg: iemand heeft het wachtwoord van `admin` geraden.
+De nieuwste: wat er het laatst bij kwam, staat onderaan. Het is een gelukte poging (`Accepted`). Met `cat` zie je de drie mislukte pogingen erboven, binnen vier seconden vanaf hetzelfde adres. Een beheerder die dit leest, weet genoeg: iemand heeft het wachtwoord van `admin` geraden.
 
 </details>
 
-## Opdracht 1.3.a: wie woont hier?
+## Opdracht 2.1.a: wie woont hier?
 
 In `/etc/passwd` staat elke gebruiker van de computer op een eigen regel.
 
 1. Hoeveel gebruikers zijn er?
 2. Wat is de laatste gebruiker, en wat is zijn thuismap?
+
+<LinuxTerminal opdracht="2.1.a" />
 
 <details>
 <summary>Klik hier voor een tip</summary>
@@ -110,6 +114,6 @@ cat: /etc/shadow: Permission denied
 
 **Oorzaak:** het bestand bestaat, maar jij mag het niet lezen. In `/etc/shadow` staan de wachtwoorden van alle gebruikers, als hash (een vingerafdruk waaruit je het wachtwoord niet terugrekent), en die zijn alleen voor de beheerder.
 
-**Oplossing:** geen; dit is de bedoeling. Waarom jij het niet mag en wie wel, leer je in [1.7 Van wie is dit?](site:linux/docs/terminal/rechten).
+**Oplossing:** geen; dit is de bedoeling. Waarom jij het niet mag en wie wel, leer je in [4.1 Van wie is dit?](site:linux/docs/terminal/rechten).
 
-Door naar [1.4 Maken en schrijven](site:linux/docs/terminal/maken).
+Door naar [2.2 Maken en schrijven](site:linux/docs/terminal/maken).

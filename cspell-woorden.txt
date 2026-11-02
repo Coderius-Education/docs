@@ -162,6 +162,8 @@ informationeel
 inspringniveau
 instantieert
 instantiëren
+jokerteken
+jokertekens
 journalctl
 jumperkabel
 jóuw
@@ -263,6 +265,7 @@ pentesters
 percipi
 PETA
 Pfungst
+pgrep
 Photopea
 photopea
 PHPSESSID
@@ -402,6 +405,7 @@ tileset
 timerkanaal
 Timsort
 tinytronics
+tldr
 toggelt
 togglen
 tokenbeveiliging
