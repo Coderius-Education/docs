@@ -40,7 +40,7 @@ find /var/www -name '*.html'
 /var/www/html/inloggen.html
 ```
 
-De aanhalingstekens zijn nodig omdat de shell anders het sterretje al invult, voordat `find` het ziet. Dan krijgt `find` de namen uit de map waar jij staat, en dat is niet wat je bedoelt. Bij `grep` en `-name` zet je een patroon daarom altijd tussen aanhalingstekens.
+Zonder aanhalingstekens vult de shell het sterretje al in voordat `find` het ziet, als er in de map waar jij staat iets op past. Dan krijgt `find` die namen in plaats van het patroon. Past er niets, dan blijft het patroon staan en werkt het toevallig. Zet een patroon bij `grep` en `-name` daarom altijd tussen aanhalingstekens: dan hangt het niet af van de map waar je staat.
 
 `-iname` zoekt zonder op hoofdletters te letten: `-iname '*.JPG'` vindt ook `foto.jpg`.
 

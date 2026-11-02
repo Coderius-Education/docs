@@ -59,7 +59,7 @@ id
 uid=1000(student) gid=1000(student) groups=1000(student)
 ```
 
-Je zit alleen in je eigen groep `student`. Daarom mag je schrijven in je thuismap (die is van jou), maar niet in `/etc` (die is van `root`). Probeer maar:
+Je zit alleen in je eigen groep `student`. Een nieuw bestand maken is schrijven in de map: je zet er een naam bij. Je thuismap is van jou, dus daar mag dat. De map `/etc` is van `root` en heeft `rwxr-xr-x`: alleen de eigenaar heeft de `w`. Probeer maar:
 
 ```bash
 touch /etc/test.txt

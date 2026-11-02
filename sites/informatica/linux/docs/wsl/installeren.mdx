@@ -20,17 +20,17 @@ Typ dit commando en druk op Enter:
 wsl --install -d Ubuntu-24.04
 ```
 
-`-d` kiest welke Linux je krijgt: Ubuntu 24.04. Zonder die toevoeging krijg je de nieuwste Ubuntu, en die kan andere meldingen geven dan de lessen hier laten zien. Windows zet nu WSL aan en haalt Ubuntu op. Dat duurt een paar minuten. Staat er dat je computer opnieuw moet opstarten, doe dat dan.
+`-d` kiest welke Linux je krijgt: Ubuntu 24.04. Zonder die toevoeging krijg je de nieuwste versie met lange ondersteuning (*LTS*), en die kan andere meldingen geven dan de lessen hier laten zien. Windows zet nu WSL aan en haalt Ubuntu op. Dat duurt een paar minuten. Staat er dat je computer opnieuw moet opstarten, doe dat dan.
 
 ## Stap 3: Een gebruiker kiezen
 
-Na het opstarten opent er een zwart venster met Ubuntu. Gebeurt dat niet, zoek dan in het startmenu naar **Ubuntu 24.04** en open het. Ubuntu vraagt om een gebruikersnaam, met een regel als deze:
+Na het opstarten opent er een zwart venster met Ubuntu. Gebeurt dat niet, zoek dan in het startmenu naar **Ubuntu 24.04** en open het. Ubuntu vraagt om een gebruikersnaam:
 
 ```
-Enter new UNIX username:
+Create a default Unix user account:
 ```
 
-(In een nieuwere versie staat er `Create a default Unix user account:`; het is dezelfde vraag.) Kies een korte naam met kleine letters en zonder spaties, bijvoorbeeld je voornaam. Daarna vraagt hij twee keer een wachtwoord.
+Bij een oudere versie van WSL staat er `Enter new UNIX username:`; het is dezelfde vraag. Kies een korte naam met kleine letters en zonder spaties, bijvoorbeeld je voornaam. Een naam met een hoofdletter of een spatie weigert Ubuntu, met een melding over `NAME_REGEX`; dan vraagt hij opnieuw. Daarna vraagt hij twee keer een wachtwoord.
 
 **Let op:** terwijl je het wachtwoord typt, zie je niets: geen sterretjes, geen bolletjes. Dat is normaal. Typ het en druk op Enter. Onthoud het goed: je hebt het nodig zodra je iets als beheerder doet.
 

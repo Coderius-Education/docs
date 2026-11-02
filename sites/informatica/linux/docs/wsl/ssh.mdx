@@ -36,10 +36,10 @@ Je zit nu "op de andere computer". De prompt lijkt hetzelfde, want het is dezelf
 
 ## Voorspel
 
-Je logt nog een keer in, en kijkt daarna in het logboek:
+Je logt nog een keer in met `ssh localhost`. Terwijl je nog ingelogd bent, kijk je in het logboek van de ssh-dienst:
 
 ```bash
-sudo journalctl -u ssh -n 3
+sudo journalctl -u ssh -n 10
 ```
 
 Wat denk je dat er staat?
@@ -47,7 +47,7 @@ Wat denk je dat er staat?
 <details>
 <summary>Klik hier als je het hebt geprobeerd</summary>
 
-Regels zoals deze, met jouw naam:
+Tussen de regels staat er een zoals deze, met jouw naam:
 
 ```
 Accepted password for sam from 127.0.0.1 port 51234 ssh2

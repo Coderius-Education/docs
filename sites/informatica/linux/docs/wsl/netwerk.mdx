@@ -10,7 +10,7 @@ Een server staat bijna altijd ergens anders dan jij. Voordat je erop inlogt, wil
 
 ## Je eigen adres
 
-Elke computer in een netwerk heeft een **IP-adres**. `ip` laat je adressen zien; met `-br` (*brief*) kort:
+Elke computer in een netwerk heeft een **IP-adres**. `ip a` laat je adressen zien (`a` is kort voor `address`); met `-br` (*brief*) kort:
 
 ```bash
 ip -br a
@@ -85,7 +85,7 @@ Zoek het IP-adres van je Ubuntu in WSL op, en dat van Windows. Zijn ze hetzelfde
 <details>
 <summary>Klik hier voor een tip</summary>
 
-In Ubuntu gebruik je `ip`, in PowerShell `ipconfig`. Kijk in Ubuntu naar de regel van `eth0`, en in PowerShell naar `IPv4 Address`.
+In Ubuntu gebruik je `ip`, in PowerShell `ipconfig`. Kijk in Ubuntu naar de regel van `eth0`. In PowerShell staat het adres bij `IPv4 Address`, of op een Nederlandse Windows bij `IPv4-adres`, onder je wifi- of ethernetadapter. De adapter `vEthernet (WSL)` is de kant van Windows van het netwerkje naar Ubuntu; die laat je hier zitten.
 
 </details>
 
@@ -126,6 +126,8 @@ curl -I https://example.com
 
 Werkt alles, dan zie je twee keer `0% packet loss`, en een `200` in de eerste regel van `curl`. Zo werk je van onder naar boven: eerst de verbinding, dan de namen, dan de website. Waar het voor het eerst misgaat, zit het probleem.
 
+Eén uitzondering: op sommige netwerken, zoals dat van een school, laat de beheerder `ping` niet door. Geeft `ping` `100% packet loss` maar krijg je bij `curl` een `200`, dan is er wel verbinding.
+
 </details>
 
 ## Er gaat iets mis
@@ -136,7 +138,7 @@ Werkt alles, dan zie je twee keer `0% packet loss`, en een `200` in de eerste re
 ping: one.one.one.on: Name or service not known
 ```
 
-**Oorzaak:** je computer kon bij die naam geen adres vinden. Meestal een typfout in de naam, of er is helemaal geen verbinding.
+**Oorzaak:** je computer kon bij die naam geen adres vinden, door een typfout in de naam. Is er helemaal geen verbinding, dan staat er `Temporary failure in name resolution`: dan kon hij het niet eens vragen.
 
 **Oplossing:** controleer de naam. Ping daarna een adres, `ping -c 3 1.1.1.1`: werkt dat wel, dan ligt het alleen aan het opzoeken van namen.
 

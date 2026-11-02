@@ -176,6 +176,13 @@ ls: cannot access '*.jpeg': No such file or directory
 mv: target 'zee.jpg': Not a directory
 ```
 
+Staat er maar één foto, dan krijgt `mv` maar één naam, en mist hij het doel:
+
+```
+mv: missing destination file operand after 'strand.jpg'
+Try 'mv --help' for more information.
+```
+
 **Oplossing:** zet altijd een map als laatste woord, met een `/` erachter. Bestaat die map niet, dan weigert `mv` in plaats van stil iets te overschrijven.
 
 ```bash

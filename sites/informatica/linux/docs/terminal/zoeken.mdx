@@ -40,7 +40,7 @@ student:x:1000:1000:student:/home/student:/bin/bash
 
 ## Voorspel
 
-Wat geeft dit, denk je?
+In 1.1 zag je wat er in `/etc` staat. Wat geeft dit, denk je?
 
 ```bash
 ls /etc | grep host
@@ -54,7 +54,7 @@ hostname
 hosts
 ```
 
-`ls /etc` geeft de namen in `/etc`, en `grep host` houdt de namen over waar `host` in zit.
+`ls /etc` geeft de namen in `/etc`, en `grep host` houdt de namen over waar `host` in zit. Ze staan onder elkaar: op het scherm zet `ls` de namen naast elkaar, maar naar een pipe zet hij elke naam op een eigen regel. Zo kan `grep`, dat per regel kiest, per naam kiezen.
 
 </details>
 
