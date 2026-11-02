@@ -106,7 +106,7 @@ permission denied while trying to connect to the docker API at unix:///var/run/d
 
 **Oorzaak:** je zit niet in de groep `docker`, of je bent nog niet opnieuw ingelogd sinds `usermod`.
 
-**Oplossing:** typ `groups`. Staat `docker` er niet bij, doe dan de stap van **Jezelf toegang geven** opnieuw, en vergeet `wsl --terminate Ubuntu-24.04` niet. Zet geen `sudo` voor elk `docker`-commando: dan maak je alles als `root`, en dat geeft later problemen met de rechten van je bestanden.
+**Oplossing:** typ `groups`. Staat `docker` er niet bij, doe dan de stap van **Jezelf toegang geven** opnieuw, en vergeet `wsl --terminate Ubuntu-24.04` niet. Zet geen `sudo` voor elk `docker`-commando. Het werkt wel, maar wat Docker dan voor jou in je eigen mappen zet, zoals een back-up in [les 15](site:fullstack/docs/online/server/nieuwe-versie), is van `root`, en dan mag je het zelf niet meer weggooien.
 
 ### failed to connect to the docker API
 

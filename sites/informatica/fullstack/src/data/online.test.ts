@@ -177,6 +177,12 @@ describe('vanaf les 5 werk je alleen in WSL', () => {
     expect(regels).not.toMatch(/^git clone https:/m);
   });
 
+  it('les 5 legt de waarschuwing van pip uit, die tegen een image zonder venv in gaat', () => {
+    // Bij RUN python -m pip install zegt pip: use a virtual environment
+    // instead. De les zei twee alinea's eerder dat dat niet nodig is.
+    expect(lees('online/docker/image')).toContain("WARNING: Running pip as the 'root' user");
+  });
+
   it('na les 4 start geen codeblok de site nog met fastapi dev', () => {
     const fout = lessen
       .slice(lessen.indexOf('online/docker/image'))

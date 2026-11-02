@@ -107,7 +107,13 @@ docker build -t gastenboek .
  => naming to docker.io/library/gastenboek:latest
 ```
 
-De eerste keer duurt het een minuut: Docker haalt het Python-image op en installeert alle packages. Daarna staat je image erbij:
+De eerste keer duurt het een minuut: Docker haalt het Python-image op en installeert alle packages. Bij de pip-stap zie je een waarschuwing:
+
+```text
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead
+```
+
+Op je eigen computer is dat een goed advies: daar delen Ubuntu en jij dezelfde Python. In een image draait alleen jouw site, en het image gooi je weg en bouw je opnieuw zodra er iets mis is. Hier mag je de waarschuwing laten staan, net als de `[notice]` dat er een nieuwe pip is. Daarna staat je image erbij:
 
 ```bash
 docker images
