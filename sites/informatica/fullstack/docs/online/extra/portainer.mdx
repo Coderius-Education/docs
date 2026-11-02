@@ -1,0 +1,158 @@
+---
+sidebar_label: '16. Beheren met Portainer (extra)'
+description: Portainer laat je containers, logboeken en volumes in de browser zien. Omdat Portainer alles op de server kan, staat hij alleen op 127.0.0.1, en open je hem via een ssh-tunnel.
+---
+
+# Online zetten: beheren met Portainer
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'Inloggen met ssh'}]} />
+
+Deze les is een extra: je site staat al online. Tot nu toe beheerde je hem met commando's: `docker compose ps`, `logs`, `up`. **Portainer** is een website die hetzelfde laat zien, in je browser: welke containers draaien, hun logboeken, de volumes en de images.
+
+Portainer praat met Docker via `docker.sock`, net als Traefik, en mag dus alles wat Docker mag. Wie in Portainer binnenkomt, kan een container starten die de hele server overneemt. Portainer komt daarom nooit op internet. Hij luistert alleen op `127.0.0.1` van de server, en jij komt erbij via een tunnel van ssh.
+
+## Portainer starten
+
+Op de server, in een eigen map:
+
+```bash
+mkdir ~/portainer
+cd ~/portainer
+nano compose.yaml
+```
+
+```yaml
+services:
+  portainer:
+    image: portainer/portainer-ce:lts
+    ports:
+      - "127.0.0.1:9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - data:/data
+    restart: unless-stopped
+
+volumes:
+  data:
+```
+
+`lts` is de versie die het langst bijgehouden wordt. Portainer heeft een eigen website met HTTPS op poort 9443, en die publiceer je alleen op `127.0.0.1`. Zonder `127.0.0.1:` stond hij op internet, langs de firewall heen ([les 13](site:fullstack/docs/online/server/site)). Er zijn geen labels voor Traefik: Portainer hoort niet achter de voordeur.
+
+```bash
+docker compose up -d
+```
+
+Je hebt nu vijf minuten om een beheerder te maken. Daarna sluit Portainer zichzelf af, zodat niemand anders dat voor jou doet.
+
+## Een tunnel
+
+Open een terminal in WSL, en log in met een tunnel:
+
+```bash
+ssh -L 9443:127.0.0.1:9443 sam@gastenboek.voorbeeld.nl
+```
+
+`-L 9443:127.0.0.1:9443` betekent: wat op poort 9443 van je laptop binnenkomt, gaat door de versleutelde verbinding naar `127.0.0.1:9443` op de server. Zolang deze terminal openstaat, is de tunnel er. Open op Windows `https://localhost:9443`.
+
+De browser waarschuwt dat de verbinding niet privé is. Portainer maakte zijn certificaat zelf, en geen bekende partij heeft het ondertekend. Hier mag je doorgaan, via **Geavanceerd**: het verkeer gaat door je eigen ssh-tunnel.
+
+## De eerste keer
+
+Portainer vraagt een **setup token**: een code die alleen in zijn logboek staat, zodat alleen wie op de server kan, de beheerder maakt. Typ in de terminal met de tunnel:
+
+```bash
+cd ~/portainer
+docker compose logs | grep setup_token
+```
+
+```text
+portainer-1  | setup_token=c2413f1a2e3617788d18a0b3dd04a5531c4a1265a3afeafc6542257f3722244c
+```
+
+Plak de code na `setup_token=` in de browser. Kies daarna een gebruikersnaam en een wachtwoord van minstens twaalf tekens. Klik op **Get Started**: Portainer toont de omgeving `local`, de Docker van deze server.
+
+## Kijken, niet veranderen
+
+Onder **Containers** zie je Traefik, je gastenboek en Portainer zelf, met hun status. Bij een container vind je de knop **Logs**, met hetzelfde als `docker compose logs`, en onder **Volumes** je volume met de databases.
+
+Portainer kan ook containers stoppen, starten en veranderen. Doe dat zo weinig mogelijk. Je `compose.yaml` in git is de beschrijving van je server; een verandering die je in Portainer klikt, staat daar niet in, en is weg bij de volgende `docker compose up`. Gebruik Portainer om te kijken, en verander wat er draait met je bestanden en `docker compose`.
+
+<Voorspel soort="Controlevraag" vraag="Je sluit de terminal met de tunnel. Wat gebeurt er met Portainer?">
+  <Keuze uitleg="De tunnel is weg. Komt een verzoek van je browser nog op de server aan?">Hij werkt nog in je browser, want hij draait op de server</Keuze>
+  <Keuze goed uitleg="Je browser kan niet meer bij poort 9443 van de server, want de tunnel was de enige weg. Op de server draait Portainer gewoon door.">Je browser krijgt geen antwoord meer, maar Portainer draait door op de server</Keuze>
+  <Keuze uitleg="Portainer weet niets van je ssh-verbinding. Wat stopt er als je de terminal sluit?">Portainer stopt, want hij hoort bij je ssh-verbinding</Keuze>
+  <Uitleg>
+
+  De tunnel is de deur, en jij hebt de enige sleutel: je ssh-sleutel. Op internet staat poort 9443 niet, en de firewall laat hem ook niet door. Wie Portainer wil openen, moet eerst als `sam` kunnen inloggen, en dan kan hij al alles.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### timed out for security purposes
+
+De browser toont een melding dat Portainer is afgesloten, en in het logboek staat:
+
+```text
+the Portainer instance timed out for security purposes, to re-enable your Portainer instance, you will need to restart Portainer
+```
+
+**Oorzaak:** je maakte de beheerder niet binnen vijf minuten na het starten.
+
+**Oplossing:** start Portainer opnieuw met `docker compose restart` in `~/portainer`, en maak de beheerder meteen. Er staat dan een nieuwe setup token in het logboek.
+
+### Password does not meet the requirements
+
+**Oorzaak:** je wachtwoord is korter dan twaalf tekens.
+
+**Oplossing:** kies een langer wachtwoord. Wie in Portainer komt, kan de hele server overnemen; dit wachtwoord verdient de lengte.
+
+### Address already in use bij ssh -L
+
+```text
+bind [127.0.0.1]:9443: Address already in use
+channel_setup_fwd_listener_tcpip: cannot listen to port: 9443
+Could not request local forwarding.
+```
+
+**Oorzaak:** poort 9443 op je laptop is al bezet, vaak door een andere terminal met dezelfde tunnel.
+
+**Oplossing:** sluit die andere terminal, of kies een andere poort voor je laptop: `ssh -L 9444:127.0.0.1:9443 …`, en open dan `https://localhost:9444`.
+
+## Opdrachten
+
+### Opdracht 1: Run - Portainer via een tunnel
+
+Start Portainer op je server, open hem via een tunnel, en maak een beheerder. Zoek in Portainer het logboek van je gastenboek, en de grootte van het volume met je databases.
+
+<details>
+<summary>Antwoord</summary>
+
+```bash
+cd ~/portainer
+docker compose up -d
+```
+
+Daarna in WSL `ssh -L 9443:127.0.0.1:9443 sam@gastenboek.voorbeeld.nl`, en in de browser `https://localhost:9443`, met de setup token uit `docker compose logs`. Het logboek staat bij de container `gastenboek-gastenboek-1` onder **Logs**. Het volume `gastenboek_data` vind je onder **Volumes**.
+
+</details>
+
+### Opdracht 2: Investigate - Is de deur echt dicht?
+
+Probeer in WSL, zonder tunnel, Portainer op het adres van je server te openen:
+
+```bash
+curl -k -m 5 https://gastenboek.voorbeeld.nl:9443
+```
+
+Wat gebeurt er? Welke twee dingen houden het tegen?
+
+<details>
+<summary>Antwoord</summary>
+
+`curl` geeft het na vijf seconden op (`-m 5`), zonder antwoord. Twee dingen houden het tegen: Docker publiceerde poort 9443 alleen op `127.0.0.1` van de server, en ufw laat 9443 niet door. Het eerste is het slot dat telt, want langs ufw gaat Docker zelf. Het tweede is een extra slot, voor het geval je een keer `127.0.0.1:` vergeet bij een programma zonder Docker.
+
+</details>
+
+Je site staat online en je kunt hem beheren. Loop met de controlelijst van [Beveilig je eigen project](site:fullstack/docs/veiligheid/eigen-project) nog een keer je code na: dat is nu code op internet.

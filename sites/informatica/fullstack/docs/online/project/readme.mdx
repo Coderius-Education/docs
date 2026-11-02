@@ -1,0 +1,142 @@
+---
+sidebar_label: '3. Een README en je repository'
+description: Je project reist als repository. Een README.md zegt wat het is en hoe je het start, en je controleert dat iemand anders het met alleen je repository aan de praat krijgt.
+---
+
+# Online zetten: een README en je repository
+
+<Voorkennis items={[{site: 'editor', to: '/git/push/stap-1-publish', label: 'Een project naar GitHub pushen'}, {site: 'editor', to: '/git/pull-clone/stap-3-clone', label: 'Een project clonen'}]} />
+
+Je project gaat straks naar een server. Het gaat niet als zip en niet met een USB-stick, maar als **repository** op GitHub: de server haalt het daar op, en elke nieuwe versie ook. Wat niet in je repository staat, komt dus nergens aan. Wat er wel in staat, kan iedereen met toegang lezen.
+
+Een goede repository voor een site bevat:
+
+| Bestand of map | Waarom |
+|:---|:---|
+| `main.py`, `templates/`, `static/` | je site zelf |
+| `requirements.txt` | welke packages hij nodig heeft ([les 2](site:fullstack/docs/online/project/requirements)) |
+| `.gitignore` | wat er bewust niet in komt: `.venv`, `__pycache__` en je databases ([Wat er in je map staat](site:fullstack/docs/veiligheid/zichtbaar/gitignore)) |
+| `README.md` | wat het is en hoe je het start |
+
+De laatste is nieuw.
+
+## Een README
+
+Een **README** is de handleiding van je project. GitHub laat hem zien onder de lijst met bestanden, en het is het eerste wat een bezoeker van je repository leest. Maak in VS Code een bestand `README.md` naast `main.py`:
+
+````markdown
+# Gastenboek
+
+Een gastenboek waarin bezoekers een account maken en een bericht achterlaten.
+Gemaakt met FastAPI in de fullstack-cursus van Coderius.
+
+## Starten
+
+1. Maak een virtual environment en zet hem aan.
+2. Installeer de packages:
+
+   ```
+   python -m pip install -r requirements.txt
+   ```
+
+3. Start de server:
+
+   ```
+   fastapi dev main.py
+   ```
+
+4. Open `http://127.0.0.1:8000` in je browser.
+
+## Wat het kan
+
+- een account maken en inloggen
+- een bericht schrijven, lezen en verwijderen
+````
+
+`.md` staat voor **Markdown**: gewone tekst met een paar tekens die de opmaak bepalen. Een regel met `#` is een titel, `##` een kop daaronder, een regel met `-` of `1.` een punt in een lijst, en tussen drie backticks staat code. Zet een lege regel tussen twee alinea's; anders plakt Markdown ze aan elkaar.
+
+Schrijf op wat iemand nodig heeft die je project nog nooit zag: wat het doet, en welke stappen hij moet zetten. Wat er niet in hoort, zijn wachtwoorden en andere geheimen: de README staat net zo openbaar als je code.
+
+## Op GitHub
+
+Zet de README in git en push:
+
+```bash
+git add README.md
+git commit -m "README toegevoegd"
+git push
+```
+
+Open je repository op GitHub. Onder de lijst met bestanden staat je README, opgemaakt: de titel groot, de stappen genummerd, de commando's in een grijs vak.
+
+Kijk ook naar de lijst zelf. Er staan `main.py`, `requirements.txt`, `README.md`, `.gitignore`, `static` en `templates`. Er staan geen `.db`-bestanden, geen `.venv` en geen `__pycache__`. Staat er toch zo'n bestand, haal het dan uit git zoals in [Wat er in je map staat](site:fullstack/docs/veiligheid/zichtbaar/gitignore).
+
+<Voorspel soort="Controlevraag" vraag="Een klasgenoot clonet je repository en volgt je README stap voor stap. Hij opent zijn browser. Wat ziet hij in het gastenboek?">
+  <Keuze uitleg="De berichten staan in gastenboek.db. Zit dat bestand in je repository?">Jouw berichten en die van je bezoekers</Keuze>
+  <Keuze goed uitleg="De databases staan in .gitignore, dus ze zitten niet in je repository. Zijn server maakt nieuwe, lege databases.">Een leeg gastenboek, en hij moet zelf een account maken</Keuze>
+  <Keuze uitleg="SqliteDict maakt een database aan als hij er nog niet is. Er gaat niets mis.">Een foutmelding, want de databases ontbreken</Keuze>
+  <Uitleg>
+
+  Je code reist mee met je repository, je gegevens niet. Daarom staat je account niet bij je klasgenoot, en komt geen wachtwoord van een bezoeker op GitHub. Op de server gaat het net zo: daar begint je gastenboek leeg.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### GitHub laat de README niet zien
+
+Het bestand staat in de lijst, maar onder de lijst staat niets, of alleen een knop **Add a README**.
+
+**Oorzaak:** het bestand heet anders, bijvoorbeeld `README.md.txt` of `readme.txt`. Windows verbergt de laatste extensie, dus in de Verkenner zie je alleen `README.md`.
+
+**Oplossing:** kijk in VS Code naar de echte naam, en hernoem het bestand naar `README.md`.
+
+### Alles staat op één regel
+
+De lijst met stappen staat op GitHub als één lange alinea.
+
+**Oorzaak:** er staat geen lege regel tussen de alinea en de lijst. Markdown plakt regels zonder lege regel ertussen aan elkaar.
+
+**Oplossing:** zet een lege regel voor de lijst, en tussen elke twee alinea's.
+
+### Een `.db`-bestand op GitHub
+
+Je ziet `gastenboek.db` of `gebruikers.db` in de lijst met bestanden.
+
+**Oorzaak:** de database stond al in git voordat je hem in `.gitignore` zette. Een bestand dat git al kent, blijft git volgen.
+
+**Oplossing:** haal hem uit git met `git rm --cached`, zoals in [Wat er in je map staat](site:fullstack/docs/veiligheid/zichtbaar/gitignore). Er staan wachtwoorden in, ook als hash. Is de repository openbaar, maak dan ook nieuwe wachtwoorden voor de accounts die erin stonden.
+
+## Opdrachten
+
+### Opdracht 1: Make - Jouw README
+
+Schrijf een README voor je eigen project, met wat het is, hoe je het start en wat het kan. Zet hem op GitHub.
+
+<details>
+<summary>Antwoord</summary>
+
+Gebruik het voorbeeld van boven als begin, en pas het aan op jouw site. Heb je packages die je eerst apart moet installeren, of moet er iets anders gebeuren voor de eerste start, zet het dan bij de stappen. Controleer op GitHub dat de README opgemaakt onder de bestanden staat.
+
+</details>
+
+### Opdracht 2: Run - Volg je eigen README
+
+Clone je repository in een nieuwe, lege map op je laptop, en volg je README alsof je het project nooit eerder zag. Werkt het? Beter nog: laat een klasgenoot het doen, zonder dat je helpt.
+
+<details>
+<summary>Tip</summary>
+
+In VS Code haal je een repository op met **Git: Clone** uit de Command Palette. Kies een andere map dan die van je project.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Werkt het, dan staat alles wat je site nodig heeft in je repository. Loop je vast, dan ontbreekt er iets: een package in `requirements.txt` (`ModuleNotFoundError`), een map die niet in git staat, of een stap in je README. Los het op in je project, commit, en probeer het opnieuw in een verse map. Op de server ga je precies zo te werk, alleen zonder dat jij erbij bent.
+
+</details>
+
+Door naar [les 4: Docker installeren](site:fullstack/docs/online/docker/installeren).

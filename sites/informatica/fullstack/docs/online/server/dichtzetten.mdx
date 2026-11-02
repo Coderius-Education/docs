@@ -1,5 +1,5 @@
 ---
-sidebar_label: '8. De deuren dicht'
+sidebar_label: '12. De deuren dicht'
 description: Een firewall laat alleen ssh, 80 en 443 door, en Ubuntu installeert beveiligingsupdates zelf.
 ---
 
@@ -7,7 +7,7 @@ description: Een firewall laat alleen ssh, 80 en 443 door, en Ubuntu installeert
 
 <Voorkennis items={[{site: 'linux', to: '/docs/wsl/apt', label: 'Bijwerken met apt'}]} />
 
-Je server staat op internet, en het logboek van ssh liet zien dat er al aan de deur wordt gemorreld. In de vorige les zette je ssh al op alleen een sleutel. Nu doe je nog twee dingen: alleen de deuren open die nodig zijn, en updates zonder dat jij eraan hoeft te denken.
+Je server staat op internet, en het logboek van ssh liet zien dat er al aan de deur wordt gemorreld. In de vorige les zette je ssh al op alleen een sleutel. Voordat je site erop komt, doe je nog twee dingen: alleen de deuren open die nodig zijn, en updates zonder dat jij eraan hoeft te denken.
 
 ## Een firewall
 
@@ -45,7 +45,7 @@ OpenSSH (v6)               ALLOW       Anywhere (v6)
 443/tcp (v6)               ALLOW       Anywhere (v6)
 ```
 
-Elke deur staat er twee keer: één keer voor gewone internetadressen, en met `(v6)` voor de nieuwere IPv6-adressen. Wat niet in de lijst staat, houdt ufw tegen. Ook als je later per ongeluk een programma op `0.0.0.0` laat luisteren.
+Elke deur staat er twee keer: één keer voor gewone internetadressen, en met `(v6)` voor de nieuwere IPv6-adressen. Wat niet in de lijst staat, houdt ufw tegen. Ook als je later per ongeluk een programma op `0.0.0.0` laat luisteren. Met één uitzondering, en dat is Docker; die zie je in de volgende les.
 
 ## Updates vanzelf
 
@@ -77,15 +77,15 @@ cat /var/run/reboot-required
 *** System restart required ***
 ```
 
-Herstart dan met `sudo reboot`. Je site komt vanzelf terug: dat deed `enable` in [les 5](site:fullstack/docs/online/wsl/dienst).
+Herstart dan met `sudo reboot`. Docker start daarna vanzelf, en je site straks ook, door `restart: unless-stopped` uit [les 9](site:fullstack/docs/online/docker/compose).
 
-<Voorspel soort="Controlevraag" vraag="Je firewall laat alleen OpenSSH, 80 en 443 door. Een klasgenoot opent in zijn browser het adres van je server met :8000 erachter. Wat gebeurt er?">
-  <Keuze uitleg="Poort 8000 staat niet in de lijst van ufw. En op welk adres luistert je site?">Hij ziet je site, zonder Caddy ertussen</Keuze>
-  <Keuze goed uitleg="Twee sloten: de firewall laat 8000 niet door, en je site luistert alleen op 127.0.0.1. Elk van de twee is genoeg.">Zijn browser krijgt geen antwoord</Keuze>
-  <Keuze uitleg="Caddy luistert op 80 en 443. Een verzoek op 8000 komt niet bij Caddy.">Hij ziet de testpagina van Caddy</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je firewall laat alleen OpenSSH, 80 en 443 door. Je start op de server een programma dat op 0.0.0.0:5000 luistert, zonder Docker. Een klasgenoot opent het adres van je server met :5000 erachter. Wat gebeurt er?">
+  <Keuze uitleg="Het programma luistert op 0.0.0.0, dus op internet. Maar wat doet ufw met een poort die niet in de lijst staat?">Hij ziet het programma, want het luistert op 0.0.0.0</Keuze>
+  <Keuze goed uitleg="Poort 5000 staat niet in de lijst van ufw, dus het verzoek komt de server niet binnen, ook al luistert het programma op 0.0.0.0.">Zijn browser krijgt geen antwoord</Keuze>
+  <Keuze uitleg="ufw zegt niets terug tegen een bezoeker. Hij gooit het verzoek weg, en de browser wacht tot hij het opgeeft.">Zijn browser zegt dat de firewall het verbiedt</Keuze>
   <Uitleg>
 
-  Er zitten nu twee sloten op dezelfde deur: de firewall, en het adres `127.0.0.1` uit [les 3](site:fullstack/docs/online/wsl/fastapi-run). Gaat er één mis, bijvoorbeeld omdat je een keer `--host 0.0.0.0` typt om iets te testen, dan houdt de ander het tegen. Twee sloten voor één deur is geen overdaad: zo werkt beveiliging.
+  De firewall is een tweede slot op elke deur: ook een programma dat je per ongeluk op `0.0.0.0` laat luisteren, is niet van buiten te bereiken. Zo werkt beveiliging, met meer sloten dan nodig. Voor Docker geldt dit niet, en dat is het begin van de volgende les.
 
   </Uitleg>
 </Voorspel>
@@ -108,32 +108,35 @@ sudo ufw allow OpenSSH
 
 ## Opdrachten
 
-### Opdracht 1: Investigate - Wie bezoekt je site?
+### Opdracht 1: Run - De deuren dicht
 
-Open je site op je telefoon via mobiele data. Kijk daarna op de server welk adres je site bij dat verzoek zag:
+Zet de firewall aan met OpenSSH, 80 en 443, en controleer dat automatische updates aanstaan. Log daarna in een tweede terminal opnieuw in, om te zien dat ssh er nog door mag.
+
+<details>
+<summary>Antwoord</summary>
 
 ```bash
-sudo journalctl -u gastenboek -n 5
+sudo ufw allow OpenSSH
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+sudo ufw status
+cat /etc/apt/apt.conf.d/20auto-upgrades
 ```
 
-Is dat `127.0.0.1`, het adres van Caddy?
+`ufw status` toont de zes regels van hierboven, en in `20auto-upgrades` staan twee keer `"1"`. Kom je in de tweede terminal niet meer binnen, gebruik dan de console van je hostingbedrijf, zoals bij **Jezelf buitengesloten**.
+
+</details>
+
+### Opdracht 2: Investigate - Wat luistert er?
+
+Kijk met `sudo ss -tlnp` welke programma's luisteren. Welke luisteren op `0.0.0.0`, `*` of `[::]`, dus op internet? Staat elk daarvan in `ufw status`?
 
 <details>
 <summary>Antwoord</summary>
 
-Nee: je ziet het adres van je telefoon op internet. Caddy zette het in de kop `X-Forwarded-For`, en `fastapi run` gelooft die kop omdat het verzoek van `127.0.0.1` komt, zoals in [les 6](site:fullstack/docs/online/wsl/voordeur). Daardoor telt de limiet uit de route Veiligheid per bezoeker, en niet iedereen samen.
+Op een verse Ubuntu 24.04 luistert alleen ssh op internet, op poort 22, en die staat open. Daarnaast zie je `127.0.0.53` en `127.0.0.54` op poort 53: dat is `systemd-resolved`, dat namen opzoekt voor de server zelf, alleen op `127.0.0.…`. Bij jouw hostingbedrijf kan er meer staan. Staat er iets op `0.0.0.0` dat je niet kent, zoek dan uit wat het is; de firewall houdt het tegen, maar een programma dat je niet nodig hebt, zet je beter uit.
 
 </details>
 
-### Opdracht 2: Investigate - Wat luistert er nog?
-
-Kijk met `sudo ss -tlnp` op de server welke programma's luisteren op `0.0.0.0`, `*` of `[::]`. Staat elk van die poorten in `ufw status`?
-
-<details>
-<summary>Antwoord</summary>
-
-Je ziet ssh (`:22`) en Caddy (`:80` en `:443`), en die staan alle drie open in ufw. Je site staat op `127.0.0.1:8000`, Caddy's eigen poort op `127.0.0.1:2019`. Staat er nog iets anders op `0.0.0.0`, zoek dan uit wat het is; de firewall houdt het tegen, maar een programma dat je niet nodig hebt, zet je beter uit.
-
-</details>
-
-Door naar [les 9: je domein met HTTPS](site:fullstack/docs/online/server/https).
+Door naar [les 13: je site op de server](site:fullstack/docs/online/server/site).

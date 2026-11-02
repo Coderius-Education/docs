@@ -1,0 +1,115 @@
+---
+sidebar_label: '8. Je berichten bewaren'
+description: Een volume is opslag buiten de container. Met -v komt de map data daarin, en dan overleven de berichten een docker rm en een nieuw image.
+---
+
+# Online zetten: je berichten bewaren
+
+Een container gooi je weg zodra er een nieuwe versie is. In [les 6](site:fullstack/docs/online/docker/container) zag je wat er dan met je berichten gebeurt: ze gaan mee. Daarom komen de databases buiten de container, in een **volume**: opslag die Docker los van elke container bewaart.
+
+Sinds de vorige les staan alle databases in één map, `/app/data`. Die map zet je in een volume:
+
+```bash
+docker rm -f gastenboek
+docker run -d --name gastenboek -p 8000:8000 -v gastenboek-data:/app/data gastenboek
+```
+
+`-v gastenboek-data:/app/data` betekent: koppel het volume `gastenboek-data` aan de map `/app/data` in de container. Voor de dubbele punt staat de naam van het volume, erna de map in de container. Bestaat het volume nog niet, dan maakt Docker het. Wat je site in `/app/data` schrijft, komt in het volume.
+
+Bekijk het volume:
+
+```bash
+docker volume ls
+```
+
+```text
+DRIVER    VOLUME NAME
+local     gastenboek-data
+```
+
+## De proef
+
+Maak een account, schrijf een bericht, en gooi de container weg. Start een nieuwe, met hetzelfde volume:
+
+```bash
+docker rm -f gastenboek
+docker run -d --name gastenboek -p 8000:8000 -v gastenboek-data:/app/data gastenboek
+```
+
+Je bericht staat er nog, en je kunt inloggen met je account. De container is nieuw, maar de databases kwamen uit het volume.
+
+Een nieuw volume begint met wat er in het image in die map stond. In je image is `/app/data` een lege map van `app` (uit de vorige les), dus het volume is ook van `app`. Zo mag je site er meteen in schrijven.
+
+<Voorspel soort="Controlevraag" vraag="Je verandert een template, bouwt het image opnieuw, gooit de container weg en start een nieuwe met hetzelfde -v. Wat zie je?">
+  <Keuze goed uitleg="De code komt uit het nieuwe image, de databases uit het volume. Die twee staan los van elkaar.">De nieuwe template, met de oude berichten</Keuze>
+  <Keuze uitleg="Het volume staat los van het image. Komt een nieuw image erbij aan?">Een leeg gastenboek, met de nieuwe template</Keuze>
+  <Keuze uitleg="De container komt van het nieuwe image. Waar komt de template vandaan?">De oude template, want het volume bewaart de oude versie van je site</Keuze>
+  <Uitleg>
+
+  Het image bevat je code, het volume je gegevens. Zo gaat een nieuwe versie straks op de server: een nieuw image, een nieuwe container, en hetzelfde volume. Je bezoekers merken alleen dat de site veranderd is.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+Bij een volume gaat het mis zonder foutmelding. Je site werkt, maar na een `docker rm` zijn de berichten toch weg.
+
+### Een andere naam
+
+**Oorzaak:** je typte de naam van het volume een keer anders, zoals `gastenboek_data` of `gastenboekdata`. Docker maakt dan zonder iets te zeggen een nieuw, leeg volume.
+
+**Oplossing:** kijk met `docker volume ls`. Staan er twee, gebruik dan steeds dezelfde naam. Een volume dat je niet meer nodig hebt, gooi je weg met `docker volume rm` en de naam.
+
+### Een andere map
+
+**Oorzaak:** de map na de dubbele punt is niet de map waar je site schrijft, zoals `-v gastenboek-data:/data`. Het volume blijft leeg, en de databases komen in de container, in `/app/data`.
+
+**Oplossing:** de map moet precies `/app/data` zijn: `WORKDIR /app` uit de Dockerfile plus `data` uit `main.py`.
+
+### volume is in use
+
+```text
+Error response from daemon: remove gastenboek-data: volume is in use - [3eb36ed7ad44…]
+```
+
+**Oorzaak:** je probeert een volume weg te gooien dat nog aan een container hangt, ook een gestopte.
+
+**Oplossing:** gooi eerst de container weg. Bedenk wel dat een volume weggooien je berichten weggooit, en dat dat niet terug te draaien is.
+
+## Opdrachten
+
+### Opdracht 1: Run - Blijvende berichten
+
+Start je site met een volume, schrijf een bericht, gooi de container weg, en start een nieuwe. Verander daarna een tekst in een template, bouw opnieuw, en doe het nog een keer.
+
+<details>
+<summary>Antwoord</summary>
+
+```bash
+docker rm -f gastenboek
+docker run -d --name gastenboek -p 8000:8000 -v gastenboek-data:/app/data gastenboek
+```
+
+Na elke nieuwe container staat je bericht er nog. Na het bouwen zie je de nieuwe tekst, met de oude berichten eronder.
+
+</details>
+
+### Opdracht 2: Investigate - Wat zit er in het volume?
+
+Je kunt een volume ook aan een andere container hangen. Kijk met een losse container wat erin staat:
+
+```bash
+docker run --rm -v gastenboek-data:/data python:3.13-slim ls -ln /data
+```
+
+Welke bestanden staan erin? Van wie zijn ze, en waarom staat er een getal in plaats van een naam?
+
+<details>
+<summary>Antwoord</summary>
+
+Je ziet `gastenboek.db` en `gebruikers.db`, en meer als je site meer databases heeft. Ze zijn van `999`. `-n` toont nummers in plaats van namen, en de gebruiker `app` heeft in jouw image nummer 999. In het image `python:3.13-slim` bestaat geen gebruiker `app`. Linux bewaart bij een bestand alleen het nummer; de naam zoekt hij op in de gebruikers van de computer, of hier van de container. Je ziet ook dat een volume niet aan één container vastzit: elke container die hem koppelt, ziet dezelfde bestanden.
+
+</details>
+
+Door naar [les 9: alles in één bestand](site:fullstack/docs/online/docker/compose).

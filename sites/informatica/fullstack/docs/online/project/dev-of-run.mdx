@@ -1,0 +1,111 @@
+---
+sidebar_label: '1. fastapi dev of fastapi run'
+description: fastapi dev is voor jou, fastapi run voor je bezoekers. Het verschil zit in herladen en in het adres waarop de server luistert.
+---
+
+# Online zetten: fastapi dev of fastapi run
+
+Tot nu toe startte je je server met `fastapi dev`. Dat is een server voor jou, de ontwikkelaar (*developer*). Voor bezoekers is er een tweede:
+
+```bash
+fastapi run main.py
+```
+
+Typ het in de terminal van VS Code, in je project. Je site doet het precies zoals met `dev`. De verschillen staan in de eerste regels die de terminal laat zien. Met `fastapi dev`:
+
+```text
+ ⚡️ Starting FastAPI in development mode
+ 🌐 Server started at http://127.0.0.1:8000
+ ▕  Will watch for changes in these directories:
+```
+
+En met `fastapi run`:
+
+```text
+ ⚡️ Starting FastAPI in production mode
+ 🌐 Server started at http://0.0.0.0:8000
+```
+
+*Production* is de stand voor echte bezoekers. Er zijn twee dingen anders.
+
+## Twee verschillen
+
+| | `fastapi dev` | `fastapi run` |
+|:---|:---|:---|
+| Je verandert `main.py` | de server start vanzelf opnieuw | de server merkt niets |
+| Luistert op | `127.0.0.1`: alleen deze computer | `0.0.0.0`: elk netwerk van deze computer |
+
+Opnieuw starten bij elke wijziging is handig als je bouwt. Op een server is het een risico: een half opgeslagen bestand zet je site plat, en het opletten kost rekenkracht. Daar start je de server zelf opnieuw als je klaar bent. Met `dev` staat er daarom `Will watch for changes`, met `run` niet.
+
+Het adres zegt wie er bij je server kan. `127.0.0.1` is "deze computer", en daar komt niemand anders bij. `0.0.0.0` betekent: luister op elk netwerk waar deze computer aan hangt. Op een server is dat internet.
+
+## Zelf kiezen waar hij luistert
+
+Met `--host` en `--port` kies je het adres zelf:
+
+```bash
+fastapi run main.py --host 127.0.0.1 --port 8000
+```
+
+Op je laptop wil je dat: je site is nog niet klaar voor bezoekers, en op het wifi van school kan dan niemand meekijken. Straks draait je site in een **container**, een afgeschermd stukje Linux. Daar is het andersom: de container is zijn eigen kleine computer, en dan moet hij juist op `0.0.0.0` luisteren om van buiten de container bereikbaar te zijn. Dat zie je in [les 6](site:fullstack/docs/online/docker/container).
+
+`fastapi run` geeft je handleiding op `/docs` ook aan iedereen. Die heb je in de route Veiligheid uitgezet ([Wat je server laat zien](site:fullstack/docs/veiligheid/zichtbaar/uitzetten)); doe dat nu als je het nog niet deed.
+
+<Voorspel soort="Controlevraag" vraag="Je server draait met fastapi run. Je verandert in main.py de tekst van een pagina en slaat op. Je herlaadt de pagina in je browser. Wat zie je?">
+  <Keuze uitleg="Dat doet fastapi dev. Kijkt fastapi run naar je bestanden?">De nieuwe tekst</Keuze>
+  <Keuze goed uitleg="fastapi run las main.py één keer, bij het starten. Wat je daarna verandert, draait pas na een herstart.">De oude tekst, tot je de server stopt en opnieuw start</Keuze>
+  <Keuze uitleg="De server blijft draaien met de code die hij bij het starten las. Er gaat niets mis.">Een foutmelding, want het bestand is veranderd terwijl de server draaide</Keuze>
+  <Uitleg>
+
+  `fastapi run` leest je code bij het starten en kijkt daarna niet meer. Op een server is dat wat je wilt: een nieuwe versie gaat pas live als jij de server opnieuw start, in [les 15](site:fullstack/docs/online/server/nieuwe-versie).
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Address already in use
+
+```text
+[Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+```
+
+Op Windows staat er `only one usage of each socket address` in plaats van `address already in use`.
+
+**Oorzaak:** er draait al een server op poort 8000, vaak je eigen `fastapi dev` in een andere terminal.
+
+**Oplossing:** stop die eerst met Ctrl+C, of kies een andere poort met `--port 8001`.
+
+### Windows vraagt of Python het netwerk op mag
+
+Bij de eerste `fastapi run` opent Windows een venster van de firewall, met de vraag of Python toegang mag hebben tot het netwerk.
+
+**Oorzaak:** `fastapi run` luistert op `0.0.0.0`, dus ook op het wifi. De firewall van Windows vraagt of dat mag.
+
+**Oplossing:** klik op **Annuleren**. Je hebt het niet nodig: in je browser op dezelfde laptop werkt `http://127.0.0.1:8000` toch. Een klasgenoot op hetzelfde wifi kan er dan niet bij, en dat is goed.
+
+## Opdrachten
+
+### Opdracht 1: Run - Het verschil zien
+
+Start je project met `fastapi run main.py`, verander een tekst in `main.py`, en herlaad je browser. Stop en start de server, en herlaad nog een keer.
+
+<details>
+<summary>Antwoord</summary>
+
+Na de eerste keer herladen zie je de oude tekst, na de herstart de nieuwe. Een template (`templates/…html`) werkt anders: Jinja leest een template opnieuw als het bestand veranderd is, dus daar zie je een wijziging wel zonder herstart. Python-code in `main.py` nooit.
+
+</details>
+
+### Opdracht 2: Investigate - Waar staat het in de terminal?
+
+Start je project één keer met `fastapi dev main.py` en één keer met `fastapi run main.py --host 127.0.0.1`. Welke regels in de terminal laten de twee verschillen uit de tabel zien?
+
+<details>
+<summary>Antwoord</summary>
+
+Het adres staat bij `Server started at`: met `dev` en met `--host 127.0.0.1` is dat `http://127.0.0.1:8000`, zonder `--host` was het `http://0.0.0.0:8000`. Het herladen zie je aan `Will watch for changes in these directories`: die regel staat er alleen bij `dev`. Bovenaan staat ook nog `development mode` of `production mode`.
+
+</details>
+
+Door naar [les 2: wat je project nodig heeft](site:fullstack/docs/online/project/requirements).

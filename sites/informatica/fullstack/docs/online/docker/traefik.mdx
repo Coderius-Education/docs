@@ -1,0 +1,231 @@
+---
+sidebar_label: '10. Een voordeur met Traefik'
+description: Traefik ontvangt bezoekers op poort 80 en geeft elk verzoek door aan de container die bij de naam hoort. Je site zelf heeft geen poort meer naar buiten.
+---
+
+# Online zetten: een voordeur met Traefik
+
+Een bezoeker typt een naam zonder poortnummer: `http://…` gaat naar poort 80, `https://…` naar poort 443. Op een server draaien vaak meer sites, en ze kunnen niet allemaal poort 80 hebben. Daarom staat er één programma op poort 80 en 443 dat elk verzoek doorgeeft aan de juiste site: een **reverse proxy**, de voordeur van je server.
+
+```text
+browser van de bezoeker  →  Traefik, op poort 80 en 443  →  de container van jouw site
+```
+
+Hier gebruik je **Traefik**. Het draait zelf in een container, en kijkt bij Docker welke andere containers er zijn. Een container die een paar **labels** heeft (regels met instellingen), krijgt vanzelf een plek achter de voordeur. Op de server regelt Traefik ook HTTPS, in [les 14](site:fullstack/docs/online/server/https).
+
+## Een netwerk voor de voordeur
+
+Traefik en je site moeten elkaar kunnen bereiken. Daarvoor maak je één keer een netwerk van Docker, `web`:
+
+```bash
+docker network create web
+```
+
+Elke container in `web` kan de andere bereiken, en containers buiten `web` niet.
+
+## Traefik starten
+
+De voordeur hoort niet bij één site, dus hij krijgt een eigen map, naast je project:
+
+```bash
+mkdir ~/traefik
+cd ~/traefik
+nano compose.yaml
+```
+
+```yaml
+services:
+  traefik:
+    image: traefik:v3
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - web
+    restart: unless-stopped
+
+networks:
+  web:
+    external: true
+```
+
+| Regel | Betekenis |
+|:---|:---|
+| `image: traefik:v3` | geen Dockerfile: Docker haalt Traefik van Docker Hub |
+| `--providers.docker=true` | kijk bij Docker welke containers er zijn |
+| `--providers.docker.exposedbydefault=false` | alleen containers met `traefik.enable=true` komen achter de voordeur |
+| `--entrypoints.web.address=:80` | een ingang met de naam `web`, op poort 80 |
+| `/var/run/docker.sock:…:ro` | hierlangs vraagt Traefik aan Docker welke containers er zijn |
+| `external: true` | het netwerk `web` bestaat al, maak het niet opnieuw |
+
+```bash
+docker compose up -d
+```
+
+Open `http://localhost` op Windows. Traefik antwoordt met `404 page not found`: de voordeur staat, maar er is nog geen site achter.
+
+:::caution[Toegang tot Docker]
+Met `docker.sock` kan Traefik Docker alles vragen, en `:ro` verandert daar weinig aan. Geef die toegang daarom alleen aan een programma dat je vertrouwt en bijhoudt, zoals Traefik zelf.
+:::
+
+## Je site achter de voordeur
+
+Verander de `compose.yaml` van je project. De `ports` gaan weg: niemand komt nog rechtstreeks bij je site. Er komen een netwerk, labels en een instelling bij:
+
+```yaml
+services:
+  gastenboek:
+    build: .
+    volumes:
+      - data:/app/data
+    networks:
+      - web
+    environment:
+      - FORWARDED_ALLOW_IPS=*
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gastenboek.rule=Host(`gastenboek.localhost`)
+      - traefik.http.services.gastenboek.loadbalancer.server.port=8000
+    restart: unless-stopped
+
+volumes:
+  data:
+
+networks:
+  web:
+    external: true
+```
+
+De labels zijn voor Traefik:
+
+- `traefik.enable=true`: deze container hoort achter de voordeur.
+- `…routers.gastenboek.rule=Host(…)`: stuur een verzoek voor de naam `gastenboek.localhost` naar deze container. Let op de backticks rond de naam.
+- `…services.gastenboek.loadbalancer.server.port=8000`: in de container luistert je site op poort 8000.
+
+```bash
+cd ~/gastenboek
+docker compose up -d --build
+```
+
+Open `http://gastenboek.localhost`. Een naam die eindigt op `.localhost` wijst in je browser altijd naar je eigen computer. Traefik ziet welke naam je typte, en geeft het verzoek aan je site.
+
+## Wie is de bezoeker?
+
+Voor je site komt elk verzoek nu van Traefik. Traefik zet het adres van de echte bezoeker daarom in een kop van het verzoek, `X-Forwarded-For`. Een kop die een bezoeker zelf meestuurt, vervangt Traefik door het echte adres.
+
+`fastapi run` gelooft die kop alleen van `127.0.0.1`, en Traefik heeft een adres in het netwerk `web`. Daarom staat er `FORWARDED_ALLOW_IPS=*`: geloof de kop van iedereen. Zonder die regel ziet je site bij elk verzoek het adres van Traefik, en telt de limiet uit [Te veel verzoeken](site:fullstack/docs/veiligheid/dos/limiet) alle bezoekers samen: na een paar verzoeken krijgt iedereen een `429`.
+
+`*` is hier veilig om één reden: je site heeft geen `ports` meer. Elk verzoek komt via Traefik, dus elke `X-Forwarded-For` komt van Traefik. Zet je `ports` ooit terug, haal dan ook deze regel weg.
+
+<Voorspel soort="Controlevraag" vraag="Je site draait achter Traefik, zonder ports. Je opent http://127.0.0.1:8000. Wat zie je?">
+  <Keuze uitleg="Zonder ports is er geen deur van de computer naar de container. Komt het verzoek ergens binnen?">Je gastenboek, want je site luistert nog op poort 8000</Keuze>
+  <Keuze goed uitleg="Poort 8000 van de computer is nergens meer aan gekoppeld. Je site luistert op 8000 in de container, maar daar komt alleen Traefik bij, via het netwerk web.">Je browser krijgt geen antwoord</Keuze>
+  <Keuze uitleg="Traefik luistert op poort 80, niet op 8000. Een verzoek op 8000 komt niet bij Traefik.">De 404 van Traefik</Keuze>
+  <Uitleg>
+
+  Er is nog maar één deur naar buiten, en dat is Traefik. Je site staat erachter, in een netwerk waar alleen containers bij kunnen. Zo kan niemand om de voordeur heen, en hoef je straks maar één deur te bewaken.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### 404 page not found
+
+Op `http://gastenboek.localhost` zegt Traefik `404 page not found`.
+
+**Oorzaak:** Traefik kent geen site voor deze naam. Meestal een tikfout in een label (`traefik.enabled` in plaats van `traefik.enable`), een andere naam in `Host(…)` dan die je typte, of gewone aanhalingstekens in plaats van backticks.
+
+**Oplossing:** vergelijk je labels letter voor letter met die hierboven, en start opnieuw met `docker compose up -d`. Kijk ook in het logboek van Traefik: `docker compose logs` in `~/traefik`.
+
+### Bad Gateway
+
+Traefik antwoordt met `Bad Gateway`.
+
+**Oorzaak:** Traefik weet welke container het is, maar krijgt geen antwoord. Vaak staat er een andere poort in het label dan 8000, of start je site niet.
+
+**Oplossing:** controleer `server.port=8000`, en kijk met `docker compose logs` in je project of je site draait.
+
+### client version 1.24 is too old
+
+In het logboek van Traefik staat steeds:
+
+```text
+Error response from daemon: client version 1.24 is too old. Minimum supported API version is 1.40, please upgrade your client to a newer version
+```
+
+**Oorzaak:** een oude versie van Traefik, zoals `traefik:v3.5`, praat met Docker op een manier die Docker 29 niet meer kent.
+
+**Oplossing:** gebruik `image: traefik:v3`, en haal de nieuwste op met `docker compose pull` en `docker compose up -d`.
+
+### network web declared as external, but could not be found
+
+**Oorzaak:** het netwerk `web` bestaat niet.
+
+**Oplossing:** `docker network create web`, en daarna opnieuw `docker compose up -d`.
+
+### address already in use
+
+```text
+failed to bind host port 0.0.0.0:80/tcp: address already in use
+```
+
+**Oorzaak:** een ander programma heeft poort 80 al. Vaak is het nginx uit [Diensten](site:linux/docs/wsl/diensten) in de Linux-cursus.
+
+**Oplossing:** zet het uit met `sudo systemctl disable --now nginx`, en start Traefik opnieuw.
+
+## Opdrachten
+
+### Opdracht 1: Run - Je site achter de voordeur
+
+Start Traefik, zet je site erachter, en open `http://gastenboek.localhost`. Controleer dat `http://127.0.0.1:8000` niet meer werkt.
+
+<details>
+<summary>Antwoord</summary>
+
+```bash
+docker network create web
+cd ~/traefik
+docker compose up -d
+cd ~/gastenboek
+docker compose up -d --build
+```
+
+Op `http://gastenboek.localhost` staat je gastenboek, met je berichten uit de vorige les: het volume is hetzelfde. Op poort 8000 antwoordt niemand. Zet de veranderde `compose.yaml` in git.
+
+</details>
+
+### Opdracht 2: Investigate - Een tweede site
+
+Eén voordeur kan meer sites bedienen. Maak een map `~/whoami` met deze `compose.yaml`, en start hem:
+
+```yaml
+services:
+  whoami:
+    image: traefik/whoami
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoami.rule=Host(`whoami.localhost`)
+
+networks:
+  web:
+    external: true
+```
+
+Open `http://whoami.localhost`. Dit kleine programma laat elk verzoek zien zoals het binnenkwam. Welke kop zette Traefik erbij met jouw adres? Waarom staat er geen label met een poort?
+
+<details>
+<summary>Antwoord</summary>
+
+Je ziet onder andere `X-Forwarded-For` en `X-Real-Ip`, met het adres waarvan jouw browser kwam, en `X-Forwarded-Host: whoami.localhost`. Dat zijn de koppen die Traefik toevoegt. In WSL is dat adres iets als `172.18.0.1`: je browser komt via Windows en het netwerk van Docker binnen. Op de server staat er het adres van de bezoeker op internet. Een label met de poort is hier niet nodig: het image van `whoami` zegt zelf op welke poort het luistert, en dan vindt Traefik hem. Jouw image zegt dat niet, daarom heeft je gastenboek het label wel. Gooi de tweede site daarna weg met `docker compose down` in `~/whoami`.
+
+</details>
+
+Door naar [les 11: een server huren en inloggen](site:fullstack/docs/online/server/huren).

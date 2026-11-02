@@ -1,13 +1,13 @@
 ---
-sidebar_label: '7. Een server huren en inloggen'
-description: Een server met Ubuntu op internet, inloggen met je ssh-sleutel, een eigen gebruiker met sudo, ssh alleen met een sleutel, een domeinnaam, een deploy key, en daarna dezelfde stappen als in WSL.
+sidebar_label: '11. Een server huren en inloggen'
+description: Een server met Ubuntu op internet, inloggen met je ssh-sleutel, een eigen gebruiker met sudo, ssh alleen met een sleutel, en een domeinnaam.
 ---
 
 # Online zetten: een server huren en inloggen
 
 <Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'ssh en een sleutelpaar'}, {site: 'linux', to: '/docs/terminal/bestanden-lezen', label: 'Inlogpogingen in een logboek'}, {site: 'linux', to: '/docs/wsl/nano', label: 'Een bestand in /etc bewerken met sudo nano'}]} />
 
-Alles werkt in WSL. Nu doe je het op een computer die dag en nacht aan internet hangt: een **server**. Je huurt er een bij een hostingbedrijf, of je krijgt er een van school. Zo'n gehuurde server is meestal een stukje van een grotere computer, en heet een **VPS** (*virtual private server*). De kleinste is ruim genoeg voor een gastenboek.
+Je site draait in Docker, achter een voordeur. Nu zet je hem op een computer die dag en nacht aan internet hangt: een **server**. Je huurt er een bij een hostingbedrijf, of je krijgt er een van school. Zo'n gehuurde server is meestal een stukje van een grotere computer, en heet een **VPS** (*virtual private server*). De kleinste is ruim genoeg voor een gastenboek.
 
 :::caution[Vraag eerst toestemming]
 Een server kost geld, ook als je hem vergeet. Huur er alleen een met toestemming van een ouder of verzorger, en zeg hem op als je klaar bent. Krijg je er een van school, houd je dan aan wat je docent erover zegt.
@@ -99,7 +99,7 @@ Controleer in de tweede terminal ook dat de deur echt dicht is: `ssh root@203.0.
 
 ## Een naam voor je server
 
-Een IP-adres onthoudt niemand. Met een **domeinnaam** zoals `gastenboek.voorbeeld.nl` is je site te vinden, en zonder naam krijg je straks geen HTTPS. Een naam huur je bij een domeinbedrijf, of je docent geeft je een naam onder het domein van school.
+Een IP-adres onthoudt niemand. Met een **domeinnaam** zoals `gastenboek.voorbeeld.nl` is je site te vinden. Traefik heeft hem nodig, want hij kiest de site op de naam ([les 10](site:fullstack/docs/online/docker/traefik)), en zonder naam krijg je geen HTTPS. Een naam huur je bij een domeinbedrijf, of je docent geeft je een naam onder het domein van school.
 
 Bij de naam zet je een **A-record**: een regel die zegt welk IP-adres bij de naam hoort. Het kan een uur duren voor de hele wereld de nieuwe regel kent. Controleer het in WSL:
 
@@ -109,35 +109,13 @@ ping -c 1 gastenboek.voorbeeld.nl
 
 Op de eerste regel staat het IP-adres. Is dat dat van jouw server, dan klopt de naam.
 
-## Een privé-repository: een deploy key
-
-Is je repository privé, geef de server dan een eigen sleutel die alleen jouw project mag lezen. Doe dit vóór de stappen hieronder, want daarin haal je je project op. De gebruiker `gastenboek` uit [les 4](site:fullstack/docs/online/wsl/eigen-gebruiker) maak je daarom nu al. Maak de sleutel als `gastenboek`:
-
-```bash
-sudo adduser --system --group --home /srv/gastenboek gastenboek
-sudo -H -u gastenboek ssh-keygen -t ed25519
-sudo cat /srv/gastenboek/.ssh/id_ed25519.pub
-```
-
-Druk bij de vragen op Enter (een passphrase kan hier niet: de server moet de sleutel zonder jou kunnen gebruiken). Zet de publieke sleutel op GitHub bij je repository onder **Settings**, **Deploy keys**, en laat **Allow write access** uit. In les 4 clone je daarna met het ssh-adres in plaats van het https-adres. De eerste keer vraagt ssh of je de vingerafdruk van GitHub vertrouwt; typ `yes`.
-
-```bash
-sudo -H -u gastenboek git clone git@github.com:sam/gastenboek.git /srv/gastenboek/app
-```
-
-Wordt je server ooit gekraakt, dan kan de sleutel alleen dit ene project lezen, en niets veranderen.
-
-## Dezelfde stappen als in WSL
-
-Doe op de server, als `sam`, wat je in WSL deed (heb je `gastenboek` al gemaakt voor de deploy key, sla die regel dan over): [les 2](site:fullstack/docs/online/wsl/project-in-linux) (git en `python3-venv` installeren), [les 4](site:fullstack/docs/online/wsl/eigen-gebruiker), [les 5](site:fullstack/docs/online/wsl/dienst) en [les 6](site:fullstack/docs/online/wsl/voordeur). Je project zet je meteen in `/srv/gastenboek/app`; in je eigen thuismap op de server hoeft het niet. Daarna staat je site op `http://203.0.113.10`.
-
 <Voorspel soort="Controlevraag" vraag="Je server staat een uur aan, en je hebt het adres aan niemand gegeven. Je kijkt met sudo journalctl -u ssh in het logboek van ssh. Wat staat er?">
   <Keuze uitleg="Niemand kent je adres, maar programma's proberen alle adressen op internet, de hele dag.">Alleen de keren dat jij inlogde</Keuze>
   <Keuze goed uitleg="Programma's lopen alle adressen op internet af en proberen in te loggen met namen als root en admin. Binnen een uur staan ze in je logboek.">Ook mislukte pogingen van onbekende adressen, met namen als root en admin</Keuze>
   <Keuze uitleg="ssh schrijft elke poging op, ook een mislukte. Daar is het logboek voor.">Niets: ssh schrijft alleen op wie er echt binnenkwam</Keuze>
   <Uitleg>
 
-  Je ziet regels als `Invalid user admin from …` en `Connection closed by authenticating user root …`. Dat zijn geen mensen die jou zoeken, maar programma's die elk adres proberen. Wachtwoorden staan uit, dus met raden komen ze niet binnen. In de volgende les zet je de andere deuren dicht. Doe die les meteen na deze.
+  Je ziet regels als `Invalid user admin from …` en `Connection closed by authenticating user root …`. Dat zijn geen mensen die jou zoeken, maar programma's die elk adres proberen. Wachtwoorden staan uit, dus met raden komen ze niet binnen. In de volgende les zet je de andere deuren dicht. Doe die les meteen na deze, en zet pas daarna je site erop.
 
   </Uitleg>
 </Voorspel>
@@ -177,7 +155,7 @@ ping: gastenboek.voorbeeld.nl: Name or service not known
 
 **Oorzaak:** het A-record is er nog niet, of de wereld kent het nog niet.
 
-**Oplossing:** controleer het record bij je domeinbedrijf, en wacht een uur. Je site werkt intussen op het IP-adres.
+**Oplossing:** controleer het record bij je domeinbedrijf, en wacht een uur. Ga intussen door met de volgende les; die heeft de naam nog niet nodig.
 
 ### sshd -t geeft een fout
 
@@ -191,14 +169,20 @@ ping: gastenboek.voorbeeld.nl: Name or service not known
 
 ## Opdrachten
 
-### Opdracht 1: Run - Je site op internet
+### Opdracht 1: Run - Alleen met je sleutel
 
-Zet je site op de server, achter Caddy, als dienst. Open `http://` met het IP-adres van je server op je telefoon, via mobiele data en niet via het wifi van school.
+Huur of krijg een server, maak je eigen gebruiker, en zet ssh op alleen een sleutel. Laat in een tweede terminal zien dat inloggen als `root` en inloggen zonder sleutel allebei geweigerd worden, en dat `ssh sam@` met je eigen adres wel werkt.
 
 <details>
 <summary>Antwoord</summary>
 
-Je ziet je gastenboek, met een lege lijst: de databases van WSL staan niet op de server. Werkt het niet, ga dan de stappen van achter naar voren na: draait de dienst (`systemctl status gastenboek`), draait Caddy (`systemctl status caddy`), en geeft `curl http://127.0.0.1:8000` op de server je site?
+```bash
+ssh root@203.0.113.10
+ssh -o PubkeyAuthentication=no sam@203.0.113.10
+ssh sam@203.0.113.10
+```
+
+De eerste twee geven `Permission denied (publickey)`, de derde laat je binnen zonder wachtwoord. Lukt de derde niet, sluit dan nog niets: herstel het in de terminal die nog als `sam` of `root` openstaat, met de oplossingen hierboven.
 
 </details>
 
@@ -224,4 +208,4 @@ Het getal verschilt per server en per uur, maar nul is het zelden.
 
 </details>
 
-Door naar [les 8: de deuren dicht](site:fullstack/docs/online/server/dichtzetten).
+Door naar [les 12: de deuren dicht](site:fullstack/docs/online/server/dichtzetten).

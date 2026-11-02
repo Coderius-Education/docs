@@ -1,0 +1,163 @@
+---
+sidebar_label: '9. Alles in één bestand'
+description: compose.yaml zet bouwen, de poort, het volume en vanzelf herstarten in één bestand, en docker compose up doet de rest.
+---
+
+# Online zetten: alles in één bestand
+
+Je container start nu met een lange regel:
+
+```bash
+docker run -d --name gastenboek -p 8000:8000 -v gastenboek-data:/app/data gastenboek
+```
+
+Elke keer moet je die precies goed typen, en één tikfout geeft een leeg volume ([les 8](site:fullstack/docs/online/docker/volume)). Met **Docker Compose** zet je wat er in die regel staat in een bestand, en start je alles met één kort commando.
+
+## compose.yaml
+
+Maak naast de Dockerfile een bestand `compose.yaml`:
+
+```yaml
+services:
+  gastenboek:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - data:/app/data
+    restart: unless-stopped
+
+volumes:
+  data:
+```
+
+Het is **YAML**: een bestand van namen en waarden, waarin de inspringing zegt wat bij wat hoort. Gebruik spaties, nooit een tab, en steeds twee per niveau.
+
+| Regel | Betekenis |
+|:---|:---|
+| `services:` | de containers van dit project; hier één, `gastenboek` |
+| `build: .` | bouw het image met de Dockerfile in deze map |
+| `ports:` | wat `-p` deed, maar alleen op `127.0.0.1` (zie hieronder) |
+| `volumes:` (bij de service) | wat `-v` deed: het volume `data` in `/app/data` |
+| `restart: unless-stopped` | start de container opnieuw na een crash of een herstart, tenzij jij hem stopte |
+| `volumes:` (onderaan) | de volumes die dit project gebruikt |
+
+Bij `ports` staat `127.0.0.1` ervoor. Dan is poort 8000 alleen te bereiken vanaf deze computer, en niet vanaf het wifi. Op een server maakt dat straks veel uit; in [les 13](site:fullstack/docs/online/server/site) zie je waarom.
+
+## Starten en stoppen
+
+Gooi eerst de container uit de vorige les weg, want die heeft poort 8000. Start daarna alles:
+
+```bash
+docker rm -f gastenboek
+docker compose up -d --build
+```
+
+`up` maakt en start wat er in `compose.yaml` staat, `-d` zet het op de achtergrond, en `--build` bouwt het image eerst opnieuw. Kijk wat er draait:
+
+```bash
+docker compose ps
+```
+
+```text
+NAME                      IMAGE                   COMMAND                  SERVICE      CREATED        STATUS         PORTS
+gastenboek-gastenboek-1   gastenboek-gastenboek   "fastapi run main.py…"   gastenboek   1 second ago   Up 1 second    127.0.0.1:8000->8000/tcp
+```
+
+Compose verzint de namen zelf, met de naam van je map ervoor: de container heet `gastenboek-gastenboek-1`, het image `gastenboek-gastenboek`, en het volume `gastenboek_data`. Je hoeft die namen niet te typen. Elk `docker compose`-commando in deze map gaat over dit project:
+
+| Commando | Wat er gebeurt |
+|:---|:---|
+| `docker compose up -d --build` | bouwen en starten, of bijwerken als het al draait |
+| `docker compose ps` | wat er draait |
+| `docker compose logs -f` | meekijken in de logboeken, tot Ctrl+C |
+| `docker compose down` | containers stoppen en weggooien; het volume blijft |
+
+Zet `compose.yaml` in git. Pas ook je README aan: met Docker start iemand je site met één regel.
+
+<Voorspel soort="Controlevraag" vraag="Je schrijft een bericht, en typt daarna docker compose down en docker compose up -d. Staat je bericht er nog?">
+  <Keuze goed uitleg="down gooit de container weg, maar niet het volume. De nieuwe container koppelt hetzelfde volume.">Ja, want down laat het volume staan</Keuze>
+  <Keuze uitleg="down gooit de container weg. Maar waar stonden de databases?">Nee, want down gooit alles weg wat up maakte</Keuze>
+  <Keuze uitleg="Het image staat er nog, en het volume ook. up maakt alleen een nieuwe container.">Nee, want up bouwt een nieuw image en begint opnieuw</Keuze>
+  <Uitleg>
+
+  `docker compose down` laat volumes bewust staan. Alleen met `docker compose down -v` gooit hij ze ook weg, en dan zijn je berichten weg. Typ die `-v` nooit op een server.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### De berichten uit les 8 zijn weg
+
+**Oorzaak:** Compose maakte een nieuw volume, `gastenboek_data`. Je berichten staan nog in `gastenboek-data`, het volume uit de vorige les.
+
+**Oplossing:** op je laptop is dat geen ramp: het waren testberichten. Met `docker volume ls` zie je ze allebei, en het oude gooi je weg met `docker volume rm gastenboek-data`. Op de server begin je meteen met Compose.
+
+### additional properties not allowed
+
+```text
+validating /home/sam/gastenboek/compose.yaml: services.gastenboek additional properties 'volume' not allowed
+```
+
+**Oorzaak:** een tikfout in een naam: hier `volume` in plaats van `volumes`. Compose kent die naam niet.
+
+**Oplossing:** verbeter de naam die in de melding staat. Met `docker compose config` controleer je het bestand zonder iets te starten.
+
+### found a tab character
+
+```text
+yaml: line 3: found a tab character that violates indentation
+```
+
+**Oorzaak:** er staat een tab in plaats van spaties. De fout staat op de regel die Compose noemt, of de regel erna.
+
+**Oplossing:** vervang de tab door spaties. In VS Code zie je rechtsonder `Spaces: 2` of `Tab Size`; klik erop en kies **Indent Using Spaces**.
+
+### port is already allocated
+
+```text
+Bind for 127.0.0.1:8000 failed: port is already allocated
+```
+
+**Oorzaak:** de container uit de vorige les draait nog, met poort 8000.
+
+**Oplossing:** `docker rm -f gastenboek`, en daarna opnieuw `docker compose up -d`.
+
+## Opdrachten
+
+### Opdracht 1: Run - Je site met Compose
+
+Maak `compose.yaml`, start je site met `docker compose up -d --build`, en schrijf een bericht. Typ daarna in PowerShell `wsl --shutdown`, zodat Linux helemaal uitgaat, en open Ubuntu opnieuw. Draait je site nog?
+
+<details>
+<summary>Antwoord</summary>
+
+Ja. Bij het openen van Ubuntu start de dienst van Docker, en `restart: unless-stopped` start daarna je container. Je bericht staat er nog, want het volume bleef staan. Op een server werkt het net zo na een herstart, en dan hoeft niemand Ubuntu te openen.
+
+</details>
+
+### Opdracht 2: Make - Je README bij
+
+Schrijf in je README hoe je je site met Docker start. Commit `compose.yaml` en de README, en push.
+
+<details>
+<summary>Antwoord</summary>
+
+Bijvoorbeeld een extra kop onder **Starten**:
+
+````markdown
+## Starten met Docker
+
+```
+docker compose up -d --build
+```
+
+Open `http://127.0.0.1:8000`. Stoppen doe je met `docker compose down`.
+````
+
+Wie je repository ophaalt en Docker heeft, heeft nu geen virtual environment en geen packages meer nodig. Dat is ook wat de server straks doet.
+
+</details>
+
+Door naar [les 10: een voordeur met Traefik](site:fullstack/docs/online/docker/traefik).
