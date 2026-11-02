@@ -153,7 +153,7 @@ Permissions 0755 for '/home/sam/.ssh/id_ed25519' are too open.
 
 **Oorzaak:** ook anderen mogen je privésleutel lezen. ssh weigert hem dan. Dat gebeurt als je de sleutel van Windows hebt gekopieerd.
 
-**Oplossing:** maak hem alleen van jou, met `chmod`. De `600` betekent `rw-------`: alleen de eigenaar mag lezen en schrijven.
+**Oplossing:** maak hem alleen van jou, met `chmod`. De `600` betekent `rw-------`, in de tekens uit [4.1 Van wie is dit?](site:linux/docs/terminal/rechten): alleen de eigenaar mag lezen en schrijven.
 
 ```bash
 chmod 600 ~/.ssh/id_ed25519

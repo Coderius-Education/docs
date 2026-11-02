@@ -144,12 +144,12 @@ bash: kill: (1) - Operation not permitted
 
 **Oorzaak:** het proces is van een andere gebruiker, hier van `root`. Je mag alleen je eigen processen stoppen.
 
-**Oplossing:** meestal is het niet jouw proces om te stoppen. Is het een dienst, dan stop je hem met `systemctl`, in de volgende les.
+**Oplossing:** meestal is het niet jouw proces om te stoppen. Is het een dienst, dan stop je hem met `systemctl`, in de volgende les: [6.4 Diensten](site:linux/docs/wsl/diensten).
 
 ### De terminal reageert niet meer
 
-**Oorzaak:** er draait nog een programma, zoals `sleep`, `ping` of `top`. Zolang dat loopt, gaat wat je typt naar dat programma en niet naar bash.
+**Oorzaak:** er draait nog een programma, zoals `sleep`, `yes` of `top`. Zolang dat loopt, gaat wat je typt naar dat programma en niet naar bash.
 
-**Oplossing:** druk op Ctrl+C. Werkt dat niet, probeer dan `q`: daarmee sluit je `top`, `man` en `less`.
+**Oplossing:** druk op Ctrl+C. Werkt dat niet, probeer dan `q`: daarmee sluit je `top` en `man`.
 
 Door naar [6.4 Diensten](site:linux/docs/wsl/diensten).

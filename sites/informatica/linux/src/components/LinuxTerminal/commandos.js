@@ -1,0 +1,62 @@
+/**
+ * Per commando de les waar het voor het eerst wordt uitgelegd: het nummer
+ * en de pagina. Twee dingen gebruiken deze tabel:
+ *
+ * - src/docs-tests/volgorde.test.ts eist dat geen les een commando eerder
+ *   gebruikt, tenzij dezelfde alinea naar die les linkt ("dat leer je in
+ *   6.1"). Eerst gebruikte 1.3 `cat` drie keer, twee lessen voor 2.1.
+ * - NIET_HIER in commands.js: een commando dat de oefenterminal niet kent,
+ *   zegt in welke les het wel aan bod komt. Eerst hield commands.js daar een
+ *   eigen lijst voor bij, en die liep achter (ping deed alsof hij werkte,
+ *   sort en chmod noemden geen les).
+ */
+export const EERSTE_LES = {
+  pwd: { les: '1.1', pagina: 'terminal/eerste-commando' },
+  whoami: { les: '1.1', pagina: 'terminal/eerste-commando' },
+  ls: { les: '1.1', pagina: 'terminal/eerste-commando' },
+  hostname: { les: '1.1', pagina: 'terminal/eerste-commando' },
+  uname: { les: '1.1', pagina: 'terminal/eerste-commando' },
+  cd: { les: '1.2', pagina: 'terminal/mappen' },
+  history: { les: '1.3', pagina: 'terminal/sneller' },
+  clear: { les: '1.3', pagina: 'terminal/sneller' },
+  cat: { les: '2.1', pagina: 'terminal/bestanden-lezen' },
+  head: { les: '2.1', pagina: 'terminal/bestanden-lezen' },
+  tail: { les: '2.1', pagina: 'terminal/bestanden-lezen' },
+  wc: { les: '2.1', pagina: 'terminal/bestanden-lezen' },
+  mkdir: { les: '2.2', pagina: 'terminal/maken' },
+  touch: { les: '2.2', pagina: 'terminal/maken' },
+  echo: { les: '2.2', pagina: 'terminal/maken' },
+  cp: { les: '2.3', pagina: 'terminal/kopieren' },
+  mv: { les: '2.3', pagina: 'terminal/kopieren' },
+  rm: { les: '2.3', pagina: 'terminal/kopieren' },
+  grep: { les: '3.1', pagina: 'terminal/zoeken' },
+  find: { les: '3.2', pagina: 'terminal/vinden' },
+  id: { les: '4.1', pagina: 'terminal/rechten' },
+  wsl: { les: '5.1', pagina: 'wsl/installeren' },
+  'explorer.exe': { les: '5.2', pagina: 'wsl/windows-en-linux' },
+  code: { les: '5.2', pagina: 'wsl/windows-en-linux' },
+  python3: { les: '5.2', pagina: 'wsl/windows-en-linux' },
+  man: { les: '5.3', pagina: 'wsl/hulp' },
+  apropos: { les: '5.3', pagina: 'wsl/hulp' },
+  type: { les: '5.3', pagina: 'wsl/hulp' },
+  sort: { les: '5.3', pagina: 'wsl/hulp' },
+  sudo: { les: '6.1', pagina: 'wsl/apt' },
+  apt: { les: '6.1', pagina: 'wsl/apt' },
+  tldr: { les: '6.1', pagina: 'wsl/apt' },
+  nano: { les: '6.2', pagina: 'wsl/nano' },
+  ps: { les: '6.3', pagina: 'wsl/processen' },
+  pgrep: { les: '6.3', pagina: 'wsl/processen' },
+  kill: { les: '6.3', pagina: 'wsl/processen' },
+  pkill: { les: '6.3', pagina: 'wsl/processen' },
+  top: { les: '6.3', pagina: 'wsl/processen' },
+  sleep: { les: '6.3', pagina: 'wsl/processen' },
+  systemctl: { les: '6.4', pagina: 'wsl/diensten' },
+  journalctl: { les: '6.4', pagina: 'wsl/diensten' },
+  ip: { les: '7.1', pagina: 'wsl/netwerk' },
+  ping: { les: '7.1', pagina: 'wsl/netwerk' },
+  curl: { les: '7.1', pagina: 'wsl/netwerk' },
+  ssh: { les: '7.2', pagina: 'wsl/ssh' },
+  'ssh-keygen': { les: '7.2', pagina: 'wsl/ssh' },
+  'ssh-copy-id': { les: '7.2', pagina: 'wsl/ssh' },
+  chmod: { les: '7.2', pagina: 'wsl/ssh' },
+};

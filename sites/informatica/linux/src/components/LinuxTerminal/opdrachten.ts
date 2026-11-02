@@ -197,24 +197,21 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
   },
   '1.3.a': {
     doelen: [
-      {
-        tekst: 'Lees /etc/os-release.',
-        klaar: (s) => gebruikt(s, 'cat') && s.uitvoer.some((r) => r.startsWith('PRETTY_NAME=')),
-      },
+      { tekst: 'Ga naar /var/www/html/config.', klaar: (s) => s.cwd === '/var/www/html/config' },
     ],
   },
   '1.3.b': {
     opVolgorde: true,
     doelen: [
       {
-        tekst: 'Typ cat /etc/hostnme, met de typfout.',
+        tekst: 'Typ ls /etc/hots, met de typfout.',
         klaar: (s) =>
-          s.regel.trim() === 'cat /etc/hostnme' &&
-          s.uitvoer[0] === 'cat: /etc/hostnme: No such file or directory',
+          s.regel.trim() === 'ls /etc/hots' &&
+          s.uitvoer[0] === "ls: cannot access '/etc/hots': No such file or directory",
       },
       {
         tekst: 'Haal hem terug, verbeter hem, en voer hem opnieuw uit.',
-        klaar: (s) => s.regel.trim() === 'cat /etc/hostname' && s.uitvoer[0] === 'oefenpc',
+        klaar: (s) => s.regel.trim() === 'ls /etc/hosts' && s.uitvoer[0] === '/etc/hosts',
       },
     ],
   },

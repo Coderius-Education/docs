@@ -205,9 +205,9 @@ describe('een terminal per opdracht', () => {
     ).toEqual([true, false, false]);
   });
 
-  it('1.3.b: de toetsen uit de les maken van hostnme echt hostname', () => {
-    // De les zei eerst "drie keer pijltje links"; dat gaf hostanme, en het
-    // tweede vinkje kwam nooit.
+  it('1.3.b: de toetsen uit de les maken van hots echt hosts', () => {
+    // De les zei eerst "drie keer pijltje links" bij hostnme; dat gaf
+    // hostanme, en het tweede vinkje kwam nooit.
     const les = readFileSync(join(TERMINAL, 'sneller.mdx'), 'utf8');
     const getallen: Record<string, number> = { een: 1, twee: 2, drie: 3, vier: 4 };
     const keren = [...les.matchAll(/(een|twee|drie|vier) keer (?:op )?pijltje links/g)].map(
@@ -215,11 +215,11 @@ describe('een terminal per opdracht', () => {
     );
     expect(keren.length).toBeGreaterThan(0);
     const sessie = maakSessie();
-    sessie.typ('cat /etc/hostnme');
+    sessie.typ('ls /etc/hots');
     for (const n of keren) {
       let stand = toets(LEEG, '\x1b[A', sessie).stand;
       for (let i = 0; i < n; i++) stand = toets(stand, '\x1b[D', sessie).stand;
-      expect(toets(stand, 'a', sessie).stand.tekst).toBe('cat /etc/hostname');
+      expect(toets(stand, 's', sessie).stand.tekst).toBe('ls /etc/hosts');
     }
   });
 });

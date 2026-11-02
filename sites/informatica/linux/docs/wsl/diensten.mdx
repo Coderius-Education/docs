@@ -126,7 +126,7 @@ Deze regel staat in `sudo journalctl -u nginx -n 20`, en `systemctl status nginx
 
 **Oorzaak:** een ander programma luistert al op poort 80. Alle Linux-versies in WSL delen één netwerk, dus het kan ook een webserver in een andere Linux zijn.
 
-**Oplossing:** zoek met `sudo ss -tlnp` welk programma op `:80` staat, en zet dat uit.
+**Oplossing:** zoek uit welk programma op `:80` staat, en zet dat uit. Dat vertelt `sudo ss -tlnp`: `ss` laat de verbindingen van de computer zien, en met `-tlnp` alleen de poorten waarop een programma wacht, met de naam van dat programma erbij.
 
 ### De dienst draait niet meer als je later terugkomt
 

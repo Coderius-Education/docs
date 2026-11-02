@@ -10,28 +10,32 @@ import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
 Wie veel in een terminal werkt, typt bijna nooit een hele naam uit. De terminal vult aan, onthoudt wat je typte, en laat je een fout verbeteren zonder alles opnieuw te typen.
 
+:::note
+Deze les gaat over Tab en de pijltjes. Die zitten niet op het toetsenbord van een telefoon of tablet: doe hem op een computer met een toetsenbord.
+:::
+
 ## Tab vult aan
 
-Typ in de terminal hieronder `cat /etc/os` en druk op **Tab**. Er staat nu:
+Typ in de terminal hieronder `cd /va` en druk op **Tab**. Er staat nu:
 
 ```
-student@oefenpc:~$ cat /etc/os-release
+student@oefenpc:~$ cd /var/
 ```
 
-Er is in `/etc` maar één naam die met `os` begint, dus de terminal weet wat je bedoelt. Druk op Enter om hem te lezen. Tab werkt voor namen van bestanden en mappen, en als eerste woord ook voor commando's: `hostn` en Tab wordt `hostname`.
+Er is in `/` maar één naam die met `va` begint, dus de terminal weet wat je bedoelt. Achter een map zet Tab een `/`, zodat je meteen verder kunt typen: `ww` en weer Tab wordt `cd /var/www/`. Druk op Enter om erheen te gaan.
 
-Achter een map zet Tab een `/`, zodat je meteen verder kunt typen: `cd /va` en Tab wordt `cd /var/`.
+Tab werkt voor namen van bestanden en mappen, en als eerste woord ook voor commando's: `hostn` en Tab wordt `hostname`.
 
 <LinuxTerminal title="Oefenterminal" />
 
 ## Voorspel
 
-Je typt `cat /etc/ho` en drukt op Tab. In `/etc` staan `hostname` en `hosts`. Wat gebeurt er? En wat als je nog een keer op Tab drukt?
+Je typt `ls /etc/ho` en drukt op Tab. In `/etc` staan `hostname` en `hosts`. Wat gebeurt er? En wat als je nog een keer op Tab drukt?
 
 <details>
 <summary>Klik hier als je het hebt geprobeerd</summary>
 
-De eerste Tab maakt er `cat /etc/host` van: zo ver zijn de twee namen gelijk. Verder kan de terminal niet kiezen. De tweede Tab laat zien wat er past:
+De eerste Tab maakt er `ls /etc/host` van: zo ver zijn de twee namen gelijk. Verder kan de terminal niet kiezen. De tweede Tab laat zien wat er past:
 
 ```
 hostname  hosts
@@ -70,16 +74,16 @@ Nog drie toetsen:
 
 Op je eigen Linux werkt ook **Ctrl+R**: typ een stukje van een oud commando, en de terminal zoekt het voor je op. De oefenterminal kent dat niet.
 
-## Opdracht 1.3.a: lees zonder uit te typen
+## Opdracht 1.3.a: diep een map in
 
-Lees het bestand `/etc/os-release`. Typ niet de hele naam, maar laat Tab hem aanvullen.
+Ga naar de map `/var/www/html/config`. Typ de namen niet uit, maar laat Tab ze aanvullen.
 
 <LinuxTerminal opdracht="1.3.a" />
 
 <details>
 <summary>Klik hier voor een tip</summary>
 
-Typ `cat /etc/os` en druk op Tab. Lukt het niet, kijk dan of je `/etc/` goed hebt: Tab vult alleen aan wat er echt staat.
+Typ `cd /va` en druk op Tab, dan `ww` en Tab, en zo verder: van elke map de eerste letters. Lukt het niet, kijk dan wat er al staat: Tab vult alleen aan wat er echt is.
 
 </details>
 
@@ -87,24 +91,24 @@ Typ `cat /etc/os` en druk op Tab. Lukt het niet, kijk dan of je `/etc/` goed heb
 <summary>Klik hier voor het antwoord</summary>
 
 ```bash
-cat /etc/os-release
+cd /var/www/html/config
 ```
 
-Je typte `cat /etc/os` en Tab deed de rest: elf tekens minder, en geen kans op een typfout in de naam.
+Je typte `cd /va`, Tab, `ww`, Tab, `h`, Tab, `c`, Tab. Tab deed de rest, en een typfout in een naam kon niet meer.
 
 </details>
 
 ## Opdracht 1.3.b: verbeter de typfout
 
-1. Typ `cat /etc/hostnme`, precies zo, met de typfout. Je krijgt een foutmelding.
-2. Haal het commando terug met pijltje omhoog, zet de ontbrekende `a` erin met pijltje links, en voer het opnieuw uit.
+1. Typ `ls /etc/hots`, precies zo, met de typfout. Je krijgt een foutmelding.
+2. Haal het commando terug met pijltje omhoog, zet de ontbrekende `s` erin met pijltje links, en voer het opnieuw uit.
 
 <LinuxTerminal opdracht="1.3.b" />
 
 <details>
 <summary>Klik hier voor een tip</summary>
 
-Na pijltje omhoog staat de cursor aan het eind, achter de `e`. Druk twee keer op pijltje links: dan staat hij tussen de `n` en de `m`.
+Na pijltje omhoog staat de cursor aan het eind, achter de `s`. Druk twee keer op pijltje links: dan staat hij tussen de `o` en de `t`.
 
 </details>
 
@@ -112,11 +116,11 @@ Na pijltje omhoog staat de cursor aan het eind, achter de `e`. Druk twee keer op
 <summary>Klik hier voor het antwoord</summary>
 
 ```bash
-cat /etc/hostnme
-cat /etc/hostname
+ls /etc/hots
+ls /etc/hosts
 ```
 
-De tweede regel typ je niet opnieuw: pijltje omhoog, twee keer pijltje links, `a`, Enter. Je krijgt `oefenpc`.
+De tweede regel typ je niet opnieuw: pijltje omhoog, twee keer pijltje links, `s`, Enter. Nu staat er geen foutmelding meer, maar de naam van het bestand: `/etc/hosts`.
 
 </details>
 

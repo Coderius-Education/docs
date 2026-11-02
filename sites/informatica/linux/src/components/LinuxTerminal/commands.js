@@ -4,6 +4,7 @@
  * env contains: { cwd, fs, setCwd, terminal, write, writeln }
  */
 
+import { EERSTE_LES } from './commandos';
 import {
   GEHEIME_MAP,
   HOME,
@@ -884,31 +885,20 @@ const COMMANDS = {
  * eerlijk waar het wel kan. De les waar ze aan bod komen, staat erbij.
  */
 export const NIET_HIER = {
-  sudo: '6.1',
-  apt: '6.1',
-  'apt-get': '6.1',
-  nano: '6.2',
-  vim: '6.2',
-  vi: '6.2',
-  man: '5.3',
-  apropos: '5.3',
-  ps: '6.3',
-  pgrep: '6.3',
-  kill: '6.3',
-  pkill: '6.3',
-  top: '6.3',
-  systemctl: '6.4',
-  journalctl: '6.4',
-  ip: '7.1',
-  ping: '7.1',
-  curl: '7.1',
-  ssh: '7.2',
-  chmod: '7.2',
+  // Elk commando uit de lessen dat de oefenterminal niet nadoet, met de les
+  // waar het aan bod komt (commandos.js).
+  ...Object.fromEntries(
+    Object.entries(EERSTE_LES)
+      .filter(([naam]) => !Object.hasOwn(COMMANDS, naam))
+      .map(([naam, { les }]) => [naam, les]),
+  ),
+  // En een paar die leerlingen proberen zonder dat een les ze behandelt.
+  'apt-get': EERSTE_LES.apt.les,
+  vim: EERSTE_LES.nano.les,
+  vi: EERSTE_LES.nano.les,
   chown: null,
   su: null,
   less: null,
-  sort: '5.3',
-  python3: null,
   git: null,
 };
 
