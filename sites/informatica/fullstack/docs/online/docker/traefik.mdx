@@ -5,6 +5,8 @@ description: Traefik ontvangt bezoekers op poort 80 en geeft elk verzoek door aa
 
 # Online zetten: een voordeur met Traefik
 
+<Voorkennis items={[{site: 'linux', to: '/docs/terminal/maken', label: 'Een map maken met mkdir'}, {site: 'linux', to: '/docs/wsl/nano', label: 'Een bestand maken met nano'}]} />
+
 Een bezoeker typt een naam zonder poortnummer: `http://…` gaat naar poort 80, `https://…` naar poort 443. Op een server draaien vaak meer sites, en ze kunnen niet allemaal poort 80 hebben. Daarom staat er één programma op poort 80 en 443 dat elk verzoek doorgeeft aan de juiste site: een **reverse proxy**, de voordeur van je server.
 
 ```text

@@ -114,11 +114,52 @@ describe('de route Online zetten', () => {
     expect(fout).toEqual([]);
   });
 
-  it('Linux staat in de Linux-cursus: de startpagina en de eerste les in WSL linken ernaar', () => {
+  it('Linux en git staan in hun eigen cursus: de startpagina noemt ze allebei', () => {
     expect(lees('online/index')).toContain('(site:linux/docs)');
     expect(lees('online/index')).toContain('(site:linux/docs/wsl/installeren)');
-    expect(lees('online/docker/installeren')).toMatch(/site: 'linux', to: '\/docs\//);
+    expect(lees('online/index')).toContain('(site:editor/git)');
   });
+
+  // De route legt geen Linux en geen git uit. Een commando dat een leerling
+  // voor het eerst typt, moet dus een link hebben naar de les die het
+  // uitlegt: in die les of een les ervoor, als <Voorkennis>-item of als
+  // site:-link. Eerst gebruikten requirements (git commit en push), image
+  // (cd), traefik (mkdir en nano) en nieuwe-versie (git pull) een commando
+  // zonder link.
+  const BRONNEN: { commando: RegExp; doel: string[] }[] = [
+    { commando: /^git (add|commit)\b/, doel: ['editor/git/basis/'] },
+    { commando: /^git push\b/, doel: ['editor/git/push/'] },
+    { commando: /^git (clone|pull)\b/, doel: ['editor/git/pull-clone/'] },
+    { commando: /^sudo apt\b/, doel: ['linux/docs/wsl/apt'] },
+    { commando: /^(sudo )?nano\b/, doel: ['linux/docs/wsl/nano'] },
+    { commando: /^(sudo )?(systemctl|journalctl)\b/, doel: ['linux/docs/wsl/diensten'] },
+    { commando: /^(ssh|ssh-keygen)\b/, doel: ['linux/docs/wsl/ssh'] },
+    { commando: /^(cd|ls)\b/, doel: ['linux/docs/terminal/mappen'] },
+    { commando: /^mkdir\b/, doel: ['linux/docs/terminal/maken'] },
+    { commando: /^cat\b/, doel: ['linux/docs/terminal/bestanden-lezen'] },
+    { commando: /^code \./, doel: ['linux/docs/wsl/windows-en-linux'] },
+  ];
+  const linksVan = (id: string) => {
+    const tekst = lees(id);
+    return [
+      ...[...tekst.matchAll(/site: '([a-z]+)', to: '\/([^']+)'/g)].map((m) => `${m[1]}/${m[2]}`),
+      ...[...tekst.matchAll(/\(site:([a-z]+\/[^)#\s]+)/g)].map((m) => m[1]),
+    ];
+  };
+  it.each(BRONNEN)(
+    '$commando: de eerste les die het gebruikt, of een les ervoor, linkt naar de uitleg',
+    ({ commando, doel }) => {
+      const regels = (id: string) =>
+        ['bash', 'powershell'].flatMap((taal) => blokken(id, taal).join('\n').split('\n'));
+      const eerste = lessen.findIndex((id) => regels(id).some((r) => commando.test(r)));
+      expect(eerste, 'geen les gebruikt dit commando').toBeGreaterThan(-1);
+      const links = lessen.slice(0, eerste + 1).flatMap(linksVan);
+      expect(
+        links.some((l) => doel.some((d) => l.startsWith(d))),
+        `${lessen[eerste]} gebruikt het eerst, zonder link naar ${doel.join(' of ')}`,
+      ).toBe(true);
+    },
+  );
 });
 
 describe('de keten van Docker', () => {
