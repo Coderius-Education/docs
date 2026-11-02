@@ -331,6 +331,15 @@ describe('de server', () => {
     expect(site.indexOf('Deploy keys')).toBeLessThan(site.indexOf('git clone git@github.com'));
   });
 
+  it('wat alleen op de server staat, gaat mee in de back-up', () => {
+    // Les 15 zei: werk nooit op de server. Toch maken les 13, 14 en 16 daar
+    // .env, ~/traefik en ~/portainer, en die staan nergens in git.
+    const backup = blokken('online/server/nieuwe-versie', 'bash').join('\n');
+    expect(backup).toContain('cp ~/gastenboek/.env ~/backup/');
+    expect(backup).toContain('cp -r ~/traefik ~/backup/');
+    expect(lees('online/extra/portainer')).toContain('cp -r ~/portainer ~/backup/');
+  });
+
   it('Portainer staat alleen op 127.0.0.1 en zonder labels voor Traefik', () => {
     const yaml = blokken('online/extra/portainer', 'yaml').join('\n');
     expect(yaml).toContain('- "127.0.0.1:9443:9443"');

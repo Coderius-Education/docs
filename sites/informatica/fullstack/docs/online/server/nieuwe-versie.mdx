@@ -31,7 +31,9 @@ Staat er `Up` bij de status en geen traceback in het logboek, open dan je site.
 
 ## Werk nooit op de server zelf
 
-Pas je code nooit aan op de server, ook niet "even snel" met nano. De volgende `git pull` weigert dan, of jouw wijziging staat nergens anders en is bij een nieuwe server weg. De server krijgt alleen code die eerst op GitHub stond. Alleen `.env` maak je op de server, want die hoort bij de server.
+Pas je code nooit aan op de server, ook niet "even snel" met nano. De volgende `git pull` weigert dan, of jouw wijziging staat nergens anders en is bij een nieuwe server weg. De server krijgt alleen code die eerst op GitHub stond.
+
+Een paar bestanden horen niet bij je project maar bij de server zelf: `.env` met je domeinnaam, en de map `~/traefik` met de voordeur. Die maak en verander je wel op de server, en ze staan nergens anders. Daarom gaan ze mee in de back-up hieronder.
 
 <Voorspel soort="Controlevraag" vraag="Na git pull en docker compose up --build opent een klasgenoot je gastenboek. Zijn de berichten van gisteren er nog?">
   <Keuze uitleg="git pull verandert alleen bestanden die in git staan. Staan de databases in git, of in de container?">Nee, git pull zet alle bestanden terug zoals ze op GitHub staan</Keuze>
@@ -46,7 +48,7 @@ Pas je code nooit aan op de server, ook niet "even snel" met nano. De volgende `
 
 ## Een back-up
 
-Het volume is het enige op je server dat je niet opnieuw kunt maken. Een kapotte schijf, een `docker compose down -v` of een opgezegde server, en het is weg. Maak er daarom een kopie van, op een andere computer.
+Het volume is het enige op je server dat je niet opnieuw kunt maken, en de instellingen van de server staan alleen daar. Een kapotte schijf, een `docker compose down -v` of een opgezegde server, en ze zijn weg. Maak er daarom een kopie van, op een andere computer.
 
 Stop je site even, zodat er tijdens het kopiëren niets verandert, en kopieer de map `data` uit de container:
 
@@ -57,7 +59,14 @@ docker compose cp gastenboek:/app/data ~/backup
 docker compose start
 ```
 
-`docker compose cp` kopieert tussen een container en de server, ook als de container gestopt is. `gastenboek:` is de naam van de service uit `compose.yaml`. Haal de kopie daarna in WSL naar je laptop met `scp`:
+`docker compose cp` kopieert tussen een container en de server, ook als de container gestopt is. `gastenboek:` is de naam van de service uit `compose.yaml`. Zet de instellingen van de server erbij:
+
+```bash
+cp ~/gastenboek/.env ~/backup/
+cp -r ~/traefik ~/backup/
+```
+
+Haal de kopie daarna in WSL naar je laptop met `scp`:
 
 ```bash
 scp -r sam@gastenboek.voorbeeld.nl:backup ~/backup-gastenboek
@@ -138,7 +147,7 @@ Verander een tekst op je homepage, commit en push, en zet de nieuwe versie op je
 <details>
 <summary>Antwoord</summary>
 
-Op je laptop: `git add`, `git commit` en `git push`. Op de server de twee stappen van boven, en daarna de stappen van **Een back-up**. Na de nieuwe versie zie je de nieuwe tekst, met de oude berichten eronder. In `~/backup-gastenboek` op je laptop staan je databases.
+Op je laptop: `git add`, `git commit` en `git push`. Op de server de twee stappen van boven, en daarna de stappen van **Een back-up**. Na de nieuwe versie zie je de nieuwe tekst, met de oude berichten eronder. In `~/backup-gastenboek` op je laptop staan je databases, `.env` en de map `traefik`.
 
 </details>
 
