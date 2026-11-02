@@ -16,6 +16,10 @@ import { createFilesystem } from '../components/LinuxTerminal/filesystem';
 // wordt wel getypt, maar niet vergeleken. Een opdracht die begint in een
 // "verse oefenterminal" begint hier ook met een verse.
 
+// Een kleurcode van de terminal (ESC [ … m); ESC als String.fromCharCode, want
+// biome weigert een stuurteken in een regex.
+const KLEUR = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
+
 const TERMINAL = fileURLToPath(new URL('../../docs/terminal', import.meta.url));
 
 type Blok = { taal: string; regels: string[]; ervoor: string };
@@ -53,7 +57,7 @@ function terminal() {
       .filter(Boolean)
       .join('\n')
       // Kleur weg: in de les staat de tekst zonder.
-      .replace(/\x1b\[[0-9;]*m/g, '');
+      .replace(KLEUR, '');
 }
 
 const lessen = readdirSync(TERMINAL).filter((n) => n.endsWith('.mdx'));
@@ -67,18 +71,30 @@ describe('wat deel 1 belooft, laat de oefenterminal zien', () => {
       let vergeleken = 0;
       lijst.forEach((blok, i) => {
         if (blok.taal !== 'bash') return;
-        if (/verse oefenterminal/.test(blok.ervoor) || /verse oefenterminal/.test(lijst[i - 1]?.ervoor ?? ''))
+        if (
+          /verse oefenterminal/.test(blok.ervoor) ||
+          /verse oefenterminal/.test(lijst[i - 1]?.ervoor ?? '')
+        )
           typ = terminal();
-        const uitvoer = blok.regels.map((r) => typ(r)).filter(Boolean).join('\n');
+        const uitvoer = blok.regels
+          .map((r) => typ(r))
+          .filter(Boolean)
+          .join('\n');
         const volgende = lijst[i + 1];
         const meteenErna = volgende && volgende.taal === '' && volgende.ervoor.trim() === '';
         if (!meteenErna || blok.regels.some((r) => r.includes('#'))) return;
         vergeleken++;
         const belofte = volgende.regels.join('\n');
-        if (uitvoer !== belofte) fout.push(`${blok.regels.join(' ; ')}\n  les:      ${JSON.stringify(belofte)}\n  terminal: ${JSON.stringify(uitvoer)}`);
+        if (uitvoer !== belofte)
+          fout.push(
+            `${blok.regels.join(' ; ')}\n  les:      ${JSON.stringify(belofte)}\n  terminal: ${JSON.stringify(uitvoer)}`,
+          );
       });
       expect(fout).toEqual([]);
-      expect(vergeleken, 'deze les vergelijkt niets: klopt de vorm van de blokken nog?').toBeGreaterThan(0);
+      expect(
+        vergeleken,
+        'deze les vergelijkt niets: klopt de vorm van de blokken nog?',
+      ).toBeGreaterThan(0);
     });
   }
 

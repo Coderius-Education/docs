@@ -116,5 +116,4 @@ describe('de Linux-cursus', () => {
     });
     expect(fout).toEqual([]);
   });
-
 });

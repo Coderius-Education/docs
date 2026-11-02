@@ -118,7 +118,7 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands }) {
 
       // Welcome message
       term.writeln('\x1b[1;32m  Oefenterminal\x1b[0m');
-      term.writeln('\x1b[90m  Typ help voor een lijst met commando\'s.\x1b[0m');
+      term.writeln("\x1b[90m  Typ help voor een lijst met commando's.\x1b[0m");
       term.write(getPrompt());
 
       // Handle keyboard input

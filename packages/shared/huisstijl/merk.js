@@ -109,7 +109,10 @@ const GLYPHS = {
       'gat',
       '<ellipse cx="0" cy="2.4" rx="3.7" ry="4.9"/><circle cx="-1.7" cy="-4.2" r="1"/><circle cx="1.7" cy="-4.2" r="1"/>',
     ],
-    ['vlak', '<path d="M-1.3-2.4h2.6L0-.6Z"/><path d="M-4.6 6.6h3.4v1.4h-3.4zM1.2 6.6h3.4v1.4H1.2z"/>'],
+    [
+      'vlak',
+      '<path d="M-1.3-2.4h2.6L0-.6Z"/><path d="M-4.6 6.6h3.4v1.4h-3.4zM1.2 6.6h3.4v1.4H1.2z"/>',
+    ],
   ],
   terminal: [
     [

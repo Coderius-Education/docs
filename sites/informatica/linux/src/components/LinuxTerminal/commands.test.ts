@@ -18,7 +18,6 @@ function voer(regel: string): string {
     .join('\n');
 }
 
-
 describe('parseCommandLine', () => {
   it('splitst op de scheidingstekens en onthoudt de operator', () => {
     const delen = parseCommandLine('ping 127.0.0.1; ls');
