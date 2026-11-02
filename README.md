@@ -24,7 +24,7 @@ een eigen host, en de cursus staat onder een pad daarvan.
 | Embedded | `sites/informatica/embedded` | https://informatica.coderius.nl/embedded/ | Programmeer microcontrollers: van Arduino tot STM32. |
 | Godot | `sites/informatica/godot` | https://informatica.coderius.nl/godot/ | Bouw je eerste 2D game in Godot 4. |
 | Capture The Flag | `sites/informatica/ctf` | https://informatica.coderius.nl/ctf/ | Leer cybersecurity door CTF-challenges op te lossen. |
-| Linux & DVWA | `sites/informatica/dvwa` | https://informatica.coderius.nl/dvwa/ | Werk in de terminal van Linux, zet Linux op je computer met WSL, en oefen daarna websecurity met DVWA. |
+| Linux | `sites/informatica/linux` | https://informatica.coderius.nl/linux/ | Werk in de terminal van Linux, en zet Linux op je eigen computer met WSL. |
 | Online Editor | `sites/informatica/ide` | https://informatica.coderius.nl/ide/ | Schrijf en draai code direct in je browser. |
 | Onderzoek | `sites/wo/onderzoek` | https://wo.coderius.nl/onderzoek/ | Leer onderzoek doen, van een scherpe vraag tot een eerlijke conclusie. |
 | Hartjespuzzel | `sites/techniek/hartjespuzzel` | https://techniek.coderius.nl/hartjespuzzel/ | Leermateriaal: Opdracht hartjespuzzel. |

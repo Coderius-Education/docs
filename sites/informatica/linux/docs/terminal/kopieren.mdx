@@ -1,0 +1,121 @@
+---
+sidebar_position: 5
+---
+
+import LinuxTerminal from '@site/src/components/LinuxTerminal';
+
+# 1.5 Kopiëren, verplaatsen en weggooien
+
+<Voorkennis items={[{to: '/docs/terminal/maken', label: 'Mappen en bestanden maken'}]} />
+
+Drie commando's, die je alle drie nodig hebt als je op een server werkt:
+
+```bash
+cp notities.txt reserve.txt
+mv reserve.txt oud.txt
+rm oud.txt
+```
+
+- `cp` (*copy*) maakt een kopie. Het origineel blijft staan.
+- `mv` (*move*) verplaatst. Naar een nieuwe naam in dezelfde map is het hernoemen.
+- `rm` (*remove*) gooit weg.
+
+<LinuxTerminal title="Oefenterminal" />
+
+## Naar een map
+
+Staat er achter `cp` of `mv` een map die al bestaat, dan gaat het bestand die map in, met dezelfde naam:
+
+```bash
+mkdir archief
+cp notities.txt archief
+ls archief
+```
+
+```
+notities.txt
+```
+
+## Voorspel
+
+Je typt `rm notities.txt`. Waar is het bestand daarna? Kun je het terughalen?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Het is weg. In de terminal is er geen prullenbak en geen "Weet je het zeker?". Op een server is dat de reden dat beheerders eerst een kopie maken: `cp instellingen.conf instellingen.conf.bak`, en pas daarna gaan wijzigen.
+
+</details>
+
+## Een map weggooien
+
+`rm` weigert een map:
+
+```bash
+rm archief
+```
+
+```
+rm: cannot remove 'archief': Is a directory
+```
+
+Met `rm -r` (*recursive*) gaat de map weg met alles wat erin staat. Lees zo'n commando twee keer voor je op Enter drukt.
+
+## Opdracht 1.5.a: opruimen
+
+Begin in een verse oefenterminal (herlaad de pagina).
+
+1. Maak een map `oud` en zet daar een kopie van `notities.txt` in.
+2. Hernoem het origineel naar `todo.txt`.
+3. Gooi de map `oud` weg.
+4. Controleer met `ls` dat alleen `todo.txt` over is.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Hernoemen is verplaatsen naar een nieuwe naam. Een map met iets erin vraagt een optie bij `rm`.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+mkdir oud
+cp notities.txt oud
+mv notities.txt todo.txt
+rm -r oud
+ls
+```
+
+```
+todo.txt
+```
+
+</details>
+
+## Er gaat iets mis
+
+### Cannot stat
+
+```
+cp: cannot stat 'notitie.txt': No such file or directory
+```
+
+**Oorzaak:** het bestand dat je wilt kopiëren of verplaatsen, bestaat niet. Hier ontbreekt een `s`.
+
+**Oplossing:** kijk met `ls` hoe het bestand precies heet. Typ de eerste letters en druk op Tab: dan vult de terminal de naam aan. Dat werkt in WSL en op een server; de oefenterminal hier kent het niet.
+
+### Per ongeluk overschreven
+
+**Oorzaak:** `cp` en `mv` vragen niets als er op de nieuwe plek al een bestand met die naam staat. Het oude bestand is dan weg.
+
+**Oplossing:** met `-i` (*interactive*) vraagt het commando eerst om toestemming:
+
+```bash
+cp -i notities.txt todo.txt
+```
+
+Die optie werkt in WSL en op een server, niet in de oefenterminal.
+
+Door naar [1.6 Zoeken en doorgeven](site:linux/docs/terminal/zoeken).

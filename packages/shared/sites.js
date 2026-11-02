@@ -135,13 +135,14 @@ const SITES = defineSites([
     requires: ['python', 'web'],
   },
   {
-    id: 'dvwa',
-    label: 'Linux & DVWA',
+    id: 'linux',
+    label: 'Linux',
     subject: 'informatica',
-    path: 'dvwa',
+    path: 'linux',
+    // Hier stond tot november 2026 de DVWA-cursus; dat oude subdomein stuurt
+    // nu door naar Linux.
     legacyUrl: 'https://dvwa.coderius.nl',
-    description:
-      'Werk in de terminal van Linux, zet Linux op je computer met WSL, en oefen daarna websecurity met DVWA.',
+    description: 'Werk in de terminal van Linux, en zet Linux op je eigen computer met WSL.',
     requires: [],
   },
   {

@@ -208,23 +208,22 @@ const entries: CurriculumEntry[] = [
     },
   },
   {
-    id: 'dvwa',
-    labels: ['Cybersecurity', 'Web'],
+    id: 'linux',
+    labels: ['Linux'],
     programmingLanguages: ['Linux Shell'],
-    projectTypes: ['Cybersecurity', 'Web Development'],
+    // Security: rechten (1.7), sudo, een eigen sleutel voor ssh (2.6).
+    projectTypes: ['Cybersecurity'],
     operatingSystems: ['Windows', 'Linux'],
-    // N2 sterk: elk Impossible-niveau en 'Word de Developer' leggen de
-    // maatregel uit. D2: PHP-code aanpassen in de fix-it-challenge.
+    // E2 sterk: eigenaar en rechten, root en sudo, en inloggen met een
+    // sleutel in plaats van een wachtwoord. L1/L4: ssh naar een andere
+    // computer, localhost en poorten in WSL.
     examDomains: [
       { code: 'E2', strength: 'strong' },
-      { code: 'N1', strength: 'strong' },
-      { code: 'N2', strength: 'strong' },
-      { code: 'D2', strength: 'weak' },
-      { code: 'L2', strength: 'weak' },
+      { code: 'L1', strength: 'weak' },
       { code: 'L4', strength: 'weak' },
     ],
-    level: 'Medium',
-    klas: '5+',
+    level: 'Beginner',
+    klas: '4 en 5+',
     order: {
       vwo: 5,
       havo: 5,

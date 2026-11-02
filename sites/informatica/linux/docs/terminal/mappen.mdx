@@ -1,0 +1,156 @@
+---
+sidebar_position: 2
+---
+
+import LinuxTerminal from '@site/src/components/LinuxTerminal';
+
+# 1.2 Door mappen lopen
+
+<Voorkennis items={[{to: '/docs/terminal/eerste-commando', label: 'De prompt, pwd en ls'}]} />
+
+Alle bestanden op een Linux-computer hangen aan één boom. Bovenaan staat de map `/`, de **root**. Daaronder hangt de rest:
+
+```
+/
+├── etc
+├── home
+│   └── student
+│       └── notities.txt
+├── tmp
+└── var
+    └── www
+```
+
+Windows heeft voor elke schijf een eigen begin (`C:\`, `D:\`). Linux heeft er maar één, en tussen de mappen staat een gewone schuine streep `/`, geen backslash.
+
+## Van map wisselen met cd
+
+Met `cd` (*change directory*) ga je naar een andere map. Probeer het in de terminal hieronder:
+
+```bash
+cd /var/www
+pwd
+```
+
+```
+/var/www
+```
+
+De prompt verandert mee: er staat nu `student@oefenpc:/var/www$`.
+
+<LinuxTerminal title="Oefenterminal" />
+
+## Voorspel
+
+Je staat in `/var/www`. Waar sta je na `cd ..`? En na nog een keer `cd ..`?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Eerst in `/var`, daarna in `/`. Twee puntjes betekent "de map erboven". Hoger dan `/` kun je niet: een derde `cd ..` laat je in `/` staan.
+
+</details>
+
+## Absolute en relatieve paden
+
+Een pad dat met `/` begint, is **absoluut**: het begint bij de root, waar je ook staat. `cd /home/student` brengt je altijd naar je thuismap.
+
+Een pad zonder `/` vooraan is **relatief**: het begint in de map waar je nu staat. Sta je in `/var`, dan brengt `cd www` je naar `/var/www`. Sta je ergens anders, dan bestaat `www` daar meestal niet.
+
+Drie korte namen kom je steeds tegen:
+
+| Naam | Betekenis |
+|:---:|:---|
+| `.` | de map waar je nu staat |
+| `..` | de map erboven |
+| `~` | je thuismap, `/home/student` |
+
+`cd` zonder iets erachter brengt je ook naar je thuismap.
+
+## Opdracht 1.2.a: rondlopen
+
+Begin in je thuismap. Ga met zo min mogelijk commando's:
+
+1. naar `/var/log`;
+2. van daaruit naar `/var/www/html`, met een relatief pad;
+3. terug naar je thuismap.
+
+Controleer na elke stap met `pwd` waar je staat.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Bij stap 2 ga je eerst één map omhoog en dan twee omlaag. Dat kan in één pad: de stukken plak je aan elkaar met `/`.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+cd /var/log
+cd ../www/html
+cd ~
+```
+
+Na de tweede stap geeft `pwd` `/var/www/html`. Bij de derde mag je ook alleen `cd` typen.
+
+</details>
+
+## Opdracht 1.2.b: zoek het bestand
+
+Ergens onder `/var/www` staat een map `config` met een bestand erin. Zoek het met `cd` en `ls`, en schrijf het absolute pad van dat bestand op.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Mappen zijn blauw in de uitvoer van `ls`. Ga steeds één map dieper, tot je `config` ziet. Het absolute pad is het pad vanaf `/`, en dat vertelt `pwd` je.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+cd /var/www
+ls
+cd html
+ls
+ls config
+```
+
+Het bestand is `/var/www/html/config/instellingen.conf`.
+
+</details>
+
+## Er gaat iets mis
+
+### No such file or directory
+
+```
+bash: cd: www: No such file or directory
+```
+
+**Oorzaak:** de map bestaat niet op de plek waar je zoekt. Meestal is het een relatief pad vanuit de verkeerde map, of een typfout.
+
+**Oplossing:** kijk met `pwd` waar je staat en met `ls` wat er is. Twijfel je, gebruik dan het absolute pad.
+
+```bash
+# FOUT: je staat in /home/student, daar is geen www
+cd www
+
+# GOED
+cd /var/www
+```
+
+### Not a directory
+
+```
+bash: cd: notities.txt: Not a directory
+```
+
+**Oorzaak:** je probeert met `cd` een bestand in te gaan. Een bestand is geen map.
+
+**Oplossing:** een bestand lees je; dat leer je in de volgende les. In de uitvoer van `ls` zijn mappen blauw en bestanden wit.
+
+Door naar [1.3 Bestanden lezen](site:linux/docs/terminal/bestanden-lezen).

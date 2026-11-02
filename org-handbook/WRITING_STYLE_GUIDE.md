@@ -1,6 +1,6 @@
 # Schrijfgids voor *-docs (gebaseerd op play-docs)
 
-Dit document beschrijft de schrijfstijl die binnen `play-docs` consequent wordt gehanteerd en die alle overige `*-docs` projecten (`coderius-docs`, `ctf-docs`, `DVWA-docs`, `editor-docs`, `fullstack-docs`, `Godot-docs`, `python-docs`, `robotica-docs`, `web-docs`) moeten volgen.
+Dit document beschrijft de schrijfstijl die binnen `play-docs` consequent wordt gehanteerd en die alle overige `*-docs` projecten (`coderius-docs`, `ctf-docs`, `editor-docs`, `fullstack-docs`, `Godot-docs`, `linux-docs`, `python-docs`, `robotica-docs`, `web-docs`) moeten volgen.
 
 > **Doel:** één herkenbare, leerlingvriendelijke stem over alle Coderius-documentatie heen, gebaseerd op het didactische **PRIMM**-model (Predict, Run, Investigate, Modify, Make).
 

@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import sidebars from '../../sidebars';
 
 // De route Online zetten (docs/online/, eigen sidebar en navbar-link). Hij legt
-// geen Linux uit maar linkt naar de Linux-cursus (site dvwa, docs/linux/), en
+// geen Linux uit maar linkt naar de Linux-cursus (site linux), en
 // zijn lessen bouwen op elkaar: de dienst uit les 5 start wat de voordeur uit
 // les 6 en de Caddyfile uit les 9 doorgeven. Deze test bewaakt:
 // - de sidebar noemt elke les één keer, in de mappen wsl/ en server/;
@@ -89,9 +89,9 @@ describe('de route Online zetten', () => {
   });
 
   it('Linux staat in de Linux-cursus: de startpagina en project-in-linux linken ernaar', () => {
-    expect(lees('online/index')).toContain('(site:dvwa/docs/linux)');
-    expect(lees('online/index')).toContain('(site:dvwa/docs/linux/wsl/installeren)');
-    expect(lees('online/wsl/project-in-linux')).toMatch(/site: 'dvwa', to: '\/docs\/linux\//);
+    expect(lees('online/index')).toContain('(site:linux/docs)');
+    expect(lees('online/index')).toContain('(site:linux/docs/wsl/installeren)');
+    expect(lees('online/wsl/project-in-linux')).toMatch(/site: 'linux', to: '\/docs\//);
   });
 
   it('de dienst luistert op 127.0.0.1, en de voordeur geeft door aan dezelfde poort', () => {

@@ -1,0 +1,51 @@
+---
+title: Docentenhandleiding
+hide_table_of_contents: false
+---
+
+# Docentenhandleiding
+
+Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: wat de cursus is, welke randvoorwaarden er zijn, en hoe je de lessen indeelt.
+
+## Wat is dit?
+
+Een **introductie in Linux** voor leerlingen zonder voorkennis. Ze werken in de terminal: eerst in een oefenterminal in de browser, daarna op een eigen Ubuntu in WSL, tot en met `apt`, `nano`, diensten en `ssh`.
+
+De fullstack-cursus verwijst voor alles wat met Linux te maken heeft naar deze cursus, in de route waarin leerlingen hun FastAPI-site online zetten.
+
+## Technische randvoorwaarden
+
+| Wat | Antwoord |
+|---|---|
+| Deel 1 | Elke browser; er hoeft niets geïnstalleerd te worden |
+| Deel 2 | Windows 10 (versie 2004 of later) of 11, met het recht om WSL te installeren; virtualisatie moet aanstaan in het BIOS |
+| Account | Niet nodig |
+| Internet | Nodig om de site te openen, en in deel 2 voor de installatie en voor `apt` |
+
+Op laptops van school mag WSL soms niet. Ga dat na voordat je met deel 2 begint. Op een Mac of een Chromebook kunnen leerlingen deel 1 doen; deel 2 vraagt Ubuntu (WSL, of een Linux-computer).
+
+## Didactische aanpak (PRIMM)
+
+Elke les begint met een klein voorbeeld dat de leerling zelf typt, gevolgd door een **Voorspel** met het antwoord in een uitklapblok. Daarna komen opdrachten met een tip en een antwoord, ook allebei ingeklapt. Elke les sluit af met **Er gaat iets mis**: de foutmeldingen die leerlingen echt tegenkomen, letterlijk zoals Ubuntu ze geeft, met de oorzaak en de oplossing.
+
+In deel 1 kan niets stuk: herladen zet de oefenterminal terug. In deel 2 werken leerlingen op hun eigen computer. Wijs ze op de waarschuwingen bij `rm`, `sudo` en `/etc/wsl.conf`.
+
+## Klassikaal gebruik & differentiatie
+
+- **Plenair starten**: doe 1.1 samen, met de oefenterminal op het bord.
+- **Deel 2 vooruit regelen**: laat de installatie van WSL (2.1) thuis of in een aparte les doen; die vraagt een herstart en soms het BIOS.
+- **Snelle leerlingen** gaan door naar [Online zetten](site:fullstack/docs/online) in de fullstack-cursus, als ze die cursus volgen.
+- **Beoordelen**: laat leerlingen een foutmelding uitleggen die ze zelf kregen: wat er stond, waarom, en wat ze deden.
+
+## Leerlijn
+
+Naslag staat in de [Cheatsheet](site:linux/docs/cheatsheet).
+
+| Onderwerp | Leerdoel |
+|---|---|
+| [Deel 1: de terminal](site:linux/docs/terminal/eerste-commando) | Commando's, paden, bestanden lezen en maken, zoeken en rechten, in de browser |
+| [Deel 2: Linux op je eigen computer](site:linux/docs/wsl/installeren) | Ubuntu op Windows, `apt`, `nano`, diensten en `ssh` |
+
+## Feedback & bijdragen
+
+Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs).

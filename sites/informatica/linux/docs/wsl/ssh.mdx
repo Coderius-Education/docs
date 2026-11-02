@@ -1,0 +1,162 @@
+---
+sidebar_position: 6
+---
+
+# 2.6 Inloggen op een andere computer
+
+<Voorkennis items={[{to: '/docs/wsl/diensten', label: 'Diensten en het logboek'}, {to: '/docs/terminal/bestanden-lezen', label: 'Inlogpogingen in auth.log'}]} />
+
+Een server staat in een datacenter, ver weg en zonder scherm. Je werkt erop via **ssh** (*secure shell*): je typt in je eigen terminal, en de commando's draaien op de server. Alles wat over de lijn gaat, is versleuteld.
+
+Je kunt het oefenen zonder server. Je logt in op je eigen Ubuntu, alsof die ver weg staat. Daarvoor heb je de ssh-dienst nodig:
+
+```bash
+sudo apt update
+sudo apt install openssh-server
+```
+
+## Inloggen
+
+```bash
+ssh localhost
+```
+
+`localhost` is "deze computer". Op een echte server staat hier zijn naam of adres, bijvoorbeeld `ssh sam@server.voorbeeld.nl`. De eerste keer vraagt ssh iets:
+
+```
+The authenticity of host 'localhost (127.0.0.1)' can't be established.
+ED25519 key fingerprint is SHA256:Xq3v...
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+ssh kent deze computer nog niet en laat zijn **vingerafdruk** zien. Typ `yes`. ssh onthoudt de vingerafdruk in `~/.ssh/known_hosts` en vraagt het daarna niet meer. Typ daarna je wachtwoord.
+
+Je zit nu "op de andere computer". De prompt lijkt hetzelfde, want het is dezelfde. Met `exit` ga je terug.
+
+## Voorspel
+
+Je logt nog een keer in, en kijkt daarna in het logboek:
+
+```bash
+sudo journalctl -u ssh -n 3
+```
+
+Wat denk je dat er staat?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Regels zoals deze, met jouw naam:
+
+```
+Accepted password for sam from 127.0.0.1 port 51234 ssh2
+```
+
+Elke inlogpoging staat erin, ook de mislukte. Net als in [1.3](site:linux/docs/terminal/bestanden-lezen): een server op internet krijgt elke dag duizenden pogingen van programma's die wachtwoorden raden.
+
+</details>
+
+## Een sleutel in plaats van een wachtwoord
+
+Een wachtwoord kan geraden worden. Een **sleutelpaar** niet. Maak er een:
+
+```bash
+ssh-keygen -t ed25519
+```
+
+Druk op Enter bij de vraag waar hij moet komen. Daarna vraagt hij een *passphrase*: een wachtwoord op je sleutel. Kies er een; dan heeft iemand die je laptop steelt nog niets aan de sleutel.
+
+Je hebt nu twee bestanden in `~/.ssh`:
+
+| Bestand | Wat het is |
+|:---|:---|
+| `id_ed25519` | je **privésleutel**. Geheim. Deze geef je nooit aan iemand en zet je nooit online. |
+| `id_ed25519.pub` | je **publieke sleutel**. Die mag iedereen zien; die zet je op de server. |
+
+Zet je publieke sleutel op de "server":
+
+```bash
+ssh-copy-id localhost
+```
+
+Log nu opnieuw in met `ssh localhost`. ssh vraagt geen wachtwoord van de server meer, alleen de passphrase van je sleutel. De server stuurt een vraag die alleen te beantwoorden is met de privésleutel, en die verlaat jouw computer nooit.
+
+## Opdracht 2.6.a: commando op afstand
+
+ssh kan ook één commando uitvoeren en dan meteen terugkomen. Laat met één regel zien hoe lang de "server" al aanstaat. Het commando daarvoor op de server is `uptime`.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Het commando komt achter de naam van de server.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+ssh localhost uptime
+```
+
+Je krijgt één regel met de tijd, hoe lang de computer aanstaat en hoe druk hij is, en daarna staat je prompt weer op je eigen computer.
+
+</details>
+
+## De ssh-dienst weer uit
+
+Zolang `openssh-server` draait, kan je Ubuntu inlogpogingen ontvangen, ook met een wachtwoord. Op je eigen laptop heb je dat na deze les niet meer nodig. Zet de dienst uit, net als nginx in [2.5](site:linux/docs/wsl/diensten):
+
+```bash
+sudo systemctl disable --now ssh.socket ssh
+```
+
+Wil je hem later weer gebruiken, dan zet je hem aan met `sudo systemctl enable --now ssh`.
+
+## Er gaat iets mis
+
+### Connection refused
+
+```
+ssh: connect to host localhost port 22: Connection refused
+```
+
+**Oorzaak:** op die computer draait geen ssh-dienst, of hij staat uit.
+
+**Oplossing:** installeer `openssh-server` en zet de dienst aan:
+
+```bash
+sudo apt install openssh-server
+sudo systemctl enable --now ssh
+```
+
+### Remote host identification has changed
+
+```
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+```
+
+**Oorzaak:** de server laat een andere vingerafdruk zien dan ssh onthouden heeft. Dat kan betekenen dat iemand zich als jouw server voordoet. Het gebeurt ook als de server opnieuw is geïnstalleerd.
+
+**Oplossing:** stop en vraag na of de server opnieuw is geïnstalleerd. Weet je dat zeker, haal dan de oude vingerafdruk weg en log opnieuw in:
+
+```bash
+ssh-keygen -R localhost
+```
+
+### Unprotected private key file
+
+```
+Permissions 0755 for '/home/sam/.ssh/id_ed25519' are too open.
+```
+
+**Oorzaak:** ook anderen mogen je privésleutel lezen. ssh weigert hem dan. Dat gebeurt als je de sleutel van Windows hebt gekopieerd.
+
+**Oplossing:** maak hem alleen van jou, met `chmod`. De `600` betekent `rw-------`: alleen de eigenaar mag lezen en schrijven.
+
+```bash
+chmod 600 ~/.ssh/id_ed25519
+```
+
+Klaar met deze cursus? In de fullstack-cursus zet je je eigen site [online](site:fullstack/docs/online), op een echte Linux-server.

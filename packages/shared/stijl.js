@@ -130,7 +130,7 @@ const AFKORTINGEN = new Set([
   'WASD',
   'QUIT',
   // Web-security: productnamen, protocol-methodes en aanvalsafkortingen
-  // (o.a. DVWA-cursus). Geen gewone woorden, dus veilig monorepo-breed.
+  // (CTF en de route Veiligheid). Geen gewone woorden, dus veilig monorepo-breed.
   'DVWA',
   'CSRF',
   'XSS',

@@ -5,7 +5,7 @@ description: Haal je project met git clone naar Ubuntu in WSL, maak daar een vir
 
 # Online zetten: je project in Linux
 
-<Voorkennis items={[{site: 'dvwa', to: '/docs/linux/wsl/windows-en-linux', label: 'Ubuntu in WSL, en je projecten in je Linux-thuismap'}, {site: 'dvwa', to: '/docs/linux/wsl/apt', label: 'Installeren met sudo apt'}]} />
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/windows-en-linux', label: 'Ubuntu in WSL, en je projecten in je Linux-thuismap'}, {site: 'linux', to: '/docs/wsl/apt', label: 'Installeren met sudo apt'}]} />
 
 Een server draait Linux, en geen Windows. Voordat je je project naar een server brengt, kijk je of het in Linux werkt. Dat doe je in Ubuntu in WSL, op je eigen computer. Wat hier misgaat, gaat op de server ook mis, maar hier kun je het rustig oplossen.
 
@@ -127,7 +127,7 @@ remote: Support for password authentication was removed on August 13, 2021.
 
 **Oorzaak:** je repository is privé, en GitHub accepteert in de terminal geen wachtwoord meer.
 
-**Oplossing:** log in met een sleutel. Maak er een zoals in [Inloggen op een andere computer](site:dvwa/docs/linux/wsl/ssh) in de Linux-cursus, zet de inhoud van `~/.ssh/id_ed25519.pub` op GitHub onder **Settings**, **SSH and GPG keys**, en clone met het ssh-adres:
+**Oplossing:** log in met een sleutel. Maak er een zoals in [Inloggen op een andere computer](site:linux/docs/wsl/ssh) in de Linux-cursus, zet de inhoud van `~/.ssh/id_ed25519.pub` op GitHub onder **Settings**, **SSH and GPG keys**, en clone met het ssh-adres:
 
 ```bash
 git clone git@github.com:sam/gastenboek.git

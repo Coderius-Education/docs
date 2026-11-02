@@ -1,0 +1,109 @@
+---
+sidebar_position: 6
+---
+
+import LinuxTerminal from '@site/src/components/LinuxTerminal';
+
+# 1.6 Zoeken en doorgeven
+
+<Voorkennis items={[{to: '/docs/terminal/bestanden-lezen', label: 'Bestanden lezen met cat, head en tail'}]} />
+
+Met `grep` zoek je in een bestand naar een woord. Je krijgt alleen de regels te zien waar het in staat:
+
+```bash
+grep Failed /var/log/auth.log
+```
+
+```
+Mar 26 10:15:01 oefenpc sshd[1234]: Failed password for admin from 192.168.1.100
+Mar 26 10:15:03 oefenpc sshd[1234]: Failed password for admin from 192.168.1.100
+Mar 26 10:15:04 oefenpc sshd[1234]: Failed password for admin from 192.168.1.100
+```
+
+`grep` let op hoofdletters: `grep failed` vindt hier niets. Met `grep -i` maakt het niet uit.
+
+<LinuxTerminal title="Oefenterminal" />
+
+## De pipe
+
+Het teken `|` heet een **pipe**. Hij geeft de uitvoer van het ene commando door aan het volgende, in plaats van hem op het scherm te zetten:
+
+```bash
+cat /etc/passwd | grep student
+```
+
+```
+student:x:1000:1000:student:/home/student:/bin/bash
+```
+
+`cat` leest het hele bestand, en `grep` houdt alleen de regel met `student` over. Zo bouw je met kleine commando's iets groters.
+
+## Voorspel
+
+Wat geeft dit, denk je?
+
+```bash
+ls /etc | grep host
+```
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+```
+hostname
+hosts
+```
+
+`ls /etc` geeft de namen in `/etc`, en `grep host` houdt de namen over waar `host` in zit.
+
+</details>
+
+## Opdracht 1.6.a: wat doet de webserver?
+
+In `/var/log/apache2/access.log` schrijft de webserver elk bezoek. Zoek met één regel alle bezoeken aan `inloggen.html`.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Het woord waarnaar je zoekt komt eerst, het bestand erachter.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+grep inloggen.html /var/log/apache2/access.log
+```
+
+```
+192.168.1.100 - - [26/Mar/2026:10:15:01 +0100] "GET /inloggen.html HTTP/1.1" 200 1234
+```
+
+Met `cat /var/log/apache2/access.log | grep inloggen.html` mag ook; het resultaat is hetzelfde.
+
+</details>
+
+## Er gaat iets mis
+
+### Geen uitvoer
+
+**Oorzaak:** `grep` vond niets. Dat is geen fout: dan zegt hij niets. Vaak scheelt het een hoofdletter.
+
+**Oplossing:** probeer het met `-i`, of zoek op een kleiner stuk van het woord.
+
+```bash
+# niets: in het bestand staat Failed met een hoofdletter
+grep failed /var/log/auth.log
+
+# drie regels
+grep -i failed /var/log/auth.log
+```
+
+### De terminal blijft wachten
+
+**Oorzaak:** in WSL of op een server wacht `grep` zonder bestand op tekst die jij typt. Dat lijkt op vastlopen.
+
+**Oplossing:** druk op Ctrl+C. Dat stopt het commando dat nu draait, en je krijgt je prompt terug.
+
+Door naar [1.7 Van wie is dit?](site:linux/docs/terminal/rechten).

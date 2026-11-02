@@ -53,7 +53,7 @@ thema. Zo leest de rechterbladzijde overal even goed.
 | Embedded | chip | een microcontroller |
 | Godot | kruistoets | een gamecontroller |
 | Capture The Flag | vlag | de vlag die je verovert |
-| DVWA | hangslot | websecurity |
+| Linux | pinguïn | Tux, de mascotte van Linux |
 | Online Editor | terminalvenster | code draaien in de browser |
 | Didactiek | tekstballon | het gesprek, zoals in de *Colloquia* |
 | Onderzoek | vergrootglas | goed kijken voordat je iets concludeert |

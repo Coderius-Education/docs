@@ -424,6 +424,7 @@ twintigduizend
 tússen
 UART
 uitgeremd
+uitklapblok
 uitlogknop
 ultrasoonsensor
 Unpaywall
