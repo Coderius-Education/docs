@@ -72,7 +72,7 @@ export function maakSessie(extraFs?: object, { clear }: { clear?: () => void } =
       // niet bij.
       if (regel.trim() && !regel.startsWith(' ') && env.geschiedenis.at(-1) !== regel)
         env.geschiedenis.push(regel);
-      const results: { output?: string }[] = executeCommandLine(regel, env);
+      const results: { output?: string; exitCode?: number }[] = executeCommandLine(regel, env);
       const tekst = results
         .map((r) => (r.output ?? '').replace(/\n$/, ''))
         .filter(Boolean)

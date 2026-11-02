@@ -11,11 +11,16 @@
  * de pagina, wsl/ op je eigen Ubuntu. De thema's 1 tot en met 4 zijn helemaal
  * terminal/, zodat je zonder installatie tot en met de rechten komt. De sidebar
  * zet er een label "browser" of "WSL" bij (src/css/custom.css), op het pad.
- *
- * @type {import('@docusaurus/plugin-content-docs').SidebarsConfig}
+ */
+
+/**
+ * @param {string} label
+ * @param {string[]} items
+ * @returns {{ type: 'category', label: string, collapsed: boolean, items: string[] }}
  */
 const thema = (label, items) => ({ type: 'category', label, collapsed: true, items });
 
+/** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   linuxSidebar: [
     'index',
