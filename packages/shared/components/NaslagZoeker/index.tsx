@@ -2,6 +2,9 @@ import { type ReactElement, useEffect, useRef, useState } from 'react';
 import { normaal, past, splitsLabel } from './logica';
 import styles from './styles.module.css';
 
+// Gedeeld: de cheatsheet en Er gaat iets mis van fullstack, en de cheatsheet
+// van linux. De compacte rijen staan in packages/shared/css/custom.css.
+//
 // Een zoekbalk boven een naslagpagina die uit <details>-blokken onder
 // ##-koppen bestaat (Cheatsheet, Er gaat iets mis). Hij filtert de blokken
 // op de pagina zelf, zodat de markdown gewone markdown blijft en de tests
@@ -39,8 +42,11 @@ function zet(details: HTMLDetailsElement, open: boolean) {
 
 export default function NaslagZoeker({
   soort,
+  voorbeeld,
 }: {
   soort: keyof typeof SOORTEN;
+  /** Wat er in het lege zoekveld staat; anders dat van de soort. */
+  voorbeeld?: string;
 }): ReactElement {
   const wortel = useRef<HTMLDivElement>(null);
   const veld = useRef<HTMLInputElement>(null);
@@ -164,7 +170,8 @@ export default function NaslagZoeker({
     return () => window.removeEventListener('keydown', toets);
   }, []);
 
-  const { placeholder, wat } = SOORTEN[soort];
+  const { wat } = SOORTEN[soort];
+  const placeholder = voorbeeld ?? SOORTEN[soort].placeholder;
   const zoekt = zoek.trim() !== '';
 
   return (

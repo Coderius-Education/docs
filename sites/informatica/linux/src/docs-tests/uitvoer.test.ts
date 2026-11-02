@@ -2,9 +2,9 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { maakSessie } from '../components/LinuxTerminal/opdrachten';
+import { OPDRACHTEN, maakSessie } from '../components/LinuxTerminal/opdrachten';
 
-// Deel 1 belooft in elke les wat de oefenterminal laat zien: een ```bash-blok
+// Elke les in terminal/ belooft wat de oefenterminal laat zien: een ```bash-blok
 // met daaronder een ```-blok met de uitvoer. Een leerling legt die uitvoer
 // tot op de spatie naast zijn scherm. Deze test typt elk bash-blok, les voor
 // les en in volgorde, in één oefenterminal, en vergelijkt de uitvoer met het
@@ -38,14 +38,14 @@ function blokken(tekst: string): Blok[] {
   return uit;
 }
 
-function terminal() {
-  const sessie = maakSessie();
+function terminal(bestanden?: object) {
+  const sessie = maakSessie(bestanden);
   return (regel: string) => sessie.typ(regel).stand.uitvoer.join('\n');
 }
 
 const lessen = readdirSync(TERMINAL).filter((n) => n.endsWith('.mdx'));
 
-describe('wat deel 1 belooft, laat de oefenterminal zien', () => {
+describe('wat de lessen in terminal/ beloven, laat de oefenterminal zien', () => {
   for (const les of lessen) {
     it(les, () => {
       const lijst = blokken(readFileSync(join(TERMINAL, les), 'utf8'));
@@ -56,7 +56,9 @@ describe('wat deel 1 belooft, laat de oefenterminal zien', () => {
       lijst.forEach((blok, i) => {
         if (blok.taal !== 'bash') return;
         const kop = [...blok.ervoor.matchAll(/^## (.*)$/gm)].pop();
-        if (kop) typ = kop[1].startsWith('Opdracht ') ? terminal() : lesTerminal;
+        // Een opdracht begint vers, met de bestanden die er bij die opdracht staan.
+        const opdracht = kop?.[1].match(/^Opdracht (\S+):/)?.[1];
+        if (kop) typ = opdracht ? terminal(OPDRACHTEN[opdracht]?.bestanden) : lesTerminal;
         const uitvoer = blok.regels
           .map((r) => typ(r))
           .filter(Boolean)

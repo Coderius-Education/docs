@@ -2,11 +2,11 @@
 sidebar_position: 5
 ---
 
-# 2.5 Diensten
+# 6.4 Diensten
 
 <Voorkennis items={[{to: '/docs/wsl/apt', label: 'Installeren met sudo apt'}, {to: '/docs/wsl/windows-en-linux', label: 'Een website in WSL bekijken'}]} />
 
-De webserver uit [2.2](site:linux/docs/wsl/windows-en-linux) stopte zodra je Ctrl+C drukte of de terminal sloot. Een echte server moet blijven draaien, ook als niemand is ingelogd, en vanzelf weer starten na een herstart. Zo'n programma heet een **dienst**. Op Ubuntu regelt **systemd** de diensten, en je praat ermee via `systemctl`.
+De webserver uit [5.2](site:linux/docs/wsl/windows-en-linux) stopte zodra je Ctrl+C drukte of de terminal sloot. Een echte server moet blijven draaien, ook als niemand is ingelogd, en vanzelf weer starten na een herstart. Zo'n programma heet een **dienst**. Op Ubuntu regelt **systemd** de diensten, en je praat ermee via `systemctl`.
 
 Installeer een echte webserver, nginx:
 
@@ -64,7 +64,7 @@ sudo journalctl -u nginx -n 20
 
 `-u nginx` kiest de dienst (*unit*), `-n 20` de laatste twintig regels. Start een dienst niet, dan staat hier waarom. Met `-f` (*follow*) blijft het logboek openstaan en zie je nieuwe regels meteen verschijnen; stoppen doe je met Ctrl+C.
 
-## Opdracht 2.5.a: nginx uit
+## Opdracht 6.4.a: nginx uit
 
 Je hebt nginx straks niet meer nodig, en hij houdt de deur van `http://localhost` bezet.
 
@@ -134,4 +134,4 @@ Deze regel staat in `sudo journalctl -u nginx -n 20`, en `systemctl status nginx
 
 **Oplossing:** open Ubuntu; diensten met `enabled` starten dan vanzelf weer. Op een echte server speelt dit niet: die staat altijd aan.
 
-Door naar [2.6 Inloggen op een andere computer](site:linux/docs/wsl/ssh).
+Door naar [7.1 Netwerk](site:linux/docs/wsl/netwerk).

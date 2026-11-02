@@ -29,6 +29,7 @@ export default createConfig({
           editUrl: repoEditUrl('linux'),
         },
         blog: false,
+        theme: { customCss: './src/css/custom.css' },
       },
     ],
   ],

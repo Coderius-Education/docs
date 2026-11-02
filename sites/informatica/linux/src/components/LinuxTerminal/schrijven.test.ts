@@ -76,7 +76,8 @@ describe('> en >>', () => {
   it('> zet de uitvoer in een bestand in plaats van op het scherm', () => {
     const t = terminal();
     expect(t.typ('echo hallo > groet.txt')).toBe('');
-    expect(t.typ('cat groet.txt')).toBe('hallo\n');
+    expect(t.inhoud('groet.txt')).toBe('hallo\n');
+    expect(t.typ('cat groet.txt')).toBe('hallo');
   });
 
   it('> overschrijft, >> vult aan', () => {

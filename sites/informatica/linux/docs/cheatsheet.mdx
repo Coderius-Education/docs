@@ -1,51 +1,21 @@
 ---
-sidebar_position: 6
+sidebar_position: 20
 displayed_sidebar: null
 hide_pagination: true
 ---
 
+import NaslagZoeker from '@coderius/shared/components/NaslagZoeker';
+
 # Cheatsheet
 
-De commando's uit de [Linux-cursus](site:linux/docs) op één pagina. Klik op een vraag om het antwoord te zien.
+De commando's uit de [Linux-cursus](site:linux/docs) op één pagina, in de volgorde van de thema's. Zoek met het veld hieronder, of klik een vraag aan om het antwoord te zien.
 
-## WSL
+<NaslagZoeker soort="cheatsheet" voorbeeld="Zoek, bijvoorbeeld kopiëren of grep" />
 
-<details>
-<summary>Hoe open ik Ubuntu? (<code>wsl</code>)</summary>
-
-Zoek in het startmenu naar **Ubuntu**, of typ in PowerShell:
-
-```powershell
-wsl
-```
-
-</details>
+## Rondkijken
 
 <details>
-<summary>Welke Linux staat er in WSL, en welke versie? (<code>wsl -l -v</code>)</summary>
-
-```powershell
-wsl -l -v
-```
-
-Onder `VERSION` hoort `2` te staan.
-
-</details>
-
-<details>
-<summary>Hoe kom ik vanuit Linux bij mijn Windows-bestanden? (<code>/mnt/c</code>)</summary>
-
-```bash
-ls /mnt/c/Users
-explorer.exe .
-```
-
-</details>
-
-## Mappen
-
-<details>
-<summary>Waar ben ik, en wat staat hier? (<code>pwd</code>, <code>ls</code>)</summary>
+<summary>Waar ben ik, en wat staat hier? (pwd, ls)</summary>
 
 ```bash
 pwd
@@ -53,10 +23,12 @@ ls
 ls -la
 ```
 
+`-a` laat ook verborgen bestanden zien, `-l` de eigenaar, de rechten en de grootte.
+
 </details>
 
 <details>
-<summary>Hoe ga ik naar een andere map? (<code>cd</code>)</summary>
+<summary>Hoe ga ik naar een andere map? (cd)</summary>
 
 ```bash
 cd /var/log
@@ -64,12 +36,33 @@ cd ..
 cd ~
 ```
 
+`..` is de map erboven, `~` je thuismap.
+
+</details>
+
+<details>
+<summary>Hoe typ ik minder? (Tab)</summary>
+
+Typ de eerste letters van een commando, bestand of map en druk op Tab. Passen er meer, druk dan nog een keer: dan zie je wat er past.
+
+</details>
+
+<details>
+<summary>Hoe haal ik een vorig commando terug? (pijltje omhoog, history)</summary>
+
+```bash
+history
+history 5
+```
+
+Pijltje omhoog haalt het vorige commando terug, pijltje links en rechts zetten de cursor in de regel. Ctrl+C gooit de regel weg, Ctrl+L maakt het scherm leeg.
+
 </details>
 
 ## Bestanden
 
 <details>
-<summary>Hoe lees ik een bestand? (<code>cat</code>, <code>head</code>, <code>tail</code>, <code>wc</code>)</summary>
+<summary>Hoe lees ik een bestand? (cat, head, tail, wc)</summary>
 
 ```bash
 cat notities.txt
@@ -81,7 +74,7 @@ wc -l /etc/passwd
 </details>
 
 <details>
-<summary>Hoe maak ik een map of een bestand? (<code>mkdir</code>, <code>touch</code>, <code>&gt;</code>)</summary>
+<summary>Hoe maak ik een map of een bestand? (mkdir, touch, >)</summary>
 
 ```bash
 mkdir -p project/static
@@ -95,7 +88,7 @@ Eén `>` maakt het bestand eerst leeg, `>>` zet er iets onder.
 </details>
 
 <details>
-<summary>Hoe kopieer, verplaats en verwijder ik? (<code>cp</code>, <code>mv</code>, <code>rm</code>)</summary>
+<summary>Hoe kopieer, verplaats en verwijder ik? (cp, mv, rm)</summary>
 
 ```bash
 cp main.py main.py.bak
@@ -107,10 +100,23 @@ Er is geen prullenbak: `rm` is meteen weg.
 
 </details>
 
+<details>
+<summary>Hoe doe ik iets met veel bestanden tegelijk? (*, ?)</summary>
+
+```bash
+ls *.jpg
+mv *.jpg *.png fotos/
+echo *.txt
+```
+
+`*` past op elk stuk tekst, `?` op één teken. Kijk met `ls` of `echo` wat er past voordat je `rm` gebruikt.
+
+</details>
+
 ## Zoeken
 
 <details>
-<summary>Hoe zoek ik in een bestand? (<code>grep</code>, <code>|</code>)</summary>
+<summary>Hoe zoek ik iets in een bestand? (grep, |)</summary>
 
 ```bash
 grep -i failed /var/log/auth.log
@@ -119,10 +125,23 @@ ls /etc | grep host
 
 </details>
 
-## Rechten
+<details>
+<summary>Hoe vind ik een bestand? (find)</summary>
+
+```bash
+find /var/www -name '*.html'
+find ~ -type d
+find / -name passwd
+```
+
+Zet een patroon met `*` altijd tussen aanhalingstekens.
+
+</details>
+
+## Gebruikers en rechten
 
 <details>
-<summary>Wie ben ik, en van wie is dit bestand? (<code>id</code>, <code>ls -l</code>)</summary>
+<summary>Wie ben ik, en van wie is dit bestand? (id, ls -l)</summary>
 
 ```bash
 id
@@ -134,7 +153,7 @@ ls -l /etc/passwd
 </details>
 
 <details>
-<summary>Hoe doe ik iets als beheerder? (<code>sudo</code>)</summary>
+<summary>Hoe doe ik iets als beheerder? (sudo)</summary>
 
 ```bash
 sudo apt update
@@ -144,10 +163,67 @@ sudo apt update
 
 </details>
 
-## Programma's en bestanden in WSL
+## Linux op je eigen computer
 
 <details>
-<summary>Hoe installeer ik een programma? (<code>sudo apt</code>)</summary>
+<summary>Hoe open ik Ubuntu? (wsl)</summary>
+
+Zoek in het startmenu naar **Ubuntu**, of typ in PowerShell:
+
+```powershell
+wsl
+```
+
+</details>
+
+<details>
+<summary>Welke Linux staat er in WSL, en welke versie? (wsl -l -v)</summary>
+
+```powershell
+wsl -l -v
+```
+
+Onder `VERSION` hoort `2` te staan.
+
+</details>
+
+<details>
+<summary>Hoe kom ik vanuit Linux bij mijn Windows-bestanden? (/mnt/c)</summary>
+
+```bash
+ls /mnt/c/Users
+explorer.exe .
+```
+
+</details>
+
+<details>
+<summary>Wat kan dit commando? (--help, man)</summary>
+
+```bash
+ls --help
+man ls
+type cd
+help cd
+```
+
+In `man`: spatie is verder, `/woord` zoekt, `q` stopt. Voor een commando dat in bash zelf zit (`cd`), gebruik je `help`.
+
+</details>
+
+<details>
+<summary>Welk commando doet wat ik wil? (apropos)</summary>
+
+```bash
+apropos sort
+```
+
+</details>
+
+## Programma's en diensten
+
+<details>
+<summary>Hoe installeer ik een programma? (sudo apt)</summary>
 
 ```bash
 sudo apt update
@@ -158,7 +234,7 @@ sudo apt upgrade
 </details>
 
 <details>
-<summary>Hoe bewerk ik een bestand in de terminal? (<code>nano</code>)</summary>
+<summary>Hoe bewerk ik een bestand in de terminal? (nano)</summary>
 
 ```bash
 nano bestand.txt
@@ -168,10 +244,23 @@ Ctrl+O en Enter slaat op, Ctrl+X stopt.
 
 </details>
 
-## Diensten en andere computers
+<details>
+<summary>Wat draait er, en hoe stop ik het? (ps, kill, top)</summary>
+
+```bash
+ps
+pgrep -a sleep
+kill 734
+pkill sleep
+top
+```
+
+Ctrl+C stopt wat in je eigen terminal draait. `kill -9` pas als `kill` alleen niet werkt. `top` sluit je met `q`.
+
+</details>
 
 <details>
-<summary>Hoe start, stop en bekijk ik een dienst? (<code>systemctl</code>, <code>journalctl</code>)</summary>
+<summary>Hoe start, stop en bekijk ik een dienst? (systemctl, journalctl)</summary>
 
 ```bash
 systemctl status nginx
@@ -182,8 +271,33 @@ sudo journalctl -u nginx -n 20
 
 </details>
 
+## Netwerk
+
 <details>
-<summary>Hoe log ik in op een andere computer? (<code>ssh</code>)</summary>
+<summary>Wat is mijn IP-adres? (ip)</summary>
+
+```bash
+ip -br a
+```
+
+`127.0.0.1` (`localhost`) is je eigen computer.
+
+</details>
+
+<details>
+<summary>Kan ik die computer bereiken, en antwoordt de website? (ping, curl)</summary>
+
+```bash
+ping -c 3 1.1.1.1
+curl -I https://example.com
+```
+
+`0% packet loss` is goed; een `200` in de eerste regel van `curl` ook.
+
+</details>
+
+<details>
+<summary>Hoe log ik in op een andere computer? (ssh)</summary>
 
 ```bash
 ssh sam@server.voorbeeld.nl

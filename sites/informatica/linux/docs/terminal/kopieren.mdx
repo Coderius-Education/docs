@@ -4,7 +4,7 @@ sidebar_position: 5
 
 import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
-# 1.5 Kopiëren, verplaatsen en weggooien
+# 2.3 Kopiëren, verplaatsen en weggooien
 
 <Voorkennis items={[{to: '/docs/terminal/maken', label: 'Mappen en bestanden maken'}]} />
 
@@ -61,14 +61,14 @@ rm: cannot remove 'archief': Is a directory
 
 Met `rm -r` (*recursive*) gaat de map weg met alles wat erin staat. Lees zo'n commando twee keer voor je op Enter drukt.
 
-## Opdracht 1.5.a: opruimen
+## Opdracht 2.3.a: opruimen
 
 1. Maak een map `oud` en zet daar een kopie van `notities.txt` in.
 2. Hernoem het origineel naar `todo.txt`.
 3. Gooi de map `oud` weg.
 4. Controleer met `ls` dat alleen `todo.txt` over is.
 
-<LinuxTerminal opdracht="1.5.a" />
+<LinuxTerminal opdracht="2.3.a" />
 
 <details>
 <summary>Klik hier voor een tip</summary>
@@ -118,4 +118,4 @@ cp -i notities.txt todo.txt
 
 Die optie werkt in WSL en op een server, niet in de oefenterminal.
 
-Door naar [1.6 Zoeken en doorgeven](site:linux/docs/terminal/zoeken).
+Door naar [2.4 Jokertekens](site:linux/docs/terminal/jokertekens).

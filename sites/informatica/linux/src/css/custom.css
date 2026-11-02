@@ -1,0 +1,28 @@
+/*
+ * Waar je een les doet staat in de sidebar achter de titel: de map van de les
+ * bepaalt het (zie sidebars.js). terminal/ is de oefenterminal op de pagina,
+ * wsl/ is je eigen Ubuntu.
+ */
+.theme-doc-sidebar-menu .menu__link[href*="/docs/terminal/"]::after,
+.theme-doc-sidebar-menu .menu__link[href*="/docs/wsl/"]::after {
+  flex: none;
+  align-self: center;
+  margin-left: 0.5rem;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ifm-color-emphasis-800);
+  background: var(--ifm-color-emphasis-200);
+}
+
+.theme-doc-sidebar-menu .menu__link[href*="/docs/terminal/"]::after {
+  content: "browser";
+}
+
+.theme-doc-sidebar-menu .menu__link[href*="/docs/wsl/"]::after {
+  content: "WSL";
+  color: var(--coderius-on-primary);
+  background: var(--ifm-color-primary-darker);
+}

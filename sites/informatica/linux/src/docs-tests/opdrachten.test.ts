@@ -3,8 +3,9 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { OPDRACHTEN, maakSessie, volgDoelen } from '../components/LinuxTerminal/opdrachten';
+import { LEEG, toets } from '../components/LinuxTerminal/regel';
 
-// Elke opdracht in deel 1 heeft een eigen oefenterminal, direct onder de
+// Elke opdracht in de oefenterminal (terminal/) heeft een eigen oefenterminal, direct onder de
 // opdracht en vóór de tip, met de doelen uit opdrachten.ts erboven. Deze test
 // bewaakt dat elke opdracht er een heeft (of een reden waarom niet), dat de
 // terminal op zijn plek staat, en dat de doelen eerlijk zijn: het antwoord uit
@@ -15,7 +16,7 @@ const TERMINAL = fileURLToPath(new URL('../../docs/terminal', import.meta.url));
 
 /** Opdrachten zonder terminal, met de reden. */
 const ZONDER_TERMINAL: Record<string, string> = {
-  '1.7.a': 'je leest een regel die in de les staat; er is niets te typen',
+  '4.1.a': 'je leest een regel die in de les staat; er is niets te typen',
 };
 
 type Sectie = { id: string; les: string; tekst: string };
@@ -24,7 +25,7 @@ const secties: Sectie[] = readdirSync(TERMINAL)
   .filter((n) => n.endsWith('.mdx'))
   .flatMap((les) => {
     const bron = readFileSync(join(TERMINAL, les), 'utf8');
-    return [...bron.matchAll(/^## Opdracht (1\.\d\.[a-z]):/gm)].map((m) => {
+    return [...bron.matchAll(/^## Opdracht (\d\.\d\.[a-z]):/gm)].map((m) => {
       const start = m.index ?? 0;
       const einde = bron.indexOf('\n## ', start + 1);
       return { id: m[1], les, tekst: bron.slice(start, einde === -1 ? undefined : einde) };
@@ -38,7 +39,7 @@ function antwoord(s: Sectie): string[] {
 }
 
 function speel(id: string, regels: string[]): boolean[] {
-  const sessie = maakSessie();
+  const sessie = maakSessie(OPDRACHTEN[id].bestanden);
   let klaar: boolean[] = [];
   for (const regel of regels) klaar = volgDoelen(OPDRACHTEN[id], klaar, sessie.typ(regel).stand);
   return OPDRACHTEN[id].doelen.map((_, i) => klaar[i] ?? false);
@@ -105,22 +106,40 @@ describe('een terminal per opdracht', () => {
     ]);
   });
 
-  it('1.3.a: het hele bestand laten zien is niet alleen de laatste regel', () => {
-    expect(speel('1.3.a', ['cat /etc/passwd'])[1]).toBe(false);
+  it('2.1.a: het hele bestand laten zien is niet alleen de laatste regel', () => {
+    expect(speel('2.1.a', ['cat /etc/passwd'])[1]).toBe(false);
   });
 
-  it('1.5.a: de map oud weggooien telt pas als er een kopie in zat', () => {
-    expect(speel('1.5.a', ['ls', 'rm -r oud'])).toEqual([false, false, false, false]);
+  it('2.3.a: de map oud weggooien telt pas als er een kopie in zat', () => {
+    expect(speel('2.3.a', ['ls', 'rm -r oud'])).toEqual([false, false, false, false]);
   });
 
-  it('1.4.a: tellen telt alleen als het bestand klopt', () => {
+  it('2.2.a: tellen telt alleen als het bestand klopt', () => {
     expect(
-      speel('1.4.a', [
+      speel('2.2.a', [
         'mkdir lijstjes',
         'echo brood > lijstjes/boodschappen.txt',
         'echo kaas > lijstjes/boodschappen.txt',
         'wc -l lijstjes/boodschappen.txt',
       ]),
     ).toEqual([true, false, false]);
+  });
+
+  it('1.3.b: de toetsen uit de les maken van hostnme echt hostname', () => {
+    // De les zei eerst "drie keer pijltje links"; dat gaf hostanme, en het
+    // tweede vinkje kwam nooit.
+    const les = readFileSync(join(TERMINAL, 'sneller.mdx'), 'utf8');
+    const getallen: Record<string, number> = { een: 1, twee: 2, drie: 3, vier: 4 };
+    const keren = [...les.matchAll(/(een|twee|drie|vier) keer (?:op )?pijltje links/g)].map(
+      (m) => getallen[m[1]],
+    );
+    expect(keren.length).toBeGreaterThan(0);
+    const sessie = maakSessie();
+    sessie.typ('cat /etc/hostnme');
+    for (const n of keren) {
+      let stand = toets(LEEG, '\x1b[A', sessie).stand;
+      for (let i = 0; i < n; i++) stand = toets(stand, '\x1b[D', sessie).stand;
+      expect(toets(stand, 'a', sessie).stand.tekst).toBe('cat /etc/hostname');
+    }
   });
 });

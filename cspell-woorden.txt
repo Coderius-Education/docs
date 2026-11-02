@@ -162,6 +162,8 @@ informationeel
 inspringniveau
 instantieert
 instantiëren
+jokerteken
+jokertekens
 journalctl
 jumperkabel
 jóuw

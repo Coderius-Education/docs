@@ -80,6 +80,9 @@ const defaultFilesystem = {
 
 export const HOME = '/home/student';
 
+/** De map die je niet mag lezen (drwx------ root). /etc/shadow is een bestand. */
+export const GEHEIME_MAP = '/root';
+
 /** De map in de prompt, zoals bash hem toont: ~ voor je thuismap, ook als begin. */
 export function promptPad(cwd) {
   if (cwd === HOME) return '~';
@@ -255,7 +258,9 @@ export function createFilesystem(extraFiles) {
   // Deep clone default filesystem and merge extra files
   const fs = JSON.parse(JSON.stringify(defaultFilesystem));
   if (extraFiles) {
-    mergeDeep(fs, extraFiles);
+    // Ook een kopie: anders veranderde een sessie de startbestanden van een
+    // opdracht, en begon Opnieuw beginnen met het werk van de vorige keer.
+    mergeDeep(fs, JSON.parse(JSON.stringify(extraFiles)));
   }
   return fs;
 }

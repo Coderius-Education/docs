@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# 2.2 Windows en Linux naast elkaar
+# 5.2 Windows en Linux naast elkaar
 
 <Voorkennis items={[{to: '/docs/wsl/installeren', label: 'WSL en Ubuntu installeren'}, {to: '/docs/terminal/mappen', label: 'Absolute paden en cd'}]} />
 
@@ -41,7 +41,7 @@ Nee. `~` is je Linux-thuismap, `/home/<jouw naam>`, en die staat los van Windows
 
 ## Waar zet je je projecten?
 
-Zet een project waar je in Linux aan werkt, in je Linux-thuismap, niet onder `/mnt/c`. Linux-programma's werken veel trager op de Windows-schijf, en de rechten uit [1.7](site:linux/docs/terminal/rechten) werken daar niet zoals je verwacht.
+Zet een project waar je in Linux aan werkt, in je Linux-thuismap, niet onder `/mnt/c`. Linux-programma's werken veel trager op de Windows-schijf, en de rechten uit [4.1](site:linux/docs/terminal/rechten) werken daar niet zoals je verwacht.
 
 Met VS Code werk je dan zo: installeer in VS Code de extensie **WSL** (van Microsoft), ga in Ubuntu naar je project en typ:
 
@@ -64,7 +64,7 @@ python3 -m http.server 8000
 
 Open in je browser `http://localhost:8000`. Je ziet de kop uit `index.html`. In de terminal verschijnt bij elk bezoek een regel. Stop de server met Ctrl+C.
 
-## Opdracht 2.2.a: van Windows naar Linux
+## Opdracht 5.2.a: van Windows naar Linux
 
 1. Zet op je Windows-bureaublad een tekstbestand `boodschap.txt` met een zin erin (met Kladblok).
 2. Kopieer het in Ubuntu naar je Linux-thuismap.
@@ -122,4 +122,4 @@ ls /mnt/c/Users/Sam/Mijn bestanden
 ls "/mnt/c/Users/Sam/Mijn bestanden"
 ```
 
-Door naar [2.3 Programma's installeren](site:linux/docs/wsl/apt).
+Door naar [5.3 Hulp vragen](site:linux/docs/wsl/hulp).

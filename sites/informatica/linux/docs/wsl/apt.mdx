@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# 2.3 Programma's installeren
+# 6.1 Programma's installeren
 
 <Voorkennis items={[{to: '/docs/terminal/rechten', label: 'Eigenaar, rechten en root'}]} />
 
@@ -20,7 +20,7 @@ Ubuntu kent het programma, maar het staat nog niet op je computer. Hij zegt er m
 
 ## sudo: even beheerder zijn
 
-Een programma installeren verandert dingen in mappen van `root`. Dat mag jij niet, zag je in [1.7](site:linux/docs/terminal/rechten). Met `sudo` voor een commando voer je dat ene commando uit als `root`:
+Een programma installeren verandert dingen in mappen van `root`. Dat mag jij niet, zag je in [4.1](site:linux/docs/terminal/rechten). Met `sudo` voor een commando voer je dat ene commando uit als `root`:
 
 ```bash
 sudo apt update
@@ -75,7 +75,7 @@ sudo apt upgrade
 
 Op een server doe je dat vaak. Een lek dat al gedicht is maar bij jou nog openstaat, is de makkelijkste weg naar binnen.
 
-## Opdracht 2.3.a: een koe die praat
+## Opdracht 6.1.a: een koe die praat
 
 Het pakket `cowsay` tekent een koe die zegt wat jij wilt.
 
@@ -138,4 +138,4 @@ sudo apt install tree
 
 **Oplossing:** gebruik `sudo` alleen als het moet. Een bestand dat je met `sudo` maakt in je thuismap, is van `root`, en dat mag je daarna zelf niet meer veranderen. En een typfout met `sudo rm` kan alles weggooien, ook van Ubuntu zelf.
 
-Door naar [2.4 Een bestand bewerken met nano](site:linux/docs/wsl/nano).
+Door naar [6.2 Een bestand bewerken met nano](site:linux/docs/wsl/nano).

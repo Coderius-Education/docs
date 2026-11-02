@@ -1,0 +1,189 @@
+---
+sidebar_position: 9
+---
+
+import LinuxTerminal from '@site/src/components/LinuxTerminal';
+
+# 3.2 Bestanden vinden
+
+<Voorkennis items={[{to: '/docs/terminal/jokertekens', label: 'Jokertekens'}, {to: '/docs/terminal/zoeken', label: 'Zoeken in een bestand met grep'}]} />
+
+`grep` zoekt iets *in* een bestand. Weet je niet eens waar het bestand staat, dan zoek je het met `find`. Je geeft een map, en `find` loopt alles eronder af, map in map:
+
+```bash
+find /var/www
+```
+
+```
+/var/www
+/var/www/html
+/var/www/html/config
+/var/www/html/config/instellingen.conf
+/var/www/html/index.html
+/var/www/html/inloggen.html
+```
+
+Elke regel is een pad dat je zo kunt gebruiken, bijvoorbeeld achter `cat`.
+
+<LinuxTerminal title="Oefenterminal" />
+
+## Op naam zoeken
+
+Met `-name` noemt `find` alleen wat zo heet. Een jokerteken mag, maar dan tussen aanhalingstekens:
+
+```bash
+find /var/www -name '*.html'
+```
+
+```
+/var/www/html/index.html
+/var/www/html/inloggen.html
+```
+
+De aanhalingstekens zijn nodig omdat de shell anders het sterretje al invult, voordat `find` het ziet. Dan krijgt `find` de namen uit de map waar jij staat, en dat is niet wat je bedoelt. Bij `grep` en `-name` zet je een patroon daarom altijd tussen aanhalingstekens.
+
+`-iname` zoekt zonder op hoofdletters te letten: `-iname '*.JPG'` vindt ook `foto.jpg`.
+
+## Alleen mappen, of alleen bestanden
+
+Met `-type d` (*directory*) noemt `find` alleen mappen, met `-type f` (*file*) alleen bestanden. Je kunt het combineren met `-name`.
+
+## Voorspel
+
+Wat geeft `find /var/www -type d`? Hoeveel regels, en welke?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+```bash
+find /var/www -type d
+```
+
+```
+/var/www
+/var/www/html
+/var/www/html/config
+```
+
+Drie regels. De map waar je begint, telt ook mee: `/var/www` is zelf een map.
+
+</details>
+
+## Overal zoeken
+
+Begin je bij `/`, dan zoekt `find` op de hele computer:
+
+```bash
+find / -name passwd
+```
+
+```
+/etc/passwd
+find: ‘/root’: Permission denied
+```
+
+De tweede regel is geen fout van jou: `find` mocht niet in `/root` kijken, de thuismap van de beheerder. Op je eigen Linux krijg je zo tientallen regels. Ze vertellen alleen dat `find` daar niet kon zoeken.
+
+## Opdracht 3.2.a: alle logboeken
+
+Programma's schrijven hun logboeken in bestanden die op `.log` eindigen, ergens onder `/var/log`. Zoek met één commando alle bestanden die op `.log` eindigen.
+
+<LinuxTerminal opdracht="3.2.a" />
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Je begint in `/var/log`, en zoekt op naam met een jokerteken. Vergeet de aanhalingstekens niet.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+find /var/log -name '*.log'
+```
+
+```
+/var/log/apache2/access.log
+/var/log/apache2/error.log
+/var/log/auth.log
+```
+
+Met `ls /var/log` had je alleen `auth.log` gezien: de andere twee zitten een map dieper.
+
+</details>
+
+## Opdracht 3.2.b: welke mappen?
+
+Laat met één commando alle mappen onder `/var` zien, `/var` zelf meegeteld, en geen bestanden.
+
+<LinuxTerminal opdracht="3.2.b" />
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Een map heet in `find` een *directory*.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+find /var -type d
+```
+
+```
+/var
+/var/log
+/var/log/apache2
+/var/www
+/var/www/html
+/var/www/html/config
+```
+
+</details>
+
+## Er gaat iets mis
+
+### paths must precede expression
+
+```
+find: paths must precede expression: `b.txt'
+find: possible unquoted pattern after predicate `-name'?
+```
+
+**Oorzaak:** je zette het patroon niet tussen aanhalingstekens. De shell vulde `*.txt` in met de namen uit de map waar je stond, en `find` kreeg `-name a.txt b.txt`: één naam te veel. Staat er maar één `.txt` in je map, dan krijg je geen fout, maar zoekt `find` stil alleen naar die ene naam.
+
+**Oplossing:** zet het patroon tussen aanhalingstekens.
+
+```bash
+# FOUT
+find . -name *.txt
+
+# GOED
+find . -name '*.txt'
+```
+
+### No such file or directory
+
+```
+find: ‘/var/logs’: No such file or directory
+```
+
+**Oorzaak:** de map waar je begint, bestaat niet. Hier is het een `s` te veel.
+
+**Oplossing:** kijk met `ls` hoe de map heet, of laat Tab de naam aanvullen.
+
+### Permission denied
+
+```
+find: ‘/root’: Permission denied
+```
+
+**Oorzaak:** `find` kwam een map tegen waar jij niet in mag kijken.
+
+**Oplossing:** meestal niets: wat `find` wel mocht doorzoeken, staat er ook bij. Waarom je in `/root` niet mag, lees je in de volgende les.
+
+Door naar [4.1 Van wie is dit?](site:linux/docs/terminal/rechten).

@@ -2,6 +2,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { promptPad } from './filesystem';
 import { OPDRACHTEN, maakSessie, volgDoelen } from './opdrachten';
+import { LEEG, toets } from './regel';
 import styles from './styles.module.css';
 
 /**
@@ -22,12 +23,12 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
   if (opdracht && !doelen) throw new Error(`LinuxTerminal: onbekende opdracht ${opdracht}`);
   const termRef = useRef(null);
   const xtermRef = useRef(null);
-  const lineBuffer = useRef('');
-  const history = useRef([]);
-  const historyIndex = useRef(-1);
+  const standRef = useRef(LEEG);
   const sessieRef = useRef(null);
   if (sessieRef.current === null) {
-    sessieRef.current = maakSessie(extraFs, { clear: () => xtermRef.current?.clear() });
+    sessieRef.current = maakSessie(extraFs ?? doelen?.bestanden, {
+      clear: () => xtermRef.current?.clear(),
+    });
   }
   const klaarRef = useRef([]);
   const [klaar, setKlaar] = useState([]);
@@ -51,11 +52,6 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
         writePrompt(term);
         return;
       }
-
-      // Add to history
-      history.current.unshift(line);
-      if (history.current.length > 50) history.current.pop();
-      historyIndex.current = -1;
 
       const { results, stand } = sessieRef.current.typ(line);
       if (doelen) {
@@ -94,16 +90,16 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
   const opnieuw = useCallback(() => {
     const term = xtermRef.current;
     if (!term) return;
-    sessieRef.current = maakSessie(extraFs, { clear: () => xtermRef.current?.clear() });
-    lineBuffer.current = '';
-    history.current = [];
-    historyIndex.current = -1;
+    sessieRef.current = maakSessie(extraFs ?? doelen?.bestanden, {
+      clear: () => xtermRef.current?.clear(),
+    });
+    standRef.current = LEEG;
     klaarRef.current = [];
     setKlaar([]);
     term.reset();
     welkom(term);
     term.focus();
-  }, [extraFs, welkom]);
+  }, [extraFs, welkom, doelen]);
 
   useEffect(() => {
     let isMounted = true;
@@ -146,64 +142,54 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
 
       welkom(term);
 
-      // Handle keyboard input
-      term.onData((data) => {
-        const code = data.charCodeAt(0);
-
-        if (code === 13) {
-          // Enter
-          const line = lineBuffer.current;
-          lineBuffer.current = '';
-          handleCommand(term, line);
-        } else if (code === 127 || code === 8) {
-          // Backspace
-          if (lineBuffer.current.length > 0) {
-            lineBuffer.current = lineBuffer.current.slice(0, -1);
-            term.write('\b \b');
-          }
-        } else if (code === 3) {
-          // Ctrl+C
-          lineBuffer.current = '';
-          term.write('^C');
-          writePrompt(term);
-        } else if (code === 12) {
-          // Ctrl+L (clear)
-          term.clear();
-          term.write(getPrompt() + lineBuffer.current);
-        } else if (data === '\x1b[A') {
-          // Arrow up - history
-          if (historyIndex.current < history.current.length - 1) {
-            historyIndex.current++;
-            const entry = history.current[historyIndex.current];
-            // Clear current line
-            term.write(
-              `\r${getPrompt()}${' '.repeat(lineBuffer.current.length)}\r${getPrompt()}${entry}`,
-            );
-            lineBuffer.current = entry;
-          }
-        } else if (data === '\x1b[B') {
-          // Arrow down - history
-          if (historyIndex.current > 0) {
-            historyIndex.current--;
-            const entry = history.current[historyIndex.current];
-            term.write(
-              `\r${getPrompt()}${' '.repeat(lineBuffer.current.length)}\r${getPrompt()}${entry}`,
-            );
-            lineBuffer.current = entry;
-          } else if (historyIndex.current === 0) {
-            historyIndex.current = -1;
-            term.write(`\r${getPrompt()}${' '.repeat(lineBuffer.current.length)}\r${getPrompt()}`);
-            lineBuffer.current = '';
-          }
-        } else if (data === '\x1b[C' || data === '\x1b[D') {
-          // Arrow left/right - ignore for simplicity
-        } else if (code === 9) {
-          // Tab - ignore
-        } else if (code >= 32) {
-          // Printable character
-          lineBuffer.current += data;
-          term.write(data);
+      // De regel tekenen na een toets. Typ je aan het eind, dan komt alleen
+      // het nieuwe teken erbij; anders de hele regel opnieuw, met de cursor
+      // op zijn plek.
+      const teken = (oud, nieuw) => {
+        if (
+          oud.cursor === oud.tekst.length &&
+          nieuw.cursor === nieuw.tekst.length &&
+          nieuw.tekst.startsWith(oud.tekst)
+        ) {
+          term.write(nieuw.tekst.slice(oud.tekst.length));
+          return;
         }
+        term.write(`\r${getPrompt()}${nieuw.tekst}\x1b[K`);
+        const terug = nieuw.tekst.length - nieuw.cursor;
+        if (terug > 0) term.write(`\x1b[${terug}D`);
+      };
+
+      const verwerk = (data) => {
+        const oud = standRef.current;
+        const { stand, actie, opties } = toets(oud, data, sessieRef.current);
+        if (actie === 'uitvoeren') {
+          standRef.current = LEEG;
+          handleCommand(term, stand.tekst);
+        } else if (actie === 'afbreken') {
+          teken(oud, { ...oud, cursor: oud.tekst.length });
+          term.write('^C');
+          standRef.current = LEEG;
+          writePrompt(term);
+        } else if (actie === 'leeg') {
+          term.clear();
+          standRef.current = stand;
+          teken({ ...LEEG, tekst: '\0' }, stand);
+        } else if (actie === 'opties') {
+          // De tweede Tab: wat er past, en dan de regel opnieuw.
+          term.write(`\r\n${opties.join('  ')}\r\n`);
+          standRef.current = stand;
+          teken({ ...LEEG, tekst: '\0' }, stand);
+        } else {
+          standRef.current = stand;
+          teken(oud, stand);
+        }
+      };
+
+      term.onData((data) => {
+        // Een escape-reeks (pijltje, Home) is één toets; geplakte tekst gaat
+        // teken voor teken, met een regeleinde als Enter.
+        if (data.startsWith('\x1b')) verwerk(data);
+        else for (const ch of data.replace(/\r\n/g, '\r')) verwerk(ch);
       });
 
       xtermRef.current = term;
@@ -213,7 +199,6 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
       if (initialCommands && initialCommands.length > 0) {
         for (const cmd of initialCommands) {
           term.write(cmd);
-          lineBuffer.current = cmd;
           handleCommand(term, cmd);
         }
       }

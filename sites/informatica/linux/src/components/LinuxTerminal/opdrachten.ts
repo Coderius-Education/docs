@@ -1,7 +1,8 @@
+import { vulAan } from './aanvullen';
 import { executeCommandLine, parseCommandLine } from './commands';
 import { HOME, createFilesystem, getNode, readFile, resolvePath } from './filesystem';
 
-// De terminal bij een opdracht. Elke opdracht in deel 1 krijgt een eigen,
+// De terminal bij een opdracht. Elke opdracht in de oefenterminal krijgt een eigen,
 // verse oefenterminal direct onder de opdracht, met daarboven de doelen als
 // lijstje dat afvinkt terwijl de leerling typt. Eerst stond er één terminal
 // bovenaan de les: de opdracht stond zestig regels lager, en een verse start
@@ -27,6 +28,13 @@ export type Doel = { tekst: string; klaar: (s: Stand) => boolean };
 export type Opdracht = {
   doelen: Doel[];
   /**
+   * Bestanden die er bij deze opdracht al staan, bovenop de gewone oefenpc
+   * (dezelfde vorm als het bestandssysteem: een map is een object, een
+   * bestand een tekst). Zo hoeft de leerling niet eerst tien bestanden te
+   * maken voordat hij aan het eigenlijke commando toekomt.
+   */
+  bestanden?: object;
+  /**
    * Een doel telt pas als het vorige gehaald is. Nodig als een later doel
    * aan het begin al waar is: "ga terug naar je thuismap" of "gooi de map
    * oud weg" klopt ook voordat je iets gedaan hebt.
@@ -41,6 +49,7 @@ export function maakSessie(extraFs?: object, { clear }: { clear?: () => void } =
   const env = {
     cwd: HOME,
     fs: createFilesystem(extraFs),
+    geschiedenis: [] as string[],
     setCwd(nieuw: string) {
       env.cwd = nieuw;
     },
@@ -50,8 +59,19 @@ export function maakSessie(extraFs?: object, { clear }: { clear?: () => void } =
     get cwd() {
       return env.cwd;
     },
+    get geschiedenis() {
+      return env.geschiedenis;
+    },
+    aanvullen(voor: string): { invoegen: string; opties: string[] } {
+      return vulAan(voor, env);
+    },
     typ(regel: string) {
       const voor = env.cwd;
+      // Zoals Ubuntu het instelt (HISTCONTROL=ignoreboth in ~/.bashrc): een
+      // regel die met een spatie begint of gelijk is aan de vorige, komt er
+      // niet bij.
+      if (regel.trim() && !regel.startsWith(' ') && env.geschiedenis.at(-1) !== regel)
+        env.geschiedenis.push(regel);
       const results: { output?: string }[] = executeCommandLine(regel, env);
       const tekst = results
         .map((r) => (r.output ?? '').replace(/\n$/, ''))
@@ -103,6 +123,17 @@ const BEZOEKEN = (readFile(begin, '/var/log/apache2/access.log').content as stri
   .split('\n')
   .filter((r) => r.includes('inloggen.html'));
 
+const FOTOS = ['kat.png', 'vakantie1.jpg', 'vakantie2.jpg'];
+const LOGS = ['/var/log/apache2/access.log', '/var/log/apache2/error.log', '/var/log/auth.log'];
+const MAPPEN_VAR = [
+  '/var',
+  '/var/log',
+  '/var/log/apache2',
+  '/var/www',
+  '/var/www/html',
+  '/var/www/html/config',
+];
+
 export const OPDRACHTEN: Record<string, Opdracht> = {
   '1.1.a': {
     doelen: [
@@ -150,6 +181,40 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
   '1.3.a': {
     doelen: [
       {
+        tekst: 'Lees /etc/os-release.',
+        klaar: (s) => gebruikt(s, 'cat') && s.uitvoer.some((r) => r.startsWith('PRETTY_NAME=')),
+      },
+    ],
+  },
+  '1.3.b': {
+    opVolgorde: true,
+    doelen: [
+      {
+        tekst: 'Typ cat /etc/hostnme, met de typfout.',
+        klaar: (s) =>
+          s.regel.trim() === 'cat /etc/hostnme' &&
+          s.uitvoer[0] === 'cat: /etc/hostnme: No such file or directory',
+      },
+      {
+        tekst: 'Haal hem terug, verbeter hem, en voer hem opnieuw uit.',
+        klaar: (s) => s.regel.trim() === 'cat /etc/hostname' && s.uitvoer[0] === 'oefenpc',
+      },
+    ],
+  },
+  '1.3.c': {
+    doelen: [
+      {
+        tekst: 'Laat alleen de laatste drie commando’s zien die je typte.',
+        klaar: (s) =>
+          gebruikt(s, 'history') &&
+          s.uitvoer.length === 3 &&
+          s.uitvoer.every((r) => /^\s+\d+ {2}/.test(r)),
+      },
+    ],
+  },
+  '2.1.a': {
+    doelen: [
+      {
         tekst: 'Tel de gebruikers in /etc/passwd.',
         klaar: (s) => gebruikt(s, 'wc') && /^7(\s|$)/.test(s.uitvoer[0] ?? ''),
       },
@@ -161,7 +226,7 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
       },
     ],
   },
-  '1.4.a': {
+  '2.2.a': {
     opVolgorde: true,
     doelen: [
       { tekst: 'Maak in je thuismap een map lijstjes.', klaar: (s) => isMap(s, '~/lijstjes') },
@@ -178,7 +243,7 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
       },
     ],
   },
-  '1.5.a': {
+  '2.3.a': {
     opVolgorde: true,
     doelen: [
       {
@@ -196,7 +261,75 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
       },
     ],
   },
-  '1.6.a': {
+  '2.4.a': {
+    opVolgorde: true,
+    bestanden: {
+      home: {
+        student: {
+          downloads: {
+            'vakantie1.jpg': '',
+            'vakantie2.jpg': '',
+            'kat.png': '',
+            'liedje.mp3': '',
+            'opdracht.pdf': '',
+            'verslag.docx': '',
+          },
+        },
+      },
+    },
+    doelen: [
+      { tekst: 'Maak in downloads een map fotos.', klaar: (s) => isMap(s, '~/downloads/fotos') },
+      {
+        tekst: 'Verplaats alle .jpg- en .png-bestanden naar fotos.',
+        klaar: (s) =>
+          FOTOS.every((f) => bestaat(s, `~/downloads/fotos/${f}`)) &&
+          FOTOS.every((f) => !bestaat(s, `~/downloads/${f}`)),
+      },
+      {
+        tekst: 'Laat zien wat er nu in fotos staat.',
+        klaar: (s) =>
+          gebruikt(s, 'ls') && s.uitvoer.join(' ').split(/\s+/).join(' ') === FOTOS.join(' '),
+      },
+    ],
+  },
+  '2.4.b': {
+    opVolgorde: true,
+    bestanden: {
+      home: {
+        student: {
+          project: {
+            'main.py': 'print("hallo")\n',
+            'README.md': '# Mijn project\n',
+            'cache1.tmp': '',
+            'cache2.tmp': '',
+          },
+        },
+      },
+    },
+    doelen: [
+      {
+        tekst: 'Kijk eerst met ls welke .tmp-bestanden je gaat weggooien.',
+        klaar: (s) =>
+          gebruikt(s, 'ls') &&
+          s.regel.includes('*') &&
+          s.uitvoer
+            .join(' ')
+            .split(/\s+/)
+            .map((n) => n.split('/').pop())
+            .join(' ') === 'cache1.tmp cache2.tmp',
+      },
+      {
+        tekst: 'Gooi ze weg met één rm, en laat de rest staan.',
+        klaar: (s) =>
+          gebruikt(s, 'rm') &&
+          !bestaat(s, '~/project/cache1.tmp') &&
+          !bestaat(s, '~/project/cache2.tmp') &&
+          bestaat(s, '~/project/main.py') &&
+          bestaat(s, '~/project/README.md'),
+      },
+    ],
+  },
+  '3.1.a': {
     doelen: [
       {
         tekst: 'Zoek met één regel alle bezoeken aan inloggen.html.',
@@ -204,6 +337,22 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
           gebruikt(s, 'grep') &&
           s.uitvoer.length === BEZOEKEN.length &&
           s.uitvoer.every((r, i) => r === BEZOEKEN[i]),
+      },
+    ],
+  },
+  '3.2.a': {
+    doelen: [
+      {
+        tekst: 'Zoek met één commando alle bestanden onder /var/log die op .log eindigen.',
+        klaar: (s) => gebruikt(s, 'find') && s.uitvoer.join('\n') === LOGS.join('\n'),
+      },
+    ],
+  },
+  '3.2.b': {
+    doelen: [
+      {
+        tekst: 'Laat alle mappen onder /var zien, /var zelf meegeteld.',
+        klaar: (s) => gebruikt(s, 'find') && s.uitvoer.join('\n') === MAPPEN_VAR.join('\n'),
       },
     ],
   },
