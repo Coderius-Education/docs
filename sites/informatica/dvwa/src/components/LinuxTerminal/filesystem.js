@@ -76,8 +76,19 @@ const defaultFilesystem = {
 /**
  * Resolve a path relative to cwd. Returns an absolute path array.
  */
-export function resolvePath(cwd, inputPath) {
+export const HOME = '/home/student';
+
+/** De map in de prompt, zoals bash hem toont: ~ voor je thuismap, ook als begin. */
+export function promptPad(cwd) {
+  if (cwd === HOME) return '~';
+  if (cwd.startsWith(`${HOME}/`)) return `~${cwd.slice(HOME.length)}`;
+  return cwd;
+}
+
+export function resolvePath(cwd, invoer) {
   let parts;
+  // ~ is je thuismap, net als in bash: ~ en ~/notities.txt.
+  const inputPath = invoer === '~' || invoer.startsWith('~/') ? HOME + invoer.slice(1) : invoer;
   if (inputPath.startsWith('/')) {
     parts = inputPath.split('/').filter(Boolean);
   } else {
@@ -134,7 +145,8 @@ export function getNode(fs, absPath) {
  * List directory contents. Returns sorted array of names with '/' suffix for dirs.
  */
 export function listDir(fs, absPath) {
-  const { node, isDir, permissionDenied } = getNode(fs, absPath);
+  const { node, exists, isDir, permissionDenied } = getNode(fs, absPath);
+  if (!exists) return { error: `ls: cannot access '${absPath}': No such file or directory` };
   if (permissionDenied)
     return { error: `ls: cannot open directory '${absPath}': Permission denied` };
   if (!isDir) return { error: `ls: cannot access '${absPath}': Not a directory` };
@@ -160,6 +172,72 @@ export function readFile(fs, absPath) {
   if (isDir) return { error: `cat: ${absPath}: Is a directory` };
   if (isFile) return { content: node };
   return { error: `cat: ${absPath}: Cannot read` };
+}
+
+/**
+ * Mag de leerling hier schrijven? Alleen in zijn thuismap en in /tmp, zoals
+ * een gewone gebruiker op een echte Linux. Elders: Permission denied, en dat
+ * is precies wat de les over rechten laat zien.
+ */
+export function magSchrijven(absPath) {
+  return (
+    absPath === HOME ||
+    absPath.startsWith(`${HOME}/`) ||
+    absPath === '/tmp' ||
+    absPath.startsWith('/tmp/')
+  );
+}
+
+/** De map boven absPath en de naam erin: '/a/b' -> ['/a', 'b']. */
+export function splitPad(absPath) {
+  const delen = absPath.split('/').filter(Boolean);
+  const naam = delen.pop() ?? '';
+  return [`/${delen.join('/')}`, naam];
+}
+
+/**
+ * Zet een bestand neer (of vult het aan). De map erboven moet bestaan.
+ * @returns {{ error?: string }} error is de reden zonder commandonaam:
+ *   'No such file or directory', 'Is a directory', 'Permission denied'.
+ */
+export function writeFile(fs, absPath, content, { append = false } = {}) {
+  const [ouder, naam] = splitPad(absPath);
+  const map = getNode(fs, ouder);
+  if (!map.exists || !map.isDir) return { error: 'No such file or directory' };
+  if (map.permissionDenied || !magSchrijven(absPath)) return { error: 'Permission denied' };
+  const bestaand = map.node[naam];
+  if (bestaand !== undefined && bestaand !== null && typeof bestaand === 'object')
+    return { error: 'Is a directory' };
+  map.node[naam] = append && typeof bestaand === 'string' ? `${bestaand}${content}` : content;
+  return {};
+}
+
+/** Maakt een lege map. Met `parents` ook de mappen erboven, zoals mkdir -p. */
+export function makeDir(fs, absPath, { parents = false } = {}) {
+  const hier = getNode(fs, absPath);
+  if (hier.exists) return parents && hier.isDir ? {} : { error: 'File exists' };
+  const [ouder, naam] = splitPad(absPath);
+  const map = getNode(fs, ouder);
+  if (!map.exists && parents) {
+    const fout = makeDir(fs, ouder, { parents });
+    if (fout.error) return fout;
+    return makeDir(fs, absPath);
+  }
+  if (!map.exists || !map.isDir) return { error: 'No such file or directory' };
+  if (map.permissionDenied || !magSchrijven(absPath)) return { error: 'Permission denied' };
+  map.node[naam] = {};
+  return {};
+}
+
+/** Haalt een bestand of map weg. Een map alleen met `recursive`, zoals rm -r. */
+export function removeNode(fs, absPath, { recursive = false } = {}) {
+  const hier = getNode(fs, absPath);
+  if (!hier.exists) return { error: 'No such file or directory' };
+  if (!magSchrijven(absPath) || absPath === HOME) return { error: 'Permission denied' };
+  if (hier.isDir && !recursive) return { error: 'Is a directory' };
+  const [ouder, naam] = splitPad(absPath);
+  delete getNode(fs, ouder).node[naam];
+  return {};
 }
 
 export function createFilesystem(extraFiles) {

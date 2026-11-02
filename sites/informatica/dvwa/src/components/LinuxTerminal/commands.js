@@ -4,7 +4,33 @@
  * env contains: { cwd, fs, setCwd, terminal, write, writeln }
  */
 
-import { getNode, listDir, readFile, resolvePath } from './filesystem';
+import {
+  getNode,
+  listDir,
+  magSchrijven,
+  makeDir,
+  readFile,
+  removeNode,
+  resolvePath,
+  splitPad,
+  writeFile,
+} from './filesystem';
+
+/**
+ * Leest een bestand voor een commando, met de foutmelding zoals bash hem
+ * geeft: de naam van het commando en het pad zoals de leerling het typte
+ * (`head: notitie.txt: No such file or directory`), niet `cat:` en het
+ * absolute pad.
+ */
+function lees(env, cmd, arg) {
+  const result = readFile(env.fs, resolvePath(env.cwd, arg));
+  if (!result.error) return result;
+  const reden = result.error.slice(result.error.lastIndexOf(': ') + 2);
+  // head en tail zeggen het anders dan cat (GNU coreutils 9).
+  if ((cmd === 'head' || cmd === 'tail') && reden !== 'Is a directory')
+    return { error: `${cmd}: cannot open '${arg}' for reading: ${reden}` };
+  return { error: `${cmd}: ${arg}: ${reden}` };
+}
 
 /**
  * Parse a command line into chained commands, respecting ;, &&, ||, and |
@@ -102,15 +128,72 @@ function parseArgs(cmdStr) {
   return { name: parts[0] || '', args: parts.slice(1) };
 }
 
+/**
+ * cp en mv voor één bestand: naar een nieuwe naam, of in een bestaande map.
+ * mv verplaatst ook een map; cp doet dat alleen met -r, en dat kent deze
+ * oefenterminal niet.
+ */
+function kopieer(cmd, args, env, verplaats) {
+  const namen = args.filter((a) => !a.startsWith('-'));
+  if (namen.length < 2) return { output: `${cmd}: missing file operand`, exitCode: 1 };
+  const [bron, doel] = namen;
+  const bronPad = resolvePath(env.cwd, bron);
+  const bronNode = getNode(env.fs, bronPad);
+  if (!bronNode.exists)
+    return { output: `${cmd}: cannot stat '${bron}': No such file or directory`, exitCode: 1 };
+  if (bronNode.permissionDenied)
+    return { output: `${cmd}: cannot open '${bron}' for reading: Permission denied`, exitCode: 1 };
+  if (bronNode.isDir && !verplaats)
+    return { output: `${cmd}: -r not specified; omitting directory '${bron}'`, exitCode: 1 };
+
+  let doelPad = resolvePath(env.cwd, doel);
+  let doelNaam = doel;
+  const doelNode = getNode(env.fs, doelPad);
+  if (doelNode.exists && doelNode.isDir) {
+    const naam = splitPad(bronPad)[1];
+    doelPad = doelPad === '/' ? `/${naam}` : `${doelPad}/${naam}`;
+    doelNaam = `${doel.replace(/\/$/, '')}/${naam}`;
+  }
+  if (doelPad === bronPad)
+    return { output: `${cmd}: '${bron}' and '${doelNaam}' are the same file`, exitCode: 1 };
+  if (verplaats && !magSchrijven(bronPad))
+    return {
+      output: `mv: cannot move '${bron}' to '${doelNaam}': Permission denied`,
+      exitCode: 1,
+    };
+
+  const [ouder, naam] = splitPad(doelPad);
+  const map = getNode(env.fs, ouder);
+  const geen = `${cmd}: cannot create regular file '${doelNaam}'`;
+  if (!map.exists || !map.isDir)
+    return { output: `${geen}: No such file or directory`, exitCode: 1 };
+  if (!magSchrijven(doelPad)) return { output: `${geen}: Permission denied`, exitCode: 1 };
+  const bestaand = map.node[naam];
+  if (bestaand && typeof bestaand === 'object' && !bronNode.isDir)
+    return {
+      output: `${cmd}: cannot overwrite directory '${doel}' with non-directory`,
+      exitCode: 1,
+    };
+
+  map.node[naam] = bronNode.node;
+  if (verplaats) {
+    const [bronOuder, bronNaam] = splitPad(bronPad);
+    delete getNode(env.fs, bronOuder).node[bronNaam];
+  }
+  return { output: '', exitCode: 0 };
+}
+
 const COMMANDS = {
-  ls(args, env) {
+  ls(args, env, stdin, { doorgeven = false } = {}) {
     const showAll = args.includes('-a') || args.includes('-la') || args.includes('-al');
     const showLong = args.includes('-l') || args.includes('-la') || args.includes('-al');
     const target = args.find((a) => !a.startsWith('-')) || env.cwd;
     const absPath = resolvePath(env.cwd, target);
     const result = listDir(env.fs, absPath);
 
-    if (result.error) return { output: result.error, exitCode: 1 };
+    // Met het pad zoals de leerling het typte, net als ls zelf.
+    if (result.error)
+      return { output: result.error.replace(`'${absPath}'`, `'${target}'`), exitCode: 2 };
 
     let entries = result.entries;
     if (!showAll) {
@@ -121,11 +204,24 @@ const COMMANDS = {
       const lines = entries.map((e) => {
         const perms = e.isDir ? 'drwxr-xr-x' : '-rw-r--r--';
         const size = e.isDir ? '4096' : ' 256';
-        return `${perms}  1 student student ${size} Mar 26 10:00 ${e.name}${e.isDir ? '' : ''}`;
+        // Van jou in je thuismap en /tmp, van root daarbuiten.
+        const kind = absPath === '/' ? `/${e.name}` : `${absPath}/${e.name}`;
+        const eigenaar = magSchrijven(kind) ? 'student student' : 'root    root   ';
+        // Wat je niet mag lezen (/etc/shadow, /root), met de rechten van een
+        // echte Ubuntu: alleen root, en voor shadow ook de groep shadow.
+        if (getNode(env.fs, kind).permissionDenied) {
+          const geheim =
+            e.name === 'root' ? 'drwx------  1 root    root   ' : '-rw-r-----  1 root    shadow ';
+          return `${geheim} ${size} Mar 26 10:00 ${e.name}`;
+        }
+        return `${perms}  1 ${eigenaar} ${size} Mar 26 10:00 ${e.name}`;
       });
       return { output: lines.join('\n'), exitCode: 0 };
     }
 
+    // Naar een pipe of een bestand: één naam per regel en geen kleur, net
+    // als de echte ls. Dan werkt `ls /etc | grep host`.
+    if (doorgeven) return { output: entries.map((e) => e.name).join('\n'), exitCode: 0 };
     const names = entries.map((e) => (e.isDir ? `\x1b[1;34m${e.name}\x1b[0m` : e.name));
     return { output: names.join('  '), exitCode: 0 };
   },
@@ -136,8 +232,7 @@ const COMMANDS = {
     let exitCode = 0;
     for (const arg of args) {
       if (arg.startsWith('-')) continue;
-      const absPath = resolvePath(env.cwd, arg);
-      const result = readFile(env.fs, absPath);
+      const result = lees(env, 'cat', arg);
       if (result.error) {
         outputs.push(result.error);
         exitCode = 1;
@@ -183,11 +278,7 @@ const COMMANDS = {
   },
 
   cd(args, env) {
-    const target = args[0] || '/home/student';
-    if (target === '~') {
-      env.setCwd('/home/student');
-      return { output: '', exitCode: 0 };
-    }
+    const target = args[0] || '~';
     const absPath = resolvePath(env.cwd, target);
     const { exists, isDir, permissionDenied } = getNode(env.fs, absPath);
 
@@ -211,9 +302,8 @@ const COMMANDS = {
     if (stdin) {
       lines = stdin.split('\n');
     } else if (file) {
-      const absPath = resolvePath(env.cwd, file);
-      const result = readFile(env.fs, absPath);
-      if (result.error) return { output: result.error, exitCode: 1 };
+      const result = lees(env, 'grep', file);
+      if (result.error) return { output: result.error, exitCode: 2 };
       lines = result.content.split('\n');
     } else {
       return { output: 'grep: missing file operand', exitCode: 1 };
@@ -247,6 +337,12 @@ const COMMANDS = {
         '  tail [-n N] <bestand> - Laatste N regels tonen (standaard 10)',
         '  wc [-l|-w|-c] <bestand> - Regels/woorden/tekens tellen',
         '  find <pad> -name <patroon> - Bestanden zoeken',
+        '  mkdir [-p] <map>  - Map maken',
+        '  touch <bestand>   - Leeg bestand maken',
+        '  cp <bron> <doel>  - Bestand kopiëren',
+        '  mv <bron> <doel>  - Verplaatsen of hernoemen',
+        '  rm [-r] <pad>     - Weggooien (er is geen prullenbak)',
+        '  echo <tekst> > <bestand> - Tekst in een bestand zetten (>> vult aan)',
         '  chmod <mode> <bestand> - Rechten wijzigen (gesimuleerd)',
         '  uname [-a]        - Systeeminformatie tonen',
         '  hostname          - Hostnaam tonen',
@@ -270,8 +366,7 @@ const COMMANDS = {
       }
     }
     if (filteredArgs.length === 0) return { output: 'head: missing operand', exitCode: 1 };
-    const absPath = resolvePath(env.cwd, filteredArgs[0]);
-    const result = readFile(env.fs, absPath);
+    const result = lees(env, 'head', filteredArgs[0]);
     if (result.error) return { output: result.error, exitCode: 1 };
     const lines = result.content.split('\n').slice(0, numLines);
     return { output: lines.join('\n'), exitCode: 0 };
@@ -289,8 +384,7 @@ const COMMANDS = {
       }
     }
     if (filteredArgs.length === 0) return { output: 'tail: missing operand', exitCode: 1 };
-    const absPath = resolvePath(env.cwd, filteredArgs[0]);
-    const result = readFile(env.fs, absPath);
+    const result = lees(env, 'tail', filteredArgs[0]);
     if (result.error) return { output: result.error, exitCode: 1 };
     const allLines = result.content.split('\n');
     const lines = allLines.slice(-numLines);
@@ -303,8 +397,7 @@ const COMMANDS = {
     const countChars = args.includes('-c') || args.includes('-m');
     const filteredArgs = args.filter((a) => !a.startsWith('-'));
     if (filteredArgs.length === 0) return { output: 'wc: missing operand', exitCode: 1 };
-    const absPath = resolvePath(env.cwd, filteredArgs[0]);
-    const result = readFile(env.fs, absPath);
+    const result = lees(env, 'wc', filteredArgs[0]);
     if (result.error) return { output: result.error, exitCode: 1 };
     const content = result.content;
     const lines = content.split('\n').length;
@@ -376,6 +469,51 @@ const COMMANDS = {
     return { output: found.join('\n'), exitCode: 0 };
   },
 
+  mkdir(args, env) {
+    const parents = args.includes('-p');
+    const mappen = args.filter((a) => !a.startsWith('-'));
+    if (mappen.length === 0) return { output: 'mkdir: missing operand', exitCode: 1 };
+    const fouten = [];
+    for (const map of mappen) {
+      const r = makeDir(env.fs, resolvePath(env.cwd, map), { parents });
+      if (r.error) fouten.push(`mkdir: cannot create directory \u2018${map}\u2019: ${r.error}`);
+    }
+    return { output: fouten.join('\n'), exitCode: fouten.length ? 1 : 0 };
+  },
+
+  touch(args, env) {
+    const namen = args.filter((a) => !a.startsWith('-'));
+    if (namen.length === 0) return { output: 'touch: missing file operand', exitCode: 1 };
+    const fouten = [];
+    for (const naam of namen) {
+      const absPath = resolvePath(env.cwd, naam);
+      if (getNode(env.fs, absPath).exists) continue;
+      const r = writeFile(env.fs, absPath, '');
+      if (r.error) fouten.push(`touch: cannot touch '${naam}': ${r.error}`);
+    }
+    return { output: fouten.join('\n'), exitCode: fouten.length ? 1 : 0 };
+  },
+
+  rm(args, env) {
+    const recursive = args.some((a) => /^-[a-zA-Z]*[rR]/.test(a));
+    const namen = args.filter((a) => !a.startsWith('-'));
+    if (namen.length === 0) return { output: 'rm: missing operand', exitCode: 1 };
+    const fouten = [];
+    for (const naam of namen) {
+      const r = removeNode(env.fs, resolvePath(env.cwd, naam), { recursive });
+      if (r.error) fouten.push(`rm: cannot remove '${naam}': ${r.error}`);
+    }
+    return { output: fouten.join('\n'), exitCode: fouten.length ? 1 : 0 };
+  },
+
+  cp(args, env) {
+    return kopieer('cp', args, env, false);
+  },
+
+  mv(args, env) {
+    return kopieer('mv', args, env, true);
+  },
+
   chmod(args) {
     if (args.length < 2) return { output: 'chmod: missing operand', exitCode: 1 };
     const mode = args[0];
@@ -428,23 +566,70 @@ export const Filters = {
 /**
  * Execute a single command. Returns { output, exitCode }.
  */
-export function executeCommand(cmdStr, env, stdin) {
-  const { name, args } = parseArgs(cmdStr);
+export function executeCommand(cmdStr, env, stdin, { doorgeven = false } = {}) {
+  const { opdracht, naar, aanvullen } = splitRedirect(cmdStr);
+  const { name, args } = parseArgs(opdracht);
   if (!name) return { output: '', exitCode: 0 };
+
+  if (naar === '')
+    return { output: "bash: syntax error near unexpected token `newline'", exitCode: 2 };
 
   const handler = COMMANDS[name];
   if (!handler) {
     return { output: `bash: ${name}: command not found`, exitCode: 127 };
   }
 
-  return handler(args, env, stdin);
+  // bash opent het doelbestand vóór het commando draait: een fout daar
+  // betekent dat het commando niet draait.
+  if (naar) {
+    const doelPad = resolvePath(env.cwd, naar);
+    const leeg = writeFile(env.fs, doelPad, '', { append: true });
+    if (leeg.error) return { output: `bash: ${naar}: ${leeg.error}`, exitCode: 1 };
+    const result = handler(args, env, stdin, { doorgeven: true });
+    // Een foutmelding gaat naar het scherm, niet het bestand in (stderr).
+    if (result.exitCode !== 0) return result;
+    const tekst = result.output ? `${result.output}\n` : '';
+    writeFile(env.fs, doelPad, tekst, { append: aanvullen });
+    return { output: '', exitCode: 0 };
+  }
+
+  return handler(args, env, stdin, { doorgeven });
+}
+
+/**
+ * Haalt `> bestand` of `>> bestand` van het einde van een commando, buiten
+ * aanhalingstekens. naar is null zonder omleiding en '' als de naam ontbreekt.
+ */
+export function splitRedirect(cmdStr) {
+  let inSingle = false;
+  let inDouble = false;
+  for (let i = 0; i < cmdStr.length; i++) {
+    const ch = cmdStr[i];
+    if (ch === "'" && !inDouble) inSingle = !inSingle;
+    else if (ch === '"' && !inSingle) inDouble = !inDouble;
+    else if (ch === '>' && !inSingle && !inDouble) {
+      const aanvullen = cmdStr[i + 1] === '>';
+      const rest = cmdStr.slice(i + (aanvullen ? 2 : 1)).trim();
+      const naar = parseArgs(rest).name;
+      return { opdracht: cmdStr.slice(0, i).trim(), naar, aanvullen };
+    }
+  }
+  return { opdracht: cmdStr, naar: null, aanvullen: false };
 }
 
 /**
  * Execute a full command line with chaining (;, &&, ||, |).
  * Returns array of { output, exitCode } for each command.
  */
-export function executeCommandLine(line, env) {
+export function executeCommandLine(line, buiten) {
+  // Een cd midden in de regel (`cd /etc; ls`) geldt voor de commando's erna.
+  const env = {
+    ...buiten,
+    setCwd: (nieuw) => {
+      env.cwd = nieuw;
+      buiten.setCwd?.(nieuw);
+    },
+  };
   const parsed = parseCommandLine(line);
   const results = [];
   let lastExitCode = 0;
@@ -454,7 +639,7 @@ export function executeCommandLine(line, env) {
     const { cmd, operator } = parsed[i];
     if (!cmd) continue;
 
-    const result = executeCommand(cmd, env, pipeOutput);
+    const result = executeCommand(cmd, env, pipeOutput, { doorgeven: operator === '|' });
     pipeOutput = null;
 
     if (operator === '|') {

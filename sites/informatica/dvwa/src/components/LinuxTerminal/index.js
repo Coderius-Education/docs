@@ -1,7 +1,7 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { executeCommandLine } from './commands';
-import { createFilesystem } from './filesystem';
+import { createFilesystem, promptPad } from './filesystem';
 import styles from './styles.module.css';
 
 /**
@@ -27,8 +27,7 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, filte
   const [isLoaded, setIsLoaded] = useState(false);
 
   const getPrompt = useCallback(() => {
-    const cwd = cwdRef.current;
-    const display = cwd === '/home/student' ? '~' : cwd;
+    const display = promptPad(cwdRef.current);
     return `\x1b[1;32mstudent@dvwa\x1b[0m:\x1b[1;34m${display}\x1b[0m$ `;
   }, []);
 
@@ -73,7 +72,9 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, filte
       for (const result of results) {
         if (result.output) {
           // Write each line separately for proper terminal rendering
-          const lines = result.output.split('\n');
+          // Een bestand eindigt met een regeleinde (echo > bestand); de
+          // prompt komt toch al op een nieuwe regel.
+          const lines = result.output.replace(/\n$/, '').split('\n');
           for (const l of lines) {
             term.write(`\r\n${l}`);
           }
