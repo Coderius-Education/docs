@@ -170,6 +170,54 @@ describe('kopiëren, verplaatsen en weggooien', () => {
   });
 });
 
+describe('randgevallen zoals een echte Ubuntu (nagespeeld als gewone gebruiker)', () => {
+  it('/tmp zelf en je thuismap zelf mag je niet weghalen of verplaatsen', () => {
+    const t = terminal();
+    expect(t.typ('rm -r /tmp')).toBe("rm: cannot remove '/tmp': Permission denied");
+    expect(t.typ('mv ~ /tmp/weg')).toBe(
+      "mv: cannot move '/home/student' to '/tmp/weg': Permission denied",
+    );
+    expect(t.typ('ls /')).toContain('tmp');
+    expect(t.typ('pwd')).toBe('/home/student');
+  });
+
+  it('mv van een map in zichzelf weigert, en de map blijft', () => {
+    const t = terminal();
+    t.typ('mkdir a');
+    expect(t.typ('mv a a/b')).toBe("mv: cannot move 'a' to a subdirectory of itself, 'a/b'");
+    expect(t.typ('ls')).toContain('a');
+  });
+
+  it('een / aan het eind belooft een map', () => {
+    const t = terminal();
+    expect(t.typ('cp notities.txt nergens/')).toBe(
+      "cp: cannot create regular file 'nergens/': Not a directory",
+    );
+    expect(t.typ('mv notities.txt nergens/')).toBe(
+      "mv: cannot move 'notities.txt' to 'nergens/': Not a directory",
+    );
+    expect(t.typ('ls')).not.toContain('nergens');
+  });
+
+  it('rm -f zwijgt over wat er niet is', () => {
+    const t = terminal();
+    expect(t.typ('rm -f bestaatniet')).toBe('');
+  });
+
+  it('grep met een ongeldig patroon geeft een melding en de terminal gaat door', () => {
+    const t = terminal();
+    expect(t.typ('grep [ notities.txt')).toBe('grep: Invalid regular expression');
+    expect(t.typ('pwd')).toBe('/home/student');
+  });
+
+  it('ls van een bestand noemt het bestand', () => {
+    const t = terminal();
+    expect(t.typ('ls notities.txt')).toBe('notities.txt');
+    expect(t.typ('ls -l notities.txt')).toMatch(/^-rw-r--r-- +1 student student .* notities.txt$/);
+    expect(t.typ('ls -l /etc/passwd')).toMatch(/^-rw-r--r-- +1 root +root .* \/etc\/passwd$/);
+  });
+});
+
 describe('paden en meldingen zoals bash', () => {
   it('~ is je thuismap, ook midden in een pad', () => {
     const t = terminal();

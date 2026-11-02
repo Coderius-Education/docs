@@ -5,9 +5,11 @@
  */
 
 import {
+  HOME,
   getNode,
   listDir,
   magSchrijven,
+  magVerwijderen,
   makeDir,
   readFile,
   removeNode,
@@ -125,7 +127,10 @@ function parseArgs(cmdStr) {
   }
   if (current) parts.push(current);
 
-  return { name: parts[0] || '', args: parts.slice(1) };
+  // De shell vult ~ in voordat het commando het ziet: mv ~ x krijgt
+  // /home/student, en zegt dat ook in een foutmelding.
+  const ingevuld = parts.map((p) => (p === '~' || p.startsWith('~/') ? HOME + p.slice(1) : p));
+  return { name: ingevuld[0] || '', args: ingevuld.slice(1) };
 }
 
 /**
@@ -149,6 +154,13 @@ function kopieer(cmd, args, env, verplaats) {
   let doelPad = resolvePath(env.cwd, doel);
   let doelNaam = doel;
   const doelNode = getNode(env.fs, doelPad);
+  // Een / aan het eind belooft een map: is die er niet, dan weigert het.
+  if (doel.endsWith('/') && !(doelNode.exists && doelNode.isDir)) {
+    const reden = 'Not a directory';
+    return verplaats
+      ? { output: `mv: cannot move '${bron}' to '${doel}': ${reden}`, exitCode: 1 }
+      : { output: `cp: cannot create regular file '${doel}': ${reden}`, exitCode: 1 };
+  }
   if (doelNode.exists && doelNode.isDir) {
     const naam = splitPad(bronPad)[1];
     doelPad = doelPad === '/' ? `/${naam}` : `${doelPad}/${naam}`;
@@ -156,7 +168,12 @@ function kopieer(cmd, args, env, verplaats) {
   }
   if (doelPad === bronPad)
     return { output: `${cmd}: '${bron}' and '${doelNaam}' are the same file`, exitCode: 1 };
-  if (verplaats && !magSchrijven(bronPad))
+  if (verplaats && bronNode.isDir && doelPad.startsWith(`${bronPad}/`))
+    return {
+      output: `mv: cannot move '${bron}' to a subdirectory of itself, '${doelNaam}'`,
+      exitCode: 1,
+    };
+  if (verplaats && !magVerwijderen(bronPad))
     return {
       output: `mv: cannot move '${bron}' to '${doelNaam}': Permission denied`,
       exitCode: 1,
@@ -189,6 +206,13 @@ const COMMANDS = {
     const showLong = args.includes('-l') || args.includes('-la') || args.includes('-al');
     const target = args.find((a) => !a.startsWith('-')) || env.cwd;
     const absPath = resolvePath(env.cwd, target);
+    // Een bestand: ls noemt het (met -l op één regel), zoals de echte ls.
+    const bestand = getNode(env.fs, absPath);
+    if (bestand.isFile) {
+      if (!showLong) return { output: target, exitCode: 0 };
+      const eigenaar = magSchrijven(absPath) ? 'student student' : 'root    root   ';
+      return { output: `-rw-r--r--  1 ${eigenaar}  256 Mar 26 10:00 ${target}`, exitCode: 0 };
+    }
     const result = listDir(env.fs, absPath);
 
     // Met het pad zoals de leerling het typte, net als ls zelf.
@@ -309,7 +333,12 @@ const COMMANDS = {
       return { output: 'grep: missing file operand', exitCode: 1 };
     }
 
-    const regex = new RegExp(pattern, caseInsensitive ? 'i' : '');
+    let regex;
+    try {
+      regex = new RegExp(pattern, caseInsensitive ? 'i' : '');
+    } catch {
+      return { output: 'grep: Invalid regular expression', exitCode: 2 };
+    }
     const matching = lines.filter((line) => regex.test(line));
 
     if (matching.length === 0) return { output: '', exitCode: 1 };
@@ -496,12 +525,15 @@ const COMMANDS = {
 
   rm(args, env) {
     const recursive = args.some((a) => /^-[a-zA-Z]*[rR]/.test(a));
+    // -f: zwijg over wat er niet is, net als de echte rm.
+    const forceer = args.some((a) => /^-[a-zA-Z]*f/.test(a));
     const namen = args.filter((a) => !a.startsWith('-'));
     if (namen.length === 0) return { output: 'rm: missing operand', exitCode: 1 };
     const fouten = [];
     for (const naam of namen) {
       const r = removeNode(env.fs, resolvePath(env.cwd, naam), { recursive });
-      if (r.error) fouten.push(`rm: cannot remove '${naam}': ${r.error}`);
+      if (r.error && !(forceer && r.error === 'No such file or directory'))
+        fouten.push(`rm: cannot remove '${naam}': ${r.error}`);
     }
     return { output: fouten.join('\n'), exitCode: fouten.length ? 1 : 0 };
   },
@@ -639,7 +671,14 @@ export function executeCommandLine(line, buiten) {
     const { cmd, operator } = parsed[i];
     if (!cmd) continue;
 
-    const result = executeCommand(cmd, env, pipeOutput, { doorgeven: operator === '|' });
+    let result;
+    try {
+      result = executeCommand(cmd, env, pipeOutput, { doorgeven: operator === '|' });
+    } catch (fout) {
+      // Een fout in de simulator mag de terminal niet laten hangen: zonder
+      // deze vangst kwam er geen nieuwe prompt meer.
+      result = { output: `bash: ${cmd.split(' ')[0]}: ${fout.message}`, exitCode: 1 };
+    }
     pipeOutput = null;
 
     if (operator === '|') {

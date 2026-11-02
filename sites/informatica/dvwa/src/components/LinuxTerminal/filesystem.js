@@ -188,6 +188,15 @@ export function magSchrijven(absPath) {
   );
 }
 
+/**
+ * Mag de leerling dit weghalen of verplaatsen? Dat hangt, net als op een echte
+ * Linux, af van de map erboven: /tmp zelf en je thuismap zelf horen in mappen
+ * van root, en die mag je dus niet weghalen.
+ */
+export function magVerwijderen(absPath) {
+  return magSchrijven(splitPad(absPath)[0]);
+}
+
 /** De map boven absPath en de naam erin: '/a/b' -> ['/a', 'b']. */
 export function splitPad(absPath) {
   const delen = absPath.split('/').filter(Boolean);
@@ -233,7 +242,7 @@ export function makeDir(fs, absPath, { parents = false } = {}) {
 export function removeNode(fs, absPath, { recursive = false } = {}) {
   const hier = getNode(fs, absPath);
   if (!hier.exists) return { error: 'No such file or directory' };
-  if (!magSchrijven(absPath) || absPath === HOME) return { error: 'Permission denied' };
+  if (!magVerwijderen(absPath)) return { error: 'Permission denied' };
   if (hier.isDir && !recursive) return { error: 'Is a directory' };
   const [ouder, naam] = splitPad(absPath);
   delete getNode(fs, ouder).node[naam];
