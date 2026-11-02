@@ -768,7 +768,11 @@ jobs:
     if: >-
       !cancelled() && needs.plan.outputs.browser == 'true'
       && (needs.build.result == 'success' || needs.build.result == 'skipped')
-    runs-on: ubuntu-latest
+    # Vast op 24.04, niet ubuntu-latest: op 2 november 2026 werd latest
+    # Ubuntu 26.04, en Playwright 1.56.1 installeert daar geen Chromium
+    # ("Playwright does not support chromium on ubuntu26.04-x64"). Naar latest
+    # kan pas met een Playwright die 26.04 kent (ci-setup.test.ts).
+    runs-on: ubuntu-24.04
     env:
       GEBOUWD: ${{ contains(fromJSON(needs.plan.outputs.sites), 'python') }}
     steps:
