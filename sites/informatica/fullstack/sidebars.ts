@@ -293,7 +293,7 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Je project klaarmaken',
       collapsed: false,
-      items: ['online/project/dev-of-run', 'online/project/requirements', 'online/project/readme'],
+      items: ['online/project/dev-of-run', 'online/project/requirements', 'online/project/repository'],
     },
     {
       type: 'category',

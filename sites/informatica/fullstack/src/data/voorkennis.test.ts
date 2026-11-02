@@ -208,7 +208,7 @@ const MET_BLOK = [
   'veiligheid/xss/zwakheid.mdx',
   'veiligheid/zichtbaar/gitignore.mdx',
   'veiligheid/zichtbaar/handleiding.mdx',
-  'online/project/readme.mdx',
+  'online/project/repository.mdx',
   'online/docker/installeren.mdx',
   'online/docker/image.mdx',
   'online/docker/niet-als-root.mdx',

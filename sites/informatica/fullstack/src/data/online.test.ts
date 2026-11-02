@@ -72,6 +72,14 @@ describe('de route Online zetten', () => {
     expect(dubbel).toEqual([]);
   });
 
+  it('geen les heet readme of index: Docusaurus maakt daar de pagina van de map van', () => {
+    // De les over de README heette eerst project/readme.mdx, en kwam op
+    // /docs/online/project/ terecht, zodat elke link ernaar brak.
+    expect(lessen.filter((id) => /^(readme|index)$/i.test(id.split('/').at(-1) ?? ''))).toEqual(
+      [],
+    );
+  });
+
   it('elke les: één controlevraag vóór de opdrachten, Er gaat iets mis, en een antwoord per opdracht', () => {
     const fout: string[] = [];
     for (const id of lessen) {
