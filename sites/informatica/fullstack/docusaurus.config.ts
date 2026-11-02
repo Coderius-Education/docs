@@ -67,6 +67,12 @@ export default createConfig({
           position: 'left',
           label: 'Veiligheid',
         },
+        {
+          type: 'docSidebar',
+          sidebarId: 'onlineSidebar',
+          position: 'left',
+          label: 'Online zetten',
+        },
         { type: 'doc', docId: 'starten', position: 'left', label: 'Hoe start ik?' },
         { type: 'docSidebar', sidebarId: 'unpluggedSidebar', position: 'left', label: 'Unplugged' },
         { type: 'doc', docId: 'cheatsheet', position: 'left', label: 'Cheatsheet' },

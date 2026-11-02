@@ -1,0 +1,120 @@
+---
+sidebar_position: 1
+---
+
+import LinuxTerminal from '@site/src/components/LinuxTerminal';
+
+# 1.1 Je eerste commando's
+
+Hieronder staat een oefenterminal. Klik erin en typ `whoami`, en druk op Enter.
+
+<LinuxTerminal title="Oefenterminal" />
+
+De terminal antwoordt met `student`. Dat is de naam waarmee je bent ingelogd: `whoami` is Engels voor "wie ben ik?".
+
+## De prompt
+
+Voor de cursor staat steeds dezelfde regel:
+
+```
+student@oefenpc:~$
+```
+
+Dat heet de **prompt**. Linux laat ermee zien dat hij klaar is voor je volgende commando. Hij vertelt ook drie dingen:
+
+| Stuk | Betekenis |
+|:---|:---|
+| `student` | wie je bent |
+| `oefenpc` | op welke computer je werkt |
+| `~` | in welke map je staat; `~` is je eigen thuismap |
+
+Het dollarteken sluit de prompt af. Typ je dat teken niet mee als je een commando uit een les overneemt.
+
+## Voorspel
+
+Typ nog niets. Wat denk je dat `pwd` laat zien? Het is een afkorting van *print working directory*.
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+```
+/home/student
+```
+
+`pwd` geeft de map waarin je nu staat, voluit. Je thuismap heet dus `/home/student`. In de prompt staat hij kort als `~`.
+
+</details>
+
+## Kijken wat er in een map staat
+
+Met `ls` (*list*) zie je wat er in de map staat:
+
+```bash
+ls
+```
+
+```
+notities.txt
+```
+
+Er staat één bestand. Met `ls -a` (*all*) zie je ook de verborgen bestanden: alles wat met een punt begint, zoals `.bashrc`. Linux verstopt die omdat het instellingen zijn waar je meestal niet aan hoeft te komen.
+
+Het stukje `-a` heet een **optie**. Een optie begint met een streepje en verandert wat het commando doet.
+
+## Opdracht 1.1.a: drie vragen aan de computer
+
+Zoek met de oefenterminal het antwoord op:
+
+1. Hoe heet de computer waarop je werkt?
+2. Welk besturingssysteem draait erop?
+3. Wat staat er in de map `/etc`?
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Typ `help` voor een lijst met commando's. Bij vraag 3 zet je de map achter het commando, met een spatie ertussen.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+hostname
+uname
+ls /etc
+```
+
+`hostname` geeft `oefenpc`, dezelfde naam als in de prompt. `uname` geeft `Linux`; met `-a` erbij krijg je ook de versie. Welke soort Linux het precies is (er zijn er veel, zoals Ubuntu, Debian en Fedora), lees je in les 1.3 in een bestand. `ls /etc` toont onder andere `hostname`, `hosts` en `passwd`: in `/etc` staan de instellingen van de hele computer.
+
+</details>
+
+## Er gaat iets mis
+
+### Command not found
+
+```
+bash: Whoami: command not found
+```
+
+**Oorzaak:** Linux maakt verschil tussen hoofdletters en kleine letters. `Whoami` is een ander woord dan `whoami`, en dat commando bestaat niet.
+
+**Oplossing:** typ commando's met kleine letters, precies zoals ze in de les staan.
+
+```bash
+# FOUT
+Whoami
+
+# GOED
+whoami
+```
+
+Dezelfde melding krijg je bij een typfout (`whomai`) of als je het dollarteken van de prompt meetypt (`$ whoami`).
+
+### Er gebeurt niets
+
+**Oorzaak:** je hebt nog niet op Enter gedrukt, of de terminal heeft je klik niet gekregen.
+
+**Oplossing:** klik in het zwarte vlak tot je de cursor ziet knipperen, en sluit elk commando af met Enter.
+
+Door naar [1.2 Door mappen lopen](site:linux/docs/terminal/mappen).

@@ -124,7 +124,7 @@ describe('zonderAanhalingstekens — wat dit script niet kan lezen, is een fout'
   it('laat aangehaalde adressen, codevoorbeelden en scripts met rust', () => {
     expect(zonderAanhalingstekens('<a href="/a" target=_blank>x</a>')).toEqual([]);
     expect(zonderAanhalingstekens("<a href='/a'>x</a>")).toEqual([]);
-    // Een codevoorbeeld uit de DVWA-lessen: escaped, dus geen tag.
+    // Een codevoorbeeld: escaped, dus geen tag.
     expect(zonderAanhalingstekens('<code>&lt;img src=x onerror=alert(1)&gt;</code>')).toEqual([]);
     // ` src=` binnen een aangehaalde waarde is geen attribuut.
     expect(zonderAanhalingstekens('<a title="kijk src=x" href="/a">x</a>')).toEqual([]);

@@ -24,7 +24,7 @@ een eigen host, en de cursus staat onder een pad daarvan.
 | Embedded | `sites/informatica/embedded` | https://informatica.coderius.nl/embedded/ | Programmeer microcontrollers: van Arduino tot STM32. |
 | Godot | `sites/informatica/godot` | https://informatica.coderius.nl/godot/ | Bouw je eerste 2D game in Godot 4. |
 | Capture The Flag | `sites/informatica/ctf` | https://informatica.coderius.nl/ctf/ | Leer cybersecurity door CTF-challenges op te lossen. |
-| DVWA Websecurity | `sites/informatica/dvwa` | https://informatica.coderius.nl/dvwa/ | Oefen websecurity in een veilige DVWA-omgeving. |
+| Linux | `sites/informatica/linux` | https://informatica.coderius.nl/linux/ | Werk in de terminal van Linux, en zet Linux op je eigen computer met WSL. |
 | Online Editor | `sites/informatica/ide` | https://informatica.coderius.nl/ide/ | Schrijf en draai code direct in je browser. |
 | Onderzoek | `sites/wo/onderzoek` | https://wo.coderius.nl/onderzoek/ | Leer onderzoek doen, van een scherpe vraag tot een eerlijke conclusie. |
 | Hartjespuzzel | `sites/techniek/hartjespuzzel` | https://techniek.coderius.nl/hartjespuzzel/ | Leermateriaal: Opdracht hartjespuzzel. |
@@ -148,10 +148,11 @@ buiten deze repo.
 ## Bijdragen
 
 1. Maak een branch vanaf `main` en open een pull request.
-2. Elke branch krijgt per site een preview op
-   `https://<branch-met-streepjes>--<site-id>.preview.coderius.nl/`: de `/` in
-   de branchnaam wordt een `-`. Zet de previews van de sites die je aanpast in
-   de beschrijving van je pull request.
+2. Elke branch krijgt per vak een preview op
+   `https://<branch-met-streepjes>--<vak>.preview.coderius.nl/<pad>/`, zoals
+   `https://feat-x--informatica.preview.coderius.nl/python/`: de `/` in de
+   branchnaam wordt een `-`. Zet de previews van de sites die je aanpast in de
+   beschrijving van je pull request.
 3. Een bugfix gaat samen met een test die de fout vastpint, in dezelfde
    commit. Kan dat niet in node (puur browsergedrag), beschrijf dan in de
    commit hoe je het met de hand hebt gecontroleerd.

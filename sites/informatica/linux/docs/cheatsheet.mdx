@@ -1,0 +1,196 @@
+---
+sidebar_position: 6
+displayed_sidebar: null
+hide_pagination: true
+---
+
+# Cheatsheet
+
+De commando's uit de [Linux-cursus](site:linux/docs) op één pagina. Klik op een vraag om het antwoord te zien.
+
+## WSL
+
+<details>
+<summary>Hoe open ik Ubuntu? (<code>wsl</code>)</summary>
+
+Zoek in het startmenu naar **Ubuntu**, of typ in PowerShell:
+
+```powershell
+wsl
+```
+
+</details>
+
+<details>
+<summary>Welke Linux staat er in WSL, en welke versie? (<code>wsl -l -v</code>)</summary>
+
+```powershell
+wsl -l -v
+```
+
+Onder `VERSION` hoort `2` te staan.
+
+</details>
+
+<details>
+<summary>Hoe kom ik vanuit Linux bij mijn Windows-bestanden? (<code>/mnt/c</code>)</summary>
+
+```bash
+ls /mnt/c/Users
+explorer.exe .
+```
+
+</details>
+
+## Mappen
+
+<details>
+<summary>Waar ben ik, en wat staat hier? (<code>pwd</code>, <code>ls</code>)</summary>
+
+```bash
+pwd
+ls
+ls -la
+```
+
+</details>
+
+<details>
+<summary>Hoe ga ik naar een andere map? (<code>cd</code>)</summary>
+
+```bash
+cd /var/log
+cd ..
+cd ~
+```
+
+</details>
+
+## Bestanden
+
+<details>
+<summary>Hoe lees ik een bestand? (<code>cat</code>, <code>head</code>, <code>tail</code>, <code>wc</code>)</summary>
+
+```bash
+cat notities.txt
+head -n 3 /etc/passwd
+tail -n 1 /var/log/auth.log
+wc -l /etc/passwd
+```
+
+</details>
+
+<details>
+<summary>Hoe maak ik een map of een bestand? (<code>mkdir</code>, <code>touch</code>, <code>&gt;</code>)</summary>
+
+```bash
+mkdir -p project/static
+touch leeg.txt
+echo "eerste regel" > lijst.txt
+echo "tweede regel" >> lijst.txt
+```
+
+Eén `>` maakt het bestand eerst leeg, `>>` zet er iets onder.
+
+</details>
+
+<details>
+<summary>Hoe kopieer, verplaats en verwijder ik? (<code>cp</code>, <code>mv</code>, <code>rm</code>)</summary>
+
+```bash
+cp main.py main.py.bak
+mv oud.txt nieuw.txt
+rm -r oude-map
+```
+
+Er is geen prullenbak: `rm` is meteen weg.
+
+</details>
+
+## Zoeken
+
+<details>
+<summary>Hoe zoek ik in een bestand? (<code>grep</code>, <code>|</code>)</summary>
+
+```bash
+grep -i failed /var/log/auth.log
+ls /etc | grep host
+```
+
+</details>
+
+## Rechten
+
+<details>
+<summary>Wie ben ik, en van wie is dit bestand? (<code>id</code>, <code>ls -l</code>)</summary>
+
+```bash
+id
+ls -l /etc/passwd
+```
+
+`rwx` staat voor lezen, schrijven en uitvoeren, voor de eigenaar, de groep en de rest.
+
+</details>
+
+<details>
+<summary>Hoe doe ik iets als beheerder? (<code>sudo</code>)</summary>
+
+```bash
+sudo apt update
+```
+
+`sudo` vraagt jouw eigen wachtwoord. Gebruik het alleen als het moet.
+
+</details>
+
+## Programma's en bestanden in WSL
+
+<details>
+<summary>Hoe installeer ik een programma? (<code>sudo apt</code>)</summary>
+
+```bash
+sudo apt update
+sudo apt install tree
+sudo apt upgrade
+```
+
+</details>
+
+<details>
+<summary>Hoe bewerk ik een bestand in de terminal? (<code>nano</code>)</summary>
+
+```bash
+nano bestand.txt
+```
+
+Ctrl+O en Enter slaat op, Ctrl+X stopt.
+
+</details>
+
+## Diensten en andere computers
+
+<details>
+<summary>Hoe start, stop en bekijk ik een dienst? (<code>systemctl</code>, <code>journalctl</code>)</summary>
+
+```bash
+systemctl status nginx
+sudo systemctl restart nginx
+sudo systemctl disable --now nginx
+sudo journalctl -u nginx -n 20
+```
+
+</details>
+
+<details>
+<summary>Hoe log ik in op een andere computer? (<code>ssh</code>)</summary>
+
+```bash
+ssh sam@server.voorbeeld.nl
+ssh-keygen -t ed25519
+ssh-copy-id sam@server.voorbeeld.nl
+```
+
+Je privésleutel (`~/.ssh/id_ed25519`) geef je nooit weg.
+
+</details>

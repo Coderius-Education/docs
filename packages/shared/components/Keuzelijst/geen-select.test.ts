@@ -25,13 +25,6 @@ const UITZONDERINGEN: Record<string, string> = {
   // De Keuzelijst zelf noemt <select> in zijn uitleg.
   'packages/shared/components/Keuzelijst/index.tsx': 'uitleg',
   'packages/shared/components/Keuzelijst/logica.ts': 'uitleg',
-  // De nagebouwde kwetsbare webapp van DVWA draait in een eigen iframe en
-  // hoort er als een oude website uit te zien.
-  'sites/informatica/dvwa/src/components/DvwaLab/modules/authorization_bypass.js': 'lab-inhoud',
-  'sites/informatica/dvwa/src/components/DvwaLab/modules/file_upload.js': 'lab-inhoud',
-  'sites/informatica/dvwa/src/components/DvwaLab/modules/sql_injection.js': 'lab-inhoud',
-  'sites/informatica/dvwa/src/components/DvwaLab/modules/sql_injection_blind.js': 'lab-inhoud',
-  'sites/informatica/dvwa/src/components/DvwaLab/modules/xss_dom.js': 'lab-inhoud',
   // De nakijker herkent <select> in het werk van de leerling.
   'sites/informatica/web/src/checker/curriculum.ts': 'herkenpatroon van de nakijker',
 };

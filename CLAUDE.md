@@ -9,11 +9,15 @@ Elke repo heeft zijn eigen `CLAUDE.md` met uitsluitend project-specifieke aanvul
 
 ## Preview-links
 
-Elke branch krijgt per site automatisch een preview op
-`https://<branch-met-streepjes>--<site-id>.preview.coderius.nl/` — de `/` in de
-branchnaam wordt een `-`, de site-id is de mapnaam onder `sites/<vak>/`. Voorbeeld:
-branch `claude/status-ttlwfx` + site `play` →
-`https://claude-status-ttlwfx--play.preview.coderius.nl/`. Zet in elke
+Elke branch krijgt per vak automatisch een preview op
+`https://<branch-met-streepjes>--<vak>.preview.coderius.nl/<pad>/`, net zoals een
+cursus in productie onder de host van zijn vak staat — de `/` in de branchnaam
+wordt een `-`, `<vak>` en `<pad>` komen uit de registry. Voorbeeld: branch
+`claude/status-ttlwfx` + site `play` →
+`https://claude-status-ttlwfx--informatica.preview.coderius.nl/play/`. De vorm
+`<branch>--<site-id>.preview.coderius.nl` (van vóór de vakken) geeft "onbekende
+host". Een cursus die nieuw is in de registry of een nieuw pad krijgt, kent de
+hosting pas na de merge: zijn preview werkt dan nog niet. Zet in elke
 PR-beschrijving de preview-links van de aangepaste sites.
 
 ## Vakken en mappen

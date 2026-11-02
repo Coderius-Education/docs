@@ -93,6 +93,7 @@ const AFKORTINGEN = new Set([
   'PRIMM',
   'SNES',
   'USB',
+  'BIOS',
   'PDF',
   'CSV',
   'RGB',
@@ -129,7 +130,7 @@ const AFKORTINGEN = new Set([
   'WASD',
   'QUIT',
   // Web-security: productnamen, protocol-methodes en aanvalsafkortingen
-  // (o.a. DVWA-cursus). Geen gewone woorden, dus veilig monorepo-breed.
+  // (CTF en de route Veiligheid). Geen gewone woorden, dus veilig monorepo-breed.
   'DVWA',
   'CSRF',
   'XSS',
@@ -271,7 +272,8 @@ const REGELS = [
     zoek: (proza) =>
       treffers(
         proza,
-        /\b(let's|we're|gonna|awesome|nice|cool)\b/gi,
+        // "Let's Encrypt" is een naam (de route Online zetten), geen opvulling.
+        /\b(let's(?! encrypt\b)|we're|gonna|awesome|nice|cool)\b/gi,
         (m) => `Engelse opvulling "${m[1]}"`,
       ),
   },

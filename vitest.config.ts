@@ -6,7 +6,7 @@ import { defineConfig } from 'vitest/config';
 // nu aan.
 //
 // De tests staan bij de code die ze bewaken: de nakijk-checker en de
-// conceptenlijsten per site, de DVWA-labs, de editor-package (preview-builder,
+// conceptenlijsten per site, de oefenterminal van Linux, de editor-package (preview-builder,
 // bestandsboom, paden) en de python-runner. Een componenttest heet *.test.tsx
 // en zet bovenaan `// @vitest-environment jsdom`; de rest draait in node. De
 // Docusaurus-pagina's zelf worden niet getest — die dekt `pnpm build` af.

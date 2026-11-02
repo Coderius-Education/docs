@@ -1,0 +1,140 @@
+---
+sidebar_label: '6. Een voordeur met Caddy'
+description: Caddy ontvangt bezoekers op poort 80 (en straks 443) en geeft hun verzoek door aan je site op 127.0.0.1:8000. Je site zelf is van buiten niet te bereiken.
+---
+
+# Online zetten: een voordeur met Caddy
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/diensten', label: 'Een dienst starten en stoppen'}]} />
+
+Een bezoeker typt een adres zonder poortnummer: `http://…` gaat naar poort 80, `https://…` naar poort 443. Je site luistert op `127.0.0.1:8000`, waar niemand van buiten bij kan. Ertussen komt een **reverse proxy**: een programma dat op poort 80 en 443 de bezoekers ontvangt, en elk verzoek doorgeeft aan je site.
+
+Waarom niet je site zelf op poort 80 zetten? Omdat de voordeur dingen doet die je anders zelf moet bouwen. In [les 9](site:fullstack/docs/online/server/https) regelt hij HTTPS voor je, met een certificaat dat hij zelf aanvraagt en op tijd vernieuwt. En hij is gemaakt om de hele dag bezoekers van internet te ontvangen, ook bezoekers die zich vreemd gedragen.
+
+```text
+browser van de bezoeker  →  Caddy, op poort 80 en 443  →  jouw site, op 127.0.0.1:8000
+```
+
+Hier gebruik je **Caddy**. Het staat in Ubuntu, en de instellingen passen in een paar regels.
+
+## Installeren
+
+```bash
+sudo apt update
+sudo apt install caddy
+```
+
+Caddy start meteen als dienst, op poort 80. Open `http://localhost` op Windows: je ziet de testpagina van Caddy.
+
+## Doorgeven aan je site
+
+De instellingen staan in `/etc/caddy/Caddyfile`. Maak er een kopie van, en open hem:
+
+```bash
+sudo cp /etc/caddy/Caddyfile /etc/caddy/Caddyfile.bak
+sudo nano /etc/caddy/Caddyfile
+```
+
+Haal alles weg, en zet erin:
+
+```text
+:80 {
+	reverse_proxy 127.0.0.1:8000
+}
+```
+
+`:80` betekent: alles wat op poort 80 binnenkomt. `reverse_proxy` geeft het door aan je site. Laad de nieuwe instellingen:
+
+```bash
+sudo systemctl reload caddy
+```
+
+Open `http://localhost` op Windows, zonder `:8000`. Je ziet je gastenboek.
+
+## Wie is de bezoeker?
+
+Voor je site komt elk verzoek nu van Caddy, dus van `127.0.0.1`. Dat lijkt een probleem: de limiet uit de route Veiligheid telt per bezoeker, en dan zou iedereen één bezoeker zijn. Caddy zet het echte adres van de bezoeker daarom in een kop van het verzoek, `X-Forwarded-For`. `fastapi run` gelooft die kop, maar alleen als het verzoek van `127.0.0.1` komt. Een bezoeker die zelf zo'n kop meestuurt, komt via Caddy binnen, en Caddy zet er het echte adres in.
+
+<Voorspel soort="Controlevraag" vraag="Je site luistert op 127.0.0.1:8000 en Caddy op poort 80. Een klasgenoot op een ander apparaat typt het adres van jouw server met :8000 erachter. Wat ziet hij?">
+  <Keuze uitleg="Dat zou zo zijn als je site op 0.0.0.0 luisterde. Op welk adres luistert hij?">Jouw gastenboek, net als via poort 80</Keuze>
+  <Keuze goed uitleg="Je site luistert alleen op 127.0.0.1, dus alleen deze computer zelf kan erbij. Van buiten kan alleen de voordeur.">Een foutmelding van zijn browser: er is niemand die antwoordt</Keuze>
+  <Keuze uitleg="Caddy luistert op poort 80, niet op 8000. Een verzoek op 8000 komt bij Caddy niet aan.">De testpagina van Caddy</Keuze>
+  <Uitleg>
+
+  Er is maar één deur naar buiten, en dat is Caddy. Je site staat erachter, op een adres waar alleen deze computer bij kan. Zo kan niemand om Caddy heen, en hoef je straks maar één deur te bewaken.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### address already in use
+
+```text
+listen tcp :80: bind: address already in use
+```
+
+Deze regel staat in `sudo journalctl -u caddy -n 20`, en `systemctl status caddy` zegt `failed`.
+
+**Oorzaak:** een ander programma luistert al op poort 80. Vaak is het nginx uit de Linux-cursus.
+
+**Oplossing:** zet nginx uit, en start Caddy opnieuw.
+
+```bash
+sudo systemctl disable --now nginx
+sudo systemctl restart caddy
+```
+
+### 502 Bad Gateway
+
+**Oorzaak:** Caddy draait, maar achter de deur is niemand: je site staat uit, of luistert op een andere poort.
+
+**Oplossing:** kijk met `systemctl status gastenboek` of je site draait, en of de poort in de Caddyfile gelijk is aan die in `ExecStart`.
+
+### Job for caddy.service failed
+
+```text
+Job for caddy.service failed because the control process exited with error code.
+```
+
+**Oorzaak:** een tikfout in de Caddyfile. Caddy weigert de nieuwe instellingen en houdt de oude.
+
+**Oplossing:** lees het logboek, en controleer het bestand:
+
+```bash
+sudo journalctl -u caddy -n 20
+caddy validate --config /etc/caddy/Caddyfile
+```
+
+## Opdrachten
+
+### Opdracht 1: Run - Je site achter de voordeur
+
+Zet Caddy voor je eigen site en open hem op `http://localhost`. Schrijf een bericht. Kijk daarna in het logboek van je site van welk adres het verzoek kwam.
+
+<details>
+<summary>Antwoord</summary>
+
+In `sudo journalctl -u gastenboek -n 10` staat bij elk verzoek een adres. In WSL is dat meestal `127.0.0.1`, want Windows geeft je verkeer binnen deze computer door aan Linux. Op een echte server staat er het adres van de bezoeker, omdat `fastapi run` de kop van Caddy leest. Dat zie je terug in les 8.
+
+</details>
+
+### Opdracht 2: Investigate - Wie luistert waar?
+
+Kijk met `sudo ss -tlnp` welke programma's luisteren. Welke staan open voor elk netwerk, en welke alleen voor deze computer?
+
+<details>
+<summary>Tip</summary>
+
+De `-p` laat zien welk programma het is. Daarvoor heb je `sudo` nodig.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Caddy staat op `*:80` of `0.0.0.0:80`: open voor elk netwerk. Je site staat op `127.0.0.1:8000`: alleen deze computer. Misschien zie je ook een poort van Caddy zelf op `127.0.0.1:2019`; daar luistert hij naar zijn eigen instellingen, ook alleen voor deze computer.
+
+</details>
+
+Klaar met oefenen in WSL. Door naar [les 7: een server huren en inloggen](site:fullstack/docs/online/server/huren).

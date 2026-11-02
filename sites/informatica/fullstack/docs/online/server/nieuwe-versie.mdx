@@ -1,0 +1,162 @@
+---
+sidebar_label: '10. Een nieuwe versie uitrollen'
+description: Een nieuwe versie gaat met git pull, `python -m pip install` en een herstart van de dienst naar de server. De databases blijven staan, en je maakt er een back-up van.
+---
+
+# Online zetten: een nieuwe versie uitrollen
+
+Je site staat online. Nu verander je iets, bijvoorbeeld de `secure=True` uit de vorige les. Je werkt zoals altijd op je laptop: bouwen, testen met `fastapi dev`, en een commit naar GitHub. Daarna haalt de server de nieuwe versie op.
+
+## Drie stappen op de server
+
+```bash
+sudo -H -u gastenboek git -C /srv/gastenboek/app pull
+sudo -H -u gastenboek /srv/gastenboek/app/.venv/bin/python -m pip install -r /srv/gastenboek/app/requirements.txt
+sudo systemctl restart gastenboek
+```
+
+- `git pull` haalt de nieuwe commits op. Met `-C` zeg je in welke map, zodat je er niet eerst heen hoeft (dat mag je als `sam` ook niet).
+- `python -m pip install -r` installeert wat er in `requirements.txt` bij kwam. Kwam er niets bij, dan zegt hij bij elke regel `Requirement already satisfied`.
+- `restart` start je site opnieuw, want `fastapi run` leest je code alleen bij het starten ([les 3](site:fullstack/docs/online/wsl/fastapi-run)).
+
+De eerste twee doe je als `gastenboek`, want de map is van hem. De derde doe je als beheerder: een dienst herstarten mag alleen `root`.
+
+Kijk daarna of het gelukt is:
+
+```bash
+systemctl status gastenboek
+sudo journalctl -u gastenboek -n 20
+```
+
+Staat er `active (running)` en geen traceback, open dan je site.
+
+## Werk nooit op de server zelf
+
+Pas je code nooit aan op de server, ook niet "even snel" met nano. De volgende `git pull` weigert dan, of jouw wijziging staat nergens anders en is bij een nieuwe server weg. De server krijgt alleen code die eerst op GitHub stond.
+
+<Voorspel soort="Controlevraag" vraag="Na git pull en de herstart opent een klasgenoot je gastenboek. Zijn de berichten van gisteren er nog?">
+  <Keuze uitleg="git pull verandert alleen bestanden die in git staan. Staat gastenboek.db in git?">Nee, git pull zet alle bestanden terug zoals ze op GitHub staan</Keuze>
+  <Keuze goed uitleg="De databases staan in .gitignore en dus niet in git. git pull komt er niet aan, en de herstart ook niet.">Ja, want de databases staan niet in git, en git pull komt er niet aan</Keuze>
+  <Keuze uitleg="SqliteDict bewaart alles in een bestand op de schijf, niet in het geheugen van de server.">Nee, want bij een herstart gaat het geheugen van de server leeg</Keuze>
+  <Uitleg>
+
+  Je code komt uit git, je gegevens niet. Daarom hield je de databases buiten git ([Wat er in je map staat](site:fullstack/docs/veiligheid/zichtbaar/gitignore)): zo overschrijft een nieuwe versie nooit wat je bezoekers schreven, en komen hun wachtwoorden nooit op GitHub. Het betekent ook dat de berichten maar op één plek staan. Daarom de back-up hieronder.
+
+  </Uitleg>
+</Voorspel>
+
+## Een back-up
+
+De databases zijn het enige op je server dat je niet opnieuw kunt maken. Een kapotte schijf, een verkeerde `rm` of een opgezegde server, en ze zijn weg. Maak er daarom een kopie van, op een andere computer.
+
+Stop je site even, zodat er tijdens het kopiëren niets verandert, en zet een kopie in je thuismap:
+
+```bash
+sudo systemctl stop gastenboek
+sudo cp /srv/gastenboek/app/gastenboek.db /srv/gastenboek/app/gebruikers.db ~
+sudo systemctl start gastenboek
+sudo chown sam:sam ~/gastenboek.db ~/gebruikers.db
+```
+
+`sessies.db` hoeft niet mee: na een herstel logt iedereen opnieuw in. De `chown` maakt de kopieën van jou, zodat je ze mag ophalen. Haal ze in WSL naar je laptop met `scp` (*secure copy*), dat via ssh werkt. Ging ssh tot nu toe met het IP-adres, dan vraagt hij bij de domeinnaam nog één keer of je de vingerafdruk vertrouwt; het is dezelfde server.
+
+```bash
+mkdir -p ~/backup
+scp sam@gastenboek.voorbeeld.nl:gastenboek.db sam@gastenboek.voorbeeld.nl:gebruikers.db ~/backup/
+```
+
+Gooi de kopieën op de server daarna weg met `rm ~/gastenboek.db ~/gebruikers.db`. In `gebruikers.db` staan de wachtwoorden van je bezoekers, als hash; bewaar de back-up dus net zo zorgvuldig als de server zelf.
+
+## Er gaat iets mis
+
+### Your local changes would be overwritten
+
+```text
+error: Your local changes to the following files would be overwritten by merge:
+        main.py
+```
+
+**Oorzaak:** iemand heeft `main.py` op de server veranderd.
+
+**Oplossing:** zet de wijziging, als je hem wilt houden, eerst op je laptop en in git. Gooi hem daarna op de server weg, en haal opnieuw op:
+
+```bash
+sudo -H -u gastenboek git -C /srv/gastenboek/app checkout -- main.py
+sudo -H -u gastenboek git -C /srv/gastenboek/app pull
+```
+
+### De site start niet meer na de nieuwe versie
+
+**Oorzaak:** er zit een fout in de nieuwe code, of een package ontbreekt in `requirements.txt` (`ModuleNotFoundError` in het logboek).
+
+**Oplossing:** lees de fout in `sudo journalctl -u gastenboek -n 50`. Moet je site snel weer werken, ga dan terug naar de vorige versie en los het daarna op je laptop op:
+
+```bash
+sudo -H -u gastenboek git -C /srv/gastenboek/app checkout HEAD~1
+sudo systemctl restart gastenboek
+```
+
+`HEAD~1` is de commit vóór de laatste. Als je fix op GitHub staat, ga je terug naar de nieuwste versie, en doe je daarna weer de drie stappen:
+
+```bash
+sudo -H -u gastenboek git -C /srv/gastenboek/app checkout main
+```
+
+### detected dubious ownership
+
+```text
+fatal: detected dubious ownership in repository at '/srv/gastenboek/app'
+```
+
+**Oorzaak:** je typte `sudo git …` zonder `-H -u gastenboek`. Dan doet `root` het, en git weigert te werken in een map van een andere gebruiker. Zonder `sudo` mag je als `sam` niet eens in de map: dan krijg je `Permission denied`.
+
+**Oplossing:** doe elk git-commando op de server als `gastenboek`:
+
+```bash
+# FOUT
+sudo git -C /srv/gastenboek/app pull
+
+# GOED
+sudo -H -u gastenboek git -C /srv/gastenboek/app pull
+```
+
+## Opdrachten
+
+### Opdracht 1: Run - Een nieuwe versie
+
+Verander een tekst op je homepage, commit en push, en zet de nieuwe versie op je server.
+
+<details>
+<summary>Antwoord</summary>
+
+Op je laptop: `git add`, `git commit` en `git push`. Op de server de drie stappen van boven. Na de herstart zie je de nieuwe tekst op je site.
+
+</details>
+
+### Opdracht 2: Make - Een script voor het uitrollen
+
+Drie lange commando's typ je snel een keer verkeerd. Zet ze in een script `~/uitrollen.sh` op de server, zodat `bash ~/uitrollen.sh` alles doet. Laat het script stoppen zodra een stap misgaat.
+
+<details>
+<summary>Tip</summary>
+
+Een script is een tekstbestand met op elke regel een commando, dat je met nano maakt. Met de regel `set -e` bovenaan stopt bash bij het eerste commando dat misgaat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```bash
+set -e
+sudo -H -u gastenboek git -C /srv/gastenboek/app pull
+sudo -H -u gastenboek /srv/gastenboek/app/.venv/bin/python -m pip install -r /srv/gastenboek/app/requirements.txt
+sudo systemctl restart gastenboek
+systemctl status gastenboek --no-pager
+```
+
+Zonder `set -e` start het script je site ook opnieuw als `git pull` faalde. Dat gaat meestal goed, maar dan denk je dat er een nieuwe versie staat terwijl het de oude is. `--no-pager` zet de status meteen op het scherm, zonder dat je op `q` moet drukken.
+
+</details>
+
+Je site staat online, met een eigen gebruiker, als dienst, achter een voordeur met HTTPS, en met alleen de deuren open die hij nodig heeft. Loop met de controlelijst van [Beveilig je eigen project](site:fullstack/docs/veiligheid/eigen-project) nog een keer je code na: dat is nu code op internet.

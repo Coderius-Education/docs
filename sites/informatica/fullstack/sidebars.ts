@@ -282,6 +282,37 @@ const sidebars: SidebarsConfig = {
     },
     'veiligheid/eigen-project',
   ],
+  // Online zetten: eerst alles in WSL op de eigen computer, dan op een echte
+  // server. Linux zelf legt de route niet uit; dat staat in de Linux-cursus
+  // (site dvwa, docs/linux/), en elke les linkt ernaar. Uitgeklapt: de route
+  // is kort en wordt van voor naar achter gedaan.
+  onlineSidebar: [
+    'online/index',
+    {
+      type: 'category',
+      label: 'Oefenen in WSL',
+      collapsed: false,
+      items: [
+        'online/wsl/requirements',
+        'online/wsl/project-in-linux',
+        'online/wsl/fastapi-run',
+        'online/wsl/eigen-gebruiker',
+        'online/wsl/dienst',
+        'online/wsl/voordeur',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Op een echte server',
+      collapsed: false,
+      items: [
+        'online/server/huren',
+        'online/server/dichtzetten',
+        'online/server/https',
+        'online/server/nieuwe-versie',
+      ],
+    },
+  ],
 };
 
 export default sidebars;

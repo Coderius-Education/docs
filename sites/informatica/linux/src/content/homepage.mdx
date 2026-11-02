@@ -1,0 +1,30 @@
+---
+---
+
+import {Hero, Section, Columns, Card, Buttons, Button} from '@coderius/shared/components/HomepageSections';
+
+<Hero title="Coderius Linux">
+  <Buttons>
+    <Button href="/docs">Begin met Linux</Button>
+  </Buttons>
+</Hero>
+
+<Section title="Waar wil je mee aan de slag?">
+  <Columns count={3}>
+    <Card title="De terminal" href="/docs/terminal/eerste-commando">
+
+      Typ je eerste commando's in een oefenterminal in je browser.
+
+    </Card>
+    <Card title="Linux op je computer" href="/docs/wsl/installeren">
+
+      Zet Ubuntu op Windows met WSL, en werk met apt, nano, diensten en ssh.
+
+    </Card>
+    <Card title="Cheatsheet" href="/docs/cheatsheet">
+
+      Alle commando's uit de cursus op één pagina.
+
+    </Card>
+  </Columns>
+</Section>

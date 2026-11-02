@@ -102,6 +102,18 @@ const GLYPHS = {
     ['vlak', '<rect x="-6.5" y="-1.5" width="13" height="9.5" rx="2"/>'],
     ['gat', '<circle cx="0" cy="2.2" r="1.5"/><path d="M-.6 2.8h1.2l.4 2.9h-2z"/>'],
   ],
+  // Een pinguïn (Tux): de mascotte van Linux.
+  pinguin: [
+    ['vlak', '<ellipse cx="0" cy="0.4" rx="5.6" ry="7.4"/>'],
+    [
+      'gat',
+      '<ellipse cx="0" cy="2.4" rx="3.7" ry="4.9"/><circle cx="-1.7" cy="-4.2" r="1"/><circle cx="1.7" cy="-4.2" r="1"/>',
+    ],
+    [
+      'vlak',
+      '<path d="M-1.3-2.4h2.6L0-.6Z"/><path d="M-4.6 6.6h3.4v1.4h-3.4zM1.2 6.6h3.4v1.4H1.2z"/>',
+    ],
+  ],
   terminal: [
     [
       'lijn',

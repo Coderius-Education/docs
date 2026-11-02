@@ -200,4 +200,16 @@ describe('comprimeren na elke site-build', () => {
     const v = stappen('browser');
     expect(v[plek(v, 'De speeltuin in Chromium')].tekst).toContain('--eis-compressie');
   });
+
+  it('een job die Chromium installeert, draait op een vaste Ubuntu', () => {
+    // Playwright installeert Chromium alleen op de Ubuntu-versies die het
+    // kent. Toen ubuntu-latest naar 26.04 ging, faalde de job browser op
+    // "Playwright does not support chromium on ubuntu26.04-x64".
+    const jobs = workflow.split(/\n {2}(?=[a-z-]+:\n)/).slice(1);
+    const fout = jobs
+      .filter((blok) => blok.includes('playwright install'))
+      .filter((blok) => !/^ {4}runs-on: ubuntu-\d{2}\.\d{2}$/m.test(blok))
+      .map((blok) => blok.slice(0, blok.indexOf(':')));
+    expect(fout).toEqual([]);
+  });
 });

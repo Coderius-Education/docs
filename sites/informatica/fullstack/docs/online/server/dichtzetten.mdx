@@ -1,0 +1,139 @@
+---
+sidebar_label: '8. De deuren dicht'
+description: Een firewall laat alleen ssh, 80 en 443 door, en Ubuntu installeert beveiligingsupdates zelf.
+---
+
+# Online zetten: de deuren dicht
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/apt', label: 'Bijwerken met apt'}]} />
+
+Je server staat op internet, en het logboek van ssh liet zien dat er al aan de deur wordt gemorreld. In de vorige les zette je ssh al op alleen een sleutel. Nu doe je nog twee dingen: alleen de deuren open die nodig zijn, en updates zonder dat jij eraan hoeft te denken.
+
+## Een firewall
+
+Een **firewall** bepaalt welke poorten van buiten bereikbaar zijn. Op Ubuntu heet hij `ufw` (*uncomplicated firewall*). Je hebt drie deuren nodig: ssh om in te loggen, 80 voor `http` en 443 voor `https`.
+
+```bash
+sudo ufw allow OpenSSH
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+```
+
+**Let op:** de volgorde doet ertoe. Zet je de firewall aan voordat ssh erdoor mag, dan sluit je jezelf buiten. `ufw enable` waarschuwt daarom:
+
+```text
+Command may disrupt existing ssh connections. Proceed with operation (y|n)?
+```
+
+Typ `y`. Er staat dan `Firewall is active and enabled on system startup`. Kijk wat er openstaat:
+
+```bash
+sudo ufw status
+```
+
+```text
+Status: active
+
+To                         Action      From
+--                         ------      ----
+OpenSSH                    ALLOW       Anywhere
+80/tcp                     ALLOW       Anywhere
+443/tcp                    ALLOW       Anywhere
+OpenSSH (v6)               ALLOW       Anywhere (v6)
+80/tcp (v6)                ALLOW       Anywhere (v6)
+443/tcp (v6)               ALLOW       Anywhere (v6)
+```
+
+Elke deur staat er twee keer: één keer voor gewone internetadressen, en met `(v6)` voor de nieuwere IPv6-adressen. Wat niet in de lijst staat, houdt ufw tegen. Ook als je later per ongeluk een programma op `0.0.0.0` laat luisteren.
+
+## Updates vanzelf
+
+Elke week worden er gaten in programma's gevonden en gedicht. Ubuntu kan de beveiligingsupdates zelf installeren, elke dag. Op een server staat dat meestal al aan:
+
+```bash
+cat /etc/apt/apt.conf.d/20auto-upgrades
+```
+
+```text
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+```
+
+Staat er twee keer `"1"`, dan is het goed. Kijk niet naar `systemctl status unattended-upgrades`: die dienst draait altijd, ook als de updates uitstaan. Bestaat het bestand niet, of staat er een `"0"`, zet het dan aan:
+
+```bash
+sudo apt install unattended-upgrades
+sudo dpkg-reconfigure -plow unattended-upgrades
+```
+
+Soms is een herstart nodig, bijvoorbeeld na een update van de kern van Linux. Dan staat er een bestand:
+
+```bash
+cat /var/run/reboot-required
+```
+
+```text
+*** System restart required ***
+```
+
+Herstart dan met `sudo reboot`. Je site komt vanzelf terug: dat deed `enable` in [les 5](site:fullstack/docs/online/wsl/dienst).
+
+<Voorspel soort="Controlevraag" vraag="Je firewall laat alleen OpenSSH, 80 en 443 door. Een klasgenoot opent in zijn browser het adres van je server met :8000 erachter. Wat gebeurt er?">
+  <Keuze uitleg="Poort 8000 staat niet in de lijst van ufw. En op welk adres luistert je site?">Hij ziet je site, zonder Caddy ertussen</Keuze>
+  <Keuze goed uitleg="Twee sloten: de firewall laat 8000 niet door, en je site luistert alleen op 127.0.0.1. Elk van de twee is genoeg.">Zijn browser krijgt geen antwoord</Keuze>
+  <Keuze uitleg="Caddy luistert op 80 en 443. Een verzoek op 8000 komt niet bij Caddy.">Hij ziet de testpagina van Caddy</Keuze>
+  <Uitleg>
+
+  Er zitten nu twee sloten op dezelfde deur: de firewall, en het adres `127.0.0.1` uit [les 3](site:fullstack/docs/online/wsl/fastapi-run). Gaat er één mis, bijvoorbeeld omdat je een keer `--host 0.0.0.0` typt om iets te testen, dan houdt de ander het tegen. Twee sloten voor één deur is geen overdaad: zo werkt beveiliging.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Jezelf buitengesloten
+
+```text
+ssh: connect to host 203.0.113.10 port 22: Connection timed out
+```
+
+**Oorzaak:** de firewall staat aan, maar ssh mag er niet door.
+
+**Oplossing:** bijna elk hostingbedrijf heeft in zijn beheerpagina een **console**: een terminal in je browser, die niet via ssh gaat. Log daar in en zet ssh open:
+
+```bash
+sudo ufw allow OpenSSH
+```
+
+## Opdrachten
+
+### Opdracht 1: Investigate - Wie bezoekt je site?
+
+Open je site op je telefoon via mobiele data. Kijk daarna op de server welk adres je site bij dat verzoek zag:
+
+```bash
+sudo journalctl -u gastenboek -n 5
+```
+
+Is dat `127.0.0.1`, het adres van Caddy?
+
+<details>
+<summary>Antwoord</summary>
+
+Nee: je ziet het adres van je telefoon op internet. Caddy zette het in de kop `X-Forwarded-For`, en `fastapi run` gelooft die kop omdat het verzoek van `127.0.0.1` komt, zoals in [les 6](site:fullstack/docs/online/wsl/voordeur). Daardoor telt de limiet uit de route Veiligheid per bezoeker, en niet iedereen samen.
+
+</details>
+
+### Opdracht 2: Investigate - Wat luistert er nog?
+
+Kijk met `sudo ss -tlnp` op de server welke programma's luisteren op `0.0.0.0`, `*` of `[::]`. Staat elk van die poorten in `ufw status`?
+
+<details>
+<summary>Antwoord</summary>
+
+Je ziet ssh (`:22`) en Caddy (`:80` en `:443`), en die staan alle drie open in ufw. Je site staat op `127.0.0.1:8000`, Caddy's eigen poort op `127.0.0.1:2019`. Staat er nog iets anders op `0.0.0.0`, zoek dan uit wat het is; de firewall houdt het tegen, maar een programma dat je niet nodig hebt, zet je beter uit.
+
+</details>
+
+Door naar [les 9: je domein met HTTPS](site:fullstack/docs/online/server/https).

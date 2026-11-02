@@ -1,0 +1,165 @@
+---
+sidebar_label: '5. Je site als dienst'
+description: Een systemd-dienst start je site als de computer opstart, als de gebruiker gastenboek, start hem opnieuw na een crash en schrijft een logboek.
+---
+
+# Online zetten: je site als dienst
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/diensten', label: 'Diensten met systemctl en journalctl'}, {site: 'linux', to: '/docs/wsl/nano', label: 'Een bestand bewerken met nano'}]} />
+
+Je site draait nu zolang jouw terminal openstaat. Een server moet blijven draaien als jij uitlogt, en vanzelf opstarten na een herstart. Dat regelt systemd, net als voor nginx in de Linux-cursus. Het verschil: voor je eigen site schrijf je zelf het bestand dat zegt hoe hij start.
+
+## Het bestand van de dienst
+
+Een dienst staat in `/etc/systemd/system/`, in een bestand met de naam van de dienst en `.service` erachter. Maak het met nano:
+
+```bash
+sudo nano /etc/systemd/system/gastenboek.service
+```
+
+Zet erin:
+
+```ini
+[Unit]
+Description=Gastenboek (FastAPI)
+After=network.target
+
+[Service]
+User=gastenboek
+Group=gastenboek
+WorkingDirectory=/srv/gastenboek/app
+ExecStart=/srv/gastenboek/app/.venv/bin/fastapi run main.py --host 127.0.0.1 --port 8000
+Restart=on-failure
+
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Het bestand heeft drie delen:
+
+- **`[Unit]`**: een naam, en wanneer hij mag starten: pas als het netwerk er is.
+- **`[Service]`**: hoe hij start. `User` is de gebruiker uit [les 4](site:fullstack/docs/online/wsl/eigen-gebruiker). `WorkingDirectory` is de map waarin je server draait; daar zoekt hij `templates/` en maakt hij zijn databases. `ExecStart` is het commando, met het hele pad naar `fastapi` in je virtual environment, zodat `source` niet nodig is. `Restart=on-failure` start hem opnieuw als hij crasht.
+- **`[Install]`**: `WantedBy=multi-user.target` betekent: start hem als de computer opstart, zonder dat iemand inlogt.
+
+De vier regels in het midden zijn extra sloten. `NoNewPrivileges` zorgt dat je site nooit meer rechten kan krijgen, ook niet via een programma dat dat normaal wel kan. `ProtectSystem=full` maakt de mappen van het systeem, waaronder `/etc`, alleen-lezen voor je site. `ProtectHome` verbergt alle thuismappen. `PrivateTmp` geeft je site een eigen `/tmp`, die andere programma's niet zien.
+
+## Starten
+
+systemd leest nieuwe bestanden pas als je het vraagt. Daarna start en enable je de dienst in één keer:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now gastenboek
+systemctl status gastenboek
+```
+
+```text
+● gastenboek.service - Gastenboek (FastAPI)
+     Loaded: loaded (/etc/systemd/system/gastenboek.service; enabled; preset: enabled)
+     Active: active (running) since …
+```
+
+Open `http://127.0.0.1:8000` op Windows: je site draait, zonder dat er een terminal openstaat.
+
+## Het logboek
+
+Wat `fastapi run` eerst in je terminal zette, staat nu in het logboek van de dienst:
+
+```bash
+sudo journalctl -u gastenboek -f
+```
+
+Herlaad een pagina en je ziet de regel van dat verzoek verschijnen. Een fout in je code, met de hele traceback, staat hier ook. Stop het meekijken met Ctrl+C; de dienst draait door.
+
+<Voorspel soort="Controlevraag" vraag="Je typt in PowerShell wsl --shutdown. Daarmee gaat Linux helemaal uit, alsof de server opnieuw opstart. Je opent Ubuntu weer en gaat in je browser naar 127.0.0.1:8000. Wat zie je?">
+  <Keuze uitleg="Na een herstart begint alles opnieuw. Maar wat zei enable ook alweer?">Een foutmelding: de server is uit tot je hem met start opnieuw aanzet</Keuze>
+  <Keuze goed uitleg="enable betekent: start mee als de computer opstart. Ubuntu start, en systemd start je dienst.">Je site, want enable zette hem aan voor elke keer dat Linux opstart</Keuze>
+  <Keuze uitleg="De databases staan in /srv/gastenboek/app, op de schijf van Linux. Die blijven bewaard als Linux uitgaat.">Je site, maar zonder berichten: die waren alleen in het geheugen</Keuze>
+  <Uitleg>
+
+  `--now` startte de dienst meteen, `enable` zorgt dat hij bij elke start van Linux meekomt. Op een echte server is dat het verschil tussen een site die na een update en een herstart vanzelf terug is, en een site die uit blijft tot jij het merkt.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### `status=203/EXEC`
+
+```text
+Main process exited, code=exited, status=203/EXEC
+```
+
+**Oorzaak:** systemd kan het programma uit `ExecStart` niet starten. Meestal klopt het pad niet: een typfout, of de virtual environment staat ergens anders.
+
+**Oplossing:** kijk of het pad bestaat, verbeter het bestand, en laad het opnieuw.
+
+```bash
+sudo ls /srv/gastenboek/app/.venv/bin/fastapi
+sudo nano /etc/systemd/system/gastenboek.service
+sudo systemctl daemon-reload
+sudo systemctl restart gastenboek
+```
+
+### `status=200/CHDIR`
+
+```text
+Main process exited, code=exited, status=200/CHDIR
+```
+
+**Oorzaak:** de map in `WorkingDirectory` bestaat niet, of `gastenboek` mag er niet in.
+
+**Oplossing:** controleer het pad met `sudo ls -ld /srv/gastenboek/app`, en of hij van `gastenboek` is.
+
+### changed on disk
+
+```text
+Warning: The unit file, source configuration file or drop-ins of gastenboek.service changed on disk. Run 'systemctl daemon-reload' to reload units.
+```
+
+**Oorzaak:** je hebt het bestand van de dienst veranderd, maar systemd gebruikt nog de oude versie.
+
+**Oplossing:** doe wat er staat: `sudo systemctl daemon-reload`, en daarna `sudo systemctl restart gastenboek`.
+
+### De dienst start, maar de site geeft een 500
+
+**Oorzaak:** een fout in je eigen code. Vaak zoekt je code een bestand op een plek die als `gastenboek` niet bestaat of niet mag.
+
+**Oplossing:** lees de traceback in `sudo journalctl -u gastenboek -n 50`. De laatste regel zegt welke fout het is.
+
+## Opdrachten
+
+### Opdracht 1: Run - Jouw site als dienst
+
+Maak de dienst voor je eigen project, start hem, en schrijf een bericht via de browser. Kijk in het logboek of je het verzoek terugziet.
+
+<details>
+<summary>Antwoord</summary>
+
+Na `sudo systemctl enable --now gastenboek` zegt `systemctl status gastenboek` `active (running)`. In `sudo journalctl -u gastenboek -n 20` zie je regels als `"POST /gastenboek HTTP/1.1" 303`.
+
+</details>
+
+### Opdracht 2: Investigate - Hoe goed zijn de sloten?
+
+systemd kan zelf beoordelen hoe goed een dienst is afgeschermd:
+
+```bash
+systemd-analyze security gastenboek
+```
+
+Onderaan staat een getal van 0 tot 10: hoe lager, hoe beter. Haal de vier regels met de extra sloten even weg (zet een `#` vooraan), laad opnieuw en vergelijk. Zet ze daarna terug.
+
+<details>
+<summary>Antwoord</summary>
+
+Zonder de vier regels is het getal hoger. De lijst erboven laat per instelling zien wat er openstaat. Je hoeft niet alles dicht te zetten: een te strenge dienst start niet meer, en elk slot dat je toevoegt, test je eerst. Na het terugzetten: `sudo systemctl daemon-reload` en `sudo systemctl restart gastenboek`.
+
+</details>
+
+Door naar [les 6: een voordeur met Caddy](site:fullstack/docs/online/wsl/voordeur).

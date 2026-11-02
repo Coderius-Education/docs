@@ -1,11 +1,21 @@
 /* Site-specifieke aanvullingen op de gedeelde Coderius-huisstijl
    (packages/shared/css/). Kleuren en letters komen uit de huisstijl. */
 
-/* De navbar heeft hier veel items (FastAPI, Veiligheid, Hoe start ik?,
-   Unplugged, Cheatsheet, Er gaat iets mis, Project checken). Met de gewone
-   ruimte ertussen liepen ze op 1280 breed over twee regels; tot 1440 breed
-   staan ze wat dichter op elkaar. Onder 997 klapt de navbar in een menu. */
-@media (min-width: 997px) and (max-width: 1439px) {
+/* De navbar heeft hier veel items (FastAPI, Veiligheid, Online zetten, Hoe
+   start ik?, Unplugged, Cheatsheet, Er gaat iets mis, Project checken). Met de
+   gewone ruimte ertussen liepen ze op 1280 breed over twee regels; tot 1440
+   breed staan ze wat dichter op elkaar, en tot 1366 nog dichter. Gemeten in
+   Chromium (november 2026, met Online zetten erbij): op 1280 liepen bij
+   0.4rem vier labels over twee regels en werd de titel afgekapt, bij 0.35rem
+   paste het net; 0.3rem laat wat marge voor andere lettertypes. Op 1366 past
+   het met 0.55rem. Onder 997 klapt de navbar in een menu. */
+@media (min-width: 997px) and (max-width: 1365px) {
+  :root:not(#\#):not(#\#) {
+    --ifm-navbar-item-padding-horizontal: 0.3rem;
+  }
+}
+
+@media (min-width: 1366px) and (max-width: 1439px) {
   :root:not(#\#):not(#\#) {
     --ifm-navbar-item-padding-horizontal: 0.55rem;
   }

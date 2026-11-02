@@ -129,7 +129,7 @@ describe('projectFromImport', () => {
 
 describe('isAllowedSender — één origin voor alle informatica-cursussen', () => {
   // Elke cursus op informatica.coderius.nl heeft dezelfde origin, ook een
-  // DVWA-lab of een speeltuin die leerling-HTML draait. Alleen het venster
+  // speeltuin die leerling-HTML draait. Alleen het venster
   // dat de IDE opende, en dan alleen op een pagina van de web-cursus, mag een
   // project sturen.
   const checker = { location: { pathname: '/web/docs/html-css/intro-html' } };
@@ -145,8 +145,8 @@ describe('isAllowedSender — één origin voor alle informatica-cursussen', () 
   });
 
   it('weigert een opener op een andere cursus van dezelfde vak-host', () => {
-    const dvwa = { location: { pathname: '/dvwa/docs/xss' } };
-    expect(isAllowedSender(WEB, dvwa, dvwa)).toBe(false);
+    const ctf = { location: { pathname: '/ctf/docs/xss' } };
+    expect(isAllowedSender(WEB, ctf, ctf)).toBe(false);
     const lijktOpWeb = { location: { pathname: '/webx/' } };
     expect(isAllowedSender(WEB, lijktOpWeb, lijktOpWeb)).toBe(false);
   });

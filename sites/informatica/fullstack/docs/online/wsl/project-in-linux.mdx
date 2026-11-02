@@ -1,0 +1,170 @@
+---
+sidebar_label: '2. Je project in Linux'
+description: Haal je project met git clone naar Ubuntu in WSL, maak daar een virtual environment, installeer requirements.txt en start de server.
+---
+
+# Online zetten: je project in Linux
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/windows-en-linux', label: 'Ubuntu in WSL, en je projecten in je Linux-thuismap'}, {site: 'linux', to: '/docs/wsl/apt', label: 'Installeren met sudo apt'}]} />
+
+Een server draait Linux, en geen Windows. Voordat je je project naar een server brengt, kijk je of het in Linux werkt. Dat doe je in Ubuntu in WSL, op je eigen computer. Wat hier misgaat, gaat op de server ook mis, maar hier kun je het rustig oplossen.
+
+## Wat Ubuntu nodig heeft
+
+Open Ubuntu en installeer twee dingen: git, om je project op te halen, en `python3-venv`, om een virtual environment te maken.
+
+```bash
+sudo apt update
+sudo apt install git python3-venv
+```
+
+Python zelf staat al op Ubuntu. Het commando heet daar `python3`, niet `python`.
+
+## Je project ophalen
+
+Je project staat op GitHub. Haal het naar je Linux-thuismap met `git clone`. Zet je eigen adres op de plek van dat van `sam`; je vindt het op GitHub onder de groene knop **Code**.
+
+```bash
+cd ~
+git clone https://github.com/sam/gastenboek.git
+cd gastenboek
+ls
+```
+
+```text
+main.py  requirements.txt  static  templates
+```
+
+Er staan geen `.db`-bestanden en geen `.venv`: die hield je met `.gitignore` buiten git. Je begint hier dus met een leeg gastenboek.
+
+## Een virtual environment in Linux
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Op Windows deed VS Code dat tweede commando voor je. In Linux typ je het zelf, elke keer dat je een nieuwe terminal opent. Daarna staat `(.venv)` voor je prompt, en heet Python ook `python`. Installeer de packages uit je lijst:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+## Starten
+
+```bash
+fastapi dev main.py
+```
+
+Open `http://127.0.0.1:8000` in je browser op Windows. Je ziet je eigen site, maar nu draait hij in Linux. Registreer een account en schrijf een bericht. Stop de server met Ctrl+C.
+
+<Voorspel soort="Controlevraag" vraag="Je sluit Ubuntu, opent hem opnieuw, gaat naar ~/gastenboek en typt fastapi dev main.py. Wat gebeurt er?">
+  <Keuze uitleg="De packages staan nog in .venv. Maar weet deze nieuwe terminal dat hij die moet gebruiken?">De server start, net als de vorige keer</Keuze>
+  <Keuze goed uitleg="Een nieuwe terminal begint zonder virtual environment. fastapi staat alleen in .venv, dus de terminal kent het commando niet.">De terminal zegt dat hij fastapi niet kent</Keuze>
+  <Keuze uitleg="De packages staan nog in .venv; die zijn niet weg. Het gaat erom welke Python de terminal gebruikt.">pip moet alles opnieuw installeren</Keuze>
+  <Uitleg>
+
+  Je krijgt `fastapi: command not found`. De packages staan nog in `.venv`, maar de nieuwe terminal gebruikt ze pas na `source .venv/bin/activate`. Een server die vanzelf start, kan dat commando niet typen; in les 5 zie je hoe een dienst het zonder doet.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### ensurepip is not available
+
+```text
+The virtual environment was not created successfully because ensurepip is not
+available.  On Debian/Ubuntu systems, you need to install the python3-venv
+package using the following command.
+```
+
+**Oorzaak:** Ubuntu levert Python zonder het stuk dat een virtual environment maakt.
+
+**Oplossing:** installeer het, gooi de halve `.venv` weg en maak hem opnieuw.
+
+```bash
+sudo apt install python3-venv
+rm -r .venv
+python3 -m venv .venv
+```
+
+### Command 'python' not found
+
+```text
+Command 'python' not found, did you mean:
+  command 'python3' from deb python3
+```
+
+**Oorzaak:** buiten een virtual environment heet Python op Ubuntu `python3`.
+
+**Oplossing:** zet de virtual environment aan. Daarin werkt `python` wel.
+
+```bash
+# FOUT
+python -m pip install -r requirements.txt
+
+# GOED
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
+
+### No module named pip, of externally-managed-environment
+
+```text
+/usr/bin/python3: No module named pip
+```
+
+**Oorzaak:** je installeert met de Python van Ubuntu zelf, niet met die in `.venv`. Ubuntu laat dat bewust niet toe: zijn eigen programma's gebruiken die Python, en een ander package kan ze breken.
+
+**Oplossing:** hetzelfde als hierboven. Zie je `(.venv)` niet voor je prompt, typ dan eerst `source .venv/bin/activate`.
+
+### Support for password authentication was removed
+
+```text
+remote: Support for password authentication was removed on August 13, 2021.
+```
+
+**Oorzaak:** je repository is privé, en GitHub accepteert in de terminal geen wachtwoord meer.
+
+**Oplossing:** log in met een sleutel. Maak er een zoals in [Inloggen op een andere computer](site:linux/docs/wsl/ssh) in de Linux-cursus, zet de inhoud van `~/.ssh/id_ed25519.pub` op GitHub onder **Settings**, **SSH and GPG keys**, en clone met het ssh-adres:
+
+```bash
+git clone git@github.com:sam/gastenboek.git
+```
+
+## Opdrachten
+
+### Opdracht 1: Run - Jouw project in Linux
+
+Haal je eigen project naar Ubuntu, en laat het daar draaien met `fastapi dev`. Werkt elke pagina? Kun je registreren, inloggen en een bericht schrijven?
+
+<details>
+<summary>Antwoord</summary>
+
+```bash
+cd ~
+git clone https://github.com/sam/gastenboek.git
+cd gastenboek
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+fastapi dev main.py
+```
+
+Werkt iets op Windows wel en hier niet, kijk dan in de terminal welke fout er staat. Vaak is het een package dat in `requirements.txt` ontbreekt (`ModuleNotFoundError`), of een bestandsnaam met een hoofdletter: `Style.css` en `style.css` zijn op Windows hetzelfde bestand en in Linux niet.
+
+</details>
+
+### Opdracht 2: Investigate - Waar staan de databases?
+
+Kijk na het schrijven van een bericht met `ls` in `~/gastenboek`. Welke bestanden zijn erbij gekomen? Waarom komen die niet in git als je straks `git status` doet?
+
+<details>
+<summary>Antwoord</summary>
+
+`gastenboek.db`, `gebruikers.db` en, als je sessies hebt, `sessies.db`. SqliteDict maakt ze aan in de map waar de server draait. `git status` toont ze niet, omdat ze in je `.gitignore` staan. Zo komt het wachtwoord van een klasgenoot nooit op GitHub, en overschrijft een nieuwe versie van je code de berichten op de server niet.
+
+</details>
+
+Door naar [les 3: van fastapi dev naar fastapi run](site:fullstack/docs/online/wsl/fastapi-run).

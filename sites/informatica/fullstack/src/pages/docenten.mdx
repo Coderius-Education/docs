@@ -165,6 +165,14 @@ De reeks is opzettelijk defensief. Elke zelftest draait tegen de eigen server op
 
 De beloofde uitvoer en foutmeldingen in deze reeks draaien niet mee in CI, die alleen de Python-syntax controleert. Ze zijn met de hand nagedraaid tegen een echte server. Werk je een les bij, controleer een gewijzigde uitvoer dan zelf in een virtual environment met de echte packages.
 
+### De route Online zetten
+
+Een eigen route in de navbar, na Veiligheid: je leerlingen zetten hun gastenboek op een Linux-server, op een veilige manier. Eerst oefenen ze alles in Ubuntu in WSL op hun eigen computer (`requirements.txt`, het project in Linux, `fastapi run`, een eigen gebruiker zonder rechten, een systemd-dienst, Caddy als voordeur). Daarna doen ze het op een echte server, met een firewall, ssh alleen met een sleutel, automatische updates, HTTPS met een eigen domeinnaam, en een nieuwe versie uitrollen met een back-up.
+
+De route legt geen Linux uit. Terminal, rechten, `sudo apt`, `nano`, diensten en `ssh` staan in de [Linux-cursus](site:linux/docs), en elke les linkt naar de Linux-les die hij nodig heeft. Laat leerlingen die cursus eerst doen; deel 1 kan in de browser, deel 2 vraagt WSL.
+
+Voor het tweede deel is een server nodig. Een VPS bij een hostingbedrijf kost een paar euro per maand; als de school er een heeft, of een paar kleine voor de klas, kan elke leerling er een eigen gebruiker op krijgen. Een domeinnaam is nodig voor HTTPS. Met een subdomein per leerling onder een domein van school is dat het makkelijkst te regelen. Zeg erbij dat een server op internet binnen een uur bezoek krijgt van programma's die proberen in te loggen: les 7 laat dat zien, en les 8 doet er iets aan. Laat les 8 daarom op dezelfde dag als les 7 doen.
+
 ## Feedback & bijdragen
 
 Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs). Alle bijdragen — van een typo tot een nieuwe les — zijn welkom.
