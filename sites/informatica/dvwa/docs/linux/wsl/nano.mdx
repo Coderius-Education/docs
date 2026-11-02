@@ -1,0 +1,104 @@
+---
+sidebar_position: 4
+---
+
+# 2.4 Een bestand bewerken met nano
+
+<Voorkennis items={[{to: '/docs/linux/wsl/apt', label: 'sudo'}]} />
+
+Op een server is geen Kladblok en geen VS Code. Wil je daar een instelling veranderen, dan bewerk je het bestand in de terminal. Het makkelijkste programma daarvoor is **nano**, en het staat al op Ubuntu.
+
+```bash
+nano ~/plan.txt
+```
+
+Het scherm wordt een tekstvak. Het bestand bestond nog niet, dus het is leeg. Typ een paar regels. Met de pijltjestoetsen ga je door de tekst; de muis doet hier niets.
+
+## Opslaan en stoppen
+
+Onderaan staat een lijstje sneltoetsen. Het dakje `^` betekent Ctrl:
+
+| Toets | Wat het doet |
+|:---|:---|
+| Ctrl+O | opslaan (*write out*); druk daarna op Enter om de naam te bevestigen |
+| Ctrl+X | stoppen |
+| Ctrl+K | de regel knippen |
+| Ctrl+U | de geknipte regel plakken |
+| Ctrl+W | zoeken (*where is*) |
+
+Sla op met Ctrl+O en Enter, en stop met Ctrl+X. Controleer met `cat ~/plan.txt` dat je tekst erin staat.
+
+## Voorspel
+
+Je bewerkt een bestand en drukt meteen op Ctrl+X, zonder eerst op te slaan. Wat doet nano?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Hij vraagt onderaan:
+
+```
+Save modified buffer?
+ Y Yes
+ N No           ^C Cancel
+```
+
+`Y` slaat op (en vraagt dan de naam, druk op Enter), `N` gooit je wijzigingen weg, Ctrl+C gaat terug naar je tekst.
+
+</details>
+
+## Opdracht 2.4.a: een welkomstgroet
+
+Elke keer dat je Ubuntu opent, leest de terminal het verborgen bestand `~/.bashrc`. Wat daarin staat, voert hij uit.
+
+1. Open `~/.bashrc` in nano.
+2. Zet helemaal onderaan deze regel: `echo "Welkom terug, $USER"`.
+3. Sla op, stop, en open een nieuwe Ubuntu-terminal.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Met Ctrl+End, of Alt+/, spring je naar het eind van het bestand. Het bestand is van jou: `sudo` heb je hier niet nodig.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+nano ~/.bashrc
+```
+
+Onderaan de regel erbij zetten, Ctrl+O, Enter, Ctrl+X. In een nieuwe terminal staat bovenaan `Welkom terug, sam`, met jouw naam. `$USER` vult de terminal zelf in.
+
+Een nieuw venster openen hoeft niet: met `source ~/.bashrc` leest de terminal het bestand meteen opnieuw.
+
+</details>
+
+## Er gaat iets mis
+
+### Opslaan lukt niet
+
+```
+[ File '/etc/hosts' is unwritable ]
+```
+
+**Oorzaak:** het bestand is van `root`. nano opent het wel, maar opslaan lukt niet: dan krijg je `Permission denied`.
+
+**Oplossing:** stop met Ctrl+X (antwoord `N`), en open het opnieuw met `sudo`. Doe dat alleen bij een bestand dat echt van `root` is, zoals de instellingen in `/etc`.
+
+```bash
+# FOUT: je kunt niet opslaan
+nano /etc/hosts
+
+# GOED
+sudo nano /etc/hosts
+```
+
+### Vast in een ander programma
+
+**Oorzaak:** een ander commando opende de editor **vim**, of je typte `vi`. Ctrl+X werkt daar niet, en wat je typt doet rare dingen.
+
+**Oplossing:** druk op Esc, typ `:q!` en druk op Enter. vim stopt dan zonder op te slaan.
+
+Door naar [2.5 Diensten](site:dvwa/docs/linux/wsl/diensten).

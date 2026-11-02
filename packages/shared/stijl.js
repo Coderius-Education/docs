@@ -93,6 +93,7 @@ const AFKORTINGEN = new Set([
   'PRIMM',
   'SNES',
   'USB',
+  'BIOS',
   'PDF',
   'CSV',
   'RGB',
@@ -271,7 +272,8 @@ const REGELS = [
     zoek: (proza) =>
       treffers(
         proza,
-        /\b(let's|we're|gonna|awesome|nice|cool)\b/gi,
+        // "Let's Encrypt" is een naam (de route Online zetten), geen opvulling.
+        /\b(let's(?! encrypt\b)|we're|gonna|awesome|nice|cool)\b/gi,
         (m) => `Engelse opvulling "${m[1]}"`,
       ),
   },

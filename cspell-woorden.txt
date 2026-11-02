@@ -162,6 +162,7 @@ informationeel
 inspringniveau
 instantieert
 instantiëren
+journalctl
 jumperkabel
 jóuw
 kaartjesvel
@@ -214,6 +215,7 @@ meescrollende
 meescrollt
 meetpen
 meetypen
+meetypt
 mergesort
 mergt
 micropython
@@ -247,6 +249,7 @@ ondoorzichtbare
 ontsleuteling
 ontwikkelaarshulpmiddelen
 ontwikkelaarstools
+onversleutelde
 onvervalsbare
 opengameart
 openingstag
@@ -379,6 +382,7 @@ syllogistiek
 syntaxfouten
 systeemfont
 systeemfonts
+systemctl
 tagnaam
 Tagnaam
 tagnamen

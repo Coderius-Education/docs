@@ -1,0 +1,145 @@
+---
+sidebar_position: 4
+---
+
+import LinuxTerminal from '@site/src/components/LinuxTerminal';
+
+# 1.4 Maken en schrijven
+
+<Voorkennis items={[{to: '/docs/linux/terminal/bestanden-lezen', label: 'Bestanden lezen met cat'}]} />
+
+Een nieuwe map maak je met `mkdir` (*make directory*):
+
+```bash
+mkdir project
+cd project
+pwd
+```
+
+```
+/home/student/project
+```
+
+<LinuxTerminal title="Oefenterminal" />
+
+Wat je hier maakt, is weg als je de pagina herlaadt. Op een echte computer blijft het staan.
+
+## Een bestand maken
+
+Met `touch` maak je een leeg bestand:
+
+```bash
+touch leesmij.txt
+ls
+```
+
+```
+leesmij.txt
+```
+
+Een leeg bestand heb je niet vaak nodig. Meestal wil je er meteen iets in hebben. Dat doe je met `echo` en een pijltje:
+
+```bash
+echo "Mijn eerste project" > leesmij.txt
+cat leesmij.txt
+```
+
+```
+Mijn eerste project
+```
+
+`echo` zet tekst op het scherm. Het teken `>` stuurt die tekst niet naar het scherm, maar een bestand in. Dat heet **omleiden**, en het werkt met elk commando: `ls /etc > lijst.txt` zet de lijst met bestanden in `lijst.txt`.
+
+## Voorspel
+
+Je typt deze twee regels na elkaar. Wat staat er daarna in `leesmij.txt`?
+
+```bash
+echo "regel een" > leesmij.txt
+echo "regel twee" > leesmij.txt
+```
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Alleen `regel twee`. Eén pijltje maakt het bestand eerst leeg. Wil je er iets onder zetten, gebruik dan twee:
+
+```bash
+echo "regel een" > leesmij.txt
+echo "regel twee" >> leesmij.txt
+cat leesmij.txt
+```
+
+```
+regel een
+regel twee
+```
+
+</details>
+
+## Opdracht 1.4.a: een boodschappenlijst
+
+1. Maak in je thuismap een map `lijstjes`.
+2. Zet daarin een bestand `boodschappen.txt` met drie regels: `brood`, `kaas` en `appels`.
+3. Laat met één commando zien hoeveel regels het bestand heeft.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+De eerste regel schrijf je met `>`, de andere twee met `>>`. Tellen deed je in de vorige les.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+cd ~
+mkdir lijstjes
+echo brood > lijstjes/boodschappen.txt
+echo kaas >> lijstjes/boodschappen.txt
+echo appels >> lijstjes/boodschappen.txt
+wc -l lijstjes/boodschappen.txt
+```
+
+Je hoeft niet met `cd` de map in: een pad naar het bestand werkt ook achter `>`.
+
+</details>
+
+## Er gaat iets mis
+
+### File exists
+
+```
+mkdir: cannot create directory ‘project’: File exists
+```
+
+**Oorzaak:** er staat al een map of bestand met die naam.
+
+**Oplossing:** kies een andere naam, of gebruik de map die er al is. Met `ls` zie je wat er staat.
+
+### Een map in een map die er nog niet is
+
+```
+mkdir: cannot create directory ‘a/b’: No such file or directory
+```
+
+**Oorzaak:** `mkdir a/b` maakt alleen `b`, en verwacht dat `a` er al is.
+
+**Oplossing:** maak eerst `a`, of gebruik `-p` (*parents*): dan maakt `mkdir` de mappen erboven ook.
+
+```bash
+# FOUT
+mkdir a/b
+
+# GOED
+mkdir -p a/b
+```
+
+### Je bestand is leeg
+
+**Oorzaak:** je gebruikte `>` waar je `>>` bedoelde, of je schreef een commando dat een fout gaf. Een foutmelding gaat niet het bestand in maar komt op je scherm, en het bestand blijft leeg.
+
+**Oplossing:** kijk met `cat` wat er staat, en schrijf het opnieuw.
+
+Door naar [1.5 Kopiëren, verplaatsen en weggooien](site:dvwa/docs/linux/terminal/kopieren).

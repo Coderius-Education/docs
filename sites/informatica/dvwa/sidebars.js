@@ -8,7 +8,8 @@
  * lokaal-afhankelijke challenges. De niveaus gaan over moeilijkheid; wat je per
  * challenge nodig hebt (browser, F12 of lokaal) staat in het LabBadge-label.
  * Installeren en naslag staan onderaan — je pakt ze erbij wanneer je ze nodig
- * hebt, niet vooraf.
+ * hebt, niet vooraf. Linux en WSL zijn een eigen cursus (linuxSidebar); de
+ * DVWA-sidebar verwijst er alleen naar (type 'ref').
  *
  * De challenges houden hun mapnummer (01-…/) en URL; de volgorde komt hieruit,
  * niet uit het mapnummer. Elke challenge wordt een inklapbare groep met zijn
@@ -30,6 +31,38 @@ const challenge = (dir, label) => ({
 });
 
 const sidebars = {
+  // De Linux-cursus: eerst de terminal in de browser, dan Linux op je eigen
+  // computer. De volgorde is de leerroute; elke les linkt naar de volgende.
+  linuxSidebar: [
+    'linux/index',
+    {
+      type: 'category',
+      label: '1. De terminal',
+      collapsed: false,
+      items: [
+        'linux/terminal/eerste-commando',
+        'linux/terminal/mappen',
+        'linux/terminal/bestanden-lezen',
+        'linux/terminal/maken',
+        'linux/terminal/kopieren',
+        'linux/terminal/zoeken',
+        'linux/terminal/rechten',
+      ],
+    },
+    {
+      type: 'category',
+      label: '2. Linux op je eigen computer (WSL)',
+      collapsed: false,
+      items: [
+        'linux/wsl/installeren',
+        'linux/wsl/windows-en-linux',
+        'linux/wsl/apt',
+        'linux/wsl/nano',
+        'linux/wsl/diensten',
+        'linux/wsl/ssh',
+      ],
+    },
+  ],
   tutorialSidebar: [
     'dvwa_tutorial/index',
     {
@@ -72,13 +105,21 @@ const sidebars = {
       type: 'category',
       label: 'Naslag',
       collapsed: true,
-      items: ['linux_leren', 'http_leren', 'sql_leren', 'cheatsheet'],
+      items: [
+        { type: 'ref', id: 'linux/index', label: 'Linux (eigen cursus)' },
+        'http_leren',
+        'sql_leren',
+        'cheatsheet',
+      ],
     },
     {
       type: 'category',
       label: 'Lokaal installeren (voor de zwaardere challenges)',
       collapsed: true,
-      items: ['installatie', 'dvwa_installatie'],
+      items: [
+        { type: 'ref', id: 'linux/wsl/installeren', label: 'WSL installeren' },
+        'dvwa_installatie',
+      ],
     },
   ],
 };

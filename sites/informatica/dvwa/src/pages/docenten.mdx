@@ -9,7 +9,9 @@ Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: 
 
 ## Wat is dit?
 
-Een interactieve cursus **websecurity** met **DVWA** (Damn Vulnerable Web Application). Je leerlingen leren veelvoorkomende kwetsbaarheden begrijpen en misbruiken — SQL-injectie, XSS, command injection en meer — in een veilige oefenomgeving. Doelgroep: leerlingen die al wat web (HTML/JS) kennen en security willen verkennen.
+Twee cursussen op één site. De eerste is een **introductie in Linux**: werken in de terminal, eerst in een oefenterminal in de browser en daarna op een eigen Ubuntu in WSL, tot en met `apt`, `nano`, diensten en `ssh`. De tweede is **websecurity** met **DVWA** (Damn Vulnerable Web Application): je leerlingen leren veelvoorkomende kwetsbaarheden begrijpen en misbruiken, zoals SQL-injectie, XSS en command injection, in een veilige oefenomgeving.
+
+De Linux-cursus heeft geen voorkennis nodig. Voor DVWA moeten je leerlingen al wat web (HTML en JavaScript) kennen. De fullstack-cursus verwijst voor alles wat met Linux te maken heeft naar de Linux-cursus, in de route waarin leerlingen hun FastAPI-site online zetten.
 
 :::caution[Alleen in je eigen installatie]
 DVWA is expres kwetsbaar. Gebruik het uitsluitend in een **eigen, lokale installatie** — nooit op systemen van anderen of op het schoolnetwerk zonder toestemming.
@@ -19,8 +21,8 @@ DVWA is expres kwetsbaar. Gebruik het uitsluitend in een **eigen, lokale install
 
 | Wat | Antwoord |
 |---|---|
-| Operating system | Windows met WSL2, of Linux |
-| Software | DVWA (de cursus leert je het installeren, o.a. via WSL) |
+| Operating system | Deel 1 van Linux: elke browser. Deel 2 en DVWA lokaal: Windows met WSL2, macOS of Linux |
+| Software | Ubuntu in WSL (de cursus leert het installeren); voor DVWA lokaal ook Kali Linux |
 | Account | Niet nodig |
 | Internet | Vereist voor de installatie; daarna werkt DVWA lokaal |
 
@@ -39,11 +41,12 @@ Laat je leerlingen het Impossible-level vergelijken met de andere: daar zien ze 
 
 ## Leerlijn
 
-Begin met de basis en de installatie, en werk daarna door de challenges. Naslag staat in de [Cheatsheet](site:dvwa/docs/cheatsheet).
+Begin met Linux, en werk daarna door de challenges. Naslag staat in de [Cheatsheet](site:dvwa/docs/cheatsheet).
 
 | Onderwerp | Leerdoel |
 |---|---|
-| [Linux leren](site:dvwa/docs/linux_leren) | De command line voor je begint |
+| [Linux, deel 1: de terminal](site:dvwa/docs/linux/terminal/eerste-commando) | Commando's, paden, bestanden, zoeken en rechten, in de browser |
+| [Linux, deel 2: WSL](site:dvwa/docs/linux/wsl/installeren) | Ubuntu op Windows, `apt`, `nano`, diensten en `ssh` |
 | [DVWA installeren](site:dvwa/docs/dvwa_installatie) | Je eigen oefenomgeving opzetten |
 | [Challenges](site:dvwa/docs/dvwa_tutorial) | SQL-injectie, XSS, command injection, CSRF, file inclusion en meer |
 

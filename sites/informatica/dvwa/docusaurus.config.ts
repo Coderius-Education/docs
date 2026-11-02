@@ -2,16 +2,22 @@ import { createConfig, prismThemes } from '@coderius/shared/config';
 import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 
 export default createConfig({
-  title: 'DVWA Websecurity — Coderius',
-  tagline: 'Oefen websecurity met DVWA direct in je browser',
+  title: 'Linux en DVWA — Coderius',
+  tagline: 'Leer werken in de terminal van Linux, en oefen daarna websecurity met DVWA',
   siteId: 'dvwa',
   projectName: 'DVWA',
   matomoSiteId: 10,
 
   description:
-    'Oefen websecurity met DVWA direct in je browser. Geen installatie nodig. Leer SQL-injectie, XSS, command injection en meer.',
+    'Leer Linux in de terminal, direct in je browser, en zet Linux op je eigen computer met WSL. Daarna oefen je websecurity met DVWA.',
   keywords:
-    'dvwa tutorial, dvwa zonder installatie, websecurity oefenen, sql injectie leren, command injection tutorial, ethical hacking browser',
+    'linux leren, linux terminal oefenen, wsl installeren, ubuntu wsl, ssh leren, dvwa tutorial, websecurity oefenen',
+
+  // De Linux-pagina's kregen in november 2026 een eigen cursus onder docs/linux/.
+  omleidingen: [
+    { van: '/docs/linux_leren', naar: '/docs/linux' },
+    { van: '/docs/installatie', naar: '/docs/linux/wsl/installeren' },
+  ],
 
   clientModules: [require.resolve('@xterm/xterm/css/xterm.css')],
 
@@ -35,9 +41,8 @@ export default createConfig({
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
       items: [
-        { to: '/docs/linux_leren', label: 'Linux leren', position: 'left' },
-        { to: '/docs/installatie', label: 'WSL installeren', position: 'left' },
-        { to: '/docs/dvwa_installatie', label: 'DVWA installeren', position: 'left' },
+        { type: 'docSidebar', sidebarId: 'linuxSidebar', position: 'left', label: 'Linux' },
+        { to: '/docs/linux/wsl/installeren', label: 'WSL', position: 'left' },
         {
           to: '/docs/dvwa_tutorial/brute-force/low',
           label: 'DVWA Challenges',

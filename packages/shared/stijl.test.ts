@@ -101,6 +101,13 @@ describe('waarschuwingen', () => {
     expect(namen('Een krachtige bibliotheek.')).toContain('superlatief');
   });
 
+  it("vindt Engelse opvulling, maar niet de naam Let's Encrypt", () => {
+    expect(namen("Let's begin met een server.")).toContain('engels-opvulling');
+    expect(namen("Caddy vraagt een certificaat aan bij Let's Encrypt.")).not.toContain(
+      'engels-opvulling',
+    );
+  });
+
   it('vindt een formulaire opener aan het begin van een regel', () => {
     expect(namen('Laten we eens kijken naar lijsten.')).toContain('formulaire-opener');
   });

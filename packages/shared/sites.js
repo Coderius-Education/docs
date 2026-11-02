@@ -136,12 +136,13 @@ const SITES = defineSites([
   },
   {
     id: 'dvwa',
-    label: 'DVWA Websecurity',
+    label: 'Linux & DVWA',
     subject: 'informatica',
     path: 'dvwa',
     legacyUrl: 'https://dvwa.coderius.nl',
-    description: 'Oefen websecurity in een veilige DVWA-omgeving.',
-    requires: ['web'],
+    description:
+      'Werk in de terminal van Linux, zet Linux op je computer met WSL, en oefen daarna websecurity met DVWA.',
+    requires: [],
   },
   {
     id: 'ide',

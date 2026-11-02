@@ -14,9 +14,10 @@ Op deze pagina vind je alle handige commando's, opstartstappen en begrippen die 
 
 <summary>Hoe start ik WSL op?</summary>
 
-Open `Windows PowerShell` en voer dit commando uit:
+Open `Windows PowerShell` en voer een van deze commando's uit: het eerste opent Ubuntu (de Linux-cursus), het tweede Kali (DVWA).
 
 ```powershell
+wsl
 wsl -d kali-linux
 ```
 
@@ -58,6 +59,98 @@ Twee dingen:
 
 1. Ga naar `Setup / Reset DB` en klik onderaan op de knop `Create / Reset Database`.
 2. Ga naar `DVWA Security`, kies `low` en klik op `Submit`.
+
+</details>
+
+## Linux-basis
+
+Uitleg en oefeningen staan in de [Linux-cursus](site:dvwa/docs/linux).
+
+<details>
+<summary>Waar ben ik, en wat staat hier? (<code>pwd</code>, <code>ls</code>)</summary>
+
+```bash
+pwd
+ls -la
+```
+
+</details>
+
+<details>
+<summary>Hoe ga ik naar een andere map? (<code>cd</code>)</summary>
+
+```bash
+cd /var/log
+cd ..
+cd ~
+```
+
+</details>
+
+<details>
+<summary>Hoe maak, kopieer, verplaats en verwijder ik? (<code>mkdir</code>, <code>cp</code>, <code>mv</code>, <code>rm</code>)</summary>
+
+```bash
+mkdir -p project/static
+cp main.py main.py.bak
+mv oud.txt nieuw.txt
+rm -r oude-map
+```
+
+Er is geen prullenbak: `rm` is meteen weg.
+
+</details>
+
+<details>
+<summary>Hoe zoek ik in een bestand? (<code>grep</code>, <code>|</code>)</summary>
+
+```bash
+grep -i failed /var/log/auth.log
+ls /etc | grep host
+```
+
+</details>
+
+<details>
+<summary>Hoe installeer ik een programma? (<code>sudo apt</code>)</summary>
+
+```bash
+sudo apt update
+sudo apt install tree
+```
+
+</details>
+
+<details>
+<summary>Hoe bewerk ik een bestand in de terminal? (<code>nano</code>)</summary>
+
+```bash
+nano bestand.txt
+```
+
+Ctrl+O en Enter slaat op, Ctrl+X stopt.
+
+</details>
+
+<details>
+<summary>Hoe start, stop en bekijk ik een dienst? (<code>systemctl</code>, <code>journalctl</code>)</summary>
+
+```bash
+systemctl status nginx
+sudo systemctl restart nginx
+sudo journalctl -u nginx -n 20
+```
+
+</details>
+
+<details>
+<summary>Hoe log ik in op een andere computer? (<code>ssh</code>)</summary>
+
+```bash
+ssh sam@server.voorbeeld.nl
+ssh-keygen -t ed25519
+ssh-copy-id sam@server.voorbeeld.nl
+```
 
 </details>
 

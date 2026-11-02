@@ -1,0 +1,135 @@
+---
+sidebar_position: 1
+---
+
+# 2.1 WSL installeren
+
+Met **WSL** (*Windows Subsystem for Linux*) draait een echte Linux op je Windows-computer, naast je gewone programma's. Je hoeft geen tweede computer te kopen, en Windows blijft werken zoals je gewend bent. In deze les zet je er **Ubuntu** op: de Linux die je ook op de meeste servers tegenkomt.
+
+Je hebt nodig: Windows 11, of Windows 10 met de update van mei 2020 of later, en het recht om programma's te installeren. Op een laptop van school mag dat soms niet; vraag het dan aan je docent.
+
+## Stap 1: PowerShell openen als administrator
+
+Druk op de Windows-toets, typ `PowerShell`, klik met de rechtermuisknop op **Windows PowerShell** en kies **Als administrator uitvoeren**. Klik op **Ja** als Windows vraagt of het programma wijzigingen mag aanbrengen.
+
+## Stap 2: WSL en Ubuntu installeren
+
+Typ dit commando en druk op Enter:
+
+```powershell
+wsl --install
+```
+
+Windows zet nu WSL aan en haalt Ubuntu op. Dat duurt een paar minuten. Staat er dat je computer opnieuw moet opstarten, doe dat dan.
+
+## Stap 3: Een gebruiker kiezen
+
+Na het opstarten opent er een zwart venster met Ubuntu. Gebeurt dat niet, zoek dan in het startmenu naar **Ubuntu** en open het. Ubuntu vraagt:
+
+```
+Enter new UNIX username:
+```
+
+Kies een korte naam met kleine letters en zonder spaties, bijvoorbeeld je voornaam. Daarna vraagt hij twee keer een wachtwoord.
+
+**Let op:** terwijl je het wachtwoord typt, zie je niets: geen sterretjes, geen bolletjes. Dat is normaal. Typ het en druk op Enter. Onthoud het goed: je hebt het nodig zodra je iets als beheerder doet.
+
+## Stap 4: Controleren of het werkt
+
+Je ziet nu een prompt zoals deze, met jouw naam en die van je computer:
+
+```
+sam@laptop:~$
+```
+
+Typ `pwd` en `whoami`. Herken je het uit [deel 1](site:dvwa/docs/linux/terminal/eerste-commando)? Dit is dezelfde terminal, maar nu op je eigen computer: wat je hier maakt, blijft bewaard.
+
+Open daarna een gewone PowerShell (geen administrator) en typ:
+
+```powershell
+wsl -l -v
+```
+
+```
+  NAME      STATE           VERSION
+* Ubuntu    Running         2
+```
+
+Onder `VERSION` moet `2` staan.
+
+## Voorspel
+
+In de oefenterminal van deel 1 was alles weg als je de pagina herlaadde. Je maakt nu in Ubuntu een map met `mkdir ~/linux-cursus`, sluit het venster en opent Ubuntu opnieuw. Staat de map er nog?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Ja. Dit is een echte Linux op je eigen schijf: wat je maakt, blijft staan tot je het zelf weggooit. En wat je met `rm` weggooit, komt ook niet meer terug.
+
+</details>
+
+## Opdracht 2.1.a: rondkijken in je eigen Linux
+
+Gebruik de commando's uit deel 1 om drie dingen uit te zoeken over je nieuwe Ubuntu:
+
+1. Wat is je thuismap?
+2. Welke versie van Ubuntu draait er? Die staat in `/etc/os-release`.
+3. Hoeveel gebruikers staan er in `/etc/passwd`?
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Voor 1 heb je [1.1](site:dvwa/docs/linux/terminal/eerste-commando) nodig, voor 2 en 3 [1.3](site:dvwa/docs/linux/terminal/bestanden-lezen).
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+pwd
+cat /etc/os-release
+wc -l /etc/passwd
+```
+
+Je thuismap is `/home/` met je eigen naam erachter. In `/etc/os-release` staat bij `PRETTY_NAME` iets als `Ubuntu 24.04 LTS`. In `/etc/passwd` staan er tientallen: bijna allemaal programma's, en jij als laatste.
+
+</details>
+
+## Ubuntu later weer openen
+
+Zoek in het startmenu naar **Ubuntu**, of typ `wsl` in PowerShell. Met **Windows Terminal** kun je Ubuntu en PowerShell als tabbladen naast elkaar open hebben.
+
+## Er gaat iets mis
+
+### Virtualisatie staat uit
+
+```
+WslRegisterDistribution failed with error: 0x80370102
+```
+
+**Oorzaak:** WSL gebruikt een stukje van je processor dat virtualisatie heet. Op sommige computers staat dat uit.
+
+**Oplossing:** zet virtualisatie aan in het BIOS van je computer (vaak heet het *Intel VT-x*, *Intel Virtualization Technology* of *AMD-V*). Hoe je in het BIOS komt, verschilt per merk; zoek op het merk en type van je laptop. Lukt het niet, vraag je docent.
+
+### wsl --install toont alleen een lijst met opties
+
+**Oorzaak:** WSL staat al op je computer, maar er is nog geen Linux bij.
+
+**Oplossing:** zeg erbij welke Linux je wilt:
+
+```powershell
+wsl --install -d Ubuntu
+```
+
+### Wachtwoord vergeten
+
+**Oorzaak:** je hebt bij stap 3 iets gekozen wat je nu niet meer weet.
+
+**Oplossing:** open PowerShell en log in als beheerder van Ubuntu, en kies een nieuw wachtwoord. Zet je eigen gebruikersnaam op de plek van `sam`:
+
+```powershell
+wsl -u root passwd sam
+```
+
+Door naar [2.2 Windows en Linux naast elkaar](site:dvwa/docs/linux/wsl/windows-en-linux).

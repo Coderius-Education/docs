@@ -1,0 +1,125 @@
+---
+sidebar_position: 5
+---
+
+# 2.5 Diensten
+
+<Voorkennis items={[{to: '/docs/linux/wsl/apt', label: 'Installeren met sudo apt'}, {to: '/docs/linux/wsl/windows-en-linux', label: 'Een website in WSL bekijken'}]} />
+
+De webserver uit [2.2](site:dvwa/docs/linux/wsl/windows-en-linux) stopte zodra je Ctrl+C drukte of de terminal sloot. Een echte server moet blijven draaien, ook als niemand is ingelogd, en vanzelf weer starten na een herstart. Zo'n programma heet een **dienst**. Op Ubuntu regelt **systemd** de diensten, en je praat ermee via `systemctl`.
+
+Installeer een echte webserver, nginx:
+
+```bash
+sudo apt update
+sudo apt install nginx
+```
+
+Open in je browser `http://localhost`. Je ziet de kop `Welcome to nginx!`, zonder dat je iets hebt gestart: apt zette de dienst meteen aan.
+
+## Kijken hoe het gaat
+
+```bash
+systemctl status nginx
+```
+
+```
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2026-11-02 10:15:01 CET; 2min ago
+```
+
+Twee woorden doen ertoe. `active (running)` betekent: hij draait nu. `enabled` betekent: hij start vanzelf als de computer opstart. Druk op `q` om terug te gaan naar je prompt.
+
+## Starten en stoppen
+
+| Commando | Wat het doet |
+|:---|:---|
+| `sudo systemctl stop nginx` | stoppen |
+| `sudo systemctl start nginx` | starten |
+| `sudo systemctl restart nginx` | opnieuw starten, bijvoorbeeld na een nieuwe instelling |
+| `sudo systemctl enable nginx` | vanzelf starten bij het opstarten |
+| `sudo systemctl disable nginx` | niet meer vanzelf starten |
+
+Kijken mag iedereen, dus `status` werkt zonder `sudo`. Een dienst veranderen vraagt `sudo`.
+
+## Voorspel
+
+Je doet `sudo systemctl stop nginx` en herlaadt `http://localhost` in je browser. Wat zie je? En na `sudo systemctl start nginx`?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Na `stop` geeft de browser een foutmelding, zoiets als **Kan deze pagina niet bereiken**: er luistert niemand meer. Na `start` is de welkomstpagina terug.
+
+</details>
+
+## Wat er gebeurde: het logboek
+
+Elke dienst schrijft wat hij doet naar een logboek. Dat lees je met `journalctl`:
+
+```bash
+sudo journalctl -u nginx -n 20
+```
+
+`-u nginx` kiest de dienst (*unit*), `-n 20` de laatste twintig regels. Start een dienst niet, dan staat hier waarom. Met `-f` (*follow*) blijft het logboek openstaan en zie je nieuwe regels meteen verschijnen; stoppen doe je met Ctrl+C.
+
+## Opdracht 2.5.a: nginx uit
+
+Je hebt nginx straks niet meer nodig, en hij houdt de deur van `http://localhost` bezet.
+
+1. Stop nginx, en zorg dat hij niet meer vanzelf start.
+2. Laat met `systemctl status` zien dat het gelukt is.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Je hebt twee commando's uit de tabel nodig. Ze kunnen ook in één keer: `disable` kent de optie `--now`.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+sudo systemctl disable --now nginx
+systemctl status nginx
+```
+
+In de status staan nu `disabled` en `inactive (dead)`. Helemaal weghalen kan met `sudo apt remove nginx`.
+
+</details>
+
+## Er gaat iets mis
+
+### Niet opgestart met systemd
+
+```
+System has not been booted with systemd as init system (PID 1). Can't operate.
+Failed to connect to bus: Host is down
+```
+
+**Oorzaak:** in je WSL staat systemd uit. Bij een nieuwe Ubuntu staat het aan, maar bij een oudere installatie niet.
+
+**Oplossing:** zet het aan in `/etc/wsl.conf`:
+
+```bash
+sudo nano /etc/wsl.conf
+```
+
+Zet erin:
+
+```ini
+[boot]
+systemd=true
+```
+
+Sla op, stop, en typ in PowerShell `wsl --shutdown`. Open daarna Ubuntu opnieuw.
+
+### De dienst draait niet meer als je later terugkomt
+
+**Oorzaak:** WSL zet Linux stil als er een tijdje geen Ubuntu-venster open is. Je diensten stoppen dan mee.
+
+**Oplossing:** open Ubuntu; diensten met `enabled` starten dan vanzelf weer. Op een echte server speelt dit niet: die staat altijd aan.
+
+Door naar [2.6 Inloggen op een andere computer](site:dvwa/docs/linux/wsl/ssh).

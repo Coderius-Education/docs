@@ -1,0 +1,124 @@
+---
+sidebar_position: 2
+---
+
+# 2.2 Windows en Linux naast elkaar
+
+<Voorkennis items={[{to: '/docs/linux/wsl/installeren', label: 'WSL en Ubuntu installeren'}, {to: '/docs/linux/terminal/mappen', label: 'Absolute paden en cd'}]} />
+
+Ubuntu in WSL heeft een eigen bestandsboom, met een eigen thuismap: `/home/<jouw naam>`. Dat is een andere map dan je Windows-map met Documenten en Bureaublad. Toch kunnen de twee bij elkaar.
+
+## Vanuit Linux naar Windows
+
+Je C-schijf hangt in Linux onder `/mnt/c`. Typ in Ubuntu:
+
+```bash
+ls /mnt/c/Users
+```
+
+Je ziet de gebruikers van je Windows-computer. Je Bureaublad is bijvoorbeeld `/mnt/c/Users/Sam/Desktop`. Let op de hoofdletters: die moeten kloppen.
+
+## Vanuit Windows naar Linux
+
+Typ in Ubuntu:
+
+```bash
+explorer.exe .
+```
+
+De Verkenner van Windows opent, in de map waar je in Linux stond. De punt is "de map waar ik nu ben", net als in [1.2](site:dvwa/docs/linux/terminal/mappen). Links in de Verkenner zie je voortaan ook **Linux**, met je Ubuntu erin.
+
+## Voorspel
+
+Je maakt in Ubuntu een bestand met `echo hallo > ~/groet.txt`. Staat dat op je Windows-bureaublad?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Nee. `~` is je Linux-thuismap, `/home/<jouw naam>`, en die staat los van Windows. Je vindt het bestand in de Verkenner onder **Linux**, **Ubuntu**, `home`, je naam.
+
+</details>
+
+## Waar zet je je projecten?
+
+Zet een project waar je in Linux aan werkt, in je Linux-thuismap, niet onder `/mnt/c`. Linux-programma's werken veel trager op de Windows-schijf, en de rechten uit [1.7](site:dvwa/docs/linux/terminal/rechten) werken daar niet zoals je verwacht.
+
+Met VS Code werk je dan zo: installeer in VS Code de extensie **WSL** (van Microsoft), ga in Ubuntu naar je project en typ:
+
+```bash
+code .
+```
+
+VS Code opent op je Windows-scherm, maar werkt met de bestanden en de terminal van Linux. Linksonder staat **WSL: Ubuntu**.
+
+## Een website in Linux, de browser in Windows
+
+Een programma in WSL dat een website maakt, zie je in je browser op Windows. Probeer het met de kleine webserver die in Python zit:
+
+```bash
+mkdir -p ~/proef
+cd ~/proef
+echo "<h1>Hallo uit Linux</h1>" > index.html
+python3 -m http.server 8000
+```
+
+Open in je browser `http://localhost:8000`. Je ziet de kop uit `index.html`. In de terminal verschijnt bij elk bezoek een regel. Stop de server met Ctrl+C.
+
+## Opdracht 2.2.a: van Windows naar Linux
+
+1. Zet op je Windows-bureaublad een tekstbestand `boodschap.txt` met een zin erin (met Kladblok).
+2. Kopieer het in Ubuntu naar je Linux-thuismap.
+3. Laat de inhoud zien met `cat`.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Zoek eerst met `ls /mnt/c/Users` hoe je Windows-naam precies is. Kopiëren naar je thuismap kan met `~` als doel.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+Met `Sam` als Windows-naam:
+
+```bash
+cp /mnt/c/Users/Sam/Desktop/boodschap.txt ~
+cat ~/boodschap.txt
+```
+
+Staat je bureaublad in OneDrive, dan is het pad `/mnt/c/Users/Sam/OneDrive/Desktop/boodschap.txt`, of `Bureaublad` in plaats van `Desktop`.
+
+</details>
+
+## Er gaat iets mis
+
+### code: command not found
+
+```
+code: command not found
+```
+
+**Oorzaak:** VS Code staat niet op Windows, of Ubuntu was al open toen je het installeerde.
+
+**Oplossing:** installeer VS Code op Windows, sluit Ubuntu en open hem opnieuw.
+
+### Een pad met een spatie
+
+```
+ls: cannot access '/mnt/c/Users/Sam/Mijn': No such file or directory
+```
+
+**Oorzaak:** een spatie scheidt in de terminal de stukken van een commando. `ls /mnt/c/Users/Sam/Mijn bestanden` zijn voor Linux twee paden.
+
+**Oplossing:** zet het pad tussen aanhalingstekens.
+
+```bash
+# FOUT
+ls /mnt/c/Users/Sam/Mijn bestanden
+
+# GOED
+ls "/mnt/c/Users/Sam/Mijn bestanden"
+```
+
+Door naar [2.3 Programma's installeren](site:dvwa/docs/linux/wsl/apt).
