@@ -13,8 +13,8 @@ Typ in de oefenterminal `ls -l /etc`. De `-l` staat voor *long*: je krijgt per b
 <LinuxTerminal title="Oefenterminal" />
 
 ```
--rw-r--r--  1 root    root     256 Mar 26 10:00 passwd
--rw-r-----  1 root    shadow   256 Mar 26 10:00 shadow
+-rw-r--r-- 1 root root    318 Mar 26 10:00 passwd
+-rw-r----- 1 root shadow 1024 Mar 26 10:00 shadow
 ```
 
 Twee regels uit die lijst. Elk bestand op Linux heeft een **eigenaar** (hier `root`) en een **groep** (`root` of `shadow`). `root` is de beheerder van de computer: die mag alles.
@@ -74,7 +74,7 @@ touch: cannot touch '/etc/test.txt': Permission denied
 Lees deze regel en beantwoord de drie vragen.
 
 ```
--rwxr-x---  1 www-data www-data  1024 Mar 26 10:00 start.sh
+-rwxr-x--- 1 www-data www-data 1024 Mar 26 10:00 start.sh
 ```
 
 1. Van wie is het bestand?

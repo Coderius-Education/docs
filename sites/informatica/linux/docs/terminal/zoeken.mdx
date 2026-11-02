@@ -104,8 +104,12 @@ grep -i failed /var/log/auth.log
 
 ### De terminal blijft wachten
 
-**Oorzaak:** in WSL of op een server wacht `grep` zonder bestand op tekst die jij typt. Dat lijkt op vastlopen.
+**Oorzaak:** je zette geen bestand achter het patroon, en er komt ook niets door een pipe binnen. Dan wacht `grep` op tekst die jij typt. Dat lijkt op vastlopen. De oefenterminal kan niet wachten, en zegt het:
 
-**Oplossing:** druk op Ctrl+C. Dat stopt het commando dat nu draait, en je krijgt je prompt terug.
+```
+oefenterminal: grep zonder bestand wacht op wat je typt; dat kan hier niet. Zet een bestand achter het patroon.
+```
+
+**Oplossing:** zet het bestand achter het patroon. Staat het al te wachten, in WSL of op een server, druk dan op Ctrl+C: dat stopt het commando dat nu draait, en je krijgt je prompt terug.
 
 Door naar [3.2 Bestanden vinden](site:linux/docs/terminal/vinden).

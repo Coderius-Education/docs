@@ -32,7 +32,7 @@ const defaultFilesystem = {
       '127.0.1.1\toefenpc',
       '::1\t\tlocalhost ip6-localhost ip6-loopback',
     ),
-    group: tekst('root:x:0:', 'www-data:x:33:', 'student:x:1000:'),
+    group: tekst('root:x:0:', 'www-data:x:33:', 'shadow:x:42:', 'student:x:1000:'),
   },
   home: {
     student: {

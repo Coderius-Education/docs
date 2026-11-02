@@ -27,6 +27,56 @@ function regels(tekst) {
 }
 
 /**
+ * Een patroon van grep (een BRE, zoals GNU grep hem leest) als reguliere
+ * expressie van JavaScript. In een BRE zijn + ? | ( ) { } gewone tekens, en
+ * alleen met een \ ervoor bijzonder; een * aan het begin is ook gewoon een
+ * sterretje. Eerst las de oefenterminal het patroon als JavaScript, en gaf
+ * grep '*.html' een melding die het echte grep niet kent.
+ */
+export function breRegex(patroon, hoofdletters = false) {
+  let bron = '';
+  let begin = true;
+  for (let i = 0; i < patroon.length; i++) {
+    const ch = patroon[i];
+    if (ch === '\\' && i + 1 === patroon.length) throw new Error('Trailing backslash');
+    if (ch === '\\') {
+      const volgend = patroon[++i];
+      bron += '+?|(){}'.includes(volgend) ? volgend : `\\${volgend}`;
+      begin = volgend === '(' || volgend === '|';
+      continue;
+    }
+    if (ch === '[') {
+      // Een ] direct na [ of [^ hoort bij de tekens, niet bij het einde.
+      let start = i + 1;
+      if (patroon[start] === '^') start++;
+      if (patroon[start] === ']') start++;
+      const eind = patroon.indexOf(']', start);
+      // GNU grep 3.11: een [ als laatste teken is een ongeldig patroon, een
+      // [ met nog iets erachter maar zonder ] is "Unmatched [".
+      if (eind === -1)
+        throw new Error(
+          i === patroon.length - 1
+            ? 'Invalid regular expression'
+            : 'Unmatched [, [^, [:, [., or [=',
+        );
+      bron += patroon.slice(i, eind + 1);
+      i = eind;
+    } else if (ch === '*') bron += begin ? '\\*' : '*';
+    else if ('+?|(){}'.includes(ch)) bron += `\\${ch}`;
+    else if (ch === '^') bron += begin ? '^' : '\\^';
+    else if (ch === '$') bron += i === patroon.length - 1 ? '$' : '\\$';
+    else if (ch === '/') bron += '\\/';
+    else bron += ch;
+    begin = ch === '^' && begin;
+  }
+  try {
+    return new RegExp(bron, hoofdletters ? 'i' : '');
+  } catch {
+    throw new Error('Unmatched ( or \\(');
+  }
+}
+
+/**
  * Leest een bestand voor een commando, met de foutmelding zoals bash hem
  * geeft: de naam van het commando en het pad zoals de leerling het typte
  * (`head: notitie.txt: No such file or directory`), niet `cat:` en het
@@ -297,17 +347,105 @@ function kopieerEen(cmd, bron, doel, env, verplaats) {
   return { output: '', exitCode: 0 };
 }
 
+/** Hoeveel bytes een tekst is (UTF-8), zoals ls het telt. */
+const bytes = (tekst) => new TextEncoder().encode(tekst).length;
+
+/** 4096 -> 4.0K, zoals ls -h: één decimaal onder de 10, naar boven afgerond. */
+function leesbaar(n) {
+  if (n < 1024) return String(n);
+  const eenheden = ['K', 'M', 'G'];
+  let waarde = n;
+  let i = -1;
+  while (waarde >= 1024 && i < eenheden.length - 1) {
+    waarde /= 1024;
+    i++;
+  }
+  return waarde < 10
+    ? `${(Math.ceil(waarde * 10) / 10).toFixed(1)}${eenheden[i]}`
+    : `${Math.ceil(waarde)}${eenheden[i]}`;
+}
+
+/**
+ * Wat ls -l over één pad zegt: rechten, eigenaar, groep, grootte. Van jou in
+ * je thuismap en /tmp, van root daarbuiten, met de rechten van een echte
+ * Ubuntu voor /tmp, /root, /etc/shadow en je thuismap.
+ */
+function gegevens(env, absPad) {
+  const node = getNode(env.fs, absPad);
+  if (absPad === GEHEIME_MAP)
+    return { rechten: 'drwx------', eigenaar: 'root', groep: 'root', grootte: 4096, map: true };
+  if (node.permissionDenied)
+    return { rechten: '-rw-r-----', eigenaar: 'root', groep: 'shadow', grootte: 1024, map: false };
+  const vanJou = magSchrijven(absPad) && absPad !== '/tmp';
+  const eigenaar = vanJou ? 'student' : 'root';
+  if (node.isDir) {
+    const rechten =
+      absPad === '/tmp' ? 'drwxrwxrwt' : absPad === HOME ? 'drwxr-x---' : 'drwxr-xr-x';
+    return { rechten, eigenaar, groep: eigenaar, grootte: 4096, map: true, node: node.node };
+  }
+  return {
+    rechten: '-rw-r--r--',
+    eigenaar,
+    groep: eigenaar,
+    grootte: bytes(node.node),
+    map: false,
+  };
+}
+
+/** Het aantal links: 1 voor een bestand, 2 plus de mappen erin voor een map. */
+function links(env, absPad, g) {
+  if (!g.map || !g.node) return g.map ? 2 : 1;
+  const kind = (n) => (absPad === '/' ? `/${n}` : `${absPad}/${n}`);
+  return (
+    2 +
+    Object.keys(g.node).filter((n) => {
+      const k = g.node[n];
+      return (k !== null && typeof k === 'object') || kind(n) === GEHEIME_MAP;
+    }).length
+  );
+}
+
+/**
+ * De regels van ls -l, met de kolommen even breed zoals coreutils 9.4 ze
+ * zet: één spatie na de rechten, eigenaar en groep links uitgelijnd, de
+ * grootte rechts.
+ */
+function langeRegels(env, rijen, mens) {
+  const g = rijen.map(({ naam, pad }) => {
+    const d = gegevens(env, pad);
+    return { ...d, naam, links: links(env, pad, d) };
+  });
+  const maat = (d) => (mens ? leesbaar(d.grootte) : String(d.grootte));
+  const breed = (f) => Math.max(...g.map((d) => f(d).length));
+  const wl = breed((d) => String(d.links));
+  const we = breed((d) => d.eigenaar);
+  const wg = breed((d) => d.groep);
+  const wm = breed(maat);
+  const regels = g.map(
+    (d) =>
+      `${d.rechten} ${String(d.links).padStart(wl)} ${d.eigenaar.padEnd(we)} ${d.groep.padEnd(wg)} ${maat(d).padStart(wm)} Mar 26 10:00 ${d.naam}`,
+  );
+  // total: de blokken van 1K die de bestanden innemen, per 4K afgerond.
+  const blokken = g.reduce((som, d) => som + Math.ceil(d.grootte / 4096) * 4, 0);
+  return { regels, total: mens ? leesbaar(blokken * 1024) : String(blokken) };
+}
+
 /** ls voor één map of bestand. */
 function lsEen(args, target, env, { doorgeven = false } = {}) {
   const showAll = args.some((a) => /^-[a-zA-Z]*a/.test(a));
   const showLong = args.some((a) => /^-[a-zA-Z]*l/.test(a));
+  const mens = args.some((a) => /^-[a-zA-Z]*h/.test(a));
   const absPath = resolvePath(env.cwd, target);
-  // Een bestand: ls noemt het (met -l op één regel), zoals de echte ls.
-  const bestand = getNode(env.fs, absPath);
-  if (bestand.isFile) {
+  const node = getNode(env.fs, absPath);
+  // Een bestand (ook een dat je niet mag lezen, zoals /etc/shadow): ls noemt
+  // het, met -l op één regel. Alleen in een map die je niet mag lezen, kan ls
+  // niet kijken.
+  if (node.isFile || (node.permissionDenied && absPath !== GEHEIME_MAP)) {
     if (!showLong) return { output: target, exitCode: 0 };
-    const eigenaar = magSchrijven(absPath) ? 'student student' : 'root    root   ';
-    return { output: `-rw-r--r--  1 ${eigenaar}  256 Mar 26 10:00 ${target}`, exitCode: 0 };
+    return {
+      output: langeRegels(env, [{ naam: target, pad: absPath }], mens).regels[0],
+      exitCode: 0,
+    };
   }
   const result = listDir(env.fs, absPath);
 
@@ -315,40 +453,34 @@ function lsEen(args, target, env, { doorgeven = false } = {}) {
   if (result.error)
     return { output: result.error.replace(`'${absPath}'`, `'${target}'`), exitCode: 2 };
 
-  let entries = result.entries;
+  const kind = (n) => (absPath === '/' ? `/${n}` : `${absPath}/${n}`);
+  let entries = result.entries.map((e) => ({ ...e, pad: kind(e.name) }));
   if (!showAll) {
     entries = entries.filter((e) => !e.name.startsWith('.'));
   } else {
     // -a toont ook . (deze map) en .. (de map erboven), zoals de echte ls.
-    entries = [{ name: '.', isDir: true }, { name: '..', isDir: true }, ...entries];
+    entries = [
+      { name: '.', isDir: true, pad: absPath },
+      { name: '..', isDir: true, pad: resolvePath(absPath, '..') },
+      ...entries,
+    ];
   }
 
   if (showLong) {
-    const lines = entries.map((e) => {
-      const perms = e.isDir ? 'drwxr-xr-x' : '-rw-r--r--';
-      const size = e.isDir ? '4096' : ' 256';
-      // Van jou in je thuismap en /tmp, van root daarbuiten.
-      const kind = absPath === '/' ? `/${e.name}` : `${absPath}/${e.name}`;
-      // /tmp is van root, maar iedereen mag erin schrijven (de t: alleen
-      // je eigen bestanden weghalen).
-      if (kind === '/tmp') return `drwxrwxrwt  1 root    root    ${size} Mar 26 10:00 ${e.name}`;
-      const eigenaar = magSchrijven(kind) ? 'student student' : 'root    root   ';
-      // Wat je niet mag lezen (/etc/shadow, /root), met de rechten van een
-      // echte Ubuntu: alleen root, en voor shadow ook de groep shadow.
-      if (getNode(env.fs, kind).permissionDenied) {
-        const geheim =
-          e.name === 'root' ? 'drwx------  1 root    root   ' : '-rw-r-----  1 root    shadow ';
-        return `${geheim} ${size} Mar 26 10:00 ${e.name}`;
-      }
-      return `${perms}  1 ${eigenaar} ${size} Mar 26 10:00 ${e.name}`;
-    });
-    return { output: lines.join('\n'), exitCode: 0 };
+    const { regels: lijst, total } = langeRegels(
+      env,
+      entries.map((e) => ({ naam: e.name, pad: e.pad })),
+      mens,
+    );
+    return { output: [`total ${total}`, ...lijst].join('\n'), exitCode: 0 };
   }
 
   // Naar een pipe of een bestand: één naam per regel en geen kleur, net
   // als de echte ls. Dan werkt `ls /etc | grep host`.
   if (doorgeven) return { output: entries.map((e) => e.name).join('\n'), exitCode: 0 };
-  const names = entries.map((e) => (e.isDir ? `\x1b[1;34m${e.name}\x1b[0m` : e.name));
+  const names = entries.map((e) =>
+    e.isDir || e.pad === GEHEIME_MAP ? `\x1b[1;34m${e.name}\x1b[0m` : e.name,
+  );
   return { output: names.join('  '), exitCode: 0 };
 }
 
@@ -445,25 +577,47 @@ const COMMANDS = {
   },
 
   grep(args, env, stdin) {
-    if (args.length === 0) return { output: 'grep: missing pattern', exitCode: 1 };
-
-    const caseInsensitive = args.includes('-i');
-    const filteredArgs = args.filter((a) => !a.startsWith('-'));
+    // Opties los of samen (-in), en het patroon is het eerste woord zonder -.
+    const opties = new Set(
+      args.filter((a) => /^-[a-zA-Z]+$/.test(a)).flatMap((a) => [...a.slice(1)]),
+    );
+    const filteredArgs = args.filter((a) => !/^-[a-zA-Z]+$/.test(a));
+    if (filteredArgs.length === 0)
+      return {
+        output:
+          "Usage: grep [OPTION]... PATTERNS [FILE]...\nTry 'grep --help' for more information.",
+        exitCode: 2,
+      };
     const pattern = filteredArgs[0];
     const files = filteredArgs.slice(1);
 
     let regex;
     try {
-      regex = new RegExp(pattern, caseInsensitive ? 'i' : '');
-    } catch {
-      return { output: 'grep: Invalid regular expression', exitCode: 2 };
+      regex = breRegex(pattern, opties.has('i'));
+    } catch (fout) {
+      return { output: `grep: ${fout.message}`, exitCode: 2 };
     }
+    const past = (regel) => regex.test(regel) !== opties.has('v');
+    const tel = (lijst, naam) => {
+      const raak = lijst.map((r, i) => ({ r, nr: i + 1 })).filter(({ r }) => past(r));
+      const voor = naam === undefined ? '' : `${naam}:`;
+      if (opties.has('c')) return { uit: [`${voor}${raak.length}`], raak: raak.length };
+      return {
+        uit: raak.map(({ r, nr }) => `${voor}${opties.has('n') ? `${nr}:` : ''}${r}`),
+        raak: raak.length,
+      };
+    };
 
-    if (stdin !== null && stdin !== undefined && files.length === 0) {
-      const matching = regels(stdin).filter((line) => regex.test(line));
-      return { output: matching.join('\n'), exitCode: matching.length ? 0 : 1 };
+    if (files.length === 0) {
+      if (stdin === null || stdin === undefined)
+        return {
+          output:
+            'oefenterminal: grep zonder bestand wacht op wat je typt; dat kan hier niet. Zet een bestand achter het patroon.',
+          exitCode: 2,
+        };
+      const { uit, raak } = tel(regels(stdin));
+      return { output: uit.join('\n'), exitCode: raak ? 0 : 1 };
     }
-    if (files.length === 0) return { output: 'grep: missing file operand', exitCode: 1 };
 
     // Meer bestanden (grep Failed /var/log/*.log): de naam voor elke regel.
     const uit = [];
@@ -476,11 +630,9 @@ const COMMANDS = {
         fout = true;
         continue;
       }
-      for (const line of regels(result.content)) {
-        if (!regex.test(line)) continue;
-        gevonden = true;
-        uit.push(files.length > 1 ? `${file}:${line}` : line);
-      }
+      const r = tel(regels(result.content), files.length > 1 ? file : undefined);
+      if (r.raak) gevonden = true;
+      uit.push(...r.uit);
     }
     return { output: uit.join('\n'), exitCode: fout ? 2 : gevonden ? 0 : 1 };
   },
@@ -523,7 +675,6 @@ const COMMANDS = {
         '  echo <tekst> > <bestand> - Tekst in een bestand zetten (>> vult aan)',
         '  uname [-a]        - Systeeminformatie tonen',
         '  hostname          - Hostnaam tonen',
-        '  ping <host>       - Netwerk-ping simuleren',
         "  history           - De commando's die je typte",
         '  clear             - Scherm leegmaken',
         '  help              - Dit hulpoverzicht tonen',
@@ -538,7 +689,9 @@ const COMMANDS = {
     let numLines = 10;
     const filteredArgs = [];
     for (let i = 0; i < args.length; i++) {
-      if (args[i] === '-n' && args[i + 1]) {
+      // head -3 is hetzelfde als head -n 3.
+      if (/^-\d+$/.test(args[i])) numLines = Number.parseInt(args[i].slice(1), 10);
+      else if (args[i] === '-n' && args[i + 1]) {
         numLines = Number.parseInt(args[i + 1], 10) || 10;
         i++; // skip next arg
       } else if (!args[i].startsWith('-')) {
@@ -555,7 +708,9 @@ const COMMANDS = {
     let numLines = 10;
     const filteredArgs = [];
     for (let i = 0; i < args.length; i++) {
-      if (args[i] === '-n' && args[i + 1]) {
+      // tail -3 is hetzelfde als tail -n 3.
+      if (/^-\d+$/.test(args[i])) numLines = Number.parseInt(args[i].slice(1), 10);
+      else if (args[i] === '-n' && args[i + 1]) {
         numLines = Number.parseInt(args[i + 1], 10) || 10;
         i++;
       } else if (!args[i].startsWith('-')) {
@@ -720,29 +875,6 @@ const COMMANDS = {
   mv(args, env) {
     return kopieer('mv', args, env, true);
   },
-
-  ping(args, env) {
-    if (args.length === 0) return { output: 'ping: usage: ping [-c count] host', exitCode: 1 };
-
-    let count = 4;
-    let host = args[args.length - 1];
-    const cIdx = args.indexOf('-c');
-    if (cIdx >= 0 && args[cIdx + 1]) {
-      count = Number.parseInt(args[cIdx + 1], 10) || 4;
-      if (host === args[cIdx + 1]) host = args[args.length - 1];
-    }
-
-    const lines = [`PING ${host} (${host}) 56(84) bytes of data.`];
-    for (let i = 1; i <= Math.min(count, 4); i++) {
-      const time = (0.5 + Math.random() * 2).toFixed(1);
-      lines.push(`64 bytes from ${host}: icmp_seq=${i} ttl=64 time=${time} ms`);
-    }
-    lines.push('');
-    lines.push(`--- ${host} ping statistics ---`);
-    lines.push(`${count} packets transmitted, ${count} received, 0% packet loss`);
-
-    return { output: lines.join('\n'), exitCode: 0, isAsync: true };
-  },
 };
 
 /**
@@ -768,16 +900,55 @@ export const NIET_HIER = {
   systemctl: '6.4',
   journalctl: '6.4',
   ip: '7.1',
+  ping: '7.1',
   curl: '7.1',
   ssh: '7.2',
-  chmod: null,
+  chmod: '7.2',
   chown: null,
   su: null,
   less: null,
-  sort: null,
+  sort: '5.3',
   python3: null,
   git: null,
 };
+
+/**
+ * De opties die de oefenterminal per commando echt uitvoert. Een commando
+ * dat hier niet staat (echo, find, history), leest zijn opties zelf.
+ */
+const OPTIES = {
+  ls: 'alh',
+  cat: '',
+  cd: '',
+  pwd: '',
+  whoami: '',
+  id: '',
+  hostname: '',
+  uname: 'ar',
+  grep: 'ivcn',
+  head: 'n',
+  tail: 'n',
+  wc: 'lwcm',
+  mkdir: 'p',
+  touch: '',
+  rm: 'rRf',
+  cp: '',
+  mv: '',
+  clear: '',
+  help: '',
+};
+
+/** De eerste optie die dit commando hier niet kent, of null. */
+function onbekendeOptie(naam, args) {
+  const kent = OPTIES[naam];
+  if (kent === undefined) return null;
+  for (const a of args) {
+    if (a === '-' || !a.startsWith('-') || /^-\d+$/.test(a)) continue;
+    if (a.startsWith('--')) return a;
+    for (const ch of a.slice(1)) if (!kent.includes(ch)) return `-${ch}`;
+  }
+  return null;
+}
 
 /** De commando's die de oefenterminal kent, voor Tab. */
 export const COMMANDONAMEN = Object.keys(COMMANDS).sort();
@@ -796,6 +967,18 @@ export function executeCommand(cmdStr, env, stdin, { doorgeven = false } = {}) {
   if (naar === '')
     return { output: "bash: syntax error near unexpected token `newline'", exitCode: 2 };
 
+  // bash opent het doelbestand vóór het commando draait: > maakt het leeg,
+  // ook als het commando daarna faalt of niet bestaat. Een fout bij het
+  // openen betekent dat het commando niet draait.
+  let doelPad = null;
+  if (naar) {
+    doelPad = resolvePath(env.cwd, naar);
+    const open = aanvullen
+      ? writeFile(env.fs, doelPad, '', { append: true })
+      : writeFile(env.fs, doelPad, '');
+    if (open.error) return { output: `bash: ${naar}: ${open.error}`, exitCode: 1 };
+  }
+
   const handler = Object.hasOwn(COMMANDS, name) ? COMMANDS[name] : undefined;
   if (!handler) {
     if (Object.hasOwn(NIET_HIER, name)) {
@@ -809,12 +992,16 @@ export function executeCommand(cmdStr, env, stdin, { doorgeven = false } = {}) {
     return { output: `bash: ${name}: command not found`, exitCode: 127 };
   }
 
-  // bash opent het doelbestand vóór het commando draait: een fout daar
-  // betekent dat het commando niet draait.
-  if (naar) {
-    const doelPad = resolvePath(env.cwd, naar);
-    const leeg = writeFile(env.fs, doelPad, '', { append: true });
-    if (leeg.error) return { output: `bash: ${naar}: ${leeg.error}`, exitCode: 1 };
+  // Een optie die de oefenterminal niet kent, slaat hij niet stil over: dan
+  // zou cp -i toch overschrijven en grep -v het omgekeerde geven.
+  const onbekend = onbekendeOptie(name, args);
+  if (onbekend)
+    return {
+      output: `oefenterminal: ${name} ${onbekend} werkt hier niet, wel op je eigen Linux.`,
+      exitCode: 2,
+    };
+
+  if (doelPad) {
     const result = handler(args, env, stdin, { doorgeven: true });
     // Een foutmelding gaat naar het scherm, niet het bestand in (stderr).
     if (result.exitCode !== 0) return result;

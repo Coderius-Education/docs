@@ -81,7 +81,7 @@ describe('wat de lessen in terminal/ beloven, laat de oefenterminal zien', () =>
     });
   }
 
-  it('de ls -l uit 1.7 staat zo in de oefenterminal', () => {
+  it('de ls -l uit 4.1 staat zo in de oefenterminal', () => {
     const les = readFileSync(join(TERMINAL, 'rechten.mdx'), 'utf8');
     const uitvoer = terminal()('ls -l /etc').split('\n');
     const blok = blokken(les).find((b) => b.regels.some((r) => r.endsWith(' passwd')));

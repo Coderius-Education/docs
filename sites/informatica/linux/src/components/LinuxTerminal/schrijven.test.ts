@@ -261,6 +261,6 @@ describe('paden en meldingen zoals bash', () => {
     expect(t.typ('ls -l')).toContain('student student');
     expect(t.typ('ls -l /etc')).toMatch(/-rw-r--r-- +1 root +root .*passwd/);
     expect(t.typ('ls -l /etc')).toMatch(/-rw-r----- +1 root +shadow .*shadow/);
-    expect(t.typ('ls -l /')).toMatch(/drwx------ +1 root +root .*root/);
+    expect(t.typ('ls -l /')).toMatch(/drwx------ +\d+ root +root .*root/);
   });
 });

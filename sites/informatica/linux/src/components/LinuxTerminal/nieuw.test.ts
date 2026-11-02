@@ -272,7 +272,7 @@ describe("commando's van een echte Linux", () => {
     );
     // chmod zei eerst "gewijzigd (gesimuleerd)" en veranderde niets.
     expect(typ('chmod +x notities.txt')).toBe(
-      'oefenterminal: chmod werkt hier niet, wel op je eigen Linux.',
+      'oefenterminal: chmod werkt hier niet, wel op je eigen Linux, vanaf les 7.2.',
     );
   });
 
@@ -314,5 +314,104 @@ describe('een lange regel opnieuw tekenen', () => {
     expect(verplaats(5, 3, 10)).toBe('\u001b[2A\r\u001b[10C');
     expect(verplaats(3, 4, 0)).toBe('\r\n\r');
     expect(verplaats(4, 4, 7)).toBe('\r\u001b[7C');
+  });
+});
+
+// De simulator zegt wat Ubuntu 24.04 zegt (coreutils 9.4, grep 3.11,
+// LANG=C.UTF-8). Elk geval hieronder week eerst af; nagedraaid op Ubuntu.
+describe('zoals op Ubuntu', () => {
+  it('> maakt een bestaand bestand leeg, ook als het commando faalt of niet bestaat', () => {
+    const { sessie, typ } = terminal();
+    const inhoud = () => typ('cat l.txt');
+    typ('echo brood > l.txt');
+    typ('ech kaas > l.txt');
+    expect(inhoud()).toBe('');
+    typ('echo brood > l.txt');
+    typ('cat bestaatniet > l.txt');
+    expect(inhoud()).toBe('');
+    // Een typfout met > erachter maakt het bestand ook aan.
+    typ('ech kaas > nieuw.txt');
+    expect(typ('ls nieuw.txt')).toBe('nieuw.txt');
+    // >> laat staan wat er stond.
+    typ('echo brood > l.txt');
+    typ('ech kaas >> l.txt');
+    expect(inhoud()).toBe('brood');
+    expect(sessie.cwd).toBe('/home/student');
+  });
+
+  it('ls toont een bestand dat je niet mag lezen gewoon als bestand', () => {
+    const { typ } = terminal();
+    expect(typ('ls /etc/shadow')).toBe('/etc/shadow');
+    expect(typ('ls -l /etc/shadow')).toBe('-rw-r----- 1 root shadow 1024 Mar 26 10:00 /etc/shadow');
+    expect(typ('cat /etc/group')).toContain('shadow:x:42:');
+  });
+
+  it('ls -l in de opmaak van coreutils: total, één spatie, echte groottes, -h', () => {
+    const { typ } = terminal();
+    expect(typ('ls -l /etc').split('\n')).toEqual([
+      'total 24',
+      '-rw-r--r-- 1 root root     54 Mar 26 10:00 group',
+      '-rw-r--r-- 1 root root      8 Mar 26 10:00 hostname',
+      '-rw-r--r-- 1 root root     80 Mar 26 10:00 hosts',
+      '-rw-r--r-- 1 root root    113 Mar 26 10:00 os-release',
+      '-rw-r--r-- 1 root root    318 Mar 26 10:00 passwd',
+      '-rw-r----- 1 root shadow 1024 Mar 26 10:00 shadow',
+    ]);
+    expect(typ('ls -lh /etc').split('\n')[0]).toBe('total 24K');
+    expect(typ('ls -lh /etc')).toContain('-rw-r----- 1 root shadow 1.0K Mar 26 10:00 shadow');
+    typ('touch leeg.txt');
+    expect(typ('ls -l leeg.txt')).toBe('-rw-r--r-- 1 student student 0 Mar 26 10:00 leeg.txt');
+    expect(typ('ls -la').split('\n').slice(0, 3)).toEqual([
+      'total 16',
+      'drwxr-x--- 2 student student 4096 Mar 26 10:00 .',
+      'drwxr-xr-x 3 root    root    4096 Mar 26 10:00 ..',
+    ]);
+  });
+
+  it('grep leest een patroon als GNU grep (BRE), niet als JavaScript', () => {
+    const { typ } = terminal();
+    typ("echo 'GET /inloggen.html' > g.txt");
+    typ("echo 'a+b' >> g.txt");
+    typ("echo '*.html' >> g.txt");
+    expect(typ("grep '*.html' g.txt")).toBe('*.html');
+    expect(typ("grep 'a+b' g.txt")).toBe('a+b');
+    expect(typ("grep 'a\\+b' g.txt")).toBe('');
+    expect(typ('grep [ g.txt')).toBe('grep: Invalid regular expression');
+    expect(typ('grep [a g.txt')).toBe('grep: Unmatched [, [^, [:, [., or [=');
+  });
+
+  it('grep -v, -c, -n en -i doen wat ze beloven', () => {
+    const { typ } = terminal();
+    expect(typ('grep -v Failed /var/log/auth.log')).not.toContain('Failed');
+    expect(typ('grep -c Failed /var/log/auth.log')).toMatch(/^\d+$/);
+    expect(typ('grep -n Accepted /var/log/auth.log')).toMatch(/^\d+:.*Accepted/);
+    expect(typ('grep -ic failed /var/log/auth.log')).toBe(typ('grep -c Failed /var/log/auth.log'));
+  });
+
+  it('grep zonder patroon of zonder bestand', () => {
+    const { typ } = terminal();
+    expect(typ('grep')).toBe(
+      "Usage: grep [OPTION]... PATTERNS [FILE]...\nTry 'grep --help' for more information.",
+    );
+    expect(typ('grep Failed')).toMatch(/^oefenterminal: grep zonder bestand/);
+  });
+
+  it('een optie die de oefenterminal niet kent, zegt dat in plaats van hem stil over te slaan', () => {
+    const { typ } = terminal();
+    typ('cp notities.txt kopie.txt');
+    expect(typ('cp -i notities.txt kopie.txt')).toBe(
+      'oefenterminal: cp -i werkt hier niet, wel op je eigen Linux.',
+    );
+    expect(typ('rm -i kopie.txt')).toBe(
+      'oefenterminal: rm -i werkt hier niet, wel op je eigen Linux.',
+    );
+    expect(typ('ls kopie.txt')).toBe('kopie.txt');
+    expect(typ('ls --all')).toBe('oefenterminal: ls --all werkt hier niet, wel op je eigen Linux.');
+  });
+
+  it('tail -1 is tail -n 1', () => {
+    const { typ } = terminal();
+    expect(typ('tail -1 /etc/passwd')).toBe(typ('tail -n 1 /etc/passwd'));
+    expect(typ('head -2 /etc/passwd').split('\n')).toHaveLength(2);
   });
 });
