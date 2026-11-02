@@ -61,12 +61,36 @@ const defaultFilesystem = {
         'Mar 26 10:15:04 oefenpc sshd[1234]: Failed password for admin from 192.168.1.100',
         'Mar 26 10:15:05 oefenpc sshd[1234]: Accepted password for admin from 192.168.1.100',
       ),
+      // Meer bezoeken dan alleen inloggen.html, zodat grep in opdracht 3.1.a
+      // echt iets wegfiltert.
       apache2: {
         'access.log': tekst(
+          '192.168.1.57 - - [26/Mar/2026:10:14:52 +0100] "GET /index.html HTTP/1.1" 200 512',
           '192.168.1.100 - - [26/Mar/2026:10:15:01 +0100] "GET /inloggen.html HTTP/1.1" 200 1234',
+          '192.168.1.57 - - [26/Mar/2026:10:15:02 +0100] "GET /favicon.ico HTTP/1.1" 404 196',
+          '192.168.1.100 - - [26/Mar/2026:10:15:05 +0100] "POST /inloggen.html HTTP/1.1" 303 0',
+          '192.168.1.100 - - [26/Mar/2026:10:15:06 +0100] "GET /index.html HTTP/1.1" 200 512',
         ),
         'error.log': '',
       },
+      // Langer dan tien regels, zodat head en tail zonder -n iets weglaten,
+      // en zonder .log, zodat find -name '*.log' in 3.2.a iets wegfiltert.
+      syslog: tekst(
+        'Mar 26 10:00:01 oefenpc systemd[1]: Starting Daily apt download activities...',
+        'Mar 26 10:00:02 oefenpc systemd[1]: Started Daily apt download activities.',
+        'Mar 26 10:05:00 oefenpc CRON[812]: (root) CMD (command -v debian-sa1 > /dev/null)',
+        'Mar 26 10:10:00 oefenpc systemd[1]: Starting Clean php session files...',
+        'Mar 26 10:10:01 oefenpc systemd[1]: Finished Clean php session files.',
+        'Mar 26 10:12:44 oefenpc kernel: [ 1201.441] usb 1-1: new high-speed USB device',
+        'Mar 26 10:13:02 oefenpc systemd[1]: Starting Apache HTTP Server...',
+        'Mar 26 10:13:03 oefenpc systemd[1]: Started Apache HTTP Server.',
+        'Mar 26 10:14:30 oefenpc systemd[1]: Starting Message of the Day...',
+        'Mar 26 10:14:31 oefenpc systemd[1]: Finished Message of the Day.',
+        'Mar 26 10:15:00 oefenpc CRON[901]: (root) CMD (command -v debian-sa1 > /dev/null)',
+        'Mar 26 10:15:01 oefenpc systemd-logind[512]: New session 3 of user admin.',
+        'Mar 26 10:15:07 oefenpc systemd[1]: Started Session 3 of User admin.',
+        'Mar 26 10:16:00 oefenpc systemd[1]: Starting Cleanup of Temporary Directories...',
+      ),
     },
   },
   tmp: {},

@@ -98,6 +98,86 @@ describe('een terminal per opdracht', () => {
     });
   }
 
+  // Uit de leerling-doorloop: goede antwoorden die geen vinkje kregen, en
+  // foute die het wel kregen. Elk antwoord hier is een reeks regels in een
+  // verse terminal met de startbestanden van de opdracht.
+  const OOK_GOED: Record<string, string[][]> = {
+    '2.1.a': [
+      ['wc /etc/passwd', 'tail -n 1 /etc/passwd'],
+      ['cat /etc/passwd | wc -l', 'tail -1 /etc/passwd'],
+    ],
+    '2.2.a': [
+      [
+        'mkdir lijstjes',
+        'cd lijstjes',
+        'echo brood > boodschappen.txt',
+        'echo kaas >> boodschappen.txt',
+        'echo appels >> boodschappen.txt',
+        'wc boodschappen.txt',
+      ],
+    ],
+    '2.3.a': [
+      ['mkdir oud', 'cp notities.txt oud/kopie.txt', 'mv notities.txt todo.txt', 'rm -r oud', 'ls'],
+    ],
+    '3.1.a': [
+      ['grep inloggen /var/log/apache2/access.log'],
+      ['cat /var/log/apache2/access.log | grep inloggen.html'],
+    ],
+    '3.2.a': [['cd /var/log', "find . -name '*.log'"], ["find / -name '*.log'"]],
+    '3.2.b': [['find /var/ -type d'], ['cd /var', 'find . -type d']],
+  };
+  const NIET_GOED: Record<string, string[][]> = {
+    '3.1.a': [
+      ['cat /var/log/apache2/access.log'],
+      ['grep GET /var/log/apache2/access.log'],
+      ['cat /var/log/apache2/access.log | grep .'],
+    ],
+    '3.2.a': [['find /var/log -type f'], ['find /var/log']],
+    '3.2.b': [['find /var'], ['find /var -type f']],
+    '2.4.a': [
+      [
+        'cd downloads',
+        'mkdir fotos',
+        'mv vakantie1.jpg fotos/',
+        'mv vakantie2.jpg fotos/',
+        'mv kat.png fotos/',
+        'ls fotos',
+      ],
+    ],
+  };
+
+  for (const [id, antwoorden] of Object.entries(OOK_GOED)) {
+    it(`${id}: ook een ander goed antwoord haalt elk doel`, () => {
+      for (const a of antwoorden)
+        expect(speel(id, a), a.join(' ; ')).toEqual(OPDRACHTEN[id].doelen.map(() => true));
+    });
+  }
+  for (const [id, antwoorden] of Object.entries(NIET_GOED)) {
+    it(`${id}: een fout antwoord haalt niet elk doel`, () => {
+      for (const a of antwoorden) expect(speel(id, a).every(Boolean), a.join(' ; ')).toBe(false);
+    });
+  }
+
+  // Een opdracht om te filteren moet iets wegfilteren: eerst had het
+  // logboek van de webserver één regel en eindigde alles in /var/log op .log,
+  // zodat cat en find zonder -name hetzelfde gaven als het antwoord.
+  const ONGEFILTERD: Record<string, string> = {
+    '3.1.a': 'cat /var/log/apache2/access.log',
+    '3.2.a': 'find /var/log',
+  };
+  for (const [id, zonder] of Object.entries(ONGEFILTERD)) {
+    it(`${id}: het antwoord geeft minder dan ${zonder}`, () => {
+      const sectie = secties.find((x) => x.id === id);
+      if (!sectie) throw new Error(id);
+      const regels = antwoord(sectie);
+      const sessie = maakSessie(OPDRACHTEN[id].bestanden);
+      const met = regels.map((r) => sessie.typ(r).stand.uitvoer).at(-1) ?? [];
+      const zonderUit = maakSessie(OPDRACHTEN[id].bestanden).typ(zonder).stand.uitvoer;
+      expect(met.length).toBeGreaterThan(0);
+      expect(met.length).toBeLessThan(zonderUit.length);
+    });
+  }
+
   it('1.2.a: met een absoluut pad telt de tweede stap niet', () => {
     expect(speel('1.2.a', ['cd /var/log', 'cd /var/www/html', 'cd ~'])).toEqual([
       true,

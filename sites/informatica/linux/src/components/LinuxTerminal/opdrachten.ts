@@ -107,6 +107,23 @@ const inhoud = (s: Stand, p: string): string | null => {
   return content ?? null;
 };
 const isMap = (s: Stand, p: string) => getNode(s.fs, pad(s, p)).isDir;
+/** Staat er in deze map een bestand met deze inhoud, onder welke naam ook? */
+const metInhoud = (s: Stand, map: string, tekst: string) => {
+  const { node, isDir } = getNode(s.fs, pad(s, map));
+  return isDir && Object.values(node as Record<string, unknown>).some((v) => v === tekst);
+};
+/**
+ * Noemt find precies deze paden? Een relatief pad (./x, vanuit cd /var/log)
+ * en een / aan het eind (find /var/, met Tab) tellen ook; een Permission
+ * denied van find ook, want die is geen fout van de leerling (les 3.2).
+ */
+const zelfdePaden = (s: Stand, verwacht: string[]) => {
+  const paden = s.uitvoer
+    .filter((r) => !r.startsWith('find:'))
+    .map((r) => resolvePath(s.cwd, r))
+    .sort();
+  return paden.join('\n') === [...verwacht].sort().join('\n');
+};
 const bestaat = (s: Stand, p: string) => getNode(s.fs, pad(s, p)).exists;
 
 /** De commando's op de regel, als lijst woorden: `cd ..; ls` -> [['cd','..'],['ls']]. */
@@ -216,7 +233,8 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
     doelen: [
       {
         tekst: 'Tel de gebruikers in /etc/passwd.',
-        klaar: (s) => gebruikt(s, 'wc') && /^7(\s|$)/.test(s.uitvoer[0] ?? ''),
+        // wc zonder -l zet de getallen uitgelijnd, met spaties vooraan.
+        klaar: (s) => gebruikt(s, 'wc') && /^\s*7(\s|$)/.test(s.uitvoer[0] ?? ''),
       },
       {
         tekst: 'Laat alleen de laatste regel van /etc/passwd zien.',
@@ -239,7 +257,7 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
         klaar: (s) =>
           gebruikt(s, 'wc') &&
           s.regel.includes('boodschappen.txt') &&
-          /^3(\s|$)/.test(s.uitvoer[0] ?? ''),
+          /^\s*3(\s|$)/.test(s.uitvoer[0] ?? ''),
       },
     ],
   },
@@ -248,7 +266,8 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
     doelen: [
       {
         tekst: 'Maak een map oud met een kopie van notities.txt erin.',
-        klaar: (s) => inhoud(s, '~/oud/notities.txt') === NOTITIES,
+        // Een kopie mag ook een andere naam krijgen.
+        klaar: (s) => metInhoud(s, '~/oud', NOTITIES),
       },
       {
         tekst: 'Hernoem het origineel naar todo.txt.',
@@ -280,8 +299,10 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
     doelen: [
       { tekst: 'Maak in downloads een map fotos.', klaar: (s) => isMap(s, '~/downloads/fotos') },
       {
-        tekst: 'Verplaats alle .jpg- en .png-bestanden naar fotos.',
+        tekst: 'Verplaats alle .jpg- en .png-bestanden naar fotos, met één mv en jokertekens.',
         klaar: (s) =>
+          gebruikt(s, 'mv') &&
+          s.regel.includes('*') &&
           FOTOS.every((f) => bestaat(s, `~/downloads/fotos/${f}`)) &&
           FOTOS.every((f) => !bestaat(s, `~/downloads/${f}`)),
       },
@@ -344,7 +365,7 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
     doelen: [
       {
         tekst: 'Zoek met één commando alle bestanden onder /var/log die op .log eindigen.',
-        klaar: (s) => gebruikt(s, 'find') && s.uitvoer.join('\n') === LOGS.join('\n'),
+        klaar: (s) => gebruikt(s, 'find') && zelfdePaden(s, LOGS),
       },
     ],
   },
@@ -352,7 +373,7 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
     doelen: [
       {
         tekst: 'Laat alle mappen onder /var zien, /var zelf meegeteld.',
-        klaar: (s) => gebruikt(s, 'find') && s.uitvoer.join('\n') === MAPPEN_VAR.join('\n'),
+        klaar: (s) => gebruikt(s, 'find') && zelfdePaden(s, MAPPEN_VAR),
       },
     ],
   },

@@ -80,9 +80,10 @@ grep inloggen.html /var/log/apache2/access.log
 
 ```
 192.168.1.100 - - [26/Mar/2026:10:15:01 +0100] "GET /inloggen.html HTTP/1.1" 200 1234
+192.168.1.100 - - [26/Mar/2026:10:15:05 +0100] "POST /inloggen.html HTTP/1.1" 303 0
 ```
 
-Met `cat /var/log/apache2/access.log | grep inloggen.html` mag ook; het resultaat is hetzelfde.
+Twee bezoeken van dezelfde computer: eerst haalt hij het formulier op (`GET`), dan verstuurt hij het (`POST`). De andere drie regels in het logboek gaan over andere pagina's. Met `cat /var/log/apache2/access.log | grep inloggen.html` mag ook; het resultaat is hetzelfde.
 
 </details>
 
