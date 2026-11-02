@@ -112,3 +112,23 @@ export function verplaats(van, naar, kolom) {
 export function zichtbaar(tekst) {
   return tekst.replace(new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g'), '').length;
 }
+
+/**
+ * Tekst in regels van hoogstens `kolommen` tekens, afgebroken tussen woorden,
+ * elke regel met `inspring` ervoor. xterm breekt een te lange regel af op de
+ * rand, ook midden in een woord: op een telefoon stond er eerst
+ * "Typ help voor een lijst met comman" en op de volgende regel "do's.".
+ */
+export function omKolommen(tekst, kolommen, inspring = '  ') {
+  const ruimte = Math.max(kolommen - inspring.length, 1);
+  const regels = [];
+  let regel = '';
+  for (const woord of tekst.split(/\s+/).filter(Boolean)) {
+    if (regel && regel.length + 1 + woord.length > ruimte) {
+      regels.push(regel);
+      regel = woord;
+    } else regel = regel ? `${regel} ${woord}` : woord;
+  }
+  if (regel) regels.push(regel);
+  return regels.map((r) => inspring + r);
+}

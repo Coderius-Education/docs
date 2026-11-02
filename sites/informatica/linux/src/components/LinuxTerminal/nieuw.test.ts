@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { vulAan } from './aanvullen';
 import { maakSessie } from './opdrachten';
-import { LEEG, plekVan, toets, verplaats, zichtbaar } from './regel';
+import { LEEG, omKolommen, plekVan, toets, verplaats, zichtbaar } from './regel';
 
 // Jokertekens, ls/cp/mv/grep met meer namen, find, history, Tab en het
 // bewerken van de regel. Elke verwachte uitvoer is nagedraaid op Ubuntu 24.04
@@ -295,6 +295,18 @@ describe("commando's van een echte Linux", () => {
       const [thema, nr] = les.split('.').map(Number);
       expect(nr, les).toBeLessThanOrEqual(aantal[thema - 1] ?? 0);
     }
+  });
+});
+
+describe('de welkomsttekst', () => {
+  it('breekt op een smal scherm tussen woorden af', () => {
+    const tekst = "Typ help voor een lijst met commando's.";
+    expect(omKolommen(tekst, 80)).toEqual([`  ${tekst}`]);
+    const smal = omKolommen(tekst, 30);
+    expect(smal).toEqual(['  Typ help voor een lijst met', "  commando's."]);
+    for (const r of smal) expect(r.length).toBeLessThanOrEqual(30);
+    // Een woord dat langer is dan de regel, krijgt een eigen regel.
+    expect(omKolommen('a heelergroteswoord b', 8)).toEqual(['  a', '  heelergroteswoord', '  b']);
   });
 });
 

@@ -2,7 +2,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { promptPad } from './filesystem';
 import { OPDRACHTEN, maakSessie, volgDoelen } from './opdrachten';
-import { LEEG, plekVan, toets, verplaats, zichtbaar } from './regel';
+import { LEEG, omKolommen, plekVan, toets, verplaats, zichtbaar } from './regel';
 import styles from './styles.module.css';
 
 /**
@@ -103,7 +103,8 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
   const welkom = useCallback(
     (term) => {
       term.writeln('\x1b[1;32m  Oefenterminal\x1b[0m');
-      term.writeln("\x1b[90m  Typ help voor een lijst met commando's.\x1b[0m");
+      for (const r of omKolommen("Typ help voor een lijst met commando's.", term.cols))
+        term.writeln(`\x1b[90m${r}\x1b[0m`);
       schrijfPrompt(term);
     },
     [schrijfPrompt],
@@ -160,6 +161,9 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
       const fitAddon = new FitAddon();
       term.loadAddon(fitAddon);
       term.open(termRef.current);
+      // Meteen passend maken, zodat de welkomsttekst op de echte breedte
+      // wordt afgebroken; het tweede fit vangt een container die nog groeit.
+      fitAddon.fit();
 
       // Small delay to ensure container is sized
       requestAnimationFrame(() => {
