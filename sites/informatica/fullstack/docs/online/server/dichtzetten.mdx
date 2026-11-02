@@ -1,0 +1,183 @@
+---
+sidebar_label: '8. De deuren dicht'
+description: Een firewall laat alleen ssh, 80 en 443 door, ssh accepteert alleen sleutels en geen root, en Ubuntu installeert beveiligingsupdates zelf.
+---
+
+# Online zetten: de deuren dicht
+
+<Voorkennis items={[{site: 'dvwa', to: '/docs/linux/wsl/nano', label: 'Een bestand in /etc bewerken met sudo nano'}, {site: 'dvwa', to: '/docs/linux/wsl/apt', label: 'Bijwerken met apt'}]} />
+
+Je server staat op internet, en het logboek van ssh liet zien dat er al aan de deur wordt gemorreld. Je doet drie dingen: alleen de deuren open die nodig zijn, ssh alleen met een sleutel, en updates zonder dat jij eraan hoeft te denken.
+
+## Een firewall
+
+Een **firewall** bepaalt welke poorten van buiten bereikbaar zijn. Op Ubuntu heet hij `ufw` (*uncomplicated firewall*). Je hebt drie deuren nodig: ssh om in te loggen, 80 voor `http` en 443 voor `https`.
+
+```bash
+sudo ufw allow OpenSSH
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+```
+
+**Let op:** de volgorde doet ertoe. Zet je de firewall aan voordat ssh erdoor mag, dan sluit je jezelf buiten. `ufw enable` waarschuwt daarom:
+
+```text
+Command may disrupt existing ssh connections. Proceed with operation (y|n)?
+```
+
+Typ `y`. Kijk wat er openstaat:
+
+```bash
+sudo ufw status
+```
+
+```text
+Status: active
+
+To                         Action      From
+--                         ------      ----
+OpenSSH                    ALLOW       Anywhere
+80/tcp                     ALLOW       Anywhere
+443/tcp                    ALLOW       Anywhere
+```
+
+Alles wat niet in de lijst staat, komt er niet in. Ook als je later per ongeluk een programma op `0.0.0.0` laat luisteren.
+
+## ssh alleen met een sleutel
+
+Met de sleutel uit de vorige les kom jij binnen. Maar zolang ssh ook wachtwoorden accepteert, kan een programma er een raden. Zet dat uit, en inloggen als `root` meteen ook. Maak een eigen bestand met instellingen:
+
+```bash
+sudo nano /etc/ssh/sshd_config.d/00-veilig.conf
+```
+
+```text
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin no
+```
+
+De `00` vooraan doet ertoe. ssh leest de bestanden in die map op alfabet, en de eerste keer dat een instelling voorkomt, telt. Op sommige servers staat er al een bestand, zoals `50-cloud-init.conf`, met `PasswordAuthentication yes`. Jouw bestand komt eerder.
+
+Controleer de instellingen en laad ze:
+
+```bash
+sudo sshd -t
+sudo systemctl reload ssh
+```
+
+Zegt `sshd -t` niets, dan klopt alles.
+
+**Let op:** sluit je terminal nog niet. Probeer eerst in een tweede terminal of je nog binnenkomt met `ssh sam@203.0.113.10`. Gaat er iets mis, dan herstel je het in de eerste.
+
+## Updates vanzelf
+
+Elke week worden er gaten in programma's gevonden en gedicht. Ubuntu kan de beveiligingsupdates zelf installeren, elke dag. Op een server staat dat meestal al aan:
+
+```bash
+systemctl status unattended-upgrades
+```
+
+Staat er `active (running)`, dan is het goed. Staat het uit, zet het dan aan:
+
+```bash
+sudo apt install unattended-upgrades
+sudo dpkg-reconfigure -plow unattended-upgrades
+```
+
+Soms is een herstart nodig, bijvoorbeeld na een update van de kern van Linux. Dan staat er een bestand:
+
+```bash
+cat /var/run/reboot-required
+```
+
+```text
+*** System restart required ***
+```
+
+Herstart dan met `sudo reboot`. Je site komt vanzelf terug: dat deed `enable` in [les 5](site:fullstack/docs/online/wsl/dienst).
+
+<Voorspel soort="Controlevraag" vraag="Je firewall laat alleen OpenSSH, 80 en 443 door. Een klasgenoot opent in zijn browser het adres van je server met :8000 erachter. Wat gebeurt er?">
+  <Keuze uitleg="Poort 8000 staat niet in de lijst van ufw. En op welk adres luistert je site?">Hij ziet je site, zonder Caddy ertussen</Keuze>
+  <Keuze goed uitleg="Twee sloten: de firewall laat 8000 niet door, en je site luistert alleen op 127.0.0.1. Elk van de twee is genoeg.">Zijn browser krijgt geen antwoord</Keuze>
+  <Keuze uitleg="Caddy luistert op 80 en 443. Een verzoek op 8000 komt niet bij Caddy.">Hij ziet de testpagina van Caddy</Keuze>
+  <Uitleg>
+
+  Er zitten nu twee sloten op dezelfde deur: de firewall, en het adres `127.0.0.1` uit [les 3](site:fullstack/docs/online/wsl/fastapi-run). Gaat er één mis, bijvoorbeeld omdat je een keer `--host 0.0.0.0` typt om iets te testen, dan houdt de ander het tegen. Twee sloten voor één deur is geen overdaad: zo werkt beveiliging.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Jezelf buitengesloten
+
+```text
+ssh: connect to host 203.0.113.10 port 22: Connection timed out
+```
+
+**Oorzaak:** de firewall staat aan, maar ssh mag er niet door. Of je zette wachtwoorden uit voordat je sleutel bij `sam` stond.
+
+**Oplossing:** bijna elk hostingbedrijf heeft in zijn beheerpagina een **console**: een terminal in je browser, die niet via ssh gaat. Log daar in en herstel het:
+
+```bash
+sudo ufw allow OpenSSH
+```
+
+### sshd -t geeft een fout
+
+```text
+/etc/ssh/sshd_config.d/00-veilig.conf: line 1: Bad configuration option: PaswordAuthentication
+```
+
+**Oorzaak:** een tikfout in je bestand, hier één `s` te weinig.
+
+**Oplossing:** verbeter het bestand en draai `sudo sshd -t` opnieuw. Laad de instellingen pas als hij niets meer zegt; met een fout erin start ssh niet.
+
+## Opdrachten
+
+### Opdracht 1: Run - Controleer de deuren
+
+Controleer vanaf WSL dat het werkt. Welke van deze drie lukken, en welke niet?
+
+1. `ssh sam@203.0.113.10`
+2. `ssh root@203.0.113.10`
+3. `ssh -o PubkeyAuthentication=no sam@203.0.113.10`
+
+<details>
+<summary>Antwoord</summary>
+
+Alleen de eerste. De tweede geeft `Permission denied (publickey)`, want `root` mag niet meer inloggen. De derde probeert het zonder sleutel, dus met een wachtwoord, en krijgt dezelfde melding: wachtwoorden staan uit.
+
+</details>
+
+### Opdracht 2: Investigate - Wie bezoekt je site?
+
+Open je site op je telefoon via mobiele data. Kijk daarna op de server welk adres je site bij dat verzoek zag:
+
+```bash
+sudo journalctl -u gastenboek -n 5
+```
+
+Is dat `127.0.0.1`, het adres van Caddy?
+
+<details>
+<summary>Antwoord</summary>
+
+Nee: je ziet het adres van je telefoon op internet. Caddy zette het in de kop `X-Forwarded-For`, en `fastapi run` gelooft die kop omdat het verzoek van `127.0.0.1` komt, zoals in [les 6](site:fullstack/docs/online/wsl/voordeur). Daardoor telt de limiet uit de route Veiligheid per bezoeker, en niet iedereen samen.
+
+</details>
+
+### Opdracht 3: Investigate - Wat luistert er nog?
+
+Kijk met `sudo ss -tlnp` op de server welke programma's luisteren op `0.0.0.0`, `*` of `[::]`. Staat elk van die poorten in `ufw status`?
+
+<details>
+<summary>Antwoord</summary>
+
+Je ziet ssh (`:22`) en Caddy (`:80` en `:443`), en die staan alle drie open in ufw. Je site staat op `127.0.0.1:8000`, Caddy's eigen poort op `127.0.0.1:2019`. Staat er nog iets anders op `0.0.0.0`, zoek dan uit wat het is; de firewall houdt het tegen, maar een programma dat je niet nodig hebt, zet je beter uit.
+
+</details>
+
+Door naar [les 9: je domein met HTTPS](site:fullstack/docs/online/server/https).

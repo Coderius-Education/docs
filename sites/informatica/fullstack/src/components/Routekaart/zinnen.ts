@@ -1,6 +1,6 @@
 // Per categorie (of losse pagina) in sidebars.ts één zin voor de Routekaart.
 // In de FastAPI-route zegt de zin wat je daarna kunt; in de route Veiligheid
-// is het de vraag die de reeks beantwoordt. De sleutel is het label uit
+// is het de vraag die de reeks beantwoordt; in Online zetten wat er dan werkt. De sleutel is het label uit
 // sidebars.ts; logica.test.ts eist dat elke categorie een zin heeft en dat er
 // geen zin blijft staan voor een categorie die niet meer bestaat.
 
@@ -49,10 +49,17 @@ export const ZINNEN: Record<string, string> = {
   'Wachtwoorden veilig opslaan':
     'Hoe bewaar je wachtwoorden zo dat een gelekte database ze niet weggeeft?',
   'Beveilig je eigen project': 'Eén lijst om je gastenboek of eigen project mee na te lopen.',
+
+  // Online zetten
+  'Oefenen in WSL':
+    'Je site draait in Linux op je eigen computer, als een eigen gebruiker, als dienst en achter een voordeur.',
+  'Op een echte server':
+    'Je site staat op internet, met alleen de deuren open die nodig zijn, HTTPS en een back-up.',
 };
 
 // Een mijlpaal staat onder een etappe: hier heb je iets wat werkt.
 export const MIJLPALEN: Record<string, string> = {
   Accounts: 'Hier werkt je gastenboek. Wat hierna komt, maakt het mooier, maar is niet nodig.',
   'Beveilig je eigen project': 'Hier is je gastenboek beschermd.',
+  'Op een echte server': 'Hier staat je gastenboek online.',
 };

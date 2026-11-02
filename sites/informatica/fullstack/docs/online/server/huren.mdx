@@ -1,0 +1,185 @@
+---
+sidebar_label: '7. Een server huren en inloggen'
+description: Een server met Ubuntu op internet, inloggen met je ssh-sleutel, een eigen gebruiker met sudo, een domeinnaam, en daarna dezelfde stappen als in WSL.
+---
+
+# Online zetten: een server huren en inloggen
+
+<Voorkennis items={[{site: 'dvwa', to: '/docs/linux/wsl/ssh', label: 'ssh en een sleutelpaar'}, {site: 'dvwa', to: '/docs/linux/terminal/bestanden-lezen', label: 'Inlogpogingen in een logboek'}]} />
+
+Alles werkt in WSL. Nu doe je het op een computer die dag en nacht aan internet hangt: een **server**. Je huurt er een bij een hostingbedrijf, of je krijgt er een van school. Zo'n gehuurde server is meestal een stukje van een grotere computer, en heet een **VPS** (*virtual private server*). De kleinste is ruim genoeg voor een gastenboek.
+
+:::caution[Vraag eerst toestemming]
+Een server kost geld, ook als je hem vergeet. Huur er alleen een met toestemming van een ouder of verzorger, en zeg hem op als je klaar bent. Krijg je er een van school, houd je dan aan wat je docent erover zegt.
+:::
+
+## De server maken
+
+Bij het maken kies je een paar dingen:
+
+- **Besturingssysteem:** Ubuntu 24.04 LTS. LTS betekent dat Ubuntu het vijf jaar lang van beveiligingsupdates voorziet.
+- **Inloggen:** kies een ssh-sleutel, geen wachtwoord, en plak de inhoud van je publieke sleutel `~/.ssh/id_ed25519.pub` uit WSL. Nooit de privésleutel.
+- **Plaats:** een datacenter in Europa, dichtbij je bezoekers.
+
+Daarna krijg je een **IP-adres**: het nummer waarop je server op internet te vinden is. In deze lessen is dat `203.0.113.10`; dat adres is bedoeld voor voorbeelden en bestaat niet echt. Zet steeds je eigen adres op die plek.
+
+## De eerste keer inloggen
+
+Open Ubuntu in WSL en log in als `root`, de enige gebruiker die er nu is:
+
+```bash
+ssh root@203.0.113.10
+```
+
+ssh vraagt of je de vingerafdruk vertrouwt; typ `yes`. Bijna elk hostingbedrijf toont die vingerafdruk ook in zijn beheerpagina, zodat je kunt nakijken dat je echt met je eigen server praat. Werk eerst alles bij:
+
+```bash
+apt update
+apt upgrade
+```
+
+Als `root` heb je geen `sudo` nodig: je bent het al.
+
+## Een eigen gebruiker
+
+Als `root` werken is als altijd met `sudo` werken: één tikfout en je server is stuk. In de volgende les zet je inloggen als `root` helemaal uit. Daarom maak je nu een gebruiker voor jezelf, die met `sudo` beheerder mag zijn:
+
+```bash
+adduser sam
+usermod -aG sudo sam
+```
+
+`adduser` vraagt een wachtwoord; dat heb je straks nodig voor `sudo`. `usermod -aG sudo` zet `sam` in de groep `sudo`. Geef `sam` daarna dezelfde sleutel als `root`:
+
+```bash
+mkdir -p /home/sam/.ssh
+cp /root/.ssh/authorized_keys /home/sam/.ssh/
+chown -R sam:sam /home/sam/.ssh
+```
+
+In `authorized_keys` staan de publieke sleutels waarmee je mag inloggen. `chown -R` maakt de map en alles erin van `sam`; anders weigert ssh de sleutel. Laat deze terminal openstaan, en log in een tweede terminal in als jezelf:
+
+```bash
+ssh sam@203.0.113.10
+sudo whoami
+```
+
+Lukt dat, en zegt `sudo whoami` `root`, dan log je voortaan zo in.
+
+## Een naam voor je server
+
+Een IP-adres onthoudt niemand. Met een **domeinnaam** zoals `gastenboek.voorbeeld.nl` is je site te vinden, en zonder naam krijg je straks geen HTTPS. Een naam huur je bij een domeinbedrijf, of je docent geeft je een naam onder het domein van school.
+
+Bij de naam zet je een **A-record**: een regel die zegt welk IP-adres bij de naam hoort. Het kan een uur duren voor de hele wereld de nieuwe regel kent. Controleer het in WSL:
+
+```bash
+ping -c 1 gastenboek.voorbeeld.nl
+```
+
+Op de eerste regel staat het IP-adres. Is dat dat van jouw server, dan klopt de naam.
+
+## Dezelfde stappen als in WSL
+
+Doe op de server, als `sam`, wat je in WSL deed: [les 2](site:fullstack/docs/online/wsl/project-in-linux) (git en `python3-venv` installeren), [les 4](site:fullstack/docs/online/wsl/eigen-gebruiker), [les 5](site:fullstack/docs/online/wsl/dienst) en [les 6](site:fullstack/docs/online/wsl/voordeur). Je project zet je meteen in `/srv/gastenboek/app`; in je eigen thuismap op de server hoeft het niet. Daarna staat je site op `http://203.0.113.10`.
+
+### Een privé-repository: een deploy key
+
+Is je repository privé, geef de server dan een eigen sleutel die alleen jouw project mag lezen. Maak hem als `gastenboek`:
+
+```bash
+sudo -H -u gastenboek ssh-keygen -t ed25519
+sudo cat /srv/gastenboek/.ssh/id_ed25519.pub
+```
+
+Druk bij de vragen op Enter (een passphrase kan hier niet: de server moet de sleutel zonder jou kunnen gebruiken). Zet de publieke sleutel op GitHub bij je repository onder **Settings**, **Deploy keys**, en laat **Allow write access** uit. Clone daarna met het ssh-adres:
+
+```bash
+sudo -H -u gastenboek git clone git@github.com:sam/gastenboek.git /srv/gastenboek/app
+```
+
+Wordt je server ooit gekraakt, dan kan de sleutel alleen dit ene project lezen, en niets veranderen.
+
+<Voorspel soort="Controlevraag" vraag="Je server staat een uur aan, en je hebt het adres aan niemand gegeven. Je kijkt met sudo journalctl -u ssh in het logboek van ssh. Wat staat er?">
+  <Keuze uitleg="Niemand kent je adres, maar programma's proberen alle adressen op internet, de hele dag.">Alleen de keren dat jij inlogde</Keuze>
+  <Keuze goed uitleg="Programma's lopen alle adressen op internet af en proberen in te loggen met namen als root en admin. Binnen een uur staan ze in je logboek.">Ook mislukte pogingen van onbekende adressen, met namen als root en admin</Keuze>
+  <Keuze uitleg="ssh schrijft elke poging op, ook een mislukte. Daar is het logboek voor.">Niets: ssh schrijft alleen op wie er echt binnenkwam</Keuze>
+  <Uitleg>
+
+  Je ziet regels als `Invalid user admin from …` en `Connection closed by authenticating user root …`. Dat zijn geen mensen die jou zoeken, maar programma's die elk adres proberen. Met alleen een sleutel komen ze niet binnen; in de volgende les zet je de deuren die ze proberen zo ver mogelijk dicht. Doe die les daarom meteen na deze.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### `Permission denied (publickey)`
+
+```text
+sam@203.0.113.10: Permission denied (publickey).
+```
+
+**Oorzaak:** de server kent jouw sleutel niet voor deze gebruiker. Meestal staat `authorized_keys` niet bij `sam`, of is de map nog van `root`.
+
+**Oplossing:** log in als `root` in de terminal die nog openstaat, en kijk wie de eigenaar is:
+
+```bash
+ls -la /home/sam/.ssh
+chown -R sam:sam /home/sam/.ssh
+```
+
+### sam is not in the sudoers file
+
+```text
+sam is not in the sudoers file.
+```
+
+**Oorzaak:** `sam` staat niet in de groep `sudo`, of je was al ingelogd voordat je hem erin zette.
+
+**Oplossing:** doe als `root` `usermod -aG sudo sam`, log uit met `exit` en log opnieuw in.
+
+### De naam wijst nog niet naar je server
+
+```text
+ping: gastenboek.voorbeeld.nl: Name or service not known
+```
+
+**Oorzaak:** het A-record is er nog niet, of de wereld kent het nog niet.
+
+**Oplossing:** controleer het record bij je domeinbedrijf, en wacht een uur. Je site werkt intussen op het IP-adres.
+
+## Opdrachten
+
+### Opdracht 1: Run - Je site op internet
+
+Zet je site op de server, achter Caddy, als dienst. Open `http://` met het IP-adres van je server op je telefoon, via mobiele data en niet via het wifi van school.
+
+<details>
+<summary>Antwoord</summary>
+
+Je ziet je gastenboek, met een lege lijst: de databases van WSL staan niet op de server. Werkt het niet, ga dan de stappen van achter naar voren na: draait de dienst (`systemctl status gastenboek`), draait Caddy (`systemctl status caddy`), en geeft `curl http://127.0.0.1:8000` op de server je site?
+
+</details>
+
+### Opdracht 2: Investigate - Wie klopt er aan?
+
+Tel hoeveel keer er in het afgelopen uur een onbekende gebruiker probeerde in te loggen.
+
+<details>
+<summary>Tip</summary>
+
+`journalctl` kent de optie `--since "1 hour ago"`. Tellen deed je met `wc -l`, en zoeken met `grep`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```bash
+sudo journalctl -u ssh --since "1 hour ago" | grep "Invalid user" | wc -l
+```
+
+Het getal verschilt per server en per uur, maar nul is het zelden.
+
+</details>
+
+Door naar [les 8: de deuren dicht](site:fullstack/docs/online/server/dichtzetten).

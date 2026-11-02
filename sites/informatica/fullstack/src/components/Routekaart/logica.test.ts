@@ -23,6 +23,7 @@ function alsProp(items: Config[]): SidebarItem[] {
 
 const fastapi = sidebars.apiSidebar as unknown as Config[];
 const veiligheid = sidebars.veiligheidSidebar as unknown as Config[];
+const online = sidebars.onlineSidebar as unknown as Config[];
 
 describe('etappes', () => {
   it('laat de startpagina weg, met en zonder slash aan het eind', () => {
@@ -111,7 +112,7 @@ describe('zinnen bij sidebars.ts', () => {
     );
     return bron.match(/^sidebar_label: '([^']+)'/m)?.[1] ?? bron.match(/^# (.+)$/m)?.[1] ?? id;
   };
-  const sleutels = [...fastapi, ...veiligheid].flatMap((i) => {
+  const sleutels = [...fastapi, ...veiligheid, ...online].flatMap((i) => {
     if (typeof i !== 'string') return [i.label];
     return i.endsWith('/index') ? [] : [label(i)];
   });

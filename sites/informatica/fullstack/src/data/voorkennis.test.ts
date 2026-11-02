@@ -107,6 +107,14 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/dos/praktijk.mdx': 'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/eigen-project.mdx': 'controlelijst over de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/index.mdx': 'startpagina van de route, verwijst naar de FastAPI-lessen zelf',
+  'online/index.mdx':
+    'startpagina van de route; de Linux-cursus staat er als geheel in, elke les linkt zijn eigen Linux-les',
+  'online/wsl/requirements.mdx':
+    'pip freeze en -r worden hier zelf uitgelegd; het pijltje > linkt in de tekst naar de Linux-les',
+  'online/wsl/fastapi-run.mdx': 'fastapi run en ss worden hier zelf uitgelegd',
+  'online/server/https.mdx':
+    'Caddy en het A-record staan in de lessen ervoor; secure linkt in de tekst naar Cookies afschermen',
+  'online/server/nieuwe-versie.mdx': 'git pull, scp en de back-up worden hier zelf uitgelegd',
   'veiligheid/cookies/eigen-project.mdx': 'toepassen van de lessen ervoor op het eigen project',
   'veiligheid/cookies/httponly.mdx': 'bouwt op de les ervoor, in dezelfde map',
   'veiligheid/cookies/samesite.mdx': 'begrippen worden in de les zelf uitgelegd',
@@ -195,6 +203,12 @@ const MET_BLOK = [
   'veiligheid/xss/zwakheid.mdx',
   'veiligheid/zichtbaar/gitignore.mdx',
   'veiligheid/zichtbaar/handleiding.mdx',
+  'online/wsl/project-in-linux.mdx',
+  'online/wsl/eigen-gebruiker.mdx',
+  'online/wsl/dienst.mdx',
+  'online/wsl/voordeur.mdx',
+  'online/server/huren.mdx',
+  'online/server/dichtzetten.mdx',
 ];
 
 function relatievePaden(): string[] {
