@@ -148,10 +148,11 @@ buiten deze repo.
 ## Bijdragen
 
 1. Maak een branch vanaf `main` en open een pull request.
-2. Elke branch krijgt per site een preview op
-   `https://<branch-met-streepjes>--<site-id>.preview.coderius.nl/`: de `/` in
-   de branchnaam wordt een `-`. Zet de previews van de sites die je aanpast in
-   de beschrijving van je pull request.
+2. Elke branch krijgt per vak een preview op
+   `https://<branch-met-streepjes>--<vak>.preview.coderius.nl/<pad>/`, zoals
+   `https://feat-x--informatica.preview.coderius.nl/python/`: de `/` in de
+   branchnaam wordt een `-`. Zet de previews van de sites die je aanpast in de
+   beschrijving van je pull request.
 3. Een bugfix gaat samen met een test die de fout vastpint, in dezelfde
    commit. Kan dat niet in node (puur browsergedrag), beschrijf dan in de
    commit hoe je het met de hand hebt gecontroleerd.
