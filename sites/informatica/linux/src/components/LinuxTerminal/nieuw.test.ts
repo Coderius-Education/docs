@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { vulAan } from './aanvullen';
 import { maakSessie } from './opdrachten';
-import { LEEG, toets } from './regel';
+import { LEEG, plekVan, toets, verplaats, zichtbaar } from './regel';
 
 // Jokertekens, ls/cp/mv/grep met meer namen, find, history, Tab en het
 // bewerken van de regel. Elke verwachte uitvoer is nagedraaid op Ubuntu 24.04
@@ -212,7 +212,7 @@ describe('Tab', () => {
       'project/',
     ]);
     expect(vulAan('l', e)).toEqual({ invoegen: 's ', opties: [] });
-    expect(vulAan('c', e).opties).toEqual(['cat', 'cd', 'chmod', 'clear', 'cp']);
+    expect(vulAan('c', e).opties).toEqual(['cat', 'cd', 'clear', 'cp']);
   });
 
   it('niets dat past: dan doet Tab niets', () => {
@@ -258,5 +258,61 @@ describe('de regel bewerken', () => {
     expect(toets(LEEG, '\r', sessie).actie).toBe('uitvoeren');
     expect(toets(LEEG, '\x03', sessie).actie).toBe('afbreken');
     expect(toets(LEEG, '\x0c', sessie).actie).toBe('leeg');
+  });
+});
+
+describe("commando's van een echte Linux", () => {
+  it('zeggen dat ze hier niet werken, en in welke les wel', () => {
+    const { typ } = terminal();
+    expect(typ('sudo apt update')).toBe(
+      'oefenterminal: sudo werkt hier niet, wel op je eigen Linux, vanaf les 6.1.',
+    );
+    expect(typ('man ls')).toBe(
+      'oefenterminal: man werkt hier niet, wel op je eigen Linux, vanaf les 5.3.',
+    );
+    // chmod zei eerst "gewijzigd (gesimuleerd)" en veranderde niets.
+    expect(typ('chmod +x notities.txt')).toBe(
+      'oefenterminal: chmod werkt hier niet, wel op je eigen Linux.',
+    );
+  });
+
+  it('een typfout blijft command not found, zoals in bash', () => {
+    const { typ } = terminal();
+    expect(typ('hsitory')).toBe('bash: hsitory: command not found');
+    // Geen eigenschap van een gewoon object (toString, constructor).
+    expect(typ('toString')).toBe('bash: toString: command not found');
+  });
+
+  it('elke les die NIET_HIER noemt, bestaat in de sidebar', async () => {
+    const { NIET_HIER } = await import('./commands');
+    const sidebars = (await import('../../../sidebars')).default as {
+      linuxSidebar: (string | { items: string[] })[];
+    };
+    const aantal = sidebars.linuxSidebar
+      .filter((i): i is { items: string[] } => typeof i !== 'string')
+      .map((c) => c.items.length);
+    for (const les of Object.values(NIET_HIER).filter(Boolean) as string[]) {
+      const [thema, nr] = les.split('.').map(Number);
+      expect(nr, les).toBeLessThanOrEqual(aantal[thema - 1] ?? 0);
+    }
+  });
+});
+
+describe('een lange regel opnieuw tekenen', () => {
+  // Eerst schreef de terminal na een pijltje de regel vanaf het begin van de
+  // huidige schermregel opnieuw: liep hij over twee regels, dan stond hij er
+  // dubbel. Nu begint het tekenen op de rij van de prompt.
+  it('de plek van de cursor in een regel die over meer rijen loopt', () => {
+    const prompt = zichtbaar('\u001b[1;32mstudent@oefenpc\u001b[0m:\u001b[1;34m~\u001b[0m$ ');
+    expect(prompt).toBe(19);
+    expect(plekVan(prompt, 0, 80)).toEqual({ rij: 0, kolom: 19 });
+    expect(plekVan(prompt, 61, 80)).toEqual({ rij: 1, kolom: 0 });
+    expect(plekVan(prompt, 100, 80)).toEqual({ rij: 1, kolom: 39 });
+  });
+
+  it('omhoog met CSI A, omlaag met regeleinden', () => {
+    expect(verplaats(5, 3, 10)).toBe('\u001b[2A\r\u001b[10C');
+    expect(verplaats(3, 4, 0)).toBe('\r\n\r');
+    expect(verplaats(4, 4, 7)).toBe('\r\u001b[7C');
   });
 });

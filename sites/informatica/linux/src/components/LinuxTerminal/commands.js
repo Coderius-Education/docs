@@ -521,7 +521,6 @@ const COMMANDS = {
         '  mv <bron> <doel>  - Verplaatsen of hernoemen',
         '  rm [-r] <pad>     - Weggooien (er is geen prullenbak)',
         '  echo <tekst> > <bestand> - Tekst in een bestand zetten (>> vult aan)',
-        '  chmod <mode> <bestand> - Rechten wijzigen (gesimuleerd)',
         '  uname [-a]        - Systeeminformatie tonen',
         '  hostname          - Hostnaam tonen',
         '  ping <host>       - Netwerk-ping simuleren',
@@ -722,16 +721,6 @@ const COMMANDS = {
     return kopieer('mv', args, env, true);
   },
 
-  chmod(args) {
-    if (args.length < 2) return { output: 'chmod: missing operand', exitCode: 1 };
-    const mode = args[0];
-    const file = args[1];
-    return {
-      output: `chmod: mode van '${file}' gewijzigd naar ${mode} (gesimuleerd)`,
-      exitCode: 0,
-    };
-  },
-
   ping(args, env) {
     if (args.length === 0) return { output: 'ping: usage: ping [-c count] host', exitCode: 1 };
 
@@ -756,6 +745,40 @@ const COMMANDS = {
   },
 };
 
+/**
+ * Commando's die op een echte Linux bestaan, maar niet in de oefenterminal.
+ * Eerst gaven ze `command not found`, alsof ze nergens bestaan, en zei chmod
+ * "gewijzigd (gesimuleerd)" zonder iets te veranderen. Nu zegt de terminal
+ * eerlijk waar het wel kan. De les waar ze aan bod komen, staat erbij.
+ */
+export const NIET_HIER = {
+  sudo: '6.1',
+  apt: '6.1',
+  'apt-get': '6.1',
+  nano: '6.2',
+  vim: '6.2',
+  vi: '6.2',
+  man: '5.3',
+  apropos: '5.3',
+  ps: '6.3',
+  pgrep: '6.3',
+  kill: '6.3',
+  pkill: '6.3',
+  top: '6.3',
+  systemctl: '6.4',
+  journalctl: '6.4',
+  ip: '7.1',
+  curl: '7.1',
+  ssh: '7.2',
+  chmod: null,
+  chown: null,
+  su: null,
+  less: null,
+  sort: null,
+  python3: null,
+  git: null,
+};
+
 /** De commando's die de oefenterminal kent, voor Tab. */
 export const COMMANDONAMEN = Object.keys(COMMANDS).sort();
 
@@ -773,8 +796,16 @@ export function executeCommand(cmdStr, env, stdin, { doorgeven = false } = {}) {
   if (naar === '')
     return { output: "bash: syntax error near unexpected token `newline'", exitCode: 2 };
 
-  const handler = COMMANDS[name];
+  const handler = Object.hasOwn(COMMANDS, name) ? COMMANDS[name] : undefined;
   if (!handler) {
+    if (Object.hasOwn(NIET_HIER, name)) {
+      const les = NIET_HIER[name];
+      const waar = les ? `, vanaf les ${les}` : '';
+      return {
+        output: `oefenterminal: ${name} werkt hier niet, wel op je eigen Linux${waar}.`,
+        exitCode: 127,
+      };
+    }
     return { output: `bash: ${name}: command not found`, exitCode: 127 };
   }
 

@@ -130,16 +130,9 @@
   white-space: nowrap;
 }
 
-.footerLink {
-  color: #27c93f !important;
+.hint {
+  color: #999;
   font-size: 0.75rem;
-  text-decoration: none !important;
-  transition: opacity 0.2s;
-}
-
-.footerLink:hover {
-  opacity: 0.8;
-  text-decoration: underline !important;
 }
 
 .fallback {

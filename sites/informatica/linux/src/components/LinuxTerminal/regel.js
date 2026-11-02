@@ -86,3 +86,29 @@ export function toets(s, data, sessie) {
   if (data.startsWith('\x1b') || data.charCodeAt(0) < 32) return { stand: st, actie: null };
   return { stand: invoegen(st, data), actie: null };
 }
+
+/**
+ * Waar de cursor hoort te staan, als rij (vanaf de rij van de prompt) en
+ * kolom, bij een regel die over meer schermregels loopt. `prompt` is het
+ * aantal tekens van de prompt zonder kleurcodes.
+ */
+export function plekVan(prompt, cursor, kolommen) {
+  const n = prompt + cursor;
+  return { rij: Math.floor(n / kolommen), kolom: n % kolommen };
+}
+
+/**
+ * De escape-reeks die de cursor van rij `van` naar rij `naar` en kolom
+ * `kolom` brengt. Omhoog met CSI A; omlaag met regeleinden, want CSI B
+ * stopt onderaan het scherm en een regel die net vol is, staat daar nog
+ * niet op de volgende rij.
+ */
+export function verplaats(van, naar, kolom) {
+  const rijen = naar < van ? `\x1b[${van - naar}A` : '\r\n'.repeat(naar - van);
+  return `${rijen}\r${kolom > 0 ? `\x1b[${kolom}C` : ''}`;
+}
+
+/** De zichtbare lengte van een tekst met kleurcodes. */
+export function zichtbaar(tekst) {
+  return tekst.replace(new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g'), '').length;
+}

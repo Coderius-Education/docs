@@ -2,7 +2,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { promptPad } from './filesystem';
 import { OPDRACHTEN, maakSessie, volgDoelen } from './opdrachten';
-import { LEEG, toets } from './regel';
+import { LEEG, plekVan, toets, verplaats, zichtbaar } from './regel';
 import styles from './styles.module.css';
 
 /**
@@ -24,10 +24,16 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
   const termRef = useRef(null);
   const xtermRef = useRef(null);
   const standRef = useRef(LEEG);
+  // De rij in de buffer waar de prompt staat: een lange regel loopt over
+  // meer schermregels, en opnieuw tekenen begint daar.
+  const promptRij = useRef(0);
+  const netLeeg = useRef(false);
   const sessieRef = useRef(null);
   if (sessieRef.current === null) {
     sessieRef.current = maakSessie(extraFs ?? doelen?.bestanden, {
-      clear: () => xtermRef.current?.clear(),
+      clear: () => {
+        netLeeg.current = true;
+      },
     });
   }
   const klaarRef = useRef([]);
@@ -39,11 +45,29 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
     return `\x1b[1;32mstudent@oefenpc\x1b[0m:\x1b[1;34m${display}\x1b[0m$ `;
   }, []);
 
-  const writePrompt = useCallback(
-    (term) => {
-      term.write(`\r\n${getPrompt()}`);
+  // Schrijft de prompt, en onthoudt op welke rij hij staat.
+  const schrijfPrompt = useCallback(
+    (term, ervoor = '') => {
+      term.write(`${ervoor}${getPrompt()}`, () => {
+        const b = term.buffer.active;
+        promptRij.current = b.baseY + b.cursorY;
+      });
     },
     [getPrompt],
+  );
+
+  const writePrompt = useCallback(
+    (term) => {
+      // Na clear een leeg scherm met de prompt bovenaan, zoals bash.
+      if (netLeeg.current) {
+        netLeeg.current = false;
+        term.write('\x1b[H\x1b[2J\x1b[3J');
+        schrijfPrompt(term);
+        return;
+      }
+      schrijfPrompt(term, '\r\n');
+    },
+    [schrijfPrompt],
   );
 
   const handleCommand = useCallback(
@@ -80,9 +104,9 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
     (term) => {
       term.writeln('\x1b[1;32m  Oefenterminal\x1b[0m');
       term.writeln("\x1b[90m  Typ help voor een lijst met commando's.\x1b[0m");
-      term.write(getPrompt());
+      schrijfPrompt(term);
     },
-    [getPrompt],
+    [schrijfPrompt],
   );
 
   // Een verse start zonder de pagina te herladen: herladen gooit ook het werk
@@ -91,7 +115,9 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
     const term = xtermRef.current;
     if (!term) return;
     sessieRef.current = maakSessie(extraFs ?? doelen?.bestanden, {
-      clear: () => xtermRef.current?.clear(),
+      clear: () => {
+        netLeeg.current = true;
+      },
     });
     standRef.current = LEEG;
     klaarRef.current = [];
@@ -154,9 +180,25 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
           term.write(nieuw.tekst.slice(oud.tekst.length));
           return;
         }
-        term.write(`\r${getPrompt()}${nieuw.tekst}\x1b[K`);
-        const terug = nieuw.tekst.length - nieuw.cursor;
-        if (terug > 0) term.write(`\x1b[${terug}D`);
+        // Terug naar de rij van de prompt, alles opnieuw, en de rest van
+        // het scherm leeg: de regel kan korter zijn geworden.
+        const b = term.buffer.active;
+        const omhoog = Math.max(0, b.baseY + b.cursorY - promptRij.current);
+        const prompt = getPrompt();
+        term.write(`${omhoog ? `\x1b[${omhoog}A` : ''}\r${prompt}${nieuw.tekst}\x1b[J`, () => {
+          const na = term.buffer.active;
+          const { rij, kolom } = plekVan(zichtbaar(prompt), nieuw.cursor, term.cols);
+          term.write(verplaats(na.baseY + na.cursorY, promptRij.current + rij, kolom));
+        });
+      };
+
+      // Na een nieuwe prompt de regel er weer achter, met de cursor op zijn
+      // plek. Dat laatste pas als xterm de prompt heeft verwerkt: dan weet
+      // schrijfPrompt op welke rij hij staat.
+      const naPrompt = (stand) => {
+        const eind = { ...stand, cursor: stand.tekst.length };
+        teken(LEEG, eind);
+        if (stand.cursor < stand.tekst.length) term.write('', () => teken(eind, stand));
       };
 
       const verwerk = (data) => {
@@ -171,14 +213,16 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
           standRef.current = LEEG;
           writePrompt(term);
         } else if (actie === 'leeg') {
-          term.clear();
+          term.write('\x1b[H\x1b[2J\x1b[3J');
           standRef.current = stand;
-          teken({ ...LEEG, tekst: '\0' }, stand);
+          schrijfPrompt(term);
+          naPrompt(stand);
         } else if (actie === 'opties') {
           // De tweede Tab: wat er past, en dan de regel opnieuw.
-          term.write(`\r\n${opties.join('  ')}\r\n`);
+          term.write(`\r\n${opties.join('  ')}`);
           standRef.current = stand;
-          teken({ ...LEEG, tekst: '\0' }, stand);
+          schrijfPrompt(term, '\r\n');
+          naPrompt(stand);
         } else {
           standRef.current = stand;
           teken(oud, stand);
@@ -220,7 +264,7 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
         term.dispose();
       }
     };
-  }, [getPrompt, handleCommand, writePrompt, initialCommands, welkom, doelen]);
+  }, [getPrompt, handleCommand, writePrompt, initialCommands, welkom, doelen, schrijfPrompt]);
 
   const allesKlaar = doelen?.doelen.every((_, i) => klaar[i]);
 
@@ -266,14 +310,7 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
         <button type="button" className={styles.opnieuw} onClick={opnieuw} disabled={!isLoaded}>
           Opnieuw beginnen
         </button>
-        <a
-          className={styles.footerLink}
-          href="https://bellard.org/jslinux/vm.html?url=alpine-x86.cfg&mem=256"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Volledige Linux nodig? Open JSLinux ↗
-        </a>
+        <span className={styles.hint}>Tab vult aan, ↑ haalt terug</span>
       </div>
     </div>
   );
