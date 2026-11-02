@@ -84,6 +84,7 @@ const AFKORTINGEN = new Set([
   'HTML',
   'CSS',
   'JSON',
+  'YAML',
   'HTTP',
   'HTTPS',
   'JSX',

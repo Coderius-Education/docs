@@ -1,37 +1,73 @@
 ---
-sidebar_label: '9. Je domein met HTTPS'
-description: Met je domeinnaam in de Caddyfile vraagt Caddy zelf een certificaat aan, stuurt http door naar https, en kan je sessie-cookie secure worden.
+sidebar_label: '14. Je domein met HTTPS'
+description: Traefik krijgt een ingang op 443, stuurt http door naar https en vraagt zelf een certificaat aan bij Let's Encrypt. Daarna kan je sessie-cookie secure worden.
 ---
 
 # Online zetten: je domein met HTTPS
 
 Over `http` gaat alles leesbaar over de lijn. Wie op hetzelfde wifi zit, of ergens onderweg een kabel beheert, kan meelezen: het wachtwoord waarmee een bezoeker inlogt, en de cookie met zijn sessie-id. Met `https` is het versleuteld, en weet de browser bovendien zeker dat hij met jouw server praat en niet met een die zich voor jou uitgeeft.
 
-Daarvoor heb je een **certificaat** nodig: een bewijs, ondertekend door een bekende partij, dat jouw server bij jouw domeinnaam hoort. Caddy vraagt er zelf een aan, gratis, bij Let's Encrypt, en vernieuwt het op tijd.
+Daarvoor heb je een **certificaat** nodig: een bewijs, ondertekend door een bekende partij, dat jouw server bij jouw domeinnaam hoort. Traefik vraagt er zelf een aan, gratis, bij **Let's Encrypt**, en vernieuwt het op tijd.
 
-## Je naam in de Caddyfile
+## Traefik op 443
 
-Open de Caddyfile op de server:
-
-```bash
-sudo nano /etc/caddy/Caddyfile
-```
-
-Vervang `:80` door je domeinnaam:
-
-```text
-gastenboek.voorbeeld.nl {
-	reverse_proxy 127.0.0.1:8000
-}
-```
+Open op de server de `compose.yaml` van Traefik:
 
 ```bash
-sudo systemctl reload caddy
+cd ~/traefik
+nano compose.yaml
 ```
 
-Caddy ziet een naam in plaats van een poort, en doet nu drie dingen: hij vraagt een certificaat aan voor die naam, hij luistert op 443 voor `https`, en hij stuurt elk verzoek op `http` door naar `https`. Open `https://gastenboek.voorbeeld.nl` op je telefoon. Je site opent zonder waarschuwing over de verbinding.
+Er komen vijf regels bij `command` bij, een poort, en een volume voor de certificaten:
 
-Twee dingen moeten kloppen voordat het lukt: het A-record wijst naar je server ([les 7](site:fullstack/docs/online/server/huren)), en poort 80 en 443 staan open in de firewall ([les 8](site:fullstack/docs/online/server/dichtzetten)). Let's Encrypt komt via poort 80 controleren dat de naam echt bij jouw server hoort.
+```yaml
+services:
+  traefik:
+    image: traefik:v3
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls.certresolver=letsencrypt
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+    networks:
+      - web
+    restart: unless-stopped
+
+volumes:
+  letsencrypt:
+
+networks:
+  web:
+    external: true
+```
+
+| Nieuw | Betekenis |
+|:---|:---|
+| `web.http.redirections.entrypoint.to=websecure` | stuur elk verzoek op poort 80 door naar `https` |
+| `websecure.address=:443` | een tweede ingang, `websecure`, op poort 443 |
+| `websecure.http.tls.certresolver=letsencrypt` | elke site op 443 krijgt een certificaat van `letsencrypt` |
+| `letsencrypt.acme.httpchallenge.entrypoint=web` | Let's Encrypt controleert via poort 80 of de naam bij jouw server hoort |
+| `letsencrypt.acme.storage=…` | waar de certificaten bewaard worden: in het volume `letsencrypt` |
+
+Zonder dat volume vraagt Traefik bij elke herstart een nieuw certificaat aan, en Let's Encrypt geeft er maar een paar per week voor dezelfde naam. Start Traefik opnieuw:
+
+```bash
+docker compose up -d
+```
+
+Aan je site verandert niets: de labels uit [les 10](site:fullstack/docs/online/docker/traefik) gelden voor beide ingangen. Open `https://gastenboek.voorbeeld.nl` op je telefoon. Je site opent zonder waarschuwing over de verbinding.
+
+Twee dingen moeten kloppen voordat het lukt: het A-record wijst naar je server ([les 11](site:fullstack/docs/online/server/huren)), en poort 80 en 443 staan open in de firewall ([les 12](site:fullstack/docs/online/server/dichtzetten)).
 
 ## De cookie alleen over https
 
@@ -50,15 +86,15 @@ Nu je site `https` heeft, kan de sessie-cookie de vlag `secure` krijgen: dan stu
     )
 ```
 
-Op je eigen computer blijft het werken: Chrome en Firefox laten een `secure`-cookie op `127.0.0.1` en `localhost` toch door. Hoe de nieuwe code op de server komt, is de volgende les.
+Op je eigen computer blijft het werken: Chrome en Firefox laten een `secure`-cookie op `127.0.0.1`, `localhost` en `gastenboek.localhost` toch door. Hoe de nieuwe code op de server komt, is de volgende les.
 
 <Voorspel soort="Controlevraag" vraag="Een bezoeker typt http://gastenboek.voorbeeld.nl, zonder s. Wat gebeurt er?">
-  <Keuze uitleg="Caddy luistert ook op poort 80. Wat doet hij met een verzoek dat daar binnenkomt, nu er een naam in de Caddyfile staat?">Hij ziet je site, maar zonder versleuteling</Keuze>
-  <Keuze goed uitleg="Met een naam in de Caddyfile stuurt Caddy elk verzoek op http door naar dezelfde pagina op https.">Hij komt vanzelf op https://gastenboek.voorbeeld.nl</Keuze>
-  <Keuze uitleg="Poort 80 staat open in de firewall, en Caddy luistert erop. Er is wel iemand die antwoordt.">Zijn browser krijgt geen antwoord, want alleen 443 doet nog mee</Keuze>
+  <Keuze uitleg="Traefik luistert nog op poort 80. Wat doet hij nu met een verzoek dat daar binnenkomt?">Hij ziet je site, maar zonder versleuteling</Keuze>
+  <Keuze goed uitleg="De ingang web stuurt elk verzoek door naar dezelfde pagina op https.">Hij komt vanzelf op https://gastenboek.voorbeeld.nl</Keuze>
+  <Keuze uitleg="Poort 80 staat open, en Traefik luistert erop. Er is wel iemand die antwoordt.">Zijn browser krijgt geen antwoord, want alleen 443 doet nog mee</Keuze>
   <Uitleg>
 
-  Caddy antwoordt op `http` met een omleiding (`308`) naar `https`. Daarom moest poort 80 open blijven: voor die omleiding, en voor Let's Encrypt, dat er het certificaat mee controleert. Er gaat over poort 80 geen inhoud van je site meer.
+  Traefik antwoordt op `http` met een omleiding (`301`) naar `https`. Daarom moest poort 80 open blijven: voor die omleiding, en voor Let's Encrypt, dat er het certificaat mee controleert. Er gaat over poort 80 geen inhoud van je site meer.
 
   </Uitleg>
 </Voorspel>
@@ -67,17 +103,17 @@ Op je eigen computer blijft het werken: Chrome en Firefox laten een `secure`-coo
 
 ### Geen certificaat
 
-In `sudo journalctl -u caddy -n 30` staan regels met `challenge failed` of `could not get certificate`, en de browser zegt dat de verbinding niet veilig is.
+De browser zegt dat de verbinding niet veilig is. Klik je op de details, dan is het certificaat van `TRAEFIK DEFAULT CERT`. In `docker compose logs` van Traefik staat `Unable to obtain ACME certificate`.
 
-**Oorzaak:** Let's Encrypt kon niet controleren dat de naam bij jouw server hoort. Meestal wijst het A-record nog niet naar je server, of poort 80 is dicht. Een derde oorzaak zie je niet met `ping`: een oud `AAAA`-record (een IPv6-adres) van de parkeerpagina van je domeinbedrijf. Let's Encrypt kiest dan dat adres, en komt niet bij jouw server.
+**Oorzaak:** Let's Encrypt kon niet controleren dat de naam bij jouw server hoort, en Traefik gebruikt zolang een certificaat dat hij zelf maakte. Meestal wijst het A-record nog niet naar je server, of poort 80 is dicht. Een derde oorzaak zie je niet met `ping`: een oud `AAAA`-record (een IPv6-adres) van de parkeerpagina van je domeinbedrijf. Let's Encrypt kiest dan dat adres, en komt niet bij jouw server.
 
-**Oplossing:** controleer met `getent ahosts gastenboek.voorbeeld.nl` alle adressen van je naam: staat er een adres tussen dat niet van jouw server is, haal dan dat record weg bij je domeinbedrijf. Kijk met `sudo ufw status` of 80 en 443 openstaan. Wacht daarna even: Caddy probeert het zelf opnieuw. Herstart hem niet steeds: Let's Encrypt laat maar een paar mislukte pogingen per uur toe.
+**Oplossing:** controleer met `getent ahosts gastenboek.voorbeeld.nl` alle adressen van je naam: staat er een adres tussen dat niet van jouw server is, haal dan dat record weg bij je domeinbedrijf. Kijk met `sudo ufw status` of 80 en 443 openstaan. Wacht daarna even: Traefik probeert het zelf opnieuw. Herstart hem niet steeds: Let's Encrypt laat maar een paar mislukte pogingen per uur toe.
 
-### Je site werkt niet meer op het IP-adres
+### Je site werkt niet op het IP-adres
 
-Op `http://203.0.113.10` zegt de browser dat de verbinding niet veilig is, of hij komt niet verder.
+Op `http://203.0.113.10` krijg je een waarschuwing over de verbinding, en daarna `404 page not found`.
 
-**Oorzaak:** met een naam in de Caddyfile stuurt Caddy elk verzoek op `http` door naar `https`, ook dat met het IP-adres. Voor het IP-adres heeft hij geen certificaat.
+**Oorzaak:** Traefik stuurt `http` door naar `https`, ook voor het IP-adres. Daar heeft hij geen certificaat voor, en geen site: je site hoort bij de naam.
 
 **Oplossing:** open je site met je domeinnaam. Dat is ook het adres dat je aan anderen geeft.
 
@@ -85,24 +121,25 @@ Op `http://203.0.113.10` zegt de browser dat de verbinding niet veilig is, of hi
 
 ### Opdracht 1: Run - HTTPS voor je site
 
-Zet je domeinnaam in de Caddyfile, laad Caddy opnieuw, en open je site met `https`. Klik in de adresbalk op het pictogram voor het adres: wie heeft het certificaat ondertekend, en tot wanneer is het geldig?
+Zet de nieuwe regels in de `compose.yaml` van Traefik, start hem opnieuw, en open je site met `https`. Klik in de adresbalk op het pictogram voor het adres: wie heeft het certificaat ondertekend, en tot wanneer is het geldig?
 
 <details>
 <summary>Antwoord</summary>
 
-Als uitgever staat er Let's Encrypt, meestal met een korte naam als `E5` erbij, of ZeroSSL: die gebruikt Caddy als Let's Encrypt het even niet doet. Het certificaat is hooguit drie maanden geldig, en Caddy vernieuwt het vanzelf ruim voordat het afloopt.
+Als uitgever staat er Let's Encrypt, met een korte naam als `E5` of `R11` erbij. Het certificaat is hooguit drie maanden geldig, en Traefik vernieuwt het vanzelf ruim voordat het afloopt.
 
 </details>
 
 ### Opdracht 2: Modify - Nooit meer http
 
-Caddy stuurt `http` door naar `https`, maar de allereerste keer gaat het verzoek nog onversleuteld. Met de kop `Strict-Transport-Security` vertel je de browser: gebruik voor deze naam voortaan altijd `https`, ook als iemand `http` typt. Zet in je Caddyfile, binnen de accolades onder `reverse_proxy`:
+Traefik stuurt `http` door naar `https`, maar de allereerste keer gaat het verzoek nog onversleuteld. Met de kop `Strict-Transport-Security` vertel je de browser: gebruik voor deze naam voortaan altijd `https`, ook als iemand `http` typt. Zet bij de labels van je site twee regels:
 
-```text
-	header Strict-Transport-Security "max-age=86400"
+```yaml
+      - traefik.http.routers.gastenboek.middlewares=hsts
+      - traefik.http.middlewares.hsts.headers.stsSeconds=86400
 ```
 
-Laad Caddy opnieuw. Hoe zie je in de ontwikkelaarstools dat de kop meekomt?
+De tweede maakt een **middleware**: een stap die Traefik doet met elk antwoord. De eerste zet die stap op je site. Commit, haal het op op de server, en start opnieuw. Hoe zie je in de ontwikkelaarstools dat de kop meekomt?
 
 <details>
 <summary>Tip</summary>
@@ -114,8 +151,8 @@ De koppen van een antwoord staan in het tabblad Netwerk, bij een verzoek. Zie [K
 <details>
 <summary>Antwoord</summary>
 
-Klik in Netwerk op het verzoek van de pagina. Onder de koppen van het antwoord staat `strict-transport-security: max-age=86400`. `max-age` is in seconden: een dag lang gebruikt de browser alleen nog `https` voor je naam. Grote sites zetten hier een jaar (`31536000`), maar begin klein: een browser die de kop kent, gaat die tijd niet terug naar `http`, ook niet als je server later weg is of iets anders draait.
+Klik in Netwerk op het verzoek van de pagina. Onder de koppen van het antwoord staat `strict-transport-security: max-age=86400`. `max-age` is in seconden: een dag lang gebruikt de browser alleen nog `https` voor je naam. Grote sites zetten hier een jaar (`31536000`), maar begin klein: een browser die de kop kent, gaat die tijd niet terug naar `http`, ook niet als je server later weg is of iets anders draait. Op je laptop zie je de kop niet: Traefik zet hem alleen bij een antwoord over `https`.
 
 </details>
 
-Door naar [les 10: een nieuwe versie uitrollen](site:fullstack/docs/online/server/nieuwe-versie).
+Door naar [les 15: een nieuwe versie uitrollen](site:fullstack/docs/online/server/nieuwe-versie).

@@ -7,27 +7,30 @@ import Routekaart from '@site/src/components/Routekaart';
 
 # Online zetten: zo werkt deze route
 
-Je gastenboek draait op je eigen laptop, met `fastapi dev`. Alleen jij kunt erbij, en als je laptop dichtgaat, is hij weg. In deze route zet je hem op een server op internet, waar een klasgenoot hem vanaf zijn telefoon kan openen. Op een veilige manier: met een eigen gebruiker, alleen de deuren open die nodig zijn, en HTTPS.
+Je gastenboek draait op je eigen laptop, met `fastapi dev`. Alleen jij kunt erbij, en als je laptop dichtgaat, is hij weg. In deze route zet je hem op een server op internet, waar een klasgenoot hem vanaf zijn telefoon kan openen. Op een veilige manier: in een container die niet als `root` draait, achter een voordeur met HTTPS, en met alleen de deuren open die nodig zijn.
 
 ## Wat je al moet kunnen
 
-- **De FastAPI-route**, minstens de basis. Je hebt een project in git, met een `.gitignore` die je databases en `.venv` buiten git houdt (uit [Wat er in je map staat](site:fullstack/docs/veiligheid/zichtbaar/gitignore)).
+- **De FastAPI-route**, minstens de basis. Je hebt een project in git, met een `.gitignore` die je databases en `.venv` buiten git houdt (uit [Een .gitignore en een nette zip](site:fullstack/docs/veiligheid/zichtbaar/gitignore)).
 - **De route Veiligheid.** Een site op internet krijgt binnen een paar minuten bezoek van programma's die naar zwakke plekken zoeken. Wachtwoorden in gewone tekst, of een handleiding op `/docs` die iedereen alles laat proberen: los dat op voordat je online gaat.
+- **Git en GitHub.** Je project reist als repository: je maakt commits, pusht ze naar GitHub, en haalt het op een andere computer op met `git clone` en `git pull`. Dat staat in de [git-lessen van de editor-cursus](site:editor/git). Elke les die een git-commando voor het eerst gebruikt, linkt naar de les waar het staat.
 - **Linux.** Deze route legt geen Linux uit. Alles over de terminal, rechten, `sudo apt`, `nano`, diensten en `ssh` staat in de [Linux-cursus](site:linux/docs). Elke les zegt welke Linux-les je nodig hebt.
 
 ## Waar je werkt
 
-Je doet alles eerst op je eigen computer, in Ubuntu in WSL ([WSL installeren](site:linux/docs/wsl/installeren)). Daar kan niets stuk en kost het niets. Pas als het daar werkt, huur je een echte server en doe je hetzelfde nog een keer, plus de stappen die alleen op internet nodig zijn.
-
 | Deel | Waar | Wat je doet |
 |:---|:---|:---|
-| Oefenen in WSL | je eigen computer | je project in Linux, `fastapi run`, een eigen gebruiker, een dienst, een voordeur |
-| Op een echte server | een server op internet | inloggen, de deuren dicht, HTTPS met je eigen domein, een nieuwe versie uitrollen |
+| Je project klaarmaken | je laptop, in VS Code | `fastapi run`, `requirements.txt`, een README |
+| In een container | Ubuntu in WSL op je laptop, en vanaf hier alleen nog daar | Docker: een image, een container, een volume, Compose, en Traefik als voordeur |
+| Op een echte server | een server op internet | inloggen, de deuren dicht, je site erop, HTTPS, een nieuwe versie uitrollen |
+| Extra | de server, via een tunnel | je containers bekijken met Portainer |
 
-Voor het tweede deel heb je een server nodig. Vraag je docent of de school er een heeft. Anders huur je er een voor een paar euro per maand bij een hostingbedrijf; dat mag alleen met toestemming van een ouder of verzorger, en zeg hem op als je klaar bent.
+Voor het tweede deel heb je Ubuntu in WSL nodig ([WSL installeren](site:linux/docs/wsl/installeren)). Daar kan niets stuk en kost het niets. In les 5 haal je je project naar Ubuntu, en daarna werk je alleen nog daar: in VS Code vanuit Ubuntu, met git en Docker in Ubuntu. Wat in WSL werkt, werkt op de server ook: daar draait dezelfde Docker, met dezelfde bestanden.
+
+Voor het derde deel heb je een server nodig. Vraag je docent of de school er een heeft. Anders huur je er een voor een paar euro per maand bij een hostingbedrijf; dat mag alleen met toestemming van een ouder of verzorger, en zeg hem op als je klaar bent.
 
 ## De route
 
 <Routekaart kop="De route Online zetten" />
 
-Begin bij [les 1: requirements.txt](site:fullstack/docs/online/wsl/requirements).
+Begin bij [les 1: fastapi dev of fastapi run](site:fullstack/docs/online/project/dev-of-run).

@@ -60,4 +60,15 @@ export const omleidingen: Omleiding[] = [
     naar: '/docs/FastAPI/accounts/verzoek-get#een-formulier',
   },
   ...verhuisd,
+  // De route Online zetten ging in november 2026 over op Docker. De lessen
+  // in WSL zonder Docker (een venv in Linux, een eigen gebruiker, systemd en
+  // Caddy) vielen weg; hun adres komt uit bij de les die die taak nu heeft.
+  ...Object.entries({
+    'wsl/requirements': 'project/requirements',
+    'wsl/fastapi-run': 'project/dev-of-run',
+    'wsl/project-in-linux': 'docker/image',
+    'wsl/eigen-gebruiker': 'docker/niet-als-root',
+    'wsl/dienst': 'docker/compose',
+    'wsl/voordeur': 'docker/traefik',
+  }).map(([oud, nieuw]) => ({ van: `/docs/online/${oud}`, naar: `/docs/online/${nieuw}` })),
 ];

@@ -51,10 +51,13 @@ export const ZINNEN: Record<string, string> = {
   'Beveilig je eigen project': 'Eén lijst om je gastenboek of eigen project mee na te lopen.',
 
   // Online zetten
-  'Oefenen in WSL':
-    'Je site draait in Linux op je eigen computer, als een eigen gebruiker, als dienst en achter een voordeur.',
+  'Je project klaarmaken':
+    'Je project start zoals op een server, en een ander krijgt het met alleen je repository aan de praat.',
+  'In een container':
+    'Je site draait in Docker op je laptop, niet als root, met de berichten in een volume, achter een voordeur.',
   'Op een echte server':
     'Je site staat op internet, met alleen de deuren open die nodig zijn, HTTPS en een back-up.',
+  'Extra: beheren in de browser': 'Je bekijkt je containers in de browser, via een tunnel.',
 };
 
 // Een mijlpaal staat onder een etappe: hier heb je iets wat werkt.

@@ -1,0 +1,166 @@
+---
+sidebar_label: '13. Je site op de server'
+description: Docker op de server, je project ophalen met een deploy key, Traefik ernaast, en je domeinnaam in een .env. Docker zet een gepubliceerde poort open langs de firewall.
+---
+
+# Online zetten: je site op de server
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'Een sleutelpaar maken met ssh-keygen'}]} />
+
+Op je laptop draait alles in Docker. Op de server doe je hetzelfde, met dezelfde bestanden. Je typt de commando's in deze les op de server, als `sam`, tenzij er staat dat het in WSL is.
+
+## Docker op de server
+
+Installeer Docker zoals in [les 4](site:fullstack/docs/online/docker/installeren), en zet `sam` in de groep `docker`:
+
+```bash
+sudo apt update
+sudo apt install docker.io docker-compose-v2 docker-buildx git
+sudo usermod -aG docker sam
+exit
+```
+
+Log opnieuw in met ssh, zodat de groep telt. Op de server zit alleen `sam` in die groep: wie erin zit, is bijna `root`.
+
+## Je project ophalen
+
+Op de server push je nooit; hij haalt alleen op. Is je repository openbaar, kloon hem dan met het https-adres: ophalen mag dan zonder inloggen. Is hij privé, geef de server dan een eigen sleutel die alleen dit project mag lezen: een **deploy key**. Je eigen sleutel uit [les 5](site:fullstack/docs/online/docker/image) zet je hier niet neer: die mag al je repositories veranderen.
+
+```bash
+ssh-keygen -t ed25519
+cat ~/.ssh/id_ed25519.pub
+```
+
+Druk bij de vragen op Enter. Een passphrase laat je leeg: de server moet de sleutel kunnen gebruiken als jij er niet bij bent. Zet de publieke sleutel op GitHub bij je repository onder **Settings**, **Deploy keys**, en laat **Allow write access** uit. Kloon daarna met het ssh-adres:
+
+```bash
+cd ~
+git clone git@github.com:sam/gastenboek.git
+```
+
+De eerste keer vraagt ssh of je de vingerafdruk van GitHub vertrouwt; typ `yes`. Wordt je server ooit gekraakt, dan kan deze sleutel alleen dit ene project lezen, en niets veranderen.
+
+## Traefik op de server
+
+De map `~/traefik` uit WSL hoort niet bij je project, dus hij staat niet op GitHub. Kopieer hem met `scp`, in WSL:
+
+```bash
+scp -r ~/traefik sam@203.0.113.10:
+```
+
+`scp` (*secure copy*) kopieert over ssh. `-r` neemt de hele map mee, en de dubbele punt aan het eind betekent: in de thuismap van `sam`. Start hem daarna op de server:
+
+```bash
+docker network create web
+cd ~/traefik
+docker compose up -d
+```
+
+## Je domeinnaam
+
+In je `compose.yaml` staat `Host(` met `gastenboek.localhost`. Op de server moet daar je domeinnaam staan, en op je laptop niet. Daarom haal je de naam uit een **variabele**. Verander het label in WSL, in je project:
+
+```yaml
+      - traefik.http.routers.gastenboek.rule=Host(`${DOMEIN:-gastenboek.localhost}`)
+```
+
+`${DOMEIN:-gastenboek.localhost}` betekent: de waarde van `DOMEIN`, of `gastenboek.localhost` als die er niet is. Zet `.env` in je `.gitignore` en je `.dockerignore`, en commit en push.
+
+Op de server haal je de nieuwe versie op, en zet je de naam in een bestand `.env` naast `compose.yaml`. Compose leest dat bestand vanzelf:
+
+```bash
+cd ~/gastenboek
+git pull
+echo "DOMEIN=gastenboek.voorbeeld.nl" > .env
+docker compose up -d --build
+```
+
+De `.env` hoort bij deze computer, niet bij je project. Zo werkt dezelfde `compose.yaml` op je laptop en op de server. Open `http://gastenboek.voorbeeld.nl` op je telefoon, via mobiele data en niet via het wifi van school. Daar is je gastenboek, nog met `http`. HTTPS komt in de volgende les.
+
+## Docker en de firewall
+
+In [les 12](site:fullstack/docs/online/server/dichtzetten) hield ufw elke poort tegen die niet in de lijst staat. Voor Docker geldt dat niet. Een poort die je publiceert met `ports` in `compose.yaml` of `-p`, zet Docker zelf open, in de firewall van Linux, vóór de regels van ufw. Een gepubliceerde poort staat dus op internet, wat ufw ook zegt.
+
+Daarom heeft je site geen `ports`: alleen Traefik publiceert iets, poort 80 en 443, en die stonden al open. Wil je ooit iets publiceren dat alleen voor jou is, zet er dan `127.0.0.1:` voor, zoals in [les 9](site:fullstack/docs/online/docker/compose). Dan luistert Docker alleen op de server zelf.
+
+<Voorspel soort="Controlevraag" vraag="Om iets te testen zet je bij je site weer ports met 8000:8000, zonder 127.0.0.1 ervoor. ufw laat 8000 niet door. Een klasgenoot opent het adres van je server met :8000 erachter. Wat ziet hij?">
+  <Keuze uitleg="Zo werkt het voor een gewoon programma, zoals in de vorige les. Maar wie zette deze poort open?">Niets: ufw houdt poort 8000 tegen</Keuze>
+  <Keuze goed uitleg="Docker zet een gepubliceerde poort open vóór de regels van ufw. Poort 8000 staat op internet, en hij komt rechtstreeks bij je site, om Traefik heen.">Je gastenboek, rechtstreeks, zonder Traefik ertussen</Keuze>
+  <Keuze uitleg="Traefik luistert alleen op 80 en 443. Een verzoek op 8000 komt niet bij Traefik.">De 404 van Traefik</Keuze>
+  <Uitleg>
+
+  Dit is de valkuil van Docker op een server: ufw toont 8000 als dicht, en toch staat hij open. Het is ook gevaarlijk om een tweede reden. Je site gelooft door `FORWARDED_ALLOW_IPS=*` elke `X-Forwarded-For`, en via poort 8000 kan een bezoeker die kop zelf invullen. Dan helpt de limiet van slowapi niet meer. Publiceer op een server dus nooit de poort van je site.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### permission denied while trying to connect to the docker API
+
+**Oorzaak:** `sam` zit nog niet in de groep `docker`, of je logde daarna niet opnieuw in.
+
+**Oplossing:** typ `exit`, log opnieuw in met ssh, en kijk met `groups` of `docker` erbij staat.
+
+### `Permission denied (publickey)` bij git clone
+
+```text
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+```
+
+**Oorzaak:** GitHub kent de sleutel van de server niet. De deploy key staat er niet, of bij een andere repository.
+
+**Oplossing:** kijk op GitHub onder **Settings**, **Deploy keys** van deze repository of de sleutel er staat, en of het dezelfde is als `cat ~/.ssh/id_ed25519.pub` laat zien.
+
+### 404 page not found op je domein
+
+Traefik antwoordt, maar zegt `404 page not found`.
+
+**Oorzaak:** Traefik zoekt een andere naam. Meestal staat `.env` niet naast `compose.yaml`, of zit er een tikfout in `DOMEIN`. Dan gebruikt Compose `gastenboek.localhost`.
+
+**Oplossing:** kijk welke naam Compose echt gebruikt, verbeter `.env`, en start opnieuw:
+
+```bash
+docker compose config | grep Host
+docker compose up -d
+```
+
+### De browser krijgt geen antwoord
+
+**Oorzaak:** het A-record wijst nog niet naar je server ([les 11](site:fullstack/docs/online/server/huren)), of Traefik draait niet.
+
+**Oplossing:** controleer de naam met `ping -c 1 gastenboek.voorbeeld.nl`, en kijk met `docker ps` of Traefik draait.
+
+## Opdrachten
+
+### Opdracht 1: Run - Je site op internet
+
+Zet je site op de server, achter Traefik, met je eigen domeinnaam. Open hem op je telefoon via mobiele data, en maak er een account.
+
+<details>
+<summary>Antwoord</summary>
+
+Je ziet je gastenboek, met een lege lijst: de databases van je laptop staan in een volume op je laptop, niet op de server. Werkt het niet, ga dan van achter naar voren: draait je site (`docker compose ps` in `~/gastenboek`), draait Traefik (`docker compose ps` in `~/traefik`), en wijst de naam naar je server?
+
+</details>
+
+### Opdracht 2: Investigate - Wie bezoekt je site?
+
+Kijk na een bezoek met je telefoon in het logboek van je site:
+
+```bash
+cd ~/gastenboek
+docker compose logs --tail 5
+```
+
+Staat er het adres van Traefik, of dat van je telefoon? Waarom?
+
+<details>
+<summary>Antwoord</summary>
+
+Je ziet het adres van je telefoon op internet. Traefik zette het in `X-Forwarded-For`, en je site gelooft die kop door `FORWARDED_ALLOW_IPS=*` uit [les 10](site:fullstack/docs/online/docker/traefik). Daardoor telt de limiet uit de route Veiligheid per bezoeker, en niet iedereen samen.
+
+</details>
+
+Door naar [les 14: je domein met HTTPS](site:fullstack/docs/online/server/https).

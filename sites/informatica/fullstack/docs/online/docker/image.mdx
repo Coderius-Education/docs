@@ -1,0 +1,244 @@
+---
+sidebar_label: '5. Je site in een image'
+description: Een Dockerfile beschrijft je image stap voor stap, een .dockerignore houdt rommel buiten, en docker build maakt het image.
+---
+
+# Online zetten: je site in een image
+
+<Voorkennis items={[{site: 'linux', to: '/docs/terminal/mappen', label: 'Door mappen lopen met cd en ls'}, {site: 'linux', to: '/docs/wsl/windows-en-linux', label: 'Je project in je Linux-thuismap, en code . vanuit Ubuntu'}, {site: 'linux', to: '/docs/terminal/bestanden-lezen', label: 'Een bestand lezen met cat'}, {site: 'linux', to: '/docs/wsl/ssh', label: 'Een sleutelpaar maken met ssh-keygen'}]} />
+
+Je site moet een image worden. Wat erin moet, schrijf je op in een bestand: de **Dockerfile**. Docker volgt dat recept stap voor stap, en bewaart het resultaat als image.
+
+## Je project in Linux
+
+Docker draait in Ubuntu, dus daar haal je je project naartoe. Vanaf nu werk je alleen nog daar: je opent het project in VS Code vanuit Ubuntu, je commit en pusht vanuit Ubuntu, en je test je site in Docker. De map op Windows gebruik je niet meer. De databases die daar staan, komen niet mee, want ze staan niet in git: in Ubuntu begint je gastenboek leeg.
+
+Git in Ubuntu is een andere git dan die op Windows, en kent jou nog niet. Vertel hem eerst je naam en het e-mailadres van je GitHub-account:
+
+```bash
+git config --global user.name "Sam de Vries"
+git config --global user.email "sam@voorbeeld.nl"
+```
+
+GitHub laat je in de terminal niet inloggen met een wachtwoord. Je gebruikt daarom je ssh-sleutel uit [Inloggen op een andere computer](site:linux/docs/wsl/ssh). Laat de publieke sleutel zien:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+Heb je nog geen sleutel, maak er dan eerst een met `ssh-keygen -t ed25519`, zoals in die les. Kopieer de hele regel, en zet hem op GitHub onder je profielfoto, **Settings**, **SSH and GPG keys**, **New SSH key**. Controleer daarna of GitHub je kent:
+
+```bash
+ssh -T git@github.com
+```
+
+De eerste keer vraagt ssh of je de vingerafdruk van GitHub vertrouwt; typ `yes`. Daarna staat er `Hi sam! You've successfully authenticated, but GitHub does not provide shell access.` Dat laatste is goed: je wilde alleen weten of de sleutel werkt.
+
+Kloon nu je repository in je Linux-thuismap, met het ssh-adres. Je vindt het op GitHub onder de groene knop **Code**, bij **SSH**. Zet je eigen adres op de plek van dat van `sam`:
+
+```bash
+cd ~
+git clone git@github.com:sam/gastenboek.git
+cd gastenboek
+code .
+```
+
+VS Code opent, en linksonder staat **WSL: Ubuntu-24.04**. Alles wat je nu verandert, verandert in Ubuntu.
+
+## De Dockerfile
+
+Maak naast `main.py` een bestand `Dockerfile`, zonder extensie, met hoofdletter D:
+
+```dockerfile
+FROM python:3.13-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN python -m pip install -r requirements.txt
+
+COPY . .
+
+CMD ["fastapi", "run", "main.py", "--port", "8000"]
+```
+
+Elke regel is een stap:
+
+| Regel | Wat Docker doet |
+|:---|:---|
+| `FROM python:3.13-slim` | begin met een image van Docker Hub: een kleine Linux met Python 3.13 erop |
+| `WORKDIR /app` | maak de map `/app` en ga erin staan |
+| `COPY requirements.txt .` | kopieer `requirements.txt` uit je project naar `/app` |
+| `RUN python -m pip install -r requirements.txt` | installeer de packages uit je lijst ([les 2](site:fullstack/docs/online/project/requirements)) |
+| `COPY . .` | kopieer de rest van je project naar `/app` |
+| `CMD [...]` | dit commando start een container: `fastapi run`, op poort 8000 |
+
+`RUN` gebeurt één keer, tijdens het bouwen. `CMD` gebeurt elke keer dat een container start. Een virtual environment is hier niet nodig: in het image draait alleen jouw site, en die mag Python voor zichzelf hebben.
+
+Er staat `fastapi run` en niet `fastapi dev`, om de redenen uit [les 1](site:fullstack/docs/online/project/dev-of-run). En er staat geen `--host`: in een container moet je site op `0.0.0.0` luisteren. In de volgende les zie je waarom.
+
+## Wat er niet in hoort
+
+`COPY . .` kopieert alles uit je map. Ook `.venv`, als je die in Ubuntu ooit maakte, en databases die bij het testen ontstonden. Dat hoort niet in je image: `.venv` is van een andere computer, en een database met wachtwoorden zit dan in elk image dat je deelt.
+
+Maak daarom naast de Dockerfile een bestand `.dockerignore`, dat werkt als `.gitignore`:
+
+```text
+.venv
+__pycache__
+.git
+*.db
+```
+
+## Bouwen
+
+```bash
+docker build -t gastenboek .
+```
+
+`-t gastenboek` geeft het image een naam (een *tag*). De punt aan het eind betekent: de Dockerfile en de bestanden staan in deze map. Docker laat elke stap zien:
+
+```text
+ => [1/5] FROM docker.io/library/python:3.13-slim
+ => [2/5] WORKDIR /app
+ => [3/5] COPY requirements.txt .
+ => [4/5] RUN python -m pip install -r requirements.txt
+ => [5/5] COPY . .
+ => naming to docker.io/library/gastenboek:latest
+```
+
+De eerste keer duurt het een minuut: Docker haalt het Python-image op en installeert alle packages. Bij de pip-stap zie je een waarschuwing:
+
+```text
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead
+```
+
+Op je eigen computer is dat een goed advies: daar delen Ubuntu en jij dezelfde Python. In een image draait alleen jouw site, en het image gooi je weg en bouw je opnieuw zodra er iets mis is. Hier mag je de waarschuwing laten staan, net als de `[notice]` dat er een nieuwe pip is. Daarna staat je image erbij:
+
+```bash
+docker images
+```
+
+```text
+IMAGE                ID             DISK USAGE   CONTENT SIZE   EXTRA
+gastenboek:latest    b5897b957b4d        361MB         94.9MB
+```
+
+Ruim 300 MB, en dat is bijna allemaal Linux, Python en de packages uit je lijst. Je eigen code is een paar kilobyte. Zet de Dockerfile en `.dockerignore` in git, ze horen bij je project:
+
+```bash
+git add Dockerfile .dockerignore
+git commit -m "Dockerfile toegevoegd"
+git push
+```
+
+<Voorspel soort="Controlevraag" vraag="Je verandert een tekst in een template en bouwt het image opnieuw met dezelfde regel. Welke stappen doet Docker opnieuw?">
+  <Keuze uitleg="Docker onthoudt elke stap. Is er voor de eerste stappen iets veranderd?">Alle vijf, want het is een nieuw image</Keuze>
+  <Keuze goed uitleg="Tot en met de pip-stap is er niets veranderd: requirements.txt is gelijk. Pas bij de stap die je hele map kopieert, is er een ander bestand, dus vanaf daar doet Docker het opnieuw.">Alleen de stap die je hele map kopieert; de stappen ervoor haalt Docker uit zijn geheugen</Keuze>
+  <Keuze uitleg="Een template is een van de bestanden die de laatste kopieerstap meeneemt. Ziet Docker dat het veranderd is?">Geen enkele, want de Dockerfile is niet veranderd</Keuze>
+  <Uitleg>
+
+  Docker bewaart het resultaat van elke stap. Is een stap en alles ervoor gelijk aan de vorige keer, dan pakt hij het bewaarde resultaat: `CACHED`. Daarom staat `COPY requirements.txt .` apart, vóór `COPY . .`. Zolang je lijst gelijk blijft, slaat Docker de trage pip-stap over, ook als je code verandert.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Author identity unknown
+
+```text
+Author identity unknown
+
+*** Please tell me who you are.
+```
+
+**Oorzaak:** git in Ubuntu weet nog niet wie je bent. De naam die je op Windows instelde, geldt hier niet.
+
+**Oplossing:** doe de twee regels met `git config --global` van hierboven, en commit opnieuw.
+
+### `Permission denied (publickey)` bij GitHub
+
+```text
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+```
+
+**Oorzaak:** GitHub kent je sleutel niet. Je zette de publieke sleutel niet op GitHub, of een andere dan die in `~/.ssh/id_ed25519.pub`.
+
+**Oplossing:** vergelijk `cat ~/.ssh/id_ed25519.pub` met de sleutel onder **SSH and GPG keys** op GitHub, en probeer `ssh -T git@github.com` opnieuw.
+
+### Username for 'https://github.com'
+
+Bij `git push` vraagt git om een gebruikersnaam en een wachtwoord, en daarna staat er `Support for password authentication was removed`.
+
+**Oorzaak:** je kloonde met het https-adres. Daarover laat GitHub je in de terminal niet met een wachtwoord inloggen.
+
+**Oplossing:** zet het adres om naar ssh, en push opnieuw:
+
+```bash
+git remote set-url origin git@github.com:sam/gastenboek.git
+```
+
+### failed to read dockerfile
+
+```text
+ERROR: failed to build: failed to solve: failed to read dockerfile: open Dockerfile: no such file or directory
+```
+
+**Oorzaak:** in deze map staat geen bestand dat precies `Dockerfile` heet. Je staat in een andere map, of het bestand heet `dockerfile`, `Dockerfile.txt` of `DockerFile`.
+
+**Oplossing:** ga met `cd` naar je project, en kijk met `ls` hoe het bestand heet. Linux maakt verschil tussen hoofdletters en kleine letters.
+
+### No matching distribution found
+
+```text
+ERROR: No matching distribution found for pywin32==306
+```
+
+**Oorzaak:** in `requirements.txt` staat een package dat alleen op Windows bestaat. In het image draait Linux.
+
+**Oplossing:** haal die regel uit `requirements.txt`, zoals in [les 2](site:fullstack/docs/online/project/requirements), en bouw opnieuw.
+
+### The legacy builder is deprecated
+
+```text
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+```
+
+**Oorzaak:** `docker-buildx` is niet geïnstalleerd. Docker bouwt dan op de oude manier; dat werkt nog, maar je ziet de stappen anders.
+
+**Oplossing:** `sudo apt install docker-buildx`.
+
+## Opdrachten
+
+### Opdracht 1: Run - Jouw image
+
+Kloon je project in Ubuntu, maak de Dockerfile en `.dockerignore`, en bouw het image. Bouw het daarna nog een keer zonder iets te veranderen. Hoe lang duurt de tweede keer?
+
+<details>
+<summary>Antwoord</summary>
+
+```bash
+docker build -t gastenboek .
+docker build -t gastenboek .
+```
+
+De tweede keer is het binnen een seconde klaar: elke stap staat er als `CACHED`, want er is niets veranderd.
+
+</details>
+
+### Opdracht 2: Investigate - Wat zit erin?
+
+Start een container van je image, maar met `bash` in plaats van de server: `docker run --rm -it gastenboek bash`. Kijk met `ls` wat er in `/app` staat, en met `python --version` welke Python het is. Staat `.venv` erin? Typ `exit` als je klaar bent.
+
+<details>
+<summary>Antwoord</summary>
+
+In `/app` staan je bestanden: `Dockerfile`, `main.py`, `requirements.txt`, `README.md`, `static` en `templates`. Geen `.venv` en geen `.db`, want die hield `.dockerignore` buiten het image. `python --version` geeft `Python 3.13` met een nummer erachter, ook als je in Ubuntu of op Windows een andere versie hebt. Een woord achter de naam van het image vervangt de `CMD`, en `--rm` gooit de container weg zodra je `exit` typt.
+
+</details>
+
+Door naar [les 6: een container draaien](site:fullstack/docs/online/docker/container).

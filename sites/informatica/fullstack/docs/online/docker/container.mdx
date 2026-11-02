@@ -1,0 +1,137 @@
+---
+sidebar_label: '6. Een container draaien'
+description: docker run start je image als container, -p maakt een poort van buiten bereikbaar, en met ps, logs, stop, start en rm beheer je hem.
+---
+
+# Online zetten: een container draaien
+
+Je image staat klaar. Start er een container van:
+
+```bash
+docker run -p 8000:8000 gastenboek
+```
+
+Je ziet bijna dezelfde regels als bij `fastapi run` op je laptop, met `production mode` en `http://0.0.0.0:8000`. Ze zien er wat kaler uit: Docker geeft de container geen echt scherm, en dan laat fastapi de opmaak weg. Open `http://127.0.0.1:8000` in je browser op Windows: daar is je gastenboek, nu uit een container. Stop hem met Ctrl+C.
+
+## Een poort naar buiten
+
+Een container is afgeschermd: van buiten kan niemand erbij, ook jij niet. Met `-p` (*publish*) maak je één deur open. `-p 8000:8000` betekent: wat op poort 8000 van deze computer binnenkomt, gaat naar poort 8000 in de container. Het eerste getal is van de computer, het tweede van de container. Met `-p 9000:8000` open je je site op `http://127.0.0.1:9000`.
+
+Nu zie je ook waarom de container op `0.0.0.0` luistert. Een verzoek via `-p` komt de container binnen over zijn eigen netwerk. Luisterde je site op `127.0.0.1`, dan nam hij alleen verzoeken aan van binnen de container zelf, en kwam jouw browser nooit binnen.
+
+## Op de achtergrond
+
+Een server houd je niet open in een terminal. Met `-d` (*detached*) draait de container op de achtergrond, en met `--name` geef je hem een naam die je onthoudt:
+
+```bash
+docker run -d --name gastenboek -p 8000:8000 gastenboek
+```
+
+Docker geeft een lange code terug, het nummer van de container, en je prompt is meteen weer vrij. Kijk wat er draait:
+
+```bash
+docker ps
+```
+
+```text
+CONTAINER ID   IMAGE        COMMAND                  CREATED         STATUS         PORTS                    NAMES
+1e4f4be5187f   gastenboek   "fastapi run main.py…"   3 seconds ago   Up 3 seconds   0.0.0.0:8000->8000/tcp   gastenboek
+```
+
+Bij `PORTS` zie je de deur die `-p` openzette. Wat je site in de terminal zou zetten, lees je nu met `logs`:
+
+```bash
+docker logs gastenboek
+```
+
+Met `docker logs -f gastenboek` blijf je meekijken, tot je Ctrl+C drukt. Dat stopt alleen het meekijken, niet je site.
+
+## Stoppen, starten en weggooien
+
+| Commando | Wat er gebeurt |
+|:---|:---|
+| `docker stop gastenboek` | de container stopt, en blijft bestaan |
+| `docker start gastenboek` | dezelfde container draait weer |
+| `docker rm gastenboek` | de gestopte container is weg |
+| `docker rm -f gastenboek` | stoppen en weggooien in één keer |
+
+Een gestopte container zie je met `docker ps -a`, met `Exited` bij de status.
+
+<Voorspel soort="Controlevraag" vraag="Je schrijft een bericht in je gastenboek in de container. Daarna doe je docker stop gastenboek en docker start gastenboek. Staat je bericht er nog?">
+  <Keuze goed uitleg="stop en start gebruiken dezelfde container, en de databases staan in die container. Ze blijven staan tot de container weg is.">Ja, want het is nog steeds dezelfde container</Keuze>
+  <Keuze uitleg="Een container begint niet opnieuw bij stop en start. Wat zit er in deze container, wat er niet in het image zat?">Nee, want een container begint bij elke start weer bij het image</Keuze>
+  <Keuze uitleg="SqliteDict bewaart alles in een bestand. Een bestand blijft staan als een programma stopt.">Nee, want bij het stoppen gaat het geheugen van de container leeg</Keuze>
+  <Uitleg>
+
+  Een container heeft een eigen laag bovenop het image, waarin alles komt wat er tijdens het draaien bijkomt: hier `gastenboek.db` en `gebruikers.db`. Bij stop en start blijft die laag staan. Gooi je de container weg, dan gaat de laag mee. Dat zie je in opdracht 2.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### The container name is already in use
+
+```text
+docker: Error response from daemon: Conflict. The container name "/gastenboek" is already in use by container "f3313046c0cd…". You have to remove (or rename) that container to be able to reuse that name.
+```
+
+**Oorzaak:** er bestaat al een container met die naam, ook als hij gestopt is.
+
+**Oplossing:** gooi de oude weg met `docker rm -f gastenboek`, en start opnieuw.
+
+### port is already allocated
+
+```text
+docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint …: Bind for 0.0.0.0:8000 failed: port is already allocated
+```
+
+Draait er een ander programma dan Docker op die poort, dan eindigt de regel met `address already in use`.
+
+**Oorzaak:** poort 8000 van deze computer is al bezet, door een andere container of een ander programma.
+
+**Oplossing:** kijk met `docker ps` welke container hem heeft, en stop die. Of kies een andere poort voor de computer: `-p 8001:8000`. Docker maakt de container wel aan voordat het misgaat; gooi hem weg met `docker rm`.
+
+### De browser krijgt geen antwoord
+
+`docker ps` toont je container met `Up`, maar `http://127.0.0.1:8000` laadt niet.
+
+**Oorzaak:** je startte de container zonder `-p`. Bij `PORTS` staat dan niets: er is geen deur.
+
+**Oplossing:** gooi de container weg en start hem opnieuw met `-p 8000:8000`.
+
+## Opdrachten
+
+### Opdracht 1: Run - Op de achtergrond
+
+Start je site op de achtergrond met de naam `gastenboek`. Maak een account en schrijf een bericht. Kijk daarna met `docker logs` welke verzoeken je browser deed.
+
+<details>
+<summary>Antwoord</summary>
+
+```bash
+docker run -d --name gastenboek -p 8000:8000 gastenboek
+docker logs gastenboek
+```
+
+Onder de startregels staat een regel per verzoek, met de methode, het pad en de statuscode: `POST /registreer` met `303`, en daarna `GET /gastenboek` met `200`. Het adres vooraan is niet dat van je laptop maar van het netwerk van Docker. Dat komt terug in [les 10](site:fullstack/docs/online/docker/traefik).
+
+</details>
+
+### Opdracht 2: Investigate - Weg is weg
+
+Gooi de container weg en start een nieuwe met hetzelfde commando. Staat je bericht er nog? Waarom niet?
+
+<details>
+<summary>Antwoord</summary>
+
+```bash
+docker rm -f gastenboek
+docker run -d --name gastenboek -p 8000:8000 gastenboek
+```
+
+Je gastenboek is leeg, en je account is weg. De databases stonden in de laag van de oude container, en die ging mee met `docker rm`. De nieuwe container begint bij het image, en daarin staan geen databases. Voor een server is dat een probleem: bij elke nieuwe versie gooi je de container weg. In [les 8](site:fullstack/docs/online/docker/volume) zet je de databases daarom buiten de container.
+
+</details>
+
+Door naar [les 7: niet als root](site:fullstack/docs/online/docker/niet-als-root).

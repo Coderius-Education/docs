@@ -109,12 +109,12 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/index.mdx': 'startpagina van de route, verwijst naar de FastAPI-lessen zelf',
   'online/index.mdx':
     'startpagina van de route; de Linux-cursus staat er als geheel in, elke les linkt zijn eigen Linux-les',
-  'online/wsl/requirements.mdx':
-    'pip freeze en -r worden hier zelf uitgelegd; het pijltje > linkt in de tekst naar de Linux-les',
-  'online/wsl/fastapi-run.mdx': 'fastapi run en ss worden hier zelf uitgelegd',
+  'online/project/dev-of-run.mdx': 'fastapi run en --host worden hier zelf uitgelegd',
+  'online/docker/container.mdx': 'docker run, -p en -d worden hier zelf uitgelegd',
+  'online/docker/volume.mdx': 'een volume wordt hier zelf uitgelegd, en bouwt op de lessen ervoor',
+  'online/docker/compose.mdx': 'YAML en docker compose worden hier zelf uitgelegd',
   'online/server/https.mdx':
-    'Caddy en het A-record staan in de lessen ervoor; secure linkt in de tekst naar Cookies afschermen',
-  'online/server/nieuwe-versie.mdx': 'git pull, scp en de back-up worden hier zelf uitgelegd',
+    'Traefik en het A-record staan in de lessen ervoor; secure linkt in de tekst naar Cookies afschermen',
   'veiligheid/cookies/eigen-project.mdx': 'toepassen van de lessen ervoor op het eigen project',
   'veiligheid/cookies/httponly.mdx': 'bouwt op de les ervoor, in dezelfde map',
   'veiligheid/cookies/samesite.mdx': 'begrippen worden in de les zelf uitgelegd',
@@ -203,12 +203,17 @@ const MET_BLOK = [
   'veiligheid/xss/zwakheid.mdx',
   'veiligheid/zichtbaar/gitignore.mdx',
   'veiligheid/zichtbaar/handleiding.mdx',
-  'online/wsl/project-in-linux.mdx',
-  'online/wsl/eigen-gebruiker.mdx',
-  'online/wsl/dienst.mdx',
-  'online/wsl/voordeur.mdx',
+  'online/project/requirements.mdx',
+  'online/project/repository.mdx',
+  'online/docker/traefik.mdx',
+  'online/server/nieuwe-versie.mdx',
+  'online/docker/installeren.mdx',
+  'online/docker/image.mdx',
+  'online/docker/niet-als-root.mdx',
   'online/server/huren.mdx',
   'online/server/dichtzetten.mdx',
+  'online/server/site.mdx',
+  'online/extra/portainer.mdx',
 ];
 
 function relatievePaden(): string[] {

@@ -1,11 +1,13 @@
 ---
-sidebar_label: '1. Wat je project nodig heeft'
+sidebar_label: '2. Wat je project nodig heeft'
 description: Zet in requirements.txt welke packages je project gebruikt, met `python -m pip freeze`, zodat een andere computer precies dezelfde installeert.
 ---
 
 # Online zetten: wat je project nodig heeft
 
-Je project draait op je laptop omdat je daar ooit `fastapi[standard]`, `sqlitedict` en misschien `argon2-cffi` en `slowapi` hebt geïnstalleerd. Een server weet daar niets van. Hij krijgt je code uit git, en `.venv` zit daar bewust niet in.
+<Voorkennis items={[{site: 'editor', to: '/git/basis/stap-4-commit', label: 'Een commit maken'}, {site: 'editor', to: '/git/push/stap-1-publish', label: 'Je project naar GitHub pushen'}]} />
+
+Je project draait op je laptop omdat je daar ooit `fastapi[standard]`, `sqlitedict` en misschien `argon2-cffi` en `slowapi` hebt geïnstalleerd. Een andere computer weet daar niets van. Hij krijgt je code uit git, en `.venv` zit daar bewust niet in.
 
 Daarom zet je in een bestand welke packages je project nodig heeft. Dat bestand heet bij afspraak `requirements.txt`, en het staat naast `main.py`.
 
@@ -13,7 +15,7 @@ Daarom zet je in een bestand welke packages je project nodig heeft. Dat bestand 
 
 Open je project in VS Code, en typ in de terminal van VS Code (waar je virtual environment aanstaat):
 
-```bash
+```powershell
 python -m pip freeze | Out-File -Encoding ascii requirements.txt
 ```
 
@@ -40,7 +42,7 @@ Op een andere computer, in een nieuwe virtual environment, installeer je alles i
 python -m pip install -r requirements.txt
 ```
 
-De `-r` betekent: lees de namen uit dit bestand. Dat doe je in de volgende les, in Linux.
+De `-r` betekent: lees de namen uit dit bestand. Een klasgenoot die je project ophaalt, doet dat zo. Straks doet Docker het voor je, met precies deze regel in de Dockerfile van [les 5](site:fullstack/docs/online/docker/image).
 
 ## In git
 
@@ -52,7 +54,7 @@ git commit -m "requirements.txt toegevoegd"
 git push
 ```
 
-Installeer je later een nieuw package, maak de lijst dan opnieuw en commit hem mee. Anders werkt je site op je laptop wel en op de server niet.
+Installeer je later een nieuw package, maak de lijst dan opnieuw en commit hem mee. Anders werkt je site op je laptop wel en in Docker niet.
 
 <Voorspel soort="Controlevraag" vraag="Je installeert httpx voor een script, en maakt daarna de lijst opnieuw met dezelfde regel. Wat gebeurt er met de packages die al in het bestand stonden?">
   <Keuze uitleg="Out-File maakt het bestand eerst leeg. Maar wat schrijft freeze er daarna in?">Ze zijn weg, alleen httpx staat erin</Keuze>
@@ -101,6 +103,19 @@ sqlitedict @ file:///C:/Users/sam/Downloads/sqlitedict-2.1.0.tar.gz
 
 **Oplossing:** verander de regel in een naam met versie, zoals `sqlitedict==2.1.0`.
 
+### Een package dat alleen op Windows bestaat
+
+Op je laptop werkt alles, maar in Linux en straks in Docker niet:
+
+```text
+ERROR: Could not find a version that satisfies the requirement pywin32==306 (from versions: none)
+ERROR: No matching distribution found for pywin32==306
+```
+
+**Oorzaak:** er staat een package in je lijst dat alleen voor Windows bestaat, zoals `pywin32` of `pywinpty`. Het kwam mee met iets anders dat je ooit in deze virtual environment installeerde, zoals Jupyter.
+
+**Oplossing:** heeft je site het niet nodig, haal die regel dan uit `requirements.txt`, en commit het bestand opnieuw.
+
 ## Opdrachten
 
 ### Opdracht 1: Run - Je eigen lijst
@@ -110,14 +125,14 @@ Maak `requirements.txt` voor je eigen project, en zet hem in git.
 <details>
 <summary>Antwoord</summary>
 
-```bash
+```powershell
 python -m pip freeze | Out-File -Encoding ascii requirements.txt
 git add requirements.txt
 git commit -m "requirements.txt toegevoegd"
 git push
 ```
 
-Controleer op GitHub dat het bestand er staat, naast `main.py`, en dat er geen `.db`-bestanden en geen `.venv` bij staan.
+Controleer op GitHub dat het bestand er staat, naast `main.py`.
 
 </details>
 
@@ -139,4 +154,4 @@ Zoek in je `requirements.txt` de regel met `uvicorn`. Je hebt dat package nooit 
 
 </details>
 
-Door naar [les 2: je project in Linux](site:fullstack/docs/online/wsl/project-in-linux).
+Door naar [les 3: een README en je repository](site:fullstack/docs/online/project/repository).

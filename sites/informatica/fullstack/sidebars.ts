@@ -282,23 +282,35 @@ const sidebars: SidebarsConfig = {
     },
     'veiligheid/eigen-project',
   ],
-  // Online zetten: eerst alles in WSL op de eigen computer, dan op een echte
-  // server. Linux zelf legt de route niet uit; dat staat in de Linux-cursus
-  // (site dvwa, docs/linux/), en elke les linkt ernaar. Uitgeklapt: de route
-  // is kort en wordt van voor naar achter gedaan.
+  // Online zetten: eerst het project klaar op de laptop, dan Docker in WSL,
+  // dan dezelfde bestanden op een echte server, en Portainer als extra.
+  // Linux zelf legt de route niet uit; dat staat in de Linux-cursus (site
+  // linux), en elke les linkt ernaar. Uitgeklapt: de route wordt van voor
+  // naar achter gedaan.
   onlineSidebar: [
     'online/index',
     {
       type: 'category',
-      label: 'Oefenen in WSL',
+      label: 'Je project klaarmaken',
       collapsed: false,
       items: [
-        'online/wsl/requirements',
-        'online/wsl/project-in-linux',
-        'online/wsl/fastapi-run',
-        'online/wsl/eigen-gebruiker',
-        'online/wsl/dienst',
-        'online/wsl/voordeur',
+        'online/project/dev-of-run',
+        'online/project/requirements',
+        'online/project/repository',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'In een container',
+      collapsed: false,
+      items: [
+        'online/docker/installeren',
+        'online/docker/image',
+        'online/docker/container',
+        'online/docker/niet-als-root',
+        'online/docker/volume',
+        'online/docker/compose',
+        'online/docker/traefik',
       ],
     },
     {
@@ -308,9 +320,16 @@ const sidebars: SidebarsConfig = {
       items: [
         'online/server/huren',
         'online/server/dichtzetten',
+        'online/server/site',
         'online/server/https',
         'online/server/nieuwe-versie',
       ],
+    },
+    {
+      type: 'category',
+      label: 'Extra: beheren in de browser',
+      collapsed: false,
+      items: ['online/extra/portainer'],
     },
   ],
 };

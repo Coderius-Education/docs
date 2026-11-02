@@ -167,11 +167,33 @@ De beloofde uitvoer en foutmeldingen in deze reeks draaien niet mee in CI, die a
 
 ### De route Online zetten
 
-Een eigen route in de navbar, na Veiligheid: je leerlingen zetten hun gastenboek op een Linux-server, op een veilige manier. Eerst oefenen ze alles in Ubuntu in WSL op hun eigen computer (`requirements.txt`, het project in Linux, `fastapi run`, een eigen gebruiker zonder rechten, een systemd-dienst, Caddy als voordeur). Daarna doen ze het op een echte server, met een firewall, ssh alleen met een sleutel, automatische updates, HTTPS met een eigen domeinnaam, en een nieuwe versie uitrollen met een back-up.
+Een eigen route in de navbar, na Veiligheid: je leerlingen zetten hun gastenboek op een Linux-server, op een veilige manier, met Docker. De route heeft drie delen en een extra.
 
-De route legt geen Linux uit. Terminal, rechten, `sudo apt`, `nano`, diensten en `ssh` staan in de [Linux-cursus](site:linux/docs), en elke les linkt naar de Linux-les die hij nodig heeft. Laat leerlingen die cursus eerst doen; deel 1 kan in de browser, deel 2 vraagt WSL.
+| Deel | Waar | Lessen |
+|:---|:---|:---|
+| Je project klaarmaken | laptop, VS Code | `fastapi dev` of `fastapi run`, `requirements.txt`, een README en een repository die een ander aan de praat krijgt |
+| In een container | Ubuntu in WSL | Docker installeren, een image, een container, niet als `root`, een volume, Compose, Traefik als voordeur |
+| Op een echte server | een VPS | ssh alleen met een sleutel, de firewall en automatische updates, de site erop met een deploy key, HTTPS via Let's Encrypt, een nieuwe versie uitrollen met een back-up |
+| Extra | de server, via een ssh-tunnel | Portainer om de containers in de browser te bekijken |
 
-Voor het tweede deel is een server nodig. Een VPS bij een hostingbedrijf kost een paar euro per maand; als de school er een heeft, of een paar kleine voor de klas, kan elke leerling er een eigen gebruiker op krijgen. Een domeinnaam is nodig voor HTTPS. Met een subdomein per leerling onder een domein van school is dat het makkelijkst te regelen. Zeg erbij dat een server op internet binnen een uur bezoek krijgt van programma's die proberen in te loggen: les 7 laat dat zien, en les 8 doet er iets aan. Laat les 8 daarom op dezelfde dag als les 7 doen.
+De route legt geen Linux uit. Terminal, rechten, `sudo apt`, `nano`, diensten en `ssh` staan in de [Linux-cursus](site:linux/docs), en elke les linkt naar de Linux-les die hij nodig heeft. Laat leerlingen die cursus eerst doen, minstens tot en met de lessen over WSL en ssh.
+
+Vanaf les 5 werken leerlingen alleen nog in Ubuntu in WSL: ze klonen hun repository daar met ssh (de sleutel uit de Linux-cursus staat op hun GitHub-account), openen hem met `code .` vanuit Ubuntu, en testen hun site in Docker. De kopie op Windows gebruiken ze niet meer; de databases die daar staan, komen niet mee. Docker draait in de lessen als Docker Engine in Ubuntu in WSL, met de pakketten van Ubuntu (`docker.io`, `docker-compose-v2`, `docker-buildx`), en niet als Docker Desktop. Zo is het op de laptop hetzelfde als op de server, en is er geen licentievraag. Leerlingen komen in de groep `docker`; zeg erbij dat dat bijna `root` is. Docker Hub geeft per internetadres een beperkt aantal images per uur, en op school deelt de hele klas één adres. Haal met de klas niet tegelijk images op, of laat leerlingen een gratis account maken en `docker login` doen.
+
+Voor het derde deel is een server nodig. Een VPS bij een hostingbedrijf kost een paar euro per maand, en een domeinnaam is nodig voor HTTPS. Zeg erbij dat een server op internet binnen een uur bezoek krijgt van programma's die proberen in te loggen: les 11 laat dat zien, en les 12 doet er iets aan. Laat les 12 daarom op dezelfde dag als les 11 doen, en voordat de site erop komt.
+
+Twee dingen in de route zijn bewust streng. Docker zet een gepubliceerde poort open langs `ufw`, dus op de server publiceert alleen Traefik iets (80 en 443), en Portainer alleen op `127.0.0.1`. En Portainer kan alles wat Docker kan: hij komt nooit achter Traefik of op een open poort, alleen via een ssh-tunnel.
+
+#### Eén server voor de klas
+
+Huren niet alle leerlingen een eigen server, dan kan één schoolserver met Traefik de sites van de hele klas draaien. Dat is dezelfde opzet als in de lessen, met een paar verschillen:
+
+- **Eén voordeur.** Jij draait Traefik met HTTPS, zoals in les 14, en maakt het netwerk `web`. Met een DNS-record `*.klas.school.nl` (een *wildcard*) dat naar de server wijst, hoort elke naam onder dat domein bij deze server.
+- **Een naam per leerling.** Elke leerling krijgt een eigen naam, zoals `sam.klas.school.nl`, in zijn `.env` als `DOMEIN`. Traefik vraagt voor elke naam zelf een certificaat aan.
+- **Unieke namen in de labels.** Het label `traefik.http.routers.gastenboek…` moet per leerling anders heten, anders zitten de sites elkaar in de weg. Laat ze `gastenboek` vervangen door hun eigen naam, ook in `traefik.http.services…`.
+- **Wie mag Docker gebruiken?** Wie in de groep `docker` zit, kan de hele server overnemen, en dus ook bij de databases van klasgenoten. Geef leerlingen daarom geen toegang tot Docker op de gedeelde server. Laat ze hun repository met jou delen (een deploy key per project, alleen lezen), en rol hun sites zelf uit met `git pull` en `docker compose up -d --build`, met een map en een `.env` per leerling. Portainer, via jouw eigen ssh-tunnel, geeft je dan een overzicht van alle containers.
+
+Leerlingen doen in die opzet deel 1 en 2 helemaal zelf, en van deel 3 alleen wat over hun eigen project gaat: de deploy key, de `.env` met hun naam, en controleren dat hun site met HTTPS werkt. Les 11 en 12 lezen ze mee; die doe jij één keer voor de server.
 
 ## Feedback & bijdragen
 
