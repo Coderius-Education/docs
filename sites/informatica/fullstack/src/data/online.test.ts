@@ -123,4 +123,41 @@ describe('de route Online zetten', () => {
     }
     expect(fout).toEqual([]);
   });
+
+  it('ssh gaat in les 7 al op alleen een sleutel, vóór de site erop komt', () => {
+    // Eerst stond dit in les 8: de hele les 7 kon je met het wachtwoord van
+    // sam inloggen, terwijl een 50-cloud-init.conf dat toestond.
+    const les7 = lees('online/server/huren');
+    const sleutel = les7.indexOf('PasswordAuthentication no');
+    expect(sleutel).toBeGreaterThan(les7.indexOf('usermod -aG sudo sam'));
+    expect(sleutel).toBeLessThan(les7.indexOf('## Dezelfde stappen als in WSL'));
+    expect(lees('online/server/dichtzetten')).not.toContain('PasswordAuthentication');
+  });
+
+  it('de deploy key komt vóór de stappen die het project ophalen', () => {
+    const les7 = lees('online/server/huren');
+    expect(les7.indexOf('## Een privé-repository: een deploy key')).toBeLessThan(
+      les7.indexOf('## Dezelfde stappen als in WSL'),
+    );
+  });
+
+  it('elk git-commando in /srv/gastenboek draait als gastenboek', () => {
+    // Als sam geeft het Permission denied, met kale sudo dubious ownership.
+    const fout: string[] = [];
+    for (const id of lessen) {
+      for (const regel of lees(id).split('\n')) {
+        if (/^(sudo )?git .*\/srv\/gastenboek/.test(regel) && !regel.includes('# FOUT'))
+          fout.push(`${id}: ${regel}`);
+      }
+    }
+    // De ene FOUT-regel in nieuwe-versie is bewust fout; die staat onder # FOUT.
+    expect(fout.filter((r) => !r.endsWith('sudo git -C /srv/gastenboek/app pull'))).toEqual([]);
+  });
+
+  it('requirements.txt komt uit Out-File, niet uit > in PowerShell', () => {
+    const les = lees('online/wsl/requirements');
+    const blokken = [...les.matchAll(/```bash\n([\s\S]*?)```/g)].map((m) => m[1]);
+    expect(blokken.join('\n')).not.toContain('freeze >');
+    expect(les).toContain('python -m pip freeze | Out-File -Encoding ascii requirements.txt');
+  });
 });

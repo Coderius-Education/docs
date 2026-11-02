@@ -1,13 +1,13 @@
 ---
 sidebar_label: '8. De deuren dicht'
-description: Een firewall laat alleen ssh, 80 en 443 door, ssh accepteert alleen sleutels en geen root, en Ubuntu installeert beveiligingsupdates zelf.
+description: Een firewall laat alleen ssh, 80 en 443 door, en Ubuntu installeert beveiligingsupdates zelf.
 ---
 
 # Online zetten: de deuren dicht
 
-<Voorkennis items={[{site: 'linux', to: '/docs/wsl/nano', label: 'Een bestand in /etc bewerken met sudo nano'}, {site: 'linux', to: '/docs/wsl/apt', label: 'Bijwerken met apt'}]} />
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/apt', label: 'Bijwerken met apt'}]} />
 
-Je server staat op internet, en het logboek van ssh liet zien dat er al aan de deur wordt gemorreld. Je doet drie dingen: alleen de deuren open die nodig zijn, ssh alleen met een sleutel, en updates zonder dat jij eraan hoeft te denken.
+Je server staat op internet, en het logboek van ssh liet zien dat er al aan de deur wordt gemorreld. In de vorige les zette je ssh al op alleen een sleutel. Nu doe je nog twee dingen: alleen de deuren open die nodig zijn, en updates zonder dat jij eraan hoeft te denken.
 
 ## Een firewall
 
@@ -26,7 +26,7 @@ sudo ufw enable
 Command may disrupt existing ssh connections. Proceed with operation (y|n)?
 ```
 
-Typ `y`. Kijk wat er openstaat:
+Typ `y`. Er staat dan `Firewall is active and enabled on system startup`. Kijk wat er openstaat:
 
 ```bash
 sudo ufw status
@@ -40,46 +40,27 @@ To                         Action      From
 OpenSSH                    ALLOW       Anywhere
 80/tcp                     ALLOW       Anywhere
 443/tcp                    ALLOW       Anywhere
+OpenSSH (v6)               ALLOW       Anywhere (v6)
+80/tcp (v6)                ALLOW       Anywhere (v6)
+443/tcp (v6)               ALLOW       Anywhere (v6)
 ```
 
-Alles wat niet in de lijst staat, komt er niet in. Ook als je later per ongeluk een programma op `0.0.0.0` laat luisteren.
-
-## ssh alleen met een sleutel
-
-Met de sleutel uit de vorige les kom jij binnen. Maar zolang ssh ook wachtwoorden accepteert, kan een programma er een raden. Zet dat uit, en inloggen als `root` meteen ook. Maak een eigen bestand met instellingen:
-
-```bash
-sudo nano /etc/ssh/sshd_config.d/00-veilig.conf
-```
-
-```text
-PasswordAuthentication no
-KbdInteractiveAuthentication no
-PermitRootLogin no
-```
-
-De `00` vooraan doet ertoe. ssh leest de bestanden in die map op alfabet, en de eerste keer dat een instelling voorkomt, telt. Op sommige servers staat er al een bestand, zoals `50-cloud-init.conf`, met `PasswordAuthentication yes`. Jouw bestand komt eerder.
-
-Controleer de instellingen en laad ze:
-
-```bash
-sudo sshd -t
-sudo systemctl reload ssh
-```
-
-Zegt `sshd -t` niets, dan klopt alles.
-
-**Let op:** sluit je terminal nog niet. Probeer eerst in een tweede terminal of je nog binnenkomt met `ssh sam@203.0.113.10`. Gaat er iets mis, dan herstel je het in de eerste.
+Elke deur staat er twee keer: één keer voor gewone internetadressen, en met `(v6)` voor de nieuwere IPv6-adressen. Wat niet in de lijst staat, houdt ufw tegen. Ook als je later per ongeluk een programma op `0.0.0.0` laat luisteren.
 
 ## Updates vanzelf
 
 Elke week worden er gaten in programma's gevonden en gedicht. Ubuntu kan de beveiligingsupdates zelf installeren, elke dag. Op een server staat dat meestal al aan:
 
 ```bash
-systemctl status unattended-upgrades
+cat /etc/apt/apt.conf.d/20auto-upgrades
 ```
 
-Staat er `active (running)`, dan is het goed. Staat het uit, zet het dan aan:
+```text
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+```
+
+Staat er twee keer `"1"`, dan is het goed. Kijk niet naar `systemctl status unattended-upgrades`: die dienst draait altijd, ook als de updates uitstaan. Bestaat het bestand niet, of staat er een `"0"`, zet het dan aan:
 
 ```bash
 sudo apt install unattended-upgrades
@@ -117,42 +98,17 @@ Herstart dan met `sudo reboot`. Je site komt vanzelf terug: dat deed `enable` in
 ssh: connect to host 203.0.113.10 port 22: Connection timed out
 ```
 
-**Oorzaak:** de firewall staat aan, maar ssh mag er niet door. Of je zette wachtwoorden uit voordat je sleutel bij `sam` stond.
+**Oorzaak:** de firewall staat aan, maar ssh mag er niet door.
 
-**Oplossing:** bijna elk hostingbedrijf heeft in zijn beheerpagina een **console**: een terminal in je browser, die niet via ssh gaat. Log daar in en herstel het:
+**Oplossing:** bijna elk hostingbedrijf heeft in zijn beheerpagina een **console**: een terminal in je browser, die niet via ssh gaat. Log daar in en zet ssh open:
 
 ```bash
 sudo ufw allow OpenSSH
 ```
 
-### sshd -t geeft een fout
-
-```text
-/etc/ssh/sshd_config.d/00-veilig.conf: line 1: Bad configuration option: PaswordAuthentication
-```
-
-**Oorzaak:** een tikfout in je bestand, hier één `s` te weinig.
-
-**Oplossing:** verbeter het bestand en draai `sudo sshd -t` opnieuw. Laad de instellingen pas als hij niets meer zegt; met een fout erin start ssh niet.
-
 ## Opdrachten
 
-### Opdracht 1: Run - Controleer de deuren
-
-Controleer vanaf WSL dat het werkt. Welke van deze drie lukken, en welke niet?
-
-1. `ssh sam@203.0.113.10`
-2. `ssh root@203.0.113.10`
-3. `ssh -o PubkeyAuthentication=no sam@203.0.113.10`
-
-<details>
-<summary>Antwoord</summary>
-
-Alleen de eerste. De tweede geeft `Permission denied (publickey)`, want `root` mag niet meer inloggen. De derde probeert het zonder sleutel, dus met een wachtwoord, en krijgt dezelfde melding: wachtwoorden staan uit.
-
-</details>
-
-### Opdracht 2: Investigate - Wie bezoekt je site?
+### Opdracht 1: Investigate - Wie bezoekt je site?
 
 Open je site op je telefoon via mobiele data. Kijk daarna op de server welk adres je site bij dat verzoek zag:
 
@@ -169,7 +125,7 @@ Nee: je ziet het adres van je telefoon op internet. Caddy zette het in de kop `X
 
 </details>
 
-### Opdracht 3: Investigate - Wat luistert er nog?
+### Opdracht 2: Investigate - Wat luistert er nog?
 
 Kijk met `sudo ss -tlnp` op de server welke programma's luisteren op `0.0.0.0`, `*` of `[::]`. Staat elk van die poorten in `ufw status`?
 

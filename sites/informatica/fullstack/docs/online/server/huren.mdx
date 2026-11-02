@@ -1,11 +1,11 @@
 ---
 sidebar_label: '7. Een server huren en inloggen'
-description: Een server met Ubuntu op internet, inloggen met je ssh-sleutel, een eigen gebruiker met sudo, een domeinnaam, en daarna dezelfde stappen als in WSL.
+description: Een server met Ubuntu op internet, inloggen met je ssh-sleutel, een eigen gebruiker met sudo, ssh alleen met een sleutel, een domeinnaam, een deploy key, en daarna dezelfde stappen als in WSL.
 ---
 
 # Online zetten: een server huren en inloggen
 
-<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'ssh en een sleutelpaar'}, {site: 'linux', to: '/docs/terminal/bestanden-lezen', label: 'Inlogpogingen in een logboek'}]} />
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'ssh en een sleutelpaar'}, {site: 'linux', to: '/docs/terminal/bestanden-lezen', label: 'Inlogpogingen in een logboek'}, {site: 'linux', to: '/docs/wsl/nano', label: 'Een bestand in /etc bewerken met sudo nano'}]} />
 
 Alles werkt in WSL. Nu doe je het op een computer die dag en nacht aan internet hangt: een **server**. Je huurt er een bij een hostingbedrijf, of je krijgt er een van school. Zo'n gehuurde server is meestal een stukje van een grotere computer, en heet een **VPS** (*virtual private server*). De kleinste is ruim genoeg voor een gastenboek.
 
@@ -40,9 +40,11 @@ apt upgrade
 
 Als `root` heb je geen `sudo` nodig: je bent het al.
 
+Bij sommige hostingbedrijven log je niet in als `root` maar als `ubuntu`, een gebruiker die al `sudo` mag. Zet dan `sudo` voor de commando's hieronder, en kopieer straks de sleutel uit `/home/ubuntu/.ssh/authorized_keys` in plaats van die van `root`.
+
 ## Een eigen gebruiker
 
-Als `root` werken is als altijd met `sudo` werken: één tikfout en je server is stuk. In de volgende les zet je inloggen als `root` helemaal uit. Daarom maak je nu een gebruiker voor jezelf, die met `sudo` beheerder mag zijn:
+Als `root` werken is als altijd met `sudo` werken: één tikfout en je server is stuk. Straks zet je inloggen als `root` helemaal uit. Daarom maak je nu een gebruiker voor jezelf, die met `sudo` beheerder mag zijn:
 
 ```bash
 adduser sam
@@ -66,6 +68,35 @@ sudo whoami
 
 Lukt dat, en zegt `sudo whoami` `root`, dan log je voortaan zo in.
 
+## ssh alleen met een sleutel
+
+Met je sleutel kom jij binnen. Maar zolang ssh ook wachtwoorden accepteert, kan een programma er een raden. Zet dat uit, en inloggen als `root` meteen ook. Maak een eigen bestand met instellingen:
+
+```bash
+sudo nano /etc/ssh/sshd_config.d/00-veilig.conf
+```
+
+```text
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin no
+```
+
+De `00` vooraan doet ertoe. ssh leest de bestanden in die map op alfabet, en de eerste keer dat een instelling voorkomt, telt. Op sommige servers staat er al een bestand, zoals `50-cloud-init.conf`, met `PasswordAuthentication yes`. Jouw bestand komt eerder.
+
+Controleer de instellingen en laad ze:
+
+```bash
+sudo sshd -t
+sudo systemctl reload ssh
+```
+
+Zegt `sshd -t` niets, dan klopt alles.
+
+**Let op:** sluit de terminal waarin je als `sam` bent ingelogd nog niet. Probeer eerst in een tweede terminal of je nog binnenkomt met `ssh sam@203.0.113.10`. Gaat er iets mis, dan herstel je het in de eerste.
+
+Controleer in de tweede terminal ook dat de deur echt dicht is: `ssh root@203.0.113.10` en `ssh -o PubkeyAuthentication=no sam@203.0.113.10` moeten allebei `Permission denied (publickey)` geven. De tweede probeert het zonder sleutel, dus met een wachtwoord.
+
 ## Een naam voor je server
 
 Een IP-adres onthoudt niemand. Met een **domeinnaam** zoals `gastenboek.voorbeeld.nl` is je site te vinden, en zonder naam krijg je straks geen HTTPS. Een naam huur je bij een domeinbedrijf, of je docent geeft je een naam onder het domein van school.
@@ -78,20 +109,17 @@ ping -c 1 gastenboek.voorbeeld.nl
 
 Op de eerste regel staat het IP-adres. Is dat dat van jouw server, dan klopt de naam.
 
-## Dezelfde stappen als in WSL
+## Een privé-repository: een deploy key
 
-Doe op de server, als `sam`, wat je in WSL deed: [les 2](site:fullstack/docs/online/wsl/project-in-linux) (git en `python3-venv` installeren), [les 4](site:fullstack/docs/online/wsl/eigen-gebruiker), [les 5](site:fullstack/docs/online/wsl/dienst) en [les 6](site:fullstack/docs/online/wsl/voordeur). Je project zet je meteen in `/srv/gastenboek/app`; in je eigen thuismap op de server hoeft het niet. Daarna staat je site op `http://203.0.113.10`.
-
-### Een privé-repository: een deploy key
-
-Is je repository privé, geef de server dan een eigen sleutel die alleen jouw project mag lezen. Maak hem als `gastenboek`:
+Is je repository privé, geef de server dan een eigen sleutel die alleen jouw project mag lezen. Doe dit vóór de stappen hieronder, want daarin haal je je project op. De gebruiker `gastenboek` uit [les 4](site:fullstack/docs/online/wsl/eigen-gebruiker) maak je daarom nu al. Maak de sleutel als `gastenboek`:
 
 ```bash
+sudo adduser --system --group --home /srv/gastenboek gastenboek
 sudo -H -u gastenboek ssh-keygen -t ed25519
 sudo cat /srv/gastenboek/.ssh/id_ed25519.pub
 ```
 
-Druk bij de vragen op Enter (een passphrase kan hier niet: de server moet de sleutel zonder jou kunnen gebruiken). Zet de publieke sleutel op GitHub bij je repository onder **Settings**, **Deploy keys**, en laat **Allow write access** uit. Clone daarna met het ssh-adres:
+Druk bij de vragen op Enter (een passphrase kan hier niet: de server moet de sleutel zonder jou kunnen gebruiken). Zet de publieke sleutel op GitHub bij je repository onder **Settings**, **Deploy keys**, en laat **Allow write access** uit. In les 4 clone je daarna met het ssh-adres in plaats van het https-adres. De eerste keer vraagt ssh of je de vingerafdruk van GitHub vertrouwt; typ `yes`.
 
 ```bash
 sudo -H -u gastenboek git clone git@github.com:sam/gastenboek.git /srv/gastenboek/app
@@ -99,13 +127,17 @@ sudo -H -u gastenboek git clone git@github.com:sam/gastenboek.git /srv/gastenboe
 
 Wordt je server ooit gekraakt, dan kan de sleutel alleen dit ene project lezen, en niets veranderen.
 
+## Dezelfde stappen als in WSL
+
+Doe op de server, als `sam`, wat je in WSL deed (heb je `gastenboek` al gemaakt voor de deploy key, sla die regel dan over): [les 2](site:fullstack/docs/online/wsl/project-in-linux) (git en `python3-venv` installeren), [les 4](site:fullstack/docs/online/wsl/eigen-gebruiker), [les 5](site:fullstack/docs/online/wsl/dienst) en [les 6](site:fullstack/docs/online/wsl/voordeur). Je project zet je meteen in `/srv/gastenboek/app`; in je eigen thuismap op de server hoeft het niet. Daarna staat je site op `http://203.0.113.10`.
+
 <Voorspel soort="Controlevraag" vraag="Je server staat een uur aan, en je hebt het adres aan niemand gegeven. Je kijkt met sudo journalctl -u ssh in het logboek van ssh. Wat staat er?">
   <Keuze uitleg="Niemand kent je adres, maar programma's proberen alle adressen op internet, de hele dag.">Alleen de keren dat jij inlogde</Keuze>
   <Keuze goed uitleg="Programma's lopen alle adressen op internet af en proberen in te loggen met namen als root en admin. Binnen een uur staan ze in je logboek.">Ook mislukte pogingen van onbekende adressen, met namen als root en admin</Keuze>
   <Keuze uitleg="ssh schrijft elke poging op, ook een mislukte. Daar is het logboek voor.">Niets: ssh schrijft alleen op wie er echt binnenkwam</Keuze>
   <Uitleg>
 
-  Je ziet regels als `Invalid user admin from …` en `Connection closed by authenticating user root …`. Dat zijn geen mensen die jou zoeken, maar programma's die elk adres proberen. Met alleen een sleutel komen ze niet binnen; in de volgende les zet je de deuren die ze proberen zo ver mogelijk dicht. Doe die les daarom meteen na deze.
+  Je ziet regels als `Invalid user admin from …` en `Connection closed by authenticating user root …`. Dat zijn geen mensen die jou zoeken, maar programma's die elk adres proberen. Wachtwoorden staan uit, dus met raden komen ze niet binnen. In de volgende les zet je de andere deuren dicht. Doe die les meteen na deze.
 
   </Uitleg>
 </Voorspel>
@@ -146,6 +178,16 @@ ping: gastenboek.voorbeeld.nl: Name or service not known
 **Oorzaak:** het A-record is er nog niet, of de wereld kent het nog niet.
 
 **Oplossing:** controleer het record bij je domeinbedrijf, en wacht een uur. Je site werkt intussen op het IP-adres.
+
+### sshd -t geeft een fout
+
+```text
+/etc/ssh/sshd_config.d/00-veilig.conf: line 1: Bad configuration option: PaswordAuthentication
+```
+
+**Oorzaak:** een tikfout in je bestand, hier één `s` te weinig.
+
+**Oplossing:** verbeter het bestand en draai `sudo sshd -t` opnieuw. Laad de instellingen pas als hij niets meer zegt; met een fout erin start ssh niet.
 
 ## Opdrachten
 

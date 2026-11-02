@@ -14,10 +14,10 @@ Daarom zet je in een bestand welke packages je project nodig heeft. Dat bestand 
 Open je project in VS Code, en typ in de terminal van VS Code (waar je virtual environment aanstaat):
 
 ```bash
-python -m pip freeze > requirements.txt
+python -m pip freeze | Out-File -Encoding ascii requirements.txt
 ```
 
-`python -m pip freeze` schrijft elk package in je virtual environment op, met de precieze versie. Het pijltje `>` zet die lijst in een bestand in plaats van op je scherm; dat ken je uit [Maken en schrijven](site:linux/docs/terminal/maken) in de Linux-cursus. Open `requirements.txt`:
+`python -m pip freeze` schrijft elk package in je virtual environment op, met de precieze versie. De pipe `|` geeft die lijst door aan `Out-File`, dat hem in een bestand zet; de pipe ken je uit [Zoeken en doorgeven](site:linux/docs/terminal/zoeken) in de Linux-cursus. In Linux zou je `>` gebruiken, maar in de PowerShell van Windows schrijft `>` een bestand dat git en Linux niet als gewone tekst lezen. `-Encoding ascii` maakt er gewone tekst van. Open `requirements.txt`:
 
 ```text
 annotated-types==0.7.0
@@ -54,8 +54,8 @@ git push
 
 Installeer je later een nieuw package, maak de lijst dan opnieuw en commit hem mee. Anders werkt je site op je laptop wel en op de server niet.
 
-<Voorspel soort="Controlevraag" vraag="Je installeert httpx voor een script, en doet daarna weer python -m pip freeze > requirements.txt. Wat gebeurt er met de packages die al in het bestand stonden?">
-  <Keuze uitleg="Kijk naar het pijltje: één > maakt het bestand eerst leeg. Maar wat schrijft freeze er daarna in?">Ze zijn weg, alleen httpx staat erin</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je installeert httpx voor een script, en maakt daarna de lijst opnieuw met dezelfde regel. Wat gebeurt er met de packages die al in het bestand stonden?">
+  <Keuze uitleg="Out-File maakt het bestand eerst leeg. Maar wat schrijft freeze er daarna in?">Ze zijn weg, alleen httpx staat erin</Keuze>
   <Keuze goed uitleg="freeze schrijft alles op wat nu in je virtual environment staat. Het oude bestand wordt overschreven met een nieuwe, volledige lijst.">Ze staan er nog, met httpx erbij, want freeze schrijft alles op wat er nu is</Keuze>
   <Keuze uitleg="freeze leest het bestand niet; hij kijkt in je virtual environment. Wat staat daar nu in?">Er verandert niets, want freeze kijkt alleen naar wat al in het bestand stond</Keuze>
   <Uitleg>
@@ -74,6 +74,22 @@ Installeer je later een nieuw package, maak de lijst dan opnieuw en commit hem m
 **Oorzaak:** je typte het commando in een terminal waar je virtual environment niet aanstaat. Dan schrijft `python -m pip freeze` de packages van je gewone Python op, en daar staat bijna niets.
 
 **Oplossing:** open de terminal in VS Code na `code .` in je projectmap; daar zet de Python-extensie de virtual environment aan. Je ziet `(.venv)` voor de prompt staan. Maak de lijst opnieuw.
+
+### Een binair bestand op GitHub
+
+GitHub zegt bij `requirements.txt` dat het een binair bestand is, en `cat requirements.txt` in Linux toont rommel tussen de letters.
+
+**Oorzaak:** je maakte de lijst met `>` in de PowerShell van Windows. Die schrijft UTF-16, een vorm van tekst die git en Linux niet als gewone tekst herkennen.
+
+**Oplossing:** maak de lijst opnieuw met `Out-File`, en commit hem opnieuw.
+
+```powershell
+# FOUT
+python -m pip freeze > requirements.txt
+
+# GOED
+python -m pip freeze | Out-File -Encoding ascii requirements.txt
+```
 
 ### Een pad in plaats van een versie
 
@@ -95,7 +111,7 @@ Maak `requirements.txt` voor je eigen project, en zet hem in git.
 <summary>Antwoord</summary>
 
 ```bash
-python -m pip freeze > requirements.txt
+python -m pip freeze | Out-File -Encoding ascii requirements.txt
 git add requirements.txt
 git commit -m "requirements.txt toegevoegd"
 git push

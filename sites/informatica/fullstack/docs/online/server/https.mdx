@@ -69,15 +69,17 @@ Op je eigen computer blijft het werken: Chrome en Firefox laten een `secure`-coo
 
 In `sudo journalctl -u caddy -n 30` staan regels met `challenge failed` of `could not get certificate`, en de browser zegt dat de verbinding niet veilig is.
 
-**Oorzaak:** Let's Encrypt kon niet controleren dat de naam bij jouw server hoort. Meestal wijst het A-record nog niet naar je server, of poort 80 is dicht.
+**Oorzaak:** Let's Encrypt kon niet controleren dat de naam bij jouw server hoort. Meestal wijst het A-record nog niet naar je server, of poort 80 is dicht. Een derde oorzaak zie je niet met `ping`: een oud `AAAA`-record (een IPv6-adres) van de parkeerpagina van je domeinbedrijf. Let's Encrypt kiest dan dat adres, en komt niet bij jouw server.
 
-**Oplossing:** controleer met `ping -c 1 gastenboek.voorbeeld.nl` het IP-adres, en met `sudo ufw status` of 80 en 443 openstaan. Wacht daarna even: Caddy probeert het zelf opnieuw. Herstart hem niet steeds: Let's Encrypt laat maar een paar mislukte pogingen per uur toe.
+**Oplossing:** controleer met `getent ahosts gastenboek.voorbeeld.nl` alle adressen van je naam: staat er een adres tussen dat niet van jouw server is, haal dan dat record weg bij je domeinbedrijf. Kijk met `sudo ufw status` of 80 en 443 openstaan. Wacht daarna even: Caddy probeert het zelf opnieuw. Herstart hem niet steeds: Let's Encrypt laat maar een paar mislukte pogingen per uur toe.
 
-### Je moet steeds opnieuw inloggen
+### Je site werkt niet meer op het IP-adres
 
-**Oorzaak:** je zette `secure=True`, maar opent je site op `http://` met het IP-adres. Daar is geen versleuteling, en de browser bewaart de cookie niet.
+Op `http://203.0.113.10` zegt de browser dat de verbinding niet veilig is, of hij komt niet verder.
 
-**Oplossing:** open je site op `https://` met je domeinnaam.
+**Oorzaak:** met een naam in de Caddyfile stuurt Caddy elk verzoek op `http` door naar `https`, ook dat met het IP-adres. Voor het IP-adres heeft hij geen certificaat.
+
+**Oplossing:** open je site met je domeinnaam. Dat is ook het adres dat je aan anderen geeft.
 
 ## Opdrachten
 
@@ -88,7 +90,7 @@ Zet je domeinnaam in de Caddyfile, laad Caddy opnieuw, en open je site met `http
 <details>
 <summary>Antwoord</summary>
 
-Als uitgever staat er Let's Encrypt, soms met een korte naam als `R11` erbij, of ZeroSSL: die gebruikt Caddy als Let's Encrypt het even niet doet. Het certificaat is een paar maanden geldig, en Caddy vernieuwt het vanzelf ruim voordat het afloopt.
+Als uitgever staat er Let's Encrypt, meestal met een korte naam als `E5` erbij, of ZeroSSL: die gebruikt Caddy als Let's Encrypt het even niet doet. Het certificaat is hooguit drie maanden geldig, en Caddy vernieuwt het vanzelf ruim voordat het afloopt.
 
 </details>
 
@@ -97,7 +99,7 @@ Als uitgever staat er Let's Encrypt, soms met een korte naam als `R11` erbij, of
 Caddy stuurt `http` door naar `https`, maar de allereerste keer gaat het verzoek nog onversleuteld. Met de kop `Strict-Transport-Security` vertel je de browser: gebruik voor deze naam voortaan altijd `https`, ook als iemand `http` typt. Zet in je Caddyfile, binnen de accolades onder `reverse_proxy`:
 
 ```text
-	header Strict-Transport-Security "max-age=31536000"
+	header Strict-Transport-Security "max-age=86400"
 ```
 
 Laad Caddy opnieuw. Hoe zie je in de ontwikkelaarstools dat de kop meekomt?
@@ -112,7 +114,7 @@ De koppen van een antwoord staan in het tabblad Netwerk, bij een verzoek. Zie [K
 <details>
 <summary>Antwoord</summary>
 
-Klik in Netwerk op het verzoek van de pagina. Onder de koppen van het antwoord staat `strict-transport-security: max-age=31536000`. `max-age` is in seconden: een jaar lang gebruikt de browser alleen nog `https` voor je naam. Zet dit pas als `https` goed werkt: een browser die de kop eenmaal kent, gaat een jaar lang niet terug naar `http`.
+Klik in Netwerk op het verzoek van de pagina. Onder de koppen van het antwoord staat `strict-transport-security: max-age=86400`. `max-age` is in seconden: een dag lang gebruikt de browser alleen nog `https` voor je naam. Grote sites zetten hier een jaar (`31536000`), maar begin klein: een browser die de kop kent, gaat die tijd niet terug naar `http`, ook niet als je server later weg is of iets anders draait.
 
 </details>
 

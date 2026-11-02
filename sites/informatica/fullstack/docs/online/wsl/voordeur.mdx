@@ -91,9 +91,13 @@ sudo systemctl restart caddy
 
 **Oplossing:** kijk met `systemctl status gastenboek` of je site draait, en of de poort in de Caddyfile gelijk is aan die in `ExecStart`.
 
-### De nieuwe instellingen doen niets
+### Job for caddy.service failed
 
-**Oorzaak:** een tikfout in de Caddyfile. Caddy houdt dan de oude instellingen en zegt het alleen in zijn logboek.
+```text
+Job for caddy.service failed because the control process exited with error code.
+```
+
+**Oorzaak:** een tikfout in de Caddyfile. Caddy weigert de nieuwe instellingen en houdt de oude.
 
 **Oplossing:** lees het logboek, en controleer het bestand:
 

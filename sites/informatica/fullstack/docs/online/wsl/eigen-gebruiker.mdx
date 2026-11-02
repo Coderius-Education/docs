@@ -69,7 +69,7 @@ Open `http://127.0.0.1:8000` op Windows. Je site werkt, maar hij draait nu als `
 | instellingen in `/etc` | lezen, niet veranderen |
 | `sudo` | niet: hij staat niet in de groep `sudo` en heeft geen wachtwoord |
 
-Je site kan dus zijn eigen bestanden veranderen, maar niet de rest van de computer. Een slot dat helemaal dicht is, is het niet: wie een gat in je site vindt, kan nog steeds bij de berichten en accounts in de databases. Daarom blijft de route Veiligheid nodig. Deze stap zorgt dat het daarbij blijft.
+Je site kan dus zijn eigen bestanden veranderen, maar niet de rest van de computer. Een slot dat helemaal dicht is, is het niet. Wie een gat in je site vindt, kan bij de berichten en accounts in de databases, en kan ook je code en je `.venv` veranderen: een achterdeur in `main.py` blijft na een herstart staan. Daarom blijft de route Veiligheid nodig. Deze stap zorgt dat het bij je site blijft, en niet de hele server wordt.
 
 ## Er gaat iets mis
 
