@@ -101,7 +101,21 @@ function lees(env, cmd, arg) {
 function vanInvoer(env, cmd, bestand, stdin) {
   if (bestand !== undefined) return lees(env, cmd, bestand);
   if (stdin !== null && stdin !== undefined) return { content: stdin };
-  return { error: `${cmd}: missing operand` };
+  return { error: wachtOpToetsenbord(cmd) };
+}
+
+/**
+ * Zonder bestand lezen cat, head, tail, wc en grep van het toetsenbord, tot
+ * Ctrl+D. Dat kan de oefenterminal niet; eerst zei hij `cat: missing
+ * operand`, een melding die Ubuntu nooit geeft.
+ */
+function wachtOpToetsenbord(cmd, achter = 'het commando') {
+  return `oefenterminal: ${cmd} zonder bestand wacht op wat je typt; dat kan hier niet. Zet een bestand achter ${achter}.`;
+}
+
+/** Een ontbrekend argument, zoals coreutils 9.4 het meldt. */
+function ontbreekt(cmd, melding) {
+  return { output: `${cmd}: ${melding}\nTry '${cmd} --help' for more information.`, exitCode: 1 };
 }
 
 /**
@@ -271,7 +285,9 @@ export function vulJokersIn(woord, env) {
  */
 function kopieer(cmd, args, env, verplaats) {
   const namen = args.filter((a) => !a.startsWith('-'));
-  if (namen.length < 2) return { output: `${cmd}: missing file operand`, exitCode: 1 };
+  if (namen.length === 0) return ontbreekt(cmd, 'missing file operand');
+  if (namen.length === 1)
+    return ontbreekt(cmd, `missing destination file operand after '${namen[0]}'`);
   if (namen.length > 2) {
     // cp a.txt b.txt map/: meer dan één bron, dan moet het laatste een map zijn.
     const doel = namen.at(-1);
@@ -512,8 +528,11 @@ const COMMANDS = {
     return { output: uitvoer, exitCode: fouten.length ? 2 : 0 };
   },
 
-  cat(args, env) {
-    if (args.length === 0) return { output: 'cat: missing operand', exitCode: 1 };
+  cat(args, env, stdin) {
+    if (args.length === 0) {
+      if (stdin !== null && stdin !== undefined) return { output: stdin.replace(/\n$/, '') };
+      return { output: wachtOpToetsenbord('cat'), exitCode: 1 };
+    }
     // Achter elkaar, zonder iets ertussen: cat a.txt b.txt plakt de bestanden.
     let uitvoer = '';
     let exitCode = 0;
@@ -613,7 +632,7 @@ const COMMANDS = {
       if (stdin === null || stdin === undefined)
         return {
           output:
-            'oefenterminal: grep zonder bestand wacht op wat je typt; dat kan hier niet. Zet een bestand achter het patroon.',
+            wachtOpToetsenbord('grep', 'het patroon'),
           exitCode: 2,
         };
       const { uit, raak } = tel(regels(stdin));
@@ -832,7 +851,7 @@ const COMMANDS = {
   mkdir(args, env) {
     const parents = args.includes('-p');
     const mappen = args.filter((a) => !a.startsWith('-'));
-    if (mappen.length === 0) return { output: 'mkdir: missing operand', exitCode: 1 };
+    if (mappen.length === 0) return ontbreekt('mkdir', 'missing operand');
     const fouten = [];
     for (const map of mappen) {
       const r = makeDir(env.fs, resolvePath(env.cwd, map), { parents });
@@ -843,7 +862,7 @@ const COMMANDS = {
 
   touch(args, env) {
     const namen = args.filter((a) => !a.startsWith('-'));
-    if (namen.length === 0) return { output: 'touch: missing file operand', exitCode: 1 };
+    if (namen.length === 0) return ontbreekt('touch', 'missing file operand');
     const fouten = [];
     for (const naam of namen) {
       const absPath = resolvePath(env.cwd, naam);
@@ -859,7 +878,7 @@ const COMMANDS = {
     // -f: zwijg over wat er niet is, net als de echte rm.
     const forceer = args.some((a) => /^-[a-zA-Z]*f/.test(a));
     const namen = args.filter((a) => !a.startsWith('-'));
-    if (namen.length === 0) return { output: 'rm: missing operand', exitCode: 1 };
+    if (namen.length === 0) return forceer ? { output: '' } : ontbreekt('rm', 'missing operand');
     const fouten = [];
     for (const naam of namen) {
       const r = removeNode(env.fs, resolvePath(env.cwd, naam), { recursive });

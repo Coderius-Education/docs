@@ -320,6 +320,36 @@ describe('een lange regel opnieuw tekenen', () => {
 // De simulator zegt wat Ubuntu 24.04 zegt (coreutils 9.4, grep 3.11,
 // LANG=C.UTF-8). Elk geval hieronder week eerst af; nagedraaid op Ubuntu.
 describe('zoals op Ubuntu', () => {
+  it('een ontbrekend argument geeft de melding van coreutils 9.4', () => {
+    // mv *.jpg met één jpg zei eerst `mv: missing file operand`; Ubuntu noemt
+    // het bestand en verwijst naar --help.
+    const { typ } = terminal();
+    typ('touch strand.jpg');
+    expect(typ('mv *.jpg')).toBe(
+      "mv: missing destination file operand after 'strand.jpg'\nTry 'mv --help' for more information.",
+    );
+    expect(typ('cp strand.jpg')).toBe(
+      "cp: missing destination file operand after 'strand.jpg'\nTry 'cp --help' for more information.",
+    );
+    expect(typ('mv')).toBe("mv: missing file operand\nTry 'mv --help' for more information.");
+    expect(typ('mkdir')).toBe("mkdir: missing operand\nTry 'mkdir --help' for more information.");
+    expect(typ('touch')).toBe("touch: missing file operand\nTry 'touch --help' for more information.");
+    expect(typ('rm')).toBe("rm: missing operand\nTry 'rm --help' for more information.");
+    expect(typ('rm -f')).toBe('');
+  });
+
+  it('cat, head, tail en wc zonder bestand: die wachten op het toetsenbord', () => {
+    // Eerst zei de oefenterminal `cat: missing operand`, een melding die
+    // Ubuntu nooit geeft: daar wacht cat op wat je typt, tot Ctrl+D.
+    const { typ } = terminal();
+    for (const cmd of ['cat', 'head', 'tail', 'wc'])
+      expect(typ(cmd)).toBe(
+        `oefenterminal: ${cmd} zonder bestand wacht op wat je typt; dat kan hier niet. Zet een bestand achter het commando.`,
+      );
+    // Door een pipe krijgt cat wel invoer.
+    expect(typ('echo hoi | cat')).toBe('hoi');
+  });
+
   it('> maakt een bestaand bestand leeg, ook als het commando faalt of niet bestaat', () => {
     const { sessie, typ } = terminal();
     const inhoud = () => typ('cat l.txt');
