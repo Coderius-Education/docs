@@ -106,13 +106,15 @@ Je krijgt één regel met de tijd, hoe lang de computer aanstaat en hoe druk hij
 
 ## De ssh-dienst weer uit
 
-Zolang `openssh-server` draait, kan je Ubuntu inlogpogingen ontvangen, ook met een wachtwoord. Op je eigen laptop heb je dat na deze les niet meer nodig. Zet de dienst uit, net als nginx in [6.4](site:linux/docs/wsl/diensten):
+Zolang `openssh-server` draait, kan je Ubuntu inlogpogingen ontvangen, ook met een wachtwoord. Op je eigen laptop heb je dat na deze les niet meer nodig. Zet de dienst uit, net als nginx in [6.4](site:linux/docs/wsl/diensten).
+
+Bij ssh zijn het er twee. Op Ubuntu 24.04 wacht `ssh.socket` op poort 22, en pas als er iemand inlogt, start die de dienst `ssh`. Zet je alleen `ssh` uit, dan start de socket hem bij de volgende poging gewoon weer. Zet ze daarom allebei uit:
 
 ```bash
 sudo systemctl disable --now ssh.socket ssh
 ```
 
-Wil je hem later weer gebruiken, dan zet je hem aan met `sudo systemctl enable --now ssh`.
+Wil je hem later weer gebruiken, zet dan de socket weer aan: `sudo systemctl enable --now ssh.socket`.
 
 ## Er gaat iets mis
 
@@ -124,11 +126,11 @@ ssh: connect to host localhost port 22: Connection refused
 
 **Oorzaak:** op die computer draait geen ssh-dienst, of hij staat uit.
 
-**Oplossing:** installeer `openssh-server` en zet de dienst aan:
+**Oplossing:** installeer `openssh-server` en zet de socket aan, die de dienst start als er iemand inlogt:
 
 ```bash
 sudo apt install openssh-server
-sudo systemctl enable --now ssh
+sudo systemctl enable --now ssh.socket
 ```
 
 ### Remote host identification has changed
