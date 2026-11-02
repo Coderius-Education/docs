@@ -631,8 +631,7 @@ const COMMANDS = {
     if (files.length === 0) {
       if (stdin === null || stdin === undefined)
         return {
-          output:
-            wachtOpToetsenbord('grep', 'het patroon'),
+          output: wachtOpToetsenbord('grep', 'het patroon'),
           exitCode: 2,
         };
       const { uit, raak } = tel(regels(stdin));

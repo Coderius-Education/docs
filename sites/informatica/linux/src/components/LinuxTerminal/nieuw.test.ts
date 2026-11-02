@@ -345,7 +345,9 @@ describe('zoals op Ubuntu', () => {
     );
     expect(typ('mv')).toBe("mv: missing file operand\nTry 'mv --help' for more information.");
     expect(typ('mkdir')).toBe("mkdir: missing operand\nTry 'mkdir --help' for more information.");
-    expect(typ('touch')).toBe("touch: missing file operand\nTry 'touch --help' for more information.");
+    expect(typ('touch')).toBe(
+      "touch: missing file operand\nTry 'touch --help' for more information.",
+    );
     expect(typ('rm')).toBe("rm: missing operand\nTry 'rm --help' for more information.");
     expect(typ('rm -f')).toBe('');
   });
