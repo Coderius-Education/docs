@@ -963,7 +963,7 @@ Een `{{ }}`-template escapet vanzelf; een f-string niet. Ook een query-parameter
 voorbeeld.textContent = veld.value;
 ```
 
-`textContent` houdt het tekst; `innerHTML` leest het als HTML. Gebruik `innerHTML` alleen voor HTML die je zelf schreef. Zie [HTML van een bezoeker: in de browser met innerHTML](site:fullstack/docs/veiligheid/xss/browser).
+`textContent` houdt het tekst; `innerHTML` leest het als HTML. Gebruik `innerHTML` alleen voor HTML die je zelf schreef. Zie [HTML van een bezoeker: tekst blijft tekst met `textContent`](site:fullstack/docs/veiligheid/xss/textcontent).
 
 </details>
 

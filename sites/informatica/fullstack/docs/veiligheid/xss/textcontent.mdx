@@ -51,30 +51,6 @@ is dan al `&lt;b&gt;`, en de browser toont het als tekst.
   </Uitleg>
 </Voorspel>
 
-<details>
-<summary>Zo ziet `voorbeeld.js` er nu uit</summary>
-
-```js
-const veld = document.querySelector("#bericht");
-const voorbeeld = document.querySelector("#voorbeeld");
-
-function toon() {
-    voorbeeld.textContent = veld.value;
-}
-
-veld.addEventListener("input", toon);
-
-const vooraf = new URLSearchParams(location.search).get("bericht");
-if (vooraf) {
-    veld.value = vooraf;
-    toon();
-}
-```
-
-`main.py` is in les 7 en 8 niet veranderd.
-
-</details>
-
 ## Er gaat iets mis
 
 ### Het voorbeeld blijft leeg, zonder foutmelding
@@ -140,6 +116,30 @@ Met `innerHTML`: `'<b>vet</b>'`. In de `<p>` staat een echte tag.
 
 Met `textContent`: `'&lt;b&gt;vet&lt;/b&gt;'`. De browser heeft de haakjes
 zelf ge-escapet, net als `escape` in Python, en toont ze daarom als tekst.
+
+</details>
+
+<details>
+<summary>Zo ziet `voorbeeld.js` er nu uit</summary>
+
+```js
+const veld = document.querySelector("#bericht");
+const voorbeeld = document.querySelector("#voorbeeld");
+
+function toon() {
+    voorbeeld.textContent = veld.value;
+}
+
+veld.addEventListener("input", toon);
+
+const vooraf = new URLSearchParams(location.search).get("bericht");
+if (vooraf) {
+    veld.value = vooraf;
+    toon();
+}
+```
+
+`main.py` is in les 7 en 8 niet veranderd.
 
 </details>
 

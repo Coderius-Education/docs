@@ -54,7 +54,7 @@ print(f"Nog in het gastenboek: {namen}")
 ```
 
 <Regel n={5} tot={6}>
-Twee `httpx.Client`s zijn twee bezoekers, elk met hun eigen cookies en dus een eigen sessie, zoals in [Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap).
+Twee `httpx.Client`s zijn twee bezoekers, elk met hun eigen cookies en dus een eigen sessie, zoals in [Een bezoeker die onthoudt](site:fullstack/docs/veiligheid/client).
 </Regel>
 
 <Regel n={8} tot={11}>
@@ -93,7 +93,7 @@ Je server weet precies wie Alex is: de naam staat in zijn sessie. Alleen vraagt
 `bericht_verwijderen` er niet naar. Een verborgen knop, zoals in opdracht 4 van
 Sessies, maakt dat alleen minder zichtbaar.
 
-<Voorspel soort="Controlevraag" vraag="Je laat de knop Verwijderen alleen bij je eigen berichten zien, zoals in opdracht 4 van Sessies. Wat print het script van Alex dan?">
+<Voorspel soort="Controlevraag" vraag="Je laat de knop Verwijderen alleen bij je eigen berichten zien. Wat print het script van Alex dan?">
   <Keuze uitleg="Een 403 moet de server zelf geven. Staat er in bericht_verwijderen iets wat naar de bezoeker kijkt?">`Alex verwijdert het bericht van Sara: 403`</Keuze>
   <Keuze uitleg="Het script gebruikt geen knop. Waar haalt het de sleutel van het bericht van Sara vandaan?">Niets over Sara, want zonder knop vindt Alex de sleutel niet</Keuze>
   <Keuze goed uitleg="Het script haalt de sleutel uit /berichten en stuurt zelf het DELETE-verzoek. Aan de knop in de browser verandert voor de server niets.">`Alex verwijdert het bericht van Sara: 200`</Keuze>
@@ -119,11 +119,11 @@ Sara.
 [les 1](site:fullstack/docs/veiligheid/toegang/gastenboek), of gooi
 `gastenboek.db`, `sessies.db` en `gebruikers.db` weg voordat je de server start.
 
-## Opdrachten
-
 :::tip[Eerst op papier]
 Zoek eerst zonder computer bij zes verzoeken de controle die de server beschermt: [Vertrouw de bezoeker niet](site:fullstack/docs/unplugged/vertrouw-de-bezoeker). Je docent kan de hand-out printen.
 :::
+
+## Opdrachten
 
 ### Opdracht 1: Predict - Zonder browser
 

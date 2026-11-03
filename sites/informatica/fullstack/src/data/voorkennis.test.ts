@@ -166,6 +166,12 @@ const ZONDER_BLOK: Record<string, string> = {
     'query-parameters en escape komen uit eerdere lessen, waar ze gelinkt zijn',
   'veiligheid/xss/browser.mdx':
     'bouwt op JavaScript erbij uit de FastAPI-route, waar de voorkennis voor JavaScript staat',
+  'veiligheid/xss/gastenboek.mdx':
+    'startbestand met stof uit de FastAPI-route (htmx, StaticFiles, SqliteDict); de f-string-voorkennis staat in de les erna',
+  'veiligheid/xss/textcontent.mdx':
+    'textContent komt uit JavaScript erbij, waar les 7 al naar linkt',
+  'veiligheid/dos/server.mdx':
+    'het kleinste endpoint uit Je eerste server, zonder nieuwe voorkennis',
   'veiligheid/xss/templates.mdx': 'templates komen uit de FastAPI-lessen, hier alleen het escapen',
   'veiligheid/xss/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
   'veiligheid/client.mdx':
