@@ -1,0 +1,76 @@
+---
+sidebar_label: '43. De back-ups naar je laptop (extra)'
+description: De back-ups van cron met scp naar je laptop halen, want op de server verdwijnen ze met de server, en er een uitpakken met tar.
+---
+
+# Online zetten: de back-ups naar je laptop
+
+Cron maakt elke nacht een back-up, maar die staat op dezelfde server als je site. Gaat de schijf kapot, of zeg je de server op, dan zijn je site en je back-ups samen weg. Haal ze daarom af en toe naar je laptop.
+
+## Ophalen met scp
+
+Typ in WSL, op je laptop:
+
+```bash
+mkdir -p ~/backups
+scp 'sam@gastenboek.voorbeeld.nl:backups/*.tar.gz' ~/backups/
+```
+
+`mkdir -p` maakt de map, en zegt niets als hij er al is. De `*` staat tussen aanhalingstekens, zodat de server hem invult met de bestanden die daar staan, en niet je laptop met wat er bij jou staat. `scp` haalt elke keer alle zeven op, ook de bestanden die je al had; ze zijn klein.
+
+## Eén back-up uitpakken
+
+Een `.tar.gz` pak je uit met `tar -xzf`, in de map waar je de inhoud wilt hebben:
+
+```bash
+cd ~/backups
+tar -xzf 2026-11-03.tar.gz
+ls -A 2026-11-03
+```
+
+`-x` betekent uitpakken, waar `-c` in het script inpakken was. Je krijgt de map die het script inpakte, met dezelfde drie dingen als de back-up van [les 37](site:fullstack/docs/online/server/backup). Terugzetten gaat dus zoals in [les 38](site:fullstack/docs/online/server/terugzetten), met `~/backups/2026-11-03/data/.` als bron.
+
+<Gelukt>
+
+`ls -A ~/backups/2026-11-03` toont in WSL:
+
+```text
+.env  data  traefik
+```
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je haalde de back-ups op 1 november naar je laptop. Op 10 november gaat de schijf van je server kapot. Welke berichten kun je terugzetten?">
+  <Keuze uitleg="Cron maakte elke nacht een back-up, maar waar stonden die van na 1 november?">Alles tot 9 november, want cron maakte elke nacht een back-up</Keuze>
+  <Keuze goed uitleg="De back-ups van na 1 november stonden alleen op de server, en zijn met de schijf weg. Op je laptop staat de nieuwste van 1 november.">Alles tot de nacht van 1 november</Keuze>
+  <Keuze uitleg="Je laptop heeft de back-ups van tot en met 1 november, en die kun je terugzetten zoals in les 38.">Niets, want de server is weg</Keuze>
+  <Uitleg>
+
+  Wat je terug kunt halen, hangt af van hoe vaak je de back-ups naar je laptop haalt, niet van hoe vaak cron er een maakt. Haal ze dus vaak op, bijvoorbeeld elke week.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### No such file or directory bij scp
+
+```text
+scp: backup/*.tar.gz: No such file or directory
+```
+
+**Oorzaak:** op de server staat in die map geen `.tar.gz`. Hier staat er `backup` in plaats van `backups`: de map uit les 37, die je na het ophalen weggooide.
+
+**Oplossing:** kijk op de server met `ls ~/backups` hoe de map en de bestanden heten, en typ het commando opnieuw.
+
+### Cannot open bij tar
+
+```text
+tar (child): 2026-11-04.tar.gz: Cannot open: No such file or directory
+```
+
+**Oorzaak:** er staat geen bestand met die naam in de map waar je bent, door een tikfout in de datum, of omdat je niet in `~/backups` stond.
+
+**Oplossing:** kijk met `ls ~/backups` welke bestanden er zijn, ga met `cd ~/backups` naar de map, en gebruik een naam uit de lijst.
+
+Je site staat op internet, en je back-ups staan op twee plekken. Loop met de controlelijst van [Beveilig je eigen project](site:fullstack/docs/veiligheid/eigen-project) nog een keer je code na: dat is nu code op internet.

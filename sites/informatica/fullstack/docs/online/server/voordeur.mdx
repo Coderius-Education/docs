@@ -74,7 +74,7 @@ Dat is de voordeur van je server: Traefik antwoordt, maar er staat nog geen site
 
 **Oplossing:** `docker network create web`, en daarna opnieuw `docker compose up -d` in `~/traefik`.
 
-### No such file or directory bij cd ~/traefik
+### No such file or directory bij `cd ~/traefik`
 
 **Oorzaak:** `scp` zette de map ergens anders neer. Zonder de `:` aan het eind van het adres maakt `scp` op je laptop een kopie met de naam `sam@203.0.113.10`.
 

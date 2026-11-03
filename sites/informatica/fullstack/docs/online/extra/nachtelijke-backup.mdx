@@ -1,61 +1,15 @@
 ---
-sidebar_label: '38. Elke nacht een back-up (extra)'
-description: De back-up uit les 34 als script, dat cron elke nacht draait en dat de laatste zeven back-ups bewaart. De site start ook als het kopiëren misgaat.
+sidebar_label: '42. Elke nacht met cron (extra)'
+description: cron draait het back-upscript elke nacht, met hele paden en een log.txt. Je probeert het twee minuten vanaf nu, zonder tot morgen te wachten.
 ---
 
-# Online zetten: elke nacht een back-up
+# Online zetten: elke nacht met cron
 
-<Voorkennis items={[{site: 'linux', to: '/docs/terminal/zoeken', label: 'Uitvoer doorgeven met een pipe'}]} />
+Het script uit [les 41](site:fullstack/docs/online/extra/script) werkt als jij het start. Nu laat je de server het zelf doen, elke nacht.
 
-De back-up uit [les 34](site:fullstack/docs/online/server/backup) maak je met de hand, en dat vergeet je. Zet de stappen in een script, en laat de server dat elke nacht draaien.
+## Een regel in de crontab
 
-## Het script
-
-Maak op de server een map voor de back-ups, en een script:
-
-```bash
-mkdir ~/backups
-nano ~/backup.sh
-```
-
-```bash
-MAP=~/backups/$(date +%F)
-
-mkdir -p "$MAP"
-cd ~/gastenboek
-docker compose stop
-docker compose cp gastenboek:/app/data "$MAP/data"
-docker compose start
-
-cp ~/gastenboek/.env "$MAP"
-cp -r ~/traefik "$MAP"
-tar -czf "$MAP.tar.gz" -C ~/backups "$(basename "$MAP")"
-rm -r "$MAP"
-
-ls -1t ~/backups/*.tar.gz | tail -n +8 | xargs -r rm
-```
-
-Het middelste stuk ken je uit les 34. Nieuw is wat eromheen staat:
-
-| Regel | Wat hij doet |
-|:---|:---|
-| `MAP=~/backups/$(date +%F)` | een variabele `MAP` met een map per dag: `date +%F` geeft de datum, zoals `2026-11-03` |
-| `"$MAP"` | de waarde van `MAP`; de aanhalingstekens houden hem bij elkaar als er ooit een spatie in staat |
-| `tar -czf "$MAP.tar.gz" …` | maakt van de map één ingepakt bestand, `2026-11-03.tar.gz` |
-| `ls -1t … \| tail -n +8 \| xargs -r rm` | zet de back-ups op een rij, nieuwste eerst, slaat er zeven over, en gooit de rest weg |
-
-Zo blijven de laatste zeven nachten bewaard, en loopt de schijf niet vol. Probeer het script zelf:
-
-```bash
-bash ~/backup.sh
-ls ~/backups
-```
-
-Je site stopt een paar seconden, en daarna staat er een bestand met de datum van vandaag erin.
-
-## Elke nacht met cron
-
-**cron** is een dienst op elke Ubuntu-server die commando's op vaste tijden draait. Elke gebruiker heeft een eigen lijst, de *crontab*. Open de jouwe:
+**cron** is een dienst op elke Ubuntu-server die commando's op vaste tijden draait. Elke gebruiker heeft een eigen lijst, de *crontab*. Open de jouwe, als `sam` en zonder `sudo`:
 
 ```bash
 crontab -e
@@ -85,34 +39,59 @@ De eerste vijf velden zeggen wanneer:
 | maand | `*` | elke maand |
 | dag van de week | `*` | elke dag van de week |
 
-Daarna komt het commando. Schrijf hele paden, met `/home/sam` en niet `~`. `>> …/log.txt 2>&1` zet alles wat het script zegt, ook de fouten, achter elkaar in `log.txt`. Daar lees je achteraf wat er 's nachts gebeurde.
+Daarna komt het commando. Schrijf hele paden, met `/home/sam` en niet `~`. `>> …/log.txt 2>&1` zet alles wat het script zegt, ook de fouten, achter elkaar in `log.txt`. Daar lees je achteraf wat er gebeurde terwijl jij sliep.
 
 Sla op en sluit nano; cron zegt `crontab: installing new crontab`. `crontab -l` toont je lijst.
 
-## Nog steeds naar je laptop
+## Niet tot morgen wachten
 
-De back-ups staan op dezelfde server als je site, en verdwijnen met hem. Haal ze daarom af en toe naar je laptop, in WSL:
+Kijk hoe laat de server het vindt:
 
 ```bash
-mkdir -p ~/backup-gastenboek
-scp 'sam@gastenboek.voorbeeld.nl:backups/*.tar.gz' ~/backup-gastenboek/
+date
 ```
 
-De aanhalingstekens zorgen dat de server de `*` invult, en niet je laptop. Uitpakken doe je met `tar -xzf` en de naam van het bestand.
+```text
+Tue Nov  3 14:10:12 UTC 2026
+```
+
+Let op `UTC`: de server rekent in de tijd van Greenwich, een of twee uur achter op Nederland. Neem het uur dat `date` toont. Zet met `crontab -e` de tijd op twee minuten vanaf nu, hier 14:12:
+
+```text
+12 14 * * * bash /home/sam/backup.sh >> /home/sam/backups/log.txt 2>&1
+```
+
+Wacht tot die minuut voorbij is, en kijk:
+
+```bash
+ls -l ~/backups
+tail ~/backups/log.txt
+```
+
+Zet de tijd daarna met `crontab -e` terug op `30 3`.
 
 <Gelukt>
 
-De ochtend na de afgesproken tijd staat er in `~/backups` een bestand met de datum van die nacht, zoals `2026-11-03.tar.gz`, en eindigt `log.txt` met `Container gastenboek-gastenboek-1 Started`.
+Het bestand van vandaag in `~/backups` heeft de tijd van die minuut, zoals `14:12`, en `log.txt` toont wat `docker compose` zei, met `Started` als laatste:
+
+```text
+ Container gastenboek-gastenboek-1 Stopping
+ Container gastenboek-gastenboek-1 Stopped
+ gastenboek-gastenboek-1 Copying gastenboek-gastenboek-1:/app/data to /home/sam/backups/2026-11-03/data
+ gastenboek-gastenboek-1 Copied gastenboek-gastenboek-1:/app/data to /home/sam/backups/2026-11-03/data
+ Container gastenboek-gastenboek-1 Starting
+ Container gastenboek-gastenboek-1 Started
+```
 
 </Gelukt>
 
-<Voorspel soort="Controlevraag" vraag="In uitrollen.sh uit les 32 stond set -e bovenaan, zodat het script stopt bij de eerste fout. In dit script staat het niet. Op een nacht is de schijf vol, en docker compose cp mislukt. Wat gebeurt er met je site?">
-  <Keuze uitleg="Zonder set -e gaat bash na een fout door met de volgende regel. Welke regel komt na het kopiëren?">Je site blijft uit, want het script stopt bij de fout</Keuze>
-  <Keuze goed uitleg="bash gaat door na de mislukte regel, en de volgende is docker compose start. De back-up van die nacht is mislukt, maar je site draait.">Hij start weer, want het script gaat door met docker compose start</Keuze>
-  <Keuze uitleg="docker compose stop heeft hem echt gestopt. Er moet nog iets zijn wat hem weer start.">Niets: stop doet niets als de schijf vol is</Keuze>
+<Voorspel soort="Controlevraag" vraag="Op een nacht is de schijf vol, en docker compose cp mislukt. Wat lees je 's ochtends onderaan log.txt?">
+  <Keuze uitleg="Het script heeft geen set -e. Wat doet bash na een regel die misgaat?">Alleen de fout van het kopiëren, want het script stopte daar</Keuze>
+  <Keuze goed uitleg="bash gaat door na de mislukte regel. docker compose start draait, en ook dat komt in log.txt, onder de fout.">De fout van het kopiëren, en daaronder dat je site weer startte</Keuze>
+  <Keuze uitleg="2>&1 stuurt ook de fouten naar log.txt. Daar is hij juist voor.">Niets: cron schrijft alleen op wat lukt</Keuze>
   <Uitleg>
 
-  Bij uitrollen wil je stoppen bij een fout: anders denk je dat er een nieuwe versie staat terwijl het de oude is. Hier is het andersom. Met `set -e` zou een mislukte back-up je site uit laten staan tot jij het 's ochtends ziet. Een gemiste back-up is erg, een site die de hele nacht uit staat erger.
+  Daarom kijk je af en toe in `log.txt`: cron zegt het je niet als er iets misgaat. Een nacht zonder back-up zie je daar, en je site draaide intussen door.
 
   </Uitleg>
 </Voorspel>
@@ -123,11 +102,11 @@ De ochtend na de afgesproken tijd staat er in `~/backups` een bestand met de dat
 
 **Oorzaak:** de map `~/backups` bestaat niet. Cron kan `log.txt` dan niet maken, en start het script niet eens.
 
-**Oplossing:** maak de map met `mkdir ~/backups`. De volgende nacht werkt het.
+**Oplossing:** maak de map met `mkdir ~/backups`, en probeer het opnieuw met de tijd op twee minuten vanaf nu.
 
 ### De back-up komt op een ander uur
 
-**Oorzaak:** de server rekent in UTC, de tijd van Greenwich, en niet in de tijd van Nederland. Typ `date`: staat er `UTC` achter, dan loopt de klok van de server een of twee uur achter op die van jou.
+**Oorzaak:** je rekende met de tijd van Nederland, en de server rekent in UTC.
 
 **Oplossing:** reken de tijd om, of laat hem staan: 3:30 UTC is in Nederland ook midden in de nacht.
 
@@ -139,7 +118,7 @@ permission denied while trying to connect to the docker API at unix:///var/run/d
 
 **Oorzaak:** `sam` zit niet in de groep `docker`. Bij het inloggen met ssh merk je dat meteen, maar cron draait ook als jij er niet bij bent.
 
-**Oplossing:** zet `sam` in de groep zoals in [les 28](site:fullstack/docs/online/server/docker), en probeer het script met de hand.
+**Oplossing:** zet `sam` in de groep zoals in [les 30](site:fullstack/docs/online/server/docker), en probeer het script met de hand.
 
 ### No such file or directory in log.txt
 
@@ -151,54 +130,4 @@ permission denied while trying to connect to the docker API at unix:///var/run/d
 
 **Oplossing:** haal de regel daar weg met `sudo crontab -e`, en zet hem in je eigen lijst met `crontab -e`, zonder `sudo`.
 
-## Opdrachten
-
-### Opdracht 1: Run - Elke nacht een back-up
-
-Maak het script, probeer het met de hand, en zet het in je crontab. Wil je niet tot morgen wachten, zet de tijd dan eerst op twee minuten vanaf nu (kijk met `date` hoe laat de server het vindt), en zet hem daarna terug op 3:30. Wat staat er in `log.txt`?
-
-<details>
-<summary>Antwoord</summary>
-
-Na de afgesproken minuut staat er een nieuw bestand in `~/backups`, en in `log.txt` staat wat `docker compose` zei:
-
-```text
- Container gastenboek-gastenboek-1 Stopping
- Container gastenboek-gastenboek-1 Stopped
- gastenboek-gastenboek-1 Copying gastenboek-gastenboek-1:/app/data to /home/sam/backups/2026-11-03/data
- gastenboek-gastenboek-1 Copied gastenboek-gastenboek-1:/app/data to /home/sam/backups/2026-11-03/data
- Container gastenboek-gastenboek-1 Starting
- Container gastenboek-gastenboek-1 Started
-```
-
-Staat er een fout in, dan zie je hem hier.
-
-</details>
-
-### Opdracht 2: Modify - Portainer erbij
-
-Heb je Portainer uit [les 37](site:fullstack/docs/online/extra/portainer), dan hoort `~/portainer` ook in de back-up. Pas het script aan.
-
-<details>
-<summary>Antwoord</summary>
-
-Zet onder de regel voor `~/traefik`:
-
-```bash
-cp -r ~/portainer "$MAP"
-```
-
-</details>
-
-### Opdracht 3: Investigate - Hoeveel ruimte?
-
-Hoeveel ruimte nemen je back-ups in? Gebruik `du -sh ~/backups`. Hoeveel zou het zijn zonder de regel die er zeven bewaart, na een jaar?
-
-<details>
-<summary>Antwoord</summary>
-
-Een gastenboek met een paar accounts en berichten is ingepakt een paar kilobyte, dus zeven back-ups zijn samen minder dan een megabyte. Na een jaar zonder opruimen zijn het er 365, en dat is voor een klein gastenboek nog steeds weinig. Maar je databases groeien, en een schijf die vol raakt, stopt je site. De regel kost niets, en je hoeft er nooit meer aan te denken.
-
-</details>
-
-Je site staat online en hij zorgt voor zichzelf. Loop met de controlelijst van [Beveilig je eigen project](site:fullstack/docs/veiligheid/eigen-project) nog een keer je code na: dat is nu code op internet.
+Door naar [les 43: de back-ups naar je laptop](site:fullstack/docs/online/extra/ophalen).
