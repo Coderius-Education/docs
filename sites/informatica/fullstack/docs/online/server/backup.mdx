@@ -1,5 +1,5 @@
 ---
-sidebar_label: '34. Een back-up'
+sidebar_label: '37. Een back-up'
 description: Een kopie van je databases en de instellingen van de server, op je laptop.
 ---
 
@@ -28,13 +28,13 @@ cp ~/gastenboek/.env ~/backup/
 cp -r ~/traefik ~/backup/
 ```
 
-Haal de kopie daarna in WSL naar je laptop met `scp`:
+Haal de kopie daarna naar je laptop. Typ dit in WSL, niet op de server:
 
 ```bash
 scp -r sam@gastenboek.voorbeeld.nl:backup ~/backup-gastenboek
 ```
 
-Ging ssh tot nu toe met het IP-adres, dan vraagt hij bij de domeinnaam nog één keer of je de vingerafdruk vertrouwt; het is dezelfde server. Gooi de kopie op de server daarna weg met `rm -r ~/backup`. In `gebruikers.db` staan de wachtwoorden van je bezoekers, als hash; bewaar de back-up dus net zo zorgvuldig als de server zelf.
+Ging ssh tot nu toe met het IP-adres, dan vraagt hij bij de domeinnaam nog één keer of je de vingerafdruk vertrouwt; het is dezelfde server. Staat de kopie op je laptop, gooi hem dan op de server weg met `rm -r ~/backup`. De kopie in `~/backup-gastenboek` op je laptop houd je: die zet je in de volgende stap terug. In `gebruikers.db` staan de wachtwoorden van je bezoekers, als hash; bewaar de back-up dus net zo zorgvuldig als de server zelf.
 
 <Gelukt>
 
@@ -61,6 +61,24 @@ In WSL toont `ls -A ~/backup-gastenboek` drie dingen: de map `data` met je datab
 
 **Oplossing:** gooi hem weg met `sudo rm -r ~/backup`, en laat `sudo` voortaan weg voor `docker`.
 
+### De nieuwe back-up staat in ~/backup-gastenboek/backup
+
+Je maakte een tweede back-up, en op je laptop toont `ls -A ~/backup-gastenboek`:
+
+```text
+.env  backup  data  traefik
+```
+
+**Oorzaak:** `~/backup-gastenboek` bestond al van de vorige keer. Dan maakt `scp -r` de map `backup` daarbinnen, in plaats van de oude te vervangen. Daarbuiten staat nog de oude back-up.
+
+**Oplossing:** geef de oude back-up eerst een andere naam, en haal de nieuwe opnieuw op:
+
+```bash
+rm -r ~/backup-gastenboek/backup
+mv ~/backup-gastenboek ~/backup-gastenboek-oud
+scp -r sam@gastenboek.voorbeeld.nl:backup ~/backup-gastenboek
+```
+
 ## Opdrachten
 
 ### Opdracht 1: Run - Een back-up op je laptop
@@ -74,4 +92,4 @@ De map `data` met je databases (`gebruikers.db`, en de andere die je site gebrui
 
 </details>
 
-Door naar [les 35: een back-up terugzetten](site:fullstack/docs/online/server/terugzetten).
+Door naar [les 38: een back-up terugzetten](site:fullstack/docs/online/server/terugzetten).

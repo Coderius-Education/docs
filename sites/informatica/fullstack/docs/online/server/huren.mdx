@@ -1,11 +1,11 @@
 ---
-sidebar_label: '22. Een server huren'
+sidebar_label: '24. Een server huren'
 description: Een server met Ubuntu 24.04 op internet, gemaakt met je ssh-sleutel, en de eerste keer inloggen als root.
 ---
 
 # Online zetten: een server huren
 
-<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'ssh en een sleutelpaar'}, {site: 'linux', to: '/docs/terminal/bestanden-lezen', label: 'Inlogpogingen in een logboek'}]} />
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'ssh en een sleutelpaar'}, {site: 'linux', to: '/docs/wsl/diensten', label: 'Een logboek lezen met journalctl'}]} />
 
 Je site draait in Docker, achter een voordeur. Nu zet je hem op een computer die dag en nacht aan internet hangt: een **server**. Je huurt er een bij een hostingbedrijf, of je krijgt er een van school. Zo'n gehuurde server is meestal een stukje van een grotere computer, en heet een **VPS** (*virtual private server*). De kleinste is ruim genoeg voor een gastenboek.
 
@@ -40,7 +40,7 @@ apt upgrade
 
 Als `root` heb je geen `sudo` nodig: je bent het al.
 
-Bij sommige hostingbedrijven log je niet in als `root` maar als `ubuntu`, een gebruiker die al `sudo` mag. Zet dan `sudo` voor de commando's in de volgende stappen, en kopieer in [les 23](site:fullstack/docs/online/server/gebruiker) de sleutel uit `/home/ubuntu/.ssh/authorized_keys` in plaats van die van `root`.
+Bij sommige hostingbedrijven log je niet in als `root` maar als `ubuntu`, een gebruiker die al `sudo` mag. Zet dan `sudo` voor de commando's in de volgende stappen, en kopieer in [les 25](site:fullstack/docs/online/server/gebruiker) de sleutel uit `/home/ubuntu/.ssh/authorized_keys` in plaats van die van `root`.
 
 <Gelukt>
 
@@ -95,4 +95,4 @@ Het getal verschilt per server en per uur, maar nul is het zelden.
 
 </details>
 
-Door naar [les 23: een eigen gebruiker](site:fullstack/docs/online/server/gebruiker).
+Door naar [les 25: een eigen gebruiker](site:fullstack/docs/online/server/gebruiker).

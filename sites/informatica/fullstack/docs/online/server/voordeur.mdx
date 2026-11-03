@@ -1,0 +1,83 @@
+---
+sidebar_label: '32. Traefik op de server'
+description: De voordeur uit WSL naar de server, met scp, en Traefik starten. Docker zet een gepubliceerde poort open langs de firewall, dus alleen Traefik publiceert iets.
+---
+
+# Online zetten: Traefik op de server
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/scp', label: 'Bestanden kopiëren met scp'}]} />
+
+Docker draait op de server, en je project staat er. Nu komt de voordeur erbij, dezelfde als in WSL. Daarna antwoordt je server op internet, nog zonder site erachter.
+
+## De voordeur kopiëren
+
+De map `~/traefik` uit [les 22](site:fullstack/docs/online/docker/voordeur) hoort niet bij je project, dus hij staat niet op GitHub. Kopieer hem met `scp`, in WSL:
+
+```bash
+scp -r ~/traefik sam@203.0.113.10:
+```
+
+`scp -r` kopieert de hele map over ssh. De `:` zonder pad erachter betekent: naar de thuismap van `sam`.
+
+## Traefik starten
+
+Op de server maak je eerst het netwerk `web`, net als in WSL, en start je daarna Traefik:
+
+```bash
+docker network create web
+cd ~/traefik
+docker compose up -d
+```
+
+Je hebt nog geen domeinnaam nodig om te kijken of hij antwoordt. Open in de browser op je laptop het IP-adres van je server: `http://203.0.113.10`.
+
+## Docker en de firewall
+
+In [les 28](site:fullstack/docs/online/server/dichtzetten) hield ufw elke poort tegen die niet in de lijst staat. Voor Docker geldt dat niet. Een poort die je publiceert met `ports` in `compose.yaml` of `-p`, zet Docker zelf open, in de firewall van Linux, vóór de regels van ufw. Een gepubliceerde poort staat dus op internet, wat ufw ook zegt.
+
+Daarom publiceert op je server alleen Traefik iets: poort 80, en straks 443. Die stonden al open in ufw. Je site krijgt in de volgende stap geen `ports`, net als in WSL. Wil je ooit iets publiceren dat alleen voor jou is, zet er dan `127.0.0.1:` voor, zoals in [les 21](site:fullstack/docs/online/docker/compose). Dan luistert Docker alleen op de server zelf.
+
+<Gelukt>
+
+`http://203.0.113.10` geeft in je browser:
+
+```text
+404 page not found
+```
+
+Dat is de voordeur van je server: Traefik antwoordt, maar er staat nog geen site achter. Op de server toont `docker ps` de container `traefik-traefik-1` met `Up`.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Om iets te testen start je op de server een container met -p 8000:8000. ufw laat 8000 niet door. Een klasgenoot opent het adres van je server met :8000 erachter. Wat ziet hij?">
+  <Keuze uitleg="Zo werkt het voor een programma zonder Docker, zoals in les 28. Maar wie zette deze poort open?">Niets: ufw houdt poort 8000 tegen</Keuze>
+  <Keuze goed uitleg="Docker zet een gepubliceerde poort open vóór de regels van ufw. Poort 8000 staat op internet, en het verzoek komt rechtstreeks bij de container, om Traefik heen.">Wat de container antwoordt, rechtstreeks, zonder Traefik ertussen</Keuze>
+  <Keuze uitleg="Traefik luistert alleen op 80 en 443. Een verzoek op 8000 komt niet bij Traefik.">De 404 van Traefik</Keuze>
+  <Uitleg>
+
+  Dit is de valkuil van Docker op een server: ufw toont 8000 als dicht, en toch staat hij open. Voor je site is het ook gevaarlijk om een tweede reden. Je site gelooft door `FORWARDED_ALLOW_IPS=*` elke `X-Forwarded-For`, en via een eigen poort kan een bezoeker die kop zelf invullen. Dan helpt de limiet van slowapi niet meer. Publiceer op een server dus nooit de poort van je site.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### De browser krijgt geen antwoord
+
+**Oorzaak:** Traefik draait niet, of poort 80 staat niet open in ufw.
+
+**Oplossing:** kijk op de server met `docker ps` of `traefik-traefik-1` erbij staat, en lees anders het logboek met `docker compose logs` in `~/traefik`. Kijk met `sudo ufw status` of `80/tcp` er staat, zoals in [les 28](site:fullstack/docs/online/server/dichtzetten).
+
+### network web declared as external, but could not be found
+
+**Oorzaak:** het netwerk `web` bestaat op de server nog niet. Het netwerk uit WSL gaat niet mee met `scp`: het is van de Docker op je laptop.
+
+**Oplossing:** `docker network create web`, en daarna opnieuw `docker compose up -d` in `~/traefik`.
+
+### No such file or directory bij cd ~/traefik
+
+**Oorzaak:** `scp` zette de map ergens anders neer. Zonder de `:` aan het eind van het adres maakt `scp` op je laptop een kopie met de naam `sam@203.0.113.10`.
+
+**Oplossing:** kijk in WSL met `ls` of die map er staat, en gooi hem weg met `rm -r sam@203.0.113.10`. Typ het commando opnieuw, met de `:` erachter.
+
+Door naar [les 33: je site op je domein](site:fullstack/docs/online/server/site).

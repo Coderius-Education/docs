@@ -1,5 +1,5 @@
 ---
-sidebar_label: '20. Een voordeur met Traefik'
+sidebar_label: '22. Een voordeur met Traefik'
 description: Traefik ontvangt bezoekers op poort 80 en geeft elk verzoek door aan de container die bij de naam hoort. Eerst start je de voordeur zelf, in een eigen map.
 ---
 
@@ -13,7 +13,7 @@ Een bezoeker typt een naam zonder poortnummer: `http://…` gaat naar poort 80, 
 browser van de bezoeker  →  Traefik, op poort 80 en 443  →  de container van jouw site
 ```
 
-Hier gebruik je **Traefik**. Het draait zelf in een container, en kijkt bij Docker welke andere containers er zijn. Een container die een paar **labels** heeft (regels met instellingen), krijgt vanzelf een plek achter de voordeur. Op de server regelt Traefik ook HTTPS, in [les 31](site:fullstack/docs/online/server/https). Je start eerst de voordeur zelf, zonder site erachter.
+Hier gebruik je **Traefik**. Het draait zelf in een container, en kijkt bij Docker welke andere containers er zijn. Een container die een paar **labels** heeft (regels met instellingen), krijgt vanzelf een plek achter de voordeur. Op de server regelt Traefik ook HTTPS, in [les 34](site:fullstack/docs/online/server/https). Je start eerst de voordeur zelf, zonder site erachter.
 
 ## Een netwerk voor de voordeur
 
@@ -87,7 +87,7 @@ Dat is goed nieuws: de voordeur staat, maar er staat nog geen site achter. Die z
 Met `docker.sock` kan Traefik Docker alles vragen, en `:ro` verandert daar weinig aan. Geef die toegang daarom alleen aan een programma dat je vertrouwt en bijhoudt, zoals Traefik zelf.
 :::
 
-<Voorspel soort="Controlevraag" vraag="Traefik draait. Je site draait nog zoals in les 19, met ports op 127.0.0.1:8000. Wat zie je op http://127.0.0.1:8000?">
+<Voorspel soort="Controlevraag" vraag="Traefik draait. Je site draait nog zoals in les 21, met ports op 127.0.0.1:8000. Wat zie je op http://127.0.0.1:8000?">
   <Keuze goed uitleg="Je site heeft nog zijn eigen deur, poort 8000. Traefik luistert op 80 en weet nog niets van je site.">Je gastenboek, net als voor Traefik er was</Keuze>
   <Keuze uitleg="Traefik luistert op poort 80. Komt een verzoek op poort 8000 bij hem?">De 404 van Traefik</Keuze>
   <Keuze uitleg="Je site staat nog niet in het netwerk web, maar ports werkt los daarvan. Is er iets aan je site veranderd?">Geen antwoord, want je site staat niet in het netwerk web</Keuze>
@@ -128,4 +128,4 @@ failed to bind host port 0.0.0.0:80/tcp: address already in use
 
 **Oplossing:** zet het uit met `sudo systemctl disable --now nginx`, en start Traefik opnieuw.
 
-Door naar [les 21: je site achter Traefik](site:fullstack/docs/online/docker/traefik).
+Door naar [les 23: je site achter Traefik](site:fullstack/docs/online/docker/traefik).

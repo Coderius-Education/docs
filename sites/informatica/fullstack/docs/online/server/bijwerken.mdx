@@ -1,11 +1,11 @@
 ---
-sidebar_label: '36. Bijwerken en opruimen'
+sidebar_label: '39. Bijwerken en opruimen'
 description: De images van Python en Traefik bijwerken met --pull, want unattended-upgrades doet dat niet, en oude images opruimen voordat de schijf vol is.
 ---
 
 # Online zetten: bijwerken en opruimen
 
-Ubuntu installeert zijn eigen updates vanzelf ([les 27](site:fullstack/docs/online/server/updates)). Maar je site draait op `python:3.13-slim`, en de voordeur op `traefik:v3`, en die komen van Docker Hub, niet van Ubuntu. Ook daarin worden gaten gevonden en gedicht, en die updates haal jij op.
+Ubuntu installeert zijn eigen updates vanzelf ([les 29](site:fullstack/docs/online/server/updates)). Maar je site draait op `python:3.13-slim`, en de voordeur op `traefik:v3`, en die komen van Docker Hub, niet van Ubuntu. Ook daarin worden gaten gevonden en gedicht, en die updates haal jij op.
 
 ## De images bijwerken
 
@@ -78,7 +78,7 @@ Na het bijwerken staat je site bij `docker compose ps` op `(healthy)` en Traefik
 
 **Oorzaak:** in de nieuwe `python:3.13-slim` of in een package is iets veranderd waar je site niet tegen kan. Dat is zeldzaam, maar het kan.
 
-**Oplossing:** lees de fout in `docker compose logs --tail 50`. Terug naar het oude image gaat niet zomaar: `build` gaf de nieuwe zijn naam, en het oude heeft er geen meer. Los het daarom op je laptop op: bouw daar met `docker compose build --pull`, zoek de fout, en zet een fix op de server zoals in [les 32](site:fullstack/docs/online/server/nieuwe-versie).
+**Oplossing:** lees de fout in `docker compose logs --tail 50`. Terug naar het oude image gaat niet zomaar: `build` gaf de nieuwe zijn naam, en het oude heeft er geen meer. Los het daarom op je laptop op: bouw daar met `docker compose build --pull`, zoek de fout, en zet een fix op de server zoals in [les 35](site:fullstack/docs/online/server/nieuwe-versie).
 
 ## Opdrachten
 
@@ -104,6 +104,6 @@ Kijk met `docker system df` hoeveel ruimte de images gebruiken, ruim op met `doc
 
 </details>
 
-Je site staat online, in een container die niet als `root` draait, met de berichten in een volume, achter een voordeur met HTTPS, en met alleen de deuren open die hij nodig heeft. Wil je je containers in de browser beheren, of de back-up elke nacht vanzelf laten gebeuren, dan zijn er nog twee extra lessen.
+Hierna volgen extra stappen: je containers bekijken in de browser, en de back-up die elke nacht vanzelf gebeurt.
 
-Door naar [les 37: beheren met Portainer](site:fullstack/docs/online/extra/portainer).
+Door naar [les 40: beheren met Portainer](site:fullstack/docs/online/extra/portainer).

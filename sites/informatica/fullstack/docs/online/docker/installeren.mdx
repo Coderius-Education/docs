@@ -29,7 +29,7 @@ sudo apt install docker.io docker-compose-v2 docker-buildx git
 Dat zijn vier pakketten van Ubuntu zelf:
 
 - `docker.io`: Docker, met het commando `docker` en de dienst die de containers draait;
-- `docker-compose-v2`: `docker compose`, voor [les 19](site:fullstack/docs/online/docker/compose);
+- `docker-compose-v2`: `docker compose`, voor [les 21](site:fullstack/docs/online/docker/compose);
 - `docker-buildx`: het onderdeel dat images bouwt;
 - `git`: dat heb je al, maar op de server typ je straks precies deze regel.
 
@@ -77,6 +77,16 @@ failed to connect to the docker API at unix:///var/run/docker.sock; check if the
 ```bash
 sudo systemctl enable --now docker
 ```
+
+### Cannot connect to the Docker daemon
+
+```text
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+```
+
+**Oorzaak:** hetzelfde als hierboven, in een andere vorm. Het bestand `docker.sock` staat er nog, maar de dienst die erachter hoort te luisteren, draait niet.
+
+**Oplossing:** `sudo systemctl enable --now docker`, en kijk met `systemctl status docker` of er `active (running)` staat.
 
 ### `inactive (dead)` bij systemctl status
 

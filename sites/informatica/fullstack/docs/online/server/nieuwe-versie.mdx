@@ -1,5 +1,5 @@
 ---
-sidebar_label: '32. Een nieuwe versie uitrollen'
+sidebar_label: '35. Een nieuwe versie uitrollen'
 description: Een nieuwe versie gaat met git pull en docker compose up --build naar de server. Je code verandert nooit op de server zelf, en het volume blijft staan.
 ---
 
@@ -11,7 +11,7 @@ Je site staat online. Nu verander je iets. Je werkt zoals altijd in Ubuntu op je
 
 ## Een wijziging: de cookie alleen over https
 
-Nu je site `https` heeft, kan de sessie-cookie de vlag `secure` krijgen: dan stuurt de browser hem nooit meer over een onversleutelde verbinding. Wat `secure` doet, staat in de praktijkles van [Cookies afschermen](site:fullstack/docs/veiligheid/cookies/praktijk). Zet het bij `set_cookie` in je `/inloggen`:
+Nu je site `https` heeft, kan de sessie-cookie de vlag `secure` krijgen: dan stuurt de browser hem nooit meer over een onversleutelde verbinding. Wat `secure` doet, staat in de praktijkles van [Cookies afschermen](site:fullstack/docs/veiligheid/cookies/praktijk). Zet het bij `set_cookie` in je `/inloggen`, en laat de rest staan zoals het was:
 
 {/* niet-compileren: alleen de set_cookie uit /inloggen, het endpoint eromheen staat in Cookies afschermen */}
 
@@ -19,14 +19,14 @@ Nu je site `https` heeft, kan de sessie-cookie de vlag `secure` krijgen: dan stu
     antwoord.set_cookie(
         key="sessie_id",
         value=sessie_id,
-        max_age=60 * 60 * 24 * 30,
+        max_age=GELDIG,
         httponly=True,
         samesite="lax",
         secure=True,
     )
 ```
 
-Op je eigen computer blijft het werken: Chrome en Firefox laten een `secure`-cookie op `127.0.0.1`, `localhost` en `gastenboek.localhost` toch door. Commit en push het, en zet het daarna op de server.
+Op je eigen computer blijft het werken: Chrome en Firefox laten een `secure`-cookie op `127.0.0.1`, `localhost` en `gastenboek.localhost` toch door. Had je `secure=True` al uit Cookies afschermen, dan hoef je hier niets te veranderen; kies dan een andere wijziging, zoals een tekst op je homepage. Commit en push het, en zet het daarna op de server.
 
 ## Twee stappen op de server
 
@@ -52,7 +52,7 @@ Staat er `Up` bij de status en geen traceback in het logboek, open dan je site. 
 
 Pas je code nooit aan op de server, ook niet "even snel" met nano. De volgende `git pull` weigert dan, of jouw wijziging staat nergens anders en is bij een nieuwe server weg. De server krijgt alleen code die eerst op GitHub stond.
 
-Een paar bestanden horen niet bij je project maar bij de server zelf: `.env` met je domeinnaam, en de map `~/traefik` met de voordeur. Die maak en verander je wel op de server, en ze staan nergens anders. Daarom gaan ze mee in de back-up van [les 34](site:fullstack/docs/online/server/backup).
+Een paar bestanden horen niet bij je project maar bij de server zelf: `.env` met je domeinnaam, en de map `~/traefik` met de voordeur. Die maak en verander je wel op de server, en ze staan nergens anders. Daarom gaan ze mee in de back-up van [les 37](site:fullstack/docs/online/server/backup).
 
 <Gelukt>
 
@@ -66,7 +66,7 @@ Na de twee stappen staat bij `docker compose ps` `Up`, en kun je op je telefoon 
   <Keuze uitleg="Compose gooit de oude container weg. Maar stonden de databases in de container?">Nee, want de oude container is weggegooid</Keuze>
   <Uitleg>
 
-  Je code komt uit git en zit in het image, je gegevens staan in het volume ([les 18](site:fullstack/docs/online/docker/volume)). Een nieuwe versie vervangt het image en de container, en komt niet aan het volume. Het betekent ook dat de berichten maar op één plek staan. Daarom maak je in [les 34](site:fullstack/docs/online/server/backup) een back-up.
+  Je code komt uit git en zit in het image, je gegevens staan in het volume ([les 20](site:fullstack/docs/online/docker/volume)). Een nieuwe versie vervangt het image en de container, en komt niet aan het volume. Het betekent ook dat de berichten maar op één plek staan. Daarom maak je in [les 37](site:fullstack/docs/online/server/backup) een back-up.
 
   </Uitleg>
 </Voorspel>
@@ -136,4 +136,4 @@ Zonder `set -e` bouwt het script ook als `git pull` faalde. Dat gaat meestal goe
 
 </details>
 
-Door naar [les 33: draait hij echt?](site:fullstack/docs/online/server/healthcheck).
+Door naar [les 36: draait hij echt?](site:fullstack/docs/online/server/healthcheck).

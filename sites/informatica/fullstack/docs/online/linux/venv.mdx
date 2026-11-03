@@ -14,15 +14,16 @@ Je code staat in Ubuntu, maar de packages nog niet: `.venv` zit niet in git. Je 
 Ubuntu heeft Python al, maar de module om een virtual environment te maken moet je er eerst bij zetten. Typ in de terminal van VS Code, in je project:
 
 ```bash
+sudo apt update
 sudo apt install python3-venv
 python3 -m venv .venv
 ```
 
-In Ubuntu heet Python `python3`. De tweede regel maakt de map `.venv`, net als op Windows.
+`sudo apt update` haalt eerst de nieuwste lijst met pakketten op; met een oude lijst zoekt apt naar versies die er niet meer zijn. De laatste regel maakt de map `.venv`, net als op Windows. In Ubuntu heet Python `python3`: een commando `python` kent Ubuntu niet.
 
 ## Aanzetten
 
-Op Windows zette VS Code de virtual environment vanzelf aan. In Ubuntu doe je het zelf:
+Zet de virtual environment aan in de terminal:
 
 ```bash
 source .venv/bin/activate
@@ -34,7 +35,7 @@ source .venv/bin/activate
 (.venv) sam@laptop:~/gastenboek$
 ```
 
-Zolang dat er staat, is `python` de Python uit `.venv`, en komt alles wat je installeert daarin. Open je een nieuwe terminal, dan typ je deze regel opnieuw.
+Zolang dat er staat, is `python` de Python uit `.venv`, en komt alles wat je installeert daarin. Staat er in een terminal geen `(.venv)` voor de prompt, typ deze regel dan opnieuw.
 
 ## Installeren uit je lijst
 
@@ -48,18 +49,34 @@ Voor je prompt staat `(.venv)`, en `python -m pip list` noemt `fastapi` en `sqli
 
 </Gelukt>
 
-<Voorspel soort="Controlevraag" vraag="Je sluit de terminal, opent een nieuwe en typt meteen python -m pip install -r requirements.txt. Wat gebeurt er?">
-  <Keuze uitleg="In een nieuwe terminal staat er geen (.venv) voor de prompt. Welke Python krijg je dan?">Hij installeert alles in .venv, net als de vorige keer</Keuze>
-  <Keuze goed uitleg="Zonder source staat de virtual environment uit. Dan probeer je het in de Python van Ubuntu zelf, en die weigert het.">Het lukt niet, want de virtual environment staat nog uit</Keuze>
-  <Keuze uitleg="Er is niets kapot. Kijk naar wat er voor de prompt staat.">Het lukt niet, want .venv is weg na het sluiten</Keuze>
+<Voorspel soort="Controlevraag" vraag="In een terminal staat geen (.venv) voor je prompt. Je typt python -m pip install -r requirements.txt. Wat gebeurt er?">
+  <Keuze uitleg="De map .venv staat er nog, maar zonder source staat hij uit. Welke Python krijg je dan?">Hij installeert alles in .venv, want die map staat in je project</Keuze>
+  <Keuze goed uitleg="Zonder (.venv) kent Ubuntu alleen python3. Pas source .venv/bin/activate maakt python de Python uit .venv.">Ubuntu zegt dat het commando python niet bestaat</Keuze>
+  <Keuze uitleg="Hoe heet de Python van Ubuntu zelf? Kijk naar het commando waarmee je .venv maakte.">Hij installeert alles in de Python van Ubuntu zelf</Keuze>
   <Uitleg>
 
-  `.venv` blijft staan, maar een nieuwe terminal weet er niets van tot je `source .venv/bin/activate` typt. Kijk daarom altijd eerst of `(.venv)` voor je prompt staat.
+  Het woord `python` werkt in Ubuntu alleen als je virtual environment aanstaat. Zie je een melding dat `python` niet bestaat, dan weet je meteen wat er ontbreekt: `source .venv/bin/activate`.
 
   </Uitleg>
 </Voorspel>
 
 ## Er gaat iets mis
+
+### Een pakket dat apt niet kan ophalen
+
+```text
+E: Package 'python3-venv' has no installation candidate
+```
+
+Of, met een `404`:
+
+```text
+E: Failed to fetch http://security.ubuntu.com/ubuntu/pool/universe/p/python3.12/python3.12-venv_…_amd64.deb  404  Not Found
+```
+
+**Oorzaak:** de lijst met pakketten van apt is leeg of oud. Je sloeg `sudo apt update` over. Met een lege lijst kent apt het pakket niet; met een oude zoekt hij een versie die er niet meer is.
+
+**Oplossing:** typ `sudo apt update`, en installeer opnieuw.
 
 ### ensurepip is not available
 
@@ -73,7 +90,19 @@ package using the following command.
 
 **Oorzaak:** de module voor een virtual environment staat nog niet in Ubuntu.
 
-**Oplossing:** installeer hem met `sudo apt install python3-venv`, en typ `python3 -m venv .venv` opnieuw. De half gemaakte map `.venv` hoef je niet eerst weg te gooien.
+**Oplossing:** installeer hem met `sudo apt update` en `sudo apt install python3-venv`, en typ `python3 -m venv .venv` opnieuw. De half gemaakte map `.venv` hoef je niet eerst weg te gooien.
+
+### Command 'python' not found
+
+```text
+Command 'python' not found, did you mean:
+  command 'python3' from deb python3
+  command 'python' from deb python-is-python3
+```
+
+**Oorzaak:** de virtual environment staat niet aan. Zonder `.venv` heet Python in Ubuntu `python3`.
+
+**Oplossing:** zet hem aan met `source .venv/bin/activate`, kijk of `(.venv)` voor je prompt staat, en typ je commando opnieuw. Installeer geen `python-is-python3`: dan werkt `python` ook als je virtual environment uitstaat, en merk je niet meer dat hij uitstaat.
 
 ### externally-managed-environment
 
@@ -85,7 +114,7 @@ error: externally-managed-environment
 
 Of: `/usr/bin/python3: No module named pip`.
 
-**Oorzaak:** de virtual environment staat niet aan. Je probeert te installeren in de Python van Ubuntu zelf, en die laat dat niet toe, of heeft geen pip.
+**Oorzaak:** je typte `python3 -m pip` terwijl de virtual environment niet aanstaat. Je probeert te installeren in de Python van Ubuntu zelf, en die laat dat niet toe, of heeft geen pip.
 
 **Oplossing:** zet hem aan met `source .venv/bin/activate`, kijk of `(.venv)` voor je prompt staat, en installeer opnieuw. Installeer geen `python3-pip` om dit te omzeilen.
 

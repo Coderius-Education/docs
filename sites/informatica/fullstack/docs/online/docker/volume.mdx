@@ -1,13 +1,13 @@
 ---
-sidebar_label: '18. Je berichten bewaren'
+sidebar_label: '20. Je berichten bewaren'
 description: Een volume is opslag buiten de container. Met -v komt de map data daarin, en dan overleven de berichten een docker rm en een nieuw image.
 ---
 
 # Online zetten: je berichten bewaren
 
-Een container gooi je weg zodra er een nieuwe versie is. In [les 16](site:fullstack/docs/online/docker/container) zag je wat er dan met je berichten gebeurt: ze gaan mee. Daarom komen de databases buiten de container, in een **volume**: opslag die Docker los van elke container bewaart.
+Een container gooi je weg zodra er een nieuwe versie is. In [les 17](site:fullstack/docs/online/docker/achtergrond) zag je wat er dan met je berichten gebeurt: ze gaan mee. Daarom komen de databases buiten de container, in een **volume**: opslag die Docker los van elke container bewaart.
 
-Sinds de vorige les staan alle databases in één map, `/app/data`. Die map zet je in een volume:
+Sinds [les 18](site:fullstack/docs/online/docker/databases) staan alle databases in één map, `/app/data`. Die map zet je in een volume:
 
 ```bash
 docker rm -f gastenboek
@@ -85,28 +85,12 @@ Error response from daemon: remove gastenboek-data: volume is in use - [3eb36ed7
 
 ## Opdrachten
 
-### Opdracht 1: Run - Blijvende berichten
-
-Start je site met een volume, schrijf een bericht, gooi de container weg, en start een nieuwe. Verander daarna een tekst in een template, bouw opnieuw, en doe het nog een keer.
-
-<details>
-<summary>Antwoord</summary>
-
-```bash
-docker rm -f gastenboek
-docker run -d --name gastenboek -p 8000:8000 -v gastenboek-data:/app/data gastenboek
-```
-
-Na elke nieuwe container staat je bericht er nog. Na het bouwen zie je de nieuwe tekst, met de oude berichten eronder.
-
-</details>
-
-### Opdracht 2: Investigate - Wat zit er in het volume?
+### Opdracht 1: Investigate - Wat zit er in het volume?
 
 Je kunt een volume ook aan een andere container hangen. Kijk met een losse container wat erin staat:
 
 ```bash
-docker run --rm -v gastenboek-data:/data python:3.13-slim ls -ln /data
+docker run --rm -v gastenboek-data:/data python:3.13-slim ls -l /data
 ```
 
 Welke bestanden staan erin? Van wie zijn ze, en waarom staat er een getal in plaats van een naam?
@@ -114,8 +98,8 @@ Welke bestanden staan erin? Van wie zijn ze, en waarom staat er een getal in pla
 <details>
 <summary>Antwoord</summary>
 
-Je ziet `gastenboek.db` en `gebruikers.db`, en meer als je site meer databases heeft. Ze zijn van `999`. `-n` toont nummers in plaats van namen, en de gebruiker `app` heeft in jouw image nummer 999. In het image `python:3.13-slim` bestaat geen gebruiker `app`. Linux bewaart bij een bestand alleen het nummer; de naam zoekt hij op in de gebruikers van de computer, of hier van de container. Je ziet ook dat een volume niet aan één container vastzit: elke container die hem koppelt, ziet dezelfde bestanden.
+Je ziet `gastenboek.db` en `gebruikers.db`, en meer als je site meer databases heeft. Als eigenaar staat er `999 999`, en geen naam. De gebruiker `app` heeft in jouw image nummer 999, maar in het image `python:3.13-slim` bestaat geen gebruiker `app`. Linux bewaart bij een bestand alleen het nummer; de naam zoekt hij op in de gebruikers van de computer, of hier van de container. Je ziet ook dat een volume niet aan één container vastzit: elke container die hem koppelt, ziet dezelfde bestanden.
 
 </details>
 
-Door naar [les 19: alles in één bestand](site:fullstack/docs/online/docker/compose).
+Door naar [les 21: alles in één bestand](site:fullstack/docs/online/docker/compose).

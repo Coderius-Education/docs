@@ -1,11 +1,11 @@
 ---
-sidebar_label: '21. Je site achter Traefik'
+sidebar_label: '23. Je site achter Traefik'
 description: Met labels zet je je site achter de voordeur, zonder eigen poort naar buiten, en met FORWARDED_ALLOW_IPS ziet je site het echte adres van een bezoeker.
 ---
 
 # Online zetten: je site achter Traefik
 
-De voordeur uit [les 20](site:fullstack/docs/online/docker/voordeur) staat. Nu zet je je site erachter. Daarna is Traefik de enige deur naar buiten.
+De voordeur uit [les 22](site:fullstack/docs/online/docker/voordeur) staat. Nu zet je je site erachter. Daarna is Traefik de enige deur naar buiten.
 
 ## Je site achter de voordeur
 
@@ -38,7 +38,7 @@ networks:
 De labels zijn voor Traefik:
 
 - `traefik.enable=true`: deze container hoort achter de voordeur.
-- `…routers.gastenboek.rule=Host(…)`: stuur een verzoek voor de naam `gastenboek.localhost` naar deze container. Let op de backticks rond de naam.
+- `…routers.gastenboek.rule=Host(…)`: stuur een verzoek voor de naam `gastenboek.localhost` naar deze container. Rond de naam staan backticks. Dubbele aanhalingstekens mogen ook, enkele niet: die kent Traefik niet.
 - `…services.gastenboek.loadbalancer.server.port=8000`: in de container luistert je site op poort 8000.
 
 ```bash
@@ -46,11 +46,17 @@ cd ~/gastenboek
 docker compose up -d --build
 ```
 
-Open `http://gastenboek.localhost`. Traefik ziet welke naam je typte, en geeft het verzoek aan je site.
+Open `http://gastenboek.localhost`. Traefik ziet welke naam je typte, en geeft het verzoek aan je site. Zet de veranderde `compose.yaml` daarna in git:
+
+```bash
+git add compose.yaml
+git commit -m "Achter Traefik"
+git push
+```
 
 <Gelukt>
 
-Op `http://gastenboek.localhost` staat je gastenboek, met je berichten uit [les 19](site:fullstack/docs/online/docker/compose): het volume is hetzelfde. Waar eerst `404 page not found` stond, antwoordt nu je site.
+Op `http://gastenboek.localhost` staat je gastenboek, met je berichten uit [les 21](site:fullstack/docs/online/docker/compose): het volume is hetzelfde. Waar eerst `404 page not found` stond, antwoordt nu je site.
 
 </Gelukt>
 
@@ -58,17 +64,17 @@ Op `http://gastenboek.localhost` staat je gastenboek, met je berichten uit [les 
 
 Voor je site komt elk verzoek nu van Traefik. Traefik zet het adres van de echte bezoeker daarom in een kop van het verzoek, `X-Forwarded-For`. Een kop die een bezoeker zelf meestuurt, vervangt Traefik door het echte adres.
 
-`fastapi run` gelooft die kop alleen van `127.0.0.1`, en Traefik heeft een adres in het netwerk `web`. Daarom staat er `FORWARDED_ALLOW_IPS=*`: geloof de kop van iedereen. Zonder die regel ziet je site bij elk verzoek het adres van Traefik, en telt de limiet uit [Te veel verzoeken](site:fullstack/docs/veiligheid/dos/limiet) alle bezoekers samen: na een paar verzoeken krijgt iedereen een `429`.
+`fastapi run` gelooft die kop alleen van `127.0.0.1`, en Traefik heeft een adres in het netwerk `web`. Daarom staat er `FORWARDED_ALLOW_IPS=*`: geloof de kop van iedereen.
 
 `*` is hier veilig om één reden: je site heeft geen `ports` meer. Elk verzoek komt via Traefik, dus elke `X-Forwarded-For` komt van Traefik. Zet je `ports` ooit terug, haal dan ook deze regel weg.
 
-<Voorspel soort="Controlevraag" vraag="Je site draait achter Traefik, zonder ports. Je opent http://127.0.0.1:8000. Wat zie je?">
-  <Keuze uitleg="Zonder ports is er geen deur van de computer naar de container. Komt het verzoek ergens binnen?">Je gastenboek, want je site luistert nog op poort 8000</Keuze>
-  <Keuze goed uitleg="Poort 8000 van de computer is nergens meer aan gekoppeld. Je site luistert op 8000 in de container, maar daar komt alleen Traefik bij, via het netwerk web.">Je browser krijgt geen antwoord</Keuze>
-  <Keuze uitleg="Traefik luistert op poort 80, niet op 8000. Een verzoek op 8000 komt niet bij Traefik.">De 404 van Traefik</Keuze>
+<Voorspel soort="Controlevraag" vraag="Wie is de bezoeker? Je haalt FORWARDED_ALLOW_IPS=* weg en start je site opnieuw. Tien klasgenoten openen hem. Welk adres ziet je site bij hun verzoeken?">
+  <Keuze uitleg="Traefik zet het echte adres wel in X-Forwarded-For. Maar gelooft fastapi run die kop nog?">Het adres van elke klasgenoot, want Traefik zet het in X-Forwarded-For</Keuze>
+  <Keuze goed uitleg="fastapi run gelooft X-Forwarded-For alleen van 127.0.0.1. Traefik heeft een ander adres, dus je site kijkt naar wie het verzoek echt stuurde: Traefik.">Bij elk verzoek het adres van Traefik</Keuze>
+  <Keuze uitleg="127.0.0.1 is het adres van de container zelf. Wie stuurt de verzoeken naar je site?">127.0.0.1, want iedereen komt via je eigen computer binnen</Keuze>
   <Uitleg>
 
-  Er is nog maar één deur naar buiten, en dat is Traefik. Je site staat erachter, in een netwerk waar alleen containers bij kunnen. Zo kan niemand om de voordeur heen, en hoef je straks maar één deur te bewaken.
+  Voor je site lijken alle tien dezelfde bezoeker. Dan telt de limiet uit [Te veel verzoeken](site:fullstack/docs/veiligheid/dos/limiet) alle bezoekers samen: na een paar verzoeken krijgt iedereen een `429`. Met `FORWARDED_ALLOW_IPS=*` gelooft je site de kop, en telt hij per bezoeker.
 
   </Uitleg>
 </Voorspel>
@@ -79,9 +85,13 @@ Voor je site komt elk verzoek nu van Traefik. Traefik zet het adres van de echte
 
 Op `http://gastenboek.localhost` zegt Traefik `404 page not found`.
 
-**Oorzaak:** Traefik kent geen site voor deze naam. Meestal een tikfout in een label (`traefik.enabled` in plaats van `traefik.enable`), een andere naam in `Host(…)` dan die je typte, of gewone aanhalingstekens in plaats van backticks.
+**Oorzaak:** Traefik kent geen site voor deze naam. Meestal een tikfout in een label (`traefik.enabled` in plaats van `traefik.enable`), een andere naam in `Host(…)` dan die je typte, of enkele aanhalingstekens rond de naam: `Host('gastenboek.localhost')`. Dat laatste zie je in het logboek van Traefik:
 
-**Oplossing:** vergelijk je labels letter voor letter met die hierboven, en start opnieuw met `docker compose up -d`. Kijk ook in het logboek van Traefik: `docker compose logs` in `~/traefik`.
+```text
+error while parsing rule Host('gastenboek.localhost'): parsing rule Host('gastenboek.localhost'): 1:6: illegal rune literal
+```
+
+**Oplossing:** vergelijk je labels letter voor letter met die hierboven, en zet backticks rond de naam. Start opnieuw met `docker compose up -d`. Het logboek van Traefik lees je met `docker compose logs` in `~/traefik`.
 
 ### Bad Gateway
 
@@ -93,21 +103,14 @@ Traefik antwoordt met `Bad Gateway`.
 
 ## Opdrachten
 
-### Opdracht 1: Run - Eén deur
+### Opdracht 1: Investigate - Eén deur
 
-Controleer dat `http://127.0.0.1:8000` niet meer werkt, en zet de veranderde `compose.yaml` in git.
+Open `http://127.0.0.1:8000`, het adres uit les 21. Wat zie je, en waarom?
 
 <details>
 <summary>Antwoord</summary>
 
-```bash
-cd ~/gastenboek
-git add compose.yaml
-git commit -m "Achter Traefik"
-git push
-```
-
-Op poort 8000 antwoordt niemand meer: zonder `ports` is er geen deur van je computer naar de container.
+Je browser krijgt geen antwoord. Zonder `ports` is er geen deur van je computer naar de container. Je site luistert op 8000 in de container, maar daar komt alleen Traefik bij, via het netwerk `web`. Er is nog maar één deur naar buiten, en dat is Traefik. Zo kan niemand om de voordeur heen, en hoef je straks maar één deur te bewaken.
 
 </details>
 
@@ -139,4 +142,4 @@ Je ziet onder andere `X-Forwarded-For` en `X-Real-Ip`, met het adres waarvan jou
 
 </details>
 
-Door naar [les 22: een server huren](site:fullstack/docs/online/server/huren).
+Door naar [les 24: een server huren](site:fullstack/docs/online/server/huren).

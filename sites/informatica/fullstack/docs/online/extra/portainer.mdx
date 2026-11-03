@@ -1,5 +1,5 @@
 ---
-sidebar_label: '37. Beheren met Portainer (extra)'
+sidebar_label: '40. Beheren met Portainer (extra)'
 description: Portainer laat je containers, logboeken en volumes in de browser zien. Omdat Portainer alles op de server kan, staat hij alleen op 127.0.0.1, en open je hem via een ssh-tunnel.
 ---
 
@@ -36,7 +36,7 @@ volumes:
   data:
 ```
 
-`lts` is de versie die het langst bijgehouden wordt. Portainer heeft een eigen website met HTTPS op poort 9443, alleen op `127.0.0.1`. Zonder `127.0.0.1:` stond hij op internet, langs de firewall heen ([les 30](site:fullstack/docs/online/server/site)). Er zijn geen labels voor Traefik: Portainer hoort niet achter de voordeur.
+`lts` is de versie die het langst bijgehouden wordt. Portainer heeft een eigen website met HTTPS op poort 9443, alleen op `127.0.0.1`. Zonder `127.0.0.1:` stond hij op internet, langs de firewall heen ([les 32](site:fullstack/docs/online/server/voordeur)). Er zijn geen labels voor Traefik: Portainer hoort niet achter de voordeur.
 
 ```bash
 docker compose up -d
@@ -77,7 +77,7 @@ Bij een container vind je de knop **Logs**, met hetzelfde als `docker compose lo
 
 Portainer kan ook containers stoppen, starten en veranderen. Doe dat zo weinig mogelijk. Je `compose.yaml` in git is de beschrijving van je server; een verandering die je in Portainer klikt, staat daar niet in, en is weg bij de volgende `docker compose up`. Gebruik Portainer om te kijken, en verander wat er draait met je bestanden en `docker compose`.
 
-De map `~/portainer` staat net als `~/traefik` alleen op de server. Neem hem mee in je back-up uit [les 34](site:fullstack/docs/online/server/backup), met `cp -r ~/portainer ~/backup/` naast de regel voor `~/traefik`.
+De map `~/portainer` staat net als `~/traefik` alleen op de server. Neem hem mee in je back-up uit [les 37](site:fullstack/docs/online/server/backup), met `cp -r ~/portainer ~/backup/` naast de regel voor `~/traefik`.
 
 <Gelukt>
 
@@ -162,4 +162,4 @@ Wat gebeurt er? Welke twee dingen houden het tegen?
 
 </details>
 
-Door naar [les 38: elke nacht een back-up](site:fullstack/docs/online/extra/nachtelijke-backup).
+Door naar [les 41: een back-upscript](site:fullstack/docs/online/extra/script).

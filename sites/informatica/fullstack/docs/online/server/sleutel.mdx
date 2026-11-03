@@ -1,5 +1,5 @@
 ---
-sidebar_label: '24. Alleen met een sleutel'
+sidebar_label: '26. Alleen met een sleutel'
 description: ssh laat geen wachtwoorden meer toe en root mag niet meer inloggen. Je controleert in een tweede terminal dat de deur dicht is en jij er nog in komt.
 ---
 
@@ -25,16 +25,19 @@ PermitRootLogin no
 
 De `00` vooraan doet ertoe. ssh leest de bestanden in die map op alfabet, en de eerste keer dat een instelling voorkomt, telt. Op sommige servers staat er al een bestand, zoals `50-cloud-init.conf`, met `PasswordAuthentication yes`. Jouw bestand komt eerder.
 
-Controleer de instellingen en laad ze:
+Controleer de instellingen:
 
 ```bash
 sudo sshd -t
-sudo systemctl reload ssh
 ```
 
 Zegt `sshd -t` niets, dan klopt alles.
 
-**Let op:** sluit de terminal waarin je als `sam` bent ingelogd nog niet. Probeer eerst in een tweede terminal of je nog binnenkomt met `ssh sam@203.0.113.10`. Gaat er iets mis, dan herstel je het in de eerste.
+**Let op:** sluit de terminal waarin je als `sam` bent ingelogd niet, ook niet na het laden. Probeer eerst in een tweede terminal of je nog binnenkomt met `ssh sam@203.0.113.10`. Gaat er iets mis, dan herstel je het in de eerste, die nog openstaat. Laad nu de instellingen:
+
+```bash
+sudo systemctl reload ssh
+```
 
 <Gelukt>
 
@@ -80,6 +83,6 @@ sam@203.0.113.10: Permission denied (publickey).
 
 **Oorzaak:** de server kent jouw sleutel niet voor `sam`. Nu wachtwoorden uitstaan, vraagt ssh niet meer om een wachtwoord, maar weigert hij meteen.
 
-**Oplossing:** herstel het in de terminal die nog openstaat, met `chown -R sam:sam /home/sam/.ssh` zoals in [les 23](site:fullstack/docs/online/server/gebruiker).
+**Oplossing:** herstel het in de terminal die nog openstaat, met `chown -R sam:sam /home/sam/.ssh` zoals in [les 25](site:fullstack/docs/online/server/gebruiker).
 
-Door naar [les 25: een naam voor je server](site:fullstack/docs/online/server/naam).
+Door naar [les 27: een naam voor je server](site:fullstack/docs/online/server/naam).

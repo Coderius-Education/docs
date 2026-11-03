@@ -1,5 +1,5 @@
 ---
-sidebar_label: '33. Draait hij echt?'
+sidebar_label: '36. Draait hij echt?'
 description: Een healthcheck laat Docker zelf je homepage opvragen. Traefik stuurt pas bezoekers naar een container die gezond is.
 ---
 
@@ -25,7 +25,7 @@ Commit en push, en zet de nieuwe versie op de server met de twee stappen. Nu sta
 
 ```text
 NAME                      STATUS
-gastenboek-gastenboek-1   Up 14 seconds (healthy)
+gastenboek-gastenboek-1   Up 4 seconds (healthy)
 ```
 
 `healthy` betekent: de laatste test lukte. Traefik let erop: een container die nog niet gezond is, krijgt geen bezoekers. Vlak na een nieuwe versie geeft je site daarom twee of drie seconden `404 page not found`, tot de eerste test lukt. In het logboek zie je de test ook, elke dertig seconden een `GET /` van `127.0.0.1`.
@@ -36,18 +36,18 @@ Direct na `docker compose up -d` staat er `(health: starting)` bij je site, en n
 
 ```text
 NAME                      STATUS
-gastenboek-gastenboek-1   Up 14 seconds (healthy)
+gastenboek-gastenboek-1   Up 4 seconds (healthy)
 ```
 
 </Gelukt>
 
-<Voorspel soort="Controlevraag" vraag="Je zet een nieuwe versie op de server. Een bezoeker opent je site op het moment dat docker compose up -d klaar is. Wat ziet hij?">
-  <Keuze uitleg="De nieuwe container draait al, maar is hij al gezond? Naar wie stuurt Traefik bezoekers?">Meteen je site, want de container staat op Up</Keuze>
-  <Keuze goed uitleg="Tot de eerste test lukt, is de container niet gezond, en stuurt Traefik er niemand heen.">Een paar seconden 404 page not found, tot de eerste test lukt</Keuze>
-  <Keuze uitleg="Traefik toont geen eigen wachtpagina. Wat zegt hij als hij geen container voor de naam heeft?">Een pagina van Traefik dat de site even onderhoud heeft</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je rolt een versie uit waarin je homepage door een fout een 500 geeft. De pagina /registreer werkt nog wel. Wat ziet een bezoeker die /registreer opent?">
+  <Keuze uitleg="Docker test alleen de homepage. Wat vindt hij van een 500, en wat doet Traefik dan met de hele container?">Het formulier, want /registreer werkt</Keuze>
+  <Keuze goed uitleg="De test vraagt de homepage op en krijgt een 500: mislukt. De container wordt nooit gezond, en Traefik stuurt er niemand heen, voor geen enkele pagina.">404 page not found van Traefik</Keuze>
+  <Keuze uitleg="Een 500 komt van je site zelf. Komt het verzoek nog bij je site?">Een 500, net als op de homepage</Keuze>
   <Uitleg>
 
-  Die paar seconden zijn de prijs van de healthcheck. Ervoor krijg je dat een site die bij elk verzoek een 500 geeft, nooit bezoekers krijgt: hij blijft `unhealthy`, en jij ziet het in `docker compose ps`.
+  De healthcheck kijkt naar één pagina, maar beslist voor de hele container. Zo krijgt een site die stuk is helemaal geen bezoekers, en zie jij het meteen in `docker compose ps`. Een pagina die alleen soms een fout geeft, vangt hij niet: daarvoor blijf je het logboek lezen.
 
   </Uitleg>
 </Voorspel>
@@ -66,7 +66,7 @@ gastenboek-gastenboek-1   Up 14 seconds (healthy)
 docker compose exec gastenboek python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/')"
 ```
 
-Krijg je een traceback met `HTTP Error 500`, kijk dan in `docker compose logs` welke fout je site gaf. Ga zo nodig terug naar de vorige versie, zoals in [les 32](site:fullstack/docs/online/server/nieuwe-versie).
+Krijg je een traceback met `HTTP Error 500`, kijk dan in `docker compose logs` welke fout je site gaf. Ga zo nodig terug naar de vorige versie, zoals in [les 35](site:fullstack/docs/online/server/nieuwe-versie).
 
 ## Opdrachten
 
@@ -81,4 +81,4 @@ Op je laptop: `git add`, `git commit` en `git push`. Op de server de twee stappe
 
 </details>
 
-Door naar [les 34: een back-up](site:fullstack/docs/online/server/backup).
+Door naar [les 37: een back-up](site:fullstack/docs/online/server/backup).

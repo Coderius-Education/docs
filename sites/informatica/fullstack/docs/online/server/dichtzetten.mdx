@@ -1,15 +1,17 @@
 ---
-sidebar_label: '26. De firewall'
+sidebar_label: '28. De firewall'
 description: Een firewall laat alleen ssh, 80 en 443 door. In de goede volgorde, zodat je jezelf niet buitensluit.
 ---
 
 # Online zetten: de firewall
 
-Je server staat op internet, en het logboek van ssh liet zien dat er al aan de deur wordt gemorreld. Inloggen kan alleen nog met een sleutel. Nu doe je de andere deuren dicht: alleen wat je site nodig heeft, blijft open.
+Je server staat op internet, en programma's lopen de hele dag alle adressen af om binnen te komen. Inloggen kan bij jou alleen nog met een sleutel. Nu doe je de andere deuren dicht: alleen wat je site nodig heeft, blijft open.
 
 ## Een firewall
 
 Een **firewall** bepaalt welke poorten van buiten bereikbaar zijn. Op Ubuntu heet hij `ufw` (*uncomplicated firewall*). Je hebt drie deuren nodig: ssh om in te loggen, 80 voor `http` en 443 voor `https`.
+
+**Let op:** de volgorde doet ertoe. Zet je de firewall aan voordat ssh erdoor mag, dan sluit je jezelf buiten. Typ de regels daarom precies in deze volgorde, met `ufw enable` als laatste:
 
 ```bash
 sudo ufw allow OpenSSH
@@ -18,7 +20,7 @@ sudo ufw allow 443/tcp
 sudo ufw enable
 ```
 
-**Let op:** de volgorde doet ertoe. Zet je de firewall aan voordat ssh erdoor mag, dan sluit je jezelf buiten. `ufw enable` waarschuwt daarom:
+`ufw enable` waarschuwt nog een keer:
 
 ```text
 Command may disrupt existing ssh connections. Proceed with operation (y|n)?
@@ -43,7 +45,7 @@ OpenSSH (v6)               ALLOW       Anywhere (v6)
 443/tcp (v6)               ALLOW       Anywhere (v6)
 ```
 
-Elke deur staat er twee keer: één keer voor gewone internetadressen, en met `(v6)` voor de nieuwere IPv6-adressen. Wat niet in de lijst staat, houdt ufw tegen. Ook als je later per ongeluk een programma op `0.0.0.0` laat luisteren. Met één uitzondering, en dat is Docker; die zie je in [les 30](site:fullstack/docs/online/server/site).
+Elke deur staat er twee keer: één keer voor gewone internetadressen, en met `(v6)` voor de nieuwere IPv6-adressen. Wat niet in de lijst staat, houdt ufw tegen. Ook als je later per ongeluk een programma op `0.0.0.0` laat luisteren. Met één uitzondering, en dat is Docker; die zie je in [les 32](site:fullstack/docs/online/server/voordeur).
 
 <Gelukt>
 
@@ -57,7 +59,7 @@ Elke deur staat er twee keer: één keer voor gewone internetadressen, en met `(
   <Keuze uitleg="ufw zegt niets terug tegen een bezoeker. Hij gooit het verzoek weg, en de browser wacht tot hij het opgeeft.">Zijn browser zegt dat de firewall het verbiedt</Keuze>
   <Uitleg>
 
-  De firewall is een tweede slot op elke deur: ook een programma dat je per ongeluk op `0.0.0.0` laat luisteren, is niet van buiten te bereiken. Zo werkt beveiliging, met meer sloten dan nodig. Voor Docker geldt dit niet; dat zie je in [les 30](site:fullstack/docs/online/server/site).
+  De firewall is een tweede slot op elke deur: ook een programma dat je per ongeluk op `0.0.0.0` laat luisteren, is niet van buiten te bereiken. Zo werkt beveiliging, met meer sloten dan nodig. Voor Docker geldt dit niet; dat zie je in [les 32](site:fullstack/docs/online/server/voordeur).
 
   </Uitleg>
 </Voorspel>
@@ -91,4 +93,4 @@ Op een verse Ubuntu 24.04 luistert alleen ssh op internet, op poort 22, en die s
 
 </details>
 
-Door naar [les 27: updates vanzelf](site:fullstack/docs/online/server/updates).
+Door naar [les 29: updates vanzelf](site:fullstack/docs/online/server/updates).

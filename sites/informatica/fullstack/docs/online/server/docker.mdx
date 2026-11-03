@@ -1,5 +1,5 @@
 ---
-sidebar_label: '28. Docker op de server'
+sidebar_label: '30. Docker op de server'
 description: Dezelfde Docker als in WSL, sam in de groep docker, en een grens aan de logboeken voordat de eerste container start.
 ---
 
@@ -36,7 +36,7 @@ sudo nano /etc/docker/daemon.json
 }
 ```
 
-Start Docker daarna opnieuw, en kijk of hij de instelling kent:
+Let op de aanhalingstekens en de komma's: met een fout in dit bestand start Docker niet meer (zie Er gaat iets mis). Start Docker daarna opnieuw, en kijk of hij de instelling kent:
 
 ```bash
 sudo systemctl restart docker
@@ -54,7 +54,7 @@ Er staat `local`. Die manier van bewaren houdt per container hoogstens vijf best
 <Voorspel soort="Controlevraag" vraag="Je zet daemon.json pas als je site al een maand draait, en herstart Docker. docker info zegt local. Heeft het logboek van je site nu een grens?">
   <Keuze uitleg="docker info toont wat Docker voor nieuwe containers gebruikt. Wanneer werd je container gemaakt?">Ja, want docker info zegt local</Keuze>
   <Keuze goed uitleg="De log-driver geldt alleen voor containers die Docker daarna maakt. De container van je site bestond al, en houdt zijn oude manier.">Nee, pas als Docker de container opnieuw maakt</Keuze>
-  <Keuze uitleg="Docker kan het logboek van een draaiende container wel begrenzen, maar alleen bij het maken van de container.">Nee, een grens kan alleen bij het installeren van Docker</Keuze>
+  <Keuze uitleg="Je kunt daemon.json ook later zetten, en Docker gebruikt hem dan ook. Maar voor welke containers?">Nee, een grens kan alleen bij het installeren van Docker</Keuze>
   <Uitleg>
 
   Een container krijgt zijn manier van loggen bij het maken. Daarom zet je `daemon.json` nu, voordat er een container op de server staat. Een nieuwe versie uitrollen maakt de container ook opnieuw, en dan krijgt hij de grens alsnog.
@@ -87,4 +87,4 @@ Hier staat een komma te veel achter de laatste regel. JSON is strenger dan Pytho
 
 **Oplossing:** typ `exit`, log opnieuw in met ssh, en kijk met `groups` of `docker` erbij staat.
 
-Door naar [les 29: je project ophalen](site:fullstack/docs/online/server/ophalen).
+Door naar [les 31: je project ophalen](site:fullstack/docs/online/server/ophalen).

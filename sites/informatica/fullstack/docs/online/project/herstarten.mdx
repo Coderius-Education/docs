@@ -9,7 +9,7 @@ Met `fastapi dev` zag je een wijziging meteen: je sloeg `main.py` op, en de serv
 
 ## Een wijziging zonder herstart
 
-Laat je site draaien met `fastapi run main.py`. Verander in `main.py` een tekst die je site laat zien, bijvoorbeeld de `detail` van een `HTTPException`, en sla op. Laat je site die tekst opnieuw tonen.
+Laat je site draaien met `fastapi run main.py`. Log in met een verkeerd wachtwoord: je site zegt `Naam of wachtwoord klopt niet`. Die tekst staat in `main.py`. Maak er `Naam of wachtwoord klopt niet, probeer het opnieuw` van, sla op, en log nog een keer verkeerd in.
 
 Je ziet de oude tekst. In de terminal gebeurt niets: geen regel dat de server opnieuw start.
 
@@ -21,13 +21,13 @@ Stop de server met Ctrl+C, en start hem opnieuw:
 fastapi run main.py
 ```
 
-Laat de tekst nog een keer zien. Nu staat de nieuwe er.
+Log nog een keer in met een verkeerd wachtwoord. Nu staat de nieuwe tekst er.
 
-`fastapi run` leest je code één keer, bij het starten, en kijkt daarna niet meer naar je bestanden. Op een server is dat wat je wilt. Een half opgeslagen bestand zet je site niet plat, en het opletten kost geen rekenkracht. Een nieuwe versie gaat pas live als jij de server opnieuw start, in [les 32](site:fullstack/docs/online/server/nieuwe-versie).
+`fastapi run` leest je code één keer, bij het starten, en kijkt daarna niet meer naar je bestanden. Op een server is dat wat je wilt. Een half opgeslagen bestand zet je site niet plat, en het opletten kost geen rekenkracht. Een nieuwe versie gaat pas live als jij de server opnieuw start, in [les 35](site:fullstack/docs/online/server/nieuwe-versie).
 
 <Gelukt>
 
-Na Ctrl+C en `fastapi run main.py` staat je nieuwe tekst in de browser. Zonder herstart stond er de oude.
+Na Ctrl+C en `fastapi run main.py` zegt je site bij een verkeerd wachtwoord `Naam of wachtwoord klopt niet, probeer het opnieuw`. Zonder herstart stond er de oude tekst.
 
 </Gelukt>
 

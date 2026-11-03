@@ -1,5 +1,5 @@
 ---
-sidebar_label: '31. Je domein met HTTPS'
+sidebar_label: '34. Je domein met HTTPS'
 description: Traefik krijgt een ingang op 443, stuurt http door naar https en vraagt zelf een certificaat aan bij Let's Encrypt.
 ---
 
@@ -67,9 +67,9 @@ Zonder dat volume vraagt Traefik bij elke herstart een nieuw certificaat aan, en
 docker compose up -d
 ```
 
-Aan je site verandert niets: de labels uit [les 21](site:fullstack/docs/online/docker/traefik) gelden voor beide ingangen. Open `https://gastenboek.voorbeeld.nl` op je telefoon. Je site opent zonder waarschuwing over de verbinding.
+Aan je site verandert niets: de labels uit [les 23](site:fullstack/docs/online/docker/traefik) gelden voor beide ingangen. Open `https://gastenboek.voorbeeld.nl` op je telefoon. Je site opent zonder waarschuwing over de verbinding.
 
-Twee dingen moeten kloppen voordat het lukt: het A-record wijst naar je server ([les 25](site:fullstack/docs/online/server/naam)), en poort 80 en 443 staan open in de firewall ([les 26](site:fullstack/docs/online/server/dichtzetten)).
+Twee dingen moeten kloppen voordat het lukt: het A-record wijst naar je server ([les 27](site:fullstack/docs/online/server/naam)), en poort 80 en 443 staan open in de firewall ([les 28](site:fullstack/docs/online/server/dichtzetten)).
 
 ## De hele weg
 
@@ -156,4 +156,4 @@ Klik in Netwerk op het verzoek van de pagina. Onder de koppen van het antwoord s
 
 </details>
 
-Door naar [les 32: een nieuwe versie uitrollen](site:fullstack/docs/online/server/nieuwe-versie).
+Door naar [les 35: een nieuwe versie uitrollen](site:fullstack/docs/online/server/nieuwe-versie).

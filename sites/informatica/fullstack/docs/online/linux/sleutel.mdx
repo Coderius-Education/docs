@@ -7,7 +7,7 @@ description: GitHub laat je in de terminal niet inloggen met een wachtwoord. Je 
 
 <Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'Een sleutelpaar maken met ssh-keygen'}, {site: 'linux', to: '/docs/wsl/github', label: 'Je ssh-sleutel op GitHub'}]} />
 
-Straks haal je je project op en push je vanuit Ubuntu. GitHub laat je in de terminal niet inloggen met een wachtwoord. Je gebruikt een ssh-sleutel, en die zet je nu op GitHub.
+Deed je [les 7.3 van de Linux-cursus](site:linux/docs/wsl/github) al, dan is dit je controle. Straks haal je je project op en push je vanuit Ubuntu. GitHub laat je in de terminal niet inloggen met een wachtwoord. Je gebruikt een ssh-sleutel, en die staat na deze stap op GitHub.
 
 ## De sleutel op GitHub
 
@@ -21,7 +21,7 @@ Zet de publieke sleutel op GitHub zoals in [Je sleutel op GitHub](site:linux/doc
 ssh -T git@github.com
 ```
 
-De eerste keer vraagt ssh of je de vingerafdruk van GitHub vertrouwt; typ `yes`.
+De eerste keer vraagt ssh of je de vingerafdruk van GitHub vertrouwt; typ `yes`. Iedereen logt in als `git`, ook jij. GitHub herkent je aan je sleutel.
 
 <Gelukt>
 
@@ -35,13 +35,13 @@ Dat laatste is goed: je wilde alleen weten of de sleutel werkt.
 
 </Gelukt>
 
-<Voorspel soort="Controlevraag" vraag="Je zet je publieke sleutel op GitHub. Een klasgenoot krijgt die regel ook te zien. Kan hij nu met jouw naam pushen?">
-  <Keuze uitleg="Met de publieke sleutel kun je controleren, niet inloggen. Wat heb je daar nog meer voor nodig?">Ja, met de publieke sleutel komt hij binnen</Keuze>
-  <Keuze goed uitleg="Inloggen lukt alleen met de privésleutel, en die verlaat jouw Ubuntu nooit.">Nee, daarvoor heeft hij je privésleutel nodig</Keuze>
-  <Keuze uitleg="Je publieke sleutel staat ook op GitHub zelf zichtbaar. Een wachtwoord is hier niet de reden.">Nee, want hij kent je wachtwoord van GitHub niet</Keuze>
+<Voorspel soort="Controlevraag" vraag="Een klasgenoot typt op zijn eigen laptop ook ssh -T git@github.com. Zijn publieke sleutel staat op zijn eigen GitHub-account. Wat antwoordt GitHub hem?">
+  <Keuze uitleg="Iedereen logt in als git. Waaraan ziet GitHub dan wie het is?">Het groet hem als sam, want hij logt in als dezelfde gebruiker git als jij</Keuze>
+  <Keuze goed uitleg="De naam git is voor iedereen gelijk. GitHub zoekt bij welk account de sleutel hoort, en groet dat account.">Het groet hem met zijn eigen GitHub-naam, want GitHub herkent hem aan zijn sleutel</Keuze>
+  <Keuze uitleg="Duizenden mensen loggen tegelijk in als git. Wat maakt hem anders dan jou?">Permission denied, want git@github.com is al in gebruik door jou</Keuze>
   <Uitleg>
 
-  GitHub stuurt een vraag die alleen te beantwoorden is met de privésleutel. De publieke sleutel mag iedereen zien. Daarom heet hij zo.
+  `git@github.com` is het adres, niet je naam. Welk account je bent, haalt GitHub uit de sleutel die je laptop laat zien. Daarom staat er in de groet je GitHub-naam, en weet je na `ssh -T` dat de sleutel bij het goede account hoort.
 
   </Uitleg>
 </Voorspel>

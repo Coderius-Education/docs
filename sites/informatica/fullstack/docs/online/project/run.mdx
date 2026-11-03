@@ -36,20 +36,20 @@ Je gastenboek staat in je browser, op `http://127.0.0.1:8000`, en in de terminal
 
 </Gelukt>
 
-<Voorspel soort="Controlevraag" vraag="Je site draait met fastapi run. Je klikt in de terminal op http://0.0.0.0:8000. Wat gebeurt er?">
-  <Keuze uitleg="0.0.0.0 is geen adres van een computer. Kan de browser er dan naartoe?">Je gastenboek opent, net als op 127.0.0.1</Keuze>
-  <Keuze goed uitleg="0.0.0.0 zegt tegen de server: luister overal. Als adres om naartoe te gaan, bestaat het niet.">De browser zegt dat het adres niet werkt, want 0.0.0.0 is geen plek om naartoe te gaan</Keuze>
-  <Keuze uitleg="De server draait gewoon door. Het probleem zit in het adres dat je opent.">De server stopt, want je opende het verkeerde adres</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je klikte bij de firewall op Annuleren, en je site draait met fastapi run. Wie kan er nu bij je gastenboek?">
+  <Keuze goed uitleg="De firewall houdt verzoeken van andere computers tegen. Je browser op dezelfde laptop komt er niet langs.">Alleen jij, in de browser op je eigen laptop</Keuze>
+  <Keuze uitleg="Je opende je gastenboek net zelf op 127.0.0.1. Over welke verzoeken ging de vraag van de firewall?">Niemand, ook jij niet, want Python mag niet op het netwerk</Keuze>
+  <Keuze uitleg="Production is de stand voor bezoekers, maar de firewall beslist wie er binnenkomt. Wat koos je daar?">Iedereen op hetzelfde wifi, want je site draait nu voor bezoekers</Keuze>
   <Uitleg>
 
-  Een server die op `0.0.0.0` luistert, neemt verzoeken aan op elk netwerk van de computer. Jij opent je eigen computer met `127.0.0.1`. In les 3 zie je waarom dat verschil ertoe doet.
+  De firewall van Windows vroeg of Python verzoeken van andere computers mag aannemen. Met **Annuleren** zei je nee. Je eigen browser praat met je eigen laptop, en daar heeft de firewall niets over te zeggen. Wie er zonder firewall bij zou kunnen, zie je in les 3.
 
   </Uitleg>
 </Voorspel>
 
 ## Er gaat iets mis
 
-### Address already in use
+### Errno 10048
 
 ```text
 [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): only one usage of each socket address (protocol/network address/port) is normally permitted

@@ -31,11 +31,15 @@ Stop eerst de server in je eigen projectmap, als die nog draait. Start dan de ko
 fastapi run main.py --host 127.0.0.1
 ```
 
+Open `http://127.0.0.1:8000` in je browser.
+
 <Gelukt>
 
 Je gastenboek opent op `http://127.0.0.1:8000`, vanuit de verse map, en het is leeg. Alles wat je site nodig heeft, staat in je repository.
 
 </Gelukt>
+
+Stop daarna deze server met Ctrl+C. In [les 11](site:fullstack/docs/online/linux/run) start je je site in Ubuntu, op dezelfde poort.
 
 <Voorspel soort="Controlevraag" vraag="In je eigen projectmap installeerde je ooit slowapi, maar je maakte requirements.txt daarvoor en niet daarna. Wat gebeurt er als je de kopie in de verse map start?">
   <Keuze uitleg="De verse map heeft een eigen, nieuwe virtual environment. Wat staat daarin?">Hij start, want slowapi staat al op je laptop</Keuze>
@@ -70,7 +74,9 @@ jinja2.exceptions.TemplateNotFound: 'gastenboek.html' not found in search path: 
 
 **Oplossing:** zet het bestand in git in je eigen projectmap, commit en push, en haal het op in de verse map.
 
-### Address already in use
+### Errno 10048
+
+De kopie start niet, met dezelfde melding `[Errno 10048]` als in [les 1](site:fullstack/docs/online/project/run).
 
 **Oorzaak:** je eigen project draait nog op poort 8000.
 

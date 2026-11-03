@@ -28,7 +28,7 @@ Met `--host 127.0.0.1` luistert hij alleen op deze computer, zoals in [les 3](si
 
 Open `http://127.0.0.1:8000` in je browser op Windows. Dat werkt net als de kleine webserver in [Windows en Linux naast elkaar](site:linux/docs/wsl/windows-en-linux) van de Linux-cursus: wat in WSL op `127.0.0.1` luistert, ziet je browser op Windows ook. Bij elk bezoek verschijnt in de terminal van Ubuntu een regel met `GET` en `200`.
 
-Je gastenboek is leeg. De databases stonden op Windows en niet in git, dus je site maakt nieuwe aan. Maak een account en schrijf een bericht: ze komen in de nieuwe databases in Ubuntu.
+Je gastenboek is leeg. De databases stonden op Windows en niet in git, dus je site maakt nieuwe aan, naast `main.py`. Maak een account en schrijf een bericht.
 
 <Gelukt>
 
@@ -36,13 +36,13 @@ Je gastenboek staat in je browser op Windows, en de regels van elk bezoek staan 
 
 </Gelukt>
 
-<Voorspel soort="Controlevraag" vraag="Je site draait in Ubuntu. Je verandert een tekst in main.py, slaat op en herlaadt de pagina. Wat zie je?">
-  <Keuze uitleg="fastapi run kijkt niet naar je bestanden, ook niet op Linux.">De nieuwe tekst, want Linux merkt het meteen</Keuze>
-  <Keuze goed uitleg="Net als op Windows leest fastapi run je code alleen bij het starten.">De oude tekst, tot je de server stopt met Ctrl+C en opnieuw start</Keuze>
-  <Keuze uitleg="Er gaat niets mis: de server blijft draaien met de code die hij bij het starten las.">Een foutmelding, want het bestand veranderde terwijl de server draaide</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je schreef in je browser op Windows een bericht in je gastenboek. Waar staat dat bericht nu?">
+  <Keuze uitleg="De browser laat alleen zien wat de server terugstuurt. Welk programma schrijft in de database?">In je projectmap op Windows, want daar draait je browser</Keuze>
+  <Keuze goed uitleg="De server draait in Ubuntu en schrijft zijn databases naast main.py, in je project in Ubuntu.">In een database in ~/gastenboek, in Ubuntu</Keuze>
+  <Keuze uitleg="Je databases staan in .gitignore, en je hebt nog niets gepusht. Hoe zou het bericht op GitHub komen?">Op GitHub, want je project komt van GitHub</Keuze>
   <Uitleg>
 
-  Het commando doet op Linux precies wat het op Windows deed ([les 2](site:fullstack/docs/online/project/herstarten)). Dat is het punt van deze stap: je site hangt niet af van Windows, en straks werkt hij op een server met Linux net zo.
+  Je browser is alleen het venster. Alles wat je site bewaart, schrijft de server op de computer waar hij draait, en dat is nu Linux. Op een server gaat het straks net zo: de berichten van je bezoekers staan op de server, niet bij hen en niet op GitHub.
 
   </Uitleg>
 </Voorspel>
@@ -59,20 +59,18 @@ fastapi: command not found
 
 **Oplossing:** typ `source .venv/bin/activate` en start opnieuw. Installeer `fastapi` niet met `sudo apt`.
 
-### ModuleNotFoundError
-
-```text
-ModuleNotFoundError: No module named 'sqlitedict'
-```
-
-**Oorzaak:** een package dat je site gebruikt, staat niet in `requirements.txt`. Op Windows had je het los geïnstalleerd, en daar viel het niet op.
-
-**Oplossing:** installeer het in Ubuntu, en maak de lijst opnieuw zoals in [les 4](site:fullstack/docs/online/project/requirements), maar nu in Ubuntu: `python -m pip freeze > requirements.txt`. In Linux schrijft `>` gewone tekst. Push hem in de volgende les.
-
 ### De browser krijgt geen antwoord
 
 **Oorzaak:** de server draait niet meer, of je opende een ander adres dan `http://127.0.0.1:8000`.
 
-**Oplossing:** kijk in de terminal van Ubuntu of de server nog draait, en open precies dat adres. Werkt de kleine webserver uit de Linux-cursus ook niet, kijk dan in die les bij Er gaat iets mis.
+**Oplossing:** kijk in de terminal van Ubuntu of de server nog draait, en open precies dat adres.
+
+### Een leeg gastenboek zonder regels in Ubuntu
+
+Je browser toont een gastenboek, maar in de terminal van Ubuntu komt bij een bezoek geen regel bij. Een bericht dat je schrijft, zie je niet terug in Ubuntu.
+
+**Oorzaak:** op Windows draait nog een server op poort 8000, bijvoorbeeld die uit de verse map van [les 6](site:fullstack/docs/online/project/proef). Je browser praat met die server, en niet met die in Ubuntu.
+
+**Oplossing:** stop de server op Windows met Ctrl+C in zijn terminal, en herlaad de pagina.
 
 Door naar [les 12: een wijziging vanuit Ubuntu](site:fullstack/docs/online/linux/pushen).

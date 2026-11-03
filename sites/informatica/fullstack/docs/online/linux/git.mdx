@@ -16,25 +16,28 @@ Open Ubuntu, en vertel git je naam en het e-mailadres van je GitHub-account:
 ```bash
 git config --global user.name "Sam de Vries"
 git config --global user.email "sam@voorbeeld.nl"
+git config --global pull.rebase false
 ```
 
 Gebruik je eigen naam en je eigen adres. `--global` betekent: voor elk project van deze gebruiker in Ubuntu. Op Windows deed je dit ooit ook al, maar dat was de git van Windows.
 
-Kijk of het gelukt is:
+De derde regel is voor `git pull`: staat er op GitHub een commit die jij nog niet hebt, terwijl jij er ook een maakte, dan voegt git ze samen in plaats van te stoppen met een foutmelding.
+
+Kijk wat git nu van je weet:
 
 ```bash
-git config --global user.name
+git config --global --list
 ```
 
 <Gelukt>
 
-Git zet je eigen naam neer:
+Git zet je drie instellingen onder elkaar, met je eigen naam en adres:
 
 ```text
-Sam de Vries
+user.name=Sam de Vries
+user.email=sam@voorbeeld.nl
+pull.rebase=false
 ```
-
-Met `git config --global user.email` zie je je e-mailadres.
 
 </Gelukt>
 
@@ -67,6 +70,6 @@ Author identity unknown
 
 **Oorzaak:** git staat niet in jouw Ubuntu. Op een gewone installatie van Ubuntu 24.04 in WSL staat hij er wel.
 
-**Oplossing:** installeer hem met `sudo apt install git`, zoals in [Programma's installeren](site:linux/docs/wsl/apt) van de Linux-cursus.
+**Oplossing:** installeer hem met `sudo apt update` en daarna `sudo apt install git`, zoals in [Programma's installeren](site:linux/docs/wsl/apt) van de Linux-cursus.
 
 Door naar [les 8: je sleutel op GitHub](site:fullstack/docs/online/linux/sleutel).

@@ -1,27 +1,11 @@
 ---
-sidebar_label: '30. Je site op internet'
-description: Traefik op de server, je domeinnaam in een .env, en je site met http op je telefoon. Docker zet een gepubliceerde poort open langs de firewall.
+sidebar_label: '33. Je site op je domein'
+description: Je domeinnaam in een .env die alleen op de server staat, en je site achter Traefik, met http op je telefoon.
 ---
 
-# Online zetten: je site op internet
+# Online zetten: je site op je domein
 
-Docker draait op de server, en je project staat er. Nu komt de voordeur erbij, en dan staat je site op internet, nog met `http`.
-
-## Traefik op de server
-
-De map `~/traefik` uit WSL hoort niet bij je project, dus hij staat niet op GitHub. Kopieer hem met `scp`, in WSL:
-
-```bash
-scp -r ~/traefik sam@203.0.113.10:
-```
-
-`scp -r` kopieert de hele map over ssh, naar de thuismap van `sam` ([Bestanden kopiëren met scp](site:linux/docs/wsl/scp)). Start hem daarna op de server:
-
-```bash
-docker network create web
-cd ~/traefik
-docker compose up -d
-```
+De voordeur staat op de server. Nu zet je je site erachter, op je eigen domeinnaam, nog met `http`.
 
 ## Je domeinnaam
 
@@ -33,6 +17,8 @@ In je `compose.yaml` staat `Host(` met `gastenboek.localhost`. Op de server moet
 
 `${DOMEIN:-gastenboek.localhost}` betekent: de waarde van `DOMEIN`, of `gastenboek.localhost` als die er niet is. Zet `.env` in je `.gitignore` en je `.dockerignore`, en commit en push.
 
+## De naam op de server
+
 Op de server haal je de nieuwe versie op, en zet je de naam in een bestand `.env` naast `compose.yaml` ([een .env-bestand](site:linux/docs/wsl/variabelen#env)). Compose leest dat bestand vanzelf:
 
 ```bash
@@ -42,13 +28,7 @@ echo "DOMEIN=gastenboek.voorbeeld.nl" > .env
 docker compose up -d --build
 ```
 
-De `.env` hoort bij deze computer, niet bij je project. Zo werkt dezelfde `compose.yaml` op je laptop en op de server.
-
-## Docker en de firewall
-
-In [les 26](site:fullstack/docs/online/server/dichtzetten) hield ufw elke poort tegen die niet in de lijst staat. Voor Docker geldt dat niet. Een poort die je publiceert met `ports` in `compose.yaml` of `-p`, zet Docker zelf open, in de firewall van Linux, vóór de regels van ufw. Een gepubliceerde poort staat dus op internet, wat ufw ook zegt.
-
-Daarom heeft je site geen `ports`: alleen Traefik publiceert iets, poort 80 en 443, en die stonden al open. Wil je ooit iets publiceren dat alleen voor jou is, zet er dan `127.0.0.1:` voor, zoals in [les 19](site:fullstack/docs/online/docker/compose). Dan luistert Docker alleen op de server zelf.
+De `.env` hoort bij deze computer, niet bij je project. Zo werkt dezelfde `compose.yaml` op je laptop en op de server. Je site heeft geen `ports`, net als in WSL: alleen Traefik publiceert iets ([les 32](site:fullstack/docs/online/server/voordeur)).
 
 <Gelukt>
 
@@ -56,13 +36,13 @@ Op je telefoon, via mobiele data en niet via het wifi van school, opent `http://
 
 </Gelukt>
 
-<Voorspel soort="Controlevraag" vraag="Om iets te testen zet je bij je site weer ports met 8000:8000, zonder 127.0.0.1 ervoor. ufw laat 8000 niet door. Een klasgenoot opent het adres van je server met :8000 erachter. Wat ziet hij?">
-  <Keuze uitleg="Zo werkt het voor een gewoon programma, zoals in les 26. Maar wie zette deze poort open?">Niets: ufw houdt poort 8000 tegen</Keuze>
-  <Keuze goed uitleg="Docker zet een gepubliceerde poort open vóór de regels van ufw. Poort 8000 staat op internet, en hij komt rechtstreeks bij je site, om Traefik heen.">Je gastenboek, rechtstreeks, zonder Traefik ertussen</Keuze>
-  <Keuze uitleg="Traefik luistert alleen op 80 en 443. Een verzoek op 8000 komt niet bij Traefik.">De 404 van Traefik</Keuze>
+<Voorspel soort="Controlevraag" vraag="Na deze stap start je je site op je laptop in WSL opnieuw met docker compose up -d. In WSL staat geen .env. Op welke naam vind je je site op je laptop?">
+  <Keuze uitleg="De .env met DOMEIN staat alleen op de server. Wat neemt Compose als DOMEIN er niet is?">Op gastenboek.voorbeeld.nl, want dat staat nu in compose.yaml</Keuze>
+  <Keuze goed uitleg="Zonder .env is DOMEIN leeg, en dan neemt Compose wat achter :- staat: gastenboek.localhost.">Op gastenboek.localhost, zoals eerst</Keuze>
+  <Keuze uitleg="Compose start ook zonder .env. Een variabele die er niet is, krijgt de waarde achter :-.">Nergens: zonder .env start Compose je site niet</Keuze>
   <Uitleg>
 
-  Dit is de valkuil van Docker op een server: ufw toont 8000 als dicht, en toch staat hij open. Het is ook gevaarlijk om een tweede reden. Je site gelooft door `FORWARDED_ALLOW_IPS=*` elke `X-Forwarded-For`, en via poort 8000 kan een bezoeker die kop zelf invullen. Dan helpt de limiet van slowapi niet meer. Publiceer op een server dus nooit de poort van je site.
+  Eén `compose.yaml` in git, en per computer een eigen `.env`. Zo hoeft er nooit iets in je code te veranderen als je site naar een andere computer of een andere naam gaat.
 
   </Uitleg>
 </Voorspel>
@@ -84,7 +64,7 @@ docker compose up -d
 
 ### De browser krijgt geen antwoord
 
-**Oorzaak:** het A-record wijst nog niet naar je server ([les 25](site:fullstack/docs/online/server/naam)), of Traefik draait niet.
+**Oorzaak:** het A-record wijst nog niet naar je server ([les 27](site:fullstack/docs/online/server/naam)), of Traefik draait niet.
 
 **Oplossing:** controleer de naam met `ping -c 1 gastenboek.voorbeeld.nl`, en kijk met `docker ps` of Traefik draait.
 
@@ -115,8 +95,8 @@ Staat er het adres van Traefik, of dat van je telefoon? Waarom?
 <details>
 <summary>Antwoord</summary>
 
-Je ziet het adres van je telefoon op internet. Traefik zette het in `X-Forwarded-For`, en je site gelooft die kop door `FORWARDED_ALLOW_IPS=*` uit [les 21](site:fullstack/docs/online/docker/traefik). Daardoor telt de limiet uit de route Veiligheid per bezoeker, en niet iedereen samen.
+Je ziet het adres van je telefoon op internet. Traefik zette het in `X-Forwarded-For`, en je site gelooft die kop door `FORWARDED_ALLOW_IPS=*` uit [les 23](site:fullstack/docs/online/docker/traefik). Daardoor telt de limiet uit de route Veiligheid per bezoeker, en niet iedereen samen.
 
 </details>
 
-Door naar [les 31: je domein met HTTPS](site:fullstack/docs/online/server/https).
+Door naar [les 34: je domein met HTTPS](site:fullstack/docs/online/server/https).

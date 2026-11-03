@@ -101,7 +101,28 @@ gastenboek:latest    b5897b957b4d        361MB         94.9MB
 
 </Gelukt>
 
-Ruim 300 MB, en dat is bijna allemaal Linux, Python en de packages uit je lijst. Je eigen code is een paar kilobyte. Zet de Dockerfile en `.dockerignore` in git, ze horen bij je project:
+Ruim 300 MB, en dat is bijna allemaal Linux, Python en de packages uit je lijst. Je eigen code is een paar kilobyte.
+
+## De tweede keer
+
+Bouw nog een keer, zonder iets te veranderen:
+
+```bash
+docker build -t gastenboek .
+```
+
+Binnen een seconde is het klaar, met `CACHED` bij elke stap:
+
+```text
+ => CACHED [2/5] WORKDIR /app
+ => CACHED [3/5] COPY requirements.txt .
+ => CACHED [4/5] RUN python -m pip install -r requirements.txt
+ => CACHED [5/5] COPY . .
+```
+
+Docker bewaart het resultaat van elke stap: de **cache**. Is een stap gelijk aan de vorige keer, en alles ervoor ook, dan pakt hij dat resultaat. Verandert er iets, dan doet hij die stap opnieuw, en alle stappen erna. Daarom staat `COPY requirements.txt .` apart, vóór `COPY . .`: de trage pip-stap hangt alleen af van je lijst met packages.
+
+Zet de Dockerfile en `.dockerignore` in git:
 
 ```bash
 git add Dockerfile .dockerignore
@@ -109,13 +130,13 @@ git commit -m "Dockerfile toegevoegd"
 git push
 ```
 
-<Voorspel soort="Controlevraag" vraag="Je verandert een tekst in een template en bouwt het image opnieuw met dezelfde regel. Welke stappen doet Docker opnieuw?">
-  <Keuze uitleg="Docker onthoudt elke stap. Is er voor de eerste stappen iets veranderd?">Alle vijf, want het is een nieuw image</Keuze>
-  <Keuze goed uitleg="Tot en met de pip-stap is er niets veranderd: requirements.txt is gelijk. Pas bij de stap die je hele map kopieert, is er een ander bestand, dus vanaf daar doet Docker het opnieuw.">Alleen de stap die je hele map kopieert; de stappen ervoor haalt Docker uit zijn geheugen</Keuze>
-  <Keuze uitleg="Een template is een van de bestanden die de laatste kopieerstap meeneemt. Ziet Docker dat het veranderd is?">Geen enkele, want de Dockerfile is niet veranderd</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je zet een nieuw package in requirements.txt en bouwt opnieuw. Welke stappen doet Docker opnieuw?">
+  <Keuze uitleg="requirements.txt is veranderd, en die kopieert Docker al eerder. Wat gebeurt er met de stappen daarna?">Alleen de stap die je hele map kopieert</Keuze>
+  <Keuze goed uitleg="De stap die requirements.txt kopieert, ziet een ander bestand. Die stap en alles erna doet Docker opnieuw: pip installeert alles nog een keer, en daarna komt je map erin.">Vanaf het kopiëren van requirements.txt: ook pip, en daarna je map</Keuze>
+  <Keuze uitleg="FROM en WORKDIR zijn niet veranderd, en komen vóór requirements.txt. Moet Docker die opnieuw doen?">Alle vijf, want de lijst met packages is anders</Keuze>
   <Uitleg>
 
-  Docker bewaart het resultaat van elke stap. Is een stap en alles ervoor gelijk aan de vorige keer, dan pakt hij het bewaarde resultaat: `CACHED`. Daarom staat `COPY requirements.txt .` apart, vóór `COPY . .`. Zolang je lijst gelijk blijft, slaat Docker de trage pip-stap over, ook als je code verandert.
+  Docker kijkt stap voor stap of er iets veranderd is. De eerste stap die anders is, doet hij opnieuw, en alles erna ook, want die bouwen erop voort. Een nieuw package kost dus een minuut, een verandering in je code een paar seconden.
 
   </Uitleg>
 </Voorspel>
@@ -156,9 +177,9 @@ DEPRECATED: The legacy builder is deprecated and will be removed in a future rel
 
 ## Opdrachten
 
-### Opdracht 1: Run - Jouw image
+### Opdracht 1: Run - Een tekst in een template
 
-Bouw je image nog een keer, zonder iets te veranderen. Hoe lang duurt de tweede keer?
+Verander een tekst in een template, en bouw opnieuw. Welke stappen staan er nu als `CACHED`, en welke niet?
 
 <details>
 <summary>Antwoord</summary>
@@ -167,7 +188,14 @@ Bouw je image nog een keer, zonder iets te veranderen. Hoe lang duurt de tweede 
 docker build -t gastenboek .
 ```
 
-De tweede keer is het binnen een seconde klaar: elke stap staat er als `CACHED`, want er is niets veranderd.
+```text
+ => CACHED [2/5] WORKDIR /app
+ => CACHED [3/5] COPY requirements.txt .
+ => CACHED [4/5] RUN python -m pip install -r requirements.txt
+ => [5/5] COPY . .
+```
+
+Tot en met de pip-stap is er niets veranderd, want `requirements.txt` is gelijk. Pas de stap die je hele map kopieert, ziet een ander bestand, en die doet Docker opnieuw. Daarom is het in een paar seconden klaar.
 
 </details>
 

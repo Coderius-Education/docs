@@ -1,17 +1,17 @@
 ---
-sidebar_label: '19. Alles in één bestand'
+sidebar_label: '21. Alles in één bestand'
 description: compose.yaml zet bouwen, de poort, het volume en vanzelf herstarten in één bestand, en docker compose up doet de rest.
 ---
 
 # Online zetten: alles in één bestand
 
-Je container start nu met een lange regel:
+Je container uit les 20 draait nog, en hij startte met een lange regel:
 
-```bash
+```text
 docker run -d --name gastenboek -p 8000:8000 -v gastenboek-data:/app/data gastenboek
 ```
 
-Elke keer moet je die precies goed typen, en één tikfout geeft een leeg volume ([les 18](site:fullstack/docs/online/docker/volume)). Met **Docker Compose** zet je wat er in die regel staat in een bestand, en start je alles met één kort commando.
+Elke keer moet je die precies goed typen, en één tikfout geeft een leeg volume ([les 20](site:fullstack/docs/online/docker/volume)). Met **Docker Compose** zet je wat er in die regel staat in een bestand, en start je alles met één kort commando.
 
 ## compose.yaml
 
@@ -37,12 +37,10 @@ Het is **YAML**: een bestand van namen en waarden, waarin de inspringing zegt wa
 |:---|:---|
 | `services:` | de containers van dit project; hier één, `gastenboek` |
 | `build: .` | bouw het image met de Dockerfile in deze map |
-| `ports:` | wat `-p` deed, maar alleen op `127.0.0.1` (zie hieronder) |
+| `ports:` | wat `-p` deed, maar alleen voor deze computer: `127.0.0.1` ervoor |
 | `volumes:` (bij de service) | wat `-v` deed: het volume `data` in `/app/data` |
 | `restart: unless-stopped` | start de container opnieuw na een crash of een herstart, tenzij jij hem stopte |
 | `volumes:` (onderaan) | de volumes die dit project gebruikt |
-
-Bij `ports` staat `127.0.0.1` ervoor. Dan is poort 8000 alleen te bereiken vanaf deze computer, en niet vanaf het wifi. Op een server maakt dat straks veel uit; in [les 30](site:fullstack/docs/online/server/site) zie je waarom.
 
 ## Starten en stoppen
 
@@ -81,7 +79,24 @@ Compose verzint de namen zelf, met de naam van je map ervoor: de container heet 
 | `docker compose logs -f` | meekijken in de logboeken, tot Ctrl+C |
 | `docker compose down` | containers stoppen en weggooien; het volume blijft |
 
-Zet `compose.yaml` in git. Pas ook je README aan: met Docker start iemand je site met één regel.
+Zet `compose.yaml` in git:
+
+```bash
+git add compose.yaml
+git commit -m "Compose"
+git push
+```
+
+## Opruimen
+
+Het image `gastenboek` van je losse container heb je niet meer nodig: Compose bouwt zijn eigen image. Ook de containers van `hello-world` en die uit les 16 staan nog in `docker ps -a`, gestopt. Ruim ze op:
+
+```bash
+docker container prune
+docker image rm gastenboek
+```
+
+`docker container prune` vraagt `Are you sure you want to continue? [y/N]`. Typ `y`: hij gooit elke gestopte container weg, en laat je site, die draait, staan. Daarna gebruikt geen container het image `gastenboek` meer, en mag het weg. Het image van `hello-world` gooi je op dezelfde manier weg: `docker image rm hello-world`.
 
 <Voorspel soort="Controlevraag" vraag="Je schrijft een bericht, en typt daarna docker compose down en docker compose up -d. Staat je bericht er nog?">
   <Keuze goed uitleg="down gooit de container weg, maar niet het volume. De nieuwe container koppelt hetzelfde volume.">Ja, want down laat het volume staan</Keuze>
@@ -96,7 +111,7 @@ Zet `compose.yaml` in git. Pas ook je README aan: met Docker start iemand je sit
 
 ## Er gaat iets mis
 
-### De berichten uit les 18 zijn weg
+### De berichten uit les 20 zijn weg
 
 **Oorzaak:** Compose maakte een nieuw volume, `gastenboek_data`. Je berichten staan nog in `gastenboek-data`, het volume uit de vorige les.
 
@@ -121,6 +136,16 @@ yaml: line 3: found a tab character that violates indentation
 **Oorzaak:** er staat een tab in plaats van spaties. De fout staat op de regel die Compose noemt, of de regel erna.
 
 **Oplossing:** vervang de tab door spaties. In VS Code zie je rechtsonder `Spaces: 2` of `Tab Size`; klik erop en kies **Indent Using Spaces**.
+
+### unable to delete gastenboek:latest
+
+```text
+Error response from daemon: conflict: unable to delete gastenboek:latest (must be forced) - container e71d0225ee86 is using its referenced image 00aedae74c12
+```
+
+**Oorzaak:** er bestaat nog een container van het image `gastenboek`, draaiend of gestopt.
+
+**Oplossing:** gooi die container eerst weg, met `docker rm -f` en de naam uit de melding, of met `docker container prune` als hij gestopt is. Typ daarna opnieuw `docker image rm gastenboek`.
 
 ### port is already allocated
 
@@ -172,4 +197,4 @@ Wie je repository ophaalt en Docker heeft, heeft nu geen virtual environment en 
 
 </details>
 
-Door naar [les 20: een voordeur met Traefik](site:fullstack/docs/online/docker/voordeur).
+Door naar [les 22: een voordeur met Traefik](site:fullstack/docs/online/docker/voordeur).

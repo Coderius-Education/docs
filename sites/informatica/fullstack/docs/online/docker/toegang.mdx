@@ -73,7 +73,7 @@ permission denied while trying to connect to the docker API at unix:///var/run/d
 
 **Oorzaak:** je zit niet in de groep `docker`, of je bent nog niet opnieuw ingelogd sinds `usermod`.
 
-**Oplossing:** typ `groups`. Staat `docker` er niet bij, doe dan de stap van **Jezelf toegang geven** opnieuw, en vergeet `wsl --terminate Ubuntu-24.04` niet. Zet geen `sudo` voor elk `docker`-commando. Het werkt wel, maar wat Docker dan voor jou in je eigen mappen zet, zoals een back-up in [les 34](site:fullstack/docs/online/server/backup), is van `root`, en dan mag je het zelf niet meer weggooien.
+**Oplossing:** typ `groups`. Staat `docker` er niet bij, doe dan de stap van **Jezelf toegang geven** opnieuw, en vergeet `wsl --terminate Ubuntu-24.04` niet. Zet geen `sudo` voor elk `docker`-commando. Het werkt wel, maar wat Docker dan voor jou in je eigen mappen zet, zoals een back-up in [les 37](site:fullstack/docs/online/server/backup), is van `root`, en dan mag je het zelf niet meer weggooien.
 
 ### `toomanyrequests`
 
@@ -99,7 +99,7 @@ De tekst van `hello-world` stelt iets voor: `docker run -it ubuntu bash`. Doe he
 <details>
 <summary>Antwoord</summary>
 
-Je prompt verandert in iets als `root@3f2a9c1e7b54:/#`: je zit in een container met een eigen Ubuntu, als `root`. `cat /etc/os-release` laat zien welke Ubuntu het image heeft; dat hoeft niet dezelfde te zijn als die van WSL. Na `exit` stopt de container, en `docker ps -a` toont hem met `Exited`. In een paar seconden had je een hele Linux, en die is weg zodra je hem weggooit met `docker rm`. Dat zie je in [les 16](site:fullstack/docs/online/docker/container).
+Je prompt verandert in iets als `root@3f2a9c1e7b54:/#`: je zit in een container met een eigen Ubuntu, als `root`. `cat /etc/os-release` laat zien welke Ubuntu het image heeft; dat hoeft niet dezelfde te zijn als die van WSL. Na `exit` stopt de container, en `docker ps -a` toont hem met `Exited`. In een paar seconden had je een hele Linux, en die is weg zodra je hem weggooit met `docker rm`. Wat er dan met de bestanden erin gebeurt, zie je in [les 17](site:fullstack/docs/online/docker/achtergrond).
 
 </details>
 
