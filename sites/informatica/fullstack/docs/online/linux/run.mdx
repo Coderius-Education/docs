@@ -1,0 +1,78 @@
+---
+sidebar_label: '11. Je site draait in Linux'
+description: Start je site met fastapi run in Ubuntu, en open hem in je browser op Windows. Hetzelfde commando als op Windows, nu op Linux.
+---
+
+# Online zetten: je site draait in Linux
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/windows-en-linux', label: 'Een website uit Linux in je browser op Windows'}]} />
+
+Alles staat klaar: je code, je packages, een virtual environment die aanstaat. Nu start je je site, met hetzelfde commando als in [les 1](site:fullstack/docs/online/project/run).
+
+## Starten
+
+In de terminal van VS Code, met `(.venv)` voor je prompt:
+
+```bash
+fastapi run main.py --host 127.0.0.1
+```
+
+Met `--host 127.0.0.1` luistert hij alleen op deze computer, zoals in [les 3](site:fullstack/docs/online/project/adres). Bovenaan staat hetzelfde als op Windows:
+
+```text
+ ⚡️ Starting FastAPI in production mode
+ 🌐 Server started at http://127.0.0.1:8000
+```
+
+## Openen op Windows
+
+Open `http://127.0.0.1:8000` in je browser op Windows. Dat werkt net als de kleine webserver in [Windows en Linux naast elkaar](site:linux/docs/wsl/windows-en-linux) van de Linux-cursus: wat in WSL op `127.0.0.1` luistert, ziet je browser op Windows ook. Bij elk bezoek verschijnt in de terminal van Ubuntu een regel met `GET` en `200`.
+
+Je gastenboek is leeg. De databases stonden op Windows en niet in git, dus je site maakt nieuwe aan. Maak een account en schrijf een bericht: ze komen in de nieuwe databases in Ubuntu.
+
+<Gelukt>
+
+Je gastenboek staat in je browser op Windows, en de regels van elk bezoek staan in de terminal van Ubuntu. Je site draait op Linux.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je site draait in Ubuntu. Je verandert een tekst in main.py, slaat op en herlaadt de pagina. Wat zie je?">
+  <Keuze uitleg="fastapi run kijkt niet naar je bestanden, ook niet op Linux.">De nieuwe tekst, want Linux merkt het meteen</Keuze>
+  <Keuze goed uitleg="Net als op Windows leest fastapi run je code alleen bij het starten.">De oude tekst, tot je de server stopt met Ctrl+C en opnieuw start</Keuze>
+  <Keuze uitleg="Er gaat niets mis: de server blijft draaien met de code die hij bij het starten las.">Een foutmelding, want het bestand veranderde terwijl de server draaide</Keuze>
+  <Uitleg>
+
+  Het commando doet op Linux precies wat het op Windows deed ([les 2](site:fullstack/docs/online/project/herstarten)). Dat is het punt van deze stap: je site hangt niet af van Windows, en straks werkt hij op een server met Linux net zo.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### fastapi: command not found
+
+```text
+fastapi: command not found
+```
+
+**Oorzaak:** de virtual environment staat niet aan. `fastapi` staat in `.venv`, en zonder `(.venv)` voor je prompt zoekt de terminal hem daar niet.
+
+**Oplossing:** typ `source .venv/bin/activate` en start opnieuw. Installeer `fastapi` niet met `sudo apt`.
+
+### ModuleNotFoundError
+
+```text
+ModuleNotFoundError: No module named 'sqlitedict'
+```
+
+**Oorzaak:** een package dat je site gebruikt, staat niet in `requirements.txt`. Op Windows had je het los geïnstalleerd, en daar viel het niet op.
+
+**Oplossing:** installeer het in Ubuntu, en maak de lijst opnieuw zoals in [les 4](site:fullstack/docs/online/project/requirements), maar nu in Ubuntu: `python -m pip freeze > requirements.txt`. In Linux schrijft `>` gewone tekst. Push hem in de volgende les.
+
+### De browser krijgt geen antwoord
+
+**Oorzaak:** de server draait niet meer, of je opende een ander adres dan `http://127.0.0.1:8000`.
+
+**Oplossing:** kijk in de terminal van Ubuntu of de server nog draait, en open precies dat adres. Werkt de kleine webserver uit de Linux-cursus ook niet, kijk dan in die les bij Er gaat iets mis.
+
+Door naar [les 12: een wijziging vanuit Ubuntu](site:fullstack/docs/online/linux/pushen).

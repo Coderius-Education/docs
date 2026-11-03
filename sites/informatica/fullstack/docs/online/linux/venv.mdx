@@ -1,0 +1,92 @@
+---
+sidebar_label: '10. Packages in Ubuntu'
+description: Maak in Ubuntu een virtual environment, zet hem aan met source, en installeer je packages uit requirements.txt.
+---
+
+# Online zetten: packages in Ubuntu
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/apt', label: 'Installeren met sudo apt'}]} />
+
+Je code staat in Ubuntu, maar de packages nog niet: `.venv` zit niet in git. Je installeert ze opnieuw, uit je lijst van [les 4](site:fullstack/docs/online/project/requirements). Dat is precies wat een server straks ook doet.
+
+## Een virtual environment
+
+Ubuntu heeft Python al, maar de module om een virtual environment te maken moet je er eerst bij zetten. Typ in de terminal van VS Code, in je project:
+
+```bash
+sudo apt install python3-venv
+python3 -m venv .venv
+```
+
+In Ubuntu heet Python `python3`. De tweede regel maakt de map `.venv`, net als op Windows.
+
+## Aanzetten
+
+Op Windows zette VS Code de virtual environment vanzelf aan. In Ubuntu doe je het zelf:
+
+```bash
+source .venv/bin/activate
+```
+
+`source` voert een bestand uit in je eigen terminal. Voor je prompt staat nu `(.venv)`:
+
+```text
+(.venv) sam@laptop:~/gastenboek$
+```
+
+Zolang dat er staat, is `python` de Python uit `.venv`, en komt alles wat je installeert daarin. Open je een nieuwe terminal, dan typ je deze regel opnieuw.
+
+## Installeren uit je lijst
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+<Gelukt>
+
+Voor je prompt staat `(.venv)`, en `python -m pip list` noemt `fastapi` en `sqlitedict`, met de versies uit je `requirements.txt`.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je sluit de terminal, opent een nieuwe en typt meteen python -m pip install -r requirements.txt. Wat gebeurt er?">
+  <Keuze uitleg="In een nieuwe terminal staat er geen (.venv) voor de prompt. Welke Python krijg je dan?">Hij installeert alles in .venv, net als de vorige keer</Keuze>
+  <Keuze goed uitleg="Zonder source staat de virtual environment uit. Dan probeer je het in de Python van Ubuntu zelf, en die weigert het.">Het lukt niet, want de virtual environment staat nog uit</Keuze>
+  <Keuze uitleg="Er is niets kapot. Kijk naar wat er voor de prompt staat.">Het lukt niet, want .venv is weg na het sluiten</Keuze>
+  <Uitleg>
+
+  `.venv` blijft staan, maar een nieuwe terminal weet er niets van tot je `source .venv/bin/activate` typt. Kijk daarom altijd eerst of `(.venv)` voor je prompt staat.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### ensurepip is not available
+
+```text
+The virtual environment was not created successfully because ensurepip is not
+available.  On Debian/Ubuntu systems, you need to install the python3-venv
+package using the following command.
+
+    apt install python3.12-venv
+```
+
+**Oorzaak:** de module voor een virtual environment staat nog niet in Ubuntu.
+
+**Oplossing:** installeer hem met `sudo apt install python3-venv`, en typ `python3 -m venv .venv` opnieuw. De half gemaakte map `.venv` hoef je niet eerst weg te gooien.
+
+### externally-managed-environment
+
+```text
+error: externally-managed-environment
+
+× This environment is externally managed
+```
+
+Of: `/usr/bin/python3: No module named pip`.
+
+**Oorzaak:** de virtual environment staat niet aan. Je probeert te installeren in de Python van Ubuntu zelf, en die laat dat niet toe, of heeft geen pip.
+
+**Oplossing:** zet hem aan met `source .venv/bin/activate`, kijk of `(.venv)` voor je prompt staat, en installeer opnieuw. Installeer geen `python3-pip` om dit te omzeilen.
+
+Door naar [les 11: je site draait in Linux](site:fullstack/docs/online/linux/run).

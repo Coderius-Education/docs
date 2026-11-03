@@ -97,7 +97,8 @@ describe('de route Online zetten', () => {
       if (vragen.length !== 1) fout.push(`${id}: ${vragen.length} controlevragen`);
       const g = gelukt[0]?.index ?? -1;
       const v = vragen[0]?.index ?? -1;
-      if (!(g < v && v < mis)) fout.push(`${id}: eerst Gelukt, dan de controlevraag, dan Er gaat iets mis`);
+      if (!(g < v && v < mis))
+        fout.push(`${id}: eerst Gelukt, dan de controlevraag, dan Er gaat iets mis`);
       const opdrachten = tekst.indexOf('\n## Opdrachten');
       if (opdrachten === -1) continue;
       tekst
@@ -276,8 +277,7 @@ describe('vanaf les 7 werk je alleen in Ubuntu', () => {
   });
 
   it('geen codeblok in de route start de site nog met fastapi dev', () => {
-    const fout = lessen
-      .filter((id) => blokken(id, 'bash').some((b) => /^fastapi dev\b/m.test(b)));
+    const fout = lessen.filter((id) => blokken(id, 'bash').some((b) => /^fastapi dev\b/m.test(b)));
     expect(fout).toEqual([]);
   });
 });
@@ -368,7 +368,7 @@ describe('de keten van Docker', () => {
   it('dezelfde pakketten in WSL en op de server', () => {
     const regel = 'sudo apt install docker.io docker-compose-v2 docker-buildx git';
     expect(lees('online/docker/installeren')).toContain(regel);
-    expect(lees('online/server/site')).toContain(regel);
+    expect(lees('online/server/docker')).toContain(regel);
   });
 
   it('geen bash-blok gooit volumes weg of draait docker met sudo', () => {
@@ -412,7 +412,9 @@ describe('de server', () => {
   it('de deploy key komt vóór git clone', () => {
     const ophalen = lees('online/server/ophalen');
     expect(ophalen.indexOf('Deploy keys')).toBeGreaterThan(-1);
-    expect(ophalen.indexOf('Deploy keys')).toBeLessThan(ophalen.indexOf('git clone git@github.com'));
+    expect(ophalen.indexOf('Deploy keys')).toBeLessThan(
+      ophalen.indexOf('git clone git@github.com'),
+    );
   });
 
   it('wat alleen op de server staat, gaat mee in de back-up', () => {

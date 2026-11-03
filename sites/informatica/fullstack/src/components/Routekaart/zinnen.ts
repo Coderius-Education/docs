@@ -53,8 +53,7 @@ export const ZINNEN: Record<string, string> = {
   // Online zetten
   'Op Windows':
     'Je site draait met fastapi run, je snapt wat er anders is, en je project start met alleen je repository.',
-  'In Linux':
-    'Je site draait met fastapi run in Ubuntu, en je werkt vanaf hier alleen nog daar.',
+  'In Linux': 'Je site draait met fastapi run in Ubuntu, en je werkt vanaf hier alleen nog daar.',
   'In een container':
     'Je site draait in Docker op je laptop, niet als root, met de berichten in een volume, achter een voordeur.',
   'Op een echte server':

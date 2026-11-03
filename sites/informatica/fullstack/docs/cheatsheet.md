@@ -1127,7 +1127,7 @@ docker compose cp gastenboek:/app/data ~/backup/data
 docker compose start
 ```
 
-Zet `.env` en `~/traefik` erbij, en haal de map met `scp -r` naar je laptop. Terugzetten eindigt met `docker compose exec -u root gastenboek chown -R app /app/data`. Zie [Online zetten: een back-up](site:fullstack/docs/online/server/backup).
+Zet `.env` en `~/traefik` erbij, en haal de map met `scp -r` naar je laptop. Terugzetten eindigt met `docker compose exec -u root gastenboek chown -R app /app/data`. Zie [Online zetten: een back-up](site:fullstack/docs/online/server/backup) en [een back-up terugzetten](site:fullstack/docs/online/server/terugzetten).
 
 </details>
 
