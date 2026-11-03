@@ -115,7 +115,7 @@ describe('de route Online zetten', () => {
     expect(fout).toEqual([]);
   });
 
-  it('elke stap is klein: hooguit 450 woorden uitleg vóór Er gaat iets mis', () => {
+  it('elke stap is klein: hooguit 450 woorden uitleg vóór Er gaat iets mis, tabellen meegeteld', () => {
     const fout: string[] = [];
     for (const id of lessen) {
       const tekst = lees(id);
@@ -126,7 +126,7 @@ describe('de route Online zetten', () => {
         .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '')
         .replace(/<details>[\s\S]*?<\/details>/g, '')
         .replace(/<[^>]+>/g, '')
-        .replace(/^\|.*$/gm, '');
+        .replace(/^\|(\s*:?-+:?\s*\|)+$/gm, '');
       const woorden = uitleg.split(/\s+/).filter((w) => /\p{L}/u.test(w)).length;
       if (woorden > 450) fout.push(`${id}: ${woorden} woorden`);
     }
@@ -270,7 +270,7 @@ describe('vanaf les 7 werk je alleen in Ubuntu', () => {
     expect(tekst).not.toContain('[Errno 98]');
   });
 
-  it('les 5 legt de waarschuwing van pip uit, die tegen een image zonder venv in gaat', () => {
+  it('de les over het image legt de waarschuwing van pip uit, die tegen een image zonder venv in gaat', () => {
     // Bij RUN python -m pip install zegt pip: use a virtual environment
     // instead. De les zei twee alinea's eerder dat dat niet nodig is.
     expect(lees('online/docker/image')).toContain("WARNING: Running pip as the 'root' user");
@@ -291,7 +291,7 @@ describe('de keten van Docker', () => {
     return laatste;
   };
 
-  it('de hele Dockerfile in niet-als-root bouwt op die van les 5, met USER na de map data', () => {
+  it('de hele Dockerfile in niet-als-root bouwt op die van het image, met USER na de map data', () => {
     const eerste = blokken('online/docker/image', 'dockerfile')[0];
     const hele = dockerfile();
     for (const regel of eerste.split('\n').filter(Boolean)) expect(hele).toContain(regel);
@@ -519,6 +519,156 @@ describe('de server', () => {
     expect(blokken('online/project/requirements', 'bash').join('\n')).not.toContain('freeze >');
     expect(les).toContain('python -m pip freeze | Out-File -Encoding ascii requirements.txt');
   });
+});
+
+// De review van PR #168 (december 2026) liep de route als leerling door en
+// vond fouten die een leerling vastzetten of op het verkeerde been zetten.
+// Elke test hieronder pint er een klasse van vast.
+describe('wat de leerling typt, werkt in een verse Ubuntu', () => {
+  /** De hoofdtekst: alles vóór Er gaat iets mis, zonder uitklapblokken en Voorspel. */
+  const hoofdtekst = (id: string) => {
+    const tekst = lees(id);
+    const eind = tekst.indexOf('\n## Er gaat iets mis\n');
+    return tekst
+      .slice(0, eind === -1 ? undefined : eind)
+      .replace(/<details>[\s\S]*?<\/details>/g, '')
+      .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '');
+  };
+  const hoofdblokken = (id: string, taal: string) =>
+    [...hoofdtekst(id).matchAll(new RegExp(`\`\`\`${taal}\\n([\\s\\S]*?)\`\`\``, 'g'))].map(
+      (m) => m[1],
+    );
+
+  it('git pull werkt: stap 7 zet pull.rebase, want git 2.43 weigert een pull zonder keuze', () => {
+    // Nagedraaid met git 2.43: na een push vanaf Windows en een commit in
+    // Ubuntu geeft git pull "fatal: Need to specify how to reconcile
+    // divergent branches", precies in het geval dat de les beschreef.
+    const git = blokken('online/linux/git', 'bash').join('\n');
+    expect(git).toContain('git config --global pull.rebase false');
+    const eerstePull = lessen.findIndex((id) =>
+      ['bash', 'text'].some((taal) => blokken(id, taal).some((b) => /^git pull\b/m.test(b))),
+    );
+    expect(eerstePull).toBeGreaterThan(lessen.indexOf('online/linux/git'));
+  });
+
+  it('elke sudo apt install heeft sudo apt update ervoor, in dezelfde stap', () => {
+    // Met een oude pakketlijst geeft apt een 404 (Unable to fetch some
+    // archives); de Linux-cursus zegt: doe update voor je iets installeert.
+    const fout = lessen.filter((id) => {
+      const regels = blokken(id, 'bash').join('\n').split('\n');
+      const installeer = regels.findIndex((r) => /^sudo apt install\b/.test(r));
+      if (installeer === -1) return false;
+      const update = regels.findIndex((r) => /^sudo apt update\b/.test(r));
+      return update === -1 || update > installeer;
+    });
+    expect(fout).toEqual([]);
+  });
+
+  it('geen codeblok in de route start de site met fastapi dev, ook niet de README', () => {
+    // De README in stap 5 liet starten met fastapi dev, terwijl stap 3 zegt
+    // dat je je site voortaan met fastapi run start.
+    // Een regel die met fastapi dev begint, staat altijd in een codeblok, ook
+    // ingesprongen in het voorbeeld van een README.
+    const fout = lessen.filter((id) => /^\s*fastapi dev\b/m.test(lees(id)));
+    expect(fout).toEqual([]);
+  });
+
+  it('een container met een naam start pas als de vorige met die naam weg is', () => {
+    // Stap 17 startte docker run --name gastenboek terwijl de container uit
+    // de stap ervoor nog draaide: Conflict, en daarna zei whoami nog root,
+    // van de oude container.
+    const bestaat = new Set<string>();
+    const fout: string[] = [];
+    for (const id of lessen.filter((l) => l.startsWith('online/docker/'))) {
+      for (const blok of hoofdblokken(id, 'bash')) {
+        for (const regel of blok.split('\n')) {
+          const weg = regel.match(/^docker rm -f (\S+)/);
+          if (weg) bestaat.delete(weg[1]);
+          const start = regel.match(/^docker run\b.*--name (\S+)/);
+          if (start) {
+            if (bestaat.has(start[1])) fout.push(`${id}: ${regel}`);
+            bestaat.add(start[1]);
+          }
+        }
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('na rm -r ~/backup gebruikt geen stap die map, tot hij opnieuw gemaakt is', () => {
+    // Stap 35 zette terug uit ~/backup/data, terwijl de stap ervoor die map
+    // al had weggegooid.
+    // Het weggooien staat vaak in de lopende tekst ("gooi hem weg met
+    // `rm -r ~/backup`"); dat telt aan het eind van die stap.
+    let weg = false;
+    const fout: string[] = [];
+    for (const id of lessen) {
+      for (const blok of hoofdblokken(id, 'bash')) {
+        for (const regel of blok.split('\n')) {
+          if (/^(mkdir( -p)? ~\/backup$|scp\b.*~\/backup(\/|\s|$))/.test(regel)) weg = false;
+          else if (/~\/backup(\/|\s|$)/.test(regel) && !/^rm -r ~\/backup$/.test(regel) && weg)
+            fout.push(`${id}: ${regel}`);
+          if (/^rm -r ~\/backup$/.test(regel)) weg = true;
+        }
+      }
+      if (hoofdtekst(id).includes('rm -r ~/backup`')) weg = true;
+    }
+    expect(fout).toEqual([]);
+  });
+});
+
+describe('de controlevraag toetst deze stap, met wat de leerling al weet', () => {
+  const vragen = lessen.map((id) => ({
+    id,
+    vraag: lees(id).match(/<Voorspel soort="Controlevraag" vraag="([^"]+)"/)?.[1] ?? '',
+    uitleg: lees(id).match(/<Voorspel soort="Controlevraag"[\s\S]*?<\/Voorspel>/)?.[0] ?? '',
+  }));
+
+  it('de uitleg verklapt geen opdracht', () => {
+    // Stap 16 zei in de uitleg "Dat zie je in opdracht 2", en stap 18 bouwde
+    // daarop, terwijl opdrachten mogen maar niet hoeven.
+    const fout = vragen.filter((v) => /opdracht \d/i.test(v.uitleg)).map((v) => v.id);
+    expect(fout).toEqual([]);
+  });
+
+  it('geen twee stappen stellen (bijna) dezelfde vraag', () => {
+    // Stap 11 vroeg bijna letterlijk wat stap 2 al vroeg.
+    const woorden = (s: string) => new Set(s.toLowerCase().match(/[\p{L}\d.]+/gu) ?? []);
+    const fout: string[] = [];
+    vragen.forEach((a, i) => {
+      for (const b of vragen.slice(i + 1)) {
+        const x = woorden(a.vraag);
+        const y = woorden(b.vraag);
+        const samen = [...x].filter((w) => y.has(w)).length;
+        if (samen / Math.min(x.size, y.size) > 0.7) fout.push(`${a.id} en ${b.id}`);
+      }
+    });
+    expect(fout).toEqual([]);
+  });
+
+  // Begrippen die een controlevraag of zijn keuzes pas mag gebruiken als ze in
+  // de hoofdtekst van deze of een eerdere stap staan, niet alleen in een
+  // opdracht of uitklapblok. Stap 38 leunde op set -e uit een opdracht.
+  const BEGRIPPEN = ['set -e', 'pull.rebase', '--pull', 'CACHED', 'chown', 'FORWARDED_ALLOW_IPS'];
+
+  it.each(BEGRIPPEN)(
+    '%s staat in de hoofdtekst voordat een controlevraag het gebruikt',
+    (begrip) => {
+      const hoofd = (id: string) => {
+        const tekst = lees(id);
+        return tekst
+          .slice(0, tekst.indexOf('\n## Er gaat iets mis\n'))
+          .replace(/<details>[\s\S]*?<\/details>/g, '')
+          .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '');
+      };
+      const fout = vragen
+        .map((v, i) => ({ ...v, i }))
+        .filter((v) => v.uitleg.includes(begrip))
+        .filter((v) => !lessen.slice(0, v.i + 1).some((id) => hoofd(id).includes(begrip)))
+        .map((v) => v.id);
+      expect(fout).toEqual([]);
+    },
+  );
 });
 
 describe('naslag en diagram van Online zetten', () => {
