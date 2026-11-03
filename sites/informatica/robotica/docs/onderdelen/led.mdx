@@ -1,0 +1,95 @@
+---
+sidebar_label: LED
+description: Een LED is een lampje met twee pootjes dat je met een digitale pin aan en uit zet.
+sidebar_custom_props:
+  kort: Een lampje aan en uit zetten
+  foto: led/led.png
+  aansluiting: digitale pin
+---
+
+# LED
+
+Een **LED** is een lampje met twee pootjes. Je sluit hem aan op een digitale pin en zet hem vanuit je code aan en uit.
+
+<Voorkennis items={[{site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Variabelen in Python'}]} />
+
+## Materiaal
+
+Wat heb je nodig?
+
+1. Arduino Nano RP2040 Connect
+2. Een **LED-lampje** (extern, met twee pootjes)
+3. Een **weerstand** van 220 Ω
+
+![Tekening van een LED met een lang en een kort pootje](./img/led/led.png)
+
+Let goed op: een LED heeft een **lange** en een **korte** pin. De lange pin is de **plus** (+), de korte pin is de **min** (-).
+
+<details>
+<summary>Controlevraag</summary>
+
+Welke pin van de LED gaat naar GND?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+De **korte** pin (de min, -). De **lange** pin gaat naar een digitale uitgang van de microcontroller.
+
+</details>
+
+## Aansluiten
+
+![Aansluitschema van de LED op pin D7 en GND van de Nano RP2040 Connect](./img/led/nano_rp2040_led_bb.svg)
+![Overzicht van de pinnen van de Arduino Nano RP2040 Connect](/img/pinout_nano_rp2040_connect.png)
+
+Verbind:
+
+- **D7** aan de weerstand, en de weerstand aan de **lange pin** (plus) van de LED
+- **Korte pin** (min) van de LED aan een **GND**-pin
+
+De weerstand staat niet op de tekening, maar laat hem niet weg. Zonder weerstand
+trekt de LED meer stroom dan een pin hoort te leveren. Hij brandt dan wel, maar
+de LED of de pin kan stukgaan. Welke kant van de weerstand waar zit, maakt niet
+uit.
+
+## Code
+
+```python
+from machine import Pin
+
+pin_7 = Pin('D7', Pin.OUT)
+pin_7.on()
+```
+
+Als alles goed is aangesloten, brandt je lampje nu.
+
+### Uitleg
+
+- `Pin('D7', Pin.OUT)` zegt: gebruik pin **D7** als uitgang.
+- `.on()` zet de pin op 3,3V, waardoor er stroom door de weerstand en de LED loopt en de LED gaat branden.
+
+<details>
+<summary>Opdracht: lampje uitzetten</summary>
+
+Hoe zou je het lampje na 1 seconde weer uit zetten?
+
+</details>
+
+<details>
+<summary>Oplossing</summary>
+
+```python
+from machine import Pin
+from time import sleep
+
+pin_7 = Pin('D7', Pin.OUT)
+pin_7.on()
+sleep(1)
+pin_7.off()
+```
+
+Met `sleep(1)` wacht je 1 seconde en daarna zet je het lampje uit met `.off()`.
+
+</details>

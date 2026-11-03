@@ -1,0 +1,141 @@
+/* De overzichtspagina van Onderdelen. Een leerling zoekt hier het ding dat op
+   tafel ligt, dus elke kaart heeft een foto en een korte regel, en de groep
+   Aan de slag is een genummerde rij. Selectors op :not(#\#):not(#\#), anders
+   wint Infima (zie huisstijl/README.md). */
+
+.groep:not(#\#):not(#\#) {
+  margin-bottom: 1.75rem;
+}
+
+.groep:not(#\#):not(#\#) h2 {
+  margin-bottom: 0.75rem;
+}
+
+/* Kaarten: vier naast elkaar in de kolom van een docpagina, twee op een
+   telefoon. */
+.raster {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 0.75rem;
+}
+
+.kaart:not(#\#):not(#\#),
+.stap:not(#\#):not(#\#) {
+  display: flex;
+  height: 100%;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-card-border-radius, 8px);
+  background: var(--ifm-background-surface-color);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.kaart:not(#\#):not(#\#) {
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.kaart:not(#\#):not(#\#):hover,
+.stap:not(#\#):not(#\#):hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
+}
+
+.kaart:not(#\#):not(#\#):focus-visible,
+.stap:not(#\#):not(#\#):focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+/* De foto's hebben een witte of lichte achtergrond; een wit vlak houdt ze
+   ook in donker herkenbaar. */
+.foto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 6.5rem;
+  padding: 0.5rem;
+  background: #fff;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.foto img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.tekst {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.6rem 0.75rem 0.7rem;
+}
+
+.titel {
+  font-weight: var(--ifm-font-weight-bold);
+  line-height: 1.25;
+  color: var(--ifm-color-primary-darkest);
+}
+
+[data-theme="dark"] .titel {
+  color: var(--ifm-color-primary-lightest);
+}
+
+.kort {
+  font-size: 0.85rem;
+  line-height: 1.35;
+  margin-bottom: 0.3rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.aansluiting {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: var(--ifm-color-emphasis-200);
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-900);
+}
+
+/* Aan de slag: drie stappen naast elkaar, onder elkaar op een telefoon. */
+.stappen:not(#\#):not(#\#) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stappen:not(#\#):not(#\#) li {
+  margin: 0;
+}
+
+.stap:not(#\#):not(#\#) {
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding-left: 0.75rem;
+}
+
+.nummer {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: 0.6rem;
+  border-radius: 50%;
+  background: var(--ifm-color-primary);
+  font-weight: var(--ifm-font-weight-bold);
+  color: var(--coderius-on-primary);
+}
+
+.hulp:not(#\#):not(#\#) {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+}

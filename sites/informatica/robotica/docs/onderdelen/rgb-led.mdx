@@ -1,0 +1,149 @@
+---
+sidebar_label: RGB-LED
+description: Een RGB-LED brandt in elke kleur door rood, groen en blauw te mengen, elk op een eigen PWM-pin.
+sidebar_custom_props:
+  kort: Een lampje in elke kleur
+  foto: rgb-led/rgb-led-module.svg
+  aansluiting: 3 PWM-pinnen
+---
+
+# RGB-LED
+
+Een **RGB-LED** is een lampje dat in elke kleur kan branden. Hij heeft drie kanalen: rood (R), groen (G) en blauw (B). Door die te mengen krijg je alle kleuren.
+
+## Materiaal
+
+Wat heb je nodig?
+
+1. Arduino Nano RP2040 Connect
+2. RGB-LED-module
+
+![Tekening van een RGB-LED-module: een printje met een LED en vier pinnen, gemerkt min, R, G en B](./img/rgb-led/rgb-led-module.svg)
+
+Een RGB-LED-module heeft vier pinnen. Op het printje staan ze als `-`, `R`, `G` en `B`; bij sommige modules in een andere volgorde, dus kijk naar de letters.
+
+<details>
+<summary>Controlevraag</summary>
+
+Hoeveel pinnen heeft deze RGB-LED-module nodig op de microcontroller?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+**Vier** in totaal: één GND-pin en drie digitale pinnen (voor R, G en B). De drie kleurpinnen moeten **PWM** ondersteunen, anders kun je geen tussenkleuren maken.
+
+</details>
+
+## Aansluiten
+
+### Pinnen van de RGB-LED
+
+- **Min (-)**: GND
+- **R**: rood kanaal
+- **G**: groen kanaal
+- **B**: blauw kanaal
+
+### Aansluiten op de Nano RP2040 Connect
+
+- **Min** van de LED aan een **GND**-pin
+- **R** aan een digitale pin met PWM, bijvoorbeeld **D9**
+- **G** aan een digitale pin met PWM, bijvoorbeeld **D10**
+- **B** aan een digitale pin met PWM, bijvoorbeeld **D12**
+
+<details>
+<summary>Let op</summary>
+
+Pinnen **D2**, **D3**, **D4** en **D11** zijn bezet zodra je het **motor shield** gebruikt.
+
+Daarom zit blauw in dit voorbeeld op pin 12, en niet op de bezette 11.
+
+</details>
+
+<details>
+<summary>Controlevraag</summary>
+
+Wat gebeurt er als je een kleur-pin van de RGB-LED aan een pin **zonder PWM** sluit?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dan kun je dat kanaal alleen **aan** of **uit** zetten, niet half. Je krijgt dus geen mooie tussenkleuren of dimmend gedrag.
+
+</details>
+
+## Code
+
+Met de leaphymicropython-bibliotheek heb je één klasse: **`RGBLed`**.
+
+### Voorbeeld
+
+```python
+from time import sleep
+from leaphymicropython.actuators.rgbled import RGBLed
+
+led = RGBLed("D9", "D10", "D12")
+
+while True:
+    led.set_color(255, 0, 0)  # rood
+    sleep(1)
+    led.set_color(0, 0, 0)    # uit
+    sleep(1)
+```
+
+### Uitleg
+
+```python
+led = RGBLed("D9", "D10", "D12")
+```
+
+Dit zijn de pinnen voor **rood, groen, blauw**: hier `D9`, `D10` en `D12`. Schrijf de namen tussen aanhalingstekens. Een kaal getal als `9` betekent voor MicroPython iets anders: het nummer van een aansluiting op de chip (GPIO9), en die zit niet op de pinnen van het bord.
+
+```python
+led.set_color(red, green, blue)
+```
+
+Elke kleurwaarde ligt tussen **0** (uit) en **255** (maximaal). Door te mengen krijg je alle kleuren:
+
+- `(255, 0, 0)` = rood
+- `(0, 255, 0)` = groen
+- `(0, 0, 255)` = blauw
+- `(255, 255, 0)` = geel
+- `(255, 255, 255)` = wit
+- `(0, 0, 0)` = uit
+
+<details>
+<summary>Opdracht: regenboog</summary>
+
+Laat de LED achter elkaar rood, geel, groen, cyaan, blauw en paars laten zien, elk 1 seconde.
+
+</details>
+
+<details>
+<summary>Oplossing</summary>
+
+```python
+from time import sleep
+from leaphymicropython.actuators.rgbled import RGBLed
+
+led = RGBLed("D9", "D10", "D12")
+
+kleuren = [
+    (255, 0, 0),    # rood
+    (255, 255, 0),  # geel
+    (0, 255, 0),    # groen
+    (0, 255, 255),  # cyaan
+    (0, 0, 255),    # blauw
+    (255, 0, 255),  # paars
+]
+
+while True:
+    for r, g, b in kleuren:
+        led.set_color(r, g, b)
+        sleep(1)
+```
+
+</details>

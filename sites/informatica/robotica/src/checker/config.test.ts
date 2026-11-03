@@ -193,7 +193,7 @@ describe('roboticaConfig', () => {
           'from leaphymicropython.actuators.servo import set_servo_angle',
           'from leaphymicropython.sensors.sonar import read_distance',
           'set_servo_angle("D6", 180)',
-          'print(read_distance(19, 18))',
+          'print(read_distance("D7", "D8"))',
         ].join('\n'),
       }),
       roboticaConfig,

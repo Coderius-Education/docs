@@ -1,10 +1,11 @@
 ---
 sidebar_position: 3
 slug: /software/verbinden
-hide_title: true
 title: Microcontroller verbinden met computer
 ---
 
-import Verbinden from '/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-installatie/3_verbinden.md'
+import Verbinden from '@site/docs/onderdelen/_delen/installatie/verbinden.md'
+
+# Bord verbinden met je computer
 
 <Verbinden />

@@ -48,16 +48,16 @@ describe('Python uit de lespagina´s halen', () => {
 
   it('geeft elk blok een naam die niet van het absolute pad afhangt', () => {
     const zonderSlug = '# Cheatsheet\n\n```python\nx = 1\n```';
-    const a = fragmentenUit('/ergens/Tutorial-x/cheatsheet.md', zonderSlug);
-    const b = fragmentenUit('/heel/ander/pad/Tutorial-x/cheatsheet.md', zonderSlug);
+    const a = fragmentenUit('/ergens/x/cheatsheet.md', zonderSlug);
+    const b = fragmentenUit('/heel/ander/pad/x/cheatsheet.md', zonderSlug);
     expect(a.fragmenten[0].naam).toBe(b.fragmenten[0].naam);
-    expect(a.fragmenten[0].naam).toBe('Tutorial_x_cheatsheet_1');
+    expect(a.fragmenten[0].naam).toBe('x_cheatsheet_1');
   });
 
   it('geeft gelijknamige bestanden in verschillende mappen verschillende namen', () => {
     const zonderSlug = '```python\nx = 1\n```';
-    const a = fragmentenUit('/docs/Tutorial-Dcmotor/4_code.md', zonderSlug);
-    const b = fragmentenUit('/docs/Tutorial-lampje/4_code.md', zonderSlug);
+    const a = fragmentenUit('/docs/onderdelen/_delen/dc-motor/materiaal.md', zonderSlug);
+    const b = fragmentenUit('/docs/onderdelen/_delen/oled-scherm/materiaal.md', zonderSlug);
     expect(a.fragmenten[0].naam).not.toBe(b.fragmenten[0].naam);
   });
 
