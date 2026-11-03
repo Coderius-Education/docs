@@ -334,6 +334,14 @@ describe('elk aansluitschema in een les', () => {
     expect(fout).toEqual([]);
   });
 
+  it('heeft een alt-tekst die met een hoofdletter begint en zegt wat erop staat', () => {
+    // deel5_scherm.md had "aansluitschema: OLED via multiplexer", de rest "Aansluitschema: ...".
+    const fout = schemaPlaatjes()
+      .filter((p) => !/^[A-Z]/.test(p.alt) || p.alt.length < 40)
+      .map((p) => `${p.les}: "${p.alt}"`);
+    expect(fout).toEqual([]);
+  });
+
   it('heeft de draadkleuren die zijn alt-tekst noemt', () => {
     // De alt-tekst van de batterijhouder zei "de rode draad op de plus en de
     // zwarte op de min", terwijl beide draden in het plaatje blauw waren.
