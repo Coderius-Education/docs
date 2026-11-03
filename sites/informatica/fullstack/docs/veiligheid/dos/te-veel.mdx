@@ -20,6 +20,8 @@ gastenboek uitleest, kan daar rekening mee houden.
 
 Zet deze regel onderaan `test_verzoeken.py` uit [les 3](site:fullstack/docs/veiligheid/dos/zelf-meten):
 
+{/* erbij: test_verzoeken.py */}
+
 ```python
 print(antwoord.json())
 ```
@@ -78,6 +80,8 @@ Het endpoint krijgt een parameter `response: Response`. Op dat antwoord zet `slo
 Maak een script `headers.py` dat zes verzoeken stuurt en bij elk twee headers
 laat zien:
 
+{/* bestand: headers.py */}
+
 <CodeUitleg>
 
 ```python showLineNumbers
@@ -107,6 +111,8 @@ Start je server opnieuw, zodat de telling bij nul begint, en draai het script.
 <Gelukt>
 
 Bij elk verzoek staat hoeveel er nog over zijn:
+
+{/* draai: headers.py; vrij: (?<=wacht )\d+ */}
 
 ```text
 Verzoek 1: 200, nog 4 over, wacht 60 seconden
