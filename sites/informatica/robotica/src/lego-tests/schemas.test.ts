@@ -1,8 +1,8 @@
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { basename, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inflateRawSync } from 'node:zlib';
-import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import sidebars from '../../sidebars';
 
@@ -289,11 +289,11 @@ function schemaPlaatjes() {
   const uit: { les: string; alt: string; pad: string }[] = [];
   for (const les of ['docs', 'lego_auto', 'golfbot'].flatMap(lessen)) {
     for (const m of readFileSync(les, 'utf8').matchAll(/!\[([^\]]*)\]\(([^)\s]+)\)/g)) {
-      const pad = m[2].startsWith('@site/')
-        ? m[2].slice(6)
-        : relative(SITE, join(les, '..', m[2]));
+      const pad = m[2].startsWith('@site/') ? m[2].slice(6) : relative(SITE, join(les, '..', m[2]));
       const isSchema =
-        pad.startsWith('static/fritzing/') || NOG_ZONDER_BRON.has(pad) || /_bb\.(png|svg)$/.test(pad);
+        pad.startsWith('static/fritzing/') ||
+        NOG_ZONDER_BRON.has(pad) ||
+        /_bb\.(png|svg)$/.test(pad);
       if (isSchema) uit.push({ les: relative(SITE, les), alt: m[1], pad });
     }
   }
@@ -312,7 +312,11 @@ describe('elk aansluitschema in een les', () => {
     // maken. Een schema staat nu in static/fritzing, naast zijn .fzz.
     const fout = schemaPlaatjes()
       .filter((p) => !NOG_ZONDER_BRON.has(p.pad))
-      .filter((p) => !p.pad.startsWith('static/fritzing/') || !existsSync(join(FRITZING, `${bronVan(p.pad)}.fzz`)))
+      .filter(
+        (p) =>
+          !p.pad.startsWith('static/fritzing/') ||
+          !existsSync(join(FRITZING, `${bronVan(p.pad)}.fzz`)),
+      )
       .map((p) => `${p.les}: ${p.pad}`);
     expect(fout).toEqual([]);
   });
@@ -323,7 +327,9 @@ describe('elk aansluitschema in een les', () => {
     // D3; de tekst moest uitleggen dat de hoekjes geen aansluitingen waren.
     const NOG_SCHUIN = new Set<string>([]);
     const fout: string[] = [];
-    for (const fzz of readdirSync(FRITZING).filter((n) => n.endsWith('.fzz') && !NOG_SCHUIN.has(n))) {
+    for (const fzz of readdirSync(FRITZING).filter(
+      (n) => n.endsWith('.fzz') && !NOG_SCHUIN.has(n),
+    )) {
       const fz = [...unzip(join(FRITZING, fzz))].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
       for (const m of fz.matchAll(
         /<instance moduleIdRef="WireModuleID"[\s\S]*?<breadboardView[^>]*>\s*<geometry [^>]*x2="([-\d.e]+)" y2="([-\d.e]+)"/g,
@@ -350,16 +356,21 @@ describe('elk aansluitschema in een les', () => {
       const fzz = join(FRITZING, `${bronVan(p.pad)}.fzz`);
       if (!existsSync(fzz)) continue;
       const fz = [...unzip(fzz)].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
-      const kleuren = new Set([...fz.matchAll(/<wireExtras [^>]*color="([^"]*)"/g)].map((m) => m[1].toLowerCase()));
+      const kleuren = new Set(
+        [...fz.matchAll(/<wireExtras [^>]*color="([^"]*)"/g)].map((m) => m[1].toLowerCase()),
+      );
       for (const [woord, kleur] of KLEURWOORD)
         if (woord.test(p.alt) && !KLEUR[kleur].some((k) => kleuren.has(k)))
-          fout.push(`${p.les}: de alt noemt ${kleur}, maar ${basename(fzz)} heeft geen ${kleur}e draad`);
+          fout.push(
+            `${p.les}: de alt noemt ${kleur}, maar ${basename(fzz)} heeft geen ${kleur}e draad`,
+          );
     }
     expect(fout).toEqual([]);
   });
 });
 
-const fzVan = (fzz: string) => [...unzip(join(FRITZING, fzz))].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
+const fzVan = (fzz: string) =>
+  [...unzip(join(FRITZING, fzz))].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
 const alleFzz = () => readdirSync(FRITZING).filter((n) => n.endsWith('.fzz'));
 const geometrie = (blok: string) => {
   const g = blok.match(/<breadboardView[^>]*>\s*<geometry ([^>]*)>/)?.[1] ?? '';
@@ -374,11 +385,18 @@ describe('elk .fzz met een shield', () => {
     const fout: string[] = [];
     for (const fzz of alleFzz()) {
       const fz = fzVan(fzz);
-      const shield = fz.match(/<instance moduleIdRef="Flitz[ _]Shield[^"]*"[\s\S]*?<\/instance>/i)?.[0];
+      const shield = fz.match(
+        /<instance moduleIdRef="Flitz[ _]Shield[^"]*"[\s\S]*?<\/instance>/i,
+      )?.[0];
       if (!shield) continue;
-      const nanos = [...fz.matchAll(/<instance moduleIdRef="(?:arduinoNano|Arduino Nano)[^"]*"[\s\S]*?<\/instance>/g)];
+      const nanos = [
+        ...fz.matchAll(
+          /<instance moduleIdRef="(?:arduinoNano|Arduino Nano)[^"]*"[\s\S]*?<\/instance>/g,
+        ),
+      ];
       if (nanos.length !== 1) fout.push(`${fzz}: ${nanos.length} Nano's`);
-      else if (geometrie(nanos[0][0]).z <= geometrie(shield).z) fout.push(`${fzz}: de Nano ligt onder het shield`);
+      else if (geometrie(nanos[0][0]).z <= geometrie(shield).z)
+        fout.push(`${fzz}: de Nano ligt onder het shield`);
     }
     expect(fout).toEqual([]);
   });
@@ -392,20 +410,32 @@ describe('elk .fzz met een shield', () => {
     const fout: string[] = [];
     for (const fzz of alleFzz()) {
       const fz = fzVan(fzz);
-      const shield = fz.match(/<instance moduleIdRef="Flitz_shieldv3[^"]*"[\s\S]*?<\/instance>/)?.[0];
+      const shield = fz.match(
+        /<instance moduleIdRef="Flitz_shieldv3[^"]*"[\s\S]*?<\/instance>/,
+      )?.[0];
       if (!shield) continue;
       const s = geometrie(shield);
-      for (const [draad] of fz.matchAll(/<instance moduleIdRef="WireModuleID"[\s\S]*?<\/instance>/g)) {
+      for (const [draad] of fz.matchAll(
+        /<instance moduleIdRef="WireModuleID"[\s\S]*?<\/instance>/g,
+      )) {
         const w = geometrie(draad);
         const [x0, x1] = [Math.min(w.x, w.x + w.x2), Math.max(w.x, w.x + w.x2)];
         const [y0, y1] = [Math.min(w.y, w.y + w.y2), Math.max(w.y, w.y + w.y2)];
         const over = (a: number, b: number, c: number) => c > a + 1.5 && c < b - 1.5;
+        // ook een bijna-horizontale draad (de oude liepen 0,9 schuin over 180)
         for (const r of RIJEN.map((r) => s.y + r))
-          // ook een bijna-horizontale draad (de oude liepen 0,9 schuin over 180)
-          if (y1 - y0 < 2 && Math.abs((y0 + y1) / 2 - r) < 2 && KOLOMMEN.some((k) => over(x0, x1, s.x + k)))
+          if (
+            y1 - y0 < 2 &&
+            Math.abs((y0 + y1) / 2 - r) < 2 &&
+            KOLOMMEN.some((k) => over(x0, x1, s.x + k))
+          )
             fout.push(`${fzz}: draad over de rij op y ${r.toFixed(1)}`);
         for (const k of KOLOMMEN.map((k) => s.x + k))
-          if (x1 - x0 < 2 && Math.abs((x0 + x1) / 2 - k) < 1.5 && RIJEN.some((r) => over(y0, y1, s.y + r)))
+          if (
+            x1 - x0 < 2 &&
+            Math.abs((x0 + x1) / 2 - k) < 1.5 &&
+            RIJEN.some((r) => over(y0, y1, s.y + r))
+          )
             fout.push(`${fzz}: draad over de kolom op x ${k.toFixed(1)}`);
       }
     }
@@ -414,17 +444,29 @@ describe('elk .fzz met een shield', () => {
 
   it('heeft notities die door de stijlregels komen', () => {
     // Notities eindigden op ":)" en zeiden "channels 0-3" en "jumper wires".
-    const { controleer } = createRequire(import.meta.url)('../../../../../packages/shared/stijl.js') as {
+    const { controleer } = createRequire(import.meta.url)(
+      '../../../../../packages/shared/stijl.js',
+    ) as {
       controleer: (tekst: string) => { niveau: string; naam: string }[];
     };
     const fout: string[] = [];
     for (const fzz of alleFzz()) {
-      for (const m of fzVan(fzz).matchAll(/<instance moduleIdRef="NoteModuleID"[\s\S]*?<text>([\s\S]*?)<\/text>/g)) {
-        const html = m[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
-        const tekst = html.replace(/<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/g, ' ');
+      for (const m of fzVan(fzz).matchAll(
+        /<instance moduleIdRef="NoteModuleID"[\s\S]*?<text>([\s\S]*?)<\/text>/g,
+      )) {
+        const html = m[1]
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&quot;/g, '"')
+          .replace(/&amp;/g, '&');
+        const tekst = html
+          .replace(/<style[\s\S]*?<\/style>/g, '')
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/&[a-z#0-9]+;/g, ' ');
         for (const melding of controleer(tekst).filter((x) => x.niveau === 'fout'))
           fout.push(`${fzz}: ${melding.naam}`);
-        if (/:\)|\bchannels?\b|\bjumper ?wires?\b/i.test(tekst)) fout.push(`${fzz}: "${tekst.trim().slice(0, 60)}"`);
+        if (/:\)|\bchannels?\b|\bjumper ?wires?\b/i.test(tekst))
+          fout.push(`${fzz}: "${tekst.trim().slice(0, 60)}"`);
       }
     }
     expect(fout).toEqual([]);
