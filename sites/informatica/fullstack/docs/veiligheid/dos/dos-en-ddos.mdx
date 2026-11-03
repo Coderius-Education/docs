@@ -1,24 +1,42 @@
 ---
-sidebar_label: '2. DoS en DDoS'
-description: Een DoS-aanval maakt een server zo druk dat echte bezoekers geen antwoord meer krijgen. Het verschil tussen DoS en DDoS, en wat een botnet is.
+sidebar_label: '4. DoS en DDoS'
+description: Een DoS-aanval maakt een server zo druk dat echte bezoekers geen antwoord meer krijgen. Zelf gezien dat één laptop dat niet lukt, en het verschil tussen DoS en DDoS, met een botnet.
 ---
 
 # Te veel verzoeken: DoS en DDoS
 
-In [les 1](site:fullstack/docs/veiligheid/dos/verzoek) zag je dat je server per seconde een beperkt aantal
+In [les 2](site:fullstack/docs/veiligheid/dos/verzoek) zag je dat je server per seconde een beperkt aantal
 verzoeken kan beantwoorden. Stuurt iemand er expres meer dan dat, dan raakt de
-server achter. Hij is dan bezig met alleen nog die verzoeken, en een echte
-bezoeker krijgt geen antwoord meer. De site ligt plat.
+server achter, en een echte bezoeker krijgt geen antwoord meer. De site ligt
+plat.
 
 Dat is een **DoS**-aanval: *Denial of Service*, oftewel "dienst weigeren". De
 aanvaller breekt niet in, hij maakt de server zo druk dat hij niets nuttigs
 meer doet.
 
+## Lukt dat met één laptop?
+
+Zet in `test_verzoeken.py` uit [les 3](site:fullstack/docs/veiligheid/dos/zelf-meten) `range(20)` op `range(500)`,
+en in de laatste regel `20` op `500`. Draai het script. Het doet er een tijdje
+over; open intussen `http://127.0.0.1:8000/` in je browser.
+
+<Gelukt>
+
+Terwijl het script nog loopt, staat in je browser meteen
+`{"bericht":"Hallo wereld!"}`. Aan het eind zegt het script:
+
+```text
+Gelukt: 500 van de 500
+```
+
+Je server beantwoordde het script én je browser.
+
+</Gelukt>
+
 ## Verzoeken na elkaar zijn niet genoeg
 
-Een laptop die verzoeken na elkaar stuurt, wacht bij elk verzoek op het
-antwoord. Hij stuurt ze dus nooit sneller dan de server ze beantwoordt. Zo houd
-je een server niet plat: hij loopt nooit achter.
+Je script wacht bij elk verzoek op het antwoord. Het stuurt ze dus nooit
+sneller dan de server ze beantwoordt, en de server loopt nooit achter.
 
 Daarom komen echte aanvallen van heel veel computers tegelijk. Dat heet
 **DDoS**: *Distributed Denial of Service*. De verzoeken zijn "verspreid" over
@@ -26,7 +44,7 @@ duizenden machines, en samen sturen ze er veel meer dan de server aankan.
 
 Eén computer kan een server wel te druk maken als hij niet netjes wacht: als hij
 veel verzoeken tegelijk stuurt, of steeds een endpoint kiest dat veel werk kost.
-Daarom telt de limiet in [les 4](site:fullstack/docs/veiligheid/dos/limiet) per computer.
+Daarom telt de limiet in [les 5](site:fullstack/docs/veiligheid/dos/limiet) per computer.
 
 ## Een botnet
 
@@ -41,8 +59,36 @@ begint te sturen. De eigenaren weten vaak niet eens dat hun apparaat meedoet.
 | De eerste D staat voor | Denial | Distributed |
 | Tegen te houden met een blokkade per computer | ja | veel lastiger |
 
-Allebei overspoelen ze de server met werk. Een DDoS is alleen groter en moeilijker te stoppen, want je kunt niet één boosdoener
-blokkeren.
+Allebei overspoelen ze de server met werk. Een DDoS is alleen groter en
+moeilijker te stoppen, want je kunt niet één boosdoener blokkeren.
+
+<Voorspel soort="Controlevraag" vraag="Je script stuurt 500 verzoeken, en je browser krijgt intussen meteen antwoord. Hoe kan dat?">
+  <Keuze goed uitleg="Het script stuurt pas een nieuw verzoek als het antwoord binnen is. Je server heeft dus nooit een rij die blijft groeien.">Het script wacht op elk antwoord, dus je server loopt nooit achter</Keuze>
+  <Keuze uitleg="Je server weet niet of een verzoek van een browser of een script komt. Hij beantwoordt ze allemaal op volgorde.">Je server geeft een browser voorrang boven een script</Keuze>
+  <Keuze uitleg="Er staat nog geen limiet in je server. Die zet je er later in deze reeks in.">Vijfhonderd verzoeken blijven onder de limiet van je server</Keuze>
+  <Uitleg>
+
+  Eén laptop die netjes wacht, krijgt je server niet plat. Een aanval die werkt, komt daarom van veel computers tegelijk: een DDoS.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### KeyboardInterrupt
+
+Je wacht het script niet af en stopt het met Ctrl+C. Er verschijnt een lange
+foutmelding die eindigt met:
+
+```text
+KeyboardInterrupt
+```
+
+**Oorzaak:** Python laat zien op welke regel het script was toen je het
+onderbrak.
+
+**Oplossing:** niets; zo stop je een script. Je server draait door in zijn
+eigen terminal.
 
 ## Opdrachten
 
@@ -80,8 +126,8 @@ Waarom werkt dat bij een DDoS niet?
 Omdat er geen ene computer is. Elke camera uit het botnet stuurt zo weinig
 verzoeken dat hij eruitziet als een gewone bezoeker. Weiger je ze allemaal, dan
 weiger je ook je echte bezoekers, want je kunt ze niet uit elkaar houden. In
-[les 6](site:fullstack/docs/veiligheid/dos/praktijk) zie je wat grote sites daar wel tegen doen.
+[les 7](site:fullstack/docs/veiligheid/dos/praktijk) zie je wat grote sites daar wel tegen doen.
 
 </details>
 
-Door naar [les 3: zelf twintig verzoeken](site:fullstack/docs/veiligheid/dos/zelf-meten).
+Door naar [les 5: een limiet met slowapi](site:fullstack/docs/veiligheid/dos/limiet).

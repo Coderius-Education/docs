@@ -183,11 +183,13 @@ const sidebars: SidebarsConfig = {
   veiligheidSidebar: [
     'veiligheid/index',
     'veiligheid/gereedschap',
+    'veiligheid/client',
     {
       type: 'category',
       label: 'Wat je server laat zien',
       collapsed: true,
       items: [
+        'veiligheid/zichtbaar/startbestand',
         'veiligheid/zichtbaar/handleiding',
         'veiligheid/zichtbaar/vergeten',
         'veiligheid/zichtbaar/uitzetten',
@@ -201,11 +203,13 @@ const sidebars: SidebarsConfig = {
       label: 'Invoer controleren',
       collapsed: true,
       items: [
+        'veiligheid/invoer/startbestand',
         'veiligheid/invoer/maxlength',
         'veiligheid/invoer/grenzen',
         'veiligheid/invoer/fouten-lezen',
         'veiligheid/invoer/inhoud',
         'veiligheid/invoer/getallen',
+        'veiligheid/invoer/keuzes',
         'veiligheid/invoer/paden',
         'veiligheid/invoer/praktijk',
       ],

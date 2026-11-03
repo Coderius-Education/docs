@@ -352,8 +352,8 @@ const INVOER_STAPPEN: Stap[] = [
     kant: 'browser',
     titel: 'Een script slaat de browser over',
     tekst: 'httpx stuurt hetzelfde verzoek, zonder maxlength en zonder formulier.',
-    to: '/docs/veiligheid/gereedschap',
-    les: 'Een script als bezoeker',
+    to: '/docs/veiligheid/client',
+    les: 'Een bezoeker die onthoudt',
   },
   {
     kant: 'server',

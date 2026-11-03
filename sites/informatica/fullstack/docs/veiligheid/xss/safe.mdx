@@ -67,9 +67,9 @@ Het welkomstwoord is vet, want de `<b>` bleef HTML. Het bericht van Sara is nog
 steeds tekst, want daar staat geen `|safe` achter.
 
 <Voorspel soort="Controlevraag" vraag="Wat doet |safe met de tekst waar het achter staat?">
-  <Keuze goed uitleg="Jinja escapet die ene waarde niet meer, en de browser leest alles erin als HTML.">Het zet het escapen uit voor die ene waarde</Keuze>
+  <Keuze goed uitleg="Jinja escapet die ene waarde niet meer, en de browser leest alles erin als HTML.">Jinja escapet die ene waarde dan niet meer</Keuze>
   <Keuze uitleg="Jinja controleert niets: met |safe beloof jij dat de tekst veilig is, en Jinja gelooft je.">Het haalt gevaarlijke HTML eruit en laat de rest staan</Keuze>
-  <Keuze uitleg="Zonder |safe escapet Jinja al alles tussen dubbele accolades. |safe doet het tegenovergestelde.">Het escapet de tekst extra grondig, ook de aanhalingstekens</Keuze>
+  <Keuze uitleg="Zonder |safe escapet Jinja al alles tussen dubbele accolades. |safe doet het tegenovergestelde.">Extra grondig escapen, ook de aanhalingstekens</Keuze>
   <Uitleg>
 
   `|safe` is geen filter dat iets veilig maakt, maar een belofte van jou aan Jinja. Klopt die belofte niet, omdat de tekst van een bezoeker komt, dan is de bescherming weg.

@@ -1,11 +1,11 @@
 ---
-sidebar_label: '3. samesite'
+sidebar_label: '4. samesite'
 description: Met samesite bepaal je of de browser je cookie meestuurt als een andere site een verzoek naar jouw site start. FastAPI zet lax al vanzelf.
 ---
 
 # Cookies afschermen: `samesite`
 
-`httponly` uit [les 2](site:fullstack/docs/veiligheid/cookies/httponly) houdt scripts op je eigen pagina bij de
+`httponly` uit [les 3](site:fullstack/docs/veiligheid/cookies/httponly) houdt scripts op je eigen pagina bij de
 cookie weg. Er is nog een route naar je server: vanaf een andere site.
 
 De browser stuurt je cookie mee bij verzoeken naar jouw site, ook als dat
@@ -33,18 +33,26 @@ Een klik op een link is altijd een GET-verzoek. Met `lax` gaat je cookie daarbij
 mee, dus een endpoint dat iets verandert, mag nooit een GET zijn. Een POST
 van een andere site gaat zonder cookie: je server ziet dan geen sessie, en een
 endpoint dat een sessie nodig heeft, doet niets. Daarom is uitloggen in
-[les 4](site:fullstack/docs/veiligheid/cookies/uitloggen) een POST. Helemaal dicht is uitloggen daarmee niet: de
-`delete_cookie` in het antwoord voert de browser ook na zo'n POST uit, dus een
-andere site kan je cookie laten weghalen. Je sessie op de server raakt hij niet
-aan.
+[les 5](site:fullstack/docs/veiligheid/cookies/uitloggen) een POST.
 
-## Wat FastAPI al doet
+<details>
+<summary>Is uitloggen met een POST helemaal dicht?</summary>
 
-Kijk nog eens naar de regel `set-cookie` uit
-[opdracht 1 van les 1](site:fullstack/docs/veiligheid/cookies/zwakheid): daar stond al `SameSite=lax`. FastAPI zet
-`samesite="lax"` vanzelf, en dat is voor de meeste sites de goede keuze. Een
-bezoeker die via een link van een andere site binnenkomt, is meteen ingelogd,
-maar een formulier of een verzoek op de achtergrond gaat zonder cookie.
+Niet helemaal. De `delete_cookie` in het antwoord voert de browser ook na een
+POST van een andere site uit, dus een andere site kan je cookie laten weghalen.
+Je sessie op de server raakt hij niet aan, want het verzoek kwam zonder cookie
+binnen.
+
+</details>
+
+## Wat FastAPI al zet
+
+Open het tabblad **Netwerk**, log in met het formulier, en klik op het verzoek
+`inloggen`. Onder **Reactieheaders** staat in de regel `set-cookie` al
+`SameSite=lax`. FastAPI zet `samesite="lax"` vanzelf, en dat is voor de meeste
+sites de goede keuze. Een bezoeker die via een link van een andere site
+binnenkomt, is meteen ingelogd, maar een formulier of een verzoek op de
+achtergrond gaat zonder cookie.
 
 Sites die niet alleen op de browser willen vertrouwen, zetten daarnaast een
 eigen code in elk formulier. Hoe dat werkt, lees je in
@@ -64,7 +72,35 @@ Vervang in `inloggen` de `set_cookie` door:
     )
 ```
 
+Log daarna opnieuw in.
+
+<Gelukt>
+
+Bij het verzoek `inloggen` staat onder **Reactieheaders** een `set-cookie` als:
+
+```text
+sessie_id=0e0b14ae11bfd4e3ce5a3ce38f00d9d2; HttpOnly; Max-Age=2592000; Path=/; SameSite=lax
+```
+
+Hetzelfde als eerst, want FastAPI zette `lax` al. Nu staat de keuze ook in je
+code.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je bent ingelogd op je gastenboek. Een andere site heeft een formulier dat naar /bericht op jouw gastenboek post, en je klikt daar op Verstuur. Wat antwoordt je server?">
+  <Keuze uitleg="Dat gebeurt als je cookie meegaat. Kijk in de tabel bij lax en een formulier dat post.">Een nieuwe sleutel: het bericht staat op jouw naam</Keuze>
+  <Keuze goed uitleg="Met lax gaat je cookie niet mee met een POST van een andere site. Je server ziet geen sessie.">`{"detail":"Log eerst in"}`</Keuze>
+  <Keuze uitleg="Die 403 komt van verwijderen. bericht_plaatsen kijkt alleen of er een sessie is.">`{"detail":"Dit is niet jouw bericht"}`</Keuze>
+  <Uitleg>
+
+  De browser beslist per verzoek of de cookie meegaat. Voor een formulier op een andere site laat `lax` hem thuis, en zonder sessie doet `bericht_plaatsen` niets. Zo blijft een CSRF-aanval op je gastenboek zonder effect.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
+
+### `samesite="none"` zonder `secure`
 
 Je zet `samesite="none"` om te zien wat er gebeurt, en logt opnieuw in. Maar in
 het tabblad **App** staat bij `sessie_id` nog steeds Lax. Verwijder je de cookie
@@ -121,4 +157,4 @@ gastenboek weegt het gemak zwaarder.
 
 </details>
 
-Door naar [les 4: uitloggen](site:fullstack/docs/veiligheid/cookies/uitloggen).
+Door naar [les 5: uitloggen](site:fullstack/docs/veiligheid/cookies/uitloggen).

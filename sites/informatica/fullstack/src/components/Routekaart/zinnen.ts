@@ -38,6 +38,8 @@ export const ZINNEN: Record<string, string> = {
   // Veiligheid
   'Een script als bezoeker':
     'Hoe stuur je een verzoek zonder browser? Dat gereedschap gebruik je in elke reeks.',
+  'Een bezoeker die onthoudt':
+    'Hoe stuurt een script een formulier, en onthoudt het een cookie zoals een browser?',
   'Wat je server laat zien':
     'Wat ziet een bezoeker van je server zonder dat je het hem vertelt, en wat deel je met je bestanden?',
   'Invoer controleren':

@@ -118,8 +118,8 @@ gaat, krijgt het `escape`.
 
 <Voorspel soort="Controlevraag" vraag="Een klasgenoot stuurt je een link naar /zoek met HTML in ?term=. Bij wie draait die HTML als je zoekpagina de term niet escapet?">
   <Keuze goed uitleg="De HTML zit in de link. Wie erop klikt, laat zijn eigen browser het verzoek sturen en krijgt de HTML terug in zijn pagina.">Bij jou, en bij iedereen die op die link klikt</Keuze>
-  <Keuze uitleg="De zoekpagina slaat niets op. Een bezoeker die /zoek zonder die link opent, krijgt de HTML niet.">Bij iedereen die daarna je zoekpagina opent, ook zonder de link</Keuze>
-  <Keuze uitleg="Een link is ook een verzoek met tekst van een bezoeker, en FastAPI maakt van de codes in de URL weer gewone tekens.">Bij niemand, want een link is geen formulier en verstuurt niets</Keuze>
+  <Keuze uitleg="De zoekpagina slaat niets op. Een bezoeker die /zoek zonder die link opent, krijgt de HTML niet.">Iedereen die daarna je zoekpagina opent, ook zonder de link</Keuze>
+  <Keuze uitleg="Een link is ook een verzoek met tekst van een bezoeker, en FastAPI maakt van de codes in de URL weer gewone tekens.">Niemand, want een link is geen formulier en verstuurt niets</Keuze>
   <Uitleg>
 
   Reflected XSS bewaart niets op de server. Wie de link opent, stuurt de HTML zelf mee, en de server kaatst hem terug in de pagina van die ene bezoeker.

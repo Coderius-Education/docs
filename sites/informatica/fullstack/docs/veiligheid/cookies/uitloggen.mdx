@@ -1,5 +1,5 @@
 ---
-sidebar_label: '4. Uitloggen'
+sidebar_label: '5. Uitloggen'
 description: Bij uitloggen gooit de server de sessie weg en haalt hij de cookie weg. Een bewaard sessie-id hoort daarna bij niemand meer.
 ---
 
@@ -7,8 +7,8 @@ description: Bij uitloggen gooit de server de sessie weg en haalt hij de cookie 
 
 Een sessie hoort niet eeuwig te duren. Hij eindigt op twee manieren: de
 bezoeker logt uit, of de tijd is om. In allebei de gevallen beslist je server,
-niet de browser. Deze les gaat over uitloggen; de tijd komt in
-[les 5](site:fullstack/docs/veiligheid/cookies/verlopen). De cookie weghalen is niet genoeg: wie het sessie-id eerder
+niet de browser. Eerst uitloggen; de tijd komt in
+[les 6](site:fullstack/docs/veiligheid/cookies/verlopen). De cookie weghalen is niet genoeg: wie het sessie-id eerder
 heeft gekopieerd, stuurt het zelf mee. Pas als de sessie uit
 `sessies.db` weg is, hoort dat id bij niemand meer.
 
@@ -17,7 +17,7 @@ heeft gekopieerd, stuurt het zelf mee. Pas als de sessie uit
 Een `/uitloggen` ken je al uit opdracht 5 van
 [Cookie of sessie?](site:fullstack/docs/FastAPI/onthouden/cookie-of-sessie). Daar was het een POST, en
 dat is geen toeval: een link is altijd een GET, en een link kan ook op een
-andere site staan. Hoe dat zit, zag je in [les 3](site:fullstack/docs/veiligheid/cookies/samesite).
+andere site staan. Hoe dat zit, zag je in [les 4](site:fullstack/docs/veiligheid/cookies/samesite).
 
 Zet dit endpoint onder de andere in `main.py`:
 
@@ -86,9 +86,7 @@ haar bericht te verwijderen.
 
 Het script maakt Sara aan met het wachtwoord `zon123`. Gooi daarom eerst
 `gastenboek.db`, `sessies.db` en `gebruikers.db` weg en start de server
-opnieuw. Bestaat Sara nog met een ander wachtwoord, bijvoorbeeld uit
-[les 1](site:fullstack/docs/veiligheid/cookies/zwakheid), dan mislukt het inloggen en stopt het script met
-`KeyError: 'sleutel'`.
+opnieuw.
 
 <CodeUitleg>
 
@@ -131,18 +129,37 @@ Een tweede `Client` krijgt het bewaarde id als cookie mee en probeert het berich
 
 </CodeUitleg>
 
-Uitvoer:
+Draai het script.
 
-```
+<Gelukt>
+
+Het script print:
+
+```text
 {'bericht': 'Uitgelogd'}
 Cookie na uitloggen: None
 Met het oude sessie-id: 403
 ```
 
+</Gelukt>
+
 Sara heeft geen cookie meer, en de server kent haar sessie niet meer. Wie het
 oude id nog heeft, is voor de server niet ingelogd.
 
+<Voorspel soort="Controlevraag" vraag="Welke regel in uitloggen houdt iemand met een gekopieerd sessie-id buiten?">
+  <Keuze uitleg="delete_cookie haalt alleen de cookie in de browser van Sara weg. Een dief stuurt het id zelf mee.">`antwoord.delete_cookie("sessie_id")`</Keuze>
+  <Keuze uitleg="Die regel kijkt alleen of er iets weg te gooien is. Wat gebeurt er in de regel eronder?">`if sessie_id in sessies:`</Keuze>
+  <Keuze goed uitleg="Pas als de sessie uit sessies.db weg is, hoort het id bij niemand meer. De server vindt het dan nergens.">`del sessies[sessie_id]`</Keuze>
+  <Uitleg>
+
+  Een sessie-id is alleen iets waard zolang de server het in `sessies.db` terugvindt. De cookie weghalen is netjes voor de browser van Sara; de sessie weggooien is wat een dief buitensluit.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
+
+### Met het oude sessie-id: 200
 
 Na het uitloggen is de cookie weg, maar `uitloggen.py` geeft
 `Met het oude sessie-id: 200`.
@@ -154,6 +171,17 @@ komt er nog steeds mee binnen.
 
 **Oplossing:** gooi altijd ook de sessie op de server weg, zoals in regel 3 tot
 en met 6 van `uitloggen`.
+
+### KeyError: 'sleutel'
+
+Het script stopt bij de regel met `sleutel = ` met `KeyError: 'sleutel'`.
+
+**Oorzaak:** Sara bestond al, met een ander wachtwoord. Dan mislukt het
+inloggen, weigert `/bericht` met `Log eerst in`, en staat er in het antwoord
+geen `sleutel`.
+
+**Oplossing:** gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, start
+de server opnieuw en draai het script nog een keer.
 
 ## Opdrachten
 
@@ -297,8 +325,8 @@ async def uitloggen(sessie_id: str = Cookie(default="")):
 
 Uitloggen beëindigt de sessie nu op de server. Wie niet uitlogt, houdt zijn
 sessie in `sessies.db` nog eeuwig: de 30 dagen van `max_age` gelden alleen voor
-de cookie in de browser. Dat los je op in les 5.
+de cookie in de browser. Dat los je op in les 6.
 
 </details>
 
-Door naar [les 5: een sessie laten verlopen](site:fullstack/docs/veiligheid/cookies/verlopen).
+Door naar [les 6: een sessie laten verlopen](site:fullstack/docs/veiligheid/cookies/verlopen).

@@ -155,7 +155,7 @@ describe('de lessen van Invoer controleren lopen zonder raadsel', () => {
   });
 
   it('de eerste les zegt waar main.py en static komen voordat de code komt', () => {
-    const tekst = lees('maxlength');
+    const tekst = lees('startbestand');
     const voorCode = tekst.slice(0, blokMetIndex(tekst)[0].index);
     expect(voorCode).toContain('`main.py`');
     expect(voorCode).toContain('`static`');
@@ -177,12 +177,12 @@ describe('de lessen van Invoer controleren lopen zonder raadsel', () => {
     expect(stap).not.toMatch(/spatie/i);
   });
 
-  it('een nieuwe bericht_plaatsen zegt wat er van opdracht 2 van les 4 blijft', () => {
-    // De stand van les 4 heeft de controle op het bericht niet; wie de opdracht
+  it('een nieuwe bericht_plaatsen zegt wat er van opdracht 2 van les 5 blijft', () => {
+    // De stand van les 5 heeft de controle op het bericht niet; wie de opdracht
     // deed, gooide hem anders zonder één woord weg.
     const tekst = lees('getallen');
     expect(tekst).toMatch(
-      /opdracht 2 van\s+\[les 4\]\(site:fullstack\/docs\/veiligheid\/invoer\/inhoud\)/,
+      /opdracht 2 van\s+\[les 5\]\(site:fullstack\/docs\/veiligheid\/invoer\/inhoud\)/,
     );
   });
 

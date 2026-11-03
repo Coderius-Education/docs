@@ -168,17 +168,25 @@ const ZONDER_BLOK: Record<string, string> = {
     'bouwt op JavaScript erbij uit de FastAPI-route, waar de voorkennis voor JavaScript staat',
   'veiligheid/xss/templates.mdx': 'templates komen uit de FastAPI-lessen, hier alleen het escapen',
   'veiligheid/xss/praktijk.mdx': 'achtergrond bij de twee stappen ervoor, geen nieuwe voorkennis',
+  'veiligheid/client.mdx':
+    'post, data en Client worden in de les zelf uitgelegd; importeren staat bij Een script als bezoeker',
+  'veiligheid/zichtbaar/startbestand.mdx':
+    'het startbestand komt uit Sessies in de FastAPI-route, waar het gelinkt is; geen nieuwe voorkennis',
+  'veiligheid/invoer/startbestand.mdx':
+    'formulieren en static files komen uit de FastAPI-lessen en zijn in de Regels gelinkt',
+  'veiligheid/invoer/keuzes.mdx': 'not in met een lijst wordt in de les zelf uitgelegd',
   'veiligheid/zichtbaar/vergeten.mdx':
-    'cookies meesturen met httpx staat in gereedschap, sessies in de FastAPI-lessen',
+    'cookies meesturen met httpx staat in Een bezoeker die onthoudt, sessies in de FastAPI-lessen',
   'veiligheid/zichtbaar/uitzetten.mdx':
     'de instellingen van FastAPI() worden in de les zelf uitgelegd',
   'veiligheid/zichtbaar/bestanden.mdx':
-    'SqliteDict en .items() kent de leerling uit de FastAPI-lessen en les 1',
+    'SqliteDict en .items() kent de leerling uit de FastAPI-lessen en les 2',
   'veiligheid/zichtbaar/praktijk.mdx': 'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/wachtwoorden/gewone-tekst.mdx':
     'bekijkt de database uit les 1 met een script dat op bekijk_db.py uit de basis lijkt, en linkt daarnaar',
   'veiligheid/wachtwoorden/hash.mdx': 'hashlib en encode worden in de les zelf uitgelegd',
-  'veiligheid/wachtwoorden/hash-opslaan.mdx': 'zet de hash uit de les ervoor in de server, in dezelfde map',
+  'veiligheid/wachtwoorden/hash-opslaan.mdx':
+    'zet de hash uit de les ervoor in de server, in dezelfde map',
   'veiligheid/wachtwoorden/praktijk.mdx':
     'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/wachtwoorden/registreren.mdx': 'bouwt op de lessen ervoor, in dezelfde map',

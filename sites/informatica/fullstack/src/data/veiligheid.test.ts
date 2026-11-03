@@ -47,7 +47,11 @@ describe('de reeks Veiligheid', () => {
     // Zonder startpagina opende de navbar midden in een reeks, zonder te zeggen
     // waar de route over gaat of wat de spelregel is. De afsluiter bundelt wat
     // de leerling op zijn eigen project moet toepassen.
-    expect(route.slice(0, 2)).toEqual(['veiligheid/index', 'veiligheid/gereedschap']);
+    expect(route.slice(0, 3)).toEqual([
+      'veiligheid/index',
+      'veiligheid/gereedschap',
+      'veiligheid/client',
+    ]);
     expect(route.at(-1)).toBe('veiligheid/eigen-project');
   });
 
@@ -95,8 +99,9 @@ describe('de reeks Veiligheid', () => {
 
   it('het gereedschap wijst door naar de eerste les van de eerste reeks', () => {
     // Toen Wat je server laat zien voor Invoer kwam, wees Een script als
-    // bezoeker nog naar Invoer.
-    const tekst = readFileSync(join(VEILIGHEID, 'gereedschap.mdx'), 'utf8');
+    // bezoeker nog naar Invoer. Het gereedschap is twee pagina's; de tweede,
+    // Een bezoeker die onthoudt, wijst door.
+    const tekst = readFileSync(join(VEILIGHEID, 'client.mdx'), 'utf8');
     const eerste = categorieen[0].items[0].slice('veiligheid/'.length);
     expect(
       tekst.match(
@@ -117,12 +122,14 @@ describe('de reeks Veiligheid', () => {
   });
 
   it("de losse pagina's richten zich alleen op de eigen computer", () => {
-    for (const pagina of ['index', 'gereedschap', 'eigen-project']) {
+    for (const pagina of ['index', 'gereedschap', 'client', 'eigen-project']) {
       const tekst = readFileSync(join(VEILIGHEID, `${pagina}.mdx`), 'utf8');
       for (const [, host] of tekst.matchAll(/https?:\/\/([^/:"'\s)]+)/g)) {
         expect(['127.0.0.1', 'localhost'], `${pagina}: ${host}`).toContain(host);
       }
-      expect(tekst, pagina).toMatch(/:::danger\[Alleen je eigen [a-z]+\]/);
+      // Een bezoeker die onthoudt gaat verder op de server van het gereedschap,
+      // waar de waarschuwing al staat.
+      if (pagina !== 'client') expect(tekst, pagina).toMatch(/:::danger\[Alleen je eigen [a-z]+\]/);
     }
   });
 

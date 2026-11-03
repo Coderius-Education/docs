@@ -1,5 +1,5 @@
 ---
-sidebar_label: '4. Een limiet met slowapi'
+sidebar_label: '5. Een limiet met slowapi'
 description: Zet een verzoeklimiet op je endpoint met slowapi, zodat één bezoeker niet onbeperkt verzoeken kan laten beantwoorden.
 ---
 
@@ -16,7 +16,7 @@ Een grens op het aantal verzoeken per bezoeker heet een **rate limit**, een
 verzoeklimiet. Hij stopt één computer die te veel vraagt, of die zijn verzoeken
 nu na elkaar of tegelijk stuurt. Tegen een DDoS van duizenden computers helpt
 hij minder, want elk apparaat blijft onder de grens; wat daartegen helpt, zie je
-in [les 6](site:fullstack/docs/veiligheid/dos/praktijk).
+in [les 7](site:fullstack/docs/veiligheid/dos/praktijk).
 
 ## `slowapi` installeren
 
@@ -72,10 +72,12 @@ Het endpoint zelf doet niets anders dan eerst: de limiet staat tussen
 
 ## Doe de test opnieuw
 
-Start je server opnieuw en draai `test_verzoeken.py` uit
-[les 3](site:fullstack/docs/veiligheid/dos/zelf-meten):
+Zet in `test_verzoeken.py` de twee getallen uit [les 4](site:fullstack/docs/veiligheid/dos/dos-en-ddos) weer op `20`.
+Start je server opnieuw en draai het script.
 
-```
+<Gelukt>
+
+```text
 Verzoek 1: status 200
 Verzoek 2: status 200
 Verzoek 3: status 200
@@ -87,7 +89,10 @@ Verzoek 7: status 429
 
 en zo verder tot verzoek 20, met aan het eind `Gelukt: 5 van de 20`. De eerste
 vijf krijgen antwoord, de rest weigert je server met `429`, de code voor te veel
-verzoeken uit [het overzicht](site:fullstack/docs/veiligheid#statuscodes). Hoeveel het script
+verzoeken uit [het overzicht](site:fullstack/docs/veiligheid#statuscodes).
+
+</Gelukt>
+ Hoeveel het script
 ook stuurt, je server doet nog maar vijf keer echt werk per minuut. Een bezoeker
 die één keer je pagina opvraagt, merkt er niets van.
 
@@ -101,6 +106,17 @@ die vergeet wat hij geteld had.
 De limiet telt vóór je functie draait. Een geweigerd verzoek kost je server daardoor bijna geen werk.
 
 <VerzoekCyclus variant="dos" />
+
+<Voorspel soort="Controlevraag" vraag="Waarom kost een verzoek dat slowapi weigert je server bijna geen werk?">
+  <Keuze goed uitleg="De limiet staat tussen @app.get en je functie. Bij een 429 draait je functie niet.">slowapi weigert het voordat je functie draait</Keuze>
+  <Keuze uitleg="De limiet zit op de server. Het verzoek komt binnen, en pas daar weigert slowapi het.">De browser verstuurt het verzoek niet meer als de limiet op is</Keuze>
+  <Keuze uitleg="De grootte van het antwoord is het probleem niet. Het gaat om het werk dat je functie doet.">Een antwoord met 429 is korter dan een antwoord met 200</Keuze>
+  <Uitleg>
+
+  De limiet is een portier voor de deur: hij telt en weigert, en pas wie erdoor mag, komt bij je functie. Bij een zwaar endpoint scheelt dat veel.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -213,7 +229,7 @@ krijgen `200`, en hoeveel `429`?
 Tien krijgen `200`, de andere tien `429`. Aan het eind staat er
 `Gelukt: 10 van de 20`.
 
-Zet de limiet daarna terug op `5/minute`: les 5 rekent met vijf.
+Zet de limiet daarna terug op `5/minute`: les 6 rekent met vijf.
 
 </details>
 
@@ -238,7 +254,7 @@ te streng: een gewone bezoeker die een paar pagina's bekijkt of even
 terugklikt, zit zo aan twee verzoeken, en dan weigert je server hem. Een limiet
 moet hoog genoeg zijn voor een mens, en laag genoeg om een script te stoppen.
 
-Zet de limiet daarna terug op `5/minute`, zoals in de stand hieronder: les 5
+Zet de limiet daarna terug op `5/minute`, zoals in de stand hieronder: les 6
 rekent met vijf.
 
 </details>
@@ -268,4 +284,4 @@ De startpagina heeft nu een limiet van vijf per minuut.
 
 </details>
 
-Door naar [les 5: wat de 429 vertelt](site:fullstack/docs/veiligheid/dos/te-veel).
+Door naar [les 6: wat de 429 vertelt](site:fullstack/docs/veiligheid/dos/te-veel).

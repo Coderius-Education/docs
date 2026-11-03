@@ -134,9 +134,9 @@ Een lege dictionary, als JSON: het gastenboek draait, en er staat nog niets in.
 </Gelukt>
 
 <Voorspel soort="Controlevraag" vraag="Sara is ingelogd en stuurt POST /bericht met alleen het veld bericht. Waar komt de naam bij haar nieuwe bericht vandaan?">
-  <Keuze uitleg="bericht_plaatsen heeft maar één formulierveld, bericht. Een naam kan Sara niet meesturen.">Uit een veld naam in het formulier</Keuze>
-  <Keuze goed uitleg="Het endpoint zoekt met de cookie sessie_id haar sessie op, en zet de naam uit die sessie bij het bericht.">Uit haar sessie in sessies.db</Keuze>
-  <Keuze uitleg="In de cookie staat alleen een lang willekeurig getal, het sessie-id. Waar zoekt de server dat getal op?">Uit de cookie, want daar staat haar naam in</Keuze>
+  <Keuze uitleg="bericht_plaatsen heeft maar één formulierveld, bericht. Een naam kan Sara niet meesturen.">Een veld naam in het formulier</Keuze>
+  <Keuze goed uitleg="Het endpoint zoekt met de cookie sessie_id haar sessie op, en zet de naam uit die sessie bij het bericht.">Haar sessie in sessies.db</Keuze>
+  <Keuze uitleg="In de cookie staat alleen een lang willekeurig getal, het sessie-id. Waar zoekt de server dat getal op?">De cookie, want daar staat haar naam in</Keuze>
   <Uitleg>
 
   De naam bij een bericht zet de server er zelf bij, uit de sessie. Die sessie maakte `inloggen`, pas nadat het wachtwoord klopte. Een bezoeker kan dus geen bericht op naam van een ander plaatsen. Of hij een bericht van een ander kan verwijderen, zie je in de volgende stap.

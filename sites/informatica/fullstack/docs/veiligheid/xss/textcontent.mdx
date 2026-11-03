@@ -41,9 +41,9 @@ htmx zet het antwoord van je server ook met `innerHTML` in de pagina, dat is
 is dan al `&lt;b&gt;`, en de browser toont het als tekst.
 
 <Voorspel soort="Controlevraag" vraag="In welk geval mag je in je JavaScript nog innerHTML gebruiken?">
-  <Keuze goed uitleg="Die HTML schreef jij, in je eigen code. Geen bezoeker kan hem veranderen, net als WELKOM met |safe.">Voor HTML die je zelf in je JavaScript hebt geschreven</Keuze>
+  <Keuze goed uitleg="Die HTML schreef jij, in je eigen code. Geen bezoeker kan hem veranderen, net als WELKOM met |safe.">Alleen met HTML die je zelf in je JavaScript hebt geschreven</Keuze>
   <Keuze uitleg="Tekst uit de URL komt nooit langs je server. Hoe goed die escapet, maakt hier niets uit.">Voor tekst uit de URL, als je server overal escapet</Keuze>
-  <Keuze uitleg="Met een link vult een ander dat veld al voor je in. Dan is het niet meer alleen je eigen tekst.">Voor tekst uit een veld, want die ziet alleen de bezoeker zelf</Keuze>
+  <Keuze uitleg="Met een link vult een ander dat veld al voor je in. Dan is het niet meer alleen je eigen tekst.">Bij tekst uit een veld, want die ziet alleen de bezoeker zelf</Keuze>
   <Uitleg>
 
   `innerHTML` maakt HTML van alles wat je erin zet. Dat mag alleen met HTML die van jou komt. Tekst uit een veld, de URL of de server zet je er met `textContent` in.

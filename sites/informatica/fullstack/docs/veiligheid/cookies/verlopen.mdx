@@ -1,5 +1,5 @@
 ---
-sidebar_label: '5. Een sessie laten verlopen'
+sidebar_label: '6. Een sessie laten verlopen'
 description: Een sessie verloopt op de server, niet in de browser. Bewaar in de sessie tot wanneer hij geldt, en controleer dat bij elk verzoek.
 ---
 
@@ -41,8 +41,7 @@ De sessie van deze bezoeker, of een lege dictionary als er geen is.
 
 <Regel n={4}>
 `time.time()` is het tijdstip van nu in seconden. Ligt `tot` daarvoor, dan is
-de sessie verlopen. Een sessie zonder `tot`, uit een eerdere les, telt ook als
-verlopen: wie toen inlogde, moet opnieuw inloggen.
+de sessie verlopen. Een sessie zonder `tot` telt ook als verlopen.
 </Regel>
 
 <Regel n={5} tot={7}>
@@ -51,11 +50,10 @@ Een verlopen sessie gaat weg, en de functie doet alsof er geen sessie is.
 
 </CodeUitleg>
 
-In `inloggen` veranderen twee dingen: de nieuwe sessie krijgt een `tot`, en
-`max_age` gebruikt `GELDIG`. Na dertig dagen log je dus opnieuw in. Vervang je
-`inloggen` door:
+In `inloggen` krijgt de nieuwe sessie een `tot`, en `max_age` gebruikt
+`GELDIG`. Vervang je `inloggen` door:
 
-{/* route-dubbel: vervangt POST /inloggen uit les 1 tot en met 3, nu met een verlooptijd in de sessie */}
+{/* route-dubbel: vervangt POST /inloggen uit les 1 tot en met 4, nu met een verlooptijd in de sessie */}
 ```python
 @app.post("/inloggen")
 async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
@@ -95,7 +93,7 @@ Dertig dagen wachten is geen test. Het script `verlopen.py` zet daarom de tijd
 van Sara's sessie in je eigen `sessies.db` op een moment dat al voorbij is, en
 probeert dan haar bericht te verwijderen. Gooi ook nu eerst `gastenboek.db`,
 `sessies.db` en `gebruikers.db` weg en start de server opnieuw, net als in
-[les 4](site:fullstack/docs/veiligheid/cookies/uitloggen): het script maakt Sara aan met het wachtwoord `zon123`.
+[les 5](site:fullstack/docs/veiligheid/cookies/uitloggen).
 
 <CodeUitleg>
 
@@ -124,7 +122,7 @@ print("Verwijderen:", sara.delete(f"/bericht/{sleutel}").status_code)
 ```
 
 <Regel n={9} tot={12}>
-Sara maakt een account, logt in en plaatst een bericht. Het script bewaart de sleutel van het bericht en haar sessie-id.
+Sara maakt een account, logt in en plaatst een bericht, zoals in `uitloggen.py`.
 </Regel>
 
 <Regel n={14}>
@@ -135,26 +133,68 @@ Het script opent dezelfde `sessies.db` als je server. Draai het daarom in je map
 De sessie van Sara ophalen, `tot` op één seconde geleden zetten en de sessie terugzetten, zoals in [Een dictionary aanpassen](site:fullstack/docs/FastAPI/sqlitedict/aanpassen).
 </Regel>
 
-<Regel n={20}>
-Kijkt of de `Client` van Sara de cookie nog heeft. Voor haar `Client` is ze nog ingelogd.
-</Regel>
-
-<Regel n={21}>
-Sara probeert haar eigen bericht te verwijderen, met de cookie die ze nog heeft.
+<Regel n={20} tot={21}>
+De `Client` van Sara heeft de cookie nog, en probeert er haar eigen bericht mee te verwijderen.
 </Regel>
 
 </CodeUitleg>
 
-Uitvoer:
+Draai het script in een tweede terminal.
 
-```
+<Gelukt>
+
+Het script print:
+
+```text
 Cookie nog bij Sara: True
 Verwijderen: 403
 ```
 
+</Gelukt>
+
 De cookie staat er nog, net als bij een dief die het id heeft gekopieerd. Toch
-weigert de server. Zonder `sessie_ophalen`, met alleen `max_age`, geeft
-hetzelfde script `Verwijderen: 200`.
+weigert de server, want de tijd in de sessie is voorbij.
+
+<Voorspel soort="Controlevraag" vraag="Iemand kopieerde het sessie-id van Sara en bewaart het 31 dagen. Sara logt nooit uit. Wat krijgt hij als hij dan haar bericht wil verwijderen?">
+  <Keuze uitleg="Hij stuurt het id wel zelf mee, maar wat doet sessie_ophalen met een sessie waarvan tot voorbij is?">`200`, want hij stuurt het id zelf mee</Keuze>
+  <Keuze uitleg="Die 401 geeft bericht_plaatsen. Wat doet bericht_verwijderen als er geen sessie is?">`401 Log eerst in`</Keuze>
+  <Keuze goed uitleg="Na 30 dagen ligt tot vóór nu. sessie_ophalen gooit de sessie weg, en zonder naam weigert de controle met 403.">`403 Dit is niet jouw bericht`</Keuze>
+  <Uitleg>
+
+  Hoe oud de cookie is, ziet de server niet, en een dief stuurt het id zelf mee. De tijd die telt, staat daarom in `sessies.db`. Na 30 dagen is het id waardeloos, ook als niemand uitlogt.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Verwijderen: 200
+
+**Oorzaak:** in `bericht_verwijderen` staat nog het oude `with`-blok van
+`sessies.db`. Dat leest de sessie zonder naar `tot` te kijken.
+
+**Oplossing:** vervang dat blok door `mijn = sessie_ophalen(sessie_id)`, net als
+in `bericht_plaatsen` en `alles_wissen`.
+
+### `NameError: name 'GELDIG' is not defined`
+
+Het script stopt met een foutmelding van `httpx`, en in de terminal van je
+server eindigt de foutmelding met die regel.
+
+**Oorzaak:** `inloggen` gebruikt `GELDIG`, maar de regel `GELDIG = 60 * 60 * 24 * 30`
+staat niet in `main.py`.
+
+**Oplossing:** zet die regel onder de imports, boven `app = FastAPI()`.
+
+### KeyError bij `sessies[sessie_id]`
+
+Het script stopt met `KeyError` en een lang getal: het sessie-id van Sara.
+
+**Oorzaak:** je draaide `verlopen.py` in een andere map dan je server. Daar
+maakt `SqliteDict` stil een nieuwe, lege `sessies.db`, en daarin staat Sara niet.
+
+**Oplossing:** draai het script in je map `veiligheid-cookies`, waar ook
+`main.py` staat.
 
 ## Opdrachten
 
@@ -316,4 +356,4 @@ de browser nog bewaart, verandert daar niets aan.
 
 </details>
 
-Door naar [les 6: in je eigen project](site:fullstack/docs/veiligheid/cookies/eigen-project).
+Door naar [les 7: in je eigen project](site:fullstack/docs/veiligheid/cookies/eigen-project).
