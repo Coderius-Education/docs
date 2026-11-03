@@ -92,8 +92,7 @@ function overschrijvenGoed(): Promise<boolean> {
   });
 }
 
-const DEBUG_DOCS_URL =
-  '/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-debuggen/debuggen';
+const DEBUG_DOCS_URL = '/docs/onderdelen/er-gaat-iets-mis';
 
 /** Markeert één regel in de editor als foutregel. */
 function foutRegelExtension(regel: number, klasse: string): Extension {
@@ -794,9 +793,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           <p>
             Gebruik Google Chrome of Microsoft Edge (versie 89+) om met het board te kunnen praten
             vanuit de browser. Werkt dat niet? Volg dan de Thonny-instructies onder{' '}
-            <Link to="/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-installatie/2_editor">
-              Tutorial installatie
-            </Link>
+            <Link to="/docs/onderdelen/installatie#editor">Installatie</Link>
             .
           </p>
         </div>
