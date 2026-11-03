@@ -169,6 +169,43 @@ describe('de aansluitschema’s staan op het shield', () => {
     expect(fout).toEqual([]);
   });
 
+  it('naast het shield lopen draden ver genoeg uit elkaar', () => {
+    // Twee draden die naast elkaar omlaag lopen, waren niet uit elkaar te houden.
+    // Alleen over het rijtje zelf mogen ze dichter bij elkaar (de pinnen zitten
+    // daar 8,9 uit elkaar); daarbuiten minstens 8.
+    const fout: string[] = [];
+    for (const schema of Object.values(SCHEMAS)) {
+      const fz =
+        [...unzip(join(FRITZING, `${schema}.fzz`))].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
+      const shield = fz.match(
+        /moduleIdRef="Flitz_shield[^"]*"[\s\S]*?<breadboardView[^>]*>\s*<geometry [^>]*x="([-\d.]+)" y="([-\d.]+)"/,
+      );
+      const [sy0, sy1] = [Number(shield?.[2]), Number(shield?.[2]) + 197.2];
+      const lijnen = [
+        ...fz.matchAll(
+          /<instance moduleIdRef="WireModuleID"[\s\S]*?<breadboardView[^>]*>\s*<geometry [^>]*x="([-\d.e]+)" y="([-\d.e]+)" x1="0" y1="0" x2="([-\d.e]+)" y2="([-\d.e]+)"/g,
+        ),
+      ]
+        .map((m) => m.slice(1, 5).map(Number))
+        .filter(([, , dx, dy]) => Math.abs(dx) < 0.01 && Math.abs(dy) > 0.01)
+        .map(([x, y, , dy]) => ({ x, van: Math.min(y, y + dy), tot: Math.max(y, y + dy) }))
+        // alleen het stuk buiten het shield
+        .map((l) => ({ ...l, tot: Math.min(l.tot, sy0), van2: Math.max(l.van, sy1), tot2: l.tot }))
+        .flatMap((l) => [
+          { x: l.x, van: l.van, tot: l.tot },
+          { x: l.x, van: l.van2, tot: l.tot2 },
+        ])
+        .filter((l) => l.tot - l.van > 1);
+      for (const [i, a] of lijnen.entries())
+        for (const b of lijnen.slice(i + 1))
+          if (Math.min(a.tot, b.tot) - Math.max(a.van, b.van) > 1 && Math.abs(a.x - b.x) < 8)
+            fout.push(
+              `${schema}: draden ${Math.abs(a.x - b.x).toFixed(1)} uit elkaar bij x ${a.x.toFixed(0)}`,
+            );
+    }
+    expect(fout).toEqual([]);
+  });
+
   it('het LED-schema heeft de weerstand', () => {
     const fz =
       [...unzip(join(FRITZING, 'shield_led.fzz'))].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
