@@ -1,11 +1,11 @@
 ---
-sidebar_label: '9. Inlogpogingen beperken'
+sidebar_label: '11. Inlogpogingen beperken'
 description: Zet een verzoeklimiet op /inloggen en /wijzig, zodat niemand eindeloos wachtwoorden kan proberen, en zie na vijf foute pogingen een 429.
 ---
 
 # Wachtwoorden: inlogpogingen beperken
 
-Met Argon2 uit [les 5 tot en met 8](site:fullstack/docs/veiligheid/wachtwoorden/registreren) geeft een gelekte database
+Met Argon2 uit [les 7 tot en met 10](site:fullstack/docs/veiligheid/wachtwoorden/registreren) geeft een gelekte database
 de wachtwoorden niet weg. Maar wie de database niet heeft, kan nog iets anders:
 `/inloggen` zelf proberen, keer op keer, met steeds een ander wachtwoord. Je
 server antwoordt op elke poging, en elk antwoord zegt of het raak was.
@@ -53,7 +53,7 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 ```
 
-In `/inloggen` uit [les 8](site:fullstack/docs/veiligheid/wachtwoorden/rehash) veranderen alleen de kop en de regel
+In `/inloggen` uit [les 10](site:fullstack/docs/veiligheid/wachtwoorden/rehash) veranderen alleen de kop en de regel
 erboven:
 
 <CodeUitleg>
@@ -102,7 +102,7 @@ als het "maar een testje" is.
 :::
 
 Start je server opnieuw. Staat Sara nog niet in je database, draai dan eerst
-`registreer.py` uit [les 1](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst). Maak daarna `pogingen.py`, dat zes
+`registreer.py` uit [les 1](site:fullstack/docs/veiligheid/wachtwoorden/startbestand). Maak daarna `pogingen.py`, dat zes
 keer met hetzelfde foute wachtwoord inlogt:
 
 ```python
@@ -115,9 +115,79 @@ for nummer in range(6):
     print(f"Poging {nummer + 1}: {antwoord.status_code} {antwoord.json()}")
 ```
 
-Uitvoer:
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
 
+```python
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
+from fastapi import FastAPI, Form, HTTPException, Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+from sqlitedict import SqliteDict
+
+limiter = Limiter(key_func=get_remote_address)
+
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+ph = PasswordHasher()
+NEP = ph.hash("niemand")
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if naam in db:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        db[naam] = ph.hash(wachtwoord)
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+@limiter.limit("5/minute")
+async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam, NEP)
+    try:
+        ph.verify(opgeslagen, wachtwoord)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if opgeslagen == NEP:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if ph.check_needs_rehash(opgeslagen):
+        with SqliteDict("gebruikers.db") as db:
+            db[naam] = ph.hash(wachtwoord)
+            db.commit()
+    return {"bericht": "Ingelogd"}
+
+@app.post("/wijzig")
+@limiter.limit("5/minute")
+async def wijzig(request: Request, naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam, NEP)
+    try:
+        ph.verify(opgeslagen, oud)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if opgeslagen == NEP:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    with SqliteDict("gebruikers.db") as db:
+        db[naam] = ph.hash(nieuw)
+        db.commit()
+    return {"bericht": "Wachtwoord gewijzigd"}
 ```
+
+Registreren, inloggen en wijzigen met Argon2, en een limiet op elk endpoint dat
+een wachtwoord controleert: de hele reeks in één server.
+
+</details>
+
+<Gelukt>
+
+`python pogingen.py` krijgt vijf keer een melding, en de zesde keer een `429`:
+
+```text
 Poging 1: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
 Poging 2: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
 Poging 3: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
@@ -126,12 +196,28 @@ Poging 5: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
 Poging 6: 429 {'error': 'Rate limit exceeded: 5 per 1 minute'}
 ```
 
+</Gelukt>
+
 De zesde poging komt niet meer bij `ph.verify`: `slowapi` weigert hem met een
 `429` voordat je functie draait. Wie wachtwoorden wil proberen, haalt er nu
 vijf per minuut, en een lijst van duizend wachtwoorden kost hem meer dan drie
 uur. Het scheelt je server ook werk, want elke `ph.verify` is expres traag.
 
+<Voorspel soort="Controlevraag" vraag="Waarom krijgt ook /wijzig een limiet, en niet alleen /inloggen?">
+  <Keuze uitleg="Elk endpoint telt apart, en alleen met een eigen @limiter.limit erboven.">Anders telt slowapi de pogingen op /wijzig mee bij /inloggen</Keuze>
+  <Keuze goed uitleg="/wijzig doet ook ph.verify, met het oude wachtwoord. Zonder limiet probeert een script daar wat /inloggen weigert.">Ook /wijzig controleert een wachtwoord, namelijk het oude</Keuze>
+  <Keuze uitleg="De limiet telt verzoeken, of het wijzigen lukt of niet. Een fout oud wachtwoord verandert niets in de database.">Een wachtwoord mag maar vijf keer per minuut veranderen</Keuze>
+  <Uitleg>
+
+  Een limiet hoort op elke plek waar je server een wachtwoord controleert. Eén
+  plek zonder limiet is genoeg om eindeloos te proberen.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
+
+### Zes keer 200
 
 `pogingen.py` geeft zes keer `200`, en nooit een `429`.
 
@@ -160,7 +246,7 @@ Sla `main.py` op en draai `pogingen.py` opnieuw.
 ### Opdracht 1: Predict - Sara zelf
 
 Je draait `pogingen.py`, en direct daarna logt Sara in met haar goede
-wachtwoord, vanaf dezelfde computer. Sinds opdracht 1 van [les 7](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen) is
+wachtwoord, vanaf dezelfde computer. Sinds [les 9](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen) is
 dat `Lange-Nieuwe-Zin-7`.
 
 **Vraag:** wat krijgt ze terug?
@@ -200,7 +286,7 @@ Wat kost `ph.hash`? En wat antwoordt `/registreer` als een naam al bestaat?
 
 Ja, twee dingen. Elke registratie rekent een trage `ph.hash` uit. Een script
 dat duizend accounts aanmaakt, laat je server dus lang rekenen: met de 19
-hashes per seconde uit [les 4](site:fullstack/docs/veiligheid/wachtwoorden/traag) bijna een minuut, en ondertussen wacht
+hashes per seconde uit [les 6](site:fullstack/docs/veiligheid/wachtwoorden/traag) bijna een minuut, en ondertussen wacht
 iedereen. Dat is [wat een verzoek kost](site:fullstack/docs/veiligheid/dos/verzoek).
 
 En bij een naam die al bestaat, antwoordt `/registreer` met
@@ -321,72 +407,4 @@ nodig voor een dictionary.
 
 </details>
 
-<details>
-<summary>Zo ziet je `main.py` er nu uit</summary>
-
-```python
-from argon2 import PasswordHasher
-from argon2.exceptions import VerifyMismatchError
-from fastapi import FastAPI, Form, HTTPException, Request
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
-from sqlitedict import SqliteDict
-
-limiter = Limiter(key_func=get_remote_address)
-
-app = FastAPI()
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-ph = PasswordHasher()
-NEP = ph.hash("niemand")
-
-@app.post("/registreer")
-async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as db:
-        if naam in db:
-            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
-        db[naam] = ph.hash(wachtwoord)
-        db.commit()
-    return {"bericht": f"Welkom, {naam}"}
-
-@app.post("/inloggen")
-@limiter.limit("5/minute")
-async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as db:
-        opgeslagen = db.get(naam, NEP)
-    try:
-        ph.verify(opgeslagen, wachtwoord)
-    except VerifyMismatchError:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
-    if opgeslagen == NEP:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
-    if ph.check_needs_rehash(opgeslagen):
-        with SqliteDict("gebruikers.db") as db:
-            db[naam] = ph.hash(wachtwoord)
-            db.commit()
-    return {"bericht": "Ingelogd"}
-
-@app.post("/wijzig")
-@limiter.limit("5/minute")
-async def wijzig(request: Request, naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
-    with SqliteDict("gebruikers.db") as db:
-        opgeslagen = db.get(naam, NEP)
-    try:
-        ph.verify(opgeslagen, oud)
-    except VerifyMismatchError:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
-    if opgeslagen == NEP:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
-    with SqliteDict("gebruikers.db") as db:
-        db[naam] = ph.hash(nieuw)
-        db.commit()
-    return {"bericht": "Wachtwoord gewijzigd"}
-```
-
-Registreren, inloggen en wijzigen met Argon2, en een limiet op elk endpoint dat
-een wachtwoord controleert: de hele reeks in één server.
-
-</details>
-
-Door naar [les 10: in de praktijk](site:fullstack/docs/veiligheid/wachtwoorden/praktijk).
+Door naar [les 12: in de praktijk](site:fullstack/docs/veiligheid/wachtwoorden/praktijk).

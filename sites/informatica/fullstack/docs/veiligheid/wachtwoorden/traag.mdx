@@ -1,5 +1,5 @@
 ---
-sidebar_label: '4. Traag is goed'
+sidebar_label: '6. Traag is goed'
 description: Een hash voor wachtwoorden is expres traag. Meet zelf het verschil tussen sha256 en Argon2.
 ---
 
@@ -17,8 +17,8 @@ expres traag zijn, zoals **Argon2**. Installeer hem met
 
 ## Meet het zelf
 
-Dit script rekent eerst honderdduizend `sha256`-hashes uit, en daarna twintig
-Argon2-hashes, en zegt hoeveel er per seconde lukken:
+Dit script, `meten.py`, rekent eerst honderdduizend `sha256`-hashes uit, en
+daarna twintig Argon2-hashes, en zegt hoeveel er per seconde lukken:
 
 <CodeUitleg>
 
@@ -44,7 +44,7 @@ print(f"argon2: {20 / duur:.0f} per seconde")
 ```
 
 <Regel n={6}>
-Een `PasswordHasher` rekent Argon2-hashes uit. In les 5 gebruik je hem in je server.
+Een `PasswordHasher` rekent Argon2-hashes uit. In les 7 gebruik je hem in je server.
 </Regel>
 
 <Regel n={8}>
@@ -57,15 +57,20 @@ Een `PasswordHasher` rekent Argon2-hashes uit. In les 5 gebruik je hem in je ser
 
 </CodeUitleg>
 
-Op de computer waarop deze les is getest, gaf dat:
+<Gelukt>
 
-```
+`python meten.py` print na een paar seconden twee regels. Op de computer
+waarop deze les is getest, was dat:
+
+```text
 sha256: 2194629 per seconde
 argon2: 19 per seconde
 ```
 
 Jouw getallen zijn anders, want elke computer is anders snel. Maar het verschil
 is steeds enorm: tienduizenden tot honderdduizenden keren.
+
+</Gelukt>
 
 ## Waarom dat jou niet hindert
 
@@ -78,9 +83,23 @@ opnieuw. Bij duizend gebruikers is dat ruim drie dagen.
 
 Een trage hash beschermt niet tegen alles. Een wachtwoord als `welkom123` staat
 in elke lijst met veelgebruikte wachtwoorden en blijft zwak, hoe traag de hash
-ook is. Hoe sites daarmee omgaan, zie je in [les 10](site:fullstack/docs/veiligheid/wachtwoorden/praktijk).
+ook is. Hoe sites daarmee omgaan, zie je in [les 12](site:fullstack/docs/veiligheid/wachtwoorden/praktijk).
+
+<Voorspel soort="Controlevraag" vraag="Je server gebruikt straks Argon2. Merkt een gebruiker dat als hij inlogt?">
+  <Keuze uitleg="Eén Argon2-hash kost een fractie van een seconde. Hoeveel hashes rekent je server uit als iemand één keer inlogt?">Ja, inloggen duurt dan een paar minuten</Keuze>
+  <Keuze goed uitleg="Eén hash per keer inloggen is een fractie van een seconde. Pas wie duizenden wachtwoorden probeert, merkt dat het traag is.">Nee, want bij één keer inloggen rekent je server maar één hash uit</Keuze>
+  <Keuze uitleg="Een hash bewaren helpt niet: bij elke poging moet de server de hash van wat er nu ingetypt wordt opnieuw uitrekenen.">Nee, want de server bewaart de hash van de vorige keer dat hij inlogde</Keuze>
+  <Uitleg>
+
+  Traag is goed omdat het verschil zit in het aantal pogingen. Een gebruiker
+  doet er één, iemand met een gestolen database miljoenen.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
+
+### No module named 'argon2'
 
 ```
 ModuleNotFoundError: No module named 'argon2'
@@ -134,4 +153,4 @@ door het zout begint het rekenen bij elke gebruiker opnieuw.
 
 </details>
 
-Door naar [les 5: registreren met Argon2](site:fullstack/docs/veiligheid/wachtwoorden/registreren).
+Door naar [les 7: registreren met Argon2](site:fullstack/docs/veiligheid/wachtwoorden/registreren).

@@ -270,8 +270,10 @@ const sidebars: SidebarsConfig = {
       label: 'Wachtwoorden veilig opslaan',
       collapsed: true,
       items: [
+        'veiligheid/wachtwoorden/startbestand',
         'veiligheid/wachtwoorden/gewone-tekst',
         'veiligheid/wachtwoorden/hash',
+        'veiligheid/wachtwoorden/hash-opslaan',
         'veiligheid/wachtwoorden/zout',
         'veiligheid/wachtwoorden/traag',
         'veiligheid/wachtwoorden/registreren',

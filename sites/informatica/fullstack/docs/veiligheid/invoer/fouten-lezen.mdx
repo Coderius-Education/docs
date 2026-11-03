@@ -1,11 +1,11 @@
 ---
-sidebar_label: '3. Een 422 lezen'
+sidebar_label: '4. Een 422 lezen'
 description: Wat er in het antwoord van een 422 staat, per veld, en waarom een leeg veld al een 422 geeft zonder dat je er iets voor hoeft te doen.
 ---
 
 # Invoer controleren: een 422 lezen
 
-In [les 2](site:fullstack/docs/veiligheid/invoer/grenzen) printte je alleen de melding. Het antwoord van een `422`
+In [les 3](site:fullstack/docs/veiligheid/invoer/grenzen) printte je alleen de melding. Het antwoord van een `422`
 zegt meer: welk veld het was, wat voor fout, en wat er binnenkwam. Met die
 gegevens kan een script zeggen wat er mis is.
 
@@ -36,15 +36,21 @@ Uit elke fout drie stukken: het veld, het soort fout, en de melding.
 
 </CodeUitleg>
 
-Draai het, met de server uit les 2:
+Draai het, met de server uit les 3.
 
-```
+<Gelukt>
+
+`fouten.py` print de statuscode en een regel per fout:
+
+```text
 422
 naam string_too_long String should have at most 30 characters
 bericht missing Field required
 ```
 
 FastAPI controleert alle velden, en meldt alle fouten in één keer.
+
+</Gelukt>
 
 ## Wat er in één fout staat
 
@@ -70,6 +76,47 @@ naam van het veld.
 Het lege bericht gaf `missing`, en dat zonder dat je er iets voor schreef.
 `Form(...)` maakt een veld verplicht, en voor FastAPI telt een leeg veld als
 niet ingevuld. Een `min_length=1` erbij is dus niet nodig.
+
+<Voorspel soort="Controlevraag" vraag="Waarom print fouten.py het tweede stuk van loc, en niet het eerste?">
+  <Keuze uitleg="De statuscode staat niet in loc, maar in antwoord.status_code.">Het eerste stuk is de statuscode, en die print je al</Keuze>
+  <Keuze uitleg="In loc staat de naam van het veld maar één keer. Wat staat er op de eerste plek?">In loc staat de naam van het veld twee keer, en één is genoeg</Keuze>
+  <Keuze goed uitleg="Bij een formulierveld is het eerste stuk altijd body. Het tweede zegt welk veld het was.">Het eerste stuk is altijd body, het tweede is het veld</Keuze>
+  <Uitleg>
+
+  `loc` zegt waar de fout zit: eerst in welk deel van het verzoek, dan in welk
+  veld. Voor een formulier is dat deel altijd `body`.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### `KeyError: 'detail'`
+
+Je verandert in `fouten.py` de naam in `Sara` en het bericht in `hoi`, en het
+script stopt met:
+
+```
+KeyError: 'detail'
+```
+
+**Oorzaak:** de server keurde alles goed, en antwoordde met een `200` en
+`{'lengte': 3}`. In dat antwoord staat geen `detail`, dus
+`antwoord.json()["detail"]` bestaat niet.
+
+**Oplossing:** lees `detail` alleen als de server een `422` stuurde:
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/bericht"
+
+antwoord = httpx.post(adres, data={"naam": "Sara", "bericht": "hoi"})
+print(antwoord.status_code)
+if antwoord.status_code == 422:
+    for fout in antwoord.json()["detail"]:
+        print(fout["loc"][1], fout["type"], fout["msg"])
+```
 
 ## Opdrachten
 
@@ -97,7 +144,7 @@ Waarom print `fouten.py` wel `type` en `msg`, maar niet `input`?
 <details>
 <summary>Tip</summary>
 
-Denk aan `groot.py` uit les 2.
+Denk aan `groot.py` uit les 2 en 3.
 
 </details>
 
@@ -109,4 +156,4 @@ tekens print je dan een miljoen letters. `type` en `msg` zijn altijd kort.
 
 </details>
 
-Door naar [les 4: de inhoud controleren](site:fullstack/docs/veiligheid/invoer/inhoud).
+Door naar [les 5: de inhoud controleren](site:fullstack/docs/veiligheid/invoer/inhoud).

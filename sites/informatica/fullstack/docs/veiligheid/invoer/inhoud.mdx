@@ -1,12 +1,12 @@
 ---
-sidebar_label: '4. De inhoud controleren'
+sidebar_label: '5. De inhoud controleren'
 description: Een naam van alleen spaties komt langs max_length. Controleer de inhoud zelf met strip() en stuur een eigen 400.
 ---
 
 # Invoer controleren: de inhoud controleren
 
-`max_length` uit [les 2](site:fullstack/docs/veiligheid/invoer/grenzen) bewaakt de lengte, en een leeg veld weigert
-FastAPI al, zoals je in [les 3](site:fullstack/docs/veiligheid/invoer/fouten-lezen) zag. Maar een naam van drie
+`max_length` uit [les 3](site:fullstack/docs/veiligheid/invoer/grenzen) bewaakt de lengte, en een leeg veld weigert
+FastAPI al, zoals je in [les 4](site:fullstack/docs/veiligheid/invoer/fouten-lezen) zag. Maar een naam van drie
 spaties is niet leeg en niet te lang. Maak een script `spaties.py` dat zo'n
 naam stuurt:
 
@@ -23,7 +23,7 @@ Uitvoer:
 200 {'lengte': 3}
 ```
 
-Draai `lees_database.py` uit [les 1](site:fullstack/docs/veiligheid/invoer/maxlength). Onderaan staat het nieuwe
+Draai `lees_database.py` uit [les 1](site:fullstack/docs/veiligheid/invoer/startbestand). Onderaan staat het nieuwe
 bericht:
 
 ```
@@ -81,19 +81,37 @@ Een lege tekst telt in een `if` als niet waar, dus `not naam.strip()` is waar al
 
 </CodeUitleg>
 
-Draai `spaties.py` opnieuw:
+Draai `spaties.py` opnieuw.
 
-```
+<Gelukt>
+
+`spaties.py` print nu:
+
+```text
 400 {'detail': 'Vul een naam in'}
 ```
 
-Het is een **400** en geen 422. Een 422 komt van FastAPI zelf, als een veld niet
-past bij wat er in `Form` staat. Een 400 stuur meestal jij, voor een regel die
-je zelf bedacht. De uitzondering zag je in [les 1](site:fullstack/docs/veiligheid/invoer/maxlength): bij een veld
-boven een megabyte stuurt Starlette zelf een 400.
-
 `lees_database.py` laat geen nieuwe regel met `[   ]` zien: het bericht kwam
 niet in de database.
+
+</Gelukt>
+
+Het is een **400** en geen 422. Een 422 komt van FastAPI zelf, als een veld niet
+past bij wat er in `Form` staat. Een 400 stuur meestal jij, voor een regel die
+je zelf bedacht. De uitzondering zag je in [les 2](site:fullstack/docs/veiligheid/invoer/maxlength): bij een veld
+boven een megabyte stuurt Starlette zelf een 400.
+
+<Voorspel soort="Controlevraag" vraag="Een naam van drie spaties kwam langs max_length en Form(...). Waarom?">
+  <Keuze uitleg="Drie tekens is ruim onder de 30. Zou een kortere grens helpen?">max_length=30 staat te ruim, met 3 erbij was hij tegengehouden</Keuze>
+  <Keuze goed uitleg="Drie spaties zijn drie tekens: niet leeg en niet te lang. Of er iets zichtbaars staat, ziet FastAPI niet.">FastAPI kijkt naar hoeveel tekens er staan, niet wat het zijn</Keuze>
+  <Keuze uitleg="Een spatie is ook voor FastAPI een teken. Telt een veld met drie tekens als leeg?">FastAPI ziet een spatie niet als teken, dus de naam telt als leeg</Keuze>
+  <Uitleg>
+
+  `max_length` en `Form(...)` gaan over de lengte. Wat erin staat, controleer
+  je zelf in je functie, zoals met `strip()`.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -205,4 +223,4 @@ De lengte bewaakt FastAPI, de inhoud jij.
 
 </details>
 
-Door naar [les 5: getallen en keuzes](site:fullstack/docs/veiligheid/invoer/getallen).
+Door naar [les 6: getallen met een grens](site:fullstack/docs/veiligheid/invoer/getallen).

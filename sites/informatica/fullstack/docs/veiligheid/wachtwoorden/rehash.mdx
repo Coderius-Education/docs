@@ -1,11 +1,11 @@
 ---
-sidebar_label: '8. Een oude hash bijwerken'
+sidebar_label: '10. Een oude hash bijwerken'
 description: Werk een hash met oude instellingen bij met check_needs_rehash, op het moment dat iemand inlogt.
 ---
 
 # Wachtwoorden: een oude hash bijwerken
 
-In [les 7](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen) kon een gebruiker zelf een nieuw wachtwoord kiezen. Soms
+In [les 9](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen) kon een gebruiker zelf een nieuw wachtwoord kiezen. Soms
 wil jij als bouwer van de site dat een hash vernieuwd wordt, zonder dat de
 gebruiker iets hoeft te doen.
 
@@ -41,7 +41,7 @@ True
 
 `PasswordHasher(time_cost=1)` doet hier alsof hij een hash van jaren geleden
 maakt, met lichtere instellingen: `time_cost` is de `t=` uit de tabel in
-[les 5](site:fullstack/docs/veiligheid/wachtwoorden/registreren).
+[les 7](site:fullstack/docs/veiligheid/wachtwoorden/registreren).
 
 ## Bijwerken in `/inloggen`
 
@@ -69,7 +69,7 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
 ```
 
 <Regel n={3} tot={10}>
-Dit ken je uit les 6. Klopt het wachtwoord niet, of bestaat de naam niet, dan stopt de functie hier.
+Dit ken je uit les 8. Klopt het wachtwoord niet, of bestaat de naam niet, dan stopt de functie hier.
 </Regel>
 
 <Regel n={11} tot={14}>
@@ -81,13 +81,12 @@ Nieuw: is de opgeslagen hash met oude instellingen gemaakt, dan maak je een nieu
 Zo werkt je server de hashes vanzelf bij, zonder dat iemand zijn wachtwoord
 hoeft te veranderen.
 
-## Opdrachten
+## Zie het bijwerken gebeuren
 
-### Opdracht 1: Run - Zie het bijwerken gebeuren
-
-Zet het bijwerken in je `/inloggen`. Dit script zet voor een nieuwe gebruiker
-Tim een hash met oude instellingen in de database, logt in als Tim, en laat de
-hash ervoor en erna zien. Voorspel eerst: verandert er iets aan de `t=`?
+Dit scriptje, `tim.py`, zet voor een nieuwe gebruiker Tim een hash met oude
+instellingen in de database, logt in als Tim, en laat de hash ervoor en erna
+zien. `[:31]` toont alleen het begin: het algoritme en de instellingen, zonder
+het zout.
 
 ```python
 import httpx
@@ -106,61 +105,6 @@ print(antwoord.json())
 with SqliteDict("gebruikers.db") as db:
     print(db["tim"][:31])
 ```
-
-<details>
-<summary>Tip</summary>
-
-`[:31]` laat alleen het begin van de hash zien: het algoritme en de
-instellingen, zonder het zout. Let op het getal achter `t=`.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Uitvoer:
-
-```
-$argon2id$v=19$m=65536,t=1,p=4$
-{'bericht': 'Ingelogd'}
-$argon2id$v=19$m=65536,t=3,p=4$
-```
-
-Tim komt binnen met de oude hash, want de instellingen staan erin. Daarna ziet
-`/inloggen` dat die hash lichter is dan de instellingen van nu, en bewaart hij
-een nieuwe: `t=1` is `t=3` geworden. Staat er bij jou een ander getal dan 3,
-dan heeft jouw versie van `argon2-cffi` strengere instellingen.
-
-</details>
-
-### Opdracht 2: Investigate - Wie nooit meer inlogt
-
-In opdracht 1 logde Tim meteen in. Stel dat hij dat nooit had gedaan: dan
-staat zijn hash met `t=1` er jaren later nog. Wat betekent dat als je database lekt? En kan je
-server daar iets aan doen zonder Tims wachtwoord?
-
-<details>
-<summary>Tip</summary>
-
-Wanneer werkt je server een hash bij? En welke hash is sneller uit te rekenen:
-een met `t=1` of een met `t=3`?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Tims hash blijft licht, want bijwerken gebeurt alleen als hij inlogt. Lekt de
-database, dan is zijn hash sneller te proberen dan die van de rest: bij het
-testen van deze les was een hash met `t=1` ruim twee keer zo snel uitgerekend
-als een met `t=3`.
-
-Zonder zijn wachtwoord kan je server geen nieuwe hash maken. Wel kan een site
-een hash weggooien die na een paar jaar nog steeds oud is. Komt Tim ooit
-terug, dan kiest hij een nieuw wachtwoord via een link per mail, zoals bij
-Wachtwoord vergeten in [les 10](site:fullstack/docs/veiligheid/wachtwoorden/praktijk).
-
-</details>
 
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
@@ -217,9 +161,81 @@ async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(
 ```
 
 Registreren, inloggen met bijwerken, en wijzigen in één server. Iedereen kan
-nog eindeloos wachtwoorden proberen op `/inloggen` en `/wijzig`; in les 9 komt
+nog eindeloos wachtwoorden proberen op `/inloggen` en `/wijzig`; in les 11 komt
 er een limiet op het aantal pogingen bij.
 
 </details>
 
-Door naar [les 9: inlogpogingen beperken](site:fullstack/docs/veiligheid/wachtwoorden/pogingen).
+<Gelukt>
+
+`python tim.py` laat zien dat de `t=1` na het inloggen een `t=3` is:
+
+```text
+$argon2id$v=19$m=65536,t=1,p=4$
+{'bericht': 'Ingelogd'}
+$argon2id$v=19$m=65536,t=3,p=4$
+```
+
+Staat er bij jou een ander getal dan 3, dan heeft jouw versie van
+`argon2-cffi` strengere instellingen.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Tim heeft nog een hash met t=1, en je server gebruikt t=3. Kan Tim inloggen voordat zijn hash is bijgewerkt?">
+  <Keuze uitleg="Het bijwerken komt pas na ph.verify. Hoe zou het ooit gebeuren als hij eerst niet binnenkwam?">Nee, eerst moet check_needs_rehash zijn hash bijwerken</Keuze>
+  <Keuze goed uitleg="De instellingen staan in de hash zelf. ph.verify rekent met t=1 als dat in de opgeslagen hash staat.">Ja, want ph.verify leest de instellingen uit zijn hash</Keuze>
+  <Keuze uitleg="Je server hoeft de oude instellingen niet te kennen: ze staan al in Tims opgeslagen code.">Alleen als je PasswordHasher(time_cost=1) in je server zet</Keuze>
+  <Uitleg>
+
+  Een oude hash blijft werken, want alles wat `ph.verify` nodig heeft, staat
+  erin. Pas als het wachtwoord klopt, maakt je server er een nieuwe van, met de
+  instellingen van nu.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Na het inloggen staat er nog t=1
+
+`tim.py` print `{'bericht': 'Ingelogd'}`, maar de laatste regel zegt nog
+`t=1`. Er komt geen foutmelding.
+
+**Oorzaak:** in het nieuwe stuk van `/inloggen` ontbreekt `db.commit()`. Zonder
+`commit()` gaat de nieuwe hash niet in het bestand, en blijft de oude staan.
+
+**Oplossing:** zet `db.commit()` direct onder `db[naam] = ph.hash(wachtwoord)`,
+in hetzelfde `with`-blok, sla `main.py` op en draai `tim.py` opnieuw.
+
+## Opdrachten
+
+### Opdracht 1: Investigate - Wie nooit meer inlogt
+
+In `tim.py` logde Tim meteen in. Stel dat hij dat nooit had gedaan: dan
+staat zijn hash met `t=1` er jaren later nog. Wat betekent dat als je database lekt? En kan je
+server daar iets aan doen zonder Tims wachtwoord?
+
+<details>
+<summary>Tip</summary>
+
+Wanneer werkt je server een hash bij? En welke hash is sneller uit te rekenen:
+een met `t=1` of een met `t=3`?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Tims hash blijft licht, want bijwerken gebeurt alleen als hij inlogt. Lekt de
+database, dan is zijn hash sneller te proberen dan die van de rest: bij het
+testen van deze les was een hash met `t=1` ruim twee keer zo snel uitgerekend
+als een met `t=3`.
+
+Zonder zijn wachtwoord kan je server geen nieuwe hash maken. Wel kan een site
+een hash weggooien die na een paar jaar nog steeds oud is. Komt Tim ooit
+terug, dan kiest hij een nieuw wachtwoord via een link per mail, zoals bij
+Wachtwoord vergeten in [les 12](site:fullstack/docs/veiligheid/wachtwoorden/praktijk).
+
+</details>
+
+Door naar [les 11: inlogpogingen beperken](site:fullstack/docs/veiligheid/wachtwoorden/pogingen).

@@ -1,0 +1,275 @@
+---
+sidebar_label: '1. Het gastenboek van deze reeks'
+description: De server van Wie mag wat is het gastenboek uit Sessies, met JSON als antwoord. Zet hem in een eigen map en start hem.
+---
+
+# Wie mag wat: het gastenboek van deze reeks
+
+Wie mag een bericht verwijderen? Dat zoek je in deze reeks uit op een eigen
+server. Die zet je nu klaar.
+
+:::note[Waar je werkt]
+Maak voor deze reeks een nieuwe map `veiligheid-toegang`, naast je eigen
+project, en open die in VS Code. De server, de scripts en de databases van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
+het eind van de reeks pas je het geleerde toe op je eigen project.
+
+Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
+:::
+
+:::danger[Alleen je eigen server]
+In deze reeks verwijder je berichten van een ander, met verzoeken die je zelf in
+elkaar zet. Doe dat **uitsluitend** met je eigen server op `127.0.0.1`. Bij de
+site van een ander is het strafbaar, ook als de site het toelaat en ook als het
+"maar een testje" is.
+:::
+
+## Het gastenboek als JSON
+
+De server hieronder is het gastenboek uit Sessies: registreren uit de basis,
+inloggen met een sessie, en het endpoint Verwijderen uit het
+[htmx-overzicht](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht#verwijderen). De HTML is eruit:
+elk endpoint geeft JSON terug, zodat een scriptje kan lezen wat de server
+antwoordt. Een bericht plaatsen heet hier `POST /bericht`.
+
+<CodeUitleg>
+
+```python showLineNumbers
+import secrets
+import time
+
+from fastapi import Cookie, FastAPI, Form, HTTPException
+from fastapi.responses import JSONResponse
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        if naam in gebruikers:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        gebruikers[naam] = wachtwoord
+        gebruikers.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
+    sessie_id = secrets.token_hex(16)
+    with SqliteDict("sessies.db") as sessies:
+        sessies[sessie_id] = {"naam": naam}
+        sessies.commit()
+
+    antwoord = JSONResponse({"bericht": f"Ingelogd als {naam}"})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+
+@app.post("/bericht")
+async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if not mijn:
+        raise HTTPException(status_code=401, detail="Log eerst in")
+
+    sleutel = f"bericht_{time.time_ns()}"
+    with SqliteDict("gastenboek.db") as db:
+        db[sleutel] = {"naam": mijn["naam"], "bericht": bericht}
+        db.commit()
+    return {"sleutel": sleutel}
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return dict(db)
+
+@app.delete("/bericht/{sleutel}")
+async def bericht_verwijderen(sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel not in db:
+            raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+        del db[sleutel]
+        db.commit()
+    return {"bericht": "Verwijderd"}
+```
+
+<Regel n={10} tot={17}>
+Registreren uit de basis, met JSON als antwoord in plaats van een omleiding.
+</Regel>
+
+<Regel n={19} tot={33}>
+Inloggen uit Sessies: pas als het wachtwoord klopt, komt er een sessie met de naam.
+</Regel>
+
+<Regel n={35} tot={46}>
+Een bericht plaatsen. De naam komt uit de sessie, en het antwoord is de sleutel van het nieuwe bericht.
+</Regel>
+
+<Regel n={48} tot={51}>
+Alle berichten, met hun sleutels. Op de pagina ziet elke bezoeker ze ook.
+</Regel>
+
+<Regel n={53} tot={60}>
+Het DELETE-endpoint uit het htmx-recept. Het vraagt welk bericht weg moet, en niet wie dat vraagt.
+</Regel>
+
+</CodeUitleg>
+
+Zet de server in `main.py` in je map `veiligheid-toegang` en start hem met
+`fastapi dev main.py`.
+
+<Gelukt>
+
+Open `http://127.0.0.1:8000/berichten` in je browser. Je ziet:
+
+```text
+{}
+```
+
+Een lege dictionary, als JSON: het gastenboek draait, en er staat nog niets in.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Sara is ingelogd en stuurt POST /bericht met alleen het veld bericht. Waar komt de naam bij haar nieuwe bericht vandaan?">
+  <Keuze uitleg="bericht_plaatsen heeft maar één formulierveld, bericht. Een naam kan Sara niet meesturen.">Uit een veld naam in het formulier</Keuze>
+  <Keuze goed uitleg="Het endpoint zoekt met de cookie sessie_id haar sessie op, en zet de naam uit die sessie bij het bericht.">Uit haar sessie in sessies.db</Keuze>
+  <Keuze uitleg="In de cookie staat alleen een lang willekeurig getal, het sessie-id. Waar zoekt de server dat getal op?">Uit de cookie, want daar staat haar naam in</Keuze>
+  <Uitleg>
+
+  De naam bij een bericht zet de server er zelf bij, uit de sessie. Die sessie maakte `inloggen`, pas nadat het wachtwoord klopte. Een bezoeker kan dus geen bericht op naam van een ander plaatsen. Of hij een bericht van een ander kan verwijderen, zie je in de volgende stap.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### ModuleNotFoundError: No module named 'sqlitedict'
+
+`fastapi dev` stopt meteen, en de foutmelding eindigt met die regel.
+
+**Oorzaak:** `sqlitedict` staat niet in de virtual environment van deze map: je
+installeerde hem niet, of de terminal gebruikt een andere virtual environment.
+
+**Oplossing:** kijk of `(.venv)` vooraan je terminalregel staat, en installeer
+de packages zoals bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
+
+### Address already in use
+
+`fastapi dev` start niet, en de terminal meldt dat het adres al in gebruik is:
+`Address already in use`, of op Windows een melding met het nummer `10048`.
+
+**Oorzaak:** er draait al een server op poort 8000, vaak die van een vorige reeks
+in een andere terminal.
+
+**Oplossing:** stop die server met Ctrl+C, en start deze opnieuw.
+
+### Er staan al berichten in
+
+`/berichten` geeft geen `{}`, maar berichten met namen die je kent.
+
+**Oorzaak:** je startte de server in een map met een oude `gastenboek.db`, zoals
+je eigen project.
+
+**Oplossing:** stop de server, ga naar de map `veiligheid-toegang` en start hem
+daar.
+
+## Opdrachten
+
+### Opdracht 1: Investigate - Een bericht in de adresbalk
+
+Open `http://127.0.0.1:8000/bericht` in je browser. Welke statuscode krijg je?
+Waarom is het niet `401 Log eerst in`, terwijl je niet bent ingelogd?
+
+<details>
+<summary>Tip</summary>
+
+Welke methode gebruikt de browser als je een adres intypt, en welke methode
+heeft het endpoint `/bericht`?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`405`, met `{"detail":"Method Not Allowed"}`. Een adres in de adresbalk is een
+`GET`, en `/bericht` bestaat alleen als `POST`. FastAPI weigert het verzoek al
+voordat `bericht_plaatsen` begint, dus de controle op de sessie komt niet eens
+aan de beurt. De statuscodes staan op [de startpagina](site:fullstack/docs/veiligheid#statuscodes).
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import secrets
+import time
+
+from fastapi import Cookie, FastAPI, Form, HTTPException
+from fastapi.responses import JSONResponse
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        if naam in gebruikers:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        gebruikers[naam] = wachtwoord
+        gebruikers.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam)
+    if opgeslagen != wachtwoord:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+
+    sessie_id = secrets.token_hex(16)
+    with SqliteDict("sessies.db") as sessies:
+        sessies[sessie_id] = {"naam": naam}
+        sessies.commit()
+
+    antwoord = JSONResponse({"bericht": f"Ingelogd als {naam}"})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
+    return antwoord
+
+@app.post("/bericht")
+async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    if not mijn:
+        raise HTTPException(status_code=401, detail="Log eerst in")
+
+    sleutel = f"bericht_{time.time_ns()}"
+    with SqliteDict("gastenboek.db") as db:
+        db[sleutel] = {"naam": mijn["naam"], "bericht": bericht}
+        db.commit()
+    return {"sleutel": sleutel}
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return dict(db)
+
+@app.delete("/bericht/{sleutel}")
+async def bericht_verwijderen(sleutel: str):
+    with SqliteDict("gastenboek.db") as db:
+        if sleutel not in db:
+            raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
+        del db[sleutel]
+        db.commit()
+    return {"bericht": "Verwijderd"}
+```
+
+Dit is het startbestand van de reeks. In de volgende stap zie je wat
+`bericht_verwijderen` mist.
+
+</details>
+
+Door naar [les 2: een knop is geen slot](site:fullstack/docs/veiligheid/toegang/zwakheid).

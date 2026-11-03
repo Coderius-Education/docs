@@ -1,5 +1,5 @@
 ---
-sidebar_label: '2. De controle met 403'
+sidebar_label: '3. De controle met 403'
 description: Controleer in het endpoint zelf of het bericht van deze bezoeker is, en antwoord anders met 403 Forbidden.
 ---
 
@@ -7,7 +7,7 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 # Wie mag wat: de controle met 403
 
-In [les 1](site:fullstack/docs/veiligheid/toegang/zwakheid) verwijderde Alex het bericht van Sara, met of zonder
+In [les 2](site:fullstack/docs/veiligheid/toegang/zwakheid) verwijderde Alex het bericht van Sara, met of zonder
 knop. De controle hoort daarom op de plek waar het verzoek binnenkomt: in het
 endpoint. De server weet wie deze bezoeker is: sinds het inloggen staat zijn
 naam in zijn sessie. En bij elk bericht staat de naam van wie het plaatste. Zijn
@@ -15,7 +15,7 @@ die twee niet gelijk, dan verwijdert het endpoint niets.
 
 Heb je [opdracht 5 van Sessies](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen)
 gemaakt, dan deed je dit al, op `/verwijderen`. Hier zet je dezelfde controle op
-`DELETE /bericht/{sleutel}`, en zie je met het script uit les 1 dat hij werkt.
+`DELETE /bericht/{sleutel}`.
 
 ## De controle in het endpoint
 
@@ -56,57 +56,11 @@ Pas nu gaat het bericht weg.
 
 </CodeUitleg>
 
-## Doe de test opnieuw
+## Doe de test opnieuw \{#test-opnieuw}
 
-Gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, start de server
-opnieuw, en draai `test_verwijderen.py` uit [les 1](site:fullstack/docs/veiligheid/toegang/zwakheid):
-
-```
-Alex verwijdert het bericht van Sara: 403
-Nog in het gastenboek: ['Sara', 'Alex']
-```
-
-Alex stuurt nog steeds hetzelfde verzoek, maar de server weigert. Het bericht
-van Sara staat er nog.
-
-## Waar de controle zit
-
-De controle zit in het endpoint zelf, na het ophalen van de sessie en vóór het
-verwijderen.
-
-<VerzoekCyclus variant="toegang" />
-
-## Er gaat iets mis
-
-Het verwijderen geeft `500 Internal Server Error`, ook bij je eigen bericht. In
-de terminal van je server eindigt de foutmelding met:
-
-```
-NameError: name 'sessie_id' is not defined
-```
-
-**Oorzaak:** je hebt de nieuwe regels in `bericht_verwijderen` gezet, maar de
-parameter `sessie_id: str = Cookie(default="")` niet. Dan bestaat `sessie_id`
-niet in de functie.
-
-**Oplossing:** zet de parameter erbij, zoals in regel 2 hierboven.
-
-## Opdrachten
-
-### Opdracht 1: Run - Sara mag wel
-
-Zet onderaan `test_verwijderen.py` een stuk erbij waarin Sara haar eigen bericht
-verwijdert. Lukt dat, en wat staat er daarna nog in het gastenboek?
-
-<details>
-<summary>Tip</summary>
-
-Het is dezelfde lus als voor Alex, maar dan met `sara.get` en `sara.delete`.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
+Zet onderaan `test_verwijderen.py` uit [les 2](site:fullstack/docs/veiligheid/toegang/zwakheid) een stuk
+waarin Sara haar eigen bericht verwijdert. Het is dezelfde lus als voor Alex,
+met `sara.get` en `sara.delete`:
 
 ```python
 for sleutel, bericht in sara.get("/berichten").json().items():
@@ -120,18 +74,68 @@ for bericht in sara.get("/berichten").json().values():
 print(f"Nog in het gastenboek: {namen}")
 ```
 
-Uitvoer, na de twee regels van Alex:
+Gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, start de server
+opnieuw, en draai het script.
 
-```
+<Gelukt>
+
+Het script print:
+
+```text
+Alex verwijdert het bericht van Sara: 403
+Nog in het gastenboek: ['Sara', 'Alex']
 Sara verwijdert haar eigen bericht: 200
 Nog in het gastenboek: ['Alex']
 ```
 
-De `Client` van Sara stuurt haar cookie mee, en in haar sessie staat de naam Sara, dezelfde naam als bij het bericht.
+Alex krijgt `403` en het bericht van Sara blijft staan. Sara zelf mag het wel
+verwijderen.
 
-</details>
+</Gelukt>
 
-### Opdracht 2: Predict - Een nieuw venster
+Alex stuurt nog steeds hetzelfde verzoek, maar de server weigert. De `Client`
+van Sara stuurt haar cookie mee, en in haar sessie staat de naam Sara, dezelfde
+naam als bij het bericht.
+
+## Waar de controle zit
+
+De controle zit in het endpoint zelf, na het ophalen van de sessie en vóór het
+verwijderen.
+
+<VerzoekCyclus variant="toegang" />
+
+<Voorspel soort="Controlevraag" vraag="Sara is ingelogd en stuurt een DELETE voor het bericht van Alex. Wat antwoordt de server nu?">
+  <Keuze uitleg="Inloggen alleen is niet genoeg. Welke twee namen vergelijkt de controle?">`200`, want Sara is ingelogd</Keuze>
+  <Keuze uitleg="Sara heeft een sessie, dus ze is ingelogd. En bericht_verwijderen kent geen 401: welke code staat er in de controle?">`401 Log eerst in`</Keuze>
+  <Keuze goed uitleg="In de sessie van Sara staat Sara, bij het bericht staat Alex. Die twee zijn niet gelijk, dus de controle stopt met 403.">`403 Dit is niet jouw bericht`</Keuze>
+  <Uitleg>
+
+  De controle werkt voor iedereen hetzelfde: alleen wie onder de naam bij het bericht is ingelogd, mag het verwijderen. Voor Sara is het bericht van Alex net zo goed van een ander.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### NameError: name 'sessie_id' is not defined
+
+Het script print `Alex verwijdert het bericht van Sara: 500` en stopt daarna
+met een foutmelding van `httpx`. In de terminal van je server eindigt de
+foutmelding met:
+
+```text
+NameError: name 'sessie_id' is not defined
+```
+
+**Oorzaak:** je hebt de nieuwe regels in `bericht_verwijderen` gezet, maar de
+parameter `sessie_id: str = Cookie(default="")` niet. Dan bestaat `sessie_id`
+niet in de functie.
+
+**Oplossing:** zet de parameter erbij, zoals in regel 2 hierboven.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een nieuw venster
 
 Sara opent het gastenboek in een privévenster. Daar logt ze opnieuw in, als
 Sara, en stuurt ze het verzoek om haar eigen bericht te verwijderen. In het
@@ -158,7 +162,7 @@ geen sessie en krijgt ze `403`.
 
 </details>
 
-### Opdracht 3: Investigate - Een sleutel die niet bestaat
+### Opdracht 2: Investigate - Een sleutel die niet bestaat
 
 Alex stuurt `alex.delete("/bericht/bestaat_niet")`. Welke statuscode krijgt hij,
 en waarom is het goed dat het geen `404` is?
@@ -249,4 +253,4 @@ Het verwijderen controleert nu wie het vraagt.
 
 </details>
 
-Door naar [les 3: controleer op wat de server weet](site:fullstack/docs/veiligheid/toegang/server-weet).
+Door naar [les 4: controleer op wat de server weet](site:fullstack/docs/veiligheid/toegang/server-weet).

@@ -1,5 +1,5 @@
 ---
-sidebar_label: '6. Een bestandsnaam van een bezoeker'
+sidebar_label: '8. Een bestandsnaam van een bezoeker'
 description: Laat je een bezoeker met ?naam= kiezen welk bestand je server stuurt, dan kan hij ook om main.py vragen. Sta alleen de pagina's uit je eigen lijst toe.
 ---
 
@@ -92,13 +92,9 @@ server bij kan, zoals `gastenboek.db` met alle berichten, of in een echt project
 een bestand met een geheime sleutel. Met `..` uit de bedoelde map klimmen heet
 **path traversal**.
 
-Met een path-parameter, zoals in
-[Een 404 sturen: als het item niet bestaat](site:fullstack/docs/FastAPI/berichten-tonen/niet-gevonden), gaat dit
-net anders. Dat zie je in opdracht 1.
-
 ## Alleen wat in je lijst staat
 
-Een bestandsnaam controleer je net als de stemming in [les 5](site:fullstack/docs/veiligheid/invoer/getallen): met
+Een bestandsnaam controleer je net als de stemming in [les 7](site:fullstack/docs/veiligheid/invoer/keuzes): met
 een lijst met wat mag.
 
 <CodeUitleg>
@@ -133,17 +129,35 @@ for naam in ["home.html", "../../main.py", "oeps.html"]:
     print(naam, "->", antwoord.status_code)
 ```
 
-Uitvoer:
+<Gelukt>
 
-```
+`paden.py` laat alleen `home.html` door:
+
+```text
 home.html -> 200
 ../../main.py -> 404
 oeps.html -> 404
 ```
 
+Dezelfde vraag om `main.py` die eerst je code gaf, krijgt nu een `404`.
+
+</Gelukt>
+
 Je hoeft niet te bedenken welke trucs er met `..`, `/` of `\` bestaan. Wat niet
 in je lijst staat, komt er niet door. Met het endpoint van daarnet gaf
 `oeps.html` een `500`, zoals je zelf zag. Nu is dat een nette `404`.
+
+<Voorspel soort="Controlevraag" vraag="Je server stuurde main.py terug bij ?naam=../../main.py. Wat deed ../.. in die naam?">
+  <Keuze goed uitleg="Vanuit static/pages is .. de map static, en ../.. de map van je project. Daar staat main.py.">Het ging twee mappen omhoog, van static/pages naar je project</Keuze>
+  <Keuze uitleg="Een punt is in een bestandsnaam geen fout. Wat betekent .. in een pad?">Niets, FastAPI negeert de punten en zoekt main.py in static/pages</Keuze>
+  <Keuze uitleg="Er is geen tweede map static/pages. Welke kant op gaat .. in een pad?">Het zocht twee mappen dieper, in een map onder static/pages</Keuze>
+  <Uitleg>
+
+  `FileResponse` opent elk pad dat je hem geeft. Met `..` komt een bezoeker uit
+  de map die jij bedoelde, en bij elk bestand waar je server bij kan.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -370,4 +384,4 @@ Naast `main.py` staan `static/formulier.html` en de map `static/pages` met
 
 </details>
 
-Door naar [les 7: in de praktijk](site:fullstack/docs/veiligheid/invoer/praktijk).
+Door naar [les 9: in de praktijk](site:fullstack/docs/veiligheid/invoer/praktijk).

@@ -1,0 +1,237 @@
+---
+sidebar_label: '1. Een server met accounts'
+description: Zet de server van deze reeks klaar, met registreren en inloggen zoals in je gastenboek, en maak met een script drie accounts aan.
+---
+
+# Wachtwoorden: een server met accounts
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/tuples', label: 'Tuples uitpakken'},
+  ]}
+/>
+
+:::note[Waar je werkt]
+Maak voor deze reeks een nieuwe map `veiligheid-wachtwoorden`, naast je eigen
+project, en open die in VS Code. De server, de scripts en de database van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
+het eind van de reeks pas je het geleerde toe op je eigen project.
+Maak in die map een virtual environment en installeer de packages; hoe dat gaat
+staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
+:::
+
+Je zet de server van deze reeks neer en maakt met een script drie accounts aan.
+
+Je gastenboek heeft accounts sinds
+[Registreren: een account opslaan](site:fullstack/docs/FastAPI/accounts/registreren), en controleert
+het wachtwoord sinds [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen).
+Het bewaart dat wachtwoord precies zoals de gebruiker het intypt; in
+Registreren zag je het al staan. Deze reeks laat zien waarom dat gevaarlijk is,
+en maakt het stap voor stap veilig.
+
+## Het startbestand
+
+Je werkt met dezelfde twee stappen, als een kleine server die JSON teruggeeft,
+zodat een script elk antwoord kan lezen: `/registreer` uit de basis, en
+`/inloggen` met de controle uit je gastenboek, als eigen endpoint zoals in
+[Sessies](site:fullstack/docs/FastAPI/onthouden/sessies), maar nog zonder sessie. Een fout wachtwoord
+geeft hier geen `401` maar een melding: het gaat in deze reeks om wat er in de
+database staat. Zet dit in `main.py`:
+
+<CodeUitleg>
+
+```python showLineNumbers
+from fastapi import FastAPI, Form, HTTPException
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if naam in db:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        db[naam] = wachtwoord
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if db.get(naam) == wachtwoord:
+            return {"bericht": "Ingelogd"}
+    return {"bericht": "Naam of wachtwoord klopt niet"}
+```
+
+<Regel n={9} tot={10}>
+Bestaat de naam al, dan weigert de server hem met een 400. Zonder die controle
+overschrijft iemand die zich als `sara` registreert het wachtwoord van Sara, en
+kan hij daarna als haar inloggen.
+</Regel>
+
+<Regel n={11}>
+Het wachtwoord gaat letterlijk de database in, onder de naam van de gebruiker.
+</Regel>
+
+<Regel n={18}>
+Inloggen vergelijkt wat de gebruiker intypt met wat er in de database staat. Staat de naam er niet in, dan geeft `db.get` `None`, en dat is nooit gelijk aan een wachtwoord.
+</Regel>
+
+</CodeUitleg>
+
+Start de server met `fastapi dev main.py`.
+
+## Drie accounts aanmaken
+
+:::danger[Alleen je eigen database]
+Doe dit **uitsluitend** met je eigen server op `127.0.0.1` en je eigen
+database. De wachtwoorden van een ander bekijken of gebruiken is strafbaar.
+:::
+
+Maak naast `main.py` een los scriptje `registreer.py` dat drie gebruikers
+aanmaakt, net zoals een formulier dat zou doen. Het gebruikt `httpx`, zoals in
+[Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap).
+
+<CodeUitleg>
+
+```python showLineNumbers
+import httpx
+
+adres = "http://127.0.0.1:8000/registreer"
+
+gebruikers = [("sara", "welkom123"), ("alex", "Zonnebloem-Fiets-42"), ("noor", "welkom123")]
+for naam, wachtwoord in gebruikers:
+    antwoord = httpx.post(adres, data={"naam": naam, "wachtwoord": wachtwoord})
+    print(antwoord.json())
+```
+
+<Regel n={5}>
+Drie gebruikers, elk een tuple van naam en wachtwoord. Sara en Noor kozen hetzelfde wachtwoord.
+</Regel>
+
+<Regel n={7}>
+`httpx.post` stuurt een formulier: `data` zijn de velden, net als `name="naam"` en `name="wachtwoord"` in een HTML-formulier.
+</Regel>
+
+</CodeUitleg>
+
+Draai het in een tweede terminal, in dezelfde map.
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+from fastapi import FastAPI, Form, HTTPException
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if naam in db:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        db[naam] = wachtwoord
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if db.get(naam) == wachtwoord:
+            return {"bericht": "Ingelogd"}
+    return {"bericht": "Naam of wachtwoord klopt niet"}
+```
+
+Dit is de beginstand. In de volgende lessen verandert steeds één stuk.
+
+</details>
+
+<Gelukt>
+
+`python registreer.py` print drie welkomstberichten:
+
+```text
+{'bericht': 'Welkom, sara'}
+{'bericht': 'Welkom, alex'}
+{'bericht': 'Welkom, noor'}
+```
+
+Naast `main.py` staat nu een bestand `gebruikers.db`.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Sara heeft een account. Iemand anders stuurt naar /registreer de naam sara met het wachtwoord geheim. Wat gebeurt er?">
+  <Keuze uitleg="Zo ging het zonder de controle bovenaan registreer. Wat doet de regel met if naam in db?">Welkom, sara, en daarna werkt alleen geheim nog als wachtwoord</Keuze>
+  <Keuze goed uitleg="De naam staat al in de database, dus de server stopt met een 400 voordat hij iets opslaat.">Deze naam is al bezet, en Sara houdt haar eigen wachtwoord</Keuze>
+  <Keuze uitleg="Een SqliteDict is een dictionary: elke sleutel staat er één keer in.">Welkom, sara, en er staan nu twee accounts met de naam sara</Keuze>
+  <Uitleg>
+
+  De controle `if naam in db` komt vóór het opslaan. Zonder die controle zou
+  `db[naam] = wachtwoord` het wachtwoord van Sara overschrijven, en kon iedereen
+  als Sara inloggen door zich opnieuw als `sara` te registreren.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Deze naam is al bezet
+
+Je draait `registreer.py` een tweede keer, en krijgt:
+
+```text
+{'detail': 'Deze naam is al bezet'}
+{'detail': 'Deze naam is al bezet'}
+{'detail': 'Deze naam is al bezet'}
+```
+
+**Oorzaak:** de eerste keer heeft je server de drie accounts al opgeslagen in
+`gebruikers.db`. Een tweede registratie met dezelfde naam weigert hij met een
+`400`.
+
+**Oplossing:** niets, je accounts staan er al. Wil je opnieuw beginnen, stop
+dan je server, gooi `gebruikers.db` weg, start de server en draai het script
+opnieuw.
+
+## Opdrachten
+
+### Opdracht 1: Modify - Inloggen met een script
+
+Maak een kopie van `registreer.py` die inlogt in plaats van registreert: één
+keer als Sara met `welkom123`, en één keer als Sara met `welkom124`.
+
+<details>
+<summary>Tip</summary>
+
+Verander het adres naar `/inloggen`, en zet in de lijst twee pogingen voor
+Sara.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/inloggen"
+
+pogingen = [("sara", "welkom123"), ("sara", "welkom124")]
+for naam, wachtwoord in pogingen:
+    antwoord = httpx.post(adres, data={"naam": naam, "wachtwoord": wachtwoord})
+    print(antwoord.json())
+```
+
+Uitvoer:
+
+```text
+{'bericht': 'Ingelogd'}
+{'bericht': 'Naam of wachtwoord klopt niet'}
+```
+
+Inloggen verandert niets in de database, dus je kunt dit script zo vaak
+draaien als je wilt.
+
+</details>
+
+Door naar [les 2: waarom geen gewone tekst](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst).

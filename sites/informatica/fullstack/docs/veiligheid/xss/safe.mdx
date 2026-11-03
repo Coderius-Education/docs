@@ -1,5 +1,5 @@
 ---
-sidebar_label: '5. |safe: de bescherming uitzetten'
+sidebar_label: '6. |safe: de bescherming uitzetten'
 description: Met |safe zeg je tegen Jinja dat tekst al veilig is. Dat mag alleen voor HTML die je zelf schreef, nooit voor tekst van een bezoeker.
 ---
 
@@ -44,10 +44,15 @@ En bovenaan `templates/berichten_lijst.html`:
 <p>{{ welkom|safe }}</p>
 ```
 
-`lijst.py` uit [les 1](site:fullstack/docs/veiligheid/xss/zwakheid) laat zien wat de server stuurt, met Sara's
-bericht eronder:
+Sla beide op en open je gastenboek opnieuw.
 
-```
+<Gelukt>
+
+Boven de lijst staat "**Welkom** in mijn gastenboek", met Welkom vet, en het
+bericht van Sara staat er nog met de haakjes. `lijst.py` uit [les 2](site:fullstack/docs/veiligheid/xss/zwakheid)
+laat zien wat de server stuurt:
+
+```text
 <p><b>Welkom</b> in mijn gastenboek</p>
 <ul>
     
@@ -56,10 +61,25 @@ bericht eronder:
 </ul>
 ```
 
+</Gelukt>
+
 Het welkomstwoord is vet, want de `<b>` bleef HTML. Het bericht van Sara is nog
 steeds tekst, want daar staat geen `|safe` achter.
 
+<Voorspel soort="Controlevraag" vraag="Wat doet |safe met de tekst waar het achter staat?">
+  <Keuze goed uitleg="Jinja escapet die ene waarde niet meer, en de browser leest alles erin als HTML.">Het zet het escapen uit voor die ene waarde</Keuze>
+  <Keuze uitleg="Jinja controleert niets: met |safe beloof jij dat de tekst veilig is, en Jinja gelooft je.">Het haalt gevaarlijke HTML eruit en laat de rest staan</Keuze>
+  <Keuze uitleg="Zonder |safe escapet Jinja al alles tussen dubbele accolades. |safe doet het tegenovergestelde.">Het escapet de tekst extra grondig, ook de aanhalingstekens</Keuze>
+  <Uitleg>
+
+  `|safe` is geen filter dat iets veilig maakt, maar een belofte van jou aan Jinja. Klopt die belofte niet, omdat de tekst van een bezoeker komt, dan is de bescherming weg.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
+
+### Bezoekers schrijven weer vet
 
 Je wilde dat bezoekers vet konden schrijven, en zette `|safe` achter het
 bericht:
@@ -75,7 +95,7 @@ bericht:
 Er komt geen foutmelding, en `<b>vet</b>` is weer vet.
 
 **Oorzaak:** `|safe` zet het escapen uit. Dan is alles wat een bezoeker invult
-weer HTML, net als met de f-string in les 1.
+weer HTML, net als met de f-string in les 2.
 
 **Oplossing:** gebruik `|safe` alleen voor tekst die je zelf in je code hebt
 geschreven, nooit voor iets wat van een bezoeker komt.
@@ -207,4 +227,4 @@ async def zoek(term: str = ""):
 
 </details>
 
-Door naar [les 6: in de browser met innerHTML](site:fullstack/docs/veiligheid/xss/browser).
+Door naar [les 7: in de browser met innerHTML](site:fullstack/docs/veiligheid/xss/browser).

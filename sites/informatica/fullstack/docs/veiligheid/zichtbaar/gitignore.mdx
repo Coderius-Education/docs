@@ -1,5 +1,5 @@
 ---
-sidebar_label: '5. Een .gitignore en een nette zip'
+sidebar_label: '6. Een .gitignore en een nette zip'
 description: Met een .gitignore laat git je databases, .venv en __pycache__ liggen, en een zip maak je van alleen je code. Daarna loop je je eigen project na.
 ---
 
@@ -11,7 +11,7 @@ description: Met een .gitignore laat git je databases, .venv en __pycache__ ligg
   ]}
 />
 
-In [les 4](site:fullstack/docs/veiligheid/zichtbaar/bestanden) zag je welke bestanden in je map niet bij je code
+In [les 5](site:fullstack/docs/veiligheid/zichtbaar/bestanden) zag je welke bestanden in je map niet bij je code
 horen. Je kunt ze elke keer met de hand overslaan, maar één keer vergeten is
 genoeg. Laat het daarom een bestand onthouden.
 
@@ -50,9 +50,14 @@ __pycache__/
 
 Een regel die eindigt op `/` slaat een hele map over. `*.db` slaat elk bestand
 over dat op `.db` eindigt: `gastenboek.db`, `sessies.db`, en in je eigen
-gastenboek ook `gebruikers.db`. Sla op en typ opnieuw `git status --short`:
+gastenboek ook `gebruikers.db`. Sla op en typ opnieuw `git status --short`.
 
-```
+<Gelukt>
+
+De databases, `.venv` en `__pycache__` staan er niet meer bij, en
+`.gitignore` wel:
+
+```text
 ?? .gitignore
 ?? dicht.py
 ?? handleiding.py
@@ -62,8 +67,11 @@ gastenboek ook `gebruikers.db`. Sla op en typ opnieuw `git status --short`:
 ?? twee.py
 ```
 
-De databases, `.venv` en `__pycache__` staan er niet meer bij. In het
-Explorer-paneel zijn ze grijs geworden. `.gitignore` zelf staat er wel bij, en
+In het Explorer-paneel zijn de databases, `.venv` en `__pycache__` grijs
+geworden.
+
+</Gelukt>
+ `.gitignore` zelf staat er wel bij, en
 die hoort ook in je repository: zo weet een klasgenoot die je project ophaalt
 welke bestanden er niet bij horen.
 
@@ -82,6 +90,19 @@ Open de zip daarna, en kijk of er geen `.db`-bestand of `.venv` in staat. Wie
 je project nakijkt, heeft je code nodig, niet de berichten en sessie-id's van je
 bezoekers. De pagina [Project checken](site:fullstack/project-checken) vraagt ook alleen om
 `main.py`, `static/` en `templates/`.
+
+<Voorspel soort="Controlevraag" vraag="Je maakt een zip van de hele map veiligheid-zichtbaar. Laat de zip sessies.db weg, omdat het in je .gitignore staat?">
+  <Keuze uitleg="Alleen git leest .gitignore. Wat doet een zip met de bestanden die je selecteert?">Ja, want .gitignore geldt voor alles wat je deelt</Keuze>
+  <Keuze goed uitleg="Een zip pakt alles wat je selecteert. Daarom kies je zelf wat erin gaat, en kijk je de zip na.">Nee, want alleen git leest .gitignore</Keuze>
+  <Keuze uitleg="Een zip slaat geen bestanden over op hun naam. Wat ziet de zip van je .gitignore?">Alleen als .gitignore zelf ook in de zip zit</Keuze>
+  <Uitleg>
+
+  `.gitignore` is een lijst voor git, en voor niets anders. Voor een zip kies je
+  zelf de bestanden: `main.py`, je scripts, en `static/` en `templates/` als je
+  die hebt.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -105,7 +126,7 @@ git rm --cached sessies.db
 Maak daarna een commit. Stond de repository al op GitHub, dan staat het bestand
 nog in de oude commits, en kan iedereen het daar ophalen. Gooi dan ook
 `sessies.db` op je computer weg: je server begint met een lege, en de oude
-sessie-id's werken nergens meer, zoals je in opdracht 1 van [les 4](site:fullstack/docs/veiligheid/zichtbaar/bestanden)
+sessie-id's werken nergens meer, zoals je in opdracht 1 van [les 5](site:fullstack/docs/veiligheid/zichtbaar/bestanden)
 zag.
 
 ## Opdrachten
@@ -165,4 +186,4 @@ uitzetten zodra anderen erbij kunnen.
 
 </details>
 
-Door naar [les 6: in de praktijk](site:fullstack/docs/veiligheid/zichtbaar/praktijk).
+Door naar [les 7: in de praktijk](site:fullstack/docs/veiligheid/zichtbaar/praktijk).

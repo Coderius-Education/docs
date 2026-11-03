@@ -1,5 +1,5 @@
 ---
-sidebar_label: '1. Tekst of HTML?'
+sidebar_label: '2. Tekst of HTML?'
 description: Wat een bezoeker invult, komt met een f-string letterlijk in je HTML, en de browser leest het als HTML. Zelf gezien met een vet woord, op je eigen server.
 ---
 
@@ -11,95 +11,11 @@ description: Wat een bezoeker invult, komt met een f-string letterlijk in je HTM
   ]}
 />
 
-In het htmx-recept [Een formulier versturen](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht#een-formulier-versturen)
-zette je `escape(naam)` in het antwoord, zodat een naam als `<b>Sara</b>` niet
-vet werd. In deze reeks zie je waarom die `escape` er staat: je haalt hem weg en
-kijkt wat er dan gebeurt. Met een
-[template](site:fullstack/docs/FastAPI/formulieren/post_met_templates) blijft tekst van een bezoeker
-tekst; met een f-string niet.
+Met een [template](site:fullstack/docs/FastAPI/formulieren/post_met_templates)
+blijft tekst van een bezoeker tekst; met een f-string niet. Dat zie je nu zelf,
+met een vet woord in het gastenboek uit [les 1](site:fullstack/docs/veiligheid/xss/startbestand).
 
-:::note[Waar je werkt]
-Maak voor deze reeks een nieuwe map `veiligheid-xss`, naast je eigen
-project, en open die in VS Code. De server, de scripts en de database van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
-het eind van de reeks pas je het geleerde toe op je eigen project.
-
-Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
-:::
-
-## Een gastenboek met een f-string
-
-Dit gastenboek zet de berichten niet in een template, maar in een f-string,
-en het antwoord na het versturen heeft geen `escape`. Het is kleiner dan je
-gastenboek uit de basis: zonder accounts en zonder wachtwoordveld. Wie een
-bericht schrijft, typt alleen een naam.
-De pagina zelf is een los bestand `static/gastenboek.html`:
-
-```html
-<!doctype html>
-<html>
-<head>
-    <script src="/static/js/htmx.min.js" defer></script>
-</head>
-<body>
-    <form hx-post="/gastenboek" hx-target="#antwoord">
-        <input type="text" name="naam" placeholder="Je naam" required>
-        <input type="text" name="bericht" placeholder="Je bericht" required>
-        <button type="submit">Verstuur</button>
-    </form>
-    <p id="antwoord"></p>
-    <div id="lijst" hx-get="/berichten/lijst" hx-trigger="load, every 5s"></div>
-</body>
-</html>
-```
-
-Door `load` haalt htmx de lijst meteen op als de pagina geladen is, en na de
-komma komt `every 5s` erbij: daarna elke vijf seconden opnieuw.
-
-Zet `htmx.min.js` uit [Zonder herladen](site:fullstack/docs/FastAPI/zonder-herladen/htmx) in `static/js/`.
-Het endpoint staat in `main.py`:
-
-{/* onveilig-voorbeeld: de zwakheid die deze les laat zien */}
-
-<CodeUitleg>
-
-```python showLineNumbers
-import time
-
-from fastapi import FastAPI, Form
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from sqlitedict import SqliteDict
-
-app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-@app.post("/gastenboek")
-async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
-    with SqliteDict("gastenboek.db") as db:
-        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
-        db.commit()
-    return HTMLResponse(f"Bedankt, {naam}. Je bericht staat in het gastenboek.")
-
-@app.get("/berichten/lijst")
-async def berichten_lijst():
-    regels = ""
-    with SqliteDict("gastenboek.db") as db:
-        for bericht in db.values():
-            regels += f"<li>{bericht['naam']}: {bericht['bericht']}</li>"
-    return HTMLResponse(f"<ul>{regels}</ul>")
-```
-
-<Regel n={16}>
-Het antwoord na het versturen, zoals in het recept Een formulier versturen, maar zonder `escape` om de naam.
-</Regel>
-
-<Regel n={20} tot={24}>
-Elk bericht wordt een `<li>`, met een f-string. De naam en het bericht komen erin zoals de bezoeker ze typte.
-</Regel>
-
-</CodeUitleg>
-
-## Doe het na, op je eigen server
+## Vul HTML in
 
 :::danger[Alleen je eigen server]
 Doe dit **uitsluitend** op je eigen server op `127.0.0.1`. HTML invullen op de
@@ -107,24 +23,25 @@ site van een ander om te kijken wat er gebeurt, is een aanval op die site en op
 de bezoekers ervan, en strafbaar.
 :::
 
-Start je server en open `http://127.0.0.1:8000/static/gastenboek.html`. In de
-terminal van je server komt elke vijf seconden een regel `GET /berichten/lijst`
-bij: dat is de lijst die zich ververst. Zie je in het tabblad **Netwerk** een
-rode regel `favicon.ico` met 404, dan heeft dat niets met htmx te maken: de
-browser vraagt vanzelf om een icoontje voor het tabblad, en deze server heeft
-er geen. Vul als
+Start je server en open `http://127.0.0.1:8000/static/gastenboek.html`. Vul als
 naam `Sara` in en als bericht:
 
 ```html
 <b>vet</b>
 ```
 
-Binnen vijf seconden, als de lijst zich ververst, staat daar **vet**,
-vetgedrukt. Open dezelfde pagina in een
-privévenster, als een tweede bezoeker: ook daar is het vet. De browser las wat
-Sara typte niet als tekst, maar als HTML.
+<Gelukt>
 
-Wat de server terugstuurt, zie je met een scriptje `lijst.py`:
+Binnen vijf seconden, als de lijst zich ververst, staat daar **vet**,
+vetgedrukt. Open dezelfde pagina in een privévenster, als een tweede bezoeker:
+ook daar is het vet.
+
+</Gelukt>
+
+## Wat de server stuurt
+
+De browser las wat Sara typte niet als tekst, maar als HTML. Wat de server
+terugstuurt, zie je met een scriptje `lijst.py`, in een tweede terminal:
 
 ```python
 import httpx
@@ -135,7 +52,7 @@ print(antwoord.text)
 
 Uitvoer, met alleen het bericht van Sara in de database:
 
-```
+```text
 <ul><li>Sara: <b>vet</b></li></ul>
 ```
 
@@ -145,19 +62,34 @@ de pagina van iedereen die hem daarna opent, en de browser voert het uit. Dat
 heet **XSS**, *cross-site scripting*: code van een bezoeker die draait in de
 browser van een ander.
 
+<Voorspel soort="Controlevraag" vraag="Sara typte een vet woord als HTML, in haar eigen browser. Waarom is het ook vet bij een tweede bezoeker in een ander venster?">
+  <Keuze goed uitleg="Het bericht staat zoals Sara het typte in de database, en de f-string zet het voor elke bezoeker in de lijst.">Het staat in gastenboek.db, en de server zet het in de lijst van iedereen</Keuze>
+  <Keuze uitleg="Twee browservensters praten niet met elkaar. Alles wat het tweede venster ziet, komt van de server.">Sara's browser stuurt de opmaak door naar de andere vensters die openstaan</Keuze>
+  <Keuze uitleg="htmx zet alleen het antwoord van de server in de pagina. Het is de browser die de tag leest, en alleen omdat hij er letterlijk in staat.">htmx maakt van elke tekst tussen haakjes vanzelf opmaak</Keuze>
+  <Uitleg>
+
+  De server bewaart het bericht en bouwt de lijst voor iedereen. Eén bezoeker schrijft HTML, en elke bezoeker die daarna de pagina opent, krijgt die HTML in zijn browser.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
 
-Het formulier verstuurt niets, of er staat `?naam=` in de adresbalk en de lijst
-blijft leeg.
+### No module named 'httpx'
 
-**Oorzaak:** htmx is niet geladen. Zonder htmx kent de browser `hx-post` en
-`hx-get` niet, en verstuurt hij het formulier als gewone `GET` naar dezelfde
-pagina.
+`lijst.py` stopt meteen, en de foutmelding eindigt met:
 
-**Oplossing:** kijk in het tabblad **Netwerk** of `htmx.min.js` een 200
-kreeg. Een 404 betekent dat het bestand niet in `static/js/` staat.
+```text
+ModuleNotFoundError: No module named 'httpx'
+```
 
-Meer uitleg: [Zonder herladen met htmx](site:fullstack/docs/FastAPI/zonder-herladen/htmx)
+**Oorzaak:** het script draait met een Python buiten de virtual environment
+van `veiligheid-xss`, bijvoorbeeld in een los PowerShell-venster. Daar is
+`httpx` niet geïnstalleerd.
+
+**Oplossing:** draai het script in een tweede terminal van VS Code, in de map
+`veiligheid-xss`. Staat `httpx` daar ook niet, installeer de packages dan zoals
+bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
 
 ## Opdrachten
 
@@ -170,7 +102,7 @@ Een nieuwe bezoeker vult als naam `<i>Noor</i>` in en als bericht `hoi`.
 <details>
 <summary>Tip</summary>
 
-Kijk naar regel 16: wat staat er in de f-string?
+Kijk naar regel 16 van `main.py` in [les 1](site:fullstack/docs/veiligheid/xss/startbestand): wat staat er in de f-string?
 
 </details>
 
@@ -194,46 +126,9 @@ maakt de lijst met een template, `berichten_lijst.html`. Stel dat Sara daar
 
 Nee. Je ziet `<b>vet</b>` staan, met de haakjes erbij. Jinja zet in een
 template van elke `<` een `&lt;` en van elke `>` een `&gt;`, en die tekens toont
-de browser als tekst. De f-string doet dat niet. In les 2 doe je hetzelfde in
-Python, en in les 4 laat je het aan een template over.
+de browser als tekst. De f-string doet dat niet. In les 3 doe je hetzelfde in
+Python, en in les 5 laat je het aan een template over.
 
 </details>
 
-<details>
-<summary>Zo ziet je `main.py` er nu uit</summary>
-
-{/* onveilig-voorbeeld: de zwakheid die deze les laat zien */}
-
-```python
-import time
-
-from fastapi import FastAPI, Form
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from sqlitedict import SqliteDict
-
-app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-@app.post("/gastenboek")
-async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
-    with SqliteDict("gastenboek.db") as db:
-        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
-        db.commit()
-    return HTMLResponse(f"Bedankt, {naam}. Je bericht staat in het gastenboek.")
-
-@app.get("/berichten/lijst")
-async def berichten_lijst():
-    regels = ""
-    with SqliteDict("gastenboek.db") as db:
-        for bericht in db.values():
-            regels += f"<li>{bericht['naam']}: {bericht['bericht']}</li>"
-    return HTMLResponse(f"<ul>{regels}</ul>")
-```
-
-Naast `main.py` staan `static/gastenboek.html` en `static/js/htmx.min.js`. Dit
-is de zwakke versie; in les 2 komt er `escape` in.
-
-</details>
-
-Door naar [les 2: escapen in Python](site:fullstack/docs/veiligheid/xss/escape).
+Door naar [les 3: escapen in Python](site:fullstack/docs/veiligheid/xss/escape).

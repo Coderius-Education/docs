@@ -1,0 +1,225 @@
+---
+sidebar_label: '1. Het gastenboek van deze reeks'
+description: Zet het kleine gastenboek van deze reeks klaar, met een f-string in plaats van een template, en zie dat het werkt.
+---
+
+# HTML van een bezoeker: het gastenboek van deze reeks
+
+In het htmx-recept [Een formulier versturen](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht#een-formulier-versturen)
+zette je `escape(naam)` in het antwoord, zodat een naam als `<b>Sara</b>` niet
+vet werd. Straks haal je die `escape` weg en kijk je wat er dan gebeurt. Eerst
+zet je het gastenboek klaar waarop je dat doet.
+
+:::note[Waar je werkt]
+Maak voor deze reeks een nieuwe map `veiligheid-xss`, naast je eigen
+project, en open die in VS Code. De server, de scripts en de database van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
+het eind van de reeks pas je het geleerde toe op je eigen project.
+
+Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
+:::
+
+## Een gastenboek met een f-string
+
+Dit gastenboek zet de berichten niet in een template, maar in een f-string,
+en het antwoord na het versturen heeft geen `escape`. Het is kleiner dan je
+gastenboek uit de basis: zonder accounts en zonder wachtwoordveld. Wie een
+bericht schrijft, typt alleen een naam.
+De pagina zelf is een los bestand `static/gastenboek.html`:
+
+```html
+<!doctype html>
+<html>
+<head>
+    <script src="/static/js/htmx.min.js" defer></script>
+</head>
+<body>
+    <form hx-post="/gastenboek" hx-target="#antwoord">
+        <input type="text" name="naam" placeholder="Je naam" required>
+        <input type="text" name="bericht" placeholder="Je bericht" required>
+        <button type="submit">Verstuur</button>
+    </form>
+    <p id="antwoord"></p>
+    <div id="lijst" hx-get="/berichten/lijst" hx-trigger="load, every 5s"></div>
+</body>
+</html>
+```
+
+Door `load` haalt htmx de lijst meteen op als de pagina geladen is, en na de
+komma komt `every 5s` erbij: daarna elke vijf seconden opnieuw.
+
+Zet `htmx.min.js` uit [Zonder herladen](site:fullstack/docs/FastAPI/zonder-herladen/htmx) in `static/js/`.
+De endpoints staan in `main.py`:
+
+{/* onveilig-voorbeeld: de zwakheid die deze reeks laat zien */}
+
+<CodeUitleg>
+
+```python showLineNumbers
+import time
+
+from fastapi import FastAPI, Form
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return HTMLResponse(f"Bedankt, {naam}. Je bericht staat in het gastenboek.")
+
+@app.get("/berichten/lijst")
+async def berichten_lijst():
+    regels = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            regels += f"<li>{bericht['naam']}: {bericht['bericht']}</li>"
+    return HTMLResponse(f"<ul>{regels}</ul>")
+```
+
+<Regel n={16}>
+Het antwoord na het versturen, zoals in het recept Een formulier versturen, maar zonder `escape` om de naam.
+</Regel>
+
+<Regel n={20} tot={24}>
+Elk bericht wordt een `<li>`, met een f-string. De naam en het bericht komen erin zoals de bezoeker ze typte.
+</Regel>
+
+</CodeUitleg>
+
+## Starten
+
+:::danger[Alleen je eigen server]
+Doe alles in deze reeks **uitsluitend** op je eigen server op `127.0.0.1`. HTML
+invullen op de site van een ander om te kijken wat er gebeurt, is een aanval op
+die site en op de bezoekers ervan, en strafbaar.
+:::
+
+Start je server met `fastapi dev main.py` en open
+`http://127.0.0.1:8000/static/gastenboek.html`. Vul als naam `Sara` in en als
+bericht `hoi`, en klik op **Verstuur**.
+
+<Gelukt>
+
+Onder het formulier staat:
+
+```text
+Bedankt, Sara. Je bericht staat in het gastenboek.
+```
+
+Binnen vijf seconden staat `Sara: hoi` in de lijst eronder. In de terminal van
+je server komt elke vijf seconden een regel `GET /berichten/lijst` bij: dat is
+de lijst die zich ververst.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Wie maakt de HTML van de lijst, met een regel per bericht?">
+  <Keuze goed uitleg="htmx vraagt /berichten/lijst op en krijgt kant-en-klare HTML terug, die de f-string in je functie heeft gebouwd.">Je server, met de f-string in /berichten/lijst</Keuze>
+  <Keuze uitleg="htmx bouwt niets: het zet alleen het antwoord van je server in de div. Wat geeft berichten_lijst terug?">htmx, uit de berichten die het van de server krijgt</Keuze>
+  <Keuze uitleg="In gastenboek.html staat alleen een lege div. De berichten staan in gastenboek.db, en dat bestand leest alleen de server.">De browser, uit wat er in gastenboek.html staat</Keuze>
+  <Uitleg>
+
+  Je server bouwt de lijst met een f-string en stuurt HTML terug; htmx zet die in `<div id="lijst">`. Wat een bezoeker typt, komt dus via die f-string in de pagina van iedereen.
+
+  </Uitleg>
+</Voorspel>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+{/* onveilig-voorbeeld: de zwakheid die deze reeks laat zien */}
+
+```python
+import time
+
+from fastapi import FastAPI, Form
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.post("/gastenboek")
+async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    return HTMLResponse(f"Bedankt, {naam}. Je bericht staat in het gastenboek.")
+
+@app.get("/berichten/lijst")
+async def berichten_lijst():
+    regels = ""
+    with SqliteDict("gastenboek.db") as db:
+        for bericht in db.values():
+            regels += f"<li>{bericht['naam']}: {bericht['bericht']}</li>"
+    return HTMLResponse(f"<ul>{regels}</ul>")
+```
+
+Naast `main.py` staan `static/gastenboek.html` en `static/js/htmx.min.js`. Dit
+is de zwakke versie; in [les 3](site:fullstack/docs/veiligheid/xss/escape) komt er `escape` in.
+
+</details>
+
+## Er gaat iets mis
+
+### Het formulier verstuurt niets
+
+Na **Verstuur** staat er `?naam=Sara&bericht=hoi` in de adresbalk, en de lijst
+blijft leeg.
+
+**Oorzaak:** htmx is niet geladen. Zonder htmx kent de browser `hx-post` en
+`hx-get` niet, en verstuurt hij het formulier als gewone `GET` naar dezelfde
+pagina.
+
+**Oplossing:** kijk in het tabblad **Netwerk** of `htmx.min.js` een 200
+kreeg. Een 404 betekent dat het bestand niet in `static/js/` staat.
+
+Meer uitleg: [Zonder herladen met htmx](site:fullstack/docs/FastAPI/zonder-herladen/htmx)
+
+### Directory 'static' does not exist
+
+De server start niet, en de foutmelding in de terminal eindigt met:
+
+```text
+RuntimeError: Directory 'static' does not exist
+```
+
+**Oorzaak:** `app.mount` zoekt de map `static` naast de plek waar je de server
+startte. Die map ontbreekt, of je terminal staat in een andere map.
+
+**Oplossing:** maak de map `static` naast `main.py`, met `gastenboek.html`
+erin, en start de server vanuit de map `veiligheid-xss`.
+
+### Een rode regel `favicon.ico` met 404
+
+In het tabblad **Netwerk** en in de terminal van je server staat
+`GET /favicon.ico` met `404 Not Found`.
+
+**Oorzaak:** de browser vraagt vanzelf om een icoontje voor het tabblad, en
+deze server heeft er geen.
+
+**Oplossing:** niets; het heeft niets met htmx of je gastenboek te maken.
+
+## Opdrachten
+
+### Opdracht 1: Run - Een tweede bezoeker
+
+Open dezelfde pagina in een privévenster, als een tweede bezoeker, en schrijf
+daar als `Noor` een bericht. Wanneer verschijnt het in het eerste venster, en
+hoe zie je in de terminal dat er nu twee bezoekers zijn?
+
+<details>
+<summary>Antwoord</summary>
+
+Binnen vijf seconden, zonder dat je het eerste venster herlaadt: daar haalt
+htmx de lijst ook elke vijf seconden op. In de terminal komen er nu elke vijf
+seconden twee regels `GET /berichten/lijst` bij, één per venster.
+
+</details>
+
+Door naar [les 2: tekst of HTML?](site:fullstack/docs/veiligheid/xss/zwakheid).

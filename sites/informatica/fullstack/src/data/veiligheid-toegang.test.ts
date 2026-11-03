@@ -210,7 +210,7 @@ describe('Veiligheid sluit aan op de accounts uit de basis', () => {
   });
 
   it('Wachtwoorden begint bij de accounts uit de basis', () => {
-    const tekst = lees('wachtwoorden/gewone-tekst.mdx');
+    const tekst = lees('wachtwoorden/startbestand.mdx');
     const intro = tekst.slice(0, tekst.indexOf('<CodeUitleg>'));
     expect(intro).toContain('](site:fullstack/docs/FastAPI/accounts/registreren)');
     expect(intro).toContain('](site:fullstack/docs/FastAPI/accounts/inloggen)');

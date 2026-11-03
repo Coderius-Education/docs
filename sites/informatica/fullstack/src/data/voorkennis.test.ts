@@ -175,7 +175,10 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/zichtbaar/bestanden.mdx':
     'SqliteDict en .items() kent de leerling uit de FastAPI-lessen en les 1',
   'veiligheid/zichtbaar/praktijk.mdx': 'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
+  'veiligheid/wachtwoorden/gewone-tekst.mdx':
+    'bekijkt de database uit les 1 met een script dat op bekijk_db.py uit de basis lijkt, en linkt daarnaar',
   'veiligheid/wachtwoorden/hash.mdx': 'hashlib en encode worden in de les zelf uitgelegd',
+  'veiligheid/wachtwoorden/hash-opslaan.mdx': 'zet de hash uit de les ervoor in de server, in dezelfde map',
   'veiligheid/wachtwoorden/praktijk.mdx':
     'achtergrond bij de lessen ervoor, geen nieuwe voorkennis',
   'veiligheid/wachtwoorden/registreren.mdx': 'bouwt op de lessen ervoor, in dezelfde map',
@@ -217,7 +220,7 @@ const MET_BLOK = [
   'veiligheid/gereedschap.mdx',
   'veiligheid/invoer/grenzen.mdx',
   'veiligheid/toegang/zwakheid.mdx',
-  'veiligheid/wachtwoorden/gewone-tekst.mdx',
+  'veiligheid/wachtwoorden/startbestand.mdx',
   'veiligheid/wachtwoorden/inloggen.mdx',
   'veiligheid/xss/zwakheid.mdx',
   'veiligheid/zichtbaar/gitignore.mdx',

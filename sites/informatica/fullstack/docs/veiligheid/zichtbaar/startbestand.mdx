@@ -1,0 +1,249 @@
+---
+sidebar_label: '1. Een gastenboek met sessies'
+description: Zet de map en de server van deze reeks klaar, een klein gastenboek met sessies, en kijk of hij draait.
+---
+
+# Wat je server laat zien: een gastenboek met sessies
+
+:::note[Waar je werkt]
+Maak voor deze reeks een nieuwe map `veiligheid-zichtbaar`, naast je eigen
+project, en open die in VS Code. De server, de scripts en de databases van deze
+reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan het eind van de
+reeks pas je het geleerde toe op je eigen project.
+
+Maak in die map een virtual environment en installeer de packages; hoe dat gaat
+staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
+:::
+
+Je zet de server van deze reeks klaar en start hem. In de lessen erna kijk je
+wat hij over zichzelf vertelt, en aan wie.
+
+## Een server om mee te oefenen
+
+Zet dit `main.py` in de map. Het is een klein gastenboek met sessies, kleiner
+dan dat uit [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies): zonder
+accounts, en je sessie begint bij je eerste bericht. Onderaan staat ook het
+endpoint `GET /sessies` uit opdracht 3 van die les, dat je daar maakte om in je
+sessies te kijken.
+
+<CodeUitleg>
+
+```python showLineNumbers
+import secrets
+import time
+
+from fastapi import Cookie, FastAPI, Form
+from fastapi.responses import JSONResponse
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(...),
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+    sleutel = f"bericht_{time.time_ns()}"
+    with SqliteDict("gastenboek.db") as db:
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
+        mijn["naam"] = naam
+        mijn["berichten"].append(sleutel)
+        sessies[sessie_id] = mijn
+        sessies.commit()
+    antwoord = JSONResponse({"opgeslagen": sleutel})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, httponly=True, samesite="lax")
+    return antwoord
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return list(db.values())
+
+@app.get("/ik")
+async def wie_ben_ik(sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    return {"naam": mijn.get("naam", "onbekend")}
+
+@app.get("/sessies")
+async def alle_sessies():
+    with SqliteDict("sessies.db") as sessies:
+        return dict(sessies)
+```
+
+<Regel n={10} tot={28}>
+Een bericht plaatsen. Het bericht gaat in `gastenboek.db`, en in `sessies.db` onthoudt de server wie het schreef, onder het sessie-id uit de cookie.
+</Regel>
+
+<Regel n={29}>
+De cookie met het sessie-id. In Sessies stond er `max_age` bij; hier staan `httponly` en `samesite`, twee instellingen die de cookie afschermen. Wat ze doen, leer je later in [Cookies afschermen](site:fullstack/docs/veiligheid/cookies/httponly).
+</Regel>
+
+<Regel n={37} tot={41}>
+`/ik` zegt wie je bent: de naam uit je sessie, of `onbekend` als je server je sessie-id niet kent.
+</Regel>
+
+<Regel n={43} tot={46}>
+Het endpoint uit opdracht 3 van Sessies. Het geeft alles uit `sessies.db` terug, met de sessie-id's erbij.
+</Regel>
+
+</CodeUitleg>
+
+Start de server met `fastapi dev main.py`. In de terminal staan twee adressen:
+
+```text
+Server started at http://127.0.0.1:8000
+Documentation at http://127.0.0.1:8000/docs
+```
+
+Het eerste ken je. Het tweede bekijk je in de volgende stap.
+
+## Kijk of hij draait
+
+:::danger[Alleen je eigen server]
+Bekijk en gebruik in deze reeks **uitsluitend** je eigen server op
+`127.0.0.1`. Een endpoint van een ander gebruiken dat niet voor jou bedoeld is,
+is binnendringen, en strafbaar, ook als het "maar een testje" is.
+:::
+
+Open `http://127.0.0.1:8000/berichten` in je browser, en daarna
+`http://127.0.0.1:8000/ik`.
+
+<Gelukt>
+
+Op `/berichten` staat `[]`: een lege lijst, want er is nog geen bericht. Op
+`/ik` staat `{"naam":"onbekend"}`. In de map staan nu ook `gastenboek.db` en
+`sessies.db`: de server maakte ze aan toen hij ze voor het eerst opende.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je opent /ik voordat je een bericht hebt geplaatst. Waarom zegt de server onbekend?">
+  <Keuze goed uitleg="/ik zoekt je naam op met het sessie-id uit je cookie. Je browser heeft die cookie nog niet, en een leeg sessie-id staat niet in sessies.db.">Je browser heeft nog geen cookie sessie_id die de server kent</Keuze>
+  <Keuze uitleg="Ook als sessies.db al bestaat, zegt /ik onbekend zonder cookie. Waar zoekt wie_ben_ik je naam op?">sessies.db bestaat nog niet, en zonder dat bestand weet /ik nooit iets</Keuze>
+  <Keuze uitleg="Een browser stuurt hetzelfde verzoek als een script. Het verschil zit in wat er aan cookies meekomt.">/ik geeft alleen een naam als je het met een script opent</Keuze>
+  <Uitleg>
+
+  `wie_ben_ik` krijgt geen naam mee, alleen een cookie. Zonder sessie-id dat in
+  `sessies.db` staat, valt `mijn.get("naam", "onbekend")` terug op `onbekend`.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### `Path does not exist main.py`
+
+`fastapi dev main.py` start niet, en zegt:
+
+```
+Path does not exist main.py
+```
+
+**Oorzaak:** de terminal staat in een andere map dan `main.py`, of je bewaarde
+`main.py` ergens anders dan in `veiligheid-zichtbaar`.
+
+**Oplossing:** open de map `veiligheid-zichtbaar` in VS Code, zet `main.py`
+daarin, en start de server in de terminal van VS Code.
+
+### `No module named 'sqlitedict'`
+
+De server start niet, en onderaan staat:
+
+```
+ModuleNotFoundError: No module named 'sqlitedict'
+```
+
+**Oorzaak:** de packages staan niet in de virtual environment van deze map. Elke
+map heeft zijn eigen virtual environment.
+
+**Oplossing:** installeer de packages in de terminal van VS Code, zoals bij
+[Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
+
+## Opdrachten
+
+### Opdracht 1: Investigate - Wanneer komt er een sessie?
+
+Kijk in `bericht_plaatsen`, regel 16 en 17. Wanneer maakt de server een nieuw
+sessie-id, en wanneer niet?
+
+<details>
+<summary>Tip</summary>
+
+`if not sessie_id` is waar als de cookie leeg is.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Alleen als het verzoek geen cookie `sessie_id` meestuurt, bij je eerste
+bericht. Dan maakt `secrets.token_hex(16)` een sessie-id van 32 tekens, en zet
+de server het in een cookie. Bij je volgende bericht stuurt je browser die
+cookie mee, en gebruikt de server hetzelfde sessie-id.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import secrets
+import time
+
+from fastapi import Cookie, FastAPI, Form
+from fastapi.responses import JSONResponse
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(...),
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
+    if not sessie_id:
+        sessie_id = secrets.token_hex(16)
+    sleutel = f"bericht_{time.time_ns()}"
+    with SqliteDict("gastenboek.db") as db:
+        db[sleutel] = {"naam": naam, "bericht": bericht}
+        db.commit()
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {"naam": naam, "berichten": []})
+        mijn["naam"] = naam
+        mijn["berichten"].append(sleutel)
+        sessies[sessie_id] = mijn
+        sessies.commit()
+    antwoord = JSONResponse({"opgeslagen": sleutel})
+    antwoord.set_cookie(key="sessie_id", value=sessie_id, httponly=True, samesite="lax")
+    return antwoord
+
+@app.get("/berichten")
+async def berichten():
+    with SqliteDict("gastenboek.db") as db:
+        return list(db.values())
+
+@app.get("/ik")
+async def wie_ben_ik(sessie_id: str = Cookie(default="")):
+    with SqliteDict("sessies.db") as sessies:
+        mijn = sessies.get(sessie_id, {})
+    return {"naam": mijn.get("naam", "onbekend")}
+
+@app.get("/sessies")
+async def alle_sessies():
+    with SqliteDict("sessies.db") as sessies:
+        return dict(sessies)
+```
+
+Dit is de beginstand. In [les 4](site:fullstack/docs/veiligheid/zichtbaar/uitzetten)
+verandert de regel met `app = FastAPI()`, en gaat `GET /sessies` eruit.
+
+</details>
+
+Door naar [les 2: de handleiding op /docs](site:fullstack/docs/veiligheid/zichtbaar/handleiding).

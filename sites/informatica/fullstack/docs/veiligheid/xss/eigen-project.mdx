@@ -1,5 +1,5 @@
 ---
-sidebar_label: '7. In je eigen project'
+sidebar_label: '9. In je eigen project'
 description: Zoek in je eigen gastenboek elke plek waar tekst van een bezoeker in HTML komt, en zorg dat die overal tekst blijft.
 ---
 
@@ -15,7 +15,66 @@ Werk in je eigen project, niet in de map `veiligheid-xss`. Test daarna met je
 eigen server op `127.0.0.1`.
 :::
 
-## Opdracht
+## Zoeken en testen
+
+Zoek in je `main.py` naar `HTMLResponse(f`, in je templates naar `|safe`, en in
+je JavaScript naar `innerHTML`. Een `{{ }}` in een `.html`-template is al
+veilig. Wat je vindt, maak je veilig zoals in de lessen hiervoor: `escape()` in
+een f-string, `|safe` weg, en `textContent` in plaats van `innerHTML`.
+
+Start daarna je eigen server, en schrijf in je eigen gastenboek een bericht
+`<b>vet</b>`.
+
+<Gelukt>
+
+In je lijst en op de detailpagina van dat bericht staat `<b>vet</b>` met de
+haakjes erbij, en niets is vetgedrukt.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="In je eigen lijst staat het vette woord met de haakjes erbij. Is je hele project daarmee veilig voor HTML van een bezoeker?">
+  <Keuze goed uitleg="Je test laat alleen de plekken zien waar dat bericht staat. Een zoekterm uit de URL of een voorbeeld met innerHTML test je apart.">Nee, alleen de plekken waar je bericht nu verschijnt</Keuze>
+  <Keuze uitleg="Een link met HTML achter ?term= raakt wie hem opent, ook als de lijst goed escapet.">Ja, want de lijst is de enige plek die alle bezoekers zien</Keuze>
+  <Keuze uitleg="De database bewaart het bericht zoals het getypt is. Escapen gebeurt pas bij het tonen, op elke plek apart.">Ja, want het bericht staat nu veilig in de database</Keuze>
+  <Uitleg>
+
+  Eén vergeten plek is genoeg. Elke plek waar tekst van een bezoeker in HTML komt, heeft zijn eigen bescherming nodig, en zijn eigen test.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### NameError: name 'escape' is not defined
+
+Na het versturen verschijnt er niets onder het formulier, maar je bericht staat
+wel in de lijst. In het tabblad **Netwerk** heeft `POST /gastenboek` een `500`,
+en in de terminal van je server eindigt de foutmelding met:
+
+```text
+NameError: name 'escape' is not defined
+```
+
+**Oorzaak:** je zette `escape(…)` in de `return`, maar `from html import escape`
+staat niet bovenaan `main.py`. Het bericht is dan al opgeslagen; pas de `return`
+gaat mis. htmx zet een `500` niet in de pagina.
+
+**Oplossing:** zet `from html import escape` bij je andere imports.
+
+### `&lt;b&gt;` op je pagina
+
+In je lijst staat letterlijk `&lt;b&gt;vet&lt;/b&gt;`, met de codes in plaats
+van de haakjes.
+
+**Oorzaak:** je zette `escape()` om een waarde die je aan een template geeft.
+Jinja escapet die dan nog een keer, en van de `&` in `&lt;` maakt hij `&amp;`.
+
+**Oplossing:** geef het template de tekst zoals hij is; het template escapet
+zelf. `escape()` hoort alleen in een f-string.
+
+Meer uitleg: [Templates escapen vanzelf](site:fullstack/docs/veiligheid/xss/templates)
+
+## Opdrachten
 
 ### Opdracht 1: Make - In je eigen project
 
@@ -25,8 +84,9 @@ zorg dat die overal tekst blijft.
 <details>
 <summary>Tip</summary>
 
-Zoek in je `main.py` naar `HTMLResponse(f`, in je templates naar `|safe`, en in
-je JavaScript naar `innerHTML`. Een `{{ }}` in een `.html`-template is al veilig.
+Na de basis en de uitbreidingen staat er meestal maar één f-string met HTML in
+je `main.py`: de `return` van je `POST /gastenboek` als je het htmx-formulier
+gebruikt. Begin daar.
 
 </details>
 
@@ -73,4 +133,4 @@ haakjes zien, en niets vetgedrukt.
 
 </details>
 
-Door naar [les 8: in de praktijk](site:fullstack/docs/veiligheid/xss/praktijk).
+Door naar [les 10: in de praktijk](site:fullstack/docs/veiligheid/xss/praktijk).

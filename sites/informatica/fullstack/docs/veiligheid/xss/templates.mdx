@@ -1,11 +1,11 @@
 ---
-sidebar_label: '4. Templates escapen vanzelf'
+sidebar_label: '5. Templates escapen vanzelf'
 description: Een .html-template van Jinja escapet alles tussen dubbele accolades, zodat je geen plek kunt vergeten. Zet de lijst van je gastenboek in een template.
 ---
 
 # HTML van een bezoeker: templates escapen vanzelf
 
-Met `escape` uit [les 2](site:fullstack/docs/veiligheid/xss/escape) moet je aan elke plek denken, en in de "Er
+Met `escape` uit [les 3](site:fullstack/docs/veiligheid/xss/escape) moet je aan elke plek denken, en in de "Er
 gaat iets mis" van die les zag je hoe makkelijk je er een vergeet. Een template
 van Jinja doet het voor je: alles tussen `{{ }}` escapet hij, zonder dat je
 erom vraagt.
@@ -58,15 +58,20 @@ templates = Jinja2Templates(directory="templates")
 ```
 
 Het antwoord na het versturen blijft één zin in een f-string, met `escape(naam)`,
-en de zoekpagina uit [les 3](site:fullstack/docs/veiligheid/xss/url) houdt `escape(term)`. Voor één zin is een
+en de zoekpagina uit [les 4](site:fullstack/docs/veiligheid/xss/url) houdt `escape(term)`. Voor één zin is een
 template wat veel.
 
 ## Doe de test opnieuw
 
 Gooi `gastenboek.db` weg, start de server opnieuw, en vul als Sara weer
-`<b>vet</b>` in. `lijst.py` uit [les 1](site:fullstack/docs/veiligheid/xss/zwakheid) geeft nu:
+`<b>vet</b>` in.
 
-```
+<Gelukt>
+
+In de lijst staat `<b>vet</b>` met de haakjes erbij, ook al staat er in
+`berichten_lijst` geen `escape` meer. `lijst.py` uit [les 2](site:fullstack/docs/veiligheid/xss/zwakheid) geeft nu:
+
+```text
 <ul>
     
         <li>Sara: &lt;b&gt;vet&lt;/b&gt;</li>
@@ -74,11 +79,26 @@ Gooi `gastenboek.db` weg, start de server opnieuw, en vul als Sara weer
 </ul>
 ```
 
+</Gelukt>
+
 De witruimte komt uit het template: de regels met `{% for %}` en `{% endfor %}`
 worden elk een regel met alleen vier spaties. Wat Sara typte staat er, maar als
 tekst, net als met `escape`.
 
+<Voorspel soort="Controlevraag" vraag="De lijst komt nu uit een template. Wat heeft de return van POST /gastenboek, met de naam in een f-string, dan nog nodig?">
+  <Keuze goed uitleg="Jinja escapet alleen wat door een template gaat. De zin na het versturen is nog een f-string in een HTMLResponse.">Nog steeds escape om de naam</Keuze>
+  <Keuze uitleg="Het template geldt alleen voor /berichten/lijst. De return van POST /gastenboek gebruikt het niet.">Niets meer, want Jinja escapet nu alles wat de server terugstuurt</Keuze>
+  <Keuze uitleg="De database bewaart de naam zoals de bezoeker hem typte. Escapen gebeurt pas waar hij de HTML in gaat.">Niets, want de naam staat al ge-escapet in de database</Keuze>
+  <Uitleg>
+
+  Het escapen van Jinja geldt binnen het template. Een f-string in een `HTMLResponse` blijft gewoon Python, dus daar houd je `escape(naam)`, net als `escape(term)` in de zoekpagina.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
+
+### Weer vet met een andere extensie
 
 Je noemt het template `berichten_lijst.jinja`, en `<b>vet</b>` is weer vet.
 
@@ -129,7 +149,7 @@ in wat `lijst.py` print?
 <details>
 <summary>Tip</summary>
 
-In [les 2](site:fullstack/docs/veiligheid/xss/escape) zag je welke tekens escapen vervangt. Een `"` is er een
+In [les 3](site:fullstack/docs/veiligheid/xss/escape) zag je welke tekens escapen vervangt. Een `"` is er een
 van.
 
 </details>
@@ -144,7 +164,7 @@ geeft voor dat bericht:
         <li>Noor: Ik zeg &#34;hoi&#34;</li>
 ```
 
-Jinja schrijft een `"` als `&#34;`, waar `escape` uit les 2 `&quot;` maakt. Het
+Jinja schrijft een `"` als `&#34;`, waar `escape` uit les 3 `&quot;` maakt. Het
 zijn twee codes voor hetzelfde teken, en de browser toont van allebei een `"`.
 Wie gewone tekst typt, merkt dus niets van het escapen.
 
@@ -195,4 +215,4 @@ Naast `main.py` staan `static/gastenboek.html`, `static/js/htmx.min.js` en
 
 </details>
 
-Door naar [les 5: |safe, de bescherming uitzetten](site:fullstack/docs/veiligheid/xss/safe).
+Door naar [les 6: |safe, de bescherming uitzetten](site:fullstack/docs/veiligheid/xss/safe).

@@ -1,5 +1,5 @@
 ---
-sidebar_label: '2. Grenzen in Form'
+sidebar_label: '3. Grenzen in Form'
 description: Zet de grens in Form met max_length, zodat FastAPI een te lang bericht met 422 weigert voordat je code draait.
 ---
 
@@ -68,17 +68,25 @@ print(antwoord.json()["detail"][0]["msg"])
 ```
 
 <Regel n={8}>
-Het antwoord is een dictionary met onder `detail` een lijst, met één fout per veld. `[0]` pakt de eerste fout uit die lijst, en `["msg"]` de melding daarin. Wat er verder in staat, zie je in [les 3](site:fullstack/docs/veiligheid/invoer/fouten-lezen).
+Het antwoord is een dictionary met onder `detail` een lijst, met één fout per veld. `[0]` pakt de eerste fout uit die lijst, en `["msg"]` de melding daarin. Wat er verder in staat, zie je in [les 4](site:fullstack/docs/veiligheid/invoer/fouten-lezen).
 </Regel>
 
 </CodeUitleg>
 
-Uitvoer:
+Draai het met `python groot.py`.
 
-```
+<Gelukt>
+
+`groot.py` print:
+
+```text
 422
 String should have at most 280 characters
 ```
+
+`lees_database.py` laat geen nieuwe regel zien: het bericht kwam er niet in.
+
+</Gelukt>
 
 Een **422** betekent: het verzoek klopt niet met wat het endpoint verwacht. Het
 bericht komt niet in de database, en je eigen code draait niet eens. De
@@ -87,9 +95,21 @@ browser vergist.
 
 ## Waar de controle zit
 
-Een verzoek komt nu langs twee controles, allebei op de server. De grens in `Form` ken je nu; de controle op de inhoud komt in [les 4](site:fullstack/docs/veiligheid/invoer/inhoud).
+Een verzoek komt nu langs twee controles, allebei op de server. De grens in `Form` ken je nu; de controle op de inhoud komt in [les 5](site:fullstack/docs/veiligheid/invoer/inhoud).
 
 <VerzoekCyclus variant="invoer" />
+
+<Voorspel soort="Controlevraag" vraag="De grens staat nu in Form. Waarom laat je maxlength in de HTML toch staan?">
+  <Keuze uitleg="max_length in Form werkt los van de HTML. Een script zonder formulier krijgt ook een 422.">Zonder maxlength in de HTML werkt max_length in Form niet</Keuze>
+  <Keuze goed uitleg="De browser laat je niet verder typen. Zo merkt een bezoeker het meteen, nog voor er een verzoek is.">Het helpt een bezoeker die zich in de browser vergist</Keuze>
+  <Keuze uitleg="Een script slaat de HTML over, zoals groot.py in les 2. Wie houdt het script dan tegen?">Het houdt een script tegen voordat de server iets ziet</Keuze>
+  <Uitleg>
+
+  Twee plekken, twee taken. `maxlength` is een hulp voor wie het formulier
+  gebruikt; `max_length` in `Form` is de controle, voor elk verzoek.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -182,4 +202,4 @@ Beide velden hebben nu een grens op de server.
 
 </details>
 
-Door naar [les 3: een 422 lezen](site:fullstack/docs/veiligheid/invoer/fouten-lezen).
+Door naar [les 4: een 422 lezen](site:fullstack/docs/veiligheid/invoer/fouten-lezen).
