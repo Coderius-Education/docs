@@ -18,6 +18,8 @@ deze server heeft geen detailpagina en geen verwijderknop, dus de link en het
 formuliertje zijn eruit. Zonder die twee heb je de sleutels niet nodig, en loopt
 de lus over de berichten alleen, met `db.values()` in plaats van `db.items()`:
 
+{/* bestand: templates/berichten_lijst.html */}
+
 ```html
 <ul>
     {% for bericht in berichten %}
@@ -63,13 +65,19 @@ template wat veel.
 
 ## Doe de test opnieuw
 
+{/* weg: gastenboek.db */}
+
 Gooi `gastenboek.db` weg, start de server opnieuw, en vul als Sara weer
 `<b>vet</b>` in.
+
+{/* verstuur-ook: /gastenboek naam=Sara&bericht=<b>vet</b> */}
 
 <Gelukt>
 
 In de lijst staat `<b>vet</b>` met de haakjes erbij, ook al staat er in
 `berichten_lijst` geen `escape` meer. `lijst.py` uit [les 2](site:fullstack/docs/veiligheid/xss/zwakheid) geeft nu:
+
+{/* draai: lijst.py */}
 
 ```text
 <ul>

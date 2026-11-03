@@ -22,6 +22,8 @@ Maak in de map `veiligheid-invoer` een map `static`, en zet daarin
 `formulier.html`. Het formulier zet een grens op beide velden, en een grijze
 tekst in elk vak, de `placeholder`, zegt welk vak welk is:
 
+{/* bestand: static/formulier.html */}
+
 ```html
 <!doctype html>
 <html>
@@ -87,6 +89,8 @@ Wat er in je database staat, zie je met een scriptje naast `main.py`,
 bericht heeft. Het bericht zelf print het niet: in de volgende stappen zijn
 berichten soms zo lang dat ze je terminal vullen.
 
+{/* bestand: lees_database.py */}
+
 <CodeUitleg>
 
 ```python showLineNumbers
@@ -111,8 +115,17 @@ Draai het in de tweede terminal met `python lees_database.py`.
 
 <Gelukt>
 
-Na **Verstuur** toont je browser `{"lengte":3}`. `lees_database.py` print je
-bericht, met jouw naam tussen de blokhaken:
+Na **Verstuur** toont je browser:
+
+{/* verstuur: /bericht naam=Sara&bericht=hoi */}
+
+```text
+{"lengte":3}
+```
+
+`lees_database.py` print je bericht, met jouw naam tussen de blokhaken:
+
+{/* draai: lees_database.py */}
 
 ```text
 [Sara] 3 tekens

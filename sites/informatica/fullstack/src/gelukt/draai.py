@@ -14,7 +14,7 @@ leerling. Wat het doet, staat in markers in de les, in dezelfde vorm als
 - Het uitklapblok "Zo ziet je `main.py` er nu uit" is altijd `main.py`, en
   gaat in voor het eerste script van die les draait.
 - `{/* erbij: pad */}` direct boven een codeblok: zet dat blok onderaan `pad`
-  ("zet onderaan je script …").
+  ("zet onderaan je script …"). `{/* bovenaan: pad */}` zet het blok erboven.
 - `{/* vervang: pad */}` direct boven een codeblok: vervang in `pad` wat het
   blok vervangt ("vervang `bericht_verwijderen` tijdelijk door …"). Een blok
   dat met `@app.` of `def ` begint, vervangt de functie met dezelfde eerste
@@ -67,7 +67,7 @@ VEILIGHEID = SITE / "docs" / "veiligheid"
 OPSTARTEN = 30
 LUISTERT = re.compile(r"Uvicorn running on http://127\.0\.0\.1:(\d+)")
 MARKER = re.compile(
-    r"\{/\*\s*(bestand|erbij|vervang|weg|draai|draai-ook|open|verstuur|verstuur-ook|gelukt-met-de-hand):\s*(.*?)\s*\*/\}"
+    r"\{/\*\s*(bestand|erbij|bovenaan|vervang|weg|draai|draai-ook|open|verstuur|verstuur-ook|gelukt-met-de-hand):\s*(.*?)\s*\*/\}"
 )
 FENCE = re.compile(r"^```[^\n]*\n(.*?)^```", re.M | re.S)
 STAND = "<summary>Zo ziet je `main.py` er nu uit</summary>"
@@ -137,7 +137,7 @@ def stappen(tekst: str) -> list[tuple[str, str, str | None]]:
     for m in MARKER.finditer(tekst):
         rest = tekst[m.end() :]
         blok = None
-        if m.group(1) in ("bestand", "erbij", "vervang"):
+        if m.group(1) in ("bestand", "erbij", "bovenaan", "vervang"):
             f = FENCE.search(rest)
             # Een andere marker ertussen (route-dubbel, niet-compileren) mag.
             tussen = re.sub(r"\{/\*.*?\*/\}", "", rest[: f.start()] if f else "", flags=re.S)
@@ -258,6 +258,9 @@ def doe_reeks(reeks: str, lessen: list[str]) -> tuple[str, list[str], int]:
                         doel = map_ / waarde
                         doel.parent.mkdir(parents=True, exist_ok=True)
                         doel.write_text(blok, encoding="utf-8")
+                    elif soort == "bovenaan":
+                        doel = map_ / waarde
+                        doel.write_text(blok + doel.read_text(encoding="utf-8"), encoding="utf-8")
                     elif soort == "erbij":
                         doel = map_ / waarde
                         doel.write_text(doel.read_text(encoding="utf-8") + "\n" + blok, encoding="utf-8")

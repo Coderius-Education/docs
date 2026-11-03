@@ -18,6 +18,8 @@ typt. Het berichtveld krijgt een `id`, en onder het formulier komt een lege
 `<p>`. Zet dit in `static/gastenboek.html`, met een tweede script-tag in de
 `<head>`:
 
+{/* bestand: static/gastenboek.html */}
+
 ```html
 <!doctype html>
 <html>
@@ -41,6 +43,8 @@ typt. Het berichtveld krijgt een `id`, en onder het formulier komt een lege
 Heb je in les 4 een zoekveld boven het formulier gezet, laat dat dan staan.
 
 En maak `static/js/voorbeeld.js`:
+
+{/* bestand: static/js/voorbeeld.js */}
 
 {/* onveilig-voorbeeld: de zwakheid die deze les laat zien */}
 
@@ -80,6 +84,8 @@ http://127.0.0.1:8000/static/gastenboek.html?bericht=<b>vet</b>
 ```
 
 <Gelukt>
+
+{/* gelukt-met-de-hand: het voorbeeld vult JavaScript in de browser, uit de link; de server ziet het niet */}
 
 Het berichtveld is ingevuld met `<b>vet</b>`, en het voorbeeld eronder is weer
 **vet**, zonder dat je iets typte. Deze keer kwam de HTML uit de link, en die kan

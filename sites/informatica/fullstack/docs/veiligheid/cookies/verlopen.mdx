@@ -89,11 +89,15 @@ In `bericht_plaatsen`, `bericht_verwijderen` en `alles_wissen` vervang je het
 
 ## Doe de test met een verlopen sessie
 
+{/* weg: gastenboek.db sessies.db gebruikers.db */}
+
 Dertig dagen wachten is geen test. Het script `verlopen.py` zet daarom de tijd
 van Sara's sessie in je eigen `sessies.db` op een moment dat al voorbij is, en
 probeert dan haar bericht te verwijderen. Gooi ook nu eerst `gastenboek.db`,
 `sessies.db` en `gebruikers.db` weg en start de server opnieuw, net als in
 [les 5](site:fullstack/docs/veiligheid/cookies/uitloggen).
+
+{/* bestand: verlopen.py */}
 
 <CodeUitleg>
 
@@ -144,6 +148,8 @@ Draai het script in een tweede terminal.
 <Gelukt>
 
 Het script print:
+
+{/* draai: verlopen.py */}
 
 ```text
 Cookie nog bij Sara: True

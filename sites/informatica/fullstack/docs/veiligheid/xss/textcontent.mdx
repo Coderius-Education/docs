@@ -27,6 +27,8 @@ http://127.0.0.1:8000/static/gastenboek.html?bericht=<b>vet</b>
 
 <Gelukt>
 
+{/* gelukt-met-de-hand: textContent werkt in de browser, en de server ziet het voorbeeld niet */}
+
 In het voorbeeld staat nu `<b>vet</b>`, met de haakjes erbij, en niets is vet.
 Typ je zelf `<i>hoi</i>` in het berichtveld, dan staat ook dat er als tekst.
 
@@ -121,6 +123,8 @@ zelf ge-escapet, net als `escape` in Python, en toont ze daarom als tekst.
 
 <details>
 <summary>Zo ziet `voorbeeld.js` er nu uit</summary>
+
+{/* bestand: static/js/voorbeeld.js */}
 
 ```js
 const veld = document.querySelector("#bericht");

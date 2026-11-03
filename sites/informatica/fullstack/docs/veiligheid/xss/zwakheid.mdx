@@ -23,6 +23,8 @@ site van een ander om te kijken wat er gebeurt, is een aanval op die site en op
 de bezoekers ervan, en strafbaar.
 :::
 
+{/* weg: gastenboek.db */}
+
 Gooi `gastenboek.db` weg, zodat alleen nieuwe berichten in de lijst staan.
 Start je server en open `http://127.0.0.1:8000/static/gastenboek.html`. Vul als
 naam `Sara` in en als bericht:
@@ -31,7 +33,11 @@ naam `Sara` in en als bericht:
 <b>vet</b>
 ```
 
+{/* verstuur-ook: /gastenboek naam=Sara&bericht=<b>vet</b> */}
+
 <Gelukt>
+
+{/* gelukt-met-de-hand: vetgedrukt zie je alleen in de browser, en het privévenster ook */}
 
 Binnen vijf seconden, als de lijst zich ververst, staat daar **vet**,
 vetgedrukt. Open dezelfde pagina in een privévenster, als een tweede bezoeker:
@@ -44,6 +50,8 @@ ook daar is het vet.
 De browser las wat Sara typte niet als tekst, maar als HTML. Wat de server
 terugstuurt, zie je met een scriptje `lijst.py`, in een tweede terminal:
 
+{/* bestand: lijst.py */}
+
 ```python
 import httpx
 
@@ -52,6 +60,8 @@ print(antwoord.text)
 ```
 
 Uitvoer:
+
+{/* draai: lijst.py */}
 
 ```text
 <ul><li>Sara: <b>vet</b></li></ul>

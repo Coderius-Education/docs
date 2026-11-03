@@ -17,6 +17,8 @@ Start je server uit [les 1](site:fullstack/docs/veiligheid/zichtbaar/startbestan
 elk een bericht plaatsen. Een `Client` onthoudt zijn cookie, zoals in
 [Een bezoeker die onthoudt](site:fullstack/docs/veiligheid/client):
 
+{/* bestand: twee.py */}
+
 ```python
 import httpx
 
@@ -30,7 +32,9 @@ print(alex.get("/ik").json())
 
 Uitvoer:
 
-```
+{/* draai: twee.py */}
+
+```text
 {'naam': 'Sara'}
 {'naam': 'Alex'}
 ```
@@ -42,6 +46,8 @@ daaraan.
 
 Nu ben je een derde bezoeker, zonder cookie, die alleen de handleiding heeft
 gelezen. Maak `sessies.py`:
+
+{/* bestand: sessies.py */}
 
 <CodeUitleg>
 
@@ -69,6 +75,8 @@ Met `cookies` stuur je zelf een cookie mee. Het script stuurt het sessie-id van 
 <Gelukt>
 
 `sessies.py` print elke bezoeker, met andere sessie-id's bij jou:
+
+{/* draai: sessies.py; vrij: ^[0-9a-f]{32} */}
 
 ```text
 ed37173ad83bc8b8d2442ee65e107e22 {'naam': 'Sara'}

@@ -40,18 +40,26 @@ Het template krijgt nu twee dingen mee: de berichten en de welkomsttekst.
 
 En bovenaan `templates/berichten_lijst.html`:
 
+{/* bovenaan: templates/berichten_lijst.html */}
+
 ```html
 <p>{{ welkom|safe }}</p>
 ```
 
+{/* weg: gastenboek.db */}
+
 Sla beide op, gooi `gastenboek.db` weg, open je gastenboek opnieuw en vul als
 Sara weer `<b>vet</b>` in.
+
+{/* verstuur-ook: /gastenboek naam=Sara&bericht=<b>vet</b> */}
 
 <Gelukt>
 
 Boven de lijst staat "**Welkom** in mijn gastenboek", met Welkom vet, en het
 bericht van Sara staat eronder met de haakjes. `lijst.py` uit [les 2](site:fullstack/docs/veiligheid/xss/zwakheid)
 laat zien wat de server stuurt:
+
+{/* draai: lijst.py */}
 
 ```text
 <p><b>Welkom</b> in mijn gastenboek</p>
