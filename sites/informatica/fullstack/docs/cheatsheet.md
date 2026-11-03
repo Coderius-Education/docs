@@ -37,13 +37,16 @@ Meer namen van dezelfde plek komen in één regel, met komma's ertussen:
 | `SqliteDict` | `from sqlitedict import SqliteDict` |
 | `escape` | `from html import escape` |
 
+`Response` zelf staat in `fastapi`; de soorten antwoorden met een woord ervoor,
+zoals `HTMLResponse`, staan in `fastapi.responses`.
+
 ```python
 from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 ```
 
-Staat er een rode of gele kronkel onder een naam in VS Code, zet je cursor erop
-en druk op `Ctrl+.`: VS Code stelt dan vaak de import-regel voor.
+Staat er in VS Code een kronkel onder een naam, zet je cursor erop en druk op
+`Ctrl+.`: vaak stelt VS Code de import-regel dan voor.
 
 </details>
 

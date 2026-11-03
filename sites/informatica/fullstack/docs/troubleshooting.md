@@ -1335,28 +1335,23 @@ from fastapi import FastAPI, Request
 from fastapi import FastAPI, Form, Request
 ```
 
-Een naam die niet in de tabel staat, zoals `time`, `random` of `secrets`, is een
-module van Python zelf: `import time`. Dit zijn alle imports die in de lessen
-voorkomen; neem over wat je gebruikt:
+`Response` zelf staat in `fastapi`; de soorten antwoorden met een woord ervoor,
+zoals `HTMLResponse`, staan in `fastapi.responses`. Wat niet in de tabel staat,
+komt uit Python zelf of is voor een enkele les:
 
 ```python
 import random
 import secrets
 import time
 from datetime import datetime
-from html import escape
 
-from fastapi import Cookie, FastAPI, Form, HTTPException, Request
 from fastapi.exception_handlers import http_exception_handler
-from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from sqlitedict import SqliteDict
 from starlette.exceptions import HTTPException as StarletteHTTPException
 ```
 
-In VS Code zie je het al voor je de server start: een kronkel onder de naam. Zet
-je cursor erop en druk op `Ctrl+.`; VS Code stelt dan vaak de import-regel voor.
+In VS Code zie je een ontbrekende naam al voor je de server start, aan een
+kronkel eronder. Zet je cursor erop en druk op `Ctrl+.`: vaak stelt VS Code de
+import-regel dan voor.
 
 Meer uitleg: [Modules importeren](site:python/docs/modules/09d-modules)
 

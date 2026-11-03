@@ -6,11 +6,12 @@ import { IMPORT_VAN, gebruikt, geimporteerd } from '../checker/imports';
 
 // Leerlingen liepen vast op de imports. De lessen tonen meestal alleen wat
 // erbij komt ("zet onder je andere endpoints"), en een nieuwe naam stond dan
-// in één zin ("Zet `Form` bij je imports") en pas onderaan in het uitklapblok
-// met het hele main.py. Wie de zin miste, kreeg een NameError en een server
-// die niet start. Deze test eist dat elke les die een naam uit de tabel
-// (src/checker/imports.ts) voor het eerst gebruikt, in de hoofdtekst een
-// python-blok heeft met de import-regel waar die naam in staat.
+// in één zin ("Zet `Form` bij je imports") of stil in een bestaande regel van
+// een groot codeblok. Wie hem miste, kreeg een NameError en een server die
+// niet start. Deze test eist dat elke les die een naam voor het eerst
+// importeert, de import-regel aanwijst: in een eigen blok met alleen de
+// import-regel en een zin erboven die de naam of zijn module noemt, of in een
+// <CodeUitleg> met een <Regel> op die import-regel die hem uitlegt.
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 type Item = string | { type: string; label: string; items: Item[] };
@@ -27,8 +28,6 @@ const tekst = (id: string) => {
 const STAND = /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python\n([\s\S]*?)```/;
 const hoofdtekst = (bron: string) =>
   bron.split(/\n## Opdrachten\n/)[0].replace(/<details>[\s\S]*?<\/details>/g, '');
-const blokken = (stuk: string) =>
-  [...stuk.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
 
 // Eén project dat groeit: de FastAPI-route telt door. Veiligheid en Online
 // zetten beginnen per reeks (categorie) met een eigen startbestand.
@@ -55,6 +54,52 @@ const regels = (code: string) =>
     ),
   );
 
+type Blok = { code: string; ervoor: string; uitleg: { van: number; tot: number; tekst: string }[] };
+
+/** De python-blokken van de hoofdtekst, met de alinea's erboven en de uitleg per regel. */
+function blokkenMetContext(stuk: string): Blok[] {
+  const uit: Blok[] = [];
+  const fence = /```python[^\n]*\n([\s\S]*?)```/g;
+  let vorige = 0;
+  for (const m of stuk.matchAll(fence)) {
+    const ervoor = stuk
+      .slice(vorige, m.index)
+      .split(/\n\s*\n/)
+      .map((a) => a.trim())
+      .filter((a) => a && !/^<[A-Z][\w]*[\s\S]*\/>$|^<\/?CodeUitleg>$|^\{\/\*/.test(a))
+      .slice(-2)
+      .join('\n');
+    vorige = (m.index ?? 0) + m[0].length;
+    const open = stuk.lastIndexOf('<CodeUitleg>', m.index);
+    const dicht = stuk.lastIndexOf('</CodeUitleg>', m.index);
+    const uitleg: Blok['uitleg'] = [];
+    if (open > dicht) {
+      const einde = stuk.indexOf('</CodeUitleg>', m.index);
+      for (const r of stuk
+        .slice(vorige, einde)
+        .matchAll(/<Regel n=\{(\d+)\}(?: tot=\{(\d+)\})?>([\s\S]*?)<\/Regel>/g))
+        uitleg.push({ van: Number(r[1]), tot: Number(r[2] ?? r[1]), tekst: r[3] });
+    }
+    uit.push({ code: m[1], ervoor, uitleg });
+  }
+  return uit;
+}
+
+const noemt = (tekst: string, naam: string, module: string) =>
+  [naam, module, module.split('.')[0]].some((w) => tekst.includes(`\`${w}\``));
+
+/** Wijst dit blok de import-regel van `naam` aan, met een zin of een Regel die hem noemt? */
+function wijstAan(blok: Blok, naam: string): boolean {
+  const module = geimporteerd(blok.code).get(naam);
+  if (!module) return false;
+  if (importBlok(blok.code) && noemt(blok.ervoor, naam, module)) return true;
+  const nr =
+    blok.code
+      .split('\n')
+      .findIndex((r) => /^\s*from /.test(r) && new RegExp(`\\b${naam}\\b`).test(r)) + 1;
+  return blok.uitleg.some((u) => u.van <= nr && nr <= u.tot && noemt(u.tekst, naam, module));
+}
+
 describe('de import-regel staat waar hij verandert', () => {
   for (const [sidebar, doorlopend] of [
     ['apiSidebar', true],
@@ -67,47 +112,36 @@ describe('de import-regel staat waar hij verandert', () => {
         const bekend = new Set<string>();
         for (const id of lessen) {
           const bron = tekst(id);
-          const hier = blokken(hoofdtekst(bron));
+          const hier = blokkenMetContext(hoofdtekst(bron));
           const stand = bron.match(STAND)?.[1];
           // De eerste les van een project toont het hele bestand.
           const nieuwProject = bekend.size === 0;
-          const getoond = new Set<string>();
-          // Het blok met de import-regel mag voor of na het eerste gebruik
-          // staan, als het maar in de hoofdtekst van de les staat.
-          const inScript = new Set<string>();
-          for (const code of hier)
-            if (importBlok(code) || nieuwProject || losScript(code))
-              for (const naam of geimporteerd(code).keys()) {
-                getoond.add(naam);
-                if (losScript(code) && !importBlok(code)) inScript.add(naam);
-              }
-          for (const code of hier)
-            for (const naam of gebruikt(code).keys()) {
-              if (bekend.has(naam) || getoond.has(naam)) continue;
-              fout.push(`${id}: ${naam} zonder een blok met alleen de import-regel`);
-              getoond.add(naam);
-            }
-          // Het blok toont de regel zoals hij in de stand van de les staat.
+          // Wat nieuw is: met een stand alles wat die stand nieuw importeert,
+          // zonder stand (de uitbreidingen) elke naam uit de tabel die de
+          // hoofdtekst voor het eerst gebruikt.
+          const nieuw = new Set<string>();
+          if (stand)
+            for (const naam of geimporteerd(stand).keys()) if (!bekend.has(naam)) nieuw.add(naam);
+          for (const blok of hier)
+            for (const naam of gebruikt(blok.code).keys()) if (!bekend.has(naam)) nieuw.add(naam);
+          // Een los script toont zijn eigen imports.
+          for (const blok of hier.filter((b) => losScript(b.code) && !importBlok(b.code)))
+            for (const naam of geimporteerd(blok.code).keys()) nieuw.delete(naam);
+          if (!nieuwProject)
+            for (const naam of nieuw)
+              if (!hier.some((b) => wijstAan(b, naam)))
+                fout.push(`${id}: ${naam} komt erbij zonder dat de les de import-regel aanwijst`);
+          // Een blok met alleen imports toont de regel zoals hij in de stand staat.
           if (stand && !nieuwProject)
-            for (const code of hier.filter(importBlok))
-              for (const [module, regel] of regels(code))
+            for (const blok of hier.filter((b) => importBlok(b.code)))
+              for (const [module, regel] of regels(blok.code))
                 if (regels(stand).has(module) && regels(stand).get(module) !== regel)
                   fout.push(
                     `${id}: "${regel}" is niet de regel uit de stand: "${regels(stand).get(module)}"`,
                   );
-          // En de tekst noemt de nieuwe naam: een naam die stil in een
-          // bestaande regel verschijnt, ziet een leerling niet.
-          const proza = hoofdtekst(bron).replace(/```[\s\S]*?```/g, '');
-          if (!nieuwProject)
-            for (const naam of getoond)
-              if (
-                !bekend.has(naam) &&
-                !inScript.has(naam) &&
-                naam in IMPORT_VAN &&
-                !proza.includes(`\`${naam}\``)
-              )
-                fout.push(`${id}: de tekst noemt \`${naam}\` niet bij de nieuwe import`);
-          for (const naam of getoond) bekend.add(naam);
+          for (const naam of nieuw) bekend.add(naam);
+          for (const blok of hier)
+            for (const naam of geimporteerd(blok.code).keys()) bekend.add(naam);
           if (stand) for (const naam of geimporteerd(stand).keys()) bekend.add(naam);
         }
       }
