@@ -1,0 +1,114 @@
+---
+sidebar_label: Buzzer
+description: Een buzzer maakt geluid; in je code kies je de toonhoogte en het volume.
+---
+
+# Buzzer
+
+Een **buzzer** is een klein onderdeel dat geluid maakt. Vanuit je code kies je hoe hoog de toon is en hoe hard hij klinkt.
+
+## Materiaal
+
+Wat heb je nodig?
+
+1. Arduino Nano RP2040 Connect
+2. Buzzer
+
+![Een zwarte buzzer met twee pinnen](./img/buzzer/doc_buzzer.png)
+
+De buzzer heeft twee pinnen: een **lange** (de plus, met een `+`-teken) en een **korte** (de min, GND).
+
+<details>
+<summary>Controlevraag</summary>
+
+Welke pin van de buzzer gaat naar GND?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+De **korte** pin. De **lange** pin (met het `+`-teken) gaat naar een digitale uitgang van de microcontroller.
+
+</details>
+
+## Aansluiten
+
+![De buzzer met de plus-pin en de min-pin aangewezen](./img/buzzer/doc_buzzer_uitleg.png)
+
+### Pinnen van de buzzer
+
+- **GND** (korte pin): de min
+- **Digital (+)** (lange pin): hier komt het stuursignaal binnen
+
+### Aansluiten op de Nano RP2040 Connect
+
+- **GND** van de buzzer aan een **GND**-pin van het bord
+- **Digital (+)** van de buzzer aan een digitale pin naar keuze, bijvoorbeeld **D6**
+
+<details>
+<summary>Controlevraag</summary>
+
+Mag je de `+`-pin van de buzzer rechtstreeks aan `3.3V` aansluiten?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. De buzzer moet aan een **digitale pin** zitten, zodat je hem vanuit je code aan en uit kunt zetten. Aan `3.3V` zou hij continu aan staan.
+
+</details>
+
+## Code
+
+Met de **leaphymicropython**-bibliotheek kun je in één regel een toon afspelen.
+
+### Voorbeeld
+
+```python
+from leaphymicropython.actuators.buzzer import set_buzzer
+from time import sleep
+
+set_buzzer(6, 128, 440)  # pin D6, half volume, 440 Hz (een A)
+sleep(1)
+set_buzzer(6, 0, 440)    # stil
+```
+
+### Uitleg van `set_buzzer`
+
+```python
+set_buzzer(pin_number, pwm_value, frequency)
+```
+
+- **pin_number**: het pinnummer waar de buzzer op zit (bijvoorbeeld `6` voor `D6`).
+- **pwm_value**: het volume, een getal tussen `0` en `255`. `0` is stil, `255` is keihard.
+- **frequency**: de toonhoogte in Hertz. Lager = lagere toon. Hoger = hogere toon.
+
+<details>
+<summary>Opdracht: piepje van 1 seconde</summary>
+
+Laat de buzzer op pin **D6** precies **1 seconde** een toon van 1000 Hz spelen en daarna stil zijn.
+
+</details>
+
+<details>
+<summary>Tip</summary>
+
+Gebruik `sleep(1)` tussen het aan- en uitzetten van de buzzer. Uitzetten doe je met `set_buzzer(6, 0, 1000)`.
+
+</details>
+
+<details>
+<summary>Oplossing</summary>
+
+```python
+from leaphymicropython.actuators.buzzer import set_buzzer
+from time import sleep
+
+set_buzzer(6, 128, 1000)
+sleep(1)
+set_buzzer(6, 0, 1000)
+```
+
+</details>

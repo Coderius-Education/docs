@@ -1,10 +1,11 @@
 ---
 sidebar_position: 3
 slug: /scherm/materiaal
-hide_title: true
 title: Materiaal
 ---
 
-import Materiaal from '/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-oled-scherm/1_materiaal.md'
+import Materiaal from '@site/docs/onderdelen/_delen/oled-scherm/materiaal.md'
+
+# Materiaal
 
 <Materiaal />

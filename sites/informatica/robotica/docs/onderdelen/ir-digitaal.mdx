@@ -1,0 +1,115 @@
+---
+sidebar_label: Digitale IR-sensor
+description: Een digitale IR-sensor ziet of de ondergrond zwart of wit is en geeft een 0 of een 1, bijvoorbeeld om een lijn te herkennen.
+---
+
+# Digitale IR-sensor
+
+Een **digitale IR-sensor** kijkt of de ondergrond zwart of wit is. Hij stuurt infrarood licht uit en meet hoeveel ervan terugkomt. Wit weerkaatst veel, zwart bijna niets.
+
+## Materiaal
+
+Wat heb je nodig?
+
+1. Arduino Nano RP2040 Connect
+2. Digitale IR-sensor
+
+![Een blauwe IR-sensor met vier pinnen en een blauw potmetertje](./img/ir-digitaal/doc_irsensor.png)
+
+Het potmetertje (klein draaitje) op de sensor stelt de **drempel** tussen zwart en wit in.
+
+<details>
+<summary>Controlevraag</summary>
+
+Wat geeft een digitale IR-sensor terug?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Alleen een **0** of een **1**. Hij heeft al voor je beslist of wat hij ziet zwart of wit is. Wil je het ruwe getal? Gebruik dan een **analoge** IR-sensor (zie [Analoge IR-sensor](site:robotica/docs/onderdelen/ir-analoog)).
+
+</details>
+
+## Aansluiten
+
+![Aansluitschema van de digitale IR-sensor op de Nano RP2040 Connect](./img/ir-digitaal/nano_rp2040_digital_ir_sensor.svg)
+![Pinout van de Arduino Nano RP2040 Connect](/img/pinout_nano_rp2040_connect.png)
+
+Pinnen van de digitale IR-sensor:
+
+- **VCC**: de plus (3,3V)
+- **GND**: de min
+- **DO**: digitale uitgang
+
+Aansluiten op de Nano RP2040 Connect:
+
+- **VCC** aan **3.3V**
+- **GND** aan **GND**
+- **DO** aan een digitale pin naar keuze, bijvoorbeeld **D14**
+
+## Code
+
+```python
+from time import sleep
+from leaphymicropython.sensors.linesensor import read_line_sensor
+
+while True:
+    print(read_line_sensor(14))
+    sleep(1)
+```
+
+In de Shell verschijnt steeds een **0** of een **1**.
+
+## Hoe gebruik je dit bij de RoboCup?
+
+Pak een competitietegel van de RoboCup (welke maakt niet uit):
+
+![Een witte competitietegel met een zwarte lijn](./img/ir-digitaal/image.png)
+
+Houd je IR-sensor boven de tegel. Wanneer geeft `read_line_sensor(14)`:
+
+- de waarde **1**?
+- de waarde **0**?
+
+Met een schroevendraaier kun je het potmetertje op de sensor draaien om de overgang van zwart naar wit nauwkeurig in te stellen.
+
+Voor meer informatie: [Redden Basis](site:robotica/docs/robocup/redden_basis).
+
+<details>
+<summary>Opdracht: lampje volgt de lijn</summary>
+
+Laat het ingebouwde rode lampje branden zodra de sensor **zwart** ziet, en uit gaan boven **wit**.
+
+</details>
+
+<details>
+<summary>Tip</summary>
+
+Bij de ingebouwde RGB-LED is `value(0)` aan en `value(1)` uit. Welke waarde geeft `read_line_sensor(14)` boven zwart?
+
+</details>
+
+<details>
+<summary>Oplossing</summary>
+
+```python
+from time import sleep
+from machine import Pin
+from leaphymicropython.sensors.linesensor import read_line_sensor
+
+led = Pin('LED_RED', Pin.OUT)
+
+while True:
+    waarde = read_line_sensor(14)
+    if waarde == 0:
+        led.value(0)  # AAN boven zwart
+    else:
+        led.value(1)  # UIT boven wit
+    sleep(0.1)
+```
+
+Welke waarde "zwart" is, hangt af van hoe je het potmetertje hebt afgesteld. Test eerst met de eenvoudige print-code hierboven.
+
+</details>
