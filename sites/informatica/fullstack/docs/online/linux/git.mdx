@@ -1,0 +1,72 @@
+---
+sidebar_label: '7. Git in Ubuntu'
+description: Je project gaat naar Ubuntu in WSL. Git in Ubuntu is een andere git dan die op Windows, dus vertel je hem eerst wie je bent.
+---
+
+# Online zetten: git in Ubuntu
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/installeren', label: 'Ubuntu in WSL'}, {site: 'editor', to: '/git/vscode/stap-1-config', label: 'Git vertellen wie je bent'}]} />
+
+Een server draait Linux. Daarom haal je je project nu naar Ubuntu in WSL, en laat je het daar draaien, eerst zonder iets nieuws. Ubuntu heeft een eigen git, los van die op Windows, en die kent jou nog niet.
+
+## Wie ben je?
+
+Open Ubuntu, en vertel git je naam en het e-mailadres van je GitHub-account:
+
+```bash
+git config --global user.name "Sam de Vries"
+git config --global user.email "sam@voorbeeld.nl"
+```
+
+Gebruik je eigen naam en je eigen adres. `--global` betekent: voor elk project van deze gebruiker in Ubuntu. Op Windows deed je dit ooit ook al, maar dat was de git van Windows.
+
+Kijk of het gelukt is:
+
+```bash
+git config --global user.name
+```
+
+<Gelukt>
+
+Git zet je eigen naam neer:
+
+```text
+Sam de Vries
+```
+
+Met `git config --global user.email` zie je je e-mailadres.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je slaat deze stap over. Later maak je in Ubuntu je eerste commit. Wat gebeurt er?">
+  <Keuze uitleg="Ubuntu en Windows hebben elk een eigen git, met een eigen instelling. Weet de git van Ubuntu wat je op Windows instelde?">Het lukt, met de naam die je op Windows instelde</Keuze>
+  <Keuze goed uitleg="De git van Ubuntu kent je naam en adres niet, en weigert de commit tot je ze instelt.">Git weigert de commit, met de vraag wie je bent</Keuze>
+  <Keuze uitleg="Git laat een commit nooit zonder naam door. Iemand moet zeggen wie hem maakte.">Het lukt, zonder naam</Keuze>
+  <Uitleg>
+
+  Elke commit draagt een naam en een e-mailadres. De git van Ubuntu leest die uit zijn eigen instellingen, in je Linux-thuismap. Wat je op Windows instelde, staat op een andere plek, en die ziet hij niet.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Author identity unknown
+
+```text
+Author identity unknown
+
+*** Please tell me who you are.
+```
+
+**Oorzaak:** git in Ubuntu weet nog niet wie je bent. Dit zie je pas bij je eerste commit, in [les 12](site:fullstack/docs/online/linux/pushen).
+
+**Oplossing:** doe de twee regels met `git config --global` van hierboven, en commit opnieuw.
+
+### git: command not found
+
+**Oorzaak:** git staat niet in jouw Ubuntu. Op een gewone installatie van Ubuntu 24.04 in WSL staat hij er wel.
+
+**Oplossing:** installeer hem met `sudo apt install git`, zoals in [Programma's installeren](site:linux/docs/wsl/apt) van de Linux-cursus.
+
+Door naar [les 8: je sleutel op GitHub](site:fullstack/docs/online/linux/sleutel).

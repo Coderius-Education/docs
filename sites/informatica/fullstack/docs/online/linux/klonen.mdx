@@ -1,0 +1,79 @@
+---
+sidebar_label: '9. Je project in Ubuntu'
+description: Kloon je repository met het ssh-adres in je Linux-thuismap, en open hem in VS Code vanuit Ubuntu.
+---
+
+# Online zetten: je project in Ubuntu
+
+<Voorkennis items={[{site: 'editor', to: '/git/pull-clone/stap-3-clone', label: 'Een project klonen'}, {site: 'linux', to: '/docs/terminal/mappen', label: 'Door mappen lopen met cd'}, {site: 'linux', to: '/docs/wsl/windows-en-linux', label: 'Je project in je Linux-thuismap, en code . vanuit Ubuntu'}]} />
+
+Je project staat op GitHub. Nu haal je het naar Ubuntu, zoals de server het straks ook ophaalt: met alleen wat in je repository staat.
+
+## Klonen
+
+Je hebt het ssh-adres van je repository nodig. Je vindt het op GitHub onder de groene knop **Code**, bij **SSH**. Zet je eigen adres op de plek van dat van `sam`:
+
+```bash
+cd ~
+git clone git@github.com:sam/gastenboek.git
+cd gastenboek
+```
+
+`cd ~` brengt je naar je Linux-thuismap. Daar hoort je project, en niet onder `/mnt/c`: in Linux zelf is het sneller, en straks ziet Docker het goed.
+
+## Openen in VS Code
+
+```bash
+code .
+```
+
+De eerste keer installeert VS Code een stukje in Ubuntu; dat duurt even.
+
+<Gelukt>
+
+VS Code opent je project, en linksonder staat **WSL: Ubuntu-24.04**. In de verkenner staan `main.py`, `requirements.txt`, `README.md`, `templates` en `static`. Alles wat je nu verandert, verandert in Ubuntu.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Op Windows staat je project ook nog, met je databases erin. Staan je berichten nu ook in Ubuntu?">
+  <Keuze uitleg="De databases staan in .gitignore. Gaat git clone ze ophalen?">Ja, want git clone haalt het hele project op</Keuze>
+  <Keuze goed uitleg="git clone haalt alleen op wat in de repository staat, en de databases staan er bewust niet in.">Nee, want de databases staan niet in je repository</Keuze>
+  <Keuze uitleg="WSL kan bij de bestanden van Windows, maar git clone haalt alles van GitHub, niet uit je map op Windows.">Ja, want Ubuntu kan bij de bestanden van Windows</Keuze>
+  <Uitleg>
+
+  Je code reist mee, je gegevens niet, net als in [les 6](site:fullstack/docs/online/project/proef). In Ubuntu begint je gastenboek dus leeg. Vanaf nu werk je in deze map. De map op Windows gebruik je niet meer.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Username for 'https://github.com'
+
+Bij `git clone` of later bij `git push` vraagt git om een gebruikersnaam en een wachtwoord, en daarna staat er `Support for password authentication was removed`.
+
+**Oorzaak:** je kloonde met het https-adres. Daarover laat GitHub je in de terminal niet met een wachtwoord inloggen.
+
+**Oplossing:** zet het adres om naar ssh, en probeer het opnieuw:
+
+```bash
+git remote set-url origin git@github.com:sam/gastenboek.git
+```
+
+### destination path 'gastenboek' already exists
+
+```text
+fatal: destination path 'gastenboek' already exists and is not an empty directory.
+```
+
+**Oorzaak:** er staat al een map `gastenboek` in je thuismap, van een eerdere poging.
+
+**Oplossing:** werk in die map verder met `cd gastenboek`, of gooi hem weg met `rm -r gastenboek` als er niets in staat wat je nog nodig hebt, en kloon opnieuw.
+
+### Command 'code' not found
+
+**Oorzaak:** VS Code op Windows weet nog niet dat hij met WSL moet samenwerken.
+
+**Oplossing:** volg [Command 'code' not found](site:linux/docs/wsl/windows-en-linux#command-code-not-found) in de Linux-cursus.
+
+Door naar [les 10: packages in Ubuntu](site:fullstack/docs/online/linux/venv).

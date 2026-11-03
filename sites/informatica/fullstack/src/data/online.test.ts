@@ -242,14 +242,16 @@ describe('links en codeblokken', () => {
   });
 });
 
-describe('vanaf les 5 werk je alleen in WSL', () => {
+describe('vanaf les 7 werk je alleen in Ubuntu', () => {
   // De doorloop van november 2026 vond dat les 5 liet klonen en pushen vanuit
   // Ubuntu zonder git daar klaar te zetten: een verse git weigert de eerste
   // commit (Author identity unknown), en GitHub laat over https niet inloggen
   // met een wachtwoord. Les 7 vroeg daarna te testen met fastapi dev, dat in
   // Ubuntu niet geinstalleerd is.
-  it('les 5 zet git klaar: naam, e-mail, een ssh-sleutel op GitHub, en klonen met ssh', () => {
-    const regels = blokken('online/docker/image', 'bash').join('\n');
+  it('deel 2 zet git klaar: naam, e-mail, een ssh-sleutel op GitHub, en klonen met ssh', () => {
+    const regels = ['online/linux/git', 'online/linux/sleutel', 'online/linux/klonen']
+      .flatMap((id) => blokken(id, 'bash'))
+      .join('\n');
     expect(regels).toContain('git config --global user.name');
     expect(regels).toContain('git config --global user.email');
     expect(regels).toContain('ssh -T git@github.com');
@@ -257,14 +259,12 @@ describe('vanaf les 5 werk je alleen in WSL', () => {
     expect(regels).not.toMatch(/^git clone https:/m);
   });
 
-  it('les 1 speelt op Windows: 127.0.0.1 openen, de firewall vóór de opdrachten, de melding van Windows', () => {
+  it('les 1 speelt op Windows: 127.0.0.1 openen, de firewall vóór het Gelukt-blok, de melding van Windows', () => {
     // De doorloop vond: geen adres om te openen (de terminal toont 0.0.0.0),
     // het firewallvenster pas onder Er gaat iets mis, en de melding van Linux.
-    const tekst = lees('online/project/dev-of-run');
-    const opdrachten = tekst.indexOf('## Opdrachten');
-    expect(tekst.indexOf('Open je site op `http://127.0.0.1:8000`')).toBeGreaterThan(-1);
-    expect(tekst.indexOf('Annuleren')).toBeLessThan(tekst.indexOf('<Voorspel'));
-    expect(tekst.indexOf('Annuleren')).toBeLessThan(opdrachten);
+    const tekst = lees('online/project/run');
+    expect(tekst.indexOf('Open `http://127.0.0.1:8000`')).toBeGreaterThan(-1);
+    expect(tekst.indexOf('Annuleren')).toBeLessThan(tekst.indexOf('<Gelukt>'));
     expect(tekst).toContain('[Errno 10048]');
     expect(tekst).not.toContain('[Errno 98]');
   });
@@ -275,9 +275,8 @@ describe('vanaf les 5 werk je alleen in WSL', () => {
     expect(lees('online/docker/image')).toContain("WARNING: Running pip as the 'root' user");
   });
 
-  it('na les 4 start geen codeblok de site nog met fastapi dev', () => {
+  it('geen codeblok in de route start de site nog met fastapi dev', () => {
     const fout = lessen
-      .slice(lessen.indexOf('online/docker/image'))
       .filter((id) => blokken(id, 'bash').some((b) => /^fastapi dev\b/m.test(b)));
     expect(fout).toEqual([]);
   });
@@ -389,9 +388,14 @@ describe('de server', () => {
     // Eerst stond de sleutel pas in de les na het huren: die hele les kon je
     // met het wachtwoord van sam inloggen, terwijl een 50-cloud-init.conf dat
     // toestond.
-    const huren = lees('online/server/huren');
-    const sleutel = huren.indexOf('PasswordAuthentication no');
-    expect(sleutel).toBeGreaterThan(huren.indexOf('usermod -aG sudo sam'));
+    expect(lees('online/server/sleutel')).toContain('PasswordAuthentication no');
+    expect(lees('online/server/gebruiker')).toContain('usermod -aG sudo sam');
+    expect(lessen.indexOf('online/server/gebruiker')).toBeLessThan(
+      lessen.indexOf('online/server/sleutel'),
+    );
+    expect(lessen.indexOf('online/server/sleutel')).toBeLessThan(
+      lessen.indexOf('online/server/dichtzetten'),
+    );
     expect(lees('online/server/dichtzetten')).not.toContain('PasswordAuthentication');
     expect(lessen.indexOf('online/server/dichtzetten')).toBeLessThan(
       lessen.indexOf('online/server/site'),
@@ -406,9 +410,9 @@ describe('de server', () => {
   });
 
   it('de deploy key komt vóór git clone', () => {
-    const site = lees('online/server/site');
-    expect(site.indexOf('Deploy keys')).toBeGreaterThan(-1);
-    expect(site.indexOf('Deploy keys')).toBeLessThan(site.indexOf('git clone git@github.com'));
+    const ophalen = lees('online/server/ophalen');
+    expect(ophalen.indexOf('Deploy keys')).toBeGreaterThan(-1);
+    expect(ophalen.indexOf('Deploy keys')).toBeLessThan(ophalen.indexOf('git clone git@github.com'));
   });
 
   it('wat alleen op de server staat, gaat mee in de back-up', () => {
@@ -445,16 +449,18 @@ describe('de server', () => {
   it('Docker krijgt een grens aan de logboeken voordat de eerste container op de server start', () => {
     // Zonder grens groeit het logboek van elke container tot de schijf vol is,
     // en local geldt alleen voor containers die Docker daarna maakt.
-    const site = lees('online/server/site');
-    expect(blokken('online/server/site', 'json').join('\n')).toMatch(/"log-driver": "local"/);
-    const grens = site.indexOf('sudo systemctl restart docker');
-    expect(grens).toBeGreaterThan(-1);
-    expect(grens).toBeLessThan(site.indexOf('docker compose up -d'));
-    expect(grens).toBeLessThan(site.indexOf('docker network create'));
+    expect(blokken('online/server/docker', 'json').join('\n')).toMatch(/"log-driver": "local"/);
+    expect(lees('online/server/docker')).toContain('sudo systemctl restart docker');
+    const eersteContainer = lessen.findIndex(
+      (id) =>
+        id.startsWith('online/server/') &&
+        blokken(id, 'bash').some((b) => /^docker (compose up|network create|run)\b/m.test(b)),
+    );
+    expect(lessen.indexOf('online/server/docker')).toBeLessThan(eersteContainer);
   });
 
   it('de healthcheck gebruikt python, want python:3.13-slim heeft geen curl', () => {
-    const yaml = blokken('online/server/nieuwe-versie', 'yaml').join('\n');
+    const yaml = blokken('online/server/healthcheck', 'yaml').join('\n');
     expect(yaml).toContain('healthcheck:');
     expect(yaml).toContain('"CMD", "python", "-c"');
     expect(alleBlokken('yaml').join('\n')).not.toMatch(/healthcheck:[\s\S]*?curl/);
@@ -546,7 +552,7 @@ describe('naslag en diagram van Online zetten', () => {
     expect(fout).toEqual([]);
   });
 
-  it('het diagram van de hele weg staat in les 14, na Traefik op 443', () => {
+  it('het diagram van de hele weg staat in de les over HTTPS, na Traefik op 443', () => {
     const https = lees('online/server/https');
     expect(https).toContain('<VerzoekCyclus variant="online" />');
     expect(https.indexOf('variant="online"')).toBeGreaterThan(https.indexOf('## Traefik op 443'));

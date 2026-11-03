@@ -43,9 +43,9 @@ In WSL toont `ls -A ~/backup-gastenboek` drie dingen: de map `data` met je datab
 </Gelukt>
 
 <Voorspel soort="Controlevraag" vraag="In de back-up zitten je databases, .env en ~/traefik. Waarom zit main.py er niet in?">
-  <Keuze uitleg="main.py is wel belangrijk: zonder draait je site niet. Waar staat hij nog meer?">Omdat main.py niet belangrijk is</Keuze>
-  <Keuze goed uitleg="Je code staat op GitHub, en een nieuwe server haalt hem daar op. De databases, .env en ~/traefik staan alleen op deze server.">Omdat main.py al op GitHub staat</Keuze>
-  <Keuze uitleg="docker compose cp kan elk bestand uit de container kopiëren, ook main.py. Maar is dat nodig?">Omdat docker compose cp geen Python-bestanden kopieert</Keuze>
+  <Keuze uitleg="main.py is wel belangrijk: zonder draait je site niet. Waar staat hij nog meer?">main.py is niet belangrijk</Keuze>
+  <Keuze goed uitleg="Je code staat op GitHub, en een nieuwe server haalt hem daar op. De databases, .env en ~/traefik staan alleen op deze server.">main.py staat al op GitHub</Keuze>
+  <Keuze uitleg="docker compose cp kan elk bestand uit de container kopiëren, ook main.py. Maar is dat nodig?">docker compose cp kopieert geen Python-bestanden</Keuze>
   <Uitleg>
 
   Een back-up bevat wat je niet opnieuw kunt maken. Je code maak je opnieuw met `git clone`, je image met `docker compose up --build`. De berichten van je bezoekers en de instellingen van de server staan nergens anders.

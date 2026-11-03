@@ -1,0 +1,71 @@
+---
+sidebar_label: '8. Je sleutel op GitHub'
+description: GitHub laat je in de terminal niet inloggen met een wachtwoord. Je zet je ssh-sleutel uit Ubuntu op GitHub en controleert met ssh -T dat GitHub je kent.
+---
+
+# Online zetten: je sleutel op GitHub
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'Een sleutelpaar maken met ssh-keygen'}, {site: 'linux', to: '/docs/wsl/github', label: 'Je ssh-sleutel op GitHub'}]} />
+
+Straks haal je je project op en push je vanuit Ubuntu. GitHub laat je in de terminal niet inloggen met een wachtwoord. Je gebruikt een ssh-sleutel, en die zet je nu op GitHub.
+
+## De sleutel op GitHub
+
+Heb je in de Linux-cursus een sleutelpaar gemaakt, dan staat het in `~/.ssh`. Zo niet, maak er dan eerst een zoals in [Inloggen op een andere computer](site:linux/docs/wsl/ssh).
+
+Zet de publieke sleutel op GitHub zoals in [Je sleutel op GitHub](site:linux/docs/wsl/github): de regel uit `~/.ssh/id_ed25519.pub`, onder je profielfoto, **Settings**, **SSH and GPG keys**, **New SSH key**. Nooit `id_ed25519` zelf, zonder `.pub`: dat is je privésleutel.
+
+## Kent GitHub je?
+
+```bash
+ssh -T git@github.com
+```
+
+De eerste keer vraagt ssh of je de vingerafdruk van GitHub vertrouwt; typ `yes`.
+
+<Gelukt>
+
+GitHub groet je met je eigen GitHub-naam:
+
+```text
+Hi sam! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+Dat laatste is goed: je wilde alleen weten of de sleutel werkt.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je zet je publieke sleutel op GitHub. Een klasgenoot krijgt die regel ook te zien. Kan hij nu met jouw naam pushen?">
+  <Keuze uitleg="Met de publieke sleutel kun je controleren, niet inloggen. Wat heb je daar nog meer voor nodig?">Ja, met de publieke sleutel komt hij binnen</Keuze>
+  <Keuze goed uitleg="Inloggen lukt alleen met de privésleutel, en die verlaat jouw Ubuntu nooit.">Nee, daarvoor heeft hij je privésleutel nodig</Keuze>
+  <Keuze uitleg="Je publieke sleutel staat ook op GitHub zelf zichtbaar. Een wachtwoord is hier niet de reden.">Nee, want hij kent je wachtwoord van GitHub niet</Keuze>
+  <Uitleg>
+
+  GitHub stuurt een vraag die alleen te beantwoorden is met de privésleutel. De publieke sleutel mag iedereen zien. Daarom heet hij zo.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### `Permission denied (publickey)`
+
+```text
+git@github.com: Permission denied (publickey).
+```
+
+**Oorzaak:** GitHub kent je sleutel niet. Je zette de publieke sleutel niet op GitHub, of een andere dan die in `~/.ssh/id_ed25519.pub`.
+
+**Oplossing:** vergelijk `cat ~/.ssh/id_ed25519.pub` met de sleutel onder **SSH and GPG keys** op GitHub, en probeer `ssh -T git@github.com` opnieuw.
+
+### Connection timed out
+
+```text
+ssh: connect to host github.com port 22: Connection timed out
+```
+
+**Oorzaak:** het netwerk, bijvoorbeeld dat van school, laat poort 22 niet door.
+
+**Oplossing:** laat ssh poort 443 gebruiken, met de regels uit [Je sleutel op GitHub](site:linux/docs/wsl/github) van de Linux-cursus.
+
+Door naar [les 9: je project in Ubuntu](site:fullstack/docs/online/linux/klonen).
