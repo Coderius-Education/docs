@@ -424,14 +424,14 @@ describe('de server', () => {
     expect(backup).toContain('cp ~/gastenboek/.env ~/backup/');
     expect(backup).toContain('cp -r ~/traefik ~/backup/');
     expect(lees('online/extra/portainer')).toContain('cp -r ~/portainer ~/backup/');
-    const script = blokken('online/extra/nachtelijke-backup', 'bash').join('\n');
+    const script = blokken('online/extra/script', 'bash').join('\n');
     expect(script).toContain('cp ~/gastenboek/.env "$MAP"');
     expect(script).toContain('cp -r ~/traefik "$MAP"');
   });
 
   it('wie een back-up terugzet, geeft de databases terug aan app', () => {
-    // docker compose cp zet bestanden in een container als root. De site
-    // draait als app, leest ze wel en geeft bij schrijven een 500:
+    // docker compose cp zet bestanden in een container met de uid van wie
+    // kopieert, niet als app. De site leest ze wel en geeft bij schrijven een 500:
     // sqlite3.OperationalError: attempt to write a readonly database.
     const fout: string[] = [];
     for (const id of lessen) {
@@ -477,7 +477,7 @@ describe('de server', () => {
   });
 
   it('het back-upscript start de site ook als het kopiëren misgaat', () => {
-    const script = blokken('online/extra/nachtelijke-backup', 'bash').find((b) =>
+    const script = blokken('online/extra/script', 'bash').find((b) =>
       b.includes('docker compose stop'),
     );
     if (!script) throw new Error('geen back-upscript');
@@ -486,6 +486,9 @@ describe('de server', () => {
       script.indexOf('docker compose cp'),
     );
     expect(script).toMatch(/tail -n \+8/);
+    // Een volle schijf liet een half archief staan dat als back-up meetelde.
+    expect(script).toContain('tar -czf "$MAP.tar.gz.tmp"');
+    expect(script).toMatch(/&& mv "\$MAP\.tar\.gz\.tmp" "\$MAP\.tar\.gz"/);
     const cron = blokken('online/extra/nachtelijke-backup', 'text').find((b) =>
       /^\d+ \d+ \* \* \* /.test(b),
     );

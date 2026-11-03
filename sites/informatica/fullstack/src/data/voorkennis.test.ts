@@ -125,12 +125,14 @@ const ZONDER_BLOK: Record<string, string> = {
     'een README en Markdown worden hier zelf uitgelegd; git staat in de les ervoor',
   'online/project/run.mdx': 'fastapi run wordt hier zelf uitgelegd',
   'online/server/bijwerken.mdx': '--pull en docker image prune worden hier zelf uitgelegd',
+  'online/extra/nachtelijke-backup.mdx': 'cron en de crontab worden in de stap zelf uitgelegd',
+  'online/extra/ophalen.mdx': 'scp staat in stap 32 en 37, en tar legt stap 41 zelf uit',
   'online/server/dichtzetten.mdx': 'ufw wordt in de stap zelf uitgelegd',
   'online/server/healthcheck.mdx': 'de healthcheck wordt in de stap zelf uitgelegd',
   'online/server/https.mdx':
     'Traefik en het A-record staan in de lessen ervoor; secure linkt in de tekst naar Cookies afschermen',
   'online/server/site.mdx':
-    'scp en .env linken in de tekst naar de Linux-cursus; Traefik staat in les 20 en 21',
+    '.env linkt in de tekst naar de Linux-cursus; Traefik staat in stap 22, 23 en 32',
   'online/server/terugzetten.mdx': 'docker compose cp en chown worden in de stap zelf uitgelegd',
   'veiligheid/cookies/eigen-project.mdx': 'toepassen van de lessen ervoor op het eigen project',
   'veiligheid/cookies/httponly.mdx': 'bouwt op de les ervoor, in dezelfde map',
@@ -225,8 +227,8 @@ const MET_BLOK = [
   'online/docker/niet-als-root.mdx',
   'online/docker/toegang.mdx',
   'online/docker/voordeur.mdx',
-  'online/extra/nachtelijke-backup.mdx',
   'online/extra/portainer.mdx',
+  'online/extra/script.mdx',
   'online/linux/git.mdx',
   'online/linux/klonen.mdx',
   'online/linux/pushen.mdx',
@@ -244,6 +246,7 @@ const MET_BLOK = [
   'online/server/ophalen.mdx',
   'online/server/sleutel.mdx',
   'online/server/updates.mdx',
+  'online/server/voordeur.mdx',
 ];
 
 function relatievePaden(): string[] {
