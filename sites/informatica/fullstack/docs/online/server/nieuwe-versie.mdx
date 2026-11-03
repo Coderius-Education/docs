@@ -1,6 +1,6 @@
 ---
 sidebar_label: '15. Een nieuwe versie uitrollen'
-description: Een nieuwe versie gaat met git pull en docker compose up --build naar de server. Het volume blijft staan, je maakt er een back-up van, en oude images ruim je op.
+description: Een nieuwe versie gaat met git pull en docker compose up --build naar de server. Een healthcheck laat zien of je site echt antwoordt, en het volume blijft staan.
 ---
 
 # Online zetten: een nieuwe versie uitrollen
@@ -29,11 +29,34 @@ docker compose logs --tail 20
 
 Staat er `Up` bij de status en geen traceback in het logboek, open dan je site.
 
+## Draait hij echt?
+
+`Up` betekent alleen dat het programma in de container draait. Of je site ook antwoordt, weet Docker niet. Een site die bij elk verzoek een 500 geeft, staat ook op `Up`. Met een **healthcheck** vraagt Docker zelf elke dertig seconden je site op. Zet hem in WSL in `compose.yaml`, bij je site, onder `labels`:
+
+```yaml
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/')"]
+      interval: 30s
+      start_period: 30s
+      start_interval: 2s
+```
+
+`test` is het commando dat Docker in de container draait: een regel Python die je homepage opvraagt. Geeft die een fout of geen antwoord, dan is de test mislukt. In het image staat geen `curl`, maar wel Python. `interval` is hoe vaak Docker kijkt, en in de eerste dertig seconden (`start_period`) kijkt hij elke twee seconden (`start_interval`).
+
+Commit en push, en zet de nieuwe versie op de server met de twee stappen. Nu staat er meer bij de status:
+
+```text
+NAME                      STATUS
+gastenboek-gastenboek-1   Up 14 seconds (healthy)
+```
+
+`healthy` betekent: de laatste test lukte. Traefik let erop: een container die nog niet gezond is, krijgt geen bezoekers. Vlak na een nieuwe versie geeft je site daarom twee of drie seconden `404 page not found`, tot de eerste test lukt. In het logboek zie je de test ook, elke dertig seconden een `GET /` van `127.0.0.1`.
+
 ## Werk nooit op de server zelf
 
 Pas je code nooit aan op de server, ook niet "even snel" met nano. De volgende `git pull` weigert dan, of jouw wijziging staat nergens anders en is bij een nieuwe server weg. De server krijgt alleen code die eerst op GitHub stond.
 
-Een paar bestanden horen niet bij je project maar bij de server zelf: `.env` met je domeinnaam, en de map `~/traefik` met de voordeur. Die maak en verander je wel op de server, en ze staan nergens anders. Daarom gaan ze mee in de back-up hieronder.
+Een paar bestanden horen niet bij je project maar bij de server zelf: `.env` met je domeinnaam, en de map `~/traefik` met de voordeur. Die maak en verander je wel op de server, en ze staan nergens anders. Daarom gaan ze mee in de back-up van [les 16](site:fullstack/docs/online/server/backup).
 
 <Voorspel soort="Controlevraag" vraag="Na git pull en docker compose up --build opent een klasgenoot je gastenboek. Zijn de berichten van gisteren er nog?">
   <Keuze uitleg="git pull verandert alleen bestanden die in git staan. Staan de databases in git, of in de container?">Nee, git pull zet alle bestanden terug zoals ze op GitHub staan</Keuze>
@@ -41,59 +64,10 @@ Een paar bestanden horen niet bij je project maar bij de server zelf: `.env` met
   <Keuze uitleg="Compose gooit de oude container weg. Maar stonden de databases in de container?">Nee, want de oude container is weggegooid</Keuze>
   <Uitleg>
 
-  Je code komt uit git en zit in het image, je gegevens staan in het volume ([les 8](site:fullstack/docs/online/docker/volume)). Een nieuwe versie vervangt het image en de container, en komt niet aan het volume. Het betekent ook dat de berichten maar op één plek staan. Daarom de back-up hieronder.
+  Je code komt uit git en zit in het image, je gegevens staan in het volume ([les 8](site:fullstack/docs/online/docker/volume)). Een nieuwe versie vervangt het image en de container, en komt niet aan het volume. Het betekent ook dat de berichten maar op één plek staan. Daarom maak je in de volgende les een back-up.
 
   </Uitleg>
 </Voorspel>
-
-## Een back-up
-
-Het volume is het enige op je server dat je niet opnieuw kunt maken, en de instellingen van de server staan alleen daar. Een kapotte schijf, een `docker compose down -v` of een opgezegde server, en ze zijn weg. Maak er daarom een kopie van, op een andere computer.
-
-Stop je site even, zodat er tijdens het kopiëren niets verandert, en kopieer de map `data` uit de container:
-
-```bash
-cd ~/gastenboek
-docker compose stop
-docker compose cp gastenboek:/app/data ~/backup
-docker compose start
-```
-
-`docker compose cp` kopieert tussen een container en de server, ook als de container gestopt is. `gastenboek:` is de naam van de service uit `compose.yaml`. Zet de instellingen van de server erbij:
-
-```bash
-cp ~/gastenboek/.env ~/backup/
-cp -r ~/traefik ~/backup/
-```
-
-Haal de kopie daarna in WSL naar je laptop met `scp`:
-
-```bash
-scp -r sam@gastenboek.voorbeeld.nl:backup ~/backup-gastenboek
-```
-
-Ging ssh tot nu toe met het IP-adres, dan vraagt hij bij de domeinnaam nog één keer of je de vingerafdruk vertrouwt; het is dezelfde server. Gooi de kopie op de server daarna weg met `rm -r ~/backup`. In `gebruikers.db` staan de wachtwoorden van je bezoekers, als hash; bewaar de back-up dus net zo zorgvuldig als de server zelf.
-
-## Oude images opruimen
-
-Bij elke `--build` blijft het vorige image staan, zonder naam. Na een paar maanden staan er tientallen, van elk honderden megabytes. Kijk hoeveel ruimte Docker gebruikt:
-
-```bash
-docker system df
-```
-
-Bij `Images` staat onder `RECLAIMABLE` wat er weg kan. Gooi de images zonder naam weg:
-
-```bash
-docker image prune
-```
-
-```text
-WARNING! This will remove all dangling images.
-Are you sure you want to continue? [y/N]
-```
-
-Typ `y`. *Dangling* betekent: een image zonder naam, waar geen container meer van draait. Je site en Traefik blijven staan.
 
 ## Er gaat iets mis
 
@@ -132,22 +106,30 @@ docker compose up -d --build
 git checkout main
 ```
 
-### no space left on device
+### unhealthy
 
-**Oorzaak:** de schijf van je server is vol, meestal door oude images.
+`docker compose ps` toont `(unhealthy)`, en Traefik geeft voor je hele site `404 page not found`.
 
-**Oplossing:** kijk met `docker system df` waar de ruimte zit, en ruim op met `docker image prune`. Typ nooit `docker volume prune` of `docker system prune --volumes` op een server: die gooien ook volumes weg waar op dat moment geen container aan hangt.
+**Oorzaak:** de healthcheck mislukt. Je homepage geeft een fout, of je site antwoordt niet op poort 8000. Traefik stuurt geen bezoekers naar een container die niet gezond is.
+
+**Oplossing:** open de homepage in de container zelf, en lees de fout:
+
+```bash
+docker compose exec gastenboek python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/')"
+```
+
+Krijg je een traceback met `HTTP Error 500`, kijk dan in `docker compose logs` welke fout je site gaf. Ga zo nodig terug naar de vorige versie, zoals hierboven.
 
 ## Opdrachten
 
 ### Opdracht 1: Run - Een nieuwe versie
 
-Verander een tekst op je homepage, commit en push, en zet de nieuwe versie op je server. Maak daarna een back-up, en haal hem naar je laptop.
+Zet de healthcheck in je `compose.yaml`, verander een tekst op je homepage, commit en push, en zet de nieuwe versie op je server. Kijk direct na `docker compose up` een paar keer met `docker compose ps`.
 
 <details>
 <summary>Antwoord</summary>
 
-Op je laptop: `git add`, `git commit` en `git push`. Op de server de twee stappen van boven, en daarna de stappen van **Een back-up**. Na de nieuwe versie zie je de nieuwe tekst, met de oude berichten eronder. In `~/backup-gastenboek` op je laptop staan je databases, `.env` en de map `traefik`.
+Op je laptop: `git add`, `git commit` en `git push`. Op de server de twee stappen van boven. Eerst staat er `(health: starting)`, na een paar seconden `(healthy)`. Daarna zie je de nieuwe tekst, met de oude berichten eronder.
 
 </details>
 
@@ -177,6 +159,4 @@ Zonder `set -e` bouwt het script ook als `git pull` faalde. Dat gaat meestal goe
 
 </details>
 
-Je site staat online, in een container die niet als `root` draait, met de berichten in een volume, achter een voordeur met HTTPS, en met alleen de deuren open die hij nodig heeft. Wil je je containers in de browser beheren, dan is er nog een extra les.
-
-Door naar [les 16: beheren met Portainer](site:fullstack/docs/online/extra/portainer).
+Door naar [les 16: een back-up](site:fullstack/docs/online/server/backup).

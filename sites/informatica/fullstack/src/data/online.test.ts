@@ -374,12 +374,77 @@ describe('de server', () => {
   });
 
   it('wat alleen op de server staat, gaat mee in de back-up', () => {
-    // Les 15 zei: werk nooit op de server. Toch maken les 13, 14 en 16 daar
+    // Les 15 zei: werk nooit op de server. Toch maken les 13, 14 en 18 daar
     // .env, ~/traefik en ~/portainer, en die staan nergens in git.
-    const backup = blokken('online/server/nieuwe-versie', 'bash').join('\n');
+    const backup = blokken('online/server/backup', 'bash').join('\n');
     expect(backup).toContain('cp ~/gastenboek/.env ~/backup/');
     expect(backup).toContain('cp -r ~/traefik ~/backup/');
     expect(lees('online/extra/portainer')).toContain('cp -r ~/portainer ~/backup/');
+    const script = blokken('online/extra/nachtelijke-backup', 'bash').join('\n');
+    expect(script).toContain('cp ~/gastenboek/.env "$MAP"');
+    expect(script).toContain('cp -r ~/traefik "$MAP"');
+  });
+
+  it('wie een back-up terugzet, geeft de databases terug aan app', () => {
+    // docker compose cp zet bestanden in een container als root. De site
+    // draait als app, leest ze wel en geeft bij schrijven een 500:
+    // sqlite3.OperationalError: attempt to write a readonly database.
+    const fout: string[] = [];
+    for (const id of lessen) {
+      for (const blok of blokken(id, 'bash')) {
+        const regels = blok.split('\n');
+        const terug = regels.findIndex((r) => /^docker compose cp \S+ gastenboek:/.test(r));
+        if (terug === -1) continue;
+        const chown = regels.findIndex((r) =>
+          r.includes('docker compose exec -u root gastenboek chown -R app /app/data'),
+        );
+        if (chown < terug) fout.push(`${id}: ${regels[terug]}`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('Docker krijgt een grens aan de logboeken voordat de eerste container op de server start', () => {
+    // Zonder grens groeit het logboek van elke container tot de schijf vol is,
+    // en local geldt alleen voor containers die Docker daarna maakt.
+    const site = lees('online/server/site');
+    expect(blokken('online/server/site', 'json').join('\n')).toMatch(/"log-driver": "local"/);
+    const grens = site.indexOf('sudo systemctl restart docker');
+    expect(grens).toBeGreaterThan(-1);
+    expect(grens).toBeLessThan(site.indexOf('docker compose up -d'));
+    expect(grens).toBeLessThan(site.indexOf('docker network create'));
+  });
+
+  it('de healthcheck gebruikt python, want python:3.13-slim heeft geen curl', () => {
+    const yaml = blokken('online/server/nieuwe-versie', 'yaml').join('\n');
+    expect(yaml).toContain('healthcheck:');
+    expect(yaml).toContain('"CMD", "python", "-c"');
+    expect(alleBlokken('yaml').join('\n')).not.toMatch(/healthcheck:[\s\S]*?curl/);
+  });
+
+  it('bijwerken haalt het nieuwste basisimage op', () => {
+    // Zonder --pull bouwt docker build op het Python-image dat al op de
+    // server staat, en unattended-upgrades werkt alleen Ubuntu bij.
+    const bash = blokken('online/server/bijwerken', 'bash').join('\n');
+    expect(bash).toContain('docker compose build --pull');
+    expect(bash).toContain('docker compose pull');
+  });
+
+  it('het back-upscript start de site ook als het kopiëren misgaat', () => {
+    const script = blokken('online/extra/nachtelijke-backup', 'bash').find((b) =>
+      b.includes('docker compose stop'),
+    );
+    if (!script) throw new Error('geen back-upscript');
+    expect(script).not.toMatch(/^set -e/m);
+    expect(script.indexOf('docker compose start')).toBeGreaterThan(
+      script.indexOf('docker compose cp'),
+    );
+    expect(script).toMatch(/tail -n \+8/);
+    const cron = blokken('online/extra/nachtelijke-backup', 'text').find((b) =>
+      /^\d+ \d+ \* \* \* /.test(b),
+    );
+    expect(cron, 'geen regel voor de crontab').toBeDefined();
+    expect(cron).not.toContain('~');
   });
 
   it('Portainer staat alleen op 127.0.0.1 en zonder labels voor Traefik', () => {

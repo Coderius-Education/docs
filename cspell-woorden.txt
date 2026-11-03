@@ -138,6 +138,7 @@ hashalgoritme
 hashfunctie
 hasht
 Hastebin
+healthcheck
 helpuitvoer
 Hergebruikbare
 herlaadknop

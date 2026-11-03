@@ -323,13 +323,15 @@ const sidebars: SidebarsConfig = {
         'online/server/site',
         'online/server/https',
         'online/server/nieuwe-versie',
+        'online/server/backup',
+        'online/server/bijwerken',
       ],
     },
     {
       type: 'category',
-      label: 'Extra: beheren in de browser',
+      label: 'Extra: beheren',
       collapsed: false,
-      items: ['online/extra/portainer'],
+      items: ['online/extra/portainer', 'online/extra/nachtelijke-backup'],
     },
   ],
 };

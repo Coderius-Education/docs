@@ -1,6 +1,6 @@
 ---
 sidebar_label: '13. Je site op de server'
-description: Docker op de server, je project ophalen met een deploy key, Traefik ernaast, en je domeinnaam in een .env. Docker zet een gepubliceerde poort open langs de firewall.
+description: Docker op de server met een grens aan de logboeken, je project ophalen met een deploy key, Traefik ernaast, en je domeinnaam in een .env. Docker zet een gepubliceerde poort open langs de firewall.
 ---
 
 # Online zetten: je site op de server
@@ -21,6 +21,29 @@ exit
 ```
 
 Log opnieuw in met ssh, zodat de groep telt. Op de server zit alleen `sam` in die groep: wie erin zit, is bijna `root`.
+
+## Logboeken met een grens
+
+Docker bewaart alles wat een container print, en je site print een regel voor elke bezoeker. Zonder grens groeit dat logboek maanden door, tot de schijf vol is en je site stopt. Geef Docker een grens voordat je de eerste container start:
+
+```bash
+sudo nano /etc/docker/daemon.json
+```
+
+```json
+{
+  "log-driver": "local"
+}
+```
+
+Start Docker daarna opnieuw, en kijk of hij de instelling kent:
+
+```bash
+sudo systemctl restart docker
+docker info --format '{{.LoggingDriver}}'
+```
+
+Er staat `local`. Die manier van bewaren houdt per container hoogstens vijf bestanden van 20 MB bij, en gooit het oudste weg als ze vol zijn. Hij geldt alleen voor containers die Docker daarna maakt. Daarom doe je het nu, voordat er een container is.
 
 ## Je project ophalen
 
@@ -95,6 +118,23 @@ Daarom heeft je site geen `ports`: alleen Traefik publiceert iets, poort 80 en 4
 </Voorspel>
 
 ## Er gaat iets mis
+
+### Job for docker.service failed
+
+```text
+Job for docker.service failed because the control process exited with error code.
+See "systemctl status docker.service" and "journalctl -xeu docker.service" for details.
+```
+
+**Oorzaak:** er zit een fout in `/etc/docker/daemon.json`, en dan start Docker niet. Met `sudo journalctl -u docker` zie je welke:
+
+```text
+unable to configure the Docker daemon with file /etc/docker/daemon.json: invalid JSON: invalid character '}' looking for beginning of object key string
+```
+
+Hier staat een komma te veel achter de laatste regel. JSON is strenger dan Python: een komma alleen tussen twee regels, en aanhalingstekens altijd dubbel.
+
+**Oplossing:** verbeter het bestand met `sudo nano /etc/docker/daemon.json`, en start Docker opnieuw met `sudo systemctl restart docker`.
 
 ### permission denied while trying to connect to the docker API
 

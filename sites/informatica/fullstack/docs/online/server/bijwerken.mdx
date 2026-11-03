@@ -1,0 +1,103 @@
+---
+sidebar_label: '17. Bijwerken en opruimen'
+description: De images van Python en Traefik bijwerken met --pull, want unattended-upgrades doet dat niet, en oude images opruimen voordat de schijf vol is.
+---
+
+# Online zetten: bijwerken en opruimen
+
+Ubuntu installeert zijn eigen updates vanzelf ([les 12](site:fullstack/docs/online/server/dichtzetten)). Maar je site draait op `python:3.13-slim`, en de voordeur op `traefik:v3`, en die komen van Docker Hub, niet van Ubuntu. Ook daarin worden gaten gevonden en gedicht, en die updates haal jij op.
+
+## De images bijwerken
+
+Doe dit één keer per maand, op de server:
+
+```bash
+cd ~/gastenboek
+docker compose build --pull
+docker compose up -d
+cd ~/traefik
+docker compose pull
+docker compose up -d
+```
+
+- `build --pull` haalt eerst de nieuwste `python:3.13-slim`, en bouwt je image daarop opnieuw.
+- `pull` haalt de nieuwste `traefik:v3`. Traefik bouw je niet zelf, dus daar is geen `build`.
+- `up -d` vervangt een container alleen als zijn image veranderd is. Was er niets nieuws, dan zegt hij `Running` en blijft alles staan.
+
+Je blijft wel op Python 3.13 en op Traefik 3. Een nieuwe hoofdversie kies je zelf, in de Dockerfile en de `compose.yaml`, en die test je eerst op je laptop.
+
+<Voorspel soort="Controlevraag" vraag="Een maand lang zet je elke week een nieuwe versie op de server, met git pull en docker compose up -d --build. Draait je site daarna op de nieuwste python:3.13-slim?">
+  <Keuze uitleg="--build bouwt je image opnieuw. Maar waar haalt Docker de regel FROM python:3.13-slim vandaan als dat image al op de server staat?">Ja, want --build bouwt het hele image opnieuw</Keuze>
+  <Keuze goed uitleg="Zonder --pull gebruikt Docker het Python-image dat al op de server staat, van de allereerste keer.">Nee, want Docker bouwt op het Python-image dat al op de server staat</Keuze>
+  <Keuze uitleg="unattended-upgrades werkt Ubuntu bij, met apt. Het image van Python komt van Docker Hub, niet van apt.">Ja, want de server installeert updates vanzelf</Keuze>
+  <Uitleg>
+
+  Docker haalt een image alleen op als het er nog niet is. Je eerste `python:3.13-slim` blijft dus staan, ook als er al tien nieuwere zijn, tot je `--pull` zegt. Dat is handig, want zo verandert je site niet ongemerkt. Maar het betekent ook dat bijwerken een klus is die je zelf doet.
+
+  </Uitleg>
+</Voorspel>
+
+## Oude images opruimen
+
+Bij elke `--build` en elke `pull` blijft het vorige image staan, zonder naam. Na een paar maanden staan er tientallen, van elk honderden megabytes. Kijk hoeveel ruimte Docker gebruikt:
+
+```bash
+docker system df
+```
+
+Bij `Images` staat onder `RECLAIMABLE` wat er weg kan. Gooi de images zonder naam weg:
+
+```bash
+docker image prune
+```
+
+```text
+WARNING! This will remove all dangling images.
+Are you sure you want to continue? [y/N]
+```
+
+Typ `y`. *Dangling* betekent: een image zonder naam, waar geen container meer van draait. Je site en Traefik blijven staan.
+
+## Er gaat iets mis
+
+### no space left on device
+
+**Oorzaak:** de schijf van je server is vol, meestal door oude images.
+
+**Oplossing:** kijk met `docker system df` waar de ruimte zit, en ruim op met `docker image prune`. Typ nooit `docker volume prune` of `docker system prune --volumes` op een server: die gooien ook volumes weg waar op dat moment geen container aan hangt.
+
+### De site start niet meer na het bijwerken
+
+`docker compose ps` toont `(unhealthy)` of `Restarting`, en je hebt alleen de images bijgewerkt.
+
+**Oorzaak:** in de nieuwe `python:3.13-slim` of in een package is iets veranderd waar je site niet tegen kan. Dat is zeldzaam, maar het kan.
+
+**Oplossing:** lees de fout in `docker compose logs --tail 50`. Terug naar het oude image gaat niet zomaar: `build` gaf de nieuwe zijn naam, en het oude heeft er geen meer. Los het daarom op je laptop op: bouw daar met `docker compose build --pull`, zoek de fout, en zet een fix op de server zoals in [les 15](site:fullstack/docs/online/server/nieuwe-versie).
+
+## Opdrachten
+
+### Opdracht 1: Run - Bijwerken
+
+Werk je images bij, en kijk met `docker compose ps` in `~/gastenboek` en `~/traefik` of alles weer draait.
+
+<details>
+<summary>Antwoord</summary>
+
+Je site staat op `(healthy)` en Traefik op `Up`. Kwam er een nieuw image, dan is de container net opnieuw gemaakt: bij `STATUS` staat een paar seconden.
+
+</details>
+
+### Opdracht 2: Run - Opruimen
+
+Kijk met `docker system df` hoeveel ruimte de images gebruiken, ruim op met `docker image prune`, en kijk opnieuw. Hoeveel ruimte kwam er vrij?
+
+<details>
+<summary>Antwoord</summary>
+
+`docker image prune` eindigt met `Total reclaimed space:` en een getal. Was er nog niets nieuws op Docker Hub en zette je weinig nieuwe versies op de server, dan is dat getal klein of `0B`: er waren geen oude images.
+
+</details>
+
+Je site staat online, in een container die niet als `root` draait, met de berichten in een volume, achter een voordeur met HTTPS, en met alleen de deuren open die hij nodig heeft. Wil je je containers in de browser beheren, of de back-up elke nacht vanzelf laten gebeuren, dan zijn er nog twee extra lessen.
+
+Door naar [les 18: beheren met Portainer](site:fullstack/docs/online/extra/portainer).
