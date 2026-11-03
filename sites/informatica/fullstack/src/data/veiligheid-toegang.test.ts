@@ -111,13 +111,11 @@ describe('Wie mag wat', () => {
     expect(fout).toEqual([]);
   });
 
-  it('Controleer op wat de server weet toont de uitvoer met het stuk van Sara uit les 2', () => {
+  it('Controleer op wat de server weet toont de uitvoer met het stuk van Sara uit les 3', () => {
     // De beloofde uitvoer ging uit van het script zonder opdracht 1 van les 2.
     // Met dat stuk krijgt ook Sara 403: de foute controle blokkeert de eigenaar.
     const tekst = lees('toegang/server-weet.mdx');
-    expect(tekst).toContain(
-      '](site:fullstack/docs/veiligheid/toegang/controle#opdracht-1-run---sara-mag-wel)',
-    );
+    expect(tekst).toContain('](site:fullstack/docs/veiligheid/toegang/controle#test-opnieuw)');
     expect(tekst).toContain('Sara verwijdert haar eigen bericht: 403');
   });
 

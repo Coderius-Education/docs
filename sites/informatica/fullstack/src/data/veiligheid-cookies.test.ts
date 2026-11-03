@@ -14,7 +14,7 @@ import sidebars from '../../sidebars';
 // - De uitlogtest gaf dezelfde uitvoer met en zonder de sessie op de server
 //   weg te gooien. Nu stuurt het script het oude sessie-id zelf mee.
 // - samesite.mdx zei "zet het in je code", maar de standen erna misten het.
-// - Opdracht 1 van les 1 linkte voor SameSite naar de praktijk, en noemde de
+// - Opdracht 1 van les 2 linkte voor SameSite naar de praktijk, en noemde de
 //   Reactieheaders van Chrome "antwoordkoppen".
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
@@ -112,15 +112,15 @@ describe('de reeks Cookies afschermen', () => {
     }
   });
 
-  it('les 1 verwijst voor SameSite naar de les over samesite, en noemt de Reactieheaders', () => {
+  it('les 2 verwijst voor SameSite naar de les over samesite, en noemt de Reactieheaders', () => {
     const tekst = lees('zwakheid');
     expect(tekst).toContain('](site:fullstack/docs/veiligheid/cookies/samesite)');
     expect(tekst).toContain('**Reactieheaders**');
     expect(tekst).not.toContain('antwoordkoppen');
   });
 
-  it('het startbestand heeft Alles wissen uit Wie mag wat, les 4', () => {
-    const code = pythonBlokken(lees('zwakheid')).find((b) => b.includes('app = FastAPI()')) ?? '';
+  it('het startbestand heeft Alles wissen uit Wie mag wat, les 5', () => {
+    const code = pythonBlokken(lees('formulier')).find((b) => b.includes('app = FastAPI()')) ?? '';
     expect(code).toContain('@app.delete("/berichten")');
   });
 

@@ -250,6 +250,7 @@ const sidebars: SidebarsConfig = {
       label: 'Wie mag wat',
       collapsed: true,
       items: [
+        'veiligheid/toegang/gastenboek',
         'veiligheid/toegang/zwakheid',
         'veiligheid/toegang/controle',
         'veiligheid/toegang/server-weet',
@@ -263,6 +264,7 @@ const sidebars: SidebarsConfig = {
       label: 'Cookies afschermen',
       collapsed: true,
       items: [
+        'veiligheid/cookies/formulier',
         'veiligheid/cookies/zwakheid',
         'veiligheid/cookies/httponly',
         'veiligheid/cookies/samesite',
