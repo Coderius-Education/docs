@@ -7,6 +7,8 @@ sidebar_custom_props:
   aansluiting: digitale pin
 ---
 
+import ShieldRijen from '@site/docs/onderdelen/_delen/shield/rijen.md';
+
 # Digitale IR-sensor
 
 Een **digitale IR-sensor** kijkt of de ondergrond zwart of wit is. Hij stuurt infrarood licht uit en meet hoeveel ervan terugkomt. Wit weerkaatst veel, zwart bijna niets.
@@ -15,7 +17,7 @@ Een **digitale IR-sensor** kijkt of de ondergrond zwart of wit is. Hij stuurt in
 
 Wat heb je nodig?
 
-1. Arduino Nano RP2040 Connect
+1. Arduino Nano RP2040 Connect op het **Leaphy Murphy Shield**
 2. Digitale IR-sensor
 
 ![Een blauwe IR-sensor met vier pinnen en een blauw potmetertje](./img/ir-digitaal/doc_irsensor.png)
@@ -38,8 +40,9 @@ Alleen een **0** of een **1**. Hij heeft al voor je beslist of wat hij ziet zwar
 
 ## Aansluiten
 
-![Aansluitschema van de digitale IR-sensor op de Nano RP2040 Connect](./img/ir-digitaal/nano_rp2040_digital_ir_sensor.svg)
-![Overzicht van de pinnen van de Arduino Nano RP2040 Connect](/img/pinout_nano_rp2040_connect.png)
+![Aansluitschema: de digitale IR-sensor op het shield, met DO aan D14, GND aan GND en VCC aan 3V3](@site/static/fritzing/shield_ir_digitaal_bb.png)
+
+<ShieldRijen />
 
 Pinnen van de digitale IR-sensor:
 
@@ -47,11 +50,13 @@ Pinnen van de digitale IR-sensor:
 - **GND**: de min
 - **DO**: digitale uitgang
 
-Aansluiten op de Nano RP2040 Connect:
+Aansluiten op het shield:
 
-- **VCC** aan **3.3V**
-- **GND** aan **GND**
-- **DO** aan een digitale pin naar keuze, bijvoorbeeld **D14**
+- **VCC** aan een **3V3**-pin (middelste rij)
+- **GND** aan een **GND**-pin (buitenste rij)
+- **DO** aan de pin **D14** (binnenste rij). D14 is dezelfde pin als A0, en zit aan de andere kant van de Nano dan D2 tot en met D12.
+
+De pin **AO** gebruik je hier niet; die is voor de [analoge IR-sensor](site:robotica/docs/onderdelen/ir-analoog).
 
 ## Code
 

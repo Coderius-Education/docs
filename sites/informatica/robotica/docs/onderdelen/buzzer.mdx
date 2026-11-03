@@ -7,6 +7,8 @@ sidebar_custom_props:
   aansluiting: digitale pin
 ---
 
+import ShieldRijen from '@site/docs/onderdelen/_delen/shield/rijen.md';
+
 # Buzzer
 
 Een **buzzer** is een klein onderdeel dat geluid maakt. Vanuit je code kies je hoe hoog de toon is en hoe hard hij klinkt.
@@ -15,7 +17,7 @@ Een **buzzer** is een klein onderdeel dat geluid maakt. Vanuit je code kies je h
 
 Wat heb je nodig?
 
-1. Arduino Nano RP2040 Connect
+1. Arduino Nano RP2040 Connect op het **Leaphy Murphy Shield**
 2. Buzzer
 
 ![Een zwarte buzzer met twee pinnen](./img/buzzer/doc_buzzer.png)
@@ -45,10 +47,14 @@ De **korte** pin. De **lange** pin (met het `+`-teken) gaat naar een digitale ui
 - **GND** (korte pin): de min
 - **Digital (+)** (lange pin): hier komt het stuursignaal binnen
 
-### Aansluiten op de Nano RP2040 Connect
+### Aansluiten op het shield
 
-- **GND** van de buzzer aan een **GND**-pin van het bord
-- **Digital (+)** van de buzzer aan een digitale pin naar keuze, bijvoorbeeld **D6**
+![Aansluitschema: de lange pin van de buzzer aan D6 van het shield, de korte pin aan GND](@site/static/fritzing/shield_buzzer_bb.png)
+
+<ShieldRijen />
+
+- **GND** (korte pin) van de buzzer aan een **GND**-pin (buitenste rij)
+- **Digital (+)** (lange pin) van de buzzer aan de pin **D6** (binnenste rij)
 
 <details>
 <summary>Controlevraag</summary>

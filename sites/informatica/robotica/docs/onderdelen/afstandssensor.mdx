@@ -7,6 +7,8 @@ sidebar_custom_props:
   aansluiting: 2 digitale pinnen
 ---
 
+import ShieldRijen from '@site/docs/onderdelen/_delen/shield/rijen.md';
+
 # Afstandssensor
 
 Een **ultrasone afstandssensor** meet hoe ver iets weg is door geluidsgolven te sturen en te kijken hoe lang ze erover doen om terug te komen. Wij gebruiken de **RCWL-1601**.
@@ -15,7 +17,7 @@ Een **ultrasone afstandssensor** meet hoe ver iets weg is door geluidsgolven te 
 
 Wat heb je nodig?
 
-1. Arduino Nano RP2040 Connect
+1. Arduino Nano RP2040 Connect op het **Leaphy Murphy Shield**
 2. Afstandssensor type **RCWL-1601**
 
 ![De afstandssensor RCWL-1601 met twee ronde zilveren ogen en vier pinnen](./img/afstandssensor/RCWL-1601.jpg)
@@ -38,12 +40,17 @@ Via **Trig** stuurt de microcontroller een kort signaaltje. Daardoor zendt de se
 
 ## Aansluiten
 
-![Overzicht van de pinnen van de Arduino Nano RP2040 Connect](/img/pinout_nano_rp2040_connect.png)
+![Aansluitschema: de afstandssensor op het shield, met VCC aan 3V3, Trig aan D7, Echo aan D8 en GND aan GND](@site/static/fritzing/shield_afstandssensor_bb.png)
 
-- **VCC** van de sensor aan **3.3V**
-- **GND** van de sensor aan **GND**
-- **Trig** aan een digitale pin, bijvoorbeeld **D7**
-- **Echo** aan een digitale pin, bijvoorbeeld **D8**
+<ShieldRijen />
+
+- **VCC** van de sensor aan een **3V3**-pin (middelste rij)
+- **GND** van de sensor aan een **GND**-pin (buitenste rij)
+- **Trig** aan de pin **D7** (binnenste rij)
+- **Echo** aan de pin **D8** (binnenste rij)
+
+De draden van Trig en Echo kruisen elkaar: op de sensor zit Trig links van
+Echo, op het shield zit D7 rechts van D8.
 
 Kies voor Trig en Echo een gewone D-pin. D18 en D19 (de pinnen A4 en A5) werken
 niet: in MicroPython lopen die via de wifi-chip, en dat is te traag om de echo
