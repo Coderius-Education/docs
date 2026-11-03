@@ -5,7 +5,7 @@ description: Een Dockerfile beschrijft je image stap voor stap, een .dockerignor
 
 # Online zetten: je site in een image
 
-<Voorkennis items={[{site: 'linux', to: '/docs/terminal/mappen', label: 'Door mappen lopen met cd en ls'}, {site: 'linux', to: '/docs/wsl/windows-en-linux', label: 'Je project in je Linux-thuismap, en code . vanuit Ubuntu'}, {site: 'linux', to: '/docs/terminal/bestanden-lezen', label: 'Een bestand lezen met cat'}, {site: 'linux', to: '/docs/wsl/ssh', label: 'Een sleutelpaar maken met ssh-keygen'}]} />
+<Voorkennis items={[{site: 'linux', to: '/docs/terminal/mappen', label: 'Door mappen lopen met cd en ls'}, {site: 'linux', to: '/docs/wsl/windows-en-linux', label: 'Je project in je Linux-thuismap, en code . vanuit Ubuntu'}, {site: 'linux', to: '/docs/terminal/bestanden-lezen', label: 'Een bestand lezen met cat'}, {site: 'linux', to: '/docs/wsl/github', label: 'Je ssh-sleutel op GitHub'}]} />
 
 Je site moet een image worden. Wat erin moet, schrijf je op in een bestand: de **Dockerfile**. Docker volgt dat recept stap voor stap, en bewaart het resultaat als image.
 
@@ -20,19 +20,13 @@ git config --global user.name "Sam de Vries"
 git config --global user.email "sam@voorbeeld.nl"
 ```
 
-GitHub laat je in de terminal niet inloggen met een wachtwoord. Je gebruikt daarom je ssh-sleutel uit [Inloggen op een andere computer](site:linux/docs/wsl/ssh). Laat de publieke sleutel zien:
-
-```bash
-cat ~/.ssh/id_ed25519.pub
-```
-
-Heb je nog geen sleutel, maak er dan eerst een met `ssh-keygen -t ed25519`, zoals in die les. Kopieer de hele regel, en zet hem op GitHub onder je profielfoto, **Settings**, **SSH and GPG keys**, **New SSH key**. Controleer daarna of GitHub je kent:
+GitHub laat je in de terminal niet inloggen met een wachtwoord. Zet daarom je ssh-sleutel op GitHub, zoals in [Je sleutel op GitHub](site:linux/docs/wsl/github), en controleer of GitHub je kent:
 
 ```bash
 ssh -T git@github.com
 ```
 
-De eerste keer vraagt ssh of je de vingerafdruk van GitHub vertrouwt; typ `yes`. Daarna staat er `Hi sam! You've successfully authenticated, but GitHub does not provide shell access.` Dat laatste is goed: je wilde alleen weten of de sleutel werkt.
+Staat er `Hi sam! You've successfully authenticated`, met je eigen naam, dan werkt het. Heb je nog geen sleutel, maak er dan eerst een zoals in [Inloggen op een andere computer](site:linux/docs/wsl/ssh).
 
 Kloon nu je repository in je Linux-thuismap, met het ssh-adres. Je vindt het op GitHub onder de groene knop **Code**, bij **SSH**. Zet je eigen adres op de plek van dat van `sam`:
 

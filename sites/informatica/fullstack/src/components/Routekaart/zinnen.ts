@@ -57,7 +57,8 @@ export const ZINNEN: Record<string, string> = {
     'Je site draait in Docker op je laptop, niet als root, met de berichten in een volume, achter een voordeur.',
   'Op een echte server':
     'Je site staat op internet, met alleen de deuren open die nodig zijn, HTTPS en een back-up.',
-  'Extra: beheren in de browser': 'Je bekijkt je containers in de browser, via een tunnel.',
+  'Extra: beheren':
+    'Je bekijkt je containers in de browser, en je server maakt elke nacht zelf een back-up.',
 };
 
 // Een mijlpaal staat onder een etappe: hier heb je iets wat werkt.

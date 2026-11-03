@@ -5,7 +5,7 @@ description: Docker Engine in Ubuntu in WSL, met apt, jezelf in de groep docker,
 
 # Online zetten: Docker installeren
 
-<Voorkennis items={[{site: 'linux', to: '/docs/wsl/installeren', label: 'Ubuntu in WSL'}, {site: 'linux', to: '/docs/wsl/apt', label: 'Installeren met sudo apt'}, {site: 'linux', to: '/docs/wsl/diensten', label: 'Een dienst met systemctl'}]} />
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/installeren', label: 'Ubuntu in WSL'}, {site: 'linux', to: '/docs/wsl/apt', label: 'Installeren met sudo apt'}, {site: 'linux', to: '/docs/wsl/diensten', label: 'Een dienst met systemctl'}, {site: 'linux', to: '/docs/wsl/groepen', label: 'Jezelf in een groep zetten met usermod -aG'}, {site: 'linux', to: '/docs/wsl/variabelen', label: 'Variabelen als $USER'}]} />
 
 Op je laptop draait je site met Windows, jouw Python en jouw virtual environment. Een server heeft Linux, een andere Python en geen virtual environment. Elk verschil is een kans dat iets op je laptop werkt en op de server niet.
 
@@ -110,7 +110,7 @@ permission denied while trying to connect to the docker API at unix:///var/run/d
 
 **Oorzaak:** je zit niet in de groep `docker`, of je bent nog niet opnieuw ingelogd sinds `usermod`.
 
-**Oplossing:** typ `groups`. Staat `docker` er niet bij, doe dan de stap van **Jezelf toegang geven** opnieuw, en vergeet `wsl --terminate Ubuntu-24.04` niet. Zet geen `sudo` voor elk `docker`-commando. Het werkt wel, maar wat Docker dan voor jou in je eigen mappen zet, zoals een back-up in [les 15](site:fullstack/docs/online/server/nieuwe-versie), is van `root`, en dan mag je het zelf niet meer weggooien.
+**Oplossing:** typ `groups`. Staat `docker` er niet bij, doe dan de stap van **Jezelf toegang geven** opnieuw, en vergeet `wsl --terminate Ubuntu-24.04` niet. Zet geen `sudo` voor elk `docker`-commando. Het werkt wel, maar wat Docker dan voor jou in je eigen mappen zet, zoals een back-up in [les 16](site:fullstack/docs/online/server/backup), is van `root`, en dan mag je het zelf niet meer weggooien.
 
 ### failed to connect to the docker API
 

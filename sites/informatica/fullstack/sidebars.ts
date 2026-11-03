@@ -170,6 +170,8 @@ const sidebars: SidebarsConfig = {
     'unplugged/template-invullen',
     'unplugged/postbode',
     'unplugged/vertrouw-de-bezoeker',
+    'unplugged/wat-blijft',
+    'unplugged/waar-langs',
   ],
   // Eerst de startpagina (het ene idee, de spelregel, de statuscodes) en het
   // gereedschap (httpx). Dan per zwakheid een categorie met kleine lessen, van
@@ -323,13 +325,15 @@ const sidebars: SidebarsConfig = {
         'online/server/site',
         'online/server/https',
         'online/server/nieuwe-versie',
+        'online/server/backup',
+        'online/server/bijwerken',
       ],
     },
     {
       type: 'category',
-      label: 'Extra: beheren in de browser',
+      label: 'Extra: beheren',
       collapsed: false,
-      items: ['online/extra/portainer'],
+      items: ['online/extra/portainer', 'online/extra/nachtelijke-backup'],
     },
   ],
 };

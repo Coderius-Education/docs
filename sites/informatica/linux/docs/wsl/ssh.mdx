@@ -104,18 +104,6 @@ Je krijgt één regel met de tijd, hoe lang de computer aanstaat en hoe druk hij
 
 </details>
 
-## De ssh-dienst weer uit
-
-Zolang `openssh-server` draait, kan je Ubuntu inlogpogingen ontvangen, ook met een wachtwoord. Op je eigen laptop heb je dat na deze les niet meer nodig. Zet de dienst uit, net als nginx in [6.4](site:linux/docs/wsl/diensten).
-
-Bij ssh zijn het er twee. Op Ubuntu 24.04 wacht `ssh.socket` op poort 22, en pas als er iemand inlogt, start die de dienst `ssh`. Zet je alleen `ssh` uit, dan start de socket hem bij de volgende poging weer. Zet ze daarom allebei uit:
-
-```bash
-sudo systemctl disable --now ssh.socket ssh
-```
-
-Wil je hem later weer gebruiken, zet dan de socket weer aan: `sudo systemctl enable --now ssh.socket`.
-
 ## Er gaat iets mis
 
 ### Connection refused
@@ -155,10 +143,12 @@ Permissions 0755 for '/home/sam/.ssh/id_ed25519' are too open.
 
 **Oorzaak:** ook anderen mogen je privésleutel lezen. ssh weigert hem dan. Dat gebeurt als je de sleutel van Windows hebt gekopieerd.
 
-**Oplossing:** maak hem alleen van jou, met `chmod`. De `600` betekent `rw-------`, in de tekens uit [4.1 Van wie is dit?](site:linux/docs/terminal/rechten): alleen de eigenaar mag lezen en schrijven.
+**Oplossing:** maak hem alleen van jou, met `chmod` uit [6.5](site:linux/docs/wsl/groepen). De `600` betekent `rw-------`, in de tekens uit [4.1 Van wie is dit?](site:linux/docs/terminal/rechten): alleen de eigenaar mag lezen en schrijven.
 
 ```bash
 chmod 600 ~/.ssh/id_ed25519
 ```
 
-Klaar met deze cursus? In de fullstack-cursus zet je je eigen site [online](site:fullstack/docs/online), op een echte Linux-server.
+Laat de ssh-dienst aan: je hebt hem nodig tot en met 7.5.
+
+Door naar [7.3 Je sleutel op GitHub](site:linux/docs/wsl/github).

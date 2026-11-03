@@ -272,7 +272,7 @@ describe("commando's van een echte Linux", () => {
     );
     // chmod zei eerst "gewijzigd (gesimuleerd)" en veranderde niets.
     expect(typ('chmod +x notities.txt')).toBe(
-      'oefenterminal: chmod werkt hier niet, wel op je eigen Linux, vanaf les 7.2.',
+      'oefenterminal: chmod werkt hier niet, wel op je eigen Linux, vanaf les 6.5.',
     );
   });
 

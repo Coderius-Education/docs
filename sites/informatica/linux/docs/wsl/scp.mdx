@@ -1,0 +1,110 @@
+---
+sidebar_position: 9
+---
+
+# 7.4 Bestanden kopiëren met scp
+
+<Voorkennis items={[{to: '/docs/wsl/ssh', label: 'Inloggen met ssh'}, {to: '/docs/terminal/kopieren', label: 'Kopiëren met cp'}]} />
+
+Met `cp` kopieer je op één computer. Met **scp** (*secure copy*) kopieer je van de ene computer naar de andere, over ssh. Je oefent weer op `localhost`, met de ssh-dienst uit [7.2](site:linux/docs/wsl/ssh) aan.
+
+```bash
+echo hoi > notities.txt
+scp notities.txt localhost:kopie.txt
+```
+
+Het lijkt op `cp`: eerst wat je kopieert, dan waar het heen gaat. Nieuw is de computer met een dubbele punt ervoor: `localhost:kopie.txt` betekent het bestand `kopie.txt` in je thuismap op `localhost`. Op een echte server staat er bijvoorbeeld `sam@server.voorbeeld.nl:kopie.txt`.
+
+Andersom haal je iets op, met de server vooraan. De punt is: hier, in deze map:
+
+```bash
+scp localhost:kopie.txt .
+```
+
+## Een hele map
+
+Net als bij `cp` heb je voor een map `-r` nodig:
+
+```bash
+mkdir proef
+echo a > proef/a.txt
+echo b > proef/b.txt
+scp -r proef localhost:kopiemap
+```
+
+## Voorspel
+
+Je typt dit, met een spatie maar zonder dubbele punt:
+
+```bash
+scp notities.txt localhost
+```
+
+Waar komt het bestand terecht?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Er komt geen foutmelding. Kijk met `ls`: er staat een bestand `localhost` in je eigen map. Zonder dubbele punt is `localhost` geen computer maar een bestandsnaam, en doet `scp` hetzelfde als `cp`. Gooi het weg met `rm localhost`.
+
+</details>
+
+## Opdracht 7.4.a: alleen de tekstbestanden
+
+Haal met één `scp` alle bestanden die op `.txt` eindigen uit de map `proef` op `localhost` naar een nieuwe map `hier`.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Een `*` werkt, zoals in [2.4](site:linux/docs/terminal/jokertekens). Maar wie vult hem in: jouw shell, of de andere computer? Zet er aanhalingstekens omheen, dan gaat hij ongewijzigd mee.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+mkdir hier
+scp 'localhost:proef/*.txt' hier/
+ls hier
+```
+
+`a.txt` en `b.txt` staan in `hier`. Zonder aanhalingstekens vult jouw shell de `*` in met bestanden van je eigen computer, als die er zijn, en dan vraagt `scp` iets anders op dan je bedoelde.
+
+</details>
+
+## Er gaat iets mis
+
+### not a regular file
+
+```
+scp: local "proef" is not a regular file
+scp: failed to upload file proef to kopiemap
+```
+
+**Oorzaak:** je kopieert een map zonder `-r`.
+
+**Oplossing:** zet `-r` erbij: `scp -r proef localhost:kopiemap`.
+
+### No such file or directory
+
+```
+scp: bestaatniet.txt: No such file or directory
+```
+
+**Oorzaak:** op de andere computer staat geen bestand met die naam, of niet in je thuismap. Een pad na de dubbele punt begint in je thuismap op die computer.
+
+**Oplossing:** log in met ssh en kijk met `ls` waar het staat.
+
+### Permission denied
+
+```
+scp: dest open "/etc/notities.txt": Permission denied
+scp: failed to upload file notities.txt to /etc/
+```
+
+**Oorzaak:** je mag in die map op de andere computer niet schrijven. `scp` kent geen `sudo`.
+
+**Oplossing:** kopieer naar je thuismap, log in met ssh, en verplaats het daar met `sudo mv`.
+
+Door naar [7.5 Een tunnel met ssh](site:linux/docs/wsl/tunnel).

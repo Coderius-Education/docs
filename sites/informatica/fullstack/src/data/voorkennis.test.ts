@@ -99,6 +99,8 @@ const ZONDER_BLOK: Record<string, string> = {
   'unplugged/vertrouw-de-bezoeker.mdx':
     'hand-out zonder computer; Verder op de site linkt naar de lessen',
   'unplugged/volg-de-naam.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
+  'unplugged/waar-langs.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
+  'unplugged/wat-blijft.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
   'unplugged/welke-route.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
   'unplugged/welke-taal-waar.mdx':
     'hand-out zonder computer; Verder op de site linkt naar de lessen',
@@ -113,6 +115,9 @@ const ZONDER_BLOK: Record<string, string> = {
   'online/docker/container.mdx': 'docker run, -p en -d worden hier zelf uitgelegd',
   'online/docker/volume.mdx': 'een volume wordt hier zelf uitgelegd, en bouwt op de lessen ervoor',
   'online/docker/compose.mdx': 'YAML en docker compose worden hier zelf uitgelegd',
+  'online/server/backup.mdx':
+    'docker compose cp en chown worden hier zelf uitgelegd; scp en ssh staan in de lessen ervoor',
+  'online/server/bijwerken.mdx': '--pull en docker image prune worden hier zelf uitgelegd',
   'online/server/https.mdx':
     'Traefik en het A-record staan in de lessen ervoor; secure linkt in de tekst naar Cookies afschermen',
   'veiligheid/cookies/eigen-project.mdx': 'toepassen van de lessen ervoor op het eigen project',
@@ -214,6 +219,7 @@ const MET_BLOK = [
   'online/server/dichtzetten.mdx',
   'online/server/site.mdx',
   'online/extra/portainer.mdx',
+  'online/extra/nachtelijke-backup.mdx',
 ];
 
 function relatievePaden(): string[] {

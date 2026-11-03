@@ -152,6 +152,8 @@ describe('Er gaat iets mis', () => {
     NameError: "name 'app' (endpoint boven de app) en een ontbrekende import",
     ModuleNotFoundError: 'fastapi bij de eerste server, sqlitedict bij de database',
     '404': 'de favicon-404 is geen fout, een 404 op je eigen pagina wel',
+    OperationalError:
+      'unable to open (de map data ontbreekt) en readonly (een teruggezette back-up is van root)',
   };
 
   it('geen foutnaam of statuscode onder twee koppen', () => {
@@ -166,7 +168,12 @@ describe('Er gaat iets mis', () => {
   });
 
   it('de koppen zijn de categorieën van de sidebar, in dezelfde volgorde', () => {
-    const labels = (sidebars.apiSidebar as unknown as { label: string }[]).map((c) => c.label);
+    // De route Online zetten heeft een eigen sidebar, en één kop onder de
+    // FastAPI-categorieën: de fouten van Docker en de server.
+    const labels = [
+      ...(sidebars.apiSidebar as unknown as { label: string }[]).map((c) => c.label),
+      'Online zetten',
+    ];
     const koppen = [...FOUTEN.matchAll(/^## (.+?)(?: \\?\{#[\w-]+\})?$/gm)].map((m) => m[1]);
     const zonderAlgemeen = koppen.filter((k) => k !== 'Algemeen');
 

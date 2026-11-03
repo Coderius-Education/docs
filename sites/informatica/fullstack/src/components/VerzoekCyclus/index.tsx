@@ -545,6 +545,55 @@ const DOS_STAPPEN: Stap[] = [
   },
 ];
 
+// De route Online zetten: hetzelfde rondje, maar nu over internet. Tussen de
+// telefoon en je code staan twee sloten, de firewall en Traefik; die hebben
+// `controle`. Een poort die Docker publiceert, gaat langs het eerste slot.
+const ONLINE_STAPPEN: Stap[] = [
+  {
+    kant: 'browser',
+    titel: 'Je typt de naam van je site',
+    tekst: 'De telefoon vraagt DNS welk adres erbij hoort: het A-record.',
+    to: '/docs/online/server/huren',
+    les: 'Een server huren en inloggen',
+  },
+  {
+    kant: 'browser',
+    titel: 'Een verzoek naar poort 443',
+    tekst: 'Over internet naar dat adres, versleuteld met https.',
+  },
+  {
+    kant: 'server',
+    titel: 'ufw laat 443 door',
+    tekst: 'Alleen 22, 80 en 443 staan open. Een poort die Docker publiceert, gaat hier langs.',
+    to: '/docs/online/server/dichtzetten',
+    les: 'De deuren dicht',
+    controle: true,
+  },
+  {
+    kant: 'server',
+    titel: 'Traefik kiest de container',
+    tekst:
+      'Op de naam uit Host(…), en alleen een container die healthy is. Anders: 404 page not found.',
+    to: '/docs/online/docker/traefik',
+    les: 'Een voordeur met Traefik',
+    controle: true,
+  },
+  {
+    kant: 'server',
+    titel: 'Je site draait als app',
+    tekst: 'fastapi run op poort 8000, in het netwerk web, met de databases in het volume.',
+    to: '/docs/online/docker/niet-als-root',
+    les: 'Niet als root',
+  },
+  {
+    kant: 'browser',
+    titel: 'Het antwoord komt terug',
+    tekst: 'Via Traefik, met het certificaat van Let’s Encrypt, op je telefoon.',
+    to: '/docs/online/server/https',
+    les: 'Je domein met HTTPS',
+  },
+];
+
 const VARIANTEN = {
   eerste: { stappen: EERSTE_STAPPEN, titel: 'Je eerste verzoek' },
   static: { stappen: STATIC_STAPPEN, titel: 'Eén pagina, drie verzoeken' },
@@ -559,6 +608,7 @@ const VARIANTEN = {
   cookies: { stappen: COOKIES_STAPPEN, titel: 'Waar de controle zit: cookies' },
   wachtwoorden: { stappen: WACHTWOORDEN_STAPPEN, titel: 'Waar de controle zit: wachtwoorden' },
   dos: { stappen: DOS_STAPPEN, titel: 'Waar de controle zit: te veel verzoeken' },
+  online: { stappen: ONLINE_STAPPEN, titel: 'Van je telefoon naar je container' },
 } as const;
 
 export default function VerzoekCyclus({

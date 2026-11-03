@@ -1,0 +1,137 @@
+---
+description: Rechten met kaartjes. Trek een persoon, een bestand en wat hij wil doen, en beslis met de drie rijtjes van ls -l of het mag.
+---
+
+# Mag dit?
+
+<Handout>
+
+Achter elk bestand staan negen tekens, zoals `rw-r--r--`: drie voor de
+eigenaar, drie voor de groep en drie voor alle anderen. Maar welk rijtje geldt
+voor jou? Daar gaan de meeste fouten in zitten. Jullie spelen het na met
+kaartjes.
+
+## Wat je nodig hebt
+
+- Per drietal: het knipblad (de laatste pagina), een schaar en een pen.
+- Ongeveer 25 minuten.
+
+## De regel
+
+Linux kijkt naar één rijtje, en alleen naar dat ene:
+
+1. Ben jij de eigenaar? Dan geldt het eerste rijtje.
+2. Zo niet: zit je in de groep van het bestand? Dan het tweede.
+3. Zo niet: het derde.
+
+`r` is lezen, `w` is schrijven, en een `-` is: mag niet. `root` mag alles.
+
+## Zo werkt het
+
+Knip de kaartjes los: vier personen en zes bestanden. Speel de twaalf
+situaties hieronder. Een van jullie legt de persoon en het bestand neer, de
+ander zegt welk rijtje geldt, en de derde zegt of het mag. Wissel per
+situatie.
+
+<div className="handout-samen">
+
+Gok eerst, voor situatie 9: mag de eigenaar iets wat zijn groep wel mag? ______
+
+</div>
+
+<div className="handout-teltabel">
+
+| | Persoon | Wil | Bestand | Rijtje | Mag het? |
+|:---:|---|---|---|:---:|:---:|
+| 1 | student | lezen | A | | |
+| 2 | student | schrijven | C | | |
+| 3 | student | lezen | B | | |
+| 4 | root | lezen | B | | |
+| 5 | alex | schrijven | D | | |
+| 6 | student | schrijven | D | | |
+| 7 | student | lezen | D | | |
+| 8 | alex | schrijven | E | | |
+| 9 | sam | schrijven | E | | |
+| 10 | sam | lezen | E | | |
+| 11 | alex | lezen | F | | |
+| 12 | sam | lezen | F | | |
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. Bij welke situatie had je het mis, of twijfelden jullie? Welke stap van de
+   regel sloegen jullie over?
+2. In situatie 9 mag de groep `klas` schrijven, en sam zit in `klas`. Waarom
+   mag sam het toch niet?
+3. Sam wil `verslag.txt` toch kunnen veranderen. Wat kan hij zelf doen, zonder
+   `root`?
+4. Waarom is `/etc/shadow` (bestand B) zo streng, en `/etc/hosts` (C) niet?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+| | Persoon | Wil | Bestand | Rijtje | Mag het? |
+|:---:|---|---|---|:---:|:---:|
+| 1 | student | lezen | A | eigenaar: `rw-` | ja |
+| 2 | student | schrijven | C | anderen: `r--` | nee |
+| 3 | student | lezen | B | anderen: `---` | nee |
+| 4 | root | lezen | B | geen: root mag alles | ja |
+| 5 | alex | schrijven | D | groep: `rw-` | ja |
+| 6 | student | schrijven | D | anderen: `r--` | nee |
+| 7 | student | lezen | D | anderen: `r--` | ja |
+| 8 | alex | schrijven | E | groep: `rw-` | ja |
+| 9 | sam | schrijven | E | eigenaar: `r--` | nee |
+| 10 | sam | lezen | E | eigenaar: `r--` | ja |
+| 11 | alex | lezen | F | anderen: `---` | nee |
+| 12 | sam | lezen | F | eigenaar: `rwx` | ja |
+
+Situatie 9 is nagespeeld op Ubuntu 24.04: sam krijgt `Permission denied`, en
+alex, die alleen in de groep zit, mag wel schrijven.
+
+**Bespreek na.** Vraag 2: sam is de eigenaar, dus geldt alleen het eerste
+rijtje, `r--`. Dat hij ook in `klas` zit, telt niet meer: Linux kijkt naar
+één rijtje. Vraag 3: de eigenaar mag de rechten van zijn eigen bestand
+veranderen, met `chmod u+w verslag.txt` (dat leer je in 6.5). Vraag 4: in
+`/etc/shadow` staan de wachtwoorden, als hash. Alleen `root` en de groep
+`shadow` mogen erbij. `/etc/hosts` mag iedereen lezen, want elk programma
+moet weten welke naam bij `127.0.0.1` hoort; veranderen mag alleen `root`.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [4.1 Van wie is dit?](site:linux/docs/terminal/rechten). Bestand A, B en C staan
+  ook in de oefenterminal: kijk ze na met `ls -l`.
+- Een groep maken en rechten geven: [6.5 Groepen](site:linux/docs/wsl/groepen).
+
+</div>
+
+<div className="handout-paginawissel handout-knipblad">
+
+## Knipblad
+
+| Personen |
+|---|
+| student, in de groep: `student` |
+| sam, in de groepen: `sam`, `klas` |
+| alex, in de groepen: `alex`, `klas` |
+| root |
+
+| Bestanden |
+|---|
+| A `-rw-r--r-- student student notities.txt` |
+| B `-rw-r----- root shadow /etc/shadow` |
+| C `-rw-r--r-- root root /etc/hosts` |
+| D `-rw-rw-r-- root klas rooster.txt` |
+| E `-r--rw---- sam klas verslag.txt` |
+| F `-rwx------ sam sam backup.sh` |
+
+</div>
+
+</Handout>

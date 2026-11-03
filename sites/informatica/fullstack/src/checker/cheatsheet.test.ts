@@ -26,7 +26,11 @@ const SUBJECT_PER_KOP: Record<string, string> = {
   Browser: 'browser',
   Mappenstructuur: 'structuur',
   Veiligheid: 'veiligheid',
+  'Online zetten': 'online',
 };
+
+const ONLINE =
+  'hoort bij de route Online zetten: Docker en de server, niet het nagekeken eindproject';
 
 type Item = {
   /** De tekst in <summary>, letterlijk zoals in de cheatsheet. */
@@ -336,6 +340,36 @@ const KOPPELING: Item[] = [
     summary: 'Hoe bewaar ik een wachtwoord veilig? (Argon2)',
     concepten: [],
     geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+  },
+  {
+    summary: 'Hoe maak ik een image van mijn site? (Dockerfile)',
+    concepten: [],
+    geenConcept: ONLINE,
+  },
+  {
+    summary: 'Hoe start en stop ik mijn site? (docker compose)',
+    concepten: [],
+    geenConcept: ONLINE,
+  },
+  {
+    summary: 'Wat blijft er bewaard? (rm, down en een volume)',
+    concepten: [],
+    geenConcept: ONLINE,
+  },
+  {
+    summary: 'Hoe zet ik een nieuwe versie op de server? (git pull en --build)',
+    concepten: [],
+    geenConcept: ONLINE,
+  },
+  {
+    summary: 'Hoe maak ik een back-up? (docker compose cp)',
+    concepten: [],
+    geenConcept: ONLINE,
+  },
+  {
+    summary: 'Hoe werk ik Python en Traefik bij? (--pull)',
+    concepten: [],
+    geenConcept: ONLINE,
   },
 ];
 

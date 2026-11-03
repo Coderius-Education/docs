@@ -1048,3 +1048,101 @@ except VerifyMismatchError:
 Bewaar de hash, nooit het wachtwoord. Vergelijk met `ph.verify` en niet zelf met `==`: elke hash heeft een eigen zout. Bestaat de naam niet, doe dan toch een `verify` tegen een nep-hash, zodat het antwoord even lang duurt. Zie [Wachtwoorden: registreren met Argon2](site:fullstack/docs/veiligheid/wachtwoorden/registreren) en [inloggen met verify](site:fullstack/docs/veiligheid/wachtwoorden/inloggen).
 
 </details>
+
+## Online zetten
+
+<details>
+<summary>Hoe maak ik een image van mijn site? (Dockerfile)</summary>
+
+```dockerfile
+FROM python:3.13-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN python -m pip install -r requirements.txt
+
+COPY . .
+
+RUN useradd --system app && mkdir data && chown app data
+USER app
+
+CMD ["fastapi", "run", "main.py", "--port", "8000"]
+```
+
+Bouwen doe je met `docker build -t gastenboek .`. Zet `.venv`, `__pycache__`, `.git` en `*.db` in `.dockerignore`, en elke database in `data/`. Zie [Online zetten: je site in een image](site:fullstack/docs/online/docker/image) en [niet als root](site:fullstack/docs/online/docker/niet-als-root).
+
+</details>
+
+<details>
+<summary>Hoe start en stop ik mijn site? (docker compose)</summary>
+
+```bash
+docker compose up -d --build
+docker compose ps
+docker compose logs --tail 20
+docker compose stop
+```
+
+`up -d --build` bouwt het image en start de container op de achtergrond. `ps` laat zien wat draait, `logs` wat je site printte. Zie [Online zetten: alles in één bestand](site:fullstack/docs/online/docker/compose).
+
+</details>
+
+<details>
+<summary>Wat blijft er bewaard? (rm, down en een volume)</summary>
+
+| Commando | Container | Wat erin staat | Volume |
+|:---:|:---:|:---:|:---:|
+| `docker compose stop` | blijft | blijft | blijft |
+| `docker rm -f gastenboek` | weg | weg | blijft |
+| `docker compose down` | weg | weg | blijft |
+| een nieuwe versie met `--build` | nieuw | weg | blijft |
+| `docker compose down -v` | weg | weg | weg |
+
+Wat je site in een volume schrijft, overleeft een nieuwe container; de rest niet. Typ `down -v` nooit op een server. Zie [Online zetten: je berichten bewaren](site:fullstack/docs/online/docker/volume).
+
+</details>
+
+<details>
+<summary>Hoe zet ik een nieuwe versie op de server? (git pull en --build)</summary>
+
+```bash
+cd ~/gastenboek
+git pull
+docker compose up -d --build
+```
+
+Verander je code op je laptop, push hem, en haal hem op de server op. Met `docker compose ps` zie je daarna of je site `(healthy)` is. Zie [Online zetten: een nieuwe versie uitrollen](site:fullstack/docs/online/server/nieuwe-versie).
+
+</details>
+
+<details>
+<summary>Hoe maak ik een back-up? (docker compose cp)</summary>
+
+```bash
+mkdir ~/backup
+cd ~/gastenboek
+docker compose stop
+docker compose cp gastenboek:/app/data ~/backup/data
+docker compose start
+```
+
+Zet `.env` en `~/traefik` erbij, en haal de map met `scp -r` naar je laptop. Terugzetten eindigt met `docker compose exec -u root gastenboek chown -R app /app/data`. Zie [Online zetten: een back-up](site:fullstack/docs/online/server/backup).
+
+</details>
+
+<details>
+<summary>Hoe werk ik Python en Traefik bij? (--pull)</summary>
+
+```bash
+cd ~/gastenboek
+docker compose build --pull
+docker compose up -d
+cd ~/traefik
+docker compose pull
+docker compose up -d
+```
+
+Zonder `--pull` bouwt Docker op het Python-image dat al op de server staat. Ruim daarna op met `docker image prune`. Zie [Online zetten: bijwerken en opruimen](site:fullstack/docs/online/server/bijwerken).
+
+</details>

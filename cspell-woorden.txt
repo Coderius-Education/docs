@@ -48,6 +48,7 @@ characterbody
 chatbots
 cheatsheet
 Cheatsheet
+chgrp
 cijferige
 Clonen
 clonen
@@ -138,6 +139,7 @@ hashalgoritme
 hashfunctie
 hasht
 Hastebin
+healthcheck
 helpuitvoer
 Hergebruikbare
 herlaadknop
@@ -432,6 +434,7 @@ uitklapblok
 uitlogknop
 ultrasoonsensor
 Unpaywall
+usermod
 vakstuk
 valregel
 vastgeprogrammeerd
