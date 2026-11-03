@@ -1,0 +1,175 @@
+---
+sidebar_label: Potmeter
+description: Een potmeter is een draaiknop die een getal geeft, zodat je met de hand iets instelt, bijvoorbeeld hoe fel een lampje brandt.
+sidebar_custom_props:
+  kort: Een draaiknop die een getal geeft
+  foto: potmeter/potmeter.png
+  aansluiting: analoge pin
+---
+
+import ShieldRijen from '@site/docs/onderdelen/_delen/shield/rijen.md';
+
+# Potmeter
+
+Een **potmeter** is een draaiknop. Draai je eraan, dan verandert het getal dat de Nano leest: helemaal naar de ene kant bijna 0, helemaal naar de andere kant bijna 65535. Zo stel je met de hand iets in, bijvoorbeeld hoe fel een lampje brandt. In een [joystick](site:robotica/docs/onderdelen/joystick) zitten er twee.
+
+## Materiaal
+
+Wat heb je nodig?
+
+1. Arduino Nano RP2040 Connect op het **Leaphy Murphy Shield**
+2. Draaipotmeter met drie pootjes, bijvoorbeeld van 10 kΩ
+3. Drie jumperdraden
+
+![Een blauwe draaipotmeter met een grijs asje en drie pootjes, genummerd 1, 2 en 3](./img/potmeter/potmeter.png)
+
+Tussen de twee buitenste pootjes zit een weerstand. Het middelste pootje, de **loper**, schuift daarlangs als je draait. Hoe dichter de loper bij het pootje aan de plus komt, hoe hoger het getal.
+
+## Aansluiten
+
+![Aansluitschema: de potmeter onder het shield, met de loper op A0, pootje 3 op 3V3 en pootje 1 op GND, op het rijtje van A0/D14](@site/static/fritzing/shield_potmeter_bb.png)
+
+<ShieldRijen />
+
+- de loper (het middelste pootje) aan de pin **A0** (binnenste rij; op het shield A0/D14)
+- pootje 3 aan **3V3** (middelste rij)
+- pootje 1 aan **GND** (buitenste rij)
+
+Verwissel je pootje 1 en 3, dan werkt de potmeter nog steeds, maar dan draait hij andersom: het getal wordt lager waar het eerst hoger werd. In het schema kruist de zwarte draad de blauwe, want het midden van het rijtje is voor GND.
+
+## Code
+
+### Het getal uitlezen
+
+```python
+from machine import ADC
+from time import sleep
+
+pot = ADC("A0")
+
+while True:
+    print(pot.read_u16())
+    sleep(0.2)
+```
+
+Draai aan de knop. In de Shell gaat het getal van ongeveer **0** naar ongeveer **65535**.
+
+- `ADC("A0")` maakt van A0 een pin die een getal leest in plaats van een 0 of een 1, net als bij de [analoge IR-sensor](site:robotica/docs/onderdelen/ir-analoog).
+- `pot.read_u16()` geeft dat getal: 0 bij 0 volt op de loper, 65535 bij 3,3 volt.
+
+<details>
+<summary>Controlevraag</summary>
+
+Je zet de knop precies halverwege. Welk getal verwacht je ongeveer?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Ongeveer **32768**, de helft van 65535. Precies dat getal zie je bijna nooit: het springt steeds een klein beetje heen en weer, en geen knop staat precies in het midden.
+
+</details>
+
+### Een getal van 0 tot 100
+
+Met een getal tot 65535 werkt het lastig. Dit programma maakt er een percentage van.
+
+```python
+from machine import ADC
+from time import sleep
+
+pot = ADC("A0")
+
+while True:
+    procent = pot.read_u16() * 100 // 65535
+    print(f"{procent} %")
+    sleep(0.2)
+```
+
+`//` deelt en laat weg wat achter de komma komt. Zo krijg je een heel getal, van 0 tot en met 100.
+
+### Een lampje dimmen
+
+Het lampje `LED` op de Nano kan ook half branden, met **PWM**: de pin gaat heel snel aan en uit, zo snel dat je alleen ziet hoe fel het lampje is. Dat ken je van de [buzzer](site:robotica/docs/onderdelen/buzzer).
+
+```python
+from machine import ADC, Pin, PWM
+from time import sleep
+
+pot = ADC("A0")
+lampje = PWM(Pin("LED"))
+lampje.freq(1000)
+
+while True:
+    lampje.duty_u16(pot.read_u16())
+    sleep(0.02)
+```
+
+Draai aan de knop: het lampje wordt feller of zwakker.
+
+- `lampje.freq(1000)` zet het lampje duizend keer per seconde aan en uit.
+- `lampje.duty_u16(...)` zegt hoe lang het lampje per keer aan staat, van 0 (uit) tot 65535 (steeds aan). Dat zijn dezelfde getallen als die van `read_u16()`, dus het getal van de potmeter kan er zo in.
+
+<details>
+<summary>Opdracht: rood boven de helft</summary>
+
+Laat het rode lampje op de Nano branden zodra de knop meer dan halverwege staat, en uit gaan als hij er weer onder komt.
+
+</details>
+
+<details>
+<summary>Tip</summary>
+
+Halverwege is ongeveer 32768. Gebruik `Pin('LED_RED', Pin.OUT)`, en denk eraan dat bij dat lampje `value(0)` aan is en `value(1)` uit.
+
+</details>
+
+<details>
+<summary>Oplossing</summary>
+
+```python
+from machine import ADC, Pin
+from time import sleep
+
+pot = ADC("A0")
+led = Pin('LED_RED', Pin.OUT)
+
+while True:
+    if pot.read_u16() > 32768:
+        led.value(0)  # aan
+    else:
+        led.value(1)  # uit
+    sleep(0.05)
+```
+
+</details>
+
+## Er gaat iets mis
+
+<details>
+<summary>Het getal is steeds 0, of steeds ongeveer 65535</summary>
+
+**Oorzaak:** op A0 zit een buitenste pootje in plaats van de loper. Een buitenste pootje zit vast aan GND of 3V3, dus het getal verandert niet als je draait.
+
+**Oplossing:** zet het middelste pootje op A0, en de twee buitenste op 3V3 en GND.
+
+</details>
+
+<details>
+<summary>Het getal wordt lager als ik naar rechts draai</summary>
+
+**Oorzaak:** pootje 1 en 3 zijn verwisseld. Dat is niet fout: de potmeter draait dan alleen andersom.
+
+**Oplossing:** verwissel de rode en de zwarte draad als je het andersom wilt. Of draai de knop de andere kant op.
+
+</details>
+
+<details>
+<summary>Het getal springt een beetje, ook als ik niet draai</summary>
+
+**Oorzaak:** dat is normaal. De pin meet heel nauwkeurig, en een heel klein beetje ruis is al te zien.
+
+**Oplossing:** werk met een percentage zoals hierboven. Daar valt die ruis bijna helemaal weg.
+
+</details>
