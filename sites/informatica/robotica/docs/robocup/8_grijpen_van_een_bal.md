@@ -11,7 +11,7 @@ Nu je een bal kunt vinden, moet je hem ook nog **oppakken**. Hier komt vrijwel a
 - Hoe ziet je grijper eruit? Een schepje, een tang of een arm?
 - Hoe zorg je dat de **servo** en de **afstandssensor** samenwerken (dichtbij = grijpen)?
 - Welke **soort servo** heb je nodig?
-  - Een **180-graden servo** (gewoon) voor een tangbeweging.
+  - Een **180-graden servo** (een standaard servo) voor een tangbeweging.
   - Een **continu draaiende servo** voor een transportband of rol.
 
 ## Inspiratie

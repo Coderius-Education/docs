@@ -12,7 +12,7 @@ import { describe, expect, it } from 'vitest';
 //   lego_auto/    het opbouwende traject. Vaste leesvolgorde, dus "de eerste
 //                 keer dat een concept nodig is" bestaat hier echt. Elk
 //                 bestand staat hieronder expliciet in een van de lijsten.
-//   docs/         de Bibliotheek: naslag waar je middenin binnenvalt. Zonder
+//   docs/         Onderdelen en RoboCup: naslag waar je middenin binnenvalt. Zonder
 //                 leesvolgorde bestaat er geen eerste keer, dus geen blokken —
 //                 met als enige uitzondering de instap-hoofdstukken, waar de
 //                 code wél regel voor regel wordt opgebouwd (zie CLAUDE.md).
@@ -117,11 +117,7 @@ const LEGO_ZONDER_BLOK_LESSEN = LEGO_ZONDER_BLOK.flatMap((groep) => groep.lessen
 
 // --- Bibliotheek: alleen de instap bouwt code regel voor regel op -----------
 
-const BIBLIOTHEEK_INSTAP = [
-  'docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-ingebouwd-lampje/1_ingebouwd_lampje.md',
-  'docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-ingebouwd-lampje/2_knipperen.md',
-  'docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-lampje/4_code.md',
-];
+const BIBLIOTHEEK_INSTAP = ['docs/onderdelen/ingebouwd-lampje.mdx', 'docs/onderdelen/led.mdx'];
 
 describe('robotica Voorkennis-blokken', () => {
   it('lego_auto: precies de afgesproken delen hebben een blok', () => {

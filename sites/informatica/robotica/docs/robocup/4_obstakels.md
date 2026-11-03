@@ -41,6 +41,6 @@ Twee strategieën:
 <details>
 <summary>Tip: combineer met lijnvolgen</summary>
 
-De truc is om obstakelontwijken en lijnvolgen **in dezelfde loop** te doen. Eerst checken of er een obstakel is, anders gewoon lijn volgen.
+De truc is om obstakelontwijken en lijnvolgen **in dezelfde loop** te doen. Eerst checken of er een obstakel is, anders de lijn volgen.
 
 </details>

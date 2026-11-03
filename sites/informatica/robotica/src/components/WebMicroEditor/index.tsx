@@ -793,8 +793,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           <p>
             Gebruik Google Chrome of Microsoft Edge (versie 89+) om met het board te kunnen praten
             vanuit de browser. Werkt dat niet? Volg dan de Thonny-instructies onder{' '}
-            <Link to="/docs/onderdelen/installatie#editor">Installatie</Link>
-            .
+            <Link to="/docs/onderdelen/installatie#editor">Installatie</Link>.
           </p>
         </div>
       </div>
