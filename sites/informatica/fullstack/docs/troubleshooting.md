@@ -199,7 +199,7 @@ NameError: name 'HTMLResponse' is not defined
 
 **Oorzaak:** je sloeg `main.py` op met een fout erin. `fastapi dev` probeert opnieuw te starten, loopt op de fout vast en wacht tot je weer opslaat. De poort blijft bezet, dus de browser krijgt verbinding maar nooit een antwoord.
 
-**Oplossing:** lees de onderste regel in de terminal, los de fout op en sla op. De server start dan vanzelf, en na het herladen verschijnt je pagina. Een `NameError` op een naam als `HTMLResponse` of `FileResponse` betekent meestal dat de import ontbreekt:
+**Oplossing:** lees de onderste regel in de terminal, los de fout op en sla op. De server start dan vanzelf, en na het herladen verschijnt je pagina. Een `NameError` op een naam als `HTMLResponse` of `FileResponse` betekent meestal dat de import ontbreekt. In welke regel een naam hoort, staat bij `NameError: name '...' is not defined` onder [Algemeen](#algemeen):
 
 ```python
 # FOUT
@@ -1314,23 +1314,44 @@ async def toon_formulier():
 async def toon_formulier(request: Request):
 ```
 
-Ontbreekt er een import, zet die dan bovenaan. Dit zijn alle imports die in deze cursus voorkomen; neem over wat je gebruikt:
+Ontbreekt er een import, zoek de naam dan op in deze tabel en zet hem in de
+regel die erbij hoort. Staat die regel er al, dan komt de naam erbij, met een
+komma:
+
+| Naam | Regel bovenaan je bestand |
+|---|---|
+| `FastAPI`, `Form`, `Request`, `Response`, `HTTPException`, `Cookie` | `from fastapi import …` |
+| `HTMLResponse`, `FileResponse`, `RedirectResponse`, `JSONResponse` | `from fastapi.responses import …` |
+| `StaticFiles` | `from fastapi.staticfiles import StaticFiles` |
+| `Jinja2Templates` | `from fastapi.templating import Jinja2Templates` |
+| `SqliteDict` | `from sqlitedict import SqliteDict` |
+| `escape` | `from html import escape` |
+
+```python
+# FOUT - Form wordt gebruikt, maar staat niet in de import
+from fastapi import FastAPI, Request
+
+# GOED
+from fastapi import FastAPI, Form, Request
+```
+
+`Response` zelf staat in `fastapi`; de soorten antwoorden met een woord ervoor,
+zoals `HTMLResponse`, staan in `fastapi.responses`. Wat niet in de tabel staat,
+komt uit Python zelf of is voor een enkele les:
 
 ```python
 import random
 import secrets
 import time
 from datetime import datetime
-from html import escape
 
-from fastapi import Cookie, FastAPI, Form, HTTPException, Request
 from fastapi.exception_handlers import http_exception_handler
-from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from sqlitedict import SqliteDict
 from starlette.exceptions import HTTPException as StarletteHTTPException
 ```
+
+In VS Code zie je een ontbrekende naam al voor je de server start, aan een
+kronkel eronder. Zet je cursor erop en druk op `Ctrl+.`: vaak stelt VS Code de
+import-regel dan voor.
 
 Meer uitleg: [Modules importeren](site:python/docs/modules/09d-modules)
 

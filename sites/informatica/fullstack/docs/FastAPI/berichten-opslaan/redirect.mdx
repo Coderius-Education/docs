@@ -4,12 +4,14 @@ Je gastenboek werkt, maar na het versturen van een bericht sta je op een doodlop
 
 ## RedirectResponse
 
-Met `RedirectResponse` stuur je de browser door naar een andere URL. Zet hem bij je imports:
+Met `RedirectResponse` stuur je de browser door naar een andere URL. Hij komt
+uit `fastapi.responses`, net als `FileResponse` en `HTMLResponse`. Zet hem
+daarom in die regel bovenaan je `main.py`:
 
 <Bestand pad="main.py" />
 
 ```python
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 ```
 
 Vervang dan je POST-endpoint `/gastenboek` uit [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel). Alleen de laatste regel verandert:

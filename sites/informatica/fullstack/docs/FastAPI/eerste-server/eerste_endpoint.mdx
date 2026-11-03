@@ -84,6 +84,11 @@ Ga naar [http://127.0.0.1:8000/info](http://127.0.0.1:8000/info) om dit te teste
 
 :::danger[Gaat er iets mis?]
 Start je server niet, met `NameError: name 'app' is not defined`? Dan staat je endpoint bóven de regel `app = FastAPI()`. Python leest van boven naar beneden. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+
+VS Code ziet zo'n fout vaak al voordat je de server start. Onder een naam die
+Python niet kent, zet hij een kronkel, en in het tabblad **Problems**
+(Problemen) onderaan staat wat er mis is. Ga met je muis op de kronkel staan om
+de uitleg te lezen.
 :::
 
 <details>

@@ -50,6 +50,12 @@ const KOPPELING: Item[] = [
   // --- FastAPI ---
   { summary: 'Hoe maak ik een FastAPI-app? (FastAPI)', concepten: ['fastapi-app'] },
   {
+    summary: 'Waar haal ik een naam vandaan? (import)',
+    concepten: [],
+    geenConcept:
+      'naslag voor de import-regels; een ontbrekende import meldt de samenhang-controle (src/checker/imports.ts)',
+  },
+  {
     summary: 'Hoe start ik mijn server? (fastapi dev)',
     concepten: [],
     geenConcept: 'een terminalcommando, dat staat niet in de ingeleverde code',

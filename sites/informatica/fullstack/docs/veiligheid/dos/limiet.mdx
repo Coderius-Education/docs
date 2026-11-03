@@ -49,6 +49,11 @@ async def root(request: Request):
     return {"bericht": "Hallo wereld!"}
 ```
 
+<Regel n={1} tot={4}>
+`Request` komt erbij in de regel uit `fastapi`, want de limiet moet het verzoek
+zien. De andere drie regels komen van `slowapi`.
+</Regel>
+
 <Regel n={6}>
 De `Limiter` telt de verzoeken. `get_remote_address` zegt: tel per computer, aan de hand van zijn adres. Voor jouw script is dat `127.0.0.1`.
 </Regel>

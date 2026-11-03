@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { alleLesbestanden } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 import sidebars from '../../sidebars';
+import { IMPORT_VAN } from '../checker/imports';
 
 // Wat een leerling in de lessen leest, moet hij terugvinden op de plek waar
 // hij gaat zoeken: in de navbar, in zijn eigen browser en in zijn terminal.
@@ -217,15 +218,18 @@ describe('Er gaat iets mis', () => {
     // "Zet `import time` bovenaan": ook een import in de lopende tekst telt.
     for (const m of lesTekst.matchAll(/`(?:from [\w.]+ )?import (\w+)`/g)) inLessen.add(m[1]);
 
+    // De namen uit de tabel (IMPORT_VAN, imports.test.ts eist dat de tabel
+    // daar gelijk aan is) en daaronder een korte lijst met de rest.
     const lijst = codeblokken(FOUTEN).find(
-      (c) => c.includes('from sqlitedict import SqliteDict') && c.includes('import time'),
+      (c) => c.includes('import time') && c.includes('from datetime import datetime'),
     );
-    expect(lijst, 'importlijst met sqlitedict en time').toBeDefined();
-    const inLijst = new Set(
-      [...(lijst as string).matchAll(/import ([\w, ]+)$/gm)].flatMap((m) =>
+    expect(lijst, 'importlijst met time en datetime').toBeDefined();
+    const inLijst = new Set([
+      ...Object.keys(IMPORT_VAN),
+      ...[...(lijst as string).matchAll(/import ([\w, ]+)$/gm)].flatMap((m) =>
         m[1].split(',').map((n) => n.trim()),
       ),
-    );
+    ]);
     expect([...inLessen].filter((n) => !inLijst.has(n)).sort()).toEqual([]);
   });
 

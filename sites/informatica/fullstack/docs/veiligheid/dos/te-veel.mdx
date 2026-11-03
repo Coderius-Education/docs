@@ -39,7 +39,9 @@ er niet bij.
 
 `slowapi` kan bij elk antwoord een paar **headers** meesturen: regels boven het
 antwoord, die je in het tabblad Netwerk van je browser ook ziet. Zet ze aan met
-`headers_enabled=True`:
+`headers_enabled=True`. De headers zet `slowapi` op het antwoord, en daarvoor
+krijgt je endpoint `response: Response` mee. Regel 1 laat zien waar `Response`
+bij komt:
 
 <CodeUitleg>
 
@@ -62,7 +64,7 @@ async def root(request: Request, response: Response):
 ```
 
 <Regel n={1}>
-`Response` komt erbij in de import.
+`Response` komt uit `fastapi`, net als `Request`, en komt daarom in deze regel erbij.
 </Regel>
 
 <Regel n={6}>

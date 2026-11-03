@@ -59,6 +59,7 @@ UITLEG = {
     "html-tonen": "docs/FastAPI/paginas/html_tonen#een-html-pagina-tonen",
     "fileresponse": "docs/FastAPI/paginas/html_bestanden#fileresponse-gebruiken",
     "paginas": "docs/troubleshooting#losse-paginas-en-routes",
+    "imports": "docs/troubleshooting#algemeen",
     "a-tag": "docs/FastAPI/paginas/links#de-a-tag",
     "dier": "docs/FastAPI/veel-paginas/path-parameters#de-tekst-opzoeken",
     "dier-fout": "docs/FastAPI/veel-paginas/path-parameters#er-gaat-iets-mis",
@@ -1866,6 +1867,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Je server is niet bereikbaar op {server.adres} ({e}).")
         print("Start je server met fastapi dev main.py in de terminal van VS Code, en draai dit script")
         print("in een tweede terminal: klik op het plusje (+) rechtsboven in het terminalpaneel.")
+        print()
+        print("Start hij niet, of stopt hij meteen? Lees de onderste regel in de terminal van je server.")
+        print("Staat daar NameError: name '...' is not defined, dan mist er meestal een import bovenaan")
+        print("main.py. In welke regel een naam hoort, staat hier: " + link("imports"))
         return 2
 
     if c.achteraf:

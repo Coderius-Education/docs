@@ -23,6 +23,34 @@ Dit staat één keer in je bestand, direct na de imports, en alle endpoints kome
 </details>
 
 <details>
+<summary>Waar haal ik een naam vandaan? (import)</summary>
+
+Elke naam die je niet zelf maakt, zet je bovenaan je bestand met een import.
+Meer namen van dezelfde plek komen in één regel, met komma's ertussen:
+
+| Naam | Regel bovenaan je bestand |
+|---|---|
+| `FastAPI`, `Form`, `Request`, `Response`, `HTTPException`, `Cookie` | `from fastapi import …` |
+| `HTMLResponse`, `FileResponse`, `RedirectResponse`, `JSONResponse` | `from fastapi.responses import …` |
+| `StaticFiles` | `from fastapi.staticfiles import StaticFiles` |
+| `Jinja2Templates` | `from fastapi.templating import Jinja2Templates` |
+| `SqliteDict` | `from sqlitedict import SqliteDict` |
+| `escape` | `from html import escape` |
+
+`Response` zelf staat in `fastapi`; de soorten antwoorden met een woord ervoor,
+zoals `HTMLResponse`, staan in `fastapi.responses`.
+
+```python
+from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+```
+
+Staat er in VS Code een kronkel onder een naam, zet je cursor erop en druk op
+`Ctrl+.`: vaak stelt VS Code de import-regel dan voor.
+
+</details>
+
+<details>
 <summary>Hoe start ik mijn server? (fastapi dev)</summary>
 
 ```bash

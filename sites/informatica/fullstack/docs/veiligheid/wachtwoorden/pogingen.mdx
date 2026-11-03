@@ -39,6 +39,10 @@ from slowapi.util import get_remote_address
 limiter = Limiter(key_func=get_remote_address)
 ```
 
+<Regel n={2} tot={4}>
+De drie regels van `slowapi`, dezelfde als in Een limiet met slowapi.
+</Regel>
+
 <Regel n={6}>
 Tel per computer, aan de hand van zijn adres. Zonder `headers_enabled` hoeft een endpoint geen `response: Response` te hebben.
 </Regel>
