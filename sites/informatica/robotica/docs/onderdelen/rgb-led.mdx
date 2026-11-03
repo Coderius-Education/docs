@@ -7,6 +7,8 @@ sidebar_custom_props:
   aansluiting: 3 PWM-pinnen
 ---
 
+import ShieldRijen from '@site/docs/onderdelen/_delen/shield/rijen.md';
+
 # RGB-LED
 
 Een **RGB-LED** is een lampje dat in elke kleur kan branden. Hij heeft drie kanalen: rood (R), groen (G) en blauw (B). Door die te mengen krijg je alle kleuren.
@@ -15,7 +17,7 @@ Een **RGB-LED** is een lampje dat in elke kleur kan branden. Hij heeft drie kana
 
 Wat heb je nodig?
 
-1. Arduino Nano RP2040 Connect
+1. Arduino Nano RP2040 Connect op het **Leaphy Murphy Shield**
 2. RGB-LED-module
 
 ![Tekening van een RGB-LED-module: een printje met een LED en vier pinnen, gemerkt min, R, G en B](./img/rgb-led/rgb-led-module.svg)
@@ -45,19 +47,26 @@ Hoeveel pinnen heeft deze RGB-LED-module nodig op de microcontroller?
 - **G**: groen kanaal
 - **B**: blauw kanaal
 
-### Aansluiten op de Nano RP2040 Connect
+### Aansluiten op het shield
 
-- **Min** van de LED aan een **GND**-pin
-- **R** aan een digitale pin met PWM, bijvoorbeeld **D9**
-- **G** aan een digitale pin met PWM, bijvoorbeeld **D10**
-- **B** aan een digitale pin met PWM, bijvoorbeeld **D12**
+![Aansluitschema: de RGB-LED-module op het shield, met de min aan GND, R aan D10, G aan D9 en B aan D6](@site/static/fritzing/shield_rgb_led_bb.png)
+
+<ShieldRijen />
+
+- **R** op het rijtje van **D10**: R op de binnenste rij, de **min** op de buitenste rij (GND)
+- **G** met een losse draad aan de pin **D9** (binnenste rij)
+- **B** met een losse draad aan de pin **D6** (binnenste rij)
+
+Die drie pinnen hebben PWM (op het shield staat er een `~` bij). In deze
+volgorde loopt geen draad over een andere: op de module zit R links, op het
+shield zit D10 links van D9 en D6.
 
 <details>
 <summary>Let op</summary>
 
 Pinnen **D2**, **D3**, **D4** en **D11** zijn bezet zodra je het **motor shield** gebruikt.
 
-Daarom zit blauw in dit voorbeeld op pin 12, en niet op de bezette 11.
+Daarom gebruikt dit voorbeeld D10, D9 en D6, en niet de bezette D11.
 
 </details>
 
@@ -85,7 +94,7 @@ Met de leaphymicropython-bibliotheek heb je één klasse: **`RGBLed`**.
 from time import sleep
 from leaphymicropython.actuators.rgbled import RGBLed
 
-led = RGBLed("D9", "D10", "D12")
+led = RGBLed("D10", "D9", "D6")
 
 while True:
     led.set_color(255, 0, 0)  # rood
@@ -97,10 +106,10 @@ while True:
 ### Uitleg
 
 ```python
-led = RGBLed("D9", "D10", "D12")
+led = RGBLed("D10", "D9", "D6")
 ```
 
-Dit zijn de pinnen voor **rood, groen, blauw**: hier `D9`, `D10` en `D12`. Schrijf de namen tussen aanhalingstekens. Een kaal getal als `9` betekent voor MicroPython iets anders: het nummer van een aansluiting op de chip (GPIO9), en die zit niet op de pinnen van het bord.
+Dit zijn de pinnen voor **rood, groen, blauw**: hier `D10`, `D9` en `D6`. Schrijf de namen tussen aanhalingstekens. Een kaal getal als `9` betekent voor MicroPython iets anders: het nummer van een aansluiting op de chip (GPIO9), en die zit niet op de pinnen van het bord.
 
 ```python
 led.set_color(red, green, blue)
@@ -129,7 +138,7 @@ Laat de LED achter elkaar rood, geel, groen, cyaan, blauw en paars laten zien, e
 from time import sleep
 from leaphymicropython.actuators.rgbled import RGBLed
 
-led = RGBLed("D9", "D10", "D12")
+led = RGBLed("D10", "D9", "D6")
 
 kleuren = [
     (255, 0, 0),    # rood

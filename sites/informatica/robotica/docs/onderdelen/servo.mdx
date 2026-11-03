@@ -7,6 +7,8 @@ sidebar_custom_props:
   aansluiting: digitale pin
 ---
 
+import ShieldRijen from '@site/docs/onderdelen/_delen/shield/rijen.md';
+
 # Servo
 
 Een **servo-motor** kan naar een precieze hoek draaien (tussen 0 en 180 graden). Handig voor een grijper, een wijzer of een sweepende sensor.
@@ -15,7 +17,7 @@ Een **servo-motor** kan naar een precieze hoek draaien (tussen 0 en 180 graden).
 
 Wat heb je nodig?
 
-1. Arduino Nano RP2040 Connect
+1. Arduino Nano RP2040 Connect op het **Leaphy Murphy Shield**
 2. Servo-motor (180-graden)
 
 ![Een kleine servo-motor (MG90) met een bruine, rode en oranje kabel](./img/servo/doc_servomotor.png)
@@ -42,12 +44,15 @@ De **rode** kabel. De bruine/zwarte kabel gaat naar `GND` en de oranje/gele kabe
 
 ## Aansluiten
 
-![Aansluitschema van de servo op de Nano RP2040 Connect](./img/servo/nano_rp2040_servo.svg)
-![Overzicht van de pinnen van de Arduino Nano RP2040 Connect](/img/pinout_nano_rp2040_connect.png)
+![Aansluitschema: de stekker van de servo op het rijtje van D6 van het shield](@site/static/fritzing/shield_servo_bb.png)
 
-- **Bruin** (GND) aan een **GND**-pin
-- **Rood** (VCC) aan **3.3V**
-- **Oranje** (stuursignaal) aan een digitale pin, bijvoorbeeld **D6**
+<ShieldRijen />
+
+De stekker van de servo past precies op het rijtje van **D6**:
+
+- **Bruin** (GND) op de buitenste rij, **GND**
+- **Rood** (VCC) in het midden, **3V3**
+- **Oranje** (stuursignaal) op de binnenste rij, naast de Nano: de pin **D6**
 
 :::caution[3,3 V is aan de lage kant]
 

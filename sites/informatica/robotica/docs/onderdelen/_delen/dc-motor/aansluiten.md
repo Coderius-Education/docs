@@ -1,6 +1,8 @@
 ### Schema
 
-![Schema: de twee TT-motoren aangesloten op het motor shield](@site/static/fritzing/shield_with_motors_bb.png)
+![Schema: motor A met de rode draad op A+ en de zwarte op A-, motor B met de rode draad op B+ en de zwarte op B-, en het motor shield in de bus links op het shield](@site/static/fritzing/shield_with_motors_bb.png)
+
+Het motor shield steek je in de bus aan de linkerkant van het shield. Motor A gaat op **A+** en **A-**, motor B op **B+** en **B-**: rood bij de plus, zwart bij de min.
 
 :::danger[Pinnen D2, D3, D4 en D11 zijn bezet door het motor shield]
 

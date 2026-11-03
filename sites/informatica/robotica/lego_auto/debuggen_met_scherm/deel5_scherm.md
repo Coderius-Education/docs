@@ -23,9 +23,9 @@ De multiplexer en het OLED-scherm praten via **I2C**, en dat gebruikt de pinnen 
 
 ## Aansluiten
 
-![aansluitschema: OLED via multiplexer, IR-sensor op A0](./nano_rp2040_oled_mux_ir_sensor_bb.png)
+![Aansluitschema: het OLED-scherm op channel 7 van de multiplexer, en de twee IR-sensoren op het rijtje van A0 en van A1](@site/static/fritzing/shield_oled_mux_ir_bb.png)
 
-Het scherm gaat via een 4-pins jumperkabel naar de **multiplexer**: VCC → 3,3V, GND → GND, en SDA/SCL naar channel **7**. Steek je hem in een ander channel, pas dan het getal in je code aan.
+Het scherm gaat via een 4-pins jumperkabel naar de **multiplexer**, die in de bus rechts op het shield steekt: VCC, GND, SDA en SCL elk naar de pin met dezelfde naam op channel **7**. De IR-sensoren blijven zitten waar ze zaten, op A0 en A1. Steek je hem in een ander channel, pas dan het getal in je code aan.
 
 ## Stap 1: Eerst het scherm alleen
 
