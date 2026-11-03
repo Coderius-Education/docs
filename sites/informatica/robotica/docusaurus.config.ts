@@ -87,7 +87,7 @@ export default createConfig({
     },
     {
       van: '/docs/Competities/RoboCup-Junior/Redden-Basis/redden_basis',
-      naar: '/docs/robocup/redden_basis',
+      naar: '/docs/robocup/start',
     },
     {
       van: '/docs/Competities/RoboCup-Junior/Redden-Basis/lijnvolgen',

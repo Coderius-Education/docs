@@ -1,18 +1,22 @@
 ---
-sidebar_position: 6
+sidebar_position: 7
+description: De ingang van de evacuatiezone is een strook aluminiumtape; die herken je met twee draadjes en een pin met pull-up.
 ---
 
-# Evacuatiezone detecteren
+# De ingang van de evacuatiezone
 
-Aluminiumtape op de baan geeft de **evacuatiezone** aan. Zodra je daaroverheen rijdt, moet je robot dat herkennen.
+Aan het eind van de baan stopt de zwarte lijn. Daar ligt een strook
+**aluminiumtape** van minstens 3 cm breed, dwars op de rijrichting: de ingang
+van de **evacuatiezone**. Je robot moet dat herkennen, want daarna is er geen
+lijn meer om te volgen.
 
-## Optie 1: detectie via een pull-up resistor
+## Optie 1: twee draadjes die de tape raken
 
-Zet twee draadjes naast elkaar zodat ze elkaar raken zodra ze samen de aluminiumtape raken — dan sluit het tape de twee draden kort.
+Aluminiumtape geleidt stroom. Laat twee draadjes naast elkaar over de vloer
+slepen, zonder dat ze elkaar raken. Komen ze allebei op de tape, dan verbindt de
+tape ze. Het ene draadje zit aan een pin, het andere aan GND.
 
-![aluminiumtape detectie](aluminium_tape_detectie_bb.png)
-
-## Code
+![Aansluitschema: één draadje van pin D5 en één van GND lopen naar de aluminiumtape; raken ze allebei de tape, dan wordt D5 0](aluminium_tape_detectie_bb.png)
 
 ```python
 from machine import Pin
@@ -25,37 +29,49 @@ while True:
     sleep(0.1)
 ```
 
-Zodra de twee draden via het aluminiumtape verbinden, valt **pin D5** naar **0**.
+Zolang de draadjes los zijn, print dit `1`. Zodra ze via de tape verbonden zijn,
+valt pin D5 naar `0`.
 
-:::danger[Gebruik nooit D2, D3, D10 of D11]
+:::danger[Gebruik nooit D2, D3, D4 of D11]
 
-Deze pinnen zijn bezet door het **motor shield**. Kies dus een andere vrije pin (bijvoorbeeld **D5** zoals hierboven).
+Deze pinnen zijn bezet door het **motor shield**. Kies een andere vrije pin,
+bijvoorbeeld D5 zoals hierboven.
 
 :::
-
-## Optie 2: detectie via een RGB-sensor
-
-Een **RGB-sensor** geeft een andere waarde bij:
-
-- wit
-- zwart
-- de zilverkleurige aluminiumtape
-
-Vraag jezelf af:
-
-- Welke waardes lees je in elk van de drie gevallen?
-- Hoe groot is het verschil?
 
 <details>
 <summary>Controlevraag</summary>
 
-Waarom werkt `Pin.PULL_UP` hier en geen "gewone" `Pin.IN`?
+Waarom staat er `Pin.PULL_UP` en niet alleen `Pin.IN`?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Met `PULL_UP` staat de pin standaard op **1** (HIGH). Zodra de twee draadjes via het aluminiumtape verbinding maken, wordt de pin doorverbonden naar GND en valt hij naar **0**. Zonder pull-up zou de pin "zweven" en willekeurige waardes geven.
+Met `PULL_UP` hangt er binnen in de chip een weerstand naar de plus. Daardoor
+staat de pin op **1** zolang de draadjes los zijn. Verbindt de tape de pin met
+GND, dan valt hij naar **0**. Zonder pull-up hangt de pin nergens aan als de
+draadjes los zijn, en dan geeft hij willekeurig 0 of 1.
 
 </details>
+
+## Optie 2: een kleursensor
+
+Een **RGB-sensor** onder de robot geeft een andere waarde bij wit, bij zwart en
+bij de glanzende tape. Vraag je docent of er een is. Meet dan zelf:
+
+- Welke waarden lees je op wit, op zwart en op de tape?
+- Is het verschil groot genoeg, ook als het licht in de zaal anders is?
+
+## Er gaat iets mis
+
+**De draadjes geven al een 0 op de gewone vloer.** Ze raken elkaar. Buig ze
+verder uit elkaar, of zet een stukje isolatietape tussen de uiteinden.
+
+**De robot rijdt over de tape zonder te stoppen.** De draadjes slepen niet over
+de vloer, of de robot rijdt zo snel dat de tape tussen twee metingen in valt.
+Haal de `sleep()` uit je wedstrijdlus en kijk of de draadjes de vloer echt
+raken.
+
+Door naar [Rijden in de evacuatiezone](site:robotica/docs/robocup/rijden_evacuatiezone).

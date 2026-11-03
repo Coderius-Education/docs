@@ -1,38 +1,57 @@
 ---
-sidebar_position: 4
+sidebar_position: 3
+description: Welke IR-sensoren je kiest om de zwarte lijn van Redden Basis te volgen, en hoe je ze test op de tegels.
 ---
 
 # Lijn volgen
 
-Lijnvolgen is meestal het eerste onderdeel waar je je robot op laat oefenen. De vraag is: **welke sensoren** ga je gebruiken om de zwarte lijn te zien?
+Lijn volgen is het eerste wat je robot op de baan moet kunnen, en het levert de
+meeste punten op: 5 per tegel als het in één keer lukt. De lijn is zwart en 1
+tot 2,5 cm breed, op een witte vloer.
 
 ## Sensoren kiezen
 
-### De gebaande weg: IR-sensoren
+Je ziet de lijn met IR-sensoren onder de robot. Hoe je er één aansluit en
+uitleest, staat bij de [digitale IR-sensor](site:robotica/docs/onderdelen/ir-digitaal)
+en de [analoge IR-sensor](site:robotica/docs/onderdelen/ir-analoog). Voor de
+wedstrijd maak je een paar keuzes:
 
-Je hebt de tutorials van de digitale en analoge IR-sensor gevolgd (hoofdstukken 10 en 11). Nu is het tijd om een paar keuzes te maken:
+- **Digitaal of analoog?** Een digitale sensor zegt zwart of wit. Een analoge
+  geeft een getal, en dan kies je zelf de grens. Dat helpt als het licht in de
+  wedstrijdzaal anders is dan in je klas.
+- **Hoeveel sensoren?** Met twee volg je de lijn. Met vier zie je ook een
+  scherpe bocht of een gat aankomen.
+- **Hoe ver uit elkaar?** Zet twee sensoren zo dat ze allebei wit zien als de
+  robot recht op een lijn van 1 cm staat, en dat er één zwart ziet zodra hij
+  afwijkt. Te ver uit elkaar en een smalle lijn glipt ertussendoor.
 
-- Ga je voor de **digitale** of de **analoge** variant?
-- Hoeveel IR-sensoren wil je gebruiken (2, 4, 6)?
-- Hoe laat je zien wat de microcontroller "denkt"? Je kunt bijvoorbeeld het ingebouwde **RGB-lampje** gebruiken (zie [Ingebouwd lampje](site:robotica/docs/onderdelen/ingebouwd-lampje)) om de huidige sensorstand te tonen.
+Laat zien wat je robot "denkt": zet de waarde van de sensoren op het
+[OLED-scherm](site:robotica/docs/onderdelen/oled-scherm) of laat het
+[ingebouwde lampje](site:robotica/docs/onderdelen/ingebouwd-lampje) branden als
+een sensor zwart ziet. Zo zie je meteen of het aan de sensor of aan je code ligt.
 
-Probeer verschillende competitietegels uit:
+## Rijden en bijsturen
 
-- Lukt het je om zwart van wit te onderscheiden?
-- Lukt het je om allebei de motoren aan te zetten als beide sensoren wit zien, en bij te sturen als één zwart ziet?
+Hoe je met twee sensoren en twee motoren bijstuurt, staat bij
+[Lijnvolgen](site:robotica/docs/onderdelen/lijnvolgen): ziet de rechtersensor
+zwart, dan laat je de rechtermotor langzamer draaien. Begin daarmee, en maak het
+pas ingewikkelder als de robot een hele baan rondrijdt.
 
-### Op avontuur: RGB- of ambient-light-sensor
+## Testen op de tegels
 
-Een alternatief:
-
-- **RGB-sensoren** voor kleurherkenning.
-- **Ambient-light-sensor** met een eigen lichtbron.
-
-Vraag aan je docent of deze beschikbaar zijn.
+- Leg verschillende tegels neer: recht, een bocht, een scherpe bocht.
+- Lukt het om zwart van wit te onderscheiden op elke tegel, ook bij het licht
+  van een raam?
+- Hoe snel kan je robot rijden zonder de lijn kwijt te raken in de scherpste
+  bocht?
 
 <details>
-<summary>Tip: begin simpel</summary>
+<summary>Tip: begin met twee sensoren</summary>
 
-Twee digitale IR-sensoren en een werkende `forward()`/`backward()` zijn vaak genoeg om de basis-lijnvolger werkend te krijgen. Maak het pas complexer als de basis stabiel is.
+Twee sensoren en twee snelheden per motor zijn genoeg voor een robot die een
+hele baan rondrijdt. Een derde of vierde sensor is pas nodig als je robot in
+een scherpe bocht de lijn kwijtraakt.
 
 </details>
+
+Door naar [Gaten in de lijn](site:robotica/docs/robocup/gaten).

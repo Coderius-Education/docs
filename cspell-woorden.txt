@@ -159,6 +159,7 @@ hulpvak
 hógere
 IDOR
 Ignaz
+ijsstokjes
 indentatie
 indenterror
 informationeel
@@ -279,6 +280,7 @@ pijltoets
 pinnaam
 pinnummer
 Pinoverzicht
+pinoverzicht
 Piskel
 pixelfrog
 Pixilart
@@ -312,6 +314,7 @@ RCWL
 rcwl
 rechterbatje
 rechterboven
+rechtermotor
 rechtermuur
 rechterpaneel
 rechterrand
@@ -468,6 +471,7 @@ webproject
 webroot
 websecurity
 webshopbezoeker
+wedstrijdlus
 wegbeweegt
 wegcommentarieert
 welkomsbericht
