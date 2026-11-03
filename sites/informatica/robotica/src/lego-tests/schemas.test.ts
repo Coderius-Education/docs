@@ -40,6 +40,11 @@ function unzip(pad: string): Map<string, string> {
 
 /** De pinnen van het shield waar in de sketch iets op aangesloten is, met hun naam. */
 function shieldPinnen(fzz: string): string[] {
+  return shieldConnectoren(fzz).map((c) => c.naam);
+}
+
+/** Idem, met het connector-id erbij. */
+function shieldConnectoren(fzz: string): { id: number; naam: string }[] {
   const bestanden = unzip(join(FRITZING, fzz));
   const fz = [...bestanden].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
   const fzp = [...bestanden].find(([n]) => /^part\.Flitz_shield.*\.fzp$/.test(n))?.[1] ?? '';
@@ -54,8 +59,27 @@ function shieldPinnen(fzz: string): string[] {
   const bb = shield.match(/<breadboardView[\s\S]*?<\/breadboardView>/)?.[0] ?? '';
   return [...bb.matchAll(/<connector connectorId="(connector\d+)"[^>]*>[\s\S]*?<\/connector>/g)]
     .filter((m) => /<connect /.test(m[0]))
-    .map((m) => naam.get(m[1]) ?? m[1]);
+    .map((m) => ({ id: Number(m[1].slice(9)), naam: naam.get(m[1]) ?? m[1] }));
 }
+
+// De rijen van het shield in het onderdeel Flitz_shieldv3: boven de Nano
+// GND 0-14, 3V3 15-29 en de pinnen 30-44; eronder de pinnen 75-89, 3V3 90-104
+// en GND 105-119 (45-74 is de voet voor de Nano). Een rijtje is een kolom.
+const RIJ = (id: number) =>
+  id < 15
+    ? 'G'
+    : id < 30
+      ? 'V'
+      : id < 45
+        ? 'S'
+        : id >= 105
+          ? 'G'
+          : id >= 90
+            ? 'V'
+            : id >= 75
+              ? 'S'
+              : '?';
+const KOLOM = (id: number) => `${id < 45 ? 'boven' : 'onder'}${id % 15}`;
 
 /** D7, D6~ en A0/D14 worden D7, D6 en D14; 3V3 en GND blijven zoals ze zijn. */
 const pinnaam = (naam: string) => naam.match(/D\d+/)?.[0] ?? naam;
@@ -113,6 +137,19 @@ describe('de aansluitschema’s staan op het shield', () => {
         if (!tekst.includes(`**${pin}**`)) fout.push(`${id}: Aansluiten noemt ${pin} niet`);
       if (!tekst.includes('<ShieldRijen />'))
         fout.push(`${id}: geen uitleg van de rijen op het shield`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('3V3 en GND zitten op het rijtje van een signaalpin van het onderdeel', () => {
+    // De opdrachtgever wil per onderdeel één rijtje met GND, 3V3 en signaal, zodat
+    // er een stekker van drie op past; eerst gingen 3V3 en GND naar een buurpin.
+    const fout: string[] = [];
+    for (const schema of Object.values(SCHEMAS)) {
+      const c = shieldConnectoren(`${schema}.fzz`);
+      const signaal = new Set(c.filter((x) => RIJ(x.id) === 'S').map((x) => KOLOM(x.id)));
+      for (const x of c.filter((x) => RIJ(x.id) !== 'S'))
+        if (!signaal.has(KOLOM(x.id))) fout.push(`${schema}: ${x.naam} op een ander rijtje`);
     }
     expect(fout).toEqual([]);
   });
