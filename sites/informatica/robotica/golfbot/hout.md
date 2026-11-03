@@ -66,8 +66,6 @@ Staat de baan in elkaar? Zet je toren dan met de vier hoeken van het Lego-frame 
 
 ![Het hele schema: links de sensor op de rij van A0, rechts de servo op de rij van D9, allebei op het shield met de Arduino Nano in het midden.](@site/static/fritzing/golfbot_bb.png)
 
-Let op: op dit plaatje loopt de oranje draad van de sensor langs de rij van A4. Hij hoort op het signaal van **A0**, zoals bij [de IR-sensor](site:robotica/golfbot/ir-sensor).
-
 ## Ziet de sensor de bal op de baan?
 
 Op tafel hield je de bal zelf voor de sensor. Nu zit de sensor vast, en ligt de bal in de halve ronding. Kijk of je robot hem daar ook ziet.

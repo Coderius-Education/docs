@@ -325,6 +325,23 @@ describe('elk aansluitschema in een les', () => {
     expect(fout).toEqual([]);
   });
 
+  it('heeft alleen draden die recht omlaag of recht opzij lopen, in elke .fzz', () => {
+    // Op het Golfbot-plaatje liep de oranje draad van de sensor schuin en dan
+    // langs de rij van A4, en de servodraden schuin over de pinnen van D8 tot
+    // D3; de tekst moest uitleggen dat de hoekjes geen aansluitingen waren.
+    const NOG_SCHUIN = new Set(['shield_with_motors.fzz']);
+    const fout: string[] = [];
+    for (const fzz of readdirSync(FRITZING).filter((n) => n.endsWith('.fzz') && !NOG_SCHUIN.has(n))) {
+      const fz = [...unzip(join(FRITZING, fzz))].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
+      for (const m of fz.matchAll(
+        /<instance moduleIdRef="WireModuleID"[\s\S]*?<breadboardView[^>]*>\s*<geometry [^>]*x2="([-\d.e]+)" y2="([-\d.e]+)"/g,
+      ))
+        if (Math.abs(Number(m[1])) > 0.01 && Math.abs(Number(m[2])) > 0.01)
+          fout.push(`${fzz}: schuine draad (${m[1]}, ${m[2]})`);
+    }
+    expect(fout).toEqual([]);
+  });
+
   it('heeft de draadkleuren die zijn alt-tekst noemt', () => {
     // De alt-tekst van de batterijhouder zei "de rode draad op de plus en de
     // zwarte op de min", terwijl beide draden in het plaatje blauw waren.

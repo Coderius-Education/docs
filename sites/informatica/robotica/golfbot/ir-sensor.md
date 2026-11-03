@@ -22,8 +22,6 @@ Zet je robot uit met de knop **ON/OFF**. Sluit de sensor dan aan op de rij van *
 
 ![Uitsnede van het schema: de blauwe sensor linksboven, met de rode draad naar 5V, de zwarte naar GND en de oranje naar het signaal van A0 op het shield. De pin D0 van de sensor blijft leeg.](@site/static/fritzing/golfbot_sensor.png)
 
-Op het plaatje loopt de oranje draad eerst een stukje langs de rij van A4, en gaat dan omhoog naar A0. De hoekjes in de draad zijn geen aansluitingen: hij zit alleen op het signaal van **A0**.
-
 De sensor heeft ook een pin **D0**, maar die laat je leeg. D0 zegt alleen "wel bal" of "geen bal". Op **A0** krijg je een getal, en dan kies je zelf vanaf welk getal er een bal ligt.
 
 Op het shield staat ook een D0, bij **D0/TX1**. Daar sluit je niets op aan, want over D0 en D1 van het shield gaat je programma via de usb-kabel naar de Arduino.

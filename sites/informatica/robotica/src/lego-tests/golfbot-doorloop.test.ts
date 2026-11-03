@@ -238,12 +238,13 @@ describe('aansluiten', () => {
     expect(tekst('servo')).toMatch(/dichtst bij de naam/);
   });
 
-  it('bij het sensorplaatje staat dat de oranje draad alleen op A0 hoort', () => {
-    // Op het plaatje loopt de draad langs de rij van A4 en dan omhoog; de
-    // hoeken lijken aansluitpunten. Het plaatje zelf passen we niet aan.
-    const inhoud = tekst('ir-sensor');
-    const na = inhoud.slice(inhoud.indexOf('golfbot_sensor.png'));
-    expect(na.slice(0, 400)).toMatch(/rij van A4/);
+  it('de tekst hoeft het plaatje van de sensor niet meer recht te zetten', () => {
+    // Op het oude plaatje liep de oranje draad langs de rij van A4, en twee
+    // pagina's zeiden daarom dat de hoekjes geen aansluitingen waren. Sinds
+    // november 2026 loopt hij door het gat onder het rijtje van A0 naar zijn
+    // pin (golfbot.fzz; schemas.test.ts eist haakse bochten in elke .fzz).
+    expect(tekst('ir-sensor')).not.toMatch(/rij van A4/);
+    expect(tekst('hout')).not.toMatch(/rij van A4/);
   });
 
   it('D0 van de sensor is niet D0 van het shield', () => {
