@@ -53,7 +53,7 @@ async def gastenboek_opslaan(
     return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
 ```
 
-Zet `from html import escape` bovenaan je `main.py`. De naam komt van de bezoeker, en in een f-string komt hij letterlijk in je HTML: typt iemand `<b>Sara</b>`, dan staat er een vette naam. `escape` maakt er gewone tekst van. Een template doet dat vanzelf; een f-string niet. Meer hierover in [HTML van een bezoeker](site:fullstack/docs/veiligheid/xss/zwakheid).
+Zet `from html import escape` bovenaan je `main.py`. De naam komt van de bezoeker, en in een f-string komt hij letterlijk in je HTML: typt iemand `<b>Sara</b>`, dan staat er een vette naam. `escape` maakt er gewone tekst van. Een template doet dat vanzelf; een f-string niet. Meer hierover in [HTML van een bezoeker](site:fullstack/docs/veiligheid/xss/gastenboek).
 
 De `Form`-parameters en de controle van het wachtwoord blijven hetzelfde; voor je endpoint is er geen verschil met een formulier zonder htmx. De omleiding met 303 is niet meer nodig, want de browser is nooit weggegaan.
 

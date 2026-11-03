@@ -616,4 +616,163 @@ describe('elke les in Veiligheid is een kleine stap met een succesmoment', () =>
     });
     expect(fout).toEqual([]);
   });
+  // De review van november 2026 (vier leerling-doorlopen) vond dat een
+  // controlevraag vaak de zin erboven terugvroeg, en dat het goede antwoord
+  // te herkennen was aan zijn lengte. Een controlevraag toetst begrip: het
+  // idee op een nieuw geval, niet de laatste alinea.
+  const keuzes = (blok: string) =>
+    [...blok.matchAll(/<Keuze( goed)?[^>]*>([\s\S]*?)<\/Keuze>/g)].map((m) => ({
+      goed: Boolean(m[1]),
+      tekst: m[2].replace(/`/g, '').trim(),
+    }));
+
+  it('het goede antwoord van een controlevraag staat niet letterlijk in de tekst ervoor', () => {
+    const reeksen = (s: string) => {
+      const w = s.toLowerCase().match(/[\p{L}\d]+/gu) ?? [];
+      return new Set(w.slice(0, -5).map((_, i) => w.slice(i, i + 6).join(' ')));
+    };
+    const fout: string[] = [];
+    for (const v of vragen) {
+      const tekst = tekstVan(v.id);
+      const ervoor = tekst
+        .slice(0, tekst.indexOf('<Voorspel soort="Controlevraag"'))
+        .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '')
+        .replace(/`/g, '');
+      const proza = reeksen(ervoor);
+      const goed = keuzes(v.uitleg).find((k) => k.goed);
+      if (goed && [...reeksen(goed.tekst)].some((r) => proza.has(r))) fout.push(v.id);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('het goede antwoord van een controlevraag valt niet op door zijn lengte', () => {
+    const fout: string[] = [];
+    for (const v of vragen) {
+      const alle = keuzes(v.uitleg);
+      const goed = alle.find((k) => k.goed);
+      const fouteLengte = Math.max(...alle.filter((k) => !k.goed).map((k) => k.tekst.length));
+      if (goed && goed.tekst.length > 1.4 * fouteLengte)
+        fout.push(`${v.id}: ${goed.tekst.length} tegen ${fouteLengte}`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  // Een stap die een limiet op een endpoint zet, noemt wat er gebeurt zonder
+  // request: Request: dan start de server niet. In Wachtwoorden stond dat voor
+  // /wijzig alleen in een bijzin.
+  it('een stap die een limiet op een endpoint zet, noemt de startfout zonder request', () => {
+    const stand = (tekst: string) => {
+      const i = tekst.indexOf('<summary>Zo ziet je `main.py` er nu uit</summary>');
+      return i === -1 ? '' : (tekst.slice(i).match(/```python[^\n]*\n([\s\S]*?)```/)?.[1] ?? '');
+    };
+    const limieten = (c: string) => (c.match(/@limiter\.limit/g) ?? []).length;
+    const fout: string[] = [];
+    for (const map of zwakheden) {
+      let vorige = '';
+      for (const stap of stappenVan(map)) {
+        const tekst = lees(map, stap);
+        const nu = stand(tekst);
+        if (!nu) continue;
+        const mis = tekst.slice(tekst.indexOf('\n## Er gaat iets mis\n'));
+        if (
+          limieten(nu) > limieten(vorige) &&
+          !mis.includes('No "request" or "websocket" argument')
+        )
+          fout.push(`${map}/${stap}`);
+        vorige = nu;
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+});
+
+describe('verwijzingen in en naar Veiligheid', () => {
+  const alleDocs = (map: string): string[] =>
+    readdirSync(map).flatMap((n) => {
+      const pad = join(map, n);
+      if (statSync(pad).isDirectory()) return alleDocs(pad);
+      return /\.mdx?$/.test(n) ? [pad] : [];
+    });
+  const DOCS = join(VEILIGHEID, '..');
+
+  it('een link met de naam van een reeks wijst naar de eerste les van die reeks', () => {
+    // Drie links "Wachtwoorden veilig opslaan" kwamen uit op les 2, die begint
+    // met "je server uit les 1".
+    const fout: string[] = [];
+    for (const pad of alleDocs(DOCS)) {
+      const tekst = readFileSync(pad, 'utf8');
+      for (const c of categorieen) {
+        const naam = c.label.replace(/\s*\(.*\)$/, '');
+        for (const m of tekst.matchAll(
+          /\[([^\]]+)\]\(site:fullstack\/docs\/(veiligheid\/[^)#]+)/g,
+        )) {
+          if (m[1].replace(/\s*\(.*\)$/, '') === naam && m[2] !== c.items[0])
+            fout.push(`${pad.slice(DOCS.length + 1)}: [${m[1]}] -> ${m[2]}`);
+        }
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('een linktekst noemt één les: "les 2 en 5" is twee links', () => {
+    const fout: string[] = [];
+    for (const pad of alleDocs(DOCS)) {
+      for (const m of readFileSync(pad, 'utf8').matchAll(/\[[^\]]*\bles \d+ en \d+[^\]]*\]\(/g))
+        fout.push(`${pad.slice(DOCS.length + 1)}: ${m[0]}`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('elke link in de tabel met statuscodes wijst naar een les die die code in de hoofdtekst heeft', () => {
+    // De link bij 401 wees naar een les waar 401 alleen in een uitklapblok stond.
+    const tekst = readFileSync(join(VEILIGHEID, 'index.mdx'), 'utf8');
+    const tabel = tekst.split(/^## Statuscodes/m)[1].split(/^## /m)[0];
+    const fout: string[] = [];
+    for (const rij of tabel.split('\n').filter((r) => /^\| `\d{3}`/.test(r))) {
+      const code = rij.match(/`(\d{3})`/)?.[1] ?? '';
+      for (const [, doel] of rij.matchAll(/\]\(site:fullstack\/docs\/([^)#]+)/g)) {
+        const bestand = join(DOCS, `${doel}.mdx`);
+        const hoofd = readFileSync(bestand, 'utf8').replace(/<details>[\s\S]*?<\/details>/g, '');
+        if (!hoofd.includes(code)) fout.push(`${code} -> ${doel}`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('elk invoerveld in een formulier van de route heeft een label of placeholder', () => {
+    // Twee naamloze vakken: wie naam en bericht omdraaide, zag [hoi] 4 tekens.
+    const fout: string[] = [];
+    for (const pad of alleDocs(VEILIGHEID)) {
+      for (const [, blok] of readFileSync(pad, 'utf8').matchAll(/```html[^\n]*\n([\s\S]*?)```/g)) {
+        for (const [veld] of blok.matchAll(/<(input|textarea)\b[^>]*>/g)) {
+          if (/type="(hidden|submit)"/.test(veld)) continue;
+          const id = veld.match(/id="([^"]+)"/)?.[1];
+          const label = id && blok.includes(`for="${id}"`);
+          if (
+            !veld.includes('placeholder=') &&
+            !label &&
+            !/<label>[^<]*$/.test(blok.slice(0, blok.indexOf(veld)))
+          )
+            fout.push(`${pad.slice(VEILIGHEID.length + 1)}: ${veld}`);
+        }
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('een stap in het diagram heet zoals de les waar hij naar wijst', () => {
+    // De XSS-stap heette "De zwakheid", de les "Tekst of HTML?".
+    const bron = readFileSync(
+      new URL('../components/VerzoekCyclus/index.tsx', import.meta.url),
+      'utf8',
+    );
+    const fout: string[] = [];
+    for (const m of bron.matchAll(/to: '\/docs\/(veiligheid\/[^']+)',\s*les: '([^']+)'/g)) {
+      const tekst = readFileSync(join(DOCS, `${m[1]}.mdx`), 'utf8');
+      const label = tekst.match(/^sidebar_label: '(?:\d+\. )?(.+)'$/m)?.[1] ?? '';
+      const titel = tekst.match(/^# (.+)$/m)?.[1] ?? '';
+      if (m[2] !== label && !titel.includes(m[2])) fout.push(`${m[1]}: ${m[2]} / ${label}`);
+    }
+    expect(fout).toEqual([]);
+  });
 });
