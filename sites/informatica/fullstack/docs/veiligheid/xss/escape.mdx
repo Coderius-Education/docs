@@ -1,5 +1,5 @@
 ---
-sidebar_label: '2. Escapen in Python'
+sidebar_label: '3. Escapen in Python'
 description: Met escape() uit de module html blijft tekst van een bezoeker tekst, ook in een f-string. Zet het op beide plekken in je gastenboek.
 ---
 
@@ -9,7 +9,7 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 `escape` ken je al uit het htmx-recept
 [Een formulier versturen](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht#een-formulier-versturen).
-Daar stond hij om de naam, zonder dat je zag wat hij doet. In [les 1](site:fullstack/docs/veiligheid/xss/zwakheid)
+Daar stond hij om de naam, zonder dat je zag wat hij doet. In [les 2](site:fullstack/docs/veiligheid/xss/zwakheid)
 zag je wat er zonder gebeurt: de browser las `<b>vet</b>` als HTML, omdat de
 f-string het letterlijk in de pagina zette.
 
@@ -80,16 +80,6 @@ De naam en het bericht in de lijst, elk apart.
 
 Zet `from html import escape` bovenaan `main.py`, bij de andere imports.
 
-## Doe de test opnieuw
-
-Gooi `gastenboek.db` weg, start de server opnieuw, en vul als Sara weer
-`<b>vet</b>` in. In de lijst staat nu `<b>vet</b>` met de haakjes erbij.
-`lijst.py` uit les 1 laat zien waarom:
-
-```
-<ul><li>Sara: &lt;b&gt;vet&lt;/b&gt;</li></ul>
-```
-
 ## Waar de controle zit
 
 Het bericht mag de database in zoals het getypt is. De controle zit op de plek
@@ -97,7 +87,36 @@ waar het de HTML in gaat.
 
 <VerzoekCyclus variant="xss" />
 
+## Doe de test opnieuw
+
+Gooi `gastenboek.db` weg, start de server opnieuw, en vul als Sara weer
+`<b>vet</b>` in.
+
+<Gelukt>
+
+In de lijst staat nu `<b>vet</b>` met de haakjes erbij, en niets is vet.
+`lijst.py` uit [les 2](site:fullstack/docs/veiligheid/xss/zwakheid) laat zien waarom:
+
+```text
+<ul><li>Sara: &lt;b&gt;vet&lt;/b&gt;</li></ul>
+```
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je server escapet nu bij het tonen. Wat staat er in gastenboek.db voor het bericht van Sara?">
+  <Keuze goed uitleg="Regel 4 slaat het bericht op zoals het binnenkomt. escape staat pas in de return en in de lijst.">Het bericht zoals Sara het typte, met de echte haakjes</Keuze>
+  <Keuze uitleg="escape staat niet bij het opslaan, maar op de plekken waar tekst de HTML in gaat.">Het bericht met codes in plaats van haakjes, want het is al ge-escapet</Keuze>
+  <Keuze uitleg="escape haalt niets weg. Het vervangt tekens door codes, en dat alleen in wat de server terugstuurt.">Alleen het woord vet, want escape haalt de tags eruit</Keuze>
+  <Uitleg>
+
+  De database bewaart wat de bezoeker typte. Pas waar het de HTML in gaat, maakt `escape` er tekst van. Elke plek die het bericht toont, heeft dus zijn eigen `escape` nodig.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
+
+### De naam is in de lijst nog schuin
 
 Noor vult als naam `<i>Noor</i>` in en als bericht `hoi`. Onder het formulier
 staat haar naam als tekst, maar in de lijst is hij schuin. `lijst.py` geeft, met
@@ -122,7 +141,7 @@ regels += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
 ```
 
 Omdat je zo makkelijk een plek vergeet, doet een template het in
-[les 4](site:fullstack/docs/veiligheid/xss/templates) voor je.
+[les 5](site:fullstack/docs/veiligheid/xss/templates) voor je.
 
 ## Opdrachten
 
@@ -203,8 +222,8 @@ async def berichten_lijst():
     return HTMLResponse(f"<ul>{regels}</ul>")
 ```
 
-Beide plekken escapen nu. In [les 4](site:fullstack/docs/veiligheid/xss/templates) gaat de lijst naar een template.
+Beide plekken escapen nu. In [les 5](site:fullstack/docs/veiligheid/xss/templates) gaat de lijst naar een template.
 
 </details>
 
-Door naar [les 3: tekst uit de URL](site:fullstack/docs/veiligheid/xss/url).
+Door naar [les 4: tekst uit de URL](site:fullstack/docs/veiligheid/xss/url).

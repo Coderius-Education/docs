@@ -1,5 +1,5 @@
 ---
-sidebar_label: '4. Elk endpoint apart'
+sidebar_label: '5. Elk endpoint apart'
 description: Een controle beschermt alleen het endpoint waar hij in staat. Loop elk endpoint langs dat iets verandert, en zet ook op Alles wissen een grens.
 ---
 
@@ -10,35 +10,20 @@ Een controle beschermt alleen het endpoint waar hij in staat. Heb je
 gemaakt, dan heeft je eigen gastenboek een knop Alles wissen, met een eigen
 endpoint `DELETE /berichten`. Daar staat geen controle in: wie dat endpoint
 aanroept, wist elk bericht, ook dat van een ander. De controle in
-`bericht_verwijderen` verandert daar niets aan. De server van deze reeks heeft
-dat endpoint nog niet; in opdracht 1 zet je het erop, meteen met een grens. Een
-endpoint dat je later toevoegt, heeft hetzelfde probleem als je die grens
-vergeet.
+`bericht_verwijderen` verandert daar niets aan. Een endpoint dat je later
+toevoegt, heeft hetzelfde probleem als je de grens vergeet.
 
 Loop daarom elk endpoint langs dat iets verandert of verwijdert, en stel bij elk
-dezelfde vraag: wie mag dit?
+dezelfde vraag: wie mag dit? Voor Alles wissen is het antwoord: iedereen, maar
+alleen voor zijn eigen berichten.
 
-## Opdrachten
+## Alles wissen, maar alleen van jou
 
-### Opdracht 1: Make - Alles wissen, maar alleen van jou
+Zet dit endpoint onder de andere in `main.py`:
 
-Voeg een endpoint `DELETE /berichten` toe dat alleen de berichten van de
-bezoeker zelf wist. Test het met een scriptje waarin Alex alles wist, en kijk
-of het bericht van Sara blijft staan.
+<CodeUitleg>
 
-<details>
-<summary>Tip</summary>
-
-Loop door `db.items()` en zoek de berichten met de naam uit de sessie. Zet hun
-sleutels eerst in een lijst, en verwijder ze daarna: bij een gewone dictionary
-mag je niets weghalen terwijl je er nog doorheen loopt.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-```python
+```python showLineNumbers
 @app.delete("/berichten")
 async def alles_wissen(sessie_id: str = Cookie(default="")):
     with SqliteDict("sessies.db") as sessies:
@@ -54,7 +39,23 @@ async def alles_wissen(sessie_id: str = Cookie(default="")):
     return {"bericht": "Jouw berichten zijn gewist"}
 ```
 
-Het testscript:
+<Regel n={2} tot={4}>
+De sessie van deze bezoeker, net als in `bericht_verwijderen`.
+</Regel>
+
+<Regel n={6} tot={9}>
+Eerst zoekt de functie de berichten met de naam uit de sessie, en zet hun sleutels in een lijst.
+</Regel>
+
+<Regel n={10} tot={11}>
+Daarna pas gaan ze weg. Bij een gewone dictionary mag je niets weghalen terwijl je er nog doorheen loopt; met de lijst ertussen hoeft dat ook niet.
+</Regel>
+
+</CodeUitleg>
+
+## Test het
+
+Maak een script `test_wissen.py`, waarin Alex alles wist:
 
 ```python
 import httpx
@@ -79,43 +80,130 @@ for bericht in alex.get("/berichten").json().values():
 print(f"Nog in het gastenboek: {namen}")
 ```
 
-Uitvoer, met lege databases:
+Gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, start de server
+opnieuw, en draai het script.
 
-```
+<Gelukt>
+
+Het script print:
+
+```text
 {'bericht': 'Jouw berichten zijn gewist'}
 Nog in het gastenboek: ['Sara']
 ```
 
-Hier is er geen `403` nodig: wie Alles wissen kiest, wist wat van hem is, en de
-rest blijft staan. Wie niet is ingelogd, heeft geen naam in de sessie. Dan
-wist de server niets, maar het antwoord is toch
-`{'bericht': 'Jouw berichten zijn gewist'}`. Wil je dat eerlijker, zet dan
-dezelfde `401 Log eerst in` erin als in `bericht_plaatsen`.
+Alex wiste alles wat van hem was. Het bericht van Sara staat er nog.
 
-Deze server praat JSON, dus het antwoord is een dictionary. In je eigen
-gastenboek gaf `alles_wissen` uit het htmx-overzicht de lijst-template terug,
-met een lege lijst. Houd die `TemplateResponse` en de parameter
-`request: Request`, en zet `sessie_id: str = Cookie(default="")` ernaast. Lees
-na het wissen, nog in het `with`-blok, wat er over is met
-`alle_berichten = list(db.items())`, en geef `{"berichten": alle_berichten}`
-mee in plaats van `{"berichten": []}`: de berichten van anderen blijven staan.
+</Gelukt>
+
+Hier is geen `403` nodig: de grens zit erin dat de functie alleen berichten
+met de naam uit de sessie pakt.
+
+<Voorspel soort="Controlevraag" vraag="Iemand voegt POST /bericht/{sleutel}/wijzig toe, dat de tekst van een bericht verandert, zonder controle. bericht_verwijderen houdt zijn controle. Wat kan Alex nu met het bericht van Sara?">
+  <Keuze uitleg="Die controle staat in bericht_verwijderen. Welk endpoint roept Alex aan om te wijzigen?">Niets, want bericht_verwijderen controleert al</Keuze>
+  <Keuze goed uitleg="Het nieuwe endpoint vraagt niet wie er komt, dus het verandert elk bericht waarvan het de sleutel krijgt. Verwijderen blijft dicht.">Het veranderen, maar niet verwijderen</Keuze>
+  <Keuze uitleg="Ingelogd zijn als Alex zegt niets over het bericht van Sara. Welke regel in het nieuwe endpoint vergelijkt namen?">Niets, want hij is als Alex ingelogd</Keuze>
+  <Uitleg>
+
+  Een controle beschermt alleen het endpoint waar hij in staat. Daarom stel je bij elk endpoint dat iets verandert opnieuw de vraag wie het mag, en zet je daar zijn eigen controle in.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Method Not Allowed
+
+Het script print:
+
+```text
+{'detail': 'Method Not Allowed'}
+Nog in het gastenboek: ['Sara', 'Alex']
+```
+
+**Oorzaak:** je server heeft nog geen `DELETE /berichten`, wel een
+`GET /berichten`. Het pad bestaat dus, maar niet met deze methode, en dan geeft
+FastAPI `405`.
+
+**Oplossing:** zet `alles_wissen` in `main.py` en sla op. `fastapi dev` start de
+server dan vanzelf opnieuw.
+
+### KeyError: 'naam'
+
+Een verzoek zonder sessie, zoals het script in opdracht 1, stopt met
+`json.decoder.JSONDecodeError`, zodra er berichten in het gastenboek staan. In de terminal van je server eindigt de
+foutmelding met:
+
+```text
+KeyError: 'naam'
+```
+
+**Oorzaak:** je schreef `mijn["naam"]`, zoals in `bericht_plaatsen`. Daar
+staat eerst de `401` als er geen sessie is; in `alles_wissen` niet. Zonder
+sessie is `mijn` een lege dictionary, en die heeft geen sleutel `naam`. Bij
+het eerste bericht in de for-lus antwoordt je server met een `500`, en die
+tekst is geen JSON.
+
+**Oplossing:** schrijf `mijn.get("naam")`, zoals hierboven, of zet eerst de
+`401` erin, zoals in opdracht 1.
+
+## Opdrachten
+
+### Opdracht 1: Modify - Eerst inloggen
+
+Een bezoeker zonder sessie krijgt nu `Jouw berichten zijn gewist`, terwijl er
+niets weg is. Laat `alles_wissen` hem weigeren met `401 Log eerst in`, net als
+`bericht_plaatsen`. Test het met een verzoek zonder `Client`:
+
+```python
+import httpx
+
+antwoord = httpx.delete("http://127.0.0.1:8000/berichten")
+print(antwoord.status_code, antwoord.json())
+```
+
+<details>
+<summary>Tip</summary>
+
+Kijk in `bericht_plaatsen` wat er direct na het ophalen van de sessie staat.
 
 </details>
-
-### Opdracht 2: Predict - Een endpoint om te wijzigen
-
-Iemand voegt een endpoint `POST /bericht/{sleutel}/wijzig` toe, dat de tekst van
-een bericht verandert. Het heeft geen controle; `bericht_verwijderen` wel.
-
-**Vraag:** kan Alex het bericht van Sara nu veranderen?
 
 <details>
 <summary>Antwoord</summary>
 
-Ja. De controle in `bericht_verwijderen` beschermt alleen het verwijderen. Het
-nieuwe endpoint vraagt niet wie er komt, dus het verandert elk bericht waarvan
-het de sleutel krijgt. Elk endpoint dat iets verandert, heeft zijn eigen
-controle nodig.
+Zet na het ophalen van de sessie, vóór het `with`-blok van `gastenboek.db`:
+
+{/* niet-compileren: twee regels uit alles_wissen, ingesprongen */}
+```python
+    if not mijn:
+        raise HTTPException(status_code=401, detail="Log eerst in")
+```
+
+Uitvoer:
+
+```text
+401 {'detail': 'Log eerst in'}
+```
+
+Nu zegt het antwoord eerlijk dat er niets gewist is. De lessen hierna gaan
+verder met de versie zonder deze twee regels; je mag ze laten staan.
+
+</details>
+
+### Opdracht 2: Predict - Allebei Alles wissen
+
+Sara heeft drie berichten in het gastenboek, Alex één. Eerst roept Sara Alles
+wissen aan, daarna Alex.
+
+**Vraag:** wat geeft `/berichten` daarna?
+
+<details>
+<summary>Antwoord</summary>
+
+`{}`, een leeg gastenboek. Sara wist haar drie berichten, Alex daarna het zijne.
+Geen van beiden kwam aan een bericht van de ander: samen wissen ze alles, maar
+elk alleen het eigen deel.
 
 </details>
 
@@ -207,4 +295,4 @@ Elk endpoint dat iets verwijdert, controleert nu zelf.
 
 </details>
 
-Door naar [les 5: in je eigen project](site:fullstack/docs/veiligheid/toegang/eigen-project).
+Door naar [les 6: in je eigen project](site:fullstack/docs/veiligheid/toegang/eigen-project).

@@ -1,11 +1,11 @@
 ---
-sidebar_label: '4. Wat er in je map staat'
+sidebar_label: '5. Wat er in je map staat'
 description: Naast main.py staan databases met berichten en sessie-id's, en een map met packages. Wie je map krijgt, krijgt die ook. Kijk wat erin staat en wat je deelt.
 ---
 
 # Wat je server laat zien: wat er in je map staat
 
-Na [les 3](site:fullstack/docs/veiligheid/zichtbaar/uitzetten) geeft je server geen lijst en geen sessies meer weg.
+Na [les 4](site:fullstack/docs/veiligheid/zichtbaar/uitzetten) geeft je server geen lijst en geen sessies meer weg.
 Maar je server is niet de enige weg naar je gegevens. Ze staan ook in
 bestanden, naast je code. Deel je je projectmap, als zip met een klasgenoot of
 op GitHub, dan deel je die bestanden mee.
@@ -23,17 +23,25 @@ with SqliteDict("sessies.db") as sessies:
         print(sessie_id, sessie["naam"])
 ```
 
-Uitvoer, met andere sessie-id's bij jou:
+Draai het met `python lees_sessies.py`. Je server hoeft er niet voor te
+draaien.
 
-```
+<Gelukt>
+
+`lees_sessies.py` print de sessies uit het bestand, met andere sessie-id's bij
+jou:
+
+```text
 17fc855565c554ac6a2fc8c071a48e89 Sara
 916312710b4a64610d1a100578050e18 Alex
 ```
 
-Heb je opdracht 2 van [les 1](site:fullstack/docs/veiligheid/zichtbaar/handleiding) gedaan, dan staat jouw eigen sessie
+</Gelukt>
+
+Heb je opdracht 2 van [les 2](site:fullstack/docs/veiligheid/zichtbaar/handleiding) gedaan, dan staat jouw eigen sessie
 er ook bij, bovenaan, met de naam die je op `/docs` invulde.
 
-Hetzelfde lijstje dat `/sessies` in [les 2](site:fullstack/docs/veiligheid/zichtbaar/vergeten) weggaf. Daar heb je
+Hetzelfde lijstje dat `/sessies` in [les 3](site:fullstack/docs/veiligheid/zichtbaar/vergeten) weggaf. Daar heb je
 geen endpoint voor nodig: wie het bestand heeft, heeft de sessie-id's. En met
 een sessie-id is hij voor je server die bezoeker, zolang je server draait met
 deze `sessies.db`.
@@ -61,12 +69,25 @@ is.
 In je eigen gastenboek staat ook een `gebruikers.db`, sinds
 [Registreren: een account opslaan](site:fullstack/docs/FastAPI/accounts/registreren). Daarin staan de
 wachtwoorden van je gebruikers, leesbaar, tot je de reeks
-[Wachtwoorden veilig opslaan](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst) doet,
+[Wachtwoorden veilig opslaan](site:fullstack/docs/veiligheid/wachtwoorden/startbestand) doet,
 en daarna hun hashes. Die deel je nog minder.
+
+<Voorspel soort="Controlevraag" vraag="Je stuurt een klasgenoot alleen gastenboek.db, en sessies.db niet. Wat kan hij daarmee?">
+  <Keuze uitleg="lees_sessies.py las sessies.db zonder server. Met gastenboek.db gaat dat net zo.">Niets: zonder je server is een database niet te lezen</Keuze>
+  <Keuze goed uitleg="In gastenboek.db staan per bericht de naam en het bericht. De sessie-id's staan alleen in sessies.db.">De berichten lezen met de namen erbij, maar geen sessie-id's</Keuze>
+  <Keuze uitleg="Kijk in bericht_plaatsen wat er in gastenboek.db komt. Het sessie-id gaat alleen in sessies.db.">Ook elk sessie-id: dat staat bij elk bericht opgeslagen</Keuze>
+  <Uitleg>
+
+  Een bestand geeft weg wat erin staat, niet meer en niet minder. Ook
+  berichten met namen deel je niet zomaar, dus geen van beide databases hoort in
+  een zip.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
-`lees_sessies.py` print niets, terwijl `twee.py` uit les 2 wel twee namen gaf.
+`lees_sessies.py` print niets, terwijl `twee.py` uit les 3 wel twee namen gaf.
 
 **Oorzaak:** het script draait in een andere map dan je server.
 `SqliteDict("sessies.db")` zoekt het bestand in de map waarin je het script
@@ -82,7 +103,7 @@ weg.
 
 Kopieer het sessie-id van Sara uit de uitvoer van `lees_sessies.py`. Je stopt
 je server, gooit `sessies.db` weg en start de server opnieuw. Daarna stuur je
-`GET /ik` met dat sessie-id als cookie, zoals `sessies.py` in les 2 deed:
+`GET /ik` met dat sessie-id als cookie, zoals `sessies.py` in les 3 deed:
 
 ```python
 import httpx
@@ -122,8 +143,8 @@ Wel: `main.py`, je scripts als je docent ze wil zien, en `static/` en
 `templates/` als je project die heeft. Niet: de `.db`-bestanden, `.venv/` en
 `__pycache__/`. Je docent heeft je code nodig om te zien wat je bouwde, niet de
 berichten en sessies van je bezoekers. Hoe je dat bij elke zip en elke upload
-goed doet, zie je in [les 5](site:fullstack/docs/veiligheid/zichtbaar/gitignore).
+goed doet, zie je in [les 6](site:fullstack/docs/veiligheid/zichtbaar/gitignore).
 
 </details>
 
-Door naar [les 5: een .gitignore en een nette zip](site:fullstack/docs/veiligheid/zichtbaar/gitignore).
+Door naar [les 6: een .gitignore en een nette zip](site:fullstack/docs/veiligheid/zichtbaar/gitignore).

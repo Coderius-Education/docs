@@ -1,5 +1,5 @@
 ---
-sidebar_label: '4. Uitloggen'
+sidebar_label: '5. Uitloggen'
 description: Bij uitloggen gooit de server de sessie weg en haalt hij de cookie weg. Een bewaard sessie-id hoort daarna bij niemand meer.
 ---
 
@@ -7,17 +7,17 @@ description: Bij uitloggen gooit de server de sessie weg en haalt hij de cookie 
 
 Een sessie hoort niet eeuwig te duren. Hij eindigt op twee manieren: de
 bezoeker logt uit, of de tijd is om. In allebei de gevallen beslist je server,
-niet de browser. Deze les gaat over uitloggen; de tijd komt in
-[les 5](site:fullstack/docs/veiligheid/cookies/verlopen). De cookie weghalen is niet genoeg: wie het sessie-id eerder
+niet de browser. Eerst uitloggen; de tijd komt in
+[les 6](site:fullstack/docs/veiligheid/cookies/verlopen). De cookie weghalen is niet genoeg: wie het sessie-id eerder
 heeft gekopieerd, stuurt het zelf mee. Pas als de sessie uit
 `sessies.db` weg is, hoort dat id bij niemand meer.
 
 ## Een endpoint om uit te loggen
 
-Een `/uitloggen` ken je al uit opdracht 5 van
-[Cookie of sessie?](site:fullstack/docs/FastAPI/onthouden/cookie-of-sessie). Daar was het een POST, en
-dat is geen toeval: een link is altijd een GET, en een link kan ook op een
-andere site staan. Hoe dat zit, zag je in [les 3](site:fullstack/docs/veiligheid/cookies/samesite).
+Heb je opdracht 5 van
+[Cookie of sessie?](site:fullstack/docs/FastAPI/onthouden/cookie-of-sessie) gemaakt, dan ken je
+`/uitloggen` al. Het is een POST, en dat is geen toeval: een link is altijd een GET, en een link kan ook op een
+andere site staan. Hoe dat zit, zag je in [les 4](site:fullstack/docs/veiligheid/cookies/samesite).
 
 Zet dit endpoint onder de andere in `main.py`:
 
@@ -86,9 +86,7 @@ haar bericht te verwijderen.
 
 Het script maakt Sara aan met het wachtwoord `zon123`. Gooi daarom eerst
 `gastenboek.db`, `sessies.db` en `gebruikers.db` weg en start de server
-opnieuw. Bestaat Sara nog met een ander wachtwoord, bijvoorbeeld uit
-[les 1](site:fullstack/docs/veiligheid/cookies/zwakheid), dan mislukt het inloggen en stopt het script met
-`KeyError: 'sleutel'`.
+opnieuw.
 
 <CodeUitleg>
 
@@ -118,7 +116,7 @@ Sara maakt een account en logt in, zoals in Wie mag wat. Daarna heeft haar `Clie
 </Regel>
 
 <Regel n={9}>
-Het sessie-id van Sara, bewaard voordat ze uitlogt. Zo heeft een dief het id als hij het eerder heeft gekopieerd.
+Het sessie-id van Sara, bewaard voordat ze uitlogt. `sara.cookies` zijn de cookies die haar `Client` bewaart, en `.get` haalt er één uit, net als bij een dictionary. Zo heeft een dief het id als hij het eerder heeft gekopieerd.
 </Regel>
 
 <Regel n={10} tot={11}>
@@ -126,23 +124,42 @@ Sara logt uit, en het script kijkt of haar `Client` de cookie nog heeft.
 </Regel>
 
 <Regel n={13} tot={14}>
-Een tweede `Client` krijgt het bewaarde id als cookie mee en probeert het bericht van Sara te verwijderen.
+Een tweede `Client` krijgt het bewaarde id met `cookies=` mee, zoals `dief.py` in [les 2](site:fullstack/docs/veiligheid/cookies/zwakheid), en probeert het bericht van Sara te verwijderen.
 </Regel>
 
 </CodeUitleg>
 
-Uitvoer:
+Draai het script.
 
-```
+<Gelukt>
+
+Het script print:
+
+```text
 {'bericht': 'Uitgelogd'}
 Cookie na uitloggen: None
 Met het oude sessie-id: 403
 ```
 
+</Gelukt>
+
 Sara heeft geen cookie meer, en de server kent haar sessie niet meer. Wie het
 oude id nog heeft, is voor de server niet ingelogd.
 
+<Voorspel soort="Controlevraag" vraag="Sara sluit haar browser zonder op Uitloggen te klikken. Een dief stuurt met een eerder gekopieerd id een DELETE voor haar bericht. Welke statuscode volgt?">
+  <Keuze uitleg="Een browser sluiten stuurt geen verzoek naar je server. Weet de server dat Sara weg is?">`403`, want haar browser is dicht</Keuze>
+  <Keuze goed uitleg="Alleen /uitloggen gooit de sessie weg, en dat verzoek kwam nooit. In sessies.db staat het id nog, met de naam Sara.">`200`, want niemand heeft uitgelogd</Keuze>
+  <Keuze uitleg="De cookie houdt 30 dagen, en de dief stuurt het id toch zelf mee. Wat zoekt de server op?">`401`, want haar cookie is verlopen</Keuze>
+  <Uitleg>
+
+  Uitloggen is een verzoek dat de bezoeker moet sturen. Wie zijn browser sluit of het vergeet, laat zijn sessie op de server staan, en een gekopieerd id blijft werken. Daarom laat je een sessie in de volgende les ook verlopen.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
+
+### Met het oude sessie-id: 200
 
 Na het uitloggen is de cookie weg, maar `uitloggen.py` geeft
 `Met het oude sessie-id: 200`.
@@ -155,12 +172,24 @@ komt er nog steeds mee binnen.
 **Oplossing:** gooi altijd ook de sessie op de server weg, zoals in regel 3 tot
 en met 6 van `uitloggen`.
 
+### KeyError: 'sleutel'
+
+Het script stopt bij de regel met `sleutel = ` met `KeyError: 'sleutel'`.
+
+**Oorzaak:** Sara bestond al, met een ander wachtwoord. Dan mislukt het
+inloggen, weigert `/bericht` met `Log eerst in`, en staat er in het antwoord
+geen `sleutel`.
+
+**Oplossing:** gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, start
+de server opnieuw en draai het script nog een keer.
+
 ## Opdrachten
 
 ### Opdracht 1: Investigate - Hoe haalt de server een cookie weg?
 
-Open `http://127.0.0.1:8000/static/formulier.html`, log in, ga terug en klik
-op **Uitloggen**. Klik in het tabblad **Netwerk** op het verzoek
+Open `http://127.0.0.1:8000/static/formulier.html`. Je gooide `gebruikers.db`
+net weg, dus maak eerst met het eerste formulier opnieuw een account. Log in, ga
+terug en klik op **Uitloggen**. Klik in het tabblad **Netwerk** op het verzoek
 `uitloggen` en zoek onder **Reactieheaders** de regel `set-cookie`. Hoe vertelt
 de server de browser dat de cookie weg moet?
 
@@ -297,8 +326,8 @@ async def uitloggen(sessie_id: str = Cookie(default="")):
 
 Uitloggen beëindigt de sessie nu op de server. Wie niet uitlogt, houdt zijn
 sessie in `sessies.db` nog eeuwig: de 30 dagen van `max_age` gelden alleen voor
-de cookie in de browser. Dat los je op in les 5.
+de cookie in de browser. Dat los je op in les 6.
 
 </details>
 
-Door naar [les 5: een sessie laten verlopen](site:fullstack/docs/veiligheid/cookies/verlopen).
+Door naar [les 6: een sessie laten verlopen](site:fullstack/docs/veiligheid/cookies/verlopen).

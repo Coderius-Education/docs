@@ -1,5 +1,5 @@
 ---
-sidebar_label: '1. Een knop is geen slot'
+sidebar_label: '2. Een knop is geen slot'
 description: Een knop is geen slot. Een tweede bezoeker verwijdert met een los scriptje het bericht van een ander, op je eigen server.
 ---
 
@@ -17,119 +17,15 @@ gemaakt, dan staat hij alleen bij je eigen berichten, en dat voelt als
 beveiliging. Maar een knop doet maar één ding: een verzoek versturen. Wie dat
 verzoek zelf verstuurt, heeft de knop niet nodig, verborgen of niet.
 
-:::note[Waar je werkt]
-Maak voor deze reeks een nieuwe map `veiligheid-toegang`, naast je eigen
-project, en open die in VS Code. De server, de scripts en de databases van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
-het eind van de reeks pas je het geleerde toe op je eigen project.
-
-Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
-:::
-
-## Het gastenboek als JSON
-
-De server hieronder is het gastenboek uit Sessies: registreren uit de basis,
-inloggen met een sessie, en het endpoint Verwijderen uit het
-[htmx-overzicht](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht#verwijderen). De HTML is eruit:
-elk endpoint geeft JSON terug, zodat een scriptje kan lezen wat de server
-antwoordt. Een bericht plaatsen heet hier `POST /bericht`.
-
-<CodeUitleg>
-
-```python showLineNumbers
-import secrets
-import time
-
-from fastapi import Cookie, FastAPI, Form, HTTPException
-from fastapi.responses import JSONResponse
-from sqlitedict import SqliteDict
-
-app = FastAPI()
-
-@app.post("/registreer")
-async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as gebruikers:
-        if naam in gebruikers:
-            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
-        gebruikers[naam] = wachtwoord
-        gebruikers.commit()
-    return {"bericht": f"Welkom, {naam}"}
-
-@app.post("/inloggen")
-async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as gebruikers:
-        opgeslagen = gebruikers.get(naam)
-    if opgeslagen != wachtwoord:
-        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
-
-    sessie_id = secrets.token_hex(16)
-    with SqliteDict("sessies.db") as sessies:
-        sessies[sessie_id] = {"naam": naam}
-        sessies.commit()
-
-    antwoord = JSONResponse({"bericht": f"Ingelogd als {naam}"})
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, max_age=60 * 60 * 24 * 30)
-    return antwoord
-
-@app.post("/bericht")
-async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
-    with SqliteDict("sessies.db") as sessies:
-        mijn = sessies.get(sessie_id, {})
-    if not mijn:
-        raise HTTPException(status_code=401, detail="Log eerst in")
-
-    sleutel = f"bericht_{time.time_ns()}"
-    with SqliteDict("gastenboek.db") as db:
-        db[sleutel] = {"naam": mijn["naam"], "bericht": bericht}
-        db.commit()
-    return {"sleutel": sleutel}
-
-@app.get("/berichten")
-async def berichten():
-    with SqliteDict("gastenboek.db") as db:
-        return dict(db)
-
-@app.delete("/bericht/{sleutel}")
-async def bericht_verwijderen(sleutel: str):
-    with SqliteDict("gastenboek.db") as db:
-        if sleutel not in db:
-            raise HTTPException(status_code=404, detail="Dit bericht bestaat niet")
-        del db[sleutel]
-        db.commit()
-    return {"bericht": "Verwijderd"}
-```
-
-<Regel n={10} tot={17}>
-Registreren uit de basis, met JSON als antwoord in plaats van een omleiding.
-</Regel>
-
-<Regel n={19} tot={33}>
-Inloggen uit Sessies: pas als het wachtwoord klopt, komt er een sessie met de naam.
-</Regel>
-
-<Regel n={35} tot={46}>
-Een bericht plaatsen. De naam komt uit de sessie, en het antwoord is de sleutel van het nieuwe bericht.
-</Regel>
-
-<Regel n={48} tot={51}>
-Alle berichten, met hun sleutels. Op de pagina ziet elke bezoeker ze ook.
-</Regel>
-
-<Regel n={53} tot={60}>
-Het DELETE-endpoint uit het htmx-recept. Het vraagt welk bericht weg moet, en niet wie dat vraagt.
-</Regel>
-
-</CodeUitleg>
+Maakte je ook
+[opdracht 5 van Sessies](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen),
+dan heb je dit gat in je eigen gastenboek al gedicht. Deze reeks laat zien
+waarom die controle nodig was: de server van deze map heeft hem nog niet.
 
 ## Doe het na, op je eigen server
 
-:::danger[Alleen je eigen server]
-Doe dit **uitsluitend** met je eigen server op `127.0.0.1`. Berichten of
-gegevens van een ander verwijderen via een verzoek dat je zelf in elkaar zet, is
-strafbaar, ook als de site het toelaat en ook als het "maar een testje" is.
-:::
-
-Zet de server in `main.py` in je map `veiligheid-toegang` en start hem met
-`fastapi dev main.py`. Maak in dezelfde map een scriptje `test_verwijderen.py`. Het speelt
+Laat de server uit [les 1](site:fullstack/docs/veiligheid/toegang/gastenboek)
+draaien, en maak in dezelfde map een scriptje `test_verwijderen.py`. Het speelt
 twee bezoekers: Sara en Alex. Allebei maken ze een account, loggen ze in en
 plaatsen ze een bericht. Daarna verwijdert Alex dat van Sara.
 
@@ -163,7 +59,7 @@ print(f"Nog in het gastenboek: {namen}")
 ```
 
 <Regel n={5} tot={6}>
-Twee `httpx.Client`s zijn twee bezoekers, elk met hun eigen cookies en dus een eigen sessie, zoals in [Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap).
+Twee `httpx.Client`s zijn twee bezoekers, elk met hun eigen cookies en dus een eigen sessie, zoals in [Een bezoeker die onthoudt](site:fullstack/docs/veiligheid/client).
 </Regel>
 
 <Regel n={8} tot={11}>
@@ -171,7 +67,7 @@ Elk een account en een inlog. Na het inloggen bewaart elke `Client` zijn eigen c
 </Regel>
 
 <Regel n={16} tot={19}>
-Alex vraagt de berichten op, zoals elke bezoeker kan, en stuurt voor het bericht van Sara een `DELETE`. De knop in de browser verstuurt hetzelfde verzoek.
+Alex vraagt de berichten op, zoals elke bezoeker kan, en stuurt voor het bericht van Sara een `DELETE`: `alex.delete` doet dat, zoals `alex.post` een POST stuurt. De knop in de browser verstuurt hetzelfde verzoek.
 </Regel>
 
 <Regel n={21} tot={24}>
@@ -180,31 +76,55 @@ Van elk bericht dat over is alleen de naam, want de sleutels zijn bij jou anders
 
 </CodeUitleg>
 
-Draai het in een tweede terminal:
+Draai het in een tweede terminal.
 
-```
+<Gelukt>
+
+Het script print:
+
+```text
 Alex verwijdert het bericht van Sara: 200
 Nog in het gastenboek: ['Alex']
 ```
 
-Het bericht van Sara is weg. Alex hoefde niets te raden of te kraken: hij logde
+Het bericht van Sara is weg, verwijderd door Alex.
+
+</Gelukt>
+
+Alex hoefde niets te raden of te kraken: hij logde
 in als zichzelf, en de sleutel stond in het antwoord van `/berichten`. Het endpoint deed wat Alex vroeg.
 
 Je server weet precies wie Alex is: de naam staat in zijn sessie. Alleen vraagt
 `bericht_verwijderen` er niet naar. Een verborgen knop, zoals in opdracht 4 van
 Sessies, maakt dat alleen minder zichtbaar.
 
+<Voorspel soort="Controlevraag" vraag="Je zet in app.js een controle: de knop stuurt alleen een DELETE als het bericht van jou is. Alex draait daarna test_verwijderen.py nog een keer. Welke statuscode krijgt hij?">
+  <Keuze uitleg="Een 403 moet de server zelf geven. Waar draait app.js, en waar draait het script van Alex?">`403`, want app.js weigert hem</Keuze>
+  <Keuze uitleg="De sleutel haalt het script uit /berichten, niet uit de knop. Wat verandert app.js daaraan?">Geen, want zonder knop vindt hij de sleutel niet</Keuze>
+  <Keuze goed uitleg="app.js draait in de browser. Het script stuurt het DELETE-verzoek zelf, en het endpoint vraagt nog steeds niet wie er komt.">`200`, want het script slaat app.js over</Keuze>
+  <Uitleg>
+
+  Wat in de browser draait, of het nu een verborgen knop is of een controle in JavaScript, is een hulp voor wie de pagina gebruikt. De server ziet alleen het verzoek, en dat kan iedereen zelf versturen. Een slot moet dus op de server zitten, in het endpoint.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
 
-Je ziet meer namen dan `Sara` en `Alex`, of het script verwijdert twee berichten
-van Sara.
+### Twee keer Alex, of meer namen
 
-**Oorzaak:** in de map staat nog een `gastenboek.db` van eerder, met oude
-berichten erin. Het script ziet die ook, en verwijdert elk bericht met de naam
-Sara.
+Het script print `Nog in het gastenboek: ['Alex', 'Alex']`, of er staan namen
+bij die je niet kent.
 
-**Oplossing:** werk in de map `veiligheid-toegang` uit het begin van deze les, of gooi
-`gastenboek.db`, `sessies.db` en `gebruikers.db` weg voordat je de server start.
+**Oorzaak:** de databases van een vorige keer staan er nog. Draai je het script
+een tweede keer, dan plaatst Alex opnieuw een bericht, naast dat van de eerste
+keer. Start je de server in een andere map, zoals je eigen project, dan ziet
+het script ook de berichten van daar.
+
+**Oplossing:** werk in de map `veiligheid-toegang` uit
+[les 1](site:fullstack/docs/veiligheid/toegang/gastenboek), en gooi
+`gastenboek.db`, `sessies.db` en `gebruikers.db` weg voordat je het script
+opnieuw draait.
 
 :::tip[Eerst op papier]
 Zoek eerst zonder computer bij zes verzoeken de controle die de server beschermt: [Vertrouw de bezoeker niet](site:fullstack/docs/unplugged/vertrouw-de-bezoeker). Je docent kan de hand-out printen.
@@ -260,7 +180,7 @@ naar de detailpagina `href="/bericht/…"`, en in de knop bij `hx-delete` en
 `hx-target`. Ook als je de knop verbergt, staat hij in het `id` en in de link,
 en `/berichten` geeft hem ook terug. Een lange sleutel is dus geen slot: je hoeft
 hem niet te raden, want de server geeft hem zelf. De controle moet in het
-endpoint, en dat doe je in les 2.
+endpoint, en dat doe je in [les 3](site:fullstack/docs/veiligheid/toegang/controle).
 
 </details>
 
@@ -334,4 +254,4 @@ Dit is de zwakke versie: `bericht_verwijderen` vraagt niet wie er komt.
 
 </details>
 
-Door naar [les 2: de controle met 403](site:fullstack/docs/veiligheid/toegang/controle).
+Door naar [les 3: de controle met 403](site:fullstack/docs/veiligheid/toegang/controle).

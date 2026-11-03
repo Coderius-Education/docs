@@ -1,14 +1,14 @@
 ---
-sidebar_label: '3. Zout'
+sidebar_label: '5. Zout'
 description: Met een zout krijgt hetzelfde wachtwoord toch een andere hash, zodat je in de database niet ziet wie hetzelfde wachtwoord heeft.
 ---
 
 # Wachtwoorden: zout
 
-In [les 2](site:fullstack/docs/veiligheid/wachtwoorden/hash) hadden Sara en Noor dezelfde hash, omdat ze hetzelfde
+In [les 4](site:fullstack/docs/veiligheid/wachtwoorden/hash-opslaan) hadden Sara en Noor dezelfde hash, omdat ze hetzelfde
 wachtwoord kozen. De oplossing is een **zout** (Engels: *salt*): een stukje
 willekeurige tekst dat je vóór het wachtwoord zet voordat je hasht. Elke
-gebruiker krijgt een eigen zout.
+gebruiker krijgt een eigen zout. Probeer het in een scriptje `zout.py`:
 
 ```python
 import hashlib
@@ -22,15 +22,19 @@ print(hashlib.sha256((zout_sara + wachtwoord).encode()).hexdigest())
 print(hashlib.sha256((zout_noor + wachtwoord).encode()).hexdigest())
 ```
 
-Uitvoer:
+<Gelukt>
 
-```
+`python zout.py` print twee totaal verschillende codes, voor hetzelfde
+wachtwoord:
+
+```text
 02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f
 5e83ee3a35dabb618662f2b8e13037c42d3bdf9858f1ff7dec0f365237516053
 ```
 
-Hetzelfde wachtwoord geeft nu twee totaal verschillende hashes. In de database zie je
-niet meer dat Sara en Noor hetzelfde kozen.
+</Gelukt>
+
+In de database zie je zo niet meer dat Sara en Noor hetzelfde kozen.
 
 ## Het zout is geen geheim
 
@@ -49,36 +53,46 @@ voor elk zout opnieuw maken, en dat is niet te doen.
 
 `"a1b2c3"` is een voorbeeld om te laten zien wat er gebeurt. Een echt zout is
 lang en echt willekeurig. Dat hoef je niet zelf te regelen: in
-[les 5](site:fullstack/docs/veiligheid/wachtwoorden/registreren) gebruik je Argon2, dat bij elke hash vanzelf een nieuw
+[les 7](site:fullstack/docs/veiligheid/wachtwoorden/registreren) gebruik je Argon2, dat bij elke hash vanzelf een nieuw
 zout maakt en het in de hash zelf bewaart.
+
+<Voorspel soort="Controlevraag" vraag="Een site neemt als zout de naam van de gebruiker: sara voor Sara, noor voor Noor. Ze kozen allebei welkom123. Zie je in de gelekte database dat hun wachtwoorden gelijk zijn?">
+  <Keuze uitleg="Dat geldt zonder zout. Wat gaat er hier de sha256 in, bij Sara en bij Noor?">Ja, want hetzelfde wachtwoord geeft altijd dezelfde code</Keuze>
+  <Keuze uitleg="Een naam is inderdaad geen goed zout. Maar de vraag is of je ziet dat de wachtwoorden gelijk zijn. Wat gaat er de sha256 in?">Ja, want een naam is geen willekeurig zout, dus hij helpt niet</Keuze>
+  <Keuze uitleg="Iedereen kent de naam, want hij staat als sleutel in de database. Daar zit het verschil niet.">Nee, want een naam als zout is geheim voor wie de database heeft</Keuze>
+  <Keuze goed uitleg="Bij Sara gaat sara plus welkom123 de sha256 in, bij Noor haar eigen naam plus welkom123. Verschillende teksten geven verschillende codes.">Nee, want met een andere naam ervoor komt er een andere code uit</Keuze>
+  <Uitleg>
+
+  Elk zout dat per gebruiker anders is, verbergt dat twee mensen hetzelfde
+  kozen. Een naam is wel voorspelbaar: voor `sara` kan iemand vooraf een lijst
+  maken met `sara` voor elk bekend wachtwoord. Daarom is een echt zout
+  willekeurig.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
-Je geeft iedereen hetzelfde zout, bijvoorbeeld `"a1b2c3"` voor alle
-gebruikers:
+### can only concatenate str (not "bytes") to str
+
+```
+TypeError: can only concatenate str (not "bytes") to str
+```
+
+**Oorzaak:** je vergat de haakjes om `zout_sara + wachtwoord`. Dan zet
+`.encode()` alleen het wachtwoord om in bytes, en Python kan tekst en bytes
+niet aan elkaar plakken.
+
+**Oplossing:** plak eerst de tekst aan elkaar, en maak daarna van het geheel
+bytes:
 
 ```python
-import hashlib
+# FOUT
+hashlib.sha256(zout_sara + wachtwoord.encode()).hexdigest()
 
-zout = "a1b2c3"
-print(hashlib.sha256((zout + "welkom123").encode()).hexdigest())
-print(hashlib.sha256((zout + "welkom123").encode()).hexdigest())
+# GOED
+hashlib.sha256((zout_sara + wachtwoord).encode()).hexdigest()
 ```
-
-Uitvoer:
-
-```
-02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f
-02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f
-```
-
-Geen foutmelding, maar Sara en Noor hebben weer dezelfde hash.
-
-**Oorzaak:** met hetzelfde zout gaat er voor hetzelfde wachtwoord weer precies
-hetzelfde de `sha256` in.
-
-**Oplossing:** geef elke gebruiker een eigen, willekeurig zout. Argon2 in
-les 5 doet dat vanzelf, bij elke hash opnieuw.
 
 ## Opdrachten
 
@@ -91,7 +105,7 @@ de hashes van veelgebruikte wachtwoorden?
 <details>
 <summary>Tip</summary>
 
-De hash zonder zout ken je uit [les 2](site:fullstack/docs/veiligheid/wachtwoorden/hash).
+De hash zonder zout ken je uit [les 3](site:fullstack/docs/veiligheid/wachtwoorden/hash).
 
 </details>
 
@@ -122,13 +136,13 @@ kiest niemand. Zoek je de gezouten hash op in de lijst, dan vind je niets.
 
 Een aanvaller heeft een gelekte database met duizend gebruikers, en wil weten
 wie `welkom123` als wachtwoord heeft. Hoeveel hashes moet hij daarvoor
-uitrekenen als de database geen zout gebruikt, zoals in [les 2](site:fullstack/docs/veiligheid/wachtwoorden/hash)? En
+uitrekenen als de database geen zout gebruikt, zoals in [les 4](site:fullstack/docs/veiligheid/wachtwoorden/hash-opslaan)? En
 hoeveel als elke gebruiker een eigen zout heeft?
 
 <details>
 <summary>Tip</summary>
 
-In les 2 vond je met één `sha256` van `welkom123` zowel Sara als Noor. Lukt dat
+In les 4 vond je met één `sha256` van `welkom123` zowel Sara als Noor. Lukt dat
 nog als elk zout een andere hash geeft?
 
 </details>
@@ -142,8 +156,8 @@ code in de hele database. Iedereen met die code heeft `welkom123`.
 Met een eigen zout per gebruiker duizend: voor elke gebruiker moet hij zijn
 zout plus `welkom123` apart hashen, want elk zout geeft een andere code. Dat
 het zout in de database staat, helpt hem dus niet: hij heeft duizend keer
-zoveel werk. Waarom dat telt, zie je in [les 4](site:fullstack/docs/veiligheid/wachtwoorden/traag).
+zoveel werk. Waarom dat telt, zie je in [les 6](site:fullstack/docs/veiligheid/wachtwoorden/traag).
 
 </details>
 
-Door naar [les 4: traag is goed](site:fullstack/docs/veiligheid/wachtwoorden/traag).
+Door naar [les 6: traag is goed](site:fullstack/docs/veiligheid/wachtwoorden/traag).

@@ -352,8 +352,8 @@ const INVOER_STAPPEN: Stap[] = [
     kant: 'browser',
     titel: 'Een script slaat de browser over',
     tekst: 'httpx stuurt hetzelfde verzoek, zonder maxlength en zonder formulier.',
-    to: '/docs/veiligheid/gereedschap',
-    les: 'Een script als bezoeker',
+    to: '/docs/veiligheid/client',
+    les: 'Een bezoeker die onthoudt',
   },
   {
     kant: 'server',
@@ -391,7 +391,7 @@ const XSS_STAPPEN: Stap[] = [
     titel: 'Een bezoeker typt HTML',
     tekst: 'Bijvoorbeeld <b>vet</b> in zijn bericht.',
     to: '/docs/veiligheid/xss/zwakheid',
-    les: 'De zwakheid',
+    les: 'Tekst of HTML?',
   },
   {
     kant: 'server',
@@ -424,7 +424,7 @@ const TOEGANG_STAPPEN: Stap[] = [
     titel: 'Alex stuurt een DELETE',
     tekst: 'Met de sleutel van het bericht van Sara; die staat gewoon in de pagina.',
     to: '/docs/veiligheid/toegang/zwakheid',
-    les: 'De zwakheid',
+    les: 'Een knop is geen slot',
   },
   {
     kant: 'server',
@@ -467,7 +467,7 @@ const COOKIES_STAPPEN: Stap[] = [
     titel: 'Een script vraagt document.cookie',
     tekst: 'Het krijgt de sessie-cookie niet te zien.',
     to: '/docs/veiligheid/cookies/zwakheid',
-    les: 'De zwakheid',
+    les: 'Scripts lezen cookies',
   },
   {
     kant: 'server',

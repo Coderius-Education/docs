@@ -1,11 +1,11 @@
 ---
-sidebar_label: '4. Templates escapen vanzelf'
+sidebar_label: '5. Templates escapen vanzelf'
 description: Een .html-template van Jinja escapet alles tussen dubbele accolades, zodat je geen plek kunt vergeten. Zet de lijst van je gastenboek in een template.
 ---
 
 # HTML van een bezoeker: templates escapen vanzelf
 
-Met `escape` uit [les 2](site:fullstack/docs/veiligheid/xss/escape) moet je aan elke plek denken, en in de "Er
+Met `escape` uit [les 3](site:fullstack/docs/veiligheid/xss/escape) moet je aan elke plek denken, en in de "Er
 gaat iets mis" van die les zag je hoe makkelijk je er een vergeet. Een template
 van Jinja doet het voor je: alles tussen `{{ }}` escapet hij, zonder dat je
 erom vraagt.
@@ -58,15 +58,20 @@ templates = Jinja2Templates(directory="templates")
 ```
 
 Het antwoord na het versturen blijft één zin in een f-string, met `escape(naam)`,
-en de zoekpagina uit [les 3](site:fullstack/docs/veiligheid/xss/url) houdt `escape(term)`. Voor één zin is een
+en de zoekpagina uit [les 4](site:fullstack/docs/veiligheid/xss/url) houdt `escape(term)`. Voor één zin is een
 template wat veel.
 
 ## Doe de test opnieuw
 
 Gooi `gastenboek.db` weg, start de server opnieuw, en vul als Sara weer
-`<b>vet</b>` in. `lijst.py` uit [les 1](site:fullstack/docs/veiligheid/xss/zwakheid) geeft nu:
+`<b>vet</b>` in.
 
-```
+<Gelukt>
+
+In de lijst staat `<b>vet</b>` met de haakjes erbij, ook al staat er in
+`berichten_lijst` geen `escape` meer. `lijst.py` uit [les 2](site:fullstack/docs/veiligheid/xss/zwakheid) geeft nu:
+
+```text
 <ul>
     
         <li>Sara: &lt;b&gt;vet&lt;/b&gt;</li>
@@ -74,11 +79,26 @@ Gooi `gastenboek.db` weg, start de server opnieuw, en vul als Sara weer
 </ul>
 ```
 
+</Gelukt>
+
 De witruimte komt uit het template: de regels met `{% for %}` en `{% endfor %}`
 worden elk een regel met alleen vier spaties. Wat Sara typte staat er, maar als
 tekst, net als met `escape`.
 
+<Voorspel soort="Controlevraag" vraag="Je maakt een pagina /nieuwste met een eigen template nieuwste.html. Daarin staan de naam en het bericht van de laatste bezoeker, elk tussen dubbele accolades. Wat zet je in Python om de naam en het bericht, voordat ze naar het template gaan?">
+  <Keuze goed uitleg="nieuwste.html eindigt op .html, dus Jinja escapet alles tussen dubbele accolades, net als in berichten_lijst.html.">Niets: Jinja escapet ze in nieuwste.html zelf</Keuze>
+  <Keuze uitleg="Dan escapet Jinja ze daarna nog een keer. Van de & in &lt; maakt hij &amp;, en je ziet &lt; op je pagina.">escape() om allebei, want ze komen van een bezoeker</Keuze>
+  <Keuze uitleg="Het escapen hoort niet bij één bestand. Elk template dat op .html eindigt, escapet tussen dubbele accolades.">escape() om allebei, want alleen berichten_lijst.html escapet vanzelf</Keuze>
+  <Uitleg>
+
+  Waar een waarde door een `.html`-template gaat, escapet Jinja hem; daar zet je in Python niets omheen. `escape()` hoort alleen waar je zelf HTML bouwt, in een f-string.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
+
+### Weer vet met een andere extensie
 
 Je noemt het template `berichten_lijst.jinja`, en `<b>vet</b>` is weer vet.
 
@@ -88,6 +108,23 @@ foutmelding of waarschuwing.
 
 **Oplossing:** houd je templates op `.html`, en pas de naam in
 `TemplateResponse` mee aan.
+
+### TemplateNotFound
+
+De lijst ververst niet meer, en na herladen blijft hij leeg. `lijst.py` print
+`Internal Server Error`, en in de terminal van je server eindigt de foutmelding
+met:
+
+```text
+jinja2.exceptions.TemplateNotFound: 'berichten_lijst.html' not found in search path: 'templates'
+```
+
+**Oorzaak:** het template staat niet in de map `templates` naast `main.py`, of
+het heet anders dan in `TemplateResponse`. Je endpoint geeft dan een `500`, en
+htmx zet een `500` niet in de pagina: een open pagina houdt stil de oude lijst.
+
+**Oplossing:** zet `berichten_lijst.html` in `templates/`, met precies de naam
+uit `TemplateResponse`.
 
 ## Opdrachten
 
@@ -117,6 +154,9 @@ De `<b>` mag in het template staan. Het is jouw HTML, niet die van de bezoeker.
 De tags komen van jou, de inhoud van de bezoeker. Jinja escapet alleen wat
 tussen `{{ }}` staat, dus de naam blijft tekst en jouw `<b>` blijft HTML.
 
+Haal de `<b>` daarna weer weg: les 6 rekent met het template zonder vette
+namen.
+
 </details>
 
 ### Opdracht 2: Predict - Aanhalingstekens
@@ -129,7 +169,7 @@ in wat `lijst.py` print?
 <details>
 <summary>Tip</summary>
 
-In [les 2](site:fullstack/docs/veiligheid/xss/escape) zag je welke tekens escapen vervangt. Een `"` is er een
+In [les 3](site:fullstack/docs/veiligheid/xss/escape) zag je welke tekens escapen vervangt. Een `"` is er een
 van.
 
 </details>
@@ -144,7 +184,7 @@ geeft voor dat bericht:
         <li>Noor: Ik zeg &#34;hoi&#34;</li>
 ```
 
-Jinja schrijft een `"` als `&#34;`, waar `escape` uit les 2 `&quot;` maakt. Het
+Jinja schrijft een `"` als `&#34;`, waar `escape` uit les 3 `&quot;` maakt. Het
 zijn twee codes voor hetzelfde teken, en de browser toont van allebei een `"`.
 Wie gewone tekst typt, merkt dus niets van het escapen.
 
@@ -195,4 +235,4 @@ Naast `main.py` staan `static/gastenboek.html`, `static/js/htmx.min.js` en
 
 </details>
 
-Door naar [les 5: |safe, de bescherming uitzetten](site:fullstack/docs/veiligheid/xss/safe).
+Door naar [les 6: |safe, de bescherming uitzetten](site:fullstack/docs/veiligheid/xss/safe).

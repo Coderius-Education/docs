@@ -1,17 +1,17 @@
 ---
-sidebar_label: '9. Inlogpogingen beperken'
+sidebar_label: '11. Inlogpogingen beperken'
 description: Zet een verzoeklimiet op /inloggen en /wijzig, zodat niemand eindeloos wachtwoorden kan proberen, en zie na vijf foute pogingen een 429.
 ---
 
 # Wachtwoorden: inlogpogingen beperken
 
-Met Argon2 uit [les 5 tot en met 8](site:fullstack/docs/veiligheid/wachtwoorden/registreren) geeft een gelekte database
+Met Argon2 uit [les 7 tot en met 10](site:fullstack/docs/veiligheid/wachtwoorden/registreren) geeft een gelekte database
 de wachtwoorden niet weg. Maar wie de database niet heeft, kan nog iets anders:
 `/inloggen` zelf proberen, keer op keer, met steeds een ander wachtwoord. Je
 server antwoordt op elke poging, en elk antwoord zegt of het raak was.
 
 Een grens op het aantal pogingen ken je al: de verzoeklimiet met `slowapi` uit
-[Te veel verzoeken](site:fullstack/docs/veiligheid/dos/limiet). Die zet je nu op de twee
+[Te veel verzoeken: een limiet met slowapi](site:fullstack/docs/veiligheid/dos/limiet). Die zet je nu op de twee
 endpoints die een wachtwoord controleren.
 
 ## `slowapi` in deze map
@@ -53,7 +53,7 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 ```
 
-In `/inloggen` uit [les 8](site:fullstack/docs/veiligheid/wachtwoorden/rehash) veranderen alleen de kop en de regel
+In `/inloggen` uit [les 10](site:fullstack/docs/veiligheid/wachtwoorden/rehash) veranderen alleen de kop en de regel
 erboven:
 
 <CodeUitleg>
@@ -102,7 +102,7 @@ als het "maar een testje" is.
 :::
 
 Start je server opnieuw. Staat Sara nog niet in je database, draai dan eerst
-`registreer.py` uit [les 1](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst). Maak daarna `pogingen.py`, dat zes
+`registreer.py` uit [les 1](site:fullstack/docs/veiligheid/wachtwoorden/startbestand). Maak daarna `pogingen.py`, dat zes
 keer met hetzelfde foute wachtwoord inlogt:
 
 ```python
@@ -114,212 +114,6 @@ for nummer in range(6):
     antwoord = httpx.post(adres, data={"naam": "sara", "wachtwoord": "fout"})
     print(f"Poging {nummer + 1}: {antwoord.status_code} {antwoord.json()}")
 ```
-
-Uitvoer:
-
-```
-Poging 1: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
-Poging 2: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
-Poging 3: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
-Poging 4: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
-Poging 5: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
-Poging 6: 429 {'error': 'Rate limit exceeded: 5 per 1 minute'}
-```
-
-De zesde poging komt niet meer bij `ph.verify`: `slowapi` weigert hem met een
-`429` voordat je functie draait. Wie wachtwoorden wil proberen, haalt er nu
-vijf per minuut, en een lijst van duizend wachtwoorden kost hem meer dan drie
-uur. Het scheelt je server ook werk, want elke `ph.verify` is expres traag.
-
-## Er gaat iets mis
-
-`pogingen.py` geeft zes keer `200`, en nooit een `429`.
-
-**Oorzaak:** `@limiter.limit` staat boven `@app.post` in plaats van eronder.
-FastAPI legt dan de functie zonder limiet vast als endpoint, en `slowapi` telt
-niets. Je krijgt geen foutmelding; de limiet werkt stil niet.
-
-**Oplossing:** zet `@app.post` bovenaan, en `@limiter.limit` direct eronder:
-
-{/* niet-compileren: alleen de decorators, zonder functie eronder */}
-
-```python
-# FOUT
-@limiter.limit("5/minute")
-@app.post("/inloggen")
-
-# GOED
-@app.post("/inloggen")
-@limiter.limit("5/minute")
-```
-
-Sla `main.py` op en draai `pogingen.py` opnieuw.
-
-## Opdrachten
-
-### Opdracht 1: Predict - Sara zelf
-
-Je draait `pogingen.py`, en direct daarna logt Sara in met haar goede
-wachtwoord, vanaf dezelfde computer. Sinds opdracht 1 van [les 7](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen) is
-dat `Lange-Nieuwe-Zin-7`.
-
-**Vraag:** wat krijgt ze terug?
-
-<details>
-<summary>Tip</summary>
-
-Waarop telt `get_remote_address`: op de naam, of op de computer?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-`429 {'error': 'Rate limit exceeded: 5 per 1 minute'}`. De limiet telt per
-computer, en het script en Sara zitten op `127.0.0.1`. Ze moet wachten tot de
-minuut om is, of je slaat `main.py` op en `fastapi dev` begint opnieuw te
-tellen. Op een echte site zit een bezoeker niet op de computer van een
-aanvaller, en merkt hij hier niets van.
-
-</details>
-
-### Opdracht 2: Investigate - En `/registreer`?
-
-`/registreer` controleert geen wachtwoord, en krijgt in deze les geen limiet.
-Kan een script daar toch iets mee doen wat je niet wilt?
-
-<details>
-<summary>Tip</summary>
-
-Wat kost `ph.hash`? En wat antwoordt `/registreer` als een naam al bestaat?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Ja, twee dingen. Elke registratie rekent een trage `ph.hash` uit. Een script
-dat duizend accounts aanmaakt, laat je server dus lang rekenen: met de 19
-hashes per seconde uit [les 4](site:fullstack/docs/veiligheid/wachtwoorden/traag) bijna een minuut, en ondertussen wacht
-iedereen. Dat is [wat een verzoek kost](site:fullstack/docs/veiligheid/dos/verzoek).
-
-En bij een naam die al bestaat, antwoordt `/registreer` met
-`400 Deze naam is al bezet`. Zo zoekt een script uit welke namen een account
-hebben, precies wat `/inloggen` met de nep-hash verborgen houdt.
-
-Een limiet op `/registreer` helpt tegen allebei, ook al raadt daar niemand een
-wachtwoord.
-
-</details>
-
-### Opdracht 3: Make - In je eigen project
-
-Je gastenboek heeft accounts sinds
-[Registreren: een account opslaan](site:fullstack/docs/FastAPI/accounts/registreren), en bewaart de
-wachtwoorden nog als gewone tekst. Maak ze veilig met wat je in deze reeks
-leerde: Argon2 bij het registreren, `ph.verify` met `NEP` op elke plek die een
-wachtwoord controleert, en een limiet op elk van die plekken.
-
-<details>
-<summary>Tip</summary>
-
-Zoek naar `gebruikers.get(naam)`: op elke plek waar je een wachtwoord
-vergelijkt, komt `ph.verify`. Bouwde je de uitbreiding sessies, dan is dat
-`POST /inloggen`. Zonder die uitbreiding is het je `POST /gastenboek`, want
-daar controleert je server het wachtwoord bij elk bericht.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Loop deze lijst af:
-
-- `/registreer` bewaart `ph.hash(wachtwoord)`, en weigert nog steeds een naam
-  die al bestaat.
-- Elke plek die een wachtwoord controleert, gebruikt `ph.verify`, ook bij een
-  onbekende naam (tegen `NEP`), en geeft bij een onbekende naam en bij een fout
-  wachtwoord dezelfde melding.
-- Elk van die endpoints heeft `@limiter.limit` direct onder `@app.post`, en
-  `request: Request` vooraan bij de parameters. Een script dat zes keer fout
-  inlogt, krijgt bij de zesde een `429`.
-- Er staat nergens een wachtwoord als gewone tekst: niet in de database, niet
-  in een print, niet in een cookie. Gooi je oude `gebruikers.db` weg en
-  registreer opnieuw: `ph.verify` kan niets met een wachtwoord dat als gewone
-  tekst is opgeslagen, en dan stopt je server met een `500` en in de terminal
-  `argon2.exceptions.InvalidHashError`.
-
-Installeer eerst in de virtual environment van je project wat erbij komt, in
-de terminal van VS Code:
-
-```bash
-python -m pip install argon2-cffi slowapi
-```
-
-Direct onder `app = FastAPI()` komen de `PasswordHasher`, de nep-hash en de
-limiter:
-
-```python
-ph = PasswordHasher()
-NEP = ph.hash("niemand")
-limiter = Limiter(key_func=get_remote_address)
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-```
-
-Heb je in je project al een limiter uit Te veel verzoeken, gebruik dan die: de
-laatste drie regels en de imports van `slowapi` staan er dan al, en een tweede
-`limiter` of `app.add_exception_handler` is niet nodig.
-
-Met de sessies uit [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies)
-wordt je `POST /inloggen` zo. Bij je imports komen de regels van `argon2` en
-`slowapi`; `Request` staat in de import uit `fastapi` sinds de templates al. De
-401 uit de basis blijft, en onder de controle blijft de sessie zoals hij was:
-hier met de `tot`, `httponly=True` en `samesite="lax"` uit de reeks Cookies
-afschermen. Laat die staan. Sloeg je die reeks over, dan houd je je eigen
-`sessies[sessie_id]` en `set_cookie`.
-
-```python
-from argon2 import PasswordHasher
-from argon2.exceptions import VerifyMismatchError
-from fastapi import Cookie, FastAPI, Form, HTTPException, Request
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
-
-@app.post("/inloggen")
-@limiter.limit("5/minute")
-async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as gebruikers:
-        opgeslagen = gebruikers.get(naam, NEP)
-    try:
-        ph.verify(opgeslagen, wachtwoord)
-    except VerifyMismatchError:
-        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
-    if opgeslagen == NEP:
-        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
-
-    sessie_id = secrets.token_hex(16)
-    with SqliteDict("sessies.db") as sessies:
-        sessies[sessie_id] = {"naam": naam, "tot": time.time() + GELDIG}
-        sessies.commit()
-
-    antwoord = RedirectResponse(url="/gastenboek", status_code=303)
-    antwoord.set_cookie(
-        key="sessie_id",
-        value=sessie_id,
-        max_age=GELDIG,
-        httponly=True,
-        samesite="lax",
-    )
-    return antwoord
-```
-
-Geeft `/inloggen` zo een `RedirectResponse` terug, dan werkt de limiet ook:
-`slowapi` heeft alleen bij `headers_enabled=True` een `response: Response`
-nodig voor een dictionary.
-
-</details>
 
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
@@ -389,4 +183,279 @@ een wachtwoord controleert: de hele reeks in één server.
 
 </details>
 
-Door naar [les 10: in de praktijk](site:fullstack/docs/veiligheid/wachtwoorden/praktijk).
+<Gelukt>
+
+`python pogingen.py` krijgt vijf keer een melding, en de zesde keer een `429`:
+
+```text
+Poging 1: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
+Poging 2: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
+Poging 3: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
+Poging 4: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
+Poging 5: 200 {'bericht': 'Naam of wachtwoord klopt niet'}
+Poging 6: 429 {'error': 'Rate limit exceeded: 5 per 1 minute'}
+```
+
+</Gelukt>
+
+De zesde poging komt niet meer bij `ph.verify`: `slowapi` weigert hem met een
+`429` voordat je functie draait. Wie wachtwoorden wil proberen, haalt er nu
+vijf per minuut, en een lijst van duizend wachtwoorden kost hem meer dan drie
+uur. Het scheelt je server ook werk, want elke `ph.verify` is expres traag.
+
+<Voorspel soort="Controlevraag" vraag="Je bouwt er een endpoint /opzeggen bij: wie zijn naam en wachtwoord stuurt, raakt zijn account kwijt. Het controleert het wachtwoord met ph.verify. Wat zet je erboven?">
+  <Keuze uitleg="Elk endpoint telt apart: vijf foute pogingen op /inloggen laten /opzeggen met rust.">Niets, de limiet op /inloggen telt deze pogingen al mee</Keuze>
+  <Keuze uitleg="Een gebruiker zegt één keer op, maar een script dat wachtwoorden raadt, probeert het duizend keer.">Niets, want je zegt je account maar één keer op</Keuze>
+  <Keuze goed uitleg="/opzeggen doet een ph.verify. Zonder eigen limiet raadt een script daar eindeloos, en bij een goed wachtwoord is het account weg.">Een eigen @limiter.limit onder @app.post</Keuze>
+  <Uitleg>
+
+  Elke plek waar je server een wachtwoord controleert, is een plek om te raden.
+  Daar hoort dus een limiet, ook op een endpoint dat je later bouwt.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### De server start niet
+
+Je server start niet, en in de terminal eindigt de foutmelding met:
+
+```
+Exception: No "request" or "websocket" argument on function "<function wijzig at 0x…>"
+```
+
+**Oorzaak:** je zette `@limiter.limit` boven `/wijzig`, maar `request: Request`
+staat niet bij zijn parameters. `slowapi` controleert dat al bij het starten:
+zonder `request` weet hij niet van welke computer een verzoek komt. Bij
+`/inloggen` kan hetzelfde gebeuren; dan staat er `inloggen` in de melding. Het
+getal achter `0x` verschilt per keer.
+
+**Oplossing:** zet `request: Request` vooraan bij de parameters:
+
+{/* niet-compileren: alleen de kop van de functie, zonder inhoud */}
+
+```python
+# FOUT
+@app.post("/wijzig")
+@limiter.limit("5/minute")
+async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+
+# GOED
+@app.post("/wijzig")
+@limiter.limit("5/minute")
+async def wijzig(request: Request, naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+```
+
+### Al bij poging 1 een 429
+
+`pogingen.py` geeft zes keer `429`, ook bij `Poging 1`.
+
+**Oorzaak:** je draaide het script binnen een minuut nog een keer. De limiet
+telt per minuut, en de pogingen van daarnet tellen nog mee.
+
+**Oplossing:** wacht een minuut, of sla `main.py` op: `fastapi dev` start dan
+opnieuw, en begint opnieuw te tellen.
+
+### Zes keer 200
+
+`pogingen.py` geeft zes keer `200`, en nooit een `429`.
+
+**Oorzaak:** `@limiter.limit` staat boven `@app.post` in plaats van eronder.
+FastAPI legt dan de functie zonder limiet vast als endpoint, en `slowapi` telt
+niets. Je krijgt geen foutmelding; de limiet werkt stil niet.
+
+**Oplossing:** zet `@app.post` bovenaan, en `@limiter.limit` direct eronder:
+
+{/* niet-compileren: alleen de decorators, zonder functie eronder */}
+
+```python
+# FOUT
+@limiter.limit("5/minute")
+@app.post("/inloggen")
+
+# GOED
+@app.post("/inloggen")
+@limiter.limit("5/minute")
+```
+
+Sla `main.py` op en draai `pogingen.py` opnieuw.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Sara zelf
+
+Je draait `pogingen.py`, en direct daarna logt Sara in met haar goede
+wachtwoord, vanaf dezelfde computer. Sinds [les 9](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen) is
+dat `Lange-Nieuwe-Zin-7`.
+
+**Vraag:** wat krijgt ze terug?
+
+<details>
+<summary>Tip</summary>
+
+Waarop telt `get_remote_address`: op de naam, of op de computer?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`429 {'error': 'Rate limit exceeded: 5 per 1 minute'}`. De limiet telt per
+computer, en het script en Sara zitten op `127.0.0.1`. Ze moet wachten tot de
+minuut om is, of je slaat `main.py` op en `fastapi dev` begint opnieuw te
+tellen. Op een echte site zit een bezoeker niet op de computer van een
+aanvaller, en merkt hij hier niets van.
+
+</details>
+
+### Opdracht 2: Investigate - En `/registreer`?
+
+`/registreer` controleert geen wachtwoord, en krijgt in deze les geen limiet.
+Kan een script daar toch iets mee doen wat je niet wilt?
+
+<details>
+<summary>Tip</summary>
+
+Wat kost `ph.hash`? En wat antwoordt `/registreer` als een naam al bestaat?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Ja, twee dingen. Elke registratie rekent een trage `ph.hash` uit. Een script
+dat duizend accounts aanmaakt, laat je server dus lang rekenen: met de 19
+hashes per seconde uit [les 6](site:fullstack/docs/veiligheid/wachtwoorden/traag) bijna een minuut, en ondertussen wacht
+iedereen. Dat is [wat een verzoek kost](site:fullstack/docs/veiligheid/dos/verzoek).
+
+En bij een naam die al bestaat, antwoordt `/registreer` met
+`400 Deze naam is al bezet`. Zo zoekt een script uit welke namen een account
+hebben, precies wat `/inloggen` met de nep-hash verborgen houdt.
+
+Een limiet op `/registreer` helpt tegen allebei, ook al raadt daar niemand een
+wachtwoord.
+
+</details>
+
+### Opdracht 3: Make - In je eigen project
+
+Je gastenboek heeft accounts sinds
+[Registreren: een account opslaan](site:fullstack/docs/FastAPI/accounts/registreren), en bewaart de
+wachtwoorden nog als gewone tekst. Maak ze veilig met wat je in deze reeks
+leerde: Argon2 bij het registreren, `ph.verify` met `NEP` op elke plek die een
+wachtwoord controleert, een oude hash bijwerken na het inloggen, en een limiet
+op elk van die plekken en op `/registreer`.
+
+<details>
+<summary>Tip</summary>
+
+Zoek naar `gebruikers.get(naam)`: op elke plek waar je een wachtwoord
+vergelijkt, komt `ph.verify`. Bouwde je de uitbreiding sessies, dan is dat
+`POST /inloggen`. Zonder die uitbreiding is het je `POST /gastenboek`, want
+daar controleert je server het wachtwoord bij elk bericht.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Loop deze lijst af:
+
+- `/registreer` bewaart `ph.hash(wachtwoord)`, en weigert nog steeds een naam
+  die al bestaat.
+- Elke plek die een wachtwoord controleert, gebruikt `ph.verify`, ook bij een
+  onbekende naam (tegen `NEP`), en geeft bij een onbekende naam en bij een fout
+  wachtwoord dezelfde melding.
+- Na een geslaagde controle werkt `check_needs_rehash` een oude hash bij, zoals
+  in [les 10](site:fullstack/docs/veiligheid/wachtwoorden/rehash).
+- Elk van die endpoints heeft `@limiter.limit` direct onder `@app.post`, en
+  `request: Request` vooraan bij de parameters. Een script dat zes keer fout
+  inlogt, krijgt bij de zesde een `429`.
+- Ook `/registreer` heeft zo'n limiet, met `request: Request`: elke registratie
+  kost een trage `ph.hash`, en de melding over een bezette naam verraadt welke
+  namen bestaan (opdracht 2).
+- Er staat nergens een wachtwoord als gewone tekst: niet in de database, niet
+  in een print, niet in een cookie. Gooi je oude `gebruikers.db` weg en
+  registreer opnieuw: `ph.verify` kan niets met een wachtwoord dat als gewone
+  tekst is opgeslagen, en dan stopt je server met een `500` en in de terminal
+  `argon2.exceptions.InvalidHashError`.
+
+Installeer eerst in de virtual environment van je project wat erbij komt, in
+de terminal van VS Code:
+
+```bash
+python -m pip install argon2-cffi slowapi
+```
+
+Direct onder `app = FastAPI()` komen de `PasswordHasher`, de nep-hash en de
+limiter:
+
+```python
+ph = PasswordHasher()
+NEP = ph.hash("niemand")
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+```
+
+Heb je in je project al een limiter uit Te veel verzoeken, gebruik dan die: de
+laatste drie regels en de imports van `slowapi` staan er dan al, en een tweede
+`limiter` of `app.add_exception_handler` is niet nodig.
+
+Met de sessies uit [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies)
+wordt je `POST /inloggen` zo. Bij je imports komen de regels van `argon2` en
+`slowapi`; `Request` staat in de import uit `fastapi` sinds de templates al. De
+401 uit de basis blijft, het bijwerken uit les 10 komt erbij, en daaronder
+blijft de sessie zoals hij was:
+hier met de `tot`, `httponly=True` en `samesite="lax"` uit de reeks Cookies
+afschermen. Laat die staan. Sloeg je die reeks over, dan houd je je eigen
+`sessies[sessie_id]` en `set_cookie`.
+
+```python
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
+from fastapi import Cookie, FastAPI, Form, HTTPException, Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
+@app.post("/inloggen")
+@limiter.limit("5/minute")
+async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as gebruikers:
+        opgeslagen = gebruikers.get(naam, NEP)
+    try:
+        ph.verify(opgeslagen, wachtwoord)
+    except VerifyMismatchError:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+    if opgeslagen == NEP:
+        raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+    if ph.check_needs_rehash(opgeslagen):
+        with SqliteDict("gebruikers.db") as gebruikers:
+            gebruikers[naam] = ph.hash(wachtwoord)
+            gebruikers.commit()
+
+    sessie_id = secrets.token_hex(16)
+    with SqliteDict("sessies.db") as sessies:
+        sessies[sessie_id] = {"naam": naam, "tot": time.time() + GELDIG}
+        sessies.commit()
+
+    antwoord = RedirectResponse(url="/gastenboek", status_code=303)
+    antwoord.set_cookie(
+        key="sessie_id",
+        value=sessie_id,
+        max_age=GELDIG,
+        httponly=True,
+        samesite="lax",
+    )
+    return antwoord
+```
+
+Geeft `/inloggen` zo een `RedirectResponse` terug, dan werkt de limiet ook:
+`slowapi` heeft alleen bij `headers_enabled=True` een `response: Response`
+nodig voor een dictionary.
+
+</details>
+
+Door naar [les 12: in de praktijk](site:fullstack/docs/veiligheid/wachtwoorden/praktijk).

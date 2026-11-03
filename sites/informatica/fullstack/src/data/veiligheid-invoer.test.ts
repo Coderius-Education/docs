@@ -155,14 +155,14 @@ describe('de lessen van Invoer controleren lopen zonder raadsel', () => {
   });
 
   it('de eerste les zegt waar main.py en static komen voordat de code komt', () => {
-    const tekst = lees('maxlength');
+    const tekst = lees('startbestand');
     const voorCode = tekst.slice(0, blokMetIndex(tekst)[0].index);
     expect(voorCode).toContain('`main.py`');
     expect(voorCode).toContain('`static`');
   });
 
-  it('het diagram in les 2 verklapt niet wat les 4 laat ontdekken', () => {
-    // Les 4 laat de leerling zelf zien dat een naam van spaties langs
+  it('het diagram in les 3 verklapt niet wat les 5 laat ontdekken', () => {
+    // Les 5 laat de leerling zelf zien dat een naam van spaties langs
     // max_length komt; de stap in het diagram linkt er alleen naartoe.
     const bron = readFileSync(
       fileURLToPath(new URL('../components/VerzoekCyclus/index.tsx', import.meta.url)),
@@ -177,12 +177,12 @@ describe('de lessen van Invoer controleren lopen zonder raadsel', () => {
     expect(stap).not.toMatch(/spatie/i);
   });
 
-  it('een nieuwe bericht_plaatsen zegt wat er van opdracht 2 van les 4 blijft', () => {
-    // De stand van les 4 heeft de controle op het bericht niet; wie de opdracht
+  it('een nieuwe bericht_plaatsen zegt wat er van opdracht 2 van les 5 blijft', () => {
+    // De stand van les 5 heeft de controle op het bericht niet; wie de opdracht
     // deed, gooide hem anders zonder één woord weg.
     const tekst = lees('getallen');
     expect(tekst).toMatch(
-      /opdracht 2 van\s+\[les 4\]\(site:fullstack\/docs\/veiligheid\/invoer\/inhoud\)/,
+      /opdracht 2 van\s+\[les 5\]\(site:fullstack\/docs\/veiligheid\/invoer\/inhoud\)/,
     );
   });
 
@@ -210,5 +210,55 @@ describe('de lessen van Invoer controleren lopen zonder raadsel', () => {
 
   it('een 422 lezen belooft geen pagina die de cursus niet bouwt', () => {
     expect(lees('fouten-lezen')).not.toContain('nette pagina');
+  });
+});
+
+describe('een nieuwe import in Invoer controleren', () => {
+  // In De inhoud controleren stond "voeg HTTPException toe aan de import"
+  // alleen in de uitleg bij één regel. Wie hem miste, kreeg een 500 en in
+  // spaties.py een JSONDecodeError die nergens stond (nagedraaid met fastapi
+  // 0.162). Een les die een naam importeert die de stand ervoor niet had, zegt
+  // dat in de lopende tekst, en noemt de NameError bij Er gaat iets mis.
+  const MAP = join(DOCS, 'veiligheid/invoer');
+  const categorie = (
+    sidebars.veiligheidSidebar as unknown as (string | { label: string; items: string[] })[]
+  ).find((i) => typeof i !== 'string' && i.items[0] === 'veiligheid/invoer/startbestand') as {
+    items: string[];
+  };
+  const stand = (tekst: string) => {
+    const i = tekst.indexOf('<summary>Zo ziet je `main.py` er nu uit</summary>');
+    return i === -1 ? '' : (tekst.slice(i).match(/```python[^\n]*\n([\s\S]*?)```/)?.[1] ?? '');
+  };
+  const namen = (code: string) =>
+    new Set(
+      [...code.matchAll(/^from \S+ import (.+)$/gm)].flatMap((m) =>
+        m[1].split(',').map((n) => n.trim()),
+      ),
+    );
+
+  it('elke nieuwe naam staat in de lopende tekst en zijn NameError bij Er gaat iets mis', () => {
+    const fout: string[] = [];
+    let vorige = new Set<string>();
+    for (const id of categorie.items) {
+      const tekst = readFileSync(join(MAP, `${id.split('/').pop()}.mdx`), 'utf8');
+      const nu = stand(tekst);
+      if (!nu) continue;
+      const mis = tekst.split(/^## Er gaat iets mis\s*$/m)[1]?.split(/^## /m)[0] ?? '';
+      const lopend = tekst
+        .split(/^## Er gaat iets mis\s*$/m)[0]
+        .replace(/<CodeUitleg>[\s\S]*?<\/CodeUitleg>/g, '')
+        .replace(/<details>[\s\S]*?<\/details>/g, '');
+      if (vorige.size) {
+        for (const naam of namen(nu)) {
+          if (vorige.has(naam)) continue;
+          if (!new RegExp(`import [^\\n]*\\b${naam}\\b`).test(lopend))
+            fout.push(`${id}: de import van ${naam} staat niet in de lopende tekst`);
+          if (!mis.includes(`NameError: name '${naam}' is not defined`))
+            fout.push(`${id}: geen NameError voor ${naam} bij Er gaat iets mis`);
+        }
+      }
+      vorige = namen(nu);
+    }
+    expect(fout).toEqual([]);
   });
 });

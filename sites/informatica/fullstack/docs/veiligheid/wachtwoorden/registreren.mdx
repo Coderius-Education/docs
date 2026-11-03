@@ -1,11 +1,11 @@
 ---
-sidebar_label: '5. Registreren met Argon2'
+sidebar_label: '7. Registreren met Argon2'
 description: Bewaar bij het registreren een Argon2-hash in plaats van het wachtwoord, en lees wat er in zo'n hash staat.
 ---
 
 # Wachtwoorden: registreren met Argon2
 
-Argon2 uit [les 4](site:fullstack/docs/veiligheid/wachtwoorden/traag) doet alles wat je in de lessen hiervoor nodig had:
+Argon2 uit [les 6](site:fullstack/docs/veiligheid/wachtwoorden/traag) doet alles wat je in de lessen hiervoor nodig had:
 zijn hash kun je niet terugrekenen, elk wachtwoord krijgt een eigen zout, en
 hij is expres traag. In je server verandert alleen `/registreer`.
 
@@ -41,105 +41,20 @@ Eén `PasswordHasher` voor de hele server, met instellingen die veilig zijn voor
 
 </CodeUitleg>
 
-Zet de import en `ph = PasswordHasher()` bovenaan je `main.py`, en vervang je
-`/registreer` door deze. `/inloggen` laat je nog even staan: die zet je in
-[les 6](site:fullstack/docs/veiligheid/wachtwoorden/inloggen) om.
+Neem niet het hele blok over: alleen de regels met `PasswordHasher` en
+`/registreer` zijn nieuw. Zet de import en `ph = PasswordHasher()` bovenaan je
+`main.py`, en vervang je `/registreer` door deze. `import hashlib` en
+`/inloggen` laat je staan: die zet je in
+[les 8](site:fullstack/docs/veiligheid/wachtwoorden/inloggen) om.
 
-:::caution[Inloggen werkt tot les 6 niet]
+:::caution[Inloggen werkt tot les 8 niet]
 `/inloggen` vergelijkt nog met een `sha256`-hash, en in de database staan nu
-Argon2-hashes. Tot je `/inloggen` in les 6 omzet, lukt inloggen niet, ook niet
+Argon2-hashes. Tot je `/inloggen` in les 8 omzet, lukt inloggen niet, ook niet
 met het goede wachtwoord.
 :::
 
-Gooi `gebruikers.db` weg: daar staan nog wachtwoorden of `sha256`-hashes in uit
-de lessen hiervoor. Start je server en draai `registreer.py` en
-`lees_database.py` uit [les 1](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst) opnieuw:
-
-```
-sara: $argon2id$v=19$m=65536,t=3,p=4$X9osXpPM7r/H8fRMyPCE+Q$etV1GLXtmN/ukJB8evD8IraZPm5jt9WONzagikgkl+Y
-alex: $argon2id$v=19$m=65536,t=3,p=4$rUMs0YcTR/e1avCX01vrOg$W5Flt1JoAhellSR9YETx3ZUDa6GbtisQrZIkWsRXIVs
-noor: $argon2id$v=19$m=65536,t=3,p=4$l6Q0IpvVuX7N4fBZ5PP8nw$sxddUqdV6fZMCPkJwMIlVqfwTAmuvgOQYSZjhAH2H5Q
-```
-
-Jouw codes zijn anders, want het zout is elke keer nieuw. Sara en Noor hebben
-nog steeds hetzelfde wachtwoord, maar dat zie je nergens meer aan.
-
-## Wat er in de hash staat
-
-Een Argon2-hash bestaat uit stukken, gescheiden door een `$`:
-
-| Stuk | Betekent |
-|:---:|:---:|
-| `argon2id` | welk algoritme |
-| `v=19` | welke versie van Argon2 |
-| `m=65536,t=3,p=4` | hoeveel geheugen en rekenwerk het kost |
-| `X9osXpPM7r/H8fRMyPCE+Q` | het zout |
-| `etV1GLXt…` | de hash zelf |
-
-Het zout staat er dus in, zoals [les 3](site:fullstack/docs/veiligheid/wachtwoorden/zout) al zei: het hoeft niet
-geheim te zijn. En omdat ook de instellingen erin staan, heb je later bij het
-inloggen aan de opgeslagen code genoeg.
-
-## Opdrachten
-
-### Opdracht 1: Predict - Twee keer hashen
-
-```python
-from argon2 import PasswordHasher
-
-ph = PasswordHasher()
-print(ph.hash("welkom123") == ph.hash("welkom123"))
-```
-
-**Vraag:** print dit `True` of `False`?
-
-<details>
-<summary>Tip</summary>
-
-Wat doet `ph.hash` elke keer anders dan `sha256`?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-`False`. Elke `ph.hash` krijgt een nieuw zout, dus twee hashes van hetzelfde
-wachtwoord verschillen. Hoe je dan controleert of een wachtwoord klopt, zie je
-in les 6.
-
-</details>
-
-### Opdracht 2: Run - Een lange wachtzin
-
-Registreer een vierde gebruiker, Tim, met de wachtzin
-`zonnebloem fiets regen zolder`. Voorspel eerst: wordt de code van Tim in
-`lees_database.py` langer dan die van Sara, die `welkom123` heeft?
-
-<details>
-<summary>Tip</summary>
-
-Maak een kopie van `registreer.py` met in de lijst alleen
-`("tim", "zonnebloem fiets regen zolder")`. Denk bij het voorspellen aan
-[les 2](site:fullstack/docs/veiligheid/wachtwoorden/hash): was de `sha256` van een lange naam langer dan die van een
-korte?
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Nee. In `lees_database.py` staat er een regel bij zoals deze:
-
-```
-tim: $argon2id$v=19$m=65536,t=3,p=4$UJPkc6G27VAZQnKN6K2xkQ$NGys+yqqtBo/7xbmkDKX8H7M8mGYMsLO+0ciV1pZ6qU
-```
-
-Die code is even lang als die van Sara. De hash zelf, het laatste stuk, heeft
-altijd dezelfde lengte, hoe lang het wachtwoord ook is. Een lange wachtzin kost
-je database dus geen extra ruimte, en de spaties zijn gewone tekens van het
-wachtwoord.
-
-</details>
+Gooi `gebruikers.db` weg: daar staan nog `sha256`-hashes in uit de lessen
+hiervoor. Draai daarna `registreer.py` en `lees_database.py` opnieuw.
 
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
@@ -171,8 +86,133 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     return {"bericht": "Naam of wachtwoord klopt niet"}
 ```
 
-`/inloggen` rekent hier nog met `sha256`; dat verandert in les 6.
+`/inloggen` rekent hier nog met `sha256`; dat verandert in les 8.
 
 </details>
 
-Door naar [les 6: inloggen met verify](site:fullstack/docs/veiligheid/wachtwoorden/inloggen).
+<Gelukt>
+
+`python lees_database.py` toont drie Argon2-hashes, die allemaal beginnen met
+`$argon2id$`:
+
+```text
+sara: $argon2id$v=19$m=65536,t=3,p=4$X9osXpPM7r/H8fRMyPCE+Q$etV1GLXtmN/ukJB8evD8IraZPm5jt9WONzagikgkl+Y
+alex: $argon2id$v=19$m=65536,t=3,p=4$rUMs0YcTR/e1avCX01vrOg$W5Flt1JoAhellSR9YETx3ZUDa6GbtisQrZIkWsRXIVs
+noor: $argon2id$v=19$m=65536,t=3,p=4$l6Q0IpvVuX7N4fBZ5PP8nw$sxddUqdV6fZMCPkJwMIlVqfwTAmuvgOQYSZjhAH2H5Q
+```
+
+Jouw codes zijn anders, want het zout is elke keer nieuw. Sara en Noor hebben
+nog steeds hetzelfde wachtwoord, maar dat zie je nergens meer aan.
+
+</Gelukt>
+
+## Wat er in de hash staat
+
+Een Argon2-hash bestaat uit stukken, gescheiden door een `$`:
+
+| Stuk | Betekent |
+|:---:|:---:|
+| `argon2id` | welk algoritme |
+| `v=19` | welke versie van Argon2 |
+| `m=65536,t=3,p=4` | hoeveel geheugen en rekenwerk het kost |
+| `X9osXpPM7r/H8fRMyPCE+Q` | het zout |
+| `etV1GLXt…` | de hash zelf |
+
+Het zout staat er dus in, zoals [les 5](site:fullstack/docs/veiligheid/wachtwoorden/zout) al zei: het hoeft niet
+geheim te zijn. En omdat ook de instellingen erin staan, heb je later bij het
+inloggen aan de opgeslagen code genoeg.
+
+<Voorspel soort="Controlevraag" vraag="In les 5 stond het zout naast de hash. Waar laat Argon2 het zout?">
+  <Keuze uitleg="Kijk naar de tabel: welk stuk tussen twee $-tekens is het zout?">Argon2 heeft geen zout nodig, omdat hij al traag genoeg is</Keuze>
+  <Keuze uitleg="Je server bewaart alleen wat ph.hash teruggeeft, onder de naam. Er komt geen tweede bestand bij.">In een apart bestand dat alleen je server kan lezen</Keuze>
+  <Keuze goed uitleg="Het zout is het vierde stuk van de code. Wat ph.hash teruggeeft, is algoritme, instellingen, zout en hash in één.">In de hash zelf, als een van de stukken tussen de $-tekens</Keuze>
+  <Uitleg>
+
+  Een Argon2-hash is alles in één regel: welk algoritme, welke instellingen,
+  het zout en de uitkomst. Daarom bewaar je per gebruiker maar één ding.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Deze naam is al bezet
+
+`registreer.py` geeft drie keer `{'detail': 'Deze naam is al bezet'}`, en
+`lees_database.py` toont nog de `sha256`-codes uit les 4.
+
+**Oorzaak:** de oude `gebruikers.db` staat er nog. De namen bestaan daarin al,
+dus je nieuwe `/registreer` weigert ze voordat hij een Argon2-hash maakt.
+
+**Oplossing:** gooi `gebruikers.db` weg en draai `registreer.py` opnieuw.
+
+## Opdrachten
+
+### Opdracht 1: Investigate - Twee keer hashen
+
+Draai dit scriptje een paar keer, en leg de twee regels steeds naast de tabel
+hierboven:
+
+```python
+from argon2 import PasswordHasher
+
+ph = PasswordHasher()
+print(ph.hash("welkom123"))
+print(ph.hash("welkom123"))
+```
+
+**Vraag:** welke stukken zijn in de twee regels gelijk, en welke verschillen?
+En waarom?
+
+<details>
+<summary>Tip</summary>
+
+Welke stukken hangen af van de instellingen van `ph`, en welk stuk kiest
+`ph.hash` elke keer opnieuw?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`argon2id`, `v=19` en `m=65536,t=3,p=4` zijn gelijk: dat zijn het algoritme en
+de instellingen, en die komen van dezelfde `ph`. Het zout verschilt, want
+`ph.hash` kiest bij elke hash een nieuw. En omdat het zout anders is, is de hash
+zelf ook anders. Twee hashes van hetzelfde wachtwoord zijn dus nooit gelijk.
+Hoe je dan controleert of een wachtwoord klopt, zie je in les 8.
+
+</details>
+
+### Opdracht 2: Run - Een lange wachtzin
+
+Registreer een vierde gebruiker, Tim, met de wachtzin
+`zonnebloem fiets regen zolder`. Voorspel eerst: wordt de code van Tim in
+`lees_database.py` langer dan die van Sara, die `welkom123` heeft?
+
+<details>
+<summary>Tip</summary>
+
+Maak een kopie van `registreer.py` met in de lijst alleen
+`("tim", "zonnebloem fiets regen zolder")`. Denk bij het voorspellen aan
+[les 3](site:fullstack/docs/veiligheid/wachtwoorden/hash): was de `sha256` van een lange naam langer dan die van een
+korte?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. In `lees_database.py` staat er een regel bij zoals deze:
+
+```
+tim: $argon2id$v=19$m=65536,t=3,p=4$UJPkc6G27VAZQnKN6K2xkQ$NGys+yqqtBo/7xbmkDKX8H7M8mGYMsLO+0ciV1pZ6qU
+```
+
+Die code is even lang als die van Sara. De hash zelf, het laatste stuk, heeft
+altijd dezelfde lengte, hoe lang het wachtwoord ook is. Een lange wachtzin kost
+je database dus geen extra ruimte, en de spaties zijn gewone tekens van het
+wachtwoord.
+
+</details>
+
+Door naar [les 8: inloggen met verify](site:fullstack/docs/veiligheid/wachtwoorden/inloggen).

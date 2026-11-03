@@ -279,3 +279,36 @@ describe('de tabel in registreren.mdx', () => {
     }
   });
 });
+
+// Uit de leerling-doorloop van Wachtwoorden (november 2026). De controlelijst
+// in Beveilig je eigen project vroeg check_needs_rehash en een limiet op
+// /registreer, terwijl de opdracht "In je eigen project" in pogingen.mdx geen
+// van beide deed: wie die opdracht had afgerond, hield open vakjes over zonder
+// voorbeeld. Elk punt van de sectie Wachtwoorden staat daarom ook in het
+// antwoord van die opdracht, behalve een punt dat begint met "Heb je" (een
+// endpoint dat het gastenboek niet heeft, zoals wijzigen).
+describe('de controlelijst vraagt niets wat de opdracht in je eigen project niet doet', () => {
+  const ROOT = fileURLToPath(new URL('../../docs/veiligheid', import.meta.url));
+  const lijst = readFileSync(join(ROOT, 'eigen-project.mdx'), 'utf8');
+  const sectie = lijst.split(/^## Wachtwoorden$/m)[1]?.split(/^## /m)[0] ?? '';
+  const punten = sectie
+    .split(/^- \[ \] /m)
+    .slice(1)
+    .map((p) => p.split(/\n\n/)[0])
+    .filter((p) => !/^Heb je\b/.test(p));
+  const pogingen = lessen.find(({ naam }) => naam === 'pogingen.mdx')?.tekst ?? '';
+  const opdracht = pogingen.slice(pogingen.indexOf('### Opdracht 3: Make - In je eigen project'));
+  const antwoord = opdracht.match(/<summary>Antwoord<\/summary>([\s\S]*?)<\/details>/)?.[1] ?? '';
+
+  it('vindt de punten en het antwoord', () => {
+    expect(punten.length).toBeGreaterThanOrEqual(5);
+    expect(antwoord).toContain('@app.post("/inloggen")');
+  });
+
+  it.each(punten.map((p) => [p.split('\n')[0], p]))('%s', (_, punt) => {
+    const zonderLinks = punt.replace(/\[[^\]]*\]\([^)]*\)/g, '');
+    for (const [, term] of zonderLinks.matchAll(/`([^`]+)`/g)) {
+      expect(antwoord, term).toContain(term);
+    }
+  });
+});

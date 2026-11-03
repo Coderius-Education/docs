@@ -1,5 +1,5 @@
 ---
-sidebar_label: '7. Wachtwoord wijzigen'
+sidebar_label: '9. Wachtwoord wijzigen'
 description: Laat een gebruiker zijn wachtwoord wijzigen, maar pas als het oude wachtwoord klopt.
 ---
 
@@ -10,9 +10,10 @@ maar een gebruiker moet zijn wachtwoord ook kunnen veranderen.
 
 ## Het oude wachtwoord eerst
 
-Een nieuw wachtwoord zet je pas in de database als het oude klopt. Anders kan
-iemand die jouw laptop even gebruikt, je wachtwoord veranderen en je buitensluiten.
-Het begin is daarom hetzelfde als bij `/inloggen`:
+Een nieuw wachtwoord zet je pas in de database als het oude klopt. Je server
+heeft in deze reeks geen sessie: wie alleen `sara` meestuurt, zou anders het
+wachtwoord van Sara veranderen en haar buitensluiten. Het begin is daarom
+hetzelfde als bij `/inloggen`:
 
 <CodeUitleg>
 
@@ -47,24 +48,11 @@ Zet dit endpoint in hetzelfde `main.py` als `/registreer` en `/inloggen`: het
 gebruikt dezelfde imports, dezelfde `ph` en dezelfde `NEP`. Zonder de nep-hash
 zou ook `/wijzig` met zijn snelle antwoord verraden welke namen bestaan.
 
-## Opdrachten
+## Wijzigen testen
 
-### Opdracht 1: Run - Wijzigen
-
-Zet `/wijzig` in je server. Schrijf een scriptje dat eerst probeert het
-wachtwoord van Sara te wijzigen met een fout oud wachtwoord, en daarna met het
-goede. Probeer daarna in te loggen met het oude en met het nieuwe wachtwoord.
-
-<details>
-<summary>Tip</summary>
-
-Het lijkt op `inloggen.py`, maar met drie velden in `data`: `naam`, `oud` en
-`nieuw`.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
+Maak een scriptje `wijzig.py`. Het probeert het wachtwoord van Sara eerst te
+wijzigen met een fout oud wachtwoord, en daarna met het goede. Daarna logt het
+in met het oude en met het nieuwe wachtwoord:
 
 ```python
 import httpx
@@ -80,45 +68,6 @@ for wachtwoord in ["welkom123", "Lange-Nieuwe-Zin-7"]:
     inloggen = {"naam": "sara", "wachtwoord": wachtwoord}
     print(httpx.post(adres + "/inloggen", data=inloggen).json())
 ```
-
-Uitvoer:
-
-```
-{'bericht': 'Naam of wachtwoord klopt niet'}
-{'bericht': 'Wachtwoord gewijzigd'}
-{'bericht': 'Naam of wachtwoord klopt niet'}
-{'bericht': 'Ingelogd'}
-```
-
-Met het foute oude wachtwoord verandert er niets. Na de wijziging werkt alleen
-het nieuwe wachtwoord nog.
-
-</details>
-
-### Opdracht 2: Predict - Hetzelfde wachtwoord opnieuw
-
-Sara wijzigt haar wachtwoord nog een keer, en typt bij `nieuw` precies
-hetzelfde als bij `oud`: `Lange-Nieuwe-Zin-7`.
-
-**Vraag:** staat er daarna dezelfde code bij `sara` in de database als ervoor?
-En kan ze nog inloggen met `Lange-Nieuwe-Zin-7`?
-
-<details>
-<summary>Tip</summary>
-
-Wat doet `ph.hash` elke keer anders? Bekijk het daarna zelf met
-`lees_database.py`, voor en na het wijzigen.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Een andere code, want `ph.hash` maakt bij elke hash een nieuw zout. Inloggen
-met `Lange-Nieuwe-Zin-7` lukt nog steeds: `ph.verify` haalt het nieuwe zout uit
-de nieuwe hash.
-
-</details>
 
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
@@ -171,9 +120,86 @@ async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(
 ```
 
 Registreren, inloggen en wijzigen in één server. Een hash met oude
-instellingen blijft nog zoals hij is; dat verandert in les 8. En iedereen kan
-nog eindeloos wachtwoorden proberen; daar komt in les 9 een limiet op.
+instellingen blijft nog zoals hij is; dat verandert in les 10. En iedereen kan
+nog eindeloos wachtwoorden proberen; daar komt in les 11 een limiet op.
 
 </details>
 
-Door naar [les 8: een oude hash bijwerken](site:fullstack/docs/veiligheid/wachtwoorden/rehash).
+<Gelukt>
+
+`python wijzig.py` print vier antwoorden:
+
+```text
+{'bericht': 'Naam of wachtwoord klopt niet'}
+{'bericht': 'Wachtwoord gewijzigd'}
+{'bericht': 'Naam of wachtwoord klopt niet'}
+{'bericht': 'Ingelogd'}
+```
+
+Met het foute oude wachtwoord verandert er niets. Na de wijziging werkt alleen
+het nieuwe wachtwoord nog: Sara heeft nu `Lange-Nieuwe-Zin-7`.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Waarom vraagt /wijzig om het oude wachtwoord, terwijl de naam toch zegt om wie het gaat?">
+  <Keuze uitleg="ph.hash maakt bij elke hash een nieuw zout. Het oude zout is daarbij niet nodig.">Om de nieuwe hash met hetzelfde zout te maken als de oude</Keuze>
+  <Keuze uitleg="Kijk in het endpoint: wordt oud ergens met nieuw vergeleken?">Om te controleren dat het nieuwe wachtwoord anders is dan het oude</Keuze>
+  <Keuze goed uitleg="Een naam kan iedereen intypen. Alleen wie het oude wachtwoord kent, mag een nieuw kiezen.">Omdat iedereen een naam kan intypen, maar alleen Sara haar wachtwoord kent</Keuze>
+  <Uitleg>
+
+  Zonder die controle verandert iedereen die `sara` in het formulier typt, het
+  wachtwoord van Sara, en sluit hij haar buiten. Daarom begint `/wijzig` precies
+  zoals `/inloggen`.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Wijzigen lukt de tweede keer niet
+
+Je draait `wijzig.py` nog een keer, en krijgt:
+
+```text
+{'bericht': 'Naam of wachtwoord klopt niet'}
+{'bericht': 'Naam of wachtwoord klopt niet'}
+{'bericht': 'Naam of wachtwoord klopt niet'}
+{'bericht': 'Ingelogd'}
+```
+
+**Oorzaak:** de eerste keer heeft het script het wachtwoord van Sara al
+veranderd. `welkom123` is niet meer haar oude wachtwoord, dus `/wijzig` weigert.
+Dit is je controle die werkt.
+
+**Oplossing:** niets, Sara heeft nu `Lange-Nieuwe-Zin-7`. Wil je de test
+opnieuw doen, gooi dan `gebruikers.db` weg en draai `registreer.py` en
+`wijzig.py` opnieuw.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Hetzelfde wachtwoord opnieuw
+
+Sara wijzigt haar wachtwoord nog een keer, en typt bij `nieuw` precies
+hetzelfde als bij `oud`: `Lange-Nieuwe-Zin-7`.
+
+**Vraag:** staat er daarna dezelfde code bij `sara` in de database als ervoor?
+En kan ze nog inloggen met `Lange-Nieuwe-Zin-7`?
+
+<details>
+<summary>Tip</summary>
+
+Wat doet `ph.hash` elke keer anders? Bekijk het daarna zelf met
+`lees_database.py`, voor en na het wijzigen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Een andere code, want `ph.hash` maakt bij elke hash een nieuw zout. Inloggen
+met `Lange-Nieuwe-Zin-7` lukt nog steeds: `ph.verify` haalt het nieuwe zout uit
+de nieuwe hash.
+
+</details>
+
+Door naar [les 10: een oude hash bijwerken](site:fullstack/docs/veiligheid/wachtwoorden/rehash).

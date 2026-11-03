@@ -1,11 +1,11 @@
 ---
-sidebar_label: '3. Tekst uit de URL'
+sidebar_label: '4. Tekst uit de URL'
 description: Ook tekst uit de URL komt van een bezoeker. Een zoekpagina die ?term= letterlijk terugzet, maakt HTML van een link. escape() helpt ook hier.
 ---
 
 # HTML van een bezoeker: tekst uit de URL
 
-In [les 1](site:fullstack/docs/veiligheid/xss/zwakheid) bleef de HTML van Sara in de database staan, en zag
+In [les 2](site:fullstack/docs/veiligheid/xss/zwakheid) bleef de HTML van Sara in de database staan, en zag
 iedereen die daarna kwam hem. Er is ook een kortere weg, zonder database: een
 link. Een zoekpagina zet vaak boven de resultaten waar je naar zocht, en dat
 woord staat in de URL.
@@ -36,7 +36,7 @@ Met `lower()` vindt `vet` ook een bericht met `Vet`. Een lege term staat in elk 
 </Regel>
 
 <Regel n={7}>
-De berichten escapet hij, zoals je in [les 2](site:fullstack/docs/veiligheid/xss/escape) leerde.
+De berichten escapet hij, zoals je in [les 3](site:fullstack/docs/veiligheid/xss/escape) leerde.
 </Regel>
 
 <Regel n={8}>
@@ -53,8 +53,8 @@ naar een ander. Een link met HTML naar de site van een ander is een aanval op
 die site en op wie erop klikt.
 :::
 
-Zorg dat het bericht `<b>vet</b>` van Sara uit les 2 in je gastenboek staat.
-Open dan in je browser:
+Gooi `gastenboek.db` weg, zodat alleen nieuwe berichten in de lijst staan, en
+vul als Sara weer `<b>vet</b>` in. Open dan in je browser:
 
 ```
 http://127.0.0.1:8000/zoek?term=<b>vet</b>
@@ -72,7 +72,7 @@ print(antwoord.url)
 print(antwoord.text)
 ```
 
-Uitvoer, met alleen het bericht van Sara in de database:
+Uitvoer:
 
 ```
 http://127.0.0.1:8000/zoek?term=%3Cb%3Evet%3C%2Fb%3E
@@ -98,18 +98,38 @@ Zet `escape` om de term, net als om de berichten:
     return HTMLResponse(f"<p>Je zocht naar: {escape(term)}</p><ul>{gevonden}</ul>")
 ```
 
-Draai `zoek.py` opnieuw:
+Open de link opnieuw, en draai `zoek.py` nog een keer.
 
-```
+<Gelukt>
+
+Boven het bericht staat nu "Je zocht naar: `<b>vet</b>`", met de haakjes erbij,
+en niets is vet. `zoek.py` geeft:
+
+```text
 http://127.0.0.1:8000/zoek?term=%3Cb%3Evet%3C%2Fb%3E
 <p>Je zocht naar: &lt;b&gt;vet&lt;/b&gt;</p><ul><li>Sara: &lt;b&gt;vet&lt;/b&gt;</li></ul>
 ```
+
+</Gelukt>
 
 Wat in de URL staat, typt de bezoeker, net als wat in een formulier staat. Het
 maakt niet uit of het in de database belandt: op de plek waar het de HTML in
 gaat, krijgt het `escape`.
 
+<Voorspel soort="Controlevraag" vraag="Een klasgenoot stuurt je een link naar /zoek met HTML in ?term=. Bij wie draait die HTML als je zoekpagina de term niet escapet?">
+  <Keuze goed uitleg="De HTML zit in de link. Wie erop klikt, laat zijn eigen browser het verzoek sturen en krijgt de HTML terug in zijn pagina.">Bij jou, en bij iedereen die op die link klikt</Keuze>
+  <Keuze uitleg="De zoekpagina slaat niets op. Een bezoeker die /zoek zonder die link opent, krijgt de HTML niet.">Iedereen die daarna je zoekpagina opent, ook zonder de link</Keuze>
+  <Keuze uitleg="Een link is ook een verzoek met tekst van een bezoeker, en FastAPI maakt van de codes in de URL weer gewone tekens.">Niemand, want een link is geen formulier en verstuurt niets</Keuze>
+  <Uitleg>
+
+  Reflected XSS bewaart niets op de server. Wie de link opent, stuurt de HTML zelf mee, en de server kaatst hem terug in de pagina van die ene bezoeker.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
+
+### Field required zonder term
 
 Met een term werkt je zoekpagina, maar `http://127.0.0.1:8000/zoek` zonder
 vraagteken geeft:
@@ -170,7 +190,7 @@ dezelfde link nog een keer. Is de term nog vet? Zet `escape` daarna terug.
 <details>
 <summary>Tip</summary>
 
-In les 1 bleef het vet staan omdat het in de database stond. Waar staat het nu?
+In les 2 bleef het vet staan omdat het in de database stond. Waar staat het nu?
 
 </details>
 
@@ -258,4 +278,4 @@ versturen, de lijst, en de zoekterm.
 
 </details>
 
-Door naar [les 4: templates escapen vanzelf](site:fullstack/docs/veiligheid/xss/templates).
+Door naar [les 5: templates escapen vanzelf](site:fullstack/docs/veiligheid/xss/templates).

@@ -1,19 +1,169 @@
 ---
-sidebar_label: '5. In je eigen project'
-description: Loop in je eigen project elk endpoint langs dat iets verandert of verwijdert, en zorg dat het zelf controleert of de bezoeker het mag.
+sidebar_label: '6. In je eigen project'
+description: Test je eigen gastenboek met een script als een andere bezoeker, en loop elk endpoint langs dat iets verandert of verwijdert.
 ---
 
 # Wie mag wat: in je eigen project
 
 In deze reeks zag je dat een knop geen slot is, dat de controle in het
 endpoint hoort, dat hij moet kijken naar wat de server weet, en dat elk endpoint
-er een nodig heeft. Loop je gastenboek, of een eigen project dat je bouwde,
-daarop na.
+er een nodig heeft. Nu test je je eigen gastenboek op dezelfde manier als de
+server van deze reeks.
 
 :::tip
 Werk in je eigen project, niet in de map `veiligheid-toegang`. Test daarna met
 je eigen server op `127.0.0.1`.
 :::
+
+## Alex in je eigen gastenboek
+
+Je gastenboek verwijdert op één of twee manieren: met `POST /verwijderen` uit
+[Een bericht verwijderen: een verborgen veld](site:fullstack/docs/FastAPI/berichten-verwijderen/verwijderen),
+en, als je het htmx-recept Verwijderen bouwde, met `DELETE /bericht/{sleutel}`.
+Het script test ze allebei.
+
+Start je eigen server en schrijf in je browser een bericht als Sara, of als een
+ander account. Zoek in het tabblad **Elementen** bij dat bericht de link naar de
+detailpagina, `<a href="/bericht/bericht_…">`, en kopieer het stuk vanaf
+`bericht_`.
+
+Maak in de map van je project een script `test_eigen.py`. Het maakt een account
+voor Alex, logt in en probeert het bericht te verwijderen. Zet bij `sleutel` de
+waarde die je kopieerde:
+
+```python
+import httpx
+
+alex = httpx.Client(base_url="http://127.0.0.1:8000")
+gegevens = {"naam": "Alex", "wachtwoord": "maan4567"}
+print("Registreren:", alex.post("/registreer", data=gegevens).status_code)
+print("Inloggen:", alex.post("/inloggen", data=gegevens).status_code)
+
+sleutel = "bericht_1767000000000000000"
+print("Bestaat:", alex.get(f"/bericht/{sleutel}").status_code)
+print("POST /verwijderen:", alex.post("/verwijderen", data={"sleutel": sleutel}).status_code)
+print("DELETE /bericht:", alex.delete(f"/bericht/{sleutel}").status_code)
+```
+
+Registreren en inloggen geven `303`: je gastenboek stuurt door, zoals na elk
+formulier. `Bestaat` vraagt de detailpagina op; `200` betekent dat de sleutel
+klopt. Draai het script.
+
+Staat er bij `POST /verwijderen` of `DELETE /bericht` iets anders dan `403` of
+`405`, dan staat dat endpoint open. Zet de controle erin zoals bij
+[Er gaat iets mis](#er-gaat-iets-mis), schrijf een nieuw bericht als Sara en
+draai het script opnieuw met de nieuwe sleutel.
+
+<Gelukt>
+
+Het script print:
+
+```text
+Registreren: 303
+Inloggen: 303
+Bestaat: 200
+POST /verwijderen: 403
+DELETE /bericht: 403
+```
+
+Bouwde je het htmx-recept Verwijderen niet, dan staat er bij `DELETE /bericht`
+een `405`: dat endpoint heeft je project niet. Draai je het script nog een
+keer, dan geeft registreren `400`, want Alex bestaat dan al. Het bericht van
+Sara staat in je browser nog in de lijst.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je gastenboek krijgt later een knop Bewerken, met een endpoint POST /bewerken. Wat zegt de 403 van je script over dat endpoint?">
+  <Keuze uitleg="De 403 komt uit de controle in het verwijderendpoint. Staat die ook in /bewerken?">Dat het ook dicht is</Keuze>
+  <Keuze goed uitleg="Een controle beschermt alleen het endpoint waar hij in staat. /bewerken test je met een eigen regel in het script.">Niets, dat test je apart</Keuze>
+  <Keuze uitleg="Een knop verbergen houdt niemand tegen die het verzoek zelf stuurt.">Dat het dicht is als de knop verborgen is</Keuze>
+  <Uitleg>
+
+  Eén `403` laat zien dat één endpoint controleert. Elk endpoint dat iets verandert, kan de controle vergeten. Daarom loop je ze in de opdracht hieronder allemaal langs.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Bestaat: 404
+
+Het script print `Bestaat: 404`, en daarna bij `POST /verwijderen` een `303`.
+
+**Oorzaak:** de sleutel bestaat niet. Je liet de voorbeeldsleutel staan, of je
+kopieerde er te weinig of te veel van, zoals `/bericht/` ervoor. Je
+`POST /verwijderen` vindt het bericht dan niet, verwijdert niets en stuurt je
+door. De `303` zegt hier niets over de controle, en de regel van
+`DELETE /bericht` ook niet.
+
+**Oplossing:** kopieer de sleutel opnieuw, vanaf `bericht_` tot het
+aanhalingsteken, en draai het script nog een keer.
+
+### POST /verwijderen: 303
+
+Het script print `Bestaat: 200` en `POST /verwijderen: 303`, en het bericht van
+Sara is weg.
+
+**Oorzaak:** je `POST /verwijderen` heeft nog geen controle. Hij verwijdert elk
+bericht waarvan hij de sleutel krijgt, en stuurt de bezoeker daarna door. De
+regel van `DELETE /bericht` zegt dan niets meer, want het bericht is al weg.
+
+**Oplossing:** zet `sessie_id: str = Cookie(default="")` naast `sleutel`, en
+zet in de functie de controle vóór de `del`, zoals in
+[opdracht 5 van Sessies](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen).
+Binnen de functie staat dan:
+
+```python
+with SqliteDict("sessies.db") as sessies:
+    mijn = sessies.get(sessie_id, {})
+with SqliteDict("gastenboek.db") as db:
+    if sleutel in db:
+        if db[sleutel]["naam"] != mijn.get("naam"):
+            raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+        del db[sleutel]
+        db.commit()
+```
+
+De `return RedirectResponse(...)` eronder blijft.
+
+### DELETE /bericht: 200
+
+Het script print `POST /verwijderen: 403`, maar `DELETE /bericht: 200`, en het
+bericht van Sara is weg.
+
+**Oorzaak:** de knop van het htmx-recept gebruikt `DELETE /bericht/{sleutel}`,
+en daar staat de controle nog niet in. Het formulier naar `/verwijderen` is
+beschermd, maar dat gebruikt je pagina niet meer.
+
+**Oplossing:** zet `sessie_id: str = Cookie(default="")` naast `sleutel`, en
+zet de controle vóór de `del`. Binnen de functie staat dan:
+
+```python
+with SqliteDict("sessies.db") as sessies:
+    mijn = sessies.get(sessie_id, {})
+with SqliteDict("gastenboek.db") as db:
+    bericht = db.get(sleutel)
+    if bericht is None or bericht["naam"] != mijn.get("naam"):
+        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+    del db[sleutel]
+    db.commit()
+```
+
+De `return HTMLResponse("")` eronder blijft. Bij een `403` laat htmx de pagina
+met rust: het bericht blijft staan, en in **Netwerk** zie je een rode regel.
+
+### Registreren: 400 en Inloggen: 401
+
+Het script print `Registreren: 400` en `Inloggen: 401`. Dan zeggen de `403`'s
+daarna niets: zonder sessie weigert de controle iedereen, ook de eigenaar.
+
+**Oorzaak:** je `/registreer` weigerde Alex. Of Alex bestaat al in je
+`gebruikers.db` met een ander wachtwoord, of je `/registreer` stelt eisen aan
+het wachtwoord die `maan4567` niet haalt. De melding zie je met
+`print(alex.post("/registreer", data=gegevens).text)`.
+
+**Oplossing:** kies in `gegevens` een naam die nog niet bestaat, en een
+wachtwoord dat aan je eigen eisen voldoet.
 
 ## Opdracht
 
@@ -52,28 +202,18 @@ Loop deze lijst af:
 
 Heb je in [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen)
 opdracht 5 gemaakt, dan heeft `POST /verwijderen` deze controle al. Bouwde je
-het htmx-recept Verwijderen, dan heeft je `DELETE /bericht/{sleutel}` hem nog
-niet. Zet daar `sessie_id: str = Cookie(default="")` naast `sleutel`, haal
-vooraan in de functie de sessie op, en zet in het `with`-blok van
-`gastenboek.db` de controle vóór de `del`. Binnen de functie staat dan:
+het htmx-recept Verwijderen, zet hem dan ook in `DELETE /bericht/{sleutel}`,
+zoals bij [DELETE /bericht: 200](#delete-bericht-200) hierboven.
 
-```python
-with SqliteDict("sessies.db") as sessies:
-    mijn = sessies.get(sessie_id, {})
-with SqliteDict("gastenboek.db") as db:
-    bericht = db.get(sleutel)
-    if bericht is None or bericht["naam"] != mijn.get("naam"):
-        raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
-    del db[sleutel]
-    db.commit()
-```
-
-De `return HTMLResponse("")` eronder blijft.
-
-Bij een `403` laat htmx de pagina met rust: het bericht blijft staan, en in
-**Netwerk** zie je een rode regel. Kijk daarna of elk ander endpoint dat iets
-verandert, zoals Alles wissen, de controle ook heeft.
+Heb je een knop Alles wissen, dan krijgt `alles_wissen` dezelfde grens als in
+[les 5](site:fullstack/docs/veiligheid/toegang/elk-endpoint). In je gastenboek
+gaf die functie uit het htmx-overzicht de lijst-template terug, met een lege
+lijst. Houd die `TemplateResponse` en de parameter `request: Request`, en zet
+`sessie_id: str = Cookie(default="")` ernaast. Lees na het wissen, nog in het
+`with`-blok, wat er over is met `alle_berichten = list(db.items())`, en geef
+`{"berichten": alle_berichten}` mee in plaats van `{"berichten": []}`: de
+berichten van anderen blijven staan.
 
 </details>
 
-Door naar [les 6: in de praktijk](site:fullstack/docs/veiligheid/toegang/praktijk).
+Door naar [les 7: in de praktijk](site:fullstack/docs/veiligheid/toegang/praktijk).

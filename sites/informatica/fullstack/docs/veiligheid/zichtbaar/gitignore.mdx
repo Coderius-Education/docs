@@ -1,5 +1,5 @@
 ---
-sidebar_label: '5. Een .gitignore en een nette zip'
+sidebar_label: '6. Een .gitignore en een nette zip'
 description: Met een .gitignore laat git je databases, .venv en __pycache__ liggen, en een zip maak je van alleen je code. Daarna loop je je eigen project na.
 ---
 
@@ -11,7 +11,7 @@ description: Met een .gitignore laat git je databases, .venv en __pycache__ ligg
   ]}
 />
 
-In [les 4](site:fullstack/docs/veiligheid/zichtbaar/bestanden) zag je welke bestanden in je map niet bij je code
+In [les 5](site:fullstack/docs/veiligheid/zichtbaar/bestanden) zag je welke bestanden in je map niet bij je code
 horen. Je kunt ze elke keer met de hand overslaan, maar één keer vergeten is
 genoeg. Laat het daarom een bestand onthouden.
 
@@ -36,6 +36,10 @@ ziet:
 ?? twee.py
 ```
 
+Staat `.venv/` niet in jouw lijst? Dan heb je Python 3.13 of nieuwer. Die zet
+bij het aanmaken een eigen `.gitignore` in de map `.venv`, zodat git hem al
+overslaat. De rest van de lijst is hetzelfde.
+
 `??` betekent: git kent dit bestand nog niet, en neemt het mee zodra je alles
 toevoegt. Ook de databases dus.
 
@@ -50,9 +54,14 @@ __pycache__/
 
 Een regel die eindigt op `/` slaat een hele map over. `*.db` slaat elk bestand
 over dat op `.db` eindigt: `gastenboek.db`, `sessies.db`, en in je eigen
-gastenboek ook `gebruikers.db`. Sla op en typ opnieuw `git status --short`:
+gastenboek ook `gebruikers.db`. Sla op en typ opnieuw `git status --short`.
 
-```
+<Gelukt>
+
+De databases, `.venv` en `__pycache__` staan er niet meer bij, en
+`.gitignore` wel:
+
+```text
 ?? .gitignore
 ?? dicht.py
 ?? handleiding.py
@@ -62,14 +71,15 @@ gastenboek ook `gebruikers.db`. Sla op en typ opnieuw `git status --short`:
 ?? twee.py
 ```
 
-De databases, `.venv` en `__pycache__` staan er niet meer bij. In het
-Explorer-paneel zijn ze grijs geworden. `.gitignore` zelf staat er wel bij, en
-die hoort ook in je repository: zo weet een klasgenoot die je project ophaalt
-welke bestanden er niet bij horen.
+In het Explorer-paneel zijn de databases, `.venv` en `__pycache__` grijs
+geworden.
 
-Met een nieuwere Python staat `.venv/` er in de eerste lijst al niet bij: die
-zet bij het aanmaken een eigen `.gitignore` in de map `.venv`. Zet de regel er
-toch in, dan werkt het ook met een oudere Python.
+</Gelukt>
+
+`.gitignore` hoort zelf wel in je repository: zo weet een klasgenoot die je
+project ophaalt welke bestanden er niet bij horen. De regel `.venv/` zet je er
+ook in als je Python de map al overslaat; dan werkt hij ook met een oudere
+Python.
 
 ## Een zip zonder databases
 
@@ -83,10 +93,25 @@ je project nakijkt, heeft je code nodig, niet de berichten en sessie-id's van je
 bezoekers. De pagina [Project checken](site:fullstack/project-checken) vraagt ook alleen om
 `main.py`, `static/` en `templates/`.
 
+<Voorspel soort="Controlevraag" vraag="Je kopieert de hele map veiligheid-zichtbaar naar een USB-stick. Gaat sessies.db mee, nu je .gitignore *.db overslaat?">
+  <Keuze uitleg="Welk programma leest .gitignore? En welk programma kopieert naar je USB-stick?">Nee: .gitignore geldt voor alles wat je met de map doet</Keuze>
+  <Keuze uitleg="Of de map in git staat, maakt voor kopiëren niet uit: de Verkenner kijkt niet naar git.">Alleen als de map nog niet in git staat</Keuze>
+  <Keuze goed uitleg="Alleen git leest .gitignore. De Verkenner of de Finder kopieert alles wat je selecteert, net als bij een zip.">Ja: kopiëren neemt alles mee, wat er in .gitignore ook staat</Keuze>
+  <Uitleg>
+
+  `.gitignore` is een lijst voor git, en voor niets anders. Bij een kopie of
+  een zip kies je zelf wat erin gaat.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
 
-Je hebt `.gitignore` gemaakt, maar `git status --short` laat nog steeds een
-database zien, met een `M` ervoor:
+### Een database die al in git stond
+
+In deze map kan dat niet, want je begon net met `git init`. Maar in je eigen
+project, dat al langer in git staat, laat `git status --short` na je
+`.gitignore` misschien nog een database zien, met een `M` ervoor:
 
 ```
  M sessies.db
@@ -104,16 +129,15 @@ git rm --cached sessies.db
 
 Maak daarna een commit. Stond de repository al op GitHub, dan staat het bestand
 nog in de oude commits, en kan iedereen het daar ophalen. Gooi dan ook
-`sessies.db` op je computer weg: je server begint met een lege, en de oude
-sessie-id's werken nergens meer, zoals je in opdracht 1 van [les 4](site:fullstack/docs/veiligheid/zichtbaar/bestanden)
-zag.
+`sessies.db` op je computer weg: je server begint met een lege, en kent de
+oude sessie-id's niet meer. Wie ze uit GitHub haalt, kan er dan niets mee.
 
 ## Opdrachten
 
 ### Opdracht 1: Predict - Een nieuwe database
 
-In de reeks Wachtwoorden maak je later een `gebruikers.db`. Je `.gitignore` is
-niet veranderd.
+Je zet later in deze map een server met accounts neer, die een `gebruikers.db`
+maakt. Je `.gitignore` is niet veranderd.
 
 **Vraag:** staat `gebruikers.db` dan in de lijst van `git status --short`?
 
@@ -165,4 +189,4 @@ uitzetten zodra anderen erbij kunnen.
 
 </details>
 
-Door naar [les 6: in de praktijk](site:fullstack/docs/veiligheid/zichtbaar/praktijk).
+Door naar [les 7: in de praktijk](site:fullstack/docs/veiligheid/zichtbaar/praktijk).

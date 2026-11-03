@@ -1,6 +1,6 @@
 ---
 sidebar_label: 'Een script als bezoeker'
-description: In de route Veiligheid speel je zelf de bezoeker, met een los Python-script en httpx. Verzoeken sturen, het antwoord lezen, en met een Client cookies onthouden.
+description: In de route Veiligheid speel je zelf de bezoeker, met een los Python-script en httpx. Een map per reeks klaarzetten, httpx installeren en je eerste verzoek sturen.
 ---
 
 # Een script als bezoeker
@@ -13,8 +13,8 @@ description: In de route Veiligheid speel je zelf de bezoeker, met een los Pytho
 
 In deze route kijk je naar je server zoals iemand die hem wil misbruiken. Die
 gebruikt geen browser met jouw formulier, maar stuurt zelf verzoeken. Dat doe
-jij ook, met een klein Python-script. Zo zie je wat je server doet met een
-verzoek dat niet uit je eigen HTML komt.
+jij ook, met een klein Python-script. Hier zet je dat gereedschap klaar en
+stuur je je eerste verzoek.
 
 ## De spelregel
 
@@ -47,65 +47,20 @@ Heeft een reeks nog iets nodig, zoals `argon2-cffi` voor wachtwoorden of
 `slowapi` tegen te veel verzoeken, dan zegt de les dat op het moment dat het
 nodig is.
 
-Je scripts zet je in dezelfde map als `main.py`. Sla je daar een `.py`-bestand
-op, dan start `fastapi dev` opnieuw, ook als het niet `main.py` is. In de
-terminal van je server zie je dan:
-
-```
-▕  WatchFiles detected changes in 'bezoeker.py'. Reloading...
-▕  Shutting down
-▕  Waiting for application shutdown.
-▕  Application shutdown complete.
-▕  Finished server process [14065]
-▕  Started server process [14072]
-▕  Waiting for application startup.
-▕  Application startup complete.
-```
-
-Dat is geen fout. Draai je script pas als de laatste regel er staat, anders
-klopt het aan bij een server die net opnieuw opstart. De getallen achter
-`process` zijn bij jou anders.
-
 ## Een server om mee te oefenen
 
-Maak een nieuwe map, met een virtual environment en de packages zoals in
-[Een map per reeks](#een-map-per-reeks) hierboven. Zet er dit `main.py` in. Het
-heeft drie endpoints: een gewone pagina, een formulier, en een teller die met
-een cookie telt hoe vaak je langs bent geweest.
+Maak een map `oefenen`, met een virtual environment en de packages zoals
+hierboven. Zet er dit `main.py` in, met één endpoint:
 
-<CodeUitleg>
-
-```python showLineNumbers
-from fastapi import Cookie, FastAPI, Form
-from fastapi.responses import JSONResponse
+```python
+from fastapi import FastAPI
 
 app = FastAPI()
 
 @app.get("/")
 async def root():
     return {"bericht": "Hallo wereld!"}
-
-@app.post("/groet")
-async def groet(naam: str = Form(...)):
-    return {"bericht": f"Hallo, {naam}"}
-
-@app.get("/bezoek")
-async def bezoek(teller: int = Cookie(default=0)):
-    teller = teller + 1
-    antwoord = JSONResponse({"bezoek": teller})
-    antwoord.set_cookie(key="teller", value=str(teller))
-    return antwoord
 ```
-
-<Regel n={10} tot={12}>
-Een POST-endpoint met een formulierveld, zoals in [Een formulier versturen (POST)](site:fullstack/docs/FastAPI/formulieren/forms).
-</Regel>
-
-<Regel n={14} tot={19}>
-De teller staat in een cookie, zoals in [Onthouden met een cookie](site:fullstack/docs/FastAPI/onthouden/cookies). Elk bezoek leest hem, telt er één bij op, en zet hem terug. Een cookie is altijd tekst, daarom `str(teller)`.
-</Regel>
-
-</CodeUitleg>
 
 Start hem in de terminal van VS Code met `fastapi dev main.py`, en laat die
 terminal openstaan.
@@ -114,8 +69,8 @@ terminal openstaan.
 
 Je script draait naast je server, en die houdt de eerste terminal bezet. Open
 in VS Code daarom een **tweede terminal** (het plusje naast de terminal). Daarin
-draai je de scripts uit deze route. `httpx` heb je al geïnstalleerd, bij
-[Een map per reeks](#een-map-per-reeks).
+draai je de scripts uit deze route. Je scripts zet je in dezelfde map als
+`main.py`.
 
 ## Een verzoek sturen
 
@@ -129,9 +84,6 @@ import httpx
 antwoord = httpx.get("http://127.0.0.1:8000/")
 print(antwoord.status_code)
 print(antwoord.json())
-
-antwoord = httpx.post("http://127.0.0.1:8000/groet", data={"naam": "Sara"})
-print(antwoord.status_code, antwoord.json())
 ```
 
 <Regel n={3}>
@@ -142,69 +94,44 @@ print(antwoord.status_code, antwoord.json())
 `status_code` is de statuscode van het antwoord, en `json()` maakt van het antwoord een dictionary.
 </Regel>
 
-<Regel n={7}>
-`httpx.post` met `data` verstuurt een formulier. De sleutels in `data` zijn de `name`s van de velden.
-</Regel>
-
 </CodeUitleg>
 
-Draai het in de tweede terminal met `python bezoeker.py`:
+Draai het in de tweede terminal met `python bezoeker.py`.
 
-```
+<Gelukt>
+
+In de tweede terminal staat:
+
+```text
 200
 {'bericht': 'Hallo wereld!'}
-200 {'bericht': 'Hallo, Sara'}
 ```
+
+In de terminal van je server staat een nieuwe regel met
+`"GET / HTTP/1.1" 200`: je script was een bezoeker.
+
+</Gelukt>
 
 Een statuscode zegt in één getal hoe het verzoek afliep. `200` is gelukt; de
 andere codes die je in deze route tegenkomt, staan in het overzicht op
 [de startpagina](site:fullstack/docs/veiligheid#statuscodes).
 
-## Een bezoeker die cookies onthoudt
+<Voorspel soort="Controlevraag" vraag="Je zet in main.py een tweede endpoint, /geheim, en maakt er nergens een link naar. Kan bezoeker.py het toch opvragen?">
+  <Keuze goed uitleg="Een link is alleen een hulp in de browser. httpx.get stuurt elk adres dat in je script staat, en je server antwoordt.">Ja: een script vraagt elk pad op dat het kent, ook zonder link</Keuze>
+  <Keuze uitleg="Het pad bestaat zodra het in main.py staat. Zocht httpx.get in bezoeker.py ergens naar een link?">Nee: zonder link op een pagina bestaat het pad niet voor een script</Keuze>
+  <Keuze uitleg="Je server onthoudt niet wat je browser eerder opende. Elk verzoek komt los binnen.">Alleen als je /geheim eerst zelf in je browser hebt geopend</Keuze>
+  <Uitleg>
 
-Een browser onthoudt de cookies die een server terugstuurt, en stuurt ze bij
-het volgende verzoek weer mee. `httpx.get` doet dat niet: elk verzoek is een
-nieuwe bezoeker. Voor een bezoeker die onthoudt, gebruik je een `Client`:
+  Je server beantwoordt verzoeken, geen browsers. Een script kan elk adres
+  vragen en alles sturen wat een browser stuurt, ook wat geen pagina aanbiedt.
+  Daar draait deze hele route om.
 
-<CodeUitleg>
-
-```python showLineNumbers
-import httpx
-
-for i in range(3):
-    print(httpx.get("http://127.0.0.1:8000/bezoek").json())
-
-bezoeker = httpx.Client(base_url="http://127.0.0.1:8000")
-for i in range(3):
-    print(bezoeker.get("/bezoek").json())
-```
-
-<Regel n={3} tot={4}>
-Drie losse verzoeken, zonder geheugen.
-</Regel>
-
-<Regel n={6}>
-Een `Client` is één bezoeker die zijn cookies onthoudt, zoals een browser. Met `base_url` typ je daarna alleen nog het pad.
-</Regel>
-
-</CodeUitleg>
-
-Uitvoer:
-
-```
-{'bezoek': 1}
-{'bezoek': 1}
-{'bezoek': 1}
-{'bezoek': 1}
-{'bezoek': 2}
-{'bezoek': 3}
-```
-
-Zonder `Client` is elk bezoek het eerste. Met `Client` telt de teller door,
-want de bezoeker stuurt de cookie mee. Twee `Client`s zijn twee bezoekers, elk
-met hun eigen cookies; dat gebruik je in [Wie mag wat](site:fullstack/docs/veiligheid/toegang/zwakheid).
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
+
+### `httpx.ConnectError`
 
 ```
 httpx.ConnectError: [Errno 111] Connection refused
@@ -217,72 +144,68 @@ andere tekst achter `ConnectError`, met hetzelfde idee.
 **Oplossing:** start je server in de eerste terminal met `fastapi dev main.py`,
 en draai het script pas als daar `Application startup complete` staat.
 
+### `No module named 'httpx'`
+
+```
+ModuleNotFoundError: No module named 'httpx'
+```
+
+**Oorzaak:** `httpx` staat niet in de virtual environment waarmee je het script
+draait. Je installeerde het niet in deze map, of je draait het script in een
+terminal buiten VS Code, waar de virtual environment niet aanstaat.
+
+**Oplossing:** installeer de packages in de terminal van VS Code, zoals in
+[Een map per reeks](#een-map-per-reeks), en draai het script ook daar.
+
+### Je server start opnieuw als je een script opslaat
+
+In de terminal van je server staat, nadat je `bezoeker.py` opsloeg:
+
+```
+▕  WatchFiles detected changes in 'bezoeker.py'. Reloading...
+▕  Shutting down
+▕  Waiting for application shutdown.
+▕  Application shutdown complete.
+▕  Finished server process [14065]
+▕  Started server process [14072]
+▕  Waiting for application startup.
+▕  Application startup complete.
+```
+
+**Oorzaak:** `fastapi dev` start opnieuw zodra je in zijn map een `.py`-bestand
+opslaat, ook als het niet `main.py` is. Dat is geen fout. De getallen achter
+`process` zijn bij jou anders.
+
+**Oplossing:** draai je script pas als de laatste regel er staat. Anders klopt
+het aan bij een server die net opnieuw opstart.
+
 ## Opdrachten
 
-### Opdracht 1: Predict - Een formulier zonder naam
+### Opdracht 1: Predict - Een pad dat niet bestaat
 
-Je stuurt `httpx.post("http://127.0.0.1:8000/groet", data={})`: een formulier
-zonder het veld `naam`.
+Je verandert in `bezoeker.py` het adres in
+`http://127.0.0.1:8000/bestaat-niet`, en draait het script opnieuw.
 
-**Vraag:** welke statuscode krijg je?
+**Vraag:** wat print het?
 
 <details>
 <summary>Tip</summary>
 
-`Form(...)` betekent dat het veld verplicht is.
+Je `main.py` heeft maar één endpoint.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-`422`. FastAPI mist het verplichte veld `naam`, en weigert het verzoek voordat
-je functie draait.
-
-</details>
-
-### Opdracht 2: Investigate - De browser als bezoeker
-
-Open `http://127.0.0.1:8000/bezoek` in je browser en druk een paar keer op F5.
-Loopt de teller op, zoals bij `httpx.get` of zoals bij de `Client`?
-
-<details>
-<summary>Antwoord</summary>
-
-Zoals bij de `Client`: 1, 2, 3, enzovoort. De browser bewaart de cookie
-`teller` en stuurt hem bij elke keer herladen mee. Een `Client` doet in je
-script precies wat de browser doet.
-
-</details>
-
-<details>
-<summary>Zo ziet je `main.py` er nu uit</summary>
-
-```python
-from fastapi import Cookie, FastAPI, Form
-from fastapi.responses import JSONResponse
-
-app = FastAPI()
-
-@app.get("/")
-async def root():
-    return {"bericht": "Hallo wereld!"}
-
-@app.post("/groet")
-async def groet(naam: str = Form(...)):
-    return {"bericht": f"Hallo, {naam}"}
-
-@app.get("/bezoek")
-async def bezoek(teller: int = Cookie(default=0)):
-    teller = teller + 1
-    antwoord = JSONResponse({"bezoek": teller})
-    antwoord.set_cookie(key="teller", value=str(teller))
-    return antwoord
+```
+404
+{'detail': 'Not Found'}
 ```
 
-Deze oefenserver heb je na deze les niet meer nodig; elke reeks begint met zijn
-eigen server.
+Er is geen endpoint voor `/bestaat-niet`. FastAPI stuurt dan zelf een `404`,
+met een kleine dictionary waarin staat wat er mis is.
 
 </details>
 
-Door naar de eerste reeks: [Wat je server laat zien](site:fullstack/docs/veiligheid/zichtbaar/handleiding).
+Door naar [Een bezoeker die onthoudt](site:fullstack/docs/veiligheid/client).

@@ -30,11 +30,11 @@ vertrouw je niet, en de controle hoort op de server.
 - [ ] Elk tekstveld heeft `max_length` in `Form`.
   ([Grenzen in Form](site:fullstack/docs/veiligheid/invoer/grenzen))
 - [ ] Elk getal is een `int` met `ge` en `le`.
-  ([Getallen en keuzes](site:fullstack/docs/veiligheid/invoer/getallen))
+  ([Getallen met een grens](site:fullstack/docs/veiligheid/invoer/getallen))
 - [ ] Een veld dat niet uit alleen spaties mag bestaan, controleer je met
   `strip()`. ([De inhoud controleren](site:fullstack/docs/veiligheid/invoer/inhoud))
 - [ ] Een keuze uit een paar woorden controleer je tegen een lijst met wat mag.
-  ([Getallen en keuzes](site:fullstack/docs/veiligheid/invoer/getallen))
+  ([Een keuze uit een lijst](site:fullstack/docs/veiligheid/invoer/keuzes))
 - [ ] Kiest een bezoeker een bestand, zoals met `?naam=`, dan gaat de naam pas
   naar `FileResponse` als hij in je lijst staat.
   ([Een bestandsnaam van een bezoeker](site:fullstack/docs/veiligheid/invoer/paden))
@@ -48,23 +48,23 @@ vertrouw je niet, en de controle hoort op de server.
   template. ([Tekst uit de URL](site:fullstack/docs/veiligheid/xss/url))
 - [ ] Nergens staat `|safe` achter tekst van een bezoeker. ([`|safe`](site:fullstack/docs/veiligheid/xss/safe))
 - [ ] Je JavaScript zet tekst uit een veld of de URL in de pagina met
-  `textContent`, niet met `innerHTML`. ([In de browser](site:fullstack/docs/veiligheid/xss/browser))
+  `textContent`, niet met `innerHTML`. ([Tekst blijft tekst: textContent](site:fullstack/docs/veiligheid/xss/textcontent))
 
 ## Te veel verzoeken
 
 - [ ] Het endpoint dat iets opslaat, heeft een verzoeklimiet.
-  ([Een limiet met slowapi](site:fullstack/docs/veiligheid/dos/limiet))
+  ([Wat de 429 vertelt, opdracht 3](site:fullstack/docs/veiligheid/dos/te-veel#eigen-project))
 
 ## Wie mag wat
 
 - [ ] Elk endpoint dat iets verwijdert of aanpast, controleert zelf of het van
   deze bezoeker is, en stuurt anders een `403`.
   ([De controle met 403](site:fullstack/docs/veiligheid/toegang/controle))
-- [ ] Die controle staat in elk endpoint apart, ook in Alles wissen en in een
-  endpoint dat je later toevoegt. ([Elk endpoint apart](site:fullstack/docs/veiligheid/toegang/elk-endpoint))
 - [ ] De controle gebruikt wat de server weet, zoals de naam in de sessie, niet
   wat de bezoeker in een formulier of de URL meestuurt.
   ([Controleer op wat de server weet](site:fullstack/docs/veiligheid/toegang/server-weet))
+- [ ] Die controle staat in elk endpoint apart, ook in Alles wissen en in een
+  endpoint dat je later toevoegt. ([Elk endpoint apart](site:fullstack/docs/veiligheid/toegang/elk-endpoint))
 
 ## Cookies
 
@@ -84,19 +84,23 @@ ze erin bouwde.
 
 - [ ] `/registreer` weigert een naam die al bestaat, anders overschrijft een
   tweede registratie het wachtwoord van de eerste.
-  ([Waarom geen gewone tekst](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst))
+  ([Een server met accounts](site:fullstack/docs/veiligheid/wachtwoorden/startbestand))
 - [ ] Je bewaart `ph.hash(wachtwoord)`, nooit het wachtwoord zelf.
   ([Registreren met Argon2](site:fullstack/docs/veiligheid/wachtwoorden/registreren))
 - [ ] Inloggen gebruikt `ph.verify`, met dezelfde melding bij een onbekende naam
   en een fout wachtwoord, en ook bij een onbekende naam een `verify` tegen een
   nep-hash. ([Inloggen met verify](site:fullstack/docs/veiligheid/wachtwoorden/inloggen))
-- [ ] Een wachtwoord wijzigen vraagt eerst het oude. Bij het inloggen werk je
-  na een geslaagde `verify` een oude hash bij met `check_needs_rehash`.
-  ([Wachtwoord wijzigen](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen),
-  [Een oude hash bijwerken](site:fullstack/docs/veiligheid/wachtwoorden/rehash))
+- [ ] Bij het inloggen werk je na een geslaagde `verify` een oude hash bij met
+  `check_needs_rehash`. ([Een oude hash bijwerken](site:fullstack/docs/veiligheid/wachtwoorden/rehash))
 - [ ] Elk endpoint dat een wachtwoord controleert, zoals `/inloggen`, heeft een
   limiet: `@limiter.limit` direct onder `@app.post`, met `request: Request`.
   ([Inlogpogingen beperken](site:fullstack/docs/veiligheid/wachtwoorden/pogingen))
+- [ ] Ook `/registreer` heeft een limiet: elke registratie kost een trage
+  `ph.hash`, en de melding over een bezette naam verraadt welke namen bestaan.
+  ([Inlogpogingen beperken](site:fullstack/docs/veiligheid/wachtwoorden/pogingen))
+- [ ] Heb je een endpoint om een wachtwoord te wijzigen, dan vraagt het eerst
+  het oude, met `ph.verify`, en heeft het ook een limiet.
+  ([Wachtwoord wijzigen](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen))
 
 ## Test het zoals een bezoeker
 

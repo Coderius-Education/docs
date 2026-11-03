@@ -1,37 +1,22 @@
 ---
-sidebar_label: '3. Controleer op wat de server weet'
+sidebar_label: '4. Controleer op wat de server weet'
 description: Een controle op een naam die de bezoeker meestuurt, laat zich omzeilen. Controleer op wat de server zelf heeft vastgelegd, zoals de naam in de sessie.
 ---
 
 # Wie mag wat: controleer op wat de server weet
 
-Je controle uit [les 2](site:fullstack/docs/veiligheid/toegang/controle) vergelijkt de naam bij het bericht met de
+Je controle uit [les 3](site:fullstack/docs/veiligheid/toegang/controle) vergelijkt de naam bij het bericht met de
 naam in de sessie. Er is een controle die er bijna hetzelfde uitziet: de naam
 bij het bericht vergelijken met een naam die de bezoeker zelf meestuurt. Die
-gaat mis, en het waarom is de kern van deze reeks.
+gaat mis, en dat bouw je nu na.
 
-## Wie bepaalt deze waarde?
+## Een naam uit de URL
 
-Bij elke waarde in een controle is de vraag: wie heeft hem bepaald?
+Stel dat de verwijderknop de naam van de bezoeker meestuurt, in de URL, en dat
+het endpoint daarop controleert. Vervang `bericht_verwijderen` in je `main.py`
+tijdelijk door deze versie:
 
-| Waarde | Wie bepaalt hem |
-|---|---|
-| een veld uit het formulier of de URL, zoals `naam` | de bezoeker: hij typt wat hij wil |
-| de sleutel in het pad, `/bericht/{sleutel}` | de bezoeker: hij kan elk pad sturen |
-| de cookie `sessie_id` | de bezoeker stuurt hem, maar hij is te lang om te raden |
-| de naam in `sessies.db` | de server: die zette hem erin bij het inloggen, nadat het wachtwoord klopte |
-| de naam bij een bericht in `gastenboek.db` | de server: die nam hem bij het plaatsen uit de sessie |
-
-Alleen wat de server zelf heeft vastgelegd, kun je vertrouwen. Het sessie-id is
-de sleutel waarmee de server zijn eigen gegevens terugvindt.
-
-## Er gaat iets mis
-
-Je laat de verwijderknop de naam van de bezoeker meesturen, in de URL, en
-controleert daarop. Doe het na: vervang `bericht_verwijderen` in je `main.py`
-tijdelijk door deze versie.
-
-{/* route-dubbel: tijdelijke foute versie van het DELETE-endpoint, daarna zet je die uit les 2 terug */}
+{/* route-dubbel: tijdelijke foute versie van het DELETE-endpoint, daarna zet je die uit les 3 terug */}
 ```python
 @app.delete("/bericht/{sleutel}")
 async def bericht_verwijderen(sleutel: str, naam: str = ""):
@@ -46,12 +31,10 @@ async def bericht_verwijderen(sleutel: str, naam: str = ""):
 
 `naam` is een query-parameter, zoals in [Een waarde na een vraagteken: query-parameters](site:fullstack/docs/FastAPI/veel-paginas/query-parameters):
 de knop zou `/bericht/…?naam=Alex` versturen. Gooi `gastenboek.db`,
-`sessies.db` en `gebruikers.db` weg en draai `test_verwijderen.py` uit
-[les 1](site:fullstack/docs/veiligheid/toegang/zwakheid), met onderaan het stuk van Sara uit
-[opdracht 1 van les 2](site:fullstack/docs/veiligheid/toegang/controle#opdracht-1-run---sara-mag-wel). Heb je dat
-stuk nog niet, zet het er dan eerst bij:
+`sessies.db` en `gebruikers.db` weg en draai `test_verwijderen.py`, met het stuk
+van Sara uit [les 3](site:fullstack/docs/veiligheid/toegang/controle#test-opnieuw):
 
-```
+```text
 Alex verwijdert het bericht van Sara: 403
 Nog in het gastenboek: ['Sara', 'Alex']
 Sara verwijdert haar eigen bericht: 403
@@ -68,9 +51,13 @@ meestuurt:
         antwoord = alex.delete(f"/bericht/{sleutel}?naam=Sara")
 ```
 
-Gooi de databases weer weg en draai het script opnieuw:
+Gooi de databases weer weg en draai het script opnieuw.
 
-```
+<Gelukt>
+
+Alex verwijdert het bericht van Sara, terwijl hij als Alex is ingelogd:
+
+```text
 Alex verwijdert het bericht van Sara: 200
 Nog in het gastenboek: ['Alex']
 Nog in het gastenboek: ['Alex']
@@ -79,14 +66,31 @@ Nog in het gastenboek: ['Alex']
 Sara heeft geen bericht meer om te verwijderen, dus haar regel met de
 statuscode valt weg.
 
-**Oorzaak:** de naam komt uit de URL, en die bepaalt de bezoeker zelf. Alex is
-ingelogd als Alex, maar hij stuurt "Sara" mee, en de controle gelooft wat hij
-stuurt. Het endpoint vraagt zijn sessie niet eens op.
+</Gelukt>
 
-**Oplossing:** controleer op iets dat alleen de server kan geven. De naam in de
-sessie heeft de server er zelf in gezet, nadat het wachtwoord klopte. Zet
-`bericht_verwijderen` uit [les 2](site:fullstack/docs/veiligheid/toegang/controle) terug, en zet in het script de
-regel van Alex terug.
+De naam komt uit de URL, en die bepaalt de bezoeker zelf. Alex stuurt "Sara"
+mee, en de controle gelooft wat hij stuurt. Het endpoint vraagt zijn sessie niet
+eens op.
+
+## Wie bepaalt deze waarde?
+
+Bij elke waarde in een controle is de vraag: wie heeft hem bepaald?
+
+| Waarde | Wie bepaalt hem |
+|---|---|
+| een veld uit het formulier of de URL, zoals `naam` | de bezoeker: hij typt wat hij wil |
+| de sleutel in het pad, `/bericht/{sleutel}` | de bezoeker: hij kan elk pad sturen |
+| de cookie `sessie_id` | de bezoeker stuurt hem, maar hij is te lang om te raden |
+| de naam in `sessies.db` | de server: die zette hem erin bij het inloggen, nadat het wachtwoord klopte |
+| de naam bij een bericht in `gastenboek.db` | de server: die nam hem bij het plaatsen uit de sessie |
+
+Alleen wat de server zelf heeft vastgelegd, kun je vertrouwen. Het sessie-id is
+de sleutel waarmee de server zijn eigen gegevens terugvindt.
+
+## Zet de goede controle terug
+
+Zet `bericht_verwijderen` uit [les 3](site:fullstack/docs/veiligheid/toegang/controle) terug, en zet in het script de
+regel van Alex terug. Het verschil zit in één regel:
 
 ```python
 # FOUT
@@ -98,7 +102,31 @@ if bericht is None or bericht["naam"] != mijn.get("naam"):
     raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
 ```
 
-Meer uitleg over wat je van een bezoeker kunt geloven: [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser)
+Meer over wat je van een bezoeker kunt geloven: [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser)
+
+<Voorspel soort="Controlevraag" vraag="Een klasgenoot zet de naam niet in de URL, maar in een verborgen veld naam in het verwijderformulier, met de naam van wie er ingelogd is. Zijn endpoint vergelijkt met dat veld. Is dat veiliger?">
+  <Keuze uitleg="Verborgen is alleen het scherm. Wat staat er in het verzoek dat de browser verstuurt, en wie kan dat verzoek zelf maken?">Ja, want de bezoeker ziet het veld niet</Keuze>
+  <Keuze uitleg="Een POST typ je niet in de adresbalk, maar een script stuurt hem net zo makkelijk, met elk veld dat het wil.">Ja, want een POST past niet in de adresbalk</Keuze>
+  <Keuze goed uitleg="Ook een verborgen veld stuurt de bezoeker zelf mee. Alex zet er Sara in, en de controle gelooft het.">Nee, Alex kiest ook die waarde zelf</Keuze>
+  <Uitleg>
+
+  Een verborgen veld, de URL, een cookie: het staat allemaal in het verzoek, en het verzoek maakt de bezoeker. Alleen wat de server zelf opsloeg, zoals de naam in de sessie, kan Alex niet veranderen.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Meer namen, of twee regels van Alex
+
+Het script print meer namen dan `Sara` en `Alex`, of Alex verwijdert twee
+berichten van Sara.
+
+**Oorzaak:** de databases van de vorige keer staan er nog. Het script maakt dan
+bij elke keer twee nieuwe berichten, naast de oude.
+
+**Oplossing:** gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg voordat
+je het script opnieuw draait.
 
 ## Opdrachten
 
@@ -141,7 +169,7 @@ is dat geen reden om te geloven dat alleen de schrijver de sleutel kent?
 <summary>Antwoord</summary>
 
 Omdat de sleutel in de pagina staat, voor iedereen die de lijst opvraagt. Je
-zag in [les 1](site:fullstack/docs/veiligheid/toegang/zwakheid) dat Alex hem zo uit `/berichten` haalde. Een sleutel
+zag in [les 2](site:fullstack/docs/veiligheid/toegang/zwakheid) dat Alex hem zo uit `/berichten` haalde. Een sleutel
 zegt welk bericht, niet wie het mag.
 
 </details>
@@ -216,9 +244,9 @@ async def bericht_verwijderen(sleutel: str, sessie_id: str = Cookie(default=""))
     return {"bericht": "Verwijderd"}
 ```
 
-Na het terugzetten is het hetzelfde bestand als in les 2: de controle kijkt
+Na het terugzetten is het hetzelfde bestand als in les 3: de controle kijkt
 naar de naam in de sessie.
 
 </details>
 
-Door naar [les 4: elk endpoint apart](site:fullstack/docs/veiligheid/toegang/elk-endpoint).
+Door naar [les 5: elk endpoint apart](site:fullstack/docs/veiligheid/toegang/elk-endpoint).

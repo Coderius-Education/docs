@@ -1,5 +1,5 @@
 ---
-sidebar_label: '2. Grenzen in Form'
+sidebar_label: '3. Grenzen in Form'
 description: Zet de grens in Form met max_length, zodat FastAPI een te lang bericht met 422 weigert voordat je code draait.
 ---
 
@@ -68,17 +68,25 @@ print(antwoord.json()["detail"][0]["msg"])
 ```
 
 <Regel n={8}>
-Het antwoord is een dictionary met onder `detail` een lijst, met één fout per veld. `[0]` pakt de eerste fout uit die lijst, en `["msg"]` de melding daarin. Wat er verder in staat, zie je in [les 3](site:fullstack/docs/veiligheid/invoer/fouten-lezen).
+Het antwoord is een dictionary met onder `detail` een lijst, met één fout per veld. `[0]` pakt de eerste fout uit die lijst, en `["msg"]` de melding daarin. Wat er verder in staat, zie je in [les 4](site:fullstack/docs/veiligheid/invoer/fouten-lezen).
 </Regel>
 
 </CodeUitleg>
 
-Uitvoer:
+Draai het met `python groot.py`.
 
-```
+<Gelukt>
+
+`groot.py` print:
+
+```text
 422
 String should have at most 280 characters
 ```
+
+`lees_database.py` laat geen nieuwe regel zien: het bericht kwam er niet in.
+
+</Gelukt>
 
 Een **422** betekent: het verzoek klopt niet met wat het endpoint verwacht. Het
 bericht komt niet in de database, en je eigen code draait niet eens. De
@@ -87,9 +95,22 @@ browser vergist.
 
 ## Waar de controle zit
 
-Een verzoek komt nu langs twee controles, allebei op de server. De grens in `Form` ken je nu; de controle op de inhoud komt in [les 4](site:fullstack/docs/veiligheid/invoer/inhoud).
+Een verzoek komt nu langs twee controles, allebei op de server. De grens in `Form` ken je nu; de controle op de inhoud komt in [les 5](site:fullstack/docs/veiligheid/invoer/inhoud).
 
 <VerzoekCyclus variant="invoer" />
+
+<Voorspel soort="Controlevraag" vraag="Je haalt maxlength weg uit formulier.html, en laat max_length=280 in Form staan. Iemand typt in het formulier 300 tekens en klikt op Verstuur. Wat gebeurt er?">
+  <Keuze uitleg="Form staat in main.py, op de server. Leest de browser je main.py?">De browser stopt na 280 tekens, want de grens staat in Form</Keuze>
+  <Keuze goed uitleg="Zonder maxlength houdt de browser niets tegen. Form telt op de server, en een te lang bericht komt niet in je functie.">De browser verstuurt alles, en je server weigert het met een 422</Keuze>
+  <Keuze uitleg="max_length knipt niets af. Wat gaf groot.py terug met een miljoen tekens?">Je server bewaart de eerste 280 tekens en laat de rest weg</Keuze>
+  <Uitleg>
+
+  Elke plek doet zijn eigen werk: `maxlength` helpt in de browser, `max_length`
+  in `Form` is de controle. Haal je de hulp weg, dan blijft de controle, maar
+  merkt de bezoeker het pas na **Verstuur**.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -182,4 +203,4 @@ Beide velden hebben nu een grens op de server.
 
 </details>
 
-Door naar [les 3: een 422 lezen](site:fullstack/docs/veiligheid/invoer/fouten-lezen).
+Door naar [les 4: een 422 lezen](site:fullstack/docs/veiligheid/invoer/fouten-lezen).

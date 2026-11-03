@@ -1,81 +1,15 @@
 ---
-sidebar_label: '1. Waarom geen gewone tekst'
+sidebar_label: '2. Waarom geen gewone tekst'
 description: Wat er gebeurt als je wachtwoorden bewaart zoals de gebruiker ze intypt, en waarom dat gevaarlijk is als een database lekt.
 ---
 
 # Wachtwoorden: waarom geen gewone tekst
 
-<Voorkennis
-  items={[
-    {site: 'python', to: '/docs/data/tuples', label: 'Tuples uitpakken'},
-  ]}
-/>
-
-:::note[Waar je werkt]
-Maak voor deze reeks een nieuwe map `veiligheid-wachtwoorden`, naast je eigen
-project, en open die in VS Code. De server, de scripts en de database van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
-het eind van de reeks pas je het geleerde toe op je eigen project.
-Maak in die map een virtual environment en installeer de packages; hoe dat gaat
-staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
-:::
-
-Je gastenboek heeft accounts sinds
-[Registreren: een account opslaan](site:fullstack/docs/FastAPI/accounts/registreren), en controleert
-het wachtwoord sinds [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen).
-Het bewaart dat wachtwoord precies zoals de gebruiker het intypt; in
-Registreren zag je het al staan. Deze reeks laat zien waarom dat gevaarlijk is,
-en maakt het stap voor stap veilig.
-
-Je werkt met dezelfde twee stappen, als een kleine server die JSON teruggeeft,
-zodat een script elk antwoord kan lezen: `/registreer` uit de basis, en
-`/inloggen` met de controle uit je gastenboek, als eigen endpoint zoals in
-[Sessies](site:fullstack/docs/FastAPI/onthouden/sessies), maar nog zonder sessie. Een fout wachtwoord
-geeft hier geen `401` maar een melding: het gaat in deze reeks om wat er in de
-database staat.
-
-<CodeUitleg>
-
-```python showLineNumbers
-from fastapi import FastAPI, Form, HTTPException
-from sqlitedict import SqliteDict
-
-app = FastAPI()
-
-@app.post("/registreer")
-async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as db:
-        if naam in db:
-            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
-        db[naam] = wachtwoord
-        db.commit()
-    return {"bericht": f"Welkom, {naam}"}
-
-@app.post("/inloggen")
-async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as db:
-        if db.get(naam) == wachtwoord:
-            return {"bericht": "Ingelogd"}
-    return {"bericht": "Naam of wachtwoord klopt niet"}
-```
-
-<Regel n={9} tot={10}>
-Bestaat de naam al, dan weigert de server hem met een 400. Zonder die controle
-overschrijft iemand die zich als `sara` registreert het wachtwoord van Sara, en
-kan hij daarna als haar inloggen.
-</Regel>
-
-<Regel n={11}>
-Het wachtwoord gaat letterlijk de database in, onder de naam van de gebruiker.
-</Regel>
-
-<Regel n={18}>
-Inloggen vergelijkt wat de gebruiker intypt met wat er in de database staat. Staat de naam er niet in, dan geeft `db.get` `None`, en dat is nooit gelijk aan een wachtwoord.
-</Regel>
-
-</CodeUitleg>
-
-Dat werkt. Het probleem zie je pas als iemand anders dan je server de database
-in handen krijgt.
+Je server uit [les 1](site:fullstack/docs/veiligheid/wachtwoorden/startbestand) bewaart elk
+wachtwoord zoals de gebruiker het intypt, net als je gastenboek uit
+[Registreren: een account opslaan](site:fullstack/docs/FastAPI/accounts/registreren) en
+[Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen).
+Nu kijk je in de database, zoals iemand die het bestand in handen krijgt.
 
 ## Databases lekken
 
@@ -90,41 +24,7 @@ heeft, kan het daarna overal proberen.
 
 ## Kijk zelf in je database
 
-:::danger[Alleen je eigen database]
-Doe dit **uitsluitend** met je eigen server op `127.0.0.1` en je eigen
-database. De wachtwoorden van een ander bekijken of gebruiken is strafbaar.
-:::
-
-Start je server met de code hierboven. Maak daarnaast een los scriptje
-`registreer.py` dat drie gebruikers aanmaakt, net zoals een formulier dat zou
-doen. Het gebruikt `httpx`, zoals in
-[Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap).
-
-<CodeUitleg>
-
-```python showLineNumbers
-import httpx
-
-adres = "http://127.0.0.1:8000/registreer"
-
-gebruikers = [("sara", "welkom123"), ("alex", "Zonnebloem-Fiets-42"), ("noor", "welkom123")]
-for naam, wachtwoord in gebruikers:
-    antwoord = httpx.post(adres, data={"naam": naam, "wachtwoord": wachtwoord})
-    print(antwoord.json())
-```
-
-<Regel n={5}>
-Drie gebruikers, elk een tuple van naam en wachtwoord. Sara en Noor kozen hetzelfde wachtwoord.
-</Regel>
-
-<Regel n={7}>
-`httpx.post` stuurt een formulier: `data` zijn de velden, net als `name="naam"` en `name="wachtwoord"` in een HTML-formulier.
-</Regel>
-
-</CodeUitleg>
-
-Draai het in een tweede terminal. Je ziet drie keer een welkom. Bekijk daarna
-wat er in het bestand staat, met `lees_database.py`. Het lijkt op `bekijk_db.py`
+Maak naast `main.py` een scriptje `lees_database.py`. Het lijkt op `bekijk_db.py`
 uit [Alles bekijken: len en items](site:fullstack/docs/FastAPI/sqlitedict/bekijken):
 
 ```python
@@ -135,19 +35,42 @@ with SqliteDict("gebruikers.db") as db:
         print(f"{naam}: {wachtwoord}")
 ```
 
-Uitvoer:
+Draai het in je tweede terminal. Het script praat niet met je server: het opent
+het bestand zelf.
 
-```
+<Gelukt>
+
+`python lees_database.py` print de drie accounts uit les 1, met hun
+wachtwoord:
+
+```text
 sara: welkom123
 alex: Zonnebloem-Fiets-42
 noor: welkom123
 ```
 
+</Gelukt>
+
 Alles staat er, leesbaar. Er is geen inbraak in je server voor nodig: wie het
 bestand heeft, heeft de wachtwoorden. Dat is de zwakheid waar de volgende
 lessen iets aan doen.
 
+<Voorspel soort="Controlevraag" vraag="Wat heeft iemand nodig om de wachtwoorden uit jouw gebruikers.db te lezen?">
+  <Keuze goed uitleg="Het script opent het bestand zelf. Wie een kopie heeft, uit een back-up of een gestolen laptop, leest alles.">Alleen een kopie van het bestand gebruikers.db</Keuze>
+  <Keuze uitleg="lees_database.py stuurde geen enkel verzoek naar je server. Moest die aanstaan?">Je draaiende server en een account om mee in te loggen</Keuze>
+  <Keuze uitleg="Er valt niets te raden: kijk naar wat het script printte.">Een script dat de wachtwoorden een voor een raadt</Keuze>
+  <Uitleg>
+
+  Je server controleert wie er mag inloggen, maar het bestand zelf beschermt
+  niets. Daarom moet wat erin staat waardeloos zijn voor wie het steelt. Daar
+  gaan de volgende lessen over.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
+
+### Er verschijnt niets
 
 Je draait `lees_database.py`, en er verschijnt niets. Geen foutmelding, maar
 ook geen gebruikers.
@@ -172,7 +95,7 @@ Een vierde gebruiker, Tim, registreert met het wachtwoord `geheim`.
 <details>
 <summary>Antwoord</summary>
 
-```
+```text
 tim: geheim
 ```
 
@@ -202,34 +125,4 @@ Daarom bewaart een site een wachtwoord nooit als gewone tekst.
 
 </details>
 
-<details>
-<summary>Zo ziet je `main.py` er nu uit</summary>
-
-```python
-from fastapi import FastAPI, Form, HTTPException
-from sqlitedict import SqliteDict
-
-app = FastAPI()
-
-@app.post("/registreer")
-async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as db:
-        if naam in db:
-            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
-        db[naam] = wachtwoord
-        db.commit()
-    return {"bericht": f"Welkom, {naam}"}
-
-@app.post("/inloggen")
-async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as db:
-        if db.get(naam) == wachtwoord:
-            return {"bericht": "Ingelogd"}
-    return {"bericht": "Naam of wachtwoord klopt niet"}
-```
-
-Dit is de beginstand. In de volgende lessen verandert steeds één stuk.
-
-</details>
-
-Door naar [les 2: wat een hash is](site:fullstack/docs/veiligheid/wachtwoorden/hash).
+Door naar [les 3: wat een hash is](site:fullstack/docs/veiligheid/wachtwoorden/hash).

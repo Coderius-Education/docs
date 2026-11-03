@@ -170,7 +170,7 @@ describe('de lessen zeggen eerlijk wat nog niet veilig is', () => {
   it('Registreren waarschuwt dat het wachtwoord leesbaar in gebruikers.db staat', () => {
     const les = hoofdtekst('FastAPI/accounts/registreren');
     expect(les).toContain(':::caution[Nog niet veilig]');
-    expect(les).toContain('](site:fullstack/docs/veiligheid/wachtwoorden/gewone-tekst)');
+    expect(les).toContain('](site:fullstack/docs/veiligheid/wachtwoorden/startbestand)');
     expect(les).toContain('sara = welkom123');
   });
 
@@ -181,8 +181,8 @@ describe('de lessen zeggen eerlijk wat nog niet veilig is', () => {
     expect(punten.length).toBe(3);
     for (const doel of [
       '/docs/FastAPI/onthouden/sessies',
-      '/docs/veiligheid/wachtwoorden/gewone-tekst',
-      '/docs/veiligheid/toegang/zwakheid',
+      '/docs/veiligheid/wachtwoorden/startbestand',
+      '/docs/veiligheid/toegang/gastenboek',
     ]) {
       const punt = punten.find((p) => p.includes(`](site:fullstack${doel})`));
       expect(punt, doel).toBeDefined();

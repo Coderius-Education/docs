@@ -1,0 +1,164 @@
+---
+sidebar_label: '4. Een hash in je server'
+description: Bewaar bij het registreren de sha256-hash in plaats van het wachtwoord, en vergelijk bij het inloggen hash met hash.
+---
+
+# Wachtwoorden: een hash in je server
+
+De `sha256` uit [les 3](site:fullstack/docs/veiligheid/wachtwoorden/hash) gaat nu je server in: `/registreer` bewaart
+de hash, en `/inloggen` vergelijkt hash met hash.
+
+## Twee regels anders
+
+Zet `import hashlib` bovenaan `main.py`. In `/registreer` wordt de regel
+`db[naam] = wachtwoord`:
+
+{/* niet-compileren: één regel uit de functie registreer */}
+
+```python
+        db[naam] = hashlib.sha256(wachtwoord.encode()).hexdigest()
+```
+
+In de database staat nu de hash. `/inloggen` moet daarom de hash van het
+ingetypte wachtwoord vergelijken, met dezelfde berekening. De regel met de `if`
+wordt:
+
+{/* niet-compileren: één regel uit de functie inloggen */}
+
+```python
+        if db.get(naam) == hashlib.sha256(wachtwoord.encode()).hexdigest():
+```
+
+Dat werkt omdat hetzelfde wachtwoord altijd dezelfde hash geeft.
+
+## Opnieuw registreren en inloggen
+
+In `gebruikers.db` staan nog de wachtwoorden als gewone tekst. Gooi het bestand
+weg en draai `registreer.py` en `lees_database.py` opnieuw. Maak daarna een
+scriptje `inloggen.py` dat drie pogingen doet: Sara met haar wachtwoord, Sara
+met een letter ernaast, en Bob, die geen account heeft:
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/inloggen"
+
+pogingen = [("sara", "welkom123"), ("sara", "welkom124"), ("bob", "welkom123")]
+for naam, wachtwoord in pogingen:
+    antwoord = httpx.post(adres, data={"naam": naam, "wachtwoord": wachtwoord})
+    print(f"{naam}, {wachtwoord}: {antwoord.json()['bericht']}")
+```
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import hashlib
+
+from fastapi import FastAPI, Form, HTTPException
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if naam in db:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        db[naam] = hashlib.sha256(wachtwoord.encode()).hexdigest()
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if db.get(naam) == hashlib.sha256(wachtwoord.encode()).hexdigest():
+            return {"bericht": "Ingelogd"}
+    return {"bericht": "Naam of wachtwoord klopt niet"}
+```
+
+Les 5 en 6 veranderen niets aan je server; in les 7 gaat `/registreer` weer om.
+
+</details>
+
+<Gelukt>
+
+`python lees_database.py` toont codes in plaats van wachtwoorden:
+
+```text
+sara: 2a5c5f2623024ce3de6fe7dc8f5e13ca55b7aadc13174254b40af574e37018c1
+alex: 9c6514b2297031c14bc3968b0dc45fc0ca22d6795a835f5abc8c08a9eb6d250d
+noor: 2a5c5f2623024ce3de6fe7dc8f5e13ca55b7aadc13174254b40af574e37018c1
+```
+
+En `python inloggen.py` laat alleen Sara met haar eigen wachtwoord binnen:
+
+```text
+sara, welkom123: Ingelogd
+sara, welkom124: Naam of wachtwoord klopt niet
+bob, welkom123: Naam of wachtwoord klopt niet
+```
+
+</Gelukt>
+
+De wachtwoorden zijn niet meer te lezen. Maar kijk naar Sara en Noor: dezelfde
+code. Daar gaat [les 5](site:fullstack/docs/veiligheid/wachtwoorden/zout) over.
+
+<Voorspel soort="Controlevraag" vraag="Iemand heeft een kopie van jouw gebruikers.db. Hij logt in met de naam sara, en typt als wachtwoord de code die daar bij Sara staat: 2a5c5f26… Komt hij binnen?">
+  <Keuze uitleg="Hij typt de code wel goed over, maar wat doet /inloggen eerst met alles wat er getypt wordt?">Ja, want hij typt precies wat bij sara opgeslagen staat</Keuze>
+  <Keuze goed uitleg="/inloggen hasht ook de code die hij typt. Dat geeft een nieuwe, andere code, en die staat niet bij sara.">Nee, want de server hasht ook wat hij typt</Keuze>
+  <Keuze uitleg="Je server kijkt nergens naar de lengte van een wachtwoord. Wat gebeurt er met de 64 tekens?">Nee, want een wachtwoord van 64 tekens weigert de server</Keuze>
+  <Uitleg>
+
+  De code in de database is geen wachtwoord: niemand typt hem ooit in. Wie het
+  bestand heeft, komt met die code dus niet binnen, en het wachtwoord zelf kan
+  hij er niet uit terugrekenen.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Sara kan niet inloggen
+
+`registreer.py` geeft drie keer `{'detail': 'Deze naam is al bezet'}`, en
+`inloggen.py` geeft ook bij Sara met `welkom123`
+`Naam of wachtwoord klopt niet`.
+
+**Oorzaak:** de oude `gebruikers.db` staat er nog. Daarin staat `welkom123`
+als gewone tekst, en `/inloggen` vergelijkt dat met de hash van `welkom123`.
+Die twee zijn nooit gelijk. Nieuwe accounts komen er niet bij, want de namen
+bestaan al.
+
+**Oplossing:** gooi `gebruikers.db` weg en draai `registreer.py` opnieuw.
+`lees_database.py` laat daarna codes zien.
+
+## Opdrachten
+
+### Opdracht 1: Predict - Eén hoofdletter
+
+Een vierde gebruiker, Tim, registreert met het wachtwoord `Welkom123`, met een
+hoofdletter.
+
+**Vraag:** lijkt de code bij Tim in de database op die van Sara? En zie je aan
+de database dat Tim en Sara bijna hetzelfde kozen?
+
+<details>
+<summary>Tip</summary>
+
+Kijk naar de derde eigenschap in [les 3](site:fullstack/docs/veiligheid/wachtwoorden/hash).
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. Bij Tim staat
+`7bca025eff4fb877bea86faac56c909b65c97adfba23b7c1fb6b9772d34b420e`, een heel
+andere code dan de `2a5c5f26…` van Sara. Eén letter anders is een compleet
+andere hash, dus aan de database zie je niet dat hun wachtwoorden op elkaar
+lijken.
+
+</details>
+
+Door naar [les 5: zout](site:fullstack/docs/veiligheid/wachtwoorden/zout).

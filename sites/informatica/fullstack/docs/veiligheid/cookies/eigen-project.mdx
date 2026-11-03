@@ -1,5 +1,5 @@
 ---
-sidebar_label: '6. In je eigen project'
+sidebar_label: '7. In je eigen project'
 description: Zet httponly en samesite op de sessie-cookie van je eigen project, laat sessies op de server verlopen, en maak een POST-endpoint om uit te loggen.
 ---
 
@@ -8,29 +8,93 @@ description: Zet httponly en samesite op de sessie-cookie van je eigen project, 
 In deze reeks zette je `httponly` op de sessie-cookie, zag je dat FastAPI
 `samesite="lax"` al vanzelf zet, bouwde je een endpoint om uit te loggen en liet
 je een sessie op de server verlopen. Doe hetzelfde in je gastenboek, of in een
-eigen project dat je bouwde.
+eigen project dat je bouwde. Je begint bij de cookie zelf.
 
 :::tip
 Werk in je eigen project, niet in de map `veiligheid-cookies`. Test daarna met
 je eigen server op `127.0.0.1`.
 :::
 
+## De sessie-cookie afschermen
+
+Zoek in je project naar `set_cookie`. In je gastenboek staat hij sinds Sessies
+in `POST /inloggen`, met `key="sessie_id"`. Zet er `httponly=True` en
+`samesite="lax"` bij:
+
+{/* niet-compileren: de set_cookie uit inloggen van het eigen project, ingesprongen fragment */}
+```python
+    antwoord.set_cookie(
+        key="sessie_id",
+        value=sessie_id,
+        max_age=60 * 60 * 24 * 30,
+        httponly=True,
+        samesite="lax",
+    )
+```
+
+Start je server, open je gastenboek en log opnieuw in, zodat de server een
+nieuwe cookie zet.
+
+<Gelukt>
+
+In de Console van je gastenboek laat `document.cookie` geen `sessie_id` meer
+zien, en in het tabblad **App** staat bij `sessie_id` een vinkje bij
+**HttpOnly** en `Lax` bij **SameSite**.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je sessie-cookie heeft nu httponly en samesite lax. Welke van deze drie houdt dat nog niet tegen?">
+  <Keuze uitleg="Dat is wat httponly doet: een script ziet de cookie niet meer.">Een script op je pagina dat `document.cookie` leest</Keuze>
+  <Keuze uitleg="Met lax gaat je cookie niet mee met een POST van een andere site.">Een formulier op een andere site dat naar je gastenboek post</Keuze>
+  <Keuze goed uitleg="De instellingen zeggen alleen wat de browser met de cookie doet. Een id dat al gekopieerd is, stuurt iemand zelf mee.">Iemand die een sessie-id al eerder had gekopieerd</Keuze>
+  <Uitleg>
+
+  `httponly` en `samesite` zijn regels voor de browser. Tegen een sessie-id dat al buiten de browser is, helpt alleen de server: door de sessie weg te gooien bij het uitloggen, en door hem op tijd te laten verlopen.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Het sessie-id staat er nog
+
+`document.cookie` laat `sessie_id` nog zien, of in **App** staat geen vinkje
+bij **HttpOnly**.
+
+**Oorzaak:** dit is de cookie van vóór de wijziging. De nieuwe instellingen
+komen pas mee als de server de cookie opnieuw zet.
+
+**Oplossing:** log opnieuw in, en kijk dan weer.
+
+### Andere cookies zonder vinkje
+
+`document.cookie` geeft bijvoorbeeld `'volgorde=nieuw'`.
+
+**Oorzaak:** dat is een andere cookie van je project, zoals die van de links
+voor de volgorde uit [Cookie of sessie?](site:fullstack/docs/FastAPI/onthouden/cookie-of-sessie).
+Hij bepaalt alleen hoe de lijst staat; er hangen geen rechten aan.
+
+**Oplossing:** niets. Alleen de cookie met het sessie-id hoort `httponly` te
+hebben.
+
 ## Opdracht
 
 ### Opdracht 1: Make - In je eigen project
 
-Zet in je eigen project `httponly=True` en `samesite="lax"` op de sessie-cookie,
-en controleer in de Console dat `document.cookie` hem niet meer laat zien. Geef
-de sessie een eigen verlooptijd, en zorg voor een knop om uit te loggen.
+Geef in je eigen project de sessie een eigen verlooptijd, en zorg voor een knop
+om uit te loggen. Kijk ook of elke `set_cookie` voor `sessie_id` de twee
+instellingen van hierboven heeft.
 
 <details>
 <summary>Tip</summary>
 
-Zoek naar `set_cookie`; in je gastenboek staat hij sinds Sessies in
-`POST /inloggen`. Denk aan de oude cookie: log na de wijziging opnieuw in, zodat
-de server een nieuwe zet. Lees je de sessie op meer plekken uit, zoals in
-`GET /gastenboek`, `POST /gastenboek` en `POST /verwijderen`, dan gebruik je
-overal `sessie_ophalen` uit [les 5](site:fullstack/docs/veiligheid/cookies/verlopen).
+Denk aan de oude cookie: log na elke wijziging opnieuw in, zodat de server een
+nieuwe zet. Lees je de sessie op meer plekken uit, dan gebruik je overal
+`sessie_ophalen` uit [les 6](site:fullstack/docs/veiligheid/cookies/verlopen).
+Zoek naar `sessies.get`: in je gastenboek staat het in `GET /gastenboek`,
+`POST /gastenboek` en `POST /verwijderen`, en vaak ook in `GET /berichten`,
+`GET /berichten/lijst`, `DELETE /bericht/{sleutel}` en `alles_wissen`. Laat
+het in `sessie_ophalen` zelf staan.
 
 </details>
 
@@ -62,6 +126,9 @@ antwoord.set_cookie(
 )
 ```
 
+Na `sessie_ophalen` telt elke sessie zonder `tot` als verlopen. Wie al was
+ingelogd, ook jijzelf, ziet dan weer het formulier om in te loggen.
+
 </details>
 
-Door naar [les 7: in de praktijk](site:fullstack/docs/veiligheid/cookies/praktijk).
+Door naar [les 8: in de praktijk](site:fullstack/docs/veiligheid/cookies/praktijk).

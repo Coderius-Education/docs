@@ -183,11 +183,13 @@ const sidebars: SidebarsConfig = {
   veiligheidSidebar: [
     'veiligheid/index',
     'veiligheid/gereedschap',
+    'veiligheid/client',
     {
       type: 'category',
       label: 'Wat je server laat zien',
       collapsed: true,
       items: [
+        'veiligheid/zichtbaar/startbestand',
         'veiligheid/zichtbaar/handleiding',
         'veiligheid/zichtbaar/vergeten',
         'veiligheid/zichtbaar/uitzetten',
@@ -201,11 +203,13 @@ const sidebars: SidebarsConfig = {
       label: 'Invoer controleren',
       collapsed: true,
       items: [
+        'veiligheid/invoer/startbestand',
         'veiligheid/invoer/maxlength',
         'veiligheid/invoer/grenzen',
         'veiligheid/invoer/fouten-lezen',
         'veiligheid/invoer/inhoud',
         'veiligheid/invoer/getallen',
+        'veiligheid/invoer/keuzes',
         'veiligheid/invoer/paden',
         'veiligheid/invoer/praktijk',
       ],
@@ -215,12 +219,14 @@ const sidebars: SidebarsConfig = {
       label: 'HTML van een bezoeker (XSS)',
       collapsed: true,
       items: [
+        'veiligheid/xss/gastenboek',
         'veiligheid/xss/zwakheid',
         'veiligheid/xss/escape',
         'veiligheid/xss/url',
         'veiligheid/xss/templates',
         'veiligheid/xss/safe',
         'veiligheid/xss/browser',
+        'veiligheid/xss/textcontent',
         'veiligheid/xss/eigen-project',
         'veiligheid/xss/praktijk',
       ],
@@ -230,9 +236,10 @@ const sidebars: SidebarsConfig = {
       label: 'Te veel verzoeken (DoS)',
       collapsed: true,
       items: [
+        'veiligheid/dos/server',
         'veiligheid/dos/verzoek',
-        'veiligheid/dos/dos-en-ddos',
         'veiligheid/dos/zelf-meten',
+        'veiligheid/dos/dos-en-ddos',
         'veiligheid/dos/limiet',
         'veiligheid/dos/te-veel',
         'veiligheid/dos/praktijk',
@@ -243,6 +250,7 @@ const sidebars: SidebarsConfig = {
       label: 'Wie mag wat',
       collapsed: true,
       items: [
+        'veiligheid/toegang/gastenboek',
         'veiligheid/toegang/zwakheid',
         'veiligheid/toegang/controle',
         'veiligheid/toegang/server-weet',
@@ -256,6 +264,7 @@ const sidebars: SidebarsConfig = {
       label: 'Cookies afschermen',
       collapsed: true,
       items: [
+        'veiligheid/cookies/formulier',
         'veiligheid/cookies/zwakheid',
         'veiligheid/cookies/httponly',
         'veiligheid/cookies/samesite',
@@ -270,8 +279,10 @@ const sidebars: SidebarsConfig = {
       label: 'Wachtwoorden veilig opslaan',
       collapsed: true,
       items: [
+        'veiligheid/wachtwoorden/startbestand',
         'veiligheid/wachtwoorden/gewone-tekst',
         'veiligheid/wachtwoorden/hash',
+        'veiligheid/wachtwoorden/hash-opslaan',
         'veiligheid/wachtwoorden/zout',
         'veiligheid/wachtwoorden/traag',
         'veiligheid/wachtwoorden/registreren',

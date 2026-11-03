@@ -8,9 +8,9 @@ import { describe, expect, it } from 'vitest';
 // diagram zeiden zelfs "erboven". Andersom start de server gewoon, maar telt
 // slowapi stil niets: twintig van de twintig verzoeken lukken (nagedraaid met
 // slowapi 0.1.10). Deze test eist die fout met FOUT/GOED in Er gaat iets mis
-// van les 4, en weert "erboven" bij de limiter in de lessen en in het diagram.
+// van limiet, en weert "erboven" bij de limiter in de lessen en in het diagram.
 //
-// Les 5 gaf bij de None-fout ook een ontbrekende response: Response als
+// te-veel gaf bij de None-fout ook een ontbrekende response: Response als
 // oorzaak, maar dan komt er bij verzoek 6 wel een header mee (429, nog 0 over,
 // wacht 60 seconden). En de praktijk zette onder Wat jij zelf doet cachen en
 // het afbreken van lange verzoeken, niet de limiet die de leerling bouwde.
@@ -28,7 +28,7 @@ const sectie = (tekst: string, kop: string) =>
 const zinnen = (tekst: string) => tekst.split(/(?<=[.?!])\s+|\n\s*\n/);
 
 describe('Te veel verzoeken (DoS)', () => {
-  it('Er gaat iets mis in les 4 heeft de verkeerde volgorde met FOUT en GOED', () => {
+  it('limiet: Er gaat iets mis heeft de verkeerde volgorde met FOUT en GOED', () => {
     const fouten = sectie(lees('limiet'), 'Er gaat iets mis');
     const volgorde = blokken(fouten).find((blok) => {
       const [fout, goed = ''] = blok.split('# GOED');
@@ -70,7 +70,7 @@ describe('Te veel verzoeken (DoS)', () => {
     expect(fout).toEqual([]);
   });
 
-  it('les 5: None komt van een server zonder headers_enabled, niet van response', () => {
+  it('te-veel: None komt van een server zonder headers_enabled, niet van response', () => {
     const delen = sectie(lees('te-veel'), 'Er gaat iets mis').split(/^### /m).slice(1);
     const none = delen.find((d) => d.includes('nog None over')) ?? '';
     const oorzaak = none.split('**Oorzaak:**')[1]?.split('**Oplossing:**')[0] ?? '';
@@ -95,5 +95,42 @@ describe('Te veel verzoeken (DoS)', () => {
     // Wie om en om bij drie servers aanklopt, mag drie keer zo vaak; de
     // situatie zei eerst dat de limiet "maar voor een derde" werkte.
     expect(tekst).toMatch(/drie servers, en iemand mag\s+ineens\s+drie keer zo vaak/);
+  });
+
+  it('In je eigen project geeft de uitvoer voor de omleiding én voor het htmx-formulier', () => {
+    // Het antwoord beloofde tien keer 303. Met het htmx-formulier geeft
+    // POST /gastenboek een HTMLResponse, en dan staat er tien keer 200
+    // (nagespeeld met slowapi 0.1.10).
+    const delen = lees('te-veel').split(/^### /m);
+    const eigen = delen.find((d) => /^Opdracht \d+: Make - In je eigen project/.test(d)) ?? '';
+    expect(eigen).toContain('status 303');
+    expect(eigen).toContain('HTMLResponse');
+    expect(eigen).toContain('`status 200`');
+  });
+
+  it('een geciteerde bind-fout heeft de vorm van fastapi dev, niet van uvicorn zonder reload', () => {
+    // "error while attempting to bind on address" logt uvicorn alleen zonder
+    // reload. fastapi dev bindt zelf en logt de kale fout: op Linux
+    // "[Errno 98] Address already in use", op Windows "[WinError 10048] …".
+    const fout: string[] = [];
+    for (const map of [MAP, join(DOCS, 'veiligheid/xss')]) {
+      for (const naam of readdirSync(map).filter((n) => n.endsWith('.mdx'))) {
+        const tekst = readFileSync(join(map, naam), 'utf8');
+        if (tekst.includes('error while attempting to bind')) fout.push(`${naam}: asyncio-vorm`);
+        if (tekst.includes('### Address already in use') && !tekst.includes('[WinError 10048]'))
+          fout.push(`${naam}: geen WinError 10048`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('een les die een tijd meet, laat eerst de herstart van fastapi dev afwachten', () => {
+    // Wie meet.py opslaat en meteen draait, meet de herstart mee: 565 tot 935
+    // ms in plaats van een paar (nagedraaid). Het antwoord van een opdracht
+    // weet het aan "dingen inladen".
+    const tekst = lees('verzoek');
+    const voorGelukt = tekst.slice(0, tekst.indexOf('<Gelukt>'));
+    expect(voorGelukt).toContain('Application startup complete');
+    expect(tekst).not.toMatch(/dingen moet inladen/);
   });
 });

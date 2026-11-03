@@ -1,5 +1,5 @@
 ---
-sidebar_label: '5. Wat de 429 vertelt'
+sidebar_label: '6. Wat de 429 vertelt'
 description: Wat een bezoeker terugkrijgt als hij over de limiet gaat, en hoe je met headers_enabled meegeeft hoeveel verzoeken er nog over zijn en wanneer het weer mag.
 ---
 
@@ -11,7 +11,7 @@ description: Wat een bezoeker terugkrijgt als hij over de limiet gaat, en hoe je
   ]}
 />
 
-Een bezoeker die over je limiet uit [les 4](site:fullstack/docs/veiligheid/dos/limiet) gaat, krijgt `429`. In dat
+Een bezoeker die over je limiet uit [les 5](site:fullstack/docs/veiligheid/dos/limiet) gaat, krijgt `429`. In dat
 antwoord staat nog iets meer, en je server kan ook al eerder laten weten hoeveel
 verzoeken er nog over zijn. Een eerlijk script, zoals een app die je
 gastenboek uitleest, kan daar rekening mee houden.
@@ -102,9 +102,13 @@ for nummer in range(6):
 
 </CodeUitleg>
 
-Start je server opnieuw, zodat de telling bij nul begint, en draai het script:
+Start je server opnieuw, zodat de telling bij nul begint, en draai het script.
 
-```
+<Gelukt>
+
+Bij elk verzoek staat hoeveel er nog over zijn:
+
+```text
 Verzoek 1: 200, nog 4 over, wacht 60 seconden
 Verzoek 2: 200, nog 3 over, wacht 60 seconden
 Verzoek 3: 200, nog 2 over, wacht 60 seconden
@@ -112,6 +116,8 @@ Verzoek 4: 200, nog 1 over, wacht 60 seconden
 Verzoek 5: 200, nog 0 over, wacht 60 seconden
 Verzoek 6: 429, nog 0 over, wacht 60 seconden
 ```
+
+</Gelukt>
 
 Bij een `200` hoef je niet te wachten: `retry-after` zegt dan alleen wanneer de
 telling opnieuw begint. Pas bij een `429` moet je die tijd afwachten. Een
@@ -122,6 +128,17 @@ Draai je het script binnen dezelfde minuut nog een keer, dan krijg je al bij
 verzoek 1 een `429`, met `nog 0 over` en een wachttijd van hoogstens 60 seconden: de
 telling van de vorige keer loopt nog.
 
+<Voorspel soort="Controlevraag" vraag="Je script krijgt een 200 met x-ratelimit-remaining 2 en retry-after 40. Wat doet een eerlijk script daarna?">
+  <Keuze goed uitleg="Er mogen nog twee. Pas na de tweede staat de teller op 0, en dan wacht het tot de 40 seconden om zijn.">Nog twee verzoeken sturen, en dan pauzeren tot die 40 seconden om zijn</Keuze>
+  <Keuze uitleg="Bij een 200 zegt retry-after alleen wanneer de telling opnieuw begint. Er mogen nu nog twee verzoeken.">Eerst 40 seconden wachten, en pas daarna het volgende verzoek sturen</Keuze>
+  <Keuze uitleg="Dan stuurt het bewust verzoeken die je server moet weigeren. De headers zijn er juist om dat te voorkomen.">Doorgaan tot er een 429 komt; de headers zijn alleen voor de browser</Keuze>
+  <Uitleg>
+
+  `x-ratelimit-remaining` zegt hoeveel er nog mag, `retry-after` hoe lang het duurt tot de telling opnieuw begint. Een eerlijk script gebruikt eerst wat er nog mag, en wacht dan.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
 
 ### `None` bij elk verzoek
@@ -129,7 +146,7 @@ telling van de vorige keer loopt nog.
 Het script print bij elk verzoek `nog None over, wacht None seconden`, ook bij
 de `429` van verzoek 6.
 
-**Oorzaak:** je server draait nog de code uit les 4, zonder
+**Oorzaak:** je server draait nog de code uit les 5, zonder
 `headers_enabled=True`. Dan stuurt hij de headers niet mee, en `headers.get`
 geeft `None` als een header ontbreekt.
 
@@ -232,7 +249,7 @@ stopt na het vijfde verzoek, en krijgt geen `429`.
 
 </details>
 
-### Opdracht 3: Make - In je eigen project
+### Opdracht 3: Make - In je eigen project \{#eigen-project}
 
 Zet in je eigen project een limiet op het endpoint dat een bericht opslaat,
 bijvoorbeeld tien per minuut. Test het met een script dat twaalf keer iets
@@ -292,8 +309,9 @@ async def gastenboek_opslaan(
 ```
 
 Op de plek van `...` blijft je functie zoals hij was. Die geeft een
-`RedirectResponse` terug en geen dictionary, dus `response: Response` is hier
-niet nodig: `slowapi` zet de headers op de omleiding zelf.
+`RedirectResponse` terug, of met het htmx-formulier een `HTMLResponse`. Allebei
+zijn het antwoorden en geen dictionary, dus `response: Response` is hier niet
+nodig: `slowapi` zet de headers op dat antwoord zelf.
 
 Het script `twaalf.py`, naast je `main.py`. Het logt eerst in, want zonder
 sessie krijgt elk bericht een `401`; gebruik de naam en het wachtwoord van een
@@ -310,7 +328,7 @@ for nummer in range(12):
     print(f"Verzoek {nummer + 1}: status {antwoord.status_code}")
 ```
 
-Uitvoer:
+Uitvoer, als je `POST /gastenboek` doorstuurt met een `RedirectResponse`:
 
 ```
 Verzoek 1: status 303
@@ -327,9 +345,13 @@ Verzoek 11: status 429
 Verzoek 12: status 429
 ```
 
-`303` is de omleiding naar de lijst: het bericht is opgeslagen. Een bezoeker
-die één bericht schrijft, merkt niets van de limiet. In je gastenboek staan nu
-wel tien testberichten.
+`303` is de omleiding naar de lijst: het bericht is opgeslagen. Gebruik je het
+htmx-formulier, dan geeft je endpoint een `HTMLResponse` met "Bedankt", en staat
+er bij verzoek 1 tot en met 10 `status 200` in plaats van `303`. Verzoek 11 en
+12 krijgen ook dan een `429`.
+
+Een bezoeker die één bericht schrijft, merkt niets van de limiet. In je
+gastenboek staan nu wel tien testberichten.
 
 </details>
 
@@ -358,4 +380,4 @@ De limiet vertelt nu bij elk antwoord hoeveel er nog over is.
 
 </details>
 
-Door naar [les 6: in de praktijk](site:fullstack/docs/veiligheid/dos/praktijk).
+Door naar [les 7: in de praktijk](site:fullstack/docs/veiligheid/dos/praktijk).

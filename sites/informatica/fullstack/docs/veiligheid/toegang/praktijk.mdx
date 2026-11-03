@@ -1,11 +1,11 @@
 ---
-sidebar_label: '6. In de praktijk'
+sidebar_label: '7. In de praktijk'
 description: Hoe echte sites bepalen wie wat mag, van accounts en beheerders tot een test per endpoint, en wat de wet zegt over bij gegevens van een ander komen.
 ---
 
 # Wie mag wat: in de praktijk
 
-Je controle uit [les 2](site:fullstack/docs/veiligheid/toegang/controle) koppelt een bericht aan een account. Een
+Je controle uit [les 3](site:fullstack/docs/veiligheid/toegang/controle) koppelt een bericht aan een account. Een
 echte site doet dat ook, maar daar mogen sommige mensen meer dan anderen, en
 zijn er honderden endpoints. Het idee blijft hetzelfde: elk endpoint vraagt
 zelf wie dit mag.
@@ -26,10 +26,10 @@ bij één endpoint, dan staat dat endpoint open, dus ook dan loop je ze langs.
 
 ### Test het als de ander
 
-Je script uit [les 1](site:fullstack/docs/veiligheid/toegang/zwakheid) is een test: het doet alsof het
+Je script uit [les 2](site:fullstack/docs/veiligheid/toegang/zwakheid) is een test: het doet alsof het
 Alex is en kijkt of de server weigert. Echte projecten draaien zulke tests
 automatisch, bij elke wijziging. Per endpoint zijn er dan twee: de
-eigenaar krijgt `200`, een ander `403`; Alles wissen uit les 4 is de
+eigenaar krijgt `200`, een ander `403`; Alles wissen uit les 5 is de
 uitzondering. Breekt iemand later per ongeluk de controle, dan valt de tweede
 test om voordat het op de site staat.
 
@@ -94,7 +94,7 @@ te raden: wie bericht 12 ziet, probeert 13. Je sleutels uit `time.time_ns()`
 zijn lang, maar niet willekeurig: het is de tijd in nanoseconden, dus wie weet
 wanneer een bericht geplaatst is, zit er dichtbij. Veel sites gebruiken daarom
 lange, willekeurige sleutels, zoals je sessie-id uit `secrets.token_hex`. Maar
-zoals je in les 1 zag, staat een sleutel vaak in de pagina. Een sleutel die niemand raadt is een extra drempel, geen vervanging van
+zoals je in les 2 zag, staat een sleutel vaak in de pagina. Een sleutel die niemand raadt is een extra drempel, geen vervanging van
 de controle.
 
 </details>
@@ -144,4 +144,4 @@ die het meest helpt.
 
 </details>
 
-Door naar de volgende reeks: [Cookies afschermen](site:fullstack/docs/veiligheid/cookies/zwakheid).
+Door naar de volgende reeks: [Cookies afschermen](site:fullstack/docs/veiligheid/cookies/formulier).

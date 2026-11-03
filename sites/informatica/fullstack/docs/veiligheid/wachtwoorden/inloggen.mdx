@@ -1,5 +1,5 @@
 ---
-sidebar_label: '6. Inloggen met verify'
+sidebar_label: '8. Inloggen met verify'
 description: Controleer bij het inloggen een wachtwoord tegen de Argon2-hash met ph.verify, en vang een fout wachtwoord af.
 ---
 
@@ -13,7 +13,7 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
   ]}
 />
 
-Na [les 5](site:fullstack/docs/veiligheid/wachtwoorden/registreren) staan er alleen nog Argon2-hashes in je database. Bij
+Na [les 7](site:fullstack/docs/veiligheid/wachtwoorden/registreren) staan er alleen nog Argon2-hashes in je database. Bij
 het inloggen kun je niet meer vergelijken met `==`: de hash van hetzelfde
 wachtwoord is elke keer anders. Daarvoor is `ph.verify`. Die haalt het zout en
 de instellingen uit de opgeslagen hash, rekent de hash van het ingetypte
@@ -65,46 +65,93 @@ Was het de nep-hash, dan bestaat de naam niet. Ook wie toevallig `niemand` intyp
 
 Zet de import bij je andere imports, `NEP` direct onder `ph = PasswordHasher()`,
 en vervang je oude `/inloggen` door deze, in hetzelfde `main.py` als je
-`/registreer` uit les 5. `import hashlib` mag weg: niets gebruikt hem meer.
+`/registreer` uit les 7. `import hashlib` mag weg: niets gebruikt hem meer.
 
 Waarom die nep-hash? `ph.verify` rekent een Argon2-hash uit, en die is expres
-traag, zoals je in [les 4](site:fullstack/docs/veiligheid/wachtwoorden/traag) mat. Zou je bij een onbekende naam meteen
+traag, zoals je in [les 6](site:fullstack/docs/veiligheid/wachtwoorden/traag) mat. Zou je bij een onbekende naam meteen
 antwoorden, dan komt dat antwoord vele malen sneller terug dan bij een bestaande naam met een fout wachtwoord.
 De melding is gelijk, maar de tijd verraadt dan alsnog welke namen een account
 hebben. Met de nep-hash doet de server bij een onbekende naam hetzelfde
 rekenwerk, en duren beide antwoorden even lang.
-
-## Doe de test
-
-Probeer in te loggen met een scriptje `inloggen.py`:
-
-```python
-import httpx
-
-adres = "http://127.0.0.1:8000/inloggen"
-
-pogingen = [("sara", "welkom123"), ("sara", "welkom124"), ("bob", "welkom123")]
-for naam, wachtwoord in pogingen:
-    antwoord = httpx.post(adres, data={"naam": naam, "wachtwoord": wachtwoord})
-    print(f"{naam}, {wachtwoord}: {antwoord.json()['bericht']}")
-```
-
-Uitvoer:
-
-```
-sara, welkom123: Ingelogd
-sara, welkom124: Naam of wachtwoord klopt niet
-bob, welkom123: Naam of wachtwoord klopt niet
-```
-
-Sara komt binnen met haar eigen wachtwoord, en niet met een wachtwoord dat er
-één letter naast zit. Bob heeft geen account en krijgt dezelfde melding.
 
 ## Waar de controle zit
 
 Registreren en inloggen naast elkaar: de server maakt en controleert de hash, de browser ziet hem nooit.
 
 <VerzoekCyclus variant="wachtwoorden" />
+
+## Doe de test
+
+Draai `inloggen.py` uit [les 4](site:fullstack/docs/veiligheid/wachtwoorden/hash-opslaan) opnieuw. Het doet drie
+pogingen: Sara met haar wachtwoord, Sara met een letter ernaast, en Bob, die
+geen account heeft.
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
+from fastapi import FastAPI, Form, HTTPException
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+ph = PasswordHasher()
+NEP = ph.hash("niemand")
+
+@app.post("/registreer")
+async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        if naam in db:
+            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
+        db[naam] = ph.hash(wachtwoord)
+        db.commit()
+    return {"bericht": f"Welkom, {naam}"}
+
+@app.post("/inloggen")
+async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
+    with SqliteDict("gebruikers.db") as db:
+        opgeslagen = db.get(naam, NEP)
+    try:
+        ph.verify(opgeslagen, wachtwoord)
+    except VerifyMismatchError:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    if opgeslagen == NEP:
+        return {"bericht": "Naam of wachtwoord klopt niet"}
+    return {"bericht": "Ingelogd"}
+```
+
+Registreren en inloggen werken nu allebei met Argon2.
+
+</details>
+
+<Gelukt>
+
+`python inloggen.py` laat alleen Sara met haar eigen wachtwoord binnen:
+
+```text
+sara, welkom123: Ingelogd
+sara, welkom124: Naam of wachtwoord klopt niet
+bob, welkom123: Naam of wachtwoord klopt niet
+```
+
+Bob heeft geen account en krijgt dezelfde melding als Sara met een fout
+wachtwoord.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Bob heeft geen account. Waarom rekent de server bij zijn poging toch een Argon2-hash uit, tegen NEP?">
+  <Keuze uitleg="Na de controle op NEP stuurt de server alleen een melding terug. Wat slaat hij op?">Zodat Bob na zijn poging meteen een account met dat wachtwoord krijgt</Keuze>
+  <Keuze goed uitleg="Een trage verify kost tijd. Doet de server die bij elke naam, dan duurt elk antwoord even lang, en verraadt de tijd niets.">Zodat het antwoord voor Bob even lang duurt als bij een bestaande naam</Keuze>
+  <Keuze uitleg="Die melding kun je ook zonder hash sturen, met één return. Wat maakt de nep-hash gelijk dat een return niet gelijk maakt?">Om Bob dezelfde melding te geven als bij een fout wachtwoord</Keuze>
+  <Uitleg>
+
+  De melding is voor een onbekende naam en een fout wachtwoord gelijk. Met de
+  nep-hash is ook de tijd gelijk, zodat niemand aan de snelheid van je server
+  afleest welke namen een account hebben.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -184,7 +231,7 @@ antwoord toch ook lang. Waarom is de nep-hash beter?
 <details>
 <summary>Tip</summary>
 
-Hoe lang duurt één Argon2-hash? Kijk naar je meting in [les 4](site:fullstack/docs/veiligheid/wachtwoorden/traag), en
+Hoe lang duurt één Argon2-hash? Kijk naar je meting in [les 6](site:fullstack/docs/veiligheid/wachtwoorden/traag), en
 vergelijk die met de meting van een klasgenoot.
 
 </details>
@@ -192,7 +239,7 @@ vergelijk die met de meting van een klasgenoot.
 <details>
 <summary>Antwoord</summary>
 
-Hoe lang `ph.verify` duurt, verschilt per computer en per moment: in les 4
+Hoe lang `ph.verify` duurt, verschilt per computer en per moment: in les 6
 kreeg elke computer andere getallen, en een server die het druk heeft, rekent
 langzamer. Een vaste `0.05` past dus bijna nooit precies, en wie de tijd meet,
 ziet het verschil alsnog. Worden de instellingen van Argon2 later strenger, dan
@@ -204,43 +251,4 @@ lang, op elke computer.
 
 </details>
 
-<details>
-<summary>Zo ziet je `main.py` er nu uit</summary>
-
-```python
-from argon2 import PasswordHasher
-from argon2.exceptions import VerifyMismatchError
-from fastapi import FastAPI, Form, HTTPException
-from sqlitedict import SqliteDict
-
-app = FastAPI()
-ph = PasswordHasher()
-NEP = ph.hash("niemand")
-
-@app.post("/registreer")
-async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as db:
-        if naam in db:
-            raise HTTPException(status_code=400, detail="Deze naam is al bezet")
-        db[naam] = ph.hash(wachtwoord)
-        db.commit()
-    return {"bericht": f"Welkom, {naam}"}
-
-@app.post("/inloggen")
-async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
-    with SqliteDict("gebruikers.db") as db:
-        opgeslagen = db.get(naam, NEP)
-    try:
-        ph.verify(opgeslagen, wachtwoord)
-    except VerifyMismatchError:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
-    if opgeslagen == NEP:
-        return {"bericht": "Naam of wachtwoord klopt niet"}
-    return {"bericht": "Ingelogd"}
-```
-
-Registreren en inloggen werken nu allebei met Argon2.
-
-</details>
-
-Door naar [les 7: wachtwoord wijzigen](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen).
+Door naar [les 9: wachtwoord wijzigen](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen).

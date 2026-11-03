@@ -47,7 +47,11 @@ describe('de reeks Veiligheid', () => {
     // Zonder startpagina opende de navbar midden in een reeks, zonder te zeggen
     // waar de route over gaat of wat de spelregel is. De afsluiter bundelt wat
     // de leerling op zijn eigen project moet toepassen.
-    expect(route.slice(0, 2)).toEqual(['veiligheid/index', 'veiligheid/gereedschap']);
+    expect(route.slice(0, 3)).toEqual([
+      'veiligheid/index',
+      'veiligheid/gereedschap',
+      'veiligheid/client',
+    ]);
     expect(route.at(-1)).toBe('veiligheid/eigen-project');
   });
 
@@ -95,8 +99,9 @@ describe('de reeks Veiligheid', () => {
 
   it('het gereedschap wijst door naar de eerste les van de eerste reeks', () => {
     // Toen Wat je server laat zien voor Invoer kwam, wees Een script als
-    // bezoeker nog naar Invoer.
-    const tekst = readFileSync(join(VEILIGHEID, 'gereedschap.mdx'), 'utf8');
+    // bezoeker nog naar Invoer. Het gereedschap is twee pagina's; de tweede,
+    // Een bezoeker die onthoudt, wijst door.
+    const tekst = readFileSync(join(VEILIGHEID, 'client.mdx'), 'utf8');
     const eerste = categorieen[0].items[0].slice('veiligheid/'.length);
     expect(
       tekst.match(
@@ -117,12 +122,14 @@ describe('de reeks Veiligheid', () => {
   });
 
   it("de losse pagina's richten zich alleen op de eigen computer", () => {
-    for (const pagina of ['index', 'gereedschap', 'eigen-project']) {
+    for (const pagina of ['index', 'gereedschap', 'client', 'eigen-project']) {
       const tekst = readFileSync(join(VEILIGHEID, `${pagina}.mdx`), 'utf8');
       for (const [, host] of tekst.matchAll(/https?:\/\/([^/:"'\s)]+)/g)) {
         expect(['127.0.0.1', 'localhost'], `${pagina}: ${host}`).toContain(host);
       }
-      expect(tekst, pagina).toMatch(/:::danger\[Alleen je eigen [a-z]+\]/);
+      // Een bezoeker die onthoudt gaat verder op de server van het gereedschap,
+      // waar de waarschuwing al staat.
+      if (pagina !== 'client') expect(tekst, pagina).toMatch(/:::danger\[Alleen je eigen [a-z]+\]/);
     }
   });
 
@@ -533,5 +540,239 @@ describe('verwijzingen en vaste vormen in de route Veiligheid', () => {
     ]) {
       expect(woorden, term).toContain(term);
     }
+  });
+});
+
+// Elke les is één stap met een succesmoment, net als in Online zetten: wat je
+// ziet als het werkt (<Gelukt>, met een vinkje dat de Routekaart toont), en
+// daarna één controlevraag die laat zien dat je snapt waarom. De opdrachtgever
+// vond de stappen in Veiligheid te groot: een les eindigde met opdrachten,
+// zonder moment waarop de leerling zag dat het gelukt was, en de eerste les
+// van een reeks deed de map, het startbestand en de zwakheid tegelijk.
+describe('elke les in Veiligheid is een kleine stap met een succesmoment', () => {
+  const lessen = (sidebars.veiligheidSidebar as unknown as (string | Categorie)[])
+    .flatMap((i) => (typeof i === 'string' ? [i] : i.items))
+    .filter((id) => !/^veiligheid\/(index|eigen-project)$/.test(id) && !id.endsWith('/praktijk'));
+  const tekstVan = (id: string) =>
+    readFileSync(join(VEILIGHEID, `${id.slice('veiligheid/'.length)}.mdx`), 'utf8');
+
+  it('elke les: één Gelukt-blok, daarna één controlevraag, en dan Er gaat iets mis', () => {
+    const fout: string[] = [];
+    for (const id of lessen) {
+      const tekst = tekstVan(id);
+      const mis = tekst.indexOf('\n## Er gaat iets mis\n');
+      const gelukt = [...tekst.matchAll(/^<Gelukt>$/gm)];
+      const vragen = [...tekst.matchAll(/<Voorspel soort="Controlevraag"/g)];
+      if (mis === -1) fout.push(`${id}: Er gaat iets mis`);
+      if (gelukt.length !== 1) fout.push(`${id}: ${gelukt.length} Gelukt-blokken`);
+      if (vragen.length !== 1) fout.push(`${id}: ${vragen.length} controlevragen`);
+      const g = gelukt[0]?.index ?? -1;
+      const v = vragen[0]?.index ?? -1;
+      if (!(g < v && v < mis))
+        fout.push(`${id}: eerst Gelukt, dan de controlevraag, dan Er gaat iets mis`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('elke stap is klein: hooguit 450 woorden uitleg vóór Er gaat iets mis, tabellen meegeteld', () => {
+    const fout: string[] = [];
+    for (const id of lessen) {
+      const kop = tekstVan(id).split('\n---\n').slice(1).join('\n---\n');
+      const uitleg = kop
+        .slice(0, kop.indexOf('\n## Er gaat iets mis\n'))
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '')
+        .replace(/<details>[\s\S]*?<\/details>/g, '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/^\|(\s*:?-+:?\s*\|)+$/gm, '');
+      const woorden = uitleg.split(/\s+/).filter((w) => /\p{L}/u.test(w)).length;
+      if (woorden > 450) fout.push(`${id}: ${woorden} woorden`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  const vragen = lessen.map((id) => ({
+    id,
+    vraag: tekstVan(id).match(/<Voorspel soort="Controlevraag" vraag="([^"]+)"/)?.[1] ?? '',
+    uitleg: tekstVan(id).match(/<Voorspel soort="Controlevraag"[\s\S]*?<\/Voorspel>/)?.[0] ?? '',
+  }));
+
+  it('een controlevraag verklapt geen opdracht en leunt er niet op', () => {
+    const fout = vragen.filter((v) => /opdracht \d/i.test(v.uitleg)).map((v) => v.id);
+    expect(fout).toEqual([]);
+  });
+
+  it('geen twee stappen stellen (bijna) dezelfde controlevraag', () => {
+    const woorden = (s: string) => new Set(s.toLowerCase().match(/[\p{L}\d.]+/gu) ?? []);
+    const fout: string[] = [];
+    vragen.forEach((a, i) => {
+      for (const b of vragen.slice(i + 1)) {
+        const x = woorden(a.vraag);
+        const y = woorden(b.vraag);
+        if (!x.size || !y.size) continue;
+        const samen = [...x].filter((w) => y.has(w)).length;
+        if (samen / Math.min(x.size, y.size) > 0.7) fout.push(`${a.id} en ${b.id}`);
+      }
+    });
+    expect(fout).toEqual([]);
+  });
+  // De review van november 2026 (vier leerling-doorlopen) vond dat een
+  // controlevraag vaak de zin erboven terugvroeg, en dat het goede antwoord
+  // te herkennen was aan zijn lengte. Een controlevraag toetst begrip: het
+  // idee op een nieuw geval, niet de laatste alinea.
+  const keuzes = (blok: string) =>
+    [...blok.matchAll(/<Keuze( goed)?[^>]*>([\s\S]*?)<\/Keuze>/g)].map((m) => ({
+      goed: Boolean(m[1]),
+      tekst: m[2].replace(/`/g, '').trim(),
+    }));
+
+  it('het goede antwoord van een controlevraag staat niet letterlijk in de tekst ervoor', () => {
+    const reeksen = (s: string) => {
+      const w = s.toLowerCase().match(/[\p{L}\d]+/gu) ?? [];
+      return new Set(w.slice(0, -5).map((_, i) => w.slice(i, i + 6).join(' ')));
+    };
+    const fout: string[] = [];
+    for (const v of vragen) {
+      const tekst = tekstVan(v.id);
+      const ervoor = tekst
+        .slice(0, tekst.indexOf('<Voorspel soort="Controlevraag"'))
+        .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '')
+        .replace(/`/g, '');
+      const proza = reeksen(ervoor);
+      const goed = keuzes(v.uitleg).find((k) => k.goed);
+      if (goed && [...reeksen(goed.tekst)].some((r) => proza.has(r))) fout.push(v.id);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('het goede antwoord van een controlevraag valt niet op door zijn lengte', () => {
+    const fout: string[] = [];
+    for (const v of vragen) {
+      const alle = keuzes(v.uitleg);
+      const goed = alle.find((k) => k.goed);
+      const fouteLengte = Math.max(...alle.filter((k) => !k.goed).map((k) => k.tekst.length));
+      if (goed && goed.tekst.length > 1.4 * fouteLengte)
+        fout.push(`${v.id}: ${goed.tekst.length} tegen ${fouteLengte}`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  // Een stap die een limiet op een endpoint zet, noemt wat er gebeurt zonder
+  // request: Request: dan start de server niet. In Wachtwoorden stond dat voor
+  // /wijzig alleen in een bijzin.
+  it('een stap die een limiet op een endpoint zet, noemt de startfout zonder request', () => {
+    const stand = (tekst: string) => {
+      const i = tekst.indexOf('<summary>Zo ziet je `main.py` er nu uit</summary>');
+      return i === -1 ? '' : (tekst.slice(i).match(/```python[^\n]*\n([\s\S]*?)```/)?.[1] ?? '');
+    };
+    const limieten = (c: string) => (c.match(/@limiter\.limit/g) ?? []).length;
+    const fout: string[] = [];
+    for (const map of zwakheden) {
+      let vorige = '';
+      for (const stap of stappenVan(map)) {
+        const tekst = lees(map, stap);
+        const nu = stand(tekst);
+        if (!nu) continue;
+        const mis = tekst.slice(tekst.indexOf('\n## Er gaat iets mis\n'));
+        if (
+          limieten(nu) > limieten(vorige) &&
+          !mis.includes('No "request" or "websocket" argument')
+        )
+          fout.push(`${map}/${stap}`);
+        vorige = nu;
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+});
+
+describe('verwijzingen in en naar Veiligheid', () => {
+  const alleDocs = (map: string): string[] =>
+    readdirSync(map).flatMap((n) => {
+      const pad = join(map, n);
+      if (statSync(pad).isDirectory()) return alleDocs(pad);
+      return /\.mdx?$/.test(n) ? [pad] : [];
+    });
+  const DOCS = join(VEILIGHEID, '..');
+
+  it('een link met de naam van een reeks wijst naar de eerste les van die reeks', () => {
+    // Drie links "Wachtwoorden veilig opslaan" kwamen uit op les 2, die begint
+    // met "je server uit les 1".
+    const fout: string[] = [];
+    for (const pad of alleDocs(DOCS)) {
+      const tekst = readFileSync(pad, 'utf8');
+      for (const c of categorieen) {
+        const naam = c.label.replace(/\s*\(.*\)$/, '');
+        for (const m of tekst.matchAll(
+          /\[([^\]]+)\]\(site:fullstack\/docs\/(veiligheid\/[^)#]+)/g,
+        )) {
+          if (m[1].replace(/\s*\(.*\)$/, '') === naam && m[2] !== c.items[0])
+            fout.push(`${pad.slice(DOCS.length + 1)}: [${m[1]}] -> ${m[2]}`);
+        }
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('een linktekst noemt één les: "les 2 en 5" is twee links', () => {
+    const fout: string[] = [];
+    for (const pad of alleDocs(DOCS)) {
+      for (const m of readFileSync(pad, 'utf8').matchAll(/\[[^\]]*\bles \d+ en \d+[^\]]*\]\(/g))
+        fout.push(`${pad.slice(DOCS.length + 1)}: ${m[0]}`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('elke link in de tabel met statuscodes wijst naar een les die die code in de hoofdtekst heeft', () => {
+    // De link bij 401 wees naar een les waar 401 alleen in een uitklapblok stond.
+    const tekst = readFileSync(join(VEILIGHEID, 'index.mdx'), 'utf8');
+    const tabel = tekst.split(/^## Statuscodes/m)[1].split(/^## /m)[0];
+    const fout: string[] = [];
+    for (const rij of tabel.split('\n').filter((r) => /^\| `\d{3}`/.test(r))) {
+      const code = rij.match(/`(\d{3})`/)?.[1] ?? '';
+      for (const [, doel] of rij.matchAll(/\]\(site:fullstack\/docs\/([^)#]+)/g)) {
+        const bestand = join(DOCS, `${doel}.mdx`);
+        const hoofd = readFileSync(bestand, 'utf8').replace(/<details>[\s\S]*?<\/details>/g, '');
+        if (!hoofd.includes(code)) fout.push(`${code} -> ${doel}`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('elk invoerveld in een formulier van de route heeft een label of placeholder', () => {
+    // Twee naamloze vakken: wie naam en bericht omdraaide, zag [hoi] 4 tekens.
+    const fout: string[] = [];
+    for (const pad of alleDocs(VEILIGHEID)) {
+      for (const [, blok] of readFileSync(pad, 'utf8').matchAll(/```html[^\n]*\n([\s\S]*?)```/g)) {
+        for (const [veld] of blok.matchAll(/<(input|textarea)\b[^>]*>/g)) {
+          if (/type="(hidden|submit)"/.test(veld)) continue;
+          const id = veld.match(/id="([^"]+)"/)?.[1];
+          const label = id && blok.includes(`for="${id}"`);
+          if (
+            !veld.includes('placeholder=') &&
+            !label &&
+            !/<label>[^<]*$/.test(blok.slice(0, blok.indexOf(veld)))
+          )
+            fout.push(`${pad.slice(VEILIGHEID.length + 1)}: ${veld}`);
+        }
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('een stap in het diagram heet zoals de les waar hij naar wijst', () => {
+    // De XSS-stap heette "De zwakheid", de les "Tekst of HTML?".
+    const bron = readFileSync(
+      new URL('../components/VerzoekCyclus/index.tsx', import.meta.url),
+      'utf8',
+    );
+    const fout: string[] = [];
+    for (const m of bron.matchAll(/to: '\/docs\/(veiligheid\/[^']+)',\s*les: '([^']+)'/g)) {
+      const tekst = readFileSync(join(DOCS, `${m[1]}.mdx`), 'utf8');
+      const label = tekst.match(/^sidebar_label: '(?:\d+\. )?(.+)'$/m)?.[1] ?? '';
+      const titel = tekst.match(/^# (.+)$/m)?.[1] ?? '';
+      if (m[2] !== label && !titel.includes(m[2])) fout.push(`${m[1]}: ${m[2]} / ${label}`);
+    }
+    expect(fout).toEqual([]);
   });
 });

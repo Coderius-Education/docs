@@ -1,0 +1,146 @@
+---
+sidebar_label: '8. Tekst blijft tekst: textContent'
+description: Met textContent in plaats van innerHTML blijft tekst uit een veld of een link tekst. De bescherming staat waar de tekst HTML zou worden, en dat is hier de browser.
+---
+
+# HTML van een bezoeker: tekst blijft tekst met `textContent`
+
+In [les 7](site:fullstack/docs/veiligheid/xss/browser) ontstond de HTML pas in
+de browser, in de functie `toon`. Daar hoort de bescherming dus ook.
+
+## `textContent` in plaats van `innerHTML`
+
+De regel blijft dezelfde als in de lessen hiervoor: de bescherming hoort op de
+plek waar tekst HTML wordt. Hier is dat de browser, en daar doet `textContent`
+wat `escape` op de server doet. Vervang de regel in `toon` in
+`static/js/voorbeeld.js`:
+
+```js
+    voorbeeld.textContent = veld.value;
+```
+
+Sla het bestand op en open de link uit les 7 opnieuw:
+
+```text
+http://127.0.0.1:8000/static/gastenboek.html?bericht=<b>vet</b>
+```
+
+<Gelukt>
+
+In het voorbeeld staat nu `<b>vet</b>`, met de haakjes erbij, en niets is vet.
+Typ je zelf `<i>hoi</i>` in het berichtveld, dan staat ook dat er als tekst.
+
+</Gelukt>
+
+Gebruik `innerHTML` alleen voor HTML die je zelf in je code schreef, net als
+`|safe` in [les 6](site:fullstack/docs/veiligheid/xss/safe). Voor tekst uit een veld of de URL is
+`textContent` de goede keuze.
+
+htmx zet het antwoord van je server ook met `innerHTML` in de pagina, dat is
+`hx-swap="innerHTML"`. Dat is veilig zolang je server escapet: wat htmx krijgt,
+is dan al `&lt;b&gt;`, en de browser toont het als tekst.
+
+<Voorspel soort="Controlevraag" vraag="Je wilt dat het voorbeeld begint met het woord Voorbeeld, vetgedrukt, en zet in toon: voorbeeld.innerHTML = '<b>Voorbeeld:</b> ' + veld.value. Wat zie je als je daarna de link uit les 7 opent?">
+  <Keuze goed uitleg="innerHTML kijkt niet waar een stuk tekst vandaan komt. Jouw vette tag en die uit de link worden allebei HTML.">Allebei vet: ook het woord uit de link wordt HTML</Keuze>
+  <Keuze uitleg="Zodra het in één tekst met innerHTML de pagina in gaat, leest de browser alles als HTML, ook het stuk uit het veld.">Alleen Voorbeeld: is vet, het stuk uit de link blijft tekst</Keuze>
+  <Keuze uitleg="Zo zou het met textContent gaan. Hier staat innerHTML, en dat leest alles als HTML.">Alles als tekst, met de haakjes van beide b-tags erbij</Keuze>
+  <Uitleg>
+
+  Net als `|safe` in les 6 geldt `innerHTML` voor de hele tekst, ook voor het stuk dat van een bezoeker komt. Zet je eigen `<b>Voorbeeld:</b>` in `gastenboek.html`, en het bericht met `textContent` in een element erachter.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Het voorbeeld blijft leeg, zonder foutmelding
+
+Na het vervangen staat er niets meer in het voorbeeld, en de Console is leeg.
+
+**Oorzaak:** er staat `textcontent` met een kleine `c`. JavaScript kent het
+verschil tussen hoofdletters en kleine letters. Zo'n eigenschap bestaat niet,
+maar JavaScript geeft geen fout: het zet de tekst in een nieuwe eigenschap die
+de browser niet gebruikt.
+
+**Oplossing:** schrijf `textContent`, met een hoofdletter `C`.
+
+```js
+// FOUT
+voorbeeld.textcontent = veld.value;
+
+// GOED
+voorbeeld.textContent = veld.value;
+```
+
+## Opdrachten
+
+### Opdracht 1: Predict - Een ampersand
+
+`textContent` staat in `toon`. Je opent
+`http://127.0.0.1:8000/static/gastenboek.html?bericht=Tom%20%26%20Jerry`.
+
+**Vraag:** wat staat er in het voorbeeld?
+
+<details>
+<summary>Tip</summary>
+
+`%20` is een spatie en `%26` een `&`. Wat doet `URLSearchParams` met die codes?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`Tom & Jerry`. `URLSearchParams` maakt van de codes weer een spatie en een `&`,
+en `textContent` zet de tekst erin zoals hij is. De `&` moest in de link een
+code zijn, anders had de browser hem gelezen als het begin van een tweede
+query-parameter.
+
+</details>
+
+### Opdracht 2: Run - Beide versies
+
+Probeer de link met `<b>vet</b>` eerst met `innerHTML` in `toon`, en daarna met
+`textContent`. Typ bij allebei in de Console:
+
+```js
+document.querySelector("#voorbeeld").innerHTML
+```
+
+Wat geeft de Console terug?
+
+<details>
+<summary>Antwoord</summary>
+
+Met `innerHTML`: `'<b>vet</b>'`. In de `<p>` staat een echte tag.
+
+Met `textContent`: `'&lt;b&gt;vet&lt;/b&gt;'`. De browser heeft de haakjes
+zelf ge-escapet, net als `escape` in Python, en toont ze daarom als tekst.
+
+</details>
+
+<details>
+<summary>Zo ziet `voorbeeld.js` er nu uit</summary>
+
+```js
+const veld = document.querySelector("#bericht");
+const voorbeeld = document.querySelector("#voorbeeld");
+
+function toon() {
+    voorbeeld.textContent = veld.value;
+}
+
+veld.addEventListener("input", toon);
+
+const vooraf = new URLSearchParams(location.search).get("bericht");
+if (vooraf) {
+    veld.value = vooraf;
+    toon();
+}
+```
+
+`main.py` is in les 7 en 8 niet veranderd.
+
+</details>
+
+Door naar [les 9: in je eigen project](site:fullstack/docs/veiligheid/xss/eigen-project).

@@ -1,0 +1,205 @@
+---
+sidebar_label: '7. Een keuze uit een lijst'
+description: Sta bij een keuze uit een paar woorden alleen toe wat in je eigen lijst staat, en weiger de rest met een eigen 400.
+---
+
+# Invoer controleren: een keuze uit een lijst
+
+Bij een getal zet je een onder- en een bovengrens, zoals in
+[les 6](site:fullstack/docs/veiligheid/invoer/getallen). Bij een keuze uit een
+paar woorden, zoals een stemming, maak je een lijst met wat mag, en weiger je de
+rest.
+
+## Toestaan wat mag
+
+<CodeUitleg>
+
+```python showLineNumbers
+STEMMINGEN = ["blij", "neutraal", "boos"]
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+    cijfer: int = Form(..., ge=1, le=10),
+    stemming: str = Form(...),
+):
+    if not naam.strip():
+        raise HTTPException(status_code=400, detail="Vul een naam in")
+    if stemming not in STEMMINGEN:
+        raise HTTPException(status_code=400, detail="Kies blij, neutraal of boos")
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {
+            "naam": naam,
+            "bericht": bericht,
+            "cijfer": cijfer,
+            "stemming": stemming,
+        }
+        db.commit()
+    return {"lengte": len(bericht), "cijfer": cijfer, "stemming": stemming}
+```
+
+<Regel n={1}>
+De lijst met wat mag, bovenaan `main.py`, boven je endpoints.
+</Regel>
+
+<Regel n={12} tot={13}>
+`not in` is waar als de stemming niet in de lijst staat. Dan stuur je een eigen `400`, net als bij de lege naam in [les 5](site:fullstack/docs/veiligheid/invoer/inhoud).
+</Regel>
+
+<Regel n={15} tot={20}>
+De stemming gaat mee de database in, en komt terug in het antwoord. De dictionary staat over meer regels, want hij is te lang voor één.
+</Regel>
+
+</CodeUitleg>
+
+Vervang `bericht_plaatsen` door deze, met je controle op het bericht als je die
+hebt, en zet in `static/formulier.html` een `<select>` met dezelfde drie
+woorden binnen het `<form>`:
+
+```html
+<select name="stemming">
+    <option>blij</option>
+    <option>neutraal</option>
+    <option>boos</option>
+</select>
+```
+
+## Doe de test
+
+Een script `stemming.py` probeert er twee:
+
+```python
+import httpx
+
+adres = "http://127.0.0.1:8000/bericht"
+
+for stemming in ["blij", "vrolijk"]:
+    gegevens = {"naam": "Sara", "bericht": "hoi", "cijfer": "8", "stemming": stemming}
+    antwoord = httpx.post(adres, data=gegevens)
+    print(stemming, "->", antwoord.status_code, antwoord.json())
+```
+
+<Gelukt>
+
+`stemming.py` laat `blij` door en weigert `vrolijk`:
+
+```text
+blij -> 200 {'lengte': 3, 'cijfer': 8, 'stemming': 'blij'}
+vrolijk -> 400 {'detail': 'Kies blij, neutraal of boos'}
+```
+
+</Gelukt>
+
+Je noemt op wat mag, dus alles wat je niet noemde, is geweigerd. Ook een
+woord dat je zelf nooit bedacht had.
+
+<Voorspel soort="Controlevraag" vraag="Je zet later de stemming moe in het select-veld van formulier.html, maar niet in de lijst in main.py. Wat krijgt iemand die moe kiest?">
+  <Keuze uitleg="Ook een keuze uit je eigen formulier komt bij je server als tekst binnen. Waarmee vergelijkt bericht_plaatsen die?">Een 200: moe komt uit je eigen formulier, dus het mag</Keuze>
+  <Keuze uitleg="Een 422 komt van Form, en daar staat stemming gewoon als str. Wie weigert hier?">FastAPI geeft een 422, want moe is geen bekende stemming</Keuze>
+  <Keuze goed uitleg="De controle kijkt alleen naar STEMMINGEN. Daar staat moe niet in, dus stuurt je eigen if een 400.">Je eigen 400: je server laat alleen door wat in zijn lijst staat</Keuze>
+  <Uitleg>
+
+  Wat mag, staat op één plek: in de lijst op de server. Het formulier helpt de
+  bezoeker kiezen, maar beslist niets.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### `Field required` bij een script uit een eerdere les
+
+`cijfer.py` print bij `8` nu `422 Field required`.
+
+**Oorzaak:** `stemming` is verplicht, net als `cijfer`. De scripts uit de
+vorige lessen sturen geen stemming mee. In `detail` staat dan het veld
+`stemming` met `Field required`.
+
+**Oplossing:** zet in zo'n script `"stemming": "blij"` bij de `data`.
+
+### Het formulier geeft `422` met `stemming`
+
+Elk bericht uit het formulier geeft `422` met `stemming` en `Field required`.
+
+**Oorzaak:** het `<select>` staat buiten het `<form>`, of heet anders dan de
+parameter.
+
+**Oplossing:** controleer dat er `name="stemming"` staat, en dat het
+`<select>` tussen `<form>` en `</form>` staat.
+
+## Opdrachten
+
+### Opdracht 1: Investigate - Een hoofdletter
+
+Je stuurt als stemming `Blij`, met een hoofdletter.
+
+**Vraag:** wat antwoordt de server, en hoe zorg je dat `Blij` toch mag?
+
+<details>
+<summary>Tip</summary>
+
+`"Blij" == "blij"` is in Python niet waar. Met `lower()` maak je van alle
+letters kleine letters.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+`400 {'detail': 'Kies blij, neutraal of boos'}`. `Blij` staat niet in de lijst:
+voor Python is een hoofdletter een ander teken. Wil je het toestaan, zet dan
+bovenaan de functie:
+
+```python
+stemming = stemming.lower()
+```
+
+Dan wordt `Blij` eerst `blij`, en komt hij door de controle. In de database
+staat dan `blij`, zoals in je lijst.
+
+</details>
+
+<details>
+<summary>Zo ziet je `main.py` er nu uit</summary>
+
+```python
+import time
+
+from fastapi import FastAPI, Form, HTTPException
+from fastapi.staticfiles import StaticFiles
+from sqlitedict import SqliteDict
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+STEMMINGEN = ["blij", "neutraal", "boos"]
+
+@app.post("/bericht")
+async def bericht_plaatsen(
+    naam: str = Form(..., max_length=30),
+    bericht: str = Form(..., max_length=280),
+    cijfer: int = Form(..., ge=1, le=10),
+    stemming: str = Form(...),
+):
+    if not naam.strip():
+        raise HTTPException(status_code=400, detail="Vul een naam in")
+    if stemming not in STEMMINGEN:
+        raise HTTPException(status_code=400, detail="Kies blij, neutraal of boos")
+    with SqliteDict("gastenboek.db") as db:
+        db[f"bericht_{time.time_ns()}"] = {
+            "naam": naam,
+            "bericht": bericht,
+            "cijfer": cijfer,
+            "stemming": stemming,
+        }
+        db.commit()
+    return {"lengte": len(bericht), "cijfer": cijfer, "stemming": stemming}
+```
+
+Elk veld heeft nu een controle op de server: de lengte en het getal bewaakt
+FastAPI, de keuze je eigen lijst.
+
+</details>
+
+Door naar [les 8: een bestandsnaam van een bezoeker](site:fullstack/docs/veiligheid/invoer/paden).

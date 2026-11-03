@@ -74,7 +74,7 @@ Voor je site komt elk verzoek nu van Traefik. Traefik zet het adres van de echte
   <Keuze uitleg="127.0.0.1 is het adres van de container zelf. Wie stuurt de verzoeken naar je site?">127.0.0.1, want iedereen komt via je eigen computer binnen</Keuze>
   <Uitleg>
 
-  Voor je site lijken alle tien dezelfde bezoeker. Dan telt de limiet uit [Te veel verzoeken](site:fullstack/docs/veiligheid/dos/limiet) alle bezoekers samen: na een paar verzoeken krijgt iedereen een `429`. Met `FORWARDED_ALLOW_IPS=*` gelooft je site de kop, en telt hij per bezoeker.
+  Voor je site lijken alle tien dezelfde bezoeker. Dan telt de limiet uit [Te veel verzoeken: een limiet met slowapi](site:fullstack/docs/veiligheid/dos/limiet) alle bezoekers samen: na een paar verzoeken krijgt iedereen een `429`. Met `FORWARDED_ALLOW_IPS=*` gelooft je site de kop, en telt hij per bezoeker.
 
   </Uitleg>
 </Voorspel>

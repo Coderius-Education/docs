@@ -920,7 +920,7 @@ async def bericht_plaatsen(bericht: str = Form(..., max_length=280)):
     ...
 ```
 
-`maxlength` in de HTML helpt alleen wie zich vergist; de echte grens staat in `Form`. Zie [Invoer controleren](site:fullstack/docs/veiligheid/invoer/grenzen).
+`maxlength` in de HTML helpt alleen wie zich vergist; de echte grens staat in `Form`. Zie [Invoer controleren: grenzen in Form](site:fullstack/docs/veiligheid/invoer/grenzen).
 
 </details>
 
@@ -963,14 +963,14 @@ Een `{{ }}`-template escapet vanzelf; een f-string niet. Ook een query-parameter
 voorbeeld.textContent = veld.value;
 ```
 
-`textContent` houdt het tekst; `innerHTML` leest het als HTML. Gebruik `innerHTML` alleen voor HTML die je zelf schreef. Zie [HTML van een bezoeker: in de browser met innerHTML](site:fullstack/docs/veiligheid/xss/browser).
+`textContent` houdt het tekst; `innerHTML` leest het als HTML. Gebruik `innerHTML` alleen voor HTML die je zelf schreef. Zie [HTML van een bezoeker: tekst blijft tekst met `textContent`](site:fullstack/docs/veiligheid/xss/textcontent).
 
 </details>
 
 <details>
 <summary>Hoe beperk ik het aantal verzoeken? (slowapi)</summary>
 
-Dit is de hele `main.py` uit de map `veiligheid-dos` van de reeks [Te veel verzoeken](site:fullstack/docs/veiligheid/dos/limiet), met een eigen `app = FastAPI()`. Zet je een limiet in je gastenboek, neem dan de imports en de regels met `limiter` en `app.state` en `app.add_exception_handler` over, en zet `@limiter.limit` onder de `@app.`-regel van je eigen endpoint. Geen tweede `app = FastAPI()`: die maakt je andere endpoints onbereikbaar.
+Dit is de hele `main.py` uit de map `veiligheid-dos` van de reeks [Te veel verzoeken: een limiet met slowapi](site:fullstack/docs/veiligheid/dos/limiet), met een eigen `app = FastAPI()`. Zet je een limiet in je gastenboek, neem dan de imports en de regels met `limiter` en `app.state` en `app.add_exception_handler` over, en zet `@limiter.limit` onder de `@app.`-regel van je eigen endpoint. Geen tweede `app = FastAPI()`: die maakt je andere endpoints onbereikbaar.
 
 ```python
 from fastapi import FastAPI, Request, Response

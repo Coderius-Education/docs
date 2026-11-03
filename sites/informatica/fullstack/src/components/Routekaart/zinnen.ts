@@ -38,6 +38,8 @@ export const ZINNEN: Record<string, string> = {
   // Veiligheid
   'Een script als bezoeker':
     'Hoe stuur je een verzoek zonder browser? Dat gereedschap gebruik je in elke reeks.',
+  'Een bezoeker die onthoudt':
+    'Hoe stuurt een script een formulier, en onthoudt het een cookie zoals een browser?',
   'Wat je server laat zien':
     'Wat ziet een bezoeker van je server zonder dat je het hem vertelt, en wat deel je met je bestanden?',
   'Invoer controleren':
@@ -68,6 +70,14 @@ export const MIJLPALEN: Record<string, string> = {
   'In Linux': 'Hier werkt je site in Linux.',
   'In een container': 'Hier werkt je site in Docker, achter een voordeur.',
   Accounts: 'Hier werkt je gastenboek. Wat hierna komt, maakt het mooier, maar is niet nodig.',
+  'Wat je server laat zien':
+    'Hier laat je server geen handleiding en geen vergeten endpoint meer zien.',
+  'Invoer controleren': 'Hier weigert je server een veld dat te lang, leeg of fout is.',
+  'HTML van een bezoeker (XSS)': 'Hier staat HTML van een bezoeker als tekst op je pagina.',
+  'Te veel verzoeken (DoS)': 'Hier krijgt een bezoeker die blijft bestoken een 429.',
+  'Wie mag wat': 'Hier verwijdert alleen de schrijver zijn eigen bericht.',
+  'Cookies afschermen': 'Hier kan een script niet meer bij je sessie-id.',
+  'Wachtwoorden veilig opslaan': 'Hier geeft een gelekte database geen wachtwoord meer weg.',
   'Beveilig je eigen project': 'Hier is je gastenboek beschermd.',
   'Op een echte server': 'Hier staat je gastenboek online.',
 };

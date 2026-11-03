@@ -1,11 +1,11 @@
 ---
-sidebar_label: '2. Een vergeten endpoint'
+sidebar_label: '3. Een vergeten endpoint'
 description: Een endpoint dat je voor jezelf maakte, staat in de handleiding voor iedereen. Met GET /sessies krijgt een bezoeker elk sessie-id, en daarmee is hij een ander.
 ---
 
 # Wat je server laat zien: een vergeten endpoint
 
-In [les 1](site:fullstack/docs/veiligheid/zichtbaar/handleiding) zag je dat `/docs` elk endpoint noemt. Ook
+In [les 2](site:fullstack/docs/veiligheid/zichtbaar/handleiding) zag je dat `/docs` elk endpoint noemt. Ook
 `GET /sessies`, dat je in [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies)
 maakte om zelf in je sessies te kijken. Daar stond bij: haal het daarna weg.
 Wie dat vergat, heeft een endpoint dat niemand anders mag gebruiken, op een
@@ -13,9 +13,9 @@ lijst die iedereen kan lezen.
 
 ## Twee bezoekers
 
-Start je server uit les 1. Maak een script `twee.py` met twee bezoekers die
+Start je server uit [les 1](site:fullstack/docs/veiligheid/zichtbaar/startbestand), als hij nog niet draait. Maak een script `twee.py` met twee bezoekers die
 elk een bericht plaatsen. Een `Client` onthoudt zijn cookie, zoals in
-[Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap):
+[Een bezoeker die onthoudt](site:fullstack/docs/veiligheid/client):
 
 ```python
 import httpx
@@ -66,25 +66,31 @@ Met `cookies` stuur je zelf een cookie mee. Het script stuurt het sessie-id van 
 
 </CodeUitleg>
 
-Uitvoer, met andere sessie-id's bij jou:
+<Gelukt>
 
-```
+`sessies.py` print elke bezoeker, met andere sessie-id's bij jou:
+
+```text
 ed37173ad83bc8b8d2442ee65e107e22 {'naam': 'Sara'}
 87da570d5ae77ba22e8e11900e2061d2 {'naam': 'Alex'}
 ```
 
-Heb je opdracht 2 van [les 1](site:fullstack/docs/veiligheid/zichtbaar/handleiding) gedaan, dan staat jouw eigen sessie
+Je script plaatste nooit een bericht, en toch is het voor je server om de beurt
+Sara en Alex.
+
+</Gelukt>
+
+Heb je opdracht 2 van [les 2](site:fullstack/docs/veiligheid/zichtbaar/handleiding) gedaan, dan staat jouw eigen sessie
 er ook bij, bovenaan: **Execute** op `/docs` maakte er een, met de naam die je
 daar invulde.
 
-Het script heeft nooit een bericht geplaatst, en toch is het voor je server
-om de beurt elke bezoeker op de lijst. Een sessie-id is zo lang en willekeurig dat niemand het
-kan raden. Dat helpt niets meer als je server ze zelf op een rij zet.
+Een sessie-id is zo lang en willekeurig dat niemand het kan raden. Dat helpt
+niets meer als je server ze zelf op een rij zet.
 
 In dit kleine gastenboek kan een sessie-id weinig kwaad: `/ik` zegt alleen een
 naam. In je eigen gastenboek is een sessie-id een inlog. Wie het sessie-id van
 Sara heeft, is voor je server ingelogd als Sara, zonder haar wachtwoord te
-kennen. In de reeks [Wie mag wat](site:fullstack/docs/veiligheid/toegang/zwakheid), die later
+kennen. In de reeks [Wie mag wat](site:fullstack/docs/veiligheid/toegang/gastenboek), die later
 komt, mag alleen de schrijver zijn bericht verwijderen, en dat controleert de
 server met precies dit sessie-id. Met `/sessies` erbij kan iedereen elk bericht
 verwijderen.
@@ -94,7 +100,20 @@ verwijderen.
 Je maakte `/sessies` voor jezelf, om te testen. De server weet dat niet: hij
 beantwoordt elk verzoek, van wie dan ook, en `/docs` zet het endpoint netjes op
 de lijst. Een endpoint dat alleen voor jou is, bestaat niet. In
-[les 3](site:fullstack/docs/veiligheid/zichtbaar/uitzetten) zet je de lijst uit en haal je het endpoint weg.
+[les 4](site:fullstack/docs/veiligheid/zichtbaar/uitzetten) zet je de lijst uit en haal je het endpoint weg.
+
+<Voorspel soort="Controlevraag" vraag="Alex heeft het sessie-id van Sara, bijvoorbeeld van een briefje. Hij stuurt het als cookie mee met GET /ik, vanuit zijn eigen script. Wat antwoordt je server?">
+  <Keuze uitleg="Waaraan herkent /ik een bezoeker: aan wie het script draait, of aan de cookie?">Alex: het script is van Alex, en dat ziet de server</Keuze>
+  <Keuze goed uitleg="/ik zoekt het sessie-id uit de cookie op in sessies.db. Het is het id van Sara, dus is Alex voor je server Sara.">Sara: de server ziet het sessie-id, niet wie het stuurt</Keuze>
+  <Keuze uitleg="Een cookie is tekst in het verzoek. Je server kan niet zien uit welke browser die tekst komt.">Hij is onbekend, want de cookie komt niet uit de browser van Sara</Keuze>
+  <Uitleg>
+
+  Voor je server is een bezoeker zijn sessie-id. Wie dat id meestuurt, is die
+  bezoeker, hoe hij er ook aan kwam. Daarom is een lijst met alle sessie-id's zo
+  gevaarlijk.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -147,4 +166,4 @@ lijst met sessie-id's is dus een sleutelbos van al je bezoekers.
 
 </details>
 
-Door naar [les 3: de handleiding uitzetten](site:fullstack/docs/veiligheid/zichtbaar/uitzetten).
+Door naar [les 4: de handleiding uitzetten](site:fullstack/docs/veiligheid/zichtbaar/uitzetten).

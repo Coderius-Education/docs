@@ -1,5 +1,5 @@
 ---
-sidebar_label: '2. httponly'
+sidebar_label: '3. httponly'
 description: Met httponly kan een script de sessie-cookie niet meer lezen. Zet de instelling in set_cookie en zie document.cookie leeg worden.
 ---
 
@@ -74,11 +74,29 @@ het tabblad **Netwerk** op het verzoek `bericht`: onder **Verzoekheaders** staat
 de regel `Cookie` met je sessie-id. Alleen een script komt niet meer bij de
 cookie.
 
+<Gelukt>
+
+Na opnieuw inloggen antwoordt de Console op `document.cookie` met `''`, en in
+het tabblad **App** staat bij `sessie_id` een vinkje in de kolom **HttpOnly**.
+
+</Gelukt>
+
 ## Waar de controle zit
 
 Hier zit de controle niet in een endpoint, maar in de instelling waarmee de server de cookie zet. De browser houdt zich eraan.
 
 <VerzoekCyclus variant="cookies" />
+
+<Voorspel soort="Controlevraag" vraag="In je eigen gastenboek sturen de htmx-knoppen hun verzoek vanuit JavaScript. Je zet httponly op de sessie-cookie. Weet je server bij een klik op zo'n knop nog wie je bent?">
+  <Keuze uitleg="httponly sluit scripts uit van het lezen van de cookie. Wie zet de cookie bij een verzoek in de kop Cookie: het script of de browser?">Nee, want htmx is JavaScript</Keuze>
+  <Keuze goed uitleg="htmx vraagt de browser een verzoek te sturen, en de browser zet de cookie er zelf bij. Lezen kan htmx hem niet, en dat hoeft ook niet.">Ja, de browser stuurt hem mee</Keuze>
+  <Keuze uitleg="htmx leest geen cookies. Het hoeft de cookie niet te kennen om hem mee te laten gaan.">Alleen als htmx hem eerst leest</Keuze>
+  <Uitleg>
+
+  Met `httponly` mag een script de cookie niet lezen, maar wel een verzoek laten sturen. Elk verzoek naar je site krijgt de cookie mee, ook een verzoek dat een script start. Daarom blijven je htmx-knoppen werken.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -254,4 +272,4 @@ De sessie-cookie staat nu buiten bereik van scripts.
 
 </details>
 
-Door naar [les 3: `samesite`](site:fullstack/docs/veiligheid/cookies/samesite).
+Door naar [les 4: `samesite`](site:fullstack/docs/veiligheid/cookies/samesite).

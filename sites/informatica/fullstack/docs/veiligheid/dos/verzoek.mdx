@@ -1,5 +1,5 @@
 ---
-sidebar_label: '1. Wat een verzoek kost'
+sidebar_label: '2. Wat een verzoek kost'
 description: Elk verzoek kost je server werk en tijd. Meet met httpx hoe lang één antwoord van je eigen server duurt.
 ---
 
@@ -11,41 +11,14 @@ description: Elk verzoek kost je server werk en tijd. Meet met httpx hoe lang é
   ]}
 />
 
-:::note[Waar je werkt]
-Maak voor deze reeks een nieuwe map `veiligheid-dos`, naast je eigen
-project, en open die in VS Code. De server en de scripts van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
-het eind van de reeks pas je het geleerde toe op je eigen project.
-
-Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
-:::
-
-Je begint met het kleinste endpoint dat er is, een dat op een `GET`-verzoek
-reageert. Zet dit in `main.py` in die map:
-
-```python
-from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/")
-async def root():
-    return {"bericht": "Hallo wereld!"}
-```
-
-Voor jou is dat één regel in de adresbalk. Voor je server is het werk: het
+Je server uit [les 1](site:fullstack/docs/veiligheid/dos/server) antwoordt
+op `GET /`. Voor jou is dat één regel in de adresbalk. Voor je server is het werk: het
 verzoek komt binnen, FastAPI zoekt welke functie erbij hoort, die functie
 draait, en het antwoord gaat terug. Pas daarna is de server klaar met dit
 verzoek. Een server heeft dus een grens aan hoeveel verzoeken hij per seconde
-aankan. Die grens meet je in deze les.
+aankan. Hoe lang één verzoek duurt, meet je met een script.
 
 ## Eén verzoek meten
-
-:::danger[Alleen je eigen server]
-Stuur de verzoeken in deze reeks **uitsluitend** naar je eigen server op
-`127.0.0.1`. Dat adres wijst altijd naar je eigen computer en verlaat het
-netwerk niet. Een ander zijn server bestoken met verzoeken is een aanval, en
-strafbaar, ook als het "maar een testje" is.
-:::
 
 Start je server met `fastapi dev main.py`. Maak daarnaast een los bestand
 `meet.py`. Het speelt de rol van bezoeker, met `httpx`, zoals in
@@ -77,21 +50,28 @@ De statuscode en de inhoud van het antwoord. 200 betekent gelukt.
 
 </CodeUitleg>
 
-Draai het in een tweede terminal, terwijl je server in de eerste blijft
-draaien. De uitvoer ziet er zo uit:
+Sla `meet.py` op. `fastapi dev` start dan opnieuw, want het ziet een nieuw
+`.py`-bestand in zijn map. Wacht tot in de terminal van je server weer
+`Application startup complete` staat, en draai het script dan in een tweede
+terminal.
 
-```
+<Gelukt>
+
+Het script print drie regels:
+
+```text
 200
 {'bericht': 'Hallo wereld!'}
 2.3 milliseconden
 ```
 
 Het laatste getal is bij jou anders, en ook elke keer dat je het script draait.
+In de terminal van je server staat een nieuwe regel met `GET /` en `200`.
+
+</Gelukt>
+
 Een milliseconde is een duizendste van een seconde, dus een paar milliseconden
 is heel kort.
-
-Kijk ook in de terminal van je server. Daar staat een nieuwe regel met
-`GET /` en `200`: je server houdt bij dat hij een verzoek heeft beantwoord.
 
 ## Wat dat getal betekent
 
@@ -104,7 +84,20 @@ geen antwoord meer.
 Een endpoint dat meer doet, bijvoorbeeld alle berichten uit de database halen,
 kost meer tijd per verzoek. Dan ligt de grens lager.
 
+<Voorspel soort="Controlevraag" vraag="Je server kan 500 verzoeken per seconde beantwoorden. Een minuut lang komen er 600 per seconde binnen. Wat gebeurt er met de verzoeken die nog op een antwoord wachten?">
+  <Keuze goed uitleg="Er komen er elke seconde 600 bij en er gaan er 500 uit. Het verschil stapelt zich op, en achteraan in de rij duurt het te lang.">Er komen er elke seconde zo'n honderd bij, tot bezoekers geen antwoord krijgen</Keuze>
+  <Keuze uitleg="Elk verzoek kost je server even veel tijd, druk of niet. Harder werken kan hij niet.">Niets bijzonders: je server werkt een minuut lang wat harder door</Keuze>
+  <Keuze uitleg="Je server weigert nog niets: er staat nergens een grens in je code. Hij raakt alleen achter.">Je server weigert de honderd verzoeken te veel meteen met een foutcode</Keuze>
+  <Uitleg>
+
+  Boven zijn grens raakt een server elke seconde verder achter. De bezoeker merkt dat eerst als wachten, en daarna als helemaal geen antwoord.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
+
+### Connection refused
 
 ```
 httpx.ConnectError: [Errno 111] Connection refused
@@ -117,6 +110,17 @@ andere tekst achter `ConnectError`, met hetzelfde idee.
 **Oplossing:** start je server in een aparte terminal met
 `fastapi dev main.py`, en draai het script pas als daar
 `Application startup complete` staat.
+
+### Honderden milliseconden
+
+Het script print geen paar milliseconden, maar iets als `830.0 milliseconden`.
+
+**Oorzaak:** je draaide het script meteen nadat je het opsloeg. Je server was
+nog aan het opnieuw starten, en je verzoek wachtte daarop.
+
+**Oplossing:** wacht tot `Application startup complete` in de terminal van je
+server staat, en draai het script opnieuw. Zie ook
+[Je server start opnieuw als je een script opslaat](site:fullstack/docs/veiligheid/gereedschap#je-server-start-opnieuw-als-je-een-script-opslaat).
 
 ## Opdrachten
 
@@ -152,26 +156,9 @@ Draai `meet.py` drie keer achter elkaar. Is de tijd elke keer hetzelfde?
 
 Nee, elke keer een beetje anders, bijvoorbeeld 2,3 en 1,8 en 2,1
 milliseconden. Je computer doet ook andere dingen tegelijk, en dat merk je in
-de laatste cijfers. Het eerste verzoek na het starten is vaak iets trager, omdat
-Python dan nog dingen moet inladen.
+de laatste cijfers. Sla je tussendoor iets op, dan is de eerste keer daarna
+veel trager; dat staat bij Er gaat iets mis.
 
 </details>
 
-<details>
-<summary>Zo ziet je `main.py` er nu uit</summary>
-
-```python
-from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/")
-async def root():
-    return {"bericht": "Hallo wereld!"}
-```
-
-Dit is de beginstand. In les 4 komt er een limiet bij.
-
-</details>
-
-Door naar [les 2: DoS en DDoS](site:fullstack/docs/veiligheid/dos/dos-en-ddos).
+Door naar [les 3: zelf twintig verzoeken](site:fullstack/docs/veiligheid/dos/zelf-meten).
