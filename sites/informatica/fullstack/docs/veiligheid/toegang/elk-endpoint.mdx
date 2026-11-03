@@ -131,7 +131,7 @@ server dan vanzelf opnieuw.
 ### KeyError: 'naam'
 
 Een verzoek zonder sessie, zoals het script in opdracht 1, stopt met
-`json.decoder.JSONDecodeError`. In de terminal van je server eindigt de
+`json.decoder.JSONDecodeError`, zodra er berichten in het gastenboek staan. In de terminal van je server eindigt de
 foutmelding met:
 
 ```text
@@ -140,8 +140,9 @@ KeyError: 'naam'
 
 **Oorzaak:** je schreef `mijn["naam"]`, zoals in `bericht_plaatsen`. Daar
 staat eerst de `401` als er geen sessie is; in `alles_wissen` niet. Zonder
-sessie is `mijn` een lege dictionary, en die heeft geen sleutel `naam`. Je
-server antwoordt met een `500`, en die tekst is geen JSON.
+sessie is `mijn` een lege dictionary, en die heeft geen sleutel `naam`. Bij
+het eerste bericht in de for-lus antwoordt je server met een `500`, en die
+tekst is geen JSON.
 
 **Oplossing:** schrijf `mijn.get("naam")`, zoals hierboven, of zet eerst de
 `401` erin, zoals in opdracht 1.

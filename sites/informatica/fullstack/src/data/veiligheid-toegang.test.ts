@@ -172,7 +172,9 @@ describe('Wie mag wat', () => {
 
   it('een knop is geen slot erkent opdracht 5 van Sessies', () => {
     const tekst = lees('toegang/zwakheid.mdx');
-    expect(tekst).toContain('](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen)');
+    expect(tekst).toContain(
+      '](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen)',
+    );
     // Een tweede run gaf ['Alex', 'Alex']; de fout heette "Meer namen".
     expect(tekst).toContain("['Alex', 'Alex']");
   });

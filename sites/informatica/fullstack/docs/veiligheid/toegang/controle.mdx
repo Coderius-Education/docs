@@ -135,7 +135,7 @@ niet in de functie.
 
 ### Een `'Alex'` te veel
 
-Het script print:
+Het script print bijvoorbeeld:
 
 ```text
 Alex verwijdert het bericht van Sara: 403
@@ -146,7 +146,8 @@ Nog in het gastenboek: ['Alex', 'Alex']
 
 **Oorzaak:** je hebt de databases niet weggegooid. Het bericht van Alex uit
 [les 2](site:fullstack/docs/veiligheid/toegang/zwakheid) staat er nog, naast de
-twee nieuwe. De controle werkt wel: Alex krijgt `403` en Sara `200`.
+twee nieuwe; draaide je dat script vaker, dan staan er meer. De controle werkt
+wel: Alex krijgt `403` en Sara `200`.
 
 **Oplossing:** gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, en
 draai het script opnieuw.
