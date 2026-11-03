@@ -535,3 +535,78 @@ describe('verwijzingen en vaste vormen in de route Veiligheid', () => {
     }
   });
 });
+
+// Elke les is één stap met een succesmoment, net als in Online zetten: wat je
+// ziet als het werkt (<Gelukt>, met een vinkje dat de Routekaart toont), en
+// daarna één controlevraag die laat zien dat je snapt waarom. De opdrachtgever
+// vond de stappen in Veiligheid te groot: een les eindigde met opdrachten,
+// zonder moment waarop de leerling zag dat het gelukt was, en de eerste les
+// van een reeks deed de map, het startbestand en de zwakheid tegelijk.
+describe('elke les in Veiligheid is een kleine stap met een succesmoment', () => {
+  const lessen = (sidebars.veiligheidSidebar as unknown as (string | Categorie)[])
+    .flatMap((i) => (typeof i === 'string' ? [i] : i.items))
+    .filter((id) => !/^veiligheid\/(index|eigen-project)$/.test(id) && !id.endsWith('/praktijk'));
+  const tekstVan = (id: string) =>
+    readFileSync(join(VEILIGHEID, `${id.slice('veiligheid/'.length)}.mdx`), 'utf8');
+
+  it('elke les: één Gelukt-blok, daarna één controlevraag, en dan Er gaat iets mis', () => {
+    const fout: string[] = [];
+    for (const id of lessen) {
+      const tekst = tekstVan(id);
+      const mis = tekst.indexOf('\n## Er gaat iets mis\n');
+      const gelukt = [...tekst.matchAll(/^<Gelukt>$/gm)];
+      const vragen = [...tekst.matchAll(/<Voorspel soort="Controlevraag"/g)];
+      if (mis === -1) fout.push(`${id}: Er gaat iets mis`);
+      if (gelukt.length !== 1) fout.push(`${id}: ${gelukt.length} Gelukt-blokken`);
+      if (vragen.length !== 1) fout.push(`${id}: ${vragen.length} controlevragen`);
+      const g = gelukt[0]?.index ?? -1;
+      const v = vragen[0]?.index ?? -1;
+      if (!(g < v && v < mis))
+        fout.push(`${id}: eerst Gelukt, dan de controlevraag, dan Er gaat iets mis`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('elke stap is klein: hooguit 450 woorden uitleg vóór Er gaat iets mis, tabellen meegeteld', () => {
+    const fout: string[] = [];
+    for (const id of lessen) {
+      const kop = tekstVan(id).split('\n---\n').slice(1).join('\n---\n');
+      const uitleg = kop
+        .slice(0, kop.indexOf('\n## Er gaat iets mis\n'))
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '')
+        .replace(/<details>[\s\S]*?<\/details>/g, '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/^\|(\s*:?-+:?\s*\|)+$/gm, '');
+      const woorden = uitleg.split(/\s+/).filter((w) => /\p{L}/u.test(w)).length;
+      if (woorden > 450) fout.push(`${id}: ${woorden} woorden`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  const vragen = lessen.map((id) => ({
+    id,
+    vraag: tekstVan(id).match(/<Voorspel soort="Controlevraag" vraag="([^"]+)"/)?.[1] ?? '',
+    uitleg: tekstVan(id).match(/<Voorspel soort="Controlevraag"[\s\S]*?<\/Voorspel>/)?.[0] ?? '',
+  }));
+
+  it('een controlevraag verklapt geen opdracht en leunt er niet op', () => {
+    const fout = vragen.filter((v) => /opdracht \d/i.test(v.uitleg)).map((v) => v.id);
+    expect(fout).toEqual([]);
+  });
+
+  it('geen twee stappen stellen (bijna) dezelfde controlevraag', () => {
+    const woorden = (s: string) => new Set(s.toLowerCase().match(/[\p{L}\d.]+/gu) ?? []);
+    const fout: string[] = [];
+    vragen.forEach((a, i) => {
+      for (const b of vragen.slice(i + 1)) {
+        const x = woorden(a.vraag);
+        const y = woorden(b.vraag);
+        if (!x.size || !y.size) continue;
+        const samen = [...x].filter((w) => y.has(w)).length;
+        if (samen / Math.min(x.size, y.size) > 0.7) fout.push(`${a.id} en ${b.id}`);
+      }
+    });
+    expect(fout).toEqual([]);
+  });
+});
