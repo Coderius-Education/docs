@@ -3,6 +3,8 @@ sidebar_position: 0
 sidebar_label: Zo werkt deze cursus
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # Linux: zo werkt deze cursus
 
 Bijna elke website die je bezoekt, draait op een computer met **Linux**. Je telefoon met Android ook, net als de Raspberry Pi in het lokaal en de servers achter je favoriete game. Die computers hebben meestal geen scherm en geen muis: je praat ermee door commando's te typen in een **terminal**.
@@ -30,6 +32,16 @@ In deze cursus leer je dat typen. Aan het eind kun je:
 In de sidebar staat bij elke les waar je hem doet: **browser** of **WSL**.
 
 De thema's 1 tot en met 4 doe je in een oefenterminal op de pagina zelf. Daar kan niets stuk: met **Opnieuw beginnen** staat alles weer zoals het was. Vanaf thema 5 heb je een Windows-computer nodig waarop je programma's mag installeren. Heb je een computer met Ubuntu, dan sla je de installatie over en doe je de rest in je eigen terminal. Op een Mac doe je thema 1 tot en met 4 hier op de pagina. Van de rest werkt een deel ook in de Terminal van macOS, zoals `man`, `ps`, `curl` en `ssh`, maar `apt`, `systemctl`, `journalctl` en `ip` bestaan daar niet.
+
+## Je Ubuntu controleren
+
+Na thema 5, 6 en 7 kun je je eigen Ubuntu laten nakijken door een klein script. Het verandert niets, het kijkt alleen: of alles uit het thema klopt, en zo niet, waar het staat uitgelegd.
+
+1. Download <a href={useBaseUrl('/controleer.sh')} download>controleer.sh</a>. Het komt in de map Downloads van Windows.
+2. Kopieer het in Ubuntu naar je thuismap, met je eigen Windows-naam op de plek van `sam`: `cp /mnt/c/Users/sam/Downloads/controleer.sh ~`.
+3. Typ in je thuismap `bash controleer.sh` en het nummer van het thema: `bash controleer.sh 5`, `bash controleer.sh 6` of `bash controleer.sh 7`.
+
+Per controle staat er een ✓ of een ✗. Bij een ✗ staat erbij wat er mis is, en een link naar de les.
 
 ## Waar je dit later voor gebruikt
 
