@@ -38,9 +38,11 @@ Plaats alle batterijen in de houder. Meet de spanning aan de **rode en zwarte dr
 
 ### Stap 3: batterijhouder op het shield
 
-![Aansluitschema: de batterijhouder met de rode draad op de plus en de zwarte draad op de min van het shield](../../img/batterijen/shield_battery_pack_bb.png)
+![Aansluitschema: de rode draad van de batterijhouder in de + van de adapter, de zwarte draad in de -, en de adapter in de ronde bus van het shield](@site/static/fritzing/shield_battery_pack_bb.png)
 
-Sluit de **rode** draad aan op de plus en de **zwarte** draad aan op de min van het shield (zie afbeelding). Zet daarna de schakelaar op het shield op **ON**.
+1. Draai de schroefjes van de adapter los. Steek de rode draad van de batterijhouder in het gaatje bij de **+** en de zwarte in het gaatje bij de **-**, en draai de schroefjes weer vast.
+2. Steek de adapter in de ronde bus van het shield, naast de schakelaar **ON/OFF**.
+3. Zet de schakelaar op het shield op **ON**.
 
 Als alles goed is, zie je een **groen lampje** op de microcontroller branden.
 

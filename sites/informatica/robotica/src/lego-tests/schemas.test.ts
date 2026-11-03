@@ -1,5 +1,5 @@
-import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { basename, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inflateRawSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
@@ -236,6 +236,108 @@ describe('de aansluitschema’s staan op het shield', () => {
       .flatMap((g) => g.items as string[])
       .map((id) => id.replace('onderdelen/', ''))
       .filter((id) => /\]\([^)]*nano_rp2040_[^)]*\)/.test(les(id)));
+    expect(fout).toEqual([]);
+  });
+});
+
+// Plaatjes van aansluitschema's die (nog) niet uit een .fzz in static/fritzing
+// komen. Zo'n plaatje kan niemand opnieuw maken als er iets niet klopt; deze
+// lijst mag alleen korter worden.
+const NOG_ZONDER_BRON = new Set<string>([
+  'docs/onderdelen/img/tof/wiring_tof.png',
+  'docs/onderdelen/img/tof/tof_mux.png',
+  'docs/onderdelen/img/tof/2_tof_mux.png',
+  'docs/onderdelen/img/oled-scherm/shield_oled_mux.png',
+  'docs/onderdelen/img/meten/nano_rp2040_pin_nameten.svg',
+  'docs/robocup/redden_basis_bb.png',
+  'docs/robocup/aluminium_tape_detectie_bb.png',
+  'lego_auto/debuggen_met_scherm/nano_rp2040_oled_mux_ir_sensor_bb.png',
+]);
+
+/** Uitsneden van één schema: het plaatje heet anders dan zijn .fzz. */
+const UITSNEDE: Record<string, string> = {
+  golfbot_bb: 'golfbot',
+  golfbot_sensor: 'golfbot',
+  golfbot_servo: 'golfbot',
+  golfbot_rst: 'golfbot',
+  'golfbot_aan-uit': 'golfbot',
+};
+
+/** De kleuren die een alt-tekst noemt, met hun kleur in Fritzing. */
+const KLEUR: Record<string, string[]> = {
+  rood: ['#cc1414'],
+  zwart: ['#404040'],
+  blauw: ['#418dd9'],
+  geel: ['#ffe24d', '#f2c600'],
+  groen: ['#47cc79'],
+  oranje: ['#ef6100'],
+  bruin: ['#8c3b00'],
+};
+// Alleen een kleur die bij een draad hoort: "de rode draad", "de zwarte naar GND".
+// "De blauwe sensor" en "het groene shield" gaan over een onderdeel.
+const BIJ_DRAAD = String.raw`(?=\s+(?:draad|draden|draadje|naar|op|in)\b)`;
+const KLEURWOORD: [RegExp, string][] = [
+  [new RegExp(String.raw`\brode?` + BIJ_DRAAD, 'i'), 'rood'],
+  [new RegExp(String.raw`\bzwarte?` + BIJ_DRAAD, 'i'), 'zwart'],
+  [new RegExp(String.raw`\bblauwe?` + BIJ_DRAAD, 'i'), 'blauw'],
+  [new RegExp(String.raw`\b(?:geel|gele)` + BIJ_DRAAD, 'i'), 'geel'],
+  [new RegExp(String.raw`\bgroene?` + BIJ_DRAAD, 'i'), 'groen'],
+  [new RegExp(String.raw`\boranje` + BIJ_DRAAD, 'i'), 'oranje'],
+  [new RegExp(String.raw`\bbruine?` + BIJ_DRAAD, 'i'), 'bruin'],
+];
+
+function lessen(map: string): string[] {
+  return readdirSync(join(SITE, map), { recursive: true, encoding: 'utf8' })
+    .filter((n) => /\.mdx?$/.test(n))
+    .map((n) => join(SITE, map, n));
+}
+
+/** Elk plaatje van een aansluitschema in de lessen: bestand, alt-tekst en pad in de site. */
+function schemaPlaatjes() {
+  const uit: { les: string; alt: string; pad: string }[] = [];
+  for (const les of ['docs', 'lego_auto', 'golfbot'].flatMap(lessen)) {
+    for (const m of readFileSync(les, 'utf8').matchAll(/!\[([^\]]*)\]\(([^)\s]+)\)/g)) {
+      const pad = m[2].startsWith('@site/')
+        ? m[2].slice(6)
+        : relative(SITE, join(les, '..', m[2]));
+      const isSchema =
+        pad.startsWith('static/fritzing/') || NOG_ZONDER_BRON.has(pad) || /_bb\.(png|svg)$/.test(pad);
+      if (isSchema) uit.push({ les: relative(SITE, les), alt: m[1], pad });
+    }
+  }
+  return uit;
+}
+
+const bronVan = (pad: string) => {
+  const naam = basename(pad).replace(/\.(png|svg)$/, '');
+  return UITSNEDE[naam] ?? naam.replace(/_bb$/, '');
+};
+
+describe('elk aansluitschema in een les', () => {
+  it('komt uit een .fzz in static/fritzing', () => {
+    // De batterijhouder, de TOF en de multiplexer stonden er alleen als PNG in,
+    // met blauwe draden waar de tekst rood en zwart zei. Niemand kon ze opnieuw
+    // maken. Een schema staat nu in static/fritzing, naast zijn .fzz.
+    const fout = schemaPlaatjes()
+      .filter((p) => !NOG_ZONDER_BRON.has(p.pad))
+      .filter((p) => !p.pad.startsWith('static/fritzing/') || !existsSync(join(FRITZING, `${bronVan(p.pad)}.fzz`)))
+      .map((p) => `${p.les}: ${p.pad}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('heeft de draadkleuren die zijn alt-tekst noemt', () => {
+    // De alt-tekst van de batterijhouder zei "de rode draad op de plus en de
+    // zwarte op de min", terwijl beide draden in het plaatje blauw waren.
+    const fout: string[] = [];
+    for (const p of schemaPlaatjes().filter((p) => p.pad.startsWith('static/fritzing/'))) {
+      const fzz = join(FRITZING, `${bronVan(p.pad)}.fzz`);
+      if (!existsSync(fzz)) continue;
+      const fz = [...unzip(fzz)].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
+      const kleuren = new Set([...fz.matchAll(/<wireExtras [^>]*color="([^"]*)"/g)].map((m) => m[1].toLowerCase()));
+      for (const [woord, kleur] of KLEURWOORD)
+        if (woord.test(p.alt) && !KLEUR[kleur].some((k) => kleuren.has(k)))
+          fout.push(`${p.les}: de alt noemt ${kleur}, maar ${basename(fzz)} heeft geen ${kleur}e draad`);
+    }
     expect(fout).toEqual([]);
   });
 });

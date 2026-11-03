@@ -22,9 +22,15 @@ De IR-sensor werkt het best op ongeveer **5–10 mm** boven de ondergrond. Te ho
 
 ## Aansluiten op het shield
 
-Elke sensor heeft drie draadjes: signaal, voeding en ground. Steek ze op de driepins-rij van één analoge pin van het Leaphy Murphy Shield, precies zoals op het schema:
+Elke sensor heeft drie draadjes: signaal, voeding en ground. Steek ze op het rijtje van drie van één analoge pin van het Leaphy Murphy Shield, precies zoals op het schema:
 
-![twee analoge IR-sensoren aangesloten op A0 en A1 van het shield](@site/static/fritzing/analog_irs_shield_bb.png)
+![Twee analoge IR-sensoren op het shield: links een op het rijtje van A0, rechts een op het rijtje van A1, elk met AO binnen, VCC in het midden en GND buiten](@site/static/fritzing/analog_irs_shield_bb.png)
+
+- **AO** van de sensor (met de letter O) aan de pin zelf, **A0** of **A1** (binnenste rij, naast de Nano)
+- **VCC** aan **3V3** (middelste rij)
+- **GND** aan **GND** (buitenste rij)
+
+De pin **DO** van de sensor laat je leeg.
 
 Sluit de ene sensor aan op pin **A0** en de andere op pin **A1**. Welke van de twee links zit, maakt nu nog niet uit — dat controleer je straks in [Deel 4](site:robotica/lego_auto/lijnsensor/twee-sensoren) met de code erbij.
 

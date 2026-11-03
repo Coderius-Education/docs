@@ -8,6 +8,7 @@ sidebar_custom_props:
 ---
 
 import Materiaal from '@site/docs/onderdelen/_delen/ir-analoog/materiaal.md';
+import ShieldRijen from '@site/docs/onderdelen/_delen/shield/rijen.md';
 
 # Analoge IR-sensor
 
@@ -21,9 +22,17 @@ Een **analoge IR-sensor** geeft niet zomaar een 0 of een 1, maar een getal tusse
 
 ### Aansluiten
 
-![Aansluitschema van één analoge IR-sensor op pin A0 van het Leaphy Murphy Shield](@site/static/fritzing/analog_ir_shield_bb.png)
+![Aansluitschema: de analoge IR-sensor op het rijtje van A0 van het shield, met AO aan A0, VCC aan 3V3 en GND aan GND](@site/static/fritzing/analog_ir_shield_bb.png)
 
-Sluit de IR-sensor aan op pin **A0** van het Leaphy Murphy Shield.
+<ShieldRijen />
+
+Sluit de IR-sensor aan op het rijtje van **A0**. Op het shield heet die pin A0/D14, onder de Nano.
+
+- **AO** van de sensor aan de pin **A0** (binnenste rij). AO is met de letter O: analoog uit.
+- **VCC** aan een **3V3**-pin (middelste rij)
+- **GND** aan een **GND**-pin (buitenste rij)
+
+De pin **DO** van de sensor laat je leeg; die is voor de [digitale IR-sensor](site:robotica/docs/onderdelen/ir-digitaal).
 
 ### Code
 
@@ -82,10 +91,12 @@ Met twee IR-sensoren kun je een **lijn volgen**: één links en één rechts van
 
 ### Aansluiten
 
-![Aansluitschema van twee analoge IR-sensoren op pin A0 en A1 van het Leaphy Murphy Shield](@site/static/fritzing/analog_irs_shield_bb.png)
+![Aansluitschema: links een analoge IR-sensor op het rijtje van A0, rechts een op het rijtje van A1, elk met AO binnen, VCC in het midden en GND buiten](@site/static/fritzing/analog_irs_shield_bb.png)
 
-- Sensor 1 op **A0**
-- Sensor 2 op **A1**
+- Sensor 1 (links) op het rijtje van **A0**
+- Sensor 2 (rechts) op het rijtje van **A1**
+
+Elke sensor zit net zo als hierboven: AO binnen, VCC in het midden, GND buiten. A0 en A1 zitten op het shield naast elkaar. Tussen de twee rijtjes lopen daarom twee draden vlak naast elkaar: de blauwe van de linkersensor naar A0 en de rode van de rechtersensor naar 3V3.
 
 ### Code
 
@@ -128,8 +139,6 @@ Print eerst de waardes en beweeg dan rustig één sensor over een zwarte streep.
 ## Hoeveel sensoren kan ik aansluiten? \{#hoeveel-sensoren}
 
 In totaal zijn er **zes** analoge pinnen bruikbaar voor IR-sensoren. Twee is gangbaar voor lijnvolgen, vier is gevorderd.
-
-![Twee analoge IR-sensoren aangesloten op A0 en A1 van het Leaphy Murphy Shield](./img/ir-analoog/2_analog_ir_with_shield.png)
 
 ### Wel gebruiken
 
