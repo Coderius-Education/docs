@@ -48,6 +48,8 @@ const sidebars = {
     ]),
     thema('7. Netwerk', ['wsl/netwerk', 'wsl/ssh', 'wsl/github', 'wsl/scp', 'wsl/tunnel']),
   ],
+  // Hand-outs zonder computer, met een eigen link in de navbar.
+  unpluggedSidebar: ['unplugged/index', 'unplugged/boom', 'unplugged/rechten'],
 };
 
 export default sidebars;

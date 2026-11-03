@@ -1,0 +1,135 @@
+---
+description: Het bestandssysteem van de oefenterminal als boom op papier. Loop met een pion mee met cd, en ontdek wat .., ~ en een pad zonder / betekenen.
+---
+
+# Het bestandssysteem als boom
+
+<Handout>
+
+Alle bestanden van Linux hangen aan één boom, met `/` als wortel. Een pad is
+de weg door die boom. Begint het met `/`, dan begin je bij de wortel. Begint
+het niet met `/`, dan begin je waar je nu staat. Op papier zie je dat verschil
+beter dan in de terminal, want daar zie je de boom niet.
+
+## Wat je nodig hebt
+
+- Per tweetal deze hand-out, een pen en een pion: een gum of een munt.
+- Ongeveer 20 minuten.
+
+## De boom
+
+Dit is een deel van de oefenterminal uit de lessen, de computer `oefenpc`:
+
+```
+/
+├── etc
+│   └── hosts
+├── home
+│   └── student
+│       └── notities.txt
+├── tmp
+└── var
+    ├── log
+    │   ├── apache2
+    │   │   └── access.log
+    │   └── auth.log
+    └── www
+        └── html
+            ├── config
+            │   └── instellingen.conf
+            └── index.html
+```
+
+Een map is alles waar iets onder hangt, plus `tmp`. De rest zijn bestanden.
+
+## Zo werkt het
+
+Zet je pion op `student`: daar begin je, net als in de terminal. Om de beurt
+leest een van jullie een commando voor, en de ander zet de pion. Na een `cd`
+schrijf je op waar de pion staat. Na een `cat` schrijf je op welk bestand hij
+leest; de pion blijft dan staan. Kan het niet, dan blijft de pion ook staan,
+en schrijf je op waarom niet.
+
+Twee tekens om te onthouden: `..` is één stap omhoog, naar de map erboven,
+en `~` is je thuismap, `/home/student`.
+
+<div className="handout-samen">
+
+Gok eerst, voor commando 9: lukt `cd` naar een bestand? ______
+
+</div>
+
+<div className="handout-teltabel">
+
+| | Commando | De pion staat nu op, of het bestand is |
+|:---:|---|---|
+| 1 | `cd /var/www/html` | |
+| 2 | `cd config` | |
+| 3 | `cd ../..` | |
+| 4 | `cat html/index.html` | |
+| 5 | `cd ../log/apache2` | |
+| 6 | `cat ../auth.log` | |
+| 7 | `cd ~` | |
+| 8 | `cat ../student/notities.txt` | |
+| 9 | `cd /var/www/html/config/instellingen.conf` | |
+| 10 | `cd var/log` | |
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. Commando 1 en 10 noemen allebei een map onder `var`. Waarom lukt 1 en 10
+   niet?
+2. Bij commando 4 en 6 bleef de pion staan. Hoe kun je een bestand lezen dat
+   niet in je eigen map ligt?
+3. Commando 8 gaat omhoog en meteen weer omlaag. Kan het korter?
+4. Bedenk het kortste commando dat de pion van `apache2` naar `config`
+   brengt. En het kortste met een `/` vooraan?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+| | Commando | De pion staat nu op, of het bestand is |
+|:---:|---|---|
+| 1 | `cd /var/www/html` | `/var/www/html` |
+| 2 | `cd config` | `/var/www/html/config` |
+| 3 | `cd ../..` | `/var/www` |
+| 4 | `cat html/index.html` | het bestand `/var/www/html/index.html`; de pion blijft op `/var/www` |
+| 5 | `cd ../log/apache2` | `/var/log/apache2` |
+| 6 | `cat ../auth.log` | het bestand `/var/log/auth.log`; de pion blijft op `/var/log/apache2` |
+| 7 | `cd ~` | `/home/student` |
+| 8 | `cat ../student/notities.txt` | het bestand `/home/student/notities.txt`; de pion blijft op `/home/student` |
+| 9 | `cd /var/www/html/config/instellingen.conf` | lukt niet: het is een bestand, geen map. De pion blijft op `/home/student` |
+| 10 | `cd var/log` | lukt niet: zonder `/` zoekt hij `var` in `student`, en daar staat het niet. De pion blijft op `/home/student` |
+
+In de oefenterminal zie je bij 9 en 10 precies dat:
+
+```
+bash: cd: /var/www/html/config/instellingen.conf: Not a directory
+bash: cd: var/log: No such file or directory
+```
+
+**Bespreek na.** Vraag 1: 1 begint met `/` en loopt vanaf de wortel. 10
+begint niet met `/`, en loopt dus vanaf de pion. Vraag 2: met een pad, zoals
+bij 4 en 6: `cat` gaat de weg langs zonder dat jij meeloopt. Vraag 3: ja,
+`cat notities.txt`, want de pion staat al in `student`. Vraag 4: vanaf
+`apache2` is het `cd ../../www/html/config`, en met een `/` vooraan
+`cd /var/www/html/config`. Het pad met `/` werkt overal, waar de pion ook
+staat; dat zonder `/` alleen vanaf `apache2`.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [1.2 Mappen](site:linux/docs/terminal/mappen). Typ de tien
+  commando's in de oefenterminal daar, en kijk na elke `cd` met `pwd`.
+- Bestanden lezen met `cat` staat in [2.1 Bestanden lezen](site:linux/docs/terminal/bestanden-lezen).
+
+</div>
+
+</Handout>
