@@ -1,13 +1,41 @@
 ---
-sidebar_position: 2
+sidebar_label: Afstandssensor
+description: Een ultrasone afstandssensor meet met geluidsgolven hoe ver iets weg is, bijvoorbeeld om een obstakel te zien.
 ---
 
-# 8.2 Aansluiten en code
+# Afstandssensor
+
+Een **ultrasone afstandssensor** meet hoe ver iets weg is door geluidsgolven te sturen en te kijken hoe lang ze erover doen om terug te komen. Wij gebruiken de **RCWL-1601**.
+
+## Materiaal
+
+Wat heb je nodig?
+
+1. Arduino Nano RP2040 Connect
+2. Afstandssensor type **RCWL-1601**
+
+![De afstandssensor RCWL-1601 met twee ronde zilveren ogen en vier pinnen](./img/afstandssensor/RCWL-1601.jpg)
+
+De sensor heeft vier pinnen: **VCC**, **Trig**, **Echo** en **GND**.
+
+<details>
+<summary>Controlevraag</summary>
+
+Wat doet de **Trig**-pin?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Via **Trig** stuurt de microcontroller een kort signaaltje. Daardoor zendt de sensor een geluidspuls uit. Via **Echo** komt het antwoord terug.
+
+</details>
 
 ## Aansluiten
 
-![rcwl-1601](nano_rp2040_hcsr04_bb.svg)
-![pinnen_rp2040](/img/pinout_nano_rp2040_connect.png)
+![Aansluitschema van de afstandssensor op de Nano RP2040 Connect](./img/afstandssensor/nano_rp2040_hcsr04_bb.svg)
+![Overzicht van de pinnen van de Arduino Nano RP2040 Connect](/img/pinout_nano_rp2040_connect.png)
 
 - **VCC** van de sensor aan **3.3V**
 - **GND** van de sensor aan **GND**
@@ -27,7 +55,7 @@ while True:
 
 Je krijgt nu elke seconde de afstand in **centimeters** in de Shell te zien.
 
-## Uitleg
+### Uitleg
 
 ```python
 read_distance(19, 18)
