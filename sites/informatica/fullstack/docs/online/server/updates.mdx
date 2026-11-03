@@ -1,0 +1,76 @@
+---
+sidebar_label: '27. Updates vanzelf'
+description: Ubuntu installeert beveiligingsupdates zelf, elke dag. Je kijkt na of dat aanstaat, en herstart als het moet.
+---
+
+# Online zetten: updates vanzelf
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/apt', label: 'Bijwerken met apt'}]} />
+
+## Beveiligingsupdates
+
+Elke week worden er gaten in programma's gevonden en gedicht. Ubuntu kan de beveiligingsupdates zelf installeren, elke dag. Op een server staat dat meestal al aan:
+
+```bash
+cat /etc/apt/apt.conf.d/20auto-upgrades
+```
+
+```text
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+```
+
+Staat er twee keer `"1"`, dan is het goed. Kijk niet naar `systemctl status unattended-upgrades`: die dienst draait altijd, ook als de updates uitstaan. Bestaat het bestand niet, of staat er een `"0"`, kijk dan bij Er gaat iets mis.
+
+Soms is een herstart nodig, bijvoorbeeld na een update van de kern van Linux. Dan staat er een bestand:
+
+```bash
+cat /var/run/reboot-required
+```
+
+```text
+*** System restart required ***
+```
+
+Herstart dan met `sudo reboot`. Docker, dat je in de volgende stap installeert, start daarna vanzelf, en je site ook, door `restart: unless-stopped` uit [les 19](site:fullstack/docs/online/docker/compose).
+
+<Gelukt>
+
+`cat /etc/apt/apt.conf.d/20auto-upgrades` toont twee regels die eindigen op `"1"`:
+
+```text
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+```
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="systemctl status unattended-upgrades zegt active (running). Staan de automatische updates dan aan?">
+  <Keuze uitleg="De dienst draait op elke Ubuntu, ook als de updates uitstaan. Waar staat of hij iets doet?">Ja, want de dienst draait</Keuze>
+  <Keuze goed uitleg="De dienst draait altijd. Of hij updates installeert, staat in 20auto-upgrades.">Dat weet je pas als je in 20auto-upgrades twee keer "1" ziet</Keuze>
+  <Keuze uitleg="unattended-upgrades staat op de meeste servers al aan, maar niet op allemaal. Kijk het na.">Nee, die staan op een nieuwe server altijd uit</Keuze>
+  <Uitleg>
+
+  Een dienst die draait, zegt niet dat hij zijn werk doet. Kijk naar de instelling zelf. Daarom staat in het Gelukt-blok het bestand, en niet de status van de dienst.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Het bestand bestaat niet, of er staat een 0
+
+```text
+cat: /etc/apt/apt.conf.d/20auto-upgrades: No such file or directory
+```
+
+**Oorzaak:** op deze server is `unattended-upgrades` niet geïnstalleerd, nooit ingesteld, of uitgezet.
+
+**Oplossing:** installeer en stel het in, en kijk daarna opnieuw:
+
+```bash
+sudo apt install unattended-upgrades
+sudo dpkg-reconfigure -plow unattended-upgrades
+```
+
+Door naar [les 28: Docker op de server](site:fullstack/docs/online/server/docker).

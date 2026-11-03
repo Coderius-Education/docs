@@ -1,11 +1,9 @@
 ---
-sidebar_label: '3. Een README en je repository'
-description: Je project reist als repository. Een README.md zegt wat het is en hoe je het start, en je controleert dat iemand anders het met alleen je repository aan de praat krijgt.
+sidebar_label: '5. Een README'
+description: Je project reist als repository. Een README.md zegt wat het is en hoe je het start.
 ---
 
-# Online zetten: een README en je repository
-
-<Voorkennis items={[{site: 'editor', to: '/git/pull-clone/stap-3-clone', label: 'Een project klonen'}]} />
+# Online zetten: een README
 
 Je project gaat straks naar een server. Het gaat niet als zip en niet met een USB-stick, maar als **repository** op GitHub: de server haalt het daar op, en elke nieuwe versie ook. Wat niet in je repository staat, komt dus nergens aan. Wat er wel in staat, kan iedereen met toegang lezen.
 
@@ -14,7 +12,7 @@ Een goede repository voor een site bevat:
 | Bestand of map | Waarom |
 |:---|:---|
 | `main.py`, `templates/`, `static/` | je site zelf |
-| `requirements.txt` | welke packages hij nodig heeft ([les 2](site:fullstack/docs/online/project/requirements)) |
+| `requirements.txt` | welke packages hij nodig heeft ([les 4](site:fullstack/docs/online/project/requirements)) |
 | `.gitignore` | wat er bewust niet in komt: `.venv`, `__pycache__` en je databases ([Een .gitignore en een nette zip](site:fullstack/docs/veiligheid/zichtbaar/gitignore)) |
 | `README.md` | wat het is en hoe je het start |
 
@@ -69,9 +67,15 @@ git push
 
 Open je repository op GitHub. Onder de lijst met bestanden staat je README, opgemaakt: de titel groot, de stappen genummerd, de commando's in een grijs vak.
 
-Naast de naam van je repository staat **Public** of **Private**. Allebei is goed. Een openbare repository kan iedereen lezen, dus er hoort nooit een wachtwoord in. Een privé repository kan de server straks alleen ophalen met een eigen sleutel; dat regel je in [les 13](site:fullstack/docs/online/server/site).
+Naast de naam van je repository staat **Public** of **Private**. Allebei is goed. Een openbare repository kan iedereen lezen, dus er hoort nooit een wachtwoord in. Een privé repository kan de server straks alleen ophalen met een eigen sleutel; dat regel je in [les 29](site:fullstack/docs/online/server/ophalen).
 
 Kijk ook naar de lijst zelf. Er staan `main.py`, `requirements.txt`, `README.md`, `.gitignore`, `static` en `templates`. Er staan geen `.db`-bestanden, geen `.venv` en geen `__pycache__`. Staat er toch zo'n bestand, haal het dan uit git zoals in [Een .gitignore en een nette zip](site:fullstack/docs/veiligheid/zichtbaar/gitignore).
+
+<Gelukt>
+
+Op de pagina van je repository op GitHub staat onder de lijst met bestanden je README, opgemaakt: de titel groot, de stappen genummerd. In de lijst staan geen `.db`-bestanden en geen `.venv`.
+
+</Gelukt>
 
 <Voorspel soort="Controlevraag" vraag="Een klasgenoot kloont je repository en volgt je README stap voor stap. Hij opent zijn browser. Wat ziet hij in het gastenboek?">
   <Keuze uitleg="De berichten staan in gastenboek.db. Zit dat bestand in je repository?">Jouw berichten en die van je bezoekers</Keuze>
@@ -123,22 +127,4 @@ Gebruik het voorbeeld van boven als begin, en pas het aan op jouw site. Heb je p
 
 </details>
 
-### Opdracht 2: Run - Volg je eigen README
-
-Kloon je repository in een nieuwe, lege map op je laptop, en volg je README alsof je het project nooit eerder zag. Werkt het? Beter nog: laat een klasgenoot het doen, zonder dat je helpt.
-
-<details>
-<summary>Tip</summary>
-
-In VS Code haal je een repository op met **Git: Clone** uit de Command Palette. Kies een andere map dan die van je project.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Werkt het, dan staat alles wat je site nodig heeft in je repository. Loop je vast, dan ontbreekt er iets: een package in `requirements.txt` (`ModuleNotFoundError`), een map die niet in git staat, of een stap in je README. Los het op in je project, commit, en probeer het opnieuw in een verse map. De server haalt je project straks net zo op: met alleen wat in je repository staat.
-
-</details>
-
-Door naar [les 4: Docker installeren](site:fullstack/docs/online/docker/installeren).
+Door naar [les 6: je project in een verse map](site:fullstack/docs/online/project/proef).

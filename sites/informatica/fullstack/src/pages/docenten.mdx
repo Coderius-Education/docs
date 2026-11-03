@@ -169,18 +169,19 @@ De beloofde uitvoer en foutmeldingen in deze reeks draaien niet mee in CI, die a
 
 ### De route Online zetten
 
-Een eigen route in de navbar, na Veiligheid: je leerlingen zetten hun gastenboek op een Linux-server, op een veilige manier, met Docker. De route heeft drie delen en een extra.
+Een eigen route in de navbar, na Veiligheid: je leerlingen zetten hun gastenboek op een Linux-server, op een veilige manier, met Docker. De route heeft vier delen en een extra, in 38 kleine stappen. Elke stap doet één ding en eindigt met een groen blok *Gelukt als je dit ziet*: een concrete waarneming, en een vinkje *Het werkt* dat de browser van de leerling onthoudt (alleen daar, in `localStorage`). De kaart op de startpagina van de route zet een vinkje achter elke gelukte stap. Daarna volgt één controlevraag, zodat je leerling niet alleen ziet dát het werkt maar ook snapt waarom.
 
 | Deel | Waar | Lessen |
 |:---|:---|:---|
-| Je project klaarmaken | laptop, VS Code | `fastapi dev` of `fastapi run`, `requirements.txt`, een README en een repository die een ander aan de praat krijgt |
+| Op Windows | laptop, VS Code | je site met `fastapi run`, dat hij niet herlaadt, waar hij luistert, `requirements.txt`, een README, en je project in een verse map |
+| In Linux | Ubuntu in WSL | git en de ssh-sleutel in Ubuntu, je project klonen, een virtual environment, je site met `fastapi run` in Linux, en pushen vanuit Ubuntu |
 | In een container | Ubuntu in WSL | Docker installeren, een image, een container, niet als `root`, een volume, Compose, Traefik als voordeur |
 | Op een echte server | een VPS | ssh alleen met een sleutel, de firewall en automatische updates, de site erop met een deploy key, HTTPS via Let's Encrypt, een nieuwe versie uitrollen met een healthcheck, een back-up maken en terugzetten, de images bijwerken met `--pull` en opruimen |
 | Extra | de server, en via een ssh-tunnel | Portainer om de containers in de browser te bekijken, en een back-up elke nacht met cron |
 
 De route legt geen Linux uit. Terminal, rechten, `sudo apt`, `nano`, diensten en `ssh` staan in de [Linux-cursus](site:linux/docs), en elke les linkt naar de Linux-les die hij nodig heeft. Laat leerlingen die cursus eerst doen, minstens tot en met de lessen over WSL en ssh.
 
-Vanaf les 5 werken leerlingen alleen nog in Ubuntu in WSL: ze klonen hun repository daar met ssh (de sleutel uit de Linux-cursus staat op hun GitHub-account), openen hem met `code .` vanuit Ubuntu, en testen hun site in Docker. De kopie op Windows gebruiken ze niet meer; de databases die daar staan, komen niet mee. Docker draait in de lessen als Docker Engine in Ubuntu in WSL, met de pakketten van Ubuntu (`docker.io`, `docker-compose-v2`, `docker-buildx`), en niet als Docker Desktop. Zo is het op de laptop hetzelfde als op de server, en is er geen licentievraag. Leerlingen komen in de groep `docker`; zeg erbij dat dat bijna `root` is. Docker Hub geeft per internetadres een beperkt aantal images per uur, en op school deelt de hele klas één adres. Haal met de klas niet tegelijk images op, of laat leerlingen een gratis account maken en `docker login` doen.
+Vanaf les 7 werken leerlingen alleen nog in Ubuntu in WSL: ze klonen hun repository daar met ssh (de sleutel uit de Linux-cursus staat op hun GitHub-account), openen hem met `code .` vanuit Ubuntu, laten hun site eerst met `fastapi run` in Linux draaien, zonder Docker, en pas daarna in Docker. Zo is elke overstap één ding: eerst een ander besturingssysteem, dan een container. De kopie op Windows gebruiken ze niet meer; de databases die daar staan, komen niet mee. Docker draait in de lessen als Docker Engine in Ubuntu in WSL, met de pakketten van Ubuntu (`docker.io`, `docker-compose-v2`, `docker-buildx`), en niet als Docker Desktop. Zo is het op de laptop hetzelfde als op de server, en is er geen licentievraag. Leerlingen komen in de groep `docker`; zeg erbij dat dat bijna `root` is. Docker Hub geeft per internetadres een beperkt aantal images per uur, en op school deelt de hele klas één adres. Haal met de klas niet tegelijk images op, of laat leerlingen een gratis account maken en `docker login` doen.
 
 Voor het derde deel is een server nodig. Een VPS bij een hostingbedrijf kost een paar euro per maand, en een domeinnaam is nodig voor HTTPS. Zeg erbij dat een server op internet binnen een uur bezoek krijgt van programma's die proberen in te loggen: les 11 laat dat zien, en les 12 doet er iets aan. Laat les 12 daarom op dezelfde dag als les 11 doen, en voordat de site erop komt.
 

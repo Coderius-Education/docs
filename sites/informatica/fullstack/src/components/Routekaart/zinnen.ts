@@ -51,8 +51,10 @@ export const ZINNEN: Record<string, string> = {
   'Beveilig je eigen project': 'Eén lijst om je gastenboek of eigen project mee na te lopen.',
 
   // Online zetten
-  'Je project klaarmaken':
-    'Je project start zoals op een server, en een ander krijgt het met alleen je repository aan de praat.',
+  'Op Windows':
+    'Je site draait met fastapi run, je snapt wat er anders is, en je project start met alleen je repository.',
+  'In Linux':
+    'Je site draait met fastapi run in Ubuntu, en je werkt vanaf hier alleen nog daar.',
   'In een container':
     'Je site draait in Docker op je laptop, niet als root, met de berichten in een volume, achter een voordeur.',
   'Op een echte server':
@@ -63,6 +65,9 @@ export const ZINNEN: Record<string, string> = {
 
 // Een mijlpaal staat onder een etappe: hier heb je iets wat werkt.
 export const MIJLPALEN: Record<string, string> = {
+  'Op Windows': 'Hier werkt je site met fastapi run op Windows.',
+  'In Linux': 'Hier werkt je site in Linux.',
+  'In een container': 'Hier werkt je site in Docker, achter een voordeur.',
   Accounts: 'Hier werkt je gastenboek. Wat hierna komt, maakt het mooier, maar is niet nodig.',
   'Beveilig je eigen project': 'Hier is je gastenboek beschermd.',
   'Op een echte server': 'Hier staat je gastenboek online.',

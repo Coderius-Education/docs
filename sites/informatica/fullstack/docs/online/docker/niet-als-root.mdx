@@ -1,5 +1,5 @@
 ---
-sidebar_label: '7. Niet als root'
+sidebar_label: '17. Niet als root'
 description: In een container draait je site standaard als root. Met USER draait hij als een gewone gebruiker, en dan krijgen de databases een eigen map die van die gebruiker is.
 ---
 
@@ -33,7 +33,7 @@ USER app
 
 `useradd --system` maakt een gebruiker `app` zonder wachtwoord en zonder thuismap: niemand logt als hem in. `USER app` zegt dat alles hierna als `app` draait, ook de `CMD`.
 
-<Voorspel soort="Controlevraag" vraag="Je bouwt het image opnieuw met USER app, start een container, en registreert een account. Wat gebeurt er?">
+<Voorspel vraag="Je bouwt het image opnieuw met USER app, start een container, en registreert een account. Wat gebeurt er?">
   <Keuze uitleg="Kijk naar waar de databases komen: in /app, de map waar de server staat. Van wie is die map?">Het werkt zoals eerst, maar nu als app</Keuze>
   <Keuze goed uitleg="De databases komen in /app, en die map is van root. Een nieuw bestand maken is schrijven in de map, en dat mag app niet.">Een 500: de server mag de database niet aanmaken</Keuze>
   <Keuze uitleg="De container start wel: fastapi run hoeft niets te schrijven om te starten. Het gaat mis bij het eerste verzoek dat een database opent.">De container start niet, want app mag main.py niet lezen</Keuze>
@@ -67,7 +67,7 @@ os.makedirs("data", exist_ok=True)
 app = FastAPI()
 ```
 
-SqliteDict maakt een bestand, maar geen map. Zonder die regel start je project met `fastapi dev` niet meer, zoals je README het belooft.
+SqliteDict maakt een bestand, maar geen map. Zonder die regel start je project zonder Docker niet meer, zoals in [les 11](site:fullstack/docs/online/linux/run).
 
 **2. In de Dockerfile** maak je de map, en geef je hem aan `app`. Verander de `RUN` van hierboven:
 
@@ -115,7 +115,30 @@ docker run -d --name gastenboek -p 8000:8000 gastenboek
 docker exec gastenboek whoami
 ```
 
-Nu staat er `app`. Registreer een account, en kijk met `docker exec gastenboek ls -l data` waar de databases staan, en van wie ze zijn.
+<Gelukt>
+
+`docker exec gastenboek whoami` zegt nu:
+
+```text
+app
+```
+
+En in je gastenboek op `http://127.0.0.1:8000` kun je een account maken en een bericht schrijven, zonder 500.
+
+</Gelukt>
+
+Kijk met `docker exec gastenboek ls -l data` waar de databases staan, en van wie ze zijn.
+
+<Voorspel soort="Controlevraag" vraag="Je start je project weer zonder Docker, in Ubuntu met fastapi run, zoals in les 11. Waar komen de databases nu?">
+  <Keuze uitleg="SqliteDict maakt geen map, maar je zette er een regel bij die dat wel doet. Welke?">Nergens: de site geeft een fout, want de map data bestaat in je project niet</Keuze>
+  <Keuze goed uitleg="Elke SqliteDict schrijft nu naar data/, en os.makedirs maakt die map als hij er nog niet is, ook in je project.">In een map data in je project, die os.makedirs maakt</Keuze>
+  <Keuze uitleg="USER en de map in de Dockerfile gelden alleen in het image. Zonder Docker leest niemand de Dockerfile.">In /app/data, zoals in de container</Keuze>
+  <Uitleg>
+
+  De drie veranderingen werken samen: `main.py` zoekt de databases in `data/`, de Dockerfile maakt die map in het image, en `os.makedirs` maakt hem overal anders. Daarom draait je project ook zonder Docker nog, en hoort `data/` in `.dockerignore`: je testdatabases uit die map mogen niet mee het image in.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
@@ -179,4 +202,4 @@ touch: cannot touch 'main.py': Permission denied
 
 </details>
 
-Door naar [les 8: je berichten bewaren](site:fullstack/docs/online/docker/volume).
+Door naar [les 18: je berichten bewaren](site:fullstack/docs/online/docker/volume).

@@ -1,0 +1,76 @@
+---
+sidebar_label: '1. Je site met fastapi run'
+description: Start je site één keer met fastapi run in plaats van fastapi dev. Op een server gaat het straks precies zo.
+---
+
+# Online zetten: je site met fastapi run
+
+Tot nu toe startte je je server met `fastapi dev`. Dat is een server voor jou, de ontwikkelaar (*developer*). Voor bezoekers is er een tweede, en die probeer je nu op je eigen laptop.
+
+## Starten
+
+Open je project in VS Code. Stop de server als hij nog draait (Ctrl+C), en typ in de terminal:
+
+```powershell
+fastapi run main.py
+```
+
+Bovenaan de uitvoer staat:
+
+```text
+ ⚡️ Starting FastAPI in production mode
+ 🌐 Server started at http://0.0.0.0:8000
+```
+
+*Production* is de stand voor echte bezoekers. Bij `fastapi dev` stond daar `development mode`.
+
+De eerste keer opent Windows een venster van de firewall, met de vraag of Python toegang mag hebben tot het netwerk. Klik op **Annuleren**. Je hebt het niet nodig: op je eigen laptop werkt je site toch.
+
+## Openen
+
+Open `http://127.0.0.1:8000` in je browser, net als altijd. Klik niet op het adres in de terminal: `0.0.0.0` is geen adres om naartoe te gaan. Wat het wel betekent, zie je in [les 3](site:fullstack/docs/online/project/adres).
+
+<Gelukt>
+
+Je gastenboek staat in je browser, op `http://127.0.0.1:8000`, en in de terminal staat `production mode`. Je site draait zoals hij straks voor bezoekers draait.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je site draait met fastapi run. Je klikt in de terminal op http://0.0.0.0:8000. Wat gebeurt er?">
+  <Keuze uitleg="0.0.0.0 is geen adres van een computer. Kan de browser er dan naartoe?">Je gastenboek opent, net als op 127.0.0.1</Keuze>
+  <Keuze goed uitleg="0.0.0.0 zegt tegen de server: luister overal. Als adres om naartoe te gaan, bestaat het niet.">De browser zegt dat het adres niet werkt, want 0.0.0.0 is geen plek om naartoe te gaan</Keuze>
+  <Keuze uitleg="De server draait gewoon door. Het probleem zit in het adres dat je opent.">De server stopt, want je opende het verkeerde adres</Keuze>
+  <Uitleg>
+
+  Een server die op `0.0.0.0` luistert, neemt verzoeken aan op elk netwerk van de computer. Jij opent je eigen computer met `127.0.0.1`. In les 3 zie je waarom dat verschil ertoe doet.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Address already in use
+
+```text
+[Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): only one usage of each socket address (protocol/network address/port) is normally permitted
+```
+
+**Oorzaak:** er draait al een server op poort 8000, vaak je eigen `fastapi dev` in een andere terminal.
+
+**Oplossing:** stop die eerst met Ctrl+C, of kies een andere poort met `--port 8001`.
+
+### De pagina op 0.0.0.0 laadt niet
+
+Je klikte op `http://0.0.0.0:8000` in de terminal, en de browser zegt dat het adres ongeldig is of niet bereikbaar.
+
+**Oorzaak:** `0.0.0.0` betekent voor een server "luister overal". Als adres om naartoe te gaan, bestaat het niet.
+
+**Oplossing:** open `http://127.0.0.1:8000`.
+
+### Je klikte op Toegang toestaan
+
+**Oorzaak:** bij de eerste `fastapi run` vroeg de firewall van Windows of Python het netwerk op mag, en je stond het toe. Nu kan iedereen op hetzelfde wifi bij je site als hij draait met `fastapi run`.
+
+**Oplossing:** start je site op je laptop met `--host 127.0.0.1` ([les 3](site:fullstack/docs/online/project/adres)), of met `fastapi dev`. Wil je de toestemming intrekken, zoek dan in het startmenu naar **Een app toestaan via Windows Firewall** en haal de vinkjes bij Python weg.
+
+Door naar [les 2: fastapi run herlaadt niet](site:fullstack/docs/online/project/herstarten).

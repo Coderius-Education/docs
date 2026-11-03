@@ -1,79 +1,11 @@
 ---
-sidebar_label: '10. Een voordeur met Traefik'
-description: Traefik ontvangt bezoekers op poort 80 en geeft elk verzoek door aan de container die bij de naam hoort. Je site zelf heeft geen poort meer naar buiten.
+sidebar_label: '21. Je site achter Traefik'
+description: Met labels zet je je site achter de voordeur, zonder eigen poort naar buiten, en met FORWARDED_ALLOW_IPS ziet je site het echte adres van een bezoeker.
 ---
 
-# Online zetten: een voordeur met Traefik
+# Online zetten: je site achter Traefik
 
-<Voorkennis items={[{site: 'linux', to: '/docs/terminal/maken', label: 'Een map maken met mkdir'}, {site: 'linux', to: '/docs/wsl/nano', label: 'Een bestand maken met nano'}]} />
-
-Een bezoeker typt een naam zonder poortnummer: `http://…` gaat naar poort 80, `https://…` naar poort 443. Op een server draaien vaak meer sites, en ze kunnen niet allemaal poort 80 hebben. Daarom staat er één programma op poort 80 en 443 dat elk verzoek doorgeeft aan de juiste site: een **reverse proxy**, de voordeur van je server.
-
-```text
-browser van de bezoeker  →  Traefik, op poort 80 en 443  →  de container van jouw site
-```
-
-Hier gebruik je **Traefik**. Het draait zelf in een container, en kijkt bij Docker welke andere containers er zijn. Een container die een paar **labels** heeft (regels met instellingen), krijgt vanzelf een plek achter de voordeur. Op de server regelt Traefik ook HTTPS, in [les 14](site:fullstack/docs/online/server/https).
-
-## Een netwerk voor de voordeur
-
-Traefik en je site moeten elkaar kunnen bereiken. Daarvoor maak je één keer een netwerk van Docker, `web`:
-
-```bash
-docker network create web
-```
-
-Elke container in `web` kan de andere bereiken, en containers buiten `web` niet.
-
-## Traefik starten
-
-De voordeur hoort niet bij één site, dus hij krijgt een eigen map, naast je project:
-
-```bash
-mkdir ~/traefik
-cd ~/traefik
-nano compose.yaml
-```
-
-```yaml
-services:
-  traefik:
-    image: traefik:v3
-    command:
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --entrypoints.web.address=:80
-    ports:
-      - "80:80"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - web
-    restart: unless-stopped
-
-networks:
-  web:
-    external: true
-```
-
-| Regel | Betekenis |
-|:---|:---|
-| `image: traefik:v3` | geen Dockerfile: Docker haalt Traefik van Docker Hub |
-| `--providers.docker=true` | kijk bij Docker welke containers er zijn |
-| `--providers.docker.exposedbydefault=false` | alleen containers met `traefik.enable=true` komen achter de voordeur |
-| `--entrypoints.web.address=:80` | een ingang met de naam `web`, op poort 80 |
-| `/var/run/docker.sock:…:ro` | hierlangs vraagt Traefik aan Docker welke containers er zijn |
-| `external: true` | het netwerk `web` bestaat al, maak het niet opnieuw |
-
-```bash
-docker compose up -d
-```
-
-Open `http://localhost` op Windows. Traefik antwoordt met `404 page not found`: de voordeur staat, maar er is nog geen site achter.
-
-:::caution[Toegang tot Docker]
-Met `docker.sock` kan Traefik Docker alles vragen, en `:ro` verandert daar weinig aan. Geef die toegang daarom alleen aan een programma dat je vertrouwt en bijhoudt, zoals Traefik zelf.
-:::
+De voordeur uit [les 20](site:fullstack/docs/online/docker/voordeur) staat. Nu zet je je site erachter. Daarna is Traefik de enige deur naar buiten.
 
 ## Je site achter de voordeur
 
@@ -114,7 +46,13 @@ cd ~/gastenboek
 docker compose up -d --build
 ```
 
-Open `http://gastenboek.localhost`. Een naam die eindigt op `.localhost` wijst in je browser altijd naar je eigen computer. Traefik ziet welke naam je typte, en geeft het verzoek aan je site.
+Open `http://gastenboek.localhost`. Traefik ziet welke naam je typte, en geeft het verzoek aan je site.
+
+<Gelukt>
+
+Op `http://gastenboek.localhost` staat je gastenboek, met je berichten uit [les 19](site:fullstack/docs/online/docker/compose): het volume is hetzelfde. Waar eerst `404 page not found` stond, antwoordt nu je site.
+
+</Gelukt>
 
 ## Wie is de bezoeker?
 
@@ -153,52 +91,23 @@ Traefik antwoordt met `Bad Gateway`.
 
 **Oplossing:** controleer `server.port=8000`, en kijk met `docker compose logs` in je project of je site draait.
 
-### client version 1.24 is too old
-
-In het logboek van Traefik staat steeds:
-
-```text
-Error response from daemon: client version 1.24 is too old. Minimum supported API version is 1.40, please upgrade your client to a newer version
-```
-
-**Oorzaak:** een oude versie van Traefik, zoals `traefik:v3.5`, praat met Docker op een manier die Docker 29 niet meer kent.
-
-**Oplossing:** gebruik `image: traefik:v3`, en haal de nieuwste op met `docker compose pull` en `docker compose up -d`.
-
-### network web declared as external, but could not be found
-
-**Oorzaak:** het netwerk `web` bestaat niet.
-
-**Oplossing:** `docker network create web`, en daarna opnieuw `docker compose up -d`.
-
-### address already in use
-
-```text
-failed to bind host port 0.0.0.0:80/tcp: address already in use
-```
-
-**Oorzaak:** een ander programma heeft poort 80 al. Vaak is het nginx uit [Diensten](site:linux/docs/wsl/diensten) in de Linux-cursus.
-
-**Oplossing:** zet het uit met `sudo systemctl disable --now nginx`, en start Traefik opnieuw.
-
 ## Opdrachten
 
-### Opdracht 1: Run - Je site achter de voordeur
+### Opdracht 1: Run - Eén deur
 
-Start Traefik, zet je site erachter, en open `http://gastenboek.localhost`. Controleer dat `http://127.0.0.1:8000` niet meer werkt.
+Controleer dat `http://127.0.0.1:8000` niet meer werkt, en zet de veranderde `compose.yaml` in git.
 
 <details>
 <summary>Antwoord</summary>
 
 ```bash
-docker network create web
-cd ~/traefik
-docker compose up -d
 cd ~/gastenboek
-docker compose up -d --build
+git add compose.yaml
+git commit -m "Achter Traefik"
+git push
 ```
 
-Op `http://gastenboek.localhost` staat je gastenboek, met je berichten uit de vorige les: het volume is hetzelfde. Op poort 8000 antwoordt niemand. Zet de veranderde `compose.yaml` in git.
+Op poort 8000 antwoordt niemand meer: zonder `ports` is er geen deur van je computer naar de container.
 
 </details>
 
@@ -230,4 +139,4 @@ Je ziet onder andere `X-Forwarded-For` en `X-Real-Ip`, met het adres waarvan jou
 
 </details>
 
-Door naar [les 11: een server huren en inloggen](site:fullstack/docs/online/server/huren).
+Door naar [les 22: een server huren](site:fullstack/docs/online/server/huren).

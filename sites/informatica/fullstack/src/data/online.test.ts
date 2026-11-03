@@ -58,6 +58,7 @@ describe('de route Online zetten', () => {
     expect([...lessen, 'online/index'].sort()).toEqual(bestanden(ONLINE).map(idVan).sort());
     expect(delen.map((d) => [...new Set(d.items.map((id) => id.split('/')[1]))])).toEqual([
       ['project'],
+      ['linux'],
       ['docker'],
       ['server'],
       ['extra'],
@@ -78,23 +79,55 @@ describe('de route Online zetten', () => {
     expect(lessen.filter((id) => /^(readme|index)$/i.test(id.split('/').at(-1) ?? ''))).toEqual([]);
   });
 
-  it('elke les: één controlevraag vóór de opdrachten, Er gaat iets mis, en een antwoord per opdracht', () => {
+  // Elke les is één stap met een succesmoment: wat je ziet als het werkt
+  // (<Gelukt>, met een vinkje dat de Routekaart toont), en daarna één
+  // controlevraag die laat zien dat je snapt waarom. Opdrachten mogen, maar
+  // hoeven niet. Eerst eindigde een les met opdrachten, en had hij drie of
+  // vier nieuwe dingen in duizend woorden; de opdrachtgever vond de stappen
+  // te groot.
+  it('elke les: één Gelukt-blok, daarna één controlevraag, Er gaat iets mis, en een antwoord per opdracht', () => {
     const fout: string[] = [];
     for (const id of lessen) {
       const tekst = lees(id);
-      const opdrachten = tekst.indexOf('\n## Opdrachten');
+      const mis = tekst.indexOf('\n## Er gaat iets mis\n');
+      const gelukt = [...tekst.matchAll(/^<Gelukt>$/gm)];
       const vragen = [...tekst.matchAll(/<Voorspel soort="Controlevraag"/g)];
-      if (vragen.length !== 1 || (vragen[0].index ?? 0) > opdrachten)
-        fout.push(`${id}: controlevraag`);
-      if (!tekst.includes('\n## Er gaat iets mis\n')) fout.push(`${id}: Er gaat iets mis`);
-      const blokken = tekst.slice(opdrachten).split('\n### Opdracht ').slice(1);
-      if (blokken.length === 0) fout.push(`${id}: geen opdracht`);
-      blokken.forEach((blok, i) => {
-        if (!blok.startsWith(`${i + 1}: `))
-          fout.push(`${id}: opdracht ${i + 1} heeft een ander nummer`);
-        if (!blok.includes('<summary>Antwoord</summary>'))
-          fout.push(`${id}: opdracht ${i + 1} zonder antwoord`);
-      });
+      if (mis === -1) fout.push(`${id}: Er gaat iets mis`);
+      if (gelukt.length !== 1) fout.push(`${id}: ${gelukt.length} Gelukt-blokken`);
+      if (vragen.length !== 1) fout.push(`${id}: ${vragen.length} controlevragen`);
+      const g = gelukt[0]?.index ?? -1;
+      const v = vragen[0]?.index ?? -1;
+      if (!(g < v && v < mis)) fout.push(`${id}: eerst Gelukt, dan de controlevraag, dan Er gaat iets mis`);
+      const opdrachten = tekst.indexOf('\n## Opdrachten');
+      if (opdrachten === -1) continue;
+      tekst
+        .slice(opdrachten)
+        .split('\n### Opdracht ')
+        .slice(1)
+        .forEach((blok, i) => {
+          if (!blok.startsWith(`${i + 1}: `))
+            fout.push(`${id}: opdracht ${i + 1} heeft een ander nummer`);
+          if (!blok.includes('<summary>Antwoord</summary>'))
+            fout.push(`${id}: opdracht ${i + 1} zonder antwoord`);
+        });
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('elke stap is klein: hooguit 450 woorden uitleg vóór Er gaat iets mis', () => {
+    const fout: string[] = [];
+    for (const id of lessen) {
+      const tekst = lees(id);
+      const kop = tekst.split('\n---\n').slice(1).join('\n---\n');
+      const uitleg = kop
+        .slice(0, kop.indexOf('\n## Er gaat iets mis\n'))
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '')
+        .replace(/<details>[\s\S]*?<\/details>/g, '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/^\|.*$/gm, '');
+      const woorden = uitleg.split(/\s+/).filter((w) => /\p{L}/u.test(w)).length;
+      if (woorden > 450) fout.push(`${id}: ${woorden} woorden`);
     }
     expect(fout).toEqual([]);
   });

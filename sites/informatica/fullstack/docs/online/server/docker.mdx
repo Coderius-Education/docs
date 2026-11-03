@@ -1,0 +1,90 @@
+---
+sidebar_label: '28. Docker op de server'
+description: Dezelfde Docker als in WSL, sam in de groep docker, en een grens aan de logboeken voordat de eerste container start.
+---
+
+# Online zetten: Docker op de server
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/diensten', label: 'Een dienst herstarten met systemctl'}]} />
+
+Op je laptop draait alles in Docker. Op de server doe je hetzelfde, met dezelfde bestanden. Je typt de commando's in deze stap op de server, als `sam`.
+
+## Docker op de server
+
+Installeer Docker zoals in [les 13](site:fullstack/docs/online/docker/installeren), en zet `sam` in de groep `docker` zoals in [les 14](site:fullstack/docs/online/docker/toegang):
+
+```bash
+sudo apt update
+sudo apt install docker.io docker-compose-v2 docker-buildx git
+sudo usermod -aG docker sam
+exit
+```
+
+Log opnieuw in met ssh, zodat de groep telt. Op de server zit alleen `sam` in die groep: wie erin zit, is bijna `root`.
+
+## Logboeken met een grens
+
+Docker bewaart alles wat een container print, en je site print een regel voor elke bezoeker. Zonder grens groeit dat logboek maanden door, tot de schijf vol is en je site stopt. Geef Docker een grens voordat je de eerste container start:
+
+```bash
+sudo nano /etc/docker/daemon.json
+```
+
+```json
+{
+  "log-driver": "local"
+}
+```
+
+Start Docker daarna opnieuw, en kijk of hij de instelling kent:
+
+```bash
+sudo systemctl restart docker
+docker info --format '{{.LoggingDriver}}'
+```
+
+Er staat `local`. Die manier van bewaren houdt per container hoogstens vijf bestanden van 20 MB bij, en gooit het oudste weg als ze vol zijn. Hij geldt alleen voor containers die Docker daarna maakt. Daarom doe je het nu, voordat er een container is.
+
+<Gelukt>
+
+`docker info --format '{{.LoggingDriver}}'` zegt `local`, en `groups` toont `docker` tussen je groepen.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je zet daemon.json pas als je site al een maand draait, en herstart Docker. docker info zegt local. Heeft het logboek van je site nu een grens?">
+  <Keuze uitleg="docker info toont wat Docker voor nieuwe containers gebruikt. Wanneer werd je container gemaakt?">Ja, want docker info zegt local</Keuze>
+  <Keuze goed uitleg="De log-driver geldt alleen voor containers die Docker daarna maakt. De container van je site bestond al, en houdt zijn oude manier.">Nee, pas als Docker de container opnieuw maakt</Keuze>
+  <Keuze uitleg="Docker kan het logboek van een draaiende container wel begrenzen, maar alleen bij het maken van de container.">Nee, een grens kan alleen bij het installeren van Docker</Keuze>
+  <Uitleg>
+
+  Een container krijgt zijn manier van loggen bij het maken. Daarom zet je `daemon.json` nu, voordat er een container op de server staat. Een nieuwe versie uitrollen maakt de container ook opnieuw, en dan krijgt hij de grens alsnog.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Job for docker.service failed
+
+```text
+Job for docker.service failed because the control process exited with error code.
+See "systemctl status docker.service" and "journalctl -xeu docker.service" for details.
+```
+
+**Oorzaak:** er zit een fout in `/etc/docker/daemon.json`, en dan start Docker niet. Met `sudo journalctl -u docker` zie je welke:
+
+```text
+unable to configure the Docker daemon with file /etc/docker/daemon.json: invalid JSON: invalid character '}' looking for beginning of object key string
+```
+
+Hier staat een komma te veel achter de laatste regel. JSON is strenger dan Python: een komma alleen tussen twee regels, en aanhalingstekens altijd dubbel.
+
+**Oplossing:** verbeter het bestand met `sudo nano /etc/docker/daemon.json`, en start Docker opnieuw met `sudo systemctl restart docker`.
+
+### permission denied while trying to connect to the docker API
+
+**Oorzaak:** `sam` zit nog niet in de groep `docker`, of je logde daarna niet opnieuw in.
+
+**Oplossing:** typ `exit`, log opnieuw in met ssh, en kijk met `groups` of `docker` erbij staat.
+
+Door naar [les 29: je project ophalen](site:fullstack/docs/online/server/ophalen).

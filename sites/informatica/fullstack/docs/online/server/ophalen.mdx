@@ -1,0 +1,64 @@
+---
+sidebar_label: '29. Je project ophalen'
+description: De server haalt je project van GitHub met een eigen deploy key, die alleen dit project mag lezen.
+---
+
+# Online zetten: je project ophalen
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'Een sleutelpaar maken met ssh-keygen'}]} />
+
+Je code staat op GitHub. Nu haalt de server hem daar op, net zoals je hem in Ubuntu op je laptop kloonde.
+
+## Je project ophalen
+
+Op de server push je nooit; hij haalt alleen op. Is je repository openbaar, kloon hem dan met het https-adres: ophalen mag dan zonder inloggen. Is hij privé, geef de server dan een eigen sleutel die alleen dit project mag lezen: een **deploy key**. Je eigen sleutel uit [les 8](site:fullstack/docs/online/linux/sleutel) zet je hier niet neer: die mag al je repositories veranderen.
+
+```bash
+ssh-keygen -t ed25519
+cat ~/.ssh/id_ed25519.pub
+```
+
+Druk bij de vragen op Enter. Een passphrase laat je leeg: de server moet de sleutel kunnen gebruiken als jij er niet bij bent. Zet de publieke sleutel op GitHub bij je repository onder **Settings**, **Deploy keys**, en laat **Allow write access** uit. Kloon daarna met het ssh-adres:
+
+```bash
+cd ~
+git clone git@github.com:sam/gastenboek.git
+```
+
+De eerste keer vraagt ssh of je de vingerafdruk van GitHub vertrouwt; typ `yes`. Wordt je server ooit gekraakt, dan kan deze sleutel alleen dit ene project lezen, en niets veranderen.
+
+<Gelukt>
+
+`ls ~/gastenboek` op de server toont je project, met onder andere:
+
+```text
+Dockerfile  README.md  compose.yaml  main.py  requirements.txt  static  templates
+```
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Iemand kraakt je server en vindt de deploy key in ~/.ssh. Wat kan hij daarmee op GitHub?">
+  <Keuze uitleg="Een deploy key hoort bij één repository, niet bij je account.">Al je repositories lezen en veranderen</Keuze>
+  <Keuze goed uitleg="Een deploy key hoort bij één repository, en je liet Allow write access uit. Hij kan dit ene project lezen, en niets veranderen.">Alleen dit ene project lezen</Keuze>
+  <Keuze uitleg="De sleutel staat er zonder passphrase, zodat de server hem zelf kan gebruiken. Wie de server heeft, kan hem dus ook gebruiken.">Niets, want de sleutel heeft een passphrase</Keuze>
+  <Uitleg>
+
+  Daarom krijgt de server een eigen sleutel, en niet de jouwe. Jouw sleutel mag al je repositories veranderen; die blijft op je laptop.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### `Permission denied (publickey)` bij git clone
+
+```text
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+```
+
+**Oorzaak:** GitHub kent de sleutel van de server niet. De deploy key staat er niet, of bij een andere repository.
+
+**Oplossing:** kijk op GitHub onder **Settings**, **Deploy keys** van deze repository of de sleutel er staat, en of het dezelfde is als `cat ~/.ssh/id_ed25519.pub` laat zien.
+
+Door naar [les 30: je site op internet](site:fullstack/docs/online/server/site).

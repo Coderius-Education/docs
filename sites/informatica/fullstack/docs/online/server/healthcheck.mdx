@@ -1,0 +1,84 @@
+---
+sidebar_label: '33. Draait hij echt?'
+description: Een healthcheck laat Docker zelf je homepage opvragen. Traefik stuurt pas bezoekers naar een container die gezond is.
+---
+
+# Online zetten: draait hij echt?
+
+Na een nieuwe versie zegt `docker compose ps` `Up`. Nu laat je Docker ook nakijken of je site antwoordt.
+
+## Een healthcheck
+
+`Up` betekent alleen dat het programma in de container draait. Of je site ook antwoordt, weet Docker niet. Een site die bij elk verzoek een 500 geeft, staat ook op `Up`. Met een **healthcheck** vraagt Docker zelf elke dertig seconden je site op. Zet hem in WSL in `compose.yaml`, bij je site, onder `labels`:
+
+```yaml
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/')"]
+      interval: 30s
+      start_period: 30s
+      start_interval: 2s
+```
+
+`test` is het commando dat Docker in de container draait: een regel Python die je homepage opvraagt. Geeft die een fout of geen antwoord, dan is de test mislukt. In het image staat geen `curl`, maar wel Python. `interval` is hoe vaak Docker kijkt, en in de eerste dertig seconden (`start_period`) kijkt hij elke twee seconden (`start_interval`).
+
+Commit en push, en zet de nieuwe versie op de server met de twee stappen. Nu staat er meer bij de status:
+
+```text
+NAME                      STATUS
+gastenboek-gastenboek-1   Up 14 seconds (healthy)
+```
+
+`healthy` betekent: de laatste test lukte. Traefik let erop: een container die nog niet gezond is, krijgt geen bezoekers. Vlak na een nieuwe versie geeft je site daarom twee of drie seconden `404 page not found`, tot de eerste test lukt. In het logboek zie je de test ook, elke dertig seconden een `GET /` van `127.0.0.1`.
+
+<Gelukt>
+
+Direct na `docker compose up -d` staat er `(health: starting)` bij je site, en na een paar seconden:
+
+```text
+NAME                      STATUS
+gastenboek-gastenboek-1   Up 14 seconds (healthy)
+```
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je zet een nieuwe versie op de server. Een bezoeker opent je site op het moment dat docker compose up -d klaar is. Wat ziet hij?">
+  <Keuze uitleg="De nieuwe container draait al, maar is hij al gezond? Naar wie stuurt Traefik bezoekers?">Meteen je site, want de container staat op Up</Keuze>
+  <Keuze goed uitleg="Tot de eerste test lukt, is de container niet gezond, en stuurt Traefik er niemand heen.">Een paar seconden 404 page not found, tot de eerste test lukt</Keuze>
+  <Keuze uitleg="Traefik toont geen eigen wachtpagina. Wat zegt hij als hij geen container voor de naam heeft?">Een pagina van Traefik dat de site even onderhoud heeft</Keuze>
+  <Uitleg>
+
+  Die paar seconden zijn de prijs van de healthcheck. Ervoor krijg je dat een site die bij elk verzoek een 500 geeft, nooit bezoekers krijgt: hij blijft `unhealthy`, en jij ziet het in `docker compose ps`.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### unhealthy
+
+`docker compose ps` toont `(unhealthy)`, en Traefik geeft voor je hele site `404 page not found`.
+
+**Oorzaak:** de healthcheck mislukt. Je homepage geeft een fout, of je site antwoordt niet op poort 8000. Traefik stuurt geen bezoekers naar een container die niet gezond is.
+
+**Oplossing:** open de homepage in de container zelf, en lees de fout:
+
+```bash
+docker compose exec gastenboek python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/')"
+```
+
+Krijg je een traceback met `HTTP Error 500`, kijk dan in `docker compose logs` welke fout je site gaf. Ga zo nodig terug naar de vorige versie, zoals in [les 32](site:fullstack/docs/online/server/nieuwe-versie).
+
+## Opdrachten
+
+### Opdracht 1: Run - Gezond na een nieuwe versie
+
+Zet de healthcheck in je `compose.yaml`, verander een tekst op je homepage, commit en push, en zet de nieuwe versie op je server. Kijk direct na `docker compose up` een paar keer met `docker compose ps`.
+
+<details>
+<summary>Antwoord</summary>
+
+Op je laptop: `git add`, `git commit` en `git push`. Op de server de twee stappen van boven. Eerst staat er `(health: starting)`, na een paar seconden `(healthy)`. Daarna zie je de nieuwe tekst, met de oude berichten eronder.
+
+</details>
+
+Door naar [les 34: een back-up](site:fullstack/docs/online/server/backup).

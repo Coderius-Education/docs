@@ -131,3 +131,18 @@
   font-size: 0.9rem;
   font-weight: 600;
 }
+
+/* Een stap die de leerling met het Gelukt-blok afvinkte. */
+.gelukt {
+  color: var(--ifm-color-success);
+  font-weight: 700;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

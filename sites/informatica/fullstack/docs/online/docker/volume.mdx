@@ -1,11 +1,11 @@
 ---
-sidebar_label: '8. Je berichten bewaren'
+sidebar_label: '18. Je berichten bewaren'
 description: Een volume is opslag buiten de container. Met -v komt de map data daarin, en dan overleven de berichten een docker rm en een nieuw image.
 ---
 
 # Online zetten: je berichten bewaren
 
-Een container gooi je weg zodra er een nieuwe versie is. In [les 6](site:fullstack/docs/online/docker/container) zag je wat er dan met je berichten gebeurt: ze gaan mee. Daarom komen de databases buiten de container, in een **volume**: opslag die Docker los van elke container bewaart.
+Een container gooi je weg zodra er een nieuwe versie is. In [les 16](site:fullstack/docs/online/docker/container) zag je wat er dan met je berichten gebeurt: ze gaan mee. Daarom komen de databases buiten de container, in een **volume**: opslag die Docker los van elke container bewaart.
 
 Sinds de vorige les staan alle databases in één map, `/app/data`. Die map zet je in een volume:
 
@@ -36,7 +36,13 @@ docker rm -f gastenboek
 docker run -d --name gastenboek -p 8000:8000 -v gastenboek-data:/app/data gastenboek
 ```
 
-Je bericht staat er nog, en je kunt inloggen met je account. De container is nieuw, maar de databases kwamen uit het volume.
+<Gelukt>
+
+Je bericht staat er nog, en je kunt inloggen met je account, in een container die je net nieuw startte.
+
+</Gelukt>
+
+De container is nieuw, maar de databases kwamen uit het volume.
 
 Een nieuw volume begint met wat er in het image in die map stond. In je image is `/app/data` een lege map van `app` (uit de vorige les), dus het volume is ook van `app`. Zo mag je site er meteen in schrijven.
 
@@ -112,4 +118,4 @@ Je ziet `gastenboek.db` en `gebruikers.db`, en meer als je site meer databases h
 
 </details>
 
-Door naar [les 9: alles in één bestand](site:fullstack/docs/online/docker/compose).
+Door naar [les 19: alles in één bestand](site:fullstack/docs/online/docker/compose).

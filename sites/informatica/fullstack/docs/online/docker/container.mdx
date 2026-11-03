@@ -1,5 +1,5 @@
 ---
-sidebar_label: '6. Een container draaien'
+sidebar_label: '16. Een container draaien'
 description: docker run start je image als container, -p maakt een poort van buiten bereikbaar, en met ps, logs, stop, start en rm beheer je hem.
 ---
 
@@ -11,7 +11,7 @@ Je image staat klaar. Start er een container van:
 docker run -p 8000:8000 gastenboek
 ```
 
-Je ziet bijna dezelfde regels als bij `fastapi run` op je laptop, met `production mode` en `http://0.0.0.0:8000`. Ze zien er wat kaler uit: Docker geeft de container geen echt scherm, en dan laat fastapi de opmaak weg. Open `http://127.0.0.1:8000` in je browser op Windows: daar is je gastenboek, nu uit een container. Stop hem met Ctrl+C.
+Je ziet bijna dezelfde regels als bij `fastapi run` in [les 11](site:fullstack/docs/online/linux/run), met `production mode` en `http://0.0.0.0:8000`. Ze zien er wat kaler uit: Docker geeft de container geen echt scherm, en dan laat fastapi de opmaak weg. Open `http://127.0.0.1:8000` in je browser op Windows: daar is je gastenboek, nu uit een container. Stop hem met Ctrl+C.
 
 ## Een poort naar buiten
 
@@ -33,10 +33,18 @@ Docker geeft een lange code terug, het nummer van de container, en je prompt is 
 docker ps
 ```
 
+<Gelukt>
+
+`docker ps` toont je container met `Up` bij de status:
+
 ```text
 CONTAINER ID   IMAGE        COMMAND                  CREATED         STATUS         PORTS                    NAMES
 1e4f4be5187f   gastenboek   "fastapi run main.py…"   3 seconds ago   Up 3 seconds   0.0.0.0:8000->8000/tcp   gastenboek
 ```
+
+En op `http://127.0.0.1:8000` in je browser op Windows staat je gastenboek, uit een container die op de achtergrond draait.
+
+</Gelukt>
 
 Bij `PORTS` zie je de deur die `-p` openzette. Wat je site in de terminal zou zetten, lees je nu met `logs`:
 
@@ -114,7 +122,7 @@ docker run -d --name gastenboek -p 8000:8000 gastenboek
 docker logs gastenboek
 ```
 
-Onder de startregels staat een regel per verzoek, met de methode, het pad en de statuscode: `POST /registreer` met `303`, en daarna `GET /gastenboek` met `200`. Het adres vooraan is niet dat van je laptop maar van het netwerk van Docker. Dat komt terug in [les 10](site:fullstack/docs/online/docker/traefik).
+Onder de startregels staat een regel per verzoek, met de methode, het pad en de statuscode: `POST /registreer` met `303`, en daarna `GET /gastenboek` met `200`. Het adres vooraan is niet dat van je laptop maar van het netwerk van Docker. Dat komt terug in [les 21](site:fullstack/docs/online/docker/traefik).
 
 </details>
 
@@ -130,8 +138,8 @@ docker rm -f gastenboek
 docker run -d --name gastenboek -p 8000:8000 gastenboek
 ```
 
-Je gastenboek is leeg, en je account is weg. De databases stonden in de laag van de oude container, en die ging mee met `docker rm`. De nieuwe container begint bij het image, en daarin staan geen databases. Voor een server is dat een probleem: bij elke nieuwe versie gooi je de container weg. In [les 8](site:fullstack/docs/online/docker/volume) zet je de databases daarom buiten de container.
+Je gastenboek is leeg, en je account is weg. De databases stonden in de laag van de oude container, en die ging mee met `docker rm`. De nieuwe container begint bij het image, en daarin staan geen databases. Voor een server is dat een probleem: bij elke nieuwe versie gooi je de container weg. In [les 18](site:fullstack/docs/online/docker/volume) zet je de databases daarom buiten de container.
 
 </details>
 
-Door naar [les 7: niet als root](site:fullstack/docs/online/docker/niet-als-root).
+Door naar [les 17: niet als root](site:fullstack/docs/online/docker/niet-als-root).

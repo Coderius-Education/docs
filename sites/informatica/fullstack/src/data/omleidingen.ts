@@ -64,9 +64,11 @@ export const omleidingen: Omleiding[] = [
   // in WSL zonder Docker (een venv in Linux, een eigen gebruiker, systemd en
   // Caddy) vielen weg; hun adres komt uit bij de les die die taak nu heeft.
   ...Object.entries({
-    'wsl/requirements': 'project/requirements',
-    'wsl/fastapi-run': 'project/dev-of-run',
-    'wsl/project-in-linux': 'docker/image',
+    'wsl/requirements': 'linux/venv',
+    'wsl/fastapi-run': 'linux/run',
+    'wsl/project-in-linux': 'linux/klonen',
+    // December 2026: de route ging naar kleine stappen met een Gelukt-blok.
+    'project/dev-of-run': 'project/run',
     'wsl/eigen-gebruiker': 'docker/niet-als-root',
     'wsl/dienst': 'docker/compose',
     'wsl/voordeur': 'docker/traefik',

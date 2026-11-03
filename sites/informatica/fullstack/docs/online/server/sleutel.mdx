@@ -1,0 +1,85 @@
+---
+sidebar_label: '24. Alleen met een sleutel'
+description: ssh laat geen wachtwoorden meer toe en root mag niet meer inloggen. Je controleert in een tweede terminal dat de deur dicht is en jij er nog in komt.
+---
+
+# Online zetten: alleen met een sleutel
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/nano', label: 'Een bestand in /etc bewerken met sudo nano'}]} />
+
+Met je sleutel kom jij binnen. Maar zolang ssh ook wachtwoorden accepteert, kan een programma er een raden. Zet dat uit, en inloggen als `root` meteen ook.
+
+## De instellingen
+
+Maak als `sam` een eigen bestand met instellingen:
+
+```bash
+sudo nano /etc/ssh/sshd_config.d/00-veilig.conf
+```
+
+```text
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin no
+```
+
+De `00` vooraan doet ertoe. ssh leest de bestanden in die map op alfabet, en de eerste keer dat een instelling voorkomt, telt. Op sommige servers staat er al een bestand, zoals `50-cloud-init.conf`, met `PasswordAuthentication yes`. Jouw bestand komt eerder.
+
+Controleer de instellingen en laad ze:
+
+```bash
+sudo sshd -t
+sudo systemctl reload ssh
+```
+
+Zegt `sshd -t` niets, dan klopt alles.
+
+**Let op:** sluit de terminal waarin je als `sam` bent ingelogd nog niet. Probeer eerst in een tweede terminal of je nog binnenkomt met `ssh sam@203.0.113.10`. Gaat er iets mis, dan herstel je het in de eerste.
+
+<Gelukt>
+
+In een tweede terminal geven deze twee allebei `Permission denied (publickey)`. De tweede probeert het zonder sleutel, dus met een wachtwoord:
+
+```bash
+ssh root@203.0.113.10
+ssh -o PubkeyAuthentication=no sam@203.0.113.10
+```
+
+En `ssh sam@203.0.113.10` laat je nog steeds binnen.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Op je server staat al 50-cloud-init.conf met PasswordAuthentication yes. Je noemt je eigen bestand 99-veilig.conf, met PasswordAuthentication no. Kan iemand nu nog met een wachtwoord inloggen?">
+  <Keuze uitleg="ssh leest de bestanden op alfabet. Welke van de twee komt eerst, en welke telt?">Nee, want het laatste bestand wint</Keuze>
+  <Keuze goed uitleg="50 komt voor 99. De eerste keer dat PasswordAuthentication voorkomt, telt, en daar staat yes.">Ja, want 50-cloud-init.conf komt eerst, en de eerste waarde telt</Keuze>
+  <Keuze uitleg="sshd -t zegt niets over twee waarden voor dezelfde instelling: allebei zijn ze geldig.">Nee, want sshd -t geeft een fout en ssh start niet</Keuze>
+  <Uitleg>
+
+  Daarom heet je bestand `00-veilig.conf`. Controleer het altijd zoals in het Gelukt-blok, met een poging zonder sleutel: aan het bestand alleen zie je niet of het telt.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### sshd -t geeft een fout
+
+```text
+/etc/ssh/sshd_config.d/00-veilig.conf: line 1: Bad configuration option: PaswordAuthentication
+```
+
+**Oorzaak:** een tikfout in je bestand, hier één `s` te weinig.
+
+**Oplossing:** verbeter het bestand en draai `sudo sshd -t` opnieuw. Laad de instellingen pas als hij niets meer zegt; met een fout erin start ssh niet.
+
+### `Permission denied (publickey)` als sam
+
+```text
+sam@203.0.113.10: Permission denied (publickey).
+```
+
+**Oorzaak:** de server kent jouw sleutel niet voor `sam`. Nu wachtwoorden uitstaan, vraagt ssh niet meer om een wachtwoord, maar weigert hij meteen.
+
+**Oplossing:** herstel het in de terminal die nog openstaat, met `chown -R sam:sam /home/sam/.ssh` zoals in [les 23](site:fullstack/docs/online/server/gebruiker).
+
+Door naar [les 25: een naam voor je server](site:fullstack/docs/online/server/naam).

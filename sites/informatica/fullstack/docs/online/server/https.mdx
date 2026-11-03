@@ -1,6 +1,6 @@
 ---
-sidebar_label: '14. Je domein met HTTPS'
-description: Traefik krijgt een ingang op 443, stuurt http door naar https en vraagt zelf een certificaat aan bij Let's Encrypt. Daarna kan je sessie-cookie secure worden.
+sidebar_label: '31. Je domein met HTTPS'
+description: Traefik krijgt een ingang op 443, stuurt http door naar https en vraagt zelf een certificaat aan bij Let's Encrypt.
 ---
 
 import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
@@ -67,9 +67,9 @@ Zonder dat volume vraagt Traefik bij elke herstart een nieuw certificaat aan, en
 docker compose up -d
 ```
 
-Aan je site verandert niets: de labels uit [les 10](site:fullstack/docs/online/docker/traefik) gelden voor beide ingangen. Open `https://gastenboek.voorbeeld.nl` op je telefoon. Je site opent zonder waarschuwing over de verbinding.
+Aan je site verandert niets: de labels uit [les 21](site:fullstack/docs/online/docker/traefik) gelden voor beide ingangen. Open `https://gastenboek.voorbeeld.nl` op je telefoon. Je site opent zonder waarschuwing over de verbinding.
 
-Twee dingen moeten kloppen voordat het lukt: het A-record wijst naar je server ([les 11](site:fullstack/docs/online/server/huren)), en poort 80 en 443 staan open in de firewall ([les 12](site:fullstack/docs/online/server/dichtzetten)).
+Twee dingen moeten kloppen voordat het lukt: het A-record wijst naar je server ([les 25](site:fullstack/docs/online/server/naam)), en poort 80 en 443 staan open in de firewall ([les 26](site:fullstack/docs/online/server/dichtzetten)).
 
 ## De hele weg
 
@@ -79,24 +79,11 @@ Nu de route rond is, zie je de hele weg van een verzoek. Elke melding uit de les
 
 Een verzoek dat bij stap 3 niet door mag, krijgt geen antwoord: de browser wacht en geeft het op. Bij stap 4 antwoordt Traefik zelf, met `404 page not found` of `Bad Gateway`. Pas bij stap 5 draait jouw code.
 
-## De cookie alleen over https
+<Gelukt>
 
-Nu je site `https` heeft, kan de sessie-cookie de vlag `secure` krijgen: dan stuurt de browser hem nooit meer over een onversleutelde verbinding. Wat `secure` doet, staat in de praktijkles van [Cookies afschermen](site:fullstack/docs/veiligheid/cookies/praktijk). Zet het bij `set_cookie` in je `/inloggen`:
+`https://gastenboek.voorbeeld.nl` opent op je telefoon zonder waarschuwing over de verbinding. Klik je in de adresbalk op het pictogram voor het adres, dan staat Let's Encrypt erbij als uitgever.
 
-{/* niet-compileren: alleen de set_cookie uit /inloggen, het endpoint eromheen staat in Cookies afschermen */}
-
-```python
-    antwoord.set_cookie(
-        key="sessie_id",
-        value=sessie_id,
-        max_age=60 * 60 * 24 * 30,
-        httponly=True,
-        samesite="lax",
-        secure=True,
-    )
-```
-
-Op je eigen computer blijft het werken: Chrome en Firefox laten een `secure`-cookie op `127.0.0.1`, `localhost` en `gastenboek.localhost` toch door. Hoe de nieuwe code op de server komt, is de volgende les.
+</Gelukt>
 
 <Voorspel soort="Controlevraag" vraag="Een bezoeker typt http://gastenboek.voorbeeld.nl, zonder s. Wat gebeurt er?">
   <Keuze uitleg="Traefik luistert nog op poort 80. Wat doet hij nu met een verzoek dat daar binnenkomt?">Hij ziet je site, maar zonder versleuteling</Keuze>
@@ -169,4 +156,4 @@ Klik in Netwerk op het verzoek van de pagina. Onder de koppen van het antwoord s
 
 </details>
 
-Door naar [les 15: een nieuwe versie uitrollen](site:fullstack/docs/online/server/nieuwe-versie).
+Door naar [les 32: een nieuwe versie uitrollen](site:fullstack/docs/online/server/nieuwe-versie).

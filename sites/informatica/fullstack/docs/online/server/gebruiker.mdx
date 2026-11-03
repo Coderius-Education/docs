@@ -1,0 +1,94 @@
+---
+sidebar_label: '23. Een eigen gebruiker'
+description: Een gebruiker voor jezelf die met sudo beheerder mag zijn, met dezelfde ssh-sleutel als root.
+---
+
+# Online zetten: een eigen gebruiker
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/groepen', label: 'Iemand in een groep zetten met usermod -aG'}]} />
+
+Als `root` werken is als altijd met `sudo` werken: één tikfout en je server is stuk. In de volgende stap zet je inloggen als `root` helemaal uit. Daarom maak je nu een gebruiker voor jezelf, die met `sudo` beheerder mag zijn.
+
+## Een gebruiker met sudo
+
+Je bent nog ingelogd als `root`:
+
+```bash
+adduser sam
+usermod -aG sudo sam
+```
+
+`adduser` vraagt een wachtwoord; dat heb je straks nodig voor `sudo`. `usermod -aG sudo` zet `sam` in de groep `sudo`.
+
+## Dezelfde sleutel
+
+Geef `sam` dezelfde sleutel als `root`:
+
+```bash
+mkdir -p /home/sam/.ssh
+cp /root/.ssh/authorized_keys /home/sam/.ssh/
+chown -R sam:sam /home/sam/.ssh
+```
+
+In `authorized_keys` staan de publieke sleutels waarmee je mag inloggen. `chown -R` maakt de map en alles erin van `sam`. Zonder die regel is de kopie van `root`, en mag alleen `root` hem lezen; dan kan ssh je sleutel voor `sam` niet vinden.
+
+Laat deze terminal openstaan, en log in een tweede terminal in als jezelf:
+
+```bash
+ssh sam@203.0.113.10
+sudo whoami
+```
+
+`sudo` vraagt het wachtwoord dat je bij `adduser` koos.
+
+<Gelukt>
+
+`ssh sam@203.0.113.10` laat je binnen zonder om het wachtwoord van `sam` te vragen, en `sudo whoami` zegt:
+
+```text
+root
+```
+
+Vanaf nu log je zo in.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je bent ingelogd als sam en typt sudo whoami. sudo vraagt een wachtwoord. Welk wachtwoord is dat?">
+  <Keuze uitleg="De passphrase hoort bij de sleutel op je laptop. Daar weet sudo op de server niets van.">De passphrase van je ssh-sleutel</Keuze>
+  <Keuze goed uitleg="sudo vraagt het wachtwoord van wie het typt: van sam, dat je bij adduser koos.">Het wachtwoord van sam, uit adduser</Keuze>
+  <Keuze uitleg="root heeft op de meeste servers geen wachtwoord: je logde in met een sleutel.">Het wachtwoord van root</Keuze>
+  <Uitleg>
+
+  Inloggen gaat met je sleutel, `sudo` met het wachtwoord van `sam`. Zo heeft iemand die je laptop steelt nog niet genoeg om beheerder te worden op de server.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### ssh vraagt om het wachtwoord van sam
+
+```text
+sam@203.0.113.10's password:
+```
+
+**Oorzaak:** de server kan je sleutel voor `sam` niet lezen. Meestal is `authorized_keys` nog van `root`, of staat hij er niet. Omdat wachtwoorden nog aanstaan, vraagt ssh dan om het wachtwoord.
+
+**Oplossing:** druk op Ctrl+C. Kijk als `root`, in de terminal die nog openstaat, van wie de map is, en maak hem van `sam`:
+
+```bash
+ls -la /home/sam/.ssh
+chown -R sam:sam /home/sam/.ssh
+```
+
+### sam is not in the sudoers file
+
+```text
+sam is not in the sudoers file.
+```
+
+**Oorzaak:** `sam` staat niet in de groep `sudo`, of je was al ingelogd voordat je hem erin zette.
+
+**Oplossing:** doe als `root` `usermod -aG sudo sam`, log uit met `exit` en log opnieuw in.
+
+Door naar [les 24: alleen met een sleutel](site:fullstack/docs/online/server/sleutel).

@@ -1,67 +1,11 @@
 ---
-sidebar_label: '13. Je site op de server'
-description: Docker op de server met een grens aan de logboeken, je project ophalen met een deploy key, Traefik ernaast, en je domeinnaam in een .env. Docker zet een gepubliceerde poort open langs de firewall.
+sidebar_label: '30. Je site op internet'
+description: Traefik op de server, je domeinnaam in een .env, en je site met http op je telefoon. Docker zet een gepubliceerde poort open langs de firewall.
 ---
 
-# Online zetten: je site op de server
+# Online zetten: je site op internet
 
-<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'Een sleutelpaar maken met ssh-keygen'}]} />
-
-Op je laptop draait alles in Docker. Op de server doe je hetzelfde, met dezelfde bestanden. Je typt de commando's in deze les op de server, als `sam`, tenzij er staat dat het in WSL is.
-
-## Docker op de server
-
-Installeer Docker zoals in [les 4](site:fullstack/docs/online/docker/installeren), en zet `sam` in de groep `docker`:
-
-```bash
-sudo apt update
-sudo apt install docker.io docker-compose-v2 docker-buildx git
-sudo usermod -aG docker sam
-exit
-```
-
-Log opnieuw in met ssh, zodat de groep telt. Op de server zit alleen `sam` in die groep: wie erin zit, is bijna `root`.
-
-## Logboeken met een grens
-
-Docker bewaart alles wat een container print, en je site print een regel voor elke bezoeker. Zonder grens groeit dat logboek maanden door, tot de schijf vol is en je site stopt. Geef Docker een grens voordat je de eerste container start:
-
-```bash
-sudo nano /etc/docker/daemon.json
-```
-
-```json
-{
-  "log-driver": "local"
-}
-```
-
-Start Docker daarna opnieuw, en kijk of hij de instelling kent:
-
-```bash
-sudo systemctl restart docker
-docker info --format '{{.LoggingDriver}}'
-```
-
-Er staat `local`. Die manier van bewaren houdt per container hoogstens vijf bestanden van 20 MB bij, en gooit het oudste weg als ze vol zijn. Hij geldt alleen voor containers die Docker daarna maakt. Daarom doe je het nu, voordat er een container is.
-
-## Je project ophalen
-
-Op de server push je nooit; hij haalt alleen op. Is je repository openbaar, kloon hem dan met het https-adres: ophalen mag dan zonder inloggen. Is hij privé, geef de server dan een eigen sleutel die alleen dit project mag lezen: een **deploy key**. Je eigen sleutel uit [les 5](site:fullstack/docs/online/docker/image) zet je hier niet neer: die mag al je repositories veranderen.
-
-```bash
-ssh-keygen -t ed25519
-cat ~/.ssh/id_ed25519.pub
-```
-
-Druk bij de vragen op Enter. Een passphrase laat je leeg: de server moet de sleutel kunnen gebruiken als jij er niet bij bent. Zet de publieke sleutel op GitHub bij je repository onder **Settings**, **Deploy keys**, en laat **Allow write access** uit. Kloon daarna met het ssh-adres:
-
-```bash
-cd ~
-git clone git@github.com:sam/gastenboek.git
-```
-
-De eerste keer vraagt ssh of je de vingerafdruk van GitHub vertrouwt; typ `yes`. Wordt je server ooit gekraakt, dan kan deze sleutel alleen dit ene project lezen, en niets veranderen.
+Docker draait op de server, en je project staat er. Nu komt de voordeur erbij, en dan staat je site op internet, nog met `http`.
 
 ## Traefik op de server
 
@@ -98,16 +42,22 @@ echo "DOMEIN=gastenboek.voorbeeld.nl" > .env
 docker compose up -d --build
 ```
 
-De `.env` hoort bij deze computer, niet bij je project. Zo werkt dezelfde `compose.yaml` op je laptop en op de server. Open `http://gastenboek.voorbeeld.nl` op je telefoon, via mobiele data en niet via het wifi van school. Daar is je gastenboek, nog met `http`. HTTPS komt in de volgende les.
+De `.env` hoort bij deze computer, niet bij je project. Zo werkt dezelfde `compose.yaml` op je laptop en op de server.
 
 ## Docker en de firewall
 
-In [les 12](site:fullstack/docs/online/server/dichtzetten) hield ufw elke poort tegen die niet in de lijst staat. Voor Docker geldt dat niet. Een poort die je publiceert met `ports` in `compose.yaml` of `-p`, zet Docker zelf open, in de firewall van Linux, vóór de regels van ufw. Een gepubliceerde poort staat dus op internet, wat ufw ook zegt.
+In [les 26](site:fullstack/docs/online/server/dichtzetten) hield ufw elke poort tegen die niet in de lijst staat. Voor Docker geldt dat niet. Een poort die je publiceert met `ports` in `compose.yaml` of `-p`, zet Docker zelf open, in de firewall van Linux, vóór de regels van ufw. Een gepubliceerde poort staat dus op internet, wat ufw ook zegt.
 
-Daarom heeft je site geen `ports`: alleen Traefik publiceert iets, poort 80 en 443, en die stonden al open. Wil je ooit iets publiceren dat alleen voor jou is, zet er dan `127.0.0.1:` voor, zoals in [les 9](site:fullstack/docs/online/docker/compose). Dan luistert Docker alleen op de server zelf.
+Daarom heeft je site geen `ports`: alleen Traefik publiceert iets, poort 80 en 443, en die stonden al open. Wil je ooit iets publiceren dat alleen voor jou is, zet er dan `127.0.0.1:` voor, zoals in [les 19](site:fullstack/docs/online/docker/compose). Dan luistert Docker alleen op de server zelf.
+
+<Gelukt>
+
+Op je telefoon, via mobiele data en niet via het wifi van school, opent `http://gastenboek.voorbeeld.nl` je gastenboek. De lijst is leeg: de databases van je laptop staan in een volume op je laptop. HTTPS komt in de volgende stap.
+
+</Gelukt>
 
 <Voorspel soort="Controlevraag" vraag="Om iets te testen zet je bij je site weer ports met 8000:8000, zonder 127.0.0.1 ervoor. ufw laat 8000 niet door. Een klasgenoot opent het adres van je server met :8000 erachter. Wat ziet hij?">
-  <Keuze uitleg="Zo werkt het voor een gewoon programma, zoals in de vorige les. Maar wie zette deze poort open?">Niets: ufw houdt poort 8000 tegen</Keuze>
+  <Keuze uitleg="Zo werkt het voor een gewoon programma, zoals in les 26. Maar wie zette deze poort open?">Niets: ufw houdt poort 8000 tegen</Keuze>
   <Keuze goed uitleg="Docker zet een gepubliceerde poort open vóór de regels van ufw. Poort 8000 staat op internet, en hij komt rechtstreeks bij je site, om Traefik heen.">Je gastenboek, rechtstreeks, zonder Traefik ertussen</Keuze>
   <Keuze uitleg="Traefik luistert alleen op 80 en 443. Een verzoek op 8000 komt niet bij Traefik.">De 404 van Traefik</Keuze>
   <Uitleg>
@@ -118,40 +68,6 @@ Daarom heeft je site geen `ports`: alleen Traefik publiceert iets, poort 80 en 4
 </Voorspel>
 
 ## Er gaat iets mis
-
-### Job for docker.service failed
-
-```text
-Job for docker.service failed because the control process exited with error code.
-See "systemctl status docker.service" and "journalctl -xeu docker.service" for details.
-```
-
-**Oorzaak:** er zit een fout in `/etc/docker/daemon.json`, en dan start Docker niet. Met `sudo journalctl -u docker` zie je welke:
-
-```text
-unable to configure the Docker daemon with file /etc/docker/daemon.json: invalid JSON: invalid character '}' looking for beginning of object key string
-```
-
-Hier staat een komma te veel achter de laatste regel. JSON is strenger dan Python: een komma alleen tussen twee regels, en aanhalingstekens altijd dubbel.
-
-**Oplossing:** verbeter het bestand met `sudo nano /etc/docker/daemon.json`, en start Docker opnieuw met `sudo systemctl restart docker`.
-
-### permission denied while trying to connect to the docker API
-
-**Oorzaak:** `sam` zit nog niet in de groep `docker`, of je logde daarna niet opnieuw in.
-
-**Oplossing:** typ `exit`, log opnieuw in met ssh, en kijk met `groups` of `docker` erbij staat.
-
-### `Permission denied (publickey)` bij git clone
-
-```text
-git@github.com: Permission denied (publickey).
-fatal: Could not read from remote repository.
-```
-
-**Oorzaak:** GitHub kent de sleutel van de server niet. De deploy key staat er niet, of bij een andere repository.
-
-**Oplossing:** kijk op GitHub onder **Settings**, **Deploy keys** van deze repository of de sleutel er staat, en of het dezelfde is als `cat ~/.ssh/id_ed25519.pub` laat zien.
 
 ### 404 page not found op je domein
 
@@ -168,7 +84,7 @@ docker compose up -d
 
 ### De browser krijgt geen antwoord
 
-**Oorzaak:** het A-record wijst nog niet naar je server ([les 11](site:fullstack/docs/online/server/huren)), of Traefik draait niet.
+**Oorzaak:** het A-record wijst nog niet naar je server ([les 25](site:fullstack/docs/online/server/naam)), of Traefik draait niet.
 
 **Oplossing:** controleer de naam met `ping -c 1 gastenboek.voorbeeld.nl`, en kijk met `docker ps` of Traefik draait.
 
@@ -199,8 +115,8 @@ Staat er het adres van Traefik, of dat van je telefoon? Waarom?
 <details>
 <summary>Antwoord</summary>
 
-Je ziet het adres van je telefoon op internet. Traefik zette het in `X-Forwarded-For`, en je site gelooft die kop door `FORWARDED_ALLOW_IPS=*` uit [les 10](site:fullstack/docs/online/docker/traefik). Daardoor telt de limiet uit de route Veiligheid per bezoeker, en niet iedereen samen.
+Je ziet het adres van je telefoon op internet. Traefik zette het in `X-Forwarded-For`, en je site gelooft die kop door `FORWARDED_ALLOW_IPS=*` uit [les 21](site:fullstack/docs/online/docker/traefik). Daardoor telt de limiet uit de route Veiligheid per bezoeker, en niet iedereen samen.
 
 </details>
 
-Door naar [les 14: je domein met HTTPS](site:fullstack/docs/online/server/https).
+Door naar [les 31: je domein met HTTPS](site:fullstack/docs/online/server/https).

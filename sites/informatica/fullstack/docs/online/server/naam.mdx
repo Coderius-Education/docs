@@ -1,0 +1,55 @@
+---
+sidebar_label: '25. Een naam voor je server'
+description: Een domeinnaam met een A-record dat naar het IP-adres van je server wijst, gecontroleerd met ping.
+---
+
+# Online zetten: een naam voor je server
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/netwerk', label: 'Een naam opzoeken met ping'}]} />
+
+Een IP-adres onthoudt niemand. Met een **domeinnaam** zoals `gastenboek.voorbeeld.nl` is je site te vinden. Traefik heeft hem ook nodig: hij kiest de site op de naam ([les 21](site:fullstack/docs/online/docker/traefik)), en zonder naam krijg je geen HTTPS.
+
+## Het A-record
+
+Een naam huur je bij een domeinbedrijf, of je docent geeft je een naam onder het domein van school. Bij de naam zet je een **A-record**: een regel die zegt welk IP-adres bij de naam hoort. Bij `gastenboek.voorbeeld.nl` hoort dan `203.0.113.10`.
+
+Het kan een uur duren voor de hele wereld de nieuwe regel kent. Controleer het in WSL:
+
+```bash
+ping -c 1 gastenboek.voorbeeld.nl
+```
+
+<Gelukt>
+
+Op de eerste regel van `ping` staat het IP-adres van jouw server, achter de naam:
+
+```text
+PING gastenboek.voorbeeld.nl (203.0.113.10) 56(84) bytes of data.
+```
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je zet het A-record, en ping zegt direct daarna Name or service not known. Je hebt de naam goed getypt. Wat is er aan de hand?">
+  <Keuze uitleg="ping vraagt alleen welk adres bij de naam hoort. Of je server aanstaat, komt daarna pas.">Je server staat uit</Keuze>
+  <Keuze goed uitleg="Een nieuw record moet zich nog verspreiden. Tot dan kennen de computers die namen opzoeken je naam nog niet.">De wereld kent de nieuwe regel nog niet; wacht tot een uur</Keuze>
+  <Keuze uitleg="ufw houdt verbindingen naar je server tegen, maar het opzoeken van een naam gebeurt niet op je server.">De firewall van je server houdt ping tegen</Keuze>
+  <Uitleg>
+
+  Een naam opzoeken gebeurt bij de computers van je domeinbedrijf en je internetprovider, niet op je server. Daarom kun je intussen gewoon door met de volgende stappen: die hebben de naam pas nodig als je site erop staat.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### De naam wijst nog niet naar je server
+
+```text
+ping: gastenboek.voorbeeld.nl: Name or service not known
+```
+
+**Oorzaak:** het A-record is er nog niet, of de wereld kent het nog niet.
+
+**Oplossing:** controleer het record bij je domeinbedrijf, en wacht een uur. Ga intussen door met de volgende stap; die heeft de naam nog niet nodig.
+
+Door naar [les 26: de firewall](site:fullstack/docs/online/server/dichtzetten).
