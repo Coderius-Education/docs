@@ -1,0 +1,124 @@
+---
+sidebar_label: '18. Je databases in één map'
+description: Elke SqliteDict schrijft naar de map data, os.makedirs maakt die map, en data/ komt in .dockerignore. Daarna staan alle databases in de container in /app/data.
+---
+
+# Online zetten: je databases in één map
+
+Je databases staan nu los in `/app`, tussen je code. Straks wil je ze buiten de container bewaren, en dat gaat het makkelijkst als ze samen in één map staan. Je zet ze in een map `data`.
+
+## In main.py
+
+Vervang in VS Code met Ctrl+H overal `SqliteDict("` door `SqliteDict("data/`, met **Replace All**. Dan staat er `SqliteDict("data/gastenboek.db")`, `SqliteDict("data/gebruikers.db")`, en zo voor elke database.
+
+SqliteDict maakt een bestand, maar geen map. Die maak je zelf, als hij er nog niet is. Zet bovenaan, bij je andere imports:
+
+```python
+import os
+```
+
+En onder de imports, boven `app = FastAPI()`:
+
+```python
+os.makedirs("data", exist_ok=True)
+```
+
+`os.makedirs` maakt de map `data` in de map waar je server start. `exist_ok=True` betekent: bestaat hij al, dan is dat goed, geef geen fout.
+
+## In .dockerignore
+
+Zet `data/` erbij:
+
+```text
+.venv
+__pycache__
+.git
+*.db
+data/
+```
+
+`*.db` geldt in `.dockerignore` alleen voor bestanden direct in je map, niet voor bestanden in `data`. Zonder `data/` gaan je testdatabases uit die map mee het image in. In `.gitignore` hoeft niets bij: daar geldt `*.db` ook voor bestanden in een map.
+
+## Bouwen en kijken
+
+De container uit les 17 draait nog met het oude image. Gooi hem weg, bouw opnieuw en start een nieuwe:
+
+```bash
+docker rm -f gastenboek
+docker build -t gastenboek .
+docker run -d --name gastenboek -p 8000:8000 gastenboek
+```
+
+Maak een account en schrijf een bericht. Kijk dan wat er in de map `data` in de container staat:
+
+```bash
+docker exec gastenboek ls data
+```
+
+`docker exec` voert een commando uit in een container die al draait. Hier is dat `ls data`, in `/app`.
+
+<Gelukt>
+
+`docker exec gastenboek ls data` toont je databases:
+
+```text
+gastenboek.db
+gebruikers.db
+```
+
+Heeft je site meer databases, dan staan die er ook.
+
+</Gelukt>
+
+De oude bestanden uit les 11, naast `main.py` in je projectmap, gebruikt je site niet meer. Je mag ze weggooien.
+
+Zet de veranderingen in git. Alleen `main.py` en `.dockerignore` zijn veranderd; de databases in de container komen niet in je projectmap.
+
+```bash
+git add main.py .dockerignore
+git commit -m "Databases in de map data"
+git push
+```
+
+<Voorspel soort="Controlevraag" vraag="Je start je project weer zonder Docker, in Ubuntu met fastapi run, zoals in les 11. Waar komen de databases nu?">
+  <Keuze uitleg="SqliteDict maakt geen map, maar je zette er een regel bij die dat wel doet. Welke?">Nergens: de site geeft een fout, want de map data bestaat in je project niet</Keuze>
+  <Keuze goed uitleg="Elke SqliteDict schrijft nu naar data/, en os.makedirs maakt die map in de map waar de server start: je project.">In een map data in je project, die os.makedirs maakt</Keuze>
+  <Keuze uitleg="/app is de WORKDIR uit de Dockerfile. Zonder Docker leest niemand de Dockerfile.">In /app/data, zoals in de container</Keuze>
+  <Uitleg>
+
+  `main.py` zoekt de databases in `data/`, waar hij ook draait, en `os.makedirs` maakt die map als hij er nog niet is. Daarom draait je project ook zonder Docker nog. En daarom hoort `data/` in `.dockerignore`: je testdatabases uit die map mogen niet mee het image in.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### The directory does not exist
+
+Bij het eerste verzoek dat een database opent, geeft je site een 500, en `docker logs gastenboek` eindigt met:
+
+```text
+RuntimeError: Error! The directory does not exist, data
+```
+
+**Oorzaak:** de map `data` bestaat niet, want de regel met `os.makedirs` ontbreekt. SqliteDict maakt zelf geen map.
+
+**Oplossing:** zet `os.makedirs("data", exist_ok=True)` onder je imports, en `import os` erbij. Bouw opnieuw.
+
+### Een database staat nog naast main.py
+
+Je site werkt, maar `docker exec gastenboek ls` toont nog een `.db` in `/app`, naast `main.py`.
+
+**Oorzaak:** een `SqliteDict("…")` zonder `data/` ervoor. Als `root` mag je site overal schrijven, dus je ziet nog geen fout. In de volgende les wel.
+
+**Oplossing:** zoek in `main.py` naar `SqliteDict("` zonder `data/` erachter, verbeter het, en bouw opnieuw.
+
+### Je testberichten staan in de container
+
+Een nieuwe container begint niet leeg, maar met de berichten die je zonder Docker schreef.
+
+**Oorzaak:** `data/` staat niet in `.dockerignore`. Dan kopieert `COPY . .` de map `data` uit je project mee het image in, met je testdatabases.
+
+**Oplossing:** zet `data/` in `.dockerignore`, en bouw opnieuw.
+
+Door naar [les 19: niet als root](site:fullstack/docs/online/docker/niet-als-root).

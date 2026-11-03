@@ -1,0 +1,125 @@
+---
+sidebar_label: '17. Op de achtergrond'
+description: Met -d en --name draait je container op de achtergrond, en met ps, logs, stop, start en rm beheer je hem. Wat in een container staat, gaat mee als je hem weggooit.
+---
+
+# Online zetten: op de achtergrond
+
+Een server houd je niet open in een terminal. Je start je container op de achtergrond, met een naam, en leert hem beheren zonder dat hij een terminal bezet houdt.
+
+## Starten met een naam
+
+Met `-d` (*detached*) draait de container op de achtergrond, en met `--name` geef je hem een naam die je onthoudt:
+
+```bash
+docker run -d --name gastenboek -p 8000:8000 gastenboek
+```
+
+Docker geeft een lange code terug, het nummer van de container, en je prompt is meteen weer vrij. Kijk wat er draait:
+
+```bash
+docker ps
+```
+
+<Gelukt>
+
+`docker ps` toont je container met `Up` bij de status:
+
+```text
+CONTAINER ID   IMAGE        COMMAND                  CREATED         STATUS         PORTS                    NAMES
+c6e0858343ca   gastenboek   "fastapi run main.py…"   3 seconds ago   Up 3 seconds   0.0.0.0:8000->8000/tcp   gastenboek
+```
+
+En op `http://127.0.0.1:8000` in je browser op Windows staat je site, uit een container die op de achtergrond draait.
+
+</Gelukt>
+
+Bij `PORTS` zie je de deur die `-p` openzette. Wat je site in de terminal zou zetten, lees je nu met `logs`:
+
+```bash
+docker logs gastenboek
+```
+
+Met `docker logs -f gastenboek` blijf je meekijken, tot je Ctrl+C drukt. Dat stopt alleen het meekijken, niet je site.
+
+## Stoppen, starten en weggooien
+
+| Commando | Wat er gebeurt |
+|:---|:---|
+| `docker stop gastenboek` | de container stopt, en blijft bestaan |
+| `docker start gastenboek` | dezelfde container draait weer |
+| `docker rm gastenboek` | de gestopte container is weg |
+| `docker rm -f gastenboek` | stoppen en weggooien in één keer |
+
+Een gestopte container zie je met `docker ps -a`, met `Exited` bij de status. Daar staat ook de container uit les 16 nog, met een naam die Docker zelf verzon.
+
+## Weg is weg
+
+Een container heeft een eigen laag bovenop het image. Alles wat er tijdens het draaien bijkomt, komt in die laag: hier `gastenboek.db` en `gebruikers.db`, naast `main.py` in `/app`. Gooi je de container weg, dan gaat die laag mee.
+
+Probeer het. Maak een account, schrijf een bericht, en start daarna een nieuwe container met dezelfde naam. Die naam is pas vrij als de oude weg is, dus eerst `rm -f`:
+
+```bash
+docker rm -f gastenboek
+docker run -d --name gastenboek -p 8000:8000 gastenboek
+```
+
+Je gastenboek is leeg, en je account is weg. De nieuwe container begint bij het image, en daarin staan geen databases. Voor een server is dat een probleem: bij elke nieuwe versie gooi je de container weg. Daarom zet je de databases straks buiten de container.
+
+<Voorspel soort="Controlevraag" vraag="Je schrijft een bericht in je gastenboek. Daarna doe je docker stop gastenboek en docker start gastenboek. Staat je bericht er nog?">
+  <Keuze goed uitleg="stop en start gebruiken dezelfde container, en de databases staan in de laag van die container.">Ja, want het is nog steeds dezelfde container</Keuze>
+  <Keuze uitleg="Een container begint niet opnieuw bij stop en start. Wanneer is de laag met de databases weg?">Nee, want een container begint bij elke start weer bij het image</Keuze>
+  <Keuze uitleg="SqliteDict bewaart alles in een bestand. Een bestand blijft staan als een programma stopt.">Nee, want bij het stoppen gaat het geheugen van de container leeg</Keuze>
+  <Uitleg>
+
+  De laag van een container blijft bestaan zolang de container bestaat, ook als hij gestopt is. Pas `docker rm` gooit hem weg. Stoppen en starten is dus veilig; weggooien kost je berichten.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### The container name is already in use
+
+```text
+docker: Error response from daemon: Conflict. The container name "/gastenboek" is already in use by container "c6e0858343ca…". You have to remove (or rename) that container to be able to reuse that name.
+```
+
+**Oorzaak:** er bestaat al een container met die naam, ook als hij gestopt is.
+
+**Oplossing:** gooi de oude weg met `docker rm -f gastenboek`, en start opnieuw.
+
+### Eerst port is already allocated, daarna Conflict
+
+De eerste `docker run` geeft `port is already allocated`, en als je hem opnieuw typt, staat er `Conflict`.
+
+**Oorzaak:** Docker maakte de container `gastenboek` al aan voordat de poort misging. Hij staat in `docker ps -a` met `Created` bij de status, en houdt de naam bezet.
+
+**Oplossing:** maak de poort vrij zoals in [les 16](site:fullstack/docs/online/docker/container), gooi de container weg met `docker rm -f gastenboek`, en start opnieuw.
+
+### De browser krijgt geen antwoord
+
+`docker ps` toont je container met `Up`, maar `http://127.0.0.1:8000` laadt niet.
+
+**Oorzaak:** je startte de container zonder `-p`. Bij `PORTS` staat dan niets: er is geen deur.
+
+**Oplossing:** gooi de container weg en start hem opnieuw met `-p 8000:8000`.
+
+## Opdrachten
+
+### Opdracht 1: Investigate - Wie bezocht je site?
+
+Maak een account en schrijf een bericht. Kijk daarna met `docker logs` welke verzoeken je browser deed.
+
+<details>
+<summary>Antwoord</summary>
+
+```bash
+docker logs gastenboek
+```
+
+Onder de startregels staat een regel per verzoek, met de methode, het pad en de statuscode: `POST /registreer` met `303`, en daarna `GET /gastenboek` met `200`. Het adres vooraan is niet dat van je laptop maar van het netwerk van Docker. Dat komt terug in [les 23](site:fullstack/docs/online/docker/traefik).
+
+</details>
+
+Door naar [les 18: je databases in één map](site:fullstack/docs/online/docker/databases).

@@ -1,43 +1,13 @@
 ---
-sidebar_label: '5. Je site in een image'
+sidebar_label: '15. Je site in een image'
 description: Een Dockerfile beschrijft je image stap voor stap, een .dockerignore houdt rommel buiten, en docker build maakt het image.
 ---
 
 # Online zetten: je site in een image
 
-<Voorkennis items={[{site: 'linux', to: '/docs/terminal/mappen', label: 'Door mappen lopen met cd en ls'}, {site: 'linux', to: '/docs/wsl/windows-en-linux', label: 'Je project in je Linux-thuismap, en code . vanuit Ubuntu'}, {site: 'linux', to: '/docs/terminal/bestanden-lezen', label: 'Een bestand lezen met cat'}, {site: 'linux', to: '/docs/wsl/github', label: 'Je ssh-sleutel op GitHub'}]} />
+<Voorkennis items={[{site: 'linux', to: '/docs/terminal/mappen', label: 'Door mappen lopen met cd en ls'}]} />
 
-Je site moet een image worden. Wat erin moet, schrijf je op in een bestand: de **Dockerfile**. Docker volgt dat recept stap voor stap, en bewaart het resultaat als image.
-
-## Je project in Linux
-
-Docker draait in Ubuntu, dus daar haal je je project naartoe. Vanaf nu werk je alleen nog daar: je opent het project in VS Code vanuit Ubuntu, je commit en pusht vanuit Ubuntu, en je test je site in Docker. De map op Windows gebruik je niet meer. De databases die daar staan, komen niet mee, want ze staan niet in git: in Ubuntu begint je gastenboek leeg.
-
-Git in Ubuntu is een andere git dan die op Windows, en kent jou nog niet. Vertel hem eerst je naam en het e-mailadres van je GitHub-account:
-
-```bash
-git config --global user.name "Sam de Vries"
-git config --global user.email "sam@voorbeeld.nl"
-```
-
-GitHub laat je in de terminal niet inloggen met een wachtwoord. Zet daarom je ssh-sleutel op GitHub, zoals in [Je sleutel op GitHub](site:linux/docs/wsl/github), en controleer of GitHub je kent:
-
-```bash
-ssh -T git@github.com
-```
-
-Staat er `Hi sam! You've successfully authenticated`, met je eigen naam, dan werkt het. Heb je nog geen sleutel, maak er dan eerst een zoals in [Inloggen op een andere computer](site:linux/docs/wsl/ssh).
-
-Kloon nu je repository in je Linux-thuismap, met het ssh-adres. Je vindt het op GitHub onder de groene knop **Code**, bij **SSH**. Zet je eigen adres op de plek van dat van `sam`:
-
-```bash
-cd ~
-git clone git@github.com:sam/gastenboek.git
-cd gastenboek
-code .
-```
-
-VS Code opent, en linksonder staat **WSL: Ubuntu-24.04**. Alles wat je nu verandert, verandert in Ubuntu.
+Je site moet een image worden. Wat erin moet, schrijf je op in een bestand: de **Dockerfile**. Docker volgt dat recept stap voor stap, en bewaart het resultaat als image. Je werkt in je project in Ubuntu, dat je in [les 9](site:fullstack/docs/online/linux/klonen) kloonde, met VS Code vanuit Ubuntu.
 
 ## De Dockerfile
 
@@ -63,17 +33,17 @@ Elke regel is een stap:
 | `FROM python:3.13-slim` | begin met een image van Docker Hub: een kleine Linux met Python 3.13 erop |
 | `WORKDIR /app` | maak de map `/app` en ga erin staan |
 | `COPY requirements.txt .` | kopieer `requirements.txt` uit je project naar `/app` |
-| `RUN python -m pip install -r requirements.txt` | installeer de packages uit je lijst ([les 2](site:fullstack/docs/online/project/requirements)) |
+| `RUN python -m pip install -r requirements.txt` | installeer de packages uit je lijst ([les 4](site:fullstack/docs/online/project/requirements)) |
 | `COPY . .` | kopieer de rest van je project naar `/app` |
 | `CMD [...]` | dit commando start een container: `fastapi run`, op poort 8000 |
 
 `RUN` gebeurt één keer, tijdens het bouwen. `CMD` gebeurt elke keer dat een container start. Een virtual environment is hier niet nodig: in het image draait alleen jouw site, en die mag Python voor zichzelf hebben.
 
-Er staat `fastapi run` en niet `fastapi dev`, om de redenen uit [les 1](site:fullstack/docs/online/project/dev-of-run). En er staat geen `--host`: in een container moet je site op `0.0.0.0` luisteren. In de volgende les zie je waarom.
+Er staat `fastapi run`, net als in [les 11](site:fullstack/docs/online/linux/run). Maar er staat geen `--host`: in een container moet je site op `0.0.0.0` luisteren. In de volgende les zie je waarom.
 
 ## Wat er niet in hoort
 
-`COPY . .` kopieert alles uit je map. Ook `.venv`, als je die in Ubuntu ooit maakte, en databases die bij het testen ontstonden. Dat hoort niet in je image: `.venv` is van een andere computer, en een database met wachtwoorden zit dan in elk image dat je deelt.
+`COPY . .` kopieert alles uit je map. Ook `.venv` uit [les 10](site:fullstack/docs/online/linux/venv), en de databases die ontstonden toen je site in Ubuntu draaide. Dat hoort niet in je image: `.venv` is van jouw Ubuntu, en een database met wachtwoorden zit dan in elk image dat je deelt.
 
 Maak daarom naast de Dockerfile een bestand `.dockerignore`, dat werkt als `.gitignore`:
 
@@ -101,24 +71,58 @@ docker build -t gastenboek .
  => naming to docker.io/library/gastenboek:latest
 ```
 
-De eerste keer duurt het een minuut: Docker haalt het Python-image op en installeert alle packages. Bij de pip-stap zie je een waarschuwing:
+De eerste keer duurt het een minuut: Docker haalt het Python-image op en installeert alle packages. Bij de pip-stap staat een waarschuwing:
 
 ```text
 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead
 ```
 
-Op je eigen computer is dat een goed advies: daar delen Ubuntu en jij dezelfde Python. In een image draait alleen jouw site, en het image gooi je weg en bouw je opnieuw zodra er iets mis is. Hier mag je de waarschuwing laten staan, net als de `[notice]` dat er een nieuwe pip is. Daarna staat je image erbij:
+<details>
+<summary>Waarom mag die waarschuwing blijven staan?</summary>
+
+Op je eigen computer is het een goed advies: daar delen Ubuntu en jij dezelfde Python, en daarom maakte je in [les 10](site:fullstack/docs/online/linux/venv) een virtual environment. In een image draait alleen jouw site, en het image gooi je weg en bouw je opnieuw zodra er iets mis is. Hier mag je de waarschuwing laten staan, net als de `[notice]` dat er een nieuwe pip is.
+
+</details>
+
+Kijk daarna welke images er zijn:
 
 ```bash
 docker images
 ```
+
+<Gelukt>
+
+Je image staat in de lijst:
 
 ```text
 IMAGE                ID             DISK USAGE   CONTENT SIZE   EXTRA
 gastenboek:latest    b5897b957b4d        361MB         94.9MB
 ```
 
-Ruim 300 MB, en dat is bijna allemaal Linux, Python en de packages uit je lijst. Je eigen code is een paar kilobyte. Zet de Dockerfile en `.dockerignore` in git, ze horen bij je project:
+</Gelukt>
+
+Ruim 300 MB, en dat is bijna allemaal Linux, Python en de packages uit je lijst. Je eigen code is een paar kilobyte.
+
+## De tweede keer
+
+Bouw nog een keer, zonder iets te veranderen:
+
+```bash
+docker build -t gastenboek .
+```
+
+Binnen een seconde is het klaar, met `CACHED` bij elke stap:
+
+```text
+ => CACHED [2/5] WORKDIR /app
+ => CACHED [3/5] COPY requirements.txt .
+ => CACHED [4/5] RUN python -m pip install -r requirements.txt
+ => CACHED [5/5] COPY . .
+```
+
+Docker bewaart het resultaat van elke stap: de **cache**. Is een stap gelijk aan de vorige keer, en alles ervoor ook, dan pakt hij dat resultaat. Verandert er iets, dan doet hij die stap opnieuw, en alle stappen erna. Daarom staat `COPY requirements.txt .` apart, vóór `COPY . .`: de trage pip-stap hangt alleen af van je lijst met packages.
+
+Zet de Dockerfile en `.dockerignore` in git:
 
 ```bash
 git add Dockerfile .dockerignore
@@ -126,53 +130,18 @@ git commit -m "Dockerfile toegevoegd"
 git push
 ```
 
-<Voorspel soort="Controlevraag" vraag="Je verandert een tekst in een template en bouwt het image opnieuw met dezelfde regel. Welke stappen doet Docker opnieuw?">
-  <Keuze uitleg="Docker onthoudt elke stap. Is er voor de eerste stappen iets veranderd?">Alle vijf, want het is een nieuw image</Keuze>
-  <Keuze goed uitleg="Tot en met de pip-stap is er niets veranderd: requirements.txt is gelijk. Pas bij de stap die je hele map kopieert, is er een ander bestand, dus vanaf daar doet Docker het opnieuw.">Alleen de stap die je hele map kopieert; de stappen ervoor haalt Docker uit zijn geheugen</Keuze>
-  <Keuze uitleg="Een template is een van de bestanden die de laatste kopieerstap meeneemt. Ziet Docker dat het veranderd is?">Geen enkele, want de Dockerfile is niet veranderd</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je zet een nieuw package in requirements.txt en bouwt opnieuw. Welke stappen doet Docker opnieuw?">
+  <Keuze uitleg="requirements.txt is veranderd, en die kopieert Docker al eerder. Wat gebeurt er met de stappen daarna?">Alleen de stap die je hele map kopieert</Keuze>
+  <Keuze goed uitleg="De stap die requirements.txt kopieert, ziet een ander bestand. Die stap en alles erna doet Docker opnieuw: pip installeert alles nog een keer, en daarna komt je map erin.">Vanaf het kopiëren van requirements.txt: ook pip, en daarna je map</Keuze>
+  <Keuze uitleg="FROM en WORKDIR zijn niet veranderd, en komen vóór requirements.txt. Moet Docker die opnieuw doen?">Alle vijf, want de lijst met packages is anders</Keuze>
   <Uitleg>
 
-  Docker bewaart het resultaat van elke stap. Is een stap en alles ervoor gelijk aan de vorige keer, dan pakt hij het bewaarde resultaat: `CACHED`. Daarom staat `COPY requirements.txt .` apart, vóór `COPY . .`. Zolang je lijst gelijk blijft, slaat Docker de trage pip-stap over, ook als je code verandert.
+  Docker kijkt stap voor stap of er iets veranderd is. De eerste stap die anders is, doet hij opnieuw, en alles erna ook, want die bouwen erop voort. Een nieuw package kost dus een minuut, een verandering in je code een paar seconden.
 
   </Uitleg>
 </Voorspel>
 
 ## Er gaat iets mis
-
-### Author identity unknown
-
-```text
-Author identity unknown
-
-*** Please tell me who you are.
-```
-
-**Oorzaak:** git in Ubuntu weet nog niet wie je bent. De naam die je op Windows instelde, geldt hier niet.
-
-**Oplossing:** doe de twee regels met `git config --global` van hierboven, en commit opnieuw.
-
-### `Permission denied (publickey)` bij GitHub
-
-```text
-git@github.com: Permission denied (publickey).
-fatal: Could not read from remote repository.
-```
-
-**Oorzaak:** GitHub kent je sleutel niet. Je zette de publieke sleutel niet op GitHub, of een andere dan die in `~/.ssh/id_ed25519.pub`.
-
-**Oplossing:** vergelijk `cat ~/.ssh/id_ed25519.pub` met de sleutel onder **SSH and GPG keys** op GitHub, en probeer `ssh -T git@github.com` opnieuw.
-
-### Username for 'https://github.com'
-
-Bij `git push` vraagt git om een gebruikersnaam en een wachtwoord, en daarna staat er `Support for password authentication was removed`.
-
-**Oorzaak:** je kloonde met het https-adres. Daarover laat GitHub je in de terminal niet met een wachtwoord inloggen.
-
-**Oplossing:** zet het adres om naar ssh, en push opnieuw:
-
-```bash
-git remote set-url origin git@github.com:sam/gastenboek.git
-```
 
 ### failed to read dockerfile
 
@@ -192,7 +161,7 @@ ERROR: No matching distribution found for pywin32==306
 
 **Oorzaak:** in `requirements.txt` staat een package dat alleen op Windows bestaat. In het image draait Linux.
 
-**Oplossing:** haal die regel uit `requirements.txt`, zoals in [les 2](site:fullstack/docs/online/project/requirements), en bouw opnieuw.
+**Oplossing:** haal die regel uit `requirements.txt`, zoals in [les 4](site:fullstack/docs/online/project/requirements), en bouw opnieuw.
 
 ### The legacy builder is deprecated
 
@@ -208,19 +177,25 @@ DEPRECATED: The legacy builder is deprecated and will be removed in a future rel
 
 ## Opdrachten
 
-### Opdracht 1: Run - Jouw image
+### Opdracht 1: Run - Een tekst in een template
 
-Kloon je project in Ubuntu, maak de Dockerfile en `.dockerignore`, en bouw het image. Bouw het daarna nog een keer zonder iets te veranderen. Hoe lang duurt de tweede keer?
+Verander een tekst in een template, en bouw opnieuw. Welke stappen staan er nu als `CACHED`, en welke niet?
 
 <details>
 <summary>Antwoord</summary>
 
 ```bash
 docker build -t gastenboek .
-docker build -t gastenboek .
 ```
 
-De tweede keer is het binnen een seconde klaar: elke stap staat er als `CACHED`, want er is niets veranderd.
+```text
+ => CACHED [2/5] WORKDIR /app
+ => CACHED [3/5] COPY requirements.txt .
+ => CACHED [4/5] RUN python -m pip install -r requirements.txt
+ => [5/5] COPY . .
+```
+
+Tot en met de pip-stap is er niets veranderd, want `requirements.txt` is gelijk. Pas de stap die je hele map kopieert, ziet een ander bestand, en die doet Docker opnieuw. Daarom is het in een paar seconden klaar.
 
 </details>
 
@@ -235,4 +210,4 @@ In `/app` staan je bestanden: `Dockerfile`, `main.py`, `requirements.txt`, `READ
 
 </details>
 
-Door naar [les 6: een container draaien](site:fullstack/docs/online/docker/container).
+Door naar [les 16: een container draaien](site:fullstack/docs/online/docker/container).

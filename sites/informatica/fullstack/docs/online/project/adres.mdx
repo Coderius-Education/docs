@@ -1,0 +1,81 @@
+---
+sidebar_label: '3. Waar je server luistert'
+description: 127.0.0.1 is alleen deze computer, 0.0.0.0 is elk netwerk. Met --host kies je het zelf.
+---
+
+# Online zetten: waar je server luistert
+
+`fastapi dev` liet `http://127.0.0.1:8000` zien, en `fastapi run` liet `http://0.0.0.0:8000` zien. Dat adres zegt wie er bij je server kan.
+
+## Twee adressen
+
+| Adres | Wie er bij je server kan |
+|:---|:---|
+| `127.0.0.1` | alleen deze computer |
+| `0.0.0.0` | iedereen die deze computer kan bereiken, op elk netwerk waar hij aan hangt |
+
+Op een server is `0.0.0.0` wat je wilt: daar moeten bezoekers van internet bij. Op je laptop is je site nog niet klaar voor bezoekers, en op het wifi van school kan dan een klasgenoot meekijken.
+
+## Zelf kiezen
+
+Met `--host` kies je het adres zelf, en met `--port` de poort. Stop je server, en start hem zo:
+
+```powershell
+fastapi run main.py --host 127.0.0.1 --port 8000
+```
+
+Zo start je je site voortaan op je laptop. Straks draait hij in een **container**, een afgeschermd stukje Linux, en daar is het andersom: dan moet hij juist op `0.0.0.0` luisteren. Dat zie je in [les 16](site:fullstack/docs/online/docker/container).
+
+Je handleiding op `/docs` zette je in de route Veiligheid uit ([Wat je server laat zien](site:fullstack/docs/veiligheid/zichtbaar/uitzetten)). Deed je dat nog niet, doe het dan voordat je site in [les 33](site:fullstack/docs/online/server/site) op internet komt.
+
+<Gelukt>
+
+In de terminal staat `Server started at http://127.0.0.1:8000`, en je gastenboek opent op dat adres.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je zit op het wifi van school en start je site met fastapi run main.py, zonder --host. Je klikte bij de firewall op Toegang toestaan. Een klasgenoot typt het adres van jouw laptop met :8000 erachter. Wat ziet hij?">
+  <Keuze goed uitleg="Zonder --host luistert fastapi run op 0.0.0.0, dus ook op het wifi. De firewall laat het door, want je stond het toe.">Jouw gastenboek</Keuze>
+  <Keuze uitleg="Dat zou zo zijn met --host 127.0.0.1. Waarop luistert fastapi run zonder --host?">Niets, want je site luistert alleen op je eigen laptop</Keuze>
+  <Keuze uitleg="Het adres 0.0.0.0 typt niemand. Hij typt het adres van jouw laptop, en daar luistert je server.">Een foutmelding, want 0.0.0.0 werkt niet in een browser</Keuze>
+  <Uitleg>
+
+  Zonder `--host` neemt `fastapi run` verzoeken aan van elk netwerk. Daarom start je hem op je laptop met `--host 127.0.0.1`, en klik je bij de firewall op **Annuleren**.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### No such option
+
+```text
+No such option: --hots (Possible options: --host, --port)
+```
+
+**Oorzaak:** een tikfout in de optie. `fastapi` noemt erachter de opties die erop lijken.
+
+**Oplossing:** typ `--host` met twee streepjes en zonder tikfout. Met `fastapi run --help` zie je alle opties.
+
+### De pagina laadt niet met een andere poort
+
+Je startte met `--port 8001`, en `http://127.0.0.1:8000` laadt niet meer.
+
+**Oorzaak:** de poort is deel van het adres. Je site staat nu op 8001.
+
+**Oplossing:** open `http://127.0.0.1:8001`, of start weer met `--port 8000`.
+
+## Opdrachten
+
+### Opdracht 1: Investigate - Waar staat het in de terminal?
+
+Start je project één keer met `fastapi dev main.py` en één keer met `fastapi run main.py --host 127.0.0.1`. Welke regels in de terminal laten de verschillen zien?
+
+<details>
+<summary>Antwoord</summary>
+
+Het adres staat bij `Server started at`: in beide gevallen `http://127.0.0.1:8000`. Het herladen zie je aan `Will watch for changes in these directories`: die regel staat er alleen bij `dev`. Bovenaan staat ook nog `development mode` of `production mode`.
+
+</details>
+
+Door naar [les 4: de lijst van je packages](site:fullstack/docs/online/project/requirements).

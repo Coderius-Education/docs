@@ -1,9 +1,11 @@
 ---
-sidebar_label: '16. Een back-up'
-description: Een back-up van je databases en de instellingen van de server, op je laptop, en hoe je hem terugzet zodat je site er weer in mag schrijven.
+sidebar_label: '37. Een back-up'
+description: Een kopie van je databases en de instellingen van de server, op je laptop.
 ---
 
 # Online zetten: een back-up
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/scp', label: 'Bestanden kopiëren met scp'}]} />
 
 Het volume is het enige op je server dat je niet opnieuw kunt maken: je code staat op GitHub, maar de berichten en accounts van je bezoekers staan alleen in `gastenboek_data`. Hetzelfde geldt voor de instellingen van de server, `.env` en de map `~/traefik`. Een kapotte schijf, een `docker compose down -v` of een opgezegde server, en ze zijn weg. Maak er daarom een kopie van, op een andere computer.
 
@@ -26,56 +28,32 @@ cp ~/gastenboek/.env ~/backup/
 cp -r ~/traefik ~/backup/
 ```
 
-Haal de kopie daarna in WSL naar je laptop met `scp`:
+Haal de kopie daarna naar je laptop. Typ dit in WSL, niet op de server:
 
 ```bash
 scp -r sam@gastenboek.voorbeeld.nl:backup ~/backup-gastenboek
 ```
 
-Ging ssh tot nu toe met het IP-adres, dan vraagt hij bij de domeinnaam nog één keer of je de vingerafdruk vertrouwt; het is dezelfde server. Gooi de kopie op de server daarna weg met `rm -r ~/backup`. In `gebruikers.db` staan de wachtwoorden van je bezoekers, als hash; bewaar de back-up dus net zo zorgvuldig als de server zelf.
+Ging ssh tot nu toe met het IP-adres, dan vraagt hij bij de domeinnaam nog één keer of je de vingerafdruk vertrouwt; het is dezelfde server. Staat de kopie op je laptop, gooi hem dan op de server weg met `rm -r ~/backup`. De kopie in `~/backup-gastenboek` op je laptop houd je: die zet je in de volgende stap terug. In `gebruikers.db` staan de wachtwoorden van je bezoekers, als hash; bewaar de back-up dus net zo zorgvuldig als de server zelf.
 
-## Terugzetten
+<Gelukt>
 
-Een back-up die je nooit terugzette, is een gok. Zo gaan de databases terug in het volume, op de server:
+In WSL toont `ls -A ~/backup-gastenboek` drie dingen: de map `data` met je databases, het bestand `.env` en de map `traefik`.
 
-```bash
-cd ~/gastenboek
-docker compose stop
-docker compose cp ~/backup/data/. gastenboek:/app/data
-docker compose start
-docker compose exec -u root gastenboek chown -R app /app/data
-```
+</Gelukt>
 
-De `/.` achter `data` betekent: de bestanden uit de map, niet de map zelf. Anders komen ze in `/app/data/data`, waar je site niet zoekt.
-
-De laatste regel is nodig, en je ziet pas later dat hij ontbreekt. Wat `docker compose cp` in een container zet, is van `root`. Je site draait als `app` ([les 7](site:fullstack/docs/online/docker/niet-als-root)) en mag zulke bestanden lezen, maar niet veranderen. `exec -u root` doet één commando als `root` in de draaiende container, en `chown -R app` geeft de databases terug aan `app`.
-
-<Voorspel soort="Controlevraag" vraag="Je zet de back-up terug zonder de laatste regel. Je opent je site, en de berichten van gisteren staan er weer. Een bezoeker schrijft een nieuw bericht. Wat gebeurt er?">
-  <Keuze uitleg="De berichten lezen lukte. Maar van wie zijn de databases nu, en wat mag app daarmee?">Het bericht komt erbij, want de site werkt weer</Keuze>
-  <Keuze goed uitleg="De databases zijn van root. app mag ze lezen, dus de oude berichten staan er, maar schrijven mag hij niet. Je site geeft een 500.">Een 500, want je site mag de databases lezen maar niet veranderen</Keuze>
-  <Keuze uitleg="De container draait gewoon, en de healthcheck vraagt alleen de homepage op. Die leest alleen.">De container stopt, want de healthcheck faalt</Keuze>
+<Voorspel soort="Controlevraag" vraag="In de back-up zitten je databases, .env en ~/traefik. Waarom zit main.py er niet in?">
+  <Keuze uitleg="main.py is wel belangrijk: zonder draait je site niet. Waar staat hij nog meer?">main.py is niet belangrijk</Keuze>
+  <Keuze goed uitleg="Je code staat op GitHub, en een nieuwe server haalt hem daar op. De databases, .env en ~/traefik staan alleen op deze server.">main.py staat al op GitHub</Keuze>
+  <Keuze uitleg="docker compose cp kan elk bestand uit de container kopiëren, ook main.py. Maar is dat nodig?">docker compose cp kopieert geen Python-bestanden</Keuze>
   <Uitleg>
 
-  Dit is de verraderlijke kant: alles lijkt te werken, tot iemand iets opslaat. In het logboek staat dan `sqlite3.OperationalError: attempt to write a readonly database`. Test een teruggezette back-up daarom altijd met iets wat schrijft: registreer een account, of plaats een bericht.
+  Een back-up bevat wat je niet opnieuw kunt maken. Je code maak je opnieuw met `git clone`, je image met `docker compose up --build`. De berichten van je bezoekers en de instellingen van de server staan nergens anders.
 
   </Uitleg>
 </Voorspel>
 
 ## Er gaat iets mis
-
-### attempt to write a readonly database
-
-```text
-sqlite3.OperationalError: attempt to write a readonly database
-```
-
-**Oorzaak:** je zette een back-up terug, en de databases zijn van `root`. Je site leest ze wel, maar schrijven mag niet.
-
-**Oplossing:** geef ze terug aan `app`, terwijl de container draait:
-
-```bash
-docker compose exec -u root gastenboek chown -R app /app/data
-```
 
 ### Permission denied bij rm -r ~/backup
 
@@ -83,11 +61,23 @@ docker compose exec -u root gastenboek chown -R app /app/data
 
 **Oplossing:** gooi hem weg met `sudo rm -r ~/backup`, en laat `sudo` voortaan weg voor `docker`.
 
-### Je site is leeg na het terugzetten
+### De nieuwe back-up staat in ~/backup-gastenboek/backup
 
-**Oorzaak:** de bestanden staan in `/app/data/data`: je typte `~/backup/data` zonder `/.` erachter.
+Je maakte een tweede back-up, en op je laptop toont `ls -A ~/backup-gastenboek`:
 
-**Oplossing:** kijk met `docker compose exec gastenboek ls /app/data` wat er staat. Zet het opnieuw terug, nu met `/.`, en gooi de map `data` in de container weg met `docker compose exec -u root gastenboek rm -r /app/data/data`.
+```text
+.env  backup  data  traefik
+```
+
+**Oorzaak:** `~/backup-gastenboek` bestond al van de vorige keer. Dan maakt `scp -r` de map `backup` daarbinnen, in plaats van de oude te vervangen. Daarbuiten staat nog de oude back-up.
+
+**Oplossing:** geef de oude back-up eerst een andere naam, en haal de nieuwe opnieuw op:
+
+```bash
+rm -r ~/backup-gastenboek/backup
+mv ~/backup-gastenboek ~/backup-gastenboek-oud
+scp -r sam@gastenboek.voorbeeld.nl:backup ~/backup-gastenboek
+```
 
 ## Opdrachten
 
@@ -102,32 +92,4 @@ De map `data` met je databases (`gebruikers.db`, en de andere die je site gebrui
 
 </details>
 
-### Opdracht 2: Run - Terugzetten als oefening
-
-Oefen het terugzetten op je laptop, in WSL, waar niets stuk kan. Registreer in je site op `gastenboek.localhost` het account `voor`, en maak een back-up naar `~/proef`. Registreer daarna het account `na`, en zet de back-up terug. Kun je nog inloggen als `na`? En lukt een nieuw account `daarna`?
-
-<details>
-<summary>Antwoord</summary>
-
-```bash
-cd ~/gastenboek
-mkdir ~/proef
-docker compose stop
-docker compose cp gastenboek:/app/data ~/proef/data
-docker compose start
-```
-
-Registreer nu `na` in de browser, en zet daarna terug:
-
-```bash
-docker compose stop
-docker compose cp ~/proef/data/. gastenboek:/app/data
-docker compose start
-docker compose exec -u root gastenboek chown -R app /app/data
-```
-
-Inloggen als `voor` lukt, als `na` niet meer: de databases zijn weer zoals op het moment van de back-up. Het account `daarna` komt erbij. Liet je de laatste regel weg, dan gaf dat een 500.
-
-</details>
-
-Door naar [les 17: bijwerken en opruimen](site:fullstack/docs/online/server/bijwerken).
+Door naar [les 38: een back-up terugzetten](site:fullstack/docs/online/server/terugzetten).

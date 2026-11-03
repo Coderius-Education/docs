@@ -1,0 +1,96 @@
+---
+sidebar_label: '12. Een wijziging vanuit Ubuntu'
+description: Verander iets in Ubuntu, commit en push het naar GitHub. Vanaf nu werk je alleen nog in Ubuntu.
+---
+
+# Online zetten: een wijziging vanuit Ubuntu
+
+<Voorkennis items={[{site: 'editor', to: '/git/basis/stap-4-commit', label: 'Een commit maken'}, {site: 'editor', to: '/git/push/stap-2-wijziging', label: 'Een wijziging pushen'}]} />
+
+Je site draait in Ubuntu. Het laatste stuk van deze reeks: een wijziging van hier naar GitHub brengen, zoals je dat straks steeds doet.
+
+## Iets veranderen
+
+Verander de titel in je `README.md`, bijvoorbeeld van `# Gastenboek` in `# Mijn gastenboek`. Sla op, en kijk wat git ziet:
+
+```bash
+git status
+```
+
+`README.md` staat bij `Changes not staged for commit`. Je databases staan er niet bij: die staan in `.gitignore`. `.venv` ook niet.
+
+## Commit en push
+
+```bash
+git add README.md
+git commit -m "Titel aangepast in Ubuntu"
+git push
+```
+
+<Gelukt>
+
+Op GitHub staat je commit bovenaan, met je bericht `Titel aangepast in Ubuntu`. Hoort het e-mailadres uit [les 7](site:fullstack/docs/online/linux/git) bij je GitHub-account, dan staat je accountnaam erbij. `git status` zegt in Ubuntu `nothing to commit, working tree clean`.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Na je push open je je projectmap op Windows, in VS Code op Windows. Staat je nieuwe titel daar in de README?">
+  <Keuze uitleg="Je projectmap op Windows is een andere kopie van je repository. Wie zou de wijziging daarheen brengen?">Ja, want het is hetzelfde project</Keuze>
+  <Keuze goed uitleg="De wijziging staat in Ubuntu en op GitHub. De kopie op Windows krijgt hem pas met een git pull.">Nee, die kopie loopt nu achter op GitHub</Keuze>
+  <Keuze uitleg="WSL kan bij de bestanden van Windows, maar dit zijn losse mappen met elk een eigen kopie.">Ja, want WSL deelt zijn bestanden met Windows</Keuze>
+  <Uitleg>
+
+  Twee kopieën van één project lopen uit elkaar zodra je in de ene werkt. Daarom werk je vanaf nu alleen nog in Ubuntu: daar bouw je, daar test je in Docker, en vandaar push je. Je projectmap op Windows en de kopie uit les 6 gebruik je niet meer.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Author identity unknown
+
+```text
+Author identity unknown
+
+*** Please tell me who you are.
+```
+
+**Oorzaak:** git in Ubuntu weet nog niet wie je bent.
+
+**Oplossing:** doe de twee regels met `git config --global` uit [les 7](site:fullstack/docs/online/linux/git), en commit opnieuw.
+
+### Username for 'https://github.com'
+
+**Oorzaak:** je kloonde met het https-adres, en daarover laat GitHub je niet met een wachtwoord pushen.
+
+**Oplossing:** zet het adres om naar ssh zoals in [les 9](site:fullstack/docs/online/linux/klonen), en push opnieuw.
+
+### Updates were rejected
+
+```text
+ ! [rejected]        main -> main (fetch first)
+```
+
+**Oorzaak:** op GitHub staat een commit die jouw Ubuntu nog niet heeft, bijvoorbeeld omdat je op Windows nog iets pushte.
+
+**Oplossing:** haal hem eerst op, en push dan opnieuw:
+
+```bash
+git pull
+git push
+```
+
+Heb jij ook een nieuwe commit, dan voegt `git pull` de twee samen. Hij opent daarvoor [nano](site:linux/docs/wsl/nano) met een bericht dat begint met `Merge branch 'main'`. Laat het staan en sluit nano met Ctrl+X; dan maakt git de commit die de twee samenvoegt. Veranderde je op beide plekken dezelfde regel, dan zegt git `CONFLICT`. Los dat op zoals in [branches samenvoegen](site:editor/git/branches/stap-4-mergen) van de editor-cursus, en commit.
+
+### Need to specify how to reconcile divergent branches
+
+```text
+hint: You have divergent branches and need to specify how to reconcile them.
+...
+fatal: Need to specify how to reconcile divergent branches.
+```
+
+**Oorzaak:** de regel `git config --global pull.rebase false` uit [les 7](site:fullstack/docs/online/linux/git) ontbreekt. Zonder die regel weet git niet hoe hij jouw commit en die van GitHub moet samenvoegen, en stopt hij.
+
+**Oplossing:** typ die regel, en daarna opnieuw `git pull` en `git push`.
+
+Door naar [les 13: Docker installeren](site:fullstack/docs/online/docker/installeren).

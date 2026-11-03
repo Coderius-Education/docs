@@ -1,16 +1,15 @@
 ---
-sidebar_label: '7. Niet als root'
-description: In een container draait je site standaard als root. Met USER draait hij als een gewone gebruiker, en dan krijgen de databases een eigen map die van die gebruiker is.
+sidebar_label: '19. Niet als root'
+description: In een container draait je site standaard als root. Met USER draait hij als een gewone gebruiker, die alleen in de map data mag schrijven.
 ---
 
 # Online zetten: niet als root
 
 <Voorkennis items={[{site: 'linux', to: '/docs/terminal/rechten', label: 'Rechten op bestanden en mappen'}]} />
 
-Start je container, en vraag wie je site draait:
+Je container uit les 18 draait nog. Vraag wie je site draait:
 
 ```bash
-docker run -d --name gastenboek -p 8000:8000 gastenboek
 docker exec gastenboek whoami
 ```
 
@@ -18,65 +17,39 @@ docker exec gastenboek whoami
 root
 ```
 
-`docker exec` voert een commando uit in een container die al draait. Het antwoord is `root`: je site mag alles in de container. Dat is een risico. Zit er een gat in je code, zoals een bestandsnaam van een bezoeker uit [Invoer controleren](site:fullstack/docs/veiligheid/invoer/paden), dan kan wie dat gat vindt ook alles. Hij kan je code veranderen, programma's installeren, en zoeken naar een weg uit de container.
+Het antwoord is `root`: je site mag alles in de container. Dat is een risico. Zit er een gat in je code, zoals een bestandsnaam van een bezoeker uit [Invoer controleren](site:fullstack/docs/veiligheid/invoer/paden), dan kan wie dat gat vindt ook alles. Hij kan je code veranderen, programma's installeren, en zoeken naar een weg uit de container.
 
 Een webserver hoort daarom te draaien als een gewone gebruiker, die zo weinig mag als kan.
 
 ## Een eigen gebruiker in het image
 
-Zet in je Dockerfile, na `COPY . .`, twee regels:
+`RUN useradd --system app` maakt een gebruiker `app` zonder wachtwoord en zonder thuismap: niemand logt als hem in. `USER app` zegt dat alles hierna als `app` draait, ook de `CMD`.
 
-```dockerfile
-RUN useradd --system app
-USER app
-```
-
-`useradd --system` maakt een gebruiker `app` zonder wachtwoord en zonder thuismap: niemand logt als hem in. `USER app` zegt dat alles hierna als `app` draait, ook de `CMD`.
-
-<Voorspel soort="Controlevraag" vraag="Je bouwt het image opnieuw met USER app, start een container, en registreert een account. Wat gebeurt er?">
-  <Keuze uitleg="Kijk naar waar de databases komen: in /app, de map waar de server staat. Van wie is die map?">Het werkt zoals eerst, maar nu als app</Keuze>
-  <Keuze goed uitleg="De databases komen in /app, en die map is van root. Een nieuw bestand maken is schrijven in de map, en dat mag app niet.">Een 500: de server mag de database niet aanmaken</Keuze>
-  <Keuze uitleg="De container start wel: fastapi run hoeft niets te schrijven om te starten. Het gaat mis bij het eerste verzoek dat een database opent.">De container start niet, want app mag main.py niet lezen</Keuze>
+<Voorspel vraag="Je zet alleen RUN useradd --system app en USER app na COPY . . in je Dockerfile, bouwt, en start een container. Wat gebeurt er?">
+  <Keuze uitleg="Kijk naar de eerste regel van main.py die iets schrijft: os.makedirs. In welke map maakt hij data, en van wie is die map?">Het werkt zoals eerst, maar nu als app</Keuze>
+  <Keuze goed uitleg="os.makedirs wil de map data maken in /app, en die map is van root. app mag daar niets maken, dus je site start niet eens.">De container stopt meteen, want app mag de map data niet maken</Keuze>
+  <Keuze uitleg="app mag main.py lezen: iedereen mag de bestanden in /app lezen. Het gaat mis bij het eerste wat je site schrijft.">De container start niet, want app mag main.py niet lezen</Keuze>
   <Uitleg>
 
-  In het logboek van de container staat het antwoord:
+  `docker logs gastenboek` eindigt met:
 
   ```text
-  sqlite3.OperationalError: unable to open database file
+  PermissionError: [Errno 13] Permission denied: 'data'
   ```
 
-  `SqliteDict("gastenboek.db")` maakt het bestand in de map waar de server draait: `/app`. Die map maakte Docker als `root`, en `app` heeft er geen `w`. Je site mag zijn code lezen, en dat is goed. Maar zijn databases moeten op een plek waar hij wel mag schrijven.
+  `/app` maakte Docker als `root`, en `app` heeft er geen `w`. Je site mag zijn code lezen, en dat is goed. Maar zijn databases moeten op een plek waar hij wel mag schrijven.
 
   </Uitleg>
 </Voorspel>
 
-## Een map voor de databases
-
-Je geeft de databases een eigen map, `data`, die van `app` is. Dat zijn drie veranderingen.
-
-**1. In `main.py`** komt elke database in `data/`. Vervang in VS Code met Ctrl+H overal `SqliteDict("` door `SqliteDict("data/`, met **Replace All**. Dan staat er `SqliteDict("data/gastenboek.db")`, `SqliteDict("data/gebruikers.db")`, en zo voor elke database. Zet bovenaan, onder je imports, een regel die de map maakt als hij er nog niet is:
-
-```python
-import os
-
-from fastapi import FastAPI
-from sqlitedict import SqliteDict
-
-os.makedirs("data", exist_ok=True)
-
-app = FastAPI()
-```
-
-SqliteDict maakt een bestand, maar geen map. Zonder die regel start je project met `fastapi dev` niet meer, zoals je README het belooft.
-
-**2. In de Dockerfile** maak je de map, en geef je hem aan `app`. Verander de `RUN` van hierboven:
+Daarom maakt de Dockerfile de map `data` zelf, en geeft hij hem aan `app`. Zet na `COPY . .` deze twee regels:
 
 ```dockerfile
 RUN useradd --system app && mkdir data && chown app data
 USER app
 ```
 
-`&&` voert de volgende stap alleen uit als de vorige lukte. Dit gebeurt nog als `root`, want het staat vóór `USER`. Je hele Dockerfile is nu:
+`&&` voert de volgende stap alleen uit als de vorige lukte. Je hele Dockerfile is nu:
 
 ```dockerfile
 FROM python:3.13-slim
@@ -94,18 +67,6 @@ USER app
 CMD ["fastapi", "run", "main.py", "--port", "8000"]
 ```
 
-**3. In `.dockerignore`** komt `data/`, zodat je eigen testdatabases niet in het image komen:
-
-```text
-.venv
-__pycache__
-.git
-*.db
-data/
-```
-
-In `.gitignore` hoeft niets bij: `*.db` geldt daar ook voor bestanden in een map.
-
 Bouw en start opnieuw, en kijk:
 
 ```bash
@@ -115,19 +76,56 @@ docker run -d --name gastenboek -p 8000:8000 gastenboek
 docker exec gastenboek whoami
 ```
 
-Nu staat er `app`. Registreer een account, en kijk met `docker exec gastenboek ls -l data` waar de databases staan, en van wie ze zijn.
+<Gelukt>
+
+`docker exec gastenboek whoami` zegt nu:
+
+```text
+app
+```
+
+En in je gastenboek op `http://127.0.0.1:8000` kun je een account maken en een bericht schrijven, zonder 500.
+
+</Gelukt>
+
+Met `docker exec gastenboek ls -l data` zie je je databases, met `app` als eigenaar. Zet de Dockerfile in git:
+
+```bash
+git add Dockerfile
+git commit -m "Niet als root"
+git push
+```
+
+<Voorspel soort="Controlevraag" vraag="Je zet de regels in een andere volgorde: eerst RUN useradd --system app, dan USER app, en daarna RUN mkdir data && chown app data. Wat gebeurt er bij docker build?">
+  <Keuze uitleg="USER app geldt voor alles wat erna komt, ook voor RUN. Wie maakt de map dan?">Het image wordt hetzelfde, want de regels doen hetzelfde</Keuze>
+  <Keuze goed uitleg="Na USER app draait ook RUN als app. mkdir data wil de map maken in /app, en dat mag app niet.">De build stopt bij mkdir, want die draait nu als app</Keuze>
+  <Keuze uitleg="De build gaat juist mis, nog voordat er een container is. Bij welke regel?">De build lukt, maar de container geeft bij het eerste account een 500</Keuze>
+  <Uitleg>
+
+  De build stopt met:
+
+  ```text
+  mkdir: cannot create directory ‘data’: Permission denied
+  ```
+
+  Alles vóór `USER` draait als `root`, alles erna als `app`. Een map maken en weggeven moet dus vóór `USER`, en de `CMD` erna, zodat alleen je site als `app` draait.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
 ### unable to open database file
 
+Je site start, maar geeft bij sommige pagina's een 500, en in `docker logs gastenboek` staat:
+
 ```text
 sqlite3.OperationalError: unable to open database file
 ```
 
-**Oorzaak:** een database staat nog niet in `data/`, en `app` mag in `/app` niets maken. Of de map `data` bestaat niet.
+**Oorzaak:** een database staat nog niet in `data/`, en `app` mag in `/app` niets maken. Als `root` zag je die fout nog niet.
 
-**Oplossing:** zoek in `main.py` naar `SqliteDict("` zonder `data/` erachter. Staat het overal goed, controleer dan of de regel met `os.makedirs` er staat.
+**Oplossing:** zoek in `main.py` naar `SqliteDict("` zonder `data/` erachter, verbeter het, en bouw opnieuw.
 
 ### Permission denied: 'data'
 
@@ -137,7 +135,7 @@ De container stopt meteen, en `docker logs gastenboek` eindigt met:
 PermissionError: [Errno 13] Permission denied: 'data'
 ```
 
-**Oorzaak:** de Dockerfile maakt de map `data` niet. Dan probeert `os.makedirs` hem te maken, als `app`, in de map van `root`.
+**Oorzaak:** de Dockerfile maakt de map `data` niet. Dan probeert `os.makedirs("data", exist_ok=True)` uit les 18 hem te maken, als `app`, in de map van `root`.
 
 **Oplossing:** zet `&& mkdir data && chown app data` achter `useradd` in je Dockerfile, en bouw opnieuw.
 
@@ -149,22 +147,19 @@ mkdir: cannot create directory ‘data’: File exists
 
 **Oorzaak:** de map `data` uit je project kwam met `COPY . .` mee in het image, met je testdatabases erin.
 
-**Oplossing:** zet `data/` in `.dockerignore`, en bouw opnieuw.
+**Oplossing:** zet `data/` in `.dockerignore`, zoals in les 18, en bouw opnieuw. Je `.dockerignore` is dan:
+
+```text
+.venv
+__pycache__
+.git
+*.db
+data/
+```
 
 ## Opdrachten
 
-### Opdracht 1: Run - Jouw site als app
-
-Doe de drie veranderingen in je eigen project, bouw het image, en laat zien dat je site draait als `app` en dat registreren en schrijven werken. Commit en push daarna.
-
-<details>
-<summary>Antwoord</summary>
-
-`docker exec gastenboek whoami` geeft `app`, en `docker exec gastenboek ls -l data` toont je databases met `app` als eigenaar. In je projectmap in Ubuntu komen ze niet: ze staan in de container. `git status` toont daarom alleen `main.py`, de Dockerfile en `.dockerignore` als veranderd.
-
-</details>
-
-### Opdracht 2: Investigate - Wat mag app niet?
+### Opdracht 1: Investigate - Wat mag app niet?
 
 Probeer als `app` je code te veranderen: `docker exec gastenboek touch main.py`. Wat zegt de container? Wat betekent dat voor iemand die een gat in je site vindt?
 
@@ -179,4 +174,4 @@ touch: cannot touch 'main.py': Permission denied
 
 </details>
 
-Door naar [les 8: je berichten bewaren](site:fullstack/docs/online/docker/volume).
+Door naar [les 20: je berichten bewaren](site:fullstack/docs/online/docker/volume).

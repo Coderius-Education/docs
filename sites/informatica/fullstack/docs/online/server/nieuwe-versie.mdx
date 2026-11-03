@@ -1,13 +1,32 @@
 ---
-sidebar_label: '15. Een nieuwe versie uitrollen'
-description: Een nieuwe versie gaat met git pull en docker compose up --build naar de server. Een healthcheck laat zien of je site echt antwoordt, en het volume blijft staan.
+sidebar_label: '35. Een nieuwe versie uitrollen'
+description: Een nieuwe versie gaat met git pull en docker compose up --build naar de server. Je code verandert nooit op de server zelf, en het volume blijft staan.
 ---
 
 # Online zetten: een nieuwe versie uitrollen
 
 <Voorkennis items={[{site: 'editor', to: '/git/pull-clone/stap-2-pull', label: 'Nieuwe commits ophalen met git pull'}]} />
 
-Je site staat online. Nu verander je iets, bijvoorbeeld de `secure=True` uit de vorige les. Je werkt zoals altijd in Ubuntu op je laptop: veranderen, testen met `docker compose up -d --build`, en een commit naar GitHub. Daarna haalt de server de nieuwe versie op.
+Je site staat online. Nu verander je iets. Je werkt zoals altijd in Ubuntu op je laptop: veranderen, testen met `docker compose up -d --build`, en een commit naar GitHub. Daarna haalt de server de nieuwe versie op.
+
+## Een wijziging: de cookie alleen over https
+
+Nu je site `https` heeft, kan de sessie-cookie de vlag `secure` krijgen: dan stuurt de browser hem nooit meer over een onversleutelde verbinding. Wat `secure` doet, staat in de praktijkles van [Cookies afschermen](site:fullstack/docs/veiligheid/cookies/praktijk). Zet het bij `set_cookie` in je `/inloggen`, en laat de rest staan zoals het was:
+
+{/* niet-compileren: alleen de set_cookie uit /inloggen, het endpoint eromheen staat in Cookies afschermen */}
+
+```python
+    antwoord.set_cookie(
+        key="sessie_id",
+        value=sessie_id,
+        max_age=GELDIG,
+        httponly=True,
+        samesite="lax",
+        secure=True,
+    )
+```
+
+Op je eigen computer blijft het werken: Chrome en Firefox laten een `secure`-cookie op `127.0.0.1`, `localhost` en `gastenboek.localhost` toch door. Had je `secure=True` al uit Cookies afschermen, dan hoef je hier niets te veranderen; kies dan een andere wijziging, zoals een tekst op je homepage. Commit en push het, en zet het daarna op de server.
 
 ## Twee stappen op de server
 
@@ -18,7 +37,7 @@ docker compose up -d --build
 ```
 
 - `git pull` haalt de nieuwe commits op.
-- `docker compose up -d --build` bouwt een nieuw image en vervangt de container. Kwam er niets bij in `requirements.txt`, dan staat de pip-stap er als `CACHED` ([les 5](site:fullstack/docs/online/docker/image)), en is het in een paar seconden klaar.
+- `docker compose up -d --build` bouwt een nieuw image en vervangt de container. Kwam er niets bij in `requirements.txt`, dan staat de pip-stap er als `CACHED` ([les 15](site:fullstack/docs/online/docker/image)), en is het in een paar seconden klaar.
 
 Kijk daarna of het gelukt is:
 
@@ -27,36 +46,19 @@ docker compose ps
 docker compose logs --tail 20
 ```
 
-Staat er `Up` bij de status en geen traceback in het logboek, open dan je site.
-
-## Draait hij echt?
-
-`Up` betekent alleen dat het programma in de container draait. Of je site ook antwoordt, weet Docker niet. Een site die bij elk verzoek een 500 geeft, staat ook op `Up`. Met een **healthcheck** vraagt Docker zelf elke dertig seconden je site op. Zet hem in WSL in `compose.yaml`, bij je site, onder `labels`:
-
-```yaml
-    healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/')"]
-      interval: 30s
-      start_period: 30s
-      start_interval: 2s
-```
-
-`test` is het commando dat Docker in de container draait: een regel Python die je homepage opvraagt. Geeft die een fout of geen antwoord, dan is de test mislukt. In het image staat geen `curl`, maar wel Python. `interval` is hoe vaak Docker kijkt, en in de eerste dertig seconden (`start_period`) kijkt hij elke twee seconden (`start_interval`).
-
-Commit en push, en zet de nieuwe versie op de server met de twee stappen. Nu staat er meer bij de status:
-
-```text
-NAME                      STATUS
-gastenboek-gastenboek-1   Up 14 seconds (healthy)
-```
-
-`healthy` betekent: de laatste test lukte. Traefik let erop: een container die nog niet gezond is, krijgt geen bezoekers. Vlak na een nieuwe versie geeft je site daarom twee of drie seconden `404 page not found`, tot de eerste test lukt. In het logboek zie je de test ook, elke dertig seconden een `GET /` van `127.0.0.1`.
+Staat er `Up` bij de status en geen traceback in het logboek, open dan je site. Of hij ook echt antwoordt, laat Docker je in de volgende stap zelf nakijken.
 
 ## Werk nooit op de server zelf
 
 Pas je code nooit aan op de server, ook niet "even snel" met nano. De volgende `git pull` weigert dan, of jouw wijziging staat nergens anders en is bij een nieuwe server weg. De server krijgt alleen code die eerst op GitHub stond.
 
-Een paar bestanden horen niet bij je project maar bij de server zelf: `.env` met je domeinnaam, en de map `~/traefik` met de voordeur. Die maak en verander je wel op de server, en ze staan nergens anders. Daarom gaan ze mee in de back-up van [les 16](site:fullstack/docs/online/server/backup).
+Een paar bestanden horen niet bij je project maar bij de server zelf: `.env` met je domeinnaam, en de map `~/traefik` met de voordeur. Die maak en verander je wel op de server, en ze staan nergens anders. Daarom gaan ze mee in de back-up van [les 37](site:fullstack/docs/online/server/backup).
+
+<Gelukt>
+
+Na de twee stappen staat bij `docker compose ps` `Up`, en kun je op je telefoon inloggen met je account van gisteren. Je site werkt met de nieuwe versie, en de berichten staan er nog.
+
+</Gelukt>
 
 <Voorspel soort="Controlevraag" vraag="Na git pull en docker compose up --build opent een klasgenoot je gastenboek. Zijn de berichten van gisteren er nog?">
   <Keuze uitleg="git pull verandert alleen bestanden die in git staan. Staan de databases in git, of in de container?">Nee, git pull zet alle bestanden terug zoals ze op GitHub staan</Keuze>
@@ -64,7 +66,7 @@ Een paar bestanden horen niet bij je project maar bij de server zelf: `.env` met
   <Keuze uitleg="Compose gooit de oude container weg. Maar stonden de databases in de container?">Nee, want de oude container is weggegooid</Keuze>
   <Uitleg>
 
-  Je code komt uit git en zit in het image, je gegevens staan in het volume ([les 8](site:fullstack/docs/online/docker/volume)). Een nieuwe versie vervangt het image en de container, en komt niet aan het volume. Het betekent ook dat de berichten maar op één plek staan. Daarom maak je in de volgende les een back-up.
+  Je code komt uit git en zit in het image, je gegevens staan in het volume ([les 20](site:fullstack/docs/online/docker/volume)). Een nieuwe versie vervangt het image en de container, en komt niet aan het volume. Het betekent ook dat de berichten maar op één plek staan. Daarom maak je in [les 37](site:fullstack/docs/online/server/backup) een back-up.
 
   </Uitleg>
 </Voorspel>
@@ -106,34 +108,9 @@ docker compose up -d --build
 git checkout main
 ```
 
-### unhealthy
-
-`docker compose ps` toont `(unhealthy)`, en Traefik geeft voor je hele site `404 page not found`.
-
-**Oorzaak:** de healthcheck mislukt. Je homepage geeft een fout, of je site antwoordt niet op poort 8000. Traefik stuurt geen bezoekers naar een container die niet gezond is.
-
-**Oplossing:** open de homepage in de container zelf, en lees de fout:
-
-```bash
-docker compose exec gastenboek python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/')"
-```
-
-Krijg je een traceback met `HTTP Error 500`, kijk dan in `docker compose logs` welke fout je site gaf. Ga zo nodig terug naar de vorige versie, zoals hierboven.
-
 ## Opdrachten
 
-### Opdracht 1: Run - Een nieuwe versie
-
-Zet de healthcheck in je `compose.yaml`, verander een tekst op je homepage, commit en push, en zet de nieuwe versie op je server. Kijk direct na `docker compose up` een paar keer met `docker compose ps`.
-
-<details>
-<summary>Antwoord</summary>
-
-Op je laptop: `git add`, `git commit` en `git push`. Op de server de twee stappen van boven. Eerst staat er `(health: starting)`, na een paar seconden `(healthy)`. Daarna zie je de nieuwe tekst, met de oude berichten eronder.
-
-</details>
-
-### Opdracht 2: Make - Een script voor het uitrollen
+### Opdracht 1: Make - Een script voor het uitrollen
 
 Zet de stappen in een script `~/uitrollen.sh` op de server, zodat `bash ~/uitrollen.sh` alles doet. Laat het script stoppen zodra een stap misgaat, en laat het aan het eind zien wat er draait.
 
@@ -159,4 +136,4 @@ Zonder `set -e` bouwt het script ook als `git pull` faalde. Dat gaat meestal goe
 
 </details>
 
-Door naar [les 16: een back-up](site:fullstack/docs/online/server/backup).
+Door naar [les 36: draait hij echt?](site:fullstack/docs/online/server/healthcheck).

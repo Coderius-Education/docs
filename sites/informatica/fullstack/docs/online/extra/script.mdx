@@ -1,0 +1,139 @@
+---
+sidebar_label: '41. Een back-upscript (extra)'
+description: De back-up uit les 37 als script, dat de laatste zeven back-ups bewaart, nooit een half bestand achterlaat en je site ook start als het kopiëren misgaat.
+---
+
+# Online zetten: een back-upscript
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/variabelen', label: 'Een variabele in de shell'}, {site: 'linux', to: '/docs/terminal/zoeken', label: 'Uitvoer doorgeven met een pipe'}]} />
+
+De back-up uit [les 37](site:fullstack/docs/online/server/backup) typ je met de hand, en dat vergeet je. Zet de stappen in een **script**: een bestand met commando's die bash na elkaar uitvoert. In de volgende stap laat je de server het elke nacht draaien.
+
+## Het script
+
+Maak op de server een map voor de back-ups, en het script:
+
+```bash
+mkdir ~/backups
+nano ~/backup.sh
+```
+
+```bash
+MAP=~/backups/$(date +%F)
+
+mkdir -p "$MAP"
+cd ~/gastenboek
+docker compose stop
+docker compose cp gastenboek:/app/data "$MAP/data"
+docker compose start
+
+cp ~/gastenboek/.env "$MAP"
+cp -r ~/traefik "$MAP"
+tar -czf "$MAP.tar.gz.tmp" -C ~/backups "$(basename "$MAP")" && mv "$MAP.tar.gz.tmp" "$MAP.tar.gz"
+rm -rf "$MAP" "$MAP.tar.gz.tmp"
+
+ls -1t ~/backups/*.tar.gz | tail -n +8 | xargs -r rm
+```
+
+Het middelste stuk ken je uit les 37. Nieuw is wat eromheen staat:
+
+| Regel | Wat hij doet |
+|:---|:---|
+| `MAP=~/backups/$(date +%F)` | `$(…)` zet de uitvoer van een commando op die plek; `date +%F` geeft de datum, dus `MAP` wordt een map per dag, zoals `~/backups/2026-11-03` |
+| `"$MAP"` | de waarde van `MAP`, bij elkaar gehouden door de aanhalingstekens |
+| `tar -czf "$MAP.tar.gz.tmp" …` | pakt de map in tot één bestand, eerst met een tijdelijke naam |
+| `&& mv …` | hernoemt het naar `2026-11-03.tar.gz`, maar alleen als `tar` lukte |
+| `rm -rf …` | gooit de map weg, en wat er van een mislukte `tar` over is; `-f` zwijgt als iets er niet is |
+| `ls -1t … \| tail -n +8 \| xargs -r rm` | zet de back-ups op een rij, nieuwste eerst, slaat er zeven over, en gooit de rest weg |
+
+## Nooit een half bestand
+
+`tar` schrijft het ingepakte bestand stukje voor stukje. Raakt de schijf halverwege vol, dan blijft er een half bestand staan dat je niet kunt uitpakken. Had het meteen de echte naam, dan telde het mee als een van de zeven, en gooide de laatste regel er een goede voor weg. Daarom krijgt het pas zijn echte naam als `tar` klaar is en het gelukt is.
+
+## Geen set -e
+
+Na een fout gaat bash door met de volgende regel. Met `set -e` bovenaan stopt een script bij het eerste commando dat misgaat. In dit script wil je dat juist niet: na `docker compose stop` moet `docker compose start` altijd komen, ook als het kopiëren misging. Een gemiste back-up is erg, een site die tot de ochtend uit staat erger.
+
+## Met de hand proberen
+
+```bash
+bash ~/backup.sh
+ls ~/backups
+```
+
+Je site stopt een paar seconden, en start daarna weer.
+
+<Gelukt>
+
+`ls ~/backups` toont een bestand met de datum van vandaag:
+
+```text
+2026-11-03.tar.gz
+```
+
+En `docker compose ps` in `~/gastenboek` toont je site weer met `Up`.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="In ~/backups staan zeven goede back-ups. Op een nacht raakt de schijf vol terwijl tar inpakt. Wat staat er daarna in ~/backups?">
+  <Keuze uitleg="Het halve bestand heette nog .tmp. Wat doet de regel met rm -rf daarmee?">De zeven oude, en een half bestand van vannacht</Keuze>
+  <Keuze goed uitleg="tar mislukte, dus mv deed niets, en rm -rf gooide het halve .tmp-bestand weg. Er is geen nieuwe back-up, en de zeven oude staan er nog.">De zeven oude, en niets van vannacht</Keuze>
+  <Keuze uitleg="De laatste regel telt alleen bestanden die op .tar.gz eindigen. Kwam er vannacht een bij?">Zes oude: de oudste is weggegooid voor die van vannacht</Keuze>
+  <Uitleg>
+
+  Met de tijdelijke naam telt alleen een back-up die af is. Een mislukte nacht kost je één back-up, maar nooit een goede van eerder.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### no space left on device
+
+```text
+write /home/sam/backups/2026-11-03/data/gastenboek.db: no space left on device
+```
+
+**Oorzaak:** de schijf van je server is vol. `docker compose start` draait daarna toch, dus je site start weer, maar er komt geen back-up.
+
+**Oplossing:** kijk met `df -h` hoeveel ruimte er nog is, en met `docker system df` hoeveel Docker gebruikt. Ruim oude images op zoals in [les 39](site:fullstack/docs/online/server/bijwerken), en draai het script opnieuw.
+
+### cannot access bij `*.tar.gz`
+
+```text
+ls: cannot access '/home/sam/backups/*.tar.gz': No such file or directory
+```
+
+**Oorzaak:** er staat nog geen enkele back-up in `~/backups`: `tar` mislukte, en de shell vond niets bij `*.tar.gz`.
+
+**Oplossing:** lees de melding erboven; daar staat waarom `tar` of het kopiëren misging. Bij `no space left on device` helpt de oplossing hierboven.
+
+## Opdrachten
+
+### Opdracht 1: Modify - Portainer erbij
+
+Heb je Portainer uit [les 40](site:fullstack/docs/online/extra/portainer), dan hoort `~/portainer` ook in de back-up. Pas het script aan.
+
+<details>
+<summary>Antwoord</summary>
+
+Zet onder de regel voor `~/traefik`:
+
+```bash
+cp -r ~/portainer "$MAP"
+```
+
+</details>
+
+### Opdracht 2: Investigate - Hoeveel ruimte?
+
+Hoeveel ruimte nemen je back-ups in? Gebruik `du -sh ~/backups`. Hoeveel zou het zijn zonder de regel die er zeven bewaart, na een jaar?
+
+<details>
+<summary>Antwoord</summary>
+
+Een gastenboek met een paar accounts en berichten is ingepakt een paar kilobyte, dus zeven back-ups zijn samen minder dan een megabyte. Na een jaar zonder opruimen zijn het er 365, en dat is voor een klein gastenboek nog steeds weinig. Maar je databases groeien, en een schijf die vol raakt, stopt je site. De regel kost niets, en je hoeft er nooit meer aan te denken.
+
+</details>
+
+Door naar [les 42: elke nacht met cron](site:fullstack/docs/online/extra/nachtelijke-backup).

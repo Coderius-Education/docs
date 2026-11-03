@@ -284,8 +284,9 @@ const sidebars: SidebarsConfig = {
     },
     'veiligheid/eigen-project',
   ],
-  // Online zetten: eerst het project klaar op de laptop, dan Docker in WSL,
-  // dan dezelfde bestanden op een echte server, en Portainer als extra.
+  // Online zetten in kleine stappen, elk met een Gelukt-blok: eerst op
+  // Windows met fastapi run, dan in Linux zonder Docker, dan Docker in WSL,
+  // dan dezelfde bestanden op een echte server, en beheren als extra.
   // Linux zelf legt de route niet uit; dat staat in de Linux-cursus (site
   // linux), en elke les linkt ernaar. Uitgeklapt: de route wordt van voor
   // naar achter gedaan.
@@ -293,12 +294,28 @@ const sidebars: SidebarsConfig = {
     'online/index',
     {
       type: 'category',
-      label: 'Je project klaarmaken',
+      label: 'Op Windows',
       collapsed: false,
       items: [
-        'online/project/dev-of-run',
+        'online/project/run',
+        'online/project/herstarten',
+        'online/project/adres',
         'online/project/requirements',
         'online/project/repository',
+        'online/project/proef',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'In Linux',
+      collapsed: false,
+      items: [
+        'online/linux/git',
+        'online/linux/sleutel',
+        'online/linux/klonen',
+        'online/linux/venv',
+        'online/linux/run',
+        'online/linux/pushen',
       ],
     },
     {
@@ -307,11 +324,15 @@ const sidebars: SidebarsConfig = {
       collapsed: false,
       items: [
         'online/docker/installeren',
+        'online/docker/toegang',
         'online/docker/image',
         'online/docker/container',
+        'online/docker/achtergrond',
+        'online/docker/databases',
         'online/docker/niet-als-root',
         'online/docker/volume',
         'online/docker/compose',
+        'online/docker/voordeur',
         'online/docker/traefik',
       ],
     },
@@ -321,11 +342,20 @@ const sidebars: SidebarsConfig = {
       collapsed: false,
       items: [
         'online/server/huren',
+        'online/server/gebruiker',
+        'online/server/sleutel',
+        'online/server/naam',
         'online/server/dichtzetten',
+        'online/server/updates',
+        'online/server/docker',
+        'online/server/ophalen',
+        'online/server/voordeur',
         'online/server/site',
         'online/server/https',
         'online/server/nieuwe-versie',
+        'online/server/healthcheck',
         'online/server/backup',
+        'online/server/terugzetten',
         'online/server/bijwerken',
       ],
     },
@@ -333,7 +363,12 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Extra: beheren',
       collapsed: false,
-      items: ['online/extra/portainer', 'online/extra/nachtelijke-backup'],
+      items: [
+        'online/extra/portainer',
+        'online/extra/script',
+        'online/extra/nachtelijke-backup',
+        'online/extra/ophalen',
+      ],
     },
   ],
 };

@@ -1,0 +1,131 @@
+---
+sidebar_label: '22. Een voordeur met Traefik'
+description: Traefik ontvangt bezoekers op poort 80 en geeft elk verzoek door aan de container die bij de naam hoort. Eerst start je de voordeur zelf, in een eigen map.
+---
+
+# Online zetten: een voordeur met Traefik
+
+<Voorkennis items={[{site: 'linux', to: '/docs/terminal/maken', label: 'Een map maken met mkdir'}, {site: 'linux', to: '/docs/wsl/nano', label: 'Een bestand maken met nano'}]} />
+
+Een bezoeker typt een naam zonder poortnummer: `http://…` gaat naar poort 80, `https://…` naar poort 443. Op een server draaien vaak meer sites, en ze kunnen niet allemaal poort 80 hebben. Daarom staat er één programma op poort 80 en 443 dat elk verzoek doorgeeft aan de juiste site: een **reverse proxy**, de voordeur van je server.
+
+```text
+browser van de bezoeker  →  Traefik, op poort 80 en 443  →  de container van jouw site
+```
+
+Hier gebruik je **Traefik**. Het draait zelf in een container, en kijkt bij Docker welke andere containers er zijn. Een container die een paar **labels** heeft (regels met instellingen), krijgt vanzelf een plek achter de voordeur. Op de server regelt Traefik ook HTTPS, in [les 34](site:fullstack/docs/online/server/https). Je start eerst de voordeur zelf, zonder site erachter.
+
+## Een netwerk voor de voordeur
+
+Traefik en je site moeten elkaar kunnen bereiken. Daarvoor maak je één keer een netwerk van Docker, `web`:
+
+```bash
+docker network create web
+```
+
+Elke container in `web` kan de andere bereiken, en containers buiten `web` niet.
+
+## Traefik starten
+
+De voordeur hoort niet bij één site, dus hij krijgt een eigen map, naast je project:
+
+```bash
+mkdir ~/traefik
+cd ~/traefik
+nano compose.yaml
+```
+
+```yaml
+services:
+  traefik:
+    image: traefik:v3
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - web
+    restart: unless-stopped
+
+networks:
+  web:
+    external: true
+```
+
+| Regel | Betekenis |
+|:---|:---|
+| `image: traefik:v3` | geen Dockerfile: Docker haalt Traefik van Docker Hub |
+| `--providers.docker=true` | kijk bij Docker welke containers er zijn |
+| `--providers.docker.exposedbydefault=false` | alleen containers met `traefik.enable=true` komen achter de voordeur |
+| `--entrypoints.web.address=:80` | een ingang met de naam `web`, op poort 80 |
+| `/var/run/docker.sock:…:ro` | hierlangs vraagt Traefik aan Docker welke containers er zijn |
+| `external: true` | het netwerk `web` bestaat al, maak het niet opnieuw |
+
+```bash
+docker compose up -d
+```
+
+Open `http://gastenboek.localhost` in je browser op Windows. Een naam die eindigt op `.localhost` wijst in je browser altijd naar je eigen computer, en daar luistert Traefik nu op poort 80.
+
+<Gelukt>
+
+Traefik antwoordt:
+
+```text
+404 page not found
+```
+
+Dat is goed nieuws: de voordeur staat, maar er staat nog geen site achter. Die zet je er in de volgende les achter.
+
+</Gelukt>
+
+:::caution[Toegang tot Docker]
+Met `docker.sock` kan Traefik Docker alles vragen, en `:ro` verandert daar weinig aan. Geef die toegang daarom alleen aan een programma dat je vertrouwt en bijhoudt, zoals Traefik zelf.
+:::
+
+<Voorspel soort="Controlevraag" vraag="Traefik draait. Je site draait nog zoals in les 21, met ports op 127.0.0.1:8000. Wat zie je op http://127.0.0.1:8000?">
+  <Keuze goed uitleg="Je site heeft nog zijn eigen deur, poort 8000. Traefik luistert op 80 en weet nog niets van je site.">Je gastenboek, net als voor Traefik er was</Keuze>
+  <Keuze uitleg="Traefik luistert op poort 80. Komt een verzoek op poort 8000 bij hem?">De 404 van Traefik</Keuze>
+  <Keuze uitleg="Je site staat nog niet in het netwerk web, maar ports werkt los daarvan. Is er iets aan je site veranderd?">Geen antwoord, want je site staat niet in het netwerk web</Keuze>
+  <Uitleg>
+
+  Traefik en je site staan nog los van elkaar. Er zijn nu twee deuren: poort 80 naar Traefik, en poort 8000 rechtstreeks naar je site. In de volgende les gaat de tweede dicht, en komt je site achter de eerste.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### client version 1.24 is too old
+
+In het logboek van Traefik staat steeds:
+
+```text
+Error response from daemon: client version 1.24 is too old. Minimum supported API version is 1.40, please upgrade your client to a newer version
+```
+
+**Oorzaak:** een oude versie van Traefik, zoals `traefik:v3.5`, praat met Docker op een manier die Docker 29 niet meer kent.
+
+**Oplossing:** gebruik `image: traefik:v3`, en haal de nieuwste op met `docker compose pull` en `docker compose up -d`.
+
+### network web declared as external, but could not be found
+
+**Oorzaak:** het netwerk `web` bestaat niet.
+
+**Oplossing:** `docker network create web`, en daarna opnieuw `docker compose up -d`.
+
+### address already in use
+
+```text
+failed to bind host port 0.0.0.0:80/tcp: address already in use
+```
+
+**Oorzaak:** een ander programma heeft poort 80 al. Vaak is het nginx uit [Diensten](site:linux/docs/wsl/diensten) in de Linux-cursus.
+
+**Oplossing:** zet het uit met `sudo systemctl disable --now nginx`, en start Traefik opnieuw.
+
+Door naar [les 23: je site achter Traefik](site:fullstack/docs/online/docker/traefik).

@@ -1,17 +1,17 @@
 ---
-sidebar_label: '12. De deuren dicht'
-description: Een firewall laat alleen ssh, 80 en 443 door, en Ubuntu installeert beveiligingsupdates zelf.
+sidebar_label: '28. De firewall'
+description: Een firewall laat alleen ssh, 80 en 443 door. In de goede volgorde, zodat je jezelf niet buitensluit.
 ---
 
-# Online zetten: de deuren dicht
+# Online zetten: de firewall
 
-<Voorkennis items={[{site: 'linux', to: '/docs/wsl/apt', label: 'Bijwerken met apt'}]} />
-
-Je server staat op internet, en het logboek van ssh liet zien dat er al aan de deur wordt gemorreld. In de vorige les zette je ssh al op alleen een sleutel. Voordat je site erop komt, doe je nog twee dingen: alleen de deuren open die nodig zijn, en updates zonder dat jij eraan hoeft te denken.
+Je server staat op internet, en programma's lopen de hele dag alle adressen af om binnen te komen. Inloggen kan bij jou alleen nog met een sleutel. Nu doe je de andere deuren dicht: alleen wat je site nodig heeft, blijft open.
 
 ## Een firewall
 
 Een **firewall** bepaalt welke poorten van buiten bereikbaar zijn. Op Ubuntu heet hij `ufw` (*uncomplicated firewall*). Je hebt drie deuren nodig: ssh om in te loggen, 80 voor `http` en 443 voor `https`.
+
+**Let op:** de volgorde doet ertoe. Zet je de firewall aan voordat ssh erdoor mag, dan sluit je jezelf buiten. Typ de regels daarom precies in deze volgorde, met `ufw enable` als laatste:
 
 ```bash
 sudo ufw allow OpenSSH
@@ -20,7 +20,7 @@ sudo ufw allow 443/tcp
 sudo ufw enable
 ```
 
-**Let op:** de volgorde doet ertoe. Zet je de firewall aan voordat ssh erdoor mag, dan sluit je jezelf buiten. `ufw enable` waarschuwt daarom:
+`ufw enable` waarschuwt nog een keer:
 
 ```text
 Command may disrupt existing ssh connections. Proceed with operation (y|n)?
@@ -45,39 +45,13 @@ OpenSSH (v6)               ALLOW       Anywhere (v6)
 443/tcp (v6)               ALLOW       Anywhere (v6)
 ```
 
-Elke deur staat er twee keer: één keer voor gewone internetadressen, en met `(v6)` voor de nieuwere IPv6-adressen. Wat niet in de lijst staat, houdt ufw tegen. Ook als je later per ongeluk een programma op `0.0.0.0` laat luisteren. Met één uitzondering, en dat is Docker; die zie je in de volgende les.
+Elke deur staat er twee keer: één keer voor gewone internetadressen, en met `(v6)` voor de nieuwere IPv6-adressen. Wat niet in de lijst staat, houdt ufw tegen. Ook als je later per ongeluk een programma op `0.0.0.0` laat luisteren. Met één uitzondering, en dat is Docker; die zie je in [les 32](site:fullstack/docs/online/server/voordeur).
 
-## Updates vanzelf
+<Gelukt>
 
-Elke week worden er gaten in programma's gevonden en gedicht. Ubuntu kan de beveiligingsupdates zelf installeren, elke dag. Op een server staat dat meestal al aan:
+`sudo ufw status` toont `Status: active` en de zes regels van hierboven, en in een tweede terminal kom je nog binnen met `ssh sam@203.0.113.10`.
 
-```bash
-cat /etc/apt/apt.conf.d/20auto-upgrades
-```
-
-```text
-APT::Periodic::Update-Package-Lists "1";
-APT::Periodic::Unattended-Upgrade "1";
-```
-
-Staat er twee keer `"1"`, dan is het goed. Kijk niet naar `systemctl status unattended-upgrades`: die dienst draait altijd, ook als de updates uitstaan. Bestaat het bestand niet, of staat er een `"0"`, zet het dan aan:
-
-```bash
-sudo apt install unattended-upgrades
-sudo dpkg-reconfigure -plow unattended-upgrades
-```
-
-Soms is een herstart nodig, bijvoorbeeld na een update van de kern van Linux. Dan staat er een bestand:
-
-```bash
-cat /var/run/reboot-required
-```
-
-```text
-*** System restart required ***
-```
-
-Herstart dan met `sudo reboot`. Docker start daarna vanzelf, en je site straks ook, door `restart: unless-stopped` uit [les 9](site:fullstack/docs/online/docker/compose).
+</Gelukt>
 
 <Voorspel soort="Controlevraag" vraag="Je firewall laat alleen OpenSSH, 80 en 443 door. Je start op de server een programma dat op 0.0.0.0:5000 luistert, zonder Docker. Een klasgenoot opent het adres van je server met :5000 erachter. Wat gebeurt er?">
   <Keuze uitleg="Het programma luistert op 0.0.0.0, dus op internet. Maar wat doet ufw met een poort die niet in de lijst staat?">Hij ziet het programma, want het luistert op 0.0.0.0</Keuze>
@@ -85,7 +59,7 @@ Herstart dan met `sudo reboot`. Docker start daarna vanzelf, en je site straks o
   <Keuze uitleg="ufw zegt niets terug tegen een bezoeker. Hij gooit het verzoek weg, en de browser wacht tot hij het opgeeft.">Zijn browser zegt dat de firewall het verbiedt</Keuze>
   <Uitleg>
 
-  De firewall is een tweede slot op elke deur: ook een programma dat je per ongeluk op `0.0.0.0` laat luisteren, is niet van buiten te bereiken. Zo werkt beveiliging, met meer sloten dan nodig. Voor Docker geldt dit niet, en dat is het begin van de volgende les.
+  De firewall is een tweede slot op elke deur: ook een programma dat je per ongeluk op `0.0.0.0` laat luisteren, is niet van buiten te bereiken. Zo werkt beveiliging, met meer sloten dan nodig. Voor Docker geldt dit niet; dat zie je in [les 32](site:fullstack/docs/online/server/voordeur).
 
   </Uitleg>
 </Voorspel>
@@ -108,27 +82,7 @@ sudo ufw allow OpenSSH
 
 ## Opdrachten
 
-### Opdracht 1: Run - De deuren dicht
-
-Zet de firewall aan met OpenSSH, 80 en 443, en controleer dat automatische updates aanstaan. Log daarna in een tweede terminal opnieuw in, om te zien dat ssh er nog door mag.
-
-<details>
-<summary>Antwoord</summary>
-
-```bash
-sudo ufw allow OpenSSH
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
-sudo ufw enable
-sudo ufw status
-cat /etc/apt/apt.conf.d/20auto-upgrades
-```
-
-`ufw status` toont de zes regels van hierboven, en in `20auto-upgrades` staan twee keer `"1"`. Kom je in de tweede terminal niet meer binnen, gebruik dan de console van je hostingbedrijf, zoals bij **Jezelf buitengesloten**.
-
-</details>
-
-### Opdracht 2: Investigate - Wat luistert er?
+### Opdracht 1: Investigate - Wat luistert er?
 
 Kijk met `sudo ss -tlnp` welke programma's luisteren. Welke luisteren op `0.0.0.0`, `*` of `[::]`, dus op internet? Staat elk daarvan in `ufw status`?
 
@@ -139,4 +93,4 @@ Op een verse Ubuntu 24.04 luistert alleen ssh op internet, op poort 22, en die s
 
 </details>
 
-Door naar [les 13: je site op de server](site:fullstack/docs/online/server/site).
+Door naar [les 29: updates vanzelf](site:fullstack/docs/online/server/updates).

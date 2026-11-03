@@ -58,6 +58,7 @@ describe('de route Online zetten', () => {
     expect([...lessen, 'online/index'].sort()).toEqual(bestanden(ONLINE).map(idVan).sort());
     expect(delen.map((d) => [...new Set(d.items.map((id) => id.split('/')[1]))])).toEqual([
       ['project'],
+      ['linux'],
       ['docker'],
       ['server'],
       ['extra'],
@@ -78,23 +79,56 @@ describe('de route Online zetten', () => {
     expect(lessen.filter((id) => /^(readme|index)$/i.test(id.split('/').at(-1) ?? ''))).toEqual([]);
   });
 
-  it('elke les: één controlevraag vóór de opdrachten, Er gaat iets mis, en een antwoord per opdracht', () => {
+  // Elke les is één stap met een succesmoment: wat je ziet als het werkt
+  // (<Gelukt>, met een vinkje dat de Routekaart toont), en daarna één
+  // controlevraag die laat zien dat je snapt waarom. Opdrachten mogen, maar
+  // hoeven niet. Eerst eindigde een les met opdrachten, en had hij drie of
+  // vier nieuwe dingen in duizend woorden; de opdrachtgever vond de stappen
+  // te groot.
+  it('elke les: één Gelukt-blok, daarna één controlevraag, Er gaat iets mis, en een antwoord per opdracht', () => {
     const fout: string[] = [];
     for (const id of lessen) {
       const tekst = lees(id);
-      const opdrachten = tekst.indexOf('\n## Opdrachten');
+      const mis = tekst.indexOf('\n## Er gaat iets mis\n');
+      const gelukt = [...tekst.matchAll(/^<Gelukt>$/gm)];
       const vragen = [...tekst.matchAll(/<Voorspel soort="Controlevraag"/g)];
-      if (vragen.length !== 1 || (vragen[0].index ?? 0) > opdrachten)
-        fout.push(`${id}: controlevraag`);
-      if (!tekst.includes('\n## Er gaat iets mis\n')) fout.push(`${id}: Er gaat iets mis`);
-      const blokken = tekst.slice(opdrachten).split('\n### Opdracht ').slice(1);
-      if (blokken.length === 0) fout.push(`${id}: geen opdracht`);
-      blokken.forEach((blok, i) => {
-        if (!blok.startsWith(`${i + 1}: `))
-          fout.push(`${id}: opdracht ${i + 1} heeft een ander nummer`);
-        if (!blok.includes('<summary>Antwoord</summary>'))
-          fout.push(`${id}: opdracht ${i + 1} zonder antwoord`);
-      });
+      if (mis === -1) fout.push(`${id}: Er gaat iets mis`);
+      if (gelukt.length !== 1) fout.push(`${id}: ${gelukt.length} Gelukt-blokken`);
+      if (vragen.length !== 1) fout.push(`${id}: ${vragen.length} controlevragen`);
+      const g = gelukt[0]?.index ?? -1;
+      const v = vragen[0]?.index ?? -1;
+      if (!(g < v && v < mis))
+        fout.push(`${id}: eerst Gelukt, dan de controlevraag, dan Er gaat iets mis`);
+      const opdrachten = tekst.indexOf('\n## Opdrachten');
+      if (opdrachten === -1) continue;
+      tekst
+        .slice(opdrachten)
+        .split('\n### Opdracht ')
+        .slice(1)
+        .forEach((blok, i) => {
+          if (!blok.startsWith(`${i + 1}: `))
+            fout.push(`${id}: opdracht ${i + 1} heeft een ander nummer`);
+          if (!blok.includes('<summary>Antwoord</summary>'))
+            fout.push(`${id}: opdracht ${i + 1} zonder antwoord`);
+        });
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('elke stap is klein: hooguit 450 woorden uitleg vóór Er gaat iets mis, tabellen meegeteld', () => {
+    const fout: string[] = [];
+    for (const id of lessen) {
+      const tekst = lees(id);
+      const kop = tekst.split('\n---\n').slice(1).join('\n---\n');
+      const uitleg = kop
+        .slice(0, kop.indexOf('\n## Er gaat iets mis\n'))
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '')
+        .replace(/<details>[\s\S]*?<\/details>/g, '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/^\|(\s*:?-+:?\s*\|)+$/gm, '');
+      const woorden = uitleg.split(/\s+/).filter((w) => /\p{L}/u.test(w)).length;
+      if (woorden > 450) fout.push(`${id}: ${woorden} woorden`);
     }
     expect(fout).toEqual([]);
   });
@@ -209,14 +243,16 @@ describe('links en codeblokken', () => {
   });
 });
 
-describe('vanaf les 5 werk je alleen in WSL', () => {
+describe('vanaf les 7 werk je alleen in Ubuntu', () => {
   // De doorloop van november 2026 vond dat les 5 liet klonen en pushen vanuit
   // Ubuntu zonder git daar klaar te zetten: een verse git weigert de eerste
   // commit (Author identity unknown), en GitHub laat over https niet inloggen
   // met een wachtwoord. Les 7 vroeg daarna te testen met fastapi dev, dat in
   // Ubuntu niet geinstalleerd is.
-  it('les 5 zet git klaar: naam, e-mail, een ssh-sleutel op GitHub, en klonen met ssh', () => {
-    const regels = blokken('online/docker/image', 'bash').join('\n');
+  it('deel 2 zet git klaar: naam, e-mail, een ssh-sleutel op GitHub, en klonen met ssh', () => {
+    const regels = ['online/linux/git', 'online/linux/sleutel', 'online/linux/klonen']
+      .flatMap((id) => blokken(id, 'bash'))
+      .join('\n');
     expect(regels).toContain('git config --global user.name');
     expect(regels).toContain('git config --global user.email');
     expect(regels).toContain('ssh -T git@github.com');
@@ -224,28 +260,24 @@ describe('vanaf les 5 werk je alleen in WSL', () => {
     expect(regels).not.toMatch(/^git clone https:/m);
   });
 
-  it('les 1 speelt op Windows: 127.0.0.1 openen, de firewall vóór de opdrachten, de melding van Windows', () => {
+  it('les 1 speelt op Windows: 127.0.0.1 openen, de firewall vóór het Gelukt-blok, de melding van Windows', () => {
     // De doorloop vond: geen adres om te openen (de terminal toont 0.0.0.0),
     // het firewallvenster pas onder Er gaat iets mis, en de melding van Linux.
-    const tekst = lees('online/project/dev-of-run');
-    const opdrachten = tekst.indexOf('## Opdrachten');
-    expect(tekst.indexOf('Open je site op `http://127.0.0.1:8000`')).toBeGreaterThan(-1);
-    expect(tekst.indexOf('Annuleren')).toBeLessThan(tekst.indexOf('<Voorspel'));
-    expect(tekst.indexOf('Annuleren')).toBeLessThan(opdrachten);
+    const tekst = lees('online/project/run');
+    expect(tekst.indexOf('Open `http://127.0.0.1:8000`')).toBeGreaterThan(-1);
+    expect(tekst.indexOf('Annuleren')).toBeLessThan(tekst.indexOf('<Gelukt>'));
     expect(tekst).toContain('[Errno 10048]');
     expect(tekst).not.toContain('[Errno 98]');
   });
 
-  it('les 5 legt de waarschuwing van pip uit, die tegen een image zonder venv in gaat', () => {
+  it('de les over het image legt de waarschuwing van pip uit, die tegen een image zonder venv in gaat', () => {
     // Bij RUN python -m pip install zegt pip: use a virtual environment
     // instead. De les zei twee alinea's eerder dat dat niet nodig is.
     expect(lees('online/docker/image')).toContain("WARNING: Running pip as the 'root' user");
   });
 
-  it('na les 4 start geen codeblok de site nog met fastapi dev', () => {
-    const fout = lessen
-      .slice(lessen.indexOf('online/docker/image'))
-      .filter((id) => blokken(id, 'bash').some((b) => /^fastapi dev\b/m.test(b)));
+  it('geen codeblok in de route start de site nog met fastapi dev', () => {
+    const fout = lessen.filter((id) => blokken(id, 'bash').some((b) => /^fastapi dev\b/m.test(b)));
     expect(fout).toEqual([]);
   });
 });
@@ -259,7 +291,7 @@ describe('de keten van Docker', () => {
     return laatste;
   };
 
-  it('de hele Dockerfile in niet-als-root bouwt op die van les 5, met USER na de map data', () => {
+  it('de hele Dockerfile in niet-als-root bouwt op die van het image, met USER na de map data', () => {
     const eerste = blokken('online/docker/image', 'dockerfile')[0];
     const hele = dockerfile();
     for (const regel of eerste.split('\n').filter(Boolean)) expect(hele).toContain(regel);
@@ -281,13 +313,13 @@ describe('de keten van Docker', () => {
 
   it('het volume hangt op WORKDIR plus de map data uit main.py', () => {
     const werkmap = dockerfile().match(/^WORKDIR (\S+)$/m)?.[1];
-    expect(lees('online/docker/niet-als-root')).toContain('os.makedirs("data", exist_ok=True)');
+    expect(lees('online/docker/databases')).toContain('os.makedirs("data", exist_ok=True)');
     const doel = `${werkmap}/data`;
     expect(lees('online/docker/volume')).toContain(`-v gastenboek-data:${doel} `);
     for (const id of ['online/docker/compose', 'online/docker/traefik']) {
       expect(blokken(id, 'yaml').join('\n'), id).toContain(`- data:${doel}`);
     }
-    const negeer = blokken('online/docker/niet-als-root', 'text').find((b) => b.includes('.venv'));
+    const negeer = blokken('online/docker/databases', 'text').find((b) => b.includes('.venv'));
     expect(negeer).toContain('data/');
   });
 
@@ -336,7 +368,7 @@ describe('de keten van Docker', () => {
   it('dezelfde pakketten in WSL en op de server', () => {
     const regel = 'sudo apt install docker.io docker-compose-v2 docker-buildx git';
     expect(lees('online/docker/installeren')).toContain(regel);
-    expect(lees('online/server/site')).toContain(regel);
+    expect(lees('online/server/docker')).toContain(regel);
   });
 
   it('geen bash-blok gooit volumes weg of draait docker met sudo', () => {
@@ -356,9 +388,14 @@ describe('de server', () => {
     // Eerst stond de sleutel pas in de les na het huren: die hele les kon je
     // met het wachtwoord van sam inloggen, terwijl een 50-cloud-init.conf dat
     // toestond.
-    const huren = lees('online/server/huren');
-    const sleutel = huren.indexOf('PasswordAuthentication no');
-    expect(sleutel).toBeGreaterThan(huren.indexOf('usermod -aG sudo sam'));
+    expect(lees('online/server/sleutel')).toContain('PasswordAuthentication no');
+    expect(lees('online/server/gebruiker')).toContain('usermod -aG sudo sam');
+    expect(lessen.indexOf('online/server/gebruiker')).toBeLessThan(
+      lessen.indexOf('online/server/sleutel'),
+    );
+    expect(lessen.indexOf('online/server/sleutel')).toBeLessThan(
+      lessen.indexOf('online/server/dichtzetten'),
+    );
     expect(lees('online/server/dichtzetten')).not.toContain('PasswordAuthentication');
     expect(lessen.indexOf('online/server/dichtzetten')).toBeLessThan(
       lessen.indexOf('online/server/site'),
@@ -373,9 +410,11 @@ describe('de server', () => {
   });
 
   it('de deploy key komt vóór git clone', () => {
-    const site = lees('online/server/site');
-    expect(site.indexOf('Deploy keys')).toBeGreaterThan(-1);
-    expect(site.indexOf('Deploy keys')).toBeLessThan(site.indexOf('git clone git@github.com'));
+    const ophalen = lees('online/server/ophalen');
+    expect(ophalen.indexOf('Deploy keys')).toBeGreaterThan(-1);
+    expect(ophalen.indexOf('Deploy keys')).toBeLessThan(
+      ophalen.indexOf('git clone git@github.com'),
+    );
   });
 
   it('wat alleen op de server staat, gaat mee in de back-up', () => {
@@ -385,14 +424,14 @@ describe('de server', () => {
     expect(backup).toContain('cp ~/gastenboek/.env ~/backup/');
     expect(backup).toContain('cp -r ~/traefik ~/backup/');
     expect(lees('online/extra/portainer')).toContain('cp -r ~/portainer ~/backup/');
-    const script = blokken('online/extra/nachtelijke-backup', 'bash').join('\n');
+    const script = blokken('online/extra/script', 'bash').join('\n');
     expect(script).toContain('cp ~/gastenboek/.env "$MAP"');
     expect(script).toContain('cp -r ~/traefik "$MAP"');
   });
 
   it('wie een back-up terugzet, geeft de databases terug aan app', () => {
-    // docker compose cp zet bestanden in een container als root. De site
-    // draait als app, leest ze wel en geeft bij schrijven een 500:
+    // docker compose cp zet bestanden in een container met de uid van wie
+    // kopieert, niet als app. De site leest ze wel en geeft bij schrijven een 500:
     // sqlite3.OperationalError: attempt to write a readonly database.
     const fout: string[] = [];
     for (const id of lessen) {
@@ -412,16 +451,18 @@ describe('de server', () => {
   it('Docker krijgt een grens aan de logboeken voordat de eerste container op de server start', () => {
     // Zonder grens groeit het logboek van elke container tot de schijf vol is,
     // en local geldt alleen voor containers die Docker daarna maakt.
-    const site = lees('online/server/site');
-    expect(blokken('online/server/site', 'json').join('\n')).toMatch(/"log-driver": "local"/);
-    const grens = site.indexOf('sudo systemctl restart docker');
-    expect(grens).toBeGreaterThan(-1);
-    expect(grens).toBeLessThan(site.indexOf('docker compose up -d'));
-    expect(grens).toBeLessThan(site.indexOf('docker network create'));
+    expect(blokken('online/server/docker', 'json').join('\n')).toMatch(/"log-driver": "local"/);
+    expect(lees('online/server/docker')).toContain('sudo systemctl restart docker');
+    const eersteContainer = lessen.findIndex(
+      (id) =>
+        id.startsWith('online/server/') &&
+        blokken(id, 'bash').some((b) => /^docker (compose up|network create|run)\b/m.test(b)),
+    );
+    expect(lessen.indexOf('online/server/docker')).toBeLessThan(eersteContainer);
   });
 
   it('de healthcheck gebruikt python, want python:3.13-slim heeft geen curl', () => {
-    const yaml = blokken('online/server/nieuwe-versie', 'yaml').join('\n');
+    const yaml = blokken('online/server/healthcheck', 'yaml').join('\n');
     expect(yaml).toContain('healthcheck:');
     expect(yaml).toContain('"CMD", "python", "-c"');
     expect(alleBlokken('yaml').join('\n')).not.toMatch(/healthcheck:[\s\S]*?curl/);
@@ -436,7 +477,7 @@ describe('de server', () => {
   });
 
   it('het back-upscript start de site ook als het kopiëren misgaat', () => {
-    const script = blokken('online/extra/nachtelijke-backup', 'bash').find((b) =>
+    const script = blokken('online/extra/script', 'bash').find((b) =>
       b.includes('docker compose stop'),
     );
     if (!script) throw new Error('geen back-upscript');
@@ -445,6 +486,9 @@ describe('de server', () => {
       script.indexOf('docker compose cp'),
     );
     expect(script).toMatch(/tail -n \+8/);
+    // Een volle schijf liet een half archief staan dat als back-up meetelde.
+    expect(script).toContain('tar -czf "$MAP.tar.gz.tmp"');
+    expect(script).toMatch(/&& mv "\$MAP\.tar\.gz\.tmp" "\$MAP\.tar\.gz"/);
     const cron = blokken('online/extra/nachtelijke-backup', 'text').find((b) =>
       /^\d+ \d+ \* \* \* /.test(b),
     );
@@ -480,6 +524,156 @@ describe('de server', () => {
   });
 });
 
+// De review van PR #168 (december 2026) liep de route als leerling door en
+// vond fouten die een leerling vastzetten of op het verkeerde been zetten.
+// Elke test hieronder pint er een klasse van vast.
+describe('wat de leerling typt, werkt in een verse Ubuntu', () => {
+  /** De hoofdtekst: alles vóór Er gaat iets mis, zonder uitklapblokken en Voorspel. */
+  const hoofdtekst = (id: string) => {
+    const tekst = lees(id);
+    const eind = tekst.indexOf('\n## Er gaat iets mis\n');
+    return tekst
+      .slice(0, eind === -1 ? undefined : eind)
+      .replace(/<details>[\s\S]*?<\/details>/g, '')
+      .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '');
+  };
+  const hoofdblokken = (id: string, taal: string) =>
+    [...hoofdtekst(id).matchAll(new RegExp(`\`\`\`${taal}\\n([\\s\\S]*?)\`\`\``, 'g'))].map(
+      (m) => m[1],
+    );
+
+  it('git pull werkt: stap 7 zet pull.rebase, want git 2.43 weigert een pull zonder keuze', () => {
+    // Nagedraaid met git 2.43: na een push vanaf Windows en een commit in
+    // Ubuntu geeft git pull "fatal: Need to specify how to reconcile
+    // divergent branches", precies in het geval dat de les beschreef.
+    const git = blokken('online/linux/git', 'bash').join('\n');
+    expect(git).toContain('git config --global pull.rebase false');
+    const eerstePull = lessen.findIndex((id) =>
+      ['bash', 'text'].some((taal) => blokken(id, taal).some((b) => /^git pull\b/m.test(b))),
+    );
+    expect(eerstePull).toBeGreaterThan(lessen.indexOf('online/linux/git'));
+  });
+
+  it('elke sudo apt install heeft sudo apt update ervoor, in dezelfde stap', () => {
+    // Met een oude pakketlijst geeft apt een 404 (Unable to fetch some
+    // archives); de Linux-cursus zegt: doe update voor je iets installeert.
+    const fout = lessen.filter((id) => {
+      const regels = blokken(id, 'bash').join('\n').split('\n');
+      const installeer = regels.findIndex((r) => /^sudo apt install\b/.test(r));
+      if (installeer === -1) return false;
+      const update = regels.findIndex((r) => /^sudo apt update\b/.test(r));
+      return update === -1 || update > installeer;
+    });
+    expect(fout).toEqual([]);
+  });
+
+  it('geen codeblok in de route start de site met fastapi dev, ook niet de README', () => {
+    // De README in stap 5 liet starten met fastapi dev, terwijl stap 3 zegt
+    // dat je je site voortaan met fastapi run start.
+    // Een regel die met fastapi dev begint, staat altijd in een codeblok, ook
+    // ingesprongen in het voorbeeld van een README.
+    const fout = lessen.filter((id) => /^\s*fastapi dev\b/m.test(lees(id)));
+    expect(fout).toEqual([]);
+  });
+
+  it('een container met een naam start pas als de vorige met die naam weg is', () => {
+    // Stap 17 startte docker run --name gastenboek terwijl de container uit
+    // de stap ervoor nog draaide: Conflict, en daarna zei whoami nog root,
+    // van de oude container.
+    const bestaat = new Set<string>();
+    const fout: string[] = [];
+    for (const id of lessen.filter((l) => l.startsWith('online/docker/'))) {
+      for (const blok of hoofdblokken(id, 'bash')) {
+        for (const regel of blok.split('\n')) {
+          const weg = regel.match(/^docker rm -f (\S+)/);
+          if (weg) bestaat.delete(weg[1]);
+          const start = regel.match(/^docker run\b.*--name (\S+)/);
+          if (start) {
+            if (bestaat.has(start[1])) fout.push(`${id}: ${regel}`);
+            bestaat.add(start[1]);
+          }
+        }
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('na rm -r ~/backup gebruikt geen stap die map, tot hij opnieuw gemaakt is', () => {
+    // Stap 35 zette terug uit ~/backup/data, terwijl de stap ervoor die map
+    // al had weggegooid.
+    // Het weggooien staat vaak in de lopende tekst ("gooi hem weg met
+    // `rm -r ~/backup`"); dat telt aan het eind van die stap.
+    let weg = false;
+    const fout: string[] = [];
+    for (const id of lessen) {
+      for (const blok of hoofdblokken(id, 'bash')) {
+        for (const regel of blok.split('\n')) {
+          if (/^(mkdir( -p)? ~\/backup$|scp\b.*~\/backup(\/|\s|$))/.test(regel)) weg = false;
+          else if (/~\/backup(\/|\s|$)/.test(regel) && !/^rm -r ~\/backup$/.test(regel) && weg)
+            fout.push(`${id}: ${regel}`);
+          if (/^rm -r ~\/backup$/.test(regel)) weg = true;
+        }
+      }
+      if (hoofdtekst(id).includes('rm -r ~/backup`')) weg = true;
+    }
+    expect(fout).toEqual([]);
+  });
+});
+
+describe('de controlevraag toetst deze stap, met wat de leerling al weet', () => {
+  const vragen = lessen.map((id) => ({
+    id,
+    vraag: lees(id).match(/<Voorspel soort="Controlevraag" vraag="([^"]+)"/)?.[1] ?? '',
+    uitleg: lees(id).match(/<Voorspel soort="Controlevraag"[\s\S]*?<\/Voorspel>/)?.[0] ?? '',
+  }));
+
+  it('de uitleg verklapt geen opdracht', () => {
+    // Stap 16 zei in de uitleg "Dat zie je in opdracht 2", en stap 18 bouwde
+    // daarop, terwijl opdrachten mogen maar niet hoeven.
+    const fout = vragen.filter((v) => /opdracht \d/i.test(v.uitleg)).map((v) => v.id);
+    expect(fout).toEqual([]);
+  });
+
+  it('geen twee stappen stellen (bijna) dezelfde vraag', () => {
+    // Stap 11 vroeg bijna letterlijk wat stap 2 al vroeg.
+    const woorden = (s: string) => new Set(s.toLowerCase().match(/[\p{L}\d.]+/gu) ?? []);
+    const fout: string[] = [];
+    vragen.forEach((a, i) => {
+      for (const b of vragen.slice(i + 1)) {
+        const x = woorden(a.vraag);
+        const y = woorden(b.vraag);
+        const samen = [...x].filter((w) => y.has(w)).length;
+        if (samen / Math.min(x.size, y.size) > 0.7) fout.push(`${a.id} en ${b.id}`);
+      }
+    });
+    expect(fout).toEqual([]);
+  });
+
+  // Begrippen die een controlevraag of zijn keuzes pas mag gebruiken als ze in
+  // de hoofdtekst van deze of een eerdere stap staan, niet alleen in een
+  // opdracht of uitklapblok. Stap 38 leunde op set -e uit een opdracht.
+  const BEGRIPPEN = ['set -e', 'pull.rebase', '--pull', 'CACHED', 'chown', 'FORWARDED_ALLOW_IPS'];
+
+  it.each(BEGRIPPEN)(
+    '%s staat in de hoofdtekst voordat een controlevraag het gebruikt',
+    (begrip) => {
+      const hoofd = (id: string) => {
+        const tekst = lees(id);
+        return tekst
+          .slice(0, tekst.indexOf('\n## Er gaat iets mis\n'))
+          .replace(/<details>[\s\S]*?<\/details>/g, '')
+          .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '');
+      };
+      const fout = vragen
+        .map((v, i) => ({ ...v, i }))
+        .filter((v) => v.uitleg.includes(begrip))
+        .filter((v) => !lessen.slice(0, v.i + 1).some((id) => hoofd(id).includes(begrip)))
+        .map((v) => v.id);
+      expect(fout).toEqual([]);
+    },
+  );
+});
+
 describe('naslag en diagram van Online zetten', () => {
   // De cheatsheet en Er gaat iets mis hadden geen enkel Docker-item, terwijl
   // de route twintig meldingen behandelt.
@@ -513,7 +707,7 @@ describe('naslag en diagram van Online zetten', () => {
     expect(fout).toEqual([]);
   });
 
-  it('het diagram van de hele weg staat in les 14, na Traefik op 443', () => {
+  it('het diagram van de hele weg staat in de les over HTTPS, na Traefik op 443', () => {
     const https = lees('online/server/https');
     expect(https).toContain('<VerzoekCyclus variant="online" />');
     expect(https.indexOf('variant="online"')).toBeGreaterThan(https.indexOf('## Traefik op 443'));

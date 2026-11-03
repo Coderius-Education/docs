@@ -1,0 +1,77 @@
+---
+sidebar_label: '29. Updates vanzelf'
+description: Ubuntu installeert beveiligingsupdates zelf, elke dag. Je kijkt na of dat aanstaat, en herstart als het moet.
+---
+
+# Online zetten: updates vanzelf
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/apt', label: 'Bijwerken met apt'}, {site: 'linux', to: '/docs/terminal/bestanden-lezen', label: 'Een bestand lezen met cat'}]} />
+
+## Beveiligingsupdates
+
+Elke week worden er gaten in programma's gevonden en gedicht. Ubuntu kan de beveiligingsupdates zelf installeren, elke dag. Op een server staat dat meestal al aan:
+
+```bash
+cat /etc/apt/apt.conf.d/20auto-upgrades
+```
+
+```text
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+```
+
+Staat er twee keer `"1"`, dan is het goed. Kijk niet naar `systemctl status unattended-upgrades`: die dienst draait altijd, ook als de updates uitstaan. Bestaat het bestand niet, of staat er een `"0"`, kijk dan bij Er gaat iets mis.
+
+Soms is een herstart nodig, bijvoorbeeld na een update van de kern van Linux. Dan staat er een bestand:
+
+```bash
+cat /var/run/reboot-required
+```
+
+```text
+*** System restart required ***
+```
+
+Herstart dan met `sudo reboot`. Docker, dat je in de volgende stap installeert, start daarna vanzelf, en je site ook, door `restart: unless-stopped` uit [les 21](site:fullstack/docs/online/docker/compose).
+
+<Gelukt>
+
+`cat /etc/apt/apt.conf.d/20auto-upgrades` toont twee regels die eindigen op `"1"`:
+
+```text
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+```
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Op een nacht installeert Ubuntu een nieuwe kern van Linux, en daarna staat er /var/run/reboot-required. Je doet een week niets. Welke kern draait je server dan?">
+  <Keuze uitleg="Geïnstalleerd is iets anders dan gestart. Wanneer laadt een computer zijn kern?">De nieuwe, want Ubuntu heeft hem vanzelf geïnstalleerd</Keuze>
+  <Keuze goed uitleg="De kern laadt bij het opstarten. De nieuwe staat klaar op de schijf, maar de oude draait door tot je herstart.">Nog de oude, tot je de server herstart</Keuze>
+  <Keuze uitleg="Een server die op een herstart wacht, werkt gewoon door. Alleen draait hij nog op wat hij bij het opstarten laadde.">Geen: de server stopt tot je herstart</Keuze>
+  <Uitleg>
+
+  De updates komen vanzelf, maar een nieuwe kern gaat pas mee na `sudo reboot`. Tot dan zit een gat in de kern er nog in. Kijk daarom af en toe of `/var/run/reboot-required` er staat.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Het bestand bestaat niet, of er staat een 0
+
+```text
+cat: /etc/apt/apt.conf.d/20auto-upgrades: No such file or directory
+```
+
+**Oorzaak:** op deze server is `unattended-upgrades` niet geïnstalleerd, nooit ingesteld, of uitgezet.
+
+**Oplossing:** installeer en stel het in, en kijk daarna opnieuw:
+
+```bash
+sudo apt update
+sudo apt install unattended-upgrades
+sudo dpkg-reconfigure -plow unattended-upgrades
+```
+
+Door naar [les 30: Docker op de server](site:fullstack/docs/online/server/docker).

@@ -1,0 +1,42 @@
+/* Een eigen blok, geen admonition: het valt op als het eind van een stap.
+   De maten die Infima ook zet (p, label) staan op de opgehoogde selector,
+   anders wint Infima stil (zie de huisstijl-README). */
+
+.blok:not(#\#):not(#\#) {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border: 2px solid var(--ifm-color-success);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-color-success-contrast-background);
+}
+
+.blok:not(#\#):not(#\#) .kop {
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+  color: var(--ifm-color-success-contrast-foreground);
+}
+
+.blok:not(#\#):not(#\#) .inhoud > :last-child {
+  margin-bottom: 0;
+}
+
+.blok:not(#\#):not(#\#) .vinkje {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vinkje input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--ifm-color-success);
+}
+
+.blok:not(#\#):not(#\#) .niet {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}

@@ -1,11 +1,11 @@
 ---
-sidebar_label: '11. Een server huren en inloggen'
-description: Een server met Ubuntu op internet, inloggen met je ssh-sleutel, een eigen gebruiker met sudo, ssh alleen met een sleutel, en een domeinnaam.
+sidebar_label: '24. Een server huren'
+description: Een server met Ubuntu 24.04 op internet, gemaakt met je ssh-sleutel, en de eerste keer inloggen als root.
 ---
 
-# Online zetten: een server huren en inloggen
+# Online zetten: een server huren
 
-<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'ssh en een sleutelpaar'}, {site: 'linux', to: '/docs/terminal/bestanden-lezen', label: 'Inlogpogingen in een logboek'}, {site: 'linux', to: '/docs/wsl/nano', label: 'Een bestand in /etc bewerken met sudo nano'}]} />
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'ssh en een sleutelpaar'}, {site: 'linux', to: '/docs/wsl/diensten', label: 'Een logboek lezen met journalctl'}]} />
 
 Je site draait in Docker, achter een voordeur. Nu zet je hem op een computer die dag en nacht aan internet hangt: een **server**. Je huurt er een bij een hostingbedrijf, of je krijgt er een van school. Zo'n gehuurde server is meestal een stukje van een grotere computer, en heet een **VPS** (*virtual private server*). De kleinste is ruim genoeg voor een gastenboek.
 
@@ -40,153 +40,40 @@ apt upgrade
 
 Als `root` heb je geen `sudo` nodig: je bent het al.
 
-Bij sommige hostingbedrijven log je niet in als `root` maar als `ubuntu`, een gebruiker die al `sudo` mag. Zet dan `sudo` voor de commando's hieronder, en kopieer straks de sleutel uit `/home/ubuntu/.ssh/authorized_keys` in plaats van die van `root`.
+Bij sommige hostingbedrijven log je niet in als `root` maar als `ubuntu`, een gebruiker die al `sudo` mag. Zet dan `sudo` voor de commando's in de volgende stappen, en kopieer in [les 25](site:fullstack/docs/online/server/gebruiker) de sleutel uit `/home/ubuntu/.ssh/authorized_keys` in plaats van die van `root`.
 
-## Een eigen gebruiker
+<Gelukt>
 
-Als `root` werken is als altijd met `sudo` werken: één tikfout en je server is stuk. Straks zet je inloggen als `root` helemaal uit. Daarom maak je nu een gebruiker voor jezelf, die met `sudo` beheerder mag zijn:
+Na `ssh root@203.0.113.10` staat er een prompt die met `root@` begint, zonder dat ssh om een wachtwoord vroeg. `apt upgrade` eindigt zonder regel met `E:` erin.
 
-```bash
-adduser sam
-usermod -aG sudo sam
-```
+</Gelukt>
 
-`adduser` vraagt een wachtwoord; dat heb je straks nodig voor `sudo`. `usermod -aG sudo` zet `sam` in de groep `sudo`. Geef `sam` daarna dezelfde sleutel als `root`:
-
-```bash
-mkdir -p /home/sam/.ssh
-cp /root/.ssh/authorized_keys /home/sam/.ssh/
-chown -R sam:sam /home/sam/.ssh
-```
-
-In `authorized_keys` staan de publieke sleutels waarmee je mag inloggen. `chown -R` maakt de map en alles erin van `sam`; anders weigert ssh de sleutel. Laat deze terminal openstaan, en log in een tweede terminal in als jezelf:
-
-```bash
-ssh sam@203.0.113.10
-sudo whoami
-```
-
-Lukt dat, en zegt `sudo whoami` `root`, dan log je voortaan zo in.
-
-## ssh alleen met een sleutel
-
-Met je sleutel kom jij binnen. Maar zolang ssh ook wachtwoorden accepteert, kan een programma er een raden. Zet dat uit, en inloggen als `root` meteen ook. Maak een eigen bestand met instellingen:
-
-```bash
-sudo nano /etc/ssh/sshd_config.d/00-veilig.conf
-```
-
-```text
-PasswordAuthentication no
-KbdInteractiveAuthentication no
-PermitRootLogin no
-```
-
-De `00` vooraan doet ertoe. ssh leest de bestanden in die map op alfabet, en de eerste keer dat een instelling voorkomt, telt. Op sommige servers staat er al een bestand, zoals `50-cloud-init.conf`, met `PasswordAuthentication yes`. Jouw bestand komt eerder.
-
-Controleer de instellingen en laad ze:
-
-```bash
-sudo sshd -t
-sudo systemctl reload ssh
-```
-
-Zegt `sshd -t` niets, dan klopt alles.
-
-**Let op:** sluit de terminal waarin je als `sam` bent ingelogd nog niet. Probeer eerst in een tweede terminal of je nog binnenkomt met `ssh sam@203.0.113.10`. Gaat er iets mis, dan herstel je het in de eerste.
-
-Controleer in de tweede terminal ook dat de deur echt dicht is: `ssh root@203.0.113.10` en `ssh -o PubkeyAuthentication=no sam@203.0.113.10` moeten allebei `Permission denied (publickey)` geven. De tweede probeert het zonder sleutel, dus met een wachtwoord.
-
-## Een naam voor je server
-
-Een IP-adres onthoudt niemand. Met een **domeinnaam** zoals `gastenboek.voorbeeld.nl` is je site te vinden. Traefik heeft hem nodig, want hij kiest de site op de naam ([les 10](site:fullstack/docs/online/docker/traefik)), en zonder naam krijg je geen HTTPS. Een naam huur je bij een domeinbedrijf, of je docent geeft je een naam onder het domein van school.
-
-Bij de naam zet je een **A-record**: een regel die zegt welk IP-adres bij de naam hoort. Het kan een uur duren voor de hele wereld de nieuwe regel kent. Controleer het in WSL:
-
-```bash
-ping -c 1 gastenboek.voorbeeld.nl
-```
-
-Op de eerste regel staat het IP-adres. Is dat dat van jouw server, dan klopt de naam.
-
-<Voorspel soort="Controlevraag" vraag="Je server staat een uur aan, en je hebt het adres aan niemand gegeven. Je kijkt met sudo journalctl -u ssh in het logboek van ssh. Wat staat er?">
+<Voorspel soort="Controlevraag" vraag="Je server staat een uur aan, en je hebt het adres aan niemand gegeven. Je kijkt met journalctl -u ssh in het logboek van ssh. Wat staat er?">
   <Keuze uitleg="Niemand kent je adres, maar programma's proberen alle adressen op internet, de hele dag.">Alleen de keren dat jij inlogde</Keuze>
   <Keuze goed uitleg="Programma's lopen alle adressen op internet af en proberen in te loggen met namen als root en admin. Binnen een uur staan ze in je logboek.">Ook mislukte pogingen van onbekende adressen, met namen als root en admin</Keuze>
   <Keuze uitleg="ssh schrijft elke poging op, ook een mislukte. Daar is het logboek voor.">Niets: ssh schrijft alleen op wie er echt binnenkwam</Keuze>
   <Uitleg>
 
-  Je ziet regels als `Invalid user admin from …` en `Connection closed by authenticating user root …`. Dat zijn geen mensen die jou zoeken, maar programma's die elk adres proberen. Wachtwoorden staan uit, dus met raden komen ze niet binnen. In de volgende les zet je de andere deuren dicht. Doe die les meteen na deze, en zet pas daarna je site erop.
+  Je ziet regels als `Invalid user admin from …` en `Connection closed by authenticating user root …`. Dat zijn geen mensen die jou zoeken, maar programma's die elk adres proberen. In de volgende stappen maak je een eigen gebruiker, zet je wachtwoorden uit en doe je de andere deuren dicht. Doe die stappen meteen na deze, en zet pas daarna je site erop.
 
   </Uitleg>
 </Voorspel>
 
 ## Er gaat iets mis
 
-### `Permission denied (publickey)`
+### `Permission denied (publickey)` als root
 
 ```text
-sam@203.0.113.10: Permission denied (publickey).
+root@203.0.113.10: Permission denied (publickey).
 ```
 
-**Oorzaak:** de server kent jouw sleutel niet voor deze gebruiker. Meestal staat `authorized_keys` niet bij `sam`, of is de map nog van `root`.
+**Oorzaak:** de server kent jouw sleutel niet. Je koos bij het maken een andere sleutel, of geen.
 
-**Oplossing:** log in als `root` in de terminal die nog openstaat, en kijk wie de eigenaar is:
-
-```bash
-ls -la /home/sam/.ssh
-chown -R sam:sam /home/sam/.ssh
-```
-
-### sam is not in the sudoers file
-
-```text
-sam is not in the sudoers file.
-```
-
-**Oorzaak:** `sam` staat niet in de groep `sudo`, of je was al ingelogd voordat je hem erin zette.
-
-**Oplossing:** doe als `root` `usermod -aG sudo sam`, log uit met `exit` en log opnieuw in.
-
-### De naam wijst nog niet naar je server
-
-```text
-ping: gastenboek.voorbeeld.nl: Name or service not known
-```
-
-**Oorzaak:** het A-record is er nog niet, of de wereld kent het nog niet.
-
-**Oplossing:** controleer het record bij je domeinbedrijf, en wacht een uur. Ga intussen door met de volgende les; die heeft de naam nog niet nodig.
-
-### sshd -t geeft een fout
-
-```text
-/etc/ssh/sshd_config.d/00-veilig.conf: line 1: Bad configuration option: PaswordAuthentication
-```
-
-**Oorzaak:** een tikfout in je bestand, hier één `s` te weinig.
-
-**Oplossing:** verbeter het bestand en draai `sudo sshd -t` opnieuw. Laad de instellingen pas als hij niets meer zegt; met een fout erin start ssh niet.
+**Oplossing:** kijk in de beheerpagina van je hostingbedrijf welke sleutel bij de server staat, en vergelijk hem met `cat ~/.ssh/id_ed25519.pub` in WSL. Klopt hij niet, maak de server dan opnieuw met de goede sleutel; hij is nog leeg.
 
 ## Opdrachten
 
-### Opdracht 1: Run - Alleen met je sleutel
-
-Huur of krijg een server, maak je eigen gebruiker, en zet ssh op alleen een sleutel. Laat in een tweede terminal zien dat inloggen als `root` en inloggen zonder sleutel allebei geweigerd worden, en dat `ssh sam@` met je eigen adres wel werkt.
-
-<details>
-<summary>Antwoord</summary>
-
-```bash
-ssh root@203.0.113.10
-ssh -o PubkeyAuthentication=no sam@203.0.113.10
-ssh sam@203.0.113.10
-```
-
-De eerste twee geven `Permission denied (publickey)`, de derde laat je binnen zonder wachtwoord. Lukt de derde niet, sluit dan nog niets: herstel het in de terminal die nog als `sam` of `root` openstaat, met de oplossingen hierboven.
-
-</details>
-
-### Opdracht 2: Investigate - Wie klopt er aan?
+### Opdracht 1: Investigate - Wie klopt er aan?
 
 Tel hoeveel keer er in het afgelopen uur een onbekende gebruiker probeerde in te loggen.
 
@@ -201,11 +88,11 @@ Tel hoeveel keer er in het afgelopen uur een onbekende gebruiker probeerde in te
 <summary>Antwoord</summary>
 
 ```bash
-sudo journalctl -u ssh --since "1 hour ago" | grep "Invalid user" | wc -l
+journalctl -u ssh --since "1 hour ago" | grep "Invalid user" | wc -l
 ```
 
 Het getal verschilt per server en per uur, maar nul is het zelden.
 
 </details>
 
-Door naar [les 12: de deuren dicht](site:fullstack/docs/online/server/dichtzetten).
+Door naar [les 25: een eigen gebruiker](site:fullstack/docs/online/server/gebruiker).

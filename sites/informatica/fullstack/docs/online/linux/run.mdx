@@ -1,0 +1,76 @@
+---
+sidebar_label: '11. Je site draait in Linux'
+description: Start je site met fastapi run in Ubuntu, en open hem in je browser op Windows. Hetzelfde commando als op Windows, nu op Linux.
+---
+
+# Online zetten: je site draait in Linux
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/windows-en-linux', label: 'Een website uit Linux in je browser op Windows'}]} />
+
+Alles staat klaar: je code, je packages, een virtual environment die aanstaat. Nu start je je site, met hetzelfde commando als in [les 1](site:fullstack/docs/online/project/run).
+
+## Starten
+
+In de terminal van VS Code, met `(.venv)` voor je prompt:
+
+```bash
+fastapi run main.py --host 127.0.0.1
+```
+
+Met `--host 127.0.0.1` luistert hij alleen op deze computer, zoals in [les 3](site:fullstack/docs/online/project/adres). Bovenaan staat hetzelfde als op Windows:
+
+```text
+ ⚡️ Starting FastAPI in production mode
+ 🌐 Server started at http://127.0.0.1:8000
+```
+
+## Openen op Windows
+
+Open `http://127.0.0.1:8000` in je browser op Windows. Dat werkt net als de kleine webserver in [Windows en Linux naast elkaar](site:linux/docs/wsl/windows-en-linux) van de Linux-cursus: wat in WSL op `127.0.0.1` luistert, ziet je browser op Windows ook. Bij elk bezoek verschijnt in de terminal van Ubuntu een regel met `GET` en `200`.
+
+Je gastenboek is leeg. De databases stonden op Windows en niet in git, dus je site maakt nieuwe aan, naast `main.py`. Maak een account en schrijf een bericht.
+
+<Gelukt>
+
+Je gastenboek staat in je browser op Windows, en de regels van elk bezoek staan in de terminal van Ubuntu. Je site draait op Linux.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je schreef in je browser op Windows een bericht in je gastenboek. Waar staat dat bericht nu?">
+  <Keuze uitleg="De browser laat alleen zien wat de server terugstuurt. Welk programma schrijft in de database?">In je projectmap op Windows, want daar draait je browser</Keuze>
+  <Keuze goed uitleg="De server draait in Ubuntu en schrijft zijn databases naast main.py, in je project in Ubuntu.">In een database in ~/gastenboek, in Ubuntu</Keuze>
+  <Keuze uitleg="Je databases staan in .gitignore, en je hebt nog niets gepusht. Hoe zou het bericht op GitHub komen?">Op GitHub, want je project komt van GitHub</Keuze>
+  <Uitleg>
+
+  Je browser is alleen het venster. Alles wat je site bewaart, schrijft de server op de computer waar hij draait, en dat is nu Linux. Op een server gaat het straks net zo: de berichten van je bezoekers staan op de server, niet bij hen en niet op GitHub.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### fastapi: command not found
+
+```text
+fastapi: command not found
+```
+
+**Oorzaak:** de virtual environment staat niet aan. `fastapi` staat in `.venv`, en zonder `(.venv)` voor je prompt zoekt de terminal hem daar niet.
+
+**Oplossing:** typ `source .venv/bin/activate` en start opnieuw. Installeer `fastapi` niet met `sudo apt`.
+
+### De browser krijgt geen antwoord
+
+**Oorzaak:** de server draait niet meer, of je opende een ander adres dan `http://127.0.0.1:8000`.
+
+**Oplossing:** kijk in de terminal van Ubuntu of de server nog draait, en open precies dat adres.
+
+### Een leeg gastenboek zonder regels in Ubuntu
+
+Je browser toont een gastenboek, maar in de terminal van Ubuntu komt bij een bezoek geen regel bij. Een bericht dat je schrijft, zie je niet terug in Ubuntu.
+
+**Oorzaak:** op Windows draait nog een server op poort 8000, bijvoorbeeld die uit de verse map van [les 6](site:fullstack/docs/online/project/proef). Je browser praat met die server, en niet met die in Ubuntu.
+
+**Oplossing:** stop de server op Windows met Ctrl+C in zijn terminal, en herlaad de pagina.
+
+Door naar [les 12: een wijziging vanuit Ubuntu](site:fullstack/docs/online/linux/pushen).

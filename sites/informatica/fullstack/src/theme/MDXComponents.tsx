@@ -6,16 +6,19 @@ import SiteLink from '@coderius/shared/components/SiteLink';
 import Voorkennis from '@coderius/shared/components/Voorkennis';
 import Voorspel, { Keuze, Uitleg } from '@coderius/shared/components/Voorspel';
 import Bestand from '@site/src/components/Bestand';
+import Gelukt from '@site/src/components/Gelukt';
 import MDXComponents from '@theme-original/MDXComponents';
 
 // Maakt deze componenten globaal beschikbaar in alle .md/.mdx zonder import:
 // <Voorkennis>, <SiteLink>, <CodeUitleg> met <Regel>, <Bestand> (het label
 // boven een codeblok), <Voorspel> met <Keuze> en <Uitleg> (losse vragen met
-// meteen terugkoppeling), en de hand-outcomponenten van docs/unplugged.
+// meteen terugkoppeling), <Gelukt> (het succesmoment van een stap in Online
+// zetten), en de hand-outcomponenten van docs/unplugged.
 export default {
   ...MDXComponents,
   Antwoordblad,
   Bestand,
+  Gelukt,
   CodeUitleg,
   Handout,
   Keuze,

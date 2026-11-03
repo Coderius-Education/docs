@@ -1169,7 +1169,7 @@ docker: Error response from daemon: Conflict. The container name "/gastenboek" i
 
 **Oplossing:** gooi de oude weg met `docker rm -f gastenboek`, en start opnieuw. Wat de container in een volume schreef, blijft bewaard; wat erin zelf stond, is weg.
 
-Meer uitleg: [Online zetten: een container draaien](site:fullstack/docs/online/docker/container)
+Meer uitleg: [Online zetten: op de achtergrond](site:fullstack/docs/online/docker/achtergrond)
 
 </details>
 

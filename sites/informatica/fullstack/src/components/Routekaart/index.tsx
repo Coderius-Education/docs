@@ -2,6 +2,8 @@ import Link from '@docusaurus/Link';
 import { useDoc, useDocsSidebar } from '@docusaurus/plugin-content-docs/client';
 import clsx from 'clsx';
 import type { ReactElement } from 'react';
+import { useEffect, useState } from 'react';
+import { isGelukt } from '../Gelukt/opslag';
 import { type SidebarItem, etappes } from './logica';
 import styles from './styles.module.css';
 import { MIJLPALEN, ZINNEN } from './zinnen';
@@ -19,6 +21,20 @@ export default function Routekaart({
 }): ReactElement | null {
   const sidebar = useDocsSidebar();
   const { metadata } = useDoc();
+  // Welke stappen de leerling als gelukt aanvinkte (het Gelukt-blok). Pas na
+  // het laden, zodat de HTML van de build en de eerste render gelijk zijn.
+  const [, ververs] = useState(0);
+  const [geladen, zetGeladen] = useState(false);
+  useEffect(() => {
+    zetGeladen(true);
+    const opnieuw = () => ververs((n) => n + 1);
+    window.addEventListener('coderius-gelukt', opnieuw);
+    window.addEventListener('storage', opnieuw);
+    return () => {
+      window.removeEventListener('coderius-gelukt', opnieuw);
+      window.removeEventListener('storage', opnieuw);
+    };
+  }, []);
   if (!sidebar) return null;
   const route = etappes(sidebar.items as unknown as SidebarItem[], {
     huidig: metadata.permalink,
@@ -48,6 +64,12 @@ export default function Routekaart({
                   {etappe.lessen.map((les) => (
                     <li key={les.href}>
                       <Link to={les.href}>{les.label}</Link>
+                      {geladen && isGelukt(les.href) && (
+                        <span className={styles.gelukt} title="Gelukt">
+                          {' '}
+                          ✓<span className={styles.srOnly}> gelukt</span>
+                        </span>
+                      )}
                     </li>
                   ))}
                 </ol>

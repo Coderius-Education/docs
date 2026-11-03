@@ -1,0 +1,99 @@
+---
+sidebar_label: '38. Een back-up terugzetten'
+description: De databases van je server terug in een volume, eerst als oefening op je laptop, en weer van app, zodat je site erin mag schrijven.
+---
+
+# Online zetten: een back-up terugzetten
+
+Een back-up die je nooit terugzette, is een gok. Oefen het daarom op je laptop, in WSL, waar niets stuk kan: je zet de back-up van je server uit [les 37](site:fullstack/docs/online/server/backup) terug in je site op `gastenboek.localhost`.
+
+## Terug in het volume
+
+De kopie staat in `~/backup-gastenboek` op je laptop. Typ in WSL:
+
+```bash
+cd ~/gastenboek
+docker compose stop
+docker compose cp ~/backup-gastenboek/data/. gastenboek:/app/data
+docker compose start
+docker compose exec -u root gastenboek chown -R app /app/data
+```
+
+De `/.` achter `data` betekent: de bestanden uit de map, niet de map zelf. Anders komen ze in `/app/data/data`, waar je site niet zoekt. De databases van de server vervangen die van je laptop: wat je in WSL in je gastenboek had gezet, is daarna weg.
+
+De laatste regel is nodig, en je ziet pas later dat hij ontbreekt. Wat `docker compose cp` in een container zet, is niet van `app`. Je site draait als `app` ([les 19](site:fullstack/docs/online/docker/niet-als-root)) en mag zulke bestanden lezen, maar niet veranderen. `exec -u root` doet één commando als `root` in de draaiende container, en `chown -R app` geeft de databases terug aan `app`.
+
+## Op een server
+
+Op een server gaat het net zo. Zet de map eerst met `scp -r ~/backup-gastenboek sam@203.0.113.10:backup` terug op de server, en typ daar dezelfde regels met `~/backup/data/.` in plaats van `~/backup-gastenboek/data/.`. Op een nieuwe server zet je ook `.env` terug in `~/gastenboek` en de map `traefik` in je thuismap, in plaats van ze opnieuw te maken.
+
+<Gelukt>
+
+Op `http://gastenboek.localhost` staan de berichten van je server. Je logt in met je account van de server, en een nieuw account maken lukt, zonder 500.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je zet de back-up terug zonder de laatste regel. Je opent je site, en de berichten van de server staan er. Een bezoeker schrijft een nieuw bericht. Wat gebeurt er?">
+  <Keuze uitleg="De berichten lezen lukte. Maar van wie zijn de databases nu, en wat mag app daarmee?">Het bericht komt erbij, want de site werkt weer</Keuze>
+  <Keuze goed uitleg="De databases zijn niet van app. app mag ze lezen, dus de oude berichten staan er, maar schrijven mag hij niet. Je site geeft een 500.">Een 500, want je site mag de databases lezen maar niet veranderen</Keuze>
+  <Keuze uitleg="De container draait gewoon, en de healthcheck vraagt alleen de homepage op. Die leest alleen.">De container stopt, want de healthcheck faalt</Keuze>
+  <Uitleg>
+
+  Dit is de verraderlijke kant: alles lijkt te werken, tot iemand iets opslaat. In het logboek staat dan `sqlite3.OperationalError: attempt to write a readonly database`. Test een teruggezette back-up daarom altijd met iets wat schrijft: registreer een account, of plaats een bericht.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### attempt to write a readonly database
+
+```text
+sqlite3.OperationalError: attempt to write a readonly database
+```
+
+**Oorzaak:** je zette een back-up terug, en de databases zijn niet van `app`. Je site leest ze wel, maar schrijven mag niet.
+
+**Oplossing:** geef ze terug aan `app`, terwijl de container draait:
+
+```bash
+docker compose exec -u root gastenboek chown -R app /app/data
+```
+
+### Je site is leeg na het terugzetten
+
+**Oorzaak:** de bestanden staan in `/app/data/data`: je typte `~/backup-gastenboek/data` zonder `/.` erachter.
+
+**Oplossing:** kijk met `docker compose exec gastenboek ls /app/data` wat er staat. Zet het opnieuw terug, nu met `/.`, en gooi de map `data` in de container weg met `docker compose exec -u root gastenboek rm -r /app/data/data`.
+
+## Opdrachten
+
+### Opdracht 1: Run - Terug in de tijd
+
+Oefen nog een keer, nu met je eigen site in WSL. Registreer op `gastenboek.localhost` het account `voor`, en maak een back-up naar `~/proef`. Registreer daarna het account `na`, en zet de back-up terug. Kun je nog inloggen als `na`? En lukt een nieuw account `daarna`?
+
+<details>
+<summary>Antwoord</summary>
+
+```bash
+cd ~/gastenboek
+mkdir ~/proef
+docker compose stop
+docker compose cp gastenboek:/app/data ~/proef/data
+docker compose start
+```
+
+Registreer nu `na` in de browser, en zet daarna terug:
+
+```bash
+docker compose stop
+docker compose cp ~/proef/data/. gastenboek:/app/data
+docker compose start
+docker compose exec -u root gastenboek chown -R app /app/data
+```
+
+Inloggen als `voor` lukt, als `na` niet meer: de databases zijn weer zoals op het moment van de back-up. Het account `daarna` komt erbij. Liet je de laatste regel weg, dan gaf dat een 500.
+
+</details>
+
+Door naar [les 39: bijwerken en opruimen](site:fullstack/docs/online/server/bijwerken).

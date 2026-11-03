@@ -1,0 +1,61 @@
+---
+sidebar_label: '2. fastapi run herlaadt niet'
+description: fastapi run leest je code één keer, bij het starten. Een wijziging in main.py zie je pas na een herstart.
+---
+
+# Online zetten: fastapi run herlaadt niet
+
+Met `fastapi dev` zag je een wijziging meteen: je sloeg `main.py` op, en de server startte vanzelf opnieuw. Met `fastapi run` gaat dat anders. Probeer het.
+
+## Een wijziging zonder herstart
+
+Laat je site draaien met `fastapi run main.py`. Log in met een verkeerd wachtwoord: je site zegt `Naam of wachtwoord klopt niet`. Die tekst staat in `main.py`. Maak er `Naam of wachtwoord klopt niet, probeer het opnieuw` van, sla op, en log nog een keer verkeerd in.
+
+Je ziet de oude tekst. In de terminal gebeurt niets: geen regel dat de server opnieuw start.
+
+## Opnieuw starten
+
+Stop de server met Ctrl+C, en start hem opnieuw:
+
+```powershell
+fastapi run main.py
+```
+
+Log nog een keer in met een verkeerd wachtwoord. Nu staat de nieuwe tekst er.
+
+`fastapi run` leest je code één keer, bij het starten, en kijkt daarna niet meer naar je bestanden. Op een server is dat wat je wilt. Een half opgeslagen bestand zet je site niet plat, en het opletten kost geen rekenkracht. Een nieuwe versie gaat pas live als jij de server opnieuw start, in [les 35](site:fullstack/docs/online/server/nieuwe-versie).
+
+<Gelukt>
+
+Na Ctrl+C en `fastapi run main.py` zegt je site bij een verkeerd wachtwoord `Naam of wachtwoord klopt niet, probeer het opnieuw`. Zonder herstart stond er de oude tekst.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je server draait met fastapi run. Je verandert in main.py de tekst van een pagina en slaat op. Je herlaadt de pagina in je browser. Wat zie je?">
+  <Keuze uitleg="Dat doet fastapi dev. Kijkt fastapi run naar je bestanden?">De nieuwe tekst</Keuze>
+  <Keuze goed uitleg="fastapi run las main.py één keer, bij het starten. Wat je daarna verandert, draait pas na een herstart.">De oude tekst, tot je de server stopt en opnieuw start</Keuze>
+  <Keuze uitleg="De server blijft draaien met de code die hij bij het starten las. Er gaat niets mis.">Een foutmelding, want het bestand is veranderd terwijl de server draaide</Keuze>
+  <Uitleg>
+
+  `fastapi run` leest je code bij het starten en kijkt daarna niet meer. Met `dev` staat er bij het starten `Will watch for changes in these directories`; met `run` ontbreekt die regel.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Je template verandert wel meteen
+
+Je past een tekst in `templates/…html` aan, en die zie je zonder herstart.
+
+**Oorzaak:** een template is geen Python-code. Jinja leest een template opnieuw als het bestand veranderd is. Alleen `main.py` leest de server één keer.
+
+**Oplossing:** niets: zo werkt het. Een wijziging in `main.py` vraagt altijd een herstart.
+
+### Ctrl+C doet niets
+
+**Oorzaak:** de terminal van VS Code heeft de focus niet; je drukte Ctrl+C in de editor, en daar kopieert het.
+
+**Oplossing:** klik eerst in de terminal, en druk dan op Ctrl+C. Daarna staat de prompt er weer.
+
+Door naar [les 3: waar je server luistert](site:fullstack/docs/online/project/adres).

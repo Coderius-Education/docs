@@ -1,0 +1,98 @@
+---
+sidebar_label: '6. Je project in een verse map'
+description: Kloon je repository in een lege map, installeer met requirements.txt en start met fastapi run. Werkt het, dan staat alles wat je site nodig heeft in je repository.
+---
+
+# Online zetten: je project in een verse map
+
+<Voorkennis items={[{site: 'editor', to: '/git/pull-clone/stap-3-clone', label: 'Een project klonen'}, {site: 'editor', to: '/python/stap-4-venv', label: 'Een virtual environment maken'}]} />
+
+Een server krijgt alleen wat in je repository staat. Doe daarom eerst zelf wat hij straks doet: haal je project op in een lege map, en kijk of het start. Dat doe je nog op Windows, waar je alles kent.
+
+## Klonen
+
+Kloon je repository in VS Code met **Git: Clone**, in een andere map dan die van je project, bijvoorbeeld `Documenten\proef`. Open de gekloonde map.
+
+## Installeren vanaf de lijst
+
+Maak in die map een nieuwe virtual environment, zoals je dat bij elk project doet. Open daarna de terminal van VS Code: de Python-extensie zet hem daar aan, en je ziet `(.venv)` voor de prompt. Installeer alles uit je lijst in één keer:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+De `-r` betekent: lees de namen uit dit bestand. Straks doet de server precies dit.
+
+## Starten
+
+Stop eerst de server in je eigen projectmap, als die nog draait. Start dan de kopie:
+
+```powershell
+fastapi run main.py --host 127.0.0.1
+```
+
+Open `http://127.0.0.1:8000` in je browser.
+
+<Gelukt>
+
+Je gastenboek opent op `http://127.0.0.1:8000`, vanuit de verse map, en het is leeg. Alles wat je site nodig heeft, staat in je repository.
+
+</Gelukt>
+
+Stop daarna deze server met Ctrl+C. In [les 11](site:fullstack/docs/online/linux/run) start je je site in Ubuntu, op dezelfde poort.
+
+<Voorspel soort="Controlevraag" vraag="In je eigen projectmap installeerde je ooit slowapi, maar je maakte requirements.txt daarvoor en niet daarna. Wat gebeurt er als je de kopie in de verse map start?">
+  <Keuze uitleg="De verse map heeft een eigen, nieuwe virtual environment. Wat staat daarin?">Hij start, want slowapi staat al op je laptop</Keuze>
+  <Keuze goed uitleg="In de nieuwe virtual environment staat alleen wat in requirements.txt staat. slowapi staat daar niet in, dus import slowapi faalt.">Er staat ModuleNotFoundError: No module named 'slowapi'</Keuze>
+  <Keuze uitleg="pip installeert alleen de namen die in het bestand staan. Het kijkt niet naar je code.">Hij start, want pip ziet dat main.py slowapi gebruikt</Keuze>
+  <Uitleg>
+
+  Een virtual environment is per map. Wat je in je eigen project installeerde, ziet de verse map niet. Daarom is deze proef zo nuttig: de server gaat het net zo doen, met alleen je lijst.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### ModuleNotFoundError
+
+```text
+ModuleNotFoundError: No module named 'slowapi'
+```
+
+**Oorzaak:** je site gebruikt een package dat niet in `requirements.txt` staat.
+
+**Oplossing:** maak de lijst opnieuw in je eigen projectmap ([les 4](site:fullstack/docs/online/project/requirements)), commit en push. Haal hem in de verse map op met **Git: Pull** en installeer opnieuw.
+
+### TemplateNotFound
+
+```text
+jinja2.exceptions.TemplateNotFound: 'gastenboek.html' not found in search path: 'templates'
+```
+
+**Oorzaak:** een bestand of map staat wel op je laptop, maar niet in git.
+
+**Oplossing:** zet het bestand in git in je eigen projectmap, commit en push, en haal het op in de verse map.
+
+### Errno 10048
+
+De kopie start niet, met dezelfde melding `[Errno 10048]` als in [les 1](site:fullstack/docs/online/project/run).
+
+**Oorzaak:** je eigen project draait nog op poort 8000.
+
+**Oplossing:** stop die server met Ctrl+C, of start de kopie met `--port 8001`.
+
+## Opdrachten
+
+### Opdracht 1: Run - Volg je eigen README
+
+Doe het nog een keer, maar nu met alleen je README als handleiding. Beter nog: laat een klasgenoot het doen, zonder dat je helpt.
+
+<details>
+<summary>Antwoord</summary>
+
+Werkt het, dan klopt je README. Loopt iemand vast, dan ontbreekt er een stap. Zet hem erbij, commit, en probeer het opnieuw in een verse map.
+
+</details>
+
+Door naar [les 7: git in Ubuntu](site:fullstack/docs/online/linux/git).

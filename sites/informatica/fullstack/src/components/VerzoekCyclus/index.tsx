@@ -553,8 +553,8 @@ const ONLINE_STAPPEN: Stap[] = [
     kant: 'browser',
     titel: 'Je typt de naam van je site',
     tekst: 'De telefoon vraagt DNS welk adres erbij hoort: het A-record.',
-    to: '/docs/online/server/huren',
-    les: 'Een server huren en inloggen',
+    to: '/docs/online/server/naam',
+    les: 'Een naam voor je server',
   },
   {
     kant: 'browser',

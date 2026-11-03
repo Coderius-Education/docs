@@ -1,0 +1,106 @@
+---
+sidebar_label: '14. Docker zonder sudo'
+description: Jezelf in de groep docker, opnieuw inloggen, en een eerste container met hello-world. Waarom de groep docker bijna root is.
+---
+
+# Online zetten: Docker zonder sudo
+
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/groepen', label: 'Jezelf in een groep zetten met usermod -aG'}, {site: 'linux', to: '/docs/wsl/variabelen', label: 'Variabelen als $USER'}]} />
+
+Docker draait. Alleen `root` en de groep `docker` mogen hem gebruiken, en jij zit nog in geen van beide. Je zet jezelf in de groep, en start je eerste container.
+
+## Jezelf toegang geven
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+`$USER` is je eigen naam. Een nieuwe groep telt pas als je opnieuw inlogt. Sluit Ubuntu, typ in PowerShell `wsl --terminate Ubuntu-24.04`, en open Ubuntu opnieuw. Met `groups` zie je nu ook `docker` staan.
+
+:::caution[De groep docker is bijna root]
+Wie Docker mag gebruiken, kan een container starten die alles op de computer mag. In de groep `docker` zitten is dus bijna hetzelfde als `root` zijn. Zet er alleen jezelf in, en op een server alleen de beheerder.
+:::
+
+## Je eerste container
+
+```bash
+docker run hello-world
+```
+
+Het commando `docker` vraagt de dienst (de *daemon*) om het image `hello-world` te draaien. Dat image staat er nog niet, dus de dienst haalt het van **Docker Hub**, een website vol images. Daarna start hij er een container van, en die zet een tekst op je scherm en stopt.
+
+<Gelukt>
+
+Zonder `sudo` staat er:
+
+```text
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+...
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+```
+
+</Gelukt>
+
+Daaronder legt de tekst zelf uit wat er gebeurde, in vier stappen. Bekijk daarna wat er op je computer staat:
+
+```bash
+docker images
+docker ps -a
+```
+
+`docker images` toont het image. `docker ps -a` toont de container, met `Exited (0)` bij de status: hij is klaar, zonder fout. Zonder `-a` zie je alleen containers die nog draaien.
+
+<Voorspel soort="Controlevraag" vraag="Je typt nog een keer docker run hello-world. Wat gebeurt er?">
+  <Keuze uitleg="Het image staat nu op je computer. Moet Docker het dan nog ophalen?">Docker haalt het image opnieuw van Docker Hub, en daarna verschijnt de tekst</Keuze>
+  <Keuze goed uitleg="Het image staat er al, dus Docker start meteen een nieuwe container van hetzelfde image.">De tekst verschijnt meteen, zonder Unable to find image, en er is een tweede container bij</Keuze>
+  <Keuze uitleg="Een container die klaar is, staat nog in docker ps -a, maar Docker start een nieuwe. De oude zit hem niet in de weg.">Een foutmelding, want er bestaat al een container van dit image</Keuze>
+  <Uitleg>
+
+  Het image is het pakket, en dat haalt Docker één keer op. Elke `docker run` maakt er een nieuwe container van. Kijk maar met `docker ps -a`: er staan er nu twee, elk met een eigen naam die Docker zelf verzon.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### permission denied
+
+```text
+permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+```
+
+**Oorzaak:** je zit niet in de groep `docker`, of je bent nog niet opnieuw ingelogd sinds `usermod`.
+
+**Oplossing:** typ `groups`. Staat `docker` er niet bij, doe dan de stap van **Jezelf toegang geven** opnieuw, en vergeet `wsl --terminate Ubuntu-24.04` niet. Zet geen `sudo` voor elk `docker`-commando. Het werkt wel, maar wat Docker dan voor jou in je eigen mappen zet, zoals een back-up in [les 37](site:fullstack/docs/online/server/backup), is van `root`, en dan mag je het zelf niet meer weggooien.
+
+### `toomanyrequests`
+
+Docker haalt een image niet op, en in de melding staat `toomanyrequests` of `429 Too Many Requests`.
+
+**Oorzaak:** Docker Hub geeft per internetadres een beperkt aantal images per uur. Op school delen alle laptops één adres, dus de hele klas telt samen.
+
+**Oplossing:** wacht een uur, of maak een gratis account op Docker Hub en log in met `docker login`. Dan telt je eigen account, niet het adres van school.
+
+## Opdrachten
+
+### Opdracht 1: Investigate - Een Linux in een paar seconden
+
+De tekst van `hello-world` stelt iets voor: `docker run -it ubuntu bash`. Doe het, en typ in de container `cat /etc/os-release` en `whoami`. Typ daarna `exit`. Wat is dit, en wat zegt `docker ps -a` erna?
+
+<details>
+<summary>Tip</summary>
+
+`-it` betekent: koppel deze container aan je toetsenbord en je scherm, zodat je erin kunt typen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Je prompt verandert in iets als `root@3f2a9c1e7b54:/#`: je zit in een container met een eigen Ubuntu, als `root`. `cat /etc/os-release` laat zien welke Ubuntu het image heeft; dat hoeft niet dezelfde te zijn als die van WSL. Na `exit` stopt de container, en `docker ps -a` toont hem met `Exited`. In een paar seconden had je een hele Linux, en die is weg zodra je hem weggooit met `docker rm`. Wat er dan met de bestanden erin gebeurt, zie je in [les 17](site:fullstack/docs/online/docker/achtergrond).
+
+</details>
+
+Door naar [les 15: je site in een image](site:fullstack/docs/online/docker/image).
