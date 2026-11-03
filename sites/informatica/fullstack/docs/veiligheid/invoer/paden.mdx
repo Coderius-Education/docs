@@ -16,6 +16,8 @@ net als een formulierveld. Hij kan er meer in zetten dan een paginanaam.
 Maak naast `formulier.html` een map `static/pages` met twee pagina's. Eerst
 `home.html`:
 
+{/* bestand: static/pages/home.html */}
+
 ```html
 <!doctype html>
 <html>
@@ -75,6 +77,8 @@ In een pad betekent `..` de map erboven. Vanuit `static/pages` is `../..` twee
 mappen omhoog: de map van je project, waar `main.py` staat. Een scriptje
 `pagina.py` vraagt om dat bestand:
 
+{/* bestand: pagina.py */}
+
 ```python
 import httpx
 
@@ -127,6 +131,8 @@ Staat de naam niet in de lijst, dan bestaat de pagina voor de bezoeker niet: een
 
 Vervang je `/pagina` door deze. Een script `paden.py` probeert er drie:
 
+{/* bestand: paden.py */}
+
 ```python
 import httpx
 
@@ -138,6 +144,8 @@ for naam in ["home.html", "../../main.py", "oeps.html"]:
 <Gelukt>
 
 `paden.py` laat alleen `home.html` door:
+
+{/* draai: paden.py */}
 
 ```text
 home.html -> 200

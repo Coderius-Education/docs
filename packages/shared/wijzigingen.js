@@ -143,7 +143,8 @@ const RUNNERS = {
   fullstack: {
     site: 'fullstack',
     // Naast de codeblokken draait de job het controlescript voor leerlingen
-    // tegen het referentieproject en kapotte kopieën (src/controle/draai.py);
+    // tegen het referentieproject en kapotte kopieën (src/controle/draai.py)
+    // en de Gelukt-blokken van Veiligheid (src/gelukt/draai.py);
     // het eindproject met de uitbreidingen neemt static/htmx/htmx.min.js mee,
     // en sidebars.ts zegt welke les bij welk hoofdstuk hoort.
     leest: [
@@ -152,6 +153,7 @@ const RUNNERS = {
       '{site}/static/controleer.py',
       '{site}/static/htmx/',
       '{site}/src/controle/',
+      '{site}/src/gelukt/',
     ],
     alles: [...COMPILEER, '{site}/src/code-tests/schrijf.ts'],
   },

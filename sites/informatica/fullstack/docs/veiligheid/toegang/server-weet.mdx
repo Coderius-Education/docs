@@ -16,6 +16,8 @@ Stel dat de verwijderknop de naam van de bezoeker meestuurt, in de URL, en dat
 het endpoint daarop controleert. Vervang `bericht_verwijderen` in je `main.py`
 tijdelijk door deze versie:
 
+{/* vervang: main.py */}
+
 {/* route-dubbel: tijdelijke foute versie van het DELETE-endpoint, daarna zet je die uit les 3 terug */}
 ```python
 @app.delete("/bericht/{sleutel}")
@@ -41,21 +43,31 @@ Sara verwijdert haar eigen bericht: 403
 Nog in het gastenboek: ['Sara', 'Alex']
 ```
 
+{/* weg: gastenboek.db sessies.db gebruikers.db */}
+
+{/* draai-ook: test_verwijderen.py */}
+
 Alex stuurt geen naam mee en krijgt `403`. Maar Sara ook: zij stuurt evenmin
 een naam mee, en dus blokkeert deze controle zelfs de eigenaar. Verander nu in
 het script de regel waarmee Alex verwijdert, zodat hij de naam van Sara
 meestuurt:
+
+{/* vervang: test_verwijderen.py */}
 
 {/* niet-compileren: de regel uit de for-lus van test_verwijderen.py, ingesprongen */}
 ```python
         antwoord = alex.delete(f"/bericht/{sleutel}?naam=Sara")
 ```
 
+{/* weg: gastenboek.db sessies.db gebruikers.db */}
+
 Gooi de databases weer weg en draai het script opnieuw.
 
 <Gelukt>
 
 Alex verwijdert het bericht van Sara, terwijl hij als Alex is ingelogd:
+
+{/* draai: test_verwijderen.py */}
 
 ```text
 Alex verwijdert het bericht van Sara: 200

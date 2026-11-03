@@ -36,6 +36,8 @@ Vervang je regel `app = FastAPI()` door deze. De rest van `main.py` blijft.
 
 Maak een script `dicht.py` dat de vier adressen afloopt:
 
+{/* bestand: dicht.py */}
+
 ```python
 import httpx
 
@@ -72,6 +74,8 @@ Haal daarom het endpoint zelf weg. Verwijder `alle_sessies` met zijn
 
 `dicht.py` print vier keer `404`:
 
+{/* draai: dicht.py */}
+
 ```text
 /docs 404
 /redoc 404
@@ -86,7 +90,9 @@ Nu valt er niets te vinden en niets te gebruiken.
 Draai je `sessies.py` nog
 een keer, dan print het één vreemde regel:
 
-```
+{/* draai: sessies.py */}
+
+```text
 detail {'naam': 'onbekend'}
 ```
 

@@ -69,6 +69,8 @@ woorden binnen het `<form>`:
 
 Een script `stemming.py` probeert er twee:
 
+{/* bestand: stemming.py */}
+
 ```python
 import httpx
 
@@ -83,6 +85,8 @@ for stemming in ["blij", "vrolijk"]:
 <Gelukt>
 
 `stemming.py` laat `blij` door en weigert `vrolijk`:
+
+{/* draai: stemming.py */}
 
 ```text
 blij -> 200 {'lengte': 3, 'cijfer': 8, 'stemming': 'blij'}

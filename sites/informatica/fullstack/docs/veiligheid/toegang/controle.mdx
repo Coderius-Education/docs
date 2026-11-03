@@ -62,6 +62,8 @@ Zet onderaan `test_verwijderen.py` uit [les 2](site:fullstack/docs/veiligheid/to
 waarin Sara haar eigen bericht verwijdert. Het is dezelfde lus als voor Alex,
 met `sara.get` en `sara.delete`:
 
+{/* erbij: test_verwijderen.py */}
+
 ```python
 for sleutel, bericht in sara.get("/berichten").json().items():
     if bericht["naam"] == "Sara":
@@ -74,12 +76,16 @@ for bericht in sara.get("/berichten").json().values():
 print(f"Nog in het gastenboek: {namen}")
 ```
 
+{/* weg: gastenboek.db sessies.db gebruikers.db */}
+
 Gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, start de server
 opnieuw, en draai het script.
 
 <Gelukt>
 
 Het script print:
+
+{/* draai: test_verwijderen.py */}
 
 ```text
 Alex verwijdert het bericht van Sara: 403

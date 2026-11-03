@@ -15,6 +15,8 @@ op GitHub, dan deel je die bestanden mee.
 Maak naast `main.py` een script `lees_sessies.py`. Het opent de database zelf,
 zonder server:
 
+{/* bestand: lees_sessies.py */}
+
 ```python
 from sqlitedict import SqliteDict
 
@@ -30,6 +32,8 @@ draaien.
 
 `lees_sessies.py` print de sessies uit het bestand, met andere sessie-id's bij
 jou:
+
+{/* draai: lees_sessies.py; vrij: ^[0-9a-f]{32} */}
 
 ```text
 17fc855565c554ac6a2fc8c071a48e89 Sara

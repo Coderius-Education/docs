@@ -36,6 +36,8 @@ Neem de server uit Wie mag wat, in de stand van
 er formulieren bij, als los bestand `static/formulier.html`: een om te
 registreren, een om in te loggen en een voor een bericht.
 
+{/* bestand: static/formulier.html */}
+
 ```html
 <!doctype html>
 <html>
@@ -164,6 +166,8 @@ async def alles_wissen(sessie_id: str = Cookie(default="")):
 Start de server in je map `veiligheid-cookies` met `fastapi dev main.py`.
 
 <Gelukt>
+
+{/* gelukt-met-de-hand: registreren en inloggen gaan met het formulier in de browser; de les heeft geen script */}
 
 Open `http://127.0.0.1:8000/static/formulier.html`, maak met het eerste
 formulier een account, bijvoorbeeld `sara`, ga terug en log in met het tweede.

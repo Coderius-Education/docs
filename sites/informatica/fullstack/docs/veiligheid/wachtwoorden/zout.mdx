@@ -10,6 +10,8 @@ wachtwoord kozen. De oplossing is een **zout** (Engels: *salt*): een stukje
 willekeurige tekst dat je vóór het wachtwoord zet voordat je hasht. Elke
 gebruiker krijgt een eigen zout. Probeer het in een scriptje `zout.py`:
 
+{/* bestand: zout.py */}
+
 ```python
 import hashlib
 
@@ -26,6 +28,8 @@ print(hashlib.sha256((zout_noor + wachtwoord).encode()).hexdigest())
 
 `python zout.py` print twee totaal verschillende codes, voor hetzelfde
 wachtwoord:
+
+{/* draai: zout.py */}
 
 ```text
 02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f

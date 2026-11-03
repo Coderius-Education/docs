@@ -56,6 +56,10 @@ met het goede wachtwoord.
 Gooi `gebruikers.db` weg: daar staan nog `sha256`-hashes in uit de lessen
 hiervoor. Draai daarna `registreer.py` en `lees_database.py` opnieuw.
 
+{/* weg: gebruikers.db */}
+
+{/* draai-ook: registreer.py */}
+
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
@@ -94,6 +98,8 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
 
 `python lees_database.py` toont drie Argon2-hashes, die allemaal beginnen met
 `$argon2id$`:
+
+{/* draai: lees_database.py; vrij: \$[^$]+\$[^$]+$ */}
 
 ```text
 sara: $argon2id$v=19$m=65536,t=3,p=4$X9osXpPM7r/H8fRMyPCE+Q$etV1GLXtmN/ukJB8evD8IraZPm5jt9WONzagikgkl+Y

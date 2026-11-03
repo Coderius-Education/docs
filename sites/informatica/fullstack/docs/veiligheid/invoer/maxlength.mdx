@@ -22,6 +22,8 @@ en open het formulier uit de map `static`:
 Nu een scriptje `groot.py`, naast `main.py`, dat níét via het formulier gaat,
 maar rechtstreeks naar het endpoint:
 
+{/* bestand: groot.py */}
+
 <CodeUitleg>
 
 ```python showLineNumbers
@@ -49,6 +51,8 @@ Draai het met `python groot.py`, en daarna `lees_database.py` uit les 1.
 <Gelukt>
 
 `groot.py` print:
+
+{/* draai: groot.py */}
 
 ```text
 {'lengte': 1000000}
@@ -79,6 +83,8 @@ script, `te_groot.py`, met tien miljoen tekens en onderaan ook de statuscode.
 `groot.py` zelf laat je zoals hij is: die heb je in de opdrachten en in les 3
 nog nodig.
 
+{/* bestand: te_groot.py */}
+
 ```python
 import httpx
 
@@ -92,7 +98,9 @@ print(antwoord.status_code)
 
 Uitvoer:
 
-```
+{/* draai: te_groot.py */}
+
+```text
 {'detail': 'Field exceeded maximum size of 1024KB.'}
 400
 ```

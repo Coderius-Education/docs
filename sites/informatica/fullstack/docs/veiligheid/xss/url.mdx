@@ -53,8 +53,12 @@ naar een ander. Een link met HTML naar de site van een ander is een aanval op
 die site en op wie erop klikt.
 :::
 
+{/* weg: gastenboek.db */}
+
 Gooi `gastenboek.db` weg, zodat alleen nieuwe berichten in de lijst staan, en
 vul als Sara weer `<b>vet</b>` in. Open dan in je browser:
+
+{/* verstuur-ook: /gastenboek naam=Sara&bericht=<b>vet</b> */}
 
 ```
 http://127.0.0.1:8000/zoek?term=<b>vet</b>
@@ -63,6 +67,8 @@ http://127.0.0.1:8000/zoek?term=<b>vet</b>
 Boven het bericht van Sara staat "Je zocht naar: **vet**", vetgedrukt. Het
 bericht zelf staat er als tekst, met de haakjes. Met een scriptje `zoek.py`
 zie je beide in één antwoord:
+
+{/* bestand: zoek.py */}
 
 ```python
 import httpx
@@ -104,6 +110,8 @@ Open de link opnieuw, en draai `zoek.py` nog een keer.
 
 Boven het bericht staat nu "Je zocht naar: `<b>vet</b>`", met de haakjes erbij,
 en niets is vet. `zoek.py` geeft:
+
+{/* draai: zoek.py; vrij: 127\.0\.0\.1:\d+ */}
 
 ```text
 http://127.0.0.1:8000/zoek?term=%3Cb%3Evet%3C%2Fb%3E

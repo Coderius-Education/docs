@@ -89,13 +89,19 @@ waar het de HTML in gaat.
 
 ## Doe de test opnieuw
 
+{/* weg: gastenboek.db */}
+
 Gooi `gastenboek.db` weg, start de server opnieuw, en vul als Sara weer
 `<b>vet</b>` in.
+
+{/* verstuur-ook: /gastenboek naam=Sara&bericht=<b>vet</b> */}
 
 <Gelukt>
 
 In de lijst staat nu `<b>vet</b>` met de haakjes erbij, en niets is vet.
 `lijst.py` uit [les 2](site:fullstack/docs/veiligheid/xss/zwakheid) laat zien waarom:
+
+{/* draai: lijst.py */}
 
 ```text
 <ul><li>Sara: &lt;b&gt;vet&lt;/b&gt;</li></ul>
