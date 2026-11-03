@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inflateRawSync } from 'node:zlib';
@@ -202,6 +202,20 @@ describe('de aansluitschema’s staan op het shield', () => {
             fout.push(
               `${schema}: draden ${Math.abs(a.x - b.x).toFixed(1)} uit elkaar bij x ${a.x.toFixed(0)}`,
             );
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('de pinnamen op het shield blijven leesbaar in de export', () => {
+    // De namen bij de rijtjes (-D7-, A0/D14) zijn lijntjes met stroke-width .43px
+    // in een <style>-blok. Fritzing schaalt bij de export de coördinaten van een
+    // onderdeel zo'n veertien keer op, maar die maat niet: de letters werden
+    // haardun en op lesbreedte onleesbaar. Als attribuut schaalt hij mee.
+    const fout: string[] = [];
+    for (const fzz of readdirSync(FRITZING).filter((n) => n.endsWith('.fzz'))) {
+      for (const [naam, inhoud] of unzip(join(FRITZING, fzz)))
+        if (/^svg\.breadboard\.Flitz_shield.*\.svg$/.test(naam) && /<style|class="/.test(inhoud))
+          fout.push(`${fzz}: ${naam} heeft nog een <style>-blok of klassen`);
     }
     expect(fout).toEqual([]);
   });
