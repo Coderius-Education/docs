@@ -1,8 +1,8 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 ---
 
-# 2.3 Obstakels ontwijken
+# Obstakels ontwijken
 
 Op de baan staan blokjes die je niet mag raken. Je hebt dus een **afstandssensor** nodig en een plan om om het obstakel heen te rijden.
 
@@ -10,8 +10,8 @@ Op de baan staan blokjes die je niet mag raken. Je hebt dus een **afstandssensor
 
 Drie opties:
 
-- **Ultrasone sensor** (RCWL-1601). Goedkoop, werkt op afstand. Zie [hoofdstuk 8](site:robotica/docs/category/tutorial---afstandssensor).
-- **Time of Flight** (TOF). Preciezer en kleiner. Zie [hoofdstuk 9](site:robotica/docs/category/tutorial---time-of-flight).
+- **Ultrasone sensor** (RCWL-1601). Goedkoop, werkt op afstand. Zie [Afstandssensor](site:robotica/docs/onderdelen/afstandssensor).
+- **Time of Flight** (TOF). Preciezer en kleiner. Zie [Time of Flight](site:robotica/docs/onderdelen/tof).
 - **Piezo**. Vraag je docent naar beschikbaarheid.
 
 ## Stap 2: lees de afstand uit

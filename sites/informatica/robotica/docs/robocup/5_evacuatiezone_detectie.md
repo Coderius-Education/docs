@@ -1,8 +1,8 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 ---
 
-# 2.4 Evacuatiezone detecteren
+# Evacuatiezone detecteren
 
 De evacuatiezone wordt aangegeven met **aluminiumtape** op de baan. Zodra je daaroverheen rijdt, moet je robot dat herkennen.
 

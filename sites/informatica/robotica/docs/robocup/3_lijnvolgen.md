@@ -1,8 +1,8 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
 ---
 
-# 2.2 Lijn volgen
+# Lijn volgen
 
 Lijnvolgen is meestal het eerste onderdeel waar je je robot op laat oefenen. De vraag is: **welke sensoren** ga je gebruiken om de zwarte lijn te zien?
 
@@ -14,7 +14,7 @@ Je hebt de tutorials van de digitale en analoge IR-sensor gevolgd (hoofdstukken 
 
 - Ga je voor de **digitale** of de **analoge** variant?
 - Hoeveel IR-sensoren wil je gebruiken (2, 4, 6)?
-- Hoe laat je zien wat de microcontroller "denkt"? Je kunt bijvoorbeeld het ingebouwde **RGB-lampje** gebruiken (zie hoofdstuk 2) om de huidige sensorstand te tonen.
+- Hoe laat je zien wat de microcontroller "denkt"? Je kunt bijvoorbeeld het ingebouwde **RGB-lampje** gebruiken (zie [Ingebouwd lampje](site:robotica/docs/onderdelen/ingebouwd-lampje)) om de huidige sensorstand te tonen.
 
 Probeer verschillende competitietegels uit:
 

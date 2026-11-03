@@ -1,8 +1,8 @@
 ---
-sidebar_position: 6
+sidebar_position: 7
 ---
 
-# 2.5 Rijden in de evacuatiezone
+# Rijden in de evacuatiezone
 
 In de evacuatiezone is er **geen lijn meer**. Je moet dus een ander plan om te blijven rijden zonder de zone uit te schieten.
 
@@ -10,7 +10,7 @@ In de evacuatiezone is er **geen lijn meer**. Je moet dus een ander plan om te b
 
 - Welke **afstandssensor** gebruik je? Ultrasoon of Time of Flight?
 - Welk **robotframe** rijdt prettig? De Leaphy Original is een veilige keuze.
-- Welke sensor zorgt dat je **niet** de evacuatiezone uitrijdt? (Hint: dezelfde detectie als bij [2.4 Evacuatiezone detecteren](site:robotica/docs/Competities/RoboCup-Junior/Redden-Basis/evacuatiezone_detectie) kun je hergebruiken.)
+- Welke sensor zorgt dat je **niet** de evacuatiezone uitrijdt? (Hint: dezelfde detectie als bij [Evacuatiezone detecteren](site:robotica/docs/robocup/evacuatiezone_detectie) kun je hergebruiken.)
 
 ## Mogelijke strategieën
 

@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# 1.2 Onderdelen
+# Onderdelen
 
 Dit is de **bill of materials** voor het volledige Redden Basis-project. De onderdelen komen uit verschillende webshops, dus plan even welke je waar bestelt.
 

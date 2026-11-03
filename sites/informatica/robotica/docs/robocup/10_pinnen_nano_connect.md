@@ -1,8 +1,8 @@
 ---
-sidebar_position: 10
+sidebar_position: 11
 ---
 
-# 2.9 Pinoverzicht Nano RP2040 Connect
+# Pinoverzicht Nano RP2040 Connect
 
 Hieronder zie je welke pin je voor wat gebruikt in een complete Redden-Basis-opstelling.
 

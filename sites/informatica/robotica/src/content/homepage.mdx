@@ -6,24 +6,30 @@ import {Hero, Section, Columns, Card, Buttons, Button} from '@coderius/shared/co
 <Hero title="Coderius Robotica">
   <Buttons>
     <Button href="/lego_auto/frame">Start met de Lego-auto</Button>
+    <Button href="/editor" variant="secondary">Open de editor</Button>
   </Buttons>
 </Hero>
 
 <Section title="Waar wil je mee aan de slag?">
-  <Columns count={3}>
+  <Columns count={4}>
     <Card title="Lego-auto" href="/lego_auto/frame">
 
-      Bouw stap voor stap je eigen rijdende robot.
+      Bouw stap voor stap een robot die zelf een lijn volgt, in Python.
 
     </Card>
-    <Card title="Editor" href="/editor">
+    <Card title="Onderdelen" href="/docs/onderdelen">
 
-      Schrijf en upload code naar je microcontroller.
+      Zoek een sensor of actuator op: aansluiten en code om te kopiëren.
 
     </Card>
-    <Card title="Cheatsheet" href="/cheatsheet">
+    <Card title="RoboCup Junior" href="/docs/robocup/start">
 
-      Pin-aansluitingen en code-snippets snel opzoeken.
+      Maak je robot klaar voor de wedstrijd Redden Basis.
+
+    </Card>
+    <Card title="Golfbot" href="/golfbot/intro">
+
+      Voor groep 7 en 8: een golfrobot programmeren met blokken.
 
     </Card>
   </Columns>

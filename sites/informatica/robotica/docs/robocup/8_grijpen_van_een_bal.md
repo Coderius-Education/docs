@@ -1,8 +1,8 @@
 ---
-sidebar_position: 8
+sidebar_position: 9
 ---
 
-# 2.7 Ballen grijpen
+# Ballen grijpen
 
 Nu je een bal kunt vinden, moet je hem ook nog **oppakken**. Hier komt vrijwel altijd een **servo** aan te pas.
 

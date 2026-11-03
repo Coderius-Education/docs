@@ -1,8 +1,8 @@
 ---
-sidebar_position: 7
+sidebar_position: 8
 ---
 
-# 2.6 Ballen vinden
+# Ballen vinden
 
 In de evacuatiezone liggen ballen die je moet ophalen. Hoe vind je ze?
 

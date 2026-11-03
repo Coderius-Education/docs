@@ -56,6 +56,21 @@ export default createConfig({
     { van: '/click_golfer/aansluiten', naar: '/golfbot/ir-sensor' },
     { van: '/click_golfer/bal-detecteren', naar: '/golfbot/ir-sensor' },
     { van: '/click_golfer/hole-in-one', naar: '/golfbot/arm#hole-in-one' },
+    // RoboCup Junior stond tot november 2026 diep in de Bibliotheek, onder
+    // Competities/RoboCup-Junior/Redden-Basis; nu heeft het een eigen ingang.
+    { van: '/docs/Competities/RoboCup-Junior/Redden-Basis/start', naar: '/docs/robocup/start' },
+    { van: '/docs/Competities/RoboCup-Junior/Redden-Basis/the_material', naar: '/docs/robocup/the_material' },
+    { van: '/docs/Competities/RoboCup-Junior/Redden-Basis/redden_basis', naar: '/docs/robocup/redden_basis' },
+    { van: '/docs/Competities/RoboCup-Junior/Redden-Basis/lijnvolgen', naar: '/docs/robocup/lijnvolgen' },
+    { van: '/docs/Competities/RoboCup-Junior/Redden-Basis/obstakels', naar: '/docs/robocup/obstakels' },
+    { van: '/docs/Competities/RoboCup-Junior/Redden-Basis/evacuatiezone_detectie', naar: '/docs/robocup/evacuatiezone_detectie' },
+    { van: '/docs/Competities/RoboCup-Junior/Redden-Basis/rijden_evacuatiezone', naar: '/docs/robocup/rijden_evacuatiezone' },
+    { van: '/docs/Competities/RoboCup-Junior/Redden-Basis/vinden_van_ballen', naar: '/docs/robocup/vinden_van_ballen' },
+    { van: '/docs/Competities/RoboCup-Junior/Redden-Basis/grijpen_van_een_bal', naar: '/docs/robocup/grijpen_van_een_bal' },
+    { van: '/docs/Competities/RoboCup-Junior/Redden-Basis/detectie_eindpunt', naar: '/docs/robocup/detectie_eindpunt' },
+    { van: '/docs/Competities/RoboCup-Junior/Redden-Basis/pinnen_nano_connect', naar: '/docs/robocup/pinnen_nano_connect' },
+    { van: '/docs/category/redden-basis', naar: '/docs/robocup/start' },
+    // ONDERDELEN
   ],
 
   // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
@@ -114,25 +129,11 @@ export default createConfig({
     navbar: {
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
-          position: 'right',
-          label: 'Bibliotheek',
-        },
-        {
           type: 'doc',
           docId: 'intro',
           position: 'left',
           label: 'Lego-auto',
           docsPluginId: 'lego_auto',
-        },
-        { to: '/cheatsheet', label: 'Cheatsheet', position: 'left' },
-        { to: '/robot-checken', label: 'Robot checken', position: 'left' },
-        { to: '/editor', label: 'Editor', position: 'left' },
-        {
-          to: '/docs/Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-debuggen/debuggen',
-          label: 'Er gaat iets mis',
-          position: 'left',
         },
         {
           type: 'doc',
@@ -140,6 +141,29 @@ export default createConfig({
           position: 'left',
           label: 'Golfbot',
           docsPluginId: 'golfbot',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'onderdelenSidebar',
+          position: 'left',
+          label: 'Onderdelen',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'robocupSidebar',
+          position: 'left',
+          label: 'RoboCup Junior',
+        },
+        { to: '/editor', label: 'Editor', position: 'left' },
+        {
+          type: 'dropdown',
+          label: 'Hulp',
+          position: 'left',
+          items: [
+            { to: '/cheatsheet', label: 'Cheatsheet' },
+            { to: '/docs/onderdelen/er-gaat-iets-mis', label: 'Er gaat iets mis' },
+            { to: '/robot-checken', label: 'Robot checken' },
+          ],
         },
         {
           href: REPO_URL,
