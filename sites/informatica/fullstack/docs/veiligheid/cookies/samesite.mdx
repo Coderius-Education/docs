@@ -121,7 +121,7 @@ anders zie je niet wat de nieuwe doet.
 
 Je bouwt een tweede site op `127.0.0.1:8001`, met een formulier dat naar
 `http://127.0.0.1:8000/bericht` post. Je bent ingelogd en klikt op Verstuur, en
-het bericht komt er gewoon in, op jouw naam.
+het bericht komt erin, op jouw naam.
 
 **Oorzaak:** voor `samesite` is een site het adres zonder de poort.
 `127.0.0.1:8001` en `127.0.0.1:8000` zijn dus dezelfde site, en `lax` laat de

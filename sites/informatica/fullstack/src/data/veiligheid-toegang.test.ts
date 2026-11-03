@@ -94,9 +94,9 @@ describe('Wie mag wat', () => {
   ).map((id) => id.slice('veiligheid/toegang/'.length));
 
   it('na de controle met 403 geeft geen blok een 404 voor een bericht', () => {
-    // Les 2 (controle.mdx, opdracht 3) legt uit waarom een onbekende sleutel
-    // geen 404 krijgt: zo leert Alex niets over sleutels van anderen. Het
-    // antwoord in In je eigen project zette toch eerst een 404 en dan de 403.
+    // Les 3 (controle.mdx, opdracht 2) legt uit waarom een onbekende sleutel
+    // ook 403 krijgt: één voorwaarde vóór de del. Het antwoord in In je eigen
+    // project zette toch eerst een 404 en dan de 403.
     expect(stappen).toContain('controle');
     const fout = stappen.slice(stappen.indexOf('controle')).flatMap((stap) =>
       [
