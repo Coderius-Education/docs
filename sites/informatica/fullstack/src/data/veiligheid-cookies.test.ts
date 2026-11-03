@@ -112,11 +112,17 @@ describe('de reeks Cookies afschermen', () => {
     }
   });
 
-  it('les 2 verwijst voor SameSite naar de les over samesite, en noemt de Reactieheaders', () => {
-    const tekst = lees('zwakheid');
-    expect(tekst).toContain('](site:fullstack/docs/veiligheid/cookies/samesite)');
-    expect(tekst).toContain('**Reactieheaders**');
-    expect(tekst).not.toContain('antwoordkoppen');
+  it('set-cookie bekijken staat één keer, in de hoofdtekst van samesite, met de Reactieheaders', () => {
+    // De PR zette set-cookie bekijken in de hoofdtekst van samesite, maar les 2
+    // hield dezelfde stap als opdracht 1: de leerling deed hem twee keer, en de
+    // Gelukt van samesite ("hetzelfde als eerst") wees naar die opdracht. Les 2
+    // laat nu zien wat iemand met het gekopieerde getal kan.
+    const samesite = zonderUitklap(lees('samesite'));
+    expect(samesite).toContain('**Reactieheaders**');
+    expect(samesite).toContain('`set-cookie`');
+    expect(lees('zwakheid')).not.toContain('set-cookie');
+    expect(lees('zwakheid')).toMatch(/cookies=\{"sessie_id": gestolen\}/);
+    for (const stap of stappen) expect(lees(stap), stap).not.toContain('antwoordkoppen');
   });
 
   it('het startbestand heeft Alles wissen uit Wie mag wat, les 5', () => {
@@ -201,6 +207,53 @@ describe('de reeks Cookies afschermen', () => {
     expect(lees('httponly')).not.toContain('verwijderverzoek');
     // samesite zegt waar de set_cookie hoort.
     expect(lees('samesite')).toMatch(/Vervang in `inloggen` de `set_cookie`/);
+  });
+
+  // Uit de leerling-doorloop van november 2026 (PR #169).
+  it('samesite zegt dat de poort niet meetelt, en de praktijk belooft niet dat lax op 127.0.0.1 dicht is', () => {
+    // Nagedraaid in Chromium: een formulier op 127.0.0.1:8213 dat naar
+    // 127.0.0.1:8203/bericht post, stuurt de lax-cookie mee (het bericht komt
+    // er op jouw naam in); vanaf localhost:8213 komt het zonder cookie aan.
+    // Wie een "andere site" op een andere poort bouwde, zag het tegendeel van
+    // de tabel, en de praktijk zei dat je daarvoor samesite="none" nodig had.
+    const mis = lees('samesite').split('\n## Er gaat iets mis\n')[1] ?? '';
+    expect(mis).toMatch(/### [^\n]*poort/);
+    expect(mis).toContain('localhost');
+    const csrf = lees('praktijk').replace(/\s+/g, ' ');
+    expect(csrf).toMatch(/andere poort telt niet/);
+  });
+
+  it('verlopen noemt de fout als sessie_ophalen zichzelf aanroept', () => {
+    // sessie_ophalen bevat dezelfde twee regels als het with-blok dat in drie
+    // endpoints vervangen wordt. Met "alles vervangen" staat er in de functie
+    // mijn = sessie_ophalen(sessie_id) met de rest nog ingesprongen: fastapi
+    // dev stopt met IndentationError. Wie alleen de inspringing herstelt,
+    // krijgt RecursionError in de terminal en een 500 bij /bericht.
+    const mis = lees('verlopen').split('\n## Er gaat iets mis\n')[1] ?? '';
+    expect(mis).toMatch(/### IndentationError in `sessie_ophalen`/);
+    expect(mis).toContain('IndentationError: unexpected indent');
+    expect(mis).toContain('RecursionError: maximum recursion depth exceeded');
+  });
+
+  it('na het weggooien van gebruikers.db laat een opdracht niet zomaar "log in" doen', () => {
+    // Uitloggen en verlopen laten de databases weggooien, en een opdracht zei
+    // daarna "log in": dat gaf 401, want het account uit les 1 bestond niet
+    // meer. Zo'n opdracht zegt nu dat je eerst een account maakt.
+    const fout: string[] = [];
+    for (const stap of stappen) {
+      const proza = lees(stap)
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/`[^`]*`/g, '')
+        .replace(/\s+/g, ' ');
+      const opdrachten = proza.split('## Opdrachten')[1] ?? '';
+      const hoofdtekst = lees(stap).replace(/\s+/g, ' ').split('## Opdrachten')[0];
+      if (!/Gooi (?:(?!\. ).)*`gebruikers\.db` weg/.test(hoofdtekst)) continue;
+      for (const opdracht of opdrachten.split('### ').slice(1)) {
+        if (/\blog (?:\w+ )?in\b/i.test(opdracht) && !/account/.test(opdracht))
+          fout.push(`${stap}: ${opdracht.slice(0, 60)}`);
+      }
+    }
+    expect(fout).toEqual([]);
   });
 
   it('de praktijk zegt dat de tot vanaf het inloggen telt, niet vanaf de laatste activiteit', () => {

@@ -41,8 +41,10 @@ Eén `PasswordHasher` voor de hele server, met instellingen die veilig zijn voor
 
 </CodeUitleg>
 
-Zet de import en `ph = PasswordHasher()` bovenaan je `main.py`, en vervang je
-`/registreer` door deze. `/inloggen` laat je staan: die zet je in
+Neem niet het hele blok over: alleen de regels met `PasswordHasher` en
+`/registreer` zijn nieuw. Zet de import en `ph = PasswordHasher()` bovenaan je
+`main.py`, en vervang je `/registreer` door deze. `import hashlib` en
+`/inloggen` laat je staan: die zet je in
 [les 8](site:fullstack/docs/veiligheid/wachtwoorden/inloggen) om.
 
 :::caution[Inloggen werkt tot les 8 niet]
@@ -146,30 +148,38 @@ dus je nieuwe `/registreer` weigert ze voordat hij een Argon2-hash maakt.
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Twee keer hashen
+### Opdracht 1: Investigate - Twee keer hashen
+
+Draai dit scriptje een paar keer, en leg de twee regels steeds naast de tabel
+hierboven:
 
 ```python
 from argon2 import PasswordHasher
 
 ph = PasswordHasher()
-print(ph.hash("welkom123") == ph.hash("welkom123"))
+print(ph.hash("welkom123"))
+print(ph.hash("welkom123"))
 ```
 
-**Vraag:** print dit `True` of `False`?
+**Vraag:** welke stukken zijn in de twee regels gelijk, en welke verschillen?
+En waarom?
 
 <details>
 <summary>Tip</summary>
 
-Wat doet `ph.hash` elke keer anders dan `sha256`?
+Welke stukken hangen af van de instellingen van `ph`, en welk stuk kiest
+`ph.hash` elke keer opnieuw?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-`False`. Elke `ph.hash` krijgt een nieuw zout, dus twee hashes van hetzelfde
-wachtwoord verschillen. Hoe je dan controleert of een wachtwoord klopt, zie je
-in les 8.
+`argon2id`, `v=19` en `m=65536,t=3,p=4` zijn gelijk: dat zijn het algoritme en
+de instellingen, en die komen van dezelfde `ph`. Het zout verschilt, want
+`ph.hash` kiest bij elke hash een nieuw. En omdat het zout anders is, is de hash
+zelf ook anders. Twee hashes van hetzelfde wachtwoord zijn dus nooit gelijk.
+Hoe je dan controleert of een wachtwoord klopt, zie je in les 8.
 
 </details>
 

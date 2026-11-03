@@ -89,20 +89,21 @@ computer typen met `:8000/docs` erachter. Je klasgenoot ziet dan dezelfde lijst
 als jij, met het endpoint dat je vergeten bent weg te halen. Wat dat kost, zie
 je in [les 3](site:fullstack/docs/veiligheid/zichtbaar/vergeten).
 
-<Voorspel soort="Controlevraag" vraag="Je server draait met fastapi dev op 127.0.0.1. Wie kan jouw /docs openen?">
-  <Keuze goed uitleg="127.0.0.1 is je eigen computer. Een ander apparaat komt er niet bij, hoe goed hij het pad ook kent.">Alleen jij, op je eigen computer</Keuze>
-  <Keuze uitleg="Het pad kennen is niet genoeg: je server luistert op 127.0.0.1. Wat verandert --host 0.0.0.0?">Iedereen op het netwerk van school die het pad kent</Keuze>
-  <Keuze uitleg="FastAPI zet niets online. Je server is alleen te bereiken op het adres waarop hij luistert.">Iedereen op internet, want FastAPI zet de pagina online</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je geeft een endpoint een pad dat niemand raadt, zoals /x7k2-beheer, en zet je server open voor de klas. Hoe vindt een klasgenoot het toch?">
+  <Keuze uitleg="Raden hoeft niet. Welke lijst maakt FastAPI zelf, op een vast adres?">Niet: een pad dat niemand raadt, kan ook niemand vinden</Keuze>
+  <Keuze uitleg="In main.py staat het pad, maar FastAPI zet het ook ergens anders. Waar las handleiding.py het?">Alleen als hij je main.py heeft, want daar staat het pad</Keuze>
+  <Keuze goed uitleg="FastAPI zet elk endpoint op de handleiding, ook een pad dat niemand zou raden.">Hij opent /docs of /openapi.json, en ziet het tussen de rest</Keuze>
   <Uitleg>
 
-  Wie bij je server kan, kan bij `/docs`. Zolang je server op `127.0.0.1`
-  luistert, ben jij dat alleen. Met `--host 0.0.0.0` is dat iedereen op het
-  netwerk, en dan staat de handleiding er ook voor hen.
+  Een vreemd pad helpt niet zolang de handleiding aanstaat: daarop staat elk
+  endpoint, met zijn methode. Wie bij je server kan, kan ook bij die lijst.
 
   </Uitleg>
 </Voorspel>
 
 ## Er gaat iets mis
+
+### `/docs` blijft wit
 
 `/docs` blijft een witte pagina, terwijl `/openapi.json` wel een lange tekst
 toont.

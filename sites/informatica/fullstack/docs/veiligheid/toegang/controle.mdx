@@ -133,6 +133,24 @@ niet in de functie.
 
 **Oplossing:** zet de parameter erbij, zoals in regel 2 hierboven.
 
+### Een `'Alex'` te veel
+
+Het script print:
+
+```text
+Alex verwijdert het bericht van Sara: 403
+Nog in het gastenboek: ['Alex', 'Sara', 'Alex']
+Sara verwijdert haar eigen bericht: 200
+Nog in het gastenboek: ['Alex', 'Alex']
+```
+
+**Oorzaak:** je hebt de databases niet weggegooid. Het bericht van Alex uit
+[les 2](site:fullstack/docs/veiligheid/toegang/zwakheid) staat er nog, naast de
+twee nieuwe. De controle werkt wel: Alex krijgt `403` en Sara `200`.
+
+**Oplossing:** gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, en
+draai het script opnieuw.
+
 ## Opdrachten
 
 ### Opdracht 1: Predict - Een nieuw venster
@@ -165,17 +183,22 @@ geen sessie en krijgt ze `403`.
 ### Opdracht 2: Investigate - Een sleutel die niet bestaat
 
 Alex stuurt `alex.delete("/bericht/bestaat_niet")`. Welke statuscode krijgt hij,
-en waarom is het goed dat het geen `404` is?
+en welk deel van de controle geeft die?
 
 <details>
 <summary>Antwoord</summary>
 
-`403`, met `{'detail': 'Dit is niet jouw bericht'}`: een bericht dat niet
-bestaat, valt onder dezelfde voorwaarde als een bericht van een ander. Zo leert
-Alex niets over sleutels van anderen: een bestaand bericht van Sara en een
-verzonnen sleutel geven hetzelfde antwoord. Hetzelfde idee zag je bij
-[Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen): één melding
-voor een onbekende naam en een fout wachtwoord.
+`403`, met `{'detail': 'Dit is niet jouw bericht'}`. `db.get` geeft `None`, en
+dan is `bericht is None` waar. Eén voorwaarde vangt allebei de gevallen: een
+bericht dat niet bestaat en een bericht van een ander. Zo staat er maar één
+controle vóór de `del`, en kan een niet-bestaande sleutel nooit bij
+`bericht["naam"]` een `TypeError` geven.
+
+Een `404` zou hier niets verraden, want `/berichten` laat elke sleutel al zien.
+Op een site waar de sleutels niet openbaar zijn, is het wel een reden om
+dezelfde `403` te geven: dan leert een bezoeker niet welke sleutels bestaan,
+net zoals [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen)
+één melding geeft voor een onbekende naam en een fout wachtwoord.
 
 </details>
 

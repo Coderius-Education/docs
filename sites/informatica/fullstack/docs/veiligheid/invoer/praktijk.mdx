@@ -18,6 +18,17 @@ veiliger.
 Neem een gebruikersnaam. Weren wat niet mag ("geen `<`, geen spaties, geen
 `;`…") laat altijd iets door dat je niet bedacht had. Toestaan wat mag ("alleen
 letters en cijfers, 3 tot 20 tekens") laat precies dat door en de rest niet.
+In FastAPI is dat een grens in `Form` en één `if` in je functie:
+
+```python
+@app.post("/profiel")
+async def profiel_opslaan(naam: str = Form(..., min_length=3, max_length=20)):
+    if not naam.isalnum():
+        raise HTTPException(status_code=400, detail="Alleen letters en cijfers")
+```
+
+`min_length` is de ondergrens, net als `max_length` de bovengrens. `isalnum()`
+is waar als een tekst alleen uit letters en cijfers bestaat, zonder spaties.
 Wat je vergeet te noemen, is dan geweigerd in plaats van toegestaan. Dat is
 hetzelfde idee als de lijst met stemmingen uit [les 7](site:fullstack/docs/veiligheid/invoer/keuzes) en de
 pagina's uit [les 8](site:fullstack/docs/veiligheid/invoer/paden). Je komt het later weer tegen in
@@ -70,8 +81,8 @@ Kies bij elke situatie de aanpak uit deze reeks die past.
    dan met een `422`, net als het cijfer in [les 6](site:fullstack/docs/veiligheid/invoer/getallen). Met `ge` en
    `le` zet je er ook een onder- en bovengrens op.
 2. Een grens op de grootte van het verzoek, in de server vóór FastAPI.
-3. Toestaan wat mag: alleen letters en cijfers, met een minimum- en
-   maximumlengte.
+3. Toestaan wat mag: `min_length` en `max_length` in `Form`, en een `400` als
+   `isalnum()` niet waar is.
 4. Een lijst met de pagina's die mogen, zoals in [les 8](site:fullstack/docs/veiligheid/invoer/paden). Een naam
    die er niet in staat, krijgt een `404` voordat `FileResponse` iets opent.
 

@@ -72,14 +72,15 @@ wachtwoorden van je gebruikers, leesbaar, tot je de reeks
 [Wachtwoorden veilig opslaan](site:fullstack/docs/veiligheid/wachtwoorden/startbestand) doet,
 en daarna hun hashes. Die deel je nog minder.
 
-<Voorspel soort="Controlevraag" vraag="Een klasgenoot krijgt een zip van je map, met sessies.db erin. Wat kan hij daarmee?">
-  <Keuze uitleg="SqliteDict leest het bestand zonder server, zoals lees_sessies.py deed.">Niets, want zonder jouw server is de database niet te lezen</Keuze>
-  <Keuze uitleg="In sessies.db staan geen berichten, maar sessie-id's. Wat kun je met een sessie-id?">Alleen de berichten lezen die je bezoekers schreven</Keuze>
-  <Keuze goed uitleg="Met een sessie-id is hij voor je server die bezoeker, zolang je server met deze sessies.db draait.">Elk sessie-id lezen, en zich daarmee bij je server voordoen als die bezoeker</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je stuurt een klasgenoot alleen gastenboek.db, en sessies.db niet. Wat kan hij daarmee?">
+  <Keuze uitleg="lees_sessies.py las sessies.db zonder server. Met gastenboek.db gaat dat net zo.">Niets: zonder je server is een database niet te lezen</Keuze>
+  <Keuze goed uitleg="In gastenboek.db staan per bericht de naam en het bericht. De sessie-id's staan alleen in sessies.db.">De berichten lezen met de namen erbij, maar geen sessie-id's</Keuze>
+  <Keuze uitleg="Kijk in bericht_plaatsen wat er in gastenboek.db komt. Het sessie-id gaat alleen in sessies.db.">Ook elk sessie-id: dat staat bij elk bericht opgeslagen</Keuze>
   <Uitleg>
 
-  Wie het bestand heeft, heeft wat erin staat. `sessies.db` delen is hetzelfde
-  als `/sessies` openzetten, alleen zonder server ertussen.
+  Een bestand geeft weg wat erin staat, niet meer en niet minder. Ook
+  berichten met namen deel je niet zomaar, dus geen van beide databases hoort in
+  een zip.
 
   </Uitleg>
 </Voorspel>

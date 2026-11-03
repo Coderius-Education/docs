@@ -94,14 +94,14 @@ vrolijk -> 400 {'detail': 'Kies blij, neutraal of boos'}
 Je noemt op wat mag, dus alles wat je niet noemde, is geweigerd. Ook een
 woord dat je zelf nooit bedacht had.
 
-<Voorspel soort="Controlevraag" vraag="Waarom maak je een lijst met wat mag, en niet een lijst met wat niet mag?">
-  <Keuze uitleg="Hier is de lijst kort, maar daar gaat het niet om. Wat gebeurt er met een woord dat op geen van beide lijsten staat?">Een lijst met wat mag is korter, en dus sneller</Keuze>
-  <Keuze uitleg="not in werkt met elke lijst. Je kunt er ook verboden woorden mee zoeken.">Python kan alleen met not in tegen een lijst controleren</Keuze>
-  <Keuze goed uitleg="Een lijst met wat niet mag is nooit af. Een bezoeker verzint altijd een woord dat er niet op staat, en dat komt er dan door.">Een lijst met wat niet mag, is nooit compleet</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je zet later de stemming moe in het select-veld van formulier.html, maar niet in de lijst in main.py. Wat krijgt iemand die moe kiest?">
+  <Keuze uitleg="Ook een keuze uit je eigen formulier komt bij je server als tekst binnen. Waarmee vergelijkt bericht_plaatsen die?">Een 200: moe komt uit je eigen formulier, dus het mag</Keuze>
+  <Keuze uitleg="Een 422 komt van Form, en daar staat stemming gewoon als str. Wie weigert hier?">FastAPI geeft een 422, want moe is geen bekende stemming</Keuze>
+  <Keuze goed uitleg="De controle kijkt alleen naar STEMMINGEN. Daar staat moe niet in, dus stuurt je eigen if een 400.">Je eigen 400: je server laat alleen door wat in zijn lijst staat</Keuze>
   <Uitleg>
 
-  Met een lijst met wat mag, hoef je niet te bedenken wat een bezoeker allemaal
-  kan sturen. Alles wat je niet noemde, komt er niet door.
+  Wat mag, staat op één plek: in de lijst op de server. Het formulier helpt de
+  bezoeker kiezen, maar beslist niets.
 
   </Uitleg>
 </Voorspel>

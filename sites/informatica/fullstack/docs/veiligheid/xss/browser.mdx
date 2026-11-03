@@ -103,13 +103,13 @@ vraagteken heeft hij niet gebruikt, en er is geen endpoint waar je een
 `escape` kunt zetten. De HTML ontstaat pas in de browser, in de functie `toon` in
 `voorbeeld.js`.
 
-<Voorspel soort="Controlevraag" vraag="Je opent de link met een vet woord achter ?bericht=. Welk stuk code maakt er HTML van?">
-  <Keuze goed uitleg="toon zet de tekst uit de link met innerHTML in het voorbeeld, en dan leest de browser hem als HTML.">De functie toon in voorbeeld.js, met innerHTML</Keuze>
-  <Keuze uitleg="Je server stuurt gastenboek.html zoals het in static/ staat. Het stuk na het vraagteken gebruikt hij niet.">Je server, die het stuk na het vraagteken in de pagina zet</Keuze>
-  <Keuze uitleg="htmx vult alleen het antwoord en de lijst, met wat je server terugstuurt. Het voorbeeld vult voorbeeld.js.">htmx, dat na het laden de lege plekken in de pagina vult</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je opent de link met een vet woord achter ?bericht=, maar je klikt niet op Verstuur. Wat staat er daarna in gastenboek.db?">
+  <Keuze goed uitleg="Je server kreeg alleen een GET voor gastenboek.html. Het vette woord ontstond in je browser, in toon.">Niets nieuws: het vet ontstond alleen in je browser</Keuze>
+  <Keuze uitleg="Ingevuld is nog niet verstuurd. Zonder Verstuur gaat er geen POST naar /gastenboek.">Het vette woord, want de link vulde het formulier in</Keuze>
+  <Keuze uitleg="Je server escapet bij het tonen, niet bij het opslaan. En hier kreeg hij niets om op te slaan.">Het woord met codes voor de haakjes, ge-escapet door je server</Keuze>
   <Uitleg>
 
-  De tekst uit de link komt nooit langs een endpoint van jou. JavaScript leest hem in de browser en zet hem in de pagina, dus daar, in `toon`, ontstaat de HTML.
+  Bij DOM-XSS komt je server er niet aan te pas: hij stuurde alleen `gastenboek.html`. Er is geen endpoint en geen database waar je het kunt tegenhouden; dat moet in je JavaScript.
 
   </Uitleg>
 </Voorspel>

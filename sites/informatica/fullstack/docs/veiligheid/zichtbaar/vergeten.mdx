@@ -102,15 +102,15 @@ beantwoordt elk verzoek, van wie dan ook, en `/docs` zet het endpoint netjes op
 de lijst. Een endpoint dat alleen voor jou is, bestaat niet. In
 [les 4](site:fullstack/docs/veiligheid/zichtbaar/uitzetten) zet je de lijst uit en haal je het endpoint weg.
 
-<Voorspel soort="Controlevraag" vraag="sessies.py plaatste geen bericht. Waarom ziet je server het script toch als Sara?">
-  <Keuze uitleg="Een sessie-id van 32 willekeurige tekens raadt niemand. Waar haalde het script het vandaan?">Sara's sessie-id was te raden</Keuze>
-  <Keuze goed uitleg="/sessies gaf het sessie-id, en /ik herkent een bezoeker alleen aan de cookie met dat sessie-id.">Het stuurt Sara's sessie-id als cookie mee, en meer vraagt /ik niet</Keuze>
-  <Keuze uitleg="sessies.py gebruikt geen Client van twee.py; het maakt alleen losse verzoeken. Wat stuurt het mee?">sessies.py gebruikt de Client van Sara uit twee.py</Keuze>
+<Voorspel soort="Controlevraag" vraag="Alex heeft het sessie-id van Sara, bijvoorbeeld van een briefje. Hij stuurt het als cookie mee met GET /ik, vanuit zijn eigen script. Wat antwoordt je server?">
+  <Keuze uitleg="Waaraan herkent /ik een bezoeker: aan wie het script draait, of aan de cookie?">Alex: het script is van Alex, en dat ziet de server</Keuze>
+  <Keuze goed uitleg="/ik zoekt het sessie-id uit de cookie op in sessies.db. Het is het id van Sara, dus is Alex voor je server Sara.">Sara: de server ziet het sessie-id, niet wie het stuurt</Keuze>
+  <Keuze uitleg="Een cookie is tekst in het verzoek. Je server kan niet zien uit welke browser die tekst komt.">Hij is onbekend, want de cookie komt niet uit de browser van Sara</Keuze>
   <Uitleg>
 
   Voor je server is een bezoeker zijn sessie-id. Wie dat id meestuurt, is die
-  bezoeker. Een lijst met alle sessie-id's maakt van één script dus elke
-  bezoeker.
+  bezoeker, hoe hij er ook aan kwam. Daarom is een lijst met alle sessie-id's zo
+  gevaarlijk.
 
   </Uitleg>
 </Voorspel>

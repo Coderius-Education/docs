@@ -121,17 +121,17 @@ Zonder `Client` is elk bezoek het eerste. Met `Client` telt de teller door tot
 
 </Gelukt>
 
-Twee `Client`s zijn twee bezoekers, elk met hun eigen cookies. Zo laat een
-script straks Sara en Alex tegelijk je gastenboek bezoeken.
+Met een `Client` per bezoeker laat een script straks Sara en Alex tegelijk
+je gastenboek bezoeken.
 
-<Voorspel soort="Controlevraag" vraag="Waarom print httpx.get in teller.py drie keer {'bezoek': 1}?">
-  <Keuze uitleg="De server zet bij elk bezoek een cookie, ook bij httpx.get. Wat gebeurt er met die cookie na het verzoek?">De server zet geen cookie als het verzoek van httpx.get komt</Keuze>
-  <Keuze goed uitleg="httpx.get onthoudt niets. Elk verzoek komt zonder cookie aan, dus de server begint steeds bij 0.">Elk httpx.get is een nieuwe bezoeker, zonder de cookie van daarnet</Keuze>
-  <Keuze uitleg="De drie verzoeken gaan na elkaar, in een for-lus. Het ligt niet aan de snelheid.">De drie verzoeken komen tegelijk aan, en de server telt ze als één</Keuze>
+<Voorspel soort="Controlevraag" vraag="Een script maakt twee Clients, sara en alex. Sara vraagt twee keer /bezoek op, daarna alex één keer. Welk bezoek print alex?">
+  <Keuze uitleg="De server onthoudt zelf niets: de teller zit in de cookie. Welke cookie stuurt alex mee?">3, want de server telt alle bezoeken aan /bezoek bij elkaar op</Keuze>
+  <Keuze goed uitleg="Elke Client heeft zijn eigen cookies. De cookie van sara gaat niet mee met het verzoek van alex.">1, want alex heeft zijn eigen cookies, en nog geen teller</Keuze>
+  <Keuze uitleg="Een Client bewaart alleen de cookies van zijn eigen antwoorden. Wie kreeg de cookie teller?">Ook 3: twee Clients in één script delen hun cookies</Keuze>
   <Uitleg>
 
-  De teller staat niet op de server, maar in de cookie van de bezoeker. Wie de
-  cookie niet meestuurt, is voor de server iemand die voor het eerst langskomt.
+  De teller staat niet op de server, maar in de cookie van elke bezoeker. Twee
+  `Client`s zijn twee bezoekers, elk met hun eigen cookies.
 
   </Uitleg>
 </Voorspel>

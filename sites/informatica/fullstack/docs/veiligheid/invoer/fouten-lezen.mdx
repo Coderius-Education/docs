@@ -77,14 +77,14 @@ Het lege bericht gaf `missing`, en dat zonder dat je er iets voor schreef.
 `Form(...)` maakt een veld verplicht, en voor FastAPI telt een leeg veld als
 niet ingevuld. Een `min_length=1` erbij is dus niet nodig.
 
-<Voorspel soort="Controlevraag" vraag="Waarom print fouten.py het tweede stuk van loc, en niet het eerste?">
-  <Keuze uitleg="De statuscode staat niet in loc, maar in antwoord.status_code.">Het eerste stuk is de statuscode, en die print je al</Keuze>
-  <Keuze uitleg="In loc staat de naam van het veld maar één keer. Wat staat er op de eerste plek?">In loc staat de naam van het veld twee keer, en één is genoeg</Keuze>
-  <Keuze goed uitleg="Bij een formulierveld is het eerste stuk altijd body. Het tweede zegt welk veld het was.">Het eerste stuk is altijd body, het tweede is het veld</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je stuurt met fouten.py een naam van 40 tekens en een bericht van 300 tekens. Hoeveel regels print het onder de 422?">
+  <Keuze uitleg="FastAPI stopt niet bij de eerste fout. Hoeveel fouten meldde hij in de Gelukt hierboven?">Eén: FastAPI stopt bij de eerste fout die hij vindt</Keuze>
+  <Keuze goed uitleg="FastAPI controleert elk veld, en zet elke fout als eigen dictionary in detail. De for-loop print er één regel per.">Twee: één regel voor de naam, en één voor het bericht</Keuze>
+  <Keuze uitleg="loc noemt bij elke fout ook het veld, op de tweede plek.">Eén, met in loc alleen body voor het hele formulier</Keuze>
   <Uitleg>
 
-  `loc` zegt waar de fout zit: eerst in welk deel van het verzoek, dan in welk
-  veld. Voor een formulier is dat deel altijd `body`.
+  `detail` is een lijst met één fout per veld dat niet klopt. Daarom kan een
+  script per veld zeggen wat er mis is.
 
   </Uitleg>
 </Voorspel>

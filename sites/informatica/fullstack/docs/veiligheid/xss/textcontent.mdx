@@ -33,20 +33,20 @@ Typ je zelf `<i>hoi</i>` in het berichtveld, dan staat ook dat er als tekst.
 </Gelukt>
 
 Gebruik `innerHTML` alleen voor HTML die je zelf in je code schreef, net als
-`|safe` in [les 6](site:fullstack/docs/veiligheid/xss/safe). Voor alles wat uit een veld, de URL of de server
-komt, is `textContent` de goede keuze.
+`|safe` in [les 6](site:fullstack/docs/veiligheid/xss/safe). Voor tekst uit een veld of de URL is
+`textContent` de goede keuze.
 
 htmx zet het antwoord van je server ook met `innerHTML` in de pagina, dat is
 `hx-swap="innerHTML"`. Dat is veilig zolang je server escapet: wat htmx krijgt,
 is dan al `&lt;b&gt;`, en de browser toont het als tekst.
 
-<Voorspel soort="Controlevraag" vraag="In welk geval mag je in je JavaScript nog innerHTML gebruiken?">
-  <Keuze goed uitleg="Die HTML schreef jij, in je eigen code. Geen bezoeker kan hem veranderen, net als WELKOM met |safe.">Alleen met HTML die je zelf in je JavaScript hebt geschreven</Keuze>
-  <Keuze uitleg="Tekst uit de URL komt nooit langs je server. Hoe goed die escapet, maakt hier niets uit.">Voor tekst uit de URL, als je server overal escapet</Keuze>
-  <Keuze uitleg="Met een link vult een ander dat veld al voor je in. Dan is het niet meer alleen je eigen tekst.">Bij tekst uit een veld, want die ziet alleen de bezoeker zelf</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je wilt dat het voorbeeld begint met het woord Voorbeeld, vetgedrukt, en zet in toon: voorbeeld.innerHTML = '<b>Voorbeeld:</b> ' + veld.value. Wat zie je als je daarna de link uit les 7 opent?">
+  <Keuze goed uitleg="innerHTML kijkt niet waar een stuk tekst vandaan komt. Jouw vette tag en die uit de link worden allebei HTML.">Allebei vet: ook het woord uit de link wordt HTML</Keuze>
+  <Keuze uitleg="Zodra het in één tekst met innerHTML de pagina in gaat, leest de browser alles als HTML, ook het stuk uit het veld.">Alleen Voorbeeld: is vet, het stuk uit de link blijft tekst</Keuze>
+  <Keuze uitleg="Zo zou het met textContent gaan. Hier staat innerHTML, en dat leest alles als HTML.">Alles als tekst, met de haakjes van beide b-tags erbij</Keuze>
   <Uitleg>
 
-  `innerHTML` maakt HTML van alles wat je erin zet. Dat mag alleen met HTML die van jou komt. Tekst uit een veld, de URL of de server zet je er met `textContent` in.
+  Net als `|safe` in les 6 geldt `innerHTML` voor de hele tekst, ook voor het stuk dat van een bezoeker komt. Zet je eigen `<b>Voorbeeld:</b>` in `gastenboek.html`, en het bericht met `textContent` in een element erachter.
 
   </Uitleg>
 </Voorspel>

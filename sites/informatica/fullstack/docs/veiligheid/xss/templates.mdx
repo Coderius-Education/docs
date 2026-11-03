@@ -85,13 +85,13 @@ De witruimte komt uit het template: de regels met `{% for %}` en `{% endfor %}`
 worden elk een regel met alleen vier spaties. Wat Sara typte staat er, maar als
 tekst, net als met `escape`.
 
-<Voorspel soort="Controlevraag" vraag="De lijst komt nu uit een template. Wat heeft de return van POST /gastenboek, met de naam in een f-string, dan nog nodig?">
-  <Keuze goed uitleg="Jinja escapet alleen wat door een template gaat. De zin na het versturen is nog een f-string in een HTMLResponse.">Nog steeds escape om de naam</Keuze>
-  <Keuze uitleg="Het template geldt alleen voor /berichten/lijst. De return van POST /gastenboek gebruikt het niet.">Niets meer, want Jinja escapet nu alles wat de server terugstuurt</Keuze>
-  <Keuze uitleg="De database bewaart de naam zoals de bezoeker hem typte. Escapen gebeurt pas waar hij de HTML in gaat.">Niets, want de naam staat al ge-escapet in de database</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je maakt een pagina /nieuwste met een eigen template nieuwste.html. Daarin staan de naam en het bericht van de laatste bezoeker, elk tussen dubbele accolades. Wat zet je in Python om de naam en het bericht, voordat ze naar het template gaan?">
+  <Keuze goed uitleg="nieuwste.html eindigt op .html, dus Jinja escapet alles tussen dubbele accolades, net als in berichten_lijst.html.">Niets: Jinja escapet ze in nieuwste.html zelf</Keuze>
+  <Keuze uitleg="Dan escapet Jinja ze daarna nog een keer. Van de & in &lt; maakt hij &amp;, en je ziet &lt; op je pagina.">escape() om allebei, want ze komen van een bezoeker</Keuze>
+  <Keuze uitleg="Het escapen hoort niet bij één bestand. Elk template dat op .html eindigt, escapet tussen dubbele accolades.">escape() om allebei, want alleen berichten_lijst.html escapet vanzelf</Keuze>
   <Uitleg>
 
-  Het escapen van Jinja geldt binnen het template. Een f-string in een `HTMLResponse` blijft Python, dus daar houd je `escape(naam)`, net als `escape(term)` in de zoekpagina.
+  Waar een waarde door een `.html`-template gaat, escapet Jinja hem; daar zet je in Python niets omheen. `escape()` hoort alleen waar je zelf HTML bouwt, in een f-string.
 
   </Uitleg>
 </Voorspel>
@@ -108,6 +108,23 @@ foutmelding of waarschuwing.
 
 **Oplossing:** houd je templates op `.html`, en pas de naam in
 `TemplateResponse` mee aan.
+
+### TemplateNotFound
+
+De lijst ververst niet meer, en na herladen blijft hij leeg. `lijst.py` print
+`Internal Server Error`, en in de terminal van je server eindigt de foutmelding
+met:
+
+```text
+jinja2.exceptions.TemplateNotFound: 'berichten_lijst.html' not found in search path: 'templates'
+```
+
+**Oorzaak:** het template staat niet in de map `templates` naast `main.py`, of
+het heet anders dan in `TemplateResponse`. Je endpoint geeft dan een `500`, en
+htmx zet een `500` niet in de pagina: een open pagina houdt stil de oude lijst.
+
+**Oplossing:** zet `berichten_lijst.html` in `templates/`, met precies de naam
+uit `TemplateResponse`.
 
 ## Opdrachten
 
@@ -136,6 +153,9 @@ De `<b>` mag in het template staan. Het is jouw HTML, niet die van de bezoeker.
 
 De tags komen van jou, de inhoud van de bezoeker. Jinja escapet alleen wat
 tussen `{{ }}` staat, dus de naam blijft tekst en jouw `<b>` blijft HTML.
+
+Haal de `<b>` daarna weer weg: les 6 rekent met het template zonder vette
+namen.
 
 </details>
 

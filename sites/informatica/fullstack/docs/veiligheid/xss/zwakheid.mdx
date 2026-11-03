@@ -23,6 +23,7 @@ site van een ander om te kijken wat er gebeurt, is een aanval op die site en op
 de bezoekers ervan, en strafbaar.
 :::
 
+Gooi `gastenboek.db` weg, zodat alleen nieuwe berichten in de lijst staan.
 Start je server en open `http://127.0.0.1:8000/static/gastenboek.html`. Vul als
 naam `Sara` in en als bericht:
 
@@ -50,7 +51,7 @@ antwoord = httpx.get("http://127.0.0.1:8000/berichten/lijst")
 print(antwoord.text)
 ```
 
-Uitvoer, met alleen het bericht van Sara in de database:
+Uitvoer:
 
 ```text
 <ul><li>Sara: <b>vet</b></li></ul>

@@ -160,15 +160,16 @@ Naast `main.py` staat nu een bestand `gebruikers.db`.
 
 </Gelukt>
 
-<Voorspel soort="Controlevraag" vraag="Sara heeft een account. Iemand anders stuurt naar /registreer de naam sara met het wachtwoord geheim. Wat gebeurt er?">
-  <Keuze uitleg="Zo ging het zonder de controle bovenaan registreer. Wat doet de regel met if naam in db?">Welkom, sara, en daarna werkt alleen geheim nog als wachtwoord</Keuze>
-  <Keuze goed uitleg="De naam staat al in de database, dus de server stopt met een 400 voordat hij iets opslaat.">Deze naam is al bezet, en Sara houdt haar eigen wachtwoord</Keuze>
-  <Keuze uitleg="Een SqliteDict is een dictionary: elke sleutel staat er één keer in.">Welkom, sara, en er staan nu twee accounts met de naam sara</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je zet in de lijst van registreer.py een vierde gebruiker achter de drie: tim, met het wachtwoord geheim. Daarna draai je het script nog een keer. Wat print het?">
+  <Keuze uitleg="Het script begint wel opnieuw, maar gebruikers.db niet. Wat staat er al in dat bestand?">Vier welkomstberichten, want het script begint opnieuw</Keuze>
+  <Keuze uitleg="De server kijkt per naam of hij al bestaat. Staat tim er al in?">Vier keer de melding dat de naam al bezet is</Keuze>
+  <Keuze goed uitleg="sara, alex en noor staan al in gebruikers.db en krijgen een 400. tim is nieuw en krijgt een account.">Drie keer bezet, en daarna een welkom voor tim</Keuze>
+  <Keuze uitleg="Het script stuurt alle vier de namen, en print elk antwoord, ook een 400.">Alleen een welkom voor tim; de rest slaat het over</Keuze>
   <Uitleg>
 
-  De controle `if naam in db` komt vóór het opslaan. Zonder die controle zou
-  `db[naam] = wachtwoord` het wachtwoord van Sara overschrijven, en kon iedereen
-  als Sara inloggen door zich opnieuw als `sara` te registreren.
+  De accounts staan in een bestand, niet in je script. Bij elke registratie
+  kijkt de server in dat bestand of de naam al bestaat, en alleen een nieuwe
+  naam komt erbij.
 
   </Uitleg>
 </Voorspel>
@@ -189,9 +190,10 @@ Je draait `registreer.py` een tweede keer, en krijgt:
 `gebruikers.db`. Een tweede registratie met dezelfde naam weigert hij met een
 `400`.
 
-**Oplossing:** niets, je accounts staan er al. Wil je opnieuw beginnen, stop
-dan je server, gooi `gebruikers.db` weg, start de server en draai het script
-opnieuw.
+**Oplossing:** niets, je accounts staan er al. Wil je opnieuw beginnen, gooi
+dan `gebruikers.db` weg en draai het script opnieuw. Je server mag blijven
+draaien: hij opent het bestand alleen tijdens een verzoek, en maakt bij het
+eerste verzoek een nieuw, leeg bestand.
 
 ## Opdrachten
 

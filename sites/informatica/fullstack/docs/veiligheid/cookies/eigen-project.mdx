@@ -89,9 +89,12 @@ instellingen van hierboven heeft.
 <summary>Tip</summary>
 
 Denk aan de oude cookie: log na elke wijziging opnieuw in, zodat de server een
-nieuwe zet. Lees je de sessie op meer plekken uit, zoals in `GET /gastenboek`,
-`POST /gastenboek` en `POST /verwijderen`, dan gebruik je overal
+nieuwe zet. Lees je de sessie op meer plekken uit, dan gebruik je overal
 `sessie_ophalen` uit [les 6](site:fullstack/docs/veiligheid/cookies/verlopen).
+Zoek naar `sessies.get`: in je gastenboek staat het in `GET /gastenboek`,
+`POST /gastenboek` en `POST /verwijderen`, en vaak ook in `GET /berichten`,
+`GET /berichten/lijst`, `DELETE /bericht/{sleutel}` en `alles_wissen`. Laat
+het in `sessie_ophalen` zelf staan.
 
 </details>
 

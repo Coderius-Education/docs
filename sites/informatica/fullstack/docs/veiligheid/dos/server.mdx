@@ -52,11 +52,12 @@ In je browser staat:
 ```
 
 In de terminal van je server staat een regel met `GET /` en `200 OK`: je server
-heeft één verzoek beantwoord.
+heeft één verzoek beantwoord. Staat er ook een regel met `GET /favicon.ico` en
+`404`, dan vroeg je browser om een icoontje voor het tabblad; die hoort erbij.
 
 </Gelukt>
 
-<Voorspel soort="Controlevraag" vraag="Je herlaadt de pagina drie keer. Hoeveel regels met GET / komen er in de terminal van je server bij?">
+<Voorspel soort="Controlevraag" vraag="Je herlaadt de pagina drie keer. Hoeveel regels voor je startpagina, GET / zonder favicon.ico, komen er in de terminal van je server bij?">
   <Keuze goed uitleg="Elke keer herladen stuurt de browser een nieuw verzoek, en je server beantwoordt elk verzoek apart.">Drie, één voor elke keer dat je herlaadt</Keuze>
   <Keuze uitleg="De browser vraagt bij herladen opnieuw aan de server. Kijk maar in de terminal terwijl je herlaadt.">Eén, want na de eerste keer onthoudt de browser het antwoord</Keuze>
   <Keuze uitleg="Een browser is ook een bezoeker. Alles wat een verzoek stuurt, komt in de terminal.">Geen, want alleen een script telt er als bezoeker</Keuze>
@@ -86,16 +87,19 @@ Dit is de beginstand. In [les 5](site:fullstack/docs/veiligheid/dos/limiet) komt
 
 ## Er gaat iets mis
 
-### Errno 10048, of Address already in use
+### Address already in use
 
 Je browser toont iets anders dan `Hallo wereld!`, bijvoorbeeld
-`{"detail":"Not Found"}`. In de terminal van je nieuwe server staat:
+`{"detail":"Not Found"}`. In de terminal van je nieuwe server eindigt de
+melding op Windows met:
 
 ```text
-[Errno 10048] error while attempting to bind on address ('127.0.0.1', 8000): only one usage of each socket address (protocol/network address/port) is normally permitted
+[WinError 10048] Elk socketadres (protocol/netwerkadres/poort) kan normaal slechts één keer worden gebruikt
 ```
 
-Op macOS en Linux eindigt die regel met `Address already in use`.
+In een Engelse Windows staat er `only one usage of each socket address`. Op
+macOS staat er `[Errno 48] Address already in use`, op Linux
+`[Errno 98] Address already in use`.
 
 **Oorzaak:** de server van een vorige reeks draait nog op poort 8000, in een
 ander venster van VS Code. Je nieuwe server kon niet starten, en je browser

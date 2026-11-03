@@ -195,6 +195,24 @@ startte. Die map ontbreekt, of je terminal staat in een andere map.
 **Oplossing:** maak de map `static` naast `main.py`, met `gastenboek.html`
 erin, en start de server vanuit de map `veiligheid-xss`.
 
+### Address already in use
+
+Je browser toont `{"detail":"Not Found"}` in plaats van het formulier. In de
+terminal van je nieuwe server eindigt de melding op Windows met:
+
+```text
+[WinError 10048] Elk socketadres (protocol/netwerkadres/poort) kan normaal slechts één keer worden gebruikt
+```
+
+Op macOS en Linux staat er `Address already in use`.
+
+**Oorzaak:** de server van de vorige reeks draait nog op poort 8000, in een
+ander venster van VS Code. Je nieuwe server kon niet starten, en je browser
+vroeg `gastenboek.html` aan de oude, die dat bestand niet heeft.
+
+**Oplossing:** stop de oude server met Ctrl+C in zijn terminal, en start deze
+opnieuw.
+
 ### Een rode regel `favicon.ico` met 404
 
 In het tabblad **Netwerk** en in de terminal van je server staat

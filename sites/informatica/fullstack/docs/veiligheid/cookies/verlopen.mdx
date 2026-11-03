@@ -186,6 +186,26 @@ staat niet in `main.py`.
 
 **Oplossing:** zet die regel onder de imports, boven `app = FastAPI()`.
 
+### IndentationError in `sessie_ophalen`
+
+`fastapi dev` stopt meteen, en de foutmelding wijst naar de regel
+`if mijn and mijn.get("tot", 0) < time.time():` en eindigt met:
+
+```text
+IndentationError: unexpected indent
+```
+
+**Oorzaak:** je liet je editor het `with`-blok overal vervangen. De twee regels
+staan ook bovenaan in `sessie_ophalen` zelf, en daar mogen ze niet weg. Nu
+staat in `sessie_ophalen` `mijn = sessie_ophalen(sessie_id)`, met de rest van
+de functie nog ingesprongen. Haal je alleen de inspringing weg, dan start de
+server wel, maar roept de functie zichzelf eindeloos aan: de terminal toont
+`RecursionError: maximum recursion depth exceeded`, en `verlopen.py` stopt met
+`json.decoder.JSONDecodeError`.
+
+**Oplossing:** zet in `sessie_ophalen` het `with`-blok terug, zoals hierboven.
+Vervang het alleen in de drie endpoints, één voor één.
+
 ### KeyError bij `sessies[sessie_id]`
 
 Het script stopt met `KeyError` en een lang getal: het sessie-id van Sara.
@@ -198,11 +218,11 @@ maakt `SqliteDict` stil een nieuwe, lege `sessies.db`, en daarin staat Sara niet
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Een sessie van vóór deze les
+### Opdracht 1: Predict - Een sessie zonder `tot`
 
-Je logde in de browser in vóórdat `inloggen` een `tot` meegaf. Die sessie staat
-nog in `sessies.db`, zonder `tot`, en de cookie staat nog in je browser. Nu
-verstuur je met het formulier een bericht.
+Stel dat er in `sessies.db` nog een sessie staat van vóór deze les, zonder
+`tot`. Dat gebeurt als je de databases niet weggooit. Met die sessie-cookie
+verstuur je een bericht.
 
 **Vraag:** wat antwoordt de server?
 
@@ -218,14 +238,15 @@ Kijk in `sessie_ophalen` wat `mijn.get("tot", 0)` geeft als er geen `tot` is.
 
 `{"detail":"Log eerst in"}`, met `401`. Zonder `tot` geeft `mijn.get("tot", 0)`
 een `0`, en dat ligt ver vóór nu. `sessie_ophalen` gooit de sessie weg en geeft
-een lege dictionary, dus `bericht_plaatsen` ziet geen sessie. Log opnieuw in,
-dan krijg je een sessie met een `tot`.
+een lege dictionary, dus `bericht_plaatsen` ziet geen sessie. Wie opnieuw
+inlogt, krijgt een sessie met een `tot`.
 
 </details>
 
 ### Opdracht 2: Investigate - Ziet de server hoe oud de cookie is?
 
-Open het tabblad **Netwerk**, log in met het formulier en verstuur een bericht.
+Open het tabblad **Netwerk**. Maak met het formulier een account, want je
+gooide `gebruikers.db` weg, log in en verstuur een bericht.
 Klik op het verzoek `bericht` en zoek onder **Verzoekheaders** de regel
 `Cookie`. Staat daar hoe lang de cookie nog geldt? Wat betekent dat voor
 `max_age`?

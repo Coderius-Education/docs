@@ -77,13 +77,13 @@ server dat zegt "zo is het wel genoeg". Zet in gedachten `range(20)` op
 aanval eruit. Wat zo'n aanval is, zie je in [les 4](site:fullstack/docs/veiligheid/dos/dos-en-ddos), en in
 [les 5](site:fullstack/docs/veiligheid/dos/limiet) zet je er een grens op.
 
-<Voorspel soort="Controlevraag" vraag="Je script krijgt 20 van de 20. Wat zegt dat over je server?">
-  <Keuze goed uitleg="Er staat nergens in je code een grens. Elk verzoek dat binnenkomt, krijgt antwoord.">Elk verzoek krijgt antwoord, hoe vaak het ook komt en van wie</Keuze>
-  <Keuze uitleg="Twintig verzoeken na elkaar zijn niets. Over duizenden tegelijk zegt deze test nog niets.">Hij is snel genoeg om elke aanval aan te kunnen</Keuze>
-  <Keuze uitleg="Je server weet niet wie een verzoek stuurt, en vraagt er ook niet naar. Hij beantwoordt alles.">Je script is een bezoeker die hij herkent en vertrouwt</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je draait test_verzoeken.py daarna meteen nog twee keer, zonder iets op te slaan. Wat print de derde keer op de laatste regel?">
+  <Keuze goed uitleg="Je server houdt niet bij wie al hoeveel verzoeken stuurde. Ook de derde keer krijgt alles antwoord.">Gelukt: 20 van de 20, net als de eerste keer</Keuze>
+  <Keuze uitleg="Een server die telt en dan weigert, heb je nog niet; die bouw je in les 5. Nu onthoudt hij niets.">Gelukt: 0 van de 20, want je had je beurt al gehad</Keuze>
+  <Keuze uitleg="Na elk antwoord is je server klaar met dat verzoek. Er blijft niets liggen voor de volgende keer.">Minder dan 20, want je server loopt steeds verder achter</Keuze>
   <Uitleg>
 
-  Dat alles lukt, is hier de zwakheid: je server zegt nooit "zo is het wel genoeg". Een grens moet je er zelf in zetten.
+  Je server onthoudt niet hoe vaak iemand al iets vroeg, dus de zestigste krijgt net zo goed antwoord als de eerste. Dat is de zwakheid; in les 5 zet je er een grens op.
 
   </Uitleg>
 </Voorspel>
@@ -120,8 +120,8 @@ Je verandert `range(20)` in `range(50)` en draait het script opnieuw.
 <details>
 <summary>Tip</summary>
 
-Er is nog niets dat je server laat weigeren. En één laptop die verzoeken na
-elkaar stuurt, is niet sneller dan de server die ze beantwoordt.
+Er is nog niets dat je server laat weigeren. Kijk ook goed naar de laatste
+`print`.
 
 </details>
 
@@ -135,9 +135,9 @@ Gelukt: 50 van de 20
 ```
 
 Het getal 20 staat vast in de laatste `print`. Pas je dat aan naar 50, dan
-staat er `Gelukt: 50 van de 50`. Je server ligt niet plat: hij beantwoordt
-elk verzoek voordat het volgende komt. Waarom één computer daar niets aan
-verandert, zie je in [les 4](site:fullstack/docs/veiligheid/dos/dos-en-ddos).
+staat er `Gelukt: 50 van de 50`. Je server ligt niet plat: open na het script
+`http://127.0.0.1:8000/`, en je krijgt meteen antwoord. Of dat ook zo is terwijl
+het script nog loopt, probeer je in [les 4](site:fullstack/docs/veiligheid/dos/dos-en-ddos).
 
 </details>
 

@@ -6,9 +6,10 @@ import sidebars from '../../sidebars';
 
 // De reeks XSS ging alleen over opgeslagen HTML: het gastenboek. Twee vormen
 // uit DVWA ontbraken. Reflected XSS: de HTML zit in een link, en de server zet
-// hem terug in de pagina zonder iets op te slaan (les 3, /zoek?term=). En
+// hem terug in de pagina zonder iets op te slaan (de les url, /zoek?term=). En
 // DOM-XSS: JavaScript zet tekst met innerHTML in de pagina, en dan helpt
-// escape() op de server niet, want de server ziet de tekst nooit (les 6). Deze
+// escape() op de server niet, want de server ziet de tekst nooit (de les
+// browser). Deze
 // test pint de plek van die twee lessen vast, dat /zoek in elke latere stand
 // blijft en escapet, en weert innerHTML met een waarde in de hele cursus,
 // tenzij het blok {/* onveilig-voorbeeld: reden */} heeft.
@@ -101,6 +102,44 @@ describe('HTML van een bezoeker (XSS)', () => {
     // De les beloofde een regel met 200; open je de link opnieuw, dan staat er
     // 304 Not Modified (nagedraaid in Chromium).
     expect(lees('browser')).toContain('304 Not Modified');
+  });
+
+  it('een lijst-uitvoer in de hoofdtekst komt na "gastenboek.db weg" in dezelfde les', () => {
+    // De opdrachten van les 3 en les 5 laten Noor een bericht schrijven. De les
+    // erna beloofde een lijst met alleen Sara, en de leerling zag er een
+    // <li> van Noor bij (nagedraaid). Wie een <li>-uitvoer belooft, laat eerst
+    // de database weggooien.
+    const fout: string[] = [];
+    for (const stap of stappen) {
+      const tekst = lees(stap);
+      const mis = tekst.indexOf('\n## Er gaat iets mis\n');
+      const hoofd = mis === -1 ? tekst : tekst.slice(0, mis);
+      for (const m of hoofd.matchAll(/```(\w*)[^\n]*\n([\s\S]*?)```/g)) {
+        if (!['', 'text'].includes(m[1]) || !m[2].includes('<li>')) continue;
+        if (!hoofd.slice(0, m.index).includes('`gastenboek.db` weg')) {
+          fout.push(`${stap}: ${m[2].split('\n').find((r) => r.includes('<li>'))}`);
+        }
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('de les die de lijst naar een template zet, noemt TemplateNotFound', () => {
+    // Staat het template niet in templates/, dan geeft de lijst een 500, en
+    // htmx laat een open pagina stil de oude lijst houden (nagedraaid).
+    const eerste = stappen.find((stap) => lees(stap).includes('Jinja2Templates('));
+    expect(eerste).toBe('templates');
+    const mis = lees('templates').split(/^## Er gaat iets mis\s*$/m)[1] ?? '';
+    expect(mis).toContain('### TemplateNotFound');
+    expect(mis).toContain("not found in search path: 'templates'");
+  });
+
+  it('In je eigen project noemt de omleiding en het htmx-antwoord', () => {
+    // Het eigen gastenboek antwoordt met een RedirectResponse, of na htmx met
+    // een HTMLResponse; beide komen in de route voor.
+    const tekst = lees('eigen-project');
+    expect(tekst).toContain('RedirectResponse');
+    expect(tekst).toContain('HTMLResponse');
   });
 
   for (const pad of bestanden(DOCS)) {

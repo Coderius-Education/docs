@@ -143,7 +143,7 @@ wachtwoord.
 <Voorspel soort="Controlevraag" vraag="Bob heeft geen account. Waarom rekent de server bij zijn poging toch een Argon2-hash uit, tegen NEP?">
   <Keuze uitleg="Na de controle op NEP stuurt de server alleen een melding terug. Wat slaat hij op?">Zodat Bob na zijn poging meteen een account met dat wachtwoord krijgt</Keuze>
   <Keuze goed uitleg="Een trage verify kost tijd. Doet de server die bij elke naam, dan duurt elk antwoord even lang, en verraadt de tijd niets.">Zodat het antwoord voor Bob even lang duurt als bij een bestaande naam</Keuze>
-  <Keuze uitleg="Zonder NEP geeft db.get(naam) None, en dan kun je meteen een melding sturen, zoals in les 1. De nep-hash is er om een andere reden.">Omdat de server anders stopt met een fout, want er is geen hash om te controleren</Keuze>
+  <Keuze uitleg="Die melding kun je ook zonder hash sturen, met één return. Wat maakt de nep-hash gelijk dat een return niet gelijk maakt?">Om Bob dezelfde melding te geven als bij een fout wachtwoord</Keuze>
   <Uitleg>
 
   De melding is voor een onbekende naam en een fout wachtwoord gelijk. Met de

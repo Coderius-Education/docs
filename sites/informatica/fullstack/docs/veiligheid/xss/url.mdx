@@ -53,8 +53,8 @@ naar een ander. Een link met HTML naar de site van een ander is een aanval op
 die site en op wie erop klikt.
 :::
 
-Zorg dat het bericht `<b>vet</b>` van Sara uit les 3 in je gastenboek staat.
-Open dan in je browser:
+Gooi `gastenboek.db` weg, zodat alleen nieuwe berichten in de lijst staan, en
+vul als Sara weer `<b>vet</b>` in. Open dan in je browser:
 
 ```
 http://127.0.0.1:8000/zoek?term=<b>vet</b>
@@ -72,7 +72,7 @@ print(antwoord.url)
 print(antwoord.text)
 ```
 
-Uitvoer, met alleen het bericht van Sara in de database:
+Uitvoer:
 
 ```
 http://127.0.0.1:8000/zoek?term=%3Cb%3Evet%3C%2Fb%3E

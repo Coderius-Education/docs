@@ -50,8 +50,10 @@ De statuscode en de inhoud van het antwoord. 200 betekent gelukt.
 
 </CodeUitleg>
 
-Draai het in een tweede terminal, terwijl je server in de eerste blijft
-draaien.
+Sla `meet.py` op. `fastapi dev` start dan opnieuw, want het ziet een nieuw
+`.py`-bestand in zijn map. Wacht tot in de terminal van je server weer
+`Application startup complete` staat, en draai het script dan in een tweede
+terminal.
 
 <Gelukt>
 
@@ -82,13 +84,13 @@ geen antwoord meer.
 Een endpoint dat meer doet, bijvoorbeeld alle berichten uit de database halen,
 kost meer tijd per verzoek. Dan ligt de grens lager.
 
-<Voorspel soort="Controlevraag" vraag="Er komen meer verzoeken binnen dan je server per seconde kan beantwoorden. Wat merkt een bezoeker dan?">
-  <Keuze goed uitleg="Je server werkt de verzoeken een voor een af. Wat niet meteen past, wacht, en wie te lang wacht, krijgt geen antwoord.">Zijn verzoek moet wachten, en duurt het te lang, dan krijgt hij geen antwoord</Keuze>
-  <Keuze uitleg="Je server weigert nog niets: er staat nergens een grens in je code. Hij raakt alleen achter.">Hij krijgt meteen een foutmelding met een statuscode die zegt dat het te druk is</Keuze>
-  <Keuze uitleg="Elk verzoek kost je server dezelfde hoeveelheid werk. Meer verzoeken maken hem niet sneller.">Niets, want je server werkt de verzoeken dan sneller af dan normaal</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je server kan 500 verzoeken per seconde beantwoorden. Een minuut lang komen er 600 per seconde binnen. Wat gebeurt er met de verzoeken die nog op een antwoord wachten?">
+  <Keuze goed uitleg="Er komen er elke seconde 600 bij en er gaan er 500 uit. Het verschil stapelt zich op, en achteraan in de rij duurt het te lang.">Er komen er elke seconde zo'n honderd bij, tot bezoekers geen antwoord krijgen</Keuze>
+  <Keuze uitleg="Elk verzoek kost je server even veel tijd, druk of niet. Harder werken kan hij niet.">Niets bijzonders: je server werkt een minuut lang wat harder door</Keuze>
+  <Keuze uitleg="Je server weigert nog niets: er staat nergens een grens in je code. Hij raakt alleen achter.">Je server weigert de honderd verzoeken te veel meteen met een foutcode</Keuze>
   <Uitleg>
 
-  Een server heeft een grens. Daarboven loopt hij achter, en dan merken de bezoekers het: eerst als wachten, daarna als geen antwoord.
+  Boven zijn grens raakt een server elke seconde verder achter. De bezoeker merkt dat eerst als wachten, en daarna als helemaal geen antwoord.
 
   </Uitleg>
 </Voorspel>
@@ -108,6 +110,17 @@ andere tekst achter `ConnectError`, met hetzelfde idee.
 **Oplossing:** start je server in een aparte terminal met
 `fastapi dev main.py`, en draai het script pas als daar
 `Application startup complete` staat.
+
+### Honderden milliseconden
+
+Het script print geen paar milliseconden, maar iets als `830.0 milliseconden`.
+
+**Oorzaak:** je draaide het script meteen nadat je het opsloeg. Je server was
+nog aan het opnieuw starten, en je verzoek wachtte daarop.
+
+**Oplossing:** wacht tot `Application startup complete` in de terminal van je
+server staat, en draai het script opnieuw. Zie ook
+[Je server start opnieuw als je een script opslaat](site:fullstack/docs/veiligheid/gereedschap#je-server-start-opnieuw-als-je-een-script-opslaat).
 
 ## Opdrachten
 
@@ -143,8 +156,8 @@ Draai `meet.py` drie keer achter elkaar. Is de tijd elke keer hetzelfde?
 
 Nee, elke keer een beetje anders, bijvoorbeeld 2,3 en 1,8 en 2,1
 milliseconden. Je computer doet ook andere dingen tegelijk, en dat merk je in
-de laatste cijfers. Het eerste verzoek na het starten is vaak iets trager, omdat
-Python dan nog dingen moet inladen.
+de laatste cijfers. Sla je tussendoor iets op, dan is de eerste keer daarna
+veel trager; dat staat bij Er gaat iets mis.
 
 </details>
 

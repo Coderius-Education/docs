@@ -104,13 +104,13 @@ if bericht is None or bericht["naam"] != mijn.get("naam"):
 
 Meer over wat je van een bezoeker kunt geloven: [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser)
 
-<Voorspel soort="Controlevraag" vraag="Welke van deze drie waarden kan Alex niet zelf kiezen?">
-  <Keuze uitleg="Alex kan elk pad sturen dat hij wil. De sleutels haalde hij zelfs uit /berichten.">De sleutel in het pad</Keuze>
-  <Keuze goed uitleg="Die naam zette de server er bij het inloggen in, nadat het wachtwoord klopte. Alex stuurt alleen het sessie-id mee.">De naam in zijn sessie</Keuze>
-  <Keuze uitleg="Alex kan elke waarde als cookie meesturen. Dat hij het id van Sara niet raadt, komt doordat het lang is, niet doordat hij niet mag kiezen.">Het sessie-id in zijn cookie</Keuze>
+<Voorspel soort="Controlevraag" vraag="Een klasgenoot zet de naam niet in de URL, maar in een verborgen veld naam in het verwijderformulier, met de naam van wie er ingelogd is. Zijn endpoint vergelijkt met dat veld. Is dat veiliger?">
+  <Keuze uitleg="Verborgen is alleen het scherm. Wat staat er in het verzoek dat de browser verstuurt, en wie kan dat verzoek zelf maken?">Ja, want de bezoeker ziet het veld niet</Keuze>
+  <Keuze uitleg="Een POST typ je niet in de adresbalk, maar een script stuurt hem net zo makkelijk, met elk veld dat het wil.">Ja, want een POST past niet in de adresbalk</Keuze>
+  <Keuze goed uitleg="Ook een verborgen veld stuurt de bezoeker zelf mee. Alex zet er Sara in, en de controle gelooft het.">Nee, Alex kiest ook die waarde zelf</Keuze>
   <Uitleg>
 
-  Wat in een verzoek staat, kiest de bezoeker: het pad, de velden, de URL en de cookies. Wat de server zelf opsloeg, kan hij niet aanpassen. Een controle vergelijkt dus met de naam in de sessie, en niet met iets uit het verzoek.
+  Een verborgen veld, de URL, een cookie: het staat allemaal in het verzoek, en het verzoek maakt de bezoeker. Alleen wat de server zelf opsloeg, zoals de naam in de sessie, kan Alex niet veranderen.
 
   </Uitleg>
 </Voorspel>

@@ -123,14 +123,15 @@ Op `/berichten` staat `[]`: een lege lijst, want er is nog geen bericht. Op
 
 </Gelukt>
 
-<Voorspel soort="Controlevraag" vraag="Je opent /ik voordat je een bericht hebt geplaatst. Waarom zegt de server onbekend?">
-  <Keuze goed uitleg="/ik zoekt je naam op met het sessie-id uit je cookie. Je browser heeft die cookie nog niet, en een leeg sessie-id staat niet in sessies.db.">Je browser heeft nog geen cookie sessie_id die de server kent</Keuze>
-  <Keuze uitleg="Ook als sessies.db al bestaat, zegt /ik onbekend zonder cookie. Waar zoekt wie_ben_ik je naam op?">sessies.db bestaat nog niet, en zonder dat bestand weet /ik nooit iets</Keuze>
-  <Keuze uitleg="Een browser stuurt hetzelfde verzoek als een script. Het verschil zit in wat er aan cookies meekomt.">/ik geeft alleen een naam als je het met een script opent</Keuze>
+<Voorspel soort="Controlevraag" vraag="Stel: je browser heeft nog een cookie sessie_id van je eigen gastenboek, dat ook op 127.0.0.1 draaide. Je opent /ik van deze server. Wat zie je?">
+  <Keuze goed uitleg="/ik zoekt het sessie-id op in de sessies.db naast deze main.py. Die is nieuw, en kent alleen de sessies van deze server.">onbekend: dat sessie-id staat niet in de sessies.db van deze map</Keuze>
+  <Keuze uitleg="De browser stuurt de cookie inderdaad mee. Maar waar zoekt wie_ben_ik het sessie-id op?">De naam uit je eigen gastenboek: de browser stuurt die cookie mee</Keuze>
+  <Keuze uitleg="Je server weet niet waar een cookie vandaan komt. Hij zoekt het sessie-id op, en vindt het niet.">Een foutmelding: de cookie komt van een andere server</Keuze>
   <Uitleg>
 
-  `wie_ben_ik` krijgt geen naam mee, alleen een cookie. Zonder sessie-id dat in
-  `sessies.db` staat, valt `mijn.get("naam", "onbekend")` terug op `onbekend`.
+  Een sessie-id is alleen een sleutel. Wat erbij hoort, staat in de
+  `sessies.db` van de server die hem uitdeelde. Deze server heeft zijn eigen
+  `sessies.db`, kent de sleutel niet, en valt terug op `onbekend`.
 
   </Uitleg>
 </Voorspel>

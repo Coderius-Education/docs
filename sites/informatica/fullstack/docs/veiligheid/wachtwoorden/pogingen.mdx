@@ -203,19 +203,59 @@ De zesde poging komt niet meer bij `ph.verify`: `slowapi` weigert hem met een
 vijf per minuut, en een lijst van duizend wachtwoorden kost hem meer dan drie
 uur. Het scheelt je server ook werk, want elke `ph.verify` is expres traag.
 
-<Voorspel soort="Controlevraag" vraag="Waarom krijgt ook /wijzig een limiet, en niet alleen /inloggen?">
-  <Keuze uitleg="Elk endpoint telt apart, en alleen met een eigen @limiter.limit erboven.">Anders telt slowapi de pogingen op /wijzig mee bij /inloggen</Keuze>
-  <Keuze goed uitleg="/wijzig doet ook ph.verify, met het oude wachtwoord. Zonder limiet probeert een script daar wat /inloggen weigert.">Ook /wijzig controleert een wachtwoord, namelijk het oude</Keuze>
-  <Keuze uitleg="De limiet telt verzoeken, of het wijzigen lukt of niet. Een fout oud wachtwoord verandert niets in de database.">Een wachtwoord mag maar vijf keer per minuut veranderen</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je bouwt er een endpoint /opzeggen bij: wie zijn naam en wachtwoord stuurt, raakt zijn account kwijt. Het controleert het wachtwoord met ph.verify. Wat zet je erboven?">
+  <Keuze uitleg="Elk endpoint telt apart: vijf foute pogingen op /inloggen laten /opzeggen met rust.">Niets, de limiet op /inloggen telt deze pogingen al mee</Keuze>
+  <Keuze uitleg="Een gebruiker zegt één keer op, maar een script dat wachtwoorden raadt, probeert het duizend keer.">Niets, want je zegt je account maar één keer op</Keuze>
+  <Keuze goed uitleg="/opzeggen doet een ph.verify. Zonder eigen limiet raadt een script daar eindeloos, en bij een goed wachtwoord is het account weg.">Een eigen @limiter.limit onder @app.post</Keuze>
   <Uitleg>
 
-  Een limiet hoort op elke plek waar je server een wachtwoord controleert. Eén
-  plek zonder limiet is genoeg om eindeloos te proberen.
+  Elke plek waar je server een wachtwoord controleert, is een plek om te raden.
+  Daar hoort dus een limiet, ook op een endpoint dat je later bouwt.
 
   </Uitleg>
 </Voorspel>
 
 ## Er gaat iets mis
+
+### De server start niet
+
+Je server start niet, en in de terminal eindigt de foutmelding met:
+
+```
+Exception: No "request" or "websocket" argument on function "<function wijzig at 0x…>"
+```
+
+**Oorzaak:** je zette `@limiter.limit` boven `/wijzig`, maar `request: Request`
+staat niet bij zijn parameters. `slowapi` controleert dat al bij het starten:
+zonder `request` weet hij niet van welke computer een verzoek komt. Bij
+`/inloggen` kan hetzelfde gebeuren; dan staat er `inloggen` in de melding. Het
+getal achter `0x` verschilt per keer.
+
+**Oplossing:** zet `request: Request` vooraan bij de parameters:
+
+{/* niet-compileren: alleen de kop van de functie, zonder inhoud */}
+
+```python
+# FOUT
+@app.post("/wijzig")
+@limiter.limit("5/minute")
+async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+
+# GOED
+@app.post("/wijzig")
+@limiter.limit("5/minute")
+async def wijzig(request: Request, naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+```
+
+### Al bij poging 1 een 429
+
+`pogingen.py` geeft zes keer `429`, ook bij `Poging 1`.
+
+**Oorzaak:** je draaide het script binnen een minuut nog een keer. De limiet
+telt per minuut, en de pogingen van daarnet tellen nog mee.
+
+**Oplossing:** wacht een minuut, of sla `main.py` op: `fastapi dev` start dan
+opnieuw, en begint opnieuw te tellen.
 
 ### Zes keer 200
 
@@ -304,7 +344,8 @@ Je gastenboek heeft accounts sinds
 [Registreren: een account opslaan](site:fullstack/docs/FastAPI/accounts/registreren), en bewaart de
 wachtwoorden nog als gewone tekst. Maak ze veilig met wat je in deze reeks
 leerde: Argon2 bij het registreren, `ph.verify` met `NEP` op elke plek die een
-wachtwoord controleert, en een limiet op elk van die plekken.
+wachtwoord controleert, een oude hash bijwerken na het inloggen, en een limiet
+op elk van die plekken en op `/registreer`.
 
 <details>
 <summary>Tip</summary>
@@ -326,9 +367,14 @@ Loop deze lijst af:
 - Elke plek die een wachtwoord controleert, gebruikt `ph.verify`, ook bij een
   onbekende naam (tegen `NEP`), en geeft bij een onbekende naam en bij een fout
   wachtwoord dezelfde melding.
+- Na een geslaagde controle werkt `check_needs_rehash` een oude hash bij, zoals
+  in [les 10](site:fullstack/docs/veiligheid/wachtwoorden/rehash).
 - Elk van die endpoints heeft `@limiter.limit` direct onder `@app.post`, en
   `request: Request` vooraan bij de parameters. Een script dat zes keer fout
   inlogt, krijgt bij de zesde een `429`.
+- Ook `/registreer` heeft zo'n limiet, met `request: Request`: elke registratie
+  kost een trage `ph.hash`, en de melding over een bezette naam verraadt welke
+  namen bestaan (opdracht 2).
 - Er staat nergens een wachtwoord als gewone tekst: niet in de database, niet
   in een print, niet in een cookie. Gooi je oude `gebruikers.db` weg en
   registreer opnieuw: `ph.verify` kan niets met een wachtwoord dat als gewone
@@ -360,7 +406,8 @@ laatste drie regels en de imports van `slowapi` staan er dan al, en een tweede
 Met de sessies uit [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies)
 wordt je `POST /inloggen` zo. Bij je imports komen de regels van `argon2` en
 `slowapi`; `Request` staat in de import uit `fastapi` sinds de templates al. De
-401 uit de basis blijft, en onder de controle blijft de sessie zoals hij was:
+401 uit de basis blijft, het bijwerken uit les 10 komt erbij, en daaronder
+blijft de sessie zoals hij was:
 hier met de `tot`, `httponly=True` en `samesite="lax"` uit de reeks Cookies
 afschermen. Laat die staan. Sloeg je die reeks over, dan houd je je eigen
 `sessies[sessie_id]` en `set_cookie`.
@@ -384,6 +431,10 @@ async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Fo
         raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
     if opgeslagen == NEP:
         raise HTTPException(status_code=401, detail="Naam of wachtwoord klopt niet")
+    if ph.check_needs_rehash(opgeslagen):
+        with SqliteDict("gebruikers.db") as gebruikers:
+            gebruikers[naam] = ph.hash(wachtwoord)
+            gebruikers.commit()
 
     sessie_id = secrets.token_hex(16)
     with SqliteDict("sessies.db") as sessies:

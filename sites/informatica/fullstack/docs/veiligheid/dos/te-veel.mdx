@@ -128,13 +128,13 @@ Draai je het script binnen dezelfde minuut nog een keer, dan krijg je al bij
 verzoek 1 een `429`, met `nog 0 over` en een wachttijd van hoogstens 60 seconden: de
 telling van de vorige keer loopt nog.
 
-<Voorspel soort="Controlevraag" vraag="Bij verzoek 1 staat al wacht 60 seconden. Moet een eerlijk script na dat verzoek een minuut wachten?">
-  <Keuze goed uitleg="Bij een 200 zegt retry-after alleen wanneer de telling opnieuw begint. Wachten hoeft pas na een 429.">Nee, pas na een 429 moet het die tijd afwachten</Keuze>
-  <Keuze uitleg="Dan zou het script na elk verzoek een minuut stilstaan, terwijl er nog vier verzoeken over zijn.">Ja, na elk antwoord met retry-after wacht het zo lang</Keuze>
-  <Keuze uitleg="retry-after zegt wel iets: na een 429 is het precies de tijd die je moet wachten.">Nee, want retry-after is alleen voor de browser bedoeld</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je script krijgt een 200 met x-ratelimit-remaining 2 en retry-after 40. Wat doet een eerlijk script daarna?">
+  <Keuze goed uitleg="Er mogen nog twee. Pas na de tweede staat de teller op 0, en dan wacht het tot de 40 seconden om zijn.">Nog twee verzoeken sturen, en dan pauzeren tot die 40 seconden om zijn</Keuze>
+  <Keuze uitleg="Bij een 200 zegt retry-after alleen wanneer de telling opnieuw begint. Er mogen nu nog twee verzoeken.">Eerst 40 seconden wachten, en pas daarna het volgende verzoek sturen</Keuze>
+  <Keuze uitleg="Dan stuurt het bewust verzoeken die je server moet weigeren. De headers zijn er juist om dat te voorkomen.">Doorgaan tot er een 429 komt; de headers zijn alleen voor de browser</Keuze>
   <Uitleg>
 
-  `x-ratelimit-remaining` zegt hoeveel er nog mag, en `retry-after` wanneer de telling opnieuw begint. Een eerlijk script let op het eerste, en wacht pas na een `429` op het tweede.
+  `x-ratelimit-remaining` zegt hoeveel er nog mag, `retry-after` hoe lang het duurt tot de telling opnieuw begint. Een eerlijk script gebruikt eerst wat er nog mag, en wacht dan.
 
   </Uitleg>
 </Voorspel>
@@ -249,7 +249,7 @@ stopt na het vijfde verzoek, en krijgt geen `429`.
 
 </details>
 
-### Opdracht 3: Make - In je eigen project
+### Opdracht 3: Make - In je eigen project \{#eigen-project}
 
 Zet in je eigen project een limiet op het endpoint dat een bericht opslaat,
 bijvoorbeeld tien per minuut. Test het met een script dat twaalf keer iets
@@ -309,8 +309,9 @@ async def gastenboek_opslaan(
 ```
 
 Op de plek van `...` blijft je functie zoals hij was. Die geeft een
-`RedirectResponse` terug en geen dictionary, dus `response: Response` is hier
-niet nodig: `slowapi` zet de headers op de omleiding zelf.
+`RedirectResponse` terug, of met het htmx-formulier een `HTMLResponse`. Allebei
+zijn het antwoorden en geen dictionary, dus `response: Response` is hier niet
+nodig: `slowapi` zet de headers op dat antwoord zelf.
 
 Het script `twaalf.py`, naast je `main.py`. Het logt eerst in, want zonder
 sessie krijgt elk bericht een `401`; gebruik de naam en het wachtwoord van een
@@ -327,7 +328,7 @@ for nummer in range(12):
     print(f"Verzoek {nummer + 1}: status {antwoord.status_code}")
 ```
 
-Uitvoer:
+Uitvoer, als je `POST /gastenboek` doorstuurt met een `RedirectResponse`:
 
 ```
 Verzoek 1: status 303
@@ -344,9 +345,13 @@ Verzoek 11: status 429
 Verzoek 12: status 429
 ```
 
-`303` is de omleiding naar de lijst: het bericht is opgeslagen. Een bezoeker
-die één bericht schrijft, merkt niets van de limiet. In je gastenboek staan nu
-wel tien testberichten.
+`303` is de omleiding naar de lijst: het bericht is opgeslagen. Gebruik je het
+htmx-formulier, dan geeft je endpoint een `HTMLResponse` met "Bedankt", en staat
+er bij verzoek 1 tot en met 10 `status 200` in plaats van `303`. Verzoek 11 en
+12 krijgen ook dan een `429`.
+
+Een bezoeker die één bericht schrijft, merkt niets van de limiet. In je
+gastenboek staan nu wel tien testberichten.
 
 </details>
 

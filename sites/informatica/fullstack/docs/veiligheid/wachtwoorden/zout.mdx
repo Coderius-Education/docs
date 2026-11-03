@@ -56,48 +56,43 @@ lang en echt willekeurig. Dat hoef je niet zelf te regelen: in
 [les 7](site:fullstack/docs/veiligheid/wachtwoorden/registreren) gebruik je Argon2, dat bij elke hash vanzelf een nieuw
 zout maakt en het in de hash zelf bewaart.
 
-<Voorspel soort="Controlevraag" vraag="Het zout van Sara staat gewoon naast haar hash in de database. Waarom is dat geen probleem?">
-  <Keuze uitleg="Het zout staat er als gewone tekst; de server moet het kunnen lezen om bij het inloggen dezelfde hash uit te rekenen.">Het zout is versleuteld, zodat alleen de server het kan lezen</Keuze>
-  <Keuze goed uitleg="Het zout hoeft niet geheim te zijn. Het werkt omdat het per gebruiker anders is, en dus elke vooraf gemaakte lijst onbruikbaar maakt.">Het zout hoeft niet geheim te zijn, alleen per gebruiker anders</Keuze>
-  <Keuze uitleg="Ga ervan uit dat wie de database heeft, ook weet hoe je server werkt. Een geheim dat alleen werkt zolang niemand kijkt, is geen slot.">Een aanvaller ziet niet dat het een zout is, en laat het liggen</Keuze>
+<Voorspel soort="Controlevraag" vraag="Een site neemt als zout de naam van de gebruiker: sara voor Sara, noor voor Noor. Ze kozen allebei welkom123. Zie je in de gelekte database dat hun wachtwoorden gelijk zijn?">
+  <Keuze uitleg="Dat geldt zonder zout. Wat gaat er hier de sha256 in, bij Sara en bij Noor?">Ja, want hetzelfde wachtwoord geeft altijd dezelfde code</Keuze>
+  <Keuze uitleg="Een naam is inderdaad geen goed zout. Maar de vraag is of je ziet dat de wachtwoorden gelijk zijn. Wat gaat er de sha256 in?">Ja, want een naam is geen willekeurig zout, dus hij helpt niet</Keuze>
+  <Keuze uitleg="Iedereen kent de naam, want hij staat als sleutel in de database. Daar zit het verschil niet.">Nee, want een naam als zout is geheim voor wie de database heeft</Keuze>
+  <Keuze goed uitleg="Bij Sara gaat sara plus welkom123 de sha256 in, bij Noor haar eigen naam plus welkom123. Verschillende teksten geven verschillende codes.">Nee, want met een andere naam ervoor komt er een andere code uit</Keuze>
   <Uitleg>
 
-  Het zout beschermt niet door geheim te zijn, maar door verschil: met een eigen
-  zout per gebruiker heeft een lijst met de hashes van bekende wachtwoorden
-  geen zin meer, en zie je niet meer wie hetzelfde wachtwoord heeft.
+  Elk zout dat per gebruiker anders is, verbergt dat twee mensen hetzelfde
+  kozen. Een naam is wel voorspelbaar: voor `sara` kan iemand vooraf een lijst
+  maken met `sara` voor elk bekend wachtwoord. Daarom is een echt zout
+  willekeurig.
 
   </Uitleg>
 </Voorspel>
 
 ## Er gaat iets mis
 
-### Iedereen hetzelfde zout
+### can only concatenate str (not "bytes") to str
 
-Je geeft iedereen hetzelfde zout, bijvoorbeeld `"a1b2c3"` voor alle
-gebruikers:
+```
+TypeError: can only concatenate str (not "bytes") to str
+```
+
+**Oorzaak:** je vergat de haakjes om `zout_sara + wachtwoord`. Dan zet
+`.encode()` alleen het wachtwoord om in bytes, en Python kan tekst en bytes
+niet aan elkaar plakken.
+
+**Oplossing:** plak eerst de tekst aan elkaar, en maak daarna van het geheel
+bytes:
 
 ```python
-import hashlib
+# FOUT
+hashlib.sha256(zout_sara + wachtwoord.encode()).hexdigest()
 
-zout = "a1b2c3"
-print(hashlib.sha256((zout + "welkom123").encode()).hexdigest())
-print(hashlib.sha256((zout + "welkom123").encode()).hexdigest())
+# GOED
+hashlib.sha256((zout_sara + wachtwoord).encode()).hexdigest()
 ```
-
-Uitvoer:
-
-```
-02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f
-02c84638cc526f509a1e50b8de1c12a120a1f9f3a441521c81d767942596b42f
-```
-
-Geen foutmelding, maar Sara en Noor hebben weer dezelfde hash.
-
-**Oorzaak:** met hetzelfde zout gaat er voor hetzelfde wachtwoord weer precies
-hetzelfde de `sha256` in.
-
-**Oplossing:** geef elke gebruiker een eigen, willekeurig zout. Argon2 in
-les 7 doet dat vanzelf, bij elke hash opnieuw.
 
 ## Opdrachten
 

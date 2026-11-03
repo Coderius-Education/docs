@@ -133,6 +133,56 @@ describe('Wie mag wat', () => {
   it('de praktijk doet niet alsof elke leerling berichten per nummer opvraagt', () => {
     expect(lees('toegang/praktijk.mdx')).not.toContain('met een nummer');
   });
+
+  // Uit de leerling-doorloop van november 2026 (PR #169).
+  describe('in je eigen project', () => {
+    const tekst = readFileSync(join(VEILIGHEID, 'toegang/eigen-project.mdx'), 'utf8');
+    const hoofdtekst = tekst.slice(0, tekst.indexOf('<Gelukt>'));
+    const mis = tekst.split('\n## Er gaat iets mis\n')[1]?.split('\n## ')[0] ?? '';
+
+    it('test het endpoint van de knop, ook met het htmx-recept', () => {
+      // Het script testte alleen POST /verwijderen en liet de sleutel uit het
+      // verborgen veld halen. Het htmx-recept vervangt dat veld door een knop
+      // met hx-delete: de leerling vond het veld niet, en kreeg een 403 terwijl
+      // DELETE /bericht/{sleutel} nog 200 gaf (nagedraaid).
+      expect(hoofdtekst).toContain('`POST /verwijderen`');
+      expect(hoofdtekst).toContain('`DELETE /bericht/{sleutel}`');
+      expect(hoofdtekst).toContain('alex.delete(f"/bericht/{sleutel}")');
+      expect(hoofdtekst).not.toContain('name="sleutel"');
+      expect(mis).toMatch(/### DELETE \/bericht: 200/);
+    });
+
+    it('elk wachtwoord in een script voor het eigen project heeft minstens 8 tekens', () => {
+      // Opdracht 4 van Registreren weigert een wachtwoord korter dan 8 tekens.
+      // Met maan456 gaf registreren 400 en inloggen 401, en de les noemde als
+      // oorzaak dat Alex al bestond.
+      const wachtwoorden = [...tekst.matchAll(/"wachtwoord": "([^"]*)"/g)].map((m) => m[1]);
+      expect(wachtwoorden.length).toBeGreaterThan(0);
+      for (const w of wachtwoorden) expect(w.length, w).toBeGreaterThanOrEqual(8);
+      expect(mis).toMatch(/### Registreren: 400/);
+    });
+
+    it('zegt wat een 303 betekent als de sleutel niet bestaat', () => {
+      // Een beschermd POST /verwijderen geeft bij een onbekende sleutel ook
+      // 303, en Er gaat iets mis zei dan "nog geen controle".
+      expect(hoofdtekst).toContain('alex.get(f"/bericht/{sleutel}")');
+      expect(mis).toMatch(/### Bestaat: 404/);
+    });
+  });
+
+  it('een knop is geen slot erkent opdracht 5 van Sessies', () => {
+    const tekst = lees('toegang/zwakheid.mdx');
+    expect(tekst).toContain('](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen)');
+    // Een tweede run gaf ['Alex', 'Alex']; de fout heette "Meer namen".
+    expect(tekst).toContain("['Alex', 'Alex']");
+  });
+
+  it('de controle met 403 zegt niet dat Alex zo niets over sleutels leert', () => {
+    // /berichten geeft elke sleutel; les 2 en les 4 zeggen dat ook.
+    const tekst = lees('toegang/controle.mdx');
+    expect(tekst).not.toContain('Zo leert Alex niets over sleutels');
+    expect(tekst).toContain("['Alex', 'Sara', 'Alex']");
+  });
 });
 
 // Issue #126: het gastenboek kreeg accounts in de basis, en Sessies logt je
@@ -175,6 +225,9 @@ describe('Veiligheid sluit aan op de accounts uit de basis', () => {
     const fout = [...reeks('toegang'), ...reeks('cookies')].flatMap((pad) =>
       python(pad)
         .filter((b) => b.startsWith('import httpx') && b.includes('.post("/bericht"'))
+        // dief.py in cookies/zwakheid logt bewust niet in: het gebruikt een
+        // gekopieerd sessie-id.
+        .filter((b) => !b.includes('cookies={"sessie_id"'))
         .filter(
           (b) =>
             b.indexOf('/inloggen') === -1 || b.indexOf('/inloggen') > b.indexOf('.post("/bericht"'),

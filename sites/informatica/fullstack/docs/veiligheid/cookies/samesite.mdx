@@ -38,10 +38,10 @@ endpoint dat een sessie nodig heeft, doet niets. Daarom is uitloggen in
 <details>
 <summary>Is uitloggen met een POST helemaal dicht?</summary>
 
-Niet helemaal. De `delete_cookie` in het antwoord voert de browser ook na een
-POST van een andere site uit, dus een andere site kan je cookie laten weghalen.
-Je sessie op de server raakt hij niet aan, want het verzoek kwam zonder cookie
-binnen.
+Niet helemaal. Het antwoord van `/uitloggen` zegt de browser de cookie weg te
+halen, en daar luistert de browser ook na een POST van een andere site. Een
+andere site kan je cookie dus laten weghalen. Je sessie op de server raakt hij
+niet aan, want het verzoek kwam zonder cookie binnen.
 
 </details>
 
@@ -82,8 +82,8 @@ Bij het verzoek `inloggen` staat onder **Reactieheaders** een `set-cookie` als:
 sessie_id=0e0b14ae11bfd4e3ce5a3ce38f00d9d2; HttpOnly; Max-Age=2592000; Path=/; SameSite=lax
 ```
 
-Hetzelfde als eerst, want FastAPI zette `lax` al. Nu staat de keuze ook in je
-code.
+Hetzelfde als vóór je wijziging, want FastAPI zette `lax` al. Nu staat de
+keuze ook in je code.
 
 </Gelukt>
 
@@ -116,6 +116,20 @@ weg en houdt hij de oude `lax`-cookie, als die er nog was.
 jouw cookie bewust moet kunnen meesturen, en dat is bij een gastenboek nooit zo.
 Probeer je een instelling uit, verwijder dan eerst je oude cookie in **App**;
 anders zie je niet wat de nieuwe doet.
+
+### Een tweede site op een andere poort krijgt je cookie wel
+
+Je bouwt een tweede site op `127.0.0.1:8001`, met een formulier dat naar
+`http://127.0.0.1:8000/bericht` post. Je bent ingelogd en klikt op Verstuur, en
+het bericht komt er gewoon in, op jouw naam.
+
+**Oorzaak:** voor `samesite` is een site het adres zonder de poort.
+`127.0.0.1:8001` en `127.0.0.1:8000` zijn dus dezelfde site, en `lax` laat de
+cookie meegaan. `localhost` en `127.0.0.1` zijn wel twee sites, ook al wijzen ze
+naar dezelfde computer.
+
+**Oplossing:** open de tweede site als `http://localhost:8001`. Dan is het een
+andere site, en antwoordt je server met `{"detail":"Log eerst in"}`.
 
 ## Opdrachten
 

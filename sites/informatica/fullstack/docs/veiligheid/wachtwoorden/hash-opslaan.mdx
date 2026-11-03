@@ -104,15 +104,15 @@ bob, welkom123: Naam of wachtwoord klopt niet
 De wachtwoorden zijn niet meer te lezen. Maar kijk naar Sara en Noor: dezelfde
 code. Daar gaat [les 5](site:fullstack/docs/veiligheid/wachtwoorden/zout) over.
 
-<Voorspel soort="Controlevraag" vraag="Bob heeft geen account en logt in met welkom123. De hash van welkom123 staat wel in de database, bij Sara. Waarom komt Bob niet binnen?">
-  <Keuze uitleg="De server vergelijkt niet met de andere accounts. Waar zoekt db.get(naam) in?">De server ziet dat Bob het wachtwoord van Sara gebruikt, en weigert dat</Keuze>
-  <Keuze goed uitleg="db.get zoekt alleen onder de naam bob. Die staat er niet in, dus krijg je None, en dat is nooit gelijk aan een hash.">Onder de naam bob staat niets, dus er is geen hash om mee te vergelijken</Keuze>
-  <Keuze uitleg="Een sha256-hash hangt alleen af van wat je erin stopt, niet van wie het intypt.">Voor Bob geeft sha256 een andere hash van welkom123 dan voor Sara</Keuze>
+<Voorspel soort="Controlevraag" vraag="Iemand heeft een kopie van jouw gebruikers.db. Hij logt in met de naam sara, en typt als wachtwoord de code die daar bij Sara staat: 2a5c5f26… Komt hij binnen?">
+  <Keuze uitleg="Hij typt de code wel goed over, maar wat doet /inloggen eerst met alles wat er getypt wordt?">Ja, want hij typt precies wat bij sara opgeslagen staat</Keuze>
+  <Keuze goed uitleg="/inloggen hasht ook de code die hij typt. Dat geeft een nieuwe, andere code, en die staat niet bij sara.">Nee, want de server hasht ook wat hij typt</Keuze>
+  <Keuze uitleg="Je server kijkt nergens naar de lengte van een wachtwoord. Wat gebeurt er met de 64 tekens?">Nee, want een wachtwoord van 64 tekens weigert de server</Keuze>
   <Uitleg>
 
-  `/inloggen` rekent de hash uit van wat er ingetypt wordt, en vergelijkt die
-  alleen met de hash die onder díe naam is opgeslagen. Een goed wachtwoord van
-  een ander account helpt niet.
+  De code in de database is geen wachtwoord: niemand typt hem ooit in. Wie het
+  bestand heeft, komt met die code dus niet binnen, en het wachtwoord zelf kan
+  hij er niet uit terugrekenen.
 
   </Uitleg>
 </Voorspel>
@@ -135,24 +135,29 @@ bestaan al.
 
 ## Opdrachten
 
-### Opdracht 1: Predict - Twee keer hetzelfde
+### Opdracht 1: Predict - Eén hoofdletter
 
-Een vierde gebruiker, Tim, registreert met het wachtwoord `welkom123`.
+Een vierde gebruiker, Tim, registreert met het wachtwoord `Welkom123`, met een
+hoofdletter.
 
-**Vraag:** welke code staat er in de database bij Tim?
+**Vraag:** lijkt de code bij Tim in de database op die van Sara? En zie je aan
+de database dat Tim en Sara bijna hetzelfde kozen?
 
 <details>
 <summary>Tip</summary>
 
-Een `sha256`-hash hangt alleen af van wat je erin stopt.
+Kijk naar de derde eigenschap in [les 3](site:fullstack/docs/veiligheid/wachtwoorden/hash).
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Precies dezelfde als bij Sara en Noor:
-`2a5c5f2623024ce3de6fe7dc8f5e13ca55b7aadc13174254b40af574e37018c1`.
+Nee. Bij Tim staat
+`7bca025eff4fb877bea86faac56c909b65c97adfba23b7c1fb6b9772d34b420e`, een heel
+andere code dan de `2a5c5f26…` van Sara. Eén letter anders is een compleet
+andere hash, dus aan de database zie je niet dat hun wachtwoorden op elkaar
+lijken.
 
 </details>
 

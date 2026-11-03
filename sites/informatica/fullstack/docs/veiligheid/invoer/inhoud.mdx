@@ -76,10 +76,17 @@ Een lege tekst telt in een `if` als niet waar, dus `not naam.strip()` is waar al
 </Regel>
 
 <Regel n={7}>
-`raise HTTPException` stopt de functie en stuurt een foutmelding, zoals de 404 in [Een 404 sturen: als het item niet bestaat](site:fullstack/docs/FastAPI/berichten-tonen/niet-gevonden). Voeg `HTTPException` toe aan de import uit `fastapi`.
+`raise HTTPException` stopt de functie en stuurt een foutmelding, zoals de 404 in [Een 404 sturen: als het item niet bestaat](site:fullstack/docs/FastAPI/berichten-tonen/niet-gevonden).
 </Regel>
 
 </CodeUitleg>
+
+Vervang `bericht_plaatsen` in je `main.py` door deze. `HTTPException` komt uit
+`fastapi`, net als `Form`. Zet hem daarom bij de import bovenaan:
+
+```python
+from fastapi import FastAPI, Form, HTTPException
+```
 
 Draai `spaties.py` opnieuw.
 
@@ -114,6 +121,29 @@ boven een megabyte stuurt Starlette zelf een 400.
 </Voorspel>
 
 ## Er gaat iets mis
+
+### `JSONDecodeError` in `spaties.py`
+
+`spaties.py` stopt met:
+
+```
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+```
+
+In de terminal van je server staat:
+
+```
+NameError: name 'HTTPException' is not defined
+```
+
+**Oorzaak:** `HTTPException` staat niet bij de import. Je server loopt vast op
+de regel met `raise`, en stuurt een `500` met de tekst `Internal Server Error`.
+Dat is geen JSON, dus `antwoord.json()` in je script kan er niets mee.
+
+**Oplossing:** zet `HTTPException` bij de import uit `fastapi`, zoals hierboven.
+Bij een `500` staat de echte fout altijd in de terminal van je server.
+
+### `400`, maar het bericht staat er toch in
 
 De server geeft `400`, maar `lees_database.py` laat toch een nieuwe regel met
 `[   ]` zien.

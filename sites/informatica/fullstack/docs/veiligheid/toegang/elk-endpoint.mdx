@@ -96,16 +96,16 @@ Alex wiste alles wat van hem was. Het bericht van Sara staat er nog.
 
 </Gelukt>
 
-Hier is geen `403` nodig: wie Alles wissen kiest, wist wat van hem is, en de
-rest blijft staan.
+Hier is geen `403` nodig: de grens zit erin dat de functie alleen berichten
+met de naam uit de sessie pakt.
 
-<Voorspel soort="Controlevraag" vraag="Er staan drie berichten van Sara en één van Alex. Alex roept Alles wissen aan. Wat gebeurt er?">
-  <Keuze uitleg="Alles wissen geeft nooit een 403. Kijk welke sleutels in de lijst van_mij komen.">Alex krijgt `403`, want er staan berichten van een ander tussen</Keuze>
-  <Keuze goed uitleg="In van_mij komen alleen sleutels van berichten met de naam uit zijn sessie. Die van Sara blijven staan.">Alleen het bericht van Alex gaat weg</Keuze>
-  <Keuze uitleg="Ingelogd zijn geeft geen recht op de berichten van een ander. Met welke naam vergelijkt de functie?">Alle vier gaan weg, want Alex is ingelogd</Keuze>
+<Voorspel soort="Controlevraag" vraag="Iemand voegt POST /bericht/{sleutel}/wijzig toe, dat de tekst van een bericht verandert, zonder controle. bericht_verwijderen houdt zijn controle. Wat kan Alex nu met het bericht van Sara?">
+  <Keuze uitleg="Die controle staat in bericht_verwijderen. Welk endpoint roept Alex aan om te wijzigen?">Niets, want bericht_verwijderen controleert al</Keuze>
+  <Keuze goed uitleg="Het nieuwe endpoint vraagt niet wie er komt, dus het verandert elk bericht waarvan het de sleutel krijgt. Verwijderen blijft dicht.">Het veranderen, maar niet verwijderen</Keuze>
+  <Keuze uitleg="Ingelogd zijn als Alex zegt niets over het bericht van Sara. Welke regel in het nieuwe endpoint vergelijkt namen?">Niets, want hij is als Alex ingelogd</Keuze>
   <Uitleg>
 
-  Een grens hoeft niet altijd een `403` te zijn. Bij Alles wissen is de grens dat de functie alleen jouw berichten pakt. De vraag "wie mag dit?" stel je bij elk endpoint, maar het antwoord verschilt.
+  Een controle beschermt alleen het endpoint waar hij in staat. Daarom stel je bij elk endpoint dat iets verandert opnieuw de vraag wie het mag, en zet je daar zijn eigen controle in.
 
   </Uitleg>
 </Voorspel>
@@ -128,24 +128,31 @@ FastAPI `405`.
 **Oplossing:** zet `alles_wissen` in `main.py` en sla op. `fastapi dev` start de
 server dan vanzelf opnieuw.
 
-### Gewist, maar er is niets weg
+### KeyError: 'naam'
 
-Een bezoeker die niet is ingelogd, krijgt ook
-`{'bericht': 'Jouw berichten zijn gewist'}`, maar er verdwijnt niets.
+Een verzoek zonder sessie, zoals het script in opdracht 1, stopt met
+`json.decoder.JSONDecodeError`. In de terminal van je server eindigt de
+foutmelding met:
 
-**Oorzaak:** zonder sessie is `mijn.get("naam")` gelijk aan `None`, en geen
-bericht heeft die naam. De server wist niets, maar het antwoord zegt iets
-anders.
+```text
+KeyError: 'naam'
+```
 
-**Oplossing:** zet dezelfde `401 Log eerst in` erin als in `bericht_plaatsen`.
-Hoe dat gaat, zie je in opdracht 1.
+**Oorzaak:** je schreef `mijn["naam"]`, zoals in `bericht_plaatsen`. Daar
+staat eerst de `401` als er geen sessie is; in `alles_wissen` niet. Zonder
+sessie is `mijn` een lege dictionary, en die heeft geen sleutel `naam`. Je
+server antwoordt met een `500`, en die tekst is geen JSON.
+
+**Oplossing:** schrijf `mijn.get("naam")`, zoals hierboven, of zet eerst de
+`401` erin, zoals in opdracht 1.
 
 ## Opdrachten
 
 ### Opdracht 1: Modify - Eerst inloggen
 
-Laat `alles_wissen` een bezoeker zonder sessie weigeren met `401 Log eerst in`,
-net als `bericht_plaatsen`. Test het met een verzoek zonder `Client`:
+Een bezoeker zonder sessie krijgt nu `Jouw berichten zijn gewist`, terwijl er
+niets weg is. Laat `alles_wissen` hem weigeren met `401 Log eerst in`, net als
+`bericht_plaatsen`. Test het met een verzoek zonder `Client`:
 
 ```python
 import httpx
@@ -183,20 +190,19 @@ verder met de versie zonder deze twee regels; je mag ze laten staan.
 
 </details>
 
-### Opdracht 2: Predict - Een endpoint om te wijzigen
+### Opdracht 2: Predict - Allebei Alles wissen
 
-Iemand voegt een endpoint `POST /bericht/{sleutel}/wijzig` toe, dat de tekst van
-een bericht verandert. Het heeft geen controle; `bericht_verwijderen` wel.
+Sara heeft drie berichten in het gastenboek, Alex één. Eerst roept Sara Alles
+wissen aan, daarna Alex.
 
-**Vraag:** kan Alex het bericht van Sara nu veranderen?
+**Vraag:** wat geeft `/berichten` daarna?
 
 <details>
 <summary>Antwoord</summary>
 
-Ja. De controle in `bericht_verwijderen` beschermt alleen het verwijderen. Het
-nieuwe endpoint vraagt niet wie er komt, dus het verandert elk bericht waarvan
-het de sleutel krijgt. Elk endpoint dat iets verandert, heeft zijn eigen
-controle nodig.
+`{}`, een leeg gastenboek. Sara wist haar drie berichten, Alex daarna het zijne.
+Geen van beiden kwam aan een bericht van de ander: samen wissen ze alles, maar
+elk alleen het eigen deel.
 
 </details>
 

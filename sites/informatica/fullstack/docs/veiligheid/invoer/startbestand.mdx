@@ -19,15 +19,16 @@ script dat laat zien wat er in de database staat.
 ## Een gastenboek met een formulier
 
 Maak in de map `veiligheid-invoer` een map `static`, en zet daarin
-`formulier.html`. Het formulier zet een grens op beide velden:
+`formulier.html`. Het formulier zet een grens op beide velden, en een grijze
+tekst in elk vak, de `placeholder`, zegt welk vak welk is:
 
 ```html
 <!doctype html>
 <html>
 <body>
     <form method="post" action="/bericht">
-        <input type="text" name="naam" maxlength="30" required>
-        <input type="text" name="bericht" maxlength="280" required>
+        <input type="text" name="naam" placeholder="naam" maxlength="30" required>
+        <input type="text" name="bericht" placeholder="bericht" maxlength="280" required>
         <button type="submit">Verstuur</button>
     </form>
 </body>
@@ -76,8 +77,8 @@ een aanval, en strafbaar.
 :::
 
 Start je server met `fastapi dev main.py` en open
-`http://127.0.0.1:8000/static/formulier.html`. Typ je naam en het bericht
-`hoi`, en klik op **Verstuur**.
+`http://127.0.0.1:8000/static/formulier.html`. Typ je naam in het vak `naam`
+en `hoi` in het vak `bericht`, en klik op **Verstuur**.
 
 ## Kijk in je database
 

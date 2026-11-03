@@ -116,15 +116,15 @@ Een statuscode zegt in één getal hoe het verzoek afliep. `200` is gelukt; de
 andere codes die je in deze route tegenkomt, staan in het overzicht op
 [de startpagina](site:fullstack/docs/veiligheid#statuscodes).
 
-<Voorspel soort="Controlevraag" vraag="Je opent http://127.0.0.1:8000/ in je browser, en draait daarna bezoeker.py. Wat merkt je server van het verschil?">
-  <Keuze goed uitleg="Allebei sturen ze GET /, en je endpoint geeft op allebei hetzelfde antwoord. Het kijkt niet wie er vraagt.">Niets: hij krijgt twee keer GET / en antwoordt twee keer hetzelfde</Keuze>
-  <Keuze uitleg="Je endpoint heeft geen regel die een script tegenhoudt. Wat staat er in root()?">Hij weigert het script, want dat komt niet uit een browser</Keuze>
-  <Keuze uitleg="Je endpoint geeft altijd dezelfde dictionary terug. De browser toont die JSON gewoon als tekst.">Hij stuurt de browser een pagina en het script JSON</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je zet in main.py een tweede endpoint, /geheim, en maakt er nergens een link naar. Kan bezoeker.py het toch opvragen?">
+  <Keuze goed uitleg="Een link is alleen een hulp in de browser. httpx.get stuurt elk adres dat in je script staat, en je server antwoordt.">Ja: een script vraagt elk pad op dat het kent, ook zonder link</Keuze>
+  <Keuze uitleg="Het pad bestaat zodra het in main.py staat. Zocht httpx.get in bezoeker.py ergens naar een link?">Nee: zonder link op een pagina bestaat het pad niet voor een script</Keuze>
+  <Keuze uitleg="Je server onthoudt niet wat je browser eerder opende. Elk verzoek komt los binnen.">Alleen als je /geheim eerst zelf in je browser hebt geopend</Keuze>
   <Uitleg>
 
-  Je server beantwoordt verzoeken, geen browsers. Een script kan dus alles
-  sturen wat een browser stuurt, en ook wat geen formulier ooit zou sturen. Daar
-  draait deze hele route om.
+  Je server beantwoordt verzoeken, geen browsers. Een script kan elk adres
+  vragen en alles sturen wat een browser stuurt, ook wat geen pagina aanbiedt.
+  Daar draait deze hele route om.
 
   </Uitleg>
 </Voorspel>

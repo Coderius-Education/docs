@@ -116,7 +116,7 @@ Sara maakt een account en logt in, zoals in Wie mag wat. Daarna heeft haar `Clie
 </Regel>
 
 <Regel n={9}>
-Het sessie-id van Sara, bewaard voordat ze uitlogt. Zo heeft een dief het id als hij het eerder heeft gekopieerd.
+Het sessie-id van Sara, bewaard voordat ze uitlogt. `sara.cookies` zijn de cookies die haar `Client` bewaart, en `.get` haalt er één uit, net als bij een dictionary. Zo heeft een dief het id als hij het eerder heeft gekopieerd.
 </Regel>
 
 <Regel n={10} tot={11}>
@@ -124,7 +124,7 @@ Sara logt uit, en het script kijkt of haar `Client` de cookie nog heeft.
 </Regel>
 
 <Regel n={13} tot={14}>
-Een tweede `Client` krijgt het bewaarde id als cookie mee en probeert het bericht van Sara te verwijderen.
+Een tweede `Client` krijgt het bewaarde id met `cookies=` mee, zoals `dief.py` in [les 2](site:fullstack/docs/veiligheid/cookies/zwakheid), en probeert het bericht van Sara te verwijderen.
 </Regel>
 
 </CodeUitleg>
@@ -146,13 +146,13 @@ Met het oude sessie-id: 403
 Sara heeft geen cookie meer, en de server kent haar sessie niet meer. Wie het
 oude id nog heeft, is voor de server niet ingelogd.
 
-<Voorspel soort="Controlevraag" vraag="Welke regel in uitloggen houdt iemand met een gekopieerd sessie-id buiten?">
-  <Keuze uitleg="delete_cookie haalt alleen de cookie in de browser van Sara weg. Een dief stuurt het id zelf mee.">`antwoord.delete_cookie("sessie_id")`</Keuze>
-  <Keuze uitleg="Die regel kijkt alleen of er iets weg te gooien is. Wat gebeurt er in de regel eronder?">`if sessie_id in sessies:`</Keuze>
-  <Keuze goed uitleg="Pas als de sessie uit sessies.db weg is, hoort het id bij niemand meer. De server vindt het dan nergens.">`del sessies[sessie_id]`</Keuze>
+<Voorspel soort="Controlevraag" vraag="Sara sluit haar browser zonder op Uitloggen te klikken. Een dief stuurt met een eerder gekopieerd id een DELETE voor haar bericht. Welke statuscode volgt?">
+  <Keuze uitleg="Een browser sluiten stuurt geen verzoek naar je server. Weet de server dat Sara weg is?">`403`, want haar browser is dicht</Keuze>
+  <Keuze goed uitleg="Alleen /uitloggen gooit de sessie weg, en dat verzoek kwam nooit. In sessies.db staat het id nog, met de naam Sara.">`200`, want niemand heeft uitgelogd</Keuze>
+  <Keuze uitleg="De cookie houdt 30 dagen, en de dief stuurt het id toch zelf mee. Wat zoekt de server op?">`401`, want haar cookie is verlopen</Keuze>
   <Uitleg>
 
-  Een sessie-id is alleen iets waard zolang de server het in `sessies.db` terugvindt. De cookie weghalen is netjes voor de browser van Sara; de sessie weggooien is wat een dief buitensluit.
+  Uitloggen is een verzoek dat de bezoeker moet sturen. Wie zijn browser sluit of het vergeet, laat zijn sessie op de server staan, en een gekopieerd id blijft werken. Daarom laat je een sessie in de volgende les ook verlopen.
 
   </Uitleg>
 </Voorspel>
@@ -187,8 +187,9 @@ de server opnieuw en draai het script nog een keer.
 
 ### Opdracht 1: Investigate - Hoe haalt de server een cookie weg?
 
-Open `http://127.0.0.1:8000/static/formulier.html`, log in, ga terug en klik
-op **Uitloggen**. Klik in het tabblad **Netwerk** op het verzoek
+Open `http://127.0.0.1:8000/static/formulier.html`. Je gooide `gebruikers.db`
+net weg, dus maak eerst met het eerste formulier opnieuw een account. Log in, ga
+terug en klik op **Uitloggen**. Klik in het tabblad **Netwerk** op het verzoek
 `uitloggen` en zoek onder **Reactieheaders** de regel `set-cookie`. Hoe vertelt
 de server de browser dat de cookie weg moet?
 

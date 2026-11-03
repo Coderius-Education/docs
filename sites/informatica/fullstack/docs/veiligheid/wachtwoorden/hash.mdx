@@ -57,15 +57,17 @@ compleet andere code:
 
 Aan de hash zie je dus niet of twee wachtwoorden op elkaar lijken.
 
-<Voorspel soort="Controlevraag" vraag="In een database staat bij Sara alleen de hash van haar wachtwoord. Hoe controleert de server bij het inloggen of Sara het goede wachtwoord typt?">
-  <Keuze uitleg="Van een hash terug naar het wachtwoord bestaat geen berekening. Dat is de eerste eigenschap.">De server rekent de opgeslagen hash terug naar het wachtwoord en vergelijkt</Keuze>
-  <Keuze goed uitleg="Hetzelfde erin geeft hetzelfde eruit. Is de hash gelijk, dan was het ingetypte wachtwoord ook gelijk.">Hij rekent de hash van wat Sara typt uit en vergelijkt die met de opgeslagen</Keuze>
-  <Keuze uitleg="Elke sha256-hash is 64 tekens lang, hoe lang het wachtwoord ook is. Wat zegt de lengte dan?">Als de lengte van wat ze typt bij de opgeslagen hash past, mag ze erin</Keuze>
+<Voorspel soort="Controlevraag" vraag="In een gelekte lijst met sha256-codes staat bij Tim een code die op het eerste en laatste teken na gelijk is aan de code van welkom123. Wat weet je dan over het wachtwoord van Tim?">
+  <Keuze uitleg="Een klein verschil in het wachtwoord geeft een heel andere code. Werkt dat ook andersom?">Dat het op één letter na welkom123 is</Keuze>
+  <Keuze uitleg="Elke sha256-code is 64 tekens lang, hoe lang het wachtwoord ook is. De code zegt dus niets over de lengte.">Dat het negen tekens heeft, net als welkom123</Keuze>
+  <Keuze uitleg="Van een code terug naar het wachtwoord bestaat geen berekening, hoe dichtbij de code ook is.">Het hele wachtwoord, door de code terug te rekenen</Keuze>
+  <Keuze goed uitleg="Een andere code betekent een ander wachtwoord. Meer verraadt een code niet, ook niet als hij er bijna hetzelfde uitziet.">Alleen dat het niet welkom123 is</Keuze>
   <Uitleg>
 
-  De server hoeft het wachtwoord nooit terug te krijgen. Hij rekent alleen
-  vooruit, met wat er ingetypt wordt, en vergelijkt twee hashes. Dat zet je in
-  [les 4](site:fullstack/docs/veiligheid/wachtwoorden/hash-opslaan) in je server.
+  Lijken twee codes op elkaar, dan is dat toeval: ze zeggen niets over hoe de
+  wachtwoorden op elkaar lijken. Alleen precies dezelfde code betekent precies
+  hetzelfde wachtwoord. Daarmee controleert je server straks een wachtwoord, in
+  [les 4](site:fullstack/docs/veiligheid/wachtwoorden/hash-opslaan).
 
   </Uitleg>
 </Voorspel>

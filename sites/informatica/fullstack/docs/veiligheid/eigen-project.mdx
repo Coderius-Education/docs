@@ -53,18 +53,18 @@ vertrouw je niet, en de controle hoort op de server.
 ## Te veel verzoeken
 
 - [ ] Het endpoint dat iets opslaat, heeft een verzoeklimiet.
-  ([Een limiet met slowapi](site:fullstack/docs/veiligheid/dos/limiet))
+  ([Wat de 429 vertelt, opdracht 3](site:fullstack/docs/veiligheid/dos/te-veel))
 
 ## Wie mag wat
 
 - [ ] Elk endpoint dat iets verwijdert of aanpast, controleert zelf of het van
   deze bezoeker is, en stuurt anders een `403`.
   ([De controle met 403](site:fullstack/docs/veiligheid/toegang/controle))
-- [ ] Die controle staat in elk endpoint apart, ook in Alles wissen en in een
-  endpoint dat je later toevoegt. ([Elk endpoint apart](site:fullstack/docs/veiligheid/toegang/elk-endpoint))
 - [ ] De controle gebruikt wat de server weet, zoals de naam in de sessie, niet
   wat de bezoeker in een formulier of de URL meestuurt.
   ([Controleer op wat de server weet](site:fullstack/docs/veiligheid/toegang/server-weet))
+- [ ] Die controle staat in elk endpoint apart, ook in Alles wissen en in een
+  endpoint dat je later toevoegt. ([Elk endpoint apart](site:fullstack/docs/veiligheid/toegang/elk-endpoint))
 
 ## Cookies
 
@@ -90,13 +90,17 @@ ze erin bouwde.
 - [ ] Inloggen gebruikt `ph.verify`, met dezelfde melding bij een onbekende naam
   en een fout wachtwoord, en ook bij een onbekende naam een `verify` tegen een
   nep-hash. ([Inloggen met verify](site:fullstack/docs/veiligheid/wachtwoorden/inloggen))
-- [ ] Een wachtwoord wijzigen vraagt eerst het oude. Bij het inloggen werk je
-  na een geslaagde `verify` een oude hash bij met `check_needs_rehash`.
-  ([Wachtwoord wijzigen](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen),
-  [Een oude hash bijwerken](site:fullstack/docs/veiligheid/wachtwoorden/rehash))
+- [ ] Bij het inloggen werk je na een geslaagde `verify` een oude hash bij met
+  `check_needs_rehash`. ([Een oude hash bijwerken](site:fullstack/docs/veiligheid/wachtwoorden/rehash))
 - [ ] Elk endpoint dat een wachtwoord controleert, zoals `/inloggen`, heeft een
   limiet: `@limiter.limit` direct onder `@app.post`, met `request: Request`.
   ([Inlogpogingen beperken](site:fullstack/docs/veiligheid/wachtwoorden/pogingen))
+- [ ] Ook `/registreer` heeft een limiet: elke registratie kost een trage
+  `ph.hash`, en de melding over een bezette naam verraadt welke namen bestaan.
+  ([Inlogpogingen beperken](site:fullstack/docs/veiligheid/wachtwoorden/pogingen))
+- [ ] Heb je een endpoint om een wachtwoord te wijzigen, dan vraagt het eerst
+  het oude, met `ph.verify`, en heeft het ook een limiet.
+  ([Wachtwoord wijzigen](site:fullstack/docs/veiligheid/wachtwoorden/wijzigen))
 
 ## Test het zoals een bezoeker
 

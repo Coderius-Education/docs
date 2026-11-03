@@ -27,8 +27,14 @@ Maak naast `formulier.html` een map `static/pages` met twee pagina's. Eerst
 
 Maak `over.html` net zo, met de kop `Over dit gastenboek`.
 
-Zet `from fastapi.responses import FileResponse` bij je imports, en dit endpoint
-onder `bericht_plaatsen`:
+`FileResponse` komt uit `fastapi.responses`. Zet deze regel bij de imports
+bovenaan `main.py`:
+
+```python
+from fastapi.responses import FileResponse
+```
+
+Zet dan dit endpoint onder `bericht_plaatsen`:
 
 {/* onveilig-voorbeeld: de zwakheid die deze les laat zien */}
 
@@ -147,19 +153,36 @@ Je hoeft niet te bedenken welke trucs er met `..`, `/` of `\` bestaan. Wat niet
 in je lijst staat, komt er niet door. Met het endpoint van daarnet gaf
 `oeps.html` een `500`, zoals je zelf zag. Nu is dat een nette `404`.
 
-<Voorspel soort="Controlevraag" vraag="Je server stuurde main.py terug bij ?naam=../../main.py. Wat deed ../.. in die naam?">
-  <Keuze goed uitleg="Vanuit static/pages is .. de map static, en ../.. de map van je project. Daar staat main.py.">Het ging twee mappen omhoog, van static/pages naar je project</Keuze>
-  <Keuze uitleg="Een punt is in een bestandsnaam geen fout. Wat betekent .. in een pad?">Niets, FastAPI negeert de punten en zoekt main.py in static/pages</Keuze>
-  <Keuze uitleg="Er is geen tweede map static/pages. Welke kant op gaat .. in een pad?">Het zocht twee mappen dieper, in een map onder static/pages</Keuze>
+<Voorspel soort="Controlevraag" vraag="Iemand vraagt /pagina?naam=./home.html. Wat krijgt hij van je endpoint met PAGINAS?">
+  <Keuze goed uitleg="not in vergelijkt tekst, teken voor teken. ./home.html staat niet in PAGINAS, dus je server stuurt een 404 voordat FileResponse iets opent.">Een 404: ./home.html is een andere tekst dan home.html</Keuze>
+  <Keuze uitleg="Voor je computer klopt dat. Maar wat vergelijkt naam not in PAGINAS?">De pagina home.html: ./ is dezelfde map, dus hetzelfde bestand</Keuze>
+  <Keuze uitleg="FileResponse komt hier niet eens aan de beurt. Wat gebeurt er eerst in pagina()?">Een 500, want FileResponse snapt geen ./ in een pad</Keuze>
   <Uitleg>
 
-  `FileResponse` opent elk pad dat je hem geeft. Met `..` komt een bezoeker uit
-  de map die jij bedoelde, en bij elk bestand waar je server bij kan.
+  Je lijst kijkt niet naar wat een pad betekent, alleen of de tekst er precies
+  in staat. Daarom hoef je de trucs met `.`, `..` en `/` niet te kennen.
 
   </Uitleg>
 </Voorspel>
 
 ## Er gaat iets mis
+
+### `NameError: name 'FileResponse' is not defined`
+
+`http://127.0.0.1:8000/pagina?naam=home.html` geeft `Internal Server Error`,
+en in de terminal van je server staat:
+
+```
+NameError: name 'FileResponse' is not defined
+```
+
+**Oorzaak:** de regel `from fastapi.responses import FileResponse` ontbreekt
+bovenaan `main.py`. Je server start wel, maar loopt vast zodra het endpoint
+draait.
+
+**Oplossing:** zet de import bovenaan, onder die uit `fastapi`. Een script dat
+`antwoord.json()` doet, stopt bij zo'n `500` met een `JSONDecodeError`: de
+echte fout staat in de terminal van je server.
 
 ### `RuntimeError: File at path static/pages/over.html does not exist.`
 

@@ -87,13 +87,13 @@ Hier zit de controle niet in een endpoint, maar in de instelling waarmee de serv
 
 <VerzoekCyclus variant="cookies" />
 
-<Voorspel soort="Controlevraag" vraag="Je zet httponly=True in je code en slaat op. Zonder opnieuw in te loggen typ je document.cookie in de Console. Wat zie je?">
-  <Keuze uitleg="httponly staat nu in je code. Maar welke cookie staat er in je browser, en wanneer zette de server die?">`''`, een lege tekst</Keuze>
-  <Keuze goed uitleg="De cookie in je browser kreeg de server bij het vorige inloggen, zonder httponly. De nieuwe instelling komt pas mee met een nieuwe set_cookie.">Je oude sessie-id, net als in les 2</Keuze>
-  <Keuze uitleg="document.cookie geeft nooit een fout. Hij laat alleen weg wat is afgeschermd.">Een foutmelding, want de cookie is afgeschermd</Keuze>
+<Voorspel soort="Controlevraag" vraag="In je eigen gastenboek sturen de htmx-knoppen hun verzoek vanuit JavaScript. Je zet httponly op de sessie-cookie. Weet je server bij een klik op zo'n knop nog wie je bent?">
+  <Keuze uitleg="httponly sluit scripts uit van het lezen van de cookie. Wie zet de cookie bij een verzoek in de kop Cookie: het script of de browser?">Nee, want htmx is JavaScript</Keuze>
+  <Keuze goed uitleg="htmx vraagt de browser een verzoek te sturen, en de browser zet de cookie er zelf bij. Lezen kan htmx hem niet, en dat hoeft ook niet.">Ja, de browser stuurt hem mee</Keuze>
+  <Keuze uitleg="htmx leest geen cookies. Het hoeft de cookie niet te kennen om hem mee te laten gaan.">Alleen als htmx hem eerst leest</Keuze>
   <Uitleg>
 
-  `httponly` is een instelling die de server meegeeft op het moment dat hij de cookie zet. Een cookie die al in je browser staat, verandert niet als je je code aanpast. Daarom log je opnieuw in.
+  Met `httponly` mag een script de cookie niet lezen, maar wel een verzoek laten sturen. Elk verzoek naar je site krijgt de cookie mee, ook een verzoek dat een script start. Daarom blijven je htmx-knoppen werken.
 
   </Uitleg>
 </Voorspel>

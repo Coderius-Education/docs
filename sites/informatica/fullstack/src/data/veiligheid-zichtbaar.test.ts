@@ -115,4 +115,30 @@ describe('Wat je server laat zien', () => {
     }
     expect(fout).toEqual([]);
   });
+
+  it('een git status-lijst met .venv/ zegt meteen wat Python 3.13 anders doet', () => {
+    // Python 3.13 en nieuwer zet een eigen .gitignore in .venv, dus de
+    // beloofde lijst met ?? .venv/ klopte voor de meeste leerlingen niet, en
+    // de uitleg stond pas na de Gelukt (nagedraaid met python3.13 -m venv).
+    const fout: string[] = [];
+    for (const naam of readdirSync(MAP)) {
+      const tekst = readFileSync(join(MAP, naam), 'utf8');
+      for (const m of tekst.matchAll(/```[^\n]*\n([\s\S]*?)```/g)) {
+        if (!/^\?\? \.venv\/$/m.test(m[1])) continue;
+        const erna = tekst.slice((m.index ?? 0) + m[0].length);
+        const alinea = erna.trimStart().split(/\n\n/)[0];
+        if (!/Python 3\.13/.test(alinea)) fout.push(naam);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('opdracht 1 van de .gitignore-les gaat over een database in deze map', () => {
+    // De opdracht noemde de gebruikers.db uit de reeks Wachtwoorden, maar die
+    // staat in een andere map, zonder deze .gitignore.
+    const tekst = lees('gitignore');
+    const opdracht = tekst.slice(tekst.indexOf('### Opdracht 1'), tekst.indexOf('### Opdracht 2'));
+    expect(opdracht).toContain('in deze map');
+    expect(opdracht).not.toContain('reeks Wachtwoorden');
+  });
 });

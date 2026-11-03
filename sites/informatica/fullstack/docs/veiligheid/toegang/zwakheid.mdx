@@ -17,6 +17,11 @@ gemaakt, dan staat hij alleen bij je eigen berichten, en dat voelt als
 beveiliging. Maar een knop doet maar één ding: een verzoek versturen. Wie dat
 verzoek zelf verstuurt, heeft de knop niet nodig, verborgen of niet.
 
+Maakte je ook
+[opdracht 5 van Sessies](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen),
+dan heb je dit gat in je eigen gastenboek al gedicht. Deze reeks laat zien
+waarom die controle nodig was: de server van deze map heeft hem nog niet.
+
 ## Doe het na, op je eigen server
 
 Laat de server uit [les 1](site:fullstack/docs/veiligheid/toegang/gastenboek)
@@ -62,7 +67,7 @@ Elk een account en een inlog. Na het inloggen bewaart elke `Client` zijn eigen c
 </Regel>
 
 <Regel n={16} tot={19}>
-Alex vraagt de berichten op, zoals elke bezoeker kan, en stuurt voor het bericht van Sara een `DELETE`. De knop in de browser verstuurt hetzelfde verzoek.
+Alex vraagt de berichten op, zoals elke bezoeker kan, en stuurt voor het bericht van Sara een `DELETE`: `alex.delete` doet dat, zoals `alex.post` een POST stuurt. De knop in de browser verstuurt hetzelfde verzoek.
 </Regel>
 
 <Regel n={21} tot={24}>
@@ -93,31 +98,33 @@ Je server weet precies wie Alex is: de naam staat in zijn sessie. Alleen vraagt
 `bericht_verwijderen` er niet naar. Een verborgen knop, zoals in opdracht 4 van
 Sessies, maakt dat alleen minder zichtbaar.
 
-<Voorspel soort="Controlevraag" vraag="Je laat de knop Verwijderen alleen bij je eigen berichten zien. Wat print het script van Alex dan?">
-  <Keuze uitleg="Een 403 moet de server zelf geven. Staat er in bericht_verwijderen iets wat naar de bezoeker kijkt?">`Alex verwijdert het bericht van Sara: 403`</Keuze>
-  <Keuze uitleg="Het script gebruikt geen knop. Waar haalt het de sleutel van het bericht van Sara vandaan?">Niets over Sara, want zonder knop vindt Alex de sleutel niet</Keuze>
-  <Keuze goed uitleg="Het script haalt de sleutel uit /berichten en stuurt zelf het DELETE-verzoek. Aan de knop in de browser verandert voor de server niets.">`Alex verwijdert het bericht van Sara: 200`</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je zet in app.js een controle: de knop stuurt alleen een DELETE als het bericht van jou is. Alex draait daarna test_verwijderen.py nog een keer. Welke statuscode krijgt hij?">
+  <Keuze uitleg="Een 403 moet de server zelf geven. Waar draait app.js, en waar draait het script van Alex?">`403`, want app.js weigert hem</Keuze>
+  <Keuze uitleg="De sleutel haalt het script uit /berichten, niet uit de knop. Wat verandert app.js daaraan?">Geen, want zonder knop vindt hij de sleutel niet</Keuze>
+  <Keuze goed uitleg="app.js draait in de browser. Het script stuurt het DELETE-verzoek zelf, en het endpoint vraagt nog steeds niet wie er komt.">`200`, want het script slaat app.js over</Keuze>
   <Uitleg>
 
-  Een knop is een hulp voor wie de pagina gebruikt. De server ziet alleen het verzoek, en dat kan iedereen zelf versturen. Een slot moet dus op de server zitten, in het endpoint.
+  Wat in de browser draait, of het nu een verborgen knop is of een controle in JavaScript, is een hulp voor wie de pagina gebruikt. De server ziet alleen het verzoek, en dat kan iedereen zelf versturen. Een slot moet dus op de server zitten, in het endpoint.
 
   </Uitleg>
 </Voorspel>
 
 ## Er gaat iets mis
 
-### Meer namen dan Sara en Alex
+### Twee keer Alex, of meer namen
 
-Je ziet meer namen dan `Sara` en `Alex`, of het script verwijdert twee berichten
-van Sara.
+Het script print `Nog in het gastenboek: ['Alex', 'Alex']`, of er staan namen
+bij die je niet kent.
 
-**Oorzaak:** in de map staat nog een `gastenboek.db` van eerder, met oude
-berichten erin. Het script ziet die ook, en verwijdert elk bericht met de naam
-Sara.
+**Oorzaak:** de databases van een vorige keer staan er nog. Draai je het script
+een tweede keer, dan plaatst Alex opnieuw een bericht, naast dat van de eerste
+keer. Start je de server in een andere map, zoals je eigen project, dan ziet
+het script ook de berichten van daar.
 
 **Oplossing:** werk in de map `veiligheid-toegang` uit
-[les 1](site:fullstack/docs/veiligheid/toegang/gastenboek), of gooi
-`gastenboek.db`, `sessies.db` en `gebruikers.db` weg voordat je de server start.
+[les 1](site:fullstack/docs/veiligheid/toegang/gastenboek), en gooi
+`gastenboek.db`, `sessies.db` en `gebruikers.db` weg voordat je het script
+opnieuw draait.
 
 :::tip[Eerst op papier]
 Zoek eerst zonder computer bij zes verzoeken de controle die de server beschermt: [Vertrouw de bezoeker niet](site:fullstack/docs/unplugged/vertrouw-de-bezoeker). Je docent kan de hand-out printen.

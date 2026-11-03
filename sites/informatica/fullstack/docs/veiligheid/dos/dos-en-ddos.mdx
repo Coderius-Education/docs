@@ -17,8 +17,11 @@ meer doet.
 ## Lukt dat met één laptop?
 
 Zet in `test_verzoeken.py` uit [les 3](site:fullstack/docs/veiligheid/dos/zelf-meten) `range(20)` op `range(500)`,
-en in de laatste regel `20` op `500`. Draai het script. Het doet er een tijdje
-over; open intussen `http://127.0.0.1:8000/` in je browser.
+en in de laatste regel `20` op `500`. Draai het script, en open intussen
+`http://127.0.0.1:8000/` in je browser. Het script doet er al gauw tien seconden
+of langer over, veel langer dan de 500 per seconde uit les 2 doet denken:
+`httpx.get` maakt bij elk verzoek eerst alles opnieuw klaar om te versturen, en
+dat kost je laptop meer tijd dan je server het antwoord.
 
 <Gelukt>
 
@@ -62,13 +65,13 @@ begint te sturen. De eigenaren weten vaak niet eens dat hun apparaat meedoet.
 Allebei overspoelen ze de server met werk. Een DDoS is alleen groter en
 moeilijker te stoppen, want je kunt niet één boosdoener blokkeren.
 
-<Voorspel soort="Controlevraag" vraag="Je script stuurt 500 verzoeken, en je browser krijgt intussen meteen antwoord. Hoe kan dat?">
-  <Keuze goed uitleg="Het script stuurt pas een nieuw verzoek als het antwoord binnen is. Je server heeft dus nooit een rij die blijft groeien.">Het script wacht op elk antwoord, dus je server loopt nooit achter</Keuze>
-  <Keuze uitleg="Je server weet niet of een verzoek van een browser of een script komt. Hij beantwoordt ze allemaal op volgorde.">Je server geeft een browser voorrang boven een script</Keuze>
-  <Keuze uitleg="Er staat nog geen limiet in je server. Die zet je er later in deze reeks in.">Vijfhonderd verzoeken blijven onder de limiet van je server</Keuze>
+<Voorspel soort="Controlevraag" vraag="Je start test_verzoeken.py met range(500) in twee terminals tegelijk. Hoeveel verzoeken van je scripts wachten er bij je server hoogstens tegelijk op een antwoord?">
+  <Keuze goed uitleg="Elk script stuurt pas een nieuw verzoek als het vorige antwoord binnen is. Twee scripts hebben er dus samen hoogstens twee openstaan.">Twee: van elk script één, want elk wacht op zijn antwoord</Keuze>
+  <Keuze uitleg="Een script dat op elk antwoord wacht, heeft nooit meer dan één verzoek tegelijk openstaan, hoe lang de lus ook is.">Duizend: elk script stuurt zijn vijfhonderd zo snel als het kan</Keuze>
+  <Keuze uitleg="Ook het tweede script wacht op elk antwoord. Het stuurt niet alles in één keer omdat het eerste bezig is.">Vijfhonderd: die van het tweede script, terwijl het eerste bezig is</Keuze>
   <Uitleg>
 
-  Eén laptop die netjes wacht, krijgt je server niet plat. Een aanval die werkt, komt daarom van veel computers tegelijk: een DDoS.
+  Een script dat netjes wacht, houdt zichzelf in toom: meer scripts erbij betekent maar één verzoek per script tegelijk. Wie een server echt wil overspoelen, laat heel veel computers tegelijk sturen, zonder te wachten.
 
   </Uitleg>
 </Voorspel>
