@@ -14,7 +14,9 @@ import sidebars from '../../sidebars';
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
 const ONDERDELEN = join(SITE, 'docs', 'onderdelen');
 
-type Item = string | { type: string; label: string; items: Item[] };
+type Item =
+  | string
+  | { type: string; label: string; items: Item[]; customProps?: Record<string, unknown> };
 const ids = (items: Item[]): string[] =>
   items.flatMap((i) => (typeof i === 'string' ? [i] : ids(i.items ?? [])));
 
@@ -37,6 +39,52 @@ describe('Onderdelen', () => {
   it('elke pagina heeft een description: die staat op de kaart van het overzicht', () => {
     const zonder = sidebar.filter((id) => !/^description: \S/m.test(pagina(id)));
     expect(zonder).toEqual([]);
+  });
+
+  // De kaarten op de overzichtspagina (src/components/OnderdelenOverzicht)
+  // lezen sidebar_custom_props uit de frontmatter. De description was te lang
+  // voor een kaart (drie tot vijf regels per onderdeel), en zonder foto
+  // herkende je het onderdeel dat op tafel ligt niet.
+  const kaart = (id: string, veld: string) =>
+    pagina(id)
+      .match(/^sidebar_custom_props:\n((?: {2}.*\n)+)/m)?.[1]
+      .match(new RegExp(`^ {2}${veld}: (.+)$`, 'm'))?.[1];
+  const groepen = (sidebars.onderdelenSidebar as unknown as Item[]).filter(
+    (i): i is Exclude<Item, string> => typeof i !== 'string',
+  );
+  const pagina_s = sidebar.filter((id) => id !== 'onderdelen/index');
+
+  it('elke pagina heeft een korte regel voor zijn kaart', () => {
+    const fout = pagina_s.filter((id) => {
+      const kort = kaart(id, 'kort');
+      return !kort || kort.length > 50 || kort.endsWith('.');
+    });
+    expect(fout).toEqual([]);
+  });
+
+  it('elke kaart heeft een foto die bestaat, behalve in een groep met stappen', () => {
+    const fout: string[] = [];
+    for (const groep of groepen.filter((g) => g.customProps?.weergave !== 'stappen'))
+      for (const id of groep.items as string[]) {
+        const foto = kaart(id, 'foto');
+        if (!foto || !existsSync(join(ONDERDELEN, 'img', foto))) fout.push(`${id}: ${foto}`);
+      }
+    expect(fout).toEqual([]);
+  });
+
+  it('elke sensor en actuator zegt waar hij op aangesloten wordt', () => {
+    const fout = groepen
+      .filter((g) => ['Sensoren', 'Actuatoren'].includes(g.label))
+      .flatMap((g) => g.items as string[])
+      .filter((id) => !kaart(id, 'aansluiting'));
+    expect(fout).toEqual([]);
+  });
+
+  it('Aan de slag is een rij stappen, met Er gaat iets mis als losse regel', () => {
+    const start = groepen.find((g) => g.label === 'Aan de slag');
+    expect(start?.customProps?.weergave).toBe('stappen');
+    const hulp = (start?.items as string[]).filter((id) => kaart(id, 'hulp') === 'true');
+    expect(hulp).toEqual(['onderdelen/er-gaat-iets-mis']);
   });
 
   it('niets heet nog "Tutorial"', () => {

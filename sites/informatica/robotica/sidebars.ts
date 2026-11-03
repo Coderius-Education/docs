@@ -14,6 +14,9 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Aan de slag',
       collapsed: false,
+      // Op de overzichtspagina genummerde stappen in plaats van kaarten; een
+      // pagina met `hulp: true` (Er gaat iets mis) staat daar als losse regel.
+      customProps: { weergave: 'stappen' },
       items: [
         'onderdelen/installatie',
         'onderdelen/ingebouwd-lampje',
