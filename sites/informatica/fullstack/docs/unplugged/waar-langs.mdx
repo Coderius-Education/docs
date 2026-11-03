@@ -1,0 +1,131 @@
+---
+description: Een verzoek van een telefoon reist langs DNS, de firewall, Traefik en je container. Speel acht keer na waar het stopt, en wat de bezoeker dan ziet.
+---
+
+# Waar komt je verzoek langs?
+
+<Handout>
+
+Een bezoeker typt je adres, en ziet je gastenboek. Daartussen zitten vier
+stations, en elk station kan het verzoek tegenhouden. Elke melding die je in
+de route Online zetten tegenkwam, hoort bij één station. Jullie spelen het
+na, met een briefje dat van hand tot hand gaat.
+
+## Wat je nodig hebt
+
+- Per groepje van vijf: briefjes papier en een pen. Iedereen krijgt een
+  station.
+- Ongeveer 25 minuten.
+
+## De stations
+
+Elk station kent alleen zijn eigen regel. Op het briefje staan de naam die de
+bezoeker typte, en een poort.
+
+1. De telefoon schrijft het briefje: de naam, en poort 443 voor `https`,
+   80 voor `http`, of de poort die achter de naam staat. Hij vraagt eerst
+   aan DNS welk adres bij de naam hoort.
+2. DNS kent één regel, het A-record: `gastenboek.voorbeeld.nl` hoort bij
+   `203.0.113.10`. Een andere naam kent hij niet.
+3. ufw, de firewall van `203.0.113.10`, laat 22, 80 en 443 door. Elk ander
+   briefje gooit hij weg, zonder antwoord. Behalve een poort die Docker
+   publiceerde: die zette Docker zelf open, vóór de regels van ufw.
+4. Traefik krijgt 80 en 443. Op 80 antwoordt hij met een `301`: probeer
+   het op `https`. Op 443 zoekt hij een container met dezelfde naam in
+   `Host(…)`, die `healthy` is. Geen container gevonden: `404 page not found`.
+   Antwoordt de container niet op de poort uit het label, dan zegt hij `Bad Gateway`.
+5. Je site, in de container, luistert op 8000 en antwoordt met de pagina.
+
+Wie het briefje weggooit of beantwoordt, roept "stop". Het antwoord gaat
+dezelfde weg terug.
+
+## De scenario's
+
+1. Sam typt `https://gastenboek.voorbeeld.nl`. Alles staat goed.
+2. Sam typt `http://gastenboek.voorbeeld.nl`, zonder s.
+3. Het A-record wijst nog naar `203.0.113.99`, het adres van een oude server.
+4. In `.env` op de server staat `DOMEIN=gastenboek.voorbeld.nl`, met een
+   tikfout. Sam typt het goede adres.
+5. Bij de labels van de site staat `loadbalancer.server.port=8080`.
+6. `docker compose ps` toont de site als `(unhealthy)`.
+7. Om iets te testen zette je `ports: "8000:8000"` bij je site. Alex typt
+   `http://203.0.113.10:8000`.
+8. Alex typt `https://203.0.113.10:9443`. Portainer staat op de server, op
+   `127.0.0.1:9443`.
+
+<div className="handout-samen">
+
+Gok eerst, bij scenario 7: komt Alex bij je site? ______
+
+</div>
+
+<div className="handout-teltabel">
+
+| Scenario | Langs | Stopt bij | Wat de bezoeker ziet |
+|:---:|---|---|---|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
+| 4 | | | |
+| 5 | | | |
+| 6 | | | |
+| 7 | | | |
+| 8 | | | |
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. In welk scenario kwam een verzoek bij je site zonder dat Traefik het zag?
+   Wat mist de bezoeker dan, en wat kan hij nu zelf invullen?
+2. Scenario 4 en 6 geven dezelfde melding. Met welk commando zie je op de
+   server welke van de twee het is?
+3. Alles gaat via `https`. Waarom moet poort 80 dan toch open blijven?
+4. ufw zegt dat 8000 dicht is. Waarom kwam Alex er in scenario 7 toch door?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+| Scenario | Langs | Stopt bij | Wat de bezoeker ziet |
+|:---:|---|---|---|
+| 1 | DNS, ufw, Traefik, je site | je site | je gastenboek, met `https` |
+| 2 | DNS, ufw, Traefik | Traefik, met een `301` | daarna als scenario 1: je gastenboek, met `https` |
+| 3 | DNS | het oude adres | geen antwoord, of een pagina van iemand anders |
+| 4 | DNS, ufw, Traefik | Traefik | `404 page not found` |
+| 5 | DNS, ufw, Traefik, je container | Traefik | `Bad Gateway` |
+| 6 | DNS, ufw, Traefik | Traefik | `404 page not found` |
+| 7 | je site, langs ufw | je site | je gastenboek, zonder `https` |
+| 8 | ufw | ufw | geen antwoord: de browser wacht en geeft het op |
+
+In scenario 8 hield niet alleen ufw het tegen. Docker publiceerde 9443 alleen
+op `127.0.0.1`, dus op het adres van de server luistert niemand. Met de tunnel
+uit de les kom jij er wel bij.
+
+**Bespreek na.** Vraag 1: scenario 7. Er is geen `https`, dus alles gaat
+leesbaar over de lijn. En je site gelooft door `FORWARDED_ALLOW_IPS=*` elke
+`X-Forwarded-For`: Alex vult die kop zelf in, en de limiet uit Veiligheid telt
+hem dan als iemand anders. Vraag 2: `docker compose ps` toont in scenario 6
+`(unhealthy)`, en `docker compose config | grep Host` toont in scenario 4 de
+verkeerde naam. Vraag 3: voor de `301` van `http` naar `https`, en
+Let's Encrypt controleert via poort 80 dat de naam bij jouw server hoort. Vraag 4:
+Docker zet een gepubliceerde poort zelf open, vóór de regels van ufw. Daarom
+publiceert op de server alleen Traefik een poort.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [Online zetten: de deuren dicht](site:fullstack/docs/online/server/dichtzetten),
+  [Online zetten: je site op de server](site:fullstack/docs/online/server/site) en
+  [Online zetten: je domein met HTTPS](site:fullstack/docs/online/server/https).
+- De meldingen van Traefik staan bij [Online zetten: een voordeur met Traefik](site:fullstack/docs/online/docker/traefik),
+  en de tunnel naar Portainer bij [Online zetten: beheren met Portainer](site:fullstack/docs/online/extra/portainer).
+
+</div>
+
+</Handout>

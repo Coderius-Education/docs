@@ -1126,6 +1126,158 @@ Meer uitleg: [Laat het aan anderen zien](site:fullstack/docs/FastAPI/afronden/la
 
 </details>
 
+## Online zetten
+
+<details>
+<summary>permission denied while trying to connect to the docker API</summary>
+
+```
+permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+```
+
+**Oorzaak:** je zit niet in de groep `docker`, of je logde nog niet opnieuw in sinds `usermod`. In WSL moet Ubuntu daarvoor helemaal opnieuw starten.
+
+**Oplossing:** typ `groups`. Staat `docker` er niet bij, zet jezelf dan in de groep met `sudo usermod -aG docker $USER`. Sluit daarna in WSL alle terminals en typ in PowerShell `wsl --terminate Ubuntu-24.04`; op een server log je uit en weer in. Zet geen `sudo` voor `docker`: wat Docker dan in je mappen zet, is van `root`.
+
+Meer uitleg: [Online zetten: Docker installeren](site:fullstack/docs/online/docker/installeren)
+
+</details>
+
+<details>
+<summary>port is already allocated</summary>
+
+```
+Bind for 0.0.0.0:8000 failed: port is already allocated
+```
+
+**Oorzaak:** poort 8000 van je computer is al bezet, meestal door een container die nog draait.
+
+**Oplossing:** kijk met `docker ps` welke container de poort heeft, en stop hem met `docker stop` en zijn naam. Of kies een andere poort voor je computer: `-p 8001:8000`, of `"127.0.0.1:8001:8000"` in `compose.yaml`.
+
+Meer uitleg: [Online zetten: een container draaien](site:fullstack/docs/online/docker/container)
+
+</details>
+
+<details>
+<summary>The container name is already in use</summary>
+
+```
+docker: Error response from daemon: Conflict. The container name "/gastenboek" is already in use
+```
+
+**Oorzaak:** er bestaat al een container met die naam, ook als hij gestopt is.
+
+**Oplossing:** gooi de oude weg met `docker rm -f gastenboek`, en start opnieuw. Wat de container in een volume schreef, blijft bewaard; wat erin zelf stond, is weg.
+
+Meer uitleg: [Online zetten: een container draaien](site:fullstack/docs/online/docker/container)
+
+</details>
+
+<details>
+<summary>sqlite3.OperationalError: unable to open database file (in een container)</summary>
+
+```
+sqlite3.OperationalError: unable to open database file
+```
+
+**Oorzaak:** je site draait als `app`, en die mag in `/app` niets maken. Een database staat nog niet in `data/`, of de map `data` bestaat niet.
+
+**Oplossing:** zet elke `SqliteDict("…")` in `main.py` in `data/`, en zorg voor de regel `os.makedirs("data", exist_ok=True)`. Bouw daarna opnieuw.
+
+Meer uitleg: [Online zetten: niet als root](site:fullstack/docs/online/docker/niet-als-root)
+
+</details>
+
+<details>
+<summary>sqlite3.OperationalError: attempt to write a readonly database</summary>
+
+```
+sqlite3.OperationalError: attempt to write a readonly database
+```
+
+**Oorzaak:** je zette een back-up terug met `docker compose cp`. Wat dat in een container zet, is van `root`; je site draait als `app` en mag de databases lezen, maar niet veranderen.
+
+**Oplossing:** geef ze terug aan `app`, terwijl de container draait: `docker compose exec -u root gastenboek chown -R app /app/data`.
+
+Meer uitleg: [Online zetten: een back-up](site:fullstack/docs/online/server/backup)
+
+</details>
+
+<details>
+<summary>found a tab character that violates indentation</summary>
+
+```
+yaml: line 3: found a tab character that violates indentation
+```
+
+**Oorzaak:** in `compose.yaml` staat een tab in plaats van spaties, op de regel die Compose noemt of de regel erna.
+
+**Oplossing:** vervang de tab door spaties. Klik in VS Code rechtsonder op `Tab Size` en kies **Indent Using Spaces**.
+
+Meer uitleg: [Online zetten: alles in één bestand](site:fullstack/docs/online/docker/compose)
+
+</details>
+
+<details>
+<summary>404 page not found van Traefik</summary>
+
+```
+404 page not found
+```
+
+**Oorzaak:** Traefik kent geen gezonde site voor deze naam. Een tikfout in een label, een andere naam in `Host(…)` dan die je typte, op de server een `.env` die ontbreekt, of een container die `(unhealthy)` is.
+
+**Oplossing:** kijk met `docker compose ps` of je site draait en gezond is, en met `docker compose config | grep Host` welke naam Compose echt gebruikt. Vergelijk je labels letter voor letter met die uit de les.
+
+Meer uitleg: [Online zetten: een voordeur met Traefik](site:fullstack/docs/online/docker/traefik)
+
+</details>
+
+<details>
+<summary>Bad Gateway van Traefik</summary>
+
+```
+Bad Gateway
+```
+
+**Oorzaak:** Traefik weet welke container het is, maar krijgt geen antwoord. Vaak staat er een andere poort in het label dan 8000, of start je site niet.
+
+**Oplossing:** controleer `loadbalancer.server.port=8000`, en kijk met `docker compose logs` in je project of je site draait.
+
+Meer uitleg: [Online zetten: een voordeur met Traefik](site:fullstack/docs/online/docker/traefik)
+
+</details>
+
+<details>
+<summary>client version 1.24 is too old</summary>
+
+```
+Error response from daemon: client version 1.24 is too old. Minimum supported API version is 1.40
+```
+
+**Oorzaak:** een oude versie van Traefik praat met Docker op een manier die Docker 29 niet meer kent.
+
+**Oplossing:** zet `image: traefik:v3` in de `compose.yaml` van Traefik, en haal de nieuwste op met `docker compose pull` en `docker compose up -d`.
+
+Meer uitleg: [Online zetten: een voordeur met Traefik](site:fullstack/docs/online/docker/traefik)
+
+</details>
+
+<details>
+<summary>no space left on device</summary>
+
+```
+no space left on device
+```
+
+**Oorzaak:** de schijf is vol, meestal door oude images: bij elke `--build` en elke `pull` blijft het vorige staan.
+
+**Oplossing:** kijk met `docker system df` waar de ruimte zit, en ruim op met `docker image prune`. Typ nooit `docker volume prune` of `docker system prune --volumes`: die gooien ook volumes weg waar op dat moment geen container aan hangt, en daar staan je databases in.
+
+Meer uitleg: [Online zetten: bijwerken en opruimen](site:fullstack/docs/online/server/bijwerken)
+
+</details>
+
 ## Algemeen
 
 <details>

@@ -170,6 +170,8 @@ const sidebars: SidebarsConfig = {
     'unplugged/template-invullen',
     'unplugged/postbode',
     'unplugged/vertrouw-de-bezoeker',
+    'unplugged/wat-blijft',
+    'unplugged/waar-langs',
   ],
   // Eerst de startpagina (het ene idee, de spelregel, de statuscodes) en het
   // gereedschap (httpx). Dan per zwakheid een categorie met kleine lessen, van

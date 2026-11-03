@@ -43,13 +43,15 @@ function bestaat(pad: string): boolean {
 }
 
 describe('de unplugged hand-outs van fullstack', () => {
-  it('er zijn er zeven, en elk staat in de eigen sidebar', () => {
+  it('er zijn er negen, en elk staat in de eigen sidebar', () => {
     expect(handouts.map((h) => h.slug).sort()).toEqual([
       'postbode',
       'template-invullen',
       'vertrouw-de-bezoeker',
       'verzoek-rollenspel',
       'volg-de-naam',
+      'waar-langs',
+      'wat-blijft',
       'welke-route',
       'welke-taal-waar',
     ]);
@@ -97,7 +99,7 @@ describe('de unplugged hand-outs van fullstack', () => {
         expect(scherm).toMatch(/^## Verder op de site$/m);
         const lessen = [
           ...(scherm ?? '').matchAll(
-            /\]\(site:fullstack(\/docs\/(?:FastAPI|veiligheid)\/[^)\s]+)\)/g,
+            /\]\(site:fullstack(\/docs\/(?:FastAPI|veiligheid|online)\/[^)\s]+)\)/g,
           ),
         ];
         expect(lessen.length, 'minstens één link naar een les').toBeGreaterThan(0);

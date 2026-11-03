@@ -474,3 +474,47 @@ describe('de server', () => {
     expect(les).toContain('python -m pip freeze | Out-File -Encoding ascii requirements.txt');
   });
 });
+
+describe('naslag en diagram van Online zetten', () => {
+  // De cheatsheet en Er gaat iets mis hadden geen enkel Docker-item, terwijl
+  // de route twintig meldingen behandelt.
+  const deel = (bestand: string) => {
+    const tekst = readFileSync(join(DOCS, bestand), 'utf8');
+    const begin = tekst.indexOf('\n## Online zetten\n');
+    expect(begin, `${bestand} heeft een kop Online zetten`).toBeGreaterThan(-1);
+    const eind = tekst.indexOf('\n## ', begin + 5);
+    return tekst.slice(begin, eind === -1 ? undefined : eind);
+  };
+
+  it.each(['cheatsheet.md', 'troubleshooting.md'])(
+    '%s: elk item onder Online zetten linkt naar een les van de route',
+    (bestand) => {
+      const items = deel(bestand).split('<details>').slice(1);
+      expect(items.length).toBeGreaterThanOrEqual(6);
+      const zonder = items
+        .filter((item) => {
+          const links = [...item.matchAll(/\(site:fullstack\/docs\/(online\/[^)#\s]+)/g)];
+          return links.length === 0 || links.some((m) => !lessen.includes(m[1]));
+        })
+        .map((item) => item.match(/<summary>(.*)<\/summary>/)?.[1]);
+      expect(zonder).toEqual([]);
+    },
+  );
+
+  it('een fout op Er gaat iets mis staat letterlijk in een les van de route', () => {
+    const fout = [...deel('troubleshooting.md').matchAll(/```\n([^\n]+)\n```/g)]
+      .map((m) => m[1])
+      .filter((melding) => !lessen.some((id) => lees(id).includes(melding)));
+    expect(fout).toEqual([]);
+  });
+
+  it('het diagram van de hele weg staat in les 14, na Traefik op 443', () => {
+    const https = lees('online/server/https');
+    expect(https).toContain('<VerzoekCyclus variant="online" />');
+    expect(https.indexOf('variant="online"')).toBeGreaterThan(https.indexOf('## Traefik op 443'));
+    const andere = lessen.filter(
+      (id) => id !== 'online/server/https' && lees(id).includes('variant="online"'),
+    );
+    expect(andere).toEqual([]);
+  });
+});

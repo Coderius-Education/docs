@@ -1,0 +1,149 @@
+---
+description: Image, container en volume als kaartjes op tafel. Speel na wat er blijft bij stop, een nieuwe versie, down en down -v, en waarom je berichten in het volume horen.
+---
+
+# Wat blijft er over?
+
+<Handout>
+
+Een image, een container en een volume lijken op elkaar: alle drie "zitten
+er dingen in". Ze gaan alleen heel anders weg. Jullie leggen ze als vakken op
+tafel, met kaartjes erin, en spelen na wat Docker doet bij vijf commando's.
+
+## Wat je nodig hebt
+
+- Per tweetal: het knipblad (de laatste pagina), een schaar, drie vellen papier
+  als vakken en een pen.
+- Ongeveer 20 minuten.
+
+## De tafel
+
+Schrijf op de drie vellen: **Image**, **Container** en **Volume**. Knip de
+kaartjes uit, en leg ze in het vak waar ze horen:
+
+| Vak | Kaartjes |
+|---|---|
+| Image | A, B, C |
+| Container | D, E |
+| Volume | F |
+
+Kaartje G hoort bij geen enkel vak: het staat op de server zelf, naast
+Docker. Leg het naast de vellen.
+
+Een kaartje dat weggaat, leg je omgekeerd opzij. Een kaartje dat opnieuw
+gemaakt wordt, draai je om en schrijf je er "nieuw" op. Begin elke ronde met
+de tafel zoals hij na de vorige ronde is.
+
+## De rondes
+
+1. `docker compose stop`, en daarna `docker compose start`.
+2. Je verandert een tekst in `main.py` op je laptop, pusht, en typt op de
+   server `git pull` en `docker compose up -d --build`.
+3. `docker image prune`.
+4. `docker compose down`, en daarna `docker compose up -d`.
+5. `docker compose down -v`, en daarna `docker compose up -d`.
+
+<div className="handout-samen">
+
+Gok eerst, voor ronde 2: staat het bericht van gisteren er nog? ______
+
+Gok eerst, voor ronde 5: en nu? ______
+
+</div>
+
+<div className="handout-teltabel">
+
+| Ronde | Weg | Nieuw | Blijft |
+|:---:|---|---|---|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
+| 4 | | | |
+| 5 | | | |
+
+</div>
+
+## Bespreek na
+
+<div className="handout-vragen">
+
+1. Kaartje E stond in de container, niet in het volume. Na welke ronde was
+   het voor het eerst weg? Wat zegt dat over een bestand dat je site buiten
+   `data/` schrijft?
+2. Bij ronde 2 ging de container weg, en toch stond het bericht er nog. Hoe
+   kan dat?
+3. Welke ronde typ je nooit op een server? En welke kaartjes zou je dan
+   alleen nog uit een back-up kunnen halen?
+4. Kaartje G ging nooit weg. Waarom hoort het toch in je back-up?
+
+</div>
+
+<Antwoordblad titel="Antwoorden">
+
+| Ronde | Weg | Nieuw | Blijft |
+|:---:|---|---|---|
+| 1 | niets | niets | alles: de container stopt en start, maar blijft bestaan, met E erin |
+| 2 | D, E | C, D | A, B, F, G; het oude image blijft ook, zonder naam |
+| 3 | het oude image, zonder naam | niets | alles wat op tafel ligt |
+| 4 | D | D | A, B, C, F, G |
+| 5 | D, F | D, en een leeg volume | A, B, C, G |
+
+In ronde 2 bouwt Docker een nieuw image. A en B haalt hij uit zijn geheugen
+(`CACHED`), want `requirements.txt` veranderde niet; C is nieuw. Omdat het
+image anders is, gooit `up` de oude container weg en maakt hij een nieuwe, en
+die koppelt hetzelfde volume. Zonder verandering in je code was het image
+gelijk gebleven, en de container ook.
+
+Zo kun je het zelf nagaan, op je laptop:
+
+```bash
+docker compose exec gastenboek touch /tmp/kladje
+docker compose stop
+docker compose start
+docker compose exec gastenboek ls /tmp/kladje
+docker compose up -d --force-recreate
+docker compose exec gastenboek ls /tmp/kladje
+```
+
+`--force-recreate` maakt een nieuwe container, ook als het image gelijk is.
+De eerste `ls` vindt het kladje, de tweede zegt `No such file or directory`:
+een nieuwe container begint met wat er in het image staat.
+
+**Bespreek na.** Vraag 1: na ronde 2. Wat je site buiten `data/` schrijft,
+is weg bij elke nieuwe versie. Daarom staat elke database in `data/`, en
+`data/` in het volume. Vraag 2: het bericht stond in F, en het volume hoort
+niet bij één container: de nieuwe koppelt hetzelfde volume. Vraag 3: ronde 5,
+`down -v`. Dan is F weg, en die staat alleen in je back-up. Vraag 4: G staat
+alleen op deze server. Is de server weg, dan is G ook weg, en dan heb je je
+domeinnaam en de voordeur niet meer.
+
+</Antwoordblad>
+
+<div className="handout-alleen-scherm">
+
+## Verder op de site
+
+- In de les: [Online zetten: je berichten bewaren](site:fullstack/docs/online/docker/volume),
+  [Online zetten: alles in één bestand](site:fullstack/docs/online/docker/compose) en
+  [Online zetten: bijwerken en opruimen](site:fullstack/docs/online/server/bijwerken).
+- Hoe je F en G veilig stelt, staat in [Online zetten: een back-up](site:fullstack/docs/online/server/backup).
+
+</div>
+
+<div className="handout-paginawissel handout-knipblad">
+
+## Knipblad
+
+| Kaartjes |
+|---|
+| A `python:3.13-slim`: Linux en Python |
+| B de packages uit `requirements.txt` |
+| C je code: `main.py`, `templates`, `static` |
+| D de container `gastenboek-gastenboek-1` |
+| E een bestand dat je site in `/tmp` schreef |
+| F `gebruikers.db` en je andere databases in `/app/data` |
+| G `.env` en de map `~/traefik` op de server |
+
+</div>
+
+</Handout>

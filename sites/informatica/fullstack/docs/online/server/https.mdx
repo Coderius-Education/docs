@@ -3,6 +3,8 @@ sidebar_label: '14. Je domein met HTTPS'
 description: Traefik krijgt een ingang op 443, stuurt http door naar https en vraagt zelf een certificaat aan bij Let's Encrypt. Daarna kan je sessie-cookie secure worden.
 ---
 
+import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
+
 # Online zetten: je domein met HTTPS
 
 Over `http` gaat alles leesbaar over de lijn. Wie op hetzelfde wifi zit, of ergens onderweg een kabel beheert, kan meelezen: het wachtwoord waarmee een bezoeker inlogt, en de cookie met zijn sessie-id. Met `https` is het versleuteld, en weet de browser bovendien zeker dat hij met jouw server praat en niet met een die zich voor jou uitgeeft.
@@ -69,6 +71,14 @@ Aan je site verandert niets: de labels uit [les 10](site:fullstack/docs/online/d
 
 Twee dingen moeten kloppen voordat het lukt: het A-record wijst naar je server ([les 11](site:fullstack/docs/online/server/huren)), en poort 80 en 443 staan open in de firewall ([les 12](site:fullstack/docs/online/server/dichtzetten)).
 
+## De hele weg
+
+Nu de route rond is, zie je de hele weg van een verzoek. Elke melding uit de lessen hiervoor hoort bij één stap.
+
+<VerzoekCyclus variant="online" />
+
+Een verzoek dat bij stap 3 niet door mag, krijgt geen antwoord: de browser wacht en geeft het op. Bij stap 4 antwoordt Traefik zelf, met `404 page not found` of `Bad Gateway`. Pas bij stap 5 draait jouw code.
+
 ## De cookie alleen over https
 
 Nu je site `https` heeft, kan de sessie-cookie de vlag `secure` krijgen: dan stuurt de browser hem nooit meer over een onversleutelde verbinding. Wat `secure` doet, staat in de praktijkles van [Cookies afschermen](site:fullstack/docs/veiligheid/cookies/praktijk). Zet het bij `set_cookie` in je `/inloggen`:
@@ -116,6 +126,10 @@ Op `http://203.0.113.10` krijg je een waarschuwing over de verbinding, en daarna
 **Oorzaak:** Traefik stuurt `http` door naar `https`, ook voor het IP-adres. Daar heeft hij geen certificaat voor, en geen site: je site hoort bij de naam.
 
 **Oplossing:** open je site met je domeinnaam. Dat is ook het adres dat je aan anderen geeft.
+
+:::tip[Eerst op papier]
+Speel zonder computer na langs welke stations een verzoek reist, en waar het stopt bij elke melding uit deze route: [Waar komt je verzoek langs?](site:fullstack/docs/unplugged/waar-langs). Je docent kan de hand-out printen.
+:::
 
 ## Opdrachten
 

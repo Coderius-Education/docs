@@ -99,6 +99,8 @@ const ZONDER_BLOK: Record<string, string> = {
   'unplugged/vertrouw-de-bezoeker.mdx':
     'hand-out zonder computer; Verder op de site linkt naar de lessen',
   'unplugged/volg-de-naam.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
+  'unplugged/waar-langs.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
+  'unplugged/wat-blijft.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
   'unplugged/welke-route.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
   'unplugged/welke-taal-waar.mdx':
     'hand-out zonder computer; Verder op de site linkt naar de lessen',
