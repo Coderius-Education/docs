@@ -13,13 +13,28 @@ leerling. Wat het doet, staat in markers in de les, in dezelfde vorm als
 - `{/* bestand: pad */}` direct boven een codeblok: zet dat blok in `pad`.
 - Het uitklapblok "Zo ziet je `main.py` er nu uit" is altijd `main.py`, en
   gaat in voor het eerste script van die les draait.
+- `{/* erbij: pad */}` direct boven een codeblok: zet dat blok onderaan `pad`
+  ("zet onderaan je script …").
+- `{/* vervang: pad */}` direct boven een codeblok: vervang in `pad` wat het
+  blok vervangt ("vervang `bericht_verwijderen` tijdelijk door …"). Een blok
+  dat met `@app.` of `def ` begint, vervangt de functie met dezelfde eerste
+  regel; één losse regel vervangt de regel die tot de eerste `(` gelijk is.
+  Vervangt een les zo `main.py`, dan geldt het uitklapblok met de stand pas
+  aan het eind van de les.
 - `{/* weg: a.db b.db */}`: gooi die bestanden weg (zoals de les zegt).
 - `{/* draai: script.py */}` in een `<Gelukt>`: draai het script tegen de
   server en vergelijk wat het print met het eerste ```text-blok daarna, regel
   voor regel. Met `{/* draai: script.py; vrij: <regex> */}` mag wat op de
-  regex past verschillen (een zout, een meettijd).
+  regex past verschillen (een zout, een meettijd). Met `; deel` (vóór een
+  `vrij:`) hoeft het blok maar een aaneengesloten stuk van de uitvoer te zijn
+  (een les die alleen de eerste regels of de laatste regel toont).
 - `{/* open: /pad */}` in een `<Gelukt>`: wat de browser op dat adres toont,
   vergeleken met het ```text-blok erna (een JSON-antwoord, een tekst).
+- `{/* verstuur: /pad veld=waarde&veld=waarde */}` in een `<Gelukt>`: wat de
+  browser toont na **Verstuur** in een formulier (een POST met die velden,
+  zoals een browser hem stuurt), vergeleken met het ```text-blok erna.
+- `{/* verstuur-ook: /pad veld=waarde&veld=waarde */}`: verstuur dat formulier,
+  zonder te vergelijken (een bericht dat de les eerst laat invullen).
 - `{/* draai-ook: script.py */}`: draai het script, zonder te vergelijken
   (een registratie die de les eerst laat doen).
 - `{/* gelukt-met-de-hand: reden */}` in een `<Gelukt>`: dit succesmoment zie
@@ -51,7 +66,9 @@ VEILIGHEID = SITE / "docs" / "veiligheid"
 
 OPSTARTEN = 30
 LUISTERT = re.compile(r"Uvicorn running on http://127\.0\.0\.1:(\d+)")
-MARKER = re.compile(r"\{/\*\s*(bestand|weg|draai|draai-ook|open|gelukt-met-de-hand):\s*(.*?)\s*\*/\}")
+MARKER = re.compile(
+    r"\{/\*\s*(bestand|erbij|vervang|weg|draai|draai-ook|open|verstuur|verstuur-ook|gelukt-met-de-hand):\s*(.*?)\s*\*/\}"
+)
 FENCE = re.compile(r"^```[^\n]*\n(.*?)^```", re.M | re.S)
 STAND = "<summary>Zo ziet je `main.py` er nu uit</summary>"
 
@@ -120,12 +137,14 @@ def stappen(tekst: str) -> list[tuple[str, str, str | None]]:
     for m in MARKER.finditer(tekst):
         rest = tekst[m.end() :]
         blok = None
-        if m.group(1) == "bestand":
+        if m.group(1) in ("bestand", "erbij", "vervang"):
             f = FENCE.search(rest)
-            if f is None or rest[: f.start()].strip() not in ("", "<CodeUitleg>"):
-                raise ValueError(f"bestand: {m.group(2)} staat niet direct boven een codeblok")
+            # Een andere marker ertussen (route-dubbel, niet-compileren) mag.
+            tussen = re.sub(r"\{/\*.*?\*/\}", "", rest[: f.start()] if f else "", flags=re.S)
+            if f is None or tussen.strip() not in ("", "<CodeUitleg>"):
+                raise ValueError(f"{m.group(1)}: {m.group(2)} staat niet direct boven een codeblok")
             blok = f.group(1)
-        elif m.group(1) in ("draai", "open"):
+        elif m.group(1) in ("draai", "open", "verstuur"):
             einde = rest.find("</Gelukt>")
             f = FENCE.search(rest, 0, einde if einde != -1 else len(rest))
             if f is None or not rest[f.start() :].startswith("```text"):
@@ -143,13 +162,39 @@ def stand(tekst: str) -> str | None:
     return f.group(1) if f else None
 
 
-def vergelijk(verwacht: str, kreeg: str, vrij: str | None) -> list[str]:
+def vervang(oud: str, blok: str) -> str:
+    """Zet `blok` in `oud` op de plek van de functie of regel die het vervangt."""
+    regels = oud.split("\n")
+    nieuw = blok.rstrip("\n").split("\n")
+    if nieuw[0].startswith(("@app.", "def ")):
+        begin = [i for i, r in enumerate(regels) if r == nieuw[0]]
+        if len(begin) != 1:
+            raise ValueError(f"vervang: {nieuw[0]!r} staat {len(begin)} keer in het bestand")
+        eind = begin[0] + 1
+        while eind < len(regels) and not regels[eind].startswith(("@app.", "def ")):
+            eind += 1
+        while eind > begin[0] + 1 and regels[eind - 1].strip() == "":
+            eind -= 1
+        return "\n".join(regels[: begin[0]] + nieuw + regels[eind:])
+    if len(nieuw) != 1 or "(" not in nieuw[0]:
+        raise ValueError("vervang: geef een functie of één regel met een (")
+    kop = nieuw[0][: nieuw[0].index("(")]
+    plek = [i for i, r in enumerate(regels) if r.startswith(kop + "(")]
+    if len(plek) != 1:
+        raise ValueError(f"vervang: {kop!r} staat {len(plek)} keer in het bestand")
+    regels[plek[0]] = nieuw[0]
+    return "\n".join(regels)
+
+
+def vergelijk(verwacht: str, kreeg: str, vrij: str | None, deel: bool = False) -> list[str]:
     a = [r.rstrip() for r in verwacht.strip("\n").split("\n")]
     b = [r.rstrip() for r in kreeg.strip("\n").split("\n")]
     if vrij:
         a = [re.sub(vrij, "…", r) for r in a]
         b = [re.sub(vrij, "…", r) for r in b]
     if a == b:
+        return []
+    if deel and any(b[i : i + len(a)] == a for i in range(len(b) - len(a) + 1)):
         return []
     return [f"    verwacht: {x!r}\n    kreeg:    {y!r}" for x, y in zip_lang(a, b) if x != y][:5]
 
@@ -182,9 +227,12 @@ def draai_script(map_: Path, naam: str, poort: int) -> str:
     return r.stdout + (r.stderr if r.returncode else "")
 
 
-def haal(poort: int, pad: str) -> str:
+def haal(poort: int, pad: str, formulier: str | None = None) -> str:
+    """GET op pad, of met formulier (veld=waarde&…) een POST zoals een browser."""
+    data = formulier.encode("utf-8") if formulier is not None else None
+    verzoek = urllib.request.Request(f"http://127.0.0.1:{poort}{pad}", data=data)
     try:
-        with urllib.request.urlopen(f"http://127.0.0.1:{poort}{pad}", timeout=30) as r:
+        with urllib.request.urlopen(verzoek, timeout=30) as r:
             return r.read().decode("utf-8")
     except urllib.error.HTTPError as e:
         return e.read().decode("utf-8")
@@ -204,37 +252,56 @@ def doe_reeks(reeks: str, lessen: list[str]) -> tuple[str, list[str], int]:
                 tekst = (VEILIGHEID / reeks / f"{les}.mdx").read_text(encoding="utf-8")
                 nieuwe_main = stand(tekst)
                 main_gezet = False
+                tijdelijk = False
                 for soort, waarde, blok in stappen(tekst):
                     if soort == "bestand":
                         doel = map_ / waarde
                         doel.parent.mkdir(parents=True, exist_ok=True)
                         doel.write_text(blok, encoding="utf-8")
+                    elif soort == "erbij":
+                        doel = map_ / waarde
+                        doel.write_text(doel.read_text(encoding="utf-8") + "\n" + blok, encoding="utf-8")
+                    elif soort == "vervang":
+                        doel = map_ / waarde
+                        doel.write_text(vervang(doel.read_text(encoding="utf-8"), blok), encoding="utf-8")
+                        if waarde == "main.py":
+                            main_gezet = tijdelijk = True
                     elif soort == "weg":
                         for bestand in waarde.split():
                             (map_ / bestand).unlink(missing_ok=True)
-                    elif soort == "open":
+                    elif soort == "verstuur-ook":
+                        if nieuwe_main is not None and not main_gezet:
+                            (map_ / "main.py").write_text(nieuwe_main, encoding="utf-8")
+                            main_gezet = True
+                        server.zorg_dat_hij_draait()
+                        pad, _, velden = waarde.partition(" ")
+                        haal(server.poort, pad, velden.strip())
+                    elif soort in ("open", "verstuur"):
                         if nieuwe_main is not None and not main_gezet:
                             (map_ / "main.py").write_text(nieuwe_main, encoding="utf-8")
                             main_gezet = True
                         server.zorg_dat_hij_draait()
                         gedaan += 1
-                        verschil = vergelijk(blok, haal(server.poort, waarde), None)
+                        pad, _, velden = waarde.partition(" ")
+                        formulier = velden.strip() if soort == "verstuur" else None
+                        verschil = vergelijk(blok, haal(server.poort, pad, formulier), None)
                         if verschil:
-                            fouten.append(f"✗ {naam}: open {waarde}\n" + "\n".join(verschil))
+                            fouten.append(f"✗ {naam}: {soort} {waarde}\n" + "\n".join(verschil))
                     elif soort in ("draai", "draai-ook"):
                         if nieuwe_main is not None and not main_gezet:
                             (map_ / "main.py").write_text(nieuwe_main, encoding="utf-8")
                             main_gezet = True
                         script, _, optie = waarde.partition(";")
                         vrij = optie.split("vrij:", 1)[1].strip() if "vrij:" in optie else None
+                        deel = "deel" in [o.strip() for o in optie.split(";")]
                         server.zorg_dat_hij_draait()
                         uitvoer = draai_script(map_, script.strip(), server.poort)
                         if soort == "draai":
                             gedaan += 1
-                            verschil = vergelijk(blok, uitvoer, vrij)
+                            verschil = vergelijk(blok, uitvoer, vrij, deel)
                             if verschil:
                                 fouten.append(f"✗ {naam}: {script.strip()}\n" + "\n".join(verschil))
-                if nieuwe_main is not None and not main_gezet:
+                if nieuwe_main is not None and (tijdelijk or not main_gezet):
                     (map_ / "main.py").write_text(nieuwe_main, encoding="utf-8")
         except Exception as e:  # noqa: BLE001
             fouten.append(f"✗ {reeks}: {e}")

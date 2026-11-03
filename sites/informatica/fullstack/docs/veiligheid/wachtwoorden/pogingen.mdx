@@ -105,6 +105,8 @@ Start je server opnieuw. Staat Sara nog niet in je database, draai dan eerst
 `registreer.py` uit [les 1](site:fullstack/docs/veiligheid/wachtwoorden/startbestand). Maak daarna `pogingen.py`, dat zes
 keer met hetzelfde foute wachtwoord inlogt:
 
+{/* bestand: pogingen.py */}
+
 ```python
 import httpx
 
@@ -186,6 +188,8 @@ een wachtwoord controleert: de hele reeks in één server.
 <Gelukt>
 
 `python pogingen.py` krijgt vijf keer een melding, en de zesde keer een `429`:
+
+{/* draai: pogingen.py */}
 
 ```text
 Poging 1: 200 {'bericht': 'Naam of wachtwoord klopt niet'}

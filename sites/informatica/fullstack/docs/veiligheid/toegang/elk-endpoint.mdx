@@ -57,6 +57,8 @@ Daarna pas gaan ze weg. Bij een gewone dictionary mag je niets weghalen terwijl 
 
 Maak een script `test_wissen.py`, waarin Alex alles wist:
 
+{/* bestand: test_wissen.py */}
+
 ```python
 import httpx
 
@@ -80,12 +82,16 @@ for bericht in alex.get("/berichten").json().values():
 print(f"Nog in het gastenboek: {namen}")
 ```
 
+{/* weg: gastenboek.db sessies.db gebruikers.db */}
+
 Gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, start de server
 opnieuw, en draai het script.
 
 <Gelukt>
 
 Het script print:
+
+{/* draai: test_wissen.py */}
 
 ```text
 {'bericht': 'Jouw berichten zijn gewist'}

@@ -38,6 +38,12 @@ weg en draai `registreer.py` en `lees_database.py` opnieuw. Maak daarna een
 scriptje `inloggen.py` dat drie pogingen doet: Sara met haar wachtwoord, Sara
 met een letter ernaast, en Bob, die geen account heeft:
 
+{/* weg: gebruikers.db */}
+
+{/* draai-ook: registreer.py */}
+
+{/* bestand: inloggen.py */}
+
 ```python
 import httpx
 
@@ -85,6 +91,8 @@ Les 5 en 6 veranderen niets aan je server; in les 7 gaat `/registreer` weer om.
 
 `python lees_database.py` toont codes in plaats van wachtwoorden:
 
+{/* draai: lees_database.py */}
+
 ```text
 sara: 2a5c5f2623024ce3de6fe7dc8f5e13ca55b7aadc13174254b40af574e37018c1
 alex: 9c6514b2297031c14bc3968b0dc45fc0ca22d6795a835f5abc8c08a9eb6d250d
@@ -92,6 +100,8 @@ noor: 2a5c5f2623024ce3de6fe7dc8f5e13ca55b7aadc13174254b40af574e37018c1
 ```
 
 En `python inloggen.py` laat alleen Sara met haar eigen wachtwoord binnen:
+
+{/* draai: inloggen.py */}
 
 ```text
 sara, welkom123: Ingelogd

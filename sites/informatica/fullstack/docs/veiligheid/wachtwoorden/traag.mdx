@@ -20,6 +20,8 @@ expres traag zijn, zoals **Argon2**. Installeer hem met
 Dit script, `meten.py`, rekent eerst honderdduizend `sha256`-hashes uit, en
 daarna twintig Argon2-hashes, en zegt hoeveel er per seconde lukken:
 
+{/* bestand: meten.py */}
+
 <CodeUitleg>
 
 ```python showLineNumbers
@@ -61,6 +63,8 @@ Een `PasswordHasher` rekent Argon2-hashes uit. In les 7 gebruik je hem in je ser
 
 `python meten.py` print na een paar seconden twee regels. Op de computer
 waarop deze les is getest, was dat:
+
+{/* draai: meten.py; vrij: \d+(?= per seconde) */}
 
 ```text
 sha256: 2194629 per seconde
