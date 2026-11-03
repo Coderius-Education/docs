@@ -1,5 +1,5 @@
 ---
-sidebar_label: '1. Wat een verzoek kost'
+sidebar_label: '2. Wat een verzoek kost'
 description: Elk verzoek kost je server werk en tijd. Meet met httpx hoe lang één antwoord van je eigen server duurt.
 ---
 
@@ -11,41 +11,14 @@ description: Elk verzoek kost je server werk en tijd. Meet met httpx hoe lang é
   ]}
 />
 
-:::note[Waar je werkt]
-Maak voor deze reeks een nieuwe map `veiligheid-dos`, naast je eigen
-project, en open die in VS Code. De server en de scripts van deze reeks komen daarin. Zo blijft je eigen gastenboek heel. Aan
-het eind van de reeks pas je het geleerde toe op je eigen project.
-
-Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
-:::
-
-Je begint met het kleinste endpoint dat er is, een dat op een `GET`-verzoek
-reageert. Zet dit in `main.py` in die map:
-
-```python
-from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/")
-async def root():
-    return {"bericht": "Hallo wereld!"}
-```
-
-Voor jou is dat één regel in de adresbalk. Voor je server is het werk: het
+Je server uit [les 1](site:fullstack/docs/veiligheid/dos/startbestand) antwoordt
+op `GET /`. Voor jou is dat één regel in de adresbalk. Voor je server is het werk: het
 verzoek komt binnen, FastAPI zoekt welke functie erbij hoort, die functie
 draait, en het antwoord gaat terug. Pas daarna is de server klaar met dit
 verzoek. Een server heeft dus een grens aan hoeveel verzoeken hij per seconde
-aankan. Die grens meet je in deze les.
+aankan. Hoe lang één verzoek duurt, meet je met een script.
 
 ## Eén verzoek meten
-
-:::danger[Alleen je eigen server]
-Stuur de verzoeken in deze reeks **uitsluitend** naar je eigen server op
-`127.0.0.1`. Dat adres wijst altijd naar je eigen computer en verlaat het
-netwerk niet. Een ander zijn server bestoken met verzoeken is een aanval, en
-strafbaar, ook als het "maar een testje" is.
-:::
 
 Start je server met `fastapi dev main.py`. Maak daarnaast een los bestand
 `meet.py`. Het speelt de rol van bezoeker, met `httpx`, zoals in
@@ -78,20 +51,25 @@ De statuscode en de inhoud van het antwoord. 200 betekent gelukt.
 </CodeUitleg>
 
 Draai het in een tweede terminal, terwijl je server in de eerste blijft
-draaien. De uitvoer ziet er zo uit:
+draaien.
 
-```
+<Gelukt>
+
+Het script print drie regels:
+
+```text
 200
 {'bericht': 'Hallo wereld!'}
 2.3 milliseconden
 ```
 
 Het laatste getal is bij jou anders, en ook elke keer dat je het script draait.
+In de terminal van je server staat een nieuwe regel met `GET /` en `200`.
+
+</Gelukt>
+
 Een milliseconde is een duizendste van een seconde, dus een paar milliseconden
 is heel kort.
-
-Kijk ook in de terminal van je server. Daar staat een nieuwe regel met
-`GET /` en `200`: je server houdt bij dat hij een verzoek heeft beantwoord.
 
 ## Wat dat getal betekent
 
@@ -104,7 +82,20 @@ geen antwoord meer.
 Een endpoint dat meer doet, bijvoorbeeld alle berichten uit de database halen,
 kost meer tijd per verzoek. Dan ligt de grens lager.
 
+<Voorspel soort="Controlevraag" vraag="Er komen meer verzoeken binnen dan je server per seconde kan beantwoorden. Wat merkt een bezoeker dan?">
+  <Keuze goed uitleg="Je server werkt de verzoeken een voor een af. Wat niet meteen past, wacht, en wie te lang wacht, krijgt geen antwoord.">Zijn verzoek moet wachten, en duurt het te lang, dan krijgt hij geen antwoord</Keuze>
+  <Keuze uitleg="Je server weigert nog niets: er staat nergens een grens in je code. Hij raakt alleen achter.">Hij krijgt meteen een foutmelding met een statuscode die zegt dat het te druk is</Keuze>
+  <Keuze uitleg="Elk verzoek kost je server dezelfde hoeveelheid werk. Meer verzoeken maken hem niet sneller.">Niets, want je server werkt de verzoeken dan sneller af dan normaal</Keuze>
+  <Uitleg>
+
+  Een server heeft een grens. Daarboven loopt hij achter, en dan merken de bezoekers het: eerst als wachten, daarna als geen antwoord.
+
+  </Uitleg>
+</Voorspel>
+
 ## Er gaat iets mis
+
+### Connection refused
 
 ```
 httpx.ConnectError: [Errno 111] Connection refused
@@ -157,21 +148,4 @@ Python dan nog dingen moet inladen.
 
 </details>
 
-<details>
-<summary>Zo ziet je `main.py` er nu uit</summary>
-
-```python
-from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/")
-async def root():
-    return {"bericht": "Hallo wereld!"}
-```
-
-Dit is de beginstand. In les 4 komt er een limiet bij.
-
-</details>
-
-Door naar [les 2: DoS en DDoS](site:fullstack/docs/veiligheid/dos/dos-en-ddos).
+Door naar [les 3: zelf twintig verzoeken](site:fullstack/docs/veiligheid/dos/zelf-meten).

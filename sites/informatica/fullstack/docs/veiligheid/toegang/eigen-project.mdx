@@ -1,19 +1,124 @@
 ---
-sidebar_label: '5. In je eigen project'
-description: Loop in je eigen project elk endpoint langs dat iets verandert of verwijdert, en zorg dat het zelf controleert of de bezoeker het mag.
+sidebar_label: '6. In je eigen project'
+description: Test je eigen gastenboek met een script als een andere bezoeker, en loop elk endpoint langs dat iets verandert of verwijdert.
 ---
 
 # Wie mag wat: in je eigen project
 
 In deze reeks zag je dat een knop geen slot is, dat de controle in het
 endpoint hoort, dat hij moet kijken naar wat de server weet, en dat elk endpoint
-er een nodig heeft. Loop je gastenboek, of een eigen project dat je bouwde,
-daarop na.
+er een nodig heeft. Nu test je je eigen gastenboek op dezelfde manier als de
+server van deze reeks.
 
 :::tip
 Werk in je eigen project, niet in de map `veiligheid-toegang`. Test daarna met
 je eigen server op `127.0.0.1`.
 :::
+
+## Alex in je eigen gastenboek
+
+In je gastenboek verwijdert `POST /verwijderen` een bericht, met de sleutel uit
+een verborgen veld, zoals in
+[Een bericht verwijderen: een verborgen veld](site:fullstack/docs/FastAPI/berichten-verwijderen/verwijderen).
+Start je eigen server en schrijf in je browser een bericht als Sara, of als een
+ander account. Zoek in het tabblad **Elementen** bij dat bericht het verborgen
+veld `<input type="hidden" name="sleutel" value="bericht_…">`, en kopieer de
+waarde.
+
+Maak in de map van je project een script `test_eigen.py`. Het logt in als Alex
+en probeert het bericht van Sara te verwijderen. Zet bij `sleutel` de waarde die
+je kopieerde:
+
+```python
+import httpx
+
+alex = httpx.Client(base_url="http://127.0.0.1:8000")
+alex.post("/registreer", data={"naam": "Alex", "wachtwoord": "maan456"})
+print("Inloggen:", alex.post("/inloggen", data={"naam": "Alex", "wachtwoord": "maan456"}).status_code)
+
+sleutel = "bericht_1767000000000000000"
+print("Verwijderen:", alex.post("/verwijderen", data={"sleutel": sleutel}).status_code)
+```
+
+Inloggen geeft `303`: je gastenboek stuurt je door, zoals na elk formulier.
+Draai het script.
+
+<Gelukt>
+
+Het script print:
+
+```text
+Inloggen: 303
+Verwijderen: 403
+```
+
+Alex mag het bericht van Sara niet verwijderen, en in je browser staat het er
+nog.
+
+</Gelukt>
+
+<Voorspel soort="Controlevraag" vraag="Je script als Alex krijgt 403 bij /verwijderen. Is je gastenboek daarmee af?">
+  <Keuze uitleg="De controle zit nu in één endpoint. Wat deed Alles wissen in les 5 zonder eigen grens?">Ja, want de controle zit nu op de server</Keuze>
+  <Keuze goed uitleg="Elk endpoint dat iets verandert, heeft zijn eigen controle nodig. Dit script test er maar één.">Nee, elk ander endpoint dat iets verandert, test je apart</Keuze>
+  <Keuze uitleg="Een verborgen knop is een hulp, geen slot. Het script gebruikte de knop niet eens.">Pas als de knop ook verborgen is</Keuze>
+  <Uitleg>
+
+  Eén `403` laat zien dat één endpoint controleert. Een gastenboek heeft er meer die iets veranderen, en elk ervan kan het vergeten. Daarom loop je ze in de opdracht hieronder allemaal langs.
+
+  </Uitleg>
+</Voorspel>
+
+## Er gaat iets mis
+
+### Verwijderen: 303
+
+Het script print `Verwijderen: 303`, en het bericht van Sara is weg.
+
+**Oorzaak:** je `POST /verwijderen` heeft nog geen controle. Hij verwijdert elk
+bericht waarvan hij de sleutel krijgt, en stuurt de bezoeker daarna door.
+
+**Oplossing:** zet `sessie_id: str = Cookie(default="")` naast `sleutel`, en
+zet in de functie de controle vóór de `del`, zoals in
+[opdracht 5 van Sessies](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen).
+Binnen de functie staat dan:
+
+```python
+with SqliteDict("sessies.db") as sessies:
+    mijn = sessies.get(sessie_id, {})
+with SqliteDict("gastenboek.db") as db:
+    if sleutel in db:
+        if db[sleutel]["naam"] != mijn.get("naam"):
+            raise HTTPException(status_code=403, detail="Dit is niet jouw bericht")
+        del db[sleutel]
+        db.commit()
+```
+
+De `return RedirectResponse(...)` eronder blijft.
+
+### Inloggen: 401
+
+Het script print `Inloggen: 401`. Dan zegt de `403` daarna niets: zonder sessie
+weigert de controle iedereen, ook de eigenaar.
+
+**Oorzaak:** Alex bestaat al in je `gebruikers.db`, met een ander wachtwoord.
+Het registreren gaf dan `400 Deze naam is al bezet`, en het script ging verder.
+
+**Oplossing:** gebruik in het script het wachtwoord dat Alex al heeft, of een
+naam die nog niet bestaat.
+
+### Verwijderen: 404
+
+**Oorzaak:** je project heeft geen `POST /verwijderen`. Bouwde je het
+htmx-recept Verwijderen, dan heet het endpoint `DELETE /bericht/{sleutel}`.
+
+**Oplossing:** vervang de laatste regel van het script door:
+
+```python
+print("Verwijderen:", alex.delete(f"/bericht/{sleutel}").status_code)
+```
+
+Krijg je daar `200` en is het bericht weg, zet dan de controle erin zoals in de
+opdracht hieronder.
 
 ## Opdracht
 
@@ -71,9 +176,17 @@ with SqliteDict("gastenboek.db") as db:
 De `return HTMLResponse("")` eronder blijft.
 
 Bij een `403` laat htmx de pagina met rust: het bericht blijft staan, en in
-**Netwerk** zie je een rode regel. Kijk daarna of elk ander endpoint dat iets
-verandert, zoals Alles wissen, de controle ook heeft.
+**Netwerk** zie je een rode regel.
+
+Heb je een knop Alles wissen, dan krijgt `alles_wissen` dezelfde grens als in
+[les 5](site:fullstack/docs/veiligheid/toegang/elk-endpoint). In je gastenboek
+gaf die functie uit het htmx-overzicht de lijst-template terug, met een lege
+lijst. Houd die `TemplateResponse` en de parameter `request: Request`, en zet
+`sessie_id: str = Cookie(default="")` ernaast. Lees na het wissen, nog in het
+`with`-blok, wat er over is met `alle_berichten = list(db.items())`, en geef
+`{"berichten": alle_berichten}` mee in plaats van `{"berichten": []}`: de
+berichten van anderen blijven staan.
 
 </details>
 
-Door naar [les 6: in de praktijk](site:fullstack/docs/veiligheid/toegang/praktijk).
+Door naar [les 7: in de praktijk](site:fullstack/docs/veiligheid/toegang/praktijk).

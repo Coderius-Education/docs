@@ -11,7 +11,7 @@ description: Stuur met een for-loop twintig verzoeken naar je eigen server en zi
   ]}
 />
 
-In [les 1](site:fullstack/docs/veiligheid/dos/verzoek) mat je één verzoek. Nu stuur je er twintig achter elkaar
+In [les 2](site:fullstack/docs/veiligheid/dos/verzoek) mat je één verzoek. Nu stuur je er twintig achter elkaar
 naar je eigen server, en tel je hoeveel er antwoord krijgen.
 
 ## Twintig verzoeken
@@ -56,8 +56,17 @@ Draai het in een tweede terminal:
 python test_verzoeken.py
 ```
 
-Je ziet twintig regels met `status 200`, en aan het eind `Gelukt: 20 van de 20`.
+<Gelukt>
+
+Je ziet twintig regels met `status 200`, en aan het eind:
+
+```text
+Gelukt: 20 van de 20
+```
+
 In de terminal van je server staan twintig regels met `GET /`, één per verzoek.
+
+</Gelukt>
 
 ## Dit is de zwakheid
 
@@ -65,20 +74,40 @@ Twintig verzoeken zijn niets voor je server. Maar elk verzoek krijgt
 antwoord, hoe vaak het ook komt en van wie. Er is niets in je
 server dat zegt "zo is het wel genoeg". Zet in gedachten `range(20)` op
 `range(20000)`, en laat dat door duizend computers tegelijk doen: zo ziet een
-DDoS eruit, alleen groter. In [les 4](site:fullstack/docs/veiligheid/dos/limiet) zet je er een grens op.
+aanval eruit. Wat zo'n aanval is, zie je in [les 4](site:fullstack/docs/veiligheid/dos/dos-en-ddos), en in
+[les 5](site:fullstack/docs/veiligheid/dos/limiet) zet je er een grens op.
+
+<Voorspel soort="Controlevraag" vraag="Je script krijgt 20 van de 20. Wat zegt dat over je server?">
+  <Keuze goed uitleg="Er staat nergens in je code een grens. Elk verzoek dat binnenkomt, krijgt antwoord.">Hij beantwoordt elk verzoek, hoe vaak het ook komt en van wie</Keuze>
+  <Keuze uitleg="Twintig verzoeken na elkaar zijn niets. Over duizenden tegelijk zegt deze test nog niets.">Hij is snel genoeg om elke aanval aan te kunnen</Keuze>
+  <Keuze uitleg="Je server weet niet wie een verzoek stuurt, en vraagt er ook niet naar. Hij beantwoordt alles.">Hij herkent je script als een bezoeker die hij vertrouwt</Keuze>
+  <Uitleg>
+
+  Dat alles lukt, is hier de zwakheid: je server zegt nooit "zo is het wel genoeg". Een grens moet je er zelf in zetten.
+
+  </Uitleg>
+</Voorspel>
 
 ## Er gaat iets mis
 
-Je ziet `Gelukt: 0 van de 20`, of het script stopt meteen met een
-`ConnectError`.
+### Gelukt: 0 van de 20
 
-**Oorzaak:** bij `0 van de 20` klopt het adres niet: elk verzoek krijgt een
-404, bijvoorbeeld omdat er een pad als `/test` in `adres` staat terwijl je
-server alleen `/` kent. Bij een `ConnectError` draait je server niet, zoals in
-les 1.
+Elke regel zegt `status 404`, en aan het eind staat `Gelukt: 0 van de 20`.
+
+**Oorzaak:** het adres klopt niet, bijvoorbeeld omdat er een pad als `/test`
+in `adres` staat terwijl je server alleen `/` kent.
 
 **Oplossing:** open `http://127.0.0.1:8000/` in je browser. Zie je daar
 `Hallo wereld!`, zet dan precies dat adres in `adres`.
+
+### ConnectError
+
+Het script stopt meteen met een `httpx.ConnectError`.
+
+**Oorzaak:** je server draait niet, zoals in [les 2](site:fullstack/docs/veiligheid/dos/verzoek).
+
+**Oplossing:** start je server in de eerste terminal met `fastapi dev main.py`,
+en draai het script opnieuw.
 
 ## Opdrachten
 
@@ -106,26 +135,10 @@ Gelukt: 50 van de 20
 ```
 
 Het getal 20 staat vast in de laatste `print`. Pas je dat aan naar 50, dan
-staat er `Gelukt: 50 van de 50`. Je server ligt niet plat, want verzoeken na elkaar
-van één computer zijn niet genoeg, zoals in [les 2](site:fullstack/docs/veiligheid/dos/dos-en-ddos).
+staat er `Gelukt: 50 van de 50`. Je server ligt niet plat: hij beantwoordt
+elk verzoek voordat het volgende komt. Waarom één computer daar niets aan
+verandert, zie je in [les 4](site:fullstack/docs/veiligheid/dos/dos-en-ddos).
 
 </details>
 
-### Opdracht 2: Investigate - Merkt een bezoeker iets?
-
-Zet `range(20)` op `range(500)`. Open tijdens het draaien je startpagina in de
-browser. Krijg je hem te zien?
-
-<details>
-<summary>Antwoord</summary>
-
-Ja. Je browser is één verzoek extra tussen de vijfhonderd, en je server
-beantwoordt ze allemaal. Om een echte bezoeker buiten te sluiten, moet de
-server zó druk zijn dat hij achterloopt, en dat lukt niet met verzoeken na
-elkaar vanaf één laptop. Dat
-is geruststellend, maar het betekent ook dat je server niet uit zichzelf
-ingrijpt.
-
-</details>
-
-Door naar [les 4: een limiet met slowapi](site:fullstack/docs/veiligheid/dos/limiet).
+Door naar [les 4: DoS en DDoS](site:fullstack/docs/veiligheid/dos/dos-en-ddos).

@@ -138,17 +138,28 @@ script straks Sara en Alex tegelijk je gastenboek bezoeken.
 
 ## Er gaat iets mis
 
-### `Request URL is missing an 'http://' or 'https://' protocol`
+### De `Client` telt niet door
 
+Ook de `Client` print drie keer `{'bezoek': 1}`.
+
+**Oorzaak:** je maakt de `Client` binnen de for-lus:
+
+```python
+# FOUT
+for i in range(3):
+    bezoeker = httpx.Client(base_url="http://127.0.0.1:8000")
+    print(bezoeker.get("/bezoek").json())
+
+# GOED
+bezoeker = httpx.Client(base_url="http://127.0.0.1:8000")
+for i in range(3):
+    print(bezoeker.get("/bezoek").json())
 ```
-httpx.UnsupportedProtocol: Request URL is missing an 'http://' or 'https://' protocol.
-```
 
-**Oorzaak:** je gaf alleen het pad, zoals `httpx.get("/bezoek")`. Alleen een
-`Client` met `base_url` weet bij welke server dat pad hoort.
+Elke ronde maakt dan een nieuwe bezoeker, zonder de cookie van de vorige.
 
-**Oplossing:** gebruik je `Client`, zoals `bezoeker.get("/bezoek")`, of geef
-`httpx.get` het hele adres met `http://127.0.0.1:8000` ervoor.
+**Oplossing:** maak de `Client` één keer, boven de lus, en gebruik hem in de
+lus.
 
 ### `Method Not Allowed` op /groet
 
