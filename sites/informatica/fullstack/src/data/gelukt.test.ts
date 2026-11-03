@@ -17,9 +17,28 @@ const reeksen = (sidebars.veiligheidSidebar as unknown as (string | Categorie)[]
   .filter((c): c is Categorie => typeof c !== 'string' && c.type === 'category')
   .map((c) => c.items.map((id) => id.slice('veiligheid/'.length)));
 
-const MARKER = /\{\/\*\s*(bestand|weg|draai|draai-ook|open|gelukt-met-de-hand):\s*(.*?)\s*\*\/\}/g;
+// De soorten markers leest de test uit de runner zelf, zodat een nieuwe soort
+// daar niet stil buiten deze test valt.
+const RUNNER = readFileSync(new URL('../gelukt/draai.py', import.meta.url), 'utf8');
+const SOORTEN =
+  RUNNER.match(/MARKER = re\.compile\(\s*r"[^(]*\(([a-z|-]+)\)/)?.[1].split('|') ?? [];
+const MARKER = new RegExp(`\\{/\\*\\s*(${SOORTEN.join('|')}):\\s*(.*?)\\s*\\*/\\}`, 'g');
+// Andere markers in de lessen, voor de compileercheck en de tests.
+const ANDERE = [
+  'niet-compileren',
+  'route-dubbel',
+  'onveilig-voorbeeld',
+  'stijl-uitzondering',
+  'stijl-uitzondering-bestand',
+];
 
 describe('elk Gelukt-blok in Veiligheid wordt nagedaan', () => {
+  it('de test kent de soorten markers van de runner', () => {
+    expect(SOORTEN).toEqual(
+      expect.arrayContaining(['bestand', 'draai', 'open', 'gelukt-met-de-hand']),
+    );
+  });
+
   for (const lessen of reeksen) {
     const reeks = lessen[0].split('/')[0];
     it(reeks, () => {
@@ -30,15 +49,18 @@ describe('elk Gelukt-blok in Veiligheid wordt nagedaan', () => {
         for (const m of tekst.matchAll(MARKER)) {
           const [soort, waarde] = [m[1], m[2]];
           const script = waarde.split(';')[0].trim();
-          if (soort === 'bestand') bestanden.add(waarde);
+          if (['bestand', 'erbij', 'bovenaan', 'vervang'].includes(soort)) bestanden.add(waarde);
           if ((soort === 'draai' || soort === 'draai-ook') && !bestanden.has(script))
             fout.push(`${les}: ${script} draait voordat het als bestand is neergezet`);
           if (soort === 'gelukt-met-de-hand' && waarde.length < 10)
             fout.push(`${les}: met de hand zonder reden`);
         }
+        for (const [, soort] of tekst.matchAll(/\{\/\*\s*([a-z-]+):/g))
+          if (!SOORTEN.includes(soort) && !ANDERE.includes(soort))
+            fout.push(`${les}: onbekende marker ${soort} (een tikfout slaat de runner stil over)`);
         const blok = tekst.match(/^<Gelukt>$([\s\S]*?)^<\/Gelukt>$/m)?.[1] ?? '';
         const hoe = [...blok.matchAll(MARKER)].filter((m) =>
-          ['draai', 'open', 'gelukt-met-de-hand'].includes(m[1]),
+          ['draai', 'open', 'verstuur', 'gelukt-met-de-hand'].includes(m[1]),
         );
         if (hoe.length === 0) fout.push(`${les}: het Gelukt-blok zegt niet hoe het nagedaan wordt`);
       }
