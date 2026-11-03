@@ -38,13 +38,17 @@ Via **Trig** stuurt de microcontroller een kort signaaltje. Daardoor zendt de se
 
 ## Aansluiten
 
-![Aansluitschema van de afstandssensor op de Nano RP2040 Connect](./img/afstandssensor/nano_rp2040_hcsr04_bb.svg)
 ![Overzicht van de pinnen van de Arduino Nano RP2040 Connect](/img/pinout_nano_rp2040_connect.png)
 
 - **VCC** van de sensor aan **3.3V**
 - **GND** van de sensor aan **GND**
-- **Trig** aan een digitale pin, bijvoorbeeld **D19**
-- **Echo** aan een digitale pin, bijvoorbeeld **D18**
+- **Trig** aan een digitale pin, bijvoorbeeld **D7**
+- **Echo** aan een digitale pin, bijvoorbeeld **D8**
+
+Kies voor Trig en Echo een gewone D-pin. D18 en D19 (de pinnen A4 en A5) werken
+niet: in MicroPython lopen die via de wifi-chip, en dat is te traag om de echo
+te timen. Bovendien zijn ze nodig voor I2C, als je een TOF of OLED-scherm
+gebruikt.
 
 ## Code
 
@@ -53,7 +57,7 @@ from time import sleep
 from leaphymicropython.sensors.sonar import read_distance
 
 while True:
-    print(read_distance(19, 18))
+    print(read_distance("D7", "D8"))
     sleep(1)
 ```
 
@@ -62,11 +66,18 @@ Je krijgt nu elke seconde de afstand in **centimeters** in de Shell te zien.
 ### Uitleg
 
 ```python
-read_distance(19, 18)
+read_distance("D7", "D8")
 ```
 
-- Eerste getal: pin van **Trig** (`D19`).
-- Tweede getal: pin van **Echo** (`D18`).
+- Eerste naam: de pin van **Trig** (`D7`).
+- Tweede naam: de pin van **Echo** (`D8`).
+- Schrijf de namen tussen aanhalingstekens. Een kaal getal als `7` betekent voor
+  MicroPython iets anders: het nummer van een aansluiting op de chip (GPIO7), en
+  dat is hier de pin D11.
+
+Komt er geen echo terug, omdat er niets voor de sensor staat of een draad los
+zit, dan geeft `read_distance` het getal **1313.0**. Dat is geen afstand van
+13 meter, maar een teken dat de meting mislukte.
 
 <details>
 <summary>Opdracht: lampje bij obstakel</summary>
@@ -93,7 +104,7 @@ from leaphymicropython.sensors.sonar import read_distance
 led = Pin('LED_RED', Pin.OUT)
 
 while True:
-    afstand = read_distance(19, 18)
+    afstand = read_distance("D7", "D8")
     if afstand < 10:
         led.value(0)  # AAN
     else:

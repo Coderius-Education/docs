@@ -19,6 +19,7 @@ Wat heb je nodig?
 
 1. Arduino Nano RP2040 Connect
 2. Een **LED-lampje** (extern, met twee pootjes)
+3. Een **weerstand** van 220 Ω
 
 ![Tekening van een LED met een lang en een kort pootje](./img/led/led.png)
 
@@ -45,8 +46,13 @@ De **korte** pin (de min, -). De **lange** pin gaat naar een digitale uitgang va
 
 Verbind:
 
-- **Lange pin** (plus) van de LED aan **D7**
+- **D7** aan de weerstand, en de weerstand aan de **lange pin** (plus) van de LED
 - **Korte pin** (min) van de LED aan een **GND**-pin
+
+De weerstand staat niet op de tekening, maar laat hem niet weg. Zonder weerstand
+trekt de LED meer stroom dan een pin hoort te leveren. Hij brandt dan wel, maar
+de LED of de pin kan stukgaan. Welke kant van de weerstand waar zit, maakt niet
+uit.
 
 ## Code
 
@@ -62,7 +68,7 @@ Als alles goed is aangesloten, brandt je lampje nu.
 ### Uitleg
 
 - `Pin('D7', Pin.OUT)` zegt: gebruik pin **D7** als uitgang.
-- `.on()` zet de pin op 3,3V, waardoor er stroom door de LED loopt en hij gaat branden.
+- `.on()` zet de pin op 3,3V, waardoor er stroom door de weerstand en de LED loopt en de LED gaat branden.
 
 <details>
 <summary>Opdracht: lampje uitzetten</summary>

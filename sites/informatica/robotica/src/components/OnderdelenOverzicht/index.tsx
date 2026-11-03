@@ -24,7 +24,7 @@ type Props = { kort?: string; foto?: string; aansluiting?: string; hulp?: boolea
 type Context = (pad: string) => string | { default: string };
 const fotoContext = (
   require as unknown as { context: (map: string, diep: boolean, filter: RegExp) => Context }
-).context('@site/docs/onderdelen/img', true, /\.(png|jpe?g)$/i);
+).context('@site/docs/onderdelen/img', true, /\.(png|jpe?g|svg)$/i);
 
 function fotoUrl(pad: string | undefined): string | undefined {
   if (!pad) return undefined;

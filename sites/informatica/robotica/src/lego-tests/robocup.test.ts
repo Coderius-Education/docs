@@ -74,9 +74,10 @@ describe('RoboCup Junior', () => {
     expect(fout).toEqual([]);
   });
 
-  it('geen ultrasone sensor op de pinnen van I2C', () => {
-    // read_distance(19, 18) zit op A5 en A4, waar de multiplexer met de TOF en
-    // het OLED-scherm aan hangt. Op de RoboCup-robot is de TOF de standaard.
+  it('de afstand komt van een TOF, niet van een ultrasone sensor', () => {
+    // Op de RoboCup-robot is de TOF op de multiplexer de standaard: hij kost
+    // geen pinnen en meet preciezer. Een ultrasone sensor heeft twee eigen
+    // D-pinnen nodig (zie docs/onderdelen/afstandssensor.mdx).
     const fout = paginas.filter((p) => /read_distance\(/.test(p.tekst)).map((p) => p.bestand);
     expect(fout).toEqual([]);
   });

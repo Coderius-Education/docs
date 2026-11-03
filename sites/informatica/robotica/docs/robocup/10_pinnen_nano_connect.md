@@ -22,10 +22,10 @@ Het Fritzing-bestand: [Fritzing Redden Basis](/docs/redden_basis.fzz).
 - De andere D-pinnen: vrij voor een servo, een buzzer of de draadjes voor
   de aluminiumtape.
 
-Een ultrasone afstandssensor heeft twee digitale pinnen nodig. De code bij
-[Afstandssensor](site:robotica/docs/onderdelen/afstandssensor) gebruikt pin 18
-en 19, en dat zijn A4 en A5. In een robot met een multiplexer gebruik je daarom
-een [TOF](site:robotica/docs/onderdelen/tof#met-mux).
+Een ultrasone afstandssensor heeft twee gewone D-pinnen nodig, bijvoorbeeld D7
+en D8 (zie [Afstandssensor](site:robotica/docs/onderdelen/afstandssensor)). Een
+[TOF](site:robotica/docs/onderdelen/tof#met-mux) op de multiplexer kost geen
+pinnen, en daarom is dat op deze robot de standaard.
 
 <details>
 <summary>Controlevraag</summary>

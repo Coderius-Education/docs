@@ -30,6 +30,6 @@ Hoeveel volt verwacht je in totaal als je **6 volle AA-batterijen** in serie zet
 <details>
 <summary>Antwoord</summary>
 
-Ongeveer **9V**: 6 × 1,5V.
+Ongeveer **9V**: 6 × 1,5V. Met oplaadbare batterijen is het minder, ongeveer 7,5V.
 
 </details>

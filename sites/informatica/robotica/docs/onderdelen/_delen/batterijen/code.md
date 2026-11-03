@@ -7,6 +7,14 @@ Zonder USB-kabel kan niemand op **Run** drukken. De code moet dus al **op de mic
 
 :::
 
+:::tip[Met de online editor]
+
+Gebruik je de [online editor](site:robotica/editor)? Dan staat je code na
+**Run op board** al als `main.py` op de microcontroller. Je kunt dan meteen naar
+[Klaar](#klaar). De stappen hieronder zijn voor Thonny.
+
+:::
+
 ### Stap 1: kies de juiste interpreter
 
 Kijk rechtsonder in Thonny. Daar moet **MicroPython (RP2040)** staan.
@@ -23,12 +31,12 @@ Klik rechtsonder en kies **MicroPython (RP2040)** uit de lijst. Zie je hem niet?
 Onderin Thonny zie je de **Shell** (REPL). Als de verbinding goed is, zie je zoiets:
 
 ```
-MicroPython v1.20.0 on 2023-04-26; Arduino Nano RP2040 Connect with RP2040
+MicroPython v1.28.0 on 2026-04-06; Arduino Nano RP2040 Connect with RP2040
 Type "help()" for more information.
 >>>
 ```
 
-Het belangrijkste is dat je de `>>>`-prompt ziet.
+Het versienummer en de datum kunnen bij jou anders zijn. Het belangrijkste is dat je de `>>>`-prompt ziet.
 
 <details>
 <summary>Ik zie geen >>> prompt</summary>
@@ -67,13 +75,14 @@ Het moet precies **`main.py`** zijn. Niet `Main.py`, niet `main.PY`, niet `mijn_
 
 :::
 
-:::warning[Vergeet de while-loop niet]
+:::warning[Moet je robot blijven rijden?]
 
-Zorg dat je code een `while True:`-loop heeft. Anders voert de microcontroller je code één keer uit en stopt.
+`main.py` loopt één keer van boven naar beneden, en dan is hij klaar. Moet je
+robot blijven rijden en meten, zet dat deel dan in een `while True:`-lus.
 
 :::
 
-### Klaar
+### Klaar \{#klaar}
 
 Koppel de USB-kabel los, zet de batterijhouder op **ON**, en je robot werkt zelfstandig.
 

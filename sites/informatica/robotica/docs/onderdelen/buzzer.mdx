@@ -66,28 +66,42 @@ Nee. De buzzer moet aan een **digitale pin** zitten, zodat je hem vanuit je code
 
 ## Code
 
-Met de **leaphymicropython**-bibliotheek kun je in één regel een toon afspelen.
+Een buzzer maakt geluid als je zijn pin heel snel aan en uit zet. Dat doet
+**PWM** uit `machine`: hoe vaak per seconde de pin aan en uit gaat, is de
+toonhoogte.
 
 ### Voorbeeld
 
 ```python
-from leaphymicropython.actuators.buzzer import set_buzzer
+from machine import Pin, PWM
 from time import sleep
 
-set_buzzer(6, 128, 440)  # pin D6, half volume, 440 Hz (een A)
+buzzer = PWM(Pin("D6"))
+buzzer.freq(440)
+buzzer.duty_u16(32768)
 sleep(1)
-set_buzzer(6, 0, 440)    # stil
+buzzer.duty_u16(0)
 ```
 
-### Uitleg van `set_buzzer`
+Je hoort één seconde een toon van 440 Hz (een A) en daarna is het stil.
 
-```python
-set_buzzer(pin_number, pwm_value, frequency)
-```
+### Uitleg
 
-- **pin_number**: het pinnummer waar de buzzer op zit (bijvoorbeeld `6` voor `D6`).
-- **pwm_value**: het volume, een getal tussen `0` en `255`. `0` is stil, `255` is keihard.
-- **frequency**: de toonhoogte in Hertz. Lager = lagere toon. Hoger = hogere toon.
+- `PWM(Pin("D6"))` maakt van pin **D6** een PWM-pin. De naam staat tussen
+  aanhalingstekens, zoals hij op het bord staat.
+- `buzzer.freq(440)` kiest de **toonhoogte** in hertz: hoe vaak per seconde de
+  pin aan en uit gaat. Lager getal, lagere toon.
+- `buzzer.duty_u16(32768)` kiest hoe lang de pin per keer aan staat, tussen
+  `0` en `65535`. Met `32768` staat hij de helft van de tijd aan: dan klinkt de
+  buzzer het hardst. Met `0` is hij stil.
+
+:::note[Waarom niet `set_buzzer`?]
+
+De bibliotheek leaphymicropython heeft ook `set_buzzer`, maar die accepteert nu
+alleen toonhoogtes tot 255 Hz, en dan hoor je vooral gebrom. Daarom gebruik je
+hier `PWM` uit `machine`.
+
+:::
 
 <details>
 <summary>Opdracht: piepje van 1 seconde</summary>
@@ -99,7 +113,7 @@ Laat de buzzer op pin **D6** precies **1 seconde** een toon van 1000 Hz spelen e
 <details>
 <summary>Tip</summary>
 
-Gebruik `sleep(1)` tussen het aan- en uitzetten van de buzzer. Uitzetten doe je met `set_buzzer(6, 0, 1000)`.
+Verander alleen het getal bij `freq()`. Stil maak je de buzzer met `duty_u16(0)`.
 
 </details>
 
@@ -107,12 +121,14 @@ Gebruik `sleep(1)` tussen het aan- en uitzetten van de buzzer. Uitzetten doe je 
 <summary>Oplossing</summary>
 
 ```python
-from leaphymicropython.actuators.buzzer import set_buzzer
+from machine import Pin, PWM
 from time import sleep
 
-set_buzzer(6, 128, 1000)
+buzzer = PWM(Pin("D6"))
+buzzer.freq(1000)
+buzzer.duty_u16(32768)
 sleep(1)
-set_buzzer(6, 0, 1000)
+buzzer.duty_u16(0)
 ```
 
 </details>

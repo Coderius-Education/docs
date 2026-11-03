@@ -211,11 +211,21 @@ oled.show()
 <details>
 <summary>Oude tekst blijft op het scherm staan</summary>
 
-- Wis eerst met `oled.fill("white")` of `oled.fill("black")`:
+- Maak het scherm eerst leeg met `oled.fill("white")`, en zet daarna de nieuwe tekst erop:
 
 ```python
 oled.fill("white")
 oled.text('Nieuwe tekst', x=0, y=0)
+oled.show()
+```
+
+- Liever een zwart scherm? Gebruik dan `oled.fill("black")` en geef de tekst
+  `color="white"` mee. Tekst is standaard zwart, dus op een zwart scherm zie je
+  hem anders niet.
+
+```python
+oled.fill("black")
+oled.text('Nieuwe tekst', x=0, y=0, color="white")
 oled.show()
 ```
 

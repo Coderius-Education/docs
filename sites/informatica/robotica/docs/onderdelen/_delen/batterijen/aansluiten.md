@@ -2,8 +2,13 @@
 
 Meet met je multimeter (op **DC voltage**) de spanning van iedere AA-batterij.
 
-- **Vol**: ongeveer **1,5V**
-- **Te zwak**: minder dan **1,2V** → vervang die batterij
+| Soort batterij | Vol | Vervangen of opladen onder |
+|---|:---:|:---:|
+| Gewone (alkaline) | ongeveer 1,5V | 1,2V |
+| Oplaadbaar (NiMH) | ongeveer 1,3V | 1,1V |
+
+Een oplaadbare batterij geeft vol al minder dan een gewone. Met zes oplaadbare
+krijg je dus ongeveer 7,5V in plaats van 9V, en dat is genoeg voor het shield.
 
 :::tip[Nog nooit een multimeter gebruikt?]
 
@@ -20,7 +25,7 @@ Zet de multimeter op **DC voltage** (V met een streepje). Rode meetpen op de plu
 
 ### Stap 2: meet de batterijhouder na
 
-Plaats alle batterijen in de houder. Meet de spanning aan de **rode en zwarte draad** die eruit komen. Verwacht: ongeveer **9V**.
+Plaats alle batterijen in de houder. Meet de spanning aan de **rode en zwarte draad** die eruit komen. Verwacht: ongeveer **9V** met gewone batterijen, ongeveer **7,5V** met oplaadbare.
 
 <details>
 <summary>Ik meet een veel lagere spanning</summary>

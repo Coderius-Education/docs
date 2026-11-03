@@ -16,9 +16,16 @@ Pak het zip-bestand uit op je computer. Je hebt nu een map met onder andere de s
 
 ### Stap 3: kopieer naar de microcontroller
 
-1. Druk op de **reset-knop** op je microcontroller.
-2. Maak in Thonny op de microcontroller een map aan met de naam **`lib`**.
-3. Sleep de map **`leaphymicropython`** (vanaf je computer) naar de map **`lib`** op de microcontroller.
+1. Klik in Thonny op **View** → **Files**. Links zie je nu twee lijsten: boven
+   de bestanden op je laptop, onder die op de microcontroller.
+2. Druk op **Stop** in Thonny, zodat er geen programma draait terwijl je
+   bestanden kopieert.
+3. Maak in de onderste lijst een map aan met de naam **`lib`** (rechtermuisknop,
+   **New directory...**), als die er nog niet is, en dubbelklik erop om hem te
+   openen.
+4. Zoek in de bovenste lijst de map **`leaphymicropython`**, klik er met de
+   rechtermuisknop op en kies **Upload to /lib**. In de onderste lijst staat de
+   map daarna in `lib`.
 
 <details>
 <summary>Controlevraag</summary>

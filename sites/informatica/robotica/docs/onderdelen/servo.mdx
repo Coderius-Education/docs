@@ -23,7 +23,7 @@ Wat heb je nodig?
 De servo heeft drie kabels:
 
 - **Bruin** (of zwart): GND
-- **Rood**: VCC (3,3V)
+- **Rood**: VCC, de plus
 - **Oranje** (of geel): stuursignaal
 
 <details>
@@ -48,6 +48,16 @@ De **rode** kabel. De bruine/zwarte kabel gaat naar `GND` en de oranje/gele kabe
 - **Bruin** (GND) aan een **GND**-pin
 - **Rood** (VCC) aan **3.3V**
 - **Oranje** (stuursignaal) aan een digitale pin, bijvoorbeeld **D6**
+
+:::caution[3,3 V is aan de lage kant]
+
+Een MG90 of SG90 is gemaakt voor 4,8 tot 6 V. Op 3,3 V draait hij wel, maar
+zwakker: met een zware grijper kan hij haperen of halverwege blijven staan.
+Start het bord opnieuw op zodra de servo beweegt? Dan trekt hij meer stroom dan
+het bord kan leveren. Vraag je docent dan om een aparte voeding van 5 V voor de
+servo, met de GND van die voeding aan de GND van het bord.
+
+:::
 
 ## Code
 

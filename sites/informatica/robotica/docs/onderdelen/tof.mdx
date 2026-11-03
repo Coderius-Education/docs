@@ -110,8 +110,15 @@ while True:
     sleep(1)
 ```
 
-- Een echte afstand is een getal tussen **0** en ongeveer **8090** (in millimeters).
-- Is het getal **groter dan 8090**? Dan is er geen geldig object: te ver, te dichtbij, niets ervoor, of een storing.
+- Alles tot en met **8090** noemt de bibliotheek een afstand, in millimeters.
+  Betrouwbaar meet de sensor tussen ongeveer **50 en 2000 mm** (5 cm tot 2 m).
+  Daarbuiten krijg je soms nog een getal, maar reken er niet op.
+- Is het getal **groter dan 8090**? Dan is er geen geldige meting:
+  - **8191**: de sensor antwoordt, maar ziet niets binnen bereik (te ver, te
+    dichtbij of niets ervoor);
+  - **boven 9000**: de sensor antwoordt niet, bijvoorbeeld door een losse SDA-
+    of SCL-draad of een verkeerd `channel`. Zie
+    [Er gaat iets mis](site:robotica/docs/onderdelen/er-gaat-iets-mis#tof-sensoren).
 
 <details>
 <summary>Controlevraag</summary>

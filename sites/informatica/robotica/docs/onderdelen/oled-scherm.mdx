@@ -77,6 +77,16 @@ oled.fill("black")  # alles zwart
 oled.show()
 ```
 
+Tekst is standaard **zwart**. Op een wit scherm zie je hem meteen. Maak je het
+scherm zwart, geef je tekst dan `color="white"` mee, anders zet je zwart op
+zwart:
+
+```python
+oled.fill("black")
+oled.text('Wit op zwart', x=0, y=0, color="white")
+oled.show()
+```
+
 #### Een getal tonen
 
 Getallen zet je in een **f-string** om ze als tekst te tonen:

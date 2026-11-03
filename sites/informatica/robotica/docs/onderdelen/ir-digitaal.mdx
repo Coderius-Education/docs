@@ -55,16 +55,25 @@ Aansluiten op de Nano RP2040 Connect:
 
 ## Code
 
+Een digitale sensor is voor de microcontroller een gewone ingang, net als een
+knop: je leest hem met `Pin` uit `machine`.
+
 ```python
+from machine import Pin
 from time import sleep
-from leaphymicropython.sensors.linesensor import read_line_sensor
+
+sensor = Pin("D14", Pin.IN)
 
 while True:
-    print(read_line_sensor(14))
-    sleep(1)
+    print(sensor.value())
+    sleep(0.5)
 ```
 
 In de Shell verschijnt steeds een **0** of een **1**.
+
+- `Pin("D14", Pin.IN)` zegt: gebruik pin **D14** als **ingang**. De naam staat
+  tussen aanhalingstekens, precies zoals hij op het bord staat.
+- `sensor.value()` geeft wat de sensor nu ziet: 0 of 1.
 
 ## Hoe gebruik je dit bij de RoboCup?
 
@@ -72,12 +81,16 @@ Pak een competitietegel van de RoboCup (welke maakt niet uit):
 
 ![Een witte competitietegel met een zwarte lijn](./img/ir-digitaal/image.png)
 
-Houd je IR-sensor boven de tegel. Wanneer geeft `read_line_sensor(14)`:
+Houd je IR-sensor boven de tegel. Wanneer geeft `sensor.value()`:
 
 - de waarde **1**?
 - de waarde **0**?
 
-Met een schroevendraaier kun je het potmetertje op de sensor draaien om de overgang van zwart naar wit nauwkeurig in te stellen.
+Bij de meeste sensoren is het **1** boven zwart en **0** boven wit: wit kaatst
+het licht terug, en dan maakt de sensor zijn uitgang laag. Met een
+schroevendraaier draai je aan het potmetertje. Daarmee verschuif je de grens:
+hoe donker het moet zijn voordat de sensor "zwart" zegt. Wat 0 en 1 betekenen,
+verandert daar niet door.
 
 Voor meer informatie: [Redden Basis](site:robotica/docs/robocup/start).
 
@@ -91,7 +104,8 @@ Laat het ingebouwde rode lampje branden zodra de sensor **zwart** ziet, en uit g
 <details>
 <summary>Tip</summary>
 
-Bij de ingebouwde RGB-LED is `value(0)` aan en `value(1)` uit. Welke waarde geeft `read_line_sensor(14)` boven zwart?
+Bij de ingebouwde RGB-LED is `value(0)` aan en `value(1)` uit. Kijk eerst met
+de print-code welke waarde jouw sensor boven zwart geeft.
 
 </details>
 
@@ -101,19 +115,19 @@ Bij de ingebouwde RGB-LED is `value(0)` aan en `value(1)` uit. Welke waarde geef
 ```python
 from time import sleep
 from machine import Pin
-from leaphymicropython.sensors.linesensor import read_line_sensor
 
+sensor = Pin("D14", Pin.IN)
 led = Pin('LED_RED', Pin.OUT)
+ZWART = 1
 
 while True:
-    waarde = read_line_sensor(14)
-    if waarde == 0:
-        led.value(0)  # AAN boven zwart
+    if sensor.value() == ZWART:
+        led.value(0)  # aan boven zwart
     else:
-        led.value(1)  # UIT boven wit
+        led.value(1)  # uit boven wit
     sleep(0.1)
 ```
 
-Welke waarde "zwart" is, hangt af van hoe je het potmetertje hebt afgesteld. Test eerst met de eenvoudige print-code hierboven.
+Geeft jouw sensor boven zwart een 0? Zet dan `ZWART = 0`.
 
 </details>

@@ -21,13 +21,16 @@ Probeer een andere USB-poort of een andere kabel. Sommige kabels zijn alleen ges
 <details>
 <summary>Controlevraag</summary>
 
-Hoe weet je dat de verbinding goed is?
+Het groene lampje brandt. Weet je dan zeker dat je computer met het bord kan praten?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Het **groene lampje** op de Arduino Nano RP2040 Connect brandt zodra het bord stroom krijgt via USB.
+Nee. Het groene lampje zegt alleen dat het bord **stroom** krijgt, en dat lukt
+ook met een kabel die alleen oplaadt. Of de verbinding goed is, zie je pas in de
+editor: in de online editor staat het bord dan als verbonden, en in Thonny zie je
+onderaan de prompt `>>>`.
 
 </details>

@@ -20,11 +20,11 @@ afstand met licht, in millimeters, en zit op de multiplexer. Zo heb je de pinnen
 A4 en A5 (I2C) toch al voor het OLED-scherm, en kost elke extra TOF geen pinnen.
 Hoe je hem aansluit, staat bij [Time of Flight](site:robotica/docs/onderdelen/tof#met-mux).
 
-:::caution[Geen ultrasone sensor op A4 en A5]
+:::note[En de ultrasone sensor?]
 
-De code bij de [ultrasone afstandssensor](site:robotica/docs/onderdelen/afstandssensor)
-gebruikt pin 18 en 19. Dat zijn A4 en A5, de pinnen van I2C. Op een robot met
-een TOF of een OLED-scherm werkt die sensor daar dus niet.
+Een [ultrasone afstandssensor](site:robotica/docs/onderdelen/afstandssensor)
+kan ook, maar die heeft twee eigen digitale pinnen nodig, en een TOF meet
+preciezer. Op de robot hieronder gebruik je daarom een TOF.
 
 :::
 
