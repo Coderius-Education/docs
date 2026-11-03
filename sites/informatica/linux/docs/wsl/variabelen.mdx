@@ -1,0 +1,130 @@
+---
+sidebar_position: 4
+---
+
+# 5.4 Variabelen in de shell
+
+<Voorkennis items={[{to: '/docs/terminal/maken', label: 'Tekst schrijven met echo'}]} />
+
+```bash
+echo $USER
+echo $HOME
+```
+
+```
+sam
+/home/sam
+```
+
+`$USER` en `$HOME` zijn **variabelen**: een naam met een waarde, net als in Python. Het dollarteken zegt tegen de shell: zet hier de waarde neer. De shell doet dat vóór `echo` start, dus `echo` krijgt `sam` te zien, niet `$USER`. Daarom kun je een commando met `$USER` aan iedereen geven: het werkt bij iedereen met zijn eigen naam.
+
+## Zelf een variabele maken
+
+```bash
+NAAM=Sam
+echo "Hallo $NAAM"
+```
+
+```
+Hallo Sam
+```
+
+Rond het `=` staan geen spaties. Een variabele die je zelf maakt, schrijf je meestal in hoofdletters, net als `USER` en `HOME`. Hij bestaat tot je de terminal sluit.
+
+Tussen dubbele aanhalingstekens vult de shell een variabele in, tussen enkele niet:
+
+```bash
+echo 'Hallo $NAAM'
+```
+
+```
+Hallo $NAAM
+```
+
+## Voorspel
+
+Je maakt `NAAM=Sam`, en start daarna een nieuwe shell in de shell:
+
+```bash
+NAAM=Sam
+bash
+echo "[$NAAM]"
+exit
+```
+
+Wat zet `echo` neer?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+```
+[]
+```
+
+Een variabele die je zo maakt, kent alleen deze shell. Een programma dat je vanuit de shell start, zoals een tweede `bash`, krijgt hem niet mee. Wil je dat wel, gebruik dan `export`:
+
+```bash
+export NAAM=Sam
+bash
+echo "[$NAAM]"
+exit
+```
+
+Nu staat er `[Sam]`. Een variabele die meegaat naar elk programma heet een **omgevingsvariabele**. `$USER` en `$HOME` zijn er twee. Met `printenv` zie je ze allemaal, en met `printenv NAAM` één.
+
+</details>
+
+## Een .env-bestand \{#env}
+
+Een programma leest zijn instellingen vaak uit omgevingsvariabelen: een wachtwoord, een adres, of de naam van een site. Typ je die elke keer met `export`, dan vergeet je er een. Daarom staan ze vaak in een bestand `.env`, één per regel, in dezelfde vorm:
+
+```
+DOMEIN=gastenboek.voorbeeld.nl
+```
+
+De shell leest dat bestand niet vanzelf: na `cat .env` is `$DOMEIN` nog steeds leeg. Het programma zelf leest het, Docker Compose bijvoorbeeld. Een `.env` hoort bij één computer, en er staan vaak geheimen in. Daarom zet je hem nooit in git.
+
+## Opdracht 5.4.a: een begroeting
+
+Maak een variabele `KLAS` met de naam van je klas. Laat dan met één `echo` een zin zien met je eigen naam en je klas, zoals `sam zit in 4H`. Typ je eigen naam niet: laat de shell hem invullen.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Je eigen naam staat al in een variabele die de shell kent. Gebruik dubbele aanhalingstekens.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+KLAS=4H
+echo "$USER zit in $KLAS"
+```
+
+Met enkele aanhalingstekens staat er letterlijk `$USER zit in $KLAS`.
+
+</details>
+
+## Er gaat iets mis
+
+### `NAAM: command not found`
+
+```
+NAAM: command not found
+```
+
+**Oorzaak:** je zette spaties rond het `=`, zoals `NAAM = Sam`. Dan denkt de shell dat `NAAM` een commando is, met `=` en `Sam` als woorden erachter.
+
+**Oplossing:** typ het zonder spaties: `NAAM=Sam`. Staat er een spatie in de waarde, zet die dan tussen aanhalingstekens: `NAAM="Sam de Vries"`.
+
+### De variabele is leeg
+
+`echo $NAAM` zet een lege regel neer.
+
+**Oorzaak:** je maakte de variabele in een andere terminal, of je sloot de terminal sinds je hem maakte. Of je tikte de naam anders: `$naam` is een andere variabele dan `$NAAM`.
+
+**Oplossing:** maak hem opnieuw, in deze terminal, en let op hoofdletters.
+
+Door naar [6.1 Programma's installeren](site:linux/docs/wsl/apt).

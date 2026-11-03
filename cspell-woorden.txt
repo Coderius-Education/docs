@@ -48,6 +48,7 @@ characterbody
 chatbots
 cheatsheet
 Cheatsheet
+chgrp
 cijferige
 Clonen
 clonen
@@ -433,6 +434,7 @@ uitklapblok
 uitlogknop
 ultrasoonsensor
 Unpaywall
+usermod
 vakstuk
 valregel
 vastgeprogrammeerd

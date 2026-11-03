@@ -5,7 +5,7 @@ description: Portainer laat je containers, logboeken en volumes in de browser zi
 
 # Online zetten: beheren met Portainer
 
-<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'Inloggen met ssh'}]} />
+<Voorkennis items={[{site: 'linux', to: '/docs/wsl/ssh', label: 'Inloggen met ssh'}, {site: 'linux', to: '/docs/wsl/tunnel', label: 'Een tunnel met ssh -L'}]} />
 
 Deze les is een extra: je site staat al online. Tot nu toe beheerde je hem met commando's: `docker compose ps`, `logs`, `up`. **Portainer** is een website die hetzelfde laat zien, in je browser: welke containers draaien, hun logboeken, de volumes en de images.
 
@@ -52,7 +52,7 @@ Open een terminal in WSL, en log in met een tunnel:
 ssh -L 9443:127.0.0.1:9443 sam@gastenboek.voorbeeld.nl
 ```
 
-`-L 9443:127.0.0.1:9443` betekent: wat op poort 9443 van je laptop binnenkomt, gaat door de versleutelde verbinding naar `127.0.0.1:9443` op de server. Zolang deze terminal openstaat, is de tunnel er. Open op Windows `https://localhost:9443`.
+`-L 9443:127.0.0.1:9443` brengt poort 9443 van de server naar je laptop, zoals in [Een tunnel met ssh](site:linux/docs/wsl/tunnel). Zolang deze terminal openstaat, is de tunnel er. Open op Windows `https://localhost:9443`.
 
 De browser waarschuwt dat de verbinding niet privé is. Portainer maakte zijn certificaat zelf, en geen bekende partij heeft het ondertekend. Hier mag je doorgaan, via **Geavanceerd**: het verkeer gaat door je eigen ssh-tunnel.
 
@@ -110,10 +110,9 @@ the Portainer instance timed out for security purposes, to re-enable your Portai
 
 **Oplossing:** kies een langer wachtwoord. Wie in Portainer komt, kan de hele server overnemen; dit wachtwoord verdient de lengte.
 
-### Address already in use bij ssh -L
+### cannot listen to port bij ssh -L
 
 ```text
-bind [127.0.0.1]:9443: Address already in use
 channel_setup_fwd_listener_tcpip: cannot listen to port: 9443
 Could not request local forwarding.
 ```

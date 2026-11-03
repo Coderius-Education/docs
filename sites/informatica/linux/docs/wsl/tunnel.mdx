@@ -1,0 +1,102 @@
+---
+sidebar_position: 10
+---
+
+# 7.5 Een tunnel met ssh
+
+<Voorkennis items={[{to: '/docs/wsl/ssh', label: 'Inloggen met ssh'}, {to: '/docs/wsl/windows-en-linux', label: 'Een website uit Linux in je browser'}]} />
+
+Een programma op een server dat alleen op `127.0.0.1` luistert, is van buiten niet te bereiken. Dat is veilig, en soms wil jij er toch bij: een beheerpagina, bijvoorbeeld. Met ssh maak je dan een **tunnel**: een poort op je eigen computer die via ssh uitkomt bij een poort op de server.
+
+## Een website die alleen op de server staat
+
+Zet een kleine website neer, die alleen op `127.0.0.1` luistert:
+
+```bash
+mkdir site
+echo "<h1>Alleen op de server</h1>" > site/index.html
+cd site
+python3 -m http.server 8000 --bind 127.0.0.1
+```
+
+Je oefent weer op `localhost`, dus de "server" is je eigen Ubuntu. Open een tweede terminal, en maak de tunnel:
+
+```bash
+ssh -N -L 9000:127.0.0.1:8000 localhost
+```
+
+`-L 9000:127.0.0.1:8000` betekent: poort 9000 hier, op mijn computer, gaat naar `127.0.0.1:8000` gezien vanaf de server. `-N` betekent: geen commando's, alleen de tunnel. De terminal lijkt stil te staan; zolang hij open is, staat de tunnel.
+
+Open `http://localhost:9000` in je browser. Daar staat *Alleen op de server*.
+
+## Voorspel
+
+Op een echte server typ je `ssh -N -L 9000:127.0.0.1:8000 sam@server.voorbeeld.nl`. Waar wijst `127.0.0.1` in dat commando naar: je laptop, of de server?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Naar de server. Het adres achter de eerste dubbele punt kijkt ssh op aan de kant van de server: daar betekent `127.0.0.1` de server zelf. Daarom kun je zo bij een programma dat alleen voor de server zelf luistert, zonder dat het op internet staat. Wie er via de tunnel bij wil, moet eerst met ssh kunnen inloggen.
+
+</details>
+
+## Opdracht 7.5.a: een andere poort
+
+Laat de website op 8000 draaien, en maak een tunnel zodat hij in je browser op `http://localhost:9500` staat.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Alleen het eerste getal na `-L` gaat over je eigen computer.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+ssh -N -L 9500:127.0.0.1:8000 localhost
+```
+
+Stop de tunnel met Ctrl+C, en de website in de eerste terminal ook.
+
+</details>
+
+## De ssh-dienst weer uit
+
+Zolang `openssh-server` draait, kan je Ubuntu inlogpogingen ontvangen, ook met een wachtwoord. Op je eigen laptop heb je dat na deze cursus niet meer nodig. Zet de dienst uit, net als nginx in [6.4](site:linux/docs/wsl/diensten).
+
+Bij ssh zijn het er twee. Op Ubuntu 24.04 wacht `ssh.socket` op poort 22, en pas als er iemand inlogt, start die de dienst `ssh`. Zet je alleen `ssh` uit, dan start de socket hem bij de volgende poging weer. Zet ze daarom allebei uit:
+
+```bash
+sudo systemctl disable --now ssh.socket ssh
+```
+
+Wil je hem later weer gebruiken, zet dan de socket weer aan: `sudo systemctl enable --now ssh.socket`.
+
+## Er gaat iets mis
+
+### cannot listen to port
+
+```
+channel_setup_fwd_listener_tcpip: cannot listen to port: 9000
+Could not request local forwarding.
+```
+
+**Oorzaak:** poort 9000 op je eigen computer is al bezet, vaak door een tunnel in een andere terminal.
+
+**Oplossing:** sluit die andere tunnel, of kies een ander eerste getal: `-L 9001:127.0.0.1:8000`.
+
+### connect failed: Connection refused
+
+De browser zegt dat de verbinding is verbroken, en in de terminal met de tunnel staat:
+
+```
+channel 1: open failed: connect failed: Connection refused
+```
+
+**Oorzaak:** de tunnel staat, maar op de server luistert niets op de poort achter `127.0.0.1:`. De website draait niet, of op een andere poort.
+
+**Oplossing:** start de website in de eerste terminal, en controleer of het tweede getal na `-L` zijn poort is.
+
+Klaar met deze cursus? In de fullstack-cursus zet je je eigen site [online](site:fullstack/docs/online), op een echte Linux-server.

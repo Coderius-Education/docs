@@ -33,9 +33,20 @@ const sidebars = {
     ]),
     thema('3. Zoeken', ['terminal/zoeken', 'terminal/vinden']),
     thema('4. Gebruikers en rechten', ['terminal/rechten']),
-    thema('5. Linux op je eigen computer', ['wsl/installeren', 'wsl/windows-en-linux', 'wsl/hulp']),
-    thema("6. Programma's en diensten", ['wsl/apt', 'wsl/nano', 'wsl/processen', 'wsl/diensten']),
-    thema('7. Netwerk', ['wsl/netwerk', 'wsl/ssh']),
+    thema('5. Linux op je eigen computer', [
+      'wsl/installeren',
+      'wsl/windows-en-linux',
+      'wsl/hulp',
+      'wsl/variabelen',
+    ]),
+    thema("6. Programma's, diensten en groepen", [
+      'wsl/apt',
+      'wsl/nano',
+      'wsl/processen',
+      'wsl/diensten',
+      'wsl/groepen',
+    ]),
+    thema('7. Netwerk', ['wsl/netwerk', 'wsl/ssh', 'wsl/github', 'wsl/scp', 'wsl/tunnel']),
   ],
 };
 

@@ -138,6 +138,11 @@ describe('de route Online zetten', () => {
     { commando: /^mkdir\b/, doel: ['linux/docs/terminal/maken'] },
     { commando: /^cat\b/, doel: ['linux/docs/terminal/bestanden-lezen'] },
     { commando: /^code \./, doel: ['linux/docs/wsl/windows-en-linux'] },
+    { commando: /^sudo usermod -aG\b/, doel: ['linux/docs/wsl/groepen'] },
+    { commando: /\$USER\b/, doel: ['linux/docs/wsl/variabelen'] },
+    { commando: /^ssh -T git@github\.com/, doel: ['linux/docs/wsl/github'] },
+    { commando: /^scp\b/, doel: ['linux/docs/wsl/scp'] },
+    { commando: /^ssh (-N )?-L\b/, doel: ['linux/docs/wsl/tunnel'] },
   ];
   const linksVan = (id: string) => {
     const tekst = lees(id);

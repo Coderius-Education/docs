@@ -1,0 +1,113 @@
+---
+sidebar_position: 8
+---
+
+# 7.3 Je sleutel op GitHub
+
+<Voorkennis items={[{to: '/docs/wsl/ssh', label: 'Een sleutelpaar maken met ssh-keygen'}]} />
+
+GitHub praat ook ssh. Met de sleutel uit [7.2](site:linux/docs/wsl/ssh) kun je vanuit Ubuntu je repositories ophalen en ernaar pushen, zonder wachtwoord. Over https laat GitHub je in de terminal niet met een wachtwoord inloggen, dus dit is de weg.
+
+## De publieke sleutel op GitHub
+
+Laat je publieke sleutel zien:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+```
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK0x... sam@laptop
+```
+
+Kopieer de hele regel. Zet hem op GitHub: klik op je profielfoto, dan **Settings**, **SSH and GPG keys** en **New SSH key**.
+
+Geef hem een naam waaraan je de computer herkent, zoals `laptop WSL`, plak de regel in het veld Key, en bevestig met de groene knop.
+
+Zet nooit `id_ed25519` zelf op GitHub, zonder `.pub`. Dat is je privésleutel.
+
+## Kent GitHub je?
+
+```bash
+ssh -T git@github.com
+```
+
+`-T` betekent: ik wil geen terminal, alleen kijken of ik binnenkom. Iedereen logt in als `git`; GitHub herkent je aan je sleutel.
+
+## Voorspel
+
+De eerste keer stelt ssh een vraag, net als bij `ssh localhost`. Daarna komt er een antwoord van GitHub. Wat denk je dat GitHub zegt?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Eerst de vraag over de vingerafdruk van `github.com`. Vergelijk hem met de vingerafdrukken die GitHub zelf noemt op `docs.github.com` (zoek op *GitHub's SSH key fingerprints*), en typ `yes`. Daarna:
+
+```
+Hi sam! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+Met je eigen GitHub-naam. Dat "geen shell" is goed: je wilde alleen weten of de sleutel werkt. Een repository haal je voortaan op met het ssh-adres, onder de knop **Code** bij **SSH**: `git@github.com:sam/project.git`.
+
+</details>
+
+## Opdracht 7.3.a: twee computers, twee sleutels
+
+Je wilt ook vanaf de computer van school bij GitHub. Kopieer je je privésleutel daarheen, of maak je daar een nieuwe? Leg uit waarom.
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+Denk aan wat er gebeurt als de computer van school een keer van iemand anders is, of als je laptop gestolen wordt.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+Maak op elke computer een eigen sleutelpaar, en zet elke publieke sleutel apart op GitHub, met een herkenbare naam. Raak je een computer kwijt, dan haal je alleen die sleutel weg onder **SSH and GPG keys**, en de andere blijven werken. Een privésleutel die je rondstuurt, kan onderweg blijven hangen.
+
+</details>
+
+## Er gaat iets mis
+
+### `Permission denied (publickey)`
+
+```
+git@github.com: Permission denied (publickey).
+```
+
+**Oorzaak:** GitHub kent je sleutel niet. Je zette hem niet op GitHub, of een andere dan die in `~/.ssh/id_ed25519.pub`.
+
+**Oplossing:** vergelijk `cat ~/.ssh/id_ed25519.pub` met de sleutel onder **SSH and GPG keys**, en probeer `ssh -T git@github.com` opnieuw.
+
+### Connection timed out
+
+```
+ssh: connect to host github.com port 22: Connection timed out
+```
+
+**Oorzaak:** het netwerk, bijvoorbeeld dat van school, laat poort 22 niet door.
+
+**Oplossing:** GitHub luistert ook op poort 443, op de naam `ssh.github.com`. Zet in `~/.ssh/config` (maak het bestand met nano):
+
+```
+Host github.com
+    Hostname ssh.github.com
+    Port 443
+    User git
+```
+
+Vanaf dan gaat elke verbinding met `github.com` via poort 443.
+
+### Host key verification failed
+
+```
+Host key verification failed.
+```
+
+**Oorzaak:** je typte `no` bij de vraag over de vingerafdruk, of drukte op Enter.
+
+**Oplossing:** probeer `ssh -T git@github.com` opnieuw, en typ `yes` als de vingerafdruk klopt.
+
+Door naar [7.4 Bestanden kopiëren met scp](site:linux/docs/wsl/scp).

@@ -248,7 +248,22 @@ sort /etc/passwd
 
 </details>
 
-## Programma's en diensten
+<details>
+<summary>Hoe gebruik ik een variabele in de shell, zoals mijn naam? (echo, export, printenv)</summary>
+
+```bash
+echo $USER $HOME
+NAAM=Sam
+echo "Hallo $NAAM"
+export NAAM
+printenv NAAM
+```
+
+Geen spaties rond het `=`. Tussen enkele aanhalingstekens vult de shell niets in. Met `export` gaat een variabele mee naar elk programma dat je start.
+
+</details>
+
+## Programma's, diensten en groepen
 
 <details>
 <summary>Hoe installeer ik een programma, als beheerder? (sudo, apt, tldr)</summary>
@@ -306,6 +321,22 @@ sudo journalctl -u nginx -f
 ```
 
 `disable --now` zet hem uit en laat hem na een herstart ook uit; `-f` blijft meekijken tot je Ctrl+C drukt.
+
+</details>
+
+<details>
+<summary>Hoe zet ik iemand in een groep, en geef ik een groep rechten? (groups, groupadd, groupdel, usermod -aG, chgrp, chmod)</summary>
+
+```bash
+groups
+sudo groupadd klas
+sudo usermod -aG klas $USER
+sudo chgrp klas /srv/klas
+sudo chmod g+w /srv/klas
+sudo groupdel klas
+```
+
+Altijd `-aG`: zonder `-a` haalt `usermod` je uit je andere groepen, ook uit `sudo`. Een nieuwe groep telt pas als je opnieuw inlogt.
 
 </details>
 
@@ -370,5 +401,42 @@ sudo systemctl enable --now ssh.socket
 ```
 
 De eerste regel zet hem uit, de tweede weer aan.
+
+</details>
+
+<details>
+<summary>Hoe kom ik met mijn sleutel bij GitHub? (ssh -T)</summary>
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+ssh -T git@github.com
+```
+
+Zet de regel uit `id_ed25519.pub` op GitHub onder **Settings**, **SSH and GPG keys**. Nooit de privésleutel.
+
+</details>
+
+<details>
+<summary>Hoe kopieer ik naar of van een andere computer? (scp)</summary>
+
+```bash
+scp notities.txt sam@server.voorbeeld.nl:
+scp sam@server.voorbeeld.nl:kopie.txt .
+scp -r proef sam@server.voorbeeld.nl:kopiemap
+scp 'sam@server.voorbeeld.nl:proef/*.txt' hier/
+```
+
+Zonder dubbele punt is de computer een bestandsnaam. Een `*` voor de andere computer zet je tussen aanhalingstekens.
+
+</details>
+
+<details>
+<summary>Hoe kom ik bij een poort die alleen op de server openstaat? (ssh -L)</summary>
+
+```bash
+ssh -N -L 9000:127.0.0.1:8000 sam@server.voorbeeld.nl
+```
+
+Poort 9000 op je eigen computer gaat naar `127.0.0.1:8000` op de server. Open `http://localhost:9000`; Ctrl+C sluit de tunnel.
 
 </details>

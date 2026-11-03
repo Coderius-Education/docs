@@ -1,0 +1,140 @@
+---
+sidebar_position: 6
+---
+
+# 6.5 Groepen
+
+<Voorkennis items={[{to: '/docs/terminal/rechten', label: 'Rechten lezen met ls -l'}, {to: '/docs/wsl/apt', label: 'Beheerder zijn met sudo'}]} />
+
+```bash
+groups
+```
+
+Je ziet je eigen naam en een rij andere namen, met ergens `sudo` ertussen, bijvoorbeeld:
+
+```
+sam adm dialout cdrom floppy sudo audio dip video plugdev netdev
+```
+
+Dat zijn je **groepen**. In [4.1](site:linux/docs/terminal/rechten) zag je dat een bestand een eigenaar heeft, een groep, en rechten voor allebei. Een groep is een lijst gebruikers die samen iets mogen. Dat jij `sudo` mag gebruiken, komt doordat je in de groep `sudo` zit.
+
+## Een gedeelde map
+
+Je maakt een map waarin iedereen van de groep `klas` mag schrijven. Eerst de groep:
+
+```bash
+sudo groupadd klas
+```
+
+Dan de map. Hij is van `root`, en met `chgrp` geef je hem de groep `klas`. Met `chmod g+w` krijgt de groep (`g`) er schrijfrecht (`w`) bij:
+
+```bash
+sudo mkdir /srv/klas
+sudo chgrp klas /srv/klas
+sudo chmod g+w /srv/klas
+ls -ld /srv/klas
+```
+
+```
+drwxrwxr-x 2 root klas 4096 Nov  3 10:28 /srv/klas
+```
+
+`-d` laat de map zelf zien, en niet wat erin staat. De middelste drie tekens, `rwx`, zijn van de groep `klas`. Probeer er iets in te zetten:
+
+```bash
+touch /srv/klas/hallo.txt
+```
+
+```
+touch: cannot touch '/srv/klas/hallo.txt': Permission denied
+```
+
+Logisch: jij zit nog niet in `klas`.
+
+## Jezelf in een groep zetten
+
+```bash
+sudo usermod -aG klas $USER
+```
+
+`usermod` verandert een gebruiker. `-G klas` zegt welke groep, en `-a` (*append*) betekent: erbij, naast de groepen die je al hebt. `$USER` is je eigen naam ([5.4](site:linux/docs/wsl/variabelen)).
+
+## Voorspel
+
+Je typt direct daarna, in dezelfde terminal, nog een keer `touch /srv/klas/hallo.txt`. Lukt het nu?
+
+<details>
+<summary>Klik hier als je het hebt geprobeerd</summary>
+
+Nee, weer `Permission denied`. Typ `groups`: `klas` staat er niet bij. Linux kijkt bij het inloggen in welke groepen je zit, en een terminal die al open stond, houdt die lijst.
+
+Log daarom opnieuw in. In WSL sluit je alle terminals van Ubuntu, typ je in PowerShell:
+
+```powershell
+wsl --terminate Ubuntu-24.04
+```
+
+en open je Ubuntu opnieuw. Nu staat `klas` bij `groups`, en lukt `touch`. Op een server log je uit met `exit` en weer in met ssh.
+
+</details>
+
+## Opdracht 6.5.a: wie mag erin?
+
+Maak een bestand in `/srv/klas`, en kijk met `ls -l` van wie het is. Van welke groep is het: `klas`, of je eigen groep?
+
+<details>
+<summary>Klik hier voor een tip</summary>
+
+De groep staat in de vierde kolom van `ls -l`, na de eigenaar.
+
+</details>
+
+<details>
+<summary>Klik hier voor het antwoord</summary>
+
+```bash
+touch /srv/klas/opdracht.txt
+ls -l /srv/klas
+```
+
+```
+-rw-rw-r-- 1 sam sam 0 Nov  3 10:30 opdracht.txt
+```
+
+Het bestand is van jou en van je eigen groep `sam`, niet van `klas`. De groep van de map geeft je het recht om er iets in te maken, maar wat je maakt, krijgt je eigen groep. Ruim op met `sudo rm -r /srv/klas` en `sudo groupdel klas`.
+
+</details>
+
+## Er gaat iets mis
+
+### sam is not in the sudoers file
+
+```
+sam is not in the sudoers file.
+```
+
+**Oorzaak:** je typte `usermod -G klas` zonder `-a`. Dan zit je alleen nog in `klas`, en ben je uit al je andere groepen gehaald, ook uit `sudo`.
+
+**Oplossing:** in WSL kun je als `root` binnenkomen zonder `sudo`. Typ in PowerShell:
+
+```powershell
+wsl -d Ubuntu-24.04 -u root usermod -aG sudo sam
+```
+
+met je eigen naam op de plek van `sam`. Sluit Ubuntu en open het opnieuw. Op een server zonder WSL kan alleen iemand die nog `root` is, dit herstellen. Typ daarom altijd `-aG`.
+
+### De groep telt niet
+
+`groups` toont de nieuwe groep niet, en je krijgt nog steeds `Permission denied`.
+
+**Oorzaak:** je logde niet opnieuw in sinds `usermod`.
+
+**Oplossing:** sluit in WSL alle terminals, typ `wsl --terminate Ubuntu-24.04` in PowerShell, en open Ubuntu opnieuw.
+
+### groupadd: group 'klas' already exists
+
+**Oorzaak:** de groep bestaat al, bijvoorbeeld van een eerdere poging.
+
+**Oplossing:** niets: je kunt hem meteen gebruiken.
+
+Door naar [7.1 Netwerk](site:linux/docs/wsl/netwerk).

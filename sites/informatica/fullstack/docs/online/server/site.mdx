@@ -71,7 +71,7 @@ De map `~/traefik` uit WSL hoort niet bij je project, dus hij staat niet op GitH
 scp -r ~/traefik sam@203.0.113.10:
 ```
 
-`scp` (*secure copy*) kopieert over ssh. `-r` neemt de hele map mee, en de dubbele punt aan het eind betekent: in de thuismap van `sam`. Start hem daarna op de server:
+`scp -r` kopieert de hele map over ssh, naar de thuismap van `sam` ([Bestanden kopiëren met scp](site:linux/docs/wsl/scp)). Start hem daarna op de server:
 
 ```bash
 docker network create web
@@ -89,7 +89,7 @@ In je `compose.yaml` staat `Host(` met `gastenboek.localhost`. Op de server moet
 
 `${DOMEIN:-gastenboek.localhost}` betekent: de waarde van `DOMEIN`, of `gastenboek.localhost` als die er niet is. Zet `.env` in je `.gitignore` en je `.dockerignore`, en commit en push.
 
-Op de server haal je de nieuwe versie op, en zet je de naam in een bestand `.env` naast `compose.yaml`. Compose leest dat bestand vanzelf:
+Op de server haal je de nieuwe versie op, en zet je de naam in een bestand `.env` naast `compose.yaml` ([een .env-bestand](site:linux/docs/wsl/variabelen#env)). Compose leest dat bestand vanzelf:
 
 ```bash
 cd ~/gastenboek
