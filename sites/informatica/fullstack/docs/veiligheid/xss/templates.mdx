@@ -50,10 +50,12 @@ Geen f-string en geen `escape` meer: de berichten gaan naar het template, en Jin
 
 </CodeUitleg>
 
-Zet bovenaan `main.py` wat daarvoor nodig is:
+Zet bovenaan `main.py` wat daarvoor nodig is. `Request` komt uit `fastapi`, dus
+die zet je in de regel die er al staat. `Jinja2Templates` komt uit
+`fastapi.templating` en krijgt een eigen regel:
 
 ```python
-from fastapi import Request
+from fastapi import FastAPI, Form, Request
 from fastapi.templating import Jinja2Templates
 
 templates = Jinja2Templates(directory="templates")

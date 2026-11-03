@@ -199,7 +199,7 @@ NameError: name 'HTMLResponse' is not defined
 
 **Oorzaak:** je sloeg `main.py` op met een fout erin. `fastapi dev` probeert opnieuw te starten, loopt op de fout vast en wacht tot je weer opslaat. De poort blijft bezet, dus de browser krijgt verbinding maar nooit een antwoord.
 
-**Oplossing:** lees de onderste regel in de terminal, los de fout op en sla op. De server start dan vanzelf, en na het herladen verschijnt je pagina. Een `NameError` op een naam als `HTMLResponse` of `FileResponse` betekent meestal dat de import ontbreekt:
+**Oplossing:** lees de onderste regel in de terminal, los de fout op en sla op. De server start dan vanzelf, en na het herladen verschijnt je pagina. Een `NameError` op een naam als `HTMLResponse` of `FileResponse` betekent meestal dat de import ontbreekt. In welke regel een naam hoort, staat bij `NameError: name '...' is not defined` onder [Algemeen](#algemeen):
 
 ```python
 # FOUT
@@ -1314,7 +1314,30 @@ async def toon_formulier():
 async def toon_formulier(request: Request):
 ```
 
-Ontbreekt er een import, zet die dan bovenaan. Dit zijn alle imports die in deze cursus voorkomen; neem over wat je gebruikt:
+Ontbreekt er een import, zoek de naam dan op in deze tabel en zet hem in de
+regel die erbij hoort. Staat die regel er al, dan komt de naam erbij, met een
+komma:
+
+| Naam | Regel bovenaan je bestand |
+|---|---|
+| `FastAPI`, `Form`, `Request`, `Response`, `HTTPException`, `Cookie` | `from fastapi import …` |
+| `HTMLResponse`, `FileResponse`, `RedirectResponse`, `JSONResponse` | `from fastapi.responses import …` |
+| `StaticFiles` | `from fastapi.staticfiles import StaticFiles` |
+| `Jinja2Templates` | `from fastapi.templating import Jinja2Templates` |
+| `SqliteDict` | `from sqlitedict import SqliteDict` |
+| `escape` | `from html import escape` |
+
+```python
+# FOUT - Form wordt gebruikt, maar staat niet in de import
+from fastapi import FastAPI, Request
+
+# GOED
+from fastapi import FastAPI, Form, Request
+```
+
+Een naam die niet in de tabel staat, zoals `time`, `random` of `secrets`, is een
+module van Python zelf: `import time`. Dit zijn alle imports die in de lessen
+voorkomen; neem over wat je gebruikt:
 
 ```python
 import random
@@ -1331,6 +1354,9 @@ from fastapi.templating import Jinja2Templates
 from sqlitedict import SqliteDict
 from starlette.exceptions import HTTPException as StarletteHTTPException
 ```
+
+In VS Code zie je het al voor je de server start: een kronkel onder de naam. Zet
+je cursor erop en druk op `Ctrl+.`; VS Code stelt dan vaak de import-regel voor.
 
 Meer uitleg: [Modules importeren](site:python/docs/modules/09d-modules)
 

@@ -29,6 +29,18 @@ python -m pip install slowapi
 
 ## De limiet in je server
 
+Zet bovenaan je `main.py` drie regels voor `slowapi`, en `Request` in de regel
+uit `fastapi`, want de limiet moet het verzoek zien:
+
+```python
+from fastapi import FastAPI, Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+```
+
+Daarna ziet je server er zo uit:
+
 <CodeUitleg>
 
 ```python showLineNumbers

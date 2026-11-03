@@ -464,4 +464,52 @@ async def bestand(pad: str):
       expect(samenhang(files)).toEqual([]);
     });
   });
+
+  describe('een naam zonder import', () => {
+    const main = (code: string) => project({ 'main.py': code });
+    const KOP =
+      'from fastapi import FastAPI, Request\nfrom fastapi.responses import HTMLResponse\n\napp = FastAPI()\n\n';
+
+    it('vindt Form zonder import, en noemt de regel waar hij bij hoort', () => {
+      const fouten = samenhang(
+        main(
+          `${KOP}@app.post("/naam")\nasync def naam(naam: str = Form(...)):\n    return {"naam": naam}\n`,
+        ),
+      );
+      expect(fouten.map((f) => f.titel)).toEqual([
+        'Form wordt gebruikt, maar staat niet bij de imports',
+      ]);
+      expect(fouten[0].uitleg).toContain('`from fastapi import FastAPI, Request`');
+      expect(fouten[0].plekken).toEqual([{ bestand: 'main.py', regel: 7 }]);
+    });
+
+    it('geeft de hele regel als de module er nog niet staat', () => {
+      const fouten = samenhang(
+        main(
+          `${KOP}@app.get("/weg")\nasync def weg():\n    return RedirectResponse(url="/", status_code=303)\n`,
+        ),
+      );
+      expect(fouten[0].uitleg).toContain('`from fastapi.responses import HTMLResponse`');
+      const zonderRegel = samenhang(
+        main(`${KOP}app.mount("/static", StaticFiles(directory="static"), name="static")\n`),
+      );
+      expect(zonderRegel[0].uitleg).toContain('`from fastapi.staticfiles import StaticFiles`');
+    });
+
+    it('laat met rust: geimporteerd, met een alias, in een string of commentaar, met de module ervoor', () => {
+      expect(
+        titels(
+          main(
+            `${KOP}from fastapi import Form as Formulier\nimport fastapi\n\n@app.post("/a")\nasync def a(naam: str = fastapi.Form(...), b: str = Formulier(...)):\n    # HTTPException hoort hier niet\n    return HTMLResponse("<form>Form</form>")\n`,
+          ),
+        ),
+      ).toEqual([]);
+    });
+
+    it('laat met rust: een import *, en een naam die het bestand zelf maakt', () => {
+      expect(titels(main('from fastapi import *\n\napp = FastAPI()\nx = Form(...)\n'))).toEqual([]);
+      expect(titels(main('def escape(t):\n    return t\n\nprint(escape("<b>"))\n'))).toEqual([]);
+      expect(titels(main('Request = None\nprint(Request)\n'))).toEqual([]);
+    });
+  });
 });

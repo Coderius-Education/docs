@@ -61,7 +61,15 @@ Gebruik je het htmx-formulier uit de [htmx-recepten](site:fullstack/docs/FastAPI
 
 ## De cookie terugkrijgen
 
-Vanaf nu stuurt de browser die cookie mee bij elk verzoek aan jouw server. Je vraagt hem op met `Cookie`, net zoals je formuliervelden met `Form` opvraagt. Vervang je `GET /gastenboek`, dat tot nu toe een `FileResponse` gaf:
+Vanaf nu stuurt de browser die cookie mee bij elk verzoek aan jouw server. Je vraagt hem op met `Cookie`, net zoals je formuliervelden met `Form` opvraagt. `Cookie` komt uit `fastapi`, net als `Form`. Zet hem daarom in die regel bovenaan je `main.py`:
+
+<Bestand pad="main.py" />
+
+```python
+from fastapi import Cookie, FastAPI, Form, HTTPException, Request
+```
+
+Vervang daarna je `GET /gastenboek`, dat tot nu toe een `FileResponse` gaf:
 
 <Bestand pad="main.py" />
 
@@ -69,14 +77,12 @@ Vanaf nu stuurt de browser die cookie mee bij elk verzoek aan jouw server. Je vr
 
 {/* route-dubbel: vervangt GET /gastenboek uit Elk bericht bewaren, nu met een template */}
 ```python showLineNumbers
-from fastapi import Cookie
-
 @app.get("/gastenboek")
 async def gastenboek_form(request: Request, naam: str = Cookie(default="")):
     return templates.TemplateResponse(request, "gastenboek.html", {"naam": naam})
 ```
 
-<Regel n={4}>
+<Regel n={2}>
 `Cookie(default="")` haalt de cookie `naam` uit het verzoek, zoals `Form(...)` een formulierveld haalt. `default=""` bepaalt wat je krijgt als er nog geen cookie is: bij een eerste bezoek een lege tekst.
 </Regel>
 

@@ -20,6 +20,29 @@ from fastapi.responses import HTMLResponse
 app = FastAPI()
 ```
 
+`HTMLResponse` komt niet uit `fastapi` zelf, maar uit `fastapi.responses`, en
+krijgt daarom een eigen regel.
+
+:::tip[Waar komt een naam vandaan?]
+
+Alles wat je in deze cursus uit FastAPI gebruikt, staat op een van vier plekken:
+
+- `FastAPI` zelf, en wat je in de haakjes van een functie zet (`Form`,
+  `Request`, `HTTPException`, `Cookie`): `from fastapi import …`
+- een soort antwoord (`HTMLResponse`, `FileResponse`, `RedirectResponse`):
+  `from fastapi.responses import …`
+- `StaticFiles`: `from fastapi.staticfiles import StaticFiles`
+- `Jinja2Templates`: `from fastapi.templating import Jinja2Templates`
+
+Een nieuwe naam zet je in de regel van zijn plek, met een komma ertussen. Staat
+die regel er nog niet, dan zet je hem erbij. Vergeet je een naam, dan start de
+server niet en staat er in de terminal `NameError: name '…' is not defined`.
+VS Code zet dan al een kronkel onder de naam. Zet je cursor erop en druk op
+`Ctrl+.`: vaak stelt VS Code de import-regel dan zelf voor. Alle namen op een
+rij staan op de [cheatsheet](site:fullstack/docs/cheatsheet#fastapi).
+
+:::
+
 ## Een HTML pagina tonen
 
 Zet dit endpoint onder je andere endpoints:

@@ -1,5 +1,6 @@
 import { blanco, regelBegins, regelVan as regelIn } from '@coderius/checker/plekken';
 import type { Plek, ProjectFiles, Samenhangfout } from '@coderius/checker/types';
+import { IMPORT_VAN, gebruikt, geimporteerd, importRegel } from './imports';
 
 // Samenhang: wat tussen twee bestanden niet aansluit. Een beginner schrijft
 // een formulier in HTML, een functie in Python en een template in Jinja, en
@@ -542,6 +543,44 @@ function controleerBestandsantwoorden(fouten: Samenhangfout[], files: ProjectFil
   }
 }
 
+/**
+ * Een naam uit de tabel (src/checker/imports.ts) die main.py gebruikt zonder
+ * hem te importeren. Dan start de server niet, met een NameError in de
+ * terminal: de fout waar leerlingen het vaakst op vastliepen. Met rust laten:
+ * een `import *`, een naam die het bestand zelf maakt (def, class, een
+ * toekenning of een parameter), en `fastapi.Form` met de module ervoor.
+ */
+function controleerImports(fouten: Samenhangfout[], files: ProjectFiles) {
+  for (const f of Object.values(files)) {
+    if (f.kind !== 'py' || !f.content) continue;
+    const tekst = f.content;
+    if (/^\s*from [\w.]+ import \*/m.test(tekst)) continue;
+    const binnen = geimporteerd(tekst);
+    for (const [naam, index] of gebruikt(tekst)) {
+      if (binnen.has(naam)) continue;
+      const zelf = new RegExp(
+        `^\\s*(?:async\\s+)?(?:def|class)\\s+${naam}\\b|^\\s*${naam}\\s*=[^=]|[(,]\\s*${naam}\\s*[:=,)]`,
+        'm',
+      );
+      if (zelf.test(tekst)) continue;
+      const module = IMPORT_VAN[naam];
+      const regel = [
+        ...tekst.matchAll(
+          new RegExp(`^from ${module.replace('.', '\\.')} import ([\\w ,]+)$`, 'gm'),
+        ),
+      ][0];
+      const wat = regel
+        ? `Zet ${naam} in je regel \`${regel[0]}\`, met een komma ertussen.`
+        : `Zet bovenaan je bestand: \`${importRegel(naam)}\`.`;
+      fouten.push({
+        titel: `${naam} wordt gebruikt, maar staat niet bij de imports`,
+        uitleg: `Python kent ${naam} pas als je hem importeert. Zonder import start de server niet, of geeft hij bij het eerste verzoek een 500, met in de terminal NameError: name '${naam}' is not defined. ${wat}`,
+        plekken: [plek(f.path, regelVan(tekst, index))],
+      });
+    }
+  }
+}
+
 export function samenhang(project: ProjectFiles): Samenhangfout[] {
   begins.clear();
   const files = zonderCommentaar(project);
@@ -565,6 +604,7 @@ export function samenhang(project: ProjectFiles): Samenhangfout[] {
   );
   controleerTemplates(lijst, fouten, files);
   controleerBestandsantwoorden(fouten, files);
+  controleerImports(fouten, files);
   begins.clear();
   return fouten;
 }

@@ -39,7 +39,15 @@ er niet bij.
 
 `slowapi` kan bij elk antwoord een paar **headers** meesturen: regels boven het
 antwoord, die je in het tabblad Netwerk van je browser ook ziet. Zet ze aan met
-`headers_enabled=True`:
+`headers_enabled=True`. De headers zet `slowapi` op het antwoord, en daarvoor
+krijgt je endpoint `response: Response` mee. `Response` komt uit `fastapi`, net
+als `Request`, dus die regel wordt:
+
+```python
+from fastapi import FastAPI, Request, Response
+```
+
+Je server ziet er dan zo uit:
 
 <CodeUitleg>
 
