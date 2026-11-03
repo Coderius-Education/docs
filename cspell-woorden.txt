@@ -169,6 +169,9 @@ instantiëren
 jokerteken
 jokertekens
 journalctl
+joystickje
+joystickmodule
+jumperdraden
 jumperkabel
 jóuw
 kaartjesvel

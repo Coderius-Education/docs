@@ -1,0 +1,161 @@
+---
+sidebar_label: Drukknop
+description: Met een drukknop weet je robot of jij erop drukt, bijvoorbeeld om pas te gaan rijden als jij dat wilt.
+sidebar_custom_props:
+  kort: Weet of je erop drukt
+  foto: drukknop/drukknop.png
+  aansluiting: digitale pin
+---
+
+import ShieldRijen from '@site/docs/onderdelen/_delen/shield/rijen.md';
+
+# Drukknop
+
+Een **drukknop** heeft twee pootjes. Druk je hem in, dan zijn die met elkaar verbonden. Laat je los, dan niet meer. Met een knop laat je je robot bijvoorbeeld pas rijden als jij erop drukt.
+
+## Materiaal
+
+Wat heb je nodig?
+
+1. Arduino Nano RP2040 Connect op het **Leaphy Murphy Shield**
+2. Drukknop met twee pootjes
+3. Twee jumperdraden
+
+![Een zwarte drukknop met een ronde rode knop en twee pootjes](./img/drukknop/drukknop.png)
+
+:::tip[Een knopje met vier pootjes]
+
+Heeft jouw knopje vier pootjes? Die zitten in twee paren, en de twee pootjes van één paar zijn altijd met elkaar verbonden. Gebruik twee pootjes die schuin tegenover elkaar zitten: die horen zeker niet bij hetzelfde paar.
+
+:::
+
+## Aansluiten
+
+![Aansluitschema: het ene pootje van de drukknop met een blauwe draad op D7, het andere met een zwarte draad op GND, allebei op het rijtje van D7](@site/static/fritzing/shield_drukknop_bb.png)
+
+<ShieldRijen />
+
+- het ene pootje aan de pin **D7** (binnenste rij)
+- het andere pootje aan een **GND**-pin (buitenste rij)
+
+Welk pootje waar komt, maakt niet uit: een knop heeft geen plus en geen min. De 3V3 in het midden gebruik je hier niet.
+
+## Code
+
+```python
+from machine import Pin
+from time import sleep
+
+knop = Pin("D7", Pin.IN, Pin.PULL_UP)
+
+while True:
+    print(knop.value())
+    sleep(0.2)
+```
+
+In de Shell verschijnt steeds een **1**. Houd je de knop ingedrukt, dan wordt het een **0**.
+
+- `Pin("D7", Pin.IN, ...)` maakt van D7 een ingang, net als bij de [digitale IR-sensor](site:robotica/docs/onderdelen/ir-digitaal).
+- `Pin.PULL_UP` zet binnen in de chip een weerstand van D7 naar de plus. Zolang de knop los is, is D7 daardoor 1. Druk je, dan verbindt de knop D7 met GND, en dan is hij 0.
+
+<details>
+<summary>Controlevraag</summary>
+
+Waarom leest de pin een 0 als je de knop indrukt, en niet een 1?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+De knop verbindt D7 met **GND**, de min, en een pin aan de min leest 0. Laat je los, dan houdt `Pin.PULL_UP` de pin aan de plus: 1.
+
+</details>
+
+## Iets doen als je drukt
+
+Zolang je de knop indrukt, brandt het rode lampje op de Nano.
+
+```python
+from machine import Pin
+from time import sleep
+
+knop = Pin("D7", Pin.IN, Pin.PULL_UP)
+led = Pin('LED_RED', Pin.OUT)
+
+while True:
+    if knop.value() == 0:
+        led.value(0)  # aan
+    else:
+        led.value(1)  # uit
+    sleep(0.05)
+```
+
+Bij het RGB-lampje op de Nano is `value(0)` aan en `value(1)` uit, zie [Het ingebouwde lampje](site:robotica/docs/onderdelen/ingebouwd-lampje).
+
+<details>
+<summary>Opdracht: tel hoe vaak je drukt</summary>
+
+Print bij elke keer drukken hoe vaak je in totaal gedrukt hebt: `Gedrukt: 1 keer`, `Gedrukt: 2 keer`, enzovoort. Houd je de knop lang in, dan telt dat als één keer.
+
+</details>
+
+<details>
+<summary>Tip</summary>
+
+Onthoud in een variabele wat de knop de vorige keer was. Je drukt precies op het moment dat de knop de vorige keer 1 was en nu 0 is.
+
+</details>
+
+<details>
+<summary>Oplossing</summary>
+
+```python
+from machine import Pin
+from time import sleep
+
+knop = Pin("D7", Pin.IN, Pin.PULL_UP)
+vorige = 1
+teller = 0
+
+while True:
+    nu = knop.value()
+    if vorige == 1 and nu == 0:
+        teller = teller + 1
+        print(f"Gedrukt: {teller} keer")
+    vorige = nu
+    sleep(0.02)
+```
+
+Zolang je de knop vasthoudt, zijn `vorige` en `nu` allebei 0, en telt het programma niet verder.
+
+</details>
+
+## Er gaat iets mis
+
+<details>
+<summary>De waarde springt tussen 0 en 1, ook als ik niets doe</summary>
+
+**Oorzaak:** `Pin.PULL_UP` staat er niet bij. Zolang de knop los is, hangt D7 dan nergens aan, en vangt de pin elk klein stroompje op.
+
+**Oplossing:** schrijf `Pin("D7", Pin.IN, Pin.PULL_UP)`.
+
+</details>
+
+<details>
+<summary>De waarde blijft 1, ook als ik druk</summary>
+
+**Oorzaak:** de knop verbindt D7 niet met GND. Er zit een draad op de middelste rij (3V3) in plaats van de buitenste, of op een ander rijtje. Bij een knopje met vier pootjes kunnen beide draden ook aan hetzelfde paar zitten.
+
+**Oplossing:** vergelijk je draden met het schema: één op D7 (binnen), één op GND (buiten), en bij vier pootjes twee pootjes die schuin tegenover elkaar zitten.
+
+</details>
+
+<details>
+<summary>Eén keer drukken telt als twee of drie keer</summary>
+
+**Oorzaak:** het metaal in de knop stuitert een paar duizendste seconde als je drukt. Leest je programma heel snel, dan ziet het de knop een paar keer aan en uit gaan.
+
+**Oplossing:** wacht tussen twee metingen even, met `sleep(0.02)` zoals in de oplossing van de opdracht.
+
+</details>

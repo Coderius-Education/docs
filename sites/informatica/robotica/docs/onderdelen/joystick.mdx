@@ -1,0 +1,207 @@
+---
+sidebar_label: Joystick
+description: Een joystick geeft twee getallen, een voor links-rechts en een voor voor-achter, en werkt ook als drukknop, bijvoorbeeld om je robot met de hand te besturen.
+sidebar_custom_props:
+  kort: Twee getallen voor de richting, en een knop
+  foto: joystick/joystick.png
+  aansluiting: analoge pinnen
+---
+
+import ShieldRijen from '@site/docs/onderdelen/_delen/shield/rijen.md';
+
+# Joystick
+
+Een **joystick** is een stuurknuppeltje. Binnenin zitten twee draaiknopjes (potmeters): een voor links-rechts en een voor voor-achter. Elk geeft een getal dat verandert als je de knuppel beweegt. Druk je de knuppel in, dan werkt hij als [drukknop](site:robotica/docs/onderdelen/drukknop).
+
+## Materiaal
+
+Wat heb je nodig?
+
+1. Arduino Nano RP2040 Connect op het **Leaphy Murphy Shield**
+2. Joystickmodule (KY-023)
+3. Vijf jumperdraden
+
+![Een blauw printje met een zwarte joystick op een grijze voet, en onderaan vijf pinnen: GND, +5V, VRx, VRy en SW](./img/joystick/joystick.png)
+
+| Pin | Wat het is |
+|:---:|---|
+| **GND** | de min |
+| **+5V** | de plus |
+| **VRx** | het getal voor links-rechts |
+| **VRy** | het getal voor voor-achter |
+| **SW** | de knop (van het Engelse *switch*) |
+
+:::caution[+5V gaat op 3V3]
+
+De pin heet +5V, maar sluit hem aan op **3V3**. De joystick werkt daar net zo goed op. Op 5 volt zou het getal op VRx en VRy hoger kunnen worden dan de pinnen van de Nano verdragen.
+
+:::
+
+## Aansluiten
+
+![Aansluitschema: de joystick onder het shield, met SW op D14, VRy op A1 en VRx op A2, en +5V op 3V3 en GND op GND op het rijtje van A2](@site/static/fritzing/shield_joystick_bb.png)
+
+<ShieldRijen />
+
+- VRx aan de pin **A2** (binnenste rij; op het shield A2/D16)
+- VRy aan de pin **A1** (binnenste rij; A1/D15)
+- SW aan de pin **D14** (binnenste rij; A0/D14)
+- +5V aan **3V3** (middelste rij) en GND aan **GND** (buitenste rij), allebei op het rijtje van A2
+
+VRx en VRy moeten op een analoge pin, een pin met een A in zijn naam: alleen die kan een getal lezen. Op het joystickje zit VRx links van VRy, maar in deze volgorde lopen de draden in het schema naast elkaar omhoog. Alleen de rode en de zwarte draad kruisen elkaar.
+
+## Code
+
+### De twee getallen
+
+```python
+from machine import ADC
+from time import sleep
+
+x = ADC("A2")
+y = ADC("A1")
+
+while True:
+    print(x.read_u16(), y.read_u16())
+    sleep(0.2)
+```
+
+In de Shell verschijnen steeds twee getallen tussen **0** en **65535**. Laat je de joystick los, dan staan ze ongeveer in het midden, rond de 32000. Beweeg de knuppel en kijk welk getal verandert, en welke kant op.
+
+- `ADC("A2")` maakt van A2 een pin die een getal leest in plaats van een 0 of een 1, net als bij de [analoge IR-sensor](site:robotica/docs/onderdelen/ir-analoog).
+- `x.read_u16()` geeft dat getal: 0 bij 0 volt, 65535 bij 3,3 volt.
+
+<details>
+<summary>Controlevraag</summary>
+
+Je laat de joystick los. Welk getal geeft `x.read_u16()` ongeveer, en waarom is het niet precies 32768?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Ongeveer het midden, rond de 32000. Het potmetertje staat dan in de middelste stand, maar geen joystick is precies gelijk gemaakt: de ene zit op 31500, de andere op 33000. Daarom gebruik je in je code een marge rond het midden, zoals hieronder.
+
+</details>
+
+### De knop
+
+De knop lees je zoals een [drukknop](site:robotica/docs/onderdelen/drukknop): ingedrukt is **0**, los is **1**.
+
+```python
+from machine import Pin
+from time import sleep
+
+knop = Pin("D14", Pin.IN, Pin.PULL_UP)
+
+while True:
+    print(knop.value())
+    sleep(0.2)
+```
+
+### Welke kant op?
+
+Dit programma zegt in de Shell welke kant je de joystick op duwt.
+
+```python
+from machine import ADC, Pin
+from time import sleep
+
+x = ADC("A2")
+y = ADC("A1")
+knop = Pin("D14", Pin.IN, Pin.PULL_UP)
+
+while True:
+    links_rechts = x.read_u16()
+    voor_achter = y.read_u16()
+    if knop.value() == 0:
+        print("knop")
+    elif links_rechts < 15000:
+        print("links")
+    elif links_rechts > 50000:
+        print("rechts")
+    elif voor_achter < 15000:
+        print("voor")
+    elif voor_achter > 50000:
+        print("achter")
+    else:
+        print("midden")
+    sleep(0.2)
+```
+
+Tussen 15000 en 50000 telt de joystick als "midden": zo zegt hij niet al "links" als hij een beetje scheef staat. Zegt het programma "links" als je naar rechts duwt? Dan houd je de joystick andersom. Draai hem, of verwissel in de code "links" en "rechts".
+
+<details>
+<summary>Opdracht: lampje bij voor</summary>
+
+Laat het rode lampje op de Nano branden zolang je de joystick naar voren duwt, en uit gaan als je loslaat.
+
+</details>
+
+<details>
+<summary>Tip</summary>
+
+Gebruik alleen `voor_achter` en de grens uit het programma hierboven. Bij het rode lampje op de Nano is `value(0)` aan en `value(1)` uit.
+
+</details>
+
+<details>
+<summary>Oplossing</summary>
+
+```python
+from machine import ADC, Pin
+from time import sleep
+
+y = ADC("A1")
+led = Pin('LED_RED', Pin.OUT)
+
+while True:
+    if y.read_u16() < 15000:
+        led.value(0)  # aan
+    else:
+        led.value(1)  # uit
+    sleep(0.05)
+```
+
+Gaat het lampje aan als je de joystick naar achteren duwt? Dan houd je hem andersom: maak van `< 15000` dan `> 50000`.
+
+</details>
+
+## Er gaat iets mis
+
+<details>
+<summary>Allebei de getallen zijn steeds 0</summary>
+
+**Oorzaak:** de joystick krijgt geen stroom. De draad van +5V zit los, of niet op de middelste rij (3V3).
+
+**Oplossing:** vergelijk de rode en de zwarte draad met het schema: +5V op 3V3 (midden), GND op GND (buiten), allebei op het rijtje van A2.
+
+</details>
+
+<details>
+<summary>Een getal verandert niet als ik de joystick beweeg</summary>
+
+**Oorzaak:** de draad van VRx of VRy zit op een andere pin dan in je code, of op een pin zonder A in zijn naam, zoals D7: die kan geen getal lezen.
+
+**Oplossing:** kijk welke pin in `ADC("...")` staat en volg de draad naar het shield. Zet VRx en VRy op een analoge pin, zoals A1 en A2 in het schema.
+
+</details>
+
+<details>
+<summary>Links-rechts en voor-achter zijn omgedraaid</summary>
+
+**Oorzaak:** de draden van VRx en VRy zijn verwisseld, of je houdt de joystick een kwartslag gedraaid.
+
+**Oplossing:** wissel `"A2"` en `"A1"` in de code om, of draai de joystick zo dat de pinnen naar jou toe wijzen.
+
+</details>
+
+<details>
+<summary>De knop geeft steeds 1, ook als ik de knuppel indruk</summary>
+
+**Oorzaak:** de draad van SW zit niet op D14, of `Pin.PULL_UP` ontbreekt. Druk ook goed: de knop zit onder de knuppel en klikt pas als je recht naar beneden drukt.
+
+**Oplossing:** schrijf `Pin("D14", Pin.IN, Pin.PULL_UP)` en controleer de groene draad.
+
+</details>

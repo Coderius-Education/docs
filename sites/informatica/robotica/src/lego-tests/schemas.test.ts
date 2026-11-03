@@ -92,6 +92,8 @@ const SCHEMAS: Record<string, string> = {
   servo: 'shield_servo',
   buzzer: 'shield_buzzer',
   'rgb-led': 'shield_rgb_led',
+  drukknop: 'shield_drukknop',
+  joystick: 'shield_joystick',
 };
 
 const les = (id: string) => readFileSync(join(ONDERDELEN, `${id}.mdx`), 'utf8');
@@ -99,12 +101,15 @@ const aansluiten = (id: string) =>
   les(id)
     .split(/^## Aansluiten$/m)[1]
     ?.split(/^## Code$/m)[0] ?? '';
+/** De pinnen uit de code van de les, zoals ze daar staan ("D7", "A2"). */
 const codePinnen = (id: string) =>
   new Set(
     [...les(id).matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].flatMap((m) =>
-      [...m[1].matchAll(/["'](D\d+)["']/g)].map((p) => p[1]),
+      [...m[1].matchAll(/["']([DA]\d+)["']/g)].map((p) => p[1]),
     ),
   );
+/** A0 tot en met A7 zijn op de Nano D14 tot en met D21 (op het shield A2/D16). */
+const alsD = (pin: string) => (pin.startsWith('A') ? `D${14 + Number(pin.slice(1))}` : pin);
 
 describe('de aansluitschema’s staan op het shield', () => {
   it('het schema gebruikt precies de pinnen uit de code van de les, plus GND', () => {
@@ -112,7 +117,7 @@ describe('de aansluitschema’s staan op het shield', () => {
     for (const [id, schema] of Object.entries(SCHEMAS)) {
       const pinnen = shieldPinnen(`${schema}.fzz`).map(pinnaam);
       const signaal = new Set(pinnen.filter((p) => /^D\d+$/.test(p)));
-      const code = codePinnen(id);
+      const code = new Set([...codePinnen(id)].map(alsD));
       if ([...signaal].sort().join() !== [...code].sort().join())
         fout.push(`${id}: schema ${[...signaal]}, code ${[...code]}`);
       if (!pinnen.includes('GND')) fout.push(`${id}: geen GND in het schema`);
@@ -120,12 +125,12 @@ describe('de aansluitschema’s staan op het shield', () => {
     expect(fout).toEqual([]);
   });
 
-  it('een sensor heeft ook 3V3 in zijn schema, een LED of buzzer niet', () => {
+  it('een sensor heeft ook 3V3 in zijn schema, een LED, buzzer of drukknop niet', () => {
     const met3v3 = Object.entries(SCHEMAS)
       .filter(([, schema]) => shieldPinnen(`${schema}.fzz`).includes('3V3'))
       .map(([id]) => id)
       .sort();
-    expect(met3v3).toEqual(['afstandssensor', 'ir-digitaal', 'servo']);
+    expect(met3v3).toEqual(['afstandssensor', 'ir-digitaal', 'joystick', 'servo']);
   });
 
   it('elke les toont zijn schema onder Aansluiten en noemt de pinnen uit de code', () => {

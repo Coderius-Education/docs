@@ -33,6 +33,8 @@ const sidebars: SidebarsConfig = {
         'onderdelen/ir-analoog',
         'onderdelen/afstandssensor',
         'onderdelen/tof',
+        'onderdelen/drukknop',
+        'onderdelen/joystick',
       ],
     },
     {
