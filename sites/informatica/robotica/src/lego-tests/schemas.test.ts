@@ -94,6 +94,7 @@ const SCHEMAS: Record<string, string> = {
   'rgb-led': 'shield_rgb_led',
   drukknop: 'shield_drukknop',
   joystick: 'shield_joystick',
+  potmeter: 'shield_potmeter',
 };
 
 const les = (id: string) => readFileSync(join(ONDERDELEN, `${id}.mdx`), 'utf8');
@@ -130,7 +131,7 @@ describe('de aansluitschema’s staan op het shield', () => {
       .filter(([, schema]) => shieldPinnen(`${schema}.fzz`).includes('3V3'))
       .map(([id]) => id)
       .sort();
-    expect(met3v3).toEqual(['afstandssensor', 'ir-digitaal', 'joystick', 'servo']);
+    expect(met3v3).toEqual(['afstandssensor', 'ir-digitaal', 'joystick', 'potmeter', 'servo']);
   });
 
   it('elke les toont zijn schema onder Aansluiten en noemt de pinnen uit de code', () => {

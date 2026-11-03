@@ -35,6 +35,7 @@ const sidebars: SidebarsConfig = {
         'onderdelen/tof',
         'onderdelen/drukknop',
         'onderdelen/joystick',
+        'onderdelen/potmeter',
       ],
     },
     {
