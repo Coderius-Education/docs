@@ -111,8 +111,11 @@ const ZONDER_BLOK: Record<string, string> = {
   'veiligheid/index.mdx': 'startpagina van de route, verwijst naar de FastAPI-lessen zelf',
   'online/index.mdx':
     'startpagina van de route; de Linux-cursus staat er als geheel in, elke les linkt zijn eigen Linux-les',
+  'online/docker/achtergrond.mdx': '-d, --name, logs en stop/start/rm worden hier zelf uitgelegd',
   'online/docker/compose.mdx': 'YAML en docker compose worden hier zelf uitgelegd',
-  'online/docker/container.mdx': 'docker run, -p en -d worden hier zelf uitgelegd',
+  'online/docker/container.mdx': 'docker run en -p worden hier zelf uitgelegd',
+  'online/docker/databases.mdx':
+    'de map data, os.makedirs en docker exec worden hier zelf uitgelegd; git staat in de lessen ervoor',
   'online/docker/traefik.mdx':
     'labels en FORWARDED_ALLOW_IPS worden hier zelf uitgelegd; mkdir en nano staan in de les ervoor',
   'online/docker/volume.mdx': 'een volume wordt hier zelf uitgelegd, en bouwt op de lessen ervoor',

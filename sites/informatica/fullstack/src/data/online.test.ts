@@ -313,13 +313,13 @@ describe('de keten van Docker', () => {
 
   it('het volume hangt op WORKDIR plus de map data uit main.py', () => {
     const werkmap = dockerfile().match(/^WORKDIR (\S+)$/m)?.[1];
-    expect(lees('online/docker/niet-als-root')).toContain('os.makedirs("data", exist_ok=True)');
+    expect(lees('online/docker/databases')).toContain('os.makedirs("data", exist_ok=True)');
     const doel = `${werkmap}/data`;
     expect(lees('online/docker/volume')).toContain(`-v gastenboek-data:${doel} `);
     for (const id of ['online/docker/compose', 'online/docker/traefik']) {
       expect(blokken(id, 'yaml').join('\n'), id).toContain(`- data:${doel}`);
     }
-    const negeer = blokken('online/docker/niet-als-root', 'text').find((b) => b.includes('.venv'));
+    const negeer = blokken('online/docker/databases', 'text').find((b) => b.includes('.venv'));
     expect(negeer).toContain('data/');
   });
 
