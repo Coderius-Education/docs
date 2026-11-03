@@ -19,16 +19,16 @@ Op een **OLED-scherm** van 128 × 64 pixels zet je tekst en getallen, zodat je o
 
 ## Aansluiten
 
-![Aansluitschema: OLED-scherm via de multiplexer op het Leaphy Murphy Shield](./img/oled-scherm/shield_oled_mux.png)
+![Aansluitschema: het OLED-scherm op channel 7 van de multiplexer, met SCL, SDA, VCC en GND elk op de pin met dezelfde naam](@site/static/fritzing/shield_oled_mux_bb.png)
 
-Sluit het OLED-scherm via een 4-pins jumperkabel aan op de **multiplexer**:
+Sluit het OLED-scherm via een 4-pins jumperkabel aan op de **multiplexer**, die in de bus rechts op het shield steekt:
 
-- **VCC** → 3,3V op de multiplexer
-- **GND** → GND op de multiplexer
+- **VCC** → VCC op channel 7 van de multiplexer
+- **GND** → GND op channel 7 van de multiplexer
 - **SDA** → SDA op channel **7** van de multiplexer
 - **SCL** → SCL op channel **7** van de multiplexer
 
-In dit voorbeeld zit het scherm dus op **channel 7**. Steek het in een ander kanaal? Pas dan het getal in de code aan.
+Op het scherm zit SCL boven SDA, op de multiplexer andersom: die twee draden kruisen. In dit voorbeeld zit het scherm dus op **channel 7**. Steek het in een ander kanaal? Pas dan het getal in de code aan.
 
 ## Code
 

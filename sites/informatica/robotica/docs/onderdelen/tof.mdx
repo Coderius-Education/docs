@@ -45,12 +45,13 @@ Alle TOF-sensoren hebben hetzelfde **I2C-adres**. De microcontroller zou ze niet
 
 ### Aansluiten
 
-![Aansluitschema van één TOF op A4 (SDA) en A5 (SCL) van het Leaphy Murphy Shield, zonder multiplexer](./img/tof/wiring_tof.png)
+![Aansluitschema: één TOF zonder multiplexer op het shield, met SDA aan A4, SCL aan A5, en VCC en GND op het rijtje van A4](@site/static/fritzing/shield_tof_bb.png)
 
-- **VCC** van de TOF aan **3.3V**
-- **GND** van de TOF aan **GND**
-- **SDA** van de TOF aan **A4** (SDA)
-- **SCL** van de TOF aan **A5** (SCL)
+- **SDA** van de TOF aan de pin **A4** (binnenste rij; op het shield A4/D18/SDA)
+- **SCL** van de TOF aan de pin **A5** (binnenste rij; A5/D19/SCL)
+- **VCC** aan **3V3** (middelste rij) en **GND** aan **GND** (buitenste rij), allebei op het rijtje van A4
+
+In het schema kruisen twee draden elkaar: op de TOF zit SDA links van SCL, maar de draad van SDA moet het verst opzij.
 
 :::tip[Beschermend stickertje]
 
@@ -140,9 +141,9 @@ Met de SDA/SCL-module kun je tot acht I2C-apparaten aansluiten op **channels 0 t
 
 ### Aansluiten
 
-![Aansluitschema van één TOF op channel 7 van de multiplexer op het Leaphy Murphy Shield](./img/tof/tof_mux.png)
+![Aansluitschema: de TOF op channel 7 van de multiplexer, met SDA, SCL, VCC en GND elk op de pin met dezelfde naam; de multiplexer steekt in de bus rechts op het shield](@site/static/fritzing/shield_tof_mux_bb.png)
 
-In dit voorbeeld zit de TOF op **channel 7** van de multiplexer. Het cijfer staat boven het stel pinnen waarin je de sensor steekt.
+In dit voorbeeld zit de TOF op **channel 7** van de multiplexer. Het cijfer staat boven het stel pinnen waarin je de sensor steekt. Op een channel staan vier pinnen onder elkaar: SDA, SCL, VCC en GND. Elke draad van de TOF gaat naar de pin met dezelfde naam.
 
 ### Code
 
@@ -185,12 +186,14 @@ Heb je twee TOFs nodig (bijvoorbeeld om links en rechts te meten)? Dan steek je 
 
 ### Aansluiten
 
-![Aansluitschema van twee TOF-sensoren op channel 0 en channel 7 van de multiplexer](./img/tof/2_tof_mux.png)
+![Aansluitschema: TOF 1 op channel 0 en TOF 2 op channel 7 van de multiplexer, elke draad op de pin met dezelfde naam](@site/static/fritzing/shield_twee_tof_mux_bb.png)
 
 In dit voorbeeld:
 
 - TOF 1 op **channel 0**
 - TOF 2 op **channel 7**
+
+Bij channel 0 tot en met 3 (bovenaan de multiplexer) staan de pinnen andersom: GND bovenaan en SDA onderaan. Daarom kruisen de draden van TOF 1 in het schema. Steek ook hier elke draad op de pin met dezelfde naam.
 
 ### Code
 

@@ -16,7 +16,7 @@ Aluminiumtape geleidt stroom. Laat twee draadjes naast elkaar over de vloer
 slepen, zonder dat ze elkaar raken. Komen ze allebei op de tape, dan verbindt de
 tape ze. Het ene draadje zit aan een pin, het andere aan GND.
 
-![Aansluitschema: één draadje van pin D5 en één van GND lopen naar de aluminiumtape; raken ze allebei de tape, dan wordt D5 0](aluminium_tape_detectie_bb.png)
+![Aansluitschema: een blauw draadje van D5 en een zwart draadje van GND, allebei op het rijtje van D5, liggen op de aluminiumtape; raken ze allebei de tape, dan wordt D5 0](@site/static/fritzing/shield_aluminiumtape_bb.png)
 
 ```python
 from machine import Pin

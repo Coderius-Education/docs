@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { basename, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inflateRawSync } from 'node:zlib';
+import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import sidebars from '../../sidebars';
 
@@ -243,16 +244,7 @@ describe('de aansluitschema’s staan op het shield', () => {
 // Plaatjes van aansluitschema's die (nog) niet uit een .fzz in static/fritzing
 // komen. Zo'n plaatje kan niemand opnieuw maken als er iets niet klopt; deze
 // lijst mag alleen korter worden.
-const NOG_ZONDER_BRON = new Set<string>([
-  'docs/onderdelen/img/tof/wiring_tof.png',
-  'docs/onderdelen/img/tof/tof_mux.png',
-  'docs/onderdelen/img/tof/2_tof_mux.png',
-  'docs/onderdelen/img/oled-scherm/shield_oled_mux.png',
-  'docs/onderdelen/img/meten/nano_rp2040_pin_nameten.svg',
-  'docs/robocup/redden_basis_bb.png',
-  'docs/robocup/aluminium_tape_detectie_bb.png',
-  'lego_auto/debuggen_met_scherm/nano_rp2040_oled_mux_ir_sensor_bb.png',
-]);
+const NOG_ZONDER_BRON = new Set<string>([]);
 
 /** Uitsneden van één schema: het plaatje heet anders dan zijn .fzz. */
 const UITSNEDE: Record<string, string> = {
@@ -329,7 +321,7 @@ describe('elk aansluitschema in een les', () => {
     // Op het Golfbot-plaatje liep de oranje draad van de sensor schuin en dan
     // langs de rij van A4, en de servodraden schuin over de pinnen van D8 tot
     // D3; de tekst moest uitleggen dat de hoekjes geen aansluitingen waren.
-    const NOG_SCHUIN = new Set(['shield_with_motors.fzz']);
+    const NOG_SCHUIN = new Set<string>([]);
     const fout: string[] = [];
     for (const fzz of readdirSync(FRITZING).filter((n) => n.endsWith('.fzz') && !NOG_SCHUIN.has(n))) {
       const fz = [...unzip(join(FRITZING, fzz))].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
@@ -354,6 +346,78 @@ describe('elk aansluitschema in een les', () => {
       for (const [woord, kleur] of KLEURWOORD)
         if (woord.test(p.alt) && !KLEUR[kleur].some((k) => kleuren.has(k)))
           fout.push(`${p.les}: de alt noemt ${kleur}, maar ${basename(fzz)} heeft geen ${kleur}e draad`);
+    }
+    expect(fout).toEqual([]);
+  });
+});
+
+const fzVan = (fzz: string) => [...unzip(join(FRITZING, fzz))].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
+const alleFzz = () => readdirSync(FRITZING).filter((n) => n.endsWith('.fzz'));
+const geometrie = (blok: string) => {
+  const g = blok.match(/<breadboardView[^>]*>\s*<geometry ([^>]*)>/)?.[1] ?? '';
+  const getal = (k: string) => Number(g.match(new RegExp(`\\b${k}="([-\\d.e]+)"`))?.[1] ?? 0);
+  return { z: getal('z'), x: getal('x'), y: getal('y'), x2: getal('x2'), y2: getal('y2') };
+};
+
+describe('elk .fzz met een shield', () => {
+  it('heeft de Nano erop, boven het shield', () => {
+    // In redden_basis lagen vijf Nano's onder het shield (lagere z), en in de
+    // TOF-schema's ontbrak hij: je zag een leeg shield.
+    const fout: string[] = [];
+    for (const fzz of alleFzz()) {
+      const fz = fzVan(fzz);
+      const shield = fz.match(/<instance moduleIdRef="Flitz[ _]Shield[^"]*"[\s\S]*?<\/instance>/i)?.[0];
+      if (!shield) continue;
+      const nanos = [...fz.matchAll(/<instance moduleIdRef="(?:arduinoNano|Arduino Nano)[^"]*"[\s\S]*?<\/instance>/g)];
+      if (nanos.length !== 1) fout.push(`${fzz}: ${nanos.length} Nano's`);
+      else if (geometrie(nanos[0][0]).z <= geometrie(shield).z) fout.push(`${fzz}: de Nano ligt onder het shield`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('heeft geen draad die over een pinrij van het shield loopt', () => {
+    // Bij de analoge IR-sensoren liepen de draden over de hele onderste rij, over
+    // de pinnen van D13, 3V3 en REF; je zag niet op welke pin ze uitkwamen. Een
+    // draad mag een rij alleen raken waar hij eindigt.
+    const RIJEN = [18.018, 27.881, 37.743, 163.028, 172.89, 182.74];
+    const KOLOMMEN = Array.from({ length: 15 }, (_, i) => 127.11 + i * 8.926);
+    const fout: string[] = [];
+    for (const fzz of alleFzz()) {
+      const fz = fzVan(fzz);
+      const shield = fz.match(/<instance moduleIdRef="Flitz_shieldv3[^"]*"[\s\S]*?<\/instance>/)?.[0];
+      if (!shield) continue;
+      const s = geometrie(shield);
+      for (const [draad] of fz.matchAll(/<instance moduleIdRef="WireModuleID"[\s\S]*?<\/instance>/g)) {
+        const w = geometrie(draad);
+        const [x0, x1] = [Math.min(w.x, w.x + w.x2), Math.max(w.x, w.x + w.x2)];
+        const [y0, y1] = [Math.min(w.y, w.y + w.y2), Math.max(w.y, w.y + w.y2)];
+        const over = (a: number, b: number, c: number) => c > a + 1.5 && c < b - 1.5;
+        for (const r of RIJEN.map((r) => s.y + r))
+          // ook een bijna-horizontale draad (de oude liepen 0,9 schuin over 180)
+          if (y1 - y0 < 2 && Math.abs((y0 + y1) / 2 - r) < 2 && KOLOMMEN.some((k) => over(x0, x1, s.x + k)))
+            fout.push(`${fzz}: draad over de rij op y ${r.toFixed(1)}`);
+        for (const k of KOLOMMEN.map((k) => s.x + k))
+          if (x1 - x0 < 2 && Math.abs((x0 + x1) / 2 - k) < 1.5 && RIJEN.some((r) => over(y0, y1, s.y + r)))
+            fout.push(`${fzz}: draad over de kolom op x ${k.toFixed(1)}`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('heeft notities die door de stijlregels komen', () => {
+    // Notities eindigden op ":)" en zeiden "channels 0-3" en "jumper wires".
+    const { controleer } = createRequire(import.meta.url)('../../../../../packages/shared/stijl.js') as {
+      controleer: (tekst: string) => { niveau: string; naam: string }[];
+    };
+    const fout: string[] = [];
+    for (const fzz of alleFzz()) {
+      for (const m of fzVan(fzz).matchAll(/<instance moduleIdRef="NoteModuleID"[\s\S]*?<text>([\s\S]*?)<\/text>/g)) {
+        const html = m[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+        const tekst = html.replace(/<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/g, ' ');
+        for (const melding of controleer(tekst).filter((x) => x.niveau === 'fout'))
+          fout.push(`${fzz}: ${melding.naam}`);
+        if (/:\)|\bchannels?\b|\bjumper ?wires?\b/i.test(tekst)) fout.push(`${fzz}: "${tekst.trim().slice(0, 60)}"`);
+      }
     }
     expect(fout).toEqual([]);
   });

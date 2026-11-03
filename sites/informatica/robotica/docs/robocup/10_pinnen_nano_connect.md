@@ -9,7 +9,7 @@ Zo zitten de pinnen in een complete robot voor Redden Basis: de Nano op het
 Murphy Shield, met links de motormodule en rechts de multiplexer (de
 SDA/SCL-module).
 
-![Fritzing-schema van het Murphy Shield met links de motormodule en rechts de SDA/SCL-module met kanalen 0 tot en met 7; een notitie zegt dat D2, D3, D4 en D11 bezet zijn door de DC-motoren](redden_basis_bb.png)
+![Fritzing-schema van het Murphy Shield met de Nano, links de motormodule en rechts de SDA/SCL-module met kanalen 0 tot en met 7; de legenda zegt dat de motormodule D2, D3, D4 en D11 gebruikt en de multiplexer A4 en A5](@site/static/fritzing/redden_basis_bb.png)
 
 Het Fritzing-bestand: [Fritzing Redden Basis](/docs/redden_basis.fzz).
 
