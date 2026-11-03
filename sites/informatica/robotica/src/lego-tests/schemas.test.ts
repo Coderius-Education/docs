@@ -154,6 +154,21 @@ describe('de aansluitschema’s staan op het shield', () => {
     expect(fout).toEqual([]);
   });
 
+  it('elke draad is een stuk recht omlaag of recht opzij', () => {
+    // Schuine draden waren niet te volgen: een draad heeft alleen haakse bochten.
+    const fout: string[] = [];
+    for (const schema of Object.values(SCHEMAS)) {
+      const fz =
+        [...unzip(join(FRITZING, `${schema}.fzz`))].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
+      for (const m of fz.matchAll(
+        /<instance moduleIdRef="WireModuleID"[\s\S]*?<breadboardView[^>]*>\s*<geometry [^>]*x2="([-\d.e]+)" y2="([-\d.e]+)"/g,
+      ))
+        if (Math.abs(Number(m[1])) > 0.01 && Math.abs(Number(m[2])) > 0.01)
+          fout.push(`${schema}: schuine draad (${m[1]}, ${m[2]})`);
+    }
+    expect(fout).toEqual([]);
+  });
+
   it('het LED-schema heeft de weerstand', () => {
     const fz =
       [...unzip(join(FRITZING, 'shield_led.fzz'))].find(([n]) => n.endsWith('.fz'))?.[1] ?? '';
