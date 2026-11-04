@@ -17,6 +17,7 @@ const OVERGESLAGEN := "<overgeslagen>"
 
 var fouten: Array[String] = []
 var gedaan := 0
+var foutvoorbeelden := 0
 
 func _ready() -> void:
 	var index := _lees_index()
@@ -60,7 +61,9 @@ func _compileer_alles(index: Array) -> void:
 			_faal("%s — compileert niet (zie de fout hierboven)" % bron)
 		else:
 			gedaan += 1
-	print("Gecompileerd: %d van %d blokken." % [gedaan, index.size() - overgeslagen])
+	var voorbeelden := index.filter(func(item): return item.has("verwacht_fout") and not item.get("overslaan", false)).size()
+	print("Gecompileerd: %d van %d blokken." % [gedaan, index.size() - overgeslagen - voorbeelden])
+	print("Foutvoorbeelden met de melding uit de les: %d van %d." % [foutvoorbeelden, voorbeelden])
 	if overgeslagen > 0:
 		print("Overgeslagen: %d blokken die de wijziging niet raakt (--alleen)." % overgeslagen)
 
@@ -86,7 +89,7 @@ func _compileer_foutvoorbeeld(script: GDScript, bron: String, verwacht: String) 
 		return
 	for regel in meldingen.regels:
 		if regel.contains(verwacht):
-			gedaan += 1
+			foutvoorbeelden += 1
 			return
 	_faal("%s — Godot geeft niet de melding uit de les ('%s') maar: %s" % [bron, verwacht, " | ".join(meldingen.regels)])
 
@@ -96,6 +99,8 @@ func _compileer_foutvoorbeeld(script: GDScript, bron: String, verwacht: String) 
 func _stap_script(index: Array, bron_bevat: String) -> String:
 	for item in index:
 		var kop: String = item["kop"]
+		if item.has("verwacht_fout"):
+			continue
 		if String(item["bron"]).contains(bron_bevat) and (kop.begins_with("Je script tot nu toe") or kop.begins_with("Je complete script")):
 			if item.get("overslaan", false):
 				return OVERGESLAGEN

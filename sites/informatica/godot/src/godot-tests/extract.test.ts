@@ -1,11 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { autoloadUit, fragmentenUit } from './extract';
+import { autoloadUit, citaatKlopt, fragmentenUit } from './extract';
 
 // De extractie bepaalt wát Godot in CI te zien krijgt. Neemt hij te weinig mee,
 // dan is de suite stil groen zonder iets te controleren; neemt hij fragmenten
 // mee die nooit op zichzelf kunnen compileren, dan is hij vals rood.
 
 const kop = '## Je script tot nu toe\n\n';
+
+const DELTA = 'Identifier "delta" not declared in the current scope.';
+const DELTA_SUMMARY = `<details>\n<summary>${DELTA}</summary>\n\n\`\`\`\n${DELTA}\n\`\`\`\n\n`;
+const FOUT_SCRIPT =
+  '```gdscript\n# FOUT\nextends Node\n\nfunc val() -> void:\n    print(delta)\n```';
 
 function pagina(body: string): string {
   return `---\nslug: /voorbeeld\n---\n\n${body}`;
@@ -16,7 +21,7 @@ describe('GDScript uit de lespagina´s halen', () => {
     const { fragmenten, overgeslagen } = fragmentenUit(
       'les.md',
       pagina(
-        '{/* verwacht-fout: Identifier "delta" not declared in the current scope. */}\n\n```gdscript\n# FOUT\nextends Node\n\nfunc val() -> void:\n    print(delta)\n\n# GOED\nfunc val(delta: float) -> void:\n    print(delta)\n```',
+        `${DELTA_SUMMARY}{/* verwacht-fout: Identifier "delta" not declared in the current scope. */}\n\n\`\`\`gdscript\n# FOUT\nextends Node\n\nfunc val() -> void:\n    print(delta)\n\n# GOED\nfunc val(delta: float) -> void:\n    print(delta)\n\`\`\``,
       ),
     );
     expect(overgeslagen).toEqual([]);
@@ -26,6 +31,68 @@ describe('GDScript uit de lespagina´s halen', () => {
     );
     expect(fragmenten[0].code).toContain('func val() -> void:');
     expect(fragmenten[0].code).not.toContain('GOED');
+  });
+
+  it('weigert een verwacht-fout waarvan de summary of het meldingsblok iets anders zegt', () => {
+    // De test vergelijkt Godot met de marker; wat de leerling leest, is de
+    // summary en het meldingsblok. Die moeten dus dezelfde melding zijn.
+    const marker = `{/* verwacht-fout: ${DELTA} */}\n\n${FOUT_SCRIPT}`;
+    const andereSummary = DELTA_SUMMARY.replace('<summary>Identifier', '<summary>Identifer');
+    expect(() => fragmentenUit('les.md', pagina(andereSummary + marker))).toThrow(/summary/);
+    const anderBlok = DELTA_SUMMARY.replace('```\nIdentifier', '```\nIdentifer');
+    expect(() => fragmentenUit('les.md', pagina(anderBlok + marker))).toThrow(/meldingsblok/);
+    const zonderDetails = marker;
+    expect(() => fragmentenUit('les.md', pagina(zonderDetails))).toThrow(/details/);
+  });
+
+  it('laat een ... in het citaat staan voor wat per keer verschilt', () => {
+    expect(citaatKlopt('in object "Muntje:...".', 'in object "Muntje:<Area2D#123>".')).toBe(true);
+    expect(citaatKlopt('in object "Muntje".', 'in object "Muntje:<Area2D#123>".')).toBe(false);
+  });
+
+  it('leest bij twee markers kort na elkaar elk blok met zijn eigen melding', () => {
+    const tweede = DELTA_SUMMARY.replaceAll(DELTA, 'Fout B');
+    const { fragmenten } = fragmentenUit(
+      'les.md',
+      pagina(
+        `${DELTA_SUMMARY}{/* verwacht-fout: ${DELTA} */}\n\n${FOUT_SCRIPT}\n\n</details>\n\n${tweede}{/* verwacht-fout: Fout B */}\n\n${FOUT_SCRIPT}`,
+      ),
+    );
+    expect(fragmenten.map((f) => f.verwachtFout)).toEqual([DELTA, 'Fout B']);
+  });
+
+  it('maakt van een marker over meerdere regels één regel', () => {
+    const { fragmenten } = fragmentenUit(
+      'les.md',
+      pagina(
+        `${DELTA_SUMMARY}{/* verwacht-fout: Identifier "delta" not declared\n   in the current scope. */}\n\n${FOUT_SCRIPT}`,
+      ),
+    );
+    expect(fragmenten[0].verwachtFout).toBe(DELTA);
+  });
+
+  it('weigert een marker die niet direct boven een gdscript-blok staat', () => {
+    // Anders valt het blok stil terug op "overgeslagen", en denkt de schrijver
+    // dat het gecontroleerd wordt.
+    expect(() =>
+      fragmentenUit(
+        'les.md',
+        pagina(
+          `${DELTA_SUMMARY}{/* verwacht-fout: ${DELTA} */}\n\nZo ziet dat eruit:\n\n${FOUT_SCRIPT}`,
+        ),
+      ),
+    ).toThrow(/niet direct boven/);
+  });
+
+  it('ziet ook een blok met een titel en met Windows-regeleinden', () => {
+    const { fragmenten } = fragmentenUit(
+      'les.md',
+      pagina(
+        '```gdscript title="speler.gd"\r\nextends Node2D\r\n\r\nfunc _ready() -> void:\r\n    pass\r\n```',
+      ),
+    );
+    expect(fragmenten).toHaveLength(1);
+    expect(fragmenten[0].code).not.toContain('\r');
   });
 
   it('weigert een verwacht-fout-blok zonder extends', () => {

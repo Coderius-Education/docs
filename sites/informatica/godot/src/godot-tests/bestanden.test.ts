@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { alleLesbestanden } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
+import { BLOK } from './extract';
 
 // Een bestand dat je met FileAccess.WRITE opent, staat pas op de schijf als
 // het gesloten is: met close(), of doordat de variabele aan het eind van de
@@ -13,18 +14,25 @@ import { describe, expect, it } from 'vitest';
 // compileert zo'n fragment niet en voert het niet uit, dus dit staat hier.
 
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
-const BLOK = /```gdscript\n([\s\S]*?)```/g;
 
-/** Of een blok een bestand leest nadat het er een schreef, zonder close() ertussen. */
+/**
+ * Of een blok een bestand leest terwijl een schrijf-handle in een variabele
+ * nog open is. Een handle zonder variabele (`FileAccess.open(…).store_string(…)`
+ * op één regel) sluit Godot meteen; alleen `bestand.close()` van díé variabele
+ * of het einde van de functie sluit een bewaarde handle.
+ */
 function leestVoorSluiten(code: string): boolean {
-  let open = false;
+  const open = new Set<string>();
   for (const regel of code.split('\n')) {
-    if (/FileAccess\.open\([^)]*FileAccess\.WRITE/.test(regel)) open = true;
-    else if (/\.close\(\)/.test(regel)) open = false;
-    else if (/^func\s/.test(regel)) open = false;
-    else if (open && /FileAccess\.open\([^)]*FileAccess\.READ|get_file_as_string/.test(regel)) {
-      return true;
+    if (/^func\s/.test(regel)) open.clear();
+    const schrijf = regel.match(/\bvar\s+(\w+)\s*:?=\s*FileAccess\.open\(.*FileAccess\.WRITE/);
+    if (schrijf) {
+      open.add(schrijf[1]);
+      continue;
     }
+    for (const m of regel.matchAll(/\b(\w+)\.close\(\)/g)) open.delete(m[1]);
+    if (open.size && /FileAccess\.open\(.*FileAccess\.READ|get_file_as_string\(/.test(regel))
+      return true;
   }
   return false;
 }
@@ -38,6 +46,22 @@ describe('bestanden in GDScript-voorbeelden', () => {
     const tweeFuncties =
       'func schrijf():\n    var b = FileAccess.open(P, FileAccess.WRITE)\n\nfunc lees():\n    var l = FileAccess.open(P, FileAccess.READ)';
     expect(leestVoorSluiten(tweeFuncties)).toBe(false);
+  });
+
+  it('ziet geneste haakjes in het pad, en sluiten van een ander bestand telt niet', () => {
+    const genest =
+      'var b = FileAccess.open(pad_voor("x"), FileAccess.WRITE)\nb.store_string("x")\nvar t = FileAccess.get_file_as_string(pad_voor("x"))';
+    expect(leestVoorSluiten(genest)).toBe(true);
+    const ander =
+      'var b = FileAccess.open(P, FileAccess.WRITE)\nlog.close()\nvar l = FileAccess.open(P, FileAccess.READ)';
+    expect(leestVoorSluiten(ander)).toBe(true);
+  });
+
+  it('laat een handle zonder variabele toe: die sluit Godot meteen', () => {
+    // Nagespeeld in Godot 4.7.2: het lezen gaf daarna de geschreven tekst.
+    const eenRegel =
+      'FileAccess.open(P, FileAccess.WRITE).store_string("hallo")\nvar t = FileAccess.get_file_as_string(P)';
+    expect(leestVoorSluiten(eenRegel)).toBe(false);
   });
 
   it('leest nergens een bestand dat het in hetzelfde blok schreef en nog niet sloot', () => {

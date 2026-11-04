@@ -1,2 +1,6 @@
 extracted/
 .godot/
+# Godot maakt bij --import een uid naast elk script; het testproject heeft
+# die niet nodig, en zonder deze regel stond er na elke lokale run een nieuw
+# bestand in git status.
+tests/*.gd.uid

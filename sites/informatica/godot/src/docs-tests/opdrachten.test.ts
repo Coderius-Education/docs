@@ -38,12 +38,19 @@ function paginas(): Pagina[] {
 
 type Opdracht = { pad: string; kop: string; sectie: string; nummer?: [number, number, string] };
 
+const IS_OPDRACHT = /^Opdracht(?:\s|:)/;
+
 function opdrachten(p: Pagina): Opdracht[] {
-  const koppen = [...p.proza.matchAll(/^(#{2,3}) (.*)$/gm)];
+  const koppen = [...p.proza.matchAll(/^(#{2,4}) (.*)$/gm)];
   const uit: Opdracht[] = [];
   koppen.forEach((k, i) => {
-    if (!k[2].startsWith('Opdracht')) return;
-    const volgende = koppen.slice(i + 1).find((v) => v[1].length <= k[1].length);
+    if (!IS_OPDRACHT.test(k[2])) return;
+    // Een sectie loopt tot de volgende kop van hetzelfde of een hoger niveau,
+    // of tot de volgende opdracht op welk niveau ook: anders telde de
+    // oplossing van een H3-opdracht eronder mee voor deze.
+    const volgende = koppen
+      .slice(i + 1)
+      .find((v) => v[1].length <= k[1].length || IS_OPDRACHT.test(v[2]));
     const sectie = p.proza.slice(k.index, volgende?.index ?? p.proza.length);
     const m = k[2].match(/^Opdracht (\d+)\.(\d+)\.([a-z]): \S/);
     uit.push({
@@ -54,6 +61,13 @@ function opdrachten(p: Pagina): Opdracht[] {
     });
   });
   return uit;
+}
+
+/** De teksten van de summaries in een sectie, zonder inline tags. */
+function summaries(sectie: string): string[] {
+  return [...sectie.matchAll(/<summary[^>]*>([\s\S]*?)<\/summary>/g)].map((m) =>
+    m[1].replace(/<[^>]+>/g, '').trim(),
+  );
 }
 
 const PAGINAS = paginas();
@@ -113,8 +127,23 @@ describe('opdrachten in de Godot-cursus', () => {
 
   it('hebben een tip in een uitklapblok, of een reden waarom niet', () => {
     const fout = ALLE.filter(
-      (o) => !ZONDER_TIP.has(o.kop) && !/<summary>[^<]*tip[^<]*<\/summary>/i.test(o.sectie),
+      (o) => !ZONDER_TIP.has(o.kop) && !summaries(o.sectie).some((t) => /\btip\b/i.test(t)),
     ).map((o) => `${o.pad}: ${o.kop}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('geven elke les in een hoofdstuk een eigen positie, 1 tot en met n', () => {
+    // Het nummer van een opdracht komt uit de sidebar_position. Twee lessen met
+    // dezelfde positie hebben allebei een "Opdracht 5.1.a", en een gat laat
+    // een les verspringen ten opzichte van wat de leerling in de sidebar telt.
+    const fout: string[] = [];
+    for (const h of new Set(PAGINAS.map((p) => p.hoofdstuk))) {
+      const posities = PAGINAS.filter((p) => p.hoofdstuk === h)
+        .map((p) => p.positie)
+        .sort((a, b) => a - b);
+      const verwacht = posities.map((_, i) => i + 1);
+      if (posities.join() !== verwacht.join()) fout.push(`hoofdstuk ${h}: ${posities.join(', ')}`);
+    }
     expect(fout).toEqual([]);
   });
 
@@ -122,5 +151,36 @@ describe('opdrachten in de Godot-cursus', () => {
     const koppen = new Set(ALLE.map((o) => o.kop));
     const weg = [...ZONDER_OPLOSSING.keys(), ...ZONDER_TIP.keys()].filter((k) => !koppen.has(k));
     expect(weg).toEqual([]);
+  });
+});
+
+describe('de controle zelf', () => {
+  const pagina = (proza: string): Pagina => ({ pad: 'x.md', hoofdstuk: 2, positie: 1, proza });
+  const TIP = '<details>\n<summary>Klik hier voor een tip.</summary>\n\nx\n\n</details>\n';
+  const OPLOSSING =
+    '<details>\n<summary>Klik hier voor de <code>oplossing</code>.</summary>\n\nx\n\n</details>\n';
+
+  it('rekent de oplossing van een opdracht eronder niet mee', () => {
+    const [a, b] = opdrachten(
+      pagina(
+        `## Opdracht 2.1.a: een\n\nDoe iets.\n\n### Opdracht 2.1.b: twee\n\n${TIP}${OPLOSSING}`,
+      ),
+    );
+    expect(summaries(a.sectie)).toEqual([]);
+    expect(summaries(b.sectie)).toHaveLength(2);
+  });
+
+  it('ziet een groepskop "Opdrachten" niet als opdracht, en een H4-opdracht wel', () => {
+    const gevonden = opdrachten(pagina('## Opdrachten\n\n#### Opdracht 2.1.a: diep\n\nx\n'));
+    expect(gevonden.map((o) => o.kop)).toEqual(['Opdracht 2.1.a: diep']);
+  });
+
+  it('telt alleen het woord tip, en leest een summary met inline tags', () => {
+    expect(
+      summaries('<summary>Waarom is mijn lijn een stippellijn?</summary>').some((t) =>
+        /\btip\b/i.test(t),
+      ),
+    ).toBe(false);
+    expect(summaries(OPLOSSING)).toEqual(['Klik hier voor de oplossing.']);
   });
 });
