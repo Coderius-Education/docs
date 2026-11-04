@@ -14,9 +14,16 @@ export default function Lessen({ concept }: { concept: LeerdoelConcept }): React
         <span key={l.id}>
           {i > 0 && (i === lessen.length - 1 ? ' en ' : ', ')}
           {/* Het pad heeft de baseUrl al (permalink van de docs-plugin). */}
-          <Link to={l.pad} autoAddBaseUrl={false}>
-            {l.titel}
-          </Link>
+          {l.extern ? (
+            // Een andere cursus opent in een nieuw tabblad, net als een site:-link.
+            <Link to={l.pad} target="_blank" rel="noopener noreferrer">
+              {l.titel}
+            </Link>
+          ) : (
+            <Link to={l.pad} autoAddBaseUrl={false}>
+              {l.titel}
+            </Link>
+          )}
         </span>
       ))}
     </span>

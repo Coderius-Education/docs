@@ -42,6 +42,40 @@ schoolsoort.
 - De volgorde is die van het blad. Een rij blijft op één regel: `biome.json`
   geeft `leerdoelen.json` een regelbreedte van 200.
 
+## Een niveau met een tentamen
+
+Een niveau kan met een tentamen worden afgesloten in plaats van met een
+project (Algoritmiek, niveau 2). Dan heeft het bestand een veld `tentamen`:
+
+```json
+"tentamen": {
+  "niveau": "2",
+  "vorm": "Niveau 2 sluit je af met een papieren tentamen. …",
+  "bron": "/bronnen/toetsing-domein-b",
+  "manieren": [
+    { "id": "stellingen", "label": "Stellingen", "uitleg": "Je kunt stellingen beoordelen …", "vraagtype": "Type 4: stellingen over een algoritme", "lessen": ["stellingen"] }
+  ],
+  "onderwerpen": { "zoeken-en-sorteren": "Van deze zes algoritmes ken je alle manieren." }
+}
+```
+
+- Op dat niveau is de waarde van een rij geen moeilijkheid maar een lijst
+  manieren: `"2": ["begrijpen", "stellingen"]`. Een lege lijst betekent dat
+  het concept zelf de vaardigheid is ("Dijkstra op papier uitwerken"); de
+  pagina zet die rijen als lijst onder de tabel.
+- `lessen` van een manier zijn lesnamen in de map van het concept: de map van
+  zijn eerste `les` (`binair-zoeken/concept` geeft `binair-zoeken`). De plugin
+  neemt de eerste naam die bestaat; `"bouwen/"` is de eerste les in die
+  submap, op `sidebar_position`. Een manier zonder les stopt de build.
+- `bron` is een pagina bij vakdidactiek (`/bronnen/<slug>`), met een tip in
+  `tips.ts`; `leerdoelen.test.ts` eist dat beide bestaan.
+- `les` mag ook een `site:`-link naar een andere cursus zijn
+  (`"site:python/docs/data/10a-lijsten-basis"`). Die zoekt de plugin niet op;
+  of hij bestaat, controleert de CI-job `cross-links`.
+- Een tentamen-niveau heeft geen moeilijkheden, dus geen kolom in de
+  vergelijking en geen cijfer volgens Bloom. Heeft een cursus alleen zulke
+  niveaus, dan staat de uitleg van Bloom niet op het overzicht.
+
 ## Een rij toevoegen
 
 1. Een regel in `src/leerdoelen.json`, met een nieuwe `id`.

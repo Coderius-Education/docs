@@ -12,6 +12,7 @@ import {
   leesLeerdoelen,
   moeilijkhedenTekst,
   moeilijkheidVoorstel,
+  projectNiveaus,
   sjabloonZin,
 } from './leerdoelen';
 import { SITES, siteDir } from './sites';
@@ -49,7 +50,9 @@ describe('src/leerdoelen.json per cursus', () => {
       const bestand = join(ROOT, siteDir(site.id), 'src', 'leerdoelen.json');
       const tekst = readFileSync(bestand, 'utf8');
       const aantal = JSON.parse(tekst).concepten.length;
-      const rijen = tekst.split('\n').filter((r) => /^ {4}\{ "id": .* \},?$/.test(r));
+      // Alleen de regels van de concepten: de onderwerpen mogen er ook zo staan.
+      const concepten = tekst.slice(tekst.indexOf('"concepten": ['));
+      const rijen = concepten.split('\n').filter((r) => /^ {4}\{ "id": .* \},?$/.test(r));
       expect(rijen.length, 'rijen op één regel').toBe(aantal);
     });
 
@@ -74,6 +77,7 @@ describe('alleen niveaus, geen schoolsoorten', () => {
         'Niveau',
         'Vergelijking',
         'VergelijkPagina',
+        'Tentamen',
       ].map((c) => join(__dirname, 'components', 'Leerdoelen', `${c}.tsx`)),
       ...MET_LEERDOELEN.map((s) => join(ROOT, siteDir(s.id), 'src', 'leerdoelen.json')),
     ];
@@ -187,6 +191,137 @@ describe('leesLeerdoelen', () => {
       'zet de niveaus op volgorde: 1, 3',
     );
   });
+});
+
+describe('een niveau met een tentamen', () => {
+  // Algoritmiek sluit niveau 2 af met een papieren tentamen, niet met een
+  // project. Daar is een concept niet basis of gevorderd: er geldt een lijst
+  // manieren waarop je het moet kennen (uitleggen, stellingen, aanvullen …),
+  // en per manier is er een les waar je hem oefent.
+  const manier = (id: string, lessen: string[]) => ({
+    id,
+    label: id,
+    uitleg: `je kunt ${id}`,
+    vraagtype: `type ${id}`,
+    lessen,
+  });
+  const tentamen = {
+    niveau: '2',
+    vorm: 'Een papieren tentamen.',
+    bron: '/bronnen/toetsing',
+    manieren: [manier('begrijpen', ['concept', 'spel']), manier('aanvullen', ['bouwen/'])],
+    onderwerpen: { zoeken: 'Van deze algoritmes ken je alles.' },
+  };
+  const met = (concepten: unknown[], extra: object = {}) =>
+    leesLeerdoelen({
+      niveaus: ['1', '2'],
+      onderwerpen: [{ id: 'zoeken', label: 'Zoeken' }],
+      concepten,
+      tentamen: { ...tentamen, ...extra },
+    });
+  const rij = (id: string, manieren: unknown, les: unknown = `${id}/concept`) => ({
+    id,
+    onderwerp: 'zoeken',
+    concept: id,
+    1: 'basis',
+    2: manieren,
+    les,
+  });
+
+  it('leest per concept de manieren op het tentamen-niveau, en de moeilijkheid op de andere', () => {
+    const l = met([rij('binair', ['begrijpen', 'aanvullen']), rij('dijkstra-papier', [])]);
+    expect(l.concepten[0]).toMatchObject({
+      niveau: { 1: 'basis' },
+      manieren: ['begrijpen', 'aanvullen'],
+    });
+    expect(l.concepten[1].manieren).toEqual([]);
+    expect(l.tentamen?.onderwerpen.zoeken).toBe('Van deze algoritmes ken je alles.');
+    expect(projectNiveaus(l).map((n) => n.id)).toEqual(['1']);
+  });
+
+  it('weigert een onbekende of dubbele manier, en een moeilijkheid op het tentamen-niveau', () => {
+    expect(() => met([rij('a', ['raden'])])).toThrow(/bij 2 \(het tentamen\) een lijst manieren/);
+    expect(() => met([rij('a', 'basis')])).toThrow(/een lijst manieren/);
+    expect(() => met([rij('a', ['begrijpen', 'begrijpen'])])).toThrow(/staat een manier twee keer/);
+  });
+
+  it('eist een les uit de eigen cursus bij een concept met manieren', () => {
+    expect(() =>
+      met([rij('a', ['begrijpen'], 'site:python/docs/basis/jij-als-variabele')]),
+    ).toThrow(/met manieren hoort een les uit de eigen cursus/);
+    expect(() => met([{ ...rij('a', ['begrijpen']), les: undefined }])).toThrow(
+      /met manieren hoort een les/,
+    );
+  });
+
+  it('weigert een tentamen op een onbekend niveau, zonder manieren of met een bron buiten vakdidactiek', () => {
+    expect(() => met([rij('a', [])], { niveau: '4' })).toThrow(/niveau '4' staat niet in niveaus/);
+    expect(() => met([rij('a', [])], { manieren: [] })).toThrow(/minstens één manier/);
+    expect(() => met([rij('a', [])], { bron: 'https://slo.nl/x.pdf' })).toThrow(
+      /bron is het pad van een pagina bij vakdidactiek/,
+    );
+    expect(() => met([rij('a', [])], { onderwerpen: { weg: 'x' } })).toThrow(
+      /onbekend onderwerp 'weg'/,
+    );
+  });
+
+  it('koppelt per manier de eerste les die in de map van het concept bestaat', () => {
+    const docs = [
+      { id: 'hanoi/spel', title: 'Het spel', permalink: '/a/docs/hanoi/spel' },
+      {
+        id: 'hanoi/bouwen/basisgeval',
+        title: 'Bouwsteen 2',
+        permalink: '/a/b2',
+        sidebarPosition: 5,
+      },
+      { id: 'hanoi/bouwen/een-zet', title: 'Bouwsteen 1', permalink: '/a/b1', sidebarPosition: 4 },
+    ];
+    const l = plugin.koppelLessen(
+      met([rij('hanoi', ['begrijpen', 'aanvullen'], 'hanoi/spel')]),
+      docs,
+    );
+    expect(l.concepten[0].oefenen).toEqual({
+      begrijpen: { id: 'hanoi/spel', titel: 'Het spel', pad: '/a/docs/hanoi/spel' },
+      aanvullen: { id: 'hanoi/bouwen/een-zet', titel: 'Bouwsteen 1', pad: '/a/b1' },
+    });
+    expect(() =>
+      plugin.koppelLessen(met([rij('hanoi', ['aanvullen'], 'hanoi/spel')]), docs.slice(0, 1)),
+    ).toThrow("concept 'hanoi': geen les voor 'aanvullen' in hanoi/ (gezocht: bouwen/)");
+  });
+
+  it('linkt een les in een andere cursus via de registry, zonder hem in de eigen docs te zoeken', () => {
+    const l = plugin.koppelLessen(
+      met([rij('variabelen', [], 'site:python/docs/basis/jij-als-variabele')]),
+      [],
+    );
+    expect(l.concepten[0].lessen).toEqual([
+      {
+        id: 'site:python/docs/basis/jij-als-variabele',
+        titel: 'variabelen (cursus Python)',
+        pad: 'https://informatica.coderius.nl/python/docs/basis/jij-als-variabele',
+        extern: true,
+      },
+    ]);
+  });
+
+  it('heeft geen vergelijking als er maar één niveau met een project is', () => {
+    const l = met([rij('a', [])]);
+    const paden = plugin.routes('/a/', l).map((r: { path: string }) => r.path);
+    expect(paden).toEqual(['/a/leerdoelen', '/a/leerdoelen/niveau-1', '/a/leerdoelen/niveau-2']);
+  });
+
+  for (const site of MET_LEERDOELEN) {
+    const bestand = join(ROOT, siteDir(site.id), 'src', 'leerdoelen.json');
+    const data = JSON.parse(readFileSync(bestand, 'utf8'));
+    if (!data.tentamen) continue;
+    it(`${site.id}: de bron van het tentamen staat bij vakdidactiek, met een tip`, () => {
+      const didactiek = join(ROOT, siteDir('didactiek'));
+      const slug = data.tentamen.bron.replace(/^\/bronnen\//, '');
+      expect(bestaat(join(didactiek, 'docs', `${slug}.md`)), `docs/${slug}.md`).toBe(true);
+      const tips = readFileSync(join(didactiek, 'src', 'data', 'tips.ts'), 'utf8');
+      expect(tips).toContain(`detailPad: '${data.tentamen.bron}'`);
+    });
+  }
 });
 
 describe('cijfer volgens het beoordelingsblad', () => {
@@ -454,10 +589,10 @@ describe('plugin en createConfig', () => {
     expect(voetLinks(web)).toContain('/leerdoelen');
     expect(plugins(web)).toEqual([[plugin, { siteId: 'web' }]]);
 
-    vi.spyOn(process, 'cwd').mockReturnValue(join(ROOT, siteDir('algorithms')));
-    const algorithms = createConfig({ siteId: 'algorithms' });
-    expect(voetLinks(algorithms)).not.toContain('/leerdoelen');
-    expect(plugins(algorithms)).toEqual([]);
+    vi.spyOn(process, 'cwd').mockReturnValue(join(ROOT, siteDir('python')));
+    const python = createConfig({ siteId: 'python' });
+    expect(voetLinks(python)).not.toContain('/leerdoelen');
+    expect(plugins(python)).toEqual([]);
     vi.restoreAllMocks();
   });
 });

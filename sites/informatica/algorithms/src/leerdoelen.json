@@ -1,0 +1,117 @@
+{
+  "niveaus": ["2"],
+  "tentamen": {
+    "niveau": "2",
+    "vorm": "Het is een papieren tentamen: je legt uit, beoordeelt stellingen en schrijft Python-code, allemaal op papier.",
+    "bron": "/bronnen/toetsing-domein-b",
+    "manieren": [
+      {
+        "id": "begrijpen",
+        "label": "Begrijpen",
+        "uitleg": "Je kunt het in woorden uitleggen of op papier uitwerken, zonder programmeercode.",
+        "vraagtype": "Type 1: het algoritme lezen en uitvoeren",
+        "lessen": ["concept", "spel"]
+      },
+      {
+        "id": "stellingen",
+        "label": "Stellingen",
+        "uitleg": "Je kunt stellingen beoordelen, toelichten en van argumenten voor en tegen voorzien.",
+        "vraagtype": "Type 4: stellingen over een algoritme",
+        "lessen": ["stellingen"]
+      },
+      {
+        "id": "aanvullen",
+        "label": "Aanvullen",
+        "uitleg": "Je krijgt het begin van het algoritme in Python, en vult het aan tot het compleet is.",
+        "vraagtype": "Type 3: het algoritme opstellen met gegeven blokjes",
+        "lessen": ["bouwen/"]
+      },
+      {
+        "id": "debuggen",
+        "label": "Debuggen",
+        "uitleg": "Je controleert een bestaande implementatie op correctheid.",
+        "vraagtype": "Type 2: een fout in het algoritme vinden en herstellen",
+        "lessen": ["fouten"]
+      },
+      {
+        "id": "benoemd",
+        "label": "Programmeren, algoritme genoemd",
+        "uitleg": "Je programmeert het algoritme zonder startcode. De vraag zegt welk algoritme.",
+        "vraagtype": "Type 5: zelf opstellen bij een gegeven oplossingsrichting",
+        "lessen": ["compleet"]
+      },
+      {
+        "id": "kiezen",
+        "label": "Programmeren, algoritme niet genoemd",
+        "uitleg": "Je programmeert zonder startcode, en kiest zelf welk algoritme bij een verhaaltje past.",
+        "vraagtype": "Type 6: zelf opstellen bij alleen het probleem",
+        "lessen": ["zelf-bouwen"]
+      },
+      {
+        "id": "aanpassen",
+        "label": "Programmeren met een aanpassing",
+        "uitleg": "Net als hiervoor, maar het algoritme moet waarschijnlijk iets anders doen dan in de les.",
+        "vraagtype": "Type 6, met daarbovenop een aanpassing",
+        "lessen": ["aanpassen"]
+      }
+    ],
+    "onderwerpen": {
+      "python": "Je kent en begrijpt deze Python-concepten, en kunt ermee programmeren, ook in combinatie met elkaar. Je leert ze in de python-cursus.",
+      "zoeken-en-sorteren": "Van deze zes algoritmes ken je alle manieren. In elke cel staat de les waar je die manier oefent.",
+      "big-o": "Je kent de eerste twee manieren, en daarnaast wat eronder staat.",
+      "dijkstra": "Je kent de eerste twee manieren, en daarnaast wat eronder staat.",
+      "minimax": "Je kent de eerste twee manieren, en daarnaast wat eronder staat.",
+      "knapsack": "Je kent de eerste twee manieren, en daarnaast wat eronder staat.",
+      "cfg": "Je kent de eerste twee manieren, en daarnaast wat eronder staat.",
+      "hanoi": "Je kent de eerste twee manieren, en daarnaast wat eronder staat.",
+      "pagerank": "Van PageRank ken je de eerste twee manieren."
+    }
+  },
+  "onderwerpen": [
+    { "id": "python", "label": "Python" },
+    { "id": "zoeken-en-sorteren", "label": "Zoeken en sorteren" },
+    { "id": "big-o", "label": "Big-O-notatie" },
+    { "id": "dijkstra", "label": "Dijkstra" },
+    { "id": "minimax", "label": "Minimax" },
+    { "id": "knapsack", "label": "Knapsack 0/1" },
+    { "id": "cfg", "label": "Context-vrije grammatica" },
+    { "id": "hanoi", "label": "Torens van Hanoi" },
+    { "id": "pagerank", "label": "PageRank" }
+  ],
+  "concepten": [
+    { "id": "f-strings", "onderwerp": "python", "concept": "F-strings", "2": [], "les": "site:python/docs/tekst/04a-f-strings" },
+    { "id": "variabelen", "onderwerp": "python", "concept": "Variabelen", "2": [], "les": "site:python/docs/basis/jij-als-variabele" },
+    { "id": "if-elif-else", "onderwerp": "python", "concept": "If, elif en else", "2": [], "les": ["site:python/docs/beslissen/05b-if-else", "site:python/docs/beslissen/05c-and-or-elif"] },
+    { "id": "and-or", "onderwerp": "python", "concept": "And en or", "2": [], "les": "site:python/docs/beslissen/05c-and-or-elif" },
+    { "id": "for-loop", "onderwerp": "python", "concept": "De for-loop", "2": [], "les": "site:python/docs/herhalen/06a-for-loop" },
+    { "id": "continue", "onderwerp": "python", "concept": "Continue", "2": [], "les": "site:python/docs/herhalen/06c-continue" },
+    { "id": "break", "onderwerp": "python", "concept": "Break", "2": [], "les": "site:python/docs/herhalen/06d-break" },
+    { "id": "while-loop", "onderwerp": "python", "concept": "De while-loop", "2": [], "les": "site:python/docs/herhalen/while-loop" },
+    { "id": "functies", "onderwerp": "python", "concept": "Functies en return-waarden", "2": [], "les": ["site:python/docs/functies/functies", "site:python/docs/functies/09b-return"] },
+    { "id": "parameters", "onderwerp": "python", "concept": "Parameters", "2": [], "les": "site:python/docs/functies/09a-parameters" },
+    { "id": "lijsten", "onderwerp": "python", "concept": "Lijsten", "2": [], "les": "site:python/docs/data/10a-lijsten-basis" },
+    { "id": "dictionaries", "onderwerp": "python", "concept": "Dictionaries", "2": [], "les": "site:python/docs/data/11a-dictionaries-basis" },
+    { "id": "fout-in-code", "onderwerp": "python", "concept": "Bij een stuk code bepalen of er een fout in zit, en uitleggen welke", "2": [], "toelichting": "Dit oefen je bij elk algoritme op de pagina Er gaat iets mis, en met de manier debuggen." },
+    { "id": "lineair-zoeken", "onderwerp": "zoeken-en-sorteren", "concept": "Lineair zoeken", "2": ["begrijpen", "stellingen", "aanvullen", "debuggen", "benoemd", "kiezen", "aanpassen"], "les": "lineair-zoeken/01-concept" },
+    { "id": "vind-maximum", "onderwerp": "zoeken-en-sorteren", "concept": "Vind het maximum", "2": ["begrijpen", "stellingen", "aanvullen", "debuggen", "benoemd", "kiezen", "aanpassen"], "les": "vind-maximum/01-concept" },
+    { "id": "max-en-min", "onderwerp": "zoeken-en-sorteren", "concept": "Max én min in één pass", "2": ["begrijpen", "stellingen", "aanvullen", "debuggen", "benoemd", "kiezen", "aanpassen"], "les": "max-en-min/01-concept" },
+    { "id": "binair-zoeken", "onderwerp": "zoeken-en-sorteren", "concept": "Binair zoeken", "2": ["begrijpen", "stellingen", "aanvullen", "debuggen", "benoemd", "kiezen", "aanpassen"], "les": "binair-zoeken/01-concept" },
+    { "id": "selection-sort", "onderwerp": "zoeken-en-sorteren", "concept": "Selection sort", "2": ["begrijpen", "stellingen", "aanvullen", "debuggen", "benoemd", "kiezen", "aanpassen"], "les": "selection-sort/01-concept" },
+    { "id": "bubble-sort", "onderwerp": "zoeken-en-sorteren", "concept": "Bubble sort", "2": ["begrijpen", "stellingen", "aanvullen", "debuggen", "benoemd", "kiezen", "aanpassen"], "les": "bubble-sort/01-concept" },
+    { "id": "big-o", "onderwerp": "big-o", "concept": "Big-O-notatie", "2": ["begrijpen", "stellingen"], "les": "big-o/01-concept" },
+    { "id": "big-o-klasse", "onderwerp": "big-o", "concept": "De complexiteitsklasse bepalen bij een codevoorbeeld, en uitleggen waarom", "2": [], "les": "big-o/09-welke-klasse" },
+    { "id": "big-o-best-worst", "onderwerp": "big-o", "concept": "De klasse bij best en worst case noemen en uitleggen, voor de zes zoek- en sorteeralgoritmes", "2": [], "les": "big-o/08-overzicht" },
+    { "id": "dijkstra", "onderwerp": "dijkstra", "concept": "Dijkstra", "2": ["begrijpen", "stellingen"], "les": "dijkstra/01-concept" },
+    { "id": "dijkstra-papier", "onderwerp": "dijkstra", "concept": "Het algoritme doorlopen en op papier uitwerken, zoals in de les", "2": [], "les": ["dijkstra/02-met-pen-en-papier", "unplugged/03-dijkstra-op-papier"] },
+    { "id": "minimax", "onderwerp": "minimax", "concept": "Minimax", "2": ["begrijpen", "stellingen"], "les": "minimax/01-concept" },
+    { "id": "minimax-boom", "onderwerp": "minimax", "concept": "De game-tree doorlopen en uitleggen hoe minimax tot een zet komt", "2": [], "les": ["minimax/02-pen-en-papier", "unplugged/04-minimax-op-papier"] },
+    { "id": "knapsack", "onderwerp": "knapsack", "concept": "Knapsack 0/1", "2": ["begrijpen", "stellingen"], "les": "knapsack/01-concept" },
+    { "id": "knapsack-tabel", "onderwerp": "knapsack", "concept": "Het algoritme toepassen met een tabel en de formule", "2": [], "les": ["knapsack/02-vul-de-tabel-in", "unplugged/05-pak-de-rugzak-in"] },
+    { "id": "cfg", "onderwerp": "cfg", "concept": "Context-vrije grammatica", "2": ["begrijpen", "stellingen"], "les": "cfg/01-concept" },
+    { "id": "cfg-geldig", "onderwerp": "cfg", "concept": "Bepalen of een zin geldig is volgens een grammatica, en waarom", "2": [], "les": "cfg/bouwen/09-past-al" },
+    { "id": "cfg-opstellen", "onderwerp": "cfg", "concept": "Een grammatica opstellen voor een set zinnen", "2": [], "les": ["cfg/bouwen/03-simpele-zin", "unplugged/06-zinnen-bouwen-met-kaartjes"] },
+    { "id": "hanoi", "onderwerp": "hanoi", "concept": "Torens van Hanoi", "2": ["begrijpen", "stellingen"], "les": "hanoi/01-spel" },
+    { "id": "hanoi-aanroepen", "onderwerp": "hanoi", "concept": "De functieaanroepen opschrijven bij een aanroep van de hanoi-functie", "2": [], "les": ["hanoi/09-uitrollen", "unplugged/07-hanoi-op-tafel"] },
+    { "id": "pagerank", "onderwerp": "pagerank", "concept": "PageRank", "2": ["begrijpen", "stellingen"], "les": "pagerank/01-concept" }
+  ]
+}

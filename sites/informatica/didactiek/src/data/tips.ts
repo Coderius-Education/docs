@@ -49,4 +49,27 @@ export const tips: Tip[] = [
     },
     detailPad: '/bronnen/taxonomie-van-bloom',
   },
+  {
+    slug: 'toetsing-domein-b',
+    term: 'Toetsen van algoritmiek in zeven vraagtypes',
+    categorie: 'Beoordelen',
+    termen: [
+      'toetsen',
+      'tentamen',
+      'algoritmiek',
+      'vraagtypes',
+      'stellingen',
+      'debuggen',
+      'misconcepten',
+      'SLO',
+    ],
+    samenvatting:
+      'Toets een algoritme met verschillende soorten vragen, van uitvoeren en debuggen tot zelf opstellen, en varieer de moeilijkheid binnen dezelfde context.',
+    paper: {
+      titel: 'Toetsing domein B: Grondslagen',
+      auteurs: 'Bergervoet, Bruggink, Gijssen, Gnodde, Hendriks, Hoekstra en Weeda',
+      jaar: 2021,
+    },
+    detailPad: '/bronnen/toetsing-domein-b',
+  },
 ];

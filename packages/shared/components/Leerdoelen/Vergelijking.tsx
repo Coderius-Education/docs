@@ -1,6 +1,6 @@
 import Link from '@docusaurus/Link';
 import type { ReactNode } from 'react';
-import type { Leerdoelen } from '../../leerdoelen';
+import { type Leerdoelen, projectNiveaus } from '../../leerdoelen';
 import Lessen from './Lessen';
 import Moeilijkheid from './Moeilijkheid';
 import styles from './styles.module.css';
@@ -10,7 +10,9 @@ import styles from './styles.module.css';
  * moeilijkheid die anders is dan bij het niveau ervoor, valt op.
  */
 export default function Vergelijking({ leerdoelen }: { leerdoelen: Leerdoelen }): ReactNode {
-  const { niveaus, onderwerpen, concepten } = leerdoelen;
+  const { onderwerpen, concepten } = leerdoelen;
+  // Het tentamen-niveau heeft geen moeilijkheid per concept.
+  const niveaus = projectNiveaus(leerdoelen);
   return (
     <div className={styles.schuif}>
       <table className={styles.tabel}>

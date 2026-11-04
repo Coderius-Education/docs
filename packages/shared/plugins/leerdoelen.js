@@ -12,7 +12,8 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { leesLeerdoelen } = require('../leerdoelen');
+const { leesLeerdoelen, projectNiveaus } = require('../leerdoelen');
+const { linkDoel, parseSiteUrl, routeUrl } = require('../sites');
 
 const COMPONENT = '@coderius/shared/components/Leerdoelen';
 
@@ -46,17 +47,60 @@ function docsVan(allContent) {
 /**
  * Zoek bij elk concept de titel en het adres van zijn lessen op, uit de docs
  * van de cursus. Een les die niet bestaat is een fout: anders verwees de
- * pagina naar een les die verhuisd of verdwenen is.
+ * pagina naar een les die verhuisd of verdwenen is. Een site:-link wijst naar
+ * een andere cursus; die krijgt het adres uit de registry, en de CI-job
+ * cross-links controleert of hij bestaat.
+ *
+ * Op het tentamen-niveau krijgt een concept met manieren per manier de les
+ * waar je hem oefent: de eerste naam uit `manier.lessen` die in de map van
+ * zijn eerste les bestaat ("binair-zoeken/01-concept" geeft de map
+ * "binair-zoeken"), zonder het cijferprefix van het bestand. Een naam op "/" is een submap, en dan telt de eerste les
+ * daarin. Een manier zonder les is een fout.
  *
  * @param {object} leerdoelen uit leesLeerdoelen
- * @param {{id: string, title: string, permalink: string}[]} docs
+ * @param {{id: string, title: string, permalink: string, sidebarPosition?: number}[]} docs
  */
 function koppelLessen(leerdoelen, docs) {
   const perId = new Map(docs.map((d) => [d.id, d]));
   const onbekend = [];
+  const manieren = leerdoelen.tentamen?.manieren ?? [];
+  // Een doc-id houdt het cijferprefix van zijn bestand ("binair-zoeken/
+  // 03-stellingen"); een lesnaam van een manier noemt alleen de naam.
+  const zonderPrefix = (id) =>
+    id
+      .split('/')
+      .map((deel) => deel.replace(/^\d+[-_.]+/, ''))
+      .join('/');
+  const lesIn = (map, naam) => {
+    const voor = `${zonderPrefix(map)}/${naam}`;
+    if (!naam.endsWith('/')) return docs.find((d) => zonderPrefix(d.id) === voor);
+    return docs
+      .filter((d) => {
+        const id = zonderPrefix(d.id);
+        return id.startsWith(voor) && !id.slice(voor.length).includes('/');
+      })
+      .sort((a, b) => (a.sidebarPosition ?? 0) - (b.sidebarPosition ?? 0))[0];
+  };
   const concepten = leerdoelen.concepten.map((c) => {
     if (!c.lessen) return c;
     const lessen = c.lessen.map(({ id }) => {
+      const extern = parseSiteUrl(id);
+      if (extern) {
+        const doel = linkDoel(extern.site);
+        if (!doel) {
+          onbekend.push(`concept '${c.id}': onbekende cursus in '${id}'`);
+          return { id };
+        }
+        // De titel van een les in een andere cursus kent de plugin niet; de
+        // linktekst noemt daarom het concept en de cursus. Twaalf keer "de
+        // cursus Python" zei niet waar elke link heen ging.
+        return {
+          id,
+          titel: `${c.concept} (cursus ${doel.label})`,
+          pad: routeUrl(extern.site, extern.route, extern.anchor),
+          extern: true,
+        };
+      }
       const doc = perId.get(id);
       if (!doc) {
         onbekend.push(`concept '${c.id}': les '${id}' bestaat niet`);
@@ -64,7 +108,24 @@ function koppelLessen(leerdoelen, docs) {
       }
       return { id, titel: doc.title, pad: doc.permalink };
     });
-    return { ...c, lessen };
+    const uit = { ...c, lessen };
+    if (c.manieren?.length) {
+      const eigen = c.lessen.find(({ id }) => !id.startsWith('site:'));
+      const map = eigen ? path.posix.dirname(eigen.id) : '.';
+      uit.oefenen = {};
+      for (const id of c.manieren) {
+        const manier = manieren.find((m) => m.id === id);
+        const doc = manier?.lessen.map((naam) => lesIn(map, naam)).find(Boolean);
+        if (!doc) {
+          onbekend.push(
+            `concept '${c.id}': geen les voor '${id}' in ${map}/ (gezocht: ${manier?.lessen.join(', ')})`,
+          );
+          continue;
+        }
+        uit.oefenen[id] = { id: doc.id, titel: doc.title, pad: doc.permalink };
+      }
+    }
+    return uit;
   });
   if (onbekend.length) {
     const hint =
@@ -86,7 +147,7 @@ function routes(baseUrl, leerdoelen) {
       props: { leerdoelen },
     },
   ];
-  if (leerdoelen.niveaus.length > 1) {
+  if (projectNiveaus(leerdoelen).length > 1) {
     lijst.push({
       path: `${baseUrl}leerdoelen/vergelijken`,
       component: `${COMPONENT}/VergelijkPagina`,
