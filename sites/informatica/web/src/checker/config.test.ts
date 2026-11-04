@@ -5,11 +5,11 @@ import { analyze } from '@coderius/checker/matchConcepts';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
 import { describe, expect, it } from 'vitest';
+import leerdoelen from '../leerdoelen.json';
 import { maakBuitenLesstof } from './buitenLesstof';
 import { webConfig } from './config';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
 import { berekenLesstof, stukkenUit } from './lesstof';
-import niveaus from './niveaus.json';
 
 const FIXTURES = fileURLToPath(new URL('./__fixtures__', import.meta.url));
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
@@ -87,13 +87,54 @@ describe('webConfig — de conceptenlijst zelf', () => {
     expect(validateCheckerConfig(webConfig)).toEqual([]);
   });
 
-  it('telt precies de rijen uit de tabel van de docent, met hun niveau', () => {
+  it('telt precies de rijen uit de leerdoelen, met hun niveau', () => {
     expect(webConfig.concepts.map((c) => [c.id, c.subject, c.label, c.level])).toEqual(
-      niveaus.concepten.map((c) => [c.id, c.onderwerp, c.concept, c.niveau]),
+      leerdoelen.concepten.map((c) => [c.id, c.onderwerp, c.concept, c.start]),
     );
     // De tabel van de docent: 13 rijen basis, 11 gevorderd.
     expect(webConfig.concepts.filter((c) => c.level === 'basis')).toHaveLength(13);
     expect(webConfig.concepts.filter((c) => c.level === 'gevorderd')).toHaveLength(11);
+  });
+
+  it('de leerdoelen zijn het tabblad Web van het beoordelingsblad (Beoordeling_INF.xlsx)', () => {
+    // Overgenomen uit het blad, met "pseusoclass" als pseudoclass. Verandert
+    // het blad, dan veranderen dit lijstje en src/leerdoelen.json samen.
+    const blad = [
+      ['CSS', 'tag selector (p, h)', 'basis'],
+      ['CSS', 'class', 'basis'],
+      ['CSS', 'pseudoclass', 'basis'],
+      ['CSS', 'id', 'gevorderd'],
+      ['CSS', 'flexbox of grid', 'gevorderd'],
+      ['CSS', 'media query', 'gevorderd'],
+      ['HTML', 'h1-h6', 'basis'],
+      ['HTML', 'ol & ul, li', 'basis'],
+      ['HTML', 'img', 'basis'],
+      ['HTML', 'a', 'basis'],
+      ['HTML', 'opbouw (header, main, footer)', 'basis'],
+      ['HTML', 'forms', 'gevorderd'],
+      ['JavaScript', 'document.getElementById()', 'basis'],
+      ['JavaScript', 'DOM-stijl aanpassen via .style', 'basis'],
+      ['JavaScript', 'script tag', 'basis'],
+      ['JavaScript', 'script.js', 'basis'],
+      ['JavaScript', 'prompt & alert', 'basis'],
+      ['JavaScript', 'functies', 'gevorderd'],
+      ['JavaScript', 'addEventListener', 'gevorderd'],
+      ['JavaScript', 'events', 'gevorderd'],
+      ['JavaScript', 'if else', 'gevorderd'],
+      ['JavaScript', 'formulier data ophalen', 'gevorderd'],
+      ['JavaScript', 'arrays', 'gevorderd'],
+      ['JavaScript', 'loops', 'gevorderd'],
+    ];
+    const label = new Map(leerdoelen.onderwerpen.map((o) => [o.id, o.label]));
+    expect(leerdoelen.niveaus.map((n) => n.id)).toEqual(['start']);
+    expect(leerdoelen.concepten.map((c) => [label.get(c.onderwerp), c.concept, c.start])).toEqual(
+      blad,
+    );
+  });
+
+  it('stelt een cijfer voor: de config draagt de leerdoelen', () => {
+    expect(webConfig.leerdoelen?.niveaus).toEqual([{ id: 'start', label: 'Start' }]);
+    expect(webConfig.tracks).toBeUndefined();
   });
 
   it('zet elk ander concept uit de lessen onder "Ook gebruikt", zonder niveau', () => {

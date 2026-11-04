@@ -225,6 +225,30 @@ overhoudt. Schrijf code in een les dus gewoon met vier spaties;
 `mdx-inspringing.test.ts` pint het MDX-gedrag vast voor als een upgrade het
 verandert.
 
+## Leerdoelen
+
+Een cursus met leerdoelen heeft één bestand, `src/leerdoelen.json`: de tabel
+van de docent uit het beoordelingsblad, per concept één rij met per niveau van
+de cursus (start, verdieping havo, …) basis, gevorderd of expert naast
+elkaar. Een rij blijft op één regel (een override in `biome.json`), zodat je
+de niveaus met het oog vergelijkt en een wijziging één regel in de diff is.
+`createConfig` ziet het bestand en zet `packages/shared/plugins/leerdoelen.js`
+aan: de routes `/leerdoelen` (per niveau, en de niveaus naast elkaar),
+`/leerdoelen/<niveau>` bij meer niveaus, `/leerdoelen/bloom` (voor elke
+cursus gelijk), een link in de footer, en na de build `leerdoelen.json` in de
+root van de cursus voor coderius.nl. Een fout in het bestand stopt de build.
+De denkvaardigheden, de cijfertabel, het sjabloon en de vuistregels staan in
+`packages/shared/leerdoelen/bloom.json`; `leerdoelen/index.js` leest en
+rekent (`leesLeerdoelen`, `cijferVoor`, `sjabloonZin`, `moeilijkheidVoorstel`),
+zodat pagina en nakijker hetzelfde zeggen. De nakijker van een cursus maakt
+zijn concepten met `leerdoelenNaarConfig` (`packages/checker`); een rij zonder
+herkenning, of een herkenning zonder rij, is een fout. Met de leerdoelen in
+de config stelt de docentweergave een cijfer voor: de docent kiest de
+denkvaardigheid, de nakijker stelt de moeilijkheid voor (gevorderd alleen bij
+een gevorderd concept in élk onderwerp), en cijfer en zin komen in de PDF.
+Expert telt voor het cijfer als gevorderd tot het blad er een kolom voor heeft.
+Hoe je een rij of een niveau toevoegt: `packages/shared/leerdoelen/README.md`.
+
 ## Bugfixes
 
 Een bugfix gaat samen met een test die de bug vastpint, in dezelfde commit.

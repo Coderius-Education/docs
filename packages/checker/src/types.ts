@@ -1,8 +1,17 @@
+import type { Leerdoelen } from '@coderius/shared/leerdoelen';
+
 // Domein-onafhankelijke types voor de gedeelde 'nakijken'-checker. Een site
 // levert een CheckerConfig aan (welke concepten, hoe bestanden te classificeren,
 // welke onderwerpen) en de engine analyseert een geüpload project client-side.
 
-export type Level = 'basis' | 'gevorderd';
+/**
+ * De moeilijkheid van een concept. Expert staat in de tabellen van godot en
+ * fullstack; voor het cijfer telt het als gevorderd (packages/shared/leerdoelen).
+ */
+export type Level = 'basis' | 'gevorderd' | 'expert';
+
+/** De moeilijkheden in volgorde, van makkelijk naar moeilijk. */
+export const LEVELS: readonly Level[] = ['basis', 'gevorderd', 'expert'];
 
 export interface ProjectFile {
   /** Genormaliseerd, "/"-gescheiden pad, geen leidende "/". */
@@ -75,7 +84,9 @@ export interface Concept {
   /**
    * Optioneel: de denkvaardigheid van Bloom (onthouden, begrijpen, toepassen,
    * analyseren, evalueren, creëren) als tweede as naast het niveau. De
-   * rapportage doet er nog niets mee; de tabel van een site legt hem vast.
+   * rapportage doet er nog niets mee; de leerdoelen van een site leggen hem
+   * vast. Het cijfer hangt af van de denkvaardigheid die de docent zag, niet
+   * van deze.
    */
   bloom?: string;
   detect: ConceptDetect;
@@ -132,6 +143,11 @@ export interface CheckerConfig {
    */
   tracks?: TrackInfo[];
   concepts: Concept[];
+  /**
+   * De leerdoelen waar de concepten uit komen (leerdoelenNaarConfig). Met
+   * leerdoelen stelt de docentweergave een cijfer voor volgens Bloom.
+   */
+  leerdoelen?: Leerdoelen;
   /** Bestandssoorten voor het bestandsoverzicht (volgorde + labels). */
   fileKinds: FileKindInfo[];
   /** Pad → kind-id. */

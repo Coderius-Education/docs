@@ -1,0 +1,131 @@
+{
+  "denkvaardigheden": [
+    {
+      "id": "onthouden",
+      "label": "Onthouden",
+      "werkwoorden": [
+        { "werkwoord": "Benoemen", "voorbeeld": "Hoe heet …, maar niet per se begrijpen" },
+        { "werkwoord": "Definiëren", "voorbeeld": "Wat is de definitie van …" },
+        { "werkwoord": "Nadoen of namaken", "voorbeeld": "Lesmateriaal gevolgd" },
+        { "werkwoord": "Opsporen", "voorbeeld": "Op welke plek moet je …, waar doe je …" },
+        { "werkwoord": "Voordragen", "voorbeeld": "Uitleg geven over je project" }
+      ]
+    },
+    {
+      "id": "begrijpen",
+      "label": "Begrijpen",
+      "werkwoorden": [
+        {
+          "werkwoord": "Toelichten of uitleggen",
+          "voorbeeld": "Ik doe dit omdat …, ik toon dit onder andere aan via comments in code"
+        },
+        { "werkwoord": "Voorspellen", "voorbeeld": "Wat zou er gebeuren als …" },
+        { "werkwoord": "Vragen", "voorbeeld": "Lesmateriaal gevolgd" }
+      ]
+    },
+    {
+      "id": "toepassen",
+      "label": "Toepassen",
+      "werkwoorden": [
+        { "werkwoord": "Uitleggen", "voorbeeld": "De leerling kan het zelf uitleggen" },
+        {
+          "werkwoord": "Manipuleren",
+          "voorbeeld": "Je past bestaande voorbeelden aan op een relevante manier voor je project"
+        }
+      ]
+    },
+    {
+      "id": "analyseren",
+      "label": "Analyseren",
+      "werkwoorden": [
+        { "werkwoord": "Integreren", "voorbeeld": "Concepten samenvoegen tot iets nieuws" },
+        {
+          "werkwoord": "Ordenen of classificeren",
+          "voorbeeld": "Inrichting van het project, de bestanden, enzovoort"
+        },
+        {
+          "werkwoord": "Vereenvoudigen",
+          "voorbeeld": "Slimme kortere oplossing voor iets ingewikkelds, herbruikbaarheid"
+        }
+      ]
+    },
+    {
+      "id": "evalueren",
+      "label": "Evalueren",
+      "werkwoorden": [
+        { "werkwoord": "Beredeneren", "voorbeeld": "Tijdens het mondeling" },
+        {
+          "werkwoord": "Betogen of overwegen",
+          "voorbeeld": "Hoe ben je tot deze keuze of dit ontwerp gekomen?"
+        },
+        {
+          "werkwoord": "Doceren",
+          "voorbeeld": "Kunnen uitleggen zodat een beginner het ook snapt"
+        }
+      ]
+    },
+    {
+      "id": "creëren",
+      "label": "Creëren",
+      "werkwoorden": [
+        {
+          "werkwoord": "Creëren of innoveren",
+          "voorbeeld": "Iets nieuws bedenken op basis van wat je geleerd hebt"
+        },
+        {
+          "werkwoord": "Optimaliseren",
+          "voorbeeld": "Een bestaande oplossing verbeteren, het lesmateriaal verbeteren"
+        }
+      ]
+    }
+  ],
+  "tijdensDeLessen": [
+    "Welke vragen stelt de leerling, en wat kun je daaruit afleiden?",
+    "Experimenteren: een probleem onderzocht, uitgezocht, vergeleken"
+  ],
+  "moeilijkheden": [
+    { "id": "niet-aan-basis", "label": "Niet aan basis voldaan" },
+    { "id": "basis", "label": "Basis" },
+    { "id": "gevorderd", "label": "Gevorderd" },
+    { "id": "expert", "label": "Expert", "cijferAls": "gevorderd" }
+  ],
+  "cijfers": {
+    "onthouden": { "niet-aan-basis": 1, "basis": 5, "gevorderd": 5 },
+    "begrijpen": { "niet-aan-basis": 4, "basis": 6, "gevorderd": 7 },
+    "toepassen": { "niet-aan-basis": 4, "basis": 6.5, "gevorderd": 7.5 },
+    "analyseren": { "niet-aan-basis": 4, "basis": 6.5, "gevorderd": 8 },
+    "evalueren": { "niet-aan-basis": 4, "basis": 6.5, "gevorderd": 9 },
+    "creëren": { "niet-aan-basis": 4, "basis": 6.5, "gevorderd": 10 }
+  },
+  "sjabloon": "Ik heb bij jou Bloom niveau $BLOOM_NIVEAU gezien voor de moeilijkheid $MOEILIJKHEIDSNIVEAU en daarbij hoort het cijfer $CIJFER.",
+  "vuistregels": [
+    "Hetzelfde concept vaak toepassen leidt niet tot een hogere denkvaardigheid: heel veel hyperlinks levert geen hoger cijfer op.",
+    "Niet inleveren scoort lager dan basis onthouden en wordt beoordeeld op de observaties in de les.",
+    "AI gebruiken zonder begrip scoort dus laag.",
+    "Voor gevorderd gebruik je bij elk onderwerp van de technologie gevorderde concepten: bij webontwikkeling in HTML én in CSS én in JavaScript."
+  ],
+  "bronnen": [
+    {
+      "titel": "A Revision of Bloom's Taxonomy: An Overview",
+      "auteurs": "David R. Krathwohl",
+      "jaar": 2002,
+      "uitgave": "Theory Into Practice, 41(4), 212–218",
+      "url": "https://doi.org/10.1207/s15430421tip4104_2",
+      "toelichting": "De herziene taxonomie met de zes denkvaardigheden als werkwoorden, van onthouden tot creëren. Deze indeling gebruiken we."
+    },
+    {
+      "titel": "A Taxonomy for Learning, Teaching, and Assessing: A Revision of Bloom's Taxonomy of Educational Objectives",
+      "auteurs": "Lorin W. Anderson en David R. Krathwohl (red.)",
+      "jaar": 2001,
+      "uitgave": "Longman, New York",
+      "toelichting": "Het boek bij de herziening."
+    },
+    {
+      "titel": "Taxonomy of Educational Objectives: The Classification of Educational Goals. Handbook I: Cognitive Domain",
+      "auteurs": "Benjamin S. Bloom, Max D. Engelhart, Edward J. Furst, Walker H. Hill en David R. Krathwohl",
+      "jaar": 1956,
+      "uitgave": "David McKay, New York",
+      "toelichting": "De oorspronkelijke taxonomie van Bloom."
+    }
+  ]
+}

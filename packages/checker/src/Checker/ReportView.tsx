@@ -32,7 +32,11 @@ function LevelBadge({ level }: { level: Level }) {
     <span
       className={clsx(
         styles.levelBadge,
-        level === 'basis' ? styles.levelBadgeBasis : styles.levelBadgeGevorderd,
+        level === 'basis'
+          ? styles.levelBadgeBasis
+          : level === 'gevorderd'
+            ? styles.levelBadgeGevorderd
+            : styles.levelBadgeExpert,
       )}
     >
       {level}

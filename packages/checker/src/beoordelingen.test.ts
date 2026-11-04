@@ -502,6 +502,38 @@ describe('Bewaarder: beoordelingen bewaren', () => {
     expect((await opslag.alleBeoordelingen())[0].vragen).toEqual([vraag]);
     expect(aangevuld(oud).vragen).toEqual([]);
   });
+
+  it('bewaart de denkvaardigheid en de moeilijkheid, en vult ze aan bij een oudere beoordeling', async () => {
+    const opslag = geheugenOpslag();
+    // Een beoordeling van vóór het cijfer: zonder bloom en moeilijkheid.
+    const oud = {
+      ...aangevuld({} as Beoordeling),
+      id: 'oud',
+      naam: 'Oud',
+      aangemaakt: Date.now(),
+      bijgewerkt: Date.now(),
+      track: null,
+    } as Partial<Beoordeling>;
+    // biome-ignore lint/performance/noDelete: het veld moet echt ontbreken, zoals in een oud record
+    delete oud.bloom;
+    // biome-ignore lint/performance/noDelete: idem
+    delete oud.moeilijkheid;
+    await opslag.bewaarNieuw(oud as Beoordeling, project('Oud'));
+    const { b } = bewaarder(opslag, () => new Date());
+    await b.klaar;
+    expect(b.get('oud')).toMatchObject({ bloom: null, moeilijkheid: null });
+
+    b.wijzig('oud', { bloom: 'toepassen', moeilijkheid: 'gevorderd' });
+    await stil(b);
+    expect((await opslag.alleBeoordelingen())[0]).toMatchObject({
+      bloom: 'toepassen',
+      moeilijkheid: 'gevorderd',
+    });
+    expect(b.nieuw('Noor', project('Noor'), null)).toMatchObject({
+      bloom: null,
+      moeilijkheid: null,
+    });
+  });
 });
 
 describe('databaseNaam', () => {

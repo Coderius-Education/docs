@@ -47,6 +47,11 @@
       "default": "./privacy-content.js"
     },
     "./dialoog": "./dialoog.ts",
+    "./leerdoelen": {
+      "types": "./leerdoelen/index.d.ts",
+      "default": "./leerdoelen/index.js"
+    },
+    "./leerdoelen/bloom.json": "./leerdoelen/bloom.json",
     "./klas": {
       "types": "./klas/index.d.ts",
       "default": "./klas/index.js"
@@ -57,6 +62,7 @@
     "./plugins/cursussen-route": "./plugins/cursussen-route.js",
     "./plugins/privacy-route": "./plugins/privacy-route.js",
     "./plugins/omleidingen": "./plugins/omleidingen.js",
+    "./plugins/leerdoelen": "./plugins/leerdoelen.js",
     "./plugins/matomo": "./plugins/matomo.js",
     "./css/custom.css": "./css/custom.css",
     "./components/HomepageHero": "./components/HomepageHero/index.tsx",
@@ -77,6 +83,9 @@
     "./components/Privacy/PrivacyPage": "./components/Privacy/PrivacyPage.tsx",
     "./components/Privacy/MatomoOptOut": "./components/Privacy/MatomoOptOut.tsx",
     "./components/OudeOpslag/OverzettenPagina": "./components/OudeOpslag/OverzettenPagina.tsx",
+    "./components/Leerdoelen/LeerdoelenPagina": "./components/Leerdoelen/LeerdoelenPagina.tsx",
+    "./components/Leerdoelen/NiveauPagina": "./components/Leerdoelen/NiveauPagina.tsx",
+    "./components/Leerdoelen/BloomPagina": "./components/Leerdoelen/BloomPagina.tsx",
     "./package.json": "./package.json",
     "./components/ManagedHomepage": "./components/ManagedHomepage/index.tsx",
     "./components/HomepageSections": "./components/HomepageSections/index.tsx"

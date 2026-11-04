@@ -31,7 +31,7 @@ export const GROEPEN = [
 export type Groep = (typeof GROEPEN)[number];
 
 /**
- * Bij welk onderwerp van het rapport (de ids in niveaus.json) een groep
+ * Bij welk onderwerp van het rapport (de ids in src/leerdoelen.json) een groep
  * hoort: het rapport zet de vondsten dan in het blok HTML, CSS of
  * JavaScript, naast de rijen van dat onderwerp.
  */

@@ -37,6 +37,13 @@ describe('validateCheckerConfig', () => {
     expect(validateCheckerConfig(config([concept()]))).toEqual([]);
   });
 
+  it('kent basis, gevorderd en expert, en meldt een ander niveau', () => {
+    expect(validateCheckerConfig(config([concept({ level: 'expert' })]))).toEqual([]);
+    expect(
+      validateCheckerConfig(config([concept({ level: 'moeilijk' as Concept['level'] })])),
+    ).toEqual(["Concept 'basis-concept' heeft niveau 'moeilijk' (wel: basis, gevorderd, expert)."]);
+  });
+
   it('meldt een docentsleutel die niet per site is', () => {
     // Uit die sleutel volgt de database met bewaarde beoordelingen.
     const problemen = validateCheckerConfig(

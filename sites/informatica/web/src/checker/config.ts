@@ -1,13 +1,9 @@
 import { lijktBibliotheek } from '@coderius/checker/bibliotheek';
-import type {
-  CheckerConfig,
-  Concept,
-  ConceptDetect,
-  ExtraConcept,
-  Level,
-} from '@coderius/checker/types';
+import { leerdoelenNaarConfig } from '@coderius/checker/leerdoelen';
+import type { CheckerConfig, ConceptDetect, ExtraConcept } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
 import { SITES_BY_ID } from '@coderius/shared/sites';
+import leerdoelenJson from '../leerdoelen.json';
 import {
   alleenCss,
   alleenJavaScript,
@@ -16,12 +12,11 @@ import {
   alleenTagsZonderWaarden,
 } from './code';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
-import niveaus from './niveaus.json';
 
 // De nakijker voor webprojecten. Wélke concepten tellen en op welk niveau
-// staat in `niveaus.json`: dat bestand is de tabel van de docent, in dezelfde
-// volgorde en met dezelfde woorden. Hier staat alleen hóé je elke rij in de
-// bestanden terugvindt.
+// staat in `src/leerdoelen.json`: dat bestand is de tabel van de docent, in
+// dezelfde volgorde en met dezelfde woorden, en ook de bron van de pagina
+// /leerdoelen. Hier staat alleen hóé je elke rij in de bestanden terugvindt.
 //
 // Eerder telde de nakijker elk concept uit curriculum.ts, zo'n tachtig, met
 // een eigen niveau per concept. Dat sprak de tabel tegen: `<p>`, `color` en
@@ -345,36 +340,19 @@ const HERKENNING: Record<string, Herkenning> = {
   },
 };
 
-const NIVEAUS: Record<string, Level> = { basis: 'basis', gevorderd: 'gevorderd' };
-const GROEP: Record<Level, string> = { basis: 'Basis', gevorderd: 'Gevorderd' };
-
-const concepts: Concept[] = niveaus.concepten.map((c) => {
-  const herkenning = HERKENNING[c.id];
-  if (!herkenning) throw new Error(`niveaus.json: geen herkenning voor concept '${c.id}'`);
-  const level = NIVEAUS[c.niveau];
-  if (!level) throw new Error(`niveaus.json: onbekend niveau '${c.niveau}' bij ${c.id}`);
-  return {
-    id: c.id,
-    subject: c.onderwerp,
-    group: GROEP[level],
-    label: c.concept,
-    level,
-    detect: herkenning.detect,
-  };
-});
-
-const TABEL = new Set(niveaus.concepten.map((c) => c.id));
-for (const id of Object.keys(HERKENNING)) {
-  if (!TABEL.has(id))
-    throw new Error(`config.ts: herkenning voor '${id}', dat niet in niveaus.json staat`);
-}
+// Elke rij uit de leerdoelen met zijn herkenning; leerdoelenNaarConfig gooit
+// een fout bij een rij zonder herkenning en bij een herkenning zonder rij.
+const uitLeerdoelen = leerdoelenNaarConfig(
+  leerdoelenJson,
+  Object.fromEntries(Object.entries(HERKENNING).map(([id, h]) => [id, h.detect])),
+);
 
 const gedekt = new Set(Object.values(HERKENNING).flatMap((h) => h.dekt));
 for (const id of gedekt) les(id);
 const extra = LESCONCEPTEN.filter((c) => !gedekt.has(c.id));
 
 export const webConfig: CheckerConfig = {
-  subjects: niveaus.onderwerpen,
+  subjects: uitLeerdoelen.subjects,
 
   fileKinds: [
     { id: 'html', label: 'HTML' },
@@ -413,7 +391,8 @@ export const webConfig: CheckerConfig = {
   privacyNote:
     'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',
 
-  concepts,
+  concepts: uitLeerdoelen.concepts,
+  leerdoelen: uitLeerdoelen.leerdoelen,
   extra,
   // buitenLesstof zet de docentpagina erbij, met de lesstof die
   // lesstof-plugin.ts bij het bouwen berekent; de leerling ziet het niet.

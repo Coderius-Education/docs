@@ -1,0 +1,30 @@
+{
+  "niveaus": [{ "id": "start", "label": "Start" }],
+  "onderwerpen": [{ "id": "html", "label": "HTML" }, { "id": "css", "label": "CSS" }, { "id": "js", "label": "JavaScript" }],
+  "concepten": [
+    { "id": "css-tag-selector", "onderwerp": "css", "concept": "tag selector (p, h)", "start": "basis" },
+    { "id": "css-class", "onderwerp": "css", "concept": "class", "start": "basis" },
+    { "id": "css-pseudoclass", "onderwerp": "css", "concept": "pseudoclass", "start": "basis" },
+    { "id": "css-id", "onderwerp": "css", "concept": "id", "start": "gevorderd" },
+    { "id": "css-flexbox-grid", "onderwerp": "css", "concept": "flexbox of grid", "start": "gevorderd" },
+    { "id": "css-media-query", "onderwerp": "css", "concept": "media query", "start": "gevorderd" },
+    { "id": "html-koppen", "onderwerp": "html", "concept": "h1-h6", "start": "basis" },
+    { "id": "html-lijsten", "onderwerp": "html", "concept": "ol & ul, li", "start": "basis" },
+    { "id": "html-img", "onderwerp": "html", "concept": "img", "start": "basis" },
+    { "id": "html-a", "onderwerp": "html", "concept": "a", "start": "basis" },
+    { "id": "html-opbouw", "onderwerp": "html", "concept": "opbouw (header, main, footer)", "start": "basis" },
+    { "id": "html-forms", "onderwerp": "html", "concept": "forms", "start": "gevorderd" },
+    { "id": "js-get-element-by-id", "onderwerp": "js", "concept": "document.getElementById()", "start": "basis" },
+    { "id": "js-style", "onderwerp": "js", "concept": "DOM-stijl aanpassen via .style", "start": "basis" },
+    { "id": "js-script-tag", "onderwerp": "js", "concept": "script tag", "start": "basis" },
+    { "id": "js-script-js", "onderwerp": "js", "concept": "script.js", "start": "basis" },
+    { "id": "js-prompt-alert", "onderwerp": "js", "concept": "prompt & alert", "start": "basis" },
+    { "id": "js-functies", "onderwerp": "js", "concept": "functies", "start": "gevorderd" },
+    { "id": "js-add-event-listener", "onderwerp": "js", "concept": "addEventListener", "start": "gevorderd" },
+    { "id": "js-events", "onderwerp": "js", "concept": "events", "start": "gevorderd" },
+    { "id": "js-if-else", "onderwerp": "js", "concept": "if else", "start": "gevorderd" },
+    { "id": "js-formulier-data", "onderwerp": "js", "concept": "formulier data ophalen", "start": "gevorderd" },
+    { "id": "js-arrays", "onderwerp": "js", "concept": "arrays", "start": "gevorderd" },
+    { "id": "js-loops", "onderwerp": "js", "concept": "loops", "start": "gevorderd" }
+  ]
+}
