@@ -577,13 +577,14 @@ Vergeet niet dit script als **Autoload** in te stellen via Project Settings, tab
 ```gdscript
 var bestand = FileAccess.open("user://highscore.json", FileAccess.WRITE)
 bestand.store_string(JSON.stringify({"highscore": 40}))
+bestand.close()
 
 var lezen = FileAccess.open("user://highscore.json", FileAccess.READ)
 var gegevens = JSON.parse_string(lezen.get_as_text())
 var highscore = int(gegevens["highscore"])
 ```
 
-Een getal komt uit JSON terug als kommagetal; daarom `int()`. Uitgelegd in [JSON: een highscore die blijft](site:godot/docs/json_opslaan).
+Zonder `close()` staat de tekst nog niet in het bestand als je het meteen weer leest; in een eigen functie sluit Godot het bestand vanzelf aan het eind. Een getal komt uit JSON terug als kommagetal; daarom `int()`. Uitgelegd in [JSON: een highscore die blijft](site:godot/docs/json_opslaan).
 
 </details>
 
