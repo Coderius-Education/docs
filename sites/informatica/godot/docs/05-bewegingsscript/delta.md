@@ -41,7 +41,7 @@ func _physics_process(delta: float) -> void:
 
 Tussen de haakjes staat `delta`. Dat is een **parameter**: informatie die Godot bij elke aanroep aan je functie meegeeft. Jij hoeft hem niet te vullen, je mag hem alleen gebruiken.
 
-Wat er in zit, is de tijd in seconden sinds de vorige frame. Bij zestig frames per seconde is dat ongeveer `0.0167`, oftewel een zestigste.
+Wat er in zit, is de tijd in seconden sinds de vorige keer dat de functie draaide. `_physics_process` draait zestig keer per seconde, dus dat is een zestigste: ongeveer `0.0167`.
 
 ## Onderzoek: kijk zelf wat er in zit
 
@@ -51,7 +51,7 @@ Zet deze regel bovenin je functie en start met `F5`:
     print(delta)
 ```
 
-In **Uitvoer** loopt een stroom getallen rond `0.0167`. Ze zijn niet allemaal precies gelijk: heeft je computer het even druk, dan duurt een frame langer en wordt `delta` groter.
+In **Uitvoer** loopt een stroom van steeds hetzelfde getal: `0.01666666666667`. Dat is geen toeval. Voor `_physics_process` houdt Godot een vaste klok aan van zestig keer per seconde, ook als je computer het even druk heeft. In `_process`, dat bij elk beeld op je scherm draait, wisselt `delta` wél.
 
 Haal de `print` daarna weer weg.
 
@@ -59,9 +59,9 @@ Haal de `print` daarna weer weg.
 
 `980 * 0.0167` is ongeveer `16`. Elke frame komt er dus zo'n 16 bij de snelheid, en na zestig frames — één seconde — zit je op ongeveer 980. Precies wat de bedoeling was.
 
-Draait het spel op een snellere computer met 120 frames per seconde, dan is `delta` half zo groot en telt elke frame half zoveel mee. Het resultaat na één seconde blijft hetzelfde.
+Zet je die klok in **Project Settings → Physics → Common → Physics Ticks per Second** op 120 (zet rechtsboven **Advanced Settings** aan als je hem niet ziet), dan is `delta` half zo groot en telt elke frame half zoveel mee. Het resultaat na één seconde blijft hetzelfde.
 
-**Dat is waar het om gaat:** met `delta` gaat je spel overal even snel. Zonder `delta` bepaalt de snelheid van je computer hoe hard je valt.
+**Dat is waar het om gaat:** met `delta` hangt je spel niet af van hoe vaak de functie draait. Zonder `delta` val je bij 120 keer per seconde ineens twee keer zo hard, en in `_process` bepaalt de snelheid van je computer hoe hard je valt.
 
 ## Opdracht 5.3.a: haal delta weg en kijk
 
@@ -70,14 +70,14 @@ Verwijder tijdelijk `* delta` uit je valregel, zodat er `velocity += get_gravity
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Kijk niet alleen naar de snelheid, maar ook of je karakter nog netjes op de vloer terechtkomt.
+Zet je karakter in je level een flink stuk boven de vloer, zodat je het vallen goed ziet.
 
 </details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-Je karakter schiet vrijwel meteen naar beneden. Vaak zakt hij zelfs dwars door de vloer heen: hij legt per frame zo'n groot stuk af dat hij in één stap voorbij de tegels is, en dan is er niets meer om tegenaan te botsen.
+Je karakter schiet vrijwel meteen naar beneden. Na vijf frames, een twaalfde seconde, valt hij al met bijna 4000 per seconde; met `* delta` was dat ongeveer 80. Op de vloer houdt `move_and_slide()` hem tegen, dus je ziet vooral een klap in plaats van een val.
 
 Zet `* delta` terug:
 
@@ -110,9 +110,19 @@ func _physics_process(delta: float) -> void:
 ## Er gaat iets mis
 
 <details>
-<summary>Godot zegt: <code>Identifier "delta" not declared in the current scope</code></summary>
+<summary>Foutmelding: <code>Identifier "delta" not declared in the current scope.</code></summary>
 
 **Oorzaak:** Je gebruikt `delta` buiten `_physics_process`, bijvoorbeeld in `_ready()` of helemaal bovenaan je script.
+
+{/* verwacht-fout: Identifier "delta" not declared in the current scope. */}
+
+```gdscript
+# FOUT
+extends CharacterBody2D
+
+func _ready() -> void:
+    print(delta)
+```
 
 **Oplossing:** `delta` bestaat alleen binnen de functie die hem als parameter meekrijgt. Gebruik hem dus alleen binnen `_physics_process`.
 
