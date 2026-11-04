@@ -10,6 +10,19 @@ Hier zoek je op hoe iets uit de lessen ook alweer ging. De onderwerpen staan in 
 ## FastAPI
 
 <details>
+<summary>Hoe installeer ik FastAPI? (python -m pip install)</summary>
+
+Typ dit in de terminal van VS Code, met je virtual environment aan:
+
+```bash
+python -m pip install "fastapi[standard]"
+```
+
+Hoe je de virtual environment maakt, staat bij [Installatie](site:fullstack/docs/FastAPI/eerste-server/installatie).
+
+</details>
+
+<details>
 <summary>Hoe maak ik een FastAPI-app? (FastAPI)</summary>
 
 ```python

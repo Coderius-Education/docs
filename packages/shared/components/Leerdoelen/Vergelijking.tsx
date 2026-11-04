@@ -40,6 +40,7 @@ export default function Vergelijking({ leerdoelen }: { leerdoelen: Leerdoelen })
                 <tr key={c.id}>
                   <td>
                     {c.concept}
+                    {c.toelichting && <span className={styles.toelichting}>{c.toelichting}</span>}
                     <Lessen concept={c} />
                   </td>
                   {niveaus.map((n, i) => {

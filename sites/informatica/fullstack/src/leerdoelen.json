@@ -1,0 +1,30 @@
+{
+  "niveaus": ["1", "2"],
+  "onderwerpen": [{ "id": "fastapi", "label": "FastAPI" }],
+  "concepten": [
+    { "id": "fastapi-installeren", "onderwerp": "fastapi", "concept": "virtual environment en FastAPI package installeren", "1": "basis", "2": "basis", "groep": "Je eerste server", "les": "FastAPI/eerste-server/installatie" },
+    { "id": "fastapi-app", "onderwerp": "fastapi", "concept": "FastAPI applicatie starten", "1": "basis", "2": "basis", "groep": "Je eerste server", "les": "FastAPI/eerste-server/eerste_endpoint" },
+    { "id": "browser-devtools", "onderwerp": "fastapi", "concept": "je kunt de ontwikkelaarstools gebruiken om te kijken wat de browser doet", "1": "basis", "2": "basis", "groep": "Je eerste server", "les": "FastAPI/eerste-server/devtools-netwerk" },
+    { "id": "fastapi-fileresponse", "onderwerp": "fastapi", "concept": "FileResponse als responstype", "1": "basis", "2": "basis", "groep": "Pagina's en routes", "les": "FastAPI/paginas/html_bestanden" },
+    { "id": "fastapi-html-response", "onderwerp": "fastapi", "concept": "HTMLResponse als responstype", "1": "basis", "2": "basis", "groep": "Pagina's en routes", "les": "FastAPI/paginas/html_tonen" },
+    { "id": "fastapi-routes", "onderwerp": "fastapi", "concept": "meerdere GET-routes", "1": "basis", "2": "basis", "groep": "Pagina's en routes", "les": "FastAPI/eerste-server/eerste_endpoint" },
+    { "id": "html-css-link", "onderwerp": "fastapi", "concept": "CSS importeren van los bestand", "1": "basis", "2": "basis", "groep": "CSS en afbeeldingen", "les": "FastAPI/css-en-afbeeldingen/static_files" },
+    { "id": "html-img", "onderwerp": "fastapi", "concept": "afbeelding importeren van los bestand", "1": "basis", "2": "basis", "groep": "CSS en afbeeldingen", "les": "FastAPI/css-en-afbeeldingen/afbeeldingen" },
+    { "id": "html-link", "onderwerp": "fastapi", "concept": "links tussen pagina's via endpoint", "1": "basis", "2": "basis", "groep": "Pagina's en routes", "les": "FastAPI/paginas/links" },
+    { "id": "fastapi-templates", "onderwerp": "fastapi", "concept": "Jinja2 template met variabelen", "1": "gevorderd", "2": "basis", "groep": "Templates en formulieren", "les": "FastAPI/formulieren/templates" },
+    { "id": "db-write", "onderwerp": "fastapi", "concept": "data opslaan met sqlitedict", "1": "basis", "2": "basis", "groep": "Gegevens opslaan", "les": "FastAPI/sqlitedict/database" },
+    { "id": "db-lezen", "onderwerp": "fastapi", "concept": "data uitlezen met sqlitedict", "1": "basis", "2": "basis", "groep": "Gegevens opslaan", "les": "FastAPI/sqlitedict/database" },
+    { "id": "db-formulier", "onderwerp": "fastapi", "concept": "formulier data opslaan via sqlitedict", "1": "gevorderd", "2": "basis", "groep": "Gegevens opslaan", "les": "FastAPI/berichten-opslaan/naam-opslaan" },
+    { "id": "db-dictionary", "onderwerp": "fastapi", "concept": "een geneste dictionary in sqlitedict", "1": "expert", "2": "gevorderd", "groep": "Gegevens opslaan", "les": "FastAPI/sqlitedict/dictionary" },
+    { "id": "db-aanpassen", "onderwerp": "fastapi", "concept": "Een dictionary aanpassen: ophalen, aanpassen, terugzetten", "1": "expert", "2": "basis", "groep": "Gegevens opslaan", "les": "FastAPI/sqlitedict/aanpassen" },
+    { "id": "fastapi-redirect", "onderwerp": "fastapi", "concept": "Doorsturen na opslaan (redirect)", "1": "gevorderd", "2": "basis", "groep": "Gegevens opslaan", "les": "FastAPI/berichten-opslaan/redirect" },
+    { "id": "if-else", "onderwerp": "fastapi", "concept": "if else in python of jinja2 template", "1": "gevorderd", "2": "gevorderd", "groep": "Templates en formulieren", "les": "FastAPI/berichten-tonen/leeg" },
+    { "id": "account-registreren", "onderwerp": "fastapi", "concept": "Registreren: een account opslaan", "1": "gevorderd", "2": "basis", "groep": "Accounts", "les": "FastAPI/accounts/registreren" },
+    { "id": "account-inloggen", "onderwerp": "fastapi", "concept": "gebruiker laten inloggen", "1": "gevorderd", "2": "gevorderd", "groep": "Accounts", "toelichting": "Je formulier heeft een wachtwoordveld, zodat iemand met naam en wachtwoord inlogt.", "les": "FastAPI/accounts/inloggen" },
+    { "id": "account-wachtwoord", "onderwerp": "fastapi", "concept": "Inloggen: een wachtwoord controleren", "1": "expert", "2": "gevorderd", "groep": "Accounts", "toelichting": "De server vergelijkt het wachtwoord met dat van het account en stuurt bij een fout een 401.", "les": "FastAPI/accounts/inloggen" },
+    { "id": "fastapi-path-param", "onderwerp": "fastapi", "concept": "path parameters", "1": "expert", "2": "gevorderd", "groep": "Pagina's en routes", "les": "FastAPI/veel-paginas/path-parameters" },
+    { "id": "htmx-verzoek", "onderwerp": "fastapi", "concept": "htmx", "1": "expert", "2": "gevorderd", "groep": "Uitbreidingen", "les": "FastAPI/zonder-herladen/htmx" },
+    { "id": "fastapi-cookie", "onderwerp": "fastapi", "concept": "Cookies", "1": "expert", "2": "gevorderd", "groep": "Uitbreidingen", "les": "FastAPI/onthouden/cookies" },
+    { "id": "fastapi-sessie", "onderwerp": "fastapi", "concept": "Sessies", "1": "expert", "2": "gevorderd", "groep": "Uitbreidingen", "les": "FastAPI/onthouden/sessies" }
+  ]
+}

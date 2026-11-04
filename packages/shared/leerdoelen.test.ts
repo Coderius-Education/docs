@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -84,6 +84,23 @@ describe('alleen niveaus, geen schoolsoorten', () => {
     for (const bestand of bestanden) {
       expect(readFileSync(bestand, 'utf8'), bestand).not.toMatch(/\b(havo|vwo)\b/i);
     }
+  });
+});
+
+describe('een concept op de pagina', () => {
+  it('toont overal waar het concept staat ook zijn toelichting', () => {
+    // De vergelijking liet de toelichting weg. Bij fullstack hangen twee
+    // rijen aan één les, en die les heet zoals een van de twee; zonder
+    // toelichting stond daar twee keer bijna hetzelfde, bij gevorderd en bij
+    // expert.
+    const map = join(__dirname, 'components', 'Leerdoelen');
+    const zonder = readdirSync(map)
+      .filter((f) => f.endsWith('.tsx'))
+      .filter((f) => {
+        const bron = readFileSync(join(map, f), 'utf8');
+        return /\{c\.concept\}/.test(bron) && !/c\.toelichting/.test(bron);
+      });
+    expect(zonder).toEqual([]);
   });
 });
 
