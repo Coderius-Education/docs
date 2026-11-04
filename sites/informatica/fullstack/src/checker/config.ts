@@ -95,10 +95,11 @@ const DETECTIE: Record<string, ConceptDetect> = {
   ),
   'fastapi-redirect': py(/RedirectResponse/g),
   // In een template of in Python; in de cursus komt hij voor het eerst als
-  // het lege geval in een template.
+  // het lege geval in een template. `{%- … %}` is dezelfde tag, met de
+  // witruimte ervoor weggehaald; dat geldt ook voor for en include.
   'if-else': {
     type: 'regex',
-    pattern: /\{%\s*if\b|^[ \t]*if\b[^\n]*:/gm,
+    pattern: /\{%-?\s*if\b|^[ \t]*if\b[^\n]*:/gm,
     in: ['py', 'html'],
   },
   // Niet "aanmelden": dat is in het Nederlands meestal inloggen.
@@ -194,14 +195,14 @@ const OOK_GEBRUIKT: ExtraConcept[] = [
     subject: 'html',
     group: 'Lijsten',
     label: 'Lijst herhalen (for-lus in template)',
-    detect: html(/\{%\s*for\b/g),
+    detect: html(/\{%-?\s*for\b/g),
   },
   {
     id: 'html-jinja-include',
     subject: 'html',
     group: 'Lijsten',
     label: 'Stuk template hergebruiken ({% include %})',
-    detect: html(/\{%\s*include\b/g),
+    detect: html(/\{%-?\s*include\b/g),
   },
   // De detectie kijkt in de HTML en niet in de JS: wat fullstack toevoegt is
   // de plek, een apart bestand in static/js/, gemount door FastAPI.

@@ -4,7 +4,7 @@
   "concepten": [
     { "id": "fastapi-installeren", "onderwerp": "fastapi", "concept": "virtual environment en FastAPI package installeren", "1": "basis", "2": "basis", "groep": "Je eerste server", "les": "FastAPI/eerste-server/installatie" },
     { "id": "fastapi-app", "onderwerp": "fastapi", "concept": "FastAPI applicatie starten", "1": "basis", "2": "basis", "groep": "Je eerste server", "les": "FastAPI/eerste-server/eerste_endpoint" },
-    { "id": "browser-devtools", "onderwerp": "fastapi", "concept": "je kunt de developtools gebruiken om te kijken wat de browser doet", "1": "basis", "2": "basis", "groep": "Je eerste server", "les": "FastAPI/eerste-server/devtools-netwerk" },
+    { "id": "browser-devtools", "onderwerp": "fastapi", "concept": "je kunt de ontwikkelaarstools gebruiken om te kijken wat de browser doet", "1": "basis", "2": "basis", "groep": "Je eerste server", "les": "FastAPI/eerste-server/devtools-netwerk" },
     { "id": "fastapi-fileresponse", "onderwerp": "fastapi", "concept": "FileResponse als responstype", "1": "basis", "2": "basis", "groep": "Pagina's en routes", "les": "FastAPI/paginas/html_bestanden" },
     { "id": "fastapi-html-response", "onderwerp": "fastapi", "concept": "HTMLResponse als responstype", "1": "basis", "2": "basis", "groep": "Pagina's en routes", "les": "FastAPI/paginas/html_tonen" },
     { "id": "fastapi-routes", "onderwerp": "fastapi", "concept": "meerdere GET-routes", "1": "basis", "2": "basis", "groep": "Pagina's en routes", "les": "FastAPI/eerste-server/eerste_endpoint" },
@@ -25,6 +25,6 @@
     { "id": "fastapi-path-param", "onderwerp": "fastapi", "concept": "path parameters", "1": "expert", "2": "gevorderd", "groep": "Pagina's en routes", "les": "FastAPI/veel-paginas/path-parameters" },
     { "id": "htmx-verzoek", "onderwerp": "fastapi", "concept": "htmx", "1": "expert", "2": "gevorderd", "groep": "Uitbreidingen", "les": "FastAPI/zonder-herladen/htmx" },
     { "id": "fastapi-cookie", "onderwerp": "fastapi", "concept": "Cookies", "1": "expert", "2": "gevorderd", "groep": "Uitbreidingen", "les": "FastAPI/onthouden/cookies" },
-    { "id": "fastapi-sessie", "onderwerp": "fastapi", "concept": "Sessions", "1": "expert", "2": "gevorderd", "groep": "Uitbreidingen", "les": "FastAPI/onthouden/sessies" }
+    { "id": "fastapi-sessie", "onderwerp": "fastapi", "concept": "Sessies", "1": "expert", "2": "gevorderd", "groep": "Uitbreidingen", "les": "FastAPI/onthouden/sessies" }
   ]
 }

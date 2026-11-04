@@ -398,14 +398,16 @@ describe('fullstackConfig — de leerdoelen', () => {
     // Het blad zoals de docent het invulde, met de twee startkolommen als
     // niveau 1 en 2. Een verschuiving hoort een bewuste keuze te zijn, geen
     // bijvangst van een nieuwe les; vandaar de hele tabel. Twee tikfouten van
-    // het blad zijn hersteld: "reponsetype" en "een genested dictionary".
+    // het blad zijn hersteld ("reponsetype", "een genested dictionary"), en
+    // twee woorden zijn die van de cursus geworden: "developtools" heet in de
+    // lessen ontwikkelaarstools, "Sessions" heet sessies.
     const B = 'basis';
     const G = 'gevorderd';
     const E = 'expert';
     const blad = [
       ['virtual environment en FastAPI package installeren', B, B],
       ['FastAPI applicatie starten', B, B],
-      ['je kunt de developtools gebruiken om te kijken wat de browser doet', B, B],
+      ['je kunt de ontwikkelaarstools gebruiken om te kijken wat de browser doet', B, B],
       ['FileResponse als responstype', B, B],
       ['HTMLResponse als responstype', B, B],
       ['meerdere GET-routes', B, B],
@@ -426,7 +428,7 @@ describe('fullstackConfig — de leerdoelen', () => {
       ['path parameters', E, G],
       ['htmx', E, G],
       ['Cookies', E, G],
-      ['Sessions', E, G],
+      ['Sessies', E, G],
     ];
     expect(leerdoelen.niveaus.map((n) => n.id)).toEqual(['1', '2']);
     expect(leerdoelen.onderwerpen).toEqual([{ id: 'fastapi', label: 'FastAPI' }]);
@@ -637,6 +639,16 @@ describe('fullstackConfig — de nieuwe rijen van het blad', () => {
     expect(gebruikt({ 'main.py': 'if naam in db:\n    pass' }).get('if-else')).toBe(true);
     expect(gebruikt({ 'a.html': '{% if berichten %}x{% endif %}' }).get('if-else')).toBe(true);
     expect(gebruikt({ 'main.py': 'verschil = 3\nprint("if")' }).get('if-else')).toBe(false);
+    // Ook op een latere regel: dat hangt aan de vlag m van het patroon.
+    expect(gebruikt({ 'main.py': 'x = 1\n\nif x > 0:\n    pass' }).get('if-else')).toBe(true);
+    // {%- … %} is dezelfde tag, met de witruimte ervoor weggehaald.
+    const strak = gebruikt({
+      'a.html':
+        '{%- if berichten %}{%- for b in berichten %}{%- include "b.html" %}{% endfor %}{% endif %}',
+    });
+    expect(strak.get('if-else')).toBe(true);
+    expect(strak.get('html-jinja-loop')).toBe(true);
+    expect(strak.get('html-jinja-include')).toBe(true);
   });
 
   it('onderscheidt registreren, inloggen en het wachtwoord controleren', () => {
