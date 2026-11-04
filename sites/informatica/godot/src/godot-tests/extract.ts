@@ -33,6 +33,12 @@ export type Fragment = {
    * compileert, en dat deze tekst in een van de meldingen staat.
    */
   verwachtFout?: string;
+  /**
+   * Bij `{/* verwacht-runtime-fout: … *\/}`: de melding die het script tijdens
+   * het draaien geeft. De testrunner compileert het, hangt het aan een node
+   * van zijn soort, laat `_ready()` draaien en zoekt de melding.
+   */
+  verwachtRuntimeFout?: string;
 };
 
 export type Overgeslagen = {
@@ -70,6 +76,11 @@ const NIET_COMPILEREN = '{/* niet-compileren:';
  *    `tween_callback(queue_free())` het muntje meteen laat verdwijnen, terwijl
  *    Godot het script weigert. Alles vanaf een regel `# GOED` hoort bij de
  *    verbetering en gaat niet mee.
+ *  - `{/* verwacht-runtime-fout: <melding> *\/}`: hetzelfde voor een melding
+ *    die pas tijdens het spelen komt (een ontbrekende sleutel, een kapotte
+ *    tween). Het script compileert gewoon; de testrunner hangt het aan een
+ *    node van zijn soort, laat `_ready()` draaien en zoekt de melding. Schrijf
+ *    zo'n voorbeeld dus zo dat `_ready()` de fout maakt.
  *  - `{/* compileer-als: extends Area2D *\/}`: een losse functie die de les
  *    toont zonder de rest van het script ("pas `_on_body_entered` van je vijand
  *    aan"), zodat wat de leerling er verder in heeft niet verdwijnt als hij het
@@ -78,9 +89,10 @@ const NIET_COMPILEREN = '{/* niet-compileren:';
  * De inhoud loopt nooit over een `*\/}` heen: met twee markers kort na elkaar
  * hoort elk blok alleen bij de zijne.
  */
-const MARKER_SOORTEN = ['verwacht-fout', 'compileer-als'] as const;
+const MARKER_SOORTEN = ['verwacht-fout', 'verwacht-runtime-fout', 'compileer-als'] as const;
 type MarkerSoort = (typeof MARKER_SOORTEN)[number];
-const MARKER = /\{\/\*\s*(verwacht-fout|compileer-als):\s*((?:(?!\*\/\})[\s\S])*?)\s*\*\/\}/g;
+const MARKER =
+  /\{\/\*\s*(verwacht-fout|verwacht-runtime-fout|compileer-als):\s*((?:(?!\*\/\})[\s\S])*?)\s*\*\/\}/g;
 
 /** De marker die direct boven een blok staat, met zijn inhoud op één regel. */
 function markerBoven(ervoor: string): { soort: MarkerSoort; inhoud: string } | undefined {
@@ -112,19 +124,22 @@ export function citaatKlopt(citaat: string, melding: string): boolean {
  */
 function controleerCitaten(ervoor: string, melding: string, waar: string): void {
   const begin = ervoor.lastIndexOf('<details>');
-  if (begin === -1) throw new Error(`${waar}: verwacht-fout hoort in een <details> met de melding`);
+  if (begin === -1)
+    throw new Error(
+      `${waar}: een verwacht-fout of verwacht-runtime-fout hoort in een <details> met de melding`,
+    );
   const stuk = ervoor.slice(begin);
   const summary = stuk.match(/<summary[^>]*>([\s\S]*?)<\/summary>/)?.[1];
   const zonderTags = (summary ?? '').replace(/<[^>]+>/g, '').replace(/^Foutmelding:\s*/, '');
   if (!citaatKlopt(zonderTags, melding)) {
     throw new Error(
-      `${waar}: de summary "${zonderTags.trim()}" is niet de melding uit verwacht-fout: "${melding}"`,
+      `${waar}: de summary "${zonderTags.trim()}" is niet de melding uit de marker: "${melding}"`,
     );
   }
   for (const kaal of stuk.matchAll(/^```\n([\s\S]*?)```/gm)) {
     if (!citaatKlopt(kaal[1], melding)) {
       throw new Error(
-        `${waar}: het meldingsblok "${kaal[1].trim()}" is niet de melding uit verwacht-fout: "${melding}"`,
+        `${waar}: het meldingsblok "${kaal[1].trim()}" is niet de melding uit de marker: "${melding}"`,
       );
     }
   }
@@ -188,6 +203,26 @@ export function fragmentenUit(
         kop,
         code: `${fout}\n`,
         verwachtFout: marker.inhoud,
+      });
+      continue;
+    }
+    if (marker?.soort === 'verwacht-runtime-fout') {
+      const fout = code.split(/^\s*#\s*GOED\b/m)[0].replace(/\s+$/, '');
+      if (!/^extends\s+\w+/m.test(fout) || !/^func _ready\(/m.test(fout)) {
+        throw new Error(
+          `${bron}:${regel}: een verwacht-runtime-fout-blok moet een heel script zijn, met extends en een _ready()`,
+        );
+      }
+      controleerCitaten(ervoor, marker.inhoud, `${bron}:${regel}`);
+      fragmenten.push({
+        naam,
+        bron,
+        regel,
+        begin,
+        eind,
+        kop,
+        code: `${fout}\n`,
+        verwachtRuntimeFout: marker.inhoud,
       });
       continue;
     }

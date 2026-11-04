@@ -142,6 +142,22 @@ Invalid access to property or key 'Goud' on a base object of type 'Dictionary'.
 
 **Oorzaak:** de sleutel staat niet in je dictionary. Hier staat in de Inspector `Goud` in het veld Soort, met een hoofdletter. Voor een dictionary is `Goud` een ander woord dan `goud`. Godot zoekt dan precies die sleutel, en die bestaat niet.
 
+Zo zie je de melding zelf, in een los script aan een lege `Node` (start de scène met `F6`):
+
+{/* verwacht-runtime-fout: Invalid access to property or key 'Goud' on a base object of type 'Dictionary'. */}
+
+```gdscript
+# FOUT
+extends Node
+
+const WAARDES = {"brons": 1, "zilver": 5, "goud": 10}
+
+var soort = "Goud"
+
+func _ready() -> void:
+    print(WAARDES[soort])
+```
+
 Wanneer je de melding krijgt, hangt af van je script. Deed je opdracht 10.3.a, dan komt hij al bij de start van het level, op de regel met `KLEUREN[soort]` in `_ready()`. Zonder die opdracht komt hij pas als je het muntje pakt, op de regel met `WAARDES[soort]`.
 
 **Oplossing:** zoek in je level het muntje met de tikfout, en verbeter het veld Soort in de Inspector. Bij de start weet je niet welk muntje het is: print dan `soort` als eerste regel in `_ready()`, en kijk welke soort er vlak voor de melding in **Uitvoer** staat.

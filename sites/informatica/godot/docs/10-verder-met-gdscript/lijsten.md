@@ -172,6 +172,21 @@ Invalid access of index '3' on a base object of type: 'Array'.
 
 **Oorzaak:** je vraagt een item op dat niet bestaat. Een lijst met drie items heeft de plekken `0`, `1` en `2`; plek `3` is er niet. Dat gebeurt als je na het laatste level toch `levels[volgende]` opvraagt.
 
+Zo zie je de melding zelf, in een los script aan een lege `Node` (start de scène met `F6`):
+
+{/* verwacht-runtime-fout: Invalid access of index '3' on a base object of type: 'Array'. */}
+
+```gdscript
+# FOUT
+extends Node
+
+var levels = ["res://level1.tscn", "res://level2.tscn", "res://level3.tscn"]
+
+func _ready() -> void:
+    var volgende = 3
+    print(levels[volgende])
+```
+
 **Oplossing:** controleer eerst of `volgende < levels.size()`, zoals in Stap 3. Let op het `<`: met `<=` zit je er precies één naast.
 
 </details>
@@ -188,13 +203,23 @@ Invalid access of index '3' on a base object of type: 'Array'.
 </details>
 
 <details>
-<summary>Cannot open file 'res://level3.tscn'.</summary>
+<summary>Cannot open file 'res://level4.tscn'.</summary>
 
 ```
-Cannot open file 'res://level3.tscn'.
+Cannot open file 'res://level4.tscn'.
 ```
 
-**Oorzaak:** in je lijst staat een level dat niet bestaat. Je hebt bijvoorbeeld twee levels, maar de lijst uit de les overgenomen met drie. Je blijft dan in het level waar je was.
+**Oorzaak:** in je lijst staat een level dat niet bestaat. Je hebt bijvoorbeeld drie levels, en in de lijst staat ook al `level4.tscn`, dat je nog wilde maken. Je blijft dan in het level waar je was.
+
+{/* verwacht-runtime-fout: Cannot open file 'res://level4.tscn'. */}
+
+```gdscript
+# FOUT
+extends Node
+
+func _ready() -> void:
+    get_tree().change_scene_to_file("res://level4.tscn")
+```
 
 **Oplossing:** zet alleen levels in de lijst die in FileSystem staan, met precies dat pad.
 

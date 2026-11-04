@@ -18,6 +18,7 @@ const OVERGESLAGEN := "<overgeslagen>"
 var fouten: Array[String] = []
 var gedaan := 0
 var foutvoorbeelden := 0
+var runtime_voorbeelden := 0
 
 func _ready() -> void:
 	var index := _lees_index()
@@ -27,6 +28,7 @@ func _ready() -> void:
 		return
 
 	_compileer_alles(index)
+	await _draai_runtime_voorbeelden(index)
 	await _gedrag_tests(index)
 	_rapporteer()
 
@@ -92,6 +94,66 @@ func _compileer_foutvoorbeeld(script: GDScript, bron: String, verwacht: String) 
 			foutvoorbeelden += 1
 			return
 	_faal("%s — Godot geeft niet de melding uit de les ('%s') maar: %s" % [bron, verwacht, " | ".join(meldingen.regels)])
+
+# --- meldingen tijdens het spelen --------------------------------------------
+
+# Een citaat met "..." erin staat voor iets wat per keer verschilt (een
+# node-id); de delen eromheen moeten in die volgorde in de melding staan.
+func _past(citaat: String, melding: String) -> bool:
+	var vanaf := 0
+	for deel in citaat.split("..."):
+		var plek := melding.find(deel, vanaf)
+		if plek == -1:
+			return false
+		vanaf = plek + deel.length()
+	return true
+
+# Een runtime-voorbeeld uit "Er gaat iets mis" draait echt: het script komt aan
+# een node van zijn eigen soort, _ready() maakt de fout, en de melding moet die
+# uit de les zijn. Noemt de melding een object ("in object "Muntje:…"), dan
+# krijgt de node die naam.
+func _draai_runtime_voorbeelden(index: Array) -> void:
+	var soort_regex := RegEx.create_from_string("(?m)^extends\\s+(\\w+)")
+	var naam_regex := RegEx.create_from_string("in object \"(\\w+):")
+	var totaal := 0
+	for item in index:
+		if not item.has("verwacht_runtime_fout") or item.get("overslaan", false):
+			continue
+		totaal += 1
+		var bron: String = "%s:%d" % [item["bron"], int(item["regel"])]
+		var verwacht: String = item["verwacht_runtime_fout"]
+		var code := FileAccess.get_file_as_string(EXTRACTED + "/" + item["naam"] + ".gd")
+		var soort := soort_regex.search(code)
+		if soort == null or not ClassDB.can_instantiate(soort.get_string(1)):
+			_faal("%s — runtime-voorbeeld zonder bruikbare extends" % bron)
+			continue
+		var script := GDScript.new()
+		script.source_code = code
+		if script.reload() != OK:
+			_faal("%s — runtime-voorbeeld compileert niet" % bron)
+			continue
+		var node: Node = ClassDB.instantiate(soort.get_string(1))
+		var objectnaam := naam_regex.search(verwacht)
+		if objectnaam != null:
+			node.name = objectnaam.get_string(1)
+		node.set_script(script)
+		print("Runtime-voorbeeld %s, verwacht: %s" % [bron, verwacht])
+		var meldingen := Meldingen.new()
+		OS.add_logger(meldingen)
+		add_child(node)
+		await _stap(3)
+		OS.remove_logger(meldingen)
+		remove_child(node)
+		node.queue_free()
+		var gezien := false
+		for regel in meldingen.regels:
+			if _past(verwacht, regel):
+				gezien = true
+		if gezien:
+			runtime_voorbeelden += 1
+		else:
+			_faal("%s — Godot geeft tijdens het draaien niet de melding uit de les ('%s') maar: %s" % [bron, verwacht, " | ".join(meldingen.regels)])
+	print("Meldingen tijdens het spelen zoals de les ze citeert: %d van %d." % [runtime_voorbeelden, totaal])
 
 # --- laag 2: gedrag ----------------------------------------------------------
 

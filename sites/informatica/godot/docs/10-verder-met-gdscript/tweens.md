@@ -198,14 +198,21 @@ The tweened property "modulate.a" does not exist in object "Muntje:<Area2D#...>"
 
 **Oorzaak:** in de tekst van een tween schrijf je een eigenschap van een eigenschap met een dubbele punt, niet met een punt. Godot zoekt nu een eigenschap die letterlijk `modulate.a` heet.
 
-**Oplossing:**
+{/* verwacht-runtime-fout: The tweened property "modulate.a" does not exist in object "Muntje:<Area2D#...>". */}
 
 ```gdscript
 # FOUT
-tween.tween_property(self, "modulate.a", 0.0, 0.2)
+extends Area2D
 
-# GOED
-tween.tween_property(self, "modulate:a", 0.0, 0.2)
+func _ready() -> void:
+    var tween = create_tween()
+    tween.tween_property(self, "modulate.a", 0.0, 0.2)
+```
+
+**Oplossing:** een dubbele punt in plaats van de punt:
+
+```gdscript
+    tween.tween_property(self, "modulate:a", 0.0, 0.2)
 ```
 
 </details>

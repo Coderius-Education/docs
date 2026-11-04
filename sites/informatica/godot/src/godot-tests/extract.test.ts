@@ -95,6 +95,28 @@ describe('GDScript uit de lespagina´s halen', () => {
     expect(fragmenten[0].code).not.toContain('\r');
   });
 
+  it('neemt een runtime-foutvoorbeeld mee als script dat in _ready() de fout maakt', () => {
+    const melding = "Invalid access of index '3' on a base object of type: 'Array'.";
+    const omhulling = `<details>\n<summary>${melding}</summary>\n\n`;
+    const script =
+      '```gdscript\n# FOUT\nextends Node\n\nfunc _ready() -> void:\n    print([1, 2, 3][3])\n```';
+    const { fragmenten } = fragmentenUit(
+      'les.md',
+      pagina(`${omhulling}{/* verwacht-runtime-fout: ${melding} */}\n\n${script}`),
+    );
+    expect(fragmenten[0].verwachtRuntimeFout).toBe(melding);
+    expect(fragmenten[0].verwachtFout).toBeUndefined();
+    // Zonder _ready() voert de runner niets uit, en dan bewijst het blok niets.
+    expect(() =>
+      fragmentenUit(
+        'les.md',
+        pagina(
+          `${omhulling}{/* verwacht-runtime-fout: ${melding} */}\n\n${script.replace('_ready', 'f')}`,
+        ),
+      ),
+    ).toThrow(/_ready/);
+  });
+
   it('weigert een verwacht-fout-blok zonder extends', () => {
     // Zonder extends faalt elk blok, ook als de les de verkeerde fout citeert.
     expect(() =>

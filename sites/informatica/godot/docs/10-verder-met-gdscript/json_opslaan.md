@@ -345,6 +345,19 @@ Invalid access to property or key 'highscore' on a base object of type 'Nil'.
 
 **Oorzaak:** `JSON.parse_string` kon de tekst in het bestand niet lezen, en gaf `null` terug. Dat gebeurt als je het bestand met de hand hebt aangepast en er een aanhalingsteken of accolade uit is gegaan. In **Uitvoer** staat erboven `Parse JSON failed`.
 
+Zo zie je de melding zelf, in een los script aan een lege `Node` (start de scène met `F6`):
+
+{/* verwacht-runtime-fout: Invalid access to property or key 'highscore' on a base object of type 'Nil'. */}
+
+```gdscript
+# FOUT
+extends Node
+
+func _ready() -> void:
+    var gegevens = JSON.parse_string("{highscore: 40")
+    print(gegevens["highscore"])
+```
+
 **Oplossing:** verbeter het bestand, of gooi het weg; bij de volgende highscore maakt het spel een nieuw. Wil je dat het spel zo'n kapot bestand overslaat, controleer dan eerst wat je terugkrijgt:
 
 ```gdscript
