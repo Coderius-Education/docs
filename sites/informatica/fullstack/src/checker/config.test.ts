@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { levelVoor } from '@coderius/checker/conceptLevel';
@@ -440,6 +440,28 @@ describe('fullstackConfig — de leerdoelen', () => {
     // Ook gebruikt is wat het blad niet noemt; een id staat nooit in allebei.
     const rijen = new Set(leerdoelen.concepten.map((c) => c.id));
     expect((fullstackConfig.extra ?? []).filter((c) => rijen.has(c.id))).toEqual([]);
+  });
+
+  it('geeft een toelichting als een les net zo heet als een andere rij', () => {
+    // "gebruiker laten inloggen" en "Inloggen: een wachtwoord controleren"
+    // leer je allebei in de les met die tweede naam. Zonder toelichting stond
+    // er op niveau 1 bij gevorderd "Leer het in: Inloggen: een wachtwoord
+    // controleren" en bij expert dezelfde tekst als concept.
+    const docs = fileURLToPath(new URL('../../docs/', import.meta.url));
+    const titel = (les: string) => {
+      const pad = ['.mdx', '.md'].map((e) => join(docs, les + e)).find((p) => existsSync(p));
+      return pad ? readFileSync(pad, 'utf8').match(/^# (.*)$/m)?.[1] : undefined;
+    };
+    const rijen: { id: string; concept: string; les: string; toelichting?: string }[] =
+      leerdoelenJson.concepten;
+    const namen = new Set(rijen.map((c) => c.concept));
+    const verwarrend = rijen.filter(
+      (c) =>
+        namen.has(titel(c.les) ?? '') &&
+        rijen.some((ander) => ander.les === c.les && ander.id !== c.id),
+    );
+    expect(verwarrend.map((c) => c.id)).toEqual(['account-inloggen', 'account-wachtwoord']);
+    for (const c of verwarrend) expect(c.toelichting, c.id).toBeTruthy();
   });
 
   it('kijkt alleen de installatie en de ontwikkelaarstools met de hand na', () => {
