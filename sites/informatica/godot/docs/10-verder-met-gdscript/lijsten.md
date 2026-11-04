@@ -49,7 +49,7 @@ Een lijst (in Godot heet hij een `Array`) schrijf je met blokhaken, en de items 
 | :-------------------------: | :----------------------------------------------------- | :------------- |
 | `levels[0]`                 | Het eerste item                                        | hetzelfde      |
 | `levels.size()`             | Hoeveel items er in de lijst staan                     | `len(levels)`  |
-| `levels.find("res://level2.tscn")` | Op welke plek dat item staat, of `-1` als het er niet in staat | `levels.index(...)`, maar die geeft een fout in plaats van `-1` |
+| `levels.find("res://level2.tscn")` | Op welke plek dat item staat, of `-1` als het er niet in staat | – (nieuw) |
 | `levels.append("res://level4.tscn")` | Zet een item achteraan erbij                  | hetzelfde      |
 
 ## Stap 1: Zet de volgorde in een lijst
@@ -122,17 +122,17 @@ Zet linksboven in elk level een `Label` met de tekst `Level 2 van 3`, met het ju
 - Bouw het label zoals de score in [Score op het scherm](site:godot/docs/score_op_scherm): een `CanvasLayer` met een `Label` erin, en een script aan het label.
 - De tekst verandert niet tijdens het level, dus je zet hem één keer in `_ready()`, niet elke frame in `_process`.
 - `find` geeft `0` voor het eerste level. Wat moet je erbij optellen om `1` te krijgen?
-- Het label heeft ook de lijst nodig. Kopiëren werkt, maar dan staat hij op twee plekken. Kijk of je hem in `Global` kunt zetten.
+- Het label heeft ook de lijst nodig. Kopiëren werkt, maar dan staat hij op twee plekken. Kijk of je hem in `Global` kunt zetten, met een naam die niet op `levens` lijkt.
 
 </details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-Zet de lijst in `global.gd`, onder de variabelen die er al staan, zodat de vlag en het label dezelfde gebruiken:
+Zet de lijst in `global.gd`, onder de variabelen die er al staan, zodat de vlag en het label dezelfde gebruiken. Geef hem daar een langere naam: `levels` verschilt maar één letter van `levens`, dat er ook staat, en dan is `Global.levens.find(...)` een tikfout die je lang zoekt.
 
 ```gdscript
-var levels = ["res://level1.tscn", "res://level2.tscn", "res://level3.tscn"]
+var level_volgorde = ["res://level1.tscn", "res://level2.tscn", "res://level3.tscn"]
 ```
 
 Het script van het label:
@@ -141,20 +141,20 @@ Het script van het label:
 extends Label
 
 func _ready() -> void:
-    var nu = Global.levels.find(get_tree().current_scene.scene_file_path)
-    text = "Level " + str(nu + 1) + " van " + str(Global.levels.size())
+    var nu = Global.level_volgorde.find(get_tree().current_scene.scene_file_path)
+    text = "Level " + str(nu + 1) + " van " + str(Global.level_volgorde.size())
 ```
 
-En in `vlag.gd` haal je de eigen lijst weg en schrijf je overal `Global.levels`:
+En in `vlag.gd` haal je de eigen lijst weg en schrijf je overal `Global.level_volgorde` waar `levels` stond:
 
 ```gdscript
 extends Area2D
 
 func _on_body_entered(body: Node2D) -> void:
-    var nu = Global.levels.find(get_tree().current_scene.scene_file_path)
+    var nu = Global.level_volgorde.find(get_tree().current_scene.scene_file_path)
     var volgende = nu + 1
-    if volgende < Global.levels.size():
-        get_tree().change_scene_to_file(Global.levels[volgende])
+    if volgende < Global.level_volgorde.size():
+        get_tree().change_scene_to_file(Global.level_volgorde[volgende])
     else:
         get_tree().change_scene_to_file("res://menu.tscn")
 ```

@@ -55,6 +55,19 @@ func _physics_process(delta): # 4. Functies
 
 </details>
 
+<details>
+<summary>Hoe vul ik een variabele per node in de Inspector in? (<code>@export</code>)</summary>
+
+```gdscript
+extends Area2D
+
+@export var soort = "brons"
+```
+
+Met `@export` staat de variabele als veld in de Inspector, zodat elk muntje zijn eigen waarde krijgt zonder dat je het script verandert. Uitgelegd in [Dictionaries](site:godot/docs/dictionaries).
+
+</details>
+
 ---
 
 ## Functies \{#functies}
@@ -179,6 +192,7 @@ De vorm is gelijk — blokhaken, index vanaf 0 — maar een paar namen verschill
 | `lijst.append(x)` | `lijst.append(x)` | gelijk |
 | `lijst.remove(x)` | `lijst.erase(x)` | |
 | `sorted(lijst)` | `lijst.sort()` | GDScript sorteert de lijst **zelf**; Python geeft een kopie terug |
+| – | `lijst.find(x)` | de plek van `x`, of `-1` als hij er niet in staat |
 
 ```gdscript
 var scores = [3, 1, 2]
@@ -188,9 +202,14 @@ print(scores.size())   # 4
 print(scores[0])       # 1
 ```
 
-Uitgelegd in [Lijsten](site:godot/docs/lijsten).
+In de les [Lijsten](site:godot/docs/lijsten) gebruik je `size()` en `find()` om naar het volgende level te gaan.
 
 </details>
+
+
+---
+
+## Dictionaries \{#dictionaries}
 
 <details>
 <summary>Hoe zoek ik een waarde op met een woord? (Dictionary)</summary>
@@ -489,6 +508,41 @@ Uitgebreider, met de veelvoorkomende meldingen erbij: [Een foutmelding lezen](si
 
 ---
 
+## Opslaan en animeren \{#opslaan-animeren}
+
+<details>
+<summary>Hoe bewaar ik iets tot de volgende keer dat je speelt? (JSON in user://)</summary>
+
+```gdscript
+var bestand = FileAccess.open("user://highscore.json", FileAccess.WRITE)
+bestand.store_string(JSON.stringify({"highscore": 40}))
+bestand.close()
+
+var lezen = FileAccess.open("user://highscore.json", FileAccess.READ)
+var gegevens = JSON.parse_string(lezen.get_as_text())
+var highscore = int(gegevens["highscore"])
+```
+
+Zonder `close()` staat de tekst nog niet in het bestand als je het meteen weer leest; in een eigen functie sluit Godot het bestand vanzelf aan het eind. Een getal komt uit JSON terug als kommagetal; daarom `int()`. Uitgelegd in [JSON: een highscore die blijft](site:godot/docs/json_opslaan).
+
+</details>
+
+<details>
+<summary>Hoe laat ik iets soepel bewegen of vervagen? (Tween)</summary>
+
+```gdscript
+var tween = create_tween()
+tween.tween_property(self, "position:y", position.y - 40, 0.3)
+tween.tween_property(self, "modulate:a", 0.0, 0.2)
+tween.tween_callback(queue_free)
+```
+
+De stappen lopen na elkaar. Uitgelegd in [Tweens](site:godot/docs/tweens).
+
+</details>
+
+---
+
 ## Veelgebruikte patronen \{#patronen}
 
 <details>
@@ -568,36 +622,5 @@ func reset():
 ```
 
 Vergeet niet dit script als **Autoload** in te stellen via Project Settings, tabblad Globals.
-
-</details>
-
-<details>
-<summary>Hoe bewaar ik iets tot de volgende keer dat je speelt? (JSON in user://)</summary>
-
-```gdscript
-var bestand = FileAccess.open("user://highscore.json", FileAccess.WRITE)
-bestand.store_string(JSON.stringify({"highscore": 40}))
-bestand.close()
-
-var lezen = FileAccess.open("user://highscore.json", FileAccess.READ)
-var gegevens = JSON.parse_string(lezen.get_as_text())
-var highscore = int(gegevens["highscore"])
-```
-
-Zonder `close()` staat de tekst nog niet in het bestand als je het meteen weer leest; in een eigen functie sluit Godot het bestand vanzelf aan het eind. Een getal komt uit JSON terug als kommagetal; daarom `int()`. Uitgelegd in [JSON: een highscore die blijft](site:godot/docs/json_opslaan).
-
-</details>
-
-<details>
-<summary>Hoe laat ik iets soepel bewegen of vervagen? (Tween)</summary>
-
-```gdscript
-var tween = create_tween()
-tween.tween_property(self, "position:y", position.y - 40, 0.3)
-tween.tween_property(self, "modulate:a", 0.0, 0.2)
-tween.tween_callback(queue_free)
-```
-
-De stappen lopen na elkaar. Uitgelegd in [Tweens](site:godot/docs/tweens).
 
 </details>

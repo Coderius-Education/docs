@@ -143,7 +143,7 @@ De eerste keer dat iemand je spel speelt, is er nog geen bestand. Daarom kijk je
 
 ## Stap 4: Alles bij elkaar
 
-Zo ziet `global.gd` eruit met de highscore erbij, en met wat er uit de eerdere lessen al in stond: `reset()`, `verlies_leven()` en `is_game_over()` uit [Global variables](site:godot/docs/global_variables), en de lijst `levels` uit [Lijsten](site:godot/docs/lijsten). Heb je de lijst niet in `Global` gezet, dan laat je die regel weg. Heeft jouw versie nog meer, dan laat je dat staan.
+Zo ziet `global.gd` eruit met de highscore erbij, en met wat er uit de eerdere lessen al in stond: `reset()`, `verlies_leven()` en `is_game_over()` uit [Global variables](site:godot/docs/global_variables), en de lijst `level_volgorde` uit opdracht 10.2.a van [Lijsten](site:godot/docs/lijsten). Heb je de lijst niet in `Global` gezet, dan laat je die regel weg. Heeft jouw versie nog meer, dan laat je dat staan.
 
 ```gdscript
 extends Node
@@ -152,7 +152,7 @@ const BESTAND = "user://highscore.json"
 
 var score = 0
 var levens = 3
-var levels = ["res://level1.tscn", "res://level2.tscn", "res://level3.tscn"]
+var level_volgorde = ["res://level1.tscn", "res://level2.tscn", "res://level3.tscn"]
 var highscore = 0
 
 func _ready() -> void:
@@ -204,7 +204,7 @@ Zet in het menu uit [Een startmenu](site:godot/docs/start_menu) een `Label` onde
 <summary>Klik hier voor een tip.</summary>
 
 - Voeg een `Label` toe in de `VBoxContainer` en hernoem het naar `Highscore`.
-- In `menu.gd` zet je de tekst in `_ready()`. Het label vind je met `$VBoxContainer/Highscore`.
+- In `menu.gd` zet je de tekst in `_ready()`. Het label staat ín de `VBoxContainer`, dus het pad is `$VBoxContainer/Highscore`: eerst de node waarin hij zit, een schuine streep, dan zijn eigen naam.
 - `Global.highscore` is een getal. Voor tekst gebruik je `str()`, net als bij de score op het scherm.
 
 </details>
@@ -246,7 +246,7 @@ const BESTAND = "user://highscore.json"
 
 var score = 0
 var levens = 3
-var levels = ["res://level1.tscn", "res://level2.tscn", "res://level3.tscn"]
+var level_volgorde = ["res://level1.tscn", "res://level2.tscn", "res://level3.tscn"]
 var highscore = 0
 var gespeeld = 0
 

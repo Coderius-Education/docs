@@ -83,7 +83,7 @@ Vier stukken, elk met een eigen taak:
 
 `move_and_slide()` hoort bij geen van de vier: die beweegt het karakter met wat de stukken erboven in `velocity` zetten.
 
-Namen bedenk je zelf. In deze les heten ze `val`, `spring`, `loop` en `kies_animatie`, maar `zwaartekracht` of `beweeg_opzij` zijn net zo goed. Een goede naam zegt wat het stuk doet, zodat je hem later terugvindt zonder de regels te lezen.
+Namen bedenk je zelf. In deze les heten ze `val`, `spring`, `beweeg` en `kies_animatie`, maar `zwaartekracht` of `loop_opzij` zijn net zo goed. Alleen `loop` zou je beter niet kiezen: in Python is een loop een lus, en dan lees je iets anders dan je bedoelt. Een goede naam zegt wat het stuk doet, zodat je hem later terugvindt zonder de regels te lezen.
 
 </details>
 
@@ -121,7 +121,7 @@ Start je spel met `F5`. Je karakter valt zoals altijd. Er is niets veranderd aan
 
 ## Waarom `delta` mee moet
 
-`delta` hoort bij `_physics_process`: Godot geeft hem mee als het die functie aanroept, en hij bestaat alleen daarbinnen. Een andere functie kent hem niet. Daarom geef je hem door als **parameter**: `val(delta)` stuurt de waarde mee, en `func val(delta: float)` vangt hem op.
+`delta` hoort bij `_physics_process`: Godot geeft hem mee als het die functie aanroept, en hij bestaat alleen daarbinnen. Een andere functie kent hem niet. Daarom geef je hem door als parameter, zoals je in [Spawnen](site:godot/docs/spawnen) de positie aan `spawn_muntje(x, y)` meegaf: `val(delta)` stuurt de waarde mee, en `func val(delta: float)` vangt hem op.
 
 ## Opdracht 10.1.a: knip de rest zelf op
 
@@ -154,7 +154,7 @@ var staat_stil
 func _physics_process(delta: float) -> void:
     val(delta)
     spring()
-    loop()
+    beweeg()
     kies_animatie()
     move_and_slide()
 
@@ -169,7 +169,7 @@ func spring() -> void:
         velocity.y = sprongkracht
 
 
-func loop() -> void:
+func beweeg() -> void:
     var direction := Input.get_axis("ui_left", "ui_right")
     if direction != 0:
         velocity.x = direction * SPEED
@@ -255,7 +255,7 @@ var extra_sprong = true
 func _physics_process(delta: float) -> void:
     val(delta)
     spring()
-    loop()
+    beweeg()
     kies_animatie()
     move_and_slide()
 
@@ -276,7 +276,7 @@ func spring() -> void:
             extra_sprong = false
 
 
-func loop() -> void:
+func beweeg() -> void:
     var direction := Input.get_axis("ui_left", "ui_right")
     if direction != 0:
         velocity.x = direction * SPEED
@@ -355,6 +355,17 @@ func val(delta: float) -> void:
     if not is_on_floor():
         velocity += get_gravity() * delta
 ```
+
+</details>
+
+<details>
+<summary>Mijn karakter valt ineens veel sneller</summary>
+
+**Oorzaak:** je hebt de regels voor de zwaartekracht gekopieerd in plaats van geknipt. Ze staan nu in `val()` én nog op hun oude plek in `_physics_process`, dus elke frame komt de zwaartekracht er twee keer bij.
+
+**Oplossing:** haal de twee regels weg uit `_physics_process`; daar staat alleen nog `val(delta)`.
+
+**Zelf vinden:** zet `print("in val")` in `val()` en `print("oude plek")` vlak boven `move_and_slide()`, onder de regels met `get_gravity()` als die er nog staan. Zie je in **Uitvoer** allebei, terwijl je karakter in de lucht hangt, dan rekent je script de zwaartekracht dubbel.
 
 </details>
 
