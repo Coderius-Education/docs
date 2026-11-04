@@ -533,6 +533,10 @@ describe('Bewaarder: beoordelingen bewaren', () => {
       bloom: null,
       moeilijkheid: null,
     });
+    // Een id die bloom.json niet meer kent (hernoemd of weg) telt als niet gekozen.
+    expect(
+      aangevuld({ ...oud, bloom: 'weten', moeilijkheid: 'super' } as unknown as Beoordeling),
+    ).toMatchObject({ bloom: null, moeilijkheid: null });
   });
 });
 

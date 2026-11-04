@@ -2,7 +2,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import type { ReactNode } from 'react';
-import { type Leerdoelen, moeilijkhedenTekst } from '../../leerdoelen';
+import { CONCEPT_MOEILIJKHEDEN, type Leerdoelen, moeilijkhedenTekst } from '../../leerdoelen';
 import { siteByUrl } from '../../sites';
 import Bloom from './Bloom';
 import styles from './styles.module.css';
@@ -36,14 +36,9 @@ export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoele
         <h2 id="niveaus">Niveaus</h2>
         <ul>
           {leerdoelen.niveaus.map((n) => {
-            const delen = [
-              ['basis', 'basis'],
-              ['gevorderd', 'gevorderd'],
-              ['expert', 'expert'],
-            ]
-              .map(([m, woord]) => [tel(n.id, m), woord] as const)
+            const delen = CONCEPT_MOEILIJKHEDEN.map((m) => [tel(n.id, m), m] as const)
               .filter(([aantal]) => aantal > 0)
-              .map(([aantal, woord]) => `${aantal} ${woord}`);
+              .map(([aantal, m]) => `${aantal} ${m}`);
             return (
               <li key={n.id}>
                 <Link to={`/leerdoelen/niveau-${n.id}`}>{n.label}</Link>
@@ -61,7 +56,7 @@ export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoele
           </p>
         )}
 
-        <Bloom />
+        <Bloom leerdoelen={leerdoelen} />
       </main>
     </Layout>
   );

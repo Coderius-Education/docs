@@ -33,21 +33,30 @@ export function Cijfer({
   report,
   config,
   track,
-  bloom,
-  moeilijkheid,
+  bloom: bewaardeBloom,
+  moeilijkheid: bewaardeMoeilijkheid,
   onBloom,
   onMoeilijkheid,
 }: CijferProps) {
+  // Een bewaarde waarde die bloom.json niet (meer) kent, telt als niet
+  // gekozen: anders gooit cijferVoor en valt de hele nakijker weg.
+  const bloom = BLOOM.denkvaardigheden.some((d) => d.id === bewaardeBloom) ? bewaardeBloom : null;
+  const moeilijkheid = BLOOM.moeilijkheden.some((m) => m.id === bewaardeMoeilijkheid)
+    ? bewaardeMoeilijkheid
+    : null;
   const samenvatting = computeLevelSummary(report, config, track);
   const voorstel = moeilijkheidVoorstel(samenvatting.bySubject);
   const gekozen = moeilijkheid ?? voorstel.moeilijkheid;
+  // Expert alleen als deze leerroute expertconcepten heeft, of als de docent
+  // hem al koos: een gekozen moeilijkheid moet zichtbaar en terug te zetten zijn.
   const opties = BLOOM.moeilijkheden.filter(
-    (m) => m.id !== 'expert' || samenvatting.expert.total > 0,
+    (m) => m.id !== 'expert' || samenvatting.expert.total > 0 || moeilijkheid === 'expert',
   );
 
   return (
     <section className={styles.cijfer} aria-labelledby="cijfer-kop">
-      <h3 id="cijfer-kop" className={styles.kop}>
+      {/* Zonder denkvaardigheid is er geen cijfer: dan ook geen kop in de PDF. */}
+      <h3 id="cijfer-kop" className={`${styles.kop} ${bloom ? '' : hoofd.noPrint}`}>
         Cijfer
       </h3>
 
@@ -83,7 +92,9 @@ export function Cijfer({
             type="button"
             className={`${styles.knop} ${gekozen === m.id ? styles.knopActief : ''}`}
             aria-pressed={gekozen === m.id}
-            onClick={() => onMoeilijkheid(m.id === voorstel.moeilijkheid ? null : m.id)}
+            // Ook een klik op het voorstel bewaart de keuze: anders schoof het
+            // cijfer later stil mee met een veranderd voorstel.
+            onClick={() => onMoeilijkheid(m.id)}
           >
             {m.label}
             {m.id === voorstel.moeilijkheid && ' (voorstel)'}
@@ -91,10 +102,12 @@ export function Cijfer({
         ))}
       </fieldset>
       <p className={`${styles.hulp} ${hoofd.noPrint}`}>
-        Voorstel: {voorstel.reden}
-        {moeilijkheid !== null &&
-          moeilijkheid !== voorstel.moeilijkheid &&
-          ' Je hebt het aangepast.'}
+        Voorstel: {voorstel.reden}{' '}
+        {moeilijkheid === null
+          ? 'Nog niet gekozen: het cijfer volgt het voorstel tot je een moeilijkheid kiest.'
+          : moeilijkheid !== voorstel.moeilijkheid
+            ? 'Je koos een andere moeilijkheid dan het voorstel.'
+            : 'Je koos het voorstel.'}
       </p>
 
       {bloom ? (

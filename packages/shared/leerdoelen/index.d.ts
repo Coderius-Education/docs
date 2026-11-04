@@ -98,5 +98,6 @@ export function moeilijkheidVoorstel(perOnderwerp: OnderwerpTelling[]): {
   reden: string;
 };
 export function moeilijkhedenTekst(leerdoelen: Leerdoelen): string;
+export function cijferKolommen(leerdoelen: Leerdoelen): Moeilijkheid[];
 export function denkvaardigheid(id: string): Denkvaardigheid;
 export function moeilijkheid(id: string): Moeilijkheid;

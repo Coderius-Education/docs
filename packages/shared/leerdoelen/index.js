@@ -164,6 +164,16 @@ function moeilijkhedenTekst(leerdoelen) {
     : `${gebruikt.slice(0, -1).join(', ')} of ${gebruikt.at(-1)}`;
 }
 
+/**
+ * De kolommen van de cijfertabel voor een cursus: niet aan basis voldaan en
+ * de moeilijkheden die de cursus gebruikt. Expert staat er alleen bij een
+ * cursus met expertconcepten.
+ */
+function cijferKolommen(leerdoelen) {
+  const heeftExpert = leerdoelen.concepten.some((c) => Object.values(c.niveau).includes('expert'));
+  return BLOOM.moeilijkheden.filter((m) => m.id !== 'expert' || heeftExpert);
+}
+
 function denkvaardigheid(id) {
   const d = BLOOM.denkvaardigheden.find((x) => x.id === id);
   if (!d) throw new Error(`onbekende denkvaardigheid '${id}'`);
@@ -236,7 +246,10 @@ function moeilijkheidVoorstel(perOnderwerp) {
   const label = (id) => moeilijkheid(id).label.toLowerCase();
   let reden;
   if (gehaald === 'niet-aan-basis') {
-    reden = `Geen concept toegepast bij ${lijst(mist)}.`;
+    reden =
+      mist.length > 0
+        ? `Geen concept toegepast bij ${lijst(mist)}.`
+        : 'Er zijn geen concepten voor dit niveau.';
   } else if (!volgende) {
     reden = 'Bij elk onderwerp een concept op expert.';
   } else if (mist.length > 0) {
@@ -258,6 +271,7 @@ module.exports = {
   sjabloonZin,
   moeilijkheidVoorstel,
   moeilijkhedenTekst,
+  cijferKolommen,
   denkvaardigheid,
   moeilijkheid,
 };

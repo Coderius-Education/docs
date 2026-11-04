@@ -1,4 +1,4 @@
-import type { MoeilijkheidId } from '@coderius/shared/leerdoelen';
+import { BLOOM, type MoeilijkheidId } from '@coderius/shared/leerdoelen';
 import type { CheckerConfig, ProjectFiles } from './types';
 import type { Vraag } from './vragen';
 
@@ -107,8 +107,9 @@ export function aangevuld(b: Beoordeling): Beoordeling {
     handmatig: b.handmatig ?? [],
     notes: b.notes ?? '',
     vragen: b.vragen ?? [],
-    bloom: b.bloom ?? null,
-    moeilijkheid: b.moeilijkheid ?? null,
+    // Een id die bloom.json niet (meer) kent, telt als niet gekozen.
+    bloom: BLOOM.denkvaardigheden.some((d) => d.id === b.bloom) ? b.bloom : null,
+    moeilijkheid: BLOOM.moeilijkheden.some((m) => m.id === b.moeilijkheid) ? b.moeilijkheid : null,
   };
 }
 

@@ -68,12 +68,6 @@
   background: var(--ifm-color-emphasis-100);
 }
 
-@media print {
-  .geenPrint {
-    display: none;
-  }
-}
-
 /* Alleen voor een schermlezer. */
 .verborgen {
   position: absolute;

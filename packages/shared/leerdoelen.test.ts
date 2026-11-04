@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   BLOOM,
   NIVEAUS,
+  cijferKolommen,
   cijferTekst,
   cijferVoor,
   leesLeerdoelen,
@@ -143,6 +144,19 @@ describe('leesLeerdoelen', () => {
     expect(melding).toContain("onbekende denkvaardigheid 'weten'");
   });
 
+  it('zet expert alleen in de cijfertabel van een cursus met expertconcepten', () => {
+    // De Bloom-uitleg van web had een Expert-kolom, terwijl web geen expert heeft.
+    expect(cijferKolommen(leesLeerdoelen(goed)).map((m) => m.id)).toEqual([
+      'niet-aan-basis',
+      'basis',
+      'gevorderd',
+      'expert',
+    ]);
+    const web = join(ROOT, siteDir('web'), 'src', 'leerdoelen.json');
+    const webKolommen = cijferKolommen(leesLeerdoelen(JSON.parse(readFileSync(web, 'utf8'))));
+    expect(webKolommen.map((m) => m.id)).toEqual(['niet-aan-basis', 'basis', 'gevorderd']);
+  });
+
   it('noemt alleen de moeilijkheden die de cursus gebruikt', () => {
     // Het overzicht van web noemde expert, terwijl web geen expertconcepten heeft.
     expect(moeilijkhedenTekst(leesLeerdoelen(goed))).toBe('basis, gevorderd of expert');
@@ -263,6 +277,13 @@ describe('moeilijkheidVoorstel: de vuistregels', () => {
     });
   });
 
+  it('zegt het als een niveau geen concepten heeft, in plaats van een lege lijst', () => {
+    expect(moeilijkheidVoorstel([])).toEqual({
+      moeilijkheid: 'niet-aan-basis',
+      reden: 'Er zijn geen concepten voor dit niveau.',
+    });
+  });
+
   it('zonder expertconcepten in het niveau blijft gevorderd het hoogste', () => {
     expect(moeilijkheidVoorstel(web([1, 1], [1, 1], [1, 1])).reden).toBe(
       'Bij elk onderwerp een concept op gevorderd.',
@@ -375,6 +396,26 @@ describe('plugin en createConfig', () => {
       expect(() => plugin.koppelLessen(met('html-css/weg'), docs)).toThrow(
         "concept 'a-1': les 'html-css/weg' bestaat niet",
       );
+    });
+
+    it('vindt lessen in elke docs-plugin, en per plugin in de nieuwste versie', () => {
+      const allContent = {
+        'docusaurus-plugin-content-docs': {
+          default: {
+            loadedVersions: [
+              { isLast: false, docs: [{ id: 'oud', title: 'Oud', permalink: '/x/next/oud' }] },
+              { isLast: true, docs: [{ id: 'a', title: 'A', permalink: '/x/docs/a' }] },
+            ],
+          },
+          extra: { loadedVersions: [{ docs: [{ id: 'b', title: 'B', permalink: '/x/extra/b' }] }] },
+        },
+      };
+      expect(plugin.docsVan(allContent).map((d: { id: string }) => d.id)).toEqual(['a', 'b']);
+      expect(plugin.docsVan({})).toEqual([]);
+    });
+
+    it('zegt het als de cursus geen docs heeft', () => {
+      expect(() => plugin.koppelLessen(met('a/b'), [])).toThrow(/de cursus heeft geen docs/);
     });
 
     it('web heeft bij elk concept een les', () => {

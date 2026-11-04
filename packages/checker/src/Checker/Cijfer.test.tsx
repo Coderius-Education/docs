@@ -46,19 +46,38 @@ function rapport(gebruikt: string[]): CheckReport {
   };
 }
 
-function Opstelling({ gebruikt }: { gebruikt: string[] }) {
-  const [bloom, setBloom] = useState<string | null>(null);
-  const [moeilijkheid, setMoeilijkheid] = useState<MoeilijkheidId | null>(null);
+function Opstelling({
+  gebruikt,
+  start = { bloom: null, moeilijkheid: null },
+  onMoeilijkheid,
+}: {
+  gebruikt: string[];
+  start?: { bloom: string | null; moeilijkheid: string | null };
+  onMoeilijkheid?: (m: MoeilijkheidId | null) => void;
+}) {
+  const [bloom, setBloom] = useState<string | null>(start.bloom);
+  const [moeilijkheid, setMoeilijkheid] = useState<MoeilijkheidId | null>(
+    start.moeilijkheid as MoeilijkheidId | null,
+  );
+  const [gebruiktNu, setGebruiktNu] = useState(gebruikt);
   return (
-    <Cijfer
-      report={rapport(gebruikt)}
-      config={config}
-      track={null}
-      bloom={bloom}
-      moeilijkheid={moeilijkheid}
-      onBloom={setBloom}
-      onMoeilijkheid={setMoeilijkheid}
-    />
+    <>
+      <button type="button" onClick={() => setGebruiktNu([...gebruiktNu, 'c-gev'])}>
+        vink c-gev aan
+      </button>
+      <Cijfer
+        report={rapport(gebruiktNu)}
+        config={config}
+        track={null}
+        bloom={bloom}
+        moeilijkheid={moeilijkheid}
+        onBloom={setBloom}
+        onMoeilijkheid={(m) => {
+          onMoeilijkheid?.(m);
+          setMoeilijkheid(m);
+        }}
+      />
+    </>
   );
 }
 
@@ -87,7 +106,55 @@ describe('Cijfer', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Gevorderd' }));
     expect(screen.getByText(/moeilijkheid gevorderd en daarbij hoort het cijfer 9,0/)).toBeTruthy();
-    expect(screen.getByText(/Je hebt het aangepast/)).toBeTruthy();
+    expect(screen.getByText(/Je koos een andere moeilijkheid dan het voorstel/)).toBeTruthy();
+  });
+
+  it('een bevestigd voorstel blijft staan als het voorstel later verandert', () => {
+    // Eerst bewaarde een klik op het voorstel niets, en schoof het cijfer
+    // mee zodra de docent nog een concept aanvinkte.
+    const bewaard: (MoeilijkheidId | null)[] = [];
+    render(
+      <Opstelling
+        gebruikt={['h-basis', 'h-gev', 'c-basis']}
+        onMoeilijkheid={(m) => bewaard.push(m)}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Toepassen' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Basis (voorstel)' }));
+    expect(bewaard).toEqual(['basis']);
+
+    fireEvent.click(screen.getByRole('button', { name: 'vink c-gev aan' }));
+    expect(screen.getByRole('button', { name: 'Gevorderd (voorstel)' })).toBeTruthy();
+    expect(screen.getByText(/moeilijkheid basis en daarbij hoort het cijfer 6,5/)).toBeTruthy();
+  });
+
+  it('zegt dat het cijfer het voorstel volgt zolang er niets gekozen is', () => {
+    render(<Opstelling gebruikt={['h-basis', 'c-basis']} />);
+    expect(
+      screen.getByText(/het cijfer volgt het voorstel tot je een moeilijkheid kiest/),
+    ).toBeTruthy();
+  });
+
+  it('houdt een gekozen expert zichtbaar, ook in een leerroute zonder expertconcepten', () => {
+    render(<Opstelling gebruikt={[]} start={{ bloom: 'toepassen', moeilijkheid: 'expert' }} />);
+    const expert = screen.getByRole('button', { name: 'Expert' });
+    expect(expert.getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: 'Basis' }));
+    expect(screen.getByText(/moeilijkheid basis en daarbij/)).toBeTruthy();
+  });
+
+  it('valt niet om op een bewaarde waarde die bloom.json niet meer kent', () => {
+    render(<Opstelling gebruikt={['h-basis']} start={{ bloom: 'weten', moeilijkheid: 'super' }} />);
+    expect(screen.getByText(/Kies de denkvaardigheid/)).toBeTruthy();
+    expect(screen.queryByText(/daarbij hoort het cijfer/)).toBeNull();
+  });
+
+  it('zet de kop Cijfer pas in de PDF als er een denkvaardigheid is', () => {
+    render(<Opstelling gebruikt={['h-basis']} />);
+    const kop = screen.getByRole('heading', { name: 'Cijfer' });
+    expect(kop.className).toMatch(/noPrint/);
+    fireEvent.click(screen.getByRole('button', { name: 'Onthouden' }));
+    expect(screen.getByRole('heading', { name: 'Cijfer' }).className).not.toMatch(/noPrint/);
   });
 
   it('toont expert alleen als het niveau expertconcepten heeft', () => {

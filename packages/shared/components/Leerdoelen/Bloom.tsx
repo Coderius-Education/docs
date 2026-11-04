@@ -1,5 +1,12 @@
 import type { ReactNode } from 'react';
-import { BLOOM, cijferTekst, cijferVoor } from '../../leerdoelen';
+import {
+  BLOOM,
+  type Leerdoelen,
+  cijferKolommen,
+  cijferTekst,
+  cijferVoor,
+  moeilijkhedenTekst,
+} from '../../leerdoelen';
 import SiteLink from '../SiteLink';
 import Moeilijkheid from './Moeilijkheid';
 import styles from './styles.module.css';
@@ -8,17 +15,19 @@ import styles from './styles.module.css';
 // leerdoelen. Alles komt uit leerdoelen/bloom.json, dezelfde gegevens waarmee
 // de nakijker het cijfer berekent. Een bron staat er alleen als vakdidactiek
 // hem uitlegt (`didactiek` in bloom.json; leerdoelen.test.ts eist dat).
-export default function Bloom(): ReactNode {
-  const kolommen = BLOOM.moeilijkheden;
+export default function Bloom({ leerdoelen }: { leerdoelen: Leerdoelen }): ReactNode {
+  // Alleen de moeilijkheden van deze cursus: web heeft geen expert.
+  const kolommen = cijferKolommen(leerdoelen);
+  const heeftExpert = kolommen.some((m) => m.id === 'expert');
   return (
     <section>
       <h2 id="bloom">Beoordelen met Bloom</h2>
       <p>
         Je cijfer hangt af van twee dingen. Het eerste is de moeilijkheid van de concepten die je
-        gebruikt: basis, gevorderd of expert, zoals ze bij de niveaus hierboven staan. Het tweede is
-        wat je met die concepten kunt: alleen nadoen, of ook uitleggen, verbeteren en zelf iets
-        nieuws bedenken. Dat tweede heet de <strong>denkvaardigheid</strong>, naar de indeling van
-        Bloom. Je docent ziet hem in je project, tijdens de lessen en in het mondeling.
+        gebruikt: {moeilijkhedenTekst(leerdoelen)}, zoals ze bij de niveaus hierboven staan. Het
+        tweede is wat je met die concepten kunt: alleen nadoen, of ook uitleggen, verbeteren en zelf
+        iets nieuws bedenken. Dat tweede heet de <strong>denkvaardigheid</strong>, naar de indeling
+        van Bloom. Je docent ziet hem in je project, tijdens de lessen en in het mondeling.
       </p>
 
       <h3>De zes denkvaardigheden</h3>
@@ -60,8 +69,8 @@ export default function Bloom(): ReactNode {
 
       <h3>Het cijfer</h3>
       <p>
-        Het cijfer staat waar je denkvaardigheid en de moeilijkheid elkaar kruisen. Expert telt voor
-        het cijfer als gevorderd.
+        Het cijfer staat waar je denkvaardigheid en de moeilijkheid elkaar kruisen.
+        {heeftExpert && ' Expert telt voor het cijfer als gevorderd.'}
       </p>
       <div className={styles.schuif}>
         <table className={styles.tabel}>
