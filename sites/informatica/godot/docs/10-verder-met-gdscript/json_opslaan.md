@@ -50,13 +50,27 @@ func controleer_highscore() -> void:
         highscore = score
 ```
 
-Roep `Global.controleer_highscore()` aan op het moment dat een potje klaar is. Heb je de vlag uit [Lijsten](site:godot/docs/lijsten), dan is dat in de `else`, vlak voordat je teruggaat naar het menu:
+Roep `controleer_highscore()` aan op het moment dat een potje klaar is. In je spel kan dat op twee plekken.
+
+Je gaat game over. Dat merk je in `verlies_leven()` in `global.gd`, bij `Game Over!`. Daar staat hij in hetzelfde script, dus zonder `Global.` ervoor:
+
+```gdscript
+func verlies_leven():
+    levens -= 1
+    if levens <= 0:
+        print("Game Over!")
+        controleer_highscore()
+```
+
+Of je haalt het laatste level. Heb je de vlag uit [Lijsten](site:godot/docs/lijsten), dan is dat in de `else`, vlak voordat je teruggaat naar het menu:
 
 ```gdscript
     else:
         Global.controleer_highscore()
         get_tree().change_scene_to_file("res://menu.tscn")
 ```
+
+Heb je die vlag niet, zet de regel dan in het script van de vlag in je laatste level, vóór `change_scene_to_file`.
 
 ## Stap 2: De highscore wegschrijven
 
@@ -111,7 +125,7 @@ De eerste keer dat iemand je spel speelt, is er nog geen bestand. Daarom kijk je
 
 ## Stap 4: Alles bij elkaar
 
-Zo ziet `global.gd` eruit met de highscore erbij. Je eigen versie heeft misschien meer functies, zoals `verlies_leven()`; die laat je staan.
+Zo ziet `global.gd` eruit met de highscore erbij, en met wat er uit de eerdere lessen al in stond: `reset()`, `verlies_leven()` en `is_game_over()` uit [Global variables](site:godot/docs/global_variables), en de lijst `levels` uit [Lijsten](site:godot/docs/lijsten). Heb je de lijst niet in `Global` gezet, dan laat je die regel weg. Heeft jouw versie nog meer, dan laat je dat staan.
 
 ```gdscript
 extends Node
@@ -120,6 +134,7 @@ const BESTAND = "user://highscore.json"
 
 var score = 0
 var levens = 3
+var levels = ["res://level1.tscn", "res://level2.tscn", "res://level3.tscn"]
 var highscore = 0
 
 func _ready() -> void:
@@ -129,6 +144,17 @@ func _ready() -> void:
 func reset():
     score = 0
     levens = 3
+
+
+func verlies_leven():
+    levens -= 1
+    if levens <= 0:
+        print("Game Over!")
+        controleer_highscore()
+
+
+func is_game_over() -> bool:
+    return levens <= 0
 
 
 func controleer_highscore() -> void:
@@ -169,20 +195,11 @@ Zet in het menu uit [Een startmenu](site:godot/docs/start_menu) een `Label` onde
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-```gdscript
-extends Control
+Zet in `menu.gd`, onder `extends Control`, deze functie. De functies van je knoppen blijven eronder staan zoals ze waren.
 
+```gdscript
 func _ready() -> void:
     $VBoxContainer/Highscore.text = "Highscore: " + str(Global.highscore)
-
-
-func _on_start_pressed() -> void:
-    Global.reset()
-    get_tree().change_scene_to_file("res://level1.tscn")
-
-
-func _on_afsluiten_pressed() -> void:
-    get_tree().quit()
 ```
 
 </details>
@@ -203,7 +220,7 @@ Houd bij hoe vaak iemand op Start heeft gedrukt, ook over het afsluiten heen, en
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-In `global.gd`:
+In `global.gd` komt `gespeeld` erbij, en heten de functies voor het bestand nu `bewaar_gegevens` en `lees_gegevens`:
 
 ```gdscript
 extends Node
@@ -212,6 +229,7 @@ const BESTAND = "user://highscore.json"
 
 var score = 0
 var levens = 3
+var levels = ["res://level1.tscn", "res://level2.tscn", "res://level3.tscn"]
 var highscore = 0
 var gespeeld = 0
 
@@ -222,6 +240,17 @@ func _ready() -> void:
 func reset():
     score = 0
     levens = 3
+
+
+func verlies_leven():
+    levens -= 1
+    if levens <= 0:
+        print("Game Over!")
+        controleer_highscore()
+
+
+func is_game_over() -> bool:
+    return levens <= 0
 
 
 func controleer_highscore() -> void:
@@ -245,25 +274,22 @@ func lees_gegevens() -> void:
     gespeeld = int(gegevens.get("gespeeld", 0))
 ```
 
-In `menu.gd` tel je er één bij als iemand op Start drukt, en bewaar je meteen. Het tweede label heet hier `Gespeeld`:
+In `menu.gd` zet je een tweede regel in `_ready()`, voor een label `Gespeeld`:
 
 ```gdscript
-extends Control
-
 func _ready() -> void:
     $VBoxContainer/Highscore.text = "Highscore: " + str(Global.highscore)
     $VBoxContainer/Gespeeld.text = "Gespeeld: " + str(Global.gespeeld) + " keer"
+```
 
+En in `_on_start_pressed()` tel je er één bij en bewaar je meteen, vóór de regels die er al stonden:
 
+```gdscript
 func _on_start_pressed() -> void:
     Global.gespeeld += 1
     Global.bewaar_gegevens()
     Global.reset()
     get_tree().change_scene_to_file("res://level1.tscn")
-
-
-func _on_afsluiten_pressed() -> void:
-    get_tree().quit()
 ```
 
 Het tellen staat in het menu en niet in `reset()`: die roep je misschien ook aan bij elk nieuw level, en dan telt hij levels in plaats van potjes.

@@ -11,13 +11,13 @@ Pak je nu een muntje, dan is het in één frame weg. Dat werkt, maar het voelt k
 
 ## Voorspel: wat zie je?
 
-Dit is het muntje-script met twee nieuwe regels erin:
+Je werkt in deze les alleen in `_on_body_entered` van je muntje. Wat erboven staat, de soorten uit [Dictionaries](site:godot/docs/dictionaries), blijft zoals het is. Heb je die les overgeslagen, dan staat bij jou `Global.score += 1` in plaats van `Global.score += WAARDES[soort]`; dat werkt net zo.
+
+Dit is `_on_body_entered` met twee nieuwe regels erin, en zonder `queue_free()`:
 
 ```gdscript
-extends Area2D
-
 func _on_body_entered(body: Node2D) -> void:
-    Global.score += 1
+    Global.score += WAARDES[soort]
     var tween = create_tween()
     tween.tween_property(self, "position:y", position.y - 40, 0.5)
 ```
@@ -49,16 +49,14 @@ Een eigenschap van een eigenschap schrijf je in de tekst met een dubbele punt: `
 Een tween kan meer dingen achter elkaar doen. Elke `tween_property` begint pas als de vorige klaar is. Zet er een tweede bij die de doorzichtigheid naar `0` brengt:
 
 ```gdscript
-extends Area2D
-
 func _on_body_entered(body: Node2D) -> void:
-    Global.score += 1
+    Global.score += WAARDES[soort]
     var tween = create_tween()
     tween.tween_property(self, "position:y", position.y - 40, 0.3)
     tween.tween_property(self, "modulate:a", 0.0, 0.2)
 ```
 
-`modulate:a` is de `a` van de kleur `modulate`: hoe doorzichtig de node is. Bij `1.0` zie je hem helemaal, bij `0.0` niet meer.
+`modulate:a` is de `a` van de kleur `modulate`: hoe doorzichtig de node is. Bij `1.0` zie je hem helemaal, bij `0.0` niet meer. De kleur van de soort, die je in `_ready()` met `modulate` zette, blijft staan; alleen de doorzichtigheid verandert.
 
 Start je spel en pak een muntje. Het springt omhoog en vervaagt.
 
@@ -74,18 +72,28 @@ Let op: `queue_free` staat hier zonder haakjes. Je geeft de functie zelf mee, zo
 
 ## Stap 3: Eén keer tellen
 
-Er is nog een probleem uit de voorspelling: tijdens de halve seconde van de tween kan je karakter het muntje nog een keer raken. Met een variabele houd je bij of het al gepakt is:
+Het muntje bestaat nog een halve seconde nadat je het pakte. Loop je er in die tijd uit en weer in, dan telt het opnieuw. In een halve seconde lukt dat zelden, dus maak de tween even langzaam om het te zien: zet de `0.3` op `3.0`, start je spel, en loop een paar keer heen en weer door het muntje terwijl het omhoog zweeft. Je score gaat elke keer omhoog.
+
+Met een variabele houd je bij of het muntje al gepakt is. Zet de `3.0` terug op `0.3`. Zo ziet je hele muntje-script er dan uit:
 
 ```gdscript
 extends Area2D
 
+const WAARDES = {"brons": 1, "zilver": 5, "goud": 10}
+const KLEUREN = {"brons": Color.SANDY_BROWN, "zilver": Color.SILVER, "goud": Color.GOLD}
+
+@export var soort = "brons"
 var gepakt = false
+
+func _ready() -> void:
+    modulate = KLEUREN[soort]
+
 
 func _on_body_entered(body: Node2D) -> void:
     if gepakt:
         return
     gepakt = true
-    Global.score += 1
+    Global.score += WAARDES[soort]
     var tween = create_tween()
     tween.tween_property(self, "position:y", position.y - 40, 0.3)
     tween.tween_property(self, "modulate:a", 0.0, 0.2)
@@ -102,7 +110,7 @@ Laat je power-up uit [Een power-up](site:godot/docs/power_up) de hele tijd een b
 <summary>Klik hier voor een tip.</summary>
 
 - De tween begint als de power-up in het level verschijnt. Welke functie roept Godot dan aan?
-- Schuif `scale` in een halve seconde naar `Vector2(1.2, 1.2)`, en daarna in een halve seconde terug naar `Vector2(1, 1)`.
+- Onthoud eerst hoe groot de power-up nu is: `var normaal = scale`. Schuif `scale` dan in een halve seconde naar `normaal * 1.2`, en in een halve seconde terug naar `normaal`.
 - Met `create_tween().set_loops()` begint de tween na de laatste stap opnieuw, en dat blijft hij doen.
 
 </details>
@@ -114,15 +122,20 @@ Laat je power-up uit [Een power-up](site:godot/docs/power_up) de hele tijd een b
 extends Area2D
 
 func _ready() -> void:
+    var normaal = scale
     var tween = create_tween().set_loops()
-    tween.tween_property(self, "scale", Vector2(1.2, 1.2), 0.5)
-    tween.tween_property(self, "scale", Vector2(1, 1), 0.5)
+    tween.tween_property(self, "scale", normaal * 1.2, 0.5)
+    tween.tween_property(self, "scale", normaal, 0.5)
 
 
 func _on_body_entered(body: Node2D) -> void:
     body.geef_sprongboost()
     queue_free()
 ```
+
+Alleen `_ready()` is nieuw. `_on_body_entered` is die uit Een power-up; heb je daar de controle met `has_method` uit Er gaat iets mis toegevoegd, dan laat je die staan.
+
+Met `normaal` werkt het ook als je de power-up in de editor groter of kleiner hebt gemaakt. Met een vaste `Vector2(1, 1)` zou hij bij de eerste stap terugspringen naar zijn oorspronkelijke maat.
 
 Je hoeft de tween niet zelf te stoppen. Hij hoort bij de power-up, en als die met `queue_free()` verdwijnt, stopt de tween mee.
 
