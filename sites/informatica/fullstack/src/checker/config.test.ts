@@ -489,6 +489,24 @@ describe('fullstackConfig — de leerdoelen', () => {
     expect(gemist).toEqual([]);
     for (const id of nietInDeBasis) expect(gevonden.get(id), id).toBe(false);
   });
+
+  it('telt POST /gastenboek uit de lessen zelf als formulierdata opslaan', () => {
+    // Zijn handtekening staat over vier regels, met de `):` helemaal links.
+    // Daar stopte de zoektocht naar het einde van de functie eerst, en dan
+    // telde alleen het oude /opslaan in het referentieproject. Wie dat
+    // endpoint weghaalt of zijn code laat opmaken, scoorde hier niet.
+    const main = readFileSync(
+      fileURLToPath(new URL('../controle/referentie/main.py', import.meta.url)),
+      'utf8',
+    );
+    const begin = main.indexOf('@app.post("/gastenboek")');
+    const eind = main.indexOf('\n@app', begin + 1);
+    const endpoint = main.slice(begin, eind);
+    expect(endpoint).toMatch(/\n\):\n/);
+    expect(
+      perId(analyze(files({ 'main.py': endpoint }), fullstackConfig)).get('db-formulier'),
+    ).toBe(true);
+  });
 });
 
 describe('fullstackConfig — de nieuwe rijen van het blad', () => {
@@ -516,6 +534,13 @@ describe('fullstackConfig — de nieuwe rijen van het blad', () => {
     const zonder = 'return templates.TemplateResponse(request, "a.html")';
     expect(gebruikt({ 'main.py': met }).get('fastapi-templates')).toBe(true);
     expect(gebruikt({ 'main.py': zonder }).get('fastapi-templates')).toBe(false);
+    // De oude vorm met alleen request zet niets in het template; met een
+    // tweede sleutel wel.
+    const alleenRequest = 'return templates.TemplateResponse("a.html", {"request": request})';
+    const oudMetNaam =
+      'return templates.TemplateResponse("a.html", {"request": request, "naam": naam})';
+    expect(gebruikt({ 'main.py': alleenRequest }).get('fastapi-templates')).toBe(false);
+    expect(gebruikt({ 'main.py': oudMetNaam }).get('fastapi-templates')).toBe(true);
   });
 
   it('herkent de database aan de naam na as, ook als die niet db heet', () => {
@@ -615,6 +640,12 @@ describe('fullstackConfig — de nieuwe rijen van het blad', () => {
         '<form action="/registreer" method="post"><input type="password" name="wachtwoord"></form>',
     });
     expect(alleen.get('account-inloggen')).toBe(false);
+    // "Aanmelden" is in het Nederlands meestal inloggen, niet registreren.
+    expect(
+      gebruikt({ 'main.py': '@app.post("/aanmelden")\nasync def a():\n    pass' }).get(
+        'account-registreren',
+      ),
+    ).toBe(false);
     expect(alleen.get('account-wachtwoord')).toBe(false);
   });
 });

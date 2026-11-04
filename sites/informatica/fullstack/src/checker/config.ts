@@ -52,8 +52,10 @@ const html = (pattern: RegExp): ConceptDetect => ({ type: 'regex', pattern, in: 
 const MET_DB = String.raw`SqliteDict\s*\([^)]*\)\s+as\s+(\w+)\s*:`;
 // Alles tot de volgende regel die helemaal links begint: het einde van de
 // functie of het script. Zo telt een `Form` in het ene endpoint niet mee voor
-// een database in het volgende.
-const ZELFDE_FUNCTIE = String.raw`(?:(?!\n[^\s#])[\s\S])*?`;
+// een database in het volgende. Een `):` helemaal links hoort nog bij de
+// functie: zo sluit een handtekening over meer regels, zoals die van
+// `POST /gastenboek` in de lessen.
+const ZELFDE_FUNCTIE = String.raw`(?:(?!\n[^\s#)])[\s\S])*?`;
 const SCHRIJFT = String.raw`\s*\[[^\]]+\]\s*=(?!=)`;
 const inDb = (na: string): ConceptDetect => py(new RegExp(MET_DB + ZELFDE_FUNCTIE + na, 'g'));
 
@@ -70,8 +72,9 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // Een link naar een route van de eigen server; een link naar een bestand in
   // /static/ of naar een andere site is geen pagina via een endpoint.
   'html-link': html(/<a\b[^>]*\bhref\s*=\s*["']\/(?!static\/)[^"']*["']/gi),
-  // Met variabelen: een dictionary met een sleutel als derde argument.
-  'fastapi-templates': py(/TemplateResponse\s*\([^)]*\{\s*["']\w+["']\s*:/g),
+  // Met variabelen: een dictionary met een sleutel. Alleen `request` telt
+  // niet; dat gaf de oude vorm mee zonder iets in het template te zetten.
+  'fastapi-templates': py(/TemplateResponse\s*\([^)]*\{[^}]*?["'](?!request["'])\w+["']\s*:/g),
   'db-write': inDb(String.raw`\b\1${SCHRIJFT}`),
   'db-lezen': inDb(
     String.raw`(?:\b\1\s*\.(?:get|items|keys|values)\s*\(|\b\1\s*\[[^\]]+\](?!\s*=(?!=))|\bin\s+\1\b)`,
@@ -98,7 +101,8 @@ const DETECTIE: Record<string, ConceptDetect> = {
     pattern: /\{%\s*if\b|^[ \t]*if\b[^\n]*:/gm,
     in: ['py', 'html'],
   },
-  'account-registreren': py(/@app\.post\s*\(\s*["']\/(?:registr|aanmeld|account|signup)/gi),
+  // Niet "aanmelden": dat is in het Nederlands meestal inloggen.
+  'account-registreren': py(/@app\.post\s*\(\s*["']\/(?:registr|account|signup)/gi),
   // Een formulier met een wachtwoordveld dat niet het registreerformulier is.
   'account-inloggen': html(
     /<form\b(?![^>]*registr)[^>]*>(?:(?!<\/form>)[\s\S])*?type\s*=\s*["']?password/gi,
