@@ -131,8 +131,7 @@ describe('webConfig — de conceptenlijst zelf', () => {
       ['JavaScript', 'loops', 'gevorderd'],
     ];
     const label = new Map(leerdoelen.onderwerpen.map((o) => [o.id, o.label]));
-    // Het blad heeft één kolom zonder naam: die geldt voor de start, op havo
-    // (niveau 1) en vwo (niveau 2).
+    // Het blad heeft één kolom zonder naam: die geldt voor niveau 1 en 2.
     expect(leerdoelen.niveaus).toEqual(['1', '2']);
     expect(leerdoelen.concepten.filter((c) => c['1'] !== c['2'])).toEqual([]);
     expect(leerdoelen.concepten.map((c) => [label.get(c.onderwerp), c.concept, c['1']])).toEqual(
@@ -143,8 +142,8 @@ describe('webConfig — de conceptenlijst zelf', () => {
   it('stelt een cijfer voor: de config draagt de leerdoelen', () => {
     expect(webConfig.leerdoelen?.niveaus.map((n) => n.id)).toEqual(['1', '2']);
     expect(webConfig.tracks).toEqual([
-      { id: '1', label: 'Niveau 1 (havo start)' },
-      { id: '2', label: 'Niveau 2 (vwo start)' },
+      { id: '1', label: 'Niveau 1' },
+      { id: '2', label: 'Niveau 2' },
     ]);
   });
 

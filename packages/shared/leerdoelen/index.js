@@ -2,9 +2,8 @@
 //
 // Elke cursus met leerdoelen heeft één bestand, `src/leerdoelen.json`: per
 // concept één rij, met per niveau de moeilijkheid (basis, gevorderd, expert)
-// naast elkaar. De niveaus zijn voor elke cursus dezelfde vier (niveaus.json):
-// 1 havo start, 2 vwo start, 3 havo uitbreiding, 4 vwo uitbreiding; een
-// cursus noemt welke hij heeft. Dat bestand is de
+// naast elkaar. De niveaus zijn voor elke cursus dezelfde vier (niveaus.json),
+// Niveau 1 tot en met Niveau 4; een cursus noemt welke hij heeft. Dat bestand is de
 // enige bron voor de pagina /leerdoelen, de nakijker en coderius.nl.
 // `bloom.json` hiernaast is voor alle cursussen gelijk: de denkvaardigheden,
 // de cijfertabel, het sjabloon en de vuistregels uit het beoordelingsblad.
@@ -137,11 +136,6 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
   };
 }
 
-/** "Niveau 3 (havo uitbreiding)", voor een kop of een knop. */
-function niveauNaam(niveau) {
-  return `${niveau.label} (${niveau.omschrijving})`;
-}
-
 function denkvaardigheid(id) {
   const d = BLOOM.denkvaardigheden.find((x) => x.id === id);
   if (!d) throw new Error(`onbekende denkvaardigheid '${id}'`);
@@ -228,7 +222,6 @@ function moeilijkheidVoorstel(perOnderwerp) {
 module.exports = {
   BLOOM,
   NIVEAUS,
-  niveauNaam,
   CONCEPT_MOEILIJKHEDEN,
   VELDEN,
   leesLeerdoelen,

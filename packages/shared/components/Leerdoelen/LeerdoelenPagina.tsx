@@ -2,10 +2,11 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import type { ReactNode } from 'react';
-import { type Leerdoelen, niveauNaam } from '../../leerdoelen';
+import type { Leerdoelen } from '../../leerdoelen';
 import { siteByUrl } from '../../sites';
-import Niveau from './Niveau';
+import Bloom from './Bloom';
 import Vergelijking from './Vergelijking';
+import styles from './styles.module.css';
 
 /** De cursus, voor in de titel. */
 export function useCursus(): string | null {
@@ -13,61 +14,58 @@ export function useCursus(): string | null {
   return siteByUrl(siteConfig.url + siteConfig.baseUrl)?.label ?? null;
 }
 
-// De route /leerdoelen (plugins/leerdoelen.js). De gegevens komen uit
-// src/leerdoelen.json van de cursus.
+// De overzichtspagina /leerdoelen (plugins/leerdoelen.js): links naar de
+// niveaus, de niveaus naast elkaar, en de uitleg van de beoordeling volgens
+// Bloom. De gegevens komen uit src/leerdoelen.json van de cursus.
 export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoelen }): ReactNode {
   const cursus = useCursus();
-  const meer = leerdoelen.niveaus.length > 1;
-  const heeftExpert = leerdoelen.concepten.some((c) => Object.values(c.niveau).includes('expert'));
+  const tel = (niveau: string, m: string) =>
+    leerdoelen.concepten.filter((c) => c.niveau[niveau] === m).length;
   return (
     <Layout
       title="Leerdoelen"
-      description={`De concepten waarop je project bij ${cursus ?? 'deze cursus'} wordt beoordeeld, per niveau.`}
+      description={`De concepten waarop je project bij ${cursus ?? 'deze cursus'} wordt beoordeeld, per niveau, en hoe het cijfer tot stand komt.`}
     >
       <main className="container margin-vert--lg">
         <h1>Leerdoelen{cursus ? ` ${cursus}` : ''}</h1>
         <p>
-          Op deze concepten beoordeelt je docent je project. Bij elk concept staat of het{' '}
-          {heeftExpert ? (
-            <>
-              <strong>basis</strong>, <strong>gevorderd</strong> of <strong>expert</strong>
-            </>
-          ) : (
-            <>
-              <strong>basis</strong> of <strong>gevorderd</strong>
-            </>
-          )}{' '}
-          is. Hoe je docent daar een cijfer van maakt, lees je bij{' '}
-          <Link to="/leerdoelen/bloom">Beoordelen met Bloom</Link>.
+          Op de concepten van je niveau beoordeelt je docent je project. Bij elk concept staat of
+          het basis, gevorderd of expert is. Hoe je docent daar een cijfer van maakt, staat{' '}
+          <a href="#bloom">onderaan deze pagina</a>.
         </p>
-        {meer ? (
+
+        <h2 id="niveaus">Niveaus</h2>
+        <ul>
+          {leerdoelen.niveaus.map((n) => {
+            const delen = [
+              ['basis', 'basis'],
+              ['gevorderd', 'gevorderd'],
+              ['expert', 'expert'],
+            ]
+              .map(([m, woord]) => [tel(n.id, m), woord] as const)
+              .filter(([aantal]) => aantal > 0)
+              .map(([aantal, woord]) => `${aantal} ${woord}`);
+            return (
+              <li key={n.id}>
+                <Link to={`/leerdoelen/niveau-${n.id}`}>{n.label}</Link>
+                <span className={styles.toelichting}>{delen.join(', ')}</span>
+              </li>
+            );
+          })}
+        </ul>
+
+        {leerdoelen.niveaus.length > 1 && (
           <>
+            <h2 id="naast-elkaar">De niveaus naast elkaar</h2>
             <p>
-              De cursus heeft{' '}
-              {leerdoelen.niveaus
-                .map(niveauNaam)
-                .join(', ')
-                .replace(/, ([^,]*)$/, ' en $1')}
-              . Een concept kan op het ene niveau basis zijn en op het andere gevorderd: zo'n
-              verschil heeft een rand.
+              Een concept kan op het ene niveau basis zijn en op het andere gevorderd: zo'n verschil
+              heeft een rand.
             </p>
-            <h2>De niveaus naast elkaar</h2>
             <Vergelijking leerdoelen={leerdoelen} />
-            {leerdoelen.niveaus.map((n) => (
-              <section key={n.id}>
-                <h2>
-                  <Link to={`/leerdoelen/niveau-${n.id}`}>{niveauNaam(n)}</Link>
-                </h2>
-                <Niveau leerdoelen={leerdoelen} niveau={n.id} />
-              </section>
-            ))}
-          </>
-        ) : (
-          <>
-            <p>De cursus heeft één niveau: {niveauNaam(leerdoelen.niveaus[0])}.</p>
-            <Niveau leerdoelen={leerdoelen} niveau={leerdoelen.niveaus[0].id} kop="h2" />
           </>
         )}
+
+        <Bloom />
       </main>
     </Layout>
   );

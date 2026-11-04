@@ -19,7 +19,6 @@ export default function Vergelijking({ leerdoelen }: { leerdoelen: Leerdoelen })
             {niveaus.map((n) => (
               <th key={n.id} scope="col">
                 <Link to={`/leerdoelen/niveau-${n.id}`}>{n.label}</Link>
-                <span className={styles.toelichting}>{n.omschrijving}</span>
               </th>
             ))}
           </tr>

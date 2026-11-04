@@ -1,9 +1,9 @@
 // Leerdoelen van een cursus (zie ../leerdoelen/README.md). createConfig zet
 // deze plugin aan als de site `src/leerdoelen.json` heeft:
-//  - /leerdoelen: de concepten per niveau, en bij meer niveaus een tabel om
-//    ze te vergelijken;
-//  - /leerdoelen/niveau-<n>: één niveau, als er meer dan één is;
-//  - /leerdoelen/bloom: de beoordeling volgens Bloom, voor elke cursus gelijk;
+//  - /leerdoelen: het overzicht, met links naar de niveaus, bij meer niveaus
+//    een tabel om ze te vergelijken, en de uitleg van de beoordeling volgens
+//    Bloom (voor elke cursus gelijk);
+//  - /leerdoelen/niveau-<n>: de concepten van één niveau;
 //  - na de build: leerdoelen.json in de root van de cursus, voor coderius.nl.
 //
 // Het bestand wordt bij het maken van de plugin al gelezen en gecontroleerd:
@@ -38,21 +38,14 @@ function routes(baseUrl, leerdoelen) {
       exact: true,
       props: { leerdoelen },
     },
-    {
-      path: `${baseUrl}leerdoelen/bloom`,
-      component: `${COMPONENT}/BloomPagina`,
-      exact: true,
-    },
   ];
-  if (leerdoelen.niveaus.length > 1) {
-    for (const niveau of leerdoelen.niveaus) {
-      lijst.push({
-        path: `${baseUrl}leerdoelen/niveau-${niveau.id}`,
-        component: `${COMPONENT}/NiveauPagina`,
-        exact: true,
-        props: { leerdoelen, niveau: niveau.id },
-      });
-    }
+  for (const niveau of leerdoelen.niveaus) {
+    lijst.push({
+      path: `${baseUrl}leerdoelen/niveau-${niveau.id}`,
+      component: `${COMPONENT}/NiveauPagina`,
+      exact: true,
+      props: { leerdoelen, niveau: niveau.id },
+    });
   }
   return lijst;
 }

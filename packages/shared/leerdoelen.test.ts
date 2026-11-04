@@ -10,7 +10,6 @@ import {
   cijferVoor,
   leesLeerdoelen,
   moeilijkheidVoorstel,
-  niveauNaam,
   sjabloonZin,
 } from './leerdoelen';
 import { SITES, siteDir } from './sites';
@@ -51,6 +50,22 @@ describe('src/leerdoelen.json per cursus', () => {
   }
 });
 
+describe('alleen niveaus, geen schoolsoorten', () => {
+  it('noemt geen schoolsoort in de leerdoelen, de niveaus of de pagina', () => {
+    const bestanden = [
+      join(__dirname, 'leerdoelen', 'niveaus.json'),
+      join(__dirname, 'leerdoelen', 'bloom.json'),
+      ...['Bloom', 'LeerdoelenPagina', 'NiveauPagina', 'Niveau', 'Vergelijking'].map((c) =>
+        join(__dirname, 'components', 'Leerdoelen', `${c}.tsx`),
+      ),
+      ...MET_LEERDOELEN.map((s) => join(ROOT, siteDir(s.id), 'src', 'leerdoelen.json')),
+    ];
+    for (const bestand of bestanden) {
+      expect(readFileSync(bestand, 'utf8'), bestand).not.toMatch(/\b(havo|vwo)\b/i);
+    }
+  });
+});
+
 describe('leesLeerdoelen', () => {
   const goed = {
     niveaus: ['1', '3'],
@@ -69,19 +84,14 @@ describe('leesLeerdoelen', () => {
   };
 
   it('kent vier niveaus, voor elke cursus dezelfde', () => {
-    expect(NIVEAUS.map(niveauNaam)).toEqual([
-      'Niveau 1 (havo start)',
-      'Niveau 2 (vwo start)',
-      'Niveau 3 (havo uitbreiding)',
-      'Niveau 4 (vwo uitbreiding)',
-    ]);
+    expect(NIVEAUS.map((n) => n.label)).toEqual(['Niveau 1', 'Niveau 2', 'Niveau 3', 'Niveau 4']);
   });
 
-  it('zet de niveaus van een rij bij elkaar, met naam en omschrijving', () => {
+  it('zet de niveaus van een rij bij elkaar, met de naam van het niveau', () => {
     const uit = leesLeerdoelen(goed);
     expect(uit.niveaus).toEqual([
-      { id: '1', label: 'Niveau 1', omschrijving: 'havo start' },
-      { id: '3', label: 'Niveau 3', omschrijving: 'havo uitbreiding' },
+      { id: '1', label: 'Niveau 1' },
+      { id: '3', label: 'Niveau 3' },
     ]);
     expect(uit.concepten).toEqual([
       {
@@ -176,8 +186,22 @@ describe('cijfer volgens het beoordelingsblad', () => {
     );
   });
 
-  it('verwijst naar het artikel van Krathwohl over de herziene taxonomie', () => {
-    expect(BLOOM.bronnen[0].url).toBe('https://doi.org/10.1207/s15430421tip4104_2');
+  it('noemt alleen bronnen die vakdidactiek uitlegt, met dezelfde paper', () => {
+    // Een bron op de leerdoelen hoort bij een pagina op de didactiek-site,
+    // met de paper en het jaar erin, en bij een tip in tips.ts.
+    const didactiek = join(ROOT, siteDir('didactiek'));
+    const tips = readFileSync(join(didactiek, 'src', 'data', 'tips.ts'), 'utf8');
+    expect(BLOOM.bronnen.length).toBeGreaterThan(0);
+    for (const bron of BLOOM.bronnen) {
+      const slug = bron.didactiek.replace(/^\/bronnen\//, '');
+      expect(bron.didactiek, bron.titel).toBe(`/bronnen/${slug}`);
+      const pagina = readFileSync(join(didactiek, 'docs', `${slug}.md`), 'utf8');
+      expect(pagina).toContain(bron.titel);
+      expect(pagina).toContain(`${bron.auteurs}, D. R. (${bron.jaar})`);
+      expect(pagina).toMatch(/\[Lees de paper \(DOI\)\]\(https:\/\/doi\.org\//);
+      expect(pagina).toContain(`title: ${bron.didactiekLabel}`);
+      expect(tips).toContain(`detailPad: '${bron.didactiek}'`);
+    }
   });
 });
 
@@ -238,10 +262,9 @@ describe('plugin en createConfig', () => {
     ],
   });
 
-  it('maakt /leerdoelen, /leerdoelen/bloom en bij meer niveaus een route per niveau', () => {
+  it('maakt het overzicht /leerdoelen en een route per niveau', () => {
     expect(plugin.routes('/godot/', leerdoelen).map((r: { path: string }) => r.path)).toEqual([
       '/godot/leerdoelen',
-      '/godot/leerdoelen/bloom',
       '/godot/leerdoelen/niveau-1',
       '/godot/leerdoelen/niveau-2',
       '/godot/leerdoelen/niveau-3',
@@ -250,7 +273,7 @@ describe('plugin en createConfig', () => {
     const een = { ...leerdoelen, niveaus: [leerdoelen.niveaus[0]] };
     expect(plugin.routes('/web/', een).map((r: { path: string }) => r.path)).toEqual([
       '/web/leerdoelen',
-      '/web/leerdoelen/bloom',
+      '/web/leerdoelen/niveau-1',
     ]);
   });
 

@@ -105,7 +105,7 @@ export function Cijfer({
       ) : (
         <p className={`${styles.hulp} ${hoofd.noPrint}`}>
           Kies de denkvaardigheid die je in het project en het mondeling zag. Wat bij welke hoort,
-          staat op de pagina Beoordelen met Bloom.
+          staat op de pagina Leerdoelen onder Beoordelen met Bloom.
         </p>
       )}
     </section>

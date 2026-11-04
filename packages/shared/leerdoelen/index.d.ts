@@ -19,10 +19,8 @@ export interface LeerdoelConcept {
   toelichting?: string;
 }
 
-/** Een van de vier niveaus: 1 havo start, 2 vwo start, 3 havo uitbreiding, 4 vwo uitbreiding. */
-export interface Niveau extends Benoemd {
-  omschrijving: string;
-}
+/** Een van de vier niveaus, Niveau 1 tot en met Niveau 4 (niveaus.json). */
+export type Niveau = Benoemd;
 
 export interface Leerdoelen {
   niveaus: Niveau[];
@@ -41,13 +39,18 @@ export interface Moeilijkheid extends Benoemd {
   id: MoeilijkheidId;
   cijferAls?: MoeilijkheidId;
 }
+/**
+ * Een bron staat er alleen als vakdidactiek hem uitlegt: `didactiek` is het
+ * pad van die pagina op de didactiek-site (leerdoelen.test.ts eist dat hij
+ * bestaat en dezelfde paper noemt).
+ */
 export interface Bron {
   titel: string;
   auteurs: string;
   jaar: number;
-  uitgave: string;
-  url?: string;
   toelichting: string;
+  didactiek: string;
+  didactiekLabel: string;
 }
 export interface Bloom {
   denkvaardigheden: Denkvaardigheid[];
@@ -72,7 +75,6 @@ export interface OnderwerpTelling {
 
 export const BLOOM: Bloom;
 export const NIVEAUS: Niveau[];
-export function niveauNaam(niveau: Niveau): string;
 export const CONCEPT_MOEILIJKHEDEN: ConceptMoeilijkheid[];
 export const VELDEN: string[];
 export function leesLeerdoelen(data: unknown, bron?: string): Leerdoelen;

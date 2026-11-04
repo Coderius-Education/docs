@@ -1,9 +1,4 @@
-import {
-  type Leerdoelen,
-  leesLeerdoelen,
-  moeilijkheid,
-  niveauNaam,
-} from '@coderius/shared/leerdoelen';
+import { type Leerdoelen, leesLeerdoelen, moeilijkheid } from '@coderius/shared/leerdoelen';
 import type { CheckerConfig, Concept, ConceptDetect, ConceptLevel } from './types';
 
 // Van de leerdoelen van een cursus (src/leerdoelen.json, zie
@@ -59,9 +54,7 @@ export function leerdoelenNaarConfig(
   return {
     leerdoelen,
     subjects: leerdoelen.onderwerpen,
-    ...(eenNiveau
-      ? {}
-      : { tracks: leerdoelen.niveaus.map((n) => ({ id: n.id, label: niveauNaam(n) })) }),
+    ...(eenNiveau ? {} : { tracks: leerdoelen.niveaus.map((n) => ({ id: n.id, label: n.label })) }),
     concepts,
   };
 }

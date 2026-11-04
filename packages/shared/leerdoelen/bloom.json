@@ -107,25 +107,11 @@
   "bronnen": [
     {
       "titel": "A Revision of Bloom's Taxonomy: An Overview",
-      "auteurs": "David R. Krathwohl",
+      "auteurs": "Krathwohl",
       "jaar": 2002,
-      "uitgave": "Theory Into Practice, 41(4), 212–218",
-      "url": "https://doi.org/10.1207/s15430421tip4104_2",
-      "toelichting": "De herziene taxonomie met de zes denkvaardigheden als werkwoorden, van onthouden tot creëren. Deze indeling gebruiken we."
-    },
-    {
-      "titel": "A Taxonomy for Learning, Teaching, and Assessing: A Revision of Bloom's Taxonomy of Educational Objectives",
-      "auteurs": "Lorin W. Anderson en David R. Krathwohl (red.)",
-      "jaar": 2001,
-      "uitgave": "Longman, New York",
-      "toelichting": "Het boek bij de herziening."
-    },
-    {
-      "titel": "Taxonomy of Educational Objectives: The Classification of Educational Goals. Handbook I: Cognitive Domain",
-      "auteurs": "Benjamin S. Bloom, Max D. Engelhart, Edward J. Furst, Walker H. Hill en David R. Krathwohl",
-      "jaar": 1956,
-      "uitgave": "David McKay, New York",
-      "toelichting": "De oorspronkelijke taxonomie van Bloom."
+      "toelichting": "De zes denkvaardigheden komen uit de herziene taxonomie van Bloom.",
+      "didactiek": "/bronnen/taxonomie-van-bloom",
+      "didactiekLabel": "Denkvaardigheden volgens Bloom"
     }
   ]
 }

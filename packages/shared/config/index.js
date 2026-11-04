@@ -267,7 +267,8 @@ function createConfig(course = {}) {
   }
 
   // Leerdoelen (plugins/leerdoelen.js): elke site met src/leerdoelen.json
-  // krijgt /leerdoelen, /leerdoelen/bloom en een link in de footer.
+  // krijgt /leerdoelen (met de uitleg van Bloom), een pagina per niveau en een
+  // link in de footer.
   const heeftLeerdoelen = fs.existsSync(leerdoelenPlugin.leerdoelenBestand(process.cwd()));
 
   const seoTags = [];

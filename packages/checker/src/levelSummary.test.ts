@@ -39,17 +39,17 @@ describe('computeLevelSummary', () => {
   it('telt expert apart, en per leerroute', () => {
     const cfg = config([
       concept('a', 'html', 'basis'),
-      concept('b', 'html', { start: 'expert', vwo: 'gevorderd' }),
+      concept('b', 'html', { 1: 'expert', 4: 'gevorderd' }),
       concept('c', 'css', 'expert'),
     ]);
     const rapport = report({ a: true, b: true, c: false });
-    const start = computeLevelSummary(rapport, cfg, 'start');
+    const start = computeLevelSummary(rapport, cfg, '1');
     expect(start.expert).toEqual({ used: 1, total: 2 });
     expect(start.gevorderd).toEqual({ used: 0, total: 0 });
-    const vwo = computeLevelSummary(rapport, cfg, 'vwo');
-    expect(vwo.expert).toEqual({ used: 0, total: 1 });
-    expect(vwo.gevorderd).toEqual({ used: 1, total: 1 });
-    expect(vwo.bySubject.find((s) => s.subject === 'css')?.expert).toEqual({ used: 0, total: 1 });
+    const vier = computeLevelSummary(rapport, cfg, '4');
+    expect(vier.expert).toEqual({ used: 0, total: 1 });
+    expect(vier.gevorderd).toEqual({ used: 1, total: 1 });
+    expect(vier.bySubject.find((s) => s.subject === 'css')?.expert).toEqual({ used: 0, total: 1 });
   });
 
   it('telt per onderwerp en per niveau hoeveel concepten gebruikt zijn', () => {

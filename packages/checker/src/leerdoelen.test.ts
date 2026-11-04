@@ -43,8 +43,8 @@ describe('leerdoelenNaarConfig', () => {
   it('meer niveaus: de niveaus worden leerroutes, met een moeilijkheid per route', () => {
     const uit = leerdoelenNaarConfig(tweeNiveaus, { 'api-cookies': detect, 'api-routes': detect });
     expect(uit.tracks).toEqual([
-      { id: '1', label: 'Niveau 1 (havo start)' },
-      { id: '2', label: 'Niveau 2 (vwo start)' },
+      { id: '1', label: 'Niveau 1' },
+      { id: '2', label: 'Niveau 2' },
     ]);
     expect(uit.concepts[0]).toMatchObject({
       level: { 1: 'expert', 2: 'gevorderd' },
