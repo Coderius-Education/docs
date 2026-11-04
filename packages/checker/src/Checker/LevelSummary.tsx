@@ -19,7 +19,7 @@ export function LevelSummary({
   onToggleLevel,
   track = null,
 }: LevelSummaryProps) {
-  const { basis, gevorderd, bySubject } = computeLevelSummary(report, config, track);
+  const { basis, gevorderd, expert, bySubject } = computeLevelSummary(report, config, track);
 
   const tile = (level: Level, label: string, total: ConceptStats) => (
     <button
@@ -35,7 +35,7 @@ export function LevelSummary({
       <span className={styles.label}>{label} toegepast</span>
       <span className={styles.breakdown}>
         {bySubject.map((s) => {
-          const stat = level === 'basis' ? s.basis : s.gevorderd;
+          const stat = s[level];
           // Niet elk onderwerp komt op elk niveau voor: fullstack heeft geen
           // basis-concepten voor JavaScript en database, godot niet voor
           // beweging. Een chip "Database 0/0" leest als iets wat nog moet
@@ -59,6 +59,9 @@ export function LevelSummary({
     <div className={styles.summary}>
       {tile('basis', 'Basisconcepten', basis)}
       {tile('gevorderd', 'Gevorderde concepten', gevorderd)}
+      {/* Alleen bij een tabel met expert (godot, fullstack), en alleen in de
+          leerroute die er concepten op heeft. */}
+      {expert.total > 0 && tile('expert', 'Expertconcepten', expert)}
     </div>
   );
 }

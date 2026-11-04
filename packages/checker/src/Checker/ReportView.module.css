@@ -121,6 +121,11 @@
   color: var(--ifm-color-warning-contrast-foreground, #7a5b00);
 }
 
+.levelBadgeExpert {
+  background: var(--ifm-color-danger-contrast-background, #ffebec);
+  color: var(--ifm-color-danger-contrast-foreground, #4b1113);
+}
+
 /* Handmatig beoordeelde concepten: de docent klikt ze aan terwijl hij naar de
    foto's kijkt. Een knop in plaats van een checkbox, zodat de stand als tekst
    in de PDF terechtkomt. */

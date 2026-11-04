@@ -25,6 +25,7 @@ const managedManifest = require('../plugins/managed-manifest');
 const sidebarManifest = require('../plugins/sidebar-manifest');
 const klasPlugin = require('../plugins/klas');
 const oudeOpslagPlugin = require('../plugins/oude-opslag');
+const leerdoelenPlugin = require('../plugins/leerdoelen');
 const { controleerRegels } = require('../oude-opslag');
 const { gebruiktPyodide, pyodideStaticDir } = require('./pyodide-runtime');
 const pyodideCachePlugin = require('../plugins/pyodide-cache');
@@ -265,6 +266,11 @@ function createConfig(course = {}) {
     controleerRegels(oudeOpslag);
   }
 
+  // Leerdoelen (plugins/leerdoelen.js): elke site met src/leerdoelen.json
+  // krijgt /leerdoelen (met de uitleg van Bloom), een pagina per niveau en een
+  // link in de footer.
+  const heeftLeerdoelen = fs.existsSync(leerdoelenPlugin.leerdoelenBestand(process.cwd()));
+
   const seoTags = [];
   if (description)
     seoTags.push({ tagName: 'meta', attributes: { name: 'description', content: description } });
@@ -336,6 +342,11 @@ function createConfig(course = {}) {
     // Werk van het oude subdomein ophalen: onder Home en Privacy, voor wie het zoekt.
     const kolom = footerLinks.find((col) => col.title === HOME.label) ?? footerLinks.at(-1);
     kolom.items = [...(kolom.items || []), { label: 'Werk van het oude adres', to: '/overzetten' }];
+  }
+  if (heeftLeerdoelen) {
+    // Voor docenten en leerlingen: wat er per niveau van de cursus verwacht wordt.
+    const kolom = footerLinks.find((col) => col.title === HOME.label) ?? footerLinks.at(-1);
+    kolom.items = [...(kolom.items || []), { label: 'Leerdoelen', to: '/leerdoelen' }];
   }
   footer.links = footerLinks;
   themeConfig.footer = footer;
@@ -428,6 +439,7 @@ function createConfig(course = {}) {
       [matomoPlugin, { siteId: matomoSiteId }],
       ...(omleidingen?.length ? [[omleidingenPlugin, { omleidingen }]] : []),
       ...(oudeOpslag ? [[oudeOpslagPlugin, { siteId: registry?.id, regels: oudeOpslag }]] : []),
+      ...(heeftLeerdoelen ? [[leerdoelenPlugin, { siteId: registry?.id }]] : []),
       // De Pyodide van de site in een eigen cache (plugins/pyodide-cache.js),
       // behalve waar een PWA dat al doet (play).
       ...(gebruiktPyodide(process.cwd()) && !heeftPwa(plugins, process.cwd())

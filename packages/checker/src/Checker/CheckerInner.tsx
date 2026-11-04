@@ -1,4 +1,5 @@
 import { bevestig } from '@coderius/shared/dialoog';
+import type { MoeilijkheidId } from '@coderius/shared/leerdoelen';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   type Beoordeling,
@@ -13,6 +14,7 @@ import { analyze } from '../matchConcepts';
 import type { CheckReport, CheckerConfig, Level, Plek, ProjectFiles } from '../types';
 import { type Vraag, nieuweVraag } from '../vragen';
 import { Beoordelingen } from './Beoordelingen';
+import { Cijfer } from './Cijfer';
 import { type CodeOpen, CodeWeergave } from './CodeWeergave';
 import { FileStats } from './FileStats';
 import { LevelSummary } from './LevelSummary';
@@ -183,6 +185,11 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   );
 
   const wijzigNotes = useCallback((tekst: string) => bewaar({ notes: tekst }), [bewaar]);
+  const kiesBloom = useCallback((id: string) => bewaar({ bloom: id }), [bewaar]);
+  const kiesMoeilijkheid = useCallback(
+    (id: MoeilijkheidId | null) => bewaar({ moeilijkheid: id }),
+    [bewaar],
+  );
 
   // Eén afgeleid rapport waarin de aangevinkte handmatige concepten als
   // "toegepast" gelden. Zo hoeven computeLevelSummary en ReportView niets van
@@ -529,6 +536,18 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
             onToggleHandmatig={toggleHandmatig}
             onToonPlekken={toonPlekken}
           />
+
+          {isDocent && config.leerdoelen && actief && (
+            <Cijfer
+              report={effectiefRapport}
+              config={config}
+              track={track}
+              bloom={actief.bloom}
+              moeilijkheid={actief.moeilijkheid}
+              onBloom={kiesBloom}
+              onMoeilijkheid={kiesMoeilijkheid}
+            />
+          )}
 
           {actief && files && (
             <Vragen

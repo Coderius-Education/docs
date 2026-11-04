@@ -176,6 +176,7 @@ jumperkabel
 jóuw
 kaartjesvel
 Kaggle
+kernpaper
 kliks
 kloktje
 kloonbord
@@ -185,6 +186,7 @@ knoppenrij
 knopstand
 Kortingschecker
 kortingschecker
+Krathwohl
 kuifmakaak
 kuifmakaken
 kénnen
@@ -195,6 +197,7 @@ Leaphy
 leaphy
 leaphymicropython
 leegtrekt
+lesdoelen
 lesnummer
 lesonderdeel
 lespagina
@@ -227,6 +230,7 @@ meetypen
 meetypt
 mergesort
 mergt
+metacognitieve
 micropython
 middencel
 middentak

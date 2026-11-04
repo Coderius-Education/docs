@@ -8,7 +8,7 @@ export type Tip = {
   detailPad: string; // '/bronnen/<slug>'
 };
 
-// Eén tip om mee te beginnen; voeg er hier eenvoudig meer toe.
+// Voeg hier eenvoudig meer tips toe.
 // Maak voor elke nieuwe tip ook een bestand docs/<slug>.md aan en houd
 // `slug` en `detailPad` (`/bronnen/<slug>`) gelijk.
 export const tips: Tip[] = [
@@ -27,5 +27,26 @@ export const tips: Tip[] = [
       'Drie soorten belasting op het werkgeheugen — intrinsiek, extrinsiek en relevant; snijd de extrinsieke weg.',
     paper: { titel: 'Cognitive load during problem solving', auteurs: 'Sweller', jaar: 1988 },
     detailPad: '/bronnen/cognitieve-belasting',
+  },
+  {
+    slug: 'taxonomie-van-bloom',
+    term: 'Denkvaardigheden volgens Bloom',
+    categorie: 'Beoordelen',
+    termen: [
+      'taxonomie van Bloom',
+      'denkvaardigheid',
+      'onthouden',
+      'creëren',
+      'leerdoelen',
+      'beoordelen',
+    ],
+    samenvatting:
+      'Beoordeel niet alleen welke concepten een leerling gebruikt, maar ook wat hij ermee kan, van onthouden tot creëren.',
+    paper: {
+      titel: "A Revision of Bloom's Taxonomy: An Overview",
+      auteurs: 'Krathwohl',
+      jaar: 2002,
+    },
+    detailPad: '/bronnen/taxonomie-van-bloom',
   },
 ];

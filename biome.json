@@ -21,6 +21,10 @@
     {
       "include": ["tsconfig.base.json", "**/tsconfig*.json", "**/jsconfig.json"],
       "json": { "parser": { "allowComments": true, "allowTrailingCommas": true } }
+    },
+    {
+      "include": ["**/leerdoelen.json"],
+      "formatter": { "lineWidth": 200 }
     }
   ]
 }

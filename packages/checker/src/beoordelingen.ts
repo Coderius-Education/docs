@@ -1,3 +1,4 @@
+import { BLOOM, type MoeilijkheidId } from '@coderius/shared/leerdoelen';
 import type { CheckerConfig, ProjectFiles } from './types';
 import type { Vraag } from './vragen';
 
@@ -25,6 +26,10 @@ export interface Beoordeling {
   track: string | null;
   /** Vragen voor het mondeling, in de volgorde van de docent. */
   vragen: Vraag[];
+  /** De denkvaardigheid van Bloom die de docent zag; null = nog niet gekozen. */
+  bloom: string | null;
+  /** De moeilijkheid die de docent koos; null = het voorstel van de nakijker. */
+  moeilijkheid: MoeilijkheidId | null;
 }
 
 /** Het ingeleverde project; groot, en wordt één keer opgeslagen. */
@@ -53,7 +58,7 @@ export interface Opslag {
 }
 
 export type Wijziging = Partial<
-  Pick<Beoordeling, 'naam' | 'handmatig' | 'notes' | 'track' | 'vragen'>
+  Pick<Beoordeling, 'naam' | 'handmatig' | 'notes' | 'track' | 'vragen' | 'bloom' | 'moeilijkheid'>
 >;
 
 /**
@@ -97,7 +102,15 @@ export function pdfNaamMetLeerling(bestandsnaam: string, naam: string): string {
  * van de nakijker nog niet bewaarde.
  */
 export function aangevuld(b: Beoordeling): Beoordeling {
-  return { ...b, handmatig: b.handmatig ?? [], notes: b.notes ?? '', vragen: b.vragen ?? [] };
+  return {
+    ...b,
+    handmatig: b.handmatig ?? [],
+    notes: b.notes ?? '',
+    vragen: b.vragen ?? [],
+    // Een id die bloom.json niet (meer) kent, telt als niet gekozen.
+    bloom: BLOOM.denkvaardigheden.some((d) => d.id === b.bloom) ? b.bloom : null,
+    moeilijkheid: BLOOM.moeilijkheden.some((m) => m.id === b.moeilijkheid) ? b.moeilijkheid : null,
+  };
 }
 
 export function nieuwId(): string {
@@ -230,6 +243,8 @@ export class Bewaarder {
       notes: '',
       track,
       vragen: [],
+      bloom: null,
+      moeilijkheid: null,
     };
     this.cache.set(b.id, b);
     this.zonderProject.add(b.id);

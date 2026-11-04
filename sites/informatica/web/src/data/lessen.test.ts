@@ -5,66 +5,22 @@ import { siteDir } from '@coderius/shared/sites';
 import { lesBestaat } from '@coderius/shared/voorkennis';
 import { describe, expect, it, vi } from 'vitest';
 import sidebars from '../../sidebars';
-import { CODEORG_COURSE, codeorgBySlug, codeorgProjects, codeorgUnit1, lessonUrl } from './codeorg';
 
 // jsLessons.ts leest de sidebar via de Docusaurus-alias @site; buiten Docusaurus
 // bestaat die niet, dus hier krijgt hij dezelfde sidebar via een relatief pad.
 vi.mock('@site/sidebars', () => ({ default: sidebars }));
 const { jsLessons } = await import('./jsLessons');
 
-// Bewaakt de twee lestabellen die uit data worden opgebouwd: de Code.org-
-// koppeling (per-les callout én de hub-tabel) en het JS-overzicht op /js.
-// Beide wijzen met losse strings naar pagina's onder docs/. Een hernoemde
-// les breekt zo'n interne route pas als iemand erop klikt: de tabel is een
+// Bewaakt de lestabel die uit data wordt opgebouwd: het JS-overzicht op /js.
+// Die wijst met losse strings naar pagina's onder docs/. Een hernoemde les
+// breekt zo'n interne route pas als iemand erop klikt: de tabel is een
 // React-component, geen Markdown-link, dus de linkcheck van `pnpm build`
-// ziet hem niet. De Code.org-URL's zijn extern en worden nergens gecheckt.
+// ziet hem niet.
 
 // De repo-root: lesBestaat zoekt de map van een site zelf op in de registry.
 const ROOT = fileURLToPath(new URL('../../../../..', import.meta.url));
 const DOCS = join(ROOT, siteDir('web'), 'docs');
 const JS_LESSONS_BRON = fileURLToPath(new URL('./jsLessons.ts', import.meta.url));
-
-describe('codeorg.ts', () => {
-  it('slug, route en lesnummer zijn elk uniek', () => {
-    for (const veld of ['slug', 'to', 'lesson'] as const) {
-      const waarden = codeorgUnit1.map((l) => l[veld]);
-      expect(new Set(waarden).size, `dubbel in '${veld}'`).toBe(waarden.length);
-    }
-  });
-
-  it('elke route wijst naar een bestaande les onder docs/html-css', () => {
-    const kapot = codeorgUnit1
-      .filter((l) => !lesBestaat(ROOT, 'web', l.to))
-      .map((l) => `${l.slug} -> ${l.to}`);
-    expect(kapot).toEqual([]);
-  });
-
-  it('elke Code.org-URL is een https-link naar de cursus van dit jaar', () => {
-    const vorm = new RegExp(
-      `^https://studio\\.code\\.org/courses/${CODEORG_COURSE}/units/1/lessons/\\d+/levels/1$`,
-    );
-    const kapot = [...codeorgUnit1, ...codeorgProjects]
-      .filter((l) => !vorm.test(l.url) || l.url !== lessonUrl(l.lesson))
-      .map((l) => l.url);
-    expect(kapot).toEqual([]);
-    expect(CODEORG_COURSE).toMatch(/^web-development-\d{4}$/);
-  });
-
-  it('een les is óf oefenles óf projectles, nooit allebei', () => {
-    const oefen = new Set(codeorgUnit1.map((l) => l.lesson));
-    const projecten = codeorgProjects.map((p) => p.lesson);
-    expect(new Set(projecten).size).toBe(projecten.length);
-    expect(projecten.filter((n) => oefen.has(n))).toEqual([]);
-  });
-
-  it('titels zijn nergens leeg en de lookup kent precies de slugs', () => {
-    const leeg = codeorgUnit1
-      .filter((l) => l.title.trim() === '' || l.nl.trim() === '')
-      .map((l) => l.slug);
-    expect(leeg).toEqual([]);
-    expect(Object.keys(codeorgBySlug).sort()).toEqual(codeorgUnit1.map((l) => l.slug).sort());
-  });
-});
 
 describe('jsLessons.ts', () => {
   const sidebarIds = (sidebars.jsSidebar as unknown[]).filter(
@@ -109,5 +65,28 @@ describe('jsLessons.ts', () => {
   it('de lescontrole herkent een verzonnen pad wél als kapot', () => {
     expect(lesBestaat(ROOT, 'web', '/docs/js-basics/bestaat-niet')).toBe(false);
     expect(lesBestaat(ROOT, 'web', '/docs/html-css/intro-html')).toBe(true);
+  });
+});
+
+describe('geen Code.org', () => {
+  // De cursus verwees per les en in de docentenhandleiding naar Code.org; dat
+  // is eruit. Een nieuwe verwijzing valt hier op.
+  it("noemt Code.org nergens in de lessen, de pagina's of de config", () => {
+    const SITE = join(ROOT, siteDir('web'));
+    const bestanden = (map: string): string[] =>
+      readdirSync(map, { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory()
+          ? bestanden(join(map, e.name))
+          : /\.(mdx?|tsx?)$/.test(e.name) && !e.name.endsWith('.test.ts')
+            ? [join(map, e.name)]
+            : [],
+      );
+    const alles = [
+      ...bestanden(join(SITE, 'docs')),
+      ...bestanden(join(SITE, 'src')),
+      join(SITE, 'docusaurus.config.ts'),
+    ];
+    const met = alles.filter((f) => /code\.org|codeorg/i.test(readFileSync(f, 'utf8')));
+    expect(met.map((f) => f.slice(SITE.length + 1))).toEqual([]);
   });
 });

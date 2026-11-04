@@ -1,7 +1,6 @@
 // Eén bron voor de koppeling tussen deze cursus en de interactieve GDQuest-cursus
 // "Learn GDScript From Zero". Zowel de per-les callout (<GDQuestLes>) als de
 // centrale tabel (<GDQuestTabel>) lezen hieruit, zodat ze nooit uit elkaar lopen.
-// Zelfde opzet als de Code.org-koppeling in web (sites/web/src/data/codeorg.ts).
 //
 // De lesnummers en Engelse titels komen van de schermafdruk van het
 // lessenoverzicht in docs/images/gdscript.png. Alleen wat daarop te zien is

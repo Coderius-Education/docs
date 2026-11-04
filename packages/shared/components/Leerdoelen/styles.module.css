@@ -1,0 +1,79 @@
+/* Leerdoelen en Bloom: tabellen in de stijl van Infima, met de kleuren van
+   de huisstijl. Een moeilijkheid is een label met tekst, niet alleen een
+   kleur. */
+
+.badge {
+  display: inline-block;
+  padding: 0.05rem 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.gevorderd {
+  border-color: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+.expert {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+  font-weight: 600;
+}
+
+/* Een brede tabel schuift binnen zijn eigen vak, niet de hele pagina. */
+.schuif {
+  overflow-x: auto;
+  margin-bottom: var(--ifm-spacing-vertical);
+}
+
+.tabel {
+  display: table;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+/* Basis, gevorderd en expert even breed. */
+.kolommen {
+  table-layout: fixed;
+}
+
+.tabel th,
+.tabel td {
+  vertical-align: top;
+}
+
+.anders {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+.concepten {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.toelichting {
+  display: block;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.875rem;
+}
+
+.sjabloon {
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+}
+
+/* Alleen voor een schermlezer. */
+.verborgen {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

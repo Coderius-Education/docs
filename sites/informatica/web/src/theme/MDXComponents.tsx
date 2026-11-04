@@ -1,6 +1,5 @@
 import SiteLink from '@coderius/shared/components/SiteLink';
 import Voorkennis from '@coderius/shared/components/Voorkennis';
-import CodeOrg, { CodeOrgTabel, CodeOrgProjecten } from '@site/src/components/CodeOrg';
 import JsLessen from '@site/src/components/JsLessen';
 import MDXComponents from '@theme-original/MDXComponents';
 
@@ -9,8 +8,5 @@ export default {
   ...MDXComponents,
   SiteLink,
   Voorkennis,
-  CodeOrg,
-  CodeOrgTabel,
-  CodeOrgProjecten,
   JsLessen,
 };

@@ -1,15 +1,16 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { levelVoor } from '@coderius/checker/conceptLevel';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
 import { describe, expect, it } from 'vitest';
+import leerdoelen from '../leerdoelen.json';
 import { maakBuitenLesstof } from './buitenLesstof';
 import { webConfig } from './config';
 import { CSS_TECHNIQUES, HTML_ELEMENTS, JS_TECHNIQUES } from './curriculum';
 import { berekenLesstof, stukkenUit } from './lesstof';
-import niveaus from './niveaus.json';
 
 const FIXTURES = fileURLToPath(new URL('./__fixtures__', import.meta.url));
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
@@ -87,13 +88,55 @@ describe('webConfig — de conceptenlijst zelf', () => {
     expect(validateCheckerConfig(webConfig)).toEqual([]);
   });
 
-  it('telt precies de rijen uit de tabel van de docent, met hun niveau', () => {
+  it('telt precies de rijen uit de leerdoelen, met hun niveau', () => {
     expect(webConfig.concepts.map((c) => [c.id, c.subject, c.label, c.level])).toEqual(
-      niveaus.concepten.map((c) => [c.id, c.onderwerp, c.concept, c.niveau]),
+      leerdoelen.concepten.map((c) => [c.id, c.onderwerp, c.concept, c['1']]),
     );
-    // De tabel van de docent: 13 rijen basis, 11 gevorderd.
-    expect(webConfig.concepts.filter((c) => c.level === 'basis')).toHaveLength(13);
-    expect(webConfig.concepts.filter((c) => c.level === 'gevorderd')).toHaveLength(11);
+    // De tabel van de docent: 13 rijen basis, 10 gevorderd.
+    expect(webConfig.concepts.filter((c) => levelVoor(c, null) === 'basis')).toHaveLength(13);
+    expect(webConfig.concepts.filter((c) => levelVoor(c, null) === 'gevorderd')).toHaveLength(10);
+  });
+
+  it('de leerdoelen zijn het tabblad Web van het beoordelingsblad (Beoordeling_INF.xlsx)', () => {
+    // Overgenomen uit het blad, met "pseusoclass" als pseudoclass. Verandert
+    // het blad, dan veranderen dit lijstje en src/leerdoelen.json samen.
+    const blad = [
+      ['CSS', 'tag selector (p, h)', 'basis'],
+      ['CSS', 'class', 'basis'],
+      ['CSS', 'pseudoclass', 'basis'],
+      ['CSS', 'id', 'gevorderd'],
+      ['CSS', 'flexbox of grid', 'gevorderd'],
+      ['HTML', 'h1-h6', 'basis'],
+      ['HTML', 'ol & ul, li', 'basis'],
+      ['HTML', 'img', 'basis'],
+      ['HTML', 'a', 'basis'],
+      ['HTML', 'opbouw (header, main, footer)', 'basis'],
+      ['HTML', 'forms', 'gevorderd'],
+      ['JavaScript', 'document.getElementById()', 'basis'],
+      ['JavaScript', 'DOM-stijl aanpassen via .style', 'basis'],
+      ['JavaScript', 'script tag', 'basis'],
+      ['JavaScript', 'script.js', 'basis'],
+      ['JavaScript', 'prompt & alert', 'basis'],
+      ['JavaScript', 'functies', 'gevorderd'],
+      ['JavaScript', 'addEventListener', 'gevorderd'],
+      ['JavaScript', 'events', 'gevorderd'],
+      ['JavaScript', 'if else', 'gevorderd'],
+      ['JavaScript', 'formulier data ophalen', 'gevorderd'],
+      ['JavaScript', 'arrays', 'gevorderd'],
+      ['JavaScript', 'loops', 'gevorderd'],
+    ];
+    const label = new Map(leerdoelen.onderwerpen.map((o) => [o.id, o.label]));
+    // Het blad heeft één kolom zonder naam: niveau 1, het enige niveau van web.
+    expect(leerdoelen.niveaus).toEqual(['1']);
+    expect(leerdoelen.concepten.map((c) => [label.get(c.onderwerp), c.concept, c['1']])).toEqual(
+      blad,
+    );
+  });
+
+  it('stelt een cijfer voor: de config draagt de leerdoelen', () => {
+    expect(webConfig.leerdoelen?.niveaus.map((n) => n.id)).toEqual(['1']);
+    // Eén niveau: geen keuze bij Leerroute.
+    expect(webConfig.tracks).toBeUndefined();
   });
 
   it('zet elk ander concept uit de lessen onder "Ook gebruikt", zonder niveau', () => {
@@ -172,7 +215,6 @@ describe('webConfig — voorbeeldprojecten scoren', () => {
       [
         'css-pseudoclass',
         'css-flexbox-grid',
-        'css-media-query',
         'html-forms',
         'js-style',
         'js-prompt-alert',
@@ -455,7 +497,6 @@ describe('webConfig — JavaScript wordt herkend waar het staat', () => {
       },
       {
         'css-pseudoclass': false,
-        'css-media-query': false,
         'css-flexbox-grid': false,
         'css-tag-selector': true,
       },
@@ -613,7 +654,6 @@ describe('webConfig — elke les laat zien wat ze aanleert', () => {
     'html-css/pseudo-klassen': ['css-pseudoclass'],
     'html-css/flexbox': ['css-flexbox-grid'],
     'html-css/css-grid': ['css-flexbox-grid'],
-    'html-css/media-queries': ['css-media-query'],
     'js-basics/tekst-veranderen': ['js-get-element-by-id'],
     'js-basics/inline-onclick': ['js-events'],
     'js-basics/inline-stijl': ['js-style'],
@@ -665,7 +705,6 @@ describe('webConfig — HTML en CSS worden herkend waar ze staan', () => {
         'css-pseudoclass': true,
         'css-id': true,
         'css-flexbox-grid': true,
-        'css-media-query': true,
         'css-color': true,
       },
     ],

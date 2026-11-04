@@ -1,4 +1,4 @@
-import type { CheckerConfig } from './types';
+import { type CheckerConfig, LEVELS } from './types';
 
 // Controleert de conceptenlijst van een site op fouten die anders stil
 // verkeerd scoren: er verschijnt geen foutmelding, er telt alleen iets niet
@@ -98,6 +98,16 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
       problems.push(
         `Concept '${concept.id}' hoort bij onderwerp '${concept.subject}', dat niet in subjects staat.`,
       );
+    }
+
+    const levels =
+      typeof concept.level === 'string' ? [concept.level] : Object.values(concept.level);
+    for (const level of levels) {
+      if (!LEVELS.includes(level)) {
+        problems.push(
+          `Concept '${concept.id}' heeft niveau '${level}' (wel: ${LEVELS.join(', ')}).`,
+        );
+      }
     }
 
     if (typeof concept.level !== 'string') {

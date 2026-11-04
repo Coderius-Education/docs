@@ -13,6 +13,7 @@
     "./levelSummary": "./src/levelSummary.ts",
     "./conceptLevel": "./src/conceptLevel.ts",
     "./validateConfig": "./src/validateConfig.ts",
+    "./leerdoelen": "./src/leerdoelen.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
