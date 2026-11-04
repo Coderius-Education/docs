@@ -252,6 +252,7 @@ func _gedrag_tests(index: Array) -> void:
 	await _test_lopen(index)
 	await _test_remmen(index)
 	await _test_springen(index)
+	await _test_springvarianten(index)
 	await _test_opknippen(index)
 	await _test_dubbel_springen(index)
 
@@ -368,6 +369,76 @@ func _test_springen(index: Array) -> void:
 		"Deel 7: een tweede sprong in de lucht hoort niet te werken, velocity.y=%s (y was %s)" % [speler.velocity.y, y_in_lucht]
 	)
 	_ruim_op(speler)
+
+# Deel 7 beschrijft wat er gebeurt met een variant van de springregel. Dat
+# klopte niet: "hij komt nooit meer naar beneden" en "hij blijft aan het
+# plafond plakken" bij is_action_pressed, terwijl hij landt en meteen weer
+# springt. Hier speelt de runner elke variant na, op het complete script.
+func _test_springvarianten(index: Array) -> void:
+	var pad := _stap_script(index, "afsluiter.md")
+	if pad == OVERGESLAGEN or pad == "":
+		return
+	var bron := FileAccess.get_file_as_string(pad)
+	var regel := 'if Input.is_action_just_pressed("ui_accept") and is_on_floor():'
+	if not bron.contains(regel) or not bron.contains("velocity.y = JUMP_VELOCITY"):
+		_faal("Deel 7: de springregel staat niet meer zoals de varianten hem verwachten")
+		return
+	var gewoon := await _hoogste_sprong(pad)
+
+	# Stap 5: met += is de sprong vanaf de grond even hoog.
+	var plus := await _hoogste_sprong(_variant(bron, "velocity.y = JUMP_VELOCITY", "velocity.y += JUMP_VELOCITY"))
+	_verwacht(absf(plus - gewoon) < 1.0, "Deel 7: met += hoort een sprong vanaf de grond even hoog te zijn (%s tegen %s)" % [plus, gewoon])
+
+	# Stap 3: met is_action_pressed blijft hij stuiteren, niet hoger dan gewoon.
+	var vast := _variant(bron, "is_action_just_pressed", "is_action_pressed")
+	var speler := await _draai(vast, 90)
+	var start: float = speler.position.y
+	var hoogste := start
+	var landingen := 0
+	var was_op_grond := true
+	Input.action_press("ui_accept")
+	for i in 150:
+		await _stap(1)
+		hoogste = minf(hoogste, speler.position.y)
+		if speler.is_on_floor() and not was_op_grond:
+			landingen += 1
+		was_op_grond = speler.is_on_floor()
+	Input.action_release("ui_accept")
+	_verwacht(landingen >= 2, "Deel 7: met is_action_pressed hoort hij te landen en opnieuw te springen, landingen=%s" % landingen)
+	_verwacht(start - hoogste < gewoon + 2.0, "Deel 7: met is_action_pressed hoort hij niet hoger te komen dan een gewone sprong (%s tegen %s)" % [start - hoogste, gewoon])
+	_ruim_op(speler)
+
+	# Stap 4: zonder is_on_floor() lukt een sprong midden in de lucht.
+	speler = await _draai(_variant(bron, " and is_on_floor()", ""), 90)
+	_verwacht(await _sprong(speler), "Deel 7: zonder is_on_floor() hoort een sprong vanaf de grond te lukken")
+	await _stap(10)
+	_verwacht(not speler.is_on_floor() and await _sprong(speler), "Deel 7: zonder is_on_floor() hoort een sprong in de lucht te lukken, velocity.y=%s" % speler.velocity.y)
+	_ruim_op(speler)
+
+# Hoe hoog één druk op de spatie het karakter brengt, in pixels.
+func _hoogste_sprong(script_pad: String) -> float:
+	var speler := await _draai(script_pad, 90)
+	var start: float = speler.position.y
+	var hoogste := start
+	Input.action_press("ui_accept")
+	await _stap(1)
+	Input.action_release("ui_accept")
+	for i in 90:
+		await _stap(1)
+		hoogste = minf(hoogste, speler.position.y)
+	_ruim_op(speler)
+	return start - hoogste
+
+var _varianten := 0
+
+# Een kopie van een script met één stuk vervangen, als bestand voor _draai.
+func _variant(bron: String, oud: String, nieuw: String) -> String:
+	_varianten += 1
+	var pad := "user://variant_%s.gd" % _varianten
+	var f := FileAccess.open(pad, FileAccess.WRITE)
+	f.store_string(bron.replace(oud, nieuw))
+	f.close()
+	return pad
 
 # --- rapportage --------------------------------------------------------------
 

@@ -80,12 +80,12 @@ const ALLE = PAGINAS.flatMap(opdrachten);
 // keuze is en geen vergissing.
 const ZONDER_OPLOSSING = new Map([
   [
-    'Opdracht 5.7.a: voeg een eigen kracht toe',
+    'Opdracht 5.7.b: voeg een eigen kracht toe',
     'bewust zonder uitgewerkte oplossing; het info-blok in de les zegt waarom',
   ],
 ]);
 const ZONDER_TIP = new Map([
-  ['Opdracht 5.7.a: voeg een eigen kracht toe', 'de leerling kiest zelf wat hij bouwt'],
+  ['Opdracht 5.7.b: voeg een eigen kracht toe', 'de leerling kiest zelf wat hij bouwt'],
 ]);
 
 describe('opdrachten in de Godot-cursus', () => {

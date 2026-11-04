@@ -76,7 +76,7 @@ Godot heeft twee manieren om naar een toets te kijken:
 <details>
 <summary>Antwoord</summary>
 
-Je karakter stuitert continu omhoog zolang je de spatie vasthoudt. Elke frame voldoet `pressed` aan de check, dus elke frame krijgt hij opnieuw de volle sprongkracht. Hij komt nooit meer naar beneden.
+Zolang je de spatie vasthoudt, blijft je karakter springen: hij landt en is meteen weer weg, als een stuiterbal. Hoger dan een gewone sprong komt hij niet, want `and is_on_floor()` laat de sprong alleen toe op de grond. Maar elke keer dat hij landt, is de toets nog ingedrukt.
 
 Met `just_pressed` gebeurt het één keer per druk, en moet de speler loslaten voor een volgende sprong.
 
@@ -101,14 +101,14 @@ Je kunt in de lucht springen. Tijdens een sprong nog eens drukken geeft opnieuw 
 
 Bij de zwaartekracht gebruikte je `+=`, hier gebruik je `=`. Dat is bewust.
 
-**Je karakter valt al met `velocity.y = 200`. Wat gebeurt er als je hier `velocity.y += JUMP_VELOCITY` schrijft?**
+**Maakt het in jouw script uit als je hier `velocity.y += JUMP_VELOCITY` schrijft?**
 
 <details>
 <summary>Antwoord</summary>
 
-Dan wordt het `200 + (-400) = -200`: je springt half zo hoog, alleen omdat je toevallig al aan het vallen was.
+Nu nog niet. Je springt alleen als je op de grond staat, en daar is `velocity.y` `0`: het zwaartekracht-blok telt dan niets op. `0 + (-400)` blijft `-400`.
 
-Met `=` vervang je de verticale snelheid volledig door `-400`. Een sprong is dan altijd even hoog, en dat voelt voorspelbaar.
+Het gaat mis zodra je ook in de lucht mag springen, zoals bij dubbel springen in opdracht 5.7.b. Val je al met `velocity.y = 200`, dan geeft `+=` `200 + (-400) = -200`, en springt je karakter half zo hoog. Met `=` vervang je de verticale snelheid helemaal door `-400`. Een sprong is dan altijd even hoog, waar je ook bent.
 
 </details>
 
@@ -181,7 +181,33 @@ Een toets juist vervangen in plaats van toevoegen? Klap de actie open en klik op
 
 </details>
 
-## Opdracht 5.7.a: voeg een eigen kracht toe
+## Opdracht 5.7.a: kies je sprongkracht
+
+In [Opdracht 5.5.a](site:godot/docs/movement-krachten) koos je een loopsnelheid. Stem je sprong daar nu op af. Probeer minstens drie waarden voor `JUMP_VELOCITY`, bijvoorbeeld `-400.0`, `-800.0` en `-1200.0`, en kies de waarde waarmee je net op je hoogste platform komt.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Hoe negatiever het getal, hoe harder je omhoog gaat. Spring vanaf de vloer naast een platform en kijk of je er bovenop komt, en of je bij een gat niet over het volgende platform heen schiet.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+Een goede waarde hangt af van je level. Als richtlijn, met de zwaartekracht van Godot:
+
+| `JUMP_VELOCITY` | Zo hoog kom je ongeveer |
+| :---: | :---: |
+| `-400.0` | 85 pixels |
+| `-800.0` | 330 pixels |
+| `-1200.0` | 740 pixels |
+
+Twee keer zo hard afzetten geeft dus vier keer zo hoog. Vanaf hoofdstuk 6 staat in de lessen `-800.0`. Koos jij iets anders, houd dan je eigen waarde aan.
+
+</details>
+
+## Opdracht 5.7.b: voeg een eigen kracht toe
 
 Je script kent nu vallen, lopen en springen. Voeg er zelf iets bij dat niet in de les staat. Kies er één:
 
@@ -231,20 +257,20 @@ Zo weet je bij een fout meteen aan welke kant je moet zoeken: bij het uitlezen v
 </details>
 
 <details>
-<summary>Mijn karakter springt oneindig hoog of blijft hangen</summary>
+<summary>Mijn karakter blijft stuiteren zolang ik de spatie vasthoud</summary>
 
-**Oorzaak:** `is_action_pressed` in plaats van `is_action_just_pressed`, of de `and is_on_floor()` ontbreekt.
+**Oorzaak:** Er staat `is_action_pressed` in plaats van `is_action_just_pressed`. Elke keer dat je karakter landt, is de toets nog ingedrukt, dus springt hij meteen weer.
 
-**Oplossing:** Vergelijk je regel letterlijk met die uit Stap 2.
+**Oplossing:** Vergelijk je regel letterlijk met die uit Stap 2. Zie Stap 3 voor het verschil.
 
 </details>
 
 <details>
-<summary>Mijn sprong voelt elke keer anders</summary>
+<summary>Mijn karakter kan in de lucht steeds opnieuw springen</summary>
 
-**Oorzaak:** Je gebruikt `+=` in plaats van `=` bij `velocity.y`.
+**Oorzaak:** De `and is_on_floor()` ontbreekt. Dan geeft elke druk op de spatie de volle sprongkracht, ook midden in een sprong.
 
-**Oplossing:** Gebruik `velocity.y = JUMP_VELOCITY`. Zie Stap 5 voor waarom.
+**Oplossing:** Zet `and is_on_floor()` achter de check op de toets, zoals in Stap 2.
 
 </details>
 

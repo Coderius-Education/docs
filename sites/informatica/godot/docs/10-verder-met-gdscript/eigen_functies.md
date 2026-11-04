@@ -226,7 +226,7 @@ Met één lang blok had je bij elk van die vragen twintig regels moeten lezen. N
 
 ## Opdracht 10.1.b: dubbel springen
 
-Je karakter mag in de lucht één keer extra springen, ook als hij van een randje is gelopen. Koos je dit bij opdracht 5.7.a al, dan heb je het werkend; zet het nu in `spring()`, en vergelijk daarna je versie met de oplossing. Daarna moet hij eerst weer landen. Je past daarvoor alleen `spring()` aan, en zet bovenaan één variabele.
+Je karakter mag in de lucht één keer extra springen, ook als hij van een randje is gelopen. Koos je dit bij opdracht 5.7.b al, dan heb je het werkend; zet het nu in `spring()`, en vergelijk daarna je versie met de oplossing. Daarna moet hij eerst weer landen. Je past daarvoor alleen `spring()` aan, en zet bovenaan één variabele.
 
 <details>
 <summary>Klik hier voor een tip.</summary>

@@ -209,7 +209,7 @@ Dit is een goed voorbeeld van de tweede soort fout: er is niets kapot, er ontbre
 
 ## Opdracht 5.8.c: het spel doet iets anders dan bedoeld
 
-Dit karakter zou moeten springen bij een druk op de spatiebalk, maar hij blijft aan het plafond plakken zolang je de toets vasthoudt.
+Dit karakter zou één keer moeten springen bij een druk op de spatiebalk, maar zolang je de toets vasthoudt blijft hij stuiteren: landen, en meteen weer omhoog.
 
 ```gdscript
     if Input.is_action_pressed("ui_accept") and is_on_floor():
@@ -226,7 +226,7 @@ Er is geen foutmelding en er ontbreekt niets. Vraag jezelf af hoe vaak deze `if`
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-`is_action_pressed` is waar zolang je de toets vasthoudt, dus elke frame krijgt je karakter opnieuw de volle sprongkracht. Gebruik `is_action_just_pressed`, dat alleen waar is op het frame dat je indrukt:
+`is_action_pressed` is waar zolang je de toets vasthoudt. In de lucht houdt `and is_on_floor()` hem tegen, maar op het frame dat hij landt, is de toets nog steeds ingedrukt, en springt hij meteen weer. Gebruik `is_action_just_pressed`, dat alleen waar is op het frame dat je indrukt:
 
 ```gdscript
     if Input.is_action_just_pressed("ui_accept") and is_on_floor():

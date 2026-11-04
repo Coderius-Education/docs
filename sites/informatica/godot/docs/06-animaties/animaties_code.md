@@ -50,7 +50,7 @@ Dit is een `var` zónder `=`, en dat is nieuw. Zo'n regel maakt de variabele alv
 extends CharacterBody2D
 
 const SPEED = 300.0        # gebruik jouw eigen waarde
-const JUMP_VELOCITY = -800.0
+const JUMP_VELOCITY = -800.0  # jouw waarde uit Opdracht 5.7.a
 
 var op_de_grond
 var staat_stil
@@ -189,7 +189,7 @@ Elke tak heeft twee regels nodig: één om de animatie te starten en één om `f
 extends CharacterBody2D
 
 const SPEED = 300.0
-const JUMP_VELOCITY = -800.0
+const JUMP_VELOCITY = -800.0  # jouw waarde uit Opdracht 5.7.a
 
 var op_de_grond
 var staat_stil
