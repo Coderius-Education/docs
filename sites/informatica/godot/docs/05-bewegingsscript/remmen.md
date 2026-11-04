@@ -87,11 +87,11 @@ De derde waarde tussen de haakjes bepaalt hoe groot een remstap is. Kleiner bete
 <summary>Klik hier voor de oplossing.</summary>
 
 ```gdscript
-    else:
+    if direction == 0:
         velocity.x = move_toward(velocity.x, 0, 30)
 ```
 
-Bij `30` glijdt je karakter duidelijk door, alsof hij op ijs loopt. Bij `300` (gelijk aan `SPEED`) staat hij meteen stil.
+Bij `30` gaat er elke frame 30 van je snelheid van 300 af: je karakter glijdt nog tien frames door, een zesde seconde. Dat zie je net. Bij `10` is het een halve seconde, en dat voelt als ijs. Bij `300` (gelijk aan `SPEED`) staat hij meteen stil.
 
 Wat "nog nét bestuurbaar" is, hangt af van je level: hoe smaller je platforms, hoe minder glijden je jezelf kunt veroorloven.
 

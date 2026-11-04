@@ -33,7 +33,17 @@ function blokken(): { plek: string; code: string }[] {
 describe('codestijl van de GDScript-voorbeelden', () => {
   it('vraagt bij direction positief: if direction == 0', () => {
     const fout = blokken()
-      .filter((b) => /^\s*(?:el)?if\s+(?:not\s+)?direction\s*(?::|!=)/m.test(b.code))
+      .filter((b) => /^\s*(?:el)?if\s+(?:not\s+)?direction\s*(?::|!=|and\b|or\b)/m.test(b.code))
+      .map((b) => b.plek);
+    expect(fout).toEqual([]);
+  });
+
+  it('remt onder if direction == 0, niet in de else', () => {
+    // Bij het omdraaien van de takken bleef de oplossing van 5.6.a als los
+    // fragment "else: move_toward(...)" staan. Wie dat overnam, zette het
+    // remmen in de looptak en kwam niet meer van zijn plek.
+    const fout = blokken()
+      .filter((b) => /^\s*else:\s*\n\s*velocity\.x = move_toward\(velocity\.x, 0,/m.test(b.code))
       .map((b) => b.plek);
     expect(fout).toEqual([]);
   });
