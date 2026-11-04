@@ -96,6 +96,8 @@ const BEVROREN_SLUGS = [
   '/software/editor',
   '/software/micropython',
   '/software/verbinden',
+  '/lijnvolgen/vier-sensoren',
+  '/afstand/stoppen',
 ];
 
 describe('lego_auto-structuur', () => {

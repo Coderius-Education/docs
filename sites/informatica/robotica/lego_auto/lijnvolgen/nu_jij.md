@@ -6,7 +6,7 @@ title: "Deel 8: Nu jij"
 
 # Het robotscript bouwen — Deel 8: Nu jij
 
-Je robot rijdt rechtdoor zolang beide sensoren wit zien. Zodra hij afdwaalt, ziet één sensor de lijn — en dan gebeurt er nog niets. Dit laatste deel is aan jou: zoals in Deel 7 aangekondigd, staat hier geen uitwerking. Alles wat je nodig hebt, heb je in de vorige delen zelf gebouwd.
+Je robot rijdt rechtdoor zolang beide sensoren wit zien. Zodra hij afdwaalt, ziet één sensor de lijn — en dan gebeurt er nog niets. Dit deel is aan jou: zoals in Deel 7 aangekondigd, staat hier geen uitwerking. Alles wat je nodig hebt, heb je in de vorige delen zelf gebouwd.
 
 <Voorkennis
   items={[
@@ -104,4 +104,4 @@ Stoppen is het makkelijkst om te zien: allebei de motoren `forward(0)`. Kijk op 
 
 ---
 
-← [Deel 7 — Rechtdoor rijden](site:robotica/lego_auto/lijnvolgen/rechtdoor) · **Volgende:** [de afstandssensor](site:robotica/lego_auto/afstand) →
+← [Deel 7 — Rechtdoor rijden](site:robotica/lego_auto/lijnvolgen/rechtdoor) · **Volgende:** [Deel 9 — Vier sensoren](site:robotica/lego_auto/lijnvolgen/vier-sensoren) →

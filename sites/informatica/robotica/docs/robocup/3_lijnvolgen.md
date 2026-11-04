@@ -20,7 +20,8 @@ wedstrijd maak je een paar keuzes:
   geeft een getal, en dan kies je zelf de grens. Dat helpt als het licht in de
   wedstrijdzaal anders is dan in je klas.
 - **Hoeveel sensoren?** Met twee volg je de lijn. Met vier zie je ook een
-  scherpe bocht of een gat aankomen.
+  scherpe bocht of een gat aankomen; hoe je er twee bij zet, staat in
+  [Deel 9 van de Lego-auto](site:robotica/lego_auto/lijnvolgen/vier-sensoren).
 - **Hoe ver uit elkaar?** Zet twee sensoren zo dat ze allebei wit zien als de
   robot recht op een lijn van 1 cm staat, en dat er één zwart ziet zodra hij
   afwijkt. Te ver uit elkaar en een smalle lijn glipt ertussendoor.
