@@ -1,5 +1,6 @@
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import Heading from '@theme/Heading';
 import Layout from '@theme/Layout';
 import type { ReactNode } from 'react';
 import {
@@ -55,7 +56,9 @@ export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoele
           </p>
         )}
 
-        <h2 id="niveaus">Niveaus</h2>
+        <Heading as="h2" id="niveaus">
+          Niveaus
+        </Heading>
         <ul>
           {leerdoelen.niveaus.map((n) => {
             const delen =

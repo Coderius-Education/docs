@@ -1,4 +1,5 @@
 import Link from '@docusaurus/Link';
+import Heading from '@theme/Heading';
 import type { ReactNode } from 'react';
 import type { Leerdoelen, Les } from '../../leerdoelen';
 import { routeUrl } from '../../sites';
@@ -27,7 +28,9 @@ export default function Tentamen({ leerdoelen }: { leerdoelen: Leerdoelen }): Re
   const nummer = (id: string) => manieren.findIndex((m) => m.id === id) + 1;
   return (
     <>
-      <h2 id="tentamen">Het tentamen</h2>
+      <Heading as="h2" id="tentamen">
+        Het tentamen
+      </Heading>
       <p>{tentamen.vorm}</p>
       <p>
         Waar de manieren hieronder vandaan komen en hoe wij ze gebruiken, lees je bij{' '}
@@ -38,7 +41,9 @@ export default function Tentamen({ leerdoelen }: { leerdoelen: Leerdoelen }): Re
         .
       </p>
 
-      <h2 id="manieren">Manieren om het te kennen</h2>
+      <Heading as="h2" id="manieren">
+        Manieren om het te kennen
+      </Heading>
       <div className={styles.schuif}>
         <table className={styles.tabel}>
           <thead>
@@ -72,7 +77,9 @@ export default function Tentamen({ leerdoelen }: { leerdoelen: Leerdoelen }): Re
         );
         return (
           <section key={onderwerp.id}>
-            <h2 id={onderwerp.id}>{onderwerp.label}</h2>
+            <Heading as="h2" id={onderwerp.id}>
+              {onderwerp.label}
+            </Heading>
             {tentamen.onderwerpen[onderwerp.id] && <p>{tentamen.onderwerpen[onderwerp.id]}</p>}
             {metManieren.length > 0 && (
               <div className={styles.schuif}>

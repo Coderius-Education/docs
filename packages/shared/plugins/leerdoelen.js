@@ -37,11 +37,20 @@ function gepubliceerd(siteId, leerdoelen) {
  * met twee docs-plugins of met versies vindt zo ook zijn lessen.
  */
 function docsVan(allContent) {
-  const instanties = Object.values(allContent?.['docusaurus-plugin-content-docs'] ?? {});
-  return instanties.flatMap((inst) => {
+  const instanties = Object.entries(allContent?.['docusaurus-plugin-content-docs'] ?? {});
+  return instanties.flatMap(([instantie, inst]) => {
     const versies = inst?.loadedVersions ?? [];
-    return (versies.find((v) => v.isLast) ?? versies[0])?.docs ?? [];
+    const docs = (versies.find((v) => v.isLast) ?? versies[0])?.docs ?? [];
+    // Welke docs-plugin: twee plugins kunnen een les met hetzelfde id hebben
+    // (robotica heeft een "intro" in lego_auto en in golfbot).
+    return docs.map((d) => ({ ...d, instantie }));
   });
+}
+
+/** "lego_auto:intro" naar de plugin en het id; een kaal id heeft geen plugin. */
+function splitsLes(les) {
+  const m = /^([\w-]+):(.+)$/.exec(les);
+  return m && m[1] !== 'site' ? { instantie: m[1], id: m[2] } : { instantie: null, id: les };
 }
 
 /**
@@ -51,6 +60,10 @@ function docsVan(allContent) {
  * een andere cursus; die krijgt het adres uit de registry, en de CI-job
  * cross-links controleert of hij bestaat.
  *
+ * Heeft de cursus meer docs-plugins met een les met hetzelfde id, dan zegt
+ * `les` welke: "lego_auto:intro". Een kaal id dat in meer plugins staat, is
+ * een fout; anders koos de plugin stil de laatste.
+ *
  * Op het tentamen-niveau krijgt een concept met manieren per manier de les
  * waar je hem oefent: de eerste naam uit `manier.lessen` die in de map van
  * zijn eerste les bestaat ("binair-zoeken/01-concept" geeft de map
@@ -58,10 +71,9 @@ function docsVan(allContent) {
  * daarin. Een manier zonder les is een fout.
  *
  * @param {object} leerdoelen uit leesLeerdoelen
- * @param {{id: string, title: string, permalink: string, sidebarPosition?: number}[]} docs
+ * @param {{id: string, title: string, permalink: string, sidebarPosition?: number, instantie?: string}[]} docs
  */
 function koppelLessen(leerdoelen, docs) {
-  const perId = new Map(docs.map((d) => [d.id, d]));
   const onbekend = [];
   const manieren = leerdoelen.tentamen?.manieren ?? [];
   // Een doc-id houdt het cijferprefix van zijn bestand ("binair-zoeken/
@@ -94,24 +106,44 @@ function koppelLessen(leerdoelen, docs) {
         // De titel van een les in een andere cursus kent de plugin niet; de
         // linktekst noemt daarom het concept en de cursus. Twaalf keer "de
         // cursus Python" zei niet waar elke link heen ging.
+        // Twee lessen in dezelfde cursus (tuples en sets) kregen zo twee
+        // keer dezelfde linktekst; dan staat de les erachter.
+        const zelfdeCursus = c.lessen.filter(
+          (l) => parseSiteUrl(l.id)?.site === extern.site,
+        ).length;
+        const les = extern.route.split('/').filter(Boolean).at(-1);
         return {
           id,
-          titel: `${c.concept} (cursus ${doel.label})`,
+          titel:
+            zelfdeCursus > 1
+              ? `${c.concept} (cursus ${doel.label}, ${les})`
+              : `${c.concept} (cursus ${doel.label})`,
           pad: routeUrl(extern.site, extern.route, extern.anchor),
           extern: true,
         };
       }
-      const doc = perId.get(id);
-      if (!doc) {
+      const les = splitsLes(id);
+      const kandidaten = docs.filter(
+        (d) => d.id === les.id && (!les.instantie || d.instantie === les.instantie),
+      );
+      if (kandidaten.length === 0) {
         onbekend.push(`concept '${c.id}': les '${id}' bestaat niet`);
         return { id };
       }
+      if (kandidaten.length > 1) {
+        const waar = kandidaten.map((d) => d.instantie).join(', ');
+        onbekend.push(
+          `concept '${c.id}': les '${id}' staat in meer docs-plugins (${waar}); schrijf bijvoorbeeld '${kandidaten[0].instantie}:${les.id}'`,
+        );
+        return { id };
+      }
+      const [doc] = kandidaten;
       return { id, titel: doc.title, pad: doc.permalink };
     });
     const uit = { ...c, lessen };
     if (c.manieren?.length) {
       const eigen = c.lessen.find(({ id }) => !id.startsWith('site:'));
-      const map = eigen ? path.posix.dirname(eigen.id) : '.';
+      const map = eigen ? path.posix.dirname(splitsLes(eigen.id).id) : '.';
       uit.oefenen = {};
       for (const id of c.manieren) {
         const manier = manieren.find((m) => m.id === id);
