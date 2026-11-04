@@ -162,19 +162,35 @@ De y-waarde `100` past bij een vloer die lager ligt — vul hier coördinaten in
 </details>
 
 <details>
-<summary>Foutmelding: <code>Invalid call. Nonexistent function 'instantiate' in base 'String'</code></summary>
+<summary>Foutmelding: <code>Cannot find member "instantiate" in base "String".</code></summary>
 
-**Oorzaak:** Je roept `instantiate()` aan op het pad zelf, bijvoorbeeld `"res://muntje.tscn".instantiate()`. Alleen het resultaat van `preload()` heeft die functie.
+```
+Cannot find member "instantiate" in base "String".
+```
+
+**Oorzaak:** Je roept `instantiate()` aan op het pad zelf, bijvoorbeeld `"res://muntje.tscn".instantiate()`. Een pad is tekst, en tekst heeft geen `instantiate()`; alleen het resultaat van `preload()` heeft die functie. Godot ziet dat al terwijl je typt: de regel kleurt rood en je spel start niet.
+
+{/* verwacht-fout: Cannot find member "instantiate" in base "String". */}
+
+```gdscript
+# FOUT
+extends Node2D
+
+func _ready() -> void:
+    var nieuw_muntje = "res://muntje.tscn".instantiate()
+    add_child(nieuw_muntje)
+```
 
 **Oplossing:** Eerst inladen, dan instantiëren:
 
 ```gdscript
-# FOUT
-var nieuw_muntje = "res://muntje.tscn".instantiate()
+extends Node2D
 
-# GOED
 const MUNTJE = preload("res://muntje.tscn")
-var nieuw_muntje = MUNTJE.instantiate()
+
+func _ready() -> void:
+    var nieuw_muntje = MUNTJE.instantiate()
+    add_child(nieuw_muntje)
 ```
 
 </details>
