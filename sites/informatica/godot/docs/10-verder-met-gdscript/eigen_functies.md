@@ -218,7 +218,7 @@ Je script is nu opgeknipt. Stel dat er later iets misgaat. **In welke functie ki
 1. `kies_animatie()`: daar staat `flip_h`, die het plaatje omdraait.
 2. `val()`: daar komt de zwaartekracht bij `velocity`.
 3. `spring()`: daar hoort de controle `is_on_floor()` te staan.
-4. In geen van de vier: de animatie kijkt naar `velocity.x`, dus die klopt. Dan ontbreekt `move_and_slide()` in `_physics_process`, of staat hij er niet meer als laatste.
+4. In geen van de vier: de animatie kijkt naar `velocity.x`, dus die klopt. Dan ontbreekt `move_and_slide()` in `_physics_process`: zonder die regel verandert `velocity` wel, maar beweegt het karakter niet.
 
 Met één lang blok had je bij elk van die vragen twintig regels moeten lezen. Nu wijst de naam je de weg.
 

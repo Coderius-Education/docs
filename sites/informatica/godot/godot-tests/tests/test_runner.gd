@@ -180,6 +180,8 @@ func _gedrag_tests(index: Array) -> void:
 	await _test_lopen(index)
 	await _test_remmen(index)
 	await _test_springen(index)
+	await _test_opknippen(index)
+	await _test_dubbel_springen(index)
 
 func _test_skelet(index: Array) -> void:
 	var pad := _stap_script(index, "skelet.md")
@@ -296,6 +298,117 @@ func _test_springen(index: Array) -> void:
 	_ruim_op(speler)
 
 # --- rapportage --------------------------------------------------------------
+
+# --- hoofdstuk 10: eigen functies ------------------------------------------
+
+# Het script onder een kop in een les; OVERGESLAGEN bij --alleen, "" als het
+# er niet is.
+func _script_onder(index: Array, bron_bevat: String, kop_begint: String) -> String:
+	for item in index:
+		if item.has("verwacht_fout"):
+			continue
+		if String(item["bron"]).contains(bron_bevat) and String(item["kop"]).begins_with(kop_begint):
+			if item.get("overslaan", false):
+				return OVERGESLAGEN
+			return EXTRACTED + "/" + item["naam"] + ".gd"
+	return ""
+
+# Een karakter zoals de leerling het na Animaties heeft, met een
+# AnimatedSprite2D, zodat kies_animatie() niets mist.
+func _maak_karakter(script_pad: String, positie: Vector2) -> CharacterBody2D:
+	var karakter := CharacterBody2D.new()
+	var vorm := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(20, 40)
+	vorm.shape = rect
+	karakter.add_child(vorm)
+	var anim := AnimatedSprite2D.new()
+	anim.name = "AnimatedSprite2D"
+	var frames := SpriteFrames.new()
+	for naam in ["idle", "run", "jump"]:
+		frames.add_animation(naam)
+	anim.sprite_frames = frames
+	karakter.add_child(anim)
+	karakter.position = positie
+	var script := GDScript.new()
+	script.source_code = FileAccess.get_file_as_string(script_pad)
+	if script.reload() == OK:
+		karakter.set_script(script)
+	else:
+		_faal("kon %s niet compileren voor de gedragstest" % script_pad)
+	return karakter
+
+func _zet_neer(script_pad: String, positie: Vector2) -> CharacterBody2D:
+	var wereld := _maak_wereld()
+	var karakter := _maak_karakter(script_pad, positie)
+	wereld.add_child(karakter)
+	add_child(wereld)
+	return karakter
+
+# Vallen, naar rechts lopen, springen en uitlopen: dezelfde invoer voor elk script.
+func _speel_rondje(script_pad: String) -> Vector2:
+	var karakter := _zet_neer(script_pad, Vector2(0, 100))
+	await _stap(60)
+	Input.action_press("ui_right")
+	await _stap(30)
+	Input.action_press("ui_accept")
+	await _stap(2)
+	Input.action_release("ui_accept")
+	await _stap(30)
+	Input.action_release("ui_right")
+	await _stap(30)
+	var plek := karakter.position
+	_ruim_op(karakter)
+	return plek
+
+# 10.1 belooft: na het opknippen doet je spel precies hetzelfde.
+func _test_opknippen(index: Array) -> void:
+	var voor := _script_onder(index, "eigen_functies.md", "Je script als beginpunt")
+	var na := _script_onder(index, "eigen_functies.md", "Opdracht 10.1.a")
+	if voor == OVERGESLAGEN or na == OVERGESLAGEN:
+		return
+	if voor == "" or na == "":
+		_faal("10.1: beginpunt of oplossing van 10.1.a niet gevonden")
+		return
+	var a: Vector2 = await _speel_rondje(voor)
+	var b: Vector2 = await _speel_rondje(na)
+	_verwacht(a.distance_to(b) < 0.01, "10.1: opgeknipt script eindigt op %s, het beginpunt op %s" % [b, a])
+	_verwacht(a.x > 100.0, "10.1: het karakter hoort naar rechts gelopen te zijn, x=%s" % a.x)
+
+# Druk één keer op spatie en geef terug of het karakter sprong. Zwaartekracht
+# maakt velocity.y alleen groter; wordt hij kleiner, dan was dat een sprong.
+# (Een vaste drempel miste een tweede sprong vlak na de eerste: dan daalt hij
+# maar zo'n 50.)
+func _sprong(karakter: CharacterBody2D) -> bool:
+	var voor := karakter.velocity.y
+	Input.action_press("ui_accept")
+	await _stap(2)
+	Input.action_release("ui_accept")
+	await _stap(1)
+	return karakter.velocity.y < voor
+
+# 10.1.b belooft: één extra sprong in de lucht, ook na een randje, en niet meer.
+func _test_dubbel_springen(index: Array) -> void:
+	var pad := _script_onder(index, "eigen_functies.md", "Opdracht 10.1.b")
+	if pad == OVERGESLAGEN:
+		return
+	if pad == "":
+		_faal("10.1.b: geen oplossing gevonden")
+		return
+	# Hoog boven de vloer: zoals van een randje gelopen, zonder te springen.
+	var karakter := _zet_neer(pad, Vector2(0, -200))
+	await _stap(5)
+	_verwacht(await _sprong(karakter), "10.1.b: na een randje hoort één sprong in de lucht te lukken")
+	await _stap(5)
+	_verwacht(not await _sprong(karakter), "10.1.b: na een randje hoort maar één sprong in de lucht te lukken")
+	await _stap(300)
+	_verwacht(karakter.is_on_floor(), "10.1.b: het karakter hoort weer op de vloer te staan")
+	_verwacht(await _sprong(karakter), "10.1.b: vanaf de grond hoort een sprong te lukken")
+	await _stap(8)
+	_verwacht(await _sprong(karakter), "10.1.b: na een sprong vanaf de grond hoort één extra sprong te lukken")
+	await _stap(5)
+	_verwacht(not await _sprong(karakter), "10.1.b: daarna hoort er geen sprong meer te lukken")
+	_ruim_op(karakter)
 
 func _verwacht(voorwaarde: bool, boodschap: String) -> void:
 	if not voorwaarde:

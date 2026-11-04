@@ -142,15 +142,21 @@ Invalid access to property or key 'Goud' on a base object of type 'Dictionary'.
 
 **Oorzaak:** de sleutel staat niet in je dictionary. Hier staat in de Inspector `Goud` in het veld Soort, met een hoofdletter. Voor een dictionary is `Goud` een ander woord dan `goud`. Godot zoekt dan precies die sleutel, en die bestaat niet.
 
-**Oplossing:** zoek in je level het muntje dat je net pakte, en verbeter het veld Soort in de Inspector.
+Wanneer je de melding krijgt, hangt af van je script. Deed je opdracht 10.3.a, dan komt hij al bij de start van het level, op de regel met `KLEUREN[soort]` in `_ready()`. Zonder die opdracht komt hij pas als je het muntje pakt, op de regel met `WAARDES[soort]`.
 
-Wil je dat het spel bij een tikfout doorgaat, gebruik dan `get` met een reservewaarde:
+**Oplossing:** zoek in je level het muntje met de tikfout, en verbeter het veld Soort in de Inspector. Bij de start weet je niet welk muntje het is: print dan `soort` als eerste regel in `_ready()`, en kijk welke soort er vlak voor de melding in **Uitvoer** staat.
+
+Wil je dat het spel bij een tikfout doorgaat, gebruik dan `get` met een reservewaarde, in elke regel waar je een tabel opzoekt:
+
+```gdscript
+    modulate = KLEUREN.get(soort, Color.WHITE)
+```
 
 ```gdscript
     Global.score += WAARDES.get(soort, 1)
 ```
 
-Dan telt een onbekende soort als één punt. Let op dat je de tikfout dan niet meer opmerkt: het spel werkt, maar je gouden muntje is maar één punt waard.
+Dan krijgt een onbekende soort geen kleur en telt hij als één punt. Let op dat je de tikfout dan niet meer opmerkt: het spel werkt, maar je gouden muntje is maar één punt waard.
 
 </details>
 
