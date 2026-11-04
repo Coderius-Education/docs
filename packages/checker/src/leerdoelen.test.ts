@@ -95,6 +95,14 @@ describe('geldigeTrack', () => {
     expect(geldigeTrack(config, null)).toBe('1');
   });
 
+  it('zet een oude leerroute om naar de route die ervoor in de plaats kwam', () => {
+    const metOude = { ...config, oudeLeerroutes: { start: '1', verdieping: '3', weg: '9' } };
+    expect(geldigeTrack(metOude, 'verdieping')).toBe('3');
+    expect(geldigeTrack(metOude, 'start')).toBe('1');
+    // Een omzetting naar een route die er ook niet is, valt terug op de eerste.
+    expect(geldigeTrack(metOude, 'weg')).toBe('1');
+  });
+
   it('geeft null zonder leerroutes', () => {
     expect(geldigeTrack({}, 'start')).toBeNull();
   });

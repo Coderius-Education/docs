@@ -63,15 +63,20 @@ export function leerdoelenNaarConfig(
  * De leerroute die de nakijker gebruikt: de bewaarde, als de config hem nog
  * kent, en anders de eerste. Een beoordeling van vóór een nieuwe indeling
  * (Godot had start en verdieping) rekende anders stil met de eerste waarde
- * van elk concept, zonder dat er een knop gekozen stond.
+ * van elk concept, zonder dat er een knop gekozen stond. Kent de config de
+ * oude route (oudeLeerroutes), dan wordt het de route die ervoor in de plaats
+ * kwam: een beoordeling op "verdieping" telde anders ineens op niveau 1.
  */
 export function geldigeTrack(
-  config: Pick<CheckerConfig, 'tracks'>,
+  config: Pick<CheckerConfig, 'tracks' | 'oudeLeerroutes'>,
   track: string | null | undefined,
 ): string | null {
   const tracks = config.tracks ?? [];
   if (tracks.length === 0) return null;
-  return tracks.some((t) => t.id === track) ? (track as string) : tracks[0].id;
+  const bekend = (id: string | null | undefined) => tracks.some((t) => t.id === id);
+  if (bekend(track)) return track as string;
+  const nieuw = track ? config.oudeLeerroutes?.[track] : undefined;
+  return bekend(nieuw) ? (nieuw as string) : tracks[0].id;
 }
 
 /**

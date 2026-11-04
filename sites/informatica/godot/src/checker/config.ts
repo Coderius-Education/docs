@@ -84,6 +84,20 @@ const BEKENDE_NODES = [
 const CURSUS_SNELHEID = ['300.0', '300'];
 const CURSUS_SPRONG = ['-800.0', '-800', '-400.0', '-400'];
 const CURSUS_ANIMATIES = ['idle', 'run', 'jump'];
+// De eigen functies die hoofdstuk 1 tot en met 9 voorzegt. Wie ze overtypt
+// heeft geen code opgeknipt, en zo telde een nagedane cursus (reset() in de
+// global en spawn_muntje() in het level) al als "modulaire eigen functies".
+// Hoofdstuk 10 leert het opknippen zelf; die functies tellen dus wel.
+export const CURSUS_FUNCTIES = [
+  'geef_snelheidsboost',
+  'geef_sprongboost',
+  'is_game_over',
+  'reset',
+  'spawn_muntje',
+  'spawn_vijand',
+  'stop',
+  'verlies_leven',
+];
 
 // De waardes worden in een negatieve lookahead gezet. `\b` volstaat daar niet:
 // achter de `300` in `300.5` staat óók een woordgrens, waardoor een eigen
@@ -152,9 +166,13 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'gd-instantiate': gd(/\.instantiate\s*\(/g),
   'gd-groups': gd(/\b(?:add_to_group|get_nodes_in_group|call_group|is_in_group)\s*\(/g),
   // Eigen functies, dus niet de functies die Godot zelf aanroept (_ready,
-  // _process, _physics_process, _input) en niet de signal-handlers (_on_…),
-  // want die staan al als eigen concept in de tabel.
-  'gd-modulaire-functies': gd(/^[ \t]*func\s+(?!_)\w+/gm, 2),
+  // _process, _physics_process, _input), niet de signal-handlers (_on_…),
+  // want die staan al als eigen concept in de tabel, en niet de functies die
+  // de cursus voorzegt (CURSUS_FUNCTIES).
+  'gd-modulaire-functies': gd(
+    new RegExp(`^[ \\t]*func\\s+(?!_|(?:${alt(CURSUS_FUNCTIES)})\\s*\\()\\w+`, 'gm'),
+    2,
+  ),
   'gd-lijsten': gd(/\.append\s*\(|\.size\s*\(\)|\bArray\b|=\s*\[/g, 2),
   'gd-dictionaries': gd(/\.keys\s*\(\)|\.values\s*\(\)|\.has\s*\(|=\s*\{/g, 2),
   'gd-json': gd(/\bJSON\.\w+|\bFileAccess\./g),
@@ -229,6 +247,10 @@ export const godotConfig: CheckerConfig = {
     'gesprek-creëren': 'creëren',
     'gesprek-optimaliseren': 'creëren',
   },
+
+  // De leerroutes van vóór de drie niveaus. Start was de eerste kolom van het
+  // blad en is niveau 1; verdieping was de tweede, en dat is nu niveau 3.
+  oudeLeerroutes: { start: '1', verdieping: '3' },
 
   fileKinds: [
     { id: 'gd', label: 'GDScript' },

@@ -154,6 +154,12 @@ export interface CheckerConfig {
    * docent toen aanvinkte (bloomUitOudeVinkjes).
    */
   oudeVinkjes?: Record<string, string>;
+  /**
+   * Leerroutes die er niet meer zijn, met de route die er nu voor staat. Een
+   * bewaarde beoordeling met een oude route opent op de nieuwe
+   * (geldigeTrack), niet stil op de eerste.
+   */
+  oudeLeerroutes?: Record<string, string>;
   /** Bestandssoorten voor het bestandsoverzicht (volgorde + labels). */
   fileKinds: FileKindInfo[];
   /** Pad → kind-id. */

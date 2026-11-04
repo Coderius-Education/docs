@@ -2,14 +2,16 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { levelVoor } from '@coderius/checker/conceptLevel';
+import { geldigeTrack } from '@coderius/checker/leerdoelen';
 import { computeLevelSummary } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { CheckReport, ConceptMatch, ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
 import { BLOOM } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
+import { blokkenInVolgorde, functies } from '../godot-tests/lessen';
 import leerdoelen from '../leerdoelen.json';
-import { godotConfig } from './config';
+import { CURSUS_FUNCTIES, godotConfig } from './config';
 
 function files(entries: Record<string, string | null>): ProjectFiles {
   return Object.fromEntries(
@@ -112,7 +114,6 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         'gd-volgend-level',
         'gd-globals',
         'gd-instantiate',
-        'gd-modulaire-functies',
         'gd-timers',
       ],
       [
@@ -128,6 +129,9 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         // Het bouwt met de nodes die de cursus aanleert, dus er is niets
         // zelf ontdekt.
         '2d-nieuwe-nodes',
+        // Zijn enige eigen functies, reset() en spawn_muntje(), staan zo in
+        // hoofdstuk 7 en 8: overgetypt, niet zelf opgeknipt.
+        'gd-modulaire-functies',
         'gd-groups',
         'gd-lijsten',
         'gd-dictionaries',
@@ -258,6 +262,36 @@ describe('godotConfig — de leerdoelen', () => {
         );
       }
     }
+  });
+
+  it('kent de eigen functies die hoofdstuk 1 tot en met 9 voorzegt', () => {
+    // Komt er in een les een functie bij, dan telt hij anders stil mee als
+    // "modulaire eigen functies" voor wie hem overtypt.
+    const inDeLessen = new Set<string>();
+    for (const b of blokkenInVolgorde()) {
+      if (b.hoofdstuk > 9) continue;
+      for (const f of functies(b.code).keys()) if (!f.startsWith('_')) inDeLessen.add(f);
+    }
+    expect([...inDeLessen].sort()).toEqual([...CURSUS_FUNCTIES].sort());
+  });
+
+  it('telt een eigen functie wel, ook naast een uit de cursus', () => {
+    const telt = (code: string) =>
+      score(analyze(files({ 'global.gd': code }), godotConfig), 'gd-modulaire-functies').used;
+    expect(telt('extends Node\n\nfunc reset() -> void:\n\tpass\n\nfunc stop():\n\tpass\n')).toBe(
+      false,
+    );
+    expect(telt('extends Node\n\nfunc reset_alles():\n\tpass\n\nfunc stoppen():\n\tpass\n')).toBe(
+      true,
+    );
+  });
+
+  it('opent een bewaarde beoordeling met een oude leerroute op het niveau dat ervoor kwam', () => {
+    // Zonder omzetting opende een beoordeling op "verdieping" stil op niveau 1.
+    expect(geldigeTrack(godotConfig, 'start')).toBe('1');
+    expect(geldigeTrack(godotConfig, 'verdieping')).toBe('3');
+    const ids = (godotConfig.tracks ?? []).map((t) => t.id);
+    for (const naar of Object.values(godotConfig.oudeLeerroutes ?? {})) expect(ids).toContain(naar);
   });
 
   it('levert per niveau een andere verdeling op, anders zijn de niveaus zinloos', () => {
