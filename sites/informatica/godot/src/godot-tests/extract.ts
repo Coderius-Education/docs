@@ -27,6 +27,18 @@ export type Fragment = {
   code: string;
   /** de dichtstbijzijnde `##`-kop erboven; de gedragstest kiest hierop */
   kop: string;
+  /**
+   * Bij een foutvoorbeeld met `{/* verwacht-fout: … *\/}` erboven: de melding
+   * die Godot hoort te geven. De testrunner eist dan dat het blok níét
+   * compileert, en dat deze tekst in een van de meldingen staat.
+   */
+  verwachtFout?: string;
+  /**
+   * Bij `{/* verwacht-runtime-fout: … *\/}`: de melding die het script tijdens
+   * het draaien geeft. De testrunner compileert het, hangt het aan een node
+   * van zijn soort, laat `_ready()` draaien en zoekt de melding.
+   */
+  verwachtRuntimeFout?: string;
 };
 
 export type Overgeslagen = {
@@ -35,7 +47,12 @@ export type Overgeslagen = {
   reden: string;
 };
 
-const BLOK = /```gdscript\n([\s\S]*?)```/g;
+/**
+ * Een GDScript-codeblok, ook met iets achter de taal (```gdscript title=…)
+ * en met Windows-regeleinden. Gedeeld met de andere tests over de codeblokken,
+ * zodat die dezelfde blokken zien als de extractie.
+ */
+export const BLOK = /```gdscript[^\n]*\r?\n([\s\S]*?)```/g;
 
 /** Regels die op zichzelf geen geldig script vormen maar wel voorkomen. */
 function isFoutVoorbeeld(code: string): boolean {
@@ -50,6 +67,118 @@ function isFoutVoorbeeld(code: string): boolean {
  */
 const NIET_COMPILEREN = '{/* niet-compileren:';
 
+/**
+ * Markers vlak boven een codeblok, in de MDX-vorm die de leerling niet ziet:
+ *
+ *  - `{/* verwacht-fout: <melding> *\/}`: een foutvoorbeeld dat juist wél door
+ *    Godot moet. De les citeert de melding die het geeft, en die melding moet
+ *    kloppen. Zonder deze controle stond in de tweens-les dat
+ *    `tween_callback(queue_free())` het muntje meteen laat verdwijnen, terwijl
+ *    Godot het script weigert. Alles vanaf een regel `# GOED` hoort bij de
+ *    verbetering en gaat niet mee.
+ *  - `{/* verwacht-runtime-fout: <melding> *\/}`: hetzelfde voor een melding
+ *    die pas tijdens het spelen komt (een ontbrekende sleutel, een kapotte
+ *    tween). Het script compileert gewoon; de testrunner hangt het aan een
+ *    node van zijn soort, laat `_ready()` draaien en zoekt de melding. Schrijf
+ *    zo'n voorbeeld dus zo dat `_ready()` de fout maakt.
+ *  - `{/* compileer-als: extends Area2D *\/}`: een losse functie die de les
+ *    toont zonder de rest van het script ("pas `_on_body_entered` van je vijand
+ *    aan"), zodat wat de leerling er verder in heeft niet verdwijnt als hij het
+ *    overneemt. De extractie zet die regel bovenaan, zodat hij toch compileert.
+ *
+ * De inhoud loopt nooit over een `*\/}` heen: met twee markers kort na elkaar
+ * hoort elk blok alleen bij de zijne.
+ */
+const MARKER_SOORTEN = ['verwacht-fout', 'verwacht-runtime-fout', 'compileer-als'] as const;
+type MarkerSoort = (typeof MARKER_SOORTEN)[number];
+const MARKER =
+  /\{\/\*\s*(verwacht-fout|verwacht-runtime-fout|compileer-als):\s*((?:(?!\*\/\})[\s\S])*?)\s*\*\/\}/g;
+
+/** De marker die direct boven een blok staat, met zijn inhoud op één regel. */
+export function markerBoven(ervoor: string): { soort: MarkerSoort; inhoud: string } | undefined {
+  const laatste = [...ervoor.matchAll(MARKER)].at(-1);
+  if (!laatste || ervoor.slice((laatste.index ?? 0) + laatste[0].length).trim() !== '') {
+    return undefined;
+  }
+  // `…` en `...` betekenen hetzelfde: iets wat per keer verschilt. De
+  // testrunner kent alleen `...`.
+  const inhoud = laatste[2].replace(/\s+/g, ' ').replace(/…/g, '...').trim();
+  return { soort: laatste[1] as MarkerSoort, inhoud };
+}
+
+/** Het patroon waaraan de extractie een heel script herkent; ook voor lessen.ts. */
+export const HEEL_SCRIPT = /^extends\s+\w+/m;
+
+/**
+ * Of een citaat uit de les klopt met de melding in de marker. Een `...` of `…`
+ * in het citaat staat voor iets wat per keer verschilt (een node-id).
+ */
+export function citaatKlopt(citaat: string, melding: string): boolean {
+  const patroon = citaat
+    .replace(/\s+/g, ' ')
+    .trim()
+    .split(/\.\.\.|…/)
+    .map((deel) => deel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('[\\s\\S]*?');
+  return new RegExp(`^${patroon}$`).test(melding);
+}
+
+/**
+ * Een foutvoorbeeld staat in een uitklapblok waarvan de summary de melding
+ * noemt, vaak met de melding nog eens in een kaal codeblok. Wat de leerling
+ * leest, moet de melding zijn die Godot geeft, en die staat in de marker.
+ */
+function controleerCitaten(ervoor: string, melding: string, waar: string): void {
+  const openingen = [...ervoor.matchAll(/<details[\s>]/g)];
+  const begin = openingen.at(-1)?.index;
+  if (begin === undefined || ervoor.slice(begin).includes('</details>')) {
+    throw new Error(
+      `${waar}: een verwacht-fout of verwacht-runtime-fout hoort in hetzelfde <details> als de melding`,
+    );
+  }
+  const stuk = ervoor.slice(begin);
+  const summary = stuk.match(/<summary[^>]*>([\s\S]*?)<\/summary>/)?.[1];
+  const zonderTags = (summary ?? '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/`/g, '')
+    .replace(/^\s*Foutmelding:\s*/, '');
+  if (!citaatKlopt(zonderTags, melding)) {
+    throw new Error(
+      `${waar}: de summary "${zonderTags.trim()}" is niet de melding uit de marker: "${melding}"`,
+    );
+  }
+  // De codeblokken regel voor regel: een gdscript-blok is code, elk ander
+  // blok (zonder taal, of text, console) is een meldingsblok.
+  let taal: string | undefined;
+  let inhoud: string[] = [];
+  for (const regel of stuk.split('\n')) {
+    const fence = regel.match(/^```(\S*)/);
+    if (!fence) {
+      if (taal !== undefined) inhoud.push(regel);
+      continue;
+    }
+    if (taal === undefined) {
+      taal = fence[1];
+      inhoud = [];
+      continue;
+    }
+    if (taal !== 'gdscript' && !citaatKlopt(inhoud.join('\n'), melding)) {
+      throw new Error(
+        `${waar}: het meldingsblok "${inhoud.join('\n').trim()}" is niet de melding uit de marker: "${melding}"`,
+      );
+    }
+    taal = undefined;
+  }
+}
+
+/**
+ * Wat een runtime-voorbeeld niet mag doen: de testrunner hangt het in zijn
+ * eigen scène. quit() beëindigde de hele run met exit 0, een scènewissel
+ * verving de runner, en een fout na een await valt buiten de frames die de
+ * runner wacht.
+ */
+const VERBODEN_IN_RUNTIME = /\bquit\s*\(|\breload_current_scene\s*\(|\bawait\b/;
+
 function slugVan(inhoud: string): string | undefined {
   return inhoud.match(/^slug:\s*\/(\S+)/m)?.[1];
 }
@@ -62,8 +191,16 @@ function slugVan(inhoud: string): string | undefined {
  */
 export function fragmentenUit(
   bron: string,
-  inhoud: string,
+  ruw: string,
 ): { fragmenten: Fragment[]; overgeslagen: Overgeslagen[] } {
+  const inhoud = ruw.replace(/\r\n/g, '\n');
+  for (const m of inhoud.matchAll(MARKER)) {
+    const erna = inhoud.slice((m.index ?? 0) + m[0].length);
+    if (!/^\s*```gdscript/.test(erna)) {
+      const regel = inhoud.slice(0, m.index).split('\n').length;
+      throw new Error(`${bron}:${regel}: ${m[1]} staat niet direct boven een gdscript-blok`);
+    }
+  }
   // Pagina's zonder slug (cheatsheet, tips) krijgen hun bestandsnaam, zodat de
   // namen niet van het absolute pad afhangen.
   const slug = slugVan(inhoud) ?? (bron.split('/').pop() ?? bron).replace(/\.mdx?$/, '');
@@ -82,6 +219,52 @@ export function fragmentenUit(
     n += 1;
     const naam = `${slug.replace(/[^a-z0-9]+/gi, '_')}_${n}`;
 
+    const marker = markerBoven(ervoor);
+    if (marker?.soort === 'verwacht-fout') {
+      const fout = code.split(/^\s*#\s*GOED\b/m)[0].replace(/\s+$/, '');
+      if (!/^extends\s+\w+/m.test(fout)) {
+        throw new Error(
+          `${bron}:${regel}: een verwacht-fout-blok moet een heel script zijn, met extends`,
+        );
+      }
+      controleerCitaten(ervoor, marker.inhoud, `${bron}:${regel}`);
+      fragmenten.push({
+        naam,
+        bron,
+        regel,
+        begin,
+        eind,
+        kop,
+        code: `${fout}\n`,
+        verwachtFout: marker.inhoud,
+      });
+      continue;
+    }
+    if (marker?.soort === 'verwacht-runtime-fout') {
+      const fout = code.split(/^\s*#\s*GOED\b/m)[0].replace(/\s+$/, '');
+      if (!/^extends\s+\w+/m.test(fout) || !/^func _ready\(/m.test(fout)) {
+        throw new Error(
+          `${bron}:${regel}: een verwacht-runtime-fout-blok moet een heel script zijn, met extends en een _ready()`,
+        );
+      }
+      if (VERBODEN_IN_RUNTIME.test(fout)) {
+        throw new Error(
+          `${bron}:${regel}: een verwacht-runtime-fout-blok mag geen quit(), reload_current_scene() of await bevatten`,
+        );
+      }
+      controleerCitaten(ervoor, marker.inhoud, `${bron}:${regel}`);
+      fragmenten.push({
+        naam,
+        bron,
+        regel,
+        begin,
+        eind,
+        kop,
+        code: `${fout}\n`,
+        verwachtRuntimeFout: marker.inhoud,
+      });
+      continue;
+    }
     if (isFoutVoorbeeld(code) || ervoor.slice(-200).includes(NIET_COMPILEREN)) {
       overgeslagen.push({ bron, regel, reden: 'bewust fout voorbeeld' });
       continue;
@@ -89,6 +272,24 @@ export function fragmentenUit(
 
     if (/^extends\s+\w+/m.test(code)) {
       fragmenten.push({ naam, bron, regel, begin, eind, kop, code: `${code}\n` });
+      continue;
+    }
+
+    if (marker?.soort === 'compileer-als') {
+      if (!/^extends\s+\w+$/.test(marker.inhoud) || /^\s/.test(code)) {
+        throw new Error(
+          `${bron}:${regel}: compileer-als hoort "extends <Node>" te zijn, boven code die links begint`,
+        );
+      }
+      fragmenten.push({
+        naam,
+        bron,
+        regel,
+        begin,
+        eind,
+        kop,
+        code: `${marker.inhoud}\n\n${code}\n`,
+      });
       continue;
     }
 
@@ -122,7 +323,8 @@ export function verzamel(wortels: string[]): {
  * met elk lid één keer. Van een lid dat meermaals voorkomt wint de langste
  * versie, want dat is de uitgewerkte.
  */
-export function autoloadUit(inhoud: string): string | undefined {
+export function autoloadUit(ruw: string): string | undefined {
+  const inhoud = ruw.replace(/\r\n/g, '\n');
   const leden = new Map<string, string>();
 
   for (const match of inhoud.matchAll(BLOK)) {

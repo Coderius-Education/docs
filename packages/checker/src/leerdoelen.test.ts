@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { leerdoelenNaarConfig } from './leerdoelen';
+import { bloomUitOudeVinkjes, geldigeTrack, leerdoelenNaarConfig } from './leerdoelen';
 import type { ConceptDetect } from './types';
 
 const detect: ConceptDetect = { type: 'regex', pattern: /x/g };
@@ -74,5 +74,49 @@ describe('leerdoelenNaarConfig', () => {
 
   it('een fout in de leerdoelen zelf komt uit leesLeerdoelen', () => {
     expect(() => leerdoelenNaarConfig({ ...eenNiveau, niveaus: [] }, {})).toThrow(/niveau/);
+  });
+});
+
+describe('geldigeTrack', () => {
+  const config = {
+    tracks: [
+      { id: '1', label: 'Niveau 1' },
+      { id: '3', label: 'Niveau 3' },
+    ],
+  };
+
+  it('houdt een bekende leerroute', () => {
+    expect(geldigeTrack(config, '3')).toBe('3');
+  });
+
+  it('valt bij een onbekende of lege terug op de eerste, zodat er altijd een knop gekozen is', () => {
+    // Een bewaarde beoordeling uit Godot had nog 'verdieping'.
+    expect(geldigeTrack(config, 'verdieping')).toBe('1');
+    expect(geldigeTrack(config, null)).toBe('1');
+  });
+
+  it('zet een oude leerroute om naar de route die ervoor in de plaats kwam', () => {
+    const metOude = { ...config, oudeLeerroutes: { start: '1', verdieping: '3', weg: '9' } };
+    expect(geldigeTrack(metOude, 'verdieping')).toBe('3');
+    expect(geldigeTrack(metOude, 'start')).toBe('1');
+    // Een omzetting naar een route die er ook niet is, valt terug op de eerste.
+    expect(geldigeTrack(metOude, 'weg')).toBe('1');
+  });
+
+  it('geeft null zonder leerroutes', () => {
+    expect(geldigeTrack({}, 'start')).toBeNull();
+  });
+});
+
+describe('bloomUitOudeVinkjes', () => {
+  const oud = { 'gesprek-voordragen': 'onthouden', 'gesprek-betogen': 'evalueren' };
+
+  it('neemt de hoogste trede van de oude vinkjes', () => {
+    expect(bloomUitOudeVinkjes(oud, ['gesprek-voordragen', 'gesprek-betogen'])).toBe('evalueren');
+  });
+
+  it('geeft null zonder oude vinkjes of zonder lijst', () => {
+    expect(bloomUitOudeVinkjes(oud, ['2d-handmatig'])).toBeNull();
+    expect(bloomUitOudeVinkjes(undefined, ['gesprek-betogen'])).toBeNull();
   });
 });

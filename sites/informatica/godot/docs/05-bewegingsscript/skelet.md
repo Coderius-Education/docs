@@ -78,7 +78,7 @@ Let op het inspringen: `move_and_slide()` staat één tab naar rechts. Daaraan z
 
 **`_physics_process`** is geen naam die jij verzint. Godot kent deze naam en roept hem automatisch aan, ongeveer zestig keer per seconde. De underscore vooraan is het teken dat het een functie van Godot zelf is.
 
-**`(delta: float)`** is een parameter: informatie die Godot bij elke aanroep meegeeft. `delta` is de tijd in seconden sinds de vorige keer. In Deel 3 ga je hem gebruiken.
+**`(delta: float)`** is een parameter: informatie die Godot bij elke aanroep meegeeft. `delta` is de tijd in seconden sinds de vorige keer. In Deel 2 gebruik je hem voor het eerst, en in Deel 3 zie je wat hij doet.
 
 **`-> void`** zegt: deze functie geeft niets terug. Ze *doet* iets, in plaats van iets te berekenen dat je later gebruikt. In Python is dat een functie zonder `return`.
 
@@ -143,31 +143,63 @@ func _physics_process(delta: float) -> void:
 ## Er gaat iets mis
 
 <details>
-<summary>Foutmelding over inspringen (Indentation / Expected indented block)</summary>
+<summary>Foutmelding: <code>Expected indented block after function declaration.</code></summary>
 
-**Oorzaak:** De regel `move_and_slide()` springt niet in, of je hebt tabs en spaties door elkaar gebruikt.
+**Oorzaak:** De regel `move_and_slide()` springt niet in. Dan heeft de functie geen enkele regel die erbij hoort.
+
+{/* verwacht-fout: Expected indented block after function declaration. */}
+
+```gdscript
+# FOUT
+extends CharacterBody2D
+
+func _physics_process(delta: float) -> void:
+move_and_slide()
+```
 
 **Oplossing:**
 
 1. Zet de cursor aan het begin van `move_and_slide()` en verwijder alle witruimte ervoor.
 2. Druk één keer op `Tab`.
-3. Gebruik in het hele bestand hetzelfde: alleen tabs, of alleen spaties.
+
+Meldt Godot daarna `Used space character for indentation instead of tab as used before in the file.`, dan staan er tabs en spaties door elkaar. Gebruik in het hele bestand hetzelfde: alleen tabs, of alleen spaties.
 
 </details>
 
 <details>
-<summary>Foutmelding: <code>move_and_slide called without physics frame</code></summary>
+<summary>Foutmelding: <code>Unexpected identifier "move_and_slide" in class body.</code></summary>
 
-**Oorzaak:** `move_and_slide()` staat buiten `_physics_process`, bijvoorbeeld helemaal links tegen de kantlijn.
+**Oorzaak:** De functie heeft al een ingesprongen regel, zoals de `print` uit Stap 3, maar `move_and_slide()` staat daaronder helemaal links. Dan hoort hij niet meer bij de functie, en los in je script mag zo'n regel niet staan.
 
-**Oplossing:** Zorg dat de regel ingesprongen staat onder `func _physics_process(delta: float) -> void:`.
+{/* verwacht-fout: Unexpected identifier "move_and_slide" in class body. */}
+
+```gdscript
+# FOUT
+extends CharacterBody2D
+
+func _physics_process(delta: float) -> void:
+    print("ik draai")
+move_and_slide()
+```
+
+**Oplossing:** Laat `move_and_slide()` net zo ver inspringen als de regel erboven.
 
 </details>
 
 <details>
-<summary>Ik krijg een foutmelding over een dubbele punt</summary>
+<summary>Foutmelding: <code>Unexpected "Indent" in class body.</code></summary>
 
-**Oorzaak:** De `:` aan het eind van de `func`-regel ontbreekt.
+**Oorzaak:** De `:` aan het eind van de `func`-regel ontbreekt. Zonder dubbele punt begint er geen functie, en dan hoort de ingesprongen regel eronder nergens bij. Daarom klaagt Godot over het inspringen, terwijl de fout een regel hoger zit.
+
+{/* verwacht-fout: Unexpected "Indent" in class body. */}
+
+```gdscript
+# FOUT
+extends CharacterBody2D
+
+func _physics_process(delta: float) -> void
+    move_and_slide()
+```
 
 **Oplossing:** Elke functie-regel eindigt op een dubbele punt: `func _physics_process(delta: float) -> void:`. Net als in Python.
 

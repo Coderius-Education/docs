@@ -1,4 +1,4 @@
-import { type Leerdoelen, leesLeerdoelen, moeilijkheid } from '@coderius/shared/leerdoelen';
+import { BLOOM, type Leerdoelen, leesLeerdoelen, moeilijkheid } from '@coderius/shared/leerdoelen';
 import type { CheckerConfig, Concept, ConceptDetect, ConceptLevel } from './types';
 
 // Van de leerdoelen van een cursus (src/leerdoelen.json, zie
@@ -57,4 +57,42 @@ export function leerdoelenNaarConfig(
     ...(eenNiveau ? {} : { tracks: leerdoelen.niveaus.map((n) => ({ id: n.id, label: n.label })) }),
     concepts,
   };
+}
+
+/**
+ * De leerroute die de nakijker gebruikt: de bewaarde, als de config hem nog
+ * kent, en anders de eerste. Een beoordeling van vóór een nieuwe indeling
+ * (Godot had start en verdieping) rekende anders stil met de eerste waarde
+ * van elk concept, zonder dat er een knop gekozen stond. Kent de config de
+ * oude route (oudeLeerroutes), dan wordt het de route die ervoor in de plaats
+ * kwam: een beoordeling op "verdieping" telde anders ineens op niveau 1.
+ */
+export function geldigeTrack(
+  config: Pick<CheckerConfig, 'tracks' | 'oudeLeerroutes'>,
+  track: string | null | undefined,
+): string | null {
+  const tracks = config.tracks ?? [];
+  if (tracks.length === 0) return null;
+  const bekend = (id: string | null | undefined) => tracks.some((t) => t.id === id);
+  if (bekend(track)) return track as string;
+  const nieuw = track ? config.oudeLeerroutes?.[track] : undefined;
+  return bekend(nieuw) ? (nieuw as string) : tracks[0].id;
+}
+
+/**
+ * De denkvaardigheid uit oude handmatige vinkjes (de Gesprek-vinkjes van
+ * Godot): de hoogste trede die de docent aanvinkte, of null.
+ */
+export function bloomUitOudeVinkjes(
+  oud: Record<string, string> | undefined,
+  handmatig: readonly string[],
+): string | null {
+  if (!oud) return null;
+  const volgorde = BLOOM.denkvaardigheden.map((d) => d.id);
+  let hoogste = -1;
+  for (const id of handmatig) {
+    const i = volgorde.indexOf(oud[id] ?? '');
+    if (i > hoogste) hoogste = i;
+  }
+  return hoogste === -1 ? null : volgorde[hoogste];
 }

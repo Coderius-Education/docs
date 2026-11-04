@@ -188,19 +188,6 @@ In de volgende les bouw je een **score-teller** in je karakter, zodat opgepakte 
 </details>
 
 <details>
-<summary>Ik krijg een fout: <code>signal already connected</code></summary>
-
-**Oorzaak:** Je hebt het `body_entered`-signal twee keer gekoppeld aan dezelfde functie.
-
-**Oplossing:**
-
-1. Selecteer de `Muntje`-node.
-2. Open het **Node**-tabblad.
-3. Klik met rechts op de dubbele verbinding onder `body_entered` → **Disconnect**.
-
-</details>
-
-<details>
 <summary><code>_on_body_entered</code> wordt nooit aangeroepen</summary>
 
 **Oorzaak:** Het muntje is geen `Area2D`, of de `CollisionShape2D` heeft geen Shape.

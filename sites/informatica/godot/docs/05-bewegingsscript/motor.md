@@ -123,9 +123,19 @@ func _physics_process(delta: float) -> void:
 </details>
 
 <details>
-<summary>Foutmelding: <code>Identifier "velocity" not declared in the current scope</code></summary>
+<summary>Foutmelding: <code>Identifier "velocity" not declared in the current scope.</code></summary>
 
 **Oorzaak:** De eerste regel van je script klopt niet. `velocity` bestaat alleen als je script van een `CharacterBody2D` erft.
+
+{/* verwacht-fout: Identifier "velocity" not declared in the current scope. */}
+
+```gdscript
+# FOUT
+extends Node2D
+
+func _physics_process(delta: float) -> void:
+    velocity += get_gravity() * delta
+```
 
 **Oplossing:** Controleer dat er bovenaan `extends CharacterBody2D` staat.
 

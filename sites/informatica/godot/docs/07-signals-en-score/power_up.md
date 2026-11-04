@@ -162,13 +162,15 @@ Maak een tweede power-up die je drie seconden lang sneller laat lopen in plaats 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-**In je karakter-script:**
+**In je karakter-script** staat dit erbij; `_physics_process` en `geef_sprongboost()` blijven staan:
 
 ```gdscript
 extends CharacterBody2D
 
 var snelheid = 300.0
 var sprongkracht = -800.0
+
+# ... hier staan _physics_process en geef_sprongboost() nog
 
 
 func geef_snelheidsboost() -> void:
@@ -183,10 +185,10 @@ Overal waar `SPEED` stond, staat nu `snelheid`:
 
 ```gdscript
     var direction := Input.get_axis("ui_left", "ui_right")
-    if direction:
-        velocity.x = direction * snelheid
-    else:
+    if direction == 0:
         velocity.x = move_toward(velocity.x, 0, snelheid)
+    else:
+        velocity.x = direction * snelheid
 ```
 
 **In het script van de tweede power-up:**
@@ -210,7 +212,7 @@ Je hebt nu een stopwatch gebruikt die één keer afloopt. Moet er telkens opnieu
 <details>
 <summary>Mijn boost stopt te vroeg als ik twee power-ups snel achter elkaar pak</summary>
 
-**Oorzaak:** elke power-up start zijn eigen stopwatch, maar ze zetten allebei dezelfde variabele terug. Pak je er één na twee seconden nog een, dan loopt de eerste stopwatch drie seconden later af en zet de sprongkracht terug — terwijl de tweede boost nog vier seconden te gaan had.
+**Oorzaak:** elke power-up start zijn eigen stopwatch, maar ze zetten allebei dezelfde variabele terug. Pak je er één na twee seconden nog een, dan loopt de eerste stopwatch drie seconden later af en zet de sprongkracht terug — terwijl de tweede boost nog twee seconden te gaan had.
 
 **Oplossing:** houd bij hoeveel boosts er lopen, en zet pas terug als de laatste afloopt:
 
@@ -242,7 +244,7 @@ func geef_sprongboost() -> void:
 <details>
 <summary>De power-up doet niets, en ik krijg een fout over een functie die niet bestaat</summary>
 
-**Oorzaak:** `body.geef_sprongboost()` roept een functie aan op de node die de power-up raakte. Raakt er iets anders dan je karakter de power-up — een muntje, een vijand, de vloer — dan heeft díé node de functie niet.
+**Oorzaak:** `body.geef_sprongboost()` roept een functie aan op de node die de power-up raakte. Voor een `Area2D` is dat elke body, ook de grond: je `TileMapLayer` met collision. Ligt de power-up op of in de tegels, dan krijgt `_on_body_entered` de grond, en die heeft de functie niet. Achteraan de melding staat welke node het was: `Invalid call. Nonexistent function 'geef_sprongboost' in base 'TileMapLayer'.` Een muntje of vijand telt hier niet mee: dat is zelf een `Area2D`, en een andere `Area2D` geeft geen `body_entered`.
 
 **Oplossing:** kijk eerst of de node de functie heeft:
 

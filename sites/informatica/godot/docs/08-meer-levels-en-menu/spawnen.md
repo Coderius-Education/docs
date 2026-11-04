@@ -136,9 +136,18 @@ De y-waarde `100` past bij een vloer die lager ligt — vul hier coördinaten in
 ## Er gaat iets mis
 
 <details>
-<summary>Foutmelding: <code>Preload file "res://muntje.tscn" does not exist</code></summary>
+<summary>Foutmelding: <code>Preload file "res://Muntje.tscn" does not exist.</code></summary>
 
-**Oorzaak:** Het pad in `preload()` klopt niet met de werkelijke bestandsnaam of -locatie.
+**Oorzaak:** Het pad in `preload()` klopt niet met de werkelijke bestandsnaam of -locatie. Hier staat er een hoofdletter in die de bestandsnaam niet heeft.
+
+{/* verwacht-fout: Preload file "res://Muntje.tscn" does not exist. */}
+
+```gdscript
+# FOUT
+extends Node2D
+
+const MUNTJE = preload("res://Muntje.tscn")
+```
 
 **Oplossing:** Zoek `muntje.tscn` in het FileSystem-paneel, klik met rechts → **Copy Path** en plak dat pad in je script. Let op hoofdletters: `Muntje.tscn` is een ander bestand dan `muntje.tscn`.
 
@@ -162,19 +171,37 @@ De y-waarde `100` past bij een vloer die lager ligt — vul hier coördinaten in
 </details>
 
 <details>
-<summary>Foutmelding: <code>Invalid call. Nonexistent function 'instantiate' in base 'String'</code></summary>
+<summary>Foutmelding: <code>Cannot find member "instantiate" in base "String".</code></summary>
 
-**Oorzaak:** Je roept `instantiate()` aan op het pad zelf, bijvoorbeeld `"res://muntje.tscn".instantiate()`. Alleen het resultaat van `preload()` heeft die functie.
+```
+Cannot find member "instantiate" in base "String".
+```
+
+**Oorzaak:** Je hebt het pad zelf in je constante gezet, zonder `preload()` eromheen. Dan is `MUNTJE` alleen tekst, en tekst heeft geen `instantiate()`; alleen het resultaat van `preload()` heeft die functie. Godot ziet dat al terwijl je typt: de regel kleurt rood en je spel start niet.
+
+{/* verwacht-fout: Cannot find member "instantiate" in base "String". */}
+
+```gdscript
+# FOUT
+extends Node2D
+
+const MUNTJE = "res://muntje.tscn"
+
+func _ready() -> void:
+    var nieuw_muntje = MUNTJE.instantiate()
+    add_child(nieuw_muntje)
+```
 
 **Oplossing:** Eerst inladen, dan instantiëren:
 
 ```gdscript
-# FOUT
-var nieuw_muntje = "res://muntje.tscn".instantiate()
+extends Node2D
 
-# GOED
 const MUNTJE = preload("res://muntje.tscn")
-var nieuw_muntje = MUNTJE.instantiate()
+
+func _ready() -> void:
+    var nieuw_muntje = MUNTJE.instantiate()
+    add_child(nieuw_muntje)
 ```
 
 </details>

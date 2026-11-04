@@ -1,28 +1,30 @@
-import type { CheckerConfig, Concept, ConceptDetect, Level } from '@coderius/checker/types';
+import { leerdoelenNaarConfig } from '@coderius/checker/leerdoelen';
+import type { CheckerConfig, ConceptDetect, ExtraConcept } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
-import niveaus from './niveaus.json';
+import leerdoelenJson from '../leerdoelen.json';
 
 // De nakijker voor Godot-projecten. Wélke concepten er zijn en op welk niveau
-// ze per leerroute tellen staat in `niveaus.json` — dat bestand is de tabel
-// van de docent, in dezelfde volgorde en met dezelfde woorden. Hier staat
-// alleen hóé je elk concept in de bestanden terugvindt.
+// ze tellen staat in `src/leerdoelen.json`: het tabblad Godot van het
+// beoordelingsblad, in dezelfde volgorde en met dezelfde woorden, met de
+// niveaus 1, 3 en 4. Hier staat alleen hóé je elk concept in de bestanden
+// terugvindt.
 //
 // De tweedeling basis/gevorderd hing eerder los van de cursus: het hele
 // bewegingsscript van hoofdstuk 5 (velocity, move_and_slide, is_on_floor,
 // get_gravity, _physics_process) stond op "gevorderd", net als _process. Een
 // leerling die de cursus afmaakte zag daardoor de helft van zijn eigen werk
-// als gevorderd staan, en het onderscheid zei niets meer. De niveaus komen nu
-// uit de tabel, en verschillen per route: wat in Start nog gevorderd is, is in
-// Verdieping gewoon basis.
+// als gevorderd staan, en het onderscheid zei niets meer. De moeilijkheden
+// komen nu uit het blad, en verschillen per niveau: wat op niveau 1 nog
+// gevorderd is, is op niveau 3 en 4 basis, en op niveau 3 zijn vier
+// concepten expert.
 //
-// Naast basis/gevorderd heeft elk concept een denkvaardigheid van Bloom. Dat
-// is een tweede as, geen derde niveau: basis/gevorderd zegt wélke concepten
+// Naast de moeilijkheid heeft elk concept een denkvaardigheid van Bloom. Dat
+// is een tweede as, geen extra niveau: de moeilijkheid zegt wélke concepten
 // tellen, Bloom zegt hoe diep een leerling ze beheerst. Dezelfde SPEED is op
 // 300.0 "nadoen" (onthouden) en op 450.0 "manipuleren" (toepassen) — en dat
 // tweede is precies wat het concept "snelheid veranderen" meet. Wat de
-// bestanden niet kunnen bewijzen (voorspellen, betogen, doceren) staat als
-// gespreksvraag in de tabel: een handmatig concept dat de docent tijdens het
-// mondeling aanvinkt.
+// bestanden niet kunnen bewijzen (voorspellen, betogen, doceren) kiest de
+// docent in het blok Cijfer van de docentweergave.
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico', '.bmp']);
 
@@ -82,13 +84,25 @@ const BEKENDE_NODES = [
 const CURSUS_SNELHEID = ['300.0', '300'];
 const CURSUS_SPRONG = ['-800.0', '-800', '-400.0', '-400'];
 const CURSUS_ANIMATIES = ['idle', 'run', 'jump'];
+// De eigen functies die hoofdstuk 1 tot en met 9 voorzegt. Wie ze overtypt
+// heeft geen code opgeknipt, en zo telde een nagedane cursus (reset() in de
+// global en spawn_muntje() in het level) al als "modulaire eigen functies".
+// Hoofdstuk 10 leert het opknippen zelf; die functies tellen dus wel.
+export const CURSUS_FUNCTIES = [
+  'geef_snelheidsboost',
+  'geef_sprongboost',
+  'is_game_over',
+  'reset',
+  'spawn_muntje',
+  'spawn_vijand',
+  'stop',
+  'verlies_leven',
+];
 
 // De waardes worden in een negatieve lookahead gezet. `\b` volstaat daar niet:
 // achter de `300` in `300.5` staat óók een woordgrens, waardoor een eigen
 // waarde ten onrechte als cursuswaarde zou tellen. Vandaar `(?![\d.])`.
 const alt = (waardes: string[]) => waardes.map((w) => w.replace(/[.\-]/g, '\\$&')).join('|');
-
-const HANDMATIG: ConceptDetect = { type: 'handmatig' };
 
 const DETECTIE: Record<string, ConceptDetect> = {
   // --- 2D: nodes uit de scene-bestanden ---
@@ -102,8 +116,18 @@ const DETECTIE: Record<string, ConceptDetect> = {
   '2d-canvaslayer': node('CanvasLayer'),
   '2d-label': node('Label'),
   '2d-control': node('Control'),
-  '2d-vboxcontainer': node('VBoxContainer'),
-  '2d-button': node('Button'),
+  // Het startmenu uit hoofdstuk 8: een scène waarvan de bovenste node een
+  // Control is, met een Button erin. Alleen de bovenste node heeft geen
+  // `parent=`; een Control ergens in een level (een pauzescherm in de HUD)
+  // met een knop ernaast is geen startscherm. Godot 4.6 en nieuwer zetten
+  // er een unique_id achter ([node name="Menu" type="Control"
+  // unique_id=810606303]), dus na het type mag er meer staan, maar geen parent.
+  '2d-startscherm': {
+    type: 'regex',
+    pattern:
+      /\[node name="[^"]*" type="Control"(?![^\]]*\bparent=)[^\]]*\][\s\S]*?\[node [^\]]*type="Button"/g,
+    in: ['tscn'],
+  },
   '2d-nieuwe-nodes': {
     type: 'regex',
     pattern: new RegExp(`\\[node [^\\]]*type="(?!(?:${BEKENDE_NODES.join('|')})")\\w+"`, 'g'),
@@ -142,17 +166,16 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'gd-instantiate': gd(/\.instantiate\s*\(/g),
   'gd-groups': gd(/\b(?:add_to_group|get_nodes_in_group|call_group|is_in_group)\s*\(/g),
   // Eigen functies, dus niet de functies die Godot zelf aanroept (_ready,
-  // _process, _physics_process, _input) en niet de signal-handlers (_on_…),
-  // want die staan al als eigen concept in de tabel.
-  'gd-modulaire-functies': gd(/^[ \t]*func\s+(?!_)\w+/gm, 2),
+  // _process, _physics_process, _input), niet de signal-handlers (_on_…),
+  // want die staan al als eigen concept in de tabel, en niet de functies die
+  // de cursus voorzegt (CURSUS_FUNCTIES).
+  'gd-modulaire-functies': gd(
+    new RegExp(`^[ \\t]*func\\s+(?!_|(?:${alt(CURSUS_FUNCTIES)})\\s*\\()\\w+`, 'gm'),
+    2,
+  ),
   'gd-lijsten': gd(/\.append\s*\(|\.size\s*\(\)|\bArray\b|=\s*\[/g, 2),
   'gd-dictionaries': gd(/\.keys\s*\(\)|\.values\s*\(\)|\.has\s*\(|=\s*\{/g, 2),
   'gd-json': gd(/\bJSON\.\w+|\bFileAccess\./g),
-  // Begrijpen — toelichten. De tabel zegt zelf hoe je dat aantoont: "via
-  // comments in code". Niet elke comment is een toelichting; `# beweging`
-  // benoemt alleen. Een reden herken je aan een redengevend woord. Twee keer,
-  // want één zo'n comment kan uit de les zijn overgetypt.
-  'gd-toelichting': gd(/#[^\n]*\b(?:omdat|zodat|want|daarom|hierdoor|anders)\b/gi, 2),
   'gd-loops': gd(/^[ \t]*(?:for|while)\s/gm, 2),
   'gd-tweens': gd(/\bcreate_tween\s*\(|\bTween\b/g),
   // Een Timer is er in twee smaken: de node in je scène, en de stopwatch die
@@ -162,65 +185,72 @@ const DETECTIE: Record<string, ConceptDetect> = {
     pattern: /\bcreate_timer\s*\(|\[node [^\]]*type="Timer"/g,
     in: ['gd', 'tscn'],
   },
-
-  // --- Project: analyseren — ordenen ---
-  // "Inrichting van project, bestanden" uit de tabel. Een `assets`-map en een
-  // `scripts`-map schrijft de cursus zelf voor (hoofdstuk 2), dus die bewijzen
-  // nadoen, geen ordenen. Scènes in een eigen map noemt de cursus alleen als
-  // mogelijkheid; wie dat doet heeft zelf over de indeling nagedacht. De
-  // uploader haalt de gedeelde bovenmap er al af, dus `mijn-game/wereld.tscn`
-  // telt niet als submap.
-  'project-inrichting': { type: 'path', pattern: /\/[^/]+\.tscn$/i },
-
-  // --- Gesprek: wat alleen in het mondeling zichtbaar is ---
-  // analyze() laat deze op used: false; de docentweergave maakt er een
-  // vinkvakje van dat mee de PDF in gaat. De vraag staat in het label.
-  'gesprek-voordragen': HANDMATIG,
-  'gesprek-voorspellen': HANDMATIG,
-  'gesprek-vragen': HANDMATIG,
-  'gesprek-uitleggen': HANDMATIG,
-  'gesprek-integreren': HANDMATIG,
-  'gesprek-beredeneren': HANDMATIG,
-  'gesprek-betogen': HANDMATIG,
-  'gesprek-doceren': HANDMATIG,
-  'gesprek-creëren': HANDMATIG,
-  'gesprek-optimaliseren': HANDMATIG,
 };
 
-const NIVEAUS: Record<string, Level> = { basis: 'basis', gevorderd: 'gevorderd' };
+// Herkend, maar niet in de tabel van de docent: ze staan onder "Ook gebruikt"
+// en tellen niet mee voor het niveau.
+const OOK_GEBRUIKT: ExtraConcept[] = [
+  {
+    id: '2d-vboxcontainer',
+    subject: '2d',
+    group: 'Nodes',
+    label: 'VBoxContainer',
+    detect: node('VBoxContainer'),
+  },
+  { id: '2d-button', subject: '2d', group: 'Nodes', label: 'Button', detect: node('Button') },
+  {
+    id: 'gd-toelichting',
+    subject: 'gdscript',
+    group: 'Verder met code',
+    label: 'toelichting in comments (omdat, zodat, want)',
+    // Begrijpen — toelichten. De tabel zegt zelf hoe je dat aantoont: "via
+    // comments in code". Niet elke comment is een toelichting; `# beweging`
+    // benoemt alleen. Een reden herken je aan een redengevend woord. Twee keer,
+    // want één zo'n comment kan uit de les zijn overgetypt.
+    detect: gd(/#[^\n]*\b(?:omdat|zodat|want|daarom|hierdoor|anders)\b/gi, 2),
+  },
+  {
+    id: 'project-inrichting',
+    subject: 'project',
+    group: 'Inrichting',
+    label: 'scènes in eigen mappen',
+    // "Inrichting van project, bestanden" uit de tabel. Een `assets`-map en een
+    // `scripts`-map schrijft de cursus zelf voor (hoofdstuk 2), dus die bewijzen
+    // nadoen, geen ordenen. Scènes in een eigen map noemt de cursus alleen als
+    // mogelijkheid; wie dat doet heeft zelf over de indeling nagedacht. De
+    // uploader haalt de gedeelde bovenmap er al af, dus `mijn-game/wereld.tscn`
+    // telt niet als submap.
+    detect: { type: 'path', pattern: /\/[^/]+\.tscn$/i },
+  },
+];
 
-function niveau(waarde: string, waar: string): Level {
-  const n = NIVEAUS[waarde];
-  if (!n) throw new Error(`niveaus.json: onbekend niveau '${waarde}' bij ${waar}`);
-  return n;
-}
-
-const BLOOM = new Set(niveaus.bloom.map((b) => b.id));
-
-const concepts: Concept[] = niveaus.concepten.map((c) => {
-  const detect = DETECTIE[c.id];
-  if (!detect) throw new Error(`niveaus.json: geen detectie voor concept '${c.id}'`);
-  if (!BLOOM.has(c.bloom)) {
-    throw new Error(`niveaus.json: onbekende denkvaardigheid '${c.bloom}' bij ${c.id}`);
-  }
-  return {
-    id: c.id,
-    subject: c.onderwerp,
-    group: c.groep,
-    label: c.concept,
-    bloom: c.bloom,
-    level: {
-      start: niveau(c.start, `${c.id}.start`),
-      verdieping: niveau(c.verdieping, `${c.id}.verdieping`),
-    },
-    detect,
-  };
-});
+const uitLeerdoelen = leerdoelenNaarConfig(leerdoelenJson, DETECTIE);
 
 export const godotConfig: CheckerConfig = {
-  subjects: niveaus.onderwerpen,
-  tracks: niveaus.tracks,
-  concepts,
+  // Project heeft alleen een concept onder Ook gebruikt.
+  subjects: [...uitLeerdoelen.subjects, { id: 'project', label: 'Project' }],
+  tracks: uitLeerdoelen.tracks,
+  concepts: uitLeerdoelen.concepts,
+  leerdoelen: uitLeerdoelen.leerdoelen,
+  extra: OOK_GEBRUIKT,
+  // De Gesprek-vinkjes van vóór de leerdoelen, met hun trede. Een bewaarde
+  // beoordeling zonder denkvaardigheid krijgt de hoogste die toen aanstond.
+  oudeVinkjes: {
+    'gesprek-voordragen': 'onthouden',
+    'gesprek-voorspellen': 'begrijpen',
+    'gesprek-vragen': 'begrijpen',
+    'gesprek-uitleggen': 'toepassen',
+    'gesprek-integreren': 'analyseren',
+    'gesprek-beredeneren': 'evalueren',
+    'gesprek-betogen': 'evalueren',
+    'gesprek-doceren': 'evalueren',
+    'gesprek-creëren': 'creëren',
+    'gesprek-optimaliseren': 'creëren',
+  },
+
+  // De leerroutes van vóór de drie niveaus. Start was de eerste kolom van het
+  // blad en is niveau 1; verdieping was de tweede, en dat is nu niveau 3.
+  oudeLeerroutes: { start: '1', verdieping: '3' },
 
   fileKinds: [
     { id: 'gd', label: 'GDScript' },

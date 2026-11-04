@@ -44,6 +44,15 @@ describe('validateCheckerConfig', () => {
     ).toEqual(["Concept 'basis-concept' heeft niveau 'moeilijk' (wel: basis, gevorderd, expert)."]);
   });
 
+  it('meldt een extra concept bij een onderwerp dat er niet is', () => {
+    const extra = [
+      { id: 'x', subject: 'project', group: 'G', label: 'x', detect: concept().detect },
+    ];
+    expect(validateCheckerConfig(config([concept()], { extra }))).toEqual([
+      "Extra concept 'x' hoort bij onderwerp 'project', dat niet in subjects staat.",
+    ]);
+  });
+
   it('meldt een docentsleutel die niet per site is', () => {
     // Uit die sleutel volgt de database met bewaarde beoordelingen.
     const problemen = validateCheckerConfig(

@@ -49,13 +49,13 @@ Krijg je meerdere meldingen tegelijk? Los alleen de **bovenste** op en start opn
 
 Deze drie komen tijdens het spelen, niet bij het starten. Je spel draait dus al even en klapt er dan uit. Ze zeggen alle drie iets anders over waar je moet kijken.
 
-### `Attempt to call function 'x' on a null instance`
+### `Attempt to call function 'x' in base 'null instance' on a null instance`
 
-Je vraagt iets aan een node die er niet is. **`null`** betekent leeg: de variabele bestaat, maar er zit geen node in.
+Je vraagt iets aan een node die er niet is. **`null`** betekent leeg: de variabele bestaat, maar er zit geen node in. Vlak erboven zegt Godot welke node hij niet vond:
 
 ```
-Invalid call. Nonexistent function 'play' in base 'Nil'.
-Attempt to call function 'play' on a null instance.
+Node not found: "Sprite" (relative to "/root/Level1/CharacterBody2D").
+Attempt to call function 'play' in base 'null instance' on a null instance.
 ```
 
 Bijna altijd staat er een `$Naam` in je regel die niet klopt met de Scene Tree. Vergelijk letter voor letter: `$AnimatedSprite2D` vindt niets als je node `$Sprite` heet. Twijfel je over de schrijfwijze, sleep de node dan vanuit de Scene Tree je script in met `Ctrl` ingedrukt — Godot typt het pad dan zelf.
@@ -184,8 +184,7 @@ const SPEED = 300.0
 
 func _physics_process(delta: float) -> void:
     var direction := Input.get_axis("ui_left", "ui_right")
-    if direction:
-        velocity.x = direction * SPEED
+    velocity.x = direction * SPEED
 ```
 
 <details>
@@ -210,7 +209,7 @@ Dit is een goed voorbeeld van de tweede soort fout: er is niets kapot, er ontbre
 
 ## Opdracht 5.8.c: het spel doet iets anders dan bedoeld
 
-Dit karakter zou moeten springen bij een druk op de spatiebalk, maar hij blijft aan het plafond plakken zolang je de toets vasthoudt.
+Dit karakter zou één keer moeten springen bij een druk op de spatiebalk, maar zolang je de toets vasthoudt blijft hij stuiteren: landen, en meteen weer omhoog.
 
 ```gdscript
     if Input.is_action_pressed("ui_accept") and is_on_floor():
@@ -227,7 +226,7 @@ Er is geen foutmelding en er ontbreekt niets. Vraag jezelf af hoe vaak deze `if`
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-`is_action_pressed` is waar zolang je de toets vasthoudt, dus elke frame krijgt je karakter opnieuw de volle sprongkracht. Gebruik `is_action_just_pressed`, dat alleen waar is op het frame dat je indrukt:
+`is_action_pressed` is waar zolang je de toets vasthoudt. In de lucht houdt `and is_on_floor()` hem tegen, maar op het frame dat hij landt, is de toets nog steeds ingedrukt, en springt hij meteen weer. Gebruik `is_action_just_pressed`, dat alleen waar is op het frame dat je indrukt:
 
 ```gdscript
     if Input.is_action_just_pressed("ui_accept") and is_on_floor():
@@ -244,14 +243,16 @@ Elke les in deze cursus eindigt met een blok **Er gaat iets mis** waarin de fout
 
 | Waar het misgaat | Kijk hier |
 | :--- | :--- |
-| Installatie en projectmap | [Installatie](site:godot/docs/installatie), [Je projectmap terugvinden](site:godot/docs/exporteren) |
-| Editor, scènes en bestanden | [De Godot-interface](site:godot/docs/interface), [Bestanden downloaden](site:godot/docs/bestanden-downloaden) |
-| Level en tegels | [Level tekenen](site:godot/docs/tilemap_opzetten), [Collision op je tegels](site:godot/docs/tilemap_collision) |
-| Beweging en springen | [Deel 2 — Vallen](site:godot/docs/movement-motor), [Deel 4 — Je eerste if](site:godot/docs/movement-grond), [Deel 5 — Lopen](site:godot/docs/movement-krachten), [Deel 7 — Springen](site:godot/docs/movement-afsluiter) |
+| Installatie en projectmap | [Installatie](site:godot/docs/installatie), [Nieuw project aanmaken](site:godot/docs/project), [Je projectmap terugvinden](site:godot/docs/exporteren) |
+| Editor, scènes en bestanden | [De Godot-interface](site:godot/docs/interface), [Je eerste 2D-scène](site:godot/docs/scene), [Bestanden downloaden](site:godot/docs/bestanden-downloaden) |
+| Level en tegels | [Level tekenen](site:godot/docs/tilemap_opzetten), [Collision op je tegels](site:godot/docs/tilemap_collision), [Achtergrond](site:godot/docs/background_image) |
+| Karakter en eerste code | [Een speelbaar karakter](site:godot/docs/sprite), [Je eerste regels code](site:godot/docs/start_gdscript), [Je eerste eigen script](site:godot/docs/sprite_movement) |
+| Beweging en springen | [Deel 1 — Een script dat draait](site:godot/docs/basis_movement_begrijpen), [Deel 2 — Vallen](site:godot/docs/movement-motor), [Deel 3 — Delta](site:godot/docs/movement-delta), [Deel 4 — Je eerste if](site:godot/docs/movement-grond), [Deel 5 — Lopen](site:godot/docs/movement-krachten), [Deel 6 — Stoppen](site:godot/docs/movement-remmen), [Deel 7 — Springen](site:godot/docs/movement-afsluiter) |
 | Camera | [Camera die de speler volgt](site:godot/docs/camera2d) |
-| Animaties | [Animaties maken](site:godot/docs/animaties), [Animaties in code](site:godot/docs/animaties_code) |
-| Signals en score | [Signals & een muntje](site:godot/docs/signals_muntje), [Score op het scherm](site:godot/docs/score_op_scherm) |
+| Animaties | [Animaties maken](site:godot/docs/animaties), [Animaties in code](site:godot/docs/animaties_code), [Je eigen animaties](site:godot/docs/eigen_animaties) |
+| Signals en score | [Signals & een muntje](site:godot/docs/signals_muntje), [Score in je karakter](site:godot/docs/score_in_karakter), [Global variables](site:godot/docs/global_variables), [Score op het scherm](site:godot/docs/score_op_scherm), [Groups](site:godot/docs/groups), [Een power-up](site:godot/docs/power_up) |
 | Levels, menu en spawnen | [Een tweede level](site:godot/docs/tweede_level), [Een startmenu](site:godot/docs/start_menu), [Spawnen](site:godot/docs/spawnen), [Timer](site:godot/docs/spawn_timer) |
+| Verder met GDScript | [Eigen functies](site:godot/docs/eigen_functies), [Lijsten](site:godot/docs/lijsten), [Dictionaries](site:godot/docs/dictionaries), [JSON](site:godot/docs/json_opslaan), [Tweens](site:godot/docs/tweens) |
 
 Losse code-voorbeelden staan in de [GDScript-tips](site:godot/gdscript-tips), en alle node-instellingen in de [Nodes cheatsheet](site:godot/cheatsheet).
 

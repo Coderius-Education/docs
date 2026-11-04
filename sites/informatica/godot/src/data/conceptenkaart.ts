@@ -50,6 +50,7 @@ export const HOOFDSTUKKEN: { nummer: number; label: string }[] = [
   { nummer: 7, label: 'Signals & score' },
   { nummer: 8, label: 'Meer levels & menu' },
   { nummer: 9, label: 'Uitdagende spel-ideeën' },
+  { nummer: 10, label: 'Verder met GDScript' },
 ];
 
 // Volgorde = leerlijn-groepen, binnen een groep de cursusvolgorde; bepaalt de
@@ -262,6 +263,27 @@ export const godotConcepten: GodotConcept[] = [
     leerlijn: 'gdscript',
     to: '/docs/fouten-zoeken#runtime-meldingen',
   },
+  {
+    id: 'eigen-functie',
+    label: 'Eigen functies',
+    leerlijn: 'gdscript',
+    to: '/docs/eigen_functies#eigen-functie',
+  },
+  { id: 'array', label: 'Lijsten (Array)', leerlijn: 'gdscript', to: '/docs/lijsten#lijst' },
+  {
+    id: 'dictionary',
+    label: 'Dictionaries',
+    leerlijn: 'gdscript',
+    to: '/docs/dictionaries#dictionary',
+  },
+  { id: 'export', label: '@export', leerlijn: 'gdscript', to: '/docs/dictionaries#export' },
+  {
+    id: 'json-bestand',
+    label: 'JSON in een bestand (user://)',
+    leerlijn: 'gdscript',
+    to: '/docs/json_opslaan#json',
+  },
+  { id: 'tween', label: 'Tweens', leerlijn: 'gdscript', to: '/docs/tweens#tween' },
 ];
 
 // Volgorde = cursusvolgorde; bepaalt de rechterkolom op de kaart.
@@ -304,6 +326,11 @@ export const lessen: Les[] = [
   { slug: 'spel-flappy_bird', titel: 'Spelidee: Flappy Bird', hoofdstuk: 9 },
   { slug: 'spel-top_down', titel: 'Spelidee: top-down crawler', hoofdstuk: 9 },
   { slug: 'spel-endless_runner', titel: 'Spelidee: endless runner', hoofdstuk: 9 },
+  { slug: 'eigen_functies', titel: 'Eigen functies', hoofdstuk: 10 },
+  { slug: 'lijsten', titel: 'Lijsten', hoofdstuk: 10 },
+  { slug: 'dictionaries', titel: 'Dictionaries', hoofdstuk: 10 },
+  { slug: 'json_opslaan', titel: 'JSON: een highscore die blijft', hoofdstuk: 10 },
+  { slug: 'tweens', titel: 'Tweens', hoofdstuk: 10 },
 ];
 
 /**
@@ -419,4 +446,9 @@ export const conceptenPerLes: Record<string, string[]> = {
     'queue-free',
     'velocity-move-and-slide',
   ],
+  eigen_functies: ['eigen-functie', 'physics-process-delta', 'velocity-move-and-slide'],
+  lijsten: ['array', 'change-scene', 'signal-functie', 'global-autoload'],
+  dictionaries: ['dictionary', 'export', 'global-autoload', 'signal-functie'],
+  json_opslaan: ['json-bestand', 'dictionary', 'global-autoload', 'func-ready'],
+  tweens: ['tween', 'signal-functie', 'queue-free', 'func-ready'],
 };

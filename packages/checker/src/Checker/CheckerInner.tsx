@@ -10,6 +10,7 @@ import {
   nieuwId,
   pdfNaamMetLeerling,
 } from '../beoordelingen';
+import { bloomUitOudeVinkjes, geldigeTrack } from '../leerdoelen';
 import { analyze } from '../matchConcepts';
 import type { CheckReport, CheckerConfig, Level, Plek, ProjectFiles } from '../types';
 import { type Vraag, nieuweVraag } from '../vragen';
@@ -86,7 +87,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   const handmatigAan = useMemo(() => new Set(actief?.handmatig ?? []), [actief?.handmatig]);
   // De leerroute van een nieuwe upload: de laatst gekozen, of de eerste.
   const laatsteTrackRef = useRef<string | null>(config.tracks?.[0]?.id ?? null);
-  const track = actief?.track ?? laatsteTrackRef.current;
+  const track = geldigeTrack(config, actief?.track ?? laatsteTrackRef.current);
 
   // UploadZone roept onLoaded aan nadat het inlezen klaar is, met de
   // callback van het moment waarop het bestand werd losgelaten. De naam en
@@ -542,7 +543,7 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
               report={effectiefRapport}
               config={config}
               track={track}
-              bloom={actief.bloom}
+              bloom={actief.bloom ?? bloomUitOudeVinkjes(config.oudeVinkjes, actief.handmatig)}
               moeilijkheid={actief.moeilijkheid}
               onBloom={kiesBloom}
               onMoeilijkheid={kiesMoeilijkheid}

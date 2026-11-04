@@ -46,8 +46,8 @@ Je Scene Tree ziet er nu zo uit:
 Menu (Control)
 └── VBoxContainer
     ├── Label              (tekst: Mijn 2D Game)
-    ├── Button (Start)     (tekst: Start spel)
-    └── Button (Afsluiten) (tekst: Afsluiten)
+    ├── Button             (tekst: Start spel)
+    └── Button2            (tekst: Afsluiten)
 ```
 
 Alle UI-nodes uit deze les staan met hun instellingen in de [Nodes cheatsheet](site:godot/cheatsheet#ui-menu).
@@ -64,9 +64,13 @@ Per knop koppel je het `pressed`-signaal aan een functie in `menu.gd`. Dat doe j
 1. Selecteer de eerste knop (`Start spel`).
 2. Ga naar het **Node**-tabblad rechts naast de Inspector.
 3. Dubbelklik op `pressed`.
-4. Kies de `Menu`-root als ontvanger en klik op **Connect**. Godot maakt een functie `_on_button_pressed()` aan — hernoem die handmatig naar `_on_start_pressed()` voor de duidelijkheid.
+4. Kies de `Menu`-root als ontvanger. Onderin, bij **Receiver Method**, staat de naam die Godot voorstelt: `_on_button_pressed`. Verander die in `_on_start_pressed` en klik op **Connect**. Godot zet de functie met die naam in `menu.gd`.
 
-Doe hetzelfde voor de `Afsluiten`-knop, met als functienaam `_on_afsluiten_pressed()`.
+Doe hetzelfde voor de `Afsluiten`-knop, met `_on_afsluiten_pressed` bij **Receiver Method**.
+
+:::caution
+Verander de naam in het dialoogvenster, niet achteraf in je script. De verbinding onthoudt de naam van toen. Hernoem je de functie later, dan zoekt de knop bij een klik nog de oude naam, en gebeurt er niets, zonder foutmelding. Alleen onderin de scripteditor waarschuwt Godot: `Missing connected method '_on_button_pressed' for signal 'pressed' …`.
+:::
 
 ## Stap 6: Vul de callbacks
 
@@ -109,7 +113,7 @@ Maak het menu uitgebreider: voeg een derde knop toe waarmee de speler rechtstree
 <summary>Klik hier voor een tip.</summary>
 
 - Voeg een derde `Button` toe in de `VBoxContainer`, tekst `Level 2`.
-- Verbind het `pressed`-signaal en noem de functie `_on_level2_pressed()`.
+- Verbind het `pressed`-signaal en zet bij **Receiver Method** `_on_level2_pressed`.
 - Vul de callback met `Global.reset()` en `change_scene_to_file("res://level2.tscn")`.
 
 </details>
@@ -148,7 +152,7 @@ Bonus: voeg een vierde knop **Credits** toe die naar een derde scène `credits.t
 1. Selecteer de knop in de Scene Tree.
 2. Open het **Node**-tabblad. Staat er een groen pijltje naast `pressed`?
 3. Zo niet: dubbelklik op `pressed`, kies de juiste ontvanger en klik **Connect**.
-4. Check ook of de functienaam in je script *exact* hetzelfde is als wat Godot heeft gekoppeld.
+4. Check ook of de functienaam in je script *exact* hetzelfde is als wat Godot heeft gekoppeld. Is hij anders, dan staat onderin de scripteditor een waarschuwing `Missing connected method`.
 
 **Zelf vinden:** zet een `print("geklikt")` in de callback. Verschijnt die niet, dan is het signal niet verbonden; verschijnt hij wél maar gebeurt er niets, dan ligt het aan de regel die de scène wisselt.
 

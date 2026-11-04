@@ -50,6 +50,8 @@ writeFileSync(
       bron: f.bron.slice(SITE.length + 1),
       regel: f.regel,
       kop: f.kop,
+      ...(f.verwachtFout ? { verwacht_fout: f.verwachtFout } : {}),
+      ...(f.verwachtRuntimeFout ? { verwacht_runtime_fout: f.verwachtRuntimeFout } : {}),
       ...(alles ||
       binnenWijziging(
         gewijzigd ?? {},

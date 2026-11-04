@@ -1,0 +1,198 @@
+---
+sidebar_position: 3
+slug: /dictionaries
+---
+
+# Dictionaries: muntjes van brons, zilver en goud
+
+Elk muntje is nu één punt waard. Een gouden muntje dat tien punten oplevert, maakt je level spannender: je springt er een extra keer voor. Je kunt daar drie muntje-scènes voor maken, maar dan heb je drie scripts die bijna gelijk zijn. Met een **dictionary** zet je de waarde van elke soort in één tabel.
+
+<GodotVersie />
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/data/11a-dictionaries-basis', label: 'Dictionaries'},
+    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary lopen'},
+  ]}
+/>
+
+## Voorspel: wat print dit?
+
+```gdscript
+extends Node
+
+var waardes = {"brons": 1, "zilver": 5, "goud": 10}
+
+func _ready() -> void:
+    print(waardes["goud"])
+    print(waardes["brons"] + waardes["zilver"])
+```
+
+**Welke twee getallen verschijnen er in Uitvoer?** Proberen kan net als bij de lijsten: hang het script aan een lege `Node` in een nieuwe scène en start die met `F6`.
+
+<details>
+<summary>Antwoord</summary>
+
+```
+10
+6
+```
+
+`waardes["goud"]` zoekt de sleutel `"goud"` op en geeft wat erbij hoort: `10`. In de tweede regel tel je de waarde van brons (`1`) en zilver (`5`) op.
+
+</details>
+
+## Een dictionary in GDScript \{#dictionary}
+
+Een lijst zoek je op met een plek: `levels[0]`. Een dictionary zoek je op met een **sleutel**: een woord dat je zelf kiest. Je schrijft hem met accolades, en elke sleutel krijgt met een dubbele punt zijn waarde:
+
+```gdscript
+var waardes = {"brons": 1, "zilver": 5, "goud": 10}
+```
+
+|             Code              | Wat doet het?                                         |
+| :---------------------------: | :---------------------------------------------------- |
+| `waardes["goud"]`             | De waarde bij de sleutel `"goud"`                     |
+| `waardes["platina"] = 25`     | Zet er een sleutel bij, of verandert de waarde        |
+| `waardes.has("platina")`      | `true` als de sleutel erin staat                      |
+| `waardes.get("hout", 0)`      | De waarde, of `0` als de sleutel er niet in staat     |
+
+Opzoeken met blokhaken en een sleutel toevoegen gaan zoals in Python. `has` doet wat `in` in Python doet, en `"platina" in waardes` werkt in GDScript ook. `get` is nieuw: die geeft een reservewaarde als de sleutel er niet is.
+
+## Stap 1: De waarde uit de tabel
+
+Open het script van je muntje. Nu staat er `Global.score += 1`. Zet er een tabel boven, en een variabele met de soort van dit muntje. De group en de controle op winnen uit opdracht 7.5.a blijven staan; deed je die opdracht niet, dan laat je die regels weg.
+
+```gdscript
+extends Area2D
+
+const WAARDES = {"brons": 1, "zilver": 5, "goud": 10}
+
+var soort = "goud"
+
+func _ready() -> void:
+    add_to_group("muntjes")
+
+
+func _on_body_entered(body: Node2D) -> void:
+    Global.score += WAARDES[soort]
+    print("Score: ", Global.score)
+    queue_free()
+    if get_tree().get_nodes_in_group("muntjes").size() <= 1:
+        print("Je hebt gewonnen!")
+```
+
+De tabel verandert niet tijdens het spel, dus het is een `const`, met een naam in hoofdletters. Zo deed je het ook met `SPEED`.
+
+Start je spel en pak een muntje. In **Uitvoer** gaat de score met tien omhoog.
+
+## Stap 2: Elk muntje een eigen soort \{#export}
+
+Nu is elk muntje goud. Je wilt per muntje in je level kunnen kiezen welke soort het is. Zet daarvoor `@export` voor de variabele:
+
+```gdscript
+@export var soort = "brons"
+```
+
+Sla op en selecteer een muntje in je level. In de Inspector staat nu een veld Soort, met `brons` erin. Dat veld komt van `@export`: het zet een variabele uit je script in de Inspector, zodat je hem per node kunt invullen zonder het script te veranderen.
+
+Zet bij een paar muntjes `zilver` of `goud` in het veld, en speel je level. Elk muntje telt nu zijn eigen waarde.
+
+Wil je er later een soort bij, platina voor 25 punten? Dan zet je één sleutel in de tabel, en verder hoeft er niets te veranderen.
+
+## Opdracht 10.3.a: de kleur van de soort
+
+Je ziet nog niet welk muntje goud is. Geef elk muntje bij de start de kleur van zijn soort, met een tweede dictionary.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+- Maak een tweede `const` met de sleutels `"brons"`, `"zilver"` en `"goud"`, en als waardes `Color.SANDY_BROWN`, `Color.SILVER` en `Color.GOLD`.
+- Elke node die je in je spel ziet, heeft een eigenschap `modulate`: een kleur die over de afbeelding heen gaat.
+- De kleur hoeft maar één keer gezet te worden, als het muntje in het level verschijnt. Welke functie roept Godot dan aan? Die heb je al, voor de group: zet de regel erbij, een tweede `_ready()` mag niet.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```gdscript
+extends Area2D
+
+const WAARDES = {"brons": 1, "zilver": 5, "goud": 10}
+const KLEUREN = {"brons": Color.SANDY_BROWN, "zilver": Color.SILVER, "goud": Color.GOLD}
+
+@export var soort = "brons"
+
+func _ready() -> void:
+    add_to_group("muntjes")
+    modulate = KLEUREN[soort]
+
+
+func _on_body_entered(body: Node2D) -> void:
+    Global.score += WAARDES[soort]
+    print("Score: ", Global.score)
+    queue_free()
+    if get_tree().get_nodes_in_group("muntjes").size() <= 1:
+        print("Je hebt gewonnen!")
+```
+
+`modulate` mengt de kleur met die van je afbeelding. Een witte of grijze afbeelding kleurt het mooist; een geel muntje wordt met zilver alleen wat donkerder.
+
+</details>
+
+## Er gaat iets mis
+
+<details>
+<summary>Invalid access to property or key 'Goud' on a base object of type 'Dictionary'.</summary>
+
+```
+Invalid access to property or key 'Goud' on a base object of type 'Dictionary'.
+```
+
+**Oorzaak:** de sleutel staat niet in je dictionary. Hier staat in de Inspector `Goud` in het veld Soort, met een hoofdletter. Voor een dictionary is `Goud` een ander woord dan `goud`. Godot zoekt dan precies die sleutel, en die bestaat niet.
+
+Zo zie je de melding zelf, in een los script aan een lege `Node` (start de scène met `F6`):
+
+{/* verwacht-runtime-fout: Invalid access to property or key 'Goud' on a base object of type 'Dictionary'. */}
+
+```gdscript
+# FOUT
+extends Node
+
+const WAARDES = {"brons": 1, "zilver": 5, "goud": 10}
+
+var soort = "Goud"
+
+func _ready() -> void:
+    print(WAARDES[soort])
+```
+
+Wanneer je de melding krijgt, hangt af van je script. Deed je opdracht 10.3.a, dan komt hij al bij de start van het level, op de regel met `KLEUREN[soort]` in `_ready()`. Zonder die opdracht komt hij pas als je het muntje pakt, op de regel met `WAARDES[soort]`.
+
+**Oplossing:** zoek in je level het muntje met de tikfout, en verbeter het veld Soort in de Inspector. Bij de start weet je niet welk muntje het is: print dan `soort` als eerste regel in `_ready()`, en kijk welke soort er vlak voor de melding in **Uitvoer** staat.
+
+Wil je dat het spel bij een tikfout doorgaat, gebruik dan `get` met een reservewaarde, in elke regel waar je een tabel opzoekt:
+
+```gdscript
+    modulate = KLEUREN.get(soort, Color.WHITE)
+```
+
+```gdscript
+    Global.score += WAARDES.get(soort, 1)
+```
+
+Dan krijgt een onbekende soort geen kleur en telt hij als één punt. Let op dat je de tikfout dan niet meer opmerkt: het spel werkt, maar je gouden muntje is maar één punt waard.
+
+</details>
+
+<details>
+<summary>Ik zie geen veld Soort in de Inspector</summary>
+
+**Oorzaak:** `@export` ontbreekt, of je hebt het script nog niet opgeslagen. Zonder `@export` is `soort` een gewone variabele die alleen in het script bestaat.
+
+**Oplossing:** zet `@export` vóór `var soort`, sla het script op met `Ctrl + S`, en klik daarna opnieuw op een muntje.
+
+</details>
+
+Staat je fout er niet bij? In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je hem zelf opspoort.

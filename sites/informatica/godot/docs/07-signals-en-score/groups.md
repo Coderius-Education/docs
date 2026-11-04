@@ -135,10 +135,14 @@ func _ready() -> void:
     add_to_group("muntjes")
 
 func _on_body_entered(body: Node2D) -> void:
+    Global.score += 1
+    print("Score: ", Global.score)
     queue_free()
     if get_tree().get_nodes_in_group("muntjes").size() <= 1:
         print("Je hebt gewonnen!")
 ```
+
+De twee regels met `Global.score` staan er al sinds [Global variables](site:godot/docs/global_variables); die laat je staan.
 
 Het laatste muntje wordt wel `queue_free()`'d, maar telt in dit frame nog mee — daarom `<= 1`.
 
@@ -188,15 +192,17 @@ get_tree().call_group("vijanden", "stop")
 **Oplossing:**
 
 - Controleer dat je overal exact dezelfde naam gebruikt, bijvoorbeeld `muntjes` (niet `Muntjes` of `muntje`).
-- Staat `add_to_group(...)` in `_ready()` (en niet in `_init()`)? In `_init()` bestaat de scène-boom nog niet.
+- Staat `add_to_group(...)` in het script van die nodes zelf, en hangt dat script echt aan elk muntje? Een muntje zonder script komt nooit in de group.
 
 </details>
 
 <details>
-<summary>Ik krijg een fout op <code>call_group</code>: de functie bestaat niet</summary>
+<summary>Na <code>call_group</code> stopt één vijand niet</summary>
 
-**Oorzaak:** Niet elke node in de group heeft de aangeroepen functie.
+**Oorzaak:** Die vijand heeft geen functie `stop()`, of hij heet anders (`Stop`, `stoppen`). `call_group` slaat zo'n node stil over: er komt geen foutmelding.
 
-**Oplossing:** Zorg dat élke node in de group dezelfde functienaam heeft (bijvoorbeeld `stop()`), of gebruik `get_nodes_in_group` en controleer per node met `has_method("stop")` voordat je 'm aanroept.
+**Oplossing:** Zorg dat élke node in de group dezelfde functie heeft, met precies dezelfde naam als tussen de aanhalingstekens bij `call_group`.
+
+**Zelf vinden:** zet in `stop()` een `print(name, " stopt")`. Tel je minder regels in Uitvoer dan je vijanden hebt, dan weet je welke er geen `stop()` heeft.
 
 </details>

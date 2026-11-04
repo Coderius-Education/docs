@@ -15,10 +15,10 @@ func _physics_process(delta: float) -> void:
 		velocity.y = JUMP_VELOCITY
 
 	var direction := Input.get_axis("ui_left", "ui_right")
-	if direction:
-		velocity.x = direction * SPEED
-	else:
+	if direction == 0:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
+	else:
+		velocity.x = direction * SPEED
 
 	staat_stil = velocity.x == 0
 	op_de_grond = is_on_floor()
