@@ -243,14 +243,16 @@ Elke les in deze cursus eindigt met een blok **Er gaat iets mis** waarin de fout
 
 | Waar het misgaat | Kijk hier |
 | :--- | :--- |
-| Installatie en projectmap | [Installatie](site:godot/docs/installatie), [Je projectmap terugvinden](site:godot/docs/exporteren) |
-| Editor, scènes en bestanden | [De Godot-interface](site:godot/docs/interface), [Bestanden downloaden](site:godot/docs/bestanden-downloaden) |
-| Level en tegels | [Level tekenen](site:godot/docs/tilemap_opzetten), [Collision op je tegels](site:godot/docs/tilemap_collision) |
-| Beweging en springen | [Deel 2 — Vallen](site:godot/docs/movement-motor), [Deel 4 — Je eerste if](site:godot/docs/movement-grond), [Deel 5 — Lopen](site:godot/docs/movement-krachten), [Deel 7 — Springen](site:godot/docs/movement-afsluiter) |
+| Installatie en projectmap | [Installatie](site:godot/docs/installatie), [Nieuw project aanmaken](site:godot/docs/project), [Je projectmap terugvinden](site:godot/docs/exporteren) |
+| Editor, scènes en bestanden | [De Godot-interface](site:godot/docs/interface), [Je eerste 2D-scène](site:godot/docs/scene), [Bestanden downloaden](site:godot/docs/bestanden-downloaden) |
+| Level en tegels | [Level tekenen](site:godot/docs/tilemap_opzetten), [Collision op je tegels](site:godot/docs/tilemap_collision), [Achtergrond](site:godot/docs/background_image) |
+| Karakter en eerste code | [Een speelbaar karakter](site:godot/docs/sprite), [Je eerste regels code](site:godot/docs/start_gdscript), [Je eerste eigen script](site:godot/docs/sprite_movement) |
+| Beweging en springen | [Deel 1 — Een script dat draait](site:godot/docs/basis_movement_begrijpen), [Deel 2 — Vallen](site:godot/docs/movement-motor), [Deel 3 — Delta](site:godot/docs/movement-delta), [Deel 4 — Je eerste if](site:godot/docs/movement-grond), [Deel 5 — Lopen](site:godot/docs/movement-krachten), [Deel 6 — Stoppen](site:godot/docs/movement-remmen), [Deel 7 — Springen](site:godot/docs/movement-afsluiter) |
 | Camera | [Camera die de speler volgt](site:godot/docs/camera2d) |
-| Animaties | [Animaties maken](site:godot/docs/animaties), [Animaties in code](site:godot/docs/animaties_code) |
-| Signals en score | [Signals & een muntje](site:godot/docs/signals_muntje), [Score op het scherm](site:godot/docs/score_op_scherm) |
+| Animaties | [Animaties maken](site:godot/docs/animaties), [Animaties in code](site:godot/docs/animaties_code), [Je eigen animaties](site:godot/docs/eigen_animaties) |
+| Signals en score | [Signals & een muntje](site:godot/docs/signals_muntje), [Score in je karakter](site:godot/docs/score_in_karakter), [Global variables](site:godot/docs/global_variables), [Score op het scherm](site:godot/docs/score_op_scherm), [Groups](site:godot/docs/groups), [Een power-up](site:godot/docs/power_up) |
 | Levels, menu en spawnen | [Een tweede level](site:godot/docs/tweede_level), [Een startmenu](site:godot/docs/start_menu), [Spawnen](site:godot/docs/spawnen), [Timer](site:godot/docs/spawn_timer) |
+| Verder met GDScript | [Eigen functies](site:godot/docs/eigen_functies), [Lijsten](site:godot/docs/lijsten), [Dictionaries](site:godot/docs/dictionaries), [JSON](site:godot/docs/json_opslaan), [Tweens](site:godot/docs/tweens) |
 
 Losse code-voorbeelden staan in de [GDScript-tips](site:godot/gdscript-tips), en alle node-instellingen in de [Nodes cheatsheet](site:godot/cheatsheet).
 
