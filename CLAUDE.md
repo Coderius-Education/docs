@@ -253,7 +253,7 @@ herkenning, of een herkenning zonder rij, is een fout. Met de leerdoelen in
 de config stelt de docentweergave een cijfer voor: de docent kiest de
 denkvaardigheid, de nakijker stelt de moeilijkheid voor (gevorderd alleen bij
 een gevorderd concept in élk onderwerp), en cijfer en zin komen in de PDF.
-Expert telt voor het cijfer als gevorderd tot het blad er een kolom voor heeft.
+Expert telt voor het cijfer als gevorderd tot het blad er een kolom voor heeft. Een niveau kan ook met een tentamen worden afgesloten (`tentamen` in het bestand, bij Algoritmiek niveau 2): dan heeft een rij op dat niveau een lijst manieren om het te kennen in plaats van een moeilijkheid, en zet de plugin bij elke manier de les uit de map van het concept waar je hem oefent; de pagina van dat niveau legt het tentamen uit, met de bron bij vakdidactiek.
 Een bron noemen we alleen als vakdidactiek hem uitlegt: elke bron in
 `bloom.json` wijst naar een pagina onder `/bronnen/` van de didactiek-site, met
 dezelfde paper (`leerdoelen.test.ts`). Bij Bloom is dat de kernpaper van

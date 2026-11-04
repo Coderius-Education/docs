@@ -36,6 +36,16 @@
   margin-bottom: 0;
 }
 
+/* Het tentamen: een kolom per manier, met de les erin in kleine letters. */
+.manieren td {
+  font-size: 0.875rem;
+}
+
+/* Een rijkop (het concept of de manier) staat links, zoals de tekst ernaast. */
+.tabel tbody th {
+  text-align: left;
+}
+
 /* Basis, gevorderd en expert even breed. */
 .kolommen {
   table-layout: fixed;

@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import type { Leerdoelen } from '../../leerdoelen';
 import { useCursus } from './LeerdoelenPagina';
 import Niveau from './Niveau';
+import Tentamen from './Tentamen';
 
 // De route /leerdoelen/niveau-<n> (plugins/leerdoelen.js): de concepten van
 // één niveau, om te printen of met een klas te delen.
@@ -16,6 +17,26 @@ export default function NiveauPagina({
 }): ReactNode {
   const cursus = useCursus();
   const label = leerdoelen.niveaus.find((n) => n.id === niveau)?.label ?? niveau;
+  if (leerdoelen.tentamen?.niveau === niveau) {
+    return (
+      <Layout
+        title={`Leerdoelen ${label}`}
+        description={`Het tentamen van ${cursus ?? 'de cursus'} op ${label}: wat erin komt en waar je het oefent.`}
+      >
+        <main className="container margin-vert--lg">
+          <h1>
+            Leerdoelen{cursus ? ` ${cursus}` : ''}: {label}
+          </h1>
+          <p>
+            Op {label} sluit je af met een tentamen. Hieronder staat wat erin komt, en bij elk
+            onderdeel de les waar je het oefent. De andere niveaus staan op het{' '}
+            <Link to="/leerdoelen">overzicht</Link>.
+          </p>
+          <Tentamen leerdoelen={leerdoelen} />
+        </main>
+      </Layout>
+    );
+  }
   return (
     <Layout
       title={`Leerdoelen ${label}`}

@@ -22,13 +22,45 @@ export interface LeerdoelConcept {
    * (plugins/leerdoelen.js) ook met titel en pad binnen de cursus.
    */
   lessen?: Les[];
+  /**
+   * Alleen op het tentamen-niveau: de manieren van kennen (ids uit
+   * `tentamen.manieren`) die voor dit concept gelden. Leeg: het concept is
+   * zelf de vaardigheid.
+   */
+  manieren?: string[];
+  /** Na de plugin: per manier de les waar je hem oefent. */
+  oefenen?: Record<string, Les>;
 }
 
 export interface Les {
   id: string;
   titel?: string;
-  /** Pad binnen de cursus, met de baseUrl: '/web/docs/html-css/koppen-lijsten'. */
+  /**
+   * Pad binnen de cursus, met de baseUrl: '/web/docs/html-css/koppen-lijsten'.
+   * Bij een les in een andere cursus (`extern`) de volledige URL.
+   */
   pad?: string;
+  extern?: boolean;
+}
+
+/** Een manier waarop je een concept kunt kennen, op het tentamen-niveau. */
+export interface Manier extends Benoemd {
+  uitleg: string;
+  /** Het vraagtype uit de bron dat erbij hoort. */
+  slo: string;
+  /** Lesnamen in de map van het concept; "bouwen/" is de eerste les in die submap. */
+  lessen: string[];
+}
+
+/** Een niveau dat met een tentamen wordt getoetst, in plaats van met een project. */
+export interface Tentamen {
+  niveau: string;
+  vorm: string;
+  /** Pad van de pagina bij vakdidactiek: '/bronnen/<slug>'. */
+  bron: string;
+  manieren: Manier[];
+  /** Per onderwerp-id een inleiding op de pagina. */
+  onderwerpen: Record<string, string>;
 }
 
 /** Een van de vier niveaus, Niveau 1 tot en met Niveau 4 (niveaus.json). */
@@ -38,6 +70,7 @@ export interface Leerdoelen {
   niveaus: Niveau[];
   onderwerpen: Benoemd[];
   concepten: LeerdoelConcept[];
+  tentamen?: Tentamen;
 }
 
 export interface Werkwoord {
@@ -98,6 +131,7 @@ export function moeilijkheidVoorstel(perOnderwerp: OnderwerpTelling[]): {
   reden: string;
 };
 export function moeilijkhedenTekst(leerdoelen: Leerdoelen): string;
+export function projectNiveaus(leerdoelen: Leerdoelen): Niveau[];
 export function cijferKolommen(leerdoelen: Leerdoelen): Moeilijkheid[];
 export function denkvaardigheid(id: string): Denkvaardigheid;
 export function moeilijkheid(id: string): Moeilijkheid;

@@ -41,8 +41,8 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
   if (!data || typeof data !== 'object') throw new Error(`${bron}: geen object`);
   const { niveaus, onderwerpen, concepten } = data;
   for (const sleutel of Object.keys(data)) {
-    if (!['niveaus', 'onderwerpen', 'concepten'].includes(sleutel)) {
-      fouten.push(`onbekend veld '${sleutel}' (wel: niveaus, onderwerpen, concepten)`);
+    if (!['niveaus', 'onderwerpen', 'concepten', 'tentamen'].includes(sleutel)) {
+      fouten.push(`onbekend veld '${sleutel}' (wel: niveaus, onderwerpen, concepten, tentamen)`);
     }
   }
   const bekend = NIVEAUS.map((n) => n.id);
@@ -71,6 +71,8 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
 
   const niveauIds = niveaus;
   const onderwerpIds = new Set(onderwerpen.map((o) => o.id));
+  const tentamen = data.tentamen === undefined ? undefined : leesTentamen(data.tentamen);
+  const manierIds = new Set((tentamen?.manieren ?? []).map((m) => m.id));
   for (const [soort, lijst] of [
     ['niveau', niveauIds],
     ['onderwerp', onderwerpen.map((o) => o.id)],
@@ -114,18 +116,31 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
     let lessen;
     if (rij.les !== undefined) {
       lessen = Array.isArray(rij.les) ? rij.les : [rij.les];
-      const goedeLes = (l) => typeof l === 'string' && /^[\w-]+(\/[\w-]+)*$/.test(l);
+      const goedeLes = (l) =>
+        typeof l === 'string' &&
+        (/^[\w-]+(\/[\w-]+)*$/.test(l) || /^site:[\w-]+(\/[\w.-]+)+(#[\w-]+)?$/.test(l));
       if (lessen.length === 0 || !lessen.every(goedeLes)) {
         fouten.push(
-          `${waar}: les moet een doc-id zijn ("html-css/koppen-lijsten") of een lijst daarvan`,
+          `${waar}: les moet een doc-id zijn ("html-css/koppen-lijsten"), een site:-link naar een andere cursus, of een lijst daarvan`,
         );
       }
     }
     const niveau = {};
+    let manieren;
     for (const n of niveauIds) {
       const m = rij[n];
       if (m === undefined) fouten.push(`${waar}: niveau '${n}' ontbreekt`);
-      else if (!CONCEPT_MOEILIJKHEDEN.includes(m)) {
+      else if (tentamen && n === tentamen.niveau) {
+        // Op het tentamen-niveau: welke manieren van kennen voor dit concept
+        // gelden. Leeg mag: dan is het concept zelf de vaardigheid.
+        if (!Array.isArray(m) || !m.every((x) => manierIds.has(x))) {
+          fouten.push(
+            `${waar}: bij ${n} (het tentamen) een lijst manieren (wel: ${[...manierIds].join(', ')})`,
+          );
+        } else if (new Set(m).size !== m.length) {
+          fouten.push(`${waar}: bij ${n} staat een manier twee keer`);
+        } else manieren = m;
+      } else if (!CONCEPT_MOEILIJKHEDEN.includes(m)) {
         fouten.push(`${waar}: '${m}' bij ${n} (wel: ${CONCEPT_MOEILIJKHEDEN.join(', ')})`);
       } else niveau[n] = m;
     }
@@ -139,6 +154,12 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
       if (rij[veld] !== undefined) uit[veld] = rij[veld];
     }
     if (lessen) uit.lessen = lessen.map((id) => ({ id }));
+    if (manieren) uit.manieren = manieren;
+    if (manieren?.length && !lessen?.some((l) => !l.startsWith('site:'))) {
+      fouten.push(
+        `${waar}: met manieren hoort een les uit de eigen cursus, in de map waar de lessen per manier staan`,
+      );
+    }
     return uit;
   });
   if (fouten.length) throw new Error(`${bron}:\n- ${fouten.join('\n- ')}`);
@@ -147,7 +168,99 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
     niveaus: niveauIds.map((id) => NIVEAUS.find((n) => n.id === id)),
     onderwerpen: onderwerpen.map(({ id, label }) => ({ id, label })),
     concepten: rijen,
+    ...(tentamen ? { tentamen } : {}),
   };
+
+  /**
+   * Een niveau dat met een tentamen wordt getoetst, in plaats van met een
+   * project: de vorm, de bron, de manieren waarop je een concept kunt kennen
+   * en per onderwerp een inleiding.
+   */
+  function leesTentamen(t) {
+    const waar = 'tentamen';
+    if (!t || typeof t !== 'object') {
+      fouten.push(`${waar}: geen object`);
+      return undefined;
+    }
+    for (const sleutel of Object.keys(t)) {
+      if (!['niveau', 'vorm', 'bron', 'manieren', 'onderwerpen'].includes(sleutel)) {
+        fouten.push(
+          `${waar}: onbekend veld '${sleutel}' (wel: niveau, vorm, bron, manieren, onderwerpen)`,
+        );
+      }
+    }
+    if (!niveauIds.includes(t.niveau)) {
+      fouten.push(`${waar}: niveau '${t.niveau}' staat niet in niveaus`);
+    }
+    for (const veld of ['vorm', 'bron']) {
+      if (typeof t[veld] !== 'string' || t[veld].trim() === '') {
+        fouten.push(`${waar}: ${veld} moet tekst zijn`);
+      }
+    }
+    if (typeof t.bron === 'string' && !/^\/bronnen\/[\w-]+$/.test(t.bron)) {
+      fouten.push(`${waar}: bron is het pad van een pagina bij vakdidactiek (/bronnen/<slug>)`);
+    }
+    const manieren = Array.isArray(t.manieren) ? t.manieren : [];
+    if (manieren.length === 0)
+      fouten.push(`${waar}: manieren moet een lijst zijn met minstens één manier`);
+    const ids = [];
+    for (const [i, m] of manieren.entries()) {
+      const w = `${waar}: manier ${m?.id ?? i + 1}`;
+      if (!m || typeof m.id !== 'string' || !/^[a-z][a-z0-9-]*$/.test(m.id)) {
+        fouten.push(`${w}: id moet kleine letters, cijfers en streepjes zijn`);
+        continue;
+      }
+      if (ids.includes(m.id)) fouten.push(`${w} staat er twee keer`);
+      ids.push(m.id);
+      for (const veld of ['label', 'uitleg', 'slo']) {
+        if (typeof m[veld] !== 'string' || m[veld].trim() === '') {
+          fouten.push(`${w}: ${veld} moet tekst zijn`);
+        }
+      }
+      if (
+        !Array.isArray(m.lessen) ||
+        m.lessen.length === 0 ||
+        !m.lessen.every((l) => typeof l === 'string' && /^[\w-]+\/?$/.test(l))
+      ) {
+        fouten.push(
+          `${w}: lessen is een lijst lesnamen in de map van het concept ("stellingen", of "bouwen/" voor de eerste les in die submap)`,
+        );
+      }
+      for (const sleutel of Object.keys(m)) {
+        if (!['id', 'label', 'uitleg', 'slo', 'lessen'].includes(sleutel)) {
+          fouten.push(`${w}: onbekend veld '${sleutel}'`);
+        }
+      }
+    }
+    const inleidingen = t.onderwerpen ?? {};
+    if (typeof inleidingen !== 'object' || Array.isArray(inleidingen)) {
+      fouten.push(`${waar}: onderwerpen is een object van onderwerp-id naar een inleiding`);
+    } else {
+      for (const [id, tekst] of Object.entries(inleidingen)) {
+        if (!onderwerpIds.has(id)) fouten.push(`${waar}: onbekend onderwerp '${id}'`);
+        if (typeof tekst !== 'string' || tekst.trim() === '') {
+          fouten.push(`${waar}: de inleiding bij '${id}' moet tekst zijn`);
+        }
+      }
+    }
+    return {
+      niveau: t.niveau,
+      vorm: t.vorm,
+      bron: t.bron,
+      manieren: manieren
+        .filter((m) => m && typeof m.id === 'string')
+        .map(({ id, label, uitleg, slo, lessen }) => ({ id, label, uitleg, slo, lessen })),
+      onderwerpen: { ...inleidingen },
+    };
+  }
+}
+
+/**
+ * De niveaus die met een project worden beoordeeld: alle niveaus, behalve
+ * dat van het tentamen. Alleen deze hebben per concept een moeilijkheid.
+ */
+function projectNiveaus(leerdoelen) {
+  return leerdoelen.niveaus.filter((n) => n.id !== leerdoelen.tentamen?.niveau);
 }
 
 /**
@@ -261,6 +374,7 @@ function moeilijkheidVoorstel(perOnderwerp) {
 }
 
 module.exports = {
+  projectNiveaus,
   BLOOM,
   NIVEAUS,
   CONCEPT_MOEILIJKHEDEN,
