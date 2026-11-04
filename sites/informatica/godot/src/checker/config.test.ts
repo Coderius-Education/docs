@@ -6,9 +6,10 @@ import { computeLevelSummary } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { CheckReport, ConceptMatch, ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
+import { BLOOM } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
+import leerdoelen from '../leerdoelen.json';
 import { godotConfig } from './config';
-import niveaus from './niveaus.json';
 
 function files(entries: Record<string, string | null>): ProjectFiles {
   return Object.fromEntries(
@@ -58,15 +59,21 @@ function leesFixture(naam: string): ProjectFiles {
   return result;
 }
 
+// Concepten uit de leerdoelen en die onder Ook gebruikt, samen.
+const alleMatches = (report: CheckReport): ConceptMatch[] => [
+  ...report.concepts,
+  ...(report.extra ?? []),
+];
+
 function score(report: CheckReport, id: string): ConceptMatch {
-  const match = report.concepts.find((c) => c.id === id);
+  const match = alleMatches(report).find((c) => c.id === id);
   if (!match) throw new Error(`concept '${id}' bestaat niet in godotConfig`);
   return match;
 }
 
 function verwacht(naam: string, gebruikt: string[], ongebruikt: string[]): void {
   const report = analyze(leesFixture(naam), godotConfig);
-  const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+  const perId = new Map(alleMatches(report).map((c) => [c.id, c.used]));
 
   for (const id of [...gebruikt, ...ongebruikt]) {
     expect(perId.has(id), `concept '${id}' bestaat niet in godotConfig`).toBe(true);
@@ -98,6 +105,7 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         '2d-canvaslayer',
         '2d-label',
         '2d-control',
+        '2d-startscherm',
         '2d-vboxcontainer',
         '2d-button',
         'gd-signal',
@@ -172,77 +180,107 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         'gd-instantiate',
         '2d-label',
         '2d-button',
+        '2d-startscherm',
       ],
     );
   });
 });
 
-describe('godotConfig — de tabel uit niveaus.json', () => {
-  it('geeft elk concept een detectie en elk niveau een geldige waarde', () => {
-    // config.ts gooit al bij het laden als een concept geen detectie heeft;
-    // deze test legt vast dat de twee bestanden even lang zijn, zodat een
-    // rij die uit de tabel verdwijnt niet stil een detectie laat staan.
-    expect(godotConfig.concepts.length).toBe(niveaus.concepten.length);
-    expect(godotConfig.concepts.map((c) => c.id)).toEqual(niveaus.concepten.map((c) => c.id));
-  });
-
-  it('kent elk concept aan een bestaand onderwerp toe', () => {
-    const onderwerpen = new Set(godotConfig.subjects.map((s) => s.id));
+describe('godotConfig — de leerdoelen', () => {
+  it('zijn het tabblad Godot van het beoordelingsblad (Beoordeling_INF.xlsx)', () => {
+    // Per rij: onderwerp, concept, en de drie kolommen van het blad, als
+    // niveau 1, 3 en 4. Verandert het blad, dan veranderen dit lijstje en
+    // src/leerdoelen.json samen.
+    const B = 'basis';
+    const G = 'gevorderd';
+    const E = 'expert';
+    const blad = [
+      ['2D', 'TileMapLayer', B, B, B],
+      ['2D', 'TextureRect', B, B, B],
+      ['2D', 'CharacterBody2D', B, B, B],
+      ['2D', 'AnimatedSprite2D', B, B, B],
+      ['2D', 'CollisionShape2D', B, B, B],
+      ['2D', 'Camera2D', B, B, B],
+      ['2D', 'Area2D', B, B, B],
+      ['2D', 'CanvasLayer', B, B, B],
+      ['2D', 'Label', B, B, B],
+      ['2D', 'Control', B, B, B],
+      ['2D', 'Startscherm', B, B, B],
+      ['2D', 'zelf ontdekken en toepassen van nieuwe nodes', G, B, B],
+      ['GDScript', 'snelheid veranderen', B, B, B],
+      ['GDScript', 'sprongkracht veranderen', B, B, B],
+      ['GDScript', 'keybindings hernoemen', B, B, B],
+      ['GDScript', 'animatie veranderen', B, B, B],
+      ['GDScript', 'signal toepassen', B, B, B],
+      ['GDScript', 'naar volgend level', B, B, B],
+      ['GDScript', 'nuttig gebruik globals', G, B, B],
+      ['GDScript', 'nuttig gebruik instantiate', G, G, B],
+      ['GDScript', 'groups', G, G, B],
+      ['GDScript', 'modulaire eigen functies', G, E, G],
+      ['GDScript', 'nuttig gebruik lijsten', G, E, G],
+      ['GDScript', 'nuttig gebruik dictionaries', G, E, G],
+      ['GDScript', 'lezen en schrijven JSON', G, G, G],
+      ['GDScript', 'nuttige gebruik loops', G, E, G],
+      ['GDScript', 'tweens', G, G, G],
+      ['GDScript', 'nuttig gebruik timers (bijvoorbeeld await)', G, G, B],
+    ];
+    const label = new Map(leerdoelen.onderwerpen.map((o) => [o.id, o.label]));
+    expect(leerdoelen.niveaus).toEqual(['1', '3', '4']);
     expect(
-      godotConfig.concepts.filter((c) => !onderwerpen.has(c.subject)).map((c) => c.id),
-    ).toEqual([]);
+      leerdoelen.concepten.map((c) => [label.get(c.onderwerp), c.concept, c['1'], c['3'], c['4']]),
+    ).toEqual(blad);
   });
 
-  it('geeft elk concept een niveau per leerroute', () => {
-    const routes = (godotConfig.tracks ?? []).map((t) => t.id);
-    expect(routes).toEqual(['start', 'verdieping']);
+  it('geeft elk concept uit de leerdoelen een detectie, en niets meer', () => {
+    // leerdoelenNaarConfig gooit al bij het laden als een rij geen detectie
+    // heeft, of een detectie geen rij; deze test legt de volgorde vast.
+    expect(godotConfig.concepts.map((c) => c.id)).toEqual(leerdoelen.concepten.map((c) => c.id));
+  });
+
+  it('maakt van de niveaus de leerroutes', () => {
+    expect(godotConfig.tracks).toEqual([
+      { id: '1', label: 'Niveau 1' },
+      { id: '3', label: 'Niveau 3' },
+      { id: '4', label: 'Niveau 4' },
+    ]);
     for (const concept of godotConfig.concepts) {
-      expect(
-        typeof concept.level,
-        `${concept.id} heeft één niveau in plaats van één per route`,
-      ).toBe('object');
-      for (const route of routes) {
-        expect(
-          levelVoor(concept, route),
-          `${concept.id} heeft geen niveau voor route '${route}'`,
-        ).toMatch(/^(basis|gevorderd)$/);
+      for (const route of ['1', '3', '4']) {
+        expect(levelVoor(concept, route), `${concept.id} op niveau ${route}`).toMatch(
+          /^(basis|gevorderd|expert)$/,
+        );
       }
     }
   });
 
-  it('levert per route een andere verdeling op, anders zijn twee routes zinloos', () => {
-    const telling = (route: string) =>
-      godotConfig.concepts.filter((c) => levelVoor(c, route) === 'basis').length;
-    expect(telling('verdieping')).toBeGreaterThan(telling('start'));
+  it('levert per niveau een andere verdeling op, anders zijn de niveaus zinloos', () => {
+    const telling = (route: string, m: string) =>
+      godotConfig.concepts.filter((c) => levelVoor(c, route) === m).length;
+    expect(telling('4', 'basis')).toBeGreaterThan(telling('1', 'basis'));
+    // Alleen niveau 3 heeft expert, zoals het blad.
+    expect(telling('3', 'expert')).toBe(4);
+    expect(telling('1', 'expert') + telling('4', 'expert')).toBe(0);
+  });
+
+  it('zet wat buiten het blad valt onder Ook gebruikt, en niet meer als gesprek', () => {
+    expect((godotConfig.extra ?? []).map((c) => c.id)).toEqual([
+      '2d-vboxcontainer',
+      '2d-button',
+      'gd-toelichting',
+      'project-inrichting',
+    ]);
+    // De gespreksvragen kiest de docent nu als denkvaardigheid in het blok
+    // Cijfer; de nakijker heeft geen handmatige concepten meer.
+    expect(godotConfig.concepts.filter((c) => c.detect.type === 'handmatig')).toEqual([]);
+    expect(godotConfig.leerdoelen).toBeDefined();
   });
 });
 
 describe('godotConfig — Bloom als tweede as', () => {
-  const bloomIds = niveaus.bloom.map((b) => b.id);
+  const bloomIds = BLOOM.denkvaardigheden.map((b) => b.id);
 
   it('geeft elk concept een denkvaardigheid uit de lijst', () => {
-    // config.ts gooit al bij het laden op een onbekende waarde; hier staat
-    // vast dat de waarde ook echt meekomt op het concept, want daar hangt de
-    // Bloom-ladder straks aan.
-    expect(bloomIds).toEqual([
-      'onthouden',
-      'begrijpen',
-      'toepassen',
-      'analyseren',
-      'evalueren',
-      'creëren',
-    ]);
     for (const concept of godotConfig.concepts) {
       expect(bloomIds, `${concept.id} heeft geen geldige bloom`).toContain(concept.bloom);
-    }
-  });
-
-  it('heeft op elke trede van de ladder minstens één concept', () => {
-    for (const bloom of bloomIds) {
-      expect(
-        godotConfig.concepts.filter((c) => c.bloom === bloom).length,
-        `geen enkel concept op '${bloom}'`,
-      ).toBeGreaterThan(0);
     }
   });
 
@@ -253,40 +291,7 @@ describe('godotConfig — Bloom als tweede as', () => {
     const bloomVan = new Map(godotConfig.concepts.map((c) => [c.id, c.bloom]));
     expect(bloomVan.get('2d-characterbody2d')).toBe('onthouden');
     expect(bloomVan.get('gd-snelheid')).toBe('toepassen');
-    expect(bloomVan.get('gd-toelichting')).toBe('begrijpen');
-    expect(bloomVan.get('project-inrichting')).toBe('analyseren');
     expect(bloomVan.get('2d-nieuwe-nodes')).toBe('creëren');
-  });
-
-  it('zet alles wat alleen in het gesprek zichtbaar is op handmatig, gegroepeerd per trede', () => {
-    const labelVan = new Map(niveaus.bloom.map((b) => [b.id, b.label]));
-    const gesprek = godotConfig.concepts.filter((c) => c.subject === 'gesprek');
-    expect(gesprek.length).toBeGreaterThan(0);
-    for (const c of gesprek) {
-      expect(c.detect.type, `${c.id} is een gespreksvraag en hoort handmatig te zijn`).toBe(
-        'handmatig',
-      );
-      // De groepskop is de trede, zodat de docent de ladder ziet zonder dat
-      // het rapport Bloom al apart toont.
-      expect(c.group, `${c.id} staat onder een andere kop dan zijn trede`).toBe(
-        labelVan.get(c.bloom ?? ''),
-      );
-    }
-    // En andersom: buiten het gesprek stelt niets de docent handmatig vast;
-    // alles daar komt uit de bestanden.
-    for (const c of godotConfig.concepts.filter((c) => c.subject !== 'gesprek')) {
-      expect(c.detect.type, `${c.id} hoort uit de bestanden te komen`).not.toBe('handmatig');
-    }
-  });
-
-  it('laat de gespreksvragen open, ook bij het meest complete project', () => {
-    const report = analyze(leesFixture('eigen'), godotConfig);
-    const gesprek = new Set(
-      godotConfig.concepts.filter((c) => c.subject === 'gesprek').map((c) => c.id),
-    );
-    const open = report.concepts.filter((m) => gesprek.has(m.id));
-    expect(open.length).toBe(gesprek.size);
-    expect(open.every((m) => !m.used)).toBe(true);
   });
 });
 
@@ -404,7 +409,7 @@ describe('godotConfig — patronen die er net naast zitten', () => {
       }),
       godotConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+    const perId = new Map(alleMatches(report).map((c) => [c.id, c.used]));
 
     expect(perId.get('2d-label')).toBe(false);
     expect(perId.get('2d-button')).toBe(false);
@@ -441,8 +446,11 @@ describe('godotConfig — patronen die er net naast zitten', () => {
     // Geen realistische .tscn-regel buiten [node ...] bevat type="Button",
     // dus een weggevallen "\[node "-prefix is met fixtures alleen niet te
     // vangen. Daarom deze structurele bewaking op het patroon zelf.
-    const nodes = godotConfig.concepts.filter((c) => c.subject === '2d');
-    expect(nodes.length).toBe(13);
+    // Ook de nodes onder Ook gebruikt (VBoxContainer, Button).
+    const nodes = [...godotConfig.concepts, ...(godotConfig.extra ?? [])].filter(
+      (c) => c.subject === '2d',
+    );
+    expect(nodes.length).toBe(14);
     for (const c of nodes) {
       expect(c.detect.type, `${c.id} hoort regex-detectie te hebben`).toBe('regex');
       if (c.detect.type === 'regex') {
@@ -464,19 +472,20 @@ describe('godotConfig — patronen die er net naast zitten', () => {
 
   it('houdt beide niveaus gevuld in elke route, en elk onderwerp bezet', () => {
     // De LevelSummary-chips verbergen 0/0, dus een niveau dat leegvalt
-    // verdwijnt stil uit het rapport. Per onderwerp eisen we dat niet: in
-    // Verdieping staat volgens de tabel élk 2D-concept op basis, en dat is
-    // de bedoeling — daar is niets meer gevorderd aan.
+    // verdwijnt stil uit het rapport. Per onderwerp eisen we dat niet: op
+    // niveau 4 staat volgens het blad élk 2D-concept op basis, en dat is de
+    // bedoeling.
     const report = analyze(files({}), godotConfig);
-    for (const route of ['start', 'verdieping']) {
+    for (const route of ['1', '3', '4']) {
       const samenvatting = computeLevelSummary(report, godotConfig, route);
       expect(samenvatting.basis.total, `geen basis-concepten in ${route}`).toBeGreaterThan(0);
       expect(samenvatting.gevorderd.total, `geen gevorderd-concepten in ${route}`).toBeGreaterThan(
         0,
       );
-      for (const onderwerp of samenvatting.bySubject) {
+      // Project heeft alleen een concept onder Ook gebruikt.
+      for (const onderwerp of samenvatting.bySubject.filter((o) => o.subject !== 'project')) {
         expect(
-          onderwerp.basis.total + onderwerp.gevorderd.total,
+          onderwerp.basis.total + onderwerp.gevorderd.total + onderwerp.expert.total,
           `${onderwerp.subject} heeft geen concepten in ${route}`,
         ).toBeGreaterThan(0);
       }
