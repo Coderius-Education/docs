@@ -95,13 +95,19 @@ const MARKER =
   /\{\/\*\s*(verwacht-fout|verwacht-runtime-fout|compileer-als):\s*((?:(?!\*\/\})[\s\S])*?)\s*\*\/\}/g;
 
 /** De marker die direct boven een blok staat, met zijn inhoud op één regel. */
-function markerBoven(ervoor: string): { soort: MarkerSoort; inhoud: string } | undefined {
+export function markerBoven(ervoor: string): { soort: MarkerSoort; inhoud: string } | undefined {
   const laatste = [...ervoor.matchAll(MARKER)].at(-1);
   if (!laatste || ervoor.slice((laatste.index ?? 0) + laatste[0].length).trim() !== '') {
     return undefined;
   }
-  return { soort: laatste[1] as MarkerSoort, inhoud: laatste[2].replace(/\s+/g, ' ').trim() };
+  // `…` en `...` betekenen hetzelfde: iets wat per keer verschilt. De
+  // testrunner kent alleen `...`.
+  const inhoud = laatste[2].replace(/\s+/g, ' ').replace(/…/g, '...').trim();
+  return { soort: laatste[1] as MarkerSoort, inhoud };
 }
+
+/** Het patroon waaraan de extractie een heel script herkent; ook voor lessen.ts. */
+export const HEEL_SCRIPT = /^extends\s+\w+/m;
 
 /**
  * Of een citaat uit de les klopt met de melding in de marker. Een `...` of `…`
@@ -123,27 +129,55 @@ export function citaatKlopt(citaat: string, melding: string): boolean {
  * leest, moet de melding zijn die Godot geeft, en die staat in de marker.
  */
 function controleerCitaten(ervoor: string, melding: string, waar: string): void {
-  const begin = ervoor.lastIndexOf('<details>');
-  if (begin === -1)
+  const openingen = [...ervoor.matchAll(/<details[\s>]/g)];
+  const begin = openingen.at(-1)?.index;
+  if (begin === undefined || ervoor.slice(begin).includes('</details>')) {
     throw new Error(
-      `${waar}: een verwacht-fout of verwacht-runtime-fout hoort in een <details> met de melding`,
+      `${waar}: een verwacht-fout of verwacht-runtime-fout hoort in hetzelfde <details> als de melding`,
     );
+  }
   const stuk = ervoor.slice(begin);
   const summary = stuk.match(/<summary[^>]*>([\s\S]*?)<\/summary>/)?.[1];
-  const zonderTags = (summary ?? '').replace(/<[^>]+>/g, '').replace(/^Foutmelding:\s*/, '');
+  const zonderTags = (summary ?? '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/`/g, '')
+    .replace(/^\s*Foutmelding:\s*/, '');
   if (!citaatKlopt(zonderTags, melding)) {
     throw new Error(
       `${waar}: de summary "${zonderTags.trim()}" is niet de melding uit de marker: "${melding}"`,
     );
   }
-  for (const kaal of stuk.matchAll(/^```\n([\s\S]*?)```/gm)) {
-    if (!citaatKlopt(kaal[1], melding)) {
+  // De codeblokken regel voor regel: een gdscript-blok is code, elk ander
+  // blok (zonder taal, of text, console) is een meldingsblok.
+  let taal: string | undefined;
+  let inhoud: string[] = [];
+  for (const regel of stuk.split('\n')) {
+    const fence = regel.match(/^```(\S*)/);
+    if (!fence) {
+      if (taal !== undefined) inhoud.push(regel);
+      continue;
+    }
+    if (taal === undefined) {
+      taal = fence[1];
+      inhoud = [];
+      continue;
+    }
+    if (taal !== 'gdscript' && !citaatKlopt(inhoud.join('\n'), melding)) {
       throw new Error(
-        `${waar}: het meldingsblok "${kaal[1].trim()}" is niet de melding uit de marker: "${melding}"`,
+        `${waar}: het meldingsblok "${inhoud.join('\n').trim()}" is niet de melding uit de marker: "${melding}"`,
       );
     }
+    taal = undefined;
   }
 }
+
+/**
+ * Wat een runtime-voorbeeld niet mag doen: de testrunner hangt het in zijn
+ * eigen scène. quit() beëindigde de hele run met exit 0, een scènewissel
+ * verving de runner, en een fout na een await valt buiten de frames die de
+ * runner wacht.
+ */
+const VERBODEN_IN_RUNTIME = /\bquit\s*\(|\breload_current_scene\s*\(|\bawait\b/;
 
 function slugVan(inhoud: string): string | undefined {
   return inhoud.match(/^slug:\s*\/(\S+)/m)?.[1];
@@ -211,6 +245,11 @@ export function fragmentenUit(
       if (!/^extends\s+\w+/m.test(fout) || !/^func _ready\(/m.test(fout)) {
         throw new Error(
           `${bron}:${regel}: een verwacht-runtime-fout-blok moet een heel script zijn, met extends en een _ready()`,
+        );
+      }
+      if (VERBODEN_IN_RUNTIME.test(fout)) {
+        throw new Error(
+          `${bron}:${regel}: een verwacht-runtime-fout-blok mag geen quit(), reload_current_scene() of await bevatten`,
         );
       }
       controleerCitaten(ervoor, marker.inhoud, `${bron}:${regel}`);

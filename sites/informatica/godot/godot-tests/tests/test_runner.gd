@@ -19,6 +19,12 @@ var fouten: Array[String] = []
 var gedaan := 0
 var foutvoorbeelden := 0
 var runtime_voorbeelden := 0
+# Hoeveel runtime-voorbeelden de index heeft en hoeveel er zijn afgehandeld.
+# Breekt de laag halverwege af, dan blijven die twee verschillend, en dat is
+# een fout: anders zei de run "Alles klopt." over voorbeelden die nooit
+# draaiden.
+var runtime_totaal := 0
+var runtime_afgehandeld := 0
 
 func _ready() -> void:
 	var index := _lees_index()
@@ -90,7 +96,7 @@ func _compileer_foutvoorbeeld(script: GDScript, bron: String, verwacht: String) 
 		_faal("%s — foutvoorbeeld compileert, maar de les zegt dat Godot het weigert" % bron)
 		return
 	for regel in meldingen.regels:
-		if regel.contains(verwacht):
+		if _past(verwacht, regel):
 			foutvoorbeelden += 1
 			return
 	_faal("%s — Godot geeft niet de melding uit de les ('%s') maar: %s" % [bron, verwacht, " | ".join(meldingen.regels)])
@@ -101,7 +107,7 @@ func _compileer_foutvoorbeeld(script: GDScript, bron: String, verwacht: String) 
 # node-id); de delen eromheen moeten in die volgorde in de melding staan.
 func _past(citaat: String, melding: String) -> bool:
 	var vanaf := 0
-	for deel in citaat.split("..."):
+	for deel in citaat.replace("…", "...").split("..."):
 		var plek := melding.find(deel, vanaf)
 		if plek == -1:
 			return false
@@ -115,11 +121,13 @@ func _past(citaat: String, melding: String) -> bool:
 func _draai_runtime_voorbeelden(index: Array) -> void:
 	var soort_regex := RegEx.create_from_string("(?m)^extends\\s+(\\w+)")
 	var naam_regex := RegEx.create_from_string("in object \"(\\w+):")
-	var totaal := 0
+	for item in index:
+		if item.has("verwacht_runtime_fout") and not item.get("overslaan", false):
+			runtime_totaal += 1
 	for item in index:
 		if not item.has("verwacht_runtime_fout") or item.get("overslaan", false):
 			continue
-		totaal += 1
+		runtime_afgehandeld += 1
 		var bron: String = "%s:%d" % [item["bron"], int(item["regel"])]
 		var verwacht: String = item["verwacht_runtime_fout"]
 		var code := FileAccess.get_file_as_string(EXTRACTED + "/" + item["naam"] + ".gd")
@@ -143,8 +151,10 @@ func _draai_runtime_voorbeelden(index: Array) -> void:
 		add_child(node)
 		await _stap(3)
 		OS.remove_logger(meldingen)
-		remove_child(node)
-		node.queue_free()
+		# Een voorbeeld kan zichzelf al hebben vrijgegeven.
+		if is_instance_valid(node):
+			remove_child(node)
+			node.queue_free()
 		var gezien := false
 		for regel in meldingen.regels:
 			if _past(verwacht, regel):
@@ -153,7 +163,7 @@ func _draai_runtime_voorbeelden(index: Array) -> void:
 			runtime_voorbeelden += 1
 		else:
 			_faal("%s — Godot geeft tijdens het draaien niet de melding uit de les ('%s') maar: %s" % [bron, verwacht, " | ".join(meldingen.regels)])
-	print("Meldingen tijdens het spelen zoals de les ze citeert: %d van %d." % [runtime_voorbeelden, totaal])
+	print("Meldingen tijdens het spelen zoals de les ze citeert: %d van %d." % [runtime_voorbeelden, runtime_totaal])
 
 # --- laag 2: gedrag ----------------------------------------------------------
 
@@ -366,14 +376,20 @@ func _test_springen(index: Array) -> void:
 # Het script onder een kop in een les; OVERGESLAGEN bij --alleen, "" als het
 # er niet is.
 func _script_onder(index: Array, bron_bevat: String, kop_begint: String) -> String:
+	var item := _item_onder(index, bron_bevat, kop_begint)
+	if item.is_empty():
+		return ""
+	if item.get("overslaan", false):
+		return OVERGESLAGEN
+	return EXTRACTED + "/" + item["naam"] + ".gd"
+
+func _item_onder(index: Array, bron_bevat: String, kop_begint: String) -> Dictionary:
 	for item in index:
-		if item.has("verwacht_fout"):
+		if item.has("verwacht_fout") or item.has("verwacht_runtime_fout"):
 			continue
 		if String(item["bron"]).contains(bron_bevat) and String(item["kop"]).begins_with(kop_begint):
-			if item.get("overslaan", false):
-				return OVERGESLAGEN
-			return EXTRACTED + "/" + item["naam"] + ".gd"
-	return ""
+			return item
+	return {}
 
 # Een karakter zoals de leerling het na Animaties heeft, met een
 # AnimatedSprite2D, zodat kies_animatie() niets mist.
@@ -386,9 +402,12 @@ func _maak_karakter(script_pad: String, positie: Vector2) -> CharacterBody2D:
 	karakter.add_child(vorm)
 	var anim := AnimatedSprite2D.new()
 	anim.name = "AnimatedSprite2D"
+	# Een animatie zonder frames laat play() stil op "default" staan; met één
+	# placeholder per animatie volgt animation wat het script kiest.
 	var frames := SpriteFrames.new()
 	for naam in ["idle", "run", "jump"]:
 		frames.add_animation(naam)
+		frames.add_frame(naam, PlaceholderTexture2D.new())
 	anim.sprite_frames = frames
 	karakter.add_child(anim)
 	karakter.position = positie
@@ -407,8 +426,10 @@ func _zet_neer(script_pad: String, positie: Vector2) -> CharacterBody2D:
 	add_child(wereld)
 	return karakter
 
-# Vallen, naar rechts lopen, springen en uitlopen: dezelfde invoer voor elk script.
-func _speel_rondje(script_pad: String) -> Vector2:
+# Vallen, naar rechts lopen, springen en uitlopen: dezelfde invoer voor elk
+# script. Geeft de plek, en de animatie en spiegeling op het eind, zodat ook
+# een vergeten kies_animatie() opvalt.
+func _speel_rondje(script_pad: String) -> String:
 	var karakter := _zet_neer(script_pad, Vector2(0, 100))
 	await _stap(60)
 	Input.action_press("ui_right")
@@ -418,24 +439,30 @@ func _speel_rondje(script_pad: String) -> Vector2:
 	Input.action_release("ui_accept")
 	await _stap(30)
 	Input.action_release("ui_right")
-	await _stap(30)
-	var plek := karakter.position
+	await _stap(120)
+	Input.action_press("ui_left")
+	await _stap(5)
+	var anim: AnimatedSprite2D = karakter.get_node("AnimatedSprite2D")
+	var uitkomst := "plek %s, animatie %s, gespiegeld %s" % [karakter.position.round(), anim.animation, anim.flip_h]
+	Input.action_release("ui_left")
 	_ruim_op(karakter)
-	return plek
+	return uitkomst
 
-# 10.1 belooft: na het opknippen doet je spel precies hetzelfde.
+# 10.1 belooft: na het opknippen doet je spel precies hetzelfde. Bij --alleen
+# draait de test zodra een van de twee blokken is veranderd; de .gd-bestanden
+# worden altijd geschreven.
 func _test_opknippen(index: Array) -> void:
-	var voor := _script_onder(index, "eigen_functies.md", "Je script als beginpunt")
-	var na := _script_onder(index, "eigen_functies.md", "Opdracht 10.1.a")
-	if voor == OVERGESLAGEN or na == OVERGESLAGEN:
-		return
-	if voor == "" or na == "":
+	var voor := _item_onder(index, "eigen_functies.md", "Je script als beginpunt")
+	var na := _item_onder(index, "eigen_functies.md", "Opdracht 10.1.a")
+	if voor.is_empty() or na.is_empty():
 		_faal("10.1: beginpunt of oplossing van 10.1.a niet gevonden")
 		return
-	var a: Vector2 = await _speel_rondje(voor)
-	var b: Vector2 = await _speel_rondje(na)
-	_verwacht(a.distance_to(b) < 0.01, "10.1: opgeknipt script eindigt op %s, het beginpunt op %s" % [b, a])
-	_verwacht(a.x > 100.0, "10.1: het karakter hoort naar rechts gelopen te zijn, x=%s" % a.x)
+	if voor.get("overslaan", false) and na.get("overslaan", false):
+		return
+	var a: String = await _speel_rondje(EXTRACTED + "/" + voor["naam"] + ".gd")
+	var b: String = await _speel_rondje(EXTRACTED + "/" + na["naam"] + ".gd")
+	_verwacht(a == b, "10.1: opgeknipt script eindigt op %s, het beginpunt op %s" % [b, a])
+	_verwacht(a.contains("animatie run") and a.contains("gespiegeld true"), "10.1: na naar links lopen hoort de loop-animatie gespiegeld te spelen: %s" % a)
 
 # Druk één keer op spatie en geef terug of het karakter sprong. Zwaartekracht
 # maakt velocity.y alleen groter; wordt hij kleiner, dan was dat een sprong.
@@ -449,7 +476,26 @@ func _sprong(karakter: CharacterBody2D) -> bool:
 	await _stap(1)
 	return karakter.velocity.y < voor
 
-# 10.1.b belooft: één extra sprong in de lucht, ook na een randje, en niet meer.
+# Een platform van 200 breed op y=0, met de gewone vloer op y=400 eronder.
+func _zet_op_platform(script_pad: String) -> CharacterBody2D:
+	var wereld := _maak_wereld()
+	var platform := StaticBody2D.new()
+	var vorm := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(200, 20)
+	vorm.shape = rect
+	platform.add_child(vorm)
+	platform.position = Vector2(0, 0)
+	wereld.add_child(platform)
+	var karakter := _maak_karakter(script_pad, Vector2(0, -40))
+	wereld.add_child(karakter)
+	add_child(wereld)
+	return karakter
+
+# 10.1.b belooft: één extra sprong in de lucht, ook na een randje, en niet
+# meer. Eerst gebruikt het karakter zijn extra sprong al eens, landt, en
+# loopt dan pas van het randje: een oplossing die de extra sprong alleen bij
+# een sprong vanaf de grond teruggeeft, valt zo door de mand.
 func _test_dubbel_springen(index: Array) -> void:
 	var pad := _script_onder(index, "eigen_functies.md", "Opdracht 10.1.b")
 	if pad == OVERGESLAGEN:
@@ -457,19 +503,25 @@ func _test_dubbel_springen(index: Array) -> void:
 	if pad == "":
 		_faal("10.1.b: geen oplossing gevonden")
 		return
-	# Hoog boven de vloer: zoals van een randje gelopen, zonder te springen.
-	var karakter := _zet_neer(pad, Vector2(0, -200))
-	await _stap(5)
-	_verwacht(await _sprong(karakter), "10.1.b: na een randje hoort één sprong in de lucht te lukken")
-	await _stap(5)
-	_verwacht(not await _sprong(karakter), "10.1.b: na een randje hoort maar één sprong in de lucht te lukken")
-	await _stap(300)
-	_verwacht(karakter.is_on_floor(), "10.1.b: het karakter hoort weer op de vloer te staan")
+	var karakter := _zet_op_platform(pad)
+	await _stap(30)
+	_verwacht(karakter.is_on_floor(), "10.1.b: het karakter hoort op het platform te staan")
 	_verwacht(await _sprong(karakter), "10.1.b: vanaf de grond hoort een sprong te lukken")
 	await _stap(8)
 	_verwacht(await _sprong(karakter), "10.1.b: na een sprong vanaf de grond hoort één extra sprong te lukken")
 	await _stap(5)
 	_verwacht(not await _sprong(karakter), "10.1.b: daarna hoort er geen sprong meer te lukken")
+	await _stap(120)
+	_verwacht(karakter.is_on_floor(), "10.1.b: het karakter hoort weer op het platform te landen")
+	Input.action_press("ui_right")
+	while karakter.is_on_floor() and karakter.position.x < 400.0:
+		await _stap(1)
+	Input.action_release("ui_right")
+	await _stap(3)
+	_verwacht(not karakter.is_on_floor(), "10.1.b: het karakter hoort van het randje te zijn gelopen")
+	_verwacht(await _sprong(karakter), "10.1.b: na een randje hoort één sprong in de lucht te lukken")
+	await _stap(5)
+	_verwacht(not await _sprong(karakter), "10.1.b: na een randje hoort maar één sprong in de lucht te lukken")
 	_ruim_op(karakter)
 
 func _verwacht(voorwaarde: bool, boodschap: String) -> void:
@@ -480,6 +532,8 @@ func _faal(boodschap: String) -> void:
 	fouten.append(boodschap)
 
 func _rapporteer() -> void:
+	if runtime_afgehandeld != runtime_totaal:
+		_faal("de runtime-voorbeelden braken af na %d van %d" % [runtime_afgehandeld, runtime_totaal])
 	if fouten.is_empty():
 		print("Alles klopt.")
 		get_tree().quit(0)

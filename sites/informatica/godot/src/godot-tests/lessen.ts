@@ -5,7 +5,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BLOK } from './extract';
+import { BLOK, HEEL_SCRIPT, markerBoven } from './extract';
 
 export const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 
@@ -57,15 +57,16 @@ export function blokkenInVolgorde(): Blok[] {
           plek: `${map.name}/${f}:${ervoor.split('\n').length}`,
           hoofdstuk: Number.parseInt(map.name, 10),
           code,
-          heelScript: /^(?:\s*#.*\n|\s*\n)*extends\s+\w+/.test(code),
+          // Zoals de extractie het ziet: ook een script met class_name of
+          // @tool boven extends is heel.
+          heelScript: HEEL_SCRIPT.test(code),
           fout:
             /^\s*#\s*FOUT\b/m.test(code) ||
-            /\{\/\*\s*(?:verwacht-fout|verwacht-runtime-fout|niet-compileren):[^*]*\*\/\}\s*$/.test(
-              ervoor.slice(-400),
-            ),
+            /^(?:verwacht-fout|verwacht-runtime-fout)$/.test(markerBoven(ervoor)?.soort ?? '') ||
+            ervoor.slice(-200).includes('{/* niet-compileren:'),
           kop,
           opdracht: kop.startsWith('Opdracht'),
-          deel: /\{\/\*\s*compileer-als:[^*]*\*\/\}\s*$/.test(ervoor.slice(-300)),
+          deel: markerBoven(ervoor)?.soort === 'compileer-als',
         });
       }
     }

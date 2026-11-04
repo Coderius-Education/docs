@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { alleLesbestanden } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
-import { BLOK } from './extract';
+import { BLOK, markerBoven } from './extract';
 
 // Een bestand dat je met FileAccess.WRITE opent, staat pas op de schijf als
 // het gesloten is: met close(), of doordat de variabele aan het eind van de
@@ -25,7 +25,9 @@ function leestVoorSluiten(code: string): boolean {
   const open = new Set<string>();
   for (const regel of code.split('\n')) {
     if (/^func\s/.test(regel)) open.clear();
-    const schrijf = regel.match(/\bvar\s+(\w+)\s*:?=\s*FileAccess\.open\(.*FileAccess\.WRITE/);
+    const schrijf = regel.match(
+      /\bvar\s+(\w+)\s*(?::\s*\w+\s*)?:?=\s*FileAccess\.open\(.*FileAccess\.WRITE/,
+    );
     if (schrijf) {
       open.add(schrijf[1]);
       continue;
@@ -57,6 +59,12 @@ describe('bestanden in GDScript-voorbeelden', () => {
     expect(leestVoorSluiten(ander)).toBe(true);
   });
 
+  it('ziet ook een getypeerde variabele', () => {
+    const getypeerd =
+      'var f: FileAccess = FileAccess.open(P, FileAccess.WRITE)\nf.store_string("x")\nvar l = FileAccess.open(P, FileAccess.READ)';
+    expect(leestVoorSluiten(getypeerd)).toBe(true);
+  });
+
   it('laat een handle zonder variabele toe: die sluit Godot meteen', () => {
     // Nagespeeld in Godot 4.7.2: het lezen gaf daarna de geschreven tekst.
     const eenRegel =
@@ -70,6 +78,9 @@ describe('bestanden in GDScript-voorbeelden', () => {
       for (const pad of alleLesbestanden(wortel)) {
         const inhoud = readFileSync(pad, 'utf8');
         for (const m of inhoud.matchAll(BLOK)) {
+          // Een foutvoorbeeld mag deze fout juist laten zien.
+          const ervoor = inhoud.slice(0, m.index);
+          if (/^\s*#\s*FOUT\b/m.test(m[1]) || markerBoven(ervoor)) continue;
           if (leestVoorSluiten(m[1])) {
             fout.push(`${pad.slice(SITE.length)}:${inhoud.slice(0, m.index).split('\n').length}`);
           }

@@ -66,7 +66,10 @@ function opdrachten(p: Pagina): Opdracht[] {
 /** De teksten van de summaries in een sectie, zonder inline tags. */
 function summaries(sectie: string): string[] {
   return [...sectie.matchAll(/<summary[^>]*>([\s\S]*?)<\/summary>/g)].map((m) =>
-    m[1].replace(/<[^>]+>/g, '').trim(),
+    m[1]
+      .replace(/<[^>]+>/g, '')
+      .replace(/`/g, '')
+      .trim(),
   );
 }
 
@@ -119,15 +122,14 @@ describe('opdrachten in de Godot-cursus', () => {
 
   it('hebben een oplossing in een uitklapblok', () => {
     const fout = ALLE.filter(
-      (o) =>
-        !ZONDER_OPLOSSING.has(o.kop) && !/<summary>[^<]*oplossing[^<]*<\/summary>/i.test(o.sectie),
+      (o) => !ZONDER_OPLOSSING.has(o.kop) && !summaries(o.sectie).some((t) => /oplossing/i.test(t)),
     ).map((o) => `${o.pad}: ${o.kop}`);
     expect(fout).toEqual([]);
   });
 
   it('hebben een tip in een uitklapblok, of een reden waarom niet', () => {
     const fout = ALLE.filter(
-      (o) => !ZONDER_TIP.has(o.kop) && !summaries(o.sectie).some((t) => /\btip\b/i.test(t)),
+      (o) => !ZONDER_TIP.has(o.kop) && !summaries(o.sectie).some((t) => /\btips?\b/i.test(t)),
     ).map((o) => `${o.pad}: ${o.kop}`);
     expect(fout).toEqual([]);
   });
