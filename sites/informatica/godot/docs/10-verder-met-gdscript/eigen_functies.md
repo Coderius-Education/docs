@@ -18,7 +18,7 @@ Je karakter-script werkt, maar `_physics_process` is een lang blok geworden: val
 
 ## Je script als beginpunt
 
-De les gaat uit van je karakter-script zoals het is na [Animaties in code](site:godot/docs/animaties_code) en [Een power-up](site:godot/docs/power_up). Zo ziet het eruit; `geef_sprongboost()` staat er bij jou nog onder, en die blijft zoals hij is.
+De les gaat uit van je karakter-script zoals het is na [Animaties in code](site:godot/docs/animaties_code) en [Een power-up](site:godot/docs/power_up). Zo ziet het eruit:
 
 ```gdscript
 extends CharacterBody2D
@@ -56,9 +56,16 @@ func _physics_process(delta: float) -> void:
         $AnimatedSprite2D.flip_h = true
 
     move_and_slide()
+
+func geef_sprongboost() -> void:
+    sprongkracht = -1300.0
+    print("Boost!")
+    await get_tree().create_timer(5.0).timeout
+    sprongkracht = -800.0
+    print("Boost voorbij")
 ```
 
-Heb je bij opdracht 7.6.a van `SPEED` een `var snelheid` gemaakt, dan staat bij jou `snelheid` waar hier `SPEED` staat. Voor deze les maakt dat niets uit.
+Heb je bij opdracht 7.6.a van `SPEED` een `var snelheid` gemaakt, dan staat bij jou `snelheid` waar hier `SPEED` staat, en heb je onderaan ook `geef_snelheidsboost()`. Voor deze les maakt dat niets uit: laat die functie staan zoals hij is.
 
 ## Voorspel: waar knip je?
 
@@ -183,9 +190,16 @@ func kies_animatie() -> void:
     elif velocity.x < 0:
         $AnimatedSprite2D.play('run')
         $AnimatedSprite2D.flip_h = true
+
+func geef_sprongboost() -> void:
+    sprongkracht = -1300.0
+    print("Boost!")
+    await get_tree().create_timer(5.0).timeout
+    sprongkracht = -800.0
+    print("Boost voorbij")
 ```
 
-Koos je andere namen, of verdeelde je het anders, dan is dat ook goed, zolang elke functie één ding doet en je spel hetzelfde doet als ervoor. `geef_sprongboost()` staat bij jou nog onderaan.
+Koos je andere namen, of verdeelde je het anders, dan is dat ook goed, zolang elke functie één ding doet en je spel hetzelfde doet als ervoor. `geef_sprongboost()` blijft onderaan staan zoals hij was; de power-up roept hem aan.
 
 </details>
 
@@ -283,7 +297,16 @@ func kies_animatie() -> void:
     elif velocity.x < 0:
         $AnimatedSprite2D.play('run')
         $AnimatedSprite2D.flip_h = true
+
+func geef_sprongboost() -> void:
+    sprongkracht = -1300.0
+    print("Boost!")
+    await get_tree().create_timer(5.0).timeout
+    sprongkracht = -800.0
+    print("Boost voorbij")
 ```
+
+Heb je `geef_snelheidsboost()` uit opdracht 7.6.a, dan staat die er bij jou ook nog onder.
 
 Loop je van een randje, dan stond je net nog op de grond, dus `extra_sprong` is `true`: je krijgt één sprong in de lucht. Spring je vanaf de grond, dan kost die eerste sprong de extra sprong niet, en heb je er in de lucht ook één.
 

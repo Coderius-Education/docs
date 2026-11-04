@@ -38,6 +38,30 @@ describe('GDScript uit de lespagina´s halen', () => {
     ).toThrow(/heel script/);
   });
 
+  it('compileert een losse functie met compileer-als onder die regel', () => {
+    const { fragmenten } = fragmentenUit(
+      'les.md',
+      pagina(
+        '{/* compileer-als: extends Area2D */}\n\n```gdscript\nfunc _on_body_entered(body: Node2D) -> void:\n    queue_free()\n```',
+      ),
+    );
+    expect(fragmenten).toHaveLength(1);
+    expect(fragmenten[0].code).toBe(
+      'extends Area2D\n\nfunc _on_body_entered(body: Node2D) -> void:\n    queue_free()\n',
+    );
+  });
+
+  it('weigert compileer-als boven ingesprongen code', () => {
+    // Ingesprongen code hoort binnen een functie; onder een extends geplakt
+    // compileert die nooit, en dan zegt de fout niets over de les.
+    expect(() =>
+      fragmentenUit(
+        'les.md',
+        pagina('{/* compileer-als: extends Area2D */}\n\n```gdscript\n    queue_free()\n```'),
+      ),
+    ).toThrow(/compileer-als/);
+  });
+
   it('slaat een # FOUT-blok zonder marker nog steeds over', () => {
     const { fragmenten, overgeslagen } = fragmentenUit(
       'les.md',

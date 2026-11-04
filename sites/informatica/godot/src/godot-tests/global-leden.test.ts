@@ -45,11 +45,12 @@ describe('volledige global-scripts in hoofdstuk 10', () => {
   it('zetten alleen code in een functie die het project van de leerling ook aanroept', () => {
     // Een nieuwe of veranderde functie telt pas als hij wordt aangeroepen:
     // vanuit het global-script zelf, of als Global.<naam>() in een heel script
-    // ergens in de cursus. Een losse voorbeeldregel ("Global.verlies_leven()")
-    // telt niet, want die staat in geen enkel script van de leerling.
+    // (of een deel met compileer-als) ergens in de cursus. Een losse
+    // voorbeeldregel ("Global.verlies_leven()") telt niet, want die staat in
+    // geen enkel script van de leerling.
     const aanroepen = new Set<string>();
     for (const b of BLOKKEN) {
-      if (b.fout || !b.heelScript) continue;
+      if (b.fout || !(b.heelScript || b.deel)) continue;
       for (const m of b.code.matchAll(/\bGlobal\.(\w+)\s*\(/g)) aanroepen.add(m[1]);
     }
     const fout: string[] = [];

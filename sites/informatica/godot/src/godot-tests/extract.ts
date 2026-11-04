@@ -70,6 +70,15 @@ const NIET_COMPILEREN = '{/* niet-compileren:';
  */
 const VERWACHT_FOUT = /\{\/\*\s*verwacht-fout:\s*([\s\S]*?)\s*\*\/\}\s*$/;
 
+/**
+ * Een losse functie die de les toont zonder de rest van het script ("pas
+ * `_on_body_entered` van je vijand aan"), zodat wat de leerling er verder in
+ * heeft niet verdwijnt als hij het overneemt. Met `{/* compileer-als: extends
+ * Area2D *\/}` erboven compileert de testrunner hem toch: de extractie zet die
+ * regel bovenaan.
+ */
+const COMPILEER_ALS = /\{\/\*\s*compileer-als:\s*([^*]*?)\s*\*\/\}\s*$/;
+
 function slugVan(inhoud: string): string | undefined {
   return inhoud.match(/^slug:\s*\/(\S+)/m)?.[1];
 }
@@ -130,6 +139,17 @@ export function fragmentenUit(
 
     if (/^extends\s+\w+/m.test(code)) {
       fragmenten.push({ naam, bron, regel, begin, eind, kop, code: `${code}\n` });
+      continue;
+    }
+
+    const kopregel = ervoor.slice(-300).match(COMPILEER_ALS)?.[1];
+    if (kopregel) {
+      if (!/^extends\s+\w+$/.test(kopregel) || /^\s/.test(code)) {
+        throw new Error(
+          `${bron}:${regel}: compileer-als hoort "extends <Node>" te zijn, boven code die links begint`,
+        );
+      }
+      fragmenten.push({ naam, bron, regel, begin, eind, kop, code: `${kopregel}\n\n${code}\n` });
       continue;
     }
 

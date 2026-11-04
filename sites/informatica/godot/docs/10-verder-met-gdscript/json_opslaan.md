@@ -67,11 +67,11 @@ func controleer_highscore() -> void:
 
 Roep `Global.controleer_highscore()` aan op het moment dat een potje klaar is. In je spel kan dat op twee plekken.
 
-Je gaat game over. Dat gebeurt in je vijand-script uit opdracht 7.3.a: daar gaat er een leven af. Kijk daar met `is_game_over()` of het het laatste was:
+Je gaat game over. Dat gebeurt in je vijand-script uit opdracht 7.3.a: daar gaat er een leven af. Kijk in `_on_body_entered` met `is_game_over()` of het het laatste was. De rest van je vijand-script, zoals `stop()` uit opdracht 7.5.b, blijft staan.
+
+{/* compileer-als: extends Area2D */}
 
 ```gdscript
-extends Area2D
-
 func _on_body_entered(body: Node2D) -> void:
     Global.levens -= 1
     print("Levens: ", Global.levens)

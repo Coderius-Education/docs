@@ -18,6 +18,13 @@ export type Blok = {
   heelScript: boolean;
   /** een bewust fout voorbeeld (`# FOUT`, of een verwacht-fout- of niet-compileren-marker) */
   fout: boolean;
+  /** staat onder een kop "Opdracht …": een opdracht die de leerling ook kan overslaan */
+  opdracht: boolean;
+  /**
+   * een deel van een script, met `{/* compileer-als: extends … *\/}` erboven:
+   * de rest van het script van de leerling blijft staan
+   */
+  deel: boolean;
 };
 
 function positie(tekst: string): number {
@@ -42,6 +49,8 @@ export function blokkenInVolgorde(): Blok[] {
       for (const m of tekst.matchAll(BLOK)) {
         const ervoor = tekst.slice(0, m.index);
         const code = m[1];
+        const koppen = ervoor.match(/^#{2,3} .*$/gm) ?? [];
+        const kop = (koppen.at(-1) ?? '').replace(/^#+ /, '');
         uit.push({
           plek: `${map.name}/${f}:${ervoor.split('\n').length}`,
           hoofdstuk: Number.parseInt(map.name, 10),
@@ -52,6 +61,8 @@ export function blokkenInVolgorde(): Blok[] {
             /\{\/\*\s*(?:verwacht-fout|verwacht-runtime-fout|niet-compileren):[^*]*\*\/\}\s*$/.test(
               ervoor.slice(-400),
             ),
+          opdracht: kop.startsWith('Opdracht'),
+          deel: /\{\/\*\s*compileer-als:[^*]*\*\/\}\s*$/.test(ervoor.slice(-300)),
         });
       }
     }

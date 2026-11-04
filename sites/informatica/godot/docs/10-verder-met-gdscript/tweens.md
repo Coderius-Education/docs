@@ -11,13 +11,14 @@ Pak je nu een muntje, dan is het in één frame weg. Dat werkt, maar het voelt k
 
 ## Voorspel: wat zie je?
 
-Je werkt in deze les alleen in `_on_body_entered` van je muntje. Wat erboven staat, de soorten uit [Dictionaries](site:godot/docs/dictionaries), blijft zoals het is. Heb je die les overgeslagen, dan staat bij jou `Global.score += 1` in plaats van `Global.score += WAARDES[soort]`; dat werkt net zo.
+Je werkt in deze les vooral in `_on_body_entered` van je muntje; in Stap 3 komt er bovenaan één variabele bij. De soorten uit [Dictionaries](site:godot/docs/dictionaries) blijven zoals ze zijn. Heb je die les overgeslagen, dan staat bij jou `Global.score += 1` in plaats van `Global.score += WAARDES[soort]`; dat werkt net zo.
 
 Dit is `_on_body_entered` met twee nieuwe regels erin, en zonder `queue_free()`:
 
 ```gdscript
 func _on_body_entered(body: Node2D) -> void:
     Global.score += WAARDES[soort]
+    print("Score: ", Global.score)
     var tween = create_tween()
     tween.tween_property(self, "position:y", position.y - 40, 0.5)
 ```
@@ -29,7 +30,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 Het muntje schuift in een halve seconde veertig pixels omhoog, en blijft daar hangen. Er staat geen `queue_free()` meer, dus het gaat niet weg.
 
-En er is nog iets: het muntje bestaat nog. Loop je eronder door en spring je er opnieuw tegenaan, dan krijg je nog een punt. Dat los je verderop op.
+En er is nog iets: het muntje bestaat nog. Loop je eronder door en spring je er opnieuw tegenaan, dan krijg je de punten van dat muntje nog een keer. Dat los je verderop op.
 
 </details>
 
@@ -51,6 +52,7 @@ Een tween kan meer dingen achter elkaar doen. Elke `tween_property` begint pas a
 ```gdscript
 func _on_body_entered(body: Node2D) -> void:
     Global.score += WAARDES[soort]
+    print("Score: ", Global.score)
     var tween = create_tween()
     tween.tween_property(self, "position:y", position.y - 40, 0.3)
     tween.tween_property(self, "modulate:a", 0.0, 0.2)
@@ -94,6 +96,7 @@ func _on_body_entered(body: Node2D) -> void:
         return
     gepakt = true
     Global.score += WAARDES[soort]
+    print("Score: ", Global.score)
     var tween = create_tween()
     tween.tween_property(self, "position:y", position.y - 40, 0.3)
     tween.tween_property(self, "modulate:a", 0.0, 0.2)
@@ -143,7 +146,7 @@ Je hoeft de tween niet zelf te stoppen. Hij hoort bij de power-up, en als die me
 
 ## Opdracht 10.5.b: zelf een effect bedenken
 
-Kies een moment in je spel dat nu in één frame gebeurt, en maak er met een tween een kleine animatie van. Bijvoorbeeld: de vijand uit opdracht 7.1.a die rood knippert voordat hij verdwijnt, de vlag die omhoog schuift als je een level haalt, of je menu dat bij de start langzaam in beeld komt.
+Kies een moment in je spel dat nu in één frame gebeurt, en maak er met een tween een kleine animatie van. Bijvoorbeeld: de vijand uit opdracht 7.3.a die rood knippert voordat hij verdwijnt, de vlag die omhoog schuift als je een level haalt, of je menu dat bij de start langzaam in beeld komt.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -157,18 +160,21 @@ Kies een moment in je spel dat nu in één frame gebeurt, en maak er met een twe
 <details>
 <summary>Klik hier voor een voorbeeldoplossing.</summary>
 
-Je vijand uit opdracht 7.1.a verdwijnt meteen als hij je raakt. Hier knippert hij eerst twee keer rood. Het idee is hetzelfde als bij het muntje: `gepakt` heet hier `geraakt`, en `queue_free` komt aan het eind van de tween.
+Je vijand uit opdracht 7.3.a haalt een leven van je af en verdwijnt meteen. Hier knippert hij eerst twee keer rood. Je zet `var geraakt` bovenaan je vijand-script en vervangt `_on_body_entered`; wat er verder in staat, blijft. Het idee is hetzelfde als bij het muntje: `gepakt` heet hier `geraakt`, en `queue_free` komt aan het eind van de tween. De regels met `Global` zijn die van jou: het leven eraf uit 7.3.a, en de highscore-controle uit de JSON-les. Heb je die les niet gedaan, dan laat je de `if` met `is_game_over()` weg.
+
+{/* compileer-als: extends Area2D */}
 
 ```gdscript
-extends Area2D
-
 var geraakt = false
 
 func _on_body_entered(body: Node2D) -> void:
     if geraakt:
         return
     geraakt = true
-    print("Geraakt door vijand!")
+    Global.levens -= 1
+    print("Levens: ", Global.levens)
+    if Global.is_game_over():
+        Global.controleer_highscore()
     var tween = create_tween()
     tween.tween_property(self, "modulate", Color.RED, 0.1)
     tween.tween_property(self, "modulate", Color.WHITE, 0.1)
