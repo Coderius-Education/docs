@@ -1,3 +1,4 @@
+import Heading from '@theme/Heading';
 import type { ReactNode } from 'react';
 import {
   BLOOM,
@@ -21,7 +22,9 @@ export default function Bloom({ leerdoelen }: { leerdoelen: Leerdoelen }): React
   const heeftExpert = kolommen.some((m) => m.id === 'expert');
   return (
     <section>
-      <h2 id="bloom">Beoordelen met Bloom</h2>
+      <Heading as="h2" id="bloom">
+        Beoordelen met Bloom
+      </Heading>
       <p>
         Je cijfer hangt af van twee dingen. Het eerste is de moeilijkheid van de concepten die je
         gebruikt: {moeilijkhedenTekst(leerdoelen)}, zoals ze bij de niveaus hierboven staan. Het

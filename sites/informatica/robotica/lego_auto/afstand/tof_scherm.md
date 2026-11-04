@@ -43,7 +43,10 @@ while True:
 
 ## Verder bouwen
 
-Wil je meer? Twee richtingen, zonder stappenplan:
+In het volgende deel laat je je **lijnvolger stoppen** zodra de TOF een obstakel dichterbij dan 10 cm ziet: [Deel 10](site:robotica/lego_auto/afstand/stoppen).
 
-- Laat je **lijnvolger stoppen** zodra de TOF een obstakel dichterbij dan 10 cm ziet — een extra `if` in je robotscript.
-- **Meer TOF-sensoren** aansluiten kan via de andere channels van de multiplexer; hoe dat werkt staat in de bibliotheek bij [twee TOF-sensoren met multiplexer](site:robotica/docs/onderdelen/tof#twee-met-mux).
+Wil je daarna nog meer? **Meer TOF-sensoren** aansluiten kan via de andere channels van de multiplexer; hoe dat werkt staat in de bibliotheek bij [twee TOF-sensoren met multiplexer](site:robotica/docs/onderdelen/tof#twee-met-mux).
+
+---
+
+← [De afstand uitlezen](site:robotica/lego_auto/afstand/uitlezen) · **Volgende:** [Deel 10 — Stoppen voor een obstakel](site:robotica/lego_auto/afstand/stoppen) →

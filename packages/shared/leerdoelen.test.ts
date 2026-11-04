@@ -87,6 +87,24 @@ describe('alleen niveaus, geen schoolsoorten', () => {
   });
 });
 
+describe('ankers op de leerdoelenpagina', () => {
+  it('maakt elke kop met een id met Heading, zodat Docusaurus het anker kent', () => {
+    // Een kale <h2 id="bloom"> staat wel in de HTML, maar Docusaurus kent het
+    // anker niet: een link naar leerdoelen#bloom gaf bij fullstack een
+    // waarschuwing en liet de build van robotica (onBrokenAnchors: 'throw')
+    // stoppen. @theme/Heading meldt het anker aan.
+    const map = join(__dirname, 'components', 'Leerdoelen');
+    const kaal = readdirSync(map)
+      .filter((f) => f.endsWith('.tsx'))
+      .flatMap((f) =>
+        [...readFileSync(join(map, f), 'utf8').matchAll(/<h[1-6]\b[^>]*\bid=/g)].map(
+          (m) => `${f}: ${m[0]}`,
+        ),
+      );
+    expect(kaal).toEqual([]);
+  });
+});
+
 describe('een concept op de pagina', () => {
   it('toont overal waar het concept staat ook zijn toelichting', () => {
     // De vergelijking liet de toelichting weg. Bij fullstack hangen twee
@@ -576,8 +594,58 @@ describe('plugin en createConfig', () => {
           extra: { loadedVersions: [{ docs: [{ id: 'b', title: 'B', permalink: '/x/extra/b' }] }] },
         },
       };
-      expect(plugin.docsVan(allContent).map((d: { id: string }) => d.id)).toEqual(['a', 'b']);
+      expect(
+        plugin
+          .docsVan(allContent)
+          .map((d: { id: string; instantie: string }) => [d.instantie, d.id]),
+      ).toEqual([
+        ['default', 'a'],
+        ['extra', 'b'],
+      ]);
       expect(plugin.docsVan({})).toEqual([]);
+    });
+
+    it('kiest bij hetzelfde id in twee docs-plugins niet stil een van de twee', () => {
+      // Robotica heeft een "intro" in lego_auto (het frame) en in golfbot. Een
+      // Map op id hield stil de laatste, en dan wees "het frame bouwen" naar
+      // de Golfbot.
+      const docs = [
+        {
+          id: 'intro',
+          title: 'Het frame',
+          permalink: '/r/lego_auto/intro',
+          instantie: 'lego_auto',
+        },
+        { id: 'intro', title: 'De Golfbot', permalink: '/r/golfbot/intro', instantie: 'golfbot' },
+      ];
+      expect(() => plugin.koppelLessen(met('intro'), docs)).toThrow(
+        "les 'intro' staat in meer docs-plugins (lego_auto, golfbot); schrijf bijvoorbeeld 'lego_auto:intro'",
+      );
+      expect(plugin.koppelLessen(met('lego_auto:intro'), docs).concepten[0].lessen).toEqual([
+        { id: 'lego_auto:intro', titel: 'Het frame', pad: '/r/lego_auto/intro' },
+      ]);
+      expect(() => plugin.koppelLessen(met('golf:intro'), docs)).toThrow(
+        "les 'golf:intro' bestaat niet",
+      );
+      expect(() => met('site:python')).toThrow(/les moet een doc-id zijn/);
+    });
+
+    it('houdt twee lessen in dezelfde andere cursus uit elkaar in de linktekst', () => {
+      // Robotica linkt "tuples / sets" naar twee lessen van de python-cursus;
+      // twee keer "tuples / sets (cursus Python)" zei niet welke link waarheen
+      // ging.
+      const docs = [{ id: 'a/b', title: 'B', permalink: '/x/docs/a/b' }];
+      const twee = plugin.koppelLessen(
+        met(['site:python/docs/data/tuples', 'site:python/docs/data/sets']),
+        docs,
+      ).concepten[0].lessen;
+      expect(twee.map((l: { titel: string }) => l.titel)).toEqual([
+        'één (cursus Python, tuples)',
+        'één (cursus Python, sets)',
+      ]);
+      const een = plugin.koppelLessen(met(['a/b', 'site:python/docs/data/tuples']), docs)
+        .concepten[0].lessen;
+      expect(een.map((l: { titel: string }) => l.titel)).toEqual(['B', 'één (cursus Python)']);
     });
 
     it('zegt het als de cursus geen docs heeft', () => {

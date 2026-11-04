@@ -104,10 +104,12 @@ const LEGO_ZONDER_BLOK: { reden: string; lessen: string[] }[] = [
   {
     reden: 'nieuw onderdeel in bekende code: een tweede object of een andere methode',
     lessen: [
+      'lego_auto/afstand/stoppen.md',
       'lego_auto/afstand/tof_scherm.md',
       'lego_auto/afstand/uitlezen.md',
       'lego_auto/analoog_ir/deel4_twee_sensoren.md',
       'lego_auto/batterijen/code.md',
+      'lego_auto/lijnvolgen/vier_sensoren.md',
       'lego_auto/motoren/deel6_draaien.md',
     ],
   },

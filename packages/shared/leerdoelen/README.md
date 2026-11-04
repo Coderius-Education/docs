@@ -36,7 +36,10 @@ schoolsoort.
 - `les`: waar je het concept leert, als doc-id van de cursus
   (`"html-css/koppen-lijsten"`) of een lijst daarvan. De plugin zoekt bij het
   bouwen titel en adres op; een les die niet bestaat stopt de build. Op de
-  pagina's staat onder het concept "Leer het in: …".
+  pagina's staat onder het concept "Leer het in: …". Heeft de cursus meer
+  docs-plugins met hetzelfde id (robotica heeft een `intro` in `lego_auto` en
+  in `golfbot`), zet dan de plugin ervoor: `"lego_auto:intro"`; een kaal id
+  dat in meer plugins staat, stopt de build.
 - Andere velden die mogen: `bloom` (een denkvaardigheid uit `bloom.json`),
   `groep` (een kop in de nakijker) en `toelichting` (een zin op de pagina).
 - De volgorde is die van het blad. Een rij blijft op één regel: `biome.json`

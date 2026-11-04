@@ -118,10 +118,11 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
       lessen = Array.isArray(rij.les) ? rij.les : [rij.les];
       const goedeLes = (l) =>
         typeof l === 'string' &&
-        (/^[\w-]+(\/[\w-]+)*$/.test(l) || /^site:[\w-]+(\/[\w.-]+)+(#[\w-]+)?$/.test(l));
+        (/^(?!site:)([\w-]+:)?[\w-]+(\/[\w-]+)*$/.test(l) ||
+          /^site:[\w-]+(\/[\w.-]+)+(#[\w-]+)?$/.test(l));
       if (lessen.length === 0 || !lessen.every(goedeLes)) {
         fouten.push(
-          `${waar}: les moet een doc-id zijn ("html-css/koppen-lijsten"), een site:-link naar een andere cursus, of een lijst daarvan`,
+          `${waar}: les moet een doc-id zijn ("html-css/koppen-lijsten", of met de docs-plugin ervoor: "lego_auto:intro"), een site:-link naar een andere cursus, of een lijst daarvan`,
         );
       }
     }
