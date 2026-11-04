@@ -1,8 +1,10 @@
 // Leerdoelen per cursus en de beoordeling volgens Bloom (zie README.md).
 //
 // Elke cursus met leerdoelen heeft één bestand, `src/leerdoelen.json`: per
-// concept één rij, met per niveau van de cursus (start, verdieping havo, …)
-// de moeilijkheid (basis, gevorderd, expert) naast elkaar. Dat bestand is de
+// concept één rij, met per niveau de moeilijkheid (basis, gevorderd, expert)
+// naast elkaar. De niveaus zijn voor elke cursus dezelfde vier (niveaus.json):
+// 1 havo start, 2 vwo start, 3 havo uitbreiding, 4 vwo uitbreiding; een
+// cursus noemt welke hij heeft. Dat bestand is de
 // enige bron voor de pagina /leerdoelen, de nakijker en coderius.nl.
 // `bloom.json` hiernaast is voor alle cursussen gelijk: de denkvaardigheden,
 // de cijfertabel, het sjabloon en de vuistregels uit het beoordelingsblad.
@@ -11,6 +13,7 @@
 // ze hetzelfde lezen en hetzelfde rekenen.
 
 const BLOOM = require('./bloom.json');
+const NIVEAUS = require('./niveaus.json');
 
 /** De moeilijkheden die een concept kan hebben, van makkelijk naar moeilijk. */
 const CONCEPT_MOEILIJKHEDEN = ['basis', 'gevorderd', 'expert'];
@@ -43,8 +46,19 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
       fouten.push(`onbekend veld '${sleutel}' (wel: niveaus, onderwerpen, concepten)`);
     }
   }
-  if (!isLijstMetIds(niveaus) || niveaus.length === 0) {
-    fouten.push('niveaus moet een lijst zijn van { "id", "label" }, met minstens één niveau');
+  const bekend = NIVEAUS.map((n) => n.id);
+  if (!Array.isArray(niveaus) || niveaus.length === 0) {
+    fouten.push(`niveaus moet een lijst zijn met minstens één niveau (${bekend.join(', ')})`);
+  } else {
+    for (const n of niveaus) {
+      if (!bekend.includes(n)) {
+        fouten.push(`onbekend niveau ${JSON.stringify(n)} (wel: ${bekend.join(', ')})`);
+      }
+    }
+    const opVolgorde = [...niveaus].sort((a, b) => bekend.indexOf(a) - bekend.indexOf(b));
+    if (niveaus.join() !== opVolgorde.join()) {
+      fouten.push(`zet de niveaus op volgorde: ${opVolgorde.join(', ')}`);
+    }
   }
   if (!isLijstMetIds(onderwerpen) || onderwerpen.length === 0) {
     fouten.push(
@@ -56,7 +70,7 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
   }
   if (fouten.length) throw new Error(`${bron}:\n- ${fouten.join('\n- ')}`);
 
-  const niveauIds = niveaus.map((n) => n.id);
+  const niveauIds = niveaus;
   const onderwerpIds = new Set(onderwerpen.map((o) => o.id));
   for (const [soort, lijst] of [
     ['niveau', niveauIds],
@@ -64,9 +78,6 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
   ]) {
     const dubbel = lijst.filter((id, i) => lijst.indexOf(id) !== i);
     for (const id of new Set(dubbel)) fouten.push(`${soort} '${id}' staat er twee keer`);
-  }
-  for (const id of niveauIds) {
-    if (VELDEN.includes(id)) fouten.push(`niveau '${id}' heeft de naam van een veld`);
   }
 
   const gezien = new Set();
@@ -120,10 +131,15 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
   if (fouten.length) throw new Error(`${bron}:\n- ${fouten.join('\n- ')}`);
 
   return {
-    niveaus: niveaus.map(({ id, label }) => ({ id, label })),
+    niveaus: niveauIds.map((id) => NIVEAUS.find((n) => n.id === id)),
     onderwerpen: onderwerpen.map(({ id, label }) => ({ id, label })),
     concepten: rijen,
   };
+}
+
+/** "Niveau 3 (havo uitbreiding)", voor een kop of een knop. */
+function niveauNaam(niveau) {
+  return `${niveau.label} (${niveau.omschrijving})`;
 }
 
 function denkvaardigheid(id) {
@@ -211,6 +227,8 @@ function moeilijkheidVoorstel(perOnderwerp) {
 
 module.exports = {
   BLOOM,
+  NIVEAUS,
+  niveauNaam,
   CONCEPT_MOEILIJKHEDEN,
   VELDEN,
   leesLeerdoelen,

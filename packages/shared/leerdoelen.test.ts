@@ -5,10 +5,12 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   BLOOM,
+  NIVEAUS,
   cijferTekst,
   cijferVoor,
   leesLeerdoelen,
   moeilijkheidVoorstel,
+  niveauNaam,
   sjabloonZin,
 } from './leerdoelen';
 import { SITES, siteDir } from './sites';
@@ -51,38 +53,49 @@ describe('src/leerdoelen.json per cursus', () => {
 
 describe('leesLeerdoelen', () => {
   const goed = {
-    niveaus: [
-      { id: 'start', label: 'Start' },
-      { id: 'havo', label: 'Verdieping havo' },
-    ],
+    niveaus: ['1', '3'],
     onderwerpen: [{ id: 'gd', label: 'GDScript' }],
     concepten: [
-      { id: 'gd-groups', onderwerp: 'gd', concept: 'groups', start: 'gevorderd', havo: 'basis' },
+      { id: 'gd-groups', onderwerp: 'gd', concept: 'groups', 1: 'gevorderd', 3: 'basis' },
       {
         id: 'gd-loops',
         onderwerp: 'gd',
         concept: 'loops',
         bloom: 'toepassen',
-        start: 'gevorderd',
-        havo: 'expert',
+        1: 'gevorderd',
+        3: 'expert',
       },
     ],
   };
 
-  it('zet de niveaus van een rij bij elkaar', () => {
-    expect(leesLeerdoelen(goed).concepten).toEqual([
+  it('kent vier niveaus, voor elke cursus dezelfde', () => {
+    expect(NIVEAUS.map(niveauNaam)).toEqual([
+      'Niveau 1 (havo start)',
+      'Niveau 2 (vwo start)',
+      'Niveau 3 (havo uitbreiding)',
+      'Niveau 4 (vwo uitbreiding)',
+    ]);
+  });
+
+  it('zet de niveaus van een rij bij elkaar, met naam en omschrijving', () => {
+    const uit = leesLeerdoelen(goed);
+    expect(uit.niveaus).toEqual([
+      { id: '1', label: 'Niveau 1', omschrijving: 'havo start' },
+      { id: '3', label: 'Niveau 3', omschrijving: 'havo uitbreiding' },
+    ]);
+    expect(uit.concepten).toEqual([
       {
         id: 'gd-groups',
         onderwerp: 'gd',
         concept: 'groups',
-        niveau: { start: 'gevorderd', havo: 'basis' },
+        niveau: { 1: 'gevorderd', 3: 'basis' },
       },
       {
         id: 'gd-loops',
         onderwerp: 'gd',
         concept: 'loops',
         bloom: 'toepassen',
-        niveau: { start: 'gevorderd', havo: 'expert' },
+        niveau: { 1: 'gevorderd', 3: 'expert' },
       },
     ]);
   });
@@ -91,24 +104,10 @@ describe('leesLeerdoelen', () => {
     const fout = {
       ...goed,
       concepten: [
-        { id: 'gd-groups', onderwerp: 'gd', concept: 'groups', start: 'gevorderd' },
-        { id: 'gd-groups', onderwerp: 'x', concept: '', start: 'moeilijk', havo: 'basis' },
-        {
-          id: 'gd-tweens',
-          onderwerp: 'gd',
-          concept: 'tweens',
-          start: 'basis',
-          havo: 'basis',
-          vwo: 'basis',
-        },
-        {
-          id: 'gd-json',
-          onderwerp: 'gd',
-          concept: 'JSON',
-          start: 'basis',
-          havo: 'basis',
-          bloom: 'weten',
-        },
+        { id: 'gd-groups', onderwerp: 'gd', concept: 'groups', 1: 'gevorderd' },
+        { id: 'gd-groups', onderwerp: 'x', concept: '', 1: 'moeilijk', 3: 'basis' },
+        { id: 'gd-tweens', onderwerp: 'gd', concept: 'tweens', 1: 'basis', 3: 'basis', 4: 'basis' },
+        { id: 'gd-json', onderwerp: 'gd', concept: 'JSON', 1: 'basis', 3: 'basis', bloom: 'weten' },
       ],
     };
     let melding = '';
@@ -118,21 +117,24 @@ describe('leesLeerdoelen', () => {
       melding = (e as Error).message;
     }
     expect(melding).toContain('godot/src/leerdoelen.json');
-    expect(melding).toContain("concept 'gd-groups': niveau 'havo' ontbreekt");
+    expect(melding).toContain("concept 'gd-groups': niveau '3' ontbreekt");
     expect(melding).toContain("concept 'gd-groups' staat er twee keer");
     expect(melding).toContain("onbekend onderwerp 'x'");
     expect(melding).toContain('concept (de tekst) ontbreekt');
-    expect(melding).toContain("'moeilijk' bij start");
-    // Een niveau dat er niet is: een tikfout in een kolom valt op.
-    expect(melding).toContain("concept 'gd-tweens': onbekend veld 'vwo'");
+    expect(melding).toContain("'moeilijk' bij 1");
+    // Een niveau dat de cursus niet heeft: een tikfout in een kolom valt op.
+    expect(melding).toContain("concept 'gd-tweens': onbekend veld '4'");
     expect(melding).toContain("onbekende denkvaardigheid 'weten'");
   });
 
-  it('weigert een bestand zonder niveaus of met een niveau dat een veld heet', () => {
+  it('weigert een onbekend niveau, geen niveaus, of niveaus door elkaar', () => {
     expect(() => leesLeerdoelen({ ...goed, niveaus: [] })).toThrow(/minstens één niveau/);
-    expect(() =>
-      leesLeerdoelen({ ...goed, niveaus: [{ id: 'concept', label: 'Concept' }] }),
-    ).toThrow(/heeft de naam van een veld/);
+    expect(() => leesLeerdoelen({ ...goed, niveaus: ['start'] })).toThrow(
+      'onbekend niveau "start" (wel: 1, 2, 3, 4)',
+    );
+    expect(() => leesLeerdoelen({ ...goed, niveaus: ['3', '1'] })).toThrow(
+      'zet de niveaus op volgorde: 1, 3',
+    );
   });
 });
 
@@ -229,31 +231,27 @@ describe('moeilijkheidVoorstel: de vuistregels', () => {
 
 describe('plugin en createConfig', () => {
   const leerdoelen = leesLeerdoelen({
-    niveaus: [
-      { id: 'start', label: 'Start' },
-      { id: 'vwo', label: 'Verdieping vwo' },
-    ],
+    niveaus: ['1', '2', '3', '4'],
     onderwerpen: [{ id: 'gd', label: 'GDScript' }],
-    concepten: [{ id: 'gd-a', onderwerp: 'gd', concept: 'a', start: 'basis', vwo: 'basis' }],
+    concepten: [
+      { id: 'gd-a', onderwerp: 'gd', concept: 'a', 1: 'basis', 2: 'basis', 3: 'basis', 4: 'basis' },
+    ],
   });
 
   it('maakt /leerdoelen, /leerdoelen/bloom en bij meer niveaus een route per niveau', () => {
     expect(plugin.routes('/godot/', leerdoelen).map((r: { path: string }) => r.path)).toEqual([
       '/godot/leerdoelen',
       '/godot/leerdoelen/bloom',
-      '/godot/leerdoelen/start',
-      '/godot/leerdoelen/vwo',
+      '/godot/leerdoelen/niveau-1',
+      '/godot/leerdoelen/niveau-2',
+      '/godot/leerdoelen/niveau-3',
+      '/godot/leerdoelen/niveau-4',
     ]);
     const een = { ...leerdoelen, niveaus: [leerdoelen.niveaus[0]] };
     expect(plugin.routes('/web/', een).map((r: { path: string }) => r.path)).toEqual([
       '/web/leerdoelen',
       '/web/leerdoelen/bloom',
     ]);
-  });
-
-  it("weigert een niveau dat 'bloom' heet: dat is de route van de Bloom-pagina", () => {
-    const fout = { ...leerdoelen, niveaus: [...leerdoelen.niveaus, { id: 'bloom', label: 'B' }] };
-    expect(() => plugin.routes('/x/', fout)).toThrow(/bloom/);
   });
 
   it('elk component van een route staat in de exports van het pakket', () => {
@@ -282,9 +280,9 @@ describe('plugin en createConfig', () => {
       writeFileSync(
         join(src, 'leerdoelen.json'),
         JSON.stringify({
-          niveaus: [{ id: 'start', label: 'Start' }],
+          niveaus: ['1'],
           onderwerpen: [{ id: 'a', label: 'A' }],
-          concepten: [{ id: 'a-1', onderwerp: 'a', concept: 'één', start: 'basis' }],
+          concepten: [{ id: 'a-1', onderwerp: 'a', concept: 'één', 1: 'basis' }],
         }),
       );
       const p = plugin({ siteDir: map, baseUrl: '/x/' }, { siteId: 'x' });

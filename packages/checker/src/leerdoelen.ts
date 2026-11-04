@@ -1,4 +1,9 @@
-import { type Leerdoelen, leesLeerdoelen, moeilijkheid } from '@coderius/shared/leerdoelen';
+import {
+  type Leerdoelen,
+  leesLeerdoelen,
+  moeilijkheid,
+  niveauNaam,
+} from '@coderius/shared/leerdoelen';
 import type { CheckerConfig, Concept, ConceptDetect, ConceptLevel } from './types';
 
 // Van de leerdoelen van een cursus (src/leerdoelen.json, zie
@@ -34,13 +39,16 @@ export function leerdoelenNaarConfig(
 
   const concepts: Concept[] = leerdoelen.concepten.map((c) => {
     const level: ConceptLevel = eenNiveau ? c.niveau[leerdoelen.niveaus[0].id] : { ...c.niveau };
+    const overal = new Set(Object.values(c.niveau));
     return {
       id: c.id,
       subject: c.onderwerp,
-      // Zonder eigen groep: bij één niveau de moeilijkheid als kop (Basis,
-      // Gevorderd), zoals de tabel van de docent; bij meer niveaus verschilt
-      // die per leerroute, en staat het label bij het concept.
-      group: c.groep ?? (eenNiveau ? moeilijkheid(level as string).label : 'Concepten'),
+      // Zonder eigen groep: de moeilijkheid als kop (Basis, Gevorderd), zoals
+      // de tabel van de docent. Verschilt die per niveau, dan staat het
+      // concept onder "Per niveau anders", met het label van de gekozen
+      // leerroute erbij.
+      group:
+        c.groep ?? (overal.size === 1 ? moeilijkheid([...overal][0]).label : 'Per niveau anders'),
       label: c.concept,
       level,
       ...(c.bloom ? { bloom: c.bloom } : {}),
@@ -51,7 +59,9 @@ export function leerdoelenNaarConfig(
   return {
     leerdoelen,
     subjects: leerdoelen.onderwerpen,
-    ...(eenNiveau ? {} : { tracks: leerdoelen.niveaus }),
+    ...(eenNiveau
+      ? {}
+      : { tracks: leerdoelen.niveaus.map((n) => ({ id: n.id, label: niveauNaam(n) })) }),
     concepts,
   };
 }

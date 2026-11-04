@@ -12,15 +12,20 @@ export interface LeerdoelConcept {
   id: string;
   onderwerp: string;
   concept: string;
-  /** Per niveau-id de moeilijkheid. */
+  /** Per niveau-id ('1' tot en met '4') de moeilijkheid. */
   niveau: Record<string, ConceptMoeilijkheid>;
   bloom?: string;
   groep?: string;
   toelichting?: string;
 }
 
+/** Een van de vier niveaus: 1 havo start, 2 vwo start, 3 havo uitbreiding, 4 vwo uitbreiding. */
+export interface Niveau extends Benoemd {
+  omschrijving: string;
+}
+
 export interface Leerdoelen {
-  niveaus: Benoemd[];
+  niveaus: Niveau[];
   onderwerpen: Benoemd[];
   concepten: LeerdoelConcept[];
 }
@@ -66,6 +71,8 @@ export interface OnderwerpTelling {
 }
 
 export const BLOOM: Bloom;
+export const NIVEAUS: Niveau[];
+export function niveauNaam(niveau: Niveau): string;
 export const CONCEPT_MOEILIJKHEDEN: ConceptMoeilijkheid[];
 export const VELDEN: string[];
 export function leesLeerdoelen(data: unknown, bron?: string): Leerdoelen;

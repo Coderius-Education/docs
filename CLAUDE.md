@@ -228,13 +228,15 @@ verandert.
 ## Leerdoelen
 
 Een cursus met leerdoelen heeft één bestand, `src/leerdoelen.json`: de tabel
-van de docent uit het beoordelingsblad, per concept één rij met per niveau van
-de cursus (start, verdieping havo, …) basis, gevorderd of expert naast
-elkaar. Een rij blijft op één regel (een override in `biome.json`), zodat je
+van de docent uit het beoordelingsblad, per concept één rij met per niveau
+basis, gevorderd of expert naast elkaar. De niveaus zijn voor elke cursus
+dezelfde vier (`packages/shared/leerdoelen/niveaus.json`): 1 havo start, 2 vwo
+start, 3 havo uitbreiding, 4 vwo uitbreiding; een cursus zet in `niveaus` welke
+hij heeft (`["1", "2"]`), en de nakijker maakt er de leerroutes van. Een rij blijft op één regel (een override in `biome.json`), zodat je
 de niveaus met het oog vergelijkt en een wijziging één regel in de diff is.
 `createConfig` ziet het bestand en zet `packages/shared/plugins/leerdoelen.js`
 aan: de routes `/leerdoelen` (per niveau, en de niveaus naast elkaar),
-`/leerdoelen/<niveau>` bij meer niveaus, `/leerdoelen/bloom` (voor elke
+`/leerdoelen/niveau-<n>` bij meer niveaus, `/leerdoelen/bloom` (voor elke
 cursus gelijk), een link in de footer, en na de build `leerdoelen.json` in de
 root van de cursus voor coderius.nl. Een fout in het bestand stopt de build.
 De denkvaardigheden, de cijfertabel, het sjabloon en de vuistregels staan in

@@ -5,19 +5,16 @@ import type { ConceptDetect } from './types';
 const detect: ConceptDetect = { type: 'regex', pattern: /x/g };
 
 const eenNiveau = {
-  niveaus: [{ id: 'start', label: 'Start' }],
+  niveaus: ['1'],
   onderwerpen: [{ id: 'html', label: 'HTML' }],
   concepten: [
-    { id: 'html-a', onderwerp: 'html', concept: 'a', start: 'basis' },
-    { id: 'html-forms', onderwerp: 'html', concept: 'forms', start: 'gevorderd' },
+    { id: 'html-a', onderwerp: 'html', concept: 'a', 1: 'basis' },
+    { id: 'html-forms', onderwerp: 'html', concept: 'forms', 1: 'gevorderd' },
   ],
 };
 
 const tweeNiveaus = {
-  niveaus: [
-    { id: 'havo', label: 'Start havo' },
-    { id: 'vwo', label: 'Start vwo' },
-  ],
+  niveaus: ['1', '2'],
   onderwerpen: [{ id: 'api', label: 'FastAPI' }],
   concepten: [
     {
@@ -25,9 +22,10 @@ const tweeNiveaus = {
       onderwerp: 'api',
       concept: 'Cookies',
       bloom: 'toepassen',
-      havo: 'expert',
-      vwo: 'gevorderd',
+      1: 'expert',
+      2: 'gevorderd',
     },
+    { id: 'api-routes', onderwerp: 'api', concept: 'meerdere GET-routes', 1: 'basis', 2: 'basis' },
   ],
 };
 
@@ -43,14 +41,19 @@ describe('leerdoelenNaarConfig', () => {
   });
 
   it('meer niveaus: de niveaus worden leerroutes, met een moeilijkheid per route', () => {
-    const uit = leerdoelenNaarConfig(tweeNiveaus, { 'api-cookies': detect });
-    expect(uit.tracks).toEqual(tweeNiveaus.niveaus);
+    const uit = leerdoelenNaarConfig(tweeNiveaus, { 'api-cookies': detect, 'api-routes': detect });
+    expect(uit.tracks).toEqual([
+      { id: '1', label: 'Niveau 1 (havo start)' },
+      { id: '2', label: 'Niveau 2 (vwo start)' },
+    ]);
     expect(uit.concepts[0]).toMatchObject({
-      level: { havo: 'expert', vwo: 'gevorderd' },
+      level: { 1: 'expert', 2: 'gevorderd' },
       bloom: 'toepassen',
       label: 'Cookies',
+      group: 'Per niveau anders',
     });
-    expect(uit.leerdoelen.concepten[0].niveau).toEqual({ havo: 'expert', vwo: 'gevorderd' });
+    // Overal dezelfde moeilijkheid: die is de groep, zoals bij één niveau.
+    expect(uit.concepts[1]).toMatchObject({ level: { 1: 'basis', 2: 'basis' }, group: 'Basis' });
   });
 
   it('een nieuwe rij in de leerdoelen zonder herkenning stopt de nakijker', () => {

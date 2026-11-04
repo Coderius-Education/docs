@@ -1,0 +1,6 @@
+[
+  { "id": "1", "label": "Niveau 1", "omschrijving": "havo start" },
+  { "id": "2", "label": "Niveau 2", "omschrijving": "vwo start" },
+  { "id": "3", "label": "Niveau 3", "omschrijving": "havo uitbreiding" },
+  { "id": "4", "label": "Niveau 4", "omschrijving": "vwo uitbreiding" }
+]

@@ -2,7 +2,7 @@
 // deze plugin aan als de site `src/leerdoelen.json` heeft:
 //  - /leerdoelen: de concepten per niveau, en bij meer niveaus een tabel om
 //    ze te vergelijken;
-//  - /leerdoelen/<niveau>: één niveau, als er meer dan één is;
+//  - /leerdoelen/niveau-<n>: één niveau, als er meer dan één is;
 //  - /leerdoelen/bloom: de beoordeling volgens Bloom, voor elke cursus gelijk;
 //  - na de build: leerdoelen.json in de root van de cursus, voor coderius.nl.
 //
@@ -46,10 +46,8 @@ function routes(baseUrl, leerdoelen) {
   ];
   if (leerdoelen.niveaus.length > 1) {
     for (const niveau of leerdoelen.niveaus) {
-      if (niveau.id === 'bloom')
-        throw new Error("leerdoelen.json: een niveau mag niet 'bloom' heten");
       lijst.push({
-        path: `${baseUrl}leerdoelen/${niveau.id}`,
+        path: `${baseUrl}leerdoelen/niveau-${niveau.id}`,
         component: `${COMPONENT}/NiveauPagina`,
         exact: true,
         props: { leerdoelen, niveau: niveau.id },

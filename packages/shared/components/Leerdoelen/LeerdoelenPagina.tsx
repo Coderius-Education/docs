@@ -2,7 +2,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import type { ReactNode } from 'react';
-import type { Leerdoelen } from '../../leerdoelen';
+import { type Leerdoelen, niveauNaam } from '../../leerdoelen';
 import { siteByUrl } from '../../sites';
 import Niveau from './Niveau';
 import Vergelijking from './Vergelijking';
@@ -43,22 +43,30 @@ export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoele
         {meer ? (
           <>
             <p>
-              De cursus heeft {leerdoelen.niveaus.length} niveaus. Een concept kan op het ene niveau
-              basis zijn en op het andere gevorderd: zo'n verschil heeft een rand.
+              De cursus heeft{' '}
+              {leerdoelen.niveaus
+                .map(niveauNaam)
+                .join(', ')
+                .replace(/, ([^,]*)$/, ' en $1')}
+              . Een concept kan op het ene niveau basis zijn en op het andere gevorderd: zo'n
+              verschil heeft een rand.
             </p>
             <h2>De niveaus naast elkaar</h2>
             <Vergelijking leerdoelen={leerdoelen} />
             {leerdoelen.niveaus.map((n) => (
               <section key={n.id}>
                 <h2>
-                  <Link to={`/leerdoelen/${n.id}`}>{n.label}</Link>
+                  <Link to={`/leerdoelen/niveau-${n.id}`}>{niveauNaam(n)}</Link>
                 </h2>
                 <Niveau leerdoelen={leerdoelen} niveau={n.id} />
               </section>
             ))}
           </>
         ) : (
-          <Niveau leerdoelen={leerdoelen} niveau={leerdoelen.niveaus[0].id} kop="h2" />
+          <>
+            <p>De cursus heeft één niveau: {niveauNaam(leerdoelen.niveaus[0])}.</p>
+            <Niveau leerdoelen={leerdoelen} niveau={leerdoelen.niveaus[0].id} kop="h2" />
+          </>
         )}
       </main>
     </Layout>

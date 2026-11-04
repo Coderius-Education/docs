@@ -353,6 +353,8 @@ const extra = LESCONCEPTEN.filter((c) => !gedekt.has(c.id));
 
 export const webConfig: CheckerConfig = {
   subjects: uitLeerdoelen.subjects,
+  // Niveau 1 (havo start) en 2 (vwo start): de docent kiest bij Leerroute.
+  tracks: uitLeerdoelen.tracks,
 
   fileKinds: [
     { id: 'html', label: 'HTML' },

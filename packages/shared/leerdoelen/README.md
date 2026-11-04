@@ -3,29 +3,41 @@
 Elke cursus met leerdoelen heeft `src/leerdoelen.json`. Het is de tabel van de
 docent uit het beoordelingsblad, en de enige bron voor:
 
-- de pagina's `/leerdoelen`, `/leerdoelen/<niveau>` en `/leerdoelen/bloom`
+- de pagina's `/leerdoelen`, `/leerdoelen/niveau-<n>` en `/leerdoelen/bloom`
   (`../plugins/leerdoelen.js`, `../components/Leerdoelen/`);
 - de nakijker (`leerdoelenNaarConfig` in `packages/checker`);
 - coderius.nl: na de build staat het bestand als `<cursus>/leerdoelen.json`
   op de site.
 
+## De niveaus
+
+Elke cursus kent dezelfde vier niveaus (`niveaus.json`):
+
+| Niveau | Wie |
+|:---:|---|
+| 1 | havo, start |
+| 2 | vwo, start |
+| 3 | havo, uitbreiding |
+| 4 | vwo, uitbreiding |
+
+Een cursus zet in `niveaus` welke hij heeft, op volgorde. Naam en omschrijving
+komen uit `niveaus.json`; die staan niet per cursus.
+
 ## De vorm
 
 ```json
 {
-  "niveaus": [
-    { "id": "start", "label": "Start" },
-    { "id": "havo", "label": "Verdieping havo" }
-  ],
+  "niveaus": ["1", "2", "3", "4"],
   "onderwerpen": [{ "id": "gdscript", "label": "GDScript" }],
   "concepten": [
-    { "id": "gd-groups", "onderwerp": "gdscript", "concept": "groups", "start": "gevorderd", "havo": "basis" }
+    { "id": "gd-groups", "onderwerp": "gdscript", "concept": "groups", "1": "gevorderd", "2": "gevorderd", "3": "gevorderd", "4": "basis" }
   ]
 }
 ```
 
 - Elk niveau is een sleutel op de rij, met `basis`, `gevorderd` of `expert`.
-  Elke rij heeft elk niveau; een ontbrekend of onbekend niveau is een fout.
+  Elke rij heeft elk niveau van de cursus; een ontbrekend of onbekend niveau
+  is een fout.
 - Andere velden die mogen: `bloom` (een denkvaardigheid uit `bloom.json`),
   `groep` (een kop in de nakijker) en `toelichting` (een zin op de pagina).
 - De volgorde is die van het blad. Een rij blijft op één regel: `biome.json`
@@ -40,12 +52,12 @@ docent uit het beoordelingsblad, en de enige bron voor:
 3. `pnpm test`: `packages/shared/leerdoelen.test.ts` controleert de vorm van
    elk bestand, de nakijker-test van de cursus de herkenning.
 
-## Een niveau toevoegen
+## Een niveau toevoegen aan een cursus
 
-Een regel in `niveaus` en een sleutel op élke rij. De nakijker krijgt het
-niveau vanzelf als leerroute, en de pagina's een kolom en een eigen route.
-Een niveau mag niet `bloom` heten (dat is de route van de Bloom-pagina) en niet
-de naam van een veld hebben.
+Het nummer in `niveaus` (op volgorde) en een sleutel op élke rij. De nakijker
+krijgt het niveau vanzelf als leerroute ("Niveau 3 (havo uitbreiding)"), en de
+pagina's een kolom en een eigen route. Een vijfde niveau voor alle cursussen
+is een regel in `niveaus.json`.
 
 ## Bloom en het cijfer
 

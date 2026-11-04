@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { levelVoor } from '@coderius/checker/conceptLevel';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
@@ -89,11 +90,15 @@ describe('webConfig — de conceptenlijst zelf', () => {
 
   it('telt precies de rijen uit de leerdoelen, met hun niveau', () => {
     expect(webConfig.concepts.map((c) => [c.id, c.subject, c.label, c.level])).toEqual(
-      leerdoelen.concepten.map((c) => [c.id, c.onderwerp, c.concept, c.start]),
+      leerdoelen.concepten.map((c) => [c.id, c.onderwerp, c.concept, { 1: c['1'], 2: c['2'] }]),
     );
     // De tabel van de docent: 13 rijen basis, 11 gevorderd.
-    expect(webConfig.concepts.filter((c) => c.level === 'basis')).toHaveLength(13);
-    expect(webConfig.concepts.filter((c) => c.level === 'gevorderd')).toHaveLength(11);
+    for (const niveau of ['1', '2']) {
+      expect(webConfig.concepts.filter((c) => levelVoor(c, niveau) === 'basis')).toHaveLength(13);
+      expect(webConfig.concepts.filter((c) => levelVoor(c, niveau) === 'gevorderd')).toHaveLength(
+        11,
+      );
+    }
   });
 
   it('de leerdoelen zijn het tabblad Web van het beoordelingsblad (Beoordeling_INF.xlsx)', () => {
@@ -126,15 +131,21 @@ describe('webConfig — de conceptenlijst zelf', () => {
       ['JavaScript', 'loops', 'gevorderd'],
     ];
     const label = new Map(leerdoelen.onderwerpen.map((o) => [o.id, o.label]));
-    expect(leerdoelen.niveaus.map((n) => n.id)).toEqual(['start']);
-    expect(leerdoelen.concepten.map((c) => [label.get(c.onderwerp), c.concept, c.start])).toEqual(
+    // Het blad heeft één kolom zonder naam: die geldt voor de start, op havo
+    // (niveau 1) en vwo (niveau 2).
+    expect(leerdoelen.niveaus).toEqual(['1', '2']);
+    expect(leerdoelen.concepten.filter((c) => c['1'] !== c['2'])).toEqual([]);
+    expect(leerdoelen.concepten.map((c) => [label.get(c.onderwerp), c.concept, c['1']])).toEqual(
       blad,
     );
   });
 
   it('stelt een cijfer voor: de config draagt de leerdoelen', () => {
-    expect(webConfig.leerdoelen?.niveaus).toEqual([{ id: 'start', label: 'Start' }]);
-    expect(webConfig.tracks).toBeUndefined();
+    expect(webConfig.leerdoelen?.niveaus.map((n) => n.id)).toEqual(['1', '2']);
+    expect(webConfig.tracks).toEqual([
+      { id: '1', label: 'Niveau 1 (havo start)' },
+      { id: '2', label: 'Niveau 2 (vwo start)' },
+    ]);
   });
 
   it('zet elk ander concept uit de lessen onder "Ook gebruikt", zonder niveau', () => {
