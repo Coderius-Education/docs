@@ -70,7 +70,7 @@ Het muntje is onzichtbaar, maar staat nog in je level. Je wilt `queue_free()` aa
     tween.tween_callback(queue_free)
 ```
 
-Let op: `queue_free` staat hier zonder haakjes. Je geeft de functie zelf mee, zodat de tween hem straks kan aanroepen. Met haakjes erachter zou je hem nu meteen aanroepen.
+Let op: `queue_free` staat hier zonder haakjes. Je geeft de functie zelf mee, zodat de tween hem straks kan aanroepen. Met haakjes erachter zou je hem op deze regel al aanroepen, en dat weigert Godot (zie [Er gaat iets mis](#er-gaat-iets-mis)).
 
 ## Stap 3: Eén keer tellen
 
@@ -185,11 +185,36 @@ tween.tween_property(self, "modulate:a", 0.0, 0.2)
 </details>
 
 <details>
+<summary>Cannot get return value of call to "queue_free()" because it returns "void".</summary>
+
+```
+Cannot get return value of call to "queue_free()" because it returns "void".
+```
+
+**Oorzaak:** je schreef `tween_callback(queue_free())`, met haakjes. Dan roep je `queue_free()` op die regel al aan, en geef je wat hij teruggeeft aan de tween. Maar `queue_free()` geeft niets terug, en Godot weigert je script: je spel start niet.
+
+{/* verwacht-fout: Cannot get return value of call to "queue_free()" because it returns "void". */}
+
+```gdscript
+# FOUT
+extends Area2D
+
+func _on_body_entered(body: Node2D) -> void:
+    var tween = create_tween()
+    tween.tween_property(self, "modulate:a", 0.0, 0.2)
+    tween.tween_callback(queue_free())
+```
+
+**Oplossing:** laat de haakjes weg: `tween.tween_callback(queue_free)`. Zo geef je de functie zelf mee, en roept de tween hem aan als hij klaar is.
+
+</details>
+
+<details>
 <summary>Het muntje is meteen weg, ik zie geen animatie</summary>
 
-**Oorzaak:** er staat nog een `queue_free()` aan het eind van `_on_body_entered`, of je schreef `tween_callback(queue_free())` met haakjes. In allebei de gevallen verdwijnt het muntje meteen, en de tween met hem.
+**Oorzaak:** er staat nog een `queue_free()` aan het eind van `_on_body_entered`. Het muntje verdwijnt dan in hetzelfde frame, en de tween met hem.
 
-**Oplossing:** haal de losse `queue_free()` weg, en schrijf `tween_callback(queue_free)` zonder haakjes.
+**Oplossing:** haal die losse `queue_free()` weg. De tween ruimt het muntje op met `tween_callback(queue_free)`.
 
 **Zelf vinden:** zet `print("weg")` vlak voor elke `queue_free` in je script. Zie je `weg` op hetzelfde moment als je het muntje raakt, dan wordt hij te vroeg aangeroepen.
 

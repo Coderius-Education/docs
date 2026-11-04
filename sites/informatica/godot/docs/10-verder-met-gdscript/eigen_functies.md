@@ -261,21 +261,38 @@ Identifier "delta" not declared in the current scope.
 
 **Oorzaak:** je hebt de regels met `delta` naar een eigen functie verhuisd, maar `delta` niet meegegeven. Hij bestaat alleen in `_physics_process`.
 
-**Oplossing:** geef hem mee als parameter, bij de aanroep én bij de functie:
+Zo ziet dat eruit:
+
+{/* verwacht-fout: Identifier "delta" not declared in the current scope. */}
 
 ```gdscript
 # FOUT
-func val() -> void:
-    if not is_on_floor():
-        velocity += get_gravity() * delta
+extends CharacterBody2D
 
-# GOED
-func val(delta: float) -> void:
+func _physics_process(delta: float) -> void:
+    val()
+    move_and_slide()
+
+
+func val() -> void:
     if not is_on_floor():
         velocity += get_gravity() * delta
 ```
 
-En in `_physics_process` wordt `val()` dan `val(delta)`.
+**Oplossing:** geef hem mee als parameter, bij de aanroep én bij de functie:
+
+```gdscript
+extends CharacterBody2D
+
+func _physics_process(delta: float) -> void:
+    val(delta)
+    move_and_slide()
+
+
+func val(delta: float) -> void:
+    if not is_on_floor():
+        velocity += get_gravity() * delta
+```
 
 </details>
 
@@ -298,6 +315,21 @@ Standalone lambdas cannot be accessed. Consider assigning it to a variable.
 ```
 
 **Oorzaak:** je nieuwe functie staat ingesprongen, binnen `_physics_process`. Een `func` binnen een andere functie leest Godot als iets anders: een *lambda*, een functie zonder vaste plek in je script. Die heb je hier niet nodig, en daarom klinkt de melding vreemd.
+
+{/* verwacht-fout: Standalone lambdas cannot be accessed. Consider assigning it to a variable. */}
+
+```gdscript
+# FOUT
+extends CharacterBody2D
+
+func _physics_process(delta: float) -> void:
+    val(delta)
+    move_and_slide()
+
+    func val(delta: float) -> void:
+        if not is_on_floor():
+            velocity += get_gravity() * delta
+```
 
 **Oplossing:** haal de inspringing weg, zodat `func` helemaal links staat, net als `func _physics_process`.
 

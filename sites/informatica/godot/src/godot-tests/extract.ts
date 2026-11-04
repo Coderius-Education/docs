@@ -27,6 +27,12 @@ export type Fragment = {
   code: string;
   /** de dichtstbijzijnde `##`-kop erboven; de gedragstest kiest hierop */
   kop: string;
+  /**
+   * Bij een foutvoorbeeld met `{/* verwacht-fout: … *\/}` erboven: de melding
+   * die Godot hoort te geven. De testrunner eist dan dat het blok níét
+   * compileert, en dat deze tekst in een van de meldingen staat.
+   */
+  verwachtFout?: string;
 };
 
 export type Overgeslagen = {
@@ -49,6 +55,15 @@ function isFoutVoorbeeld(code: string): boolean {
  * MDX-vorm, want `<!-- -->` laat de docusaurus-build stuklopen.
  */
 const NIET_COMPILEREN = '{/* niet-compileren:';
+
+/**
+ * Een foutvoorbeeld dat juist wél door Godot moet: de les citeert de melding
+ * die het geeft, en die melding moet kloppen. Zonder deze controle stond in
+ * de tweens-les dat `tween_callback(queue_free())` het muntje meteen laat
+ * verdwijnen, terwijl Godot het script weigert. Alles vanaf een regel
+ * `# GOED` hoort bij de verbetering en gaat niet mee.
+ */
+const VERWACHT_FOUT = /\{\/\*\s*verwacht-fout:\s*([\s\S]*?)\s*\*\/\}\s*$/;
 
 function slugVan(inhoud: string): string | undefined {
   return inhoud.match(/^slug:\s*\/(\S+)/m)?.[1];
@@ -82,6 +97,26 @@ export function fragmentenUit(
     n += 1;
     const naam = `${slug.replace(/[^a-z0-9]+/gi, '_')}_${n}`;
 
+    const verwacht = ervoor.slice(-400).match(VERWACHT_FOUT)?.[1];
+    if (verwacht) {
+      const fout = code.split(/^\s*#\s*GOED\b/m)[0].replace(/\s+$/, '');
+      if (!/^extends\s+\w+/m.test(fout)) {
+        throw new Error(
+          `${bron}:${regel}: een verwacht-fout-blok moet een heel script zijn, met extends`,
+        );
+      }
+      fragmenten.push({
+        naam,
+        bron,
+        regel,
+        begin,
+        eind,
+        kop,
+        code: `${fout}\n`,
+        verwachtFout: verwacht,
+      });
+      continue;
+    }
     if (isFoutVoorbeeld(code) || ervoor.slice(-200).includes(NIET_COMPILEREN)) {
       overgeslagen.push({ bron, regel, reden: 'bewust fout voorbeeld' });
       continue;

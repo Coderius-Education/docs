@@ -12,6 +12,41 @@ function pagina(body: string): string {
 }
 
 describe('GDScript uit de lespagina´s halen', () => {
+  it('neemt een foutvoorbeeld met verwacht-fout mee, met de melding en zonder de verbetering', () => {
+    const { fragmenten, overgeslagen } = fragmentenUit(
+      'les.md',
+      pagina(
+        '{/* verwacht-fout: Identifier "delta" not declared in the current scope. */}\n\n```gdscript\n# FOUT\nextends Node\n\nfunc val() -> void:\n    print(delta)\n\n# GOED\nfunc val(delta: float) -> void:\n    print(delta)\n```',
+      ),
+    );
+    expect(overgeslagen).toEqual([]);
+    expect(fragmenten).toHaveLength(1);
+    expect(fragmenten[0].verwachtFout).toBe(
+      'Identifier "delta" not declared in the current scope.',
+    );
+    expect(fragmenten[0].code).toContain('func val() -> void:');
+    expect(fragmenten[0].code).not.toContain('GOED');
+  });
+
+  it('weigert een verwacht-fout-blok zonder extends', () => {
+    // Zonder extends faalt elk blok, ook als de les de verkeerde fout citeert.
+    expect(() =>
+      fragmentenUit(
+        'les.md',
+        pagina('{/* verwacht-fout: iets */}\n\n```gdscript\nfunc val():\n    pass\n```'),
+      ),
+    ).toThrow(/heel script/);
+  });
+
+  it('slaat een # FOUT-blok zonder marker nog steeds over', () => {
+    const { fragmenten, overgeslagen } = fragmentenUit(
+      'les.md',
+      pagina('```gdscript\n# FOUT\nextends Node\n\nfunc f():\n    x\n```'),
+    );
+    expect(fragmenten).toEqual([]);
+    expect(overgeslagen[0].reden).toBe('bewust fout voorbeeld');
+  });
+
   it('neemt een volledig script mee', () => {
     const { fragmenten } = fragmentenUit(
       'les.md',

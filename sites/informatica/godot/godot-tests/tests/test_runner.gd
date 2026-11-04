@@ -54,13 +54,41 @@ func _compileer_alles(index: Array) -> void:
 		# foutcode.
 		var script := GDScript.new()
 		script.source_code = FileAccess.get_file_as_string(pad)
-		if script.reload() != OK:
+		if item.has("verwacht_fout"):
+			_compileer_foutvoorbeeld(script, bron, item["verwacht_fout"])
+		elif script.reload() != OK:
 			_faal("%s — compileert niet (zie de fout hierboven)" % bron)
 		else:
 			gedaan += 1
 	print("Gecompileerd: %d van %d blokken." % [gedaan, index.size() - overgeslagen])
 	if overgeslagen > 0:
 		print("Overgeslagen: %d blokken die de wijziging niet raakt (--alleen)." % overgeslagen)
+
+# Vangt de meldingen die Godot bij het compileren geeft, zodat een
+# foutvoorbeeld uit de les met zijn eigen melding vergeleken kan worden.
+class Meldingen extends Logger:
+	var regels: Array[String] = []
+
+	func _log_error(_function: String, _file: String, _line: int, code: String, rationale: String, _editor_notify: bool, _error_type: int, _script_backtraces: Array[ScriptBacktrace]) -> void:
+		regels.append(code + " " + rationale)
+
+# Een foutvoorbeeld uit "Er gaat iets mis" hoort níét te compileren, en Godot
+# hoort de melding te geven die de les citeert. De melding zelf verschijnt
+# hierboven ook als SCRIPT ERROR; dat is hier de bedoeling.
+func _compileer_foutvoorbeeld(script: GDScript, bron: String, verwacht: String) -> void:
+	print("Foutvoorbeeld %s, verwacht: %s" % [bron, verwacht])
+	var meldingen := Meldingen.new()
+	OS.add_logger(meldingen)
+	var resultaat := script.reload()
+	OS.remove_logger(meldingen)
+	if resultaat == OK:
+		_faal("%s — foutvoorbeeld compileert, maar de les zegt dat Godot het weigert" % bron)
+		return
+	for regel in meldingen.regels:
+		if regel.contains(verwacht):
+			gedaan += 1
+			return
+	_faal("%s — Godot geeft niet de melding uit de les ('%s') maar: %s" % [bron, verwacht, " | ".join(meldingen.regels)])
 
 # --- laag 2: gedrag ----------------------------------------------------------
 
