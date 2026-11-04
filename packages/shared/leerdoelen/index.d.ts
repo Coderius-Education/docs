@@ -17,6 +17,18 @@ export interface LeerdoelConcept {
   bloom?: string;
   groep?: string;
   toelichting?: string;
+  /**
+   * Waar je het concept leert: de doc-id's uit het veld `les`. Na de plugin
+   * (plugins/leerdoelen.js) ook met titel en pad binnen de cursus.
+   */
+  lessen?: Les[];
+}
+
+export interface Les {
+  id: string;
+  titel?: string;
+  /** Pad binnen de cursus, met de baseUrl: '/web/docs/html-css/koppen-lijsten'. */
+  pad?: string;
 }
 
 /** Een van de vier niveaus, Niveau 1 tot en met Niveau 4 (niveaus.json). */

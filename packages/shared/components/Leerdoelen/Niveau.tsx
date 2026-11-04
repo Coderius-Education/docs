@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { CONCEPT_MOEILIJKHEDEN, type Leerdoelen } from '../../leerdoelen';
+import Lessen from './Lessen';
 import Moeilijkheid from './Moeilijkheid';
 import styles from './styles.module.css';
 
@@ -52,6 +53,7 @@ export default function Niveau({
                                 {c.toelichting && (
                                   <span className={styles.toelichting}>{c.toelichting}</span>
                                 )}
+                                <Lessen concept={c} />
                               </li>
                             ))}
                         </ul>

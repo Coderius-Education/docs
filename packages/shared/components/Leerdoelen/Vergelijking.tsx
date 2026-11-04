@@ -1,6 +1,7 @@
 import Link from '@docusaurus/Link';
 import type { ReactNode } from 'react';
 import type { Leerdoelen } from '../../leerdoelen';
+import Lessen from './Lessen';
 import Moeilijkheid from './Moeilijkheid';
 import styles from './styles.module.css';
 
@@ -35,7 +36,10 @@ export default function Vergelijking({ leerdoelen }: { leerdoelen: Leerdoelen })
               </tr>
               {rijen.map((c) => (
                 <tr key={c.id}>
-                  <td>{c.concept}</td>
+                  <td>
+                    {c.concept}
+                    <Lessen concept={c} />
+                  </td>
                   {niveaus.map((n, i) => {
                     const anders = i > 0 && c.niveau[n.id] !== c.niveau[niveaus[i - 1].id];
                     return (

@@ -30,6 +30,33 @@ function gepubliceerd(siteId, leerdoelen) {
   return { cursus: siteId ?? null, ...leerdoelen };
 }
 
+/**
+ * Zoek bij elk concept de titel en het adres van zijn lessen op, uit de docs
+ * van de cursus. Een les die niet bestaat is een fout: anders verwees de
+ * pagina naar een les die verhuisd of verdwenen is.
+ *
+ * @param {object} leerdoelen uit leesLeerdoelen
+ * @param {{id: string, title: string, permalink: string}[]} docs
+ */
+function koppelLessen(leerdoelen, docs) {
+  const perId = new Map(docs.map((d) => [d.id, d]));
+  const onbekend = [];
+  const concepten = leerdoelen.concepten.map((c) => {
+    if (!c.lessen) return c;
+    const lessen = c.lessen.map(({ id }) => {
+      const doc = perId.get(id);
+      if (!doc) {
+        onbekend.push(`concept '${c.id}': les '${id}' bestaat niet`);
+        return { id };
+      }
+      return { id, titel: doc.title, pad: doc.permalink };
+    });
+    return { ...c, lessen };
+  });
+  if (onbekend.length) throw new Error(`leerdoelen.json:\n- ${onbekend.join('\n- ')}`);
+  return { ...leerdoelen, concepten };
+}
+
 /** De routes, los van Docusaurus, zodat een test ze kan nalopen. */
 function routes(baseUrl, leerdoelen) {
   const lijst = [
@@ -62,18 +89,23 @@ function routes(baseUrl, leerdoelen) {
 module.exports = function leerdoelenPlugin(context, { siteId } = {}) {
   const bestand = leerdoelenBestand(context.siteDir);
   lees(bestand);
+  let gekoppeld = null;
   return {
     name: 'coderius-leerdoelen',
-    loadContent: () => lees(bestand),
-    contentLoaded({ content, actions }) {
+    // De lessen staan pas vast als de docs geladen zijn: daarom komen de
+    // routes uit allContentLoaded, met de titels en adressen erbij.
+    async allContentLoaded({ allContent, actions }) {
+      const docsPlugin = allContent['docusaurus-plugin-content-docs'];
+      const docs = docsPlugin?.default?.loadedVersions?.[0]?.docs ?? [];
+      gekoppeld = koppelLessen(lees(bestand), docs);
       // Een route van een plugin krijgt de baseUrl niet vanzelf.
-      for (const route of routes(context.baseUrl, content)) actions.addRoute(route);
+      for (const route of routes(context.baseUrl, gekoppeld)) actions.addRoute(route);
     },
     getPathsToWatch: () => [bestand],
-    async postBuild({ outDir, content }) {
+    async postBuild({ outDir }) {
       fs.writeFileSync(
         path.join(outDir, 'leerdoelen.json'),
-        `${JSON.stringify(gepubliceerd(siteId, content), null, 2)}\n`,
+        `${JSON.stringify(gepubliceerd(siteId, gekoppeld), null, 2)}\n`,
       );
     },
   };
@@ -81,4 +113,5 @@ module.exports = function leerdoelenPlugin(context, { siteId } = {}) {
 
 module.exports.leerdoelenBestand = leerdoelenBestand;
 module.exports.routes = routes;
+module.exports.koppelLessen = koppelLessen;
 module.exports.gepubliceerd = gepubliceerd;

@@ -236,6 +236,8 @@ nakijker maakt er de leerroutes van. Noem op de sites alleen de niveaus, geen
 schoolsoort; `leerdoelen.test.ts` weert die woorden uit de leerdoelen en de
 pagina's. Een rij blijft op één regel (een override in `biome.json`), zodat je
 de niveaus met het oog vergelijkt en een wijziging één regel in de diff is.
+Elk concept wijst met `les` naar de les waar je het leert (een doc-id); de
+plugin zoekt titel en adres op en stopt de build bij een les die niet bestaat.
 `createConfig` ziet het bestand en zet `packages/shared/plugins/leerdoelen.js`
 aan: het overzicht `/leerdoelen` (links naar de niveaus en, bij meer dan één,
 naar de vergelijking, en onderaan de uitleg van Bloom, voor elke cursus

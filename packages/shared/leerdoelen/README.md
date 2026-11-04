@@ -33,6 +33,10 @@ schoolsoort.
 - Elk niveau is een sleutel op de rij, met `basis`, `gevorderd` of `expert`.
   Elke rij heeft elk niveau van de cursus; een ontbrekend of onbekend niveau
   is een fout.
+- `les`: waar je het concept leert, als doc-id van de cursus
+  (`"html-css/koppen-lijsten"`) of een lijst daarvan. De plugin zoekt bij het
+  bouwen titel en adres op; een les die niet bestaat stopt de build. Op de
+  pagina's staat onder het concept "Leer het in: …".
 - Andere velden die mogen: `bloom` (een denkvaardigheid uit `bloom.json`),
   `groep` (een kop in de nakijker) en `toelichting` (een zin op de pagina).
 - De volgorde is die van het blad. Een rij blijft op één regel: `biome.json`

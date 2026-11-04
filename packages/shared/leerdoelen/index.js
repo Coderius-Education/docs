@@ -18,7 +18,7 @@ const NIVEAUS = require('./niveaus.json');
 const CONCEPT_MOEILIJKHEDEN = ['basis', 'gevorderd', 'expert'];
 
 /** Velden van een rij die geen niveau zijn. */
-const VELDEN = ['id', 'onderwerp', 'concept', 'bloom', 'groep', 'toelichting'];
+const VELDEN = ['id', 'onderwerp', 'concept', 'bloom', 'groep', 'toelichting', 'les'];
 
 const BLOOM_IDS = BLOOM.denkvaardigheden.map((d) => d.id);
 
@@ -108,6 +108,19 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
         fouten.push(`${waar}: ${veld} moet tekst zijn`);
       }
     }
+    // De les waar je het concept leert: een doc-id van de eigen cursus
+    // ("html-css/koppen-lijsten"), of een lijst als het in meer lessen zit.
+    // De plugin zoekt titel en adres op en stopt de build bij een onbekende.
+    let lessen;
+    if (rij.les !== undefined) {
+      lessen = Array.isArray(rij.les) ? rij.les : [rij.les];
+      const goedeLes = (l) => typeof l === 'string' && /^[\w-]+(\/[\w-]+)*$/.test(l);
+      if (lessen.length === 0 || !lessen.every(goedeLes)) {
+        fouten.push(
+          `${waar}: les moet een doc-id zijn ("html-css/koppen-lijsten") of een lijst daarvan`,
+        );
+      }
+    }
     const niveau = {};
     for (const n of niveauIds) {
       const m = rij[n];
@@ -125,6 +138,7 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
     for (const veld of ['bloom', 'groep', 'toelichting']) {
       if (rij[veld] !== undefined) uit[veld] = rij[veld];
     }
+    if (lessen) uit.lessen = lessen.map((id) => ({ id }));
     return uit;
   });
   if (fouten.length) throw new Error(`${bron}:\n- ${fouten.join('\n- ')}`);

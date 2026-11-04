@@ -323,16 +323,66 @@ describe('plugin en createConfig', () => {
         JSON.stringify({
           niveaus: ['1'],
           onderwerpen: [{ id: 'a', label: 'A' }],
-          concepten: [{ id: 'a-1', onderwerp: 'a', concept: 'één', 1: 'basis' }],
+          concepten: [{ id: 'a-1', onderwerp: 'a', concept: 'één', 1: 'basis', les: 'a/een' }],
         }),
       );
       const p = plugin({ siteDir: map, baseUrl: '/x/' }, { siteId: 'x' });
-      const content = p.loadContent();
-      await p.postBuild({ outDir: map, content });
-      expect(JSON.parse(readFileSync(join(map, 'leerdoelen.json'), 'utf8'))).toEqual({
-        cursus: 'x',
-        ...content,
+      const routesGezien: { path: string; props?: { leerdoelen?: unknown } }[] = [];
+      const docs = [{ id: 'a/een', title: 'Les één', permalink: '/x/docs/a/een' }];
+      await p.allContentLoaded({
+        allContent: {
+          'docusaurus-plugin-content-docs': { default: { loadedVersions: [{ docs }] } },
+        },
+        actions: { addRoute: (r: (typeof routesGezien)[number]) => routesGezien.push(r) },
       });
+      await p.postBuild({ outDir: map });
+      const uit = JSON.parse(readFileSync(join(map, 'leerdoelen.json'), 'utf8'));
+      expect(uit.cursus).toBe('x');
+      // De les staat in de build met titel en adres, ook voor coderius.nl.
+      expect(uit.concepten[0].lessen).toEqual([
+        { id: 'a/een', titel: 'Les één', pad: '/x/docs/a/een' },
+      ]);
+      expect(routesGezien.map((r) => r.path)).toEqual(['/x/leerdoelen', '/x/leerdoelen/niveau-1']);
+    });
+  });
+
+  describe('lessen per concept', () => {
+    const met = (les: unknown) =>
+      leesLeerdoelen({
+        niveaus: ['1'],
+        onderwerpen: [{ id: 'a', label: 'A' }],
+        concepten: [{ id: 'a-1', onderwerp: 'a', concept: 'één', 1: 'basis', les }],
+      });
+
+    it('neemt een doc-id of een lijst daarvan', () => {
+      expect(met('html-css/flexbox').concepten[0].lessen).toEqual([{ id: 'html-css/flexbox' }]);
+      expect(met(['html-css/flexbox', 'html-css/css-grid']).concepten[0].lessen).toHaveLength(2);
+    });
+
+    it('weigert een pad, een bestandsnaam of een lege lijst', () => {
+      for (const fout of ['/docs/html-css/flexbox', 'html-css/flexbox.mdx', [], 3]) {
+        expect(() => met(fout), String(fout)).toThrow(/les moet een doc-id zijn/);
+      }
+    });
+
+    it('zoekt titel en adres op, en stopt bij een les die niet bestaat', () => {
+      const docs = [
+        { id: 'html-css/flexbox', title: 'Flexbox', permalink: '/web/docs/html-css/flexbox' },
+      ];
+      expect(plugin.koppelLessen(met('html-css/flexbox'), docs).concepten[0].lessen).toEqual([
+        { id: 'html-css/flexbox', titel: 'Flexbox', pad: '/web/docs/html-css/flexbox' },
+      ]);
+      expect(() => plugin.koppelLessen(met('html-css/weg'), docs)).toThrow(
+        "concept 'a-1': les 'html-css/weg' bestaat niet",
+      );
+    });
+
+    it('web heeft bij elk concept een les', () => {
+      const web = join(ROOT, siteDir('web'), 'src', 'leerdoelen.json');
+      const zonder = leesLeerdoelen(JSON.parse(readFileSync(web, 'utf8'))).concepten.filter(
+        (c) => !c.lessen,
+      );
+      expect(zonder.map((c) => c.id)).toEqual([]);
     });
   });
 
