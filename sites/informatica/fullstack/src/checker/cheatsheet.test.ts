@@ -14,6 +14,9 @@ import { fullstackConfig } from './config';
 // dichttimmeren. Verandert er iets aan de cheatsheet of aan config.ts, dan moet
 // je hier langs — en dat is precies de bedoeling.
 
+/** De rijen van het blad en wat de nakijker daarnaast laat zien. */
+const ALLE = [...fullstackConfig.concepts, ...(fullstackConfig.extra ?? [])];
+
 const CHEATSHEET = fileURLToPath(new URL('../../docs/cheatsheet.md', import.meta.url));
 
 /** De H2-koppen van de cheatsheet, vertaald naar het subject in de nakijker. */
@@ -48,6 +51,10 @@ type Item = {
 // Een summary is een vraag met de functienaam erachter (schrijfgids §7).
 const KOPPELING: Item[] = [
   // --- FastAPI ---
+  {
+    summary: 'Hoe installeer ik FastAPI? (python -m pip install)',
+    concepten: ['fastapi-installeren'],
+  },
   { summary: 'Hoe maak ik een FastAPI-app? (FastAPI)', concepten: ['fastapi-app'] },
   {
     summary: 'Waar haal ik een naam vandaan? (import)',
@@ -60,7 +67,7 @@ const KOPPELING: Item[] = [
     concepten: [],
     geenConcept: 'een terminalcommando, dat staat niet in de ingeleverde code',
   },
-  { summary: 'Hoe geef ik JSON terug? (@app.get)', concepten: ['fastapi-get'] },
+  { summary: 'Hoe geef ik JSON terug? (@app.get)', concepten: ['fastapi-get', 'fastapi-routes'] },
   {
     summary: 'Hoe geef ik een HTML-pagina terug? (HTMLResponse)',
     concepten: ['fastapi-html-response'],
@@ -98,14 +105,11 @@ const KOPPELING: Item[] = [
   },
   {
     summary: 'Hoe maak ik een account? (registreren)',
-    concepten: [],
-    geenConcept:
-      'opslaan met een controle ervoor; nagekeken via db-write en fastapi-httpexception, aan de code niet te onderscheiden van een gewoon formulier',
+    concepten: ['account-registreren'],
   },
   {
     summary: 'Hoe controleer ik een wachtwoord? (inloggen met 401)',
-    concepten: [],
-    geenConcept: 'een vergelijking met ==; db-get en fastapi-httpexception worden al nagekeken',
+    concepten: ['account-inloggen', 'account-wachtwoord'],
   },
   // Dezelfde regex als de 404: een project met een eigen controle gebruikt
   // HTTPException ook, en scoort daarmee op hetzelfde concept.
@@ -151,16 +155,12 @@ const KOPPELING: Item[] = [
 
   // --- Browser ---
   // Handelingen in de browser van de leerling; daar staat niets van in het
-  // ingeleverde project.
-  {
-    summary: 'Hoe open ik de ontwikkelaarstools? (F12)',
-    concepten: [],
-    geenConcept: 'een handeling in de browser, niet terug te zien in een bestand',
-  },
+  // ingeleverde project. Het blad noemt de ontwikkelaarstools wel: dat
+  // concept vinkt de docent met de hand aan.
+  { summary: 'Hoe open ik de ontwikkelaarstools? (F12)', concepten: ['browser-devtools'] },
   {
     summary: 'Hoe zie ik welke verzoeken de pagina doet? (tabblad Netwerk)',
-    concepten: [],
-    geenConcept: 'een handeling in de browser, niet terug te zien in een bestand',
+    concepten: ['browser-devtools'],
   },
   {
     summary: 'Hoe herlaad ik zonder cache? (Ctrl+Shift+R)',
@@ -184,7 +184,7 @@ const KOPPELING: Item[] = [
   },
   {
     summary: 'Hoe vang ik een lege lijst op? (if en else in een template)',
-    concepten: ['html-jinja-if'],
+    concepten: ['if-else'],
   },
   {
     summary: 'Hoe maak ik een verwijderknop per bericht? (verborgen veld)',
@@ -217,12 +217,11 @@ const KOPPELING: Item[] = [
   },
   {
     summary: 'Hoe sla ik iets op? (db[...] = en commit)',
-    concepten: ['db-sqlitedict', 'db-write', 'db-commit'],
+    concepten: ['db-sqlitedict', 'db-write', 'db-commit', 'db-formulier'],
   },
   {
     summary: 'Hoe lees ik iets uit? (db[...])',
-    concepten: [],
-    geenConcept: 'db["naam"] is gewoon indexeren; alleen db.get() wordt apart nagekeken',
+    concepten: ['db-lezen'],
   },
   { summary: 'Hoe bekijk ik alles wat erin staat? (db.items)', concepten: ['db-items'] },
   {
@@ -238,14 +237,11 @@ const KOPPELING: Item[] = [
   { summary: 'Hoe verwijder ik iets? (del db[...])', concepten: ['db-del'] },
   {
     summary: 'Hoe sla ik meer dan één ding onder een sleutel op? (dictionary als waarde)',
-    concepten: [],
-    geenConcept: 'een dictionary is Python; het opslaan zelf wordt nagekeken via db-write',
+    concepten: ['db-dictionary'],
   },
   {
     summary: 'Hoe pas ik een opgeslagen dictionary aan? (ophalen, aanpassen, terugzetten)',
-    concepten: [],
-    geenConcept:
-      'terugzetten is een gewone toewijzing, aan de code niet te onderscheiden van db-write',
+    concepten: ['db-aanpassen'],
   },
   {
     summary: 'Hoe geef ik elk bericht een eigen sleutel? (time.time_ns)',
@@ -416,7 +412,7 @@ describe('cheatsheet en nakijker lopen gelijk op', () => {
   });
 
   it('elk gekoppeld concept bestaat in de nakijker', () => {
-    const bestaande = new Set(fullstackConfig.concepts.map((c) => c.id));
+    const bestaande = new Set(ALLE.map((c) => c.id));
     const onbekend = KOPPELING.flatMap((i) => i.concepten).filter((id) => !bestaande.has(id));
 
     expect(onbekend).toEqual([]);
@@ -426,7 +422,7 @@ describe('cheatsheet en nakijker lopen gelijk op', () => {
     // De andere richting: een concept toevoegen zonder de leerling ergens te
     // vertellen hoe het werkt, is een concept waar hij nooit op kan scoren.
     const gekoppeld = new Set(KOPPELING.flatMap((i) => i.concepten));
-    const ongedekt = fullstackConfig.concepts.map((c) => c.id).filter((id) => !gekoppeld.has(id));
+    const ongedekt = ALLE.map((c) => c.id).filter((id) => !gekoppeld.has(id));
 
     expect(ongedekt).toEqual([]);
   });
@@ -451,13 +447,15 @@ describe('cheatsheet en nakijker lopen gelijk op', () => {
 
   it('een concept staat onder dezelfde kop als in de cheatsheet', () => {
     // Vangt een concept dat onder het verkeerde subject is gezet: dan komt het
-    // in de verkeerde kolom van het rapport te staan.
-    const subjectPerId = new Map(fullstackConfig.concepts.map((c) => [c.id, c.subject]));
+    // in de verkeerde kolom van het rapport te staan. Alleen voor Ook
+    // gebruikt: de rijen van het blad staan allemaal onder FastAPI, het ene
+    // onderwerp van het blad, ook een rij over HTML of de database.
+    const subjectPerId = new Map((fullstackConfig.extra ?? []).map((c) => [c.id, c.subject]));
     const scheef: string[] = [];
 
     for (const [i, item] of KOPPELING.entries()) {
       const verwacht = SUBJECT_PER_KOP[cheatsheet[i].kop];
-      for (const id of item.concepten) {
+      for (const id of item.concepten.filter((c) => subjectPerId.has(c))) {
         const gevonden = subjectPerId.get(id);
         if (gevonden !== verwacht) {
           scheef.push(`${id}: subject '${gevonden}' maar cheatsheet-kop '${cheatsheet[i].kop}'`);

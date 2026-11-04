@@ -1,10 +1,13 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { levelVoor } from '@coderius/checker/conceptLevel';
 import { analyze } from '@coderius/checker/matchConcepts';
-import type { ProjectFiles } from '@coderius/checker/types';
+import type { CheckReport, ConceptMatch, ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
+import { leesLeerdoelen } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
+import leerdoelenJson from '../leerdoelen.json';
 import { fullstackConfig } from './config';
 
 function files(entries: Record<string, string | null>): ProjectFiles {
@@ -22,13 +25,17 @@ function files(entries: Record<string, string | null>): ProjectFiles {
   );
 }
 
+// Concepten uit de leerdoelen en die onder Ook gebruikt, samen.
+const alle = (report: CheckReport): ConceptMatch[] => [...report.concepts, ...(report.extra ?? [])];
+const perId = (report: CheckReport) => new Map(alle(report).map((c) => [c.id, c.used]));
+
 const FIXTURES = fileURLToPath(new URL('./__fixtures__', import.meta.url));
 
 // Leest een voorbeeldproject van schijf, net als de helper in web. Zelfde
 // afspraak: assereer op benoemde concept-id's en nooit op totalen, zodat een
 // nieuwe les deze tests alleen breekt als hij precies deze concepten raakt.
-function leesFixture(naam: string): ProjectFiles {
-  const wortel = join(FIXTURES, naam);
+function leesFixture(naam: string, map = FIXTURES): ProjectFiles {
+  const wortel = join(map, naam);
   const files: ProjectFiles = {};
 
   const loop = (map: string): void => {
@@ -55,14 +62,13 @@ function leesFixture(naam: string): ProjectFiles {
 }
 
 function verwacht(naam: string, gebruikt: string[], ongebruikt: string[]): void {
-  const report = analyze(leesFixture(naam), fullstackConfig);
-  const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+  const gevonden = perId(analyze(leesFixture(naam), fullstackConfig));
 
   for (const id of [...gebruikt, ...ongebruikt]) {
-    expect(perId.has(id), `concept '${id}' bestaat niet in fullstackConfig`).toBe(true);
+    expect(gevonden.has(id), `concept '${id}' bestaat niet in fullstackConfig`).toBe(true);
   }
-  expect(gebruikt.filter((id) => !perId.get(id))).toEqual([]);
-  expect(ongebruikt.filter((id) => perId.get(id))).toEqual([]);
+  expect(gebruikt.filter((id) => !gevonden.get(id))).toEqual([]);
+  expect(ongebruikt.filter((id) => gevonden.get(id))).toEqual([]);
 }
 
 describe('fullstackConfig — voorbeeldprojecten scoren', () => {
@@ -71,6 +77,9 @@ describe('fullstackConfig — voorbeeldprojecten scoren', () => {
       'minimaal',
       ['fastapi-app', 'fastapi-get', 'struct-main'],
       [
+        'fastapi-routes',
+        'db-write',
+        'db-lezen',
         'fastapi-post',
         'fastapi-templates',
         'fastapi-redirect',
@@ -90,6 +99,7 @@ describe('fullstackConfig — voorbeeldprojecten scoren', () => {
       [
         'fastapi-app',
         'fastapi-get',
+        'fastapi-routes',
         'fastapi-post',
         'fastapi-path-param',
         'fastapi-static',
@@ -106,10 +116,13 @@ describe('fullstackConfig — voorbeeldprojecten scoren', () => {
         'html-form',
         'html-jinja-var',
         'html-jinja-loop',
-        'html-jinja-if',
+        'if-else',
         'js-bestand-koppelen',
         'db-sqlitedict',
         'db-write',
+        'db-lezen',
+        'db-formulier',
+        'db-dictionary',
         'db-commit',
         'db-get',
         'db-items',
@@ -120,8 +133,13 @@ describe('fullstackConfig — voorbeeldprojecten scoren', () => {
       // Even belangrijk: de nakijker vinkt niet zomaar alles aan. Deze fixture
       // gebruikt geen HTMLResponse, verwijdert niets en onthoudt de bezoeker
       // niet, dus die blijven uit.
-      // De fixture is van vóór het htmx-blok en doet niets zonder herladen.
+      // De fixture is van vóór het htmx-blok en doet niets zonder herladen,
+      // en van vóór de accounts.
       [
+        'db-aanpassen',
+        'account-registreren',
+        'account-inloggen',
+        'account-wachtwoord',
         'fastapi-html-response',
         'db-del',
         'fastapi-cookie',
@@ -160,20 +178,20 @@ describe('fullstackConfig', () => {
       }),
       fullstackConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+    const gevonden = perId(report);
 
-    expect(perId.get('struct-main')).toBe(true);
-    expect(perId.get('struct-static')).toBe(true);
-    expect(perId.get('struct-templates')).toBe(true);
+    expect(gevonden.get('struct-main')).toBe(true);
+    expect(gevonden.get('struct-static')).toBe(true);
+    expect(gevonden.get('struct-templates')).toBe(true);
   });
 
   it('vindt de mappen niet als ze er niet zijn', () => {
     const report = analyze(files({ 'app.py': 'print("hoi")' }), fullstackConfig);
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+    const gevonden = perId(report);
 
-    expect(perId.get('struct-main')).toBe(false);
-    expect(perId.get('struct-static')).toBe(false);
-    expect(perId.get('struct-templates')).toBe(false);
+    expect(gevonden.get('struct-main')).toBe(false);
+    expect(gevonden.get('struct-static')).toBe(false);
+    expect(gevonden.get('struct-templates')).toBe(false);
   });
 
   // De lessen 13-15 (lijst tonen, redirect, detailpagina + 404) leveren code op
@@ -196,11 +214,11 @@ describe('fullstackConfig', () => {
       }),
       fullstackConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+    const gevonden = perId(report);
 
-    expect(perId.get('fastapi-redirect')).toBe(true);
-    expect(perId.get('fastapi-httpexception')).toBe(true);
-    expect(perId.get('fastapi-path-param')).toBe(true);
+    expect(gevonden.get('fastapi-redirect')).toBe(true);
+    expect(gevonden.get('fastapi-httpexception')).toBe(true);
+    expect(gevonden.get('fastapi-path-param')).toBe(true);
   });
 
   // De twee concepten die niet in de fixtures voorkomen; zonder deze test zou
@@ -214,15 +232,16 @@ describe('fullstackConfig', () => {
           'async def pagina():',
           '    return "<h1>Hallo</h1>"',
           'async def verwijderen(sleutel: str = Form(...)):',
-          '    del db[sleutel]',
+          '    with SqliteDict("gastenboek.db") as db:',
+          '        del db[sleutel]',
         ].join('\n'),
       }),
       fullstackConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+    const gevonden = perId(report);
 
-    expect(perId.get('fastapi-html-response')).toBe(true);
-    expect(perId.get('db-del')).toBe(true);
+    expect(gevonden.get('fastapi-html-response')).toBe(true);
+    expect(gevonden.get('db-del')).toBe(true);
   });
 
   it('herkent een cookie en een sessie in de code van de les', () => {
@@ -239,10 +258,10 @@ describe('fullstackConfig', () => {
       }),
       fullstackConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+    const gevonden = perId(report);
 
-    expect(perId.get('fastapi-cookie')).toBe(true);
-    expect(perId.get('fastapi-sessie')).toBe(true);
+    expect(gevonden.get('fastapi-cookie')).toBe(true);
+    expect(gevonden.get('fastapi-sessie')).toBe(true);
   });
 
   it('ziet een gewone variabelenaam niet aan voor een cookie of sessie', () => {
@@ -250,10 +269,10 @@ describe('fullstackConfig', () => {
       files({ 'main.py': 'cookies = 3\nsessie = "x"\nprint(cookies, sessie)' }),
       fullstackConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+    const gevonden = perId(report);
 
-    expect(perId.get('fastapi-cookie')).toBe(false);
-    expect(perId.get('fastapi-sessie')).toBe(false);
+    expect(gevonden.get('fastapi-cookie')).toBe(false);
+    expect(gevonden.get('fastapi-sessie')).toBe(false);
   });
 
   it('ziet een route zonder accolades niet aan voor een path-parameter', () => {
@@ -261,11 +280,11 @@ describe('fullstackConfig', () => {
       files({ 'main.py': '@app.get("/berichten")\nasync def berichten():\n    return []' }),
       fullstackConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+    const gevonden = perId(report);
 
-    expect(perId.get('fastapi-path-param')).toBe(false);
-    expect(perId.get('fastapi-redirect')).toBe(false);
-    expect(perId.get('fastapi-httpexception')).toBe(false);
+    expect(gevonden.get('fastapi-path-param')).toBe(false);
+    expect(gevonden.get('fastapi-redirect')).toBe(false);
+    expect(gevonden.get('fastapi-httpexception')).toBe(false);
   });
 
   // Voor de JS-lessen werd .js als 'other' geclassificeerd en stond het niet in
@@ -291,11 +310,11 @@ describe('fullstackConfig', () => {
       fullstackConfig,
     );
 
-    const jsConcepten = fullstackConfig.concepts.filter((c) => c.subject === 'js').map((c) => c.id);
+    const jsConcepten = [...fullstackConfig.concepts, ...(fullstackConfig.extra ?? [])]
+      .filter((c) => c.subject === 'js')
+      .map((c) => c.id);
     expect(jsConcepten).toEqual(['js-bestand-koppelen']);
-    expect(new Map(report.concepts.map((c) => [c.id, c.used])).get('js-bestand-koppelen')).toBe(
-      true,
-    );
+    expect(perId(report).get('js-bestand-koppelen')).toBe(true);
   });
 
   it('een inline script-blok telt niet als koppelen', () => {
@@ -307,9 +326,9 @@ describe('fullstackConfig', () => {
       }),
       fullstackConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+    const gevonden = perId(report);
 
-    expect(perId.get('js-bestand-koppelen')).toBe(false);
+    expect(gevonden.get('js-bestand-koppelen')).toBe(false);
   });
 
   it('onderscheidt een template met een lus van een template met alleen variabelen', () => {
@@ -320,49 +339,19 @@ describe('fullstackConfig', () => {
       }),
       fullstackConfig,
     );
-    const lus = new Map(metLus.concepts.map((c) => [c.id, c.used]));
+    const lus = perId(metLus);
     expect(lus.get('html-jinja-loop')).toBe(true);
-    expect(lus.get('html-jinja-if')).toBe(true);
+    expect(lus.get('if-else')).toBe(true);
     expect(lus.get('html-jinja-var')).toBe(true);
 
     const zonderLus = analyze(
       files({ 'templates/groet.html': '<h1>Hallo {{ naam }}</h1>' }),
       fullstackConfig,
     );
-    const plat = new Map(zonderLus.concepts.map((c) => [c.id, c.used]));
+    const plat = perId(zonderLus);
     expect(plat.get('html-jinja-var')).toBe(true);
     expect(plat.get('html-jinja-loop')).toBe(false);
-    expect(plat.get('html-jinja-if')).toBe(false);
-  });
-
-  it('precies deze concepten staan op gevorderd', () => {
-    // De niveau-indeling is vastgesteld voor de hele leerlijn en bepaalt wat
-    // een leerling aan het eind moet kunnen. Een verschuiving hoort een
-    // bewuste keuze te zijn, geen bijvangst van een nieuwe les — vandaar een
-    // exacte lijst in plaats van een telling.
-    const gevorderd = fullstackConfig.concepts
-      .filter((c) => c.level === 'gevorderd')
-      .map((c) => c.id)
-      .sort();
-
-    // Het htmx-blok is een uitbreiding op het gastenboek, geen basisstof:
-    // een leerling zonder htmx heeft een compleet werkende site.
-    expect(gevorderd).toEqual([
-      'db-del',
-      'fastapi-cookie',
-      'fastapi-delete',
-      'fastapi-httpexception',
-      'fastapi-path-param',
-      'fastapi-redirect',
-      'fastapi-sessie',
-      'html-jinja-if',
-      'html-jinja-include',
-      'html-jinja-loop',
-      'htmx-koppelen',
-      'htmx-target',
-      'htmx-trigger',
-      'htmx-verzoek',
-    ]);
+    expect(plat.get('if-else')).toBe(false);
   });
 
   // De htmx-concepten en include staan in geen enkele fixture; zonder deze
@@ -385,19 +374,247 @@ describe('fullstackConfig', () => {
       }),
       fullstackConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+    const gevonden = perId(report);
 
-    expect(perId.get('fastapi-delete')).toBe(true);
-    expect(perId.get('htmx-koppelen')).toBe(true);
-    expect(perId.get('htmx-verzoek')).toBe(true);
-    expect(perId.get('htmx-target')).toBe(true);
-    expect(perId.get('htmx-trigger')).toBe(true);
-    expect(perId.get('html-jinja-include')).toBe(true);
+    expect(gevonden.get('fastapi-delete')).toBe(true);
+    expect(gevonden.get('htmx-koppelen')).toBe(true);
+    expect(gevonden.get('htmx-verzoek')).toBe(true);
+    expect(gevonden.get('htmx-target')).toBe(true);
+    expect(gevonden.get('htmx-trigger')).toBe(true);
+    expect(gevonden.get('html-jinja-include')).toBe(true);
     // app.js alleen is geen htmx.
     const zonder = analyze(
       files({ 'templates/a.html': '<script src="/static/js/app.js" defer></script>' }),
       fullstackConfig,
     );
-    expect(new Map(zonder.concepts.map((c) => [c.id, c.used])).get('htmx-koppelen')).toBe(false);
+    expect(perId(zonder).get('htmx-koppelen')).toBe(false);
+  });
+});
+
+describe('fullstackConfig — de leerdoelen', () => {
+  const leerdoelen = leesLeerdoelen(leerdoelenJson);
+
+  it('volgt het tabblad fullstack van het beoordelingsblad', () => {
+    // Het blad zoals de docent het invulde, met de twee startkolommen als
+    // niveau 1 en 2. Een verschuiving hoort een bewuste keuze te zijn, geen
+    // bijvangst van een nieuwe les; vandaar de hele tabel. Twee tikfouten van
+    // het blad zijn hersteld: "reponsetype" en "een genested dictionary".
+    const B = 'basis';
+    const G = 'gevorderd';
+    const E = 'expert';
+    const blad = [
+      ['virtual environment en FastAPI package installeren', B, B],
+      ['FastAPI applicatie starten', B, B],
+      ['je kunt de developtools gebruiken om te kijken wat de browser doet', B, B],
+      ['FileResponse als responstype', B, B],
+      ['HTMLResponse als responstype', B, B],
+      ['meerdere GET-routes', B, B],
+      ['CSS importeren van los bestand', B, B],
+      ['afbeelding importeren van los bestand', B, B],
+      ["links tussen pagina's via endpoint", B, B],
+      ['Jinja2 template met variabelen', G, B],
+      ['data opslaan met sqlitedict', B, B],
+      ['data uitlezen met sqlitedict', B, B],
+      ['formulier data opslaan via sqlitedict', G, B],
+      ['een geneste dictionary in sqlitedict', E, G],
+      ['Een dictionary aanpassen: ophalen, aanpassen, terugzetten', E, B],
+      ['Doorsturen na opslaan (redirect)', G, B],
+      ['if else in python of jinja2 template', G, G],
+      ['Registreren: een account opslaan', G, B],
+      ['gebruiker laten inloggen', G, G],
+      ['Inloggen: een wachtwoord controleren', E, G],
+      ['path parameters', E, G],
+      ['htmx', E, G],
+      ['Cookies', E, G],
+      ['Sessions', E, G],
+    ];
+    expect(leerdoelen.niveaus.map((n) => n.id)).toEqual(['1', '2']);
+    expect(leerdoelen.onderwerpen).toEqual([{ id: 'fastapi', label: 'FastAPI' }]);
+    expect(leerdoelenJson.concepten.map((c) => [c.concept, c['1'], c['2']])).toEqual(blad);
+  });
+
+  it('geeft elk concept uit de leerdoelen een detectie, in dezelfde volgorde', () => {
+    expect(fullstackConfig.concepts.map((c) => c.id)).toEqual(
+      leerdoelen.concepten.map((c) => c.id),
+    );
+    // Ook gebruikt is wat het blad niet noemt; een id staat nooit in allebei.
+    const rijen = new Set(leerdoelen.concepten.map((c) => c.id));
+    expect((fullstackConfig.extra ?? []).filter((c) => rijen.has(c.id))).toEqual([]);
+  });
+
+  it('kijkt alleen de installatie en de ontwikkelaarstools met de hand na', () => {
+    // Een venv leest de nakijker niet in, en wat je in de browser doet staat
+    // in geen bestand. De rest moet uit het project te halen zijn.
+    expect(
+      fullstackConfig.concepts.filter((c) => c.detect.type === 'handmatig').map((c) => c.id),
+    ).toEqual(['fastapi-installeren', 'browser-devtools']);
+  });
+
+  it('maakt van de twee niveaus leerroutes met elk een eigen verdeling', () => {
+    expect(fullstackConfig.tracks).toEqual([
+      { id: '1', label: 'Niveau 1' },
+      { id: '2', label: 'Niveau 2' },
+    ]);
+    const telling = (route: string, m: string) =>
+      fullstackConfig.concepts.filter((c) => levelVoor(c, route) === m).length;
+    expect([telling('1', 'basis'), telling('1', 'gevorderd'), telling('1', 'expert')]).toEqual([
+      11, 6, 7,
+    ]);
+    expect([telling('2', 'basis'), telling('2', 'gevorderd'), telling('2', 'expert')]).toEqual([
+      16, 8, 0,
+    ]);
+  });
+
+  it('vindt in het eindproject van de basis elke rij van de basis', () => {
+    // src/controle/referentie is letterlijk de laatste stand van main.py uit
+    // de lessen (controleer.test.ts houdt dat bij). Wat de basis leert, moet
+    // de nakijker daar terugvinden; anders scoort een leerling die de cursus
+    // afmaakt minder dan hij gedaan heeft.
+    const referentie = fileURLToPath(new URL('../controle', import.meta.url));
+    const gevonden = perId(analyze(leesFixture('referentie', referentie), fullstackConfig));
+    const nietInDeBasis = [
+      // handmatig
+      'fastapi-installeren',
+      'browser-devtools',
+      // een los script in Gegevens opslaan, geen endpoint
+      'db-aanpassen',
+      // uitbreidingen
+      'htmx-verzoek',
+      'fastapi-cookie',
+      'fastapi-sessie',
+    ];
+    const gemist = leerdoelen.concepten
+      .map((c) => c.id)
+      .filter((id) => !nietInDeBasis.includes(id) && !gevonden.get(id));
+    expect(gemist).toEqual([]);
+    for (const id of nietInDeBasis) expect(gevonden.get(id), id).toBe(false);
+  });
+});
+
+describe('fullstackConfig — de nieuwe rijen van het blad', () => {
+  const gebruikt = (code: Record<string, string>) => perId(analyze(files(code), fullstackConfig));
+
+  it('telt een tweede GET-route pas als meerdere routes', () => {
+    const een = gebruikt({ 'main.py': '@app.get("/")\nasync def a():\n    return {}\n' });
+    expect(een.get('fastapi-get')).toBe(true);
+    expect(een.get('fastapi-routes')).toBe(false);
+    const twee = gebruikt({
+      'main.py':
+        '@app.get("/")\nasync def a():\n    return {}\n@app.get("/b")\nasync def b():\n    return {}\n',
+    });
+    expect(twee.get('fastapi-routes')).toBe(true);
+  });
+
+  it('telt een link naar een route, niet naar een bestand of een andere site', () => {
+    expect(gebruikt({ 'a.html': '<a href="/about">Over</a>' }).get('html-link')).toBe(true);
+    expect(gebruikt({ 'a.html': '<a href="/static/a.pdf">pdf</a>' }).get('html-link')).toBe(false);
+    expect(gebruikt({ 'a.html': '<a href="https://x.nl">x</a>' }).get('html-link')).toBe(false);
+  });
+
+  it('telt een template pas met variabelen', () => {
+    const met = 'return templates.TemplateResponse(request, "a.html", {"naam": naam})';
+    const zonder = 'return templates.TemplateResponse(request, "a.html")';
+    expect(gebruikt({ 'main.py': met }).get('fastapi-templates')).toBe(true);
+    expect(gebruikt({ 'main.py': zonder }).get('fastapi-templates')).toBe(false);
+  });
+
+  it('herkent de database aan de naam na as, ook als die niet db heet', () => {
+    const code = [
+      'with SqliteDict("gebruikers.db") as gebruikers:',
+      '    gebruikers[naam] = wachtwoord',
+      '    gebruikers.commit()',
+    ].join('\n');
+    const g = gebruikt({ 'main.py': code });
+    expect(g.get('db-write')).toBe(true);
+    expect(g.get('db-lezen')).toBe(false);
+    // Een gewone dictionary is geen database.
+    const dier = gebruikt({ 'main.py': 'DIEREN = {}\nDIEREN["kat"] = {"geluid": "miauw"}\n' });
+    expect(dier.get('db-write')).toBe(false);
+    expect(dier.get('db-dictionary')).toBe(false);
+  });
+
+  it('telt uitlezen met indexeren, get, items en in, maar opslaan niet als uitlezen', () => {
+    const lees = (regel: string) =>
+      gebruikt({ 'main.py': `with SqliteDict("a.db") as db:\n    ${regel}\n` }).get('db-lezen');
+    expect(lees('print(db["naam"])')).toBe(true);
+    expect(lees('x = db.get(sleutel)')).toBe(true);
+    expect(lees('alles = list(db.items())')).toBe(true);
+    expect(lees('if naam in db:')).toBe(true);
+    expect(lees('db["naam"] = "Sam"')).toBe(false);
+  });
+
+  it('telt formulierdata opslaan alleen als Form en database in hetzelfde endpoint staan', () => {
+    const samen = [
+      '@app.post("/opslaan")',
+      'async def opslaan(naam: str = Form(...)):',
+      '    with SqliteDict("namen.db") as db:',
+      '        db["naam"] = naam',
+      '        db.commit()',
+    ].join('\n');
+    expect(gebruikt({ 'main.py': samen }).get('db-formulier')).toBe(true);
+    const los = [
+      '@app.post("/groet")',
+      'async def groet(naam: str = Form(...)):',
+      '    return {"naam": naam}',
+      '',
+      'with SqliteDict("namen.db") as db:',
+      '    db["teller"] = 1',
+    ].join('\n');
+    expect(gebruikt({ 'main.py': los }).get('db-formulier')).toBe(false);
+  });
+
+  it('telt een dictionary als waarde, en aanpassen alleen met terugzetten', () => {
+    const goed = [
+      'with SqliteDict("mijn_data.db") as db:',
+      '    db["sara"] = {"klas": "5A", "vakken": []}',
+      '    sara = db["sara"]',
+      '    sara["klas"] = "5B"',
+      '    db["sara"] = sara',
+      '    db.commit()',
+    ].join('\n');
+    const g = gebruikt({ 'main.py': goed });
+    expect(g.get('db-dictionary')).toBe(true);
+    expect(g.get('db-aanpassen')).toBe(true);
+    // De fout uit de les: een kopie aanpassen verandert het bestand niet.
+    const kopie = [
+      'with SqliteDict("mijn_data.db") as db:',
+      '    db["sara"]["klas"] = "5B"',
+      '    sara = db["sara"]',
+      '    sara["vakken"].append("Duits")',
+      '    db.commit()',
+    ].join('\n');
+    expect(gebruikt({ 'main.py': kopie }).get('db-aanpassen')).toBe(false);
+  });
+
+  it('telt een if in Python of in een template', () => {
+    expect(gebruikt({ 'main.py': 'if naam in db:\n    pass' }).get('if-else')).toBe(true);
+    expect(gebruikt({ 'a.html': '{% if berichten %}x{% endif %}' }).get('if-else')).toBe(true);
+    expect(gebruikt({ 'main.py': 'verschil = 3\nprint("if")' }).get('if-else')).toBe(false);
+  });
+
+  it('onderscheidt registreren, inloggen en het wachtwoord controleren', () => {
+    const g = gebruikt({
+      'main.py': [
+        '@app.post("/registreer")',
+        'async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):',
+        '    pass',
+        '@app.post("/gastenboek")',
+        'async def opslaan(naam: str = Form(...), wachtwoord: str = Form(...)):',
+        '    if gebruikers.get(naam) != wachtwoord:',
+        '        raise HTTPException(status_code=401)',
+      ].join('\n'),
+      'static/pages/gastenboek_form.html':
+        '<form action="/gastenboek" method="post"><input type="password" name="wachtwoord"></form>',
+    });
+    expect(g.get('account-registreren')).toBe(true);
+    expect(g.get('account-inloggen')).toBe(true);
+    expect(g.get('account-wachtwoord')).toBe(true);
+    // Alleen een registreerformulier is nog geen inloggen.
+    const alleen = gebruikt({
+      'static/pages/registreer.html':
+        '<form action="/registreer" method="post"><input type="password" name="wachtwoord"></form>',
+    });
+    expect(alleen.get('account-inloggen')).toBe(false);
+    expect(alleen.get('account-wachtwoord')).toBe(false);
   });
 });
