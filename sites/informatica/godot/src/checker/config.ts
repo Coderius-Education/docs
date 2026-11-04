@@ -105,10 +105,13 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // Het startmenu uit hoofdstuk 8: een scène waarvan de bovenste node een
   // Control is, met een Button erin. Alleen de bovenste node heeft geen
   // `parent=`; een Control ergens in een level (een pauzescherm in de HUD)
-  // met een knop ernaast is geen startscherm.
+  // met een knop ernaast is geen startscherm. Godot 4.6 en nieuwer zetten
+  // er een unique_id achter ([node name="Menu" type="Control"
+  // unique_id=810606303]), dus na het type mag er meer staan, maar geen parent.
   '2d-startscherm': {
     type: 'regex',
-    pattern: /\[node name="[^"]*" type="Control"\][\s\S]*?\[node [^\]]*type="Button"/g,
+    pattern:
+      /\[node name="[^"]*" type="Control"(?![^\]]*\bparent=)[^\]]*\][\s\S]*?\[node [^\]]*type="Button"/g,
     in: ['tscn'],
   },
   '2d-nieuwe-nodes': {

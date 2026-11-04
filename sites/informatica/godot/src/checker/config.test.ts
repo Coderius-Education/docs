@@ -459,6 +459,26 @@ describe('godotConfig — patronen die er net naast zitten', () => {
     expect(startscherm('[node name="Menu" type="Control"]')).toBe(false);
   });
 
+  it('ziet het startscherm zoals Godot 4.7 het opslaat, met unique_id', () => {
+    // Zo schreef Godot 4.7.2 headless een Control met een Button erin weg.
+    // Het patroon eiste eerst "Control"] direct na het type en vond dit
+    // nooit; de voorbeeldprojecten waren met de hand geschreven, zonder id.
+    const opgeslagen = [
+      '[gd_scene format=3]',
+      '[node name="Menu" type="Control" unique_id=810606303]\nlayout_mode = 3\nanchors_preset = 0',
+      '[node name="Start" type="Button" parent="." unique_id=159633435]\nlayout_mode = 0',
+    ].join('\n\n');
+    const gebruikt = (tscn: string) =>
+      score(analyze(files({ 'menu.tscn': tscn }), godotConfig), '2d-startscherm').used;
+    expect(gebruikt(opgeslagen)).toBe(true);
+    // En een Control met unique_id dieper in een level blijft geen startscherm.
+    expect(
+      gebruikt(
+        '[node name="Level" type="Node2D" unique_id=1]\n\n[node name="Pauze" type="Control" parent="HUD" unique_id=2]\n\n[node name="Knop" type="Button" parent="Pauze" unique_id=3]',
+      ),
+    ).toBe(false);
+  });
+
   it('negeert ext_resource-regels; alleen [node ...]-regels tellen', () => {
     const report = analyze(
       files({
