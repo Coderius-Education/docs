@@ -65,16 +65,19 @@ func controleer_highscore() -> void:
         highscore = score
 ```
 
-Roep `controleer_highscore()` aan op het moment dat een potje klaar is. In je spel kan dat op twee plekken.
+Roep `Global.controleer_highscore()` aan op het moment dat een potje klaar is. In je spel kan dat op twee plekken.
 
-Je gaat game over. Dat merk je in `verlies_leven()` in `global.gd`, bij `Game Over!`. Daar staat hij in hetzelfde script, dus zonder `Global.` ervoor:
+Je gaat game over. Dat gebeurt in je vijand-script uit opdracht 7.3.a: daar gaat er een leven af. Kijk daar met `is_game_over()` of het het laatste was:
 
 ```gdscript
-func verlies_leven():
-    levens -= 1
-    if levens <= 0:
-        print("Game Over!")
-        controleer_highscore()
+extends Area2D
+
+func _on_body_entered(body: Node2D) -> void:
+    Global.levens -= 1
+    print("Levens: ", Global.levens)
+    if Global.is_game_over():
+        Global.controleer_highscore()
+    queue_free()
 ```
 
 Of je haalt het laatste level. Heb je de vlag uit [Lijsten](site:godot/docs/lijsten), dan is dat in de `else`, vlak voordat je teruggaat naar het menu:
@@ -165,7 +168,6 @@ func verlies_leven():
     levens -= 1
     if levens <= 0:
         print("Game Over!")
-        controleer_highscore()
 
 
 func is_game_over() -> bool:
@@ -261,7 +263,6 @@ func verlies_leven():
     levens -= 1
     if levens <= 0:
         print("Game Over!")
-        controleer_highscore()
 
 
 func is_game_over() -> bool:
@@ -327,9 +328,9 @@ Het tellen staat in het menu en niet in `reset()`: die roep je misschien ook aan
 <details>
 <summary>Na het opnieuw starten is mijn highscore weer 0</summary>
 
-**Oorzaak:** het bestand wordt niet geschreven, of niet gelezen. Vaak roept niets `bewaar_highscore()` aan, of staat `lees_highscore()` niet in `_ready()`.
+**Oorzaak:** het bestand wordt niet geschreven, of niet gelezen. Vaak wordt `controleer_highscore()` niet aangeroepen op de plek waar jouw potje eindigt: je ging game over, maar alleen de vlag roept hem aan. Of `lees_highscore()` staat niet in `_ready()`.
 
-**Oplossing:** kijk of `controleer_highscore()` aan het eind van een potje wordt aangeroepen, en of `_ready()` in `global.gd` `lees_highscore()` aanroept.
+**Oplossing:** kijk of je vijand-script én de vlag van je laatste level `Global.controleer_highscore()` aanroepen, zoals in Stap 1, en of `_ready()` in `global.gd` `lees_highscore()` aanroept.
 
 **Zelf vinden:** open met **Open User Data Folder** de map van je spel. Staat er geen `highscore.json`, dan wordt er niets geschreven: zet een `print` in `bewaar_highscore`. Staat het bestand er wel, met de goede score erin, dan wordt het niet gelezen: zet een `print` in `lees_highscore`.
 
