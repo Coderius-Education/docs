@@ -85,5 +85,6 @@ export function moeilijkheidVoorstel(perOnderwerp: OnderwerpTelling[]): {
   moeilijkheid: MoeilijkheidId;
   reden: string;
 };
+export function moeilijkhedenTekst(leerdoelen: Leerdoelen): string;
 export function denkvaardigheid(id: string): Denkvaardigheid;
 export function moeilijkheid(id: string): Moeilijkheid;

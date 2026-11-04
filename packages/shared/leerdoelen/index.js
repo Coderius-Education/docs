@@ -136,6 +136,20 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
   };
 }
 
+/**
+ * De moeilijkheden die een cursus echt gebruikt, als tekst: "basis of
+ * gevorderd", of "basis, gevorderd of expert". Een cursus zonder expert
+ * noemt hem niet.
+ */
+function moeilijkhedenTekst(leerdoelen) {
+  const gebruikt = CONCEPT_MOEILIJKHEDEN.filter((m) =>
+    leerdoelen.concepten.some((c) => Object.values(c.niveau).includes(m)),
+  );
+  return gebruikt.length <= 1
+    ? gebruikt.join('')
+    : `${gebruikt.slice(0, -1).join(', ')} of ${gebruikt.at(-1)}`;
+}
+
 function denkvaardigheid(id) {
   const d = BLOOM.denkvaardigheden.find((x) => x.id === id);
   if (!d) throw new Error(`onbekende denkvaardigheid '${id}'`);
@@ -229,6 +243,7 @@ module.exports = {
   cijferTekst,
   sjabloonZin,
   moeilijkheidVoorstel,
+  moeilijkhedenTekst,
   denkvaardigheid,
   moeilijkheid,
 };

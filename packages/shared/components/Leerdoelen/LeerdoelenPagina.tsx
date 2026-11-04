@@ -2,7 +2,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import type { ReactNode } from 'react';
-import type { Leerdoelen } from '../../leerdoelen';
+import { type Leerdoelen, moeilijkhedenTekst } from '../../leerdoelen';
 import { siteByUrl } from '../../sites';
 import Bloom from './Bloom';
 import Vergelijking from './Vergelijking';
@@ -30,7 +30,7 @@ export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoele
         <h1>Leerdoelen{cursus ? ` ${cursus}` : ''}</h1>
         <p>
           Op de concepten van je niveau beoordeelt je docent je project. Bij elk concept staat of
-          het basis, gevorderd of expert is. Hoe je docent daar een cijfer van maakt, staat{' '}
+          het {moeilijkhedenTekst(leerdoelen)} is. Hoe je docent daar een cijfer van maakt, staat{' '}
           <a href="#bloom">onderaan deze pagina</a>.
         </p>
 

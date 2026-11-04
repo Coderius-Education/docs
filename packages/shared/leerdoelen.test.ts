@@ -9,6 +9,7 @@ import {
   cijferTekst,
   cijferVoor,
   leesLeerdoelen,
+  moeilijkhedenTekst,
   moeilijkheidVoorstel,
   sjabloonZin,
 } from './leerdoelen';
@@ -135,6 +136,17 @@ describe('leesLeerdoelen', () => {
     // Een niveau dat de cursus niet heeft: een tikfout in een kolom valt op.
     expect(melding).toContain("concept 'gd-tweens': onbekend veld '4'");
     expect(melding).toContain("onbekende denkvaardigheid 'weten'");
+  });
+
+  it('noemt alleen de moeilijkheden die de cursus gebruikt', () => {
+    // Het overzicht van web noemde expert, terwijl web geen expertconcepten heeft.
+    expect(moeilijkhedenTekst(leesLeerdoelen(goed))).toBe('basis, gevorderd of expert');
+    const zonderExpert = { ...goed, concepten: [goed.concepten[0]] };
+    expect(moeilijkhedenTekst(leesLeerdoelen(zonderExpert))).toBe('basis of gevorderd');
+    const web = join(ROOT, siteDir('web'), 'src', 'leerdoelen.json');
+    expect(moeilijkhedenTekst(leesLeerdoelen(JSON.parse(readFileSync(web, 'utf8'))))).toBe(
+      'basis of gevorderd',
+    );
   });
 
   it('weigert een onbekend niveau, geen niveaus, of niveaus door elkaar', () => {
