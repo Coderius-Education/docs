@@ -8,6 +8,9 @@ export default createConfig({
   siteId: 'web',
   projectName: 'web-docs',
   matomoSiteId: 3,
+  // De oude pagina /html_css is weg; een oude link (werkblad,
+  // bladwijzer) komt op de eerste HTML-les uit.
+  omleidingen: [{ van: '/html_css', naar: '/docs/html-css/intro-html' }],
   // Werk van web.coderius.nl (vóór de verhuizing): zie oude-opslag.js.
   oudeOpslag: {
     indexedDB: [
@@ -49,7 +52,6 @@ export default createConfig({
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
       items: [
-        { to: '/html_css', label: 'Met Code.org', position: 'left' },
         { type: 'docSidebar', sidebarId: 'htmlCssSidebar', label: 'HTML & CSS', position: 'left' },
         { type: 'docSidebar', sidebarId: 'jsSidebar', label: 'JavaScript', position: 'left' },
         { to: '/cheatsheet', label: 'Cheatsheet', position: 'left' },

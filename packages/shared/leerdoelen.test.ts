@@ -232,6 +232,10 @@ describe('cijfer volgens het beoordelingsblad', () => {
       expect(pagina).toMatch(/\[Lees de paper \(DOI\)\]\(https:\/\/doi\.org\//);
       expect(pagina).toContain(`title: ${bron.didactiekLabel}`);
       expect(tips).toContain(`detailPad: '${bron.didactiek}'`);
+      // Geen andere paper zonder citaat en beschrijving: elk jaartal op de
+      // pagina is dat van de bron (eerst stond er "In 1956 publiceerden …").
+      const jaren = new Set(pagina.match(/\b(?:19|20)\d{2}\b/g));
+      expect([...jaren], slug).toEqual([String(bron.jaar)]);
     }
   });
 });

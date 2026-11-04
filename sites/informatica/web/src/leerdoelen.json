@@ -7,7 +7,6 @@
     { "id": "css-pseudoclass", "onderwerp": "css", "concept": "pseudoclass", "1": "basis", "les": "html-css/pseudo-klassen" },
     { "id": "css-id", "onderwerp": "css", "concept": "id", "1": "gevorderd", "les": "html-css/css-klassen" },
     { "id": "css-flexbox-grid", "onderwerp": "css", "concept": "flexbox of grid", "1": "gevorderd", "les": ["html-css/flexbox", "html-css/css-grid"] },
-    { "id": "css-media-query", "onderwerp": "css", "concept": "media query", "1": "gevorderd", "les": "html-css/media-queries" },
     { "id": "html-koppen", "onderwerp": "html", "concept": "h1-h6", "1": "basis", "les": "html-css/koppen-lijsten" },
     { "id": "html-lijsten", "onderwerp": "html", "concept": "ol & ul, li", "1": "basis", "les": "html-css/koppen-lijsten" },
     { "id": "html-img", "onderwerp": "html", "concept": "img", "1": "basis", "les": "html-css/afbeeldingen" },

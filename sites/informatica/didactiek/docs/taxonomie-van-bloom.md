@@ -11,12 +11,10 @@ creëren.
 
 ## Waar komt dit vandaan
 
-In 1956 publiceerden Benjamin Bloom en collega's een indeling van
-onderwijsdoelen in zes oplopende categorieën, van kennis tot evaluatie. Die
-indeling werd veel gebruikt om toetsen en lesdoelen te ordenen. Een groep
-onderzoekers, onder wie David Krathwohl (een van de oorspronkelijke auteurs),
-herzag haar aan het eind van de jaren negentig. Krathwohl vatte de herziening
-in 2002 samen in één artikel; dat is de kernpaper waar we naar verwijzen.
+De taxonomie van Bloom deelt onderwijsdoelen in naar denkvaardigheid, van
+eenvoudig naar complex. Wij gebruiken de herziene versie zoals Krathwohl die
+in 2002 in één artikel samenvat. Dat is de kernpaper waar we naar verwijzen,
+en de enige bron voor wat hieronder staat.
 
 ## Het onderzoek
 

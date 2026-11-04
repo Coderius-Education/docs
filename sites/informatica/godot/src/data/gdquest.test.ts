@@ -12,8 +12,7 @@ import {
 
 // Bewaakt de <GDQuestLes>-callouts. Het component zoekt op paginaslug en
 // rendert niets bij een onbekende slug, dus een typefout is op de pagina zelf
-// onzichtbaar. Deze test maakt dat geval hard, net als de koppeling met
-// Code.org in web.
+// onzichtbaar. Deze test maakt dat geval hard.
 
 const DOCS = fileURLToPath(new URL('../../docs', import.meta.url));
 

@@ -239,7 +239,6 @@ const HERKENNING: Record<string, Herkenning> = {
     'css-grid-template-rows',
     'css-grid-column',
   ),
-  'css-media-query': uitLessen('css-media-query'),
 
   // --- HTML ---
   'html-koppen': {

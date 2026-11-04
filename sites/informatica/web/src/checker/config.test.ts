@@ -92,9 +92,9 @@ describe('webConfig — de conceptenlijst zelf', () => {
     expect(webConfig.concepts.map((c) => [c.id, c.subject, c.label, c.level])).toEqual(
       leerdoelen.concepten.map((c) => [c.id, c.onderwerp, c.concept, c['1']]),
     );
-    // De tabel van de docent: 13 rijen basis, 11 gevorderd.
+    // De tabel van de docent: 13 rijen basis, 10 gevorderd.
     expect(webConfig.concepts.filter((c) => levelVoor(c, null) === 'basis')).toHaveLength(13);
-    expect(webConfig.concepts.filter((c) => levelVoor(c, null) === 'gevorderd')).toHaveLength(11);
+    expect(webConfig.concepts.filter((c) => levelVoor(c, null) === 'gevorderd')).toHaveLength(10);
   });
 
   it('de leerdoelen zijn het tabblad Web van het beoordelingsblad (Beoordeling_INF.xlsx)', () => {
@@ -106,7 +106,6 @@ describe('webConfig — de conceptenlijst zelf', () => {
       ['CSS', 'pseudoclass', 'basis'],
       ['CSS', 'id', 'gevorderd'],
       ['CSS', 'flexbox of grid', 'gevorderd'],
-      ['CSS', 'media query', 'gevorderd'],
       ['HTML', 'h1-h6', 'basis'],
       ['HTML', 'ol & ul, li', 'basis'],
       ['HTML', 'img', 'basis'],
@@ -216,7 +215,6 @@ describe('webConfig — voorbeeldprojecten scoren', () => {
       [
         'css-pseudoclass',
         'css-flexbox-grid',
-        'css-media-query',
         'html-forms',
         'js-style',
         'js-prompt-alert',
@@ -499,7 +497,6 @@ describe('webConfig — JavaScript wordt herkend waar het staat', () => {
       },
       {
         'css-pseudoclass': false,
-        'css-media-query': false,
         'css-flexbox-grid': false,
         'css-tag-selector': true,
       },
@@ -657,7 +654,6 @@ describe('webConfig — elke les laat zien wat ze aanleert', () => {
     'html-css/pseudo-klassen': ['css-pseudoclass'],
     'html-css/flexbox': ['css-flexbox-grid'],
     'html-css/css-grid': ['css-flexbox-grid'],
-    'html-css/media-queries': ['css-media-query'],
     'js-basics/tekst-veranderen': ['js-get-element-by-id'],
     'js-basics/inline-onclick': ['js-events'],
     'js-basics/inline-stijl': ['js-style'],
@@ -709,7 +705,6 @@ describe('webConfig — HTML en CSS worden herkend waar ze staan', () => {
         'css-pseudoclass': true,
         'css-id': true,
         'css-flexbox-grid': true,
-        'css-media-query': true,
         'css-color': true,
       },
     ],
