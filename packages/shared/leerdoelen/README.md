@@ -53,7 +53,7 @@ project (Algoritmiek, niveau 2). Dan heeft het bestand een veld `tentamen`:
   "vorm": "Niveau 2 sluit je af met een papieren tentamen. …",
   "bron": "/bronnen/toetsing-domein-b",
   "manieren": [
-    { "id": "stellingen", "label": "Stellingen", "uitleg": "Je kunt stellingen beoordelen …", "slo": "Type 4: stellingen over een algoritme", "lessen": ["stellingen"] }
+    { "id": "stellingen", "label": "Stellingen", "uitleg": "Je kunt stellingen beoordelen …", "vraagtype": "Type 4: stellingen over een algoritme", "lessen": ["stellingen"] }
   ],
   "onderwerpen": { "zoeken-en-sorteren": "Van deze zes algoritmes ken je alle manieren." }
 }

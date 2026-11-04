@@ -31,7 +31,11 @@ export default function Tentamen({ leerdoelen }: { leerdoelen: Leerdoelen }): Re
       <p>{tentamen.vorm}</p>
       <p>
         Waar de manieren hieronder vandaan komen en hoe wij ze gebruiken, lees je bij{' '}
-        <Link to={routeUrl('didactiek', tentamen.bron)}>vakdidactiek</Link>.
+        {/* Een andere cursus opent in een nieuw tabblad, net als een site:-link. */}
+        <Link to={routeUrl('didactiek', tentamen.bron)} target="_blank" rel="noopener noreferrer">
+          vakdidactiek
+        </Link>
+        .
       </p>
 
       <h2 id="manieren">Manieren om het te kennen</h2>
@@ -51,7 +55,7 @@ export default function Tentamen({ leerdoelen }: { leerdoelen: Leerdoelen }): Re
                   {i + 1}. {m.label}
                 </th>
                 <td>{m.uitleg}</td>
-                <td>{m.slo}</td>
+                <td>{m.vraagtype}</td>
               </tr>
             ))}
           </tbody>
@@ -94,7 +98,13 @@ export default function Tentamen({ leerdoelen }: { leerdoelen: Leerdoelen }): Re
                               {c.manieren?.includes(m.id) && les?.pad ? (
                                 <LesLink les={les} />
                               ) : (
-                                <span aria-label="hoort niet bij het tentamen">–</span>
+                                <>
+                                  {/* Een aria-label op een kale span leest een schermlezer niet voor. */}
+                                  <span aria-hidden="true">–</span>
+                                  <span className={styles.verborgen}>
+                                    hoort niet bij het tentamen
+                                  </span>
+                                </>
                               )}
                             </td>
                           );

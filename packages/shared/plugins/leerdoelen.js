@@ -91,9 +91,12 @@ function koppelLessen(leerdoelen, docs) {
           onbekend.push(`concept '${c.id}': onbekende cursus in '${id}'`);
           return { id };
         }
+        // De titel van een les in een andere cursus kent de plugin niet; de
+        // linktekst noemt daarom het concept en de cursus. Twaalf keer "de
+        // cursus Python" zei niet waar elke link heen ging.
         return {
           id,
-          titel: `de cursus ${doel.label}`,
+          titel: `${c.concept} (cursus ${doel.label})`,
           pad: routeUrl(extern.site, extern.route, extern.anchor),
           extern: true,
         };

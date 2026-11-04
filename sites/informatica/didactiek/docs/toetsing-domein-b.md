@@ -59,10 +59,11 @@ J., & Weeda, R. (2021). *Toetsing domein B: Grondslagen.* SLO.
   stroomdiagrammen: aanvullen is type 3, debuggen type 2, stellingen type 4.
   Programmeren met de naam van het algoritme erbij is type 5, zonder die naam
   type 6. De laatste manier vraagt daarbovenop een aanpassing.
-- Elk algoritme in de cursus heeft voor elke manier een eigen les, in dezelfde
-  volgorde: het concept, de stellingen, de bouwstenen, de fouten, de complete
-  code, zelf bouwen en aanpassen. Wat een leerling in de les oefent, is dus
-  wat het tentamen vraagt.
+- De zes zoek- en sorteeralgoritmes hebben voor elke manier een eigen les, in
+  dezelfde volgorde: het concept, de stellingen, de bouwstenen, de fouten, de
+  complete code, zelf bouwen en aanpassen. Wat een leerling in de les oefent,
+  is dus wat het tentamen vraagt. De andere onderwerpen toetst het tentamen
+  alleen op begrijpen en stellingen.
 - Bij sommige onderwerpen vraagt het tentamen iets eigens, zoals Dijkstra op
   papier uitwerken of de aanroepen van de Torens van Hanoi uitschrijven. Dat
   staat er apart bij, met de les waarin je het oefent.

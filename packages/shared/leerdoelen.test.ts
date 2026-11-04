@@ -202,7 +202,7 @@ describe('een niveau met een tentamen', () => {
     id,
     label: id,
     uitleg: `je kunt ${id}`,
-    slo: `type ${id}`,
+    vraagtype: `type ${id}`,
     lessen,
   });
   const tentamen = {
@@ -297,7 +297,7 @@ describe('een niveau met een tentamen', () => {
     expect(l.concepten[0].lessen).toEqual([
       {
         id: 'site:python/docs/basis/jij-als-variabele',
-        titel: 'de cursus Python',
+        titel: 'variabelen (cursus Python)',
         pad: 'https://informatica.coderius.nl/python/docs/basis/jij-als-variabele',
         extern: true,
       },

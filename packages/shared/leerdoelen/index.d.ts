@@ -47,7 +47,7 @@ export interface Les {
 export interface Manier extends Benoemd {
   uitleg: string;
   /** Het vraagtype uit de bron dat erbij hoort. */
-  slo: string;
+  vraagtype: string;
   /** Lesnamen in de map van het concept; "bouwen/" is de eerste les in die submap. */
   lessen: string[];
 }

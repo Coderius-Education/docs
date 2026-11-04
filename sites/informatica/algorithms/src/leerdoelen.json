@@ -9,49 +9,49 @@
         "id": "begrijpen",
         "label": "Begrijpen",
         "uitleg": "Je kunt het in woorden uitleggen of op papier uitwerken, zonder programmeercode.",
-        "slo": "Type 1: het algoritme lezen en uitvoeren",
+        "vraagtype": "Type 1: het algoritme lezen en uitvoeren",
         "lessen": ["concept", "spel"]
       },
       {
         "id": "stellingen",
         "label": "Stellingen",
         "uitleg": "Je kunt stellingen beoordelen, toelichten en van argumenten voor en tegen voorzien.",
-        "slo": "Type 4: stellingen over een algoritme",
+        "vraagtype": "Type 4: stellingen over een algoritme",
         "lessen": ["stellingen"]
       },
       {
         "id": "aanvullen",
         "label": "Aanvullen",
         "uitleg": "Je krijgt het begin van het algoritme in Python, en vult het aan tot het compleet is.",
-        "slo": "Type 3: het algoritme opstellen met gegeven blokjes",
+        "vraagtype": "Type 3: het algoritme opstellen met gegeven blokjes",
         "lessen": ["bouwen/"]
       },
       {
         "id": "debuggen",
         "label": "Debuggen",
         "uitleg": "Je controleert een bestaande implementatie op correctheid.",
-        "slo": "Type 2: een fout in het algoritme vinden en herstellen",
+        "vraagtype": "Type 2: een fout in het algoritme vinden en herstellen",
         "lessen": ["fouten"]
       },
       {
         "id": "benoemd",
         "label": "Programmeren, algoritme genoemd",
         "uitleg": "Je programmeert het algoritme zonder startcode. De vraag zegt welk algoritme.",
-        "slo": "Type 5: zelf opstellen bij een gegeven oplossingsrichting",
+        "vraagtype": "Type 5: zelf opstellen bij een gegeven oplossingsrichting",
         "lessen": ["compleet"]
       },
       {
         "id": "kiezen",
         "label": "Programmeren, algoritme niet genoemd",
         "uitleg": "Je programmeert zonder startcode, en kiest zelf welk algoritme bij een verhaaltje past.",
-        "slo": "Type 6: zelf opstellen bij alleen het probleem",
+        "vraagtype": "Type 6: zelf opstellen bij alleen het probleem",
         "lessen": ["zelf-bouwen"]
       },
       {
         "id": "aanpassen",
         "label": "Programmeren met een aanpassing",
         "uitleg": "Net als hiervoor, maar het algoritme moet waarschijnlijk iets anders doen dan in de les.",
-        "slo": "Type 6, met daarbovenop een aanpassing",
+        "vraagtype": "Type 6, met daarbovenop een aanpassing",
         "lessen": ["aanpassen"]
       }
     ],

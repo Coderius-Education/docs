@@ -212,7 +212,7 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
       }
       if (ids.includes(m.id)) fouten.push(`${w} staat er twee keer`);
       ids.push(m.id);
-      for (const veld of ['label', 'uitleg', 'slo']) {
+      for (const veld of ['label', 'uitleg', 'vraagtype']) {
         if (typeof m[veld] !== 'string' || m[veld].trim() === '') {
           fouten.push(`${w}: ${veld} moet tekst zijn`);
         }
@@ -227,7 +227,7 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
         );
       }
       for (const sleutel of Object.keys(m)) {
-        if (!['id', 'label', 'uitleg', 'slo', 'lessen'].includes(sleutel)) {
+        if (!['id', 'label', 'uitleg', 'vraagtype', 'lessen'].includes(sleutel)) {
           fouten.push(`${w}: onbekend veld '${sleutel}'`);
         }
       }
@@ -249,7 +249,13 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
       bron: t.bron,
       manieren: manieren
         .filter((m) => m && typeof m.id === 'string')
-        .map(({ id, label, uitleg, slo, lessen }) => ({ id, label, uitleg, slo, lessen })),
+        .map(({ id, label, uitleg, vraagtype, lessen }) => ({
+          id,
+          label,
+          uitleg,
+          vraagtype,
+          lessen,
+        })),
       onderwerpen: { ...inleidingen },
     };
   }
