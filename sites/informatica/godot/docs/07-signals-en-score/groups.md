@@ -135,10 +135,14 @@ func _ready() -> void:
     add_to_group("muntjes")
 
 func _on_body_entered(body: Node2D) -> void:
+    Global.score += 1
+    print("Score: ", Global.score)
     queue_free()
     if get_tree().get_nodes_in_group("muntjes").size() <= 1:
         print("Je hebt gewonnen!")
 ```
+
+De twee regels met `Global.score` staan er al sinds [Global variables](site:godot/docs/global_variables); die laat je staan.
 
 Het laatste muntje wordt wel `queue_free()`'d, maar telt in dit frame nog mee — daarom `<= 1`.
 

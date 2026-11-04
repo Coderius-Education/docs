@@ -13,7 +13,7 @@ Pak je nu een muntje, dan is het in één frame weg. Dat werkt, maar het voelt k
 
 Je werkt in deze les vooral in `_on_body_entered` van je muntje; in Stap 3 komt er bovenaan één variabele bij. De soorten uit [Dictionaries](site:godot/docs/dictionaries) blijven zoals ze zijn. Heb je die les overgeslagen, dan staat bij jou `Global.score += 1` in plaats van `Global.score += WAARDES[soort]`; dat werkt net zo.
 
-Dit is `_on_body_entered` met twee nieuwe regels erin, en zonder `queue_free()`:
+Dit is `_on_body_entered` met twee nieuwe regels erin, en zonder `queue_free()`. Heb je de controle op winnen uit opdracht 7.5.a, dan laat je die er even uit; in Stap 3 komt hij terug.
 
 ```gdscript
 func _on_body_entered(body: Node2D) -> void:
@@ -76,7 +76,11 @@ Let op: `queue_free` staat hier zonder haakjes. Je geeft de functie zelf mee, zo
 
 Het muntje bestaat nog een halve seconde nadat je het pakte. Loop je er in die tijd uit en weer in, dan telt het opnieuw. In een halve seconde lukt dat zelden, dus maak de tween even langzaam om het te zien: zet de `0.3` op `3.0`, start je spel, en loop een paar keer heen en weer door het muntje terwijl het omhoog zweeft. Je score gaat elke keer omhoog.
 
-Met een variabele houd je bij of het muntje al gepakt is. Zet de `3.0` terug op `0.3`. Zo ziet je hele muntje-script er dan uit:
+Met een variabele houd je bij of het muntje al gepakt is. Zet de `3.0` terug op `0.3`.
+
+En dan de controle op winnen uit opdracht 7.5.a. Die telde op `<= 1`, omdat het gepakte muntje tot het eind van het frame in de group bleef. Nu blijft het een halve seconde, en pak je twee muntjes kort na elkaar, dan zitten ze er allebei nog: je wint nooit. Haal het muntje daarom meteen uit de group als je het pakt, met `remove_from_group`. Dan telt het niet meer mee, en win je bij nul.
+
+Zo ziet je hele muntje-script er dan uit:
 
 ```gdscript
 extends Area2D
@@ -88,6 +92,7 @@ const KLEUREN = {"brons": Color.SANDY_BROWN, "zilver": Color.SILVER, "goud": Col
 var gepakt = false
 
 func _ready() -> void:
+    add_to_group("muntjes")
     modulate = KLEUREN[soort]
 
 
@@ -95,15 +100,18 @@ func _on_body_entered(body: Node2D) -> void:
     if gepakt:
         return
     gepakt = true
+    remove_from_group("muntjes")
     Global.score += WAARDES[soort]
     print("Score: ", Global.score)
+    if get_tree().get_nodes_in_group("muntjes").size() == 0:
+        print("Je hebt gewonnen!")
     var tween = create_tween()
     tween.tween_property(self, "position:y", position.y - 40, 0.3)
     tween.tween_property(self, "modulate:a", 0.0, 0.2)
     tween.tween_callback(queue_free)
 ```
 
-De eerste keer is `gepakt` nog `false`, dus het muntje telt. Daarna staat hij op `true`, en stopt de functie meteen bij `return`.
+De eerste keer is `gepakt` nog `false`, dus het muntje telt. Daarna staat hij op `true`, en stopt de functie meteen bij `return`. Deed je opdracht 7.5.a niet, dan laat je de regels met de group en `gewonnen` weg.
 
 ## Opdracht 10.5.a: een power-up die pulseert
 

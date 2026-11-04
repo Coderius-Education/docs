@@ -60,7 +60,7 @@ Opzoeken met blokhaken en een sleutel toevoegen gaan zoals in Python. `has` en `
 
 ## Stap 1: De waarde uit de tabel
 
-Open het script van je muntje. Nu staat er `Global.score += 1`. Zet er een tabel boven, en een variabele met de soort van dit muntje:
+Open het script van je muntje. Nu staat er `Global.score += 1`. Zet er een tabel boven, en een variabele met de soort van dit muntje. De group en de controle op winnen uit opdracht 7.5.a blijven staan; deed je die opdracht niet, dan laat je die regels weg.
 
 ```gdscript
 extends Area2D
@@ -69,10 +69,16 @@ const WAARDES = {"brons": 1, "zilver": 5, "goud": 10}
 
 var soort = "goud"
 
+func _ready() -> void:
+    add_to_group("muntjes")
+
+
 func _on_body_entered(body: Node2D) -> void:
     Global.score += WAARDES[soort]
     print("Score: ", Global.score)
     queue_free()
+    if get_tree().get_nodes_in_group("muntjes").size() <= 1:
+        print("Je hebt gewonnen!")
 ```
 
 De tabel verandert niet tijdens het spel, dus het is een `const`, met een naam in hoofdletters. Zo deed je het ook met `SPEED`.
@@ -102,7 +108,7 @@ Je ziet nog niet welk muntje goud is. Geef elk muntje bij de start de kleur van 
 
 - Maak een tweede `const` met de sleutels `"brons"`, `"zilver"` en `"goud"`, en als waardes `Color.SANDY_BROWN`, `Color.SILVER` en `Color.GOLD`.
 - Elke node die je in je spel ziet, heeft een eigenschap `modulate`: een kleur die over de afbeelding heen gaat.
-- De kleur hoeft maar één keer gezet te worden, als het muntje in het level verschijnt. Welke functie roept Godot dan aan?
+- De kleur hoeft maar één keer gezet te worden, als het muntje in het level verschijnt. Welke functie roept Godot dan aan? Die heb je al, voor de group: zet de regel erbij, een tweede `_ready()` mag niet.
 
 </details>
 
@@ -118,6 +124,7 @@ const KLEUREN = {"brons": Color.SANDY_BROWN, "zilver": Color.SILVER, "goud": Col
 @export var soort = "brons"
 
 func _ready() -> void:
+    add_to_group("muntjes")
     modulate = KLEUREN[soort]
 
 
@@ -125,6 +132,8 @@ func _on_body_entered(body: Node2D) -> void:
     Global.score += WAARDES[soort]
     print("Score: ", Global.score)
     queue_free()
+    if get_tree().get_nodes_in_group("muntjes").size() <= 1:
+        print("Je hebt gewonnen!")
 ```
 
 `modulate` mengt de kleur met die van je afbeelding. Een witte of grijze afbeelding kleurt het mooist; een geel muntje wordt met zilver alleen wat donkerder.

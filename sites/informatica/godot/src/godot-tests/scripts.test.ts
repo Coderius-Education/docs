@@ -4,19 +4,33 @@ import { type Blok, blokkenInVolgorde, functies } from './lessen';
 // Hoofdstuk 10 bouwt op het project van de leerling. Een volledig script in
 // een les of oplossing vervangt bij overnemen wat er stond, en dan moet het
 // houden wat er al was. Zo verdween geef_sprongboost() uit de oplossing van
-// 10.1.b (daarna gaf de power-up "Nonexistent function"), en ging het
-// voorbeeld van 10.5.b uit van de vijand uit 7.1.a in plaats van 7.3.a,
-// waardoor de levens niet meer zakten.
+// 10.1.b (daarna gaf de power-up "Nonexistent function"), ging het voorbeeld
+// van 10.5.b uit van de vijand uit 7.1.a in plaats van 7.3.a, en verdwenen de
+// group "muntjes" en de controle op winnen uit 7.5.a uit Dictionaries en
+// Tweens.
 //
 // Per soort script (karakter, vijand, muntje) is de voorganger het laatste
-// volledige script van die soort eerder in de cursus; een opdracht telt
-// alleen als de soort buiten opdrachten nog niet voorkwam (de vijand bestaat
-// alleen in opdrachten). Een volledig script in hoofdstuk 10 moet:
-//  - de eigen functies van zijn voorganger hebben;
-//  - dezelfde Global-namen gebruiken als zijn voorganger;
+// volledige script van die soort eerder in de cursus: uit een les, of uit een
+// opdracht waarop latere lessen voortbouwen (OPDRACHTEN_DIE_BLIJVEN). Een
+// volledig script in hoofdstuk 10 moet:
+//  - alle functies van zijn voorganger hebben, ook _ready;
+//  - dezelfde groups aanmaken en dezelfde Global-namen gebruiken;
 //  - bij het karakter: elke functie hebben die een ander script in de les
 //    (geen opdracht) op `body.` aanroept, zoals de power-up met
 //    body.geef_sprongboost().
+
+/**
+ * Opdrachten waarvan het script de basis is voor wat erna komt: de vijand
+ * bestaat alleen in opdrachten, en de winst-check uit 7.5.a hoort bij het
+ * muntje. 7.6.a (snelheid) staat er bewust niet bij: hoofdstuk 10 noemt die
+ * variant in de tekst.
+ */
+const OPDRACHTEN_DIE_BLIJVEN = [
+  'Opdracht 7.1.a',
+  'Opdracht 7.3.a',
+  'Opdracht 7.5.a',
+  'Opdracht 7.5.b',
+];
 
 type Soort = 'karakter' | 'vijand' | 'muntje';
 
@@ -26,15 +40,20 @@ function soortVan(b: Blok): Soort | undefined {
     return 'karakter';
   }
   if (!/^extends Area2D/m.test(b.code)) return undefined;
-  if (/\b(?:Global|body)\.score\s*\+=/.test(b.code)) return 'muntje';
+  if (/\b(?:Global|body)\.score\s*\+=|add_to_group\("muntjes"\)/.test(b.code)) return 'muntje';
   if (/\b(?:Global|body)\.levens\s*-=|vijand/i.test(b.code)) return 'vijand';
   return undefined;
 }
 
-const eigenFuncties = (code: string) =>
-  [...functies(code).keys()].filter((n) => !n.startsWith('_'));
+function telt(b: Blok): boolean {
+  return !b.opdracht || OPDRACHTEN_DIE_BLIJVEN.some((o) => b.kop.startsWith(o));
+}
+
+const eigenFuncties = (code: string) => [...functies(code).keys()];
 const globalNamen = (code: string) =>
   new Set([...code.matchAll(/\bGlobal\.(\w+)/g)].map((m) => m[1]));
+const groups = (code: string) =>
+  new Set([...code.matchAll(/add_to_group\("(\w+)"\)/g)].map((m) => m[1]));
 
 describe('volledige scripts in hoofdstuk 10', () => {
   it('houden wat het script van de leerling al had', () => {
@@ -45,11 +64,14 @@ describe('volledige scripts in hoofdstuk 10', () => {
       const soort = soortVan(b);
       if (!soort || b.hoofdstuk !== 10) return;
       gecontroleerd += 1;
-      const eerder = blokken.slice(0, i).filter((e) => soortVan(e) === soort);
-      const voorganger = (eerder.filter((e) => !e.opdracht).at(-1) ?? eerder.at(-1)) as Blok;
+      const voorganger = blokken
+        .slice(0, i)
+        .filter((e) => soortVan(e) === soort && telt(e))
+        .at(-1);
       if (!voorganger) return;
       const heeft = new Set(eigenFuncties(b.code));
       const globals = globalNamen(b.code);
+      const eigenGroups = groups(b.code);
       const mist = [
         ...eigenFuncties(voorganger.code)
           .filter((f) => !heeft.has(f))
@@ -57,6 +79,9 @@ describe('volledige scripts in hoofdstuk 10', () => {
         ...[...globalNamen(voorganger.code)]
           .filter((g) => !globals.has(g))
           .map((g) => `Global.${g}`),
+        ...[...groups(voorganger.code)]
+          .filter((g) => !eigenGroups.has(g))
+          .map((g) => `add_to_group("${g}")`),
       ];
       if (soort === 'karakter') {
         for (const e of blokken.slice(0, i)) {
@@ -71,5 +96,10 @@ describe('volledige scripts in hoofdstuk 10', () => {
     });
     expect(gecontroleerd).toBeGreaterThan(3);
     expect(fout).toEqual([]);
+  });
+
+  it('kent de opdrachten die blijven nog als opdracht in de cursus', () => {
+    const koppen = new Set(blokkenInVolgorde().map((b) => b.kop.split(':')[0]));
+    expect(OPDRACHTEN_DIE_BLIJVEN.filter((o) => !koppen.has(o))).toEqual([]);
   });
 });

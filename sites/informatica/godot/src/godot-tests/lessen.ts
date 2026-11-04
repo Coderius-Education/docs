@@ -18,6 +18,8 @@ export type Blok = {
   heelScript: boolean;
   /** een bewust fout voorbeeld (`# FOUT`, of een verwacht-fout- of niet-compileren-marker) */
   fout: boolean;
+  /** de dichtstbijzijnde kop erboven (`##` of `###`) */
+  kop: string;
   /** staat onder een kop "Opdracht …": een opdracht die de leerling ook kan overslaan */
   opdracht: boolean;
   /**
@@ -61,6 +63,7 @@ export function blokkenInVolgorde(): Blok[] {
             /\{\/\*\s*(?:verwacht-fout|verwacht-runtime-fout|niet-compileren):[^*]*\*\/\}\s*$/.test(
               ervoor.slice(-400),
             ),
+          kop,
           opdracht: kop.startsWith('Opdracht'),
           deel: /\{\/\*\s*compileer-als:[^*]*\*\/\}\s*$/.test(ervoor.slice(-300)),
         });
