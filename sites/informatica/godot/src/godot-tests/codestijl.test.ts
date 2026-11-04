@@ -5,11 +5,12 @@ import { alleLesbestanden } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 import { BLOK } from './extract';
 
-// De cursus schrijft een vergelijking uit: `if direction != 0:`, niet
-// `if direction:`. Die korte vorm komt uit het sjabloon van Godot en leunt op
-// de regel dat 0 als onwaar telt; een leerling leest er niet aan af wat er
-// gecontroleerd wordt. Remmen (Stap 2) legt uit dat tutorials de korte vorm
-// gebruiken. Deze test houdt de lessen, de tips en de cheatsheet daaraan.
+// De cursus vraagt het positief: `if direction == 0:` (remmen), met lopen in
+// de `else`. Het sjabloon van Godot schrijft `if direction:`, dat leunt op de
+// regel dat 0 als onwaar telt; een leerling leest er niet aan af wat er
+// gecontroleerd wordt. `if direction != 0:` zegt het wel, maar als ontkenning.
+// Remmen (Stap 2) legt uit dat tutorials de korte vorm gebruiken. Deze test
+// houdt de lessen, de tips en de cheatsheet daaraan.
 
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
 
@@ -30,9 +31,9 @@ function blokken(): { plek: string; code: string }[] {
 }
 
 describe('codestijl van de GDScript-voorbeelden', () => {
-  it('schrijft de vergelijking bij direction uit', () => {
+  it('vraagt bij direction positief: if direction == 0', () => {
     const fout = blokken()
-      .filter((b) => /^\s*(?:el)?if\s+(?:not\s+)?direction\s*:/m.test(b.code))
+      .filter((b) => /^\s*(?:el)?if\s+(?:not\s+)?direction\s*(?::|!=)/m.test(b.code))
       .map((b) => b.plek);
     expect(fout).toEqual([]);
   });

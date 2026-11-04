@@ -25,7 +25,7 @@ Nu staat er één regel die altijd draait: `velocity.x = direction * SPEED`. Bij
 <details>
 <summary>Antwoord</summary>
 
-Alleen als de speler niets indrukt. Je hebt dus twee gevallen die elkaar uitsluiten: wél een toets ingedrukt (lopen) of géén toets ingedrukt (afremmen).
+Alleen als de speler niets indrukt, dus als `direction` `0` is. Je hebt twee gevallen die elkaar uitsluiten: géén toets ingedrukt (afremmen) of wél een toets ingedrukt (lopen).
 
 Voor precies dat soort tweedeling bestaat `else`: het blok dat draait wanneer de `if` niet opgaat.
 
@@ -36,22 +36,22 @@ Voor precies dat soort tweedeling bestaat `else`: het blok dat draait wanneer de
 Vervang je regel `velocity.x = direction * SPEED` door dit:
 
 ```gdscript
-    if direction != 0:
-        velocity.x = direction * SPEED
-    else:
+    if direction == 0:
         velocity.x = move_toward(velocity.x, 0, SPEED)
+    else:
+        velocity.x = direction * SPEED
 ```
 
 De `else` hoort op hetzelfde niveau als de `if` erboven; de regels eronder springen allebei één niveau verder in.
 
-## Stap 2: Wat `direction != 0` vraagt
+## Stap 2: Wat `direction == 0` vraagt
 
-`!=` betekent "is niet gelijk aan". De `if` vraagt dus: drukt de speler een pijltje in?
+`==` betekent "is gelijk aan". De `if` vraagt dus precies wat je in de voorspelling bedacht: drukt de speler niets in?
 
-- `direction` is `0` → de `if` is onwaar → de `else` draait, je remt af.
-- `direction` is `-1` of `1` → de `if` is waar → je loopt.
+- `direction` is `0` → de `if` is waar → je remt af.
+- `direction` is `-1` of `1` → de `if` is onwaar → de `else` draait, je loopt.
 
-In tutorials en in het sjabloon van Godot zie je vaak `if direction:`, zonder `!= 0`. Dat doet hetzelfde, omdat GDScript het getal `0` als onwaar behandelt en elk ander getal als waar. In deze cursus schrijf je de vergelijking uit: dan lees je wat er gecontroleerd wordt, zonder die regel te hoeven kennen.
+In tutorials en in het sjabloon van Godot zie je vaak `if direction:`, met de twee takken andersom: eerst lopen, en remmen in de `else`. Dat doet hetzelfde, omdat GDScript het getal `0` als onwaar behandelt en elk ander getal als waar. In deze cursus stel je de vraag rechtstreeks: is `direction` nul?
 
 ## Stap 3: Wat `move_toward()` doet
 
@@ -64,7 +64,7 @@ Met `move_toward(velocity.x, 0, SPEED)` breng je je snelheid dus richting nul, m
 <details>
 <summary>Antwoord</summary>
 
-Je karakter blijft voor eeuwig doorrijden zodra je één keer een pijltje hebt ingedrukt. Zonder `else` zet niemand de snelheid ooit terug naar nul.
+Je karakter komt niet meer van zijn plek. Alleen de `else` zet `velocity.x` op `direction * SPEED`; wat overblijft, remt alleen af, en vanaf stilstand blijft dat nul.
 
 </details>
 
@@ -112,10 +112,10 @@ func _physics_process(delta: float) -> void:
         velocity += get_gravity() * delta
 
     var direction := Input.get_axis("ui_left", "ui_right")
-    if direction != 0:
-        velocity.x = direction * SPEED
-    else:
+    if direction == 0:
         velocity.x = move_toward(velocity.x, 0, SPEED)
+    else:
+        velocity.x = direction * SPEED
 
     move_and_slide()
 ```
@@ -136,11 +136,11 @@ func _physics_process(delta: float) -> void:
 <details>
 <summary>Mijn karakter blijft doorrijden na loslaten</summary>
 
-**Oorzaak:** De `else`-tak ontbreekt, of de regel eronder springt niet in.
+**Oorzaak:** De regel met `move_toward` staat niet onder `if direction == 0:`, of springt niet in. Of de takken staan andersom: het remmen hoort bij `== 0`, het lopen in de `else`.
 
-**Oplossing:** Vergelijk je code met het script hierboven. De regel met `move_toward` hoort binnen de `else` te staan.
+**Oplossing:** Vergelijk je code met het script hierboven. Onder `if direction == 0:` staat de regel met `move_toward`, onder `else:` de regel met `direction * SPEED`.
 
-**Zelf vinden:** zet een `print("remmen")` binnen de `else`. Zie je die regel nooit verschijnen als je de toets loslaat, dan wordt je `else` niet bereikt.
+**Zelf vinden:** zet een `print("remmen")` vlak onder `if direction == 0:`. Zie je die regel nooit verschijnen als je de toets loslaat, dan wordt het remmen niet bereikt.
 
 </details>
 
