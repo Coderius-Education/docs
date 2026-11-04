@@ -28,7 +28,7 @@ Drie vragen:
 2. Beweegt mijn karakter, en welke kant op?
 3. Staat mijn karakter stil?
 
-Voor elk van deze drie maken we een variabele.
+Voor de eerste en de derde maak je een variabele. De tweede staat al in je script: `velocity.x` is positief als je naar rechts loopt en negatief als je naar links loopt.
 
 </details>
 
@@ -98,14 +98,14 @@ Welke functie kun je gebruiken om te checken of je hoofdpersoon op de grond staa
 <summary>Bekijk het antwoord</summary>
 
 ```gdscript
-op_de_grond = is_on_floor()
-if not op_de_grond:
-    $AnimatedSprite2D.play('jump')
+    op_de_grond = is_on_floor()
+    if not op_de_grond:
+        $AnimatedSprite2D.play('jump')
 
-move_and_slide()
+    move_and_slide()
 ```
 
-Voeg dit toe **vóór** `move_and_slide()` in je `_physics_process`.
+Voeg dit toe **vóór** `move_and_slide()` in je `_physics_process`, even ver ingesprongen als de regels erboven.
 
 </details>
 
@@ -258,7 +258,7 @@ Dus bij `velocity.x < 0` (links bewegen): `flip_h = true`.
 1. De volgorde van je `if` / `elif` is verkeerd: `velocity.x > 0` of `< 0` wordt eerder waar dan `staat_stil`.
 2. `staat_stil` wordt bijgewerkt vóórdat `move_toward` de snelheid op `0` heeft gezet, en houdt dan een frame lang de oude waarde vast.
 
-Over dat tweede: met stap `SPEED` (zoals in [Deel 5 — Lopen](site:godot/docs/movement-krachten)) maakt `move_toward` de snelheid in één frame exact `0`. Alleen als je bewust een kleinere stap koos voor een glij-effect, blijft `velocity.x` nog een paar frames ongelijk aan nul en start `idle` iets later — dat is dan geen bug, maar het gevolg van het glijden.
+Over dat tweede: met stap `SPEED` (zoals in [Deel 6 — Stoppen](site:godot/docs/movement-remmen)) maakt `move_toward` de snelheid in één frame exact `0`. Alleen als je bewust een kleinere stap koos voor een glij-effect, blijft `velocity.x` nog een paar frames ongelijk aan nul en start `idle` iets later — dat is dan geen bug, maar het gevolg van het glijden.
 
 **Oplossing:**
 
