@@ -74,10 +74,10 @@ Zie je een foutmelding over een ontbrekende Main Scene? Stel die eerst in via **
 </details>
 
 <details>
-<summary>Foutmelding: <code>Script inherits from native type 'Node2D', so it can't be assigned to an object of type: 'CharacterBody2D'</code></summary>
+<summary>Foutmelding: <code>Script inherits from native type 'CharacterBody2D', so it can't be assigned to an object of type 'Sprite2D'.</code></summary>
 
-**Oorzaak:** In de eerste regel staat een ander node-type dan de node waar het script op zit.
+**Oorzaak:** Het script hangt aan de verkeerde node. In de eerste regel staat `extends CharacterBody2D`, maar je hebt het script aan de `Sprite2D` gekoppeld (of aan een andere node: die naam staat achteraan de melding).
 
-**Oplossing:** Zorg dat er `extends CharacterBody2D` staat, precies zoals het node-type in je Scene Tree heet.
+**Oplossing:** Klik met rechts op die node → **Detach Script**. Selecteer daarna je `CharacterBody2D` en doe Stap 1 opnieuw.
 
 </details>

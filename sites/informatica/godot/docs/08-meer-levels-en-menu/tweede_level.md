@@ -138,9 +138,19 @@ func _on_body_entered(body: Node2D) -> void:
 ## Er gaat iets mis
 
 <details>
-<summary>Mijn spel crasht met "Cannot open file 'res://level2.tscn'"</summary>
+<summary>Foutmelding: <code>Cannot open file 'res://Level2.tscn'.</code></summary>
 
-**Oorzaak:** Het pad in je script komt niet overeen met de werkelijke bestandsnaam of -locatie.
+**Oorzaak:** Het pad in je script komt niet overeen met de werkelijke bestandsnaam of -locatie. Je spel blijft dan in het level waar je was, en in Uitvoer staat deze melding. Hier staat er een hoofdletter in het pad die de bestandsnaam niet heeft.
+
+{/* verwacht-runtime-fout: Cannot open file 'res://Level2.tscn'. */}
+
+```gdscript
+# FOUT
+extends Area2D
+
+func _ready() -> void:
+    get_tree().change_scene_to_file("res://Level2.tscn")
+```
 
 **Oplossing:**
 

@@ -49,13 +49,13 @@ Krijg je meerdere meldingen tegelijk? Los alleen de **bovenste** op en start opn
 
 Deze drie komen tijdens het spelen, niet bij het starten. Je spel draait dus al even en klapt er dan uit. Ze zeggen alle drie iets anders over waar je moet kijken.
 
-### `Attempt to call function 'x' on a null instance`
+### `Attempt to call function 'x' in base 'null instance' on a null instance`
 
-Je vraagt iets aan een node die er niet is. **`null`** betekent leeg: de variabele bestaat, maar er zit geen node in.
+Je vraagt iets aan een node die er niet is. **`null`** betekent leeg: de variabele bestaat, maar er zit geen node in. Vlak erboven zegt Godot welke node hij niet vond:
 
 ```
-Invalid call. Nonexistent function 'play' in base 'Nil'.
-Attempt to call function 'play' on a null instance.
+Node not found: "Sprite" (relative to "/root/Level1/CharacterBody2D").
+Attempt to call function 'play' in base 'null instance' on a null instance.
 ```
 
 Bijna altijd staat er een `$Naam` in je regel die niet klopt met de Scene Tree. Vergelijk letter voor letter: `$AnimatedSprite2D` vindt niets als je node `$Sprite` heet. Twijfel je over de schrijfwijze, sleep de node dan vanuit de Scene Tree je script in met `Ctrl` ingedrukt — Godot typt het pad dan zelf.

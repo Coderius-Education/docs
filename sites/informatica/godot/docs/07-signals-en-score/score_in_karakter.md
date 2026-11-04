@@ -153,11 +153,26 @@ func _on_body_entered(body: Node2D) -> void:
 ## Er gaat iets mis
 
 <details>
-<summary>Ik krijg <code>Invalid get index 'score' (on base: 'Node2D')</code></summary>
+<summary>Foutmelding: <code>Invalid access to property or key 'score' on a base object of type 'TileMapLayer'.</code></summary>
 
-**Oorzaak:** Het signal vangt ook andere bodies op die geen `score`-veld hebben — bijvoorbeeld een vijand. `body` is dan geen karakter.
+**Oorzaak:** Je muntje raakt de grond. Voor een `Area2D` is je `TileMapLayer` met collision ook een body, dus `_on_body_entered` krijgt dan de grond in plaats van je karakter. De grond heeft geen `score`. Achteraan de melding staat wat `body` was: `TileMapLayer`.
 
-**Oplossing:** Ga er voor nu vanuit dat alleen de speler je muntjes oppakt. Als je later vijanden toevoegt, controleer je eerst of `body` een speler is (bijvoorbeeld met een naam-check of een group).
+Zo zie je de melding zelf, met een muntje dat de grond als `body` krijgt:
+
+{/* verwacht-runtime-fout: Invalid access to property or key 'score' on a base object of type 'TileMapLayer'. */}
+
+```gdscript
+# FOUT
+extends Area2D
+
+func _ready() -> void:
+    _on_body_entered(TileMapLayer.new())
+
+func _on_body_entered(body: Node2D) -> void:
+    body.score += 1
+```
+
+**Oplossing:** Zet het muntje iets hoger, zodat zijn `CollisionShape2D` de tegels niet raakt. Wil je zeker zijn dat alleen je karakter telt, zet dan `if body is CharacterBody2D:` boven de regel met `score` en laat die regel eronder inspringen.
 
 </details>
 

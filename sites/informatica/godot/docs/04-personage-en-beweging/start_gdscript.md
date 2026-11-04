@@ -95,15 +95,17 @@ In Uitvoer staat `Punten per level: 30`. Dat getal staat nergens in je script: G
 ## Er gaat iets mis
 
 <details>
-<summary>Ik krijg een SyntaxError bij `_ready()`</summary>
+<summary>Godot meldt een Parse Error bij `_ready()`</summary>
 
-**Oorzaak:** Verkeerde indentatie of de `:` aan het einde van de functie-regel is vergeten.
+Onderin het scriptvenster staat dan een rode regel. De twee die je hier het vaakst ziet:
+
+- `Unexpected "Indent" in class body.` De `:` aan het einde van de functie-regel ontbreekt. Zonder dubbele punt begint er geen functie, en hoort de ingesprongen regel eronder nergens bij.
+- `Expected indented block after function declaration.` De regels die bij de functie horen, springen niet in.
 
 **Oplossing:**
 
 1. Zorg dat `func _ready() -> void:` op een dubbele punt eindigt.
-2. Alle regels die *bij* de functie horen, moeten ingesprongen zijn met een tab of vier spaties — niet mengen.
-3. Lege regels in de functie zijn prima; mengen van tabs en spaties is dat niet.
+2. Alle regels die *bij* de functie horen, springen in met een tab of vier spaties. Kies één van de twee en houd die vast: tabs en spaties door elkaar geeft ook een melding.
 
 </details>
 

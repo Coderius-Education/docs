@@ -136,9 +136,18 @@ De y-waarde `100` past bij een vloer die lager ligt — vul hier coördinaten in
 ## Er gaat iets mis
 
 <details>
-<summary>Foutmelding: <code>Preload file "res://muntje.tscn" does not exist</code></summary>
+<summary>Foutmelding: <code>Preload file "res://Muntje.tscn" does not exist.</code></summary>
 
-**Oorzaak:** Het pad in `preload()` klopt niet met de werkelijke bestandsnaam of -locatie.
+**Oorzaak:** Het pad in `preload()` klopt niet met de werkelijke bestandsnaam of -locatie. Hier staat er een hoofdletter in die de bestandsnaam niet heeft.
+
+{/* verwacht-fout: Preload file "res://Muntje.tscn" does not exist. */}
+
+```gdscript
+# FOUT
+extends Node2D
+
+const MUNTJE = preload("res://Muntje.tscn")
+```
 
 **Oplossing:** Zoek `muntje.tscn` in het FileSystem-paneel, klik met rechts → **Copy Path** en plak dat pad in je script. Let op hoofdletters: `Muntje.tscn` is een ander bestand dan `muntje.tscn`.
 

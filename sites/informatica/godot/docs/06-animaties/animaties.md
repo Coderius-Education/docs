@@ -78,18 +78,19 @@ De `AnimatedSprite2D`-instellingen staan ook in de [Nodes cheatsheet](site:godot
 </details>
 
 <details>
-<summary>Mijn script geeft een fout: "Node not found: Sprite2D"</summary>
+<summary>Foutmelding: <code>Attempt to call function 'play' in base 'null instance' on a null instance.</code></summary>
 
-**Oorzaak:** Het script verwijst nog naar `$Sprite2D`, maar die node is vervangen door `$AnimatedSprite2D`.
+**Oorzaak:** Godot kan de node uit je script niet vinden. De naam in je script komt niet overeen met de naam in de Scene Tree, of je script verwijst nog naar `$Sprite2D` terwijl die node is vervangen door een `AnimatedSprite2D`. Vlak boven deze melding staat welke naam Godot zocht, bijvoorbeeld `Node not found: "AnimatedSprite"`.
 
-**Oplossing:** Vervang alle verwijzingen naar `$Sprite2D` in je script door `$AnimatedSprite2D`.
+{/* verwacht-runtime-fout: Attempt to call function 'play' in base 'null instance' on a null instance. */}
 
-</details>
+```gdscript
+# FOUT
+extends CharacterBody2D
 
-<details>
-<summary>Ik krijg een fout: "Attempt to call function on a null instance"</summary>
-
-**Oorzaak:** Godot kan de node `$AnimatedSprite2D` niet vinden. De naam in je script komt niet overeen met de naam in de Scene Tree.
+func _ready() -> void:
+    $AnimatedSprite.play("idle")
+```
 
 **Oplossing:**
 

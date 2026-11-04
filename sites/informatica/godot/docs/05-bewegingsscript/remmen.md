@@ -125,11 +125,62 @@ func _physics_process(delta: float) -> void:
 ## Er gaat iets mis
 
 <details>
-<summary>Foutmelding: <code>Expected end of statement</code> bij de else-regel</summary>
+<summary>Foutmelding: <code>Expected ":" after "else".</code></summary>
 
-**Oorzaak:** De dubbele punt achter `else` ontbreekt, of `else` staat niet op hetzelfde niveau als de `if`.
+**Oorzaak:** De dubbele punt achter `else` ontbreekt.
 
-**Oplossing:** Er hoort `else:` te staan, precies even ver ingesprongen als de `if` erboven.
+{/* verwacht-fout: Expected ":" after "else". */}
+
+```gdscript
+# FOUT
+extends CharacterBody2D
+
+const SPEED = 300.0
+
+func _physics_process(delta: float) -> void:
+    if not is_on_floor():
+        velocity += get_gravity() * delta
+
+    var direction := Input.get_axis("ui_left", "ui_right")
+    if direction == 0:
+        velocity.x = move_toward(velocity.x, 0, SPEED)
+    else
+        velocity.x = direction * SPEED
+
+    move_and_slide()
+```
+
+**Oplossing:** Er hoort `else:` te staan, met de dubbele punt, net als achter de `if`.
+
+</details>
+
+<details>
+<summary>Foutmelding: <code>Expected statement, found "else" instead.</code></summary>
+
+**Oorzaak:** `else` staat verder ingesprongen dan de `if` erboven. Dan hoort hij bij de regel met `move_toward`, en daar kan geen `else` komen.
+
+{/* verwacht-fout: Expected statement, found "else" instead. */}
+
+```gdscript
+# FOUT
+extends CharacterBody2D
+
+const SPEED = 300.0
+
+func _physics_process(delta: float) -> void:
+    if not is_on_floor():
+        velocity += get_gravity() * delta
+
+    var direction := Input.get_axis("ui_left", "ui_right")
+    if direction == 0:
+        velocity.x = move_toward(velocity.x, 0, SPEED)
+        else:
+        velocity.x = direction * SPEED
+
+    move_and_slide()
+```
+
+**Oplossing:** Laat `else:` precies even ver inspringen als de `if` waar hij bij hoort.
 
 </details>
 

@@ -137,9 +137,19 @@ func _process(delta: float) -> void:
 </details>
 
 <details>
-<summary>Ik krijg <code>Invalid call. Nonexistent function 'Str' in base 'int'</code></summary>
+<summary>Foutmelding: <code>Function "Str()" not found in base self.</code></summary>
 
-**Oorzaak:** GDScript is hoofdlettergevoelig. `Str` bestaat niet — alleen `str` (kleine letter).
+**Oorzaak:** GDScript is hoofdlettergevoelig. `Str` bestaat niet, alleen `str` met een kleine letter.
+
+{/* verwacht-fout: Function "Str()" not found in base self. */}
+
+```gdscript
+# FOUT
+extends Label
+
+func _process(delta: float) -> void:
+    text = "Score: " + Str(Global.score)
+```
 
 **Oplossing:** Vervang `Str(...)` door `str(...)`.
 

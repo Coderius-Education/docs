@@ -113,9 +113,22 @@ func _physics_process(delta: float) -> void:
 ## Er gaat iets mis
 
 <details>
-<summary>Foutmelding: <code>Expected indented block after "if"</code></summary>
+<summary>Foutmelding: <code>Expected indented block after "if" block.</code></summary>
 
 **Oorzaak:** De regel onder de `if` springt niet verder in dan de `if` zelf.
+
+{/* verwacht-fout: Expected indented block after "if" block. */}
+
+```gdscript
+# FOUT
+extends CharacterBody2D
+
+func _physics_process(delta: float) -> void:
+    if not is_on_floor():
+    velocity += get_gravity() * delta
+
+    move_and_slide()
+```
 
 **Oplossing:** Zet de cursor voor `velocity` en druk één keer op `Tab`, zodat die regel dieper staat dan de `if`-regel erboven.
 
@@ -133,9 +146,22 @@ func _physics_process(delta: float) -> void:
 </details>
 
 <details>
-<summary>Foutmelding over een ontbrekende dubbele punt</summary>
+<summary>Foutmelding: <code>Expected ":" after "if" condition.</code></summary>
 
 **Oorzaak:** De `:` aan het eind van de `if`-regel ontbreekt.
+
+{/* verwacht-fout: Expected ":" after "if" condition. */}
+
+```gdscript
+# FOUT
+extends CharacterBody2D
+
+func _physics_process(delta: float) -> void:
+    if not is_on_floor()
+        velocity += get_gravity() * delta
+
+    move_and_slide()
+```
 
 **Oplossing:** Elke regel die een blok opent eindigt op een dubbele punt, net als in Python.
 
