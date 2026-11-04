@@ -1,8 +1,9 @@
 // Leerdoelen van een cursus (zie ../leerdoelen/README.md). createConfig zet
 // deze plugin aan als de site `src/leerdoelen.json` heeft:
-//  - /leerdoelen: het overzicht, met links naar de niveaus, bij meer niveaus
-//    een tabel om ze te vergelijken, en de uitleg van de beoordeling volgens
+//  - /leerdoelen: het overzicht, met links naar de niveaus en de vergelijking,
+//    en de uitleg van de beoordeling volgens
 //    Bloom (voor elke cursus gelijk);
+//  - /leerdoelen/vergelijken: de niveaus naast elkaar, bij meer dan één;
 //  - /leerdoelen/niveau-<n>: de concepten van één niveau;
 //  - na de build: leerdoelen.json in de root van de cursus, voor coderius.nl.
 //
@@ -39,6 +40,14 @@ function routes(baseUrl, leerdoelen) {
       props: { leerdoelen },
     },
   ];
+  if (leerdoelen.niveaus.length > 1) {
+    lijst.push({
+      path: `${baseUrl}leerdoelen/vergelijken`,
+      component: `${COMPONENT}/VergelijkPagina`,
+      exact: true,
+      props: { leerdoelen },
+    });
+  }
   for (const niveau of leerdoelen.niveaus) {
     lijst.push({
       path: `${baseUrl}leerdoelen/niveau-${niveau.id}`,

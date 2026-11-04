@@ -56,9 +56,14 @@ describe('alleen niveaus, geen schoolsoorten', () => {
     const bestanden = [
       join(__dirname, 'leerdoelen', 'niveaus.json'),
       join(__dirname, 'leerdoelen', 'bloom.json'),
-      ...['Bloom', 'LeerdoelenPagina', 'NiveauPagina', 'Niveau', 'Vergelijking'].map((c) =>
-        join(__dirname, 'components', 'Leerdoelen', `${c}.tsx`),
-      ),
+      ...[
+        'Bloom',
+        'LeerdoelenPagina',
+        'NiveauPagina',
+        'Niveau',
+        'Vergelijking',
+        'VergelijkPagina',
+      ].map((c) => join(__dirname, 'components', 'Leerdoelen', `${c}.tsx`)),
       ...MET_LEERDOELEN.map((s) => join(ROOT, siteDir(s.id), 'src', 'leerdoelen.json')),
     ];
     for (const bestand of bestanden) {
@@ -274,9 +279,10 @@ describe('plugin en createConfig', () => {
     ],
   });
 
-  it('maakt het overzicht /leerdoelen en een route per niveau', () => {
+  it('maakt het overzicht, een route per niveau en bij meer niveaus de vergelijking', () => {
     expect(plugin.routes('/godot/', leerdoelen).map((r: { path: string }) => r.path)).toEqual([
       '/godot/leerdoelen',
+      '/godot/leerdoelen/vergelijken',
       '/godot/leerdoelen/niveau-1',
       '/godot/leerdoelen/niveau-2',
       '/godot/leerdoelen/niveau-3',

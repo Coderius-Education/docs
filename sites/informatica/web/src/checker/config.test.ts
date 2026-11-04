@@ -90,15 +90,11 @@ describe('webConfig — de conceptenlijst zelf', () => {
 
   it('telt precies de rijen uit de leerdoelen, met hun niveau', () => {
     expect(webConfig.concepts.map((c) => [c.id, c.subject, c.label, c.level])).toEqual(
-      leerdoelen.concepten.map((c) => [c.id, c.onderwerp, c.concept, { 1: c['1'], 2: c['2'] }]),
+      leerdoelen.concepten.map((c) => [c.id, c.onderwerp, c.concept, c['1']]),
     );
     // De tabel van de docent: 13 rijen basis, 11 gevorderd.
-    for (const niveau of ['1', '2']) {
-      expect(webConfig.concepts.filter((c) => levelVoor(c, niveau) === 'basis')).toHaveLength(13);
-      expect(webConfig.concepts.filter((c) => levelVoor(c, niveau) === 'gevorderd')).toHaveLength(
-        11,
-      );
-    }
+    expect(webConfig.concepts.filter((c) => levelVoor(c, null) === 'basis')).toHaveLength(13);
+    expect(webConfig.concepts.filter((c) => levelVoor(c, null) === 'gevorderd')).toHaveLength(11);
   });
 
   it('de leerdoelen zijn het tabblad Web van het beoordelingsblad (Beoordeling_INF.xlsx)', () => {
@@ -131,20 +127,17 @@ describe('webConfig — de conceptenlijst zelf', () => {
       ['JavaScript', 'loops', 'gevorderd'],
     ];
     const label = new Map(leerdoelen.onderwerpen.map((o) => [o.id, o.label]));
-    // Het blad heeft één kolom zonder naam: die geldt voor niveau 1 en 2.
-    expect(leerdoelen.niveaus).toEqual(['1', '2']);
-    expect(leerdoelen.concepten.filter((c) => c['1'] !== c['2'])).toEqual([]);
+    // Het blad heeft één kolom zonder naam: niveau 1, het enige niveau van web.
+    expect(leerdoelen.niveaus).toEqual(['1']);
     expect(leerdoelen.concepten.map((c) => [label.get(c.onderwerp), c.concept, c['1']])).toEqual(
       blad,
     );
   });
 
   it('stelt een cijfer voor: de config draagt de leerdoelen', () => {
-    expect(webConfig.leerdoelen?.niveaus.map((n) => n.id)).toEqual(['1', '2']);
-    expect(webConfig.tracks).toEqual([
-      { id: '1', label: 'Niveau 1' },
-      { id: '2', label: 'Niveau 2' },
-    ]);
+    expect(webConfig.leerdoelen?.niveaus.map((n) => n.id)).toEqual(['1']);
+    // Eén niveau: geen keuze bij Leerroute.
+    expect(webConfig.tracks).toBeUndefined();
   });
 
   it('zet elk ander concept uit de lessen onder "Ook gebruikt", zonder niveau', () => {

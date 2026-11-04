@@ -5,7 +5,6 @@ import type { ReactNode } from 'react';
 import { type Leerdoelen, moeilijkhedenTekst } from '../../leerdoelen';
 import { siteByUrl } from '../../sites';
 import Bloom from './Bloom';
-import Vergelijking from './Vergelijking';
 import styles from './styles.module.css';
 
 /** De cursus, voor in de titel. */
@@ -15,8 +14,8 @@ export function useCursus(): string | null {
 }
 
 // De overzichtspagina /leerdoelen (plugins/leerdoelen.js): links naar de
-// niveaus, de niveaus naast elkaar, en de uitleg van de beoordeling volgens
-// Bloom. De gegevens komen uit src/leerdoelen.json van de cursus.
+// niveaus, bij meer niveaus een link naar de vergelijking, en de uitleg van
+// de beoordeling volgens Bloom. De gegevens komen uit src/leerdoelen.json van de cursus.
 export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoelen }): ReactNode {
   const cursus = useCursus();
   const tel = (niveau: string, m: string) =>
@@ -55,14 +54,11 @@ export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoele
         </ul>
 
         {leerdoelen.niveaus.length > 1 && (
-          <>
-            <h2 id="naast-elkaar">De niveaus naast elkaar</h2>
-            <p>
-              Een concept kan op het ene niveau basis zijn en op het andere gevorderd: zo'n verschil
-              heeft een rand.
-            </p>
-            <Vergelijking leerdoelen={leerdoelen} />
-          </>
+          <p>
+            Een concept kan op het ene niveau basis zijn en op het andere gevorderd.{' '}
+            <Link to="/leerdoelen/vergelijken">Vergelijk de niveaus</Link> om de verschillen naast
+            elkaar te zien.
+          </p>
         )}
 
         <Bloom />

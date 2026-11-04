@@ -237,9 +237,10 @@ schoolsoort; `leerdoelen.test.ts` weert die woorden uit de leerdoelen en de
 pagina's. Een rij blijft op één regel (een override in `biome.json`), zodat je
 de niveaus met het oog vergelijkt en een wijziging één regel in de diff is.
 `createConfig` ziet het bestand en zet `packages/shared/plugins/leerdoelen.js`
-aan: het overzicht `/leerdoelen` (links naar de niveaus, de niveaus naast
-elkaar, en onderaan de uitleg van Bloom, voor elke cursus gelijk), een pagina
-`/leerdoelen/niveau-<n>` per niveau, een link in de footer, en na de build `leerdoelen.json` in de
+aan: het overzicht `/leerdoelen` (links naar de niveaus en, bij meer dan één,
+naar de vergelijking, en onderaan de uitleg van Bloom, voor elke cursus
+gelijk), een pagina `/leerdoelen/niveau-<n>` per niveau, bij meer niveaus
+`/leerdoelen/vergelijken` met de niveaus naast elkaar, een link in de footer, en na de build `leerdoelen.json` in de
 root van de cursus voor coderius.nl. Een fout in het bestand stopt de build.
 De denkvaardigheden, de cijfertabel, het sjabloon en de vuistregels staan in
 `packages/shared/leerdoelen/bloom.json`; `leerdoelen/index.js` leest en

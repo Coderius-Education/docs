@@ -85,6 +85,7 @@
     "./components/OudeOpslag/OverzettenPagina": "./components/OudeOpslag/OverzettenPagina.tsx",
     "./components/Leerdoelen/LeerdoelenPagina": "./components/Leerdoelen/LeerdoelenPagina.tsx",
     "./components/Leerdoelen/NiveauPagina": "./components/Leerdoelen/NiveauPagina.tsx",
+    "./components/Leerdoelen/VergelijkPagina": "./components/Leerdoelen/VergelijkPagina.tsx",
     "./package.json": "./package.json",
     "./components/ManagedHomepage": "./components/ManagedHomepage/index.tsx",
     "./components/HomepageSections": "./components/HomepageSections/index.tsx"

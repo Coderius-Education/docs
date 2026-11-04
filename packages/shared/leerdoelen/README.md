@@ -3,8 +3,9 @@
 Elke cursus met leerdoelen heeft `src/leerdoelen.json`. Het is de tabel van de
 docent uit het beoordelingsblad, en de enige bron voor:
 
-- het overzicht `/leerdoelen`, met de uitleg van Bloom, en een pagina
-  `/leerdoelen/niveau-<n>` per niveau (`../plugins/leerdoelen.js`,
+- het overzicht `/leerdoelen`, met de uitleg van Bloom, een pagina
+  `/leerdoelen/niveau-<n>` per niveau, en bij meer niveaus
+  `/leerdoelen/vergelijken` (`../plugins/leerdoelen.js`,
   `../components/Leerdoelen/`);
 - de nakijker (`leerdoelenNaarConfig` in `packages/checker`);
 - coderius.nl: na de build staat het bestand als `<cursus>/leerdoelen.json`
