@@ -12,6 +12,7 @@ Elk muntje is nu één punt waard. Een gouden muntje dat tien punten oplevert, m
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/data/11a-dictionaries-basis', label: 'Dictionaries'},
+    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary lopen'},
   ]}
 />
 
@@ -56,7 +57,7 @@ var waardes = {"brons": 1, "zilver": 5, "goud": 10}
 | `waardes.has("platina")`      | `true` als de sleutel erin staat                      |
 | `waardes.get("hout", 0)`      | De waarde, of `0` als de sleutel er niet in staat     |
 
-Opzoeken met blokhaken en een sleutel toevoegen gaan zoals in Python. `has` en `get` zijn nieuw: met `has` kijk je of een sleutel bestaat, en `get` geeft een reservewaarde als hij er niet is.
+Opzoeken met blokhaken en een sleutel toevoegen gaan zoals in Python. `has` doet wat `in` in Python doet, en `"platina" in waardes` werkt in GDScript ook. `get` is nieuw: die geeft een reservewaarde als de sleutel er niet is.
 
 ## Stap 1: De waarde uit de tabel
 

@@ -72,7 +72,7 @@ De vlag moet weten in welk level hij staat. Dat vraag je aan Godot:
 get_tree().current_scene.scene_file_path
 ```
 
-Dat geeft het pad van de scène die nu speelt, bijvoorbeeld `"res://level1.tscn"`. Met `find` zoek je op waar dat pad in je lijst staat:
+Dat geeft het pad van de scène die nu speelt, bijvoorbeeld `"res://level1.tscn"`. Met `find` zoek je op waar dat pad in je lijst staat. Vervang je `_on_body_entered` door deze versie; een script mag maar één functie met die naam hebben:
 
 ```gdscript
 func _on_body_entered(body: Node2D) -> void:

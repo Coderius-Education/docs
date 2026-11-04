@@ -168,7 +168,7 @@ De y-waarde `100` past bij een vloer die lager ligt — vul hier coördinaten in
 Cannot find member "instantiate" in base "String".
 ```
 
-**Oorzaak:** Je roept `instantiate()` aan op het pad zelf, bijvoorbeeld `"res://muntje.tscn".instantiate()`. Een pad is tekst, en tekst heeft geen `instantiate()`; alleen het resultaat van `preload()` heeft die functie. Godot ziet dat al terwijl je typt: de regel kleurt rood en je spel start niet.
+**Oorzaak:** Je hebt het pad zelf in je constante gezet, zonder `preload()` eromheen. Dan is `MUNTJE` alleen tekst, en tekst heeft geen `instantiate()`; alleen het resultaat van `preload()` heeft die functie. Godot ziet dat al terwijl je typt: de regel kleurt rood en je spel start niet.
 
 {/* verwacht-fout: Cannot find member "instantiate" in base "String". */}
 
@@ -176,8 +176,10 @@ Cannot find member "instantiate" in base "String".
 # FOUT
 extends Node2D
 
+const MUNTJE = "res://muntje.tscn"
+
 func _ready() -> void:
-    var nieuw_muntje = "res://muntje.tscn".instantiate()
+    var nieuw_muntje = MUNTJE.instantiate()
     add_child(nieuw_muntje)
 ```
 

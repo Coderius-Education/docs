@@ -146,7 +146,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 Alleen `_ready()` is nieuw. `_on_body_entered` is die uit Een power-up; heb je daar de controle met `has_method` uit Er gaat iets mis toegevoegd, dan laat je die staan.
 
-Met `normaal` werkt het ook als je de power-up in de editor groter of kleiner hebt gemaakt. Met een vaste `Vector2(1, 1)` zou hij bij de eerste stap terugspringen naar zijn oorspronkelijke maat.
+Met `normaal` werkt het ook als je de power-up in de editor groter of kleiner hebt gemaakt. Met een vaste `Vector2(1, 1)` zou hij in de eerste halve seconde naar zijn oorspronkelijke maat krimpen of groeien, en daarna rond die maat pulseren in plaats van rond de jouwe.
 
 Je hoeft de tween niet zelf te stoppen. Hij hoort bij de power-up, en als die met `queue_free()` verdwijnt, stopt de tween mee.
 
@@ -257,7 +257,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 **Oplossing:** haal die losse `queue_free()` weg. De tween ruimt het muntje op met `tween_callback(queue_free)`.
 
-**Zelf vinden:** zet `print("weg")` vlak voor elke `queue_free` in je script. Zie je `weg` op hetzelfde moment als je het muntje raakt, dan wordt hij te vroeg aangeroepen.
+**Zelf vinden:** zet de duur van de eerste `tween_property` tijdelijk op `3.0`. Is het muntje nog steeds meteen weg, dan ruimt iets anders dan de tween het op, en staat er ergens nog een losse `queue_free()`.
 
 </details>
 

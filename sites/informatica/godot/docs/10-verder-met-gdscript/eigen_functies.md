@@ -210,7 +210,7 @@ Je script is nu opgeknipt. Stel dat er later iets misgaat. **In welke functie ki
 1. Je karakter kijkt de verkeerde kant op als hij naar links loopt.
 2. Na een sprong blijft je karakter in de lucht hangen.
 3. Je karakter kan in de lucht steeds opnieuw springen.
-4. De loop-animatie speelt, maar je karakter komt niet van zijn plek.
+4. De spring-animatie speelt de hele tijd, ook op de grond, en je karakter komt niet van zijn plek.
 
 <details>
 <summary>Antwoord</summary>
@@ -218,7 +218,7 @@ Je script is nu opgeknipt. Stel dat er later iets misgaat. **In welke functie ki
 1. `kies_animatie()`: daar staat `flip_h`, die het plaatje omdraait.
 2. `val()`: daar komt de zwaartekracht bij `velocity`.
 3. `spring()`: daar hoort de controle `is_on_floor()` te staan.
-4. In geen van de vier: de animatie kijkt naar `velocity.x`, dus die klopt. Dan ontbreekt `move_and_slide()` in `_physics_process`: zonder die regel verandert `velocity` wel, maar beweegt het karakter niet.
+4. In geen van de vier: dan ontbreekt `move_and_slide()` in `_physics_process`. Zonder die regel verandert `velocity` wel, maar beweegt het karakter niet. En `is_on_floor()` weet het pas na `move_and_slide()`: zonder die regel denkt hij steeds dat hij in de lucht hangt, en kiest `kies_animatie()` dus `jump`.
 
 Met één lang blok had je bij elk van die vragen twintig regels moeten lezen. Nu wijst de naam je de weg.
 
@@ -365,7 +365,7 @@ func val(delta: float) -> void:
 
 **Oplossing:** haal de twee regels weg uit `_physics_process`; daar staat alleen nog `val(delta)`.
 
-**Zelf vinden:** zet `print("in val")` in `val()` en `print("oude plek")` vlak boven `move_and_slide()`, onder de regels met `get_gravity()` als die er nog staan. Zie je in **Uitvoer** allebei, terwijl je karakter in de lucht hangt, dan rekent je script de zwaartekracht dubbel.
+**Zelf vinden:** zet `print(velocity.y)` vlak boven `move_and_slide()`, zoals in [Bewegingsscript 2](site:godot/docs/movement-motor), en laat je karakter vallen. Komt er elke frame zo'n 16 bij, dan klopt het. Komt er zo'n 33 bij, dan telt je script de zwaartekracht dubbel.
 
 </details>
 

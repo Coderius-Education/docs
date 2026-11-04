@@ -136,9 +136,17 @@ func _physics_process(delta: float) -> void:
 <details>
 <summary>Mijn karakter blijft doorrijden na loslaten</summary>
 
-**Oorzaak:** De regel met `move_toward` staat niet onder `if direction == 0:`, of springt niet in. Of de takken staan andersom: het remmen hoort bij `== 0`, het lopen in de `else`.
+**Oorzaak:** In de regel met `move_toward` staan de eerste twee waardes andersom. `move_toward(0, velocity.x, SPEED)` brengt `0` naar je snelheid toe, en dat geeft je snelheid ongewijzigd terug: hij blijft rijden.
 
-**Oplossing:** Vergelijk je code met het script hierboven. Onder `if direction == 0:` staat de regel met `move_toward`, onder `else:` de regel met `direction * SPEED`.
+**Oplossing:** eerst wat je verandert, dan waar het naartoe moet:
+
+```gdscript
+# FOUT
+        velocity.x = move_toward(0, velocity.x, SPEED)
+
+# GOED
+        velocity.x = move_toward(velocity.x, 0, SPEED)
+```
 
 **Zelf vinden:** zet een `print("remmen")` vlak onder `if direction == 0:`. Zie je die regel nooit verschijnen als je de toets loslaat, dan wordt het remmen niet bereikt.
 
