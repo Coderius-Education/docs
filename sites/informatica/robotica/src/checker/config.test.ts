@@ -1,12 +1,19 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { levelVoor } from '@coderius/checker/conceptLevel';
+import { geldigeTrack } from '@coderius/checker/leerdoelen';
 import { computeLevelSummary } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
-import type { ProjectFiles } from '@coderius/checker/types';
+import type { CheckReport, ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
 import { describe, expect, it } from 'vitest';
+import leerdoelenJson from '../leerdoelen.json';
 import { roboticaConfig } from './config';
+
+// Concepten uit de leerdoelen en die onder Ook gebruikt, samen.
+const perId = (report: CheckReport) =>
+  new Map([...report.concepts, ...(report.extra ?? [])].map((c) => [c.id, c.used]));
 
 // Asserteert op benoemde concept-id's in plaats van op totalen, zodat een
 // nieuwe les deze tests niet breekt. Elke genoemde id moet wel bestaan —
@@ -58,13 +65,13 @@ function leesFixture(naam: string): ProjectFiles {
 
 function verwacht(naam: string, gebruikt: string[], ongebruikt: string[]): void {
   const report = analyze(leesFixture(naam), roboticaConfig);
-  const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+  const gevonden = perId(report);
 
   for (const id of [...gebruikt, ...ongebruikt]) {
-    expect(perId.has(id), `concept '${id}' bestaat niet in roboticaConfig`).toBe(true);
+    expect(gevonden.has(id), `concept '${id}' bestaat niet in roboticaConfig`).toBe(true);
   }
-  expect(gebruikt.filter((id) => !perId.get(id))).toEqual([]);
-  expect(ongebruikt.filter((id) => perId.get(id))).toEqual([]);
+  expect(gebruikt.filter((id) => !gevonden.get(id))).toEqual([]);
+  expect(ongebruikt.filter((id) => gevonden.get(id))).toEqual([]);
 }
 
 describe('roboticaConfig — voorbeeldprojecten scoren', () => {
@@ -170,10 +177,10 @@ describe('roboticaConfig', () => {
       }),
       roboticaConfig,
     );
-    const perId = new Map(drie.concepts.map((c) => [c.id, c.used]));
-    expect(perId.get('rb-ir-een')).toBe(true);
-    expect(perId.get('rb-ir-twee')).toBe(true);
-    expect(perId.get('rb-ir-vier')).toBe(false);
+    const gevonden = perId(drie);
+    expect(gevonden.get('rb-ir-een')).toBe(true);
+    expect(gevonden.get('rb-ir-twee')).toBe(true);
+    expect(gevonden.get('rb-ir-vier')).toBe(false);
 
     const vier = analyze(
       files({
@@ -181,7 +188,7 @@ describe('roboticaConfig', () => {
       }),
       roboticaConfig,
     );
-    expect(new Map(vier.concepts.map((c) => [c.id, c.used])).get('rb-ir-vier')).toBe(true);
+    expect(perId(vier).get('rb-ir-vier')).toBe(true);
   });
 
   it('herkent de sensoren die niet in de fixtures zitten', () => {
@@ -198,9 +205,9 @@ describe('roboticaConfig', () => {
       }),
       roboticaConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
-    expect(perId.get('rb-servo')).toBe(true);
-    expect(perId.get('rb-afstand')).toBe(true);
+    const gevonden = perId(report);
+    expect(gevonden.get('rb-servo')).toBe(true);
+    expect(gevonden.get('rb-afstand')).toBe(true);
   });
 
   it('laat handmatige concepten altijd op niet-toegepast staan', () => {
@@ -210,9 +217,9 @@ describe('roboticaConfig', () => {
       files({ 'main.py': '# frame gebouwd, batterijen erin, rijdt om obstakels heen' }),
       roboticaConfig,
     );
-    const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
+    const gevonden = perId(report);
     for (const id of ['rb-frame', 'rb-robot-compleet', 'rb-batterijen', 'rb-obstakel-omheen']) {
-      expect(perId.get(id), id).toBe(false);
+      expect(gevonden.get(id), id).toBe(false);
     }
   });
 
@@ -223,12 +230,12 @@ describe('roboticaConfig', () => {
       files({ 'main.py': 'while True:\n    lampje.on()\n    sleep(0.5)' }),
       roboticaConfig,
     );
-    expect(new Map(lus.concepts.map((c) => [c.id, c.used])).get('py-boolean')).toBe(false);
+    expect(perId(lus).get('py-boolean')).toBe(false);
 
     for (const regel of ['klaar = True', 'if kleur == "wit":', 'if afstand >= 100:']) {
       const report = analyze(files({ 'main.py': `while True:\n    ${regel}` }), roboticaConfig);
-      const perId = new Map(report.concepts.map((c) => [c.id, c.used]));
-      expect(perId.get('py-boolean'), regel).toBe(true);
+      const gevonden = perId(report);
+      expect(gevonden.get('py-boolean'), regel).toBe(true);
     }
   });
 
@@ -236,8 +243,8 @@ describe('roboticaConfig', () => {
     // Het bord voert bij het aanzetten alleen main.py uit; robot.py doet niets.
     const goed = analyze(files({ 'main.py': 'x = 1' }), roboticaConfig);
     const fout = analyze(files({ 'robot.py': 'x = 1' }), roboticaConfig);
-    expect(new Map(goed.concepts.map((c) => [c.id, c.used])).get('rb-main-py')).toBe(true);
-    expect(new Map(fout.concepts.map((c) => [c.id, c.used])).get('rb-main-py')).toBe(false);
+    expect(perId(goed).get('rb-main-py')).toBe(true);
+    expect(perId(fout).get('rb-main-py')).toBe(false);
   });
 
   it('ziet een eigen module los van de bibliotheek van het bord', () => {
@@ -245,55 +252,124 @@ describe('roboticaConfig', () => {
       files({ 'main.py': 'from machine import Pin\nfrom time import sleep' }),
       roboticaConfig,
     );
-    expect(new Map(bord.concepts.map((c) => [c.id, c.used])).get('py-import-eigen')).toBe(false);
+    expect(perId(bord).get('py-import-eigen')).toBe(false);
 
     const eigen = analyze(files({ 'main.py': 'import rijden' }), roboticaConfig);
-    expect(new Map(eigen.concepts.map((c) => [c.id, c.used])).get('py-import-eigen')).toBe(true);
+    expect(perId(eigen).get('py-import-eigen')).toBe(true);
   });
 
   it('houdt een dictionary uit de buurt van een set', () => {
     const dict = analyze(files({ 'main.py': 'kleuren = {"rood": 1}' }), roboticaConfig);
-    const dictIds = new Map(dict.concepts.map((c) => [c.id, c.used]));
+    const dictIds = perId(dict);
     expect(dictIds.get('py-dict')).toBe(true);
     expect(dictIds.get('py-tuple-set')).toBe(false);
 
     const set = analyze(files({ 'main.py': 'namen = {"jan", "sam"}' }), roboticaConfig);
-    const setIds = new Map(set.concepts.map((c) => [c.id, c.used]));
+    const setIds = perId(set);
     expect(setIds.get('py-tuple-set')).toBe(true);
     expect(setIds.get('py-dict')).toBe(false);
   });
 
-  it('de niveaus verschuiven tussen start en verdieping', () => {
-    // Vijf concepten verschillen per route, en niet allemaal dezelfde kant op:
-    // vier robotica-onderdelen zakken van gevorderd naar basis, en `imports`
-    // gaat juist omhoog. Netto verschuiven er dus drie naar basis. Zonder
-    // tracks zou dezelfde robot in beide routes hetzelfde scoren.
-    const report = analyze(leesFixture('compleet'), roboticaConfig);
-    const start = computeLevelSummary(report, roboticaConfig, 'start');
-    const verdieping = computeLevelSummary(report, roboticaConfig, 'verdieping');
-
-    expect(verdieping.basis.total).toBe(start.basis.total + 3);
-    expect(verdieping.gevorderd.total).toBe(start.gevorderd.total - 3);
-    // Het totaal blijft gelijk: er verdwijnt geen concept uit een route.
-    expect(verdieping.basis.total + verdieping.gevorderd.total).toBe(
-      start.basis.total + start.gevorderd.total,
-    );
+  it('volgt het tabblad robotica van het beoordelingsblad', () => {
+    // Het blad zoals de docent het invulde, met start als niveau 1 en
+    // verdieping als niveau 3. Twee spelfouten zijn hersteld ("calibreren",
+    // "afstandsensor"). Waar de oude nakijker een andere moeilijkheid gaf
+    // (if / elif / else, Lijsten en bal detecteren, en bij verdieping functies,
+    // lijst-methodes en imports), geldt nu het blad.
+    const B = 'basis';
+    const G = 'gevorderd';
+    const blad = [
+      ['Python', 'variabele', B, B],
+      ['Python', 'rekenen (+, -, *, /)', B, B],
+      ['Python', 'f-strings', B, B],
+      ['Python', 'booleans', B, B],
+      ['Python', 'if / else', B, B],
+      ['Python', 'if / elif / else', G, G],
+      ['Python', 'while-loop', B, B],
+      ['Python', 'functie zonder parameters en return', B, G],
+      ['Python', 'Functie met parameters', B, G],
+      ['Python', 'Lijst-methodes', B, G],
+      ['Python', 'imports', B, B],
+      ['Robotica', 'het frame bouwen', B, B],
+      ['Robotica', 'één IR-sensor uitlezen en kalibreren', B, B],
+      ['Robotica', 'twee IR-sensoren uitlezen en kalibreren', B, B],
+      ['Robotica', 'waardes van IR-sensoren tonen op scherm', B, B],
+      ['Robotica', 'Motoren aansturen', B, B],
+      ['Robotica', 'hele robot gebouwd (lego + motoren + IR-sensoren + schermpje)', B, B],
+      ['Robotica', 'robot laten werken op batterijen', B, B],
+      ['Robotica', 'lijnvolgen met twee IR-sensoren', B, B],
+      ['Robotica', 'lijnvolgen met vier IR-sensoren', G, B],
+      ['Robotica', 'afstandssensor uitlezen', G, B],
+      ['Robotica', 'obstakel detecteren en stoppen', G, B],
+      ['Robotica', 'bal detecteren', G, G],
+      ['Python', 'and / or', G, G],
+      ['Python', 'continue', G, G],
+      ['Python', 'break', G, G],
+      ['Python', 'Lijsten', G, G],
+      ['Python', 'zelf python module schrijven en importeren in ander bestand', G, G],
+      ['Python', 'tuples / sets', G, G],
+      ['Robotica', 'om obstakel heen rijden', G, G],
+      ['Robotica', 'langs muren rijden', G, G],
+      ['Robotica', 'bal grijpen', G, G],
+      ['Robotica', 'groot gedeelte Redden Basis', G, G],
+    ];
+    const label = new Map(leerdoelenJson.onderwerpen.map((o) => [o.id, o.label]));
+    expect(leerdoelenJson.niveaus).toEqual(['1', '3']);
+    expect(
+      leerdoelenJson.concepten.map((c) => [label.get(c.onderwerp), c.concept, c['1'], c['3']]),
+    ).toEqual(blad);
   });
 
-  it('precies deze concepten hebben een niveau per route', () => {
-    // Een verschuiving hoort een bewuste keuze te zijn, geen bijvangst.
-    const perRoute = roboticaConfig.concepts
-      .filter((c) => typeof c.level !== 'string')
-      .map((c) => c.id)
-      .sort();
-
-    expect(perRoute).toEqual([
-      'py-import',
-      'rb-afstand',
-      'rb-bal-detecteren',
-      'rb-ir-vier',
-      'rb-obstakel-stoppen',
+  it('geeft elk concept uit de leerdoelen een detectie, en zet de rest onder Ook gebruikt', () => {
+    expect(roboticaConfig.concepts.map((c) => c.id)).toEqual(
+      leerdoelenJson.concepten.map((c) => c.id),
+    );
+    expect((roboticaConfig.extra ?? []).map((c) => c.id)).toEqual([
+      'py-print',
+      'py-string-methoden',
+      'py-for',
+      'py-range',
+      'py-return',
+      'py-dict',
+      'py-dict-loop',
+      'rb-servo',
+      'rb-main-py',
     ]);
+  });
+
+  it('wijst bij elk concept een les aan', () => {
+    // Een les uit de Lego-auto of RoboCup, en voor Python wat de robotcursus
+    // niet zelf uitlegt een les van de python-cursus. Dat de les bestaat,
+    // controleert de build (en cross-links voor de python-cursus).
+    expect(leerdoelenJson.concepten.filter((c) => !c.les).map((c) => c.id)).toEqual([]);
+  });
+
+  it('maakt van de niveaus de leerroutes, en opent een oude beoordeling op het goede niveau', () => {
+    expect(roboticaConfig.tracks).toEqual([
+      { id: '1', label: 'Niveau 1' },
+      { id: '3', label: 'Niveau 3' },
+    ]);
+    // Een beoordeling van vóór de leerdoelen had start of verdieping.
+    expect(geldigeTrack(roboticaConfig, 'start')).toBe('1');
+    expect(geldigeTrack(roboticaConfig, 'verdieping')).toBe('3');
+  });
+
+  it('de niveaus verschuiven tussen niveau 1 en 3', () => {
+    // Zonder twee niveaus zou dezelfde robot in beide routes hetzelfde
+    // scoren. Volgens het blad gaan op niveau 3 drie robotica-onderdelen van
+    // gevorderd naar basis, en drie Python-concepten juist naar gevorderd.
+    const naarBasis = roboticaConfig.concepts
+      .filter((c) => levelVoor(c, '1') === 'gevorderd' && levelVoor(c, '3') === 'basis')
+      .map((c) => c.id);
+    const naarGevorderd = roboticaConfig.concepts
+      .filter((c) => levelVoor(c, '1') === 'basis' && levelVoor(c, '3') === 'gevorderd')
+      .map((c) => c.id);
+    expect(naarBasis).toEqual(['rb-ir-vier', 'rb-afstand', 'rb-obstakel-stoppen']);
+    expect(naarGevorderd).toEqual(['py-functie', 'py-functie-parameters', 'py-lijst-methoden']);
+    const report = analyze(leesFixture('compleet'), roboticaConfig);
+    const een = computeLevelSummary(report, roboticaConfig, '1');
+    const drie = computeLevelSummary(report, roboticaConfig, '3');
+    expect(drie.basis.total + drie.gevorderd.total).toBe(een.basis.total + een.gevorderd.total);
   });
 
   it('elk handmatig concept staat in Bouwen of Rijgedrag', () => {

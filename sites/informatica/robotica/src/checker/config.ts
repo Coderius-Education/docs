@@ -1,9 +1,14 @@
-import type { CheckerConfig, Concept } from '@coderius/checker/types';
+import { leerdoelenNaarConfig } from '@coderius/checker/leerdoelen';
+import type { CheckerConfig, ConceptDetect, ExtraConcept } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
+import leerdoelenJson from '../leerdoelen.json';
 
-// Conceptenlijst voor de robotica-nakijker, afgeleid van de vastgestelde
-// leerlijntabel (kolommen Onderwerp / Concept / Niveau start / Niveau
-// Verdieping). De twee onderwerpen hieronder zijn precies die eerste kolom.
+// De nakijker voor robotica. Wélke concepten tellen en op welk niveau staat
+// in `src/leerdoelen.json`: het tabblad robotica van het beoordelingsblad, in
+// dezelfde volgorde en met dezelfde woorden, met start als niveau 1 en
+// verdieping als niveau 3. Hier staat alleen hóé je elk concept terugvindt
+// (DETECTIE), en wat de nakijker daarnaast onder "Ook gebruikt" laat zien
+// (OOK_GEBRUIKT).
 //
 // Wat deze nakijker anders maakt dan die van web, fullstack en godot: een
 // robotica-project is één `main.py` plus foto's van een fysiek ding. De
@@ -16,9 +21,6 @@ import { storageKey } from '@coderius/shared/opslag';
 // `forward()` en `stop()` bewijzen niet dat een robot om een obstakel heen
 // rijdt; diezelfde twee aanroepen staan in elk script van de cursus. Zulke
 // concepten als regex opnemen zou een score opleveren die niets meet.
-//
-// De twee leerroutes (start en verdieping) geven per concept een eigen niveau.
-// Waar dat gelijk is staat er één waarde; waar het verschilt een record.
 
 // Exact de extensies uit `accept` hieronder. Wijkt die lijst af, dan valt een
 // foto uit een zip wél in de fotostrip terwijl dezelfde foto via de
@@ -39,7 +41,7 @@ function todayStamp(d: Date): string {
 }
 
 /** Korter dan het hele object uitschrijven; alle python-concepten lezen `py`. */
-function py(pattern: RegExp, minCount?: number): Concept['detect'] {
+function py(pattern: RegExp, minCount?: number): ConceptDetect {
   return minCount === undefined
     ? { type: 'regex', pattern, in: ['py'] }
     : { type: 'regex', pattern, in: ['py'], minCount };
@@ -47,343 +49,139 @@ function py(pattern: RegExp, minCount?: number): Concept['detect'] {
 
 const HANDMATIG = { type: 'handmatig' } as const;
 
-const pythonConcepts: Concept[] = [
+const DETECTIE: Record<string, ConceptDetect> = {
+  'py-variabele': py(/^[ \t]*[a-z_]\w*\s*=\s*[^=\s]/gm),
+  // Bewust smal: een operator tússen twee getallen of variabelen, met
+  // spaties eromheen zoals de cursus het schrijft. Een kale `+` zou net zo
+  // vaak tekst plakken als rekenen.
+  'py-rekenen': py(/[\w)]\s[-*/]\s[\w(]|[\w)]\s\+\s[\w(]/g),
+  'py-fstring': py(/\bf["']/g),
+  // `while True:` telt hier niet mee. Die regel staat in élk script van de
+  // cursus, al in het knipperscript van Deel 2, en zou dit concept dus
+  // aanvinken voordat de leerling één boolean heeft gebruikt.
+  'py-boolean': py(/[=!<>]=|(?<!\bwhile\s{1,8})\b(?:True|False)\b/g),
+  'py-if-else': py(/^[ \t]*if\b/gm),
+  'py-elif': py(/^[ \t]*elif\b/gm),
+  'py-while': py(/^[ \t]*while\b/gm),
+  'py-functie': py(/^[ \t]*def\s+\w+\s*\(\s*\)/gm),
+  'py-functie-parameters': py(/^[ \t]*def\s+\w+\s*\(\s*\w/gm),
+  'py-lijst-methoden': py(/\.(append|insert|remove|pop|sort|reverse|extend|index)\s*\(/g),
+  'py-import': py(/^[ \t]*(from|import)\s+\w/gm),
+  'rb-frame': HANDMATIG,
+  'rb-ir-een': py(/\bAnalogIR\s*\(/g),
+  'rb-ir-twee': py(/\bAnalogIR\s*\(/g, 2),
+  'rb-scherm': py(/\bOLEDSH1106\s*\(/g),
+  'rb-motoren': py(/\bDCMotors\s*\(/g),
+  'rb-robot-compleet': HANDMATIG,
+  'rb-batterijen': HANDMATIG,
+  'rb-lijnvolgen-twee': HANDMATIG,
+  'rb-ir-vier': py(/\bAnalogIR\s*\(/g, 4),
+  'rb-afstand': py(/\bTimeOfFlight\s*\(|\bget_distance\s*\(|\bread_distance\s*\(/g),
+  'rb-obstakel-stoppen': HANDMATIG,
+  'rb-bal-detecteren': HANDMATIG,
+  'py-and-or': py(/\s(and|or)\s/g),
+  'py-continue': py(/^[ \t]*continue\b/gm),
+  'py-break': py(/^[ \t]*break\b/gm),
+  'py-lijst': py(/=\s*\[/g),
+  // Alles wat niet een module van het bord of uit de standaardbibliotheek
+  // is, moet wel van de leerling zelf komen.
+  'py-import-eigen': py(
+    /^[ \t]*(?:from|import)\s+(?!machine\b|time\b|utime\b|leaphymicropython\b|random\b|math\b|sys\b|os\b|json\b|micropython\b|neopixel\b|network\b|gc\b)\w+/gm,
+  ),
+  // Zwak te detecteren, en dat is hier vastgelegd in plaats van weggepoetst:
+  // een tuple zonder haakjes (`a, b = 1, 2`) valt hierbuiten, en een set
+  // met één element is niet van een blok code te onderscheiden. Zie de
+  // valkuilen-test.
+  'py-tuple-set': py(/=\s*\([^)]*,|=\s*\{[^}:]+\}/g),
+  'rb-obstakel-omheen': HANDMATIG,
+  'rb-muren': HANDMATIG,
+  'rb-bal-grijpen': HANDMATIG,
+  'rb-redden-basis': HANDMATIG,
+};
+
+// Wat het blad niet noemt. De nakijker laat het zien onder Ook gebruikt, maar
+// het telt niet mee voor de moeilijkheid.
+const OOK_GEBRUIKT: ExtraConcept[] = [
   {
     id: 'py-print',
+    subject: 'python',
     group: 'Basis',
     label: 'print',
-    level: 'basis',
     detect: py(/\bprint\s*\(/g),
   },
   {
-    id: 'py-variabele',
-    group: 'Basis',
-    label: 'Variabele',
-    level: 'basis',
-    detect: py(/^[ \t]*[a-z_]\w*\s*=\s*[^=\s]/gm),
-  },
-  {
-    id: 'py-rekenen',
-    group: 'Basis',
-    label: 'Rekenen (+, -, *, /)',
-    level: 'basis',
-    // Bewust smal: een operator tússen twee getallen of variabelen, met
-    // spaties eromheen zoals de cursus het schrijft. Een kale `+` zou net zo
-    // vaak tekst plakken als rekenen.
-    detect: py(/[\w)]\s[-*/]\s[\w(]|[\w)]\s\+\s[\w(]/g),
-  },
-  {
-    id: 'py-fstring',
-    group: 'Tekst',
-    label: 'f-strings',
-    level: 'basis',
-    detect: py(/\bf["']/g),
-  },
-  {
     id: 'py-string-methoden',
+    subject: 'python',
     group: 'Tekst',
     label: 'String-methoden',
-    level: 'basis',
     detect: py(/\.(upper|lower|strip|replace|split|join|startswith|endswith|title|format)\s*\(/g),
   },
   {
-    id: 'py-boolean',
-    group: 'Beslissen',
-    label: 'Booleans',
-    level: 'basis',
-    // `while True:` telt hier niet mee. Die regel staat in élk script van de
-    // cursus, al in het knipperscript van Deel 2, en zou dit concept dus
-    // aanvinken voordat de leerling één boolean heeft gebruikt.
-    detect: py(/[=!<>]=|(?<!\bwhile\s{1,8})\b(?:True|False)\b/g),
-  },
-  {
-    id: 'py-if-else',
-    group: 'Beslissen',
-    label: 'if / else',
-    level: 'basis',
-    detect: py(/^[ \t]*if\b/gm),
-  },
-  {
-    id: 'py-elif',
-    group: 'Beslissen',
-    label: 'if / elif / else',
-    level: 'basis',
-    detect: py(/^[ \t]*elif\b/gm),
-  },
-  {
-    id: 'py-and-or',
-    group: 'Beslissen',
-    label: 'and / or',
-    level: 'gevorderd',
-    detect: py(/\s(and|or)\s/g),
-  },
-  {
     id: 'py-for',
+    subject: 'python',
     group: 'Herhalen',
     label: 'for-loop',
-    level: 'basis',
     detect: py(/^[ \t]*for\b/gm),
   },
   {
     id: 'py-range',
+    subject: 'python',
     group: 'Herhalen',
     label: 'range',
-    level: 'basis',
     detect: py(/\brange\s*\(/g),
   },
   {
-    id: 'py-continue',
-    group: 'Herhalen',
-    label: 'continue',
-    level: 'gevorderd',
-    detect: py(/^[ \t]*continue\b/gm),
-  },
-  {
-    id: 'py-break',
-    group: 'Herhalen',
-    label: 'break',
-    level: 'gevorderd',
-    detect: py(/^[ \t]*break\b/gm),
-  },
-  {
-    id: 'py-while',
-    group: 'Herhalen',
-    label: 'while-loop',
-    level: 'basis',
-    detect: py(/^[ \t]*while\b/gm),
-  },
-  {
-    id: 'py-functie',
-    group: 'Functies',
-    label: 'Functie zonder parameters',
-    level: 'basis',
-    detect: py(/^[ \t]*def\s+\w+\s*\(\s*\)/gm),
-  },
-  {
-    id: 'py-functie-parameters',
-    group: 'Functies',
-    label: 'Functie met parameters',
-    level: 'basis',
-    detect: py(/^[ \t]*def\s+\w+\s*\(\s*\w/gm),
-  },
-  {
     id: 'py-return',
+    subject: 'python',
     group: 'Functies',
     label: 'return',
-    level: 'gevorderd',
     detect: py(/^[ \t]*return\b/gm),
   },
   {
-    id: 'py-lijst',
-    group: 'Data',
-    label: 'Lijsten',
-    level: 'basis',
-    detect: py(/=\s*\[/g),
-  },
-  {
-    id: 'py-lijst-methoden',
-    group: 'Data',
-    label: 'Lijst-methoden',
-    level: 'basis',
-    detect: py(/\.(append|insert|remove|pop|sort|reverse|extend|index)\s*\(/g),
-  },
-  {
     id: 'py-dict',
+    subject: 'python',
     group: 'Data',
     label: 'Dictionaries',
-    level: 'gevorderd',
     // Een dict herken je aan de dubbele punt binnen de accolades; zonder die
     // eis zou elke set ook meetellen.
     detect: py(/=\s*\{[^}]*:/g),
   },
   {
     id: 'py-dict-loop',
+    subject: 'python',
     group: 'Data',
     label: 'Door een dictionary lopen',
-    level: 'gevorderd',
     detect: py(/\.(items|keys|values)\s*\(\s*\)/g),
   },
   {
-    id: 'py-tuple-set',
-    group: 'Data',
-    label: 'Tuples / sets',
-    level: 'gevorderd',
-    // Zwak te detecteren, en dat is hier vastgelegd in plaats van weggepoetst:
-    // een tuple zonder haakjes (`a, b = 1, 2`) valt hierbuiten, en een set
-    // met één element is niet van een blok code te onderscheiden. Zie de
-    // valkuilen-test.
-    detect: py(/=\s*\([^)]*,|=\s*\{[^}:]+\}/g),
-  },
-  {
-    id: 'py-import',
-    group: 'Modules',
-    label: 'Imports',
-    level: { start: 'basis', verdieping: 'gevorderd' },
-    detect: py(/^[ \t]*(from|import)\s+\w/gm),
-  },
-  {
-    id: 'py-import-eigen',
-    group: 'Modules',
-    label: 'Import uit een eigen bestand',
-    level: 'gevorderd',
-    // Alles wat niet een module van het bord of uit de standaardbibliotheek
-    // is, moet wel van de leerling zelf komen.
-    detect: py(
-      /^[ \t]*(?:from|import)\s+(?!machine\b|time\b|utime\b|leaphymicropython\b|random\b|math\b|sys\b|os\b|json\b|micropython\b|neopixel\b|network\b|gc\b)\w+/gm,
-    ),
-  },
-].map((c) => ({ ...c, subject: 'python' }) as Concept);
-
-const roboticaConcepts: Concept[] = [
-  // --- Bouwen: alleen op foto's vast te stellen ---
-  {
-    id: 'rb-frame',
-    group: 'Bouwen',
-    label: 'Het frame gebouwd',
-    level: 'basis',
-    detect: HANDMATIG,
-  },
-  {
-    id: 'rb-robot-compleet',
-    group: 'Bouwen',
-    label: 'Hele robot gebouwd (lego, motoren, IR-sensoren, scherm)',
-    level: 'basis',
-    detect: HANDMATIG,
-  },
-  {
-    id: 'rb-batterijen',
-    group: 'Bouwen',
-    label: 'Robot werkt op batterijen',
-    level: 'basis',
-    detect: HANDMATIG,
-  },
-
-  // --- Sensoren: wat er in de code staat ---
-  {
-    id: 'rb-ir-een',
-    group: 'Sensoren',
-    label: 'Eén IR-sensor uitlezen en kalibreren',
-    level: 'basis',
-    detect: py(/\bAnalogIR\s*\(/g),
-  },
-  {
-    id: 'rb-ir-twee',
-    group: 'Sensoren',
-    label: 'Twee IR-sensoren uitlezen en kalibreren',
-    level: 'basis',
-    detect: py(/\bAnalogIR\s*\(/g, 2),
-  },
-  {
-    id: 'rb-ir-vier',
-    group: 'Sensoren',
-    label: 'Lijnvolgen met vier IR-sensoren',
-    level: { start: 'gevorderd', verdieping: 'basis' },
-    detect: py(/\bAnalogIR\s*\(/g, 4),
-  },
-  {
-    id: 'rb-afstand',
-    group: 'Sensoren',
-    label: 'Afstandsensor uitlezen',
-    level: { start: 'gevorderd', verdieping: 'basis' },
-    detect: py(/\bTimeOfFlight\s*\(|\bget_distance\s*\(|\bread_distance\s*\(/g),
-  },
-
-  // --- Aansturen ---
-  {
-    id: 'rb-scherm',
-    group: 'Aansturen',
-    label: 'Waardes van de sensoren op het scherm',
-    level: 'basis',
-    detect: py(/\bOLEDSH1106\s*\(/g),
-  },
-  {
-    id: 'rb-motoren',
-    group: 'Aansturen',
-    label: 'Motoren aansturen',
-    level: 'basis',
-    detect: py(/\bDCMotors\s*\(/g),
-  },
-  {
     id: 'rb-servo',
+    subject: 'robotica',
     group: 'Aansturen',
     label: 'Servo aansturen (grijper)',
-    level: 'gevorderd',
     detect: py(/\bset_servo_angle\s*\(/g),
   },
-
-  // --- Rijgedrag: alleen te zien aan een rijdende robot ---
-  {
-    id: 'rb-lijnvolgen-twee',
-    group: 'Rijgedrag',
-    label: 'Lijnvolgen met twee IR-sensoren',
-    level: 'basis',
-    detect: HANDMATIG,
-  },
-  {
-    id: 'rb-obstakel-stoppen',
-    group: 'Rijgedrag',
-    label: 'Obstakel detecteren en stoppen',
-    level: { start: 'gevorderd', verdieping: 'basis' },
-    detect: HANDMATIG,
-  },
-  {
-    id: 'rb-obstakel-omheen',
-    group: 'Rijgedrag',
-    label: 'Om een obstakel heen rijden',
-    level: 'gevorderd',
-    detect: HANDMATIG,
-  },
-  {
-    id: 'rb-muren',
-    group: 'Rijgedrag',
-    label: 'Langs muren rijden',
-    level: 'gevorderd',
-    detect: HANDMATIG,
-  },
-  {
-    id: 'rb-bal-detecteren',
-    group: 'Rijgedrag',
-    label: 'Bal detecteren',
-    level: { start: 'gevorderd', verdieping: 'basis' },
-    detect: HANDMATIG,
-  },
-  {
-    id: 'rb-bal-grijpen',
-    group: 'Rijgedrag',
-    label: 'Bal grijpen',
-    level: 'gevorderd',
-    detect: HANDMATIG,
-  },
-  {
-    id: 'rb-redden-basis',
-    group: 'Rijgedrag',
-    label: 'Redden Basis gelopen',
-    level: 'gevorderd',
-    detect: HANDMATIG,
-  },
-
-  // --- Op het bord ---
   {
     id: 'rb-main-py',
+    subject: 'robotica',
     group: 'Op het bord',
     label: 'Script heet main.py',
-    level: 'basis',
     // Het bord voert bij het aanzetten alleen een bestand met exact deze naam
     // uit; heet het anders, dan doet de robot op batterijen niets.
     detect: { type: 'path', pattern: /(^|\/)main\.py$/ },
   },
-].map((c) => ({ ...c, subject: 'robotica' }) as Concept);
+];
+
+const uitLeerdoelen = leerdoelenNaarConfig(leerdoelenJson, DETECTIE);
 
 export const roboticaConfig: CheckerConfig = {
-  subjects: [
-    { id: 'python', label: 'Python' },
-    { id: 'robotica', label: 'Robotica' },
-  ],
-
-  tracks: [
-    { id: 'start', label: 'Start' },
-    { id: 'verdieping', label: 'Verdieping' },
-  ],
+  subjects: uitLeerdoelen.subjects,
+  tracks: uitLeerdoelen.tracks,
+  concepts: uitLeerdoelen.concepts,
+  leerdoelen: uitLeerdoelen.leerdoelen,
+  extra: OOK_GEBRUIKT,
+  // De leerroutes van vóór de leerdoelen. Start was de eerste kolom van het
+  // blad en is niveau 1; verdieping is niveau 3, zoals bij Godot.
+  oudeLeerroutes: { start: '1', verdieping: '3' },
 
   fileKinds: [
     { id: 'py', label: 'Python' },
@@ -405,6 +203,4 @@ export const roboticaConfig: CheckerConfig = {
   pdfFilename: (d) => `Beoordeling Robot - ${todayStamp(d)}.pdf`,
   privacyNote:
     'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',
-
-  concepts: [...pythonConcepts, ...roboticaConcepts],
 };
