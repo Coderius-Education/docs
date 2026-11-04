@@ -237,6 +237,14 @@ describe('godotConfig — de leerdoelen', () => {
     expect(godotConfig.concepts.map((c) => c.id)).toEqual(leerdoelen.concepten.map((c) => c.id));
   });
 
+  it('wijst bij elk concept een les aan', () => {
+    // Wat de cursus nergens behandelde, kreeg een les in hoofdstuk 10. Een
+    // nieuwe rij zonder les is een concept waarop je beoordeelt maar dat de
+    // leerling nergens kan leren. Dat de les bestaat, controleert de build.
+    const zonderLes = leerdoelen.concepten.filter((c) => !('les' in c) || !c.les).map((c) => c.id);
+    expect(zonderLes).toEqual([]);
+  });
+
   it('maakt van de niveaus de leerroutes', () => {
     expect(godotConfig.tracks).toEqual([
       { id: '1', label: 'Niveau 1' },

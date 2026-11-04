@@ -47,6 +47,10 @@ const MET_BLOK = [
   '06-animaties/animaties_code.md',
   '07-signals-en-score/global_variables.md',
   '07-signals-en-score/groups.md',
+  '10-verder-met-gdscript/dictionaries.md',
+  '10-verder-met-gdscript/eigen_functies.md',
+  '10-verder-met-gdscript/json_opslaan.md',
+  '10-verder-met-gdscript/lijsten.md',
 ];
 
 // En de lessen die er bewust géén hebben, gegroepeerd per reden. Zonder deze
@@ -104,6 +108,10 @@ const ZONDER_BLOK: { reden: string; lessen: string[] }[] = [
       '09-spel-ideeen/flappy_bird.md',
       '09-spel-ideeen/top_down.md',
     ],
+  },
+  {
+    reden: 'Godot-stof zonder tegenhanger in de python-cursus',
+    lessen: ['10-verder-met-gdscript/tweens.md'],
   },
 ];
 

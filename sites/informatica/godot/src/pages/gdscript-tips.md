@@ -188,6 +188,23 @@ print(scores.size())   # 4
 print(scores[0])       # 1
 ```
 
+Uitgelegd in [Lijsten](site:godot/docs/lijsten).
+
+</details>
+
+<details>
+<summary>Hoe zoek ik een waarde op met een woord? (Dictionary)</summary>
+
+```gdscript
+var waardes = {"brons": 1, "zilver": 5, "goud": 10}
+
+print(waardes["goud"])          # 10
+print(waardes.has("platina"))   # false
+print(waardes.get("hout", 0))   # 0
+```
+
+Uitgelegd in [Dictionaries](site:godot/docs/dictionaries).
+
 </details>
 
 ---
@@ -551,5 +568,35 @@ func reset():
 ```
 
 Vergeet niet dit script als **Autoload** in te stellen via Project Settings, tabblad Globals.
+
+</details>
+
+<details>
+<summary>Hoe bewaar ik iets tot de volgende keer dat je speelt? (JSON in user://)</summary>
+
+```gdscript
+var bestand = FileAccess.open("user://highscore.json", FileAccess.WRITE)
+bestand.store_string(JSON.stringify({"highscore": 40}))
+
+var lezen = FileAccess.open("user://highscore.json", FileAccess.READ)
+var gegevens = JSON.parse_string(lezen.get_as_text())
+var highscore = int(gegevens["highscore"])
+```
+
+Een getal komt uit JSON terug als kommagetal; daarom `int()`. Uitgelegd in [JSON: een highscore die blijft](site:godot/docs/json_opslaan).
+
+</details>
+
+<details>
+<summary>Hoe laat ik iets soepel bewegen of vervagen? (Tween)</summary>
+
+```gdscript
+var tween = create_tween()
+tween.tween_property(self, "position:y", position.y - 40, 0.3)
+tween.tween_property(self, "modulate:a", 0.0, 0.2)
+tween.tween_callback(queue_free)
+```
+
+De stappen lopen na elkaar. Uitgelegd in [Tweens](site:godot/docs/tweens).
 
 </details>
