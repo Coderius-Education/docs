@@ -148,6 +148,12 @@ export interface CheckerConfig {
    * leerdoelen stelt de docentweergave een cijfer voor volgens Bloom.
    */
   leerdoelen?: Leerdoelen;
+  /**
+   * Handmatige vinkjes die er niet meer zijn, met hun denkvaardigheid. Een
+   * oude beoordeling zonder gekozen denkvaardigheid krijgt de hoogste die de
+   * docent toen aanvinkte (bloomUitOudeVinkjes).
+   */
+  oudeVinkjes?: Record<string, string>;
   /** Bestandssoorten voor het bestandsoverzicht (volgorde + labels). */
   fileKinds: FileKindInfo[];
   /** Pad → kind-id. */

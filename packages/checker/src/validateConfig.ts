@@ -32,6 +32,12 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
   }
 
   for (const extra of config.extra ?? []) {
+    if (!subjectIds.has(extra.subject)) {
+      // Ook gebruikt toont per onderwerp; zonder onderwerp verdwijnt hij stil.
+      problems.push(
+        `Extra concept '${extra.id}' hoort bij onderwerp '${extra.subject}', dat niet in subjects staat.`,
+      );
+    }
     // Extra concepten delen de id-ruimte: het rapport zoekt matches op id.
     if (config.concepts.some((c) => c.id === extra.id)) {
       problems.push(`Extra concept '${extra.id}' heeft dezelfde id als een concept uit de tabel.`);

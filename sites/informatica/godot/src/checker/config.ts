@@ -13,12 +13,13 @@ import leerdoelenJson from '../leerdoelen.json';
 // bewegingsscript van hoofdstuk 5 (velocity, move_and_slide, is_on_floor,
 // get_gravity, _physics_process) stond op "gevorderd", net als _process. Een
 // leerling die de cursus afmaakte zag daardoor de helft van zijn eigen werk
-// als gevorderd staan, en het onderscheid zei niets meer. De niveaus komen nu
-// uit de tabel, en verschillen per route: wat in Start nog gevorderd is, is in
-// Verdieping gewoon basis.
+// als gevorderd staan, en het onderscheid zei niets meer. De moeilijkheden
+// komen nu uit het blad, en verschillen per niveau: wat op niveau 1 nog
+// gevorderd is, is op niveau 3 en 4 basis, en op niveau 3 zijn vier
+// concepten expert.
 //
-// Naast basis/gevorderd heeft elk concept een denkvaardigheid van Bloom. Dat
-// is een tweede as, geen derde niveau: basis/gevorderd zegt wélke concepten
+// Naast de moeilijkheid heeft elk concept een denkvaardigheid van Bloom. Dat
+// is een tweede as, geen extra niveau: de moeilijkheid zegt wélke concepten
 // tellen, Bloom zegt hoe diep een leerling ze beheerst. Dezelfde SPEED is op
 // 300.0 "nadoen" (onthouden) en op 450.0 "manipuleren" (toepassen) — en dat
 // tweede is precies wat het concept "snelheid veranderen" meet. Wat de
@@ -101,10 +102,13 @@ const DETECTIE: Record<string, ConceptDetect> = {
   '2d-canvaslayer': node('CanvasLayer'),
   '2d-label': node('Label'),
   '2d-control': node('Control'),
-  // Het startmenu uit hoofdstuk 8: een Control-scène met een knop erin.
+  // Het startmenu uit hoofdstuk 8: een scène waarvan de bovenste node een
+  // Control is, met een Button erin. Alleen de bovenste node heeft geen
+  // `parent=`; een Control ergens in een level (een pauzescherm in de HUD)
+  // met een knop ernaast is geen startscherm.
   '2d-startscherm': {
     type: 'regex',
-    pattern: /\[node [^\]]*type="Control"[\s\S]*?\[node [^\]]*type="Button"/g,
+    pattern: /\[node name="[^"]*" type="Control"\][\s\S]*?\[node [^\]]*type="Button"/g,
     in: ['tscn'],
   },
   '2d-nieuwe-nodes': {
@@ -208,6 +212,20 @@ export const godotConfig: CheckerConfig = {
   concepts: uitLeerdoelen.concepts,
   leerdoelen: uitLeerdoelen.leerdoelen,
   extra: OOK_GEBRUIKT,
+  // De Gesprek-vinkjes van vóór de leerdoelen, met hun trede. Een bewaarde
+  // beoordeling zonder denkvaardigheid krijgt de hoogste die toen aanstond.
+  oudeVinkjes: {
+    'gesprek-voordragen': 'onthouden',
+    'gesprek-voorspellen': 'begrijpen',
+    'gesprek-vragen': 'begrijpen',
+    'gesprek-uitleggen': 'toepassen',
+    'gesprek-integreren': 'analyseren',
+    'gesprek-beredeneren': 'evalueren',
+    'gesprek-betogen': 'evalueren',
+    'gesprek-doceren': 'evalueren',
+    'gesprek-creëren': 'creëren',
+    'gesprek-optimaliseren': 'creëren',
+  },
 
   fileKinds: [
     { id: 'gd', label: 'GDScript' },

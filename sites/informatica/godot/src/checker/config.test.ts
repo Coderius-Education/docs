@@ -272,6 +272,14 @@ describe('godotConfig — de leerdoelen', () => {
     // Cijfer; de nakijker heeft geen handmatige concepten meer.
     expect(godotConfig.concepts.filter((c) => c.detect.type === 'handmatig')).toEqual([]);
     expect(godotConfig.leerdoelen).toBeDefined();
+    // Een oude beoordeling met Gesprek-vinkjes krijgt daar zijn denkvaardigheid
+    // uit; elke trede moet er een uit de lijst van Bloom zijn.
+    const treden = BLOOM.denkvaardigheden.map((d) => d.id);
+    for (const [id, trede] of Object.entries(godotConfig.oudeVinkjes ?? {})) {
+      expect(id).toMatch(/^gesprek-/);
+      expect(treden).toContain(trede);
+    }
+    expect(Object.keys(godotConfig.oudeVinkjes ?? {})).toHaveLength(10);
   });
 });
 
@@ -419,6 +427,30 @@ describe('godotConfig — patronen die er net naast zitten', () => {
     expect(perId.get('2d-nieuwe-nodes')).toBe(true);
   });
 
+  it('ziet een startscherm alleen in een scène met een Control bovenaan', () => {
+    const startscherm = (tscn: string) =>
+      score(analyze(files({ 'scene.tscn': tscn }), godotConfig), '2d-startscherm').used;
+    // Het menu uit de les: de bovenste node is een Control, met een knop erin.
+    expect(
+      startscherm(
+        '[node name="Menu" type="Control"]\n\n[node name="Start" type="Button" parent="."]',
+      ),
+    ).toBe(true);
+    // Een pauzescherm in de HUD van een level, met een knop elders: geen
+    // startscherm. Dat telde eerst wel.
+    expect(
+      startscherm(
+        [
+          '[node name="Level" type="Node2D"]',
+          '[node name="Pauze" type="Control" parent="HUD"]',
+          '[node name="Knop" type="Button" parent="Speler"]',
+        ].join('\n\n'),
+      ),
+    ).toBe(false);
+    // Een Control bovenaan zonder knop is ook geen startscherm.
+    expect(startscherm('[node name="Menu" type="Control"]')).toBe(false);
+  });
+
   it('negeert ext_resource-regels; alleen [node ...]-regels tellen', () => {
     const report = analyze(
       files({
@@ -470,7 +502,7 @@ describe('godotConfig — patronen die er net naast zitten', () => {
     expect(godotConfig.classify('level.TSCN')).toBe('tscn');
   });
 
-  it('houdt beide niveaus gevuld in elke route, en elk onderwerp bezet', () => {
+  it('houdt de moeilijkheden van elk niveau gevuld, en elk onderwerp bezet', () => {
     // De LevelSummary-chips verbergen 0/0, dus een niveau dat leegvalt
     // verdwijnt stil uit het rapport. Per onderwerp eisen we dat niet: op
     // niveau 4 staat volgens het blad élk 2D-concept op basis, en dat is de
@@ -482,6 +514,13 @@ describe('godotConfig — patronen die er net naast zitten', () => {
       expect(samenvatting.gevorderd.total, `geen gevorderd-concepten in ${route}`).toBeGreaterThan(
         0,
       );
+      // Expert hoort bij niveau 3 en nergens anders; valt hij weg, dan
+      // verdwijnt ook de tegel en de keuze in het blok Cijfer.
+      if (route === '3') {
+        expect(samenvatting.expert.total, 'geen expert-concepten op niveau 3').toBeGreaterThan(0);
+      } else {
+        expect(samenvatting.expert.total, `expert op niveau ${route}`).toBe(0);
+      }
       // Project heeft alleen een concept onder Ook gebruikt.
       for (const onderwerp of samenvatting.bySubject.filter((o) => o.subject !== 'project')) {
         expect(

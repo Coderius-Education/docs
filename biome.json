@@ -24,7 +24,7 @@
     },
     {
       "include": ["**/leerdoelen.json"],
-      "formatter": { "lineWidth": 200 }
+      "formatter": { "lineWidth": 320 }
     }
   ]
 }

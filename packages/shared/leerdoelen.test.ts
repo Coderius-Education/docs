@@ -43,6 +43,16 @@ describe('src/leerdoelen.json per cursus', () => {
   });
 
   for (const site of MET_LEERDOELEN) {
+    it(`${site.id}: elke rij staat op één regel, zodat je de niveaus naast elkaar ziet`, () => {
+      // Biome verdeelde een te lange rij over tien regels (Godot); de override
+      // in biome.json geeft leerdoelen.json daarom een ruime regelbreedte.
+      const bestand = join(ROOT, siteDir(site.id), 'src', 'leerdoelen.json');
+      const tekst = readFileSync(bestand, 'utf8');
+      const aantal = JSON.parse(tekst).concepten.length;
+      const rijen = tekst.split('\n').filter((r) => /^ {4}\{ "id": .* \},?$/.test(r));
+      expect(rijen.length, 'rijen op één regel').toBe(aantal);
+    });
+
     it(`${site.id}: klopt met de vorm`, () => {
       const bestand = join(ROOT, siteDir(site.id), 'src', 'leerdoelen.json');
       expect(() =>
