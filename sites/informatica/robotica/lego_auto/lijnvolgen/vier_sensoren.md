@@ -18,7 +18,9 @@ Twee sensoren op **A2** en **A3**, twee regels op het scherm, en twee `elif`-tak
 
 ## Stap 1: Twee sensoren erbij
 
-Monteer de twee nieuwe sensoren net als de eerste twee ([IR-sensoren monteren](site:robotica/lego_auto/lijnsensor/monteren)), maar een paar centimeter verder naar buiten: één links van je linkersensor, één rechts van je rechtersensor. Staat de robot recht op de lijn, dan zien alle vier wit.
+Je hebt twee extra analoge IR-sensoren nodig, elk met een 3D-geprinte adapter, net als bij de eerste twee ([Materiaal](site:robotica/lego_auto/lijnsensor/materiaal)).
+
+Monteer ze zoals de eerste twee ([IR-sensoren monteren](site:robotica/lego_auto/lijnsensor/monteren)): één links naast je linkersensor, één rechts naast je rechtersensor. Zet ze zo dicht naast de binnenste dat de lijn er niet tussen past. Dan ziet altijd minstens één sensor de lijn zodra de robot ervan afdwaalt. Staat de robot recht op de lijn, dan zien alle vier wit.
 
 De sensoren op **A0** en **A1** blijven zitten. De nieuwe gaan op het rijtje van **A2** (links buiten) en **A3** (rechts buiten):
 
@@ -106,7 +108,7 @@ Dan klapt `Buiten R` om in plaats van `Buiten L`. De code leest A3 als `buiten_r
 
 <Voorspel vraag="De lijn ligt onder de linker buitensensor, de andere drie zien wit. Wat doet je robot met alleen het if-blok uit Deel 8?">
   <Keuze uitleg="Daarvoor moet een tak naar de buitensensor kijken. Welke variabelen staan er in je if-blok uit Deel 8?">Hij stuurt naar links bij</Keuze>
-  <Keuze uitleg="Je if-blok heeft geen tak die de motoren stilzet als een sensor zwart ziet.">Hij stopt</Keuze>
+  <Keuze uitleg="Stoppen doet je if-blok hooguit bij een kruising uit Opdracht 10.4.b, en hier zien de twee binnenste sensoren wit.">Hij stopt</Keuze>
   <Keuze goed uitleg="Je if-blok kijkt alleen naar links en rechts. Die zien allebei wit, dus de tak voor rechtdoor klopt.">Hij rijdt rechtdoor</Keuze>
   <Uitleg>
 
@@ -232,11 +234,20 @@ while True:
 </details>
 
 <details>
+<summary>In een scherpe bocht rijdt hij even rechtdoor en raakt hij de lijn kwijt</summary>
+
+**Oorzaak:** Tussen een binnenste en een buitenste sensor zit zoveel ruimte dat de lijn ertussen past. Op dat moment zien alle vier wit, en dan wint de tak voor rechtdoor.
+
+**Oplossing:** Zet de buitenste sensoren dichter tegen de binnenste. **Zelf vinden:** schuif de robot met de hand langzaam opzij over de lijn en kijk op het scherm. Staan er tussen `Links` en `Buiten L` even vier keer `white`, dan zit de lijn in dat gat.
+
+</details>
+
+<details>
 <summary>Hij neemt elke bocht met een ruk, ook een flauwe</summary>
 
-**Oorzaak:** De buitenste sensoren zitten te dicht bij de binnenste. Ze zien de lijn al in een flauwe bocht, en dan wint hun tak.
+**Oorzaak:** De buitenste sensoren zitten zo dicht bij het midden dat ze de lijn al in een flauwe bocht zien, en dan wint hun tak.
 
-**Oplossing:** Zet ze verder naar buiten. **Zelf vinden:** schuif de robot met de hand langzaam door een flauwe bocht en kijk op het scherm. Klapt `Buiten L` of `Buiten R` om, dan zit die sensor te dicht bij het midden.
+**Oplossing:** Schuif ze iets naar buiten, maar niet zo ver dat de lijn ertussen past (zie hierboven). **Zelf vinden:** schuif de robot met de hand langzaam door een flauwe bocht en kijk op het scherm. Klapt `Buiten L` of `Buiten R` om, dan zit die sensor te dicht bij het midden.
 
 </details>
 

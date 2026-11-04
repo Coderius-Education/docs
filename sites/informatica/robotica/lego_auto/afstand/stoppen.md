@@ -236,7 +236,22 @@ while True:
 
 **Oorzaak:** Een meting van de TOF duurt langer dan die van een IR-sensor. De loop kijkt daardoor minder vaak naar de lijn.
 
-**Oplossing:** Meet de afstand niet elke ronde. Tel de rondes met een teller, zoals in [Code beter begrijpen](site:robotica/lego_auto/lijnsensor/code-begrijpen), en lees de TOF bijvoorbeeld eens per vijf rondes. Tussendoor gebruik je de vorige afstand.
+**Zelf vinden:** zet een `#` voor de regel met `get_distance()` en een regel `afstand = 8191` eronder. Neemt de robot de bochten dan weer wel, dan ligt het aan de meting.
+
+**Oplossing:** Meet de afstand niet elke ronde, maar eens per vijf rondes. Tel de rondes met een teller, zoals in [Code beter begrijpen](site:robotica/lego_auto/lijnsensor/code-begrijpen). De teller begint bij 0, dus de eerste ronde meet hij altijd, en daarna blijft `afstand` de vorige meting tot de teller weer op 0 staat:
+
+```python
+teller = 0
+
+while True:
+    if teller == 0:
+        afstand = tof.get_distance()
+    teller = teller + 1
+    if teller == 5:
+        teller = 0
+```
+
+`teller = 0` zet je vóór je `while True:`, de vijf regels erin komen op de plek van `afstand = tof.get_distance()`.
 
 </details>
 

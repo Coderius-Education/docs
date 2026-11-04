@@ -12,5 +12,6 @@ In dit hoofdstuk leer je de **Time of Flight**-sensor (TOF) gebruiken op je Lego
 
 - De TOF-sensor zit gemonteerd en je leest de afstand uit.
 - De afstand staat op het OLED-schermpje, zodat je hem ook ziet als de robot los rijdt.
+- Je lijnvolger stopt voor een obstakel op de lijn, en rijdt verder als het weg is ([Deel 10](site:robotica/lego_auto/afstand/stoppen)).
 
 De volgende pagina's helpen je om dit doel te bereiken.
