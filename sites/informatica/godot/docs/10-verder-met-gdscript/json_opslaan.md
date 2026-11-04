@@ -16,27 +16,42 @@ Je score staat in `Global`, en die is weg zodra je het spel afsluit. Een highsco
   ]}
 />
 
-## Voorspel: wat onthoudt Godot?
+## Voorspel: wat wordt de tekst?
 
-Je haalt 40 punten, sluit het spelvenster en start het spel opnieuw met `F5`. **Wat staat er dan in `Global.score`?**
+Een dictionary kun je niet zomaar in een bestand zetten: een bestand bevat tekst. `JSON.stringify` maakt van een dictionary tekst:
+
+```gdscript
+extends Node
+
+func _ready() -> void:
+    print(JSON.stringify({"highscore": 40, "naam": "Sam"}))
+```
+
+**Wat print dit?** En wat zou er in Python uitkomen met `json.dumps`?
 
 <details>
 <summary>Antwoord</summary>
 
-`0`. Een variabele staat in het geheugen van je computer, en dat geheugen ruimt Godot op zodra het spel stopt. Bij de volgende start begint `global.gd` weer bij `var score = 0`.
+```
+{"highscore":40,"naam":"Sam"}
+```
 
-Wil je iets bewaren tot de volgende keer, dan moet het in een bestand op de harde schijf.
+Bijna hetzelfde als je dictionary, maar zonder spaties. Python zet er na elke dubbele punt en komma wel een spatie: `{"highscore": 40, "naam": "Sam"}`. Allebei is het JSON, en allebei lezen ze het andere weer in.
+
+Die tekst kan in een bestand, en een bestand blijft staan als je het spel afsluit. Je score in `Global` niet: bij de volgende start begint `global.gd` weer bij `var score = 0`.
 
 </details>
 
 ## Een bestand in `user://` \{#json}
 
-Je kent `res://` al: de map van je project. Daar kan je spel tijdens het spelen niet in schrijven, want na het [exporteren](site:godot/docs/exporteren) zit die map ingepakt in je spel. Voor bestanden die het spel zelf maakt, is er `user://`:
+Je kent `res://` al: de map van je project. Na het [exporteren](site:godot/docs/exporteren) zit die map ingepakt in je spel, en dan kan je spel er niet meer in schrijven. Voor bestanden die het spel zelf maakt, is er `user://`:
 
 | Pad       | Wat staat erin?                                 | Kan je spel erin schrijven? |
-| :-------- | :---------------------------------------------- | :-------------------------: |
-| `res://`  | Je project: scènes, scripts, afbeeldingen       | nee                         |
-| `user://` | Wat je spel zelf bewaart, zoals een highscore   | ja                          |
+| :-------- | :---------------------------------------------- | :-------------------------- |
+| `res://`  | Je project: scènes, scripts, afbeeldingen       | in de editor wel, na het exporteren niet |
+| `user://` | Wat je spel zelf bewaart, zoals een highscore   | altijd                      |
+
+Speel je vanuit de editor, dan lukt schrijven in `res://` dus wel. Gebruik het toch niet: je spel werkt dan tot je het exporteert, en daarna niet meer.
 
 ## Stap 1: Een highscore bijhouden
 
@@ -100,7 +115,7 @@ func controleer_highscore() -> void:
         bewaar_highscore()
 ```
 
-Speel een potje uit. Kies daarna in Godot **Project** en dan **Open User Data Folder**. Er gaat een map open met `highscore.json` erin. Open het bestand in Kladblok: er staat `{"highscore":40}`, of jouw score.
+Speel een potje uit. Kies daarna in Godot **Project** en dan **Open User Data Folder**. Er gaat een map open met `highscore.json` erin. Open het bestand met een teksteditor, zoals Kladblok: er staat `{"highscore":40}`, of jouw score.
 
 ## Stap 3: De highscore inlezen
 

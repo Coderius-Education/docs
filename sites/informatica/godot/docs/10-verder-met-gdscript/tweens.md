@@ -143,7 +143,7 @@ Je hoeft de tween niet zelf te stoppen. Hij hoort bij de power-up, en als die me
 
 ## Opdracht 10.5.b: zelf een effect bedenken
 
-Kies een moment in je spel dat nu in één frame gebeurt, en maak er met een tween een kleine animatie van. Bijvoorbeeld: een vijand die rood knippert als je hem raakt, de vlag die omhoog schuift als je een level haalt, of de titel van je menu die bij de start van boven het scherm in schuift.
+Kies een moment in je spel dat nu in één frame gebeurt, en maak er met een tween een kleine animatie van. Bijvoorbeeld: de vijand uit opdracht 7.1.a die rood knippert voordat hij verdwijnt, de vlag die omhoog schuift als je een level haalt, of je menu dat bij de start langzaam in beeld komt.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -155,19 +155,26 @@ Kies een moment in je spel dat nu in één frame gebeurt, en maak er met een twe
 </details>
 
 <details>
-<summary>Klik hier voor een voorbeeld.</summary>
+<summary>Klik hier voor een voorbeeldoplossing.</summary>
 
-Een vijand die rood knippert. Deze functie zet je in het script van de vijand, en je roept hem aan op het moment dat hij geraakt wordt:
+Je vijand uit opdracht 7.1.a verdwijnt meteen als hij je raakt. Hier knippert hij eerst twee keer rood. Het idee is hetzelfde als bij het muntje: `gepakt` heet hier `geraakt`, en `queue_free` komt aan het eind van de tween.
 
 ```gdscript
 extends Area2D
 
-func knipper() -> void:
+var geraakt = false
+
+func _on_body_entered(body: Node2D) -> void:
+    if geraakt:
+        return
+    geraakt = true
+    print("Geraakt door vijand!")
     var tween = create_tween()
     tween.tween_property(self, "modulate", Color.RED, 0.1)
     tween.tween_property(self, "modulate", Color.WHITE, 0.1)
     tween.tween_property(self, "modulate", Color.RED, 0.1)
     tween.tween_property(self, "modulate", Color.WHITE, 0.1)
+    tween.tween_callback(queue_free)
 ```
 
 Er is geen goed of fout antwoord: elk effect dat je met een tween maakt en dat in je spel klopt, telt.
@@ -230,15 +237,6 @@ func _on_body_entered(body: Node2D) -> void:
 **Oplossing:** haal die losse `queue_free()` weg. De tween ruimt het muntje op met `tween_callback(queue_free)`.
 
 **Zelf vinden:** zet `print("weg")` vlak voor elke `queue_free` in je script. Zie je `weg` op hetzelfde moment als je het muntje raakt, dan wordt hij te vroeg aangeroepen.
-
-</details>
-
-<details>
-<summary>Mijn spel wordt steeds trager als ik een tween in _process zet</summary>
-
-**Oorzaak:** `_process` draait elke frame, dus je maakt zestig nieuwe tweens per seconde. Ze lopen allemaal tegelijk en vechten om dezelfde eigenschap.
-
-**Oplossing:** maak een tween één keer, op het moment dat er iets gebeurt: in `_ready()`, of in de functie van een signal. Dat is dezelfde regel als bij `await` in [Een power-up](site:godot/docs/power_up).
 
 </details>
 

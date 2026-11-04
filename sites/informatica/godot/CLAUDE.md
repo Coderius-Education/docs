@@ -7,6 +7,8 @@ Algemene schrijfstijl, didactiek en schrijfskills staan in `../CLAUDE.md` (en de
 - Bij scene-/node-uitleg: noem expliciet welk node-type je toevoegt en waar in de tree het komt.
 - Voor de "jouw project"-pagina's: verwijs naar de cheatsheet i.p.v. voorbeelden te dupliceren.
 - **Voorkennis-blokken** (`<Voorkennis>`, doelsite `python`) staan alleen waar er voor het eerst GDScript-stof langskomt die de python-cursus al uitlegt — elf van de drieënveertig lessen. `src/data/voorkennis.test.ts` houdt twee lijsten bij: `MET_BLOK` en `ZONDER_BLOK`, die laatste gegroepeerd per reden (editorwerk zonder code, voortbouwen op de vorige les, naslag, projectidee). Élk lesbestand moet in een van beide staan, dus een nieuwe les dwingt een expliciete keuze af. Dát de paden bestaan wordt monorepo-breed getest in `packages/shared/voorkennis.test.ts`.
+- **Opdrachten** heten `Opdracht H.S.x: titel`, met het hoofdstuknummer van de map en de `sidebar_position` van de les, en hebben een tip en een oplossing in een uitklapblok. `src/docs-tests/opdrachten.test.ts` dwingt dat af; een bewuste uitzondering (5.7.a heeft met opzet geen oplossing) staat daar met een reden.
+- **Hoofdstuk 10 bouwt op het project van de leerling, niet op een schone lei.** Een les zegt bovenaan van welk script hij uitgaat, en noemt de varianten die een eerdere opdracht kan hebben opgeleverd (`snelheid` uit 7.6.a, een derde level uit 8.1.a). Een volledig script in een oplossing bevat alles wat de leerling al had; komt er maar één functie bij, laat dan alleen die zien. `src/godot-tests/global-leden.test.ts` bewaakt dat voor `global.gd`: elk volledig global-script in hoofdstuk 10 heeft alles wat de cursus daarvoor als `Global.<naam>` gebruikte.
 
 ## De nakijker
 

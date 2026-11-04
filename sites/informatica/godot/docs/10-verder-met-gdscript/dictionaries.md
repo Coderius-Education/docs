@@ -5,7 +5,7 @@ slug: /dictionaries
 
 # Dictionaries: muntjes van brons, zilver en goud
 
-Elk muntje is nu één punt waard. Een goud muntje dat tien punten oplevert, maakt je level spannender: je springt er een extra keer voor. Je kunt daar drie muntje-scènes voor maken, maar dan heb je drie scripts die bijna gelijk zijn. Met een **dictionary** zet je de waarde van elke soort in één tabel.
+Elk muntje is nu één punt waard. Een gouden muntje dat tien punten oplevert, maakt je level spannender: je springt er een extra keer voor. Je kunt daar drie muntje-scènes voor maken, maar dan heb je drie scripts die bijna gelijk zijn. Met een **dictionary** zet je de waarde van elke soort in één tabel.
 
 <GodotVersie />
 
@@ -27,7 +27,7 @@ func _ready() -> void:
     print(waardes["brons"] + waardes["zilver"])
 ```
 
-**Welke twee getallen verschijnen er in Uitvoer?**
+**Welke twee getallen verschijnen er in Uitvoer?** Proberen kan net als bij de lijsten: hang het script aan een lege `Node` in een nieuwe scène en start die met `F6`.
 
 <details>
 <summary>Antwoord</summary>
@@ -101,7 +101,7 @@ Je ziet nog niet welk muntje goud is. Geef elk muntje bij de start de kleur van 
 <summary>Klik hier voor een tip.</summary>
 
 - Maak een tweede `const` met de sleutels `"brons"`, `"zilver"` en `"goud"`, en als waardes `Color.SANDY_BROWN`, `Color.SILVER` en `Color.GOLD`.
-- Elke node heeft een eigenschap `modulate`: een kleur die over de afbeelding heen gaat.
+- Elke node die je in je spel ziet, heeft een eigenschap `modulate`: een kleur die over de afbeelding heen gaat.
 - De kleur hoeft maar één keer gezet te worden, als het muntje in het level verschijnt. Welke functie roept Godot dan aan?
 
 </details>
@@ -150,7 +150,7 @@ Wil je dat het spel bij een tikfout doorgaat, gebruik dan `get` met een reservew
     Global.score += WAARDES.get(soort, 1)
 ```
 
-Dan telt een onbekende soort als één punt. Let op dat je de tikfout dan niet meer opmerkt: het spel werkt, maar je goud muntje is maar één punt waard.
+Dan telt een onbekende soort als één punt. Let op dat je de tikfout dan niet meer opmerkt: het spel werkt, maar je gouden muntje is maar één punt waard.
 
 </details>
 

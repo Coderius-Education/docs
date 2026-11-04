@@ -27,7 +27,7 @@ func _ready() -> void:
     print(levels.size())
 ```
 
-**Welke twee regels verschijnen er in Uitvoer?**
+**Welke twee regels verschijnen er in Uitvoer?** Denk het eerst uit. Wil je het daarna proberen: maak een nieuwe scène met een lege `Node`, hang dit script eraan, en start alleen die scène met `F6`.
 
 <details>
 <summary>Antwoord</summary>
@@ -49,12 +49,12 @@ Een lijst (in Godot heet hij een `Array`) schrijf je met blokhaken, en de items 
 | :-------------------------: | :----------------------------------------------------- | :------------- |
 | `levels[0]`                 | Het eerste item                                        | hetzelfde      |
 | `levels.size()`             | Hoeveel items er in de lijst staan                     | `len(levels)`  |
-| `levels.find("res://level2.tscn")` | Op welke plek dat item staat, of `-1` als het er niet in staat | `levels.index(...)` |
+| `levels.find("res://level2.tscn")` | Op welke plek dat item staat, of `-1` als het er niet in staat | `levels.index(...)`, maar die geeft een fout in plaats van `-1` |
 | `levels.append("res://level4.tscn")` | Zet een item achteraan erbij                  | hetzelfde      |
 
 ## Stap 1: Zet de volgorde in een lijst
 
-Open `vlag.gd`, het script van de vlag in level 1. Zet bovenaan, onder `extends Area2D`, een lijst met al je levels in de volgorde waarin je ze speelt:
+Open `vlag.gd`, het script van de vlag in level 1. Zet bovenaan, onder `extends Area2D`, een lijst met al je levels in de volgorde waarin je ze speelt. Hier zijn dat er drie, zoals na opdracht 8.1.a; heb je er twee, zet er dan twee in.
 
 ```gdscript
 extends Area2D
@@ -104,11 +104,13 @@ Na het laatste level ga je terug naar het menu uit [Een startmenu](site:godot/do
 
 ## Stap 4: Dezelfde vlag in elk level
 
-Open `level2.tscn`, selecteer de `Vlag`-node en sleep `vlag.gd` vanuit **FileSystem** op de node. Doe hetzelfde in level 3. De koppeling met `body_entered` blijft staan, want de functie heet in elk script `_on_body_entered`.
+Elk level heeft een vlag nodig, ook het laatste: daar brengt hij je terug naar het menu. Heeft een level er nog geen, bouw hem dan zoals in [Een tweede level](site:godot/docs/tweede_level), Stap 2 en 3, en kies bij het script `vlag.gd` in plaats van een nieuw script.
 
-Start het spel vanaf level 1 en speel alle levels uit. Na level 3 kom je in het menu.
+Heeft een level al een vlag met een eigen script, open dan dat level, selecteer de `Vlag`-node en sleep `vlag.gd` vanuit **FileSystem** op de node. De koppeling met `body_entered` blijft staan, want de functie heet in elk script `_on_body_entered`.
 
-Wil je een level toevoegen, of de volgorde omgooien? Dat doe je nu in één regel: de lijst. De vlaggen zelf hoef je niet meer open te maken.
+Start het spel vanaf level 1 en speel alle levels uit. Na het laatste level kom je in het menu.
+
+Wil je de volgorde omgooien, dan pas je alleen de lijst aan. Een nieuw level zet je in de lijst en geef je een vlag met `vlag.gd`; de vlaggen in de andere levels hoef je niet meer open te maken.
 
 ## Opdracht 10.2.a: welk level speel je?
 
@@ -182,6 +184,19 @@ Invalid access of index '3' on a base object of type: 'Array'.
 **Oplossing:** schrijf de paden in de lijst precies zoals ze in FileSystem staan. Klik met rechts op een scène in FileSystem en kies **Copy Path** om het pad te kopiëren.
 
 **Zelf vinden:** print `get_tree().current_scene.scene_file_path` en `nu` in `_on_body_entered`. Zie je `-1`, leg het geprinte pad dan naast je lijst.
+
+</details>
+
+<details>
+<summary>Cannot open file 'res://level3.tscn'.</summary>
+
+```
+Cannot open file 'res://level3.tscn'.
+```
+
+**Oorzaak:** in je lijst staat een level dat niet bestaat. Je hebt bijvoorbeeld twee levels, maar de lijst uit de les overgenomen met drie. Je blijft dan in het level waar je was.
+
+**Oplossing:** zet alleen levels in de lijst die in FileSystem staan, met precies dat pad.
 
 </details>
 
