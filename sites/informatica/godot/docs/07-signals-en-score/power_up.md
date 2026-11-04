@@ -183,7 +183,7 @@ Overal waar `SPEED` stond, staat nu `snelheid`:
 
 ```gdscript
     var direction := Input.get_axis("ui_left", "ui_right")
-    if direction:
+    if direction != 0:
         velocity.x = direction * snelheid
     else:
         velocity.x = move_toward(velocity.x, 0, snelheid)

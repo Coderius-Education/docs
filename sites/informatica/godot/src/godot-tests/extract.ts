@@ -41,7 +41,12 @@ export type Overgeslagen = {
   reden: string;
 };
 
-const BLOK = /```gdscript\n([\s\S]*?)```/g;
+/**
+ * Een GDScript-codeblok, ook met iets achter de taal (```gdscript title=…)
+ * en met Windows-regeleinden. Gedeeld met de andere tests over de codeblokken,
+ * zodat die dezelfde blokken zien als de extractie.
+ */
+export const BLOK = /```gdscript[^\n]*\r?\n([\s\S]*?)```/g;
 
 /** Regels die op zichzelf geen geldig script vormen maar wel voorkomen. */
 function isFoutVoorbeeld(code: string): boolean {
@@ -77,8 +82,9 @@ function slugVan(inhoud: string): string | undefined {
  */
 export function fragmentenUit(
   bron: string,
-  inhoud: string,
+  ruw: string,
 ): { fragmenten: Fragment[]; overgeslagen: Overgeslagen[] } {
+  const inhoud = ruw.replace(/\r\n/g, '\n');
   // Pagina's zonder slug (cheatsheet, tips) krijgen hun bestandsnaam, zodat de
   // namen niet van het absolute pad afhangen.
   const slug = slugVan(inhoud) ?? (bron.split('/').pop() ?? bron).replace(/\.mdx?$/, '');
@@ -157,7 +163,8 @@ export function verzamel(wortels: string[]): {
  * met elk lid één keer. Van een lid dat meermaals voorkomt wint de langste
  * versie, want dat is de uitgewerkte.
  */
-export function autoloadUit(inhoud: string): string | undefined {
+export function autoloadUit(ruw: string): string | undefined {
+  const inhoud = ruw.replace(/\r\n/g, '\n');
   const leden = new Map<string, string>();
 
   for (const match of inhoud.matchAll(BLOK)) {

@@ -37,7 +37,7 @@ func _physics_process(delta: float) -> void:
         velocity.y = sprongkracht
 
     var direction := Input.get_axis("ui_left", "ui_right")
-    if direction:
+    if direction != 0:
         velocity.x = direction * SPEED
     else:
         velocity.x = move_toward(velocity.x, 0, SPEED)
@@ -164,7 +164,7 @@ func spring() -> void:
 
 func loop() -> void:
     var direction := Input.get_axis("ui_left", "ui_right")
-    if direction:
+    if direction != 0:
         velocity.x = direction * SPEED
     else:
         velocity.x = move_toward(velocity.x, 0, SPEED)
@@ -264,7 +264,7 @@ func spring() -> void:
 
 func loop() -> void:
     var direction := Input.get_axis("ui_left", "ui_right")
-    if direction:
+    if direction != 0:
         velocity.x = direction * SPEED
     else:
         velocity.x = move_toward(velocity.x, 0, SPEED)

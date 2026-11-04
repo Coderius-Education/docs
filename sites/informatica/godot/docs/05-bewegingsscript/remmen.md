@@ -36,7 +36,7 @@ Voor precies dat soort tweedeling bestaat `else`: het blok dat draait wanneer de
 Vervang je regel `velocity.x = direction * SPEED` door dit:
 
 ```gdscript
-    if direction:
+    if direction != 0:
         velocity.x = direction * SPEED
     else:
         velocity.x = move_toward(velocity.x, 0, SPEED)
@@ -44,21 +44,14 @@ Vervang je regel `velocity.x = direction * SPEED` door dit:
 
 De `else` hoort op hetzelfde niveau als de `if` erboven; de regels eronder springen allebei één niveau verder in.
 
-## Stap 2: `if direction:` zonder vergelijking
+## Stap 2: Wat `direction != 0` vraagt
 
-Er staat geen `==` of `!=` in die `if`. Dat mag, omdat GDScript het getal `0` als "onwaar" behandelt en elk ander getal als "waar":
+`!=` betekent "is niet gelijk aan". De `if` vraagt dus: drukt de speler een pijltje in?
 
 - `direction` is `0` → de `if` is onwaar → de `else` draait, je remt af.
 - `direction` is `-1` of `1` → de `if` is waar → je loopt.
 
-**Doet `if direction != 0:` precies hetzelfde?**
-
-<details>
-<summary>Antwoord</summary>
-
-Ja. `if direction:` is een kortere schrijfwijze van `if direction != 0:`. Kies wat jij duidelijker vindt en houd het consequent.
-
-</details>
+In tutorials en in het sjabloon van Godot zie je vaak `if direction:`, zonder `!= 0`. Dat doet hetzelfde, omdat GDScript het getal `0` als onwaar behandelt en elk ander getal als waar. In deze cursus schrijf je de vergelijking uit: dan lees je wat er gecontroleerd wordt, zonder die regel te hoeven kennen.
 
 ## Stap 3: Wat `move_toward()` doet
 
@@ -119,7 +112,7 @@ func _physics_process(delta: float) -> void:
         velocity += get_gravity() * delta
 
     var direction := Input.get_axis("ui_left", "ui_right")
-    if direction:
+    if direction != 0:
         velocity.x = direction * SPEED
     else:
         velocity.x = move_toward(velocity.x, 0, SPEED)
