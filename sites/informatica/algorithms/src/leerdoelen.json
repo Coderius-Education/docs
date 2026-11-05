@@ -92,7 +92,7 @@
     { "id": "parameters", "onderwerp": "python", "concept": "Parameters", "1": "basis", "2": [], "les": "site:python/docs/functies/09a-parameters" },
     { "id": "lijsten", "onderwerp": "python", "concept": "Lijsten", "1": "basis", "2": [], "les": "site:python/docs/data/10a-lijsten-basis" },
     { "id": "dictionaries", "onderwerp": "python", "concept": "Dictionaries", "1": "basis", "2": [], "les": "site:python/docs/data/11a-dictionaries-basis" },
-    { "id": "fout-in-code", "onderwerp": "python", "concept": "Bij een stuk code bepalen of er een fout in zit, en uitleggen welke", "1": "basis", "2": [], "toelichting": "Dit oefen je bij elk algoritme op de pagina Er gaat iets mis, en met de manier debuggen." },
+    { "id": "fout-in-code", "onderwerp": "python", "concept": "Bij een stuk code bepalen of er een fout in zit, en uitleggen welke", "1": "basis", "2": [], "toelichting": "Dit oefen je onder Er gaat iets mis, bij elk algoritme en elk project, en voor het tentamen met de manier debuggen." },
     { "id": "in-tekst", "onderwerp": "python", "concept": "in op tekst en op een lijst", "1": "basis", "2": null, "les": "ml-regels/01-chatbot" },
     { "id": "lower-split", "onderwerp": "python", "concept": "Tekst omzetten met .lower() en .split()", "1": "basis", "2": null, "les": ["site:python/docs/tekst/04b-string-methoden", "ml-regels/02-spamfilter"] },
     { "id": "tuples", "onderwerp": "python", "concept": "Tuples, en uitpakken in een for-loop", "1": "basis", "2": null, "les": "site:python/docs/data/tuples" },

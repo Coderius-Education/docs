@@ -8,7 +8,8 @@ sidebar_label: "Machine learning: de route"
 
 Een computer die leert van voorbeelden in plaats van regels: dat is machine
 learning. De route hieronder bouwt dat op in kleine projecten, die je in je
-browser maakt. Elk project voegt één nieuw stuk Python toe, of één nieuw idee.
+browser maakt. Elk project zet een klein stuk Python bij wat je al kunt, samen met
+één nieuw idee.
 Aan het eind van een fase ben je klaar voor een project uit
 [CS50 AI](https://cs50.harvard.edu/ai/), de gratis AI-cursus van Harvard.
 Op welke concepten je docent je beoordeelt, staat bij

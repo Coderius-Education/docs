@@ -177,16 +177,16 @@ Deze functie gebruik je in de volgende projecten weer.
 
 ## Bouw zelf: een derde soort
 
-Zet citroenen bij de voorbeelden: vier citroenen van ongeveer 9 centimeter
-lang en 5 centimeter breed. Zoek met je functie `voorspel` een stuk fruit
-waarbij `k = 1` en `k = 3` een ander antwoord geven.
+Zet citroenen bij de voorbeelden: vier citroenen van ongeveer 8 of 9
+centimeter lang en 5 centimeter breed. Zoek met je functie `voorspel` een
+stuk fruit waarbij `k = 1` en `k = 3` een ander antwoord geven.
 
 <details>
 <summary>Tip</summary>
 
-Kies een stuk fruit dat tussen de appels en de citroenen in ligt, iets
-dichter bij één citroen dan bij de appels. Varieer de maten van je citroenen
-een beetje, zodat ze niet allemaal op dezelfde plek liggen.
+Kies een stuk fruit dat vlak bij één appel ligt, maar met meer citroenen
+dan appels iets verder weg. Varieer de maten van je citroenen een beetje,
+zodat ze niet allemaal op dezelfde plek liggen.
 
 </details>
 
@@ -196,18 +196,22 @@ een beetje, zodat ze niet allemaal op dezelfde plek liggen.
 {/* draaien-met: blok-erboven */}
 ```python
 fruit = voorbeelden + [
-    ((9, 5), "citroen"), ((10, 5), "citroen"),
-    ((8, 5), "citroen"), ((9, 4), "citroen"),
+    ((8, 5), "citroen"), ((9, 5), "citroen"),
+    ((9, 6), "citroen"), ((8, 4), "citroen"),
 ]
-print(voorspel((8, 6), fruit, 1))   # citroen
-print(voorspel((8, 6), fruit, 3))   # appel
+print(voorspel((7, 6), fruit, 1))   # appel
+print(voorspel((7, 6), fruit, 3))   # citroen
 ```
 
-Met `+` plak je twee lijsten aan elkaar. Bij `k = 1` wint de citroen
-`(8, 5)`, op afstand 1. Bij `k = 3` stemmen ook de appels `(7, 7)` en
-`(8, 8)` mee, allebei op afstand 2. Welk antwoord klopt, weet je pas als je
+Met `+` plak je twee lijsten aan elkaar. Bij `k = 1` wint de appel
+`(7, 7)`, op afstand 1. Bij `k = 3` stemmen ook de citroenen `(8, 5)` en
+`(9, 6)` mee, allebei op afstand 2. Welk antwoord klopt, weet je pas als je
 het fruit zelf bekijkt. Hoe je kiest welke `k` het beste werkt, zie je in
 [eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen).
+
+Kies je zelf een voorbeeld, let dan op gelijke afstanden. Staan de derde en
+de vierde buur even ver weg, dan kiest `sorted` op alfabet, en dan wint
+"appel" van "citroen" zonder dat het fruit erop lijkt.
 
 </details>
 

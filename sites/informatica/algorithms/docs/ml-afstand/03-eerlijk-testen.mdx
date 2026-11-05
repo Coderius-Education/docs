@@ -112,8 +112,11 @@ print(goed, "van de", len(toets), "goed")`} />
 <details>
 <summary>Antwoorden</summary>
 
-1. Vijf van de zes. De citroen `(8, 6)` noemt hij een appel.
-2. Met `k = 3` heeft hij ze alle zes goed.
+1. Vijf van de zes. De citroen `(8, 6)` noemt hij een appel. Een appel
+   `(8, 7)` en twee citroenen liggen allemaal op afstand 1, en bij gelijke
+   afstand sorteert `sorted` op de soort: appel komt op alfabet voor
+   citroen. Met één buur beslist dus het toeval van de spelling.
+2. Met `k = 3` heeft hij ze alle zes goed: bij `(8, 6)` stemmen nu twee citroenen mee.
 3. Met seed 4 komen er andere stukken fruit in de toetsset, en heeft hij ze
    alle zes goed, ook met `k = 1`. De score hangt dus ook af van welke stukken
    fruit toevallig in de toets zitten.
@@ -166,7 +169,7 @@ for soort in totaal:
     print(soort, goed[soort], "van de", totaal[soort], "goed")
 ```
 
-Nu zie je dat de citroenen het moeilijkst zijn: ze lijken op appels.
+Nu zie je dat de citroenen het moeilijkst zijn: sommige liggen even dicht bij een appel als bij een andere citroen.
 
 </details>
 
