@@ -380,7 +380,8 @@ describe('een niveau met een tentamen', () => {
 
 describe('andersDan: wat in de vergelijking opvalt', () => {
   const niveaus = [{ id: '1' }, { id: '3' }, { id: '4' }];
-  const rij = (n1: string | null, n3: string | null, n4: string | null) => ({
+  type M = 'basis' | 'gevorderd' | 'expert' | null;
+  const rij = (n1: M, n3: M, n4: M) => ({
     niveau: { 1: n1, 3: n3, 4: n4 },
   });
 
