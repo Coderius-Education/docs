@@ -1,5 +1,6 @@
 import cfgParser from './cfg-parser';
 import dijkstraCompleet from './dijkstra-compleet';
+import knn from './knn';
 import minimaxHelpers from './minimax-helpers';
 
 // Code die een PyRunner vóór de zichtbare code draait maar niet in de editor
@@ -15,6 +16,7 @@ import minimaxHelpers from './minimax-helpers';
 export const VERBORGEN: Record<string, string> = {
   'cfg-parser': cfgParser,
   'dijkstra-compleet': dijkstraCompleet,
+  knn,
   'minimax-helpers': minimaxHelpers,
 };
 

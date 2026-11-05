@@ -1,0 +1,208 @@
+---
+sidebar_position: 1
+---
+
+# Een chatbot met regels
+
+In 1966 bouwde Joseph Weizenbaum Eliza, een programma waarmee je kon
+chatten. Veel mensen dachten dat Eliza hen begreep. Toch deed het programma
+iets heel kleins: het zocht in je zin naar trefwoorden en gaf bij elk
+trefwoord een vast antwoord. Zo'n chatbot bouw je hier zelf.
+
+:::info
+Je gebruikt hier `if`, `elif` en `else` uit
+[If en else](site:python/docs/beslissen/05b-if-else) en
+[And, or en elif](site:python/docs/beslissen/05c-and-or-elif), en `.lower()` uit
+[String-methoden](site:python/docs/tekst/04b-string-methoden).
+:::
+
+## Voorspel
+
+```python
+zin = "Hoi, hoe gaat het?"
+zin = zin.lower()
+
+if "hoi" in zin or "hallo" in zin:
+    print("Hallo, leuk dat je er bent.")
+elif "weer" in zin:
+    print("Ik kan niet naar buiten kijken.")
+else:
+    print("Daar weet ik niets van.")
+```
+
+Wat print dit programma? En wat print het als `zin` de tekst
+`"Wat voor weer wordt het morgen?"` is?
+
+<details>
+<summary>Antwoord</summary>
+
+Bij `"Hoi, hoe gaat het?"` print het `Hallo, leuk dat je er bent.`, want
+`"hoi"` staat in de zin. Bij de vraag over het weer staat er geen `"hoi"` of
+`"hallo"` in de zin, wel `"weer"`, dus print het
+`Ik kan niet naar buiten kijken.`
+
+</details>
+
+## Zo werkt het
+
+Het nieuwe stuk is `in` op tekst:
+
+```python
+print("hoi" in "hoi, hoe gaat het?")   # True
+print("doei" in "hoi, hoe gaat het?")  # False
+```
+
+`"hoi" in zin` is `True` als het stukje tekst ergens in de zin staat, en
+`False` als het er nergens in staat. De regel `zin = zin.lower()` zet de
+hele zin eerst in kleine letters. Zonder die regel zou `"hoi"` niet passen
+op `"Hoi"`, want voor Python zijn `h` en `H` twee verschillende letters.
+
+De chatbot begrijpt dus niets. Hij loopt zijn regels van boven naar beneden
+af, en de eerste regel die past, bepaalt het antwoord.
+
+## Onderzoek
+
+1. Verander `zin` in `"Hallo, hoe is het weer?"`. Welk antwoord krijg je, en
+   waarom niet het antwoord over het weer?
+2. Verander `zin` in `"Ik ga weer naar huis"`. Snapt de chatbot wat je
+   bedoelt?
+3. Haal de regel `zin = zin.lower()` weg en probeer `"HOI"`. Wat gebeurt er?
+
+<PyRunner initialCode={`zin = "Hoi, hoe gaat het?"
+zin = zin.lower()
+
+if "hoi" in zin or "hallo" in zin:
+    print("Hallo, leuk dat je er bent.")
+elif "weer" in zin:
+    print("Ik kan niet naar buiten kijken.")
+else:
+    print("Daar weet ik niets van.")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Je krijgt `Hallo, leuk dat je er bent.` De zin past op twee regels, maar
+   de chatbot neemt de eerste die past. De volgorde van je regels telt dus.
+2. Nee. De chatbot ziet `"weer"` en praat over het weer, terwijl je
+   "opnieuw" bedoelt. Hij zoekt naar letters, niet naar betekenis.
+3. Zonder `.lower()` past `"hoi"` niet op `"HOI"`, en krijg je
+   `Daar weet ik niets van.`
+
+</details>
+
+## Opdracht: twee regels erbij
+
+Geef de chatbot twee nieuwe regels:
+
+1. Staat `"naam"` in de zin, dan antwoordt hij `Ik heet Bot. En jij?`
+2. Staat `"doei"` of `"tot ziens"` in de zin, dan antwoordt hij `Doei, tot de volgende keer.`
+
+Test elke regel met een zin die erop past.
+
+<details>
+<summary>Tip</summary>
+
+Elke nieuwe regel is een `elif` tussen de regels die er al staan en de
+`else`. Voor twee trefwoorden in één regel gebruik je `or`, net als bij
+`"hoi"` en `"hallo"`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+zin = "Wat is je naam?"
+zin = zin.lower()
+
+if "hoi" in zin or "hallo" in zin:
+    print("Hallo, leuk dat je er bent.")
+elif "weer" in zin:
+    print("Ik kan niet naar buiten kijken.")
+elif "naam" in zin:
+    print("Ik heet Bot. En jij?")
+elif "doei" in zin or "tot ziens" in zin:
+    print("Doei, tot de volgende keer.")
+else:
+    print("Daar weet ik niets van.")
+```
+
+Met `"Wat is je naam?"` print hij `Ik heet Bot. En jij?`. Een trefwoord mag
+ook uit twee woorden bestaan, zoals `"tot ziens"`: `in` zoekt naar het hele
+stukje tekst, met de spatie erbij.
+
+</details>
+
+## Bouw zelf: een chatbot over jouw onderwerp
+
+Bouw een chatbot die over iets praat waar jij veel van weet: voetbal, een
+game, je huisdier. Hij heeft minstens vier regels, en één regel gebruikt
+`and`: die past alleen als twee trefwoorden allebei in de zin staan.
+
+Zoek daarna een zin die je chatbot verkeerd begrijpt, zoals de chatbot
+hierboven bij `"Ik ga weer naar huis"`.
+
+<details>
+<summary>Tip</summary>
+
+Zet de regel met `and` bovenaan. Hij is strenger dan een regel met één
+trefwoord, en de chatbot neemt de eerste regel die past.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Een chatbot over voetbal, bijvoorbeeld:
+
+```python
+zin = "Wie heeft er gisteren gewonnen?"
+zin = zin.lower()
+
+if "ajax" in zin and "psv" in zin:
+    print("Dat is altijd een spannende wedstrijd.")
+elif "gewonnen" in zin or "verloren" in zin:
+    print("Ik heb de uitslag nog niet gezien.")
+elif "keeper" in zin:
+    print("Een goede keeper is goud waard.")
+elif "hoi" in zin:
+    print("Hoi, praat je mee over voetbal?")
+else:
+    print("Daar weet ik niets van.")
+```
+
+Een zin die hij verkeerd begrijpt: `"Ik heb mijn sleutels verloren"`. Daar
+antwoordt hij `Ik heb de uitslag nog niet gezien.` Elke chatbot met regels
+heeft zulke zinnen. Daarom leren de projecten hierna van voorbeelden in
+plaats van regels.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+NameError: name 'hoi' is not defined
+```
+
+**Oorzaak:** de aanhalingstekens om het trefwoord ontbreken. Zonder
+aanhalingstekens denkt Python dat `hoi` een variabele is, en die bestaat
+niet.
+
+**Oplossing:** zet het trefwoord tussen aanhalingstekens.
+
+```python
+# FOUT
+zin = "hoi daar"
+if hoi in zin:
+    print("Hallo.")
+
+# GOED
+zin = "hoi daar"
+if "hoi" in zin:
+    print("Hallo.")
+```
+
+Meer uitleg: [Variabelen](site:python/docs/basis/jij-als-variabele).
+
+Door naar [een spamfilter met regels](site:algorithms/docs/ml-regels/02-spamfilter).

@@ -1,0 +1,221 @@
+---
+sidebar_position: 1
+---
+
+# Welk fruit is dit?
+
+Je krijgt een stuk fruit en je weet niet wat het is. Je meet hoe lang en hoe
+breed het is, in centimeters. Daarna kijk je in je lijst voorbeelden welk
+fruit het meest op dit stuk lijkt, en je zegt dat het dezelfde soort is. Dat
+heet **de dichtstbijzijnde buur**, en het is een van de eenvoudigste manieren
+waarop een computer leert voorspellen.
+
+:::info
+Je gebruikt hier tuples uit [Tuples](site:python/docs/data/tuples), functies
+met `return` uit [Return-waarden](site:python/docs/functies/09b-return), en het
+patroon "onthoud de beste tot nu toe" uit
+[Vind het maximum](site:algorithms/docs/vind-maximum/01-concept).
+:::
+
+## Voorspel
+
+```python
+def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+print(afstand((8, 8), (10, 7)))
+print(afstand((18, 4), (10, 7)))
+```
+
+`abs` maakt van een getal een positief getal: `abs(-2)` is `2`. Wat print
+dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+11
+```
+
+Bij `(8, 8)` en `(10, 7)`: de lengte scheelt 2, de breedte scheelt 1, samen
+3. Bij `(18, 4)` en `(10, 7)`: 8 en 3, samen 11.
+
+</details>
+
+## Zo werkt het
+
+Elk stuk fruit is een tuple `(lengte, breedte)`. Met `a[0]` pak je de lengte,
+met `a[1]` de breedte. De functie `afstand` telt op hoeveel de lengtes en de
+breedtes schelen, en geeft dat met `return` terug. Hoe kleiner de afstand,
+hoe meer twee stukken fruit op elkaar lijken.
+
+De voorbeelden zijn tuples van een maat en een soort:
+`((8, 8), "appel")`. In de loop pak je ze met `for maten, soort in voorbeelden`
+meteen uit in twee variabelen.
+
+## Onderzoek
+
+1. Draai de code. Welke soort voorspelt hij voor `(10, 7)`, en op welke
+   afstand?
+2. Verander `nieuw` in `(15, 5)`, en daarna in `(13, 6)`. Klopt wat hij zegt
+   met wat jij zou denken?
+3. Zet `((10, 6), "banaan")` onderaan in de lijst voorbeelden. Iemand heeft
+   zich vergist: het is een appel. Wat voorspelt hij nu voor `(10, 7)`?
+
+<PyRunner initialCode={`def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+voorbeelden = [
+    ((8, 8), "appel"),
+    ((9, 8), "appel"),
+    ((7, 7), "appel"),
+    ((18, 4), "banaan"),
+    ((20, 4), "banaan"),
+    ((17, 3), "banaan"),
+]
+
+nieuw = (10, 7)
+beste_afstand = 1000
+beste_soort = ""
+for maten, soort in voorbeelden:
+    d = afstand(nieuw, maten)
+    if d < beste_afstand:
+        beste_afstand = d
+        beste_soort = soort
+print("Het is een", beste_soort, "op afstand", beste_afstand)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. `Het is een appel op afstand 2`. De dichtstbijzijnde buur is `(9, 8)`.
+2. `(15, 5)` wordt een banaan op afstand 4, en `(13, 6)` een appel op
+   afstand 6. Bij `(13, 6)` scheelt het weinig: de dichtstbijzijnde banaan
+   zit op afstand 7.
+3. Nu is het een banaan, op afstand 1. Eén verkeerd voorbeeld dat toevallig
+   dichtbij ligt, bepaalt alles. Dat los je op in
+   [het volgende project](site:algorithms/docs/ml-afstand/02-k-buren), door
+   meer buren te laten meetellen.
+
+</details>
+
+`beste_afstand` begint op 1000, zodat de eerste afstand altijd kleiner is.
+Daarna onthoudt de loop de beste tot nu toe, net als bij het maximum, maar
+nu met de kleinste afstand.
+
+## Opdracht: een functie voorspel
+
+Maak een functie `voorspel(nieuw, voorbeelden)` die de soort van de
+dichtstbijzijnde buur teruggeeft. Test hem zo:
+
+{/* niet-draaien: fragment; voorspel en voorbeelden schrijft de leerling zelf */}
+```python
+print(voorspel((10, 7), voorbeelden))   # appel
+print(voorspel((15, 5), voorbeelden))   # banaan
+```
+
+<details>
+<summary>Tip</summary>
+
+Zet de loop in een functie. Wat nu onder `nieuw = (10, 7)` staat, komt in de
+functie, en `beste_soort` geef je aan het eind terug met `return`. Zet de
+`return` na de loop, niet erin.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def voorspel(nieuw, voorbeelden):
+    beste_afstand = 1000
+    beste_soort = ""
+    for maten, soort in voorbeelden:
+        d = afstand(nieuw, maten)
+        if d < beste_afstand:
+            beste_afstand = d
+            beste_soort = soort
+    return beste_soort
+
+voorbeelden = [
+    ((8, 8), "appel"),
+    ((9, 8), "appel"),
+    ((7, 7), "appel"),
+    ((18, 4), "banaan"),
+    ((20, 4), "banaan"),
+    ((17, 3), "banaan"),
+]
+print(voorspel((10, 7), voorbeelden))   # appel
+print(voorspel((15, 5), voorbeelden))   # banaan
+```
+
+Staat de `return` in de loop, dan geeft de functie al na het eerste
+voorbeeld een antwoord, en kijkt hij nooit verder.
+
+</details>
+
+## Bouw zelf: hond of kat?
+
+Maak je eigen voorbeelden: honden en katten, met voor elk dier een tuple
+`(gewicht in kilo, hoogte in centimeters)`. Verzin er minstens vier van elke
+soort. Gebruik je functie `voorspel` om drie nieuwe dieren in te delen.
+
+<details>
+<summary>Tip</summary>
+
+Kies maten die bij elkaar in de buurt liggen, zodat het ook een beetje
+moeilijk wordt: een kleine hond is niet veel groter dan een grote kat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+{/* draaien-met: blok-erboven */}
+```python
+dieren = [
+    ((4, 25), "kat"),
+    ((5, 28), "kat"),
+    ((3, 23), "kat"),
+    ((6, 30), "kat"),
+    ((30, 60), "hond"),
+    ((8, 35), "hond"),
+    ((20, 55), "hond"),
+    ((12, 40), "hond"),
+]
+print(voorspel((5, 26), dieren))    # kat
+print(voorspel((25, 58), dieren))   # hond
+print(voorspel((7, 33), dieren))    # hond
+```
+
+Het derde dier ligt tussen een grote kat `(6, 30)` en een kleine hond
+`(8, 35)` in. De hond ligt net iets dichterbij.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: afstand = lambda a, b: abs(a[0] - b[0]) + abs(a[1] - b[1])\nafstand(10, (9, 8)) */}
+```
+TypeError: 'int' object is not subscriptable
+```
+
+**Oorzaak:** je gaf `afstand` een los getal in plaats van een tuple, zoals
+`afstand(10, (9, 8))`. In de functie staat `a[0]`, maar van het getal 10 kun
+je geen eerste element pakken.
+
+**Oplossing:** geef beide maten mee als tuple, met haakjes eromheen.
+
+{/* niet-draaien: fragment; afstand staat in de runner erboven */}
+```python
+# FOUT
+afstand(10, (9, 8))
+
+# GOED
+afstand((10, 7), (9, 8))
+```
+
+Door naar [laat de buren stemmen](site:algorithms/docs/ml-afstand/02-k-buren).

@@ -98,7 +98,10 @@ describe('leerdoelen van Algoritmiek: het tentamen van niveau 2', () => {
   });
 
   it('noemt de twaalf Python-concepten, en een fout in code vinden', () => {
-    expect(leerdoelen.concepten.filter((c) => c.onderwerp === 'python').map((c) => c.id)).toEqual([
+    const opTentamen = leerdoelen.concepten.filter(
+      (c) => c.onderwerp === 'python' && c.niveau['2'] !== null,
+    );
+    expect(opTentamen.map((c) => c.id)).toEqual([
       'f-strings',
       'variabelen',
       'if-elif-else',
@@ -151,5 +154,80 @@ describe('leerdoelen van Algoritmiek: het tentamen van niveau 2', () => {
       .map((l) => l.id.replace('site:python/docs/', ''))
       .filter((r) => !routes.has(r));
     expect(fout).toEqual([]);
+  });
+});
+
+// Niveau 1 is de route machine learning: kleine projecten in de browser, die
+// in Python en in algoritme steeds een stap verder gaan, tot een project van
+// CS50 AI. De docent beoordeelt de projecten en de Python die je erin laat
+// zien. Fase A en B staan er; de rest van de route volgt.
+describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', () => {
+  const opNiveau1 = leerdoelen.concepten.filter((c) => c.niveau['1'] != null);
+  const rij = (id: string) => leerdoelen.concepten.find((c) => c.id === id);
+
+  it('heeft op niveau 1 alleen Python en de projecten', () => {
+    expect([...new Set(opNiveau1.map((c) => c.onderwerp))]).toEqual(['python', 'ml']);
+  });
+
+  it('noemt de projecten van fase A en B op volgorde, met CS50 Shopping als laatste', () => {
+    const projecten = opNiveau1.filter((c) => c.onderwerp === 'ml');
+    expect(projecten.map((c) => [c.id, c.niveau['1']])).toEqual([
+      ['ml-chatbot', 'basis'],
+      ['ml-spamfilter-regels', 'basis'],
+      ['ml-spamfilter-leert', 'basis'],
+      ['ml-dichtstbijzijnde-buur', 'basis'],
+      ['ml-k-buren', 'basis'],
+      ['ml-eerlijk-testen', 'gevorderd'],
+      ['ml-shopping', 'gevorderd'],
+    ]);
+    // Elk project zegt welke Python je ermee laat zien.
+    for (const c of projecten) expect(c.toelichting, c.id).toMatch(/Python|scikit-learn/);
+  });
+
+  it('elk project hoort bij precies één les van de route, en elke les van de route bij een project', () => {
+    const route = docs()
+      .map((d) => d.id)
+      .filter((id) => /^ml-(regels|afstand)\//.test(id))
+      .sort();
+    const projectLessen = opNiveau1
+      .filter((c) => c.onderwerp === 'ml')
+      .flatMap((c) => (c.lessen ?? []).map((l) => l.id))
+      .sort();
+    expect(projectLessen).toEqual(route);
+  });
+
+  it('de Python van de route staat niet op het tentamen, en de Python die er niet in zit niet op niveau 1', () => {
+    for (const id of [
+      'in-tekst',
+      'lower-split',
+      'tuples',
+      'sorted-slicing',
+      'modules',
+      'csv-inlezen',
+    ]) {
+      expect(rij(id)?.niveau['2'], id).toBeNull();
+    }
+    for (const id of ['f-strings', 'continue', 'break', 'while-loop']) {
+      expect(rij(id)?.niveau['1'], id).toBeNull();
+    }
+  });
+
+  it('gevorderd vraagt een module of een CSV-bestand, en eerlijk testen of Shopping', () => {
+    // Zo stelt moeilijkheidVoorstel gevorderd pas voor als beide onderwerpen
+    // een gevorderd concept hebben.
+    const gevorderd = opNiveau1.filter((c) => c.niveau['1'] === 'gevorderd').map((c) => c.id);
+    expect(gevorderd).toEqual(['modules', 'csv-inlezen', 'ml-eerlijk-testen', 'ml-shopping']);
+  });
+
+  it('koppelt elke les van niveau 1 aan een les die bestaat', () => {
+    const gekoppeld = plugin.koppelLessen(leerdoelen, docs());
+    for (const c of gekoppeld.concepten.filter(
+      (c: { niveau: Record<string, unknown> }) => c.niveau['1'] != null,
+    )) {
+      for (const l of c.lessen ?? []) {
+        if (l.id.startsWith('site:')) continue;
+        expect(l.titel, `${c.id}: ${l.id}`).toBeTruthy();
+      }
+    }
   });
 });

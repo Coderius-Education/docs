@@ -1,57 +1,60 @@
 ---
 sidebar_position: 15
 slug: /machine-learning
-sidebar_label: Machine learning
+sidebar_label: "Machine learning: de route"
 ---
 
-# Verder met machine learning
+# Machine learning
 
-Je hebt dertien algoritmes van idee tot werkende code gebouwd. Wil je door
-richting kunstmatige intelligentie, dan is dit de kaart: zes projecten uit
-[CS50 AI](https://cs50.harvard.edu/ai/), de gratis AI-cursus van Harvard, en
-de korte cursussen van Kaggle. Alles is Engelstalig, en de CS50-projecten
-maak je op je eigen computer. Kies wat jou aanspreekt. Je hoeft ze niet
-allemaal te doen, en ook niet op volgorde.
+Een computer die leert van voorbeelden in plaats van regels: dat is machine
+learning. De route hieronder bouwt dat op in kleine projecten, die je in je
+browser maakt. Elk project voegt één nieuw stuk Python toe, of één nieuw idee.
+Aan het eind van een fase ben je klaar voor een project uit
+[CS50 AI](https://cs50.harvard.edu/ai/), de gratis AI-cursus van Harvard.
+Op welke concepten je docent je beoordeelt, staat bij
+[de leerdoelen van niveau 1](site:algorithms/leerdoelen/niveau-1).
 
-## Tic-Tac-Toe
+## De route
 
-Bekend terrein: [onze minimax-module](site:algorithms/docs/minimax/01-concept) is een
-Nederlandse bewerking van dit project. Bij CS50 bouw je dezelfde acht
-functies in het echte project, met een klikbare spelinterface eromheen. Je
-leert er inhoudelijk weinig nieuws, maar het is de zachtste instap in hoe
-CS50 werkt: een specificatie lezen, functies invullen, testen.
+| Fase | Projecten | Daarna bij CS50 |
+|---|---|---|
+| A. AI met regels | [een chatbot](site:algorithms/docs/ml-regels/01-chatbot), [een spamfilter met regels](site:algorithms/docs/ml-regels/02-spamfilter), [een spamfilter dat leert](site:algorithms/docs/ml-regels/03-spamfilter-leert) | |
+| B. Voorspellen met afstand | [welk fruit is dit?](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur), [laat de buren stemmen](site:algorithms/docs/ml-afstand/02-k-buren), [eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen), [klaar voor Shopping](site:algorithms/docs/ml-afstand/04-shopping) | Shopping |
+| C. Kans en toeval | een dobbelsteen simuleren, een surfer die willekeurig klikt, [PageRank](site:algorithms/docs/pagerank/01-concept) | PageRank |
+| D. Spellen | Nim met een vaste strategie, Nim die van zichzelf leert, [minimax](site:algorithms/docs/minimax/01-concept) | Nim, Tic-Tac-Toe |
+| E. Zoeken | de buren van een vakje in een doolhof, de kortste weg met een wachtrij | Degrees |
+| F. Neuronen | één neuron met gewichten, een neuron dat zelf leert | Traffic |
 
-[cs50.harvard.edu/ai/projects/0/tictactoe](https://cs50.harvard.edu/ai/projects/0/tictactoe/)
+Fase A en B staan klaar. De projecten van fase C tot en met F zonder link
+volgen nog; PageRank en minimax kun je nu al doen.
 
-## PageRank
+## De CS50-projecten
 
-Ook dit algoritme [heb je al gebouwd](site:algorithms/docs/pagerank/01-concept). CS50 voegt
-een tweede aanpak toe: in plaats van iteratief rekenen simuleer je een
-*random surfer* die willekeurig rondklikt over het web (een Markov-keten) en
-telt waar hij uitkomt. Twee wegen naar hetzelfde antwoord.
+De CS50-projecten zijn Engelstalig, en je maakt ze op je eigen computer. Bij
+elk project hoort een gratis hoorcollege dat de theorie uitlegt; begin daar.
+Ze staan hier in de volgorde van de route.
 
-[cs50.harvard.edu/ai/projects/2/pagerank](https://cs50.harvard.edu/ai/projects/2/pagerank/)
-
-## Crossword
-
-Hier begint het nieuwe. Je krijgt een leeg kruiswoordraster en een
-woordenlijst; jouw programma zoekt uit welke woorden passen zonder elkaar in
-de weg te zitten. Dat heet een *constraint satisfaction problem*: keuzes
-wegstrepen die met elkaar botsen (AC-3) en terugkeren op je schreden als je
-vastloopt (backtracking).
-
-[cs50.harvard.edu/ai/projects/3/crossword](https://cs50.harvard.edu/ai/projects/3/crossword/)
-
-## Shopping
+### Shopping
 
 Je eerste echte machine learning. Je voorspelt of een webshopbezoeker iets
 gaat kopen, op basis van duizenden eerdere bezoeken, met *k-nearest
 neighbors* uit scikit-learn. Onderweg leer je waarom "95% goed voorspeld"
 weinig hoeft te betekenen, en hoe je een voorspeller wél eerlijk beoordeelt.
+Hoe je je erop voorbereidt, staat bij
+[klaar voor Shopping](site:algorithms/docs/ml-afstand/04-shopping).
 
 [cs50.harvard.edu/ai/projects/4/shopping](https://cs50.harvard.edu/ai/projects/4/shopping/)
 
-## Nim
+### PageRank
+
+Dit algoritme [bouw je ook hier](site:algorithms/docs/pagerank/01-concept).
+CS50 voegt een tweede aanpak toe: in plaats van iteratief rekenen simuleer je
+een *random surfer* die willekeurig rondklikt over het web (een
+Markov-keten) en telt waar hij uitkomt. Twee wegen naar hetzelfde antwoord.
+
+[cs50.harvard.edu/ai/projects/2/pagerank](https://cs50.harvard.edu/ai/projects/2/pagerank/)
+
+### Nim
 
 *Reinforcement learning*: je AI krijgt geen dataset, maar leert het spelletje
 Nim door duizenden keren tegen zichzelf te spelen en te onthouden welke
@@ -60,13 +63,41 @@ winnen.
 
 [cs50.harvard.edu/ai/projects/4/nim](https://cs50.harvard.edu/ai/projects/4/nim/)
 
-## Traffic
+### Tic-Tac-Toe
+
+[De minimax-module](site:algorithms/docs/minimax/01-concept) van deze cursus is
+een Nederlandse bewerking van dit project. Bij CS50 bouw je dezelfde acht
+functies in het echte project, met een klikbare spelinterface eromheen. Je
+hebt er recursie voor nodig: een functie die zichzelf aanroept.
+
+[cs50.harvard.edu/ai/projects/0/tictactoe](https://cs50.harvard.edu/ai/projects/0/tictactoe/)
+
+### Degrees
+
+Via hoeveel films zijn twee acteurs met elkaar verbonden? Je zoekt de
+kortste weg door een netwerk van acteurs en films, met *breadth-first
+search*: eerst alles op één stap afstand, dan alles op twee stappen.
+
+[cs50.harvard.edu/ai/projects/0/degrees](https://cs50.harvard.edu/ai/projects/0/degrees/)
+
+### Traffic
 
 Neurale netwerken. Je traint met TensorFlow een netwerk dat verkeersborden
 herkent op foto's, de techniek achter moderne beeldherkenning. Dit is het
-zwaarste project van de zes.
+zwaarste project van de route.
 
 [cs50.harvard.edu/ai/projects/5/traffic](https://cs50.harvard.edu/ai/projects/5/traffic/)
+
+### Buiten de route: Crossword
+
+Je krijgt een leeg kruiswoordraster en een woordenlijst; jouw programma
+zoekt uit welke woorden passen zonder elkaar in de weg te zitten. Dat heet
+een *constraint satisfaction problem*: keuzes wegstrepen die met elkaar
+botsen (AC-3) en terugkeren op je schreden als je vastloopt (backtracking).
+Het vraagt veel Python voor wat het aan machine learning toevoegt, daarom
+staat het niet in de route.
+
+[cs50.harvard.edu/ai/projects/3/crossword](https://cs50.harvard.edu/ai/projects/3/crossword/)
 
 ## Kaggle: oefenen in de browser
 
@@ -78,8 +109,3 @@ in een paar uur bouw je je eerste voorspellende model met beslisbomen.
 [Intermediate Machine Learning](https://www.kaggle.com/learn/intermediate-machine-learning)
 sluit daar direct op aan.
 
----
-
-Bij elk CS50-project hoort een gratis hoorcollege dat de theorie uitlegt;
-begin daar. De projecten zijn vrij toegankelijk, een certificaat kan maar
-hoeft niet.

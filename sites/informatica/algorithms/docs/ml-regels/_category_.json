@@ -1,0 +1,11 @@
+{
+  "label": "ML A: AI met regels",
+  "position": 16,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Machine learning, fase A: AI met regels",
+    "description": "Een chatbot en een spamfilter met regels die je zelf schrijft, en daarna een spamfilter dat zijn woorden uit voorbeelden haalt. Drie kleine projecten, in je browser."
+  }
+}

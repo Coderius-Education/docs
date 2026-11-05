@@ -1,0 +1,213 @@
+---
+sidebar_position: 2
+---
+
+# Een spamfilter met regels
+
+Je mailbox krijgt elke dag berichten die je niet wilt: reclame, nep-prijzen,
+pogingen om je wachtwoord te stelen. Een spamfilter haalt ze eruit. Het
+eerste spamfilter dat je bouwt, werkt met een lijst verdachte woorden. Elk
+verdacht woord in een bericht levert een punt op, en vanaf een bepaald
+aantal punten is het bericht spam.
+
+:::info
+Je gebruikt hier een lijst en een `for`-loop uit
+[Lijsten](site:python/docs/data/10a-lijsten-basis) en
+[De for-loop](site:python/docs/herhalen/06a-for-loop), en `in` op tekst uit
+[de chatbot](site:algorithms/docs/ml-regels/01-chatbot#zo-werkt-het).
+:::
+
+## Voorspel
+
+```python
+verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+
+bericht = "Klik nu en win een gratis telefoon"
+bericht = bericht.lower()
+
+score = 0
+for woord in verdacht:
+    if woord in bericht:
+        score = score + 1
+
+print("score:", score)
+if score >= 2:
+    print("spam")
+else:
+    print("geen spam")
+```
+
+Welke score krijgt dit bericht, en is het spam?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+score: 3
+spam
+```
+
+`klik`, `nu` en `gratis` staan in het bericht. `winnen` niet: in het bericht
+staat `win`, en dat is een ander stuk tekst. `geld` staat er ook niet in.
+
+</details>
+
+## Zo werkt het
+
+De `for`-loop loopt de lijst `verdacht` langs, één woord per ronde. Staat
+het woord in het bericht, dan komt er een punt bij de score. Na de loop
+beslist één `if`: is de score minstens de **drempel**, hier 2, dan is het
+bericht spam.
+
+Dat is het hele idee van dit filter: een score optellen, en die vergelijken
+met een drempel.
+
+## Onderzoek
+
+1. Verander het bericht in `"Hoi, bel je me nu even?"`. Welke score krijgt
+   het, en is dat terecht?
+2. Verander het bericht in `"Je nieuwe nummer is binnen"`. Welk woord uit de
+   lijst vindt het filter, en waar?
+3. Zet de drempel op 1 en probeer de berichten uit vraag 1 en 2 nog eens.
+4. Probeer `"GRATIS GELD"`. Wat doet de regel met `.lower()` hier?
+
+<PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+
+bericht = "Klik nu en win een gratis telefoon"
+bericht = bericht.lower()
+
+score = 0
+for woord in verdacht:
+    if woord in bericht:
+        score = score + 1
+
+print("score:", score)
+if score >= 2:
+    print("spam")
+else:
+    print("geen spam")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Score 1, geen spam. Dat klopt: een vriend die vraagt of je belt, is geen
+   spam. Het woord `nu` geeft wel een punt.
+2. Het filter vindt `nu` in `nummer`. Het zoekt naar letters, niet naar
+   woorden, net als de chatbot bij `"weer"`.
+3. Met drempel 1 zijn beide berichten spam. Een lage drempel vangt meer
+   spam, maar ook meer gewone berichten. Een hoge drempel laat meer spam
+   door. Een goede drempel kiezen is altijd een afweging.
+4. `.lower()` maakt er `"gratis geld"` van, en dan vindt het filter beide
+   woorden: score 2, spam.
+
+</details>
+
+## Opdracht: hele woorden vergelijken
+
+Het filter vond `nu` in `nummer`. Dat los je op met `.split()`: die knipt
+een tekst op de spaties in een lijst woorden.
+
+```python
+print("je nieuwe nummer".split())   # ['je', 'nieuwe', 'nummer']
+```
+
+Pas het filter aan: loop over de woorden van het bericht, en tel een punt
+voor elk woord dat in de lijst `verdacht` staat. Test met
+`"Je nieuwe nummer is binnen"`: de score moet nu 0 zijn.
+
+<details>
+<summary>Tip</summary>
+
+Draai de loop om. Je loopt nu niet meer over `verdacht`, maar over
+`bericht.split()`. In de `if` vraag je of het woord in de lijst `verdacht`
+staat: `in` werkt ook op een lijst, en zoekt daar naar een heel element.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+
+bericht = "Je nieuwe nummer is binnen"
+bericht = bericht.lower()
+
+score = 0
+for woord in bericht.split():
+    if woord in verdacht:
+        score = score + 1
+
+print("score:", score)   # score: 0
+```
+
+`woord in verdacht` vraagt of `woord` een van de elementen van de lijst is.
+`"nummer"` is dat niet, dus er komt geen punt bij.
+
+Let op: `.split()` knipt alleen op spaties. In `"Hoi, bel je me?"` wordt het
+eerste woord `"hoi,"`, met de komma eraan.
+
+</details>
+
+## Bouw zelf: verslaan en verbeteren
+
+Schrijf een spambericht dat door het filter glipt: het is overduidelijk
+spam, maar het krijgt een score onder de drempel. Voeg daarna woorden aan de
+lijst `verdacht` toe zodat je eigen bericht wél als spam herkend wordt.
+Gebruik de versie met `.split()` uit de opdracht.
+
+<details>
+<summary>Tip</summary>
+
+Spammers schrijven woorden net anders, zodat ze niet in de lijst staan:
+`gr4tis` in plaats van `gratis`, of andere woorden die hetzelfde betekenen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+verdacht = ["gratis", "winnen", "klik", "nu", "geld", "gr4tis", "cadeau", "prijs"]
+
+bericht = "Je hebt een gr4tis cadeau gewonnen, haal je prijs op"
+bericht = bericht.lower()
+
+score = 0
+for woord in bericht.split():
+    if woord in verdacht:
+        score = score + 1
+
+print("score:", score)   # score: 3
+```
+
+Met de oude lijst kreeg dit bericht score 0. Je kunt de lijst blijven
+aanvullen, maar de spammer verzint steeds een nieuw woord. Het volgende
+project laat het filter zijn woorden daarom zelf uit voorbeelden halen.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+NameError: name 'score' is not defined
+```
+
+**Oorzaak:** `score = score + 1` gebruikt de oude waarde van `score`. Heb je
+`score = 0` vóór de loop vergeten, dan is er nog geen oude waarde.
+
+**Oplossing:** zet de score op 0 voordat de loop begint.
+
+```python
+# FOUT
+for woord in ["gratis", "geld"]:
+    score = score + 1
+
+# GOED
+score = 0
+for woord in ["gratis", "geld"]:
+    score = score + 1
+```
+
+Door naar [een spamfilter dat leert](site:algorithms/docs/ml-regels/03-spamfilter-leert).

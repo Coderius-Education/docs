@@ -1,0 +1,11 @@
+{
+  "label": "ML B: Voorspellen met afstand",
+  "position": 17,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Machine learning, fase B: voorspellen met afstand",
+    "description": "Raad welk fruit iets is door te kijken naar wat erop lijkt, laat de buren stemmen, en test eerlijk hoe goed je voorspeller is. Daarna ben je klaar voor Shopping van CS50."
+  }
+}

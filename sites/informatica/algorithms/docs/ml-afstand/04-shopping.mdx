@@ -1,0 +1,249 @@
+---
+sidebar_position: 4
+---
+
+# Klaar voor Shopping
+
+[Shopping](https://cs50.harvard.edu/ai/projects/4/shopping/) is een project
+uit CS50 AI, de gratis AI-cursus van Harvard. Je krijgt de gegevens van
+duizenden bezoeken aan een webshop, en je bouwt een voorspeller die zegt of
+een bezoeker iets gaat kopen. Het project is in het Engels, en je maakt het
+op je eigen computer.
+
+Het meeste ken je al: de voorspeller is k-NN uit
+[laat de buren stemmen](site:algorithms/docs/ml-afstand/02-k-buren), en het
+beoordelen per soort deed je bij
+[eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen#bouw-zelf-de-luie-voorspeller).
+Twee dingen zijn nieuw: de gegevens staan in een CSV-bestand, en de
+voorspeller komt uit een bibliotheek, scikit-learn. Op deze pagina oefen je
+het eerste in je browser, met een paar regels van een eigen webshop.
+
+:::info
+Je gebruikt hier `import` uit [Modules](site:python/docs/modules/09d-modules),
+`int()` uit [Tekst naar getal](site:python/docs/basis/03b-tekst-naar-getal), en
+een dictionary om op te zoeken uit
+[Dictionaries](site:python/docs/data/11a-dictionaries-basis).
+:::
+
+## Voorspel
+
+```python
+import csv
+
+regels = [
+    "maand,paginas,terugkerend,gekocht",
+    "Feb,3,TRUE,FALSE",
+    "Mar,12,FALSE,TRUE",
+]
+
+lezer = csv.reader(regels)
+next(lezer)
+for rij in lezer:
+    print(rij)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+['Feb', '3', 'TRUE', 'FALSE']
+['Mar', '12', 'FALSE', 'TRUE']
+```
+
+De kopregel print hij niet: `next(lezer)` slaat die over.
+
+</details>
+
+## Zo werkt het
+
+Een **CSV-bestand** is een tabel als tekst: elke regel is een rij, en de
+komma's scheiden de kolommen. De eerste regel heeft de namen van de
+kolommen. `csv.reader` knipt elke regel op de komma's in een lijst.
+
+Twee dingen moet je onthouden:
+
+- Alles wat uit een CSV komt, is tekst. `'3'` is geen getal, en `'TRUE'` is
+  geen `True`. Een voorspeller rekent met getallen, dus je zet alles om.
+- `next(lezer)` pakt de volgende rij. Doe je dat één keer vóór de loop, dan
+  sla je de kopregel over.
+
+Hier lees je uit een lijst regels. Op je eigen computer lees je op dezelfde
+manier uit een bestand:
+
+{/* niet-draaien: leest een bestand van de computer van de leerling */}
+```python
+import csv
+
+with open("shopping.csv") as bestand:
+    lezer = csv.reader(bestand)
+    next(lezer)
+    for rij in lezer:
+        print(rij)
+```
+
+## Opdracht: van tekst naar getallen
+
+Maak van elke rij twee dingen:
+
+- een lijst **kenmerken** met drie getallen: de maand (januari is 0,
+  december is 11), het aantal pagina's, en 1 voor een terugkerende bezoeker
+  of 0 voor een nieuwe;
+- een **label**: 1 als de bezoeker iets kocht, en anders 0.
+
+Zet alle kenmerken in de lijst `kenmerken` en alle labels in de lijst
+`labels`. Met de regels hieronder print je aan het eind:
+
+```
+[[1, 3, 1], [2, 12, 0], [2, 1, 0], [10, 25, 1]]
+[0, 1, 0, 1]
+```
+
+<PyRunner initialCode={`import csv
+
+regels = [
+    "maand,paginas,terugkerend,gekocht",
+    "Feb,3,TRUE,FALSE",
+    "Mar,12,FALSE,TRUE",
+    "Mar,1,FALSE,FALSE",
+    "Nov,25,TRUE,TRUE",
+]
+MAANDEN = {
+    "Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5,
+    "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11,
+}
+
+kenmerken = []
+labels = []
+lezer = csv.reader(regels)
+next(lezer)
+for rij in lezer:
+    print(rij)
+
+print(kenmerken)
+print(labels)`} />
+
+<details>
+<summary>Tip</summary>
+
+In de loop is `rij[0]` de maand, `rij[1]` het aantal pagina's, `rij[2]` of
+de bezoeker terugkwam en `rij[3]` of hij kocht. Met `MAANDEN[rij[0]]` zoek je
+het getal van een maand op, en `int(rij[1])` maakt van `'3'` het getal 3.
+Voor `TRUE` en `FALSE` gebruik je een `if`. Zet de drie getallen in een
+lijst, en voeg die met `.append()` toe aan `kenmerken`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import csv
+
+regels = [
+    "maand,paginas,terugkerend,gekocht",
+    "Feb,3,TRUE,FALSE",
+    "Mar,12,FALSE,TRUE",
+    "Mar,1,FALSE,FALSE",
+    "Nov,25,TRUE,TRUE",
+]
+MAANDEN = {
+    "Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5,
+    "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11,
+}
+
+kenmerken = []
+labels = []
+lezer = csv.reader(regels)
+next(lezer)
+for rij in lezer:
+    if rij[2] == "TRUE":
+        terug = 1
+    else:
+        terug = 0
+    kenmerken.append([MAANDEN[rij[0]], int(rij[1]), terug])
+    if rij[3] == "TRUE":
+        labels.append(1)
+    else:
+        labels.append(0)
+
+print(kenmerken)   # [[1, 3, 1], [2, 12, 0], [2, 1, 0], [10, 25, 1]]
+print(labels)      # [0, 1, 0, 1]
+```
+
+Bij Shopping doe je hetzelfde, maar dan met zeventien kolommen. Kijk in het
+bestand zelf hoe de maanden en de soorten bezoekers precies geschreven zijn:
+één letter anders, en je dictionary vindt de maand niet.
+
+</details>
+
+## De voorspeller uit scikit-learn
+
+Je eigen `voorspel` uit
+[laat de buren stemmen](site:algorithms/docs/ml-afstand/02-k-buren#opdracht-voorspel-met-k)
+werkt, maar met duizenden bezoekers en zeventien kenmerken wordt hij traag.
+scikit-learn heeft k-NN al ingebouwd, en snel. Met de kenmerken en labels
+van de opdracht ziet dat er zo uit:
+
+{/* niet-draaien: scikit-learn draait alleen op je eigen computer, niet in de browser van deze site */}
+```python
+from sklearn.neighbors import KNeighborsClassifier
+
+model = KNeighborsClassifier(n_neighbors=1)
+model.fit(kenmerken, labels)
+print(model.predict([[2, 10, 0]]))
+```
+
+`KNeighborsClassifier(n_neighbors=1)` is k-NN met `k = 1`. Met `fit` geef je
+hem de oefenset, en `predict` voorspelt voor een lijst nieuwe bezoekers. Een
+bezoeker in maart die tien pagina's bekeek, lijkt het meest op de koper uit
+maart, dus hij voorspelt `[1]`.
+
+## Aan de slag met Shopping
+
+Je hebt nu alle stukken. Zo begin je:
+
+1. Installeer Python op je computer, als je dat nog niet hebt.
+2. Installeer scikit-learn met `pip3 install scikit-learn` in een terminal.
+3. Download de bestanden van Shopping via de
+   [projectpagina](https://cs50.harvard.edu/ai/projects/4/shopping/), en lees
+   de opdracht helemaal door voordat je begint.
+4. Schrijf eerst de functie die de gegevens inleest, en print een paar rijen
+   om te zien of de getallen kloppen. Daarna de andere twee.
+
+De opdracht vraagt je de voorspeller per groep te beoordelen: hoeveel van de
+kopers herkent hij, en hoeveel van de bezoekers die niets kopen? Dat is wat
+je bij
+[de luie voorspeller](site:algorithms/docs/ml-afstand/03-eerlijk-testen#bouw-zelf-de-luie-voorspeller)
+deed. Er kopen veel minder bezoekers iets dan er alleen kijken, dus het
+percentage goed alleen zegt hier weinig.
+
+## Er gaat iets mis
+
+{/* foutmelding-van: int('paginas') */}
+```
+ValueError: invalid literal for int() with base 10: 'paginas'
+```
+
+**Oorzaak:** je hebt de kopregel niet overgeslagen. In die regel staat in de
+kolom van het aantal pagina's het woord `paginas`, en daar kan `int()` geen
+getal van maken.
+
+**Oplossing:** zet `next(lezer)` vóór de loop.
+
+{/* niet-draaien: fragment; leunt op regels uit de opdracht */}
+```python
+# FOUT
+lezer = csv.reader(regels)
+for rij in lezer:
+    print(int(rij[1]))
+
+# GOED
+lezer = csv.reader(regels)
+next(lezer)
+for rij in lezer:
+    print(int(rij[1]))
+```
+
+Door naar [de route machine learning](site:algorithms/docs/machine-learning).

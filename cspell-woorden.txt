@@ -421,6 +421,7 @@ timerkanaal
 Timsort
 tinytronics
 tldr
+toetsset
 toggelt
 togglen
 tokenbeveiliging
@@ -487,6 +488,7 @@ wedstrijdlus
 wegbeweegt
 wegcommentarieert
 wegzweeft
+Weizenbaum
 welkomsbericht
 whitelisten
 Wokwi
