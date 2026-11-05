@@ -52,6 +52,10 @@
       "default": "./leerdoelen/index.js"
     },
     "./leerdoelen/bloom.json": "./leerdoelen/bloom.json",
+    "./begrippen": {
+      "types": "./begrippen/index.d.ts",
+      "default": "./begrippen/index.js"
+    },
     "./klas": {
       "types": "./klas/index.d.ts",
       "default": "./klas/index.js"
@@ -70,6 +74,8 @@
     "./components/HomepageFeatures": "./components/HomepageFeatures/index.tsx",
     "./components/HomepageFeatures/styles.module.css": "./components/HomepageFeatures/styles.module.css",
     "./components/Voorkennis": "./components/Voorkennis/index.tsx",
+    "./components/Begrip": "./components/Begrip/index.tsx",
+    "./components/Woordenlijst": "./components/Woordenlijst/index.tsx",
     "./components/Keuzelijst": "./components/Keuzelijst/index.tsx",
     "./components/CodeUitleg": "./components/CodeUitleg/index.tsx",
     "./components/Voorspel": "./components/Voorspel/index.tsx",

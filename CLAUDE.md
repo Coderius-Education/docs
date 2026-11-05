@@ -265,6 +265,28 @@ dezelfde paper (`leerdoelen.test.ts`). Bij Bloom is dat de kernpaper van
 Krathwohl (2002).
 Hoe je een rij of een niveau toevoegt: `packages/shared/leerdoelen/README.md`.
 
+## Begrippen
+
+Een cursus met moeilijke woorden heeft `src/begrippen.json`: per begrip een
+`id`, de `term`, de `vormen` waarop hij in de tekst staat (meervoud erbij), een
+`kort` van één zin (tussen backticks is code) en de `les` die het uitlegt, met
+eventueel een `anker`. `createConfig` ziet het bestand en zet
+`packages/shared/plugins/begrippen.js` aan. Een remark-stap zet bij het bouwen
+het eerste voorkomen van elk begrip op een pagina in `<Begrip id="…">`: alleen
+in lopende tekst, niet in code, koppen, links, cursief, een `<summary>` of een
+andere component, en niet op de les die het begrip zelf uitlegt. Een klik of
+tik opent een kadertje met de uitleg en links naar die les en naar de
+woordenlijst; het woord is zelf geen link, want een les met een oefenterminal
+verliest zijn werk als je de pagina verlaat. `woordenlijst` in het bestand is
+het doc-id van de pagina met `<Woordenlijst />` (alle begrippen op alfabet, met
+een zoekveld); `overslaan` noemt pagina's zonder tooltips (de cheatsheet: zijn
+zoeker leest de tekst van een item, ook die van een kadertje). Beide
+componenten staan in `MDXComponents` van de site. `begrippen.test.ts` eist per
+cursus dat elke les bestaat, het begrip noemt en het anker heeft, en dat elk
+begrip ergens in lopende tekst staat; een woord dat alleen als code voorkomt
+(`localhost`) hoort er dus niet in. Linux heeft de eerste
+(`sites/informatica/linux/src/begrippen.json`).
+
 ## Bugfixes
 
 Een bugfix gaat samen met een test die de bug vastpint, in dezelfde commit.

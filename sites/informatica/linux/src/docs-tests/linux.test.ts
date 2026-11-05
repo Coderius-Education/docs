@@ -35,10 +35,11 @@ const idVan = (pad: string) =>
     .join('/')
     .replace(/\.mdx?$/, '');
 
-// De lessen: alles in docs/ behalve de cheatsheet (naslag, in de navbar) en
-// de hand-outs in unplugged/ (eigen sidebar, unplugged.test.ts).
+// De lessen: alles in docs/ behalve de cheatsheet en de begrippen (naslag, in
+// de navbar) en de hand-outs in unplugged/ (eigen sidebar, unplugged.test.ts).
+const NASLAG = ['cheatsheet', 'begrippen'];
 const lesbestanden = () =>
-  bestanden(DOCS).filter((p) => idVan(p) !== 'cheatsheet' && !idVan(p).startsWith('unplugged/'));
+  bestanden(DOCS).filter((p) => !NASLAG.includes(idVan(p)) && !idVan(p).startsWith('unplugged/'));
 
 const inhoud = (id: string) => {
   const pad = lesbestanden().find((p) => idVan(p) === id);

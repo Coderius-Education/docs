@@ -1,0 +1,77 @@
+/* Het woord en zijn kadertje. Alles is een <span>: een begrip staat midden in
+   een alinea, en een <div> in een <p> breekt de HTML (de browser sluit de
+   alinea dan zelf, en React klaagt bij het hydrateren). */
+
+.begrip {
+  position: relative;
+  display: inline;
+}
+
+/* Het woord ziet eruit als tekst met een stippellijn eronder, niet als knop:
+   dezelfde letter, kleur en dikte als de zin eromheen. */
+.woord {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: help;
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--ifm-color-primary);
+}
+
+.woord:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.woord[aria-expanded="true"] {
+  text-decoration-style: solid;
+}
+
+.kader {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  z-index: 200;
+  display: block;
+  width: max-content;
+  max-width: min(22rem, calc(100vw - 16px));
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  box-shadow: var(--ifm-global-shadow-md);
+  font-size: 0.875rem;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.45;
+  text-align: left;
+  white-space: normal;
+}
+
+/* Een klasse met display wint van het hidden-attribuut; dicht is dus dicht. */
+.kader[hidden] {
+  display: none;
+}
+
+.term {
+  font-weight: 700;
+}
+
+.term::after {
+  content: ":";
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin-top: 0.4rem;
+  font-size: 0.8125rem;
+}

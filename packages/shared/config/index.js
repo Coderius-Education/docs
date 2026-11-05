@@ -26,6 +26,8 @@ const sidebarManifest = require('../plugins/sidebar-manifest');
 const klasPlugin = require('../plugins/klas');
 const oudeOpslagPlugin = require('../plugins/oude-opslag');
 const leerdoelenPlugin = require('../plugins/leerdoelen');
+const begrippenPlugin = require('../plugins/begrippen');
+const { begrippenBestand } = require('../begrippen');
 const { controleerRegels } = require('../oude-opslag');
 const { gebruiktPyodide, pyodideStaticDir } = require('./pyodide-runtime');
 const pyodideCachePlugin = require('../plugins/pyodide-cache');
@@ -166,6 +168,24 @@ function withSiteLinks(presets, plugins, siteId) {
       return [name, metSiteLinks(Array.isArray(entry) ? entry[1] : {}, siteId)];
     }),
   };
+}
+
+// Begrippen (plugins/begrippen.js): bij een site met src/begrippen.json komt
+// de remark-stap die een begrip een tooltip geeft achteraan in de docs van het
+// classic preset. Achteraan, want Docusaurus heeft dan zijn eigen stappen
+// gedaan (<details> heet dan <Details>, de links zijn omgezet).
+function metBegrippen(presets, siteDir) {
+  const bestand = begrippenBestand(siteDir);
+  if (!fs.existsSync(bestand)) return presets;
+  return presets.map((entry) => {
+    if (!Array.isArray(entry)) return entry;
+    const [name, opts] = entry;
+    if ((name !== 'classic' && !/preset-classic$/.test(name)) || !opts?.docs) return entry;
+    const docsDir = path.resolve(siteDir, opts.docs.path ?? 'docs');
+    const remark = [begrippenPlugin.remarkBegrippen, { bestand, docsDir }];
+    const docs = { ...opts.docs, remarkPlugins: [...(opts.docs.remarkPlugins || []), remark] };
+    return [name, { ...opts, docs }];
+  });
 }
 
 /**
@@ -311,7 +331,8 @@ function createConfig(course = {}) {
       themeConfig.prism[key] = prismThemes[value];
     }
   }
-  const linkbaar = withSiteLinks(presets, plugins, registry?.id);
+  const linkbaar = withSiteLinks(metBegrippen(presets, process.cwd()), plugins, registry?.id);
+  const heeftBegrippen = fs.existsSync(begrippenBestand(process.cwd()));
   const others = otherSites(registry);
   const merk = merkVoorSite(registry);
 
@@ -440,6 +461,7 @@ function createConfig(course = {}) {
       ...(omleidingen?.length ? [[omleidingenPlugin, { omleidingen }]] : []),
       ...(oudeOpslag ? [[oudeOpslagPlugin, { siteId: registry?.id, regels: oudeOpslag }]] : []),
       ...(heeftLeerdoelen ? [[leerdoelenPlugin, { siteId: registry?.id }]] : []),
+      ...(heeftBegrippen ? [begrippenPlugin] : []),
       // De Pyodide van de site in een eigen cache (plugins/pyodide-cache.js),
       // behalve waar een PWA dat al doet (play).
       ...(gebruiktPyodide(process.cwd()) && !heeftPwa(plugins, process.cwd())

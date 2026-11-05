@@ -1,0 +1,37 @@
+.zoek {
+  width: 100%;
+  max-width: 28rem;
+  margin: 0 0 1.25rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font: inherit;
+}
+
+.lijst {
+  margin: 0;
+}
+
+.term {
+  margin-top: 1rem;
+  font-weight: 700;
+  /* Onder de vaste navbar uitkomen, niet erachter. */
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 1rem);
+}
+
+/* Wie via "Alle begrippen" in een tooltip komt, ziet welk begrip het was. */
+.gekozen {
+  border-left: 3px solid var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+  padding-left: 0.5rem;
+}
+
+dd.gekozen {
+  padding-bottom: 0.25rem;
+}
+
+.uitleg {
+  margin: 0.15rem 0 0;
+}
