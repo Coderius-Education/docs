@@ -1,0 +1,256 @@
+---
+sidebar_position: 1
+---
+
+# Nim met een vaste strategie
+
+Nim is een spel voor twee spelers met een stapel lucifers. Om de beurt pak je
+er 1, 2 of 3. Wie de laatste lucifer pakt, verliest. Het lijkt een spel van
+geluk, maar wie de truc kent, wint altijd als hij goed begint. In dit project
+schrijf jij die truc als een functie, en laat je hem spelen tegen een speler
+die maar wat doet.
+
+:::info
+Je gebruikt hier de while-loop uit
+[De while-loop](site:python/docs/herhalen/while-loop), `%` uit
+[Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest), `min`
+uit [Lijst-methoden](site:python/docs/data/10b-lijst-methoden), en
+`random.randint` uit
+[een dobbelsteen simuleren](site:algorithms/docs/ml-kans/01-dobbelsteen).
+:::
+
+## Voorspel
+
+```python
+stapel = 10
+speler = "Anna"
+while stapel > 0:
+    pak = 3
+    if stapel < 3:
+        pak = stapel
+    stapel = stapel - pak
+    print(speler, "pakt", pak, "en laat", stapel, "liggen")
+    if speler == "Anna":
+        speler = "Bob"
+    else:
+        speler = "Anna"
+```
+
+Anna en Bob pakken allebei steeds 3 lucifers, of de rest als er minder dan 3
+liggen. Wat print dit programma? En wie verliest?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+Anna pakt 3 en laat 7 liggen
+Bob pakt 3 en laat 4 liggen
+Anna pakt 3 en laat 1 liggen
+Bob pakt 1 en laat 0 liggen
+```
+
+Bob pakt de laatste lucifer, dus Bob verliest.
+
+</details>
+
+## Zo werkt het
+
+Een `while`-loop herhaalt zolang de voorwaarde waar is. Hier is dat zolang er
+lucifers liggen. Een `for`-loop past niet: je weet vooraf niet hoeveel beurten
+het spel duurt. Na elke beurt wisselt `speler` van Anna naar Bob en terug.
+
+Nu de truc. Laat je je tegenstander 1 lucifer over, dan moet hij de laatste
+pakken. Laat je er 5 over, dan pakt hij er 1, 2 of 3, en laat jij er daarna
+weer 1 over. Hetzelfde geldt voor 9. Wie de truc kent, laat dus steeds 1, 5
+of 9 liggen: een viervoud plus 1. Met `(stapel - 1) % 4` reken je uit hoeveel
+je daarvoor moet pakken. Komt daar 0 uit, dan ligt er al een viervoud plus 1
+en kun je niet winnen tegen iemand die de truc ook kent. Dan pak je 1 en hoop
+je op een fout.
+
+## Onderzoek
+
+1. Draai de code. Hoe vaak wint `slim` van de 100 spellen?
+2. Begin met 9 lucifers: `speel(9)`. Wint `slim` nog steeds altijd? Waarom
+   wel of niet?
+3. Hoeveel pakt `slim` als er 7 liggen? Reken het eerst zelf uit, en
+   controleer het met `print(slim(7))`.
+
+<PyRunner initialCode={`import random
+
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+def willekeurig(stapel):
+    return random.randint(1, min(3, stapel))
+
+def speel(stapel):
+    beurt = "slim"
+    while stapel > 0:
+        if beurt == "slim":
+            stapel = stapel - slim(stapel)
+            beurt = "willekeurig"
+        else:
+            stapel = stapel - willekeurig(stapel)
+            beurt = "slim"
+    return beurt
+
+gewonnen = 0
+for spel in range(100):
+    if speel(10) == "slim":
+        gewonnen = gewonnen + 1
+print("slim wint", gewonnen, "van de 100")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Alle 100. Bij 10 lucifers pakt `slim` er 1 en laat hij er 9 liggen. Daarna
+   houdt hij dat vol, wat `willekeurig` ook doet.
+2. Nee, rond de 89 van de 100. Bij 9 ligt er al een viervoud plus 1, en
+   elke zet laat de ander een kans. `willekeurig` ziet die kans meestal niet,
+   en dan pakt `slim` het spel weer over.
+3. 2, want `(7 - 1) % 4` is 2. Dan liggen er 5, een viervoud plus 1.
+
+</details>
+
+`speel` geeft terug wie er aan de beurt is als de stapel op is. Dat is de
+winnaar: de ander pakte net de laatste lucifer. `min(3, stapel)` zorgt dat
+`willekeurig` nooit meer pakt dan er ligt.
+
+## Opdracht: pakken tot en met 4
+
+Verander de regels: je mag nu 1, 2, 3 of 4 lucifers pakken, en het spel begint
+met 12. Pas `slim` en `willekeurig` aan, zodat `slim` weer alle 100 spellen
+wint.
+
+<details>
+<summary>Tip</summary>
+
+Bij 1 tot en met 3 hield je steeds een viervoud plus 1 over, omdat je samen
+met de ander elke ronde 4 kunt pakken. Hoeveel kun je samen pakken als het
+tot en met 4 mag?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+def slim(stapel):
+    pak = (stapel - 1) % 5
+    if pak == 0:
+        pak = 1
+    return pak
+
+def willekeurig(stapel):
+    return random.randint(1, min(4, stapel))
+
+def speel(stapel):
+    beurt = "slim"
+    while stapel > 0:
+        if beurt == "slim":
+            stapel = stapel - slim(stapel)
+            beurt = "willekeurig"
+        else:
+            stapel = stapel - willekeurig(stapel)
+            beurt = "slim"
+    return beurt
+
+gewonnen = 0
+for spel in range(100):
+    if speel(12) == "slim":
+        gewonnen = gewonnen + 1
+print("slim wint", gewonnen, "van de 100")   # slim wint 100 van de 100
+```
+
+Samen pak je elke ronde 5, dus laat `slim` steeds een vijfvoud plus 1 over:
+11, 6 en 1.
+
+</details>
+
+## Bouw zelf: slim tegen slim
+
+Laat `slim` tegen zichzelf spelen, met de gewone regels (1 tot en met 3).
+Wie wint er, de speler die begint of de ander? Zoek het uit voor elke stapel
+van 1 tot en met 12, en print per stapel wie er wint. Zie je een patroon?
+
+<details>
+<summary>Tip</summary>
+
+Schrijf een nieuwe functie `slim_tegen_slim(stapel)`. Beide spelers gebruiken
+`slim`, dus je hoeft alleen bij te houden wie er aan de beurt is: `"eerste"`
+of `"tweede"`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+def slim_tegen_slim(stapel):
+    beurt = "eerste"
+    while stapel > 0:
+        stapel = stapel - slim(stapel)
+        if beurt == "eerste":
+            beurt = "tweede"
+        else:
+            beurt = "eerste"
+    return beurt
+
+for stapel in range(1, 13):
+    print(stapel, slim_tegen_slim(stapel))
+```
+
+Bij 1, 5 en 9 wint de tweede speler, bij alle andere stapels de eerste. Als
+beide spelers de truc kennen, ligt de winnaar vast voordat het spel begint.
+Daar is geen toeval meer aan.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+TypeError: unsupported operand type(s) for -: 'int' and 'NoneType'
+```
+
+**Oorzaak:** `slim` geeft niet bij elke stapel iets terug. Bij 9 lucifers is
+`pak` 0, en dan komt de functie bij geen enkele `return`. Een functie zonder
+`return` geeft `None`, en van een getal kun je geen `None` aftrekken.
+
+**Oplossing:** zorg dat de functie bij elke stapel een getal teruggeeft.
+
+```python
+# FOUT
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak > 0:
+        return pak
+
+stapel = 9
+stapel = stapel - slim(stapel)
+
+# GOED
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+stapel = 9
+stapel = stapel - slim(stapel)
+```
+
+Meer uitleg: [Return-waarden](site:python/docs/functies/09b-return).
+
+Door naar [Nim die van zichzelf leert](site:algorithms/docs/ml-spellen/02-nim-leert).

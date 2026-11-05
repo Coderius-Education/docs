@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -158,19 +158,20 @@ describe('leerdoelen van Algoritmiek: het tentamen van niveau 2', () => {
 });
 
 // Niveau 1 is de route machine learning: kleine projecten in de browser, die
-// in Python en in algoritme steeds een stap verder gaan, tot een project van
-// CS50 AI. De docent beoordeelt de projecten en de Python die je erin laat
-// zien. Fase A en B staan er; de rest van de route volgt.
+// in Python en in algoritme steeds een stap verder gaan, met na elke fase een
+// project van CS50 AI. De docent beoordeelt de projecten en de Python die je
+// erin laat zien.
 describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', () => {
   const opNiveau1 = leerdoelen.concepten.filter((c) => c.niveau['1'] != null);
   const rij = (id: string) => leerdoelen.concepten.find((c) => c.id === id);
+  const projecten = opNiveau1.filter((c) => c.onderwerp === 'ml');
+  const cs50 = projecten.filter((c) => /^Het project .* van CS50 AI$/.test(c.concept));
 
   it('heeft op niveau 1 alleen Python en de projecten', () => {
     expect([...new Set(opNiveau1.map((c) => c.onderwerp))]).toEqual(['python', 'ml']);
   });
 
-  it('noemt de projecten van fase A en B op volgorde, met CS50 Shopping als laatste', () => {
-    const projecten = opNiveau1.filter((c) => c.onderwerp === 'ml');
+  it('noemt de projecten van fase A tot en met F op volgorde, elk CS50-project na zijn fase', () => {
     expect(projecten.map((c) => [c.id, c.niveau['1']])).toEqual([
       ['ml-chatbot', 'basis'],
       ['ml-spamfilter-regels', 'basis'],
@@ -179,21 +180,63 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
       ['ml-k-buren', 'basis'],
       ['ml-eerlijk-testen', 'gevorderd'],
       ['ml-shopping', 'gevorderd'],
+      ['ml-dobbelsteen', 'basis'],
+      ['ml-surfer', 'basis'],
+      ['ml-pagerank', 'gevorderd'],
+      ['ml-nim-strategie', 'basis'],
+      ['ml-nim-leert', 'gevorderd'],
+      ['ml-nim', 'gevorderd'],
+      ['ml-tictactoe', 'gevorderd'],
+      ['ml-buren', 'basis'],
+      ['ml-kortste-weg', 'gevorderd'],
+      ['ml-degrees', 'gevorderd'],
+      ['ml-neuron', 'basis'],
+      ['ml-neuron-leert', 'gevorderd'],
+      ['ml-traffic', 'expert'],
     ]);
-    // Elk project zegt welke Python je ermee laat zien.
-    for (const c of projecten) expect(c.toelichting, c.id).toMatch(/Python|scikit-learn/);
+    expect(cs50.map((c) => c.id)).toEqual([
+      'ml-shopping',
+      'ml-pagerank',
+      'ml-nim',
+      'ml-tictactoe',
+      'ml-degrees',
+      'ml-traffic',
+    ]);
   });
 
-  it('elk project hoort bij precies één les van de route, en elke les van de route bij een project', () => {
+  it('elk project in de browser zegt welke Python je ermee laat zien, elk CS50-project waar je het maakt', () => {
+    for (const c of projecten) {
+      expect(c.toelichting, c.id).toMatch(cs50.includes(c) ? /eigen computer/ : /^Python: /);
+    }
+  });
+
+  it('elke pagina van de route is de les van een project, en elk project heeft één les', () => {
     const route = docs()
       .map((d) => d.id)
-      .filter((id) => /^ml-(regels|afstand)\//.test(id))
+      .filter((id) => /^ml-[a-z]+\//.test(id))
       .sort();
-    const projectLessen = opNiveau1
-      .filter((c) => c.onderwerp === 'ml')
-      .flatMap((c) => (c.lessen ?? []).map((l) => l.id))
-      .sort();
-    expect(projectLessen).toEqual(route);
+    const projectLessen = projecten.map((c) => (c.lessen ?? []).map((l) => l.id));
+    for (const [i, lessen] of projectLessen.entries()) {
+      expect(lessen.length, projecten[i].id).toBe(1);
+    }
+    expect([...new Set(projectLessen.flat().filter((id) => id.startsWith('ml-')))].sort()).toEqual(
+      route,
+    );
+  });
+
+  it('een CS50-project leunt op de pagina die erop voorbereidt, en die pagina noemt het project', () => {
+    const tekst = (id: string) => {
+      const pad = ['.mdx', '.md'].map((e) => join(DOCS, id + e)).find((p) => existsSync(p));
+      return readFileSync(pad as string, 'utf8');
+    };
+    for (const c of cs50) {
+      const les = c.lessen?.[0]?.id ?? '';
+      if (!les.startsWith('ml-')) continue;
+      const naam = c.concept.replace(/^Het project (.*) van CS50 AI$/, '$1');
+      expect(tekst(les), `${c.id}: ${les}`).toMatch(
+        new RegExp(`cs50\\.harvard\\.edu/ai/projects/\\d/${naam.toLowerCase()}`),
+      );
+    }
   });
 
   it('de Python van de route staat niet op het tentamen, en de Python die er niet in zit niet op niveau 1', () => {
@@ -204,19 +247,28 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
       'sorted-slicing',
       'modules',
       'csv-inlezen',
+      'lijst-in-dictionary',
+      'tuple-sleutel',
+      'raster',
+      'wachtrij',
+      'range-len',
     ]) {
       expect(rij(id)?.niveau['2'], id).toBeNull();
     }
-    for (const id of ['f-strings', 'continue', 'break', 'while-loop']) {
+    for (const id of ['f-strings', 'continue', 'break']) {
       expect(rij(id)?.niveau['1'], id).toBeNull();
     }
+    // Nim en de kortste weg draaien op een while-loop.
+    expect(rij('while-loop')?.niveau['1']).toBe('basis');
   });
 
-  it('gevorderd vraagt een module of een CSV-bestand, en eerlijk testen of Shopping', () => {
+  it('gevorderd vraagt bij Python een module of een CSV-bestand', () => {
     // Zo stelt moeilijkheidVoorstel gevorderd pas voor als beide onderwerpen
     // een gevorderd concept hebben.
-    const gevorderd = opNiveau1.filter((c) => c.niveau['1'] === 'gevorderd').map((c) => c.id);
-    expect(gevorderd).toEqual(['modules', 'csv-inlezen', 'ml-eerlijk-testen', 'ml-shopping']);
+    const gevorderd = opNiveau1
+      .filter((c) => c.onderwerp === 'python' && c.niveau['1'] !== 'basis')
+      .map((c) => c.id);
+    expect(gevorderd).toEqual(['modules', 'csv-inlezen']);
   });
 
   it('koppelt elke les van niveau 1 aan een les die bestaat', () => {

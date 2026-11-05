@@ -1,0 +1,11 @@
+{
+  "label": "ML E: Zoeken",
+  "position": 20,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Machine learning, fase E: zoeken",
+    "description": "Zet een doolhof in Python, zoek bij elk vakje de buren, en vind de kortste weg met een wachtrij. Daarna ben je klaar voor Degrees van CS50."
+  }
+}

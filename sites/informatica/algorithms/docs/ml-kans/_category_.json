@@ -1,0 +1,11 @@
+{
+  "label": "ML C: Kans en toeval",
+  "position": 18,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Machine learning, fase C: kans en toeval",
+    "description": "Laat de computer duizenden keren dobbelen en tel wat er gebeurt, en laat een surfer willekeurig over een klein web klikken. Daarna bouw je PageRank, en ben je klaar voor PageRank van CS50."
+  }
+}

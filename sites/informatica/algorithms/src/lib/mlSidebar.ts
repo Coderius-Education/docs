@@ -5,7 +5,14 @@
 // uit. Een nieuwe fase is een map ml-… en komt hier in ML_MAPPEN.
 
 export const ML_ROUTE = 'machine-learning';
-export const ML_MAPPEN = ['ml-regels', 'ml-afstand'];
+export const ML_MAPPEN = [
+  'ml-regels',
+  'ml-afstand',
+  'ml-kans',
+  'ml-spellen',
+  'ml-zoeken',
+  'ml-neuronen',
+];
 
 type Item = { type: string; id?: string; items?: Item[] };
 

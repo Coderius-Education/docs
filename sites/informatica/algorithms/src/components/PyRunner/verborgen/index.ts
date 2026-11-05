@@ -1,7 +1,9 @@
 import cfgParser from './cfg-parser';
 import dijkstraCompleet from './dijkstra-compleet';
+import doolhofBuren from './doolhof-buren';
 import knn from './knn';
 import minimaxHelpers from './minimax-helpers';
+import nimLeren from './nim-leren';
 
 // Code die een PyRunner vóór de zichtbare code draait maar niet in de editor
 // zet: <PyRunner verborgen="cfg-parser" …>. De cfg-runners hadden tachtig
@@ -16,8 +18,10 @@ import minimaxHelpers from './minimax-helpers';
 export const VERBORGEN: Record<string, string> = {
   'cfg-parser': cfgParser,
   'dijkstra-compleet': dijkstraCompleet,
+  'doolhof-buren': doolhofBuren,
   knn,
   'minimax-helpers': minimaxHelpers,
+  'nim-leren': nimLeren,
 };
 
 export function verborgenCode(naam: string): string {

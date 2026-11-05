@@ -1,0 +1,11 @@
+{
+  "label": "ML F: Neuronen",
+  "position": 21,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Machine learning, fase F: neuronen",
+    "description": "Bouw één neuron dat een beslissing neemt met gewichten, en laat het daarna zelf zijn gewichten leren uit voorbeelden. Daarna ben je klaar voor Traffic van CS50, met een heel netwerk van neuronen."
+  }
+}

@@ -21,13 +21,13 @@ Op welke concepten je docent je beoordeelt, staat bij
 |---|---|---|
 | A. AI met regels | [een chatbot](site:algorithms/docs/ml-regels/01-chatbot), [een spamfilter met regels](site:algorithms/docs/ml-regels/02-spamfilter), [een spamfilter dat leert](site:algorithms/docs/ml-regels/03-spamfilter-leert) | |
 | B. Voorspellen met afstand | [welk fruit is dit?](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur), [laat de buren stemmen](site:algorithms/docs/ml-afstand/02-k-buren), [eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen), [klaar voor Shopping](site:algorithms/docs/ml-afstand/04-shopping) | Shopping |
-| C. Kans en toeval | een dobbelsteen simuleren, een surfer die willekeurig klikt, [PageRank](site:algorithms/docs/pagerank/01-concept) | PageRank |
-| D. Spellen | Nim met een vaste strategie, Nim die van zichzelf leert, [minimax](site:algorithms/docs/minimax/01-concept) | Nim, Tic-Tac-Toe |
-| E. Zoeken | de buren van een vakje in een doolhof, de kortste weg met een wachtrij | Degrees |
-| F. Neuronen | één neuron met gewichten, een neuron dat zelf leert | Traffic |
+| C. Kans en toeval | [een dobbelsteen simuleren](site:algorithms/docs/ml-kans/01-dobbelsteen), [een surfer die willekeurig klikt](site:algorithms/docs/ml-kans/02-surfer), [PageRank](site:algorithms/docs/pagerank/01-concept) | PageRank |
+| D. Spellen | [Nim met een vaste strategie](site:algorithms/docs/ml-spellen/01-nim-strategie), [Nim die van zichzelf leert](site:algorithms/docs/ml-spellen/02-nim-leert), [minimax](site:algorithms/docs/minimax/01-concept) | Nim, Tic-Tac-Toe |
+| E. Zoeken | [de buren van een vakje](site:algorithms/docs/ml-zoeken/01-buren), [de kortste weg met een wachtrij](site:algorithms/docs/ml-zoeken/02-kortste-weg) | Degrees |
+| F. Neuronen | [één neuron met gewichten](site:algorithms/docs/ml-neuronen/01-neuron), [een neuron dat zelf leert](site:algorithms/docs/ml-neuronen/02-neuron-leert) | Traffic |
 
-Fase A en B staan klaar. De projecten van fase C tot en met F zonder link
-volgen nog; PageRank en minimax kun je nu al doen.
+PageRank en minimax zijn hoofdstukken van deze cursus, en zwaarder dan de
+projecten ervoor. Daar bouw je het algoritme stap voor stap op.
 
 ## De CS50-projecten
 
@@ -52,6 +52,8 @@ Dit algoritme [bouw je ook hier](site:algorithms/docs/pagerank/01-concept).
 CS50 voegt een tweede aanpak toe: in plaats van iteratief rekenen simuleer je
 een *random surfer* die willekeurig rondklikt over het web (een
 Markov-keten) en telt waar hij uitkomt. Twee wegen naar hetzelfde antwoord.
+De surfer bouw je eerst in
+[een surfer die willekeurig klikt](site:algorithms/docs/ml-kans/02-surfer).
 
 [cs50.harvard.edu/ai/projects/2/pagerank](https://cs50.harvard.edu/ai/projects/2/pagerank/)
 
@@ -60,7 +62,8 @@ Markov-keten) en telt waar hij uitkomt. Twee wegen naar hetzelfde antwoord.
 *Reinforcement learning*: je AI krijgt geen dataset, maar leert het spelletje
 Nim door duizenden keren tegen zichzelf te spelen en te onthouden welke
 zetten tot winst leidden (Q-learning). Daarna mag jij proberen ervan te
-winnen.
+winnen. Hoe je je erop voorbereidt, staat bij
+[Nim die van zichzelf leert](site:algorithms/docs/ml-spellen/02-nim-leert#aan-de-slag-met-nim).
 
 [cs50.harvard.edu/ai/projects/4/nim](https://cs50.harvard.edu/ai/projects/4/nim/)
 
@@ -78,6 +81,8 @@ hebt er recursie voor nodig: een functie die zichzelf aanroept.
 Via hoeveel films zijn twee acteurs met elkaar verbonden? Je zoekt de
 kortste weg door een netwerk van acteurs en films, met *breadth-first
 search*: eerst alles op één stap afstand, dan alles op twee stappen.
+Hoe je je erop voorbereidt, staat bij
+[de kortste weg met een wachtrij](site:algorithms/docs/ml-zoeken/02-kortste-weg#aan-de-slag-met-degrees).
 
 [cs50.harvard.edu/ai/projects/0/degrees](https://cs50.harvard.edu/ai/projects/0/degrees/)
 
@@ -85,7 +90,8 @@ search*: eerst alles op één stap afstand, dan alles op twee stappen.
 
 Neurale netwerken. Je traint met TensorFlow een netwerk dat verkeersborden
 herkent op foto's, de techniek achter moderne beeldherkenning. Dit is het
-zwaarste project van de route.
+zwaarste project van de route. Hoe je je erop voorbereidt, staat bij
+[een neuron dat zelf leert](site:algorithms/docs/ml-neuronen/02-neuron-leert#aan-de-slag-met-traffic).
 
 [cs50.harvard.edu/ai/projects/5/traffic](https://cs50.harvard.edu/ai/projects/5/traffic/)
 
