@@ -68,7 +68,11 @@ sites die van een gewijzigd package afhangen) en welke jobs draaien. De
 build-matrix bevat alleen geraakte sites, en bouwt tegelijk met de tests:
 een build uploadt `<site>-gebouwd`, en pas de job `publiceer` maakt daar na
 groene tests `<site>-static` van, het artifact dat de hostingbackend ophaalt
-(`packages/shared/ci-poort.test.ts`). Node, pnpm (via corepack) en de
+(`packages/shared/ci-poort.test.ts`). Het register zelf haalt de backend ook
+uit CI: de job `registry` uploadt bij elke run de uitvoer van
+`scripts/sites-json.mjs` als artifact `registry` (`sites.json`), en de backend
+neemt dat van main over. Zonder die job kent hij geen enkele host en geeft
+elke preview "onbekende host". Node, pnpm (via corepack) en de
 pnpm-store zet elke job op met `.github/actions/node-pnpm`; een site-build
 installeert alleen zijn eigen site. `cross-links` haalt de rest uit de
 cache (`scripts/site-hash.mjs`, job `voorraad`). Docusaurus bouwt met Rspack
