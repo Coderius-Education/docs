@@ -279,16 +279,21 @@ function projectNiveaus(leerdoelen) {
  * fullstack gaf niveau 3 anders een lege tabel FastAPI, en niveau 1 drie lege
  * tabellen voor Linux, Veiligheid en Online zetten.
  *
- * @param {{onderwerpen: {id: string}[], concepten: {onderwerp: string, niveau: Record<string, unknown>}[]}} leerdoelen
+ * Op het niveau van een tentamen heeft een concept geen moeilijkheid maar
+ * manieren (zijn niveau staat dan niet in `niveau`); daar valt alleen een
+ * concept met null af. Zonder die uitzondering stonden bij algoritmes de
+ * projecten van niveau 1 op de tentamenpagina van niveau 2.
+ *
+ * @param {{onderwerpen: {id: string}[], concepten: {onderwerp: string, niveau: Record<string, unknown>}[], tentamen?: {niveau: string}}} leerdoelen
  * @param {string} niveau
  */
 function onderwerpenOpNiveau(leerdoelen, niveau) {
+  const opTentamen = leerdoelen.tentamen?.niveau === niveau;
+  const hoortErbij = (c) => (opTentamen ? c.niveau[niveau] !== null : c.niveau[niveau] != null);
   return leerdoelen.onderwerpen
     .map((onderwerp) => ({
       onderwerp,
-      concepten: leerdoelen.concepten.filter(
-        (c) => c.onderwerp === onderwerp.id && c.niveau[niveau] != null,
-      ),
+      concepten: leerdoelen.concepten.filter((c) => c.onderwerp === onderwerp.id && hoortErbij(c)),
     }))
     .filter((o) => o.concepten.length > 0);
 }

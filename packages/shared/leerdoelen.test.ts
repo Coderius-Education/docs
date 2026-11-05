@@ -400,9 +400,62 @@ describe('onderwerpenOpNiveau: wat op de pagina van een niveau staat', () => {
     expect(op('3')).toEqual([['lx', ['lx-a']]]);
   });
 
-  it('de pagina van een niveau gebruikt hem', () => {
-    const bron = readFileSync(join(__dirname, 'components', 'Leerdoelen', 'Niveau.tsx'), 'utf8');
-    expect(bron).toContain('onderwerpenOpNiveau(leerdoelen, niveau)');
+  it('op het tentamen telt een concept met manieren mee, en valt alleen null af', () => {
+    // Algoritmes kreeg een niveau 1 naast het tentamen van niveau 2. De
+    // tentamenpagina toonde elke rij, ook de projecten van niveau 1 met null
+    // op niveau 2: een kop Machine learning op de pagina van het tentamen.
+    const l = leesLeerdoelen({
+      niveaus: ['1', '2'],
+      tentamen: {
+        niveau: '2',
+        vorm: 'Op papier.',
+        bron: '/bronnen/toetsing-domein-b',
+        manieren: [
+          {
+            id: 'begrijpen',
+            label: 'Begrijpen',
+            uitleg: 'Uitleggen.',
+            vraagtype: 'Type 1',
+            lessen: ['concept'],
+          },
+        ],
+      },
+      onderwerpen: [
+        { id: 'python', label: 'Python' },
+        { id: 'ml', label: 'Machine learning' },
+        { id: 'zoeken', label: 'Zoeken' },
+      ],
+      concepten: [
+        { id: 'lijsten', onderwerp: 'python', concept: 'Lijsten', 1: 'basis', 2: [] },
+        { id: 'tuples', onderwerp: 'python', concept: 'Tuples', 1: 'basis', 2: null },
+        { id: 'ml-chatbot', onderwerp: 'ml', concept: 'Een chatbot', 1: 'basis', 2: null },
+        {
+          id: 'lineair',
+          onderwerp: 'zoeken',
+          concept: 'Lineair zoeken',
+          1: null,
+          2: ['begrijpen'],
+          les: 'lineair/concept',
+        },
+      ],
+    });
+    const op = (n: string) =>
+      onderwerpenOpNiveau(l, n).map((o) => [o.onderwerp.id, o.concepten.map((c) => c.id)]);
+    expect(op('2')).toEqual([
+      ['python', ['lijsten']],
+      ['zoeken', ['lineair']],
+    ]);
+    expect(op('1')).toEqual([
+      ['python', ['lijsten', 'tuples']],
+      ['ml', ['ml-chatbot']],
+    ]);
+  });
+
+  it('de pagina van een niveau en die van het tentamen gebruiken hem', () => {
+    const bron = (c: string) =>
+      readFileSync(join(__dirname, 'components', 'Leerdoelen', `${c}.tsx`), 'utf8');
+    expect(bron('Niveau')).toContain('onderwerpenOpNiveau(leerdoelen, niveau)');
+    expect(bron('Tentamen')).toContain('onderwerpenOpNiveau(leerdoelen, tentamen.niveau)');
   });
 });
 
