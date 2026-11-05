@@ -13,6 +13,7 @@ import {
   leesLeerdoelen,
   moeilijkhedenTekst,
   moeilijkheidVoorstel,
+  onderwerpenOpNiveau,
   projectNiveaus,
   sjabloonZin,
 } from './leerdoelen';
@@ -376,6 +377,33 @@ describe('een niveau met een tentamen', () => {
       expect(tips).toContain(`detailPad: '${data.tentamen.bron}'`);
     });
   }
+});
+
+describe('onderwerpenOpNiveau: wat op de pagina van een niveau staat', () => {
+  it('laat een onderwerp zonder concept op dat niveau weg', () => {
+    // Fullstack niveau 3 gaf een lege tabel FastAPI, en niveau 1 drie lege
+    // tabellen voor de onderwerpen van niveau 3.
+    const l = leesLeerdoelen({
+      niveaus: ['1', '3'],
+      onderwerpen: [
+        { id: 'api', label: 'FastAPI' },
+        { id: 'lx', label: 'Linux' },
+      ],
+      concepten: [
+        { id: 'api-a', onderwerp: 'api', concept: 'a', 1: 'basis', 3: null },
+        { id: 'lx-a', onderwerp: 'lx', concept: 'b', 1: null, 3: 'gevorderd' },
+      ],
+    });
+    const op = (n: string) =>
+      onderwerpenOpNiveau(l, n).map((o) => [o.onderwerp.id, o.concepten.map((c) => c.id)]);
+    expect(op('1')).toEqual([['api', ['api-a']]]);
+    expect(op('3')).toEqual([['lx', ['lx-a']]]);
+  });
+
+  it('de pagina van een niveau gebruikt hem', () => {
+    const bron = readFileSync(join(__dirname, 'components', 'Leerdoelen', 'Niveau.tsx'), 'utf8');
+    expect(bron).toContain('onderwerpenOpNiveau(leerdoelen, niveau)');
+  });
 });
 
 describe('andersDan: wat in de vergelijking opvalt', () => {

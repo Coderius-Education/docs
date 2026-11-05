@@ -274,6 +274,26 @@ function projectNiveaus(leerdoelen) {
 }
 
 /**
+ * De onderwerpen van één niveau, elk met zijn concepten op dat niveau. Een
+ * onderwerp zonder concept op dat niveau (overal null) staat er niet in: bij
+ * fullstack gaf niveau 3 anders een lege tabel FastAPI, en niveau 1 drie lege
+ * tabellen voor Linux, Veiligheid en Online zetten.
+ *
+ * @param {{onderwerpen: {id: string}[], concepten: {onderwerp: string, niveau: Record<string, unknown>}[]}} leerdoelen
+ * @param {string} niveau
+ */
+function onderwerpenOpNiveau(leerdoelen, niveau) {
+  return leerdoelen.onderwerpen
+    .map((onderwerp) => ({
+      onderwerp,
+      concepten: leerdoelen.concepten.filter(
+        (c) => c.onderwerp === onderwerp.id && c.niveau[niveau] != null,
+      ),
+    }))
+    .filter((o) => o.concepten.length > 0);
+}
+
+/**
  * Voor de vergelijking: per niveau het niveau ervoor waarvan de moeilijkheid
  * van dit concept verschilt, of null. Een niveau waar het concept niet bij
  * hoort (null) slaat hij over: "gevorderd, –, gevorderd" is geen verschil,
@@ -406,6 +426,7 @@ function moeilijkheidVoorstel(perOnderwerp) {
 
 module.exports = {
   projectNiveaus,
+  onderwerpenOpNiveau,
   andersDan,
   BLOOM,
   NIVEAUS,
