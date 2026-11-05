@@ -68,7 +68,11 @@ sites die van een gewijzigd package afhangen) en welke jobs draaien. De
 build-matrix bevat alleen geraakte sites, en bouwt tegelijk met de tests:
 een build uploadt `<site>-gebouwd`, en pas de job `publiceer` maakt daar na
 groene tests `<site>-static` van, het artifact dat de hostingbackend ophaalt
-(`packages/shared/ci-poort.test.ts`). Node, pnpm (via corepack) en de
+(`packages/shared/ci-poort.test.ts`). Het register zelf haalt de backend ook
+uit CI: de job `registry` uploadt bij elke run de uitvoer van
+`scripts/sites-json.mjs` als artifact `registry` (`sites.json`), en de backend
+neemt dat van main over. Zonder die job kent hij geen enkele host en geeft
+elke preview "onbekende host". Node, pnpm (via corepack) en de
 pnpm-store zet elke job op met `.github/actions/node-pnpm`; een site-build
 installeert alleen zijn eigen site. `cross-links` haalt de rest uit de
 cache (`scripts/site-hash.mjs`, job `voorraad`). Docusaurus bouwt met Rspack
@@ -236,8 +240,11 @@ nakijker maakt er de leerroutes van. Een concept dat niet bij een niveau hoort,
 krijgt daar `null`: dan staat het niet op de pagina van dat niveau en telt de
 nakijker het in die leerroute niet mee (`inTrack` in `packages/checker`). Noem op de sites alleen de niveaus, geen
 schoolsoort; `leerdoelen.test.ts` weert die woorden uit de leerdoelen en de
-pagina's. Een rij blijft op één regel (een override in `biome.json`), zodat je
-de niveaus met het oog vergelijkt en een wijziging één regel in de diff is.
+pagina's. Een rij blijft op één regel, zodat je
+de niveaus met het oog vergelijkt en een wijziging één regel in de diff is: `biome.json`
+formatteert het bestand niet (een rij met een toelichting en drie niveaus
+werd langer dan de 320 tekens die biome hoogstens toestaat), en
+`leerdoelen.test.ts` eist het.
 Elk concept wijst met `les` naar de les waar je het leert (een doc-id, met de
 docs-plugin ervoor als twee plugins hetzelfde id hebben: `lego_auto:intro`); de
 plugin zoekt titel en adres op en stopt de build bij een les die niet bestaat of
@@ -257,7 +264,9 @@ zijn concepten met `leerdoelenNaarConfig` (`packages/checker`); een rij zonder
 herkenning, of een herkenning zonder rij, is een fout. Met de leerdoelen in
 de config stelt de docentweergave een cijfer voor: de docent kiest de
 denkvaardigheid, de nakijker stelt de moeilijkheid voor (gevorderd alleen bij
-een gevorderd concept in élk onderwerp), en cijfer en zin komen in de PDF.
+een gevorderd concept in élk onderwerp dat gevorderde concepten heeft; een
+onderwerp zonder telt daar niet mee, en de reden noemt dan welke wel), en
+cijfer en zin komen in de PDF.
 Expert telt voor het cijfer als gevorderd tot het blad er een kolom voor heeft. Een niveau kan ook met een tentamen worden afgesloten (`tentamen` in het bestand, bij Algoritmiek niveau 2): dan heeft een rij op dat niveau een lijst manieren om het te kennen in plaats van een moeilijkheid, en zet de plugin bij elke manier de les uit de map van het concept waar je hem oefent; de pagina van dat niveau legt het tentamen uit, met de bron bij vakdidactiek.
 Een bron noemen we alleen als vakdidactiek hem uitlegt: elke bron in
 `bloom.json` wijst naar een pagina onder `/bronnen/` van de didactiek-site, met

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { CONCEPT_MOEILIJKHEDEN, type Leerdoelen } from '../../leerdoelen';
+import { CONCEPT_MOEILIJKHEDEN, type Leerdoelen, onderwerpenOpNiveau } from '../../leerdoelen';
 import Lessen from './Lessen';
 import Moeilijkheid from './Moeilijkheid';
 import styles from './styles.module.css';
@@ -23,9 +23,7 @@ export default function Niveau({
   );
   return (
     <>
-      {leerdoelen.onderwerpen.map((onderwerp) => {
-        const rijen = leerdoelen.concepten.filter((c) => c.onderwerp === onderwerp.id);
-        if (rijen.length === 0) return null;
+      {onderwerpenOpNiveau(leerdoelen, niveau).map(({ onderwerp, concepten: rijen }) => {
         return (
           <section key={onderwerp.id}>
             <Kop>{onderwerp.label}</Kop>

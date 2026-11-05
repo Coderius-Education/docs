@@ -24,7 +24,7 @@
     },
     {
       "include": ["**/leerdoelen.json", "**/begrippen.json"],
-      "formatter": { "lineWidth": 320 }
+      "formatter": { "enabled": false }
     }
   ]
 }

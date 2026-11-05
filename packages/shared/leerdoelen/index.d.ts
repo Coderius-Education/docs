@@ -132,6 +132,11 @@ export function moeilijkheidVoorstel(perOnderwerp: OnderwerpTelling[]): {
 };
 export function moeilijkhedenTekst(leerdoelen: Leerdoelen): string;
 export function projectNiveaus(leerdoelen: Leerdoelen): Niveau[];
+/** De onderwerpen met minstens één concept op dit niveau, elk met die concepten. */
+export function onderwerpenOpNiveau(
+  leerdoelen: Leerdoelen,
+  niveau: string,
+): { onderwerp: Benoemd; concepten: LeerdoelConcept[] }[];
 /** Per niveau-id het vorige niveau waarvan de moeilijkheid verschilt, of null; null-niveaus tellen niet mee. */
 export function andersDan(
   concept: Pick<LeerdoelConcept, 'niveau'>,

@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
@@ -62,6 +63,56 @@ describe('de poort naar de hostingbackend', () => {
       );
     expect(bewaard('wijzigingen')).toBeGreaterThanOrEqual(7);
     expect(bewaard('\\$\\{\\{ matrix\\.site \\}\\}-gebouwd')).toBe(bewaard('wijzigingen'));
+  });
+
+  // De backend heeft geen eigen kopie van het register meer (docs-management
+  // #22): hij leest `sites.json` uit het artifact `registry` van een run op
+  // main. Die job ontbrak, en toen gaf elke preview "onbekende host". De
+  // namen hieronder zijn ARTIFACT_NAME en ARTIFACT_FILE in
+  // backend/app/registry.py van docs-management.
+  it('registry levert bij elke run sites.json voor de backend, los van het plan', () => {
+    const registry = job('registry');
+    expect(registry).not.toMatch(/^ {4}needs:/m);
+    expect(registry).not.toMatch(/^ {4}if:/m);
+    expect(registry).toContain('run: node scripts/sites-json.mjs > sites.json');
+    expect(uploads(registry)).toEqual(['registry']);
+    expect(registry).toMatch(/name: registry\n\s+path: sites\.json\n/);
+    expect(registry).toContain('if-no-files-found: error');
+    // Een verse backend zoekt het nieuwste register van main dat nog niet
+    // verlopen is; de nachtelijke run vernieuwt het elke dag.
+    const bewaard = Number(registry.match(/retention-days: (\d+)/)?.[1]);
+    expect(bewaard).toBeGreaterThanOrEqual(30);
+    expect(workflow).toMatch(/^ {2}schedule:\n {4}- cron: /m);
+  });
+
+  it('sites.json heeft de vorm die de backend leest', () => {
+    const uit = JSON.parse(
+      execFileSync('node', [new URL('../../scripts/sites-json.mjs', import.meta.url).pathname], {
+        encoding: 'utf8',
+      }),
+    );
+    const host = (url: string) => new URL(url).hostname;
+    const vakken = new Set<string>();
+    for (const vak of uit.subjects) {
+      expect(vak, 'vak').toEqual(
+        expect.objectContaining({ id: expect.any(String), label: expect.any(String) }),
+      );
+      expect(host(vak.url)).toMatch(/\.coderius\.nl$/);
+      vakken.add(vak.id);
+    }
+    expect(uit.sites.length).toBeGreaterThan(1);
+    for (const site of uit.sites) {
+      expect(typeof site.id, 'id').toBe('string');
+      expect(typeof site.label, site.id).toBe('string');
+      expect(typeof site.path, site.id).toBe('string');
+      expect(vakken, `vak van ${site.id}`).toContain(site.subject);
+      if (site.legacyUrl) expect(host(site.legacyUrl), site.id).toBeTruthy();
+      for (const oud of site.renamedFrom ?? []) {
+        expect(oud, site.id).toEqual({ id: expect.any(String), path: expect.any(String) });
+      }
+    }
+    expect(uit.home).toEqual(expect.objectContaining({ id: 'home', label: expect.any(String) }));
+    expect(host(uit.home.url)).toBe('coderius.nl');
   });
 
   it('cross-links gebruikt de gebouwde bundles en wacht dus niet op de tests', () => {

@@ -1,11 +1,12 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { levelVoor } from '@coderius/checker/conceptLevel';
+import { inTrack, levelVoor } from '@coderius/checker/conceptLevel';
+import { computeLevelSummary } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { CheckReport, ConceptMatch, ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
-import { leesLeerdoelen } from '@coderius/shared/leerdoelen';
+import { leesLeerdoelen, moeilijkheidVoorstel } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
 import leerdoelenJson from '../leerdoelen.json';
 import { fullstackConfig } from './config';
@@ -430,9 +431,73 @@ describe('fullstackConfig — de leerdoelen', () => {
       ['Cookies', E, G],
       ['Sessies', E, G],
     ];
-    expect(leerdoelen.niveaus.map((n) => n.id)).toEqual(['1', '2']);
-    expect(leerdoelen.onderwerpen).toEqual([{ id: 'fastapi', label: 'FastAPI' }]);
-    expect(leerdoelenJson.concepten.map((c) => [c.concept, c['1'], c['2']])).toEqual(blad);
+    expect(leerdoelen.niveaus.map((n) => n.id)).toEqual(['1', '2', '3']);
+    const fastapi = leerdoelenJson.concepten.filter((c) => c.onderwerp === 'fastapi');
+    expect(fastapi.map((c) => [c.concept, c['1'], c['2']])).toEqual(blad);
+    // Op niveau 3 telt FastAPI niet mee: dat niveau gaat over Linux,
+    // Veiligheid en Online zetten.
+    expect(fastapi.filter((c) => c['3'] !== null).map((c) => c.id)).toEqual([]);
+  });
+
+  it('niveau 3 is Linux, Veiligheid en Online zetten, met basis, gevorderd en expert', () => {
+    // Niet van het blad, maar een opzet uit de lessen van de drie routes, met
+    // de verschuivingen van de docent: slowapi en Argon2 naar basis, de
+    // Dockerfile en compose.yaml naar gevorderd, en de echte server (firewall,
+    // HTTPS, back-up, uitrollen) naar expert. Vandaar ook hier de hele tabel:
+    // een verschuiving is een keuze.
+    const B = 'basis';
+    const G = 'gevorderd';
+    const E = 'expert';
+    const niveau3 = [
+      ['linux', 'door mappen lopen en bestanden lezen (cd, ls, cat)', B],
+      ['linux', 'bestanden maken, kopiëren, verplaatsen en weggooien', B],
+      ['linux', 'rechten lezen met ls -l: eigenaar, groep en rwx', B],
+      ['linux', "programma's installeren met sudo apt", B],
+      ['linux', 'een bestand bewerken met nano', B],
+      ['linux', 'inloggen op een andere computer met ssh en een sleutelpaar', B],
+      ['linux', 'zoeken met grep en de pipe', G],
+      ['linux', 'processen en diensten bekijken, starten en stoppen (ps, systemctl)', G],
+      ['linux', 'rechten en groepen aanpassen (chmod, usermod)', G],
+      ['linux', 'bestanden kopiëren met scp en een tunnel met ssh', G],
+      ['veiligheid', 'de handleiding op /docs uitzetten', B],
+      ['veiligheid', 'een .gitignore, zodat databases en geheimen niet in je repository komen', B],
+      ['veiligheid', 'invoer controleren met grenzen in Form', B],
+      ['veiligheid', 'HTML van een bezoeker blijft tekst (templates escapen, geen |safe)', B],
+      ['veiligheid', 'op de server controleren wie iets mag, met 403', B],
+      ['veiligheid', 'een limiet op verzoeken met slowapi', B],
+      ['veiligheid', 'cookies afschermen met httponly en samesite', G],
+      ['veiligheid', 'wachtwoorden als hash opslaan met Argon2', B],
+      ['veiligheid', 'inlogpogingen beperken', G],
+      ['online', 'de packages van je project in requirements.txt', B],
+      ['online', 'een README in je repository', B],
+      ['online', 'je project in Ubuntu ophalen en draaien (git clone, venv, fastapi run)', B],
+      ['online', 'je site in een image met een Dockerfile', G],
+      ['online', 'alles in één compose.yaml, met een volume voor je databases', G],
+      ['online', 'een server met een eigen gebruiker, waarop je alleen met een sleutel inlogt', G],
+      ['online', 'de server dichtzetten: firewall en automatische updates', E],
+      ['online', 'je site op je domein met HTTPS via Traefik', E],
+      ['online', 'een back-up maken en terugzetten', E],
+      ['online', 'een nieuwe versie uitrollen', E],
+    ];
+    expect(leerdoelen.onderwerpen).toEqual([
+      { id: 'fastapi', label: 'FastAPI' },
+      { id: 'linux', label: 'Linux' },
+      { id: 'veiligheid', label: 'Veiligheid' },
+      { id: 'online', label: 'Online zetten' },
+    ]);
+    const rest = leerdoelenJson.concepten.filter((c) => c.onderwerp !== 'fastapi');
+    expect(rest.map((c) => [c.onderwerp, c.concept, c['3']])).toEqual(niveau3);
+    // Op niveau 1 en 2 tellen ze niet mee.
+    expect(rest.filter((c) => c['1'] !== null || c['2'] !== null).map((c) => c.id)).toEqual([]);
+    // Een gevorderd concept in elk onderwerp: een onderwerp zonder gevorderd
+    // telt voor gevorderd niet mee, en dan wordt gevorderd te makkelijk
+    // (moeilijkheidVoorstel).
+    for (const o of ['linux', 'veiligheid', 'online']) {
+      expect(
+        niveau3.some(([on, , m]) => on === o && m === G),
+        o,
+      ).toBe(true);
+    }
   });
 
   it('geeft elk concept uit de leerdoelen een detectie, in dezelfde volgorde', () => {
@@ -466,26 +531,53 @@ describe('fullstackConfig — de leerdoelen', () => {
     for (const c of verwarrend) expect(c.toelichting, c.id).toBeTruthy();
   });
 
-  it('kijkt alleen de installatie en de ontwikkelaarstools met de hand na', () => {
-    // Een venv leest de nakijker niet in, en wat je in de browser doet staat
-    // in geen bestand. De rest moet uit het project te halen zijn.
+  it('kijkt alleen met de hand na wat in geen ingeleverd bestand staat', () => {
+    // Een venv leest de nakijker niet in, wat je in de browser doet staat in
+    // geen bestand, en wat je in een terminal of op een server doet ook niet.
+    // De rest moet uit het project te halen zijn. Of een template |safe op
+    // tekst van een bezoeker zet, beoordeelt de docent: wie niets doet,
+    // doet het goed.
     expect(
       fullstackConfig.concepts.filter((c) => c.detect.type === 'handmatig').map((c) => c.id),
-    ).toEqual(['fastapi-installeren', 'browser-devtools']);
+    ).toEqual([
+      'fastapi-installeren',
+      'browser-devtools',
+      'lx-mappen',
+      'lx-bestanden',
+      'lx-rechten',
+      'lx-apt',
+      'lx-nano',
+      'lx-ssh',
+      'lx-zoeken',
+      'lx-diensten',
+      'lx-groepen',
+      'lx-scp',
+      'vh-xss',
+      'on-linux',
+      'on-server',
+      'on-dichtzetten',
+      'on-https',
+      'on-backup',
+      'on-nieuwe-versie',
+    ]);
   });
 
-  it('maakt van de twee niveaus leerroutes met elk een eigen verdeling', () => {
+  it('maakt van de drie niveaus leerroutes met elk een eigen verdeling', () => {
     expect(fullstackConfig.tracks).toEqual([
       { id: '1', label: 'Niveau 1' },
       { id: '2', label: 'Niveau 2' },
+      { id: '3', label: 'Niveau 3' },
     ]);
     const telling = (route: string, m: string) =>
-      fullstackConfig.concepts.filter((c) => levelVoor(c, route) === m).length;
+      fullstackConfig.concepts.filter((c) => inTrack(c, route) && levelVoor(c, route) === m).length;
     expect([telling('1', 'basis'), telling('1', 'gevorderd'), telling('1', 'expert')]).toEqual([
       11, 6, 7,
     ]);
     expect([telling('2', 'basis'), telling('2', 'gevorderd'), telling('2', 'expert')]).toEqual([
       16, 8, 0,
+    ]);
+    expect([telling('3', 'basis'), telling('3', 'gevorderd'), telling('3', 'expert')]).toEqual([
+      16, 9, 4,
     ]);
   });
 
@@ -507,7 +599,9 @@ describe('fullstackConfig — de leerdoelen', () => {
       'fastapi-cookie',
       'fastapi-sessie',
     ];
+    // Alleen FastAPI: niveau 3 gaat over wat er na de basis komt.
     const gemist = leerdoelen.concepten
+      .filter((c) => c.onderwerp === 'fastapi')
       .map((c) => c.id)
       .filter((id) => !nietInDeBasis.includes(id) && !gevonden.get(id));
     expect(gemist).toEqual([]);
@@ -681,5 +775,140 @@ describe('fullstackConfig — de nieuwe rijen van het blad', () => {
       ),
     ).toBe(false);
     expect(alleen.get('account-wachtwoord')).toBe(false);
+  });
+});
+
+describe('fullstackConfig — niveau 3', () => {
+  const docs = fileURLToPath(new URL('../../docs/', import.meta.url));
+  const pythonUit = (les: string) => {
+    const pad = ['.mdx', '.md'].map((e) => join(docs, les + e)).find((p) => existsSync(p));
+    const tekst = pad ? readFileSync(pad, 'utf8') : '';
+    return [...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]).join('\n');
+  };
+  const rijen = leerdoelenJson.concepten.filter((c) => c.onderwerp !== 'fastapi');
+  const inCode = rijen.filter((c) => {
+    const detect = fullstackConfig.concepts.find((x) => x.id === c.id)?.detect;
+    return detect?.type === 'regex';
+  });
+
+  it('herkent elke rij in de code van de les die hem leert', () => {
+    // Zo loopt de herkenning niet uit de pas met wat de les de leerling laat
+    // schrijven: een regex die alleen op een eigen voorbeeld past, telt hier
+    // niet.
+    expect(inCode.map((c) => c.id)).toEqual([
+      'vh-docs',
+      'vh-invoer',
+      'vh-toegang',
+      'vh-limiet',
+      'vh-cookies',
+      'vh-hash',
+      'vh-pogingen',
+    ]);
+    const gemist = inCode.filter((c) => {
+      const gevonden = perId(analyze(files({ 'main.py': pythonUit(c.les) }), fullstackConfig));
+      return !gevonden.get(c.id);
+    });
+    expect(gemist.map((c) => `${c.id} in ${c.les}`)).toEqual([]);
+  });
+
+  it('telt niet wat erop lijkt', () => {
+    const gevonden = perId(
+      analyze(
+        files({
+          'main.py': [
+            'app = FastAPI(title="Gastenboek")',
+            'async def opslaan(bericht: str = Form(...)):',
+            '    raise HTTPException(status_code=404)',
+            '    raise HTTPException(status_code=4031)',
+            'limiter = Limiter(key_func=get_remote_address)',
+            'antwoord.set_cookie("sessie_id", sessie_id, httponly=False)',
+            'wachtwoord = sha256(wachtwoord.encode()).hexdigest()',
+            '@limiter.limit("5/minute")',
+            '@app.post("/inloggen")',
+          ].join('\n'),
+        }),
+        fullstackConfig,
+      ),
+    );
+    // Een FastAPI zonder docs_url=None, Form zonder grens, een 404, een
+    // Limiter zonder decorator, httponly=False, sha256 in plaats van
+    // Argon2, en de limiet boven @app.post (dan telt slowapi stil niets).
+    for (const id of [
+      'vh-docs',
+      'vh-invoer',
+      'vh-toegang',
+      'vh-cookies',
+      'vh-hash',
+      'vh-pogingen',
+    ]) {
+      expect(gevonden.get(id), id).toBe(false);
+    }
+    // De decorator staat er wel, dus de limiet op verzoeken telt.
+    expect(gevonden.get('vh-limiet')).toBe(true);
+  });
+
+  it('stelt de moeilijkheid voor met alleen de onderwerpen van het niveau', () => {
+    // Een rapport waarin precies deze concepten zijn toegepast (handmatig
+    // aangevinkt of herkend, voor het voorstel maakt dat niet uit).
+    const leeg = analyze({}, fullstackConfig);
+    const voorstel = (track: string, ids: string[]) =>
+      moeilijkheidVoorstel(
+        computeLevelSummary(
+          { ...leeg, concepts: leeg.concepts.map((c) => ({ ...c, used: ids.includes(c.id) })) },
+          fullstackConfig,
+          track,
+        ).bySubject,
+      ).moeilijkheid;
+    const basis = ['lx-mappen', 'vh-docs', 'on-readme'];
+    const gevorderd = [...basis, 'lx-zoeken', 'vh-cookies', 'on-compose'];
+    expect(voorstel('3', basis)).toBe('basis');
+    expect(voorstel('3', gevorderd)).toBe('gevorderd');
+    // Expert hangt alleen aan Online zetten: Linux en Veiligheid hebben
+    // op niveau 3 geen expert, en een onderwerp zonder concepten op een
+    // moeilijkheid telt daar niet mee.
+    expect(voorstel('3', [...gevorderd, 'on-https'])).toBe('expert');
+    // Op niveau 1 tellen de nieuwe onderwerpen niet: alleen FastAPI.
+    expect(voorstel('1', ['fastapi-app'])).toBe('basis');
+    expect(voorstel('1', ['lx-mappen', 'vh-docs', 'on-readme'])).toBe('niet-aan-basis');
+  });
+
+  it('herkent de bestanden van een project dat online staat aan hun naam', () => {
+    const met = perId(
+      analyze(
+        files({
+          'main.py': 'app = FastAPI()',
+          '.gitignore': '.venv/\n*.db\n',
+          'requirements.txt': 'fastapi[standard]\n',
+          'README.md': '# Gastenboek\n',
+          Dockerfile: 'FROM python:3.13-slim\n',
+          'compose.yaml': 'services:\n',
+        }),
+        fullstackConfig,
+      ),
+    );
+    for (const id of [
+      'vh-gitignore',
+      'on-requirements',
+      'on-readme',
+      'on-dockerfile',
+      'on-compose',
+    ]) {
+      expect(met.get(id), id).toBe(true);
+    }
+    // In een map telt ook; een bestand dat zo begint niet.
+    const anders = perId(
+      analyze(
+        files({
+          'gastenboek/Dockerfile': 'FROM python:3.13-slim\n',
+          'Dockerfile.oud': '',
+          'requirements-dev.txt': '',
+          'docker-compose.yml': 'services:\n',
+        }),
+        fullstackConfig,
+      ),
+    );
+    expect(anders.get('on-dockerfile')).toBe(true);
+    expect(anders.get('on-compose')).toBe(true);
+    expect(anders.get('on-requirements')).toBe(false);
   });
 });

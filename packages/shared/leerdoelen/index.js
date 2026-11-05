@@ -274,6 +274,26 @@ function projectNiveaus(leerdoelen) {
 }
 
 /**
+ * De onderwerpen van één niveau, elk met zijn concepten op dat niveau. Een
+ * onderwerp zonder concept op dat niveau (overal null) staat er niet in: bij
+ * fullstack gaf niveau 3 anders een lege tabel FastAPI, en niveau 1 drie lege
+ * tabellen voor Linux, Veiligheid en Online zetten.
+ *
+ * @param {{onderwerpen: {id: string}[], concepten: {onderwerp: string, niveau: Record<string, unknown>}[]}} leerdoelen
+ * @param {string} niveau
+ */
+function onderwerpenOpNiveau(leerdoelen, niveau) {
+  return leerdoelen.onderwerpen
+    .map((onderwerp) => ({
+      onderwerp,
+      concepten: leerdoelen.concepten.filter(
+        (c) => c.onderwerp === onderwerp.id && c.niveau[niveau] != null,
+      ),
+    }))
+    .filter((o) => o.concepten.length > 0);
+}
+
+/**
  * Voor de vergelijking: per niveau het niveau ervoor waarvan de moeilijkheid
  * van dit concept verschilt, of null. Een niveau waar het concept niet bij
  * hoort (null) slaat hij over: "gevorderd, –, gevorderd" is geen verschil,
@@ -375,6 +395,9 @@ function moeilijkheidVoorstel(perOnderwerp) {
 
   let gehaald = 'niet-aan-basis';
   let mist = [];
+  // De onderwerpen die voor de gehaalde moeilijkheid meetelden: een onderwerp
+  // zonder concepten op die moeilijkheid telt daar niet mee.
+  let geteld = [];
   for (let i = 0; i < CONCEPT_MOEILIJKHEDEN.length; i++) {
     const telt = perOnderwerp.filter((o) => vanaf(o, i).total > 0);
     const zonder = telt.filter((o) => vanaf(o, i).used === 0).map((o) => o.label);
@@ -383,11 +406,17 @@ function moeilijkheidVoorstel(perOnderwerp) {
       break;
     }
     gehaald = CONCEPT_MOEILIJKHEDEN[i];
+    geteld = telt.map((o) => o.label);
     mist = [];
   }
 
   const volgende = CONCEPT_MOEILIJKHEDEN[CONCEPT_MOEILIJKHEDEN.indexOf(gehaald) + 1];
   const label = (id) => moeilijkheid(id).label.toLowerCase();
+  // "Bij elk onderwerp", of bij welke als er niet alle meetelden. Fullstack
+  // niveau 3 heeft alleen bij Online zetten expert; "bij elk onderwerp een
+  // concept op expert" klopte daar niet.
+  const alle = perOnderwerp.filter((o) => vanaf(o, 0).total > 0).length;
+  const bijElk = geteld.length < alle ? `Bij ${lijst(geteld)}` : 'Bij elk onderwerp';
   let reden;
   if (gehaald === 'niet-aan-basis') {
     reden =
@@ -395,17 +424,18 @@ function moeilijkheidVoorstel(perOnderwerp) {
         ? `Geen concept toegepast bij ${lijst(mist)}.`
         : 'Er zijn geen concepten voor dit niveau.';
   } else if (!volgende) {
-    reden = 'Bij elk onderwerp een concept op expert.';
+    reden = `${bijElk} een concept op expert.`;
   } else if (mist.length > 0) {
-    reden = `Bij elk onderwerp een concept op ${label(gehaald)}, maar bij ${lijst(mist)} geen concept op ${label(volgende)}.`;
+    reden = `${bijElk} een concept op ${label(gehaald)}, maar bij ${lijst(mist)} geen concept op ${label(volgende)}.`;
   } else {
-    reden = `Bij elk onderwerp een concept op ${label(gehaald)}.`;
+    reden = `${bijElk} een concept op ${label(gehaald)}.`;
   }
   return { moeilijkheid: gehaald, reden };
 }
 
 module.exports = {
   projectNiveaus,
+  onderwerpenOpNiveau,
   andersDan,
   BLOOM,
   NIVEAUS,

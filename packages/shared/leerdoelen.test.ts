@@ -13,6 +13,7 @@ import {
   leesLeerdoelen,
   moeilijkhedenTekst,
   moeilijkheidVoorstel,
+  onderwerpenOpNiveau,
   projectNiveaus,
   sjabloonZin,
 } from './leerdoelen';
@@ -378,6 +379,33 @@ describe('een niveau met een tentamen', () => {
   }
 });
 
+describe('onderwerpenOpNiveau: wat op de pagina van een niveau staat', () => {
+  it('laat een onderwerp zonder concept op dat niveau weg', () => {
+    // Fullstack niveau 3 gaf een lege tabel FastAPI, en niveau 1 drie lege
+    // tabellen voor de onderwerpen van niveau 3.
+    const l = leesLeerdoelen({
+      niveaus: ['1', '3'],
+      onderwerpen: [
+        { id: 'api', label: 'FastAPI' },
+        { id: 'lx', label: 'Linux' },
+      ],
+      concepten: [
+        { id: 'api-a', onderwerp: 'api', concept: 'a', 1: 'basis', 3: null },
+        { id: 'lx-a', onderwerp: 'lx', concept: 'b', 1: null, 3: 'gevorderd' },
+      ],
+    });
+    const op = (n: string) =>
+      onderwerpenOpNiveau(l, n).map((o) => [o.onderwerp.id, o.concepten.map((c) => c.id)]);
+    expect(op('1')).toEqual([['api', ['api-a']]]);
+    expect(op('3')).toEqual([['lx', ['lx-a']]]);
+  });
+
+  it('de pagina van een niveau gebruikt hem', () => {
+    const bron = readFileSync(join(__dirname, 'components', 'Leerdoelen', 'Niveau.tsx'), 'utf8');
+    expect(bron).toContain('onderwerpenOpNiveau(leerdoelen, niveau)');
+  });
+});
+
 describe('andersDan: wat in de vergelijking opvalt', () => {
   const niveaus = [{ id: '1' }, { id: '3' }, { id: '4' }];
   type M = 'basis' | 'gevorderd' | 'expert' | null;
@@ -508,9 +536,29 @@ describe('moeilijkheidVoorstel: de vuistregels', () => {
       { label: 'FastAPI', basis: t(2, 8), gevorderd: t(1, 4), expert: t(1, 2) },
       { label: 'Database', basis: t(0, 0), gevorderd: t(1, 2), expert: t(0, 0) },
     ];
+    // De reden noemt dan welke onderwerpen meetelden: "bij elk onderwerp"
+    // klopte niet, want Database heeft geen expert.
     expect(moeilijkheidVoorstel(fullstack)).toEqual({
       moeilijkheid: 'expert',
-      reden: 'Bij elk onderwerp een concept op expert.',
+      reden: 'Bij FastAPI een concept op expert.',
+    });
+  });
+
+  it('fullstack niveau 3: expert alleen bij Online zetten, en dat zegt de reden', () => {
+    const niveau3 = [
+      { label: 'Linux', basis: t(1, 6), gevorderd: t(1, 4), expert: t(0, 0) },
+      { label: 'Veiligheid', basis: t(1, 7), gevorderd: t(1, 2), expert: t(0, 0) },
+      { label: 'Online zetten', basis: t(1, 3), gevorderd: t(1, 3), expert: t(0, 4) },
+    ];
+    expect(moeilijkheidVoorstel(niveau3)).toEqual({
+      moeilijkheid: 'gevorderd',
+      reden:
+        'Bij elk onderwerp een concept op gevorderd, maar bij Online zetten geen concept op expert.',
+    });
+    niveau3[2].expert = t(1, 4);
+    expect(moeilijkheidVoorstel(niveau3)).toEqual({
+      moeilijkheid: 'expert',
+      reden: 'Bij Online zetten een concept op expert.',
     });
   });
 

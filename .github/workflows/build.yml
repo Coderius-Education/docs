@@ -102,6 +102,37 @@ jobs:
           path: changed.json
           retention-days: 7
 
+  # Het register van vakken en sites (packages/shared/sites.js) voor de
+  # hostingbackend. Die heeft geen eigen kopie meer: hij haalt het artifact
+  # `registry` met `sites.json` uit elke run op main (docs-management,
+  # backend/app/ingest/registry.py), en kent zonder register geen enkele host.
+  # Elke preview gaf toen "onbekende host". Daarom bij elke run, los van het
+  # plan: ook een wijziging die niets bouwt, of een plan dat omvalt, levert
+  # het register. Een verse backend zoekt bij het opstarten het nieuwste
+  # register van main dat nog niet verlopen is; de nachtelijke run maakt elke
+  # dag een nieuw, dus de bewaartijd is ruim.
+  registry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Node
+        uses: ./.github/actions/node-pnpm
+        with:
+          pnpm: 'false'
+          store: 'false'
+          install: 'false'
+
+      - name: Register naar sites.json
+        run: node scripts/sites-json.mjs > sites.json
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: registry
+          path: sites.json
+          if-no-files-found: error
+          retention-days: 90
+
   # Aparte, kleine job omdat `publiceer` erop wacht. De nakijker bepaalt wat
   # een leerling als beoordeling ziet, en een scoringsfout geeft geen
   # foutmelding — die telt gewoon stil iets verkeerd. Zulke code mag niet
@@ -843,13 +874,14 @@ jobs:
     # en kon een PR met kapotte voorbeelden groen worden. `tekst` blijft
     # erbuiten: een spel- of stijlfout mag een merge niet tegenhouden (keuze
     # van de opdrachtgever; schrijfgids §17).
-    needs: [plan, test, build, publiceer, voorraad, checks, cross-links, fullstack, blokken, browser]
+    needs: [plan, test, build, publiceer, voorraad, checks, cross-links, fullstack, blokken, browser, registry]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Plan, tests, codevoorbeelden, site-builds, publiceren, lint, typecheck, cross-site links en de speeltuin groen?
+      - name: Plan, register, tests, codevoorbeelden, site-builds, publiceren, lint, typecheck, cross-site links en de speeltuin groen?
         env:
           PLAN: ${{ needs.plan.result }}
+          REGISTRY: ${{ needs.registry.result }}
           TEST: ${{ needs.test.result }}
           BUILD: ${{ needs.build.result }}
           PUBLICEER: ${{ needs.publiceer.result }}
@@ -883,6 +915,7 @@ jobs:
             esac
           }
           oordeel plan "$PLAN" true
+          oordeel registry "$REGISTRY" true
           oordeel test "$TEST" "$NODIG_TEST"
           oordeel build "$BUILD" "$NODIG_BUILD"
           oordeel publiceer "$PUBLICEER" "$NODIG_BUILD"

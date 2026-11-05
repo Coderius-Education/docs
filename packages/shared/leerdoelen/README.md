@@ -46,7 +46,8 @@ schoolsoort.
 - Andere velden die mogen: `bloom` (een denkvaardigheid uit `bloom.json`),
   `groep` (een kop in de nakijker) en `toelichting` (een zin op de pagina).
 - De volgorde is die van het blad. Een rij blijft op één regel: `biome.json`
-  geeft `leerdoelen.json` een regelbreedte van 200.
+  formatteert `leerdoelen.json` niet (een rij werd te lang voor biome), en
+  `leerdoelen.test.ts` eist het.
 
 ## Een niveau met een tentamen
 

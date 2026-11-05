@@ -7,7 +7,8 @@ import { samenhang } from './samenhang';
 // De nakijker voor fullstack-projecten. Wélke concepten tellen en op welk
 // niveau staat in `src/leerdoelen.json`: het tabblad fullstack van het
 // beoordelingsblad, in dezelfde volgorde en met dezelfde woorden, met de twee
-// startkolommen als niveau 1 en 2. Hier staat alleen hóé je elk concept in de
+// startkolommen als niveau 1 en 2. Niveau 3 (Linux, Veiligheid en Online
+// zetten) staat niet op het blad; daar telt FastAPI niet mee. Hier staat alleen hóé je elk concept in de
 // bestanden terugvindt (DETECTIE), en wat de nakijker daarnaast onder "Ook
 // gebruikt" laat zien (OOK_GEBRUIKT).
 //
@@ -114,6 +115,48 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'htmx-verzoek': html(/\bhx-(get|post|delete|put|patch)\s*=/gi),
   'fastapi-cookie': py(/set_cookie\s*\(|\bCookie\s*\(/g),
   'fastapi-sessie': py(/token_hex\s*\(|token_urlsafe\s*\(/g),
+
+  // Niveau 3: Linux, Veiligheid en Online zetten. Wat in de terminal of op
+  // een server gebeurt, staat in geen ingeleverd bestand: dat vinkt de docent
+  // aan. Een bestand dat erbij hoort (Dockerfile, compose.yaml) herkent de
+  // nakijker aan zijn naam; de inhoud leest hij niet, want alleen .py, .html,
+  // .css en .js zijn tekst voor hem.
+  'lx-mappen': { type: 'handmatig' },
+  'lx-bestanden': { type: 'handmatig' },
+  'lx-rechten': { type: 'handmatig' },
+  'lx-apt': { type: 'handmatig' },
+  'lx-nano': { type: 'handmatig' },
+  'lx-ssh': { type: 'handmatig' },
+  'lx-zoeken': { type: 'handmatig' },
+  'lx-diensten': { type: 'handmatig' },
+  'lx-groepen': { type: 'handmatig' },
+  'lx-scp': { type: 'handmatig' },
+  // Alle drie de adressen uit, zoals in de les; alleen docs_url is genoeg.
+  'vh-docs': py(/\bdocs_url\s*=\s*None\b/g),
+  'vh-gitignore': { type: 'path', pattern: /(^|\/)\.gitignore$/ },
+  // Een grens in Form: lengte of waarde. Form(...) alleen is geen controle.
+  'vh-invoer': py(/\bForm\s*\([^)]*\b(?:max_length|min_length|ge|le|gt|lt)\s*=/g),
+  // Templates escapen vanzelf: wie niets doet, doet het goed. Of er nergens
+  // |safe op tekst van een bezoeker staat, beoordeelt de docent.
+  'vh-xss': { type: 'handmatig' },
+  'vh-toegang': py(/HTTPException\s*\(\s*(?:status_code\s*=\s*)?403\b/g),
+  'vh-limiet': py(/@limiter\.limit\s*\(/g),
+  // httponly=True op een cookie. samesite hoeft niet: FastAPI zet "lax" al
+  // vanzelf (Cookies afschermen: samesite).
+  'vh-cookies': py(/\bhttponly\s*=\s*True\b/g),
+  'vh-hash': py(/\bPasswordHasher\s*\(/g),
+  // De limiet op het inlog-endpoint, zoals in de les: direct onder @app.post.
+  'vh-pogingen': py(/@app\.post\s*\(\s*["']\/(?:inlog|login)[^\n]*\n\s*@limiter\.limit\s*\(/gi),
+  'on-requirements': { type: 'path', pattern: /(^|\/)requirements\.txt$/ },
+  'on-readme': { type: 'path', pattern: /(^|\/)README\.md$/i },
+  'on-linux': { type: 'handmatig' },
+  'on-dockerfile': { type: 'path', pattern: /(^|\/)Dockerfile$/ },
+  'on-compose': { type: 'path', pattern: /(^|\/)(?:docker-)?compose\.ya?ml$/ },
+  'on-server': { type: 'handmatig' },
+  'on-dichtzetten': { type: 'handmatig' },
+  'on-https': { type: 'handmatig' },
+  'on-backup': { type: 'handmatig' },
+  'on-nieuwe-versie': { type: 'handmatig' },
 };
 
 // Wat de nakijker daarnaast laat zien. Het telt niet voor de moeilijkheid,
@@ -298,7 +341,8 @@ const uitLeerdoelen = leerdoelenNaarConfig(leerdoelenJson, DETECTIE);
 
 export const fullstackConfig: CheckerConfig = {
   samenhang,
-  // Het blad heeft één onderwerp, FastAPI. De andere zijn er voor Ook gebruikt.
+  // FastAPI, en voor niveau 3 Linux, Veiligheid en Online zetten. De andere
+  // zijn er voor Ook gebruikt.
   subjects: [
     ...uitLeerdoelen.subjects,
     { id: 'html', label: 'HTML' },
