@@ -12,8 +12,8 @@ export interface LeerdoelConcept {
   id: string;
   onderwerp: string;
   concept: string;
-  /** Per niveau-id ('1' tot en met '4') de moeilijkheid. */
-  niveau: Record<string, ConceptMoeilijkheid>;
+  /** Per niveau-id ('1' tot en met '4') de moeilijkheid; null als het concept niet bij dat niveau hoort. */
+  niveau: Record<string, ConceptMoeilijkheid | null>;
   bloom?: string;
   groep?: string;
   toelichting?: string;

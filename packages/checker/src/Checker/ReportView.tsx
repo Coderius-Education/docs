@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { levelVoor } from '../conceptLevel';
+import { inTrack, levelVoor } from '../conceptLevel';
 import type {
   CheckReport,
   CheckerConfig,
@@ -58,7 +58,7 @@ function groupConcepts(
 ): Group[] {
   const groups = new Map<string, Group>();
   for (const concept of concepts) {
-    if (concept.subject !== subjectId) continue;
+    if (concept.subject !== subjectId || !inTrack(concept, track)) continue;
     if (activeLevel && levelVoor(concept, track) !== activeLevel) continue;
     const match = matches.get(concept.id);
     if (!match) continue;

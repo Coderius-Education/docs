@@ -68,9 +68,10 @@ export type ConceptDetect =
 
 /**
  * Een cursus met twee leerroutes geeft per concept een niveau per route. Een
- * kale `Level` betekent: in elke track hetzelfde.
+ * kale `Level` betekent: in elke track hetzelfde. `null` bij een route: het
+ * concept hoort niet bij die route en telt daar niet mee.
  */
-export type ConceptLevel = Level | Record<string, Level>;
+export type ConceptLevel = Level | Record<string, Level | null>;
 
 export interface Concept {
   id: string;

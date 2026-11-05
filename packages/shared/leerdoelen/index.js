@@ -131,6 +131,9 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
     for (const n of niveauIds) {
       const m = rij[n];
       if (m === undefined) fouten.push(`${waar}: niveau '${n}' ontbreekt`);
+      // null: dit concept hoort niet bij dit niveau. Expliciet, zodat een
+      // vergeten niveau een fout blijft.
+      else if (m === null) niveau[n] = null;
       else if (tentamen && n === tentamen.niveau) {
         // Op het tentamen-niveau: welke manieren van kennen voor dit concept
         // gelden. Leeg mag: dan is het concept zelf de vaardigheid.

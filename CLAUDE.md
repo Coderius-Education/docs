@@ -232,7 +232,9 @@ van de docent uit het beoordelingsblad, per concept één rij met per niveau
 basis, gevorderd of expert naast elkaar. De niveaus zijn voor elke cursus
 dezelfde vier (`packages/shared/leerdoelen/niveaus.json`), Niveau 1 tot en met
 Niveau 4; een cursus zet in `niveaus` welke hij heeft (`["1", "2"]`), en de
-nakijker maakt er de leerroutes van. Noem op de sites alleen de niveaus, geen
+nakijker maakt er de leerroutes van. Een concept dat niet bij een niveau hoort,
+krijgt daar `null`: dan staat het niet op de pagina van dat niveau en telt de
+nakijker het in die leerroute niet mee (`inTrack` in `packages/checker`). Noem op de sites alleen de niveaus, geen
 schoolsoort; `leerdoelen.test.ts` weert die woorden uit de leerdoelen en de
 pagina's. Een rij blijft op één regel (een override in `biome.json`), zodat je
 de niveaus met het oog vergelijkt en een wijziging één regel in de diff is.

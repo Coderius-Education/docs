@@ -32,7 +32,10 @@ schoolsoort.
 
 - Elk niveau is een sleutel op de rij, met `basis`, `gevorderd` of `expert`.
   Elke rij heeft elk niveau van de cursus; een ontbrekend of onbekend niveau
-  is een fout.
+  is een fout. Hoort een concept niet bij een niveau, zet dan `null`
+  (`"3": null`): de pagina van dat niveau laat het weg, de vergelijking toont
+  een streepje, en de nakijker telt het in die leerroute niet mee. Een rij met
+  overal `null` is een fout.
 - `les`: waar je het concept leert, als doc-id van de cursus
   (`"html-css/koppen-lijsten"`) of een lijst daarvan. De plugin zoekt bij het
   bouwen titel en adres op; een les die niet bestaat stopt de build. Op de

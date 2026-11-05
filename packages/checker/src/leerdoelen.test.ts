@@ -1,6 +1,20 @@
 import { describe, expect, it } from 'vitest';
+import { inTrack } from './conceptLevel';
 import { bloomUitOudeVinkjes, geldigeTrack, leerdoelenNaarConfig } from './leerdoelen';
-import type { ConceptDetect } from './types';
+import { computeLevelSummary } from './levelSummary';
+import type { CheckReport, CheckerConfig, ConceptDetect } from './types';
+import { validateCheckerConfig } from './validateConfig';
+
+// Wat een config naast de leerdoelen nodig heeft om te valideren.
+const minimaal = {
+  fileKinds: [{ id: 'py', label: 'Python' }],
+  classify: () => 'py',
+  textKinds: ['py'],
+  accept: '.py',
+  teacher: { password: 'x', storageKey: 'coderius:test:docent' },
+  pdfFilename: () => 'x.pdf',
+  privacyNote: 'x',
+} as unknown as Omit<CheckerConfig, 'subjects' | 'concepts'>;
 
 const detect: ConceptDetect = { type: 'regex', pattern: /x/g };
 
@@ -54,6 +68,40 @@ describe('leerdoelenNaarConfig', () => {
     });
     // Overal dezelfde moeilijkheid: die is de groep, zoals bij één niveau.
     expect(uit.concepts[1]).toMatchObject({ level: { 1: 'basis', 2: 'basis' }, group: 'Basis' });
+  });
+
+  it('een concept met null op een niveau telt daar niet mee', () => {
+    // Robotica haalt op niveau 3 en 4 een deel van de Python eruit.
+    const metNull = {
+      ...tweeNiveaus,
+      concepten: [{ ...tweeNiveaus.concepten[0], 2: null }, tweeNiveaus.concepten[1]],
+    };
+    const uit = leerdoelenNaarConfig(metNull, { 'api-cookies': detect, 'api-routes': detect });
+    const cookies = uit.concepts[0];
+    expect(cookies.level).toEqual({ 1: 'expert', 2: null });
+    // De groep komt alleen uit de niveaus waar het bij hoort.
+    expect(cookies.group).toBe('Expert');
+    expect(inTrack(cookies, '1')).toBe(true);
+    expect(inTrack(cookies, '2')).toBe(false);
+    // Een leerling ziet geen leerroute; dan hoort alles erbij.
+    expect(inTrack(cookies, null)).toBe(true);
+    expect(validateCheckerConfig({ ...minimaal, ...uit })).toEqual([]);
+    const report = {
+      concepts: uit.concepts.map((c) => ({ id: c.id, count: 1, used: true })),
+    } as CheckReport;
+    const summary = computeLevelSummary(report, { ...minimaal, ...uit }, '2');
+    expect(summary.expert.total).toBe(0);
+    expect(summary.basis.total).toBe(1);
+  });
+
+  it('een concept dat bij geen enkel niveau hoort, stopt de nakijker', () => {
+    const nergens = {
+      ...tweeNiveaus,
+      concepten: [{ ...tweeNiveaus.concepten[0], 1: null, 2: null }, tweeNiveaus.concepten[1]],
+    };
+    expect(() =>
+      leerdoelenNaarConfig(nergens, { 'api-cookies': detect, 'api-routes': detect }),
+    ).toThrow("concept 'api-cookies' hoort bij geen enkel niveau");
   });
 
   it('een nieuwe rij in de leerdoelen zonder herkenning stopt de nakijker', () => {

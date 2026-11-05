@@ -1,4 +1,4 @@
-import { levelVoor } from './conceptLevel';
+import { inTrack, levelVoor } from './conceptLevel';
 import { type CheckReport, type CheckerConfig, LEVELS, type Level } from './types';
 
 // Vat het rapport samen als basis/gevorderd-tellingen, per onderwerp. Een
@@ -39,7 +39,7 @@ export function computeLevelSummary(
       ConceptStats
     >;
     for (const c of config.concepts) {
-      if (c.subject !== s.id) continue;
+      if (c.subject !== s.id || !inTrack(c, track)) continue;
       const level = levelVoor(c, track);
       stats[level].total++;
       if (usedById.get(c.id)) stats[level].used++;

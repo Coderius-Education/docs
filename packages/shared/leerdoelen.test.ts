@@ -173,7 +173,7 @@ describe('leesLeerdoelen', () => {
         { id: 'gd-groups', onderwerp: 'gd', concept: 'groups', 1: 'gevorderd' },
         { id: 'gd-groups', onderwerp: 'x', concept: '', 1: 'moeilijk', 3: 'basis' },
         { id: 'gd-tweens', onderwerp: 'gd', concept: 'tweens', 1: 'basis', 3: 'basis', 4: 'basis' },
-        { id: 'gd-json', onderwerp: 'gd', concept: 'JSON', 1: 'basis', 3: 'basis', bloom: 'weten' },
+        { id: 'gd-json', onderwerp: 'gd', concept: 'JSON', 1: 'basis', 3: null, bloom: 'weten' },
       ],
     };
     let melding = '';
@@ -184,6 +184,8 @@ describe('leesLeerdoelen', () => {
     }
     expect(melding).toContain('godot/src/leerdoelen.json');
     expect(melding).toContain("concept 'gd-groups': niveau '3' ontbreekt");
+    // null is wel een waarde: dat concept hoort niet bij dat niveau.
+    expect(melding).not.toContain("concept 'gd-json': niveau");
     expect(melding).toContain("concept 'gd-groups' staat er twee keer");
     expect(melding).toContain("onbekend onderwerp 'x'");
     expect(melding).toContain('concept (de tekst) ontbreekt');
