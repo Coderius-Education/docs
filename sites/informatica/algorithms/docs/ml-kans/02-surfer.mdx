@@ -12,7 +12,9 @@ van het vorige project naspelen: laat een surfer duizend keer klikken, en
 tel waar hij komt.
 
 :::info
-Je gebruikt hier `random.choice` en het tellen van
+Je gebruikt hier `random.choice` uit
+[Een bont bloemenveld](site:python/docs/projecten/bloemenveld/stap-6-lijst),
+het tellen van
 [een dobbelsteen simuleren](site:algorithms/docs/ml-kans/01-dobbelsteen), en een
 dictionary met een lijst als waarde uit
 [Geneste dictionaries](site:python/docs/data/11c-geneste-dictionaries).
@@ -114,22 +116,23 @@ kans 0,85 klikt de surfer een link, en anders springt hij naar een
 willekeurige pagina van het web.
 
 Bouw dat in. `random.random()` geeft een willekeurig kommagetal van 0 tot 1;
-is het kleiner dan 0,85, dan klikt de surfer een link. Met 10.000 klikken kom
-je ongeveer hierop uit:
+is het kleiner dan 0,85, dan klikt de surfer een link. `list(web)` is de lijst
+van alle pagina's van het web. Met 10.000 klikken kom je bijvoorbeeld hierop
+uit; de laatste cijfers zijn elke keer anders:
 
 ```
-A 0.37
-B 0.2
-C 0.39
-D 0.04
+A 0.3741
+B 0.1932
+C 0.3951
+D 0.0376
 ```
 
 <details>
 <summary>Tip</summary>
 
-Zet een `if` om de regel met `random.choice(web[pagina])`. In de `else`
-springt de surfer: dan kies je uit de lijst van alle pagina's,
-`list(web)`.
+Bij elke klik moet de surfer kiezen: een link volgen of springen. Welke
+Python-opdracht kiest tussen twee dingen, en wat zet je in elk van de twee
+takken?
 
 </details>
 
@@ -181,8 +184,9 @@ niet heel veel?
 <details>
 <summary>Tip</summary>
 
-Een pagina die nergens heen linkt mag niet, want dan loopt de surfer vast.
-E, F en G linken dus elk naar D: `"E": ["D"]`.
+Elke pagina staat in het web als sleutel, met de lijst van haar links als
+waarde. Wat moet er bij E, F en G in die lijst staan? Denk aan vraag 4 van het
+onderzoek: een lege lijst mag niet.
 
 </details>
 
@@ -212,7 +216,10 @@ pagina telt zwaarder.
 Met de surfer schat je PageRank door het na te spelen. Je kunt het ook
 uitrekenen, in rondes, met een formule. Dat doe je in
 [het hoofdstuk PageRank](site:algorithms/docs/pagerank/01-concept) van deze
-cursus.
+cursus. Daar kom je de surfer bij
+[Zelf bouwen](site:algorithms/docs/pagerank/09-zelf-bouwen) nog een keer tegen,
+in een iets andere vorm: hij begint op een willekeurige pagina, en telt de
+pagina waar hij is voordat hij klikt.
 
 Daarna ben je klaar voor
 [PageRank](https://cs50.harvard.edu/ai/projects/2/pagerank/) van CS50 AI. Daar
@@ -248,4 +255,6 @@ else:
     pagina = random.choice(list(web))
 ```
 
-Door naar [Nim met een vaste strategie](site:algorithms/docs/ml-spellen/01-nim-strategie).
+Door naar [het hoofdstuk PageRank](site:algorithms/docs/pagerank/01-concept),
+en daarna naar
+[Nim met een vaste strategie](site:algorithms/docs/ml-spellen/01-nim-strategie).

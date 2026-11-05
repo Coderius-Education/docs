@@ -78,4 +78,18 @@ describe('verborgen code van de route machine learning', () => {
     expect(VERBORGEN['nim-leren']).toContain('stapel = 10');
     expect(VERBORGEN['nim-leren']).toContain('min(3, stapel)');
   });
+
+  it('nim-leren: de getallen in de antwoorden van het onderzoek zijn die van de runner', () => {
+    // De beloofde uitvoer van de runner controleert het blokken-script; deze
+    // getallen staan in lopende tekst, en daar kijkt het script niet.
+    const pagina = les('ml-spellen/02-nim-leert.mdx');
+    const leren = runner(pagina).replace(/^for stapel in[\s\S]*$/m, '');
+    const vraag =
+      'print(score[(10, 1)], score[(10, 3)], score[(5, 1)], score[(5, 2)], score[(5, 3)])';
+    const [tien1, tien3, vijf1, vijf2, vijf3] = python(
+      [VERBORGEN['nim-leren'], leren, vraag].join('\n'),
+    ).split(' ');
+    expect(pagina).toContain(`\`score[(10, 1)]\` is ${tien1} en \`score[(10, 3)]\` is ${tien3}`);
+    expect(pagina).toContain(`de scores zijn daar ${vijf1}, ${vijf2} en ${vijf3}`);
+  });
 });

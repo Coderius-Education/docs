@@ -13,7 +13,8 @@ je daarmee de kortste weg.
 :::info
 Je gebruikt hier lijsten uit [Lijsten](site:python/docs/data/10a-lijsten-basis),
 tuples en uitpakken uit [Tuples](site:python/docs/data/tuples), en een functie
-met `return` uit [Return-waarden](site:python/docs/functies/09b-return).
+met `return` uit [Return-waarden](site:python/docs/functies/09b-return). Nieuw
+is dat je een tekst net als een lijst met een index leest.
 :::
 
 ## Voorspel
@@ -55,9 +56,12 @@ pak je dus één vakje. Rij 0 is de bovenste rij, kolom 0 de linker kolom.
 
 Een vakje schrijf je als tuple `(rij, kolom)`. De buren van een vakje zijn de
 vier vakjes erboven, eronder, links en rechts ervan. Een buur telt alleen mee
-als hij binnen het doolhof ligt en geen muur is. Daarvoor heeft `buren` twee
-`if`'s: de eerste kijkt of het vakje binnen de randen valt, de tweede of het
-geen muur is.
+als hij binnen het doolhof ligt en geen muur is.
+
+In de functie `buren` pakt `rij, kolom = vakje` de tuple uit in twee
+variabelen, net als in een for-loop. De loop gaat langs de vier mogelijke
+buren, ook als tuples. Daarna heeft `buren` twee `if`'s: de eerste kijkt of
+het vakje binnen de randen valt, de tweede of het geen muur is.
 
 ## Onderzoek
 
@@ -102,13 +106,12 @@ print(buren((2, 1)))`} />
 
 </details>
 
-`rij, kolom = vakje` pakt de tuple uit in twee variabelen, net als in een
-for-loop. De loop gaat langs de vier mogelijke buren, ook als tuples.
-
 ## Opdracht: tel de buren
 
 Print het doolhof opnieuw, maar zet op elk vrij vakje hoeveel buren het heeft.
-Een muur blijft een `#`. Voor het doolhof van de editor wordt dat:
+Een muur blijft een `#`. Je hebt daarvoor `str` nodig: `str(3)` maakt van het
+getal 3 de tekst `"3"`, want een tekst en een getal kun je niet aan elkaar
+plakken. Voor het doolhof van de editor wordt het:
 
 ```
 132232
@@ -121,10 +124,9 @@ Een muur blijft een `#`. Voor het doolhof van de editor wordt dat:
 <details>
 <summary>Tip</summary>
 
-Loop over de rijen met `range(len(doolhof))`, en daarbinnen over de kolommen
-met `range(len(doolhof[0]))`. Begin elke rij met een lege tekst, en plak er per
-vakje een teken achter: `"#"` bij een muur, en anders
-`str(len(buren((rij, kolom))))`. Print de tekst na de binnenste loop.
+Je hebt twee loops nodig: een over de rijen, en daarbinnen een over de
+kolommen. Bouw per rij een tekst op, teken voor teken, en print hem als de rij
+af is.
 
 </details>
 
@@ -133,7 +135,7 @@ vakje een teken achter: `"#"` bij een muur, en anders
 
 Dit vervangt de laatste regel van de code hierboven:
 
-{/* niet-draaien: fragment; leunt op doolhof en buren uit de runner erboven */}
+{/* draaien-met: blok-erboven */}
 ```python
 for rij in range(len(doolhof)):
     regel = ""
@@ -143,6 +145,14 @@ for rij in range(len(doolhof)):
         else:
             regel = regel + str(len(buren((rij, kolom))))
     print(regel)
+```
+
+```
+132232
+#2##32
+#3222#
+13###1
+#22222
 ```
 
 Geen enkel vakje heeft er vier: het doolhof heeft geen open pleintjes.
@@ -161,16 +171,15 @@ de doodlopende vakjes. Kloppen ze met wat jij ziet?
 <details>
 <summary>Tip</summary>
 
-Gebruik dezelfde twee loops als in de opdracht. Is een vakje geen muur en is
-`len(buren((rij, kolom)))` gelijk aan 1, dan voeg je `(rij, kolom)` toe aan
-de lijst.
+Gebruik dezelfde twee loops als in de opdracht. Welke twee dingen moeten
+waar zijn voordat je een vakje in de lijst zet?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-{/* niet-draaien: fragment; leunt op doolhof en buren uit de runner erboven */}
+{/* draaien-met: blok-erboven */}
 ```python
 def doodlopend():
     lijst = []
@@ -199,7 +208,10 @@ IndexError: list index out of range
 
 **Oorzaak:** je vraagt een rij die niet bestaat. Het doolhof heeft rij 0 tot
 en met 4; rij 5 ligt onder de onderrand. Bij een kolom die niet bestaat krijg
-je `IndexError: string index out of range`, want een rij is een tekst.
+je `IndexError: string index out of range`, want een rij is een tekst. Die
+krijg je ook als één rij van je eigen doolhof korter is dan de eerste:
+`buren` meet de breedte aan `doolhof[0]`, en zoekt dan in de korte rij een
+kolom die er niet is. Geef elke rij evenveel tekens.
 
 **Oplossing:** kijk eerst of het vakje binnen het doolhof ligt.
 

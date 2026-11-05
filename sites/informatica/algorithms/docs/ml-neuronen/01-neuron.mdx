@@ -13,7 +13,7 @@ auto, is gemaakt van heel veel van zulke neuronen.
 
 :::info
 Je gebruikt hier lijsten uit [Lijsten](site:python/docs/data/10a-lijsten-basis),
-`range` uit [Range met stappen](site:python/docs/herhalen/06b-range-stappen),
+`range` uit [De for-loop](site:python/docs/herhalen/06a-for-loop),
 en een functie met `return` uit
 [Return-waarden](site:python/docs/functies/09b-return).
 :::
@@ -49,12 +49,15 @@ De som begint bij de bias, -1. Daar komt 1 keer 3 bij voor je vrienden, 0 keer
 ## Zo werkt het
 
 Elke invoer heeft een eigen **gewicht**. Een groot gewicht telt zwaar, een
-negatief gewicht trekt de som omlaag: regen maakt de kans kleiner dat je gaat.
+negatief gewicht trekt de som omlaag: als het regent, zegt het neuron minder
+snel ja.
 De **bias** is waar de som begint. Met een negatieve bias moet er eerst iets
 goeds gebeuren voordat het neuron ja zegt.
 
-De loop gaat met `range(len(invoer))` langs de posities 0, 1 en 2. Op elke
-positie pakt hij de invoer en het gewicht dat erbij hoort. Is de som groter
+Nieuw is `range(len(invoer))`. `len(invoer)` is 3, dus de loop gaat langs de
+posities 0, 1 en 2. Zo loop je langs twee lijsten tegelijk: op elke positie
+`i` pak je met `invoer[i]` de invoer en met `gewichten[i]` het gewicht dat
+erbij hoort. Is de som groter
 dan 0, dan zegt het neuron 1, ja. Anders zegt het 0, nee.
 
 ## Onderzoek
@@ -75,7 +78,7 @@ dan 0, dan zegt het neuron 1, ja. Anders zegt het 0, nee.
         return 1
     return 0
 
-# vrienden gaan, huiswerk af, het regent
+# de invoer is: gaan je vrienden, is je huiswerk af, regent het (1 is ja)
 gewichten = [3, 2, -1]
 bias = -1
 
@@ -167,9 +170,9 @@ Voor OF werken gewichten `[1, 1]` met bias `0`: alleen bij `0 0` is de som 0.
 Voor "precies één" vind je geen gewichten, hoe lang je ook zoekt. Wil je
 `1 0` en `0 1` op 1 krijgen terwijl `0 0` op 0 blijft, dan moeten beide
 gewichten positief zijn. Maar dan is de som bij `1 1` nog groter, en zegt het
-neuron daar ook 1. Eén neuron kan de mogelijkheden alleen in tweeën splitsen langs één rechte
-lijn, en "precies één" past daar niet in. Daarvoor heb je meer neuronen
-achter elkaar nodig: een netwerk. Dat zie je terug in het volgende project.
+neuron daar ook 1. Eén neuron kan dit niet. Met meer neuronen achter elkaar,
+een netwerk, kan het wel. In het volgende project zie je dat één neuron het
+ook niet kan leren.
 
 </details>
 

@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
-import { CONCEPT_MOEILIJKHEDEN, type Leerdoelen, onderwerpenOpNiveau } from '../../leerdoelen';
+import { type Leerdoelen, kolommenVoorOnderwerp, onderwerpenOpNiveau } from '../../leerdoelen';
 import Lessen from './Lessen';
 import Moeilijkheid from './Moeilijkheid';
 import styles from './styles.module.css';
 
 /**
  * Eén niveau van een cursus: per onderwerp de concepten, verdeeld over basis,
- * gevorderd en expert. Expert staat er alleen als het niveau het heeft.
+ * gevorderd en expert (zie kolommenVoorOnderwerp).
  */
 export default function Niveau({
   leerdoelen,
@@ -18,12 +18,10 @@ export default function Niveau({
   kop?: 'h2' | 'h3';
 }): ReactNode {
   const Kop = kop;
-  const kolommen = CONCEPT_MOEILIJKHEDEN.filter((m) =>
-    leerdoelen.concepten.some((c) => c.niveau[niveau] === m),
-  );
   return (
     <>
       {onderwerpenOpNiveau(leerdoelen, niveau).map(({ onderwerp, concepten: rijen }) => {
+        const kolommen = kolommenVoorOnderwerp(leerdoelen, niveau, rijen);
         return (
           <section key={onderwerp.id}>
             <Kop>{onderwerp.label}</Kop>

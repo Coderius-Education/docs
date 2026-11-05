@@ -7,15 +7,17 @@ sidebar_position: 2
 In het vorige project zocht jij de gewichten van het EN-neuron. Nu laat je het
 neuron ze zelf vinden. Het begint met alle gewichten op 0, en krijgt
 voorbeelden met het goede antwoord erbij. Zegt het iets fouts, dan schuift het
-zijn gewichten een stukje in de goede richting. Na een paar rondes zegt het
-bij elk voorbeeld het goede antwoord. Zo'n lerend neuron heet een
+zijn gewichten een stukje in de goede richting. Bestaan er gewichten die
+kloppen, dan zegt het na een paar rondes bij elk voorbeeld het goede
+antwoord. Zo'n lerend neuron heet een
 **perceptron**, en het is het begin van elk neuraal netwerk.
 
 :::info
 Je gebruikt hier `neuron` uit
 [één neuron met gewichten](site:algorithms/docs/ml-neuronen/01-neuron), en
 voorbeelden met het goede antwoord erbij, zoals bij
-[welk fruit is dit?](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur)
+[welk fruit is dit?](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur).
+Nieuw is dat je één element van een lijst verandert, met `lijst[i] = …`.
 :::
 
 ## Voorspel
@@ -129,7 +131,8 @@ ronde 10 : 0 fouten
 2. Gewichten `[2, 1]` met bias `-2`. Dat is anders dan `[1, 1]` met bias `-1`,
    maar het werkt ook: alleen bij `[1, 1]` komt de som boven 0. Er zijn veel
    goede antwoorden, en het neuron vindt er één.
-3. Ja, al na drie rondes. Het eindigt op gewichten `[1, 1]` met bias `0`.
+3. Ja, vanaf ronde 4 maakt het geen fouten meer. Het eindigt op gewichten
+   `[1, 1]` met bias `0`.
 4. Het neuron blijft fouten maken, hoeveel rondes je ook doet. In het vorige
    project zag je waarom: geen enkele set gewichten past bij "precies één".
    Wat niet kan, kan een neuron ook niet leren.
@@ -140,7 +143,9 @@ ronde 10 : 0 fouten
 
 Een neuron kan ook met grotere getallen werken. Leer het appels en bananen uit
 elkaar houden, met de maten uit fase B: de lengte en de breedte in
-centimeters. Een banaan is 1, een appel 0.
+centimeters. Een neuron rekent alleen met getallen, dus de soort wordt een
+getal: een banaan is 1, een appel 0. De maten staan nu in een lijst, net als
+de invoer van het EN-neuron.
 
 ```python
 fruit = [
@@ -160,9 +165,9 @@ die het nooit zag:
 <details>
 <summary>Tip</summary>
 
-Neem de code van de editor, en zet `fruit` in de plaats van `voorbeelden`.
-Haal de print in de loop weg, en vraag na de tien rondes
-`neuron([10, 7], gewichten, bias)`.
+Het leren in de editor werkt voor elke lijst voorbeelden, ook met grotere
+getallen. Wat moet je aan de code veranderen, en wat moet je erbij zetten om
+de twee nieuwe stukken fruit te testen?
 
 </details>
 
@@ -200,6 +205,11 @@ print("[15, 5] ->", neuron([15, 5], gewichten, bias))
 Het neuron leert gewichten `[11, -16]`: een lang stuk fruit telt voor banaan,
 een breed stuk tegen. Bij k-NN uit fase B moest de voorspeller alle
 voorbeelden onthouden. Het neuron onthoudt alleen drie getallen.
+
+Vertrouw er nog niet te veel op. Een appel van 11 bij 7 noemt dit neuron al een
+banaan: de som is 8. Met acht voorbeelden en twee testen weet je weinig. Daar
+heb je [eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen) voor,
+met veel meer stukken fruit.
 
 </details>
 
@@ -268,20 +278,27 @@ neuron zegt, en wat het moest zijn.
 
 ## Aan de slag met Traffic
 
-Nu ben je klaar voor
-[Traffic](https://cs50.harvard.edu/ai/projects/5/traffic/) van CS50 AI, het
-zwaarste project van de route. Je traint een neuraal netwerk dat verkeersborden
-herkent op foto's.
+Het laatste project van de route is
+[Traffic](https://cs50.harvard.edu/ai/projects/5/traffic/) van CS50 AI, en het
+zwaarste. Je traint een neuraal netwerk dat verkeersborden herkent op foto's.
+Reken op een paar weken, en op veel dingen die je nog niet kent.
 
-Het idee ken je nu: neuronen met gewichten, en leren door de gewichten bij te
-stellen na elke fout. Drie dingen zijn anders:
+Het idee ken je nu: neuronen met gewichten, en leren door de gewichten steeds
+een stukje bij te stellen, zodat het netwerk minder fout zit. Vier dingen zijn
+anders:
 
 - Een foto is de invoer. Een foto van 30 bij 30 pixels met drie kleuren is
   2700 getallen, dus het netwerk heeft 2700 invoeren.
 - Er zijn veel neuronen, in lagen achter elkaar. Daardoor kan het netwerk wel
   leren wat één neuron niet kon, zoals "precies één".
-- Je schrijft het leren niet zelf. Dat doet de bibliotheek TensorFlow. Jij
-  kiest hoe het netwerk eruitziet: hoeveel lagen, en hoeveel neuronen per laag.
+- Je schrijft het leren niet zelf. Dat doet de bibliotheek TensorFlow, met
+  zijn onderdeel Keras. Jij kiest hoe het netwerk eruitziet: welke lagen, en
+  hoeveel neuronen per laag. Voor foto's gebruik je lagen die naar stukjes van
+  het beeld kijken, en die legt het hoorcollege uit.
+- De foto's lees je zelf in. Daarvoor heb je de module `os` nodig, om de
+  mappen met foto's langs te lopen, en de bibliotheek OpenCV, om een foto te
+  openen en op 30 bij 30 te brengen. Allebei zijn nieuw; zoek in de opdracht
+  op welke functies je nodig hebt.
 
 Zo begin je:
 

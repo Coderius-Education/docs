@@ -4,8 +4,8 @@ sidebar_position: 2
 
 # Nim die van zichzelf leert
 
-In het vorige project bedacht jij de truc van Nim, en schreef je hem op als
-functie. Nu krijgt de computer geen truc. Hij speelt tweeduizend keer tegen
+In het vorige project kreeg `slim` de truc van Nim mee, als functie. Nu
+krijgt de computer geen truc. Hij speelt tweeduizend keer tegen
 zichzelf, en onthoudt na elk spel welke zetten de winnaar deed en welke de
 verliezer. Zetten van de winnaar krijgen een punt erbij, zetten van de
 verliezer een punt eraf. Zo leert hij, zonder dat iemand het hem vertelt,
@@ -50,10 +50,14 @@ zoekt de zet met de hoogste score, en dat is pak 1, met 4.
 
 ## Zo werkt het
 
-De sleutel van `score` is een tuple `(stapel, pak)`: hoeveel er liggen, en
-hoeveel de speler pakt. De waarde zegt hoe goed die zet tot nu toe uitpakte.
-Een tuple kan sleutel zijn, een lijst niet, want een tuple kan niet meer
-veranderen.
+Nieuw is dat de sleutel van een dictionary een tuple is. Bij het spamfilter
+was de sleutel één woord; hier is hij `(stapel, pak)`: hoeveel er liggen, en
+hoeveel de speler pakt. `score[(10, 1)]` is dus de score van de zet "pak 1 als
+er 10 liggen". De waarde zegt hoe goed die zet tot nu toe uitpakte.
+
+Een lijst kan geen sleutel zijn. Een lijst kun je later nog veranderen, en dan
+zou de dictionary zijn sleutel niet meer terugvinden. Een tuple kan niet meer
+veranderen, en mag dus wel.
 
 Het spelen staat al klaar, in de verborgen code onder de editor:
 
@@ -73,7 +77,7 @@ computer nog nooit deed, zet hij eerst op 0.
 
 1. Draai de code. Vergelijk wat hij geleerd heeft met `slim` uit het vorige
    project. Bij welke stapels doet hij hetzelfde?
-2. Bij 5 en 9 lucifers pakt hij iets anders dan `slim`. Is dat erg?
+2. Bij 9 lucifers pakt hij 2, en `slim` pakt 1. Is dat erg?
 3. Print onderaan `score[(10, 1)]` en `score[(10, 3)]`. Wat betekenen die
    getallen?
 4. Zet `ontdekken` op 1: nu kiest hij altijd een willekeurige zet. Wat leert
@@ -120,20 +124,24 @@ for stapel in range(2, 11):
 <details>
 <summary>Antwoorden</summary>
 
-1. Bij elke stapel behalve 5 en 9 pakt hij precies wat `slim` pakt: genoeg
-   om een viervoud plus 1 over te laten. Niemand heeft hem dat verteld. Hij
+1. Bij elke stapel behalve 9 pakt hij precies wat `slim` pakt. Waar je kunt
+   winnen, pakt hij genoeg om een viervoud plus 1 over te laten. Niemand heeft hem dat verteld. Hij
    heeft het gevonden door te spelen.
 2. Nee. Bij 5 en 9 verlies je van een goede tegenstander, wat je ook doet.
    Alle drie de zetten hebben daar een negatieve score, en welke het hoogst
-   uitkomt, is toeval.
+   uitkomt, is toeval. Dat hij bij 5 net als `slim` 1 pakt, is ook toeval:
+   de scores zijn daar -459, -460 en -459, en bij een gelijke stand houdt
+   `beste_zet` de eerste.
 3. `score[(10, 1)]` is 971 en `score[(10, 3)]` is -76. Pak 1 bij 10 leidde
-   bijna altijd tot winst, pak 3 vaker tot verlies. De computer heeft pak 1
+   meestal tot winst, pak 3 vaker tot verlies. De computer heeft pak 1
    veel vaker gespeeld, omdat het de beste zet leek; daarom is het getal zo
    groot.
-4. Dan leert hij bij 10 lucifers pak 3, en dat is fout. Speelt hij altijd
-   willekeurig, dan leert hij hoe je wint van iemand die willekeurig speelt.
-   Pas als hij zijn eigen beste zetten speelt, leert hij winnen van een
-   tegenstander die goed speelt, en dat is hijzelf.
+4. Dan leert hij bij 10 lucifers pak 3, en dat is fout. Hij leert nu welke
+   zet het vaakst wint als daarna beide spelers willekeurig verder spelen. Dan
+   wint pak 3 net iets vaker: 52 procent, tegen 49 voor pak 1. Maar zo speelt
+   niemand die de truc kent. Pas als hij tijdens het leren zijn eigen beste
+   zetten speelt, leert hij wat werkt tegen een tegenstander die goed speelt,
+   en dat is hijzelf.
 5. Ja, ook zonder ontdekken leert hij dit spel. Een zet die verliest, krijgt
    een punt eraf, en dan probeert hij de volgende keer een andere. In een
    groter spel is dat niet genoeg: een zet die hij nooit probeert, krijgt
@@ -151,9 +159,9 @@ hij?
 <details>
 <summary>Tip</summary>
 
-Zet onder de code van de editor de functie `willekeurig` en een `speel` zoals
-in het vorige project. Waar `slim(stapel)` stond, gebruik je nu
-`beste_zet(score, stapel)`.
+In het vorige project speelde `speel` een spel tussen `slim` en `willekeurig`.
+Wat moet je daarin veranderen om `slim` te vervangen door wat de computer net
+leerde?
 
 </details>
 
@@ -162,7 +170,7 @@ in het vorige project. Waar `slim(stapel)` stond, gebruik je nu
 
 Dit komt onder de code van de editor:
 
-{/* niet-draaien: fragment; leunt op score en beste_zet uit de runner erboven */}
+{/* draaien-met: blok-erboven */}
 ```python
 def willekeurig(stapel):
     return random.randint(1, min(3, stapel))
@@ -182,7 +190,7 @@ gewonnen = 0
 for spel in range(100):
     if speel(10) == "geleerd":
         gewonnen = gewonnen + 1
-print("geleerd wint", gewonnen, "van de 100")
+print("geleerd wint", gewonnen, "van de 100")   # geleerd wint 100 van de 100
 ```
 
 Hij wint ze alle 100, net als `slim`. Bij 10 lucifers pakt hij 1, en daarna
@@ -201,17 +209,16 @@ opnieuw `random.seed(1)` en een lege `score`.
 <details>
 <summary>Tip</summary>
 
-Zet het leren in een functie `leer(spellen)` die een nieuwe `score` maakt, de
-spellen speelt en `score` teruggeeft. Zet `slim` uit het vorige project eronder.
-Loop daarna over `[1, 2, 5, 10, 20, 50]`, en tel per aantal de stapels waar
-`beste_zet(score, stapel)` iets anders is dan `slim(stapel)`.
+Maak van het leren uit de editor een functie `leer(spellen)` die een nieuwe
+`score` teruggeeft. Dan kun je hem in een loop aanroepen met elk aantal
+spellen.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-{/* niet-draaien: leunt op speel_tegen_jezelf en beste_zet uit de verborgen code van de runner */}
+{/* draaien-met: blok-erboven */}
 ```python
 import random
 
@@ -245,6 +252,15 @@ for spellen in [1, 2, 5, 10, 20, 50]:
     print(spellen, "spellen:", fout, "fout")
 ```
 
+```
+1 spellen: 2 fout
+2 spellen: 2 fout
+5 spellen: 1 fout
+10 spellen: 0 fout
+20 spellen: 0 fout
+50 spellen: 0 fout
+```
+
 Met deze seed heeft hij er na 1 en 2 spellen nog twee fout, na 5 nog één, en
 vanaf 10 spellen geen enkele meer. Dat gaat zo snel omdat Nim met 10
 lucifers een klein spel is: er zijn maar 27 zetten om te onthouden. Bij
@@ -258,10 +274,13 @@ tabel nergens.
 Nu ben je klaar voor [Nim](https://cs50.harvard.edu/ai/projects/4/nim/) van
 CS50 AI. Het idee is wat je hier deed: een tabel met een waarde voor elke
 stand en elke zet, meestal de beste zet spelen en soms een willekeurige, en
-na elk spel de waarden bijwerken. Drie dingen zijn anders:
+na elk spel de waarden bijwerken. Vier dingen zijn anders:
 
-- Er zijn vier stapels in plaats van één, en een zet is welke stapel en
-  hoeveel. Een stand is dus een lijst van vier getallen.
+- Er zijn vier stapels in plaats van één, en je mag van één stapel zoveel
+  pakken als je wilt. Een zet is dus welke stapel en hoeveel.
+- Een stand is een lijst van vier getallen. Als sleutel moet het een tuple
+  zijn: met `tuple(stand)` maak je er een van. Vergeet je dat, dan krijg je
+  de fout hieronder.
 - Een waarde gaat niet met hele punten omhoog of omlaag. Hij schuift telkens
   een stukje op, met een formule uit het college, die ook kijkt naar de
   beste zet daarna.
@@ -297,7 +316,7 @@ score = {}
 score[(10, 1)] = 0
 ```
 
-Meer uitleg: [Tuples](site:python/docs/data/tuples).
+Meer uitleg: [Zo werkt het](#zo-werkt-het).
 
 Door naar [minimax](site:algorithms/docs/minimax/01-concept), en daarna naar
 [de buren van een vakje](site:algorithms/docs/ml-zoeken/01-buren).

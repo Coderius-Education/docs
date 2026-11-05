@@ -299,6 +299,25 @@ function onderwerpenOpNiveau(leerdoelen, niveau) {
 }
 
 /**
+ * De kolommen van de tabel van één onderwerp op een niveau. Basis en
+ * gevorderd staan er zodra het niveau ze heeft, ook als dit onderwerp er geen
+ * concept in heeft: een lege kolom gevorderd zegt de leerling iets. Expert
+ * staat er alleen als dit onderwerp een expert-concept heeft. Bij algoritmes
+ * is Traffic van CS50 het enige expert-concept, en zonder die regel stond er
+ * bij Python een lege kolom Expert.
+ *
+ * @param {{concepten: {niveau: Record<string, unknown>}[]}} leerdoelen
+ * @param {string} niveau
+ * @param {{niveau: Record<string, unknown>}[]} rijen de concepten van het onderwerp
+ */
+function kolommenVoorOnderwerp(leerdoelen, niveau, rijen) {
+  return CONCEPT_MOEILIJKHEDEN.filter((m) => {
+    const bron = m === 'expert' ? rijen : leerdoelen.concepten;
+    return bron.some((c) => c.niveau[niveau] === m);
+  });
+}
+
+/**
  * Voor de vergelijking: per niveau het niveau ervoor waarvan de moeilijkheid
  * van dit concept verschilt, of null. Een niveau waar het concept niet bij
  * hoort (null) slaat hij over: "gevorderd, –, gevorderd" is geen verschil,
@@ -441,6 +460,7 @@ function moeilijkheidVoorstel(perOnderwerp) {
 module.exports = {
   projectNiveaus,
   onderwerpenOpNiveau,
+  kolommenVoorOnderwerp,
   andersDan,
   BLOOM,
   NIVEAUS,

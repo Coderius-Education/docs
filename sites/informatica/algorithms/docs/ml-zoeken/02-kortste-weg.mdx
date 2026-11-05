@@ -54,8 +54,9 @@ met alleen de start. Zolang er vakjes in de wachtrij staan:
 3. zet je elke buur die je nog niet kende achteraan in de wachtrij. Zijn
    afstand is die van het vakje plus 1.
 
-De dictionary `afstand` onthoudt voor elk vakje dat je al kent, hoeveel stappen
-het van de start ligt. Zo zet je geen vakje twee keer in de wachtrij. Omdat
+`buren` uit het vorige project staat al klaar, in de verborgen code onder de
+editor. De dictionary `afstand` onthoudt voor elk vakje dat je al kent, hoeveel
+stappen het van de start ligt. Zo zet je geen vakje twee keer in de wachtrij. Omdat
 nieuwe vakjes achteraan komen, bekijk je eerst alles op afstand 1, dan alles
 op afstand 2, enzovoort.
 
@@ -92,8 +93,8 @@ print("De kortste weg is", afstand[eind], "stappen")`} />
 <details>
 <summary>Antwoorden</summary>
 
-1. 9 stappen: van S naar beneden door de gang in kolom 1, en dan over de
-   onderste rij naar E.
+1. 9 stappen: één stap naar rechts, dan naar beneden door de gang in kolom 1,
+   en over de onderste rij naar E.
 2. Elk vakje dat de robot kan bereiken, met zijn afstand tot de start. Je
    zoekt dus niet alleen de weg naar E, maar naar alles.
 3. Nu zegt hij 15, en dat klopt niet. Met `pop()` gaat de robot steeds door
@@ -101,8 +102,8 @@ print("De kortste weg is", afstand[eind], "stappen")`} />
    bovenste rij af. Een vakje krijgt dan de afstand van de eerste weg die hij
    vond, niet van de kortste. Zo'n lijst waar je achteraan pakt heet een
    stapel. Een stapel zoekt diep, een wachtrij breed.
-4. Python stopt met een foutmelding: E is nu niet meer te bereiken, dus staat hij niet in
-   `afstand`. Zie [Er gaat iets mis](#er-gaat-iets-mis).
+4. Python stopt met een foutmelding: E is nu niet meer te bereiken, dus staat
+   hij niet in `afstand`. Zie [Er gaat iets mis](#er-gaat-iets-mis).
 
 </details>
 
@@ -110,7 +111,8 @@ print("De kortste weg is", afstand[eind], "stappen")`} />
 
 Je weet nu hoe ver E is, maar niet langs welke vakjes. Onthoud daarom bij elk
 nieuw vakje via welk vakje je er kwam, in een dictionary `vorige`. Loop daarna
-vanaf E terug naar de start, en print de weg van S naar E:
+vanaf E terug naar de start, en print de weg van S naar E. Met
+`weg.insert(0, vakje)` zet je een vakje vooraan in de lijst `weg`:
 
 ```
 [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5)]
@@ -119,10 +121,8 @@ vanaf E terug naar de start, en print de weg van S naar E:
 <details>
 <summary>Tip</summary>
 
-Zet `vorige[buur] = vakje` op de plek waar je ook de afstand van `buur`
-invult. Begin daarna met `weg = [eind]` en `vakje = eind`, en ga met een
-while-loop steeds naar `vorige[vakje]` tot je bij de start bent. De weg staat
-dan achterstevoren; `weg.reverse()` draait hem om.
+Op welke plek in de loop weet je via welk vakje je bij `buur` kwam? Het
+teruglopen is een tweede while-loop, die begint bij E en stopt bij de start.
 
 </details>
 
@@ -131,7 +131,7 @@ dan achterstevoren; `weg.reverse()` draait hem om.
 
 Dit vervangt alles onder `eind = (4, 5)` in de code hierboven:
 
-{/* niet-draaien: fragment; leunt op doolhof, start, eind en de verborgen buren */}
+{/* draaien-met: blok-erboven */}
 ```python
 afstand = {start: 0}
 vorige = {}
@@ -148,9 +148,12 @@ weg = [eind]
 vakje = eind
 while vakje != start:
     vakje = vorige[vakje]
-    weg.append(vakje)
-weg.reverse()
+    weg.insert(0, vakje)
 print(weg)
+```
+
+```
+[(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5)]
 ```
 
 De weg heeft 10 vakjes en dus 9 stappen, net als de afstand zei. Elk vakje
@@ -221,10 +224,23 @@ Nu ben je klaar voor
 krijgt een lijst acteurs en films, en zoekt de kortste verbinding tussen twee
 acteurs: speelden ze samen in een film, of samen met iemand anders?
 
-Het zoeken is wat je hier deed. Alleen de buren zijn anders: de buren van een
-acteur zijn de acteurs die met hem in een film speelden. Een functie die die
-buren geeft, krijg je bij het project. Ook een wachtrij krijg je kant-en-klaar,
-in het bestand `util.py`.
+Het zoeken is wat je hier deed, maar drie dingen zijn anders:
+
+- De buren van een acteur zijn de acteurs die met hem in een film speelden.
+  Een functie die ze geeft, krijg je bij het project. Hij geeft paren: de film
+  en de acteur.
+- De weg die je teruggeeft, bestaat uit zulke paren. Je onthoudt bij het
+  terugvinden dus niet alleen via welke acteur je ergens kwam, zoals met
+  `vorige`, maar ook via welke film.
+- De wachtrij krijg je kant-en-klaar, in het bestand `util.py`. Het is geen
+  lijst maar een klasse, met een methode om iets toe te voegen en een om het
+  voorste eruit te halen. Wat erin gaat, zijn knopen: een acteur, met de knoop
+  waar je vandaan kwam en de film ertussen. Die knoop doet hetzelfde als
+  `vorige`.
+
+Klassen zie je hier voor het eerst. Kijk in `util.py` hoe ze eruitzien, of lees
+[Je eerste klasse](site:python/docs/klassen/15a-je-eerste-klasse) in de
+python-cursus.
 
 Lees de opdracht helemaal door voordat je begint. Test eerst met de kleine
 dataset, en pas daarna met de grote.

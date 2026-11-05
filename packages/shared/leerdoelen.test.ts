@@ -10,6 +10,7 @@ import {
   cijferKolommen,
   cijferTekst,
   cijferVoor,
+  kolommenVoorOnderwerp,
   leesLeerdoelen,
   moeilijkhedenTekst,
   moeilijkheidVoorstel,
@@ -377,6 +378,45 @@ describe('een niveau met een tentamen', () => {
       expect(tips).toContain(`detailPad: '${data.tentamen.bron}'`);
     });
   }
+});
+
+describe('kolommenVoorOnderwerp: de kolommen van een tabel op een niveau', () => {
+  const l = leesLeerdoelen({
+    niveaus: ['1'],
+    onderwerpen: [
+      { id: 'py', label: 'Python' },
+      { id: 'ml', label: 'Machine learning' },
+    ],
+    concepten: [
+      { id: 'py-a', onderwerp: 'py', concept: 'a', 1: 'basis' },
+      { id: 'ml-a', onderwerp: 'ml', concept: 'b', 1: 'gevorderd' },
+      { id: 'ml-b', onderwerp: 'ml', concept: 'c', 1: 'expert' },
+    ],
+  });
+  const kolommen = (onderwerp: string) =>
+    kolommenVoorOnderwerp(
+      l,
+      '1',
+      l.concepten.filter((c) => c.onderwerp === onderwerp),
+    );
+
+  it('expert alleen bij het onderwerp dat een expert-concept heeft', () => {
+    // Bij algoritmes stond bij Python een lege kolom Expert, omdat Traffic
+    // van CS50 expert is.
+    expect(kolommen('ml')).toEqual(['basis', 'gevorderd', 'expert']);
+    expect(kolommen('py')).toEqual(['basis', 'gevorderd']);
+  });
+
+  it('basis en gevorderd staan er als het niveau ze heeft, ook als het onderwerp ze mist', () => {
+    // Een lege kolom gevorderd zegt de leerling iets: hier is nog niets op dat niveau.
+    expect(kolommen('ml')).toContain('basis');
+    expect(kolommen('py')).toContain('gevorderd');
+  });
+
+  it('wordt door de niveaupagina gebruikt', () => {
+    const niveau = readFileSync(join(__dirname, 'components', 'Leerdoelen', 'Niveau.tsx'), 'utf8');
+    expect(niveau).toContain('kolommenVoorOnderwerp(leerdoelen, niveau, rijen)');
+  });
 });
 
 describe('onderwerpenOpNiveau: wat op de pagina van een niveau staat', () => {

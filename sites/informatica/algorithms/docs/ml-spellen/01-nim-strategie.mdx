@@ -7,14 +7,13 @@ sidebar_position: 1
 Nim is een spel voor twee spelers met een stapel lucifers. Om de beurt pak je
 er 1, 2 of 3. Wie de laatste lucifer pakt, verliest. Het lijkt een spel van
 geluk, maar wie de truc kent, wint altijd als hij goed begint. In dit project
-schrijf jij die truc als een functie, en laat je hem spelen tegen een speler
-die maar wat doet.
+zet je die truc in een functie, en laat je hem spelen tegen een speler die
+maar wat doet.
 
 :::info
 Je gebruikt hier de while-loop uit
 [De while-loop](site:python/docs/herhalen/while-loop), `%` uit
-[Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest), `min`
-uit [Lijst-methoden](site:python/docs/data/10b-lijst-methoden), en
+[Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest), en
 `random.randint` uit
 [een dobbelsteen simuleren](site:algorithms/docs/ml-kans/01-dobbelsteen).
 :::
@@ -59,6 +58,14 @@ Een `while`-loop herhaalt zolang de voorwaarde waar is. Hier is dat zolang er
 lucifers liggen. Een `for`-loop past niet: je weet vooraf niet hoeveel beurten
 het spel duurt. Na elke beurt wisselt `speler` van Anna naar Bob en terug.
 
+:::caution
+Een while-loop stopt pas als de voorwaarde onwaar wordt. Vergeet je in de loop
+de stapel kleiner te maken, dan blijven er altijd lucifers liggen en stopt hij
+nooit. De speeltuin heeft geen stopknop, dus het tabblad loopt vast: herlaad de
+pagina, en je code is weg. Twijfel je of je loop stopt, druk dan eerst op Stap
+voor stap. Die neemt hoogstens 1000 stappen op.
+:::
+
 Nu de truc. Laat je je tegenstander 1 lucifer over, dan moet hij de laatste
 pakken. Laat je er 5 over, dan pakt hij er 1, 2 of 3, en laat jij er daarna
 weer 1 over. Hetzelfde geldt voor 9. Wie de truc kent, laat dus steeds 1, 5
@@ -66,6 +73,12 @@ of 9 liggen: een viervoud plus 1. Met `(stapel - 1) % 4` reken je uit hoeveel
 je daarvoor moet pakken. Komt daar 0 uit, dan ligt er al een viervoud plus 1
 en kun je niet winnen tegen iemand die de truc ook kent. Dan pak je 1 en hoop
 je op een fout.
+
+In de editor staat de truc als functie `slim`, met een tegenstander
+`willekeurig` die 1, 2 of 3 pakt. `min(3, stapel)` geeft het kleinste van de
+twee getallen, zodat `willekeurig` nooit meer pakt dan er ligt. De functie
+`speel` laat ze om de beurt pakken, en geeft terug wie er aan de beurt is als
+de stapel op is. Dat is de winnaar: de ander pakte net de laatste lucifer.
 
 ## Onderzoek
 
@@ -114,10 +127,6 @@ print("slim wint", gewonnen, "van de 100")`} />
 3. 2, want `(7 - 1) % 4` is 2. Dan liggen er 5, een viervoud plus 1.
 
 </details>
-
-`speel` geeft terug wie er aan de beurt is als de stapel op is. Dat is de
-winnaar: de ander pakte net de laatste lucifer. `min(3, stapel)` zorgt dat
-`willekeurig` nooit meer pakt dan er ligt.
 
 ## Opdracht: pakken tot en met 4
 
@@ -174,9 +183,10 @@ Samen pak je elke ronde 5, dus laat `slim` steeds een vijfvoud plus 1 over:
 
 ## Bouw zelf: slim tegen slim
 
-Laat `slim` tegen zichzelf spelen, met de gewone regels (1 tot en met 3).
-Wie wint er, de speler die begint of de ander? Zoek het uit voor elke stapel
-van 1 tot en met 12, en print per stapel wie er wint. Zie je een patroon?
+Klopt de truc wel? Volgens Zo werkt het verliest wie begint bij een viervoud
+plus 1, als de ander de truc ook kent. Controleer dat: laat `slim` tegen
+zichzelf spelen, met de gewone regels (1 tot en met 3), en print voor elke
+stapel van 1 tot en met 12 wie er wint, de speler die begint of de ander.
 
 <details>
 <summary>Tip</summary>
@@ -211,9 +221,9 @@ for stapel in range(1, 13):
     print(stapel, slim_tegen_slim(stapel))
 ```
 
-Bij 1, 5 en 9 wint de tweede speler, bij alle andere stapels de eerste. Als
-beide spelers de truc kennen, ligt de winnaar vast voordat het spel begint.
-Daar is geen toeval meer aan.
+Bij 1, 5 en 9 wint de tweede speler, bij alle andere stapels de eerste: de
+truc klopt. Als beide spelers hem kennen, ligt de winnaar vast voordat het
+spel begint. Daar is geen toeval meer aan.
 
 </details>
 
