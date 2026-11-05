@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { levelVoor } from '@coderius/checker/conceptLevel';
+import { inTrack, levelVoor } from '@coderius/checker/conceptLevel';
 import { geldigeTrack } from '@coderius/checker/leerdoelen';
 import { computeLevelSummary } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
@@ -271,52 +271,60 @@ describe('roboticaConfig', () => {
   });
 
   it('volgt het tabblad robotica van het beoordelingsblad', () => {
-    // Het blad zoals de docent het invulde, met start als niveau 1 en
-    // verdieping als niveau 3. Twee spelfouten zijn hersteld ("calibreren",
-    // "afstandsensor"). Waar de oude nakijker een andere moeilijkheid gaf
-    // (if / elif / else, Lijsten en bal detecteren, en bij verdieping functies,
-    // lijst-methodes en imports), geldt nu het blad.
+    // Het blad zoals de docent het invulde: start is niveau 1, verdieping is
+    // niveau 4, en niveau 3 zit daartussen. X is "hoort niet bij dit niveau"
+    // (null in leerdoelen.json): niveau 4 laat functies met parameters, een
+    // eigen module en tuples / sets weg, niveau 3 daarbovenop lijsten,
+    // lijst-methodes, continue en break. Twee spelfouten zijn hersteld
+    // ("calibreren", "afstandsensor").
     const B = 'basis';
     const G = 'gevorderd';
+    const X = null;
     const blad = [
-      ['Python', 'variabele', B, B],
-      ['Python', 'rekenen (+, -, *, /)', B, B],
-      ['Python', 'f-strings', B, B],
-      ['Python', 'booleans', B, B],
-      ['Python', 'if / else', B, B],
-      ['Python', 'if / elif / else', G, G],
-      ['Python', 'while-loop', B, B],
-      ['Python', 'functie zonder parameters en return', B, G],
-      ['Python', 'Functie met parameters', B, G],
-      ['Python', 'Lijst-methodes', B, G],
-      ['Python', 'imports', B, B],
-      ['Robotica', 'het frame bouwen', B, B],
-      ['Robotica', 'één IR-sensor uitlezen en kalibreren', B, B],
-      ['Robotica', 'twee IR-sensoren uitlezen en kalibreren', B, B],
-      ['Robotica', 'waardes van IR-sensoren tonen op scherm', B, B],
-      ['Robotica', 'Motoren aansturen', B, B],
-      ['Robotica', 'hele robot gebouwd (lego + motoren + IR-sensoren + schermpje)', B, B],
-      ['Robotica', 'robot laten werken op batterijen', B, B],
-      ['Robotica', 'lijnvolgen met twee IR-sensoren', B, B],
-      ['Robotica', 'lijnvolgen met vier IR-sensoren', G, B],
-      ['Robotica', 'afstandssensor uitlezen', G, B],
-      ['Robotica', 'obstakel detecteren en stoppen', G, B],
-      ['Robotica', 'bal detecteren', G, G],
-      ['Python', 'and / or', G, G],
-      ['Python', 'continue', G, G],
-      ['Python', 'break', G, G],
-      ['Python', 'Lijsten', G, G],
-      ['Python', 'zelf python module schrijven en importeren in ander bestand', G, G],
-      ['Python', 'tuples / sets', G, G],
-      ['Robotica', 'om obstakel heen rijden', G, G],
-      ['Robotica', 'langs muren rijden', G, G],
-      ['Robotica', 'bal grijpen', G, G],
-      ['Robotica', 'groot gedeelte Redden Basis', G, G],
+      ['Python', 'variabele', B, B, B],
+      ['Python', 'rekenen (+, -, *, /)', B, B, B],
+      ['Python', 'f-strings', B, B, B],
+      ['Python', 'booleans', B, B, B],
+      ['Python', 'if / else', B, B, B],
+      ['Python', 'if / elif / else', G, G, G],
+      ['Python', 'while-loop', B, B, B],
+      ['Python', 'functie zonder parameters en return', B, G, G],
+      ['Python', 'Functie met parameters', B, X, X],
+      ['Python', 'Lijst-methodes', B, X, G],
+      ['Python', 'imports', B, B, B],
+      ['Robotica', 'het frame bouwen', B, B, B],
+      ['Robotica', 'één IR-sensor uitlezen en kalibreren', B, B, B],
+      ['Robotica', 'twee IR-sensoren uitlezen en kalibreren', B, B, B],
+      ['Robotica', 'waardes van IR-sensoren tonen op scherm', B, B, B],
+      ['Robotica', 'Motoren aansturen', B, B, B],
+      ['Robotica', 'hele robot gebouwd (lego + motoren + IR-sensoren + schermpje)', B, B, B],
+      ['Robotica', 'robot laten werken op batterijen', B, B, B],
+      ['Robotica', 'lijnvolgen met twee IR-sensoren', B, B, B],
+      ['Robotica', 'lijnvolgen met vier IR-sensoren', G, B, B],
+      ['Robotica', 'afstandssensor uitlezen', G, B, B],
+      ['Robotica', 'obstakel detecteren en stoppen', G, B, B],
+      ['Robotica', 'bal detecteren', G, G, G],
+      ['Python', 'and / or', G, G, G],
+      ['Python', 'continue', G, X, G],
+      ['Python', 'break', G, X, G],
+      ['Python', 'Lijsten', G, X, G],
+      ['Python', 'zelf python module schrijven en importeren in ander bestand', G, X, X],
+      ['Python', 'tuples / sets', G, X, X],
+      ['Robotica', 'om obstakel heen rijden', G, G, G],
+      ['Robotica', 'langs muren rijden', G, G, G],
+      ['Robotica', 'bal grijpen', G, G, G],
+      ['Robotica', 'groot gedeelte Redden Basis', G, G, G],
     ];
     const label = new Map(leerdoelenJson.onderwerpen.map((o) => [o.id, o.label]));
-    expect(leerdoelenJson.niveaus).toEqual(['1', '3']);
+    expect(leerdoelenJson.niveaus).toEqual(['1', '3', '4']);
     expect(
-      leerdoelenJson.concepten.map((c) => [label.get(c.onderwerp), c.concept, c['1'], c['3']]),
+      leerdoelenJson.concepten.map((c) => [
+        label.get(c.onderwerp),
+        c.concept,
+        c['1'],
+        c['3'],
+        c['4'],
+      ]),
     ).toEqual(blad);
   });
 
@@ -348,28 +356,58 @@ describe('roboticaConfig', () => {
     expect(roboticaConfig.tracks).toEqual([
       { id: '1', label: 'Niveau 1' },
       { id: '3', label: 'Niveau 3' },
+      { id: '4', label: 'Niveau 4' },
     ]);
-    // Een beoordeling van vóór de leerdoelen had start of verdieping.
+    // Een beoordeling van vóór de leerdoelen had start of verdieping, en
+    // verdieping is nu niveau 4.
     expect(geldigeTrack(roboticaConfig, 'start')).toBe('1');
-    expect(geldigeTrack(roboticaConfig, 'verdieping')).toBe('3');
+    expect(geldigeTrack(roboticaConfig, 'verdieping')).toBe('4');
   });
 
-  it('de niveaus verschuiven tussen niveau 1 en 3', () => {
-    // Zonder twee niveaus zou dezelfde robot in beide routes hetzelfde
-    // scoren. Volgens het blad gaan op niveau 3 drie robotica-onderdelen van
-    // gevorderd naar basis, en drie Python-concepten juist naar gevorderd.
-    const naarBasis = roboticaConfig.concepts
-      .filter((c) => levelVoor(c, '1') === 'gevorderd' && levelVoor(c, '3') === 'basis')
-      .map((c) => c.id);
-    const naarGevorderd = roboticaConfig.concepts
-      .filter((c) => levelVoor(c, '1') === 'basis' && levelVoor(c, '3') === 'gevorderd')
-      .map((c) => c.id);
-    expect(naarBasis).toEqual(['rb-ir-vier', 'rb-afstand', 'rb-obstakel-stoppen']);
-    expect(naarGevorderd).toEqual(['py-functie', 'py-functie-parameters', 'py-lijst-methoden']);
+  it('laat op niveau 3 en 4 weg wat het blad daar weghaalt', () => {
+    const weg = (route: string) =>
+      roboticaConfig.concepts.filter((c) => !inTrack(c, route)).map((c) => c.id);
+    expect(weg('1')).toEqual([]);
+    expect(weg('4')).toEqual(['py-functie-parameters', 'py-import-eigen', 'py-tuple-set']);
+    expect(weg('3')).toEqual([
+      'py-functie-parameters',
+      'py-lijst-methoden',
+      'py-continue',
+      'py-break',
+      'py-lijst',
+      'py-import-eigen',
+      'py-tuple-set',
+    ]);
+    // Wat weg is, telt in die leerroute niet mee, ook niet als het in de
+    // code staat: met tuples in het project blijft het totaal op niveau 4
+    // drie lager dan op niveau 1.
     const report = analyze(leesFixture('compleet'), roboticaConfig);
-    const een = computeLevelSummary(report, roboticaConfig, '1');
-    const drie = computeLevelSummary(report, roboticaConfig, '3');
-    expect(drie.basis.total + drie.gevorderd.total).toBe(een.basis.total + een.gevorderd.total);
+    const totaal = (route: string) => {
+      const s = computeLevelSummary(report, roboticaConfig, route);
+      return s.basis.total + s.gevorderd.total + s.expert.total;
+    };
+    expect(totaal('1')).toBe(33);
+    expect(totaal('4')).toBe(30);
+    expect(totaal('3')).toBe(26);
+  });
+
+  it('de niveaus verschuiven tussen niveau 1 en 4', () => {
+    // Zonder meer niveaus zou dezelfde robot in elke route hetzelfde
+    // scoren. Volgens het blad gaan op niveau 4 drie robotica-onderdelen van
+    // gevorderd naar basis, en twee Python-concepten juist naar gevorderd.
+    const naar = (van: string, naar: string, route: string) =>
+      roboticaConfig.concepts
+        .filter(
+          (c) => inTrack(c, route) && levelVoor(c, '1') === van && levelVoor(c, route) === naar,
+        )
+        .map((c) => c.id);
+    expect(naar('gevorderd', 'basis', '4')).toEqual([
+      'rb-ir-vier',
+      'rb-afstand',
+      'rb-obstakel-stoppen',
+    ]);
+    expect(naar('basis', 'gevorderd', '4')).toEqual(['py-functie', 'py-lijst-methoden']);
+    expect(naar('basis', 'gevorderd', '3')).toEqual(['py-functie']);
   });
 
   it('elk handmatig concept staat in Bouwen of Rijgedrag', () => {

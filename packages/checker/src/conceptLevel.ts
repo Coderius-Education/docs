@@ -18,6 +18,16 @@ export function levelVoor(concept: Concept, track: string | null): Level {
   // Een record zonder de gevraagde track hoort validateConfig al te hebben
   // gemeld. Val terug op de eerste waarde, zodat het concept in elk geval
   // ergens meetelt in plaats van stil uit de tellingen te verdwijnen.
-  const eerste = Object.values(concept.level)[0];
+  const eerste = Object.values(concept.level).find((l): l is Level => l !== null);
   return eerste ?? 'basis';
+}
+
+/**
+ * Hoort het concept bij deze track? Niet als zijn niveau daar `null` is: het
+ * blad haalt het er voor die leerroute uit. Zonder track (de leerling ziet er
+ * geen) hoort alles erbij.
+ */
+export function inTrack(concept: Concept, track: string | null): boolean {
+  if (track === null || typeof concept.level === 'string') return true;
+  return concept.level[track] !== null;
 }

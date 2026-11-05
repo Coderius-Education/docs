@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   BLOOM,
   NIVEAUS,
+  andersDan,
   cijferKolommen,
   cijferTekst,
   cijferVoor,
@@ -105,6 +106,22 @@ describe('ankers op de leerdoelenpagina', () => {
   });
 });
 
+describe('de moeilijkheden in de tekst', () => {
+  it('noemt alleen de moeilijkheden die de cursus gebruikt', () => {
+    // De vergelijking zei "basis, gevorderd of expert", ook bij robotica,
+    // dat geen expert heeft. moeilijkhedenTekst kijkt in de leerdoelen.
+    const map = join(__dirname, 'components', 'Leerdoelen');
+    const zonderCommentaar = (bron: string) =>
+      bron.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+    const vast = readdirSync(map)
+      .filter((f) => f.endsWith('.tsx'))
+      .filter((f) =>
+        /basis,? (of )?gevorderd/i.test(zonderCommentaar(readFileSync(join(map, f), 'utf8'))),
+      );
+    expect(vast).toEqual([]);
+  });
+});
+
 describe('een concept op de pagina', () => {
   it('toont overal waar het concept staat ook zijn toelichting', () => {
     // De vergelijking liet de toelichting weg. Bij fullstack hangen twee
@@ -173,7 +190,7 @@ describe('leesLeerdoelen', () => {
         { id: 'gd-groups', onderwerp: 'gd', concept: 'groups', 1: 'gevorderd' },
         { id: 'gd-groups', onderwerp: 'x', concept: '', 1: 'moeilijk', 3: 'basis' },
         { id: 'gd-tweens', onderwerp: 'gd', concept: 'tweens', 1: 'basis', 3: 'basis', 4: 'basis' },
-        { id: 'gd-json', onderwerp: 'gd', concept: 'JSON', 1: 'basis', 3: 'basis', bloom: 'weten' },
+        { id: 'gd-json', onderwerp: 'gd', concept: 'JSON', 1: 'basis', 3: null, bloom: 'weten' },
       ],
     };
     let melding = '';
@@ -184,6 +201,8 @@ describe('leesLeerdoelen', () => {
     }
     expect(melding).toContain('godot/src/leerdoelen.json');
     expect(melding).toContain("concept 'gd-groups': niveau '3' ontbreekt");
+    // null is wel een waarde: dat concept hoort niet bij dat niveau.
+    expect(melding).not.toContain("concept 'gd-json': niveau");
     expect(melding).toContain("concept 'gd-groups' staat er twee keer");
     expect(melding).toContain("onbekend onderwerp 'x'");
     expect(melding).toContain('concept (de tekst) ontbreekt');
@@ -357,6 +376,40 @@ describe('een niveau met een tentamen', () => {
       expect(tips).toContain(`detailPad: '${data.tentamen.bron}'`);
     });
   }
+});
+
+describe('andersDan: wat in de vergelijking opvalt', () => {
+  const niveaus = [{ id: '1' }, { id: '3' }, { id: '4' }];
+  type M = 'basis' | 'gevorderd' | 'expert' | null;
+  const rij = (n1: M, n3: M, n4: M) => ({
+    niveau: { 1: n1, 3: n3, 4: n4 },
+  });
+
+  it('een andere moeilijkheid dan het niveau ervoor', () => {
+    expect(andersDan(rij('basis', 'gevorderd', 'gevorderd'), niveaus)).toEqual({
+      1: null,
+      3: '1',
+      4: null,
+    });
+  });
+
+  it('slaat een niveau zonder het concept over', () => {
+    // Robotica: continue is op niveau 1 en 4 gevorderd, en hoort niet bij
+    // niveau 3. Het streepje kreeg eerst een kader, en niveau 4 ook, als
+    // "anders dan Niveau 3", terwijl de moeilijkheid niet verandert.
+    expect(andersDan(rij('gevorderd', null, 'gevorderd'), niveaus)).toEqual({
+      1: null,
+      3: null,
+      4: null,
+    });
+    // Lijst-methodes: basis, weg, gevorderd. Niveau 4 verschilt van niveau 1.
+    expect(andersDan(rij('basis', null, 'gevorderd'), niveaus)).toEqual({
+      1: null,
+      3: null,
+      4: '1',
+    });
+    expect(andersDan(rij('basis', null, null), niveaus)).toEqual({ 1: null, 3: null, 4: null });
+  });
 });
 
 describe('cijfer volgens het beoordelingsblad', () => {

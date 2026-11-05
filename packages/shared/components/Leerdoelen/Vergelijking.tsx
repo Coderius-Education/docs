@@ -1,13 +1,14 @@
 import Link from '@docusaurus/Link';
 import type { ReactNode } from 'react';
-import { type Leerdoelen, projectNiveaus } from '../../leerdoelen';
+import { type Leerdoelen, andersDan, projectNiveaus } from '../../leerdoelen';
 import Lessen from './Lessen';
 import Moeilijkheid from './Moeilijkheid';
 import styles from './styles.module.css';
 
 /**
  * De niveaus naast elkaar: per concept één rij, per niveau een kolom. Een
- * moeilijkheid die anders is dan bij het niveau ervoor, valt op.
+ * moeilijkheid die anders is dan bij het niveau ervoor, valt op; een niveau
+ * waar het concept niet bij hoort, slaat die vergelijking over (andersDan).
  */
 export default function Vergelijking({ leerdoelen }: { leerdoelen: Leerdoelen }): ReactNode {
   const { onderwerpen, concepten } = leerdoelen;
@@ -36,29 +37,32 @@ export default function Vergelijking({ leerdoelen }: { leerdoelen: Leerdoelen })
                   {o.label}
                 </th>
               </tr>
-              {rijen.map((c) => (
-                <tr key={c.id}>
-                  <td>
-                    {c.concept}
-                    {c.toelichting && <span className={styles.toelichting}>{c.toelichting}</span>}
-                    <Lessen concept={c} />
-                  </td>
-                  {niveaus.map((n, i) => {
-                    const anders = i > 0 && c.niveau[n.id] !== c.niveau[niveaus[i - 1].id];
-                    return (
-                      <td key={n.id}>
-                        <Moeilijkheid id={c.niveau[n.id]} className={anders ? styles.anders : ''} />
-                        {anders && (
-                          <span className={styles.verborgen}>
-                            {' '}
-                            (anders dan {niveaus[i - 1].label})
-                          </span>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
+              {rijen.map((c) => {
+                const anders = andersDan(c, niveaus);
+                return (
+                  <tr key={c.id}>
+                    <td>
+                      {c.concept}
+                      {c.toelichting && <span className={styles.toelichting}>{c.toelichting}</span>}
+                      <Lessen concept={c} />
+                    </td>
+                    {niveaus.map((n) => {
+                      const vorige = niveaus.find((v) => v.id === anders[n.id]);
+                      return (
+                        <td key={n.id}>
+                          <Moeilijkheid
+                            id={c.niveau[n.id]}
+                            className={vorige ? styles.anders : ''}
+                          />
+                          {vorige && (
+                            <span className={styles.verborgen}> (anders dan {vorige.label})</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
             </tbody>
           );
         })}

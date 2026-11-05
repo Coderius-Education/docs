@@ -223,7 +223,7 @@ describe('godotConfig — de leerdoelen', () => {
       ['GDScript', 'modulaire eigen functies', G, E, G],
       ['GDScript', 'nuttig gebruik lijsten', G, E, G],
       ['GDScript', 'nuttig gebruik dictionaries', G, E, G],
-      ['GDScript', 'lezen en schrijven JSON', G, G, G],
+      ['GDScript', 'lezen en schrijven JSON', G, E, G],
       ['GDScript', 'nuttige gebruik loops', G, E, G],
       ['GDScript', 'tweens', G, G, G],
       ['GDScript', 'nuttig gebruik timers (bijvoorbeeld await)', G, G, B],
@@ -298,8 +298,9 @@ describe('godotConfig — de leerdoelen', () => {
     const telling = (route: string, m: string) =>
       godotConfig.concepts.filter((c) => levelVoor(c, route) === m).length;
     expect(telling('4', 'basis')).toBeGreaterThan(telling('1', 'basis'));
-    // Alleen niveau 3 heeft expert, zoals het blad.
-    expect(telling('3', 'expert')).toBe(4);
+    // Alleen niveau 3 heeft expert, zoals het blad: modulaire functies,
+    // lijsten, dictionaries, loops en JSON.
+    expect(telling('3', 'expert')).toBe(5);
     expect(telling('1', 'expert') + telling('4', 'expert')).toBe(0);
   });
 

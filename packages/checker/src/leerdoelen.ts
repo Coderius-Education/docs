@@ -1,5 +1,5 @@
 import { BLOOM, type Leerdoelen, leesLeerdoelen, moeilijkheid } from '@coderius/shared/leerdoelen';
-import type { CheckerConfig, Concept, ConceptDetect, ConceptLevel } from './types';
+import type { CheckerConfig, Concept, ConceptDetect, ConceptLevel, Level } from './types';
 
 // Van de leerdoelen van een cursus (src/leerdoelen.json, zie
 // packages/shared/leerdoelen) naar de concepten van de nakijker. De
@@ -32,9 +32,19 @@ export function leerdoelenNaarConfig(
   ];
   if (fouten.length) throw new Error(`nakijker:\n- ${fouten.join('\n- ')}`);
 
+  // Een concept dat bij geen enkel niveau hoort (overal null), kan de
+  // nakijker nergens tellen; met één niveau is null dus ook een fout.
+  const nergens = leerdoelen.concepten
+    .filter((c) => Object.values(c.niveau).every((m) => m === null))
+    .map((c) => `concept '${c.id}' hoort bij geen enkel niveau`);
+  if (nergens.length) throw new Error(`nakijker:\n- ${nergens.join('\n- ')}`);
+
   const concepts: Concept[] = leerdoelen.concepten.map((c) => {
-    const level: ConceptLevel = eenNiveau ? c.niveau[leerdoelen.niveaus[0].id] : { ...c.niveau };
-    const overal = new Set(Object.values(c.niveau));
+    const level: ConceptLevel = eenNiveau
+      ? (c.niveau[leerdoelen.niveaus[0].id] as Level)
+      : { ...c.niveau };
+    // Alleen de niveaus waar het concept bij hoort, bepalen de groep.
+    const overal = new Set(Object.values(c.niveau).filter((m) => m !== null));
     return {
       id: c.id,
       subject: c.onderwerp,

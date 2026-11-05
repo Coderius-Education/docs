@@ -107,7 +107,9 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
     }
 
     const levels =
-      typeof concept.level === 'string' ? [concept.level] : Object.values(concept.level);
+      typeof concept.level === 'string'
+        ? [concept.level]
+        : Object.values(concept.level).filter((l) => l !== null);
     for (const level of levels) {
       if (!LEVELS.includes(level)) {
         problems.push(
@@ -124,10 +126,14 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
           `Concept '${concept.id}' geeft een niveau per track, maar de config heeft geen tracks.`,
         );
       }
+      // null mag: het concept hoort dan niet bij die track. Ontbreken niet.
       for (const track of trackIds) {
-        if (!concept.level[track]) {
+        if (concept.level[track] === undefined) {
           problems.push(`Concept '${concept.id}' heeft geen niveau voor track '${track}'.`);
         }
+      }
+      if (Object.values(concept.level).every((l) => l === null)) {
+        problems.push(`Concept '${concept.id}' hoort bij geen enkele track.`);
       }
     }
 
