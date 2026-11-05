@@ -23,7 +23,7 @@
       "json": { "parser": { "allowComments": true, "allowTrailingCommas": true } }
     },
     {
-      "include": ["**/leerdoelen.json"],
+      "include": ["**/leerdoelen.json", "**/begrippen.json"],
       "formatter": { "lineWidth": 320 }
     }
   ]

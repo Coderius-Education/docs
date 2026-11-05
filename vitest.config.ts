@@ -16,6 +16,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@docusaurus/BrowserOnly': '@docusaurus/core/lib/client/exports/BrowserOnly.js',
+      // Begrip (packages/shared/components/Begrip) gebruikt Link en de globale
+      // data van zijn plugin; de test vervangt ze met vi.mock.
+      '@docusaurus/Link': '@docusaurus/core/lib/client/exports/Link.js',
+      '@docusaurus/useGlobalData': '@docusaurus/core/lib/client/exports/useGlobalData.js',
     },
   },
   test: {

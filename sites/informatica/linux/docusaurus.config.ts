@@ -41,6 +41,7 @@ export default createConfig({
         { type: 'docSidebar', sidebarId: 'linuxSidebar', position: 'left', label: 'Linux' },
         { to: '/docs/wsl/installeren', label: 'WSL', position: 'left' },
         { to: '/docs/cheatsheet', label: 'Cheatsheet', position: 'left' },
+        { to: '/docs/begrippen', label: 'Begrippen', position: 'left' },
         { type: 'docSidebar', sidebarId: 'unpluggedSidebar', position: 'left', label: 'Unplugged' },
         { href: REPO_URL, label: 'GitHub', position: 'right' },
       ],
