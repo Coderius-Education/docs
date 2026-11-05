@@ -1,7 +1,8 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { levelVoor } from '@coderius/checker/conceptLevel';
+import { inTrack, levelVoor } from '@coderius/checker/conceptLevel';
+import { leerrouteVan } from '@coderius/checker/leerdoelen';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
@@ -90,11 +91,14 @@ describe('webConfig — de conceptenlijst zelf', () => {
 
   it('telt precies de rijen uit de leerdoelen, met hun niveau', () => {
     expect(webConfig.concepts.map((c) => [c.id, c.subject, c.label, c.level])).toEqual(
-      leerdoelen.concepten.map((c) => [c.id, c.onderwerp, c.concept, c['1']]),
+      leerdoelen.concepten.map((c) => [c.id, c.onderwerp, c.concept, { 1: c['1'], 2: c['2'] }]),
     );
-    // De tabel van de docent: 13 rijen basis, 10 gevorderd.
-    expect(webConfig.concepts.filter((c) => levelVoor(c, null) === 'basis')).toHaveLength(13);
-    expect(webConfig.concepts.filter((c) => levelVoor(c, null) === 'gevorderd')).toHaveLength(10);
+    const tel = (track: string, niveau: string) =>
+      webConfig.concepts.filter((c) => inTrack(c, track) && levelVoor(c, track) === niveau).length;
+    // Niveau 2 is de tabel van de docent: 13 rijen basis, 10 gevorderd.
+    expect([tel('2', 'basis'), tel('2', 'gevorderd')]).toEqual([13, 10]);
+    // Niveau 1 is dezelfde tabel zonder JavaScript: 8 basis, 3 gevorderd.
+    expect([tel('1', 'basis'), tel('1', 'gevorderd')]).toEqual([8, 3]);
   });
 
   it('de leerdoelen zijn het tabblad Web van het beoordelingsblad (Beoordeling_INF.xlsx)', () => {
@@ -126,17 +130,23 @@ describe('webConfig — de conceptenlijst zelf', () => {
       ['JavaScript', 'loops', 'gevorderd'],
     ];
     const label = new Map(leerdoelen.onderwerpen.map((o) => [o.id, o.label]));
-    // Het blad heeft één kolom zonder naam: niveau 1, het enige niveau van web.
-    expect(leerdoelen.niveaus).toEqual(['1']);
-    expect(leerdoelen.concepten.map((c) => [label.get(c.onderwerp), c.concept, c['1']])).toEqual(
+    // Het blad heeft één kolom zonder naam: dat is niveau 2. Niveau 1 is
+    // dezelfde kolom zonder JavaScript (keuze van de docent, november 2026).
+    expect(leerdoelen.niveaus).toEqual(['1', '2']);
+    expect(leerdoelen.concepten.map((c) => [label.get(c.onderwerp), c.concept, c['2']])).toEqual(
       blad,
+    );
+    expect(leerdoelen.concepten.map((c) => [label.get(c.onderwerp), c.concept, c['1']])).toEqual(
+      blad.map(([o, c, m]) => [o, c, o === 'JavaScript' ? null : m]),
     );
   });
 
   it('stelt een cijfer voor: de config draagt de leerdoelen', () => {
-    expect(webConfig.leerdoelen?.niveaus.map((n) => n.id)).toEqual(['1']);
-    // Eén niveau: geen keuze bij Leerroute.
-    expect(webConfig.tracks).toBeUndefined();
+    expect(webConfig.leerdoelen?.niveaus.map((n) => n.id)).toEqual(['1', '2']);
+    // Twee niveaus: de docent kiest bij Leerroute.
+    expect(webConfig.tracks?.map((t) => t.id)).toEqual(['1', '2']);
+    // Een beoordeling van toen web één niveau had (met JavaScript) opent op 2.
+    expect(leerrouteVan(webConfig, { track: null }, '1')).toBe('2');
   });
 
   it('zet elk ander concept uit de lessen onder "Ook gebruikt", zonder niveau', () => {

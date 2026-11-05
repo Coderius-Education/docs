@@ -352,8 +352,12 @@ const extra = LESCONCEPTEN.filter((c) => !gedekt.has(c.id));
 
 export const webConfig: CheckerConfig = {
   subjects: uitLeerdoelen.subjects,
-  // Bij meer niveaus kiest de docent bij Leerroute; web heeft er één.
+  // De docent kiest bij Leerroute: niveau 1 is HTML en CSS, niveau 2 ook
+  // JavaScript.
   tracks: uitLeerdoelen.tracks,
+  // Tot november 2026 had web één niveau, met JavaScript: dat is niveau 2.
+  // Een beoordeling van toen heeft geen leerroute en opent daar.
+  zonderLeerroute: '2',
 
   fileKinds: [
     { id: 'html', label: 'HTML' },

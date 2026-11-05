@@ -161,6 +161,13 @@ export interface CheckerConfig {
    * (geldigeTrack), niet stil op de eerste.
    */
   oudeLeerroutes?: Record<string, string>;
+  /**
+   * De leerroute van een bewaarde beoordeling van toen de site nog geen
+   * leerroutes had (track null). Web had één niveau; dat werd niveau 2, met
+   * JavaScript, en niveau 1 kwam ervoor zonder JavaScript. Zonder deze optie
+   * opende zo'n beoordeling op niveau 1, en verloor hij stil elke JavaScript-rij.
+   */
+  zonderLeerroute?: string;
   /** Bestandssoorten voor het bestandsoverzicht (volgorde + labels). */
   fileKinds: FileKindInfo[];
   /** Pad → kind-id. */
