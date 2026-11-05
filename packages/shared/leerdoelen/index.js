@@ -274,6 +274,27 @@ function projectNiveaus(leerdoelen) {
 }
 
 /**
+ * Voor de vergelijking: per niveau het niveau ervoor waarvan de moeilijkheid
+ * van dit concept verschilt, of null. Een niveau waar het concept niet bij
+ * hoort (null) slaat hij over: "gevorderd, –, gevorderd" is geen verschil,
+ * en het streepje zelf ook niet.
+ *
+ * @param {{niveau: Record<string, string | null>}} concept
+ * @param {{id: string}[]} niveaus in de volgorde van de kolommen
+ * @returns {Record<string, string | null>} per niveau-id het id van het vorige niveau
+ */
+function andersDan(concept, niveaus) {
+  const uit = {};
+  let vorige = null;
+  for (const n of niveaus) {
+    const m = concept.niveau[n.id];
+    uit[n.id] = m !== null && vorige !== null && m !== concept.niveau[vorige] ? vorige : null;
+    if (m !== null) vorige = n.id;
+  }
+  return uit;
+}
+
+/**
  * De moeilijkheden die een cursus echt gebruikt, als tekst: "basis of
  * gevorderd", of "basis, gevorderd of expert". Een cursus zonder expert
  * noemt hem niet.
@@ -385,6 +406,7 @@ function moeilijkheidVoorstel(perOnderwerp) {
 
 module.exports = {
   projectNiveaus,
+  andersDan,
   BLOOM,
   NIVEAUS,
   CONCEPT_MOEILIJKHEDEN,

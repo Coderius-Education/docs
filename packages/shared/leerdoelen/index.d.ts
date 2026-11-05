@@ -132,6 +132,11 @@ export function moeilijkheidVoorstel(perOnderwerp: OnderwerpTelling[]): {
 };
 export function moeilijkhedenTekst(leerdoelen: Leerdoelen): string;
 export function projectNiveaus(leerdoelen: Leerdoelen): Niveau[];
+/** Per niveau-id het vorige niveau waarvan de moeilijkheid verschilt, of null; null-niveaus tellen niet mee. */
+export function andersDan(
+  concept: Pick<LeerdoelConcept, 'niveau'>,
+  niveaus: { id: string }[],
+): Record<string, string | null>;
 export function cijferKolommen(leerdoelen: Leerdoelen): Moeilijkheid[];
 export function denkvaardigheid(id: string): Denkvaardigheid;
 export function moeilijkheid(id: string): Moeilijkheid;

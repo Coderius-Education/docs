@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   BLOOM,
   NIVEAUS,
+  andersDan,
   cijferKolommen,
   cijferTekst,
   cijferVoor,
@@ -102,6 +103,22 @@ describe('ankers op de leerdoelenpagina', () => {
         ),
       );
     expect(kaal).toEqual([]);
+  });
+});
+
+describe('de moeilijkheden in de tekst', () => {
+  it('noemt alleen de moeilijkheden die de cursus gebruikt', () => {
+    // De vergelijking zei "basis, gevorderd of expert", ook bij robotica,
+    // dat geen expert heeft. moeilijkhedenTekst kijkt in de leerdoelen.
+    const map = join(__dirname, 'components', 'Leerdoelen');
+    const zonderCommentaar = (bron: string) =>
+      bron.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+    const vast = readdirSync(map)
+      .filter((f) => f.endsWith('.tsx'))
+      .filter((f) =>
+        /basis,? (of )?gevorderd/i.test(zonderCommentaar(readFileSync(join(map, f), 'utf8'))),
+      );
+    expect(vast).toEqual([]);
   });
 });
 
@@ -359,6 +376,39 @@ describe('een niveau met een tentamen', () => {
       expect(tips).toContain(`detailPad: '${data.tentamen.bron}'`);
     });
   }
+});
+
+describe('andersDan: wat in de vergelijking opvalt', () => {
+  const niveaus = [{ id: '1' }, { id: '3' }, { id: '4' }];
+  const rij = (n1: string | null, n3: string | null, n4: string | null) => ({
+    niveau: { 1: n1, 3: n3, 4: n4 },
+  });
+
+  it('een andere moeilijkheid dan het niveau ervoor', () => {
+    expect(andersDan(rij('basis', 'gevorderd', 'gevorderd'), niveaus)).toEqual({
+      1: null,
+      3: '1',
+      4: null,
+    });
+  });
+
+  it('slaat een niveau zonder het concept over', () => {
+    // Robotica: continue is op niveau 1 en 4 gevorderd, en hoort niet bij
+    // niveau 3. Het streepje kreeg eerst een kader, en niveau 4 ook, als
+    // "anders dan Niveau 3", terwijl de moeilijkheid niet verandert.
+    expect(andersDan(rij('gevorderd', null, 'gevorderd'), niveaus)).toEqual({
+      1: null,
+      3: null,
+      4: null,
+    });
+    // Lijst-methodes: basis, weg, gevorderd. Niveau 4 verschilt van niveau 1.
+    expect(andersDan(rij('basis', null, 'gevorderd'), niveaus)).toEqual({
+      1: null,
+      3: null,
+      4: '1',
+    });
+    expect(andersDan(rij('basis', null, null), niveaus)).toEqual({ 1: null, 3: null, 4: null });
+  });
 });
 
 describe('cijfer volgens het beoordelingsblad', () => {
