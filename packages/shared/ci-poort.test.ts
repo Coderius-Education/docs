@@ -92,6 +92,7 @@ describe('de verplichte check build', () => {
   // Zijn oordeel staat vast in plaats van uit het plan te komen.
   const VAST: Record<string, string> = {
     plan: 'true', // altijd nodig
+    registry: 'true', // altijd nodig: zonder register kent de hostingbackend een nieuwe site niet
     voorraad: 'false', // vult alleen de cache; cross-links oordeelt
   };
 

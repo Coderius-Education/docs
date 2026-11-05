@@ -25,6 +25,12 @@ export interface Site {
   url: string;
   /** het oude subdomein (bv. 'https://python.coderius.nl'), als de cursus er een had */
   legacyUrl?: string;
+  /** paden op het oude subdomein die niet doorsturen, bv. ['oud/'] */
+  legacyPaths?: string[];
+  /** laatste dag (JJJJ-MM-DD) dat de site ook op het oude subdomein draait */
+  legacyLiveUntil?: string;
+  /** vroegere namen van deze site; het oude pad stuurt door naar de start */
+  renamedFrom?: { id: string; path: string }[];
   /** korte omschrijving (footer/overzicht) */
   description: string;
   /** leerlijn-voorkennis: cursussen waarop deze voortbouwt */

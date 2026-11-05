@@ -7,7 +7,8 @@
  *     node scripts/sites-json.mjs python     alleen de map van één site
  *
  * Vorm: { subjects: [{id,label,url}],
- *         sites: [{id,label,subject,path,url,legacyUrl?,dir,docenten}],
+ *         sites: [{id,label,subject,path,url,legacyUrl?,legacyPaths?,
+ *                  legacyLiveUntil?,renamedFrom?,dir,docenten}],
  *         home: {id,label,url,dir} }
  * `dir` is relatief aan de repo-root (sites/<vak>/<id>, of sites/home).
  */
