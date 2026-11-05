@@ -92,11 +92,14 @@ function slaOver(docId, overslaan) {
 // <summary>: een klik op een knop daarin klapte ook het blok open), behalve
 // een uitklapblok, waarin gewoon lestekst staat. Cursief ook niet: daarin
 // zet de cursus de Engelse voluit-vorm van een afkorting (ssh, *secure
-// shell*), en dan kreeg "shell" daar een tooltip. Docusaurus maakt van
+// shell*), en dan kreeg "shell" daar een tooltip. En geen tabel: Infima laat
+// een tabel zelf schuiven (overflow: auto), en daarin viel het kadertje half
+// weg; de kop "Commando" van een tabel kreeg er ook een. Docusaurus maakt van
 // <details> al vóór deze stap <Details>. Een admonition (:::tip) is hier nog
 // een containerDirective en hoort er gewoon bij.
 const OVERSLAAN = new Set([
   'emphasis',
+  'table',
   'code',
   'inlineCode',
   'heading',

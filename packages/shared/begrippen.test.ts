@@ -113,6 +113,23 @@ describe('markeer: een tooltip op het eerste voorkomen', () => {
     expect(uit).toBe('Via ssh (secure shell) log je in. De [shell:shell] leest.');
   });
 
+  it('niet in een tabel: daar viel het kadertje half weg', () => {
+    // Zoals remark-gfm een tabel maakt (die draait in Docusaurus vóór deze stap).
+    const cel = (tekst: string) => ({
+      type: 'tableCell',
+      children: [{ type: 'text', value: tekst }],
+    });
+    const tree = {
+      type: 'root',
+      children: [
+        { type: 'table', children: [{ type: 'tableRow', children: [cel('een pipe')] }] },
+        { type: 'paragraph', children: [{ type: 'text', value: 'Een pipe.' }] },
+      ],
+    };
+    expect(markeer(tree, begrippen)).toEqual(['pipe']);
+    expect(alsTekst(tree as Knoop)).toBe('een pipe\nEen [pipe:pipe].');
+  });
+
   it('niet op de les die het begrip zelf uitlegt', async () => {
     const { gevonden } = await markeerMdx('Een pipe en een shell.', 'zoeken');
     expect(gevonden).toEqual(['shell']);
@@ -276,10 +293,12 @@ describe('de plugin', () => {
       return alsTekst(tree as Knoop);
     };
     expect(op('wsl/ssh.mdx')).toBe('Een [pipe:pipe].');
-    // De eigen les, de cheatsheet en een .md-bestand (zonder JSX) niet.
+    // Een .md ook: Docusaurus leest dat als MDX, en een cursus met .md-lessen
+    // kreeg eerst stil geen enkele tooltip. De eigen les en de cheatsheet niet.
+    expect(op('wsl/ssh.md')).toBe('Een [pipe:pipe].');
     expect(op('terminal/zoeken.mdx')).toBe('Een pipe.');
+    expect(op('terminal/zoeken.md')).toBe('Een pipe.');
     expect(op('cheatsheet.mdx')).toBe('Een pipe.');
-    expect(op('wsl/ssh.md')).toBe('Een pipe.');
 
     writeFileSync(join(map, 'src', 'begrippen.json'), '{"begrippen": [{"id": "x"}]}');
     expect(() => plugin({ siteDir: map })).toThrow(/term ontbreekt/);
@@ -341,7 +360,7 @@ function mdxBestanden(map: string): string[] {
   return readdirSync(map, { withFileTypes: true }).flatMap((e) =>
     e.isDirectory()
       ? mdxBestanden(join(map, e.name))
-      : e.name.endsWith('.mdx')
+      : /\.mdx?$/.test(e.name)
         ? [join(map, e.name)]
         : [],
   );
@@ -383,7 +402,7 @@ describe.each(MET_BEGRIPPEN.map((s) => s.id))('de begrippen van %s', (id) => {
       const docId = relative(docs, pad)
         .split('\\')
         .join('/')
-        .replace(/\.mdx$/, '');
+        .replace(/\.mdx?$/, '');
       if (slaOver(docId, gelezen.overslaan)) continue;
       await compile(readFileSync(pad, 'utf8'), {
         remarkPlugins: [

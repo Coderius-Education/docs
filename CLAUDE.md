@@ -273,8 +273,11 @@ Een cursus met moeilijke woorden heeft `src/begrippen.json`: per begrip een
 eventueel een `anker`. `createConfig` ziet het bestand en zet
 `packages/shared/plugins/begrippen.js` aan. Een remark-stap zet bij het bouwen
 het eerste voorkomen van elk begrip op een pagina in `<Begrip id="…">`: alleen
-in lopende tekst, niet in code, koppen, links, cursief, een `<summary>` of een
-andere component, en niet op de les die het begrip zelf uitlegt. Een klik of
+in lopende tekst (`.md` en `.mdx`), niet in code, koppen, links, tabellen,
+cursief, een `<summary>` of een andere component, en niet op de les die het
+begrip zelf uitlegt. Een tabel niet, omdat Infima hem zelf laat schuiven en het
+kadertje daarin half wegviel; cursief niet, omdat daar de Engelse voluit-vorm
+van een afkorting staat (*secure shell*). Een klik of
 tik opent een kadertje met de uitleg en links naar die les en naar de
 woordenlijst; het woord is zelf geen link, want een les met een oefenterminal
 verliest zijn werk als je de pagina verlaat. `woordenlijst` in het bestand is
@@ -284,7 +287,13 @@ zoeker leest de tekst van een item, ook die van een kadertje). Beide
 componenten staan in `MDXComponents` van de site. `begrippen.test.ts` eist per
 cursus dat elke les bestaat, het begrip noemt en het anker heeft, en dat elk
 begrip ergens in lopende tekst staat; een woord dat alleen als code voorkomt
-(`localhost`) hoort er dus niet in. Linux heeft de eerste
+(`localhost`) hoort er dus niet in. Een `les` is een les die het begrip echt
+uitlegt, niet een die het alleen gebruikt; legt geen les het uit (een poort),
+dan krijgt het begrip geen les. Schrijf de uitleg zo dat hij klopt op elke
+plek waar het woord staat: "vingerafdruk" is in 2.1 de hash van een wachtwoord
+en in 7.2 die van een computer. Het gedrag van het kadertje pint
+`components/Begrip/Begrip.test.tsx` vast; of het binnen beeld blijft, meet
+alleen een browser. Linux heeft de eerste
 (`sites/informatica/linux/src/begrippen.json`).
 
 ## Bugfixes

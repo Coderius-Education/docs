@@ -116,6 +116,13 @@ export default function Begrip({ id, children }: { id: string; children: ReactNo
         weg.current = null;
         if (stand === 'dicht') zet('zweven');
       }}
+      // Met Tab verder naar iets buiten het kadertje: dicht, anders bleef het
+      // over de tekst eronder hangen. Een klik op de tekst in het kadertje
+      // geeft geen nieuw doel (relatedTarget is null) en laat het open.
+      onBlur={(e) => {
+        const naar = e.relatedTarget as Node | null;
+        if (naar && !wrapper.current?.contains(naar)) setStand('dicht');
+      }}
       onPointerLeave={(e) => {
         if (!muis(e) || stand !== 'zweven') return;
         weg.current = setTimeout(() => setStand('dicht'), 200);

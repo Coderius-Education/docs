@@ -60,12 +60,13 @@ function koppelLessen(gelezen, docs) {
 function remarkBegrippen({ bestand, docsDir }) {
   const { begrippen, overslaan } = lees(bestand);
   return (tree, file) => {
-    if (!file.path || !file.path.endsWith('.mdx')) return;
+    // Docusaurus leest ook .md als MDX (markdown.format staat nergens op detect).
+    if (!file.path || !/\.mdx?$/.test(file.path)) return;
     const docId = path
       .relative(docsDir, file.path)
       .split(path.sep)
       .join('/')
-      .replace(/\.mdx$/, '');
+      .replace(/\.mdx?$/, '');
     if (docId.startsWith('..') || slaOver(docId, overslaan)) return;
     markeer(tree, begrippen, { docId });
   };
