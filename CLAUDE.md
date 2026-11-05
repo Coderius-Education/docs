@@ -236,8 +236,11 @@ nakijker maakt er de leerroutes van. Een concept dat niet bij een niveau hoort,
 krijgt daar `null`: dan staat het niet op de pagina van dat niveau en telt de
 nakijker het in die leerroute niet mee (`inTrack` in `packages/checker`). Noem op de sites alleen de niveaus, geen
 schoolsoort; `leerdoelen.test.ts` weert die woorden uit de leerdoelen en de
-pagina's. Een rij blijft op één regel (een override in `biome.json`), zodat je
-de niveaus met het oog vergelijkt en een wijziging één regel in de diff is.
+pagina's. Een rij blijft op één regel, zodat je
+de niveaus met het oog vergelijkt en een wijziging één regel in de diff is: `biome.json`
+formatteert het bestand niet (een rij met een toelichting en drie niveaus
+werd langer dan de 320 tekens die biome hoogstens toestaat), en
+`leerdoelen.test.ts` eist het.
 Elk concept wijst met `les` naar de les waar je het leert (een doc-id, met de
 docs-plugin ervoor als twee plugins hetzelfde id hebben: `lego_auto:intro`); de
 plugin zoekt titel en adres op en stopt de build bij een les die niet bestaat of

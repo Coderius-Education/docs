@@ -32,8 +32,7 @@ const SUBJECT_PER_KOP: Record<string, string> = {
   'Online zetten': 'online',
 };
 
-const ONLINE =
-  'hoort bij de route Online zetten: Docker en de server, niet het nagekeken eindproject';
+const ONLINE = 'staat niet als rij op niveau 3 van de leerdoelen';
 
 type Item = {
   /** De tekst in <summary>, letterlijk zoals in de cheatsheet. */
@@ -296,62 +295,53 @@ const KOPPELING: Item[] = [
   },
 
   // --- Veiligheid ---
-  // Een eigen reeks in de navbar, los van het nagekeken eindproject. De
-  // nakijker toetst deze syntax daarom niet.
+  // Een eigen reeks in de navbar. Wat op niveau 3 van de leerdoelen staat,
+  // toetst de nakijker; de rest heeft een reden.
   {
     summary: 'Hoe zet ik de lijst met endpoints uit? (docs_url=None)',
-    concepten: [],
-    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+    concepten: ['vh-docs'],
   },
   {
     summary: 'Hoe begrens ik invoer op de server? (Form met max_length)',
-    concepten: [],
-    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+    concepten: ['vh-invoer'],
   },
   {
     summary: 'Hoe laat ik een bezoeker een pagina kiezen? (lijst met wat mag)',
     concepten: [],
-    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+    geenConcept: 'staat niet als rij op niveau 3 van de leerdoelen',
   },
   {
     summary: 'Hoe maak ik HTML van een bezoeker onschadelijk? (escape)',
-    concepten: [],
-    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+    concepten: ['vh-xss'],
   },
   {
     summary: 'Hoe zet ik tekst van een bezoeker in de pagina met JavaScript? (textContent)',
     concepten: [],
-    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+    geenConcept: 'staat niet als rij op niveau 3 van de leerdoelen',
   },
   {
     summary: 'Hoe beperk ik het aantal verzoeken? (slowapi)',
-    concepten: [],
-    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+    concepten: ['vh-limiet', 'vh-pogingen'],
   },
   {
     summary: 'Hoe controleer ik wie iets mag? (403)',
-    concepten: [],
-    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+    concepten: ['vh-toegang'],
   },
   {
     summary: 'Hoe houd ik scripts bij mijn cookie weg? (httponly)',
-    concepten: [],
-    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+    concepten: ['vh-cookies'],
   },
   {
     summary: 'Hoe bewaar ik een wachtwoord veilig? (Argon2)',
-    concepten: [],
-    geenConcept: 'hoort bij de optionele reeks Veiligheid, niet bij het nagekeken eindproject',
+    concepten: ['vh-hash'],
   },
   {
     summary: 'Hoe maak ik een image van mijn site? (Dockerfile)',
-    concepten: [],
-    geenConcept: ONLINE,
+    concepten: ['on-dockerfile'],
   },
   {
     summary: 'Hoe start en stop ik mijn site? (docker compose)',
-    concepten: [],
-    geenConcept: ONLINE,
+    concepten: ['on-compose'],
   },
   {
     summary: 'Wat blijft er bewaard? (rm, down en een volume)',
@@ -360,13 +350,11 @@ const KOPPELING: Item[] = [
   },
   {
     summary: 'Hoe zet ik een nieuwe versie op de server? (git pull en --build)',
-    concepten: [],
-    geenConcept: ONLINE,
+    concepten: ['on-nieuwe-versie'],
   },
   {
     summary: 'Hoe maak ik een back-up? (docker compose cp)',
-    concepten: [],
-    geenConcept: ONLINE,
+    concepten: ['on-backup'],
   },
   {
     summary: 'Hoe werk ik Python en Traefik bij? (--pull)',
@@ -374,6 +362,30 @@ const KOPPELING: Item[] = [
     geenConcept: ONLINE,
   },
 ];
+
+// Rijen van niveau 3 die bewust niet op deze cheatsheet staan, met de reden.
+const LINUX = 'staat op de cheatsheet van de Linux-cursus, waar de les ook staat';
+const STAP =
+  'een stap in de terminal of op de server, met een eigen les; er is geen code om op te zoeken';
+const NIET_OP_CHEATSHEET: Record<string, string> = {
+  'lx-mappen': LINUX,
+  'lx-bestanden': LINUX,
+  'lx-rechten': LINUX,
+  'lx-apt': LINUX,
+  'lx-nano': LINUX,
+  'lx-ssh': LINUX,
+  'lx-zoeken': LINUX,
+  'lx-diensten': LINUX,
+  'lx-groepen': LINUX,
+  'lx-scp': LINUX,
+  'vh-gitignore': 'een bestand in je project, uitgelegd in Een .gitignore en een nette zip',
+  'on-requirements': 'een bestand in je project, uitgelegd in De lijst van je packages',
+  'on-readme': 'een bestand in je project, uitgelegd in Een README',
+  'on-linux': STAP,
+  'on-server': STAP,
+  'on-dichtzetten': STAP,
+  'on-https': STAP,
+};
 
 /** Leest de cheatsheet als een lijst van (H2-kop, summary-tekst). */
 function leesCheatsheet(): { kop: string; summary: string }[] {
@@ -422,9 +434,18 @@ describe('cheatsheet en nakijker lopen gelijk op', () => {
     // De andere richting: een concept toevoegen zonder de leerling ergens te
     // vertellen hoe het werkt, is een concept waar hij nooit op kan scoren.
     const gekoppeld = new Set(KOPPELING.flatMap((i) => i.concepten));
-    const ongedekt = ALLE.map((c) => c.id).filter((id) => !gekoppeld.has(id));
+    const ongedekt = ALLE.map((c) => c.id).filter(
+      (id) => !gekoppeld.has(id) && !Object.hasOwn(NIET_OP_CHEATSHEET, id),
+    );
 
     expect(ongedekt).toEqual([]);
+  });
+
+  it('een concept buiten de cheatsheet heeft een reden, en staat er echt niet op', () => {
+    const gekoppeld = new Set(KOPPELING.flatMap((i) => i.concepten));
+    const bestaande = new Set(ALLE.map((c) => c.id));
+    expect(Object.keys(NIET_OP_CHEATSHEET).filter((id) => gekoppeld.has(id))).toEqual([]);
+    expect(Object.keys(NIET_OP_CHEATSHEET).filter((id) => !bestaande.has(id))).toEqual([]);
   });
 
   it('een item zonder concept heeft een reden', () => {
