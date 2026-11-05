@@ -18,6 +18,13 @@
 //   url         afgeleid: `${vak.url}/${path}/`; productie-URL van de cursus
 //   legacyUrl   (optioneel) het oude subdomein, bv. https://python.coderius.nl;
 //               dat stuurt door naar url (delivery) en mag niet meer in links
+//   legacyPaths (optioneel) paden op het oude subdomein die níet doorsturen,
+//               bv. ['oud/']: die serveert het oude subdomein zelf, zodat een
+//               pagina daar de browseropslag van die origin kan overzetten
+//   legacyLiveUntil (optioneel) datum (JJJJ-MM-DD) tot en met wanneer de site
+//               ook nog op het oude subdomein draait, onder zijn eigen pad
+//   renamedFrom (optioneel) vroegere namen van deze site, [{ id, path }]: het
+//               oude pad stuurt door naar de start van deze site (delivery)
 //   description korte omschrijving (footer/overzicht)
 //   requires    leerlijn-voorkennis: cursussen waarop deze voortbouwt
 //
@@ -68,6 +75,7 @@ const SITES = defineSites([
     subject: 'informatica',
     path: 'web',
     legacyUrl: 'https://web.coderius.nl',
+    legacyPaths: ['oud/'],
     description: 'Maak je eerste website met HTML, CSS en JavaScript.',
     requires: [],
   },
@@ -104,6 +112,7 @@ const SITES = defineSites([
     subject: 'informatica',
     path: 'robotica',
     legacyUrl: 'https://robotica.coderius.nl',
+    legacyPaths: ['oud/'],
     description: 'Stuur sensoren en motoren aan met MicroPython.',
     requires: ['python'],
   },
@@ -131,6 +140,7 @@ const SITES = defineSites([
     subject: 'informatica',
     path: 'ctf',
     legacyUrl: 'https://ctf.coderius.nl',
+    legacyPaths: ['oud/'],
     description: 'Leer cybersecurity door CTF-challenges op te lossen.',
     requires: ['python', 'web'],
   },
@@ -142,6 +152,7 @@ const SITES = defineSites([
     // Hier stond tot november 2026 de DVWA-cursus; dat oude subdomein stuurt
     // nu door naar Linux.
     legacyUrl: 'https://dvwa.coderius.nl',
+    renamedFrom: [{ id: 'dvwa', path: 'dvwa' }],
     description: 'Werk in de terminal van Linux, en zet Linux op je eigen computer met WSL.',
     requires: [],
   },
@@ -151,6 +162,8 @@ const SITES = defineSites([
     subject: 'informatica',
     path: 'ide',
     legacyUrl: 'https://ide.coderius.nl',
+    legacyPaths: ['oud/'],
+    legacyLiveUntil: '2027-07-31',
     description: 'Schrijf en draai code direct in je browser.',
     requires: [],
   },
