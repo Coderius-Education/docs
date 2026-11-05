@@ -536,9 +536,29 @@ describe('moeilijkheidVoorstel: de vuistregels', () => {
       { label: 'FastAPI', basis: t(2, 8), gevorderd: t(1, 4), expert: t(1, 2) },
       { label: 'Database', basis: t(0, 0), gevorderd: t(1, 2), expert: t(0, 0) },
     ];
+    // De reden noemt dan welke onderwerpen meetelden: "bij elk onderwerp"
+    // klopte niet, want Database heeft geen expert.
     expect(moeilijkheidVoorstel(fullstack)).toEqual({
       moeilijkheid: 'expert',
-      reden: 'Bij elk onderwerp een concept op expert.',
+      reden: 'Bij FastAPI een concept op expert.',
+    });
+  });
+
+  it('fullstack niveau 3: expert alleen bij Online zetten, en dat zegt de reden', () => {
+    const niveau3 = [
+      { label: 'Linux', basis: t(1, 6), gevorderd: t(1, 4), expert: t(0, 0) },
+      { label: 'Veiligheid', basis: t(1, 7), gevorderd: t(1, 2), expert: t(0, 0) },
+      { label: 'Online zetten', basis: t(1, 3), gevorderd: t(1, 3), expert: t(0, 4) },
+    ];
+    expect(moeilijkheidVoorstel(niveau3)).toEqual({
+      moeilijkheid: 'gevorderd',
+      reden:
+        'Bij elk onderwerp een concept op gevorderd, maar bij Online zetten geen concept op expert.',
+    });
+    niveau3[2].expert = t(1, 4);
+    expect(moeilijkheidVoorstel(niveau3)).toEqual({
+      moeilijkheid: 'expert',
+      reden: 'Bij Online zetten een concept op expert.',
     });
   });
 

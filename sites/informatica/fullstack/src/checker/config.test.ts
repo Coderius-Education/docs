@@ -2,10 +2,11 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inTrack, levelVoor } from '@coderius/checker/conceptLevel';
+import { computeLevelSummary } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { CheckReport, ConceptMatch, ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
-import { leesLeerdoelen } from '@coderius/shared/leerdoelen';
+import { leesLeerdoelen, moeilijkheidVoorstel } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
 import leerdoelenJson from '../leerdoelen.json';
 import { fullstackConfig } from './config';
@@ -488,8 +489,9 @@ describe('fullstackConfig — de leerdoelen', () => {
     expect(rest.map((c) => [c.onderwerp, c.concept, c['3']])).toEqual(niveau3);
     // Op niveau 1 en 2 tellen ze niet mee.
     expect(rest.filter((c) => c['1'] !== null || c['2'] !== null).map((c) => c.id)).toEqual([]);
-    // Een gevorderd concept in elk onderwerp, anders stelt de nakijker op
-    // niveau 3 nooit gevorderd voor (de vuistregel van het blad).
+    // Een gevorderd concept in elk onderwerp: een onderwerp zonder gevorderd
+    // telt voor gevorderd niet mee, en dan wordt gevorderd te makkelijk
+    // (moeilijkheidVoorstel).
     for (const o of ['linux', 'veiligheid', 'online']) {
       expect(
         niveau3.some(([on, , m]) => on === o && m === G),
@@ -843,6 +845,31 @@ describe('fullstackConfig — niveau 3', () => {
     }
     // De decorator staat er wel, dus de limiet op verzoeken telt.
     expect(gevonden.get('vh-limiet')).toBe(true);
+  });
+
+  it('stelt de moeilijkheid voor met alleen de onderwerpen van het niveau', () => {
+    // Een rapport waarin precies deze concepten zijn toegepast (handmatig
+    // aangevinkt of herkend, voor het voorstel maakt dat niet uit).
+    const leeg = analyze({}, fullstackConfig);
+    const voorstel = (track: string, ids: string[]) =>
+      moeilijkheidVoorstel(
+        computeLevelSummary(
+          { ...leeg, concepts: leeg.concepts.map((c) => ({ ...c, used: ids.includes(c.id) })) },
+          fullstackConfig,
+          track,
+        ).bySubject,
+      ).moeilijkheid;
+    const basis = ['lx-mappen', 'vh-docs', 'on-readme'];
+    const gevorderd = [...basis, 'lx-zoeken', 'vh-cookies', 'on-compose'];
+    expect(voorstel('3', basis)).toBe('basis');
+    expect(voorstel('3', gevorderd)).toBe('gevorderd');
+    // Expert hangt alleen aan Online zetten: Linux en Veiligheid hebben
+    // op niveau 3 geen expert, en een onderwerp zonder concepten op een
+    // moeilijkheid telt daar niet mee.
+    expect(voorstel('3', [...gevorderd, 'on-https'])).toBe('expert');
+    // Op niveau 1 tellen de nieuwe onderwerpen niet: alleen FastAPI.
+    expect(voorstel('1', ['fastapi-app'])).toBe('basis');
+    expect(voorstel('1', ['lx-mappen', 'vh-docs', 'on-readme'])).toBe('niet-aan-basis');
   });
 
   it('herkent de bestanden van een project dat online staat aan hun naam', () => {
