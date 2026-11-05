@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { inTrack } from './conceptLevel';
-import { bloomUitOudeVinkjes, geldigeTrack, leerdoelenNaarConfig } from './leerdoelen';
+import {
+  bloomUitOudeVinkjes,
+  geldigeTrack,
+  leerdoelenNaarConfig,
+  leerrouteVan,
+} from './leerdoelen';
 import { computeLevelSummary } from './levelSummary';
 import type { CheckReport, CheckerConfig, ConceptDetect } from './types';
 import { validateCheckerConfig } from './validateConfig';
@@ -153,6 +158,32 @@ describe('geldigeTrack', () => {
 
   it('geeft null zonder leerroutes', () => {
     expect(geldigeTrack({}, 'start')).toBeNull();
+  });
+});
+
+describe('leerrouteVan', () => {
+  const config = {
+    tracks: [
+      { id: '1', label: 'Niveau 1' },
+      { id: '2', label: 'Niveau 2' },
+    ],
+  };
+
+  it('houdt de route van de open beoordeling, en anders de laatst gekozen', () => {
+    expect(leerrouteVan(config, { track: '1' }, '2')).toBe('1');
+    expect(leerrouteVan(config, null, '2')).toBe('2');
+  });
+
+  // Web had één niveau. Dat werd niveau 2 (met JavaScript), en niveau 1 kwam
+  // ervoor zonder JavaScript. Een bewaarde beoordeling zonder route opende
+  // dan op de laatst gekozen of de eerste: niveau 1, zonder JavaScript.
+  it('opent een beoordeling van vóór de leerroutes op zonderLeerroute', () => {
+    const web = { ...config, zonderLeerroute: '2' };
+    expect(leerrouteVan(web, { track: null }, '1')).toBe('2');
+    // Een nieuwe upload heeft geen open beoordeling: de laatst gekozen.
+    expect(leerrouteVan(web, null, '1')).toBe('1');
+    // Zonder de optie blijft het zoals het was.
+    expect(leerrouteVan(config, { track: null }, '2')).toBe('2');
   });
 });
 

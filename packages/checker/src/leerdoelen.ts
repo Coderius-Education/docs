@@ -90,6 +90,21 @@ export function geldigeTrack(
 }
 
 /**
+ * De leerroute waarop de nakijker rekent. Een open beoordeling houdt zijn
+ * eigen route; heeft hij er geen (bewaard toen de site nog één niveau had),
+ * dan die van zonderLeerroute. Zonder open beoordeling, of zonder die optie,
+ * de laatst gekozen. geldigeTrack maakt er daarna een bekende route van.
+ */
+export function leerrouteVan(
+  config: Pick<CheckerConfig, 'tracks' | 'oudeLeerroutes' | 'zonderLeerroute'>,
+  bewaard: { track: string | null } | null | undefined,
+  laatste: string | null,
+): string | null {
+  const eigen = bewaard ? (bewaard.track ?? config.zonderLeerroute ?? null) : null;
+  return geldigeTrack(config, eigen ?? laatste);
+}
+
+/**
  * De denkvaardigheid uit oude handmatige vinkjes (de Gesprek-vinkjes van
  * Godot): de hoogste trede die de docent aanvinkte, of null.
  */
