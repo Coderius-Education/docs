@@ -1,7 +1,7 @@
 ---
 sidebar_position: 15
 slug: /machine-learning
-sidebar_label: "Machine learning: de route"
+sidebar_label: De route
 ---
 
 # Machine learning

@@ -1,4 +1,16 @@
 import { createConfig, prismThemes } from '@coderius/shared/config';
+import type { Options as DocsOptions } from '@docusaurus/plugin-content-docs';
+import { zonderMl } from './src/lib/mlSidebar';
+
+// De route machine learning staat in zijn eigen sidebar (mlSidebar), niet ook
+// nog in "Algoritmes". Zie src/lib/mlSidebar.ts.
+const sidebarItemsGenerator: DocsOptions['sidebarItemsGenerator'] = async ({
+  defaultSidebarItemsGenerator,
+  ...args
+}) => {
+  const items = await defaultSidebarItemsGenerator(args);
+  return args.item.dirName === '.' ? zonderMl(items) : items;
+};
 
 export default createConfig({
   title: 'Algoritmes — Coderius',
@@ -17,6 +29,7 @@ export default createConfig({
         docs: {
           sidebarPath: './sidebars.ts',
           numberPrefixParser: false,
+          sidebarItemsGenerator,
         },
         blog: false,
         theme: { customCss: './src/css/custom.css' },
@@ -30,6 +43,7 @@ export default createConfig({
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Algoritmes' },
         { to: '/conceptenkaart', label: 'Conceptenkaart', position: 'left' },
         { to: '/docs/unplugged', label: 'Unplugged', position: 'left' },
+        { type: 'docSidebar', sidebarId: 'mlSidebar', position: 'left', label: 'Machine learning' },
       ],
     },
     footer: {
