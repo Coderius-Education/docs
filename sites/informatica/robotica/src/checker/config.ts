@@ -5,10 +5,11 @@ import leerdoelenJson from '../leerdoelen.json';
 
 // De nakijker voor robotica. Wélke concepten tellen en op welk niveau staat
 // in `src/leerdoelen.json`: het tabblad robotica van het beoordelingsblad, in
-// dezelfde volgorde en met dezelfde woorden, met start als niveau 1 en
-// verdieping als niveau 3. Hier staat alleen hóé je elk concept terugvindt
-// (DETECTIE), en wat de nakijker daarnaast onder "Ook gebruikt" laat zien
-// (OOK_GEBRUIKT).
+// dezelfde volgorde en met dezelfde woorden, met start als niveau 1,
+// verdieping als niveau 4 en daartussen niveau 3. Een concept met `null` op
+// een niveau telt in die leerroute niet mee. Hier staat alleen hóé je elk
+// concept terugvindt (DETECTIE), en wat de nakijker daarnaast onder "Ook
+// gebruikt" laat zien (OOK_GEBRUIKT).
 //
 // Wat deze nakijker anders maakt dan die van web, fullstack en godot: een
 // robotica-project is één `main.py` plus foto's van een fysiek ding. De
@@ -180,8 +181,8 @@ export const roboticaConfig: CheckerConfig = {
   leerdoelen: uitLeerdoelen.leerdoelen,
   extra: OOK_GEBRUIKT,
   // De leerroutes van vóór de leerdoelen. Start was de eerste kolom van het
-  // blad en is niveau 1; verdieping is niveau 3, zoals bij Godot.
-  oudeLeerroutes: { start: '1', verdieping: '3' },
+  // blad en is niveau 1; verdieping is sinds de nieuwe indeling niveau 4.
+  oudeLeerroutes: { start: '1', verdieping: '4' },
 
   fileKinds: [
     { id: 'py', label: 'Python' },
