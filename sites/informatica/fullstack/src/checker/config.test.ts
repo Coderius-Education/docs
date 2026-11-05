@@ -438,11 +438,15 @@ describe('fullstackConfig — de leerdoelen', () => {
     expect(fastapi.filter((c) => c['3'] !== null).map((c) => c.id)).toEqual([]);
   });
 
-  it('niveau 3 is Linux, Veiligheid en Online zetten, met basis en gevorderd', () => {
-    // Niet van het blad, maar een eerste opzet uit de lessen van de drie
-    // routes. Vandaar ook hier de hele tabel: een verschuiving is een keuze.
+  it('niveau 3 is Linux, Veiligheid en Online zetten, met basis, gevorderd en expert', () => {
+    // Niet van het blad, maar een opzet uit de lessen van de drie routes, met
+    // de verschuivingen van de docent: slowapi en Argon2 naar basis, de
+    // Dockerfile en compose.yaml naar gevorderd, en de echte server (firewall,
+    // HTTPS, back-up, uitrollen) naar expert. Vandaar ook hier de hele tabel:
+    // een verschuiving is een keuze.
     const B = 'basis';
     const G = 'gevorderd';
+    const E = 'expert';
     const niveau3 = [
       ['linux', 'door mappen lopen en bestanden lezen (cd, ls, cat)', B],
       ['linux', 'bestanden maken, kopiëren, verplaatsen en weggooien', B],
@@ -459,20 +463,20 @@ describe('fullstackConfig — de leerdoelen', () => {
       ['veiligheid', 'invoer controleren met grenzen in Form', B],
       ['veiligheid', 'HTML van een bezoeker blijft tekst (templates escapen, geen |safe)', B],
       ['veiligheid', 'op de server controleren wie iets mag, met 403', B],
-      ['veiligheid', 'een limiet op verzoeken met slowapi', G],
+      ['veiligheid', 'een limiet op verzoeken met slowapi', B],
       ['veiligheid', 'cookies afschermen met httponly en samesite', G],
-      ['veiligheid', 'wachtwoorden als hash opslaan met Argon2', G],
+      ['veiligheid', 'wachtwoorden als hash opslaan met Argon2', B],
       ['veiligheid', 'inlogpogingen beperken', G],
       ['online', 'de packages van je project in requirements.txt', B],
       ['online', 'een README in je repository', B],
       ['online', 'je project in Ubuntu ophalen en draaien (git clone, venv, fastapi run)', B],
-      ['online', 'je site in een image met een Dockerfile', B],
-      ['online', 'alles in één compose.yaml, met een volume voor je databases', B],
+      ['online', 'je site in een image met een Dockerfile', G],
+      ['online', 'alles in één compose.yaml, met een volume voor je databases', G],
       ['online', 'een server met een eigen gebruiker, waarop je alleen met een sleutel inlogt', G],
-      ['online', 'de server dichtzetten: firewall en automatische updates', G],
-      ['online', 'je site op je domein met HTTPS via Traefik', G],
-      ['online', 'een back-up maken en terugzetten', G],
-      ['online', 'een nieuwe versie uitrollen', G],
+      ['online', 'de server dichtzetten: firewall en automatische updates', E],
+      ['online', 'je site op je domein met HTTPS via Traefik', E],
+      ['online', 'een back-up maken en terugzetten', E],
+      ['online', 'een nieuwe versie uitrollen', E],
     ];
     expect(leerdoelen.onderwerpen).toEqual([
       { id: 'fastapi', label: 'FastAPI' },
@@ -571,7 +575,7 @@ describe('fullstackConfig — de leerdoelen', () => {
       16, 8, 0,
     ]);
     expect([telling('3', 'basis'), telling('3', 'gevorderd'), telling('3', 'expert')]).toEqual([
-      16, 13, 0,
+      16, 9, 4,
     ]);
   });
 

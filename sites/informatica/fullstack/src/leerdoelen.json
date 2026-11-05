@@ -41,19 +41,19 @@
     { "id": "vh-invoer", "onderwerp": "veiligheid", "concept": "invoer controleren met grenzen in Form", "1": null, "2": null, "3": "basis", "groep": "Invoer", "les": "veiligheid/invoer/grenzen" },
     { "id": "vh-xss", "onderwerp": "veiligheid", "concept": "HTML van een bezoeker blijft tekst (templates escapen, geen |safe)", "1": null, "2": null, "3": "basis", "groep": "Invoer", "les": "veiligheid/xss/templates" },
     { "id": "vh-toegang", "onderwerp": "veiligheid", "concept": "op de server controleren wie iets mag, met 403", "1": null, "2": null, "3": "basis", "groep": "Wie mag wat", "les": "veiligheid/toegang/controle" },
-    { "id": "vh-limiet", "onderwerp": "veiligheid", "concept": "een limiet op verzoeken met slowapi", "1": null, "2": null, "3": "gevorderd", "groep": "Te veel verzoeken", "les": "veiligheid/dos/limiet" },
+    { "id": "vh-limiet", "onderwerp": "veiligheid", "concept": "een limiet op verzoeken met slowapi", "1": null, "2": null, "3": "basis", "groep": "Te veel verzoeken", "les": "veiligheid/dos/limiet" },
     { "id": "vh-cookies", "onderwerp": "veiligheid", "concept": "cookies afschermen met httponly en samesite", "1": null, "2": null, "3": "gevorderd", "groep": "Cookies en wachtwoorden", "les": "veiligheid/cookies/httponly" },
-    { "id": "vh-hash", "onderwerp": "veiligheid", "concept": "wachtwoorden als hash opslaan met Argon2", "1": null, "2": null, "3": "gevorderd", "groep": "Cookies en wachtwoorden", "les": "veiligheid/wachtwoorden/registreren" },
+    { "id": "vh-hash", "onderwerp": "veiligheid", "concept": "wachtwoorden als hash opslaan met Argon2", "1": null, "2": null, "3": "basis", "groep": "Cookies en wachtwoorden", "les": "veiligheid/wachtwoorden/registreren" },
     { "id": "vh-pogingen", "onderwerp": "veiligheid", "concept": "inlogpogingen beperken", "1": null, "2": null, "3": "gevorderd", "groep": "Cookies en wachtwoorden", "les": "veiligheid/wachtwoorden/pogingen" },
     { "id": "on-requirements", "onderwerp": "online", "concept": "de packages van je project in requirements.txt", "1": null, "2": null, "3": "basis", "groep": "Je project", "les": "online/project/requirements" },
     { "id": "on-readme", "onderwerp": "online", "concept": "een README in je repository", "1": null, "2": null, "3": "basis", "groep": "Je project", "les": "online/project/repository" },
     { "id": "on-linux", "onderwerp": "online", "concept": "je project in Ubuntu ophalen en draaien (git clone, venv, fastapi run)", "1": null, "2": null, "3": "basis", "groep": "Je project", "les": "online/linux/run" },
-    { "id": "on-dockerfile", "onderwerp": "online", "concept": "je site in een image met een Dockerfile", "1": null, "2": null, "3": "basis", "groep": "In een container", "les": "online/docker/image" },
-    { "id": "on-compose", "onderwerp": "online", "concept": "alles in één compose.yaml, met een volume voor je databases", "1": null, "2": null, "3": "basis", "groep": "In een container", "les": "online/docker/compose" },
+    { "id": "on-dockerfile", "onderwerp": "online", "concept": "je site in een image met een Dockerfile", "1": null, "2": null, "3": "gevorderd", "groep": "In een container", "les": "online/docker/image" },
+    { "id": "on-compose", "onderwerp": "online", "concept": "alles in één compose.yaml, met een volume voor je databases", "1": null, "2": null, "3": "gevorderd", "groep": "In een container", "les": "online/docker/compose" },
     { "id": "on-server", "onderwerp": "online", "concept": "een server met een eigen gebruiker, waarop je alleen met een sleutel inlogt", "1": null, "2": null, "3": "gevorderd", "groep": "Op een echte server", "les": "online/server/sleutel" },
-    { "id": "on-dichtzetten", "onderwerp": "online", "concept": "de server dichtzetten: firewall en automatische updates", "1": null, "2": null, "3": "gevorderd", "groep": "Op een echte server", "les": "online/server/dichtzetten" },
-    { "id": "on-https", "onderwerp": "online", "concept": "je site op je domein met HTTPS via Traefik", "1": null, "2": null, "3": "gevorderd", "groep": "Op een echte server", "les": "online/server/https" },
-    { "id": "on-backup", "onderwerp": "online", "concept": "een back-up maken en terugzetten", "1": null, "2": null, "3": "gevorderd", "groep": "Op een echte server", "les": "online/server/backup" },
-    { "id": "on-nieuwe-versie", "onderwerp": "online", "concept": "een nieuwe versie uitrollen", "1": null, "2": null, "3": "gevorderd", "groep": "Op een echte server", "les": "online/server/nieuwe-versie" }
+    { "id": "on-dichtzetten", "onderwerp": "online", "concept": "de server dichtzetten: firewall en automatische updates", "1": null, "2": null, "3": "expert", "groep": "Op een echte server", "les": "online/server/dichtzetten" },
+    { "id": "on-https", "onderwerp": "online", "concept": "je site op je domein met HTTPS via Traefik", "1": null, "2": null, "3": "expert", "groep": "Op een echte server", "les": "online/server/https" },
+    { "id": "on-backup", "onderwerp": "online", "concept": "een back-up maken en terugzetten", "1": null, "2": null, "3": "expert", "groep": "Op een echte server", "les": "online/server/backup" },
+    { "id": "on-nieuwe-versie", "onderwerp": "online", "concept": "een nieuwe versie uitrollen", "1": null, "2": null, "3": "expert", "groep": "Op een echte server", "les": "online/server/nieuwe-versie" }
   ]
 }
