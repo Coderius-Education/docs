@@ -1,0 +1,169 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Stemmen tellen"
+---
+
+# Stemmen tellen
+
+Je hebt de `k` dichtstbijzijnde buren gevonden. Nu stemt elke buur op zijn
+eigen soort. Die stemmen tel je met een dictionary, zoals je in het
+spamfilter woorden telde: de soort is de sleutel, het aantal stemmen de
+waarde.
+
+## Voorspel
+
+```python
+buren = [(1, "banaan"), (2, "appel"), (3, "appel")]
+stemmen = {}
+for d, soort in buren:
+    if soort in stemmen:
+        stemmen[soort] = stemmen[soort] + 1
+    else:
+        stemmen[soort] = 1
+print(stemmen)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+{'banaan': 1, 'appel': 2}
+```
+
+</details>
+
+## Zo werkt het
+
+Elke buur is een tuple `(afstand, soort)`. Voor het tellen heb je alleen de
+soort nodig; de afstand staat in `d` en doet verder niets.
+
+Staat een soort nog niet in `stemmen`, dan krijgt hij zijn eerste stem: 1.
+Staat hij er al, dan komt er 1 bij. De dictionary onthoudt de volgorde
+waarin de soorten erin kwamen: hier eerst banaan, want de dichtstbijzijnde
+buur is een banaan.
+
+## Onderzoek
+
+1. Draai de code. Hoeveel stemmen krijgt elke soort?
+2. Zet `(4, "citroen")` onderaan in `buren`. Wat verandert er in `stemmen`?
+3. Vervang de hele `if` en `else` door één regel:
+   `stemmen[soort] = stemmen[soort] + 1`. Wat gebeurt er?
+
+<PyRunner initialCode={`buren = [(1, "banaan"), (2, "appel"), (3, "appel")]
+
+stemmen = {}
+for d, soort in buren:
+    if soort in stemmen:
+        stemmen[soort] = stemmen[soort] + 1
+    else:
+        stemmen[soort] = 1
+print(stemmen)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Banaan 1, appel 2.
+2. Er komt een derde sleutel bij: `{'banaan': 1, 'appel': 2, 'citroen': 1}`.
+   Voor een nieuwe soort hoef je niets aan de code te veranderen.
+3. Python stopt met een foutmelding over `'banaan'`: de eerste keer staat
+   banaan nog niet in `stemmen`, dus er is niets om 1 bij op te tellen. Zie
+   [er gaat iets mis](#er-gaat-iets-mis) hieronder.
+
+</details>
+
+## Opdracht: tel de stemmen van de buren
+
+In de editor staat het zoeken van de buren uit de vorige stap. Tel de
+stemmen van die buren:
+
+```
+buren: [(1, 'banaan'), (2, 'appel'), (3, 'appel')]
+stemmen: {'banaan': 1, 'appel': 2}
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de drie buren.
+2. Tel met een dictionary `stemmen` hoeveel buren elke soort heeft, en print `stemmen`.
+3. Zet `k` op 1, op 2 en op 7, en bekijk bij elke `k` de stemmen.
+
+<PyRunner initialCode={`def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+nieuw = (10, 7)
+k = 3
+
+paren = []
+for maten, soort in voorbeelden:
+    paren.append((afstand(nieuw, maten), soort))
+buren = sorted(paren)[:k]
+print("buren:", buren)`} />
+
+<details>
+<summary>Tip</summary>
+
+Een buur is een tuple met twee dingen erin. Welk van de twee is de sleutel in
+`stemmen`?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit komt onder de print van de buren:
+
+{/* draaien-met: blok-erboven */}
+```python
+stemmen = {}
+for d, soort in buren:
+    if soort in stemmen:
+        stemmen[soort] = stemmen[soort] + 1
+    else:
+        stemmen[soort] = 1
+print("stemmen:", stemmen)
+```
+
+```
+stemmen: {'banaan': 1, 'appel': 2}
+```
+
+Met `k = 1` krijg je `{'banaan': 1}`: alleen de vergissing stemt. Met
+`k = 2` staat het gelijk, `{'banaan': 1, 'appel': 1}`. Met `k = 7` stemmen
+alle voorbeelden mee: `{'banaan': 4, 'appel': 3}`. Wie er dan wint, zie je in
+de volgende stap.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: stemmen = {}\nstemmen["banaan"] = stemmen["banaan"] + 1 */}
+```
+KeyError: 'banaan'
+```
+
+**Oorzaak:** je telt 1 op bij een soort die nog niet in de dictionary staat.
+`stemmen["banaan"]` bestaat pas als je hem een eerste waarde hebt gegeven.
+
+**Oplossing:** kijk eerst met `in` of de soort er al in staat. Zo niet, zet
+hem dan op 1.
+
+{/* niet-draaien: fragment; leunt op stemmen en soort uit de runner */}
+```python
+# FOUT
+stemmen[soort] = stemmen[soort] + 1
+
+# GOED
+if soort in stemmen:
+    stemmen[soort] = stemmen[soort] + 1
+else:
+    stemmen[soort] = 1
+```
+
+Door naar [de winnaar](site:algorithms/docs/ml-afstand/02-k-buren/03-de-winnaar).

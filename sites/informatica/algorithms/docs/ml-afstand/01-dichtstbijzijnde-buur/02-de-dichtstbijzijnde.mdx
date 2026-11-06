@@ -1,0 +1,164 @@
+---
+sidebar_position: 2
+sidebar_label: "2. De dichtstbijzijnde"
+---
+
+# De dichtstbijzijnde
+
+In de vorige stap printte je hoe ver elk voorbeeld van het nieuwe fruit af
+ligt. Jij zag zelf welk voorbeeld het dichtst bij lag. Nu laat je de computer
+dat zoeken: hij onthoudt de kleinste afstand tot nu toe, en de soort die
+erbij hoort. Die soort is zijn voorspelling.
+
+## Voorspel
+
+```python
+afstanden = [3, 2, 3, 11]
+beste = 1000
+for d in afstanden:
+    if d < beste:
+        beste = d
+        print("nieuwe beste:", beste)
+print("de kleinste:", beste)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+nieuwe beste: 3
+nieuwe beste: 2
+de kleinste: 2
+```
+
+De tweede 3 is niet kleiner dan 2, en 11 ook niet. Daar doet de `if` niets.
+
+</details>
+
+## Zo werkt het
+
+`beste` begint op 1000, zodat de eerste afstand altijd kleiner is. Daarna
+onthoudt de loop de beste tot nu toe, net als bij het maximum, maar nu met de
+kleinste afstand.
+
+Voor een voorspelling heb je ook de soort nodig. Daarom onthoudt de code in
+het onderzoek twee dingen tegelijk: `beste_afstand` en `beste_soort`. Ze
+veranderen samen, in dezelfde `if`.
+
+## Onderzoek
+
+1. Draai de code. Welke soort voorspelt hij voor `(10, 7)`, en op welke
+   afstand?
+2. Verander `nieuw` in `(15, 5)`, en daarna in `(13, 6)`. Klopt wat hij zegt
+   met wat jij zou denken?
+3. Zet `((10, 6), "banaan")` onderaan in de lijst voorbeelden. Iemand heeft
+   zich vergist: het is een appel. Wat voorspelt hij nu voor `(10, 7)`?
+
+<PyRunner initialCode={`def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+voorbeelden = [
+    ((8, 8), "appel"),
+    ((9, 8), "appel"),
+    ((7, 7), "appel"),
+    ((18, 4), "banaan"),
+    ((20, 4), "banaan"),
+    ((17, 3), "banaan"),
+]
+
+nieuw = (10, 7)
+beste_afstand = 1000
+beste_soort = ""
+for maten, soort in voorbeelden:
+    d = afstand(nieuw, maten)
+    if d < beste_afstand:
+        beste_afstand = d
+        beste_soort = soort
+print("Het is een", beste_soort, "op afstand", beste_afstand)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. `Het is een appel op afstand 2`. De dichtstbijzijnde buur is `(9, 8)`.
+2. `(15, 5)` wordt een banaan op afstand 4, en `(13, 6)` een appel op
+   afstand 6. Bij `(13, 6)` scheelt het weinig: de dichtstbijzijnde banaan
+   zit op afstand 7.
+3. Nu is het een banaan, op afstand 1. Eén verkeerd voorbeeld dat toevallig
+   dichtbij ligt, bepaalt alles. Dat los je op in
+   [laat de buren stemmen](site:algorithms/docs/ml-afstand/02-k-buren/01-de-buren-sorteren),
+   door meer buren te laten meetellen.
+
+</details>
+
+## Opdracht: de dichtstbijzijnde van elke soort
+
+Bij `(13, 6)` scheelde het weinig tussen appel en banaan. Zoek uit hoeveel:
+print de afstand tot de dichtstbijzijnde appel en tot de dichtstbijzijnde
+banaan.
+
+```
+dichtstbijzijnde appel: 6
+dichtstbijzijnde banaan: 7
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de soort en de afstand van elk voorbeeld tot `(13, 6)`.
+2. Zet vóór de loop `beste_appel = 1000`. Onthoud in de loop met een `if` de kleinste afstand, maar alleen bij een appel, en print `beste_appel` na de loop.
+3. Doe hetzelfde voor de bananen, met `beste_banaan`.
+
+<PyRunner initialCode={`def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+voorbeelden = [
+    ((8, 8), "appel"),
+    ((9, 8), "appel"),
+    ((7, 7), "appel"),
+    ((18, 4), "banaan"),
+    ((20, 4), "banaan"),
+    ((17, 3), "banaan"),
+]
+nieuw = (13, 6)
+
+for maten, soort in voorbeelden:
+    print(soort, afstand(nieuw, maten))`} />
+
+<details>
+<summary>Tip</summary>
+
+De `if` moet hier twee dingen tegelijk nagaan. Welke twee? Je kunt ze met
+`and` in één `if` zetten, of een `if` in een `if` schrijven.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de loop onderaan de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+beste_appel = 1000
+beste_banaan = 1000
+for maten, soort in voorbeelden:
+    d = afstand(nieuw, maten)
+    if soort == "appel" and d < beste_appel:
+        beste_appel = d
+    if soort == "banaan" and d < beste_banaan:
+        beste_banaan = d
+print("dichtstbijzijnde appel:", beste_appel)
+print("dichtstbijzijnde banaan:", beste_banaan)
+```
+
+```
+dichtstbijzijnde appel: 6
+dichtstbijzijnde banaan: 7
+```
+
+Eén centimeter verschil beslist hier welke soort het wordt.
+
+</details>
+
+Door naar [een functie voorspel](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur/03-een-functie-voorspel).

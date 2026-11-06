@@ -1,0 +1,145 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Goed per soort"
+---
+
+# Goed per soort
+
+Met seed 4 had de voorspeller alles goed, omdat er geen enkele citroen in de
+toets zat. Een score over alles samen kan zo een probleem verstoppen. In
+deze stap tel je per soort: hoeveel stukken fruit van die soort zitten er in
+de toets, en hoeveel daarvan heeft hij goed?
+
+## Voorspel
+
+```python
+totaal = {"appel": 2, "citroen": 2}
+goed = {"appel": 2, "citroen": 1}
+for soort in totaal:
+    print(soort, goed[soort], "van de", totaal[soort], "goed")
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+appel 2 van de 2 goed
+citroen 1 van de 2 goed
+```
+
+Samen is het 3 van de 4, en dat klinkt goed. Per soort zie je dat het bij de
+citroenen misgaat.
+
+</details>
+
+## Zo werkt het
+
+Je telt met twee dictionaries, allebei met de soort als sleutel. `totaal`
+telt hoeveel stukken fruit van elke soort in de toets zitten. `goed` telt
+hoeveel daarvan de voorspeller goed heeft. Na de loop leg je ze per soort
+naast elkaar.
+
+## Opdracht: goed per soort
+
+Tel per soort hoeveel stukken fruit er in de toetsset zitten, en hoeveel
+daarvan de voorspeller goed heeft. Met seed 3 en `k = 1` print je:
+
+```
+banaan 2 van de 2 goed
+appel 2 van de 2 goed
+citroen 1 van de 2 goed
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de soort van elk stuk fruit in de toetsset.
+2. Tel met een dictionary `totaal` hoeveel stukken fruit van elke soort erin zitten, zoals je in het spamfilter woorden telde. Print `totaal` na de loop.
+3. Zet in de loop een `if` die kijkt of `voorspel(maten, oefen, k)` gelijk is aan `soort`, en tel dat in een tweede dictionary `goed`.
+4. Loop na de loop over `totaal`, en print per soort een regel zoals hierboven.
+
+In de editor staan het fruit en het verdelen uit de vorige stappen, met een loop over de toetsset.
+
+<PyRunner verborgen="knn" initialCode={`import random
+
+fruit = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
+    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
+    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
+    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
+    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
+]
+k = 1
+
+random.seed(3)
+random.shuffle(fruit)
+oefen = fruit[:18]
+toets = fruit[18:]
+
+for maten, soort in toets:
+    print(soort)`} />
+
+<details>
+<summary>Tip</summary>
+
+Stopt Python bij het printen met een foutmelding over een soort? Een soort die
+hij nooit goed heeft, komt dan niet in `goed`. Zet daarom in `goed` aan het begin elke soort op 0.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de loop onderaan de code in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+totaal = {}
+goed = {"appel": 0, "banaan": 0, "citroen": 0}
+for maten, soort in toets:
+    if soort in totaal:
+        totaal[soort] = totaal[soort] + 1
+    else:
+        totaal[soort] = 1
+    if voorspel(maten, oefen, k) == soort:
+        goed[soort] = goed[soort] + 1
+
+for soort in totaal:
+    print(soort, goed[soort], "van de", totaal[soort], "goed")
+```
+
+```
+banaan 2 van de 2 goed
+appel 2 van de 2 goed
+citroen 1 van de 2 goed
+```
+
+Nu zie je dat de citroenen het moeilijkst zijn: sommige liggen even dicht bij een appel als bij een andere citroen.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: goed = {"appel": 2}\nprint(goed["citroen"]) */}
+```
+KeyError: 'citroen'
+```
+
+**Oorzaak:** je vraagt `goed["citroen"]`, maar de voorspeller had geen enkele
+citroen goed. Je telde alleen bij een goede voorspelling, dus de sleutel
+`"citroen"` is nooit gemaakt.
+
+**Oplossing:** zet in `goed` vóór de loop elke soort op 0.
+
+{/* niet-draaien: fragment; leunt op goed en soort uit de opdracht */}
+```python
+# FOUT
+goed = {}
+
+# GOED
+goed = {"appel": 0, "banaan": 0, "citroen": 0}
+```
+
+Door naar [de luie voorspeller](site:algorithms/docs/ml-afstand/03-eerlijk-testen/05-de-luie-voorspeller).

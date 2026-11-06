@@ -1,7 +1,8 @@
-// Verborgen code voor de machine-learning-route, fase B (eerlijk testen en
-// Shopping): afstand en voorspel, precies het antwoord van de opdracht bij
-// "Laat de buren stemmen". Zo staat in de editor alleen het testen. Zie
-// ./index.ts.
+// Verborgen code voor de machine-learning-route, fase B (laat de buren
+// stemmen vanaf "Bekijk de buren", eerlijk testen en klaar voor Shopping):
+// afstand en voorspel, precies het antwoord van de opdracht in
+// ml-afstand/02-k-buren/03-de-winnaar. Zo staat in de editor alleen het
+// testen. Zie ./index.ts.
 export default String.raw`
 # afstand en voorspel uit "Laat de buren stemmen" staan hier al klaar.
 

@@ -1,0 +1,151 @@
+---
+sidebar_position: 3
+sidebar_label: "3. Een functie voorspel"
+---
+
+# Een functie voorspel
+
+Je zoekt nu de dichtstbijzijnde buur met een loop, voor één stuk fruit. Wil
+je tien stukken fruit indelen, dan schrijf je die loop niet tien keer op. Je
+stopt hem in een functie, en roept die aan voor elk stuk fruit. Let daarbij
+op één ding: waar de `return` staat.
+
+## Voorspel
+
+```python
+def kleinste(getallen):
+    beste = 1000
+    for g in getallen:
+        if g < beste:
+            beste = g
+        return beste
+
+print(kleinste([5, 2, 8]))
+```
+
+De functie moet het kleinste getal teruggeven. Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+5
+```
+
+De `return` staat in de loop. Bij het eerste getal, 5, geeft de functie al
+antwoord, en dan is hij klaar. De 2 bekijkt hij nooit.
+
+</details>
+
+## Zo werkt het
+
+Een `return` stopt de functie meteen, ook midden in een loop. Een functie die
+de beste uit een lijst zoekt, zet de `return` dus na de loop: één niveau
+minder ver ingesprongen, onder de `for`.
+
+Je functie `voorspel` krijgt twee parameters: het nieuwe fruit en de lijst
+voorbeelden. Zo werkt hij ook met een andere lijst voorbeelden, zoals de
+honden en katten in de volgende stap.
+
+## Opdracht: een functie voorspel
+
+Maak een functie `voorspel(nieuw, voorbeelden)` die de soort van de
+dichtstbijzijnde buur teruggeeft. Test hem zo:
+
+{/* niet-draaien: fragment; voorspel en voorbeelden schrijft de leerling zelf */}
+```python
+print(voorspel((10, 7), voorbeelden))   # appel
+print(voorspel((15, 5), voorbeelden))   # banaan
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `voorspel` geeft nog `"?"` terug.
+2. Loop in de functie over de voorbeelden, en print met `afstand` hoe ver elk voorbeeld weg is.
+3. Onthoud met een `if` de kleinste afstand en de soort die erbij hoort, zoals in de vorige stap. Haal de print weg, en geef de soort terug.
+
+In de editor staan `afstand`, de voorbeelden en een functie die nog niets doet.
+
+<PyRunner initialCode={`def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+voorbeelden = [
+    ((8, 8), "appel"),
+    ((9, 8), "appel"),
+    ((7, 7), "appel"),
+    ((18, 4), "banaan"),
+    ((20, 4), "banaan"),
+    ((17, 3), "banaan"),
+]
+
+def voorspel(nieuw, voorbeelden):
+    return "?"
+
+print(voorspel((10, 7), voorbeelden))
+print(voorspel((15, 5), voorbeelden))`} />
+
+<details>
+<summary>Tip</summary>
+
+De loop uit de vorige stap past bijna zo in de functie: begin met
+`beste_afstand = 1000`, en geef `beste_soort` aan het eind terug. Kijk na
+stap 3 goed naar de inspringing van de `return`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def voorspel(nieuw, voorbeelden):
+    beste_afstand = 1000
+    beste_soort = ""
+    for maten, soort in voorbeelden:
+        d = afstand(nieuw, maten)
+        if d < beste_afstand:
+            beste_afstand = d
+            beste_soort = soort
+    return beste_soort
+
+voorbeelden = [
+    ((8, 8), "appel"),
+    ((9, 8), "appel"),
+    ((7, 7), "appel"),
+    ((18, 4), "banaan"),
+    ((20, 4), "banaan"),
+    ((17, 3), "banaan"),
+]
+print(voorspel((10, 7), voorbeelden))   # appel
+print(voorspel((15, 5), voorbeelden))   # banaan
+```
+
+Staat de `return` in de loop, dan geeft de functie al na het eerste
+voorbeeld een antwoord, en kijkt hij nooit verder.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: def voorspel(nieuw, voorbeelden):\n    return "?"\nvoorspel((10, 7)) */}
+```
+TypeError: voorspel() missing 1 required positional argument: 'voorbeelden'
+```
+
+**Oorzaak:** `voorspel` heeft twee parameters, en je gaf hem er één: alleen
+het nieuwe fruit. Python weet dan niet in welke lijst hij moet zoeken.
+
+**Oplossing:** geef de lijst voorbeelden mee als tweede argument.
+
+{/* niet-draaien: fragment; voorspel en voorbeelden staan in de runner erboven */}
+```python
+# FOUT
+voorspel((10, 7))
+
+# GOED
+voorspel((10, 7), voorbeelden)
+```
+
+Door naar [hond of kat](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur/04-hond-of-kat).

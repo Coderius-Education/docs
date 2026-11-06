@@ -1,0 +1,119 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Hond of kat?"
+---
+
+# Hond of kat?
+
+Je functie `voorspel` werkt voor fruit. Hij werkt net zo goed voor iets heel
+anders, zolang elk voorbeeld twee getallen en een soort heeft. In deze stap
+verzin je zelf de voorbeelden: honden en katten. Dan merk je hoeveel het
+uitmaakt welke voorbeelden je hebt.
+
+## Voorspel
+
+```python
+def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+kat = (4, 25)
+hond = (30, 60)
+nieuw = (17, 42)
+print(afstand(nieuw, kat))
+print(afstand(nieuw, hond))
+```
+
+Elk dier is een tuple `(gewicht in kilo, hoogte in centimeters)`. Wat print
+dit programma, en wat zegt de dichtstbijzijnde buur over het nieuwe dier?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+30
+31
+```
+
+De kat ligt één dichterbij, dus het nieuwe dier is een kat. Een dier van 17
+kilo en 42 centimeter hoog is toch vooral een middelgrote hond. Met één
+voorbeeld van elke soort is de voorspelling een gok.
+
+</details>
+
+## Zo werkt het
+
+Wat je meet, kies je zelf. Bij fruit waren het lengte en breedte, hier
+gewicht en hoogte. Elk kenmerk telt even zwaar: een kilo verschil weegt net
+zo zwaar als een centimeter verschil.
+
+Hoe meer voorbeelden, en hoe beter ze verspreid liggen, hoe beter de
+voorspelling. Vooral de voorbeelden op de grens doen ertoe: een kleine hond
+en een grote kat.
+
+## Bouw zelf: hond of kat?
+
+Maak je eigen voorbeelden: honden en katten, met voor elk dier een tuple
+`(gewicht in kilo, hoogte in centimeters)`. Verzin er minstens vier van elke
+soort. Gebruik je functie `voorspel` om drie nieuwe dieren in te delen.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. In de editor staan `afstand` en `voorspel` uit de vorige stap, met één kat en één hond.
+2. Zet er minstens drie katten en drie honden bij.
+3. Deel drie nieuwe dieren in. Kies er één die tussen een kleine hond en een grote kat in zit.
+
+<PyRunner initialCode={`def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def voorspel(nieuw, voorbeelden):
+    beste_afstand = 1000
+    beste_soort = ""
+    for maten, soort in voorbeelden:
+        d = afstand(nieuw, maten)
+        if d < beste_afstand:
+            beste_afstand = d
+            beste_soort = soort
+    return beste_soort
+
+dieren = [
+    ((4, 25), "kat"),
+    ((30, 60), "hond"),
+]
+print(voorspel((5, 26), dieren))`} />
+
+<details>
+<summary>Tip</summary>
+
+Kies maten die bij elkaar in de buurt liggen, zodat het ook een beetje
+moeilijk wordt: een kleine hond is niet veel groter dan een grote kat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de lijst `dieren` en de print in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+dieren = [
+    ((4, 25), "kat"),
+    ((5, 28), "kat"),
+    ((3, 23), "kat"),
+    ((6, 30), "kat"),
+    ((30, 60), "hond"),
+    ((8, 35), "hond"),
+    ((20, 55), "hond"),
+    ((12, 40), "hond"),
+]
+print(voorspel((5, 26), dieren))    # kat
+print(voorspel((25, 58), dieren))   # hond
+print(voorspel((7, 33), dieren))    # hond
+```
+
+Het derde dier ligt tussen een grote kat `(6, 30)` en een kleine hond
+`(8, 35)` in. De hond ligt net iets dichterbij.
+
+</details>
+
+Door naar [de buren sorteren](site:algorithms/docs/ml-afstand/02-k-buren/01-de-buren-sorteren).

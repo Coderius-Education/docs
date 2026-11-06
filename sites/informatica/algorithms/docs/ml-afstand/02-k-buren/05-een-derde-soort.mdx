@@ -1,0 +1,109 @@
+---
+sidebar_position: 5
+sidebar_label: "5. Een derde soort"
+---
+
+# Een derde soort
+
+Tot nu toe kende je voorspeller twee soorten: appels en bananen. In deze stap
+komen er citroenen bij. Ze liggen dicht bij de appels, en daardoor maakt de
+keuze van `k` meer uit dan je zou denken.
+
+## Voorspel
+
+```python
+def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+citroen = (9, 5)
+appel = (9, 8)
+banaan = (18, 4)
+print(afstand(citroen, appel))
+print(afstand(citroen, banaan))
+```
+
+Wat print dit programma? Ligt een citroen dichter bij de appels of bij de
+bananen?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+10
+```
+
+Een citroen ligt veel dichter bij een appel dan bij een banaan. Liggen er
+maar een paar citroenen, dan kan een appel de dichtstbijzijnde buur zijn.
+
+</details>
+
+## Zo werkt het
+
+Aan `voorspel` hoef je niets te veranderen. In `stemmen` komt een derde
+sleutel bij, `"citroen"`, en de loop over `stemmen` vindt nog steeds de soort
+met de meeste stemmen. De functie werkt voor elk aantal soorten.
+
+Wat wel verandert: met drie soorten kan een stuk fruit op de grens liggen
+van twee soorten tegelijk. Dan geven `k = 1` en `k = 3` soms een ander
+antwoord.
+
+## Bouw zelf: een derde soort
+
+Zet citroenen bij de voorbeelden: vier citroenen van ongeveer 8 of 9
+centimeter lang en 5 centimeter breed. Zoek met je functie `voorspel` een
+stuk fruit waarbij `k = 1` en `k = 3` een ander antwoord geven.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. `voorspel` uit de vorige stappen staat klaar in de verborgen code onder de editor.
+2. Zet vier citroenen in `voorbeelden`.
+3. Kies een stuk fruit, en print wat `voorspel` zegt met `k = 1` en met `k = 3`. Probeer andere stukken tot de twee verschillen.
+
+<PyRunner verborgen="knn" initialCode={`voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+print(voorspel((10, 7), voorbeelden, 1))`} />
+
+<details>
+<summary>Tip</summary>
+
+Kies een stuk fruit dat vlak bij één appel ligt, maar met meer citroenen
+dan appels iets verder weg. Varieer de maten van je citroenen een beetje,
+zodat ze niet allemaal op dezelfde plek liggen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor; `voorspel` blijft in de verborgen code.
+
+{/* draaien-met: blok-erboven */}
+```python
+voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+    ((8, 5), "citroen"), ((9, 5), "citroen"),
+    ((9, 6), "citroen"), ((8, 4), "citroen"),
+]
+print(voorspel((7, 6), voorbeelden, 1))   # appel
+print(voorspel((7, 6), voorbeelden, 3))   # citroen
+```
+
+Bij `k = 1` wint de appel
+`(7, 7)`, op afstand 1. Bij `k = 3` stemmen ook de citroenen `(8, 5)` en
+`(9, 6)` mee, allebei op afstand 2. Welk antwoord klopt, weet je pas als je
+het fruit zelf bekijkt. Hoe je kiest welke `k` het beste werkt, zie je in
+[eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen/01-oefenen-en-toetsen).
+
+Kies je zelf een voorbeeld, let dan op gelijke afstanden. Staan de derde en
+de vierde buur even ver weg, dan kiest `sorted` op alfabet, en dan wint
+"appel" van "citroen" zonder dat het fruit erop lijkt.
+
+</details>
+
+Door naar [oefenen en toetsen](site:algorithms/docs/ml-afstand/03-eerlijk-testen/01-oefenen-en-toetsen).

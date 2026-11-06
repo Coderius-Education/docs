@@ -1,0 +1,165 @@
+---
+sidebar_position: 3
+sidebar_label: "3. De winnaar"
+---
+
+# De winnaar
+
+De buren hebben gestemd, en de stemmen staan in een dictionary. Nu zoek je
+de soort met de meeste stemmen: dat is de voorspelling. Daarna stop je alles
+in één functie, `voorspel(nieuw, voorbeelden, k)`, die je in de volgende
+projecten weer gebruikt.
+
+## Voorspel
+
+```python
+stemmen = {"banaan": 1, "appel": 2}
+winnaar = ""
+meeste = 0
+for soort in stemmen:
+    if stemmen[soort] > meeste:
+        meeste = stemmen[soort]
+        winnaar = soort
+print(winnaar)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+appel
+```
+
+</details>
+
+## Zo werkt het
+
+Een loop over een dictionary geeft je de sleutels: hier de soorten. Met
+`stemmen[soort]` pak je het aantal stemmen. De loop onthoudt de soort met de
+meeste stemmen tot nu toe, zoals je bij de dichtstbijzijnde buur de kleinste
+afstand onthield.
+
+## Onderzoek
+
+1. Draai de code. Wie wint?
+2. Maak er een gelijke stand van: `{"banaan": 1, "appel": 1}`. Wie wint er
+   nu? Dit is de stand bij `k = 2`.
+3. Draai de volgorde om: `{"appel": 1, "banaan": 1}`. Wie wint er nu?
+4. Bij `k = 7` stemmen alle zeven voorbeelden mee: `{"banaan": 4, "appel": 3}`.
+   Wie wint er, en wat betekent dat voor elk nieuw stuk fruit?
+
+<PyRunner initialCode={`stemmen = {"banaan": 1, "appel": 2}
+
+winnaar = ""
+meeste = 0
+for soort in stemmen:
+    if stemmen[soort] > meeste:
+        meeste = stemmen[soort]
+        winnaar = soort
+print("stemmen:", stemmen)
+print("Het is een", winnaar)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Appel, met twee stemmen tegen één. De vergissing verliest.
+2. Banaan. De loop neemt een soort alleen over als die méér stemmen heeft dan
+   de beste tot nu toe, niet evenveel. Banaan staat als eerste in de
+   dictionary, dus banaan wint.
+3. Appel. Bij een gelijke stand wint de soort die het eerst in de dictionary
+   kwam. Daarom kies je voor `k` meestal een oneven getal.
+4. Banaan wint met vier tegen drie. Met alle voorbeelden wint de soort waar je
+   de meeste voorbeelden van hebt, wat het nieuwe fruit ook is. Een te grote
+   `k` maakt de voorspeller dom. Een goede `k` zit ertussenin.
+
+</details>
+
+## Opdracht: voorspel met k
+
+Maak van de code een functie `voorspel(nieuw, voorbeelden, k)` die de
+winnaar teruggeeft. Test hem zo:
+
+{/* niet-draaien: fragment; voorspel en voorbeelden schrijft de leerling zelf */}
+```python
+print(voorspel((10, 7), voorbeelden, 1))   # banaan
+print(voorspel((10, 7), voorbeelden, 3))   # appel
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `voorspel` geeft de `k` buren terug, nog niet de winnaar.
+2. Tel met een dictionary `stemmen` hoeveel buren elke soort heeft, en geef `stemmen` terug.
+3. Zoek de soort met de meeste stemmen: loop over `stemmen`, en onthoud met een `if` de soort met het hoogste aantal. Geef die soort terug.
+
+In de editor staat `voorspel` met het eerste stuk: de buren zoeken.
+
+<PyRunner initialCode={`def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def voorspel(nieuw, voorbeelden, k):
+    paren = []
+    for maten, soort in voorbeelden:
+        paren.append((afstand(nieuw, maten), soort))
+    buren = sorted(paren)[:k]
+    return buren
+
+voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+print(voorspel((10, 7), voorbeelden, 1))
+print(voorspel((10, 7), voorbeelden, 3))`} />
+
+<details>
+<summary>Tip</summary>
+
+Na stap 2 print de code `{'banaan': 1}` en `{'banaan': 1, 'appel': 2}`.
+Zie je dat niet, kijk dan of de `return` na de loop staat, op dezelfde
+inspringing als de `for`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def voorspel(nieuw, voorbeelden, k):
+    paren = []
+    for maten, soort in voorbeelden:
+        paren.append((afstand(nieuw, maten), soort))
+    buren = sorted(paren)[:k]
+    stemmen = {}
+    for d, soort in buren:
+        if soort in stemmen:
+            stemmen[soort] = stemmen[soort] + 1
+        else:
+            stemmen[soort] = 1
+    winnaar = ""
+    meeste = 0
+    for soort in stemmen:
+        if stemmen[soort] > meeste:
+            meeste = stemmen[soort]
+            winnaar = soort
+    return winnaar
+
+voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+print(voorspel((10, 7), voorbeelden, 1))   # banaan
+print(voorspel((10, 7), voorbeelden, 3))   # appel
+```
+
+Deze functie gebruik je in de volgende stappen en projecten weer. Daar staat
+hij klaar in de verborgen code onder de editor.
+
+</details>
+
+Door naar [bekijk de buren](site:algorithms/docs/ml-afstand/02-k-buren/04-bekijk-de-buren).

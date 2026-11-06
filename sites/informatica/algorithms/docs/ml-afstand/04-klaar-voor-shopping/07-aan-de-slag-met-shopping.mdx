@@ -1,0 +1,89 @@
+---
+sidebar_position: 7
+sidebar_label: "7. Aan de slag met Shopping"
+---
+
+# Aan de slag met Shopping
+
+Je hebt nu alle stukken, en je hebt ze in een eigen Shopping samen laten
+werken. Tijd voor het echte project:
+[Shopping](https://cs50.harvard.edu/ai/projects/4/shopping/) van CS50 AI. Je
+maakt het op je eigen computer, met het bestand van CS50 en met scikit-learn.
+
+## Voorspel
+
+```python
+bezoeken = 12330
+kopers = 1908
+kijkers = bezoeken - kopers
+print(kijkers)
+print(kijkers / bezoeken * 100)
+```
+
+In het bestand van Shopping staan 12330 bezoeken, en bij 1908 daarvan kocht
+de bezoeker iets. Een luie voorspeller zegt over iedereen dat hij niets
+koopt. Hoeveel procent heeft hij goed?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+10422
+84.52554744525548
+```
+
+Ruim 84 procent goed, zonder één koper te herkennen: zijn gevoeligheid is 0,
+zijn specificiteit 1. Daarom vraagt Shopping die twee getallen, en niet het
+percentage goed.
+
+</details>
+
+## Wat je bij Shopping maakt
+
+CS50 geeft je `shopping.py` met de code die alles aanroept: het bestand
+lezen, 40 procent achterhouden voor de toets, voorspellen en de uitslag
+printen. Jij schrijft drie functies. Voor elk heb je geoefend:
+
+| Functie bij Shopping | Wat hij doet | Geoefend in |
+|:---:|:---:|:---:|
+| `load_data` | leest het CSV-bestand en geeft de kenmerken en de labels terug | [een CSV lezen](site:algorithms/docs/ml-afstand/04-klaar-voor-shopping/01-een-csv-lezen) tot en met [kenmerken en labels](site:algorithms/docs/ml-afstand/04-klaar-voor-shopping/03-kenmerken-en-labels), en `lees` in [een eigen Shopping](site:algorithms/docs/ml-afstand/04-klaar-voor-shopping/06-een-eigen-shopping) |
+| `train_model` | maakt een k-NN-voorspeller met `k = 1` en geeft hem de oefenset | [de voorspeller uit scikit-learn](site:algorithms/docs/ml-afstand/04-klaar-voor-shopping/04-de-voorspeller-uit-scikit-learn) |
+| `evaluate` | geeft de gevoeligheid en de specificiteit terug | [gevoeligheid en specificiteit](site:algorithms/docs/ml-afstand/04-klaar-voor-shopping/05-gevoeligheid-en-specificiteit), en `beoordeel` in een eigen Shopping |
+
+Het bestand heeft zeventien kenmerken per bezoek: aantallen, kommagetallen,
+een maand en twee kolommen met tekst. In de opdracht staat per kolom welk
+soort getal het moet worden, en welke tekst een 1 wordt.
+
+## Aan de slag met Shopping
+
+1. Installeer Python op je computer, als je dat nog niet hebt.
+2. Installeer scikit-learn met `pip3 install scikit-learn` in een terminal.
+3. Download de bestanden van Shopping via de
+   [projectpagina](https://cs50.harvard.edu/ai/projects/4/shopping/), en lees
+   de opdracht helemaal door voordat je begint.
+4. Schrijf eerst de functie die de gegevens inleest, en print een paar rijen
+   om te zien of de getallen kloppen. Kijk in het bestand zelf hoe de maanden
+   geschreven zijn: één letter anders, en je dictionary vindt de maand niet.
+5. Schrijf daarna de andere twee, en draai het geheel met
+   `python3 shopping.py shopping.csv`.
+
+## Er gaat iets mis
+
+{/* foutmelding-los: hangt af van wat er op de computer van de leerling staat; in CI kan scikit-learn wel of niet geïnstalleerd zijn */}
+```
+ModuleNotFoundError: No module named 'sklearn'
+```
+
+**Oorzaak:** scikit-learn staat niet op je computer, of bij een andere Python
+dan de Python waarmee je `shopping.py` draait.
+
+**Oplossing:** installeer het met dezelfde Python waarmee je het programma
+draait.
+
+```bash
+python3 -m pip install scikit-learn
+python3 shopping.py shopping.csv
+```
+
+Door naar [een worp](site:algorithms/docs/ml-kans/01-dobbelsteen/01-een-worp),
+in fase C.

@@ -1,0 +1,166 @@
+---
+sidebar_position: 5
+sidebar_label: "5. Gevoeligheid en specificiteit"
+---
+
+# Gevoeligheid en specificiteit
+
+Bij de luie voorspeller zag je dat het percentage goed weinig zegt als één
+soort veel vaker voorkomt. Shopping vraagt daarom twee andere getallen: welk
+deel van de kopers herkent de voorspeller, en welk deel van de bezoekers die
+niets kopen? Je oefent ze hier op een ander probleem: een spamfilter.
+
+## Voorspel
+
+```python
+uitslagen = [(1, 1), (0, 0), (1, 0), (0, 0), (0, 1), (0, 0)]
+spam = 0
+herkend = 0
+for echt, voorspeld in uitslagen:
+    if echt == 1:
+        spam = spam + 1
+        if voorspeld == 1:
+            herkend = herkend + 1
+print(herkend, "van de", spam, "spamberichten herkend")
+```
+
+Elke uitslag is een tuple: is het bericht echt spam (1) of niet (0), en wat
+zei het filter? Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1 van de 2 spamberichten herkend
+```
+
+</details>
+
+## Zo werkt het
+
+De **gevoeligheid** is het deel van de spam dat het filter herkent: hier 1
+van de 2, dus 0.5. De **specificiteit** is het deel van de gewone berichten
+dat het filter doorlaat als geen spam: hier 3 van de 4, dus 0.75. Allebei liggen
+ze tussen 0 en 1, en een goed filter scoort op allebei hoog. De luie
+voorspeller heeft een gevoeligheid van 0: hij herkent niets.
+
+In het Engels heten ze *sensitivity* en *specificity*. Shopping vraagt ze
+voor de kopers en de bezoekers die niets kopen.
+
+Bij Shopping krijg je geen lijst paren, maar twee lijsten: de echte labels
+en de voorspellingen. `zip` is nieuw: hij legt twee lijsten naast elkaar en
+geeft ze paar voor paar, zodat je ze in één loop doorloopt.
+
+## Onderzoek
+
+1. Draai de code. Welke paren print hij?
+2. Welke berichten heeft het filter goed, en welke spam mist hij?
+3. Haal het laatste getal uit `voorspellingen`. Hoeveel paren print hij nu?
+
+<PyRunner initialCode={`labels = [1, 0, 0, 1]
+voorspellingen = [1, 0, 1, 0]
+
+for echt, voorspeld in zip(labels, voorspellingen):
+    print(echt, voorspeld)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. `1 1`, `0 0`, `0 1` en `1 0`: steeds het eerste getal van de ene lijst
+   naast het eerste van de andere, dan het tweede naast het tweede.
+2. De eerste twee heeft hij goed. Het derde bericht is geen spam, maar hij noemt
+   het spam. Het vierde is spam, en dat mist hij.
+3. Drie. `zip` stopt bij het eind van de kortste lijst, zonder foutmelding.
+   Zorg dus dat je twee lijsten even lang zijn.
+
+</details>
+
+## Opdracht: beoordeel het spamfilter
+
+Reken de gevoeligheid en de specificiteit uit van een spamfilter dat tien
+berichten beoordeelde:
+
+```
+gevoeligheid: 0.6666666666666666
+specificiteit: 0.8571428571428571
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print van elk bericht wat het echt is en wat het filter zei.
+2. Tel hoeveel berichten echt spam zijn, en hoeveel daarvan het filter herkent. Print `spam` en `herkend` na de loop.
+3. Tel op dezelfde manier hoeveel berichten geen spam zijn, en hoeveel daarvan het filter doorlaat. Print `geen_spam` en `doorgelaten`.
+4. Deel, en print de gevoeligheid en de specificiteit.
+
+<PyRunner initialCode={`labels = [1, 0, 0, 1, 0, 0, 0, 1, 0, 0]
+voorspellingen = [1, 0, 0, 0, 0, 1, 0, 1, 0, 0]
+
+for echt, voorspeld in zip(labels, voorspellingen):
+    print(echt, voorspeld)`} />
+
+<details>
+<summary>Tip</summary>
+
+Na stap 3 zie je `3 2` en `7 6`. Welk getal deel je door welk?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de loop onderaan de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+spam = 0
+herkend = 0
+geen_spam = 0
+doorgelaten = 0
+for echt, voorspeld in zip(labels, voorspellingen):
+    if echt == 1:
+        spam = spam + 1
+        if voorspeld == 1:
+            herkend = herkend + 1
+    else:
+        geen_spam = geen_spam + 1
+        if voorspeld == 0:
+            doorgelaten = doorgelaten + 1
+print("gevoeligheid:", herkend / spam)
+print("specificiteit:", doorgelaten / geen_spam)
+```
+
+```
+gevoeligheid: 0.6666666666666666
+specificiteit: 0.8571428571428571
+```
+
+Het filter herkent 2 van de 3 spamberichten, en laat 6 van de 7 gewone
+berichten door. Bij Shopping zet je zo'n berekening in een functie die de
+twee getallen teruggeeft; dat oefen je in de volgende stap.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: print(0 / 0) */}
+```
+ZeroDivisionError: division by zero
+```
+
+**Oorzaak:** er zat geen enkel spambericht tussen, dus `spam` is 0, en door
+0 kun je niet delen. Bij een kleine toets gebeurt dat sneller dan je denkt.
+
+**Oplossing:** test met meer berichten, zodat van elke soort een paar in de
+toets zitten. Of kijk vóór het delen met een `if` of `spam` groter is dan 0.
+
+{/* niet-draaien: fragment; leunt op herkend en spam uit de opdracht */}
+```python
+# FOUT
+print("gevoeligheid:", herkend / spam)
+
+# GOED
+if spam > 0:
+    print("gevoeligheid:", herkend / spam)
+```
+
+Door naar [een eigen Shopping](site:algorithms/docs/ml-afstand/04-klaar-voor-shopping/06-een-eigen-shopping).

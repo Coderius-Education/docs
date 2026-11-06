@@ -1,0 +1,177 @@
+---
+sidebar_position: 6
+sidebar_label: "6. Een eigen Shopping"
+---
+
+# Een eigen Shopping
+
+Je hebt alle stukken los geoefend: een CSV lezen, kenmerken en labels maken,
+voorspellen, en beoordelen met gevoeligheid en specificiteit. Bij Shopping
+zet je ze in functies, en de code van CS50 roept die aan. Dat doe je hier
+eerst zelf, op een ander probleem: gaat het morgen regenen?
+
+## Voorspel
+
+```python
+def tel(labels):
+    enen = 0
+    nullen = 0
+    for label in labels:
+        if label == 1:
+            enen = enen + 1
+        else:
+            nullen = nullen + 1
+    return enen, nullen
+a, b = tel([1, 0, 0, 1, 0])
+print(a, b)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+2 3
+```
+
+`return enen, nullen` geeft twee getallen tegelijk terug, als tuple. Met
+`a, b = …` pak je ze meteen uit in twee variabelen.
+
+</details>
+
+## Zo werkt het
+
+Onderaan de editor staat code die je niet verandert, zoals CS50 je ook een
+deel van de code geeft. Die roept twee functies aan die jij afmaakt:
+
+- `lees(regels)` maakt van de regels twee lijsten, `kenmerken` en `labels`,
+  en geeft ze allebei terug;
+- `beoordeel(labels, voorspellingen)` geeft de gevoeligheid en de
+  specificiteit terug.
+
+Het voorspellen zelf doet `voorspel_lijst` in de verborgen code onder de
+editor. Dat is wat scikit-learn bij Shopping voor je doet: de dichtstbijzijnde
+buur zoeken voor elke dag in de toets. De eerste vier dagen zijn de toets, de
+rest is de oefenset.
+
+## Bouw zelf: regent het morgen?
+
+Elke regel is een dag: de temperatuur, de wind, of het bewolkt was, en of
+het de dag erna regende. Maak `lees` en `beoordeel` af, zodat de code onderaan
+dit print:
+
+```
+12 dagen
+gevoeligheid: 1.0
+specificiteit: 0.6666666666666666
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `lees` print elke rij, maar geeft nog twee lege lijsten terug. Daarom staat er `0 dagen`, en geeft `beoordeel` nog twee nullen.
+2. Maak in `lees` van elke rij de kenmerken `[temperatuur, wind, bewolkt]` als getallen, en het label: 1 bij regen, anders 0. Zet ze in `kenmerken` en `labels`, en haal de print weg. Nu staat er `12 dagen`.
+3. Print in `beoordeel` eerst `labels` en `voorspellingen`, zodat je ziet wat de voorspeller over de vier toetsdagen zei.
+4. Reken in `beoordeel` de gevoeligheid en de specificiteit uit, zoals in de vorige stap, en geef ze terug met `return gevoeligheid, specificiteit`.
+
+<PyRunner verborgen="buur-model" initialCode={`import csv
+
+regels = [
+    "temperatuur,wind,bewolkt,regen",
+    "12.5,5,TRUE,TRUE", "21.0,2,FALSE,FALSE", "9.5,6,TRUE,FALSE",
+    "15.0,3,FALSE,FALSE", "11.0,6,TRUE,TRUE", "8.5,4,TRUE,TRUE",
+    "14.0,5,TRUE,TRUE", "10.0,7,TRUE,TRUE", "22.5,1,FALSE,FALSE",
+    "19.0,3,FALSE,FALSE", "16.5,2,TRUE,FALSE", "13.5,4,FALSE,FALSE",
+]
+
+def lees(regels):
+    kenmerken = []
+    labels = []
+    lezer = csv.reader(regels)
+    next(lezer)
+    for rij in lezer:
+        print(rij)
+    return kenmerken, labels
+
+def beoordeel(labels, voorspellingen):
+    return 0, 0
+
+kenmerken, labels = lees(regels)
+print(len(kenmerken), "dagen")
+voorspellingen = voorspel_lijst(kenmerken[4:], labels[4:], kenmerken[:4])
+gevoeligheid, specificiteit = beoordeel(labels[:4], voorspellingen)
+print("gevoeligheid:", gevoeligheid)
+print("specificiteit:", specificiteit)`} />
+
+<details>
+<summary>Tip</summary>
+
+Bij stap 3 zie je `[1, 0, 0, 0]` en `[1, 0, 1, 0]`. Hoeveel regendagen zitten
+er in de toets, en hoeveel droge dagen noemt de voorspeller ook droog?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder de lijst `regels`:
+
+{/* draaien-met: blok-erboven */}
+```python
+def lees(regels):
+    kenmerken = []
+    labels = []
+    lezer = csv.reader(regels)
+    next(lezer)
+    for rij in lezer:
+        temperatuur = float(rij[0])
+        wind = int(rij[1])
+        if rij[2] == "TRUE":
+            bewolkt = 1
+        else:
+            bewolkt = 0
+        kenmerken.append([temperatuur, wind, bewolkt])
+        if rij[3] == "TRUE":
+            labels.append(1)
+        else:
+            labels.append(0)
+    return kenmerken, labels
+
+def beoordeel(labels, voorspellingen):
+    regen = 0
+    herkend = 0
+    droog = 0
+    droog_herkend = 0
+    for echt, voorspeld in zip(labels, voorspellingen):
+        if echt == 1:
+            regen = regen + 1
+            if voorspeld == 1:
+                herkend = herkend + 1
+        else:
+            droog = droog + 1
+            if voorspeld == 0:
+                droog_herkend = droog_herkend + 1
+    return herkend / regen, droog_herkend / droog
+
+kenmerken, labels = lees(regels)
+print(len(kenmerken), "dagen")
+voorspellingen = voorspel_lijst(kenmerken[4:], labels[4:], kenmerken[:4])
+gevoeligheid, specificiteit = beoordeel(labels[:4], voorspellingen)
+print("gevoeligheid:", gevoeligheid)
+print("specificiteit:", specificiteit)
+```
+
+```
+12 dagen
+gevoeligheid: 1.0
+specificiteit: 0.6666666666666666
+```
+
+De ene regendag herkent hij, en van de drie droge dagen noemt hij er twee
+droog. Op de derde dag, `9.5,6,TRUE`, was het bewolkt en winderig zonder
+regen. Met vier toetsdagen zegt dat nog weinig; bij Shopping toets je met
+duizenden bezoeken.
+
+</details>
+
+Door naar [aan de slag met Shopping](site:algorithms/docs/ml-afstand/04-klaar-voor-shopping/07-aan-de-slag-met-shopping).
