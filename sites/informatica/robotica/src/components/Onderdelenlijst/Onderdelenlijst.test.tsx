@@ -51,7 +51,7 @@ describe('Onderdelenlijst', () => {
 
   it('de grote foto laadt pas als je het venster opent', () => {
     const { container } = lijst();
-    for (const img of container.querySelectorAll('img'))
+    for (const img of Array.from(container.querySelectorAll('img')))
       expect(img.getAttribute('loading')).toBe('lazy');
   });
 
