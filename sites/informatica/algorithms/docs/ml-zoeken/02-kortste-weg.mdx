@@ -129,7 +129,13 @@ S*....
 #****E
 ```
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Zet `vorige = {}` boven de loop, en vul hem waar je ook de afstand van een buur invult. Print `vorige` om te zien wat erin staat.
+2. Loop met een tweede while-loop vanaf E terug naar de start, en zet elk vakje vooraan in `weg`.
+3. Teken de weg: loop over alle vakjes, net als bij de doodlopende vakjes, en zet een `*` waar de weg komt.
+
+In de editor staat het zoeken uit het onderzoek.
 
 <PyRunner verborgen="doolhof-buren" initialCode={`doolhof = [
     "S.....",
@@ -148,9 +154,7 @@ while len(wachtrij) > 0:
     for buur in buren(vakje):
         if buur not in afstand:
             afstand[buur] = afstand[vakje] + 1
-            wachtrij.append(buur)
-
-print("De kortste weg is", afstand[eind], "stappen")`} />
+            wachtrij.append(buur)`} />
 
 <details>
 <summary>Tip</summary>
@@ -166,7 +170,7 @@ en bouw je per rij een tekst op.
 <details>
 <summary>Antwoord</summary>
 
-Dit vervangt alles onder `eind = (4, 5)` in de code hierboven:
+Dit vervangt alles onder `eind = (4, 5)` in de editor:
 
 {/* draaien-met: blok-erboven */}
 ```python
@@ -222,19 +226,25 @@ vakje er schuin naast?
 Gebruik breedte-eerst zoeken op een bord van 8 bij 8. Er zijn geen muren;
 alleen de buren zijn anders.
 
-Begin in de editor hieronder. Het schaakbord heeft geen doolhof nodig, alleen de nummers 0 tot en met 7.
+Begin in de editor hieronder met één sprong, en bouw hem uit tot alle acht.
 
-<PyRunner initialCode={`start = (0, 0)
-eind = (7, 7)`} />
+<PyRunner initialCode={`def sprongen(vakje):
+    rij, kolom = vakje
+    resultaat = []
+    resultaat.append((rij + 1, kolom + 2))
+    return resultaat
+
+start = (0, 0)
+print(sprongen(start))`} />
 
 <details>
 <summary>Tip</summary>
 
-Schrijf een functie `sprongen(vakje)` in plaats van `buren`. Een paard kan
-acht kanten op: `(1, 2)`, `(2, 1)`, `(2, -1)`, `(1, -2)`, `(-1, -2)`,
+Een paard kan acht kanten op: `(1, 2)`, `(2, 1)`, `(2, -1)`, `(1, -2)`, `(-1, -2)`,
 `(-2, -1)`, `(-2, 1)` en `(-1, 2)`. Tel elke sprong bij de rij en de kolom op,
-en houd alleen de vakjes van 0 tot en met 7. De rest van het zoeken blijft
-precies hetzelfde.
+en houd alleen de vakjes van 0 tot en met 7. Zet de acht in een lijst en loop
+erover, dan hoef je niet acht keer `append` te schrijven. Het zoeken uit de
+opdracht blijft hetzelfde, met `sprongen` in plaats van `buren`.
 
 </details>
 

@@ -131,7 +131,13 @@ Teken het daarna als staafdiagram, net als bij
 [de dobbelsteen](site:algorithms/docs/ml-kans/01-dobbelsteen#opdracht-twee-dobbelstenen),
 met `bezocht` in plaats van `telling`.
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code een paar keer: soms zegt hij link, soms springen.
+2. Laat de surfer bij link een link kiezen met `random.choice(web[pagina])`, en bij springen een pagina uit `list(web)`.
+3. Zet dat in een loop van 10.000 klikken, en tel met `bezocht` hoe vaak hij op elke pagina komt.
+
+In de editor staan het web en één keuze tussen een link volgen en springen.
 
 <PyRunner initialCode={`import random
 
@@ -141,26 +147,19 @@ web = {
     "C": ["A"],
     "D": ["C"],
 }
-klikken = 1000
+damping = 0.85
 
-bezocht = {}
-for p in web:
-    bezocht[p] = 0
-
-pagina = "A"
-for i in range(klikken):
-    pagina = random.choice(web[pagina])
-    bezocht[pagina] = bezocht[pagina] + 1
-
-for p in bezocht:
-    print(p, bezocht[p] / klikken)`} />
+if random.random() < damping:
+    print("link")
+else:
+    print("springen")`} />
 
 <details>
 <summary>Tip</summary>
 
-Bij elke klik moet de surfer kiezen: een link volgen of springen. Welke
-Python-opdracht kiest tussen twee dingen, en wat zet je in elk van de twee
-takken?
+Zet `pagina = "A"` boven de loop. Bij een link kiest de surfer uit
+`web[pagina]`, de links van de pagina waar hij nu is. Bij springen kiest hij
+uit alle pagina's.
 
 </details>
 

@@ -148,45 +148,38 @@ print(voorspel((10, 7), voorbeelden, 1))   # banaan
 print(voorspel((10, 7), voorbeelden, 3))   # appel
 ```
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `voorspel` geeft de `k` buren terug, nog niet de winnaar.
+2. Tel met een dictionary `stemmen` hoeveel buren elke soort heeft, en geef `stemmen` terug.
+3. Zoek met een `if` de soort met de meeste stemmen, en geef die terug.
+
+In de editor staat `voorspel` met het eerste stuk: de buren zoeken.
 
 <PyRunner initialCode={`def afstand(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def voorspel(nieuw, voorbeelden, k):
+    paren = []
+    for maten, soort in voorbeelden:
+        paren.append((afstand(nieuw, maten), soort))
+    buren = sorted(paren)[:k]
+    return buren
 
 voorbeelden = [
     ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
     ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
     ((10, 6), "banaan"),
 ]
-nieuw = (10, 7)
-k = 3
-
-paren = []
-for maten, soort in voorbeelden:
-    paren.append((afstand(nieuw, maten), soort))
-buren = sorted(paren)[:k]
-print("buren:", buren)
-stemmen = {}
-for d, soort in buren:
-    if soort in stemmen:
-        stemmen[soort] = stemmen[soort] + 1
-    else:
-        stemmen[soort] = 1
-print("stemmen:", stemmen)
-winnaar = ""
-meeste = 0
-for soort in stemmen:
-    if stemmen[soort] > meeste:
-        meeste = stemmen[soort]
-        winnaar = soort
-print("Het is een", winnaar)`} />
+print(voorspel((10, 7), voorbeelden, 1))
+print(voorspel((10, 7), voorbeelden, 3))`} />
 
 <details>
 <summary>Tip</summary>
 
-De drie stukken van de code komen onder elkaar in de functie: de buren
-zoeken, de stemmen tellen en de winnaar kiezen. Haal de `print`-regels
-eruit, en geef `winnaar` aan het eind terug.
+Een soort die nog niet in `stemmen` staat, zet je op 1. Staat hij er al, dan
+tel je er 1 bij op. Voor de winnaar onthoud je de soort met de meeste
+stemmen, zoals je bij de dichtstbijzijnde buur de kleinste afstand onthield.
 
 </details>
 
@@ -235,37 +228,14 @@ Zet citroenen bij de voorbeelden: vier citroenen van ongeveer 8 of 9
 centimeter lang en 5 centimeter breed. Zoek met je functie `voorspel` een
 stuk fruit waarbij `k = 1` en `k = 3` een ander antwoord geven.
 
-In de editor hieronder staat `voorspel` uit de opdracht al klaar.
+`voorspel` uit de opdracht staat klaar in de verborgen code onder de editor. Zet de citroenen erbij.
 
-<PyRunner initialCode={`def afstand(a, b):
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
-
-def voorspel(nieuw, voorbeelden, k):
-    paren = []
-    for maten, soort in voorbeelden:
-        paren.append((afstand(nieuw, maten), soort))
-    buren = sorted(paren)[:k]
-    stemmen = {}
-    for d, soort in buren:
-        if soort in stemmen:
-            stemmen[soort] = stemmen[soort] + 1
-        else:
-            stemmen[soort] = 1
-    winnaar = ""
-    meeste = 0
-    for soort in stemmen:
-        if stemmen[soort] > meeste:
-            meeste = stemmen[soort]
-            winnaar = soort
-    return winnaar
-
-voorbeelden = [
+<PyRunner verborgen="knn" initialCode={`voorbeelden = [
     ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
     ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
     ((10, 6), "banaan"),
 ]
-print(voorspel((10, 7), voorbeelden, 1))   # banaan
-print(voorspel((10, 7), voorbeelden, 3))   # appel`} />
+print(voorspel((7, 6), voorbeelden, 1))`} />
 
 <details>
 <summary>Tip</summary>

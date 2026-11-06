@@ -114,7 +114,13 @@ print(voorspel((10, 7), voorbeelden))   # appel
 print(voorspel((15, 5), voorbeelden))   # banaan
 ```
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `voorspel` geeft nog `"?"` terug.
+2. Loop in de functie over de voorbeelden, en reken met `afstand` uit hoe ver elk voorbeeld weg is.
+3. Onthoud met een `if` de kleinste afstand en de soort die erbij hoort, en geef die soort terug.
+
+In de editor staan `afstand`, de voorbeelden en een functie die nog niets doet.
 
 <PyRunner initialCode={`def afstand(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
@@ -128,22 +134,19 @@ voorbeelden = [
     ((17, 3), "banaan"),
 ]
 
-nieuw = (10, 7)
-beste_afstand = 1000
-beste_soort = ""
-for maten, soort in voorbeelden:
-    d = afstand(nieuw, maten)
-    if d < beste_afstand:
-        beste_afstand = d
-        beste_soort = soort
-print("Het is een", beste_soort, "op afstand", beste_afstand)`} />
+def voorspel(nieuw, voorbeelden):
+    return "?"
+
+print(voorspel((10, 7), voorbeelden))
+print(voorspel((15, 5), voorbeelden))`} />
 
 <details>
 <summary>Tip</summary>
 
-Zet de loop in een functie. Wat nu onder `nieuw = (10, 7)` staat, komt in de
-functie, en `beste_soort` geef je aan het eind terug met `return`. Zet de
-`return` na de loop, niet erin.
+De loop uit het onderzoek past bijna zo in de functie: begin met
+`beste_afstand = 1000`, en geef `beste_soort` aan het eind terug. Zet de
+`return` na de loop, niet erin, anders geeft hij al bij het eerste voorbeeld
+antwoord.
 
 </details>
 
@@ -187,7 +190,7 @@ Maak je eigen voorbeelden: honden en katten, met voor elk dier een tuple
 `(gewicht in kilo, hoogte in centimeters)`. Verzin er minstens vier van elke
 soort. Gebruik je functie `voorspel` om drie nieuwe dieren in te delen.
 
-In de editor hieronder staat `voorspel` uit de opdracht al klaar.
+In de editor staan `afstand` en `voorspel` uit de opdracht al klaar, met een kat en een hond om mee te beginnen.
 
 <PyRunner initialCode={`def afstand(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
@@ -202,16 +205,11 @@ def voorspel(nieuw, voorbeelden):
             beste_soort = soort
     return beste_soort
 
-voorbeelden = [
-    ((8, 8), "appel"),
-    ((9, 8), "appel"),
-    ((7, 7), "appel"),
-    ((18, 4), "banaan"),
-    ((20, 4), "banaan"),
-    ((17, 3), "banaan"),
+dieren = [
+    ((4, 25), "kat"),
+    ((30, 60), "hond"),
 ]
-print(voorspel((10, 7), voorbeelden))   # appel
-print(voorspel((15, 5), voorbeelden))   # banaan`} />
+print(voorspel((5, 26), dieren))`} />
 
 <details>
 <summary>Tip</summary>

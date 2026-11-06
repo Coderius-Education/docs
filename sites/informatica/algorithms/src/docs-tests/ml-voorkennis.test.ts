@@ -2,6 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { ML_MAPPEN } from '../lib/mlSidebar';
 
 // Een project van de route machine learning noemt in zijn :::info de Python
 // die het gebruikt: "`random.choice` uit [een les](site:…)". Bij de review
@@ -71,4 +72,50 @@ describe('de :::info van een project belooft niets wat de les niet geeft', () =>
       expect(fout).toEqual([]);
     });
   }
+});
+
+// De routepagina zet per fase bij elkaar wat je moet kunnen voordat je
+// begint (`## Wat moet je al kunnen?`). Die tabel moet de :::info-blokken van
+// de projecten volgen: elke link naar de python-cursus of een ander hoofdstuk
+// staat in de rij van de fase, en een link naar een project van een andere
+// fase staat erin als "fase X".
+
+const FASES = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+describe('de voorkennis per fase op de routepagina volgt de projecten', () => {
+  const route = readFileSync(join(DOCS, 'machine-learning.md'), 'utf8');
+  const sectie = route.split('## Wat moet je al kunnen?')[1]?.split(/^## /m)[0] ?? '';
+  const rijen = new Map<string, string[]>();
+  for (const regel of sectie.split('\n')) {
+    const cellen = regel.split('|').map((c) => c.trim());
+    if (FASES.includes(cellen[1])) rijen.set(cellen[1], cellen.slice(2));
+  }
+
+  it('elke fase heeft een rij', () => {
+    expect([...rijen.keys()]).toEqual(FASES);
+  });
+
+  ML_MAPPEN.forEach((map, i) => {
+    const fase = FASES[i];
+    it(`fase ${fase} (${map})`, () => {
+      const [python = '', cursus = ''] = rijen.get(fase) ?? [];
+      const mist: string[] = [];
+      for (const pad of projecten.filter((p) => p.includes(`/${map}/`))) {
+        const info = readFileSync(pad, 'utf8').match(/^:::info\n([\s\S]*?)\n:::/m)?.[1] ?? '';
+        for (const m of info.matchAll(/\]\((site:[^)]+)\)/g)) {
+          const doel = m[1];
+          const ml = doel.match(/^site:algorithms\/docs\/(ml-[a-z]+)\//);
+          if (ml) {
+            if (ml[1] === map) continue;
+            const andere = FASES[ML_MAPPEN.indexOf(ml[1])];
+            if (!new RegExp(`fase[^|]*\\b${andere}\\b`).test(cursus))
+              mist.push(`${relative(DOCS, pad)}: fase ${andere}`);
+          } else if (!`${python} ${cursus}`.includes(`(${doel})`)) {
+            mist.push(`${relative(DOCS, pad)}: ${doel}`);
+          }
+        }
+      }
+      expect(mist).toEqual([]);
+    });
+  });
 });

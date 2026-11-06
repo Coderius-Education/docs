@@ -138,7 +138,13 @@ appel 2 van de 2 goed
 citroen 1 van de 2 goed
 ```
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de soort van elk stuk fruit in de toetsset.
+2. Tel met een dictionary `totaal` hoeveel stukken fruit van elke soort erin zitten.
+3. Zet er een `if` bij die kijkt of `voorspel` het goed heeft, en tel dat in een tweede dictionary `goed`.
+
+In de editor staan het fruit en het verdelen uit het onderzoek, met een loop over de toetsset.
 
 <PyRunner verborgen="knn" initialCode={`import random
 
@@ -157,26 +163,22 @@ random.shuffle(fruit)
 oefen = fruit[:18]
 toets = fruit[18:]
 
-goed = 0
 for maten, soort in toets:
-    if voorspel(maten, oefen, k) == soort:
-        goed = goed + 1
-print(goed, "van de", len(toets), "goed")`} />
+    print(soort)`} />
 
 <details>
 <summary>Tip</summary>
 
-Gebruik twee dictionaries, `totaal` en `goed`, met de soort als sleutel. Tel
-in de loop over de toetsset elk stuk fruit bij `totaal` op, en alleen de
-goed voorspelde ook bij `goed`. Zet in `goed` aan het begin elke soort op 0,
-anders mist een soort die hij nooit goed heeft.
+`voorspel(maten, oefen, k)` geeft de soort die het model raadt. Vergelijk die
+met `soort`. Zet in `goed` aan het begin elke soort op 0, anders mist een
+soort die hij nooit goed heeft.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Dit vervangt het tellen onderaan de code hierboven:
+Dit vervangt de loop onderaan de code in de editor:
 
 {/* niet-draaien: fragment; leunt op toets, oefen, k en voorspel uit de runner erboven */}
 ```python

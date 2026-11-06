@@ -29,6 +29,22 @@ Op welke concepten je docent je beoordeelt, staat bij
 PageRank en minimax zijn hoofdstukken van deze cursus, en zwaarder dan de
 projecten ervoor. Daar bouw je het algoritme stap voor stap op.
 
+## Wat moet je al kunnen?
+
+Elk project noemt bovenaan, in een blauw blok, welke Python het gebruikt en
+waar je die leert. Per fase staat het hieronder bij elkaar, zodat je ziet
+waar je kunt instappen. Fase A vraagt alleen de basis van de python-cursus.
+Elke fase daarna gebruikt ook wat in de fases van de laatste kolom staat.
+
+| Fase | Uit de python-cursus | Uit deze cursus |
+|---|---|---|
+| A | [If en else](site:python/docs/beslissen/05b-if-else), [And, or en elif](site:python/docs/beslissen/05c-and-or-elif), [String-methoden](site:python/docs/tekst/04b-string-methoden), [Lijsten](site:python/docs/data/10a-lijsten-basis), [De for-loop](site:python/docs/herhalen/06a-for-loop), [Dictionaries](site:python/docs/data/11a-dictionaries-basis) | niets, hier begin je |
+| B | [Tuples](site:python/docs/data/tuples), [Return-waarden](site:python/docs/functies/09b-return), [Lijst-methoden](site:python/docs/data/10b-lijst-methoden), [Modules](site:python/docs/modules/09d-modules); voor Shopping ook [Tekst naar getal](site:python/docs/basis/03b-tekst-naar-getal), [Dictionaries](site:python/docs/data/11a-dictionaries-basis) en [Een tekstbestand lezen](site:python/docs/bestanden/14b-tekstbestand-lezen) | fase A, en [Vind het maximum](site:algorithms/docs/vind-maximum/01-concept) |
+| C | [De computer kiest](site:python/docs/projecten/raad-het-getal/stap-4-random), [De for-loop](site:python/docs/herhalen/06a-for-loop), [Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest), [Een bont bloemenveld](site:python/docs/projecten/bloemenveld/stap-6-lijst), [Geneste dictionaries](site:python/docs/data/11c-geneste-dictionaries); voor de Bouw zelf van de dobbelsteen ook [Om de beurt](site:python/docs/projecten/schildpaddenrace/stap-5-loop-in-loop) en [Booleans en vergelijken](site:python/docs/beslissen/05a-booleans-en-vergelijken) | fase A |
+| D | [De while-loop](site:python/docs/herhalen/while-loop), [Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest), [Tuples](site:python/docs/data/tuples) | fase A en C |
+| E | [Lijsten](site:python/docs/data/10a-lijsten-basis), [Tuples](site:python/docs/data/tuples), [Return-waarden](site:python/docs/functies/09b-return), [Om de beurt](site:python/docs/projecten/schildpaddenrace/stap-5-loop-in-loop), [De while-loop](site:python/docs/herhalen/while-loop), [Lijst-methoden](site:python/docs/data/10b-lijst-methoden) | geen, je kunt na fase A instappen |
+| F | [Lijsten](site:python/docs/data/10a-lijsten-basis), [Return-waarden](site:python/docs/functies/09b-return) | fase B en E |
+
 ## De CS50-projecten
 
 De CS50-projecten zijn Engelstalig, en je maakt ze op je eigen computer. Bij

@@ -99,23 +99,26 @@ Geef de chatbot twee nieuwe regels:
 
 Test elke regel met een zin die erop past.
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+Begin klein, en breid de code stap voor stap uit:
 
-<PyRunner initialCode={`zin = "Hoi, hoe gaat het?"
+1. Draai de code. Bij deze zin zegt de chatbot nog niets: er is maar één regel.
+2. Zet onder de `if` een `elif` voor `"naam"`, en draai opnieuw.
+3. Voeg een `elif` toe voor `"doei"` of `"tot ziens"`.
+4. Zet er een `else` onder voor alle andere zinnen.
+
+In de editor staat de chatbot met één regel.
+
+<PyRunner initialCode={`zin = "Wat is je naam?"
 zin = zin.lower()
 
 if "hoi" in zin or "hallo" in zin:
-    print("Hallo, leuk dat je er bent.")
-elif "weer" in zin:
-    print("Ik kan niet naar buiten kijken.")
-else:
-    print("Daar weet ik niets van.")`} />
+    print("Hallo, leuk dat je er bent.")`} />
 
 <details>
 <summary>Tip</summary>
 
-Elke nieuwe regel is een `elif` tussen de regels die er al staan en de
-`else`. Voor twee trefwoorden in één regel gebruik je `or`, net als bij
+Een `elif` staat op dezelfde hoogte als de `if`, met de `print` eronder
+ingesprongen. Voor twee trefwoorden in één regel gebruik je `or`, net als bij
 `"hoi"` en `"hallo"`.
 
 </details>
@@ -129,8 +132,6 @@ zin = zin.lower()
 
 if "hoi" in zin or "hallo" in zin:
     print("Hallo, leuk dat je er bent.")
-elif "weer" in zin:
-    print("Ik kan niet naar buiten kijken.")
 elif "naam" in zin:
     print("Ik heet Bot. En jij?")
 elif "doei" in zin or "tot ziens" in zin:
@@ -154,17 +155,13 @@ game, je huisdier. Hij heeft minstens vier regels, en één regel gebruikt
 Zoek daarna een zin die je chatbot verkeerd begrijpt, zoals de chatbot
 hierboven bij `"Ik ga weer naar huis"`.
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+Begin in de editor hieronder met één regel, en bouw hem uit.
 
-<PyRunner initialCode={`zin = "Hoi, hoe gaat het?"
+<PyRunner initialCode={`zin = "Wie heeft er gisteren gewonnen?"
 zin = zin.lower()
 
-if "hoi" in zin or "hallo" in zin:
-    print("Hallo, leuk dat je er bent.")
-elif "weer" in zin:
-    print("Ik kan niet naar buiten kijken.")
-else:
-    print("Daar weet ik niets van.")`} />
+if "hoi" in zin:
+    print("Hoi, praat je mee?")`} />
 
 <details>
 <summary>Tip</summary>

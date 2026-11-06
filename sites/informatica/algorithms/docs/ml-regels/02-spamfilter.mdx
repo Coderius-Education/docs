@@ -115,30 +115,28 @@ Pas het filter aan: loop over de woorden van het bericht, en tel een punt
 voor elk woord dat in de lijst `verdacht` staat. Test met
 `"Je nieuwe nummer is binnen"`: de score moet nu 0 zijn.
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet de lijst woorden van het bericht.
+2. Loop met `for` over die woorden, en print elk woord.
+3. Zet in de loop een `if`: staat het woord in `verdacht`, print het dan.
+4. Tel nu in plaats van te printen: begin met `score = 0`, en tel er bij elk verdacht woord 1 bij op.
+
+In de editor staan de lijst verdachte woorden en het bericht al klaar.
 
 <PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
 
-bericht = "Klik nu en win een gratis telefoon"
+bericht = "Je nieuwe nummer is binnen"
 bericht = bericht.lower()
 
-score = 0
-for woord in verdacht:
-    if woord in bericht:
-        score = score + 1
-
-print("score:", score)
-if score >= 2:
-    print("spam")
-else:
-    print("geen spam")`} />
+woorden = bericht.split()
+print(woorden)`} />
 
 <details>
 <summary>Tip</summary>
 
-Draai de loop om. Je loopt nu niet meer over `verdacht`, maar over
-`bericht.split()`. In de `if` vraag je of het woord in de lijst `verdacht`
-staat: `in` werkt ook op een lijst, en zoekt daar naar een heel element.
+`in` werkt ook op een lijst, en zoekt daar naar een heel element:
+`"klik" in verdacht` is `True`, maar `"kli" in verdacht` is `False`.
 
 </details>
 
@@ -174,7 +172,8 @@ spam, maar het krijgt een score onder de drempel. Voeg daarna woorden aan de
 lijst `verdacht` toe zodat je eigen bericht wél als spam herkend wordt.
 Gebruik de versie met `.split()` uit de opdracht.
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+In de editor staat het filter met `.split()` uit de opdracht. Begin met je
+eigen spambericht.
 
 <PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
 
@@ -182,8 +181,8 @@ bericht = "Klik nu en win een gratis telefoon"
 bericht = bericht.lower()
 
 score = 0
-for woord in verdacht:
-    if woord in bericht:
+for woord in bericht.split():
+    if woord in verdacht:
         score = score + 1
 
 print("score:", score)

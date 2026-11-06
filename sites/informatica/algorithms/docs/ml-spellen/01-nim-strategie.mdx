@@ -134,18 +134,21 @@ Verander de regels: je mag nu 1, 2, 3 of 4 lucifers pakken, en het spel begint
 met 12. Pas `slim` en `willekeurig` aan, zodat `slim` weer alle 100 spellen
 wint.
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `slim` pakt nu altijd 1, en wint lang niet alles.
+2. Laat `slim` uitrekenen hoeveel hij pakt om een vijfvoud plus 1 over te laten.
+3. Zet er een `if` bij voor als dat 0 is.
+
+In de editor staat het spel tot en met 4 al klaar. Alleen `slim` doet nog niets slims.
 
 <PyRunner initialCode={`import random
 
 def slim(stapel):
-    pak = (stapel - 1) % 4
-    if pak == 0:
-        pak = 1
-    return pak
+    return 1
 
 def willekeurig(stapel):
-    return random.randint(1, min(3, stapel))
+    return random.randint(1, min(4, stapel))
 
 def speel(stapel):
     beurt = "slim"
@@ -160,7 +163,7 @@ def speel(stapel):
 
 gewonnen = 0
 for spel in range(100):
-    if speel(10) == "slim":
+    if speel(12) == "slim":
         gewonnen = gewonnen + 1
 print("slim wint", gewonnen, "van de 100")`} />
 
@@ -218,13 +221,17 @@ plus 1, als de ander de truc ook kent. Controleer dat: laat `slim` tegen
 zichzelf spelen, met de gewone regels (1 tot en met 3), en print voor elke
 stapel van 1 tot en met 12 wie er wint, de speler die begint of de ander.
 
-In de editor hieronder staat `slim` al klaar.
+In de editor staat `slim` al klaar, met één zet om mee te beginnen.
 
 <PyRunner initialCode={`def slim(stapel):
     pak = (stapel - 1) % 4
     if pak == 0:
         pak = 1
-    return pak`} />
+    return pak
+
+stapel = 10
+stapel = stapel - slim(stapel)
+print("de eerste speler laat", stapel, "liggen")`} />
 
 <details>
 <summary>Tip</summary>

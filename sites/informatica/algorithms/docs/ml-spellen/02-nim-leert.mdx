@@ -156,7 +156,13 @@ Laat de geleerde strategie 100 keer spelen tegen `willekeurig` uit het vorige
 project, met 10 lucifers, waarbij de geleerde strategie begint. Hoe vaak wint
 hij?
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij leert, en print wat hij bij 10 lucifers pakt.
+2. Schrijf een functie `speel(stapel)` zoals in het vorige project, met `beste_zet(score, stapel)` in plaats van `slim(stapel)`.
+3. Laat hem 100 keer spelen, en tel hoe vaak de geleerde strategie wint.
+
+In de editor staan het leren uit het onderzoek en `willekeurig`.
 
 <PyRunner verborgen="nim-leren" initialCode={`import random
 
@@ -175,15 +181,16 @@ for spel in range(2000):
             else:
                 score[zet] = score[zet] + 1
 
-for stapel in range(2, 11):
-    print(stapel, "lucifers: pak", beste_zet(score, stapel))`} />
+def willekeurig(stapel):
+    return random.randint(1, min(3, stapel))
+
+print("bij 10 lucifers pakt hij", beste_zet(score, 10))`} />
 
 <details>
 <summary>Tip</summary>
 
-In het vorige project speelde `speel` een spel tussen `slim` en `willekeurig`.
-Wat moet je daarin veranderen om `slim` te vervangen door wat de computer net
-leerde?
+Laat `score` staan: daar zit in wat de computer leerde. `beste_zet(score,
+stapel)` kijkt erin en geeft de zet met de hoogste score.
 
 </details>
 
@@ -194,9 +201,6 @@ Dit komt onder de code van de editor:
 
 {/* draaien-met: blok-erboven */}
 ```python
-def willekeurig(stapel):
-    return random.randint(1, min(3, stapel))
-
 def speel(stapel):
     beurt = "geleerd"
     while stapel > 0:
@@ -228,32 +232,25 @@ aantal bij hoeveel stapels hij iets anders kiest dan `slim`. Kijk alleen naar
 de stapels waar je kunt winnen: 2, 3, 4, 6, 7, 8 en 10. Gebruik bij elk aantal
 opnieuw `random.seed(1)` en een lege `score`.
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+In de editor staat `slim`, met één spel tegen zichzelf om mee te beginnen.
 
 <PyRunner verborgen="nim-leren" initialCode={`import random
 
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
 random.seed(1)
 score = {}
-ontdekken = 0.2
-
-for spel in range(2000):
-    zetten, verliezer = speel_tegen_jezelf(score, ontdekken)
-    for speler in zetten:
-        for zet in zetten[speler]:
-            if zet not in score:
-                score[zet] = 0
-            if speler == verliezer:
-                score[zet] = score[zet] - 1
-            else:
-                score[zet] = score[zet] + 1
-
-for stapel in range(2, 11):
-    print(stapel, "lucifers: pak", beste_zet(score, stapel))`} />
+zetten, verliezer = speel_tegen_jezelf(score, 0.2)
+print(zetten, verliezer)`} />
 
 <details>
 <summary>Tip</summary>
 
-Maak van het leren uit de editor een functie `leer(spellen)` die een nieuwe
+Maak van het leren uit de opdracht een functie `leer(spellen)` die een nieuwe
 `score` teruggeeft. Dan kun je hem in een loop aanroepen met elk aantal
 spellen.
 

@@ -117,19 +117,19 @@ plt.show()
 `plt.bar` tekent een staaf voor elke sleutel van `telling`, zo hoog als het
 getal dat erbij hoort. De eerste keer laden duurt het tekenen even.
 
-In de editor hieronder staat de teller voor één dobbelsteen uit het onderzoek. Pas hem aan voor twee.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij gooit één keer met twee stenen.
+2. Zet het gooien in een loop van 6000 keer, en print alleen de som.
+3. Tel de sommen in een dictionary `telling`, en print die na de loop.
+
+In de editor staat één worp met twee stenen.
 
 <PyRunner initialCode={`import random
 
-worpen = 60
-telling = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
-for i in range(worpen):
-    ogen = random.randint(1, 6)
-    telling[ogen] = telling[ogen] + 1
-
-for ogen in telling:
-    procent = telling[ogen] * 100 // worpen
-    print(ogen, telling[ogen], "keer,", procent, "procent")`} />
+eerste = random.randint(1, 6)
+tweede = random.randint(1, 6)
+print(eerste, tweede, eerste + tweede)`} />
 
 <details>
 <summary>Tip</summary>
@@ -181,12 +181,13 @@ wint. Probeer daarna een tweede: minstens één keer dubbel zes, in 24 worpen
 met twee dobbelstenen. Volgens de Méré moest die even goed uitpakken. Laat je
 simulatie dat zien?
 
-Begin in de editor hieronder.
+Begin in de editor hieronder met één worp en één `if`, en bouw hem uit.
 
 <PyRunner initialCode={`import random
 
-keren = 10000
-gewonnen = 0`} />
+worp = random.randint(1, 6)
+if worp == 6:
+    print("zes")`} />
 
 <details>
 <summary>Tip</summary>

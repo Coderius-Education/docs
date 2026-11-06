@@ -138,53 +138,40 @@ je -3
 prijs 1
 ```
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+Begin klein, en breid de code stap voor stap uit:
 
-<PyRunner initialCode={`spamwoorden = "win nu gratis geld gratis prijs klik nu klik hier voor geld".split()
-gewone_woorden = "zie je morgen op school heb je het huiswerk al kom je nu naar school".split()
+1. Draai de code: hij print de spam-telling van elk woord dat in `spam` staat. `je` mist nog.
+2. Zet een tweede `if` in de loop voor `gewoon`, en print daar ook iets.
+3. Maak per woord één variabele `bijdrage`: begin op 0, tel de spam-telling erbij en de gewone telling eraf, en print het woord met zijn bijdrage.
 
-spam = {}
-for woord in spamwoorden:
-    if woord in spam:
-        spam[woord] = spam[woord] + 1
-    else:
-        spam[woord] = 1
-gewoon = {}
-for woord in gewone_woorden:
-    if woord in gewoon:
-        gewoon[woord] = gewoon[woord] + 1
-    else:
-        gewoon[woord] = 1
+In de editor staan de tellingen uit het onderzoek al klaar, en een loop met één `if`.
+
+<PyRunner initialCode={`spam = {"win": 1, "nu": 2, "gratis": 2, "geld": 2, "prijs": 1, "klik": 2, "hier": 1, "voor": 1}
+gewoon = {
+    "zie": 1, "je": 3, "morgen": 1, "op": 1, "school": 2, "heb": 1,
+    "het": 1, "huiswerk": 1, "al": 1, "kom": 1, "nu": 1, "naar": 1,
+}
 
 bericht = "klik hier voor je prijs"
-score = 0
 for woord in bericht.split():
     if woord in spam:
-        score = score + spam[woord]
-    if woord in gewoon:
-        score = score - gewoon[woord]
-print("score:", score)
-if score > 0:
-    print("spam")
-else:
-    print("geen spam")`} />
+        print(woord, spam[woord])`} />
 
 <details>
 <summary>Tip</summary>
 
-Maak in de loop over `bericht.split()` per woord een eigen variabele
-`bijdrage`, begin die op 0, en tel er de spam-telling bij en de
-gewone telling af. Print het woord en zijn bijdrage, en tel de bijdrage
-daarna bij de score op.
+Een woord kan in allebei de dictionaries staan, zoals `nu`. Gebruik daarom
+twee losse `if`'s onder elkaar, geen `elif`: anders telt hij bij `nu` alleen
+de spam.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
-Dit vervangt de loop over het bericht in de code hierboven:
+Dit vervangt de loop onder de tellingen in de editor:
 
-{/* niet-draaien: fragment; leunt op spam en gewoon uit de runner erboven */}
+{/* draaien-met: blok-erboven */}
 ```python
 bericht = "klik hier voor je prijs"
 score = 0
@@ -211,10 +198,11 @@ een paar spamberichten die je zelf kreeg (of verzin ze), en in
 drie nieuwe berichten die het filter nog nooit zag, en kijk of het ze goed
 indeelt.
 
-De code van het onderzoek staat in de editor hieronder al klaar.
+In de editor staat het filter uit het onderzoek, met maar drie woorden spam
+en drie gewone woorden. Vervang ze door de woorden uit je eigen berichten.
 
-<PyRunner initialCode={`spamwoorden = "win nu gratis geld gratis prijs klik nu klik hier voor geld".split()
-gewone_woorden = "zie je morgen op school heb je het huiswerk al kom je nu naar school".split()
+<PyRunner initialCode={`spamwoorden = "win nu gratis".split()
+gewone_woorden = "zie je morgen".split()
 
 spam = {}
 for woord in spamwoorden:
