@@ -54,6 +54,10 @@ De voorbeelden zijn tuples van een maat en een soort:
 `((8, 8), "appel")`. In de loop pak je ze met `for maten, soort in voorbeelden`
 meteen uit in twee variabelen.
 
+`beste_afstand` begint op 1000, zodat de eerste afstand altijd kleiner is.
+Daarna onthoudt de loop de beste tot nu toe, net als bij het maximum, maar
+nu met de kleinste afstand.
+
 ## Onderzoek
 
 1. Draai de code. Welke soort voorspelt hij voor `(10, 7)`, en op welke
@@ -99,10 +103,6 @@ print("Het is een", beste_soort, "op afstand", beste_afstand)`} />
 
 </details>
 
-`beste_afstand` begint op 1000, zodat de eerste afstand altijd kleiner is.
-Daarna onthoudt de loop de beste tot nu toe, net als bij het maximum, maar
-nu met de kleinste afstand.
-
 ## Opdracht: een functie voorspel
 
 Maak een functie `voorspel(nieuw, voorbeelden)` die de soort van de
@@ -117,8 +117,8 @@ print(voorspel((15, 5), voorbeelden))   # banaan
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `voorspel` geeft nog `"?"` terug.
-2. Loop in de functie over de voorbeelden, en reken met `afstand` uit hoe ver elk voorbeeld weg is.
-3. Onthoud met een `if` de kleinste afstand en de soort die erbij hoort, en geef die soort terug.
+2. Loop in de functie over de voorbeelden, en print met `afstand` hoe ver elk voorbeeld weg is.
+3. Onthoud met een `if` de kleinste afstand en de soort die erbij hoort, zoals in het onderzoek. Haal de print weg, en geef de soort terug.
 
 In de editor staan `afstand`, de voorbeelden en een functie die nog niets doet.
 
@@ -190,7 +190,11 @@ Maak je eigen voorbeelden: honden en katten, met voor elk dier een tuple
 `(gewicht in kilo, hoogte in centimeters)`. Verzin er minstens vier van elke
 soort. Gebruik je functie `voorspel` om drie nieuwe dieren in te delen.
 
-In de editor staan `afstand` en `voorspel` uit de opdracht al klaar, met een kat en een hond om mee te beginnen.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. In de editor staan `afstand` en `voorspel` uit de opdracht, met één kat en één hond.
+2. Zet er minstens drie katten en drie honden bij.
+3. Deel drie nieuwe dieren in. Kies er één die tussen een kleine hond en een grote kat in zit.
 
 <PyRunner initialCode={`def afstand(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
@@ -221,6 +225,8 @@ moeilijk wordt: een kleine hond is niet veel groter dan een grote kat.
 
 <details>
 <summary>Antwoord</summary>
+
+Dit vervangt de lijst `dieren` en de print in de editor:
 
 {/* draaien-met: blok-erboven */}
 ```python

@@ -11,6 +11,7 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ParseTree from '../ParseTree';
 import { type Getiteld, leesBomen } from '../ParseTree/boom';
+import { draaiInVerseMain } from './draai';
 import { heeftMatplotlibNodig } from './matplotlib';
 import styles from './styles.module.css';
 import {
@@ -41,14 +42,6 @@ export type PyRunnerProps = {
    */
   verborgen?: string;
 };
-
-// Na een run haalt de runner de bomen op die de verborgen code (of de les
-// zelf) in _coderius_bomen heeft gezet, als JSON; de knop "Teken de bomen"
-// tekent ze dan. Voor de run gaat de variabele leeg, want de Pyodide is
-// gedeeld met de andere runners op de pagina.
-const BOMEN_LEEG = '_coderius_bomen = []';
-const BOMEN_OPHALEN =
-  "import json as _coderius_json; _coderius_json.dumps(globals().get('_coderius_bomen') or [])";
 
 const MATPLOTLIB_SETUP = `
 import matplotlib
@@ -154,10 +147,12 @@ export default function PyRunnerImpl({
   // alleen meegewarmd als de startercode ze nodig heeft (dat is ~39 MB extra,
   // gerechtvaardigd op matplotlib-lespagina's, verspilling elders).
   useEffect(() => {
-    const wantsMatplotlib = /\b(matplotlib|pyplot|plt\.)\b/.test(source);
+    // Dezelfde test als bij het draaien, met de verborgen code erbij: de
+    // plaatjes van k-buren en het perceptron tekenen alleen in verborgen code.
+    const wantsMatplotlib = heeftMatplotlibNodig(source, verborgenCode);
     const warmPackages = [...(packages ?? []), ...(wantsMatplotlib ? ['matplotlib'] : [])];
     warmupPyodide(pyodideIndexURL, warmPackages.length > 0 ? warmPackages : undefined);
-  }, [source, packages, pyodideIndexURL]);
+  }, [source, verborgenCode, packages, pyodideIndexURL]);
 
   // De gedeelde voorbereiding van uitvoeren én opnemen: Pyodide laden,
   // pakketten binnenhalen, matplotlib op de AGG-backend zetten. Eén plek,
@@ -200,8 +195,6 @@ export default function PyRunnerImpl({
     setOpname(null);
     try {
       const py = await maakKlaar();
-      await py.runPythonAsync(BOMEN_LEEG);
-      if (verborgenCode) await py.runPythonAsync(verborgenCode);
 
       let out = '';
       let err = '';
@@ -221,7 +214,7 @@ export default function PyRunnerImpl({
 
       setStatus('running');
       setStatusMsg('Bezig met uitvoeren…');
-      await py.runPythonAsync(code);
+      const bomenJson = await draaiInVerseMain(py, code, verborgenCode);
 
       if (needsMatplotlib && matplotlibLoadedRef.current) {
         const result = await py.runPythonAsync('_coderius_collect_plots()');
@@ -230,7 +223,7 @@ export default function PyRunnerImpl({
           typeof result?.toJs === 'function' ? result.toJs() : (result as string[]);
         if (Array.isArray(arr) && arr.length > 0) setPlots(arr as string[]);
       }
-      const gevonden = leesBomen(JSON.parse((await py.runPythonAsync(BOMEN_OPHALEN)) as string));
+      const gevonden = leesBomen(JSON.parse(bomenJson));
       setBomen(gevonden);
 
       setStdout(out);

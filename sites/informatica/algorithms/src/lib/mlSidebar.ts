@@ -30,3 +30,22 @@ function vanDeRoute(item: Item): boolean {
 export function zonderMl<T extends Item>(items: T[]): T[] {
   return items.filter((item) => !vanDeRoute(item));
 }
+
+type GeneratorArgs<A> = A & {
+  item: { dirName: string };
+  defaultSidebarItemsGenerator: (args: A & { item: { dirName: string } }) => Promise<Item[]>;
+};
+
+/**
+ * De sidebarItemsGenerator van de docs: genereert zoals Docusaurus, en haalt
+ * uit de sidebar van heel docs/ (dirName '.') de route weg. Eén functie, zodat
+ * ml-sidebar.test.ts kan nagaan dat de config precies deze gebruikt.
+ */
+export async function sidebarZonderMl<A>({
+  defaultSidebarItemsGenerator,
+  ...args
+}: GeneratorArgs<A>): Promise<Item[]> {
+  const rest = args as A & { item: { dirName: string } };
+  const items = await defaultSidebarItemsGenerator(rest);
+  return rest.item.dirName === '.' ? zonderMl(items) : items;
+}

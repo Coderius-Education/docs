@@ -72,9 +72,9 @@ Je verdeelt de voorbeelden in twee stapels:
 - de **toetsset**: die houd je achter. Daarmee test je, want deze stukken
   fruit heeft de voorspeller nooit gezien.
 
-Voordat je verdeelt, schud je de lijst met `random.shuffle`. Anders komen
-alle citroenen, die achteraan staan, in de toetsset terecht, en heeft de
-voorspeller er nooit een gezien. `random.seed(3)` zorgt dat het schudden
+Voordat je verdeelt, schud je de lijst met `random.shuffle`. Anders komen de
+laatste zes stukken in de toetsset, en dat zijn allemaal citroenen: je toetst
+dan alleen citroenen, en de voorspeller heeft er maar twee om van te leren. `random.seed(3)` zorgt dat het schudden
 elke keer hetzelfde uitpakt, zodat jij dezelfde stapels krijgt als in de
 antwoorden hieronder.
 
@@ -117,9 +117,11 @@ print(goed, "van de", len(toets), "goed")`} />
    afstand sorteert `sorted` op de soort: appel komt op alfabet voor
    citroen. Met één buur beslist dus het toeval van de spelling.
 2. Met `k = 3` heeft hij ze alle zes goed: bij `(8, 6)` stemmen nu twee citroenen mee.
-3. Met seed 4 komen er andere stukken fruit in de toetsset, en heeft hij ze
-   alle zes goed, ook met `k = 1`. De score hangt dus ook af van welke stukken
-   fruit toevallig in de toets zitten.
+3. Met seed 4 heeft hij ze alle zes goed, ook met `k = 1`. Er zit dan geen
+   enkele citroen in de toetsset, alleen appels en bananen, en die zijn
+   makkelijk. Dezelfde voorspeller lijkt zo beter dan hij is: de score hangt
+   af van welke stukken fruit toevallig in de toets zitten. In de opdracht
+   hieronder zie je daarom per soort hoe het zit.
 4. Eén stuk fruit meer of minder goed scheelt bij zes al 17 procentpunt. Een
    kleine toets zegt weinig. Met honderden stukken fruit in de toetsset wordt
    de score betrouwbaarder.
@@ -141,8 +143,9 @@ citroen 1 van de 2 goed
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij print de soort van elk stuk fruit in de toetsset.
-2. Tel met een dictionary `totaal` hoeveel stukken fruit van elke soort erin zitten.
-3. Zet er een `if` bij die kijkt of `voorspel` het goed heeft, en tel dat in een tweede dictionary `goed`.
+2. Tel met een dictionary `totaal` hoeveel stukken fruit van elke soort erin zitten, zoals je in het spamfilter woorden telde. Print `totaal` na de loop.
+3. Zet in de loop een `if` die kijkt of `voorspel(maten, oefen, k)` gelijk is aan `soort`, en tel dat in een tweede dictionary `goed`.
+4. Loop na de loop over `totaal`, en print per soort een regel zoals hierboven.
 
 In de editor staan het fruit en het verdelen uit het onderzoek, met een loop over de toetsset.
 
@@ -169,9 +172,8 @@ for maten, soort in toets:
 <details>
 <summary>Tip</summary>
 
-`voorspel(maten, oefen, k)` geeft de soort die het model raadt. Vergelijk die
-met `soort`. Zet in `goed` aan het begin elke soort op 0, anders mist een
-soort die hij nooit goed heeft.
+Stopt Python bij het printen met een foutmelding over een soort? Een soort die
+hij nooit goed heeft, komt dan niet in `goed`. Zet daarom in `goed` aan het begin elke soort op 0.
 
 </details>
 
@@ -216,16 +218,21 @@ bezoekers = ["kijkt"] * 19 + ["koopt"]
 `["kijkt"] * 19` is een lijst met negentien keer `"kijkt"`, en met `+` plak
 je de koper erachter.
 
-Begin in de editor hieronder.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code, en print `bezoekers` om te zien wat erin staat.
+2. Loop over `bezoekers`. De luie voorspeller zegt bij elke bezoeker `"kijkt"`: zet dat in een variabele `voorspeld`. Tel hoe vaak `voorspeld` gelijk is aan wat de bezoeker echt deed.
+3. Reken dat om naar procenten: deel door `len(bezoekers)`, en vermenigvuldig met 100.
+4. Tel ook hoeveel kopers er zijn, en hoeveel daarvan de voorspeller herkent: bij hoeveel kopers `voorspeld` ook `"koopt"` is.
 
 <PyRunner initialCode={`bezoekers = ["kijkt"] * 19 + ["koopt"]`} />
 
 <details>
 <summary>Tip</summary>
 
-Loop over `bezoekers` en tel hoe vaak `"kijkt"` gelijk is aan het echte
-antwoord. Deel door `len(bezoekers)` en vermenigvuldig met 100. Voor de
-kopers tel je alleen de bezoekers die echt kochten.
+Een koper herkennen zijn twee dingen tegelijk: de bezoeker kocht echt, en de
+voorspeller zei ook `"koopt"`. Dat is een `if` in een `if`, of één `if` met
+`and`.
 
 </details>
 

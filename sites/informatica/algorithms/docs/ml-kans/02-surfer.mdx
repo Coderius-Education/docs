@@ -16,7 +16,7 @@ Je gebruikt hier `random.choice` uit
 [Een bont bloemenveld](site:python/docs/projecten/bloemenveld/stap-6-lijst),
 het tellen van
 [een dobbelsteen simuleren](site:algorithms/docs/ml-kans/01-dobbelsteen), en een
-dictionary met een lijst als waarde uit
+dictionary met een lijst erin uit
 [Geneste dictionaries](site:python/docs/data/11c-geneste-dictionaries).
 :::
 
@@ -54,7 +54,7 @@ ongeveer even vaak voor.
 
 Het web is een dictionary. De sleutel is een pagina, en de waarde is de lijst
 pagina's waar die pagina naar linkt. `web["A"]` is dus de lijst links op
-pagina A. Het is hetzelfde mini-web als bij
+pagina A. Hetzelfde mini-web kom je straks tegen in het hoofdstuk
 [PageRank](site:algorithms/docs/pagerank/01-concept#een-klein-web): A linkt naar
 B en C, B en D linken naar C, en C linkt terug naar A.
 
@@ -133,11 +133,12 @@ met `bezocht` in plaats van `telling`.
 
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code een paar keer: soms zegt hij link, soms springen.
-2. Laat de surfer bij link een link kiezen met `random.choice(web[pagina])`, en bij springen een pagina uit `list(web)`.
-3. Zet dat in een loop van 10.000 klikken, en tel met `bezocht` hoe vaak hij op elke pagina komt.
+1. Draai de code een paar keer. Meestal zegt hij link: dat gebeurt gemiddeld 85 van de 100 keer.
+2. Laat de surfer bij link een link kiezen van de pagina waar hij is, met `pagina = random.choice(web[pagina])`, en bij springen een pagina uit `list(web)`. Print `pagina` na de keuze.
+3. Zet de keuze in een loop van 10.000 klikken, en tel met `bezocht` hoe vaak hij op elke pagina komt, zoals in het onderzoek.
+4. Loop na de klikken met `for p in bezocht:` langs de pagina's, print per pagina `bezocht[p] / klikken`, en zet de drie regels matplotlib eronder.
 
-In de editor staan het web en één keuze tussen een link volgen en springen.
+In de editor staan het web, de startpagina en één keuze tussen een link volgen en springen.
 
 <PyRunner initialCode={`import random
 
@@ -148,6 +149,7 @@ web = {
     "D": ["C"],
 }
 damping = 0.85
+pagina = "A"
 
 if random.random() < damping:
     print("link")
@@ -157,9 +159,8 @@ else:
 <details>
 <summary>Tip</summary>
 
-Zet `pagina = "A"` boven de loop. Bij een link kiest de surfer uit
-`web[pagina]`, de links van de pagina waar hij nu is. Bij springen kiest hij
-uit alle pagina's.
+Verandert `pagina` niet? Zet `pagina = "A"` boven de loop, niet erin: anders
+begint de surfer bij elke klik opnieuw op A.
 
 </details>
 
@@ -212,7 +213,11 @@ nieuwe pagina's, E, F en G, die alle drie naar D linken. Zet ze in het web
 van de opdracht en laat de surfer klikken. Hoeveel hoger komt D? En waarom
 niet heel veel?
 
-In de editor hieronder staat de surfer met damping uit de opdracht.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. In de editor staat de surfer met damping uit de opdracht: D komt rond de 0,04.
+2. Zet E, F en G in het web, elk met een link naar D.
+3. Draai opnieuw, en vergelijk D met de andere pagina's.
 
 <PyRunner initialCode={`import random
 

@@ -14,8 +14,12 @@ search**, of breedte-eerst zoeken.
 :::info
 Je gebruikt hier `buren` uit
 [de buren van een vakje](site:algorithms/docs/ml-zoeken/01-buren), de while-loop
-uit [De while-loop](site:python/docs/herhalen/while-loop), en `append` en `pop`
-uit [Lijst-methoden](site:python/docs/data/10b-lijst-methoden).
+uit [De while-loop](site:python/docs/herhalen/while-loop), `append` en `pop`
+uit [Lijst-methoden](site:python/docs/data/10b-lijst-methoden), `in` op een
+dictionary uit
+[Door een dictionary lopen](site:python/docs/data/11b-itereren-dictionaries),
+en een tuple als sleutel uit
+[Nim die van zichzelf leert](site:algorithms/docs/ml-spellen/02-nim-leert#zo-werkt-het).
 :::
 
 ## Voorspel
@@ -59,6 +63,14 @@ editor. De dictionary `afstand` onthoudt voor elk vakje dat je al kent, hoeveel
 stappen het van de start ligt. Zo zet je geen vakje twee keer in de wachtrij. Omdat
 nieuwe vakjes achteraan komen, bekijk je eerst alles op afstand 1, dan alles
 op afstand 2, enzovoort.
+
+:::caution
+De loop stopt pas als de wachtrij leeg is. Komt er steeds een nieuw vakje bij,
+bijvoorbeeld omdat je ook buiten het doolhof of het bord verder zoekt, dan
+stopt hij nooit. De speeltuin heeft geen stopknop, dus het tabblad loopt vast:
+herlaad de pagina, en je code is weg. Kopieer je code daarom eerst naar een
+kladblok voordat je een nieuwe while-loop draait.
+:::
 
 ## Onderzoek
 
@@ -132,8 +144,8 @@ S*....
 Begin klein, en breid de code stap voor stap uit:
 
 1. Zet `vorige = {}` boven de loop, en vul hem waar je ook de afstand van een buur invult. Print `vorige` om te zien wat erin staat.
-2. Loop met een tweede while-loop vanaf E terug naar de start, en zet elk vakje vooraan in `weg`.
-3. Teken de weg: loop over alle vakjes, net als bij de doodlopende vakjes, en zet een `*` waar de weg komt.
+2. Begin met `weg = [eind]` en `vakje = eind`. Ga in een tweede while-loop steeds één vakje terug met `vakje = vorige[vakje]`, en zet dat vakje vooraan in `weg`. Stop als je bij de start bent, en print `weg`.
+3. Teken de weg: loop over alle vakjes, net als bij de doodlopende vakjes, en zet een `*` op elk vrij vakje dat in `weg` staat.
 
 In de editor staat het zoeken uit het onderzoek.
 
@@ -159,11 +171,11 @@ while len(wachtrij) > 0:
 <details>
 <summary>Tip</summary>
 
-Op welke plek in de loop weet je via welk vakje je bij `buur` kwam? Het
-teruglopen is een tweede while-loop, die begint bij E en stopt bij de start.
-Voor het tekenen loop je weer over alle vakjes, net als bij
-[de doodlopende vakjes](site:algorithms/docs/ml-zoeken/01-buren#opdracht-doodlopende-vakjes),
-en bouw je per rij een tekst op.
+Op welke plek in de loop weet je via welk vakje je bij `buur` kwam? Mist de
+start in je weg, kijk dan in welke volgorde je teruggaat en vooraan zet.
+Voor het tekenen bouw je per rij een tekst op, net als bij
+[de doodlopende vakjes](site:algorithms/docs/ml-zoeken/01-buren#opdracht-doodlopende-vakjes)
+de loop over alle vakjes.
 
 </details>
 
@@ -223,10 +235,17 @@ vakje opzij. Hoeveel sprongen heeft een paard nodig van de ene hoek, `(0, 0)`,
 naar de hoek er schuin tegenover, `(7, 7)`? En hoeveel naar `(1, 1)`, het
 vakje er schuin naast?
 
-Gebruik breedte-eerst zoeken op een bord van 8 bij 8. Er zijn geen muren;
-alleen de buren zijn anders.
+Gebruik breedte-eerst zoeken op een bord van 8 bij 8. Er zijn geen muren,
+maar een sprong mag niet van het bord af: rij en kolom blijven van 0 tot en
+met 7. Zonder die controle springt het paard eindeloos verder, en loopt je
+tabblad vast.
 
-Begin in de editor hieronder met één sprong, en bouw hem uit tot alle acht.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `sprongen` geeft één sprong.
+2. Zet de andere zeven sprongen erbij. Een lijst met de acht richtingen en een loop erover scheelt typwerk.
+3. Houd met een `if` alleen de sprongen die op het bord blijven. `sprongen((0, 0))` geeft er dan twee: `(1, 2)` en `(2, 1)`.
+4. Zet het zoeken uit de opdracht eronder, met `sprongen` in plaats van `buren`, en print `afstand[(7, 7)]`.
 
 <PyRunner initialCode={`def sprongen(vakje):
     rij, kolom = vakje
@@ -240,11 +259,9 @@ print(sprongen(start))`} />
 <details>
 <summary>Tip</summary>
 
-Een paard kan acht kanten op: `(1, 2)`, `(2, 1)`, `(2, -1)`, `(1, -2)`, `(-1, -2)`,
-`(-2, -1)`, `(-2, 1)` en `(-1, 2)`. Tel elke sprong bij de rij en de kolom op,
-en houd alleen de vakjes van 0 tot en met 7. Zet de acht in een lijst en loop
-erover, dan hoef je niet acht keer `append` te schrijven. Het zoeken uit de
-opdracht blijft hetzelfde, met `sprongen` in plaats van `buren`.
+Een richting als `(2, -1)` betekent twee rijen omlaag en één kolom naar links:
+`rij + 2` en `kolom - 1`. Met `for dr, dk in richtingen:` haal je beide getallen
+tegelijk uit de tuple, net als `rij, kolom = vakje`.
 
 </details>
 

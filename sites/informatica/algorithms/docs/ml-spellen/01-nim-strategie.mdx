@@ -13,9 +13,12 @@ maar wat doet.
 :::info
 Je gebruikt hier de while-loop uit
 [De while-loop](site:python/docs/herhalen/while-loop), `%` uit
-[Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest), en
+[Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest),
 `random.randint` uit
-[een dobbelsteen simuleren](site:algorithms/docs/ml-kans/01-dobbelsteen).
+[een dobbelsteen simuleren](site:algorithms/docs/ml-kans/01-dobbelsteen), en
+functies met `return` uit
+[Return-waarden](site:python/docs/functies/09b-return), zoals `voorspel` uit
+[welk fruit is dit?](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur).
 :::
 
 ## Voorspel
@@ -131,14 +134,14 @@ print("slim wint", gewonnen, "van de 100")`} />
 ## Opdracht: pakken tot en met 4
 
 Verander de regels: je mag nu 1, 2, 3 of 4 lucifers pakken, en het spel begint
-met 12. Pas `slim` en `willekeurig` aan, zodat `slim` weer alle 100 spellen
-wint.
+met 12. Pas `slim` aan, zodat hij weer alle 100 spellen wint. `willekeurig`
+pakt in de editor al 1 tot en met 4.
 
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `slim` pakt nu altijd 1, en wint lang niet alles.
-2. Laat `slim` uitrekenen hoeveel hij pakt om een vijfvoud plus 1 over te laten.
-3. Zet er een `if` bij voor als dat 0 is.
+2. Laat `slim` met `%` uitrekenen hoeveel hij pakt, zoals `slim` in het onderzoek, maar dan voor 1 tot en met 4.
+3. Print in `slim` hoeveel hij pakt, en draai één keer `speel(11)` in plaats van de 100 spellen. Pakt hij ergens 0? Zet er dan een `if` bij voor als het 0 is, en haal de print weg.
 
 In de editor staat het spel tot en met 4 al klaar. Alleen `slim` doet nog niets slims.
 
@@ -221,7 +224,12 @@ plus 1, als de ander de truc ook kent. Controleer dat: laat `slim` tegen
 zichzelf spelen, met de gewone regels (1 tot en met 3), en print voor elke
 stapel van 1 tot en met 12 wie er wint, de speler die begint of de ander.
 
-In de editor staat `slim` al klaar, met één zet om mee te beginnen.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: de eerste speler doet één zet.
+2. Zet de zet in een while-loop die doorgaat zolang er lucifers liggen, en print na elke zet de stapel.
+3. Houd met een variabele `beurt` bij wie er aan de beurt is, `"eerste"` of `"tweede"`, en wissel na elke zet.
+4. Maak er een functie `slim_tegen_slim(stapel)` van die `beurt` teruggeeft als de stapel op is. Roep hem aan voor elke stapel van 1 tot en met 12, en haal de print uit de loop.
 
 <PyRunner initialCode={`def slim(stapel):
     pak = (stapel - 1) % 4
@@ -236,9 +244,9 @@ print("de eerste speler laat", stapel, "liggen")`} />
 <details>
 <summary>Tip</summary>
 
-Schrijf een nieuwe functie `slim_tegen_slim(stapel)`. Beide spelers gebruiken
-`slim`, dus je hoeft alleen bij te houden wie er aan de beurt is: `"eerste"`
-of `"tweede"`.
+Wie de laatste lucifer pakt, verliest. Is de stapel op, dan is de speler die
+aan de beurt is dus de winnaar, net als in `speel`. Beide spelers gebruiken
+`slim`, dus de zet zelf is voor allebei dezelfde regel.
 
 </details>
 

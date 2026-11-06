@@ -115,7 +115,7 @@ Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij print de eerste combinatie.
 2. Print ook de andere drie, met een loop in een loop over `[0, 1]`.
-3. Zoek de bias waarbij alleen `1 1` op 1 uitkomt.
+3. Met bias 1 zegt het neuron overal 1. Zoek de bias waarbij alleen `1 1` op 1 uitkomt.
 
 In de editor staan `neuron` en de eerste van de vier combinaties.
 
@@ -128,7 +128,7 @@ In de editor staan `neuron` en de eerste van de vier combinaties.
     return 0
 
 gewichten = [1, 1]
-bias = 0
+bias = 1
 
 print(0, 0, "->", neuron([0, 0], gewichten, bias))`} />
 
@@ -176,7 +176,12 @@ Zoek nu twee andere neuronen met twee invoeren:
 
 Print voor elk neuron de vier combinaties, zoals in de opdracht.
 
-In de editor staat `neuron`, met de eerste combinatie om mee te beginnen.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: met gewichten `[0, 0]` zegt het neuron 0.
+2. Print ook de andere drie combinaties, met de loop in een loop uit de opdracht.
+3. Zoek gewichten en een bias voor OF.
+4. Probeer daarna "precies één". Lukt het na een tijdje nog niet, lees dan het antwoord: waarom lukt het niet?
 
 <PyRunner initialCode={`def neuron(invoer, gewichten, bias):
     som = bias

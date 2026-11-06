@@ -42,7 +42,8 @@ def teken_buren(voorbeelden, nieuw, k):
     for afstand, soort, maten in sorted(paren)[:k]:
         plt.plot([nieuw[0], maten[0]], [nieuw[1], maten[1]], color="gray", linestyle="--")
     plt.scatter(nieuw[0], nieuw[1], color="black", marker="X", s=140, label="nieuw")
-    plt.legend()
+    # Naast het plaatje, zodat hij nooit een stuk fruit bedekt.
+    plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
     plt.title("De " + str(k) + " dichtstbijzijnde buren van " + str(nieuw))
     plt.show()
 
@@ -60,7 +61,8 @@ def teken_grens(voorbeelden, gewichten, bias):
         plt.plot([links, rechts], [y_links, y_rechts], color="black", label="grens van het neuron")
     plt.xlim(links, rechts)
     plt.ylim(onder, boven)
-    plt.legend()
+    # Naast het plaatje, zodat hij nooit een stuk fruit bedekt.
+    plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
     plt.title("Wat het neuron geleerd heeft")
     plt.show()
 `;

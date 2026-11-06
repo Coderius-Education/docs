@@ -2,7 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import sidebars from '../../sidebars';
-import { ML_MAPPEN, ML_ROUTE, zonderMl } from '../lib/mlSidebar';
+import { ML_MAPPEN, ML_ROUTE, sidebarZonderMl, zonderMl } from '../lib/mlSidebar';
 
 // De route machine learning (niveau 1) heeft een eigen plek in de navbar en
 // een eigen sidebar. De sidebar "Algoritmes" is autogegenereerd uit heel
@@ -55,9 +55,37 @@ describe('de route machine learning in zijn eigen sidebar', () => {
     for (const fase of fases) expect(fase.collapsed).toBe(true);
   });
 
-  it('de navbar heeft een eigen item voor de route, en de docs gebruiken de filter', () => {
+  it('de navbar heeft een eigen item voor de route', () => {
     const config = readFileSync(CONFIG, 'utf8');
     expect(config).toMatch(/sidebarId: 'mlSidebar'[^}]*label: 'Machine learning'/);
-    expect(config).toContain("args.item.dirName === '.' ? zonderMl(items) : items");
+  });
+
+  it('de generator haalt de route alleen uit de sidebar van heel docs/', async () => {
+    const gegenereerd = [
+      { type: 'doc', id: 'lineair-zoeken/01-concept' },
+      { type: 'doc', id: ML_ROUTE },
+    ];
+    const standaard = async () => gegenereerd;
+    const heel = await sidebarZonderMl({
+      item: { dirName: '.' },
+      defaultSidebarItemsGenerator: standaard,
+    });
+    expect(heel.map((i) => i.id)).toEqual(['lineair-zoeken/01-concept']);
+    const fase = await sidebarZonderMl({
+      item: { dirName: 'ml-regels' },
+      defaultSidebarItemsGenerator: standaard,
+    });
+    expect(fase).toHaveLength(2);
+  });
+
+  it('de docs van de config gebruiken die generator', async () => {
+    // Eerst zocht deze test een stuk tekst in de config. Haalde je de regel
+    // `sidebarItemsGenerator,` uit de docs-opties, dan bleef hij groen en
+    // stond de route weer in de sidebar "Algoritmes".
+    const config = (await import('../../docusaurus.config')).default as {
+      presets: [string, { docs: { sidebarItemsGenerator?: unknown } }][];
+    };
+    const docs = config.presets.find(([naam]) => naam === 'classic')?.[1].docs;
+    expect(docs?.sidebarItemsGenerator).toBe(sidebarZonderMl);
   });
 });

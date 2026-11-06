@@ -10,8 +10,8 @@ iets heel kleins: het zocht in je zin naar trefwoorden en gaf bij elk
 trefwoord een vast antwoord. Zo'n chatbot bouw je hier zelf.
 
 :::info
-Je gebruikt hier `if`, `elif` en `else` uit
-[If en else](site:python/docs/beslissen/05b-if-else) en
+Je gebruikt hier `if` en `else` uit
+[If en else](site:python/docs/beslissen/05b-if-else), `elif` en `or` uit
 [And, or en elif](site:python/docs/beslissen/05c-and-or-elif), en `.lower()` uit
 [String-methoden](site:python/docs/tekst/04b-string-methoden).
 :::
@@ -103,8 +103,8 @@ Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code. Bij deze zin zegt de chatbot nog niets: er is maar één regel.
 2. Zet onder de `if` een `elif` voor `"naam"`, en draai opnieuw.
-3. Voeg een `elif` toe voor `"doei"` of `"tot ziens"`.
-4. Zet er een `else` onder voor alle andere zinnen.
+3. Voeg een `elif` toe voor `"doei"` of `"tot ziens"`. Verander `zin` in `"Tot ziens, Bot"` om hem te testen.
+4. Zet er een `else` onder voor alle andere zinnen, en test met een zin zonder trefwoord.
 
 In de editor staat de chatbot met één regel.
 
@@ -155,7 +155,12 @@ game, je huisdier. Hij heeft minstens vier regels, en één regel gebruikt
 Zoek daarna een zin die je chatbot verkeerd begrijpt, zoals de chatbot
 hierboven bij `"Ik ga weer naar huis"`.
 
-Begin in de editor hieronder met één regel, en bouw hem uit.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Kies je onderwerp. Verander de zin en de eerste regel zo dat ze erover gaan, en draai.
+2. Zet er twee regels bij met `elif`, en een `else` voor de rest. Test elke regel met een eigen zin.
+3. Maak één regel met `and`, en test hem met een zin waar beide trefwoorden in staan, en met een zin met maar één.
+4. Probeer zinnen tot je er een vindt die hij verkeerd begrijpt.
 
 <PyRunner initialCode={`zin = "Wie heeft er gisteren gewonnen?"
 zin = zin.lower()

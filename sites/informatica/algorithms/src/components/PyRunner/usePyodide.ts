@@ -15,7 +15,7 @@ declare global {
 }
 
 export type PyodideInterface = {
-  runPythonAsync: (code: string) => Promise<unknown>;
+  runPythonAsync: (code: string, options?: { globals?: unknown }) => Promise<unknown>;
   setStdout: (opts: { batched: (s: string) => void }) => void;
   setStderr: (opts: { batched: (s: string) => void }) => void;
   loadPackage: (names: string | string[]) => Promise<void>;

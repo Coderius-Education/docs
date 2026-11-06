@@ -79,6 +79,10 @@ project (Algoritmiek, niveau 2). Dan heeft het bestand een veld `tentamen`:
 - `les` mag ook een `site:`-link naar een andere cursus zijn
   (`"site:python/docs/data/10a-lijsten-basis"`). Die zoekt de plugin niet op;
   of hij bestaat, controleert de CI-job `cross-links`.
+- Een rij die niet op het tentamen hoort, krijgt `null` op dat niveau
+  (`"2": null`), zoals de projecten van niveau 1 bij Algoritmiek. Die rij staat
+  dan niet op de pagina van het tentamen (`onderwerpenOpNiveau`), en een
+  onderwerp met alleen zulke rijen ook niet.
 - Een tentamen-niveau heeft geen moeilijkheden, dus geen kolom in de
   vergelijking en geen cijfer volgens Bloom. Heeft een cursus alleen zulke
   niveaus, dan staat de uitleg van Bloom niet op het overzicht.

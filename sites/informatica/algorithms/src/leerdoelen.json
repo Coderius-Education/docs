@@ -104,7 +104,7 @@
     { "id": "tuple-sleutel", "onderwerp": "python", "concept": "Een tuple als sleutel van een dictionary", "1": "basis", "2": null, "les": "ml-spellen/02-nim-leert" },
     { "id": "raster", "onderwerp": "python", "concept": "Een raster als lijst van teksten, met raster[rij][kolom]", "1": "basis", "2": null, "les": "ml-zoeken/01-buren" },
     { "id": "wachtrij", "onderwerp": "python", "concept": "Een lijst als wachtrij, met append en pop(0)", "1": "basis", "2": null, "les": ["site:python/docs/data/10b-lijst-methoden", "ml-zoeken/02-kortste-weg"] },
-    { "id": "range-len", "onderwerp": "python", "concept": "Met range(len(lijst)) langs de posities van een lijst, en lijst[i] veranderen", "1": "basis", "2": null, "les": ["ml-zoeken/01-buren", "ml-neuronen/01-neuron", "ml-neuronen/02-neuron-leert"] },
+    { "id": "range-len", "onderwerp": "python", "concept": "Met range(len(lijst)) langs de posities van een lijst lopen, en daarna ook lijst[i] veranderen", "1": "basis", "2": null, "les": ["ml-zoeken/01-buren", "ml-neuronen/01-neuron", "ml-neuronen/02-neuron-leert"] },
     { "id": "ml-chatbot", "onderwerp": "ml", "concept": "Een chatbot met regels", "1": "basis", "2": null, "les": "ml-regels/01-chatbot", "toelichting": "Python: if, elif en else, en in op tekst." },
     { "id": "ml-spamfilter-regels", "onderwerp": "ml", "concept": "Een spamfilter met regels: een score en een drempel", "1": "basis", "2": null, "les": "ml-regels/02-spamfilter", "toelichting": "Python: een lijst, een for-loop en .split()." },
     { "id": "ml-spamfilter-leert", "onderwerp": "ml", "concept": "Een spamfilter dat zijn woorden uit voorbeelden haalt", "1": "basis", "2": null, "les": "ml-regels/03-spamfilter-leert", "toelichting": "Python: tellen met een dictionary." },

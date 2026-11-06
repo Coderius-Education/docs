@@ -412,16 +412,19 @@ def achterstand_van_deze_site(paden, docsmap: str) -> list[str]:
 
 
 def zelftest() -> None:
-    # Een keten verborgen code, runner en draaien-met: alleen het laatste stuk.
-    m = STAART_MARKER
-    assert eigen_uitvoer(f"\n{m}\nrunner\n{m}\neigen\n", 5) == "eigen"
-    assert eigen_uitvoer(f"boven\n{m}\neigen\n", 2) == "eigen"
-    assert eigen_uitvoer("alles\n", 0) == "alles"
     """De twee vertaalslagen die stil kunnen verslappen, hardop nagelopen.
 
     Zonder deze regels zou de controle nog steeds groen zijn — met minder
     blokken die meedoen. Dat is precies de regressie die je niet ziet.
     """
+    # Een keten verborgen code, runner en draaien-met: alleen het laatste stuk.
+    m = STAART_MARKER
+    assert eigen_uitvoer(f"\n{m}\nrunner\n{m}\neigen\n", 5) == "eigen"
+    assert eigen_uitvoer(f"boven\n{m}\neigen\n", 2) == "eigen"
+    assert eigen_uitvoer("alles\n", 0) == "alles"
+    # Stopt de voorgeplakte code met exit(), dan komt de marker nooit: dan
+    # print het eigen blok niets, en niet de uitvoer van de code erboven.
+    assert eigen_uitvoer("boven\n", 2) == ""
     # Een fence in een andere taal mag de rest van het bestand niet verschuiven.
     soorten = [
         next(k for k in ("py", "kaal", "anders") if t.group(k) is not None)
@@ -858,8 +861,8 @@ def eigen_uitvoer(stdout: str, voorplak: int) -> str:
     """
     uit = stdout.strip("\n")
     if voorplak:
-        _, _, uit = uit.rpartition(STAART_MARKER)
-        uit = uit.strip("\n")
+        _, marker, uit = uit.rpartition(STAART_MARKER)
+        uit = uit.strip("\n") if marker else ""
     return uit
 
 

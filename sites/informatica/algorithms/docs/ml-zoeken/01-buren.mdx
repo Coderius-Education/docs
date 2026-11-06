@@ -122,8 +122,9 @@ bij elke kolom van die rij, en dus bij elk vakje `(rij, kolom)`.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij kijkt alleen naar het vakje `(0, 0)`.
-2. Zet de `if` in twee loops, over de rijen en de kolommen, zodat hij elk vakje bekijkt. Sla de muren over.
-3. Maak er een functie `doodlopend()` van, die de vakjes in een lijst teruggeeft in plaats van ze te printen.
+2. Zet de `if` in twee loops: `for rij in range(len(doolhof)):` en daarin `for kolom in range(len(doolhof[0])):`. Maak in de binnenste loop `vakje = (rij, kolom)`, en haal de regel `vakje = (0, 0)` weg. Nu print hij elk doodlopend vakje.
+3. Sla de muren over: zet in de `if` met `and` een tweede voorwaarde, dat het vakje geen `#` is. In dit doolhof verandert de uitvoer niet, maar in een ander doolhof kan een muur ook precies één vrij vakje naast zich hebben.
+4. Maak er een functie `doodlopend()` van, die de vakjes in een lijst teruggeeft in plaats van ze te printen.
 
 `buren` staat klaar in de verborgen code onder de editor. In de editor staan het doolhof en één `if`.
 
@@ -142,8 +143,9 @@ if len(buren(vakje)) == 1:
 <details>
 <summary>Tip</summary>
 
-Begin met een lege lijst. Welke twee dingen moeten waar zijn voordat je een
-vakje erin zet?
+Print hij nog steeds alleen `(0, 0)`? Dan staat er nog een regel die `vakje`
+steeds op `(0, 0)` zet. Voor de lijst in stap 4 begin je vóór de loops met
+`lijst = []`, en zet je de `return` na de loops.
 
 </details>
 
@@ -177,10 +179,11 @@ Teken een eigen doolhof van minstens 6 bij 6, met een S en een E. Zoek met
 `kruispunten()` die de vakjes geeft met drie of meer buren: daar moet de robot
 kiezen. Kloppen ze met wat jij in je doolhof ziet?
 
-Voor het doolhof van de editor geeft `kruispunten()`
-`[(0, 1), (0, 4), (1, 4), (2, 1), (3, 1)]`.
+Begin klein, en breid de code stap voor stap uit:
 
-`buren` staat klaar in de verborgen code onder de editor. Zet je eigen doolhof in de plaats van dit.
+1. Draai de code. In de editor staat `doodlopend()` uit de opdracht, met het doolhof van het onderzoek. `buren` staat in de verborgen code.
+2. Zet je eigen doolhof in de plaats van dat van het onderzoek, en kijk of de doodlopende vakjes kloppen met wat je ziet.
+3. Schrijf een functie `kruispunten()`. Test hem eerst met het doolhof van het onderzoek: dan geeft hij `[(0, 1), (0, 4), (1, 4), (2, 1), (3, 1)]`.
 
 <PyRunner verborgen="doolhof-buren" initialCode={`doolhof = [
     "S.....",
@@ -190,7 +193,15 @@ Voor het doolhof van de editor geeft `kruispunten()`
     "#....E",
 ]
 
-print(buren((0, 1)))`} />
+def doodlopend():
+    lijst = []
+    for rij in range(len(doolhof)):
+        for kolom in range(len(doolhof[0])):
+            if doolhof[rij][kolom] != "#" and len(buren((rij, kolom))) == 1:
+                lijst.append((rij, kolom))
+    return lijst
+
+print(doodlopend())`} />
 
 <details>
 <summary>Tip</summary>
@@ -202,6 +213,8 @@ de voorwaarde?
 
 <details>
 <summary>Antwoord</summary>
+
+Dit komt onder `doodlopend` in de editor:
 
 {/* draaien-met: blok-erboven */}
 ```python
@@ -216,7 +229,7 @@ def kruispunten():
 print(kruispunten())   # [(0, 1), (0, 4), (1, 4), (2, 1), (3, 1)]
 ```
 
-Een eigen doolhof zet je in plaats van dat in de editor, bijvoorbeeld:
+Een eigen doolhof zet je in plaats van dat van het onderzoek, bijvoorbeeld:
 
 {/* niet-draaien: een voorbeeld van een eigen doolhof; de leerling zet het in de editor */}
 ```python

@@ -68,7 +68,8 @@ met een drempel.
    het, en is dat terecht?
 2. Verander het bericht in `"Je nieuwe nummer is binnen"`. Welk woord uit de
    lijst vindt het filter, en waar?
-3. Zet de drempel op 1 en probeer de berichten uit vraag 1 en 2 nog eens.
+3. Zet de drempel op 1: verander in `if score >= 2` de 2 in een 1. Probeer de
+   berichten uit vraag 1 en 2 nog eens.
 4. Probeer `"GRATIS GELD"`. Wat doet de regel met `.lower()` hier?
 
 <PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
@@ -115,12 +116,16 @@ Pas het filter aan: loop over de woorden van het bericht, en tel een punt
 voor elk woord dat in de lijst `verdacht` staat. Test met
 `"Je nieuwe nummer is binnen"`: de score moet nu 0 zijn.
 
+Of een woord in de lijst staat, vraag je ook met `in`. Op een lijst zoekt `in`
+naar een heel element: `"klik" in verdacht` is `True`, maar `"kli" in verdacht`
+is `False`.
+
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: je ziet de lijst woorden van het bericht.
 2. Loop met `for` over die woorden, en print elk woord.
-3. Zet in de loop een `if`: staat het woord in `verdacht`, print het dan.
-4. Tel nu in plaats van te printen: begin met `score = 0`, en tel er bij elk verdacht woord 1 bij op.
+3. Zet in de loop een `if`: staat het woord in `verdacht`, print het dan. Bij dit bericht print hij niets, want geen woord is verdacht. Probeer daarom ook even `"Klik nu voor gratis geld"`.
+4. Tel nu in plaats van te printen: begin boven de loop met `score = 0`, tel er bij elk verdacht woord 1 bij op, en print de score na de loop. Met `"Je nieuwe nummer is binnen"` is hij 0.
 
 In de editor staan de lijst verdachte woorden en het bericht al klaar.
 
@@ -135,8 +140,8 @@ print(woorden)`} />
 <details>
 <summary>Tip</summary>
 
-`in` werkt ook op een lijst, en zoekt daar naar een heel element:
-`"klik" in verdacht` is `True`, maar `"kli" in verdacht` is `False`.
+Komt de score bij `"Klik nu voor gratis geld"` op 1 uit in plaats van 4? Kijk
+waar `score = 0` staat. In de loop begint hij bij elk woord opnieuw.
 
 </details>
 
@@ -149,8 +154,9 @@ verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
 bericht = "Je nieuwe nummer is binnen"
 bericht = bericht.lower()
 
+woorden = bericht.split()
 score = 0
-for woord in bericht.split():
+for woord in woorden:
     if woord in verdacht:
         score = score + 1
 
@@ -172,16 +178,20 @@ spam, maar het krijgt een score onder de drempel. Voeg daarna woorden aan de
 lijst `verdacht` toe zodat je eigen bericht wél als spam herkend wordt.
 Gebruik de versie met `.split()` uit de opdracht.
 
-In de editor staat het filter met `.split()` uit de opdracht. Begin met je
-eigen spambericht.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: het filter uit de opdracht ziet dit bericht als spam.
+2. Verander het bericht in een spambericht dat het filter mist: de score moet onder 2 komen.
+3. Zet woorden uit jouw bericht in `verdacht`, tot het filter het wel als spam ziet.
 
 <PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
 
 bericht = "Klik nu en win een gratis telefoon"
 bericht = bericht.lower()
 
+woorden = bericht.split()
 score = 0
-for woord in bericht.split():
+for woord in woorden:
     if woord in verdacht:
         score = score + 1
 
@@ -208,8 +218,9 @@ verdacht = ["gratis", "winnen", "klik", "nu", "geld", "gr4tis", "cadeau", "prijs
 bericht = "Je hebt een gr4tis cadeau gewonnen, haal je prijs op"
 bericht = bericht.lower()
 
+woorden = bericht.split()
 score = 0
-for woord in bericht.split():
+for woord in woorden:
     if woord in verdacht:
         score = score + 1
 

@@ -120,8 +120,9 @@ getal dat erbij hoort. De eerste keer laden duurt het tekenen even.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij gooit één keer met twee stenen.
-2. Zet het gooien in een loop van 6000 keer, en print alleen de som.
-3. Tel de sommen in een dictionary `telling`, en print die na de loop.
+2. Zet het gooien in een loop van 10 keer, en print alleen de som.
+3. Tel de sommen in een dictionary `telling`, en print die na de loop. Zet de loop daarna op 6000, en haal de print van de som weg.
+4. Print per som van 2 tot en met 12 een regel, en zet de drie regels matplotlib eronder.
 
 In de editor staat één worp met twee stenen.
 
@@ -134,8 +135,9 @@ print(eerste, tweede, eerste + tweede)`} />
 <details>
 <summary>Tip</summary>
 
-Welke sommen kunnen er uitkomen? Die moeten allemaal als sleutel in `telling`
-staan voordat je begint te tellen.
+Tel je zoals in het spamfilter, met `if som in telling`, dan werkt het, maar
+staan de sommen in de volgorde waarin ze voor het eerst vielen. Zet je vóór de
+loop elke som van 2 tot en met 12 op 0, dan staan ze op volgorde.
 
 </details>
 
@@ -151,7 +153,9 @@ for som in range(2, 13):
     telling[som] = 0
 
 for i in range(worpen):
-    som = random.randint(1, 6) + random.randint(1, 6)
+    eerste = random.randint(1, 6)
+    tweede = random.randint(1, 6)
+    som = eerste + tweede
     telling[som] = telling[som] + 1
 
 for som in telling:
@@ -181,7 +185,13 @@ wint. Probeer daarna een tweede: minstens één keer dubbel zes, in 24 worpen
 met twee dobbelstenen. Volgens de Méré moest die even goed uitpakken. Laat je
 simulatie dat zien?
 
-Begin in de editor hieronder met één worp en één `if`, en bouw hem uit.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code een paar keer: soms zegt hij zes.
+2. Gooi vier keer, met een `for`-loop om de worp en de `if`. Hij print nu bij elke zes.
+3. Onthoud of er een zes viel: zet vóór de loop `zes = False`, zet in de `if` `zes = True`, en print `zes` na de loop.
+4. Zet dat geheel in een buitenste loop van 10.000 keer, en tel hoe vaak `zes` waar is. Print het percentage, en haal de andere prints weg.
+5. Maak de tweede weddenschap: 24 worpen met twee stenen, en kijk of ze allebei 6 zijn.
 
 <PyRunner initialCode={`import random
 
@@ -192,9 +202,9 @@ if worp == 6:
 <details>
 <summary>Tip</summary>
 
-Je hebt een loop in een loop nodig: de buitenste speelt de weddenschap, de
-binnenste gooit. Hoe onthoud je in de binnenste loop of er al een zes is
-gevallen?
+Krijg je bijna 100 procent? Kijk waar `zes = False` staat. Hij moet bij elke
+weddenschap opnieuw op `False` beginnen, dus in de buitenste loop, vóór de
+binnenste.
 
 </details>
 
@@ -273,14 +283,15 @@ Meer uitleg: [De computer kiest](site:python/docs/projecten/raad-het-getal/stap-
 KeyError: 7
 ```
 
-**Oorzaak:** in `telling` staan alleen de sleutels 1 tot en met 6, van één
-dobbelsteen. Met twee stenen kan de som 7 zijn, en die sleutel is er niet.
+**Oorzaak:** je telt bij een som die nog geen sleutel is in `telling`. Begin
+je met een lege `telling`, of met alleen de ogen van één steen (1 tot en met
+6), dan staat 7 er niet in. Het getal in de foutmelding is de som die mist.
 
 **Oplossing:** zet elke som die kan uitkomen eerst op 0.
 
 ```python
 # FOUT
-telling = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+telling = {}
 som = 3 + 4
 telling[som] = telling[som] + 1
 

@@ -230,13 +230,25 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
       const pad = ['.mdx', '.md'].map((e) => join(DOCS, id + e)).find((p) => existsSync(p));
       return readFileSync(pad as string, 'utf8');
     };
+    // PageRank en Tic-Tac-Toe leunen op een hoofdstuk van de cursus. Die werden
+    // eerst overgeslagen; nu moet het hoofdstuk het project ergens noemen.
+    const hoofdstuk = (id: string) => {
+      const map = join(DOCS, id.split('/')[0]);
+      return readdirSync(map, { recursive: true })
+        .map(String)
+        .filter((f) => /\.mdx?$/.test(f))
+        .map((f) => readFileSync(join(map, f), 'utf8'))
+        .join('\n');
+    };
+    expect(cs50.length).toBe(6);
     for (const c of cs50) {
       const les = c.lessen?.[0]?.id ?? '';
-      if (!les.startsWith('ml-')) continue;
       const naam = c.concept.replace(/^Het project (.*) van CS50 AI$/, '$1');
-      expect(tekst(les), `${c.id}: ${les}`).toMatch(
-        new RegExp(`cs50\\.harvard\\.edu/ai/projects/\\d/${naam.toLowerCase()}`),
+      const url = new RegExp(
+        `cs50\\.harvard\\.edu/ai/projects/\\d/${naam.toLowerCase().replace(/-/g, '')}`,
       );
+      const waar = les.startsWith('ml-') ? tekst(les) : hoofdstuk(les);
+      expect(waar, `${c.id}: ${les}`).toMatch(url);
     }
   });
 

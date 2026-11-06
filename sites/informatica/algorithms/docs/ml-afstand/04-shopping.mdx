@@ -13,7 +13,7 @@ op je eigen computer.
 Het meeste ken je al: de voorspeller is k-NN uit
 [laat de buren stemmen](site:algorithms/docs/ml-afstand/02-k-buren), en het
 beoordelen per soort deed je bij
-[eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen#bouw-zelf-de-luie-voorspeller).
+[eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen#opdracht-goed-per-soort).
 Twee dingen zijn nieuw: de gegevens staan in een CSV-bestand, en de
 voorspeller komt uit een bibliotheek, scikit-learn. Op deze pagina oefen je
 het eerste in je browser, met een paar regels van een eigen webshop.
@@ -101,6 +101,14 @@ Zet alle kenmerken in de lijst `kenmerken` en alle labels in de lijst
 [0, 1, 0, 1]
 ```
 
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print elke rij als een lijst teksten, zoals `['Feb', '3', 'TRUE', 'FALSE']`.
+2. Print in de loop alleen het getal van de maand: `MAANDEN[rij[0]]`.
+3. Print ook het aantal pagina's als getal, met `int(rij[1])`.
+4. Maak met een `if` van `rij[2]` een 1 of een 0, en zet de drie getallen in een lijst. Voeg die met `.append()` toe aan `kenmerken`.
+5. Doe hetzelfde met `rij[3]` voor `labels`, en haal de prints uit de loop.
+
 <PyRunner initialCode={`import csv
 
 regels = [
@@ -128,11 +136,9 @@ print(labels)`} />
 <details>
 <summary>Tip</summary>
 
-In de loop is `rij[0]` de maand, `rij[1]` het aantal pagina's, `rij[2]` of
-de bezoeker terugkwam en `rij[3]` of hij kocht. Met `MAANDEN[rij[0]]` zoek je
-het getal van een maand op, en `int(rij[1])` maakt van `'3'` het getal 3.
-Voor `TRUE` en `FALSE` gebruik je een `if`. Zet de drie getallen in een
-lijst, en voeg die met `.append()` toe aan `kenmerken`.
+`rij[2]` is de tekst `'TRUE'` of `'FALSE'`, niet de waarde `True`. Vergelijk
+hem dus met een tekst: `if rij[2] == "TRUE":`. Een lijst met drie getallen
+maak je met `[maand, paginas, terug]`.
 
 </details>
 

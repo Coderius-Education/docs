@@ -13,7 +13,10 @@ komen uit de data.
 
 :::info
 Je gebruikt hier een dictionary uit
-[Dictionaries](site:python/docs/data/11a-dictionaries-basis), en `.split()` uit
+[Dictionaries](site:python/docs/data/11a-dictionaries-basis), kijken of een
+sleutel erin staat met `in` uit
+[Door een dictionary lopen](site:python/docs/data/11b-itereren-dictionaries),
+en `.split()` uit
 [de opdracht bij het spamfilter met regels](site:algorithms/docs/ml-regels/02-spamfilter#opdracht-hele-woorden-vergelijken).
 :::
 
@@ -141,8 +144,9 @@ prijs 1
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij print de spam-telling van elk woord dat in `spam` staat. `je` mist nog.
-2. Zet een tweede `if` in de loop voor `gewoon`, en print daar ook iets.
-3. Maak per woord één variabele `bijdrage`: begin op 0, tel de spam-telling erbij en de gewone telling eraf, en print het woord met zijn bijdrage.
+2. Zet een tweede `if` in de loop voor `gewoon`, en print daar het woord met min de gewone telling. Nu staat `je -3` erbij.
+3. Verander het bericht in `"ben je nu op school"`. `nu` staat in allebei, en je ziet hem twee keer: `nu 2` en `nu -1`.
+4. Maak per woord één variabele `bijdrage`: begin op 0, tel de spam-telling erbij en de gewone telling eraf, en print na de twee `if`'s het woord met zijn bijdrage. Nu krijgt `nu` één regel: `nu 1`.
 
 In de editor staan de tellingen uit het onderzoek al klaar, en een loop met één `if`.
 
@@ -174,7 +178,6 @@ Dit vervangt de loop onder de tellingen in de editor:
 {/* draaien-met: blok-erboven */}
 ```python
 bericht = "klik hier voor je prijs"
-score = 0
 for woord in bericht.split():
     bijdrage = 0
     if woord in spam:
@@ -182,7 +185,6 @@ for woord in bericht.split():
     if woord in gewoon:
         bijdrage = bijdrage - gewoon[woord]
     print(woord, bijdrage)
-    score = score + bijdrage
 ```
 
 Zo zie je waarom het filter beslist wat het beslist. Dat is bij elk systeem
@@ -198,8 +200,11 @@ een paar spamberichten die je zelf kreeg (of verzin ze), en in
 drie nieuwe berichten die het filter nog nooit zag, en kijk of het ze goed
 indeelt.
 
-In de editor staat het filter uit het onderzoek, met maar drie woorden spam
-en drie gewone woorden. Vervang ze door de woorden uit je eigen berichten.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. In de editor staat het filter uit het onderzoek, met maar drie woorden spam en drie gewone woorden.
+2. Zet in `spamwoorden` de woorden uit een paar spamberichten, en in `gewone_woorden` die uit gewone berichten.
+3. Bedenk drie nieuwe berichten, en kijk bij elk of het filter het goed indeelt.
 
 <PyRunner initialCode={`spamwoorden = "win nu gratis".split()
 gewone_woorden = "zie je morgen".split()

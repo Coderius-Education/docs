@@ -164,9 +164,11 @@ die het nooit zag:
 
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code: hij rekent de fout uit voor het eerste stuk fruit.
-2. Stel de gewichten en de bias bij met die fout, zoals in het onderzoek.
-3. Doe dat voor elk stuk fruit, en herhaal het tien rondes. Test daarna de twee nieuwe stukken.
+1. Draai de code: hij rekent de fout uit voor de eerste banaan. Het neuron zegt nog 0, dus de fout is 1.
+2. Stel de gewichten en de bias bij met die fout, zoals in het onderzoek, en print ze. Je krijgt `[18, 4]` en `1`.
+3. Zet het bijstellen in een loop over al het fruit, en print de gewichten en de bias na de loop.
+4. Zet die loop in een loop van tien rondes.
+5. Test het neuron met de twee nieuwe stukken fruit.
 
 In de editor staan `neuron`, het fruit en de eerste stap van het leren.
 
@@ -185,16 +187,15 @@ fruit = [
 gewichten = [0, 0]
 bias = 0
 
-invoer, doel = fruit[0]
+invoer, doel = fruit[4]
 fout = doel - neuron(invoer, gewichten, bias)
 print(invoer, doel, fout)`} />
 
 <details>
 <summary>Tip</summary>
 
-Het bijstellen gaat net als in het onderzoek: bij elk gewicht tel je de fout
-keer de invoer op, en bij de bias alleen de fout. Die loop werkt ook met
-grotere getallen, zoals de maten van het fruit.
+Stelt hij in stap 3 niets meer bij? Kijk of `fout` in de loop opnieuw wordt
+uitgerekend, voor elk stuk fruit, en niet alleen voor `fruit[4]` erboven.
 
 </details>
 
@@ -248,8 +249,9 @@ appel, aan de andere kant banaan. Deze runner leert het neuron op het fruit,
 en tekent daarna de voorbeelden en die grens. Het tekenen staat in de
 verborgen code onder de editor.
 
-Zet er een appel van 11 bij 7 bij, `([11, 7], 0)`, en draai opnieuw. Hoe
-schuift de grens? Probeer ook een banaan die dicht bij de appels ligt.
+Zet achteraan de lijst een appel van 11 bij 7 bij, `([11, 7], 0)`, en draai
+opnieuw. Hoe schuift de grens? Zet daarna ook een banaan bij die dicht bij de
+appels ligt, zoals `([10, 7], 1)`. Lukt het neuron dat nog?
 
 <PyRunner verborgen="fruit-tekenen" initialCode={`def neuron(invoer, gewichten, bias):
     som = bias
@@ -285,8 +287,22 @@ teken_grens(fruit, gewichten, bias)`} />
 
 </details>
 
-Met de nieuwe appel erbij leert het neuron `[6, -14]` met bias `-1`, en
-schuift de grens van de appels weg. Een neuron trekt altijd één rechte lijn.
+<details>
+<summary>Antwoord</summary>
+
+Met de nieuwe appel achteraan leert het neuron `[6, -14]` met bias `-1`, en
+schuift de grens van de appels weg. Zet je hem tussen de andere appels, dan
+komt er iets anders uit, `[9, -27]` met bias `-2`: de volgorde van de
+voorbeelden telt mee bij het leren.
+
+De banaan van 10 bij 7 lukt niet, ook niet met duizend rondes. Hij ligt
+tussen de appel van 8 bij 7 en die van 11 bij 7 in, en geen rechte lijn houdt
+hem van allebei gescheiden. Een banaan van 10 bij 6 lukt wel, en een van
+9 bij 6 pas na honderden rondes.
+
+</details>
+
+Een neuron trekt altijd één rechte lijn.
 Zet je de vier combinaties van "precies één" zo op papier, met de eerste
 invoer naar rechts en de tweede naar boven, dan liggen `0 1` en `1 0` schuin
 tegenover elkaar, en `0 0` en `1 1` ook. Daar past geen rechte lijn tussen, en
@@ -302,7 +318,13 @@ Leer er daarna een neuron mee dat met drie invoeren "minstens twee van de drie"
 herkent: 1 als minstens twee invoeren 1 zijn. Test het op alle acht
 combinaties.
 
-In de editor staat `neuron`, met een functie `leer` die nog niets leert.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `leer` geeft nog `([0, 0], 0)` terug.
+2. Zet het leren uit de opdracht in de functie, met `voorbeelden` en `rondes` in plaats van `fruit` en 10. Nu geeft `leer(en, 10)` hetzelfde als het onderzoek: `([2, 1], -2)`.
+3. Maak het aantal gewichten even groot als het aantal invoeren, zodat de functie ook met drie invoeren werkt.
+4. Maak de acht voorbeelden van "minstens twee van de drie", met drie loops in elkaar en een `if`.
+5. Leer ze met `leer`, en test het neuron op alle acht.
 
 <PyRunner initialCode={`def neuron(invoer, gewichten, bias):
     som = bias
@@ -324,8 +346,9 @@ print(leer(en, 10))`} />
 <summary>Tip</summary>
 
 Het aantal invoeren lees je af aan het eerste voorbeeld:
-`len(voorbeelden[0][0])`. Met `[0] * 3` maak je een lijst van drie nullen. Een
-functie kan twee dingen teruggeven als tuple: `return gewichten, bias`.
+`len(voorbeelden[0][0])`. Met `[0] * 3` maak je een lijst van drie nullen.
+Laat je `[0, 0]` staan bij drie invoeren, dan krijg je de foutmelding van
+[één neuron](site:algorithms/docs/ml-neuronen/01-neuron#er-gaat-iets-mis).
 
 </details>
 
@@ -360,6 +383,9 @@ for a in [0, 1]:
                 voorbeelden.append(([a, b, c], 1))
             else:
                 voorbeelden.append(([a, b, c], 0))
+
+en = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
+print(leer(en, 10))   # ([2, 1], -2)
 
 gewichten, bias = leer(voorbeelden, 10)
 print(gewichten, bias)   # [1, 1, 1] -1

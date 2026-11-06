@@ -34,8 +34,22 @@ describe('wanneer de runner matplotlib laadt', () => {
     ).toBe(true);
   });
 
-  it('de runner geeft de verborgen code mee', () => {
-    expect(readFileSync(IMPL, 'utf8')).toContain('heeftMatplotlibNodig(code, verborgenCode)');
+  it('alleen een echte import telt, geen woord in commentaar of een string', () => {
+    expect(heeftMatplotlibNodig('# zonder matplotlib\nprint(1)', null)).toBe(false);
+    expect(heeftMatplotlibNodig('print("pyplot en plt.show")', null)).toBe(false);
+    expect(heeftMatplotlibNodig('from matplotlib import pyplot', null)).toBe(true);
+    expect(heeftMatplotlibNodig('    import matplotlib.pyplot as p', null)).toBe(true);
+    expect(heeftMatplotlibNodig('import pylab', null)).toBe(true);
+  });
+
+  it('de runner geeft de verborgen code mee, ook bij het voorladen', () => {
+    // De warmup had een eigen regex die alleen naar de editor keek: de
+    // plaatjes van k-buren en het perceptron haalden matplotlib pas bij de
+    // eerste klik op.
+    const impl = readFileSync(IMPL, 'utf8');
+    expect(impl).toContain('heeftMatplotlibNodig(code, verborgenCode)');
+    expect(impl).toContain('heeftMatplotlibNodig(source, verborgenCode)');
+    expect(impl).not.toMatch(/\/\\b\(matplotlib/);
   });
 
   it('elke runner die een tekenfunctie aanroept, heeft de verborgen code die hem tekent', () => {
