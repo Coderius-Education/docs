@@ -1,0 +1,146 @@
+---
+sidebar_position: 6
+sidebar_label: "6. Hoeveel spellen?"
+---
+
+# Hoeveel spellen?
+
+De geleerde strategie wint alle 100 spellen, na tweeduizend spellen leren.
+Dat is veel. Nieuw is dat je het leren in een functie zet, zodat je het met
+verschillende aantallen kunt vergelijken.
+
+## Voorspel
+
+```python
+import random
+
+random.seed(1)
+print(random.randint(1, 6))
+random.seed(1)
+print(random.randint(1, 6))
+```
+
+Print dit twee keer hetzelfde getal, of twee verschillende?
+
+<details>
+<summary>Antwoord</summary>
+
+Twee keer hetzelfde: `2` en `2`. Na `random.seed(1)` komen dezelfde
+toevalsgetallen opnieuw, in dezelfde volgorde.
+
+</details>
+
+## Zo werkt het
+
+Een functie `leer(spellen)` doet het hele leren en geeft `score` terug. De
+parameter `spellen` zegt hoeveel spellen hij speelt. Roep je hem aan met 1, 2
+en 5, dan krijg je drie scoretabellen die je naast `slim` kunt leggen.
+
+Eerlijk vergelijken kan alleen als elk aantal op dezelfde manier begint: met
+dezelfde seed en een lege `score`.
+
+## Bouw zelf: hoeveel spellen heeft hij nodig?
+
+Zoek uit hoeveel spellen de computer nodig heeft om alles goed te leren.
+Probeer 1, 2, 5, 10, 20 en 50 spellen, en tel bij elk aantal bij hoeveel
+stapels hij iets anders kiest dan `slim`. Kijk alleen naar de stapels waar je
+kunt winnen: 2, 3, 4, 6, 7, 8 en 10. Gebruik bij elk aantal opnieuw
+`random.seed(1)` en een lege `score`.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij leert van 10 spellen, en print wat hij bij 10 lucifers pakt.
+2. Print voor elke stapel van 2 tot en met 10 wat `beste_zet` kiest en wat `slim` kiest.
+3. Tel bij hoeveel van de stapels 2, 3, 4, 6, 7, 8 en 10 ze verschillen.
+4. Maak van het leren een functie `leer(spellen)` die `score` teruggeeft, met `random.seed(1)` en een lege `score` erin. Roep hem aan voor 1, 2, 5, 10, 20 en 50 spellen.
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+random.seed(1)
+score = {}
+for spel in range(10):
+    zetten, verliezer = speel_tegen_jezelf(score, 0.2)
+    for speler in zetten:
+        for zet in zetten[speler]:
+            if zet not in score:
+                score[zet] = 0
+            if speler == verliezer:
+                score[zet] = score[zet] - 1
+            else:
+                score[zet] = score[zet] + 1
+
+print("bij 10 lucifers pakt hij", beste_zet(score, 10))`} />
+
+<details>
+<summary>Tip</summary>
+
+Staat `random.seed(1)` buiten `leer`, dan gaat elk aantal verder met andere
+toevalsgetallen dan het vorige, en kun je de uitkomsten niet vergelijken.
+Zet hem daarom als eerste regel in de functie.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor. Het spelen blijft in de verborgen code.
+
+{/* draaien-met: blok-erboven */}
+```python
+import random
+
+def leer(spellen):
+    random.seed(1)
+    score = {}
+    for spel in range(spellen):
+        zetten, verliezer = speel_tegen_jezelf(score, 0.2)
+        for speler in zetten:
+            for zet in zetten[speler]:
+                if zet not in score:
+                    score[zet] = 0
+                if speler == verliezer:
+                    score[zet] = score[zet] - 1
+                else:
+                    score[zet] = score[zet] + 1
+    return score
+
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+for spellen in [1, 2, 5, 10, 20, 50]:
+    score = leer(spellen)
+    fout = 0
+    for stapel in [2, 3, 4, 6, 7, 8, 10]:
+        if beste_zet(score, stapel) != slim(stapel):
+            fout = fout + 1
+    print(spellen, "spellen:", fout, "fout")
+```
+
+```
+1 spellen: 2 fout
+2 spellen: 2 fout
+5 spellen: 1 fout
+10 spellen: 0 fout
+20 spellen: 0 fout
+50 spellen: 0 fout
+```
+
+Met deze seed heeft hij er na 1 en 2 spellen nog twee fout, na 5 nog één, en
+vanaf 10 spellen geen enkele meer. Met een andere seed duurt het soms
+langer, tot een spel of honderd, maar ook dat is weinig. Het gaat snel omdat Nim met 10
+lucifers een klein spel is: er zijn maar 27 zetten om te onthouden. Bij
+schaken zijn er meer standen dan er zandkorrels op aarde zijn, en past zo'n
+tabel nergens.
+
+</details>
+
+Door naar [op weg naar Nim](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/01-een-klasse).

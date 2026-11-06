@@ -1,0 +1,184 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Een spel onthouden"
+---
+
+# Een spel onthouden
+
+De score van elke zet heeft nu een plek. Na een spel werkt de computer die
+scores bij: elke zet van de winnaar een punt erbij, elke zet van de verliezer
+een punt eraf. Nieuw is `not in`, en een spel dat al klaarstaat in verborgen
+code onder de editor.
+
+## Voorspel
+
+```python
+score = {}
+for zet in [(10, 1), (9, 2), (10, 1)]:
+    if zet not in score:
+        score[zet] = 0
+    score[zet] = score[zet] + 1
+print(score)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+{(10, 1): 2, (9, 2): 1}
+```
+
+De eerste keer staat `(10, 1)` nog niet in `score`, dus zet de loop hem eerst
+op 0 en telt er dan 1 bij. De derde keer staat hij er al, en wordt hij 2.
+
+</details>
+
+## Zo werkt het
+
+`zet not in score` is het omgekeerde van `zet in score`: het is waar als de
+zet nog geen sleutel is. Dan zet de loop hem eerst op 0.
+
+Het spelen staat al klaar, in de verborgen code onder de editor:
+
+- `speel_tegen_jezelf(score, ontdekken)` speelt één spel met 10 lucifers, met
+  twee spelers `"a"` en `"b"` die allebei dezelfde `score` gebruiken. Hij
+  geeft de zetten van elke speler terug, en wie er verloor.
+- Bij elke beurt kiest `kies` meestal de zet met de hoogste score. Maar bij
+  kans `ontdekken` kiest hij een willekeurige zet, om ook iets nieuws te
+  proberen. Wat dat doet, zie je in
+  [ontdekken](site:algorithms/docs/ml-spellen/02-nim-leert/04-ontdekken); hier
+  staat hij op 0.2.
+- `beste_zet(score, stapel)` geeft het aantal lucifers van de zet met de
+  hoogste score: een getal, zoals `slim` dat ook geeft.
+
+`zetten` is een dictionary met voor elke speler een lijst van zetten, en elke
+zet is een tuple `(stapel, pak)`.
+
+## Onderzoek
+
+1. Draai de code. Hoeveel zetten deed elke speler?
+2. Reken het spel na vanaf 10 lucifers. Pakte de verliezer de laatste?
+3. Bij 6 lucifers pakte `"a"` er 3, terwijl `beste_zet` bij een lege `score`
+   altijd 1 kiest. Hoe kan dat?
+4. Verander de seed in 1. Wat valt je op aan de zetten?
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+random.seed(2)
+score = {}
+zetten, verliezer = speel_tegen_jezelf(score, 0.2)
+print(zetten["a"])
+print(zetten["b"])
+print("verliezer:", verliezer)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+[(10, 1), (8, 1), (6, 3), (2, 1)]
+[(9, 1), (7, 1), (3, 1), (1, 1)]
+verliezer: b
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Allebei vier.
+2. Ja: 10, 9, 8, 7, 6, 3, 2, 1, en dan pakt `"b"` de laatste. `"b"` verliest.
+3. Die zet was ontdekken: met kans 0.2 kiest `kies` een willekeurige zet.
+4. Iedereen pakt steeds 1. De score is nog leeg, dus `beste_zet` kiest
+   overal 1, en met deze seed ontdekt niemand iets.
+
+</details>
+
+## Opdracht: een spel onthouden
+
+Werk na het spel uit de editor de score bij: elke zet van de winnaar een punt
+erbij, elke zet van de verliezer een punt eraf. Print daarna `score`:
+
+```
+{(10, 1): 1, (8, 1): 1, (6, 3): 1, (2, 1): 1, (9, 1): -1, (7, 1): -1, (3, 1): -1, (1, 1): -1}
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet de zetten van `"a"` en `"b"`, en wie er verloor.
+2. Loop met `for speler in zetten` over de spelers, en daarin over `zetten[speler]`. Print elke zet.
+3. Zet elke zet in `score` op 0 als hij er nog niet in staat, en print `score` na de loops.
+4. Geef een zet van de verliezer een punt eraf, en een zet van de winnaar een punt erbij.
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+random.seed(2)
+score = {}
+zetten, verliezer = speel_tegen_jezelf(score, 0.2)
+print(zetten, verliezer)`} />
+
+<details>
+<summary>Tip</summary>
+
+Bij stap 4 weet je in de binnenste loop van wie de zet is: dat is `speler`.
+Vergelijk die met `verliezer`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit komt onder de code van de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+for speler in zetten:
+    for zet in zetten[speler]:
+        if zet not in score:
+            score[zet] = 0
+        if speler == verliezer:
+            score[zet] = score[zet] - 1
+        else:
+            score[zet] = score[zet] + 1
+print(score)
+```
+
+```
+{(10, 1): 1, (8, 1): 1, (6, 3): 1, (2, 1): 1, (9, 1): -1, (7, 1): -1, (3, 1): -1, (1, 1): -1}
+```
+
+Elke zet kwam in dit spel één keer voor, dus elke score is 1 of -1. Na meer
+spellen tellen de punten op.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+KeyError: (10, 1)
+```
+
+**Oorzaak:** `score[zet] + 1` leest de score van een zet die nog niet in de
+dictionary staat. Er is nog niets om 1 bij op te tellen.
+
+**Oplossing:** zet een nieuwe zet eerst op 0.
+
+```python
+# FOUT
+score = {}
+zet = (10, 1)
+score[zet] = score[zet] + 1
+
+# GOED
+score = {}
+zet = (10, 1)
+if zet not in score:
+    score[zet] = 0
+score[zet] = score[zet] + 1
+```
+
+Meer uitleg: [Zo werkt het](#zo-werkt-het).
+
+Door naar [leren uit duizend spellen](site:algorithms/docs/ml-spellen/02-nim-leert/03-leren-uit-duizend-spellen).

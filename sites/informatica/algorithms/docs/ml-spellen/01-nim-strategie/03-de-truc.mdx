@@ -1,0 +1,187 @@
+---
+sidebar_position: 3
+sidebar_label: "3. De truc"
+---
+
+# De truc
+
+Anna en Bob pakten steeds 3 lucifers, zonder na te denken. Wie de truc van
+Nim kent, rekent uit hoeveel hij pakt. Nieuw is dat je met `%` uitrekent
+hoeveel lucifers je moet pakken om te winnen.
+
+:::info
+Je gebruikt hier `%` uit
+[Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest).
+:::
+
+## Voorspel
+
+```python
+stapel = 7
+pak = (stapel - 1) % 4
+print(pak)
+print(stapel - pak)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+2
+5
+```
+
+`(7 - 1) % 4` is de rest van 6 gedeeld door 4, en dat is 2. Pak je er 2,
+dan blijven er 5 liggen.
+
+</details>
+
+## Zo werkt het
+
+Laat je je tegenstander 1 lucifer over, dan moet hij de laatste pakken. Laat
+je er 5 over, dan pakt hij er 1, 2 of 3, en laat jij er daarna weer 1 over.
+Hetzelfde geldt voor 9. Wie de truc kent, laat dus steeds 1, 5 of 9 liggen:
+een viervoud plus 1.
+
+Met `(stapel - 1) % 4` reken je uit hoeveel je daarvoor moet pakken. Komt daar
+0 uit, dan ligt er al een viervoud plus 1, en kun je niet winnen tegen iemand
+die de truc ook kent. Dan pak je 1 en hoop je op een fout.
+
+## Onderzoek
+
+1. Draai de code. Bij welke stapels komt er 0 uit?
+2. Kijk naar 8 lucifers. Hoeveel pak je, en hoeveel blijven er liggen?
+3. Hoeveel pak je volgens de truc als er 7 liggen? Reken het eerst zelf uit,
+   en controleer het met de code.
+4. Kan er 4 of meer uitkomen? Waarom niet?
+
+<PyRunner initialCode={`for stapel in range(1, 13):
+    pak = (stapel - 1) % 4
+    print(stapel, "lucifers: pak", pak, "en laat", stapel - pak, "liggen")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Bij 1, 5 en 9. Daar ligt al een viervoud plus 1.
+2. Bij 8 pak je 3, en laat je 5 liggen. Bij elke stapel waar geen 0 uitkomt,
+   laat je 1, 5 of 9 liggen.
+3. 2, want `(7 - 1) % 4` is 2. Dan liggen er 5, een viervoud plus 1.
+4. Nee. De rest van delen door 4 is altijd 0, 1, 2 of 3. Je pakt dus nooit
+   meer dan 3, precies wat de regels toestaan.
+
+</details>
+
+## Opdracht: de functie slim
+
+Schrijf een functie `slim(stapel)` die teruggeeft hoeveel lucifers de truc
+pakt. Ligt er al een viervoud plus 1, dan pakt hij 1. Voor de stapels 1 tot en
+met 12 print hij:
+
+```
+1 pak 1
+2 pak 1
+3 pak 2
+4 pak 3
+5 pak 1
+6 pak 1
+7 pak 2
+8 pak 3
+9 pak 1
+10 pak 1
+11 pak 2
+12 pak 3
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `slim` pakt nu altijd 1.
+2. Laat `slim` met `%` uitrekenen hoeveel hij pakt, en geef dat terug. Bij 1, 5 en 9 zie je nu 0.
+3. Zet er een `if` bij die er 1 van maakt als het 0 is.
+
+<PyRunner initialCode={`def slim(stapel):
+    return 1
+
+for stapel in range(1, 13):
+    print(stapel, "pak", slim(stapel))`} />
+
+<details>
+<summary>Tip</summary>
+
+Bewaar de uitkomst van `%` eerst in een variabele. Dan kun je met een `if`
+kijken of hij 0 is, voordat je hem teruggeeft.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+for stapel in range(1, 13):
+    print(stapel, "pak", slim(stapel))
+```
+
+```
+1 pak 1
+2 pak 1
+3 pak 2
+4 pak 3
+5 pak 1
+6 pak 1
+7 pak 2
+8 pak 3
+9 pak 1
+10 pak 1
+11 pak 2
+12 pak 3
+```
+
+Er staat één `return`, onderaan. Zo geeft `slim` bij elke stapel een getal
+terug, ook bij 1, 5 en 9.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+TypeError: unsupported operand type(s) for -: 'int' and 'NoneType'
+```
+
+**Oorzaak:** `slim` geeft niet bij elke stapel iets terug. Bij 9 lucifers is
+`pak` 0, en dan komt de functie bij geen enkele `return`. Een functie zonder
+`return` geeft `None`, en van een getal kun je geen `None` aftrekken.
+
+**Oplossing:** zorg dat de functie bij elke stapel een getal teruggeeft.
+
+```python
+# FOUT
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak > 0:
+        return pak
+
+stapel = 9
+stapel = stapel - slim(stapel)
+
+# GOED
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+stapel = 9
+stapel = stapel - slim(stapel)
+```
+
+Meer uitleg: [Return-waarden](site:python/docs/functies/09b-return).
+
+Door naar [tegen het toeval](site:algorithms/docs/ml-spellen/01-nim-strategie/04-tegen-het-toeval).

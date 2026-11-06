@@ -1,0 +1,134 @@
+---
+sidebar_position: 7
+sidebar_label: "7. De route van de muis"
+---
+
+# De route van de muis
+
+De muis kiest zelf en leert van elke stap. Wat heeft hij na een paar
+wandelingen geleerd? Nieuw is dat je de muis laat lopen zonder te leren en
+zonder te ontdekken, zodat je ziet welke route hij kent.
+
+## Voorspel
+
+```python
+vakje = 2
+pad = [vakje]
+for actie in ["rechts", "links", "rechts", "rechts"]:
+    if actie == "rechts":
+        vakje = vakje + 1
+    else:
+        vakje = vakje - 1
+    pad.append(vakje)
+print(pad)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+`[2, 3, 2, 3, 4]`. `pad` begint met het startvakje, en na elke actie komt het
+nieuwe vakje erachter.
+
+</details>
+
+## Zo werkt het
+
+In de verborgen code staat de hele klasse `Muis` uit
+[ontdekken](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/06-ontdekken),
+met de gang erbij. Met `piep.kies(vakje, 0)` vraag je de muis zijn beste
+actie, zonder dat hij ontdekt. Roep je daarna alleen `stap` aan, en niet
+`piep.leer`, dan leert hij onderweg niets bij.
+
+Zo speel je bij CS50 tegen de geleerde computer: hij kiest steeds zijn beste
+zet, en leert niet meer.
+
+## Bouw zelf: de route van de muis
+
+Schrijf een functie `route(muis)` die de muis vanuit vakje 2 laat lopen met
+zijn beste actie, zonder te leren, en de lijst van vakjes teruggeeft. Print de
+route na 0, 1, 2, 5 en 10 wandelingen:
+
+```
+0 wandelingen: [2, 1, 0]
+1 wandelingen: [2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3]
+2 wandelingen: [2, 3, 4]
+5 wandelingen: [2, 3, 4]
+10 wandelingen: [2, 3, 4]
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: de muis leert van 5 wandelingen, en zegt welke kant hij in vakje 2 kiest.
+2. Laat `piep` vanuit vakje 2 lopen tot `klaar(vakje)`, met `piep.kies(vakje, 0)` en `stap`. Print na elke stap het vakje.
+3. Maak er een functie `route(muis)` van die de lijst van vakjes teruggeeft, zoals `pad` in Voorspel. Stop ook als de lijst 20 vakjes lang is.
+4. Print de route na 0, 1, 2, 5 en 10 wandelingen, elke keer met `random.seed(1)` en een nieuwe muis.
+
+:::caution
+Je schrijft hier een while-loop, en een muis kan heen en weer blijven lopen:
+na één wandeling doet deze muis dat. Zonder de grens van 20 vakjes stopt de
+loop dan nooit, en loopt het tabblad vast. Kopieer je code eerst naar een
+kladblok.
+:::
+
+<PyRunner verborgen="muis-leert" initialCode={`import random
+
+random.seed(1)
+piep = Muis()
+for keer in range(5):
+    wandel(piep, 0.2)
+print("in vakje 2 kiest hij", piep.kies(2, 0))`} />
+
+<details>
+<summary>Tip</summary>
+
+`stap` geeft twee dingen terug, het nieuwe vakje en de beloning. Voor de
+route heb je alleen het vakje nodig, maar je haalt ze allebei uit elkaar.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor. De gang en de muis blijven in de verborgen
+code.
+
+{/* draaien-met: blok-erboven */}
+```python
+import random
+
+def route(muis):
+    vakje = 2
+    pad = [vakje]
+    while not klaar(vakje) and len(pad) < 20:
+        actie = muis.kies(vakje, 0)
+        vakje, beloning = stap(vakje, actie)
+        pad.append(vakje)
+    return pad
+
+for wandelingen in [0, 1, 2, 5, 10]:
+    random.seed(1)
+    piep = Muis()
+    for keer in range(wandelingen):
+        wandel(piep, 0.2)
+    print(wandelingen, "wandelingen:", route(piep))
+```
+
+```
+0 wandelingen: [2, 1, 0]
+1 wandelingen: [2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3]
+2 wandelingen: [2, 3, 4]
+5 wandelingen: [2, 3, 4]
+10 wandelingen: [2, 3, 4]
+```
+
+Een nieuwe muis kent niets, kiest links en loopt in de val. Na één wandeling
+weet hij dat links in vakje 2 slecht afliep, en gaat hij naar rechts. Maar in
+vakje 3 was hij nog nooit: links en rechts zijn daar allebei 0, en dan kiest
+hij links. Zo loopt hij heen en weer. Na twee wandelingen kent hij de kortste
+weg naar de kaas.
+
+</details>
+
+Door naar [aan de slag met Nim](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/08-aan-de-slag-met-nim).

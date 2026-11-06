@@ -1,0 +1,122 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Om de beurt"
+---
+
+# Om de beurt
+
+In de vorige stap pakte één speler de hele stapel leeg. Nim speel je met z'n
+tweeën: na elke zet is de ander aan de beurt. Nieuw is een variabele die
+bijhoudt wie er aan de beurt is.
+
+## Voorspel
+
+```python
+stapel = 9
+speler = "Anna"
+while stapel > 0:
+    stapel = stapel - 3
+    print(speler, "laat", stapel, "liggen")
+    if speler == "Anna":
+        speler = "Bob"
+    else:
+        speler = "Anna"
+```
+
+Anna en Bob pakken allebei steeds 3 lucifers. Wat print dit programma? En
+wie verliest?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+Anna laat 6 liggen
+Bob laat 3 liggen
+Anna laat 0 liggen
+```
+
+Anna pakt de laatste lucifers, dus Anna verliest.
+
+</details>
+
+## Zo werkt het
+
+`speler` begint als `"Anna"`. Na elke zet kijkt de `if` wie er net pakte, en
+zet `speler` op de ander. Zo wisselt hij van Anna naar Bob en terug, zolang
+de loop draait.
+
+## Opdracht: wie wint?
+
+Anna en Bob pakken allebei steeds 3 lucifers, of de rest als er minder dan 3
+liggen. Ze beginnen met 10, en Anna begint. Laat zien wie wat pakt, en print
+aan het eind wie er wint:
+
+```
+Anna pakt 3 en laat 7 liggen
+Bob pakt 3 en laat 4 liggen
+Anna pakt 3 en laat 1 liggen
+Bob pakt 1 en laat 0 liggen
+Anna wint
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: één speler pakt de hele stapel leeg.
+2. Zet vóór de loop `speler = "Anna"`, en print in de loop ook wie er pakt. Nu pakt Anna alles.
+3. Laat `speler` na elke zet wisselen, zoals in Voorspel. Nu pakken Anna en Bob om de beurt.
+4. Print na de loop wie er wint. Wie de laatste lucifer pakt, verliest.
+
+:::caution
+Ook deze loop stopt alleen als de stapel kleiner wordt. Haal je de regel weg
+die pakt, dan loopt het tabblad vast, zie [een zet](site:algorithms/docs/ml-spellen/01-nim-strategie/01-een-zet#zo-werkt-het).
+:::
+
+<PyRunner initialCode={`stapel = 10
+while stapel > 0:
+    pak = 3
+    if stapel < 3:
+        pak = stapel
+    stapel = stapel - pak
+    print("pakt", pak, "en laat", stapel, "liggen")`} />
+
+<details>
+<summary>Tip</summary>
+
+Na de laatste zet wisselt `speler` nog één keer. Wie is er dan aan de beurt:
+de speler die de laatste lucifer pakte, of de ander?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+stapel = 10
+speler = "Anna"
+while stapel > 0:
+    pak = 3
+    if stapel < 3:
+        pak = stapel
+    stapel = stapel - pak
+    print(speler, "pakt", pak, "en laat", stapel, "liggen")
+    if speler == "Anna":
+        speler = "Bob"
+    else:
+        speler = "Anna"
+print(speler, "wint")
+```
+
+```
+Anna pakt 3 en laat 7 liggen
+Bob pakt 3 en laat 4 liggen
+Anna pakt 3 en laat 1 liggen
+Bob pakt 1 en laat 0 liggen
+Anna wint
+```
+
+Bob pakt de laatste lucifer, dus Bob verliest. Na de loop staat in `speler`
+al de volgende speler, en dat is de winnaar.
+
+</details>
+
+Door naar [de truc](site:algorithms/docs/ml-spellen/01-nim-strategie/03-de-truc).

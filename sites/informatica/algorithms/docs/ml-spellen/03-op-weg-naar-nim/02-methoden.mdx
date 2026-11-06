@@ -1,0 +1,228 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Methoden"
+---
+
+# Methoden
+
+In de vorige stap schreef je twee keer dezelfde twee regels om `piep` te
+laten lopen. Een **methode** is een functie die bij de klasse hoort, en die
+met `self` bij de attributen van zijn eigen object kan. Nieuw zijn methoden,
+ook een methode die iets teruggeeft en een methode die een andere aanroept.
+
+:::info
+Je gebruikt hier `def` met `self` uit
+[Je eerste methode](site:python/docs/klassen/15d-je-eerste-methode), en
+`return` in een methode uit
+[Methoden met return](site:python/docs/klassen/15f-methoden-met-return).
+:::
+
+## Voorspel
+
+```python
+class Muis:
+    def __init__(self, vakje):
+        self.vakje = vakje
+    def naar_rechts(self):
+        self.vakje = self.vakje + 1
+
+piep = Muis(2)
+piep.naar_rechts()
+piep.naar_rechts()
+print(piep.vakje)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+`4`. Elke aanroep van `naar_rechts` zet `piep` een vakje verder, en dat
+onthoudt hij in `self.vakje`.
+
+</details>
+
+## Zo werkt het
+
+Een methode schrijf je in de klasse, ingesprongen onder `class`, net als
+`__init__`. Zijn eerste parameter is altijd `self`. Bij `piep.naar_rechts()`
+vult Python `self` zelf in met het object vóór de punt: `piep`. Je schrijft
+dus `piep.naar_rechts()`, niet `piep.naar_rechts(piep)`.
+
+Een methode kan ook iets teruggeven, met `return`, en hij kan een andere
+methode van hetzelfde object aanroepen, met `self.` ervoor. De muis krijgt zo
+een methode `waarde(vakje, actie)`, die in zijn tabel opzoekt hoe goed een
+stap is. Staat de stap er nog niet in, dan geeft hij 0, net als `waarde` bij
+Nim.
+
+## Onderzoek
+
+1. Draai de code. Waarom krijg je bij links 0, en geen foutmelding?
+2. Maak onderaan een tweede muis `snuf`, en print `snuf.waarde(3, "rechts")`.
+   Wat zie je?
+3. Print `piep.q[(3, "links")]` in plaats van `piep.waarde(3, "links")`. Wat
+   gebeurt er?
+
+<PyRunner initialCode={`class Muis:
+    def __init__(self):
+        self.q = {}
+
+    def waarde(self, vakje, actie):
+        if (vakje, actie) in self.q:
+            return self.q[(vakje, actie)]
+        return 0
+
+piep = Muis()
+piep.q[(3, "rechts")] = 0.5
+print(piep.waarde(3, "rechts"))
+print(piep.waarde(3, "links"))`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+0.5
+0
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. `(3, "links")` staat niet in de tabel van `piep`. Dan komt `waarde` niet
+   bij de eerste `return`, en geeft hij 0.
+2. 0. `snuf` heeft een eigen, lege tabel.
+3. Een foutmelding: die stap staat nog niet in de tabel. Daarom bestaat
+   `waarde`, die dan 0 geeft.
+
+</details>
+
+## Opdracht: de beste actie
+
+Schrijf een methode `beste_actie(vakje)` die de actie met de hoogste waarde
+teruggeeft: `"links"` of `"rechts"`. Zijn ze even hoog, dan kiest hij
+`"links"`. Met de tabel uit de editor print hij:
+
+```
+1 rechts
+2 links
+3 rechts
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `beste_actie` zegt nu altijd `"links"`.
+2. Laat `beste_actie` de waarde van links en die van rechts vergelijken, met `self.waarde(vakje, "links")`, en de actie met de hoogste waarde teruggeven.
+3. Print de beste actie voor elk vakje van 1 tot en met 3.
+
+<PyRunner initialCode={`class Muis:
+    def __init__(self):
+        self.q = {}
+
+    def waarde(self, vakje, actie):
+        if (vakje, actie) in self.q:
+            return self.q[(vakje, actie)]
+        return 0
+
+    def beste_actie(self, vakje):
+        return "links"
+
+piep = Muis()
+piep.q[(1, "links")] = -1
+piep.q[(1, "rechts")] = 0.5
+piep.q[(2, "links")] = 0.25
+piep.q[(3, "rechts")] = 1
+print(piep.beste_actie(1))`} />
+
+<details>
+<summary>Tip</summary>
+
+Binnen een methode roep je een andere methode van dezelfde muis aan met
+`self.` ervoor. Zonder `self.` zoekt Python een gewone functie `waarde`, en
+die bestaat niet.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+class Muis:
+    def __init__(self):
+        self.q = {}
+
+    def waarde(self, vakje, actie):
+        if (vakje, actie) in self.q:
+            return self.q[(vakje, actie)]
+        return 0
+
+    def beste_actie(self, vakje):
+        beste = "links"
+        for actie in ["links", "rechts"]:
+            if self.waarde(vakje, actie) > self.waarde(vakje, beste):
+                beste = actie
+        return beste
+
+piep = Muis()
+piep.q[(1, "links")] = -1
+piep.q[(1, "rechts")] = 0.5
+piep.q[(2, "links")] = 0.25
+piep.q[(3, "rechts")] = 1
+for vakje in [1, 2, 3]:
+    print(vakje, piep.beste_actie(vakje))
+```
+
+```
+1 rechts
+2 links
+3 rechts
+```
+
+De loop zoekt de beste actie zoals de loop in
+[een score per zet](site:algorithms/docs/ml-spellen/02-nim-leert/01-een-score-per-zet#voorspel)
+de beste zet zocht. Bij vakje 2 staat rechts niet in de tabel, dus telt hij
+als 0, en wint links met 0.25.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+TypeError: Muis.waarde() takes 2 positional arguments but 3 were given
+```
+
+**Oorzaak:** je vergat `self` als eerste parameter van de methode. Python
+geeft het object altijd mee als eerste argument, dus `piep.waarde(3, "rechts")`
+geeft er drie mee: `piep`, 3 en `"rechts"`.
+
+**Oplossing:** zet `self` vooraan bij de parameters.
+
+```python
+# FOUT
+class Muis:
+    def __init__(self):
+        self.q = {}
+
+    def waarde(vakje, actie):
+        return 0
+
+piep = Muis()
+print(piep.waarde(3, "rechts"))
+
+# GOED
+class Muis:
+    def __init__(self):
+        self.q = {}
+
+    def waarde(self, vakje, actie):
+        return 0
+
+piep = Muis()
+print(piep.waarde(3, "rechts"))
+```
+
+Meer uitleg: [Je eerste methode](site:python/docs/klassen/15d-je-eerste-methode).
+
+Door naar [de gang](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/03-de-gang).

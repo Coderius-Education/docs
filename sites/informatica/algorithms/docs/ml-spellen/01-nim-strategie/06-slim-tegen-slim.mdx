@@ -1,0 +1,114 @@
+---
+sidebar_position: 6
+sidebar_label: "6. Slim tegen slim"
+---
+
+# Slim tegen slim
+
+`slim` won van een speler die maar wat deed. Klopt de truc ook tegen iemand
+die hem kent? Nieuw is dat je de truc controleert: je laat `slim` tegen
+zichzelf spelen, voor elke stapel tegelijk.
+
+## Voorspel
+
+```python
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+print(slim(5), slim(4), slim(1))
+```
+
+Er liggen 5 lucifers, en beide spelers spelen `slim`. De eerste pakt
+`slim(5)`, en dan liggen er 4. Wat print dit programma? En wie wint?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1 3 1
+```
+
+De eerste pakt 1 en laat 4 liggen. De tweede pakt 3 en laat 1 liggen. Dan
+moet de eerste de laatste pakken: de tweede wint.
+
+</details>
+
+## Zo werkt het
+
+Volgens [de truc](site:algorithms/docs/ml-spellen/01-nim-strategie/03-de-truc#zo-werkt-het)
+verliest wie begint bij een viervoud plus 1, als de ander de truc ook kent.
+Bij 5 zag je dat net met de hand. Met een programma reken je het na voor elke
+stapel van 1 tot en met 12, zonder iets met de hand te doen.
+
+## Bouw zelf: slim tegen slim
+
+Laat `slim` tegen zichzelf spelen, met de gewone regels (1 tot en met 3), en
+print voor elke stapel van 1 tot en met 12 wie er wint, de speler die begint
+of de ander.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: de eerste speler doet één zet.
+2. Zet de zet in een while-loop die doorgaat zolang er lucifers liggen, en print na elke zet de stapel.
+3. Houd met een variabele `beurt` bij wie er aan de beurt is, `"eerste"` of `"tweede"`, en wissel na elke zet.
+4. Maak er een functie `slim_tegen_slim(stapel)` van die `beurt` teruggeeft als de stapel op is. Roep hem aan voor elke stapel van 1 tot en met 12, en haal de print uit de loop.
+
+:::caution
+Je schrijft hier een while-loop. Wordt de stapel niet bij elke zet kleiner,
+dan stopt hij nooit en loopt het tabblad vast. Kopieer je code eerst naar een
+kladblok.
+:::
+
+<PyRunner initialCode={`def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+stapel = 10
+stapel = stapel - slim(stapel)
+print("de eerste speler laat", stapel, "liggen")`} />
+
+<details>
+<summary>Tip</summary>
+
+Wie de laatste lucifer pakt, verliest. Is de stapel op, dan is de speler die
+aan de beurt is dus de winnaar, net als in `speel`. Beide spelers gebruiken
+`slim`, dus de zet zelf is voor allebei dezelfde regel.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+def slim_tegen_slim(stapel):
+    beurt = "eerste"
+    while stapel > 0:
+        stapel = stapel - slim(stapel)
+        if beurt == "eerste":
+            beurt = "tweede"
+        else:
+            beurt = "eerste"
+    return beurt
+
+for stapel in range(1, 13):
+    print(stapel, slim_tegen_slim(stapel))
+```
+
+Bij 1, 5 en 9 wint de tweede speler, bij alle andere stapels de eerste: de
+truc klopt. Als beide spelers hem kennen, ligt de winnaar vast voordat het
+spel begint. Daar is geen toeval meer aan.
+
+</details>
+
+Door naar [Nim die van zichzelf leert](site:algorithms/docs/ml-spellen/02-nim-leert/01-een-score-per-zet).
