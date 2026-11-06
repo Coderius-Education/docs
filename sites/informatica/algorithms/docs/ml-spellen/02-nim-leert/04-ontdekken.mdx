@@ -1,0 +1,175 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Ontdekken"
+---
+
+# Ontdekken
+
+Bij elke beurt kiest de computer meestal de zet met de hoogste score, maar
+soms een willekeurige. Dat heet ontdekken. Nieuw is de vraag waarom een
+lerend programma niet altijd zijn beste zet speelt, en hoe `random.random()`
+die keuze maakt.
+
+:::info
+Je gebruikt hier `random.random()` uit
+[de surfer springt soms](site:algorithms/docs/ml-kans/02-surfer/04-de-surfer-springt-soms),
+en `random.choice` uit [een klik](site:algorithms/docs/ml-kans/02-surfer/02-een-klik).
+:::
+
+## Voorspel
+
+```python
+import random
+
+ontdekken = 0.2
+keer = 0
+for i in range(1000):
+    if random.random() < ontdekken:
+        keer = keer + 1
+print(keer)
+```
+
+Ongeveer welk getal print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+Rond de 200. `random.random()` geeft een kommagetal van 0 tot 1, en in 2 van
+de 10 keer is dat kleiner dan 0.2.
+
+</details>
+
+## Zo werkt het
+
+Zo kiest `kies` in de verborgen code een zet:
+
+```python
+def kies(score, stapel, ontdekken):
+    if random.random() < ontdekken:
+        return random.choice(mogelijk(stapel))
+    return beste_zet(score, stapel)
+```
+
+Met kans `ontdekken` kiest hij een willekeurige zet uit `mogelijk(stapel)`,
+de zetten die bij die stapel mogen. Anders kiest hij de zet met de hoogste
+score.
+
+Waarom zou hij ooit iets anders doen dan zijn beste zet? Omdat hij een zet die
+hij nooit probeert, ook nooit beter leert kennen. Ontdekken geeft elke zet
+af en toe een kans.
+
+## Onderzoek
+
+1. Draai de code. Dit is het leren uit
+   [leren uit duizend spellen](site:algorithms/docs/ml-spellen/02-nim-leert/03-leren-uit-duizend-spellen).
+2. Zet `ontdekken` op 1: nu kiest hij altijd een willekeurige zet. Wat leert
+   hij bij 10 lucifers?
+3. Zet `ontdekken` op 0. Leert hij nu nog iets?
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+random.seed(1)
+score = {}
+ontdekken = 0.2
+
+for spel in range(2000):
+    zetten, verliezer = speel_tegen_jezelf(score, ontdekken)
+    for speler in zetten:
+        for zet in zetten[speler]:
+            if zet not in score:
+                score[zet] = 0
+            if speler == verliezer:
+                score[zet] = score[zet] - 1
+            else:
+                score[zet] = score[zet] + 1
+
+for stapel in range(2, 11):
+    print(stapel, "lucifers: pak", beste_zet(score, stapel))`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Hetzelfde als in de vorige stap: bij 10 lucifers pak 1.
+2. Dan leert hij bij 10 lucifers pak 3, en dat is fout. Hij leert nu welke
+   zet het vaakst wint als daarna beide spelers willekeurig verder spelen. Dan
+   wint pak 3 net iets vaker: 52 procent, tegen 49 voor pak 1. Maar zo speelt
+   niemand die de truc kent. Pas als hij tijdens het leren zijn eigen beste
+   zetten speelt, leert hij wat werkt tegen een tegenstander die goed speelt,
+   en dat is hijzelf.
+3. Ja, ook zonder ontdekken leert hij dit spel. Een zet die verliest, krijgt
+   een punt eraf, en dan probeert hij de volgende keer een andere. In een
+   groter spel is dat niet genoeg: een zet die hij nooit probeert, krijgt
+   nooit een kans om te laten zien dat hij goed is. Daarom ontdekt een lerend
+   programma meestal een beetje.
+
+</details>
+
+## Opdracht: hoe vaak kiest hij wat?
+
+Laat de geleerde computer 1000 keer een zet kiezen bij 10 lucifers, met
+`kies(score, 10, 0.2)`, en tel hoe vaak hij elke zet kiest. Ongeveer zo:
+
+```
+{1: 866, 2: 73, 3: 61}
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij leert, en kiest één keer een zet bij 10 lucifers.
+2. Laat `kies` 1000 keer kiezen, en tel in een dictionary `keer` hoe vaak elke zet gekozen is. Print `keer`.
+3. Doe hetzelfde met ontdekken 0 en met ontdekken 1, in plaats van 0.2.
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+random.seed(1)
+score = {}
+
+for spel in range(2000):
+    zetten, verliezer = speel_tegen_jezelf(score, 0.2)
+    for speler in zetten:
+        for zet in zetten[speler]:
+            if zet not in score:
+                score[zet] = 0
+            if speler == verliezer:
+                score[zet] = score[zet] - 1
+            else:
+                score[zet] = score[zet] + 1
+
+print(kies(score, 10, 0.2))`} />
+
+<details>
+<summary>Tip</summary>
+
+Bewaar de zet die `kies` teruggeeft eerst in een variabele. Dan tel je hem
+zoals je woorden telde bij het spamfilter.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit komt onder de code van de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+keer = {}
+for i in range(1000):
+    pak = kies(score, 10, 0.2)
+    if pak not in keer:
+        keer[pak] = 0
+    keer[pak] = keer[pak] + 1
+print(keer)
+```
+
+```
+{1: 866, 2: 73, 3: 61}
+```
+
+Bij ontdekken 0.2 kiest hij niet 200 keer iets anders dan pak 1, maar
+ongeveer 133 keer: de willekeurige zet is in een derde van de gevallen toch
+pak 1. Bij ontdekken 0 kiest hij altijd pak 1, en bij ontdekken 1 elke zet
+ongeveer even vaak.
+
+</details>
+
+Door naar [speel tegen de geleerde strategie](site:algorithms/docs/ml-spellen/02-nim-leert/05-speel-tegen-de-geleerde-strategie).

@@ -1,0 +1,144 @@
+---
+sidebar_position: 9
+sidebar_label: "9. Aan de slag met PageRank"
+---
+
+# Aan de slag met PageRank
+
+Je hebt voor het weer alles gebouwd wat PageRank van CS50 vraagt: kansen die
+optellen tot 1, kiezen met kansen, een steekproef, en doorrekenen tot het
+stilstaat. In deze laatste stap zet je de steekproef in een functie, en leg
+je hem naast de uitgerekende verdeling: twee wegen naar hetzelfde antwoord.
+
+## Voorspel
+
+```python
+telling = {"zon": 2770, "wolken": 3780, "regen": 3450}
+n = 10000
+
+deel = {}
+for w in telling:
+    deel[w] = telling[w] / n
+print(deel)
+```
+
+Wat print dit?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+{'zon': 0.277, 'wolken': 0.378, 'regen': 0.345}
+```
+
+Elke telling gedeeld door het aantal dagen: het deel van de dagen met dat weer.
+
+</details>
+
+## Zo werkt het
+
+Bij CS50 heeft elk onderdeel dat je hier oefende een functie met dezelfde rol:
+
+| Bij het weer | Bij PageRank van CS50 |
+|:---:|:---:|
+| `kansen_morgen(vandaag)` | de kansen voor de volgende pagina, vanaf één pagina, met damping |
+| de steekproef van duizend dagen | de surfer laten klikken en tellen |
+| tot het stilstaat | rekenen in rondes tot geen rank meer dan 0,001 verandert |
+
+Elke functie geeft een dictionary terug met per weer, of per pagina, een getal.
+Samen tellen die getallen op tot 1.
+
+## Bouw zelf: twee wegen, één antwoord
+
+Schrijf een functie `steekproef(n)` die `n` dagen weer kiest met
+`kansen_morgen`, en per weer het deel van de dagen teruggeeft. Print hem naast
+de uitgerekende verdeling, bijvoorbeeld:
+
+```
+zon 0.2791 0.277
+wolken 0.3768 0.378
+regen 0.3441 0.345
+```
+
+De verborgen code onder de editor zet het model, het seizoen,
+`kansen_morgen(vandaag)` uit [kansen mengen](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/04-kansen-mengen)
+en `berekend()` klaar. `berekend()` rekent door tot het stilstaat, zoals in de
+vorige stappen, met `kansen_morgen(vandaag)` in plaats van `model[vandaag]`.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: achter elk weer staat 0, want de steekproef telt nog niets, en daarachter de uitgerekende kans.
+2. Laat `steekproef` vóór de `return` kiezen: begin met `weer = "zon"`, kies `n` keer het weer van morgen met `kansen = kansen_morgen(weer)` en `random.choices`, en tel het gekozen weer in `telling`. Je ziet nu tellingen rond de 2770.
+3. Geef het deel van de dagen terug in plaats van de tellingen: maak een dictionary `deel`, vul hem met `for w in telling:` met `telling[w] / n`, en geef `deel` terug.
+4. Draai een paar keer. Hoe ver liggen de twee kolommen uit elkaar?
+
+<PyRunner verborgen="weer-herfst" initialCode={`import random
+
+def steekproef(n):
+    telling = {"zon": 0, "wolken": 0, "regen": 0}
+    return telling
+
+geteld = steekproef(10000)
+uitgerekend = berekend()
+for weer in uitgerekend:
+    print(weer, geteld[weer], round(uitgerekend[weer], 3))`} />
+
+<details>
+<summary>Tip</summary>
+
+Zie je bijna dezelfde getallen als na een zonnige dag, 0,42 zon? Dan kies je
+elke dag met `kansen_morgen("zon")`. Het weer dat je kiest, moet de volgende
+dag het weer van vandaag zijn.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de functie `steekproef` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+def steekproef(n):
+    telling = {"zon": 0, "wolken": 0, "regen": 0}
+    weer = "zon"
+    for dag in range(n):
+        kansen = kansen_morgen(weer)
+        weer = random.choices(list(kansen), weights=list(kansen.values()))[0]
+        telling[weer] = telling[weer] + 1
+    deel = {}
+    for w in telling:
+        deel[w] = telling[w] / n
+    return deel
+```
+
+De twee kolommen verschillen hoogstens een paar duizendsten, en elke run net
+anders. De steekproef schat, het rekenen in rondes geeft elke keer hetzelfde.
+
+</details>
+
+## Aan de slag met PageRank
+
+Met de surfer schatte je PageRank door het na te spelen. In
+[het hoofdstuk PageRank](site:algorithms/docs/pagerank/01-concept) rekende je
+het uit, in rondes, met een formule. Daar kwam je de surfer bij
+[Zelf bouwen](site:algorithms/docs/pagerank/09-zelf-bouwen) nog een keer tegen,
+in een iets andere vorm: hij begint op een willekeurige pagina, en telt de
+pagina waar hij is voordat hij klikt.
+
+Nu ben je klaar voor
+[PageRank](https://cs50.harvard.edu/ai/projects/2/pagerank/) van CS50 AI. Daar
+bouw je allebei de manieren: een surfer die klikt, en het rekenen in rondes.
+Drie dingen om op te letten:
+
+- De links van een pagina staan in een set. Voor `random.choice` maak je er
+  eerst een lijst van, zie [een set van links](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/08-een-set-van-links).
+- Lees in de opdracht goed wat je moet doen met een pagina zonder links, want
+  daar loopt de surfer vast, zoals in
+  [duizend klikken](site:algorithms/docs/ml-kans/02-surfer/03-duizend-klikken#onderzoek).
+- Wil je de ranks van de vorige ronde bewaren terwijl je de nieuwe uitrekent,
+  maak dan een nieuwe dictionary of een kopie met `.copy()`, zie
+  [tot het stilstaat](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/07-tot-het-stilstaat#er-gaat-iets-mis).
+
+Door naar [een zet](site:algorithms/docs/ml-spellen/01-nim-strategie/01-een-zet),
+het begin van Nim met een vaste strategie.

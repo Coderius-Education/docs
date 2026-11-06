@@ -1,0 +1,183 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Een leertempo"
+---
+
+# Een leertempo
+
+Een blinde muis vindt de kaas in de helft van de wandelingen. Nu gaat hij
+onthouden wat elke stap opleverde. Bij Nim kreeg een zet een hele punt erbij
+of eraf, en liep de score op tot 971: een getal dat vooral zegt hoe vaak een
+zet gespeeld is. Nieuw is een **leertempo**: de waarde van een stap schuift
+telkens een stukje op naar de beloning, en blijft zo tussen -1 en 1.
+
+## Voorspel
+
+```python
+tempo = 0.5
+schatting = 0
+for keer in range(3):
+    schatting = schatting + tempo * (1 - schatting)
+    print(schatting)
+```
+
+Wat print dit programma? Komt `schatting` ooit boven 1?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+0.5
+0.75
+0.875
+```
+
+Nee. Elke keer gaat de helft van wat er tot 1 over is erbij. Hij komt steeds
+dichter bij 1, maar er nooit boven.
+
+</details>
+
+## Zo werkt het
+
+De regel is:
+
+```
+nieuwe waarde = oude waarde + tempo * (beloning - oude waarde)
+```
+
+`beloning - oude waarde` is hoever de schatting ernaast zat. Het tempo zegt
+welk deel daarvan de muis in één keer bijstelt. Bij 0.5 is dat de helft. Bij
+CS50 heet het tempo `alpha`.
+
+## Onderzoek
+
+1. Draai de code. Wat doet de schatting na de beloning -1?
+2. Zet `tempo` op 0.25. Gaat de schatting nu sneller of langzamer naar 1?
+3. Zet `tempo` op 1. Wat onthoudt de schatting dan nog van eerdere
+   beloningen?
+
+<PyRunner initialCode={`tempo = 0.5
+schatting = 0
+for beloning in [1, 1, -1, 1]:
+    schatting = schatting + tempo * (beloning - schatting)
+    print(beloning, schatting)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+1 0.5
+1 0.75
+-1 -0.125
+1 0.4375
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Hij zakt van 0.75 naar -0.125: de helft van de afstand naar -1. Bij de
+   volgende 1 stijgt hij weer.
+2. Langzamer: 0.25, dan 0.4375. Een klein tempo leert langzaam, maar laat
+   zich ook minder van één keer pech afbrengen.
+3. Niets: de schatting is dan elke keer precies de laatste beloning.
+
+</details>
+
+## Opdracht: de muis onthoudt
+
+Geef de muis een methode `bijwerken(vakje, actie, beloning)` die de waarde
+van een stap met het leertempo naar de beloning schuift. Laat hem leren van
+1000 blinde wandelingen, en print zijn tabel:
+
+```
+1 -1.0 -0.25
+2 -0.25 -0.25
+3 -0.25 1.0
+```
+
+Per vakje staan er de waarde van links en die van rechts.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `bijwerken` zet nu de beloning van één wandeling in de tabel.
+2. Laat `bijwerken` de waarde met `self.tempo` een stukje naar de beloning schuiven, zoals in Voorspel. De oude waarde krijg je met `self.waarde(vakje, actie)`.
+3. Leer van 1000 wandelingen in plaats van één.
+4. Print voor elk vakje van 1 tot en met 3 de waarde van links en van rechts.
+
+<PyRunner verborgen="muis-gang" initialCode={`import random
+
+class Muis:
+    def __init__(self):
+        self.q = {}
+        self.tempo = 0.5
+
+    def waarde(self, vakje, actie):
+        if (vakje, actie) in self.q:
+            return self.q[(vakje, actie)]
+        return 0
+
+    def bijwerken(self, vakje, actie, beloning):
+        self.q[(vakje, actie)] = beloning
+
+random.seed(1)
+piep = Muis()
+for vakje, actie, nieuw, beloning in willekeurige_wandeling():
+    piep.bijwerken(vakje, actie, beloning)
+print(piep.q)`} />
+
+<details>
+<summary>Tip</summary>
+
+Bij stap 3 hoort de muis buiten de loop van 1000. Maak je elke wandeling een
+nieuwe `Muis()`, dan begint hij steeds met een lege tabel.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor. De gang blijft in de verborgen code.
+
+{/* draaien-met: blok-erboven */}
+```python
+import random
+
+class Muis:
+    def __init__(self):
+        self.q = {}
+        self.tempo = 0.5
+
+    def waarde(self, vakje, actie):
+        if (vakje, actie) in self.q:
+            return self.q[(vakje, actie)]
+        return 0
+
+    def bijwerken(self, vakje, actie, beloning):
+        oud = self.waarde(vakje, actie)
+        self.q[(vakje, actie)] = oud + self.tempo * (beloning - oud)
+
+random.seed(1)
+piep = Muis()
+for keer in range(1000):
+    for vakje, actie, nieuw, beloning in willekeurige_wandeling():
+        piep.bijwerken(vakje, actie, beloning)
+for vakje in [1, 2, 3]:
+    print(vakje, piep.waarde(vakje, "links"), piep.waarde(vakje, "rechts"))
+```
+
+```
+1 -1.0 -0.25
+2 -0.25 -0.25
+3 -0.25 1.0
+```
+
+In vakje 1 weet de muis nu dat links de val is, en in vakje 3 dat rechts de
+kaas is. Maar in vakje 2, waar hij begint, zijn links en rechts allebei
+-0.25. Hij leert alleen wat één stap direct oplevert, en vanuit vakje 2 is
+dat nooit de kaas.
+
+</details>
+
+Door naar [de beste toekomst](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/05-de-beste-toekomst).

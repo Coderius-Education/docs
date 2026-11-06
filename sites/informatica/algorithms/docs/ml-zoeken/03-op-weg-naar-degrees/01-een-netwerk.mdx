@@ -1,0 +1,173 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Een netwerk"
+---
+
+# Een netwerk
+
+In Degrees van CS50 AI zoek je de kortste verbinding tussen twee acteurs, via
+de films waarin ze samen speelden. Dat is breedte-eerst zoeken, maar niet in
+een doolhof: in een netwerk. Je oefent hier met een eigen netwerk, de metro
+van een verzonnen stad. De buren van een station zijn de stations één halte
+verder, en bij elke buur hoort de lijn waarmee je er komt.
+
+:::info
+Je gebruikt hier tuples en uitpakken uit [Tuples](site:python/docs/data/tuples),
+`append` uit [Lijst-methoden](site:python/docs/data/10b-lijst-methoden), een
+functie met `return` uit
+[Return-waarden](site:python/docs/functies/09b-return), en het zoeken uit
+[breedte-eerst](site:algorithms/docs/ml-zoeken/02-kortste-weg/02-breedte-eerst).
+Later in dit project komen er klassen bij, uit
+[een klasse](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/01-een-klasse).
+:::
+
+## Voorspel
+
+```python
+verbindingen = [
+    ("rood", "Centraal", "Markt"),
+    ("blauw", "Zuid", "Markt"),
+]
+for lijn, a, b in verbindingen:
+    if b == "Markt":
+        print(a, "met", lijn)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+Centraal met rood
+Zuid met blauw
+```
+
+Elke verbinding is een tuple van drie: de lijn en de twee stations die hij
+verbindt. `for lijn, a, b in` pakt alle drie tegelijk uit.
+
+</details>
+
+## Zo werkt het
+
+De metro heeft vier lijnen:
+
+- rood: Centraal, Markt, Haven, Strand
+- blauw: Zuid, Markt, Park, Noord
+- groen: Centraal, Park, Stadion
+- geel: Haven, Museum, Stadion
+
+De lijst `verbindingen` heeft een tuple voor elk stuk tussen twee haltes. De
+functie `buren` zoekt bij een station alle verbindingen waar het in staat, en
+geeft een lijst paren `(lijn, station)` terug. Een metro rijdt twee kanten op,
+dus `buren` kijkt naar `a` én naar `b`.
+
+## Onderzoek
+
+1. Draai de code. Welke buren heeft Markt? Kloppen ze met de lijnen hierboven?
+2. Vraag `buren("Zuid")`. Waarom is het er maar één?
+3. Haal de tweede `if` en zijn `append` weg. Welke buren heeft Markt nu?
+4. Vraag `buren("Eiland")`, een station dat niet in het netwerk staat.
+
+<PyRunner initialCode={`verbindingen = [
+    ("rood", "Centraal", "Markt"),
+    ("rood", "Markt", "Haven"),
+    ("rood", "Haven", "Strand"),
+    ("blauw", "Zuid", "Markt"),
+    ("blauw", "Markt", "Park"),
+    ("blauw", "Park", "Noord"),
+    ("groen", "Centraal", "Park"),
+    ("groen", "Park", "Stadion"),
+    ("geel", "Haven", "Museum"),
+    ("geel", "Museum", "Stadion"),
+]
+
+def buren(station):
+    resultaat = []
+    for lijn, a, b in verbindingen:
+        if a == station:
+            resultaat.append((lijn, b))
+        if b == station:
+            resultaat.append((lijn, a))
+    return resultaat
+
+print(buren("Markt"))`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. `[('rood', 'Centraal'), ('rood', 'Haven'), ('blauw', 'Zuid'), ('blauw', 'Park')]`:
+   met rood naar Centraal of Haven, met blauw naar Zuid of Park.
+2. Zuid is het eindpunt van blauw, en geen andere lijn stopt er.
+3. `[('rood', 'Haven'), ('blauw', 'Park')]`. Nu rijdt de metro maar één kant
+   op: van Markt naar Centraal kan dan niet meer.
+4. `[]`: geen enkele verbinding noemt Eiland, dus het heeft geen buren.
+
+</details>
+
+## Opdracht: hoeveel haltes?
+
+Hoeveel haltes is elk station van Zuid? Zoek het met breedte-eerst, net als in
+het doolhof, en print de afstanden:
+
+```
+{'Zuid': 0, 'Markt': 1, 'Centraal': 2, 'Haven': 2, 'Park': 2, 'Strand': 3, 'Museum': 3, 'Noord': 3, 'Stadion': 3}
+```
+
+:::caution
+De while-loop stopt pas als de wachtrij leeg is. Zet je een station dat je al
+kent toch weer in de wachtrij, dan stopt hij nooit. De speeltuin heeft geen
+stopknop, dus het tabblad loopt vast: herlaad de pagina, en je code is weg.
+Kopieer je code daarom eerst naar een kladblok voordat je een nieuwe
+while-loop draait.
+:::
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de buren van Zuid. Het netwerk en `buren` staan in de verborgen code.
+2. Zet een wachtrij `[van]` en de while-loop uit het doolhof eronder. Haal in de loop met `station = wachtrij.pop(0)` het voorste station eruit. `buren` geeft nu paren, dus loop met `for lijn, buur in buren(station):`. Print `afstand`.
+3. Print ook hoeveel haltes Strand is, met `afstand["Strand"]`.
+
+<PyRunner verborgen="metro" initialCode={`van = "Zuid"
+afstand = {van: 0}
+print(buren(van))`} />
+
+<details>
+<summary>Tip</summary>
+
+In het doolhof heette de variabele van de loop `vakje`. Hier is het een
+station: kies een naam, en gebruik hem overal in de loop.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de print in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+wachtrij = [van]
+while len(wachtrij) > 0:
+    station = wachtrij.pop(0)
+    for lijn, buur in buren(station):
+        if buur not in afstand:
+            afstand[buur] = afstand[station] + 1
+            wachtrij.append(buur)
+
+print(afstand)
+print("Naar Strand:", afstand["Strand"], "haltes")
+```
+
+```
+{'Zuid': 0, 'Markt': 1, 'Centraal': 2, 'Haven': 2, 'Park': 2, 'Strand': 3, 'Museum': 3, 'Noord': 3, 'Stadion': 3}
+Naar Strand: 3 haltes
+```
+
+Het zoeken is hetzelfde als in het doolhof. Alleen de buren zijn anders: een
+paar met een lijn, in plaats van een vakje. De lijn gebruik je hier nog niet;
+dat komt bij [de weg met lijnen](site:algorithms/docs/ml-zoeken/03-op-weg-naar-degrees/04-de-weg-met-lijnen).
+
+</details>
+
+Door naar [een knoop](site:algorithms/docs/ml-zoeken/03-op-weg-naar-degrees/02-een-knoop).

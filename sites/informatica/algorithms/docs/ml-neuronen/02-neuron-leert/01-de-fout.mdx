@@ -1,0 +1,173 @@
+---
+sidebar_position: 1
+sidebar_label: "1. De fout"
+---
+
+# De fout
+
+In het vorige project zocht jij de gewichten van het EN-neuron. Nu laat je het
+neuron ze zelf vinden. Het begint met alle gewichten op 0, en krijgt
+voorbeelden met het goede antwoord erbij. Zegt het iets fouts, dan schuift het
+zijn gewichten een stukje in de goede richting. Zo'n lerend neuron heet een
+**perceptron**, en het is het begin van elk neuraal netwerk. Eerst moet het
+weten hoe fout het zat.
+
+:::info
+Je gebruikt hier `neuron` uit
+[ja of nee](site:algorithms/docs/ml-neuronen/01-neuron/03-ja-of-nee), en
+voorbeelden met het goede antwoord erbij, zoals bij
+[een functie voorspel](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur/03-een-functie-voorspel).
+Nieuw in dit project is dat je één element van een lijst verandert, met
+`lijst[i] = …`.
+:::
+
+## Voorspel
+
+```python
+def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+print(1 - neuron([1, 1], [0, 0], 0))
+```
+
+Een neuron met alle gewichten op 0 krijgt `[1, 1]`, en het goede antwoord is
+1. Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1
+```
+
+Met alle gewichten op 0 is de som 0, dus het neuron zegt 0. Het goede antwoord
+min wat het zei, is 1 - 0 = 1.
+
+</details>
+
+## Zo werkt het
+
+De **fout** is het goede antwoord min wat het neuron zei. Er zijn drie
+mogelijkheden:
+
+- had het neuron gelijk, dan is de fout 0;
+- zei het 0 maar moest het 1 zijn, dan is de fout 1;
+- zei het 1 terwijl het 0 moest zijn, dan is de fout -1.
+
+Een voorbeeld is een tuple met de invoer en het goede antwoord, het **doel**:
+`([1, 1], 1)`. Met `for invoer, doel in voorbeelden` pak je ze bij elk
+voorbeeld weer uit.
+
+In de runners van dit project staat `neuron` in de verborgen code onder de
+editor. Zo zie je in de editor alleen wat nieuw is.
+
+## Onderzoek
+
+1. Draai de code. Wat is de fout, en wat betekent dat?
+2. Zet `invoer` op `[1, 1]` en `doel` op 1. Wat is de fout nu?
+3. Zet daarna de bias op -2. Wat zegt het neuron nu bij `[1, 1]`, en wat is
+   de fout?
+4. Welke regel doet dit neuron met bias 0? Waarom zit het bij `[0, 1]` fout
+   als het EN moet doen?
+
+<PyRunner verborgen="neuron" initialCode={`gewichten = [1, 1]
+bias = 0
+
+invoer = [0, 1]
+doel = 0
+uit = neuron(invoer, gewichten, bias)
+print("het neuron zegt", uit, "en het moest", doel)
+print("fout:", doel - uit)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+het neuron zegt 1 en het moest 0
+fout: -1
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. De fout is -1: het neuron zei 1, maar het moest 0 zijn.
+2. 0: het neuron zegt 1, en dat klopt.
+3. De som is -2 + 1 + 1 = 0, dus het neuron zegt 0. De fout is 1.
+4. Met bias 0 doet het OF: één invoer van 1 is al genoeg. Voor EN moet het
+   bij `[0, 1]` 0 zeggen, dus daar zit het fout.
+
+</details>
+
+## Opdracht: tel de fouten
+
+Laat het neuron uit het onderzoek alle vier de voorbeelden van EN langsgaan.
+Print bij elk voorbeeld de invoer, het doel en de fout, en tel hoe vaak de
+fout niet 0 is:
+
+```
+[0, 0] 0 0
+[0, 1] 0 -1
+[1, 0] 0 -1
+[1, 1] 1 0
+2 fouten
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij rekent de fout uit voor het eerste voorbeeld, en die is 0.
+2. Zet het uitrekenen in een loop `for invoer, doel in voorbeelden`, en print bij elk voorbeeld de fout.
+3. Tel met een teller `fouten` hoe vaak de fout niet 0 is, en print hem na de loop.
+
+<PyRunner verborgen="neuron" initialCode={`voorbeelden = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
+gewichten = [1, 1]
+bias = 0
+
+invoer, doel = voorbeelden[0]
+fout = doel - neuron(invoer, gewichten, bias)
+print(invoer, doel, fout)`} />
+
+<details>
+<summary>Tip</summary>
+
+"Niet gelijk aan" schrijf je in Python als `!=`. Waar zet je `fouten = 0`:
+in de loop of ervoor?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de laatste drie regels in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+fouten = 0
+for invoer, doel in voorbeelden:
+    fout = doel - neuron(invoer, gewichten, bias)
+    print(invoer, doel, fout)
+    if fout != 0:
+        fouten = fouten + 1
+print(fouten, "fouten")
+```
+
+```
+[0, 0] 0 0
+[0, 1] 0 -1
+[1, 0] 0 -1
+[1, 1] 1 0
+2 fouten
+```
+
+Staat `fouten = 0` in de loop, dan begint de teller bij elk voorbeeld opnieuw,
+en print hij aan het eind 0.
+
+</details>
+
+Door naar [bijstellen](site:algorithms/docs/ml-neuronen/02-neuron-leert/02-bijstellen).

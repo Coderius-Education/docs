@@ -1,0 +1,210 @@
+---
+sidebar_position: 5
+sidebar_label: "5. De beste toekomst"
+---
+
+# De beste toekomst
+
+In vakje 2 weet de muis nog niets: elke stap kost daar -0.25 en levert
+direct niets op. Toch is rechts beter, want vanuit vakje 3 is de kaas één
+stap. Nieuw is dat de waarde van een stap ook meeneemt wat de muis daarna nog
+kan halen: de beste waarde van het vakje waar hij uitkomt.
+
+## Voorspel
+
+```python
+q = {(3, "links"): -0.25, (3, "rechts"): 1.0}
+beste = q[(3, "links")]
+for actie in ["links", "rechts"]:
+    if q[(3, actie)] > beste:
+        beste = q[(3, actie)]
+print(beste)
+print(-0.25 + beste)
+```
+
+Rechts vanuit vakje 2 kost -0.25, en dan sta je in vakje 3. Wat print dit
+programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1.0
+0.75
+```
+
+De beste stap in vakje 3 levert 1.0 op. Rechts vanuit vakje 2 is dus -0.25
+nu, plus 1.0 straks: 0.75.
+
+</details>
+
+## Zo werkt het
+
+De regel krijgt er een stuk bij:
+
+```
+nieuwe waarde = oude waarde + tempo * (beloning + toekomst - oude waarde)
+```
+
+`toekomst` is de hoogste waarde in het nieuwe vakje: het beste wat de muis
+daarna nog kan doen. Is de wandeling voorbij, bij de val of de kaas, dan staat
+dat vakje niet in de tabel, en is de toekomst 0. Dit is de regel uit het
+college van CS50. Hij heet *Q-learning*, en daarom heet de tabel `q`.
+
+In de editor rekent `leer` de oude waarde en de toekomst uit, en geeft ze aan
+`bijwerken`. Zo staat het ook bij CS50.
+
+## Onderzoek
+
+1. Draai de code. Naar welk getal gaat de waarde van rechts in vakje 2?
+2. Haal `toekomst` uit de regel. Naar welk getal gaat hij nu?
+3. Zet `(3, "rechts")` op 0, alsof de muis nog niet weet dat daar de kaas
+   ligt. Wat leert hij dan voor rechts in vakje 2?
+
+<PyRunner initialCode={`tempo = 0.5
+q = {(3, "links"): -0.25, (3, "rechts"): 1.0, (2, "rechts"): 0}
+for keer in range(4):
+    oud = q[(2, "rechts")]
+    toekomst = q[(3, "links")]
+    for actie in ["links", "rechts"]:
+        if q[(3, actie)] > toekomst:
+            toekomst = q[(3, actie)]
+    q[(2, "rechts")] = oud + tempo * (-0.25 + toekomst - oud)
+    print(q[(2, "rechts")])`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+0.375
+0.5625
+0.65625
+0.703125
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Naar 0.75: -0.25 voor de stap, plus 1.0 van de kaas erna.
+2. Naar -0.25. Zonder toekomst telt alleen wat de stap zelf oplevert.
+3. Dan is de toekomst 0, en gaat de waarde naar -0.25. De muis leert van
+   achter naar voor: eerst wat vlak bij de kaas goed is, en pas daarna wat
+   verder weg goed is.
+
+</details>
+
+## Opdracht: kijk vooruit
+
+Schrijf de methode `beste_toekomst(vakje)`: de hoogste waarde van een actie
+in `vakje`. Laat de muis weer leren van 1000 blinde wandelingen, en print zijn
+tabel:
+
+```
+1 -1.0 0.5
+2 0.25 0.75
+3 0.5 1.0
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `beste_toekomst` geeft nog altijd 0, dus je ziet de tabel uit de vorige stap.
+2. Laat `beste_toekomst` met een loop over `acties` de hoogste waarde in `vakje` zoeken en teruggeven. Nu is ook in vakje 2 rechts beter dan links.
+
+<PyRunner verborgen="muis-gang" initialCode={`import random
+
+class Muis:
+    def __init__(self):
+        self.q = {}
+        self.tempo = 0.5
+
+    def waarde(self, vakje, actie):
+        if (vakje, actie) in self.q:
+            return self.q[(vakje, actie)]
+        return 0
+
+    def bijwerken(self, vakje, actie, oud, beloning, toekomst):
+        self.q[(vakje, actie)] = oud + self.tempo * (beloning + toekomst - oud)
+
+    def beste_toekomst(self, vakje):
+        return 0
+
+    def leer(self, vakje, actie, nieuw, beloning):
+        oud = self.waarde(vakje, actie)
+        toekomst = self.beste_toekomst(nieuw)
+        self.bijwerken(vakje, actie, oud, beloning, toekomst)
+
+random.seed(1)
+piep = Muis()
+for keer in range(1000):
+    for vakje, actie, nieuw, beloning in willekeurige_wandeling():
+        piep.leer(vakje, actie, nieuw, beloning)
+for vakje in [1, 2, 3]:
+    print(vakje, piep.waarde(vakje, "links"), piep.waarde(vakje, "rechts"))`} />
+
+<details>
+<summary>Tip</summary>
+
+Begin de loop met de waarde van de eerste actie, `acties[0]`, zoals de
+Voorspel met links begon. Gebruik `self.waarde`, dan telt een stap die nog
+niet in de tabel staat als 0.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor. De gang blijft in de verborgen code.
+
+{/* draaien-met: blok-erboven */}
+```python
+import random
+
+class Muis:
+    def __init__(self):
+        self.q = {}
+        self.tempo = 0.5
+
+    def waarde(self, vakje, actie):
+        if (vakje, actie) in self.q:
+            return self.q[(vakje, actie)]
+        return 0
+
+    def bijwerken(self, vakje, actie, oud, beloning, toekomst):
+        self.q[(vakje, actie)] = oud + self.tempo * (beloning + toekomst - oud)
+
+    def beste_toekomst(self, vakje):
+        beste = self.waarde(vakje, acties[0])
+        for actie in acties:
+            if self.waarde(vakje, actie) > beste:
+                beste = self.waarde(vakje, actie)
+        return beste
+
+    def leer(self, vakje, actie, nieuw, beloning):
+        oud = self.waarde(vakje, actie)
+        toekomst = self.beste_toekomst(nieuw)
+        self.bijwerken(vakje, actie, oud, beloning, toekomst)
+
+random.seed(1)
+piep = Muis()
+for keer in range(1000):
+    for vakje, actie, nieuw, beloning in willekeurige_wandeling():
+        piep.leer(vakje, actie, nieuw, beloning)
+for vakje in [1, 2, 3]:
+    print(vakje, piep.waarde(vakje, "links"), piep.waarde(vakje, "rechts"))
+```
+
+```
+1 -1.0 0.5
+2 0.25 0.75
+3 0.5 1.0
+```
+
+Nu weet de muis in elk vakje welke kant beter is: rechts, en hoe dichter bij
+de kaas, hoe hoger de waarde. Ook links in vakje 2 is positief: vanuit
+vakje 1 kan hij nog terug naar de kaas, al kost dat twee stappen extra.
+
+</details>
+
+Door naar [ontdekken](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/06-ontdekken).

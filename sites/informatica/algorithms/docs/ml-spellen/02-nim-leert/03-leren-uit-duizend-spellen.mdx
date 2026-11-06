@@ -1,0 +1,183 @@
+---
+sidebar_position: 3
+sidebar_label: "3. Leren uit duizend spellen"
+---
+
+# Leren uit duizend spellen
+
+Na één spel heeft elke zet een score van 1 of -1. Dat zegt nog weinig. Nu
+speelt de computer tweeduizend spellen, en werkt hij na elk spel de score
+bij. Nieuw is dat `score` buiten de loop staat: hij onthoudt alles, over alle
+spellen heen.
+
+## Voorspel
+
+```python
+score = {}
+for spel in range(3):
+    zet = (10, 1)
+    if zet not in score:
+        score[zet] = 0
+    score[zet] = score[zet] + 1
+print(score)
+```
+
+Wat print dit programma? En wat print het als `score = {}` de eerste regel
+ín de loop is?
+
+<details>
+<summary>Antwoord</summary>
+
+`{(10, 1): 3}`. Staat `score = {}` in de loop, dan begint elke ronde met een
+lege score, en print hij `{(10, 1): 1}`: de computer vergeet dan na elk spel
+wat hij leerde.
+
+</details>
+
+## Zo werkt het
+
+Het leren in de editor is het bijwerken uit
+[een spel onthouden](site:algorithms/docs/ml-spellen/02-nim-leert/02-een-spel-onthouden),
+in een loop van 2000 spellen. Omdat beide spelers dezelfde `score` gebruiken,
+speelt de computer elk spel tegen zichzelf, en wordt hij steeds iets beter.
+
+Onderaan print de code wat hij geleerd heeft: voor elke stapel de zet die
+`beste_zet` kiest.
+
+## Onderzoek
+
+1. Draai de code. Vergelijk wat hij geleerd heeft met `slim` uit het vorige
+   project. Bij welke stapels doet hij hetzelfde?
+2. Bij 9 lucifers pakt hij 2, en `slim` pakt 1. Is dat erg?
+3. Print onderaan `score[(10, 1)]` en `score[(10, 3)]`. Wat betekenen die
+   getallen?
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+random.seed(1)
+score = {}
+ontdekken = 0.2
+
+for spel in range(2000):
+    zetten, verliezer = speel_tegen_jezelf(score, ontdekken)
+    for speler in zetten:
+        for zet in zetten[speler]:
+            if zet not in score:
+                score[zet] = 0
+            if speler == verliezer:
+                score[zet] = score[zet] - 1
+            else:
+                score[zet] = score[zet] + 1
+
+for stapel in range(2, 11):
+    print(stapel, "lucifers: pak", beste_zet(score, stapel))`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+2 lucifers: pak 1
+3 lucifers: pak 2
+4 lucifers: pak 3
+5 lucifers: pak 1
+6 lucifers: pak 1
+7 lucifers: pak 2
+8 lucifers: pak 3
+9 lucifers: pak 2
+10 lucifers: pak 1
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Bij elke stapel behalve 9 pakt hij precies wat `slim` pakt. Waar je kunt
+   winnen, pakt hij genoeg om een viervoud plus 1 over te laten. Niemand heeft
+   hem dat verteld. Hij heeft het gevonden door te spelen.
+2. Nee. Bij 5 en 9 verlies je van een goede tegenstander, wat je ook doet.
+   Alle drie de zetten hebben daar een negatieve score, en welke het hoogst
+   uitkomt, is toeval. Dat hij bij 5 net als `slim` 1 pakt, is ook toeval:
+   de scores zijn daar -459, -460 en -459, en bij een gelijke stand houdt
+   `beste_zet` de eerste.
+3. `score[(10, 1)]` is 971 en `score[(10, 3)]` is -76. Pak 1 bij 10 leidde
+   meestal tot winst, pak 3 vaker tot verlies. De computer heeft pak 1
+   veel vaker gespeeld, omdat het de beste zet leek; daarom is het getal zo
+   groot.
+
+</details>
+
+## Opdracht: waar verlies je altijd?
+
+Zoek uit bij welke stapels de computer geen enkele zet heeft gevonden die
+wint: elke zet die daar mag, heeft een score van 0 of lager.
+
+```
+bij 5 verlies je altijd
+bij 9 verlies je altijd
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij leert, en print de score van pak 1 bij 9 lucifers.
+2. Print de score van elke zet uit `mogelijk(9)`: de zetten die bij 9 lucifers mogen.
+3. Tel bij 9 lucifers hoeveel zetten een score boven 0 hebben.
+4. Doe dat voor elke stapel van 2 tot en met 10, en print alleen de stapels waar die telling 0 is.
+
+In de verborgen code staan `mogelijk(stapel)`, de zetten die bij een stapel
+mogen, en `waarde(score, stapel, pak)`, de score van een zet, of 0 als hij er
+nog niet in staat.
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+random.seed(1)
+score = {}
+
+for spel in range(2000):
+    zetten, verliezer = speel_tegen_jezelf(score, 0.2)
+    for speler in zetten:
+        for zet in zetten[speler]:
+            if zet not in score:
+                score[zet] = 0
+            if speler == verliezer:
+                score[zet] = score[zet] - 1
+            else:
+                score[zet] = score[zet] + 1
+
+print(waarde(score, 9, 1))`} />
+
+<details>
+<summary>Tip</summary>
+
+Bij stap 4 begint de telling bij elke stapel opnieuw bij 0. Waar staat die
+regel dan: binnen of buiten de loop over de stapels?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit komt onder de code van de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+for stapel in range(2, 11):
+    goed = 0
+    for pak in mogelijk(stapel):
+        if waarde(score, stapel, pak) > 0:
+            goed = goed + 1
+    if goed == 0:
+        print("bij", stapel, "verlies je altijd")
+```
+
+```
+bij 5 verlies je altijd
+bij 9 verlies je altijd
+```
+
+Dat zijn precies de viervouden plus 1 uit de truc. De computer heeft ze
+gevonden zonder `%`, alleen door te spelen.
+
+</details>
+
+Door naar [ontdekken](site:algorithms/docs/ml-spellen/02-nim-leert/04-ontdekken).

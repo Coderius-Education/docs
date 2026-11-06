@@ -1,0 +1,138 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Een drempel"
+---
+
+# Een drempel
+
+Het filter telt nu een score. Daarna moet het nog beslissen: vanaf welke
+score is een bericht spam? Die grens heet de **drempel**.
+
+## Voorspel
+
+```python
+score = 1
+drempel = 2
+
+if score >= drempel:
+    print("spam")
+else:
+    print("geen spam")
+```
+
+Wat print dit programma? En wat print het als `score` 3 is? En als de score
+1 blijft, maar de drempel 1 wordt?
+
+<details>
+<summary>Antwoord</summary>
+
+Eerst `geen spam`, want 1 is kleiner dan 2. Bij score 3 print het `spam`.
+Met drempel 1 print het ook `spam`, want `>=` betekent "groter dan of gelijk
+aan".
+
+</details>
+
+## Zo werkt het
+
+Na de loop beslist één `if`: is de score minstens de drempel, dan is het
+bericht spam. Dat is het hele idee van dit filter: een score optellen, en die
+vergelijken met een drempel.
+
+De drempel staat als variabele bovenaan. Zo zie je meteen welke grens het
+filter gebruikt, en verander je hem op één plek.
+
+## Onderzoek
+
+1. Verander het bericht in `"Hoi, bel je me nu?"`. Welke score krijgt het,
+   en is het besluit terecht?
+2. Zet `drempel` op 1, en probeer het bericht uit vraag 1 nog eens.
+3. Zet `drempel` op 4, en probeer `"Klik nu en win een gratis telefoon"` nog
+   eens.
+
+<PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+drempel = 2
+
+bericht = "Klik nu en win een gratis telefoon"
+bericht = bericht.lower()
+
+score = 0
+for woord in verdacht:
+    if woord in bericht:
+        score = score + 1
+
+print("score:", score)
+if score >= drempel:
+    print("spam")
+else:
+    print("geen spam")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Score 1, geen spam. Dat klopt: een vriend die vraagt of je belt, is geen
+   spam. Het woord `nu` geeft wel een punt.
+2. Nu is het bericht van je vriend spam. Een lage drempel vangt meer spam,
+   maar ook meer gewone berichten.
+3. Score 3, geen spam: het spambericht glipt erdoor. Een hoge drempel laat
+   meer spam door. Een goede drempel kiezen is altijd een afweging.
+
+</details>
+
+## Opdracht: twijfel
+
+Geef het filter een derde uitkomst. Is de score minstens de drempel, dan is
+het `spam`. Is hij lager maar minstens 1, dan print het `twijfel`. Bij score
+0 is het `geen spam`. Met de score uit de editor wordt de uitvoer:
+
+```
+twijfel
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: bij score 1 zegt het filter `geen spam`.
+2. Zet tussen de `if` en de `else` een `elif score >= 1:` die `twijfel` print, en draai opnieuw.
+3. Verander `score` in 0, en daarna in 3. Elke score geeft nu een ander antwoord.
+4. Zet `drempel` op 3. Nu twijfelt het filter bij score 1 en bij score 2.
+
+<PyRunner initialCode={`score = 1
+drempel = 2
+
+if score >= drempel:
+    print("spam")
+else:
+    print("geen spam")`} />
+
+<details>
+<summary>Tip</summary>
+
+Twijfelt het filter ook bij score 3? Dan staat de `elif` boven de `if` met
+de drempel. Welke regel moet een score van 3 als eerste tegenkomen?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+score = 1
+drempel = 2
+
+if score >= drempel:
+    print("spam")
+elif score >= 1:
+    print("twijfel")
+else:
+    print("geen spam")
+```
+
+```
+twijfel
+```
+
+Bij score 3 passen beide regels, maar net als bij de chatbot beslist de
+bovenste: `spam`.
+
+</details>
+
+Door naar [hele woorden](site:algorithms/docs/ml-regels/02-spamfilter/03-hele-woorden).

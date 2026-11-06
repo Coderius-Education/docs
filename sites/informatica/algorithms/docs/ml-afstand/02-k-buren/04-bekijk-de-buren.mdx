@@ -1,0 +1,140 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Bekijk de buren"
+---
+
+# Bekijk de buren
+
+Je voorspeller rekent met afstanden, en een afstand kun je zien. In deze
+stap teken je de voorbeelden als punten: elk stuk fruit op zijn lengte en
+breedte. Dan zie je welke buren meestemmen, en waar de voorspelling omslaat
+van appel naar banaan.
+
+## Voorspel
+
+{/* niet-draaien: fragment; teken_buren en voorbeelden staan in de runner hieronder */}
+```python
+nieuw = (10, 7)
+k = 3
+teken_buren(voorbeelden, nieuw, k)
+```
+
+`teken_buren` trekt een stippellijn van het nieuwe stuk fruit naar elk van de
+`k` buren. De voorbeelden zijn die van de vorige stap, met de vergissing
+`(10, 6)`. Naar welke drie stukken fruit wijst een lijn?
+
+<details>
+<summary>Antwoord</summary>
+
+Naar de vergissing `(10, 6)` op afstand 1, de appel `(9, 8)` op afstand 2 en
+een appel op afstand 3. Daar liggen er twee, `(7, 7)` en `(8, 8)`; het
+tekenen kiest `(7, 7)`, omdat `sorted` bij gelijke afstand verder kijkt.
+
+</details>
+
+## Bekijk de buren
+
+Deze runner tekent de voorbeelden: elk stuk fruit staat op zijn lengte en
+breedte, het nieuwe stuk is het zwarte kruis, en een stippellijn wijst naar
+elk van de `k` buren die meestemmen. Het tekenen staat in de verborgen code
+onder de editor.
+
+Verander `nieuw` en `k`, en kijk welke buren er meestemmen. Bij `k = 1` wijst
+er één lijn naar de vergissing `(10, 6)`; bij `k = 3` stemmen er twee appels
+mee.
+
+<PyRunner verborgen="fruit-tekenen" initialCode={`voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+nieuw = (10, 7)
+k = 3
+
+teken_buren(voorbeelden, nieuw, k)`} />
+
+## Zo werkt het
+
+Elk punt in de tekening is een voorbeeld. De afstand die `afstand` uitrekent,
+is hoeveel stappen je naar links of rechts en naar boven of beneden moet om
+van het kruis bij een punt te komen. De `k` punten met de kleinste afstand
+zijn de buren.
+
+Schuif je het kruis van de appels naar de bananen, dan slaat de voorspelling
+ergens om. Daar ligt de **grens** tussen de soorten.
+
+## Opdracht: waar ligt de grens?
+
+Schuif een stuk fruit van 6 centimeter breed van lengte 8 naar lengte 18, en
+print bij elke lengte wat `voorspel` zegt. Met `k = 3`:
+
+```
+8 appel
+9 appel
+10 appel
+11 appel
+12 appel
+13 appel
+14 banaan
+15 banaan
+16 banaan
+17 banaan
+18 banaan
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de voorspelling voor `(10, 6)` met `k = 3`. `voorspel` uit de vorige stap staat in de verborgen code onder de editor.
+2. Zet er een loop `for lengte in range(8, 19)` omheen, en print bij elke lengte de voorspelling voor `(lengte, 6)`.
+3. Zet `k` op 1. Bij welke lengte slaat het nu om?
+
+<PyRunner verborgen="knn" initialCode={`voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+k = 3
+
+print(10, voorspel((10, 6), voorbeelden, k))`} />
+
+<details>
+<summary>Tip</summary>
+
+In de loop verandert alleen de lengte. Welk getal in `(10, 6)` moet dan
+`lengte` worden, en welk getal in de print?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de print onderaan de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+for lengte in range(8, 19):
+    print(lengte, voorspel((lengte, 6), voorbeelden, k))
+```
+
+```
+8 appel
+9 appel
+10 appel
+11 appel
+12 appel
+13 appel
+14 banaan
+15 banaan
+16 banaan
+17 banaan
+18 banaan
+```
+
+Met `k = 3` ligt de grens tussen 13 en 14, ongeveer halverwege de appels en
+de bananen. Met `k = 1` slaat het al bij 9 om: de ene vergissing `(10, 6)`
+trekt de grens naar de appels toe. Kijk het na in de tekening: zet daar
+`nieuw` op `(9, 6)` en `k` op 1.
+
+</details>
+
+Door naar [een derde soort](site:algorithms/docs/ml-afstand/02-k-buren/05-een-derde-soort).

@@ -1,0 +1,208 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Een klasse"
+---
+
+# Een klasse
+
+Bij Nim die leert stonden de tabel `score` en de functies die hem gebruiken
+los van elkaar. In het project Nim van CS50 AI zitten ze samen in een
+**klasse**: één ding met een tabel en de functies die erbij horen. Dit
+project oefent dat op een ander spel: een muis in een gang, die leert waar de
+kaas ligt. Je begint met de klasse zelf. Nieuw zijn `class`, `__init__` en
+`self`.
+
+:::info
+Je gebruikt in dit project `class`, `__init__` en `self` uit
+[Je eerste klasse](site:python/docs/klassen/15a-je-eerste-klasse), een
+attribuut met een beginwaarde uit
+[Attributen veranderen](site:python/docs/klassen/15c-attributen-veranderen),
+methoden uit [Je eerste methode](site:python/docs/klassen/15d-je-eerste-methode)
+en [Methoden met return](site:python/docs/klassen/15f-methoden-met-return),
+`random.random()` uit
+[de surfer springt soms](site:algorithms/docs/ml-kans/02-surfer/04-de-surfer-springt-soms),
+en een tuple als sleutel uit
+[een score per zet](site:algorithms/docs/ml-spellen/02-nim-leert/01-een-score-per-zet).
+:::
+
+## Voorspel
+
+```python
+class Muis:
+    def __init__(self, vakje):
+        self.vakje = vakje
+
+piep = Muis(2)
+snuf = Muis(0)
+piep.vakje = piep.vakje + 1
+print(piep.vakje, snuf.vakje)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+`3 0`. `piep` en `snuf` hebben elk een eigen `vakje`. Zet je `piep` een vakje
+verder, dan blijft `snuf` staan.
+
+</details>
+
+## Zo werkt het
+
+Klassen zijn nieuw in de route. De python-cursus legt ze uit in
+[Je eerste klasse](site:python/docs/klassen/15a-je-eerste-klasse); dit zijn de
+regels die je hier nodig hebt:
+
+- `class Muis:` maakt een klasse. De naam begint met een hoofdletter.
+- `__init__` zegt wat er gebeurt als je een nieuwe muis maakt, met
+  `Muis(2)`. De twee lage streepjes voor en na `init` horen erbij.
+- `self` is de muis die op dat moment gemaakt wordt. `self.vakje = vakje`
+  bewaart het vakje in die muis.
+- `piep` is een **object**: één muis, gemaakt volgens de klasse. Met
+  `piep.vakje` lees je zijn vakje, en met `piep.vakje = 3` zet je het.
+
+Een attribuut kan ook een dictionary zijn. Bij CS50 heeft de speler een tabel
+`self.q`, met een waarde voor elke stand en elke zet, net als `score` bij Nim.
+De muis krijgt er ook een. Elke muis heeft dan zijn eigen tabel.
+
+## Onderzoek
+
+1. Draai de code. Waarom is de tabel van `snuf` leeg?
+2. Zet onderaan `snuf.vakje` op 3, en print beide muizen opnieuw. Verandert
+   `piep` mee?
+3. Haal in `__init__` de `self.` weg vóór `q = {}`. Wat gebeurt er nu?
+
+<PyRunner initialCode={`class Muis:
+    def __init__(self, vakje):
+        self.vakje = vakje
+        self.q = {}
+
+piep = Muis(2)
+snuf = Muis(2)
+piep.q[(2, "rechts")] = 0.5
+print(piep.vakje, piep.q)
+print(snuf.vakje, snuf.q)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+2 {(2, 'rechts'): 0.5}
+2 {}
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Elke muis krijgt in `__init__` een eigen, lege tabel. Je zette alleen iets
+   in de tabel van `piep`.
+2. Nee. `piep` blijft in vakje 2: elk object heeft zijn eigen attributen.
+3. Python stopt met een foutmelding, zie
+   [Er gaat iets mis](#er-gaat-iets-mis). Zonder `self.` is `q` een gewone
+   variabele in `__init__`, die verdwijnt als `__init__` klaar is. De muis
+   heeft dan geen tabel.
+
+</details>
+
+## Opdracht: twee muizen
+
+Geef de muis een naam en een teller voor zijn stappen. Laat `piep` twee
+stappen naar rechts zetten, en maak een tweede muis `snuf` in vakje 1:
+
+```
+Piep zit in vakje 4 na 2 stappen
+Snuf zit in vakje 1 na 0 stappen
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet in welk vakje `piep` zit.
+2. Geef `__init__` een tweede parameter `naam`, bewaar hem in de muis, en print de naam in plaats van het woord piep.
+3. Geef elke muis een attribuut `stappen` dat op 0 begint. Zet `piep` twee keer een vakje naar rechts, en tel elke keer een stap bij zijn `stappen` op.
+4. Maak een tweede muis `snuf` in vakje 1, en print hem ook.
+
+<PyRunner initialCode={`class Muis:
+    def __init__(self, vakje):
+        self.vakje = vakje
+
+piep = Muis(2)
+print("piep zit in vakje", piep.vakje)`} />
+
+<details>
+<summary>Tip</summary>
+
+De volgorde telt: `Muis("Piep", 2)` vult de parameters na `self` van links
+naar rechts in. Staat in `__init__` eerst `naam` en dan `vakje`, dan wordt
+`"Piep"` de naam.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+class Muis:
+    def __init__(self, naam, vakje):
+        self.naam = naam
+        self.vakje = vakje
+        self.stappen = 0
+
+piep = Muis("Piep", 2)
+piep.vakje = piep.vakje + 1
+piep.stappen = piep.stappen + 1
+piep.vakje = piep.vakje + 1
+piep.stappen = piep.stappen + 1
+snuf = Muis("Snuf", 1)
+print(piep.naam, "zit in vakje", piep.vakje, "na", piep.stappen, "stappen")
+print(snuf.naam, "zit in vakje", snuf.vakje, "na", snuf.stappen, "stappen")
+```
+
+```
+Piep zit in vakje 4 na 2 stappen
+Snuf zit in vakje 1 na 0 stappen
+```
+
+`stappen` is geen parameter: elke nieuwe muis begint op 0. Twee keer
+dezelfde twee regels voor een stap is wel veel. In de volgende stap maak je
+daar een methode van.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+AttributeError: 'Muis' object has no attribute 'q'
+```
+
+**Oorzaak:** in `__init__` staat `q = {}` zonder `self.`. Dan is `q` een
+variabele die alleen in `__init__` bestaat, en krijgt de muis zelf geen tabel.
+
+**Oplossing:** zet `self.` voor elk attribuut dat de muis moet onthouden.
+
+```python
+# FOUT
+class Muis:
+    def __init__(self, vakje):
+        self.vakje = vakje
+        q = {}
+
+piep = Muis(2)
+piep.q[(2, "rechts")] = 0.5
+
+# GOED
+class Muis:
+    def __init__(self, vakje):
+        self.vakje = vakje
+        self.q = {}
+
+piep = Muis(2)
+piep.q[(2, "rechts")] = 0.5
+```
+
+Meer uitleg: [Je eerste klasse](site:python/docs/klassen/15a-je-eerste-klasse).
+
+Door naar [methoden](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/02-methoden).

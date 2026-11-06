@@ -1,0 +1,129 @@
+---
+sidebar_position: 4
+sidebar_label: "4. De voorspeller uit scikit-learn"
+---
+
+# De voorspeller uit scikit-learn
+
+Je eigen `voorspel` uit
+[laat de buren stemmen](site:algorithms/docs/ml-afstand/02-k-buren/03-de-winnaar#opdracht-voorspel-met-k)
+werkt, maar met duizenden bezoekers en zeventien kenmerken wordt hij traag.
+De bibliotheek scikit-learn heeft k-NN al ingebouwd, en snel. In deze stap
+zie je hoe je hem gebruikt, en dat hij hetzelfde antwoord geeft als jouw
+functie.
+
+## Voorspel
+
+{/* niet-draaien: scikit-learn draait alleen op je eigen computer, niet in de browser van deze site */}
+```python
+from sklearn.neighbors import KNeighborsClassifier
+
+kenmerken = [[1, 3, 1], [2, 12, 0], [2, 1, 0], [10, 25, 1]]
+labels = [0, 1, 0, 1]
+
+model = KNeighborsClassifier(n_neighbors=1)
+model.fit(kenmerken, labels)
+print(model.predict([[2, 10, 0]]))
+```
+
+De kenmerken en labels zijn die van de vorige stap. Een nieuwe bezoeker komt
+in maart, bekijkt tien pagina's en is nieuw. Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[1]
+```
+
+De nieuwe bezoeker lijkt het meest op de koper uit maart, `[2, 12, 0]`: de
+afstand is 2. Dus voorspelt hij dat deze bezoeker ook iets koopt.
+
+</details>
+
+## Zo werkt het
+
+`KNeighborsClassifier(n_neighbors=1)` is k-NN met `k = 1`. Met `fit` geef je
+hem de oefenset: de kenmerken en de labels. Hij onthoudt ze, net zoals jouw
+`voorspel` de lijst voorbeelden meekrijgt. `predict` voorspelt voor een
+lijst nieuwe bezoekers tegelijk, en geeft een lijst labels terug.
+
+scikit-learn draait op je eigen computer, niet in deze browser. Daarom
+oefen je hieronder met je eigen `voorspel`, die hetzelfde doet.
+
+## Opdracht: jouw voorspeller op de webshop
+
+Lees de regels van de webshop, en zet elke bezoeker als voorbeeld in de vorm
+die je eigen `voorspel` kent: `((maand, paginas), label)`. Voorspel dan of
+een nieuwe bezoeker in maart met tien pagina's iets koopt:
+
+```
+1
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print elke rij. `voorspel` staat klaar in de verborgen code onder de editor.
+2. Maak in de loop `maand = MAANDEN[rij[0]]` en `paginas = int(rij[1])`, en print `(maand, paginas)`.
+3. Maak een variabele `label`: 1 als `rij[3]` gelijk is aan `"TRUE"`, en anders 0. Zet `((maand, paginas), label)` met `.append()` in `voorbeelden`.
+4. Print na de loop `voorspel((2, 10), voorbeelden, 1)`.
+
+<PyRunner verborgen="knn" initialCode={`import csv
+
+regels = [
+    "maand,paginas,terugkerend,gekocht",
+    "Feb,3,TRUE,FALSE",
+    "Mar,12,FALSE,TRUE",
+    "Mar,1,FALSE,FALSE",
+    "Nov,25,TRUE,TRUE",
+]
+MAANDEN = {
+    "Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5,
+    "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11,
+}
+
+voorbeelden = []
+lezer = csv.reader(regels)
+next(lezer)
+for rij in lezer:
+    print(rij)`} />
+
+<details>
+<summary>Tip</summary>
+
+Een voorbeeld is een tuple met twee dingen: de maten en het label. De maten
+zijn zelf weer een tuple. Tel de haakjes in `((maand, paginas), label)`
+voordat je hem in `.append()` zet.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder `voorbeelden = []`:
+
+{/* draaien-met: blok-erboven */}
+```python
+lezer = csv.reader(regels)
+next(lezer)
+for rij in lezer:
+    maand = MAANDEN[rij[0]]
+    paginas = int(rij[1])
+    if rij[3] == "TRUE":
+        label = 1
+    else:
+        label = 0
+    voorbeelden.append(((maand, paginas), label))
+print(voorspel((2, 10), voorbeelden, 1))
+```
+
+```
+1
+```
+
+Jouw `voorspel` en scikit-learn zeggen hetzelfde. Bij Shopping gebruik je
+scikit-learn: dat is sneller, en het werkt met alle zeventien kenmerken.
+
+</details>
+
+Door naar [gevoeligheid en specificiteit](site:algorithms/docs/ml-afstand/04-klaar-voor-shopping/05-gevoeligheid-en-specificiteit).

@@ -1,0 +1,113 @@
+---
+sidebar_position: 6
+sidebar_label: "6. Het verschil"
+---
+
+# Het verschil
+
+Je rekende zeven dagen vooruit, en na zes dagen veranderde er bijna niets meer.
+Om de computer zelf te laten stoppen, moet hij eerst kunnen meten hoeveel er in
+één dag veranderd is. Dat meet je met één getal: de grootste verandering van
+een kans.
+
+:::info
+`abs` en `max` ken je uit
+[itereren tot het stabiel is](site:algorithms/docs/pagerank/bouwen/06-itereren).
+:::
+
+## Voorspel
+
+```python
+oud = {"zon": 0.38, "wolken": 0.35, "regen": 0.27}
+nieuw = {"zon": 0.349, "wolken": 0.362, "regen": 0.289}
+
+verschil = 0
+for weer in nieuw:
+    verschil = max(verschil, abs(nieuw[weer] - oud[weer]))
+print(round(verschil, 3))
+```
+
+Wat print dit?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+0.031
+```
+
+Zon zakt 0,031, wolken stijgen 0,012 en regen 0,019. `abs` haalt het
+min-teken weg, en `max` houdt de grootste verandering bij: 0,031.
+
+</details>
+
+## Zo werkt het
+
+`abs(nieuw[weer] - oud[weer])` is hoeveel één kans veranderde, of hij nu
+stijgt of daalt. `max(verschil, …)` houdt in `verschil` de grootste
+verandering tot nu toe bij. Na de loop weet je dus hoeveel de kans veranderde
+die het meest veranderde. Is dat minder dan 0,001, dan verandert geen enkele
+kans nog merkbaar.
+
+## Opdracht: hoeveel verandert er?
+
+Reken uit hoeveel de verdeling in één dag verandert. Vanaf een zonnige dag
+print je:
+
+```
+0.5
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij rekent de verdeling van morgen uit en print hem.
+2. Zet onder de berekening `verschil = 0`, en loop met `for weer in nieuw:` langs het weer. Bewaar in `verschil` steeds de grootste van `verschil` en de verandering van dat weer. Print `verschil` na de loop: 0.5.
+3. Begin op de verdeling van dag 2 uit de vorige stap: `verdeling = {"zon": 0.38, "wolken": 0.35, "regen": 0.27}`. Hoe groot is het verschil nu?
+
+<PyRunner initialCode={`model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.4},
+}
+verdeling = {"zon": 1, "wolken": 0, "regen": 0}
+
+nieuw = {}
+for morgen in model:
+    kans = 0
+    for vandaag in model:
+        kans = kans + verdeling[vandaag] * model[vandaag][morgen]
+    nieuw[morgen] = kans
+
+print(nieuw)`} />
+
+<details>
+<summary>Tip</summary>
+
+Krijg je een negatief getal, of 0? Zon daalt van 1 naar 0,5, dus
+`nieuw["zon"] - verdeling["zon"]` is negatief. Wat doet `abs` daarmee?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit komt onder de berekening in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+verschil = 0
+for weer in nieuw:
+    verschil = max(verschil, abs(nieuw[weer] - verdeling[weer]))
+print(round(verschil, 3))
+```
+
+```
+0.5
+```
+
+Zon verandert het meest, van 1 naar 0,5. Begin je op de verdeling van dag 2,
+dan krijg je 0.031, net als in de Voorspel.
+
+</details>
+
+Door naar [tot het stilstaat](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/07-tot-het-stilstaat).

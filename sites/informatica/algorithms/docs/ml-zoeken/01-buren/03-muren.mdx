@@ -1,0 +1,198 @@
+---
+sidebar_position: 3
+sidebar_label: "3. Muren"
+---
+
+# Muren
+
+`buren` geeft nu alle vakjes binnen de randen, ook als er een muur op staat.
+Door een muur kan de robot niet. Daarom komt er een tweede `if` bij, die
+de muren overslaat. De volgorde van de twee `if`'s doet ertoe.
+
+## Voorspel
+
+```python
+doolhof = [
+    "S.#",
+    ".##",
+    "..E",
+]
+for r, k in [(0, 1), (0, 2), (2, 2)]:
+    if doolhof[r][k] != "#":
+        print(r, k, "is vrij")
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+0 1 is vrij
+2 2 is vrij
+```
+
+Op `(0, 2)` staat een muur, dus die print hij niet. De `E` is geen muur: de
+robot mag op de uitgang staan.
+
+</details>
+
+## Zo werkt het
+
+`buren` heeft nu twee `if`'s. De eerste kijkt of het vakje binnen de randen
+valt, de tweede of het geen muur is. De tweede staat ín de eerste: alleen een
+vakje dat bestaat, kun je in het doolhof opzoeken.
+
+## Onderzoek
+
+1. Draai de code. Welke buren heeft `(2, 1)`? Zoek ze op in het doolhof.
+2. Waarom heeft de start `(0, 0)` maar één buur?
+3. Verander de eerste `if` in `if True:`, zodat `buren` de randen niet meer
+   controleert. Vraag dan `buren((0, 1))`. Wat klopt er niet?
+4. Vraag daarna, nog steeds zonder controle, `buren((4, 5))`. Wat gebeurt er?
+
+<PyRunner initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+
+def buren(vakje):
+    rij, kolom = vakje
+    resultaat = []
+    for r, k in [(rij - 1, kolom), (rij + 1, kolom), (rij, kolom - 1), (rij, kolom + 1)]:
+        if r >= 0 and r < len(doolhof) and k >= 0 and k < len(doolhof[0]):
+            if doolhof[r][k] != "#":
+                resultaat.append((r, k))
+    return resultaat
+
+print(buren((2, 1)))`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. `[(1, 1), (3, 1), (2, 2)]`: erboven, eronder en rechts. Links van `(2, 1)`
+   staat een muur.
+2. Boven en links van de start ligt de rand van het doolhof, en eronder staat
+   een muur. Alleen rechts, `(0, 1)`, is vrij.
+3. Je krijgt `[(-1, 1), (1, 1), (0, 0), (0, 2)]`. Het vakje `(-1, 1)` bestaat
+   niet. Toch geeft Python geen fout: een negatieve index telt vanaf het eind,
+   dus `doolhof[-1]` is de onderste rij. Zonder controle springt de robot van
+   de bovenrand naar de onderrand.
+4. Python stopt met een foutmelding: rij 5 bestaat niet. Zie
+   [Er gaat iets mis](#er-gaat-iets-mis).
+
+</details>
+
+## Opdracht: muren rondom
+
+Schrijf een functie `muren(vakje)` die telt hoeveel muren er naast een vakje
+staan: erboven, eronder, links en rechts. De rand van het doolhof telt niet
+als muur.
+
+```
+1
+1
+2
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `muren` geeft nog steeds 0, voor elk vakje.
+2. Zet in `muren` de loop over de vier buren uit `buren`, en tel in de loop elke buur met `teller = teller + 1`. Nu print hij drie keer 4.
+3. Tel alleen de buren binnen de randen, met de eerste `if` uit `buren`. Nu geeft `(0, 0)` er 2.
+4. Tel alleen de buren waar een `#` op staat. Nu print hij 1, 1 en 2.
+
+<PyRunner initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+
+def muren(vakje):
+    rij, kolom = vakje
+    teller = 0
+    return teller
+
+print(muren((2, 1)))
+print(muren((0, 0)))
+print(muren((3, 5)))`} />
+
+<details>
+<summary>Tip</summary>
+
+Krijg je in stap 4 een foutmelding? Kijk dan in welke volgorde je de twee
+`if`'s hebt gezet.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de functie `muren` en de prints in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+def muren(vakje):
+    rij, kolom = vakje
+    teller = 0
+    for r, k in [(rij - 1, kolom), (rij + 1, kolom), (rij, kolom - 1), (rij, kolom + 1)]:
+        if r >= 0 and r < len(doolhof) and k >= 0 and k < len(doolhof[0]):
+            if doolhof[r][k] == "#":
+                teller = teller + 1
+    return teller
+
+print(muren((2, 1)))
+print(muren((0, 0)))
+print(muren((3, 5)))
+```
+
+```
+1
+1
+2
+```
+
+`muren` is bijna `buren`, met `==` in plaats van `!=` en een teller in plaats
+van een lijst. `(3, 5)` heeft een muur erboven en een links, en rechts de rand.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+IndexError: list index out of range
+```
+
+{/* foutmelding-van: "S."[2] */}
+
+**Oorzaak:** je vraagt een rij die niet bestaat. Het doolhof heeft rij 0 tot
+en met 4; rij 5 ligt onder de onderrand. Dat gebeurt als je in het doolhof
+kijkt voordat je de randen hebt gecontroleerd, bijvoorbeeld met de twee
+`if`'s in de verkeerde volgorde. Bij een kolom die niet bestaat krijg je
+`IndexError: string index out of range`, want een rij is een tekst.
+
+**Oplossing:** kijk eerst of het vakje binnen het doolhof ligt.
+
+```python
+# FOUT
+doolhof = ["S.", ".E"]
+r = 2
+print(doolhof[r][0])
+
+# GOED
+doolhof = ["S.", ".E"]
+r = 2
+if r >= 0 and r < len(doolhof):
+    print(doolhof[r][0])
+```
+
+Een negatieve rij geeft geen fout, maar wel een verkeerd vakje: `doolhof[-1]`
+is de onderste rij. Daarom controleert `buren` ook op `r >= 0`.
+
+Door naar [doodlopende vakjes](site:algorithms/docs/ml-zoeken/01-buren/04-doodlopende-vakjes).

@@ -1,0 +1,152 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Een kansmodel"
+---
+
+# Een kansmodel
+
+Na de surfer en het hoofdstuk
+[PageRank](site:algorithms/docs/pagerank/01-concept) bouw je bij PageRank van
+CS50 AI allebei, de surfer en het rekenen in rondes, op je eigen computer. Wat je daarvoor
+nodig hebt, oefen je hier eerst op een ander probleem: het weer van morgen.
+Morgen hangt af van vandaag, zoals de volgende pagina van de surfer afhangt van
+de pagina waar hij is. Je begint met de kansen.
+
+:::info
+Je gebruikt in dit project een dictionary in een dictionary uit
+[Geneste dictionaries](site:python/docs/data/11c-geneste-dictionaries),
+`return` uit [Return-waarden](site:python/docs/functies/09b-return),
+`while` uit [De while-loop](site:python/docs/herhalen/while-loop),
+`abs` en `max` uit
+[itereren tot het stabiel is](site:algorithms/docs/pagerank/bouwen/06-itereren),
+en een set uit [Sets](site:python/docs/data/sets). Kiezen met kansen en
+afronden zijn nieuw: die leer je onderweg.
+:::
+
+## Voorspel
+
+```python
+model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.4},
+}
+
+print(model["zon"]["regen"])
+print(model["regen"])
+```
+
+Wat print dit?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+0.2
+{'zon': 0.2, 'wolken': 0.4, 'regen': 0.4}
+```
+
+`model["zon"]` zijn de kansen voor morgen als het vandaag zonnig is, en daarin
+is `["regen"]` de kans dat het morgen regent: 0,2.
+
+</details>
+
+## Zo werkt het
+
+Het model is een **kansmodel**: per weer van vandaag een dictionary met de kans
+op elk weer van morgen. Na een zonnige dag is het morgen met kans 0,5 weer
+zonnig. Elke rij telt op tot 1, want morgen is het zeker één van de drie.
+
+Het lijkt op het web van de surfer. Daar stond per pagina de lijst links, hier
+per weer de kansen. Zo'n model, waarin morgen alleen van vandaag afhangt, heet
+een **Markov-keten**.
+
+## Onderzoek
+
+1. Draai de code. Na welk weer regent het het vaakst?
+2. Zet `"regen"` in de print op `"zon"`. Na welk weer is zon het
+   waarschijnlijkst?
+3. Zet bij `"zon"` de kans op regen op 0.4. Klopt het model dan nog?
+
+<PyRunner initialCode={`model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.4},
+}
+
+for vandaag in model:
+    print("na", vandaag, "regent het met kans", model[vandaag]["regen"])`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Na regen, met kans 0,4.
+2. Na zon, met kans 0,5.
+3. Nee. De rij van zon telt dan op tot 1,2, en een kans van meer dan 1 bestaat
+   niet. Zet je een kans hoger, dan moet een andere in die rij evenveel omlaag.
+
+</details>
+
+## Opdracht: klopt het model?
+
+In het model in de editor zit een fout. Print per weer de som van zijn rij, en
+verbeter het model tot je dit ziet:
+
+```
+zon 1.0
+wolken 1.0
+regen 1.0
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print elke rij van het model.
+2. Tel de kansen van een rij op: zet in de loop `som = 0`, loop met `for morgen in model[vandaag]:` langs het weer van morgen, tel `model[vandaag][morgen]` bij `som` op, en print `vandaag` en `som`. Eén rij komt op 1.1 uit.
+3. Verbeter die rij, zodat elke rij op 1.0 uitkomt.
+
+<PyRunner initialCode={`model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.5},
+}
+
+for vandaag in model:
+    print(vandaag, model[vandaag])`} />
+
+<details>
+<summary>Tip</summary>
+
+`som = 0` hoort ín de buitenste loop, vóór de binnenste: elke rij begint op 0.
+Staat hij erboven, dan telt hij alle rijen bij elkaar op.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.4},
+}
+
+for vandaag in model:
+    som = 0
+    for morgen in model[vandaag]:
+        som = som + model[vandaag][morgen]
+    print(vandaag, som)
+```
+
+```
+zon 1.0
+wolken 1.0
+regen 1.0
+```
+
+De kans op regen na regen moest 0.4 zijn in plaats van 0.5. CS50 vraagt
+hetzelfde van jouw kansen: bij elke pagina tellen ze samen op tot 1.
+
+</details>
+
+Door naar [kiezen met kansen](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/02-kiezen-met-kansen).

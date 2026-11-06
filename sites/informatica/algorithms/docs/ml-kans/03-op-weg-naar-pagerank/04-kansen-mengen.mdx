@@ -1,0 +1,150 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Kansen mengen"
+---
+
+# Kansen mengen
+
+Je model kent alleen het weer van gisteren. Maar in de herfst regent het vaker
+dan in de zomer. Je mengt daarom twee lijstjes kansen: voor 0,8 telt het model,
+en voor 0,2 het seizoen. De surfer deed hetzelfde: met kans 0,85 een link, en
+met kans 0,15 een sprong. Het mengen zet je in een functie die een nieuwe
+dictionary met kansen teruggeeft.
+
+## Voorspel
+
+Na een zonnige dag, in de herfst:
+
+```python
+herfst = {"zon": 0.1, "wolken": 0.4, "regen": 0.5}
+na_zon = {"zon": 0.5, "wolken": 0.3, "regen": 0.2}
+
+kans = 0.8 * na_zon["regen"] + 0.2 * herfst["regen"]
+print(round(kans, 2))
+```
+
+Wat print dit?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+0.26
+```
+
+0,8 keer 0,2 is 0,16, en 0,2 keer 0,5 is 0,1. Samen 0,26: wat meer dan de 0,2
+van het model, omdat het in de herfst vaker regent.
+
+</details>
+
+## Zo werkt het
+
+Bij elk weer van morgen neem je 0,8 deel van de kans uit het model en 0,2
+deel van de kans uit het seizoen. Samen tellen de kansen weer op tot 1, want
+0,8 keer 1 plus 0,2 keer 1 is 1.
+
+**`round`** is nieuw: `round(kans, 2)` rondt af op twee cijfers achter de komma.
+Dat heb je nodig, want een computer rekent met kommagetallen bijna, maar niet
+helemaal precies: `0.8 * 0.5 + 0.2 * 0.1` geeft `0.42000000000000004`.
+
+## Onderzoek
+
+1. Draai de code, en tel de drie kansen op.
+2. Zet 0.8 en 0.2 allebei op 0.5. Tellen de kansen nog op tot 1?
+3. Zet 0.2 op 0.3, en laat 0.8 staan. Wat gaat er mis?
+
+<PyRunner initialCode={`model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.4},
+}
+herfst = {"zon": 0.1, "wolken": 0.4, "regen": 0.5}
+
+vandaag = "zon"
+for morgen in herfst:
+    kans = 0.8 * model[vandaag][morgen] + 0.2 * herfst[morgen]
+    print(morgen, round(kans, 2))`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. 0,42 plus 0,32 plus 0,26 is 1.
+2. Ja: 0,3 plus 0,35 plus 0,35. Met de helft model en de helft seizoen telt het
+   seizoen zwaarder mee.
+3. De kansen tellen op tot 1,1, want 0,8 plus 0,3 is meer dan 1. De twee
+   delen moeten samen 1 zijn.
+
+</details>
+
+## Opdracht: een functie voor morgen
+
+Schrijf een functie `kansen_morgen(vandaag)` die een dictionary teruggeeft met
+de gemengde kans op elk weer van morgen. Na een zonnige dag print je:
+
+```
+zon 0.42
+wolken 0.32
+regen 0.26
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print `{}`, want de functie geeft nog een lege dictionary terug.
+2. Loop in de functie, vóór de `return`, met `for morgen in herfst:` langs het weer, en zet `kansen[morgen] = model[vandaag][morgen]`. Hij print nu de kansen van het model zelf.
+3. Meng er het seizoen door: 0.8 keer de kans uit het model, plus 0.2 keer `herfst[morgen]`. Je ziet nu getallen als 0.42000000000000004.
+4. Print in plaats van de hele dictionary elk weer met zijn kans, afgerond op twee cijfers, zoals in het onderzoek.
+5. Roep de functie ook aan met `"regen"`.
+
+<PyRunner initialCode={`model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.4},
+}
+herfst = {"zon": 0.1, "wolken": 0.4, "regen": 0.5}
+
+def kansen_morgen(vandaag):
+    kansen = {}
+    return kansen
+
+kansen = kansen_morgen("zon")
+print(kansen)`} />
+
+<details>
+<summary>Tip</summary>
+
+Zie je maar één weer? Kijk of de `return` onder de loop staat, en niet erin:
+in de loop stopt de functie al na het eerste weer.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles vanaf `def kansen_morgen(vandaag):` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+def kansen_morgen(vandaag):
+    kansen = {}
+    for morgen in herfst:
+        kansen[morgen] = 0.8 * model[vandaag][morgen] + 0.2 * herfst[morgen]
+    return kansen
+
+kansen = kansen_morgen("zon")
+for morgen in kansen:
+    print(morgen, round(kansen[morgen], 2))
+```
+
+```
+zon 0.42
+wolken 0.32
+regen 0.26
+```
+
+Met `"regen"` krijg je zon 0.18, wolken 0.4 en regen 0.42. De functie geeft
+voor één weer van vandaag de kansen voor morgen, en die tellen op tot 1. In de
+laatste stap van dit project gebruik je hem weer.
+
+</details>
+
+Door naar [dag na dag](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/05-dag-na-dag).

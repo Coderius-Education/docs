@@ -1,0 +1,172 @@
+---
+sidebar_position: 7
+sidebar_label: "7. Tot het stilstaat"
+---
+
+# Tot het stilstaat
+
+In de vorige stap mat je hoeveel de verdeling in één dag verandert. Nu laat je
+de computer doorrekenen tot geen enkele kans nog 0,001 of meer verandert.
+Hoeveel dagen dat duurt, weet je vooraf niet, en daarom gebruik je een `while`. Bij
+PageRank deed je dat in
+[itereren tot het stabiel is](site:algorithms/docs/pagerank/bouwen/06-itereren),
+en CS50 vraagt dezelfde grens van 0,001.
+
+:::info
+`while` ken je uit [De while-loop](site:python/docs/herhalen/while-loop).
+:::
+
+## Voorspel
+
+```python
+verschil = 1
+rondes = 0
+while verschil >= 0.001:
+    verschil = verschil / 2
+    rondes = rondes + 1
+
+print(rondes)
+```
+
+Wat print dit?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+10
+```
+
+Na tien keer halveren is `verschil` 0.0009765625, kleiner dan 0,001. Begin je
+met `verschil = 0`, dan print hij 0: de voorwaarde is meteen niet waar, en de
+loop draait geen enkele keer.
+
+</details>
+
+## Zo werkt het
+
+De `while` rekent door zolang `verschil` nog 0,001 of meer is. Zet `verschil`
+vóór de loop op 1, anders begint de loop niet eens. Bij het weer reken je in
+de loop eerst `nieuw` uit, dan het verschil met `verdeling`, en pas daarna zet
+je `verdeling = nieuw`. Andersom vergelijk je de nieuwe verdeling met
+zichzelf.
+
+:::caution
+Stopt je `while` nooit, dan loopt het tabblad vast: de speeltuin heeft geen
+stopknop. Kopieer je code daarom eerst naar een kladblok voordat je op Voer
+uit drukt.
+:::
+
+## Opdracht: tot het stilstaat
+
+Reken de verdeling door tot hij stilstaat, en print hoeveel dagen dat duurde:
+
+```
+6 dagen
+zon 0.338
+wolken 0.366
+regen 0.296
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij rekent één dag uit, en print het verschil met vandaag: 0.5.
+2. Zet `verschil = 1` boven de berekening, en zet alles vanaf `nieuw = {}` in een `while verschil >= 0.001:`. Zet aan het eind van de loop `verdeling = nieuw`. Hij print nu elke dag een kleiner verschil.
+3. Tel de dagen in `dagen`, en print na de loop het aantal dagen en de verdeling, afgerond op drie cijfers.
+
+<PyRunner initialCode={`model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.4},
+}
+verdeling = {"zon": 1, "wolken": 0, "regen": 0}
+
+nieuw = {}
+for morgen in model:
+    kans = 0
+    for vandaag in model:
+        kans = kans + verdeling[vandaag] * model[vandaag][morgen]
+    nieuw[morgen] = kans
+
+verschil = 0
+for weer in nieuw:
+    verschil = max(verschil, abs(nieuw[weer] - verdeling[weer]))
+print(round(verschil, 3))`} />
+
+<details>
+<summary>Tip</summary>
+
+Stopt hij na één dag? Kijk wat `verschil` is als de `while` voor de tweede
+keer kijkt. Staat `verschil = 0` ín de loop, vóór de `for weer in nieuw:`?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles vanaf `nieuw = {}` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+verschil = 1
+dagen = 0
+while verschil >= 0.001:
+    nieuw = {}
+    for morgen in model:
+        kans = 0
+        for vandaag in model:
+            kans = kans + verdeling[vandaag] * model[vandaag][morgen]
+        nieuw[morgen] = kans
+    verschil = 0
+    for weer in nieuw:
+        verschil = max(verschil, abs(nieuw[weer] - verdeling[weer]))
+    verdeling = nieuw
+    dagen = dagen + 1
+
+print(dagen, "dagen")
+for weer in verdeling:
+    print(weer, round(verdeling[weer], 3))
+```
+
+```
+6 dagen
+zon 0.338
+wolken 0.366
+regen 0.296
+```
+
+Dit zijn dezelfde getallen als na zes dagen in
+[dag na dag](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/05-dag-na-dag#opdracht-zeven-dagen), maar nu weet
+de computer zelf wanneer hij kan stoppen.
+
+</details>
+
+## Er gaat iets mis
+
+**Wat je ziet:** de loop stopt al na één dag, met een verdeling die nog lang
+niet stilstaat.
+
+**Oorzaak:** je begon de nieuwe verdeling met `nieuw = verdeling` in plaats
+van `nieuw = {}`. Dat maakt geen kopie, maar een tweede naam voor dezelfde
+dictionary. Verander je `nieuw`, dan verandert `verdeling` mee, en is het
+verschil tussen de twee altijd 0.
+
+**Oplossing:** begin elke dag met een lege `nieuw = {}`. Wil je toch met een
+kopie beginnen, maak hem dan met `.copy()`.
+
+{/* draaien: twee namen voor één dictionary, en een echte kopie */}
+```python
+# FOUT
+verdeling = {"zon": 1, "regen": 0}
+nieuw = verdeling
+nieuw["zon"] = 0.5
+print(verdeling["zon"])   # 0.5
+
+# GOED
+verdeling = {"zon": 1, "regen": 0}
+nieuw = verdeling.copy()
+nieuw["zon"] = 0.5
+print(verdeling["zon"])   # 1
+```
+
+Door naar [een set van links](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/08-een-set-van-links).

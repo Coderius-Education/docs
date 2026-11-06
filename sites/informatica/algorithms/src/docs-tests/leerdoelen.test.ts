@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { leesLeerdoelen } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
 import leerdoelenJson from '../leerdoelen.json';
-import { ML_MAPPEN } from '../lib/mlSidebar';
+import { lees, routePaginas, projecten as routeProjecten } from './ml-route';
 
 // Niveau 2 van Algoritmiek is een papieren tentamen. src/leerdoelen.json legt
 // vast wat erin komt, zoals het tentamenblad van de docent het zegt: zeven
@@ -183,16 +183,20 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
       ['ml-shopping', 'gevorderd'],
       ['ml-dobbelsteen', 'basis'],
       ['ml-surfer', 'basis'],
+      ['ml-op-weg-naar-pagerank', 'gevorderd'],
       ['ml-pagerank', 'gevorderd'],
       ['ml-nim-strategie', 'basis'],
       ['ml-nim-leert', 'gevorderd'],
+      ['ml-op-weg-naar-nim', 'gevorderd'],
       ['ml-nim', 'gevorderd'],
       ['ml-tictactoe', 'gevorderd'],
       ['ml-buren', 'basis'],
       ['ml-kortste-weg', 'gevorderd'],
+      ['ml-op-weg-naar-degrees', 'gevorderd'],
       ['ml-degrees', 'gevorderd'],
       ['ml-neuron', 'basis'],
       ['ml-neuron-leert', 'gevorderd'],
+      ['ml-op-weg-naar-traffic', 'gevorderd'],
       ['ml-traffic', 'expert'],
     ]);
     expect(cs50.map((c) => c.id)).toEqual([
@@ -211,18 +215,22 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
     }
   });
 
-  it('elke pagina van de route is de les van een project, en elk project heeft één les', () => {
-    const route = docs()
-      .map((d) => d.id)
-      .filter((id) => /^ml-[a-z]+\//.test(id))
-      .sort();
+  it('elk project van de route is de les van een rij, en elke rij heeft één les van de route', () => {
+    // Een project is een map met bouwstappen (ml-route.ts). De rij wijst naar
+    // de stap waar je het idee van het project leert; elke map heeft er een.
+    const route = new Set(routePaginas());
     const projectLessen = projecten.map((c) => (c.lessen ?? []).map((l) => l.id));
     for (const [i, lessen] of projectLessen.entries()) {
       expect(lessen.length, projecten[i].id).toBe(1);
+      if (lessen[0].startsWith('ml-')) expect(route.has(lessen[0]), lessen[0]).toBe(true);
     }
-    expect([...new Set(projectLessen.flat().filter((id) => id.startsWith('ml-')))].sort()).toEqual(
-      route,
-    );
+    const gedekt = new Set(projectLessen.flat());
+    for (const p of routeProjecten()) {
+      expect(
+        p.stappen.some((s) => gedekt.has(s)),
+        `${p.id} is de les van geen enkele rij`,
+      ).toBe(true);
+    }
   });
 
   it('een CS50-project leunt op de pagina die erop voorbereidt, en die pagina noemt het project', () => {
@@ -266,6 +274,9 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
       'raster',
       'wachtrij',
       'range-len',
+      'zip',
+      'kiezen-met-kansen',
+      'klassen',
     ]) {
       expect(rij(id)?.niveau['2'], id).toBeNull();
     }
@@ -280,14 +291,9 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
     // Bij de review stond range(len(...)) in "de buren van een vakje" al in
     // de opdracht, terwijl het neuron en de leerdoelen het pas daarna nieuw
     // noemden. De route is de volgorde van mlSidebar.
-    const route = ML_MAPPEN.flatMap((map) =>
-      readdirSync(join(DOCS, map))
-        .filter((f) => /^\d\d-.*\.mdx?$/.test(f))
-        .sort()
-        .map((f) => `${map}/${f.replace(/\.mdx?$/, '')}`),
-    );
+    const route = routePaginas();
     const code = (id: string) => {
-      const tekst = readFileSync(join(DOCS, `${id}.mdx`), 'utf8');
+      const tekst = lees(id);
       return [
         ...[...tekst.matchAll(/```python\n([\s\S]*?)```/g)].map((m) => m[1]),
         ...[...tekst.matchAll(/initialCode=\{`([\s\S]*?)`\}/g)].map((m) => m[1]),

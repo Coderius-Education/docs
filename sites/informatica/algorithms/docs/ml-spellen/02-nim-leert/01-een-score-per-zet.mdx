@@ -1,0 +1,154 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Een score per zet"
+---
+
+# Een score per zet
+
+In het vorige project kreeg `slim` de truc van Nim mee, als functie. Nu
+krijgt de computer geen truc. Hij speelt duizenden keren tegen zichzelf, en
+onthoudt na elk spel welke zetten de winnaar deed en welke de verliezer.
+Zetten van de winnaar krijgen een punt erbij, zetten van de verliezer een punt
+eraf. Zo leert hij, zonder dat iemand het hem vertelt, welke zet bij elke
+stapel de beste is. Dit heet **reinforcement learning**: leren van beloning en
+straf. Eerst heeft hij een plek nodig voor de score van elke zet. Nieuw is een
+tuple als sleutel van een dictionary.
+
+:::info
+Je gebruikt in dit project het spel en de while-loop uit
+[Nim met een vaste strategie](site:algorithms/docs/ml-spellen/01-nim-strategie/01-een-zet),
+tuples uit [Tuples](site:python/docs/data/tuples), tellen met een dictionary
+uit [woorden tellen](site:algorithms/docs/ml-regels/03-spamfilter-leert/01-woorden-tellen),
+een loop in een loop uit
+[de weddenschap van de Méré](site:algorithms/docs/ml-kans/01-dobbelsteen/05-de-weddenschap-van-de-mere),
+en `random.seed` uit
+[oefenen en toetsen](site:algorithms/docs/ml-afstand/03-eerlijk-testen/01-oefenen-en-toetsen).
+:::
+
+## Voorspel
+
+```python
+score = {(10, 1): 4, (10, 2): -1, (10, 3): -3}
+
+print(score[(10, 2)])
+
+beste = 1
+for pak in [1, 2, 3]:
+    if score[(10, pak)] > score[(10, beste)]:
+        beste = pak
+print(beste)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+-1
+1
+```
+
+`score[(10, 2)]` is de score van de zet "pak 2 als er 10 liggen". De loop
+zoekt de zet met de hoogste score, en dat is pak 1, met 4.
+
+</details>
+
+## Zo werkt het
+
+Nieuw is dat de sleutel van een dictionary een tuple is. Bij het spamfilter
+was de sleutel één woord; hier is hij `(stapel, pak)`: hoeveel er liggen, en
+hoeveel de speler pakt. `score[(10, 1)]` is dus de score van de zet "pak 1 als
+er 10 liggen". De waarde zegt hoe goed die zet tot nu toe uitpakte.
+
+Een lijst kan geen sleutel zijn. Een lijst kun je later nog veranderen, en dan
+zou de dictionary zijn sleutel niet meer terugvinden. Een tuple kan niet meer
+veranderen, en mag dus wel.
+
+## Opdracht: de beste zet bij elke stapel
+
+In de editor staan de scores van de zetten bij 5, 6 en 7 lucifers. Print voor
+elke stapel de zet met de hoogste score:
+
+```
+5 lucifers: pak 3
+6 lucifers: pak 1
+7 lucifers: pak 2
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet de score van pak 1 bij 6 lucifers.
+2. Zoek met een loop over `[1, 2, 3]` de zet met de hoogste score bij 6 lucifers, zoals in Voorspel, en print hem.
+3. Zet daar een loop over `[5, 6, 7]` omheen, zodat je de beste zet van elke stapel ziet.
+
+<PyRunner initialCode={`score = {
+    (5, 1): -3, (5, 2): -4, (5, 3): -2,
+    (6, 1): 6, (6, 2): -1, (6, 3): -5,
+    (7, 1): -2, (7, 2): 8, (7, 3): 0,
+}
+
+print(score[(6, 1)])`} />
+
+<details>
+<summary>Tip</summary>
+
+Zie je bij 6 of 7 lucifers een zet die niet de hoogste score heeft? Kijk dan
+waar `beste = 1` staat. Bij elke stapel begin je opnieuw met zoeken.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+score = {
+    (5, 1): -3, (5, 2): -4, (5, 3): -2,
+    (6, 1): 6, (6, 2): -1, (6, 3): -5,
+    (7, 1): -2, (7, 2): 8, (7, 3): 0,
+}
+
+for stapel in [5, 6, 7]:
+    beste = 1
+    for pak in [1, 2, 3]:
+        if score[(stapel, pak)] > score[(stapel, beste)]:
+            beste = pak
+    print(stapel, "lucifers: pak", beste)
+```
+
+```
+5 lucifers: pak 3
+6 lucifers: pak 1
+7 lucifers: pak 2
+```
+
+Bij 5 lucifers zijn alle drie de scores negatief. De loop kiest dan de minst
+slechte: pak 3, met -2.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+TypeError: unhashable type: 'list'
+```
+
+**Oorzaak:** je gebruikt een lijst als sleutel van de dictionary. Een sleutel
+mag niet kunnen veranderen, en een lijst kan dat wel.
+
+**Oplossing:** gebruik een tuple, met ronde haakjes.
+
+```python
+# FOUT
+score = {}
+score[[10, 1]] = 0
+
+# GOED
+score = {}
+score[(10, 1)] = 0
+```
+
+Meer uitleg: [Zo werkt het](#zo-werkt-het).
+
+Door naar [een spel onthouden](site:algorithms/docs/ml-spellen/02-nim-leert/02-een-spel-onthouden).

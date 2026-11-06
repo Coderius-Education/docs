@@ -1,0 +1,122 @@
+---
+sidebar_position: 5
+sidebar_label: "5. Het paard"
+---
+
+# Het paard
+
+Het zoeken werkt in het doolhof omdat `buren` zegt waar je vanaf een vakje
+heen kunt. Maar het zoeken zelf weet niets van muren of gangen. Geef je het
+een andere functie voor de buren, dan zoekt het net zo goed op een schaakbord.
+
+## Voorspel
+
+```python
+vakje = (0, 0)
+rij, kolom = vakje
+for dr, dk in [(1, 2), (2, 1), (-1, 2)]:
+    print(rij + dr, kolom + dk)
+```
+
+Wat print dit programma? Welk van die vakjes ligt niet op het bord?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1 2
+2 1
+-1 2
+```
+
+Elk paar zegt hoeveel rijen en kolommen je opschuift. Rij -1 ligt boven het
+bord, dus die sprong kan niet.
+
+</details>
+
+## Zo werkt het
+
+Een paard springt bij schaken in een L: twee vakjes de ene kant op en één
+vakje opzij. Vanaf een vakje in het midden van het bord zijn dat acht
+sprongen. Zet je die acht als tuples in een lijst, dan haal je met
+`for dr, dk in richtingen:` bij elke sprong beide getallen tegelijk uit de
+tuple, net als `rij, kolom = vakje`.
+
+Er zijn geen muren, maar een sprong mag niet van het bord af: rij en kolom
+blijven van 0 tot en met 7. Dat is dezelfde controle als de randen van het
+doolhof.
+
+:::caution
+Zonder die controle springt het paard eindeloos verder, en stopt de
+while-loop nooit. De speeltuin heeft geen stopknop, dus het tabblad loopt
+vast: herlaad de pagina, en je code is weg. Kopieer je code daarom eerst naar
+een kladblok voordat je een nieuwe while-loop draait.
+:::
+
+## Bouw zelf: het paard op het schaakbord
+
+Hoeveel sprongen heeft een paard nodig van de ene hoek, `(0, 0)`, naar de hoek
+er schuin tegenover, `(7, 7)`? En hoeveel naar `(1, 1)`, het vakje er schuin
+naast? Gebruik breedte-eerst zoeken op een bord van 8 bij 8.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `sprongen` geeft één sprong.
+2. Zet de andere zeven sprongen erbij. Een lijst met de acht richtingen en een loop erover scheelt typwerk.
+3. Houd met een `if` alleen de sprongen die op het bord blijven. `sprongen((0, 0))` geeft er dan twee: `(1, 2)` en `(2, 1)`.
+4. Zet het zoeken uit [breedte-eerst](site:algorithms/docs/ml-zoeken/02-kortste-weg/02-breedte-eerst) eronder, met `sprongen` in plaats van `buren`. Het vult de dictionary `afstand`; print daarna `afstand[(7, 7)]`.
+
+<PyRunner initialCode={`def sprongen(vakje):
+    rij, kolom = vakje
+    resultaat = []
+    resultaat.append((rij + 1, kolom + 2))
+    return resultaat
+
+start = (0, 0)
+print(sprongen(start))`} />
+
+<details>
+<summary>Tip</summary>
+
+Een richting als `(2, -1)` betekent twee rijen omlaag en één kolom naar links:
+`rij + 2` en `kolom - 1`. Werk je met `r = rij + dr` en `k = kolom + dk`, dan
+kun je de controle op de randen bijna overnemen uit `buren`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def sprongen(vakje):
+    rij, kolom = vakje
+    resultaat = []
+    for dr, dk in [(1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1), (-1, 2)]:
+        r = rij + dr
+        k = kolom + dk
+        if r >= 0 and r < 8 and k >= 0 and k < 8:
+            resultaat.append((r, k))
+    return resultaat
+
+start = (0, 0)
+afstand = {start: 0}
+wachtrij = [start]
+while len(wachtrij) > 0:
+    vakje = wachtrij.pop(0)
+    for buur in sprongen(vakje):
+        if buur not in afstand:
+            afstand[buur] = afstand[vakje] + 1
+            wachtrij.append(buur)
+
+print(afstand[(7, 7)])   # 6
+print(afstand[(1, 1)])   # 4
+```
+
+Naar de overkant zijn het 6 sprongen, en naar het vakje ernaast 4: dichtbij
+is voor een paard niet hetzelfde als makkelijk. Het zoeken zelf veranderde
+niet. Breedte-eerst zoeken werkt bij alles waar je de buren van kunt geven:
+een doolhof, een schaakbord, of een netwerk van stations.
+
+</details>
+
+Door naar [een netwerk](site:algorithms/docs/ml-zoeken/03-op-weg-naar-degrees/01-een-netwerk).

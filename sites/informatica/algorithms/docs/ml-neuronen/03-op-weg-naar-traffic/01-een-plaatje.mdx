@@ -1,0 +1,206 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Een plaatje als getallen"
+---
+
+# Een plaatje als getallen
+
+Het laatste project van de route, Traffic van CS50 AI, herkent verkeersborden
+op foto's. Daarvoor heb je meer nodig dan één neuron: lagen van neuronen, en
+één uitgang per soort bord. Dat bouw je in dit project op kleine plaatjes van
+3 bij 3 pixels. Eerst het begin: een neuron rekent alleen met getallen, dus
+een plaatje wordt een lijst getallen.
+
+:::info
+Je gebruikt hier `neuron` uit
+[ja of nee](site:algorithms/docs/ml-neuronen/01-neuron/03-ja-of-nee) en
+`leer` uit [een functie leer](site:algorithms/docs/ml-neuronen/02-neuron-leert/06-een-functie-leer),
+een plaatje als lijst van teksten uit
+[Een heel plaatje](site:python/docs/projecten/pixel-art/stap-3-plaatje),
+`for teken in` uit
+[Een rij uit tekst](site:python/docs/projecten/pixel-art/stap-2-rij), en
+`append` uit [Lijst-methoden](site:python/docs/data/10b-lijst-methoden).
+Later in dit project lees je de plaatjes uit een dictionary, met een loop
+over de sleutels uit
+[Door een dictionary lopen](site:python/docs/data/11b-itereren-dictionaries).
+:::
+
+## Voorspel
+
+```python
+plaatje = [".#.", "###", ".#."]
+
+invoer = []
+for rij in plaatje:
+    for teken in rij:
+        if teken == "#":
+            invoer.append(1)
+        else:
+            invoer.append(0)
+print(invoer)
+```
+
+Het plaatje is een plusteken: `#` is een zwarte pixel, `.` een witte. Wat
+print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[0, 1, 0, 1, 1, 1, 0, 1, 0]
+```
+
+De buitenste loop pakt de rijen van boven naar beneden, de binnenste de
+tekens van links naar rechts. Elke zwarte pixel wordt een 1, elke witte een 0.
+
+</details>
+
+## Zo werkt het
+
+Een plaatje van 3 bij 3 pixels wordt een lijst van 9 getallen: de bovenste
+rij op positie 0 tot en met 2, de middelste op 3 tot en met 5, de onderste op
+6 tot en met 8. Die lijst is de invoer van een neuron, en elke pixel krijgt
+zijn eigen gewicht.
+
+Een foto in Traffic is 30 bij 30 pixels, en elke pixel heeft drie getallen
+van 0 tot en met 255: hoeveel rood, groen en blauw erin zit. Het idee is
+hetzelfde, alleen zijn het veel meer getallen.
+
+## Onderzoek
+
+1. Draai de code. Op welke positie in de lijst staat de middelste pixel?
+2. Teken een liggende streep: alleen de middelste rij zwart. Welke lijst
+   krijg je?
+3. Maak het plaatje 4 bij 4, met vier teksten van vier tekens. Hoe lang wordt
+   de lijst?
+4. Zet in een rij een `o` in plaats van een `.`. Wat wordt die pixel?
+
+<PyRunner initialCode={`plaatje = [
+    ".#.",
+    ".#.",
+    ".#.",
+]
+
+invoer = []
+for rij in plaatje:
+    for teken in rij:
+        if teken == "#":
+            invoer.append(1)
+        else:
+            invoer.append(0)
+print(invoer)
+print(len(invoer), "getallen")`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+[0, 1, 0, 0, 1, 0, 0, 1, 0]
+9 getallen
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Op positie 4: de vijfde pixel, want je telt vanaf 0.
+2. `[0, 0, 0, 1, 1, 1, 0, 0, 0]`.
+3. 16 getallen: vier rijen van vier.
+4. Een 0: alleen een `#` wordt een 1.
+
+</details>
+
+## Opdracht: een functie naar_getallen
+
+Zet het omzetten in een functie `naar_getallen(plaatje)` die de lijst
+getallen teruggeeft. Test hem op een staande en een liggende streep:
+
+```
+[0, 1, 0, 0, 1, 0, 0, 1, 0]
+[0, 0, 0, 1, 1, 1, 0, 0, 0]
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `naar_getallen` geeft nog een lege lijst terug.
+2. Zet de loop in een loop uit het onderzoek in de functie, vóór de `return`. Nu krijg je de staande streep.
+3. Print ook `naar_getallen(liggend)`.
+
+<PyRunner initialCode={`def naar_getallen(plaatje):
+    invoer = []
+    return invoer
+
+staand = [".#.", ".#.", ".#."]
+liggend = ["...", "###", "..."]
+
+print(naar_getallen(staand))`} />
+
+<details>
+<summary>Tip</summary>
+
+Krijg je bij stap 2 maar één getal terug? Kijk hoe ver de `return` inspringt:
+staat hij in de loop, dan stopt de functie al na de eerste pixel.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def naar_getallen(plaatje):
+    invoer = []
+    for rij in plaatje:
+        for teken in rij:
+            if teken == "#":
+                invoer.append(1)
+            else:
+                invoer.append(0)
+    return invoer
+
+staand = [".#.", ".#.", ".#."]
+liggend = ["...", "###", "..."]
+
+print(naar_getallen(staand))   # [0, 1, 0, 0, 1, 0, 0, 1, 0]
+print(naar_getallen(liggend))   # [0, 0, 0, 1, 1, 1, 0, 0, 0]
+```
+
+De `return` staat op dezelfde hoogte als `invoer = []`: pas na alle pixels
+geeft de functie de lijst terug.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+AttributeError: 'NoneType' object has no attribute 'append'
+```
+
+**Oorzaak:** je schreef `invoer = invoer.append(1)`. `append` verandert de
+lijst zelf en geeft niets terug, `None`. Daarna is `invoer` geen lijst meer,
+en bij de volgende pixel kan Python er niets aan vastmaken.
+
+**Oplossing:** schrijf alleen `invoer.append(1)`, zonder `invoer =` ervoor.
+
+```python
+# FOUT
+invoer = []
+for teken in ".#.":
+    if teken == "#":
+        invoer = invoer.append(1)
+    else:
+        invoer = invoer.append(0)
+
+# GOED
+invoer = []
+for teken in ".#.":
+    if teken == "#":
+        invoer.append(1)
+    else:
+        invoer.append(0)
+```
+
+Meer uitleg: [Lijst-methoden](site:python/docs/data/10b-lijst-methoden#er-gaat-iets-mis).
+
+Door naar [een laag](site:algorithms/docs/ml-neuronen/03-op-weg-naar-traffic/02-een-laag).

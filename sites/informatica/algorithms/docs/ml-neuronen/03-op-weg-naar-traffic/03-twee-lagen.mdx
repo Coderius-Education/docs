@@ -1,0 +1,152 @@
+---
+sidebar_position: 3
+sidebar_label: "3. Twee lagen"
+---
+
+# Twee lagen
+
+Eén neuron kon "precies één" niet: er past geen rechte lijn tussen. Met twee
+lagen achter elkaar lukt het wel. De uitkomst van de eerste laag is de invoer
+van de tweede.
+
+## Voorspel
+
+```python
+def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+tussen = [neuron([1, 1], [1, 1], 0), neuron([1, 1], [1, 1], -1)]
+print(tussen)
+print(neuron(tussen, [1, -2], 0))
+```
+
+De eerste laag is de laag uit de vorige stap: OF en EN. Wat print dit
+programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[1, 1]
+0
+```
+
+Bij `1 1` zeggen OF en EN allebei 1. Het laatste neuron rekent 1 - 2 = -1,
+en zegt 0.
+
+</details>
+
+## Zo werkt het
+
+Het laatste neuron kijkt niet naar de invoer zelf, maar naar wat OF en EN
+ervan vinden. Met gewichten `[1, -2]` zegt het: OF pleit voor ja, EN pleit
+dubbel zo hard voor nee. Dat is precies één: minstens één, maar niet allebei.
+`neuron` en `laag` staan in de verborgen code onder de editor.
+
+De laag ertussen heet een **verborgen laag**: je ziet hem niet aan de invoer
+of aan de uitkomst. Hier kreeg je de gewichten van de verborgen laag. Je
+`leer` kan ze niet vinden, want die weet alleen wat de laatste uitkomst had
+moeten zijn, niet wat OF en EN hadden moeten zeggen. Keras, de bibliotheek van
+Traffic, leert ook de gewichten van verborgen lagen. Hoe, legt het hoorcollege
+van CS50 uit.
+
+## Onderzoek
+
+1. Draai de code. Doet het netwerk precies één?
+2. Zet de gewichten van het laatste neuron op `[1, -1]`. Werkt het nog?
+3. Zet ze op `[1, 0]`. Welke regel doet het netwerk nu?
+4. Welke gewichten voor het laatste neuron geven EN?
+
+<PyRunner verborgen="neuron-laag" initialCode={`for a in [0, 1]:
+    for b in [0, 1]:
+        tussen = laag([a, b], [[1, 1], [1, 1]], [0, -1])
+        uit = neuron(tussen, [1, -2], 0)
+        print(a, b, "->", tussen, "->", uit)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+0 0 -> [0, 0] -> 0
+0 1 -> [1, 0] -> 1
+1 0 -> [1, 0] -> 1
+1 1 -> [1, 1] -> 0
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Ja: alleen bij `0 1` en `1 0` komt er 1 uit.
+2. Ja. Bij `1 1` is de som dan 1 - 1 = 0, en dat is niet groter dan 0.
+3. OF: het laatste neuron kijkt alleen nog naar het OF-neuron.
+4. `[0, 1]`: dan kijkt het alleen naar het EN-neuron.
+
+</details>
+
+## Opdracht: allebei hetzelfde
+
+Maak een netwerk dat 1 zegt als de twee invoeren gelijk zijn: allebei 0 of
+allebei 1. Ook dat kan één neuron niet. Houd de eerste laag, OF en EN, en
+zoek gewichten en een bias voor het laatste neuron:
+
+```
+0 0 -> 1
+0 1 -> 0
+1 0 -> 0
+1 1 -> 1
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: met gewichten `[0, 0]` zegt het laatste neuron bij `0 0` nog 0.
+2. Zet het in een loop in een loop over de vier combinaties.
+3. Zoek gewichten en een bias voor het laatste neuron.
+
+<PyRunner verborgen="neuron-laag" initialCode={`a = 0
+b = 0
+tussen = laag([a, b], [[1, 1], [1, 1]], [0, -1])
+uit = neuron(tussen, [0, 0], 0)
+print(a, b, "->", uit)`} />
+
+<details>
+<summary>Tip</summary>
+
+Het laatste neuron ziet alleen `tussen`. Schrijf voor de vier combinaties op
+wat `tussen` is. Bij welke van die lijsten moet het 0 zeggen?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+for a in [0, 1]:
+    for b in [0, 1]:
+        tussen = laag([a, b], [[1, 1], [1, 1]], [0, -1])
+        uit = neuron(tussen, [-1, 2], 1)
+        print(a, b, "->", uit)
+```
+
+```
+0 0 -> 1
+0 1 -> 0
+1 0 -> 0
+1 1 -> 1
+```
+
+`tussen` is `[0, 0]`, `[1, 0]`, `[1, 0]` en `[1, 1]`. Alleen bij `[1, 0]` moet
+het laatste neuron 0 zeggen. Met gewichten `[-1, 2]` en bias 1 zijn de sommen
+1, 0, 0 en 2. Andere getallen kunnen ook, zoals `[-2, 2]` met bias 1.
+
+</details>
+
+Door naar [de grootste wint](site:algorithms/docs/ml-neuronen/03-op-weg-naar-traffic/04-de-grootste-wint).

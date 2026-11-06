@@ -1,0 +1,156 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Kiezen met kansen"
+---
+
+# Kiezen met kansen
+
+Je hebt een model met de kans op elk weer van morgen. Nu laat je de computer
+het weer van morgen kiezen, met die kansen: zon vaker dan regen.
+`random.choice` kan dat niet, want die kiest alles even vaak.
+
+## Voorspel
+
+```python
+import random
+
+weer = random.choices(["zon", "wolken", "regen"], weights=[0.5, 0.3, 0.2])
+print(weer)
+```
+
+Wat print dit programma? Kijk goed naar de haakjes in de uitvoer.
+
+<details>
+<summary>Antwoord</summary>
+
+Een lijst met één weer erin, zoals `['zon']`. De helft van de keren is dat zon,
+want zon heeft het grootste gewicht.
+
+</details>
+
+## Zo werkt het
+
+**`random.choices`** is nieuw. Je geeft hem een lijst met keuzes, en met
+`weights=` een lijst met de kans van elke keuze, in dezelfde volgorde. Hij
+geeft een lijst terug, omdat hij ook meer keuzes tegelijk kan maken. Met `[0]`
+haal je de ene keuze eruit.
+
+De keuzes en de kansen haal je uit het model: `list(kansen)` is de lijst
+sleutels, en `list(kansen.values())` de lijst kansen, in dezelfde volgorde.
+
+## Onderzoek
+
+1. Draai de code een paar keer, met `vandaag = "zon"`. Welk weer zie je het
+   vaakst?
+2. Zet `vandaag` op `"regen"`. Wat komt er nu vaak uit?
+3. Haal `[0]` weg. Wat verandert er in de uitvoer?
+4. Zet `weights=[5, 3, 2]` in plaats van de kansen uit het model. Verandert er
+   iets?
+
+<PyRunner initialCode={`import random
+
+model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.4},
+}
+
+vandaag = "zon"
+kansen = model[vandaag]
+morgen = random.choices(list(kansen), weights=list(kansen.values()))[0]
+print("vandaag", vandaag, "morgen", morgen)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Zon, de helft van de keren.
+2. Wolken en regen, elk 0,4. Zon nog maar 0,2.
+3. Morgen wordt een lijst, zoals `['zon']`, in plaats van het woord zelf.
+4. Nee. De gewichten hoeven niet op te tellen tot 1: 5, 3 en 2 verhouden zich
+   net zo als 0,5, 0,3 en 0,2.
+
+</details>
+
+## Opdracht: duizend keer na een zonnige dag
+
+Kies 1000 keer het weer na een zonnige dag, tel hoe vaak elk weer uitkomt, en
+print per weer welk deel van de keren het was. Je komt in de buurt van de
+kansen uit het model:
+
+```
+zon 0.497
+wolken 0.304
+regen 0.199
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij kiest één keer het weer van morgen.
+2. Zet de keuze in een loop van 1000 keer, en tel elke keuze met `telling[morgen] = telling[morgen] + 1`. Print `telling` na de loop.
+3. Loop na de keuzes met `for weer in telling:` langs het weer, en print per weer `telling[weer] / 1000`.
+
+<PyRunner initialCode={`import random
+
+kansen = {"zon": 0.5, "wolken": 0.3, "regen": 0.2}
+telling = {"zon": 0, "wolken": 0, "regen": 0}
+
+morgen = random.choices(list(kansen), weights=list(kansen.values()))[0]
+print(morgen)`} />
+
+<details>
+<summary>Tip</summary>
+
+Krijg je een foutmelding over een `list` bij `telling[morgen]`? Kijk of de
+`[0]` achter `random.choices(…)` nog staat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+kansen = {"zon": 0.5, "wolken": 0.3, "regen": 0.2}
+telling = {"zon": 0, "wolken": 0, "regen": 0}
+
+for i in range(1000):
+    morgen = random.choices(list(kansen), weights=list(kansen.values()))[0]
+    telling[morgen] = telling[morgen] + 1
+
+for weer in telling:
+    print(weer, telling[weer] / 1000)
+```
+
+Zo kiest de surfer van CS50 zijn volgende pagina: met een kans per pagina, en
+niet allemaal even vaak.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+TypeError: unhashable type: 'list'
+```
+
+**Oorzaak:** `random.choices` geeft een lijst terug, zoals `['zon']`. Een lijst
+kan geen sleutel van een dictionary zijn.
+
+**Oplossing:** haal met `[0]` de keuze uit de lijst.
+
+```python
+# FOUT
+import random
+telling = {"zon": 0, "regen": 0}
+morgen = random.choices(["zon", "regen"], weights=[0.7, 0.3])
+telling[morgen] = telling[morgen] + 1
+
+# GOED
+import random
+telling = {"zon": 0, "regen": 0}
+morgen = random.choices(["zon", "regen"], weights=[0.7, 0.3])[0]
+telling[morgen] = telling[morgen] + 1
+```
+
+Door naar [duizend dagen](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/03-duizend-dagen).

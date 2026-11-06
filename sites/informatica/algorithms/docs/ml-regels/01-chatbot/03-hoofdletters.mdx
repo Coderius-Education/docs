@@ -1,0 +1,146 @@
+---
+sidebar_position: 3
+sidebar_label: "3. Hoofdletters"
+---
+
+# Hoofdletters
+
+Je chatbot kent nu meerdere regels, maar alleen in kleine letters. Typt
+iemand `"Hoi"`, dan past de regel met `"hoi"` niet: voor Python zijn `h` en
+`H` twee verschillende letters. Met `.lower()` zet je de hele zin eerst in
+kleine letters.
+
+:::info
+Je gebruikt hier `.lower()` uit
+[String-methoden](site:python/docs/tekst/04b-string-methoden).
+:::
+
+## Voorspel
+
+```python
+zin = "Hoi, hoe gaat het?"
+print("hoi" in zin)
+
+zin = zin.lower()
+print(zin)
+print("hoi" in zin)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+False
+hoi, hoe gaat het?
+True
+```
+
+Eerst staat er `Hoi` met een hoofdletter in de zin, en dat is niet hetzelfde
+als `hoi`. Na `zin = zin.lower()` staat de hele zin in kleine letters.
+
+</details>
+
+## Zo werkt het
+
+`zin.lower()` maakt een nieuwe tekst: dezelfde zin, in kleine letters. De
+oude zin verandert er niet door. Daarom staat er `zin =` voor: zo bewaar je
+de nieuwe tekst weer in `zin`.
+
+Zet die regel bovenaan, vóór de eerste `if`. Dan schrijf je elk trefwoord
+maar één keer, in kleine letters, en past het op `hoi`, `Hoi` en `HOI`.
+
+## Onderzoek
+
+1. Haal de regel `zin = zin.lower()` weg. Wat antwoordt de chatbot nu?
+2. Zet de regel terug, maar nu als `zin.lower()`, zonder `zin =` ervoor. Wat
+   gebeurt er?
+3. Maak de regel weer compleet, en verander het trefwoord `"hallo"` in
+   `"Hallo"`. Past die regel nog?
+
+<PyRunner initialCode={`zin = "HALLO, hoe is het WEER?"
+zin = zin.lower()
+
+if "hallo" in zin:
+    print("Hallo, leuk dat je er bent.")
+elif "weer" in zin:
+    print("Ik kan niet naar buiten kijken.")
+else:
+    print("Daar weet ik niets van.")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. `Daar weet ik niets van.` In de zin staan `HALLO` en `WEER` in
+   hoofdletters, en die passen niet op `"hallo"` en `"weer"`.
+2. Hetzelfde als bij vraag 1. `zin.lower()` maakt wel een zin in kleine
+   letters, maar je bewaart hem nergens, dus `zin` houdt zijn hoofdletters.
+3. Nee. Na `.lower()` staat er geen enkele hoofdletter meer in de zin, dus
+   `"Hallo"` past nooit. De chatbot neemt nu de regel over het weer.
+   Schrijf je trefwoorden dus altijd in kleine letters.
+
+</details>
+
+## Opdracht: hoofdletters maken niet uit
+
+Maak de chatbot uit de vorige stap ongevoelig voor hoofdletters. Met de zin
+uit de editor wordt de uitvoer:
+
+```
+Ik heet Bot. En jij?
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. De zin vraagt naar je naam, maar de chatbot zegt `Daar weet ik niets van.`
+2. Zet boven de `if` de regel `print(zin.lower())`, en draai. Je ziet de zin in kleine letters, maar het antwoord blijft hetzelfde.
+3. Vervang die regel door `zin = zin.lower()`. Nu antwoordt de chatbot `Ik heet Bot. En jij?`
+4. Test met `"DOEI"` en met `"Doei Bot"`.
+
+<PyRunner initialCode={`zin = "Wat is je NAAM?"
+
+if "hoi" in zin:
+    print("Hallo, leuk dat je er bent.")
+elif "naam" in zin:
+    print("Ik heet Bot. En jij?")
+elif "doei" in zin:
+    print("Doei, tot de volgende keer.")
+else:
+    print("Daar weet ik niets van.")`} />
+
+<details>
+<summary>Tip</summary>
+
+Zegt de chatbot nog steeds `Daar weet ik niets van.`? Kijk of de regel met
+`.lower()` boven de `if` staat. Staat hij eronder, dan komt hij te laat: de
+chatbot heeft zijn antwoord dan al gekozen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+zin = "Wat is je NAAM?"
+zin = zin.lower()
+
+if "hoi" in zin:
+    print("Hallo, leuk dat je er bent.")
+elif "naam" in zin:
+    print("Ik heet Bot. En jij?")
+elif "doei" in zin:
+    print("Doei, tot de volgende keer.")
+else:
+    print("Daar weet ik niets van.")
+```
+
+```
+Ik heet Bot. En jij?
+```
+
+De regel `zin = zin.lower()` komt direct onder de zin, vóór de eerste `if`.
+
+</details>
+
+Door naar [jouw chatbot](site:algorithms/docs/ml-regels/01-chatbot/04-jouw-chatbot).

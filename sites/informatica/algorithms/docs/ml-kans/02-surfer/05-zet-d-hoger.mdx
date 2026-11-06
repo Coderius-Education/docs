@@ -1,0 +1,119 @@
+---
+sidebar_position: 5
+sidebar_label: "5. Zet D hoger"
+---
+
+# Zet D hoger
+
+Je surfer springt nu soms, en komt zo ook op D. Kun je D hoger krijgen door er
+zelf links naartoe te maken? Zo probeerden mensen Google te foppen: duizend
+nep-pagina's die naar hun eigen site linken.
+
+## Voorspel
+
+```python
+web = {"A": ["B"], "B": ["A"]}
+web["E"] = ["A"]
+
+print(list(web))
+print(web["E"])
+```
+
+Wat print dit?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+['A', 'B', 'E']
+['A']
+```
+
+`web["E"] = ["A"]` maakt een nieuwe pagina E in het web, met één link, naar A.
+
+</details>
+
+## Zo werkt het
+
+Een nieuwe pagina zet je in het web als nieuwe sleutel, met de lijst van haar
+links als waarde. Dat kan met `web["E"] = …`, of door een regel in de
+dictionary erbij te typen. Een link is een stem voor de pagina waar hij naar
+wijst. Of die stem veel waard is, laat de surfer zien.
+
+## Bouw zelf: zet D hoger
+
+Je bent de eigenaar van pagina D, en je wilt hoger komen. Je maakt drie
+nieuwe pagina's, E, F en G, die alle drie naar D linken. Zet ze in het web
+van de vorige stap en laat de surfer klikken. Hoeveel hoger komt D? En waarom
+niet heel veel?
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. In de editor staat de surfer met damping uit de vorige stap: D komt rond de 0,04.
+2. Zet E, F en G in het web, elk met een link naar D.
+3. Draai opnieuw, en vergelijk D met de andere pagina's.
+
+<PyRunner initialCode={`import random
+
+web = {
+    "A": ["B", "C"],
+    "B": ["C"],
+    "C": ["A"],
+    "D": ["C"],
+}
+klikken = 10000
+damping = 0.85
+
+bezocht = {}
+for p in web:
+    bezocht[p] = 0
+
+pagina = "A"
+for i in range(klikken):
+    if random.random() < damping:
+        pagina = random.choice(web[pagina])
+    else:
+        pagina = random.choice(list(web))
+    bezocht[pagina] = bezocht[pagina] + 1
+
+for p in bezocht:
+    print(p, bezocht[p] / klikken)
+
+import matplotlib.pyplot as plt
+plt.bar(list(bezocht), list(bezocht.values()))
+plt.show()`} />
+
+<details>
+<summary>Tip</summary>
+
+Elke pagina staat in het web als sleutel, met de lijst van haar links als
+waarde. Wat moet er bij E, F en G in die lijst staan? Denk aan vraag 4 van
+[duizend klikken](site:algorithms/docs/ml-kans/02-surfer/03-duizend-klikken#onderzoek):
+een lege lijst mag niet.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Zet onder `"D": ["C"],` in het web:
+
+{/* niet-compileren: fragment; drie regels voor het web uit de opdracht */}
+```python
+    "E": ["D"],
+    "F": ["D"],
+    "G": ["D"],
+```
+
+D gaat van ongeveer 0,04 naar 0,08: verdubbeld, maar nog steeds de laagste
+van de oude pagina's. De nep-pagina's krijgen zelf alleen bezoek als de
+surfer er toevallig naartoe springt, elk ongeveer 0,02. Hun stem is dus weinig
+waard. Een link van een pagina die zelf veel bezoek krijgt, zoals C, zou D
+veel meer helpen. Dat is het idee van PageRank: een stem van een belangrijke
+pagina telt zwaarder.
+
+</details>
+
+Door naar [het hoofdstuk PageRank](site:algorithms/docs/pagerank/01-concept),
+en daarna naar
+[een kansmodel](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/01-een-kansmodel).

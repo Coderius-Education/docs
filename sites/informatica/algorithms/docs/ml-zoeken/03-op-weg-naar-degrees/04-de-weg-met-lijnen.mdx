@@ -1,0 +1,167 @@
+---
+sidebar_position: 4
+sidebar_label: "4. De weg met lijnen"
+---
+
+# De weg met lijnen
+
+Je hebt nu alle onderdelen: het netwerk met `buren`, een `Knoop` die onthoudt
+waar hij vandaan kwam, en een `Wachtrij`. In deze stap zet je ze samen in een
+functie `reis(van, naar)`. Die geeft de weg als een lijst paren: bij elke
+halte de lijn waarmee je er komt.
+
+## Voorspel
+
+```python
+weg = []
+weg.insert(0, ("rood", "Strand"))
+weg.insert(0, ("rood", "Haven"))
+weg.insert(0, ("blauw", "Markt"))
+for lijn, station in weg:
+    print("Neem", lijn, "naar", station)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+Neem blauw naar Markt
+Neem rood naar Haven
+Neem rood naar Strand
+```
+
+Elk paar komt vooraan, dus het laatst toegevoegde paar staat voorop. Zo
+bouw je de weg op als je van het eind terugloopt.
+
+</details>
+
+## Zo werkt het
+
+Het zoeken is hetzelfde als in het doolhof, maar in de wachtrij staan nu
+knopen. Bij elke nieuwe buur maak je een knoop met de buur als toestand, de
+huidige knoop als ouder en de lijn als actie. De lijst `gezien` onthoudt welke
+stations al een knoop hebben, zoals `afstand` dat in het doolhof deed.
+
+Haal je de knoop van `naar` uit de wachtrij, dan loop je via `ouder` terug.
+Bij elke knoop zet je het paar `(knoop.actie, knoop.toestand)` vooraan in de
+weg. De start komt er niet in: daar nam je geen lijn.
+
+:::caution
+In deze functie staan twee while-loops. Stopt er een nooit, dan loopt het
+tabblad vast, want de speeltuin heeft geen stopknop: herlaad de pagina, en je
+code is weg. Kopieer je code daarom eerst naar een kladblok voordat je een
+nieuwe while-loop draait.
+:::
+
+## Onderzoek
+
+1. Draai de code. In welke volgorde komen de stations uit de wachtrij?
+2. Waarom komen Centraal, Haven en Park allemaal vóór Strand?
+3. Zet `van = "Strand"`. Welk station komt als laatste?
+
+<PyRunner verborgen="metro-zoeken" initialCode={`van = "Zuid"
+wachtrij = Wachtrij()
+wachtrij.voeg_toe(Knoop(van, None, None))
+gezien = [van]
+while not wachtrij.is_leeg():
+    knoop = wachtrij.haal_eruit()
+    print(knoop.toestand)
+    for lijn, buur in buren(knoop.toestand):
+        if buur not in gezien:
+            gezien.append(buur)
+            wachtrij.voeg_toe(Knoop(buur, knoop, lijn))`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Zuid, Markt, Centraal, Haven, Park, Strand, Museum, Noord, Stadion.
+2. Die liggen twee haltes van Zuid, Strand drie. Een wachtrij geeft eerst
+   alles op twee haltes, dan alles op drie.
+3. Noord: dat is vier haltes van Strand, verder dan elk ander station.
+
+</details>
+
+## Opdracht: een reis plannen
+
+Schrijf de functie `reis(van, naar)`, die de weg geeft als lijst paren
+`(lijn, station)`, en `None` als er geen weg is:
+
+```
+[('blauw', 'Markt'), ('rood', 'Haven'), ('rood', 'Strand')]
+[('blauw', 'Park'), ('groen', 'Stadion'), ('geel', 'Museum')]
+None
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `reis` geeft nog `"?"`.
+2. Kijk in de while-loop, direct na `haal_eruit`, of `knoop.toestand == naar`. Zo ja, geef dan `knoop.toestand` terug. Nu print hij `Strand`.
+3. Loop daar in plaats daarvan terug langs `knoop.ouder`, zoals bij [een knoop](site:algorithms/docs/ml-zoeken/03-op-weg-naar-degrees/02-een-knoop), en zet elk paar vooraan in een lijst `weg`. Geef `weg` terug.
+4. Vraag ook `reis("Noord", "Museum")` en `reis("Zuid", "Eiland")`, en zet onderaan `return None` in plaats van `return "?"`.
+
+<PyRunner verborgen="metro-zoeken" initialCode={`def reis(van, naar):
+    wachtrij = Wachtrij()
+    wachtrij.voeg_toe(Knoop(van, None, None))
+    gezien = [van]
+    while not wachtrij.is_leeg():
+        knoop = wachtrij.haal_eruit()
+        for lijn, buur in buren(knoop.toestand):
+            if buur not in gezien:
+                gezien.append(buur)
+                wachtrij.voeg_toe(Knoop(buur, knoop, lijn))
+    return "?"
+
+print(reis("Zuid", "Strand"))`} />
+
+<details>
+<summary>Tip</summary>
+
+Mist het laatste station in de weg, of staat Zuid erin? Kijk in welke
+volgorde je in de loop het paar toevoegt en `knoop = knoop.ouder` doet.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+def reis(van, naar):
+    wachtrij = Wachtrij()
+    wachtrij.voeg_toe(Knoop(van, None, None))
+    gezien = [van]
+    while not wachtrij.is_leeg():
+        knoop = wachtrij.haal_eruit()
+        if knoop.toestand == naar:
+            weg = []
+            while knoop.ouder is not None:
+                weg.insert(0, (knoop.actie, knoop.toestand))
+                knoop = knoop.ouder
+            return weg
+        for lijn, buur in buren(knoop.toestand):
+            if buur not in gezien:
+                gezien.append(buur)
+                wachtrij.voeg_toe(Knoop(buur, knoop, lijn))
+    return None
+
+print(reis("Zuid", "Strand"))
+print(reis("Noord", "Museum"))
+print(reis("Zuid", "Eiland"))
+```
+
+```
+[('blauw', 'Markt'), ('rood', 'Haven'), ('rood', 'Strand')]
+[('blauw', 'Park'), ('groen', 'Stadion'), ('geel', 'Museum')]
+None
+```
+
+Eiland staat niet in het netwerk. De wachtrij raakt leeg zonder dat de knoop
+van Eiland langskwam, en dan komt de functie bij `return None`.
+
+</details>
+
+Door naar [overstappen](site:algorithms/docs/ml-zoeken/03-op-weg-naar-degrees/05-overstappen).

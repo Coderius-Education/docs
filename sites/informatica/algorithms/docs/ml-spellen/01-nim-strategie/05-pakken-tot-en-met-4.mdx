@@ -1,0 +1,196 @@
+---
+sidebar_position: 5
+sidebar_label: "5. Pakken tot en met 4"
+---
+
+# Pakken tot en met 4
+
+`slim` wint alle 100 spellen van `willekeurig`. Maar de truc hoort bij de
+regels: pak 1, 2 of 3. Nieuw is dat je snapt waaróm hij werkt, zodat je hem
+kunt aanpassen als de regels veranderen.
+
+## Voorspel
+
+```python
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+print(slim(9))
+print(9 - slim(9))
+```
+
+Bij 9 lucifers is `slim` aan de beurt. Wat print dit? En kan `slim` dit spel
+nog winnen?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1
+8
+```
+
+Bij 9 ligt al een viervoud plus 1. `slim` pakt 1 en laat 8 liggen. Kent de
+ander de truc, dan pakt hij 3 en laat hij 5 liggen, en dan verliest `slim`.
+Speelt de ander maar wat, dan heeft `slim` nog een kans.
+
+</details>
+
+## Zo werkt het
+
+Waarom een viervoud plus 1? Pakt de ander 1, dan pak jij 3. Pakt hij 2, dan
+pak jij 2, en pakt hij 3, dan pak jij 1. Samen pak je zo elke ronde precies 4.
+Laat jij een viervoud plus 1 liggen, dan ligt er na elke ronde weer een
+viervoud plus 1, tot er nog 1 ligt: de laatste, voor de ander.
+
+De 4 in `% 4` komt dus uit de regels. Veranderen de regels, dan verandert dat
+getal mee.
+
+## Onderzoek
+
+1. Draai de code. Hoe vaak wint `slim` van de 100 spellen?
+2. Begin met 9 lucifers: `speel(9)`. Wint `slim` nog steeds altijd? Waarom
+   wel of niet?
+3. Begin weer met 10, maar laat `willekeurig` beginnen: zet in `speel` de
+   eerste `beurt` op `"willekeurig"`. Hoe vaak wint `slim` nu?
+
+<PyRunner initialCode={`import random
+
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+def willekeurig(stapel):
+    return random.randint(1, min(3, stapel))
+
+def speel(stapel):
+    beurt = "slim"
+    while stapel > 0:
+        if beurt == "slim":
+            stapel = stapel - slim(stapel)
+            beurt = "willekeurig"
+        else:
+            stapel = stapel - willekeurig(stapel)
+            beurt = "slim"
+    return beurt
+
+gewonnen = 0
+for spel in range(100):
+    if speel(10) == "slim":
+        gewonnen = gewonnen + 1
+print("slim wint", gewonnen, "van de 100")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Alle 100. Bij 10 lucifers pakt `slim` er 1 en laat hij er 9 liggen. Daarna
+   houdt hij dat vol, wat `willekeurig` ook doet.
+2. Nee, rond de 89 van de 100. Bij 9 ligt er al een viervoud plus 1, en
+   elke zet laat de ander een kans. `willekeurig` ziet die kans meestal niet,
+   en dan pakt `slim` het spel weer over.
+3. Rond de 96 van de 100. `willekeurig` laat alleen 9 liggen als hij 1 pakt,
+   en ook daarna maakt hij meestal een fout.
+
+</details>
+
+## Opdracht: pakken tot en met 4
+
+Verander de regels: je mag nu 1, 2, 3 of 4 lucifers pakken, en het spel begint
+met 12. Pas `slim` aan, zodat hij weer alle 100 spellen wint:
+
+```
+slim wint 100 van de 100
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `slim` pakt nu altijd 1, en wint lang niet alles.
+2. Laat `slim` met `%` uitrekenen hoeveel hij pakt, zoals `slim` in het onderzoek, maar dan voor 1 tot en met 4.
+3. Print in `slim` hoeveel hij pakt, en draai één keer `speel(11)` in plaats van de 100 spellen. Pakt hij ergens 0? Zet er dan een `if` bij voor als het 0 is, en haal de print weg.
+
+In de editor staat het spel tot en met 4 al klaar: `willekeurig` pakt 1 tot
+en met 4. Alleen `slim` doet nog niets slims.
+
+:::caution
+`speel` heeft een while-loop. Pakt `slim` ergens 0, dan wordt de stapel niet
+kleiner, stopt de loop nooit en loopt het tabblad vast. Kopieer je code eerst
+naar een kladblok, en druk bij twijfel op Stap voor stap.
+:::
+
+<PyRunner initialCode={`import random
+
+def slim(stapel):
+    return 1
+
+def willekeurig(stapel):
+    return random.randint(1, min(4, stapel))
+
+def speel(stapel):
+    beurt = "slim"
+    while stapel > 0:
+        if beurt == "slim":
+            stapel = stapel - slim(stapel)
+            beurt = "willekeurig"
+        else:
+            stapel = stapel - willekeurig(stapel)
+            beurt = "slim"
+    return beurt
+
+gewonnen = 0
+for spel in range(100):
+    if speel(12) == "slim":
+        gewonnen = gewonnen + 1
+print("slim wint", gewonnen, "van de 100")`} />
+
+<details>
+<summary>Tip</summary>
+
+Bij 1 tot en met 3 pakte je samen met de ander elke ronde 4. Hoeveel pak je
+samen elke ronde als het tot en met 4 mag?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+def slim(stapel):
+    pak = (stapel - 1) % 5
+    if pak == 0:
+        pak = 1
+    return pak
+
+def willekeurig(stapel):
+    return random.randint(1, min(4, stapel))
+
+def speel(stapel):
+    beurt = "slim"
+    while stapel > 0:
+        if beurt == "slim":
+            stapel = stapel - slim(stapel)
+            beurt = "willekeurig"
+        else:
+            stapel = stapel - willekeurig(stapel)
+            beurt = "slim"
+    return beurt
+
+gewonnen = 0
+for spel in range(100):
+    if speel(12) == "slim":
+        gewonnen = gewonnen + 1
+print("slim wint", gewonnen, "van de 100")   # slim wint 100 van de 100
+```
+
+Samen pak je elke ronde 5, dus laat `slim` steeds een vijfvoud plus 1 over:
+11, 6 en 1.
+
+</details>
+
+Door naar [slim tegen slim](site:algorithms/docs/ml-spellen/01-nim-strategie/06-slim-tegen-slim).

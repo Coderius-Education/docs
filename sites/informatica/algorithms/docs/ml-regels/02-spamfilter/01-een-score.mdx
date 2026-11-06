@@ -1,0 +1,181 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Een score"
+---
+
+# Een score
+
+Je mailbox krijgt elke dag berichten die je niet wilt: reclame, nep-prijzen,
+pogingen om je wachtwoord te stelen. Een spamfilter haalt ze eruit. Je
+eerste spamfilter werkt met een lijst verdachte woorden, en elk verdacht
+woord in een bericht levert een punt op. In deze eerste stap tel je die
+punten.
+
+:::info
+In dit project gebruik je een lijst en een `for`-loop uit
+[Lijsten](site:python/docs/data/10a-lijsten-basis) en
+[De for-loop](site:python/docs/herhalen/06a-for-loop), `in` op tekst uit
+[een trefwoord](site:algorithms/docs/ml-regels/01-chatbot/01-een-trefwoord#zo-werkt-het),
+en `.lower()` en `elif` uit
+[hoofdletters](site:algorithms/docs/ml-regels/01-chatbot/03-hoofdletters).
+:::
+
+## Voorspel
+
+```python
+verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+bericht = "klik nu en win een gratis telefoon"
+
+score = 0
+for woord in verdacht:
+    if woord in bericht:
+        score = score + 1
+
+print("score:", score)
+```
+
+Welke score krijgt dit bericht?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+score: 3
+```
+
+`klik`, `nu` en `gratis` staan in het bericht. `winnen` niet: in het bericht
+staat `win`, en dat is een ander stuk tekst. `geld` staat er ook niet in.
+
+</details>
+
+## Zo werkt het
+
+De `for`-loop loopt de lijst `verdacht` langs, één woord per ronde. Staat
+het woord in het bericht, dan komt er een punt bij de score.
+
+`score = score + 1` lijkt vreemd, maar Python rekent eerst uit wat rechts van
+de `=` staat: de oude score plus 1. Die uitkomst bewaart hij als de nieuwe
+score. Daarom staat `score = 0` vóór de loop: zo is er een score om mee te
+beginnen.
+
+## Onderzoek
+
+1. Zet `print(woord)` in de loop, boven de `if`. Hoe vaak draait de loop?
+2. Verander het bericht in `"hoi, bel je me nu?"`. Welke score krijgt het?
+3. Verander het bericht in `"je nieuwe nummer is binnen"`. Welk woord uit de
+   lijst vindt het filter, en waar?
+4. Probeer `"GRATIS GELD"`. Zet daarna `bericht = bericht.lower()` onder het
+   bericht, en probeer het nog eens.
+
+<PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+bericht = "klik nu en win een gratis telefoon"
+
+score = 0
+for woord in verdacht:
+    if woord in bericht:
+        score = score + 1
+
+print("score:", score)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Vijf keer, één keer voor elk woord in `verdacht`: `gratis`, `winnen`,
+   `klik`, `nu` en `geld`. De loop loopt de lijst langs, niet het bericht.
+2. Score 1: het woord `nu` geeft een punt. Of dat genoeg is voor spam,
+   beslis je in [een drempel](site:algorithms/docs/ml-regels/02-spamfilter/02-een-drempel).
+3. Het filter vindt `nu` in `nummer`. Het zoekt naar letters, niet naar
+   woorden, net als de chatbot bij `"weer"`. In
+   [hele woorden](site:algorithms/docs/ml-regels/02-spamfilter/03-hele-woorden)
+   los je dat op.
+4. Eerst score 0, want `"gratis"` staat er niet in, `"GRATIS"` wel. Met
+   `.lower()` erbij wordt het bericht `"gratis geld"`, en dan vindt het
+   filter beide woorden: score 2.
+
+</details>
+
+## Opdracht: welke woorden vond het filter?
+
+Laat het filter printen welke verdachte woorden het vond, en daarna de
+score. Met het bericht uit de editor wordt de uitvoer:
+
+```
+gevonden: gratis
+gevonden: klik
+gevonden: nu
+score: 3
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet elk woord uit `verdacht`, ook de woorden die niet in het bericht staan.
+2. Zet een `if` om de `print`, zodat alleen de woorden uit het bericht verschijnen. Zet `"gevonden:"` ervoor in de `print`.
+3. Zet `score = 0` boven de loop, tel er in de `if` 1 bij op, en print de score na de loop.
+4. Verander het bericht in `"je nieuwe nummer is binnen"`. Nu vindt het filter alleen `nu`, en is de score 1.
+
+<PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+bericht = "klik nu en win een gratis telefoon"
+
+for woord in verdacht:
+    print(woord)`} />
+
+<details>
+<summary>Tip</summary>
+
+Komt de score op 1 uit in plaats van 3? Kijk waar `score = 0` staat. In de
+loop begint hij bij elk woord opnieuw.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+bericht = "klik nu en win een gratis telefoon"
+
+score = 0
+for woord in verdacht:
+    if woord in bericht:
+        print("gevonden:", woord)
+        score = score + 1
+
+print("score:", score)
+```
+
+```
+gevonden: gratis
+gevonden: klik
+gevonden: nu
+score: 3
+```
+
+De `print` en het optellen staan allebei in de `if`: ze horen bij hetzelfde
+gevonden woord.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+NameError: name 'score' is not defined
+```
+
+**Oorzaak:** `score = score + 1` gebruikt de oude waarde van `score`. Heb je
+`score = 0` vóór de loop vergeten, dan is er nog geen oude waarde.
+
+**Oplossing:** zet de score op 0 voordat de loop begint.
+
+```python
+# FOUT
+for woord in ["gratis", "geld"]:
+    score = score + 1
+
+# GOED
+score = 0
+for woord in ["gratis", "geld"]:
+    score = score + 1
+```
+
+Door naar [een drempel](site:algorithms/docs/ml-regels/02-spamfilter/02-een-drempel).

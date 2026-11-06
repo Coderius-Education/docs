@@ -1,0 +1,109 @@
+---
+sidebar_position: 5
+sidebar_label: "5. De luie voorspeller"
+---
+
+# De luie voorspeller
+
+Je telt nu per soort hoeveel er goed gaan. Waarom dat zo belangrijk is, zie
+je het best aan een voorspeller die niets doet: hij zegt altijd hetzelfde,
+zonder ergens naar te kijken. Toch kan hij een hoge score halen.
+
+## Voorspel
+
+```python
+toets = ["appel", "banaan", "appel", "citroen", "banaan", "citroen"]
+goed = 0
+for echt in toets:
+    voorspeld = "appel"
+    if voorspeld == echt:
+        goed = goed + 1
+print(goed, "van de", len(toets), "goed")
+```
+
+Deze voorspeller zegt over elk stuk fruit `"appel"`. Wat print dit
+programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+2 van de 6 goed
+```
+
+Hij heeft alleen de appels goed. Bij een toets met van elke soort evenveel
+valt een luie voorspeller meteen door de mand.
+
+</details>
+
+## Zo werkt het
+
+Een luie voorspeller zegt altijd de soort die het vaakst voorkomt. Komen alle
+soorten even vaak voor, dan scoort hij slecht. Komt één soort veel vaker voor
+dan de rest, dan scoort hij hoog, terwijl hij niets herkent.
+
+Nieuw in de opdracht: `["kijkt"] * 19` is een lijst met negentien keer
+`"kijkt"`, en met `+` plak je er een tweede lijst achter.
+
+## Bouw zelf: de luie voorspeller
+
+Een webshop wil voorspellen welke bezoekers iets kopen. Van twintig
+bezoekers kocht er één iets. Een luie voorspeller zegt over iedereen
+`"kijkt"`, zonder ergens naar te kijken.
+
+Schrijf code die uitrekent hoeveel procent de luie voorspeller goed heeft,
+en daarna hoeveel van de kopers hij herkent. Begin zo:
+
+```python
+bezoekers = ["kijkt"] * 19 + ["koopt"]
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code, en print `bezoekers` om te zien wat erin staat.
+2. Loop over `bezoekers`. De luie voorspeller zegt bij elke bezoeker `"kijkt"`: zet dat in een variabele `voorspeld`. Tel hoe vaak `voorspeld` gelijk is aan wat de bezoeker echt deed.
+3. Reken dat om naar procenten: deel door `len(bezoekers)`, en vermenigvuldig met 100.
+4. Tel ook hoeveel kopers er zijn, en hoeveel daarvan de voorspeller herkent: bij hoeveel kopers `voorspeld` ook `"koopt"` is.
+
+<PyRunner initialCode={`bezoekers = ["kijkt"] * 19 + ["koopt"]`} />
+
+<details>
+<summary>Tip</summary>
+
+Een koper herkennen zijn twee dingen tegelijk: de bezoeker kocht echt, en de
+voorspeller zei ook `"koopt"`. Dat is een `if` in een `if`, of één `if` met
+`and`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+bezoekers = ["kijkt"] * 19 + ["koopt"]
+
+goed = 0
+kopers = 0
+kopers_herkend = 0
+for echt in bezoekers:
+    voorspeld = "kijkt"
+    if voorspeld == echt:
+        goed = goed + 1
+    if echt == "koopt":
+        kopers = kopers + 1
+        if voorspeld == "koopt":
+            kopers_herkend = kopers_herkend + 1
+
+print(goed / len(bezoekers) * 100, "procent goed")   # 95.0 procent goed
+print(kopers_herkend, "van de", kopers, "kopers herkend")   # 0 van de 1 kopers herkend
+```
+
+95 procent goed, en toch vindt hij geen enkele koper. Als één soort veel
+vaker voorkomt dan de andere, zegt het percentage goed weinig. Kijk dan per
+soort, zoals in de vorige stap. Bij Shopping van CS50 moet je precies dat
+doen; hoe CS50 die twee getallen noemt, lees je in
+[gevoeligheid en specificiteit](site:algorithms/docs/ml-afstand/04-klaar-voor-shopping/05-gevoeligheid-en-specificiteit).
+
+</details>
+
+Door naar [een CSV lezen](site:algorithms/docs/ml-afstand/04-klaar-voor-shopping/01-een-csv-lezen).

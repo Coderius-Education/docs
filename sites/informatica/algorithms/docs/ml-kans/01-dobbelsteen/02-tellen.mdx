@@ -1,0 +1,99 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Tellen"
+---
+
+# Tellen
+
+In de vorige stap gooide je tien keer, en las je de worpen zelf. Bij
+honderden worpen lukt dat niet meer: dan laat je de computer tellen.
+
+## Voorspel
+
+```python
+import random
+
+worpen = 600
+zessen = 0
+for i in range(worpen):
+    if random.randint(1, 6) == 6:
+        zessen = zessen + 1
+
+print(zessen)
+```
+
+Dit programma gooit 600 keer met een dobbelsteen en telt de zessen. Welk
+getal print het?
+
+<details>
+<summary>Antwoord</summary>
+
+Ongeveer 100, want een zes komt gemiddeld één keer op de zes worpen. Precies
+100 is het bijna nooit: de ene keer 93, de andere keer 108.
+
+</details>
+
+## Zo werkt het
+
+`random.randint(1, 6)` geeft een willekeurig getal van 1 tot en met 6, net als
+een dobbelsteen. De loop doet dat `worpen` keer, en telt hoe vaak er een 6
+uitkomt.
+
+Elke keer dat je het draait, gooit de computer opnieuw. Een simulatie geeft
+dus geen exact antwoord, maar een schatting.
+
+## Opdracht: elk getal tellen
+
+Tel niet alleen de zessen, maar elk getal van 1 tot en met 6, in een
+dictionary met de ogen als sleutel. Na 600 worpen print je bijvoorbeeld:
+
+```
+{1: 97, 2: 104, 3: 99, 4: 108, 5: 91, 6: 101}
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij telt de zessen in 600 worpen.
+2. Maak vóór de loop een dictionary `telling = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}`, en print hem na de loop. Alles staat nog op 0.
+3. Bewaar de worp in de loop eerst in een variabele: `ogen = random.randint(1, 6)`. Tel daarna bij elke worp één op bij zijn getal, met `telling[ogen] = telling[ogen] + 1`. Nu zie je de zes getallen in de print.
+4. Haal `zessen` en de `if` weg: de zessen staan nu ook in `telling`.
+
+<PyRunner initialCode={`import random
+
+worpen = 600
+zessen = 0
+for i in range(worpen):
+    if random.randint(1, 6) == 6:
+        zessen = zessen + 1
+
+print(zessen)`} />
+
+<details>
+<summary>Tip</summary>
+
+Bij `telling[ogen] + 1` leest Python eerst hoe vaak `ogen` al gevallen was, en
+telt er één bij op. Daarom moet elk getal er vóór de loop al in staan, met 0.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+worpen = 600
+telling = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+for i in range(worpen):
+    ogen = random.randint(1, 6)
+    telling[ogen] = telling[ogen] + 1
+
+print(telling)
+```
+
+Zo telde het spamfilter de woorden van een bericht: de sleutel is wat je
+telt, en de waarde hoe vaak het voorkwam. Elk getal komt rond de 100 keer.
+
+</details>
+
+Door naar [procenten](site:algorithms/docs/ml-kans/01-dobbelsteen/03-procenten).

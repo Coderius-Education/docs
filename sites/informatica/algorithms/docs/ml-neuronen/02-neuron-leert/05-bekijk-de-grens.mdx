@@ -1,0 +1,136 @@
+---
+sidebar_position: 5
+sidebar_label: "5. Bekijk de grens"
+---
+
+# Bekijk de grens
+
+Je neuron houdt appels en bananen uit elkaar met drie getallen. In deze stap
+zie je wat die drie getallen doen: ze trekken een lijn tussen de appels en de
+bananen.
+
+## Voorspel
+
+```python
+def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+print(neuron([9, 8], [1, -1], 0))
+print(neuron([8, 8], [1, -1], 0))
+print(neuron([7, 8], [1, -1], 0))
+```
+
+Dit is het neuron "langer dan breed" uit de vorige stap. Wat print dit
+programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1
+0
+0
+```
+
+De sommen zijn 1, 0 en -1. Bij 8 bij 8 is de som precies 0: dat stuk fruit
+ligt op de grens, en daar zegt het neuron nog 0.
+
+</details>
+
+## Zo werkt het
+
+Het neuron zegt banaan als de som boven 0 komt, en appel als hij dat niet
+doet. Precies waar de som 0 is, ligt de **grens**: aan de ene kant zegt het
+appel, aan de andere kant banaan. Bij "langer dan breed" ligt alles wat even
+lang als breed is op die grens, en dat is een rechte lijn.
+
+De runner hieronder leert het neuron op het fruit, en tekent daarna de
+voorbeelden en de grens met `teken_grens`. Het tekenen staat in de verborgen
+code onder de editor.
+
+## Opdracht: schuif de grens
+
+Zet nieuwe stukken fruit bij de voorbeelden, en kijk hoe de grens meeschuift.
+Met een appel van 11 bij 7 achteraan de lijst print de runner:
+
+```
+[6, -14] -1
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet het fruit en de grens die het neuron leerde.
+2. Zet achteraan de lijst een appel van 11 bij 7 bij, `([11, 7], 0)`, en draai opnieuw. Hoe schuift de grens?
+3. Zet dezelfde appel als derde in de lijst, na de appel van 9 bij 8. Leert het neuron hetzelfde?
+4. Laat de appel staan, en zet er ook een banaan bij die dicht bij de appels ligt: `([10, 7], 1)`. Lukt het neuron dat nog?
+
+<PyRunner verborgen="fruit-tekenen" initialCode={`def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+fruit = [
+    ([8, 8], 0), ([9, 8], 0), ([7, 7], 0), ([8, 7], 0),
+    ([18, 4], 1), ([20, 4], 1), ([17, 3], 1), ([19, 4], 1),
+]
+gewichten = [0, 0]
+bias = 0
+
+for ronde in range(10):
+    for invoer, doel in fruit:
+        fout = doel - neuron(invoer, gewichten, bias)
+        for i in range(len(invoer)):
+            gewichten[i] = gewichten[i] + fout * invoer[i]
+        bias = bias + fout
+
+print(gewichten, bias)
+teken_grens(fruit, gewichten, bias)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+[11, -16] -1
+```
+
+</details>
+
+<details>
+<summary>Tip</summary>
+
+Bij stap 4: zoek de banaan van 10 bij 7 op het plaatje. Welke twee appels
+liggen er links en rechts van, op dezelfde hoogte? Kan een rechte lijn hem
+van allebei scheiden?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Met de nieuwe appel achteraan leert het neuron `[6, -14]` met bias `-1`, en
+schuift de grens van de appels weg. Zet je hem als derde in de lijst, dan komt
+er iets anders uit, `[9, -27]` met bias `-2`: de volgorde van de voorbeelden
+telt mee bij het leren.
+
+De banaan van 10 bij 7 lukt niet, ook niet met duizend rondes. Hij ligt
+tussen de appel van 8 bij 7 en die van 11 bij 7 in, en geen rechte lijn houdt
+hem van allebei gescheiden. Een banaan van 10 bij 6 lukt wel, en een van
+9 bij 6 pas na honderden rondes.
+
+</details>
+
+Een neuron trekt altijd één rechte lijn.
+Zet je de vier combinaties van "precies één" zo op papier, met de eerste
+invoer naar rechts en de tweede naar boven, dan liggen `0 1` en `1 0` schuin
+tegenover elkaar, en `0 0` en `1 1` ook. Daar past geen rechte lijn tussen, en
+daarom kan één neuron het niet.
+
+Door naar [een functie leer](site:algorithms/docs/ml-neuronen/02-neuron-leert/06-een-functie-leer).

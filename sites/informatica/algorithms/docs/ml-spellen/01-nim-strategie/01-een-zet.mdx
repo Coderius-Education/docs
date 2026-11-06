@@ -1,0 +1,161 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Een zet"
+---
+
+# Een zet
+
+Nim is een spel voor twee spelers met een stapel lucifers. Om de beurt pak je
+er 1, 2 of 3. Wie de laatste lucifer pakt, verliest. Het lijkt een spel van
+geluk, maar wie de truc kent, wint altijd als hij goed begint. In dit project
+zet je die truc in een functie, en laat je hem spelen tegen een speler die
+maar wat doet. Je begint met het pakken zelf: zet na zet, tot de stapel op is.
+
+:::info
+Je gebruikt in dit project de while-loop uit
+[De while-loop](site:python/docs/herhalen/while-loop), `%` uit
+[Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest),
+`random.randint` uit
+[een worp](site:algorithms/docs/ml-kans/01-dobbelsteen/01-een-worp), en
+functies met `return` uit
+[Return-waarden](site:python/docs/functies/09b-return), zoals `voorspel` uit
+[een functie voorspel](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur/03-een-functie-voorspel).
+:::
+
+## Voorspel
+
+```python
+stapel = 10
+while stapel > 0:
+    pak = 3
+    if stapel < 3:
+        pak = stapel
+    stapel = stapel - pak
+    print("pak", pak, "en laat", stapel, "liggen")
+```
+
+Je pakt steeds 3, of de rest als er minder dan 3 liggen. Wat print
+dit programma? En hoe vaak draait de loop?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+pak 3 en laat 7 liggen
+pak 3 en laat 4 liggen
+pak 3 en laat 1 liggen
+pak 1 en laat 0 liggen
+```
+
+De loop draait vier keer. De laatste keer ligt er nog 1 lucifer, en dan
+pak je die ene.
+
+</details>
+
+## Zo werkt het
+
+Een `while`-loop herhaalt zolang de voorwaarde waar is. Hier is dat zolang er
+lucifers liggen. Een `for`-loop past niet: je weet vooraf niet hoeveel beurten
+het spel duurt. De `if` zorgt dat je nooit meer pakt dan er ligt.
+
+:::caution
+Een while-loop stopt pas als de voorwaarde onwaar wordt. Vergeet je in de loop
+de stapel kleiner te maken, dan blijven er altijd lucifers liggen en stopt hij
+nooit. De speeltuin heeft geen stopknop, dus het tabblad loopt vast: herlaad de
+pagina, en je code is weg. Twijfel je of je loop stopt, druk dan eerst op Stap
+voor stap. Die neemt hoogstens 1000 stappen op.
+:::
+
+## Onderzoek
+
+1. Draai de code. Klopt je voorspelling?
+2. Begin met 11 lucifers. Hoe vaak draait de loop nu?
+3. Haal de `if` en de regel eronder weg. Wat print de laatste regel nu? En
+   waarom stopt de loop toch?
+
+<PyRunner initialCode={`stapel = 10
+while stapel > 0:
+    pak = 3
+    if stapel < 3:
+        pak = stapel
+    stapel = stapel - pak
+    print("pak", pak, "en laat", stapel, "liggen")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Ja, als je vier regels voorspelde, met als laatste `pak 1 en laat 0 liggen`.
+2. Ook vier keer: je pakt 3, 3 en 3, en dan de laatste 2.
+3. `pak 3 en laat -2 liggen`. De stapel springt van 1 naar -2, en -2 is niet
+   groter dan 0, dus de loop stopt. Maar je pakte 3 lucifers terwijl er
+   maar 1 lag.
+
+</details>
+
+## Opdracht: tel de beurten
+
+Een speler pakt steeds 2 lucifers van een stapel van 11, of de rest als er
+minder liggen. Laat zien hoeveel er na elke zet liggen, en hoeveel beurten
+het duurt tot de stapel op is:
+
+```
+er liggen nog 9
+er liggen nog 7
+er liggen nog 5
+er liggen nog 3
+er liggen nog 1
+er liggen nog 0
+6 beurten
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: de speler pakt één keer 2.
+2. Zet het pakken en de print in een while-loop die doorgaat zolang `stapel > 0`. Kijk naar de laatste regel: daar gaat iets mis.
+3. Zorg dat de speler nooit meer pakt dan er ligt. Nu eindigt de stapel op 0.
+4. Zet vóór de loop `beurten = 0`, tel er in de loop 1 bij op, en print na de loop hoeveel beurten het waren.
+
+<PyRunner initialCode={`stapel = 11
+stapel = stapel - 2
+print("er liggen nog", stapel)`} />
+
+<details>
+<summary>Tip</summary>
+
+Bij stap 3: maak van de 2 eerst een variabele `pak`. Dan kun je met een `if`
+kijken of er genoeg liggen, en `pak` kleiner maken als dat niet zo is.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+stapel = 11
+beurten = 0
+while stapel > 0:
+    pak = 2
+    if stapel < 2:
+        pak = stapel
+    stapel = stapel - pak
+    beurten = beurten + 1
+    print("er liggen nog", stapel)
+print(beurten, "beurten")
+```
+
+```
+er liggen nog 9
+er liggen nog 7
+er liggen nog 5
+er liggen nog 3
+er liggen nog 1
+er liggen nog 0
+6 beurten
+```
+
+De print van `beurten` staat na de loop, niet erin: anders zie je hem na
+elke zet.
+
+</details>
+
+Door naar [om de beurt](site:algorithms/docs/ml-spellen/01-nim-strategie/02-om-de-beurt).

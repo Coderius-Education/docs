@@ -1,0 +1,121 @@
+---
+sidebar_position: 8
+sidebar_label: "8. Aan de slag met Nim"
+---
+
+# Aan de slag met Nim
+
+De muis heeft een tabel `q`, een leertempo, een beste toekomst en een keuze
+met ontdekken, allemaal in één klasse. Dat is precies de vorm van het project
+Nim van CS50 AI. Nieuw is alleen nog hoe je een stand van vier stapels als
+sleutel gebruikt: met `tuple`.
+
+## Voorspel
+
+```python
+stand = [1, 3, 5, 7]
+q = {}
+q[(tuple(stand), (3, 2))] = 0.5
+print(tuple(stand))
+print(q[((1, 3, 5, 7), (3, 2))])
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+(1, 3, 5, 7)
+0.5
+```
+
+`tuple(stand)` maakt van de lijst een tuple met dezelfde getallen. Die mag
+wel een sleutel zijn, en je vindt hem terug met een tuple die dezelfde
+getallen heeft.
+
+</details>
+
+## Zo werkt het
+
+`tuple(lijst)` is nieuw: het maakt een tuple met dezelfde waarden als de
+lijst. Een lijst kan geen sleutel zijn, zie
+[een score per zet](site:algorithms/docs/ml-spellen/02-nim-leert/01-een-score-per-zet#zo-werkt-het),
+een tuple wel.
+
+De klasse van CS50 heeft dezelfde onderdelen als de muis, met Engelse namen:
+
+| De muis | Nim bij CS50 |
+|:---:|:---:|
+| `Muis` | `NimAI` |
+| `self.q` | `self.q` |
+| `self.tempo` | `self.alpha` |
+| `waarde(vakje, actie)` | `get_q_value(state, action)` |
+| `bijwerken(vakje, actie, oud, beloning, toekomst)` | `update_q_value(state, action, old_q, reward, future_rewards)` |
+| `beste_toekomst(vakje)` | `best_future_reward(state)` |
+| `kies(vakje, ontdekken)` | `choose_action(state, epsilon)` |
+| `leer` | `update`, staat al klaar |
+| `wandel` | `train`, staat al klaar |
+| `route` | `play`, staat al klaar |
+
+## Aan de slag met Nim
+
+Nu ben je klaar voor [Nim](https://cs50.harvard.edu/ai/projects/4/nim/) van
+CS50 AI. Het idee is wat je bij Nim die leert en bij de muis deed: een tabel
+met een waarde voor elke stand en elke zet, meestal de beste zet spelen en
+soms een willekeurige, en na elke zet de waarde bijwerken met het leertempo
+en de beste toekomst. Dit is anders:
+
+- Er zijn vier stapels in plaats van één, en je mag van één stapel zoveel
+  pakken als je wilt. Een zet is dus een tuple: welke stapel, en hoeveel.
+- Welke zetten er mogen, hangt van de stand af, net als `mogelijk(stapel)`
+  bij Nim die leert. De muis had altijd dezelfde twee acties. Het spel van
+  CS50 geeft je de zetten die mogen; loop daaroverheen, zoals `kies` over
+  `acties` liep.
+- Een stand is een lijst van vier getallen. Als sleutel moet het een tuple
+  zijn: met `tuple(stand)` maak je er een van. Vergeet je dat, dan krijg je
+  de fout hieronder.
+- Een gewone zet kost niets. Alleen aan het eind van een spel komt er een
+  beloning: -1 voor de zet die verloor, en 1 voor de zet van de winnaar
+  daarvoor. Dat regelt de code die al klaarstaat.
+- Kan er in een stand geen enkele zet meer, dan is de beste toekomst 0. Bij
+  de muis ging dat vanzelf, omdat de val en de kaas nooit in de tabel kwamen.
+- Het spel en het trainen staan al klaar. Jij schrijft de functies die de
+  tabel lezen, bijwerken, de beste toekomst geven en een zet kiezen.
+
+Lees de opdracht helemaal door voordat je begint, en kijk in de code die je
+krijgt hoe een stand en een zet eruitzien. Kijk ook hoe de code de kans op
+ontdekken meegeeft: dat gaat bij CS50 net iets anders dan bij `kies`.
+
+Een computer kan een spel ook zonder te leren goed spelen: door alle zetten
+vooruit door te rekenen. Dat doet minimax, en daarmee win je bij
+Tic-Tac-Toe van CS50.
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+TypeError: unhashable type: 'list'
+```
+
+**Oorzaak:** de sleutel is een tuple met een lijst erin. De stand is een
+lijst, en ook binnen een tuple mag een sleutel geen lijst bevatten.
+
+**Oplossing:** maak van de stand eerst een tuple.
+
+```python
+# FOUT
+stand = [1, 3, 5, 7]
+q = {}
+q[(stand, (3, 2))] = 0.5
+
+# GOED
+stand = [1, 3, 5, 7]
+q = {}
+q[(tuple(stand), (3, 2))] = 0.5
+```
+
+Meer uitleg: [Zo werkt het](#zo-werkt-het).
+
+Door naar [minimax](site:algorithms/docs/minimax/01-concept), en daarna naar
+[een raster](site:algorithms/docs/ml-zoeken/01-buren/01-een-raster).

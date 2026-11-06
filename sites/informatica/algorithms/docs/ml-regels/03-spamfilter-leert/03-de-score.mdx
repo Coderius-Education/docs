@@ -1,0 +1,124 @@
+---
+sidebar_position: 3
+sidebar_label: "3. De score"
+---
+
+# De score
+
+Je hebt twee tellingen. Daarmee beslist het filter over een nieuw bericht.
+Per woord telt het op hoe vaak dat woord in spam voorkwam, en trekt het af
+hoe vaak het in gewone berichten voorkwam.
+
+## Voorspel
+
+```python
+spam = {"klik": 2, "prijs": 1, "nu": 2}
+gewoon = {"je": 3, "nu": 1}
+
+score = 0
+for woord in "klik nu".split():
+    if woord in spam:
+        score = score + spam[woord]
+    if woord in gewoon:
+        score = score - gewoon[woord]
+print("score:", score)
+```
+
+Welke score krijgt het bericht `"klik nu"`?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+score: 3
+```
+
+`klik` geeft +2. `nu` staat in allebei: +2 uit spam en -1 uit de gewone
+berichten.
+
+</details>
+
+## Zo werkt het
+
+Komt de score boven 0 uit, dan lijkt het bericht meer op spam dan op de
+gewone berichten. De drempel is hier dus 0, en die kies je niet zelf: de
+voorbeelden bepalen hoe hoog de score wordt.
+
+Met de tellingen uit de vorige stap geeft het bericht
+`"klik hier voor je prijs"` score 2: spam. `klik`, `hier`, `voor` en `prijs`
+kwamen samen vijf keer voor in spam, en `je` kwam drie keer voor in gewone
+berichten. Vijf min drie is twee.
+
+## Opdracht: laat het filter beslissen
+
+Reken de score uit voor `"klik hier voor je prijs"`, en laat het filter
+beslissen. De uitvoer wordt:
+
+```
+score: 2
+spam
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: score 5. Het filter telt nu alleen de spam.
+2. Zet in de loop een tweede `if` die de gewone telling van het woord van de score aftrekt. Nu is de score 2.
+3. Zet onder de `print` een `if` en een `else`: is de score groter dan 0, print dan `spam`, en anders `geen spam`.
+4. Verander het bericht in `"zie je morgen"`. Nu zegt het filter `geen spam`.
+
+<PyRunner initialCode={`spam = {"win": 1, "nu": 2, "gratis": 2, "geld": 2, "prijs": 1, "klik": 2, "hier": 1, "voor": 1}
+gewoon = {
+    "zie": 1, "je": 3, "morgen": 1, "op": 1, "school": 2, "heb": 1,
+    "het": 1, "huiswerk": 1, "al": 1, "kom": 1, "nu": 1, "naar": 1,
+}
+
+bericht = "klik hier voor je prijs"
+score = 0
+for woord in bericht.split():
+    if woord in spam:
+        score = score + spam[woord]
+print("score:", score)`} />
+
+<details>
+<summary>Tip</summary>
+
+Aftrekken gaat net als optellen, met een min in plaats van een plus. Gebruik
+een tweede `if` en geen `elif`, want een woord kan in allebei staan.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+spam = {"win": 1, "nu": 2, "gratis": 2, "geld": 2, "prijs": 1, "klik": 2, "hier": 1, "voor": 1}
+gewoon = {
+    "zie": 1, "je": 3, "morgen": 1, "op": 1, "school": 2, "heb": 1,
+    "het": 1, "huiswerk": 1, "al": 1, "kom": 1, "nu": 1, "naar": 1,
+}
+
+bericht = "klik hier voor je prijs"
+score = 0
+for woord in bericht.split():
+    if woord in spam:
+        score = score + spam[woord]
+    if woord in gewoon:
+        score = score - gewoon[woord]
+print("score:", score)
+if score > 0:
+    print("spam")
+else:
+    print("geen spam")
+```
+
+```
+score: 2
+spam
+```
+
+Bij `"zie je morgen"` wordt de score -5: alle drie de woorden komen alleen in
+gewone berichten voor.
+
+</details>
+
+Door naar [wat telt het zwaarst](site:algorithms/docs/ml-regels/03-spamfilter-leert/04-wat-telt-het-zwaarst).

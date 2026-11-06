@@ -3,6 +3,7 @@ import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { ML_MAPPEN } from '../lib/mlSidebar';
+import { routeBestand, projecten as routeProjecten } from './ml-route';
 
 // Een project van de route machine learning noemt in zijn :::info de Python
 // die het gebruikt: "`random.choice` uit [een les](site:…)". Bij de review
@@ -42,6 +43,11 @@ function kern(term: string): string {
 }
 
 const projecten = bestanden(DOCS).filter((p) => /\/ml-[a-z]+\//.test(p));
+const eersteStappen = new Set(
+  routeProjecten()
+    .filter((p) => p.stappen.length > 0)
+    .map((p) => routeBestand(p.stappen[0])),
+);
 
 describe('de :::info van een project belooft niets wat de les niet geeft', () => {
   it('er zijn projecten om te controleren', () => {
@@ -53,7 +59,10 @@ describe('de :::info van een project belooft niets wat de les niet geeft', () =>
       const tekst = readFileSync(pad, 'utf8');
       const info = tekst.match(/^:::info\n([\s\S]*?)\n:::/m)?.[1] ?? '';
       // Zonder blok, of met een titel achter :::info, slaagde de test stil.
-      expect(info.length, 'het project heeft een :::info zonder titel').toBeGreaterThan(0);
+      // De eerste stap van een project noemt de Python die het project
+      // gebruikt; een latere stap mag een eigen blok hebben, maar hoeft niet.
+      if (eersteStappen.has(pad))
+        expect(info.length, 'de eerste stap heeft een :::info zonder titel').toBeGreaterThan(0);
       const fout: string[] = [];
       let vorige = 0;
       for (const m of info.matchAll(/uit\s+\[[^\]]*\]\(site:([^)#]+)(?:#[^)]*)?\)/g)) {

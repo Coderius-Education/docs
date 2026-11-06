@@ -1,0 +1,149 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Een CSV lezen"
+---
+
+# Een CSV lezen
+
+[Shopping](https://cs50.harvard.edu/ai/projects/4/shopping/) is een project
+uit CS50 AI, de gratis AI-cursus van Harvard. Je krijgt de gegevens van
+duizenden bezoeken aan een webshop, en je bouwt een voorspeller die zegt of
+een bezoeker iets gaat kopen. Het project is in het Engels, en je maakt het
+op je eigen computer.
+
+Het meeste ken je al: de voorspeller is k-NN, en het beoordelen per soort
+deed je bij eerlijk testen. Nieuw is dat de gegevens in een CSV-bestand
+staan, en dat de voorspeller uit een bibliotheek komt, scikit-learn. In dit
+project oefen je dat in je browser, met een paar regels van een eigen
+webshop. Je begint met het lezen.
+
+:::info
+Je gebruikt hier `import` uit [Modules](site:python/docs/modules/09d-modules),
+`int()` en `float()` uit [Tekst naar getal](site:python/docs/basis/03b-tekst-naar-getal),
+een dictionary om op te zoeken uit
+[Dictionaries](site:python/docs/data/11a-dictionaries-basis), `with open`
+uit [Een tekstbestand lezen](site:python/docs/bestanden/14b-tekstbestand-lezen),
+en `voorspel(nieuw, voorbeelden, k)` uit
+[laat de buren stemmen](site:algorithms/docs/ml-afstand/02-k-buren/03-de-winnaar#opdracht-voorspel-met-k).
+:::
+
+## Voorspel
+
+```python
+import csv
+
+regels = [
+    "maand,paginas,terugkerend,gekocht",
+    "Feb,3,TRUE,FALSE",
+    "Mar,12,FALSE,TRUE",
+]
+
+lezer = csv.reader(regels)
+next(lezer)
+for rij in lezer:
+    print(rij)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+['Feb', '3', 'TRUE', 'FALSE']
+['Mar', '12', 'FALSE', 'TRUE']
+```
+
+De kopregel print hij niet: `next(lezer)` slaat die over.
+
+</details>
+
+## Zo werkt het
+
+Een **CSV-bestand** is een tabel als tekst: elke regel is een rij, en de
+komma's scheiden de kolommen. De eerste regel heeft de namen van de
+kolommen. `csv.reader` knipt elke regel op de komma's in een lijst.
+
+`next(lezer)` pakt de volgende rij. Doe je dat één keer vóór de loop, dan
+sla je de kopregel over.
+
+Hier lees je uit een lijst regels. Op je eigen computer lees je op dezelfde
+manier uit een bestand:
+
+{/* niet-draaien: leest een bestand van de computer van de leerling */}
+```python
+import csv
+
+with open("shopping.csv") as bestand:
+    lezer = csv.reader(bestand)
+    next(lezer)
+    for rij in lezer:
+        print(rij)
+```
+
+## Opdracht: tel de kopers
+
+Tel hoeveel bezoekers iets kochten. Dat staat in de laatste kolom,
+`gekocht`. Met de regels in de editor print je:
+
+```
+2 van de 4 bezoekers kochten iets
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print elke rij als een lijst teksten.
+2. Print in de loop alleen de laatste kolom: `rij[3]`.
+3. Tel met een `if` hoe vaak `rij[3]` gelijk is aan `"TRUE"`. Tel ook alle bezoekers, en print na de loop een zin zoals hierboven.
+
+<PyRunner initialCode={`import csv
+
+regels = [
+    "maand,paginas,terugkerend,gekocht",
+    "Feb,3,TRUE,FALSE",
+    "Mar,12,FALSE,TRUE",
+    "Mar,1,FALSE,FALSE",
+    "Nov,25,TRUE,TRUE",
+]
+
+lezer = csv.reader(regels)
+next(lezer)
+for rij in lezer:
+    print(rij)`} />
+
+<details>
+<summary>Tip</summary>
+
+In stap 1 zag je `'TRUE'` met aanhalingstekens. Is dat de waarde `True`, of
+iets anders?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder de lijst `regels`:
+
+{/* draaien-met: blok-erboven */}
+```python
+lezer = csv.reader(regels)
+next(lezer)
+kopers = 0
+bezoekers = 0
+for rij in lezer:
+    bezoekers = bezoekers + 1
+    if rij[3] == "TRUE":
+        kopers = kopers + 1
+print(kopers, "van de", bezoekers, "bezoekers kochten iets")
+```
+
+```
+2 van de 4 bezoekers kochten iets
+```
+
+Vergelijk je met `True` zonder aanhalingstekens, dan telt hij 0 kopers:
+alles wat uit een CSV komt, is tekst.
+
+</details>
+
+Door naar [tekst naar getallen](site:algorithms/docs/ml-afstand/04-klaar-voor-shopping/02-tekst-naar-getallen).

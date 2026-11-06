@@ -1,0 +1,165 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Tegen het toeval"
+---
+
+# Tegen het toeval
+
+`slim` kent de truc. Nu krijgt hij een tegenstander die maar wat doet:
+`willekeurig` pakt 1, 2 of 3, en nooit meer dan er ligt. Nieuw zijn `min`, en
+een functie die een heel spel speelt en de winnaar teruggeeft.
+
+:::info
+Je gebruikt hier `random.randint` uit
+[een worp](site:algorithms/docs/ml-kans/01-dobbelsteen/01-een-worp).
+:::
+
+## Voorspel
+
+```python
+stapel = 2
+print(min(3, stapel))
+stapel = 10
+print(min(3, stapel))
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+2
+3
+```
+
+`min` geeft het kleinste van de twee getallen: bij 2 lucifers is dat 2, bij
+10 lucifers is dat 3.
+
+</details>
+
+## Zo werkt het
+
+`min(3, stapel)` is nieuw. Het geeft het kleinste van de twee getallen terug.
+In `willekeurig` staat het als bovengrens: `random.randint(1, min(3, stapel))`
+kiest een getal van 1 tot en met 3, maar nooit meer dan er ligt.
+
+Een spel van `slim` tegen `willekeurig` is wat Anna en Bob deden, met een
+functie in plaats van een vaste 3. Is de stapel op, dan heeft de ander net de
+laatste lucifer gepakt. Wie dan aan de beurt is, wint.
+
+## Onderzoek
+
+1. Draai de code een paar keer. Welke getallen zie je in de eerste kolom, en
+   welke in de tweede?
+2. Verander `min(3, stapel)` in `3`. Wat kan er bij 2 lucifers nu misgaan?
+3. Hoe vaak verwacht je een 3 in de tweede kolom, als je de loop 300 keer laat
+   draaien?
+
+<PyRunner initialCode={`import random
+
+def willekeurig(stapel):
+    return random.randint(1, min(3, stapel))
+
+for keer in range(10):
+    print(willekeurig(2), willekeurig(10))`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. In de eerste kolom alleen 1 en 2, want bij 2 lucifers kan hij er niet
+   meer pakken. In de tweede kolom 1, 2 en 3.
+2. Dan pakt `willekeurig` soms 3 lucifers terwijl er maar 2 liggen. In een
+   spel zakt de stapel dan onder 0.
+3. Ongeveer 100 keer: 1, 2 en 3 zijn even waarschijnlijk, dus elk komt in
+   ongeveer een derde van de keren.
+
+</details>
+
+## Opdracht: slim tegen het toeval
+
+Laat `slim` en `willekeurig` om de beurt pakken van een stapel van 10, met
+`slim` als eerste. Speel 100 spellen, en tel hoe vaak `slim` wint:
+
+```
+slim wint 100 van de 100
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `slim` doet één zet.
+2. Zet de zet in een while-loop met een variabele `beurt`, zoals `speler` bij Anna en Bob. Is `beurt` gelijk aan `"slim"`, dan pakt `slim`, en anders `willekeurig`. Print na elke zet de stapel.
+3. Maak er een functie `speel(stapel)` van die `beurt` teruggeeft als de stapel op is, en haal de print uit de loop. Print `speel(10)`.
+4. Speel 100 spellen, en tel hoe vaak `speel(10)` `"slim"` teruggeeft.
+
+:::caution
+Je `speel` heeft een while-loop. Wordt de stapel niet in elke beurt kleiner,
+dan stopt hij nooit en loopt het tabblad vast, net als bij
+[een zet](site:algorithms/docs/ml-spellen/01-nim-strategie/01-een-zet#zo-werkt-het).
+Kopieer je code eerst naar een kladblok.
+:::
+
+<PyRunner initialCode={`import random
+
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+def willekeurig(stapel):
+    return random.randint(1, min(3, stapel))
+
+stapel = 10
+stapel = stapel - slim(stapel)
+print("slim laat", stapel, "liggen")`} />
+
+<details>
+<summary>Tip</summary>
+
+Geeft `speel` steeds `None`? Dan staat `return beurt` in de loop, of hij
+ontbreekt. Hij hoort na de loop, op dezelfde inspringing als `while`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+def willekeurig(stapel):
+    return random.randint(1, min(3, stapel))
+
+def speel(stapel):
+    beurt = "slim"
+    while stapel > 0:
+        if beurt == "slim":
+            stapel = stapel - slim(stapel)
+            beurt = "willekeurig"
+        else:
+            stapel = stapel - willekeurig(stapel)
+            beurt = "slim"
+    return beurt
+
+gewonnen = 0
+for spel in range(100):
+    if speel(10) == "slim":
+        gewonnen = gewonnen + 1
+print("slim wint", gewonnen, "van de 100")   # slim wint 100 van de 100
+```
+
+`speel` geeft terug wie er aan de beurt is als de stapel op is. Dat is de
+winnaar: de ander pakte net de laatste lucifer. Bij 10 lucifers pakt `slim`
+er 1 en laat hij er 9 liggen. Daarna houdt hij dat vol, wat `willekeurig`
+ook doet.
+
+</details>
+
+Door naar [pakken tot en met 4](site:algorithms/docs/ml-spellen/01-nim-strategie/05-pakken-tot-en-met-4).

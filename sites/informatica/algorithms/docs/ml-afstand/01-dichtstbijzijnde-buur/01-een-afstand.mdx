@@ -1,0 +1,185 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Een afstand"
+---
+
+# Een afstand
+
+Je krijgt een stuk fruit en je weet niet wat het is. Je meet hoe lang en hoe
+breed het is, in centimeters. Daarna zoek je in je lijst voorbeelden het fruit
+dat er het meest op lijkt, en je zegt dat het dezelfde soort is. Dat heet
+**de dichtstbijzijnde buur**, en het is een van de eenvoudigste manieren
+waarop een computer leert voorspellen. In deze stap meet je eerst hoeveel twee
+stukken fruit verschillen: hun afstand.
+
+:::info
+Je gebruikt hier tuples uit [Tuples](site:python/docs/data/tuples), functies
+met `return` uit [Return-waarden](site:python/docs/functies/09b-return), en het
+patroon "onthoud de beste tot nu toe" uit
+[Vind het maximum](site:algorithms/docs/vind-maximum/01-concept).
+:::
+
+## Voorspel
+
+```python
+def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+print(afstand((8, 8), (10, 7)))
+print(afstand((18, 4), (10, 7)))
+```
+
+`abs` maakt van een getal een positief getal: `abs(-2)` is `2`. Wat print
+dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+11
+```
+
+Bij `(8, 8)` en `(10, 7)`: de lengte scheelt 2, de breedte scheelt 1, samen
+3. Bij `(18, 4)` en `(10, 7)`: 8 en 3, samen 11.
+
+</details>
+
+## Zo werkt het
+
+Elk stuk fruit is een tuple `(lengte, breedte)`. Met `a[0]` pak je de lengte,
+met `a[1]` de breedte. De functie `afstand` telt op hoeveel de lengtes en de
+breedtes schelen, en geeft dat met `return` terug. Hoe kleiner de afstand,
+hoe meer twee stukken fruit op elkaar lijken.
+
+`abs` is nieuw. Zonder `abs` kan een verschil negatief zijn, en dan valt het
+weg tegen een ander verschil.
+
+## Onderzoek
+
+1. Draai de code. Welk stuk fruit lijkt het meest op `(10, 7)`?
+2. Is `afstand(appel, banaan)` hetzelfde als `afstand(banaan, appel)`?
+3. Wat is de afstand van een stuk fruit tot zichzelf?
+4. Haal beide keren `abs` weg, zodat er `(a[0] - b[0]) + (a[1] - b[1])`
+   staat. Wat is nu de afstand van `(8, 8)` tot `(10, 6)`?
+
+<PyRunner initialCode={`def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+appel = (8, 8)
+banaan = (18, 4)
+nieuw = (10, 7)
+
+print(afstand(nieuw, appel))
+print(afstand(nieuw, banaan))
+print(afstand(appel, banaan))
+print(afstand(banaan, appel))
+print(afstand(appel, appel))
+print(afstand((8, 8), (10, 6)))`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. De appel: afstand 3, tegen 11 voor de banaan.
+2. Ja, allebei 14. Het maakt niet uit welke van de twee je eerst noemt.
+3. 0. Niets scheelt, dus elk stuk fruit is zijn eigen dichtstbijzijnde buur.
+   Dat komt terug bij [eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen/01-oefenen-en-toetsen).
+4. 0, terwijl de twee wel verschillen. De lengte scheelt -2 en de breedte +2,
+   en die vallen tegen elkaar weg. Met `abs` is het 4.
+
+</details>
+
+## Opdracht: hoe ver is elk voorbeeld?
+
+Je hebt een lijst voorbeelden: tuples van een maat en een soort, zoals
+`((8, 8), "appel")`. Print bij elk voorbeeld de soort en de afstand tot
+`nieuw`:
+
+```
+appel 3
+appel 2
+appel 3
+banaan 11
+banaan 13
+banaan 11
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print elk voorbeeld als een tuple.
+2. Pak elk voorbeeld uit in twee variabelen, met `for maten, soort in voorbeelden`, en print `soort` en `maten`.
+3. Print in plaats van `maten` de afstand: `afstand(nieuw, maten)`.
+
+<PyRunner initialCode={`def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+voorbeelden = [
+    ((8, 8), "appel"),
+    ((9, 8), "appel"),
+    ((7, 7), "appel"),
+    ((18, 4), "banaan"),
+    ((20, 4), "banaan"),
+    ((17, 3), "banaan"),
+]
+nieuw = (10, 7)
+
+for voorbeeld in voorbeelden:
+    print(voorbeeld)`} />
+
+<details>
+<summary>Tip</summary>
+
+Een voorbeeld is zelf een tuple met twee dingen erin. Staan er na `for` twee
+namen met een komma ertussen, dan krijgt de eerste naam het eerste ding en de
+tweede naam het tweede.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de loop onderaan de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+for maten, soort in voorbeelden:
+    print(soort, afstand(nieuw, maten))
+```
+
+```
+appel 3
+appel 2
+appel 3
+banaan 11
+banaan 13
+banaan 11
+```
+
+De tweede appel, `(9, 8)`, ligt het dichtst bij. In de volgende stap laat je
+de computer die zelf vinden.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: afstand = lambda a, b: abs(a[0] - b[0]) + abs(a[1] - b[1])\nafstand(10, (9, 8)) */}
+```
+TypeError: 'int' object is not subscriptable
+```
+
+**Oorzaak:** je gaf `afstand` een los getal in plaats van een tuple, zoals
+`afstand(10, (9, 8))`. In de functie staat `a[0]`, maar van het getal 10 kun
+je geen eerste element pakken.
+
+**Oplossing:** geef beide maten mee als tuple, met haakjes eromheen.
+
+{/* niet-draaien: fragment; afstand staat in de runner erboven */}
+```python
+# FOUT
+afstand(10, (9, 8))
+
+# GOED
+afstand((10, 7), (9, 8))
+```
+
+Door naar [de dichtstbijzijnde](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur/02-de-dichtstbijzijnde).

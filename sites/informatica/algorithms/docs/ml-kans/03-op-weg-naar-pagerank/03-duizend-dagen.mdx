@@ -1,0 +1,149 @@
+---
+sidebar_position: 3
+sidebar_label: "3. Duizend dagen"
+---
+
+# Duizend dagen
+
+Je koos in de vorige stap duizend keer het weer na een zonnige dag. Maar in
+een echte reeks dagen is het niet elke dag zonnig geweest: morgen hangt af van
+het weer dat je net koos. Zo maak je een reeks van duizend dagen, en tel je
+hoe vaak elk weer voorkomt.
+
+## Voorspel
+
+```python
+import random
+
+kansen = {"zon": 0.5, "wolken": 0.3, "regen": 0.2}
+telling = {"zon": 0, "wolken": 0, "regen": 0}
+for dag in range(1000):
+    morgen = random.choices(list(kansen), weights=list(kansen.values()))[0]
+    telling[morgen] = telling[morgen] + 1
+print(telling)
+```
+
+Dit is het antwoord van de vorige stap. Is dit een goede simulatie van het
+weer van duizend dagen achter elkaar?
+
+<details>
+<summary>Antwoord</summary>
+
+Nee. Hij kiest elke dag met de kansen na een zonnige dag, ook als het de dag
+ervoor regende. Wat er gisteren gebeurde, telt niet mee.
+
+</details>
+
+## Zo werkt het
+
+In een reeks dagen kies je elke dag met de kansen van het weer van gisteren:
+
+{/* niet-draaien: fragment; leunt op model en weer uit de editor */}
+```python
+kansen = model[weer]
+weer = random.choices(list(kansen), weights=list(kansen.values()))[0]
+```
+
+Het gekozen weer wordt de volgende dag het weer van gisteren. Dat deed de
+surfer ook, met `pagina = random.choice(web[pagina])`. Tel je daarna hoe vaak
+elk weer voorkwam, dan heb je een **steekproef**: een schatting van hoe vaak
+het op de lange duur zonnig is.
+
+## Onderzoek
+
+1. Draai de code een paar keer. Zie je zonnige periodes van een paar dagen?
+2. Begin op `"regen"` in plaats van `"zon"`. Wat zie je in de eerste dagen?
+3. Zet in het model bij regen de kans op regen op 0.9, en die op zon en wolken
+   op 0.05. Wat zie je nu?
+
+<PyRunner initialCode={`import random
+
+model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.4},
+}
+
+weer = "zon"
+for dag in range(10):
+    kansen = model[weer]
+    weer = random.choices(list(kansen), weights=list(kansen.values()))[0]
+    print("dag", dag + 1, weer)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Ja, vaak twee of drie dagen zon achter elkaar: na zon is de kans op zon 0,5.
+2. Vaker wolken en regen. Na een paar dagen zie je het verschil met de start
+   niet meer.
+3. Lange periodes van regen. Is het eenmaal gaan regenen, dan houdt het zelden
+   op.
+
+</details>
+
+## Opdracht: duizend dagen
+
+Maak een reeks van 1000 dagen, tel hoe vaak elk weer voorkomt, en print per
+weer welk deel van de dagen het was. Bijvoorbeeld:
+
+```
+zon 0.341
+wolken 0.37
+regen 0.289
+```
+
+Maakt het uit of je op zon of op regen begint?
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij kiest het weer van één dag na een zonnige dag.
+2. Zet de twee regels met `kansen` en `weer` in een loop van 1000 dagen, en tel elke dag met `telling[weer] = telling[weer] + 1`. Print `telling` na de loop.
+3. Loop na de dagen met `for w in telling:` langs het weer, en print per weer `telling[w] / 1000`.
+4. Begin op `"regen"` in plaats van `"zon"`, en vergelijk.
+
+<PyRunner initialCode={`import random
+
+model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.4},
+}
+telling = {"zon": 0, "wolken": 0, "regen": 0}
+
+weer = "zon"
+kansen = model[weer]
+weer = random.choices(list(kansen), weights=list(kansen.values()))[0]
+print(weer)`} />
+
+<details>
+<summary>Tip</summary>
+
+Zie je bijna 0,5 zon, 0,3 wolken en 0,2 regen? Dan kies je elke dag na zon.
+Kijk of `weer = "zon"` boven de loop staat, en niet erin.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles vanaf `weer = "zon"` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+weer = "zon"
+for dag in range(1000):
+    kansen = model[weer]
+    weer = random.choices(list(kansen), weights=list(kansen.values()))[0]
+    telling[weer] = telling[weer] + 1
+
+for w in telling:
+    print(w, telling[w] / 1000)
+```
+
+Je komt rond de 0,34 zon, 0,37 wolken en 0,30 regen uit, of je nu op zon of
+op regen begint. Na een paar dagen is het model zijn begin vergeten. Zo werkt
+het ook bij de surfer: waar hij begint, maakt voor zijn PageRank niets uit.
+
+</details>
+
+Door naar [kansen mengen](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/04-kansen-mengen).

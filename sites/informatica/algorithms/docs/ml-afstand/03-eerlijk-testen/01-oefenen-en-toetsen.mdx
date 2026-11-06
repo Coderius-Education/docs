@@ -1,0 +1,123 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Oefenen en toetsen"
+---
+
+# Oefenen en toetsen
+
+Je voorspeller werkt. Maar hoe goed is hij? Dat lijkt makkelijk te meten:
+laat hem de voorbeelden voorspellen en tel hoeveel hij er goed heeft. In deze
+stap zie je waarom dat een oneerlijke toets is, en hoe je de voorbeelden
+eerlijk verdeelt.
+
+:::info
+Je gebruikt hier `voorspel(nieuw, voorbeelden, k)` uit
+[laat de buren stemmen](site:algorithms/docs/ml-afstand/02-k-buren/03-de-winnaar#opdracht-voorspel-met-k).
+Die functie staat in de code hieronder al klaar: klap onder de editor de
+verborgen code open om hem te lezen. Je gebruikt ook slicing uit
+[de buren sorteren](site:algorithms/docs/ml-afstand/02-k-buren/01-de-buren-sorteren),
+en `import` uit [Modules](site:python/docs/modules/09d-modules).
+:::
+
+## Voorspel
+
+Een leerling krijgt een week van tevoren de vragen én de antwoorden van een
+toets. Hij haalt een 10. Wat zegt dat cijfer over wat hij kan?
+
+<details>
+<summary>Antwoord</summary>
+
+Bijna niets. Hij kan de antwoorden onthouden hebben zonder iets te
+begrijpen. Of hij de stof kent, merk je pas bij vragen die hij nog nooit
+zag. Met een voorspeller is het net zo.
+
+</details>
+
+## Zo test je niet
+
+Hieronder staan 24 stuks fruit. De code laat de voorspeller elk stuk
+voorspellen, met alle 24 als voorbeelden.
+
+<PyRunner verborgen="knn" initialCode={`fruit = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
+    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
+    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
+    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
+    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
+]
+
+goed = 0
+for maten, soort in fruit:
+    if voorspel(maten, fruit, 1) == soort:
+        goed = goed + 1
+print(goed, "van de", len(fruit), "goed")`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+24 van de 24 goed
+```
+
+</details>
+
+Alles goed. Maar dat komt doordat elk stuk fruit zelf in de voorbeelden
+staat, op afstand 0. Met `k = 1` is het dichtstbijzijnde voorbeeld altijd
+het stuk fruit zelf. Dit is de toets waarvan je de antwoorden al had.
+
+## Zo werkt het
+
+Je verdeelt de voorbeelden in twee stapels:
+
+- de **oefenset**: hier leert de voorspeller van, dus dit zijn de voorbeelden
+  waar hij de buren in zoekt;
+- de **toetsset**: die houd je achter. Daarmee test je, want deze stukken
+  fruit heeft de voorspeller nooit gezien.
+
+Voordat je verdeelt, schud je de lijst met `random.shuffle`. `random.seed(3)`
+zorgt dat het schudden elke keer hetzelfde uitpakt, zodat jij dezelfde
+stapels krijgt als in de antwoorden. Daarna knip je de lijst met slicing in
+tweeën: `fruit[:18]` zijn de eerste 18, `fruit[18:]` de rest.
+
+## Onderzoek
+
+1. Draai de code. Hoeveel stukken fruit zitten er in de oefenset, en welke
+   soorten zitten er in de toets?
+2. Zet een `#` voor `random.shuffle(fruit)`. Welke soorten zitten nu in de
+   toets?
+3. Haal de `#` weg, en verander de seed in 4. Wat zit er nu in de toets?
+4. Zet een `#` voor `random.seed(4)`, en draai een paar keer.
+
+<PyRunner initialCode={`import random
+
+fruit = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
+    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
+    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
+    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
+    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
+]
+
+random.seed(3)
+random.shuffle(fruit)
+oefen = fruit[:18]
+toets = fruit[18:]
+print(len(oefen), "om te oefenen")
+print("toets:", toets)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. 18 om te oefenen. In de toets zitten twee bananen, twee appels en twee
+   citroenen.
+2. Zes citroenen: de laatste zes van de lijst. Je toetst dan alleen
+   citroenen, en de voorspeller heeft er maar twee om van te leren.
+3. Drie appels en drie bananen, en geen enkele citroen.
+4. Elke keer een andere toets. Zonder seed weet je niet welke stapels je
+   krijgt, en kun je je antwoord niet naast dat van de les leggen.
+
+</details>
+
+Door naar [veertig procent achter](site:algorithms/docs/ml-afstand/03-eerlijk-testen/02-veertig-procent-achter).

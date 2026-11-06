@@ -1,0 +1,137 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Veertig procent achter"
+---
+
+# Veertig procent achter
+
+In de vorige stap hield je 6 van de 24 stukken fruit achter voor de toets.
+Bij Shopping houdt CS50 40 procent achter. Hoeveel stukken dat zijn, laat je
+Python uitrekenen. Daarbij kom je een kommagetal tegen, en een slicing met
+een variabele in plaats van een vast getal.
+
+## Voorspel
+
+```python
+aantal = 24 * 0.4
+print(aantal)
+print(int(aantal))
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+9.600000000000001
+9
+```
+
+Een kommagetal rekent Python niet altijd precies uit: er staat een klein
+foutje helemaal achteraan. `int()` hakt alles achter de komma eraf, dus dat
+foutje maakt niet uit.
+
+</details>
+
+## Zo werkt het
+
+`int()` ken je om tekst naar een getal om te zetten. Nieuw is dat hij ook
+een kommagetal naar een heel getal omzet: hij hakt de cijfers achter de
+komma eraf, zonder af te ronden. `int(9.6)` is 9.
+
+In de slicing mag een variabele staan: `fruit[:aantal]` zijn de eerste
+`aantal` stukken, en `fruit[aantal:]` de rest. Zo werkt dezelfde code voor
+een lijst van elke lengte.
+
+## Opdracht: veertig procent achter
+
+Bij Shopping houdt CS50 40 procent van de voorbeelden achter voor de toets.
+Doe dat ook met het fruit:
+
+```
+24 stukken fruit
+aantal: 9
+oefen: 15
+toets: 9
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print hoeveel stukken fruit er zijn.
+2. Reken uit hoeveel stukken 40 procent is, met `aantal = int(len(fruit) * 0.4)`, en print `aantal`.
+3. Schud `fruit` met seed 3, zoals in de vorige stap. Zet de eerste `aantal` stukken in `toets` en de rest in `oefen`, en print hoeveel er in elk zitten.
+
+<PyRunner initialCode={`fruit = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
+    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
+    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
+    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
+    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
+]
+print(len(fruit), "stukken fruit")`} />
+
+<details>
+<summary>Tip</summary>
+
+In de vorige stap stond het getal 18 in de slicing. Wat zet je daar nu
+voor in de plaats?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit komt onder de print in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+import random
+
+aantal = int(len(fruit) * 0.4)
+print("aantal:", aantal)
+random.seed(3)
+random.shuffle(fruit)
+toets = fruit[:aantal]
+oefen = fruit[aantal:]
+print("oefen:", len(oefen))
+print("toets:", len(toets))
+```
+
+```
+aantal: 9
+oefen: 15
+toets: 9
+```
+
+Bij Shopping staat dat verdelen al in de code die je van CS50 krijgt.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: random.shuffle([1, 2, 3]) */}
+```
+NameError: name 'random' is not defined. Did you forget to import 'random'?
+```
+
+**Oorzaak:** `random` is een module. Python haalt hem pas op als je erom
+vraagt.
+
+**Oplossing:** zet `import random` bovenaan je code.
+
+```python
+# FOUT
+getallen = [1, 2, 3]
+random.shuffle(getallen)
+
+# GOED
+import random
+getallen = [1, 2, 3]
+random.shuffle(getallen)
+```
+
+Meer uitleg: [Modules](site:python/docs/modules/09d-modules).
+
+Door naar [de score](site:algorithms/docs/ml-afstand/03-eerlijk-testen/03-de-score).

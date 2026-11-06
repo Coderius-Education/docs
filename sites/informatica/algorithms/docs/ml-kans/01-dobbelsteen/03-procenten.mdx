@@ -1,0 +1,133 @@
+---
+sidebar_position: 3
+sidebar_label: "3. Procenten"
+---
+
+# Procenten
+
+Je telde in de vorige stap hoe vaak elk getal viel. Is 97 keer veel? Dat hangt
+af van het aantal worpen. In procenten kun je het vergelijken, ook tussen 60 en
+6000 worpen.
+
+## Voorspel
+
+Bij 60 worpen viel de zes 17 keer.
+
+```python
+worpen = 60
+zessen = 17
+print(zessen * 100 // worpen)
+```
+
+Wat print dit?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+28
+```
+
+17 van de 60 is 28,3 procent. `//` deelt en rondt naar beneden af, dus je
+krijgt 28.
+
+</details>
+
+## Zo werkt het
+
+Een percentage is het deel van de keren, keer 100. Je vermenigvuldigt eerst
+met 100 en deelt daarna met `//`. Andersom gaat het mis: `17 // 60` is al 0,
+en 0 keer 100 blijft 0.
+
+## Onderzoek
+
+1. Zet `worpen` op 6 en draai een paar keer. Komt elk getal één keer voor?
+2. Zet `worpen` op 6000. Hoe dicht komt elk getal nu bij 16 procent?
+3. Maak de dobbelsteen vals. `random.choice` kiest een willekeurig element uit
+   een lijst. Vervang `random.randint(1, 6)` door
+   `random.choice([1, 2, 3, 4, 5, 6, 6])`. Zie je aan de uitvoer dat hij vals
+   is bij 60 worpen? En bij 6000?
+
+<PyRunner initialCode={`import random
+
+worpen = 60
+telling = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+for i in range(worpen):
+    ogen = random.randint(1, 6)
+    telling[ogen] = telling[ogen] + 1
+
+for ogen in telling:
+    procent = telling[ogen] * 100 // worpen
+    print(ogen, telling[ogen], "keer,", procent, "procent")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Bijna nooit. Meestal komt een getal twee of drie keer, en een ander
+   helemaal niet. De kans dat elk getal precies één keer valt, is bij zes
+   worpen maar 1,5 procent.
+2. Bij 6000 worpen ligt elk getal dicht bij 16 procent (een zesde is 16,7
+   procent, en `//` rondt naar beneden af). Het verschil tussen de getallen
+   is nog maar een paar procent. Hoe meer worpen, hoe beter de schatting.
+3. Er staan twee zessen in de lijst, dus de zes komt twee keer zo vaak. Bij
+   60 worpen zie je dat meestal al: rond de 17 zessen, tegen rond de 9 van
+   elk ander getal. Maar niet altijd, want bij zo weinig worpen schommelt elk
+   getal flink. Bij 6000 zie je het zeker, de zes komt dan rond de 28
+   procent. Hoe kleiner het patroon dat je zoekt, hoe meer voorbeelden je
+   nodig hebt.
+
+</details>
+
+## Opdracht: vijf of zes
+
+Je speelt een spel: gooi je 5 of 6, dan win je. Speel het 1000 keer na, en
+print hoeveel procent van de keren je wint. Bijvoorbeeld:
+
+```
+33 procent gewonnen
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code een paar keer: hij gooit één keer, en zegt soms `gewonnen`.
+2. Zet de worp en de `if` in een loop van `worpen` keer. Je ziet nu een paar honderd keer `gewonnen`.
+3. Tel de keren in plaats van ze te printen: zet `gewonnen = 0` boven de loop, tel er in de `if` één bij op, en print `gewonnen` na de loop.
+4. Print het percentage, met `gewonnen * 100 // worpen`.
+
+<PyRunner initialCode={`import random
+
+worpen = 1000
+ogen = random.randint(1, 6)
+if ogen >= 5:
+    print("gewonnen")`} />
+
+<details>
+<summary>Tip</summary>
+
+Zie je 0 procent? Kijk waar `gewonnen = 0` staat. Staat het in de loop, dan
+begint de teller bij elke worp opnieuw.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+worpen = 1000
+gewonnen = 0
+for i in range(worpen):
+    ogen = random.randint(1, 6)
+    if ogen >= 5:
+        gewonnen = gewonnen + 1
+
+print(gewonnen * 100 // worpen, "procent gewonnen")
+```
+
+Je komt rond de 33 procent uit: 2 van de 6 getallen laten je winnen, en 2 op
+de 6 is een derde.
+
+</details>
+
+Door naar [twee dobbelstenen](site:algorithms/docs/ml-kans/01-dobbelsteen/04-twee-dobbelstenen).

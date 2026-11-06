@@ -1,9 +1,9 @@
 import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { verborgenCode } from '../components/PyRunner/verborgen';
-import { ML_MAPPEN } from '../lib/mlSidebar';
+import { routeBestand, routePaginas } from './ml-route';
 
 // Bij elke opdracht en elke Bouw zelf van de route machine learning hoort
 // een editor om in te werken, vóór de tip. Eerst had alleen Shopping er een;
@@ -18,11 +18,7 @@ import { ML_MAPPEN } from '../lib/mlSidebar';
 
 const DOCS = fileURLToPath(new URL('../../docs/', import.meta.url));
 
-const projecten = ML_MAPPEN.flatMap((map) =>
-  readdirSync(join(DOCS, map))
-    .filter((f) => /\.mdx$/.test(f))
-    .map((f) => `${map}/${f}`),
-);
+const projecten = routePaginas().map((id) => relative(DOCS, routeBestand(id)));
 
 const startcode = (stuk: string) =>
   stuk.match(/<PyRunner\b[^>]*?initialCode=\{`([\s\S]*?)`\}/)?.[1] ?? null;

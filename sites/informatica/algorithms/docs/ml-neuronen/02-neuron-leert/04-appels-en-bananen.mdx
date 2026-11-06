@@ -1,0 +1,137 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Appels en bananen"
+---
+
+# Appels en bananen
+
+Je neuron leerde EN uit vier voorbeelden met nullen en enen. Een neuron kan
+ook met grotere getallen werken, zoals de maten van fruit uit fase B. Dan
+leert het iets wat geen logische regel is: welk fruit dit is.
+
+## Voorspel
+
+```python
+def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+print(neuron([18, 4], [1, -1], 0))
+print(neuron([8, 8], [1, -1], 0))
+```
+
+De invoer is de lengte en de breedte van een stuk fruit, in centimeters. Wat
+print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1
+0
+```
+
+Met gewichten `[1, -1]` is de som de lengte min de breedte. Bij 18 bij 4 is
+dat 14, bij 8 bij 8 is het 0. Dit neuron zegt 1 bij alles wat langer is dan
+breed.
+
+</details>
+
+## Zo werkt het
+
+Een neuron rekent alleen met getallen, dus de soort wordt een getal: een
+banaan is 1, een appel 0. De maten staan in een lijst, net als de invoer van
+het EN-neuron:
+
+```python
+fruit = [
+    ([8, 8], 0), ([9, 8], 0), ([7, 7], 0), ([8, 7], 0),
+    ([18, 4], 1), ([20, 4], 1), ([17, 3], 1), ([19, 4], 1),
+]
+```
+
+Het leren gaat zoals bij EN. Alleen schuiven de gewichten nu met grotere
+stappen, want elk gewicht krijgt er de fout keer zijn invoer bij, en die
+invoer is nu bijvoorbeeld 18.
+
+## Opdracht: appels en bananen
+
+Laat het neuron tien rondes leren op het fruit, en test het daarna met twee
+stukken fruit die het nooit zag:
+
+```
+[10, 7] -> 0
+[15, 5] -> 1
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij rekent de fout uit voor de eerste banaan. Het neuron zegt nog 0, dus de fout is 1.
+2. Stel de gewichten en de bias bij met die fout, zoals bij bijstellen, en print ze. Je krijgt `[18, 4]` en `1`.
+3. Zet het bijstellen in een loop over al het fruit, en print de gewichten en de bias na de loop.
+4. Zet die loop in een loop van tien rondes.
+5. Test het neuron met de twee nieuwe stukken fruit.
+
+In de editor staan het fruit en de eerste stap van het leren. `neuron` staat in de
+verborgen code onder de editor.
+
+<PyRunner verborgen="neuron" initialCode={`fruit = [
+    ([8, 8], 0), ([9, 8], 0), ([7, 7], 0), ([8, 7], 0),
+    ([18, 4], 1), ([20, 4], 1), ([17, 3], 1), ([19, 4], 1),
+]
+gewichten = [0, 0]
+bias = 0
+
+invoer, doel = fruit[4]
+fout = doel - neuron(invoer, gewichten, bias)
+print(invoer, doel, fout)`} />
+
+<details>
+<summary>Tip</summary>
+
+Stelt hij in stap 3 niets meer bij? Kijk of `fout` in de loop opnieuw wordt
+uitgerekend, voor elk stuk fruit, en niet alleen voor `fruit[4]` erboven.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de laatste drie regels in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+for ronde in range(10):
+    for invoer, doel in fruit:
+        fout = doel - neuron(invoer, gewichten, bias)
+        for i in range(len(invoer)):
+            gewichten[i] = gewichten[i] + fout * invoer[i]
+        bias = bias + fout
+
+print(gewichten, bias)
+print("[10, 7] ->", neuron([10, 7], gewichten, bias))
+print("[15, 5] ->", neuron([15, 5], gewichten, bias))
+```
+
+```
+[11, -16] -1
+[10, 7] -> 0
+[15, 5] -> 1
+```
+
+Het neuron leert gewichten `[11, -16]`: een lang stuk fruit telt voor banaan,
+een breed stuk tegen. Bij k-NN uit fase B moest de voorspeller alle
+voorbeelden onthouden. Het neuron onthoudt alleen drie getallen.
+
+Vertrouw er nog niet te veel op. Een appel van 11 bij 7 noemt dit neuron al een
+banaan: de som is 8. Met acht voorbeelden en twee testen weet je weinig. Daar
+heb je [eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen/01-oefenen-en-toetsen) voor,
+met veel meer stukken fruit.
+
+</details>
+
+Door naar [bekijk de grens](site:algorithms/docs/ml-neuronen/02-neuron-leert/05-bekijk-de-grens).

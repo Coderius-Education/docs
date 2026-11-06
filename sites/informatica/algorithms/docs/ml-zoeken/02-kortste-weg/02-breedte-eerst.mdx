@@ -1,0 +1,204 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Breedte-eerst"
+---
+
+# Breedte-eerst
+
+Wat is de kortste weg van S naar E? Je kunt alle wegen proberen, maar dat zijn
+er al snel duizenden. Het kan slimmer: kijk eerst naar alle vakjes op één stap
+van de start, dan naar alle vakjes op twee stappen, dan op drie. Het eerste
+moment dat je E tegenkomt, weet je zeker dat er geen kortere weg is. Dat heet
+**breadth-first search**, of breedte-eerst zoeken. De wachtrij uit de vorige
+stap houdt bij welke vakjes nog aan de beurt zijn.
+
+## Voorspel
+
+```python
+afstand = {(0, 0): 0}
+afstand[(0, 1)] = afstand[(0, 0)] + 1
+
+print((0, 1) in afstand)
+print((1, 1) in afstand)
+print(afstand)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+True
+False
+{(0, 0): 0, (0, 1): 1}
+```
+
+Een vakje is een tuple, en een tuple kan een sleutel van een dictionary zijn.
+`(0, 1)` staat erin met afstand 1; `(1, 1)` nog niet.
+
+</details>
+
+## Zo werkt het
+
+De lijst `wachtrij` houdt bij welke vakjes je nog moet bekijken. Je begint
+met alleen de start. Zolang er vakjes in de wachtrij staan:
+
+1. haal je het voorste vakje eruit, met `pop(0)`;
+2. kijk je naar zijn buren;
+3. zet je elke buur die je nog niet kende achteraan in de wachtrij. Zijn
+   afstand is die van het vakje plus 1.
+
+`buren` uit het vorige project staat al klaar, in de verborgen code onder de
+editor. De dictionary `afstand` onthoudt voor elk vakje dat je al kent, hoeveel
+stappen het van de start ligt. Zo zet je geen vakje twee keer in de wachtrij. Omdat
+nieuwe vakjes achteraan komen, bekijk je eerst alles op afstand 1, dan alles
+op afstand 2, enzovoort.
+
+:::caution
+De loop stopt pas als de wachtrij leeg is. Komt er steeds een nieuw vakje bij,
+bijvoorbeeld omdat je ook buiten het doolhof of het bord verder zoekt, dan
+stopt hij nooit. De speeltuin heeft geen stopknop, dus het tabblad loopt vast:
+herlaad de pagina, en je code is weg. Kopieer je code daarom eerst naar een
+kladblok voordat je een nieuwe while-loop draait.
+:::
+
+## Onderzoek
+
+1. Draai de code. Hoeveel stappen is de kortste weg van S naar E?
+2. Zet onderaan `print(afstand)`. Wat staat er allemaal in?
+3. Verander `wachtrij.pop(0)` in `wachtrij.pop()`, zodat je steeds het
+   laatste vakje pakt. Hoeveel stappen zegt hij nu? Klopt dat?
+4. Zet `pop(0)` terug, en zet een muur op `(4, 4)`: de onderste rij wordt
+   `"#...#E"`. Wat gebeurt er?
+
+<PyRunner verborgen="doolhof-buren" initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+start = (0, 0)
+eind = (4, 5)
+
+afstand = {start: 0}
+wachtrij = [start]
+while len(wachtrij) > 0:
+    vakje = wachtrij.pop(0)
+    for buur in buren(vakje):
+        if buur not in afstand:
+            afstand[buur] = afstand[vakje] + 1
+            wachtrij.append(buur)
+
+print("De kortste weg is", afstand[eind], "stappen")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. 9 stappen: één stap naar rechts, dan naar beneden door de gang in kolom 1,
+   en over de onderste rij naar E.
+2. Elk vakje dat de robot kan bereiken, met zijn afstand tot de start. Je
+   zoekt dus niet alleen de weg naar E, maar naar alles.
+3. Nu zegt hij 15, en dat klopt niet. Met `pop()` gaat de robot steeds door
+   op het vakje dat hij het laatst vond, en loopt hij eerst helemaal de
+   bovenste rij af. Een vakje krijgt dan de afstand van de eerste weg die hij
+   vond, niet van de kortste. Een stapel zoekt diep, een wachtrij breed.
+4. Python stopt met een foutmelding: E is nu niet meer te bereiken, dus staat
+   hij niet in `afstand`. Zie [Er gaat iets mis](#er-gaat-iets-mis).
+
+</details>
+
+## Opdracht: het verste vakje
+
+Waar zou je in dit doolhof een schat verstoppen? Op het vakje dat het verst van
+de start ligt. Zoek dat vakje, en print het met zijn afstand:
+
+```
+(3, 5) 10
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print hoeveel vakjes de robot kan bereiken.
+2. Loop met `for vakje in afstand:` langs alle vakjes die je vond, en print bij elk `vakje` en `afstand[vakje]`.
+3. Onthoud het verste vakje tot nu toe: begin vóór de loop met `verste = start`, en maak in de loop `verste = vakje` als dat vakje verder weg ligt. Print na de loop `verste` en zijn afstand.
+
+<PyRunner verborgen="doolhof-buren" initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+start = (0, 0)
+
+afstand = {start: 0}
+wachtrij = [start]
+while len(wachtrij) > 0:
+    vakje = wachtrij.pop(0)
+    for buur in buren(vakje):
+        if buur not in afstand:
+            afstand[buur] = afstand[vakje] + 1
+            wachtrij.append(buur)
+
+print(len(afstand), "vakjes bereikt")`} />
+
+<details>
+<summary>Tip</summary>
+
+Hoe weet je of een vakje verder weg ligt dan `verste`? Vergelijk niet de
+vakjes zelf, maar hun afstand in de dictionary.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit komt onder de while-loop in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+verste = start
+for vakje in afstand:
+    if afstand[vakje] > afstand[verste]:
+        verste = vakje
+print(verste, afstand[verste])
+```
+
+```
+(3, 5) 10
+```
+
+Het verste vakje is het doodlopende vakje boven de uitgang. Je komt er alleen
+via E, dus het ligt één stap verder dan E zelf.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+KeyError: (4, 5)
+```
+
+**Oorzaak:** de uitgang is niet te bereiken. Het zoeken bekeek alle vakjes
+waar de robot kan komen, en E zat daar niet bij. Daarom staat E niet in
+`afstand`.
+
+**Oplossing:** kijk eerst of het vakje in `afstand` staat.
+
+```python
+# FOUT
+afstand = {(0, 0): 0, (0, 1): 1}
+print(afstand[(4, 5)])
+
+# GOED
+afstand = {(0, 0): 0, (0, 1): 1}
+if (4, 5) in afstand:
+    print(afstand[(4, 5)])
+else:
+    print("Er is geen weg naar de uitgang")
+```
+
+Door naar [de weg terug](site:algorithms/docs/ml-zoeken/02-kortste-weg/03-de-weg-terug).

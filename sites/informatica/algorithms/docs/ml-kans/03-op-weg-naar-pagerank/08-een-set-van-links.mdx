@@ -1,0 +1,159 @@
+---
+sidebar_position: 8
+sidebar_label: "8. Een set van links"
+---
+
+# Een set van links
+
+Je oefende de kansen op het weer. Bij CS50 gaat het weer over een web, en daar
+staan de links van een pagina niet in een lijst maar in een **set**. Dat ken je
+uit het hoofdstuk PageRank, maar een set gedraagt zich net anders dan een
+lijst, en precies daar loopt de surfer op vast.
+
+:::info
+Een set ken je uit [Sets](site:python/docs/data/sets), en het web met sets uit
+[het web als graph](site:algorithms/docs/pagerank/bouwen/03-graph).
+:::
+
+## Voorspel
+
+```python
+links = {"B", "C", "B"}
+
+print(len(links))
+print("C" in links)
+```
+
+Wat print dit?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+2
+True
+```
+
+Een set bewaart elk element één keer, dus de tweede `"B"` telt niet mee.
+
+</details>
+
+## Zo werkt het
+
+Een set schrijf je met accolades, zonder dubbele punten. Je kunt hem
+doorlopen met `for`, en kijken of iets erin zit met `in`. Maar een set heeft
+geen volgorde, en dus geen eerste of tweede element. `random.choice` kiest een
+element op zijn plek, en werkt dus niet op een set. Maak er eerst een lijst
+van: `random.choice(list(links))`.
+
+Bij CS50 is het web een dictionary met per pagina de set pagina's waar ze naar
+linkt, zoals `{"1.html": {"2.html", "3.html"}, ...}`. Een pagina zonder links
+heeft een lege set, `set()`.
+
+## Onderzoek
+
+1. Draai de code een paar keer. Waar komt de surfer na één klik?
+2. Haal `list(` en het haakje erachter weg. Wat gebeurt er?
+3. Geef D geen links: `"D": set()`. Wat print `len(web["D"])` dan?
+
+<PyRunner initialCode={`import random
+
+web = {"A": {"B", "C"}, "B": {"C"}, "C": {"A"}, "D": {"C"}}
+
+print(web["A"], len(web["A"]))
+pagina = random.choice(list(web["A"]))
+print("klik naar", pagina)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Op B of op C, net als met een lijst.
+2. Python stopt met een foutmelding, zie
+   [Er gaat iets mis](#er-gaat-iets-mis).
+3. 0: een lege set heeft geen elementen.
+
+</details>
+
+## Opdracht: waar is de surfer geweest?
+
+Laat de surfer twintig keer klikken vanaf D, en verzamel in een set welke
+pagina's hij heeft gezien. Print de set en het aantal:
+
+```
+{'C', 'A', 'B'}
+3
+```
+
+De volgorde van de set kan bij jou anders zijn.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: de surfer klikt één keer vanaf D, en komt op C.
+2. Zet de klik en de print in een loop van twintig keer.
+3. Maak boven de loop een lege set `gezien`, met set() zoals in [Zo werkt het](#zo-werkt-het), en voeg in de loop elke pagina toe met `gezien.add(pagina)`. Haal de print in de loop weg, en print na de loop `gezien` en `len(gezien)`.
+
+<PyRunner initialCode={`import random
+
+web = {"A": {"B", "C"}, "B": {"C"}, "C": {"A"}, "D": {"C"}}
+
+pagina = "D"
+pagina = random.choice(list(web[pagina]))
+print(pagina)`} />
+
+<details>
+<summary>Tip</summary>
+
+Een pagina die al in `gezien` staat, nog een keer toevoegen is geen fout: de
+set verandert dan niet. Je hoeft dus niet eerst te kijken of hij er al in zit.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+web = {"A": {"B", "C"}, "B": {"C"}, "C": {"A"}, "D": {"C"}}
+
+pagina = "D"
+gezien = set()
+for i in range(20):
+    pagina = random.choice(list(web[pagina]))
+    gezien.add(pagina)
+
+print(gezien)
+print(len(gezien))
+```
+
+Hij ziet A, B en C, maar nooit meer D: daar linkt niemand naar.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+TypeError: 'set' object is not subscriptable
+```
+
+**Oorzaak:** je geeft `random.choice` een set. Hij wil een element op een
+plek kiezen, maar een set heeft geen plekken.
+
+**Oplossing:** maak van de set eerst een lijst.
+
+```python
+# FOUT
+import random
+links = {"B", "C"}
+pagina = random.choice(links)
+
+# GOED
+import random
+links = {"B", "C"}
+pagina = random.choice(list(links))
+```
+
+Meer uitleg: [Zo werkt het](#zo-werkt-het).
+
+Door naar [aan de slag met PageRank](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/09-aan-de-slag-met-pagerank).

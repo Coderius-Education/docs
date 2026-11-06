@@ -1,0 +1,124 @@
+---
+sidebar_position: 5
+sidebar_label: "5. Jouw berichten"
+---
+
+# Jouw berichten
+
+Het filter haalt alles uit zijn voorbeelden. Geef je het andere
+voorbeelden, dan leert het iets anders. In deze laatste stap leer je het
+filter je eigen berichten.
+
+## Voorspel
+
+```python
+spam = {"je": 1, "pakket": 1, "wacht": 1, "betaal": 1, "nu": 1}
+gewoon = {"ik": 1, "heb": 1, "je": 1, "pakket": 1}
+
+score = 0
+for woord in "betaal je pakket".split():
+    if woord in spam:
+        score = score + spam[woord]
+    if woord in gewoon:
+        score = score - gewoon[woord]
+print("score:", score)
+```
+
+Welke score krijgt `"betaal je pakket"`? En welke score krijgt
+`"je pakket"`?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+score: 1
+```
+
+`betaal` geeft +1. `je` en `pakket` staan in allebei de tellingen even vaak,
+dus ze geven samen 0. Bij `"je pakket"` blijft alleen dat over: score 0,
+geen spam.
+
+</details>
+
+## Zo werkt het
+
+Een filter dat leert, is zo goed als zijn voorbeelden. Staat een woord even
+vaak in spam als in gewone berichten, dan zegt het niets over een nieuw
+bericht. Met meer voorbeelden leert het filter beter welke woorden vooral in
+spam staan.
+
+## Bouw zelf: leer het filter jouw berichten
+
+Vervang de voorbeelden door je eigen: zet in `spamwoorden` de woorden uit
+een paar spamberichten die je zelf kreeg (of verzin ze), en in
+`gewone_woorden` de woorden uit gewone berichten van vrienden. Bedenk daarna
+drie nieuwe berichten die het filter nog nooit zag, en kijk of het ze goed
+indeelt.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. In de editor staat het filter uit de vorige stappen, met maar drie woorden spam en drie gewone woorden.
+2. Zet in `spamwoorden` de woorden uit een paar spamberichten, en in `gewone_woorden` die uit gewone berichten.
+3. Bedenk drie nieuwe berichten, en kijk bij elk of het filter het goed indeelt.
+
+<PyRunner initialCode={`spamwoorden = "win nu gratis".split()
+gewone_woorden = "zie je morgen".split()
+
+spam = {}
+for woord in spamwoorden:
+    if woord in spam:
+        spam[woord] = spam[woord] + 1
+    else:
+        spam[woord] = 1
+gewoon = {}
+for woord in gewone_woorden:
+    if woord in gewoon:
+        gewoon[woord] = gewoon[woord] + 1
+    else:
+        gewoon[woord] = 1
+
+bericht = "klik hier voor je prijs"
+score = 0
+for woord in bericht.split():
+    if woord in spam:
+        score = score + spam[woord]
+    if woord in gewoon:
+        score = score - gewoon[woord]
+print("score:", score)
+if score > 0:
+    print("spam")
+else:
+    print("geen spam")`} />
+
+<details>
+<summary>Tip</summary>
+
+Schrijf de voorbeelden in kleine letters en zonder leestekens, want het
+filter vergelijkt hele woorden. Hoe meer voorbeelden, hoe beter het filter
+gewone woorden als `je` en `het` leert herkennen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Een voorbeeld van het begin:
+
+```python
+spamwoorden = "je pakket wacht betaal nu je account is geblokkeerd log nu in".split()
+gewone_woorden = "kom je zaterdag voetballen ik heb je pakket meegenomen".split()
+```
+
+Test bijvoorbeeld `"betaal nu voor je pakket"` (spam) en
+`"heb je zaterdag tijd"` (geen spam). Dat het filter niet altijd gelijk heeft,
+is geen fout in je code. Het weet alleen wat in je voorbeelden stond: met
+`je pakket` in allebei de lijsten twijfelt het bij elk bericht over een
+pakket.
+
+</details>
+
+Echte spamfilters tellen ook woorden in voorbeelden, maar rekenen daarmee
+een kans uit in plaats van een score. Het idee is hetzelfde: het filter
+leert van berichten waarvan je het antwoord al weet.
+
+Door naar [een afstand](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur/01-een-afstand).

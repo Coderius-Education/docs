@@ -1,0 +1,132 @@
+---
+sidebar_position: 4
+sidebar_label: "4. De surfer springt soms"
+---
+
+# De surfer springt soms
+
+Je surfer kwam nooit op D, en liep vast op een pagina zonder links. Een echte
+surfer volgt niet altijd een link. Soms typt hij een nieuw adres in en zit hij
+ergens anders op het web. Bij PageRank heet dat **damping**: met kans 0,85
+klikt de surfer een link, en anders springt hij naar een willekeurige pagina
+van het web.
+
+## Voorspel
+
+```python
+import random
+
+getal = random.random()
+print(getal < 0.85)
+```
+
+`random.random()` geeft een willekeurig kommagetal van 0 tot 1. Wat print dit
+programma? En wat print het het vaakst?
+
+<details>
+<summary>Antwoord</summary>
+
+`True` of `False`. Meestal `True`: gemiddeld 85 van de 100 keer, want 85
+procent van de getallen tussen 0 en 1 ligt onder 0,85.
+
+</details>
+
+## Zo werkt het
+
+Met `random.random() < damping` kies je dus met kans 0,85 voor een link. Is het
+getal groter, dan springt de surfer. Daarvoor heb je de lijst van alle
+pagina's nodig: `list(web)` maakt een lijst van de sleutels van het web, hier
+`['A', 'B', 'C', 'D']`.
+
+## Opdracht: de surfer springt soms
+
+Bouw het springen in de surfer. Met 10.000 klikken kom je bijvoorbeeld hierop
+uit; de laatste cijfers zijn elke keer anders:
+
+```
+A 0.3741
+B 0.1932
+C 0.3951
+D 0.0376
+```
+
+Teken het daarna als staafdiagram, net als bij
+[twee dobbelstenen](site:algorithms/docs/ml-kans/01-dobbelsteen/04-twee-dobbelstenen#opdracht-twee-dobbelstenen),
+met `bezocht` in plaats van `telling`.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code een paar keer. Meestal zegt hij link: dat gebeurt gemiddeld 85 van de 100 keer.
+2. Laat de surfer bij link een link kiezen van de pagina waar hij is, met `pagina = random.choice(web[pagina])`, en bij springen een pagina uit `list(web)`. Print `pagina` na de keuze.
+3. Zet `klikken = 10000` bovenaan, zet de keuze in een loop van `klikken` keer, en tel met `bezocht` hoe vaak hij op elke pagina komt, zoals in [duizend klikken](site:algorithms/docs/ml-kans/02-surfer/03-duizend-klikken#onderzoek).
+4. Loop na de klikken met `for p in bezocht:` langs de pagina's, print per pagina `bezocht[p] / klikken`, en zet de drie regels matplotlib eronder.
+
+In de editor staan het web, de startpagina en één keuze tussen een link volgen en springen.
+
+<PyRunner initialCode={`import random
+
+web = {
+    "A": ["B", "C"],
+    "B": ["C"],
+    "C": ["A"],
+    "D": ["C"],
+}
+damping = 0.85
+pagina = "A"
+
+if random.random() < damping:
+    print("link")
+else:
+    print("springen")`} />
+
+<details>
+<summary>Tip</summary>
+
+Verandert `pagina` niet? Zet `pagina = "A"` boven de loop, niet erin: anders
+begint de surfer bij elke klik opnieuw op A.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+web = {
+    "A": ["B", "C"],
+    "B": ["C"],
+    "C": ["A"],
+    "D": ["C"],
+}
+klikken = 10000
+damping = 0.85
+
+bezocht = {}
+for p in web:
+    bezocht[p] = 0
+
+pagina = "A"
+for i in range(klikken):
+    if random.random() < damping:
+        pagina = random.choice(web[pagina])
+    else:
+        pagina = random.choice(list(web))
+    bezocht[pagina] = bezocht[pagina] + 1
+
+for p in bezocht:
+    print(p, bezocht[p] / klikken)
+
+import matplotlib.pyplot as plt
+plt.bar(list(bezocht), list(bezocht.values()))
+plt.show()
+```
+
+D krijgt nu ook bezoek, al is het weinig: alleen als de surfer er toevallig
+naartoe springt. Uitgerekend is de PageRank van dit web A 0,373, B 0,196,
+C 0,394 en D 0,038. De surfer komt daar dicht bij, en hoe vaker hij klikt,
+hoe dichterbij.
+
+</details>
+
+Door naar [zet D hoger](site:algorithms/docs/ml-kans/02-surfer/05-zet-d-hoger).

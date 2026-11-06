@@ -1,0 +1,170 @@
+---
+sidebar_position: 4
+sidebar_label: "4. De grootste wint"
+---
+
+# De grootste wint
+
+Traffic kent 43 soorten verkeersborden, en een foto is er precies één van.
+Een neuron dat ja of nee zegt, is dan niet genoeg. Het netwerk krijgt daarom
+één uitgang per soort. Elke uitgang geeft zijn som, zonder ja of nee, en de
+uitgang met de grootste som wint. Jij doet het met vier tekens: `|`, `-`, `x`
+en `o`.
+
+## Voorspel
+
+```python
+staand = [0, 1, 0, 0, 1, 0, 0, 1, 0]
+gewichten = [-1, 1, -1, -1, 1, -1, -1, 1, -1]
+
+som = 0
+for i in range(len(staand)):
+    som = som + staand[i] * gewichten[i]
+print(som)
+```
+
+`staand` is een staande streep, `|`. De gewichten zijn 1 op de pixels van een
+staande streep en -1 op de rest. Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3
+```
+
+De drie zwarte pixels liggen allemaal op een gewicht van 1. Een liggende
+streep zou -1 geven: alleen de middelste pixel telt mee, de andere twee
+trekken eraf.
+
+</details>
+
+## Zo werkt het
+
+Elke uitgang heeft gewichten die op zijn eigen teken lijken: 1 waar het teken
+zwart is, -1 waar het wit is. Hoe meer het plaatje op het teken lijkt, hoe
+groter de som. De functie `som_van` rekent die som uit, zonder er 1 of 0 van
+te maken.
+
+Dan zoek je de positie van de grootste som. Dat is nieuw: je onthoudt niet de
+grootste waarde, zoals bij `max`, maar zijn positie `beste`. Begin bij
+positie 0, en kom je een grotere tegen, onthoud dan die positie. In Traffic
+heeft de laatste laag zo 43 uitgangen, en Keras maakt van hun sommen kansen
+die samen 1 zijn. De grootste som geeft de grootste kans.
+
+## Onderzoek
+
+1. Draai de code. Welk teken wint?
+2. Zet `uitgangen` op `[-4, -4, 0, 8]`. Welk teken wint nu?
+3. Probeer `[2, -2, 0, 2]`: twee uitgangen zijn even groot. Welke wint, en
+   waarom die?
+4. Probeer `[-5, -2, -3, -9]`. Werkt het ook als alle sommen negatief zijn?
+
+<PyRunner initialCode={`soorten = ["|", "-", "x", "o"]
+uitgangen = [3, -1, -1, 1]
+
+beste = 0
+for i in range(len(uitgangen)):
+    if uitgangen[i] > uitgangen[beste]:
+        beste = i
+print(beste, soorten[beste])`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+0 |
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. De staande streep, op positie 0.
+2. De ring, `o`, op positie 3.
+3. De staande streep: alleen een grotere som vervangt `beste`, een even grote
+   niet. Bij een gelijke stand wint de eerste.
+4. Ja, `-` wint met -2. `beste` begint bij een positie, niet bij de waarde 0.
+
+</details>
+
+## Opdracht: welk teken is dit?
+
+In de editor staan de gewichten van de vier uitgangen, en de sommen voor een
+kruis. Laat het programma zeggen welk teken het is. Zet het daarna in een
+functie `herken`, die je in de volgende stappen weer gebruikt:
+
+```
+[-3, -3, 5, 3]
+x
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de vier sommen.
+2. Zoek de positie van de grootste en onthoud hem in `beste`, zoals in het onderzoek. Print `soorten[beste]`.
+3. Zet het in een functie `herken(invoer, alle_gewichten, biases)` die `beste` teruggeeft. Geef alle uitgangen bias 0.
+4. Herken ook een ring met een gat: `[1, 1, 0, 1, 0, 1, 1, 1, 1]`.
+
+<PyRunner initialCode={`def som_van(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    return som
+
+soorten = ["|", "-", "x", "o"]
+alle_gewichten = [
+    [-1, 1, -1, -1, 1, -1, -1, 1, -1],
+    [-1, -1, -1, 1, 1, 1, -1, -1, -1],
+    [1, -1, 1, -1, 1, -1, 1, -1, 1],
+    [1, 1, 1, 1, -1, 1, 1, 1, 1],
+]
+kruis = [1, 0, 1, 0, 1, 0, 1, 0, 1]
+
+uitgangen = []
+for n in range(len(alle_gewichten)):
+    uitgangen.append(som_van(kruis, alle_gewichten[n], 0))
+print(uitgangen)`} />
+
+<details>
+<summary>Tip</summary>
+
+In de functie heb je geen `kruis` meer, maar `invoer`, en geen 0 als bias,
+maar `biases[n]`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder `kruis = …` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+def herken(invoer, alle_gewichten, biases):
+    uitgangen = []
+    for n in range(len(alle_gewichten)):
+        uitgangen.append(som_van(invoer, alle_gewichten[n], biases[n]))
+    beste = 0
+    for i in range(len(uitgangen)):
+        if uitgangen[i] > uitgangen[beste]:
+            beste = i
+    return beste
+
+biases = [0, 0, 0, 0]
+ring_met_gat = [1, 1, 0, 1, 0, 1, 1, 1, 1]
+
+print(soorten[herken(kruis, alle_gewichten, biases)])   # x
+print(soorten[herken(ring_met_gat, alle_gewichten, biases)])   # o
+```
+
+De ring met een gat lijkt niet precies op een ring, maar zijn som is wel de
+grootste: 7, tegen -1 voor het kruis. Een staande streep met een extra pixel
+linksonder geeft `[2, -2, 0, 2]`: een gelijke stand met de ring, en de streep
+wint alleen omdat hij eerst staat. Met gewichten die het netwerk zelf leert,
+gaat dat beter.
+
+</details>
+
+Door naar [de tekens inlezen](site:algorithms/docs/ml-neuronen/03-op-weg-naar-traffic/05-de-tekens-inlezen).

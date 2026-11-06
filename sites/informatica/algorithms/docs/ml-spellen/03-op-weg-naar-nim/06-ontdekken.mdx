@@ -1,0 +1,178 @@
+---
+sidebar_position: 6
+sidebar_label: "6. Ontdekken"
+---
+
+# Ontdekken
+
+Tot nu toe liep de muis blind, en leerde hij van wat hij tegenkwam. Nu kiest
+hij zelf: meestal de kant met de hoogste waarde, en soms een willekeurige,
+net als `kies` bij Nim. Nieuw is dat je die keuze zelf schrijft, als methode
+`kies(vakje, ontdekken)`.
+
+## Voorspel
+
+```python
+import random
+
+acties = ["links", "rechts"]
+ontdekken = 0
+if random.random() < ontdekken:
+    print(random.choice(acties))
+else:
+    print("de beste")
+```
+
+Wat print dit programma? En wat als `ontdekken` 1 is?
+
+<details>
+<summary>Antwoord</summary>
+
+Bij 0 altijd `de beste`: `random.random()` is nooit kleiner dan 0. Bij 1
+altijd een willekeurige actie: `random.random()` is altijd kleiner dan 1.
+
+</details>
+
+## Zo werkt het
+
+In de verborgen code staat `wandel(muis, ontdekken)`. Die zet de muis in
+vakje 2, en laat hem lopen tot de val of de kaas. Bij elke stap vraagt hij
+`muis.kies(vakje, ontdekken)` welke kant de muis op gaat, en daarna leert de
+muis met `muis.leer`. Na 20 stappen geeft `wandel` het op, voor als de muis
+heen en weer blijft lopen. Hij geeft het vakje terug waar de muis eindigt.
+
+`kies` werkt zoals `kies` bij
+[ontdekken in Nim](site:algorithms/docs/ml-spellen/02-nim-leert/04-ontdekken#zo-werkt-het):
+met kans `ontdekken` een willekeurige actie, en anders de beste. Bij CS50 heet
+die kans `epsilon`.
+
+## Opdracht: de muis kiest zelf
+
+Schrijf de methode `kies(vakje, ontdekken)`. Laat daarna een nieuwe muis
+100 keer wandelen, en tel hoe vaak hij bij de kaas eindigt. Doe dat voor
+ontdekken 0, 0.2 en 1:
+
+```
+99 keer kaas met ontdekken 0
+98 keer kaas met ontdekken 0.2
+56 keer kaas met ontdekken 1
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `kies` zegt altijd links, en de muis loopt tien keer in de val, vakje 0.
+2. Laat `kies` de actie met de hoogste waarde teruggeven, zoals `beste_actie` in [methoden](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/02-methoden#opdracht-de-beste-actie). Nu loopt hij één keer in de val, en vindt hij daarna de kaas.
+3. Zet daarvoor: met kans `ontdekken` een willekeurige actie uit `acties`.
+4. Tel hoe vaak `wandel(piep, ontdekken)` in 100 wandelingen 4 teruggeeft, voor ontdekken 0, 0.2 en 1. Begin elke keer met `random.seed(1)` en een nieuwe muis.
+
+<PyRunner verborgen="muis-gang" initialCode={`import random
+
+class Muis:
+    def __init__(self):
+        self.q = {}
+        self.tempo = 0.5
+
+    def waarde(self, vakje, actie):
+        if (vakje, actie) in self.q:
+            return self.q[(vakje, actie)]
+        return 0
+
+    def bijwerken(self, vakje, actie, oud, beloning, toekomst):
+        self.q[(vakje, actie)] = oud + self.tempo * (beloning + toekomst - oud)
+
+    def beste_toekomst(self, vakje):
+        beste = self.waarde(vakje, acties[0])
+        for actie in acties:
+            if self.waarde(vakje, actie) > beste:
+                beste = self.waarde(vakje, actie)
+        return beste
+
+    def kies(self, vakje, ontdekken):
+        return "links"
+
+    def leer(self, vakje, actie, nieuw, beloning):
+        oud = self.waarde(vakje, actie)
+        toekomst = self.beste_toekomst(nieuw)
+        self.bijwerken(vakje, actie, oud, beloning, toekomst)
+
+random.seed(1)
+piep = Muis()
+for keer in range(10):
+    print(wandel(piep, 0.2))`} />
+
+<details>
+<summary>Tip</summary>
+
+Zet de `if` met `random.random()` bovenaan in `kies`, met een `return` erin.
+Komt Python daar niet langs, dan zoekt hij daaronder de beste actie.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor. De gang blijft in de verborgen code.
+
+{/* draaien-met: blok-erboven */}
+```python
+import random
+
+class Muis:
+    def __init__(self):
+        self.q = {}
+        self.tempo = 0.5
+
+    def waarde(self, vakje, actie):
+        if (vakje, actie) in self.q:
+            return self.q[(vakje, actie)]
+        return 0
+
+    def bijwerken(self, vakje, actie, oud, beloning, toekomst):
+        self.q[(vakje, actie)] = oud + self.tempo * (beloning + toekomst - oud)
+
+    def beste_toekomst(self, vakje):
+        beste = self.waarde(vakje, acties[0])
+        for actie in acties:
+            if self.waarde(vakje, actie) > beste:
+                beste = self.waarde(vakje, actie)
+        return beste
+
+    def kies(self, vakje, ontdekken):
+        if random.random() < ontdekken:
+            return random.choice(acties)
+        beste = acties[0]
+        for actie in acties:
+            if self.waarde(vakje, actie) > self.waarde(vakje, beste):
+                beste = actie
+        return beste
+
+    def leer(self, vakje, actie, nieuw, beloning):
+        oud = self.waarde(vakje, actie)
+        toekomst = self.beste_toekomst(nieuw)
+        self.bijwerken(vakje, actie, oud, beloning, toekomst)
+
+for ontdekken in [0, 0.2, 1]:
+    random.seed(1)
+    piep = Muis()
+    kaas = 0
+    for keer in range(100):
+        if wandel(piep, ontdekken) == 4:
+            kaas = kaas + 1
+    print(kaas, "keer kaas met ontdekken", ontdekken)
+```
+
+```
+99 keer kaas met ontdekken 0
+98 keer kaas met ontdekken 0.2
+56 keer kaas met ontdekken 1
+```
+
+Zonder ontdekken vindt de muis de kaas het vaakst. Toch klopt zijn tabel dan
+niet overal: een stap die hij na het begin nooit meer zet, zoals links in
+vakje 3, houdt een waarde die niet klopt. Met ontdekken 1 kent hij de gang het best, maar
+loopt hij als een blinde. Een kleine kans zoals 0.2 doet allebei: hij leert
+de gang kennen, en vindt toch bijna altijd de kaas.
+
+</details>
+
+Door naar [de route van de muis](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/07-de-route-van-de-muis).

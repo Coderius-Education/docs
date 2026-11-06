@@ -1,0 +1,191 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Bijstellen"
+---
+
+# Bijstellen
+
+Het neuron weet nu hoe fout het zat. Met die fout stelt het zijn gewichten en
+zijn bias bij: een stukje omhoog als het 1 had moeten zeggen, een stukje
+omlaag als het 0 had moeten zeggen. Nieuw is dat je één element van een lijst
+verandert.
+
+## Voorspel
+
+```python
+gewichten = [0, 0]
+bias = 0
+invoer = [1, 1]
+fout = 1
+
+for i in range(len(invoer)):
+    gewichten[i] = gewichten[i] + fout * invoer[i]
+bias = bias + fout
+print(gewichten, bias)
+```
+
+Het neuron zei 0 bij `[1, 1]`, maar het goede antwoord is 1: de fout is 1.
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[1, 1] 1
+```
+
+Elk gewicht krijgt er de fout keer zijn invoer bij, dus allebei 1, en de bias
+krijgt de fout erbij.
+
+</details>
+
+## Zo werkt het
+
+`gewichten[i] = …` is nieuw: het verandert één element van de lijst, op
+positie `i`. De rest van de lijst blijft zoals hij was.
+
+Elk gewicht krijgt er de fout keer zijn invoer bij:
+
+- is de fout 0, dan verandert er niets;
+- bij een fout van 1 gaan de gewichten van de invoeren die 1 waren omhoog,
+  net als de bias;
+- bij -1 gaan ze omlaag.
+
+Een gewicht met invoer 0 verandert niet, want die invoer had niets met de
+fout te maken.
+
+## Onderzoek
+
+1. Draai de code. Welke gewichten en welke bias heeft het neuron na deze ene
+   stap?
+2. Zet `gewichten` op `[1, 1]` en `bias` op 1, wat je net kreeg, en leer van
+   het voorbeeld `[0, 1]` met doel 0. Wat zijn de gewichten nu?
+3. Waarom verandert bij vraag 2 het eerste gewicht niet?
+4. Wat gebeurt er als het neuron al gelijk had?
+
+<PyRunner verborgen="neuron" initialCode={`gewichten = [0, 0]
+bias = 0
+
+invoer = [1, 1]
+doel = 1
+fout = doel - neuron(invoer, gewichten, bias)
+for i in range(len(invoer)):
+    gewichten[i] = gewichten[i] + fout * invoer[i]
+bias = bias + fout
+print("fout:", fout, "nu:", gewichten, bias)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+fout: 1 nu: [1, 1] 1
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Gewichten `[1, 1]` en bias 1.
+2. Het neuron zegt 1 bij `[0, 1]`, en het moest 0 zijn: de fout is -1. Dan
+   worden de gewichten `[1, 0]` en de bias 0.
+3. De eerste invoer is 0, en 0 keer de fout is 0.
+4. Dan is de fout 0, en verandert er niets.
+
+</details>
+
+## Opdracht: leer van elk voorbeeld
+
+Laat het neuron van alle vier de voorbeelden van EN leren, één keer na elkaar.
+Het begint nu met gewichten `[1, 1]` en bias 0, het OF-neuron. Print na elk
+voorbeeld de invoer, de fout, de gewichten en de bias:
+
+```
+[0, 0] 0 [1, 1] 0
+[0, 1] -1 [1, 0] -1
+[1, 0] 0 [1, 0] -1
+[1, 1] 1 [2, 1] 0
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij leert van het eerste voorbeeld. Het neuron had gelijk, dus er verandert niets.
+2. Zet het uitrekenen van de fout en het bijstellen in een loop `for invoer, doel in voorbeelden`, en print na elk voorbeeld.
+3. Kijk naar de laatste regel. Zegt het neuron met `[2, 1]` en bias 0 nu EN? Probeer het met `neuron([0, 1], gewichten, bias)` onder de loop.
+
+<PyRunner verborgen="neuron" initialCode={`voorbeelden = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
+gewichten = [1, 1]
+bias = 0
+
+invoer, doel = voorbeelden[0]
+fout = doel - neuron(invoer, gewichten, bias)
+print(invoer, fout, gewichten, bias)`} />
+
+<details>
+<summary>Tip</summary>
+
+Het bijstellen is zelf ook een loop, over de posities van `invoer`. Die komt
+dus ín de loop over de voorbeelden, na het uitrekenen van de fout.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de laatste drie regels in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+for invoer, doel in voorbeelden:
+    fout = doel - neuron(invoer, gewichten, bias)
+    for i in range(len(invoer)):
+        gewichten[i] = gewichten[i] + fout * invoer[i]
+    bias = bias + fout
+    print(invoer, fout, gewichten, bias)
+
+print(neuron([0, 1], gewichten, bias))
+```
+
+```
+[0, 0] 0 [1, 1] 0
+[0, 1] -1 [1, 0] -1
+[1, 0] 0 [1, 0] -1
+[1, 1] 1 [2, 1] 0
+1
+```
+
+Na één keer alle voorbeelden is het neuron nog geen EN: bij `[0, 1]` zegt het
+weer 1. Het leert niet alles in één keer. In de volgende stap laat je het
+daarom vaker oefenen.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+TypeError: unsupported operand type(s) for +: 'int' and 'list'
+```
+
+**Oorzaak:** je vergat `[i]` achter `invoer`. Dan is `fout * invoer` een
+lijst, en een getal plus een lijst kan Python niet uitrekenen.
+
+**Oplossing:** pak met `invoer[i]` de invoer die bij gewicht `i` hoort.
+
+```python
+# FOUT
+gewichten = [0, 0]
+invoer = [1, 1]
+fout = 1
+for i in range(len(invoer)):
+    gewichten[i] = gewichten[i] + fout * invoer
+
+# GOED
+gewichten = [0, 0]
+invoer = [1, 1]
+fout = 1
+for i in range(len(invoer)):
+    gewichten[i] = gewichten[i] + fout * invoer[i]
+```
+
+Door naar [rondes](site:algorithms/docs/ml-neuronen/02-neuron-leert/03-rondes).

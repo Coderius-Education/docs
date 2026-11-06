@@ -1,0 +1,163 @@
+---
+sidebar_position: 3
+sidebar_label: "3. Hele woorden"
+---
+
+# Hele woorden
+
+Het filter vond `nu` in `nummer`, want `in` op tekst zoekt naar letters. Nu
+knip je het bericht in losse woorden, en vergelijk je hele woorden met de
+lijst verdachte woorden.
+
+## Voorspel
+
+```python
+verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+woorden = "je nieuwe nummer is binnen".split()
+
+print(woorden)
+print("nu" in "je nieuwe nummer is binnen")
+print("nu" in woorden)
+print("klik" in verdacht)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+['je', 'nieuwe', 'nummer', 'is', 'binnen']
+True
+False
+True
+```
+
+In de tekst staat `nu`, als begin van `nummer`. In de lijst `woorden` staat
+geen element dat precies `"nu"` is.
+
+</details>
+
+## Zo werkt het
+
+`.split()` is nieuw. Hij knipt een tekst op de spaties in een lijst woorden:
+
+```python
+print("je nieuwe nummer".split())   # ['je', 'nieuwe', 'nummer']
+```
+
+Of een woord in een lijst staat, vraag je ook met `in`. Op een lijst zoekt
+`in` naar een heel element: `"klik" in verdacht` is `True`, maar
+`"kli" in verdacht` is `False`. Op tekst zoekt `in` naar letters, op een
+lijst naar hele elementen.
+
+## Onderzoek
+
+1. Waarom geeft `"kli" in verdacht` `False`? Verander `"kli"` in `"klik"`, en
+   draai opnieuw.
+2. Welke woorden staan in de lijst `woorden`? Waarom geeft `"hoi" in woorden`
+   `False`?
+3. Zet `.lower()` voor `.split()`: `"Hoi, bel je me nu?".lower().split()`.
+   Geeft `"hoi" in woorden` nu wel `True`?
+
+<PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+print("kli" in verdacht)
+
+woorden = "Hoi, bel je me nu?".split()
+print(woorden)
+print("hoi" in woorden)
+print("je" in woorden)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. In een lijst zoekt `in` naar een heel element, en `"kli"` is geen element
+   van `verdacht`. Met `"klik"` krijg je `True`.
+2. `['Hoi,', 'bel', 'je', 'me', 'nu?']`. Het eerste woord is `"Hoi,"`, met een
+   hoofdletter en een komma eraan. `.split()` knipt alleen op spaties, dus
+   leestekens blijven aan de woorden vastzitten. Ook `"nu?"` is iets anders
+   dan `"nu"`.
+3. Nee. Nu staat er `"hoi,"`, en de komma zit er nog aan.
+
+</details>
+
+## Opdracht: hele woorden vergelijken
+
+Pas het filter aan: loop over de woorden van het bericht, en tel een punt
+voor elk woord dat in de lijst `verdacht` staat. Met
+`"Je nieuwe nummer is binnen"` moet de score 0 worden:
+
+```
+score: 0
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet de lijst woorden van het bericht.
+2. Loop met `for` over die woorden, en print elk woord.
+3. Zet in de loop een `if`: staat het woord in `verdacht`, print het dan. Bij dit bericht print hij niets, want geen woord is verdacht. Probeer daarom ook `"Klik nu voor gratis geld"`.
+4. Tel nu in plaats van te printen: begin boven de loop met `score = 0`, tel er bij elk verdacht woord 1 bij op, en print de score na de loop. Met `"Je nieuwe nummer is binnen"` is hij 0.
+
+<PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+
+bericht = "Je nieuwe nummer is binnen"
+bericht = bericht.lower()
+
+woorden = bericht.split()
+print(woorden)`} />
+
+<details>
+<summary>Tip</summary>
+
+Print hij bij `"Klik nu voor gratis geld"` nog steeds niets? Kijk naar de
+twee lijsten. De loop gaat over `woorden`, en de `if` vraagt of het woord in
+de andere lijst staat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+
+bericht = "Je nieuwe nummer is binnen"
+bericht = bericht.lower()
+
+woorden = bericht.split()
+score = 0
+for woord in woorden:
+    if woord in verdacht:
+        score = score + 1
+
+print("score:", score)   # score: 0
+```
+
+`woord in verdacht` vraagt of `woord` een van de elementen van de lijst is.
+`"nummer"` is dat niet, dus er komt geen punt bij.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+AttributeError: 'list' object has no attribute 'lower'
+```
+
+**Oorzaak:** `.lower()` werkt op tekst, niet op een lijst. Na `.split()` is
+`woorden` een lijst.
+
+**Oplossing:** zet `.lower()` vóór `.split()`: eerst de hele tekst in kleine
+letters, dan knippen.
+
+```python
+# FOUT
+woorden = "Klik NU".split()
+woorden = woorden.lower()
+
+# GOED
+woorden = "Klik NU".lower().split()
+```
+
+Door naar [verslaan en verbeteren](site:algorithms/docs/ml-regels/02-spamfilter/04-verslaan-en-verbeteren).

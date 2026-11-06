@@ -1,0 +1,164 @@
+---
+sidebar_position: 3
+sidebar_label: "3. De gang"
+---
+
+# De gang
+
+De muis heeft een tabel en kan erin kijken. Nu krijgt hij een gang om te
+leren. Nieuw is dat elke stap een beloning oplevert, en dat de gang al
+klaarstaat in verborgen code, zoals het spel van Nim.
+
+```
+vakje:   0     1     2     3     4
+        val   ...  muis   ...  kaas
+```
+
+De gang heeft vijf vakjes. In vakje 0 staat een val, in vakje 4 ligt de kaas,
+en de muis begint in vakje 2. Bij elke stap gaat hij naar links of naar
+rechts. De kaas levert 1 op, de val -1, en elke andere stap -0.25: lopen kost
+energie.
+
+## Voorspel
+
+```python
+def stap(vakje, actie):
+    nieuw = vakje + 1
+    if actie == "links":
+        nieuw = vakje - 1
+    if nieuw == 4:
+        return nieuw, 1
+    if nieuw == 0:
+        return nieuw, -1
+    return nieuw, -0.25
+
+print(stap(3, "rechts"), stap(2, "links"))
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+(4, 1) (1, -0.25)
+```
+
+`stap` geeft twee dingen terug: het nieuwe vakje en de beloning. Van 3 naar
+rechts kom je bij de kaas. Van 2 naar links kom je in vakje 1, en dat kost
+-0.25.
+
+</details>
+
+## Zo werkt het
+
+CS50 noemt een vakje een **toestand** (*state*), een stap naar links of
+rechts een **actie** (*action*), en wat hij oplevert een **beloning**
+(*reward*). Bij Nim was de toestand de stapel, en de actie hoeveel je pakt.
+
+In de verborgen code staan:
+
+- `acties`, de lijst `["links", "rechts"]`;
+- `stap(vakje, actie)` uit Voorspel, die het nieuwe vakje en de beloning
+  teruggeeft;
+- `klaar(vakje)`, die waar is in vakje 0 en vakje 4;
+- `willekeurige_wandeling()`, die de muis blind laat lopen tot de val of de
+  kaas. Je krijgt een lijst van stappen terug, en elke stap is een tuple
+  `(vakje, actie, nieuw, beloning)`.
+
+Nieuw is dat je in een `for`-loop een tuple uit elkaar kunt halen:
+`for vakje, actie, nieuw, beloning in wandeling:` geeft bij elke stap de vier
+delen een eigen naam.
+
+## Onderzoek
+
+1. Draai de code. Waar eindigt deze wandeling?
+2. Tel de beloningen van deze wandeling bij elkaar op. Hoeveel krijgt de muis
+   in totaal?
+3. Verander de seed een paar keer. Wat is de kortste wandeling naar de kaas,
+   en wat levert die op?
+
+<PyRunner verborgen="muis-gang" initialCode={`import random
+
+random.seed(21)
+wandeling = willekeurige_wandeling()
+for vakje, actie, nieuw, beloning in wandeling:
+    print(vakje, actie, "->", nieuw, "beloning", beloning)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+2 links -> 1 beloning -0.25
+1 rechts -> 2 beloning -0.25
+2 rechts -> 3 beloning -0.25
+3 rechts -> 4 beloning 1
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Bij de kaas, in vakje 4, na vier stappen.
+2. 0.25: drie keer -0.25 en één keer 1.
+3. Twee keer naar rechts, van 2 via 3 naar 4. Dat levert -0.25 + 1 = 0.75
+   op. Hoe langer de muis omloopt, hoe minder hij overhoudt.
+
+</details>
+
+## Opdracht: een blinde muis
+
+Laat de muis 1000 keer blind wandelen, en tel hoe vaak hij bij de kaas
+uitkomt:
+
+```
+kaas: 504 van de 1000
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet de laatste stap van één wandeling.
+2. Haal met `vakje, actie, nieuw, beloning = wandeling[-1]` de delen van die stap uit elkaar, en print `nieuw == 4`: is de muis bij de kaas?
+3. Doe 1000 wandelingen, en tel hoe vaak de muis de kaas vindt.
+
+<PyRunner verborgen="muis-gang" initialCode={`import random
+
+random.seed(1)
+wandeling = willekeurige_wandeling()
+print(wandeling[-1])`} />
+
+<details>
+<summary>Tip</summary>
+
+`wandeling[-1]` is de laatste stap van de lijst. Bij stap 3 hoort een nieuwe
+wandeling in de loop, anders tel je 1000 keer dezelfde.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor. De gang blijft in de verborgen code.
+
+{/* draaien-met: blok-erboven */}
+```python
+import random
+
+random.seed(1)
+kaas = 0
+for keer in range(1000):
+    wandeling = willekeurige_wandeling()
+    vakje, actie, nieuw, beloning = wandeling[-1]
+    if nieuw == 4:
+        kaas = kaas + 1
+print("kaas:", kaas, "van de 1000")   # kaas: 504 van de 1000
+```
+
+Een blinde muis vindt de kaas in ongeveer de helft van de wandelingen: de
+kaas en de val liggen even ver van vakje 2. In de volgende stappen leert hij
+het beter.
+
+</details>
+
+Door naar [een leertempo](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/04-een-leertempo).

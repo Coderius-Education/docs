@@ -1,0 +1,193 @@
+---
+sidebar_position: 3
+sidebar_label: "3. Rondes"
+---
+
+# Rondes
+
+Na één keer alle voorbeelden was het neuron nog geen EN. Daarom laat je het
+de voorbeelden vaker langsgaan, in rondes. Bestaan er gewichten die kloppen,
+dan zegt het na een paar rondes bij elk voorbeeld het goede antwoord.
+
+## Voorspel
+
+```python
+voorbeelden = [([0, 0], 0), ([1, 1], 1)]
+
+for ronde in range(2):
+    for invoer, doel in voorbeelden:
+        print("ronde", ronde + 1, invoer, doel)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+ronde 1 [0, 0] 0
+ronde 1 [1, 1] 1
+ronde 2 [0, 0] 0
+ronde 2 [1, 1] 1
+```
+
+`range(2)` geeft 0 en 1; met `ronde + 1` print je 1 en 2. In elke ronde
+komen alle voorbeelden langs.
+
+</details>
+
+## Zo werkt het
+
+Eén keer alle voorbeelden langs heet een **ronde**. De code hieronder doet tien
+rondes, en telt per ronde hoe vaak het neuron het fout had. Heeft het in een
+ronde geen enkele fout, dan is elke fout 0, en verandert er daarna niets meer.
+
+## Onderzoek
+
+1. Draai de code. Na hoeveel rondes maakt het neuron geen fouten meer?
+2. Welke gewichten en bias heeft het geleerd? Zijn ze hetzelfde als jouw
+   antwoord bij het EN-neuron?
+3. Leer het neuron OF: verander de doelen in `0, 1, 1, 1`. Leert het dat ook?
+4. Leer het neuron "precies één": de doelen worden `0, 1, 1, 0`. Wat gebeurt
+   er?
+
+<PyRunner verborgen="neuron" initialCode={`voorbeelden = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
+gewichten = [0, 0]
+bias = 0
+
+for ronde in range(10):
+    fouten = 0
+    for invoer, doel in voorbeelden:
+        fout = doel - neuron(invoer, gewichten, bias)
+        if fout != 0:
+            fouten = fouten + 1
+        for i in range(len(invoer)):
+            gewichten[i] = gewichten[i] + fout * invoer[i]
+        bias = bias + fout
+    print("ronde", ronde + 1, ":", fouten, "fouten")
+
+print(gewichten, bias)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+ronde 1 : 1 fouten
+ronde 2 : 3 fouten
+ronde 3 : 3 fouten
+ronde 4 : 2 fouten
+ronde 5 : 1 fouten
+ronde 6 : 0 fouten
+ronde 7 : 0 fouten
+ronde 8 : 0 fouten
+ronde 9 : 0 fouten
+ronde 10 : 0 fouten
+[2, 1] -2
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Vanaf ronde 6 maakt het geen fouten meer. Daarna verandert er niets meer,
+   want elke fout is 0.
+2. Gewichten `[2, 1]` met bias `-2`. Dat is anders dan `[1, 1]` met bias `-1`,
+   maar het werkt ook: alleen bij `[1, 1]` komt de som boven 0. Er zijn veel
+   goede antwoorden, en het neuron vindt er één.
+3. Ja, vanaf ronde 4 maakt het geen fouten meer. Het eindigt op gewichten
+   `[1, 1]` met bias `0`.
+4. Het neuron blijft fouten maken, hoeveel rondes je ook doet. Bij
+   [OF, en precies één](site:algorithms/docs/ml-neuronen/01-neuron/05-of-en-precies-een)
+   zag je waarom: geen enkele set gewichten past bij "precies één". Wat niet
+   kan, kan een neuron ook niet leren.
+
+</details>
+
+## Opdracht: wanneer is het klaar?
+
+Laat het programma zelf zeggen in welke ronde het neuron voor het eerst geen
+fouten meer maakte. Lukt dat in geen enkele ronde, dan zegt het dat:
+
+```
+klaar na ronde 6
+```
+
+Met de doelen van "precies één" print het:
+
+```
+niet geleerd in 10 rondes
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij leert tien rondes en print alleen de gewichten en de bias.
+2. Geef `klaar` na elke ronde het nummer van die ronde, als `fouten` 0 is en `klaar` nog 0 is. Print `klaar` na de loop: 6.
+3. Print "klaar na ronde 6" als `klaar` meer dan 0 is, en anders "niet geleerd in 10 rondes".
+4. Verander de doelen in die van OF, en daarna in die van "precies één".
+
+<PyRunner verborgen="neuron" initialCode={`voorbeelden = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
+gewichten = [0, 0]
+bias = 0
+klaar = 0
+
+for ronde in range(10):
+    fouten = 0
+    for invoer, doel in voorbeelden:
+        fout = doel - neuron(invoer, gewichten, bias)
+        if fout != 0:
+            fouten = fouten + 1
+        for i in range(len(invoer)):
+            gewichten[i] = gewichten[i] + fout * invoer[i]
+        bias = bias + fout
+
+print(gewichten, bias)`} />
+
+<details>
+<summary>Tip</summary>
+
+Waarom moet `klaar` nog 0 zijn? Kijk wat er in ronde 7 tot en met 10 gebeurt
+als je die voorwaarde weglaat.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder `voorbeelden = …` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+gewichten = [0, 0]
+bias = 0
+klaar = 0
+
+for ronde in range(10):
+    fouten = 0
+    for invoer, doel in voorbeelden:
+        fout = doel - neuron(invoer, gewichten, bias)
+        if fout != 0:
+            fouten = fouten + 1
+        for i in range(len(invoer)):
+            gewichten[i] = gewichten[i] + fout * invoer[i]
+        bias = bias + fout
+    if fouten == 0 and klaar == 0:
+        klaar = ronde + 1
+
+if klaar > 0:
+    print("klaar na ronde", klaar)
+else:
+    print("niet geleerd in 10 rondes")
+```
+
+```
+klaar na ronde 6
+```
+
+De `if` na de ronde staat in de buitenste loop, niet in de binnenste: pas na
+alle voorbeelden weet je hoeveel fouten de ronde had. Met de doelen van OF
+print hij "klaar na ronde 4".
+
+</details>
+
+Door naar [appels en bananen](site:algorithms/docs/ml-neuronen/02-neuron-leert/04-appels-en-bananen).

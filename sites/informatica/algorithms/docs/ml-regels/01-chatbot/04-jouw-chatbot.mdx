@@ -1,0 +1,147 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Jouw chatbot"
+---
+
+# Jouw chatbot
+
+Je chatbot heeft nu een regel per trefwoord. Met `or` past één regel op
+twee trefwoorden, en met `and` alleen als twee trefwoorden allebei in de zin
+staan. Daarna bouw je een chatbot over je eigen onderwerp, en zoek je uit
+waar regels tekortschieten.
+
+:::info
+Je gebruikt hier `or` en `and` uit
+[And, or en elif](site:python/docs/beslissen/05c-and-or-elif).
+:::
+
+## Voorspel
+
+```python
+zin = "tot ziens, bot"
+
+if "doei" in zin or "tot ziens" in zin:
+    print("Doei, tot de volgende keer.")
+if "ajax" in zin and "psv" in zin:
+    print("Dat is altijd een spannende wedstrijd.")
+```
+
+Wat print dit programma? En wat print het bij `"ajax speelt vandaag"`?
+
+<details>
+<summary>Antwoord</summary>
+
+Bij `"tot ziens, bot"` print het `Doei, tot de volgende keer.` Er staat
+geen `"doei"` in de zin, wel `"tot ziens"`, en bij `or` is één genoeg. De
+regel met `and` past niet. Bij `"ajax speelt vandaag"` print het niets:
+`and` wil ze allebei, en `"psv"` ontbreekt.
+
+</details>
+
+## Zo werkt het
+
+Met `or` past een regel als minstens één van de twee trefwoorden in de zin
+staat. Met `and` past hij alleen als ze er allebei in staan. Een regel met
+`and` is dus strenger.
+
+Hoeveel regels je ook toevoegt, de chatbot zoekt naar letters en niet naar
+betekenis. Bij `"ik ga weer naar huis"` praatte hij in
+[meer regels](site:algorithms/docs/ml-regels/01-chatbot/02-meer-regels#onderzoek)
+over het weer. Elke chatbot met regels heeft zulke zinnen.
+
+## Onderzoek
+
+1. Verander in de regel voor `"doei"` de `or` in `and`. Wat antwoordt de
+   chatbot nu op `"Tot ziens, Bot"`? En op `"Doei, tot ziens"`?
+2. Zet de `or` terug, maar schrijf de regel als
+   `elif "doei" or "tot ziens" in zin:`. Probeer `"Ik heb honger"`. Wat
+   gebeurt er?
+3. Probeer `"Ik zei hallo en doei"`. Welke regel wint, en waarom?
+
+<PyRunner initialCode={`zin = "Tot ziens, Bot"
+zin = zin.lower()
+
+if "hoi" in zin or "hallo" in zin:
+    print("Hallo, leuk dat je er bent.")
+elif "doei" in zin or "tot ziens" in zin:
+    print("Doei, tot de volgende keer.")
+else:
+    print("Daar weet ik niets van.")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Bij `"Tot ziens, Bot"` zegt hij `Daar weet ik niets van.`, want `"doei"`
+   staat er niet in. In `"Doei, tot ziens"` staan ze allebei, en krijg je
+   `Doei, tot de volgende keer.`
+2. De chatbot zegt `Doei, tot de volgende keer.`, ook bij een zin over
+   honger. Python leest `"doei"` als een losse vraag, en een tekst die niet
+   leeg is, telt als `True`. Schrijf `in zin` aan beide kanten van `or`:
+   `"doei" in zin or "tot ziens" in zin`. Dezelfde fout staat in
+   [And, or en elif](site:python/docs/beslissen/05c-and-or-elif), bij
+   `kleur == "rood" or "blauw"`.
+3. `Hallo, leuk dat je er bent.` De zin past op beide regels, en de bovenste
+   wint.
+
+</details>
+
+## Bouw zelf: een chatbot over jouw onderwerp
+
+Bouw een chatbot die over iets praat waar jij veel van weet: voetbal, een
+game, je huisdier. Hij heeft minstens vier regels, en één regel gebruikt
+`and`: die past alleen als twee trefwoorden allebei in de zin staan.
+
+Zoek daarna een zin die je chatbot verkeerd begrijpt, zoals de chatbot uit
+[meer regels](site:algorithms/docs/ml-regels/01-chatbot/02-meer-regels#onderzoek)
+bij `"ik ga weer naar huis"`.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Kies je onderwerp. Verander de zin en de eerste regel zo dat ze erover gaan, en draai.
+2. Zet er twee regels bij met `elif`, en een `else` voor de rest. Test elke regel met een eigen zin.
+3. Maak één regel met `and`, en test hem met een zin waar beide trefwoorden in staan, en met een zin met maar één.
+4. Probeer zinnen tot je er een vindt die hij verkeerd begrijpt.
+
+<PyRunner initialCode={`zin = "Wie heeft er gisteren gewonnen?"
+zin = zin.lower()
+
+if "hoi" in zin:
+    print("Hoi, praat je mee?")`} />
+
+<details>
+<summary>Tip</summary>
+
+Zet de regel met `and` bovenaan. Hij is strenger dan een regel met één
+trefwoord, en de chatbot neemt de eerste regel die past.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Een chatbot over voetbal, bijvoorbeeld:
+
+```python
+zin = "Wie heeft er gisteren gewonnen?"
+zin = zin.lower()
+
+if "ajax" in zin and "psv" in zin:
+    print("Dat is altijd een spannende wedstrijd.")
+elif "gewonnen" in zin or "verloren" in zin:
+    print("Ik heb de uitslag nog niet gezien.")
+elif "keeper" in zin:
+    print("Een goede keeper is goud waard.")
+elif "hoi" in zin:
+    print("Hoi, praat je mee over voetbal?")
+else:
+    print("Daar weet ik niets van.")
+```
+
+Een zin die hij verkeerd begrijpt: `"Ik heb mijn sleutels verloren"`. Daar
+antwoordt hij `Ik heb de uitslag nog niet gezien.` Elke chatbot met regels
+heeft zulke zinnen. Daarom leert het spamfilter straks van voorbeelden in
+plaats van regels.
+
+</details>
+
+Door naar [een score](site:algorithms/docs/ml-regels/02-spamfilter/01-een-score).

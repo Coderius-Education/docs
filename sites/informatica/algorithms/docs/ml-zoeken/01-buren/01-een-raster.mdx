@@ -1,0 +1,155 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Een raster"
+---
+
+# Een raster
+
+Een robot staat in een doolhof en moet de uitgang vinden. Voordat hij een weg
+kan zoeken, moet hij weten waar hij vanaf een vakje naartoe kan. In dit project
+zet je een doolhof in Python, en schrijf je een functie die bij elk vakje de
+buren geeft. In het volgende project zoek je daarmee de kortste weg. Eerst het
+doolhof zelf: een raster van vakjes.
+
+:::info
+Je gebruikt hier lijsten uit [Lijsten](site:python/docs/data/10a-lijsten-basis),
+tuples en uitpakken uit [Tuples](site:python/docs/data/tuples), een functie
+met `return` uit [Return-waarden](site:python/docs/functies/09b-return), en een
+loop in een loop uit
+[Om de beurt](site:python/docs/projecten/schildpaddenrace/stap-5-loop-in-loop).
+Nieuw is dat je een tekst net als een lijst met een index leest.
+:::
+
+## Voorspel
+
+```python
+doolhof = [
+    "S.#",
+    ".##",
+    "..E",
+]
+
+print(doolhof[0][2])
+print(doolhof[2][1])
+print(len(doolhof), len(doolhof[0]))
+```
+
+`S` is de start, `E` de uitgang, `#` een muur en `.` een vrij vakje. Wat
+print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+#
+.
+3 3
+```
+
+`doolhof[0]` is de eerste rij, `"S.#"`, en daarvan is `[2]` het derde teken:
+een muur. `doolhof[2][1]` is het tweede teken van de onderste rij.
+
+</details>
+
+## Zo werkt het
+
+Het doolhof is een lijst van teksten, één tekst per rij. Een tekst kun je net
+als een lijst met een index lezen: `"S.#"[2]` is `"#"`. Met `doolhof[rij][kolom]`
+pak je dus één vakje. Rij 0 is de bovenste rij, kolom 0 de linker kolom.
+
+Een vakje schrijf je als tuple `(rij, kolom)`. Met `rij, kolom = vakje` pak je
+de tuple uit in twee variabelen, net als in een for-loop.
+
+## Onderzoek
+
+1. Draai de code. Welk teken staat er op het vakje `(2, 3)`? Zoek het op in het doolhof.
+2. Op welk vakje staat de `E`? Zet dat vakje in `vakje`, en kijk of je gelijk had.
+3. Zet `vakje = (5, 0)`. Wat gebeurt er?
+
+<PyRunner initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+
+vakje = (2, 3)
+rij, kolom = vakje
+print(doolhof[rij])
+print(doolhof[rij][kolom])`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Een `.`: de rij is `"#....#"`, en kolom 3 is het vierde teken.
+2. Op `(4, 5)`: de onderste rij, het laatste teken. Het doolhof heeft 5 rijen
+   van 6 tekens, dus de nummers lopen van 0 tot en met 4 en van 0 tot en met 5.
+3. Python stopt met een foutmelding: rij 5 bestaat niet. In
+   [muren](site:algorithms/docs/ml-zoeken/01-buren/03-muren#er-gaat-iets-mis)
+   zie je hoe `buren` dat voorkomt.
+
+</details>
+
+## Opdracht: muren tellen
+
+Tel hoeveel muren er in het doolhof staan. Dat zijn er 9:
+
+```
+Er staan 9 muren
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij telt de muren in de bovenste rij. Daar staan er 0.
+2. Verander `doolhof[0]` in `doolhof[1]`. Nu telt hij er 3.
+3. Zet de loop in een tweede loop, `for regel in doolhof:`, en loop in de binnenste loop over `regel` in plaats van over `doolhof[1]`. Nu telt hij alle 9 muren.
+
+<PyRunner initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+
+teller = 0
+for teken in doolhof[0]:
+    if teken == "#":
+        teller = teller + 1
+print("Er staan", teller, "muren")`} />
+
+<details>
+<summary>Tip</summary>
+
+Telt hij steeds alleen één rij, of een getal dat niet klopt? Kijk waar
+`teller = 0` staat: binnen de buitenste loop begint hij bij elke rij opnieuw
+bij 0.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder het doolhof in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+teller = 0
+for regel in doolhof:
+    for teken in regel:
+        if teken == "#":
+            teller = teller + 1
+print("Er staan", teller, "muren")
+```
+
+```
+Er staan 9 muren
+```
+
+De buitenste loop gaat langs de rijen, de binnenste langs de tekens van één
+rij. Zo komt elk vakje één keer langs.
+
+</details>
+
+Door naar [de buren](site:algorithms/docs/ml-zoeken/01-buren/02-de-buren).

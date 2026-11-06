@@ -1,0 +1,164 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Een trefwoord"
+---
+
+# Een trefwoord
+
+In 1966 bouwde Joseph Weizenbaum Eliza, een programma waarmee je kon
+chatten. Veel mensen dachten dat Eliza hen begreep. Toch deed het programma
+iets heel kleins: het zocht in je zin naar trefwoorden en gaf bij elk
+trefwoord een vast antwoord. Zo'n chatbot bouw je hier zelf, in vier kleine
+stappen. In deze eerste stap reageert hij op één trefwoord.
+
+:::info
+In dit project gebruik je `if` en `else` uit
+[If en else](site:python/docs/beslissen/05b-if-else), `elif`, `or` en `and` uit
+[And, or en elif](site:python/docs/beslissen/05c-and-or-elif), en `.lower()` uit
+[String-methoden](site:python/docs/tekst/04b-string-methoden). Voor deze
+eerste stap heb je alleen `if` nodig.
+:::
+
+## Voorspel
+
+```python
+zin = "hoi, hoe gaat het?"
+
+if "hoi" in zin:
+    print("Hallo, leuk dat je er bent.")
+```
+
+Wat print dit programma? En wat print het als `zin` de tekst
+`"goedemorgen"` is?
+
+<details>
+<summary>Antwoord</summary>
+
+Bij `"hoi, hoe gaat het?"` print het `Hallo, leuk dat je er bent.`, want
+`"hoi"` staat in de zin. Bij `"goedemorgen"` print het niets: de `if` past
+niet, en er staat geen andere regel onder.
+
+</details>
+
+## Zo werkt het
+
+Het nieuwe stuk is `in` op tekst:
+
+```python
+print("hoi" in "hoi, hoe gaat het?")   # True
+print("doei" in "hoi, hoe gaat het?")  # False
+```
+
+`"hoi" in zin` is `True` als het stukje tekst ergens in de zin staat, en
+`False` als het er nergens in staat. Alleen bij `True` voert de `if` zijn
+`print` uit.
+
+De chatbot begrijpt dus niets van je zin. Hij kijkt alleen of de letters van
+het trefwoord ergens in de zin achter elkaar staan.
+
+## Onderzoek
+
+1. Verander `zin` in `"Hoi, hoe gaat het?"`, met een hoofdletter. Wat gebeurt
+   er?
+2. Verander het trefwoord `"hoi"` in `"hoe gaat"`. Past de regel nog op de
+   zin?
+3. Verander het trefwoord in `"o"`, en probeer een paar andere zinnen. Wanneer
+   antwoordt de chatbot?
+
+<PyRunner initialCode={`zin = "hoi, hoe gaat het?"
+
+if "hoi" in zin:
+    print("Hallo, leuk dat je er bent.")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. De chatbot zegt niets. Voor Python zijn `h` en `H` twee verschillende
+   letters, dus `"hoi"` staat niet in `"Hoi, hoe gaat het?"`. In
+   [hoofdletters](site:algorithms/docs/ml-regels/01-chatbot/03-hoofdletters)
+   los je dat op.
+2. Ja. Een trefwoord mag ook uit twee woorden bestaan: `in` zoekt naar het
+   hele stukje tekst, met de spatie erbij.
+3. Bij bijna elke zin, want bijna elke zin heeft een `o`. Een trefwoord dat
+   te kort is, past op te veel zinnen.
+
+</details>
+
+## Opdracht: een tweede trefwoord
+
+Laat de chatbot ook reageren op `"weer"`: dan antwoordt hij
+`Ik kan niet naar buiten kijken.` Met de zin uit de editor wordt de uitvoer:
+
+```
+Ik kan niet naar buiten kijken.
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. De zin gaat over het weer, maar de chatbot zegt niets: hij kent alleen `"hoi"`.
+2. Zet onder de eerste `if` een tweede `if` voor `"weer"`, met een eigen `print`. Draai opnieuw.
+3. Verander `zin` in `"hoi, hoe is het weer?"`. Nu geeft de chatbot twee antwoorden.
+
+<PyRunner initialCode={`zin = "wat voor weer wordt het morgen?"
+
+if "hoi" in zin:
+    print("Hallo, leuk dat je er bent.")`} />
+
+<details>
+<summary>Tip</summary>
+
+Komt het antwoord over het weer niet? Kijk of de tweede `if` helemaal links
+begint, op dezelfde hoogte als de eerste. Staat hij ingesprongen onder de
+eerste `print`, dan hoort hij bij de eerste `if`, en die past niet.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+zin = "wat voor weer wordt het morgen?"
+
+if "hoi" in zin:
+    print("Hallo, leuk dat je er bent.")
+if "weer" in zin:
+    print("Ik kan niet naar buiten kijken.")
+```
+
+```
+Ik kan niet naar buiten kijken.
+```
+
+Bij `"hoi, hoe is het weer?"` passen beide regels, en krijg je twee
+antwoorden onder elkaar. In de volgende stap kiest de chatbot er één.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+NameError: name 'hoi' is not defined
+```
+
+**Oorzaak:** de aanhalingstekens om het trefwoord ontbreken. Zonder
+aanhalingstekens denkt Python dat `hoi` een variabele is, en die bestaat
+niet.
+
+**Oplossing:** zet het trefwoord tussen aanhalingstekens.
+
+```python
+# FOUT
+zin = "hoi daar"
+if hoi in zin:
+    print("Hallo.")
+
+# GOED
+zin = "hoi daar"
+if "hoi" in zin:
+    print("Hallo.")
+```
+
+Meer uitleg: [Variabelen](site:python/docs/basis/jij-als-variabele).
+
+Door naar [meer regels](site:algorithms/docs/ml-regels/01-chatbot/02-meer-regels).

@@ -1,0 +1,162 @@
+---
+sidebar_position: 3
+sidebar_label: "3. De score"
+---
+
+# De score
+
+Je hebt het fruit verdeeld in een oefenset en een toetsset. Nu toets je: de
+voorspeller zoekt de buren alleen in de oefenset, en je telt hoeveel stukken
+uit de toetsset hij goed heeft. Dat aantal is zijn **score**.
+
+## Voorspel
+
+```python
+uitslagen = [("appel", "appel"), ("citroen", "appel"), ("banaan", "banaan"), ("appel", "appel")]
+goed = 0
+for echt, voorspeld in uitslagen:
+    if echt == voorspeld:
+        goed = goed + 1
+print(goed, "van de", len(uitslagen), "goed")
+print(goed / len(uitslagen) * 100, "procent")
+```
+
+Elke uitslag is een tuple van de echte soort en wat de voorspeller zei. Wat
+print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3 van de 4 goed
+75.0 procent
+```
+
+De citroen noemde hij een appel. Delen door het aantal en keer 100 geeft het
+percentage.
+
+</details>
+
+## Zo werkt het
+
+In de loop over de toetsset geef je `voorspel` de oefenset als voorbeelden:
+`voorspel(maten, oefen, k)`. Klopt de voorspelling met de echte soort, dan
+telt hij als goed. Het stuk fruit zelf zit niet in de oefenset, dus het kan
+niet zijn eigen buur zijn.
+
+## Onderzoek
+
+1. Draai de code met `k = 1`. Hoeveel van de zes heeft hij goed?
+2. Zet `k` op 3. Wordt het beter?
+3. Zet `k` weer op 1, en verander de seed in 4. Wat gebeurt er met de score?
+4. Zes stukken fruit is een kleine toets. Wat betekent dat voor een score
+   als "5 van de 6"?
+
+<PyRunner verborgen="knn" initialCode={`import random
+
+fruit = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
+    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
+    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
+    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
+    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
+]
+k = 1
+
+random.seed(3)
+random.shuffle(fruit)
+oefen = fruit[:18]
+toets = fruit[18:]
+
+goed = 0
+for maten, soort in toets:
+    if voorspel(maten, oefen, k) == soort:
+        goed = goed + 1
+print(goed, "van de", len(toets), "goed")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Vijf van de zes. De citroen `(8, 6)` noemt hij een appel. Een appel
+   `(8, 7)` en twee citroenen liggen allemaal op afstand 1, en bij gelijke
+   afstand sorteert `sorted` op de soort: appel komt op alfabet voor
+   citroen. Met één buur beslist dus het toeval van de spelling.
+2. Met `k = 3` heeft hij ze alle zes goed: bij `(8, 6)` stemmen nu twee citroenen mee.
+3. Met seed 4 heeft hij ze alle zes goed, ook met `k = 1`. Er zit dan geen
+   enkele citroen in de toetsset, alleen appels en bananen, en die zijn
+   makkelijk. Dezelfde voorspeller lijkt zo beter dan hij is: de score hangt
+   af van welke stukken fruit toevallig in de toets zitten. In de
+   [volgende stap](site:algorithms/docs/ml-afstand/03-eerlijk-testen/04-goed-per-soort)
+   zie je daarom per soort hoe het zit.
+4. Eén stuk fruit meer of minder goed scheelt bij zes al 17 procentpunt. Een
+   kleine toets zegt weinig. Met honderden stukken fruit in de toetsset wordt
+   de score betrouwbaarder.
+
+</details>
+
+## Opdracht: welke heeft hij fout?
+
+Een score zegt hoeveel er fout gaan, maar niet welke. Print van elk stuk
+fruit dat de voorspeller fout heeft de maten, de echte soort en de
+voorspelling. Met seed 3 en `k = 1`:
+
+```
+(8, 6) citroen voorspeld: appel
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print elk stuk fruit uit de toetsset met zijn soort.
+2. Zet de voorspelling erachter: `voorspel(maten, oefen, k)`.
+3. Print alleen de stukken fruit die hij fout heeft. Zet daarna `k` op 3.
+
+<PyRunner verborgen="knn" initialCode={`import random
+
+fruit = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
+    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
+    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
+    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
+    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
+]
+k = 1
+
+random.seed(3)
+random.shuffle(fruit)
+oefen = fruit[:18]
+toets = fruit[18:]
+
+for maten, soort in toets:
+    print(maten, soort)`} />
+
+<details>
+<summary>Tip</summary>
+
+`==` kijkt of twee dingen gelijk zijn. Welk teken kijkt of ze verschillen?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de loop onderaan de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+for maten, soort in toets:
+    voorspeld = voorspel(maten, oefen, k)
+    if voorspeld != soort:
+        print(maten, soort, "voorspeld:", voorspeld)
+```
+
+```
+(8, 6) citroen voorspeld: appel
+```
+
+Met `k = 3` print hij niets meer: alle zes zijn goed.
+
+</details>
+
+Door naar [goed per soort](site:algorithms/docs/ml-afstand/03-eerlijk-testen/04-goed-per-soort).

@@ -1,0 +1,146 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Doodlopende vakjes"
+---
+
+# Doodlopende vakjes
+
+`buren` werkt nu voor één vakje. Om iets over het hele doolhof te zeggen, moet
+je elk vakje langs, en dan heb je bij elk vakje zijn rij en zijn kolom nodig.
+Daarvoor loop je over de nummers van de rijen en kolommen, in plaats van over
+de rijen en de tekens zelf, zoals bij het tellen van de muren.
+
+## Voorspel
+
+```python
+doolhof = [
+    "S.#",
+    ".##",
+    "..E",
+]
+for rij in range(len(doolhof)):
+    print(rij, doolhof[rij])
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+0 S.#
+1 .##
+2 ..E
+```
+
+`len(doolhof)` is 3, en `range(3)` geeft 0, 1 en 2: precies de nummers van de
+rijen.
+
+</details>
+
+## Zo werkt het
+
+Nieuw is `range(len(doolhof))`. `len(doolhof)` is het aantal rijen, en
+`range` maakt daar de nummers van: 0, 1, 2, 3 en 4 bij een doolhof van vijf
+rijen. Met een tweede loop daarbinnen, over
+`range(len(doolhof[0]))`, kom je bij elke kolom van die rij. Zo heb je in de
+binnenste loop elk vakje `(rij, kolom)`, en dat kun je aan `buren` geven.
+
+Met `for regel in doolhof` kreeg je de rij zelf, maar niet zijn nummer. Een
+robot moet weten wáár hij staat, dus hier heb je de nummers nodig.
+
+## Onderzoek
+
+1. Draai de code. Hoeveel vrije vakjes heeft het doolhof?
+2. Zet in de binnenste loop, boven de `if`, `print(rij, kolom)`. In welke
+   volgorde komen de vakjes langs?
+3. Haal die print weg, en schrijf in de tweede loop `len(doolhof)` in plaats
+   van `len(doolhof[0])`. Hoeveel vrije vakjes telt hij nu? Waarom?
+
+<PyRunner initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+
+vrij = 0
+for rij in range(len(doolhof)):
+    for kolom in range(len(doolhof[0])):
+        if doolhof[rij][kolom] != "#":
+            vrij = vrij + 1
+print(vrij, "vrije vakjes")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. 21: het doolhof heeft 5 keer 6 is 30 vakjes, en daarvan zijn er 9 een muur.
+2. Rij voor rij, en in elke rij van links naar rechts: `0 0`, `0 1`, tot en
+   met `0 5`, dan `1 0`, en zo verder tot `4 5`.
+3. 17. `len(doolhof)` is 5, dus de kolommen lopen maar van 0 tot en met 4. De
+   laatste kolom slaat hij over, en daar staan 4 vrije vakjes. Python geeft
+   geen fout, dus zo'n vergissing zie je alleen aan het getal.
+
+</details>
+
+## Opdracht: doodlopende vakjes
+
+Een vakje met maar één buur is doodlopend: je kunt er alleen terug. Schrijf een
+functie `doodlopend()` die een lijst geeft met alle doodlopende vakjes. Voor
+het doolhof van de editor is dat `[(0, 0), (3, 0), (3, 5)]`.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij kijkt alleen naar het vakje `(0, 0)`.
+2. Zet de `if` in twee loops: `for rij in range(len(doolhof)):` en daarin `for kolom in range(len(doolhof[0])):`. Maak in de binnenste loop `vakje = (rij, kolom)`, en haal de regel `vakje = (0, 0)` weg. Nu print hij elk doodlopend vakje.
+3. Sla de muren over: zet in de `if` met `and` een tweede voorwaarde, dat het vakje geen `#` is. In dit doolhof verandert de uitvoer niet, maar in een ander doolhof kan een muur ook precies één vrij vakje naast zich hebben.
+4. Maak er een functie `doodlopend()` van, die de vakjes in een lijst teruggeeft in plaats van ze te printen.
+
+`buren` staat klaar in de verborgen code onder de editor. In de editor staan het doolhof en één `if`.
+
+<PyRunner verborgen="doolhof-buren" initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+
+vakje = (0, 0)
+if len(buren(vakje)) == 1:
+    print(vakje, "is doodlopend")`} />
+
+<details>
+<summary>Tip</summary>
+
+Print hij nog steeds alleen `(0, 0)`? Dan staat er nog een regel die `vakje`
+steeds op `(0, 0)` zet. Voor de lijst in stap 4 begin je vóór de loops met
+`lijst = []`, en zet je de `return` na de loops.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder het doolhof in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+def doodlopend():
+    lijst = []
+    for rij in range(len(doolhof)):
+        for kolom in range(len(doolhof[0])):
+            if doolhof[rij][kolom] != "#" and len(buren((rij, kolom))) == 1:
+                lijst.append((rij, kolom))
+    return lijst
+
+print(doodlopend())   # [(0, 0), (3, 0), (3, 5)]
+```
+
+De start telt ook mee: daar kun je maar één kant op. `(3, 5)` ligt naast de
+uitgang, en `(3, 0)` ligt aan het eind van een korte gang links.
+
+</details>
+
+Door naar [je eigen doolhof](site:algorithms/docs/ml-zoeken/01-buren/05-je-eigen-doolhof).

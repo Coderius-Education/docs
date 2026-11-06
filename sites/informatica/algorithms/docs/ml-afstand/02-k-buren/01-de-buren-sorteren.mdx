@@ -1,0 +1,173 @@
+---
+sidebar_position: 1
+sidebar_label: "1. De buren sorteren"
+---
+
+# De buren sorteren
+
+Bij de dichtstbijzijnde buur bepaalde één verkeerd voorbeeld het hele
+antwoord. Dat los je op door niet naar één buur te kijken, maar naar de `k`
+dichtstbijzijnde, bijvoorbeeld de drie dichtstbijzijnde. Die buren stemmen,
+en de soort met de meeste stemmen wint. Dat heet
+**k-nearest neighbors**, of kortweg k-NN. In deze stap zoek je de `k`
+dichtstbijzijnde buren: je sorteert op afstand en pakt de eerste `k`.
+
+:::info
+Je gebruikt hier je functie `afstand` uit
+[welk fruit is dit?](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur/01-een-afstand),
+`.append()` uit [Lijst-methoden](site:python/docs/data/10b-lijst-methoden),
+tellen met een dictionary uit
+[het spamfilter dat leert](site:algorithms/docs/ml-regels/03-spamfilter-leert/01-woorden-tellen),
+en een loop over de sleutels van een dictionary uit
+[Door een dictionary lopen](site:python/docs/data/11b-itereren-dictionaries).
+:::
+
+## Voorspel
+
+```python
+paren = [(3, "appel"), (1, "banaan"), (11, "banaan"), (2, "appel")]
+paren = sorted(paren)
+print(paren)
+print(paren[:2])
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[(1, 'banaan'), (2, 'appel'), (3, 'appel'), (11, 'banaan')]
+[(1, 'banaan'), (2, 'appel')]
+```
+
+</details>
+
+## Zo werkt het
+
+Twee dingen zijn nieuw.
+
+`sorted` geeft een gesorteerde kopie van een lijst terug. Een lijst tuples
+sorteert hij op het eerste element van elk tuple: hier de afstand. Zijn twee
+afstanden gelijk, dan kijkt hij naar het tweede element.
+
+`paren[:2]` pakt de eerste twee elementen van de lijst. Dat heet
+**slicing**: `paren[:k]` geeft je de eerste `k`. Na het sorteren zijn dat
+precies de `k` dichtstbijzijnde buren.
+
+## Onderzoek
+
+In `paren` staan de afstanden van de voorbeelden tot `(10, 7)`, met de
+vergissing uit het vorige project: de banaan op afstand 1 is in het echt een
+appel.
+
+1. Draai de code met `k = 3`. Welke drie buren krijg je?
+2. Wat is het verschil tussen `sorted(paren)[:k]` en `paren[:k]`?
+3. Zet `k` op 10. Er staan maar zeven paren in de lijst. Wat gebeurt er?
+4. Zet `(3, "citroen")` in de lijst `paren`. Komt hij na het sorteren vóór of
+   na de appels op afstand 3?
+
+<PyRunner initialCode={`paren = [
+    (3, "appel"), (2, "appel"), (3, "appel"), (11, "banaan"),
+    (13, "banaan"), (11, "banaan"), (1, "banaan"),
+]
+k = 3
+
+print(sorted(paren))
+print(sorted(paren)[:k])
+print(paren[:k])`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. `[(1, 'banaan'), (2, 'appel'), (3, 'appel')]`.
+2. `paren[:k]` pakt de eerste drie zoals ze in de lijst staan, en dat zijn
+   niet de dichtstbijzijnde. `sorted` verandert `paren` zelf niet: het geeft
+   een nieuwe lijst terug.
+3. Je krijgt alle zeven, zonder foutmelding. Slicing pakt wat er is.
+4. Erna. Bij gelijke afstand sorteert `sorted` op de soort, en "appel" komt
+   op alfabet vóór "citroen".
+
+</details>
+
+## Opdracht: zoek de buren
+
+Maak van de voorbeelden een lijst `paren` met de afstand en de soort, en
+print de `k` dichtstbijzijnde buren:
+
+```
+buren: [(1, 'banaan'), (2, 'appel'), (3, 'appel')]
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print bij elk voorbeeld de afstand en de soort.
+2. Zet in plaats van de print het tuple `(d, soort)` met `.append()` in `paren`, en print `paren` na de loop.
+3. Sorteer `paren`, pak de eerste `k`, en print die buren.
+
+<PyRunner initialCode={`def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+nieuw = (10, 7)
+k = 3
+
+paren = []
+for maten, soort in voorbeelden:
+    d = afstand(nieuw, maten)
+    print(d, soort)`} />
+
+<details>
+<summary>Tip</summary>
+
+`.append()` zet één ding in een lijst. Wil je er twee dingen tegelijk in
+zetten, maak er dan eerst één ding van.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de loop onderaan de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+for maten, soort in voorbeelden:
+    d = afstand(nieuw, maten)
+    paren.append((d, soort))
+buren = sorted(paren)[:k]
+print("buren:", buren)
+```
+
+```
+buren: [(1, 'banaan'), (2, 'appel'), (3, 'appel')]
+```
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: paren = []\nparen.append(3, "appel") */}
+```
+TypeError: list.append() takes exactly one argument (2 given)
+```
+
+**Oorzaak:** `append` zet één ding in een lijst. Met
+`paren.append(3, "appel")` geef je er twee: een getal en een tekst.
+
+**Oplossing:** maak er één tuple van, met een extra paar haakjes.
+
+{/* niet-draaien: fragment; leunt op paren uit de runner */}
+```python
+# FOUT
+paren.append(3, "appel")
+
+# GOED
+paren.append((3, "appel"))
+```
+
+Door naar [stemmen tellen](site:algorithms/docs/ml-afstand/02-k-buren/02-stemmen-tellen).

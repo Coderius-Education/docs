@@ -1,0 +1,119 @@
+---
+sidebar_position: 5
+sidebar_label: "5. OF, en precies één"
+---
+
+# OF, en precies één
+
+Je EN-neuron zegt alleen 1 bij `1 1`. Met andere gewichten en een andere bias
+doet hetzelfde neuron een andere regel. Je zoekt er nog twee, en bij de tweede
+ontdek je wat één neuron niet kan.
+
+## Voorspel
+
+```python
+def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+print(neuron([0, 0], [-1, -1], 1), neuron([1, 0], [-1, -1], 1))
+```
+
+De gewichten zijn nu negatief. Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1 0
+```
+
+Bij `0 0` is de som de bias, 1. Bij `1 0` trekt het negatieve gewicht hem
+naar 0. Dit neuron zegt alleen 1 als geen van beide invoeren 1 is.
+
+</details>
+
+## Zo werkt het
+
+Een positief gewicht zegt: deze invoer pleit voor ja. Een negatief gewicht
+zegt: deze invoer pleit voor nee. De bias bepaalt hoeveel er nodig is. Met
+alleen die drie getallen doet één neuron EN, "geen van beide", en nog meer
+regels.
+
+## Bouw zelf: OF, en precies één
+
+Zoek nu twee andere neuronen met twee invoeren:
+
+1. Een OF-neuron: 1 als minstens één van de twee invoeren 1 is.
+2. Een neuron voor "precies één": 1 als de ene invoer 1 is en de andere 0,
+   maar 0 als ze allebei 1 of allebei 0 zijn.
+
+Print voor elk neuron de vier combinaties, zoals bij het EN-neuron.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: met gewichten `[0, 0]` zegt het neuron 0.
+2. Print ook de andere drie combinaties, met de loop in een loop van het EN-neuron.
+3. Zoek gewichten en een bias voor OF.
+4. Probeer daarna "precies één". Lukt het na een tijdje nog niet, lees dan het antwoord: waarom lukt het niet?
+
+<PyRunner initialCode={`def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+gewichten = [0, 0]
+bias = 0
+
+print(0, 0, "->", neuron([0, 0], gewichten, bias))`} />
+
+<details>
+<summary>Tip</summary>
+
+Bij OF mag alleen `0 0` op 0 uitkomen. Bij "precies één": probeer een tijdje,
+en kijk dan welke combinaties steeds samen op 1 of samen op 0 uitkomen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder `neuron` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+gewichten = [1, 1]
+bias = 0
+
+for a in [0, 1]:
+    for b in [0, 1]:
+        print(a, b, "->", neuron([a, b], gewichten, bias))
+```
+
+```
+0 0 -> 0
+0 1 -> 1
+1 0 -> 1
+1 1 -> 1
+```
+
+Voor OF werken gewichten `[1, 1]` met bias `0`: alleen bij `0 0` is de som 0.
+
+Voor "precies één" vind je geen gewichten, hoe lang je ook zoekt. Wil je
+`1 0` en `0 1` op 1 krijgen terwijl `0 0` op 0 blijft, dan moeten beide
+gewichten positief zijn. Maar dan is de som bij `1 1` nog groter, en zegt het
+neuron daar ook 1. Eén neuron kan dit niet. Met meer neuronen achter elkaar,
+een netwerk, kan het wel: dat bouw je in
+[twee lagen](site:algorithms/docs/ml-neuronen/03-op-weg-naar-traffic/03-twee-lagen).
+In het volgende project zie je eerst dat één neuron het ook niet kan leren.
+
+</details>
+
+Door naar [een neuron dat zelf leert](site:algorithms/docs/ml-neuronen/02-neuron-leert/01-de-fout).

@@ -1,0 +1,131 @@
+---
+sidebar_position: 5
+sidebar_label: "5. Speel tegen de geleerde strategie"
+---
+
+# Speel tegen de geleerde strategie
+
+De computer heeft geleerd welke zet bij elke stapel de beste is. Speelt hij nu
+ook echt goed? Nieuw is dat de geleerde strategie de plek van `slim` inneemt:
+`beste_zet(score, stapel)` geeft een aantal lucifers, net als `slim(stapel)`.
+
+:::info
+Je gebruikt hier `speel` en `willekeurig` uit
+[tegen het toeval](site:algorithms/docs/ml-spellen/01-nim-strategie/04-tegen-het-toeval).
+:::
+
+## Voorspel
+
+```python
+score = {(3, 1): -2, (3, 2): 5, (3, 3): -1}
+stapel = 3
+beste = 1
+for pak in [1, 2, 3]:
+    if score[(stapel, pak)] > score[(stapel, beste)]:
+        beste = pak
+stapel = stapel - beste
+print(stapel)
+```
+
+Wat print dit programma? En wie moet daarna de laatste lucifer pakken?
+
+<details>
+<summary>Antwoord</summary>
+
+`1`. De zet met de hoogste score bij 3 lucifers is pak 2, en dan blijft er
+1 liggen. De ander moet die pakken, en verliest.
+
+</details>
+
+## Zo werkt het
+
+`beste_zet` in de verborgen code doet wat de loop in Voorspel doet: hij zoekt
+bij een stapel de zet met de hoogste score, en geeft het aantal lucifers
+terug. Een zet die nog niet in `score` staat, telt daarbij als 0.
+
+In `speel` uit [tegen het toeval](site:algorithms/docs/ml-spellen/01-nim-strategie/04-tegen-het-toeval)
+stond `slim(stapel)`. Zet je daar `beste_zet(score, stapel)` neer, dan speelt
+de geleerde strategie. De `score` uit het leren blijft daarvoor bestaan.
+
+## Opdracht: speel tegen de geleerde strategie
+
+Laat de geleerde strategie 100 keer spelen tegen `willekeurig`, met 10
+lucifers, waarbij de geleerde strategie begint. Hoe vaak wint hij?
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij leert, en print wat hij bij 10 lucifers pakt.
+2. Schrijf een functie `speel(stapel)` zoals in het vorige project, met `beste_zet(score, stapel)` in plaats van `slim(stapel)`.
+3. Laat hem 100 keer spelen, en tel hoe vaak de geleerde strategie wint.
+
+In de editor staan het leren en `willekeurig`.
+
+:::caution
+Je `speel` heeft een while-loop. Wordt de stapel niet in elke beurt kleiner,
+dan stopt hij nooit en loopt het tabblad vast, net als bij
+[een zet](site:algorithms/docs/ml-spellen/01-nim-strategie/01-een-zet#zo-werkt-het).
+Kopieer je code eerst naar een kladblok.
+:::
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+random.seed(1)
+score = {}
+ontdekken = 0.2
+
+for spel in range(2000):
+    zetten, verliezer = speel_tegen_jezelf(score, ontdekken)
+    for speler in zetten:
+        for zet in zetten[speler]:
+            if zet not in score:
+                score[zet] = 0
+            if speler == verliezer:
+                score[zet] = score[zet] - 1
+            else:
+                score[zet] = score[zet] + 1
+
+def willekeurig(stapel):
+    return random.randint(1, min(3, stapel))
+
+print("bij 10 lucifers pakt hij", beste_zet(score, 10))`} />
+
+<details>
+<summary>Tip</summary>
+
+Laat `score` staan: daar zit in wat de computer leerde. Wint hij bijna nooit,
+kijk dan of `speel` de stapel na de zet van de geleerde strategie wel kleiner
+maakt: `beste_zet` geeft alleen het aantal lucifers terug.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit komt onder de code van de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+def speel(stapel):
+    beurt = "geleerd"
+    while stapel > 0:
+        if beurt == "geleerd":
+            stapel = stapel - beste_zet(score, stapel)
+            beurt = "willekeurig"
+        else:
+            stapel = stapel - willekeurig(stapel)
+            beurt = "geleerd"
+    return beurt
+
+gewonnen = 0
+for spel in range(100):
+    if speel(10) == "geleerd":
+        gewonnen = gewonnen + 1
+print("geleerd wint", gewonnen, "van de 100")   # geleerd wint 100 van de 100
+```
+
+Hij wint ze alle 100, net als `slim`. Bij 10 lucifers pakt hij 1, en daarna
+laat hij steeds een viervoud plus 1 over.
+
+</details>
+
+Door naar [hoeveel spellen](site:algorithms/docs/ml-spellen/02-nim-leert/06-hoeveel-spellen).
