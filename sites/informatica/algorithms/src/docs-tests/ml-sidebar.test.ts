@@ -45,6 +45,16 @@ describe('de route machine learning in zijn eigen sidebar', () => {
     expect(mappen).toEqual(ML_MAPPEN);
   });
 
+  it('de fases staan standaard ingeklapt', () => {
+    // Uitgeklapt was de sidebar van de route een lijst van 21 regels, en zag
+    // je de fases niet meer. Docusaurus klapt de fase van de pagina waar je
+    // bent zelf open.
+    const ml = sidebars.mlSidebar as { type?: string; collapsed?: boolean }[];
+    const fases = ml.filter((item) => item.type === 'category');
+    expect(fases.length).toBe(ML_MAPPEN.length);
+    for (const fase of fases) expect(fase.collapsed).toBe(true);
+  });
+
   it('de navbar heeft een eigen item voor de route, en de docs gebruiken de filter', () => {
     const config = readFileSync(CONFIG, 'utf8');
     expect(config).toMatch(/sidebarId: 'mlSidebar'[^}]*label: 'Machine learning'/);
