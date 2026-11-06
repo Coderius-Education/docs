@@ -30,6 +30,17 @@ describe('de route machine learning in zijn eigen sidebar', () => {
       { type: 'doc', id: ML_ROUTE },
       { type: 'category', label: 'ML A', items: [{ type: 'doc', id: 'ml-regels/01-chatbot' }] },
       { type: 'category', label: 'ML B', items: [{ type: 'doc', id: 'ml-afstand/02-k-buren' }] },
+      {
+        type: 'category',
+        label: 'ML C',
+        items: [
+          {
+            type: 'category',
+            label: 'Een dobbelsteen',
+            items: [{ type: 'doc', id: 'ml-kans/01-dobbelsteen/01-een-worp' }],
+          },
+        ],
+      },
       { type: 'category', label: 'Unplugged', items: [{ type: 'doc', id: 'unplugged/01-zoeken' }] },
     ];
     expect(zonderMl(gegenereerd).map((i) => i.label ?? i.id)).toEqual([

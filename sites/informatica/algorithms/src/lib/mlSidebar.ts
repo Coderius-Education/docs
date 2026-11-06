@@ -20,10 +20,16 @@ type Item = { type: string; id?: string; items?: Item[] };
 function vanDeRoute(item: Item): boolean {
   if (item.type === 'doc') return item.id === ML_ROUTE;
   if (item.type === 'category') {
-    const ids = (item.items ?? []).flatMap((kind) => (kind.id ? [kind.id] : []));
+    // Een project is een map in de fase, dus een categorie in een categorie:
+    // tel de pagina's op elke diepte mee.
+    const ids = docIds(item.items ?? []);
     return ids.length > 0 && ids.every((id) => ML_MAPPEN.some((map) => id.startsWith(`${map}/`)));
   }
   return false;
+}
+
+function docIds(items: Item[]): string[] {
+  return items.flatMap((kind) => [...(kind.id ? [kind.id] : []), ...docIds(kind.items ?? [])]);
 }
 
 /** De gegenereerde sidebar van heel docs/, zonder de route machine learning. */
