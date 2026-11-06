@@ -11,6 +11,7 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ParseTree from '../ParseTree';
 import { type Getiteld, leesBomen } from '../ParseTree/boom';
+import { heeftMatplotlibNodig } from './matplotlib';
 import styles from './styles.module.css';
 import {
   type PyodideInterface,
@@ -143,7 +144,10 @@ export default function PyRunnerImpl({
   const matplotlibLoadedRef = useRef(false);
   const pyodideIndexURL = useBaseUrl('/pyodide/');
 
-  const needsMatplotlib = useMemo(() => /\b(matplotlib|pyplot|plt\.)\b/.test(code), [code]);
+  const needsMatplotlib = useMemo(
+    () => heeftMatplotlibNodig(code, verborgenCode),
+    [code, verborgenCode],
+  );
 
   // Start de Pyodide-download op de achtergrond zodra de pagina idle is, zodat
   // de eerste "Voer uit" (bijna) direct start. Wheels voor matplotlib worden

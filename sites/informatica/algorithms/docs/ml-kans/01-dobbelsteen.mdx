@@ -18,6 +18,10 @@ Je gebruikt hier `random.randint` uit
 `//` uit [Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest),
 en tellen met een dictionary uit
 [een spamfilter dat leert](site:algorithms/docs/ml-regels/03-spamfilter-leert).
+In de Bouw zelf heb je ook een loop in een loop nodig, uit
+[Om de beurt](site:python/docs/projecten/schildpaddenrace/stap-5-loop-in-loop),
+en `True` en `False` uit
+[Booleans en vergelijken](site:python/docs/beslissen/05a-booleans-en-vergelijken).
 :::
 
 ## Voorspel
@@ -100,6 +104,19 @@ Gooi 6000 keer met twee dobbelstenen, en tel hoe vaak elke som voorkomt, van
 2 tot en met 12. Print per som hoe vaak hij voorkwam. Welke som komt het
 vaakst?
 
+Teken het daarna als staafdiagram. Dat doet de bibliotheek matplotlib, en die
+hoef je hier niet te leren: zet deze drie regels onder je code.
+
+{/* niet-draaien: fragment; leunt op telling uit de opdracht */}
+```python
+import matplotlib.pyplot as plt
+plt.bar(list(telling), list(telling.values()))
+plt.show()
+```
+
+`plt.bar` tekent een staaf voor elke sleutel van `telling`, zo hoog als het
+getal dat erbij hoort. De eerste keer laden duurt het tekenen even.
+
 <details>
 <summary>Tip</summary>
 
@@ -125,9 +142,13 @@ for i in range(worpen):
 
 for som in telling:
     print(som, telling[som])
+
+import matplotlib.pyplot as plt
+plt.bar(list(telling), list(telling.values()))
+plt.show()
 ```
 
-De 7 wint, met ongeveer 1000 keer. 2 en 12 komen het minst voor, rond de 170
+De staven lopen op tot de 7 en dan weer af, als een dak. De 7 wint, met ongeveer 1000 keer. 2 en 12 komen het minst voor, rond de 170
 keer. Voor een 2 moeten allebei de stenen 1 zijn, maar voor een 7 zijn er zes
 manieren: 1 en 6, 2 en 5, 3 en 4, en ook andersom. Twee stenen kunnen op 36
 manieren vallen, dus de kans op 7 is 6 op de 36: een zesde. Je simulatie komt

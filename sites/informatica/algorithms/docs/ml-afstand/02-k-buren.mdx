@@ -116,6 +116,27 @@ print("Het is een", winnaar)`} />
 
 </details>
 
+## Bekijk de buren
+
+Afstand is iets wat je ziet. Deze runner tekent de voorbeelden uit het
+onderzoek: elk stuk fruit staat op zijn lengte en breedte, het nieuwe stuk is
+het zwarte kruis, en een stippellijn wijst naar elk van de `k` buren die
+meestemmen. Het tekenen staat in de verborgen code onder de editor.
+
+Verander `nieuw` en `k`, en kijk welke buren er meestemmen. Bij `k = 1` wijst
+er één lijn naar de vergissing `(10, 6)`; bij `k = 3` stemmen er twee appels
+mee.
+
+<PyRunner verborgen="fruit-tekenen" initialCode={`voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+nieuw = (10, 7)
+k = 3
+
+teken_buren(voorbeelden, nieuw, k)`} />
+
 ## Opdracht: voorspel met k
 
 Maak van de code een functie `voorspel(nieuw, voorbeelden, k)` die de

@@ -13,8 +13,10 @@ je daarmee de kortste weg.
 :::info
 Je gebruikt hier lijsten uit [Lijsten](site:python/docs/data/10a-lijsten-basis),
 tuples en uitpakken uit [Tuples](site:python/docs/data/tuples), en een functie
-met `return` uit [Return-waarden](site:python/docs/functies/09b-return). Nieuw
-is dat je een tekst net als een lijst met een index leest.
+met `return` uit [Return-waarden](site:python/docs/functies/09b-return), en een
+loop in een loop uit
+[Om de beurt](site:python/docs/projecten/schildpaddenrace/stap-5-loop-in-loop).
+Nieuw is dat je een tekst net als een lijst met een index leest.
 :::
 
 ## Voorspel
@@ -106,78 +108,29 @@ print(buren((2, 1)))`} />
 
 </details>
 
-## Opdracht: tel de buren
-
-Print het doolhof opnieuw, maar zet op elk vrij vakje hoeveel buren het heeft.
-Een muur blijft een `#`. Je hebt daarvoor `str` nodig: `str(3)` maakt van het
-getal 3 de tekst `"3"`, want een tekst en een getal kun je niet aan elkaar
-plakken. Voor het doolhof van de editor wordt het:
-
-```
-132232
-#2##32
-#3222#
-13###1
-#22222
-```
-
-<details>
-<summary>Tip</summary>
-
-Je hebt twee loops nodig: een over de rijen, en daarbinnen een over de
-kolommen. Bouw per rij een tekst op, teken voor teken, en print hem als de rij
-af is.
-
-</details>
-
-<details>
-<summary>Antwoord</summary>
-
-Dit vervangt de laatste regel van de code hierboven:
-
-{/* draaien-met: blok-erboven */}
-```python
-for rij in range(len(doolhof)):
-    regel = ""
-    for kolom in range(len(doolhof[0])):
-        if doolhof[rij][kolom] == "#":
-            regel = regel + "#"
-        else:
-            regel = regel + str(len(buren((rij, kolom))))
-    print(regel)
-```
-
-```
-132232
-#2##32
-#3222#
-13###1
-#22222
-```
-
-Geen enkel vakje heeft er vier: het doolhof heeft geen open pleintjes.
-
-</details>
-
-## Bouw zelf: doodlopende vakjes
+## Opdracht: doodlopende vakjes
 
 Een vakje met maar één buur is doodlopend: je kunt er alleen terug. Schrijf een
 functie `doodlopend()` die een lijst geeft met alle doodlopende vakjes. Voor
 het doolhof van de editor is dat `[(0, 0), (3, 0), (3, 5)]`.
 
-Teken daarna een eigen doolhof van minstens 6 bij 6, en zoek met je functie
-de doodlopende vakjes. Kloppen ze met wat jij ziet?
+Daarvoor moet je elk vakje langs. Nieuw is dat je loopt over de nummers van de
+rijen in plaats van over de rijen zelf: `range(len(doolhof))` geeft 0, 1, 2, 3
+en 4. Met een tweede loop daarbinnen, over `range(len(doolhof[0]))`, kom je
+bij elke kolom van die rij, en dus bij elk vakje `(rij, kolom)`.
 
 <details>
 <summary>Tip</summary>
 
-Gebruik dezelfde twee loops als in de opdracht. Welke twee dingen moeten
-waar zijn voordat je een vakje in de lijst zet?
+Begin met een lege lijst. Welke twee dingen moeten waar zijn voordat je een
+vakje erin zet?
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
+
+Dit komt onder de code van de editor:
 
 {/* draaien-met: blok-erboven */}
 ```python
@@ -194,6 +147,59 @@ print(doodlopend())   # [(0, 0), (3, 0), (3, 5)]
 
 De start telt ook mee: daar kun je maar één kant op. `(3, 5)` ligt naast de
 uitgang, en `(3, 0)` ligt aan het eind van een korte gang links.
+
+</details>
+
+## Bouw zelf: je eigen doolhof
+
+Teken een eigen doolhof van minstens 6 bij 6, met een S en een E. Zoek met
+`doodlopend()` de doodlopende vakjes, en schrijf daarna een functie
+`kruispunten()` die de vakjes geeft met drie of meer buren: daar moet de robot
+kiezen. Kloppen ze met wat jij in je doolhof ziet?
+
+Voor het doolhof van de editor geeft `kruispunten()`
+`[(0, 1), (0, 4), (1, 4), (2, 1), (3, 1)]`.
+
+<details>
+<summary>Tip</summary>
+
+`kruispunten()` lijkt bijna helemaal op `doodlopend()`. Wat verandert er aan
+de voorwaarde?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+{/* draaien-met: blok-erboven */}
+```python
+def kruispunten():
+    lijst = []
+    for rij in range(len(doolhof)):
+        for kolom in range(len(doolhof[0])):
+            if doolhof[rij][kolom] != "#" and len(buren((rij, kolom))) >= 3:
+                lijst.append((rij, kolom))
+    return lijst
+
+print(kruispunten())   # [(0, 1), (0, 4), (1, 4), (2, 1), (3, 1)]
+```
+
+Een eigen doolhof zet je in plaats van dat in de editor, bijvoorbeeld:
+
+{/* niet-draaien: een voorbeeld van een eigen doolhof; de leerling zet het in de editor */}
+```python
+doolhof = [
+    "S.#...",
+    ".##.#.",
+    "......",
+    ".#.##.",
+    ".#...#",
+    "...#.E",
+]
+```
+
+Let op dat elke rij evenveel tekens heeft, anders gaat `buren` mis: zie
+hieronder.
 
 </details>
 

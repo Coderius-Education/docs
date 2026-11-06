@@ -118,11 +118,25 @@ vanaf E terug naar de start, en print de weg van S naar E. Met
 [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5)]
 ```
 
+Teken daarna de weg in het doolhof: print het doolhof opnieuw, met een `*`
+op elk vrij vakje van de weg.
+
+```
+S*....
+#*##..
+#*...#
+.*###.
+#****E
+```
+
 <details>
 <summary>Tip</summary>
 
 Op welke plek in de loop weet je via welk vakje je bij `buur` kwam? Het
 teruglopen is een tweede while-loop, die begint bij E en stopt bij de start.
+Voor het tekenen loop je weer over alle vakjes, net als bij
+[de doodlopende vakjes](site:algorithms/docs/ml-zoeken/01-buren#opdracht-doodlopende-vakjes),
+en bouw je per rij een tekst op.
 
 </details>
 
@@ -150,10 +164,24 @@ while vakje != start:
     vakje = vorige[vakje]
     weg.insert(0, vakje)
 print(weg)
+
+for rij in range(len(doolhof)):
+    regel = ""
+    for kolom in range(len(doolhof[0])):
+        if (rij, kolom) in weg and doolhof[rij][kolom] == ".":
+            regel = regel + "*"
+        else:
+            regel = regel + doolhof[rij][kolom]
+    print(regel)
 ```
 
 ```
 [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5)]
+S*....
+#*##..
+#*...#
+.*###.
+#****E
 ```
 
 De weg heeft 10 vakjes en dus 9 stappen, net als de afstand zei. Elk vakje

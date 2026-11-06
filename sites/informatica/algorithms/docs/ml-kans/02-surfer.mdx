@@ -127,6 +127,10 @@ C 0.3951
 D 0.0376
 ```
 
+Teken het daarna als staafdiagram, net als bij
+[de dobbelsteen](site:algorithms/docs/ml-kans/01-dobbelsteen#opdracht-twee-dobbelstenen),
+met `bezocht` in plaats van `telling`.
+
 <details>
 <summary>Tip</summary>
 
@@ -165,6 +169,10 @@ for i in range(klikken):
 
 for p in bezocht:
     print(p, bezocht[p] / klikken)
+
+import matplotlib.pyplot as plt
+plt.bar(list(bezocht), list(bezocht.values()))
+plt.show()
 ```
 
 D krijgt nu ook bezoek, al is het weinig: alleen als de surfer er toevallig

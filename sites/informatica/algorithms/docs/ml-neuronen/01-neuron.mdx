@@ -13,7 +13,8 @@ auto, is gemaakt van heel veel van zulke neuronen.
 
 :::info
 Je gebruikt hier lijsten uit [Lijsten](site:python/docs/data/10a-lijsten-basis),
-`range` uit [De for-loop](site:python/docs/herhalen/06a-for-loop),
+`range(len(…))` uit
+[de buren van een vakje](site:algorithms/docs/ml-zoeken/01-buren#opdracht-doodlopende-vakjes),
 en een functie met `return` uit
 [Return-waarden](site:python/docs/functies/09b-return).
 :::
@@ -54,10 +55,10 @@ snel ja.
 De **bias** is waar de som begint. Met een negatieve bias moet er eerst iets
 goeds gebeuren voordat het neuron ja zegt.
 
-Nieuw is `range(len(invoer))`. `len(invoer)` is 3, dus de loop gaat langs de
-posities 0, 1 en 2. Zo loop je langs twee lijsten tegelijk: op elke positie
-`i` pak je met `invoer[i]` de invoer en met `gewichten[i]` het gewicht dat
-erbij hoort. Is de som groter
+De loop gaat met `range(len(invoer))` langs de posities 0, 1 en 2, zoals je
+in het doolhof langs de nummers van de rijen liep. Nieuw is dat je zo langs
+twee lijsten tegelijk loopt: op elke positie `i` pak je met `invoer[i]` de
+invoer en met `gewichten[i]` het gewicht dat erbij hoort. Is de som groter
 dan 0, dan zegt het neuron 1, ja. Anders zegt het 0, nee.
 
 ## Onderzoek

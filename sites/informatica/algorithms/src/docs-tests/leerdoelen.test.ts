@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { leesLeerdoelen } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
 import leerdoelenJson from '../leerdoelen.json';
+import { ML_MAPPEN } from '../lib/mlSidebar';
 
 // Niveau 2 van Algoritmiek is een papieren tentamen. src/leerdoelen.json legt
 // vast wat erin komt, zoals het tentamenblad van de docent het zegt: zeven
@@ -247,6 +248,7 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
       'sorted-slicing',
       'modules',
       'csv-inlezen',
+      'loop-in-loop',
       'lijst-in-dictionary',
       'tuple-sleutel',
       'raster',
@@ -260,6 +262,49 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
     }
     // Nim en de kortste weg draaien op een while-loop.
     expect(rij('while-loop')?.niveau['1']).toBe('basis');
+  });
+
+  it('een Python-rij wijst naar het project waar die Python in de route voor het eerst voorkomt', () => {
+    // Bij de review stond range(len(...)) in "de buren van een vakje" al in
+    // de opdracht, terwijl het neuron en de leerdoelen het pas daarna nieuw
+    // noemden. De route is de volgorde van mlSidebar.
+    const route = ML_MAPPEN.flatMap((map) =>
+      readdirSync(join(DOCS, map))
+        .filter((f) => /^\d\d-.*\.mdx?$/.test(f))
+        .sort()
+        .map((f) => `${map}/${f.replace(/\.mdx?$/, '')}`),
+    );
+    const code = (id: string) => {
+      const tekst = readFileSync(join(DOCS, `${id}.mdx`), 'utf8');
+      return [
+        ...[...tekst.matchAll(/```python\n([\s\S]*?)```/g)].map((m) => m[1]),
+        ...[...tekst.matchAll(/initialCode=\{`([\s\S]*?)`\}/g)].map((m) => m[1]),
+      ];
+    };
+    /** Een for-loop binnen een andere for-loop, op inspringing. */
+    const loopInLoop = (blok: string) => {
+      const open: number[] = [];
+      for (const regel of blok.split('\n')) {
+        if (!regel.trim()) continue;
+        const inspring = regel.length - regel.trimStart().length;
+        while (open.length && inspring <= open[open.length - 1]) open.pop();
+        if (/^for .* in .*:$/.test(regel.trim())) {
+          if (open.length) return true;
+          open.push(inspring);
+        }
+      }
+      return false;
+    };
+    const kenmerk: Record<string, (blok: string) => boolean> = {
+      'range-len': (blok) => /range\(len\(/.test(blok),
+      'loop-in-loop': loopInLoop,
+      wachtrij: (blok) => /\.pop\(0\)/.test(blok),
+    };
+    for (const [id, komtVoor] of Object.entries(kenmerk)) {
+      const eerste = route.find((les) => code(les).some(komtVoor));
+      const lessen = (rij(id)?.lessen ?? []).map((l) => l.id).filter((l) => l.startsWith('ml-'));
+      expect(lessen[0], id).toBe(eerste);
+    }
   });
 
   it('gevorderd vraagt bij Python een module of een CSV-bestand', () => {
