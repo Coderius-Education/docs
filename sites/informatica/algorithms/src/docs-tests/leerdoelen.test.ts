@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { leesLeerdoelen } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
 import leerdoelenJson from '../leerdoelen.json';
-import { lees, projecten as routeProjecten, routePaginas } from './ml-route';
+import { lees, routePaginas, projecten as routeProjecten } from './ml-route';
 
 // Niveau 2 van Algoritmiek is een papieren tentamen. src/leerdoelen.json legt
 // vast wat erin komt, zoals het tentamenblad van de docent het zegt: zeven
@@ -183,16 +183,20 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
       ['ml-shopping', 'gevorderd'],
       ['ml-dobbelsteen', 'basis'],
       ['ml-surfer', 'basis'],
+      ['ml-op-weg-naar-pagerank', 'gevorderd'],
       ['ml-pagerank', 'gevorderd'],
       ['ml-nim-strategie', 'basis'],
       ['ml-nim-leert', 'gevorderd'],
+      ['ml-op-weg-naar-nim', 'gevorderd'],
       ['ml-nim', 'gevorderd'],
       ['ml-tictactoe', 'gevorderd'],
       ['ml-buren', 'basis'],
       ['ml-kortste-weg', 'gevorderd'],
+      ['ml-op-weg-naar-degrees', 'gevorderd'],
       ['ml-degrees', 'gevorderd'],
       ['ml-neuron', 'basis'],
       ['ml-neuron-leert', 'gevorderd'],
+      ['ml-op-weg-naar-traffic', 'gevorderd'],
       ['ml-traffic', 'expert'],
     ]);
     expect(cs50.map((c) => c.id)).toEqual([
@@ -270,6 +274,9 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
       'raster',
       'wachtrij',
       'range-len',
+      'zip',
+      'kiezen-met-kansen',
+      'klassen',
     ]) {
       expect(rij(id)?.niveau['2'], id).toBeNull();
     }

@@ -1,1 +1,6 @@
-{ "label": "De kortste weg met een wachtrij", "position": 2, "collapsible": true, "collapsed": true }
+{
+  "label": "De kortste weg met een wachtrij",
+  "position": 2,
+  "collapsible": true,
+  "collapsed": true
+}

@@ -1,5 +1,6 @@
 import { createConfig, prismThemes } from '@coderius/shared/config';
 import type { Options as DocsOptions } from '@docusaurus/plugin-content-docs';
+import { omleidingen } from './src/data/omleidingen';
 import { sidebarZonderMl } from './src/lib/mlSidebar';
 
 // De route machine learning staat in zijn eigen sidebar (mlSidebar), niet ook
@@ -15,6 +16,9 @@ export default createConfig({
   matomoSiteId: 12,
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
+  // Verhuisde lessen houden hun oude adres; de lijst staat in
+  // src/data/omleidingen.ts.
+  omleidingen,
 
   presets: [
     [
