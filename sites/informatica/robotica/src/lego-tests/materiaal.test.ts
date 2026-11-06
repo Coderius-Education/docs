@@ -17,7 +17,8 @@ const ONDERDELEN = join(SITE, 'docs/onderdelen');
 /** De tekst van de Materiaal-sectie, met een geïmporteerde partial erin geplakt. */
 function materiaal(pagina: string): string | undefined {
   const tekst = readFileSync(join(ONDERDELEN, pagina), 'utf8');
-  const sectie = tekst.match(/^## Materiaal\n([\s\S]*?)(?=^## )/m)?.[1];
+  // De sectie loopt tot de volgende ## of tot het eind van de pagina.
+  const sectie = `${tekst}\n## `.match(/^## Materiaal\n([\s\S]*?)(?=^## )/m)?.[1];
   if (sectie === undefined) return undefined;
   const partial = tekst.match(
     /^import Materiaal from '@site\/(docs\/onderdelen\/_delen\/[^']+)'/m,
@@ -44,6 +45,29 @@ describe('de materiaallijst van een onderdeel', () => {
     for (const { pagina, sectie } of PAGINAS) {
       if (!sectie.includes('<Onderdelenlijst>')) fout.push(`${pagina}: geen <Onderdelenlijst>`);
       if (/!\[/.test(sectie)) fout.push(`${pagina}: een markdown-plaatje in Materiaal`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('elke <Onderdeel> in de site staat binnen een <Onderdelenlijst>', () => {
+    // Los tekent hij niets, en zonder melding.
+    const loop = (map: string): string[] =>
+      readdirSync(map, { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory()
+          ? loop(join(map, e.name))
+          : /\.mdx?$/.test(e.name)
+            ? [join(map, e.name)]
+            : [],
+      );
+    const fout: string[] = [];
+    for (const pad of ['docs', 'lego_auto', 'golfbot', 'src/pages'].flatMap((m) =>
+      loop(join(SITE, m)),
+    )) {
+      const zonderLijsten = readFileSync(pad, 'utf8').replace(
+        /<Onderdelenlijst>[\s\S]*?<\/Onderdelenlijst>/g,
+        '',
+      );
+      if (/<Onderdeel\b/.test(zonderLijsten)) fout.push(pad.slice(SITE.length));
     }
     expect(fout).toEqual([]);
   });

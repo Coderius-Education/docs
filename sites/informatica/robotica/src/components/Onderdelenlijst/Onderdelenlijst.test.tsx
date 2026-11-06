@@ -40,11 +40,28 @@ describe('Onderdelenlijst', () => {
     expect(verder?.textContent).toBe('Verder: 2× jumperdraden, weerstand van 220 Ω');
   });
 
+  it('de fotoknop heet naar de alt-tekst van de foto, zodat een schermlezer die voorleest', () => {
+    // Met een eigen aria-label ("LED-lampje: toon de foto groot") verdween de
+    // alt-tekst: juist die noemt bij de joystick de vijf pinnen.
+    lijst();
+    const knop = screen.getByRole('button', { name: /^Een LED met twee pootjes/ });
+    expect(knop.getAttribute('aria-label')).toBeNull();
+    expect(knop.textContent).toContain('Toon de foto groot');
+  });
+
+  it('de grote foto laadt pas als je het venster opent', () => {
+    const { container } = lijst();
+    for (const img of container.querySelectorAll('img'))
+      expect(img.getAttribute('loading')).toBe('lazy');
+  });
+
   it('een klik op de foto opent hem groot, en Sluiten zit in het venster', () => {
     const showModal = vi.fn();
     HTMLDialogElement.prototype.showModal = showModal;
     lijst();
-    fireEvent.click(screen.getByRole('button', { name: 'LED-lampje: toon de foto groot' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Een LED met twee pootjes Toon de foto groot' }),
+    );
     expect(showModal).toHaveBeenCalledOnce();
     expect(screen.getByRole('button', { name: 'Sluiten', hidden: true })).toBeTruthy();
   });

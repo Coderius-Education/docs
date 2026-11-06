@@ -35,13 +35,12 @@ function Kaart({ naam, foto, alt, aantal, children }: OnderdeelProps): ReactElem
   const src = fotoUrl(foto) as string;
   return (
     <li className={styles.kaart}>
-      <button
-        type="button"
-        className={styles.foto}
-        onClick={() => venster.current?.showModal?.()}
-        aria-label={`${naam}: toon de foto groot`}
-      >
+      {/* Geen aria-label: dan las een schermlezer alleen dat label voor en niet
+          de alt-tekst, en juist die noemt de pinnen. De naam van de knop is nu
+          de alt-tekst met de verborgen zin erachter. */}
+      <button type="button" className={styles.foto} onClick={() => venster.current?.showModal?.()}>
         <img src={src} alt={alt} loading="lazy" />
+        <span className={styles.verborgen}>Toon de foto groot</span>
       </button>
       <span className={styles.tekst}>
         <span className={styles.naam}>
@@ -59,7 +58,7 @@ function Kaart({ naam, foto, alt, aantal, children }: OnderdeelProps): ReactElem
           if (e.target === e.currentTarget) venster.current?.close();
         }}
       >
-        <img src={src} alt={alt} />
+        <img src={src} alt={alt} loading="lazy" />
         <form method="dialog" className={styles.sluiten}>
           <button type="submit">Sluiten</button>
         </form>
