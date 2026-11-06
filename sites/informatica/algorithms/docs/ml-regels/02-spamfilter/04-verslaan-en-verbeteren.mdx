@@ -1,0 +1,112 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Verslaan en verbeteren"
+---
+
+# Verslaan en verbeteren
+
+Je filter vergelijkt nu hele woorden. Een spammer wil er toch langs: hij
+schrijft zijn woorden net anders. Jij vult je lijst aan, en hij verzint weer
+iets nieuws.
+
+## Voorspel
+
+```python
+verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+woorden = "gratis! klik snel, win geld".split()
+
+score = 0
+for woord in woorden:
+    if woord in verdacht:
+        score = score + 1
+
+print("score:", score)
+```
+
+Welke score krijgt dit bericht?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+score: 2
+```
+
+Alleen `klik` en `geld` tellen. Het eerste woord is `"gratis!"`, met het
+leesteken eraan, en `win` is niet hetzelfde als `winnen`.
+
+</details>
+
+## Zo werkt het
+
+Het filter kent alleen de woorden uit zijn lijst, precies zoals ze daar
+staan. Een leesteken erachter, een cijfer in plaats van een letter of een
+ander woord met dezelfde betekenis, en het bericht glipt erdoor.
+
+Jij kunt woorden aan de lijst toevoegen. Maar de spammer ziet welke berichten
+niet aankomen, en verzint dan een nieuw woord.
+
+## Bouw zelf: verslaan en verbeteren
+
+Schrijf een spambericht dat door het filter glipt: het is overduidelijk
+spam, maar het krijgt een score onder de drempel. Voeg daarna woorden aan de
+lijst `verdacht` toe zodat je eigen bericht wél als spam herkend wordt.
+In de editor staat de versie met `.split()` uit
+[hele woorden](site:algorithms/docs/ml-regels/02-spamfilter/03-hele-woorden).
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: het filter ziet dit bericht als spam.
+2. Verander het bericht in een spambericht dat het filter mist: de score moet onder 2 komen.
+3. Zet woorden uit jouw bericht in `verdacht`, tot het filter het wel als spam ziet.
+
+<PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+
+bericht = "Klik nu en win een gratis telefoon"
+bericht = bericht.lower()
+
+woorden = bericht.split()
+score = 0
+for woord in woorden:
+    if woord in verdacht:
+        score = score + 1
+
+print("score:", score)
+if score >= 2:
+    print("spam")
+else:
+    print("geen spam")`} />
+
+<details>
+<summary>Tip</summary>
+
+Spammers schrijven woorden net anders, zodat ze niet in de lijst staan:
+`gr4tis` in plaats van `gratis`, of andere woorden die hetzelfde betekenen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+verdacht = ["gratis", "winnen", "klik", "nu", "geld", "gr4tis", "cadeau", "prijs"]
+
+bericht = "Je hebt een gr4tis cadeau gewonnen, haal je prijs op"
+bericht = bericht.lower()
+
+woorden = bericht.split()
+score = 0
+for woord in woorden:
+    if woord in verdacht:
+        score = score + 1
+
+print("score:", score)   # score: 3
+```
+
+Met de oude lijst kreeg dit bericht score 0. Je kunt de lijst blijven
+aanvullen, maar de spammer verzint steeds een nieuw woord. Het volgende
+project laat het filter zijn woorden daarom zelf uit voorbeelden halen.
+
+</details>
+
+Door naar [woorden tellen](site:algorithms/docs/ml-regels/03-spamfilter-leert/01-woorden-tellen).

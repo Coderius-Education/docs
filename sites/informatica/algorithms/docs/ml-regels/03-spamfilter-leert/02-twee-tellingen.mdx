@@ -1,0 +1,150 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Twee tellingen"
+---
+
+# Twee tellingen
+
+Je kunt nu de woorden van één lijst tellen. Het filter leert van twee
+stapels voorbeelden: spamberichten en gewone berichten. Het telt ze apart,
+in twee dictionaries.
+
+## Voorspel
+
+```python
+spam = {"gratis": 2, "nu": 2, "klik": 2}
+gewoon = {"je": 3, "nu": 1, "school": 2}
+
+print("nu" in spam, "nu" in gewoon)
+print("je" in spam, "je" in gewoon)
+print("hoi" in spam, "hoi" in gewoon)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+True True
+False True
+False False
+```
+
+`nu` staat in allebei de tellingen, `je` alleen in die van de gewone
+berichten. `hoi` staat in geen van beide: dat woord kwam in geen enkel
+voorbeeld voor.
+
+</details>
+
+## Zo werkt het
+
+Het filter telt twee keer: één keer de woorden uit spam, en één keer de
+woorden uit gewone berichten. Allebei zijn het voorbeelden waarvan je het
+antwoord al weet.
+
+Een woord kan in allebei de tellingen staan, zoals `nu`. Daarom vraag je het
+aan elke dictionary apart, met twee losse `if`'s.
+
+## Onderzoek
+
+1. Verander `woord` in `"je"`, en daarna in `"school"`. In welke telling
+   staan ze, en hoe vaak?
+2. Probeer `"hoi"`. Wat print het programma?
+3. Verander de tweede `if` in `elif`, en probeer `"nu"` nog eens. Wat mis je
+   nu?
+
+<PyRunner initialCode={`spam = {"win": 1, "nu": 2, "gratis": 2, "geld": 2, "prijs": 1, "klik": 2, "hier": 1, "voor": 1}
+gewoon = {
+    "zie": 1, "je": 3, "morgen": 1, "op": 1, "school": 2, "heb": 1,
+    "het": 1, "huiswerk": 1, "al": 1, "kom": 1, "nu": 1, "naar": 1,
+}
+
+woord = "nu"
+if woord in spam:
+    print("in spam:", spam[woord])
+if woord in gewoon:
+    print("in gewone berichten:", gewoon[woord])`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. `je` staat drie keer in de gewone berichten, en niet in spam. `school`
+   staat twee keer in de gewone berichten.
+2. Niets. `hoi` staat in geen van beide tellingen: het filter heeft dat woord
+   nooit gezien.
+3. Je ziet alleen `in spam: 2`. Met `elif` slaat Python de tweede vraag over
+   zodra de eerste past. Een woord kan in allebei staan, dus je hebt twee
+   losse `if`'s nodig.
+
+</details>
+
+## Opdracht: tel ook de gewone woorden
+
+In de editor telt het filter de spamwoorden al. Tel ook de woorden uit
+`gewone_woorden`, in een dictionary `gewoon`. De uitvoer wordt:
+
+```
+{'win': 1, 'nu': 2, 'gratis': 2, 'geld': 2, 'prijs': 1, 'klik': 2, 'hier': 1, 'voor': 1}
+{'zie': 1, 'je': 3, 'morgen': 1, 'op': 1, 'school': 2, 'heb': 1, 'het': 1, 'huiswerk': 1, 'al': 1, 'kom': 1, 'nu': 1, 'naar': 1}
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet de telling van de spamwoorden.
+2. Maak onder de `print` een lege dictionary `gewoon`, en print hem. Je ziet nu ook `{}`.
+3. Zet tussen die twee nieuwe regels een loop die de woorden uit `gewone_woorden` telt in `gewoon`, net als de loop van `spam`. Nu staat `'je': 3` erin.
+
+<PyRunner initialCode={`spamwoorden = "win nu gratis geld gratis prijs klik nu klik hier voor geld".split()
+gewone_woorden = "zie je morgen op school heb je het huiswerk al kom je nu naar school".split()
+
+spam = {}
+for woord in spamwoorden:
+    if woord in spam:
+        spam[woord] = spam[woord] + 1
+    else:
+        spam[woord] = 1
+print(spam)`} />
+
+<details>
+<summary>Tip</summary>
+
+Kopieer de loop van `spam`, en vervang daarin elke naam die bij spam hoort.
+Het zijn er vijf: één keer de lijst, en vier keer de dictionary.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+spamwoorden = "win nu gratis geld gratis prijs klik nu klik hier voor geld".split()
+gewone_woorden = "zie je morgen op school heb je het huiswerk al kom je nu naar school".split()
+
+spam = {}
+for woord in spamwoorden:
+    if woord in spam:
+        spam[woord] = spam[woord] + 1
+    else:
+        spam[woord] = 1
+print(spam)
+
+gewoon = {}
+for woord in gewone_woorden:
+    if woord in gewoon:
+        gewoon[woord] = gewoon[woord] + 1
+    else:
+        gewoon[woord] = 1
+print(gewoon)
+```
+
+```
+{'win': 1, 'nu': 2, 'gratis': 2, 'geld': 2, 'prijs': 1, 'klik': 2, 'hier': 1, 'voor': 1}
+{'zie': 1, 'je': 3, 'morgen': 1, 'op': 1, 'school': 2, 'heb': 1, 'het': 1, 'huiswerk': 1, 'al': 1, 'kom': 1, 'nu': 1, 'naar': 1}
+```
+
+Dit zijn de tellingen die het filter in de volgende stappen gebruikt.
+
+</details>
+
+Door naar [de score](site:algorithms/docs/ml-regels/03-spamfilter-leert/03-de-score).

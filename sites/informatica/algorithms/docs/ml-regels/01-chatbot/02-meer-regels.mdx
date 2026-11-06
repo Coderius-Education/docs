@@ -1,0 +1,172 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Meer regels"
+---
+
+# Meer regels
+
+In de vorige stap gaf de chatbot bij `"hoi, hoe is het weer?"` twee
+antwoorden. Met `elif` en `else` kiest hij er precies één: het antwoord van
+de eerste regel die past.
+
+:::info
+Je gebruikt hier `elif` uit
+[And, or en elif](site:python/docs/beslissen/05c-and-or-elif), en `else` uit
+[If en else](site:python/docs/beslissen/05b-if-else).
+:::
+
+## Voorspel
+
+```python
+zin = "hallo, hoe is het weer?"
+
+if "hallo" in zin:
+    print("Hallo, leuk dat je er bent.")
+elif "weer" in zin:
+    print("Ik kan niet naar buiten kijken.")
+else:
+    print("Daar weet ik niets van.")
+```
+
+Wat print dit programma? En wat print het bij
+`"wat voor weer wordt het morgen?"`, en bij `"ik heb honger"`?
+
+<details>
+<summary>Antwoord</summary>
+
+Bij `"hallo, hoe is het weer?"` print het `Hallo, leuk dat je er bent.` De
+zin past op twee regels, maar alleen de eerste telt. Bij de vraag over
+morgen staat er geen `"hallo"` in de zin, wel `"weer"`, dus print het
+`Ik kan niet naar buiten kijken.` Bij `"ik heb honger"` past geen enkele
+regel, en krijg je het antwoord van de `else`: `Daar weet ik niets van.`
+
+</details>
+
+## Zo werkt het
+
+`elif` betekent "anders, als". Python loopt de regels van boven naar beneden
+af. De eerste regel die past, bepaalt het antwoord, en de regels daaronder
+slaat hij over. Past er geen enkele, dan voert hij de `else` uit. Een `else`
+heeft geen trefwoord: hij vangt alles op wat overblijft.
+
+De volgorde van je regels telt dus. Zet je de regel over het weer bovenaan,
+dan praat de chatbot bij `"hallo, hoe is het weer?"` over het weer.
+
+## Onderzoek
+
+1. Wissel de twee regels om: `"weer"` komt bij de `if`, `"hallo"` bij de
+   `elif`, elk met zijn eigen `print`. Wat antwoordt de chatbot nu?
+2. Verander `zin` in `"ik ga weer naar huis"`. Snapt de chatbot wat je
+   bedoelt?
+3. Haal de `else` en de `print` eronder weg, en probeer `"ik heb honger"`.
+   Wat zegt de chatbot?
+
+<PyRunner initialCode={`zin = "hallo, hoe is het weer?"
+
+if "hallo" in zin:
+    print("Hallo, leuk dat je er bent.")
+elif "weer" in zin:
+    print("Ik kan niet naar buiten kijken.")
+else:
+    print("Daar weet ik niets van.")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. `Ik kan niet naar buiten kijken.` De zin past nog steeds op twee regels,
+   en nu staat die over het weer bovenaan.
+2. Nee. De chatbot ziet `"weer"` en praat over het weer, terwijl je
+   "opnieuw" bedoelt. Hij zoekt naar letters, niet naar betekenis.
+3. Niets. Zonder `else` heeft de chatbot geen antwoord als geen regel past.
+
+</details>
+
+## Opdracht: twee regels erbij
+
+Geef de chatbot een regel voor `"naam"`, die `Ik heet Bot. En jij?`
+antwoordt, en een voor `"doei"`, die `Doei, tot de volgende keer.`
+antwoordt. Alle andere zinnen krijgen `Daar weet ik niets van.` Met de zin
+uit de editor wordt de uitvoer:
+
+```
+Ik heet Bot. En jij?
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. Bij deze zin zegt de chatbot nog niets: er is maar één regel.
+2. Zet onder de `if` een `elif` voor `"naam"`, en draai opnieuw.
+3. Voeg een `elif` toe voor `"doei"`. Verander `zin` in `"doei bot"` om hem te testen.
+4. Zet er een `else` onder voor alle andere zinnen, en test met een zin zonder trefwoord.
+
+<PyRunner initialCode={`zin = "wat is je naam?"
+
+if "hoi" in zin:
+    print("Hallo, leuk dat je er bent.")`} />
+
+<details>
+<summary>Tip</summary>
+
+Een `elif` staat op dezelfde hoogte als de `if`, met de `print` eronder
+ingesprongen. Achter `else` staat geen trefwoord, alleen een dubbele punt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+zin = "wat is je naam?"
+
+if "hoi" in zin:
+    print("Hallo, leuk dat je er bent.")
+elif "naam" in zin:
+    print("Ik heet Bot. En jij?")
+elif "doei" in zin:
+    print("Doei, tot de volgende keer.")
+else:
+    print("Daar weet ik niets van.")
+```
+
+```
+Ik heet Bot. En jij?
+```
+
+De `else` staat altijd onderaan: hij is voor de zinnen waar geen regel
+boven hem op paste.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: zin = "doei"\nif "hoi" in zin:\n    print("Hallo.")\nelse "doei" in zin:\n    print("Doei.") */}
+```
+SyntaxError: expected ':'
+```
+
+**Oorzaak:** je gaf de `else` een trefwoord. Een `else` heeft geen
+voorwaarde, dus Python verwacht direct na `else` de dubbele punt.
+
+**Oplossing:** gebruik `elif` voor een regel met een trefwoord, en houd de
+`else` kaal.
+
+{/* niet-compileren: toont bewust een else met een voorwaarde */}
+```python
+# FOUT
+zin = "doei"
+if "hoi" in zin:
+    print("Hallo.")
+else "doei" in zin:
+    print("Doei.")
+
+# GOED
+zin = "doei"
+if "hoi" in zin:
+    print("Hallo.")
+elif "doei" in zin:
+    print("Doei.")
+```
+
+Meer uitleg: [And, or en elif](site:python/docs/beslissen/05c-and-or-elif).
+
+Door naar [hoofdletters](site:algorithms/docs/ml-regels/01-chatbot/03-hoofdletters).

@@ -43,7 +43,11 @@ function kern(term: string): string {
 }
 
 const projecten = bestanden(DOCS).filter((p) => /\/ml-[a-z]+\//.test(p));
-const eersteStappen = new Set(routeProjecten().map((p) => routeBestand(p.stappen[0])));
+const eersteStappen = new Set(
+  routeProjecten()
+    .filter((p) => p.stappen.length > 0)
+    .map((p) => routeBestand(p.stappen[0])),
+);
 
 describe('de :::info van een project belooft niets wat de les niet geeft', () => {
   it('er zijn projecten om te controleren', () => {
