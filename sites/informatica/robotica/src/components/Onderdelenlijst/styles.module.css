@@ -1,0 +1,142 @@
+/* De materiaallijst van een onderdeelpagina: kaarten met een kleine foto, in
+   dezelfde vorm als het overzicht van Onderdelen. Vier naast elkaar in de
+   kolom van een docpagina, twee op een telefoon. Selectors op
+   :not(#\#):not(#\#), anders wint Infima (zie huisstijl/README.md). */
+
+.lijst {
+  margin-bottom: var(--ifm-leading);
+}
+
+.raster:not(#\#):not(#\#) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kaart:not(#\#):not(#\#) {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-card-border-radius, 8px);
+  background: var(--ifm-background-surface-color);
+}
+
+/* De foto's hebben een witte of lichte achtergrond; een wit vlak houdt ze
+   ook in donker herkenbaar. */
+.foto:not(#\#):not(#\#) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 7.5rem;
+  padding: 0.5rem;
+  border: 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  background: #fff;
+  cursor: zoom-in;
+}
+
+.foto:not(#\#):not(#\#):focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: -2px;
+}
+
+.foto img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.tekst {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.55rem 0.7rem 0.65rem;
+}
+
+.naam {
+  font-weight: var(--ifm-font-weight-bold);
+  line-height: 1.25;
+  color: var(--ifm-color-primary-darkest);
+}
+
+[data-theme="dark"] .naam {
+  color: var(--ifm-color-primary-lightest);
+}
+
+.aantal {
+  margin-right: 0.3rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--ifm-color-primary);
+  font-size: 0.8rem;
+  color: var(--coderius-on-primary);
+}
+
+.uitleg {
+  font-size: 0.85rem;
+  line-height: 1.35;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.verder:not(#\#):not(#\#) {
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
+}
+
+.verderLabel {
+  font-weight: var(--ifm-font-weight-bold);
+}
+
+/* De foto groot, in een venster boven de pagina. */
+.venster:not(#\#):not(#\#) {
+  max-width: min(90vw, 40rem);
+  max-height: 90vh;
+  padding: 1rem;
+  border: 0;
+  border-radius: var(--ifm-card-border-radius, 8px);
+  background: #fff;
+}
+
+.venster::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+
+.venster img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(90vh - 5rem);
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.sluiten:not(#\#):not(#\#) {
+  margin: 0.75rem 0 0;
+  text-align: center;
+}
+
+.sluiten button {
+  padding: 0.35rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ifm-color-primary);
+  font: inherit;
+  color: var(--coderius-on-primary);
+  cursor: pointer;
+}
+
+/* Alleen voor een schermlezer: de naam van de fotoknop na de alt-tekst. */
+.verborgen {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

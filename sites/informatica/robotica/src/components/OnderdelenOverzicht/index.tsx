@@ -3,6 +3,7 @@ import type { PropSidebarItem, PropSidebarItemLink } from '@docusaurus/plugin-co
 import { useDocsSidebar } from '@docusaurus/plugin-content-docs/client';
 import Heading from '@theme/Heading';
 import type { ReactElement } from 'react';
+import { fotoUrl } from '../onderdeelFoto';
 import styles from './styles.module.css';
 
 // De overzichtspagina van Onderdelen. De groepen en hun volgorde komen uit de
@@ -18,19 +19,6 @@ import styles from './styles.module.css';
 // pagina in een groep met kaarten.
 
 type Props = { kort?: string; foto?: string; aansluiting?: string; hulp?: boolean };
-
-// require.context is van de bundler (Rspack), niet van node: elke foto in de
-// map komt als adres in de build, en een kaart pakt de zijne op naam.
-type Context = (pad: string) => string | { default: string };
-const fotoContext = (
-  require as unknown as { context: (map: string, diep: boolean, filter: RegExp) => Context }
-).context('@site/docs/onderdelen/img', true, /\.(png|jpe?g|svg)$/i);
-
-function fotoUrl(pad: string | undefined): string | undefined {
-  if (!pad) return undefined;
-  const bron = fotoContext(`./${pad}`);
-  return typeof bron === 'string' ? bron : bron.default;
-}
 
 const props = (item: PropSidebarItemLink): Props => (item.customProps ?? {}) as Props;
 const links = (items: PropSidebarItem[]): PropSidebarItemLink[] =>

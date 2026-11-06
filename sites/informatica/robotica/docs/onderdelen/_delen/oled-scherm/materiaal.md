@@ -1,22 +1,13 @@
 Een **OLED-scherm** laat je tekst en getallen zien op je robot, zonder dat hij aan de laptop hoeft te hangen. Ideaal om sensorwaardes te volgen tijdens het rijden. Het scherm praat via **I2C** (pinnen SDA en SCL).
 
-### Zonder multiplexer
+<Onderdelenlijst>
+  <Onderdeel naam="Nano op het shield" foto="ir-analoog/leaphy_murphy_shield.jpeg" alt="Het Leaphy Murphy Shield, de groene printplaat waar de Nano in past">Arduino Nano RP2040 Connect op het Leaphy Murphy Shield</Onderdeel>
+  <Onderdeel naam="OLED-scherm" foto="oled-scherm/oled.png" alt="OLED-scherm van 128 bij 64 pixels met vier pinnen">128 × 64 pixels</Onderdeel>
+  <Onderdeel naam="SDA/SCL-module" foto="oled-scherm/sda_scl_module.jpeg" alt="SDA/SCL-module voor het Leaphy Murphy shield">Een multiplexer, aanbevolen</Onderdeel>
+  <Onderdeel naam="4-pins jumperkabel female/female" />
+</Onderdelenlijst>
 
-- Arduino Nano RP2040 Connect
-- OLED-scherm (128 × 64)
-
-![OLED-scherm van 128 bij 64 pixels met vier pinnen](../../img/oled-scherm/oled.png)
-
-Het uiterlijk verschilt per merk, maar de aansluitingen zijn hetzelfde: **VCC**, **GND**, **SDA**, **SCL**.
-
-### Met multiplexer (aanbevolen)
-
-Heb je ook TOF-sensoren? Gebruik dan een multiplexer zodat alles tegelijk werkt.
-
-- SDA/SCL-module voor het Leaphy Murphy Shield
-- 4-pins jumperkabel female/female
-
-![SDA/SCL-module voor het Leaphy Murphy shield](../../img/oled-scherm/sda_scl_module.jpeg)
+Het uiterlijk van het scherm verschilt per merk, maar de aansluitingen zijn hetzelfde: **VCC**, **GND**, **SDA**, **SCL**. De multiplexer heb je nodig als je ook TOF-sensoren gebruikt: dan werkt alles tegelijk.
 
 <details>
 <summary>Controlevraag</summary>
