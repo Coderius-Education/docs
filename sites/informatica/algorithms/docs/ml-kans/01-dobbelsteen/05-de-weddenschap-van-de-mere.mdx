@@ -1,0 +1,162 @@
+---
+sidebar_position: 5
+sidebar_label: "5. De weddenschap van de Méré"
+---
+
+# De weddenschap van de Méré
+
+Je speelde in de vorige stappen telkens één worp na, of één worp met twee
+stenen. Een weddenschap bestaat soms uit een paar worpen achter elkaar. Dan
+onthoud je met een **vlag** of er iets gebeurde, en speel je de hele
+weddenschap duizenden keren na: een loop in een loop.
+
+:::info
+Een loop in een loop ken je uit
+[Om de beurt](site:python/docs/projecten/schildpaddenrace/stap-5-loop-in-loop),
+en `True` en `False` uit
+[Booleans en vergelijken](site:python/docs/beslissen/05a-booleans-en-vergelijken).
+:::
+
+## Voorspel
+
+```python
+zes = False
+for worp in [3, 6, 2, 5]:
+    if worp == 6:
+        zes = True
+
+print(zes)
+```
+
+Wat print dit?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+True
+```
+
+`zes` begint op `False`, en wordt `True` bij de 6. Daarna zet niets hem terug,
+dus na de loop is hij nog `True`.
+
+</details>
+
+## Zo werkt het
+
+`zes` is een vlag: hij staat op `False` tot er een zes valt, en blijft daarna
+op `True`. Na de loop weet je dus of er minstens één zes viel, ook als je de
+worpen zelf niet meer hebt.
+
+## Onderzoek
+
+1. Draai de code een paar keer. Wanneer print hij `True`?
+2. Zet `zes = False` ín de loop, als eerste regel onder de `for`. Wat print hij
+   nu?
+3. Zet het aantal worpen op 24. Hoe vaak zie je nog `False`?
+
+<PyRunner initialCode={`import random
+
+zes = False
+for worp in range(4):
+    ogen = random.randint(1, 6)
+    print(ogen)
+    if ogen == 6:
+        zes = True
+
+print("minstens één zes:", zes)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Als er bij de vier worpen minstens één zes zit.
+2. Nu zet hij de vlag bij elke worp terug. Alleen als de laatste worp een zes
+   is, print hij `True`.
+3. Bijna nooit. Vier worpen zonder zes gebeurt ongeveer de helft van de keren,
+   maar 24 worpen zonder zes maar één keer op de tachtig.
+
+</details>
+
+## Bouw zelf: de weddenschappen van de Méré
+
+De Franse schrijver Antoine Gombaud, die zich Chevalier de Méré noemde, gokte
+graag. Een bekende weddenschap in zijn tijd: in vier worpen met één
+dobbelsteen gooi je minstens één zes. Hoe vaak win je die?
+
+Speel de weddenschap 10.000 keer na en print hoeveel procent van de keren je
+wint. Probeer daarna een tweede: minstens één keer dubbel zes, in 24 worpen
+met twee dobbelstenen. Volgens de Méré moest die even goed uitpakken. Laat je
+simulatie dat zien?
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code een paar keer: hij speelt één weddenschap, en print soms `True` en soms `False`.
+2. Speel de weddenschap tien keer: zet `for keer in range(10):` boven `zes = False`, en spring alles eronder één stap verder in. Je ziet nu tien keer `True` of `False`.
+3. Tel de gewonnen weddenschappen: zet `gewonnen = 0` boven de buitenste loop, tel er één bij op als `zes` waar is, en print `gewonnen` na de loop.
+4. Speel `keren = 10000` weddenschappen in plaats van tien, print het percentage met `gewonnen * 100 // keren`, en haal de print van `zes` weg.
+5. Maak de tweede weddenschap: 24 worpen met twee stenen, en kijk of ze allebei 6 zijn.
+
+<PyRunner initialCode={`import random
+
+zes = False
+for worp in range(4):
+    if random.randint(1, 6) == 6:
+        zes = True
+print(zes)`} />
+
+<details>
+<summary>Tip</summary>
+
+Krijg je bijna 100 procent? Kijk waar `zes = False` staat. Hij moet bij elke
+weddenschap opnieuw op `False` beginnen, dus in de buitenste loop, vóór de
+binnenste.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+keren = 10000
+gewonnen = 0
+for keer in range(keren):
+    zes = False
+    for worp in range(4):
+        if random.randint(1, 6) == 6:
+            zes = True
+    if zes:
+        gewonnen = gewonnen + 1
+
+print(gewonnen * 100 // keren, "procent gewonnen")
+```
+
+Je krijgt rond de 51 procent. Uitgerekend is de kans 51,8 procent: net genoeg
+om er op den duur geld aan te verdienen. Voor de tweede weddenschap verander
+je de binnenste loop:
+
+```python
+import random
+
+keren = 10000
+gewonnen = 0
+for keer in range(keren):
+    dubbel = False
+    for worp in range(24):
+        if random.randint(1, 6) == 6 and random.randint(1, 6) == 6:
+            dubbel = True
+    if dubbel:
+        gewonnen = gewonnen + 1
+
+print(gewonnen * 100 // keren, "procent gewonnen")
+```
+
+Dan kom je rond de 49 procent uit: net verliezend. In 1654 legde de Méré de
+vraag waarom voor aan de wiskundige Blaise Pascal. Pascal schreef erover met
+Pierre de Fermat, en hun brieven worden gezien als het begin van de
+kansrekening.
+
+</details>
+
+Door naar [het web](site:algorithms/docs/ml-kans/02-surfer/01-het-web).

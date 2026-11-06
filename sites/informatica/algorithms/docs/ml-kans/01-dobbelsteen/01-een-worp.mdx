@@ -1,0 +1,149 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Eén worp"
+---
+
+# Eén worp
+
+Hoe groot is de kans dat je met twee dobbelstenen samen 7 gooit? Dat kun je
+uitrekenen, maar je kunt het ook proberen: gooi tienduizend keer en tel hoe
+vaak het gebeurt. Met een echte dobbelsteen duurt dat een middag, de computer
+doet het in een tel. Zo'n nagespeeld experiment heet een **simulatie**. Het
+idee komt overal in machine learning terug: veel proberen, en tellen wat er
+gebeurt. Je begint met één worp.
+
+:::info
+Je gebruikt in dit project `random.randint` uit
+[De computer kiest](site:python/docs/projecten/raad-het-getal/stap-4-random),
+`range` uit [De for-loop](site:python/docs/herhalen/06a-for-loop),
+`//` uit [Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest),
+en tellen met een dictionary uit
+[een spamfilter dat leert](site:algorithms/docs/ml-regels/03-spamfilter-leert/01-woorden-tellen).
+In de laatste stap heb je ook een loop in een loop nodig, uit
+[Om de beurt](site:python/docs/projecten/schildpaddenrace/stap-5-loop-in-loop),
+en `True` en `False` uit
+[Booleans en vergelijken](site:python/docs/beslissen/05a-booleans-en-vergelijken).
+:::
+
+## Voorspel
+
+```python
+import random
+
+worp = random.randint(1, 6)
+print(worp)
+```
+
+Wat print dit programma? Kan het een 0 printen? En een 6?
+
+<details>
+<summary>Antwoord</summary>
+
+Een getal van 1 tot en met 6, en elke keer dat je het draait een ander. Een 0
+komt er nooit uit, een 6 wel: `randint` telt allebei de grenzen mee.
+
+</details>
+
+## Zo werkt het
+
+`import random` haalt de module `random` binnen. `random.randint(1, 6)` geeft
+een willekeurig getal van 1 tot en met 6, net als een dobbelsteen. Het kleinste
+getal staat eerst, het grootste daarna.
+
+## Onderzoek
+
+1. Draai de code vijf keer. Krijg je elke keer iets anders?
+2. Maak er een dobbelsteen met twintig vlakken van.
+3. Zet de regel met `worp =` en de print nog een keer onder de code. Zijn de
+   twee worpen gelijk?
+
+<PyRunner initialCode={`import random
+
+worp = random.randint(1, 6)
+print("Je gooit", worp)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Meestal wel, maar niet altijd: de kans dat je twee keer achter elkaar
+   hetzelfde gooit, is 1 op de 6.
+2. `random.randint(1, 20)`.
+3. Soms wel, meestal niet. De tweede worp weet niets van de eerste, net als bij
+   een echte dobbelsteen.
+
+</details>
+
+## Opdracht: tien worpen
+
+Gooi tien keer, en print elke worp. Gooi je een zes, print dan ook `zes`.
+Bijvoorbeeld:
+
+```
+4
+6
+zes
+1
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij gooit één keer.
+2. Zet de worp en de print in een loop: `for i in range(10):`. Je ziet nu tien getallen.
+3. Zet in de loop een `if` die `zes` print als de worp 6 is.
+
+<PyRunner initialCode={`import random
+
+worp = random.randint(1, 6)
+print(worp)`} />
+
+<details>
+<summary>Tip</summary>
+
+Alles wat tien keer moet gebeuren, springt in onder de `for`. Staat de `if`
+onder de loop, dan kijkt hij alleen naar de laatste worp.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+for i in range(10):
+    worp = random.randint(1, 6)
+    print(worp)
+    if worp == 6:
+        print("zes")
+```
+
+Gemiddeld zie je één of twee keer `zes`. Soms geen enkele keer: tien worpen is
+weinig.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+TypeError: Random.randint() missing 1 required positional argument: 'b'
+```
+
+**Oorzaak:** `randint` wil twee getallen: het kleinste en het grootste. Met
+één getal weet hij niet waar hij moet beginnen.
+
+**Oplossing:** geef allebei de grenzen mee.
+
+```python
+# FOUT
+import random
+ogen = random.randint(6)
+
+# GOED
+import random
+ogen = random.randint(1, 6)
+```
+
+Meer uitleg: [De computer kiest](site:python/docs/projecten/raad-het-getal/stap-4-random).
+
+Door naar [tellen](site:algorithms/docs/ml-kans/01-dobbelsteen/02-tellen).

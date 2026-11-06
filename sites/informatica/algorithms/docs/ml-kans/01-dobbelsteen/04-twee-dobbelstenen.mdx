@@ -1,0 +1,163 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Twee dobbelstenen"
+---
+
+# Twee dobbelstenen
+
+Tot nu toe gooide je met één steen, en kwam elk getal even vaak. Met twee
+stenen tel je de som, en die komt niet bij elk getal even vaak uit. Dat zie je
+het best in een staafdiagram.
+
+## Voorspel
+
+```python
+telling = {}
+for som in range(2, 13):
+    telling[som] = 0
+
+print(telling)
+```
+
+Wat print dit?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+{2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0}
+```
+
+`range(2, 13)` stopt vóór de 13, dus je krijgt elke som van 2 tot en met 12:
+alles wat twee stenen samen kunnen gooien.
+
+</details>
+
+## Zo werkt het
+
+Met een loop zet je elke som op 0, in plaats van elf sleutels uit te typen.
+
+Een staafdiagram tekent de bibliotheek matplotlib, en die hoef je hier niet te
+leren. Onderaan de code van het onderzoek staan de drie regels die je nodig
+hebt: `import matplotlib.pyplot as plt`, dan
+`plt.bar(list(telling), list(telling.values()))` en `plt.show()`. `plt.bar`
+tekent een staaf voor elke sleutel van `telling`, zo hoog als het getal dat
+erbij hoort. De eerste keer laden duurt het tekenen een paar tellen.
+
+## Onderzoek
+
+1. Draai de code. Zijn de staven van één dobbelsteen even hoog?
+2. Zet `worpen` op 6000. Wat gebeurt er met de verschillen?
+3. Haal `6: 0` uit `telling` weg en draai opnieuw. Wat gebeurt er?
+
+<PyRunner initialCode={`import random
+import matplotlib.pyplot as plt
+
+worpen = 600
+telling = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+for i in range(worpen):
+    ogen = random.randint(1, 6)
+    telling[ogen] = telling[ogen] + 1
+
+plt.bar(list(telling), list(telling.values()))
+plt.show()`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Bijna: elke staaf is rond de 100, maar de een wat hoger dan de ander.
+2. De staven zijn nu bijna precies even hoog, rond de 1000.
+3. Python stopt met een foutmelding zodra er een 6 valt. Zie
+   [Er gaat iets mis](#er-gaat-iets-mis).
+
+</details>
+
+## Opdracht: twee dobbelstenen
+
+Gooi 6000 keer met twee dobbelstenen, en tel hoe vaak elke som voorkomt, van
+2 tot en met 12. Print per som hoe vaak hij voorkwam, en teken het als
+staafdiagram. Welke som komt het vaakst?
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij gooit één keer met twee stenen.
+2. Zet het gooien in een loop van 10 keer, en print alleen de som.
+3. Tel de sommen in een dictionary `telling`, en print die na de loop. Zet de loop daarna op 6000, en haal de print van de som weg.
+4. Print per som van 2 tot en met 12 een regel, en zet de drie regels matplotlib uit het onderzoek eronder.
+
+<PyRunner initialCode={`import random
+
+eerste = random.randint(1, 6)
+tweede = random.randint(1, 6)
+print(eerste, tweede, eerste + tweede)`} />
+
+<details>
+<summary>Tip</summary>
+
+Tel je zoals in het spamfilter, met `if som in telling`, dan werkt het, maar
+staan de sommen in de volgorde waarin ze voor het eerst vielen. Zet je vóór de
+loop elke som van 2 tot en met 12 op 0, dan staan ze op volgorde.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+worpen = 6000
+telling = {}
+for som in range(2, 13):
+    telling[som] = 0
+
+for i in range(worpen):
+    eerste = random.randint(1, 6)
+    tweede = random.randint(1, 6)
+    som = eerste + tweede
+    telling[som] = telling[som] + 1
+
+for som in telling:
+    print(som, telling[som])
+
+import matplotlib.pyplot as plt
+plt.bar(list(telling), list(telling.values()))
+plt.show()
+```
+
+De staven lopen op tot de 7 en dan weer af, als een dak. De 7 wint, met
+ongeveer 1000 keer. 2 en 12 komen het minst voor, rond de 170 keer. Voor een 2
+moeten allebei de stenen 1 zijn, maar voor een 7 zijn er zes manieren: 1 en 6,
+2 en 5, 3 en 4, en ook andersom. Twee stenen kunnen op 36 manieren vallen, dus
+de kans op 7 is 6 op de 36: een zesde. Je simulatie komt daar dicht bij.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+KeyError: 7
+```
+
+**Oorzaak:** je telt bij een som die nog geen sleutel is in `telling`. Begin
+je met een lege `telling`, of met alleen de ogen van één steen (1 tot en met
+6), dan staat 7 er niet in. Het getal in de foutmelding is de som die mist.
+
+**Oplossing:** zet elke som die kan uitkomen eerst op 0.
+
+```python
+# FOUT
+telling = {}
+som = 3 + 4
+telling[som] = telling[som] + 1
+
+# GOED
+telling = {}
+for som in range(2, 13):
+    telling[som] = 0
+som = 3 + 4
+telling[som] = telling[som] + 1
+```
+
+Door naar [de weddenschap van de Méré](site:algorithms/docs/ml-kans/01-dobbelsteen/05-de-weddenschap-van-de-mere).

@@ -1,0 +1,158 @@
+---
+sidebar_position: 5
+sidebar_label: "5. Dag na dag"
+---
+
+# Dag na dag
+
+Je steekproef van duizend dagen gaf elke keer net andere getallen. Je kunt ze
+ook uitrekenen, zonder toeval. Je houdt bij hoe groot de kans op elk weer is,
+en rekent daarmee de kansen voor de volgende dag uit. Dat deed je bij PageRank
+ook, in [één pagina bijwerken](site:algorithms/docs/pagerank/bouwen/05-een-update).
+
+## Voorspel
+
+Vandaag is het zonnig of bewolkt, allebei met kans 0,5.
+
+```python
+vandaag = {"zon": 0.5, "wolken": 0.5, "regen": 0}
+na_zon = {"zon": 0.5, "wolken": 0.3, "regen": 0.2}
+na_wolken = {"zon": 0.3, "wolken": 0.4, "regen": 0.3}
+
+kans = vandaag["zon"] * na_zon["regen"] + vandaag["wolken"] * na_wolken["regen"]
+print(round(kans, 2))
+```
+
+Wat print dit?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+0.25
+```
+
+Met kans 0,5 is het zonnig, en dan regent het morgen met kans 0,2: samen 0,1.
+Met kans 0,5 is het bewolkt, en dan regent het met kans 0,3: samen 0,15. Dat
+is 0,25 in totaal.
+
+</details>
+
+## Zo werkt het
+
+`verdeling` is de kans op elk weer vandaag. Vandaag is het zeker zonnig, dus
+zon staat op 1. De kans op een weer morgen is een som: voor elk weer van
+vandaag de kans daarop, keer de kans uit het model om vandaar bij dat weer van
+morgen te komen. Zo heb je een loop in een loop: buiten het weer van morgen,
+binnen het weer van vandaag.
+
+Alles samen tel je in een nieuwe dictionary `nieuw`, de verdeling van morgen.
+Die telt weer op tot 1.
+
+## Onderzoek
+
+1. Draai de code. Herken je de getallen?
+2. Begin op regen: zet in `verdeling` regen op 1 en zon op 0.
+3. Begin op half zon, half wolken, zoals in de Voorspel. Klopt de kans op
+   regen?
+
+<PyRunner initialCode={`model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.4},
+}
+verdeling = {"zon": 1, "wolken": 0, "regen": 0}
+
+nieuw = {}
+for morgen in model:
+    kans = 0
+    for vandaag in model:
+        kans = kans + verdeling[vandaag] * model[vandaag][morgen]
+    nieuw[morgen] = kans
+
+for weer in nieuw:
+    print(weer, round(nieuw[weer], 3))`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Het zijn de kansen na een zonnige dag uit het model: 0.5, 0.3 en 0.2.
+2. Nu krijg je de kansen na regen: 0.2, 0.4 en 0.4.
+3. Ja, regen komt op 0.25.
+
+</details>
+
+## Opdracht: zeven dagen
+
+Reken de verdeling zeven dagen vooruit, en print elke dag de kans op zon,
+wolken en regen:
+
+```
+1 0.5 0.3 0.2
+2 0.38 0.35 0.27
+3 0.349 0.362 0.289
+4 0.341 0.365 0.294
+5 0.339 0.366 0.295
+6 0.338 0.366 0.296
+7 0.338 0.366 0.296
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print zeven keer dezelfde verdeling, want er verandert nog niets.
+2. Reken in de loop, vóór de print, de verdeling van morgen uit in `nieuw`, zoals in het onderzoek. Zet daarna `verdeling = nieuw`. Nu verandert de verdeling elke dag.
+3. Begin op regen in plaats van op zon. Waar kom je na zeven dagen uit?
+
+<PyRunner initialCode={`model = {
+    "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
+    "wolken": {"zon": 0.3, "wolken": 0.4, "regen": 0.3},
+    "regen": {"zon": 0.2, "wolken": 0.4, "regen": 0.4},
+}
+verdeling = {"zon": 1, "wolken": 0, "regen": 0}
+
+for dag in range(7):
+    print(dag + 1, round(verdeling["zon"], 3), round(verdeling["wolken"], 3), round(verdeling["regen"], 3))`} />
+
+<details>
+<summary>Tip</summary>
+
+Verandert alleen de eerste dag, en daarna niets meer? Kijk of `verdeling = nieuw`
+in de loop staat. En begint `nieuw = {}` elke dag opnieuw?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de loop in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+for dag in range(7):
+    nieuw = {}
+    for morgen in model:
+        kans = 0
+        for vandaag in model:
+            kans = kans + verdeling[vandaag] * model[vandaag][morgen]
+        nieuw[morgen] = kans
+    verdeling = nieuw
+    print(dag + 1, round(verdeling["zon"], 3), round(verdeling["wolken"], 3), round(verdeling["regen"], 3))
+```
+
+```
+1 0.5 0.3 0.2
+2 0.38 0.35 0.27
+3 0.349 0.362 0.289
+4 0.341 0.365 0.294
+5 0.339 0.366 0.295
+6 0.338 0.366 0.296
+7 0.338 0.366 0.296
+```
+
+Na zes dagen verandert er niets meer in de eerste drie cijfers. Begin je op
+regen, dan kom je op dezelfde getallen uit. Ze liggen dicht bij je steekproef
+van duizend dagen: 0,34 zon, 0,37 wolken en 0,30 regen.
+
+</details>
+
+Door naar [het verschil](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/06-het-verschil).
