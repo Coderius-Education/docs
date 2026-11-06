@@ -143,10 +143,20 @@ Bij gelijke massa kaatsen de ballen gelijk terug. Met ongelijke massa wordt de l
 
 ## Sensor
 
-`sensor` bepaalt of een vorm botsingen **detecteert** zonder ze fysiek te **blokkeren**. Een sensor-vorm laat andere vormen er doorheen bewegen, maar je kunt nog steeds `when_touching` gebruiken om te weten wanneer ze elkaar raken.
+In [2.1](site:play/docs/fysica/links_en_rechts#een-tekst-in-de-weg) stuiterde de
+bal terug tegen een tekst. Elke vorm houdt andere vormen tegen, ook als je er
+zelf geen `start_physics()` op aanroept: een vierkant, een tekst, en ook een
+vorm met `transparency=0` die je niet ziet.
+
+Met **`sensor`** zet je dat uit. Een sensor merkt nog wel dat iets hem raakt, en
+`when_touching` gaat dan nog steeds af, maar hij houdt niets tegen. Zo maak je een
+scorezone, een finish, of een tekst waar de bal overheen vliegt.
 
 - `True` = de vorm is een sensor (objecten gaan er doorheen)
 - `False` = de vorm is normaal en blokkeert andere vormen (dit is de standaard)
+
+Geef een sensor ook `can_move=False` mee. `start_physics()` zet anders de
+zwaartekracht aan, en dan valt je zone van het scherm.
 
 <CodeUitleg>
 
@@ -159,7 +169,7 @@ bal = play.new_circle(y=200, radius=20)
 bal.start_physics()
 
 zone = play.new_box(y=0, width=200, height=100, color='green', transparency=50)
-zone.start_physics(sensor=True)
+zone.start_physics(can_move=False, sensor=True)
 
 tekst = play.new_text("", y=250, font_size=30)
 
@@ -181,7 +191,7 @@ De zone. `transparency=50` maakt hem half doorzichtig, zodat je kunt zien waar h
 </Regel>
 
 <Regel n={9}>
-De kern van dit voorbeeld: **sensor=True** betekent dat de zone botsingen wel merkt, maar niets tegenhoudt.
+De kern van dit voorbeeld: **sensor=True** betekent dat de zone botsingen wel merkt, maar niets tegenhoudt. Door `can_move=False` blijft de zone op zijn plek.
 </Regel>
 
 <Regel n={11}>
@@ -206,7 +216,7 @@ bal = play.new_circle(y=200, radius=20)
 bal.start_physics()
 
 zone = play.new_box(y=0, width=200, height=100, color='green', transparency=50)
-zone.start_physics(sensor=True)
+zone.start_physics(can_move=False, sensor=True)
 
 tekst = play.new_text("", y=250, font_size=30)
 
@@ -222,11 +232,28 @@ Je kunt `sensor` ook tijdens het spel veranderen:
 zone.physics.sensor = False
 ```
 
+### Er gaat iets mis: de zone valt weg
+
+Je zone verdwijnt onder uit het scherm, en de tekst verandert nooit.
+
+**Oorzaak:** `start_physics()` geeft een vorm zwaartekracht, ook een sensor. De
+zone valt dus net zo hard als de bal, en de bal haalt hem nooit in.
+
+**Oplossing:** geef `can_move=False` mee, dan blijft de zone staan.
+
+```python
+# FOUT
+zone.start_physics(sensor=True)
+
+# GOED
+zone.start_physics(can_move=False, sensor=True)
+```
+
 ### Opdracht 2.3.c: Scorezone
 
 Maak een spel met:
 1. Een vloer onderaan het scherm
-2. Een onzichtbare scorezone (gebruik `sensor=True` en `transparency=50`) in het midden van het scherm
+2. Een doorzichtige scorezone (gebruik `sensor=True`, `can_move=False` en `transparency=50`) in het midden van het scherm
 3. Een bal die van boven valt
 
 Als de bal door de scorezone valt, laat een tekst zien: "Punt."
@@ -247,7 +274,7 @@ import play
 vloer = play.new_box(y=-200, width=600, height=20)
 
 zone = play.new_box(y=0, width=200, height=100, color='green', transparency=50)
-zone.start_physics(sensor=True)
+zone.start_physics(can_move=False, sensor=True)
 
 bal = play.new_circle(y=200, radius=20, color='red')
 bal.start_physics()
@@ -256,7 +283,7 @@ tekst = play.new_text("", y=250, font_size=30)
 
 @bal.when_touching(zone)
 def punt():
-    tekst.words = "Punt!"
+    tekst.words = "Punt."
 ```
 
 <PygbagRunner code={`import play
@@ -264,7 +291,7 @@ def punt():
 vloer = play.new_box(y=-200, width=600, height=20)
 
 zone = play.new_box(y=0, width=200, height=100, color='green', transparency=50)
-zone.start_physics(sensor=True)
+zone.start_physics(can_move=False, sensor=True)
 
 bal = play.new_circle(y=200, radius=20, color='red')
 bal.start_physics()
@@ -273,7 +300,7 @@ tekst = play.new_text("", y=250, font_size=30)
 
 @bal.when_touching(zone)
 def punt():
-    tekst.words = "Punt!"`} height={300} />
+    tekst.words = "Punt."`} height={300} />
 
 De bal valt door de groene zone en landt op de vloer. Zodra de bal de zone raakt, verschijnt "Punt.".
 

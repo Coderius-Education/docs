@@ -153,7 +153,7 @@ Bij **Bugfixes**: toetsenbord-events worden nu maar één keer per frame afgevuu
 
 Bij **Bugfixes**: het wisselen van een achtergrondafbeelding terug naar een kleur met `set_backdrop()` werkt nu correct.
 
-Bij **Fysica**: je kunt nu `sensor=True` meegeven aan `start_physics()`. Een sensor detecteert botsingen (bijv. `when_touching`) maar blokkeert andere vormen niet — ze gaan er gewoon doorheen. Handig voor scorezones, triggers en checkpoints.
+Bij **Fysica**: je kunt nu `sensor=True` meegeven aan `start_physics()`, samen met `can_move=False`, anders valt de sensor van het scherm. Een sensor detecteert botsingen (bijv. `when_touching`) maar blokkeert andere vormen niet — ze gaan erdoorheen. Handig voor scorezones, triggers en checkpoints.
 
 Bij **Verwijderd**: het `Line`-object is verwijderd omdat het niet goed werkte met de physics engine.
 
@@ -465,6 +465,21 @@ cirkel.physics.obeys_gravity = False
 
 </details>
 
+
+<details>
+  <summary>Hoe laat ik een bal door een tekst of vorm heen gaan? (sensor)</summary>
+
+Elke vorm en elke tekst houdt een bal tegen, ook zonder `start_physics()`. Een sensor merkt de bal wel (`when_touching`), maar laat hem door. Met `can_move=False` blijft de tekst staan.
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(x=-300, radius=20)
+bal.start_physics(obeys_gravity=False, x_speed=60)
+
+tekst = play.new_text("Hallo", font_size=60)
+tekst.start_physics(can_move=False, sensor=True)
+`} height={350} />
+</details>
 
 <details>
   <summary>Wat kan ik allemaal aanpassen aan de fysica? (start_physics)</summary>

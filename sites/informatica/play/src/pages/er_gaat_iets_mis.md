@@ -433,13 +433,22 @@ Als je een variabele wilt veranderen binnen een functie, heb je `global` nodig. 
 <details>
   <summary>Mijn fysica gedraagt zich raar</summary>
 
-**1. Vormen vliegen door elkaar heen**
+**1. De bal stuitert tegen een tekst**
+Elke vorm is massief, ook een tekst en ook een vorm met `transparency=0`, en dat al zonder `start_physics()`. Moet de bal erdoorheen, maak de tekst dan een sensor:
+
+```python
+tekst.start_physics(can_move=False, sensor=True)
+```
+
+Zonder `can_move=False` krijgt de tekst zwaartekracht en valt hij van het scherm.
+
+**2. Vormen vliegen door elkaar heen**
 Dit kan gebeuren als vormen te snel bewegen. Probeer de snelheid te verlagen. Check ook of je per ongeluk `sensor=True` hebt meegegeven bij `start_physics()`. Een sensor laat vormen er doorheen bewegen.
 
-**2. Vormen trillen of schudden**
+**3. Vormen trillen of schudden**
 Dit kan gebeuren als twee vormen overlappen op het moment dat de fysica start. Zorg dat vormen niet op dezelfde positie staan bij het aanmaken.
 
-**3. De bal kaatst niet terug**
+**4. De bal kaatst niet terug**
 Check of je `bounciness` hebt ingesteld. Standaard staat deze op `1.0` (maximaal stuiteren). Wil je minder stuiteren? Verlaag de waarde:
 
 ```python

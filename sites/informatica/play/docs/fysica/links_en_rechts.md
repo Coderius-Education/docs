@@ -114,6 +114,45 @@ cirkel.start_physics(obeys_gravity=False, x_speed=100, y_speed=100)`} height={30
 
 </details>
 
+## Een tekst in de weg
+
+De bal hieronder rijdt naar rechts, en in het midden van het scherm staat een
+tekst. Wat denk je dat de bal doet als hij bij de tekst komt?
+
+```python
+import play
+
+bal = play.new_circle(x=-300, radius=20)
+bal.start_physics(obeys_gravity=False, x_speed=60)
+
+tekst = play.new_text("Hallo", font_size=60)
+```
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(x=-300, radius=20)
+bal.start_physics(obeys_gravity=False, x_speed=60)
+
+tekst = play.new_text("Hallo", font_size=60)`} height={300} />
+
+<details>
+<summary>Klik hier voor het antwoord.</summary>
+
+De bal stuitert terug tegen de tekst, alsof het een muur is. In `coderius-play`
+is elke vorm massief: een vierkant, een cirkel en ook een tekst. Dat geldt al voordat je `start_physics()` aanroept, en ook voor een vorm
+die je onzichtbaar maakt met `transparency=0`.
+
+Wil je dat de bal er doorheen gaat, maak de tekst dan een **sensor**:
+
+```python
+tekst.start_physics(can_move=False, sensor=True)
+```
+
+Een sensor merkt nog wel dat de bal hem raakt, maar houdt hem niet tegen. Hoe
+dat werkt, staat in [2.3 Fysica-eigenschappen](site:play/docs/fysica/eigenschappen#sensor).
+
+</details>
+
 :::info[Waar kom je dit later weer tegen?]
 - In [5.1 Wachten in je spel](site:play/docs/tijd/bal) gebruik je opnieuw `x_speed` om een bal te laten bewegen — en zie je waarom `time.sleep()` daar problemen veroorzaakt.
 - In [Pong (eindproject)](site:play/docs/jouw_project/pong) gebruik je `x_speed` én `y_speed` om de bal diagonaal te laten stuiteren.
