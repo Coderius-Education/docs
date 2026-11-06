@@ -63,7 +63,7 @@ oled.text('Hallo!', x=0, y=0)
 oled.show()
 ```
 
-- `text()` zet tekst klaar op positie (x, y).
+- `text()` zet tekst klaar op positie (x, y). Een letter is 8 bij 8 pixels.
 - **`show()`** stuurt alles wat je klaargezet hebt naar het scherm. Vergeet deze niet, anders blijft het scherm leeg.
 
 ### Andere handige functies
@@ -129,5 +129,74 @@ while True:
     teller = teller + 1
     sleep(1)
 ```
+
+</details>
+
+#### Grotere tekst \{#grotere-tekst}
+
+Een meetwaarde lees je van een afstand beter als hij groot op het scherm
+staat. Met **`scale`** maak je de letters groter: bij `scale=2` wordt elke
+pixel een blokje van 2 bij 2, en is een letter 16 bij 16 pixels.
+
+```python
+from leaphymicropython.actuators.oled_screen import OLEDSH1106
+
+oled = OLEDSH1106(width=128, height=64, channel=7)
+
+oled.fill("white")
+oled.text('Klein', x=0, y=0)
+oled.text('Groot', x=0, y=16, scale=2)
+oled.show()
+```
+
+Hoe groter de letters, hoe minder er op een regel past:
+
+| `scale` | Een letter | Tekens op een regel |
+|:---:|:---:|:---:|
+| 1 | 8 × 8 pixels | 16 |
+| 2 | 16 × 16 pixels | 8 |
+| 3 | 24 × 24 pixels | 5 |
+
+Wat niet past, valt van het scherm af: de tekst gaat niet verder op een
+nieuwe regel. Zet een volgende regel ook verder omlaag, minstens 8 × `scale`
+pixels. `scale` is een heel getal, dus 1, 2 of 3. Met `scale=1.5` krijg je
+een [foutmelding](site:robotica/docs/onderdelen/er-gaat-iets-mis#oled-scherm).
+
+<details>
+<summary>Opdracht: een grote teller</summary>
+
+Maak de teller van de vorige opdracht groot: het woord `Teller` klein
+bovenaan, en het getal eronder met `scale=3`.
+
+</details>
+
+<details>
+<summary>Tip</summary>
+
+Dat zijn twee keer `oled.text(...)`. Het woord is 8 pixels hoog, dus het getal
+kan op `y=16`.
+
+</details>
+
+<details>
+<summary>Oplossing</summary>
+
+```python
+from leaphymicropython.actuators.oled_screen import OLEDSH1106
+from time import sleep
+
+oled = OLEDSH1106(width=128, height=64, channel=7)
+
+teller = 0
+while True:
+    oled.fill("white")
+    oled.text('Teller', x=0, y=0)
+    oled.text(f'{teller}', x=0, y=16, scale=3)
+    oled.show()
+    teller = teller + 1
+    sleep(1)
+```
+
+Met `scale=3` passen er vijf cijfers op een regel, dus tot 99999.
 
 </details>

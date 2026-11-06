@@ -177,5 +177,18 @@ oled.show()
 ```
 </details>
 
+<details>
+<summary>Hoe maak ik de tekst groter? (scale)</summary>
+
+```python
+oled.fill("white")
+oled.text('Afstand', x=0, y=0)
+oled.text('123', x=0, y=16, scale=3)
+oled.show()
+```
+
+Een letter is 8 × 8 pixels keer `scale`. Met `scale=2` passen er 8 tekens op een regel, met `scale=3` nog 5. `scale` is een heel getal: 1, 2, 3, …
+</details>
+
 
 

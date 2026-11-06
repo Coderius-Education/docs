@@ -92,6 +92,10 @@ Let op de opbouw die je al kent: het scherm-object staat bóven de loop (eenmali
 
 Beweeg de robot boven de lijn. Het scherm toont `Links:` en `Rechts:` en wisselt live mee tussen `white` en `black` — zonder dat je nog naar de Shell hoeft te kijken.
 
+:::tip[Grotere letters]
+Is de tekst te klein om te lezen terwijl de robot rijdt? `text()` heeft ook een `scale`: met `scale=2` is elke letter twee keer zo groot. Er passen dan wel maar 8 tekens op een regel, dus `Links: white` past niet meer. Hoe dat werkt staat bij [grotere tekst](site:robotica/docs/onderdelen/oled-scherm#grotere-tekst).
+:::
+
 ## Opdracht 6.4.a: een teller op het scherm
 
 Nog even los van je robotscript: laat het scherm elke seconde een teller zien die één hoger wordt (0, 1, 2, 3, …).

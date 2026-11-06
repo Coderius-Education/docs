@@ -1,5 +1,5 @@
 {
-  "commit": "b226c3a7c4e22bc089b6b59b493942f0f9ce105b",
+  "commit": "e9c4fe44b987b886855bbc74905fae0e0d95f983",
   "modules": {
     "leaphymicropython.actuators.buzzer": ["set_buzzer"],
     "leaphymicropython.actuators.dcmotor": ["DCMotor", "DCMotors"],
@@ -37,6 +37,318 @@
     ],
     "leaphymicropython.utils.timeschedule": ["sleep_minute"],
     "leaphymicropython.utils.wifi": ["connect"]
+  },
+  "klassen": {
+    "leaphymicropython.actuators.dcmotor.DCMotors": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["dir_pin_motor_a", "dir_pin_motor_b", "pwm_pin_motor_a", "pwm_pin_motor_b"],
+        "steer": ["direction", "speed", "steering_intensity"],
+        "stop": [],
+        "test": []
+      }
+    },
+    "leaphymicropython.actuators.dcmotor.DCMotor": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["direction_pin", "pwm_pin", "freq"],
+        "forward": ["speed"],
+        "backward": ["speed"],
+        "stop": [],
+        "test": [],
+        "validate_speed": ["speed"],
+        "convert_speed_to_duty_u16": ["speed"]
+      }
+    },
+    "leaphymicropython.actuators.oled_screen.OLEDSH1106": {
+      "basis": ["I2CDevice"],
+      "methoden": {
+        "__init__": [
+          "height",
+          "width",
+          "channel",
+          "sda_gpio_pin",
+          "scl_gpio_pin",
+          "bus_id",
+          "freq",
+          "show_warnings"
+        ],
+        "initialize_device": [],
+        "fill": ["color"],
+        "text": ["text", "x", "y", "color", "scale"],
+        "show": []
+      }
+    },
+    "leaphymicropython.actuators.rgbled.RGBLed": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["red_pin", "green_pin", "blue_pin"],
+        "set_pins": ["red_pin", "green_pin", "blue_pin"],
+        "set_color": ["r", "g", "b"],
+        "print_base_colors": []
+      }
+    },
+    "leaphymicropython.actuators.sh1106.SH1106": {
+      "basis": ["FrameBuffer"],
+      "methoden": {
+        "__init__": ["width", "height", "external_vcc", "rotate"],
+        "write_cmd": ["*", "**"],
+        "write_data": ["*", "**"],
+        "init_display": [],
+        "poweroff": [],
+        "poweron": [],
+        "flip": ["flag", "update"],
+        "sleep": ["value"],
+        "contrast": ["contrast"],
+        "invert": ["invert"],
+        "show": ["full_update"],
+        "pixel": ["x", "y", "color"],
+        "text": ["text", "x", "y", "color"],
+        "line": ["x0", "y0", "x1", "y1", "color"],
+        "hline": ["x", "y", "w", "color"],
+        "vline": ["x", "y", "h", "color"],
+        "fill": ["color"],
+        "blit": ["fbuf", "x", "y", "key", "palette"],
+        "scroll": ["x", "y"],
+        "fill_rect": ["x", "y", "w", "h", "color"],
+        "rect": ["x", "y", "w", "h", "color"],
+        "ellipse": ["x", "y", "xr", "yr", "color"],
+        "register_updates": ["y0", "y1"],
+        "reset": ["res"]
+      }
+    },
+    "leaphymicropython.actuators.sh1106.SH1106_I2C": {
+      "basis": ["SH1106"],
+      "methoden": {
+        "__init__": ["width", "height", "i2c", "res", "addr", "rotate", "external_vcc", "delay"],
+        "write_cmd": ["cmd"],
+        "write_data": ["buf"],
+        "reset": ["res"]
+      }
+    },
+    "leaphymicropython.actuators.sh1106.SH1106_SPI": {
+      "basis": ["SH1106"],
+      "methoden": {
+        "__init__": [
+          "width",
+          "height",
+          "spi",
+          "dc",
+          "res",
+          "cs",
+          "rotate",
+          "external_vcc",
+          "delay"
+        ],
+        "write_cmd": ["cmd"],
+        "write_data": ["buf"],
+        "reset": ["res"]
+      }
+    },
+    "leaphymicropython.actuators.ssd1306.SSD1306": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["width", "height", "external_vcc"],
+        "initialize_device": [],
+        "poweroff": [],
+        "contrast": ["contrast"],
+        "invert": ["invert"],
+        "show": [],
+        "fill": ["col"],
+        "pixel": ["x_coor", "y_coor", "col"],
+        "scroll": ["hor_delta", "ver_delta"],
+        "text": ["string", "x_coor", "y_coor", "col"]
+      }
+    },
+    "leaphymicropython.actuators.ssd1306.SSD1306I2C": {
+      "basis": ["SSD1306", "I2CDevice"],
+      "methoden": {
+        "__init__": [
+          "width",
+          "height",
+          "external_vcc",
+          "channel",
+          "sda_gpio_pin",
+          "scl_gpio_pin",
+          "bus_id",
+          "show_warnings"
+        ],
+        "initialize_device": [],
+        "write_cmd": ["cmd"],
+        "write_framebuf": [],
+        "poweron": []
+      }
+    },
+    "leaphymicropython.actuators.ssd1306.SSD1306SPI": {
+      "basis": ["SSD1306"],
+      "methoden": {
+        "__init__": ["width", "height", "spi", "dc", "res", "cs", "external_vcc"],
+        "write_cmd": ["cmd"],
+        "write_framebuf": [],
+        "poweron": []
+      }
+    },
+    "leaphymicropython.sensors.adps9960.Adps9960": {
+      "basis": ["I2CDevice"],
+      "methoden": {
+        "__init__": [
+          "gesture_sensitivity",
+          "channel",
+          "sda_gpio_pin",
+          "scl_gpio_pin",
+          "bus_id",
+          "freq",
+          "show_warnings"
+        ],
+        "begin": [],
+        "color_available": [],
+        "read_color": [],
+        "gesture_available": ["gesture_threshold"],
+        "read_gesture": []
+      }
+    },
+    "leaphymicropython.sensors.barometer.BarometricPressure": {
+      "basis": ["I2CDevice"],
+      "methoden": {
+        "__init__": ["channel", "sda_gpio_pin", "scl_gpio_pin", "bus_id", "freq", "show_warnings"],
+        "initialize_device": [],
+        "get_temperature": [],
+        "get_pressure": []
+      }
+    },
+    "leaphymicropython.sensors.bmp280.BMP280": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["i2c_bus", "addr", "use_case"],
+        "reset": [],
+        "load_test_calibration": [],
+        "load_test_data": [],
+        "print_calibration": [],
+        "temperature": [],
+        "pressure": [],
+        "standby": ["v"],
+        "iir": ["v"],
+        "temp_os": ["v"],
+        "press_os": ["v"],
+        "power_mode": ["v"],
+        "is_measuring": [],
+        "is_updating": [],
+        "chip_id": [],
+        "in_normal_mode": [],
+        "force_measure": [],
+        "normal_measure": [],
+        "sleep": [],
+        "use_case": ["uc"],
+        "oversample": ["oss"]
+      }
+    },
+    "leaphymicropython.sensors.compass.QMC5883L": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["i2c", "address"],
+        "oversample": ["value"],
+        "field_range": ["value"],
+        "output_data_rate": ["value"],
+        "mode_control": ["value"],
+        "magnetic": []
+      }
+    },
+    "leaphymicropython.sensors.dht22.DHT22": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["pin"],
+        "read_temperature": [],
+        "read_humidity": []
+      }
+    },
+    "leaphymicropython.sensors.linesensor.AnalogIR": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["pin_name", "above_black"],
+        "get_analog_value": [],
+        "black_or_white": []
+      }
+    },
+    "leaphymicropython.sensors.tof.TimeOfFlight": {
+      "basis": ["I2CDevice"],
+      "methoden": {
+        "__init__": [
+          "channel",
+          "sda_gpio_pin",
+          "scl_gpio_pin",
+          "bus_id",
+          "freq",
+          "show_warnings",
+          "timing_budget_us",
+          "debug"
+        ],
+        "last_status": [],
+        "on_i2c_error": ["ex"],
+        "initialize_device": [],
+        "get_distance": [],
+        "deinit": []
+      }
+    },
+    "leaphymicropython.sensors.vl53l0x.VL53L0XTimeoutError": {
+      "basis": ["OSError"],
+      "methoden": {
+        "__init__": ["message"]
+      }
+    },
+    "leaphymicropython.sensors.vl53l0x.VL53L0X": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["i2c", "address", "debug", "timing_budget_us"],
+        "ping": [],
+        "init": ["power2v8"],
+        "start": ["period"],
+        "stop": [],
+        "read": [],
+        "decode_vcsel_period": ["reg_val"],
+        "get_sequence_step_enables": [],
+        "get_vcsel_pulse_period": ["period_type"],
+        "get_sequence_step_timeouts": [],
+        "timeout_mclks_to_microseconds": ["timeout_period_mclks", "vcsel_period_pclks"],
+        "timeout_microseconds_to_mclks": ["timeout_period_us", "vcsel_period_pclks"],
+        "calc_macro_period": ["vcsel_period_pclks"],
+        "decode_timeout": ["reg_val"],
+        "encode_timeout": ["timeout_mclks"],
+        "set_measurement_timing_budget": ["budget_us"]
+      }
+    },
+    "leaphymicropython.utils.ble_uart.BLEUart": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["name"],
+        "on_receive": ["callback"],
+        "is_connected": [],
+        "send": ["data"]
+      }
+    },
+    "leaphymicropython.utils.i2c_helper.I2CDevice": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["channel", "sda_gpio_pin", "scl_gpio_pin", "bus_id", "freq", "show_warnings"],
+        "initialize_i2c": [],
+        "initialize_device": [],
+        "on_i2c_error": ["ex"],
+        "find_device": ["show_warnings"],
+        "is_mux_used": [],
+        "select_channel": []
+      }
+    },
+    "leaphymicropython.utils.i2c_helper.CBits": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["num_bits", "register_address", "start_bit", "register_width", "lsb_first"]
+      }
+    },
+    "leaphymicropython.utils.i2c_helper.RegisterStruct": {
+      "basis": [],
+      "methoden": {
+        "__init__": ["register_address", "form"]
+      }
+    }
   },
   "pinnen": {
     "TX": "GPIO0",

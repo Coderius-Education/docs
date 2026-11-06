@@ -18,6 +18,67 @@ import api from './leaphy-api.json';
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
 const modules = api.modules as Record<string, string[]>;
 const pinnen = api.pinnen as Record<string, string>;
+type Klasse = { basis: string[]; methoden: Record<string, string[]> };
+const klassen = new Map(
+  Object.entries(api.klassen as Record<string, Klasse>).map(([pad, k]) => [
+    pad.split('.').at(-1) as string,
+    k,
+  ]),
+);
+
+/**
+ * De parameters van een methode, ook als hij van een basisklasse komt.
+ * `null` als een basisklasse niet uit de bibliotheek komt (dan weten we het
+ * niet), `undefined` als de methode niet bestaat.
+ */
+function parametersVan(klasse: string, methode: string): string[] | null | undefined {
+  const k = klassen.get(klasse);
+  if (!k) return null;
+  if (k.methoden[methode]) return k.methoden[methode];
+  for (const basis of k.basis) {
+    const p = parametersVan(basis, methode);
+    if (p !== undefined) return p;
+  }
+  return undefined;
+}
+
+/** Code zonder de inhoud van strings, zodat een komma of = in een tekst niet telt. */
+const zonderStrings = (code: string) =>
+  code.replace(/[fFrRbB]?(['"])(?:\\.|(?!\1)[^\\\n])*\1/g, '""');
+
+/**
+ * De argumenten van elke aanroep `voor(...)`, op het hoogste niveau gesplitst;
+ * een komma in een string telt niet.
+ */
+function aanroepen(code: string, voor: RegExp): { naam: string; args: string[] }[] {
+  const uit: { naam: string; args: string[] }[] = [];
+  for (const m of code.matchAll(voor)) {
+    let diepte = 0;
+    let huidig = '';
+    let quote = '';
+    const args: string[] = [];
+    for (const teken of code.slice((m.index ?? 0) + m[0].length)) {
+      if (quote) {
+        huidig += teken;
+        if (teken === quote) quote = '';
+        continue;
+      }
+      if (teken === "'" || teken === '"') quote = teken;
+      if (teken === '(' || teken === '[' || teken === '{') diepte++;
+      if (teken === ')' || teken === ']' || teken === '}') {
+        if (diepte === 0) break;
+        diepte--;
+      }
+      if (teken === ',' && diepte === 0) {
+        args.push(huidig.trim());
+        huidig = '';
+      } else huidig += teken;
+    }
+    if (huidig.trim()) args.push(huidig.trim());
+    uit.push({ naam: m[1], args });
+  }
+  return uit;
+}
 
 type Blok = { waar: string; code: string };
 const blokken: Blok[] = [];
@@ -106,6 +167,81 @@ describe('de codeblokken passen bij leaphymicropython', () => {
     for (const { waar, code } of blokken)
       for (const args of argumenten(code, 'set_buzzer'))
         if (Number(args[2]) > 255) fout.push(`${waar}: set_buzzer met ${args[2]} Hz`);
+    expect(fout).toEqual([]);
+  });
+
+  it('elke methode bestaat, met de keyword-argumenten die hij kent', () => {
+    // De bibliotheek verandert onder de lessen door; een argument dat hij niet
+    // meer kent, geeft op het bord een TypeError, en CI compileert alleen.
+    const fout: string[] = [];
+    let getoetst = 0;
+    for (const { waar, code: bron } of blokken) {
+      const code = zonderStrings(bron);
+      const soort = new Map<string, string>();
+      for (const [, naam, klasse] of code.matchAll(/^\s*(\w+)\s*=\s*(\w+)\(/gm))
+        if (klassen.has(klasse)) soort.set(naam, klasse);
+      const toets = (klasse: string, methode: string, args: string[], wat: string) => {
+        const kent = parametersVan(klasse, methode);
+        if (kent === null) return;
+        if (kent === undefined) {
+          fout.push(`${waar}: ${klasse} heeft geen ${methode}()`);
+          return;
+        }
+        getoetst++;
+        if (kent.includes('**')) return;
+        for (const arg of args) {
+          const sleutel = arg.match(/^(\w+)\s*=(?!=)/)?.[1];
+          if (sleutel && !kent.includes(sleutel))
+            fout.push(`${waar}: ${wat}(${sleutel}=…) kent ${klasse} niet`);
+        }
+      };
+      for (const { naam, args } of aanroepen(code, /\b([A-Z]\w*)\(/g))
+        if (klassen.has(naam)) toets(naam, '__init__', args, naam);
+      for (const [variabele, klasse] of soort)
+        for (const { naam, args } of aanroepen(
+          code,
+          new RegExp(`\\b${variabele}\\.(\\w+)\\(`, 'g'),
+        ))
+          toets(klasse, naam, args, `${variabele}.${naam}`);
+    }
+    expect(fout).toEqual([]);
+    expect(getoetst).toBeGreaterThan(50);
+  });
+
+  it('de tekst op het OLED-scherm krijgt een scale van een heel getal, 1 of hoger', () => {
+    // text() geeft anders een ValueError: "Use a whole number of 1 or higher".
+    const fout: string[] = [];
+    for (const { waar, code } of blokken)
+      for (const { args } of aanroepen(zonderStrings(code), /\b\w+\.(text)\(/g)) {
+        const scale =
+          args.find((a) => /^scale\s*=/.test(a))?.replace(/^scale\s*=\s*/, '') ?? args[4];
+        if (scale !== undefined && /^[\d.]+$/.test(scale) && !/^[1-9]\d*$/.test(scale))
+          fout.push(`${waar}: text(…, scale=${scale})`);
+      }
+    expect(fout).toEqual([]);
+  });
+
+  it('vaste tekst op het OLED-scherm past op een regel', () => {
+    // Een letter is 8 × scale pixels breed, het scherm 128, en text() gaat
+    // niet verder op een nieuwe regel: wat niet past, valt weg.
+    const fout: string[] = [];
+    for (const { waar, code } of blokken)
+      for (const { args } of aanroepen(code, /\b\w+\.(text)\(/g)) {
+        const tekst = args[0]?.match(/^(['"])(.*)\1$/)?.[2];
+        const getal = (sleutel: string, plek: number, standaard: number) => {
+          const w =
+            args.find((a) => new RegExp(`^${sleutel}\\s*=`).test(a))?.split('=')[1] ?? args[plek];
+          return w !== undefined && /^\d+$/.test(w.trim())
+            ? Number(w)
+            : w === undefined
+              ? standaard
+              : Number.NaN;
+        };
+        const x = getal('x', 1, 0);
+        const scale = getal('scale', 4, 1);
+        if (tekst !== undefined && x + 8 * scale * tekst.length > 128)
+          fout.push(`${waar}: '${tekst}' is ${x + 8 * scale * tekst.length} pixels breed`);
+      }
     expect(fout).toEqual([]);
   });
 

@@ -248,13 +248,41 @@ oled.show()
 <summary>Tekst valt buiten het scherm</summary>
 
 - Het scherm is **128** pixels breed en **64** pixels hoog.
-- Een tekstregel is ongeveer **10** pixels hoog. Gebruik `y=0`, `y=10`, `y=20`, ...:
+- Een letter is 8 × 8 pixels, dus er passen 16 tekens op een regel. Wat niet past, valt weg: de tekst gaat niet verder op een nieuwe regel.
+- Zet elke regel 10 pixels lager. Gebruik `y=0`, `y=10`, `y=20`, ...:
 
 ```python
 oled.text('Regel 1', x=0, y=0)
 oled.text('Regel 2', x=0, y=10)
 oled.text('Regel 3', x=0, y=20)
 oled.show()
+```
+
+- Gebruik je `scale`, dan is een letter 8 × `scale` pixels. `oled.text(f'Afstand: {afstand}', x=0, y=0, scale=2)` is twaalf tekens van 16 pixels, dus 192 pixels breed, en het getal valt van het scherm. Zet het woord klein en alleen het getal groot:
+
+```python
+afstand = 123
+oled.fill("white")
+oled.text('Afstand', x=0, y=0)
+oled.text(f'{afstand}', x=0, y=16, scale=3)
+oled.show()
+```
+
+</details>
+
+<details>
+<summary>Foutmelding over de scale</summary>
+
+```
+ValueError: you gave the scale 1.5. Use a whole number of 1 or higher
+```
+
+**Oorzaak:** `scale` moet een heel getal zijn van 1 of hoger. Bij `1.5`, `0` of `-1` weigert `text()`.
+
+**Oplossing:** gebruik 1, 2, 3 of hoger. Rekent je programma de grootte uit, maak er dan een heel getal van met `int()`:
+
+```python
+oled.text('Groot', x=0, y=0, scale=2)
 ```
 
 </details>
