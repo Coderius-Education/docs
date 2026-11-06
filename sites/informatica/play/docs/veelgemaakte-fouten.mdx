@@ -383,3 +383,33 @@ def spatie():
 **Oplossing:** registreer toetsen en muis één keer, buiten de functie die je herhaalt. Gebeurtenissen op een vorm (`@bal.when_clicked`, `@bal.when_touching(...)`) mogen er wél in: die verdwijnen samen met hun vorm.
 
 Meer uitleg: [9.2 Levels met andere vormen](site:play/docs/levels/andere-vormen)
+
+---
+
+## De bal gaat niet door een tekst heen
+
+Je bal stuitert terug tegen een tekst, een scorebord of een vorm die je onzichtbaar hebt gemaakt.
+
+**Oorzaak:** in `coderius-play` is elke vorm massief, ook een tekst en ook zonder `start_physics()`. Een tekst is voor de bal net zo goed een muur als een vierkant, en `transparency=0` verandert daar niets aan.
+
+**Oplossing:** maak de tekst een sensor. Dan gaat de bal erdoorheen, en `when_touching` werkt nog steeds. Geef ook `can_move=False` mee, anders valt de tekst van het scherm.
+
+```python
+import play
+
+bal = play.new_circle(x=-300, radius=20)
+bal.start_physics(obeys_gravity=False, x_speed=60)
+
+tekst = play.new_text("Hallo", font_size=60)
+tekst.start_physics(can_move=False, sensor=True)
+```
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(x=-300, radius=20)
+bal.start_physics(obeys_gravity=False, x_speed=60)
+
+tekst = play.new_text("Hallo", font_size=60)
+tekst.start_physics(can_move=False, sensor=True)`} height={250} />
+
+Meer uitleg: [2.3 Fysica-eigenschappen](site:play/docs/fysica/eigenschappen#sensor)

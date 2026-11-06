@@ -467,6 +467,21 @@ cirkel.physics.obeys_gravity = False
 
 
 <details>
+  <summary>Hoe laat ik een bal door een tekst of vorm heen gaan? (sensor)</summary>
+
+Elke vorm en elke tekst houdt een bal tegen, ook zonder `start_physics()`. Een sensor merkt de bal wel (`when_touching`), maar laat hem door. Met `can_move=False` blijft hij staan.
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(x=-300, radius=20)
+bal.start_physics(obeys_gravity=False, x_speed=60)
+
+tekst = play.new_text("Hallo", font_size=60)
+tekst.start_physics(can_move=False, sensor=True)
+`} height={350} />
+</details>
+
+<details>
   <summary>Wat kan ik allemaal aanpassen aan de fysica? (start_physics)</summary>
 
 | Attribuut | Uitleg | 
