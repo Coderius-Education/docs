@@ -1,0 +1,167 @@
+---
+sidebar_position: 3
+sidebar_label: "3. De weg terug"
+---
+
+# De weg terug
+
+Je weet nu hoe ver E is, maar niet langs welke vakjes. Daarvoor onthoud je bij
+elk nieuw vakje via welk vakje je er kwam. Vanaf E loop je daarna terug naar
+de start, één vakje per keer.
+
+## Voorspel
+
+```python
+vorige = {"C": "B", "B": "A"}
+vakje = "C"
+weg = [vakje]
+while vakje != "A":
+    vakje = vorige[vakje]
+    weg.insert(0, vakje)
+print(weg)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+['A', 'B', 'C']
+```
+
+Vanaf C zoek je op waar je vandaan kwam: B, en daarvoor A. Elk vakje komt
+vooraan in `weg`, dus de weg staat aan het eind van voor naar achter.
+
+</details>
+
+## Zo werkt het
+
+De dictionary `vorige` zegt bij elk vakje via welk vakje je er kwam. Je vult
+hem op dezelfde plek als `afstand`: als je een nieuwe buur vindt, kwam je er
+via `vakje`.
+
+Terugvinden doe je met een tweede while-loop. Begin bij het eind, en ga steeds
+één vakje terug met `vakje = vorige[vakje]`, tot je bij de start bent. Omdat
+je achterstevoren loopt, zet je elk vakje met `weg.insert(0, vakje)` vooraan
+in de lijst. `insert(0, …)` staat in de tabel van
+[Lijst-methoden](site:python/docs/data/10b-lijst-methoden).
+
+:::caution
+De tweede loop stopt pas bij de start. Kom je daar nooit, bijvoorbeeld omdat je
+`vakje = vorige[vakje]` vergeet, dan stopt hij nooit. De speeltuin heeft geen
+stopknop, dus het tabblad loopt vast: herlaad de pagina, en je code is weg.
+Kopieer je code daarom eerst naar een kladblok voordat je een nieuwe
+while-loop draait.
+:::
+
+## Onderzoek
+
+1. Draai de code. Welke weg vindt hij van A naar E?
+2. Zet `eind = "C"`. Welke weg krijg je nu?
+3. Verander `weg.insert(0, vakje)` in `weg.append(vakje)`. Wat gaat er mis?
+
+<PyRunner initialCode={`vorige = {"B": "A", "C": "A", "D": "B", "E": "D"}
+start = "A"
+eind = "E"
+
+vakje = eind
+weg = [vakje]
+while vakje != start:
+    vakje = vorige[vakje]
+    weg.insert(0, vakje)
+print(weg)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. `['A', 'B', 'D', 'E']`. E kwam via D, D via B en B via A.
+2. `['A', 'C']`: C kwam meteen via A.
+3. De weg staat achterstevoren: `['E', 'D', 'B', 'A']`. `append` zet elk vakje
+   achteraan, en je loopt van het eind naar de start.
+
+</details>
+
+## Opdracht: de weg terugvinden
+
+Onthoud bij elk nieuw vakje via welk vakje je er kwam, in een dictionary
+`vorige`. Loop daarna vanaf E terug naar de start, en print de weg van S naar
+E:
+
+```
+[(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5)]
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de afstand van E.
+2. Zet `vorige = {}` boven de loop, en vul hem waar je ook de afstand van een buur invult. Print `vorige` om te zien wat erin staat.
+3. Begin met `weg = [eind]` en `vakje = eind`. Ga in een tweede while-loop steeds één vakje terug met `vakje = vorige[vakje]`, en zet dat vakje vooraan in `weg`. Stop als je bij de start bent, en print `weg`.
+
+In de editor staat het zoeken uit de vorige stap.
+
+<PyRunner verborgen="doolhof-buren" initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+start = (0, 0)
+eind = (4, 5)
+
+afstand = {start: 0}
+wachtrij = [start]
+while len(wachtrij) > 0:
+    vakje = wachtrij.pop(0)
+    for buur in buren(vakje):
+        if buur not in afstand:
+            afstand[buur] = afstand[vakje] + 1
+            wachtrij.append(buur)
+
+print(afstand[eind])`} />
+
+<details>
+<summary>Tip</summary>
+
+Op welke plek in de loop weet je via welk vakje je bij `buur` kwam? Mist de
+start in je weg, kijk dan in welke volgorde je teruggaat en vooraan zet.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder `eind = (4, 5)` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+afstand = {start: 0}
+vorige = {}
+wachtrij = [start]
+while len(wachtrij) > 0:
+    vakje = wachtrij.pop(0)
+    for buur in buren(vakje):
+        if buur not in afstand:
+            afstand[buur] = afstand[vakje] + 1
+            vorige[buur] = vakje
+            wachtrij.append(buur)
+
+weg = [eind]
+vakje = eind
+while vakje != start:
+    vakje = vorige[vakje]
+    weg.insert(0, vakje)
+print(weg)
+```
+
+```
+[(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5)]
+```
+
+De weg heeft 10 vakjes en dus 9 stappen, net als de afstand zei. Elk vakje
+weet alleen waar het vandaan kwam, en toch vind je zo de hele weg terug.
+
+</details>
+
+Door naar [de weg tekenen](site:algorithms/docs/ml-zoeken/02-kortste-weg/04-de-weg-tekenen).

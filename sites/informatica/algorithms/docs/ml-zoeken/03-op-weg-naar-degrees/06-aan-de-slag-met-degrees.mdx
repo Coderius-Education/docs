@@ -1,0 +1,83 @@
+---
+sidebar_position: 6
+sidebar_label: "6. Aan de slag met Degrees"
+---
+
+# Aan de slag met Degrees
+
+Je zocht de kortste reis door een metronetwerk, met knopen in een wachtrij,
+en gaf de weg terug als paren `(lijn, station)`. Degrees van CS50 AI vraagt
+hetzelfde, maar dan met acteurs en films: via welke films zijn twee acteurs
+met elkaar verbonden?
+
+## Voorspel
+
+```python
+van = "Zuid"
+weg = [("blauw", "Markt"), ("rood", "Haven"), ("rood", "Strand")]
+print(len(weg), "haltes")
+vorige = van
+for lijn, station in weg:
+    print(vorige, "naar", station, "met", lijn)
+    vorige = station
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+3 haltes
+Zuid naar Markt met blauw
+Markt naar Haven met rood
+Haven naar Strand met rood
+```
+
+Uit de start en de lijst paren haal je de hele reis terug. Zo print Degrees
+ook de weg die jouw functie teruggeeft: "3 degrees of separation", en daarna
+per stap wie met wie in welke film speelde. Dat stuk krijg je erbij.
+
+</details>
+
+## Zo werkt het
+
+Wat je in de metro bouwde, heeft in Degrees een andere naam:
+
+| In de metro | In Degrees |
+|---|---|
+| een station | een acteur (een `person_id`) |
+| een lijn | een film (een `movie_id`) |
+| `buren(station)` geeft paren `(lijn, station)` | `neighbors_for_person(person_id)` geeft paren `(movie_id, person_id)` |
+| `Knoop` met `toestand`, `ouder` en `actie` | `Node` in `util.py`, met `state`, `parent` en `action` |
+| `Wachtrij` met `voeg_toe`, `haal_eruit`, `is_leeg` en `bevat` | `QueueFrontier` in `util.py`, met `add`, `remove`, `empty` en `contains_state` |
+| `reis(van, naar)` | de functie die jij schrijft: hij geeft de weg als lijst paren, of `None` als er geen weg is |
+
+Eén ding is anders dan in de metro. Een buur van een acteur is iedereen die met
+hem in een film speelde, niet alleen de volgende halte. Eén film is dus één
+stap, hoeveel acteurs er ook in spelen.
+
+## Aan de slag met Degrees
+
+Nu ben je klaar voor
+[Degrees](https://cs50.harvard.edu/ai/projects/0/degrees/) van CS50 AI. Je
+krijgt een lijst acteurs en films, en zoekt de kortste verbinding tussen twee
+acteurs: speelden ze samen in een film, of samen met iemand anders?
+
+- De functie voor de buren krijg je bij het project. Je schrijft alleen de
+  functie die de kortste weg zoekt.
+- `Node` en `QueueFrontier` staan klaar in `util.py`. Lees dat bestand eerst:
+  je herkent je eigen `Knoop` en `Wachtrij`.
+- Acteurs en films hebben een nummer als id, geen naam. De code van het project
+  zoekt het nummer bij een naam voor je op.
+- De opdracht geeft een tip om sneller klaar te zijn: kijk al bij het
+  toevoegen van een knoop of hij het doel is, en niet pas als hij uit de
+  wachtrij komt.
+
+Lees de opdracht helemaal door voordat je begint. Test eerst met de kleine
+dataset, en pas daarna met de grote.
+
+Wil je zoeken als de stappen niet even lang zijn, zoals wegen tussen steden?
+Dat doet [Dijkstra](site:algorithms/docs/dijkstra/01-concept).
+
+Door naar [één neuron met gewichten](site:algorithms/docs/ml-neuronen/01-neuron/01-gewichten).

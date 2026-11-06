@@ -1,0 +1,164 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Een wachtrij"
+---
+
+# Een wachtrij
+
+Je weet nu bij elk vakje waar de robot heen kan. In dit project zoek je de
+kortste weg van S naar E. Daarvoor heb je eerst een wachtrij nodig: een lijst
+van dingen die nog aan de beurt moeten komen, waarbij wie het eerst kwam het
+eerst aan de beurt is. Net als bij de kassa.
+
+:::info
+Je gebruikt hier `buren` uit
+[de buren van een vakje](site:algorithms/docs/ml-zoeken/01-buren/03-muren), de while-loop
+uit [De while-loop](site:python/docs/herhalen/while-loop), `append` en `pop`
+uit [Lijst-methoden](site:python/docs/data/10b-lijst-methoden), `in` op een
+dictionary uit
+[Door een dictionary lopen](site:python/docs/data/11b-itereren-dictionaries),
+en een tuple als sleutel uit
+[Nim die van zichzelf leert](site:algorithms/docs/ml-spellen/02-nim-leert/01-een-score-per-zet).
+:::
+
+## Voorspel
+
+```python
+wachtrij = ["Anna", "Bob"]
+wachtrij.append("Cem")
+eerste = wachtrij.pop(0)
+
+print(eerste)
+print(wachtrij)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+Anna
+['Bob', 'Cem']
+```
+
+`append` zet Cem achteraan, en `pop(0)` haalt de voorste eraf: Anna. Net als
+bij de kassa: wie het eerst kwam, is het eerst aan de beurt.
+
+</details>
+
+## Zo werkt het
+
+Een gewone lijst is een wachtrij als je er op twee manieren mee werkt:
+achteraan erbij met `append`, en vooraan eraf met `pop(0)`. `pop(0)` haalt het
+voorste element uit de lijst en geeft het terug, zodat je het in een variabele
+kunt zetten.
+
+Met `while len(wachtrij) > 0:` ga je door zolang er nog iemand in de rij
+staat. Komt er onderweg iemand bij, dan komt die ook nog aan de beurt.
+
+:::caution
+De loop stopt pas als de wachtrij leeg is. Komt er steeds iemand bij, dan
+stopt hij nooit. De speeltuin heeft geen stopknop, dus het tabblad loopt vast:
+herlaad de pagina, en je code is weg. Kopieer je code daarom eerst naar een
+kladblok voordat je een nieuwe while-loop draait.
+:::
+
+## Onderzoek
+
+1. Draai de code. In welke volgorde zijn de klanten aan de beurt?
+2. Zet in de loop, onder de print, `if klant == "Bob":` met daaronder
+   `wachtrij.append("Dirk")`. Wanneer is Dirk aan de beurt?
+3. Haal die twee regels weg, en verander `pop(0)` in `pop()`. Wat verandert er?
+
+<PyRunner initialCode={`wachtrij = ["Anna", "Bob", "Cem"]
+while len(wachtrij) > 0:
+    klant = wachtrij.pop(0)
+    print(klant, "is aan de beurt")
+print("De wachtrij is leeg")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Anna, Bob, Cem: in de volgorde waarin ze in de lijst staan.
+2. Na Cem. Dirk komt achteraan, dus hij wacht op iedereen die er al stond.
+3. Nu is Cem eerst, dan Bob, dan Anna. `pop()` pakt het laatste element. Zo'n
+   lijst, waar je achteraan pakt wat je het laatst erbij zette, heet een
+   stapel.
+
+</details>
+
+## Opdracht: een kettingbericht
+
+Anna stuurt een bericht naar haar vrienden, en elke vriend stuurt het door
+naar zijn eigen vrienden. In welke volgorde lezen ze het, als iedereen in een
+wachtrij op zijn beurt wacht?
+
+```
+Anna leest het bericht
+Bob leest het bericht
+Cem leest het bericht
+Dirk leest het bericht
+Eva leest het bericht
+Fen leest het bericht
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: Anna leest het bericht.
+2. Zet de vrienden van `persoon` achteraan in de wachtrij, met een for-loop over `vrienden[persoon]`. Zet onderaan `print(wachtrij)`: daar staan nu Bob en Cem.
+3. Zet alles vanaf `persoon = wachtrij.pop(0)` in een loop `while len(wachtrij) > 0:`. Nu leest iedereen het bericht. Haal daarna de `print(wachtrij)` weg.
+4. Verander `pop(0)` in `pop()`. In welke volgorde lezen ze het nu?
+
+<PyRunner initialCode={`vrienden = {
+    "Anna": ["Bob", "Cem"],
+    "Bob": ["Dirk", "Eva"],
+    "Cem": ["Fen"],
+    "Dirk": [],
+    "Eva": [],
+    "Fen": [],
+}
+
+wachtrij = ["Anna"]
+persoon = wachtrij.pop(0)
+print(persoon, "leest het bericht")`} />
+
+<details>
+<summary>Tip</summary>
+
+Leest iedereen het bericht, maar wil de loop niet stoppen? Kijk of je de
+vrienden aan `wachtrij` toevoegt, en niet aan `vrienden`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder `vrienden` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+wachtrij = ["Anna"]
+while len(wachtrij) > 0:
+    persoon = wachtrij.pop(0)
+    print(persoon, "leest het bericht")
+    for vriend in vrienden[persoon]:
+        wachtrij.append(vriend)
+```
+
+```
+Anna leest het bericht
+Bob leest het bericht
+Cem leest het bericht
+Dirk leest het bericht
+Eva leest het bericht
+Fen leest het bericht
+```
+
+Eerst Anna, dan haar twee vrienden, en pas daarna de vrienden van die
+vrienden. Met `pop()` wordt het Anna, Cem, Fen, Bob, Eva en Dirk: de stapel
+gaat eerst bij Cem zo diep mogelijk door, en komt dan pas bij Bob terug.
+
+</details>
+
+Door naar [breedte-eerst](site:algorithms/docs/ml-zoeken/02-kortste-weg/02-breedte-eerst).

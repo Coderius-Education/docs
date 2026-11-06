@@ -1,0 +1,156 @@
+---
+sidebar_position: 5
+sidebar_label: "5. Overstappen"
+---
+
+# Overstappen
+
+`reis` geeft nu de weg als lijst paren. Omdat bij elke halte de lijn staat,
+kun je meer zeggen dan alleen hoeveel haltes het is. Zo kun je tellen hoe vaak
+je moet overstappen: elke keer dat de lijn verandert.
+
+## Voorspel
+
+```python
+weg = [("blauw", "Markt"), ("rood", "Haven"), ("rood", "Strand")]
+vorige_lijn = None
+for lijn, station in weg:
+    if lijn != vorige_lijn:
+        print("Neem", lijn)
+    vorige_lijn = lijn
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+Neem blauw
+Neem rood
+```
+
+Bij Haven verandert de lijn, bij Strand niet. De eerste keer is `vorige_lijn`
+nog `None`, en dat is nooit gelijk aan een lijn.
+
+</details>
+
+## Zo werkt het
+
+Om te zien of de lijn verandert, onthoud je de lijn van de vorige halte in
+`vorige_lijn`. Is de lijn anders, dan stap je over. Alleen bij de eerste halte
+niet: daar stap je in. Daarom begint `vorige_lijn` met `None`, en tel je een
+overstap alleen als `vorige_lijn is not None`.
+
+## Bouw zelf: hoe vaak overstappen?
+
+Schrijf een functie `overstappen(weg)` die telt hoe vaak je op een weg moet
+overstappen. Van Zuid naar Museum zijn het er 2, naar Strand 1 en naar Markt 0.
+
+```
+2
+1
+0
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. In de editor staat `reis` uit de vorige stap; hij print de weg van Zuid naar Museum.
+2. Loop met `for lijn, station in weg:` langs de weg, en print bij elke halte `lijn`. Je ziet blauw, rood en geel.
+3. Tel de overstappen, met `vorige_lijn` uit het voorspel, en print het aantal. Voor Museum is het 2.
+4. Maak er een functie `overstappen(weg)` van die het aantal teruggeeft, en test hem ook met `reis("Zuid", "Strand")` en `reis("Zuid", "Markt")`.
+
+Het netwerk staat in de verborgen code. Wil je je eigen netwerk proberen, zet
+dan een eigen lijst `verbindingen` boven `reis`: die vervangt de lijst uit de
+verborgen code.
+
+<PyRunner verborgen="metro-zoeken" initialCode={`def reis(van, naar):
+    wachtrij = Wachtrij()
+    wachtrij.voeg_toe(Knoop(van, None, None))
+    gezien = [van]
+    while not wachtrij.is_leeg():
+        knoop = wachtrij.haal_eruit()
+        if knoop.toestand == naar:
+            weg = []
+            while knoop.ouder is not None:
+                weg.insert(0, (knoop.actie, knoop.toestand))
+                knoop = knoop.ouder
+            return weg
+        for lijn, buur in buren(knoop.toestand):
+            if buur not in gezien:
+                gezien.append(buur)
+                wachtrij.voeg_toe(Knoop(buur, knoop, lijn))
+    return None
+
+weg = reis("Zuid", "Museum")
+print(weg)`} />
+
+<details>
+<summary>Tip</summary>
+
+Telt hij er één te veel? Dan telt hij ook het instappen bij de eerste halte.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit komt onder `reis` in de editor, in plaats van de twee regels met `weg`:
+
+{/* draaien-met: blok-erboven */}
+```python
+def overstappen(weg):
+    aantal = 0
+    vorige_lijn = None
+    for lijn, station in weg:
+        if vorige_lijn is not None and lijn != vorige_lijn:
+            aantal = aantal + 1
+        vorige_lijn = lijn
+    return aantal
+
+print(overstappen(reis("Zuid", "Museum")))
+print(overstappen(reis("Zuid", "Strand")))
+print(overstappen(reis("Zuid", "Markt")))
+```
+
+```
+2
+1
+0
+```
+
+`reis` zoekt de weg met de minste haltes, niet die met de minste
+overstappen. Wil je zo min mogelijk overstappen, dan moet je zoeken op een
+ander netwerk: een waarin elke lijn één stap is.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+TypeError: 'NoneType' object is not iterable
+```
+
+**Oorzaak:** er is geen weg, dus `reis` gaf `None`. Een loop over `None` kan
+niet: er zit niets in om langs te lopen. Dat gebeurt bij
+`overstappen(reis("Zuid", "Eiland"))`.
+
+**Oplossing:** kijk eerst of er een weg is.
+
+```python
+# FOUT
+weg = None
+for lijn, station in weg:
+    print(lijn)
+
+# GOED
+weg = None
+if weg is None:
+    print("Er is geen verbinding")
+else:
+    for lijn, station in weg:
+        print(lijn)
+```
+
+Door naar [aan de slag met Degrees](site:algorithms/docs/ml-zoeken/03-op-weg-naar-degrees/06-aan-de-slag-met-degrees).

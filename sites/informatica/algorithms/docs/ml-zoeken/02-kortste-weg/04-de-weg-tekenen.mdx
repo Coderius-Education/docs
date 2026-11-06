@@ -1,0 +1,118 @@
+---
+sidebar_position: 4
+sidebar_label: "4. De weg tekenen"
+---
+
+# De weg tekenen
+
+De weg is nu een lijst vakjes. Die lees je niet in één oogopslag. Daarom
+teken je hem in het doolhof: een `*` op elk vrij vakje van de weg. Daarvoor
+bouw je elke rij opnieuw op, teken voor teken.
+
+## Voorspel
+
+```python
+regel = ""
+for teken in "S..#":
+    if teken == ".":
+        regel = regel + "*"
+    else:
+        regel = regel + teken
+print(regel)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+S**#
+```
+
+`regel` begint leeg, en bij elk teken komt er iets achteraan: een `*` in
+plaats van een punt, en anders het teken zelf.
+
+</details>
+
+## Zo werkt het
+
+Een tekst kun je niet veranderen, maar je kunt wel een nieuwe opbouwen. Met
+`regel = regel + "*"` plak je een teken achter wat er al stond. Per rij begin
+je met een lege `regel`, en loop je langs de kolommen.
+
+Of een vakje op de weg ligt, vraag je met `(rij, kolom) in weg`: `in` werkt op
+een lijst van tuples net als op een lijst van woorden. De `S` en de `E` laat
+je staan, dus een `*` komt alleen op een vakje met een punt.
+
+## Opdracht: teken de weg
+
+Print het doolhof opnieuw, met een `*` op elk vrij vakje van de weg:
+
+```
+S*....
+#*##..
+#*...#
+.*###.
+#****E
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print het doolhof, nog zonder weg.
+2. Bouw elke rij zelf op: zet in de loop `regel = ""`, loop met `for kolom in range(len(doolhof[0])):` langs de kolommen, plak elk teken `doolhof[rij][kolom]` achter `regel`, en print `regel` in plaats van `doolhof[rij]`. Je ziet hetzelfde doolhof.
+3. Plak een `*` in plaats van het teken als `(rij, kolom)` in `weg` staat en er een punt op dat vakje staat. Nu zie je de weg.
+
+In de editor staat de weg uit de vorige stap.
+
+<PyRunner initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+weg = [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5)]
+
+for rij in range(len(doolhof)):
+    print(doolhof[rij])`} />
+
+<details>
+<summary>Tip</summary>
+
+Staat er in stap 2 elk teken op een eigen regel? Dan staat de `print` in de
+binnenste loop. Hij hoort eronder, als de rij af is.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de loop onderaan de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+for rij in range(len(doolhof)):
+    regel = ""
+    for kolom in range(len(doolhof[0])):
+        if (rij, kolom) in weg and doolhof[rij][kolom] == ".":
+            regel = regel + "*"
+        else:
+            regel = regel + doolhof[rij][kolom]
+    print(regel)
+```
+
+```
+S*....
+#*##..
+#*...#
+.*###.
+#****E
+```
+
+De weg loopt door de gang in kolom 1 naar beneden en dan over de onderste rij
+naar E.
+
+</details>
+
+Door naar [het paard](site:algorithms/docs/ml-zoeken/02-kortste-weg/05-het-paard).

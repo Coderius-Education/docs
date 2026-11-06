@@ -1,0 +1,144 @@
+---
+sidebar_position: 5
+sidebar_label: "5. Je eigen doolhof"
+---
+
+# Je eigen doolhof
+
+Je vond de doodlopende vakjes: vakjes met één buur. Op een vakje met drie of
+vier buren moet de robot kiezen welke kant hij op gaat: een kruispunt. In deze
+stap teken je een eigen doolhof en zoek je allebei.
+
+## Voorspel
+
+```python
+doolhof = [
+    "S.#",
+    "...",
+    "#.E",
+]
+```
+
+Tel bij elk vrij vakje hoeveel buren het heeft. Welk vakje is een kruispunt?
+
+<details>
+<summary>Antwoord</summary>
+
+Alleen het middelste vakje, `(1, 1)`: het heeft vier buren. Elk ander vrij
+vakje heeft er twee, ook de start en de uitgang. Dit doolhof heeft dus geen
+doodlopende vakjes.
+
+</details>
+
+## Zo werkt het
+
+Een kruispunt is een vrij vakje met drie of meer buren. Je vindt ze op
+dezelfde manier als de doodlopende vakjes: langs elk vakje, en tellen hoeveel
+buren het heeft.
+
+Een eigen doolhof is een lijst van teksten, net als dat van de editor. Geef
+elke rij evenveel tekens: `buren` meet de breedte aan de eerste rij.
+
+## Bouw zelf: je eigen doolhof
+
+Teken een eigen doolhof van minstens 6 bij 6, met een S en een E. Zoek met
+`doodlopend()` de doodlopende vakjes, en schrijf daarna een functie
+`kruispunten()` die de vakjes geeft met drie of meer buren: daar moet de robot
+kiezen. Kloppen ze met wat jij in je doolhof ziet?
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. In de editor staat `doodlopend()` uit de vorige stap, met het doolhof van de vorige stappen. `buren` staat in de verborgen code.
+2. Zet je eigen doolhof in de plaats van het doolhof in de editor, en kijk of de doodlopende vakjes kloppen met wat je ziet.
+3. Schrijf een functie `kruispunten()`. Test hem eerst met het doolhof van de vorige stappen: dan geeft hij `[(0, 1), (0, 4), (1, 4), (2, 1), (3, 1)]`.
+
+<PyRunner verborgen="doolhof-buren" initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+
+def doodlopend():
+    lijst = []
+    for rij in range(len(doolhof)):
+        for kolom in range(len(doolhof[0])):
+            if doolhof[rij][kolom] != "#" and len(buren((rij, kolom))) == 1:
+                lijst.append((rij, kolom))
+    return lijst
+
+print(doodlopend())`} />
+
+<details>
+<summary>Tip</summary>
+
+`kruispunten()` lijkt bijna helemaal op `doodlopend()`. Wat verandert er aan
+de voorwaarde?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit komt onder `doodlopend` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+def kruispunten():
+    lijst = []
+    for rij in range(len(doolhof)):
+        for kolom in range(len(doolhof[0])):
+            if doolhof[rij][kolom] != "#" and len(buren((rij, kolom))) >= 3:
+                lijst.append((rij, kolom))
+    return lijst
+
+print(kruispunten())   # [(0, 1), (0, 4), (1, 4), (2, 1), (3, 1)]
+```
+
+Een eigen doolhof zet je in plaats van het doolhof in de editor, bijvoorbeeld:
+
+{/* niet-draaien: een voorbeeld van een eigen doolhof; je zet het in de editor */}
+```python
+doolhof = [
+    "S.#...",
+    ".##.#.",
+    "......",
+    ".#.##.",
+    ".#...#",
+    "...#.E",
+]
+```
+
+Let op dat elke rij evenveel tekens heeft, anders gaat `buren` mis: zie
+hieronder.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+IndexError: string index out of range
+```
+
+**Oorzaak:** één rij van je doolhof is korter dan de eerste. `buren` meet de
+breedte aan `doolhof[0]`, en zoekt dan in de korte rij een kolom die er niet
+is. Een rij is een tekst, daarom noemt Python een *string*.
+
+**Oplossing:** geef elke rij evenveel tekens.
+
+```python
+# FOUT
+doolhof = ["S..", ".#", "..E"]
+print(doolhof[1][2])
+
+# GOED
+doolhof = ["S..", ".#.", "..E"]
+print(doolhof[1][2])
+```
+
+Meer uitleg over een vakje buiten het doolhof:
+[muren](site:algorithms/docs/ml-zoeken/01-buren/03-muren#er-gaat-iets-mis).
+
+Door naar [een wachtrij](site:algorithms/docs/ml-zoeken/02-kortste-weg/01-een-wachtrij).

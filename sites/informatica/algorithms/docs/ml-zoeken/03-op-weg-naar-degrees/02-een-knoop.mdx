@@ -1,0 +1,190 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Een knoop"
+---
+
+# Een knoop
+
+In het doolhof onthield je in `vorige` via welk vakje je ergens kwam. In de
+metro wil je ook weten met welke lijn. CS50 stopt die twee dingen samen met
+het station in één object: een knoop. Zo'n knoop maak je met een klasse.
+
+:::info
+`class` en `self` ken je uit
+[een klasse](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/01-een-klasse).
+Meer oefenen kan met `__init__` uit
+[Je eerste klasse](site:python/docs/klassen/15a-je-eerste-klasse) in de
+python-cursus. `None` uit [Return-waarden](site:python/docs/functies/09b-return)
+betekent: geen waarde.
+:::
+
+## Voorspel
+
+```python
+class Knoop:
+    def __init__(self, toestand, ouder, actie):
+        self.toestand = toestand
+        self.ouder = ouder
+        self.actie = actie
+
+start = Knoop("Zuid", None, None)
+markt = Knoop("Markt", start, "blauw")
+print(markt.toestand, markt.actie)
+print(markt.ouder.toestand)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+Markt blauw
+Zuid
+```
+
+`markt.ouder` is de knoop `start`, en daarvan is `toestand` Zuid.
+
+</details>
+
+## Zo werkt het
+
+Een `Knoop` heeft drie dingen. `toestand` is waar je bent: een station.
+`ouder` is de knoop waar je vandaan kwam. `actie` is wat je deed om hier te
+komen: de lijn die je nam. De start heeft geen ouder en geen lijn, daarom
+krijgt hij twee keer `None`.
+
+Via `ouder` hangen de knopen aan elkaar, en loop je terug naar de start, net
+als met `vorige`. Nieuw is `is not None`: `knoop.ouder is not None` is `True`
+zolang de knoop een ouder heeft. Bij de start is hij `False`.
+
+## Onderzoek
+
+1. Draai de code. Wat staat er in `haven.toestand` en `haven.actie`?
+2. Zet onderaan `print(haven.ouder.ouder.toestand)`. Welk station is dat?
+3. Zet onderaan `print(start.ouder is not None)` en `print(markt.ouder is not None)`.
+4. Zet onderaan `print(start.ouder.toestand)`. Wat gebeurt er?
+
+<PyRunner initialCode={`class Knoop:
+    def __init__(self, toestand, ouder, actie):
+        self.toestand = toestand
+        self.ouder = ouder
+        self.actie = actie
+
+start = Knoop("Zuid", None, None)
+markt = Knoop("Markt", start, "blauw")
+haven = Knoop("Haven", markt, "rood")
+
+print(haven.toestand, haven.actie)
+print(haven.ouder.toestand)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Haven en rood: je kwam in Haven met de rode lijn.
+2. Zuid: de ouder van de ouder van Haven.
+3. `False` en `True`. De start heeft geen ouder, Markt wel.
+4. Python stopt met een foutmelding: de start heeft geen ouder, dus er is ook
+   geen `toestand` om te lezen. Zie [Er gaat iets mis](#er-gaat-iets-mis).
+
+</details>
+
+## Opdracht: terug naar de start
+
+Loop vanaf de knoop van Strand terug naar de start. Print bij elke knoop het
+station en de lijn waarmee je er kwam, en print als laatste de start:
+
+```
+Strand via rood
+Haven via rood
+Markt via blauw
+Zuid is de start
+```
+
+:::caution
+Schrijf je een while-loop die nooit `knoop = knoop.ouder` doet, dan stopt hij
+nooit. De speeltuin heeft geen stopknop, dus het tabblad loopt vast: herlaad de
+pagina, en je code is weg. Kopieer je code daarom eerst naar een kladblok
+voordat je een nieuwe while-loop draait.
+:::
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de eerste regel, `Strand via rood`.
+2. Ga één knoop terug met `knoop = knoop.ouder`, en print hetzelfde nog een keer. Nu zie je ook `Haven via rood`.
+3. Zet de print en `knoop = knoop.ouder` in een loop `while knoop.ouder is not None:`, en haal de losse regels erboven weg. Nu zie je de drie stations met een lijn.
+4. Print na de loop `knoop.toestand` met `"is de start"`.
+
+<PyRunner initialCode={`class Knoop:
+    def __init__(self, toestand, ouder, actie):
+        self.toestand = toestand
+        self.ouder = ouder
+        self.actie = actie
+
+start = Knoop("Zuid", None, None)
+markt = Knoop("Markt", start, "blauw")
+haven = Knoop("Haven", markt, "rood")
+strand = Knoop("Strand", haven, "rood")
+
+knoop = strand
+print(knoop.toestand, "via", knoop.actie)`} />
+
+<details>
+<summary>Tip</summary>
+
+Mist Strand, of zie je `Zuid via None`? Kijk waar in de loop je
+`knoop = knoop.ouder` zet: vóór of na de print.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder `knoop = strand` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+while knoop.ouder is not None:
+    print(knoop.toestand, "via", knoop.actie)
+    knoop = knoop.ouder
+print(knoop.toestand, "is de start")
+```
+
+```
+Strand via rood
+Haven via rood
+Markt via blauw
+Zuid is de start
+```
+
+Na de loop is `knoop` de start: de enige knoop zonder ouder.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+AttributeError: 'NoneType' object has no attribute 'toestand'
+```
+
+**Oorzaak:** je liep één knoop te ver terug. De ouder van de start is `None`,
+en `None` heeft geen `toestand`. Dat gebeurt als de loop doorgaat zolang
+`knoop is not None`, in plaats van zolang `knoop.ouder is not None`, en je
+daarna nog iets van `knoop` vraagt.
+
+**Oplossing:** stop de loop bij de start, zolang er nog een ouder is. Weet
+je niet zeker of een knoop er is, kijk dan eerst of hij niet `None` is.
+
+```python
+# FOUT
+knoop = None
+print(knoop.toestand)
+
+# GOED
+knoop = None
+if knoop is not None:
+    print(knoop.toestand)
+```
+
+Door naar [een wachtrij als klasse](site:algorithms/docs/ml-zoeken/03-op-weg-naar-degrees/03-een-wachtrij-als-klasse).
