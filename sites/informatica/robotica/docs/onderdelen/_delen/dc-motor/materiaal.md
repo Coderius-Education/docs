@@ -1,23 +1,12 @@
 DC-motoren zijn de wielmotoren van je robot. Ze hebben veel stroom nodig, dus we sturen ze niet rechtstreeks vanaf de microcontroller aan, maar via een **motor shield**.
 
-Wat heb je nodig?
+<Onderdelenlijst>
+  <Onderdeel naam="Nano op het shield" foto="ir-analoog/leaphy_murphy_shield.jpeg" alt="Het Leaphy Murphy Shield, de groene printplaat waar de Nano in past">Arduino Nano RP2040 Connect op het Leaphy Murphy Shield</Onderdeel>
+  <Onderdeel naam="Motor Module" foto="dc-motor/motor_module_voor_leaphy_murphy_shield.jpeg" alt="Motor module voor het Leaphy Murphy shield">Voor het Leaphy Murphy Shield</Onderdeel>
+  <Onderdeel naam="DC-motor" aantal={2} foto="dc-motor/tt_motor.jpg" alt="Gele TT-motor met twee draden">Een TT-motor</Onderdeel>
+</Onderdelenlijst>
 
-1. [Arduino Nano RP2040 Connect](https://docs.arduino.cc/hardware/nano-rp2040-connect/)
-2. Leaphy Murphy Shield
-3. Motor Module voor het Leaphy Murphy Shield
-4. **2x** DC-motor (TT-motor)
-
-### Leaphy Murphy Shield
-
-![Leaphy Murphy shield](../../img/dc-motor/leaphy_murphy_shield.jpeg)
-
-### Motor Module voor Leaphy Murphy Shield
-
-![Motor module voor het Leaphy Murphy shield](../../img/dc-motor/motor_module_voor_leaphy_murphy_shield.jpeg)
-
-### TT-motor
-
-![Gele TT-motor met twee draden](../../img/dc-motor/tt_motor.jpg)
+Meer over de Nano staat bij [Arduino](https://docs.arduino.cc/hardware/nano-rp2040-connect/).
 
 <details>
 <summary>Controlevraag</summary>

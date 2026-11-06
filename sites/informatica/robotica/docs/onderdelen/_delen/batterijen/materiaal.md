@@ -1,17 +1,11 @@
 Zonder batterijen moet je robot aan een USB-kabel hangen. Dat wil je natuurlijk niet. Hier zet je een batterijhouder op die zonder kabel werkt.
 
-Verzamel:
-
-| Onderdeel | Aantal | Waarvoor? |
-|---|---|---|
-| AA-batterij | 6x | Voeding voor de robot |
-| Batterijhouder met aan/uit-schakelaar | 1x | Houdt de batterijen bij elkaar |
-| Adapter voor Murphy en Delphy Shield | 1x | Verbindt de batterijhouder met het shield |
-| Multimeter | 1x | Om de spanning van de batterijen te controleren |
-
-### Adapter voor Murphy en Delphy Shield
-
-![Adapter voor het Murphy en Delphy Shield, met een rode en een zwarte draad](../../img/batterijen/adapter_voor_murphy_en_delphy_shield.jpg)
+<Onderdelenlijst>
+  <Onderdeel naam="Adapter" foto="batterijen/adapter_voor_murphy_en_delphy_shield.jpg" alt="Adapter voor het Murphy en Delphy Shield, met een rode en een zwarte draad">Verbindt de batterijhouder met het Murphy of Delphy Shield</Onderdeel>
+  <Onderdeel naam="Multimeter" foto="meten/doc_meter.PNG" alt="Multimeter met de draaiknop en bij elke stand wat hij meet, zoals DC Voltage">Om de spanning van de batterijen te controleren</Onderdeel>
+  <Onderdeel naam="AA-batterijen" aantal={6}>de voeding</Onderdeel>
+  <Onderdeel naam="batterijhouder met aan/uit-schakelaar" />
+</Onderdelenlijst>
 
 <details>
 <summary>Heb je alles?</summary>

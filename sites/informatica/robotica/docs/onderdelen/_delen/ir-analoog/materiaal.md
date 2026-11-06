@@ -1,16 +1,7 @@
-Wat heb je nodig?
-
-1. Arduino Nano RP2040 Connect
-2. Analoge IR-sensor
-3. Leaphy Murphy Shield
-
-### Analoge IR-sensor
-
-![Een blauwe IR-sensor met vier pinnen en een blauw potmetertje](../../img/ir-analoog/doc_irsensor.png)
-
-### Leaphy Murphy Shield
-
-![Het Leaphy Murphy Shield, de groene printplaat waar de Nano in past](../../img/ir-analoog/leaphy_murphy_shield.jpeg)
+<Onderdelenlijst>
+  <Onderdeel naam="Nano op het shield" foto="ir-analoog/leaphy_murphy_shield.jpeg" alt="Het Leaphy Murphy Shield, de groene printplaat waar de Nano in past">Arduino Nano RP2040 Connect op het Leaphy Murphy Shield</Onderdeel>
+  <Onderdeel naam="Analoge IR-sensor" foto="ir-analoog/doc_irsensor.png" alt="Een blauwe IR-sensor met vier pinnen en een blauw potmetertje">Met vier pinnen</Onderdeel>
+</Onderdelenlijst>
 
 <details>
 <summary>Controlevraag</summary>
