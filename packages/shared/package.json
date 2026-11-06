@@ -10,6 +10,10 @@
       "types": "./config/pyodide-runtime.d.ts",
       "default": "./config/pyodide-runtime.js"
     },
+    "./prism-thema": {
+      "types": "./prism-thema.d.ts",
+      "default": "./prism-thema.js"
+    },
     "./sites": {
       "types": "./sites.d.ts",
       "default": "./sites.js"

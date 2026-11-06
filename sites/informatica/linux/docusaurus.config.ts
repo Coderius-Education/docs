@@ -1,4 +1,4 @@
-import { createConfig, prismThemes } from '@coderius/shared/config';
+import { createConfig } from '@coderius/shared/config';
 import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 
 export default createConfig({
@@ -49,10 +49,6 @@ export default createConfig({
     footer: {
       style: 'dark',
       links: [],
-    },
-    prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
     },
   },
 });

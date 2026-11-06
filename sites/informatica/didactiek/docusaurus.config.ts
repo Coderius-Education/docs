@@ -1,4 +1,4 @@
-import { createConfig, prismThemes } from '@coderius/shared/config';
+import { createConfig } from '@coderius/shared/config';
 
 export default createConfig({
   title: 'Didactiek — Coderius',
@@ -38,8 +38,6 @@ export default createConfig({
       ],
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
       additionalLanguages: ['python'],
     },
   },
