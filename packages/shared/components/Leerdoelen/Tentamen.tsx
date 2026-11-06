@@ -1,7 +1,7 @@
 import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import type { ReactNode } from 'react';
-import type { Leerdoelen, Les } from '../../leerdoelen';
+import { type Leerdoelen, type Les, onderwerpenOpNiveau } from '../../leerdoelen';
 import { routeUrl } from '../../sites';
 import Lessen from './Lessen';
 import styles from './styles.module.css';
@@ -67,9 +67,7 @@ export default function Tentamen({ leerdoelen }: { leerdoelen: Leerdoelen }): Re
         </table>
       </div>
 
-      {leerdoelen.onderwerpen.map((onderwerp) => {
-        const rijen = leerdoelen.concepten.filter((c) => c.onderwerp === onderwerp.id);
-        if (rijen.length === 0) return null;
+      {onderwerpenOpNiveau(leerdoelen, tentamen.niveau).map(({ onderwerp, concepten: rijen }) => {
         const metManieren = rijen.filter((c) => c.manieren?.length);
         const zelf = rijen.filter((c) => !c.manieren?.length);
         const kolommen = manieren.filter((m) =>

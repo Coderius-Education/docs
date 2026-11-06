@@ -1,0 +1,360 @@
+---
+sidebar_position: 2
+---
+
+# De kortste weg met een wachtrij
+
+Je weet nu bij elk vakje waar de robot heen kan. Maar wat is de kortste weg
+van S naar E? Je kunt alle wegen proberen, maar dat zijn er al snel duizenden.
+Het kan slimmer: kijk eerst naar alle vakjes op één stap van de start, dan
+naar alle vakjes op twee stappen, dan op drie. Het eerste moment dat je E
+tegenkomt, weet je zeker dat er geen kortere weg is. Dat heet **breadth-first
+search**, of breedte-eerst zoeken.
+
+:::info
+Je gebruikt hier `buren` uit
+[de buren van een vakje](site:algorithms/docs/ml-zoeken/01-buren), de while-loop
+uit [De while-loop](site:python/docs/herhalen/while-loop), `append` en `pop`
+uit [Lijst-methoden](site:python/docs/data/10b-lijst-methoden), `in` op een
+dictionary uit
+[Door een dictionary lopen](site:python/docs/data/11b-itereren-dictionaries),
+en een tuple als sleutel uit
+[Nim die van zichzelf leert](site:algorithms/docs/ml-spellen/02-nim-leert#zo-werkt-het).
+:::
+
+## Voorspel
+
+```python
+wachtrij = ["Anna", "Bob"]
+wachtrij.append("Cem")
+eerste = wachtrij.pop(0)
+
+print(eerste)
+print(wachtrij)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+Anna
+['Bob', 'Cem']
+```
+
+`append` zet Cem achteraan, en `pop(0)` haalt de voorste eraf: Anna. Net als
+bij de kassa: wie het eerst kwam, is het eerst aan de beurt.
+
+</details>
+
+## Zo werkt het
+
+De lijst `wachtrij` houdt bij welke vakjes je nog moet bekijken. Je begint
+met alleen de start. Zolang er vakjes in de wachtrij staan:
+
+1. haal je het voorste vakje eruit, met `pop(0)`;
+2. kijk je naar zijn buren;
+3. zet je elke buur die je nog niet kende achteraan in de wachtrij. Zijn
+   afstand is die van het vakje plus 1.
+
+`buren` uit het vorige project staat al klaar, in de verborgen code onder de
+editor. De dictionary `afstand` onthoudt voor elk vakje dat je al kent, hoeveel
+stappen het van de start ligt. Zo zet je geen vakje twee keer in de wachtrij. Omdat
+nieuwe vakjes achteraan komen, bekijk je eerst alles op afstand 1, dan alles
+op afstand 2, enzovoort.
+
+:::caution
+De loop stopt pas als de wachtrij leeg is. Komt er steeds een nieuw vakje bij,
+bijvoorbeeld omdat je ook buiten het doolhof of het bord verder zoekt, dan
+stopt hij nooit. De speeltuin heeft geen stopknop, dus het tabblad loopt vast:
+herlaad de pagina, en je code is weg. Kopieer je code daarom eerst naar een
+kladblok voordat je een nieuwe while-loop draait.
+:::
+
+## Onderzoek
+
+1. Draai de code. Hoeveel stappen is de kortste weg van S naar E?
+2. Zet onderaan `print(afstand)`. Wat staat er allemaal in?
+3. Verander `wachtrij.pop(0)` in `wachtrij.pop()`, zodat je steeds het
+   laatste vakje pakt. Hoeveel stappen zegt hij nu? Klopt dat?
+4. Zet `pop(0)` terug, en zet een muur op `(4, 4)`: de onderste rij wordt
+   `"#...#E"`. Wat gebeurt er?
+
+<PyRunner verborgen="doolhof-buren" initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+start = (0, 0)
+eind = (4, 5)
+
+afstand = {start: 0}
+wachtrij = [start]
+while len(wachtrij) > 0:
+    vakje = wachtrij.pop(0)
+    for buur in buren(vakje):
+        if buur not in afstand:
+            afstand[buur] = afstand[vakje] + 1
+            wachtrij.append(buur)
+
+print("De kortste weg is", afstand[eind], "stappen")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. 9 stappen: één stap naar rechts, dan naar beneden door de gang in kolom 1,
+   en over de onderste rij naar E.
+2. Elk vakje dat de robot kan bereiken, met zijn afstand tot de start. Je
+   zoekt dus niet alleen de weg naar E, maar naar alles.
+3. Nu zegt hij 15, en dat klopt niet. Met `pop()` gaat de robot steeds door
+   op het vakje dat hij het laatst vond, en loopt hij eerst helemaal de
+   bovenste rij af. Een vakje krijgt dan de afstand van de eerste weg die hij
+   vond, niet van de kortste. Zo'n lijst waar je achteraan pakt heet een
+   stapel. Een stapel zoekt diep, een wachtrij breed.
+4. Python stopt met een foutmelding: E is nu niet meer te bereiken, dus staat
+   hij niet in `afstand`. Zie [Er gaat iets mis](#er-gaat-iets-mis).
+
+</details>
+
+## Opdracht: de weg terugvinden
+
+Je weet nu hoe ver E is, maar niet langs welke vakjes. Onthoud daarom bij elk
+nieuw vakje via welk vakje je er kwam, in een dictionary `vorige`. Loop daarna
+vanaf E terug naar de start, en print de weg van S naar E. Met
+`weg.insert(0, vakje)` zet je een vakje vooraan in de lijst `weg`:
+
+```
+[(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5)]
+```
+
+Teken daarna de weg in het doolhof: print het doolhof opnieuw, met een `*`
+op elk vrij vakje van de weg.
+
+```
+S*....
+#*##..
+#*...#
+.*###.
+#****E
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Zet `vorige = {}` boven de loop, en vul hem waar je ook de afstand van een buur invult. Print `vorige` om te zien wat erin staat.
+2. Begin met `weg = [eind]` en `vakje = eind`. Ga in een tweede while-loop steeds één vakje terug met `vakje = vorige[vakje]`, en zet dat vakje vooraan in `weg`. Stop als je bij de start bent, en print `weg`.
+3. Teken de weg: loop over alle vakjes, net als bij de doodlopende vakjes, en zet een `*` op elk vrij vakje dat in `weg` staat.
+
+In de editor staat het zoeken uit het onderzoek.
+
+<PyRunner verborgen="doolhof-buren" initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+start = (0, 0)
+eind = (4, 5)
+
+afstand = {start: 0}
+wachtrij = [start]
+while len(wachtrij) > 0:
+    vakje = wachtrij.pop(0)
+    for buur in buren(vakje):
+        if buur not in afstand:
+            afstand[buur] = afstand[vakje] + 1
+            wachtrij.append(buur)`} />
+
+<details>
+<summary>Tip</summary>
+
+Op welke plek in de loop weet je via welk vakje je bij `buur` kwam? Mist de
+start in je weg, kijk dan in welke volgorde je teruggaat en vooraan zet.
+Voor het tekenen bouw je per rij een tekst op, net als bij
+[de doodlopende vakjes](site:algorithms/docs/ml-zoeken/01-buren#opdracht-doodlopende-vakjes)
+de loop over alle vakjes.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder `eind = (4, 5)` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+afstand = {start: 0}
+vorige = {}
+wachtrij = [start]
+while len(wachtrij) > 0:
+    vakje = wachtrij.pop(0)
+    for buur in buren(vakje):
+        if buur not in afstand:
+            afstand[buur] = afstand[vakje] + 1
+            vorige[buur] = vakje
+            wachtrij.append(buur)
+
+weg = [eind]
+vakje = eind
+while vakje != start:
+    vakje = vorige[vakje]
+    weg.insert(0, vakje)
+print(weg)
+
+for rij in range(len(doolhof)):
+    regel = ""
+    for kolom in range(len(doolhof[0])):
+        if (rij, kolom) in weg and doolhof[rij][kolom] == ".":
+            regel = regel + "*"
+        else:
+            regel = regel + doolhof[rij][kolom]
+    print(regel)
+```
+
+```
+[(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5)]
+S*....
+#*##..
+#*...#
+.*###.
+#****E
+```
+
+De weg heeft 10 vakjes en dus 9 stappen, net als de afstand zei. Elk vakje
+weet alleen waar het vandaan kwam, en toch vind je zo de hele weg terug.
+
+</details>
+
+## Bouw zelf: het paard op het schaakbord
+
+Een paard springt bij schaken in een L: twee vakjes de ene kant op en één
+vakje opzij. Hoeveel sprongen heeft een paard nodig van de ene hoek, `(0, 0)`,
+naar de hoek er schuin tegenover, `(7, 7)`? En hoeveel naar `(1, 1)`, het
+vakje er schuin naast?
+
+Gebruik breedte-eerst zoeken op een bord van 8 bij 8. Er zijn geen muren,
+maar een sprong mag niet van het bord af: rij en kolom blijven van 0 tot en
+met 7. Zonder die controle springt het paard eindeloos verder, en loopt je
+tabblad vast.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `sprongen` geeft één sprong.
+2. Zet de andere zeven sprongen erbij. Een lijst met de acht richtingen en een loop erover scheelt typwerk.
+3. Houd met een `if` alleen de sprongen die op het bord blijven. `sprongen((0, 0))` geeft er dan twee: `(1, 2)` en `(2, 1)`.
+4. Zet het zoeken uit de opdracht eronder, met `sprongen` in plaats van `buren`, en print `afstand[(7, 7)]`.
+
+<PyRunner initialCode={`def sprongen(vakje):
+    rij, kolom = vakje
+    resultaat = []
+    resultaat.append((rij + 1, kolom + 2))
+    return resultaat
+
+start = (0, 0)
+print(sprongen(start))`} />
+
+<details>
+<summary>Tip</summary>
+
+Een richting als `(2, -1)` betekent twee rijen omlaag en één kolom naar links:
+`rij + 2` en `kolom - 1`. Met `for dr, dk in richtingen:` haal je beide getallen
+tegelijk uit de tuple, net als `rij, kolom = vakje`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def sprongen(vakje):
+    rij, kolom = vakje
+    resultaat = []
+    for dr, dk in [(1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1), (-1, 2)]:
+        r = rij + dr
+        k = kolom + dk
+        if r >= 0 and r < 8 and k >= 0 and k < 8:
+            resultaat.append((r, k))
+    return resultaat
+
+start = (0, 0)
+afstand = {start: 0}
+wachtrij = [start]
+while len(wachtrij) > 0:
+    vakje = wachtrij.pop(0)
+    for buur in sprongen(vakje):
+        if buur not in afstand:
+            afstand[buur] = afstand[vakje] + 1
+            wachtrij.append(buur)
+
+print(afstand[(7, 7)])   # 6
+print(afstand[(1, 1)])   # 4
+```
+
+Naar de overkant zijn het 6 sprongen, en naar het vakje ernaast 4: dichtbij
+is voor een paard niet hetzelfde als makkelijk. Het zoeken zelf veranderde
+niet. Breedte-eerst zoeken werkt bij alles waar je de buren van kunt geven:
+een doolhof, een schaakbord, of mensen die elkaar kennen.
+
+</details>
+
+## Aan de slag met Degrees
+
+Nu ben je klaar voor
+[Degrees](https://cs50.harvard.edu/ai/projects/0/degrees/) van CS50 AI. Je
+krijgt een lijst acteurs en films, en zoekt de kortste verbinding tussen twee
+acteurs: speelden ze samen in een film, of samen met iemand anders?
+
+Het zoeken is wat je hier deed, maar drie dingen zijn anders:
+
+- De buren van een acteur zijn de acteurs die met hem in een film speelden.
+  Een functie die ze geeft, krijg je bij het project. Hij geeft paren: de film
+  en de acteur.
+- De weg die je teruggeeft, bestaat uit zulke paren. Je onthoudt bij het
+  terugvinden dus niet alleen via welke acteur je ergens kwam, zoals met
+  `vorige`, maar ook via welke film.
+- De wachtrij krijg je kant-en-klaar, in het bestand `util.py`. Het is geen
+  lijst maar een klasse, met een methode om iets toe te voegen en een om het
+  voorste eruit te halen. Wat erin gaat, zijn knopen: een acteur, met de knoop
+  waar je vandaan kwam en de film ertussen. Die knoop doet hetzelfde als
+  `vorige`.
+
+Klassen zie je hier voor het eerst. Kijk in `util.py` hoe ze eruitzien, of lees
+[Je eerste klasse](site:python/docs/klassen/15a-je-eerste-klasse) in de
+python-cursus.
+
+Lees de opdracht helemaal door voordat je begint. Test eerst met de kleine
+dataset, en pas daarna met de grote.
+
+Wil je zoeken als de stappen niet even lang zijn, zoals wegen tussen steden?
+Dat doet [Dijkstra](site:algorithms/docs/dijkstra/01-concept).
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+KeyError: (4, 5)
+```
+
+**Oorzaak:** de uitgang is niet te bereiken. Het zoeken bekeek alle vakjes
+waar de robot kan komen, en E zat daar niet bij. Daarom staat E niet in
+`afstand`.
+
+**Oplossing:** kijk eerst of het vakje in `afstand` staat.
+
+```python
+# FOUT
+afstand = {(0, 0): 0, (0, 1): 1}
+print(afstand[(4, 5)])
+
+# GOED
+afstand = {(0, 0): 0, (0, 1): 1}
+if (4, 5) in afstand:
+    print(afstand[(4, 5)])
+else:
+    print("Er is geen weg naar de uitgang")
+```
+
+Door naar [één neuron met gewichten](site:algorithms/docs/ml-neuronen/01-neuron).

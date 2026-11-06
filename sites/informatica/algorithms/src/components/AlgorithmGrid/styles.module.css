@@ -1,5 +1,6 @@
-/* Dertien kaarten in twee rijen, zodat de homepage met footer in één scherm
-   past (vanaf 1280×720). De titel en de samenvatting krijgen de opgehoogde
+/* Veertien kaarten in twee rijen (dertien algoritmes en de route machine
+   learning), zodat de homepage met footer in één scherm past (vanaf
+   1280×720). De titel en de samenvatting krijgen de opgehoogde
    selector: Infima's h3 en p staan op :not(#\#):not(#\#) en wonnen, de
    titels stonden op 1.25rem in plaats van 0.95. */
 .grid {

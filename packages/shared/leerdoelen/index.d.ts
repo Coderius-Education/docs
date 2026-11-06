@@ -137,6 +137,12 @@ export function onderwerpenOpNiveau(
   leerdoelen: Leerdoelen,
   niveau: string,
 ): { onderwerp: Benoemd; concepten: LeerdoelConcept[] }[];
+/** De kolommen van de tabel van één onderwerp: basis en gevorderd als het niveau ze heeft, expert alleen als dit onderwerp er een heeft. */
+export function kolommenVoorOnderwerp(
+  leerdoelen: Leerdoelen,
+  niveau: string,
+  rijen: Pick<LeerdoelConcept, 'niveau'>[],
+): ConceptMoeilijkheid[];
 /** Per niveau-id het vorige niveau waarvan de moeilijkheid verschilt, of null; null-niveaus tellen niet mee. */
 export function andersDan(
   concept: Pick<LeerdoelConcept, 'niveau'>,

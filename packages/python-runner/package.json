@@ -11,7 +11,8 @@
     "./package.json": "./package.json",
     "./Stapper": "./src/Stapper/index.tsx",
     "./HighlightedEditor": "./src/HighlightedEditor/index.tsx",
-    "./inspringen": "./src/inspringen.ts"
+    "./inspringen": "./src/inspringen.ts",
+    "./pyodide-in-node": "./src/pyodide-in-node.ts"
   },
   "dependencies": {
     "@coderius/shared": "workspace:*"

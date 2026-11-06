@@ -417,6 +417,14 @@ def zelftest() -> None:
     Zonder deze regels zou de controle nog steeds groen zijn — met minder
     blokken die meedoen. Dat is precies de regressie die je niet ziet.
     """
+    # Een keten verborgen code, runner en draaien-met: alleen het laatste stuk.
+    m = STAART_MARKER
+    assert eigen_uitvoer(f"\n{m}\nrunner\n{m}\neigen\n", 5) == "eigen"
+    assert eigen_uitvoer(f"boven\n{m}\neigen\n", 2) == "eigen"
+    assert eigen_uitvoer("alles\n", 0) == "alles"
+    # Stopt de voorgeplakte code met exit(), dan komt de marker nooit: dan
+    # print het eigen blok niets, en niet de uitvoer van de code erboven.
+    assert eigen_uitvoer("boven\n", 2) == ""
     # Een fence in een andere taal mag de rest van het bestand niet verschuiven.
     soorten = [
         next(k for k in ("py", "kaal", "anders") if t.group(k) is not None)
@@ -841,6 +849,23 @@ def compileer(bron, regel, code) -> str | None:
         return f"{bron}:{regel + (e.lineno or 1)}: {e.msg}"
 
 
+def eigen_uitvoer(stdout: str, voorplak: int) -> str:
+    """Wat het blok zelf print, zonder wat de voorgeplakte code printte.
+
+    Alleen wat het eigen blok print telt; het blok erboven heeft zijn eigen
+    uitvoer al waargemaakt toen het los draaide. Ná de láátste markeerregel,
+    want een keten heeft er meer dan één: een draaien-met-blok onder een
+    PyRunner met `verborgen` plakt de verborgen code, een markeerregel, de
+    runner, nog een markeerregel en dan pas zichzelf. Met de eerste
+    markeerregel telde de uitvoer van de runner mee.
+    """
+    uit = stdout.strip("\n")
+    if voorplak:
+        _, marker, uit = uit.rpartition(STAART_MARKER)
+        uit = uit.strip("\n") if marker else ""
+    return uit
+
+
 def draai(bron, regel, code, verwacht, varieert=False, voorplak=0, invoer=None) -> str | None:
     # Bij draaien-met telt het voorgeplakte blok mee in de regelnummers van
     # Python; door de startregel te verschuiven wijst een fout in het blok
@@ -906,12 +931,7 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0, invoer=None) 
 
     # Een lege regel vooraan (een print("\\n…") als eerste) is in een fence
     # niet te zien; die telt dus niet mee, net als lege regels achteraan.
-    uit = r.stdout.strip("\n")
-    if voorplak:
-        # Alleen wat het eigen blok print; het blok erboven heeft zijn eigen
-        # uitvoer al waargemaakt toen het los draaide.
-        _, _, uit = uit.partition(STAART_MARKER)
-        uit = uit.strip("\n")
+    uit = eigen_uitvoer(r.stdout, voorplak)
 
     if verwacht is not None and uit != verwacht:
         return f"{bron}:{regel}: uitvoerblok belooft {verwacht!r}, geeft {uit!r}"

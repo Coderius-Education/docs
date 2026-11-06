@@ -1,0 +1,306 @@
+---
+sidebar_position: 1
+---
+
+# Een dobbelsteen simuleren
+
+Hoe groot is de kans dat je met twee dobbelstenen samen 7 gooit? Dat kun je
+uitrekenen, maar je kunt het ook proberen: gooi tienduizend keer en tel hoe
+vaak het gebeurt. Met een echte dobbelsteen duurt dat een middag, de computer
+doet het in een tel. Zo'n nagespeeld experiment heet een **simulatie**. Het
+idee komt overal in machine learning terug: veel proberen, en tellen wat er
+gebeurt.
+
+:::info
+Je gebruikt hier `random.randint` uit
+[De computer kiest](site:python/docs/projecten/raad-het-getal/stap-4-random),
+`range` uit [De for-loop](site:python/docs/herhalen/06a-for-loop),
+`//` uit [Delen met rest](site:python/docs/basis/rekenmachine#delen-met-rest),
+en tellen met een dictionary uit
+[een spamfilter dat leert](site:algorithms/docs/ml-regels/03-spamfilter-leert).
+In de Bouw zelf heb je ook een loop in een loop nodig, uit
+[Om de beurt](site:python/docs/projecten/schildpaddenrace/stap-5-loop-in-loop),
+en `True` en `False` uit
+[Booleans en vergelijken](site:python/docs/beslissen/05a-booleans-en-vergelijken).
+:::
+
+## Voorspel
+
+```python
+import random
+
+worpen = 600
+zessen = 0
+for i in range(worpen):
+    if random.randint(1, 6) == 6:
+        zessen = zessen + 1
+
+print(zessen)
+```
+
+Dit programma gooit 600 keer met een dobbelsteen en telt de zessen. Welk
+getal print het?
+
+<details>
+<summary>Antwoord</summary>
+
+Ongeveer 100, want een zes komt gemiddeld één keer op de zes worpen. Precies
+100 is het bijna nooit: de ene keer 93, de andere keer 108.
+
+</details>
+
+## Zo werkt het
+
+`random.randint(1, 6)` geeft een willekeurig getal van 1 tot en met 6, net als
+een dobbelsteen. De loop doet dat `worpen` keer, en telt hoe vaak er een 6
+uitkomt.
+
+Elke keer dat je het draait, gooit de computer opnieuw. Een simulatie geeft
+dus geen exact antwoord, maar een schatting. In de editor telt hij niet alleen
+de zessen, maar elk getal, in een dictionary met de ogen als sleutel.
+
+## Onderzoek
+
+1. Zet `worpen` op 6 en draai een paar keer. Komt elk getal één keer voor?
+2. Zet `worpen` op 6000. Hoe dicht komt elk getal nu bij 16 procent?
+3. Maak de dobbelsteen vals. `random.choice` kiest een willekeurig element uit
+   een lijst. Vervang `random.randint(1, 6)` door
+   `random.choice([1, 2, 3, 4, 5, 6, 6])`. Zie je aan de uitvoer dat hij vals
+   is bij 60 worpen? En bij 6000?
+
+<PyRunner initialCode={`import random
+
+worpen = 60
+telling = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+for i in range(worpen):
+    ogen = random.randint(1, 6)
+    telling[ogen] = telling[ogen] + 1
+
+for ogen in telling:
+    procent = telling[ogen] * 100 // worpen
+    print(ogen, telling[ogen], "keer,", procent, "procent")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Bijna nooit. Meestal komt een getal twee of drie keer, en een ander
+   helemaal niet. De kans dat elk getal precies één keer valt, is bij zes
+   worpen maar 1,5 procent.
+2. Bij 6000 worpen ligt elk getal dicht bij 16 procent (een zesde is 16,7
+   procent, en `//` rondt naar beneden af). Het verschil tussen de getallen
+   is nog maar een paar procent. Hoe meer worpen, hoe beter de schatting.
+3. Er staan twee zessen in de lijst, dus de zes komt twee keer zo vaak. Bij
+   60 worpen zie je dat meestal al: rond de 17 zessen, tegen rond de 9 van
+   elk ander getal. Maar niet altijd, want bij zo weinig worpen schommelt elk
+   getal flink. Bij 6000 zie je het zeker, de zes komt dan rond de 28
+   procent. Hoe kleiner het patroon dat je zoekt, hoe meer voorbeelden je
+   nodig hebt.
+
+</details>
+
+## Opdracht: twee dobbelstenen
+
+Gooi 6000 keer met twee dobbelstenen, en tel hoe vaak elke som voorkomt, van
+2 tot en met 12. Print per som hoe vaak hij voorkwam. Welke som komt het
+vaakst?
+
+Teken het daarna als staafdiagram. Dat doet de bibliotheek matplotlib, en die
+hoef je hier niet te leren: zet deze drie regels onder je code.
+
+{/* niet-draaien: fragment; leunt op telling uit de opdracht */}
+```python
+import matplotlib.pyplot as plt
+plt.bar(list(telling), list(telling.values()))
+plt.show()
+```
+
+`plt.bar` tekent een staaf voor elke sleutel van `telling`, zo hoog als het
+getal dat erbij hoort. De eerste keer laden duurt het tekenen even.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij gooit één keer met twee stenen.
+2. Zet het gooien in een loop van 10 keer, en print alleen de som.
+3. Tel de sommen in een dictionary `telling`, en print die na de loop. Zet de loop daarna op 6000, en haal de print van de som weg.
+4. Print per som van 2 tot en met 12 een regel, en zet de drie regels matplotlib eronder.
+
+In de editor staat één worp met twee stenen.
+
+<PyRunner initialCode={`import random
+
+eerste = random.randint(1, 6)
+tweede = random.randint(1, 6)
+print(eerste, tweede, eerste + tweede)`} />
+
+<details>
+<summary>Tip</summary>
+
+Tel je zoals in het spamfilter, met `if som in telling`, dan werkt het, maar
+staan de sommen in de volgorde waarin ze voor het eerst vielen. Zet je vóór de
+loop elke som van 2 tot en met 12 op 0, dan staan ze op volgorde.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+worpen = 6000
+telling = {}
+for som in range(2, 13):
+    telling[som] = 0
+
+for i in range(worpen):
+    eerste = random.randint(1, 6)
+    tweede = random.randint(1, 6)
+    som = eerste + tweede
+    telling[som] = telling[som] + 1
+
+for som in telling:
+    print(som, telling[som])
+
+import matplotlib.pyplot as plt
+plt.bar(list(telling), list(telling.values()))
+plt.show()
+```
+
+De staven lopen op tot de 7 en dan weer af, als een dak. De 7 wint, met ongeveer 1000 keer. 2 en 12 komen het minst voor, rond de 170
+keer. Voor een 2 moeten allebei de stenen 1 zijn, maar voor een 7 zijn er zes
+manieren: 1 en 6, 2 en 5, 3 en 4, en ook andersom. Twee stenen kunnen op 36
+manieren vallen, dus de kans op 7 is 6 op de 36: een zesde. Je simulatie komt
+daar dicht bij.
+
+</details>
+
+## Bouw zelf: de weddenschappen van de Méré
+
+De Franse schrijver Antoine Gombaud, die zich Chevalier de Méré noemde, gokte
+graag. Een bekende weddenschap in zijn tijd: in vier worpen met één
+dobbelsteen gooi je minstens één zes. Hoe vaak win je die?
+
+Speel de weddenschap 10.000 keer na en print hoeveel procent van de keren je
+wint. Probeer daarna een tweede: minstens één keer dubbel zes, in 24 worpen
+met twee dobbelstenen. Volgens de Méré moest die even goed uitpakken. Laat je
+simulatie dat zien?
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code een paar keer: soms zegt hij zes.
+2. Gooi vier keer, met een `for`-loop om de worp en de `if`. Hij print nu bij elke zes.
+3. Onthoud of er een zes viel: zet vóór de loop `zes = False`, zet in de `if` `zes = True`, en print `zes` na de loop.
+4. Zet dat geheel in een buitenste loop van 10.000 keer, en tel hoe vaak `zes` waar is. Print het percentage, en haal de andere prints weg.
+5. Maak de tweede weddenschap: 24 worpen met twee stenen, en kijk of ze allebei 6 zijn.
+
+<PyRunner initialCode={`import random
+
+worp = random.randint(1, 6)
+if worp == 6:
+    print("zes")`} />
+
+<details>
+<summary>Tip</summary>
+
+Krijg je bijna 100 procent? Kijk waar `zes = False` staat. Hij moet bij elke
+weddenschap opnieuw op `False` beginnen, dus in de buitenste loop, vóór de
+binnenste.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+import random
+
+keren = 10000
+gewonnen = 0
+for keer in range(keren):
+    zes = False
+    for worp in range(4):
+        if random.randint(1, 6) == 6:
+            zes = True
+    if zes:
+        gewonnen = gewonnen + 1
+
+print(gewonnen * 100 // keren, "procent gewonnen")
+```
+
+Je krijgt rond de 51 procent. Uitgerekend is de kans 51,8 procent: net genoeg
+om er op den duur geld aan te verdienen. Voor de tweede weddenschap verander
+je de binnenste loop:
+
+```python
+import random
+
+keren = 10000
+gewonnen = 0
+for keer in range(keren):
+    dubbel = False
+    for worp in range(24):
+        if random.randint(1, 6) == 6 and random.randint(1, 6) == 6:
+            dubbel = True
+    if dubbel:
+        gewonnen = gewonnen + 1
+
+print(gewonnen * 100 // keren, "procent gewonnen")
+```
+
+Dan kom je rond de 49 procent uit: net verliezend. In 1654 legde de Méré de
+vraag waarom voor aan de wiskundige Blaise Pascal. Pascal schreef erover met
+Pierre de Fermat, en hun brieven worden gezien als het begin van de
+kansrekening.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+TypeError: Random.randint() missing 1 required positional argument: 'b'
+```
+
+**Oorzaak:** `randint` wil twee getallen: het kleinste en het grootste. Met
+één getal weet hij niet waar hij moet beginnen.
+
+**Oplossing:** geef allebei de grenzen mee.
+
+```python
+# FOUT
+import random
+ogen = random.randint(6)
+
+# GOED
+import random
+ogen = random.randint(1, 6)
+```
+
+Meer uitleg: [De computer kiest](site:python/docs/projecten/raad-het-getal/stap-4-random).
+
+{/* foutmelding-van: fout-helft */}
+```
+KeyError: 7
+```
+
+**Oorzaak:** je telt bij een som die nog geen sleutel is in `telling`. Begin
+je met een lege `telling`, of met alleen de ogen van één steen (1 tot en met
+6), dan staat 7 er niet in. Het getal in de foutmelding is de som die mist.
+
+**Oplossing:** zet elke som die kan uitkomen eerst op 0.
+
+```python
+# FOUT
+telling = {}
+som = 3 + 4
+telling[som] = telling[som] + 1
+
+# GOED
+telling = {}
+for som in range(2, 13):
+    telling[som] = 0
+som = 3 + 4
+telling[som] = telling[som] + 1
+```
+
+Door naar [een surfer die willekeurig klikt](site:algorithms/docs/ml-kans/02-surfer).

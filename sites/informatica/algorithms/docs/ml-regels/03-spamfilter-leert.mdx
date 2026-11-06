@@ -1,0 +1,300 @@
+---
+sidebar_position: 3
+---
+
+# Een spamfilter dat leert
+
+In het vorige filter schreef jij de lijst verdachte woorden, en de spammer
+verzon steeds een nieuw woord. Dit filter krijgt geen lijst van jou, maar
+voorbeelden: berichten waarvan je al weet of ze spam zijn. Het telt welke
+woorden in spam voorkomen en welke in gewone berichten, en beslist daarmee
+over een nieuw bericht. Dat is je eerste stukje machine learning: de regels
+komen uit de data.
+
+:::info
+Je gebruikt hier een dictionary uit
+[Dictionaries](site:python/docs/data/11a-dictionaries-basis), kijken of een
+sleutel erin staat met `in` uit
+[Door een dictionary lopen](site:python/docs/data/11b-itereren-dictionaries),
+en `.split()` uit
+[de opdracht bij het spamfilter met regels](site:algorithms/docs/ml-regels/02-spamfilter#opdracht-hele-woorden-vergelijken).
+:::
+
+## Voorspel
+
+```python
+spamwoorden = ["gratis", "geld", "klik", "nu", "gratis", "prijs", "klik", "geld", "gratis"]
+
+telling = {}
+for woord in spamwoorden:
+    if woord in telling:
+        telling[woord] = telling[woord] + 1
+    else:
+        telling[woord] = 1
+
+print(telling)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+{'gratis': 3, 'geld': 2, 'klik': 2, 'nu': 1, 'prijs': 1}
+```
+
+</details>
+
+## Zo werkt het
+
+Een dictionary koppelt een **sleutel** aan een **waarde**. Hier is de sleutel
+een woord, en de waarde hoe vaak je dat woord al zag. Het patroon in de loop
+heet tellen met een dictionary:
+
+- staat het woord al in `telling`, dan komt er 1 bij;
+- staat het er nog niet in, dan zet je het erin met waarde 1.
+
+Na de loop weet de dictionary hoe vaak elk woord voorkwam.
+
+## Het filter
+
+Het filter telt twee keer: één keer de woorden uit spam, en één keer de
+woorden uit gewone berichten. Voor een nieuw bericht telt het daarna per
+woord op hoe vaak het in spam voorkwam, en trekt het af hoe vaak het in
+gewone berichten voorkwam. Komt de score boven 0 uit, dan lijkt het bericht
+meer op spam dan op de gewone berichten.
+
+Voor het bericht `"klik hier voor je prijs"` geeft dat score 2: spam.
+`klik`, `hier`, `voor` en `prijs` kwamen samen vijf keer voor in spam, en
+`je` kwam drie keer voor in gewone berichten. Vijf min drie is twee.
+
+## Onderzoek
+
+Draai de code eerst zoals hij is: je ziet score 2 en spam. Pas daarna het
+bericht aan, en kijk wat het filter ervan maakt.
+
+1. Probeer `"ben je nu op school"`. Het woord `nu` staat in de spam én in
+   de gewone berichten. Wat doet het met de score?
+2. Probeer `"gratis school"`. Welke score krijg je, en wat beslist het
+   filter dan?
+3. Probeer `"hoe laat is het"`. De meeste woorden heeft het filter nooit
+   gezien. Wat gebeurt er met zulke woorden?
+4. Zet in `spamwoorden` het woord `school` erbij, drie keer. Wat gebeurt er
+   nu met het bericht uit vraag 1?
+
+<PyRunner initialCode={`spamwoorden = "win nu gratis geld gratis prijs klik nu klik hier voor geld".split()
+gewone_woorden = "zie je morgen op school heb je het huiswerk al kom je nu naar school".split()
+
+spam = {}
+for woord in spamwoorden:
+    if woord in spam:
+        spam[woord] = spam[woord] + 1
+    else:
+        spam[woord] = 1
+gewoon = {}
+for woord in gewone_woorden:
+    if woord in gewoon:
+        gewoon[woord] = gewoon[woord] + 1
+    else:
+        gewoon[woord] = 1
+
+bericht = "klik hier voor je prijs"
+score = 0
+for woord in bericht.split():
+    if woord in spam:
+        score = score + spam[woord]
+    if woord in gewoon:
+        score = score - gewoon[woord]
+print("score:", score)
+if score > 0:
+    print("spam")
+else:
+    print("geen spam")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Score -5, geen spam. `nu` geeft +2 (twee keer in spam) en -1 (één keer in
+   gewone berichten). `je`, `op` en `school` trekken de score verder omlaag.
+2. Score 0: `gratis` geeft +2 en `school` geeft -2. Het filter beslist bij 0
+   op geen spam, want de score is niet groter dan 0. Twijfelt het filter, dan
+   laat het het bericht dus door.
+3. Woorden die het filter nooit zag, staan in geen van beide dictionaries en
+   tellen niet mee. Alleen `het` telt: -1, geen spam.
+4. `school` geeft nu +3 en -2, samen +1 in plaats van -2. De score wordt -2:
+   nog steeds geen spam, maar het scheelde drie punten. Het filter leert van
+   wat je het geeft. Geef je het rare voorbeelden, dan leert het rare dingen.
+
+</details>
+
+## Opdracht: wat telt het zwaarst?
+
+Laat het filter bij elk woord van het bericht printen wat dat woord aan de
+score bijdraagt. Voor `"klik hier voor je prijs"` wordt dat:
+
+```
+klik 2
+hier 1
+voor 1
+je -3
+prijs 1
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de spam-telling van elk woord dat in `spam` staat. `je` mist nog.
+2. Zet een tweede `if` in de loop voor `gewoon`, en print daar het woord met min de gewone telling. Nu staat `je -3` erbij.
+3. Verander het bericht in `"ben je nu op school"`. `nu` staat in allebei, en je ziet hem twee keer: `nu 2` en `nu -1`.
+4. Maak per woord één variabele `bijdrage`: begin op 0, tel de spam-telling erbij en de gewone telling eraf, en print na de twee `if`'s het woord met zijn bijdrage. Nu krijgt `nu` één regel: `nu 1`.
+
+In de editor staan de tellingen uit het onderzoek al klaar, en een loop met één `if`.
+
+<PyRunner initialCode={`spam = {"win": 1, "nu": 2, "gratis": 2, "geld": 2, "prijs": 1, "klik": 2, "hier": 1, "voor": 1}
+gewoon = {
+    "zie": 1, "je": 3, "morgen": 1, "op": 1, "school": 2, "heb": 1,
+    "het": 1, "huiswerk": 1, "al": 1, "kom": 1, "nu": 1, "naar": 1,
+}
+
+bericht = "klik hier voor je prijs"
+for woord in bericht.split():
+    if woord in spam:
+        print(woord, spam[woord])`} />
+
+<details>
+<summary>Tip</summary>
+
+Een woord kan in allebei de dictionaries staan, zoals `nu`. Gebruik daarom
+twee losse `if`'s onder elkaar, geen `elif`: anders telt hij bij `nu` alleen
+de spam.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de loop onder de tellingen in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+bericht = "klik hier voor je prijs"
+for woord in bericht.split():
+    bijdrage = 0
+    if woord in spam:
+        bijdrage = bijdrage + spam[woord]
+    if woord in gewoon:
+        bijdrage = bijdrage - gewoon[woord]
+    print(woord, bijdrage)
+```
+
+Zo zie je waarom het filter beslist wat het beslist. Dat is bij elk systeem
+dat leert een goede vraag: welke stukjes van de invoer gaven de doorslag?
+
+</details>
+
+## Bouw zelf: leer het filter jouw berichten
+
+Vervang de voorbeelden door je eigen: zet in `spamwoorden` de woorden uit
+een paar spamberichten die je zelf kreeg (of verzin ze), en in
+`gewone_woorden` de woorden uit gewone berichten van vrienden. Bedenk daarna
+drie nieuwe berichten die het filter nog nooit zag, en kijk of het ze goed
+indeelt.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. In de editor staat het filter uit het onderzoek, met maar drie woorden spam en drie gewone woorden.
+2. Zet in `spamwoorden` de woorden uit een paar spamberichten, en in `gewone_woorden` die uit gewone berichten.
+3. Bedenk drie nieuwe berichten, en kijk bij elk of het filter het goed indeelt.
+
+<PyRunner initialCode={`spamwoorden = "win nu gratis".split()
+gewone_woorden = "zie je morgen".split()
+
+spam = {}
+for woord in spamwoorden:
+    if woord in spam:
+        spam[woord] = spam[woord] + 1
+    else:
+        spam[woord] = 1
+gewoon = {}
+for woord in gewone_woorden:
+    if woord in gewoon:
+        gewoon[woord] = gewoon[woord] + 1
+    else:
+        gewoon[woord] = 1
+
+bericht = "klik hier voor je prijs"
+score = 0
+for woord in bericht.split():
+    if woord in spam:
+        score = score + spam[woord]
+    if woord in gewoon:
+        score = score - gewoon[woord]
+print("score:", score)
+if score > 0:
+    print("spam")
+else:
+    print("geen spam")`} />
+
+<details>
+<summary>Tip</summary>
+
+Schrijf de voorbeelden in kleine letters en zonder leestekens, want het
+filter vergelijkt hele woorden. Hoe meer voorbeelden, hoe beter het filter
+gewone woorden als `je` en `het` leert herkennen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Een voorbeeld van het begin:
+
+```python
+spamwoorden = "je pakket wacht betaal nu je account is geblokkeerd log nu in".split()
+gewone_woorden = "kom je zaterdag voetballen ik heb je pakket meegenomen".split()
+```
+
+Test bijvoorbeeld `"betaal nu voor je pakket"` (spam) en
+`"heb je zaterdag tijd"` (geen spam). Dat het filter niet altijd gelijk heeft,
+is geen fout in je code. Het weet alleen wat in je voorbeelden stond: met
+`je pakket` in allebei de lijsten twijfelt het bij elk bericht over een
+pakket.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+KeyError: 'gratis'
+```
+
+**Oorzaak:** je telt een woord op dat nog niet in de dictionary staat.
+`telling["gratis"]` bestaat de eerste keer nog niet, dus Python kan er niets
+bij optellen.
+
+**Oplossing:** kijk eerst of het woord er al in staat, en zet het er anders
+in met waarde 1.
+
+```python
+# FOUT
+telling = {}
+for woord in ["gratis", "geld", "gratis"]:
+    telling[woord] = telling[woord] + 1
+
+# GOED
+telling = {}
+for woord in ["gratis", "geld", "gratis"]:
+    if woord in telling:
+        telling[woord] = telling[woord] + 1
+    else:
+        telling[woord] = 1
+```
+
+Meer uitleg: [Dictionaries](site:python/docs/data/11a-dictionaries-basis).
+
+Echte spamfilters tellen ook woorden in voorbeelden, maar rekenen daarmee
+een kans uit in plaats van een score. Het idee is hetzelfde: het filter
+leert van berichten waarvan je het antwoord al weet.
+
+Door naar [de dichtstbijzijnde buur](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur).

@@ -1,0 +1,293 @@
+---
+sidebar_position: 3
+---
+
+# Eerlijk testen
+
+Je voorspeller werkt. Maar hoe goed is hij? Dat lijkt makkelijk te meten:
+laat hem de voorbeelden voorspellen en tel hoeveel hij er goed heeft. Op deze
+pagina zie je waarom dat een oneerlijke toets is, en hoe het wel moet.
+
+:::info
+Je gebruikt hier `voorspel(nieuw, voorbeelden, k)` uit
+[laat de buren stemmen](site:algorithms/docs/ml-afstand/02-k-buren#opdracht-voorspel-met-k).
+Die functie staat in de code hieronder al klaar: klap onder de editor de
+verborgen code open om hem te lezen. Je gebruikt ook slicing uit dat
+project, en `import` uit [Modules](site:python/docs/modules/09d-modules).
+:::
+
+## Voorspel
+
+Een leerling krijgt een week van tevoren de vragen én de antwoorden van een
+toets. Hij haalt een 10. Wat zegt dat cijfer over wat hij kan?
+
+<details>
+<summary>Antwoord</summary>
+
+Bijna niets. Hij kan de antwoorden onthouden hebben zonder iets te
+begrijpen. Of hij de stof kent, merk je pas bij vragen die hij nog nooit
+zag. Met een voorspeller is het net zo.
+
+</details>
+
+## Zo test je niet
+
+Hieronder staan 24 stuks fruit. De code laat de voorspeller elk stuk
+voorspellen, met alle 24 als voorbeelden.
+
+<PyRunner verborgen="knn" initialCode={`fruit = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
+    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
+    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
+    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
+    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
+]
+
+goed = 0
+for maten, soort in fruit:
+    if voorspel(maten, fruit, 1) == soort:
+        goed = goed + 1
+print(goed, "van de", len(fruit), "goed")`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+24 van de 24 goed
+```
+
+</details>
+
+Alles goed. Maar dat komt doordat elk stuk fruit zelf in de voorbeelden
+staat, op afstand 0. Met `k = 1` is het dichtstbijzijnde voorbeeld altijd
+het stuk fruit zelf. Dit is de toets waarvan je de antwoorden al had.
+
+## Zo wel: oefenen en toetsen
+
+Je verdeelt de voorbeelden in twee stapels:
+
+- de **oefenset**: hier leert de voorspeller van, dus dit zijn de voorbeelden
+  waar hij de buren in zoekt;
+- de **toetsset**: die houd je achter. Daarmee test je, want deze stukken
+  fruit heeft de voorspeller nooit gezien.
+
+Voordat je verdeelt, schud je de lijst met `random.shuffle`. Anders komen de
+laatste zes stukken in de toetsset, en dat zijn allemaal citroenen: je toetst
+dan alleen citroenen, en de voorspeller heeft er maar twee om van te leren. `random.seed(3)` zorgt dat het schudden
+elke keer hetzelfde uitpakt, zodat jij dezelfde stapels krijgt als in de
+antwoorden hieronder.
+
+## Onderzoek
+
+1. Draai de code met `k = 1`. Hoeveel van de zes heeft hij goed?
+2. Zet `k` op 3. Wordt het beter?
+3. Zet `k` weer op 1, en verander de seed in 4. Wat gebeurt er met de score?
+4. Zes stukken fruit is een kleine toets. Wat betekent dat voor een score
+   als "5 van de 6"?
+
+<PyRunner verborgen="knn" initialCode={`import random
+
+fruit = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
+    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
+    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
+    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
+    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
+]
+k = 1
+
+random.seed(3)
+random.shuffle(fruit)
+oefen = fruit[:18]
+toets = fruit[18:]
+
+goed = 0
+for maten, soort in toets:
+    if voorspel(maten, oefen, k) == soort:
+        goed = goed + 1
+print(goed, "van de", len(toets), "goed")`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Vijf van de zes. De citroen `(8, 6)` noemt hij een appel. Een appel
+   `(8, 7)` en twee citroenen liggen allemaal op afstand 1, en bij gelijke
+   afstand sorteert `sorted` op de soort: appel komt op alfabet voor
+   citroen. Met één buur beslist dus het toeval van de spelling.
+2. Met `k = 3` heeft hij ze alle zes goed: bij `(8, 6)` stemmen nu twee citroenen mee.
+3. Met seed 4 heeft hij ze alle zes goed, ook met `k = 1`. Er zit dan geen
+   enkele citroen in de toetsset, alleen appels en bananen, en die zijn
+   makkelijk. Dezelfde voorspeller lijkt zo beter dan hij is: de score hangt
+   af van welke stukken fruit toevallig in de toets zitten. In de opdracht
+   hieronder zie je daarom per soort hoe het zit.
+4. Eén stuk fruit meer of minder goed scheelt bij zes al 17 procentpunt. Een
+   kleine toets zegt weinig. Met honderden stukken fruit in de toetsset wordt
+   de score betrouwbaarder.
+
+</details>
+
+## Opdracht: goed per soort
+
+Een score over alles samen kan een probleem verstoppen. Tel daarom per soort
+hoeveel stukken fruit er in de toetsset zitten, en hoeveel daarvan de
+voorspeller goed heeft. Met seed 3 en `k = 1` print je:
+
+```
+banaan 2 van de 2 goed
+appel 2 van de 2 goed
+citroen 1 van de 2 goed
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de soort van elk stuk fruit in de toetsset.
+2. Tel met een dictionary `totaal` hoeveel stukken fruit van elke soort erin zitten, zoals je in het spamfilter woorden telde. Print `totaal` na de loop.
+3. Zet in de loop een `if` die kijkt of `voorspel(maten, oefen, k)` gelijk is aan `soort`, en tel dat in een tweede dictionary `goed`.
+4. Loop na de loop over `totaal`, en print per soort een regel zoals hierboven.
+
+In de editor staan het fruit en het verdelen uit het onderzoek, met een loop over de toetsset.
+
+<PyRunner verborgen="knn" initialCode={`import random
+
+fruit = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
+    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
+    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
+    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
+    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
+]
+k = 1
+
+random.seed(3)
+random.shuffle(fruit)
+oefen = fruit[:18]
+toets = fruit[18:]
+
+for maten, soort in toets:
+    print(soort)`} />
+
+<details>
+<summary>Tip</summary>
+
+Stopt Python bij het printen met een foutmelding over een soort? Een soort die
+hij nooit goed heeft, komt dan niet in `goed`. Zet daarom in `goed` aan het begin elke soort op 0.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de loop onderaan de code in de editor:
+
+{/* niet-draaien: fragment; leunt op toets, oefen, k en voorspel uit de runner erboven */}
+```python
+totaal = {}
+goed = {"appel": 0, "banaan": 0, "citroen": 0}
+for maten, soort in toets:
+    if soort in totaal:
+        totaal[soort] = totaal[soort] + 1
+    else:
+        totaal[soort] = 1
+    if voorspel(maten, oefen, k) == soort:
+        goed[soort] = goed[soort] + 1
+
+for soort in totaal:
+    print(soort, goed[soort], "van de", totaal[soort], "goed")
+```
+
+Nu zie je dat de citroenen het moeilijkst zijn: sommige liggen even dicht bij een appel als bij een andere citroen.
+
+</details>
+
+## Bouw zelf: de luie voorspeller
+
+Een webshop wil voorspellen welke bezoekers iets kopen. Van twintig
+bezoekers kocht er één iets. Een luie voorspeller zegt over iedereen
+`"kijkt"`, zonder ergens naar te kijken.
+
+Schrijf code die uitrekent hoeveel procent de luie voorspeller goed heeft,
+en daarna hoeveel van de kopers hij herkent. Begin zo:
+
+```python
+bezoekers = ["kijkt"] * 19 + ["koopt"]
+```
+
+`["kijkt"] * 19` is een lijst met negentien keer `"kijkt"`, en met `+` plak
+je de koper erachter.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code, en print `bezoekers` om te zien wat erin staat.
+2. Loop over `bezoekers`. De luie voorspeller zegt bij elke bezoeker `"kijkt"`: zet dat in een variabele `voorspeld`. Tel hoe vaak `voorspeld` gelijk is aan wat de bezoeker echt deed.
+3. Reken dat om naar procenten: deel door `len(bezoekers)`, en vermenigvuldig met 100.
+4. Tel ook hoeveel kopers er zijn, en hoeveel daarvan de voorspeller herkent: bij hoeveel kopers `voorspeld` ook `"koopt"` is.
+
+<PyRunner initialCode={`bezoekers = ["kijkt"] * 19 + ["koopt"]`} />
+
+<details>
+<summary>Tip</summary>
+
+Een koper herkennen zijn twee dingen tegelijk: de bezoeker kocht echt, en de
+voorspeller zei ook `"koopt"`. Dat is een `if` in een `if`, of één `if` met
+`and`.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+bezoekers = ["kijkt"] * 19 + ["koopt"]
+
+goed = 0
+kopers = 0
+kopers_herkend = 0
+for echt in bezoekers:
+    voorspeld = "kijkt"
+    if voorspeld == echt:
+        goed = goed + 1
+    if echt == "koopt":
+        kopers = kopers + 1
+        if voorspeld == "koopt":
+            kopers_herkend = kopers_herkend + 1
+
+print(goed / len(bezoekers) * 100, "procent goed")   # 95.0 procent goed
+print(kopers_herkend, "van de", kopers, "kopers herkend")   # 0 van de 1 kopers herkend
+```
+
+95 procent goed, en toch vindt hij geen enkele koper. Als één soort veel
+vaker voorkomt dan de andere, zegt het percentage goed weinig. Kijk dan per
+soort, zoals in de opdracht hierboven. Bij Shopping van CS50 moet je precies
+dat doen.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: random.shuffle([1, 2, 3]) */}
+```
+NameError: name 'random' is not defined. Did you forget to import 'random'?
+```
+
+**Oorzaak:** `random` is een module. Python haalt hem pas op als je erom
+vraagt.
+
+**Oplossing:** zet `import random` bovenaan je code.
+
+```python
+# FOUT
+getallen = [1, 2, 3]
+random.shuffle(getallen)
+
+# GOED
+import random
+getallen = [1, 2, 3]
+random.shuffle(getallen)
+```
+
+Meer uitleg: [Modules](site:python/docs/modules/09d-modules).
+
+Door naar [klaar voor Shopping](site:algorithms/docs/ml-afstand/04-shopping).

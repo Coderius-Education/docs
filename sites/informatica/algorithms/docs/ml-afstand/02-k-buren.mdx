@@ -1,0 +1,306 @@
+---
+sidebar_position: 2
+---
+
+# Laat de buren stemmen
+
+Bij de dichtstbijzijnde buur bepaalde één verkeerd voorbeeld het hele
+antwoord. Dat los je op door niet naar één buur te kijken, maar naar de `k`
+dichtstbijzijnde, bijvoorbeeld de drie dichtstbijzijnde. Die buren stemmen,
+en de soort met de meeste stemmen wint. Dat heet
+**k-nearest neighbors**, of kortweg k-NN.
+
+:::info
+Je gebruikt hier je functie `afstand` uit
+[Welk fruit is dit?](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur),
+`.append()` uit [Lijst-methoden](site:python/docs/data/10b-lijst-methoden),
+tellen met een dictionary uit
+[het spamfilter dat leert](site:algorithms/docs/ml-regels/03-spamfilter-leert#zo-werkt-het),
+en een loop over de sleutels van een dictionary uit
+[Door een dictionary lopen](site:python/docs/data/11b-itereren-dictionaries).
+:::
+
+## Voorspel
+
+```python
+paren = [(3, "appel"), (1, "banaan"), (11, "banaan"), (2, "appel")]
+paren = sorted(paren)
+print(paren)
+print(paren[:2])
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+[(1, 'banaan'), (2, 'appel'), (3, 'appel'), (11, 'banaan')]
+[(1, 'banaan'), (2, 'appel')]
+```
+
+</details>
+
+## Zo werkt het
+
+Twee dingen zijn nieuw.
+
+`sorted` geeft een gesorteerde kopie van een lijst terug. Een lijst tuples
+sorteert hij op het eerste element van elk tuple: hier de afstand. Zijn twee
+afstanden gelijk, dan kijkt hij naar het tweede element.
+
+`paren[:2]` pakt de eerste twee elementen van de lijst. Dat heet
+**slicing**: `paren[:k]` geeft je de eerste `k`. Na het sorteren zijn dat
+precies de `k` dichtstbijzijnde buren.
+
+Het hele idee:
+
+1. Maak een lijst `paren` met voor elk voorbeeld de afstand tot het nieuwe
+   fruit en de soort.
+2. Sorteer, en pak de eerste `k`: de buren.
+3. Tel met een dictionary hoeveel stemmen elke soort krijgt.
+4. De soort met de meeste stemmen wint.
+
+## Onderzoek
+
+In de voorbeelden staat de vergissing uit het vorige project: `(10, 6)`
+heet een banaan.
+
+1. Draai de code met `k = 3`. Wat zijn de buren, en wie wint?
+2. Zet `k` op 1. Wat voorspelt hij nu?
+3. Zet `k` op 2. De stemmen staken. Wie wint er dan?
+4. Zet `k` op 7: alle voorbeelden stemmen mee. Wie wint er, en waarom?
+
+<PyRunner initialCode={`def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+nieuw = (10, 7)
+k = 3
+
+paren = []
+for maten, soort in voorbeelden:
+    paren.append((afstand(nieuw, maten), soort))
+buren = sorted(paren)[:k]
+print("buren:", buren)
+stemmen = {}
+for d, soort in buren:
+    if soort in stemmen:
+        stemmen[soort] = stemmen[soort] + 1
+    else:
+        stemmen[soort] = 1
+print("stemmen:", stemmen)
+winnaar = ""
+meeste = 0
+for soort in stemmen:
+    if stemmen[soort] > meeste:
+        meeste = stemmen[soort]
+        winnaar = soort
+print("Het is een", winnaar)`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. De buren zijn `(1, 'banaan')`, `(2, 'appel')` en `(3, 'appel')`. Appel
+   krijgt twee stemmen en wint, ondanks de vergissing.
+2. Met `k = 1` telt alleen de dichtstbijzijnde buur, de vergissing: banaan.
+3. Banaan en appel krijgen elk één stem. De loop kiest de eerste soort die
+   meer stemmen heeft dan de beste tot nu toe, en neemt een soort die evenveel
+   heeft niet over. Banaan staat als eerste in de dictionary, dus banaan wint.
+   Daarom kies je voor `k` meestal een oneven getal.
+4. Banaan wint met vier tegen drie. Met alle voorbeelden wint de soort waar
+   je de meeste voorbeelden van hebt, wat het nieuwe fruit ook is. Een te
+   grote `k` maakt de voorspeller dom. Een goede `k` zit ertussenin.
+
+</details>
+
+## Bekijk de buren
+
+Afstand is iets wat je ziet. Deze runner tekent de voorbeelden uit het
+onderzoek: elk stuk fruit staat op zijn lengte en breedte, het nieuwe stuk is
+het zwarte kruis, en een stippellijn wijst naar elk van de `k` buren die
+meestemmen. Het tekenen staat in de verborgen code onder de editor.
+
+Verander `nieuw` en `k`, en kijk welke buren er meestemmen. Bij `k = 1` wijst
+er één lijn naar de vergissing `(10, 6)`; bij `k = 3` stemmen er twee appels
+mee.
+
+<PyRunner verborgen="fruit-tekenen" initialCode={`voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+nieuw = (10, 7)
+k = 3
+
+teken_buren(voorbeelden, nieuw, k)`} />
+
+## Opdracht: voorspel met k
+
+Maak van de code een functie `voorspel(nieuw, voorbeelden, k)` die de
+winnaar teruggeeft. Test hem zo:
+
+{/* niet-draaien: fragment; voorspel en voorbeelden schrijft de leerling zelf */}
+```python
+print(voorspel((10, 7), voorbeelden, 1))   # banaan
+print(voorspel((10, 7), voorbeelden, 3))   # appel
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `voorspel` geeft de `k` buren terug, nog niet de winnaar.
+2. Tel met een dictionary `stemmen` hoeveel buren elke soort heeft, en geef `stemmen` terug.
+3. Zoek de soort met de meeste stemmen: loop over `stemmen`, en onthoud met een `if` de soort met het hoogste aantal, zoals je bij de dichtstbijzijnde buur de kleinste afstand onthield. Geef die soort terug.
+
+In de editor staat `voorspel` met het eerste stuk: de buren zoeken.
+
+<PyRunner initialCode={`def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def voorspel(nieuw, voorbeelden, k):
+    paren = []
+    for maten, soort in voorbeelden:
+        paren.append((afstand(nieuw, maten), soort))
+    buren = sorted(paren)[:k]
+    return buren
+
+voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+print(voorspel((10, 7), voorbeelden, 1))
+print(voorspel((10, 7), voorbeelden, 3))`} />
+
+<details>
+<summary>Tip</summary>
+
+Een soort die nog niet in `stemmen` staat, zet je op 1. Staat hij er al, dan
+tel je er 1 bij op. Voor de winnaar onthoud je de soort met de meeste
+stemmen, zoals je bij de dichtstbijzijnde buur de kleinste afstand onthield.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def afstand(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def voorspel(nieuw, voorbeelden, k):
+    paren = []
+    for maten, soort in voorbeelden:
+        paren.append((afstand(nieuw, maten), soort))
+    buren = sorted(paren)[:k]
+    stemmen = {}
+    for d, soort in buren:
+        if soort in stemmen:
+            stemmen[soort] = stemmen[soort] + 1
+        else:
+            stemmen[soort] = 1
+    winnaar = ""
+    meeste = 0
+    for soort in stemmen:
+        if stemmen[soort] > meeste:
+            meeste = stemmen[soort]
+            winnaar = soort
+    return winnaar
+
+voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+print(voorspel((10, 7), voorbeelden, 1))   # banaan
+print(voorspel((10, 7), voorbeelden, 3))   # appel
+```
+
+Deze functie gebruik je in de volgende projecten weer.
+
+</details>
+
+## Bouw zelf: een derde soort
+
+Zet citroenen bij de voorbeelden: vier citroenen van ongeveer 8 of 9
+centimeter lang en 5 centimeter breed. Zoek met je functie `voorspel` een
+stuk fruit waarbij `k = 1` en `k = 3` een ander antwoord geven.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. `voorspel` uit de opdracht staat klaar in de verborgen code onder de editor.
+2. Zet vier citroenen in `voorbeelden`.
+3. Kies een stuk fruit, en print wat `voorspel` zegt met `k = 1` en met `k = 3`. Probeer andere stukken tot de twee verschillen.
+
+<PyRunner verborgen="knn" initialCode={`voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+]
+print(voorspel((10, 7), voorbeelden, 1))`} />
+
+<details>
+<summary>Tip</summary>
+
+Kies een stuk fruit dat vlak bij één appel ligt, maar met meer citroenen
+dan appels iets verder weg. Varieer de maten van je citroenen een beetje,
+zodat ze niet allemaal op dezelfde plek liggen.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor; `voorspel` blijft in de verborgen code.
+
+{/* draaien-met: blok-erboven */}
+```python
+voorbeelden = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((10, 6), "banaan"),
+    ((8, 5), "citroen"), ((9, 5), "citroen"),
+    ((9, 6), "citroen"), ((8, 4), "citroen"),
+]
+print(voorspel((7, 6), voorbeelden, 1))   # appel
+print(voorspel((7, 6), voorbeelden, 3))   # citroen
+```
+
+Bij `k = 1` wint de appel
+`(7, 7)`, op afstand 1. Bij `k = 3` stemmen ook de citroenen `(8, 5)` en
+`(9, 6)` mee, allebei op afstand 2. Welk antwoord klopt, weet je pas als je
+het fruit zelf bekijkt. Hoe je kiest welke `k` het beste werkt, zie je in
+[eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen).
+
+Kies je zelf een voorbeeld, let dan op gelijke afstanden. Staan de derde en
+de vierde buur even ver weg, dan kiest `sorted` op alfabet, en dan wint
+"appel" van "citroen" zonder dat het fruit erop lijkt.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: paren = []\nparen.append(3, "appel") */}
+```
+TypeError: list.append() takes exactly one argument (2 given)
+```
+
+**Oorzaak:** `append` zet één ding in een lijst. Met
+`paren.append(3, "appel")` geef je er twee: een getal en een tekst.
+
+**Oplossing:** maak er één tuple van, met een extra paar haakjes.
+
+{/* niet-draaien: fragment; leunt op paren uit de runner */}
+```python
+# FOUT
+paren.append(3, "appel")
+
+# GOED
+paren.append((3, "appel"))
+```
+
+Door naar [eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen).

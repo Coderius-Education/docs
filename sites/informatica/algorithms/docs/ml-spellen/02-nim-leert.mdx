@@ -1,0 +1,385 @@
+---
+sidebar_position: 2
+---
+
+# Nim die van zichzelf leert
+
+In het vorige project kreeg `slim` de truc van Nim mee, als functie. Nu
+krijgt de computer geen truc. Hij speelt tweeduizend keer tegen
+zichzelf, en onthoudt na elk spel welke zetten de winnaar deed en welke de
+verliezer. Zetten van de winnaar krijgen een punt erbij, zetten van de
+verliezer een punt eraf. Zo leert hij, zonder dat iemand het hem vertelt,
+welke zet bij elke stapel de beste is. Dit heet **reinforcement learning**:
+leren van beloning en straf.
+
+:::info
+Je gebruikt hier het spel en de while-loop uit
+[Nim met een vaste strategie](site:algorithms/docs/ml-spellen/01-nim-strategie),
+tuples uit [Tuples](site:python/docs/data/tuples), tellen met een dictionary
+uit [een spamfilter dat leert](site:algorithms/docs/ml-regels/03-spamfilter-leert),
+en `random.seed` uit
+[eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen#zo-wel-oefenen-en-toetsen).
+:::
+
+## Voorspel
+
+```python
+score = {(10, 1): 4, (10, 2): -1, (10, 3): -3}
+
+print(score[(10, 2)])
+
+beste = 1
+for pak in [1, 2, 3]:
+    if score[(10, pak)] > score[(10, beste)]:
+        beste = pak
+print(beste)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+-1
+1
+```
+
+`score[(10, 2)]` is de score van de zet "pak 2 als er 10 liggen". De loop
+zoekt de zet met de hoogste score, en dat is pak 1, met 4.
+
+</details>
+
+## Zo werkt het
+
+Nieuw is dat de sleutel van een dictionary een tuple is. Bij het spamfilter
+was de sleutel één woord; hier is hij `(stapel, pak)`: hoeveel er liggen, en
+hoeveel de speler pakt. `score[(10, 1)]` is dus de score van de zet "pak 1 als
+er 10 liggen". De waarde zegt hoe goed die zet tot nu toe uitpakte.
+
+Een lijst kan geen sleutel zijn. Een lijst kun je later nog veranderen, en dan
+zou de dictionary zijn sleutel niet meer terugvinden. Een tuple kan niet meer
+veranderen, en mag dus wel.
+
+`zet not in score` is het omgekeerde van `zet in score`: het is waar als de
+zet nog geen sleutel is. Dan zet de loop hem eerst op 0.
+
+Het spelen staat al klaar, in de verborgen code onder de editor:
+
+- `speel_tegen_jezelf(score, ontdekken)` speelt één spel, met twee spelers
+  `"a"` en `"b"` die allebei dezelfde `score` gebruiken. Hij geeft de zetten
+  van elke speler terug, en wie er verloor.
+- Bij elke beurt kiest `kies` meestal de zet met de hoogste score. Maar bij
+  kans `ontdekken` kiest hij een willekeurige zet, om ook iets nieuws te
+  proberen.
+- `beste_zet(score, stapel)` geeft het aantal lucifers van de zet met de
+  hoogste score: een getal, zoals `slim` dat ook geeft.
+
+Het leren zie je in de editor. Na elk spel krijgt elke zet van de winnaar een
+punt erbij, en elke zet van de verliezer een punt eraf. Een zet die de
+computer nog nooit deed, zet hij eerst op 0.
+
+## Onderzoek
+
+1. Draai de code. Vergelijk wat hij geleerd heeft met `slim` uit het vorige
+   project. Bij welke stapels doet hij hetzelfde?
+2. Bij 9 lucifers pakt hij 2, en `slim` pakt 1. Is dat erg?
+3. Print onderaan `score[(10, 1)]` en `score[(10, 3)]`. Wat betekenen die
+   getallen?
+4. Zet `ontdekken` op 1: nu kiest hij altijd een willekeurige zet. Wat leert
+   hij bij 10 lucifers?
+5. Zet `ontdekken` op 0. Leert hij nu nog iets?
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+random.seed(1)
+score = {}
+ontdekken = 0.2
+
+for spel in range(2000):
+    zetten, verliezer = speel_tegen_jezelf(score, ontdekken)
+    for speler in zetten:
+        for zet in zetten[speler]:
+            if zet not in score:
+                score[zet] = 0
+            if speler == verliezer:
+                score[zet] = score[zet] - 1
+            else:
+                score[zet] = score[zet] + 1
+
+for stapel in range(2, 11):
+    print(stapel, "lucifers: pak", beste_zet(score, stapel))`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+2 lucifers: pak 1
+3 lucifers: pak 2
+4 lucifers: pak 3
+5 lucifers: pak 1
+6 lucifers: pak 1
+7 lucifers: pak 2
+8 lucifers: pak 3
+9 lucifers: pak 2
+10 lucifers: pak 1
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Bij elke stapel behalve 9 pakt hij precies wat `slim` pakt. Waar je kunt
+   winnen, pakt hij genoeg om een viervoud plus 1 over te laten. Niemand heeft hem dat verteld. Hij
+   heeft het gevonden door te spelen.
+2. Nee. Bij 5 en 9 verlies je van een goede tegenstander, wat je ook doet.
+   Alle drie de zetten hebben daar een negatieve score, en welke het hoogst
+   uitkomt, is toeval. Dat hij bij 5 net als `slim` 1 pakt, is ook toeval:
+   de scores zijn daar -459, -460 en -459, en bij een gelijke stand houdt
+   `beste_zet` de eerste.
+3. `score[(10, 1)]` is 971 en `score[(10, 3)]` is -76. Pak 1 bij 10 leidde
+   meestal tot winst, pak 3 vaker tot verlies. De computer heeft pak 1
+   veel vaker gespeeld, omdat het de beste zet leek; daarom is het getal zo
+   groot.
+4. Dan leert hij bij 10 lucifers pak 3, en dat is fout. Hij leert nu welke
+   zet het vaakst wint als daarna beide spelers willekeurig verder spelen. Dan
+   wint pak 3 net iets vaker: 52 procent, tegen 49 voor pak 1. Maar zo speelt
+   niemand die de truc kent. Pas als hij tijdens het leren zijn eigen beste
+   zetten speelt, leert hij wat werkt tegen een tegenstander die goed speelt,
+   en dat is hijzelf.
+5. Ja, ook zonder ontdekken leert hij dit spel. Een zet die verliest, krijgt
+   een punt eraf, en dan probeert hij de volgende keer een andere. In een
+   groter spel is dat niet genoeg: een zet die hij nooit probeert, krijgt
+   nooit een kans om te laten zien dat hij goed is. Daarom ontdekt een lerend
+   programma meestal een beetje.
+
+</details>
+
+## Opdracht: speel tegen de geleerde strategie
+
+Laat de geleerde strategie 100 keer spelen tegen `willekeurig` uit het vorige
+project, met 10 lucifers, waarbij de geleerde strategie begint. Hoe vaak wint
+hij?
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij leert, en print wat hij bij 10 lucifers pakt.
+2. Schrijf een functie `speel(stapel)` zoals in het vorige project, met `beste_zet(score, stapel)` in plaats van `slim(stapel)`.
+3. Laat hem 100 keer spelen, en tel hoe vaak de geleerde strategie wint.
+
+In de editor staan het leren uit het onderzoek en `willekeurig`.
+
+:::caution
+Je `speel` heeft een while-loop. Wordt de stapel niet in elke beurt kleiner,
+dan stopt hij nooit en loopt het tabblad vast, net als bij
+[Nim met een vaste strategie](site:algorithms/docs/ml-spellen/01-nim-strategie#zo-werkt-het).
+Kopieer je code eerst naar een kladblok.
+:::
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+random.seed(1)
+score = {}
+ontdekken = 0.2
+
+for spel in range(2000):
+    zetten, verliezer = speel_tegen_jezelf(score, ontdekken)
+    for speler in zetten:
+        for zet in zetten[speler]:
+            if zet not in score:
+                score[zet] = 0
+            if speler == verliezer:
+                score[zet] = score[zet] - 1
+            else:
+                score[zet] = score[zet] + 1
+
+def willekeurig(stapel):
+    return random.randint(1, min(3, stapel))
+
+print("bij 10 lucifers pakt hij", beste_zet(score, 10))`} />
+
+<details>
+<summary>Tip</summary>
+
+Laat `score` staan: daar zit in wat de computer leerde. Wint hij bijna nooit,
+kijk dan of `speel` de stapel na de zet van de geleerde strategie wel kleiner
+maakt: `beste_zet` geeft alleen het aantal lucifers terug.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit komt onder de code van de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+def speel(stapel):
+    beurt = "geleerd"
+    while stapel > 0:
+        if beurt == "geleerd":
+            stapel = stapel - beste_zet(score, stapel)
+            beurt = "willekeurig"
+        else:
+            stapel = stapel - willekeurig(stapel)
+            beurt = "geleerd"
+    return beurt
+
+gewonnen = 0
+for spel in range(100):
+    if speel(10) == "geleerd":
+        gewonnen = gewonnen + 1
+print("geleerd wint", gewonnen, "van de 100")   # geleerd wint 100 van de 100
+```
+
+Hij wint ze alle 100, net als `slim`. Bij 10 lucifers pakt hij 1, en daarna
+laat hij steeds een viervoud plus 1 over.
+
+</details>
+
+## Bouw zelf: hoeveel spellen heeft hij nodig?
+
+Tweeduizend spellen is veel. Zoek uit hoeveel spellen de computer nodig heeft
+om alles goed te leren. Probeer 1, 2, 5, 10, 20 en 50 spellen, en tel bij elk
+aantal bij hoeveel stapels hij iets anders kiest dan `slim`. Kijk alleen naar
+de stapels waar je kunt winnen: 2, 3, 4, 6, 7, 8 en 10. Gebruik bij elk aantal
+opnieuw `random.seed(1)` en een lege `score`.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet één spel tegen zichzelf, met de zetten van elke speler en wie er verloor.
+2. Zet het leren uit de opdracht eronder, voor 10 spellen. Print voor elke stapel van 2 tot en met 10 wat `beste_zet` kiest en wat `slim` kiest.
+3. Tel bij hoeveel van de stapels 2, 3, 4, 6, 7, 8 en 10 ze verschillen.
+4. Maak van het leren een functie `leer(spellen)` die `score` teruggeeft, met `random.seed(1)` en een lege `score` erin. Roep hem aan voor 1, 2, 5, 10, 20 en 50 spellen.
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+random.seed(1)
+score = {}
+zetten, verliezer = speel_tegen_jezelf(score, 0.2)
+print(zetten, verliezer)`} />
+
+<details>
+<summary>Tip</summary>
+
+Staat `random.seed(1)` buiten `leer`, dan gaat elk aantal verder met andere
+toevalsgetallen dan het vorige, en kun je de uitkomsten niet vergelijken.
+Zet hem daarom als eerste regel in de functie.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor. Het spelen blijft in de verborgen code.
+
+{/* draaien-met: blok-erboven */}
+```python
+import random
+
+def leer(spellen):
+    random.seed(1)
+    score = {}
+    for spel in range(spellen):
+        zetten, verliezer = speel_tegen_jezelf(score, 0.2)
+        for speler in zetten:
+            for zet in zetten[speler]:
+                if zet not in score:
+                    score[zet] = 0
+                if speler == verliezer:
+                    score[zet] = score[zet] - 1
+                else:
+                    score[zet] = score[zet] + 1
+    return score
+
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+for spellen in [1, 2, 5, 10, 20, 50]:
+    score = leer(spellen)
+    fout = 0
+    for stapel in [2, 3, 4, 6, 7, 8, 10]:
+        if beste_zet(score, stapel) != slim(stapel):
+            fout = fout + 1
+    print(spellen, "spellen:", fout, "fout")
+```
+
+```
+1 spellen: 2 fout
+2 spellen: 2 fout
+5 spellen: 1 fout
+10 spellen: 0 fout
+20 spellen: 0 fout
+50 spellen: 0 fout
+```
+
+Met deze seed heeft hij er na 1 en 2 spellen nog twee fout, na 5 nog één, en
+vanaf 10 spellen geen enkele meer. Met een andere seed duurt het soms
+langer, tot een spel of honderd, maar ook dat is weinig. Het gaat snel omdat Nim met 10
+lucifers een klein spel is: er zijn maar 27 zetten om te onthouden. Bij
+schaken zijn er meer standen dan er zandkorrels op aarde zijn, en past zo'n
+tabel nergens.
+
+</details>
+
+## Aan de slag met Nim
+
+Nu ben je klaar voor [Nim](https://cs50.harvard.edu/ai/projects/4/nim/) van
+CS50 AI. Het idee is wat je hier deed: een tabel met een waarde voor elke
+stand en elke zet, meestal de beste zet spelen en soms een willekeurige, en
+na elk spel de waarden bijwerken. Vier dingen zijn anders:
+
+- Er zijn vier stapels in plaats van één, en je mag van één stapel zoveel
+  pakken als je wilt. Een zet is dus welke stapel en hoeveel.
+- Een stand is een lijst van vier getallen. Als sleutel moet het een tuple
+  zijn: met `tuple(stand)` maak je er een van. Vergeet je dat, dan krijg je
+  de fout hieronder.
+- Een waarde gaat niet met hele punten omhoog of omlaag. Hij schuift telkens
+  een stukje op, met een formule uit het college, die ook kijkt naar de
+  beste zet daarna.
+- Het spel en het spelen staan al klaar. Jij schrijft de functies die de
+  tabel lezen, bijwerken en een zet kiezen.
+
+Lees de opdracht helemaal door voordat je begint, en kijk in de code die je
+krijgt hoe een stand en een zet eruitzien.
+
+Een computer kan een spel ook zonder te leren goed spelen: door alle zetten
+vooruit door te rekenen. Dat doet minimax, en daarmee win je bij
+Tic-Tac-Toe van CS50.
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+TypeError: unhashable type: 'list'
+```
+
+**Oorzaak:** je gebruikt een lijst als sleutel van de dictionary. Een sleutel
+mag niet kunnen veranderen, en een lijst kan dat wel.
+
+**Oplossing:** gebruik een tuple, met ronde haakjes.
+
+```python
+# FOUT
+score = {}
+score[[10, 1]] = 0
+
+# GOED
+score = {}
+score[(10, 1)] = 0
+```
+
+Meer uitleg: [Zo werkt het](#zo-werkt-het).
+
+Door naar [minimax](site:algorithms/docs/minimax/01-concept), en daarna naar
+[de buren van een vakje](site:algorithms/docs/ml-zoeken/01-buren).
