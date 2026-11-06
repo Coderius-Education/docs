@@ -78,6 +78,8 @@ export interface Werkwoord {
   voorbeeld: string;
 }
 export interface Denkvaardigheid extends Benoemd {
+  /** Eén of twee zinnen: wat je doet, en wat je oplevert. */
+  omschrijving: string;
   werkwoorden: Werkwoord[];
 }
 export interface Moeilijkheid extends Benoemd {

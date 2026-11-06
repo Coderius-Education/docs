@@ -257,7 +257,11 @@ gelijk), een pagina `/leerdoelen/niveau-<n>` per niveau, bij meer niveaus
 `/leerdoelen/vergelijken` met de niveaus naast elkaar, een link in de footer, en na de build `leerdoelen.json` in de
 root van de cursus voor coderius.nl. Een fout in het bestand stopt de build.
 De denkvaardigheden, de cijfertabel, het sjabloon en de vuistregels staan in
-`packages/shared/leerdoelen/bloom.json`; `leerdoelen/index.js` leest en
+`packages/shared/leerdoelen/bloom.json`. Elke denkvaardigheid heeft een
+`omschrijving` (wat je doet, en bij analyseren, evalueren en creëren wat je
+oplevert: een uitleg, een keuze met een reden, iets nieuws), en elk werkwoord
+hoort bij één denkvaardigheid; evalueren heeft alleen beoordelen
+(`leerdoelen.test.ts`); `leerdoelen/index.js` leest en
 rekent (`leesLeerdoelen`, `cijferVoor`, `sjabloonZin`, `moeilijkheidVoorstel`),
 zodat pagina en nakijker hetzelfde zeggen. De nakijker van een cursus maakt
 zijn concepten met `leerdoelenNaarConfig` (`packages/checker`); een rij zonder

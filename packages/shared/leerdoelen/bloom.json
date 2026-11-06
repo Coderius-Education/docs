@@ -3,6 +3,7 @@
     {
       "id": "onthouden",
       "label": "Onthouden",
+      "omschrijving": "Je haalt op wat je eerder zag of deed, zonder dat je het per se begrijpt.",
       "werkwoorden": [
         { "werkwoord": "Benoemen", "voorbeeld": "Hoe heet …, maar niet per se begrijpen" },
         { "werkwoord": "Definiëren", "voorbeeld": "Wat is de definitie van …" },
@@ -14,6 +15,7 @@
     {
       "id": "begrijpen",
       "label": "Begrijpen",
+      "omschrijving": "Je zegt in je eigen woorden wat code doet en waarom.",
       "werkwoorden": [
         {
           "werkwoord": "Toelichten of uitleggen",
@@ -26,19 +28,28 @@
     {
       "id": "toepassen",
       "label": "Toepassen",
+      "omschrijving": "Je gebruikt wat je geleerd hebt in je eigen project, ook als je het moet aanpassen of combineren.",
       "werkwoorden": [
         { "werkwoord": "Uitleggen", "voorbeeld": "De leerling kan het zelf uitleggen" },
         {
           "werkwoord": "Manipuleren",
           "voorbeeld": "Je past bestaande voorbeelden aan op een relevante manier voor je project"
+        },
+        {
+          "werkwoord": "Integreren",
+          "voorbeeld": "Concepten uit verschillende lessen samen laten werken in je project"
         }
       ]
     },
     {
       "id": "analyseren",
       "label": "Analyseren",
+      "omschrijving": "Je haalt iets uit elkaar: uit welke delen het bestaat, hoe die samenhangen en waarin ze verschillen. Je levert een uitleg op, nog geen oordeel.",
       "werkwoorden": [
-        { "werkwoord": "Integreren", "voorbeeld": "Concepten samenvoegen tot iets nieuws" },
+        {
+          "werkwoord": "Vergelijken",
+          "voorbeeld": "Twee oplossingen naast elkaar leggen en zeggen waarin ze verschillen"
+        },
         {
           "werkwoord": "Ordenen of classificeren",
           "voorbeeld": "Inrichting van het project, de bestanden, enzovoort"
@@ -52,21 +63,18 @@
     {
       "id": "evalueren",
       "label": "Evalueren",
+      "omschrijving": "Je oordeelt: je toetst opties aan een norm en kiest. Je levert een keuze met een reden op.",
       "werkwoorden": [
-        { "werkwoord": "Beredeneren", "voorbeeld": "Tijdens het mondeling" },
         {
-          "werkwoord": "Betogen of overwegen",
-          "voorbeeld": "Hoe ben je tot deze keuze of dit ontwerp gekomen?"
-        },
-        {
-          "werkwoord": "Doceren",
-          "voorbeeld": "Kunnen uitleggen zodat een beginner het ook snapt"
+          "werkwoord": "Beoordelen",
+          "voorbeeld": "Je weegt opties af tegen een norm of een set standaarden, en maakt een weloverwogen keuze"
         }
       ]
     },
     {
       "id": "creëren",
       "label": "Creëren",
+      "omschrijving": "Je maakt iets wat er nog niet was, of maakt van een bestaande oplossing een betere. Je levert iets nieuws op.",
       "werkwoorden": [
         {
           "werkwoord": "Creëren of innoveren",

@@ -143,6 +143,17 @@ describe('waarschuwingen', () => {
   it('vindt "de leerling" in lestekst', () => {
     expect(namen('Zo leert de leerling variabelen kennen.')).toContain('leerling-vorm');
   });
+
+  it('laat "de leerling" staan in docentmateriaal, ook op de didactiek-site', () => {
+    const zin = 'Zo leert de leerling variabelen kennen.';
+    const op = (bestand: string) =>
+      controleer(zin, { bestand })
+        .map((m) => m.naam)
+        .includes('leerling-vorm');
+    expect(op('sites/informatica/didactiek/docs/constructive-alignment.md')).toBe(false);
+    expect(op('sites/informatica/web/src/pages/docenten.mdx')).toBe(false);
+    expect(op('sites/informatica/web/docs/html/intro.md')).toBe(true);
+  });
 });
 
 describe('uitzonderingen', () => {

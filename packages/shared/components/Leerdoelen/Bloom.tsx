@@ -51,6 +51,7 @@ export default function Bloom({ leerdoelen }: { leerdoelen: Leerdoelen }): React
                   {i === 0 && (
                     <th scope="rowgroup" rowSpan={d.werkwoorden.length}>
                       {d.label}
+                      <span className={styles.omschrijving}>{d.omschrijving}</span>
                     </th>
                   )}
                   <td>{w.werkwoord}</td>
@@ -61,6 +62,13 @@ export default function Bloom({ leerdoelen }: { leerdoelen: Leerdoelen }): React
           ))}
         </table>
       </div>
+
+      <p>
+        Analyseren, evalueren en creëren liggen dicht bij elkaar. Het verschil zit in wat je
+        oplevert. Bij analyseren is dat een uitleg: hoe zit het in elkaar, en waarin verschillen
+        twee oplossingen? Bij evalueren is het een oordeel: welke oplossing is beter, volgens welke
+        norm, en waarom kies je hem? Bij creëren is het iets nieuws dat er eerst niet was.
+      </p>
 
       <h3>Tijdens de lessen</h3>
       <p>Ook in de les let je docent op je denkvaardigheid:</p>
@@ -107,9 +115,9 @@ export default function Bloom({ leerdoelen }: { leerdoelen: Leerdoelen }): React
           .replace('$CIJFER', '…')}
       </p>
       <p>
-        Bijvoorbeeld: je gebruikt bij elk onderwerp een concept op gevorderd, en je voegt concepten
-        samen tot iets nieuws. Dat is analyseren op gevorderd, en daar hoort een{' '}
-        {cijferTekst(cijferVoor('analyseren', 'gevorderd'))} bij.
+        Bijvoorbeeld: je gebruikt bij elk onderwerp een concept op gevorderd, en je legt twee
+        oplossingen naast elkaar en zegt waarin ze verschillen. Dat is analyseren op gevorderd, en
+        daar hoort een {cijferTekst(cijferVoor('analyseren', 'gevorderd'))} bij.
       </p>
 
       <h3>Vuistregels</h3>

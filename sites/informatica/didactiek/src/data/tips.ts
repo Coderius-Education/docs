@@ -72,4 +72,25 @@ export const tips: Tip[] = [
     },
     detailPad: '/bronnen/toetsing-domein-b',
   },
+  {
+    slug: 'constructive-alignment',
+    term: 'Leerdoel, les en beoordeling op één lijn',
+    categorie: 'Beoordelen',
+    termen: [
+      'constructive alignment',
+      'leerdoelen',
+      'lesactiviteit',
+      'beoordeling',
+      'backwash',
+      'Biggs',
+    ],
+    samenvatting:
+      'Schrijf eerst op wat een leerling aan het eind kan, laat de les precies dat oefenen, en beoordeel precies dat.',
+    paper: {
+      titel: 'Enhancing teaching through constructive alignment',
+      auteurs: 'Biggs',
+      jaar: 1996,
+    },
+    detailPad: '/bronnen/constructive-alignment',
+  },
 ];
