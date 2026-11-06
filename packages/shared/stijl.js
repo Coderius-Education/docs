@@ -372,7 +372,8 @@ const REGELS = [
     naam: 'leerling-vorm',
     niveau: 'waarschuwing',
     // Niet op docentmateriaal: §15 schrijft daar juist "je leerlingen" voor.
-    nietIn: /voor-de-docent|docenten\.mdx?$/,
+    // De didactiek-site is helemaal voor docenten (zijn CLAUDE.md).
+    nietIn: /voor-de-docent|docenten\.mdx?$|sites\/[^/]+\/didactiek\//,
     zoek: (proza) =>
       treffers(
         proza,

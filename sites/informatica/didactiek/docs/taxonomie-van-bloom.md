@@ -32,6 +32,18 @@ indeling.
 3. De rangorde is minder strikt. De categorieën lopen op in complexiteit, maar
    ze mogen elkaar overlappen.
 
+De bovenste drie liggen het dichtst bij elkaar. Krathwohl omschrijft ze zo:
+
+- **Analyseren** is iets in zijn delen uit elkaar halen, en zien hoe die
+  delen met elkaar en met het geheel samenhangen.
+- **Evalueren** is een oordeel geven op grond van criteria en normen.
+- **Creëren** is delen samenvoegen tot een nieuw, samenhangend geheel, of een
+  eigen product maken.
+
+Het verschil zit dus in wat de leerling oplevert: een uitleg van hoe iets in
+elkaar zit, een oordeel met een norm erbij, of iets nieuws. Toepassen ligt
+eronder: een bekende werkwijze uitvoeren of gebruiken in een gegeven situatie.
+
 Krathwohl laat zien dat je met die tabel lesdoelen, lesactiviteiten en toetsen
 naast elkaar kunt leggen. Dan zie je of ze bij elkaar passen, en of een cursus
 bijna alleen op onthouden toetst terwijl de doelen hoger liggen.
@@ -48,11 +60,19 @@ Into Practice, 41(4), 212–218.
 - De denkvaardigheid is de tweede as: wat de leerling met die concepten kan.
   De docent ziet hem in het project, in de les en in het mondeling.
 - Het cijfer staat waar die twee elkaar kruisen. Een concept vaak gebruiken
-  maakt de denkvaardigheid niet hoger; een concept uitleggen, verbeteren of
-  combineren tot iets nieuws wel.
+  maakt de denkvaardigheid niet hoger; twee oplossingen vergelijken, een keuze
+  onderbouwen tegen een norm of er iets nieuws mee maken wel.
+- Bij elke denkvaardigheid staan werkwoorden, en elk werkwoord hoort bij één
+  trede. Concepten samen laten werken in je project (integreren) is toepassen,
+  twee oplossingen naast elkaar leggen (vergelijken) is analyseren, en bij
+  evalueren staat alleen beoordelen: opties afwegen tegen een norm of een set
+  standaarden, en een weloverwogen keuze maken. Zo wijst elk werkwoord naar
+  wat de leerling oplevert.
 - De nakijker stelt de moeilijkheid voor uit de gebruikte concepten. De
   denkvaardigheid kiest de docent zelf, want die zie je niet aan de code.
 
 De tabel met denkvaardigheden, voorbeelden en cijfers staat bij elke cursus op
 de pagina Leerdoelen, bijvoorbeeld
-[Leerdoelen bij Webontwikkeling](site:web/leerdoelen#bloom).
+[Leerdoelen bij Webontwikkeling](site:web/leerdoelen#bloom). Hoe leerdoel, les
+en beoordeling daar op elkaar aansluiten, staat bij
+[Leerdoel, les en beoordeling op één lijn](site:didactiek/bronnen/constructive-alignment).

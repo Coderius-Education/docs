@@ -533,6 +533,44 @@ describe('andersDan: wat in de vergelijking opvalt', () => {
   });
 });
 
+describe('de werkwoorden bij de denkvaardigheden', () => {
+  // Docenten vonden analyseren, evalueren en creëren lastig uit elkaar te
+  // houden. Integreren (concepten samen laten werken) is toepassen,
+  // vergelijken is analyseren, en evalueren heeft alleen nog beoordelen:
+  // opties afwegen tegen een norm en kiezen. Beredeneren, betogen en doceren
+  // stonden er ook, en leken op uitleggen of op analyseren.
+  const bij = (id: string) =>
+    BLOOM.denkvaardigheden.find((d) => d.id === id)?.werkwoorden.map((w) => w.werkwoord);
+
+  it('evalueren is alleen beoordelen, tegen een norm', () => {
+    expect(bij('evalueren')).toEqual(['Beoordelen']);
+    const beoordelen = BLOOM.denkvaardigheden.find((d) => d.id === 'evalueren')?.werkwoorden[0];
+    expect(beoordelen?.voorbeeld).toMatch(/norm/);
+  });
+
+  it('integreren is toepassen, en vergelijken is analyseren', () => {
+    expect(bij('toepassen')).toContain('Integreren');
+    expect(bij('analyseren')).toContain('Vergelijken');
+    expect(bij('analyseren')).not.toContain('Integreren');
+  });
+
+  it('elk werkwoord hoort bij één denkvaardigheid', () => {
+    const alle = BLOOM.denkvaardigheden.flatMap((d) => d.werkwoorden.map((w) => w.werkwoord));
+    expect(new Set(alle).size).toBe(alle.length);
+  });
+
+  it('elke denkvaardigheid zegt wat je doet, en analyseren, evalueren en creëren wat je oplevert', () => {
+    for (const d of BLOOM.denkvaardigheden) expect(d.omschrijving.length).toBeGreaterThan(20);
+    const levert = (id: string) =>
+      BLOOM.denkvaardigheden.find((d) => d.id === id)?.omschrijving.match(/levert (.*?) op\b/)?.[1];
+    expect([levert('analyseren'), levert('evalueren'), levert('creëren')]).toEqual([
+      'een uitleg',
+      'een keuze met een reden',
+      'iets nieuws',
+    ]);
+  });
+});
+
 describe('cijfer volgens het beoordelingsblad', () => {
   it('is de tabel van het tabblad Beoordeling', () => {
     // Rij per denkvaardigheid: niet aan basis voldaan, basis, gevorderd.

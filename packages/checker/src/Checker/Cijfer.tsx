@@ -77,10 +77,12 @@ export function Cijfer({
       </fieldset>
       {bloom && (
         <p className={`${styles.hulp} ${hoofd.noPrint}`}>
-          {BLOOM.denkvaardigheden
-            .find((d) => d.id === bloom)
-            ?.werkwoorden.map((w) => `${w.werkwoord}: ${w.voorbeeld}`)
-            .join(' · ')}
+          {(() => {
+            const d = BLOOM.denkvaardigheden.find((x) => x.id === bloom);
+            if (!d) return null;
+            const werkwoorden = d.werkwoorden.map((w) => `${w.werkwoord}: ${w.voorbeeld}`);
+            return [d.omschrijving, ...werkwoorden].join(' · ');
+          })()}
         </p>
       )}
 

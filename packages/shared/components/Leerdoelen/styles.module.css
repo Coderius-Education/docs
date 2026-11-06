@@ -67,6 +67,20 @@
   padding-left: 1.1rem;
 }
 
+/* Bij de denkvaardigheden: de naam vet, de omschrijving eronder gewoon. */
+.tabel tbody th[scope="rowgroup"] {
+  text-align: left;
+  width: 32%;
+}
+
+.omschrijving {
+  display: block;
+  margin-top: 0.25rem;
+  font-weight: normal;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.875rem;
+}
+
 .toelichting {
   display: block;
   color: var(--ifm-color-emphasis-700);
