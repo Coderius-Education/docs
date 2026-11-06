@@ -138,6 +138,31 @@ appel 2 van de 2 goed
 citroen 1 van de 2 goed
 ```
 
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner verborgen="knn" initialCode={`import random
+
+fruit = [
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
+    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
+    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
+    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
+    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
+]
+k = 1
+
+random.seed(3)
+random.shuffle(fruit)
+oefen = fruit[:18]
+toets = fruit[18:]
+
+goed = 0
+for maten, soort in toets:
+    if voorspel(maten, oefen, k) == soort:
+        goed = goed + 1
+print(goed, "van de", len(toets), "goed")`} />
+
 <details>
 <summary>Tip</summary>
 
@@ -188,6 +213,10 @@ bezoekers = ["kijkt"] * 19 + ["koopt"]
 
 `["kijkt"] * 19` is een lijst met negentien keer `"kijkt"`, en met `+` plak
 je de koper erachter.
+
+Begin in de editor hieronder.
+
+<PyRunner initialCode={`bezoekers = ["kijkt"] * 19 + ["koopt"]`} />
 
 <details>
 <summary>Tip</summary>

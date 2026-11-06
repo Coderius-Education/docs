@@ -119,6 +119,27 @@ rijen in plaats van over de rijen zelf: `range(len(doolhof))` geeft 0, 1, 2, 3
 en 4. Met een tweede loop daarbinnen, over `range(len(doolhof[0]))`, kom je
 bij elke kolom van die rij, en dus bij elk vakje `(rij, kolom)`.
 
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+
+def buren(vakje):
+    rij, kolom = vakje
+    resultaat = []
+    for r, k in [(rij - 1, kolom), (rij + 1, kolom), (rij, kolom - 1), (rij, kolom + 1)]:
+        if r >= 0 and r < len(doolhof) and k >= 0 and k < len(doolhof[0]):
+            if doolhof[r][k] != "#":
+                resultaat.append((r, k))
+    return resultaat
+
+print(buren((2, 1)))`} />
+
 <details>
 <summary>Tip</summary>
 
@@ -159,6 +180,27 @@ kiezen. Kloppen ze met wat jij in je doolhof ziet?
 
 Voor het doolhof van de editor geeft `kruispunten()`
 `[(0, 1), (0, 4), (1, 4), (2, 1), (3, 1)]`.
+
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`doolhof = [
+    "S.....",
+    "#.##..",
+    "#....#",
+    "..###.",
+    "#....E",
+]
+
+def buren(vakje):
+    rij, kolom = vakje
+    resultaat = []
+    for r, k in [(rij - 1, kolom), (rij + 1, kolom), (rij, kolom - 1), (rij, kolom + 1)]:
+        if r >= 0 and r < len(doolhof) and k >= 0 and k < len(doolhof[0]):
+            if doolhof[r][k] != "#":
+                resultaat.append((r, k))
+    return resultaat
+
+print(buren((2, 1)))`} />
 
 <details>
 <summary>Tip</summary>

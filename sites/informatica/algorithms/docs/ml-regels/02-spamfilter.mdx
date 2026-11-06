@@ -115,6 +115,24 @@ Pas het filter aan: loop over de woorden van het bericht, en tel een punt
 voor elk woord dat in de lijst `verdacht` staat. Test met
 `"Je nieuwe nummer is binnen"`: de score moet nu 0 zijn.
 
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+
+bericht = "Klik nu en win een gratis telefoon"
+bericht = bericht.lower()
+
+score = 0
+for woord in verdacht:
+    if woord in bericht:
+        score = score + 1
+
+print("score:", score)
+if score >= 2:
+    print("spam")
+else:
+    print("geen spam")`} />
+
 <details>
 <summary>Tip</summary>
 
@@ -155,6 +173,24 @@ Schrijf een spambericht dat door het filter glipt: het is overduidelijk
 spam, maar het krijgt een score onder de drempel. Voeg daarna woorden aan de
 lijst `verdacht` toe zodat je eigen bericht wél als spam herkend wordt.
 Gebruik de versie met `.split()` uit de opdracht.
+
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
+
+bericht = "Klik nu en win een gratis telefoon"
+bericht = bericht.lower()
+
+score = 0
+for woord in verdacht:
+    if woord in bericht:
+        score = score + 1
+
+print("score:", score)
+if score >= 2:
+    print("spam")
+else:
+    print("geen spam")`} />
 
 <details>
 <summary>Tip</summary>

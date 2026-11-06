@@ -162,6 +162,33 @@ die het nooit zag:
 [15, 5] -> 1
 ```
 
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+voorbeelden = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
+gewichten = [0, 0]
+bias = 0
+
+for ronde in range(10):
+    fouten = 0
+    for invoer, doel in voorbeelden:
+        fout = doel - neuron(invoer, gewichten, bias)
+        if fout != 0:
+            fouten = fouten + 1
+        for i in range(len(invoer)):
+            gewichten[i] = gewichten[i] + fout * invoer[i]
+        bias = bias + fout
+    print("ronde", ronde + 1, ":", fouten, "fouten")
+
+print(gewichten, bias)`} />
+
 <details>
 <summary>Tip</summary>
 
@@ -274,6 +301,33 @@ drie of tien.
 Leer er daarna een neuron mee dat met drie invoeren "minstens twee van de drie"
 herkent: 1 als minstens twee invoeren 1 zijn. Test het op alle acht
 combinaties.
+
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+voorbeelden = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
+gewichten = [0, 0]
+bias = 0
+
+for ronde in range(10):
+    fouten = 0
+    for invoer, doel in voorbeelden:
+        fout = doel - neuron(invoer, gewichten, bias)
+        if fout != 0:
+            fouten = fouten + 1
+        for i in range(len(invoer)):
+            gewichten[i] = gewichten[i] + fout * invoer[i]
+        bias = bias + fout
+    print("ronde", ronde + 1, ":", fouten, "fouten")
+
+print(gewichten, bias)`} />
 
 <details>
 <summary>Tip</summary>

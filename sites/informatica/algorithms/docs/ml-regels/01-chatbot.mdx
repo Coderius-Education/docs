@@ -99,6 +99,18 @@ Geef de chatbot twee nieuwe regels:
 
 Test elke regel met een zin die erop past.
 
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`zin = "Hoi, hoe gaat het?"
+zin = zin.lower()
+
+if "hoi" in zin or "hallo" in zin:
+    print("Hallo, leuk dat je er bent.")
+elif "weer" in zin:
+    print("Ik kan niet naar buiten kijken.")
+else:
+    print("Daar weet ik niets van.")`} />
+
 <details>
 <summary>Tip</summary>
 
@@ -141,6 +153,18 @@ game, je huisdier. Hij heeft minstens vier regels, en één regel gebruikt
 
 Zoek daarna een zin die je chatbot verkeerd begrijpt, zoals de chatbot
 hierboven bij `"Ik ga weer naar huis"`.
+
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`zin = "Hoi, hoe gaat het?"
+zin = zin.lower()
+
+if "hoi" in zin or "hallo" in zin:
+    print("Hallo, leuk dat je er bent.")
+elif "weer" in zin:
+    print("Ik kan niet naar buiten kijken.")
+else:
+    print("Daar weet ik niets van.")`} />
 
 <details>
 <summary>Tip</summary>

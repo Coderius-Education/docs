@@ -138,6 +138,37 @@ je -3
 prijs 1
 ```
 
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`spamwoorden = "win nu gratis geld gratis prijs klik nu klik hier voor geld".split()
+gewone_woorden = "zie je morgen op school heb je het huiswerk al kom je nu naar school".split()
+
+spam = {}
+for woord in spamwoorden:
+    if woord in spam:
+        spam[woord] = spam[woord] + 1
+    else:
+        spam[woord] = 1
+gewoon = {}
+for woord in gewone_woorden:
+    if woord in gewoon:
+        gewoon[woord] = gewoon[woord] + 1
+    else:
+        gewoon[woord] = 1
+
+bericht = "klik hier voor je prijs"
+score = 0
+for woord in bericht.split():
+    if woord in spam:
+        score = score + spam[woord]
+    if woord in gewoon:
+        score = score - gewoon[woord]
+print("score:", score)
+if score > 0:
+    print("spam")
+else:
+    print("geen spam")`} />
+
 <details>
 <summary>Tip</summary>
 
@@ -179,6 +210,37 @@ een paar spamberichten die je zelf kreeg (of verzin ze), en in
 `gewone_woorden` de woorden uit gewone berichten van vrienden. Bedenk daarna
 drie nieuwe berichten die het filter nog nooit zag, en kijk of het ze goed
 indeelt.
+
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`spamwoorden = "win nu gratis geld gratis prijs klik nu klik hier voor geld".split()
+gewone_woorden = "zie je morgen op school heb je het huiswerk al kom je nu naar school".split()
+
+spam = {}
+for woord in spamwoorden:
+    if woord in spam:
+        spam[woord] = spam[woord] + 1
+    else:
+        spam[woord] = 1
+gewoon = {}
+for woord in gewone_woorden:
+    if woord in gewoon:
+        gewoon[woord] = gewoon[woord] + 1
+    else:
+        gewoon[woord] = 1
+
+bericht = "klik hier voor je prijs"
+score = 0
+for woord in bericht.split():
+    if woord in spam:
+        score = score + spam[woord]
+    if woord in gewoon:
+        score = score - gewoon[woord]
+print("score:", score)
+if score > 0:
+    print("spam")
+else:
+    print("geen spam")`} />
 
 <details>
 <summary>Tip</summary>

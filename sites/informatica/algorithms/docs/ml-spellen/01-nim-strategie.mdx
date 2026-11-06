@@ -134,6 +134,36 @@ Verander de regels: je mag nu 1, 2, 3 of 4 lucifers pakken, en het spel begint
 met 12. Pas `slim` en `willekeurig` aan, zodat `slim` weer alle 100 spellen
 wint.
 
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`import random
+
+def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak
+
+def willekeurig(stapel):
+    return random.randint(1, min(3, stapel))
+
+def speel(stapel):
+    beurt = "slim"
+    while stapel > 0:
+        if beurt == "slim":
+            stapel = stapel - slim(stapel)
+            beurt = "willekeurig"
+        else:
+            stapel = stapel - willekeurig(stapel)
+            beurt = "slim"
+    return beurt
+
+gewonnen = 0
+for spel in range(100):
+    if speel(10) == "slim":
+        gewonnen = gewonnen + 1
+print("slim wint", gewonnen, "van de 100")`} />
+
 <details>
 <summary>Tip</summary>
 
@@ -187,6 +217,14 @@ Klopt de truc wel? Volgens Zo werkt het verliest wie begint bij een viervoud
 plus 1, als de ander de truc ook kent. Controleer dat: laat `slim` tegen
 zichzelf spelen, met de gewone regels (1 tot en met 3), en print voor elke
 stapel van 1 tot en met 12 wie er wint, de speler die begint of de ander.
+
+In de editor hieronder staat `slim` al klaar.
+
+<PyRunner initialCode={`def slim(stapel):
+    pak = (stapel - 1) % 4
+    if pak == 0:
+        pak = 1
+    return pak`} />
 
 <details>
 <summary>Tip</summary>

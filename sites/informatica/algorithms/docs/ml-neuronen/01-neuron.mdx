@@ -111,6 +111,22 @@ Print het neuron voor alle vier de combinaties:
 1 1 -> 1
 ```
 
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+# de invoer is: gaan je vrienden, is je huiswerk af, regent het (1 is ja)
+gewichten = [3, 2, -1]
+bias = -1
+
+print(neuron([1, 0, 1], gewichten, bias))`} />
+
 <details>
 <summary>Tip</summary>
 
@@ -154,6 +170,22 @@ Zoek nu twee andere neuronen met twee invoeren:
    maar 0 als ze allebei 1 of allebei 0 zijn.
 
 Print voor elk neuron de vier combinaties, zoals in de opdracht.
+
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner initialCode={`def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+# de invoer is: gaan je vrienden, is je huiswerk af, regent het (1 is ja)
+gewichten = [3, 2, -1]
+bias = -1
+
+print(neuron([1, 0, 1], gewichten, bias))`} />
 
 <details>
 <summary>Tip</summary>

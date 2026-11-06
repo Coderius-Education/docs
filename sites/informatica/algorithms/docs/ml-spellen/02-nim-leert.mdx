@@ -156,6 +156,28 @@ Laat de geleerde strategie 100 keer spelen tegen `willekeurig` uit het vorige
 project, met 10 lucifers, waarbij de geleerde strategie begint. Hoe vaak wint
 hij?
 
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+random.seed(1)
+score = {}
+ontdekken = 0.2
+
+for spel in range(2000):
+    zetten, verliezer = speel_tegen_jezelf(score, ontdekken)
+    for speler in zetten:
+        for zet in zetten[speler]:
+            if zet not in score:
+                score[zet] = 0
+            if speler == verliezer:
+                score[zet] = score[zet] - 1
+            else:
+                score[zet] = score[zet] + 1
+
+for stapel in range(2, 11):
+    print(stapel, "lucifers: pak", beste_zet(score, stapel))`} />
+
 <details>
 <summary>Tip</summary>
 
@@ -205,6 +227,28 @@ om alles goed te leren. Probeer 1, 2, 5, 10, 20 en 50 spellen, en tel bij elk
 aantal bij hoeveel stapels hij iets anders kiest dan `slim`. Kijk alleen naar
 de stapels waar je kunt winnen: 2, 3, 4, 6, 7, 8 en 10. Gebruik bij elk aantal
 opnieuw `random.seed(1)` en een lege `score`.
+
+De code van het onderzoek staat in de editor hieronder al klaar.
+
+<PyRunner verborgen="nim-leren" initialCode={`import random
+
+random.seed(1)
+score = {}
+ontdekken = 0.2
+
+for spel in range(2000):
+    zetten, verliezer = speel_tegen_jezelf(score, ontdekken)
+    for speler in zetten:
+        for zet in zetten[speler]:
+            if zet not in score:
+                score[zet] = 0
+            if speler == verliezer:
+                score[zet] = score[zet] - 1
+            else:
+                score[zet] = score[zet] + 1
+
+for stapel in range(2, 11):
+    print(stapel, "lucifers: pak", beste_zet(score, stapel))`} />
 
 <details>
 <summary>Tip</summary>
