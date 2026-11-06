@@ -1,0 +1,181 @@
+---
+sidebar_position: 1
+sidebar_label: "1. Gewichten"
+---
+
+# Gewichten
+
+Ga je vanavond naar het feest? Dat hangt af van een paar dingen: gaan je
+vrienden, is je huiswerk af, regent het? Het ene telt zwaarder dan het andere.
+Een **neuron** in een computer beslist op dezelfde manier. Het krijgt een paar
+getallen binnen, geeft elk getal een gewicht en telt alles op. Een neuraal
+netwerk, zoals in een spraakassistent of een zelfrijdende auto, is gemaakt van
+heel veel van zulke neuronen. In deze stap maak je de optelling.
+
+:::info
+Je gebruikt hier lijsten uit [Lijsten](site:python/docs/data/10a-lijsten-basis),
+`range(len(…))` uit
+[doodlopende vakjes](site:algorithms/docs/ml-zoeken/01-buren/04-doodlopende-vakjes),
+en een functie met `return` uit
+[Return-waarden](site:python/docs/functies/09b-return).
+:::
+
+## Voorspel
+
+```python
+invoer = [1, 0, 1]
+gewichten = [3, 2, -1]
+
+som = 0
+for i in range(len(invoer)):
+    som = som + invoer[i] * gewichten[i]
+print(som)
+```
+
+`invoer` zegt: je vrienden gaan (1), je huiswerk is niet af (0), en het regent
+(1). Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+2
+```
+
+Er komt 1 keer 3 bij voor je vrienden, 0 keer 2 voor het huiswerk, en 1 keer
+-1 voor de regen. 3 + 0 - 1 is 2.
+
+</details>
+
+## Zo werkt het
+
+Elke invoer heeft een eigen **gewicht**. Een groot gewicht telt zwaar, een
+negatief gewicht trekt de som omlaag: als het regent, wil je minder graag.
+
+De loop gaat met `range(len(invoer))` langs de posities 0, 1 en 2, zoals je
+in het doolhof langs de nummers van de rijen liep. Nieuw is dat je zo langs
+twee lijsten tegelijk loopt: op elke positie `i` pak je met `invoer[i]` de
+invoer en met `gewichten[i]` het gewicht dat erbij hoort.
+
+## Onderzoek
+
+1. Draai de code. Hoe groeit de som, positie voor positie?
+2. Waarom blijft de som op positie 1 gelijk?
+3. Probeer `[0, 1, 0]`: je vrienden gaan niet, je huiswerk is af, het is
+   droog. Wat is de som nu?
+4. Bij welke invoer wordt de som het grootst?
+
+<PyRunner initialCode={`# de invoer is: gaan je vrienden, is je huiswerk af, regent het (1 is ja)
+invoer = [1, 0, 1]
+gewichten = [3, 2, -1]
+
+som = 0
+for i in range(len(invoer)):
+    som = som + invoer[i] * gewichten[i]
+    print("na positie", i, "is de som", som)`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+na positie 0 is de som 3
+na positie 1 is de som 3
+na positie 2 is de som 2
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Eerst 3 voor je vrienden, daarna blijft hij 3, en de regen haalt er 1 af.
+2. Je huiswerk is niet af: de invoer is 0, en 0 keer 2 is 0.
+3. 2: alleen het huiswerk telt mee.
+4. Bij `[1, 1, 0]`: vrienden, huiswerk af en droog geeft 3 + 2 = 5. Regen
+   maakt de som alleen kleiner.
+
+</details>
+
+## Opdracht: een vierde reden
+
+Er speelt een band die je leuk vindt. Geef het neuron een vierde invoer
+daarvoor, met gewicht 2. Met vrienden, zonder huiswerk, met regen en met de
+band print het:
+
+```
+4
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: de som is 2.
+2. Zet een 1 achteraan `invoer`, voor de band, en draai. Je krijgt een foutmelding: die staat hieronder bij "Er gaat iets mis".
+3. Zet het gewicht van de band achteraan `gewichten`. Nu is de som 4.
+4. Zet `invoer` op `[0, 0, 0, 1]`: alleen de band. Wat is de som?
+
+<PyRunner initialCode={`invoer = [1, 0, 1]
+gewichten = [3, 2, -1]
+
+som = 0
+for i in range(len(invoer)):
+    som = som + invoer[i] * gewichten[i]
+print(som)`} />
+
+<details>
+<summary>Tip</summary>
+
+Elke invoer heeft een gewicht nodig op dezelfde positie. Op welke positie
+staat de band in `invoer`, en wat staat er op die positie in `gewichten`?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+invoer = [1, 0, 1, 1]
+gewichten = [3, 2, -1, 2]
+
+som = 0
+for i in range(len(invoer)):
+    som = som + invoer[i] * gewichten[i]
+print(som)   # 4
+```
+
+De band staat op positie 3, en zijn gewicht ook. Met alleen de band, in
+stap 4, is de som 2.
+
+</details>
+
+## Er gaat iets mis
+
+{/* foutmelding-van: fout-helft */}
+```
+IndexError: list index out of range
+```
+
+**Oorzaak:** er zijn meer invoeren dan gewichten. De loop gaat langs alle
+posities van `invoer`, en op de laatste positie heeft `gewichten` niets meer.
+
+**Oplossing:** geef elke invoer een gewicht. Zet je er een invoer bij, zet dan
+ook een gewicht bij.
+
+```python
+# FOUT
+invoer = [1, 0, 1, 1]
+gewichten = [3, 2, -1]
+som = 0
+for i in range(len(invoer)):
+    som = som + invoer[i] * gewichten[i]
+
+# GOED
+invoer = [1, 0, 1, 1]
+gewichten = [3, 2, -1, 1]
+som = 0
+for i in range(len(invoer)):
+    som = som + invoer[i] * gewichten[i]
+```
+
+Meer uitleg: [Lijsten](site:python/docs/data/10a-lijsten-basis).
+
+Door naar [een bias](site:algorithms/docs/ml-neuronen/01-neuron/02-een-bias).

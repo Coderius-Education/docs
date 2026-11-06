@@ -1,0 +1,155 @@
+---
+sidebar_position: 2
+sidebar_label: "2. Een bias"
+---
+
+# Een bias
+
+In de vorige stap telde je de invoer op, elk met zijn gewicht, vanaf 0. Nu
+begint de som bij een eigen getal, de bias. En het neuron beslist: is de som
+groter dan 0, dan zegt het ja.
+
+## Voorspel
+
+```python
+invoer = [1, 0, 1]
+gewichten = [3, 2, -1]
+bias = -1
+
+som = bias
+for i in range(len(invoer)):
+    som = som + invoer[i] * gewichten[i]
+print(som)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1
+```
+
+De som begint bij de bias, -1. Daar komt 1 keer 3 bij voor je vrienden, 0 keer
+2 voor het huiswerk, en 1 keer -1 voor de regen. -1 + 3 + 0 - 1 is 1.
+
+</details>
+
+## Zo werkt het
+
+De **bias** is waar de som begint. Met een negatieve bias moet er eerst iets
+goeds gebeuren voordat het neuron ja zegt. Hoe negatiever de bias, hoe
+strenger het neuron.
+
+Is de som groter dan 0, dan zegt het neuron ja. Anders zegt het nee, ook als
+de som precies 0 is.
+
+## Onderzoek
+
+1. Draai de code. Ga je naar het feest?
+2. Probeer `[0, 1, 0]`: je vrienden gaan niet, je huiswerk is af, het is
+   droog. Wat beslist het neuron? Zou jij dat ook doen?
+3. Probeer `[0, 1, 1]`: hetzelfde, maar nu regent het. Wat is de som, en wat
+   beslist het neuron?
+4. Zet de bias op 0 en probeer `[0, 0, 0]`. Waarom zegt het neuron nee?
+
+<PyRunner initialCode={`# de invoer is: gaan je vrienden, is je huiswerk af, regent het (1 is ja)
+invoer = [1, 0, 1]
+gewichten = [3, 2, -1]
+bias = -1
+
+som = bias
+for i in range(len(invoer)):
+    som = som + invoer[i] * gewichten[i]
+print("som:", som)
+if som > 0:
+    print("ja, je gaat")
+else:
+    print("nee, je blijft thuis")`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+som: 1
+ja, je gaat
+```
+
+</details>
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Ja: de som is 1, en dat is groter dan 0.
+2. Ook ja: -1 + 2 is 1. Een af huiswerk is voor dit neuron genoeg om te gaan.
+   Of je dat zelf ook vindt, bepaal je met de gewichten.
+3. De som is -1 + 2 - 1 = 0. Dat is niet groter dan 0, dus het neuron zegt
+   nee: je blijft thuis.
+4. De som is 0, en 0 is niet groter dan 0.
+
+</details>
+
+## Opdracht: alleen met je huiswerk af
+
+Je ouders zeggen: je gaat alleen als je huiswerk af is, en dan alleen met je
+vrienden. Zoek een bias zodat het neuron alleen ja zegt als je vrienden gaan
+én je huiswerk af is, of het nu regent of niet. Laat de gewichten zoals ze
+zijn. Draai je de code met twee verschillende invoeren, dan zie je:
+
+```
+[1, 0, 0] nee
+[1, 1, 1] ja
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: bij `[1, 0, 0]` (vrienden, geen huiswerk, droog) zegt het neuron nog ja.
+2. Maak de bias kleiner, tot het neuron bij `[1, 0, 0]` nee zegt.
+3. Zet `invoer` op `[1, 1, 1]`: vrienden, huiswerk af, maar regen. Zegt het neuron daar nog ja? Zo niet, dan was je bias te streng.
+4. Probeer ook `[0, 1, 0]`: het huiswerk is af, maar je vrienden gaan niet.
+
+<PyRunner initialCode={`invoer = [1, 0, 0]
+gewichten = [3, 2, -1]
+bias = -1
+
+som = bias
+for i in range(len(invoer)):
+    som = som + invoer[i] * gewichten[i]
+if som > 0:
+    print(invoer, "ja")
+else:
+    print(invoer, "nee")`} />
+
+<details>
+<summary>Tip</summary>
+
+Reken de som zonder bias uit voor `[1, 0, 0]` en voor `[1, 1, 1]`. De bias
+moet de eerste op 0 of lager krijgen, en de tweede boven 0 houden.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+invoer = [1, 1, 1]
+gewichten = [3, 2, -1]
+bias = -3
+
+som = bias
+for i in range(len(invoer)):
+    som = som + invoer[i] * gewichten[i]
+if som > 0:
+    print(invoer, "ja")   # [1, 1, 1] ja
+else:
+    print(invoer, "nee")
+```
+
+Met bias -3 is de som bij `[1, 0, 0]` precies 0, dus nee, en bij `[1, 1, 1]`
+is hij -3 + 3 + 2 - 1 = 1, dus ja. Bij `[0, 1, 0]` is hij -1. Met -4 wordt
+het te streng: dan zegt het neuron bij regen nee.
+
+</details>
+
+Door naar [ja of nee](site:algorithms/docs/ml-neuronen/01-neuron/03-ja-of-nee).

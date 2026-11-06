@@ -1,0 +1,152 @@
+---
+sidebar_position: 7
+sidebar_label: "7. Aan de slag met Traffic"
+---
+
+# Aan de slag met Traffic
+
+Je hebt elk stuk van Traffic nu in het klein gebouwd: een plaatje als
+getallen, lagen, een uitgang per soort, leren en inlezen. In deze stap zet je
+het achter elkaar zoals Traffic het doet, met een toets erbij. Daarna lees je
+wat Keras in Traffic voor je doet, en hoe je begint.
+
+:::info
+Je gebruikt hier `random.seed` uit
+[oefenen en toetsen](site:algorithms/docs/ml-afstand/03-eerlijk-testen/01-oefenen-en-toetsen).
+:::
+
+## Voorspel
+
+```python
+breedte = 30
+hoogte = 30
+kleuren = 3
+print(breedte * hoogte * kleuren)
+```
+
+Een foto in Traffic is 30 bij 30 pixels, met drie kleuren per pixel. Hoeveel
+invoeren heeft het netwerk? Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+2700
+```
+
+Een plaatje van jou had er 9. Elk neuron in de eerste laag van Traffic heeft
+dus 2700 gewichten.
+
+</details>
+
+## Zo werkt het
+
+In Traffic schrijf je twee functies: een die de foto's inleest, en een die
+het netwerk bouwt. De rest staat al in `traffic.py`. Wat je in dit project
+zelf maakte, doet daar de bibliotheek TensorFlow, met zijn onderdeel Keras:
+
+| Wat jij bouwde | In Traffic |
+|---|---|
+| `naar_getallen` en `lees_tekens` | Schrijf je zelf, met de module `os` en de bibliotheek OpenCV. |
+| `splits`, met 0.4 als toets | Staat klaar, met `train_test_split` uit scikit-learn: ook 40% toets. |
+| een laag neuronen | Een laag van Keras, zoals `Dense`. Jij kiest hoeveel lagen en neuronen. |
+| `som > 0` geeft 1 of 0 | Keras rekent met een zachtere stap, zoals `relu`. |
+| de grootste uitgang wint | De laatste laag heeft 43 uitgangen, en `softmax` maakt er kansen van. |
+| `leer` met tien rondes | Staat klaar: tien rondes, die Keras *epochs* noemt. Keras stelt ook de verborgen lagen bij. |
+| de score op de toets | Staat klaar, en print hoeveel procent van de toets goed is. |
+
+## Bouw zelf: oefenen en toetsen
+
+De verborgen code heeft alles uit dit project, en `splits`: die schudt de
+plaatjes en houdt een deel apart als toets, zoals Traffic doet. Laat een
+netwerk leren op de oefenplaatjes, en kijk hoeveel toetsplaatjes het goed
+heeft:
+
+```
+24 om te oefenen, 16 om te toetsen
+oefenen: 24 van de 24 goed
+toetsen: 13 van de 16 goed
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij leest de 40 tekens in en splitst ze in 24 om te oefenen en 16 om te toetsen.
+2. Laat een netwerk leren op de oefenplaatjes, met `leer_netwerk` en 10 rondes.
+3. Schrijf een functie `score(plaatjes, labels, alle_gewichten, biases)` die telt hoeveel plaatjes `herken` goed heeft. Op de oefenplaatjes zijn dat er 24.
+4. Print ook de score op de toetsplaatjes.
+5. Probeer 2 rondes in plaats van 10, en daarna een ander getal bij `random.seed`. Schrijf op wat je probeert en wat het oplevert.
+
+<PyRunner verborgen="tekens-toetsen" initialCode={`import random
+
+random.seed(2)
+plaatjes, labels = lees_tekens(mappen)
+oefen_plaatjes, toets_plaatjes, oefen_labels, toets_labels = splits(plaatjes, labels, 0.4)
+print(len(oefen_plaatjes), "om te oefenen,", len(toets_plaatjes), "om te toetsen")`} />
+
+<details>
+<summary>Tip</summary>
+
+`score` lijkt op het tellen van de fouten bij het neuron dat leert, maar nu
+tel je wat goed is: vergelijk wat `herken` zegt met het label op dezelfde
+positie.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit komt onder de code in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+def score(plaatjes, labels, alle_gewichten, biases):
+    goed = 0
+    for i in range(len(plaatjes)):
+        if herken(plaatjes[i], alle_gewichten, biases) == labels[i]:
+            goed = goed + 1
+    return goed
+
+alle_gewichten, biases = leer_netwerk(oefen_plaatjes, oefen_labels, len(soorten), 10)
+goed = score(oefen_plaatjes, oefen_labels, alle_gewichten, biases)
+print("oefenen:", goed, "van de", len(oefen_plaatjes), "goed")   # oefenen: 24 van de 24 goed
+goed = score(toets_plaatjes, toets_labels, alle_gewichten, biases)
+print("toetsen:", goed, "van de", len(toets_plaatjes), "goed")   # toetsen: 13 van de 16 goed
+```
+
+Op de oefenplaatjes is alles goed, op de toets niet. Met 2 rondes heeft het
+netwerk bij dit zaad de hele toets goed, en met `random.seed(0)` haalt het
+ook met 10 rondes 16 van de 16. Meer rondes is dus niet vanzelf beter, en één
+verdeling zegt weinig. Daarom vraagt Traffic je bij te houden wat je probeert.
+
+</details>
+
+## Zo begin je met Traffic
+
+[Traffic](https://cs50.harvard.edu/ai/projects/5/traffic/) is het laatste
+project van de route, en het zwaarste. Je traint een neuraal netwerk dat
+verkeersborden herkent op foto's. Reken op een paar weken, en op dingen die
+je nog niet kent:
+
+- Voor foto's gebruik je lagen die naar stukjes van het beeld kijken. Die
+  legt het hoorcollege over neurale netwerken uit.
+- De module `os` heb je nodig om de mappen met foto's langs te lopen, en
+  OpenCV om een foto te openen en op 30 bij 30 te brengen. Allebei zijn nieuw;
+  zoek in de opdracht op welke functies je nodig hebt.
+
+1. Download de bestanden en de foto's via de
+   [projectpagina](https://cs50.harvard.edu/ai/projects/5/traffic/), en lees de
+   opdracht helemaal door. Bekijk ook het hoorcollege over neurale netwerken.
+2. Installeer TensorFlow en de andere pakketten die het project nodig heeft,
+   met `pip3 install -r requirements.txt` in een terminal, in de map van het
+   project.
+3. Schrijf eerst de functie die de foto's inleest, en kijk of het aantal
+   foto's klopt. Bouw daarna een klein netwerk, en maak het stap voor stap
+   groter. Houd bij wat je probeert en wat het oplevert: dat vraagt de
+   opdracht ook.
+
+Net als bij [eerlijk testen](site:algorithms/docs/ml-afstand/03-eerlijk-testen/01-oefenen-en-toetsen)
+en bij je tekens houdt het project een deel van de foto's achter als toets.
+Het netwerk kan een oefenfoto onthouden, maar alleen de toets zegt of het
+borden herkent.
+
+Door naar [de route machine learning](site:algorithms/docs/machine-learning).

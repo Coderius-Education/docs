@@ -1,0 +1,115 @@
+---
+sidebar_position: 4
+sidebar_label: "4. Een EN-neuron"
+---
+
+# Een EN-neuron
+
+Je neuron beslist nu over het feest. Een neuron met twee invoeren kan ook een
+regel uit de logica nadoen: EN, dat alleen ja zegt als allebei de invoeren 1
+zijn. Daarvoor zoek je de goede gewichten en bias.
+
+## Voorspel
+
+```python
+for a in [0, 1]:
+    for b in [0, 1]:
+        print(a, b, "->", a + b)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+0 0 -> 0
+0 1 -> 1
+1 0 -> 1
+1 1 -> 2
+```
+
+De buitenste loop kiest `a`, en voor elke `a` loopt de binnenste langs beide
+waarden van `b`. Zo krijg je alle vier de combinaties van twee invoeren.
+
+</details>
+
+## Zo werkt het
+
+Met twee invoeren zijn er vier combinaties: `0 0`, `0 1`, `1 0` en `1 1`. Een
+loop in een loop over `[0, 1]` gaat ze allemaal langs, en zo test je een
+neuron in één keer op alles wat het kan krijgen.
+
+Met gewichten `[1, 1]` en bias 0 is de som van het neuron precies `a + b`,
+de getallen uit het voorspel. De bias schuift die sommen allemaal evenveel
+omhoog of omlaag.
+
+## Opdracht: een EN-neuron
+
+Zoek gewichten en een bias zodat het neuron alleen 1 zegt als beide invoeren
+1 zijn. Print het neuron voor alle vier de combinaties:
+
+```
+0 0 -> 0
+0 1 -> 0
+1 0 -> 0
+1 1 -> 1
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de eerste combinatie.
+2. Print ook de andere drie, met een loop in een loop over `[0, 1]`.
+3. Met bias 1 zegt het neuron overal 1. Zoek de bias waarbij alleen `1 1` op 1 uitkomt.
+
+In de editor staan `neuron` en de eerste van de vier combinaties.
+
+<PyRunner initialCode={`def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+gewichten = [1, 1]
+bias = 1
+
+print(0, 0, "->", neuron([0, 0], gewichten, bias))`} />
+
+<details>
+<summary>Tip</summary>
+
+De gewichten `[1, 1]` in de editor zijn goed. Welke sommen krijg je dan bij de
+vier combinaties zonder bias? Kies de bias zo dat alleen de grootste som boven 0 uitkomt.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles onder `gewichten = [1, 1]` in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+bias = -1
+
+for a in [0, 1]:
+    for b in [0, 1]:
+        print(a, b, "->", neuron([a, b], gewichten, bias))
+```
+
+```
+0 0 -> 0
+0 1 -> 0
+1 0 -> 0
+1 1 -> 1
+```
+
+Zonder bias zijn de sommen 0, 1, 1 en 2. Met bias -1 worden ze -1, 0, 0 en 1,
+en alleen de laatste is groter dan 0. Andere getallen kunnen ook, zoals
+gewichten `[2, 2]` met bias `-3`.
+
+</details>
+
+Door naar [OF, en precies één](site:algorithms/docs/ml-neuronen/01-neuron/05-of-en-precies-een).

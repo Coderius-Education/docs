@@ -1,0 +1,156 @@
+---
+sidebar_position: 3
+sidebar_label: "3. Ja of nee"
+---
+
+# Ja of nee
+
+In de vorige stap printte het neuron ja of nee. Nu zet je het in een functie
+`neuron` die 1 teruggeeft voor ja en 0 voor nee. Dan kun je hem zo vaak
+aanroepen als je wilt, en met de uitkomst verder rekenen.
+
+## Voorspel
+
+```python
+def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+print(neuron([1, 0, 1], [3, 2, -1], -1))
+print(neuron([0, 1, 1], [3, 2, -1], -1))
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+1
+0
+```
+
+Bij `[1, 0, 1]` is de som 1, bij `[0, 1, 1]` is hij 0. Alleen de eerste is
+groter dan 0.
+
+</details>
+
+## Zo werkt het
+
+De functie rekent de som uit zoals in de vorige stap. Is hij groter dan 0, dan
+geeft `return 1` het antwoord terug en stopt de functie meteen. Daarom is er
+geen `else` nodig: de laatste regel, `return 0`, haalt Python alleen als de
+som 0 of kleiner was.
+
+Dat het neuron 1 of 0 zegt in plaats van ja of nee, komt goed uit: met
+getallen kun je rekenen. Straks tel je zo hoe vaak het neuron ja zegt, en
+later rekent een neuron dat leert er zijn fout mee uit.
+
+## Onderzoek
+
+1. Draai de code. Ga je naar het feest?
+2. Probeer `[0, 1, 0]`. Wat beslist het neuron?
+3. Probeer `[0, 1, 1]`. Wat is de som, en wat beslist het neuron?
+4. Verander één gewicht zodat het neuron bij regen nooit meer gaat, wat de
+   rest ook is.
+
+<PyRunner initialCode={`def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+# de invoer is: gaan je vrienden, is je huiswerk af, regent het (1 is ja)
+gewichten = [3, 2, -1]
+bias = -1
+
+print(neuron([1, 0, 1], gewichten, bias))`} />
+
+<details>
+<summary>Antwoorden</summary>
+
+1. Ja, het neuron geeft 1: de som is 1, en dat is groter dan 0.
+2. Ook 1: -1 + 2 is 1.
+3. De som is -1 + 2 - 1 = 0. Dat is niet groter dan 0, dus het neuron zegt 0:
+   je blijft thuis.
+4. Maak het gewicht van de regen heel negatief, bijvoorbeeld -10. Zelfs met
+   vrienden en af huiswerk is de som dan -1 + 3 + 2 - 10 = -6.
+
+</details>
+
+## Opdracht: hoe vaak ga je?
+
+Dit zijn vijf avonden van een week, met de invoer van elke avond. Print voor
+elke avond wat het neuron zegt, en tel hoe vaak je gaat:
+
+```
+[1, 0, 1] 1
+[0, 1, 0] 1
+[0, 1, 1] 0
+[1, 1, 1] 1
+[0, 0, 1] 0
+je gaat 3 keer
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de eerste avond.
+2. Print alle vijf de avonden, met een loop over `week`.
+3. Tel hoe vaak je gaat. Omdat het neuron 1 of 0 zegt, kun je zijn uitkomst optellen bij een teller `keer`. Print de teller na de loop.
+
+<PyRunner initialCode={`def neuron(invoer, gewichten, bias):
+    som = bias
+    for i in range(len(invoer)):
+        som = som + invoer[i] * gewichten[i]
+    if som > 0:
+        return 1
+    return 0
+
+week = [[1, 0, 1], [0, 1, 0], [0, 1, 1], [1, 1, 1], [0, 0, 1]]
+gewichten = [3, 2, -1]
+bias = -1
+
+print(week[0], neuron(week[0], gewichten, bias))`} />
+
+<details>
+<summary>Tip</summary>
+
+Zet `keer = 0` vóór de loop. Waar in de loop komt er iets bij?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt de laatste regel in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+keer = 0
+for avond in week:
+    uit = neuron(avond, gewichten, bias)
+    print(avond, uit)
+    keer = keer + uit
+print("je gaat", keer, "keer")
+```
+
+```
+[1, 0, 1] 1
+[0, 1, 0] 1
+[0, 1, 1] 0
+[1, 1, 1] 1
+[0, 0, 1] 0
+je gaat 3 keer
+```
+
+Een avond met 0 telt niets bij, een avond met 1 telt één keer.
+
+</details>
+
+Door naar [een EN-neuron](site:algorithms/docs/ml-neuronen/01-neuron/04-een-en-neuron).

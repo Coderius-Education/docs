@@ -1,0 +1,147 @@
+---
+sidebar_position: 6
+sidebar_label: "6. De uitgangen leren"
+---
+
+# De uitgangen leren
+
+Je kunt de tekens nu inlezen, met hun labels. In stap 4 kreeg je de gewichten
+van de vier uitgangen. Nu leert elke uitgang ze zelf, met `leer` uit het
+vorige project. Elke uitgang leert één vraag: ben ik het?
+
+## Voorspel
+
+```python
+labels = [0, 1, 0, 3]
+
+for soort in [0, 3]:
+    doelen = []
+    for label in labels:
+        if label == soort:
+            doelen.append(1)
+        else:
+            doelen.append(0)
+    print(soort, doelen)
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+0 [1, 0, 1, 0]
+3 [0, 0, 0, 1]
+```
+
+Voor soort 0 is het doel 1 bij elk plaatje met label 0, en 0 bij de rest.
+Voor soort 3 alleen bij het laatste plaatje.
+
+</details>
+
+## Zo werkt het
+
+De uitgang van `|` is een neuron dat 1 moet zeggen bij een staande streep en
+0 bij elk ander teken. Dat is een gewone vraag met ja of nee, en die leert
+`leer` uit voorbeelden zoals bij EN. Je maakt dus per soort eigen voorbeelden:
+hetzelfde plaatje, met als doel 1 of 0. Zo leer je de vier uitgangen één voor
+één.
+
+Daarna herkent `herken` uit stap 4 een plaatje met de geleerde gewichten: de
+uitgang met de grootste som wint. Traffic maakt de doelen op dezelfde manier:
+label 2 wordt een rij met een 1 op positie 2 en verder nullen. Die regel staat
+al in de code die je krijgt.
+
+## Opdracht: een netwerk dat leert
+
+In de verborgen code staan de tekens uit de vorige stap, maar meer: elk teken
+zoals het hoort, en negen keer met één pixel anders. Laat alle vier de
+uitgangen leren, en herken daarna twee plaatjes die er niet tussen zitten,
+met twee pixels anders:
+
+```
+40 plaatjes van 4 soorten
+[0, 0, 0, -4]
+o
+x
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: alleen de uitgang van `|`, soort 0, leert zijn gewichten.
+2. Zet het leren in een loop `for soort in range(len(soorten))`, met `soort` in plaats van 0. Bewaar de gewichten en de bias van elke uitgang met `append` in `alle_gewichten` en `biases`. Print `biases`: `[0, 0, 0, -4]`.
+3. Herken elk plaatje in `nieuwe` met `naar_getallen` en `herken`, en print zijn soort.
+4. Zet het leren in een functie `leer_netwerk(plaatjes, labels, aantal_soorten, rondes)` die `alle_gewichten` en `biases` teruggeeft.
+
+<PyRunner verborgen="tekens-leren" initialCode={`plaatjes, labels = lees_tekens(mappen)
+print(len(plaatjes), "plaatjes van", len(soorten), "soorten")
+
+nieuwe = [["##.", "#.#", "##."], ["#.#", ".#.", "#.."]]
+
+voorbeelden = []
+for i in range(len(plaatjes)):
+    if labels[i] == 0:
+        voorbeelden.append((plaatjes[i], 1))
+    else:
+        voorbeelden.append((plaatjes[i], 0))
+gewichten, bias = leer(voorbeelden, 10)
+print(gewichten, bias)`} />
+
+<details>
+<summary>Tip</summary>
+
+Maak `alle_gewichten` en `biases` leeg vóór de loop over de soorten, en
+`voorbeelden` leeg erin. Waarom moet `voorbeelden` bij elke soort opnieuw
+leeg beginnen?
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+def leer_netwerk(plaatjes, labels, aantal_soorten, rondes):
+    alle_gewichten = []
+    biases = []
+    for soort in range(aantal_soorten):
+        voorbeelden = []
+        for i in range(len(plaatjes)):
+            if labels[i] == soort:
+                voorbeelden.append((plaatjes[i], 1))
+            else:
+                voorbeelden.append((plaatjes[i], 0))
+        gewichten, bias = leer(voorbeelden, rondes)
+        alle_gewichten.append(gewichten)
+        biases.append(bias)
+    return alle_gewichten, biases
+
+plaatjes, labels = lees_tekens(mappen)
+print(len(plaatjes), "plaatjes van", len(soorten), "soorten")
+
+nieuwe = [["##.", "#.#", "##."], ["#.#", ".#.", "#.."]]
+
+alle_gewichten, biases = leer_netwerk(plaatjes, labels, len(soorten), 10)
+print(biases)
+for plaatje in nieuwe:
+    print(soorten[herken(naar_getallen(plaatje), alle_gewichten, biases)])
+```
+
+```
+40 plaatjes van 4 soorten
+[0, 0, 0, -4]
+o
+x
+```
+
+Het eerste plaatje is een ring zonder rechterkant, het tweede een kruis
+zonder de pixel rechtsonder. Geen van beide stond bij de voorbeelden, en
+toch herkent het netwerk ze. De uitgang van `o` leert een bias van -4. Een
+ring heeft acht zwarte pixels, en door die bias begint zijn som lager: een
+plaatje met veel zwart is niet vanzelf een ring.
+
+</details>
+
+Door naar [aan de slag met Traffic](site:algorithms/docs/ml-neuronen/03-op-weg-naar-traffic/07-aan-de-slag-met-traffic).

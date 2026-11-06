@@ -1,0 +1,141 @@
+---
+sidebar_position: 6
+sidebar_label: "6. Een functie leer"
+---
+
+# Een functie leer
+
+Je hebt het leren nu twee keer geschreven: voor EN en voor het fruit. Zet het
+in een functie `leer`, dan kun je elk neuron in één regel laten leren. Die
+functie moet werken voor elk aantal invoeren, en daarvoor maak je een lijst
+gewichten van de goede lengte.
+
+## Voorspel
+
+```python
+voorbeelden = [([0, 0, 1], 0), ([1, 1, 0], 1)]
+
+print(voorbeelden[0])
+print(voorbeelden[0][0])
+print(len(voorbeelden[0][0]))
+print([0] * len(voorbeelden[0][0]))
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+([0, 0, 1], 0)
+[0, 0, 1]
+3
+[0, 0, 0]
+```
+
+`voorbeelden[0]` is het eerste voorbeeld, en `[0]` daarachter de invoer
+ervan. `[0] * 3` maakt een lijst van drie nullen.
+
+</details>
+
+## Zo werkt het
+
+Het aantal invoeren lees je af aan het eerste voorbeeld:
+`len(voorbeelden[0][0])`. `[0] * n` is nieuw: het maakt een lijst met `n` keer
+een 0. Zo krijgt het neuron één gewicht per invoer, hoeveel invoeren er ook
+zijn.
+
+Een functie kan twee dingen tegelijk teruggeven: `return gewichten, bias`
+geeft een tuple terug, en `gewichten, bias = leer(…)` pakt hem weer uit.
+
+## Bouw zelf: een functie leer
+
+Zet het leren in een functie `leer(voorbeelden, rondes)` die de gewichten en
+de bias teruggeeft. Laat hem werken voor elk aantal invoeren: twee, maar ook
+drie of tien.
+
+Leer er daarna een neuron mee dat met drie invoeren "minstens twee van de drie"
+herkent: 1 als minstens twee invoeren 1 zijn. Test het op alle acht
+combinaties.
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `leer` geeft nog `([0, 0], 0)` terug.
+2. Zet het leren uit appels en bananen in de functie, met `voorbeelden` en `rondes` in plaats van `fruit` en 10. Nu geeft `leer(en, 10)` hetzelfde als bij rondes: `([2, 1], -2)`.
+3. Maak het aantal gewichten even groot als het aantal invoeren, zodat de functie ook met drie invoeren werkt.
+4. Maak de acht voorbeelden van "minstens twee van de drie", met drie loops in elkaar en een `if`.
+5. Leer ze met `leer`, en test het neuron op alle acht.
+
+<PyRunner verborgen="neuron" initialCode={`def leer(voorbeelden, rondes):
+    gewichten = [0, 0]
+    bias = 0
+    return gewichten, bias
+
+en = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
+print(leer(en, 10))`} />
+
+<details>
+<summary>Tip</summary>
+
+Bij stap 4: wat zegt `a + b + c` over het aantal enen? Laat je `[0, 0]` staan
+bij drie invoeren, dan krijg je de foutmelding van
+[gewichten](site:algorithms/docs/ml-neuronen/01-neuron/01-gewichten#er-gaat-iets-mis).
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+Dit vervangt alles in de editor:
+
+{/* draaien-met: blok-erboven */}
+```python
+def leer(voorbeelden, rondes):
+    gewichten = [0] * len(voorbeelden[0][0])
+    bias = 0
+    for ronde in range(rondes):
+        for invoer, doel in voorbeelden:
+            fout = doel - neuron(invoer, gewichten, bias)
+            for i in range(len(invoer)):
+                gewichten[i] = gewichten[i] + fout * invoer[i]
+            bias = bias + fout
+    return gewichten, bias
+
+voorbeelden = []
+for a in [0, 1]:
+    for b in [0, 1]:
+        for c in [0, 1]:
+            if a + b + c >= 2:
+                voorbeelden.append(([a, b, c], 1))
+            else:
+                voorbeelden.append(([a, b, c], 0))
+
+en = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
+print(leer(en, 10))
+
+gewichten, bias = leer(voorbeelden, 10)
+print(gewichten, bias)
+for invoer, doel in voorbeelden:
+    print(invoer, neuron(invoer, gewichten, bias), "moest", doel)
+```
+
+```
+([2, 1], -2)
+[1, 1, 1] -1
+[0, 0, 0] 0 moest 0
+[0, 0, 1] 0 moest 0
+[0, 1, 0] 0 moest 0
+[0, 1, 1] 1 moest 1
+[1, 0, 0] 0 moest 0
+[1, 0, 1] 1 moest 1
+[1, 1, 0] 1 moest 1
+[1, 1, 1] 1 moest 1
+```
+
+Het neuron leert gewichten `[1, 1, 1]` met bias `-1`: bij twee of drie keer 1
+komt de som boven 0. Op elke regel staat twee keer hetzelfde getal: wat het
+neuron zegt, en wat het moest zijn.
+
+</details>
+
+Door naar [een plaatje als getallen](site:algorithms/docs/ml-neuronen/03-op-weg-naar-traffic/01-een-plaatje).

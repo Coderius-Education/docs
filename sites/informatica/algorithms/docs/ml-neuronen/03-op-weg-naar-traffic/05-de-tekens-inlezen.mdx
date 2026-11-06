@@ -1,0 +1,173 @@
+---
+sidebar_position: 5
+sidebar_label: "5. De tekens inlezen"
+---
+
+# De tekens inlezen
+
+In de vorige stap kreeg je de gewichten van elke uitgang. Straks leert het
+netwerk ze zelf, uit voorbeelden. Die voorbeelden staan bij Traffic in mappen:
+een map per soort bord, met de foto's erin. Het eerste wat je in Traffic
+schrijft, is een functie die al die foto's inleest. Hier oefen je dat met je
+tekens, die in een dictionary staan in plaats van in mappen.
+
+:::info
+Je loopt hier langs de sleutels van een dictionary, uit
+[Door een dictionary lopen](site:python/docs/data/11b-itereren-dictionaries).
+:::
+
+## Voorspel
+
+```python
+mappen = {
+    0: [[".#.", ".#.", ".#."], [".#.", "##.", ".#."]],
+    1: [["...", "###", "..."]],
+}
+print(len(mappen[0]))
+print(mappen[0][1])
+print(mappen[1][0][1])
+```
+
+Wat print dit programma?
+
+<details>
+<summary>Antwoord</summary>
+
+```
+2
+['.#.', '##.', '.#.']
+###
+```
+
+In map 0 zitten twee plaatjes. `mappen[0][1]` is het tweede daarvan, en
+`mappen[1][0][1]` de middelste rij van het eerste plaatje in map 1.
+
+</details>
+
+## Zo werkt het
+
+`mappen` is een dictionary met per soort een lijst plaatjes, zoals Traffic per
+soort een map met foto's heeft. De sleutel is het nummer van de soort, het
+**label**: 0 voor `|`, 1 voor `-`, en zo verder. Een netwerk rekent met
+nummers, niet met namen.
+
+Om te leren wil je twee lijsten van dezelfde lengte: `plaatjes`, met elk
+plaatje als lijst getallen, en `labels`, met op dezelfde positie het nummer
+van zijn soort. Dat vraagt Traffic ook van de functie die de foto's inleest.
+
+## Opdracht: een functie lees_tekens
+
+Schrijf een functie `lees_tekens(mappen)` die alle plaatjes uit alle mappen
+leest, en de twee lijsten teruggeeft. Voor de mappen in de editor print hij:
+
+```
+4 plaatjes
+[0, 0, 1, 1]
+[0, 1, 0, 1, 1, 0, 0, 1, 0]
+```
+
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `lees_tekens` geeft nog twee lege lijsten terug, dus 0 plaatjes.
+2. Loop in de functie langs de soorten in `mappen`, en daarin langs de plaatjes van die soort. Zet elk plaatje met `naar_getallen` in `plaatjes`. Nu zie je 4 plaatjes.
+3. Zet bij elk plaatje ook zijn soort in `labels`.
+4. Print ook `plaatjes[1]`, het tweede plaatje, als getallen.
+
+<PyRunner initialCode={`def naar_getallen(plaatje):
+    invoer = []
+    for rij in plaatje:
+        for teken in rij:
+            if teken == "#":
+                invoer.append(1)
+            else:
+                invoer.append(0)
+    return invoer
+
+def lees_tekens(mappen):
+    plaatjes = []
+    labels = []
+    return plaatjes, labels
+
+mappen = {
+    0: [[".#.", ".#.", ".#."], [".#.", "##.", ".#."]],
+    1: [["...", "###", "..."], ["...", "###", "#.."]],
+}
+
+plaatjes, labels = lees_tekens(mappen)
+print(len(plaatjes), "plaatjes")
+print(labels)`} />
+
+<details>
+<summary>Tip</summary>
+
+Een loop over een dictionary geeft je de sleutels: hier de nummers 0 en 1.
+Met `mappen[soort]` krijg je de lijst plaatjes van die soort.
+
+</details>
+
+<details>
+<summary>Antwoord</summary>
+
+```python
+def naar_getallen(plaatje):
+    invoer = []
+    for rij in plaatje:
+        for teken in rij:
+            if teken == "#":
+                invoer.append(1)
+            else:
+                invoer.append(0)
+    return invoer
+
+def lees_tekens(mappen):
+    plaatjes = []
+    labels = []
+    for soort in mappen:
+        for plaatje in mappen[soort]:
+            plaatjes.append(naar_getallen(plaatje))
+            labels.append(soort)
+    return plaatjes, labels
+
+mappen = {
+    0: [[".#.", ".#.", ".#."], [".#.", "##.", ".#."]],
+    1: [["...", "###", "..."], ["...", "###", "#.."]],
+}
+
+plaatjes, labels = lees_tekens(mappen)
+print(len(plaatjes), "plaatjes")   # 4 plaatjes
+print(labels)   # [0, 0, 1, 1]
+print(plaatjes[1])   # [0, 1, 0, 1, 1, 0, 0, 1, 0]
+```
+
+De twee `append`-regels staan in dezelfde loop: zo krijgt elk plaatje precies
+één label, op dezelfde positie.
+
+</details>
+
+## Er gaat iets mis
+
+Geen foutmelding, maar wel een fout: je hebt meer plaatjes dan labels.
+
+**Oorzaak:** `labels.append(soort)` staat in de buitenste loop. Dan krijgt elke
+soort één label, in plaats van elk plaatje. Bij de mappen uit de editor zijn
+het 4 plaatjes en 2 labels, en het label op positie 1 hoort niet meer bij
+`plaatjes[1]`.
+
+**Oplossing:** zet beide `append`-regels in de binnenste loop. Print
+`len(plaatjes)` en `len(labels)` om te zien of ze gelijk zijn.
+
+```python
+# FOUT
+for soort in mappen:
+    for plaatje in mappen[soort]:
+        plaatjes.append(naar_getallen(plaatje))
+    labels.append(soort)
+
+# GOED
+for soort in mappen:
+    for plaatje in mappen[soort]:
+        plaatjes.append(naar_getallen(plaatje))
+        labels.append(soort)
+```
+
+Door naar [de uitgangen leren](site:algorithms/docs/ml-neuronen/03-op-weg-naar-traffic/06-de-uitgangen-leren).
