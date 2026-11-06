@@ -45,6 +45,8 @@ while True:
 
 In het volgende deel laat je je **lijnvolger stoppen** zodra de TOF een obstakel dichterbij dan 10 cm ziet: [Deel 10](site:robotica/lego_auto/afstand/stoppen).
 
+Wil je de afstand van verder weg kunnen lezen? Zet hem dan groot op het scherm met `scale`, zie [grotere tekst](site:robotica/docs/onderdelen/oled-scherm#grotere-tekst).
+
 Wil je daarna nog meer? **Meer TOF-sensoren** aansluiten kan via de andere channels van de multiplexer; hoe dat werkt staat in de bibliotheek bij [twee TOF-sensoren met multiplexer](site:robotica/docs/onderdelen/tof#twee-met-mux).
 
 ---
