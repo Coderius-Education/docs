@@ -283,7 +283,7 @@ tekst = play.new_text("", y=250, font_size=30)
 
 @bal.when_touching(zone)
 def punt():
-    tekst.words = "Punt!"
+    tekst.words = "Punt."
 ```
 
 <PygbagRunner code={`import play
@@ -300,7 +300,7 @@ tekst = play.new_text("", y=250, font_size=30)
 
 @bal.when_touching(zone)
 def punt():
-    tekst.words = "Punt!"`} height={300} />
+    tekst.words = "Punt."`} height={300} />
 
 De bal valt door de groene zone en landt op de vloer. Zodra de bal de zone raakt, verschijnt "Punt.".
 

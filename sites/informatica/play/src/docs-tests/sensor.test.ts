@@ -29,6 +29,26 @@ function code(tekst: string): string[] {
   ];
 }
 
+/**
+ * Elke aanroep van start_physics(...) met zijn argumenten, ook als daar zelf
+ * haakjes in staan (`x_speed=random.randint(1, 5)`).
+ */
+function aanroepen(code: string): string[] {
+  const uit: string[] = [];
+  for (const m of code.matchAll(/start_physics\(/g)) {
+    const begin = m.index ?? 0;
+    let diepte = 0;
+    for (let i = begin + m[0].length - 1; i < code.length; i++) {
+      if (code[i] === '(') diepte++;
+      else if (code[i] === ')' && --diepte === 0) {
+        uit.push(code.slice(begin, i + 1));
+        break;
+      }
+    }
+  }
+  return uit;
+}
+
 const PAGINAS = ['docs', 'src/pages'].flatMap((map) => bestanden(join(SITE, map)));
 
 describe('een sensor blijft op zijn plek', () => {
@@ -45,7 +65,7 @@ describe('een sensor blijft op zijn plek', () => {
       for (const blok of code(readFileSync(pad, 'utf8'))) {
         // Een blok met # FOUT laat de fout bewust zien; alleen de GOED-helft telt.
         const telt = blok.includes('# FOUT') ? (blok.split('# GOED')[1] ?? '') : blok;
-        for (const [aanroep] of telt.matchAll(/start_physics\([^)]*\)/g))
+        for (const aanroep of aanroepen(telt))
           if (
             /sensor\s*=\s*True/.test(aanroep) &&
             !/can_move\s*=\s*False|obeys_gravity\s*=\s*False/.test(aanroep)
@@ -53,6 +73,12 @@ describe('een sensor blijft op zijn plek', () => {
             fout.push(`${pad.slice(SITE.length)}: ${aanroep}`);
       }
     expect(fout).toEqual([]);
+  });
+
+  it('leest ook een aanroep met haakjes in zijn argumenten', () => {
+    expect(aanroepen('a.start_physics(x_speed=random.randint(1, 5), sensor=True)\n')).toEqual([
+      'start_physics(x_speed=random.randint(1, 5), sensor=True)',
+    ]);
   });
 
   it('de eerste fysicales laat zien dat een bal tegen een tekst stuitert, en wijst naar de sensor', () => {
