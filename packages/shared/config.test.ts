@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -128,5 +128,30 @@ describe('createConfig — Docusaurus Faster', () => {
       .filter((pkg) => pkg.dependencies['@docusaurus/faster'] !== 'catalog:')
       .map((pkg) => pkg.name);
     expect(zonder).toEqual([]);
+  });
+});
+
+describe('de kleuren van Python-code (issue #158)', () => {
+  const { licht, donker } = require('./prism-thema');
+
+  it("createConfig geeft elke cursus de thema's uit prism-thema.js, en geen cursus zet zelf dracula", () => {
+    const config = createConfig({ siteId: 'python' });
+    expect(config.themeConfig.prism.theme).toBe(licht);
+    expect(config.themeConfig.prism.darkTheme).toBe(donker);
+    const sites = fileURLToPath(new URL('../../sites', import.meta.url));
+    const fout = readdirSync(sites, { recursive: true })
+      .map(String)
+      .filter((f) => f.endsWith('docusaurus.config.ts') && !f.includes('node_modules'))
+      .filter((f) => /\bdracula\b/.test(readFileSync(join(sites, f), 'utf8')));
+    expect(fout).toEqual([]);
+  });
+
+  it("de editor van de python-runner gebruikt dezelfde thema's", () => {
+    const editor = readFileSync(
+      fileURLToPath(new URL('../python-runner/src/HighlightedEditor/index.tsx', import.meta.url)),
+      'utf8',
+    );
+    expect(editor).toContain("from '@coderius/shared/prism-thema'");
+    expect(editor).not.toMatch(/\bdracula\b/);
   });
 });

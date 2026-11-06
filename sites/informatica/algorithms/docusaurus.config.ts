@@ -1,4 +1,4 @@
-import { createConfig, prismThemes } from '@coderius/shared/config';
+import { createConfig } from '@coderius/shared/config';
 import type { Options as DocsOptions } from '@docusaurus/plugin-content-docs';
 import { omleidingen } from './src/data/omleidingen';
 import { sidebarZonderMl } from './src/lib/mlSidebar';
@@ -67,8 +67,6 @@ export default createConfig({
         'Licensed under CC BY-NC 4.0 — Minimax-track is afgeleid van CS50 AI en valt onder CC BY-NC-SA 4.0.',
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
       additionalLanguages: ['python'],
     },
   },

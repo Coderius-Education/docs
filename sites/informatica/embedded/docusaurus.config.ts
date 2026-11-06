@@ -1,4 +1,4 @@
-import { createConfig, prismThemes } from '@coderius/shared/config';
+import { createConfig } from '@coderius/shared/config';
 import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
 
 export default createConfig({
@@ -57,8 +57,6 @@ export default createConfig({
       links: [],
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
       additionalLanguages: ['arduino', 'cpp', 'ini', 'bash'],
     },
   },

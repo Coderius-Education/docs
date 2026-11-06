@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { themes: prismThemes } = require('prism-react-renderer');
+const prismThema = require('../prism-thema');
 const transpileShared = require('../plugins/transpile-shared');
 const { plugin: mdxInspringing } = require('../plugins/mdx-inspringing');
 const cursussenRoute = require('../plugins/cursussen-route');
@@ -300,7 +301,8 @@ function createConfig(course = {}) {
   const themeConfig = deepMerge(
     {
       colorMode: { respectPrefersColorScheme: true },
-      prism: { theme: prismThemes.github, darkTheme: prismThemes.dracula },
+      // Licht github, donker dracula met de getallen in dezelfde kleur (prism-thema.js).
+      prism: { theme: prismThema.licht, darkTheme: prismThema.donker },
       // Rechter inhoudsopgave toont standaard alleen H2-koppen. Een site mag dit
       // overschrijven via themeConfig.tableOfContents.
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 2 },

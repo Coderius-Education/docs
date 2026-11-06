@@ -57,6 +57,7 @@ function CodeEditorInner({ value, onChange, readOnly = false, height = '300px' }
         bracketMatching,
         syntaxHighlighting,
         defaultHighlightStyle,
+        getallenDonker,
         closeBrackets,
       } = await import('./codemirror');
 
@@ -84,7 +85,8 @@ function CodeEditorInner({ value, onChange, readOnly = false, height = '300px' }
       ];
 
       if (colorMode === 'dark') {
-        extensions.push(oneDark);
+        // Getallen in dezelfde kleur als in licht en in de codeblokken (codemirror.js).
+        extensions.push(oneDark, getallenDonker);
       } else {
         extensions.push(syntaxHighlighting(defaultHighlightStyle));
         extensions.push(

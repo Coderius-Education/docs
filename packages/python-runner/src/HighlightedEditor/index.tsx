@@ -5,7 +5,8 @@
 // De CSS blijft in PythonPlayground/styles.module.css: die classes horen bij
 // elkaar (gutter, highlight-laag en textarea moeten exact dezelfde
 // font-metrics houden) en staan daar met de uitleg waarom er !important bij moet.
-import { Highlight, themes } from 'prism-react-renderer';
+import { donker, licht } from '@coderius/shared/prism-thema';
+import { Highlight } from 'prism-react-renderer';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from '../PythonPlayground/styles.module.css';
@@ -102,7 +103,8 @@ export function HighlightedEditor({
   };
 
   const lineCount = code.split('\n').length;
-  const theme = colorMode === 'dark' ? themes.dracula : themes.github;
+  // Dezelfde kleuren als de codeblokken van de cursus (prism-thema.js).
+  const theme = colorMode === 'dark' ? donker : licht;
 
   return (
     <div className={styles.editorWrapper} style={{ minHeight }}>
