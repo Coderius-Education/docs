@@ -9,6 +9,7 @@ bibliotheek met een zelftest; deze tests hebben die bibliotheek niet nodig.
 """
 
 import importlib.util
+import json
 import os
 import sys
 import tempfile
@@ -97,6 +98,48 @@ class Marker(unittest.TestCase):
             regels = [i + 1 for i, r in enumerate(les.split("\n")) if r == "```python"]
             uit = [runner.niet_draaien({"bron": "les.md", "regel": r}) for r in regels]
         self.assertEqual(uit, [False, True, False])
+
+
+class Alleen(unittest.TestCase):
+    """`--alleen changed.json` uit de plan-job (in CI de gewone weg)."""
+
+    def setUp(self):
+        self.runner = laad("draai_leaphy_alleen", "draai-leaphy-blokken.py")
+        self.index = [
+            {
+                "naam": "a",
+                "bron": "lego_auto/afstand/uitlezen.md",
+                "regel": 25,
+                "begin": 23,
+                "eind": 36,
+            },
+            {
+                "naam": "b",
+                "bron": "docs/onderdelen/tof.mdx",
+                "regel": 60,
+                "begin": 58,
+                "eind": 75,
+            },
+        ]
+
+    def kies(self, gewijzigd: dict) -> list[str]:
+        with tempfile.TemporaryDirectory() as tmp:
+            pad = Path(tmp) / "changed.json"
+            pad.write_text(json.dumps(gewijzigd))
+            return [i["naam"] for i in self.runner.kies(self.index, pad)]
+
+    def test_alleen_het_geraakte_blok(self):
+        les = "sites/informatica/robotica/lego_auto/afstand/uitlezen.md"
+        gewijzigd = {"volledig": False, "bestanden": {les: [[29, 29]]}, "runners": {}}
+        self.assertEqual(self.kies(gewijzigd), ["a"])
+
+    def test_alles_bij_een_wijziging_aan_de_runner(self):
+        gewijzigd = {
+            "volledig": False,
+            "bestanden": {},
+            "runners": {"robotica": {"alles": True}},
+        }
+        self.assertEqual(self.kies(gewijzigd), ["a", "b"])
 
 
 if __name__ == "__main__":

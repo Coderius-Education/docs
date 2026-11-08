@@ -48,7 +48,7 @@ REPO = "https://github.com/leaphy-robotics/leaphy-micropython"
 NIET_DRAAIEN = "{/* niet-draaien:"
 
 sys.path.insert(0, str(HIER))
-from alleen import Selectie, lees
+from alleen import Selectie
 
 _spec = importlib.util.spec_from_file_location(
     "compileer", HIER / "compileer-blokken.py"
@@ -181,6 +181,15 @@ def niet_draaien(item: dict) -> bool:
     return NIET_DRAAIEN in (ervoor if vorige == -1 else ervoor[vorige + 3 :])
 
 
+def kies(index: list[dict], changed: Path) -> list[dict]:
+    """De blokken die de wijziging in changed.json raakt, zoals compileer-blokken.py
+    ze kiest; alles bij een volledige run of een wijziging aan deze runner."""
+    selectie = Selectie(json.loads(changed.read_text()), "robotica")
+    if selectie.alles:
+        return index
+    return _compileer.gekozen(index, SITE, selectie)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--alleen", help="changed.json uit de plan-job")
@@ -197,13 +206,9 @@ def main() -> int:
         return 1
     index = json.loads(index_pad.read_text())
     if args.alleen:
-        selectie = Selectie(lees(args.alleen), "robotica")
-        if not selectie.alles:
-            alle = len(index)
-            index = _compileer.gekozen(index, SITE, selectie)
-            print(
-                f"--alleen: {len(index)} van {alle} blokken geraakt door de wijziging"
-            )
+        alle = len(index)
+        index = kies(index, Path(args.alleen))
+        print(f"--alleen: {len(index)} van {alle} blokken geraakt door de wijziging")
 
     lib = bibliotheek(args.bibliotheek)
     fouten = zelftest(lib)
