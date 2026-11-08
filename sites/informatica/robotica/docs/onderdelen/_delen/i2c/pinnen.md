@@ -7,9 +7,9 @@ Op het shield zitten ze op A4 en A5; daar staat A4/D18/SDA en A5/D19/SCL. In je 
 
 De Nano spreekt een apparaat aan met zijn adres, en de multiplexer kiest met `channel` welk stel pinnen meedoet. Zo kunnen het scherm op channel 7 en een TOF op channel 0 tegelijk aan A4 en A5 hangen. Een IR-sensor kan er niet meer bij: die zou de draden van I2C verstoren.
 
-<Voorspel soort="Controlevraag" vraag="Het scherm zit op channel 7 en je wilt er een IR-sensor bij. Waarom mag die niet op A4?">
-  <Keuze goed uitleg="Op A4 loopt SDA, de datadraad die het scherm en de multiplexer samen gebruiken.">Daar loopt de data van I2C.</Keuze>
+<Voorspel soort="Controlevraag" vraag="Op de multiplexer zit een scherm of een TOF, en je wilt er een IR-sensor bij. Waarom mag die niet op A4?">
+  <Keuze goed uitleg="Op A4 loopt SDA, de datadraad die de multiplexer en alles erop samen gebruiken.">Daar loopt de data van I2C.</Keuze>
   <Keuze uitleg="A4 is wel een analoge pin. Kijk wat er op het shield nog meer bij A4 staat.">A4 kan geen analoge waarde lezen.</Keuze>
-  <Keuze uitleg="Channel 7 is een stel pinnen op de multiplexer, niet op de Nano. Lees waar de multiplexer zelf aan hangt.">Channel 7 gebruikt die pin al.</Keuze>
+  <Keuze uitleg="Een channel is een stel pinnen op de multiplexer, niet op de Nano. Lees waar de multiplexer zelf aan hangt.">Het channel van het scherm of de TOF gebruikt die pin al.</Keuze>
   <Uitleg>A4 en A5 zijn SDA en SCL. Alles op de multiplexer hangt daaraan, dus een IR-sensor gaat op A0, A1, A2, A3, A6 of A7.</Uitleg>
 </Voorspel>

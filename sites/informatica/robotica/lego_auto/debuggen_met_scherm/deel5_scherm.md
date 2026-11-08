@@ -59,9 +59,12 @@ Tekenen gaat altijd in drie stappen: `fill('white')` maakt het scherm leeg, `tex
 
 </CodeUitleg>
 
-### SDA en SCL
+<details>
+<summary>Waarom staat er "SDA" en "SCL"?</summary>
 
 <I2C />
+
+</details>
 
 ## Voorspel: wat gebeurt er zonder `show()`?
 
