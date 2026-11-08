@@ -350,4 +350,20 @@ describe('de codeblokken passen bij leaphymicropython', () => {
           fout.push(`${waar}: ${regel.trim()}`);
     expect(fout).toEqual([]);
   });
+
+  it('een naslagpagina met een f-string linkt naar de uitleg', () => {
+    // Onderdelen en de cheatsheet lees je los, dus de f-string uit Deel 5 heeft
+    // een leerling daar misschien nooit gezien. drukknop en potmeter hadden er
+    // een in een print zonder link. lego_auto heeft een vaste volgorde en een
+    // <Voorkennis> waar de f-string binnenkomt (voorkennis.test.ts).
+    const UITLEG = 'site:python/docs/tekst/04a-f-strings';
+    const paginas = new Set(
+      blokken
+        .filter(({ waar, code }) => /^(docs|src\/pages)\//.test(waar) && /\bf["']/.test(code))
+        .map(({ waar }) => waar.replace(/:\d+$/, '')),
+    );
+    expect(paginas.size).toBeGreaterThan(0);
+    const fout = [...paginas].filter((p) => !readFileSync(join(SITE, p), 'utf8').includes(UITLEG));
+    expect(fout).toEqual([]);
+  });
 });
