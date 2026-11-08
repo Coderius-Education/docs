@@ -480,7 +480,11 @@ function plan({
     runners[naam] = { draaien: alles || raak, alles };
   }
 
-  const pythonScripts = paden.some((p) => /^scripts\/[^/]+\.py$/.test(p));
+  // Python in scripts/ (ook in een submap, zoals scripts/leaphy_nep) en in de
+  // scripts/ van een site: hun unittests (scripts/test_*.py) draaien in `test`.
+  const pythonScripts = paden.some((p) =>
+    /^(scripts\/.+|sites\/[^/]+\/[^/]+\/scripts\/[^/]+)\.py$/.test(p),
+  );
   const crosslinks = geraakteSites.length > 0 || paden.some((p) => past(p, PER_JOB.crosslinks));
   const lint = paden.some((p) => past(p, PER_JOB.lint));
   const browser = geraakteSites.includes('python') || paden.some((p) => past(p, PER_JOB.browser));

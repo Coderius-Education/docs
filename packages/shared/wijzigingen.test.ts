@@ -220,6 +220,21 @@ describe('plan', () => {
     }
   });
 
+  it('Python in scripts/ (ook in een submap) en in de scripts/ van een site laat de unittests draaien', () => {
+    // scripts/test_leaphy_nep.py toetst scripts/leaphy_nep/, en
+    // scripts/test_leaphy_api.py het script van robotica. Draaide de job test
+    // daar niet bij, dan bleef een fout erin stil groen.
+    for (const [pad, geraakt] of [
+      ['scripts/draai-leaphy-blokken.py', []],
+      ['scripts/leaphy_nep/machine.py', []],
+      [`${MAP.robotica}/scripts/leaphy-api.py`, [MAP.robotica]],
+    ] as const) {
+      const p = planVoor({ [pad]: [[3, 3]] }, [...geraakt]);
+      expect(p.volledig, pad).toBe(false);
+      expect(p.jobs.test, pad).toBe(true);
+    }
+  });
+
   it('het controlescript van fullstack laat de fullstack-job draaien', () => {
     for (const pad of [
       `${MAP.fullstack}/static/controleer.py`,

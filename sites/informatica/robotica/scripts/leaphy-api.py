@@ -55,6 +55,9 @@ def standaard(functie):
 
 
 bron, pins_csv = Path(sys.argv[1]), Path(sys.argv[2])
+# Een derde argument schrijft ergens anders heen (de test van dit script).
+UIT = Path(__file__).resolve().parent.parent / "src" / "lego-tests" / "leaphy-api.json"
+uit = Path(sys.argv[3]) if len(sys.argv) > 3 else UIT
 modules = {}
 klassen = {}
 for pad in sorted((bron / "leaphymicropython").rglob("*.py")):
@@ -104,15 +107,34 @@ commit = subprocess.run(
     check=True,
 ).stdout.strip()
 
-uit = Path(__file__).resolve().parent.parent / "src" / "lego-tests" / "leaphy-api.json"
-uit.write_text(
-    json.dumps(
-        {"commit": commit, "modules": modules, "klassen": klassen, "pinnen": pinnen},
-        indent=2,
-        ensure_ascii=False,
+ROOT = UIT.parents[5]
+
+
+def opgemaakt(tekst: str) -> str:
+    """Zoals biome het bestand wil; anders faalt `biome check` in CI op een
+    bestand dat dit script net schreef (json.dumps zet elke lijst over regels)."""
+    r = subprocess.run(
+        ["pnpm", "exec", "biome", "format", f"--stdin-file-path={UIT.relative_to(ROOT)}"],
+        input=tekst,
+        capture_output=True,
+        text=True,
+        cwd=ROOT,
+        check=True,
     )
-    + "\n"
+    return r.stdout
+
+
+uit.write_text(
+    opgemaakt(
+        json.dumps(
+            {"commit": commit, "modules": modules, "klassen": klassen, "pinnen": pinnen},
+            indent=2,
+            ensure_ascii=False,
+        )
+        + "\n"
+    )
 )
+
 print(
     f"{uit}: {len(modules)} modules, {len(klassen)} klassen, {len(pinnen)} pinnen, commit {commit[:7]}"
 )
