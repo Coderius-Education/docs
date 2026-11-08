@@ -342,12 +342,29 @@ describe('de codeblokken passen bij leaphymicropython', () => {
     // stonden in vijf lessen nog 28 regels als oled.text('Links: ' + kleur, …).
     // Een leerling ziet dan twee manieren en weet niet welke de cursus wil, en
     // met + en een getal krijgt hij een TypeError.
-    const PLAKKEN = /(["'])[^"'\n]*\1\s*\+(?!=)|[\w)\]]\s*\+\s*f?(["'])|\bstr\(/;
+    // Eerst gaat de inhoud van elke string eruit (zonderStrings), dan het
+    // commentaar: zo telt ook "Druk's " + x, en een + of str( in een tekst niet.
+    const PLAKKEN = /""\s*\+(?!=)|\+\s*""|\bstr\(/;
     const fout: string[] = [];
     for (const { waar, code } of blokken)
       for (const regel of code.split('\n'))
-        if (!regel.trim().startsWith('#') && PLAKKEN.test(regel))
+        if (PLAKKEN.test(zonderStrings(regel).replace(/#.*/, '')))
           fout.push(`${waar}: ${regel.trim()}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('een f-string bevat alleen een naam, eventueel met opmaak', () => {
+    // De runner draait de blokken met CPython, maar op het bord draait
+    // MicroPython, en dat kent niet elke f-string: geen !a, en geen expressie
+    // met haakjes of accolades die de parser niet in één keer sluit. Een naam
+    // ({kleur_links}, {sensor.waarde}) en een eenvoudige opmaak ({procent:3})
+    // werken overal; een berekening hoort op een eigen regel ervoor.
+    const VELD = /^[A-Za-z_][\w.]*(:[^{}!]*)?$/;
+    const fout: string[] = [];
+    for (const { waar, code } of blokken)
+      for (const [, , inhoud] of code.matchAll(/\bf(["'])((?:(?!\1)[^\n])*)\1/g))
+        for (const [, veld] of inhoud.replace(/\{\{|\}\}/g, '').matchAll(/\{([^}]*)\}/g))
+          if (!VELD.test(veld.trim())) fout.push(`${waar}: {${veld}}`);
     expect(fout).toEqual([]);
   });
 
@@ -364,6 +381,31 @@ describe('de codeblokken passen bij leaphymicropython', () => {
     );
     expect(paginas.size).toBeGreaterThan(0);
     const fout = [...paginas].filter((p) => !readFileSync(join(SITE, p), 'utf8').includes(UITLEG));
+    expect(fout).toEqual([]);
+  });
+
+  it('elke link naar de uitleg van f-strings heeft dezelfde naam', () => {
+    // Deel 5 noemde dezelfde pagina eerst "Tekst en getallen combineren met
+    // f-strings" en een paar regels later "Slimme berichten met f-strings", en
+    // Er gaat iets mis alleen "uitleg": een leerling denkt dan aan twee pagina's.
+    const NAMEN = new Set(['Tekst en getallen combineren met f-strings', 'f-string']);
+    const fout: string[] = [];
+    const loopTekst = (map: string) => {
+      for (const naam of readdirSync(map)) {
+        const pad = join(map, naam);
+        if (statSync(pad).isDirectory()) loopTekst(pad);
+        else if (/\.mdx?$/.test(naam)) {
+          const tekst = readFileSync(pad, 'utf8');
+          const links = [
+            ...tekst.matchAll(/\[([^\]]*)\]\(site:python\/docs\/tekst\/04a-f-strings[)#]/g),
+            ...tekst.matchAll(/to: '\/docs\/tekst\/04a-f-strings', label: '([^']*)'/g),
+          ];
+          for (const [, label] of links)
+            if (!NAMEN.has(label)) fout.push(`${pad.slice(SITE.length)}: ${label}`);
+        }
+      }
+    };
+    for (const map of ['docs', 'lego_auto', 'src/pages']) loopTekst(join(SITE, map));
     expect(fout).toEqual([]);
   });
 });
