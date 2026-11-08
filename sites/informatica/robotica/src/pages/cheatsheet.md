@@ -112,8 +112,14 @@ print(afstand)  # Bijvoorbeeld: 234 (= 23,4 cm)
 ```python
 from leaphymicropython.sensors.tof import TimeOfFlight
 
-tof_1 = TimeOfFlight(channel=0, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
-tof_2 = TimeOfFlight(channel=1, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+tof_1 = TimeOfFlight(
+    channel=0,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
+tof_2 = TimeOfFlight(
+    channel=1,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 afstand_1 = tof_1.get_distance()
 afstand_2 = tof_2.get_distance()
@@ -157,7 +163,10 @@ De volgende `get_distance()` probeert na een fout vanzelf opnieuw te verbinden.
 ```python
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 # Tekst tonen
 oled.fill("white")

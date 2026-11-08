@@ -38,7 +38,10 @@ Op het scherm zit SCL boven SDA, op de multiplexer andersom: die twee draden kru
 ```python
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 oled.fill("white")
 oled.text('Hello, World 1!', x=0, y=0)
@@ -52,7 +55,10 @@ Op het scherm verschijnen nu drie regels.
 ### Uitleg
 
 ```python
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 ```
 
 - **width**: breedte in pixels (128).
@@ -125,7 +131,10 @@ Maak elke ronde het scherm leeg met `oled.fill("white")` en zet de nieuwe waarde
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 from time import sleep
 
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 teller = 0
 while True:
@@ -147,7 +156,10 @@ pixel een blokje van 2 bij 2, en is een letter 16 bij 16 pixels.
 ```python
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 oled.fill("white")
 oled.text('Klein', x=0, y=0)
@@ -191,7 +203,10 @@ kan op `y=16`.
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 from time import sleep
 
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 teller = 0
 while True:

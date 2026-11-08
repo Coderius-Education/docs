@@ -182,6 +182,38 @@ describe('de codeblokken passen bij leaphymicropython', () => {
     expect(getoetst).toBeGreaterThan(40);
   });
 
+  it('een regel met pinnen past in het codeblok', () => {
+    // OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin=…, scl_gpio_pin=…)
+    // was 88 tekens: bij 1280 × 800 is een codeblok 703 pixels breed en had
+    // die regel er 869 nodig, dus juist de pinnen stonden achter de
+    // schuifbalk. Ongeveer 70 tekens passen; een regel met pinnen blijft onder
+    // de 60, en een langere aanroep zet de pinnen op een eigen regel.
+    const fout: string[] = [];
+    for (const { waar, code } of blokken)
+      for (const regel of code.split('\n'))
+        if (
+          /\b(dir_pin_motor_[ab]|pwm_pin_motor_[ab]|sda_gpio_pin|scl_gpio_pin)\s*=/.test(regel) &&
+          regel.length > 60
+        )
+          fout.push(`${waar}: ${regel.length} tekens: ${regel.trim()}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('de tabel met de motorpinnen klopt met de standaard van DCMotors', () => {
+    // De tabel in de uitleg is met de hand geschreven; de code toetst de test
+    // hierboven al tegen de bibliotheek.
+    const tekst = readFileSync(join(SITE, 'docs/onderdelen/_delen/dc-motor/pinnen.md'), 'utf8');
+    const standaard = klassen.get('DCMotors')?.standaard ?? {};
+    const rijen = [...tekst.matchAll(/^\|\s*([AB])\s*\|\s*(D\d+)\s*\|\s*(D\d+)\s*\|$/gm)].map(
+      ([, motor, richting, snelheid]) => [motor.toLowerCase(), richting, snelheid],
+    );
+    expect(rijen.map(([m]) => m)).toEqual(['a', 'b']);
+    for (const [motor, richting, snelheid] of rijen) {
+      expect(richting).toBe(standaard[`dir_pin_motor_${motor}`]);
+      expect(snelheid).toBe(standaard[`pwm_pin_motor_${motor}`]);
+    }
+  });
+
   it('een ultrasone sensor zit op pinnen van de chip zelf', () => {
     // D18 tot en met D21 (A4 tot en met A7) lopen in MicroPython via de
     // wifi-chip (EXT_GPIO); daarmee time je geen echo.

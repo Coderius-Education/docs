@@ -32,7 +32,10 @@ from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
 links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 motoren = DCMotors(
     dir_pin_motor_a="D2",
@@ -59,11 +62,11 @@ while True:
     sleep(0.01)
 ```
 
-<Regel n={28}>
+<Regel n={31}>
 `==` vergelijkt: is de tekst in `kleur_links` gelijk aan `"white"`? `and` eist dat het aan beide kanten klopt.
 </Regel>
 
-<Regel n={29} tot={30}>
+<Regel n={32} tot={33}>
 Alleen als die hele voorwaarde klopt, draaien beide motoren vol vooruit.
 </Regel>
 
@@ -95,7 +98,10 @@ from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
 links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 motoren = DCMotors(
     dir_pin_motor_a="D2",

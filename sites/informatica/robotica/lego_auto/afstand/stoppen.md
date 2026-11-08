@@ -33,8 +33,14 @@ links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
 buiten_links = AnalogIR("A2", 2500)
 buiten_rechts = AnalogIR("A3", 2500)
-tof = TimeOfFlight(channel=0, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+tof = TimeOfFlight(
+    channel=0,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 motoren = DCMotors(
     dir_pin_motor_a="D2",
@@ -69,15 +75,15 @@ while True:
 De import uit [De afstand uitlezen](site:robotica/lego_auto/afstand/uitlezen), nu tussen de andere.
 </Regel>
 
-<Regel n={11}>
+<Regel n={11} tot={14}>
 Het TOF-object op channel 0. Het scherm op channel 7 zit op dezelfde multiplexer.
 </Regel>
 
-<Regel n={28}>
+<Regel n={34}>
 Eén meting per ronde, in millimeters.
 </Regel>
 
-<Regel n={35}>
+<Regel n={41}>
 De afstand als vijfde regel op het scherm, met een f-string zoals in [Opdracht 11.5.a](site:robotica/lego_auto/afstand/op-het-scherm).
 </Regel>
 
@@ -175,8 +181,14 @@ links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
 buiten_links = AnalogIR("A2", 2500)
 buiten_rechts = AnalogIR("A3", 2500)
-tof = TimeOfFlight(channel=0, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+tof = TimeOfFlight(
+    channel=0,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 motoren = DCMotors(
     dir_pin_motor_a="D2",

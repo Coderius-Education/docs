@@ -181,8 +181,14 @@ while True:
 - Geef elke sensor zijn eigen channel:
 
 ```python
-tof_1 = TimeOfFlight(channel=0, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
-tof_2 = TimeOfFlight(channel=1, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+tof_1 = TimeOfFlight(
+    channel=0,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
+tof_2 = TimeOfFlight(
+    channel=1,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 ```
 
 </details>

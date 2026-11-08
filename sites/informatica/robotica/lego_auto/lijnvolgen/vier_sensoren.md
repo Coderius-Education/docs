@@ -48,7 +48,10 @@ links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
 buiten_links = AnalogIR("A2", 2500)
 buiten_rechts = AnalogIR("A3", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 motoren = DCMotors(
     dir_pin_motor_a="D2",
@@ -81,11 +84,11 @@ while True:
 Twee nieuwe sensor-objecten, op A2 en A3. `2500` is de drempel van de eerste twee; past hij hier niet, kalibreer dan opnieuw zoals in [Opdracht 5.4.a](site:robotica/lego_auto/lijnsensor/een-sensor).
 </Regel>
 
-<Regel n={24} tot={25}>
+<Regel n={27} tot={28}>
 Elke ronde lees je nu vier sensoren in plaats van twee.
 </Regel>
 
-<Regel n={30} tot={31}>
+<Regel n={33} tot={34}>
 Twee regels lager op het scherm, op hoogte 20 en 30, zodat ze niet over de eerste twee heen vallen.
 </Regel>
 
@@ -192,7 +195,10 @@ links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
 buiten_links = AnalogIR("A2", 2500)
 buiten_rechts = AnalogIR("A3", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 motoren = DCMotors(
     dir_pin_motor_a="D2",

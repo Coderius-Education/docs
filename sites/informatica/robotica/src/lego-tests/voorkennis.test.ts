@@ -64,7 +64,6 @@ const LEGO_ZONDER_BLOK: { reden: string; lessen: string[] }[] = [
       'lego_auto/debuggen_met_scherm/material.md',
       'lego_auto/doos.md',
       'lego_auto/intro.md',
-      'lego_auto/motoren/let_op.md',
       'lego_auto/motoren/material.md',
       'lego_auto/motoren/wiring.md',
       'lego_auto/motoren_aan_legoframe/monteren.md',
@@ -111,6 +110,8 @@ const LEGO_ZONDER_BLOK: { reden: string; lessen: string[] }[] = [
       'lego_auto/batterijen/code.md',
       'lego_auto/lijnvolgen/vier_sensoren.md',
       'lego_auto/motoren/deel6_draaien.md',
+      // De pinnen van DCMotors als keyword-argumenten; die legt Deel 5 al uit.
+      'lego_auto/motoren/let_op.md',
     ],
   },
 ];

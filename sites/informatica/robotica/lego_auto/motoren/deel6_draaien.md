@@ -65,7 +65,10 @@ from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
 links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 motoren = DCMotors(
     dir_pin_motor_a="D2",
@@ -144,7 +147,10 @@ from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
 links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 motoren = DCMotors(
     dir_pin_motor_a="D2",
