@@ -4,6 +4,8 @@ sidebar_position: 3
 
 # Leerdoelen per hoofdstuk
 
+Waarop je beoordeelt, per niveau en met basis, gevorderd en expert, staat op [Leerdoelen](site:play/leerdoelen). Hieronder staat per hoofdstuk wat een leerling na afloop kan.
+
 ### Hoofdstuk 1 — Vormen
 Na afloop kan de leerling:
 - Vormen op het scherm tekenen met `play.new_circle`, `play.new_box`, `play.new_text` en `play.new_image`.

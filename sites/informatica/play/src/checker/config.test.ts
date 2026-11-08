@@ -131,6 +131,52 @@ describe('play-nakijker', () => {
     }
   });
 
+  it('neemt de niveaus uit leerdoelen.json: Niveau 1 en Niveau 2 als leerroute', () => {
+    expect(playConfig.tracks).toEqual([
+      { id: '1', label: 'Niveau 1' },
+      { id: '2', label: 'Niveau 2' },
+    ]);
+    const niveau = (id: string) => playConfig.concepts.find((c) => c.id === id)?.level;
+    // Hoofdstuk 1 tot en met 4 is op beide niveaus de basis; UI is op
+    // niveau 1 expert, en pygame-ce hoort pas bij niveau 2.
+    expect(niveau('play-circle')).toEqual({ '1': 'basis', '2': 'basis' });
+    expect(niveau('play-timer')).toEqual({ '1': 'gevorderd', '2': 'basis' });
+    expect(niveau('play-button')).toEqual({ '1': 'expert', '2': 'gevorderd' });
+    expect(niveau('pygame-import')).toEqual({ '1': null, '2': 'expert' });
+    // Een beoordeling van vóór de niveaus opent op niveau 1.
+    expect(playConfig.zonderLeerroute).toBe('1');
+  });
+
+  it('herkent f-strings, elif/and/or en parameters', () => {
+    const code = [
+      'import play',
+      '',
+      'score = 0',
+      'tekst = play.new_text(words=f"Score: {score}")',
+      '',
+      '@play.when_key_pressed("up", "down")',
+      'def toets(key):',
+      '    if key == "up" and score < 10:',
+      '        tekst.y += 10',
+      '    elif key == "down":',
+      '        tekst.y -= 10',
+      '',
+    ].join('\n');
+    const rapport = analyze(bestanden({ 'main.py': code }), playConfig);
+    const gevonden = new Set(rapport.concepts.filter((m) => m.used).map((m) => m.id));
+    for (const id of ['py-fstring', 'py-elif-and-or', 'py-parameters']) {
+      expect(gevonden, id).toContain(id);
+    }
+    const zonder = analyze(
+      bestanden({ 'main.py': 'def stap():\n    if a:\n        pass\n' }),
+      playConfig,
+    );
+    const nietGevonden = new Set(zonder.concepts.filter((m) => m.used).map((m) => m.id));
+    for (const id of ['py-fstring', 'py-elif-and-or', 'py-parameters']) {
+      expect(nietGevonden, id).not.toContain(id);
+    }
+  });
+
   it('telt de niveaus zonder te struikelen over een leeg project', () => {
     const leeg = computeLevelSummary(analyze(bestanden({}), playConfig), playConfig);
     expect(leeg).toBeTruthy();
