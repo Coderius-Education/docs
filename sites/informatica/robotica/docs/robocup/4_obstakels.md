@@ -36,7 +36,7 @@ Zet de TOF voor op de robot, recht vooruit, en print de afstand:
 from time import sleep
 from leaphymicropython.sensors.tof import TimeOfFlight
 
-tof = TimeOfFlight(channel=0)
+tof = TimeOfFlight(channel=0, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 while True:
     print(tof.get_distance())
@@ -69,7 +69,7 @@ from time import sleep
 from machine import Pin
 from leaphymicropython.sensors.tof import TimeOfFlight
 
-tof = TimeOfFlight(channel=0)
+tof = TimeOfFlight(channel=0, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 lampje = Pin('LED', Pin.OUT)
 
 while True:

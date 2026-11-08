@@ -8,6 +8,7 @@ sidebar_custom_props:
 ---
 
 import Materiaal from '@site/docs/onderdelen/_delen/oled-scherm/materiaal.md';
+import I2C from '@site/docs/onderdelen/_delen/i2c/pinnen.md';
 
 # OLED-scherm
 
@@ -37,7 +38,7 @@ Op het scherm zit SCL boven SDA, op de multiplexer andersom: die twee draden kru
 ```python
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 oled.fill("white")
 oled.text('Hello, World 1!', x=0, y=0)
@@ -51,12 +52,13 @@ Op het scherm verschijnen nu drie regels.
 ### Uitleg
 
 ```python
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 ```
 
 - **width**: breedte in pixels (128).
 - **height**: hoogte in pixels (64).
 - **channel**: het channel van de multiplexer waar het scherm op zit.
+- `sda_gpio_pin` en `scl_gpio_pin`: de twee pinnen van I2C, `"SDA"` en `"SCL"`. Zie [SDA en SCL](#sda-scl).
 
 ```python
 oled.text('Hallo!', x=0, y=0)
@@ -65,6 +67,10 @@ oled.show()
 
 - `text()` zet tekst klaar op positie (x, y). Een letter is 8 bij 8 pixels.
 - **`show()`** stuurt alles wat je klaargezet hebt naar het scherm. Vergeet deze niet, anders blijft het scherm leeg.
+
+### SDA en SCL \{#sda-scl}
+
+<I2C />
 
 ### Andere handige functies
 
@@ -119,7 +125,7 @@ Maak elke ronde het scherm leeg met `oled.fill("white")` en zet de nieuwe waarde
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 from time import sleep
 
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 teller = 0
 while True:
@@ -141,7 +147,7 @@ pixel een blokje van 2 bij 2, en is een letter 16 bij 16 pixels.
 ```python
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 oled.fill("white")
 oled.text('Klein', x=0, y=0)
@@ -185,7 +191,7 @@ kan op `y=16`.
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 from time import sleep
 
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 teller = 0
 while True:

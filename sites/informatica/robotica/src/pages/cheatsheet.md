@@ -4,13 +4,13 @@ Handige tips en veelvoorkomende problemen voor jouw robotica-project.
 
 :::danger[Let op: A4 en A5 zijn bezet bij gebruik van een multiplexer.]
 
-Pinnen **A4** en **A5** worden gebruikt voor **I2C communicatie** (SDA en SCL). Als je een multiplexer, TOF-sensor of OLED-scherm gebruikt, zijn deze pinnen al bezet. Sluit hier **geen** IR-sensoren op aan. Gebruik alleen **A0, A1, A2, A3, A6, A7** voor IR-sensoren.
+Pinnen **A4** en **A5** worden gebruikt voor **I2C communicatie** (SDA en SCL). Als je een multiplexer, TOF-sensor of OLED-scherm gebruikt, zijn deze pinnen al bezet. Sluit hier **geen** IR-sensoren op aan. Gebruik alleen **A0, A1, A2, A3, A6, A7** voor IR-sensoren. In je code heten ze `sda_gpio_pin="SDA"` en `scl_gpio_pin="SCL"`: schrijf daar niet `"A4"`, want die naam loopt via de wifi-chip ([SDA en SCL](site:robotica/docs/onderdelen/oled-scherm#sda-scl)).
 
 :::
 
 :::danger[Let op: D2, D3, D4 en D11 zijn bezet bij gebruik van het motor shield.]
 
-Pinnen **D2**, **D3**, **D4** en **D11** worden door het motor shield gebruikt om de motoren aan te sturen. Sluit hier **geen** andere sensoren of actuatoren op aan.
+Pinnen **D2**, **D3**, **D4** en **D11** worden door het motor shield gebruikt om de motoren aan te sturen: per motor een richtingspin en een snelheidspin, zoals je ze aan `DCMotors` meegeeft ([De vier pinnen](site:robotica/docs/onderdelen/dc-motor#pinnen)). Sluit hier **geen** andere sensoren of actuatoren op aan.
 
 :::
 ---
@@ -39,7 +39,12 @@ kleur = a0.black_or_white()     # Geeft "black" of "white"
 ```python
 from leaphymicropython.actuators.dcmotor import DCMotors
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_a = motoren.motor_a
 motor_b = motoren.motor_b
 
@@ -94,7 +99,7 @@ Gebruik de zwarte schakelaar op het motor shield om de motoren volledig uit te s
 ```python
 from leaphymicropython.sensors.tof import TimeOfFlight
 
-tof = TimeOfFlight()
+tof = TimeOfFlight(sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 afstand = tof.get_distance()  # In millimeters (betrouwbaar ~5-200 cm)
 
 print(afstand)  # Bijvoorbeeld: 234 (= 23,4 cm)
@@ -107,8 +112,8 @@ print(afstand)  # Bijvoorbeeld: 234 (= 23,4 cm)
 ```python
 from leaphymicropython.sensors.tof import TimeOfFlight
 
-tof_1 = TimeOfFlight(channel=0)
-tof_2 = TimeOfFlight(channel=1)
+tof_1 = TimeOfFlight(channel=0, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+tof_2 = TimeOfFlight(channel=1, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 afstand_1 = tof_1.get_distance()
 afstand_2 = tof_2.get_distance()
@@ -152,7 +157,7 @@ De volgende `get_distance()` probeert na een fout vanzelf opnieuw te verbinden.
 ```python
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 # Tekst tonen
 oled.fill("white")

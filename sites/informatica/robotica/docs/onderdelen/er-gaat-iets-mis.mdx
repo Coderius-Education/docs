@@ -40,7 +40,7 @@ Dan heb je een moderne laptop. Gebruik een **USB-C naar USB-A**-adapter of vraag
 
 :::danger[A4 en A5 zijn bezet bij gebruik van een multiplexer]
 
-Pinnen **A4** en **A5** zijn nodig voor **I2C** (SDA en SCL). Heb je een multiplexer, TOF-sensor of OLED-scherm? Dan zijn deze pinnen bezet. Sluit IR-sensoren alleen aan op **A0, A1, A2, A3, A6** of **A7**.
+Pinnen **A4** en **A5** zijn nodig voor **I2C** (SDA en SCL). Heb je een multiplexer, TOF-sensor of OLED-scherm? Dan zijn deze pinnen bezet. Sluit IR-sensoren alleen aan op **A0, A1, A2, A3, A6** of **A7**. Zie [SDA en SCL](site:robotica/docs/onderdelen/oled-scherm#sda-scl).
 
 :::
 
@@ -78,7 +78,7 @@ Beweeg je hand boven de sensor of houd er een zwart/wit vel papier voor. Verande
 
 :::danger[D2, D3, D4 en D11 zijn bezet door het motor shield]
 
-Sluit hier **geen** andere sensoren of actuatoren op aan (geen buzzer, LED of sensor). Zie [DC-motor: er gaat iets mis](site:robotica/docs/onderdelen/dc-motor#er-gaat-iets-mis).
+Sluit hier **geen** andere sensoren of actuatoren op aan (geen buzzer, LED of sensor). Welke pin wat doet, staat bij [DC-motor: de vier pinnen](site:robotica/docs/onderdelen/dc-motor#pinnen).
 
 :::
 
@@ -118,7 +118,12 @@ Motoren draaien zelden precies even snel. Geef ze losse snelheden, bijvoorbeeld 
   ```python
   from leaphymicropython.actuators.dcmotor import DCMotors
 
-  motoren = DCMotors()
+  motoren = DCMotors(
+      dir_pin_motor_a="D2",
+      pwm_pin_motor_a="D3",
+      dir_pin_motor_b="D4",
+      pwm_pin_motor_b="D11",
+  )
   motoren.motor_a.test()
   motoren.motor_b.test()
   ```
@@ -141,7 +146,7 @@ Motoren draaien zelden precies even snel. Geef ze losse snelheden, bijvoorbeeld 
 from leaphymicropython.sensors.tof import TimeOfFlight
 from time import sleep
 
-tof = TimeOfFlight()
+tof = TimeOfFlight(sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 while True:
     print(tof.get_distance())
@@ -176,8 +181,8 @@ while True:
 - Geef elke sensor zijn eigen channel:
 
 ```python
-tof_1 = TimeOfFlight(channel=0)
-tof_2 = TimeOfFlight(channel=1)
+tof_1 = TimeOfFlight(channel=0, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+tof_2 = TimeOfFlight(channel=1, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 ```
 
 </details>

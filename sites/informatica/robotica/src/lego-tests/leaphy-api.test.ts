@@ -18,7 +18,11 @@ import api from './leaphy-api.json';
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
 const modules = api.modules as Record<string, string[]>;
 const pinnen = api.pinnen as Record<string, string>;
-type Klasse = { basis: string[]; methoden: Record<string, string[]> };
+type Klasse = {
+  basis: string[];
+  methoden: Record<string, string[]>;
+  standaard?: Record<string, unknown>;
+};
 const klassen = new Map(
   Object.entries(api.klassen as Record<string, Klasse>).map(([pad, k]) => [
     pad.split('.').at(-1) as string,
@@ -145,6 +149,37 @@ describe('de codeblokken passen bij leaphymicropython', () => {
               fout.push(`${waar}: ${functie}("${naam}") bestaat niet op het bord`);
           }
     expect(fout).toEqual([]);
+  });
+
+  it('DCMotors en de I2C-klassen noemen hun pinnen, gelijk aan de standaard', () => {
+    // DCMotors() koos zelf D2, D3, D4 en D11, en OLEDSH1106() en TimeOfFlight()
+    // de pinnen van I2C, zonder dat de les ze noemde. Een leerling zag nergens
+    // waarom die pinnen bezet waren en zette er een buzzer op. Daarom schrijft
+    // elke les ze als keyword-argumenten voluit, als naam, en moeten ze naar
+    // dezelfde GPIO wijzen als de standaard van de bibliotheek: 12 en 13 voor
+    // I2C zijn "SDA" en "SCL", want "A4" en "A5" lopen via de wifi-chip.
+    const PIN_PARAMETER = /^(dir_pin_motor_[ab]|pwm_pin_motor_[ab]|sda_gpio_pin|scl_gpio_pin)$/;
+    const gpioVan = (w: unknown) => (typeof w === 'number' ? `GPIO${w}` : pinnen[String(w)]);
+    const fout: string[] = [];
+    let getoetst = 0;
+    for (const { waar, code } of blokken)
+      for (const { naam, args } of aanroepen(code, /\b([A-Z]\w*)\(/g)) {
+        const standaard = klassen.get(naam)?.standaard ?? {};
+        for (const [param, waarde] of Object.entries(standaard)) {
+          if (!PIN_PARAMETER.test(param)) continue;
+          getoetst++;
+          const arg = args.find((a) => new RegExp(`^${param}\\s*=`).test(a));
+          const tekst = arg?.replace(/^\w+\s*=\s*/, '').match(/^["'](.+)["']$/)?.[1];
+          if (!arg) fout.push(`${waar}: ${naam}(…) noemt ${param} niet`);
+          else if (!tekst) fout.push(`${waar}: ${arg} is geen pinnaam als tekst`);
+          else if (pinnen[tekst] !== gpioVan(waarde))
+            fout.push(
+              `${waar}: ${param}="${tekst}" is ${pinnen[tekst] ?? 'geen pin'}, de bibliotheek gebruikt ${gpioVan(waarde)}`,
+            );
+        }
+      }
+    expect(fout).toEqual([]);
+    expect(getoetst).toBeGreaterThan(40);
   });
 
   it('een ultrasone sensor zit op pinnen van de chip zelf', () => {

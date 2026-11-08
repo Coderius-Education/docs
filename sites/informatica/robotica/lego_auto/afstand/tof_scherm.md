@@ -27,8 +27,8 @@ from time import sleep
 from leaphymicropython.sensors.tof import TimeOfFlight
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-tof = TimeOfFlight(channel=0)
-oled = OLEDSH1106(width=128, height=64, channel=7)
+tof = TimeOfFlight(channel=0, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 while True:
     afstand = tof.get_distance()

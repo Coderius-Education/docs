@@ -345,6 +345,7 @@ returnt
 Returnt
 reversen
 richtingsbit
+richtingspin
 Ritwick
 robotkop
 rondklikt
@@ -375,6 +376,7 @@ skimresultaten
 Skimresultaten
 slowapi
 sluitingstag
+snelheidspin
 SNES
 socialemediaposts
 spawnen

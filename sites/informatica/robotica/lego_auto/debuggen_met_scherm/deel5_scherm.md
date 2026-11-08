@@ -4,11 +4,14 @@ slug: /scherm/waardes-op-scherm
 title: "Deel 5: Waardes op het scherm"
 ---
 
+import I2C from '@site/docs/onderdelen/_delen/i2c/pinnen.md';
+
 # Het robotscript bouwen — Deel 5: Waardes op het scherm
 
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'Tekst en getallen combineren met f-strings'},
+    {site: 'python', to: '/docs/projecten/staafdiagram/stap-4-midden', label: 'Een keyword-argument meegeven'},
   ]}
 />
 
@@ -36,7 +39,7 @@ Nieuw onderdeel, dus eerst een minimale test — los van je robotscript:
 ```python showLineNumbers
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 oled.fill('white')
 oled.text('Hallo robot', 0, 0)
@@ -44,7 +47,7 @@ oled.show()
 ```
 
 <Regel n={3}>
-Maakt het scherm-object: 128 pixels breed, 64 hoog, op channel 7 van de multiplexer.
+Maakt het scherm-object: 128 pixels breed, 64 hoog, op channel 7 van de multiplexer, en aangesloten op de pinnen SDA en SCL. Elke instelling is een keyword-argument: de naam voor de `=` zegt welke instelling het is.
 </Regel>
 
 <Regel n={5} tot={7}>
@@ -52,6 +55,10 @@ Tekenen gaat altijd in drie stappen: `fill('white')` maakt het scherm leeg, `tex
 </Regel>
 
 </CodeUitleg>
+
+### SDA en SCL
+
+<I2C />
 
 ## Voorspel: wat gebeurt er zonder `show()`?
 
@@ -73,7 +80,7 @@ from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
 links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 while True:
     kleur_links = links.black_or_white()
@@ -114,7 +121,7 @@ Je hebt een variabele nodig die boven de loop op `0` begint en er in de loop `1`
 from time import sleep
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 teller = 0
 
 while True:
@@ -141,7 +148,7 @@ from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
 links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 while True:
     kleur_links = links.black_or_white()
