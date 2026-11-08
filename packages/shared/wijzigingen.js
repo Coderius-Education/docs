@@ -138,7 +138,16 @@ const RUNNERS = {
       '{site}/lego_auto/',
       '{site}/src/components/WebMicroEditor/templates.ts',
     ],
-    alles: [...COMPILEER, '{site}/src/lego-tests/schrijf.ts', '{site}/src/lego-tests/extract.ts'],
+    // Naast compileren draait elk blok met de echte leaphymicropython
+    // (scripts/draai-leaphy-blokken.py); de commit staat in leaphy-api.json.
+    alles: [
+      ...COMPILEER,
+      '{site}/src/lego-tests/schrijf.ts',
+      '{site}/src/lego-tests/extract.ts',
+      '{site}/src/lego-tests/leaphy-api.json',
+      'scripts/draai-leaphy-blokken.py',
+      'scripts/leaphy_nep/',
+    ],
   },
   fullstack: {
     site: 'fullstack',

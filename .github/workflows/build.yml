@@ -317,9 +317,12 @@ jobs:
             venv play python3.12 $(python3.12 scripts/draai-play-blokken.py --pins) &&
               "$RUNNER_TEMP/venv-play/bin/python" scripts/draai-play-blokken.py --alleen changed.json
           }
+          # Eerst compileren, dan elk blok echt draaien met leaphymicropython
+          # op de commit uit leaphy-api.json en een nagebootst bord.
           robotica_() {
             pnpm --filter @coderius/robotica-docs lego:extract &&
-              python3.13 scripts/compileer-blokken.py sites/informatica/robotica/lego-tests/extracted --alleen changed.json
+              python3.13 scripts/compileer-blokken.py sites/informatica/robotica/lego-tests/extracted --alleen changed.json &&
+              python3.13 scripts/draai-leaphy-blokken.py --alleen changed.json
           }
           godot_() {
             local tests=sites/informatica/godot/godot-tests

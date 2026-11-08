@@ -202,6 +202,24 @@ describe('plan', () => {
     expect(p.vitest.bestanden).toContain('packages/shared/codeblokken.js');
   });
 
+  it('het harnas met leaphymicropython laat alleen robotica alles draaien', () => {
+    // scripts/draai-leaphy-blokken.py voert elk robotica-blok uit; een
+    // wijziging aan het harnas of aan de commit van de bibliotheek raakt ze allemaal.
+    for (const pad of [
+      'scripts/draai-leaphy-blokken.py',
+      'scripts/leaphy_nep/machine.py',
+      'scripts/leaphy_nep/vooraf.py',
+      `${MAP.robotica}/src/lego-tests/leaphy-api.json`,
+    ]) {
+      // Een bestand in de site raakt volgens pnpm ook het package van robotica.
+      const geraakt = pad.startsWith('sites/') ? [MAP.robotica] : [];
+      const p = planVoor({ [pad]: [[3, 3]] }, geraakt);
+      expect(p.volledig, pad).toBe(false);
+      expect(p.runners.robotica, pad).toEqual({ draaien: true, alles: true });
+      expect(p.runners.fullstack.draaien, pad).toBe(false);
+    }
+  });
+
   it('het controlescript van fullstack laat de fullstack-job draaien', () => {
     for (const pad of [
       `${MAP.fullstack}/static/controleer.py`,

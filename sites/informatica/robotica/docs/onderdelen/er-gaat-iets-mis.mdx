@@ -299,6 +299,39 @@ oled.text('Groot', x=0, y=0, scale=2)
 </details>
 
 <details>
+<summary>Foutmelding: expecting a regular GPIO Pin</summary>
+
+```
+ValueError: expecting a regular GPIO Pin
+```
+
+**Oorzaak:** bij `sda_gpio_pin` of `scl_gpio_pin` staat `"A4"` of `"A5"`. Op het shield is dat het goede gaatje, maar in MicroPython leest de naam `"A4"` die pin via de wifi-chip, en I2C werkt alleen met pinnen van de Nano zelf. Bij de TOF gaat het net zo.
+
+De fout staat niet op de regel met `OLEDSH1106(...)` of `TimeOfFlight(...)`, maar op de eerste regel die het scherm of de sensor iets laat doen, zoals `oled.fill(...)` of `tof.get_distance()`. Pas dan maakt de bibliotheek verbinding.
+
+**Oplossing:** schrijf `"SDA"` en `"SCL"`.
+
+{/* niet-draaien: het FOUT-voorbeeld geeft bewust deze ValueError */}
+
+```python
+# FOUT
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="A4", scl_gpio_pin="A5",
+)
+
+# GOED
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
+```
+
+Meer uitleg: [SDA en SCL](site:robotica/docs/onderdelen/oled-scherm#sda-scl)
+
+</details>
+
+<details>
 <summary>Scherm flikkert of is traag</summary>
 
 - Update niet vaker dan **10 keer per seconde**. Zet `sleep(0.1)` in je loop.

@@ -84,7 +84,7 @@ function aanroepen(code: string, voor: RegExp): { naam: string; args: string[] }
   return uit;
 }
 
-type Blok = { waar: string; code: string };
+type Blok = { waar: string; code: string; nietDraaien: boolean };
 const blokken: Blok[] = [];
 const loop = (map: string) => {
   for (const naam of readdirSync(map)) {
@@ -93,8 +93,15 @@ const loop = (map: string) => {
     else if (/\.mdx?$/.test(naam)) {
       const tekst = readFileSync(pad, 'utf8');
       for (const m of tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)) {
-        const regel = tekst.slice(0, m.index).split('\n').length;
-        blokken.push({ waar: `${pad.slice(SITE.length)}:${regel}`, code: m[1] });
+        const ervoor = tekst.slice(0, m.index);
+        const regel = ervoor.split('\n').length;
+        // Een {/* niet-draaien: … */} tussen het vorige blok en dit blok: een
+        // bewust fout voorbeeld (scripts/draai-leaphy-blokken.py slaat het over).
+        const vorige = ervoor.lastIndexOf('```');
+        const nietDraaien = (vorige === -1 ? ervoor : ervoor.slice(vorige + 3)).includes(
+          '{/* niet-draaien:',
+        );
+        blokken.push({ waar: `${pad.slice(SITE.length)}:${regel}`, code: m[1], nietDraaien });
       }
     }
   }
@@ -162,7 +169,8 @@ describe('de codeblokken passen bij leaphymicropython', () => {
     const gpioVan = (w: unknown) => (typeof w === 'number' ? `GPIO${w}` : pinnen[String(w)]);
     const fout: string[] = [];
     let getoetst = 0;
-    for (const { waar, code } of blokken)
+    for (const { waar, code, nietDraaien } of blokken) {
+      if (nietDraaien) continue;
       for (const { naam, args } of aanroepen(code, /\b([A-Z]\w*)\(/g)) {
         const standaard = klassen.get(naam)?.standaard ?? {};
         for (const [param, waarde] of Object.entries(standaard)) {
@@ -178,6 +186,7 @@ describe('de codeblokken passen bij leaphymicropython', () => {
             );
         }
       }
+    }
     expect(fout).toEqual([]);
     expect(getoetst).toBeGreaterThan(40);
   });
