@@ -42,11 +42,11 @@ function heeftBlok(relatiefPad: string): boolean {
 // Per deel het concept dat er voor het eerst nodig is. De volgorde volgt de
 // sidebar: hoofdstukpositie, dan sidebar_position.
 const LEGO_MET_BLOK = [
-  'lego_auto/analoog_ir/deel3_een_sensor.md', //  5.4  print
+  'lego_auto/analoog_ir/deel3_een_sensor.md', //  5.4  print, f-strings
   'lego_auto/software_editor/bibliotheek.md', // 3.5  wat een module is
   'lego_auto/analoog_ir/while_loop.md', //         5.7  while, vergelijken, tellen
   'lego_auto/eerste_programma/deel1_lampje.md', // 4.2  variabelen, methode-aanroep
-  'lego_auto/debuggen_met_scherm/deel5_scherm.md', // 6.4  f-strings
+  'lego_auto/debuggen_met_scherm/deel5_scherm.md', // 6.4  keyword-argumenten
   'lego_auto/eerste_programma/deel2_knipperen.md', // 4.3 while-loop
   'lego_auto/lijnvolgen/deel7_rechtdoor.md', //    10.3 if en else
   'lego_auto/lijnvolgen/nu_jij.md', //             10.4 and, or en elif

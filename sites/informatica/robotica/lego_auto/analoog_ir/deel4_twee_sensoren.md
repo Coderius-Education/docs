@@ -35,7 +35,7 @@ rechts = AnalogIR("A1", 2500)
 while True:
     kleur_links = links.black_or_white()
     kleur_rechts = rechts.black_or_white()
-    print("Links:", kleur_links, "| Rechts:", kleur_rechts)
+    print(f"Links: {kleur_links} | Rechts: {kleur_rechts}")
     sleep(0.2)
 ```
 
@@ -87,7 +87,7 @@ rechts = AnalogIR("A1", 2500)
 while True:
     kleur_links = links.black_or_white()
     kleur_rechts = rechts.black_or_white()
-    print("Links:", kleur_links, "| Rechts:", kleur_rechts)
+    print(f"Links: {kleur_links} | Rechts: {kleur_rechts}")
     sleep(0.2)
 ```
 

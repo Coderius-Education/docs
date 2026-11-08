@@ -384,6 +384,47 @@ describe('de codeblokken passen bij leaphymicropython', () => {
     expect(fout).toEqual([]);
   });
 
+  it("print zet tekst en een waarde samen in een f-string, niet met komma's", () => {
+    // print("Links:", kleur_links) gaf hetzelfde als een f-string, maar dan
+    // zag een leerling twee manieren naast elkaar: komma's in de print en een
+    // f-string op het scherm. Zeven regels in Deel 3, Deel 4 en de while-loop.
+    const fout: string[] = [];
+    for (const { waar, code } of blokken)
+      for (const { args } of aanroepen(zonderStrings(code), /\bprint\(/g))
+        if (args.length > 1 && args.includes('""')) fout.push(`${waar}: print(${args.join(', ')})`);
+    expect(fout).toEqual([]);
+  });
+
+  it('in lego_auto komt de f-string binnen op een pagina met een link naar de uitleg', () => {
+    // De volgorde van de sidebar: hoofdstuk (position in _category_.json), dan
+    // sidebar_position. De eerste pagina met een f-string moet de uitleg
+    // noemen; de pagina's daarna mogen erop bouwen.
+    const positie = (pad: string) => {
+      const [, hoofdstuk] = pad.split('/');
+      const tekst = readFileSync(join(SITE, pad), 'utf8');
+      const les = Number(tekst.match(/^sidebar_position:\s*([\d.]+)/m)?.[1] ?? 0);
+      if (hoofdstuk.endsWith('.md')) return [0, les];
+      const cat = JSON.parse(
+        readFileSync(join(SITE, 'lego_auto', hoofdstuk, '_category_.json'), 'utf8'),
+      );
+      return [Number(cat.position), les];
+    };
+    const paginas = [
+      ...new Set(
+        blokken
+          .filter(({ waar, code }) => waar.startsWith('lego_auto/') && /\bf["']/.test(code))
+          .map(({ waar }) => waar.replace(/:\d+$/, '')),
+      ),
+    ].sort((a, b) => {
+      const [pa, pb] = [positie(a), positie(b)];
+      return pa[0] - pb[0] || pa[1] - pb[1];
+    });
+    expect(paginas[0]).toBe('lego_auto/analoog_ir/deel3_een_sensor.md');
+    expect(readFileSync(join(SITE, paginas[0]), 'utf8')).toContain(
+      "to: '/docs/tekst/04a-f-strings'",
+    );
+  });
+
   it('elke link naar de uitleg van f-strings heeft dezelfde naam', () => {
     // Deel 5 noemde dezelfde pagina eerst "Tekst en getallen combineren met
     // f-strings" en een paar regels later "Slimme berichten met f-strings", en

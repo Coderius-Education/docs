@@ -10,7 +10,6 @@ import I2C from '@site/docs/onderdelen/_delen/i2c/pinnen.md';
 
 <Voorkennis
   items={[
-    {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'Tekst en getallen combineren met f-strings'},
     {site: 'python', to: '/docs/projecten/staafdiagram/stap-4-midden', label: 'Een keyword-argument meegeven'},
   ]}
 />
@@ -102,7 +101,7 @@ while True:
     sleep(0.2)
 ```
 
-`f'Links: {kleur_links}'` is een f-string: Python zet de waarde van `kleur_links` op de plek van de accolades, dus op het scherm komt `Links: white` of `Links: black`. Hoe dat werkt, lees je bij [Tekst en getallen combineren met f-strings](site:python/docs/tekst/04a-f-strings).
+`f'Links: {kleur_links}'` is dezelfde f-string als in je `print` uit [Deel 3](site:robotica/lego_auto/lijnsensor/een-sensor): op het scherm komt `Links: white` of `Links: black`. Hoe een f-string werkt, staat bij [Tekst en getallen combineren met f-strings](site:python/docs/tekst/04a-f-strings).
 
 Let op de opbouw die je al kent: het scherm-object staat bóven de loop (eenmalig klaarzetten), het tekenen zit erin (elke ronde opnieuw). De tweede regel staat op `y=10`, tien pixels lager — anders schrijven de twee regels door elkaar heen.
 

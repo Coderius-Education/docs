@@ -185,7 +185,7 @@ zwarte_lijnen = 0
 while zwarte_lijnen < 5:
     if sensor.black_or_white() == "black":
         zwarte_lijnen = zwarte_lijnen + 1
-        print("Lijn gevonden! Totaal:", zwarte_lijnen)
+        print(f"Lijn gevonden! Totaal: {zwarte_lijnen}")
     sleep(0.1)
 
 print("Klaar! 5 lijnen gevonden!")
@@ -319,7 +319,7 @@ while True:
     huidige_kleur = sensor.black_or_white()
 
     if huidige_kleur != vorige_kleur:
-        print("Verandering!", vorige_kleur, "->", huidige_kleur)
+        print(f"Verandering! {vorige_kleur} -> {huidige_kleur}")
         vorige_kleur = huidige_kleur
 
     sleep(0.1)
