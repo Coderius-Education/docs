@@ -281,6 +281,15 @@ jobs:
         with:
           name: wijzigingen
 
+      # leaphymicropython voor scripts/draai-leaphy-blokken.py, op de commit uit
+      # leaphy-api.json: alleen bij een nieuwe commit opnieuw van GitHub.
+      - name: Cache leaphymicropython (robotica)
+        if: env.BLOK_ROBOTICA == 'true'
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/coderius
+          key: leaphymicropython-${{ hashFiles('sites/informatica/robotica/src/lego-tests/leaphy-api.json') }}
+
       # De wheel van matplotlib die pip voor algorithms uit de bron bouwt.
       - name: Cache pip (algorithms)
         if: env.BLOK_ALGORITHMS == 'true'

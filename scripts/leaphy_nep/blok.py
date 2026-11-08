@@ -95,14 +95,14 @@ except BaseException as e:  # noqa: BLE001 - elke fout is een uitkomst
     resultaat["naam"] = e.name if isinstance(e, NameError) else None
 finally:
     sys.settrace(None)
-# Waarschuwingen die de bibliotheek print in plaats van een fout te geven.
+# Waarschuwingen die de bibliotheek print in plaats van een fout te geven. Geen
+# "can not find device": het nagebootste bord meldt altijd elk apparaat, dus die
+# komt hier nooit, en dan zou de regel dekking beloven die er niet is.
 resultaat["waarschuwingen"] = sorted(
     {
         r
         for r in uit.getvalue().splitlines()
-        if "can not find device" in r
-        or "Invalid channel" in r
-        or "not possible to use pin" in r
+        if "Invalid channel" in r or "not possible to use pin" in r
     }
 )
 gebruik = {}
