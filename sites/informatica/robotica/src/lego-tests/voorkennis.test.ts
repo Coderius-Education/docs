@@ -42,11 +42,11 @@ function heeftBlok(relatiefPad: string): boolean {
 // Per deel het concept dat er voor het eerst nodig is. De volgorde volgt de
 // sidebar: hoofdstukpositie, dan sidebar_position.
 const LEGO_MET_BLOK = [
-  'lego_auto/analoog_ir/deel3_een_sensor.md', //  5.4  print
+  'lego_auto/analoog_ir/deel3_een_sensor.md', //  5.4  print, f-strings
   'lego_auto/software_editor/bibliotheek.md', // 3.5  wat een module is
   'lego_auto/analoog_ir/while_loop.md', //         5.7  while, vergelijken, tellen
   'lego_auto/eerste_programma/deel1_lampje.md', // 4.2  variabelen, methode-aanroep
-  'lego_auto/debuggen_met_scherm/deel5_scherm.md', // 6.4  f-strings
+  'lego_auto/debuggen_met_scherm/deel5_scherm.md', // 6.4  keyword-argumenten
   'lego_auto/eerste_programma/deel2_knipperen.md', // 4.3 while-loop
   'lego_auto/lijnvolgen/deel7_rechtdoor.md', //    10.3 if en else
   'lego_auto/lijnvolgen/nu_jij.md', //             10.4 and, or en elif
@@ -64,7 +64,6 @@ const LEGO_ZONDER_BLOK: { reden: string; lessen: string[] }[] = [
       'lego_auto/debuggen_met_scherm/material.md',
       'lego_auto/doos.md',
       'lego_auto/intro.md',
-      'lego_auto/motoren/let_op.md',
       'lego_auto/motoren/material.md',
       'lego_auto/motoren/wiring.md',
       'lego_auto/motoren_aan_legoframe/monteren.md',
@@ -111,6 +110,8 @@ const LEGO_ZONDER_BLOK: { reden: string; lessen: string[] }[] = [
       'lego_auto/batterijen/code.md',
       'lego_auto/lijnvolgen/vier_sensoren.md',
       'lego_auto/motoren/deel6_draaien.md',
+      // De pinnen van DCMotors als keyword-argumenten; die legt Deel 5 al uit.
+      'lego_auto/motoren/let_op.md',
     ],
   },
 ];

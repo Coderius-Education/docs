@@ -15,7 +15,7 @@ Combineer wat je hebt: de TOF-uitlezing uit de [vorige stap](site:robotica/lego_
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Zelfde drieslag als altijd: `fill`, `text`, `show`. De afstand is een getal, dus zet hem in een f-string voordat hij het scherm op kan. De TOF zit op channel **0**, je scherm op channel **7** — twee objecten, elk met hun eigen channel.
+Zelfde drieslag als altijd: `fill`, `text`, `show`. De afstand is een getal, dus zet hem in een [f-string](site:python/docs/tekst/04a-f-strings) voordat hij het scherm op kan. De TOF zit op channel **0**, je scherm op channel **7** — twee objecten, elk met hun eigen channel.
 
 </details>
 
@@ -27,8 +27,14 @@ from time import sleep
 from leaphymicropython.sensors.tof import TimeOfFlight
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-tof = TimeOfFlight(channel=0)
-oled = OLEDSH1106(width=128, height=64, channel=7)
+tof = TimeOfFlight(
+    channel=0,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 while True:
     afstand = tof.get_distance()

@@ -20,18 +20,21 @@ Steek de TOF in **channel 0** van de multiplexer. Het cijfer staat boven het ste
 from time import sleep
 from leaphymicropython.sensors.tof import TimeOfFlight
 
-tof = TimeOfFlight(channel=0)
+tof = TimeOfFlight(
+    channel=0,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 while True:
     print(tof.get_distance())
     sleep(1)
 ```
 
-<Regel n={4}>
-Maakt het sensor-object aan op channel 0 van de multiplexer.
+<Regel n={4} tot={7}>
+Maakt het sensor-object aan op channel 0 van de multiplexer, op dezelfde pinnen SDA en SCL als het scherm.
 </Regel>
 
-<Regel n={7}>
+<Regel n={10}>
 `get_distance()` geeft de afstand in **millimeters**.
 </Regel>
 

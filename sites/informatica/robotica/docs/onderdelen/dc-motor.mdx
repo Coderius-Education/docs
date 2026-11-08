@@ -10,6 +10,7 @@ sidebar_custom_props:
 import Materiaal from '@site/docs/onderdelen/_delen/dc-motor/materiaal.md';
 import Aansluiten from '@site/docs/onderdelen/_delen/dc-motor/aansluiten.md';
 import LetOp from '@site/docs/onderdelen/_delen/dc-motor/let-op.md';
+import Pinnen from '@site/docs/onderdelen/_delen/dc-motor/pinnen.md';
 
 # DC-motor
 
@@ -30,7 +31,12 @@ Een **DC-motor** laat een wiel van je robot draaien. Vanuit je code kies je de r
 ```python
 from leaphymicropython.actuators.dcmotor import DCMotors
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_a = motoren.motor_a
 motor_a.test()
 ```
@@ -42,23 +48,37 @@ Motor A draait kort vooruit en daarna kort achteruit. Zo weet je meteen welke mo
 ```python
 from leaphymicropython.actuators.dcmotor import DCMotors
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_b = motoren.motor_b
 motor_b.test()
 ```
 
 ### Uitleg
 
-- `DCMotors()` maakt een nieuw motor-object voor het shield.
+- `DCMotors(...)` maakt een motor-object voor het shield, met de vier pinnen van de motormodule. Wat die doen, staat hieronder bij [De vier pinnen](#pinnen).
 - `motoren.motor_a` en `motoren.motor_b` zijn de twee uitgangen op het shield (de letters A en B staan op het shield zelf gedrukt).
 - `.test()` doet kort vooruit + achteruit, handig om te kijken welke draait.
+
+### De vier pinnen \{#pinnen}
+
+<Pinnen />
 
 ### Vooruit en achteruit
 
 ```python
 from leaphymicropython.actuators.dcmotor import DCMotors
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_b = motoren.motor_b
 motor_b.forward(255)
 ```
@@ -77,7 +97,12 @@ Vanwege het gewicht van je robot beginnen de motoren pas rond **180–200** te d
 ```python
 from leaphymicropython.actuators.dcmotor import DCMotors
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_b = motoren.motor_b
 motor_b.backward(255)
 ```
@@ -98,7 +123,12 @@ Laat beide motoren 2 seconden vooruit rijden en daarna stoppen.
 from leaphymicropython.actuators.dcmotor import DCMotors
 from time import sleep
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_a = motoren.motor_a
 motor_b = motoren.motor_b
 

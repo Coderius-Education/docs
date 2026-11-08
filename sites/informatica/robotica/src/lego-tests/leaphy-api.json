@@ -46,6 +46,12 @@
         "steer": ["direction", "speed", "steering_intensity"],
         "stop": [],
         "test": []
+      },
+      "standaard": {
+        "dir_pin_motor_a": "D2",
+        "dir_pin_motor_b": "D4",
+        "pwm_pin_motor_a": "D3",
+        "pwm_pin_motor_b": "D11"
       }
     },
     "leaphymicropython.actuators.dcmotor.DCMotor": {
@@ -58,6 +64,9 @@
         "test": [],
         "validate_speed": ["speed"],
         "convert_speed_to_duty_u16": ["speed"]
+      },
+      "standaard": {
+        "freq": 20000
       }
     },
     "leaphymicropython.actuators.oled_screen.OLEDSH1106": {
@@ -77,6 +86,16 @@
         "fill": ["color"],
         "text": ["text", "x", "y", "color", "scale"],
         "show": []
+      },
+      "standaard": {
+        "height": 64,
+        "width": 128,
+        "channel": 255,
+        "sda_gpio_pin": 12,
+        "scl_gpio_pin": 13,
+        "bus_id": 0,
+        "freq": 400000,
+        "show_warnings": true
       }
     },
     "leaphymicropython.actuators.rgbled.RGBLed": {
@@ -115,6 +134,9 @@
         "ellipse": ["x", "y", "xr", "yr", "color"],
         "register_updates": ["y0", "y1"],
         "reset": ["res"]
+      },
+      "standaard": {
+        "rotate": 0
       }
     },
     "leaphymicropython.actuators.sh1106.SH1106_I2C": {
@@ -124,6 +146,13 @@
         "write_cmd": ["cmd"],
         "write_data": ["buf"],
         "reset": ["res"]
+      },
+      "standaard": {
+        "res": null,
+        "addr": 60,
+        "rotate": 0,
+        "external_vcc": false,
+        "delay": 0
       }
     },
     "leaphymicropython.actuators.sh1106.SH1106_SPI": {
@@ -143,6 +172,13 @@
         "write_cmd": ["cmd"],
         "write_data": ["buf"],
         "reset": ["res"]
+      },
+      "standaard": {
+        "res": null,
+        "cs": null,
+        "rotate": 0,
+        "external_vcc": false,
+        "delay": 0
       }
     },
     "leaphymicropython.actuators.ssd1306.SSD1306": {
@@ -177,6 +213,14 @@
         "write_cmd": ["cmd"],
         "write_framebuf": [],
         "poweron": []
+      },
+      "standaard": {
+        "external_vcc": false,
+        "channel": 255,
+        "sda_gpio_pin": 12,
+        "scl_gpio_pin": 13,
+        "bus_id": 0,
+        "show_warnings": true
       }
     },
     "leaphymicropython.actuators.ssd1306.SSD1306SPI": {
@@ -186,6 +230,9 @@
         "write_cmd": ["cmd"],
         "write_framebuf": [],
         "poweron": []
+      },
+      "standaard": {
+        "external_vcc": false
       }
     },
     "leaphymicropython.sensors.adps9960.Adps9960": {
@@ -205,6 +252,15 @@
         "read_color": [],
         "gesture_available": ["gesture_threshold"],
         "read_gesture": []
+      },
+      "standaard": {
+        "gesture_sensitivity": 20,
+        "channel": 255,
+        "sda_gpio_pin": 12,
+        "scl_gpio_pin": 13,
+        "bus_id": 0,
+        "freq": 400000,
+        "show_warnings": true
       }
     },
     "leaphymicropython.sensors.barometer.BarometricPressure": {
@@ -214,6 +270,14 @@
         "initialize_device": [],
         "get_temperature": [],
         "get_pressure": []
+      },
+      "standaard": {
+        "channel": 255,
+        "sda_gpio_pin": 12,
+        "scl_gpio_pin": 13,
+        "bus_id": 0,
+        "freq": 400000,
+        "show_warnings": true
       }
     },
     "leaphymicropython.sensors.bmp280.BMP280": {
@@ -240,6 +304,9 @@
         "sleep": [],
         "use_case": ["uc"],
         "oversample": ["oss"]
+      },
+      "standaard": {
+        "addr": 118
       }
     },
     "leaphymicropython.sensors.compass.QMC5883L": {
@@ -251,6 +318,9 @@
         "output_data_rate": ["value"],
         "mode_control": ["value"],
         "magnetic": []
+      },
+      "standaard": {
+        "address": 13
       }
     },
     "leaphymicropython.sensors.dht22.DHT22": {
@@ -267,6 +337,9 @@
         "__init__": ["pin_name", "above_black"],
         "get_analog_value": [],
         "black_or_white": []
+      },
+      "standaard": {
+        "above_black": 4000
       }
     },
     "leaphymicropython.sensors.tof.TimeOfFlight": {
@@ -287,12 +360,25 @@
         "initialize_device": [],
         "get_distance": [],
         "deinit": []
+      },
+      "standaard": {
+        "channel": 255,
+        "sda_gpio_pin": 12,
+        "scl_gpio_pin": 13,
+        "bus_id": 0,
+        "freq": 400000,
+        "show_warnings": true,
+        "timing_budget_us": 33000,
+        "debug": false
       }
     },
     "leaphymicropython.sensors.vl53l0x.VL53L0XTimeoutError": {
       "basis": ["OSError"],
       "methoden": {
         "__init__": ["message"]
+      },
+      "standaard": {
+        "message": "VL53L0X I2C operation timed out"
       }
     },
     "leaphymicropython.sensors.vl53l0x.VL53L0X": {
@@ -314,6 +400,11 @@
         "decode_timeout": ["reg_val"],
         "encode_timeout": ["timeout_mclks"],
         "set_measurement_timing_budget": ["budget_us"]
+      },
+      "standaard": {
+        "address": 41,
+        "debug": false,
+        "timing_budget_us": 33000
       }
     },
     "leaphymicropython.utils.ble_uart.BLEUart": {
@@ -323,6 +414,9 @@
         "on_receive": ["callback"],
         "is_connected": [],
         "send": ["data"]
+      },
+      "standaard": {
+        "name": "Nano RP2040"
       }
     },
     "leaphymicropython.utils.i2c_helper.I2CDevice": {
@@ -335,12 +429,24 @@
         "find_device": ["show_warnings"],
         "is_mux_used": [],
         "select_channel": []
+      },
+      "standaard": {
+        "channel": 255,
+        "sda_gpio_pin": 12,
+        "scl_gpio_pin": 13,
+        "bus_id": 0,
+        "freq": 400000,
+        "show_warnings": true
       }
     },
     "leaphymicropython.utils.i2c_helper.CBits": {
       "basis": [],
       "methoden": {
         "__init__": ["num_bits", "register_address", "start_bit", "register_width", "lsb_first"]
+      },
+      "standaard": {
+        "register_width": 1,
+        "lsb_first": true
       }
     },
     "leaphymicropython.utils.i2c_helper.RegisterStruct": {

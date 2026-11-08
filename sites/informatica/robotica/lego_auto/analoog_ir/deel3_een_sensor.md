@@ -9,6 +9,7 @@ title: "Deel 3: Eén sensor uitlezen"
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/basis/jouw-naam-op-het-scherm', label: 'Tekst tonen met print'},
+    {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'Tekst en getallen combineren met f-strings'},
   ]}
 />
 
@@ -73,12 +74,16 @@ links = AnalogIR("A0", 2500)
 
 while True:
     kleur_links = links.black_or_white()
-    print("Links:", kleur_links)
+    print(f"Links: {kleur_links}")
     sleep(0.2)
 ```
 
 <Regel n={7}>
 Vergelijkt de meting met je drempel van `2500` en geeft `"black"` of `"white"` terug. Die tekst bewaar je in de variabele `kleur_links`, zodat je er straks op kunt reageren.
+</Regel>
+
+<Regel n={8}>
+Print een f-string: de `f` voor de aanhalingstekens laat Python de waarde van `kleur_links` op de plek van de accolades zetten. Zo staat er `Links: white` in de Shell. Hoe dat werkt, staat bij [Tekst en getallen combineren met f-strings](site:python/docs/tekst/04a-f-strings).
 </Regel>
 
 </CodeUitleg>
@@ -113,7 +118,7 @@ links = AnalogIR("A0", 2900)
 
 while True:
     kleur_links = links.black_or_white()
-    print("Links:", kleur_links)
+    print(f"Links: {kleur_links}")
     sleep(0.2)
 ```
 
@@ -134,7 +139,7 @@ links = AnalogIR("A0", 2500)
 
 while True:
     kleur_links = links.black_or_white()
-    print("Links:", kleur_links)
+    print(f"Links: {kleur_links}")
     sleep(0.2)
 ```
 

@@ -5,7 +5,8 @@ leaphy-robotics/leaphy-micropython). Die veranderde onder de lessen door:
 read_line_sensor verdween in mei 2025, en sinds augustus 2025 is een pin een
 naam ("D6") en geen getal, en in november 2026 kreeg text() van het OLED-scherm
 een scale. leaphy-api.test.ts toetst elke import, elke pin en elke methode met
-zijn keyword-argumenten in de lessen tegen dit bestand.
+zijn keyword-argumenten in de lessen tegen dit bestand, en de pinnen die de les
+bij DCMotors en de I2C-klassen voluit schrijft tegen de standaard (`standaard`).
 
 Gebruik, na een nieuwe versie van de bibliotheek:
 
@@ -35,7 +36,28 @@ def parameters(functie):
     return namen
 
 
+def standaard(functie):
+    """De standaardwaarde van elke parameter die er een heeft, als het een vaste
+    waarde is (een pin, een getal): wat de bibliotheek doet als je hem weglaat."""
+    args = functie.args
+    gewoon = args.posonlyargs + args.args
+    paren = list(zip(gewoon[len(gewoon) - len(args.defaults) :], args.defaults))
+    paren += [
+        (a, d) for a, d in zip(args.kwonlyargs, args.kw_defaults) if d is not None
+    ]
+    uit = {}
+    for arg, waarde in paren:
+        try:
+            uit[arg.arg] = ast.literal_eval(waarde)
+        except ValueError:
+            pass
+    return uit
+
+
 bron, pins_csv = Path(sys.argv[1]), Path(sys.argv[2])
+# Een derde argument schrijft ergens anders heen (de test van dit script).
+UIT = Path(__file__).resolve().parent.parent / "src" / "lego-tests" / "leaphy-api.json"
+uit = Path(sys.argv[3]) if len(sys.argv) > 3 else UIT
 modules = {}
 klassen = {}
 for pad in sorted((bron / "leaphymicropython").rglob("*.py")):
@@ -61,6 +83,16 @@ for pad in sorted((bron / "leaphymicropython").rglob("*.py")):
                     and (m.name == "__init__" or not m.name.startswith("_"))
                 },
             }
+            init = next(
+                (
+                    m
+                    for m in knoop.body
+                    if isinstance(m, ast.FunctionDef) and m.name == "__init__"
+                ),
+                None,
+            )
+            if init and standaard(init):
+                klassen[f"{naam}.{knoop.name}"]["standaard"] = standaard(init)
 
 pinnen = {}
 for regel in pins_csv.read_text().splitlines():
@@ -75,15 +107,34 @@ commit = subprocess.run(
     check=True,
 ).stdout.strip()
 
-uit = Path(__file__).resolve().parent.parent / "src" / "lego-tests" / "leaphy-api.json"
-uit.write_text(
-    json.dumps(
-        {"commit": commit, "modules": modules, "klassen": klassen, "pinnen": pinnen},
-        indent=2,
-        ensure_ascii=False,
+ROOT = UIT.parents[5]
+
+
+def opgemaakt(tekst: str) -> str:
+    """Zoals biome het bestand wil; anders faalt `biome check` in CI op een
+    bestand dat dit script net schreef (json.dumps zet elke lijst over regels)."""
+    r = subprocess.run(
+        ["pnpm", "exec", "biome", "format", f"--stdin-file-path={UIT.relative_to(ROOT)}"],
+        input=tekst,
+        capture_output=True,
+        text=True,
+        cwd=ROOT,
+        check=True,
     )
-    + "\n"
+    return r.stdout
+
+
+uit.write_text(
+    opgemaakt(
+        json.dumps(
+            {"commit": commit, "modules": modules, "klassen": klassen, "pinnen": pinnen},
+            indent=2,
+            ensure_ascii=False,
+        )
+        + "\n"
+    )
 )
+
 print(
     f"{uit}: {len(modules)} modules, {len(klassen)} klassen, {len(pinnen)} pinnen, commit {commit[:7]}"
 )

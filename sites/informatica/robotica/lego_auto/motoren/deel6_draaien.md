@@ -21,15 +21,20 @@ Op het shield staan de letters **A** en **B** bij de twee motoruitgangen. Draai 
 ```python showLineNumbers
 from leaphymicropython.actuators.dcmotor import DCMotors
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motoren.motor_a.test()
 ```
 
-<Regel n={3}>
-Maakt één object voor het motorshield. `motoren.motor_a` en `motoren.motor_b` zijn de twee uitgangen.
+<Regel n={3} tot={8}>
+Maakt één object voor het motor shield, met de vier pinnen waar de motormodule aan vastzit: per motor een richtingspin (`dir`) en een snelheidspin (`pwm`). Wat die doen, lees je in [Let op: bezette pinnen](site:robotica/lego_auto/motoren/let-op). `motoren.motor_a` en `motoren.motor_b` zijn de twee uitgangen.
 </Regel>
 
-<Regel n={4}>
+<Regel n={9}>
 `.test()` laat een motor kort vooruit en achteruit draaien — zo zie je meteen wélke van de twee `motor_a` is.
 </Regel>
 
@@ -60,9 +65,17 @@ from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
 links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_a = motoren.motor_a
 motor_b = motoren.motor_b
 
@@ -71,8 +84,8 @@ while True:
     kleur_rechts = rechts.black_or_white()
 
     oled.fill('white')
-    oled.text('Links: ' + kleur_links, 0, 0)
-    oled.text('Rechts: ' + kleur_rechts, 0, 10)
+    oled.text(f'Links: {kleur_links}', 0, 0)
+    oled.text(f'Rechts: {kleur_rechts}', 0, 10)
     oled.show()
     sleep(0.2)
 ```
@@ -101,7 +114,12 @@ Een los script, niet in je robotscript: laat beide motoren twee seconden vooruit
 from time import sleep
 from leaphymicropython.actuators.dcmotor import DCMotors
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_a = motoren.motor_a
 motor_b = motoren.motor_b
 
@@ -129,9 +147,17 @@ from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
 links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_a = motoren.motor_a
 motor_b = motoren.motor_b
 
@@ -140,8 +166,8 @@ while True:
     kleur_rechts = rechts.black_or_white()
 
     oled.fill('white')
-    oled.text('Links: ' + kleur_links, 0, 0)
-    oled.text('Rechts: ' + kleur_rechts, 0, 10)
+    oled.text(f'Links: {kleur_links}', 0, 0)
+    oled.text(f'Rechts: {kleur_rechts}', 0, 10)
     oled.show()
     sleep(0.2)
 ```

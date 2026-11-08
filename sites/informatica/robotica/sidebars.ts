@@ -7,13 +7,17 @@ import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 // Microcontrollers/Arduino Nano RP2040 Connect/Tutorial-…, met 17 losse
 // categorieën en een sidebar die niemand opende. De oude adressen sturen door
 // via `omleidingen` in docusaurus.config.ts.
+//
+// De groepen staan dicht: open stonden er 19 pagina's onder elkaar en zocht je
+// een onderdeel in een lange lijst. Docusaurus klapt de groep van de pagina
+// waar je bent zelf open.
 const sidebars: SidebarsConfig = {
   onderdelenSidebar: [
     'onderdelen/index',
     {
       type: 'category',
       label: 'Aan de slag',
-      collapsed: false,
+      collapsed: true,
       // Op de overzichtspagina genummerde stappen in plaats van kaarten; een
       // pagina met `hulp: true` (Er gaat iets mis) staat daar als losse regel.
       customProps: { weergave: 'stappen' },
@@ -27,7 +31,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Sensoren',
-      collapsed: false,
+      collapsed: true,
       items: [
         'onderdelen/ir-digitaal',
         'onderdelen/ir-analoog',
@@ -41,7 +45,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Actuatoren',
-      collapsed: false,
+      collapsed: true,
       items: [
         'onderdelen/led',
         'onderdelen/rgb-led',
@@ -54,7 +58,7 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Op de robot',
-      collapsed: false,
+      collapsed: true,
       items: ['onderdelen/batterijen', 'onderdelen/lijnvolgen'],
     },
   ],

@@ -18,7 +18,11 @@ import api from './leaphy-api.json';
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
 const modules = api.modules as Record<string, string[]>;
 const pinnen = api.pinnen as Record<string, string>;
-type Klasse = { basis: string[]; methoden: Record<string, string[]> };
+type Klasse = {
+  basis: string[];
+  methoden: Record<string, string[]>;
+  standaard?: Record<string, unknown>;
+};
 const klassen = new Map(
   Object.entries(api.klassen as Record<string, Klasse>).map(([pad, k]) => [
     pad.split('.').at(-1) as string,
@@ -80,7 +84,7 @@ function aanroepen(code: string, voor: RegExp): { naam: string; args: string[] }
   return uit;
 }
 
-type Blok = { waar: string; code: string };
+type Blok = { waar: string; code: string; nietDraaien: boolean };
 const blokken: Blok[] = [];
 const loop = (map: string) => {
   for (const naam of readdirSync(map)) {
@@ -89,8 +93,15 @@ const loop = (map: string) => {
     else if (/\.mdx?$/.test(naam)) {
       const tekst = readFileSync(pad, 'utf8');
       for (const m of tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)) {
-        const regel = tekst.slice(0, m.index).split('\n').length;
-        blokken.push({ waar: `${pad.slice(SITE.length)}:${regel}`, code: m[1] });
+        const ervoor = tekst.slice(0, m.index);
+        const regel = ervoor.split('\n').length;
+        // Een {/* niet-draaien: … */} tussen het vorige blok en dit blok: een
+        // bewust fout voorbeeld (scripts/draai-leaphy-blokken.py slaat het over).
+        const vorige = ervoor.lastIndexOf('```');
+        const nietDraaien = (vorige === -1 ? ervoor : ervoor.slice(vorige + 3)).includes(
+          '{/* niet-draaien:',
+        );
+        blokken.push({ waar: `${pad.slice(SITE.length)}:${regel}`, code: m[1], nietDraaien });
       }
     }
   }
@@ -145,6 +156,71 @@ describe('de codeblokken passen bij leaphymicropython', () => {
               fout.push(`${waar}: ${functie}("${naam}") bestaat niet op het bord`);
           }
     expect(fout).toEqual([]);
+  });
+
+  it('DCMotors en de I2C-klassen noemen hun pinnen, gelijk aan de standaard', () => {
+    // DCMotors() koos zelf D2, D3, D4 en D11, en OLEDSH1106() en TimeOfFlight()
+    // de pinnen van I2C, zonder dat de les ze noemde. Een leerling zag nergens
+    // waarom die pinnen bezet waren en zette er een buzzer op. Daarom schrijft
+    // elke les ze als keyword-argumenten voluit, als naam, en moeten ze naar
+    // dezelfde GPIO wijzen als de standaard van de bibliotheek: 12 en 13 voor
+    // I2C zijn "SDA" en "SCL", want "A4" en "A5" lopen via de wifi-chip.
+    const PIN_PARAMETER = /^(dir_pin_motor_[ab]|pwm_pin_motor_[ab]|sda_gpio_pin|scl_gpio_pin)$/;
+    const gpioVan = (w: unknown) => (typeof w === 'number' ? `GPIO${w}` : pinnen[String(w)]);
+    const fout: string[] = [];
+    let getoetst = 0;
+    for (const { waar, code, nietDraaien } of blokken) {
+      if (nietDraaien) continue;
+      for (const { naam, args } of aanroepen(code, /\b([A-Z]\w*)\(/g)) {
+        const standaard = klassen.get(naam)?.standaard ?? {};
+        for (const [param, waarde] of Object.entries(standaard)) {
+          if (!PIN_PARAMETER.test(param)) continue;
+          getoetst++;
+          const arg = args.find((a) => new RegExp(`^${param}\\s*=`).test(a));
+          const tekst = arg?.replace(/^\w+\s*=\s*/, '').match(/^["'](.+)["']$/)?.[1];
+          if (!arg) fout.push(`${waar}: ${naam}(…) noemt ${param} niet`);
+          else if (!tekst) fout.push(`${waar}: ${arg} is geen pinnaam als tekst`);
+          else if (pinnen[tekst] !== gpioVan(waarde))
+            fout.push(
+              `${waar}: ${param}="${tekst}" is ${pinnen[tekst] ?? 'geen pin'}, de bibliotheek gebruikt ${gpioVan(waarde)}`,
+            );
+        }
+      }
+    }
+    expect(fout).toEqual([]);
+    expect(getoetst).toBeGreaterThan(40);
+  });
+
+  it('een regel met pinnen past in het codeblok', () => {
+    // OLEDSH1106(width=128, height=64, channel=7, sda_gpio_pin=…, scl_gpio_pin=…)
+    // was 88 tekens: bij 1280 × 800 is een codeblok 703 pixels breed en had
+    // die regel er 869 nodig, dus juist de pinnen stonden achter de
+    // schuifbalk. Ongeveer 70 tekens passen; een regel met pinnen blijft onder
+    // de 60, en een langere aanroep zet de pinnen op een eigen regel.
+    const fout: string[] = [];
+    for (const { waar, code } of blokken)
+      for (const regel of code.split('\n'))
+        if (
+          /\b(dir_pin_motor_[ab]|pwm_pin_motor_[ab]|sda_gpio_pin|scl_gpio_pin)\s*=/.test(regel) &&
+          regel.length > 60
+        )
+          fout.push(`${waar}: ${regel.length} tekens: ${regel.trim()}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('de tabel met de motorpinnen klopt met de standaard van DCMotors', () => {
+    // De tabel in de uitleg is met de hand geschreven; de code toetst de test
+    // hierboven al tegen de bibliotheek.
+    const tekst = readFileSync(join(SITE, 'docs/onderdelen/_delen/dc-motor/pinnen.md'), 'utf8');
+    const standaard = klassen.get('DCMotors')?.standaard ?? {};
+    const rijen = [...tekst.matchAll(/^\|\s*([AB])\s*\|\s*(D\d+)\s*\|\s*(D\d+)\s*\|$/gm)].map(
+      ([, motor, richting, snelheid]) => [motor.toLowerCase(), richting, snelheid],
+    );
+    expect(rijen.map(([m]) => m)).toEqual(['a', 'b']);
+    for (const [motor, richting, snelheid] of rijen) {
+      expect(richting).toBe(standaard[`dir_pin_motor_${motor}`]);
+      expect(snelheid).toBe(standaard[`pwm_pin_motor_${motor}`]);
+    }
   });
 
   it('een ultrasone sensor zit op pinnen van de chip zelf', () => {
@@ -258,6 +334,119 @@ describe('de codeblokken passen bij leaphymicropython', () => {
           fout.push(`${waar}: ${regel.trim()}`);
       }
     }
+    expect(fout).toEqual([]);
+  });
+
+  it('tekst en een waarde gaan samen in een f-string, niet met + of str()', () => {
+    // Deel 5 leert de f-string (met een link naar de les van python); daarna
+    // stonden in vijf lessen nog 28 regels als oled.text('Links: ' + kleur, …).
+    // Een leerling ziet dan twee manieren en weet niet welke de cursus wil, en
+    // met + en een getal krijgt hij een TypeError.
+    // Eerst gaat de inhoud van elke string eruit (zonderStrings), dan het
+    // commentaar: zo telt ook "Druk's " + x, en een + of str( in een tekst niet.
+    const PLAKKEN = /""\s*\+(?!=)|\+\s*""|\bstr\(/;
+    const fout: string[] = [];
+    for (const { waar, code } of blokken)
+      for (const regel of code.split('\n'))
+        if (PLAKKEN.test(zonderStrings(regel).replace(/#.*/, '')))
+          fout.push(`${waar}: ${regel.trim()}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('een f-string bevat alleen een naam, eventueel met opmaak', () => {
+    // De runner draait de blokken met CPython, maar op het bord draait
+    // MicroPython, en dat kent niet elke f-string: geen !a, en geen expressie
+    // met haakjes of accolades die de parser niet in één keer sluit. Een naam
+    // ({kleur_links}, {sensor.waarde}) en een eenvoudige opmaak ({procent:3})
+    // werken overal; een berekening hoort op een eigen regel ervoor.
+    const VELD = /^[A-Za-z_][\w.]*(:[^{}!]*)?$/;
+    const fout: string[] = [];
+    for (const { waar, code } of blokken)
+      for (const [, , inhoud] of code.matchAll(/\bf(["'])((?:(?!\1)[^\n])*)\1/g))
+        for (const [, veld] of inhoud.replace(/\{\{|\}\}/g, '').matchAll(/\{([^}]*)\}/g))
+          if (!VELD.test(veld.trim())) fout.push(`${waar}: {${veld}}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('een naslagpagina met een f-string linkt naar de uitleg', () => {
+    // Onderdelen en de cheatsheet lees je los, dus de f-string uit Deel 5 heeft
+    // een leerling daar misschien nooit gezien. drukknop en potmeter hadden er
+    // een in een print zonder link. lego_auto heeft een vaste volgorde en een
+    // <Voorkennis> waar de f-string binnenkomt (voorkennis.test.ts).
+    const UITLEG = 'site:python/docs/tekst/04a-f-strings';
+    const paginas = new Set(
+      blokken
+        .filter(({ waar, code }) => /^(docs|src\/pages)\//.test(waar) && /\bf["']/.test(code))
+        .map(({ waar }) => waar.replace(/:\d+$/, '')),
+    );
+    expect(paginas.size).toBeGreaterThan(0);
+    const fout = [...paginas].filter((p) => !readFileSync(join(SITE, p), 'utf8').includes(UITLEG));
+    expect(fout).toEqual([]);
+  });
+
+  it("print zet tekst en een waarde samen in een f-string, niet met komma's", () => {
+    // print("Links:", kleur_links) gaf hetzelfde als een f-string, maar dan
+    // zag een leerling twee manieren naast elkaar: komma's in de print en een
+    // f-string op het scherm. Zeven regels in Deel 3, Deel 4 en de while-loop.
+    const fout: string[] = [];
+    for (const { waar, code } of blokken)
+      for (const { args } of aanroepen(zonderStrings(code), /\bprint\(/g))
+        if (args.length > 1 && args.includes('""')) fout.push(`${waar}: print(${args.join(', ')})`);
+    expect(fout).toEqual([]);
+  });
+
+  it('in lego_auto komt de f-string binnen op een pagina met een link naar de uitleg', () => {
+    // De volgorde van de sidebar: hoofdstuk (position in _category_.json), dan
+    // sidebar_position. De eerste pagina met een f-string moet de uitleg
+    // noemen; de pagina's daarna mogen erop bouwen.
+    const positie = (pad: string) => {
+      const [, hoofdstuk] = pad.split('/');
+      const tekst = readFileSync(join(SITE, pad), 'utf8');
+      const les = Number(tekst.match(/^sidebar_position:\s*([\d.]+)/m)?.[1] ?? 0);
+      if (hoofdstuk.endsWith('.md')) return [0, les];
+      const cat = JSON.parse(
+        readFileSync(join(SITE, 'lego_auto', hoofdstuk, '_category_.json'), 'utf8'),
+      );
+      return [Number(cat.position), les];
+    };
+    const paginas = [
+      ...new Set(
+        blokken
+          .filter(({ waar, code }) => waar.startsWith('lego_auto/') && /\bf["']/.test(code))
+          .map(({ waar }) => waar.replace(/:\d+$/, '')),
+      ),
+    ].sort((a, b) => {
+      const [pa, pb] = [positie(a), positie(b)];
+      return pa[0] - pb[0] || pa[1] - pb[1];
+    });
+    expect(paginas[0]).toBe('lego_auto/analoog_ir/deel3_een_sensor.md');
+    expect(readFileSync(join(SITE, paginas[0]), 'utf8')).toContain(
+      "to: '/docs/tekst/04a-f-strings'",
+    );
+  });
+
+  it('elke link naar de uitleg van f-strings heeft dezelfde naam', () => {
+    // Deel 5 noemde dezelfde pagina eerst "Tekst en getallen combineren met
+    // f-strings" en een paar regels later "Slimme berichten met f-strings", en
+    // Er gaat iets mis alleen "uitleg": een leerling denkt dan aan twee pagina's.
+    const NAMEN = new Set(['Tekst en getallen combineren met f-strings', 'f-string']);
+    const fout: string[] = [];
+    const loopTekst = (map: string) => {
+      for (const naam of readdirSync(map)) {
+        const pad = join(map, naam);
+        if (statSync(pad).isDirectory()) loopTekst(pad);
+        else if (/\.mdx?$/.test(naam)) {
+          const tekst = readFileSync(pad, 'utf8');
+          const links = [
+            ...tekst.matchAll(/\[([^\]]*)\]\(site:python\/docs\/tekst\/04a-f-strings[)#]/g),
+            ...tekst.matchAll(/to: '\/docs\/tekst\/04a-f-strings', label: '([^']*)'/g),
+          ];
+          for (const [, label] of links)
+            if (!NAMEN.has(label)) fout.push(`${pad.slice(SITE.length)}: ${label}`);
+        }
+      }
+    };
+    for (const map of ['docs', 'lego_auto', 'src/pages']) loopTekst(join(SITE, map));
     expect(fout).toEqual([]);
   });
 });

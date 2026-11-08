@@ -4,11 +4,13 @@ slug: /scherm/waardes-op-scherm
 title: "Deel 5: Waardes op het scherm"
 ---
 
+import I2C from '@site/docs/onderdelen/_delen/i2c/pinnen.md';
+
 # Het robotscript bouwen — Deel 5: Waardes op het scherm
 
 <Voorkennis
   items={[
-    {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'Tekst en getallen combineren met f-strings'},
+    {site: 'python', to: '/docs/projecten/staafdiagram/stap-4-midden', label: 'Een keyword-argument meegeven'},
   ]}
 />
 
@@ -36,22 +38,32 @@ Nieuw onderdeel, dus eerst een minimale test — los van je robotscript:
 ```python showLineNumbers
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 oled.fill('white')
 oled.text('Hallo robot', 0, 0)
 oled.show()
 ```
 
-<Regel n={3}>
-Maakt het scherm-object: 128 pixels breed, 64 hoog, op channel 7 van de multiplexer.
+<Regel n={3} tot={6}>
+Maakt het scherm-object: 128 pixels breed, 64 hoog, op channel 7 van de multiplexer, en aangesloten op de pinnen SDA en SCL. Elke instelling is een keyword-argument: de naam voor de `=` zegt welke instelling het is.
 </Regel>
 
-<Regel n={5} tot={7}>
+<Regel n={8} tot={10}>
 Tekenen gaat altijd in drie stappen: `fill('white')` maakt het scherm leeg, `text(tekst, x, y)` zet tekst klaar op een positie, en `show()` stuurt alles in één keer naar het scherm.
 </Regel>
 
 </CodeUitleg>
+
+<details>
+<summary>Waarom staat er "SDA" en "SCL"?</summary>
+
+<I2C />
+
+</details>
 
 ## Voorspel: wat gebeurt er zonder `show()`?
 
@@ -73,18 +85,23 @@ from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
 links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 while True:
     kleur_links = links.black_or_white()
     kleur_rechts = rechts.black_or_white()
 
     oled.fill('white')
-    oled.text('Links: ' + kleur_links, 0, 0)
-    oled.text('Rechts: ' + kleur_rechts, 0, 10)
+    oled.text(f'Links: {kleur_links}', 0, 0)
+    oled.text(f'Rechts: {kleur_rechts}', 0, 10)
     oled.show()
     sleep(0.2)
 ```
+
+`f'Links: {kleur_links}'` is dezelfde f-string als in je `print` uit [Deel 3](site:robotica/lego_auto/lijnsensor/een-sensor): op het scherm komt `Links: white` of `Links: black`. Hoe een f-string werkt, staat bij [Tekst en getallen combineren met f-strings](site:python/docs/tekst/04a-f-strings).
 
 Let op de opbouw die je al kent: het scherm-object staat bóven de loop (eenmalig klaarzetten), het tekenen zit erin (elke ronde opnieuw). De tweede regel staat op `y=10`, tien pixels lager — anders schrijven de twee regels door elkaar heen.
 
@@ -114,7 +131,10 @@ Je hebt een variabele nodig die boven de loop op `0` begint en er in de loop `1`
 from time import sleep
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 teller = 0
 
 while True:
@@ -141,15 +161,18 @@ from leaphymicropython.actuators.oled_screen import OLEDSH1106
 
 links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 while True:
     kleur_links = links.black_or_white()
     kleur_rechts = rechts.black_or_white()
 
     oled.fill('white')
-    oled.text('Links: ' + kleur_links, 0, 0)
-    oled.text('Rechts: ' + kleur_rechts, 0, 10)
+    oled.text(f'Links: {kleur_links}', 0, 0)
+    oled.text(f'Rechts: {kleur_rechts}', 0, 10)
     oled.show()
     sleep(0.2)
 ```

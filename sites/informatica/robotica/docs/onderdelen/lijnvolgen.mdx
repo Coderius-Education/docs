@@ -51,7 +51,12 @@ from leaphymicropython.sensors.linesensor import AnalogIR
 from leaphymicropython.actuators.dcmotor import DCMotors
 from time import sleep
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_a = motoren.motor_a
 motor_b = motoren.motor_b
 
@@ -105,7 +110,12 @@ from leaphymicropython.sensors.linesensor import AnalogIR
 from leaphymicropython.actuators.dcmotor import DCMotors
 from time import sleep
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_a = motoren.motor_a
 motor_b = motoren.motor_b
 

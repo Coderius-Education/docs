@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import sidebars from '../../sidebars';
+import { verdeel } from '../components/OnderdelenOverzicht/verdeel';
 
 // De naslag van robotica (docs/) heeft twee ingangen: Onderdelen, één pagina
 // per sensor, actuator of handeling, en RoboCup Junior. Tot november 2026 was
@@ -16,7 +17,13 @@ const ONDERDELEN = join(SITE, 'docs', 'onderdelen');
 
 type Item =
   | string
-  | { type: string; label: string; items: Item[]; customProps?: Record<string, unknown> };
+  | {
+      type: string;
+      label: string;
+      items: Item[];
+      collapsed?: boolean;
+      customProps?: Record<string, unknown>;
+    };
 const ids = (items: Item[]): string[] =>
   items.flatMap((i) => (typeof i === 'string' ? [i] : ids(i.items ?? [])));
 
@@ -85,6 +92,36 @@ describe('Onderdelen', () => {
     expect(start?.customProps?.weergave).toBe('stappen');
     const hulp = (start?.items as string[]).filter((id) => kaart(id, 'hulp') === 'true');
     expect(hulp).toEqual(['onderdelen/er-gaat-iets-mis']);
+  });
+
+  it('elke groep in de sidebar staat standaard dicht', () => {
+    // Met alle vier de groepen open stond de sidebar vol met 19 pagina's.
+    // Docusaurus klapt de groep van de open pagina zelf open.
+    const open = groepen.filter((g) => g.collapsed !== true).map((g) => g.label);
+    expect(groepen.length).toBeGreaterThan(0);
+    expect(open).toEqual([]);
+  });
+
+  it('het overzicht past op één scherm: drie kolommen en geen inhoudsopgave', () => {
+    // Met kaarten onder elkaar was de pagina 1800 pixels hoog bij 1280 × 720.
+    // Nu staan de groepen in drie kolommen (verdeel.ts), en houdt de pagina
+    // geen kwart van de breedte vrij voor een inhoudsopgave die leeg is.
+    // Of het echt past, meet alleen een browser (zie CLAUDE.md).
+    const kolommen = verdeel(
+      groepen.map((g) => g.items.length + 1),
+      3,
+    ).map((kolom) => kolom.map((i) => groepen[i].label));
+    expect(kolommen).toEqual([['Aan de slag', 'Op de robot'], ['Sensoren'], ['Actuatoren']]);
+    expect(pagina('onderdelen/index')).toMatch(/^hide_table_of_contents: true$/m);
+  });
+
+  it('verdeel zet elke groep in de kolom die tot dan het kortst is', () => {
+    expect(verdeel([4, 8, 7, 3], 3)).toEqual([[0, 3], [1], [2]]);
+    expect(verdeel([5, 5], 3)).toEqual([[0], [1]]);
+    expect(verdeel([2, 2, 2, 2], 2)).toEqual([
+      [0, 2],
+      [1, 3],
+    ]);
   });
 
   it('niets heet nog "Tutorial"', () => {

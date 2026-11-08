@@ -7,6 +7,8 @@ sidebar_custom_props:
   aansluiting: I2C
 ---
 
+import I2C from '@site/docs/onderdelen/_delen/i2c/pinnen.md';
+
 # Time of Flight-sensor
 
 Een **Time of Flight (TOF) sensor** meet afstand met een lichtstraal. Hij is preciezer dan een ultrasone sensor en werkt ook bij geluid. De TOF praat over **I2C**, dus via de pinnen **SDA** en **SCL**.
@@ -57,7 +59,7 @@ Op een nieuwe TOF zit vaak een doorzichtig plastic stickertje. Trek dat er voorz
 from leaphymicropython.sensors.tof import TimeOfFlight
 from time import sleep
 
-tof = TimeOfFlight()
+tof = TimeOfFlight(sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 while True:
     afstand = tof.get_distance()
@@ -67,7 +69,7 @@ while True:
 
 ### Uitleg
 
-- `TimeOfFlight()` maakt een sensor aan op het standaard I2C-adres.
+- `TimeOfFlight(sda_gpio_pin="SDA", scl_gpio_pin="SCL")` maakt een sensor aan op de twee pinnen van I2C. Zonder multiplexer heb je geen `channel` nodig.
 - `tof.get_distance()` geeft de afstand in **millimeters**.
 
 <details>
@@ -84,6 +86,10 @@ Het getal **8191**. Dat betekent: geen geldige meting. Je krijgt het ook als een
 
 </details>
 
+### SDA en SCL \{#sda-scl}
+
+<I2C />
+
 ### Alleen geldige metingen \{#geldige-metingen}
 
 Soms staat er niets voor de sensor, of zit een object buiten bereik. Dan krijg je een hoog getal terug. De regel is simpel: **alles boven 8090 is geen echte afstand**.
@@ -92,7 +98,7 @@ Soms staat er niets voor de sensor, of zit een object buiten bereik. Dan krijg j
 from leaphymicropython.sensors.tof import TimeOfFlight
 from time import sleep
 
-tof = TimeOfFlight()
+tof = TimeOfFlight(sda_gpio_pin="SDA", scl_gpio_pin="SCL")
 
 while True:
     afstand = tof.get_distance()
@@ -143,7 +149,10 @@ In dit voorbeeld zit de TOF op **channel 7** van de multiplexer. Het cijfer staa
 from leaphymicropython.sensors.tof import TimeOfFlight
 from time import sleep
 
-tof = TimeOfFlight(channel=7)
+tof = TimeOfFlight(
+    channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 while True:
     print(tof.get_distance())
@@ -153,7 +162,10 @@ while True:
 ### Uitleg
 
 ```python
-TimeOfFlight(channel=7)
+TimeOfFlight(
+    channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 ```
 
 Met `channel=7` vertel je de bibliotheek op welk kanaal van de multiplexer de sensor zit. Vergeet niet dit aan te passen als je de sensor in een ander kanaal steekt.
@@ -193,8 +205,14 @@ Bij channel 0 tot en met 3 (bovenaan de multiplexer) staan de pinnen andersom: G
 from leaphymicropython.sensors.tof import TimeOfFlight
 from time import sleep
 
-tof_0 = TimeOfFlight(channel=0)
-tof_7 = TimeOfFlight(channel=7)
+tof_0 = TimeOfFlight(
+    channel=0,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
+tof_7 = TimeOfFlight(
+    channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 while True:
     afstand_0 = tof_0.get_distance()
@@ -219,9 +237,18 @@ Voeg een derde TOF toe op **channel 3** en print ook die waarde mee.
 from leaphymicropython.sensors.tof import TimeOfFlight
 from time import sleep
 
-tof_0 = TimeOfFlight(channel=0)
-tof_3 = TimeOfFlight(channel=3)
-tof_7 = TimeOfFlight(channel=7)
+tof_0 = TimeOfFlight(
+    channel=0,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
+tof_3 = TimeOfFlight(
+    channel=3,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
+tof_7 = TimeOfFlight(
+    channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
 while True:
     print(tof_0.get_distance(), tof_3.get_distance(), tof_7.get_distance())

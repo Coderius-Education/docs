@@ -48,9 +48,17 @@ links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
 buiten_links = AnalogIR("A2", 2500)
 buiten_rechts = AnalogIR("A3", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_a = motoren.motor_a  # links
 motor_b = motoren.motor_b  # rechts
 
@@ -61,10 +69,10 @@ while True:
     kleur_buiten_rechts = buiten_rechts.black_or_white()
 
     oled.fill('white')
-    oled.text('Links: ' + kleur_links, 0, 0)
-    oled.text('Rechts: ' + kleur_rechts, 0, 10)
-    oled.text('Buiten L: ' + kleur_buiten_links, 0, 20)
-    oled.text('Buiten R: ' + kleur_buiten_rechts, 0, 30)
+    oled.text(f'Links: {kleur_links}', 0, 0)
+    oled.text(f'Rechts: {kleur_rechts}', 0, 10)
+    oled.text(f'Buiten L: {kleur_buiten_links}', 0, 20)
+    oled.text(f'Buiten R: {kleur_buiten_rechts}', 0, 30)
     oled.show()
 
     # hier staat je if-blok uit Deel 8
@@ -76,11 +84,11 @@ while True:
 Twee nieuwe sensor-objecten, op A2 en A3. `2500` is de drempel van de eerste twee; past hij hier niet, kalibreer dan opnieuw zoals in [Opdracht 5.4.a](site:robotica/lego_auto/lijnsensor/een-sensor).
 </Regel>
 
-<Regel n={19} tot={20}>
+<Regel n={27} tot={28}>
 Elke ronde lees je nu vier sensoren in plaats van twee.
 </Regel>
 
-<Regel n={25} tot={26}>
+<Regel n={33} tot={34}>
 Twee regels lager op het scherm, op hoogte 20 en 30, zodat ze niet over de eerste twee heen vallen.
 </Regel>
 
@@ -187,9 +195,17 @@ links = AnalogIR("A0", 2500)
 rechts = AnalogIR("A1", 2500)
 buiten_links = AnalogIR("A2", 2500)
 buiten_rechts = AnalogIR("A3", 2500)
-oled = OLEDSH1106(width=128, height=64, channel=7)
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
 
-motoren = DCMotors()
+motoren = DCMotors(
+    dir_pin_motor_a="D2",
+    pwm_pin_motor_a="D3",
+    dir_pin_motor_b="D4",
+    pwm_pin_motor_b="D11",
+)
 motor_a = motoren.motor_a  # links
 motor_b = motoren.motor_b  # rechts
 
@@ -200,10 +216,10 @@ while True:
     kleur_buiten_rechts = buiten_rechts.black_or_white()
 
     oled.fill('white')
-    oled.text('Links: ' + kleur_links, 0, 0)
-    oled.text('Rechts: ' + kleur_rechts, 0, 10)
-    oled.text('Buiten L: ' + kleur_buiten_links, 0, 20)
-    oled.text('Buiten R: ' + kleur_buiten_rechts, 0, 30)
+    oled.text(f'Links: {kleur_links}', 0, 0)
+    oled.text(f'Rechts: {kleur_rechts}', 0, 10)
+    oled.text(f'Buiten L: {kleur_buiten_links}', 0, 20)
+    oled.text(f'Buiten R: {kleur_buiten_rechts}', 0, 30)
     oled.show()
 
     if kleur_buiten_links == "black":
