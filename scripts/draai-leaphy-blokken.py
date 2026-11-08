@@ -16,9 +16,10 @@ die ene commit) in ~/.cache/coderius.
 
 - Een while True stopt na 200 keer sleep() of 20.000 regels: op het bord
   loopt hij door, en dat is geen fout.
-- Een fragment (een losse `oled.fill(...)`) dat een NameError geeft, draait
-  opnieuw met scripts/leaphy_nep/vooraf.py ervoor: de objecten zoals de lessen
-  ze maken.
+- Een fragment (een losse `oled.fill(...)`, zonder import) dat een NameError
+  geeft, draait opnieuw met scripts/leaphy_nep/vooraf.py ervoor: de objecten
+  zoals de lessen ze maken. Een blok met een import is een compleet script en
+  krijgt vooraf.py nooit.
 - `{/* niet-draaien: reden */}` boven een blok slaat het over (een bewust fout
   voorbeeld); compileren doet compileer-blokken.py dan nog wel.
 - Elke run begint met een zelftest: bekende fouten moeten falen met de
@@ -32,6 +33,7 @@ import argparse
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -56,8 +58,9 @@ _spec = importlib.util.spec_from_file_location(
 _compileer = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_compileer)
 
-# Bekende fouten met de melding die een leerling dan ziet. Komt er een niet
-# meer uit, dan vangt het harnas die soort fout niet meer.
+# Bekende fouten met de melding die een leerling dan ziet, en "" voor een geval
+# dat moet slagen. Komt er een fout niet meer uit, dan vangt het harnas die soort
+# fout niet meer.
 ZELFTEST = [
     (
         "from leaphymicropython.actuators.oled_screen import OLEDSH1106\n"
@@ -110,6 +113,15 @@ ZELFTEST = [
         "ValueError: Speed must be up to and including 0 and 180",
     ),
     ("from leaphymicropython.actuators.dcmotor import DCMotorz\n", "ImportError"),
+    # Een compleet script (met een import) krijgt vooraf.py niet: mist het de
+    # regel die oled maakt, dan faalt het, net als op het bord.
+    (
+        "from leaphymicropython.actuators.oled_screen import OLEDSH1106\n"
+        'oled.fill("white")\n',
+        "NameError: name 'oled' is not defined",
+    ),
+    # Een fragment (geen import) draait met vooraf.py ervoor en slaagt.
+    ('oled.fill("white")\noled.show()\n', ""),
 ]
 
 
@@ -149,10 +161,19 @@ def draai(code_pad: Path, lib: Path, vooraf: bool = False) -> dict:
     return json.loads(regels[-1])
 
 
+IMPORT = re.compile(r"^\s*(from|import)\s", re.M)
+
+
 def met_vooraf(code_pad: Path, lib: Path) -> dict:
-    """Een fragment krijgt de objecten uit vooraf.py als het een naam mist."""
+    """Een fragment krijgt de objecten uit vooraf.py als het een naam mist.
+
+    Een fragment is een blok zonder import. Een blok mét import is een compleet
+    script dat een leerling zo kopieert: mist daar een naam, dan is dat een fout
+    in de les, en die mag vooraf.py niet verbergen.
+    """
     uit = draai(code_pad, lib)
-    if uit["uitkomst"] == "fout" and uit.get("naam"):
+    fragment = not IMPORT.search(code_pad.read_text())
+    if uit["uitkomst"] == "fout" and uit.get("naam") and fragment:
         tweede = draai(code_pad, lib, vooraf=True)
         tweede["fragment"] = True
         return tweede
@@ -165,8 +186,10 @@ def zelftest(lib: Path) -> list[str]:
         for i, (code, verwacht) in enumerate(ZELFTEST):
             pad = Path(tmp) / f"zelftest_{i}.py"
             pad.write_text(code)
-            uit = draai(pad, lib)
-            if verwacht not in (uit.get("fout") or ""):
+            uit = met_vooraf(pad, lib)
+            if verwacht == "" and uit["uitkomst"] != "fout":
+                continue
+            if not verwacht or verwacht not in (uit.get("fout") or ""):
                 fouten.append(
                     f"zelftest {i}: verwacht '{verwacht}', kreeg {uit.get('fout') or uit['uitkomst']}"
                 )
@@ -217,7 +240,7 @@ def main() -> int:
         for f in fouten:
             print(f"  {f}")
         return 1
-    print(f"Zelftest: {len(ZELFTEST)} bekende fouten gevangen.")
+    print(f"Zelftest: {len(ZELFTEST)} gevallen zoals verwacht.")
 
     overslaan = [item for item in index if niet_draaien(item)]
     te_draaien = [item for item in index if item not in overslaan]
