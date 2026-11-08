@@ -84,8 +84,8 @@ while True:
     kleur_rechts = rechts.black_or_white()
 
     oled.fill('white')
-    oled.text('Links: ' + kleur_links, 0, 0)
-    oled.text('Rechts: ' + kleur_rechts, 0, 10)
+    oled.text(f'Links: {kleur_links}', 0, 0)
+    oled.text(f'Rechts: {kleur_rechts}', 0, 10)
     oled.show()
     sleep(0.2)
 ```
@@ -166,8 +166,8 @@ while True:
     kleur_rechts = rechts.black_or_white()
 
     oled.fill('white')
-    oled.text('Links: ' + kleur_links, 0, 0)
-    oled.text('Rechts: ' + kleur_rechts, 0, 10)
+    oled.text(f'Links: {kleur_links}', 0, 0)
+    oled.text(f'Rechts: {kleur_rechts}', 0, 10)
     oled.show()
     sleep(0.2)
 ```

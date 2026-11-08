@@ -336,4 +336,18 @@ describe('de codeblokken passen bij leaphymicropython', () => {
     }
     expect(fout).toEqual([]);
   });
+
+  it('tekst en een waarde gaan samen in een f-string, niet met + of str()', () => {
+    // Deel 5 leert de f-string (met een link naar de les van python); daarna
+    // stonden in vijf lessen nog 28 regels als oled.text('Links: ' + kleur, …).
+    // Een leerling ziet dan twee manieren en weet niet welke de cursus wil, en
+    // met + en een getal krijgt hij een TypeError.
+    const PLAKKEN = /(["'])[^"'\n]*\1\s*\+(?!=)|[\w)\]]\s*\+\s*f?(["'])|\bstr\(/;
+    const fout: string[] = [];
+    for (const { waar, code } of blokken)
+      for (const regel of code.split('\n'))
+        if (!regel.trim().startsWith('#') && PLAKKEN.test(regel))
+          fout.push(`${waar}: ${regel.trim()}`);
+    expect(fout).toEqual([]);
+  });
 });

@@ -189,6 +189,8 @@ oled.fill("white")
 oled.text(f'Afstand: {afstand}', x=0, y=0)
 oled.show()
 ```
+
+Hoe een f-string werkt: [Slimme berichten met f-strings](site:python/docs/tekst/04a-f-strings).
 </details>
 
 <details>

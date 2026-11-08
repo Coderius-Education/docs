@@ -69,10 +69,10 @@ while True:
     kleur_buiten_rechts = buiten_rechts.black_or_white()
 
     oled.fill('white')
-    oled.text('Links: ' + kleur_links, 0, 0)
-    oled.text('Rechts: ' + kleur_rechts, 0, 10)
-    oled.text('Buiten L: ' + kleur_buiten_links, 0, 20)
-    oled.text('Buiten R: ' + kleur_buiten_rechts, 0, 30)
+    oled.text(f'Links: {kleur_links}', 0, 0)
+    oled.text(f'Rechts: {kleur_rechts}', 0, 10)
+    oled.text(f'Buiten L: {kleur_buiten_links}', 0, 20)
+    oled.text(f'Buiten R: {kleur_buiten_rechts}', 0, 30)
     oled.show()
 
     # hier staat je if-blok uit Deel 8
@@ -216,10 +216,10 @@ while True:
     kleur_buiten_rechts = buiten_rechts.black_or_white()
 
     oled.fill('white')
-    oled.text('Links: ' + kleur_links, 0, 0)
-    oled.text('Rechts: ' + kleur_rechts, 0, 10)
-    oled.text('Buiten L: ' + kleur_buiten_links, 0, 20)
-    oled.text('Buiten R: ' + kleur_buiten_rechts, 0, 30)
+    oled.text(f'Links: {kleur_links}', 0, 0)
+    oled.text(f'Rechts: {kleur_rechts}', 0, 10)
+    oled.text(f'Buiten L: {kleur_buiten_links}', 0, 20)
+    oled.text(f'Buiten R: {kleur_buiten_rechts}', 0, 30)
     oled.show()
 
     if kleur_buiten_links == "black":
