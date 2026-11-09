@@ -1,4 +1,5 @@
 import type { Leerdoelen } from '@coderius/shared/leerdoelen';
+import type { CommentaarTaal } from './commentaar';
 
 // Domein-onafhankelijke types voor de gedeelde 'nakijken'-checker. Een site
 // levert een CheckerConfig aan (welke concepten, hoe bestanden te classificeren,
@@ -55,6 +56,17 @@ export type ConceptDetect =
        * drie; Godot's "meerdere nieuwe nodes" wil drie verschillende.
        */
       minDelen?: number;
+      /**
+       * `minCount` moet in één bestand gehaald worden, niet over alle
+       * bestanden samen. Drie scripts met 1, 2 en 2 sensoren zijn geen robot
+       * met vier sensoren.
+       */
+      perBestand?: boolean;
+      /**
+       * Zoek ook in commentaar (zie `commentaar` op de config). Alleen voor
+       * een concept dat óver commentaar gaat, zoals "toelichting in comments".
+       */
+      metCommentaar?: boolean;
     }
   | {
       /** "Aanwezig" als een bestandspad hierop matcht (mappenstructuur-check). */
@@ -187,6 +199,18 @@ export interface CheckerConfig {
    * een JavaScript-patroon niet in een alinea of een commentaar.
    */
   afgeleid?: AfgeleideSoort[];
+  /**
+   * Optioneel: per bestandssoort de taal, zodat commentaar niet meetelt voor
+   * een concept (`zonderCommentaar` in commentaar.ts). Een uitgezette regel
+   * als `# tof = TimeOfFlight(...)` gaf anders de afstandssensor.
+   */
+  commentaar?: Record<string, CommentaarTaal>;
+  /**
+   * Optioneel: een herkenning die van het project zelf afhangt, per concept-id
+   * in plaats van de vaste. Godot leest zo de namen van de autoloads uit
+   * project.godot: een global die `Spel` heet, telt net zo goed als `Global`.
+   */
+  detectieVoor?: (files: ProjectFiles) => Record<string, ConceptDetect>;
   /**
    * Optioneel: is dit bestand een bibliotheek die de leerling meelevert, en
    * geen eigen code? Zo'n bestand telt niet mee voor de concepten en niet
