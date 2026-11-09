@@ -32,7 +32,7 @@
     { "id": "play-touching", "onderwerp": "play", "concept": "botsingen tussen vormen", "1": "basis", "2": "basis", "groep": "4 Gebeurtenissen", "les": "gebeurtenissen/vormen" },
     { "id": "play-wall", "onderwerp": "play", "concept": "een muur raken", "1": "basis", "2": "basis", "groep": "4 Gebeurtenissen", "les": "gebeurtenissen/vormen" },
     { "id": "play-timer", "onderwerp": "play", "concept": "await play.timer", "1": "gevorderd", "2": "basis", "groep": "5 Tijd", "les": "tijd/async" },
-    { "id": "play-repeat", "onderwerp": "play", "concept": "repeat_forever", "1": "basis", "2": "basis", "groep": "5 Tijd", "les": "tijd/animaties" },
+    { "id": "play-repeat", "onderwerp": "play", "concept": "repeat_forever", "1": "basis", "2": "basis", "groep": "4 Gebeurtenissen", "les": "gebeurtenissen/muis" },
     { "id": "play-database", "onderwerp": "play", "concept": "een database aanmaken", "1": "gevorderd", "2": "basis", "groep": "6 Opslaan", "les": "database/basis" },
     { "id": "play-data", "onderwerp": "play", "concept": "set_data en get_data", "1": "gevorderd", "2": "basis", "groep": "6 Opslaan", "les": "database/basis" },
     { "id": "play-database-bestand", "onderwerp": "play", "concept": "er staat een database.json in het project", "1": null, "2": "basis", "groep": "6 Opslaan", "les": "database/basis" },

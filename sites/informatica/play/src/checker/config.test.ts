@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { inTrack, levelVoor } from '@coderius/checker/conceptLevel';
 import { computeLevelSummary } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { ProjectFiles } from '@coderius/checker/types';
@@ -99,7 +100,7 @@ describe('play-nakijker', () => {
     expect(gevonden).not.toContain('play-button');
   });
 
-  it('herkent een project met levels, UI en geluid als gevorderd', () => {
+  it('herkent levels, UI en geluid in een project', () => {
     const code = [
       'import play',
       '',
@@ -146,9 +147,17 @@ describe('play-nakijker', () => {
     // Niveau 1 zoals de docent het in november 2026 indeelde: botsingen, een
     // muur en repeat_forever zijn basis; UI en levels gevorderd (eerst
     // expert); geluid, video en het databasebestand tellen niet mee. Zo heeft
-    // niveau 1 geen expert meer.
+    // niveau 1 geen expert meer. Gemeten zoals de nakijker telt: met inTrack
+    // en levelVoor.
+    const concept = (id: string) => {
+      const c = playConfig.concepts.find((x) => x.id === id);
+      if (!c) throw new Error(`concept '${id}' bestaat niet in playConfig`);
+      return c;
+    };
+    const opNiveau1 = (id: string) =>
+      inTrack(concept(id), '1') ? levelVoor(concept(id), '1') : null;
     for (const id of ['play-touching', 'play-wall', 'play-repeat']) {
-      expect(niveau(id), id).toEqual({ '1': 'basis', '2': 'basis' });
+      expect(opNiveau1(id), id).toBe('basis');
     }
     for (const id of [
       'play-button',
@@ -160,15 +169,17 @@ describe('play-nakijker', () => {
       'play-level-opruimen',
       'play-level-bouwen',
     ]) {
-      expect(niveau(id), id).toEqual({ '1': 'gevorderd', '2': 'gevorderd' });
+      expect(opNiveau1(id), id).toBe('gevorderd');
+      expect(levelVoor(concept(id), '2'), id).toBe('gevorderd');
     }
     for (const id of ['play-database-bestand', 'play-sound', 'play-sound-bestand', 'play-video']) {
-      expect((niveau(id) as Record<string, string | null>)['1'], id).toBeNull();
+      expect(opNiveau1(id), id).toBeNull();
+      expect(inTrack(concept(id), '2'), id).toBe(true);
     }
-    const opNiveau1 = playConfig.concepts.map(
-      (c) => (c.level as Record<string, string | null>)['1'],
-    );
-    expect(opNiveau1).not.toContain('expert');
+    const niveau1 = playConfig.concepts
+      .filter((c) => inTrack(c, '1'))
+      .map((c) => levelVoor(c, '1'));
+    expect(niveau1).not.toContain('expert');
     // Op niveau 2 vraagt "gevorderd" bij Python een gevorderd concept. Was
     // alleen de dictionary dat, dan haalde geen leerling zonder dictionary
     // het; lijst en for-loop horen bij hoofdstuk 9, dat daar gevorderd is.

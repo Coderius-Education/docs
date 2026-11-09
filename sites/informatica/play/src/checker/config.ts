@@ -11,10 +11,13 @@ import leerdoelenJson from '../leerdoelen.json';
 // want alles wat de leerling maakt staat in de code.
 //
 // De groepen heten naar de hoofdstukken (1 Vormen tot en met 10 Pygame-ce),
-// de Python-concepten naar hun onderwerp. Niveau 1 vraagt de basis van de
-// hoofdstukken 1 tot en met 4; 5 en 6 zijn daar gevorderd, en 7 tot en met 9
-// expert. Op niveau 2 is alles uit 1 tot en met 6 basis, 7 tot en met 9
-// gevorderd en pygame-ce expert.
+// de Python-concepten naar hun onderwerp. Op niveau 1 zijn de hoofdstukken 1
+// tot en met 4 basis (clone, distance_to en de fysica-instellingen
+// gevorderd), en tijd, opslaan, UI en levels gevorderd; geluid en video, het
+// bestand database.json en pygame-ce tellen daar niet mee, dus niveau 1 heeft
+// geen expert. Op niveau 2 is alles uit 1 tot en met 6 basis, 7 tot en met 9
+// gevorderd en pygame-ce expert. De precieze indeling staat in
+// src/leerdoelen.json.
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp']);
 const AUDIO_EXT = new Set(['.mp3', '.wav', '.ogg']);
@@ -106,8 +109,12 @@ export const playConfig: CheckerConfig = {
   tracks: uitLeerdoelen.tracks,
   concepts: uitLeerdoelen.concepts,
   leerdoelen: uitLeerdoelen.leerdoelen,
-  // Een beoordeling van vóór de niveaus heeft geen leerroute. Hoofdstuk 1
-  // tot en met 6 had toen dezelfde moeilijkheden als niveau 1 nu.
+  // Een beoordeling van vóór de niveaus heeft geen leerroute en opent op
+  // niveau 1: dat lijkt het meest op de indeling van toen. Helemaal gelijk is
+  // het niet meer (november 2026): op niveau 1 tellen geluid, video en
+  // database.json niet mee, en zijn botsingen, een muur en repeat_forever
+  // basis in plaats van gevorderd. Zo'n beoordeling krijgt bij het openen
+  // dus die indeling.
   zonderLeerroute: '1',
 
   fileKinds: [
