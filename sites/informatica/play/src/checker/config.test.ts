@@ -138,12 +138,35 @@ describe('play-nakijker', () => {
       { id: '2', label: 'Niveau 2' },
     ]);
     const niveau = (id: string) => playConfig.concepts.find((c) => c.id === id)?.level;
-    // Hoofdstuk 1 tot en met 4 is op beide niveaus de basis; UI is op
-    // niveau 1 expert, en pygame-ce hoort pas bij niveau 2.
+    // Hoofdstuk 1 tot en met 4 is op beide niveaus de basis, en pygame-ce
+    // hoort pas bij niveau 2.
     expect(niveau('play-circle')).toEqual({ '1': 'basis', '2': 'basis' });
     expect(niveau('play-timer')).toEqual({ '1': 'gevorderd', '2': 'basis' });
-    expect(niveau('play-button')).toEqual({ '1': 'expert', '2': 'gevorderd' });
     expect(niveau('pygame-import')).toEqual({ '1': null, '2': 'expert' });
+    // Niveau 1 zoals de docent het in november 2026 indeelde: botsingen, een
+    // muur en repeat_forever zijn basis; UI en levels gevorderd (eerst
+    // expert); geluid, video en het databasebestand tellen niet mee. Zo heeft
+    // niveau 1 geen expert meer.
+    for (const id of ['play-touching', 'play-wall', 'play-repeat']) {
+      expect(niveau(id), id).toEqual({ '1': 'basis', '2': 'basis' });
+    }
+    for (const id of [
+      'play-button',
+      'play-slider',
+      'play-keuze',
+      'play-input',
+      'play-progress',
+      'play-level-instellingen',
+      'play-level-opruimen',
+      'play-level-bouwen',
+    ]) {
+      expect(niveau(id), id).toEqual({ '1': 'gevorderd', '2': 'gevorderd' });
+    }
+    for (const id of ['play-database-bestand', 'play-sound', 'play-sound-bestand', 'play-video']) {
+      expect((niveau(id) as Record<string, string | null>)['1'], id).toBeNull();
+    }
+    const opNiveau1 = playConfig.concepts.map((c) => (c.level as Record<string, string | null>)['1']);
+    expect(opNiveau1).not.toContain('expert');
     // Op niveau 2 vraagt "gevorderd" bij Python een gevorderd concept. Was
     // alleen de dictionary dat, dan haalde geen leerling zonder dictionary
     // het; lijst en for-loop horen bij hoofdstuk 9, dat daar gevorderd is.
