@@ -427,7 +427,13 @@ function moeilijkheidVoorstel(perOnderwerp) {
   // zonder concepten op die moeilijkheid telt daar niet mee.
   let geteld = [];
   for (let i = 0; i < CONCEPT_MOEILIJKHEDEN.length; i++) {
-    const telt = perOnderwerp.filter((o) => vanaf(o, i).total > 0);
+    // Voor basis telt een onderwerp met basisconcepten; voor gevorderd en
+    // expert een onderwerp met concepten op die moeilijkheid of moeilijker.
+    // Een groep met alleen gevorderde concepten (Accounts bij fullstack) hoeft
+    // voor basis dus niets te hebben.
+    const telt = perOnderwerp.filter((o) =>
+      i === 0 ? (o.basis?.total ?? 0) > 0 : vanaf(o, i).total > 0,
+    );
     const zonder = telt.filter((o) => vanaf(o, i).used === 0).map((o) => o.label);
     if (telt.length === 0 || zonder.length > 0) {
       mist = zonder;

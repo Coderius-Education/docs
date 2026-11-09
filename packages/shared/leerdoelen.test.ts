@@ -644,6 +644,16 @@ describe('moeilijkheidVoorstel: de vuistregels', () => {
     { label: 'JavaScript', basis: t(js[0], 5), gevorderd: t(js[1], 7), expert: t(0, 0) },
   ];
 
+  it('basis vraagt niets van een onderdeel zonder basisconcepten', () => {
+    // Fullstack niveau 1 telt per groep; Accounts heeft alleen gevorderde
+    // concepten en hoeft voor basis dus niets te hebben.
+    const groepen = [
+      { label: 'Routes', basis: t(1, 3), gevorderd: t(0, 0), expert: t(0, 1) },
+      { label: 'Accounts', basis: t(0, 0), gevorderd: t(0, 3), expert: t(0, 0) },
+    ];
+    expect(moeilijkheidVoorstel(groepen).moeilijkheid).toBe('basis');
+  });
+
   it('gevorderd vraagt een gevorderd concept bij elk onderwerp', () => {
     expect(moeilijkheidVoorstel(web([3, 1], [2, 1], [2, 2])).moeilijkheid).toBe('gevorderd');
   });

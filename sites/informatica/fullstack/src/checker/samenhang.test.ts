@@ -513,3 +513,54 @@ async def bestand(pad: str):
     });
   });
 });
+
+describe('samenhang — geen valse meldingen bij een gewone opzet', () => {
+  it('zegt niets over templates en bestanden als alleen main.py geüpload is', () => {
+    const main = [
+      'from fastapi import FastAPI, Request',
+      'from fastapi.responses import FileResponse',
+      'from fastapi.templating import Jinja2Templates',
+      'app = FastAPI()',
+      'templates = Jinja2Templates(directory="templates")',
+      '@app.get("/")',
+      'def home(request: Request):',
+      '    return templates.TemplateResponse(request, "home.html", {"naam": "Sam"})',
+      '@app.get("/over")',
+      'def over():',
+      '    return FileResponse("static/over.html")',
+    ].join('\n');
+    expect(samenhang(project({ 'main.py': main }))).toEqual([]);
+  });
+
+  it('vindt templates naast een main.py in app/', () => {
+    const main = [
+      'from fastapi import FastAPI, Request',
+      'from fastapi.templating import Jinja2Templates',
+      'app = FastAPI()',
+      'templates = Jinja2Templates(directory="templates")',
+      '@app.get("/")',
+      'def home(request: Request):',
+      '    return templates.TemplateResponse(request, "home.html", {"naam": "Sam"})',
+    ].join('\n');
+    expect(
+      samenhang(project({ 'app/main.py': main, 'templates/home.html': '<p>{{ naam }}</p>' })),
+    ).toEqual([]);
+  });
+
+  it('meldt geen ontbrekende import bij commentaar achter de import-regel', () => {
+    const main = [
+      'from fastapi import FastAPI, Form  # Form erbij',
+      'from fastapi.responses import (',
+      '    HTMLResponse,  # voor de pagina',
+      ')',
+      'from fastapi.templating import \\',
+      '    Jinja2Templates',
+      'app = FastAPI()',
+      'templates = Jinja2Templates(directory="templates")',
+      '@app.post("/x", response_class=HTMLResponse)',
+      'def x(naam: str = Form(...)):',
+      '    return naam',
+    ].join('\n');
+    expect(samenhang(project({ 'main.py': main }))).toEqual([]);
+  });
+});
