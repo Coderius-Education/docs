@@ -7,10 +7,11 @@ import {
   type Wijziging,
   databaseNaam,
   geheugenOpslag,
+  gekozenMoeilijkheid,
   nieuwId,
   pdfNaamMetLeerling,
 } from '../beoordelingen';
-import { bloomUitOudeVinkjes, leerrouteVan } from '../leerdoelen';
+import { bloomUitOudeVinkjes, geldigeTrack, leerrouteVan } from '../leerdoelen';
 import { analyze } from '../matchConcepts';
 import type { CheckReport, CheckerConfig, Level, Plek, ProjectFiles } from '../types';
 import { type Vraag, nieuweVraag } from '../vragen';
@@ -180,6 +181,9 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   const kiesTrack = useCallback(
     (id: string) => {
       laatsteTrackRef.current = id;
+      // Het filter op een moeilijkheid hoort bij de tegels van deze route;
+      // op een route zonder expert bleef het aan en verdwenen hele secties.
+      setActiveLevel(null);
       bewaar({ track: id });
     },
     [bewaar],
@@ -188,8 +192,8 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   const wijzigNotes = useCallback((tekst: string) => bewaar({ notes: tekst }), [bewaar]);
   const kiesBloom = useCallback((id: string) => bewaar({ bloom: id }), [bewaar]);
   const kiesMoeilijkheid = useCallback(
-    (id: MoeilijkheidId | null) => bewaar({ moeilijkheid: id }),
-    [bewaar],
+    (id: MoeilijkheidId | null) => bewaar({ moeilijkheid: id, moeilijkheidRoute: track }),
+    [bewaar, track],
   );
 
   // Eén afgeleid rapport waarin de aangevinkte handmatige concepten als
@@ -544,7 +548,11 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
               config={config}
               track={track}
               bloom={actief.bloom ?? bloomUitOudeVinkjes(config.oudeVinkjes, actief.handmatig)}
-              moeilijkheid={actief.moeilijkheid}
+              moeilijkheid={gekozenMoeilijkheid(
+                actief,
+                track,
+                (a, b) => geldigeTrack(config, a) === geldigeTrack(config, b),
+              )}
               onBloom={kiesBloom}
               onMoeilijkheid={kiesMoeilijkheid}
             />

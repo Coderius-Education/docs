@@ -389,6 +389,10 @@ function cijferTekst(cijfer) {
 /** De zin uit het sjabloon van het beoordelingsblad, ingevuld. */
 function sjabloonZin(bloom, moeilijkheidId) {
   const cijfer = cijferVoor(bloom, moeilijkheidId);
+  // "voor de moeilijkheid niet aan basis voldaan" is geen zin.
+  if (moeilijkheidId === 'niet-aan-basis') {
+    return `Ik heb bij jou Bloom niveau ${denkvaardigheid(bloom).label.toLowerCase()} gezien, maar je voldoet nog niet aan basis, en daarbij hoort het cijfer ${cijferTekst(cijfer)}.`;
+  }
   return BLOOM.sjabloon
     .replace('$BLOOM_NIVEAU', denkvaardigheid(bloom).label.toLowerCase())
     .replace('$MOEILIJKHEIDSNIVEAU', moeilijkheid(moeilijkheidId).label.toLowerCase())

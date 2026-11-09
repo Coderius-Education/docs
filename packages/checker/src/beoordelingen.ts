@@ -30,6 +30,12 @@ export interface Beoordeling {
   bloom: string | null;
   /** De moeilijkheid die de docent koos; null = het voorstel van de nakijker. */
   moeilijkheid: MoeilijkheidId | null;
+  /**
+   * De leerroute waarvoor die moeilijkheid gekozen is. Op een andere route
+   * geldt hij niet: eerst bleef "gevorderd" van niveau 1 staan na een wissel
+   * naar niveau 4, waar het voorstel basis was, en kwam hij zo in de PDF.
+   */
+  moeilijkheidRoute: string | null;
 }
 
 /** Het ingeleverde project; groot, en wordt één keer opgeslagen. */
@@ -58,7 +64,17 @@ export interface Opslag {
 }
 
 export type Wijziging = Partial<
-  Pick<Beoordeling, 'naam' | 'handmatig' | 'notes' | 'track' | 'vragen' | 'bloom' | 'moeilijkheid'>
+  Pick<
+    Beoordeling,
+    | 'naam'
+    | 'handmatig'
+    | 'notes'
+    | 'track'
+    | 'vragen'
+    | 'bloom'
+    | 'moeilijkheid'
+    | 'moeilijkheidRoute'
+  >
 >;
 
 /**
@@ -110,7 +126,22 @@ export function aangevuld(b: Beoordeling): Beoordeling {
     // Een id die bloom.json niet (meer) kent, telt als niet gekozen.
     bloom: BLOOM.denkvaardigheden.some((d) => d.id === b.bloom) ? b.bloom : null,
     moeilijkheid: BLOOM.moeilijkheden.some((m) => m.id === b.moeilijkheid) ? b.moeilijkheid : null,
+    // Een oudere beoordeling had één route, en daar hoorde de keuze bij.
+    moeilijkheidRoute: b.moeilijkheidRoute === undefined ? b.track : b.moeilijkheidRoute,
   };
+}
+
+/**
+ * De moeilijkheid die de docent voor deze leerroute koos, of null (het
+ * voorstel). `zelfde` zegt of twee routes dezelfde zijn, na omzetting van een
+ * oude route-id.
+ */
+export function gekozenMoeilijkheid(
+  b: Pick<Beoordeling, 'moeilijkheid' | 'moeilijkheidRoute'>,
+  route: string | null,
+  zelfde: (a: string | null, b: string | null) => boolean = (a, c) => a === c,
+): MoeilijkheidId | null {
+  return b.moeilijkheid !== null && zelfde(b.moeilijkheidRoute, route) ? b.moeilijkheid : null;
 }
 
 export function nieuwId(): string {
@@ -245,6 +276,7 @@ export class Bewaarder {
       vragen: [],
       bloom: null,
       moeilijkheid: null,
+      moeilijkheidRoute: track,
     };
     this.cache.set(b.id, b);
     this.zonderProject.add(b.id);

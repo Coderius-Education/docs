@@ -607,6 +607,10 @@ describe('cijfer volgens het beoordelingsblad', () => {
     expect(sjabloonZin('creëren', 'expert')).toBe(
       'Ik heb bij jou Bloom niveau creëren gezien voor de moeilijkheid expert en daarbij hoort het cijfer 10,0.',
     );
+    // "voor de moeilijkheid niet aan basis voldaan" was geen zin.
+    expect(sjabloonZin('toepassen', 'niet-aan-basis')).toBe(
+      'Ik heb bij jou Bloom niveau toepassen gezien, maar je voldoet nog niet aan basis, en daarbij hoort het cijfer 4,0.',
+    );
   });
 
   it('noemt alleen bronnen die vakdidactiek uitlegt, met dezelfde paper', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeLevelSummary } from './levelSummary';
+import { alleenMetVinkje, computeLevelSummary, voorstelOnderdelen } from './levelSummary';
 import type { CheckReport, CheckerConfig, Concept } from './types';
 
 function concept(id: string, subject: string, level: Concept['level']): Concept {
@@ -164,5 +164,50 @@ describe('computeLevelSummary — tracks', () => {
   it('zonder track valt alles terug op het eerste niveau', () => {
     const s = computeLevelSummary(rapport, config);
     expect(s.basis.total + s.gevorderd.total).toBe(2);
+  });
+});
+
+describe('voorstelOnderdelen', () => {
+  const metGroep = (
+    id: string,
+    subject: string,
+    group: string,
+    level: Concept['level'],
+  ): Concept => ({
+    ...concept(id, subject, level),
+    group,
+  });
+
+  it('neemt de groepen als een leerroute maar één onderwerp heeft', () => {
+    // Fullstack niveau 1: alleen FastAPI. Eén path parameter gaf expert.
+    const cfg = config(
+      [
+        metGroep('route', 'fastapi', 'Routes', 'expert'),
+        metGroep('account', 'fastapi', 'Accounts', 'gevorderd'),
+        metGroep('linux', 'linux', 'Terminal', { '1': null, '3': 'basis' }),
+      ],
+      ['fastapi', 'linux'],
+    );
+    const delen = voorstelOnderdelen(report({ route: true, account: false }), cfg, '1');
+    expect(delen.map((d) => d.label)).toEqual(['Routes', 'Accounts']);
+    // Met twee onderwerpen blijven het de onderwerpen.
+    expect(voorstelOnderdelen(report({}), cfg, '3').map((d) => d.label)).toEqual([
+      'FASTAPI',
+      'LINUX',
+    ]);
+  });
+
+  it('zegt waar een moeilijkheid alleen met een vinkje te halen is', () => {
+    const cfg = config(
+      [
+        concept('code', 'python', 'gevorderd'),
+        { ...concept('robot', 'robotica', 'gevorderd'), detect: { type: 'handmatig' } },
+      ],
+      ['python', 'robotica'],
+    );
+    expect(alleenMetVinkje(report({ code: true }), cfg, null, 'gevorderd')).toEqual(['ROBOTICA']);
+    expect(alleenMetVinkje(report({ code: true, robot: true }), cfg, null, 'gevorderd')).toEqual(
+      [],
+    );
   });
 });
