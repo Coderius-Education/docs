@@ -23,7 +23,7 @@ knop = play.new_button(text="Klik mij")
 def geklikt():
     global teller
     teller = teller + 1
-    tekst.words = str(teller) + " keer geklikt"`} height={300} />
+    tekst.words = f"{teller} keer geklikt"`} height={300} />
 
 <CodeUitleg>
 
@@ -38,7 +38,7 @@ knop = play.new_button(text="Klik mij")
 def geklikt():
     global teller
     teller = teller + 1
-    tekst.words = str(teller) + " keer geklikt"
+    tekst.words = f"{teller} keer geklikt"
 ```
 
 <Regel n={3}>
@@ -58,7 +58,7 @@ Zonder `global` zou `teller` op de volgende regel een nieuwe variabele binnen de
 </Regel>
 
 <Regel n={11}>
-Zet de nieuwe stand op het scherm. `str()` maakt van het getal weer tekst.
+Zet de nieuwe stand op het scherm. De f-string zet het getal in de tekst.
 </Regel>
 
 </CodeUitleg>

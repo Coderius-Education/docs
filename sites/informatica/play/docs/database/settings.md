@@ -119,7 +119,7 @@ database = play.new_database()
 
 moeilijkheid = database.get_data('moeilijkheid', 'makkelijk')
 
-tekst = play.new_text(words="Moeilijkheid: " + moeilijkheid)
+tekst = play.new_text(words=f"Moeilijkheid: {moeilijkheid}")
 
 @play.when_key_pressed("1")
 def makkelijk():
@@ -143,7 +143,7 @@ database = play.new_database()
 
 moeilijkheid = database.get_data('moeilijkheid', 'makkelijk')
 
-tekst = play.new_text(words="Moeilijkheid: " + moeilijkheid)
+tekst = play.new_text(words=f"Moeilijkheid: {moeilijkheid}")
 
 @play.when_key_pressed("1")
 def makkelijk():

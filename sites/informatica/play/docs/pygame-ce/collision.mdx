@@ -95,7 +95,7 @@ while actief:
     pygame.draw.circle(scherm, (0, 200, 255), (bal_x, bal_y), 20)
     pygame.draw.line(scherm, (255, 255, 255), (0, 550), (800, 550), 5)
 
-    tekst = font.render("Botsingen: " + str(aantal_botsingen), True, (255, 255, 255))
+    tekst = font.render(f"Botsingen: {aantal_botsingen}", True, (255, 255, 255))
     scherm.blit(tekst, (10, 10))
 
     pygame.display.flip()

@@ -62,7 +62,7 @@ database.set_data('punten', 5)
 
 mijn_punten = database.get_data('punten')
 
-tekst = play.new_text(words="Punten: " + str(mijn_punten))
+tekst = play.new_text(words=f"Punten: {mijn_punten}")
 ```
 
 <PygbagRunner code={`import play
@@ -73,7 +73,7 @@ database.set_data('punten', 5)
 
 mijn_punten = database.get_data('punten')
 
-tekst = play.new_text(words="Punten: " + str(mijn_punten))`} height={300} />
+tekst = play.new_text(words=f"Punten: {mijn_punten}")`} height={300} />
 
 ## Default waarde
 
@@ -93,7 +93,7 @@ Een veelgemaakte fout is `get_data` aanroepen zonder default waarde wanneer de s
 database = play.new_database()
 
 mijn_punten = database.get_data('punten')
-tekst = play.new_text(words="Punten: " + str(mijn_punten))
+tekst = play.new_text(words=f"Punten: {mijn_punten}")
 ```
 
 Als `'punten'` nog niet in de database staat, is `mijn_punten` gelijk aan `None`. De tekst op het scherm wordt dan `"Punten: None"` — waarschijnlijk niet wat je bedoelde. Gebruik altijd een default waarde als je niet zeker weet of de sleutel al bestaat:
@@ -113,7 +113,7 @@ Maak een programma dat:
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-De drie stappen staan al in de opdracht en komen in die volgorde onder elkaar. Denk eraan dat `new_text` tekst wil: een naam is al tekst, dus `str()` heb je hier niet nodig.
+De drie stappen staan al in de opdracht en komen in die volgorde onder elkaar. Denk eraan dat `new_text` tekst wil. Een naam is al tekst; wil je er iets voor zetten, gebruik dan een f-string: `f"Hallo {naam}"`.
 
 </details>
 
@@ -129,7 +129,7 @@ database.set_data('naam', 'Anna')
 
 opgeslagen_naam = database.get_data('naam')
 
-tekst = play.new_text(words="Hallo " + opgeslagen_naam)
+tekst = play.new_text(words=f"Hallo {opgeslagen_naam}")
 ```
 
 <PygbagRunner code={`import play
@@ -140,7 +140,7 @@ database.set_data('naam', 'Anna')
 
 opgeslagen_naam = database.get_data('naam')
 
-tekst = play.new_text(words="Hallo " + opgeslagen_naam)`} height={300} />
+tekst = play.new_text(words=f"Hallo {opgeslagen_naam}")`} height={300} />
 
 </details>
 
@@ -176,8 +176,8 @@ leeftijd = database.get_data('leeftijd')
 kleur = database.get_data('kleur')
 
 play.new_text(words=naam, y=100)
-play.new_text(words=str(leeftijd) + " jaar", y=0)
-play.new_text(words="Favoriete kleur: " + kleur, y=-100)
+play.new_text(words=f"{leeftijd} jaar", y=0)
+play.new_text(words=f"Favoriete kleur: {kleur}", y=-100)
 ```
 
 <PygbagRunner code={`import play
@@ -193,8 +193,8 @@ leeftijd = database.get_data('leeftijd')
 kleur = database.get_data('kleur')
 
 play.new_text(words=naam, y=100)
-play.new_text(words=str(leeftijd) + " jaar", y=0)
-play.new_text(words="Favoriete kleur: " + kleur, y=-100)`} height={300} />
+play.new_text(words=f"{leeftijd} jaar", y=0)
+play.new_text(words=f"Favoriete kleur: {kleur}", y=-100)`} height={300} />
 
 </details>
 
@@ -224,7 +224,7 @@ database = play.new_database()
 
 level = database.get_data('level', 1)
 
-tekst = play.new_text(words="Level: " + str(level))
+tekst = play.new_text(words=f"Level: {level}")
 ```
 
 <PygbagRunner code={`import play
@@ -233,7 +233,7 @@ database = play.new_database()
 
 level = database.get_data('level', 1)
 
-tekst = play.new_text(words="Level: " + str(level))`} height={300} />
+tekst = play.new_text(words=f"Level: {level}")`} height={300} />
 
 De eerste keer zie je `Level: 1` omdat `'level'` nog niet bestaat. Als je `database.set_data('level', 5)` toevoegt en opnieuw draait, zie je `Level: 5`.
 

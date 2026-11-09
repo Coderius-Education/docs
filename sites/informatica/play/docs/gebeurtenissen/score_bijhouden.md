@@ -202,7 +202,7 @@ tekst = play.new_text(words="Score: 0", font_size=40)
 def punt():
     global score
     score = score + 1
-    tekst.words = "Score: " + str(score)
+    tekst.words = f"Score: {score}"
     if score == 10:
         tekst.words = "Je hebt gewonnen!"
         play.stop_program()
@@ -217,7 +217,7 @@ tekst = play.new_text(words="Score: 0", font_size=40)
 def punt():
     global score
     score = score + 1
-    tekst.words = "Score: " + str(score)
+    tekst.words = f"Score: {score}"
     if score == 10:
         tekst.words = "Je hebt gewonnen!"
         play.stop_program()`} height={300} />

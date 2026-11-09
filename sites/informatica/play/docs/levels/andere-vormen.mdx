@@ -26,7 +26,7 @@ def bouw_level():
     for vorm in vormen:
         vorm.remove()
     vormen.clear()
-    tekst.words = "Level " + str(level)
+    tekst.words = f"Level {level}"
 
     if level == 1:
         bal = play.new_circle(color='red', radius=40)
@@ -68,7 +68,7 @@ def bouw_level():
     for vorm in vormen:
         vorm.remove()
     vormen.clear()
-    tekst.words = "Level " + str(level)
+    tekst.words = f"Level {level}"
 
     if level == 1:
         bal = play.new_circle(color='red', radius=40)

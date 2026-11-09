@@ -117,13 +117,13 @@ Je hebt twee dingen nodig: `global score` om de score binnen de functie te mogen
 <PygbagRunner code={`import play
 
 score = 5
-tekst = play.new_text(words="Score: " + str(score), font_size=40)
+tekst = play.new_text(words=f"Score: {score}", font_size=40)
 
 @play.when_key_pressed("space")
 def verminder():
     global score
     score = score - 1
-    tekst.words = "Score: " + str(score)
+    tekst.words = f"Score: {score}"
     if score == 0:
         play.stop_program()`} height={300} />
 
@@ -185,7 +185,7 @@ Met `remove()` kun je een vorm **definitief** verwijderen. Anders dan `hide()` k
 cirkel = play.new_circle(color='red', radius=30)
 cirkel.remove()
 
-play.new_text(words="cirkel.alive(): " + str(cirkel.alive()), font_size=30)`} height={300} />
+play.new_text(words=f"cirkel.alive(): {cirkel.alive()}", font_size=30)`} height={300} />
 
 ### Opdracht 3.4.e: Eén voor één verdwijnen
 

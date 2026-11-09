@@ -56,12 +56,12 @@ Je probeert een getal (`int`) direct samen te voegen met tekst (`str`). Dat mag 
 score = 5
 play.new_text(words="Score: " + score)  # FOUT: score is een getal, geen tekst`} height={250} />
 
-**Oplossing:** zet het getal eerst om naar tekst met `str()`:
+**Oplossing:** zet het getal in een f-string ([Tekst en getallen combineren met f-strings](site:python/docs/tekst/04a-f-strings)):
 
 <PygbagRunner code={`import play
 
 score = 5
-play.new_text(words="Score: " + str(score))`} height={250} />
+play.new_text(words=f"Score: {score}")`} height={250} />
 
 Meer uitleg: [4.5 Een score bijhouden met global](site:play/docs/gebeurtenissen/score_bijhouden)
 
@@ -235,7 +235,7 @@ tekst = play.new_text(words="Score: 0", font_size=40)
 def verhoog():
     global score
     score = score + 1
-    tekst.words = "Score: " + str(score)`} height={250} />
+    tekst.words = f"Score: {score}"`} height={250} />
 
 Meer uitleg: [4.5 Een score bijhouden met global](site:play/docs/gebeurtenissen/score_bijhouden), of [Scope](site:python/docs/functies/09c-scope) in de python-cursus voor het achterliggende idee.
 

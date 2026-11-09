@@ -57,7 +57,7 @@ while actief:
 
     scherm.fill((30, 30, 30))
 
-    tekst = font.render("Score: " + str(score), True, (255, 255, 255))
+    tekst = font.render(f"Score: {score}", True, (255, 255, 255))
     scherm.blit(tekst, (300, 280))
 
     pygame.display.flip()
@@ -112,7 +112,7 @@ while actief:
 
     scherm.fill((30, 30, 30))
 
-    tekst = font.render("Score: " + str(score), True, (255, 255, 255))
+    tekst = font.render(f"Score: {score}", True, (255, 255, 255))
     scherm.blit(tekst, (300, 280))
 
     pygame.display.flip()

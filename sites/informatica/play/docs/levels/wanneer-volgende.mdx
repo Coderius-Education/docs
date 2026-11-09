@@ -26,7 +26,7 @@ def bouw_level():
     for vorm in vormen:
         vorm.remove()
     vormen.clear()
-    tekst.words = "Level " + str(level)
+    tekst.words = f"Level {level}"
 
     doel = play.new_box(x=250, width=60, height=200, color='green', transparency=50)
     doel.start_physics(sensor=True, can_move=False, stable=True)
@@ -57,7 +57,7 @@ def bouw_level():
     for vorm in vormen:
         vorm.remove()
     vormen.clear()
-    tekst.words = "Level " + str(level)
+    tekst.words = f"Level {level}"
 
     doel = play.new_box(x=250, width=60, height=200, color='green', transparency=50)
     doel.start_physics(sensor=True, can_move=False, stable=True)
