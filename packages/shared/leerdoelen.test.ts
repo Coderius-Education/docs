@@ -607,6 +607,10 @@ describe('cijfer volgens het beoordelingsblad', () => {
     expect(sjabloonZin('creëren', 'expert')).toBe(
       'Ik heb bij jou Bloom niveau creëren gezien voor de moeilijkheid expert en daarbij hoort het cijfer 10,0.',
     );
+    // "voor de moeilijkheid niet aan basis voldaan" was geen zin.
+    expect(sjabloonZin('toepassen', 'niet-aan-basis')).toBe(
+      'Ik heb bij jou Bloom niveau toepassen gezien, maar je voldoet nog niet aan basis, en daarbij hoort het cijfer 4,0.',
+    );
   });
 
   it('noemt alleen bronnen die vakdidactiek uitlegt, met dezelfde paper', () => {
@@ -639,6 +643,16 @@ describe('moeilijkheidVoorstel: de vuistregels', () => {
     { label: 'CSS', basis: t(css[0], 3), gevorderd: t(css[1], 3), expert: t(0, 0) },
     { label: 'JavaScript', basis: t(js[0], 5), gevorderd: t(js[1], 7), expert: t(0, 0) },
   ];
+
+  it('basis vraagt niets van een onderdeel zonder basisconcepten', () => {
+    // Fullstack niveau 1 telt per groep; Accounts heeft alleen gevorderde
+    // concepten en hoeft voor basis dus niets te hebben.
+    const groepen = [
+      { label: 'Routes', basis: t(1, 3), gevorderd: t(0, 0), expert: t(0, 1) },
+      { label: 'Accounts', basis: t(0, 0), gevorderd: t(0, 3), expert: t(0, 0) },
+    ];
+    expect(moeilijkheidVoorstel(groepen).moeilijkheid).toBe('basis');
+  });
 
   it('gevorderd vraagt een gevorderd concept bij elk onderwerp', () => {
     expect(moeilijkheidVoorstel(web([3, 1], [2, 1], [2, 2])).moeilijkheid).toBe('gevorderd');

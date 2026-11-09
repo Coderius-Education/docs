@@ -42,10 +42,14 @@ export function zonderStringsEnCommentaar(code: string): string {
 /** Welke namen een stuk Python importeert, uit welke module. */
 export function geimporteerd(code: string): Map<string, string> {
   const namen = new Map<string, string>();
-  const schoon = code.replace(/\(\s*([\w\s,]+?)\s*\)/g, (_, binnen: string) =>
+  // Eerst commentaar weg en een regel met \ aan het eind aan de volgende
+  // vast: `from fastapi import FastAPI, Form  # Form erbij` gaf eerst de
+  // melding dat FastAPI en Form niet geïmporteerd waren.
+  const zonder = code.replace(/#[^\n]*/g, '').replace(/\\[ \t]*\n/g, ' ');
+  const schoon = zonder.replace(/\(\s*([\w\s,]+?)\s*\)/g, (_, binnen: string) =>
     binnen.replace(/\s+/g, ' '),
   );
-  for (const m of schoon.matchAll(/^\s*from ([\w.]+) import ([\w ,]+)$/gm))
+  for (const m of schoon.matchAll(/^\s*from ([\w.]+) import ([\w ,\t]+?)[ \t]*$/gm))
     for (const deel of m[2].split(',')) {
       const [naam, , alias] = deel.trim().split(/\s+/);
       if (naam) namen.set(alias ?? naam, m[1]);

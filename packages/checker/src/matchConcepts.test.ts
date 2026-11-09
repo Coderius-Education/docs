@@ -507,3 +507,88 @@ describe('analyze — onderdelen en extra concepten', () => {
     ]);
   });
 });
+
+describe('analyze — commentaar en per bestand', () => {
+  it('telt geen concept in commentaar als de config de taal kent', () => {
+    const cfg = {
+      ...config([
+        concept('tof', { type: 'regex', pattern: /TimeOfFlight\(/g }),
+        concept('toelichting', { type: 'regex', pattern: /#\s*\w/g, metCommentaar: true }),
+      ]),
+      textKinds: ['py'],
+      commentaar: { py: 'python' as const },
+    };
+    const report = analyze(
+      projectFiles(file('main.py', 'py', '# tof = TimeOfFlight()\nprint(1)\n')),
+      cfg,
+    );
+    expect(matchOf(report, 'tof')?.used).toBe(false);
+    // Een concept over commentaar zoekt in de tekst mét commentaar.
+    expect(matchOf(report, 'toelichting')?.used).toBe(true);
+  });
+
+  it('eist minCount in één bestand met perBestand', () => {
+    const cfg = config([
+      concept('vier', { type: 'regex', pattern: /IR\(/g, minCount: 4, perBestand: true }),
+      concept('vier-samen', { type: 'regex', pattern: /IR\(/g, minCount: 4 }),
+    ]);
+    const files = projectFiles(
+      file('a.html', 'html', 'IR( IR('),
+      file('b.html', 'html', 'IR( IR('),
+    );
+    const report = analyze(files, cfg);
+    expect(matchOf(report, 'vier')?.used).toBe(false);
+    expect(matchOf(report, 'vier-samen')?.used).toBe(true);
+    const vier = analyze(projectFiles(file('a.html', 'html', 'IR( IR( IR( IR(')), cfg);
+    expect(matchOf(vier, 'vier')?.used).toBe(true);
+    expect(analyze(files, cfg, { plekken: false }).concepts[0].used).toBe(false);
+  });
+
+  it('eist minDelen in één bestand met perBestand', () => {
+    const cfg = config([
+      concept('pinnen', {
+        type: 'regex',
+        pattern: /IR\("(\w+)"\)/g,
+        delen: true,
+        minDelen: 3,
+        perBestand: true,
+      }),
+    ]);
+    const twee = (a: string, b: string) => `IR("${a}") IR("${b}")`;
+    expect(
+      matchOf(
+        analyze(
+          projectFiles(
+            file('a.html', 'html', twee('A0', 'A1')),
+            file('b.html', 'html', twee('A2', 'A3')),
+          ),
+          cfg,
+        ),
+        'pinnen',
+      )?.used,
+    ).toBe(false);
+    expect(
+      matchOf(
+        analyze(projectFiles(file('a.html', 'html', `${twee('A0', 'A1')} IR("A2")`)), cfg),
+        'pinnen',
+      )?.used,
+    ).toBe(true);
+  });
+});
+
+describe('analyze — detectieVoor', () => {
+  it('neemt per project een andere herkenning voor een concept', () => {
+    const cfg = {
+      ...config([concept('naam', { type: 'regex', pattern: /Global\./g })]),
+      detectieVoor: (files: ProjectFiles) =>
+        'spel.html' in files
+          ? { naam: { type: 'regex' as const, pattern: /Spel\./g } }
+          : ({} as Record<string, Concept['detect']>),
+    };
+    const report = analyze(projectFiles(file('spel.html', 'html', 'Spel.punten')), cfg);
+    expect(matchOf(report, 'naam')?.used).toBe(true);
+    expect(
+      matchOf(analyze(projectFiles(file('a.html', 'html', 'Spel.x')), cfg), 'naam')?.used,
+    ).toBe(false);
+  });
+});

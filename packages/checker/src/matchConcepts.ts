@@ -1,3 +1,4 @@
+import { zonderCommentaar } from './commentaar';
 import { MAX_PLEKKEN, plekkenIn, regelBegins } from './plekken';
 import type {
   CheckReport,
@@ -66,6 +67,8 @@ export function analyze(
   // Groepeer de bestanden per kind, zodat een regex-concept alleen de
   // relevante bestandssoorten scant.
   const textByKind: Record<string, { path: string; content: string }[]> = {};
+  // Dezelfde bestanden met commentaar, voor een concept met `metCommentaar`.
+  const ruwByKind: Record<string, { path: string; content: string }[]> = {};
   const bibliotheken: string[] = [];
   let tekstbestanden = 0;
   for (const f of values) {
@@ -75,12 +78,14 @@ export function analyze(
       bibliotheken.push(f.path);
       continue;
     }
-    let bucket = textByKind[f.kind];
-    if (!bucket) {
-      bucket = [];
-      textByKind[f.kind] = bucket;
-    }
-    bucket.push({ path: f.path, content: f.content });
+    const taal = metConcepten ? config.commentaar?.[f.kind] : undefined;
+    textByKind[f.kind] ??= [];
+    textByKind[f.kind].push({
+      path: f.path,
+      content: taal ? zonderCommentaar(f.content, taal) : f.content,
+    });
+    ruwByKind[f.kind] ??= [];
+    ruwByKind[f.kind].push({ path: f.path, content: f.content });
   }
   for (const a of metConcepten ? (config.afgeleid ?? []) : []) {
     const bucket: { path: string; content: string }[] = [];
@@ -112,7 +117,14 @@ export function analyze(
     return b;
   };
 
-  const meet = (c: Pick<Concept, 'id' | 'detect'>): ConceptMatch => {
+  const eigen = new Set(bibliotheken);
+  const eigenBestanden: ProjectFiles = Object.fromEntries(
+    values.filter((f) => !eigen.has(f.path)).map((f) => [f.path, f]),
+  );
+  const eigenDetectie = metConcepten ? (config.detectieVoor?.(eigenBestanden) ?? {}) : {};
+
+  const meet = (concept: Pick<Concept, 'id' | 'detect'>): ConceptMatch => {
+    const c = { ...concept, detect: eigenDetectie[concept.id] ?? concept.detect };
     if (c.detect.type === 'handmatig') {
       return { id: c.id, count: 0, used: false, plekken: [] };
     }
@@ -127,36 +139,53 @@ export function analyze(
         .map((bestand) => ({ bestand, regel: 1 }));
       return { id: c.id, count: used ? 1 : 0, used, plekken };
     }
-    const { delen } = c.detect;
+    const { delen, perBestand } = c.detect;
+    const bron = c.detect.metCommentaar ? ruwByKind : textByKind;
     const kinds = c.detect.in ?? config.textKinds;
     const patroon = withGlobal(c.detect.pattern);
     const minimum = c.detect.minCount ?? 1;
     const gevonden = new Set<string>();
-    const noteerDeel = (m: RegExpMatchArray) => {
-      if (delen === true) {
-        const deel = m.slice(1).find((g) => g !== undefined && g !== '');
-        if (deel) gevonden.add(deel.toLowerCase());
-      } else if (delen) {
-        const i = delen.findIndex((_, j) => m.groups?.[`d${j}`] !== undefined);
-        if (i !== -1) gevonden.add(delen[i]);
-      }
+    // De onderdelen van het bestand met de meeste, voor `perBestand`.
+    let meesteDelen = 0;
+    const deelVan = (m: RegExpMatchArray): string | undefined => {
+      if (delen === true)
+        return m
+          .slice(1)
+          .find((g) => g !== undefined && g !== '')
+          ?.toLowerCase();
+      if (!delen) return undefined;
+      const i = delen.findIndex((_, j) => m.groups?.[`d${j}`] !== undefined);
+      return i === -1 ? undefined : delen[i];
     };
     const metDelen = (m: ConceptMatch): ConceptMatch =>
       delen ? { ...m, delen: Array.from(gevonden).sort((a, b) => a.localeCompare(b)) } : m;
+    // Het meeste in één bestand, voor `perBestand`.
+    let meesteInEen = 0;
     if (!metPlekken && !delen) {
       let n = 0;
       for (const kind of kinds) {
-        for (const { content } of textByKind[kind] ?? []) n += content.match(patroon)?.length ?? 0;
+        for (const { content } of bron[kind] ?? []) {
+          const hier = content.match(patroon)?.length ?? 0;
+          n += hier;
+          meesteInEen = Math.max(meesteInEen, hier);
+        }
       }
-      return { id: c.id, count: n, used: n >= minimum };
+      return { id: c.id, count: n, used: (perBestand ? meesteInEen : n) >= minimum };
     }
     let count = 0;
     const plekken: Plek[] = [];
     for (const kind of kinds) {
-      for (const { path, content } of textByKind[kind] ?? []) {
+      for (const { path, content } of bron[kind] ?? []) {
         const treffers = Array.from(content.matchAll(patroon));
-        for (const m of treffers) noteerDeel(m);
+        const hier = new Set<string>();
+        for (const m of treffers) {
+          const deel = deelVan(m);
+          if (deel) hier.add(deel);
+        }
+        for (const deel of hier) gevonden.add(deel);
+        meesteDelen = Math.max(meesteDelen, hier.size);
         count += treffers.length;
+        meesteInEen = Math.max(meesteInEen, treffers.length);
         if (!metPlekken || treffers.length === 0 || plekken.length >= MAX_PLEKKEN) continue;
         const posities = treffers.map((m) => m.index ?? 0);
         plekken.push(
@@ -164,10 +193,11 @@ export function analyze(
         );
       }
     }
-    const genoegDelen = gevonden.size >= (c.detect.minDelen ?? 0);
+    const genoegDelen = (perBestand ? meesteDelen : gevonden.size) >= (c.detect.minDelen ?? 0);
+    const used = (perBestand ? meesteInEen : count) >= minimum && genoegDelen;
     const match: ConceptMatch = metPlekken
-      ? { id: c.id, count, used: count >= minimum && genoegDelen, plekken }
-      : { id: c.id, count, used: count >= minimum && genoegDelen };
+      ? { id: c.id, count, used, plekken }
+      : { id: c.id, count, used };
     return metDelen(match);
   };
 
@@ -188,11 +218,6 @@ export function analyze(
       `Niet meegeteld: ${namen}. ${lijst.length === 1 ? 'Dat is een bibliotheek' : 'Dat zijn bibliotheken'}, geen eigen code.`,
     );
   }
-  const eigen = new Set(bibliotheken);
-  const eigenBestanden: ProjectFiles = Object.fromEntries(
-    values.filter((f) => !eigen.has(f.path)).map((f) => [f.path, f]),
-  );
-
   return {
     fileStats: { total: values.length, byKind, skippedTooLarge },
     concepts,

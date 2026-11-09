@@ -42,6 +42,20 @@ interface Formulier {
 
 const MAP_VAN = (pad: string) => (pad.includes('/') ? pad.slice(0, pad.lastIndexOf('/') + 1) : '');
 
+/**
+ * Een map of bestand dat een Python-bestand noemt. De server zoekt vanaf de
+ * map waarin hij gestart wordt, en dat is meestal die van main.py, maar met
+ * main.py in `app/` en `static/` ernaast is het de projectmap. Eerst gaf dat
+ * vijf valse meldingen; nu telt elk van de twee die bestaat.
+ */
+function opzoeken(files: ProjectFiles, pyPad: string, pad: string, map = false): string {
+  const schoon = pad.replace(/^\.\//, '').replace(/\/$/, '');
+  const opties = [`${MAP_VAN(pyPad)}${schoon}`, schoon];
+  const bestaat = (o: string) =>
+    map ? Object.keys(files).some((p) => p.startsWith(`${o}/`)) : o in files;
+  return opties.find(bestaat) ?? opties[0];
+}
+
 // Per tekst één keer de regelbegins, en dan zoeken: eerst telde elke treffer
 // opnieuw vanaf het begin van het bestand. samenhang() leegt de cache.
 const begins = new Map<string, number[]>();
@@ -395,10 +409,7 @@ function statischeMappen(files: ProjectFiles): { mappen: Statisch[]; zeker: bool
         statisch.match(/^(?:app\s*=\s*)?StaticFiles\(\s*["']([^"']+)["']/)?.[1];
       mappen.push({
         prefix: prefix.replace(/\/$/, ''),
-        map:
-          dir === undefined
-            ? null
-            : `${MAP_VAN(f.path)}${dir.replace(/^\.\//, '').replace(/\/$/, '')}/`,
+        map: dir === undefined ? null : `${opzoeken(files, f.path, dir, true)}/`,
         bestand: f.path,
         regel: regelVan(tekst, m.index ?? 0),
       });
@@ -467,7 +478,7 @@ function controleerTemplates(lijst: Route[], fouten: Samenhangfout[], files: Pro
     const tekst = f.content;
     const dir = tekst.match(/Jinja2Templates\(\s*directory\s*=\s*["']([^"']+)["']/);
     if (!dir) continue;
-    const map = `${MAP_VAN(f.path)}${dir[1].replace(/^\.\//, '').replace(/\/$/, '')}/`;
+    const map = `${opzoeken(files, f.path, dir[1], true)}/`;
     for (const m of tekst.matchAll(/\bTemplateResponse\(/g)) {
       const open = (m.index ?? 0) + m[0].length - 1;
       const sluit = sluitHaakje(tekst, open);
@@ -532,7 +543,7 @@ function controleerBestandsantwoorden(fouten: Samenhangfout[], files: ProjectFil
   for (const f of Object.values(files)) {
     if (f.kind !== 'py' || !f.content) continue;
     for (const m of f.content.matchAll(/\bFileResponse\(\s*["']([^"']+)["']/g)) {
-      const pad = `${MAP_VAN(f.path)}${m[1].replace(/^\.\//, '')}`;
+      const pad = opzoeken(files, f.path, m[1]);
       if (pad in files) continue;
       fouten.push({
         titel: `FileResponse wijst naar ${m[1]}, en dat bestand is er niet`,
@@ -594,16 +605,22 @@ export function samenhang(project: ProjectFiles): Samenhangfout[] {
   // Een StaticFiles op `/` serveert elk pad dat geen route heeft: welke link
   // dan een bestand of een route is, weet hij niet, dus die links laat hij
   // met rust. De andere mounts loopt hij gewoon na.
+  // Alleen main.py geüpload (via Kies bestanden): dan ontbreekt elk
+  // template en elk bestand, en dat zijn geen fouten van de leerling. Eerst
+  // gaf dat twaalf meldingen. Zonder één HTML-bestand slaat hij die over.
+  const metHtml = Object.values(files).some((f) => f.kind === 'html');
   const { mappen, zeker: mountsZeker } = statischeMappen(files);
   const opWortel = mappen.some((m) => m.prefix === '');
-  controleerLinks(
-    lijst.length > 0 && zeker && mountsZeker && !opWortel ? lijst : null,
-    fouten,
-    files,
-    mappen.filter((m) => m.prefix !== ''),
-  );
-  controleerTemplates(lijst, fouten, files);
-  controleerBestandsantwoorden(fouten, files);
+  if (metHtml) {
+    controleerLinks(
+      lijst.length > 0 && zeker && mountsZeker && !opWortel ? lijst : null,
+      fouten,
+      files,
+      mappen.filter((m) => m.prefix !== ''),
+    );
+    controleerTemplates(lijst, fouten, files);
+    controleerBestandsantwoorden(fouten, files);
+  }
   controleerImports(fouten, files);
   begins.clear();
   return fouten;

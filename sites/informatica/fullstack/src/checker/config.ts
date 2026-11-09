@@ -1,3 +1,4 @@
+import { lijktBibliotheek } from '@coderius/checker/bibliotheek';
 import { leerdoelenNaarConfig } from '@coderius/checker/leerdoelen';
 import type { CheckerConfig, ConceptDetect, ExtraConcept } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
@@ -50,7 +51,13 @@ const html = (pattern: RegExp): ConceptDetect => ({ type: 'regex', pattern, in: 
 // De database zoals de cursus hem opent: `with SqliteDict("…") as db:`. De
 // naam na `as` is de groep \1, zodat `gebruikers[naam] = …` net zo goed telt
 // als `db[…] = …`, en een gewone dictionary (`DIEREN[naam]`) niet.
-const MET_DB = String.raw`SqliteDict\s*\([^)]*\)\s+as\s+(\w+)\s*:`;
+// De haakjes mogen zelf haakjes hebben (`SqliteDict(os.path.join(…))`), en
+// achter de naam mag een tweede database staan (`as a, SqliteDict(…) as b:`).
+const DB_HAAKJES = String.raw`\((?:[^()]|\([^()]*\))*\)`;
+const MET_DB = String.raw`SqliteDict\s*${DB_HAAKJES}\s+as\s+(\w+)\s*[:,]`;
+// Of één database voor het hele bestand: `db = SqliteDict("…",
+// autocommit=True)` bovenaan. Die geldt tot het eind van het bestand.
+const GLOBALE_DB = String.raw`^(\w+)\s*=\s*SqliteDict\s*${DB_HAAKJES}`;
 // Alles tot de volgende regel die helemaal links begint: het einde van de
 // functie of het script. Zo telt een `Form` in het ene endpoint niet mee voor
 // een database in het volgende. Een `):` helemaal links hoort nog bij de
@@ -58,7 +65,34 @@ const MET_DB = String.raw`SqliteDict\s*\([^)]*\)\s+as\s+(\w+)\s*:`;
 // `POST /gastenboek` in de lessen.
 const ZELFDE_FUNCTIE = String.raw`(?:(?!\n[^\s#)])[\s\S])*?`;
 const SCHRIJFT = String.raw`\s*\[[^\]]+\]\s*=(?!=)`;
-const inDb = (na: string): ConceptDetect => py(new RegExp(MET_DB + ZELFDE_FUNCTIE + na, 'g'));
+/** Een terugverwijzing naar groep n, `\\n`, om in een String.raw te zetten. */
+const terug = (n: number) => `\\${n}`;
+
+/**
+ * Een database en wat erna komt. `na` krijgt het nummer van de groep met de
+ * naam van de database, en dat van de eerste groep die hij zelf maakt: de
+ * twee vormen (in een functie, of voor het hele bestand) hebben elk hun eigen
+ * groepen.
+ */
+const inDb = (na: (db: number, eigen: number) => string, eigenGroepen = 0): ConceptDetect =>
+  py(
+    new RegExp(
+      `(?:${MET_DB}${ZELFDE_FUNCTIE}${na(1, 2)})|(?:${GLOBALE_DB}[\\s\\S]*?${na(2 + eigenGroepen, 3 + eigenGroepen)})`,
+      'gm',
+    ),
+  );
+
+// De naam van een wachtwoordveld, en van het veld waarin je hem herhaalt.
+const WACHTWOORD = String.raw`(?:wachtwoord|password|passwd|ww|pw)\b`;
+const HERHAAL = String.raw`(?:herhaal\w*|bevestig\w*|\w*2\b|\w*_again\b)`;
+
+// Het controlescript van de cursus (static/controleer.py): de leerling zet
+// het naast main.py, en zijn routes, cookies en if's telden eerst als die van
+// de leerling (niveau 1 werd expert). Plus jQuery, htmx.min.js en andere
+// meegeleverde bibliotheken.
+const isBibliotheek = (path: string, content: string) =>
+  (/(?:^|\/)controleer\.py$/.test(path) && content.includes('fullstack-cursus')) ||
+  lijktBibliotheek(path, content);
 
 const DETECTIE: Record<string, ConceptDetect> = {
   'fastapi-installeren': { type: 'handmatig' },
@@ -66,52 +100,76 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'fastapi-app': py(/FastAPI\s*\(/g),
   'browser-devtools': { type: 'handmatig' },
   'fastapi-fileresponse': py(/FileResponse\s*\(/g),
-  'fastapi-html-response': py(/HTMLResponse/g),
-  'fastapi-routes': py(/@app\.get\s*\(/g, 2),
-  'html-css-link': html(/<link\b[^>]*stylesheet/gi),
+  // Gebruikt, niet alleen geïmporteerd: de import-regel telde eerst al mee.
+  'fastapi-html-response': py(/\bresponse_class\s*=\s*HTMLResponse\b|\bHTMLResponse\s*\(/g),
+  // @app, of een APIRouter in een eigen bestand (@router.get).
+  'fastapi-routes': py(/@\w+\.get\s*\(/g, 2),
+  // Een eigen bestand: een stylesheet van een CDN (Pico) telt niet.
+  'html-css-link': html(
+    /<link\b(?=[^>]*stylesheet)(?=[^>]*\bhref\s*=\s*["'](?!https?:|\/\/))[^>]*>/gi,
+  ),
   'html-img': html(/<img\b/gi),
   // Een link naar een route van de eigen server; een link naar een bestand in
   // /static/ of naar een andere site is geen pagina via een endpoint.
   'html-link': html(/<a\b[^>]*\bhref\s*=\s*["']\/(?!static\/)[^"']*["']/gi),
   // Met variabelen: een dictionary met een sleutel. Alleen `request` telt
   // niet; dat gaf de oude vorm mee zonder iets in het template te zetten.
-  'fastapi-templates': py(/TemplateResponse\s*\([^)]*\{[^}]*?["'](?!request["'])\w+["']\s*:/g),
-  'db-write': inDb(String.raw`\b\1${SCHRIJFT}`),
+  // Of een dictionary in een variabele die je meegeeft (`context = {…}`).
+  'fastapi-templates': py(
+    new RegExp(
+      String.raw`TemplateResponse\s*\([^)]*\{[^}]*?["'](?!request["'])\w+["']\s*:|\b(\w+)\s*=\s*\{\s*["'](?!request["'])\w+["']\s*:${ZELFDE_FUNCTIE}TemplateResponse\s*\([^)]*\b\1\b`,
+      'g',
+    ),
+  ),
+  'db-write': inDb((d) => String.raw`\b${terug(d)}${SCHRIJFT}`),
   'db-lezen': inDb(
-    String.raw`(?:\b\1\s*\.(?:get|items|keys|values)\s*\(|\b\1\s*\[[^\]]+\](?!\s*=(?!=))|\bin\s+\1\b)`,
+    (d) =>
+      String.raw`(?:\b${terug(d)}\s*\.(?:get|items|keys|values)\s*\(|\b${terug(d)}\s*\[[^\]]+\](?!\s*=(?!=))|\bin\s+${terug(d)}\b)`,
   ),
   // Een Form-parameter en een database die in dezelfde functie wordt
   // beschreven: wat het formulier stuurt, komt in de database.
   'db-formulier': py(
     new RegExp(
-      String.raw`Form\s*\(${ZELFDE_FUNCTIE}${MET_DB}${ZELFDE_FUNCTIE}\b\1${SCHRIJFT}`,
-      'g',
+      String.raw`(?:Form\s*\(${ZELFDE_FUNCTIE}${MET_DB}${ZELFDE_FUNCTIE}\b\1${SCHRIJFT})|(?:${GLOBALE_DB}[\s\S]*?Form\s*\(${ZELFDE_FUNCTIE}\b\2${SCHRIJFT})`,
+      'gm',
     ),
   ),
-  'db-dictionary': inDb(String.raw`\b\1${SCHRIJFT}\s*(?:\{|dict\s*\()`),
+  'db-dictionary': inDb((d) => String.raw`\b${terug(d)}${SCHRIJFT}\s*(?:\{|dict\s*\()`),
   // Ophalen in een variabele (\2), die aanpassen, en hem terugzetten. Wie
   // `db["sara"]["klas"] = …` schrijft past een kopie aan; dat telt niet.
   'db-aanpassen': inDb(
-    String.raw`\b(\w+)\s*=\s*\1\s*(?:\[[^\]]+\]|\.get\s*\([^)]*\))${ZELFDE_FUNCTIE}\b\2\s*(?:\[[^\]]+\]\s*=(?!=)|\.(?:append|extend|update|remove|pop)\s*\()${ZELFDE_FUNCTIE}\b\1\s*\[[^\]]+\]\s*=\s*\2\b`,
+    (d, v) =>
+      String.raw`\b(\w+)\s*=\s*${terug(d)}\s*(?:\[[^\]]+\]|\.get\s*\([^)]*\))${ZELFDE_FUNCTIE}\b${terug(v)}\s*(?:\[[^\]]+\]\s*=(?!=)|\.(?:append|extend|update|remove|pop)\s*\()${ZELFDE_FUNCTIE}\b${terug(d)}\s*\[[^\]]+\]\s*=\s*${terug(v)}\b`,
+    1,
   ),
-  'fastapi-redirect': py(/RedirectResponse/g),
+  // Gebruikt, niet alleen geïmporteerd.
+  'fastapi-redirect': py(/\bRedirectResponse\s*\(|\bresponse_class\s*=\s*RedirectResponse\b/g),
   // In een template of in Python; in de cursus komt hij voor het eerst als
   // het lege geval in een template. `{%- … %}` is dezelfde tag, met de
   // witruimte ervoor weggehaald; dat geldt ook voor for en include.
   'if-else': {
     type: 'regex',
-    pattern: /\{%-?\s*if\b|^[ \t]*if\b[^\n]*:/gm,
+    // `if __name__ == "__main__":` telt niet: dat is geen keuze van de leerling.
+    pattern: /\{%-?\s*if\b|^[ \t]*if\b(?!\s+__name__\b)[^\n]*:/gm,
     in: ['py', 'html'],
   },
   // Niet "aanmelden": dat is in het Nederlands meestal inloggen.
-  'account-registreren': py(/@app\.post\s*\(\s*["']\/(?:registr|account|signup)/gi),
-  // Een formulier met een wachtwoordveld dat niet het registreerformulier is.
+  'account-registreren': py(/@\w+\.post\s*\(\s*["']\/(?:registr|account|signup)/gi),
+  // Een formulier met precies één wachtwoordveld: een registreerformulier
+  // heeft er twee (wachtwoord en herhalen), ook als het naar /aanmelden gaat.
   'account-inloggen': html(
-    /<form\b(?![^>]*registr)[^>]*>(?:(?!<\/form>)[\s\S])*?type\s*=\s*["']?password/gi,
+    /<form\b(?![^>]*registr)[^>]*>(?:(?!<\/form>|type\s*=\s*["']?password)[\s\S])*type\s*=\s*["']?password(?:(?!<\/form>|type\s*=\s*["']?password)[\s\S])*<\/form>/gi,
   ),
-  // `gebruikers.get(naam) != wachtwoord`, of een hash die je controleert.
-  'account-wachtwoord': py(/[!=]=\s*wachtwoord\b|\bwachtwoord\s*[!=]=|\.verify\s*\(/g),
-  'fastapi-path-param': py(/@app\.(get|post|delete)\s*\(\s*["'][^"']*\{[^}]*\}/g),
+  // Het wachtwoord vergelijken met wat opgeslagen is (`opgeslagen !=
+  // wachtwoord`), of een hash controleren. Niet met een lege tekst, en niet
+  // met het herhaalveld bij registreren.
+  'account-wachtwoord': py(
+    new RegExp(
+      String.raw`[\w)\]](?<!herhaal\w*|bevestig\w*|2|_again)\s*[!=]=\s*${WACHTWOORD}|\b${WACHTWOORD}\s*[!=]=\s*(?!["'\d]|${HERHAAL}|None\b)\w|\.verify\s*\(`,
+      'g',
+    ),
+  ),
+  'fastapi-path-param': py(/@\w+\.(get|post|delete|put|patch)\s*\(\s*["'][^"']*\{[^}]*\}/g),
   'htmx-verzoek': html(/\bhx-(get|post|delete|put|patch)\s*=/gi),
   'fastapi-cookie': py(/set_cookie\s*\(|\bCookie\s*\(/g),
   'fastapi-sessie': py(/token_hex\s*\(|token_urlsafe\s*\(/g),
@@ -139,14 +197,14 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // Templates escapen vanzelf: wie niets doet, doet het goed. Of er nergens
   // |safe op tekst van een bezoeker staat, beoordeelt de docent.
   'vh-xss': { type: 'handmatig' },
-  'vh-toegang': py(/HTTPException\s*\(\s*(?:status_code\s*=\s*)?403\b/g),
+  'vh-toegang': py(/HTTPException\s*\(\s*(?:status_code\s*=\s*)?(?:403\b|status\.HTTP_403)/g),
   'vh-limiet': py(/@limiter\.limit\s*\(/g),
   // httponly=True op een cookie. samesite hoeft niet: FastAPI zet "lax" al
   // vanzelf (Cookies afschermen: samesite).
   'vh-cookies': py(/\bhttponly\s*=\s*True\b/g),
   'vh-hash': py(/\bPasswordHasher\s*\(/g),
   // De limiet op het inlog-endpoint, zoals in de les: direct onder @app.post.
-  'vh-pogingen': py(/@app\.post\s*\(\s*["']\/(?:inlog|login)[^\n]*\n\s*@limiter\.limit\s*\(/gi),
+  'vh-pogingen': py(/@\w+\.post\s*\(\s*["']\/(?:inlog|login)[^\n]*\n\s*@limiter\.limit\s*\(/gi),
   'on-requirements': { type: 'path', pattern: /(^|\/)requirements\.txt$/ },
   'on-readme': { type: 'path', pattern: /(^|\/)README\.md$/i },
   'on-linux': { type: 'handmatig' },
@@ -298,7 +356,7 @@ const OOK_GEBRUIKT: ExtraConcept[] = [
     subject: 'database',
     group: 'sqlitedict',
     label: 'Veilig uitlezen (.get())',
-    detect: inDb(String.raw`\b\1\.get\s*\(`),
+    detect: inDb((d) => String.raw`\b${terug(d)}\.get\s*\(`),
   },
   {
     id: 'db-items',
@@ -312,7 +370,7 @@ const OOK_GEBRUIKT: ExtraConcept[] = [
     subject: 'database',
     group: 'sqlitedict',
     label: 'Data verwijderen (del db[…])',
-    detect: inDb(String.raw`\bdel\s+\1\s*\[`),
+    detect: inDb((d) => String.raw`\bdel\s+${terug(d)}\s*\[`),
   },
   {
     id: 'struct-main',
@@ -367,7 +425,16 @@ export const fullstackConfig: CheckerConfig = {
 
   classify,
   textKinds: ['py', 'html', 'css', 'js'],
-  accept: '.zip,.py,.html,.htm,.css,.js,.png,.jpg,.jpeg,.gif,.svg,.webp,.ico',
+  // Ook de bestanden van niveau 3 (requirements.txt, README.md, compose.yaml).
+  // Een Dockerfile of .gitignore heeft geen extensie en is hier niet te
+  // kiezen; die komen mee met Kies een map of een zip.
+  accept:
+    '.zip,.py,.html,.htm,.css,.js,.png,.jpg,.jpeg,.gif,.svg,.webp,.ico,.txt,.md,.yml,.yaml,.toml,.json',
+  commentaar: { py: 'python', html: 'html', js: 'js', css: 'css' },
+  bibliotheek: isBibliotheek,
+  // Een beoordeling van vóór de niveaus (november 2026) was de eerste
+  // startkolom van het blad.
+  zonderLeerroute: '1',
 
   teacher: {
     password: 'coderius-docent',

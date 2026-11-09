@@ -254,8 +254,19 @@ describe('roboticaConfig', () => {
     );
     expect(perId(bord).get('py-import-eigen')).toBe(false);
 
-    const eigen = analyze(files({ 'main.py': 'import rijden' }), roboticaConfig);
+    const eigen = analyze(
+      files({ 'main.py': 'import rijden', 'rijden.py': 'def vooruit():\n    pass' }),
+      roboticaConfig,
+    );
     expect(perId(eigen).get('py-import-eigen')).toBe(true);
+    // Een module zonder bestand in het project is niet van de leerling:
+    // struct, framebuf en ssd1306 telden eerst als eigen module.
+    for (const code of ['import rijden', 'import struct', 'from ssd1306 import SSD1306_I2C']) {
+      expect(
+        perId(analyze(files({ 'main.py': code }), roboticaConfig)).get('py-import-eigen'),
+        code,
+      ).toBe(false);
+    }
   });
 
   it('houdt een dictionary uit de buurt van een set', () => {
@@ -420,5 +431,91 @@ describe('roboticaConfig', () => {
       .map((c) => c.id);
 
     expect(scheef).toEqual([]);
+  });
+});
+
+describe('roboticaConfig — wat niet van de leerling is, en wat er net naast ligt', () => {
+  const ids = (entries: Record<string, string>) => perId(analyze(files(entries), roboticaConfig));
+  const vier = 'from leaphymicropython.sensors.linesensors import AnalogIR\n';
+
+  it('telt de meegeleverde bibliotheek niet als eigen code', () => {
+    const report = analyze(
+      files({
+        'main.py': 'from machine import Pin\nlampje = Pin("LED", Pin.OUT)\n',
+        'lib/leaphymicropython/sensors/tof.py':
+          'def get_distance(self):\n    waardes = [1, 2]\n    for w in waardes:\n        if w > 1 and w < 3:\n            break\n',
+      }),
+      roboticaConfig,
+    );
+    const gebruikt = new Map(report.concepts.map((c) => [c.id, c.used]));
+    for (const id of ['rb-afstand', 'py-lijst', 'py-break', 'py-and-or']) {
+      expect(gebruikt.get(id), id).toBe(false);
+    }
+    expect(report.warnings.join(' ')).toContain('lib/leaphymicropython/sensors/tof.py');
+  });
+
+  it('telt niets in commentaar of een docstring', () => {
+    const perId = ids({
+      'main.py': [
+        '"""Rijdt als wit or zwart: sensoren = [a, b]."""',
+        '# x1 = AnalogIR("A0", 2500)',
+        '# x2 = AnalogIR("A1", 2500)',
+        '# x3 = AnalogIR("A2", 2500)',
+        '# x4 = AnalogIR("A3", 2500)',
+        '# tof = TimeOfFlight(sda_gpio_pin="SDA", scl_gpio_pin="SCL")',
+      ].join('\n'),
+    });
+    for (const id of ['rb-ir-een', 'rb-ir-vier', 'rb-afstand', 'py-and-or', 'py-lijst']) {
+      expect(perId.get(id), id).toBe(false);
+    }
+  });
+
+  it('eist vier sensoren in één script, en telt digitale en die uit een lijst mee', () => {
+    const sensor = (pin: string) => `s_${pin} = AnalogIR("${pin}", 2500)\n`;
+    expect(
+      ids({
+        'test_een.py': vier + sensor('A0'),
+        'main.py': vier + sensor('A0') + sensor('A1'),
+        'main_oud.py': vier + sensor('A2') + sensor('A3'),
+      }).get('rb-ir-vier'),
+    ).toBe(false);
+    expect(
+      ids({ 'main.py': vier + ['A0', 'A1', 'A2', 'A3'].map(sensor).join('') }).get('rb-ir-vier'),
+    ).toBe(true);
+    const digitaal = ['D14', 'D15', 'D16', 'D17']
+      .map((p) => `s_${p} = Pin("${p}", Pin.IN)\n`)
+      .join('');
+    expect(ids({ 'main.py': `from machine import Pin\n${digitaal}` }).get('rb-ir-vier')).toBe(true);
+    const lijst = `${vier}sensoren = [AnalogIR(p, 2500) for p in ["A0", "A1", "A2", "A3"]]\n`;
+    expect(ids({ 'main.py': lijst }).get('rb-ir-vier')).toBe(true);
+    // Een knop met PULL_UP is geen sensor.
+    expect(ids({ 'main.py': 'knop = Pin("D7", Pin.IN, Pin.PULL_UP)' }).get('rb-ir-een')).toBe(
+      false,
+    );
+  });
+
+  it('telt een functie met parameters ook als functie', () => {
+    // Op niveau 3 en 4 telt "met parameters" niet mee; eerst gaf
+    // `def stuur(a, b)` daar niets, en `def rechtdoor()` wel gevorderd.
+    const perId = ids({ 'main.py': 'def stuur(links, rechts):\n    pass\n' });
+    expect(perId.get('py-functie')).toBe(true);
+    expect(perId.get('py-functie-parameters')).toBe(true);
+    expect(
+      ids({ 'main.py': 'class R:\n    def rijd(self):\n        pass\n' }).get(
+        'py-functie-parameters',
+      ),
+    ).toBe(false);
+  });
+
+  it('herkent gewone vormen en geen schijntreffers', () => {
+    expect(ids({ 'main.py': 'if waarde < 2500:\n    pass' }).get('py-boolean')).toBe(true);
+    expect(ids({ 'main.py': 'def f() -> int:\n    return 1' }).get('py-boolean')).toBe(false);
+    expect(ids({ 'main.py': 'teller += 1' }).get('py-rekenen')).toBe(true);
+    expect(ids({ 'main.py': 'x = snelheid*2' }).get('py-rekenen')).toBe(true);
+    expect(ids({ 'main.py': 'print(f"afstand={afstand}")' }).get('py-tuple-set')).toBe(false);
+    expect(ids({ 'oud/main.py': 'print(1)', 'robot.py': 'print(2)' }).get('rb-main-py')).toBe(
+      false,
+    );
+    expect(ids({ 'main.py': 'print(1)' }).get('rb-main-py')).toBe(true);
   });
 });

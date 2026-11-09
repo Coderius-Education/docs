@@ -277,6 +277,22 @@ Een bron noemen we alleen als vakdidactiek hem uitlegt: elke bron in
 dezelfde paper (`leerdoelen.test.ts`). Bij Bloom is dat de kernpaper van
 Krathwohl (2002).
 Hoe je een rij of een niveau toevoegt: `packages/shared/leerdoelen/README.md`.
+Het voorstel kijkt naar de onderwerpen, en als een leerroute er maar één
+heeft naar de groepen daarin (`voorstelOnderdelen` in `packages/checker`;
+fullstack niveau 1 en 2). Voor basis telt een onderdeel met
+basisconcepten, voor gevorderd en expert een onderdeel met concepten op die
+moeilijkheid of hoger. Is een moeilijkheid ergens alleen met een vinkje te
+halen, dan zegt het voorstel dat. Een gekozen moeilijkheid geldt alleen op de
+leerroute waarvoor de docent hem koos (`moeilijkheidRoute`), en de PDF noemt
+niveau, voorstel en reden.
+Wat niet van de leerling is, telt niet mee: een venv (ook als hij `env`
+heet), een reservekopie (`… - kopie`, `backup`), een bibliotheek
+(`bibliotheek` in de config: addons van Godot, `lib/` van robotica,
+`controleer.py` van fullstack) en commentaar (`commentaar`: per
+bestandssoort de taal, `packages/checker/src/commentaar.ts`). Verder kent de
+config `perBestand` (een drempel in één bestand), `metCommentaar` (een concept
+over commentaar) en `detectieVoor` (een herkenning die van het project
+afhangt, zoals de namen van de autoloads).
 
 ## Begrippen
 

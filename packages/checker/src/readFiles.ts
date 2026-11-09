@@ -16,15 +16,28 @@ export const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024; // 5 MB per afbeelding
 export const MAX_TEXT_TOTAL_SIZE = 10 * 1024 * 1024; // 10 MB code totaal
 export const MAX_IMAGE_TOTAL_SIZE = 25 * 1024 * 1024; // 25 MB afbeeldingen totaal
 
-const IGNORED_SEGMENTS = new Set([
+// Mappen die nooit bij een project horen, waar ze ook staan. site-packages
+// is het hart van elke Python-venv, ook een die `env` of `.env311` heet: een
+// leerling die zijn venv meezipte, gaf eerst 10 MB aan FastAPI-bron, waarna
+// zijn eigen main.py buiten het leesbudget viel.
+const ALTIJD_WEG = new Set([
   'node_modules',
   '.git',
   '.DS_Store',
   '__MACOSX',
-  '.venv',
-  'venv',
   '__pycache__',
   '.godot',
+  'site-packages',
+]);
+
+// Mappen die in een project rommel zijn, maar die als bovenste map gewoon de
+// naam van het project kunnen zijn: een leerling die zijn map `build` noemde,
+// kreeg eerst "Geen bruikbare bestanden". Ze tellen daarom pas onder de
+// gemeenschappelijke bovenmap.
+const IGNORED_SEGMENTS = new Set([
+  ...ALTIJD_WEG,
+  '.venv',
+  'venv',
   'build',
   'dist',
   'out',
@@ -38,6 +51,35 @@ const IGNORED_SEGMENTS = new Set([
 function isIgnoredPath(path: string): boolean {
   return path.split('/').some((segment) => IGNORED_SEGMENTS.has(segment));
 }
+
+function altijdWeg(path: string): boolean {
+  return path.split('/').some((segment) => ALTIJD_WEG.has(segment));
+}
+
+// Een reservekopie naast het project ("mijn-game - kopie", "Kopie van site",
+// "backup"). Die telde mee, en dan haalde een lijst die maar één keer in het
+// project staat de drempel van twee.
+const KOPIE =
+  /\s-\s*(?:kopie|copy)(?:\s*\(\d+\))?$|^(?:kopie|copy)\s+(?:van|of)\s|^(?:backup|back-up)$/i;
+
+/** De map van een reservekopie in dit pad, of null. Alleen mappen, niet de bestandsnaam. */
+function kopieMap(path: string): string | null {
+  const delen = path.split('/');
+  const i = delen.slice(0, -1).findIndex((d) => KOPIE.test(d));
+  return i === -1 ? null : delen.slice(0, i + 1).join('/');
+}
+
+// Archieven die de nakijker niet kan openen.
+const ANDER_ARCHIEF = /\.(?:rar|7z|tar|gz|tgz|bz2|xz)$/i;
+
+// Foto's van een telefoon die een browser niet kan tonen.
+const HEIC = /\.hei[cf]$/i;
+
+/** Een fout met een melding voor de leerling, in het Nederlands. */
+export class LeesFout extends Error {}
+
+const ONLEESBAAR = (pad: string) =>
+  `Kon "${pad}" niet lezen. Staat je map in OneDrive, iCloud of Google Drive? Zet de bestanden dan eerst op deze computer (in OneDrive: rechtsklik, "Altijd op dit apparaat bewaren") en probeer het opnieuw.`;
 
 const IMAGE_MIME_TYPES: Record<string, string> = {
   '.png': 'image/png',
@@ -87,7 +129,15 @@ function fileToRawEntry(file: File, relativePath: string): RawEntry {
   return {
     relativePath,
     size: file.size,
-    getBytes: async () => new Uint8Array(await file.arrayBuffer()),
+    getBytes: async () => {
+      try {
+        return new Uint8Array(await file.arrayBuffer());
+      } catch {
+        // Een NotReadableError in het Engels, bij een bestand dat alleen in
+        // de cloud staat.
+        throw new LeesFout(ONLEESBAAR(relativePath));
+      }
+    },
   };
 }
 
@@ -129,14 +179,23 @@ async function collectFromDataTransferItems(items: DataTransferItemList): Promis
 
   async function walk(entry: FileSystemEntry, prefix: string): Promise<void> {
     if (entry.isFile) {
+      const pad = `${prefix}${entry.name}`;
       const file = await new Promise<File>((resolve, reject) =>
-        (entry as FileSystemFileEntry).file(resolve, reject),
+        (entry as FileSystemFileEntry).file(resolve, () => reject(new LeesFout(ONLEESBAAR(pad)))),
       );
-      entries.push(fileToRawEntry(file, `${prefix}${entry.name}`));
+      entries.push(fileToRawEntry(file, pad));
     } else if (entry.isDirectory) {
-      // Genegeerde mappen niet eens inlopen (scheelt enorm bij node_modules e.d.).
-      if (IGNORED_SEGMENTS.has(entry.name)) return;
-      const children = await readAllEntries((entry as FileSystemDirectoryEntry).createReader());
+      // Genegeerde mappen niet eens inlopen (scheelt enorm bij node_modules
+      // e.d.). De gesleepte map zelf wel, ook als hij `build` heet.
+      if (ALTIJD_WEG.has(entry.name) || (prefix !== '' && IGNORED_SEGMENTS.has(entry.name))) return;
+      let children: FileSystemEntry[];
+      try {
+        children = await readAllEntries((entry as FileSystemDirectoryEntry).createReader());
+      } catch {
+        throw new LeesFout(ONLEESBAAR(`${prefix}${entry.name}`));
+      }
+      // Een venv, hoe hij ook heet.
+      if (prefix !== '' && children.some((c) => c.isFile && c.name === 'pyvenv.cfg')) return;
       for (const child of children) {
         await walk(child, `${prefix}${entry.name}/`);
       }
@@ -152,7 +211,7 @@ async function collectFromDataTransferItems(items: DataTransferItemList): Promis
 // Pakt een zip uit, maar decomprimeert alleen de tekst-/afbeeldingsbestanden
 // binnen de caps. Élke entry wordt wel geregistreerd (voor het bestandsoverzicht),
 // zodat grote binaire assets tellen maar niet in het geheugen belanden.
-async function unzipToRawEntries(file: File, opts: ReadOptions): Promise<RawEntry[]> {
+async function unzipToRawEntries(file: File, opts: ReadOptions, diepte = 0): Promise<RawEntry[]> {
   let unzipSync: typeof import('fflate').unzipSync;
   try {
     ({ unzipSync } = await import('fflate'));
@@ -169,7 +228,9 @@ async function unzipToRawEntries(file: File, opts: ReadOptions): Promise<RawEntr
     unzipped = unzipSync(bytes, {
       filter: (f) => {
         if (f.name.endsWith('/')) return false;
-        if (isIgnoredPath(f.name)) return false;
+        // De bovenste map van een zip is vaak de projectmap zelf, en mag dus
+        // `build` heten; wat daaronder in IGNORED_SEGMENTS staat, telt niet.
+        if (altijdWeg(f.name) || isIgnoredPath(f.name.split('/').slice(1).join('/'))) return false;
         // originalSize, niet size: die laatste is de gecomprimeerde grootte, en
         // tekst comprimeert enorm (6 MB JavaScript wordt zo'n 12 kB). Daarop
         // wegen zou elk codebestand langs de limieten hieronder laten glippen,
@@ -179,20 +240,54 @@ async function unzipToRawEntries(file: File, opts: ReadOptions): Promise<RawEntr
         const kind = opts.classify(f.name);
         const wantText = opts.textKinds.includes(kind) && size <= MAX_TEXT_FILE_SIZE;
         const wantImage = imageKinds.includes(kind) && size <= MAX_IMAGE_FILE_SIZE;
-        return wantText || wantImage;
+        // Een zip in een zip pakken we uit als hij het enige is (zie onder).
+        const wantZip = diepte === 0 && /\.zip$/i.test(f.name);
+        return wantText || wantImage || wantZip;
       },
     });
   } catch {
-    throw new Error(
-      'Dit zip-bestand kon niet worden geopend. Controleer of het bestand niet beschadigd is.',
+    throw new LeesFout(
+      `${file.name} kon niet worden geopend. Controleer of het bestand niet beschadigd is.`,
     );
   }
 
-  return meta.map((m) => ({
+  const entries: RawEntry[] = meta.map((m) => ({
     relativePath: m.name,
     size: m.size,
     getBytes: m.name in unzipped ? async () => unzipped[m.name] : null,
   }));
+  // Een inlevering die één zip met het project bevat (de leerling zipte zijn
+  // zip nog eens): pak die ook uit. Een zip naast andere bestanden is iets uit
+  // het project zelf, zoals een export, en blijft dicht.
+  const echt = entries.filter((e) => !altijdWeg(e.relativePath));
+  if (diepte === 0 && echt.length === 1 && /\.zip$/i.test(echt[0].relativePath)) {
+    const binnen = echt[0];
+    if (binnen.getBytes) {
+      const naam = binnen.relativePath.split('/').pop() ?? binnen.relativePath;
+      return unzipToRawEntries(new File([await binnen.getBytes()], naam), opts, diepte + 1);
+    }
+  }
+  return entries;
+}
+
+/** Tekst uit bytes: UTF-8, of UTF-16 zoals Kladblok het als "Unicode" bewaart. */
+export function decodeerTekst(bytes: Uint8Array): string {
+  if (bytes[0] === 0xff && bytes[1] === 0xfe) return new TextDecoder('utf-16le').decode(bytes);
+  if (bytes[0] === 0xfe && bytes[1] === 0xff) return new TextDecoder('utf-16be').decode(bytes);
+  // UTF-16 zonder BOM: bij gewone tekst is elke tweede byte een nul.
+  const proef = bytes.subarray(0, 512);
+  let nullen = 0;
+  for (let i = 1; i < proef.length; i += 2) if (proef[i] === 0) nullen++;
+  if (proef.length >= 8 && nullen > proef.length / 4) {
+    return new TextDecoder('utf-16le').decode(bytes);
+  }
+  return new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+}
+
+/** "a", "a en b", "a, b en c", en bij meer dan drie "a, b, c en 2 andere". */
+function opsomming(namen: string[]): string {
+  const lijst = namen.length > 3 ? [...namen.slice(0, 3), `${namen.length - 3} andere`] : namen;
+  return lijst.length === 1 ? lijst[0] : `${lijst.slice(0, -1).join(', ')} en ${lijst.at(-1)}`;
 }
 
 // Strip élke gemeenschappelijke bovenliggende map (typisch bij een gezipte of
@@ -226,31 +321,53 @@ async function entriesToProjectFiles(
   opts: ReadOptions,
 ): Promise<ReadFilesResult> {
   const imageKinds = opts.imageKinds ?? [];
-  const filtered = rawEntries.filter(
-    (e) => !isIgnoredPath(e.relativePath) && e.relativePath.trim() !== '',
+  // Een map met pyvenv.cfg is een venv, hoe hij ook heet.
+  const venvs = rawEntries
+    .map((e) => e.relativePath)
+    .filter((p) => p.endsWith('/pyvenv.cfg'))
+    .map((p) => p.slice(0, -'pyvenv.cfg'.length));
+  const schoon = rawEntries.filter(
+    (e) =>
+      e.relativePath.trim() !== '' &&
+      !altijdWeg(e.relativePath) &&
+      !venvs.some((v) => e.relativePath.startsWith(v)),
   );
+  const paden = stripCommonRoot(schoon.map((e) => e.relativePath));
+  const kopieen = new Set<string>();
+  const gekozen: { entry: RawEntry; path: string }[] = [];
+  schoon.forEach((entry, i) => {
+    const path = paden[i];
+    if (isIgnoredPath(path)) return;
+    const kopie = kopieMap(path);
+    if (kopie) kopieen.add(kopie);
+    else gekozen.push({ entry, path });
+  });
 
-  if (filtered.length === 0) {
-    throw new Error('Geen bruikbare bestanden gevonden in de upload.');
+  if (gekozen.length === 0) {
+    throw new LeesFout('Geen bruikbare bestanden gevonden in de upload.');
   }
-  if (filtered.length > MAX_FILE_COUNT) {
-    throw new Error(
-      `Dit project bevat ${filtered.length} bestanden — dat is meer dan de limiet van ${MAX_FILE_COUNT}. Upload een kleiner project.`,
+  if (gekozen.length > MAX_FILE_COUNT) {
+    throw new LeesFout(
+      `Dit project bevat ${gekozen.length} bestanden — dat is meer dan de limiet van ${MAX_FILE_COUNT}. Upload een kleiner project.`,
     );
   }
-
-  const normalizedPaths = stripCommonRoot(filtered.map((e) => e.relativePath));
 
   const files: ProjectFiles = {};
   const warnings: string[] = [];
   let skippedTooLarge = 0;
+  const teGroteFotos: string[] = [];
+  const nietGelezen: string[] = [];
   let textBudget = MAX_TEXT_TOTAL_SIZE;
   let imageBudget = MAX_IMAGE_TOTAL_SIZE;
-  let skippedByBudget = false;
 
-  for (let i = 0; i < filtered.length; i++) {
-    const entry = filtered[i];
-    const path = normalizedPaths[i];
+  // Ondiep eerst: de eigen code staat bovenin (main.py, scripts/), en een map
+  // vol code van een ander dieper. Zo valt bij een te groot project het werk
+  // van de leerling niet als eerste buiten het leesbudget.
+  const volgorde = [...gekozen].sort(
+    (a, b) => a.path.split('/').length - b.path.split('/').length || a.path.localeCompare(b.path),
+  );
+
+  for (const { entry, path } of volgorde) {
     const kind = opts.classify(path);
     const isTextKind = opts.textKinds.includes(kind);
     const isImageKind = imageKinds.includes(kind);
@@ -267,15 +384,19 @@ async function entriesToProjectFiles(
       skippedTooLarge++;
     } else if (isTextKind && entry.getBytes) {
       if (entry.size > textBudget) {
-        skippedByBudget = true;
+        nietGelezen.push(path);
       } else {
-        const bytes = await entry.getBytes();
-        content = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+        content = decodeerTekst(await entry.getBytes());
         textBudget -= entry.size;
       }
-    } else if (isImageKind && entry.getBytes && entry.size <= MAX_IMAGE_FILE_SIZE) {
+    } else if (isImageKind && entry.size > MAX_IMAGE_FILE_SIZE) {
+      // Een foto is bij robotica het bewijs voor een vinkje; stil weglaten
+      // mag dus niet.
+      tooLarge = true;
+      teGroteFotos.push(path);
+    } else if (isImageKind && entry.getBytes) {
       if (entry.size > imageBudget) {
-        skippedByBudget = true;
+        nietGelezen.push(path);
       } else {
         const bytes = await entry.getBytes();
         content = await bytesToDataUrl(bytes, mimeTypeForPath(path));
@@ -291,17 +412,52 @@ async function entriesToProjectFiles(
       `${skippedTooLarge} bestand(en) waren groter dan ${MAX_TEXT_FILE_SIZE / (1024 * 1024)} MB en zijn overgeslagen bij de analyse (ze tellen wel mee in het bestandsoverzicht).`,
     );
   }
-  if (skippedByBudget) {
+  if (teGroteFotos.length > 0) {
     warnings.push(
-      'Een deel van de bestanden is overgeslagen bij de analyse omdat het project erg groot is. De belangrijkste code is wel meegenomen.',
+      `Niet bekeken, want groter dan ${MAX_IMAGE_FILE_SIZE / (1024 * 1024)} MB: ${opsomming(teGroteFotos)}. Maak de foto kleiner (bijvoorbeeld met een schermafbeelding) en upload opnieuw.`,
+    );
+  }
+  if (nietGelezen.length > 0) {
+    warnings.push(
+      `Niet gelezen, want het project is te groot: ${opsomming(nietGelezen)}. Haal mappen die niet van jou zijn eruit en upload opnieuw.`,
+    );
+  }
+  if (kopieen.size > 0) {
+    warnings.push(
+      `Niet meegeteld, want het lijkt een reservekopie: ${opsomming([...kopieen].sort())}. Hoort die map wel bij je project, geef hem dan een andere naam.`,
+    );
+  }
+  const heic = gekozen.filter(({ path }) => HEIC.test(path)).map(({ path }) => path);
+  if (imageKinds.length > 0 && heic.length > 0) {
+    warnings.push(
+      `Een browser kan HEIC-foto's niet tonen: ${opsomming(heic)}. Zet je telefoon op "Meest compatibel" (iPhone: Instellingen, Camera, Formaten) of stuur de foto als JPG.`,
     );
   }
 
   return { files, warnings };
 }
 
-/** Eén ingang voor alle upload-methoden. Pakt een los .zip-bestand automatisch uit. */
+/**
+ * Eén ingang voor alle upload-methoden. Pakt een zip uit die de leerling zelf
+ * koos, ook naast losse foto's; een zip in een map blijft dicht.
+ */
 export async function readUploadedFiles(
+  source: FileList | File[] | DataTransferItemList,
+  opts: ReadOptions,
+): Promise<ReadFilesResult> {
+  try {
+    return await leesUpload(source, opts);
+  } catch (err) {
+    if (err instanceof LeesFout) throw err;
+    // Een DOMException van de browser, in het Engels.
+    const naam = err instanceof Error ? err.name : String(err);
+    throw new LeesFout(
+      `Het inlezen is mislukt (${naam}). Probeer het opnieuw, of maak een zip van je projectmap en upload die.`,
+    );
+  }
+}
+
+async function leesUpload(
   source: FileList | File[] | DataTransferItemList,
   opts: ReadOptions,
 ): Promise<ReadFilesResult> {
@@ -312,14 +468,40 @@ export async function readUploadedFiles(
     ? await collectFromDataTransferItems(source as DataTransferItemList)
     : collectFromFiles(source as FileList | File[]);
 
-  if (rawEntries.length === 1 && rawEntries[0].relativePath.toLowerCase().endsWith('.zip')) {
-    const zipEntry = rawEntries[0];
-    if (!zipEntry.getBytes) throw new Error('Kon het zip-bestand niet lezen.');
-    const bytes = await zipEntry.getBytes();
-    const zipFile = new File([bytes], zipEntry.relativePath);
-    const unzipped = await unzipToRawEntries(zipFile, opts);
-    return entriesToProjectFiles(unzipped, opts);
+  // Alleen wat de leerling zelf koos of sleepte, niet iets uit een map.
+  const losZip = (e: RawEntry) => !e.relativePath.includes('/') && /\.zip$/i.test(e.relativePath);
+  const losArchief = (e: RawEntry) =>
+    !e.relativePath.includes('/') && ANDER_ARCHIEF.test(e.relativePath);
+
+  const archieven = rawEntries.filter(losArchief).map((e) => e.relativePath);
+  if (archieven.length > 0 && archieven.length === rawEntries.length) {
+    throw new LeesFout(
+      `De nakijker kan alleen een .zip openen, en ${opsomming(archieven)} is een ander soort archief. Pak het uit en upload de map, of maak er een .zip van.`,
+    );
   }
 
-  return entriesToProjectFiles(rawEntries, opts);
+  const alles: RawEntry[] = [];
+  const zips = rawEntries.filter(losZip);
+  for (const e of rawEntries) {
+    if (losArchief(e)) continue;
+    if (!losZip(e)) {
+      alles.push(e);
+      continue;
+    }
+    if (!e.getBytes) throw new LeesFout(`Kon ${e.relativePath} niet lezen.`);
+    const uitgepakt = await unzipToRawEntries(new File([await e.getBytes()], e.relativePath), opts);
+    // Eén zip: zijn inhoud is het project. Meer bestanden: elke zip een eigen
+    // map, zodat twee zips elkaars bestanden niet overschrijven.
+    const voor =
+      rawEntries.length === 1 ? '' : zips.length > 1 ? `${e.relativePath.slice(0, -4)}/` : '';
+    for (const u of uitgepakt) alles.push({ ...u, relativePath: `${voor}${u.relativePath}` });
+  }
+
+  const resultaat = await entriesToProjectFiles(alles, opts);
+  if (archieven.length > 0) {
+    resultaat.warnings.push(
+      `Niet geopend: ${opsomming(archieven)}. De nakijker kan alleen een .zip openen; pak het uit of maak er een .zip van.`,
+    );
+  }
+  return resultaat;
 }

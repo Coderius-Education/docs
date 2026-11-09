@@ -39,9 +39,12 @@ export function UploadZone({ config, onLoaded, onError, busy, setBusy }: UploadZ
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
       if (files && files.length > 0) handleSource(files);
+      // Een lege map geeft een change zonder bestanden; eerst gebeurde er dan
+      // niets, en wist de leerling niet waarom.
+      else if (files) onError('Deze map is leeg. Kies de map waar je projectbestanden in staan.');
       e.target.value = '';
     },
-    [handleSource],
+    [handleSource, onError],
   );
 
   const handleDrop = useCallback(

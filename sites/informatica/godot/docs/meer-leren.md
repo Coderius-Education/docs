@@ -7,6 +7,17 @@ slug: /meer-leren
 
 Je hebt je eerste 2D-game gemaakt. Hier zijn de beste vervolgstappen, van makkelijk naar uitdagender. Kies wat jou aanspreekt — je hoeft ze niet allemaal te doen.
 
+## Zelf een nieuwe node ontdekken
+
+De cursus gebruikt zo'n twintig soorten nodes. Godot heeft er honderden, en de meeste vind je zonder tutorial:
+
+1. Klik in het Scene-paneel op het plusje (Add Child Node) en typ in het zoekveld wat je zoekt, in het Engels: `light`, `sound`, `path`, `particles`.
+2. Klik een node in de lijst aan. Onderaan het venster staat in een paar zinnen wat hij doet.
+3. Wil je meer weten, druk dan op F1 en zoek de naam op. De documentatie zegt wat de node doet en welke eigenschappen hij heeft in de Inspector.
+4. Probeer de node eerst uit in een lege testscène. Pas als hij doet wat je wilt, zet je hem in je level.
+
+Bij een platformer passen bijvoorbeeld `PointLight2D` (een lamp), `AudioStreamPlayer2D` (geluid dat zachter klinkt als je verder weg loopt), `GPUParticles2D` (stof of vonken) en `Path2D` met `PathFollow2D` (een platform dat heen en weer beweegt).
+
 ## Godot for Beginners — deel 2
 
 Een vervolg op wat je hier hebt geleerd. Je bouwt een completer spel met:

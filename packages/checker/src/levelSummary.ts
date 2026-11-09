@@ -60,3 +60,75 @@ export function computeLevelSummary(
     bySubject,
   };
 }
+
+/**
+ * De onderdelen waar het voorstel voor een moeilijkheid naar kijkt: de
+ * onderwerpen, en als een leerroute maar één onderwerp heeft de groepen
+ * daarin. De vuistregel zegt "bij elk onderwerp gevorderde concepten"; met
+ * één onderwerp (FastAPI op niveau 1 en 2 van fullstack) gaf één route met
+ * een path parameter zo al expert. Met de groepen (Accounts, Gegevens
+ * opslaan, Uitbreidingen, …) vraagt het voorstel weer om breedte.
+ */
+export function voorstelOnderdelen(
+  report: CheckReport,
+  config: CheckerConfig,
+  track: string | null = null,
+): SubjectConcepts[] {
+  const bySubject = computeLevelSummary(report, config, track).bySubject;
+  const metConcepten = bySubject.filter((s) => LEVELS.some((l) => s[l].total > 0));
+  if (metConcepten.length !== 1) return bySubject;
+  const usedById = new Map(report.concepts.map((m) => [m.id, m.used]));
+  const onderwerp = metConcepten[0].subject;
+  const groepen = new Map<string, SubjectConcepts>();
+  for (const c of config.concepts) {
+    if (c.subject !== onderwerp || !inTrack(c, track)) continue;
+    let g = groepen.get(c.group);
+    if (!g) {
+      g = {
+        subject: `${onderwerp}/${c.group}`,
+        label: c.group,
+        basis: { used: 0, total: 0 },
+        gevorderd: { used: 0, total: 0 },
+        expert: { used: 0, total: 0 },
+      };
+      groepen.set(c.group, g);
+    }
+    const level = levelVoor(c, track);
+    g[level].total++;
+    if (usedById.get(c.id)) g[level].used++;
+  }
+  return [...groepen.values()];
+}
+
+/**
+ * De onderdelen (zie voorstelOnderdelen) waar een moeilijkheid alleen te
+ * halen is met een vinkje: elk concept vanaf die moeilijkheid is handmatig,
+ * en er staat er geen aan. Zo zegt het voorstel dat het aan een vinkje ligt,
+ * en niet aan de code.
+ */
+export function alleenMetVinkje(
+  report: CheckReport,
+  config: CheckerConfig,
+  track: string | null,
+  vanaf: Level,
+): string[] {
+  const usedById = new Map(report.concepts.map((m) => [m.id, m.used]));
+  const vanafIndex = LEVELS.indexOf(vanaf);
+  const onderdelen = voorstelOnderdelen(report, config, track);
+  const perGroep = onderdelen.some((o) => o.subject.includes('/'));
+  return onderdelen
+    .filter((o) => {
+      const concepten = config.concepts.filter(
+        (c) =>
+          inTrack(c, track) &&
+          (perGroep ? `${c.subject}/${c.group}` === o.subject : c.subject === o.subject) &&
+          LEVELS.indexOf(levelVoor(c, track)) >= vanafIndex,
+      );
+      return (
+        concepten.length > 0 &&
+        concepten.every((c) => c.detect.type === 'handmatig') &&
+        !concepten.some((c) => usedById.get(c.id))
+      );
+    })
+    .map((o) => o.label);
+}

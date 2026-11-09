@@ -146,15 +146,19 @@ describe('readUploadedFiles — grenzen', () => {
       bigTextFile(`p/vol-${i}.js`, MAX_TEXT_FILE_SIZE),
     );
     const { files, warnings } = await readUploadedFiles(
-      [...gevuld, fakeFile('p/laatste.js', MAX_TEXT_FILE_SIZE)],
+      [...gevuld, fakeFile('p/vol-5.js', MAX_TEXT_FILE_SIZE)],
       webAchtig,
     );
 
     expect(files['vol-0.js'].content).not.toBeNull();
     expect(files['vol-4.js'].content).not.toBeNull();
-    expect(files['laatste.js'].content).toBeNull();
-    expect(files['laatste.js'].tooLarge).toBe(false);
-    expect(warnings.filter((w) => w.includes('erg groot'))).toHaveLength(1);
+    expect(files['vol-5.js'].content).toBeNull();
+    expect(files['vol-5.js'].tooLarge).toBe(false);
+    // De melding noemt wat er niet gelezen is, in plaats van "de belangrijkste
+    // code is wel meegenomen" terwijl dat niet zo hoefde te zijn.
+    expect(warnings.filter((w) => w.includes('te groot'))).toEqual([
+      expect.stringContaining('vol-5.js'),
+    ]);
   });
 });
 
@@ -201,14 +205,62 @@ describe('readUploadedFiles — zip', () => {
     expect(files['index.html'].content).toContain('Uit een zip');
   });
 
-  it('behandelt zips als gewone bestanden zodra er meer dan één upload is', async () => {
+  it('pakt een gekozen zip ook uit naast losse bestanden', async () => {
+    // Robotica vraagt om code en foto's; een leerling die de zip en de foto's
+    // samen koos, kreeg eerst "Geen leesbare codebestanden".
     const { files } = await readUploadedFiles(
       [maakZip({ 'a.html': '<h1>A</h1>' }), makeFile('los.html', '<h1>Los</h1>')],
       webAchtig,
     );
 
-    expect(Object.keys(files).sort()).toEqual(['los.html', 'project.zip']);
-    expect(files['project.zip'].kind).toBe('other');
+    expect(Object.keys(files).sort()).toEqual(['a.html', 'los.html']);
+  });
+
+  it('geeft twee gekozen zips elk een eigen map', async () => {
+    const tweede = makeFile(
+      'oud.zip',
+      zipSync({ 'a.html': new TextEncoder().encode('<h1>Oud</h1>') }),
+    );
+    const { files } = await readUploadedFiles(
+      [maakZip({ 'a.html': '<h1>A</h1>' }), tweede],
+      webAchtig,
+    );
+
+    expect(Object.keys(files).sort()).toEqual(['oud/a.html', 'project/a.html']);
+  });
+
+  it('pakt een zip in een zip uit als die het enige is', async () => {
+    const binnen = zipSync({
+      'game/index.html': new TextEncoder().encode('<h1>Binnen</h1>'),
+      'game/stijl.css': new TextEncoder().encode('p {}'),
+    });
+    const buiten = makeFile('inlevering.zip', zipSync({ 'project.zip': binnen }));
+    const { files } = await readUploadedFiles([buiten], webAchtig);
+
+    expect(Object.keys(files).sort()).toEqual(['index.html', 'stijl.css']);
+    expect(files['index.html'].content).toContain('Binnen');
+  });
+
+  it('laat een zip in een projectmap dicht', async () => {
+    // Een export of een back-up in het project zelf zou alles dubbel tellen.
+    const binnen = zipSync({ 'a.html': new TextEncoder().encode('<h1>A</h1>') });
+    const { files } = await readUploadedFiles(
+      [makeFile('p/index.html', '<h1>Hoi</h1>'), makeFile('p/export.zip', binnen)],
+      webAchtig,
+    );
+
+    expect(Object.keys(files).sort()).toEqual(['export.zip', 'index.html']);
+  });
+
+  it('zegt dat een rar of tar.gz niet open kan, in plaats van een leeg rapport', async () => {
+    await expect(
+      readUploadedFiles([makeFile('project.rar', new Uint8Array([1, 2, 3]))], webAchtig),
+    ).rejects.toThrow('alleen een .zip');
+    const { warnings } = await readUploadedFiles(
+      [makeFile('index.html', '<h1>Hoi</h1>'), makeFile('oud.tar.gz', new Uint8Array([1]))],
+      webAchtig,
+    );
+    expect(warnings).toEqual([expect.stringContaining('oud.tar.gz')]);
   });
 
   it('weegt bestanden in een zip op hun uitgepakte grootte, niet de gecomprimeerde', async () => {
@@ -232,7 +284,7 @@ describe('readUploadedFiles — zip', () => {
     const rommel = makeFile('kapot.zip', new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]));
 
     await expect(readUploadedFiles([rommel], webAchtig)).rejects.toThrow(
-      'zip-bestand kon niet worden geopend',
+      'kapot.zip kon niet worden geopend',
     );
   });
 });
@@ -257,5 +309,111 @@ describe('readUploadedFiles — afbeeldingen', () => {
 
     expect(files['img/logo.png'].content).toBeNull();
     expect(files['img/logo.png'].kind).toBe('image');
+  });
+});
+
+describe('readUploadedFiles — wat niet van de leerling is', () => {
+  it('slaat een venv over, ook als hij geen venv heet', async () => {
+    // Met fastapi in env/ was het leesbudget op voordat main.py aan de beurt was.
+    const { files } = await readUploadedFiles(
+      [
+        makeFile('p/main.py', 'print(1)'),
+        makeFile('p/db.py', 'x = 1'),
+        makeFile('p/env/pyvenv.cfg', 'home = /usr/bin'),
+        makeFile('p/env/bin/activate', 'export X=1'),
+        makeFile('p/env/lib/python3.12/site-packages/fastapi/app.py', 'def f(): pass'),
+        makeFile('p/env2/Lib/site-packages/x.py', 'x = 1'),
+      ],
+      { ...webAchtig, textKinds: ['py'], classify: (p) => (p.endsWith('.py') ? 'py' : 'other') },
+    );
+
+    expect(Object.keys(files).sort()).toEqual(['db.py', 'main.py']);
+  });
+
+  it('leest de bovenste bestanden eerst, zodat eigen code in het budget valt', async () => {
+    const diep = Array.from({ length: 5 }, (_, i) =>
+      bigTextFile(`p/a-lib/x/y/vol-${i}.js`, MAX_TEXT_FILE_SIZE),
+    );
+    const { files } = await readUploadedFiles(
+      [...diep, makeFile('p/script.js', 'let a = 1;')],
+      webAchtig,
+    );
+
+    expect(files['script.js'].content).toBe('let a = 1;');
+  });
+
+  it("negeert een projectmap die build of venv heet niet, alleen zo'n map erin", async () => {
+    for (const naam of ['build', 'venv', 'dist']) {
+      const { files } = await readUploadedFiles(
+        [makeFile(`${naam}/index.html`, '<h1>Hoi</h1>'), makeFile(`${naam}/dist/x.js`, '1')],
+        webAchtig,
+      );
+      expect(Object.keys(files)).toEqual(['index.html']);
+    }
+  });
+
+  it('telt een reservekopie niet mee, en zegt dat', async () => {
+    const { files, warnings } = await readUploadedFiles(
+      [
+        makeFile('Godot/mijn-game/index.html', '<h1>Hoi</h1>'),
+        makeFile('Godot/mijn-game - kopie/index.html', '<h1>Hoi</h1>'),
+        makeFile('Godot/Kopie van site/index.html', '<h1>Hoi</h1>'),
+        makeFile('Godot/backup/index.html', '<h1>Hoi</h1>'),
+      ],
+      webAchtig,
+    );
+
+    expect(Object.keys(files)).toEqual(['mijn-game/index.html']);
+    expect(warnings).toEqual([expect.stringContaining('mijn-game - kopie')]);
+    expect(warnings[0]).toContain('Kopie van site');
+  });
+});
+
+describe("readUploadedFiles — tekst en foto's", () => {
+  it('leest UTF-16 uit Kladblok, met en zonder BOM', async () => {
+    const tekst = '<h1>Hoi</h1>';
+    const utf16 = (bom: boolean) => {
+      const bytes = new Uint8Array((bom ? 2 : 0) + tekst.length * 2);
+      if (bom) bytes.set([0xff, 0xfe]);
+      for (let i = 0; i < tekst.length; i++) bytes[(bom ? 2 : 0) + i * 2] = tekst.charCodeAt(i);
+      return bytes;
+    };
+    for (const bom of [true, false]) {
+      const { files } = await readUploadedFiles([makeFile('index.html', utf16(bom))], webAchtig);
+      expect(files['index.html'].content).toBe(tekst);
+    }
+  });
+
+  it('noemt een foto die te groot is, in plaats van hem stil weg te laten', async () => {
+    const { files, warnings } = await readUploadedFiles(
+      [makeFile('p/index.html', '<h1>Hoi</h1>'), fakeFile('p/IMG_0001.png', 6 * 1024 * 1024)],
+      webAchtig,
+    );
+
+    expect(files['IMG_0001.png'].content).toBeNull();
+    expect(files['IMG_0001.png'].tooLarge).toBe(true);
+    expect(warnings).toEqual([expect.stringContaining('IMG_0001.png')]);
+  });
+
+  it('zegt dat een HEIC-foto niet te tonen is', async () => {
+    const { warnings } = await readUploadedFiles(
+      [makeFile('p/index.html', '<h1>Hoi</h1>'), makeFile('p/IMG_0002.HEIC', 'x')],
+      webAchtig,
+    );
+
+    expect(warnings).toEqual([expect.stringContaining('IMG_0002.HEIC')]);
+  });
+
+  it('geeft een Nederlandse melding als de browser een bestand niet kan lezen', async () => {
+    const wolk = {
+      name: 'main.py',
+      webkitRelativePath: 'p/main.html',
+      size: 10,
+      arrayBuffer: () => Promise.reject(new DOMException('read failed', 'NotReadableError')),
+    } as unknown as File;
+
+    await expect(
+      readUploadedFiles([makeFile('p/index.html', '<h1>Hoi</h1>'), wolk], webAchtig),
+    ).rejects.toThrow('OneDrive');
   });
 });

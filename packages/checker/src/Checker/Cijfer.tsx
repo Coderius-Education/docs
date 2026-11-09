@@ -6,7 +6,7 @@ import {
   moeilijkheidVoorstel,
   sjabloonZin,
 } from '@coderius/shared/leerdoelen';
-import { computeLevelSummary } from '../levelSummary';
+import { alleenMetVinkje, computeLevelSummary, voorstelOnderdelen } from '../levelSummary';
 import type { CheckReport, CheckerConfig } from '../types';
 import styles from './Cijfer.module.css';
 // noPrint uit de stijl van de nakijker: die verbergt ook tijdens de PDF-export.
@@ -45,7 +45,12 @@ export function Cijfer({
     ? bewaardeMoeilijkheid
     : null;
   const samenvatting = computeLevelSummary(report, config, track);
-  const voorstel = moeilijkheidVoorstel(samenvatting.bySubject);
+  const voorstel = moeilijkheidVoorstel(voorstelOnderdelen(report, config, track));
+  const hint = vinkjesHint(report, config, track, voorstel.moeilijkheid);
+  const routeLabel =
+    (config.tracks ?? []).length > 1
+      ? config.tracks?.find((t) => t.id === track)?.label
+      : undefined;
   const gekozen = moeilijkheid ?? voorstel.moeilijkheid;
   // Expert alleen als deze leerroute expertconcepten heeft, of als de docent
   // hem al koos: een gekozen moeilijkheid moet zichtbaar en terug te zetten zijn.
@@ -103,13 +108,18 @@ export function Cijfer({
           </button>
         ))}
       </fieldset>
-      <p className={`${styles.hulp} ${hoofd.noPrint}`}>
-        Voorstel: {voorstel.reden}{' '}
-        {moeilijkheid === null
-          ? 'Nog niet gekozen: het cijfer volgt het voorstel tot je een moeilijkheid kiest.'
-          : moeilijkheid !== voorstel.moeilijkheid
-            ? 'Je koos een andere moeilijkheid dan het voorstel.'
-            : 'Je koos het voorstel.'}
+      {/* Ook in de PDF: op welk niveau, wat de nakijker voorstelde en waarom.
+          Eerst stond het niveau er alleen als ingedrukte knop in. */}
+      <p className={styles.hulp}>
+        {routeLabel && `${routeLabel}. `}
+        Voorstel: {moeilijkheidLabel(voorstel.moeilijkheid)}. {voorstel.reden} {hint}{' '}
+        <span className={hoofd.noPrint}>
+          {moeilijkheid === null
+            ? 'Nog niet gekozen: het cijfer volgt het voorstel tot je een moeilijkheid kiest.'
+            : moeilijkheid !== voorstel.moeilijkheid
+              ? 'Je koos een andere moeilijkheid dan het voorstel.'
+              : 'Je koos het voorstel.'}
+        </span>
       </p>
 
       {bloom ? (
@@ -126,3 +136,29 @@ export function Cijfer({
     </section>
   );
 }
+
+/**
+ * Een zin als de volgende moeilijkheid bij een onderdeel alleen met een vinkje
+ * te halen is ("Bij Robotica kan gevorderd alleen met een vinkje bij de
+ * foto's."), of niets.
+ */
+function vinkjesHint(
+  report: CheckReport,
+  config: CheckerConfig,
+  track: string | null,
+  gehaald: MoeilijkheidId,
+): string {
+  const volgorde: MoeilijkheidId[] = ['niet-aan-basis', 'basis', 'gevorderd', 'expert'];
+  const volgende = volgorde[volgorde.indexOf(gehaald) + 1];
+  if (!volgende || volgende === 'niet-aan-basis') return '';
+  const onderdelen = alleenMetVinkje(report, config, track, volgende);
+  if (onderdelen.length === 0) return '';
+  const lijst =
+    onderdelen.length === 1
+      ? onderdelen[0]
+      : `${onderdelen.slice(0, -1).join(', ')} en ${onderdelen.at(-1)}`;
+  return `Bij ${lijst} kan ${volgende} alleen met een vinkje bij een concept dat je zelf vaststelt.`;
+}
+
+const moeilijkheidLabel = (id: MoeilijkheidId) =>
+  BLOOM.moeilijkheden.find((m) => m.id === id)?.label ?? id;

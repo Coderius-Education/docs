@@ -10,6 +10,7 @@
     "./matchConcepts": "./src/matchConcepts.ts",
     "./plekken": "./src/plekken.ts",
     "./bibliotheek": "./src/bibliotheek.ts",
+    "./commentaar": "./src/commentaar.ts",
     "./levelSummary": "./src/levelSummary.ts",
     "./conceptLevel": "./src/conceptLevel.ts",
     "./validateConfig": "./src/validateConfig.ts",

@@ -11,7 +11,7 @@ import { BLOOM } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
 import { blokkenInVolgorde, functies } from '../godot-tests/lessen';
 import leerdoelen from '../leerdoelen.json';
-import { CURSUS_FUNCTIES, godotConfig } from './config';
+import { CURSUS_FUNCTIES, CURSUS_SNELHEID, CURSUS_SPRONG, godotConfig } from './config';
 
 function files(entries: Record<string, string | null>): ProjectFiles {
   return Object.fromEntries(
@@ -114,12 +114,16 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         'gd-volgend-level',
         'gd-globals',
         'gd-instantiate',
+        // De power-up van 7.6 wacht met create_timer.
         'gd-timers',
+        // Groups staan in 7.5 in het hoofdpad: de muntjes tellen.
+        'gd-groups',
       ],
       [
         // Dit project is de cursus nagedaan, en dat is precies wat deze vier
         // concepten meten: het gebruikt de waardes en de animatienamen uit de
-        // les (SPEED 300.0, sprong -800.0, idle/run/jump) en heeft geen eigen
+        // les (SPEED 300.0, sprong -800.0 en de -1300.0 van de power-up,
+        // idle/run/jump) en heeft geen eigen
         // toetsen in project.godot. Wie niets aanpast, heeft het spel nog niet
         // van zichzelf gemaakt.
         'gd-snelheid',
@@ -133,7 +137,6 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         // Zijn enige eigen functies, reset() en spawn_muntje(), staan zo in
         // hoofdstuk 7 en 8: overgetypt, niet zelf opgeknipt.
         'gd-modulaire-functies',
-        'gd-groups',
         'gd-lijsten',
         'gd-dictionaries',
         'gd-json',
@@ -532,6 +535,11 @@ describe('godotConfig — patronen die er net naast zitten', () => {
     ).toBe(false);
     // Een Control bovenaan zonder knop is ook geen startscherm.
     expect(startscherm('[node name="Menu" type="Control"]')).toBe(false);
+    // Een menu op een CanvasLayer wel; een losse HUD-scène met een pauzeknop niet.
+    const knop = '\n\n[node name="Start" type="Button" parent="."]';
+    expect(startscherm(`[node name="Menu" type="CanvasLayer"]${knop}`)).toBe(true);
+    expect(startscherm(`[node name="HUD" type="Control"]${knop}`)).toBe(false);
+    expect(startscherm(`[node name="Pauzemenu" type="CanvasLayer"]${knop}`)).toBe(false);
   });
 
   it('ziet het startscherm zoals Godot 4.7 het opslaat, met unique_id', () => {
@@ -607,9 +615,7 @@ describe('godotConfig — patronen die er net naast zitten', () => {
 
   it('houdt de moeilijkheden van elk niveau gevuld, en elk onderwerp bezet', () => {
     // De LevelSummary-chips verbergen 0/0, dus een niveau dat leegvalt
-    // verdwijnt stil uit het rapport. Per onderwerp eisen we dat niet: op
-    // niveau 4 staat volgens het blad élk 2D-concept op basis, en dat is de
-    // bedoeling.
+    // verdwijnt stil uit het rapport.
     const report = analyze(files({}), godotConfig);
     for (const route of ['1', '3', '4']) {
       const samenvatting = computeLevelSummary(report, godotConfig, route);
@@ -632,5 +638,152 @@ describe('godotConfig — patronen die er net naast zitten', () => {
         ).toBeGreaterThan(0);
       }
     }
+  });
+});
+
+describe('godotConfig — wat niet van de leerling is, en wat er net naast ligt', () => {
+  const gebruikt = (entries: Record<string, string>) =>
+    new Map(alleMatches(analyze(files(entries), godotConfig)).map((c) => [c.id, c.used]));
+
+  it('telt een addon uit de Asset Library niet als eigen werk', () => {
+    // Een dialoog-addon tilde een nagedane cursus van basis naar expert.
+    const addon = [
+      'extends Node',
+      'var regels: Array = []',
+      'func laad():',
+      '\tfor r in regels:',
+      '\t\tprint(JSON.stringify(r))',
+      '\tvar t = create_tween()',
+    ].join('\n');
+    const report = analyze(files({ 'addons/dialoog/dialoog.gd': addon }), godotConfig);
+    expect(report.concepts.filter((c) => c.used).map((c) => c.id)).toEqual([]);
+    expect(report.warnings.join(' ')).toContain('addons/dialoog/dialoog.gd');
+  });
+
+  it('telt niets in commentaar', () => {
+    const perId = gebruikt({
+      'speler.gd': [
+        'extends CharacterBody2D',
+        '# const SPEED = 450.0',
+        '#func _on_body_entered(body):',
+        '# get_tree().change_scene_to_file("res://level2.tscn")',
+        'var x = 1 # TODO: Tween',
+      ].join('\n'),
+    });
+    for (const id of ['gd-snelheid', 'gd-signal', 'gd-volgend-level', 'gd-tweens']) {
+      expect(perId.get(id), id).toBe(false);
+    }
+  });
+
+  it('herkent gewone schrijfwijzen van Godot 4', () => {
+    const perId = gebruikt({
+      'speler.gd': [
+        'extends CharacterBody2D',
+        'const SPEED: float = 450.0',
+        '@export var jump_velocity: float = -900.0',
+        'signal geraakt',
+        'func _ready():',
+        '\tgeraakt.connect(_raak)',
+        '\t$Anim.play(&"zwemmen")',
+        '\tvar t = Timer.new()',
+        '\tSpel.punten += 1',
+        '\tSpel.levens -= 1',
+        'func _raak():',
+        '\tpass',
+        'func _bereken():',
+        '\tget_tree().change_scene_to_packed(load("res://x.tscn"))',
+      ].join('\n'),
+      'project.godot': '[autoload]\n\nSpel="*res://spel.gd"\n',
+    });
+    for (const id of [
+      'gd-snelheid',
+      'gd-sprongkracht',
+      'gd-signal',
+      'gd-animatie',
+      'gd-timers',
+      'gd-globals',
+      'gd-modulaire-functies',
+      'gd-volgend-level',
+    ]) {
+      expect(perId.get(id), id).toBe(true);
+    }
+  });
+
+  it('leest een script dat in een scène zit (Built-in Script)', () => {
+    const perId = gebruikt({
+      'level.tscn': [
+        '[gd_scene format=3]',
+        '[sub_resource type="GDScript" id="1"]',
+        'script/source = "extends Node2D',
+        '',
+        'func _ready():',
+        '\tvar t = create_tween()',
+        '\tprint(\\"#klaar\\") # create_timer',
+        '"',
+        '[node name="Level" type="Node2D"]',
+      ].join('\n'),
+    });
+    expect(perId.get('gd-tweens')).toBe(true);
+    // Het commentaar in het ingebouwde script telt niet.
+    expect(perId.get('gd-timers')).toBe(false);
+  });
+
+  it('telt een lijst of dictionary pas als je hem ook gebruikt', () => {
+    const lijst = (code: string) => gebruikt({ 'a.gd': `extends Node\n${code}` }).get('gd-lijsten');
+    const dict = (code: string) =>
+      gebruikt({ 'a.gd': `extends Node\n${code}` }).get('gd-dictionaries');
+    expect(lijst('var v: Array[Node] = []')).toBe(false);
+    expect(lijst('var v: Array[Node] = []\nfunc f():\n\tv.append(self)')).toBe(true);
+    expect(lijst('var namen = ["a", "b"]\nfunc f():\n\tfor n in namen:\n\t\tprint(n)')).toBe(true);
+    expect(dict('func f(a, b):\n\tif a.has(1) and b.has(2):\n\t\tpass')).toBe(false);
+    // Zoals de les: maken en er met een sleutel iets uithalen.
+    expect(
+      dict('const WAARDES = {"goud": 10}\nvar soort = "goud"\nfunc f():\n\tprint(WAARDES[soort])'),
+    ).toBe(true);
+  });
+
+  it('telt FileAccess op een tekstbestand niet als JSON', () => {
+    const json = (code: string) => gebruikt({ 'a.gd': `extends Node\n${code}` }).get('gd-json');
+    expect(json('func f():\n\tvar b = FileAccess.open("user://a.txt", FileAccess.READ)')).toBe(
+      false,
+    );
+    expect(json('func f():\n\tvar d = JSON.parse_string(tekst)')).toBe(true);
+  });
+
+  it('kent elke snelheid en sprongkracht die een les toekent', () => {
+    // De power-up zet -1300.0 en zijn oplossing 600.0; die stonden niet in de
+    // lijst, en wie de cursus nadeed kreeg zo "veranderen".
+    const naam = /\b(SPEED|snelheid|JUMP_VELOCITY|sprongkracht)\s*(?::\s*\w+\s*)?=\s*(-?[\d.]+)/g;
+    const ontbreekt = new Set<string>();
+    for (const b of blokkenInVolgorde()) {
+      if (b.fout || b.hoofdstuk > 9) continue;
+      for (const m of b.code.matchAll(naam)) {
+        const lijst = /SPEED|snelheid/.test(m[1]) ? CURSUS_SNELHEID : CURSUS_SPRONG;
+        if (!lijst.includes(m[2])) ontbreekt.add(`${m[1]} = ${m[2]} (${b.plek})`);
+      }
+    }
+    expect([...ontbreekt]).toEqual([]);
+  });
+
+  it('vindt elk GDScript-concept in de code van zijn eigen les', () => {
+    // Wie de les volgt, heeft het concept. Uitgezonderd: de vier concepten die
+    // juist meten dat je níet de waarde van de les gebruikt, en loops: de les
+    // toont één lus (en call_group als afkorting), en nuttig gebruik vraagt er
+    // twee. Die tweede schrijft de leerling zelf.
+    const ANDERS = ['gd-snelheid', 'gd-sprongkracht', 'gd-keybindings', 'gd-animatie', 'gd-loops'];
+    const mis: string[] = [];
+    for (const c of leerdoelen.concepten) {
+      if (!c.id.startsWith('gd-') || ANDERS.includes(c.id)) continue;
+      const lessen: string[] = Array.isArray(c.les) ? c.les : [c.les];
+      const blokken = blokkenInVolgorde().filter(
+        (b) =>
+          lessen.includes(b.plek.replace(/^\d+-/, '').replace(/\.mdx?:\d+$/, '')) &&
+          !b.fout &&
+          !b.opdracht,
+      );
+      const project = Object.fromEntries(blokken.map((b, i) => [`les${i}.gd`, b.code]));
+      if (!gebruikt(project).get(c.id)) mis.push(`${c.id} (${c.les}, ${blokken.length} blokken)`);
+    }
+    expect(mis).toEqual([]);
   });
 });

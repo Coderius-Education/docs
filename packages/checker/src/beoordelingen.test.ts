@@ -9,6 +9,7 @@ import {
   aangevuld,
   databaseNaam,
   geheugenOpslag,
+  gekozenMoeilijkheid,
   opslagMelding,
   pdfNaamMetLeerling,
   verlopen,
@@ -568,5 +569,23 @@ describe('pdfNaamMetLeerling', () => {
 
   it('laat de naam staan zonder leerling', () => {
     expect(pdfNaamMetLeerling('a.pdf', '  ')).toBe('a.pdf');
+  });
+});
+
+describe('gekozenMoeilijkheid', () => {
+  it('geldt alleen op de leerroute waarvoor de docent hem koos', () => {
+    // Eerst bleef "gevorderd" van niveau 1 staan op niveau 4, en kwam hij zo
+    // in de PDF naast een samenvatting waarin gevorderd ontbrak.
+    const b = { moeilijkheid: 'gevorderd' as const, moeilijkheidRoute: '1' };
+    expect(gekozenMoeilijkheid(b, '1')).toBe('gevorderd');
+    expect(gekozenMoeilijkheid(b, '4')).toBeNull();
+    // Een oude route-id telt als de route die ervoor kwam.
+    const oud = { moeilijkheid: 'basis' as const, moeilijkheidRoute: 'start' };
+    expect(gekozenMoeilijkheid(oud, '1', (a, c) => (a === 'start' ? '1' : a) === c)).toBe('basis');
+  });
+
+  it('geeft een oude beoordeling de route die hij had', () => {
+    const oud = { track: '3', moeilijkheid: 'expert' } as unknown as Beoordeling;
+    expect(aangevuld(oud).moeilijkheidRoute).toBe('3');
   });
 });

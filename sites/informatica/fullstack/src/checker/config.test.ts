@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inTrack, levelVoor } from '@coderius/checker/conceptLevel';
-import { computeLevelSummary } from '@coderius/checker/levelSummary';
+import { voorstelOnderdelen } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { CheckReport, ConceptMatch, ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
@@ -854,11 +854,11 @@ describe('fullstackConfig — niveau 3', () => {
     const leeg = analyze({}, fullstackConfig);
     const voorstel = (track: string, ids: string[]) =>
       moeilijkheidVoorstel(
-        computeLevelSummary(
+        voorstelOnderdelen(
           { ...leeg, concepts: leeg.concepts.map((c) => ({ ...c, used: ids.includes(c.id) })) },
           fullstackConfig,
           track,
-        ).bySubject,
+        ),
       ).moeilijkheid;
     const basis = ['lx-mappen', 'vh-docs', 'on-readme'];
     const gevorderd = [...basis, 'lx-zoeken', 'vh-cookies', 'on-compose'];
@@ -869,8 +869,24 @@ describe('fullstackConfig — niveau 3', () => {
     // moeilijkheid telt daar niet mee.
     expect(voorstel('3', [...gevorderd, 'on-https'])).toBe('expert');
     // Op niveau 1 tellen de nieuwe onderwerpen niet: alleen FastAPI.
-    expect(voorstel('1', ['fastapi-app'])).toBe('basis');
     expect(voorstel('1', ['lx-mappen', 'vh-docs', 'on-readme'])).toBe('niet-aan-basis');
+    // FastAPI is daar het enige onderwerp, dus tellen de groepen: één route
+    // met een path parameter gaf eerst expert (bij creëren een 10).
+    expect(voorstel('1', ['fastapi-app', 'fastapi-path-param'])).toBe('niet-aan-basis');
+    const basis1 = ['fastapi-app', 'fastapi-routes', 'html-css-link', 'db-write'];
+    expect(voorstel('1', basis1)).toBe('basis');
+    expect(voorstel('1', [...basis1, 'fastapi-path-param'])).toBe('basis');
+    // Gevorderd vraagt iets gevorderds in elke groep die het heeft.
+    const gevorderd1 = [
+      ...basis1,
+      'fastapi-templates',
+      'fastapi-redirect',
+      'account-inloggen',
+      'fastapi-path-param',
+      'htmx-verzoek',
+    ];
+    expect(voorstel('1', gevorderd1)).toBe('gevorderd');
+    expect(voorstel('1', [...gevorderd1, 'db-dictionary'])).toBe('expert');
   });
 
   it('herkent de bestanden van een project dat online staat aan hun naam', () => {
@@ -911,5 +927,118 @@ describe('fullstackConfig — niveau 3', () => {
     expect(anders.get('on-dockerfile')).toBe(true);
     expect(anders.get('on-compose')).toBe(true);
     expect(anders.get('on-requirements')).toBe(false);
+  });
+});
+
+describe('fullstackConfig — wat niet van de leerling is, en wat er net naast ligt', () => {
+  const ids = (entries: Record<string, string>) => perId(analyze(files(entries), fullstackConfig));
+
+  it('telt controleer.py van de cursus niet als code van de leerling', () => {
+    const controleer = readFileSync(
+      fileURLToPath(new URL('../../static/controleer.py', import.meta.url)),
+      'utf8',
+    );
+    const report = analyze(
+      files({
+        'main.py': 'from fastapi import FastAPI\napp = FastAPI()\n',
+        'controleer.py': controleer,
+      }),
+      fullstackConfig,
+    );
+    const g = perId(report);
+    for (const id of ['fastapi-path-param', 'fastapi-cookie', 'if-else', 'fastapi-redirect']) {
+      expect(g.get(id), id).toBe(false);
+    }
+    expect(report.warnings.join(' ')).toContain('controleer.py');
+  });
+
+  it('telt niets in commentaar, een docstring of alleen de import-regel', () => {
+    const g = ids({
+      'main.py': [
+        'from fastapi.responses import RedirectResponse, HTMLResponse',
+        '"""Later: SqliteDict("a.db") as db: db["a"] = {"b": 1}"""',
+        '# later: @app.get("/bericht/{sleutel}")',
+      ].join('\n'),
+      'templates/a.html': '<!-- <button hx-get="/tijd">Tijd</button> -->',
+    });
+    for (const id of [
+      'fastapi-redirect',
+      'fastapi-html-response',
+      'fastapi-path-param',
+      'db-dictionary',
+      'htmx-verzoek',
+    ]) {
+      expect(g.get(id), id).toBe(false);
+    }
+    expect(ids({ 'main.py': 'if __name__ == "__main__":\n    pass' }).get('if-else')).toBe(false);
+  });
+
+  it('herkent een router, een globale database en een context in een variabele', () => {
+    const g = ids({
+      'routes.py': [
+        'router = APIRouter()',
+        '@router.get("/a")',
+        'def a(): pass',
+        '@router.get("/dier/{naam}")',
+        'def b(naam): pass',
+        '@router.post("/registreer")',
+        'def c(): pass',
+      ].join('\n'),
+      'main.py': [
+        'db = SqliteDict(os.path.join("data", "g.db"), autocommit=True)',
+        '',
+        '@app.post("/bericht")',
+        'def opslaan(tekst: str = Form(...)):',
+        '    db["x"] = {"tekst": tekst}',
+        '',
+        '@app.get("/")',
+        'def home(request: Request):',
+        '    context = {"berichten": db.items()}',
+        '    return templates.TemplateResponse(request, "home.html", context)',
+        '',
+        '@app.delete("/x")',
+        'def weg():',
+        '    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)',
+      ].join('\n'),
+    });
+    for (const id of [
+      'fastapi-routes',
+      'fastapi-path-param',
+      'account-registreren',
+      'db-write',
+      'db-lezen',
+      'db-formulier',
+      'db-dictionary',
+      'fastapi-templates',
+      'vh-toegang',
+    ]) {
+      expect(g.get(id), id).toBe(true);
+    }
+  });
+
+  it('ziet het wachtwoord controleren, niet het herhalen bij registreren', () => {
+    const ww = (code: string) => ids({ 'main.py': code }).get('account-wachtwoord');
+    expect(ww('if opgeslagen != password:\n    pass')).toBe(true);
+    expect(ww('if wachtwoord != herhaal:\n    pass')).toBe(false);
+    expect(ww('if wachtwoord == "":\n    pass')).toBe(false);
+    // Een registreerformulier met twee wachtwoordvelden is geen inloggen,
+    // ook niet naar /aanmelden.
+    const form = (velden: number) =>
+      ids({
+        'templates/a.html': `<form action="/aanmelden">${'<input type="password">'.repeat(velden)}</form>`,
+      }).get('account-inloggen');
+    expect(form(1)).toBe(true);
+    expect(form(2)).toBe(false);
+  });
+
+  it('telt een stylesheet van een CDN niet als eigen CSS-bestand', () => {
+    const css = (href: string) =>
+      ids({ 'templates/a.html': `<link rel="stylesheet" href="${href}">` }).get('html-css-link');
+    expect(css('https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css')).toBe(false);
+    expect(css('/static/stijl.css')).toBe(true);
+  });
+
+  it('opent een beoordeling van vóór de niveaus op niveau 1', () => {
+    expect(fullstackConfig.zonderLeerroute).toBe('1');
   });
 });
