@@ -165,7 +165,9 @@ describe('play-nakijker', () => {
     for (const id of ['play-database-bestand', 'play-sound', 'play-sound-bestand', 'play-video']) {
       expect((niveau(id) as Record<string, string | null>)['1'], id).toBeNull();
     }
-    const opNiveau1 = playConfig.concepts.map((c) => (c.level as Record<string, string | null>)['1']);
+    const opNiveau1 = playConfig.concepts.map(
+      (c) => (c.level as Record<string, string | null>)['1'],
+    );
     expect(opNiveau1).not.toContain('expert');
     // Op niveau 2 vraagt "gevorderd" bij Python een gevorderd concept. Was
     // alleen de dictionary dat, dan haalde geen leerling zonder dictionary
