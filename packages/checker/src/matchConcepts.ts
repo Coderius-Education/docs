@@ -145,14 +145,17 @@ export function analyze(
     const patroon = withGlobal(c.detect.pattern);
     const minimum = c.detect.minCount ?? 1;
     const gevonden = new Set<string>();
-    const noteerDeel = (m: RegExpMatchArray) => {
-      if (delen === true) {
-        const deel = m.slice(1).find((g) => g !== undefined && g !== '');
-        if (deel) gevonden.add(deel.toLowerCase());
-      } else if (delen) {
-        const i = delen.findIndex((_, j) => m.groups?.[`d${j}`] !== undefined);
-        if (i !== -1) gevonden.add(delen[i]);
-      }
+    // De onderdelen van het bestand met de meeste, voor `perBestand`.
+    let meesteDelen = 0;
+    const deelVan = (m: RegExpMatchArray): string | undefined => {
+      if (delen === true)
+        return m
+          .slice(1)
+          .find((g) => g !== undefined && g !== '')
+          ?.toLowerCase();
+      if (!delen) return undefined;
+      const i = delen.findIndex((_, j) => m.groups?.[`d${j}`] !== undefined);
+      return i === -1 ? undefined : delen[i];
     };
     const metDelen = (m: ConceptMatch): ConceptMatch =>
       delen ? { ...m, delen: Array.from(gevonden).sort((a, b) => a.localeCompare(b)) } : m;
@@ -174,7 +177,13 @@ export function analyze(
     for (const kind of kinds) {
       for (const { path, content } of bron[kind] ?? []) {
         const treffers = Array.from(content.matchAll(patroon));
-        for (const m of treffers) noteerDeel(m);
+        const hier = new Set<string>();
+        for (const m of treffers) {
+          const deel = deelVan(m);
+          if (deel) hier.add(deel);
+        }
+        for (const deel of hier) gevonden.add(deel);
+        meesteDelen = Math.max(meesteDelen, hier.size);
         count += treffers.length;
         meesteInEen = Math.max(meesteInEen, treffers.length);
         if (!metPlekken || treffers.length === 0 || plekken.length >= MAX_PLEKKEN) continue;
@@ -184,7 +193,7 @@ export function analyze(
         );
       }
     }
-    const genoegDelen = gevonden.size >= (c.detect.minDelen ?? 0);
+    const genoegDelen = (perBestand ? meesteDelen : gevonden.size) >= (c.detect.minDelen ?? 0);
     const used = (perBestand ? meesteInEen : count) >= minimum && genoegDelen;
     const match: ConceptMatch = metPlekken
       ? { id: c.id, count, used, plekken }

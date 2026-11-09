@@ -1,5 +1,10 @@
 import { leerdoelenNaarConfig } from '@coderius/checker/leerdoelen';
-import type { CheckerConfig, ConceptDetect, ExtraConcept } from '@coderius/checker/types';
+import type {
+  CheckerConfig,
+  ConceptDetect,
+  ExtraConcept,
+  ProjectFiles,
+} from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
 import leerdoelenJson from '../leerdoelen.json';
 
@@ -50,33 +55,71 @@ function py(pattern: RegExp, minCount?: number): ConceptDetect {
 
 const HANDMATIG = { type: 'handmatig' } as const;
 
+// Een IR-sensor, met zijn pin als onderdeel: een analoge (`AnalogIR("A0",
+// 2500)`, of een naam in plaats van de pin), een digitale (`Pin("D14",
+// Pin.IN)`, zoals RoboCup ze aanbiedt; een knop heeft er PULL_UP bij), of een
+// pin in een lijst als `["A0", "A1", "A2", "A3"]` waar een lus de sensoren
+// van maakt. Per bestand, want drie scripts met 1, 2 en 2 sensoren zijn geen
+// robot met vier.
+function irSensoren(aantal: number): ConceptDetect {
+  return {
+    type: 'regex',
+    pattern:
+      /\bAnalogIR\s*\(\s*["']?(\w+)|\bPin\s*\(\s*["'](D\d+)["']\s*,\s*Pin\.IN\s*\)|(?<=\[[^\]\n]*)["'](A\d)["'](?=[^[\n]*\])/g,
+    in: ['py'],
+    delen: true,
+    minDelen: aantal,
+    perBestand: true,
+  };
+}
+
+// Een meegeleverde bibliotheek: alles in lib/ (waar MicroPython modules
+// zoekt) en de leaphymicropython zelf. Die gaf eerst lijsten, break,
+// continue, tuples en de afstandssensor, en tilde een knipperscript van
+// "niet aan basis" naar gevorderd.
+const isBibliotheek = (path: string) => /(?:^|\/)lib\/|leaphymicropython/i.test(path);
+
+/** De eigen modules: elk .py-bestand behalve main.py en boot.py, buiten lib/. */
+export function eigenModules(files: ProjectFiles): string[] {
+  return Object.keys(files)
+    .filter((p) => p.endsWith('.py') && !isBibliotheek(p))
+    .map((p) => p.slice(p.lastIndexOf('/') + 1, -3))
+    .filter((naam) => !['main', 'boot'].includes(naam) && /^\w+$/.test(naam));
+}
+
 const DETECTIE: Record<string, ConceptDetect> = {
   'py-variabele': py(/^[ \t]*[a-z_]\w*\s*=\s*[^=\s]/gm),
   // Bewust smal: een operator tússen twee getallen of variabelen, met
   // spaties eromheen zoals de cursus het schrijft. Een kale `+` zou net zo
   // vaak tekst plakken als rekenen.
-  'py-rekenen': py(/[\w)]\s[-*/]\s[\w(]|[\w)]\s\+\s[\w(]/g),
+  // Ook zonder spaties bij * en /, en `teller += 1`.
+  'py-rekenen': py(/[\w)]\s[-*/]\s[\w(]|[\w)]\s\+\s[\w(]|[\w)][*/][\w(]|\w\s*[-+*/]=\s*[\w(-]/g),
   'py-fstring': py(/\bf["']/g),
   // `while True:` telt hier niet mee. Die regel staat in élk script van de
   // cursus, al in het knipperscript van Deel 2, en zou dit concept dus
   // aanvinken voordat de leerling één boolean heeft gebruikt.
-  'py-boolean': py(/[=!<>]=|(?<!\bwhile\s{1,8})\b(?:True|False)\b/g),
+  // Ook `<` en `>`, maar niet `->` of `<<`.
+  'py-boolean': py(/[=!<>]=|(?<![-<>])[<>](?![<>=])|(?<!\bwhile\s{1,8})\b(?:True|False)\b/g),
   'py-if-else': py(/^[ \t]*if\b/gm),
   'py-elif': py(/^[ \t]*elif\b/gm),
   'py-while': py(/^[ \t]*while\b/gm),
-  'py-functie': py(/^[ \t]*def\s+\w+\s*\(\s*\)/gm),
-  'py-functie-parameters': py(/^[ \t]*def\s+\w+\s*\(\s*\w/gm),
+  // Elke functie: wie een functie met parameters schrijft, kan er ook een
+  // zonder. Op niveau 3 en 4 telt "met parameters" niet mee, en eerst gaf
+  // `def stuur(a, b)` daar dus niets, terwijl `def rechtdoor()` gevorderd was.
+  'py-functie': py(/^[ \t]*def\s+\w+\s*\(/gm),
+  // `self` alleen is geen parameter.
+  'py-functie-parameters': py(/^[ \t]*def\s+\w+\s*\(\s*(?:self\s*,\s*)?(?!self\b)\w/gm),
   'py-lijst-methoden': py(/\.(append|insert|remove|pop|sort|reverse|extend|index)\s*\(/g),
   'py-import': py(/^[ \t]*(from|import)\s+\w/gm),
   'rb-frame': HANDMATIG,
-  'rb-ir-een': py(/\bAnalogIR\s*\(/g),
-  'rb-ir-twee': py(/\bAnalogIR\s*\(/g, 2),
+  'rb-ir-een': irSensoren(1),
+  'rb-ir-twee': irSensoren(2),
   'rb-scherm': py(/\bOLEDSH1106\s*\(/g),
   'rb-motoren': py(/\bDCMotors\s*\(/g),
   'rb-robot-compleet': HANDMATIG,
   'rb-batterijen': HANDMATIG,
   'rb-lijnvolgen-twee': HANDMATIG,
-  'rb-ir-vier': py(/\bAnalogIR\s*\(/g, 4),
+  'rb-ir-vier': irSensoren(4),
   'rb-afstand': py(/\bTimeOfFlight\s*\(|\bget_distance\s*\(|\bread_distance\s*\(/g),
   'rb-obstakel-stoppen': HANDMATIG,
   'rb-bal-detecteren': HANDMATIG,
@@ -84,16 +127,18 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'py-continue': py(/^[ \t]*continue\b/gm),
   'py-break': py(/^[ \t]*break\b/gm),
   'py-lijst': py(/=\s*\[/g),
-  // Alles wat niet een module van het bord of uit de standaardbibliotheek
-  // is, moet wel van de leerling zelf komen.
-  'py-import-eigen': py(
-    /^[ \t]*(?:from|import)\s+(?!machine\b|time\b|utime\b|leaphymicropython\b|random\b|math\b|sys\b|os\b|json\b|micropython\b|neopixel\b|network\b|gc\b)\w+/gm,
-  ),
+  // Een module die als .py in het project staat (zie detectieVoor hieronder);
+  // `import struct` of `import ssd1306` telde eerst ook als eigen module.
+  'py-import-eigen': py(/(?!)/g),
   // Zwak te detecteren, en dat is hier vastgelegd in plaats van weggepoetst:
   // een tuple zonder haakjes (`a, b = 1, 2`) valt hierbuiten, en een set
   // met één element is niet van een blok code te onderscheiden. Zie de
   // valkuilen-test.
-  'py-tuple-set': py(/=\s*\([^)]*,|=\s*\{[^}:]+\}/g),
+  // Een toekenning aan het begin van de regel, zodat `f"afstand={afstand}"`
+  // geen set is; of set() en tuple().
+  'py-tuple-set': py(
+    /^[ \t]*[\w.]+\s*=\s*(?:\([^)\n]*,[^)\n]*\)|\{[^}:\n]+\})|\b(?:set|tuple|frozenset)\s*\(/gm,
+  ),
   'rb-obstakel-omheen': HANDMATIG,
   'rb-muren': HANDMATIG,
   'rb-bal-grijpen': HANDMATIG,
@@ -168,7 +213,8 @@ const OOK_GEBRUIKT: ExtraConcept[] = [
     label: 'Script heet main.py',
     // Het bord voert bij het aanzetten alleen een bestand met exact deze naam
     // uit; heet het anders, dan doet de robot op batterijen niets.
-    detect: { type: 'path', pattern: /(^|\/)main\.py$/ },
+    // Een main.py in een map oud/ of backup/ telt niet.
+    detect: { type: 'path', pattern: /^(?!(?:.*\/)?(?:oud|old|backup|test)\/)(?:.*\/)?main\.py$/i },
   },
 ];
 
@@ -192,6 +238,14 @@ export const roboticaConfig: CheckerConfig = {
 
   classify,
   textKinds: ['py'],
+  commentaar: { py: 'python' },
+  bibliotheek: isBibliotheek,
+  detectieVoor: (files): Record<string, ConceptDetect> => {
+    const namen = eigenModules(files);
+    if (namen.length === 0) return {};
+    const patroon = new RegExp(`^[ \\t]*(?:from|import)\\s+(?:${namen.join('|')})\\b`, 'gm');
+    return { 'py-import-eigen': py(patroon) };
+  },
   imageKinds: ['image'],
   // Bewust geen .heic: telefoons maken dat formaat wel, maar Chrome kan het
   // niet tonen. De leerlingpagina vraagt daarom om JPG of PNG.

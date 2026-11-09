@@ -57,9 +57,9 @@ export type ConceptDetect =
        */
       minDelen?: number;
       /**
-       * `minCount` moet in één bestand gehaald worden, niet over alle
-       * bestanden samen. Drie scripts met 1, 2 en 2 sensoren zijn geen robot
-       * met vier sensoren.
+       * `minCount` en `minDelen` moeten in één bestand gehaald worden, niet
+       * over alle bestanden samen. Drie scripts met 1, 2 en 2 sensoren zijn
+       * geen robot met vier sensoren.
        */
       perBestand?: boolean;
       /**

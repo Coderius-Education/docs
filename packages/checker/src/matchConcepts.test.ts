@@ -543,6 +543,37 @@ describe('analyze — commentaar en per bestand', () => {
     expect(matchOf(vier, 'vier')?.used).toBe(true);
     expect(analyze(files, cfg, { plekken: false }).concepts[0].used).toBe(false);
   });
+
+  it('eist minDelen in één bestand met perBestand', () => {
+    const cfg = config([
+      concept('pinnen', {
+        type: 'regex',
+        pattern: /IR\("(\w+)"\)/g,
+        delen: true,
+        minDelen: 3,
+        perBestand: true,
+      }),
+    ]);
+    const twee = (a: string, b: string) => `IR("${a}") IR("${b}")`;
+    expect(
+      matchOf(
+        analyze(
+          projectFiles(
+            file('a.html', 'html', twee('A0', 'A1')),
+            file('b.html', 'html', twee('A2', 'A3')),
+          ),
+          cfg,
+        ),
+        'pinnen',
+      )?.used,
+    ).toBe(false);
+    expect(
+      matchOf(
+        analyze(projectFiles(file('a.html', 'html', `${twee('A0', 'A1')} IR("A2")`)), cfg),
+        'pinnen',
+      )?.used,
+    ).toBe(true);
+  });
 });
 
 describe('analyze — detectieVoor', () => {
