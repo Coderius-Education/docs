@@ -307,7 +307,7 @@ def punt():
 
 De `console` toont:
 ```
-UnboundLocalError: local variable 'score' referenced before assignment
+UnboundLocalError: cannot access local variable 'score' where it is not associated with a value
 ```
 
 Python denkt dat `score` een nieuwe variabele is binnen de functie. Met `global` vertel je Python dat je de variabele van *buiten* de functie bedoelt:

@@ -202,15 +202,27 @@ describe('play-nakijker', () => {
           return join(DOCS, map, bestand);
       return null;
     };
+    // Alleen de hoofdtekst telt: een concept dat pas in een tip of oplossing
+    // staat (de f-string in 3.1), leer je daar niet.
     const code = (tekst: string) =>
       [
-        ...tekst.matchAll(/<PygbagRunner code=\{`([\s\S]*?)`\}/g),
-        ...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g),
+        ...tekst
+          .replace(/<details>[\s\S]*?<\/details>/g, '')
+          .matchAll(/<PygbagRunner code=\{`([\s\S]*?)`\}/g),
+        ...tekst
+          .replace(/<details>[\s\S]*?<\/details>/g, '')
+          .matchAll(/```python[^\n]*\n([\s\S]*?)```/g),
       ]
         .map((m) => m[1])
         .join('\n');
+    // Een concept dat een les bewust in een opdracht laat ontdekken, met de
+    // code pas in de oplossing.
+    const IN_EEN_OPDRACHT: Record<string, string> = {
+      'play-clicked': 'opdracht 4.1.c laat when_clicked in de cheatsheet opzoeken',
+    };
     const fout: string[] = [];
     for (const c of leerdoelenJson.concepten) {
+      if (IN_EEN_OPDRACHT[c.id]) continue;
       const detect = playConfig.concepts.find((x) => x.id === c.id)?.detect;
       if (detect?.type !== 'regex') continue;
       const lessen = (Array.isArray(c.les) ? c.les : [c.les]).filter((l) => !l.startsWith('site:'));

@@ -4,6 +4,12 @@ sidebar_position: 3
 
 # 2.3 Fysica-eigenschappen
 
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
+  ]}
+/>
+
 Je hebt al geleerd hoe je vormen kunt laten bewegen en welke soorten fysica er zijn. Maar er is meer. Met eigenschappen als **bounciness**, **mass** en **sensor** kun je het gedrag van je vormen fijner instellen.
 
 ## Bounciness (stuiteren)

@@ -3,9 +3,9 @@
   "onderwerpen": [{ "id": "python", "label": "Python" }, { "id": "play", "label": "coderius-play" }],
   "concepten": [
     { "id": "py-variabele", "onderwerp": "python", "concept": "een variabele gebruiken", "1": "basis", "2": "basis", "groep": "Variabelen en tekst", "les": ["vormen/vorm_aanpassen", "site:python/docs/basis/jij-als-variabele"] },
-    { "id": "py-fstring", "onderwerp": "python", "concept": "een getal in tekst zetten met een f-string", "1": "basis", "2": "basis", "groep": "Variabelen en tekst", "les": ["acties/acties", "site:python/docs/tekst/04a-f-strings"] },
-    { "id": "py-vergelijken", "onderwerp": "python", "concept": "vergelijken (==, <, >)", "1": "basis", "2": "basis", "groep": "Beslissen", "les": ["gebeurtenissen/score_bijhouden", "site:python/docs/beslissen/05a-booleans-en-vergelijken"] },
-    { "id": "py-if", "onderwerp": "python", "concept": "if / else", "1": "basis", "2": "basis", "groep": "Beslissen", "les": ["gebeurtenissen/muis", "site:python/docs/beslissen/05b-if-else"] },
+    { "id": "py-fstring", "onderwerp": "python", "concept": "een getal in tekst zetten met een f-string", "1": "basis", "2": "basis", "groep": "Variabelen en tekst", "les": ["acties/random", "site:python/docs/tekst/04a-f-strings"] },
+    { "id": "py-vergelijken", "onderwerp": "python", "concept": "vergelijken (==, <, >)", "1": "basis", "2": "basis", "groep": "Beslissen", "les": ["gebeurtenissen/toetsenbord", "site:python/docs/beslissen/05a-booleans-en-vergelijken"] },
+    { "id": "py-if", "onderwerp": "python", "concept": "if / else", "1": "basis", "2": "basis", "groep": "Beslissen", "les": ["gebeurtenissen/toetsenbord", "site:python/docs/beslissen/05b-if-else"] },
     { "id": "py-elif-and-or", "onderwerp": "python", "concept": "elif, and en or", "1": "gevorderd", "2": "basis", "groep": "Beslissen", "les": ["levels/andere-vormen", "site:python/docs/beslissen/05c-and-or-elif"] },
     { "id": "py-functie", "onderwerp": "python", "concept": "een eigen functie (def)", "1": "basis", "2": "basis", "groep": "Functies", "les": ["acties/functies_methodes", "site:python/docs/functies/functies"] },
     { "id": "py-global", "onderwerp": "python", "concept": "global", "1": "basis", "2": "basis", "groep": "Functies", "les": ["gebeurtenissen/score_bijhouden", "site:python/docs/functies/09c-scope"] },
