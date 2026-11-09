@@ -49,6 +49,12 @@ export type ConceptDetect =
        * een selector.
        */
       delen?: string[] | true;
+      /**
+       * Hoeveel verschillende onderdelen (zie `delen`) er minstens moeten zijn.
+       * `minCount` telt treffers, dus drie keer dezelfde node telt daar als
+       * drie; Godot's "meerdere nieuwe nodes" wil drie verschillende.
+       */
+      minDelen?: number;
     }
   | {
       /** "Aanwezig" als een bestandspad hierop matcht (mappenstructuur-check). */
