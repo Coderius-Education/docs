@@ -14,6 +14,7 @@
     { "id": "2d-control", "onderwerp": "2d", "concept": "Control", "1": "basis", "3": "basis", "4": "basis", "groep": "Nodes", "bloom": "onthouden", "les": "meer-levels-en-menu/start_menu" },
     { "id": "2d-startscherm", "onderwerp": "2d", "concept": "Startscherm", "1": "basis", "3": "basis", "4": "basis", "groep": "Nodes", "bloom": "onthouden", "les": "meer-levels-en-menu/start_menu" },
     { "id": "2d-nieuwe-nodes", "onderwerp": "2d", "concept": "zelf ontdekken en toepassen van nieuwe nodes", "1": "gevorderd", "3": "basis", "4": "basis", "groep": "Zelf ontdekken", "bloom": "creëren", "les": "meer-leren" },
+    { "id": "2d-nieuwe-nodes-meer", "onderwerp": "2d", "concept": "zelf ontdekken en toepassen van meerdere nieuwe nodes (drie soorten of meer)", "1": null, "3": "gevorderd", "4": "gevorderd", "groep": "Zelf ontdekken", "bloom": "creëren", "les": "meer-leren" },
     { "id": "gd-snelheid", "onderwerp": "gdscript", "concept": "snelheid veranderen", "1": "basis", "3": "basis", "4": "basis", "groep": "Je game eigen maken", "bloom": "toepassen", "les": "bewegingsscript/krachten" },
     { "id": "gd-sprongkracht", "onderwerp": "gdscript", "concept": "sprongkracht veranderen", "1": "basis", "3": "basis", "4": "basis", "groep": "Je game eigen maken", "bloom": "toepassen", "les": "bewegingsscript/afsluiter" },
     { "id": "gd-keybindings", "onderwerp": "gdscript", "concept": "keybindings hernoemen", "1": "basis", "3": "basis", "4": "basis", "groep": "Je game eigen maken", "bloom": "toepassen", "les": "bewegingsscript/afsluiter" },

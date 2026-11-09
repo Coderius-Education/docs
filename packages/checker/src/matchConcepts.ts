@@ -164,9 +164,10 @@ export function analyze(
         );
       }
     }
+    const genoegDelen = gevonden.size >= (c.detect.minDelen ?? 0);
     const match: ConceptMatch = metPlekken
-      ? { id: c.id, count, used: count >= minimum, plekken }
-      : { id: c.id, count, used: count >= minimum };
+      ? { id: c.id, count, used: count >= minimum && genoegDelen, plekken }
+      : { id: c.id, count, used: count >= minimum && genoegDelen };
     return metDelen(match);
   };
 

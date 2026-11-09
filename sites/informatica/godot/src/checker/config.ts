@@ -133,6 +133,16 @@ const DETECTIE: Record<string, ConceptDetect> = {
     pattern: new RegExp(`\\[node [^\\]]*type="(?!(?:${BEKENDE_NODES.join('|')})")\\w+"`, 'g'),
     in: ['tscn'],
   },
+  // Dezelfde nodes, maar dan drie verschillende soorten: op niveau 3 en 4 is
+  // één nieuwe node de basis, en meer ontdekken gevorderd. Drie keer een
+  // Marker2D is één soort; daarom minDelen en niet minCount.
+  '2d-nieuwe-nodes-meer': {
+    type: 'regex',
+    pattern: new RegExp(`\\[node [^\\]]*type="(?!(?:${BEKENDE_NODES.join('|')})")(\\w+)"`, 'g'),
+    in: ['tscn'],
+    delen: true,
+    minDelen: 3,
+  },
 
   // --- GDScript: je game eigen maken ---
   // De negatieve lookahead is het hele punt: `SPEED = 300.0` telt niet mee,

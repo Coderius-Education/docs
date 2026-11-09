@@ -229,6 +229,18 @@ describe('validateCheckerConfig — tracks en minCount', () => {
     expect(problemen).toContain("Concept 'c' heeft een minCount die geen geheel getal ≥ 1 is.");
   });
 
+  it('klaagt over een minDelen zonder delen, of die geen geheel getal ≥ 1 is', () => {
+    expect(metConcept(concept('basis', { type: 'regex', pattern: /x/g, minDelen: 3 }))).toContain(
+      "Concept 'c' heeft minDelen zonder delen.",
+    );
+    expect(
+      metConcept(concept('basis', { type: 'regex', pattern: /(x)/g, delen: true, minDelen: 0 })),
+    ).toContain("Concept 'c' heeft een minDelen die geen geheel getal ≥ 1 is.");
+    expect(
+      metConcept(concept('basis', { type: 'regex', pattern: /(x)/g, delen: true, minDelen: 3 })),
+    ).toEqual([]);
+  });
+
   it('laat handmatige concepten met rust', () => {
     expect(metConcept(concept('basis', { type: 'handmatig' }))).toEqual([]);
   });

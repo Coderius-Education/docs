@@ -129,6 +129,7 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         // Het bouwt met de nodes die de cursus aanleert, dus er is niets
         // zelf ontdekt.
         '2d-nieuwe-nodes',
+        '2d-nieuwe-nodes-meer',
         // Zijn enige eigen functies, reset() en spawn_muntje(), staan zo in
         // hoofdstuk 7 en 8: overgetypt, niet zelf opgeknipt.
         'gd-modulaire-functies',
@@ -178,6 +179,9 @@ describe('godotConfig — voorbeeldprojecten scoren', () => {
         // nergens gebruikt. Eén voorkomen haalt de drempel niet, en dat is de
         // bedoeling: de tabel vraagt om nuttig gebruik, niet om aanwezigheid.
         'gd-lijsten',
+        // AudioStreamPlayer2D en PathFollow2D zijn twee soorten; meer
+        // ontdekken vraagt er drie.
+        '2d-nieuwe-nodes-meer',
         // Deze game heeft geen menu, geen tweede level en geen signals.
         'gd-signal',
         'gd-volgend-level',
@@ -211,6 +215,16 @@ describe('godotConfig — de leerdoelen', () => {
       ['2D', 'Control', B, B, B],
       ['2D', 'Startscherm', B, B, B],
       ['2D', 'zelf ontdekken en toepassen van nieuwe nodes', G, B, B],
+      // Niet van het blad: op niveau 3 en 4 had 2D geen gevorderd concept,
+      // dus telde 2D daar niet mee voor gevorderd. De docent voegde deze rij
+      // toe (november 2026); op niveau 1 hoort hij er niet bij.
+      [
+        '2D',
+        'zelf ontdekken en toepassen van meerdere nieuwe nodes (drie soorten of meer)',
+        null,
+        G,
+        G,
+      ],
       ['GDScript', 'snelheid veranderen', B, B, B],
       ['GDScript', 'sprongkracht veranderen', B, B, B],
       ['GDScript', 'keybindings hernoemen', B, B, B],
@@ -466,8 +480,34 @@ describe('godotConfig — patronen die er net naast zitten', () => {
     expect(perId.get('2d-button')).toBe(false);
     expect(perId.get('2d-control')).toBe(true);
     // Drie nodes die de cursus niet aanleert: precies wat "zelf ontdekken"
-    // hoort te zien.
+    // hoort te zien, en drie soorten, dus ook "meerdere".
     expect(perId.get('2d-nieuwe-nodes')).toBe(true);
+    expect(perId.get('2d-nieuwe-nodes-meer')).toBe(true);
+  });
+
+  it('telt bij meerdere nieuwe nodes soorten, geen nodes', () => {
+    const meer = (...soorten: string[]) =>
+      score(
+        analyze(
+          files(
+            Object.fromEntries(
+              soorten.map((soort, i) => [
+                `scene${i}.tscn`,
+                `[node name="Iets${i}" type="${soort}"]`,
+              ]),
+            ),
+          ),
+          godotConfig,
+        ),
+        '2d-nieuwe-nodes-meer',
+      );
+    // Drie keer een Marker2D is één soort: één nieuwe node, geen drie.
+    expect(meer('Marker2D', 'Marker2D', 'Marker2D').used).toBe(false);
+    expect(meer('Marker2D', 'Path2D').used).toBe(false);
+    // Drie soorten, ook verspreid over scènes, en een bekende node telt niet.
+    const drie = meer('Marker2D', 'Path2D', 'Timer', 'RayCast2D');
+    expect(drie.used).toBe(true);
+    expect(drie.delen).toEqual(['marker2d', 'path2d', 'raycast2d']);
   });
 
   it('ziet een startscherm alleen in een scène met een Control bovenaan', () => {
@@ -545,7 +585,7 @@ describe('godotConfig — patronen die er net naast zitten', () => {
     const nodes = [...godotConfig.concepts, ...(godotConfig.extra ?? [])].filter(
       (c) => c.subject === '2d',
     );
-    expect(nodes.length).toBe(14);
+    expect(nodes.length).toBe(15);
     for (const c of nodes) {
       expect(c.detect.type, `${c.id} hoort regex-detectie te hebben`).toBe('regex');
       if (c.detect.type === 'regex') {

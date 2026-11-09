@@ -338,6 +338,29 @@ describe('analyze — onderdelen en extra concepten', () => {
     expect(matchOf(report, 'lijsten')).toMatchObject({ used: true, count: 3, delen: ['li', 'ul'] });
   });
 
+  it('telt met minDelen verschillende onderdelen, niet treffers', () => {
+    // Drie keer dezelfde node is geen drie nieuwe nodes.
+    const detect = {
+      type: 'regex' as const,
+      pattern: /type="(\w+)"/g,
+      delen: true as const,
+      minDelen: 3,
+    };
+    const drieKeerHetzelfde = analyze(
+      projectFiles(file('a.html', 'html', 'type="Marker" type="Marker" type="Marker"')),
+      config([concept('nodes', detect)]),
+    );
+    expect(matchOf(drieKeerHetzelfde, 'nodes')).toMatchObject({ used: false, count: 3 });
+    const drieVerschillende = analyze(
+      projectFiles(
+        file('a.html', 'html', 'type="Marker" type="Timer"'),
+        file('b.html', 'html', 'type="Path"'),
+      ),
+      config([concept('nodes', detect)]),
+    );
+    expect(matchOf(drieVerschillende, 'nodes')).toMatchObject({ used: true, count: 3 });
+  });
+
   it('neemt met delen: true de eerste groep als onderdeel', () => {
     const files = projectFiles(file('a.css', 'css', 'p { color: red; }\nh1, h2 { margin: 0; }'));
     const report = analyze(

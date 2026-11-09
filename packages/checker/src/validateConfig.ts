@@ -148,6 +148,15 @@ export function validateCheckerConfig(config: CheckerConfig): string[] {
       if (minCount !== undefined && (!Number.isInteger(minCount) || minCount < 1)) {
         problems.push(`Concept '${concept.id}' heeft een minCount die geen geheel getal ≥ 1 is.`);
       }
+      const { minDelen, delen } = concept.detect;
+      if (minDelen !== undefined && (!Number.isInteger(minDelen) || minDelen < 1)) {
+        problems.push(`Concept '${concept.id}' heeft een minDelen die geen geheel getal ≥ 1 is.`);
+      }
+      // Zonder delen verzamelt analyze() geen onderdelen, en haalt het
+      // concept minDelen nooit.
+      if (minDelen !== undefined && !delen) {
+        problems.push(`Concept '${concept.id}' heeft minDelen zonder delen.`);
+      }
     }
   }
 
