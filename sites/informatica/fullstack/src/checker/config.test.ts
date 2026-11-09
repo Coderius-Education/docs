@@ -425,7 +425,7 @@ describe('fullstackConfig — de leerdoelen', () => {
       ['if else in python of jinja2 template', G, G],
       ['Registreren: een account opslaan', G, B],
       ['gebruiker laten inloggen', G, G],
-      ['Inloggen: een wachtwoord controleren', E, G],
+      ['Inloggen: een wachtwoord controleren', G, G],
       ['path parameters', E, G],
       ['htmx', E, G],
       ['Cookies', E, G],
@@ -512,8 +512,9 @@ describe('fullstackConfig — de leerdoelen', () => {
   it('geeft een toelichting als een les net zo heet als een andere rij', () => {
     // "gebruiker laten inloggen" en "Inloggen: een wachtwoord controleren"
     // leer je allebei in de les met die tweede naam. Zonder toelichting stond
-    // er op niveau 1 bij gevorderd "Leer het in: Inloggen: een wachtwoord
-    // controleren" en bij expert dezelfde tekst als concept.
+    // er bij de ene rij "Leer het in: Inloggen: een wachtwoord controleren"
+    // en bij de andere dezelfde tekst als concept, op niveau 1 en 2 allebei
+    // onder gevorderd.
     const docs = fileURLToPath(new URL('../../docs/', import.meta.url));
     const titel = (les: string) => {
       const pad = ['.mdx', '.md'].map((e) => join(docs, les + e)).find((p) => existsSync(p));
@@ -571,7 +572,7 @@ describe('fullstackConfig — de leerdoelen', () => {
     const telling = (route: string, m: string) =>
       fullstackConfig.concepts.filter((c) => inTrack(c, route) && levelVoor(c, route) === m).length;
     expect([telling('1', 'basis'), telling('1', 'gevorderd'), telling('1', 'expert')]).toEqual([
-      11, 6, 7,
+      11, 7, 6,
     ]);
     expect([telling('2', 'basis'), telling('2', 'gevorderd'), telling('2', 'expert')]).toEqual([
       16, 8, 0,

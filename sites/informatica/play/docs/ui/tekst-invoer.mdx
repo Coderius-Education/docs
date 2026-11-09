@@ -19,7 +19,7 @@ veld = play.new_text_input(placeholder="Typ je naam en druk op Enter")
 
 @veld.when_submit
 def naam_ingevuld(naam):
-    welkom.words = "Welkom, " + naam`} height={300} />
+    welkom.words = f"Welkom, {naam}"`} height={300} />
 
 <CodeUitleg>
 
@@ -31,7 +31,7 @@ veld = play.new_text_input(placeholder="Typ je naam en druk op Enter")
 
 @veld.when_submit
 def naam_ingevuld(naam):
-    welkom.words = "Welkom, " + naam
+    welkom.words = f"Welkom, {naam}"
 ```
 
 <Regel n={4}>
@@ -65,7 +65,7 @@ veld = play.new_text_input(placeholder="Typ maar iets")
 
 @veld.when_changed
 def getypt(tekst):
-    teller.words = str(len(tekst)) + " letters"`} height={300} />
+    teller.words = f"{len(tekst)} letters"`} height={300} />
 
 De huidige inhoud kun je altijd uitlezen met `veld.value`, en leegmaken doe je met `veld.value = ""`.
 

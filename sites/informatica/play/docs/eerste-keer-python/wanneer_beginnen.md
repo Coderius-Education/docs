@@ -6,12 +6,13 @@ sidebar_position: 4
 
 Zodra je weet wat een variabele is. Met `mijn_cirkel = play.new_circle()` bewaar je een vorm onder een naam, en daar draait bijna alles in coderius-play om.
 
-Verder helpt het als je deze drie kent, maar ze zijn geen voorwaarde:
+Verder helpt het als je deze vier kent, maar ze zijn geen voorwaarde:
 
 | Wat | Waar je het tegenkomt |
 |---|---|
-| `if` en `else` | vanaf [4.3 De muis gebruiken](site:play/docs/gebeurtenissen/muis) |
-| `def` (een functie) | vanaf [4.1 Gebeurtenissen](site:play/docs/gebeurtenissen/toetsenbord) |
+| een f-string (`f"Score: {score}"`) | vanaf [3.1 Acties](site:play/docs/acties) |
+| `if` en `else` | vanaf [4.1 Gebeurtenissen](site:play/docs/gebeurtenissen/toetsenbord) |
+| `def` (een functie) | vanaf [2.3 Fysica-eigenschappen](site:play/docs/fysica/eigenschappen) |
 | lijsten | vanaf [7.3 Kiezen uit een lijst](site:play/docs/ui/kiezen) |
 
 Ken je ze nog niet? Dan kun je gewoon beginnen. Elke les die iets uit de python-cursus gebruikt, opent met een blok "Hier bouw je op verder" met een link naar de les waar het wordt uitgelegd.

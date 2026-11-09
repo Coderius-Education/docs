@@ -6,6 +6,7 @@ import { analyze } from '@coderius/checker/matchConcepts';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
 import { describe, expect, it } from 'vitest';
+import leerdoelenJson from '../leerdoelen.json';
 import { playConfig } from './config';
 
 // De play-nakijker is afgeleid van de hoofdstukken zelf, en dat is hier ook de
@@ -129,6 +130,114 @@ describe('play-nakijker', () => {
     ]) {
       expect(gevonden, id).toContain(id);
     }
+  });
+
+  it('neemt de niveaus uit leerdoelen.json: Niveau 1 en Niveau 2 als leerroute', () => {
+    expect(playConfig.tracks).toEqual([
+      { id: '1', label: 'Niveau 1' },
+      { id: '2', label: 'Niveau 2' },
+    ]);
+    const niveau = (id: string) => playConfig.concepts.find((c) => c.id === id)?.level;
+    // Hoofdstuk 1 tot en met 4 is op beide niveaus de basis; UI is op
+    // niveau 1 expert, en pygame-ce hoort pas bij niveau 2.
+    expect(niveau('play-circle')).toEqual({ '1': 'basis', '2': 'basis' });
+    expect(niveau('play-timer')).toEqual({ '1': 'gevorderd', '2': 'basis' });
+    expect(niveau('play-button')).toEqual({ '1': 'expert', '2': 'gevorderd' });
+    expect(niveau('pygame-import')).toEqual({ '1': null, '2': 'expert' });
+    // Op niveau 2 vraagt "gevorderd" bij Python een gevorderd concept. Was
+    // alleen de dictionary dat, dan haalde geen leerling zonder dictionary
+    // het; lijst en for-loop horen bij hoofdstuk 9, dat daar gevorderd is.
+    expect(niveau('py-lijst')).toEqual({ '1': 'gevorderd', '2': 'gevorderd' });
+    expect(niveau('py-for')).toEqual({ '1': 'gevorderd', '2': 'gevorderd' });
+    // Een beoordeling van vóór de niveaus opent op niveau 1.
+    expect(playConfig.zonderLeerroute).toBe('1');
+  });
+
+  it('herkent f-strings, elif/and/or en een dictionary in een lijst', () => {
+    const code = [
+      'import play',
+      '',
+      'score = 0',
+      'tekst = play.new_text(words=f"Score: {score}")',
+      '',
+      "levels = [{'snelheid': 100}, {'snelheid': 200}]",
+      '@play.when_key_pressed("up", "down")',
+      'def toets(key):',
+      '    if key == "up" and score < 10:',
+      '        tekst.y += 10',
+      '    elif key == "down":',
+      '        tekst.y -= 10',
+      '',
+    ].join('\n');
+    const rapport = analyze(bestanden({ 'main.py': code }), playConfig);
+    const gevonden = new Set(rapport.concepts.filter((m) => m.used).map((m) => m.id));
+    for (const id of ['py-fstring', 'py-elif-and-or', 'py-dict']) {
+      expect(gevonden, id).toContain(id);
+    }
+    const zonder = analyze(
+      bestanden({ 'main.py': 'def stap():\n    if a:\n        pass\n' }),
+      playConfig,
+    );
+    const nietGevonden = new Set(zonder.concepts.filter((m) => m.used).map((m) => m.id));
+    for (const id of ['py-fstring', 'py-elif-and-or', 'py-dict']) {
+      expect(nietGevonden, id).not.toContain(id);
+    }
+  });
+
+  it('een functie die play een waarde geeft (def toets(key)), telt niet als eigen parameter', () => {
+    // Play leert geen eigen functie met parameters, alleen functies die bij
+    // een gebeurtenis een waarde van play meekrijgen. Een rij "functie met
+    // parameters" telde zo elk spel met pijltjestoetsen mee.
+    expect(playConfig.concepts.map((c) => c.id)).not.toContain('py-parameters');
+  });
+
+  it('elk concept staat in de code van een les die de leerdoelen ervoor noemen', () => {
+    // De leerdoelen noemen per concept de les waar je het leert. Klikken op
+    // een vorm wees naar 4.2, maar when_clicked staat in 4.1; de dictionary
+    // wees naar 9.1, maar herkende de lijst met dictionaries daar niet.
+    const pad = (id: string) => {
+      const [map, naam] = id.split('/');
+      for (const bestand of readdirSync(join(DOCS, map)))
+        if (bestand.replace(/^\d+_/, '').replace(/\.mdx?$/, '') === naam)
+          return join(DOCS, map, bestand);
+      return null;
+    };
+    // Alleen de hoofdtekst telt: een concept dat pas in een tip of oplossing
+    // staat (de f-string in 3.1), leer je daar niet.
+    const code = (tekst: string) =>
+      [
+        ...tekst
+          .replace(/<details>[\s\S]*?<\/details>/g, '')
+          .matchAll(/<PygbagRunner code=\{`([\s\S]*?)`\}/g),
+        ...tekst
+          .replace(/<details>[\s\S]*?<\/details>/g, '')
+          .matchAll(/```python[^\n]*\n([\s\S]*?)```/g),
+      ]
+        .map((m) => m[1])
+        .join('\n');
+    // Een concept dat een les bewust in een opdracht laat ontdekken, met de
+    // code pas in de oplossing.
+    const IN_EEN_OPDRACHT: Record<string, string> = {
+      'play-clicked': 'opdracht 4.1.c laat when_clicked in de cheatsheet opzoeken',
+    };
+    const fout: string[] = [];
+    for (const c of leerdoelenJson.concepten) {
+      if (IN_EEN_OPDRACHT[c.id]) continue;
+      const detect = playConfig.concepts.find((x) => x.id === c.id)?.detect;
+      if (detect?.type !== 'regex') continue;
+      const lessen = (Array.isArray(c.les) ? c.les : [c.les]).filter((l) => !l.startsWith('site:'));
+      const gevonden = lessen.some((l) => {
+        const p = pad(l);
+        return (
+          p !== null &&
+          new RegExp(detect.pattern.source, detect.pattern.flags).test(
+            code(readFileSync(p, 'utf8')),
+          )
+        );
+      });
+      if (!gevonden) fout.push(`${c.id}: ${lessen.join(', ')}`);
+    }
+    expect(fout).toEqual([]);
   });
 
   it('telt de niveaus zonder te struikelen over een leeg project', () => {

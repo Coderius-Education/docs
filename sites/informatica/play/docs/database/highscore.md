@@ -22,13 +22,13 @@ database = play.new_database()
 
 huidige_highscore = database.get_data('punten', 0)
 
-tekst = play.new_text(words="High score: " + str(huidige_highscore))
+tekst = play.new_text(words=f"High score: {huidige_highscore}")
 
 @play.when_key_pressed("space")
 def update_high_score():
     punten = database.get_data('punten', 0)
     database.set_data('punten', punten + 1)
-    tekst.words = "High score: " + str(database.get_data('punten'))
+    tekst.words = f"High score: {database.get_data('punten')}"
 ```
 
 <PygbagRunner code={`import play
@@ -37,13 +37,13 @@ database = play.new_database()
 
 huidige_highscore = database.get_data('punten', 0)
 
-tekst = play.new_text(words="High score: " + str(huidige_highscore))
+tekst = play.new_text(words=f"High score: {huidige_highscore}")
 
 @play.when_key_pressed("space")
 def update_high_score():
     punten = database.get_data('punten', 0)
     database.set_data('punten', punten + 1)
-    tekst.words = "High score: " + str(database.get_data('punten'))`} height={300} />
+    tekst.words = f"High score: {database.get_data('punten')}"`} height={300} />
 
 Elke keer dat je op spatie drukt, wordt de high score met 1 verhoogd en opgeslagen. Sluit het programma af en start het opnieuw. Je high score is bewaard.
 
@@ -127,25 +127,25 @@ database = play.new_database()
 score = 0
 highscore = database.get_data('highscore', 0)
 
-score_tekst = play.new_text(words="Score: " + str(score), y=100)
-highscore_tekst = play.new_text(words="High score: " + str(highscore), y=-100)
+score_tekst = play.new_text(words=f"Score: {score}", y=100)
+highscore_tekst = play.new_text(words=f"High score: {highscore}", y=-100)
 
 @play.when_key_pressed("space")
 def punt():
     global score, highscore
     score = score + 1
-    score_tekst.words = "Score: " + str(score)
+    score_tekst.words = f"Score: {score}"
 
     if score > highscore:
         highscore = score
         database.set_data('highscore', highscore)
-        highscore_tekst.words = "High score: " + str(highscore)
+        highscore_tekst.words = f"High score: {highscore}"
 
 @play.when_key_pressed("r")
 def reset():
     global score
     score = 0
-    score_tekst.words = "Score: " + str(score)
+    score_tekst.words = f"Score: {score}"
 ```
 
 <PygbagRunner code={`import play
@@ -155,24 +155,24 @@ database = play.new_database()
 score = 0
 highscore = database.get_data('highscore', 0)
 
-score_tekst = play.new_text(words="Score: " + str(score), y=100)
-highscore_tekst = play.new_text(words="High score: " + str(highscore), y=-100)
+score_tekst = play.new_text(words=f"Score: {score}", y=100)
+highscore_tekst = play.new_text(words=f"High score: {highscore}", y=-100)
 
 @play.when_key_pressed("space")
 def punt():
     global score, highscore
     score = score + 1
-    score_tekst.words = "Score: " + str(score)
+    score_tekst.words = f"Score: {score}"
 
     if score > highscore:
         highscore = score
         database.set_data('highscore', highscore)
-        highscore_tekst.words = "High score: " + str(highscore)
+        highscore_tekst.words = f"High score: {highscore}"
 
 @play.when_key_pressed("r")
 def reset():
     global score
     score = 0
-    score_tekst.words = "Score: " + str(score)`} height={300} />
+    score_tekst.words = f"Score: {score}"`} height={300} />
 
 </details>

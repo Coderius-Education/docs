@@ -21,7 +21,7 @@ tekst = play.new_text(words="Beweeg je muis!")
 
 @play.repeat_forever
 def update():
-    tekst.words = "x=" + str(play.mouse.x) + " y=" + str(play.mouse.y)`} height={300} />
+    tekst.words = f"x={play.mouse.x} y={play.mouse.y}"`} height={300} />
 
 - `play.mouse.x` geeft de x-positie van de muis
 - `play.mouse.y` geeft de y-positie van de muis
@@ -93,7 +93,7 @@ tekst = play.new_text(words="", y=250)
 def update():
     cirkel.x = play.mouse.x
     cirkel.y = play.mouse.y
-    tekst.words = "x=" + str(play.mouse.x) + " y=" + str(play.mouse.y)`} height={300} />
+    tekst.words = f"x={play.mouse.x} y={play.mouse.y}"`} height={300} />
 
 </details>
 

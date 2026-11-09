@@ -1,16 +1,20 @@
-import type { CheckerConfig } from '@coderius/checker/types';
+import { leerdoelenNaarConfig } from '@coderius/checker/leerdoelen';
+import type { CheckerConfig, ConceptDetect } from '@coderius/checker/types';
 import { storageKey } from '@coderius/shared/opslag';
+import leerdoelenJson from '../leerdoelen.json';
 
-// Conceptenlijst voor de play-nakijker, één op één afgeleid van de hoofdstukken
-// van deze cursus: 1 Vormen tot en met 9 Levels, met pygame-ce (10) als
-// verdieping. Elk concept is een API-aanroep die in de lesstof voorkomt, dus
-// regex-detectie op de Python-broncode is betrouwbaar — anders dan bij robotica
-// hoeft hier niets handmatig, want alles wat de leerling maakt staat in de code.
+// De nakijker voor play-projecten. Wélke concepten tellen en op welk niveau
+// staat in `src/leerdoelen.json`, met Niveau 1 en Niveau 2 als leerroute; hier
+// staat alleen hóé je elk concept in de bestanden terugvindt (DETECTIE). Elk
+// concept is een aanroep of een stukje Python uit de lesstof, dus regex op de
+// broncode is betrouwbaar: anders dan bij robotica hoeft niets handmatig,
+// want alles wat de leerling maakt staat in de code.
 //
-// Het niveau volgt de leerlijn: wat in de eerste zes hoofdstukken staat is
-// basis, wat daarna komt (UI, media, levels, pygame-ce) is gevorderd. Zo ziet
-// een docent in één oogopslag of een project alleen de basis raakt of verder
-// gaat.
+// De groepen heten naar de hoofdstukken (1 Vormen tot en met 10 Pygame-ce),
+// de Python-concepten naar hun onderwerp. Niveau 1 vraagt de basis van de
+// hoofdstukken 1 tot en met 4; 5 en 6 zijn daar gevorderd, en 7 tot en met 9
+// expert. Op niveau 2 is alles uit 1 tot en met 6 basis, 7 tot en met 9
+// gevorderd en pygame-ce expert.
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp']);
 const AUDIO_EXT = new Set(['.mp3', '.wav', '.ogg']);
@@ -38,11 +42,73 @@ function py(pattern: RegExp, minCount?: number) {
   return { type: 'regex' as const, pattern, in: ['py'], ...(minCount ? { minCount } : {}) };
 }
 
+const DETECTIE: Record<string, ConceptDetect> = {
+  // Aan het begin van een regel, anders telt `color="red"` in een aanroep
+  // ook mee en heeft élk programma dit concept.
+  'py-variabele': py(/^[ \t]*\w+\s*=\s*[^=\n]/gm),
+  // Een f-string met een waarde erin: f"Score: {score}".
+  'py-fstring': py(/\bf["'][^"'\n]*\{/g),
+  'py-vergelijken': py(/[=!<>]=|(?<!<)>(?!=)|(?<!>)<(?!=)/g),
+  'py-if': py(/(?<!\w)if\s+.+:/g),
+  // elif aan het begin van een regel, of and/or in een if of while.
+  'py-elif-and-or': py(/^\s*elif\b|^\s*(if|elif|while)\b[^\n]*\b(and|or)\b/gm),
+  'py-functie': py(/^\s*(async\s+)?def\s+\w+/gm),
+  'py-global': py(/^\s*global\s+\w+/gm),
+  'py-lijst': py(/=\s*\[|\.append\s*\(/g),
+  'py-for': py(/^\s*for\s+\w+\s+in\b/gm),
+  // Ook een dictionary in een lijst, zoals 9.1 hem leert:
+  // levels = [{'snelheid': 100}, …]; daar staat geen = { voor.
+  'py-dict': py(/=\s*\{|\{\s*['"][^'"\n]*['"]\s*:|\.get\s*\(\s*['"]/g),
+  'py-import-extra': py(/^\s*(import|from)\s+(?!play\b)\w+/gm),
+  'play-circle': py(/\bplay\.new_circle\s*\(/g),
+  'play-box': py(/\bplay\.new_box\s*\(/g),
+  'play-text': py(/\bplay\.new_text\s*\(/g),
+  'play-image': py(/\bplay\.new_image\s*\(/g),
+  'play-backdrop': py(/\bplay\.set_backdrop\w*\s*\(/g),
+  'play-vorm-aanpassen': py(/\b\w+\.(color|radius|words|size|angle|transparency|x|y)\s*=/g),
+  'play-physics': py(/\.start_physics\s*\(/g),
+  'play-physics-type': py(/\b(can_move|obeys_gravity|stable)\s*=/g),
+  'play-physics-eigenschap': py(/\b(bounciness|mass|sensor)\s*=/g),
+  'play-clone': py(/\.clone\s*\(/g),
+  'play-hide-show': py(/\.(hide|show)\s*\(/g),
+  'play-random': py(/\bplay\.random_\w+\s*\(/g),
+  'play-distance': py(/\.distance_to\s*\(/g),
+  'play-key': py(/@play\.(when|while)_(any_)?key_\w+/g),
+  'play-mouse': py(/@play\.(when|while)_mouse\w*|\bplay\.mouse\b/g),
+  'play-clicked': py(/@\w+\.when_clicked\b/g),
+  'play-touching': py(/@\w+\.when(_stopped)?_touching\w*/g),
+  'play-wall': py(/when_touching_wall|WallSide/g),
+  'play-timer': py(/await\s+play\.timer\s*\(/g),
+  'play-repeat': py(/@play\.repeat_forever\b/g),
+  'play-database': py(/\bplay\.new_database\s*\(/g),
+  'play-data': py(/\.(set|get)_data\s*\(/g),
+  'play-database-bestand': { type: 'path', pattern: /(^|\/)database\.json$/i },
+  'play-button': py(/\bplay\.new_button\s*\(/g),
+  'play-slider': py(/\bplay\.new_(slider|checkbox)\s*\(/g),
+  'play-keuze': py(/\bplay\.new_(dropdown|radio_group|radio_button)\s*\(/g),
+  'play-input': py(/\bplay\.new_text_input\s*\(/g),
+  'play-progress': py(/\bplay\.new_(progress_bar|tooltip)\s*\(/g),
+  'play-sound': py(/\bplay\.new_sound\s*\(/g),
+  'play-sound-bestand': { type: 'path', pattern: /\.(mp3|wav|ogg)$/i },
+  'play-video': py(/\bplay\.new_video\s*\(/g),
+  'play-level-instellingen': py(/\b(levels?|niveaus?)\s*=\s*[[{]/gi),
+  'play-level-opruimen': py(/\.remove\s*\(\s*\)/g),
+  'play-level-bouwen': py(/^\s*def\s+\w*(level|scherm|niveau)\w*\s*\(/gim),
+  'pygame-import': py(/^\s*import\s+pygame\b/gm),
+  'pygame-loop': py(/pygame\.display\.(flip|update)\s*\(/g),
+  pymunk: py(/^\s*import\s+pymunk\b/gm),
+};
+
+const uitLeerdoelen = leerdoelenNaarConfig(leerdoelenJson, DETECTIE);
+
 export const playConfig: CheckerConfig = {
-  subjects: [
-    { id: 'python', label: 'Basis-Python' },
-    { id: 'play', label: 'coderius-play' },
-  ],
+  subjects: uitLeerdoelen.subjects,
+  tracks: uitLeerdoelen.tracks,
+  concepts: uitLeerdoelen.concepts,
+  leerdoelen: uitLeerdoelen.leerdoelen,
+  // Een beoordeling van vóór de niveaus heeft geen leerroute. Hoofdstuk 1
+  // tot en met 6 had toen dezelfde moeilijkheden als niveau 1 nu.
+  zonderLeerroute: '1',
 
   fileKinds: [
     { id: 'py', label: 'Python' },
@@ -65,398 +131,4 @@ export const playConfig: CheckerConfig = {
   pdfFilename: (d) => `Beoordeling play-project - ${todayStamp(d)}.pdf`,
   privacyNote:
     'Let op: je bestanden gaan nooit naar een server. Alles gebeurt in je eigen browser.',
-
-  concepts: [
-    // ── Basis-Python ────────────────────────────────────────────────────────
-    {
-      id: 'py-variabele',
-      subject: 'python',
-      group: 'Basis',
-      label: 'een variabele gebruiken',
-      level: 'basis',
-      // Aan het begin van een regel, anders telt `color="red"` in een
-      // aanroep ook mee en heeft élk programma dit concept.
-      detect: py(/^[ \t]*\w+\s*=\s*[^=\n]/gm),
-    },
-    {
-      id: 'py-if',
-      subject: 'python',
-      group: 'Basis',
-      label: 'if / else',
-      level: 'basis',
-      detect: py(/(?<!\w)if\s+.+:/g),
-    },
-    {
-      id: 'py-vergelijken',
-      subject: 'python',
-      group: 'Basis',
-      label: 'vergelijken (==, <, >)',
-      level: 'basis',
-      detect: py(/[=!<>]=|(?<!<)>(?!=)|(?<!>)<(?!=)/g),
-    },
-    {
-      id: 'py-functie',
-      subject: 'python',
-      group: 'Basis',
-      label: 'een eigen functie (def)',
-      level: 'basis',
-      detect: py(/^\s*(async\s+)?def\s+\w+/gm),
-    },
-    {
-      id: 'py-global',
-      subject: 'python',
-      group: 'Basis',
-      label: 'global',
-      level: 'basis',
-      detect: py(/^\s*global\s+\w+/gm),
-    },
-    {
-      id: 'py-lijst',
-      subject: 'python',
-      group: 'Verder',
-      label: 'een lijst',
-      level: 'gevorderd',
-      detect: py(/=\s*\[|\.append\s*\(/g),
-    },
-    {
-      id: 'py-dict',
-      subject: 'python',
-      group: 'Verder',
-      label: 'een dictionary',
-      level: 'gevorderd',
-      detect: py(/=\s*\{|\.get\s*\(\s*['"]/g),
-    },
-    {
-      id: 'py-for',
-      subject: 'python',
-      group: 'Verder',
-      label: 'een for-loop',
-      level: 'gevorderd',
-      detect: py(/^\s*for\s+\w+\s+in\b/gm),
-    },
-    {
-      id: 'py-import-extra',
-      subject: 'python',
-      group: 'Verder',
-      label: 'een tweede module importeren',
-      level: 'gevorderd',
-      detect: py(/^\s*(import|from)\s+(?!play\b)\w+/gm),
-    },
-
-    // ── 1 Vormen ────────────────────────────────────────────────────────────
-    {
-      id: 'play-circle',
-      subject: 'play',
-      group: '1 Vormen',
-      label: 'play.new_circle',
-      level: 'basis',
-      detect: py(/\bplay\.new_circle\s*\(/g),
-    },
-    {
-      id: 'play-box',
-      subject: 'play',
-      group: '1 Vormen',
-      label: 'play.new_box',
-      level: 'basis',
-      detect: py(/\bplay\.new_box\s*\(/g),
-    },
-    {
-      id: 'play-text',
-      subject: 'play',
-      group: '1 Vormen',
-      label: 'play.new_text',
-      level: 'basis',
-      detect: py(/\bplay\.new_text\s*\(/g),
-    },
-    {
-      id: 'play-image',
-      subject: 'play',
-      group: '1 Vormen',
-      label: 'play.new_image',
-      level: 'basis',
-      detect: py(/\bplay\.new_image\s*\(/g),
-    },
-    {
-      id: 'play-backdrop',
-      subject: 'play',
-      group: '1 Vormen',
-      label: 'de achtergrond aanpassen',
-      level: 'basis',
-      detect: py(/\bplay\.set_backdrop\w*\s*\(/g),
-    },
-    {
-      id: 'play-vorm-aanpassen',
-      subject: 'play',
-      group: '1 Vormen',
-      label: 'een vorm aanpassen na het maken',
-      level: 'basis',
-      detect: py(/\b\w+\.(color|radius|words|size|angle|transparency|x|y)\s*=/g),
-    },
-
-    // ── 2 Fysica ────────────────────────────────────────────────────────────
-    {
-      id: 'play-physics',
-      subject: 'play',
-      group: '2 Fysica',
-      label: 'start_physics',
-      level: 'basis',
-      detect: py(/\.start_physics\s*\(/g),
-    },
-    {
-      id: 'play-physics-type',
-      subject: 'play',
-      group: '2 Fysica',
-      label: 'bewust een fysica-type kiezen',
-      level: 'gevorderd',
-      detect: py(/\b(can_move|obeys_gravity|stable)\s*=/g),
-    },
-    {
-      id: 'play-physics-eigenschap',
-      subject: 'play',
-      group: '2 Fysica',
-      label: 'bounciness, mass of sensor',
-      level: 'gevorderd',
-      detect: py(/\b(bounciness|mass|sensor)\s*=/g),
-    },
-
-    // ── 3 Acties ────────────────────────────────────────────────────────────
-    {
-      id: 'play-clone',
-      subject: 'play',
-      group: '3 Acties',
-      label: 'clone()',
-      level: 'gevorderd',
-      detect: py(/\.clone\s*\(/g),
-    },
-    {
-      id: 'play-hide-show',
-      subject: 'play',
-      group: '3 Acties',
-      label: 'hide() of show()',
-      level: 'basis',
-      detect: py(/\.(hide|show)\s*\(/g),
-    },
-    {
-      id: 'play-random',
-      subject: 'play',
-      group: '3 Acties',
-      label: 'iets willekeurigs',
-      level: 'basis',
-      detect: py(/\bplay\.random_\w+\s*\(/g),
-    },
-    {
-      id: 'play-distance',
-      subject: 'play',
-      group: '3 Acties',
-      label: 'distance_to()',
-      level: 'gevorderd',
-      detect: py(/\.distance_to\s*\(/g),
-    },
-
-    // ── 4 Gebeurtenissen ────────────────────────────────────────────────────
-    {
-      id: 'play-key',
-      subject: 'play',
-      group: '4 Gebeurtenissen',
-      label: 'reageren op het toetsenbord',
-      level: 'basis',
-      detect: py(/@play\.(when|while)_(any_)?key_\w+/g),
-    },
-    {
-      id: 'play-mouse',
-      subject: 'play',
-      group: '4 Gebeurtenissen',
-      label: 'reageren op de muis',
-      level: 'basis',
-      detect: py(/@play\.(when|while)_mouse\w*|\bplay\.mouse\b/g),
-    },
-    {
-      id: 'play-clicked',
-      subject: 'play',
-      group: '4 Gebeurtenissen',
-      label: 'klikken op een vorm',
-      level: 'basis',
-      detect: py(/@\w+\.when_clicked\b/g),
-    },
-    {
-      id: 'play-touching',
-      subject: 'play',
-      group: '4 Gebeurtenissen',
-      label: 'botsingen tussen vormen',
-      level: 'gevorderd',
-      detect: py(/@\w+\.when(_stopped)?_touching\w*/g),
-    },
-    {
-      id: 'play-wall',
-      subject: 'play',
-      group: '4 Gebeurtenissen',
-      label: 'een muur raken',
-      level: 'gevorderd',
-      detect: py(/when_touching_wall|WallSide/g),
-    },
-
-    // ── 5 Tijd ──────────────────────────────────────────────────────────────
-    {
-      id: 'play-timer',
-      subject: 'play',
-      group: '5 Tijd',
-      label: 'await play.timer',
-      level: 'gevorderd',
-      detect: py(/await\s+play\.timer\s*\(/g),
-    },
-    {
-      id: 'play-repeat',
-      subject: 'play',
-      group: '5 Tijd',
-      label: 'repeat_forever',
-      level: 'gevorderd',
-      detect: py(/@play\.repeat_forever\b/g),
-    },
-
-    // ── 6 Opslaan ───────────────────────────────────────────────────────────
-    {
-      id: 'play-database',
-      subject: 'play',
-      group: '6 Opslaan',
-      label: 'een database aanmaken',
-      level: 'gevorderd',
-      detect: py(/\bplay\.new_database\s*\(/g),
-    },
-    {
-      id: 'play-data',
-      subject: 'play',
-      group: '6 Opslaan',
-      label: 'set_data en get_data',
-      level: 'gevorderd',
-      detect: py(/\.(set|get)_data\s*\(/g),
-    },
-    {
-      id: 'play-database-bestand',
-      subject: 'play',
-      group: '6 Opslaan',
-      label: 'er staat een database.json in het project',
-      level: 'gevorderd',
-      detect: { type: 'path', pattern: /(^|\/)database\.json$/i },
-    },
-
-    // ── 7 Knoppen en UI ─────────────────────────────────────────────────────
-    {
-      id: 'play-button',
-      subject: 'play',
-      group: '7 Knoppen en UI',
-      label: 'een knop',
-      level: 'gevorderd',
-      detect: py(/\bplay\.new_button\s*\(/g),
-    },
-    {
-      id: 'play-slider',
-      subject: 'play',
-      group: '7 Knoppen en UI',
-      label: 'een schuifbalk of vinkje',
-      level: 'gevorderd',
-      detect: py(/\bplay\.new_(slider|checkbox)\s*\(/g),
-    },
-    {
-      id: 'play-keuze',
-      subject: 'play',
-      group: '7 Knoppen en UI',
-      label: 'een uitklapmenu of keuzerondjes',
-      level: 'gevorderd',
-      detect: py(/\bplay\.new_(dropdown|radio_group|radio_button)\s*\(/g),
-    },
-    {
-      id: 'play-input',
-      subject: 'play',
-      group: '7 Knoppen en UI',
-      label: 'een invoerveld',
-      level: 'gevorderd',
-      detect: py(/\bplay\.new_text_input\s*\(/g),
-    },
-    {
-      id: 'play-progress',
-      subject: 'play',
-      group: '7 Knoppen en UI',
-      label: 'een voortgangsbalk of zweeftekst',
-      level: 'gevorderd',
-      detect: py(/\bplay\.new_(progress_bar|tooltip)\s*\(/g),
-    },
-
-    // ── 8 Geluid en video ───────────────────────────────────────────────────
-    {
-      id: 'play-sound',
-      subject: 'play',
-      group: '8 Geluid en video',
-      label: 'geluid afspelen',
-      level: 'gevorderd',
-      detect: py(/\bplay\.new_sound\s*\(/g),
-    },
-    {
-      id: 'play-sound-bestand',
-      subject: 'play',
-      group: '8 Geluid en video',
-      label: 'er zit een geluidsbestand bij',
-      level: 'gevorderd',
-      detect: { type: 'path', pattern: /\.(mp3|wav|ogg)$/i },
-    },
-    {
-      id: 'play-video',
-      subject: 'play',
-      group: '8 Geluid en video',
-      label: 'video afspelen',
-      level: 'gevorderd',
-      detect: py(/\bplay\.new_video\s*\(/g),
-    },
-
-    // ── 9 Levels ────────────────────────────────────────────────────────────
-    {
-      id: 'play-level-instellingen',
-      subject: 'play',
-      group: '9 Levels',
-      label: 'instellingen per level in een lijst',
-      level: 'gevorderd',
-      detect: py(/\b(levels?|niveaus?)\s*=\s*[[{]/gi),
-    },
-    {
-      id: 'play-level-opruimen',
-      subject: 'play',
-      group: '9 Levels',
-      label: 'een level opruimen met remove()',
-      level: 'gevorderd',
-      detect: py(/\.remove\s*\(\s*\)/g),
-    },
-    {
-      id: 'play-level-bouwen',
-      subject: 'play',
-      group: '9 Levels',
-      label: 'een functie die een level opbouwt',
-      level: 'gevorderd',
-      detect: py(/^\s*def\s+\w*(level|scherm|niveau)\w*\s*\(/gim),
-    },
-
-    // ── 10 Pygame-ce (verdieping) ───────────────────────────────────────────
-    {
-      id: 'pygame-import',
-      subject: 'play',
-      group: '10 Pygame-ce',
-      label: 'pygame-ce rechtstreeks gebruiken',
-      level: 'gevorderd',
-      detect: py(/^\s*import\s+pygame\b/gm),
-    },
-    {
-      id: 'pygame-loop',
-      subject: 'play',
-      group: '10 Pygame-ce',
-      label: 'een eigen game-loop',
-      level: 'gevorderd',
-      detect: py(/pygame\.display\.(flip|update)\s*\(/g),
-    },
-    {
-      id: 'pymunk',
-      subject: 'play',
-      group: '10 Pygame-ce',
-      label: 'fysica met pymunk',
-      level: 'gevorderd',
-      detect: py(/^\s*import\s+pymunk\b/gm),
-    },
-  ],
 };

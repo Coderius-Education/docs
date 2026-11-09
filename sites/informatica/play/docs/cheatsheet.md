@@ -349,6 +349,21 @@ tekst = play.new_text(words="Hello world", y=200, font_size=50)
 </details>
 
 <details>
+  <summary>Hoe zet ik een getal in een tekst? (f-string)</summary>
+
+Zet een `f` voor de aanhalingstekens en de variabele tussen accolades. Python zet de waarde op die plek.
+
+<PygbagRunner code={`import play
+
+score = 3
+play.new_text(words=f"Score: {score}")
+`} height={350} />
+
+Uitleg: [Tekst en getallen combineren met f-strings](site:python/docs/tekst/04a-f-strings).
+
+</details>
+
+<details>
   <summary>Afbeelding (play.new_image)</summary>
 
 :::warning[Online speeltuin]
@@ -711,7 +726,7 @@ Met **play.random_number()** krijg je een willekeurig geheel getal:
 <PygbagRunner code={`import play
 
 getal = play.random_number(1, 10)
-play.new_text(words="Getal: " + str(getal))
+play.new_text(words=f"Getal: {getal}")
 `} height={350} />
 
 </details>
@@ -906,7 +921,7 @@ feedback_tekst = play.new_text(words="", y=0)
 
 @play.when_any_key_pressed
 def handel_toets_af(key):
-    feedback_tekst.words = "Je drukte op: " + key
+    feedback_tekst.words = f"Je drukte op: {key}"
 `} height={350} />
 </details>
 
@@ -923,7 +938,7 @@ feedback_tekst = play.new_text(words="", y=0)
 
 @play.when_any_key_released
 def toets_wordt_losgelaten(key):
-    feedback_tekst.words = "Je liet los: " + key
+    feedback_tekst.words = f"Je liet los: {key}"
 `} height={350} />
 </details>
 
@@ -1035,7 +1050,7 @@ def muis_geklikt():
         circle.color = "red"
     else:
         circle.color = "blue"
-    print("Muis geklikt! De cirkel is nu " + str(circle.color))
+    print(f"Muis geklikt! De cirkel is nu {circle.color}")
 `} height={350} />
 </details>
 
@@ -1056,7 +1071,7 @@ def muis_geklikt():
         circle.color = "red"
     else:
         circle.color = "blue"
-    print("Muis geklikt! De cirkel is nu " + str(circle.color))
+    print(f"Muis geklikt! De cirkel is nu {circle.color}")
 `} height={350} />
 </details>
 

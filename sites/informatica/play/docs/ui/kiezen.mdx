@@ -56,7 +56,7 @@ play.new_radio_button(label="Moeilijk", value="moeilijk", group=groep, y=-80)
 
 @groep.when_changed
 def niveau_gekozen(waarde):
-    tekst.words = "Niveau: " + waarde`} height={360} />
+    tekst.words = f"Niveau: {waarde}"`} height={360} />
 
 Let op: `when_changed` zet je op de **groep**, niet op een los rondje. De waarde die je meekrijgt is de `value` van het rondje dat aan ging, en `groep.selected_value` geeft die waarde op elk moment.
 
