@@ -158,6 +158,31 @@ describe('leesLeerdoelen', () => {
     ],
   };
 
+  it('leest gevorderdInGroepen en weigert een aantal dat niet kan', () => {
+    const metGroepen = {
+      ...goed,
+      concepten: [
+        { ...goed.concepten[0], groep: 'A' },
+        { ...goed.concepten[1], groep: 'B' },
+      ],
+    };
+    expect(
+      leesLeerdoelen({ ...metGroepen, gevorderdInGroepen: { 1: { gd: 2 } } }).gevorderdInGroepen,
+    ).toEqual({
+      1: { gd: 2 },
+    });
+    // Op niveau 3 is er maar één groep met een gevorderd concept (B, expert).
+    expect(() => leesLeerdoelen({ ...metGroepen, gevorderdInGroepen: { 3: { gd: 2 } } })).toThrow(
+      'maar 1 met een gevorderd concept',
+    );
+    expect(() => leesLeerdoelen({ ...metGroepen, gevorderdInGroepen: { 1: { gd: 1 } } })).toThrow(
+      '2 of meer',
+    );
+    expect(() => leesLeerdoelen({ ...metGroepen, gevorderdInGroepen: { 2: { gd: 2 } } })).toThrow(
+      "onbekend niveau '2'",
+    );
+  });
+
   it('kent vier niveaus, voor elke cursus dezelfde', () => {
     expect(NIVEAUS.map((n) => n.label)).toEqual(['Niveau 1', 'Niveau 2', 'Niveau 3', 'Niveau 4']);
   });
@@ -652,6 +677,25 @@ describe('moeilijkheidVoorstel: de vuistregels', () => {
       { label: 'Accounts', basis: t(0, 0), gevorderd: t(0, 3), expert: t(0, 0) },
     ];
     expect(moeilijkheidVoorstel(groepen).moeilijkheid).toBe('basis');
+  });
+
+  it('met gevorderdInGroepen vraagt gevorderd gevorderde concepten in meer groepen', () => {
+    const play = (gehaald: number) => [
+      { label: 'Python', basis: t(1, 5), gevorderd: t(1, 3), expert: t(0, 0) },
+      {
+        label: 'coderius-play',
+        basis: t(1, 10),
+        gevorderd: t(2, 11),
+        expert: t(0, 3),
+        gevorderdGroepen: { nodig: 2, gehaald },
+      },
+    ];
+    expect(moeilijkheidVoorstel(play(1))).toEqual({
+      moeilijkheid: 'basis',
+      reden:
+        'Bij elk onderwerp een concept op basis, maar bij coderius-play in 1 van de 2 groepen die nodig zijn een concept op gevorderd.',
+    });
+    expect(moeilijkheidVoorstel(play(2)).moeilijkheid).toBe('gevorderd');
   });
 
   it('gevorderd vraagt een gevorderd concept bij elk onderwerp', () => {

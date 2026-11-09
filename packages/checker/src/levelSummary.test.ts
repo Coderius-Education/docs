@@ -211,3 +211,43 @@ describe('voorstelOnderdelen', () => {
     );
   });
 });
+
+describe('voorstelOnderdelen met gevorderdInGroepen', () => {
+  it('telt in hoeveel groepen een gevorderd concept is toegepast', () => {
+    const metGroep = (id: string, group: string, level: Concept['level']): Concept => ({
+      ...concept(id, 'play', level),
+      group,
+    });
+    const cfg = {
+      ...config(
+        [
+          metGroep('basis', '1 Vormen', 'basis'),
+          { ...concept('lijst', 'python', 'gevorderd'), group: 'Lijsten' },
+          metGroep('knop', '7 UI', 'gevorderd'),
+          metGroep('slider', '7 UI', 'gevorderd'),
+          metGroep('level', '9 Levels', 'gevorderd'),
+        ],
+        ['play', 'python'],
+      ),
+      leerdoelen: {
+        niveaus: [],
+        onderwerpen: [],
+        concepten: [],
+        gevorderdInGroepen: { '2': { play: 2 } },
+      },
+    };
+    const play = (used: Record<string, boolean>, track: string | null) =>
+      voorstelOnderdelen(report(used), cfg, track).find((s) => s.subject === 'play');
+    // Twee elementen uit dezelfde groep zijn één groep.
+    expect(play({ knop: true, slider: true }, '2')?.gevorderdGroepen).toEqual({
+      nodig: 2,
+      gehaald: 1,
+    });
+    expect(play({ knop: true, level: true }, '2')?.gevorderdGroepen).toEqual({
+      nodig: 2,
+      gehaald: 2,
+    });
+    // Op een ander niveau geldt de regel niet.
+    expect(play({ knop: true }, '1')?.gevorderdGroepen).toBeUndefined();
+  });
+});

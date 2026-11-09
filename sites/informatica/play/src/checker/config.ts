@@ -17,8 +17,9 @@ import leerdoelenJson from '../leerdoelen.json';
 // levels gevorderd; geluid en video, het
 // bestand database.json en pygame-ce tellen daar niet mee, dus niveau 1 heeft
 // geen expert. Op niveau 2 is alles uit 1 tot en met 6 basis, 7 tot en met 9
-// gevorderd en pygame-ce expert. De precieze indeling staat in
-// src/leerdoelen.json.
+// gevorderd en pygame-ce expert, en vraagt gevorderd een gevorderd concept in
+// twee van die hoofdstukken (gevorderdInGroepen), niet in één zoals op niveau
+// 1. De precieze indeling staat in src/leerdoelen.json.
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp']);
 const AUDIO_EXT = new Set(['.mp3', '.wav', '.ogg']);
@@ -114,9 +115,15 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'play-level-instellingen': py(/\b(levels?|niveaus?)\s*=\s*[[{]/gi),
   'play-level-opruimen': py(/\.remove\s*\(\s*\)/g),
   'play-level-bouwen': py(/^\s*def\s+\w*(level|scherm|niveau)\w*\s*\(/gim),
-  'pygame-import': py(/^\s*import\s+pygame\b/gm),
+  // Expert vraagt echt gebruik, niet alleen een import: `import pygame`
+  // bovenaan een play-project gaf eerst al expert, ook als er verder niets
+  // met pygame gebeurde. Een aanroep uit een module die de lessen van
+  // hoofdstuk 10 gebruiken telt wel, net als een pymunk-object.
+  'pygame-import': py(
+    /\bpygame\.(?:display|draw|event|key|mouse|time|image|font|mixer|sprite|transform|Rect|Surface)\b/g,
+  ),
   'pygame-loop': py(/pygame\.display\.(flip|update)\s*\(/g),
-  pymunk: py(/^\s*import\s+pymunk\b/gm),
+  pymunk: py(/\bpymunk\.(?:Space|Body|Circle|Poly|Segment)\s*\(/g),
 };
 
 const uitLeerdoelen = leerdoelenNaarConfig(leerdoelenJson, DETECTIE);

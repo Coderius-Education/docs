@@ -2,10 +2,11 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inTrack, levelVoor } from '@coderius/checker/conceptLevel';
-import { computeLevelSummary } from '@coderius/checker/levelSummary';
+import { computeLevelSummary, voorstelOnderdelen } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
+import { moeilijkheidVoorstel } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
 import leerdoelenJson from '../leerdoelen.json';
 import { playConfig } from './config';
@@ -198,6 +199,65 @@ describe('play-nakijker', () => {
     expect(niveau('py-for')).toEqual({ '1': 'gevorderd', '2': 'gevorderd' });
     // Een beoordeling van vóór de niveaus opent op niveau 1.
     expect(playConfig.zonderLeerroute).toBe('1');
+  });
+
+  it('geeft expert pas bij echt gebruik van pygame-ce of pymunk, niet bij een import', () => {
+    const gebruikt = (code: string) =>
+      new Set(
+        analyze(bestanden({ 'main.py': code }), playConfig)
+          .concepts.filter((c) => c.used)
+          .map((c) => c.id),
+      );
+    // Een import alleen gaf eerst al expert, ook in een gewoon play-project.
+    const alleenImport = gebruikt('import play\nimport pygame\nimport pymunk\n');
+    expect(alleenImport).not.toContain('pygame-import');
+    expect(alleenImport).not.toContain('pymunk');
+    const echt = gebruikt(
+      [
+        'import pygame',
+        'import pymunk',
+        'scherm = pygame.display.set_mode((400, 300))',
+        'ruimte = pymunk.Space()',
+        'lichaam = pymunk.Body(1, 10)',
+      ].join('\n'),
+    );
+    expect(echt).toContain('pygame-import');
+    expect(echt).toContain('pymunk');
+  });
+
+  it('vraagt op niveau 2 voor gevorderd een gevorderd concept in twee hoofdstukken', () => {
+    const voorstel = (code: string, niveau: string) =>
+      moeilijkheidVoorstel(
+        voorstelOnderdelen(analyze(bestanden({ 'main.py': code }), playConfig), playConfig, niveau),
+      ).moeilijkheid;
+    const basis = [
+      'import play',
+      'cirkel = play.new_circle(color="red", radius=30)',
+      'naam = "Sam"',
+      'tekst = play.new_text(words=f"Hoi {naam}")',
+      '',
+      '@play.when_key_pressed("up")',
+      'def omhoog(key):',
+      '    if cirkel.y < 200:',
+      '        cirkel.y += 10',
+      '    else:',
+      '        cirkel.y = 0',
+      '',
+      'vormen = []',
+      'for i in range(3):',
+      '    vormen.append(play.new_box(x=i * 50))',
+    ];
+    const knop = 'knop = play.new_button(text="Start")';
+    const level = ['levels = [{"snelheid": 1}, {"snelheid": 2}]', 'def bouw_level():', '    pass'];
+    // Een knop en een lijst zijn op niveau 1 al gevorderd, maar op niveau 2
+    // is een knop alleen één hoofdstuk (7) van de twee die nodig zijn.
+    const metKnop = [...basis, knop].join('\n');
+    const metKnopEnLevels = [...basis, knop, ...level].join('\n');
+    expect(voorstel(metKnop, '2')).toBe('basis');
+    expect(voorstel(metKnopEnLevels, '2')).toBe('gevorderd');
+    // Op niveau 1 blijft één hoofdstuk genoeg.
+    expect(voorstel([...basis, ...level].join('\n'), '1')).toBe('gevorderd');
+    expect(leerdoelenJson.gevorderdInGroepen).toEqual({ '2': { play: 2 } });
   });
 
   it('herkent f-strings, elif/and/or en een dictionary in een lijst', () => {

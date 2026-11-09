@@ -1,6 +1,7 @@
 {
   "niveaus": ["1", "2"],
   "onderwerpen": [{ "id": "python", "label": "Python" }, { "id": "play", "label": "coderius-play" }],
+  "gevorderdInGroepen": { "2": { "play": 2 } },
   "concepten": [
     { "id": "py-variabele", "onderwerp": "python", "concept": "een variabele gebruiken", "1": "basis", "2": "basis", "groep": "Variabelen en tekst", "les": ["vormen/vorm_aanpassen", "site:python/docs/basis/jij-als-variabele"] },
     { "id": "py-fstring", "onderwerp": "python", "concept": "een getal in tekst zetten met een f-string", "1": "basis", "2": "basis", "groep": "Variabelen en tekst", "les": ["acties/random", "site:python/docs/tekst/04a-f-strings"] },
