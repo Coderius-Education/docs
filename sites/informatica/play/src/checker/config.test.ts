@@ -6,6 +6,7 @@ import { analyze } from '@coderius/checker/matchConcepts';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
 import { describe, expect, it } from 'vitest';
+import leerdoelenJson from '../leerdoelen.json';
 import { playConfig } from './config';
 
 // De play-nakijker is afgeleid van de hoofdstukken zelf, en dat is hier ook de
@@ -143,17 +144,23 @@ describe('play-nakijker', () => {
     expect(niveau('play-timer')).toEqual({ '1': 'gevorderd', '2': 'basis' });
     expect(niveau('play-button')).toEqual({ '1': 'expert', '2': 'gevorderd' });
     expect(niveau('pygame-import')).toEqual({ '1': null, '2': 'expert' });
+    // Op niveau 2 vraagt "gevorderd" bij Python een gevorderd concept. Was
+    // alleen de dictionary dat, dan haalde geen leerling zonder dictionary
+    // het; lijst en for-loop horen bij hoofdstuk 9, dat daar gevorderd is.
+    expect(niveau('py-lijst')).toEqual({ '1': 'gevorderd', '2': 'gevorderd' });
+    expect(niveau('py-for')).toEqual({ '1': 'gevorderd', '2': 'gevorderd' });
     // Een beoordeling van vóór de niveaus opent op niveau 1.
     expect(playConfig.zonderLeerroute).toBe('1');
   });
 
-  it('herkent f-strings, elif/and/or en parameters', () => {
+  it('herkent f-strings, elif/and/or en een dictionary in een lijst', () => {
     const code = [
       'import play',
       '',
       'score = 0',
       'tekst = play.new_text(words=f"Score: {score}")',
       '',
+      "levels = [{'snelheid': 100}, {'snelheid': 200}]",
       '@play.when_key_pressed("up", "down")',
       'def toets(key):',
       '    if key == "up" and score < 10:',
@@ -164,7 +171,7 @@ describe('play-nakijker', () => {
     ].join('\n');
     const rapport = analyze(bestanden({ 'main.py': code }), playConfig);
     const gevonden = new Set(rapport.concepts.filter((m) => m.used).map((m) => m.id));
-    for (const id of ['py-fstring', 'py-elif-and-or', 'py-parameters']) {
+    for (const id of ['py-fstring', 'py-elif-and-or', 'py-dict']) {
       expect(gevonden, id).toContain(id);
     }
     const zonder = analyze(
@@ -172,9 +179,53 @@ describe('play-nakijker', () => {
       playConfig,
     );
     const nietGevonden = new Set(zonder.concepts.filter((m) => m.used).map((m) => m.id));
-    for (const id of ['py-fstring', 'py-elif-and-or', 'py-parameters']) {
+    for (const id of ['py-fstring', 'py-elif-and-or', 'py-dict']) {
       expect(nietGevonden, id).not.toContain(id);
     }
+  });
+
+  it('een functie die play een waarde geeft (def toets(key)), telt niet als eigen parameter', () => {
+    // Play leert geen eigen functie met parameters, alleen functies die bij
+    // een gebeurtenis een waarde van play meekrijgen. Een rij "functie met
+    // parameters" telde zo elk spel met pijltjestoetsen mee.
+    expect(playConfig.concepts.map((c) => c.id)).not.toContain('py-parameters');
+  });
+
+  it('elk concept staat in de code van een les die de leerdoelen ervoor noemen', () => {
+    // De leerdoelen noemen per concept de les waar je het leert. Klikken op
+    // een vorm wees naar 4.2, maar when_clicked staat in 4.1; de dictionary
+    // wees naar 9.1, maar herkende de lijst met dictionaries daar niet.
+    const pad = (id: string) => {
+      const [map, naam] = id.split('/');
+      for (const bestand of readdirSync(join(DOCS, map)))
+        if (bestand.replace(/^\d+_/, '').replace(/\.mdx?$/, '') === naam)
+          return join(DOCS, map, bestand);
+      return null;
+    };
+    const code = (tekst: string) =>
+      [
+        ...tekst.matchAll(/<PygbagRunner code=\{`([\s\S]*?)`\}/g),
+        ...tekst.matchAll(/```python[^\n]*\n([\s\S]*?)```/g),
+      ]
+        .map((m) => m[1])
+        .join('\n');
+    const fout: string[] = [];
+    for (const c of leerdoelenJson.concepten) {
+      const detect = playConfig.concepts.find((x) => x.id === c.id)?.detect;
+      if (detect?.type !== 'regex') continue;
+      const lessen = (Array.isArray(c.les) ? c.les : [c.les]).filter((l) => !l.startsWith('site:'));
+      const gevonden = lessen.some((l) => {
+        const p = pad(l);
+        return (
+          p !== null &&
+          new RegExp(detect.pattern.source, detect.pattern.flags).test(
+            code(readFileSync(p, 'utf8')),
+          )
+        );
+      });
+      if (!gevonden) fout.push(`${c.id}: ${lessen.join(', ')}`);
+    }
+    expect(fout).toEqual([]);
   });
 
   it('telt de niveaus zonder te struikelen over een leeg project', () => {

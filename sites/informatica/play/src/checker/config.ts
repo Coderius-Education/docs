@@ -53,12 +53,12 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // elif aan het begin van een regel, of and/or in een if of while.
   'py-elif-and-or': py(/^\s*elif\b|^\s*(if|elif|while)\b[^\n]*\b(and|or)\b/gm),
   'py-functie': py(/^\s*(async\s+)?def\s+\w+/gm),
-  // Een def met minstens één parameter; ook def toets(key): telt.
-  'py-parameters': py(/^\s*(async\s+)?def\s+\w+\s*\(\s*[A-Za-z_]/gm),
   'py-global': py(/^\s*global\s+\w+/gm),
   'py-lijst': py(/=\s*\[|\.append\s*\(/g),
   'py-for': py(/^\s*for\s+\w+\s+in\b/gm),
-  'py-dict': py(/=\s*\{|\.get\s*\(\s*['"]/g),
+  // Ook een dictionary in een lijst, zoals 9.1 hem leert:
+  // levels = [{'snelheid': 100}, …]; daar staat geen = { voor.
+  'py-dict': py(/=\s*\{|\{\s*['"][^'"\n]*['"]\s*:|\.get\s*\(\s*['"]/g),
   'py-import-extra': py(/^\s*(import|from)\s+(?!play\b)\w+/gm),
   'play-circle': py(/\bplay\.new_circle\s*\(/g),
   'play-box': py(/\bplay\.new_box\s*\(/g),
