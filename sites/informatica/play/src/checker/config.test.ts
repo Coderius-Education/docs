@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { inTrack, levelVoor } from '@coderius/checker/conceptLevel';
 import { computeLevelSummary } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { ProjectFiles } from '@coderius/checker/types';
@@ -99,7 +100,19 @@ describe('play-nakijker', () => {
     expect(gevonden).not.toContain('play-button');
   });
 
-  it('herkent een project met levels, UI en geluid als gevorderd', () => {
+  it('telt voor een startmenu met UI elk element, en noemt welk', () => {
+    const menu = (code: string) =>
+      analyze(bestanden({ 'main.py': `import play\n${code}` }), playConfig).concepts.find(
+        (c) => c.id === 'play-menu-ui',
+      );
+    expect(menu('knop = play.new_button(text="Start")')?.used).toBe(true);
+    expect(menu('s = play.new_slider()\nv = play.new_checkbox()')?.delen).toEqual([
+      'schuifbalk of vinkje',
+    ]);
+    expect(menu('t = play.new_text(words="Start")')?.used).toBe(false);
+  });
+
+  it('herkent levels, UI en geluid in een project', () => {
     const code = [
       'import play',
       '',
@@ -138,12 +151,46 @@ describe('play-nakijker', () => {
       { id: '2', label: 'Niveau 2' },
     ]);
     const niveau = (id: string) => playConfig.concepts.find((c) => c.id === id)?.level;
-    // Hoofdstuk 1 tot en met 4 is op beide niveaus de basis; UI is op
-    // niveau 1 expert, en pygame-ce hoort pas bij niveau 2.
+    // Hoofdstuk 1 tot en met 4 is op beide niveaus de basis, en pygame-ce
+    // hoort pas bij niveau 2.
     expect(niveau('play-circle')).toEqual({ '1': 'basis', '2': 'basis' });
     expect(niveau('play-timer')).toEqual({ '1': 'gevorderd', '2': 'basis' });
-    expect(niveau('play-button')).toEqual({ '1': 'expert', '2': 'gevorderd' });
     expect(niveau('pygame-import')).toEqual({ '1': null, '2': 'expert' });
+    // Niveau 1 zoals de docent het in november 2026 indeelde: botsingen, een
+    // muur en repeat_forever zijn basis; UI en levels gevorderd (eerst
+    // expert); geluid, video en het databasebestand tellen niet mee. Zo heeft
+    // niveau 1 geen expert meer. Gemeten zoals de nakijker telt: met inTrack
+    // en levelVoor.
+    const concept = (id: string) => {
+      const c = playConfig.concepts.find((x) => x.id === id);
+      if (!c) throw new Error(`concept '${id}' bestaat niet in playConfig`);
+      return c;
+    };
+    const opNiveau1 = (id: string) =>
+      inTrack(concept(id), '1') ? levelVoor(concept(id), '1') : null;
+    for (const id of ['play-touching', 'play-wall', 'play-repeat']) {
+      expect(opNiveau1(id), id).toBe('basis');
+    }
+    for (const id of ['play-level-instellingen', 'play-level-opruimen', 'play-level-bouwen']) {
+      expect(opNiveau1(id), id).toBe('gevorderd');
+      expect(levelVoor(concept(id), '2'), id).toBe('gevorderd');
+    }
+    // UI: op niveau 1 is een startmenu met iets van UI gevorderd, welk element
+    // ook; niet elk element apart. Op niveau 2 telt elk element apart.
+    expect(opNiveau1('play-menu-ui')).toBe('gevorderd');
+    expect(inTrack(concept('play-menu-ui'), '2')).toBe(false);
+    for (const id of ['play-button', 'play-slider', 'play-keuze', 'play-input', 'play-progress']) {
+      expect(opNiveau1(id), id).toBeNull();
+      expect(levelVoor(concept(id), '2'), id).toBe('gevorderd');
+    }
+    for (const id of ['play-database-bestand', 'play-sound', 'play-sound-bestand', 'play-video']) {
+      expect(opNiveau1(id), id).toBeNull();
+      expect(inTrack(concept(id), '2'), id).toBe(true);
+    }
+    const niveau1 = playConfig.concepts
+      .filter((c) => inTrack(c, '1'))
+      .map((c) => levelVoor(c, '1'));
+    expect(niveau1).not.toContain('expert');
     // Op niveau 2 vraagt "gevorderd" bij Python een gevorderd concept. Was
     // alleen de dictionary dat, dan haalde geen leerling zonder dictionary
     // het; lijst en for-loop horen bij hoofdstuk 9, dat daar gevorderd is.
