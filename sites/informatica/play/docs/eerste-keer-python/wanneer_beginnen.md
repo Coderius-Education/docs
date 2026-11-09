@@ -10,7 +10,7 @@ Verder helpt het als je deze vier kent, maar ze zijn geen voorwaarde:
 
 | Wat | Waar je het tegenkomt |
 |---|---|
-| een f-string (`f"Score: {score}"`) | vanaf [3.1 Acties](site:play/docs/acties/acties) |
+| een f-string (`f"Score: {score}"`) | vanaf [3.1 Acties](site:play/docs/acties) |
 | `if` en `else` | vanaf [4.1 Gebeurtenissen](site:play/docs/gebeurtenissen/toetsenbord) |
 | `def` (een functie) | vanaf [2.3 Fysica-eigenschappen](site:play/docs/fysica/eigenschappen) |
 | lijsten | vanaf [7.3 Kiezen uit een lijst](site:play/docs/ui/kiezen) |

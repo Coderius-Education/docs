@@ -62,7 +62,10 @@ describe('Wanneer kan ik beginnen?', () => {
     const fout: string[] = [];
     for (const { rij, code } of CONCEPTEN) {
       const regel = regels.find((r) => r.startsWith('|') && rij.test(r));
-      const les = regel?.match(/site:play\/docs\/([\w-]+\/[\w-]+)/)?.[1];
+      // Een les die heet als zijn map (acties/acties) is het adres van de map:
+      // site:play/docs/acties. Een link naar acties/acties brak de build.
+      const pad = regel?.match(/site:play\/docs\/([\w/-]+)/)?.[1];
+      const les = pad && (pad.includes('/') ? pad : `${pad}/${pad}`);
       if (!regel || !les) {
         fout.push(`geen rij voor ${rij}`);
         continue;
