@@ -100,6 +100,18 @@ describe('play-nakijker', () => {
     expect(gevonden).not.toContain('play-button');
   });
 
+  it('telt voor een startmenu met UI elk element, en noemt welk', () => {
+    const menu = (code: string) =>
+      analyze(bestanden({ 'main.py': `import play\n${code}` }), playConfig).concepts.find(
+        (c) => c.id === 'play-menu-ui',
+      );
+    expect(menu('knop = play.new_button(text="Start")')?.used).toBe(true);
+    expect(menu('s = play.new_slider()\nv = play.new_checkbox()')?.delen).toEqual([
+      'schuifbalk of vinkje',
+    ]);
+    expect(menu('t = play.new_text(words="Start")')?.used).toBe(false);
+  });
+
   it('herkent levels, UI en geluid in een project', () => {
     const code = [
       'import play',
@@ -159,17 +171,16 @@ describe('play-nakijker', () => {
     for (const id of ['play-touching', 'play-wall', 'play-repeat']) {
       expect(opNiveau1(id), id).toBe('basis');
     }
-    for (const id of [
-      'play-button',
-      'play-slider',
-      'play-keuze',
-      'play-input',
-      'play-progress',
-      'play-level-instellingen',
-      'play-level-opruimen',
-      'play-level-bouwen',
-    ]) {
+    for (const id of ['play-level-instellingen', 'play-level-opruimen', 'play-level-bouwen']) {
       expect(opNiveau1(id), id).toBe('gevorderd');
+      expect(levelVoor(concept(id), '2'), id).toBe('gevorderd');
+    }
+    // UI: op niveau 1 is een startmenu met iets van UI gevorderd, welk element
+    // ook; niet elk element apart. Op niveau 2 telt elk element apart.
+    expect(opNiveau1('play-menu-ui')).toBe('gevorderd');
+    expect(inTrack(concept('play-menu-ui'), '2')).toBe(false);
+    for (const id of ['play-button', 'play-slider', 'play-keuze', 'play-input', 'play-progress']) {
+      expect(opNiveau1(id), id).toBeNull();
       expect(levelVoor(concept(id), '2'), id).toBe('gevorderd');
     }
     for (const id of ['play-database-bestand', 'play-sound', 'play-sound-bestand', 'play-video']) {

@@ -13,7 +13,8 @@ import leerdoelenJson from '../leerdoelen.json';
 // De groepen heten naar de hoofdstukken (1 Vormen tot en met 10 Pygame-ce),
 // de Python-concepten naar hun onderwerp. Op niveau 1 zijn de hoofdstukken 1
 // tot en met 4 basis (clone, distance_to en de fysica-instellingen
-// gevorderd), en tijd, opslaan, UI en levels gevorderd; geluid en video, het
+// gevorderd), en tijd, opslaan, een startmenu met iets van UI (één rij) en
+// levels gevorderd; geluid en video, het
 // bestand database.json en pygame-ce tellen daar niet mee, dus niveau 1 heeft
 // geen expert. Op niveau 2 is alles uit 1 tot en met 6 basis, 7 tot en met 9
 // gevorderd en pygame-ce expert. De precieze indeling staat in
@@ -86,6 +87,22 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'play-database': py(/\bplay\.new_database\s*\(/g),
   'play-data': py(/\.(set|get)_data\s*\(/g),
   'play-database-bestand': { type: 'path', pattern: /(^|\/)database\.json$/i },
+  // Niveau 1: een startmenu met iets van UI, welk element maakt niet uit. Of
+  // het echt een startmenu is, ziet een regex niet; het rapport noemt welke
+  // elementen erin zitten. Op niveau 2 telt elk element apart.
+  'play-menu-ui': {
+    type: 'regex',
+    pattern:
+      /\bplay\.new_(?:(?<d0>button)|(?<d1>slider|checkbox)|(?<d2>dropdown|radio_group|radio_button)|(?<d3>text_input)|(?<d4>progress_bar|tooltip))\s*\(/g,
+    in: ['py'],
+    delen: [
+      'knop',
+      'schuifbalk of vinkje',
+      'uitklapmenu of keuzerondjes',
+      'invoerveld',
+      'voortgangsbalk of zweeftekst',
+    ],
+  },
   'play-button': py(/\bplay\.new_button\s*\(/g),
   'play-slider': py(/\bplay\.new_(slider|checkbox)\s*\(/g),
   'play-keuze': py(/\bplay\.new_(dropdown|radio_group|radio_button)\s*\(/g),
