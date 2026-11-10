@@ -374,24 +374,87 @@ function kolommenVoorOnderwerp(leerdoelen, niveau, rijen) {
 }
 
 /**
- * Voor de vergelijking: per niveau het niveau ervoor waarvan de moeilijkheid
- * van dit concept verschilt, of null. Een niveau waar het concept niet bij
- * hoort (null) slaat hij over: "gevorderd, –, gevorderd" is geen verschil,
- * en het streepje zelf ook niet.
+ * Hoe een concept verandert van het ene niveau naar het volgende:
+ * 'moeilijker' (basis wordt gevorderd), 'makkelijker', 'nieuw' (hoorde er
+ * eerst niet bij), 'weg' (hoort er niet meer bij) of null (gelijk). Een
+ * tentamen-niveau heeft geen moeilijkheid; geef dat hier niet mee.
  *
  * @param {{niveau: Record<string, string | null>}} concept
- * @param {{id: string}[]} niveaus in de volgorde van de kolommen
- * @returns {Record<string, string | null>} per niveau-id het id van het vorige niveau
+ * @param {string} van niveau-id
+ * @param {string} naar niveau-id
+ * @returns {'moeilijker' | 'makkelijker' | 'nieuw' | 'weg' | null}
  */
-function andersDan(concept, niveaus) {
-  const uit = {};
-  let vorige = null;
-  for (const n of niveaus) {
-    const m = concept.niveau[n.id];
-    uit[n.id] = m !== null && vorige !== null && m !== concept.niveau[vorige] ? vorige : null;
-    if (m !== null) vorige = n.id;
-  }
-  return uit;
+function overgang(concept, van, naar) {
+  const a = concept.niveau[van] ?? null;
+  const b = concept.niveau[naar] ?? null;
+  if (a === b) return null;
+  if (a === null) return 'nieuw';
+  if (b === null) return 'weg';
+  return CONCEPT_MOEILIJKHEDEN.indexOf(b) > CONCEPT_MOEILIJKHEDEN.indexOf(a)
+    ? 'moeilijker'
+    : 'makkelijker';
+}
+
+/**
+ * Per overgang tussen twee opeenvolgende niveaus (zonder het tentamen) de
+ * concepten die veranderen, gegroepeerd naar wat ze worden: erbij (hoorde er
+ * eerst niet bij), nu basis, nu gevorderd, nu expert, of valt af. Zo zegt de
+ * vergelijking bovenaan wáár de niveaus verschillen, in plaats van dat je het
+ * in een tabel vol gelijke rijen moet zoeken. "Makkelijker" zou misleiden: een
+ * concept dat op een hoger niveau basis wordt, verwacht je juist van iedereen.
+ *
+ * @param {object} leerdoelen uit leesLeerdoelen
+ * @returns {{van: object, naar: object, aantal: number, groepen: {soort: string, concepten: {concept: object, was: string | null, eerder: {niveau: object, moeilijkheid: string} | null}[]}[]}[]}
+ */
+function verschillen(leerdoelen) {
+  const niveaus = projectNiveaus(leerdoelen);
+  const SOORTEN = ['erbij', ...CONCEPT_MOEILIJKHEDEN, 'valt-af'];
+  return niveaus.slice(1).map((naar, i) => {
+    const van = niveaus[i];
+    const per = Object.fromEntries(SOORTEN.map((s) => [s, []]));
+    for (const c of leerdoelen.concepten) {
+      const soort = overgang(c, van.id, naar.id);
+      if (!soort) continue;
+      const was = c.niveau[van.id] ?? null;
+      const wordt = c.niveau[naar.id] ?? null;
+      const groep = soort === 'nieuw' ? 'erbij' : soort === 'weg' ? 'valt-af' : wordt;
+      // Erbij, maar het stond al op een niveau eerder (robotica: continue op
+      // 1 en 4, niet op 3): dan is het "weer erbij", niet nieuw.
+      const eerdereNiveau =
+        soort === 'nieuw'
+          ? niveaus
+              .slice(0, i)
+              .reverse()
+              .find((v) => c.niveau[v.id] != null)
+          : undefined;
+      const eerder = eerdereNiveau
+        ? { niveau: eerdereNiveau, moeilijkheid: c.niveau[eerdereNiveau.id] }
+        : null;
+      per[groep].push({ concept: c, was, eerder });
+    }
+    const groepen = SOORTEN.filter((s) => per[s].length > 0).map((s) => ({
+      soort: s,
+      concepten: per[s],
+    }));
+    return { van, naar, aantal: groepen.reduce((n, g) => n + g.concepten.length, 0), groepen };
+  });
+}
+
+/**
+ * Voor de pagina van een niveau: hoeveel concepten anders zijn dan het niveau
+ * ervoor en op deze pagina staan, en hoeveel er afvallen (die staan er niet
+ * op). Eerst telde de pagina beide samen: fullstack niveau 3 zei 53, terwijl
+ * er 29 een labeltje hadden. Null bij het eerste niveau en bij het tentamen.
+ *
+ * @param {object} leerdoelen uit leesLeerdoelen
+ * @param {string} niveau
+ * @returns {{van: object, opPagina: number, afgevallen: number} | null}
+ */
+function verschilTelling(leerdoelen, niveau) {
+  const v = verschillen(leerdoelen).find((x) => x.naar.id === niveau);
+  if (!v) return null;
+  const afgevallen = v.groepen.find((g) => g.soort === 'valt-af')?.concepten.length ?? 0;
+  return { van: v.van, opPagina: v.aantal - afgevallen, afgevallen };
 }
 
 /**
@@ -555,7 +618,9 @@ module.exports = {
   projectNiveaus,
   onderwerpenOpNiveau,
   kolommenVoorOnderwerp,
-  andersDan,
+  overgang,
+  verschillen,
+  verschilTelling,
   BLOOM,
   NIVEAUS,
   CONCEPT_MOEILIJKHEDEN,

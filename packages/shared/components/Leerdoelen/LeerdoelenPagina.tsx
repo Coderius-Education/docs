@@ -8,6 +8,7 @@ import {
   type Leerdoelen,
   moeilijkhedenTekst,
   projectNiveaus,
+  verschillen,
 } from '../../leerdoelen';
 import { siteByUrl } from '../../sites';
 import Bloom from './Bloom';
@@ -30,6 +31,8 @@ export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoele
   // alle niveaus zo, dan is er geen project en geen cijfer volgens Bloom.
   const project = projectNiveaus(leerdoelen);
   const tentamen = leerdoelen.tentamen;
+  // Per niveau hoeveel concepten anders zijn dan het niveau ervoor.
+  const anders = new Map(verschillen(leerdoelen).map((v) => [v.naar.id, v]));
   return (
     <Layout
       title="Leerdoelen"
@@ -70,7 +73,11 @@ export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoele
             return (
               <li key={n.id}>
                 <Link to={`/leerdoelen/niveau-${n.id}`}>{n.label}</Link>
-                <span className={styles.toelichting}>{delen.join(', ')}</span>
+                <span className={styles.toelichting}>
+                  {delen.join(', ')}
+                  {anders.get(n.id) &&
+                    `; ${anders.get(n.id)?.aantal} anders dan ${anders.get(n.id)?.van.label}`}
+                </span>
               </li>
             );
           })}
@@ -79,8 +86,8 @@ export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoele
         {project.length > 1 && (
           <p>
             Een concept kan op het ene niveau basis zijn en op het andere gevorderd.{' '}
-            <Link to="/leerdoelen/vergelijken">Vergelijk de niveaus</Link> om de verschillen naast
-            elkaar te zien.
+            <Link to="/leerdoelen/vergelijken">Vergelijk de niveaus</Link>: daar staat per overgang
+            wat er verandert, en de niveaus naast elkaar.
           </p>
         )}
 

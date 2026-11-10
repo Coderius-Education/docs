@@ -6,7 +6,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   BLOOM,
   NIVEAUS,
-  andersDan,
   cijferKolommen,
   cijferTekst,
   cijferVoor,
@@ -16,8 +15,11 @@ import {
   moeilijkhedenTekst,
   moeilijkheidVoorstel,
   onderwerpenOpNiveau,
+  overgang,
   projectNiveaus,
   sjabloonZin,
+  verschilTelling,
+  verschillen,
 } from './leerdoelen';
 import { SITES, siteDir } from './sites';
 
@@ -555,37 +557,114 @@ describe('onderwerpenOpNiveau: wat op de pagina van een niveau staat', () => {
   });
 });
 
-describe('andersDan: wat in de vergelijking opvalt', () => {
-  const niveaus = [{ id: '1' }, { id: '3' }, { id: '4' }];
+describe('overgang en verschillen: waar de niveaus verschillen', () => {
   type M = 'basis' | 'gevorderd' | 'expert' | null;
-  const rij = (n1: M, n3: M, n4: M) => ({
-    niveau: { 1: n1, 3: n3, 4: n4 },
+  const rij = (n1: M, n3: M, n4: M) => ({ niveau: { 1: n1, 3: n3, 4: n4 } });
+
+  it('zegt per overgang wat er met een concept gebeurt', () => {
+    expect(overgang(rij('basis', 'gevorderd', null), '1', '3')).toBe('moeilijker');
+    expect(overgang(rij('gevorderd', 'basis', null), '1', '3')).toBe('makkelijker');
+    expect(overgang(rij(null, 'basis', null), '1', '3')).toBe('nieuw');
+    expect(overgang(rij('basis', null, null), '1', '3')).toBe('weg');
+    expect(overgang(rij('basis', 'basis', null), '1', '3')).toBeNull();
+    // Robotica: continue op niveau 1 en 4, niet op 3. Per overgang is dat
+    // twee keer een verschil; de cel van niveau 4 zegt "weer erbij".
+    expect(overgang(rij('gevorderd', null, 'gevorderd'), '3', '4')).toBe('nieuw');
   });
 
-  it('een andere moeilijkheid dan het niveau ervoor', () => {
-    expect(andersDan(rij('basis', 'gevorderd', 'gevorderd'), niveaus)).toEqual({
-      1: null,
-      3: '1',
-      4: null,
+  it('groepeert de verschillen naar wat een concept wordt, niet naar makkelijker', () => {
+    // Een concept dat op een hoger niveau basis wordt, verwacht je van iedereen:
+    // "makkelijker" zou misleiden. De groepen heten dus naar wat het wordt.
+    const l = leesLeerdoelen({
+      niveaus: ['1', '3', '4'],
+      onderwerpen: [{ id: 'gd', label: 'GDScript' }],
+      concepten: [
+        { id: 'a', onderwerp: 'gd', concept: 'a', 1: 'gevorderd', 3: 'basis', 4: 'basis' },
+        { id: 'b', onderwerp: 'gd', concept: 'b', 1: 'basis', 3: 'expert', 4: 'expert' },
+        { id: 'c', onderwerp: 'gd', concept: 'c', 1: null, 3: 'basis', 4: null },
+        { id: 'd', onderwerp: 'gd', concept: 'd', 1: 'basis', 3: 'basis', 4: 'basis' },
+      ],
     });
+    const v = verschillen(l).map((o) => ({
+      van: o.van.id,
+      naar: o.naar.id,
+      aantal: o.aantal,
+      groepen: o.groepen.map((g) => [g.soort, g.concepten.map((x) => `${x.concept.id}:${x.was}`)]),
+    }));
+    expect(v).toEqual([
+      {
+        van: '1',
+        naar: '3',
+        aantal: 3,
+        groepen: [
+          ['erbij', ['c:null']],
+          ['basis', ['a:gevorderd']],
+          ['expert', ['b:basis']],
+        ],
+      },
+      { van: '3', naar: '4', aantal: 1, groepen: [['valt-af', ['c:basis']]] },
+    ]);
   });
 
-  it('slaat een niveau zonder het concept over', () => {
-    // Robotica: continue is op niveau 1 en 4 gevorderd, en hoort niet bij
-    // niveau 3. Het streepje kreeg eerst een kader, en niveau 4 ook, als
-    // "anders dan Niveau 3", terwijl de moeilijkheid niet verandert.
-    expect(andersDan(rij('gevorderd', null, 'gevorderd'), niveaus)).toEqual({
-      1: null,
-      3: null,
-      4: null,
+  it('noemt een concept dat terugkomt weer erbij, met het niveau waar het eerder stond', () => {
+    // Robotica: continue op niveau 1 en 4, niet op 3. Op niveau 4 stond het
+    // onder "Erbij" en op de niveaupagina als "nieuw", alsof het er voor het
+    // eerst was; de tabel zei al "weer erbij".
+    const l = leesLeerdoelen({
+      niveaus: ['1', '3', '4'],
+      onderwerpen: [{ id: 'py', label: 'Python' }],
+      concepten: [
+        {
+          id: 'continue',
+          onderwerp: 'py',
+          concept: 'continue',
+          1: 'gevorderd',
+          3: null,
+          4: 'gevorderd',
+        },
+        { id: 'klasse', onderwerp: 'py', concept: 'klasse', 1: null, 3: null, 4: 'basis' },
+      ],
     });
-    // Lijst-methodes: basis, weg, gevorderd. Niveau 4 verschilt van niveau 1.
-    expect(andersDan(rij('basis', null, 'gevorderd'), niveaus)).toEqual({
-      1: null,
-      3: null,
-      4: '1',
+    const erbij = verschillen(l)[1].groepen.find((g) => g.soort === 'erbij');
+    expect(
+      erbij?.concepten.map((x) => [
+        x.concept.id,
+        x.eerder?.niveau.id ?? null,
+        x.eerder?.moeilijkheid ?? null,
+      ]),
+    ).toEqual([
+      ['continue', '1', 'gevorderd'],
+      ['klasse', null, null],
+    ]);
+  });
+
+  it('telt voor de pagina van een niveau apart wat erop staat en wat afvalt', () => {
+    // Fullstack niveau 3 zei "53 concepten anders", terwijl er 29 op de
+    // pagina een labeltje hadden: de 24 die afvallen staan er niet op.
+    const l = leesLeerdoelen({
+      niveaus: ['1', '3'],
+      onderwerpen: [{ id: 'py', label: 'Python' }],
+      concepten: [
+        { id: 'a', onderwerp: 'py', concept: 'a', 1: 'gevorderd', 3: 'basis' },
+        { id: 'b', onderwerp: 'py', concept: 'b', 1: 'basis', 3: null },
+        { id: 'c', onderwerp: 'py', concept: 'c', 1: 'basis', 3: null },
+        { id: 'd', onderwerp: 'py', concept: 'd', 1: 'basis', 3: 'basis' },
+      ],
     });
-    expect(andersDan(rij('basis', null, null), niveaus)).toEqual({ 1: null, 3: null, 4: null });
+    expect(verschilTelling(l, '3')).toMatchObject({ opPagina: 1, afgevallen: 2 });
+    expect(verschilTelling(l, '3')?.van.id).toBe('1');
+    expect(verschilTelling(l, '1')).toBeNull();
+    const fullstack = leesLeerdoelen(
+      JSON.parse(readFileSync(join(ROOT, siteDir('fullstack'), 'src', 'leerdoelen.json'), 'utf8')),
+    );
+    expect(verschilTelling(fullstack, '3')).toMatchObject({ opPagina: 29, afgevallen: 24 });
+  });
+
+  it('slaat het tentamen-niveau over', () => {
+    const algoritmes = leesLeerdoelen(
+      JSON.parse(readFileSync(join(ROOT, siteDir('algorithms'), 'src', 'leerdoelen.json'), 'utf8')),
+    );
+    expect(verschillen(algoritmes)).toEqual([]);
   });
 });
 

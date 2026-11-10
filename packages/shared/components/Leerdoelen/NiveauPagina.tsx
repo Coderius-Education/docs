@@ -1,7 +1,7 @@
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import type { ReactNode } from 'react';
-import { type Leerdoelen, heeftExpert } from '../../leerdoelen';
+import { type Leerdoelen, heeftExpert, verschilTelling } from '../../leerdoelen';
 import { useCursus } from './LeerdoelenPagina';
 import Niveau from './Niveau';
 import Tentamen from './Tentamen';
@@ -17,6 +17,9 @@ export default function NiveauPagina({
 }): ReactNode {
   const cursus = useCursus();
   const label = leerdoelen.niveaus.find((n) => n.id === niveau)?.label ?? niveau;
+  // Wat er anders is dan het niveau ervoor; bij het eerste niveau niets.
+  // Wat afvalt, staat niet op deze pagina en wordt apart geteld.
+  const telling = verschilTelling(leerdoelen, niveau);
   if (leerdoelen.tentamen?.niveau === niveau) {
     return (
       <Layout
@@ -50,6 +53,25 @@ export default function NiveauPagina({
           Op deze concepten beoordeelt je docent je project op {label}. De andere niveaus en hoe het
           cijfer tot stand komt, staan op het <Link to="/leerdoelen">overzicht</Link>.
         </p>
+        {telling && telling.opPagina + telling.afgevallen > 0 && (
+          <p>
+            {telling.opPagina > 0 && (
+              <>
+                Anders dan {telling.van.label}: {telling.opPagina}{' '}
+                {telling.opPagina === 1 ? 'concept' : 'concepten'} hieronder. Bij elk staat wat het
+                daar was, of dat het nieuw is.{' '}
+              </>
+            )}
+            {telling.afgevallen > 0 && (
+              <>
+                {telling.afgevallen} {telling.afgevallen === 1 ? 'concept' : 'concepten'} van{' '}
+                {telling.van.label} {telling.afgevallen === 1 ? 'hoort' : 'horen'} er niet meer bij.{' '}
+              </>
+            )}
+            <Link to="/leerdoelen/vergelijken">Vergelijk de niveaus</Link> om alle verschillen naast
+            elkaar te zien.
+          </p>
+        )}
         {heeftExpert(leerdoelen, niveau) && (
           <p>
             De concepten op expert zijn er vooral om te laten zien dat je meer kunt dan het

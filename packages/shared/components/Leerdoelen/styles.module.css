@@ -102,3 +102,98 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* De vergelijking: eerst per overgang wat er verandert, daarna de tabel. */
+.overgangen {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.overgang {
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-left: 4px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+}
+
+.overgangKop {
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.groepen {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.groep dt {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.groep dd {
+  margin: 0;
+}
+
+.aantal {
+  font-weight: normal;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.verschilLijst {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+/* "was basis", "nieuw": een klein labeltje met tekst, niet alleen een kleur. */
+.was {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0 0.4rem;
+  border-radius: 4px;
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.knoppen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Een compacte tabel: één regel per concept, de naam links. */
+.vergelijk td,
+.vergelijk th {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.vergelijk tbody th[scope="row"] {
+  font-weight: normal;
+}
+
+.vergelijk .onderwerp {
+  text-align: left;
+  background: var(--ifm-color-emphasis-200);
+}
+
+/* Een rij met een verschil: een streep links, zodat je hem ziet zonder te lezen. */
+.rijAnders th[scope="row"] {
+  box-shadow: inset 4px 0 0 var(--ifm-color-primary);
+}
+
+.celAnders {
+  background: var(--ifm-color-emphasis-100);
+}
+
+fieldset.knoppen {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}

@@ -1,5 +1,11 @@
 import type { ReactNode } from 'react';
-import { type Leerdoelen, kolommenVoorOnderwerp, onderwerpenOpNiveau } from '../../leerdoelen';
+import {
+  type Leerdoelen,
+  kolommenVoorOnderwerp,
+  moeilijkheid,
+  onderwerpenOpNiveau,
+  verschillen,
+} from '../../leerdoelen';
 import Lessen from './Lessen';
 import Moeilijkheid from './Moeilijkheid';
 import styles from './styles.module.css';
@@ -18,6 +24,26 @@ export default function Niveau({
   kop?: 'h2' | 'h3';
 }): ReactNode {
   const Kop = kop;
+  // Wat anders is dan het niveau ervoor (zonder tentamen) krijgt een
+  // labeltje, zodat je op deze pagina ziet wat er verandert. Een concept dat
+  // op een niveau nog eerder al stond, is "weer erbij", niet nieuw.
+  const verschil = verschillen(leerdoelen).find((v) => v.naar.id === niveau);
+  const labels = new Map<string, string>();
+  for (const { soort, concepten } of verschil?.groepen ?? []) {
+    for (const { concept, was, eerder } of concepten) {
+      const bij = (m: string, n: { label: string }) =>
+        `${moeilijkheid(m).label.toLowerCase()} op ${n.label}`;
+      if (soort === 'erbij') {
+        labels.set(
+          concept.id,
+          eerder ? `weer erbij, was ${bij(eerder.moeilijkheid, eerder.niveau)}` : 'nieuw',
+        );
+      } else if (soort !== 'valt-af' && was && verschil) {
+        labels.set(concept.id, `was ${bij(was, verschil.van)}`);
+      }
+    }
+  }
+  const notitie = (c: { id: string }) => labels.get(c.id) ?? null;
   return (
     <>
       {onderwerpenOpNiveau(leerdoelen, niveau).map(({ onderwerp, concepten: rijen }) => {
@@ -61,6 +87,7 @@ export default function Niveau({
                             .map((c) => (
                               <li key={c.id}>
                                 {c.concept}
+                                {notitie(c) && <span className={styles.was}>{notitie(c)}</span>}
                                 {c.toelichting && (
                                   <span className={styles.toelichting}>{c.toelichting}</span>
                                 )}
