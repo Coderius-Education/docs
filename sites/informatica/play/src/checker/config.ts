@@ -66,7 +66,10 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // Ook een dictionary in een lijst, zoals 9.1 hem leert:
   // levels = [{'snelheid': 100}, …]; daar staat geen = { voor.
   'py-dict': py(/=\s*\{|\{\s*['"][^'"\n]*['"]\s*:|\.get\s*\(\s*['"]/g),
-  'py-import-extra': py(/^\s*(import|from)\s+(?!play\b)\w+/gm),
+  // Een tweede module naast play, zoals time of random. Pygame en pymunk
+  // tellen niet: die horen bij hoofdstuk 10, en zo gaf elk spel in
+  // pygame-ce op niveau 2 ook Python op gevorderd.
+  'py-import-extra': py(/^\s*(import|from)\s+(?!(?:play|pygame|pymunk)\b)\w+/gm),
   'play-circle': py(/\bplay\.new_circle\s*\(/g),
   'play-box': py(/\bplay\.new_box\s*\(/g),
   'play-text': py(/\bplay\.new_text\s*\(/g),

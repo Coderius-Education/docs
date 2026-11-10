@@ -200,6 +200,18 @@ describe('play-nakijker', () => {
     expect(playConfig.zonderLeerroute).toBe('1');
   });
 
+  it('telt pygame en pymunk niet als tweede module', () => {
+    const module = (code: string) =>
+      analyze(bestanden({ 'main.py': code }), playConfig).concepts.find(
+        (c) => c.id === 'py-import-extra',
+      )?.used;
+    expect(module('import play\nimport pygame\nimport pymunk\nfrom pygame import display\n')).toBe(
+      false,
+    );
+    expect(module('import play\nimport time\n')).toBe(true);
+    expect(module('import play\nfrom random import randint\n')).toBe(true);
+  });
+
   it('telt een spel in pygame-ce en pymunk pas bij echt gebruik, niet bij een import', () => {
     const gebruikt = (code: string) =>
       new Set(
@@ -270,6 +282,10 @@ describe('play-nakijker', () => {
     expect(voorstel([...basis, ...pygameSpel].join('\n'), '2')).toBe('basis');
     expect(voorstel([...basis, knop, ...level].join('\n'), '2')).toBe('gevorderd');
     expect(voorstel([...basis, knop, ...pygameSpel].join('\n'), '2')).toBe('gevorderd');
+    // Zonder gevorderd concept in Python blijft dat basis: `import pygame`
+    // gold eerst als tweede module, en die is op niveau 2 gevorderd.
+    const zonderPython = ['import play', 'knop = play.new_button(text="Start")', ...pygameSpel];
+    expect(voorstel(zonderPython.join('\n'), '2')).toBe('basis');
     // Op niveau 1 blijft één hoofdstuk genoeg.
     expect(voorstel([...basis, ...level].join('\n'), '1')).toBe('gevorderd');
     expect(leerdoelenJson.gevorderdInGroepen).toEqual({ '2': { play: 2 } });
