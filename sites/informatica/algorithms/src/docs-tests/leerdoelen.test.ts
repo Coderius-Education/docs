@@ -166,13 +166,17 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
   const opNiveau1 = leerdoelen.concepten.filter((c) => c.niveau['1'] != null);
   const rij = (id: string) => leerdoelen.concepten.find((c) => c.id === id);
   const projecten = opNiveau1.filter((c) => c.onderwerp === 'ml');
-  const cs50 = projecten.filter((c) => /^Het project .* van CS50 AI$/.test(c.concept));
+  // De projecten van CS50 AI zijn één rij: je maakt er drie van de zes
+  // (november 2026; eerst had elk project een eigen rij, en dat las als
+  // allemaal). De lessen staan in de volgorde van de route.
+  const cs50 = rij('ml-cs50');
+  const CS50_PROJECTEN = ['Shopping', 'PageRank', 'Nim', 'Tic-Tac-Toe', 'Degrees', 'Traffic'];
 
   it('heeft op niveau 1 alleen Python en de projecten', () => {
     expect([...new Set(opNiveau1.map((c) => c.onderwerp))]).toEqual(['python', 'ml']);
   });
 
-  it('noemt de projecten van fase A tot en met F op volgorde, elk CS50-project na zijn fase', () => {
+  it('noemt de projecten van fase A tot en met F op volgorde, en de projecten van CS50 AI als één rij', () => {
     expect(projecten.map((c) => [c.id, c.niveau['1']])).toEqual([
       ['ml-chatbot', 'basis'],
       ['ml-spamfilter-regels', 'basis'],
@@ -180,38 +184,29 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
       ['ml-dichtstbijzijnde-buur', 'basis'],
       ['ml-k-buren', 'basis'],
       ['ml-eerlijk-testen', 'gevorderd'],
-      ['ml-shopping', 'gevorderd'],
       ['ml-dobbelsteen', 'basis'],
       ['ml-surfer', 'basis'],
       ['ml-op-weg-naar-pagerank', 'gevorderd'],
-      ['ml-pagerank', 'gevorderd'],
       ['ml-nim-strategie', 'basis'],
       ['ml-nim-leert', 'gevorderd'],
       ['ml-op-weg-naar-nim', 'gevorderd'],
-      ['ml-nim', 'gevorderd'],
-      ['ml-tictactoe', 'gevorderd'],
       ['ml-buren', 'basis'],
       ['ml-kortste-weg', 'gevorderd'],
       ['ml-op-weg-naar-degrees', 'gevorderd'],
-      ['ml-degrees', 'gevorderd'],
       ['ml-neuron', 'basis'],
       ['ml-neuron-leert', 'gevorderd'],
       ['ml-op-weg-naar-traffic', 'gevorderd'],
-      ['ml-traffic', 'expert'],
+      ['ml-cs50', 'gevorderd'],
     ]);
-    expect(cs50.map((c) => c.id)).toEqual([
-      'ml-shopping',
-      'ml-pagerank',
-      'ml-nim',
-      'ml-tictactoe',
-      'ml-degrees',
-      'ml-traffic',
-    ]);
+    expect(cs50?.concept).toBe('Drie van de projecten van CS50 AI');
+    expect(cs50?.toelichting).toContain(
+      `Je kiest er drie uit: ${CS50_PROJECTEN.slice(0, -1).join(', ')} en Traffic.`,
+    );
   });
 
   it('elk project in de browser zegt welke Python je ermee laat zien, elk CS50-project waar je het maakt', () => {
     for (const c of projecten) {
-      expect(c.toelichting, c.id).toMatch(cs50.includes(c) ? /eigen computer/ : /^Python: /);
+      expect(c.toelichting, c.id).toMatch(c === cs50 ? /eigen computer/ : /^Python: /);
     }
   });
 
@@ -221,7 +216,8 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
     const route = new Set(routePaginas());
     const projectLessen = projecten.map((c) => (c.lessen ?? []).map((l) => l.id));
     for (const [i, lessen] of projectLessen.entries()) {
-      expect(lessen.length, projecten[i].id).toBe(1);
+      // De rij van CS50 AI wijst naar de zes pagina's waar je met een project begint.
+      expect(lessen.length, projecten[i].id).toBe(projecten[i] === cs50 ? 6 : 1);
       if (lessen[0].startsWith('ml-')) expect(route.has(lessen[0]), lessen[0]).toBe(true);
     }
     const gedekt = new Set(projectLessen.flat());
@@ -248,15 +244,15 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
         .map((f) => readFileSync(join(map, f), 'utf8'))
         .join('\n');
     };
-    expect(cs50.length).toBe(6);
-    for (const c of cs50) {
-      const les = c.lessen?.[0]?.id ?? '';
-      const naam = c.concept.replace(/^Het project (.*) van CS50 AI$/, '$1');
+    const lessen = (cs50?.lessen ?? []).map((l) => l.id);
+    expect(lessen.length).toBe(CS50_PROJECTEN.length);
+    for (const [i, naam] of CS50_PROJECTEN.entries()) {
+      const les = lessen[i];
       const url = new RegExp(
         `cs50\\.harvard\\.edu/ai/projects/\\d/${naam.toLowerCase().replace(/-/g, '')}`,
       );
       const waar = les.startsWith('ml-') ? tekst(les) : hoofdstuk(les);
-      expect(waar, `${c.id}: ${les}`).toMatch(url);
+      expect(waar, `${naam}: ${les}`).toMatch(url);
     }
   });
 
@@ -325,13 +321,21 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
     }
   });
 
-  it('gevorderd vraagt bij Python een module of een CSV-bestand', () => {
+  it('gevorderd vraagt bij Python een tuple, een module, een CSV-bestand, zip of een klasse', () => {
     // Zo stelt moeilijkheidVoorstel gevorderd pas voor als beide onderwerpen
-    // een gevorderd concept hebben.
+    // een gevorderd concept hebben. Tuples, een tuple als sleutel, zip en een
+    // klasse zijn sinds november 2026 gevorderd (eerst basis).
     const gevorderd = opNiveau1
       .filter((c) => c.onderwerp === 'python' && c.niveau['1'] !== 'basis')
       .map((c) => c.id);
-    expect(gevorderd).toEqual(['modules', 'csv-inlezen']);
+    expect(gevorderd).toEqual([
+      'tuples',
+      'modules',
+      'csv-inlezen',
+      'tuple-sleutel',
+      'zip',
+      'klassen',
+    ]);
   });
 
   it('koppelt elke les van niveau 1 aan een les die bestaat', () => {
