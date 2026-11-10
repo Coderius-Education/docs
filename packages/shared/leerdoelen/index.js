@@ -409,13 +409,26 @@ function moeilijkhedenTekst(leerdoelen) {
 }
 
 /**
- * De kolommen van de cijfertabel voor een cursus: niet aan basis voldaan en
- * de moeilijkheden die de cursus gebruikt. Expert staat er alleen bij een
- * cursus met expertconcepten.
+ * Of een cursus concepten op expert heeft, of met `niveau` alleen op dat
+ * niveau. Zo'n niveau zegt op zijn pagina waar expert voor is.
  */
-function cijferKolommen(leerdoelen) {
-  const heeftExpert = leerdoelen.concepten.some((c) => Object.values(c.niveau).includes('expert'));
-  return BLOOM.moeilijkheden.filter((m) => m.id !== 'expert' || heeftExpert);
+function heeftExpert(leerdoelen, niveau) {
+  return leerdoelen.concepten.some((c) =>
+    niveau === undefined
+      ? Object.values(c.niveau).includes('expert')
+      : c.niveau[niveau] === 'expert',
+  );
+}
+
+/**
+ * De kolommen van de cijfertabel: niet aan basis voldaan, basis en gevorderd.
+ * Expert heeft geen eigen kolom: het telt voor het cijfer als gevorderd, en
+ * dient vooral om te laten zien dat je meer kunt dan het lesmateriaal. Een
+ * kolom met dezelfde cijfers als gevorderd suggereerde dat expert een hoger
+ * cijfer gaf.
+ */
+function cijferKolommen(_leerdoelen) {
+  return BLOOM.moeilijkheden.filter((m) => m.id !== 'expert');
 }
 
 function denkvaardigheid(id) {
@@ -554,6 +567,7 @@ module.exports = {
   moeilijkheidVoorstel,
   moeilijkhedenTekst,
   cijferKolommen,
+  heeftExpert,
   denkvaardigheid,
   moeilijkheid,
 };

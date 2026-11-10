@@ -131,7 +131,10 @@ uitlegt: `didactiek` is het pad van die pagina (`/bronnen/<slug>`), en de test
 eist dat de pagina en de tip in `tips.ts` bestaan en dezelfde paper noemen. `index.js` rekent ermee:
 
 - `cijferVoor(bloom, moeilijkheid)`: het cijfer uit de tabel. Expert telt als
-  gevorderd (`cijferAls`), tot het blad er een eigen kolom voor heeft.
+  gevorderd (`cijferAls`) en heeft geen eigen kolom (`cijferKolommen`): expert
+  dient vooral om te laten zien dat je meer kunt dan het lesmateriaal. De
+  pagina van een niveau met expert (`heeftExpert`) en de uitleg bij de
+  cijfertabel zeggen dat.
 - `sjabloonZin(bloom, moeilijkheid)`: de zin voor op de beoordeling.
 - `moeilijkheidVoorstel(perOnderwerp)`: het voorstel in de nakijker. Een
   onderwerp haalt een moeilijkheid met één concept van die moeilijkheid of

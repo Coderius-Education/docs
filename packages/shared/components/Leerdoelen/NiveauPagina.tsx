@@ -1,7 +1,7 @@
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import type { ReactNode } from 'react';
-import type { Leerdoelen } from '../../leerdoelen';
+import { type Leerdoelen, heeftExpert } from '../../leerdoelen';
 import { useCursus } from './LeerdoelenPagina';
 import Niveau from './Niveau';
 import Tentamen from './Tentamen';
@@ -50,6 +50,12 @@ export default function NiveauPagina({
           Op deze concepten beoordeelt je docent je project op {label}. De andere niveaus en hoe het
           cijfer tot stand komt, staan op het <Link to="/leerdoelen">overzicht</Link>.
         </p>
+        {heeftExpert(leerdoelen, niveau) && (
+          <p>
+            De concepten op expert zijn er vooral om te laten zien dat je meer kunt dan het
+            lesmateriaal. Voor het cijfer tellen ze als gevorderd.
+          </p>
+        )}
         <Niveau leerdoelen={leerdoelen} niveau={niveau} kop="h2" />
       </main>
     </Layout>

@@ -10,6 +10,7 @@ import {
   cijferKolommen,
   cijferTekst,
   cijferVoor,
+  heeftExpert,
   kolommenVoorOnderwerp,
   leesLeerdoelen,
   moeilijkhedenTekst,
@@ -252,17 +253,34 @@ describe('leesLeerdoelen', () => {
     expect(melding).toContain("onbekende denkvaardigheid 'weten'");
   });
 
-  it('zet expert alleen in de cijfertabel van een cursus met expertconcepten', () => {
-    // De Bloom-uitleg van web had een Expert-kolom, terwijl web geen expert heeft.
-    expect(cijferKolommen(leesLeerdoelen(goed)).map((m) => m.id)).toEqual([
+  it('zet expert niet in de cijfertabel, en weet welke niveaus expert hebben', () => {
+    // Een kolom Expert met dezelfde cijfers als gevorderd suggereerde dat
+    // expert een hoger cijfer gaf. De pagina van een niveau met expert zegt
+    // nu waar expert voor is.
+    const metExpert = leesLeerdoelen(goed);
+    expect(cijferKolommen(metExpert).map((m) => m.id)).toEqual([
       'niet-aan-basis',
       'basis',
       'gevorderd',
-      'expert',
     ]);
+    expect(heeftExpert(metExpert)).toBe(true);
+    expect(heeftExpert(metExpert, '3')).toBe(true);
+    expect(heeftExpert(metExpert, '1')).toBe(false);
     const web = join(ROOT, siteDir('web'), 'src', 'leerdoelen.json');
-    const webKolommen = cijferKolommen(leesLeerdoelen(JSON.parse(readFileSync(web, 'utf8'))));
-    expect(webKolommen.map((m) => m.id)).toEqual(['niet-aan-basis', 'basis', 'gevorderd']);
+    expect(heeftExpert(leesLeerdoelen(JSON.parse(readFileSync(web, 'utf8'))))).toBe(false);
+  });
+
+  it('zegt in de cijfertabel en op een niveau met expert waar expert voor is', () => {
+    const uitleg = 'vooral om te laten zien dat je meer kunt dan het lesmateriaal';
+    const lees = (naam: string) =>
+      readFileSync(join(ROOT, 'packages/shared/components/Leerdoelen', naam), 'utf8').replace(
+        /\s+/g,
+        ' ',
+      );
+    expect(lees('Bloom.tsx')).toContain(uitleg);
+    const niveau = lees('NiveauPagina.tsx');
+    expect(niveau).toContain('heeftExpert(leerdoelen, niveau)');
+    expect(niveau).toContain(uitleg);
   });
 
   it('noemt alleen de moeilijkheden die de cursus gebruikt', () => {
