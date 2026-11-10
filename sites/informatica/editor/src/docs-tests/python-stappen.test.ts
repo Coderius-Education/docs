@@ -180,3 +180,69 @@ describe('de tutorial vangt op wat er misgaat', () => {
     expect(zonder).toEqual([]);
   });
 });
+
+describe('iedereen werkt met dezelfde Python', () => {
+  // Op Python 3.15 liet FastAPI zich niet installeren: pip vond voor de
+  // nieuwe Python nog geen kant-en-klaar pydantic-core en wilde het met Rust
+  // bouwen (issue #198). De tutorial zei alleen "begint met `Python 3`", dus
+  // de Store-versie van die dag werd het. Wissel je VERSIE, dan wijzen deze
+  // tests elke plek aan die mee moet.
+  const VERSIE = '3.14';
+  const installatie = readFileSync(
+    join(FULLSTACK, 'FastAPI/eerste-server/installatie.mdx'),
+    'utf8',
+  );
+
+  it('elke versiecontrole eist dezelfde versie', () => {
+    const plekken: [string, string][] = [
+      ['stap-3-installeren.md', tekst('stap-3-installeren.md')],
+      ['andere-versie.md', tekst('andere-versie.md')],
+      ['fullstack installatie.mdx', installatie],
+    ];
+    const scheef: string[] = [];
+
+    for (const [naam, inhoud] of plekken) {
+      const eisen = [...inhoud.matchAll(/begint (?:niet )?met `Python ([\d.]+)`/g)].map(
+        (m) => m[1],
+      );
+      if (eisen.length === 0) scheef.push(`${naam} — eist geen versie`);
+      for (const v of eisen) if (v !== VERSIE) scheef.push(`${naam} — eist ${v}`);
+    }
+
+    expect(scheef).toEqual([]);
+  });
+
+  it('de fullstack-checklist controleert de versie ook in de omgeving', () => {
+    // Een .venv die met 3.15 gemaakt is, blijft 3.15, ook nadat de leerling
+    // 3.14 installeerde. Check 3 ziet dat niet; check 4 moet het zien.
+    const check4 = installatie.split('## Check 4')[1].split('## Check 5')[0];
+
+    expect(check4).toContain('python --version');
+    expect(check4).toContain(`\`Python ${VERSIE}\``);
+  });
+
+  it('zegt hoe je van versie wisselt en een omgeving opnieuw maakt', () => {
+    const wissel = tekst('andere-versie.md');
+
+    expect(wissel).toContain('Remove-Item -Recurse -Force .venv');
+    expect(wissel).toContain('rm -rf .venv');
+    expect(wissel).toContain(`python${VERSIE} -m venv .venv`);
+    expect(wissel).toContain('python -m pip install -r requirements.txt');
+    expect(wissel).toMatch(/\n## Wat je nu ziet/);
+  });
+
+  it('wijst bij een verkeerde versie naar die uitleg', () => {
+    const naar = /\]\(site:editor\/python\/andere-versie[)#]/;
+    const zonder = [
+      ['stap-3-installeren.md', tekst('stap-3-installeren.md')],
+      ['stap-4-venv.md', tekst('stap-4-venv.md')],
+      ['problemen.md', tekst('problemen.md')],
+      ['fullstack check 3', installatie.split('## Check 3')[1].split('## Check 4')[0]],
+      ['fullstack check 4', installatie.split('## Check 4')[1].split('## Check 5')[0]],
+    ]
+      .filter(([, inhoud]) => !naar.test(inhoud))
+      .map(([naam]) => naam);
+
+    expect(zonder).toEqual([]);
+  });
+});

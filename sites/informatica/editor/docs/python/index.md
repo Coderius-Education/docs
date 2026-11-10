@@ -15,13 +15,13 @@ VS Code moet al op je computer staan, en tijdens die installatie moet het vakje 
 
 1. [Een projectmap aanmaken](site:editor/python/stap-1-projectmap) in de Verkenner
 2. [PowerShell openen](site:editor/python/stap-2-powershell) vanuit die map
-3. [Python installeren](site:editor/python/stap-3-installeren) met `python`
+3. [Python 3.14 installeren](site:editor/python/stap-3-installeren) met `python`
 4. [Een virtual environment aanmaken](site:editor/python/stap-4-venv) met `python -m venv .venv`
 5. [Je project openen in VS Code](site:editor/python/stap-5-vscode) met `code .`
 6. [Een Python-bestand maken en uitvoeren](site:editor/python/stap-6-bestand)
 7. [Packages installeren](site:editor/python/stap-7-pip) met `python -m pip install`
 
-De volgorde ligt vast: elke stap gebruikt wat de vorige heeft neergezet. Loopt er iets vast, kijk dan bij [Er gaat iets mis](site:editor/python/problemen).
+De volgorde ligt vast: elke stap gebruikt wat de vorige heeft neergezet. Loopt er iets vast, kijk dan bij [Er gaat iets mis](site:editor/python/problemen). Heb je een andere Python dan 3.14, of wil je je omgeving opnieuw maken, dan staat bij [Van Python-versie wisselen](site:editor/python/andere-versie) hoe je de oude weggooit.
 
 ## Aan de slag
 
