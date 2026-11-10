@@ -161,26 +161,39 @@ describe('leesLeerdoelen', () => {
   it('leest gevorderdInGroepen en weigert een aantal dat niet kan', () => {
     const metGroepen = {
       ...goed,
+      onderwerpen: [...goed.onderwerpen, { id: 'py', label: 'Python' }],
       concepten: [
         { ...goed.concepten[0], groep: 'A' },
         { ...goed.concepten[1], groep: 'B' },
+        { id: 'py-lijst', onderwerp: 'py', concept: 'een lijst', 1: 'basis', 3: 'basis' },
       ],
     };
-    expect(
-      leesLeerdoelen({ ...metGroepen, gevorderdInGroepen: { 1: { gd: 2 } } }).gevorderdInGroepen,
-    ).toEqual({
-      1: { gd: 2 },
-    });
+    const lees = (gevorderdInGroepen: unknown) =>
+      leesLeerdoelen({ ...metGroepen, gevorderdInGroepen });
+    expect(lees({ 1: { gd: 2 } }).gevorderdInGroepen).toEqual({ 1: { gd: 2 } });
     // Op niveau 3 is er maar één groep met een gevorderd concept (B, expert).
-    expect(() => leesLeerdoelen({ ...metGroepen, gevorderdInGroepen: { 3: { gd: 2 } } })).toThrow(
-      'maar 1 met een gevorderd concept',
-    );
-    expect(() => leesLeerdoelen({ ...metGroepen, gevorderdInGroepen: { 1: { gd: 1 } } })).toThrow(
-      '2 of meer',
-    );
-    expect(() => leesLeerdoelen({ ...metGroepen, gevorderdInGroepen: { 2: { gd: 2 } } })).toThrow(
-      "onbekend niveau '2'",
-    );
+    expect(() => lees({ 3: { gd: 2 } })).toThrow('maar 1 met een gevorderd concept');
+    expect(() => lees({ 1: { gd: 1 } })).toThrow('2 of meer');
+    expect(() => lees({ 2: { gd: 2 } })).toThrow("onbekend niveau '2'");
+    expect(() => lees({ 1: { xx: 2 } })).toThrow("onbekend onderwerp 'xx'");
+    // Zonder onderwerp ertussen ging dit eerst stil door, en deed de regel niets.
+    expect(() => lees({ 1: 2 })).toThrow('een object per onderwerp');
+    // Een rij zonder groep heeft in de nakijker de moeilijkheid als groep.
+    expect(() =>
+      leesLeerdoelen({
+        ...metGroepen,
+        concepten: [goed.concepten[0], ...metGroepen.concepten.slice(1)],
+        gevorderdInGroepen: { 1: { gd: 2 } },
+      }),
+    ).toThrow('niet elke rij een groep');
+    // Met één onderwerp gaat het voorstel al per groep: de regel doet dan niets.
+    expect(() =>
+      leesLeerdoelen({
+        ...metGroepen,
+        concepten: metGroepen.concepten.map((c) => (c.onderwerp === 'py' ? { ...c, 1: null } : c)),
+        gevorderdInGroepen: { 1: { gd: 2 } },
+      }),
+    ).toThrow('alleen gd');
   });
 
   it('kent vier niveaus, voor elke cursus dezelfde', () => {

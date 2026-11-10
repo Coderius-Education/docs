@@ -182,17 +182,36 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
     } else {
       for (const [n, perOnderwerp] of Object.entries(gevorderdInGroepen)) {
         if (!niveauIds.includes(n)) fouten.push(`gevorderdInGroepen: onbekend niveau '${n}'`);
-        for (const [o, aantal] of Object.entries(perOnderwerp ?? {})) {
+        // { "2": 2 } in plaats van { "2": { "play": 2 } } ging er eerst stil
+        // doorheen, en dan deed de regel niets.
+        if (!perOnderwerp || typeof perOnderwerp !== 'object' || Array.isArray(perOnderwerp)) {
+          fouten.push(
+            `gevorderdInGroepen: bij niveau ${n} een object per onderwerp, zoals { "${n}": { "<onderwerp>": 2 } }`,
+          );
+          continue;
+        }
+        const opNiveau = rijen.filter((r) => r && r.niveau[n] != null);
+        const onderwerpenOpNiveau = new Set(opNiveau.map((r) => r.onderwerp));
+        for (const [o, aantal] of Object.entries(perOnderwerp)) {
+          const vanOnderwerp = opNiveau.filter((r) => r.onderwerp === o);
           const groepen = new Set(
-            rijen
-              .filter(
-                (r) => r && r.onderwerp === o && ['gevorderd', 'expert'].includes(r.niveau[n]),
-              )
+            vanOnderwerp
+              .filter((r) => ['gevorderd', 'expert'].includes(r.niveau[n]))
               .map((r) => r.groep),
           );
           if (!onderwerpIds.has(o)) fouten.push(`gevorderdInGroepen: onbekend onderwerp '${o}'`);
           else if (!Number.isInteger(aantal) || aantal < 2) {
             fouten.push(`gevorderdInGroepen: bij ${n}/${o} een geheel getal van 2 of meer`);
+          } else if (vanOnderwerp.some((r) => !r.groep)) {
+            // Zonder groep krijgt een concept in de nakijker de moeilijkheid
+            // als kop: dan telt de regel iets anders dan hier.
+            fouten.push(`gevorderdInGroepen: bij ${n}/${o} heeft niet elke rij een groep`);
+          } else if (onderwerpenOpNiveau.size === 1) {
+            // Met één onderwerp gaat het voorstel al per groep en eist het
+            // gevorderd in élke groep: de regel zou dan niets doen.
+            fouten.push(
+              `gevorderdInGroepen: niveau ${n} heeft alleen ${o}; dan vraagt gevorderd al een concept in elke groep`,
+            );
           } else if (aantal > groepen.size) {
             fouten.push(
               `gevorderdInGroepen: bij ${n}/${o} ${aantal} groepen, maar er zijn er maar ${groepen.size} met een gevorderd concept`,

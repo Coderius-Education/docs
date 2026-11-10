@@ -272,7 +272,7 @@ een gevorderd concept in élk onderwerp dat gevorderde concepten heeft; een
 onderwerp zonder telt daar niet mee, en de reden noemt dan welke wel), en
 cijfer en zin komen in de PDF. Met `gevorderdInGroepen` (`{ "2": { "play": 2 } }`)
 vraagt gevorderd op dat niveau gevorderde concepten in minstens zoveel groepen
-van het onderwerp, zodat één knop op play niveau 2 nog geen gevorderd is.
+van het onderwerp, zodat één startmenu op play niveau 2 nog geen gevorderd is.
 Expert telt voor het cijfer als gevorderd tot het blad er een kolom voor heeft. Een niveau kan ook met een tentamen worden afgesloten (`tentamen` in het bestand, bij Algoritmiek niveau 2): dan heeft een rij op dat niveau een lijst manieren om het te kennen in plaats van een moeilijkheid, en zet de plugin bij elke manier de les uit de map van het concept waar je hem oefent; de pagina van dat niveau legt het tentamen uit, met de bron bij vakdidactiek. Een rij met `null` op het tentamenniveau staat daar niet op (`onderwerpenOpNiveau`), zoals de projecten van niveau 1 bij Algoritmiek.
 Een bron noemen we alleen als vakdidactiek hem uitlegt: elke bron in
 `bloom.json` wijst naar een pagina onder `/bronnen/` van de didactiek-site, met

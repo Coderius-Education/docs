@@ -36,8 +36,8 @@ export default function Niveau({
             <Kop>{onderwerp.label}</Kop>
             {groepen && (
               <p>
-                Voor gevorderd heb je hier gevorderde concepten nodig uit minstens {groepen} van
-                deze groepen: {metGevorderd.join(', ')}.
+                Voor gevorderd heb je hier een concept op gevorderd of expert nodig in minstens{' '}
+                {groepen} van deze groepen: {metGevorderd.join(', ')}.
               </p>
             )}
             <div className={styles.schuif}>

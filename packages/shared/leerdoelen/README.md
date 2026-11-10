@@ -60,11 +60,13 @@ groepen:
 "gevorderdInGroepen": { "2": { "play": 2 } }
 ```
 
-Bij play niveau 2 is een knop alleen dan nog basis; een knop en levels samen
-zijn gevorderd. Het aantal is minstens 2 en hoogstens het aantal groepen met
-een gevorderd concept op dat niveau; anders stopt de build. De pagina van het
-niveau noemt de groepen, en de nakijker zegt in zijn voorstel in hoeveel
-groepen het gelukt is.
+Bij play niveau 2 is een startmenu alleen dan nog basis; een startmenu en
+levels samen zijn gevorderd. Het aantal is minstens 2 en hoogstens het aantal
+groepen met een gevorderd concept op dat niveau. Elke rij van dat onderwerp
+heeft een `groep`, en het niveau heeft nog een ander onderwerp: met één
+onderwerp vraagt het voorstel al gevorderd in élke groep. Anders stopt de
+build. De pagina van het niveau noemt de groepen, en de nakijker zegt in zijn
+voorstel in hoeveel groepen het gelukt is.
 
 ## Een niveau met een tentamen
 
