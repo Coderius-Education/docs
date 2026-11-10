@@ -18,6 +18,7 @@ import {
   overgang,
   projectNiveaus,
   sjabloonZin,
+  verschilTelling,
   verschillen,
 } from './leerdoelen';
 import { SITES, siteDir } from './sites';
@@ -603,6 +604,60 @@ describe('overgang en verschillen: waar de niveaus verschillen', () => {
       },
       { van: '3', naar: '4', aantal: 1, groepen: [['valt-af', ['c:basis']]] },
     ]);
+  });
+
+  it('noemt een concept dat terugkomt weer erbij, met het niveau waar het eerder stond', () => {
+    // Robotica: continue op niveau 1 en 4, niet op 3. Op niveau 4 stond het
+    // onder "Erbij" en op de niveaupagina als "nieuw", alsof het er voor het
+    // eerst was; de tabel zei al "weer erbij".
+    const l = leesLeerdoelen({
+      niveaus: ['1', '3', '4'],
+      onderwerpen: [{ id: 'py', label: 'Python' }],
+      concepten: [
+        {
+          id: 'continue',
+          onderwerp: 'py',
+          concept: 'continue',
+          1: 'gevorderd',
+          3: null,
+          4: 'gevorderd',
+        },
+        { id: 'klasse', onderwerp: 'py', concept: 'klasse', 1: null, 3: null, 4: 'basis' },
+      ],
+    });
+    const erbij = verschillen(l)[1].groepen.find((g) => g.soort === 'erbij');
+    expect(
+      erbij?.concepten.map((x) => [
+        x.concept.id,
+        x.eerder?.niveau.id ?? null,
+        x.eerder?.moeilijkheid ?? null,
+      ]),
+    ).toEqual([
+      ['continue', '1', 'gevorderd'],
+      ['klasse', null, null],
+    ]);
+  });
+
+  it('telt voor de pagina van een niveau apart wat erop staat en wat afvalt', () => {
+    // Fullstack niveau 3 zei "53 concepten anders", terwijl er 29 op de
+    // pagina een labeltje hadden: de 24 die afvallen staan er niet op.
+    const l = leesLeerdoelen({
+      niveaus: ['1', '3'],
+      onderwerpen: [{ id: 'py', label: 'Python' }],
+      concepten: [
+        { id: 'a', onderwerp: 'py', concept: 'a', 1: 'gevorderd', 3: 'basis' },
+        { id: 'b', onderwerp: 'py', concept: 'b', 1: 'basis', 3: null },
+        { id: 'c', onderwerp: 'py', concept: 'c', 1: 'basis', 3: null },
+        { id: 'd', onderwerp: 'py', concept: 'd', 1: 'basis', 3: 'basis' },
+      ],
+    });
+    expect(verschilTelling(l, '3')).toMatchObject({ opPagina: 1, afgevallen: 2 });
+    expect(verschilTelling(l, '3')?.van.id).toBe('1');
+    expect(verschilTelling(l, '1')).toBeNull();
+    const fullstack = leesLeerdoelen(
+      JSON.parse(readFileSync(join(ROOT, siteDir('fullstack'), 'src', 'leerdoelen.json'), 'utf8')),
+    );
+    expect(verschilTelling(fullstack, '3')).toMatchObject({ opPagina: 29, afgevallen: 24 });
   });
 
   it('slaat het tentamen-niveau over', () => {

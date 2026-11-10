@@ -47,6 +47,25 @@ describe('Vergelijking', () => {
 });
 
 describe('Verschillen', () => {
+  it('zegt bij een concept dat terugkomt weer erbij, met het niveau van eerst', () => {
+    const terug = leesLeerdoelen({
+      niveaus: ['1', '3', '4'],
+      onderwerpen: [{ id: 'py', label: 'Python' }],
+      concepten: [
+        {
+          id: 'continue',
+          onderwerp: 'py',
+          concept: 'continue',
+          1: 'gevorderd',
+          3: null,
+          4: 'gevorderd',
+        },
+      ],
+    });
+    render(<Verschillen leerdoelen={terug} />);
+    expect(screen.getByText('weer erbij, was gevorderd op Niveau 1')).toBeTruthy();
+  });
+
   it('noemt per overgang wat erbij komt en wat basis wordt', () => {
     render(<Verschillen leerdoelen={leerdoelen} />);
     expect(screen.getByRole('heading', { name: 'Van Niveau 1 naar Niveau 2' })).toBeTruthy();

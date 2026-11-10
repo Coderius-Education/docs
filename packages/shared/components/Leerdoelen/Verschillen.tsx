@@ -53,11 +53,16 @@ export default function Verschillen({ leerdoelen }: { leerdoelen: Leerdoelen }):
                 );
                 const lijst = (
                   <ul className={styles.verschilLijst}>
-                    {concepten.map(({ concept, was: m }) => (
+                    {concepten.map(({ concept, was: m, eerder }) => (
                       <li key={concept.id}>
                         {concept.concept}
                         {soort !== 'erbij' && soort !== 'valt-af' && m && (
                           <span className={styles.was}>{was(m)}</span>
+                        )}
+                        {soort === 'erbij' && eerder && (
+                          <span className={styles.was}>
+                            weer erbij, {was(eerder.moeilijkheid)} op {eerder.niveau.label}
+                          </span>
                         )}
                       </li>
                     ))}

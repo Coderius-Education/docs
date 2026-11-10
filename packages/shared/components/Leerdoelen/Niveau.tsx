@@ -4,8 +4,7 @@ import {
   kolommenVoorOnderwerp,
   moeilijkheid,
   onderwerpenOpNiveau,
-  overgang,
-  projectNiveaus,
+  verschillen,
 } from '../../leerdoelen';
 import Lessen from './Lessen';
 import Moeilijkheid from './Moeilijkheid';
@@ -25,17 +24,26 @@ export default function Niveau({
   kop?: 'h2' | 'h3';
 }): ReactNode {
   const Kop = kop;
-  // Het niveau ervoor (zonder tentamen): een concept dat daar anders was,
-  // krijgt een labeltje, zodat je op deze pagina ziet wat er verandert.
-  const niveaus = projectNiveaus(leerdoelen);
-  const vorige = niveaus[niveaus.findIndex((n) => n.id === niveau) - 1];
-  const notitie = (c: (typeof leerdoelen.concepten)[number]) => {
-    if (!vorige) return null;
-    const soort = overgang(c, vorige.id, niveau);
-    if (soort === 'nieuw') return 'nieuw';
-    const was = c.niveau[vorige.id];
-    return soort && was ? `was ${moeilijkheid(was).label.toLowerCase()} op ${vorige.label}` : null;
-  };
+  // Wat anders is dan het niveau ervoor (zonder tentamen) krijgt een
+  // labeltje, zodat je op deze pagina ziet wat er verandert. Een concept dat
+  // op een niveau nog eerder al stond, is "weer erbij", niet nieuw.
+  const verschil = verschillen(leerdoelen).find((v) => v.naar.id === niveau);
+  const labels = new Map<string, string>();
+  for (const { soort, concepten } of verschil?.groepen ?? []) {
+    for (const { concept, was, eerder } of concepten) {
+      const bij = (m: string, n: { label: string }) =>
+        `${moeilijkheid(m).label.toLowerCase()} op ${n.label}`;
+      if (soort === 'erbij') {
+        labels.set(
+          concept.id,
+          eerder ? `weer erbij, was ${bij(eerder.moeilijkheid, eerder.niveau)}` : 'nieuw',
+        );
+      } else if (soort !== 'valt-af' && was && verschil) {
+        labels.set(concept.id, `was ${bij(was, verschil.van)}`);
+      }
+    }
+  }
+  const notitie = (c: { id: string }) => labels.get(c.id) ?? null;
   return (
     <>
       {onderwerpenOpNiveau(leerdoelen, niveau).map(({ onderwerp, concepten: rijen }) => {

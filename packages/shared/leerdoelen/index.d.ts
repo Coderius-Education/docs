@@ -167,9 +167,19 @@ export function verschillen(leerdoelen: Leerdoelen): {
   aantal: number;
   groepen: {
     soort: VerschilSoort;
-    concepten: { concept: LeerdoelConcept; was: ConceptMoeilijkheid | null }[];
+    concepten: {
+      concept: LeerdoelConcept;
+      was: ConceptMoeilijkheid | null;
+      /** Bij erbij: het laatste niveau ervoor waar het concept al stond ("weer erbij"). */
+      eerder: { niveau: Niveau; moeilijkheid: ConceptMoeilijkheid } | null;
+    }[];
   }[];
 }[];
+/** Voor de pagina van een niveau: wat er anders is en op de pagina staat, en wat afvalt. */
+export function verschilTelling(
+  leerdoelen: Leerdoelen,
+  niveau: string,
+): { van: Niveau; opPagina: number; afgevallen: number } | null;
 /** Of de cursus, of met `niveau` alleen dat niveau, concepten op expert heeft. */
 export function heeftExpert(leerdoelen: Leerdoelen, niveau?: string): boolean;
 export function cijferKolommen(leerdoelen: Leerdoelen): Moeilijkheid[];
