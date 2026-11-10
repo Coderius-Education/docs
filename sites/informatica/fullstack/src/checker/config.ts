@@ -137,9 +137,12 @@ const DETECTIE: Record<string, ConceptDetect> = {
   'db-dictionary': inDb((d) => String.raw`\b${terug(d)}${SCHRIJFT}\s*(?:\{|dict\s*\()`),
   // Ophalen in een variabele (\2), die aanpassen, en hem terugzetten. Wie
   // `db["sara"]["klas"] = …` schrijft past een kopie aan; dat telt niet.
+  // Aanpassen is een sleutel een waarde geven (ook dieper of met `+=`), of
+  // een lijstmethode, ook op een lijst in de dictionary:
+  // `sara["vakken"].append(…)` is het voorbeeld van de les zelf.
   'db-aanpassen': inDb(
     (d, v) =>
-      String.raw`\b(\w+)\s*=\s*${terug(d)}\s*(?:\[[^\]]+\]|\.get\s*\([^)]*\))${ZELFDE_FUNCTIE}\b${terug(v)}\s*(?:\[[^\]]+\]\s*=(?!=)|\.(?:append|extend|update|remove|pop)\s*\()${ZELFDE_FUNCTIE}\b${terug(d)}\s*\[[^\]]+\]\s*=\s*${terug(v)}\b`,
+      String.raw`\b(\w+)\s*=\s*${terug(d)}\s*(?:\[[^\]]+\]|\.get\s*\([^)]*\))${ZELFDE_FUNCTIE}\b${terug(v)}\s*(?:(?:\[[^\]]+\]\s*)+[-+*/]?=(?!=)|(?:\[[^\]]+\]\s*)*\.(?:append|extend|update|remove|pop|insert|clear)\s*\()${ZELFDE_FUNCTIE}\b${terug(d)}\s*\[[^\]]+\]\s*=\s*${terug(v)}\b`,
     1,
   ),
   // Gebruikt, niet alleen geïmporteerd.
