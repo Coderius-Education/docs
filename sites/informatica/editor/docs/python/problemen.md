@@ -1,5 +1,5 @@
 ---
-sidebar_position: 8
+sidebar_position: 9
 title: "Er gaat iets mis"
 ---
 
@@ -70,3 +70,27 @@ Meer uitleg: [Stap 7: packages installeren met pip](site:editor/python/stap-7-pi
 **Oplossing:** je hebt dat commando niet nodig. Open je project met `code .` en werk in de terminal van VS Code; die zet de omgeving zelf aan.
 
 Meer uitleg: [Stap 7: packages installeren met pip](site:editor/python/stap-7-pip).
+
+## `python --version` begint niet met `Python 3.14`
+
+**Oorzaak:** er stond al een andere Python op je computer, of de Store installeerde een nieuwere versie. Met een andere versie lukt het installeren van packages niet altijd: op 3.15 liet FastAPI zich niet installeren.
+
+**Oplossing:** zet Python 3.14 neer en maak daarna je virtual environment opnieuw. Een `.venv` die je met de andere versie maakte, blijft die versie gebruiken.
+
+Meer uitleg: [Van Python-versie wisselen](site:editor/python/andere-versie).
+
+## `Cargo, the Rust package manager, is not installed or is not on PATH`
+
+**Oorzaak:** voor een nieuwe Python staan nog niet alle packages kant-en-klaar. pip probeert ze dan zelf te bouwen, en dat lukt alleen met de programmeertaal Rust erbij. FastAPI liep zo vast op Python 3.15. De melding kan ook beginnen met `error: metadata-generation-failed`.
+
+**Oplossing:** installeer geen Rust, maar gebruik Python 3.14. Kijk in de terminal van VS Code met `python --version` welke versie je omgeving heeft. Staat daar niet `Python 3.14`, zet dan 3.14 neer, gooi `.venv` weg, maak hem opnieuw en installeer je packages nog een keer.
+
+Meer uitleg: [Van Python-versie wisselen](site:editor/python/andere-versie).
+
+## `No Python at '…'`
+
+**Oorzaak:** je virtual environment hoort bij de Python waarmee je hem maakte. Heb je die Python verwijderd, dan wijst `.venv` naar een plek die niet meer bestaat.
+
+**Oplossing:** gooi `.venv` weg en maak hem opnieuw met de Python die er nu staat. Je code blijft staan, die zit niet in `.venv`. Daarna installeer je je packages opnieuw.
+
+Meer uitleg: [Van Python-versie wisselen](site:editor/python/andere-versie#de-oude-omgeving-weggooien).

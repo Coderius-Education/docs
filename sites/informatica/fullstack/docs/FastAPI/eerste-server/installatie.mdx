@@ -42,14 +42,14 @@ Typ in PowerShell:
 python --version
 ```
 
-Het antwoord begint met `Python 3`.
+Het antwoord begint met `Python 3.14`. Een nieuwere versie is niet beter: op Python 3.15 liet FastAPI zich bij check 5 niet installeren.
 
 <details>
 <summary>Heb je dit nog niet? Klik hier.</summary>
 
-Typ `python` zonder meer, dan wijst Windows je de weg naar de Microsoft Store. Wat je doet als die Store geblokkeerd is, en hoe het op een Mac gaat, staat in de stap zelf.
+Typ `python` zonder meer, dan wijst Windows je de weg naar de Microsoft Store. Wat je doet als die Store geblokkeerd is, en hoe het op een Mac gaat, staat in de stap zelf. Heb je al een andere versie dan 3.14, dan zet je eerst 3.14 neer.
 
-[Python installeren](site:editor/python/stap-3-installeren)
+[Python installeren](site:editor/python/stap-3-installeren) en [van Python-versie wisselen](site:editor/python/andere-versie)
 
 </details>
 
@@ -59,6 +59,8 @@ Je project staat open in VS Code, met een map `.venv` in de Explorer links. Open
 
 ![De terminal in VS Code met (.venv) voor de prompt](@site/static/vs_code/venv.png)
 
+Typ in die terminal `python --version`. Ook hier begint het antwoord met `Python 3.14`: een omgeving houdt de versie waarmee je hem maakte, ook als je daarna een andere Python installeerde.
+
 Deze check gaat het vaakst mis. Zonder `(.venv)` installeer je FastAPI straks op de verkeerde plek en zegt Python later dat het `fastapi` niet kent.
 
 <details>
@@ -66,7 +68,9 @@ Deze check gaat het vaakst mis. Zonder `(.venv)` installeer je FastAPI straks op
 
 Een virtual environment is een afgesloten omgeving voor dit project. Packages die je hier installeert, komen niet in de weg van andere projecten. Je maakt hem aan met `python -m venv .venv` en opent je project daarna met `code .`; VS Code zet de omgeving in zijn eigen terminal vanzelf aan.
 
-[Een virtual environment aanmaken](site:editor/python/stap-4-venv) en [je project openen in VS Code](site:editor/python/stap-5-vscode)
+Heb je al een `.venv` met een andere versie, gooi hem dan weg en maak hem opnieuw.
+
+[Een virtual environment aanmaken](site:editor/python/stap-4-venv), [je project openen in VS Code](site:editor/python/stap-5-vscode) en [een omgeving opnieuw maken](site:editor/python/andere-versie#de-oude-omgeving-weggooien)
 
 </details>
 
