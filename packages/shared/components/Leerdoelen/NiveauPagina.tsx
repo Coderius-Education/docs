@@ -1,7 +1,7 @@
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import type { ReactNode } from 'react';
-import { type Leerdoelen, heeftExpert } from '../../leerdoelen';
+import { type Leerdoelen, heeftExpert, verschillen } from '../../leerdoelen';
 import { useCursus } from './LeerdoelenPagina';
 import Niveau from './Niveau';
 import Tentamen from './Tentamen';
@@ -17,6 +17,8 @@ export default function NiveauPagina({
 }): ReactNode {
   const cursus = useCursus();
   const label = leerdoelen.niveaus.find((n) => n.id === niveau)?.label ?? niveau;
+  // Wat er anders is dan het niveau ervoor; bij het eerste niveau niets.
+  const verschil = verschillen(leerdoelen).find((v) => v.naar.id === niveau);
   if (leerdoelen.tentamen?.niveau === niveau) {
     return (
       <Layout
@@ -50,6 +52,14 @@ export default function NiveauPagina({
           Op deze concepten beoordeelt je docent je project op {label}. De andere niveaus en hoe het
           cijfer tot stand komt, staan op het <Link to="/leerdoelen">overzicht</Link>.
         </p>
+        {verschil && verschil.aantal > 0 && (
+          <p>
+            Anders dan {verschil.van.label}: {verschil.aantal}{' '}
+            {verschil.aantal === 1 ? 'concept' : 'concepten'}. Bij elk staat wat het daar was, of
+            dat het nieuw is. <Link to="/leerdoelen/vergelijken">Vergelijk de niveaus</Link> om alle
+            verschillen naast elkaar te zien.
+          </p>
+        )}
         {heeftExpert(leerdoelen, niveau) && (
           <p>
             De concepten op expert zijn er vooral om te laten zien dat je meer kunt dan het

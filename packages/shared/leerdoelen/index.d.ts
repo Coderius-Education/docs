@@ -152,11 +152,24 @@ export function kolommenVoorOnderwerp(
   niveau: string,
   rijen: Pick<LeerdoelConcept, 'niveau'>[],
 ): ConceptMoeilijkheid[];
-/** Per niveau-id het vorige niveau waarvan de moeilijkheid verschilt, of null; null-niveaus tellen niet mee. */
-export function andersDan(
+/** Hoe een concept verandert van niveau `van` naar `naar`; null als hij gelijk blijft. */
+export type Overgang = 'moeilijker' | 'makkelijker' | 'nieuw' | 'weg';
+export function overgang(
   concept: Pick<LeerdoelConcept, 'niveau'>,
-  niveaus: { id: string }[],
-): Record<string, string | null>;
+  van: string,
+  naar: string,
+): Overgang | null;
+/** Per overgang tussen twee opeenvolgende niveaus (zonder tentamen) de concepten die veranderen, gegroepeerd naar wat ze worden. */
+export type VerschilSoort = 'erbij' | ConceptMoeilijkheid | 'valt-af';
+export function verschillen(leerdoelen: Leerdoelen): {
+  van: Niveau;
+  naar: Niveau;
+  aantal: number;
+  groepen: {
+    soort: VerschilSoort;
+    concepten: { concept: LeerdoelConcept; was: ConceptMoeilijkheid | null }[];
+  }[];
+}[];
 /** Of de cursus, of met `niveau` alleen dat niveau, concepten op expert heeft. */
 export function heeftExpert(leerdoelen: Leerdoelen, niveau?: string): boolean;
 export function cijferKolommen(leerdoelen: Leerdoelen): Moeilijkheid[];

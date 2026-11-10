@@ -1,5 +1,12 @@
 import type { ReactNode } from 'react';
-import { type Leerdoelen, kolommenVoorOnderwerp, onderwerpenOpNiveau } from '../../leerdoelen';
+import {
+  type Leerdoelen,
+  kolommenVoorOnderwerp,
+  moeilijkheid,
+  onderwerpenOpNiveau,
+  overgang,
+  projectNiveaus,
+} from '../../leerdoelen';
 import Lessen from './Lessen';
 import Moeilijkheid from './Moeilijkheid';
 import styles from './styles.module.css';
@@ -18,6 +25,17 @@ export default function Niveau({
   kop?: 'h2' | 'h3';
 }): ReactNode {
   const Kop = kop;
+  // Het niveau ervoor (zonder tentamen): een concept dat daar anders was,
+  // krijgt een labeltje, zodat je op deze pagina ziet wat er verandert.
+  const niveaus = projectNiveaus(leerdoelen);
+  const vorige = niveaus[niveaus.findIndex((n) => n.id === niveau) - 1];
+  const notitie = (c: (typeof leerdoelen.concepten)[number]) => {
+    if (!vorige) return null;
+    const soort = overgang(c, vorige.id, niveau);
+    if (soort === 'nieuw') return 'nieuw';
+    const was = c.niveau[vorige.id];
+    return soort && was ? `was ${moeilijkheid(was).label.toLowerCase()} op ${vorige.label}` : null;
+  };
   return (
     <>
       {onderwerpenOpNiveau(leerdoelen, niveau).map(({ onderwerp, concepten: rijen }) => {
@@ -61,6 +79,7 @@ export default function Niveau({
                             .map((c) => (
                               <li key={c.id}>
                                 {c.concept}
+                                {notitie(c) && <span className={styles.was}>{notitie(c)}</span>}
                                 {c.toelichting && (
                                   <span className={styles.toelichting}>{c.toelichting}</span>
                                 )}

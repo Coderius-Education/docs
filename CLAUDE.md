@@ -254,7 +254,7 @@ die in twee plugins staat. Een kop met een id op de leerdoelenpagina is een
 aan: het overzicht `/leerdoelen` (links naar de niveaus en, bij meer dan één,
 naar de vergelijking, en onderaan de uitleg van Bloom, voor elke cursus
 gelijk), een pagina `/leerdoelen/niveau-<n>` per niveau, bij meer niveaus
-`/leerdoelen/vergelijken` met de niveaus naast elkaar, een link in de footer, en na de build `leerdoelen.json` in de
+`/leerdoelen/vergelijken` met bovenaan per overgang wat er verandert (`verschillen`: erbij, nu basis, nu gevorderd, nu expert, valt af; geen "makkelijker", want wat op een hoger niveau basis wordt, verwacht je van iedereen) en daaronder de niveaus naast elkaar, standaard alleen de rijen die verschillen, met in een veranderde cel wat hij was (`overgang`); de pagina van een niveau zet "was …" of "nieuw" bij een concept dat anders is dan het niveau ervoor, en het overzicht telt per niveau de verschillen (`Vergelijking.test.tsx`), een link in de footer, en na de build `leerdoelen.json` in de
 root van de cursus voor coderius.nl. Een fout in het bestand stopt de build.
 De denkvaardigheden, de cijfertabel, het sjabloon en de vuistregels staan in
 `packages/shared/leerdoelen/bloom.json`. Elke denkvaardigheid heeft een
