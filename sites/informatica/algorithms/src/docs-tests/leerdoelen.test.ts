@@ -166,13 +166,12 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
   const opNiveau1 = leerdoelen.concepten.filter((c) => c.niveau['1'] != null);
   const rij = (id: string) => leerdoelen.concepten.find((c) => c.id === id);
   const projecten = opNiveau1.filter((c) => c.onderwerp === 'ml');
-  // Vijf projecten van CS50 AI zijn één rij: je maakt er drie (november
-  // 2026; eerst had elk project een eigen rij, en dat las als allemaal). De
-  // lessen staan in de volgorde van de route. Traffic blijft een eigen rij op
-  // expert: meer dan het lesmateriaal.
+  // De projecten van CS50 AI zijn één rij: je maakt er drie van de zes, en
+  // Traffic telt voor twee (november 2026; eerst had elk project een eigen
+  // rij, en dat las als allemaal, en was Traffic expert). De lessen staan in
+  // de volgorde van de route.
   const cs50 = rij('ml-cs50');
-  const traffic = rij('ml-traffic');
-  const CS50_PROJECTEN = ['Shopping', 'PageRank', 'Nim', 'Tic-Tac-Toe', 'Degrees'];
+  const CS50_PROJECTEN = ['Shopping', 'PageRank', 'Nim', 'Tic-Tac-Toe', 'Degrees', 'Traffic'];
 
   it('heeft op niveau 1 alleen Python en de projecten', () => {
     expect([...new Set(opNiveau1.map((c) => c.onderwerp))]).toEqual(['python', 'ml']);
@@ -199,20 +198,18 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
       ['ml-neuron-leert', 'gevorderd'],
       ['ml-op-weg-naar-traffic', 'gevorderd'],
       ['ml-cs50', 'gevorderd'],
-      ['ml-traffic', 'expert'],
     ]);
     expect(cs50?.concept).toBe('Drie van de projecten van CS50 AI');
     expect(cs50?.toelichting).toContain(
-      `Je kiest er drie uit: ${CS50_PROJECTEN.slice(0, -1).join(', ')} en Degrees.`,
+      `Je kiest er drie uit: ${CS50_PROJECTEN.slice(0, -1).join(', ')} en Traffic. Traffic is het zwaarste en telt voor twee.`,
     );
-    expect(traffic?.concept).toBe('Het project Traffic van CS50 AI');
+    // Niveau 1 heeft geen expert: Traffic telt voor twee in plaats daarvan.
+    expect(opNiveau1.map((c) => c.niveau['1'])).not.toContain('expert');
   });
 
   it('elk project in de browser zegt welke Python je ermee laat zien, elk CS50-project waar je het maakt', () => {
     for (const c of projecten) {
-      expect(c.toelichting, c.id).toMatch(
-        c === cs50 || c === traffic ? /eigen computer/ : /^Python: /,
-      );
+      expect(c.toelichting, c.id).toMatch(c === cs50 ? /eigen computer/ : /^Python: /);
     }
   });
 
@@ -222,8 +219,8 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
     const route = new Set(routePaginas());
     const projectLessen = projecten.map((c) => (c.lessen ?? []).map((l) => l.id));
     for (const [i, lessen] of projectLessen.entries()) {
-      // De rij van CS50 AI wijst naar de vijf pagina's waar je met een project begint.
-      expect(lessen.length, projecten[i].id).toBe(projecten[i] === cs50 ? 5 : 1);
+      // De rij van CS50 AI wijst naar de zes pagina's waar je met een project begint.
+      expect(lessen.length, projecten[i].id).toBe(projecten[i] === cs50 ? 6 : 1);
       if (lessen[0].startsWith('ml-')) expect(route.has(lessen[0]), lessen[0]).toBe(true);
     }
     const gedekt = new Set(projectLessen.flat());
@@ -250,10 +247,9 @@ describe('leerdoelen van Algoritmiek: de route machine learning op niveau 1', ()
         .map((f) => readFileSync(join(map, f), 'utf8'))
         .join('\n');
     };
-    const lessen = [...(cs50?.lessen ?? []), ...(traffic?.lessen ?? [])].map((l) => l.id);
-    const namen = [...CS50_PROJECTEN, 'Traffic'];
-    expect(lessen.length).toBe(namen.length);
-    for (const [i, naam] of namen.entries()) {
+    const lessen = (cs50?.lessen ?? []).map((l) => l.id);
+    expect(lessen.length).toBe(CS50_PROJECTEN.length);
+    for (const [i, naam] of CS50_PROJECTEN.entries()) {
       const les = lessen[i];
       const url = new RegExp(
         `cs50\\.harvard\\.edu/ai/projects/\\d/${naam.toLowerCase().replace(/-/g, '')}`,
