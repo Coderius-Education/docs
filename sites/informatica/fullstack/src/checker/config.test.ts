@@ -730,6 +730,52 @@ describe('fullstackConfig — de nieuwe rijen van het blad', () => {
     expect(gebruikt({ 'main.py': kopie }).get('db-aanpassen')).toBe(false);
   });
 
+  it('telt elk blok van de les Aanpassen dat ophaalt, aanpast en terugzet', () => {
+    // De herkenning eiste een sleutel die direct een nieuwe waarde kreeg
+    // (`sara["klas"] = …`). Het voorbeeld van de les, `sara["vakken"].append`,
+    // en de antwoorden van opdracht 4 (`remove`) en 5 (het scorebord) telden
+    // niet: een leerling die precies deed wat de les vroeg, scoorde hier niets.
+    // Elk blok apart, want samen haalde één blok de rest erdoorheen.
+    const les = readFileSync(
+      fileURLToPath(new URL('../../docs/FastAPI/sqlitedict/aanpassen.mdx', import.meta.url)),
+      'utf8',
+    );
+    const blokken = [...les.matchAll(/```python[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
+    const terugzetten = (b: string) =>
+      [...b.matchAll(/^\s+(\w+)\s*=\s*db\s*(?:\[|\.get\s*\()/gm)].some((m) =>
+        new RegExp(String.raw`^\s+db\s*\[[^\]]+\]\s*=\s*${m[1]}\s*$`, 'm').test(b),
+      );
+    const metTerugzetten = blokken.filter(terugzetten);
+    expect(metTerugzetten.length).toBeGreaterThanOrEqual(4);
+
+    const gemist = metTerugzetten.filter((b) => !gebruikt({ 'main.py': b }).get('db-aanpassen'));
+    expect(gemist).toEqual([]);
+    // En een blok dat een kopie aanpast zonder terugzetten, telt nog steeds niet.
+    const zonder = blokken.filter((b) => /SqliteDict/.test(b) && !terugzetten(b));
+    expect(zonder.filter((b) => gebruikt({ 'main.py': b }).get('db-aanpassen'))).toEqual([]);
+  });
+
+  it('telt aanpassen met een lijstmethode, een diepere sleutel of +=', () => {
+    const blok = (aanpassen: string) =>
+      [
+        'with SqliteDict("scores.db") as db:',
+        '    speler = db.get(naam, {"scores": [], "punten": 0})',
+        `    ${aanpassen}`,
+        '    db[naam] = speler',
+        '    db.commit()',
+      ].join('\n');
+    for (const a of [
+      'speler["scores"].append(score)',
+      'speler["scores"].insert(0, score)',
+      'speler["scores"][0] = score',
+      'speler["punten"] += 1',
+    ]) {
+      expect(gebruikt({ 'main.py': blok(a) }).get('db-aanpassen'), a).toBe(true);
+    }
+    // De variabele zelf opnieuw toewijzen is geen aanpassen van de dictionary.
+    expect(gebruikt({ 'main.py': blok('speler = {}') }).get('db-aanpassen')).toBe(false);
+  });
+
   it('telt een if in Python of in een template', () => {
     expect(gebruikt({ 'main.py': 'if naam in db:\n    pass' }).get('if-else')).toBe(true);
     expect(gebruikt({ 'a.html': '{% if berichten %}x{% endif %}' }).get('if-else')).toBe(true);
