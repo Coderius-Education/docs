@@ -7,8 +7,9 @@ import {
   CONCEPT_MOEILIJKHEDEN,
   type Leerdoelen,
   moeilijkhedenTekst,
+  opsomming,
   projectNiveaus,
-  verschillen,
+  verschilTelling,
 } from '../../leerdoelen';
 import { siteByUrl } from '../../sites';
 import Bloom from './Bloom';
@@ -31,8 +32,22 @@ export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoele
   // alle niveaus zo, dan is er geen project en geen cijfer volgens Bloom.
   const project = projectNiveaus(leerdoelen);
   const tentamen = leerdoelen.tentamen;
-  // Per niveau hoeveel concepten anders zijn dan het niveau ervoor.
-  const anders = new Map(verschillen(leerdoelen).map((v) => [v.naar.id, v]));
+  // Per niveau wat er anders is dan het niveau ervoor: de concepten, en een
+  // onderwerp dat begint of wegvalt als geheel (verschilTelling).
+  const anders = (niveau: string) => {
+    const t = verschilTelling(leerdoelen, niveau);
+    if (!t) return '';
+    const delen = [
+      t.opPagina + t.afgevallen > 0 ? `${t.opPagina + t.afgevallen} anders dan ${t.van.label}` : '',
+      t.nieuweOnderwerpen.length > 0
+        ? `nieuw: ${opsomming(t.nieuweOnderwerpen.map((o) => o.label))}`
+        : '',
+      t.weggevallenOnderwerpen.length > 0
+        ? `zonder ${opsomming(t.weggevallenOnderwerpen.map((o) => o.label))}`
+        : '',
+    ].filter(Boolean);
+    return delen.length > 0 ? `; ${delen.join('; ')}` : '';
+  };
   return (
     <Layout
       title="Leerdoelen"
@@ -75,8 +90,7 @@ export default function LeerdoelenPagina({ leerdoelen }: { leerdoelen: Leerdoele
                 <Link to={`/leerdoelen/niveau-${n.id}`}>{n.label}</Link>
                 <span className={styles.toelichting}>
                   {delen.join(', ')}
-                  {anders.get(n.id) &&
-                    `; ${anders.get(n.id)?.aantal} anders dan ${anders.get(n.id)?.van.label}`}
+                  {anders(n.id)}
                 </span>
               </li>
             );

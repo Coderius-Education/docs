@@ -4,6 +4,7 @@ import {
   kolommenVoorOnderwerp,
   moeilijkheid,
   onderwerpenOpNiveau,
+  verschilTelling,
   verschillen,
 } from '../../leerdoelen';
 import Lessen from './Lessen';
@@ -27,13 +28,20 @@ export default function Niveau({
   // Wat anders is dan het niveau ervoor (zonder tentamen) krijgt een
   // labeltje, zodat je op deze pagina ziet wat er verandert. Een concept dat
   // op een niveau nog eerder al stond, is "weer erbij", niet nieuw.
+  // Een onderwerp dat hier begint (fullstack niveau 3: Linux, Veiligheid,
+  // Online zetten) krijgt het label één keer, bij zijn kop; anders stond
+  // "nieuw" bij elke rij.
   const verschil = verschillen(leerdoelen).find((v) => v.naar.id === niveau);
+  const nieuwOnderwerp = new Set(
+    verschilTelling(leerdoelen, niveau)?.nieuweOnderwerpen.map((o) => o.id),
+  );
   const labels = new Map<string, string>();
   for (const { soort, concepten } of verschil?.groepen ?? []) {
     for (const { concept, was, eerder } of concepten) {
       const bij = (m: string, n: { label: string }) =>
         `${moeilijkheid(m).label.toLowerCase()} op ${n.label}`;
       if (soort === 'erbij') {
+        if (!eerder && nieuwOnderwerp.has(concept.onderwerp)) continue;
         labels.set(
           concept.id,
           eerder ? `weer erbij, was ${bij(eerder.moeilijkheid, eerder.niveau)}` : 'nieuw',
@@ -59,7 +67,14 @@ export default function Niveau({
         ];
         return (
           <section key={onderwerp.id}>
-            <Kop>{onderwerp.label}</Kop>
+            <Kop>
+              {onderwerp.label}
+              {nieuwOnderwerp.has(onderwerp.id) && (
+                <span className={styles.was}>
+                  nieuw op {leerdoelen.niveaus.find((n) => n.id === niveau)?.label}
+                </span>
+              )}
+            </Kop>
             {groepen && (
               <p>
                 Voor gevorderd heb je hier een concept op gevorderd of expert nodig in minstens{' '}

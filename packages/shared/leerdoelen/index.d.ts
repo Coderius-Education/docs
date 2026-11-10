@@ -179,7 +179,17 @@ export function verschillen(leerdoelen: Leerdoelen): {
 export function verschilTelling(
   leerdoelen: Leerdoelen,
   niveau: string,
-): { van: Niveau; opPagina: number; afgevallen: number } | null;
+): {
+  van: Niveau;
+  opPagina: number;
+  afgevallen: number;
+  /** Onderwerpen die op het niveau ervoor nog geen concept hadden. */
+  nieuweOnderwerpen: Benoemd[];
+  /** Onderwerpen met concepten op het niveau ervoor en geen enkel hier. */
+  weggevallenOnderwerpen: Benoemd[];
+} | null;
+/** "Linux", "Linux en Veiligheid", "Linux, Veiligheid en Online zetten". */
+export function opsomming(namen: string[]): string;
 /** Of de cursus, of met `niveau` alleen dat niveau, concepten op expert heeft. */
 export function heeftExpert(leerdoelen: Leerdoelen, niveau?: string): boolean;
 export function cijferKolommen(leerdoelen: Leerdoelen): Moeilijkheid[];

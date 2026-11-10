@@ -45,6 +45,31 @@ describe('Niveau', () => {
     expect(screen.getAllByText('nieuw')).toHaveLength(1);
   });
 
+  it('zet nieuw bij een onderwerp dat begint, niet bij elke rij', () => {
+    // Fullstack niveau 3: Linux, Veiligheid en Online zetten beginnen daar,
+    // en elke rij had het label nieuw.
+    const l = leesLeerdoelen({
+      niveaus: ['1', '2'],
+      onderwerpen: [
+        { id: 'py', label: 'Python' },
+        { id: 'lx', label: 'Linux' },
+      ],
+      concepten: [
+        { id: 'a', onderwerp: 'py', concept: 'een lijst', 1: 'basis', 2: 'basis' },
+        { id: 'b', onderwerp: 'py', concept: 'een klasse', 1: null, 2: 'basis' },
+        { id: 'c', onderwerp: 'lx', concept: 'cd en ls', 1: null, 2: 'basis' },
+        { id: 'd', onderwerp: 'lx', concept: 'ssh', 1: null, 2: 'gevorderd' },
+      ],
+    });
+    render(<Niveau leerdoelen={l} niveau="2" />);
+    expect(screen.getByRole('heading', { name: /Linux/ }).textContent).toContain(
+      'nieuw op Niveau 2',
+    );
+    expect(screen.getByRole('heading', { name: /Python/ }).textContent).not.toContain('nieuw');
+    // Alleen de klasse, nieuw in een onderwerp dat er al was.
+    expect(screen.getAllByText('nieuw')).toHaveLength(1);
+  });
+
   it('heeft op het eerste niveau geen labeltjes', () => {
     render(<Niveau leerdoelen={leerdoelen} niveau="1" />);
     expect(screen.queryByText(/^was |^nieuw$|weer erbij/)).toBeNull();

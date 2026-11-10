@@ -446,15 +446,44 @@ function verschillen(leerdoelen) {
  * op). Eerst telde de pagina beide samen: fullstack niveau 3 zei 53, terwijl
  * er 29 een labeltje hadden. Null bij het eerste niveau en bij het tentamen.
  *
+ * Een onderwerp dat op het niveau ervoor nog geen enkel concept had, is een
+ * nieuw onderwerp, en een onderwerp dat hier geen concept meer heeft, valt
+ * af. Hun concepten tellen niet apart mee: op fullstack niveau 3 stond bij
+ * elke rij "nieuw", omdat Linux, Veiligheid en Online zetten daar beginnen.
+ * Een concept dat terugkomt (`eerder`) telt wel, ook in een nieuw onderwerp.
+ *
  * @param {object} leerdoelen uit leesLeerdoelen
  * @param {string} niveau
- * @returns {{van: object, opPagina: number, afgevallen: number} | null}
+ * @returns {{van: object, opPagina: number, afgevallen: number, nieuweOnderwerpen: object[], weggevallenOnderwerpen: object[]} | null}
  */
 function verschilTelling(leerdoelen, niveau) {
   const v = verschillen(leerdoelen).find((x) => x.naar.id === niveau);
   if (!v) return null;
-  const afgevallen = v.groepen.find((g) => g.soort === 'valt-af')?.concepten.length ?? 0;
-  return { van: v.van, opPagina: v.aantal - afgevallen, afgevallen };
+  const heeft = (o, n) => leerdoelen.concepten.some((c) => c.onderwerp === o.id && c.niveau[n]);
+  const nieuweOnderwerpen = leerdoelen.onderwerpen.filter(
+    (o) => heeft(o, niveau) && !heeft(o, v.van.id),
+  );
+  const weggevallenOnderwerpen = leerdoelen.onderwerpen.filter(
+    (o) => !heeft(o, niveau) && heeft(o, v.van.id),
+  );
+  const in_ = (lijst, c) => lijst.some((o) => o.id === c.onderwerp);
+  let opPagina = 0;
+  let afgevallen = 0;
+  for (const { soort, concepten } of v.groepen) {
+    for (const { concept, eerder } of concepten) {
+      if (soort === 'valt-af') {
+        if (!in_(weggevallenOnderwerpen, concept)) afgevallen++;
+      } else if (!(soort === 'erbij' && !eerder && in_(nieuweOnderwerpen, concept))) {
+        opPagina++;
+      }
+    }
+  }
+  return { van: v.van, opPagina, afgevallen, nieuweOnderwerpen, weggevallenOnderwerpen };
+}
+
+/** Een opsomming: "Linux", "Linux en Veiligheid", "Linux, Veiligheid en Online zetten". */
+function opsomming(namen) {
+  return namen.length <= 1 ? namen.join('') : `${namen.slice(0, -1).join(', ')} en ${namen.at(-1)}`;
 }
 
 /**
@@ -550,8 +579,7 @@ function moeilijkheidVoorstel(perOnderwerp) {
       }),
       { used: 0, total: 0 },
     );
-  const lijst = (namen) =>
-    namen.length <= 1 ? namen.join('') : `${namen.slice(0, -1).join(', ')} en ${namen.at(-1)}`;
+  const lijst = opsomming;
 
   // Een onderdeel kan voor gevorderd meer groepen vragen (gevorderdInGroepen):
   // dan telt hoeveel groepen een gevorderd concept hebben, niet of er één is.
@@ -621,6 +649,7 @@ module.exports = {
   overgang,
   verschillen,
   verschilTelling,
+  opsomming,
   BLOOM,
   NIVEAUS,
   CONCEPT_MOEILIJKHEDEN,

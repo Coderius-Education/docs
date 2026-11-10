@@ -15,6 +15,7 @@ import {
   moeilijkhedenTekst,
   moeilijkheidVoorstel,
   onderwerpenOpNiveau,
+  opsomming,
   overgang,
   projectNiveaus,
   sjabloonZin,
@@ -657,7 +658,42 @@ describe('overgang en verschillen: waar de niveaus verschillen', () => {
     const fullstack = leesLeerdoelen(
       JSON.parse(readFileSync(join(ROOT, siteDir('fullstack'), 'src', 'leerdoelen.json'), 'utf8')),
     );
-    expect(verschilTelling(fullstack, '3')).toMatchObject({ opPagina: 29, afgevallen: 24 });
+    // Niveau 3 van fullstack heeft andere onderwerpen dan niveau 2: die
+    // tellen als geheel, niet als 29 nieuwe en 24 afgevallen concepten.
+    const t = verschilTelling(fullstack, '3');
+    expect(t).toMatchObject({ opPagina: 0, afgevallen: 0 });
+    expect(t?.nieuweOnderwerpen.map((o) => o.id)).toEqual(['linux', 'veiligheid', 'online']);
+    expect(t?.weggevallenOnderwerpen.map((o) => o.id)).toEqual(['fastapi']);
+  });
+
+  it('telt een onderwerp dat begint of wegvalt als geheel', () => {
+    // Op fullstack niveau 3 stond "nieuw" bij elke rij, omdat Linux,
+    // Veiligheid en Online zetten daar beginnen.
+    const l = leesLeerdoelen({
+      niveaus: ['1', '2', '3'],
+      onderwerpen: [
+        { id: 'py', label: 'Python' },
+        { id: 'web', label: 'Web' },
+        { id: 'oud', label: 'Oud' },
+      ],
+      concepten: [
+        { id: 'a', onderwerp: 'py', concept: 'a', 1: 'basis', 2: 'basis', 3: 'gevorderd' },
+        { id: 'b', onderwerp: 'py', concept: 'b', 1: null, 2: null, 3: 'basis' },
+        { id: 'c', onderwerp: 'web', concept: 'c', 1: null, 2: null, 3: 'basis' },
+        // Terug na een niveau zonder web: dat blijft een eigen verschil.
+        { id: 'd', onderwerp: 'web', concept: 'd', 1: 'basis', 2: null, 3: 'basis' },
+        { id: 'e', onderwerp: 'oud', concept: 'e', 1: 'basis', 2: 'basis', 3: null },
+      ],
+    });
+    const t = verschilTelling(l, '3');
+    expect(t?.nieuweOnderwerpen.map((o) => o.id)).toEqual(['web']);
+    expect(t?.weggevallenOnderwerpen.map((o) => o.id)).toEqual(['oud']);
+    // a (anders), b (nieuw in een bestaand onderwerp) en d (weer erbij).
+    expect(t).toMatchObject({ opPagina: 3, afgevallen: 0 });
+    expect(opsomming(['Linux', 'Veiligheid', 'Online zetten'])).toBe(
+      'Linux, Veiligheid en Online zetten',
+    );
+    expect(opsomming(['Linux'])).toBe('Linux');
   });
 
   it('slaat het tentamen-niveau over', () => {

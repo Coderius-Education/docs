@@ -441,9 +441,10 @@ describe('fullstackConfig — de leerdoelen', () => {
 
   it('niveau 3 is Linux, Veiligheid en Online zetten, met basis, gevorderd en expert', () => {
     // Niet van het blad, maar een opzet uit de lessen van de drie routes, met
-    // de verschuivingen van de docent: slowapi en Argon2 naar basis, de
-    // Dockerfile en compose.yaml naar gevorderd, en de echte server (firewall,
-    // HTTPS, back-up, uitrollen) naar expert. Vandaar ook hier de hele tabel:
+    // de verschuivingen van de docent: Argon2 naar basis, de Dockerfile en
+    // compose.yaml naar gevorderd, en de echte server (firewall, HTTPS,
+    // back-up, uitrollen) naar expert. Daarna (november 2026) ssh met een
+    // sleutelpaar, de 403 en de limiet met slowapi naar gevorderd. Vandaar ook hier de hele tabel:
     // een verschuiving is een keuze.
     const B = 'basis';
     const G = 'gevorderd';
@@ -454,7 +455,7 @@ describe('fullstackConfig — de leerdoelen', () => {
       ['linux', 'rechten lezen met ls -l: eigenaar, groep en rwx', B],
       ['linux', "programma's installeren met sudo apt", B],
       ['linux', 'een bestand bewerken met nano', B],
-      ['linux', 'inloggen op een andere computer met ssh en een sleutelpaar', B],
+      ['linux', 'inloggen op een andere computer met ssh en een sleutelpaar', G],
       ['linux', 'zoeken met grep en de pipe', G],
       ['linux', 'processen en diensten bekijken, starten en stoppen (ps, systemctl)', G],
       ['linux', 'rechten en groepen aanpassen (chmod, usermod)', G],
@@ -463,8 +464,8 @@ describe('fullstackConfig — de leerdoelen', () => {
       ['veiligheid', 'een .gitignore, zodat databases en geheimen niet in je repository komen', B],
       ['veiligheid', 'invoer controleren met grenzen in Form', B],
       ['veiligheid', 'HTML van een bezoeker blijft tekst (templates escapen, geen |safe)', B],
-      ['veiligheid', 'op de server controleren wie iets mag, met 403', B],
-      ['veiligheid', 'een limiet op verzoeken met slowapi', B],
+      ['veiligheid', 'op de server controleren wie iets mag, met 403', G],
+      ['veiligheid', 'een limiet op verzoeken met slowapi', G],
       ['veiligheid', 'cookies afschermen met httponly en samesite', G],
       ['veiligheid', 'wachtwoorden als hash opslaan met Argon2', B],
       ['veiligheid', 'inlogpogingen beperken', G],
@@ -578,7 +579,7 @@ describe('fullstackConfig — de leerdoelen', () => {
       16, 8, 0,
     ]);
     expect([telling('3', 'basis'), telling('3', 'gevorderd'), telling('3', 'expert')]).toEqual([
-      16, 9, 4,
+      13, 12, 4,
     ]);
   });
 
