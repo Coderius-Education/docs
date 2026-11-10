@@ -51,7 +51,8 @@ Elke fase daarna gebruikt ook wat in de fases van de laatste kolom staat.
 
 De CS50-projecten zijn Engelstalig, en je maakt ze op je eigen computer. Bij
 elk project hoort een gratis hoorcollege dat de theorie uitlegt; begin daar.
-Ze staan hier in de volgorde van de route.
+Ze staan hier in de volgorde van de route. Voor niveau 1 maak je er drie,
+en welke drie kies je zelf. Traffic is het zwaarste en telt voor twee.
 
 ### Shopping
 
