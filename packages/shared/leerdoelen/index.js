@@ -41,8 +41,12 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
   if (!data || typeof data !== 'object') throw new Error(`${bron}: geen object`);
   const { niveaus, onderwerpen, concepten } = data;
   for (const sleutel of Object.keys(data)) {
-    if (!['niveaus', 'onderwerpen', 'concepten', 'tentamen'].includes(sleutel)) {
-      fouten.push(`onbekend veld '${sleutel}' (wel: niveaus, onderwerpen, concepten, tentamen)`);
+    if (
+      !['niveaus', 'onderwerpen', 'concepten', 'tentamen', 'gevorderdInGroepen'].includes(sleutel)
+    ) {
+      fouten.push(
+        `onbekend veld '${sleutel}' (wel: niveaus, onderwerpen, concepten, tentamen, gevorderdInGroepen)`,
+      );
     }
   }
   const bekend = NIVEAUS.map((n) => n.id);
@@ -166,9 +170,61 @@ function leesLeerdoelen(data, bron = 'leerdoelen.json') {
     }
     return uit;
   });
+  // Op een niveau kan gevorderd bij een onderwerp een gevorderd concept in
+  // meer groepen vragen: { "2": { "play": 2 } }. Zo vraagt niveau 2 van play
+  // iets gevorderds in twee hoofdstukken, waar niveau 1 er één vraagt.
+  const gevorderdInGroepen = data.gevorderdInGroepen;
+  if (gevorderdInGroepen !== undefined) {
+    if (!gevorderdInGroepen || typeof gevorderdInGroepen !== 'object') {
+      fouten.push(
+        'gevorderdInGroepen moet een object zijn: { "<niveau>": { "<onderwerp>": <aantal> } }',
+      );
+    } else {
+      for (const [n, perOnderwerp] of Object.entries(gevorderdInGroepen)) {
+        if (!niveauIds.includes(n)) fouten.push(`gevorderdInGroepen: onbekend niveau '${n}'`);
+        // { "2": 2 } in plaats van { "2": { "play": 2 } } ging er eerst stil
+        // doorheen, en dan deed de regel niets.
+        if (!perOnderwerp || typeof perOnderwerp !== 'object' || Array.isArray(perOnderwerp)) {
+          fouten.push(
+            `gevorderdInGroepen: bij niveau ${n} een object per onderwerp, zoals { "${n}": { "<onderwerp>": 2 } }`,
+          );
+          continue;
+        }
+        const opNiveau = rijen.filter((r) => r && r.niveau[n] != null);
+        const onderwerpenOpNiveau = new Set(opNiveau.map((r) => r.onderwerp));
+        for (const [o, aantal] of Object.entries(perOnderwerp)) {
+          const vanOnderwerp = opNiveau.filter((r) => r.onderwerp === o);
+          const groepen = new Set(
+            vanOnderwerp
+              .filter((r) => ['gevorderd', 'expert'].includes(r.niveau[n]))
+              .map((r) => r.groep),
+          );
+          if (!onderwerpIds.has(o)) fouten.push(`gevorderdInGroepen: onbekend onderwerp '${o}'`);
+          else if (!Number.isInteger(aantal) || aantal < 2) {
+            fouten.push(`gevorderdInGroepen: bij ${n}/${o} een geheel getal van 2 of meer`);
+          } else if (vanOnderwerp.some((r) => !r.groep)) {
+            // Zonder groep krijgt een concept in de nakijker de moeilijkheid
+            // als kop: dan telt de regel iets anders dan hier.
+            fouten.push(`gevorderdInGroepen: bij ${n}/${o} heeft niet elke rij een groep`);
+          } else if (onderwerpenOpNiveau.size === 1) {
+            // Met één onderwerp gaat het voorstel al per groep en eist het
+            // gevorderd in élke groep: de regel zou dan niets doen.
+            fouten.push(
+              `gevorderdInGroepen: niveau ${n} heeft alleen ${o}; dan vraagt gevorderd al een concept in elke groep`,
+            );
+          } else if (aantal > groepen.size) {
+            fouten.push(
+              `gevorderdInGroepen: bij ${n}/${o} ${aantal} groepen, maar er zijn er maar ${groepen.size} met een gevorderd concept`,
+            );
+          }
+        }
+      }
+    }
+  }
   if (fouten.length) throw new Error(`${bron}:\n- ${fouten.join('\n- ')}`);
 
   return {
+    ...(gevorderdInGroepen ? { gevorderdInGroepen } : {}),
     niveaus: niveauIds.map((id) => NIVEAUS.find((n) => n.id === id)),
     onderwerpen: onderwerpen.map(({ id, label }) => ({ id, label })),
     concepten: rijen,
@@ -353,13 +409,26 @@ function moeilijkhedenTekst(leerdoelen) {
 }
 
 /**
- * De kolommen van de cijfertabel voor een cursus: niet aan basis voldaan en
- * de moeilijkheden die de cursus gebruikt. Expert staat er alleen bij een
- * cursus met expertconcepten.
+ * Of een cursus concepten op expert heeft, of met `niveau` alleen op dat
+ * niveau. Zo'n niveau zegt op zijn pagina waar expert voor is.
  */
-function cijferKolommen(leerdoelen) {
-  const heeftExpert = leerdoelen.concepten.some((c) => Object.values(c.niveau).includes('expert'));
-  return BLOOM.moeilijkheden.filter((m) => m.id !== 'expert' || heeftExpert);
+function heeftExpert(leerdoelen, niveau) {
+  return leerdoelen.concepten.some((c) =>
+    niveau === undefined
+      ? Object.values(c.niveau).includes('expert')
+      : c.niveau[niveau] === 'expert',
+  );
+}
+
+/**
+ * De kolommen van de cijfertabel: niet aan basis voldaan, basis en gevorderd.
+ * Expert heeft geen eigen kolom: het telt voor het cijfer als gevorderd, en
+ * dient vooral om te laten zien dat je meer kunt dan het lesmateriaal. Een
+ * kolom met dezelfde cijfers als gevorderd suggereerde dat expert een hoger
+ * cijfer gaf.
+ */
+function cijferKolommen(_leerdoelen) {
+  return BLOOM.moeilijkheden.filter((m) => m.id !== 'expert');
 }
 
 function denkvaardigheid(id) {
@@ -421,8 +490,14 @@ function moeilijkheidVoorstel(perOnderwerp) {
   const lijst = (namen) =>
     namen.length <= 1 ? namen.join('') : `${namen.slice(0, -1).join(', ')} en ${namen.at(-1)}`;
 
+  // Een onderdeel kan voor gevorderd meer groepen vragen (gevorderdInGroepen):
+  // dan telt hoeveel groepen een gevorderd concept hebben, niet of er één is.
+  const iGevorderd = CONCEPT_MOEILIJKHEDEN.indexOf('gevorderd');
+  const teWeinigGroepen = (o, i) =>
+    i === iGevorderd && o.gevorderdGroepen && o.gevorderdGroepen.gehaald < o.gevorderdGroepen.nodig;
   let gehaald = 'niet-aan-basis';
   let mist = [];
+  let groepenMist = [];
   // De onderwerpen die voor de gehaalde moeilijkheid meetelden: een onderwerp
   // zonder concepten op die moeilijkheid telt daar niet mee.
   let geteld = [];
@@ -435,8 +510,13 @@ function moeilijkheidVoorstel(perOnderwerp) {
       i === 0 ? (o.basis?.total ?? 0) > 0 : vanaf(o, i).total > 0,
     );
     const zonder = telt.filter((o) => vanaf(o, i).used === 0).map((o) => o.label);
-    if (telt.length === 0 || zonder.length > 0) {
+    const teWeinig = telt.filter((o) => vanaf(o, i).used > 0 && teWeinigGroepen(o, i));
+    if (telt.length === 0 || zonder.length > 0 || teWeinig.length > 0) {
       mist = zonder;
+      groepenMist = teWeinig.map(
+        (o) =>
+          `bij ${o.label} in ${o.gevorderdGroepen.gehaald} van de ${o.gevorderdGroepen.nodig} groepen die nodig zijn een concept op gevorderd`,
+      );
       break;
     }
     gehaald = CONCEPT_MOEILIJKHEDEN[i];
@@ -459,8 +539,12 @@ function moeilijkheidVoorstel(perOnderwerp) {
         : 'Er zijn geen concepten voor dit niveau.';
   } else if (!volgende) {
     reden = `${bijElk} een concept op expert.`;
-  } else if (mist.length > 0) {
-    reden = `${bijElk} een concept op ${label(gehaald)}, maar bij ${lijst(mist)} geen concept op ${label(volgende)}.`;
+  } else if (mist.length > 0 || groepenMist.length > 0) {
+    const delen = [
+      ...(mist.length > 0 ? [`bij ${lijst(mist)} geen concept op ${label(volgende)}`] : []),
+      ...groepenMist,
+    ];
+    reden = `${bijElk} een concept op ${label(gehaald)}, maar ${lijst(delen)}.`;
   } else {
     reden = `${bijElk} een concept op ${label(gehaald)}.`;
   }
@@ -483,6 +567,7 @@ module.exports = {
   moeilijkheidVoorstel,
   moeilijkhedenTekst,
   cijferKolommen,
+  heeftExpert,
   denkvaardigheid,
   moeilijkheid,
 };

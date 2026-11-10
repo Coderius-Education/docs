@@ -22,9 +22,24 @@ export default function Niveau({
     <>
       {onderwerpenOpNiveau(leerdoelen, niveau).map(({ onderwerp, concepten: rijen }) => {
         const kolommen = kolommenVoorOnderwerp(leerdoelen, niveau, rijen);
+        const groepen = leerdoelen.gevorderdInGroepen?.[niveau]?.[onderwerp.id];
+        const metGevorderd = [
+          ...new Set(
+            rijen
+              .filter((c) => c.niveau[niveau] === 'gevorderd' || c.niveau[niveau] === 'expert')
+              .map((c) => c.groep)
+              .filter((g): g is string => Boolean(g)),
+          ),
+        ];
         return (
           <section key={onderwerp.id}>
             <Kop>{onderwerp.label}</Kop>
+            {groepen && (
+              <p>
+                Voor gevorderd heb je hier een concept op gevorderd of expert nodig in minstens{' '}
+                {groepen} van deze groepen: {metGevorderd.join(', ')}.
+              </p>
+            )}
             <div className={styles.schuif}>
               <table className={`${styles.tabel} ${styles.kolommen}`}>
                 <thead>

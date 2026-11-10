@@ -71,6 +71,11 @@ export interface Leerdoelen {
   onderwerpen: Benoemd[];
   concepten: LeerdoelConcept[];
   tentamen?: Tentamen;
+  /**
+   * Per niveau en onderwerp: in hoeveel groepen gevorderd een gevorderd
+   * concept vraagt (standaard één). Niveau 2 van play: { "2": { "play": 2 } }.
+   */
+  gevorderdInGroepen?: Record<string, Record<string, number>>;
 }
 
 export interface Werkwoord {
@@ -118,6 +123,8 @@ export interface OnderwerpTelling {
   basis: Telling;
   gevorderd: Telling;
   expert?: Telling;
+  /** Met gevorderdInGroepen: hoeveel groepen nodig zijn, en hoeveel er een gevorderd concept hebben. */
+  gevorderdGroepen?: { nodig: number; gehaald: number };
 }
 
 export const BLOOM: Bloom;
@@ -150,6 +157,8 @@ export function andersDan(
   concept: Pick<LeerdoelConcept, 'niveau'>,
   niveaus: { id: string }[],
 ): Record<string, string | null>;
+/** Of de cursus, of met `niveau` alleen dat niveau, concepten op expert heeft. */
+export function heeftExpert(leerdoelen: Leerdoelen, niveau?: string): boolean;
 export function cijferKolommen(leerdoelen: Leerdoelen): Moeilijkheid[];
 export function denkvaardigheid(id: string): Denkvaardigheid;
 export function moeilijkheid(id: string): Moeilijkheid;

@@ -6,6 +6,7 @@ import {
   cijferKolommen,
   cijferTekst,
   cijferVoor,
+  heeftExpert,
   moeilijkhedenTekst,
 } from '../../leerdoelen';
 import SiteLink from '../SiteLink';
@@ -17,9 +18,9 @@ import styles from './styles.module.css';
 // de nakijker het cijfer berekent. Een bron staat er alleen als vakdidactiek
 // hem uitlegt (`didactiek` in bloom.json; leerdoelen.test.ts eist dat).
 export default function Bloom({ leerdoelen }: { leerdoelen: Leerdoelen }): ReactNode {
-  // Alleen de moeilijkheden van deze cursus: web heeft geen expert.
+  // Niet aan basis voldaan, basis en gevorderd: expert heeft geen eigen kolom.
   const kolommen = cijferKolommen(leerdoelen);
-  const heeftExpert = kolommen.some((m) => m.id === 'expert');
+  const metExpert = heeftExpert(leerdoelen);
   return (
     <section>
       <Heading as="h2" id="bloom">
@@ -81,7 +82,8 @@ export default function Bloom({ leerdoelen }: { leerdoelen: Leerdoelen }): React
       <h3>Het cijfer</h3>
       <p>
         Het cijfer staat waar je denkvaardigheid en de moeilijkheid elkaar kruisen.
-        {heeftExpert && ' Expert telt voor het cijfer als gevorderd.'}
+        {metExpert &&
+          ' Expert heeft geen eigen kolom: het telt voor het cijfer als gevorderd. Expert is er vooral om te laten zien dat je meer kunt dan het lesmateriaal.'}
       </p>
       <div className={styles.schuif}>
         <table className={styles.tabel}>

@@ -1,6 +1,7 @@
 {
   "niveaus": ["1", "2"],
   "onderwerpen": [{ "id": "python", "label": "Python" }, { "id": "play", "label": "coderius-play" }],
+  "gevorderdInGroepen": { "2": { "play": 2 } },
   "concepten": [
     { "id": "py-variabele", "onderwerp": "python", "concept": "een variabele gebruiken", "1": "basis", "2": "basis", "groep": "Variabelen en tekst", "les": ["vormen/vorm_aanpassen", "site:python/docs/basis/jij-als-variabele"] },
     { "id": "py-fstring", "onderwerp": "python", "concept": "een getal in tekst zetten met een f-string", "1": "basis", "2": "basis", "groep": "Variabelen en tekst", "les": ["acties/random", "site:python/docs/tekst/04a-f-strings"] },
@@ -12,7 +13,7 @@
     { "id": "py-lijst", "onderwerp": "python", "concept": "een lijst", "1": "gevorderd", "2": "gevorderd", "groep": "Lijsten en herhalen", "les": ["levels/instellingen", "site:python/docs/data/10a-lijsten-basis"] },
     { "id": "py-for", "onderwerp": "python", "concept": "een for-loop", "1": "gevorderd", "2": "gevorderd", "groep": "Lijsten en herhalen", "les": ["levels/andere-vormen", "site:python/docs/herhalen/06a-for-loop"] },
     { "id": "py-dict", "onderwerp": "python", "concept": "een dictionary", "1": "gevorderd", "2": "gevorderd", "groep": "Lijsten en herhalen", "les": ["levels/instellingen", "site:python/docs/data/11a-dictionaries-basis"] },
-    { "id": "py-import-extra", "onderwerp": "python", "concept": "een tweede module importeren", "1": "gevorderd", "2": "basis", "groep": "Modules", "les": ["tijd/bal", "site:python/docs/modules/09d-modules"] },
+    { "id": "py-import-extra", "onderwerp": "python", "concept": "een tweede module importeren", "1": "gevorderd", "2": "gevorderd", "groep": "Modules", "les": ["tijd/bal", "site:python/docs/modules/09d-modules"] },
     { "id": "play-circle", "onderwerp": "play", "concept": "play.new_circle", "1": "basis", "2": "basis", "groep": "1 Vormen", "les": "vormen/je_eerste_cirkel" },
     { "id": "play-box", "onderwerp": "play", "concept": "play.new_box", "1": "basis", "2": "basis", "groep": "1 Vormen", "les": "vormen/je_eerste_rechthoek" },
     { "id": "play-text", "onderwerp": "play", "concept": "play.new_text", "1": "basis", "2": "basis", "groep": "1 Vormen", "les": "vormen/je_eerste_tekst" },
@@ -36,20 +37,11 @@
     { "id": "play-database", "onderwerp": "play", "concept": "een database aanmaken", "1": "gevorderd", "2": "basis", "groep": "6 Opslaan", "les": "database/basis" },
     { "id": "play-data", "onderwerp": "play", "concept": "set_data en get_data", "1": "gevorderd", "2": "basis", "groep": "6 Opslaan", "les": "database/basis" },
     { "id": "play-database-bestand", "onderwerp": "play", "concept": "er staat een database.json in het project", "1": null, "2": "basis", "groep": "6 Opslaan", "les": "database/basis" },
-    { "id": "play-menu-ui", "onderwerp": "play", "concept": "een startmenu met iets van UI (knop, schuifbalk of vinkje, uitklapmenu of keuzerondjes, invoerveld, voortgangsbalk of zweeftekst)", "1": "gevorderd", "2": null, "groep": "7 Knoppen en UI", "les": ["jouw_project/startmenu", "ui/knop"] },
-    { "id": "play-button", "onderwerp": "play", "concept": "een knop", "1": null, "2": "gevorderd", "groep": "7 Knoppen en UI", "les": "ui/knop" },
-    { "id": "play-slider", "onderwerp": "play", "concept": "een schuifbalk of vinkje", "1": null, "2": "gevorderd", "groep": "7 Knoppen en UI", "les": "ui/schuif-en-vink" },
-    { "id": "play-keuze", "onderwerp": "play", "concept": "een uitklapmenu of keuzerondjes", "1": null, "2": "gevorderd", "groep": "7 Knoppen en UI", "les": "ui/kiezen" },
-    { "id": "play-input", "onderwerp": "play", "concept": "een invoerveld", "1": null, "2": "gevorderd", "groep": "7 Knoppen en UI", "les": "ui/tekst-invoer" },
-    { "id": "play-progress", "onderwerp": "play", "concept": "een voortgangsbalk of zweeftekst", "1": null, "2": "gevorderd", "groep": "7 Knoppen en UI", "les": "ui/voortgang-en-tooltip" },
-    { "id": "play-sound", "onderwerp": "play", "concept": "geluid afspelen", "1": null, "2": "gevorderd", "groep": "8 Geluid en video", "les": "media/geluid" },
-    { "id": "play-sound-bestand", "onderwerp": "play", "concept": "er zit een geluidsbestand bij", "1": null, "2": "gevorderd", "groep": "8 Geluid en video", "les": "media/geluid" },
-    { "id": "play-video", "onderwerp": "play", "concept": "video afspelen", "1": null, "2": "gevorderd", "groep": "8 Geluid en video", "les": "media/video" },
+    { "id": "play-menu-ui", "onderwerp": "play", "concept": "een startmenu met iets van UI (knop, schuifbalk of vinkje, uitklapmenu of keuzerondjes, invoerveld, voortgangsbalk of zweeftekst)", "1": "gevorderd", "2": "gevorderd", "groep": "7 Knoppen en UI", "les": ["jouw_project/startmenu", "ui/knop"] },
     { "id": "play-level-instellingen", "onderwerp": "play", "concept": "instellingen per level in een lijst", "1": "gevorderd", "2": "gevorderd", "groep": "9 Levels", "les": "levels/instellingen" },
     { "id": "play-level-opruimen", "onderwerp": "play", "concept": "een level opruimen met remove()", "1": "gevorderd", "2": "gevorderd", "groep": "9 Levels", "les": "levels/andere-vormen" },
     { "id": "play-level-bouwen", "onderwerp": "play", "concept": "een functie die een level opbouwt", "1": "gevorderd", "2": "gevorderd", "groep": "9 Levels", "les": "levels/andere-vormen" },
-    { "id": "pygame-import", "onderwerp": "play", "concept": "pygame-ce rechtstreeks gebruiken", "1": null, "2": "expert", "groep": "10 Pygame-ce", "les": "pygame-ce/je_eerste_programma" },
-    { "id": "pygame-loop", "onderwerp": "play", "concept": "een eigen game-loop", "1": null, "2": "expert", "groep": "10 Pygame-ce", "les": "pygame-ce/beweging" },
+    { "id": "pygame-spel", "onderwerp": "play", "concept": "een simpel spel in pygame-ce: een eigen venster en game-loop", "1": null, "2": "gevorderd", "groep": "10 Pygame-ce", "les": ["pygame-ce/je_eerste_programma", "pygame-ce/beweging"] },
     { "id": "pymunk", "onderwerp": "play", "concept": "fysica met pymunk", "1": null, "2": "expert", "groep": "10 Pygame-ce", "les": "pygame-ce/botsingen" }
   ]
 }

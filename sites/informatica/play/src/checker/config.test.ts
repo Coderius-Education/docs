@@ -2,10 +2,11 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inTrack, levelVoor } from '@coderius/checker/conceptLevel';
-import { computeLevelSummary } from '@coderius/checker/levelSummary';
+import { computeLevelSummary, voorstelOnderdelen } from '@coderius/checker/levelSummary';
 import { analyze } from '@coderius/checker/matchConcepts';
 import type { ProjectFiles } from '@coderius/checker/types';
 import { validateCheckerConfig } from '@coderius/checker/validateConfig';
+import { moeilijkheidVoorstel } from '@coderius/shared/leerdoelen';
 import { describe, expect, it } from 'vitest';
 import leerdoelenJson from '../leerdoelen.json';
 import { playConfig } from './config';
@@ -97,7 +98,7 @@ describe('play-nakijker', () => {
     const gevonden = new Set(rapport.concepts.filter((m) => m.used).map((m) => m.id));
     expect(gevonden).toContain('play-circle');
     expect(gevonden).toContain('play-vorm-aanpassen');
-    expect(gevonden).not.toContain('play-button');
+    expect(gevonden).not.toContain('play-menu-ui');
   });
 
   it('telt voor een startmenu met UI elk element, en noemt welk', () => {
@@ -112,13 +113,12 @@ describe('play-nakijker', () => {
     expect(menu('t = play.new_text(words="Start")')?.used).toBe(false);
   });
 
-  it('herkent levels, UI en geluid in een project', () => {
+  it('herkent levels en een startmenu in een project', () => {
     const code = [
       'import play',
       '',
       'levels = [{"snelheid": 100}, {"snelheid": 200}]',
       'vormen = []',
-      'geluid = play.new_sound("klik.mp3")',
       'knop = play.new_button(text="Start")',
       '',
       'def bouw_level():',
@@ -127,18 +127,16 @@ describe('play-nakijker', () => {
       '',
       '@knop.when_clicked',
       'def geklikt():',
-      '    geluid.play()',
+      '    bouw_level()',
       '',
     ].join('\n');
-    const rapport = analyze(bestanden({ 'spel.py': code, 'klik.mp3': null }), playConfig);
+    const rapport = analyze(bestanden({ 'spel.py': code }), playConfig);
     const gevonden = new Set(rapport.concepts.filter((m) => m.used).map((m) => m.id));
     for (const id of [
       'play-level-instellingen',
       'play-level-opruimen',
       'play-level-bouwen',
-      'play-button',
-      'play-sound',
-      'play-sound-bestand',
+      'play-menu-ui',
       'py-for',
     ]) {
       expect(gevonden, id).toContain(id);
@@ -155,7 +153,8 @@ describe('play-nakijker', () => {
     // hoort pas bij niveau 2.
     expect(niveau('play-circle')).toEqual({ '1': 'basis', '2': 'basis' });
     expect(niveau('play-timer')).toEqual({ '1': 'gevorderd', '2': 'basis' });
-    expect(niveau('pygame-import')).toEqual({ '1': null, '2': 'expert' });
+    expect(niveau('pygame-spel')).toEqual({ '1': null, '2': 'gevorderd' });
+    expect(niveau('pymunk')).toEqual({ '1': null, '2': 'expert' });
     // Niveau 1 zoals de docent het in november 2026 indeelde: botsingen, een
     // muur en repeat_forever zijn basis; UI en levels gevorderd (eerst
     // expert); geluid, video en het databasebestand tellen niet mee. Zo heeft
@@ -175,18 +174,19 @@ describe('play-nakijker', () => {
       expect(opNiveau1(id), id).toBe('gevorderd');
       expect(levelVoor(concept(id), '2'), id).toBe('gevorderd');
     }
-    // UI: op niveau 1 is een startmenu met iets van UI gevorderd, welk element
-    // ook; niet elk element apart. Op niveau 2 telt elk element apart.
-    expect(opNiveau1('play-menu-ui')).toBe('gevorderd');
-    expect(inTrack(concept('play-menu-ui'), '2')).toBe(false);
-    for (const id of ['play-button', 'play-slider', 'play-keuze', 'play-input', 'play-progress']) {
-      expect(opNiveau1(id), id).toBeNull();
-      expect(levelVoor(concept(id), '2'), id).toBe('gevorderd');
+    // UI: op beide niveaus één rij, een startmenu met iets van UI, welk
+    // element ook (november 2026; eerst telde op niveau 2 elk element apart).
+    expect(niveau('play-menu-ui')).toEqual({ '1': 'gevorderd', '2': 'gevorderd' });
+    // Geluid en video tellen op geen van beide niveaus mee, en hebben dus
+    // geen rij meer; het databasebestand telt alleen op niveau 2.
+    const ids = playConfig.concepts.map((c) => c.id);
+    for (const id of ['play-sound', 'play-sound-bestand', 'play-video', 'play-button']) {
+      expect(ids, id).not.toContain(id);
     }
-    for (const id of ['play-database-bestand', 'play-sound', 'play-sound-bestand', 'play-video']) {
-      expect(opNiveau1(id), id).toBeNull();
-      expect(inTrack(concept(id), '2'), id).toBe(true);
-    }
+    expect(opNiveau1('play-database-bestand')).toBeNull();
+    expect(inTrack(concept('play-database-bestand'), '2')).toBe(true);
+    // Een tweede module is op beide niveaus gevorderd.
+    expect(niveau('py-import-extra')).toEqual({ '1': 'gevorderd', '2': 'gevorderd' });
     const niveau1 = playConfig.concepts
       .filter((c) => inTrack(c, '1'))
       .map((c) => levelVoor(c, '1'));
@@ -198,6 +198,97 @@ describe('play-nakijker', () => {
     expect(niveau('py-for')).toEqual({ '1': 'gevorderd', '2': 'gevorderd' });
     // Een beoordeling van vóór de niveaus opent op niveau 1.
     expect(playConfig.zonderLeerroute).toBe('1');
+  });
+
+  it('telt pygame en pymunk niet als tweede module', () => {
+    const module = (code: string) =>
+      analyze(bestanden({ 'main.py': code }), playConfig).concepts.find(
+        (c) => c.id === 'py-import-extra',
+      )?.used;
+    expect(module('import play\nimport pygame\nimport pymunk\nfrom pygame import display\n')).toBe(
+      false,
+    );
+    expect(module('import play\nimport time\n')).toBe(true);
+    expect(module('import play\nfrom random import randint\n')).toBe(true);
+  });
+
+  it('telt een spel in pygame-ce en pymunk pas bij echt gebruik, niet bij een import', () => {
+    const gebruikt = (code: string) =>
+      new Set(
+        analyze(bestanden({ 'main.py': code }), playConfig)
+          .concepts.filter((c) => c.used)
+          .map((c) => c.id),
+      );
+    // Een import alleen telde eerst al, ook in een gewoon play-project.
+    const alleenImport = gebruikt('import play\nimport pygame\nimport pymunk\n');
+    expect(alleenImport).not.toContain('pygame-spel');
+    expect(alleenImport).not.toContain('pymunk');
+    // Een venster zonder game-loop is nog geen spel.
+    expect(gebruikt('import pygame\nscherm = pygame.display.set_mode((400, 300))\n')).not.toContain(
+      'pygame-spel',
+    );
+    const spel = [
+      'import pygame',
+      'import pymunk',
+      'scherm = pygame.display.set_mode((400, 300))',
+      'ruimte = pymunk.Space()',
+      'actief = True',
+      'while actief:',
+      '    pygame.display.flip()',
+    ];
+    const echt = gebruikt(spel.join('\n'));
+    expect(echt).toContain('pygame-spel');
+    expect(echt).toContain('pymunk');
+    // Uitgezette code telt niet (de play-nakijker haalde eerst geen commentaar weg).
+    const uitgezet = gebruikt(spel.map((r) => `# ${r}`).join('\n'));
+    expect(uitgezet).not.toContain('pygame-spel');
+    expect(uitgezet).not.toContain('pymunk');
+  });
+
+  it('vraagt op niveau 2 voor gevorderd een gevorderd concept in twee hoofdstukken', () => {
+    const voorstel = (code: string, niveau: string) =>
+      moeilijkheidVoorstel(
+        voorstelOnderdelen(analyze(bestanden({ 'main.py': code }), playConfig), playConfig, niveau),
+      ).moeilijkheid;
+    const basis = [
+      'import play',
+      'cirkel = play.new_circle(color="red", radius=30)',
+      'naam = "Sam"',
+      'tekst = play.new_text(words=f"Hoi {naam}")',
+      '',
+      '@play.when_key_pressed("up")',
+      'def omhoog(key):',
+      '    if cirkel.y < 200:',
+      '        cirkel.y += 10',
+      '    else:',
+      '        cirkel.y = 0',
+      '',
+      'vormen = []',
+      'for i in range(3):',
+      '    vormen.append(play.new_box(x=i * 50))',
+    ];
+    const knop = 'knop = play.new_button(text="Start")';
+    const level = ['levels = [{"snelheid": 1}, {"snelheid": 2}]', 'def bouw_level():', '    pass'];
+    const pygameSpel = [
+      'import pygame',
+      'scherm = pygame.display.set_mode((400, 300))',
+      'while True:',
+      '    pygame.display.flip()',
+    ];
+    // Een startmenu en een lijst zijn op niveau 1 al gevorderd, maar op
+    // niveau 2 is een startmenu alleen één hoofdstuk (7) van de twee die
+    // nodig zijn; een spel in pygame-ce alleen ook (10).
+    expect(voorstel([...basis, knop].join('\n'), '2')).toBe('basis');
+    expect(voorstel([...basis, ...pygameSpel].join('\n'), '2')).toBe('basis');
+    expect(voorstel([...basis, knop, ...level].join('\n'), '2')).toBe('gevorderd');
+    expect(voorstel([...basis, knop, ...pygameSpel].join('\n'), '2')).toBe('gevorderd');
+    // Zonder gevorderd concept in Python blijft dat basis: `import pygame`
+    // gold eerst als tweede module, en die is op niveau 2 gevorderd.
+    const zonderPython = ['import play', 'knop = play.new_button(text="Start")', ...pygameSpel];
+    expect(voorstel(zonderPython.join('\n'), '2')).toBe('basis');
+    // Op niveau 1 blijft één hoofdstuk genoeg.
+    expect(voorstel([...basis, ...level].join('\n'), '1')).toBe('gevorderd');
+    expect(leerdoelenJson.gevorderdInGroepen).toEqual({ '2': { play: 2 } });
   });
 
   it('herkent f-strings, elif/and/or en een dictionary in een lijst', () => {

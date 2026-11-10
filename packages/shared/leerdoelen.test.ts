@@ -10,6 +10,7 @@ import {
   cijferKolommen,
   cijferTekst,
   cijferVoor,
+  heeftExpert,
   kolommenVoorOnderwerp,
   leesLeerdoelen,
   moeilijkhedenTekst,
@@ -158,6 +159,44 @@ describe('leesLeerdoelen', () => {
     ],
   };
 
+  it('leest gevorderdInGroepen en weigert een aantal dat niet kan', () => {
+    const metGroepen = {
+      ...goed,
+      onderwerpen: [...goed.onderwerpen, { id: 'py', label: 'Python' }],
+      concepten: [
+        { ...goed.concepten[0], groep: 'A' },
+        { ...goed.concepten[1], groep: 'B' },
+        { id: 'py-lijst', onderwerp: 'py', concept: 'een lijst', 1: 'basis', 3: 'basis' },
+      ],
+    };
+    const lees = (gevorderdInGroepen: unknown) =>
+      leesLeerdoelen({ ...metGroepen, gevorderdInGroepen });
+    expect(lees({ 1: { gd: 2 } }).gevorderdInGroepen).toEqual({ 1: { gd: 2 } });
+    // Op niveau 3 is er maar één groep met een gevorderd concept (B, expert).
+    expect(() => lees({ 3: { gd: 2 } })).toThrow('maar 1 met een gevorderd concept');
+    expect(() => lees({ 1: { gd: 1 } })).toThrow('2 of meer');
+    expect(() => lees({ 2: { gd: 2 } })).toThrow("onbekend niveau '2'");
+    expect(() => lees({ 1: { xx: 2 } })).toThrow("onbekend onderwerp 'xx'");
+    // Zonder onderwerp ertussen ging dit eerst stil door, en deed de regel niets.
+    expect(() => lees({ 1: 2 })).toThrow('een object per onderwerp');
+    // Een rij zonder groep heeft in de nakijker de moeilijkheid als groep.
+    expect(() =>
+      leesLeerdoelen({
+        ...metGroepen,
+        concepten: [goed.concepten[0], ...metGroepen.concepten.slice(1)],
+        gevorderdInGroepen: { 1: { gd: 2 } },
+      }),
+    ).toThrow('niet elke rij een groep');
+    // Met één onderwerp gaat het voorstel al per groep: de regel doet dan niets.
+    expect(() =>
+      leesLeerdoelen({
+        ...metGroepen,
+        concepten: metGroepen.concepten.map((c) => (c.onderwerp === 'py' ? { ...c, 1: null } : c)),
+        gevorderdInGroepen: { 1: { gd: 2 } },
+      }),
+    ).toThrow('alleen gd');
+  });
+
   it('kent vier niveaus, voor elke cursus dezelfde', () => {
     expect(NIVEAUS.map((n) => n.label)).toEqual(['Niveau 1', 'Niveau 2', 'Niveau 3', 'Niveau 4']);
   });
@@ -214,17 +253,34 @@ describe('leesLeerdoelen', () => {
     expect(melding).toContain("onbekende denkvaardigheid 'weten'");
   });
 
-  it('zet expert alleen in de cijfertabel van een cursus met expertconcepten', () => {
-    // De Bloom-uitleg van web had een Expert-kolom, terwijl web geen expert heeft.
-    expect(cijferKolommen(leesLeerdoelen(goed)).map((m) => m.id)).toEqual([
+  it('zet expert niet in de cijfertabel, en weet welke niveaus expert hebben', () => {
+    // Een kolom Expert met dezelfde cijfers als gevorderd suggereerde dat
+    // expert een hoger cijfer gaf. De pagina van een niveau met expert zegt
+    // nu waar expert voor is.
+    const metExpert = leesLeerdoelen(goed);
+    expect(cijferKolommen(metExpert).map((m) => m.id)).toEqual([
       'niet-aan-basis',
       'basis',
       'gevorderd',
-      'expert',
     ]);
+    expect(heeftExpert(metExpert)).toBe(true);
+    expect(heeftExpert(metExpert, '3')).toBe(true);
+    expect(heeftExpert(metExpert, '1')).toBe(false);
     const web = join(ROOT, siteDir('web'), 'src', 'leerdoelen.json');
-    const webKolommen = cijferKolommen(leesLeerdoelen(JSON.parse(readFileSync(web, 'utf8'))));
-    expect(webKolommen.map((m) => m.id)).toEqual(['niet-aan-basis', 'basis', 'gevorderd']);
+    expect(heeftExpert(leesLeerdoelen(JSON.parse(readFileSync(web, 'utf8'))))).toBe(false);
+  });
+
+  it('zegt in de cijfertabel en op een niveau met expert waar expert voor is', () => {
+    const uitleg = 'vooral om te laten zien dat je meer kunt dan het lesmateriaal';
+    const lees = (naam: string) =>
+      readFileSync(join(ROOT, 'packages/shared/components/Leerdoelen', naam), 'utf8').replace(
+        /\s+/g,
+        ' ',
+      );
+    expect(lees('Bloom.tsx')).toContain(uitleg);
+    const niveau = lees('NiveauPagina.tsx');
+    expect(niveau).toContain('heeftExpert(leerdoelen, niveau)');
+    expect(niveau).toContain(uitleg);
   });
 
   it('noemt alleen de moeilijkheden die de cursus gebruikt', () => {
@@ -652,6 +708,25 @@ describe('moeilijkheidVoorstel: de vuistregels', () => {
       { label: 'Accounts', basis: t(0, 0), gevorderd: t(0, 3), expert: t(0, 0) },
     ];
     expect(moeilijkheidVoorstel(groepen).moeilijkheid).toBe('basis');
+  });
+
+  it('met gevorderdInGroepen vraagt gevorderd gevorderde concepten in meer groepen', () => {
+    const play = (gehaald: number) => [
+      { label: 'Python', basis: t(1, 5), gevorderd: t(1, 3), expert: t(0, 0) },
+      {
+        label: 'coderius-play',
+        basis: t(1, 10),
+        gevorderd: t(2, 11),
+        expert: t(0, 3),
+        gevorderdGroepen: { nodig: 2, gehaald },
+      },
+    ];
+    expect(moeilijkheidVoorstel(play(1))).toEqual({
+      moeilijkheid: 'basis',
+      reden:
+        'Bij elk onderwerp een concept op basis, maar bij coderius-play in 1 van de 2 groepen die nodig zijn een concept op gevorderd.',
+    });
+    expect(moeilijkheidVoorstel(play(2)).moeilijkheid).toBe('gevorderd');
   });
 
   it('gevorderd vraagt een gevorderd concept bij elk onderwerp', () => {

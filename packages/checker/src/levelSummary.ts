@@ -17,6 +17,11 @@ export interface SubjectConcepts {
   basis: ConceptStats;
   gevorderd: ConceptStats;
   expert: ConceptStats;
+  /**
+   * Met gevorderdInGroepen in de leerdoelen: hoeveel groepen gevorderd vraagt,
+   * en in hoeveel er een gevorderd concept is toegepast.
+   */
+  gevorderdGroepen?: { nodig: number; gehaald: number };
 }
 
 export interface LevelSummaryResult {
@@ -74,10 +79,28 @@ export function voorstelOnderdelen(
   config: CheckerConfig,
   track: string | null = null,
 ): SubjectConcepts[] {
-  const bySubject = computeLevelSummary(report, config, track).bySubject;
+  const usedById = new Map(report.concepts.map((m) => [m.id, m.used]));
+  // Vraagt gevorderd bij een onderwerp meer groepen (gevorderdInGroepen),
+  // tel dan in hoeveel groepen een gevorderd of expert-concept is toegepast.
+  const nodigPer = (track && config.leerdoelen?.gevorderdInGroepen?.[track]) || {};
+  const bySubject = computeLevelSummary(report, config, track).bySubject.map((s) => {
+    const nodig = nodigPer[s.subject];
+    if (!nodig) return s;
+    const groepen = new Set(
+      config.concepts
+        .filter(
+          (c) =>
+            c.subject === s.subject &&
+            inTrack(c, track) &&
+            levelVoor(c, track) !== 'basis' &&
+            usedById.get(c.id),
+        )
+        .map((c) => c.group),
+    );
+    return { ...s, gevorderdGroepen: { nodig, gehaald: groepen.size } };
+  });
   const metConcepten = bySubject.filter((s) => LEVELS.some((l) => s[l].total > 0));
   if (metConcepten.length !== 1) return bySubject;
-  const usedById = new Map(report.concepts.map((m) => [m.id, m.used]));
   const onderwerp = metConcepten[0].subject;
   const groepen = new Map<string, SubjectConcepts>();
   for (const c of config.concepts) {

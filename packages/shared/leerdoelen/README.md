@@ -49,6 +49,25 @@ schoolsoort.
   formatteert `leerdoelen.json` niet (een rij werd te lang voor biome), en
   `leerdoelen.test.ts` eist het.
 
+## Gevorderd in meer groepen
+
+Bij een onderwerp met hoofdstukken als groepen is één gevorderd concept soms
+te weinig voor gevorderd. Met `gevorderdInGroepen` vraag je per niveau en
+onderwerp een gevorderd (of expert-)concept in minstens zoveel verschillende
+groepen:
+
+```json
+"gevorderdInGroepen": { "2": { "play": 2 } }
+```
+
+Bij play niveau 2 is een startmenu alleen dan nog basis; een startmenu en
+levels samen zijn gevorderd. Het aantal is minstens 2 en hoogstens het aantal
+groepen met een gevorderd concept op dat niveau. Elke rij van dat onderwerp
+heeft een `groep`, en het niveau heeft nog een ander onderwerp: met één
+onderwerp vraagt het voorstel al gevorderd in élke groep. Anders stopt de
+build. De pagina van het niveau noemt de groepen, en de nakijker zegt in zijn
+voorstel in hoeveel groepen het gelukt is.
+
 ## Een niveau met een tentamen
 
 Een niveau kan met een tentamen worden afgesloten in plaats van met een
@@ -112,7 +131,10 @@ uitlegt: `didactiek` is het pad van die pagina (`/bronnen/<slug>`), en de test
 eist dat de pagina en de tip in `tips.ts` bestaan en dezelfde paper noemen. `index.js` rekent ermee:
 
 - `cijferVoor(bloom, moeilijkheid)`: het cijfer uit de tabel. Expert telt als
-  gevorderd (`cijferAls`), tot het blad er een eigen kolom voor heeft.
+  gevorderd (`cijferAls`) en heeft geen eigen kolom (`cijferKolommen`): expert
+  dient vooral om te laten zien dat je meer kunt dan het lesmateriaal. De
+  pagina van een niveau met expert (`heeftExpert`) en de uitleg bij de
+  cijfertabel zeggen dat.
 - `sjabloonZin(bloom, moeilijkheid)`: de zin voor op de beoordeling.
 - `moeilijkheidVoorstel(perOnderwerp)`: het voorstel in de nakijker. Een
   onderwerp haalt een moeilijkheid met één concept van die moeilijkheid of

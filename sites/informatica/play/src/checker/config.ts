@@ -14,11 +14,14 @@ import leerdoelenJson from '../leerdoelen.json';
 // de Python-concepten naar hun onderwerp. Op niveau 1 zijn de hoofdstukken 1
 // tot en met 4 basis (clone, distance_to en de fysica-instellingen
 // gevorderd), en tijd, opslaan, een startmenu met iets van UI (één rij) en
-// levels gevorderd; geluid en video, het
-// bestand database.json en pygame-ce tellen daar niet mee, dus niveau 1 heeft
-// geen expert. Op niveau 2 is alles uit 1 tot en met 6 basis, 7 tot en met 9
-// gevorderd en pygame-ce expert. De precieze indeling staat in
-// src/leerdoelen.json.
+// levels gevorderd; het bestand database.json en pygame-ce tellen daar niet
+// mee, dus niveau 1 heeft geen expert. Op niveau 2 is alles uit 1 tot en met
+// 6 basis; het startmenu, levels, een tweede module en een simpel spel in
+// pygame-ce zijn gevorderd, en pymunk is expert. Gevorderd vraagt daar een
+// gevorderd concept in twee van de hoofdstukken 7, 9 en 10
+// (gevorderdInGroepen), niet in één zoals op niveau 1. Geluid en video
+// (hoofdstuk 8) tellen op geen van beide niveaus mee. De precieze indeling
+// staat in src/leerdoelen.json.
 
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp']);
 const AUDIO_EXT = new Set(['.mp3', '.wav', '.ogg']);
@@ -63,7 +66,10 @@ const DETECTIE: Record<string, ConceptDetect> = {
   // Ook een dictionary in een lijst, zoals 9.1 hem leert:
   // levels = [{'snelheid': 100}, …]; daar staat geen = { voor.
   'py-dict': py(/=\s*\{|\{\s*['"][^'"\n]*['"]\s*:|\.get\s*\(\s*['"]/g),
-  'py-import-extra': py(/^\s*(import|from)\s+(?!play\b)\w+/gm),
+  // Een tweede module naast play, zoals time of random. Pygame en pymunk
+  // tellen niet: die horen bij hoofdstuk 10, en zo gaf elk spel in
+  // pygame-ce op niveau 2 ook Python op gevorderd.
+  'py-import-extra': py(/^\s*(import|from)\s+(?!(?:play|pygame|pymunk)\b)\w+/gm),
   'play-circle': py(/\bplay\.new_circle\s*\(/g),
   'play-box': py(/\bplay\.new_box\s*\(/g),
   'play-text': py(/\bplay\.new_text\s*\(/g),
@@ -103,20 +109,21 @@ const DETECTIE: Record<string, ConceptDetect> = {
       'voortgangsbalk of zweeftekst',
     ],
   },
-  'play-button': py(/\bplay\.new_button\s*\(/g),
-  'play-slider': py(/\bplay\.new_(slider|checkbox)\s*\(/g),
-  'play-keuze': py(/\bplay\.new_(dropdown|radio_group|radio_button)\s*\(/g),
-  'play-input': py(/\bplay\.new_text_input\s*\(/g),
-  'play-progress': py(/\bplay\.new_(progress_bar|tooltip)\s*\(/g),
-  'play-sound': py(/\bplay\.new_sound\s*\(/g),
-  'play-sound-bestand': { type: 'path', pattern: /\.(mp3|wav|ogg)$/i },
-  'play-video': py(/\bplay\.new_video\s*\(/g),
   'play-level-instellingen': py(/\b(levels?|niveaus?)\s*=\s*[[{]/gi),
   'play-level-opruimen': py(/\.remove\s*\(\s*\)/g),
   'play-level-bouwen': py(/^\s*def\s+\w*(level|scherm|niveau)\w*\s*\(/gim),
-  'pygame-import': py(/^\s*import\s+pygame\b/gm),
-  'pygame-loop': py(/pygame\.display\.(flip|update)\s*\(/g),
-  pymunk: py(/^\s*import\s+pymunk\b/gm),
+  // Een simpel spel in pygame-ce: een eigen venster (`set_mode`) én een
+  // game-loop die het scherm bijwerkt (`flip` of `update`). Een losse `import
+  // pygame` gaf eerst al punten, ook als er verder niets met pygame gebeurde.
+  'pygame-spel': {
+    type: 'regex',
+    pattern: /\bpygame\.display\.(?:(?<d0>set_mode)|(?<d1>flip|update))\s*\(/g,
+    in: ['py'],
+    delen: ['een venster', 'een game-loop'],
+    minDelen: 2,
+  },
+  // Pymunk telt pas met een object uit de fysica, niet met de import.
+  pymunk: py(/\bpymunk\.(?:Space|Body|Circle|Poly|Segment)\s*\(/g),
 };
 
 const uitLeerdoelen = leerdoelenNaarConfig(leerdoelenJson, DETECTIE);
@@ -133,6 +140,9 @@ export const playConfig: CheckerConfig = {
   // basis in plaats van gevorderd. Zo'n beoordeling krijgt bij het openen
   // dus die indeling.
   zonderLeerroute: '1',
+  // Uitgezette code telt niet: `# pygame.display.set_mode(...)` gaf eerst
+  // een spel in pygame-ce, en `# levels = [...]` levels.
+  commentaar: { py: 'python' },
 
   fileKinds: [
     { id: 'py', label: 'Python' },
