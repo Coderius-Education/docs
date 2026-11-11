@@ -13,6 +13,7 @@ import {
   useState,
 } from 'react';
 import { WerkvormIcoon } from '../Werkvorm/Icoon';
+import { DoelContext, PaneelContext, type Stap, useInLesTab } from './paneel';
 import styles from './styles.module.css';
 
 // Les-tabbladen: elke `##`-sectie van een les is een tabblad bovenaan
@@ -50,15 +51,9 @@ type Rij = { actief: string; niveau: Niveau; volgende: (id: string) => string | 
 const RijContext = createContext<Rij | null>(null);
 
 // Wat een tabblad van zijn stappen moet weten: is er nog een volgende stap,
-// dan gaat de knop Volgende daarheen, en pas daarna naar het volgende tabblad.
-type Stap = { label: string; ga: () => void } | null;
-const PaneelContext = createContext<((stap: Stap) => void) | null>(null);
-
-/** Of dit onderdeel in een les-tabblad staat. Een oefenveld past zich daar
- *  aan de hoogte van het scherm aan. */
-export function useInLesTab(): boolean {
-  return useContext(PaneelContext) !== null;
-}
+// dan gaat de knop Volgende daarheen, en pas daarna naar het volgende tabblad
+// (PaneelContext, in paneel.ts).
+export { useInLesTab };
 
 /** Het stuk na de # in het adres, of een lege tekst. */
 function doelUitHash(hash: string): string {
@@ -297,6 +292,48 @@ export function LesLeerdoel({ children }: { children?: ReactNode }): ReactNode {
       <div className={styles.leerdoelTekst}>{children}</div>
     </div>
   );
+}
+
+/**
+ * Een voorbeeld met zijn uitvoer: de code links, de uitvoer rechts. De
+ * remark-stap zet er elk codeblok in dat direct door "Uitvoer:" en een
+ * uitvoerblok wordt gevolgd. Onder elkaar kostte zo'n voorbeeld honderd
+ * pixels meer, en de Python-cursus heeft er 225. Op een smal scherm staan ze
+ * weer onder elkaar.
+ */
+export function LesVoorbeeld({
+  children,
+  vraag,
+}: {
+  children?: ReactNode;
+  /** Rechts staat geen uitvoer maar een voorspelvraag: die krijgt de helft. */
+  vraag?: string;
+}): ReactNode {
+  return (
+    <div
+      className={`${styles.voorbeeld}${vraag ? ` ${styles.metVraag}` : ''}`}
+      data-les-voorbeeld=""
+    >
+      {children}
+    </div>
+  );
+}
+
+/**
+ * Een oefenveld met het doel van zijn opdracht: de verwachte uitvoer of een
+ * doelplaatje (de remark-stap zet ze erin, het doel vooraan in een
+ * <LesDoel>). Het doel staat niet boven het veld maar erin: het veld vraagt
+ * het op met useLesDoel en toont het in zijn uitvoerkolom. Zelf zet dit
+ * onderdeel niets neer, zodat het veld een direct kind van het paneel blijft.
+ */
+export function LesVeld({ children }: { children?: ReactNode }): ReactNode {
+  const [doel, ...veld] = Children.toArray(children);
+  return <DoelContext.Provider value={doel}>{veld}</DoelContext.Provider>;
+}
+
+/** Het doel van een opdracht, binnen <LesVeld>. */
+export function LesDoel({ children }: { children?: ReactNode }): ReactNode {
+  return <>{children}</>;
 }
 
 /** Eén stap in een tabblad. Buiten <LesStappen> staat hij gewoon open. */

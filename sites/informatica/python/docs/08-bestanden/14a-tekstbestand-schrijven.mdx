@@ -89,7 +89,7 @@ with open("boodschappen.txt") as bestand:
 
 ## Er gaat iets mis
 
-**Een getal schrijven**
+### Een getal schrijven
 
 ```python
 score = 120
@@ -107,7 +107,7 @@ TypeError: write() argument must be str, not int
 `write` schrijft alleen tekst. Een getal maak je eerst tekst, met `str(score)`
 of in een f-string: `bestand.write(f"{score}\n")`.
 
-**De `\n` vergeten**
+### De `\n` vergeten
 
 ```python
 with open("boodschappen.txt", "w") as bestand:

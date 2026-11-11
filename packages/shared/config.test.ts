@@ -188,7 +188,10 @@ describe('createConfig — les-tabbladen', () => {
     expect(plugins(createConfig(basis))).not.toContain(werkvormenPlugin);
   });
 
-  it('staat alleen bij de web-cursus aan', () => {
+  it('staat aan bij de cursussen die zijn omgezet, en alleen daar', () => {
+    // Aanzetten is de eerste van vijf stappen (root-CLAUDE.md, Les-tabbladen):
+    // zonder meten en inkorten staat een cursus vol schermen die niet passen.
+    // Een cursus komt in deze lijst als hij die stappen heeft gehad.
     const aan = SITES.filter((s) => {
       const pad = join(ROOT, 'sites', s.subject ?? '', s.id, 'docusaurus.config.ts');
       try {
@@ -197,6 +200,6 @@ describe('createConfig — les-tabbladen', () => {
         return false;
       }
     }).map((s) => s.id);
-    expect(aan).toEqual(['web']);
+    expect(aan).toEqual(['python', 'web']);
   });
 });

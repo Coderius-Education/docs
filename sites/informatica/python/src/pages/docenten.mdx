@@ -5,124 +5,29 @@ hide_table_of_contents: false
 
 # Docentenhandleiding
 
-Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: wat de site is, welke randvoorwaarden er zijn, en hoe je de lessen indeelt.
+Een cursus Python voor leerlingen die nog nooit hebben geprogrammeerd. Hoe je ermee lesgeeft, bepaal je zelf. Deze pagina laat zien op welk onderzoek de opbouw van de lessen steunt, en noemt daarna kort wat je vooraf wilt weten.
 
-:::tip[Tip: Pydle als dagstart]
-Vanaf het moment dat je klas de for-loop heeft gehad ([les 6a](site:python/docs/herhalen/06a-for-loop)) is [pydle.net](https://pydle.net) bruikbaar als opening van de les: elke dag één puzzel waarin je een raster van gekleurde vakjes namaakt met een dubbele for-loop en if-statements.
+## Waar de lessen op steunen
 
-Projecteer de puzzel, laat leerlingen eerst op papier voorspellen welke conditie welke vakjes kleurt, bespreek de voorstellen, en run dan pas — de Predict-fase van PRIMM als routine van vijf minuten. Snelle leerlingen proberen het patroon met zo min mogelijk if-regels te bouwen. De site is Engelstalig.
-:::
+Een les heeft vaste onderdelen. In de les zijn het de tabbladen, elk met een eigen icoon. Hieronder staat bij elk onderdeel de literatuur waarop het steunt; een link opent de uitleg bij [vakdidactiek](site:didactiek/).
 
-## Wat is dit?
+<Werkvormen />
 
-Een interactieve cursus **Python** voor leerlingen die nog nooit geprogrammeerd hebben. Doelgroep: onderbouw vo en hoger, of zelfstandige beginners.
+Een voorspelvraag heeft geen eigen tabblad: hij staat in de uitleg, direct onder de code waar hij over gaat. Voorspellen, draaien, aanpassen en zelf maken is de volgorde van PRIMM.
 
-Elke les is een korte pagina met uitleg, een voorbeeld en oefeningen met oplopende moeilijkheidsgraad. Je leerlingen schrijven en draaien echte Python direct in de browser — geen installatie nodig — en lopen onderweg bewust tegen veelgemaakte fouten aan.
+## Wat je vooraf wilt weten
 
-## Technische randvoorwaarden
+- **Geen installatie, geen account.** Python draait in een moderne browser, ook op een Chromebook. Alleen de lessen 9e en 9f, over een eigen module, vragen een editor op de computer, zoals Thonny.
+- **Het oefenveld bewaart niets.** Wie de pagina herlaadt of naar een andere les gaat, is zijn code kwijt. Werk dat niet weg mag, maakt een leerling in de [Online Editor](site:ide/); daar kan hij het downloaden.
+- **De lessen staan in volgorde in de lessenlijst**, vanaf [de introductie](site:python/docs/basis/introductie). Elke les gebruikt alleen wat eerder is uitgelegd.
 
-| Wat | Antwoord |
-|---|---|
-| Operating system | Alles met een moderne browser — Windows, macOS, Linux, Chromebook |
-| Browser | Chrome, Firefox, Edge of Safari (laatste versie aanbevolen) |
-| Installatie | Geen — Python draait in de browser (Pyodide). Alleen voor 9e en 9f, met twee bestanden die elkaar importeren, is een editor op de computer nodig, zoals Thonny |
-| Bestanden | In de browser bestaat een bestand dat je leerlingen schrijven, tot ze de pagina herladen |
-| Account | Niet nodig |
-| Internet | Vereist — de site is online |
+## Naast de lessen
 
-## Didactische aanpak (PRIMM)
+- [Projecten](site:python/docs/projecten): grotere opdrachten in stappen, en een lijn van korte tekenprojecten met turtle. Bij elk project staat vanaf welke les het kan.
+- [Unplugged](site:python/docs/projecten/unplugged): negen hand-outs zonder computer om te printen, elk gericht op één misvatting van beginners. Op de hand-out staat wat je nodig hebt en hoe lang het duurt.
+- [Leerlijnen](site:python/leerlijnen): welk concept in welke les groeit.
+- [pydle.net](https://pydle.net): elke dag één puzzel met een dubbele for-loop en if-statements, te doen vanaf [les 6a](site:python/docs/herhalen/06a-for-loop). De site is Engelstalig.
 
-Elke les volgt hetzelfde vaste patroon — de **PRIMM-methode** — afgesloten met een fouten-sectie:
+## Feedback
 
-1. **Predict** — je leerling voorspelt wat de getoonde code doet, vóórdat er iets draait.
-2. **Run** — je leerling draait de code en controleert die voorspelling.
-3. **Investigate** — kleine, gerichte experimenten ("verander X — wat gebeurt er?").
-4. **Modify** — een opdracht die voortbouwt op de bestaande code.
-5. **Make** — een vrijere opdracht waarin je leerling zelf iets bouwt.
-6. **Er gaat iets mis** — de fouten die je leerlingen waarschijnlijk maken, met uitleg.
-
-Tips en antwoorden staan in `<details>`-blokken. Laat je leerlingen eerst zelf proberen voordat ze openklikken.
-
-## Klassikaal gebruik & differentiatie
-
-- **Plenair starten**: bespreek de Predict-vraag klassikaal, daarna werken je leerlingen zelfstandig door.
-- **Snelle leerlingen** werken vooruit op eigen tempo — de lessen zijn lineair maar elk zelfstandig te doen.
-- **Langzamere leerlingen** mogen de Make-opdracht overslaan zonder dat de volgende les daarop bouwt.
-- **Beoordelen**: gebruik de oefeningen of een eigen project als toets.
-
-## Leerlijn
-
-De lessen zijn gegroepeerd in tien blokken die op elkaar voortbouwen. Begin bij [de introductie](site:python/docs/basis/introductie); voor vrij experimenteren is er de [Playground](site:python/playground).
-
-| Blok | Leerdoel |
-|---|---|
-| Basis | `print()`, `input()` en rekenen met getallen |
-| Tekst | Werken met strings: knippen, plakken, opmaken |
-| Beslissen | Keuzes maken met `if`, `else` en vergelijkingen |
-| Herhalen | Taken automatiseren met `for`- en `while`-loops |
-| Functies | Code herbruikbaar maken met `def` |
-| Modules | Functies importeren, en je eigen code in een aparte module zetten |
-| Data | Lijsten, dictionaries, tuples en sets gebruiken |
-| Bestanden | Tekst en JSON opslaan in een bestand, en weer inlezen |
-| Klassen | Eigen objecten maken met attributen en methoden |
-| Fouten afvangen | Fouten opvangen met `try` en `except`, en opwerpen met `raise` |
-
-Naast de lessen staat een eigen route met grotere opdrachten: de
-[Projecten](site:python/docs/projecten). In het eerste project, *Tien groene flessen*,
-bouwen je leerlingen in negen stappen een aftelliedje na: van vijftig losse
-`print`-regels naar één aanroep `lied(10)`. Onderweg komen variabelen,
-f-strings, een aftellende `for`, `if`/`elif`, functies met parameters en
-`return` samen. Het project past goed na het blok Functies, of als
-herhaling van de hele basis. Elke stap noemt bovenaan de les die hij
-gebruikt.
-
-Daarna volgen *Raad het getal* (na Modules importeren: `input`, de
-while-loop, `break` en `random`) en *Woordjes overhoren* (na Door een
-dictionary lopen: dictionaries, lijsten en `.lower()`). In alle drie
-schrijven je leerlingen de code zelf: de opdracht beschrijft wat het
-programma moet doen, de tips bevatten geen code, en elke stap begint met het
-programma uit de vorige stap. De editor bewaart niets bij een paginawissel,
-dus laat ze hun programma kopiëren voordat ze verdergaan.
-
-Onder *Tekenen met turtle* staat een lijn van kleine projecten. Elk
-project voegt precies één ding toe: óf een turtle-commando, óf een
-Python-concept. De eerste zeven gebruiken alleen losse commando's (lijnen,
-een vierkant, een driehoek, kleur, een huis met een raam, een dobbelsteen en
-een smiley), en passen al na les 1. Daarna komt per project één concept uit
-de cursus: variabelen en rekenen, `if` en `elif`, de for-loop, de
-loopvariabele en `range` met stappen, de while-loop, functies en parameters,
-en lijsten. Elk project is kort genoeg voor een deel van een les, en past
-direct na de les van zijn concept. Leerlingen zien bij elke opdracht een plaatje van wat
-er moet komen. De speeltuin heeft een eigen turtle die in de browser tekent;
-dezelfde code werkt met de echte turtle, met `turtle.done()` als laatste regel
-zodat het venster buiten Thonny open blijft.
-
-## Unplugged
-
-Onder [Unplugged](site:python/docs/projecten/unplugged) staan werkvormen zonder
-computer, elk met een printknop. De antwoorden staan op het scherm dicht en
-komen bij het printen op een losse pagina. Elke werkvorm richt zich
-op één misvatting waar beginners lang last van houden, en de les waar hij
-bij hoort, verwijst ernaar met een kopje *Eerst op papier*.
-
-| Werkvorm | Bij | Misvatting |
-|---|---|---|
-| [Etiketten op waarden](site:python/docs/projecten/unplugged/etiketten) | les 2 en 3 | `=` betekent "is gelijk aan", en `b = a` koppelt `b` voor altijd aan `a` |
-| [De beslismachine](site:python/docs/projecten/unplugged/beslismachine) | les 5b en 5c | de volgorde van `elif` maakt niet uit |
-| [Codestroken leggen](site:python/docs/projecten/unplugged/codestroken) (print het knipblad, de laatste pagina, apart en enkelzijdig) | les 6a tot 7 | inspringen is opmaak; wat ingesprongen staat, gebeurt één keer |
-| [Jij bent de loop](site:python/docs/projecten/unplugged/jij-bent-de-loop) | les 6a tot 7 | een loop stopt midden in een ronde; een teller in de loop telt door |
-| [De functiemachine](site:python/docs/projecten/unplugged/functiemachine) | les 8 tot 9c | `return` en `print` zijn hetzelfde; een functie ziet de variabelen van een andere |
-| [Een rij bekertjes](site:python/docs/projecten/unplugged/bekertjes) | les 10a en 10b | tellen begint bij 1; `b = a` maakt een kopie van een lijst |
-| [Kluisjes met naamkaartjes](site:python/docs/projecten/unplugged/kluisjes) | les 11a en 11b | in een dictionary zoek je op plek |
-| [Raad het getal in tweetallen](site:python/docs/projecten/unplugged/raad-het-getal) | voor het project | opstap naar het project, en naar binair zoeken |
-| [Waar of niet waar?](site:python/docs/projecten/unplugged/waar-of-niet-waar) | na les 11b | zestien stellingen om na te bespreken; doe alleen de hoofdstukken die je hebt gehad |
-
-De rollenspellen (de beslismachine, de functiemachine) werken het best in
-groepjes van vier of vijf; de rest in tweetallen. Reken op 15 tot 25
-minuten per werkvorm. Een goede plek is direct na het eerste voorbeeld van
-de les, vóór de opdrachten: wat je leerlingen op papier hebben voorspeld,
-controleren ze daarna in de speeltuin met Stap voor stap.
-
-## Feedback & bijdragen
-
-Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs). Alle bijdragen — van een typo tot een nieuwe les — zijn welkom.
+Een fout gevonden of een idee? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs).

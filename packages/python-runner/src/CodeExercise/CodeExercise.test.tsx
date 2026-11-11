@@ -1,3 +1,4 @@
+import { DoelContext, PaneelContext } from '@coderius/shared/components/LesTabs/paneel';
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type React from 'react';
@@ -91,6 +92,61 @@ describe('CodeExercise', () => {
     fireEvent.click(knop(/Uitvoeren/));
     await screen.findByText(/Fout op regel 1/);
     screen.getByText(/NameError: name 'x' is not defined/);
+  });
+
+  it('in een les-tabblad staat er al een vak voor de uitvoer voordat er iets gedraaid is', async () => {
+    // In een tabblad moet het paneel op het scherm passen. De uitvoer staat
+    // daar naast de code; kwam hij er pas na Uitvoeren onder, dan schoof de
+    // knop Volgende van het scherm op het moment dat de leerling klikte.
+    const { container } = render(
+      <PaneelContext.Provider value={() => {}}>
+        <CodeExercise>{'print(1)'}</CodeExercise>
+      </PaneelContext.Provider>,
+    );
+    await wachtTotGeladen();
+    screen.getByText(/De uitvoer verschijnt hier/);
+    nep.volgende = { stdout: '1\n' };
+    fireEvent.click(knop(/Uitvoeren/));
+    // De melding maakt plaats voor de uitvoer, in hetzelfde vak.
+    await waitFor(() => expect(screen.queryByText(/De uitvoer verschijnt hier/)).toBeNull());
+    const uitvoer = Array.from(container.querySelectorAll('pre')).filter(
+      (pre) => pre.textContent === '1\n',
+    );
+    expect(uitvoer).toHaveLength(1);
+  });
+
+  it('het doel van de opdracht staat in het vak van de uitvoer, en blijft staan na Uitvoeren', async () => {
+    // De verwachte uitvoer stond boven het veld en duwde het van het scherm.
+    // In het vak staat hij onder wat de leerling zelf krijgt: zo vergelijkt
+    // hij de twee zonder te scrollen (LesVeld zet het doel om het veld).
+    const { container } = render(
+      <PaneelContext.Provider value={() => {}}>
+        <DoelContext.Provider value={<p>Verwachte uitvoer: 12</p>}>
+          <CodeExercise>{'print(1)'}</CodeExercise>
+        </DoelContext.Provider>
+      </PaneelContext.Provider>,
+    );
+    await wachtTotGeladen();
+    const doel = screen.getByText('Verwachte uitvoer: 12');
+    // Eerst de melding, dan het doel.
+    const melding = screen.getByText(/De uitvoer verschijnt hier/);
+    expect(melding.compareDocumentPosition(doel) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    nep.volgende = { stdout: '1\n' };
+    fireEvent.click(knop(/Uitvoeren/));
+    await waitFor(() => expect(screen.queryByText(/De uitvoer verschijnt hier/)).toBeNull());
+    const uitvoer = Array.from(container.querySelectorAll('pre')).find(
+      (pre) => pre.textContent === '1\n',
+    ) as HTMLElement;
+    expect(
+      uitvoer.compareDocumentPosition(screen.getByText('Verwachte uitvoer: 12')) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('buiten een tabblad staat er geen leeg vak onder de code', async () => {
+    render(<CodeExercise>{'print(1)'}</CodeExercise>);
+    await wachtTotGeladen();
+    expect(screen.queryByText(/De uitvoer verschijnt hier/)).toBeNull();
   });
 
   it('Ctrl+Enter draait de code, net als de knop', async () => {

@@ -221,19 +221,21 @@ anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
 De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
-(schrijfgids §2 en §15). De web-cursus is de eerste, en nog de enige die is
-omgezet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+(schrijfgids §2 en §15). De web-cursus en de python-cursus zijn omgezet, de
+andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
 
 1. `lesTabs: true`, en de onderdelen in `MDXComponents` van de site.
 2. Het oefenveld van de cursus leren zich aan het scherm aan te passen
-   (`useInLesTab`, zoals de web-`CodeEditor` met `pasHoogte.ts`).
+   (`useInLesTab`, zoals de web-`CodeEditor` en de `CodeExercise` van
+   python-runner, met `components/LesTabs/pasHoogte.ts`).
 3. Bouwen en meten met `node scripts/meet-les-tabs.mjs <site>`. Wat niet op
    1280×720 past: eerst splitsen (een `###` erbij), dan inkorten.
 4. Elk scherm nalopen op verwijzingen naar iets dat er niet meer staat, en
-   daar een test van maken (bij web `src/docs-tests/schermen.test.ts`).
+   daar een test van maken (bij web en python
+   `src/docs-tests/schermen.test.ts`, met `plugins/les-schermen.js`).
 5. De docentenhandleiding herschrijven (zie Werkvormen hieronder).
 
 Tot een cursus is omgezet, houdt hij de inhoudsopgave rechts en zijn oude
@@ -242,8 +244,8 @@ docentenhandleiding. Zet `lesTabs` dus niet aan zonder de stappen erna.
 De remark-stap `packages/shared/plugins/les-tabs.js` wikkelt bij het bouwen
 elke `##`-sectie in een `<LesTab>` binnen één `<LesTabs>`, en in een sectie
 met `###`-koppen elke `###` in een `<LesStap>` binnen `<LesStappen>`
-(`packages/shared/components/LesTabs`; de site registreert alle vier in
-`MDXComponents`). De bron van een les verandert niet. De titel en de startcode
+(`packages/shared/components/LesTabs`; de site registreert ze in
+`MDXComponents`, met `LesLeerdoel`, `LesVoorbeeld`, `LesVeld` en `LesDoel`). De bron van een les verandert niet. De titel en de startcode
 blijven boven de tabbladen; uitleg vóór de eerste `##` wordt het eerste
 tabblad, "Uitleg"; een kop met een dubbele punt krijgt als label het stuk
 ervoor. Twee dingen krijgen geen eigen tabblad, want dat was een scherm met
@@ -301,8 +303,7 @@ bestaat onder dezelfde naam en met dezelfde paper; hernoem je daar een tip of
 verander je de bron, pas dan `werkvormen.json` mee aan.
 
 **De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
-de standaard (schrijfgids §15), en de web-cursus is de eerste die hem zo
-heeft. Hij is een halve pagina: waar de lessen op steunen
+de standaard (schrijfgids §15); web en python hebben hem zo. Hij is een halve pagina: waar de lessen op steunen
 (de tabel hierboven, met de literatuur), wat je vooraf wilt weten in drie
 regels, en links naar leerdoelen, eindopdracht en nakijker. Wat een leerling
 of docent nodig heeft om het materiaal te gebruiken, hoort in het materiaal
@@ -342,6 +343,9 @@ Wat vastligt, en waarom:
   `height`-prop, nooit lager dan 240 pixels). Staat er in het paneel een tip
   of antwoord open, dan meet het veld niet opnieuw: de editor kromp anders
   onder het typen. Buiten een tabblad en op een telefoon verandert er niets.
+  De `CodeExercise` van python-runner doet hetzelfde vanaf 997px: code links,
+  uitvoer rechts, met het vak voor de uitvoer er al voordat er iets gedraaid
+  is (anders schoof de knop Volgende weg bij de eerste klik op Uitvoeren).
 - **De les krijgt de breedte van de inhoudsopgave** met een regel in
   `@layer docusaurus.infima`. Docusaurus zet de kolom op 75% met `!important`
   in een latere layer, en bij `!important` wint de eerste layer; een losse
@@ -353,8 +357,10 @@ leerling op dat moment ziet. Een zin als "de startcode in de editor
 hieronder" klopte op de lange pagina en wijst nu naar een ander tabblad: in
 14 van de 33 web-lessen vroeg Predict zo naar code die er niet stond. Wijs
 dus alleen naar wat in hetzelfde scherm staat, en zet de code waar een vraag
-over gaat erbij. De cursus bewaakt dat zelf
-(`sites/informatica/web/src/docs-tests/schermen.test.ts`).
+over gaat erbij. Wat op een ander scherm staat, noem je bij zijn naam ("uit
+de uitleg", "in de volgende stap"). De cursus bewaakt dat zelf
+(`src/docs-tests/schermen.test.ts` van web en van python; beide lezen een les
+met `packages/shared/plugins/les-schermen.js`, dezelfde stap als de build).
 
 Een kop die op zijn tabblad of stap al voluit staat, is verborgen voor het
 oog en blijft voor een schermlezer en een link. Bij die verborgen kop hoort

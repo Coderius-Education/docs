@@ -59,10 +59,17 @@ function werkvormenVanLes(bron, parse) {
   // tabblad erna. Voor de docent is het wel een werkvorm van de les.
   const heeft = (node, naam) =>
     node.name === naam || (node.children ?? []).some((kind) => heeft(kind, naam));
-  return tabs.children.flatMap((tab) => [
-    ...(heeft(tab, 'LesLeerdoel') ? ['leerdoel'] : []),
-    tab.attributes.find((a) => a.name === 'werkvorm')?.value ?? null,
-  ]);
+  // Een voorspelvraag in de uitleg (<Voorspel>, in de python-cursus direct
+  // onder de code waar hij over gaat) is voorspellen, ook zonder tabblad
+  // Predict.
+  return tabs.children.flatMap((tab) => {
+    const vorm = tab.attributes.find((a) => a.name === 'werkvorm')?.value ?? null;
+    return [
+      ...(heeft(tab, 'LesLeerdoel') ? ['leerdoel'] : []),
+      vorm,
+      ...(vorm !== 'voorspellen' && heeft(tab, 'Voorspel') ? ['voorspellen'] : []),
+    ];
+  });
 }
 
 /** De docs van de cursus: van elke docs-plugin de nieuwste versie. */

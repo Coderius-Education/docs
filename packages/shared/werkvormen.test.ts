@@ -178,6 +178,32 @@ describe('de werkvormen van een les (plugins/werkvormen.js)', () => {
     expect(werkvormenVanLes(les, parse)).toEqual(['leerdoel', 'uitleg', 'maken']);
   });
 
+  it('telt een voorspelvraag in de uitleg als voorspellen', async () => {
+    // De python-cursus heeft geen tabblad Predict: de vraag (<Voorspel>) staat
+    // in de uitleg, onder de code waar hij over gaat. Zonder deze regel stond
+    // voorspellen niet in de tabel van de docentenhandleiding.
+    const parse = await mdxParser();
+    const les = [
+      '# Les',
+      '## De for-loop',
+      'Uitleg.',
+      '<Voorspel vraag="Wat print dit?"><Keuze goed>`1`</Keuze></Voorspel>',
+      '## Er gaat iets mis',
+      'Een fout.',
+      '## Opdracht 1: tellen',
+      'Tel.',
+      '## Opdracht 2: zelf',
+      'Maak.',
+    ].join('\n\n');
+    expect(werkvormenVanLes(les, parse)).toEqual([
+      'uitleg',
+      'voorspellen',
+      'fouten',
+      'aanpassen',
+      'maken',
+    ]);
+  });
+
   it('een les zonder tabbladen heeft geen werkvormen', async () => {
     const parse = await mdxParser();
     expect(werkvormenVanLes('# Les\n\nAlleen tekst.\n', parse)).toBeNull();

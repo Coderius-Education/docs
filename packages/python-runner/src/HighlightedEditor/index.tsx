@@ -46,6 +46,7 @@ export function HighlightedEditor({
   onKeyDown,
   disabled,
   minHeight = 250,
+  maxHeight,
   highlightLine,
   readOnly,
   ariaLabel,
@@ -56,6 +57,8 @@ export function HighlightedEditor({
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   disabled: boolean;
   minHeight?: number;
+  /** Hoger wordt de editor niet; langere code schuift erin. */
+  maxHeight?: number;
   /** 1-gebaseerd regelnummer om te markeren; gebruikt door de stapper. */
   highlightLine?: number;
   readOnly?: boolean;
@@ -107,7 +110,12 @@ export function HighlightedEditor({
   const theme = colorMode === 'dark' ? donker : licht;
 
   return (
-    <div className={styles.editorWrapper} style={{ minHeight }}>
+    <div
+      className={styles.editorWrapper}
+      // Met een maximum schuift de code in de editor zelf; de textarea neemt
+      // de gutter en de gekleurde laag mee (zie de scroll-afhandeling).
+      style={maxHeight ? { minHeight, maxHeight, overflow: 'hidden' } : { minHeight }}
+    >
       <div ref={gutterRef} className={styles.gutter} aria-hidden="true">
         {Array.from({ length: lineCount }, (_, i) => (
           <div
@@ -128,7 +136,11 @@ export function HighlightedEditor({
           <pre
             ref={preRef}
             className={styles.highlightPre}
-            style={{ ...style, minHeight }}
+            style={
+              maxHeight
+                ? { ...style, minHeight, maxHeight, overflow: 'hidden' }
+                : { ...style, minHeight }
+            }
             aria-hidden="true"
           >
             {tokens.map((line, i) => {

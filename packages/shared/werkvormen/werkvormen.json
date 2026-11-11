@@ -58,7 +58,7 @@
     "id": "voorspellen",
     "label": "Voorspellen",
     "doet": "Je leerlingen zeggen wat de code doet, vóórdat ze hem draaien.",
-    "koppen": ["^Predict$"],
+    "koppen": ["^Predict$", "^Voorspel\\b"],
     "tips": [
       {
         "slug": "primm",
@@ -95,7 +95,7 @@
     "id": "aanpassen",
     "label": "Aanpassen",
     "doet": "Een gerichte opdracht op code die er al staat, met een tip en een antwoord.",
-    "koppen": ["^Modify$", "^Opdracht \\d+"],
+    "koppen": ["^Modify$", "^Opdracht\\b"],
     "tips": [
       {
         "slug": "primm",
@@ -114,7 +114,7 @@
     "id": "maken",
     "label": "Zelf maken",
     "doet": "Een vrijere opdracht vanaf een bijna lege pagina.",
-    "koppen": ["^Make$"],
+    "koppen": ["^Make$", "^Maak het je eigen$", "^Verder (bouwen|tekenen)$"],
     "laatsteVan": "^Opdracht \\d+",
     "tips": [
       {

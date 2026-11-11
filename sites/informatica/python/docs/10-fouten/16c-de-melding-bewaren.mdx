@@ -36,7 +36,7 @@ except ValueError as fout:
 
 ## Er gaat iets mis
 
-**De fout aan tekst plakken met +**
+### De fout aan tekst plakken met +
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -55,7 +55,7 @@ TypeError: can only concatenate str (not "ValueError") to str
 
 `fout` is geen tekst maar een fout. Met `+` plak je alleen tekst aan tekst. Zet hem in een f-string: `f"Dat lukte niet: {fout}"`.
 
-**as vergeten**
+### as vergeten
 
 {/* niet-compileren: bewuste syntaxfout, het woord as ontbreekt */}
 

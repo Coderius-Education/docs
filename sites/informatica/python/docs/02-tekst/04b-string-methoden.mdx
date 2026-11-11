@@ -30,6 +30,8 @@ tekst = "hallo wereld"
 print(len(tekst))   # 12  (de spatie telt mee)
 ```
 
+### Voorspel
+
 ```python
 tekst = "hallo"
 tekst.upper()
@@ -49,7 +51,7 @@ print(tekst)
 
 ## Er gaat iets mis
 
-**len met een punt**
+### len met een punt
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -66,7 +68,7 @@ AttributeError: 'str' object has no attribute 'len'
 
 `len()` is geen methode van een tekst. Je schrijft hem ervoor, met de tekst tussen de haakjes: `len(tekst)`.
 
-**De haakjes vergeten**
+### De haakjes vergeten
 
 Schrijf je `print(tekst.upper)` zonder `()` erachter, dan krijg je geen foutmelding maar een vreemde regel als `<built-in method upper of str object at 0x…>`. Python laat dan de methode zelf zien in plaats van hem uit te voeren. Zet de haakjes erachter: `tekst.upper()`.
 

@@ -42,6 +42,8 @@ Volgend jaar ben je 11.
 - Lukt het niet, dan springt Python naar `except`. `break` gebeurt dan niet,
   en de loop vraagt opnieuw.
 
+### Voorspel
+
 Zonder `input()` zie je hetzelfde met een lijst pogingen, alsof iemand drie
 keer iets typt:
 
@@ -71,7 +73,7 @@ print(f"Volgend jaar ben je {leeftijd + 1}.")
 
 ## Er gaat iets mis
 
-**break vergeten**
+### break vergeten
 
 {/* niet-draaien: deze loop stopt nooit */}
 
@@ -86,7 +88,7 @@ while True:
 
 Ook als je een goed getal typt, vraagt het programma opnieuw. Zonder `break` stopt een `while True`-loop nooit. Zet `break` direct onder de regel die moet lukken.
 
-**Geen enkele poging lukt**
+### Geen enkele poging lukt
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -113,7 +115,7 @@ NameError: name 'leeftijd' is not defined
 
 Een `for`-loop houdt op als de lijst op is, ook als er nooit iets lukte. Dan heeft `leeftijd` nooit een waarde gekregen. Met `while True` heb je dat probleem niet: die vraagt door tot het lukt.
 
-**Een leeg except-blok**
+### Een leeg except-blok
 
 {/* niet-compileren: bewuste inspringfout, het except-blok is leeg */}
 

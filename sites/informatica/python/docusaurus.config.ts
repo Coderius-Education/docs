@@ -24,6 +24,10 @@ export default createConfig({
   projectName: 'python-docs',
   matomoSiteId: 4,
   omleidingen,
+  // Elke ##-sectie van een les is een tabblad; zie de root-CLAUDE.md,
+  // Les-tabbladen. De unplugged hand-outs zetten het uit: die zijn om te
+  // printen.
+  lesTabs: true,
 
   description:
     'Leer stap voor stap programmeren in Python. Gratis cursus met interactieve oefeningen direct in je browser.',

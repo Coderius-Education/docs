@@ -1,6 +1,8 @@
+import { useInLesTab, useLesDoel } from '@coderius/shared/components/LesTabs/paneel';
+import { meetRuimte, pasHoogte } from '@coderius/shared/components/LesTabs/pasHoogte';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import type React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { HighlightedEditor } from '../HighlightedEditor';
 import type { Opname, PyodideInterface } from '../PyodideProvider';
 import Stapper from '../Stapper';
@@ -8,7 +10,18 @@ import Tekening from '../Tekening';
 import type { Tekening as TekeningData } from '../Tekening/tekening';
 import styles from './styles.module.css';
 
-function CodeExerciseInner({ starterCode }: { starterCode: string }) {
+/** Lager wordt het veld in een tabblad niet: de werkbalk en een regel of vijf. */
+const MIN_VELD = 180;
+/** De hoogte van de werkbalk, tot hij gemeten is. */
+const BALK = 40;
+
+function CodeExerciseInner({
+  starterCode,
+  doel,
+}: {
+  starterCode: string;
+  doel?: React.ReactNode;
+}) {
   const [code, setCode] = useState(starterCode);
   const [output, setOutput] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -20,6 +33,45 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
   // regels wijzen.
   const [opnameCode, setOpnameCode] = useState('');
   const pyodideRef = useRef<PyodideInterface | null>(null);
+  // In een les-tabblad moet het paneel op het scherm passen. Daar staat de
+  // uitvoer op een breed scherm naast de code in plaats van eronder, en
+  // schuift een lange uitvoer in zijn eigen vak: het veld duwt de rest van
+  // het scherm dan niet weg op het moment dat je op Uitvoeren klikt.
+  const inTab = useInLesTab();
+  // Het veld is daar ook niet hoger dan wat er op het scherm overblijft na
+  // wat er in het paneel boven en onder staat (pasHoogte.ts): een startcode
+  // van dertig regels duwde de opdracht en de knop Volgende anders van het
+  // scherm. Langere code schuift in de editor zelf.
+  const veldRef = useRef<HTMLDivElement>(null);
+  const balkRef = useRef<HTMLDivElement>(null);
+  const [veldHoogte, setVeldHoogte] = useState<number | null>(null);
+  const stapt = opname !== null;
+  useLayoutEffect(() => {
+    const veld = veldRef.current;
+    const paneel = veld?.closest<HTMLElement>('[data-les-tab]');
+    if (!inTab || !veld || !paneel || typeof ResizeObserver === 'undefined') return;
+    const breed = window.matchMedia('(min-width: 997px)');
+    const meet = () => {
+      // Op een smal scherm scrolt de leerling, en Stap voor stap staat onder
+      // het veld: dan zegt de ruimte in het paneel niets over het veld.
+      if (!breed.matches) return setVeldHoogte(null);
+      if (stapt) return;
+      const ruimte = meetRuimte(veld, paneel, Number.POSITIVE_INFINITY);
+      if (ruimte) setVeldHoogte(pasHoogte(ruimte, MIN_VELD));
+    };
+    meet();
+    const kijker = new ResizeObserver(meet);
+    kijker.observe(paneel);
+    window.addEventListener('resize', meet);
+    breed.addEventListener('change', meet);
+    return () => {
+      kijker.disconnect();
+      window.removeEventListener('resize', meet);
+      breed.removeEventListener('change', meet);
+    };
+  }, [inTab, stapt]);
+  const editorMax =
+    veldHoogte === null ? undefined : veldHoogte - (balkRef.current?.offsetHeight ?? BALK);
 
   useEffect(() => {
     let cancelled = false;
@@ -113,9 +165,9 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
   );
 
   return (
-    <div className={styles.exercise}>
+    <div ref={veldRef} className={`${styles.exercise}${inTab ? ` ${styles.inTab}` : ''}`}>
       <div className={styles.editorSection}>
-        <div className={styles.toolbar}>
+        <div className={styles.toolbar} ref={balkRef}>
           <span className={styles.label}>Probeer het zelf</span>
           <div className={styles.buttons}>
             <button
@@ -151,27 +203,45 @@ function CodeExerciseInner({ starterCode }: { starterCode: string }) {
           onKeyDown={handleKeyDown}
           disabled={isLoading}
           minHeight={120}
+          maxHeight={editorMax}
         />
       </div>
       {opname && <Stapper code={opnameCode} opname={opname} onSluiten={() => setOpname(null)} />}
-      {tekening && <Tekening tekening={tekening} />}
-      {output && <pre className={styles.output}>{output}</pre>}
-      {isLoading && <div className={styles.loading}>Python wordt geladen...</div>}
+      <div
+        className={styles.resultaat}
+        style={veldHoogte === null ? undefined : { maxHeight: veldHoogte }}
+      >
+        {tekening && <Tekening tekening={tekening} />}
+        {output && <pre className={styles.output}>{output}</pre>}
+        {isLoading && <div className={styles.loading}>Python wordt geladen...</div>}
+        {inTab && !output && !tekening && !opname && !isLoading && (
+          // Het vak naast de code is er al voordat er iets gedraaid is: zo
+          // verspringt het veld niet, en ziet de leerling waar hij moet kijken.
+          <p className={styles.wacht}>Klik op Uitvoeren. De uitvoer verschijnt hier.</p>
+        )}
+        {/* Wat de opdracht moet opleveren (de verwachte uitvoer of het
+            doelplaatje), onder wat de leerling zelf kreeg: zo vergelijkt hij
+            ze zonder te scrollen. */}
+        {doel && <div className={styles.doel}>{doel}</div>}
+      </div>
     </div>
   );
 }
 
 export default function CodeExercise({ children }: { children: string }) {
   const code = (children || '').trim();
+  // In een les-tabblad zet <LesVeld> het doel van de opdracht om het veld.
+  const doel = useLesDoel();
   return (
     <BrowserOnly
       fallback={
         <div className={styles.exercise}>
           <pre>{code}</pre>
+          {doel && <div className={styles.doel}>{doel}</div>}
         </div>
       }
     >
-      {() => <CodeExerciseInner starterCode={code} />}
+      {() => <CodeExerciseInner starterCode={code} doel={doel} />}
     </BrowserOnly>
   );
 }

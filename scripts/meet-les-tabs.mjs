@@ -1,6 +1,6 @@
 // Meet per les en per tabblad of het op één scherm past.
 //
-//   node scripts/meet-les-tabs.mjs [site-id] [--json]
+//   node scripts/meet-les-tabs.mjs [site-id] [--json] [--les=<stuk van het pad>] [--tegelijk=4]
 //
 // De les-tabbladen (packages/shared/plugins/les-tabs.js) halen de lange
 // pagina weg, maar een tabblad met een oefenveld of veel theorie kan nog
@@ -24,6 +24,11 @@
 //              maar zijwaarts schuiven hoort nergens: een verborgen kop
 //              maakte 18 schermen tot 236 pixels te breed.
 //
+// Met `--les=klassen/15f` meet het alleen de lessen met dat stuk in hun pad
+// (de vlag mag vaker): na een wijziging in één les hoeft niet de hele cursus
+// opnieuw. Het opent vier lessen tegelijk (`--tegelijk=1` voor één): de 150
+// pagina's van de python-cursus kostten na elkaar zestien minuten.
+//
 // Handmatig, niet in CI: het is een meting voor een auteur, geen controle.
 // Eerst bouwen: `pnpm --filter ./sites/informatica/web build`.
 
@@ -39,6 +44,10 @@ const { SITES_BY_ID, siteDir } = require('../packages/shared/sites.js');
 const argumenten = process.argv.slice(2);
 const SITE = argumenten.find((a) => !a.startsWith('--')) ?? 'web';
 const ALS_JSON = argumenten.includes('--json');
+const waarden = (vlag) =>
+  argumenten.filter((a) => a.startsWith(`--${vlag}=`)).map((a) => a.slice(vlag.length + 3));
+const ALLEEN = waarden('les');
+const TEGELIJK = Math.max(1, Number(waarden('tegelijk')[0] ?? 4));
 const BUILD = resolve(join(siteDir(SITE), 'build'));
 const BASIS = `/${SITES_BY_ID[SITE].path}/`;
 const SCHERMEN = [
@@ -92,7 +101,7 @@ function lessen() {
     }
   };
   loop(join(BUILD, 'docs'));
-  return uit;
+  return ALLEEN.length ? uit.filter((les) => ALLEEN.some((stuk) => les.includes(stuk))) : uit;
 }
 
 if (!existsSync(BUILD)) {
@@ -111,7 +120,7 @@ const rijen = [];
 const tabrijen = [];
 let kolomBreedte = null;
 
-for (const les of lessen()) {
+async function meetLes(les) {
   for (const scherm of SCHERMEN) {
     // Een verse context per les: bewaard werk in een oefenveld verandert de
     // hoogte van het veld.
@@ -189,6 +198,19 @@ for (const les of lessen()) {
     await context.close();
   }
 }
+
+// Een paar lessen tegelijk, elk in zijn eigen context. De uitkomst staat
+// daarna weer in de volgorde van de lessen.
+const wachtrij = lessen();
+const volgorde = new Map(wachtrij.map((les, i) => [les, i]));
+await Promise.all(
+  Array.from({ length: TEGELIJK }, async () => {
+    for (let les = wachtrij.shift(); les; les = wachtrij.shift()) await meetLes(les);
+  }),
+);
+const opVolgorde = (a, b) => volgorde.get(a.les) - volgorde.get(b.les);
+rijen.sort(opVolgorde);
+tabrijen.sort(opVolgorde);
 
 await browser.close();
 server.close();

@@ -136,14 +136,158 @@ function metStappen(kinderen, sectieId, vooraf = []) {
   return [kop, stappenlijst([...leerdoel, ...lesStappen])];
 }
 
+/** De werkvorm van een sectie die naar zijn onderwerp heet. */
+const UITLEG_VORM = 'uitleg';
+
+const isUitvoerKop = (node) => isAlinea(node) && /^Uitvoer\b[^.]*:$/.test(tekstVan(node).trim());
+
+const jsx = (name, children, attributes = []) => ({
+  type: 'mdxJsxFlowElement',
+  name,
+  attributes,
+  children,
+});
+
+const isVoorspel = (node) => node?.type === 'mdxJsxFlowElement' && node.name === 'Voorspel';
+
+/**
+ * Een codeblok dat direct door "Uitvoer:" en een uitvoerblok wordt gevolgd,
+ * komt in een <LesVoorbeeld>: de code links, de uitvoer rechts. Onder elkaar
+ * kost zo'n voorbeeld honderd pixels meer, en in de Python-cursus staan er
+ * 225. Ook "Uitvoer bij 50:" telt.
+ *
+ * Hetzelfde voor een codeblok met de voorspelvraag eronder (<Voorspel>): de
+ * code links, de vraag rechts. Onder elkaar waren die twee samen al hoger dan
+ * het scherm.
+ *
+ * @param {object[]} kinderen
+ */
+function voorbeeldenNaastElkaar(kinderen) {
+  const uit = [];
+  for (let i = 0; i < kinderen.length; i++) {
+    const [code, kop, uitvoer] = kinderen.slice(i, i + 3);
+    if (code.type === 'code' && kop && isUitvoerKop(kop) && uitvoer?.type === 'code') {
+      uit.push(jsx('LesVoorbeeld', [code, kop, uitvoer]));
+      i += 2;
+    } else if (code.type === 'code' && isVoorspel(kop)) {
+      uit.push(jsx('LesVoorbeeld', [code, kop], [attribuut('vraag', 'ja')]));
+      i += 1;
+    } else uit.push(code);
+  }
+  return uit;
+}
+
+/** De oefenvelden die een doel naast hun uitvoer kunnen tonen (useLesDoel). */
+const VELDEN_MET_DOEL = ['CodeExercise'];
+
+const isVeld = (node) => node.type === 'mdxJsxFlowElement' && VELDEN_MET_DOEL.includes(node.name);
+
+const isVerwachtKop = (node) =>
+  isAlinea(node) && /^(Verwachte uitvoer|Uitvoer)\b[^.]*:$/.test(tekstVan(node).trim());
+
+const isPlaatje = (node) => node.type === 'image' || node.name === 'img';
+
+/** Een alinea met alleen een plaatje: het doelplaatje van een turtle-opdracht. */
+const isPlaatjeAlinea = (node) => {
+  if (!isAlinea(node)) return false;
+  const inhoud = node.children.filter((k) => !(k.type === 'text' && !k.value.trim()));
+  return inhoud.length > 0 && inhoud.every(isPlaatje);
+};
+
+/** Wat er boven een doelplaatje in de uitvoerkolom staat. */
+const DOEL_PLAATJE = 'Zo moet het worden:';
+
+/** De startcode van een oefenveld: `<CodeExercise>{\`…\`}</CodeExercise>`. */
+function startcode(veld) {
+  const kind = (veld.children ?? []).find((k) => /Expression$/.test(k.type));
+  const m = /^`([\s\S]*)`$/.exec((kind?.value ?? '').trim());
+  return m ? m[1].replace(/\\([\\`$])/g, '$1') : null;
+}
+
+// MDX eet inspringing van een expressie op (zie mdx-inspringing.js): alleen
+// de tekst van de regels telt.
+const plat = (code) =>
+  code
+    .trim()
+    .split('\n')
+    .map((regel) => regel.trim())
+    .join('\n');
+
+/**
+ * Een codeblok met direct daaronder een oefenveld met dezelfde code: het
+ * blok vervalt. In twintig projectstappen van de Python-cursus stond de code
+ * zo twee keer onder elkaar, het voorbeeld en het veld om het te proberen;
+ * samen waren die hoger dan het scherm. Het veld laat dezelfde code zien.
+ *
+ * @param {object[]} kinderen
+ */
+function zonderDubbeleCode(kinderen) {
+  return kinderen.filter((node, i) => {
+    if (node.type !== 'code') return true;
+    let k = i + 1;
+    while (k < kinderen.length && zetNietsNeer(kinderen[k])) k++;
+    const veld = kinderen[k];
+    if (!veld || !isVeld(veld)) return true;
+    const start = startcode(veld);
+    return start === null || plat(start) !== plat(node.value ?? '');
+  });
+}
+
+/**
+ * Wat een opdracht moet opleveren, staat in de uitvoerkolom van het oefenveld:
+ * de verwachte uitvoer ("Verwachte uitvoer:" met een blok) of het doelplaatje
+ * van een turtle-opdracht. Boven het veld kostte dat tot driehonderd pixels,
+ * en het veld stond dan onder de rand van het scherm; in de kolom staat het
+ * naast wat de leerling zelf krijgt.
+ *
+ * Het doel staat vlak voor het veld: er mogen een commentaar en hooguit twee
+ * alinea's tussen staan. Het veld en zijn doel komen in een <LesVeld>, met
+ * het doel in een <LesDoel> vooraan.
+ *
+ * @param {object[]} kinderen
+ */
+function doelNaastVeld(kinderen) {
+  const uit = [];
+  for (const node of kinderen) {
+    if (!isVeld(node)) {
+      uit.push(node);
+      continue;
+    }
+    // Terug vanaf het veld, langs commentaar en hooguit twee alinea's.
+    let i = uit.length - 1;
+    let alineas = 0;
+    const tussen = (n) =>
+      zetNietsNeer(n) || (isAlinea(n) && !isPlaatjeAlinea(n) && !isVerwachtKop(n));
+    while (i >= 0 && tussen(uit[i]) && (zetNietsNeer(uit[i]) || alineas++ < 2)) i--;
+    let doel = null;
+    let vanaf = i;
+    if (i >= 0 && isPlaatjeAlinea(uit[i])) {
+      doel = [{ type: 'paragraph', children: [{ type: 'text', value: DOEL_PLAATJE }] }, uit[i]];
+    } else if (i >= 0 && uit[i].type === 'code') {
+      let k = i - 1;
+      while (k >= 0 && zetNietsNeer(uit[k])) k--;
+      if (k >= 0 && isVerwachtKop(uit[k])) {
+        doel = [uit[k], uit[i]];
+        vanaf = k;
+      }
+    }
+    if (!doel) {
+      uit.push(node);
+      continue;
+    }
+    // Het commentaar tussen de kop en het blok blijft staan: het zet niets neer.
+    const weg = new Set(doel);
+    const rest = uit.splice(vanaf).filter((n) => !weg.has(n));
+    uit.push(...rest, jsx('LesVeld', [jsx('LesDoel', doel), node]));
+  }
+  return uit;
+}
+
 /** Het label van het tabblad met wat vóór de eerste `##` staat. */
 const UITLEG = 'Uitleg';
 
 /** De werkvorm van een sectie die geen eigen tabblad krijgt (zie groepeer). */
 const LEERDOEL = 'leerdoel';
-
-/** De werkvorm van een sectie die naar zijn onderwerp heet. */
-const UITLEG_VORM = 'uitleg';
 
 const eigenschap = (node, naam) => node.attributes.find((a) => a.name === naam)?.value;
 
@@ -158,10 +302,12 @@ function alsStappen(tab, uitlegId) {
   const id = eigenschap(tab, 'id');
   const titel = eigenschap(tab, 'titel');
   // Uitleg vóór de eerste `##` heeft geen kop: het is de eerste stap, De basis.
+  const lijst = tab.children.find(isStappen);
   if (id === uitlegId) {
+    // Heeft die uitleg zelf stappen (uitlegMetStappen), dan zijn dat ze al.
+    if (lijst) return { boven: [], stappen: lijst.children.filter(isStap) };
     return { boven: [], stappen: [element('LesStap', `${id}-basis`, BASIS, tab.children)] };
   }
-  const lijst = tab.children.find(isStappen);
   if (!lijst) return { boven: [], stappen: [element('LesStap', id, titel, tab.children)] };
   // Een sectie die zelf al stappen had: die schuiven een niveau op. De `##`
   // en wat ervoor stond gaan mee in de eerste, zodat een link naar de `##`
@@ -177,6 +323,33 @@ function alsStappen(tab, uitlegId) {
       ...rest,
     ],
   };
+}
+
+/**
+ * De uitleg vóór de eerste `##` heeft geen kop, maar kan wel stappen hebben:
+ * elke `###` is er een (in de Python-cursus de voorspelvraag, `### Voorspel`).
+ * Wat vóór de eerste `###` staat, is De basis.
+ *
+ * @param {object[]} uitleg
+ * @param {string} id het id van het tabblad Uitleg
+ */
+function uitlegMetStappen(uitleg, id) {
+  const eerste = uitleg.findIndex(isH3);
+  if (eerste < 0) return uitleg;
+  const stappen = [];
+  for (const node of uitleg.slice(eerste)) {
+    if (isH3(node)) stappen.push({ kop: node, kinderen: [node] });
+    else stappen.at(-1).kinderen.push(node);
+  }
+  const lesStappen = stappen.map(({ kop, kinderen }) =>
+    element('LesStap', idVan(kop), tekstVan(kop), kinderen),
+  );
+  const basis = uitleg.slice(0, eerste);
+  if (basis.some((node) => !zetNietsNeer(node))) {
+    lesStappen.unshift(element('LesStap', `${id}-basis`, BASIS, basis));
+  } else lesStappen[0].children.unshift(...basis);
+  if (lesStappen.length < 2) return uitleg;
+  return [stappenlijst(lesStappen)];
 }
 
 /**
@@ -234,7 +407,8 @@ function voegUitlegSamen(tabs, vormen, uitlegId) {
  *
  * @param {object[]} kinderen de kinderen van de mdast-root
  */
-function groepeer(kinderen) {
+function groepeer(alles) {
+  const kinderen = doelNaastVeld(voorbeeldenNaastElkaar(zonderDubbeleCode(alles)));
   const eerste = kinderen.findIndex(isH2);
   if (eerste < 0) return null;
   const boven = [];
@@ -280,7 +454,7 @@ function groepeer(kinderen) {
     // Een id dat geen kop van de les al heeft.
     const bezet = new Set(tabs.map((t) => eigenschap(t, 'id')));
     uitlegId = bezet.has('uitleg') ? 'les-uitleg' : 'uitleg';
-    tabs.unshift(element('LesTab', uitlegId, UITLEG, uitleg));
+    tabs.unshift(element('LesTab', uitlegId, UITLEG, uitlegMetStappen(uitleg, uitlegId)));
   }
   if (tabs.length < 2) return null;
   // Elk tabblad krijgt zijn werkvorm (../werkvormen): het icoon op het

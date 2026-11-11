@@ -98,6 +98,75 @@
   border-top: 1px solid var(--ifm-color-emphasis-300);
 }
 
+/* De uitvoer, de tekening en de laadmelding. Buiten een tabblad staat dit
+   vak onder de code en is het er niet als het leeg is. */
+.resultaat:empty {
+  display: none;
+}
+
+.wacht {
+  margin: 0;
+  padding: 0.75rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.825rem;
+}
+
+/* In een les-tabblad, op een breed scherm: code links, uitvoer rechts. Een
+   lange uitvoer schuift in zijn eigen vak. Stap voor stap heeft de hele
+   breedte nodig en staat eronder. */
+@media (min-width: 997px) {
+  .inTab {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+
+  .inTab > .resultaat {
+    grid-column: 2;
+    grid-row: 1;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-left: 1px solid var(--ifm-color-emphasis-300);
+    background: var(--ifm-color-emphasis-100);
+  }
+
+  .inTab > .resultaat .output {
+    border-top: 0;
+  }
+
+  .inTab > :not(.editorSection):not(.resultaat) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Het doel van de opdracht in de uitvoerkolom (useLesDoel): de verwachte
+   uitvoer of het doelplaatje, onder wat de leerling zelf kreeg. */
+.doel {
+  padding: 0.5rem 0.75rem 0.75rem;
+  border-top: 1px dashed var(--ifm-color-emphasis-300);
+  font-size: 0.825rem;
+}
+
+.doel > p {
+  margin: 0 0 0.35rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.doel > :last-child {
+  margin-bottom: 0;
+}
+
+.doel img {
+  display: block;
+  max-width: 100%;
+  max-height: 30vh;
+  background: #fff;
+}
+
+.wacht + .doel {
+  border-top: 0;
+  padding-top: 0;
+}
+
 .loading {
   padding: 0.5rem 0.75rem;
   font-size: 0.8rem;

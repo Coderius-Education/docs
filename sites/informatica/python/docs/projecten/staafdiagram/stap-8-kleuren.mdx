@@ -123,7 +123,7 @@ de hoogste, de minuten niet.
 
 ## Er gaat iets mis
 
-**De staaf van video's is oranje, en er is geen enkele rode staaf.**
+### De staaf van video's is oranje, en er is geen enkele rode staaf
 
 **Oorzaak:** je zette `waarde > 60` bovenaan, en `waarde > 90` bij de
 `elif`. Python neemt de eerste tak die klopt. 110 is meer dan 60, dus
@@ -132,7 +132,7 @@ video's wordt oranje, en de tak voor rood komt nooit aan de beurt.
 **Oplossing:** zet de strengste voorwaarde bovenaan: eerst meer dan 90,
 dan meer dan 60.
 
-**Chatten en gamen zijn rood in plaats van oranje.**
+### Chatten en gamen zijn rood in plaats van oranje
 
 **Oorzaak:** je vergeleek met de hoogte van de staaf in plaats van met de
 minuten, bijvoorbeeld `if hoogte > 90:`. Sinds stap 7 is de hoogte geen
