@@ -9,6 +9,8 @@ title: Denkvaardigheden volgens Bloom
 wat hij ermee kan: onthouden, begrijpen, toepassen, analyseren, evalueren of
 creëren.
 
+**Controlevraag:** Zegt de beoordeling naast welke concepten de leerling gebruikt ook wat hij ermee kan?
+
 ## Waar komt dit vandaan
 
 De taxonomie van Bloom deelt onderwijsdoelen in naar denkvaardigheid, van

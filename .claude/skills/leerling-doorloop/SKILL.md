@@ -161,6 +161,12 @@ punten de opdrachtgever wil. Niet met een fix.
   in een `<details>` onder een speeltuin). Draai hem eerst; wat hij groen
   laat, hoef je niet met de hand na te rekenen, maar wat buiten zijn bereik
   valt (tekst in bullets, getallen in prose en tabellen) wel.
+- De controlevragen van vakdidactiek staan per categorie in
+  `sites/informatica/didactiek/src/data/tips.ts` (`controlevraag`; op de site
+  als `/checklist`). Het zijn de vragen die een auteur zichzelf stelt: loop ze
+  per les langs naast de vijf vragen hierboven, en noem bij een bevinding de
+  tip waar hij bij hoort. Een patroon dat geen tip heeft, is een voorstel voor
+  een nieuwe tip uit de praktijk.
 - `pnpm tekst --streng <bestanden>` en `pnpm spel` vangen toon en spelling;
   meld die niet als bevinding, verwijs ernaar.
 - Beloftes over de speeltuin controleer je in `packages/python-runner/src/`

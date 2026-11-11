@@ -9,6 +9,8 @@ title: Leerdoel, les en beoordeling op één lijn
 precies dat oefenen, en beoordeel precies dat. Dan leert een leerling wat je
 bedoelt, en niet alleen wat hij denkt dat getoetst wordt.
 
+**Controlevraag:** Oefent de les het werkwoord uit het leerdoel waarop de leerling beoordeeld wordt?
+
 ## Waar komt dit vandaan
 
 John Biggs noemde dit in 1996 **constructive alignment**. Het woord bestaat

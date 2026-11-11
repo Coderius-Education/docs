@@ -4,7 +4,9 @@ De onderbouwing achter het Coderius-lesmateriaal: een doorzoekbare lijst van
 didactische tips, elk gekoppeld aan het onderzoek waarop het berust.
 
 - Homepage (`/`): zoekveld + tip-lijst (`src/pages/index.tsx`, `src/components/TipZoeker`).
-- Tip-data: `src/data/tips.ts` (begint met één tip; voeg er eenvoudig meer toe).
+- Tip-data: `src/data/tips.ts`: de vaste categorieën en de tips, elk met een controlevraag.
+- Checklist (`/checklist`): de controlevragen van alle tips per categorie (`src/components/Checklist`).
+- Export: de build schrijft `tips.json` naast de site (`src/data/export.ts`).
 - Detailpagina's per bron: `docs/` (geserveerd op `/bronnen/<slug>`).
 
 ## Ontwikkelen

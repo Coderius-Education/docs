@@ -1,4 +1,7 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { createConfig } from '@coderius/shared/config';
+import { exportTips } from './src/data/export';
 
 export default createConfig({
   title: 'Didactiek — Coderius',
@@ -30,10 +33,30 @@ export default createConfig({
     ],
   ],
 
+  plugins: [
+    // De tips als tips.json naast de site: per categorie de controlevragen,
+    // met het adres van de onderbouwing. Zo is de verzameling buiten deze
+    // repo te gebruiken als invoer voor het nalopen van een cursus.
+    function tipsExport(context: { siteConfig: { url: string; baseUrl: string } }) {
+      return {
+        name: 'didactiek-tips-export',
+        async postBuild({ outDir }: { outDir: string }) {
+          const { url, baseUrl } = context.siteConfig;
+          const basis = `${url}${baseUrl}`.replace(/\/$/, '');
+          fs.writeFileSync(
+            path.join(outDir, 'tips.json'),
+            `${JSON.stringify(exportTips(basis), null, 2)}\n`,
+          );
+        },
+      };
+    },
+  ],
+
   themeConfig: {
     navbar: {
       items: [
         { to: '/', label: 'Tips', position: 'left' },
+        { to: '/checklist', label: 'Checklist', position: 'left' },
         { type: 'docSidebar', sidebarId: 'bronnenSidebar', position: 'left', label: 'Bronnen' },
       ],
     },
