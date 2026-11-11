@@ -2,7 +2,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import LesTabs, { LesStap, LesStappen, LesTab, useInLesTab } from './index';
+import LesTabs, { LesLeerdoel, LesStap, LesStappen, LesTab, useInLesTab } from './index';
 
 // react-dom/server heeft hier geen types (zie Voorspel/logica.test.ts).
 const { renderToStaticMarkup } = (await import('react-dom/server' as string)) as {
@@ -229,6 +229,22 @@ describe('het icoon van de werkvorm', () => {
 
   it('staat ook in de HTML van de build', () => {
     expect(renderToStaticMarkup(<LesMetWerkvormen />)).toMatch(/data-werkvorm="voorspellen"/);
+  });
+});
+
+describe('LesLeerdoel', () => {
+  it('toont het leerdoel met het icoon van de werkvorm, en houdt de kop voor een link', () => {
+    const { container } = render(
+      <LesLeerdoel>
+        <h2 id="wat-ga-je-leren">Wat ga je leren?</h2>
+        <p>Koppen en lijsten.</p>
+      </LesLeerdoel>,
+    );
+    expect(container.querySelector('svg')?.getAttribute('data-werkvorm')).toBe('leerdoel');
+    expect(screen.getByText('Koppen en lijsten.')).toBeTruthy();
+    // De kop blijft in de HTML: een link naar #wat-ga-je-leren moet zijn doel
+    // vinden, en een schermlezer hoort wat de zin is.
+    expect(document.getElementById('wat-ga-je-leren')?.tagName).toBe('H2');
   });
 });
 

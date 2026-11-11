@@ -85,12 +85,75 @@ describe('groepeer', () => {
     // De lessen over JavaScript beginnen met uitleg zonder `##`. Die bleef
     // boven elk tabblad staan: tot 750 pixels, waarna geen oefenveld meer in
     // beeld stond.
-    const uit = groepeer([titel, alinea('Dit is je eerste regel.'), kop(2, 'Predict')]);
+    const uit = groepeer([
+      titel,
+      alinea('Dit is je eerste regel.'),
+      alinea('Er gebeuren twee dingen.'),
+      kop(2, 'Predict'),
+    ]);
     expect(tabs(uit)).toEqual([
       { id: 'uitleg', titel: 'Uitleg', label: 'Uitleg', werkvorm: 'uitleg' },
       { id: 'predict', titel: 'Predict', label: 'Predict', werkvorm: 'voorspellen' },
     ]);
     expect(uit[1].children[0].children[0].children[0].value).toBe('Dit is je eerste regel.');
+  });
+
+  it('uitleg van één alinea krijgt geen eigen tabblad: hij opent het eerste', () => {
+    // Vijf lessen over JavaScript begonnen met een tabblad Uitleg van één
+    // alinea en een knop Volgende: een scherm zonder inhoud.
+    const uit = groepeer([
+      titel,
+      alinea('Tot nu toe stond alles vast.'),
+      kop(2, 'alert()'),
+      kop(2, 'Predict'),
+    ]);
+    expect(tabs(uit).map((t) => t.label)).toEqual(['alert()', 'Predict']);
+    const [eerste] = uit[1].children;
+    expect(eerste.children.map((n: Knoop) => n.type)).toEqual(['paragraph', 'heading']);
+    expect(eerste.children[0].children[0].value).toBe('Tot nu toe stond alles vast.');
+  });
+
+  it('het leerdoel van de les krijgt geen eigen tabblad: het staat bovenaan het tabblad erna', () => {
+    // "Wat ga je leren?" was in achttien lessen een scherm met één zin.
+    const uit = groepeer([
+      titel,
+      kop(2, 'Wat ga je leren?'),
+      alinea('Koppen en lijsten.'),
+      kop(2, 'Theorie'),
+      alinea('Uitleg.'),
+      kop(2, 'Make'),
+    ]);
+    expect(tabs(uit).map((t) => t.label)).toEqual(['Theorie', 'Make']);
+    const [theorie] = uit[1].children;
+    expect(theorie.children.map((n: Knoop) => n.name ?? n.type)).toEqual([
+      'LesLeerdoel',
+      'heading',
+      'paragraph',
+    ]);
+    // De kop gaat mee: hij is het doel van een link naar #wat-ga-je-leren.
+    const [leerdoel] = theorie.children;
+    expect(leerdoel.children.map((n: Knoop) => n.type)).toEqual(['heading', 'paragraph']);
+    expect(leerdoel.children[0].data?.id).toBe('wat-ga-je-leren-');
+  });
+
+  it('een leerdoel met meer dan een paar zinnen, of als laatste sectie, blijft een tabblad', () => {
+    const lang = groepeer([
+      titel,
+      kop(2, 'Wat ga je leren?'),
+      alinea('a'),
+      alinea('b'),
+      alinea('c'),
+      kop(2, 'Theorie'),
+      kop(2, 'Make'),
+    ]);
+    expect(tabs(lang).map((t) => t.label)).toEqual(['Wat ga je leren?', 'Theorie', 'Make']);
+    const laatste = groepeer([
+      titel,
+      kop(2, 'Theorie'),
+      kop(2, 'Make'),
+      kop(2, 'Wat ga je leren?'),
+    ]);
+    expect(tabs(laatste).map((t) => t.label)).toEqual(['Theorie', 'Make', 'Wat ga je leren?']);
   });
 
   it('maakt geen tabblad Uitleg van wat niets op de pagina zet', () => {
@@ -108,7 +171,7 @@ describe('groepeer', () => {
   });
 
   it('geeft Uitleg een eigen id als een kop al zo heet', () => {
-    const uit = groepeer([alinea('intro'), kop(2, 'Uitleg'), kop(2, 'Make')]);
+    const uit = groepeer([alinea('intro'), alinea('meer'), kop(2, 'Uitleg'), kop(2, 'Make')]);
     expect(tabs(uit).map((t) => t.id)).toEqual(['les-uitleg', 'uitleg', 'make']);
   });
 
@@ -135,8 +198,12 @@ describe('groepeer', () => {
   it('doet niets met minder dan twee tabbladen', () => {
     expect(groepeer([titel, alinea('alleen tekst')])).toBeNull();
     expect(groepeer([titel, kop(2, 'Enige sectie'), alinea('x')])).toBeNull();
-    // Eén sectie met uitleg ervoor zijn er wel twee.
-    expect(groepeer([titel, alinea('intro'), kop(2, 'Enige sectie')])).not.toBeNull();
+    // Eén sectie met uitleg van meer dan een alinea ervoor zijn er wel twee.
+    expect(
+      groepeer([titel, alinea('intro'), alinea('meer'), kop(2, 'Enige sectie')]),
+    ).not.toBeNull();
+    // Eén alinea ervoor hoort bij die ene sectie: nog steeds één tabblad.
+    expect(groepeer([titel, alinea('intro'), kop(2, 'Enige sectie')])).toBeNull();
   });
 
   it('weigert een kop zonder id: dan staat de stap vóór die van Docusaurus', () => {
@@ -186,14 +253,47 @@ describe('metStappen', () => {
     ]);
   });
 
-  it('laat één losse alinea boven de stappen staan', () => {
-    // "CSS kent meerdere eenheden:" is als stap een scherm met één zin.
+  it('zet één losse alinea in de eerste stap, vóór zijn kop', () => {
+    // "CSS kent meerdere eenheden:" is als stap een scherm met één zin. Boven
+    // de stappen stond hij bij elke stap opnieuw: in css-selectors zes keer
+    // "Je weet al hoe je elementen selecteert".
     const uit = metStappen(
       [kop(2, 'Theorie'), alinea('kort'), kop(3, 'Een'), kop(3, 'Twee')],
       'theorie',
     );
-    expect(uit.map((n: Knoop) => n.name ?? n.type)).toEqual(['heading', 'paragraph', 'LesStappen']);
+    expect(uit.map((n: Knoop) => n.name ?? n.type)).toEqual(['heading', 'LesStappen']);
     expect(stappen(uit).map((st) => st.id)).toEqual(['een', 'twee']);
+    const [een, twee] = uit[1].children;
+    expect(een.children.map((n: Knoop) => n.type)).toEqual(['paragraph', 'heading']);
+    expect(twee.children.map((n: Knoop) => n.type)).toEqual(['heading']);
+  });
+
+  it('wat vooraf komt, staat op het eerste scherm van het tabblad', () => {
+    const vooraf = [alinea('leerdoel')];
+    // Met een lange inleiding: in De basis, vooraan.
+    const metBasis = metStappen(
+      [kop(2, 'Theorie'), alinea('a'), alinea('b'), kop(3, 'Extra')],
+      'theorie',
+      vooraf,
+    );
+    expect(metBasis[1].children[0].children.map((n: Knoop) => n.children?.[0].value)).toEqual([
+      'leerdoel',
+      'a',
+      'b',
+    ]);
+    // Zonder inleiding: in de eerste stap.
+    const zonder = metStappen(
+      [kop(2, 'Theorie'), kop(3, 'Een'), kop(3, 'Twee')],
+      'theorie',
+      vooraf,
+    );
+    expect(zonder[1].children[0].children.map((n: Knoop) => n.type)).toEqual([
+      'paragraph',
+      'heading',
+    ]);
+    // Zonder stappen: boven de kop van het tabblad.
+    const plat = metStappen([kop(2, 'Predict'), alinea('x')], 'predict', vooraf);
+    expect(plat.map((n: Knoop) => n.type)).toEqual(['paragraph', 'heading', 'paragraph']);
   });
 
   it('laat een sectie met maar één stap zoals hij is', () => {
@@ -310,7 +410,17 @@ describe('de opmaak van de tabbladen', () => {
     expect(print).toMatch(/\.tablist[\s\S]*display:\s*none/);
     // Ook de stappen: een stap is een paneel, en zijn rij knoppen vervalt.
     expect(print).toMatch(/\.staplist[\s\S]*display:\s*none/);
-    expect(print).toMatch(/\.kopOpStap > h3:first-child[\s\S]*position:\s*static/);
+    expect(print).toMatch(/\.kopOpStap > h3[\s\S]*position:\s*static/);
+    expect(print).toMatch(/\.leerdoelTekst > h2/);
+  });
+
+  it('verbergt de kop van een tabblad of stap ook als hij niet vooraan staat', () => {
+    // Vóór de kop kan het leerdoel of een korte inleiding staan. Met
+    // `:first-child` stond de kop "Theorie" dan weer zichtbaar onder het
+    // tabblad dat al zo heet.
+    expect(css).toMatch(/\.kopOpTab > h2\s*\{/);
+    expect(css).toMatch(/\.kopOpStap > h3\s*\{/);
+    expect(css).not.toMatch(/\.kopOp(Tab|Stap) > h[23]:first-child/);
   });
 
   it('haalt het kruimelpad alleen weg waar de lessenlijst ernaast staat', () => {

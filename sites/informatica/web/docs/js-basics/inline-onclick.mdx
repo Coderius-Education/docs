@@ -86,20 +86,9 @@ Klik op de knop en de tekst in de `<p>` verandert. Er gebeuren twee dingen:
 De browser bewaart alle elementen van je pagina in een boomstructuur, de **DOM** (Document Object Model). `document` is de ingang van die boom, en `getElementById` haalt er een element uit.
 :::
 
-## Predict
-
-Bekijk de startcode in de editor hieronder. Beantwoord de vraag **voordat** je op Run klikt.
-
-<details>
-<summary>Wat verandert er als je op de knop klikt, en wat verandert er niet?</summary>
-
-De tekst in de `<p>` verandert van "Nog niet geklikt." naar "Je hebt geklikt.". De knop zelf verandert niet: die voert alleen de code in `onclick` uit.
-
-</details>
-
 ## De console lezen
 
-Onder het voorbeeld staat de **console**. Loopt je code vast, dan zet de browser daar een rode regel die begint met `JavaScript fout:`. Gebeurt er niets als je klikt, kijk dan eerst daar.
+In elk oefenveld staat onder het voorbeeld de **console**. Loopt je code vast, dan zet de browser daar een rode regel die begint met `JavaScript fout:`. Gebeurt er niets als je klikt, kijk dan eerst daar.
 
 Na `JavaScript fout: Uncaught` staat altijd de soort fout. Aan die soort zie je waar je moet zoeken:
 
@@ -108,6 +97,24 @@ Na `JavaScript fout: Uncaught` staat altijd de soort fout. Aan die soort zie je 
 | `SyntaxError` | Ik kan je code niet lezen. | Haakjes, aanhalingstekens, punten |
 | `ReferenceError` | Deze naam ken ik niet. | Spelling, aanhalingstekens rond tekst |
 | `TypeError` | Dit ding kan dat niet. | Heb je wel iets gevonden? `null` betekent: niets. |
+
+## Predict
+
+Dit is de startcode van het oefenveld. Beantwoord de vraag **voordat** je de code draait.
+
+```html
+<p id="bericht">Nog niet geklikt.</p>
+<button onclick="document.getElementById('bericht').textContent = 'Je hebt geklikt.'">
+  Klik mij
+</button>
+```
+
+<details>
+<summary>Wat verandert er als je op de knop klikt, en wat verandert er niet?</summary>
+
+De tekst in de `<p>` verandert van "Nog niet geklikt." naar "Je hebt geklikt.". De knop zelf verandert niet: die voert alleen de code in `onclick` uit.
+
+</details>
 
 ## Probeer en onderzoek
 

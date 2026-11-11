@@ -135,7 +135,25 @@ Voor één knop met één actie is `onclick` prima; daarom stond hij in de vorig
 
 ## Predict
 
-Bekijk de startcode in het script.js-tabblad. Beantwoord de vraag **voordat** je op Run klikt.
+Dit is de startcode van het oefenveld: een knop en een `<p>` in de HTML, en dit in script.js. Beantwoord de vraag **voordat** je de code draait.
+
+```html
+<button id="knop">Beweeg je muis</button>
+<p id="status">Wachten op een event...</p>
+```
+
+```js
+function muisErop() {
+  document.getElementById('status').textContent = 'Muis erop.';
+}
+
+function muisWeg() {
+  document.getElementById('status').textContent = 'Muis weg.';
+}
+
+document.getElementById('knop').addEventListener('mouseover', muisErop);
+document.getElementById('knop').addEventListener('mouseout', muisWeg);
+```
 
 <details>
 <summary>Wat zie je als je de muis op de knop zet, en wat als je hem weer wegbeweegt?</summary>

@@ -113,6 +113,8 @@ describe('de werkvormen van een les (plugins/werkvormen.js)', () => {
     '',
     'Eerst wat uitleg.',
     '',
+    'En nog een alinea, zodat de uitleg een eigen tabblad is.',
+    '',
     '## Predict',
     '',
     'Vraag.',
@@ -149,6 +151,15 @@ describe('de werkvormen van een les (plugins/werkvormen.js)', () => {
     const kaal = werkvormenVanLes(LES, parse);
     expect(werkvormenVanLes(`---\n---\n\n${LES}`, parse)).toEqual(kaal);
     expect(werkvormenVanLes(`---\ntitle: Een les\n---\n\n${LES}`, parse)).toEqual(kaal);
+  });
+
+  it('telt het leerdoel mee, ook al heeft het geen eigen tabblad', async () => {
+    // "Wat ga je leren?" staat bovenaan het tabblad erna (LesLeerdoel). Voor
+    // de docent blijft het een werkvorm van de les.
+    const parse = await mdxParser();
+    const les =
+      '# Les\n\n## Wat ga je leren?\n\nKoppen.\n\n## Theorie\n\nUitleg.\n\n## Make\n\nBouw.\n';
+    expect(werkvormenVanLes(les, parse)).toEqual(['leerdoel', 'uitleg', 'maken']);
   });
 
   it('een les zonder tabbladen heeft geen werkvormen', async () => {

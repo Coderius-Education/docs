@@ -55,9 +55,14 @@ function werkvormenVanLes(bron, parse) {
   geefId(tree);
   const tabs = (groepeer(tree.children) ?? []).find((node) => node.name === 'LesTabs');
   if (!tabs) return null;
-  return tabs.children.map(
-    (tab) => tab.attributes.find((a) => a.name === 'werkvorm')?.value ?? null,
-  );
+  // Het leerdoel van de les heeft geen eigen tabblad: het staat bovenaan het
+  // tabblad erna. Voor de docent is het wel een werkvorm van de les.
+  const heeft = (node, naam) =>
+    node.name === naam || (node.children ?? []).some((kind) => heeft(kind, naam));
+  return tabs.children.flatMap((tab) => [
+    ...(heeft(tab, 'LesLeerdoel') ? ['leerdoel'] : []),
+    tab.attributes.find((a) => a.name === 'werkvorm')?.value ?? null,
+  ]);
 }
 
 /** De docs van de cursus: van elke docs-plugin de nieuwste versie. */

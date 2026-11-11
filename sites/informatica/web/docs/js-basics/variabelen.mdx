@@ -109,7 +109,22 @@ teller = teller + 1;
 
 ## Predict
 
-Bekijk de startcode in het script.js-tabblad. Beantwoord de vraag **voordat** je op Run klikt.
+Dit is de startcode van het oefenveld: een `<p>` en een knop in de HTML, en dit in script.js. Beantwoord de vraag **voordat** je de code draait.
+
+```html
+<p id="uitvoer">0</p>
+<button onclick="telOp()">Klik mij</button>
+```
+
+```js
+let teller = 0;
+
+function telOp() {
+  teller = teller + 1;
+  document.getElementById('uitvoer').textContent = teller;
+  console.log('Teller staat op:', teller);
+}
+```
 
 <details>
 <summary>Wat zie je in de `<p>` na drie klikken?</summary>

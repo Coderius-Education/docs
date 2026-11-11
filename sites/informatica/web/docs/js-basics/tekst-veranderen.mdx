@@ -79,7 +79,13 @@ Meerdere knoppen mogen naar hetzelfde element wijzen. Elke knop zet dan zijn eig
 
 ## Predict
 
-Bekijk de startcode: twee knoppen, allebei met `getElementById('zin')`.
+Dit is de startcode van het oefenveld: twee knoppen, allebei met `getElementById('zin')`.
+
+```html
+<p id="zin">Klik een knop.</p>
+<button onclick="document.getElementById('zin').textContent = 'De zon schijnt.'">Zin 1</button>
+<button onclick="document.getElementById('zin').textContent = 'Het regent.'">Zin 2</button>
+```
 
 <details>
 <summary>Wat staat er in de `<p>` als je eerst op "Zin 1" en daarna op "Zin 2" klikt?</summary>

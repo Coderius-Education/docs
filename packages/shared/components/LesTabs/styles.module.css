@@ -80,8 +80,10 @@
 }
 
 /* Het label staat voluit op het tabblad: de kop in het paneel is dan alleen
-   nog voor een schermlezer en als doel van een link. */
-.kopOpTab > h2:first-child {
+   nog voor een schermlezer en als doel van een link. Een paneel heeft één
+   eigen `##`; hij staat niet altijd vooraan, want het leerdoel of een korte
+   inleiding kan ervoor staan. */
+.kopOpTab > h2 {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -91,8 +93,32 @@
   white-space: nowrap;
 }
 
-.kopOpTab > h2:first-child + * {
-  margin-top: 0;
+/* Het leerdoel van de les, bovenaan het eerste tabblad: het icoon en de zin.
+   De kop "Wat ga je leren?" zit erin, verborgen zoals de kop op een tabblad. */
+.leerdoel {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.leerdoelIcoon {
+  color: var(--ifm-color-primary);
+}
+
+.leerdoelTekst > h2 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.leerdoelTekst > p {
+  margin: 0;
 }
 
 /* De stappen binnen een tabblad: elke `###` van een lange sectie. Een rij
@@ -157,7 +183,7 @@
 }
 
 /* De kop van een stap staat voluit op zijn knop. */
-.kopOpStap > h3:first-child {
+.kopOpStap > h3 {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -165,10 +191,6 @@
   padding: 0;
   clip-path: inset(50%);
   white-space: nowrap;
-}
-
-.kopOpStap > h3:first-child + * {
-  margin-top: 0;
 }
 
 /* Een paneel begint bovenaan: de kop van een sectie heeft daar niet de
@@ -217,7 +239,7 @@
 }
 
 .verder {
-  margin: 0.75rem 0 0;
+  margin: 0.5rem 0 0;
   text-align: right;
 }
 
@@ -271,8 +293,9 @@
     display: block;
   }
 
-  .kopOpTab > h2:first-child,
-  .kopOpStap > h3:first-child {
+  .kopOpTab > h2,
+  .kopOpStap > h3,
+  .leerdoelTekst > h2 {
     position: static;
     width: auto;
     height: auto;

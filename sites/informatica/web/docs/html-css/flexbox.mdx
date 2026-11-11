@@ -78,7 +78,7 @@ export const makeCss = `/* Schrijf hier je stijl */
 ## Theorie
 
 :::info[Wat is `rem`?]
-In de voorbeelden hieronder staan groottes als `1.5rem`. Dat betekent "anderhalf keer de basisgrootte van de pagina". Je hoeft er nu niets mee te doen; het hele verhaal over `px`, `rem`, `em` en `%` staat in [Eenheden in CSS](site:web/docs/html-css/eenheden).
+`1.5rem` in de voorbeelden is anderhalf keer de basisgrootte van de pagina. Meer daarover staat in [Eenheden in CSS](site:web/docs/html-css/eenheden).
 :::
 
 Standaard staan HTML-elementen als blokken **onder elkaar**. Met `display: flex` op een container zet je de elementen **naast elkaar**:
@@ -102,7 +102,16 @@ Alle directe kinderen van de container worden dan **flex-items**.
 
 ## Predict
 
-Wat denk je dat er gebeurt als je `flex-direction: column` toevoegt aan de container?
+Drie items staan in een container met deze CSS. Wat denk je dat er gebeurt als je `flex-direction: column` toevoegt?
+
+```css
+.container {
+  display: flex;
+  gap: 10px;
+  background-color: #eee;
+  padding: 10px;
+}
+```
 
 <details>
 <summary>Klik hier voor het antwoord</summary>

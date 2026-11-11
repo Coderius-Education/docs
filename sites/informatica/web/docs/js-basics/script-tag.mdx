@@ -44,11 +44,11 @@ export const onderzoek = [
     antwoord: "Na de eerste klik staat er `Geklikt.` in groen, en bij de tweede klik verandert er niets meer. De functie zet de tekst en de kleur opnieuw op precies dezelfde waarden.",
   },
   {
-    vraag: "Hernoem de functie in de `<script>`-tag naar `veranderTekst`, maar laat de `onclick` staan. Welke foutmelding zie je in de console onder het voorbeeld als je klikt?",
+    vraag: "Hernoem de functie in de `<script>`-tag naar `veranderTekst`, maar laat de `onclick` staan. Welke foutmelding geeft de console als je klikt?",
     antwoord: "`JavaScript fout: Uncaught ReferenceError: verander is not defined`. De knop roept nog steeds `verander()` aan, maar een functie met die naam bestaat niet meer, dus de tekst op de pagina verandert niet.",
   },
   {
-    vraag: "Zet onderaan de `<script>`-tag, onder de sluitende `}` van de functie, een losse regel `verander();` en klik op Run. Wat zie je al voordat je op de knop klikt?",
+    vraag: "Zet onder de sluitende `}` van de functie een losse regel `verander();` en klik op Run. Wat zie je al voordat je op de knop klikt?",
     antwoord: "De tekst staat meteen op `Geklikt.` in groen. Die regel roept de functie aan zodra de pagina laadt, zonder dat iemand op de knop drukt.",
   },
   {
@@ -81,7 +81,7 @@ Tot nu toe schreef je code direct in `onclick`. Dat werkt voor één regel, maar
 
 De oplossing is een **functie**.
 
-## Stap 1: functies
+## Functies
 
 Een functie is een blok code met een naam. Je definieert hem één keer en roept hem daarna aan zo vaak als je wil:
 
@@ -116,7 +116,7 @@ In HTML gebeurt dat aanroepen via `onclick`:
 `verander()` (mét haakjes) is een **aanroep** — alsof je dat nummer ook echt belt.
 :::
 
-## Stap 2: de script-tag
+## De script-tag
 
 De functie zelf zet je in een `<script>`-tag, **onderaan** de `<body>` — zo bestaan alle HTML-elementen al op het moment dat de code laadt:
 
@@ -136,7 +136,19 @@ De functie zelf zet je in een `<script>`-tag, **onderaan** de `<body>` — zo be
 
 ## Predict
 
-Bekijk de startcode in de editor. Beantwoord de vraag **voordat** je op de knop klikt.
+Dit is de startcode van het oefenveld. Beantwoord de vraag **voordat** je op de knop klikt.
+
+```html
+<p id="bericht">Klik op de knop.</p>
+<button onclick="verander()">Klik mij</button>
+
+<script>
+  function verander() {
+    document.getElementById('bericht').textContent = 'Geklikt.';
+    document.getElementById('bericht').style.color = 'green';
+  }
+</script>
+```
 
 <details>
 <summary>Hoeveel dingen veranderen er tegelijk als je op de knop klikt?</summary>
@@ -147,7 +159,7 @@ Twee: de tekst én de kleur van de `<p>`. De functie voert bij een aanroep alle 
 
 ## Probeer en onderzoek
 
-De JavaScript staat hier in een `<script>`-tag **in** de HTML: kijk in het tabblad **index.html**, onderaan de `<body>`.
+De JavaScript staat hier in een `<script>`-tag **in** de HTML: kijk in **index.html**, onderaan de `<body>`.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -291,7 +303,7 @@ Gebruik `style.backgroundColor` voor de achtergrondkleur, en `''` om hem weer we
 JavaScript fout: Uncaught TypeError: Cannot set properties of null (setting 'textContent')
 ```
 
-De aanroep `verander();` draait zodra de browser de `<script>`-tag in de `<head>` tegenkomt. Dan is de `<body>` nog niet geladen, dus `getElementById` geeft `null`. Een functie *definiëren* in de `<head>` kan wel: die draait pas later. Zet de `<script>`-tag daarom **onderaan** de `<body>`. In [script.js](site:web/docs/js-basics/scriptjs) zie je hoe het met `defer` ook vanuit de `<head>` kan.
+De aanroep `verander();` draait zodra de browser de `<script>`-tag in de `<head>` leest. De `<body>` is er dan nog niet, dus `getElementById` geeft `null`. Zet de `<script>`-tag daarom **onderaan** de `<body>`.
 
 ### Functienaam verschilt tussen `onclick` en `<script>`
 

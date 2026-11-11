@@ -274,6 +274,21 @@ export function LesTab({
   );
 }
 
+/**
+ * Het leerdoel van de les ("Wat ga je leren?"): een zin of twee bovenaan het
+ * eerste tabblad, met het icoon van de werkvorm. Als eigen tabblad was het
+ * een scherm met één zin. De kop staat er nog, voor een schermlezer en als
+ * doel van een link; de opmaak verbergt hem.
+ */
+export function LesLeerdoel({ children }: { children?: ReactNode }): ReactNode {
+  return (
+    <div className={styles.leerdoel} data-les-leerdoel="">
+      <WerkvormIcoon id="leerdoel" className={styles.leerdoelIcoon} />
+      <div className={styles.leerdoelTekst}>{children}</div>
+    </div>
+  );
+}
+
 /** Eén stap in een tabblad. Buiten <LesStappen> staat hij gewoon open. */
 export function LesStap({ id, titel, label, children }: Props): ReactNode {
   const rij = useContext(RijContext);

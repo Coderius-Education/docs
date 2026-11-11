@@ -232,15 +232,21 @@ met `###`-koppen elke `###` in een `<LesStap>` binnen `<LesStappen>`
 `MDXComponents`). De bron van een les verandert niet. De titel en de startcode
 blijven boven de tabbladen; uitleg vóór de eerste `##` wordt het eerste
 tabblad, "Uitleg"; een kop met een dubbele punt krijgt als label het stuk
-ervoor. De stap staat achteraan in de docs, na de begrippen: Docusaurus heeft
+ervoor. Twee dingen krijgen geen eigen tabblad, want dat was een scherm met
+één zin en een knop Volgende: het leerdoel van de les ("Wat ga je leren?",
+hooguit twee alinea's) staat in een `<LesLeerdoel>` bovenaan het tabblad
+erna, met de kop erin voor een link en een schermlezer; en uitleg vóór de
+eerste `##` van één alinea opent het eerste tabblad. De stap staat achteraan in de docs, na de begrippen: Docusaurus heeft
 dan de id's van de koppen gezet.
 
 Een tabblad Theorie met vijf koppen was zelf nog tot 1330 pixels te lang.
 Daarom de stappen: een rij genummerde knoppen in het tabblad, één stap
 tegelijk in beeld. Wat in een sectie vóór de eerste `###` staat, is de eerste
-stap, "De basis" (id `<sectie>-basis`); alleen één losse alinea blijft boven
-de stappen staan. Een sectie die zo maar één stap zou krijgen, blijft zoals
-hij is. De knop Volgende onderaan een tabblad loopt eerst de stappen door en
+stap, "De basis" (id `<sectie>-basis`); één losse alinea hoort bij de eerste
+`###` en staat daar vóór de kop (boven de stappen stond hij bij elke stap
+opnieuw). Een sectie die zo maar één stap zou krijgen, heeft geen stappen.
+Omdat er iets vóór de kop kan staan, verbergt de opmaak de kop van een
+tabblad of stap met `> h2` en `> h3`, niet met `:first-child`. De knop Volgende onderaan een tabblad loopt eerst de stappen door en
 gaat dan naar het volgende tabblad.
 
 **Werkvormen: de schakel naar vakdidactiek.** Elk tabblad heeft een werkvorm:
@@ -298,6 +304,14 @@ Wat vastligt, en waarom:
   in een latere layer, en bij `!important` wint de eerste layer; een losse
   regel verliest, hoe specifiek ook.
 - Op papier staan alle panelen onder elkaar.
+
+**Elk scherm staat op zichzelf.** Een tabblad of stap is alles wat de
+leerling op dat moment ziet. Een zin als "de startcode in de editor
+hieronder" klopte op de lange pagina en wijst nu naar een ander tabblad: in
+14 van de 33 web-lessen vroeg Predict zo naar code die er niet stond. Wijs
+dus alleen naar wat in hetzelfde scherm staat, en zet de code waar een vraag
+over gaat erbij. De cursus bewaakt dat zelf
+(`sites/informatica/web/src/docs-tests/schermen.test.ts`).
 
 `les-tabs.test.ts` en `components/LesTabs/LesTabs.test.tsx` bewaken dit.
 Tabbladen garanderen niet dat een onderdeel op één scherm past:

@@ -135,7 +135,22 @@ a:hover {
 
 ## Predict
 
-Bekijk de CSS hieronder. Wat denk je dat er gebeurt als je:
+Een pagina heeft een link en een knop, met deze CSS:
+
+```css
+a:hover {
+  color: red;
+  text-decoration: none;
+}
+button:active {
+  background-color: orange;
+}
+button:focus {
+  outline: 3px solid dodgerblue;
+}
+```
+
+Wat denk je dat er gebeurt als je:
 1. Je muis over de link beweegt?
 2. Op de knop klikt en de muisknop **ingedrukt houdt**?
 3. Met Tab naar de knop springt zonder te klikken?

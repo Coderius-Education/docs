@@ -37,12 +37,11 @@ describe('les-tabbladen in de web-cursus', () => {
   it('staat aan, en de twee onderdelen zijn in elke les beschikbaar', () => {
     expect(readFileSync(join(SITE, 'docusaurus.config.ts'), 'utf8')).toMatch(/\blesTabs: true/);
     const mdx = readFileSync(join(SITE, 'src/theme/MDXComponents.tsx'), 'utf8');
-    expect(mdx).toMatch(
-      /import LesTabs, \{ LesStap, LesStappen, LesTab \} from '@coderius\/shared\/components\/LesTabs'/,
-    );
-    // De remark-stap zet vier onderdelen in een les; mist er een in
+    // De formatter zet een lange import over meer regels: de vorm doet er niet toe.
+    expect(mdx).toMatch(/import LesTabs, \{[^}]*\} from '@coderius\/shared\/components\/LesTabs'/);
+    // De remark-stap zet vijf onderdelen in een les; mist er een in
     // MDXComponents, dan faalt de build op de eerste les die hem gebruikt.
-    for (const naam of ['LesTabs', 'LesTab', 'LesStappen', 'LesStap'])
+    for (const naam of ['LesTabs', 'LesTab', 'LesStappen', 'LesStap', 'LesLeerdoel'])
       expect(mdx).toMatch(new RegExp(`^\\s+${naam},$`, 'm'));
   });
 
