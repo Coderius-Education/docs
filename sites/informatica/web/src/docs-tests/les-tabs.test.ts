@@ -38,10 +38,12 @@ describe('les-tabbladen in de web-cursus', () => {
     expect(readFileSync(join(SITE, 'docusaurus.config.ts'), 'utf8')).toMatch(/\blesTabs: true/);
     const mdx = readFileSync(join(SITE, 'src/theme/MDXComponents.tsx'), 'utf8');
     expect(mdx).toMatch(
-      /import LesTabs, \{ LesTab \} from '@coderius\/shared\/components\/LesTabs'/,
+      /import LesTabs, \{ LesStap, LesStappen, LesTab \} from '@coderius\/shared\/components\/LesTabs'/,
     );
-    expect(mdx).toMatch(/^\s+LesTabs,$/m);
-    expect(mdx).toMatch(/^\s+LesTab,$/m);
+    // De remark-stap zet vier onderdelen in een les; mist er een in
+    // MDXComponents, dan faalt de build op de eerste les die hem gebruikt.
+    for (const naam of ['LesTabs', 'LesTab', 'LesStappen', 'LesStap'])
+      expect(mdx).toMatch(new RegExp(`^\\s+${naam},$`, 'm'));
   });
 
   it('elke les heeft tabbladen, elk met een eigen label', () => {
@@ -54,6 +56,25 @@ describe('les-tabbladen in de web-cursus', () => {
       const dubbel = labels.filter((l, i) => labels.indexOf(l) !== i);
       if (dubbel.length) fout.push(`${les.naam}: dubbel label ${dubbel.join(', ')}`);
       if (labels.includes('Uitleg')) fout.push(`${les.naam}: een kop Uitleg botst met het tabblad`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('de stappen in een tabblad hebben elk een eigen label, en geen heet De basis', () => {
+    // De uitleg vóór de eerste ### wordt de stap "De basis"; een ### die zo
+    // heet, gaf twee stappen met dezelfde naam.
+    const fout: string[] = [];
+    for (const les of lessen) {
+      const zonderCode = les.inhoud.replace(/```[\s\S]*?```/g, '');
+      for (const sectie of zonderCode.split(/^## /m).slice(1)) {
+        const labels = [...sectie.matchAll(/^### (.+)$/gm)].map((m) =>
+          tabLabel(m[1].replace(/`/g, '').trim()),
+        );
+        const dubbel = labels.filter((l, i) => labels.indexOf(l) !== i);
+        const kop = sectie.split('\n')[0];
+        if (dubbel.length) fout.push(`${les.naam}, ${kop}: dubbele stap ${dubbel.join(', ')}`);
+        if (labels.includes('De basis')) fout.push(`${les.naam}, ${kop}: een ### De basis`);
+      }
     }
     expect(fout).toEqual([]);
   });

@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest';
 // gebruikte de breedte van de inhoudsopgave niet.
 
 const require = createRequire(import.meta.url);
-const { groepeer, tabLabel, remarkLesTabs } = require('./plugins/les-tabs.js');
+const { groepeer, metStappen, tabLabel, remarkLesTabs } = require('./plugins/les-tabs.js');
 
 type Knoop = {
   type: string;
@@ -124,6 +124,79 @@ describe('groepeer', () => {
   });
 });
 
+// Een tabblad Theorie met vijf koppen was zelf nog tot 1330 pixels te lang.
+// Elke `###` is daarom een stap binnen het tabblad.
+describe('metStappen', () => {
+  const eigenschappen = (n: Knoop) =>
+    Object.fromEntries((n.attributes ?? []).map((a) => [a.name, a.value]));
+  const stappen = (uit: Knoop[]) =>
+    (uit.find((n) => n.name === 'LesStappen')?.children ?? []).map(eigenschappen);
+
+  it('maakt van elke ### een stap, met de kop erin', () => {
+    const uit = metStappen(
+      [kop(2, 'Theorie'), kop(3, 'Koppen'), alinea('a'), kop(3, 'Lijsten'), alinea('b')],
+      'theorie',
+    );
+    // De ## blijft boven de stappen: hij is het doel van een link naar #theorie.
+    expect(uit.map((n: Knoop) => n.name ?? n.type)).toEqual(['heading', 'LesStappen']);
+    expect(stappen(uit)).toEqual([
+      { id: 'koppen', titel: 'Koppen', label: 'Koppen' },
+      { id: 'lijsten', titel: 'Lijsten', label: 'Lijsten' },
+    ]);
+    const [eerste] = uit[1].children;
+    expect(eerste.name).toBe('LesStap');
+    expect(eerste.children.map((n: Knoop) => n.type)).toEqual(['heading', 'paragraph']);
+  });
+
+  it('maakt van de uitleg vóór de eerste ### de eerste stap, De basis', () => {
+    // Bleef die boven de stappen staan, dan stond hij boven elke stap: in
+    // tekst-opmaken-css 21 regels, en dan paste geen enkele stap.
+    const uit = metStappen(
+      [kop(2, 'Theorie'), alinea('a'), alinea('b'), kop(3, 'Extra'), alinea('c')],
+      'theorie',
+    );
+    expect(uit.map((n: Knoop) => n.name ?? n.type)).toEqual(['heading', 'LesStappen']);
+    expect(stappen(uit)).toEqual([
+      { id: 'theorie-basis', titel: 'De basis', label: 'De basis' },
+      { id: 'extra', titel: 'Extra', label: 'Extra' },
+    ]);
+    expect(uit[1].children[0].children.map((n: Knoop) => n.type)).toEqual([
+      'paragraph',
+      'paragraph',
+    ]);
+  });
+
+  it('laat één losse alinea boven de stappen staan', () => {
+    // "CSS kent meerdere eenheden:" is als stap een scherm met één zin.
+    const uit = metStappen(
+      [kop(2, 'Theorie'), alinea('kort'), kop(3, 'Een'), kop(3, 'Twee')],
+      'theorie',
+    );
+    expect(uit.map((n: Knoop) => n.name ?? n.type)).toEqual(['heading', 'paragraph', 'LesStappen']);
+    expect(stappen(uit).map((st) => st.id)).toEqual(['een', 'twee']);
+  });
+
+  it('laat een sectie met maar één stap zoals hij is', () => {
+    const zonder = [kop(2, 'Predict'), alinea('a')];
+    expect(metStappen(zonder, 'predict')).toBe(zonder);
+    const een = [kop(2, 'Theorie'), alinea('kort'), kop(3, 'Een'), alinea('a')];
+    expect(metStappen(een, 'theorie')).toBe(een);
+  });
+
+  it('een tabblad krijgt zijn stappen van groepeer', () => {
+    const uit = groepeer([
+      titel,
+      kop(2, 'Theorie'),
+      kop(3, 'Koppen'),
+      kop(3, 'Lijsten'),
+      kop(2, 'Make'),
+    ]);
+    const [theorie, make] = uit[1].children;
+    expect(theorie.children.map((n: Knoop) => n.name ?? n.type)).toEqual(['heading', 'LesStappen']);
+    expect(make.children.map((n: Knoop) => n.name ?? n.type)).toEqual(['heading']);
+  });
+});
+
 describe('remarkLesTabs', () => {
   // Docusaurus geeft elke kop een id voordat deze stap draait; hier doet een
   // kleine stap dat na.
@@ -150,6 +223,16 @@ describe('remarkLesTabs', () => {
     // Een titel met aanhalingstekens en een & komt heel door als eigenschap.
     expect(js).toContain('titel: "Opdracht 1: Tel \\"alles\\" & meer"');
     expect(js).toContain('label: "Opdracht 1"');
+  });
+
+  it('een sectie met meer ###-koppen compileert met LesStappen en LesStap', async () => {
+    const js = await bouw(
+      '# Les\n\n## Theorie\n\n### Koppen\n\na\n\n### Lijsten\n\nb\n\n## Make\n\nx\n',
+    );
+    expect(js).toMatch(/LesStappen/);
+    expect(js).toMatch(/LesStap\b/);
+    expect(js).toContain('id: "koppen"');
+    expect(js).toContain('id: "lijsten"');
   });
 
   it('slaat een pagina over met les_tabs: false in de front matter', async () => {
@@ -182,7 +265,7 @@ describe('de opmaak van de tabbladen', () => {
     const verboden =
       /(^|[\s;])(transform|filter|contain|will-change|overflow(-[xy])?|z-index|isolation|animation|transition|container-type)\s*:/;
     const fout = regels
-      .filter(({ sel }) => /^\.(wortel|paneel)\b/.test(sel))
+      .filter(({ sel }) => /^\.(wortel|paneel|stappen)\b/.test(sel))
       .filter(({ body }) => verboden.test(body))
       .map(({ sel }) => sel);
     expect(fout).toEqual([]);
@@ -205,5 +288,24 @@ describe('de opmaak van de tabbladen', () => {
     const print = css.slice(css.indexOf('@media print'));
     expect(print).toMatch(/\.paneel\[hidden\]\s*\{\s*display:\s*block/);
     expect(print).toMatch(/\.tablist[\s\S]*display:\s*none/);
+    // Ook de stappen: een stap is een paneel, en zijn rij knoppen vervalt.
+    expect(print).toMatch(/\.staplist[\s\S]*display:\s*none/);
+    expect(print).toMatch(/\.kopOpStap > h3:first-child[\s\S]*position:\s*static/);
+  });
+
+  it('haalt het kruimelpad alleen weg waar de lessenlijst ernaast staat', () => {
+    // Boven elk paneel stond 276 pixels; het kruimelpad en een titel van 3rem
+    // waren daar 100 van. Op een telefoon is de lessenlijst dicht en zegt het
+    // kruimelpad nog wel waar je bent.
+    const breed = css.slice(
+      css.lastIndexOf('@media (min-width: 997px)'),
+      css.indexOf('@media print'),
+    );
+    expect(breed).toMatch(
+      /html:has\(\[data-les-tabs\]\) \.theme-doc-breadcrumbs\)?\s*\{\s*display:\s*none/,
+    );
+    expect(breed).toMatch(/\.theme-doc-markdown > header > h1\)?\s*\{[^}]*--ifm-h1-font-size/);
+    const buiten = css.slice(0, css.indexOf('@media'));
+    expect(buiten).not.toMatch(/theme-doc-breadcrumbs/);
   });
 });

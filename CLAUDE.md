@@ -226,13 +226,22 @@ het aan met `lesTabs: true` in `createConfig`; een pagina zet het uit met
 schrijfgids (§2, TOC staat aan) geldt voor alle andere cursussen.
 
 De remark-stap `packages/shared/plugins/les-tabs.js` wikkelt bij het bouwen
-elke `##`-sectie in een `<LesTab>` binnen één `<LesTabs>`
-(`packages/shared/components/LesTabs`, door de site geregistreerd in
+elke `##`-sectie in een `<LesTab>` binnen één `<LesTabs>`, en in een sectie
+met `###`-koppen elke `###` in een `<LesStap>` binnen `<LesStappen>`
+(`packages/shared/components/LesTabs`; de site registreert alle vier in
 `MDXComponents`). De bron van een les verandert niet. De titel en de startcode
 blijven boven de tabbladen; uitleg vóór de eerste `##` wordt het eerste
 tabblad, "Uitleg"; een kop met een dubbele punt krijgt als label het stuk
 ervoor. De stap staat achteraan in de docs, na de begrippen: Docusaurus heeft
 dan de id's van de koppen gezet.
+
+Een tabblad Theorie met vijf koppen was zelf nog tot 1330 pixels te lang.
+Daarom de stappen: een rij genummerde knoppen in het tabblad, één stap
+tegelijk in beeld. Wat in een sectie vóór de eerste `###` staat, is de eerste
+stap, "De basis" (id `<sectie>-basis`); alleen één losse alinea blijft boven
+de stappen staan. Een sectie die zo maar één stap zou krijgen, blijft zoals
+hij is. De knop Volgende onderaan een tabblad loopt eerst de stappen door en
+gaat dan naar het volgende tabblad.
 
 Wat vastligt, en waarom:
 
@@ -246,8 +255,23 @@ Wat vastligt, en waarom:
   een oefenveld op Groter (`position: fixed`) onder de navbar.
 - **Het onderdeel volgt zelf het adres** (`useLocation`): Docusaurus scrolt
   niet naar een kop in een verborgen paneel. Een link naar een kop opent het
-  paneel en scrolt er dan naartoe; een klik op een tabblad zet de hash met
-  `history.replaceState`, buiten de router om.
+  tabblad en de stap waarin hij staat en scrolt er dan naartoe; een klik op
+  een tabblad of een stap zet de hash met `history.replaceState`, buiten de
+  router om. Het doel van een adres is een kop óf een paneel: het tabblad
+  Uitleg en de stap De basis hebben geen kop.
+- **Boven de tabbladen staat zo weinig mogelijk.** Op een breed scherm
+  (vanaf 997px, waar de lessenlijst links staat) vervalt het kruimelpad en is
+  de titel 1,75rem; dat scheelt honderd pixels per tabblad. In een paneel is
+  de `##` zo groot als een tussenkop, is een uitklapblok lager, en staan een
+  tip en een antwoord die dicht zijn naast elkaar.
+- **Een oefenveld in een tabblad past zich aan het scherm aan.** Het veld
+  vraagt met `useInLesTab()` of het in een tabblad staat. De web-`CodeEditor`
+  zet code en voorbeeld daar vanaf 769px naast elkaar, ook in een veld dat
+  `stacked` is, en neemt de hoogte die op het scherm overblijft na wat er in
+  het paneel boven en onder staat (`pasHoogte.ts`: nooit hoger dan de
+  `height`-prop, nooit lager dan 240 pixels). Staat er in het paneel een tip
+  of antwoord open, dan meet het veld niet opnieuw: de editor kromp anders
+  onder het typen. Buiten een tabblad en op een telefoon verandert er niets.
 - **De les krijgt de breedte van de inhoudsopgave** met een regel in
   `@layer docusaurus.infima`. Docusaurus zet de kolom op 75% met `!important`
   in een latere layer, en bij `!important` wint de eerste layer; een losse
@@ -257,7 +281,10 @@ Wat vastligt, en waarom:
 `les-tabs.test.ts` en `components/LesTabs/LesTabs.test.tsx` bewaken dit.
 Tabbladen garanderen niet dat een onderdeel op één scherm past:
 `node scripts/meet-les-tabs.mjs <site>` (na een build, met Playwright) meet
-per les en per tabblad op 1280×720 en 1366×768 hoeveel pixels het te lang is.
+per les, per tabblad en per stap op 1280×720 en 1366×768 hoeveel pixels het
+te lang is. Wat dan nog te lang is, is tekst: een stap of een Er gaat iets
+mis met meer inhoud dan op een scherm past. Dat lost een auteur op, niet de
+opmaak.
 Bekende nadelen: Ctrl+F vindt geen tekst in een tabblad dat niet open staat,
 bij een link naar een kop is heel kort het eerste tabblad te zien, Matomo telt
 een tabblad niet als bezoek, en de begrippen-stap markeert het eerste

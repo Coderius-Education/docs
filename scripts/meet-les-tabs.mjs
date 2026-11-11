@@ -7,7 +7,8 @@
 // steeds langer zijn dan het scherm. Of het past, hangt aan de layout en is
 // alleen in een browser te meten. Dit script serveert de gebouwde site onder
 // zijn eigen pad, opent in Chromium elke les met tabbladen, klikt elk
-// tabblad aan en meet op 1280×720 en 1366×768:
+// tabblad aan (en in een tabblad met stappen elke stap) en meet op 1280×720
+// en 1366×768:
 //
 //   over    hoeveel pixels de onderkant van het paneel onder de rand van het
 //           scherm valt (0 of minder: het paneel past);
@@ -110,9 +111,10 @@ for (const les of lessen()) {
       const kolom = document.querySelector('[class*="docItemCol"]');
       return kolom ? Math.round((100 * kolom.clientWidth) / kolom.parentElement.clientWidth) : null;
     });
-    const tabs = await pagina.locator('[role=tab]').all();
+    const tabs = await pagina.locator('[data-tab]').all();
     for (const tab of tabs) {
       const id = await tab.getAttribute('data-tab');
+      const label = (await tab.innerText()).trim();
       await tab.click();
       // Een oefenveld is klaar als de editor staat; daarna nog even voor de
       // hoogte die het voorbeeld zelf meldt.
@@ -128,24 +130,30 @@ for (const les of lessen()) {
           { timeout: 10_000 },
         )
         .catch(() => {});
-      await pagina.waitForTimeout(400);
-      await pagina.evaluate(() => window.scrollTo(0, 0));
-      const maat = await pagina.evaluate((id) => {
-        const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
-        const r = paneel.getBoundingClientRect();
-        return {
-          over: Math.round(r.bottom - window.innerHeight),
-          boven: Math.round(r.top),
-          pagina: document.documentElement.scrollHeight - window.innerHeight,
-          velden: paneel.querySelectorAll('[data-zaad]').length,
-        };
-      }, id);
-      rijen.push({
-        les,
-        tab: (await tab.innerText()).trim(),
-        scherm: `${scherm.width}x${scherm.height}`,
-        ...maat,
-      });
+      // Een tabblad met stappen meet per stap; zonder stappen één keer.
+      const paneel = pagina.locator(`[data-les-tab="${id}"]`);
+      const stappen = await paneel.locator('[data-stap]').all();
+      for (const stap of stappen.length ? stappen : [null]) {
+        if (stap) await stap.click();
+        await pagina.waitForTimeout(400);
+        await pagina.evaluate(() => window.scrollTo(0, 0));
+        const maat = await pagina.evaluate((id) => {
+          const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
+          const r = paneel.getBoundingClientRect();
+          return {
+            over: Math.round(r.bottom - window.innerHeight),
+            boven: Math.round(r.top),
+            pagina: document.documentElement.scrollHeight - window.innerHeight,
+            velden: paneel.querySelectorAll('[data-zaad]').length,
+          };
+        }, id);
+        rijen.push({
+          les,
+          tab: stap ? `${label} › ${(await stap.innerText()).replace(/\s+/g, ' ').trim()}` : label,
+          scherm: `${scherm.width}x${scherm.height}`,
+          ...maat,
+        });
+      }
     }
     await context.close();
   }
@@ -161,8 +169,8 @@ if (ALS_JSON) {
     const scherm = `${width}x${height}`;
     const deze = rijen.filter((r) => r.scherm === scherm);
     const past = deze.filter((r) => r.over <= 0);
-    console.log(`\n## ${scherm}: ${past.length} van ${deze.length} tabbladen passen\n`);
-    console.log('| Les | Tabblad | Velden | Te lang (px) |');
+    console.log(`\n## ${scherm}: ${past.length} van ${deze.length} schermen passen\n`);
+    console.log('| Les | Tabblad of stap | Velden | Te lang (px) |');
     console.log('|---|---|---:|---:|');
     for (const r of deze.filter((r) => r.over > 0).sort((a, b) => b.over - a.over))
       console.log(`| ${r.les.replace(/^docs\//, '')} | ${r.tab} | ${r.velden} | ${r.over} |`);

@@ -71,12 +71,22 @@ describe('uitgeklapt vullen beide helften hun ruimte', () => {
   // maar 299, en het voorbeeld 160 terwijl er 450 klaarstond.
 
   it('de editor vult uitgeklapt zijn helft in plaats van de code te volgen', () => {
-    expect(bron).toMatch(/height=\{groot \? '100%' : height\}/);
-    expect(bron).toMatch(/autoHeight=\{stacked && !groot\}/);
+    // `gestapeld` is `stacked`, behalve in een les-tabblad op een breed
+    // scherm; `hoogte` is daar de hoogte die op het scherm past, en anders
+    // de height-prop.
+    expect(bron).toMatch(/const gestapeld = stacked && !naastElkaar;/);
+    expect(bron).toMatch(/height=\{groot \? '100%' : hoogte\}/);
+    expect(bron).toMatch(/autoHeight=\{gestapeld && !groot\}/);
   });
 
   it('het voorbeeld laat uitgeklapt zijn vaste hoogte los', () => {
-    expect(bron).toMatch(/stacked && !groot\s*\?[\s\S]*?previewInhoud/);
+    expect(bron).toMatch(/gestapeld && !groot\s*\?[\s\S]*?previewInhoud/);
+  });
+
+  it('de hoogte van een les-tabblad geldt niet op Groter', () => {
+    // Op Groter vult het veld het scherm; een meting van de les zou het
+    // weer op 240 tot 420 pixels zetten.
+    expect(bron).toMatch(/if \(!naastElkaar \|\| groot \|\| !werkvlak \|\| !paneel\) return;/);
   });
 });
 

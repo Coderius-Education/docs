@@ -2,7 +2,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import LesTabs, { LesTab } from './index';
+import LesTabs, { LesStap, LesStappen, LesTab, useInLesTab } from './index';
 
 // react-dom/server heeft hier geen types (zie Voorspel/logica.test.ts).
 const { renderToStaticMarkup } = (await import('react-dom/server' as string)) as {
@@ -155,6 +155,150 @@ describe('LesTabs', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Volgende: Opdracht 1' }));
     expect(actief()).toBe('Opdracht 1');
     expect(paneel('er-gaat-iets-mis').querySelector('button')).toBeNull();
+  });
+});
+
+// Een tabblad met meer ###-koppen toont ze als stappen, één tegelijk.
+function LesMetStappen() {
+  return (
+    <LesTabs>
+      <LesTab id="theorie" titel="Theorie" label="Theorie">
+        <h2 id="theorie">Theorie</h2>
+        <LesStappen>
+          <LesStap id="theorie-basis" titel="De basis" label="De basis">
+            <p>Kern.</p>
+          </LesStap>
+          <LesStap id="koppen" titel="Koppen" label="Koppen">
+            <h3 id="koppen">Koppen</h3>
+            <h4 id="diep">Diep</h4>
+          </LesStap>
+          <LesStap id="lijsten" titel="Lijsten" label="Lijsten">
+            <h3 id="lijsten">Lijsten</h3>
+            <Veld />
+          </LesStap>
+        </LesStappen>
+      </LesTab>
+      <LesTab id="make" titel="Make" label="Make">
+        <h2 id="make">Make</h2>
+      </LesTab>
+    </LesTabs>
+  );
+}
+
+const stap = () =>
+  Array.from(document.querySelectorAll('[data-stap]')).find(
+    (k) => k.getAttribute('aria-selected') === 'true',
+  )?.textContent;
+const tabblad = () =>
+  Array.from(document.querySelectorAll('[data-tab]')).find(
+    (k) => k.getAttribute('aria-selected') === 'true',
+  )?.textContent;
+
+describe('LesStappen', () => {
+  it('zet elke stap in de HTML van de build, en toont alleen de eerste', () => {
+    const html = renderToStaticMarkup(<LesMetStappen />);
+    for (const id of ['koppen', 'lijsten', 'diep']) expect(html).toContain(`id="${id}"`);
+    expect(html).toMatch(/<section[^>]*data-les-stap="theorie-basis"(?![^>]*hidden)/);
+    expect(html).toMatch(/<section[^>]*data-les-stap="koppen"[^>]*hidden/);
+    expect(html).toMatch(/<section[^>]*data-les-stap="lijsten"[^>]*hidden/);
+  });
+
+  it('nummert de stappen en wisselt zonder een veld opnieuw te mounten', () => {
+    mounts = 0;
+    render(<LesMetStappen />);
+    expect(stap()).toBe('1De basis');
+    fireEvent.click(document.querySelector('[data-stap="lijsten"]') as HTMLElement);
+    expect(stap()).toBe('3Lijsten');
+    expect(paneel('lijsten').hidden).toBe(false);
+    expect(paneel('theorie-basis').hidden).toBe(true);
+    expect(window.location.hash).toBe('#lijsten');
+    fireEvent.click(document.querySelector('[data-stap="koppen"]') as HTMLElement);
+    expect(mounts).toBe(1);
+  });
+
+  it('Volgende loopt eerst de stappen door, en dan pas naar het volgende tabblad', () => {
+    render(<LesMetStappen />);
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Koppen' }));
+    expect(stap()).toBe('2Koppen');
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Lijsten' }));
+    expect(stap()).toBe('3Lijsten');
+    expect(tabblad()).toBe('Theorie');
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Make' }));
+    expect(tabblad()).toBe('Make');
+  });
+
+  it('een link naar de kop van een stap opent het tabblad en de stap, zonder te scrollen', () => {
+    const { rerender } = render(<LesMetStappen />);
+    fireEvent.click(document.querySelector('[data-tab="make"]') as HTMLElement);
+    scrol.mockClear();
+    locatie = { pathname: '/les', hash: '#lijsten', search: '' };
+    rerender(<LesMetStappen />);
+    expect(tabblad()).toBe('Theorie');
+    expect(stap()).toBe('3Lijsten');
+    expect(scrol).not.toHaveBeenCalled();
+  });
+
+  it('een link naar een kop verderop in een stap opent die stap en scrolt ernaartoe', () => {
+    locatie = { pathname: '/les', hash: '#diep', search: '' };
+    render(<LesMetStappen />);
+    expect(stap()).toBe('2Koppen');
+    expect(scrol.mock.instances.at(-1)).toBe(document.getElementById('diep'));
+  });
+
+  it('het adres van De basis, een stap zonder kop, opent het tabblad', () => {
+    // De eerste versie zocht het doel alleen als element met dat id; de stap
+    // De basis heeft geen kop, en na herladen stond het eerste tabblad open.
+    const { rerender } = render(<LesMetStappen />);
+    fireEvent.click(document.querySelector('[data-tab="make"]') as HTMLElement);
+    locatie = { pathname: '/les', hash: '#theorie-basis', search: '' };
+    rerender(<LesMetStappen />);
+    expect(tabblad()).toBe('Theorie');
+    expect(stap()).toBe('1De basis');
+  });
+
+  it('de pijltjes in de stappen verzetten het tabblad niet', () => {
+    render(<LesMetStappen />);
+    const lijst = screen.getByRole('tablist', { name: 'Stappen in dit onderdeel' });
+    fireEvent.keyDown(lijst, { key: 'ArrowRight' });
+    expect(stap()).toBe('2Koppen');
+    expect(tabblad()).toBe('Theorie');
+  });
+
+  it('een stap zonder LesStappen staat gewoon open', () => {
+    render(
+      <LesStap id="los" titel="Los" label="Los">
+        <p>inhoud</p>
+      </LesStap>,
+    );
+    expect(paneel('los').hidden).toBe(false);
+  });
+});
+
+describe('useInLesTab', () => {
+  // Het oefenveld van de web-cursus vraagt hiermee of het zich aan het
+  // scherm moet aanpassen.
+  function Vraag() {
+    return <output>{useInLesTab() ? 'in een tabblad' : 'los'}</output>;
+  }
+
+  it('zegt of een onderdeel in een tabblad staat, ook binnen een stap', () => {
+    render(<Vraag />);
+    expect(screen.getByRole('status').textContent).toBe('los');
+    cleanup();
+    render(
+      <LesTabs>
+        <LesTab id="a" titel="A" label="A">
+          <LesStappen>
+            <LesStap id="b" titel="B" label="B">
+              <Vraag />
+            </LesStap>
+            <LesStap id="c" titel="C" label="C" />
+          </LesStappen>
+        </LesTab>
+        <LesTab id="d" titel="D" label="D" />
+      </LesTabs>,
+    );
+    expect(screen.getByRole('status').textContent).toBe('in een tabblad');
   });
 });
 
