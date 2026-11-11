@@ -1,4 +1,4 @@
-// De hoogte van een oefenveld in een les-tabblad (proef, zie de root-CLAUDE.md).
+// De hoogte van een oefenveld in een les-tabblad (zie de root-CLAUDE.md).
 // Buiten een tabblad heeft een veld de hoogte uit zijn `height`-prop. In een
 // tabblad is het doel dat het hele paneel op het scherm past: het veld krijgt
 // de ruimte die overblijft na wat er in het paneel boven en onder staat.

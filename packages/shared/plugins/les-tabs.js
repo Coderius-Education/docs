@@ -1,4 +1,4 @@
-// Les-tabbladen (proef, zie de root-CLAUDE.md): elke `##`-sectie van een les
+// Les-tabbladen (zie de root-CLAUDE.md): elke `##`-sectie van een les
 // wordt een tabblad bovenaan de pagina, zodat een leerling niet meer door een
 // lange les hoeft te scrollen. Een site zet het aan met `lesTabs: true` in
 // createConfig; een pagina zet het uit met `les_tabs: false` in de front matter.

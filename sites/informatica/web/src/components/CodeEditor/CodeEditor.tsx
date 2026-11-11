@@ -129,7 +129,7 @@ function CodeEditorInner({
   const containerRef = useRef<HTMLDivElement>(null);
   const werkvlakRef = useRef<HTMLDivElement>(null);
 
-  // In een les-tabblad (proef) moet het paneel op het scherm passen. Daar
+  // In een les-tabblad moet het paneel op het scherm passen. Daar
   // staan code en voorbeeld op een breed scherm altijd naast elkaar, ook in
   // een veld dat anders gestapeld is, en krijgt het veld de hoogte die op het
   // scherm overblijft (pasHoogte.ts). Buiten een tabblad verandert er niets.

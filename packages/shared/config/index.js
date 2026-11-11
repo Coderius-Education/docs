@@ -191,7 +191,7 @@ function metBegrippen(presets, siteDir) {
   });
 }
 
-// Les-tabbladen (plugins/les-tabs.js, proef): met `lesTabs: true` wikkelt een
+// Les-tabbladen (plugins/les-tabs.js): met `lesTabs: true` wikkelt een
 // remark-stap elke `##`-sectie van een les in een tabblad. Helemaal achteraan
 // in de docs van het classic preset, ook na de begrippen: die stap slaat een
 // component over, en zou in een paneel dus geen begrip meer markeren.

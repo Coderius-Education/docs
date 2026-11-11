@@ -2,8 +2,8 @@
 import { describe, expect, it } from 'vitest';
 import { MARGE, MIN_HOOGTE, meetRuimte, pasHoogte } from './pasHoogte';
 
-// Een oefenveld in een les-tabblad past zijn hoogte aan het scherm aan
-// (proef). Of het paneel dan echt past, meet alleen een browser
+// Een oefenveld in een les-tabblad past zijn hoogte aan het scherm aan.
+// Of het paneel dan echt past, meet alleen een browser
 // (scripts/meet-les-tabs.mjs); de rekenregel en de twee gevallen waarin er
 // niet gemeten wordt, staan hier.
 describe('pasHoogte', () => {

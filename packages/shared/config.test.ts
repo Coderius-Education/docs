@@ -156,7 +156,7 @@ describe('de kleuren van Python-code (issue #158)', () => {
   });
 });
 
-describe('createConfig — les-tabbladen (proef)', () => {
+describe('createConfig — les-tabbladen', () => {
   // Met `lesTabs: true` zet een remark-stap elke ##-sectie van een les in een
   // tabblad (plugins/les-tabs.js). De stap moet de laatste zijn: Docusaurus
   // heeft dan de id's van de koppen gezet, en de begrippen-stap is geweest.

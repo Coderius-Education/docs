@@ -15,7 +15,7 @@ import {
 import { WerkvormIcoon } from '../Werkvorm/Icoon';
 import styles from './styles.module.css';
 
-// Les-tabbladen (proef): elke `##`-sectie van een les is een tabblad bovenaan
+// Les-tabbladen: elke `##`-sectie van een les is een tabblad bovenaan
 // de pagina, en in een sectie met meer `###`-koppen is elke `###` een stap.
 // De remark-stap plugins/les-tabs.js zet de secties bij het bouwen in
 // <LesTab> en <LesStap>; in de bron van een les staat dit onderdeel nooit.

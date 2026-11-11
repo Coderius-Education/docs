@@ -1,4 +1,4 @@
-/* Les-tabbladen (proef). Op de wortel en de panelen staat bewust geen
+/* Les-tabbladen. Op de wortel en de panelen staat bewust geen
    transform, filter, contain, overflow, z-index of animatie: elk daarvan
    maakt een eigen laag, en dan valt een oefenveld dat op Groter staat
    (position: fixed) onder de navbar of wordt het afgesneden.

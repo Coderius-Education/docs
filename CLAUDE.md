@@ -216,14 +216,28 @@ de site en meet in headless Chromium dat
 overschrijven (`.hero`, `h2`, `h3`, `p`) staat op dezelfde opgehoogde selector,
 anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
 
-## Les-tabbladen (proef)
+## Les-tabbladen
 
 De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
-Als proef, alleen bij de web-cursus, is elke `##`-sectie van een les een
-tabblad bovenaan de pagina, en is de inhoudsopgave rechts weg. Een site zet
-het aan met `lesTabs: true` in `createConfig`; een pagina zet het uit met
-`les_tabs: false` in de front matter. Het is nog geen huisregel: de
-schrijfgids (§2, TOC staat aan) geldt voor alle andere cursussen.
+Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
+inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
+(schrijfgids §2 en §15). De web-cursus is de eerste, en nog de enige die is
+omgezet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+pagina zet het uit met `les_tabs: false` in de front matter.
+
+Een cursus omzetten is werk per cursus, niet één schakelaar:
+
+1. `lesTabs: true`, en de onderdelen in `MDXComponents` van de site.
+2. Het oefenveld van de cursus leren zich aan het scherm aan te passen
+   (`useInLesTab`, zoals de web-`CodeEditor` met `pasHoogte.ts`).
+3. Bouwen en meten met `node scripts/meet-les-tabs.mjs <site>`. Wat niet op
+   1280×720 past: eerst splitsen (een `###` erbij), dan inkorten.
+4. Elk scherm nalopen op verwijzingen naar iets dat er niet meer staat, en
+   daar een test van maken (bij web `src/docs-tests/schermen.test.ts`).
+5. De docentenhandleiding herschrijven (zie Werkvormen hieronder).
+
+Tot een cursus is omgezet, houdt hij de inhoudsopgave rechts en zijn oude
+docentenhandleiding. Zet `lesTabs` dus niet aan zonder de stappen erna.
 
 De remark-stap `packages/shared/plugins/les-tabs.js` wikkelt bij het bouwen
 elke `##`-sectie in een `<LesTab>` binnen één `<LesTabs>`, en in een sectie
@@ -286,19 +300,18 @@ leerling ziet. `werkvormen.test.ts` eist dat elke tip bij vakdidactiek
 bestaat onder dezelfde naam en met dezelfde paper; hernoem je daar een tip of
 verander je de bron, pas dan `werkvormen.json` mee aan.
 
-**De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Bij de
-web-cursus (de proef) is hij een halve pagina: waar de lessen op steunen
+**De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
+de standaard (schrijfgids §15), en de web-cursus is de eerste die hem zo
+heeft. Hij is een halve pagina: waar de lessen op steunen
 (de tabel hierboven, met de literatuur), wat je vooraf wilt weten in drie
 regels, en links naar leerdoelen, eindopdracht en nakijker. Wat een leerling
 of docent nodig heeft om het materiaal te gebruiken, hoort in het materiaal
 zelf: het oefenveld legt zijn knoppen en zijn opslag uit, de nakijker zijn
 eigen stappen, de les zijn opbouw. Lesadvies ("bespreek Predict plenair"),
 een beschrijving van elke knop en een tabel met alle lessen stonden er wel
-in, en zijn weg. De schrijfgids (§15) beschrijft nog de oude indeling; die
-geldt voor de andere cursussen tot de opdrachtgever ook daar kiest. De rij tabbladen is met opzet krap (0,875rem,
-weinig padding) en staat in elke web-les op één regel, want een tweede regel
-kost elk paneel veertig pixels. Dat lukt alleen met hooguit zeven of acht
-tabbladen; `schermen.test.ts` schat de breedte, het meetscript meet hem.
+in, en zijn weg. De andere cursussen hebben nog de oude handleiding; die
+gaat om op het moment dat de cursus tabbladen krijgt, want de tabel
+`<Werkvormen />` komt met `lesTabs`.
 
 Wat vastligt, en waarom:
 

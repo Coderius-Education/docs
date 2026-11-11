@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { compile } from '@mdx-js/mdx';
 import { describe, expect, it } from 'vitest';
 
-// Les-tabbladen (proef): een remark-stap zet elke `##`-sectie van een les in
+// Les-tabbladen: een remark-stap zet elke `##`-sectie van een les in
 // een tabblad. Wat hier vastligt, is wat er misging toen het voor het eerst
 // op de web-cursus draaide: de uitleg vóór de eerste `##` bleef boven elk
 // tabblad staan, de front matter gaf elke les een leeg tabblad, en de les
