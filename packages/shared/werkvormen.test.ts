@@ -53,6 +53,22 @@ describe('werkvormen.json', () => {
     }
     expect(fout).toEqual([]);
   });
+
+  it('noemt bij elke tip de paper waar hij op steunt, zoals vakdidactiek hem noemt', () => {
+    // De docentenhandleiding toont de literatuur naast de tip. Een bron
+    // noemen we alleen als vakdidactiek hem uitlegt, met dezelfde paper.
+    const fout: string[] = [];
+    for (const w of WERKVORMEN) {
+      for (const { slug, bron } of w.tips as { slug: string; bron?: string }[]) {
+        const tip = tips.find((t) => t.slug === slug);
+        if (!tip) continue;
+        const verwacht =
+          tip.bron === 'onderzoek' ? `${tip.paper.auteurs} (${tip.paper.jaar})` : undefined;
+        if (bron !== verwacht) fout.push(`${w.id}: '${slug}' is ${verwacht ?? 'uit de praktijk'}`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
 });
 
 describe('werkvormVan en werkvormenVan', () => {

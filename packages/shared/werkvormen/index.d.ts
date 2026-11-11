@@ -3,6 +3,9 @@ export interface WerkvormTip {
   slug: string;
   /** De naam van de tip, zoals hij bij vakdidactiek heet. */
   term: string;
+  /** De paper waar de tip op steunt, "Auteurs (jaar)", zoals bij
+   *  vakdidactiek. Ontbreekt bij een tip uit de praktijk. */
+  bron?: string;
 }
 
 export interface Werkvorm {

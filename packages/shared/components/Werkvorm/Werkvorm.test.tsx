@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 // @vitest-environment jsdom
 import { cleanup, render, screen, within } from '@testing-library/react';
@@ -44,17 +45,49 @@ describe('WerkvormIcoon', () => {
 });
 
 describe('Werkvormen', () => {
+  // De les uit de nagemaakte plugin-data heeft deze werkvormen.
+  const GEBRUIKT = ['uitleg', 'stap', 'voorspellen', 'aanpassen', 'maken'];
+
   it('legt elke werkvorm uit, met het icoon en een link naar elke tip bij vakdidactiek', () => {
     render(<Werkvormen />);
-    for (const vorm of WERKVORMEN) {
+    for (const vorm of WERKVORMEN.filter((w: { id: string }) => GEBRUIKT.includes(w.id))) {
       const rij = screen.getByRole('rowheader', { name: vorm.label }).closest('tr') as HTMLElement;
       expect(rij.querySelector(`svg[data-werkvorm="${vorm.id}"]`), vorm.id).not.toBeNull();
       expect(within(rij).getByText(vorm.doet)).toBeTruthy();
       for (const tip of vorm.tips) {
         const link = within(rij).getByRole('link', { name: tip.term });
         expect(link.getAttribute('href')).toBe(`site:didactiek/bronnen/${tip.slug}`);
+        // De literatuur staat erbij: daar gaat de handleiding om.
+        expect(link.parentElement?.textContent).toContain(tip.bron ?? 'uit de praktijk');
       }
     }
+  });
+
+  it('toont alleen wat in de lessen van de cursus voorkomt, in de volgorde van een les', () => {
+    render(<Werkvormen />);
+    const namen = screen.getAllByRole('rowheader').map((th) => th.textContent);
+    const verwacht = WERKVORMEN.filter((w: { id: string }) => GEBRUIKT.includes(w.id)).map(
+      (w: { label: string }) => w.label,
+    );
+    expect(namen).toEqual(verwacht);
+    // Uitleg komt in een les vóór voorspellen, en zelf maken na aanpassen.
+    const ids = WERKVORMEN.map((w: { id: string }) => w.id);
+    expect(ids.indexOf('uitleg')).toBeLessThan(ids.indexOf('voorspellen'));
+    expect(ids.indexOf('aanpassen')).toBeLessThan(ids.indexOf('maken'));
+    expect(ids.at(-1)).toBe('fouten');
+  });
+});
+
+describe('de opmaak van de tabel', () => {
+  it('op een telefoon schuift de tabel zelf, niet de pagina', () => {
+    // Als `display: table` met een naam die niet afbreekt, was de pagina van
+    // de docentenhandleiding op 390 pixels 96 pixels te breed. Gezien in
+    // Chromium; jsdom doet geen layout.
+    // In jsdom is import.meta.url geen bestandsadres; vitest draait vanuit de root.
+    const css = readFileSync('packages/shared/components/Werkvorm/styles.module.css', 'utf8');
+    const smal = css.slice(css.indexOf('@media (max-width: 996px)'));
+    expect(smal).toMatch(/\.legenda\s*\{[^}]*display:\s*block[^}]*overflow-x:\s*auto/);
+    expect(smal).toMatch(/\.naam\s*\{[^}]*white-space:\s*normal/);
   });
 });
 

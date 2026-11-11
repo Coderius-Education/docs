@@ -18,9 +18,29 @@
   text-align: left;
 }
 
+/* De literatuur is waar de tabel om gaat: die kolom krijgt de ruimte. */
+.legenda th:last-child,
+.legenda td:last-child {
+  width: 45%;
+}
+
 .naam {
   white-space: nowrap;
   font-weight: 600;
+}
+
+/* Op een telefoon past de tabel niet naast elkaar: de pagina schoof 96
+   pixels zijwaarts. Daar schuift de tabel zelf, zoals elke tabel van Infima,
+   en mag de naam van een onderdeel afbreken. */
+@media (max-width: 996px) {
+  .legenda {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .naam {
+    white-space: normal;
+  }
 }
 
 .naam .icoon {
@@ -31,6 +51,13 @@
 .tips {
   margin: 0;
   padding-left: 1.1rem;
+}
+
+/* De paper achter een tip: auteurs en jaar, op een eigen regel. */
+.bron {
+  display: block;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.875rem;
 }
 
 /* De werkvormen van één les op een rij. */

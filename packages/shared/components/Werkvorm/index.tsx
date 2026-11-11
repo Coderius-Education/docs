@@ -11,26 +11,35 @@ import styles from './styles.module.css';
 //
 //  - <WerkvormIcoon id="voorspellen" />: het icoon, op een les-tabblad en in
 //    de docentenhandleiding (Icoon.tsx).
-//  - <Werkvormen />: de legenda voor de docentenhandleiding. Per werkvorm het
-//    icoon, wat de leerling doet en de tips van vakdidactiek die het
-//    onderbouwen.
+//  - <Werkvormen />: de kern van de docentenhandleiding. Per onderdeel van
+//    een les het icoon, wat de leerling doet en de literatuur waarop het
+//    steunt: de tip van vakdidactiek, met de paper erbij.
 //  - <LesWerkvormen les="html-css/koppen-lijsten" />: de werkvormen van één
-//    les op een rij, voor in de leerlijn van de docentenhandleiding.
+//    les op een rij.
 
-/** De legenda: elke werkvorm met zijn icoon, wat de leerling doet en de tips
- *  van vakdidactiek waar hij op steunt. */
+type Les = { titel: string; pad: string; werkvormen: string[] };
+type Data = { lessen: Record<string, Les> };
+
+/**
+ * De onderdelen van een les, in de volgorde van de les, elk met de literatuur
+ * waarop het steunt. Alleen wat in de lessen van deze cursus voorkomt: een
+ * werkvorm die geen les gebruikt, heeft hier niets uit te leggen.
+ */
 export function Werkvormen(): ReactNode {
+  const data = usePluginData('coderius-werkvormen') as Data | undefined;
+  const gebruikt = data && new Set(Object.values(data.lessen).flatMap((les) => les.werkvormen));
+  const vormen = WERKVORMEN.filter((vorm) => !gebruikt || gebruikt.has(vorm.id));
   return (
     <table className={styles.legenda}>
       <thead>
         <tr>
-          <th scope="col">Werkvorm</th>
+          <th scope="col">Onderdeel van de les</th>
           <th scope="col">Wat je leerlingen doen</th>
-          <th scope="col">Onderbouwing bij vakdidactiek</th>
+          <th scope="col">Waar het op steunt</th>
         </tr>
       </thead>
       <tbody>
-        {WERKVORMEN.map((vorm) => (
+        {vormen.map((vorm) => (
           <tr key={vorm.id}>
             <th scope="row" className={styles.naam}>
               <WerkvormIcoon id={vorm.id} />
@@ -44,6 +53,7 @@ export function Werkvormen(): ReactNode {
                     <SiteLink site="didactiek" to={`/bronnen/${tip.slug}`}>
                       {tip.term}
                     </SiteLink>
+                    <span className={styles.bron}>{tip.bron ?? 'uit de praktijk'}</span>
                   </li>
                 ))}
               </ul>
@@ -54,9 +64,6 @@ export function Werkvormen(): ReactNode {
     </table>
   );
 }
-
-type Les = { titel: string; pad: string; werkvormen: string[] };
-type Data = { lessen: Record<string, Les> };
 
 /**
  * De werkvormen van één les, in de volgorde waarin de leerling ze tegenkomt.

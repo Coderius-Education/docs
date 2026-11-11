@@ -271,15 +271,31 @@ minstens één tip van vakdidactiek. Een kop die bij geen werkvorm hoort, is
 uitleg; van een rij genummerde opdrachten is de laatste zelf maken
 (`laatsteVan`). De remark-stap geeft elk `<LesTab>` zijn werkvorm mee en het
 tabblad toont het icoon; voor een leerling is het alleen een herkenningsteken.
-De betekenis staat in de docentenhandleiding: `<Werkvormen />` is de legenda
-met links naar de tips, en `<LesWerkvormen les="html-css/koppen-lijsten" />`
-toont de iconen van één les, voor in de leerlijn (`components/Werkvorm`). De
+De betekenis staat in de docentenhandleiding, en dat is ook waar die
+handleiding over gaat: `<Werkvormen />` toont de onderdelen van een les in de
+volgorde van de les, elk met zijn tip bij vakdidactiek en de paper erbij
+(`bron` in `werkvormen.json`, "Auteurs (jaar)"; een tip uit de praktijk heeft
+er geen). Alleen de werkvormen die in de lessen van de cursus voorkomen staan
+erin. `<LesWerkvormen les="html-css/koppen-lijsten" />` toont de iconen van
+één les (`components/Werkvorm`); de web-handleiding gebruikt hem niet meer,
+want elke les heeft daar dezelfde rij. De
 gegevens per les komen uit `plugins/werkvormen.js`, die `createConfig` aanzet
 bij `lesTabs`: hij leest elke les met de MDX-parser van Docusaurus zelf en
 dezelfde stap die de tabbladen maakt, dus de handleiding toont wat de
 leerling ziet. `werkvormen.test.ts` eist dat elke tip bij vakdidactiek
-bestaat onder dezelfde naam; hernoem je daar een tip, pas dan
-`werkvormen.json` mee aan. De rij tabbladen is met opzet krap (0,875rem,
+bestaat onder dezelfde naam en met dezelfde paper; hernoem je daar een tip of
+verander je de bron, pas dan `werkvormen.json` mee aan.
+
+**De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Bij de
+web-cursus (de proef) is hij een halve pagina: waar de lessen op steunen
+(de tabel hierboven, met de literatuur), wat je vooraf wilt weten in drie
+regels, en links naar leerdoelen, eindopdracht en nakijker. Wat een leerling
+of docent nodig heeft om het materiaal te gebruiken, hoort in het materiaal
+zelf: het oefenveld legt zijn knoppen en zijn opslag uit, de nakijker zijn
+eigen stappen, de les zijn opbouw. Lesadvies ("bespreek Predict plenair"),
+een beschrijving van elke knop en een tabel met alle lessen stonden er wel
+in, en zijn weg. De schrijfgids (§15) beschrijft nog de oude indeling; die
+geldt voor de andere cursussen tot de opdrachtgever ook daar kiest. De rij tabbladen is met opzet krap (0,875rem,
 weinig padding) en staat in elke web-les op één regel, want een tweede regel
 kost elk paneel veertig pixels. Dat lukt alleen met hooguit zeven of acht
 tabbladen; `schermen.test.ts` schat de breedte, het meetscript meet hem.

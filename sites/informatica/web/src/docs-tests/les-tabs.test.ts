@@ -78,19 +78,25 @@ describe('les-tabbladen in de web-cursus', () => {
     expect(fout).toEqual([]);
   });
 
-  it('de docentenhandleiding legt de iconen uit en toont ze bij elke les', () => {
-    // Elk tabblad heeft een icoon voor de werkvorm. De docentenhandleiding is
-    // de plek waar dat icoon iets betekent: de legenda linkt naar de tips van
-    // vakdidactiek, en de leerlijn toont per les hoe hij wordt aangeleerd.
+  it('de docentenhandleiding gaat over de literatuur, en is verder kort', () => {
+    // Wij gaan niet over hoe iemand lesgeeft. Wat een leerling of docent
+    // nodig heeft om de lessen te gebruiken, staat in de lessen en het
+    // oefenveld zelf. De handleiding laat zien waar de opbouw op steunt: de
+    // onderdelen van een les, elk met zijn tip bij vakdidactiek en de paper.
+    // Daarvóór was hij 185 regels, met een beschrijving van elke knop van
+    // het veld, lesadvies en een tabel met alle 34 lessen.
     const mdx = readFileSync(join(SITE, 'src/theme/MDXComponents.tsx'), 'utf8');
-    for (const naam of ['Werkvormen', 'LesWerkvormen'])
-      expect(mdx).toMatch(new RegExp(`^\\s+${naam},$`, 'm'));
+    expect(mdx).toMatch(/^\s+Werkvormen,$/m);
     const handleiding = readFileSync(join(SITE, 'src/pages/docenten.mdx'), 'utf8');
     expect(handleiding).toMatch(/^<Werkvormen \/>$/m);
-    const getoond = [...handleiding.matchAll(/<LesWerkvormen les="([^"]+)" \/>/g)].map((m) => m[1]);
-    // Een les zonder rij ontbreekt in de leerlijn; een rij zonder les stopt
-    // de build pas bij het bouwen.
-    expect([...getoond].sort()).toEqual(lessen.map((l) => l.naam.replace(/\.mdx$/, '')).sort());
+    expect(handleiding).toContain('site:didactiek/');
+    expect(handleiding.split('\n').length).toBeLessThanOrEqual(50);
+    expect(handleiding).not.toMatch(/^## .*(Klassikaal|Didactische aanpak|De editor)/m);
+    // Het aantal lessen dat hij noemt, klopt.
+    for (const map of ['html-css', 'js-basics']) {
+      const aantal = lessen.filter((l) => l.naam.startsWith(`${map}/`)).length;
+      expect(handleiding, map).toMatch(new RegExp(`\\b${aantal} over \\[`));
+    }
   });
 
   it('geen les zet de tabbladen uit', () => {
