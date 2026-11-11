@@ -148,19 +148,6 @@ async def dobbelsteen(request: Request):
 </details>
 
 <details>
-<summary>Hoe lees ik iets na het vraagteken in de URL? (query-parameter)</summary>
-
-```python
-@app.get("/zoek")
-async def zoek(term: str = ""):
-    return {"je_zocht": term}
-```
-
-`/zoek?term=python` geeft `term` de waarde `python`. Met de standaardwaarde `""` werkt `/zoek` ook zonder vraagteken; zonder standaardwaarde krijg je dan een 422.
-
-</details>
-
-<details>
 <summary>Hoe ontvang ik een formulier? (@app.post en Form)</summary>
 
 ```python
@@ -200,6 +187,19 @@ async def bericht_detail(sleutel: str):
 ```
 
 De naam tussen de accolades moet gelijk zijn aan de parameternaam.
+
+</details>
+
+<details>
+<summary>Hoe lees ik iets na het vraagteken in de URL? (query-parameter)</summary>
+
+```python
+@app.get("/zoek")
+async def zoek(term: str = ""):
+    return {"je_zocht": term}
+```
+
+`/zoek?term=python` geeft `term` de waarde `python`. Met de standaardwaarde `""` werkt `/zoek` ook zonder vraagteken; zonder standaardwaarde krijg je dan een 422.
 
 </details>
 

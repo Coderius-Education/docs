@@ -84,7 +84,7 @@ const sidebars: SidebarsConfig = {
       // Vlak voor Berichten tonen, en dus voor Eén item tonen, waar je hem
       // nodig hebt: één route met een path-parameter voor veel pagina's die
       // op elkaar lijken. Eerst stond hij direct na de losse pagina's, en dan
-      // zaten de dieren en /dubbel acht lessen lang in main.py zonder dat
+      // zaten de dieren en /zoek acht lessen lang in main.py zonder dat
       // iets ze gebruikte. Opzoeken in een database en de 404 komen in Eén
       // item tonen.
       type: 'category',

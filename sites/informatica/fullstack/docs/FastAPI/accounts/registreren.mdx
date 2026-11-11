@@ -195,30 +195,6 @@ async def styled():
 async def about():
     return FileResponse("static/pages/about.html")
 
-DIEREN = {
-    "kat": "Een kat spint als hij tevreden is.",
-    "hond": "Een hond kwispelt als hij blij is.",
-    "vis": "Een vis ademt met kieuwen.",
-}
-
-@app.get("/dier/{naam}", response_class=HTMLResponse)
-async def dier(naam: str):
-    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
-    return f"""
-    <!DOCTYPE html>
-    <html>
-        <body>
-            <h1>Over dieren</h1>
-            <p>{tekst}</p>
-            <a href="/">Terug naar Home</a>
-        </body>
-    </html>
-    """
-
-@app.get("/zoek")
-async def zoek(term: str):
-    return {"je_zocht": term}
-
 @app.get("/foto")
 async def foto():
     return FileResponse("static/pages/foto.html")
@@ -292,6 +268,25 @@ async def berichten(request: Request):
         "berichten.html",
         {"berichten": alle_berichten}
     )
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}")
+async def dier(request: Request, naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return templates.TemplateResponse(
+        request,
+        "dier.html",
+        {"tekst": tekst}
+    )
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
 
 @app.post("/verwijderen")
 async def verwijderen(sleutel: str = Form(...)):

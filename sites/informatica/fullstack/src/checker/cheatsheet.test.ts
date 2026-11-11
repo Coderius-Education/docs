@@ -81,12 +81,6 @@ const KOPPELING: Item[] = [
     concepten: ['fastapi-templates', 'fastapi-request'],
   },
   {
-    summary: 'Hoe lees ik iets na het vraagteken in de URL? (query-parameter)',
-    concepten: [],
-    geenConcept:
-      'een gewone parameter zonder Form of accolades; aan de code is niet te zien dat hij uit de URL komt',
-  },
-  {
     summary: 'Hoe ontvang ik een formulier? (@app.post en Form)',
     concepten: ['fastapi-post', 'fastapi-form'],
   },
@@ -97,6 +91,12 @@ const KOPPELING: Item[] = [
   {
     summary: 'Hoe haal ik een waarde uit het pad? (path-parameter)',
     concepten: ['fastapi-path-param'],
+  },
+  {
+    summary: 'Hoe lees ik iets na het vraagteken in de URL? (query-parameter)',
+    concepten: [],
+    geenConcept:
+      'een gewone parameter zonder Form of accolades; aan de code is niet te zien dat hij uit de URL komt',
   },
   {
     summary: 'Hoe stuur ik een 404 als iets niet bestaat? (HTTPException)',

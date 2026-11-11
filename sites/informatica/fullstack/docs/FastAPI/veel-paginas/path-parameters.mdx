@@ -4,32 +4,37 @@
   items={[
     {site: 'python', to: '/docs/functies/09a-parameters', label: 'Parameters'},
     {site: 'python', to: '/docs/data/11a-dictionaries-basis', label: 'Dictionaries'},
-    {site: 'python', to: '/docs/data/11b-itereren-dictionaries', label: 'Door een dictionary lopen'},
   ]}
 />
 
-Elke pagina van je site heeft nu een eigen route, zoals `/` en `/about`. Stel dat je een site over dieren maakt, met een pagina per dier. Dan zou het zo beginnen:
+Je gastenboek heeft voor elke pagina een eigen route: `/gastenboek` voor het formulier, `/berichten` voor de lijst. Straks krijgt ook elk bericht een eigen pagina, en dat zijn er zoveel als er berichten zijn. Daarvoor heb je één route nodig die veel pagina's maakt. Je oefent dat eerst met iets kleins: een site over dieren, met een pagina per dier.
+
+Met een route per dier zou het zo beginnen:
+
+<Bestand pad="main.py" />
 
 {/* niet-compileren: drie losse routes als voorbeeld van het probleem, niet om over te nemen */}
 ```python
-@app.get("/kat", response_class=HTMLResponse)
-async def kat():
-    return "<h1>Over dieren</h1><p>Een kat spint als hij tevreden is.</p>"
+@app.get("/kat")
+async def kat(request: Request):
+    return templates.TemplateResponse(request, "dier.html", {"tekst": "Een kat spint als hij tevreden is."})
 
-@app.get("/hond", response_class=HTMLResponse)
-async def hond():
-    return "<h1>Over dieren</h1><p>Een hond kwispelt als hij blij is.</p>"
+@app.get("/hond")
+async def hond(request: Request):
+    return templates.TemplateResponse(request, "dier.html", {"tekst": "Een hond kwispelt als hij blij is."})
 
-@app.get("/vis", response_class=HTMLResponse)
-async def vis():
-    return "<h1>Over dieren</h1><p>Een vis ademt met kieuwen.</p>"
+@app.get("/vis")
+async def vis(request: Request):
+    return templates.TemplateResponse(request, "dier.html", {"tekst": "Een vis ademt met kieuwen."})
 ```
 
-Deze drie hoef je niet over te nemen. Ze laten zien waar het knelt: drie functies die bijna hetzelfde doen. Bij vijftig dieren schrijf je vijftig functies, en wil je een link terug naar Home, dan pas je er vijftig aan. Alleen het stuk achter de `/` en de zin verschillen.
+Deze drie hoef je niet over te nemen. Ze laten zien waar het knelt: drie functies die bijna hetzelfde doen. Alleen het stuk achter de `/` en de zin verschillen. Bij vijftig dieren schrijf je vijftig functies.
 
 ## Eén route met een plekhouder
 
 Zet dit endpoint onder je andere endpoints:
+
+<Bestand pad="main.py" />
 
 ```python
 @app.get("/dier/{naam}")
@@ -39,11 +44,28 @@ async def dier(naam: str):
 
 Ga naar [http://127.0.0.1:8000/dier/kat](http://127.0.0.1:8000/dier/kat). Je krijgt `{"je_vroeg_om":"kat"}`. Op `/dier/olifant` krijg je `{"je_vroeg_om":"olifant"}`.
 
-`{naam}` tussen accolades is een plekhouder in het pad: een **path-parameter**. Wat er in de URL op die plek staat, komt binnen als de parameter met dezelfde naam. Met `naam: str` zeg je dat het tekst is; wat zo'n type doet, zie je in de volgende les. Eén route vangt zo elk adres dat begint met `/dier/`.
+`{naam}` tussen accolades is een plekhouder in het pad: een **path-parameter**. Wat er in de URL op die plek staat, komt binnen als de parameter met dezelfde naam, net zoals een formulierveld binnenkomt bij de parameter met `Form(...)`. Eén route vangt zo elk adres dat begint met `/dier/`.
 
 ## De tekst opzoeken
 
-Wat per dier verschilt, zet je in een dictionary, met de naam uit de URL als sleutel. Vervang je endpoint door deze versie, met de dictionary erboven:
+Wat per dier verschilt, zet je in een dictionary, met de naam uit de URL als sleutel. De pagina zelf is een template. Maak in de map `templates` het bestand `dier.html`:
+
+<Bestand pad="templates/dier.html" />
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Over dieren</h1>
+        <p>{{ tekst }}</p>
+        <a href="/">Terug naar Home</a>
+    </body>
+</html>
+```
+
+Vervang je endpoint door deze versie, met de dictionary erboven:
+
+<Bestand pad="main.py" />
 
 <CodeUitleg>
 
@@ -55,40 +77,39 @@ DIEREN = {
     "vis": "Een vis ademt met kieuwen.",
 }
 
-@app.get("/dier/{naam}", response_class=HTMLResponse)
-async def dier(naam: str):
+@app.get("/dier/{naam}")
+async def dier(request: Request, naam: str):
     tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
-    return f"""
-    <!DOCTYPE html>
-    <html>
-        <body>
-            <h1>Over dieren</h1>
-            <p>{tekst}</p>
-            <a href="/">Terug naar Home</a>
-        </body>
-    </html>
-    """
+    return templates.TemplateResponse(
+        request,
+        "dier.html",
+        {"tekst": tekst}
+    )
 ```
 
 <Regel n={1} tot={5}>
-De dictionary `DIEREN` staat buiten de functie, bovenaan bij je andere code of vlak boven het endpoint. Een dier erbij is één regel erbij.
+De dictionary `DIEREN` staat buiten de functie, vlak boven het endpoint. Een dier erbij is één regel erbij.
+</Regel>
+
+<Regel n={8}>
+`request` heeft de template nodig, net als bij je andere templates. De volgorde maakt niet uit: FastAPI koppelt op naam.
 </Regel>
 
 <Regel n={9}>
 `DIEREN.get(naam, …)` geeft de zin bij `naam`, zoals `get` bij de database in [Bestaat de sleutel? in en get](site:fullstack/docs/FastAPI/sqlitedict/zoeken#korter-met-get). Staat `naam` niet in de dictionary, dan krijg je de tekst na de komma.
 </Regel>
 
-<Regel n={10} tot={19}>
-De `f` voor de string zet de waarde van `tekst` op de plek van `{tekst}`, net als bij `print(f"…")`.
+<Regel n={10} tot={14}>
+Eén template voor alle dieren: alleen `{{ tekst }}` verschilt per verzoek.
 </Regel>
 
 </CodeUitleg>
 
-Zet in de HTML de zin uit je eigen dictionary, en niet `naam` zelf. Wat in de URL staat, typt de bezoeker, en dat kan ook HTML zijn. Waarom dat gevaarlijk is, zie je later in de route Veiligheid, bij [HTML van een bezoeker: tekst uit de URL](site:fullstack/docs/veiligheid/xss/url).
+Zet in de pagina de zin uit je eigen dictionary. Wat in de URL staat, typt de bezoeker, en dat kan ook HTML zijn. Een template zet het met `{{ }}` veilig als tekst neer; waarom dat nodig is, zie je later in de route Veiligheid, bij [HTML van een bezoeker: tekst uit de URL](site:fullstack/docs/veiligheid/xss/url).
 
 ## Testen
 
-1. Ga naar `/dier/kat`, `/dier/hond` en `/dier/vis`. Elk dier krijgt zijn eigen zin, uit één functie.
+1. Ga naar `/dier/kat`, `/dier/hond` en `/dier/vis`. Elk dier krijgt zijn eigen zin, uit één functie en één template.
 2. Ga naar `/dier/olifant`. Je ziet "Dit dier staat nog niet op de site."
 3. Ga naar `/dier/Kat`, met een hoofdletter. Ook dat dier kent je site niet: een sleutel telt elke letter mee.
 
@@ -108,18 +129,20 @@ Hoe je zelf een 404 stuurt voor iets dat er niet is, leer je later, in [Een 404 
 
 ## Er gaat iets mis
 
-Schrijf je `DIEREN[naam]` in plaats van `DIEREN.get(naam, …)`, dan werkt `/dier/kat` wel. Maar `/dier/olifant` geeft `Internal Server Error`, met de statuscode 500: er ging iets mis in jouw code. In je terminal staat:
+Schrijf je `DIEREN[naam]` in plaats van `DIEREN.get(naam, …)`, dan werkt `/dier/kat` wel. Maar `/dier/olifant` geeft `Internal Server Error`, met de statuscode 500, en in je terminal staat:
 
 ```
 KeyError: 'olifant'
 ```
 
-Met vierkante haken vraag je een sleutel op die er moet zijn. `get` geeft bij een onbekende sleutel de tekst na de komma, en je server blijft heel.
+Het is dezelfde fout als bij `db[...]` met een sleutel die er niet is, in [Bestaat de sleutel? in en get](site:fullstack/docs/FastAPI/sqlitedict/zoeken). `get` geeft bij een onbekende sleutel de tekst na de komma, en je server blijft heel.
 
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
 
 Dit is je hele `main.py` na deze les, zonder wat je in de opdrachten maakte.
+
+<Bestand pad="main.py" />
 
 ```python
 import random
@@ -180,26 +203,6 @@ async def styled():
 @app.get("/about")
 async def about():
     return FileResponse("static/pages/about.html")
-
-DIEREN = {
-    "kat": "Een kat spint als hij tevreden is.",
-    "hond": "Een hond kwispelt als hij blij is.",
-    "vis": "Een vis ademt met kieuwen.",
-}
-
-@app.get("/dier/{naam}", response_class=HTMLResponse)
-async def dier(naam: str):
-    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
-    return f"""
-    <!DOCTYPE html>
-    <html>
-        <body>
-            <h1>Over dieren</h1>
-            <p>{tekst}</p>
-            <a href="/">Terug naar Home</a>
-        </body>
-    </html>
-    """
 
 @app.get("/foto")
 async def foto():
@@ -270,6 +273,21 @@ async def berichten():
     with SqliteDict("gastenboek.db") as db:
         alle_berichten = list(db.values())
     return {"berichten": alle_berichten}
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}")
+async def dier(request: Request, naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return templates.TemplateResponse(
+        request,
+        "dier.html",
+        {"tekst": tekst}
+    )
 ```
 
 </details>
@@ -278,20 +296,22 @@ async def berichten():
 
 ### Opdracht 1: Predict - Welke waarde komt binnen?
 
+<Bestand pad="main.py" />
+
 ```python
-@app.get("/groet/{naam}")
-async def groet(naam: str):
+@app.get("/hoi/{naam}")
+async def hoi(naam: str):
     return {"bericht": f"Hallo {naam}"}
 ```
 
-<Voorspel vraag="Op /groet/Sarah groet de server Sarah. Wat krijg je op /groet/naam?">
+<Voorspel vraag="Op /hoi/Sarah groet de server Sarah. Wat krijg je op /hoi/naam?">
   <Keuze uitleg="Op de plek van de accolades in het pad mag elk woord staan. Waarom zou FastAPI dit woord weigeren?">Een 404</Keuze>
   <Keuze uitleg="De accolades staan alleen in je code. In de f-string zet Python de waarde van de parameter op die plek, wat er ook in de URL stond.">`{"bericht":"Hallo {naam}"}`, met de accolades erin</Keuze>
   <Keuze goed uitleg="Wat in de URL op de plek van de plekhouder staat, komt binnen als waarde. Ook het woord naam is dan gewoon tekst.">`{"bericht":"Hallo naam"}`</Keuze>
-  <Keuze uitleg="De parameter heeft geen standaardwaarde, en het pad heeft al een stuk na /groet/. Er ontbreekt dus niets.">Een 422</Keuze>
+  <Keuze uitleg="De parameter heeft geen standaardwaarde, en het pad heeft al een stuk na /hoi/. Er ontbreekt dus niets.">Een 422</Keuze>
   <Uitleg>
 
-  `/groet/Sarah` geeft `{"bericht":"Hallo Sarah"}` en `/groet/naam` geeft `{"bericht":"Hallo naam"}`. De naam tussen de accolades zegt alleen in welke parameter de waarde terechtkomt.
+  `/hoi/Sarah` geeft `{"bericht":"Hallo Sarah"}` en `/hoi/naam` geeft `{"bericht":"Hallo naam"}`. De naam tussen de accolades zegt alleen in welke parameter de waarde terechtkomt.
 
   </Uitleg>
 </Voorspel>
@@ -304,10 +324,12 @@ Maak de dictionary `DIEREN` en het endpoint `/dier/{naam}`. Zet er een vierde di
 
 Verander de parameter in je functie van `naam` naar `dier_naam`, maar laat `{naam}` in het pad staan:
 
+<Bestand pad="main.py" />
+
 {/* niet-compileren: losse handler-signature, toont juist de mismatch */}
 ```python
-@app.get("/dier/{naam}", response_class=HTMLResponse)
-async def dier(dier_naam: str):
+@app.get("/dier/{naam}")
+async def dier(request: Request, dier_naam: str):
 ```
 
 Verander `DIEREN.get(naam, …)` ook in `DIEREN.get(dier_naam, …)`. Wat zie je op `/dier/kat`?
@@ -334,17 +356,31 @@ Allebei `{"detail":"Not Found"}`, een 404. De route `/dier/{naam}` past alleen o
 
 ### Opdracht 5: Make - Een eigen verzameling
 
-Maak een route `/vak/{naam}` met een dictionary van drie schoolvakken, met bij elk vak één zin. Een vak dat er niet in staat, krijgt "Dit vak ken ik niet."
+Maak een route `/vak/{naam}` met een dictionary van drie schoolvakken, met bij elk vak één zin, en een eigen template `vak.html`. Een vak dat er niet in staat, krijgt "Dit vak ken ik niet."
 
 <details>
 <summary>Tip</summary>
 
-Het is dezelfde vorm als `/dier/{naam}`: een dictionary, `get` met een tekst na de komma, en een f-string met de zin erin.
+Het is dezelfde vorm als `/dier/{naam}`: een dictionary, `get` met een tekst na de komma, en een `TemplateResponse` met de zin erin.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
+
+<Bestand pad="templates/vak.html" />
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Mijn vakken</h1>
+        <p>{{ tekst }}</p>
+    </body>
+</html>
+```
+
+<Bestand pad="main.py" />
 
 ```python
 VAKKEN = {
@@ -353,53 +389,67 @@ VAKKEN = {
     "informatica": "Bij informatica leer je programmeren.",
 }
 
-@app.get("/vak/{naam}", response_class=HTMLResponse)
-async def vak(naam: str):
+@app.get("/vak/{naam}")
+async def vak(request: Request, naam: str):
     tekst = VAKKEN.get(naam, "Dit vak ken ik niet.")
-    return f"""
-    <!DOCTYPE html>
-    <html>
-        <body>
-            <h1>Mijn vakken</h1>
-            <p>{tekst}</p>
-        </body>
-    </html>
-    """
+    return templates.TemplateResponse(
+        request,
+        "vak.html",
+        {"tekst": tekst}
+    )
 ```
 
 </details>
 
-### Opdracht 6: Make - Alle dieren met een link
+### Opdracht 6: Make - Een titel per dier
 
-Maak een pagina `/dieren` met een link naar de pagina van elk dier in `DIEREN`. Zet er een dier bij in de dictionary: staat het daarna ook in de lijst, zonder dat je de pagina aanpast?
+Geef elk dier een eigen kop in plaats van "Over dieren": `De kat`, `De hond`, `De vis`. Zet de kop en de zin samen onder de naam van het dier in `DIEREN`, en laat `dier.html` allebei tonen.
 
 <details>
 <summary>Tip</summary>
 
-Loop met `for naam in DIEREN:` langs de sleutels, en plak per dier een regel HTML aan een string vast, zoals `<li><a href="/dier/kat">kat</a></li>`.
+Maak van elke waarde in `DIEREN` een dictionary met twee sleutels, zoals in [Een dictionary als waarde](site:fullstack/docs/FastAPI/sqlitedict/dictionary). Ook de tekst na de komma bij `get` wordt dan een dictionary. In de template haal je een sleutel op met een punt: `{{ info.titel }}`.
 
 </details>
 
 <details>
 <summary>Antwoord</summary>
 
+<Bestand pad="main.py" />
+
+{/* route-dubbel: vervangt GET /dier/{naam} hierboven, in een opdracht */}
 ```python
-@app.get("/dieren", response_class=HTMLResponse)
-async def dieren():
-    links = ""
-    for naam in DIEREN:
-        links += f'<li><a href="/dier/{naam}">{naam}</a></li>'
-    return f"""
-    <!DOCTYPE html>
-    <html>
-        <body>
-            <h1>Alle dieren</h1>
-            <ul>{links}</ul>
-        </body>
-    </html>
-    """
+DIEREN = {
+    "kat": {"titel": "De kat", "tekst": "Een kat spint als hij tevreden is."},
+    "hond": {"titel": "De hond", "tekst": "Een hond kwispelt als hij blij is."},
+    "vis": {"titel": "De vis", "tekst": "Een vis ademt met kieuwen."},
+}
+
+@app.get("/dier/{naam}")
+async def dier(request: Request, naam: str):
+    info = DIEREN.get(naam, {"titel": "Onbekend dier", "tekst": "Dit dier staat nog niet op de site."})
+    return templates.TemplateResponse(
+        request,
+        "dier.html",
+        {"info": info}
+    )
 ```
 
-Hier mag `naam` wel in de HTML: het komt uit je eigen dictionary, niet uit de URL. Een dier erbij in `DIEREN` geeft meteen een link erbij, en die link komt uit bij dezelfde route `/dier/{naam}`.
+<Bestand pad="templates/dier.html" />
+
+```html
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>{{ info.titel }}</h1>
+        <p>{{ info.tekst }}</p>
+        <a href="/">Terug naar Home</a>
+    </body>
+</html>
+```
+
+De template krijgt nu één naam, `info`, met twee sleutels erin. Een dier erbij is nog steeds één regel in `DIEREN`.
 
 </details>
+
+Door naar [Een waarde na een vraagteken: query-parameters](site:fullstack/docs/FastAPI/veel-paginas/query-parameters).

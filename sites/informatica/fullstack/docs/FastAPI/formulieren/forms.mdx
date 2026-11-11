@@ -7,7 +7,7 @@
   ]}
 />
 
-Tot nu toe stuurde de browser alleen GET-verzoeken: hij haalt iets op, en wat hij meestuurt staat in de URL. Met een formulier stuurt hij iets naar je server, en daarvoor gebruikt hij een tweede soort verzoek: **POST**.
+Tot nu toe stuurde de browser alleen GET-verzoeken: hij haalt iets op, en wat hij meestuurt staat in de URL. Zoek je bij een zoekmachine naar kat, dan staat er bijvoorbeeld `?q=kat` achter het adres. Zo'n waarde lees je later zelf uit, in [Een waarde na een vraagteken](site:fullstack/docs/FastAPI/veel-paginas/query-parameters). Met een formulier stuurt de browser iets naar je server, en daarvoor gebruikt hij een tweede soort verzoek: **POST**.
 
 ## Het formulier
 
@@ -335,7 +335,7 @@ Maak een formulier om je aan te melden, met naam en leeftijd, op het adres `/aan
 <details>
 <summary>Tip</summary>
 
-Je hebt twee `<input>` velden nodig in je HTML (`name="naam"` en `name="leeftijd"`, die laatste met `type="number"`) en twee `Form(...)` parameters in Python. `leeftijd` is wel een `int` en geen `str`. Met `int` zet FastAPI de waarde om naar een heel getal, en een veld met letters erin weigert hij met een 422.
+Je hebt twee `<input>` velden nodig in je HTML (`name="naam"` en `name="leeftijd"`, die laatste met `type="number"`) en twee `Form(...)` parameters in Python. `leeftijd` is wel een `int` en geen `str`. Met `int` zet FastAPI de waarde om naar een heel getal. Letters kun je in een veld met `type="number"` niet eens typen; dat houdt de browser al tegen.
 
 </details>
 

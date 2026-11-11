@@ -1,6 +1,6 @@
 # Een waarde na een vraagteken: query-parameters
 
-Bij `/dier/kat` staat de waarde in het pad zelf. Er is nog een plek waar een URL een waarde kan meegeven: na een vraagteken. Die ken je van zoekmachines, zoals `?q=fastapi`.
+Bij `/dier/kat` staat de waarde in het pad zelf. Er is nog een plek waar een URL een waarde kan meegeven: na een vraagteken. Die zag je bij [Een formulier versturen](site:fullstack/docs/FastAPI/formulieren/forms): een zoekmachine zet je zoekterm erachter, zoals `?q=fastapi`. Nu lees je zo'n waarde zelf uit.
 
 ## Na een vraagteken
 
@@ -30,13 +30,13 @@ Laat je `?term=python` weg, dan weigert FastAPI het verzoek. Je ziet:
 {"detail":[{"type":"missing","loc":["query","term"],"msg":"Field required","input":null}]}
 ```
 
-In je terminal en in het tabblad Netwerk staat de statuscode **422**: het verzoek klopt niet met wat het endpoint vraagt. `"loc":["query","term"]` zegt waar het mis ging: in de query ontbreekt `term`.
+Het is dezelfde 422 als bij een formulierveld dat ontbreekt, in [Een formulier versturen](site:fullstack/docs/FastAPI/formulieren/forms). Alleen `"loc"` is anders: `["query","term"]` zegt dat `term` in de query ontbreekt, en niet in de body.
 
 Mag de waarde ontbreken, geef de parameter dan een standaardwaarde, net als bij een gewone Python-functie: met `term: str = ""` krijgt `term` een lege tekst als er niets in de URL staat.
 
 ## Tekst of een getal
 
-Achter elke parameter staat een type: `naam: str` bij de dieren, `term: str` hier. Wat in een URL staat is altijd tekst, en `str` laat het tekst. Met `int` zet FastAPI het om naar een heel getal:
+Achter elke parameter staat een type: `naam: str` bij de dieren, `term: str` hier. Wat in een URL staat is altijd tekst, en `str` laat het tekst. Met `int` zet FastAPI het om naar een heel getal, zoals bij een formulierveld:
 
 ```python
 @app.get("/dubbel")
@@ -118,30 +118,6 @@ async def styled():
 async def about():
     return FileResponse("static/pages/about.html")
 
-DIEREN = {
-    "kat": "Een kat spint als hij tevreden is.",
-    "hond": "Een hond kwispelt als hij blij is.",
-    "vis": "Een vis ademt met kieuwen.",
-}
-
-@app.get("/dier/{naam}", response_class=HTMLResponse)
-async def dier(naam: str):
-    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
-    return f"""
-    <!DOCTYPE html>
-    <html>
-        <body>
-            <h1>Over dieren</h1>
-            <p>{tekst}</p>
-            <a href="/">Terug naar Home</a>
-        </body>
-    </html>
-    """
-
-@app.get("/zoek")
-async def zoek(term: str):
-    return {"je_zocht": term}
-
 @app.get("/foto")
 async def foto():
     return FileResponse("static/pages/foto.html")
@@ -211,6 +187,25 @@ async def berichten():
     with SqliteDict("gastenboek.db") as db:
         alle_berichten = list(db.values())
     return {"berichten": alle_berichten}
+
+DIEREN = {
+    "kat": "Een kat spint als hij tevreden is.",
+    "hond": "Een hond kwispelt als hij blij is.",
+    "vis": "Een vis ademt met kieuwen.",
+}
+
+@app.get("/dier/{naam}")
+async def dier(request: Request, naam: str):
+    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
+    return templates.TemplateResponse(
+        request,
+        "dier.html",
+        {"tekst": tekst}
+    )
+
+@app.get("/zoek")
+async def zoek(term: str):
+    return {"je_zocht": term}
 ```
 
 </details>
@@ -302,3 +297,5 @@ async def rekensom(a: int, b: int):
 Test met `http://127.0.0.1:8000/rekensom?a=3&b=4`. Met `?a=3&b=vier` krijg je weer een weigering, nu met `"loc":["query","b"]`: `vier` is geen getal.
 
 </details>
+
+Door naar [Alles tonen: een for-lus in je template](site:fullstack/docs/FastAPI/berichten-tonen/lijst_tonen).

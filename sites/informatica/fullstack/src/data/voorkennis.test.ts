@@ -44,7 +44,7 @@ function voorkennisPerLes(): Map<string, Item[]> {
 // nu álle lesbestanden in een van de twee lijsten.
 const ZONDER_BLOK: Record<string, string> = {
   'FastAPI/berichten-opslaan/naam-opslaan.mdx':
-    'f-strings staan als voorkennis bij path-parameters, waar ze voor het eerst nodig zijn',
+    'f-strings staan als voorkennis bij Een formulier versturen, waar ze voor het eerst in de code staan',
   'FastAPI/veel-paginas/query-parameters.mdx':
     'parameters en standaardwaarden staan als voorkennis bij path-parameters, de les ervoor; het type wordt hier zelf uitgelegd',
   'FastAPI/onthouden/cookie-of-sessie.mdx':
