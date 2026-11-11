@@ -1,0 +1,141 @@
+/* Les-tabbladen (proef). Op de wortel en de panelen staat bewust geen
+   transform, filter, contain, overflow, z-index of animatie: elk daarvan
+   maakt een eigen laag, en dan valt een oefenveld dat op Groter staat
+   (position: fixed) onder de navbar of wordt het afgesneden.
+   les-tabs.test.ts bewaakt dat. */
+
+/* Wie verderop in een lang paneel een ander tabblad kiest, komt weer bovenaan
+   de tabbladen uit, onder de navbar. */
+.wortel {
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 0.5rem);
+}
+
+.tablist {
+  position: sticky;
+  top: var(--ifm-navbar-height);
+  z-index: 5;
+  display: flex;
+  gap: 0.25rem;
+  margin: 0 0 1.25rem;
+  padding: 0.5rem 0 0;
+  overflow-x: auto;
+  background: var(--ifm-background-color);
+  border-bottom: 2px solid var(--ifm-color-emphasis-200);
+}
+
+.tab {
+  flex: 0 0 auto;
+  margin: 0 0 -2px;
+  padding: 0.5rem 0.85rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 6px 6px 0 0;
+  background: transparent;
+  color: var(--ifm-color-emphasis-700);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.tab[aria-selected="true"] {
+  color: var(--ifm-color-primary);
+  border-bottom-color: var(--ifm-color-primary);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: -2px;
+}
+
+.paneel[hidden] {
+  display: none;
+}
+
+/* Een les met tien tabbladen past niet op één rij. Op een breed scherm loopt
+   de rij door op een tweede regel, zodat geen tabblad buiten beeld valt; op
+   een telefoon zouden dat vier regels worden, en daar schuift de rij. */
+@media (min-width: 997px) {
+  .tablist {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+
+/* Het label staat voluit op het tabblad: de kop in het paneel is dan alleen
+   nog voor een schermlezer en als doel van een link. */
+.kopOpTab > h2:first-child {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.kopOpTab > h2:first-child + * {
+  margin-top: 0;
+}
+
+/* Een paneel begint bovenaan: de kop van een sectie heeft daar niet de
+   witruimte nodig die hij midden in een lange pagina had. */
+.paneel > :first-child {
+  margin-top: 0;
+}
+
+/* Een link naar een kop in het paneel: de kop komt onder de navbar én de rij
+   tabbladen uit, niet erachter. */
+.paneel [id] {
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 6.5rem);
+}
+
+.verder {
+  margin: 1.5rem 0 0;
+  text-align: right;
+}
+
+/* De inhoudsopgave rechts vervalt op een pagina met tabbladen, en de les
+   krijgt die breedte erbij. Docusaurus zet de kolom op 75% met !important. */
+:global(html:has([data-les-tabs]) .col--3:has(> .theme-doc-toc-desktop)),
+:global(html:has([data-les-tabs]) .theme-doc-toc-mobile) {
+  display: none;
+}
+
+/* Docusaurus zet zijn regel (75%, met !important) in de cascade layer
+   docusaurus.theme-classic. Bij !important wint de layer die het eerst is
+   aangemaakt, hoe specifiek een latere regel ook is; daarom staat deze regel
+   in de eerste layer, die van Infima. Of de kolom breed is, meet alleen een
+   browser (scripts/meet-les-tabs.mjs meldt de breedte). */
+@layer docusaurus.infima {
+  :global(html:has([data-les-tabs]) [class*="docItemCol"]) {
+    max-width: 100% !important;
+  }
+}
+
+/* Op papier staan alle onderdelen onder elkaar. */
+@media print {
+  .tablist,
+  .verder {
+    display: none;
+  }
+
+  .paneel[hidden] {
+    display: block;
+  }
+
+  .kopOpTab > h2:first-child {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: revert;
+    clip-path: none;
+    white-space: normal;
+  }
+}

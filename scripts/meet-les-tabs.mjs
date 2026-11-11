@@ -1,0 +1,171 @@
+// Meet per les en per tabblad of het op één scherm past.
+//
+//   node scripts/meet-les-tabs.mjs [site-id] [--json]
+//
+// De les-tabbladen (packages/shared/plugins/les-tabs.js) halen de lange
+// pagina weg, maar een tabblad met een oefenveld of veel theorie kan nog
+// steeds langer zijn dan het scherm. Of het past, hangt aan de layout en is
+// alleen in een browser te meten. Dit script serveert de gebouwde site onder
+// zijn eigen pad, opent in Chromium elke les met tabbladen, klikt elk
+// tabblad aan en meet op 1280×720 en 1366×768:
+//
+//   over    hoeveel pixels de onderkant van het paneel onder de rand van het
+//           scherm valt (0 of minder: het paneel past);
+//   pagina  hoeveel pixels de hele pagina hoger is dan het scherm, met de
+//           knoppen naar de vorige en volgende les en de footer erbij.
+//
+// Handmatig, niet in CI: het is een meting voor een auteur, geen controle.
+// Eerst bouwen: `pnpm --filter ./sites/informatica/web build`.
+
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { createServer } from 'node:http';
+import { createRequire } from 'node:module';
+import { extname, join, relative, resolve } from 'node:path';
+import { chromium } from 'playwright';
+
+const require = createRequire(import.meta.url);
+const { SITES_BY_ID, siteDir } = require('../packages/shared/sites.js');
+
+const argumenten = process.argv.slice(2);
+const SITE = argumenten.find((a) => !a.startsWith('--')) ?? 'web';
+const ALS_JSON = argumenten.includes('--json');
+const BUILD = resolve(join(siteDir(SITE), 'build'));
+const BASIS = `/${SITES_BY_ID[SITE].path}/`;
+const SCHERMEN = [
+  { width: 1280, height: 720 },
+  { width: 1366, height: 768 },
+];
+
+const MIME = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript',
+  '.css': 'text/css',
+  '.json': 'application/json',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
+};
+
+function serveer() {
+  const server = createServer((req, res) => {
+    const pad = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+    if (!pad.startsWith(BASIS)) {
+      res.writeHead(404).end();
+      return;
+    }
+    const rel = pad.slice(BASIS.length);
+    const kandidaten = [rel, `${rel}.html`, join(rel, 'index.html')].map((p) => join(BUILD, p));
+    const bestand = kandidaten.find((p) => existsSync(p) && statSync(p).isFile());
+    if (!bestand) {
+      res.writeHead(404).end();
+      return;
+    }
+    res.writeHead(200, { 'content-type': MIME[extname(bestand)] ?? 'application/octet-stream' });
+    res.end(readFileSync(bestand));
+  });
+  return new Promise((klaar) => server.listen(0, '127.0.0.1', () => klaar(server)));
+}
+
+/** De gebouwde pagina's met tabbladen, als pad onder de site. */
+function lessen() {
+  const uit = [];
+  const loop = (map) => {
+    for (const naam of readdirSync(map).sort()) {
+      const pad = join(map, naam);
+      if (statSync(pad).isDirectory()) loop(pad);
+      else if (naam === 'index.html' && readFileSync(pad, 'utf8').includes('data-les-tabs'))
+        uit.push(relative(BUILD, map));
+    }
+  };
+  loop(join(BUILD, 'docs'));
+  return uit;
+}
+
+if (!existsSync(BUILD)) {
+  console.error(`Geen build in ${BUILD}. Bouw de site eerst.`);
+  process.exit(2);
+}
+
+const server = await serveer();
+const adres = `http://127.0.0.1:${server.address().port}${BASIS}`;
+// Met CHROMIUM=<pad> een Chromium die al op de computer staat, voor als de
+// browser van deze Playwright-versie niet is geïnstalleerd.
+const browser = await chromium.launch(
+  process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {},
+);
+const rijen = [];
+let kolomBreedte = null;
+
+for (const les of lessen()) {
+  for (const scherm of SCHERMEN) {
+    // Een verse context per les: bewaard werk in een oefenveld verandert de
+    // hoogte van het veld.
+    const context = await browser.newContext({ viewport: scherm });
+    const pagina = await context.newPage();
+    await pagina.goto(`${adres}${les}`);
+    await pagina.waitForSelector('[role=tab]');
+    kolomBreedte ??= await pagina.evaluate(() => {
+      const kolom = document.querySelector('[class*="docItemCol"]');
+      return kolom ? Math.round((100 * kolom.clientWidth) / kolom.parentElement.clientWidth) : null;
+    });
+    const tabs = await pagina.locator('[role=tab]').all();
+    for (const tab of tabs) {
+      const id = await tab.getAttribute('data-tab');
+      await tab.click();
+      // Een oefenveld is klaar als de editor staat; daarna nog even voor de
+      // hoogte die het voorbeeld zelf meldt.
+      await pagina
+        .waitForFunction(
+          (id) => {
+            const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
+            return [...paneel.querySelectorAll('[data-zaad]')].every((v) =>
+              v.querySelector('.cm-editor'),
+            );
+          },
+          id,
+          { timeout: 10_000 },
+        )
+        .catch(() => {});
+      await pagina.waitForTimeout(400);
+      await pagina.evaluate(() => window.scrollTo(0, 0));
+      const maat = await pagina.evaluate((id) => {
+        const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
+        const r = paneel.getBoundingClientRect();
+        return {
+          over: Math.round(r.bottom - window.innerHeight),
+          boven: Math.round(r.top),
+          pagina: document.documentElement.scrollHeight - window.innerHeight,
+          velden: paneel.querySelectorAll('[data-zaad]').length,
+        };
+      }, id);
+      rijen.push({
+        les,
+        tab: (await tab.innerText()).trim(),
+        scherm: `${scherm.width}x${scherm.height}`,
+        ...maat,
+      });
+    }
+    await context.close();
+  }
+}
+
+await browser.close();
+server.close();
+
+if (ALS_JSON) {
+  console.log(JSON.stringify({ kolomBreedte, rijen }, null, 2));
+} else {
+  for (const { width, height } of SCHERMEN) {
+    const scherm = `${width}x${height}`;
+    const deze = rijen.filter((r) => r.scherm === scherm);
+    const past = deze.filter((r) => r.over <= 0);
+    console.log(`\n## ${scherm}: ${past.length} van ${deze.length} tabbladen passen\n`);
+    console.log('| Les | Tabblad | Velden | Te lang (px) |');
+    console.log('|---|---|---:|---:|');
+    for (const r of deze.filter((r) => r.over > 0).sort((a, b) => b.over - a.over))
+      console.log(`| ${r.les.replace(/^docs\//, '')} | ${r.tab} | ${r.velden} | ${r.over} |`);
+  }
+  console.log(`\nDe les gebruikt ${kolomBreedte}% van de breedte naast de lessenlijst.`);
+}

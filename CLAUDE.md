@@ -216,6 +216,53 @@ de site en meet in headless Chromium dat
 overschrijven (`.hero`, `h2`, `h3`, `p`) staat op dezelfde opgehoogde selector,
 anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
 
+## Les-tabbladen (proef)
+
+De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
+Als proef, alleen bij de web-cursus, is elke `##`-sectie van een les een
+tabblad bovenaan de pagina, en is de inhoudsopgave rechts weg. Een site zet
+het aan met `lesTabs: true` in `createConfig`; een pagina zet het uit met
+`les_tabs: false` in de front matter. Het is nog geen huisregel: de
+schrijfgids (§2, TOC staat aan) geldt voor alle andere cursussen.
+
+De remark-stap `packages/shared/plugins/les-tabs.js` wikkelt bij het bouwen
+elke `##`-sectie in een `<LesTab>` binnen één `<LesTabs>`
+(`packages/shared/components/LesTabs`, door de site geregistreerd in
+`MDXComponents`). De bron van een les verandert niet. De titel en de startcode
+blijven boven de tabbladen; uitleg vóór de eerste `##` wordt het eerste
+tabblad, "Uitleg"; een kop met een dubbele punt krijgt als label het stuk
+ervoor. De stap staat achteraan in de docs, na de begrippen: Docusaurus heeft
+dan de id's van de koppen gezet.
+
+Wat vastligt, en waarom:
+
+- **Elk paneel blijft gemount en staat in de HTML van de build**; een paneel
+  dat niet aan de beurt is, is `hidden`. Een oefenveld dat opnieuw mount raakt
+  zijn werk kwijt (de opslag van de web-`CodeEditor` hangt aan de volgorde van
+  alle velden op de pagina), en `cross-links` zoekt het doel van een link in
+  de HTML. Geen `@theme/Tabs`: dat mount na het laden opnieuw.
+- **Geen `transform`, `filter`, `contain`, `overflow`, `z-index` of animatie
+  op de wortel en de panelen.** Elk daarvan maakt een eigen laag, en dan valt
+  een oefenveld op Groter (`position: fixed`) onder de navbar.
+- **Het onderdeel volgt zelf het adres** (`useLocation`): Docusaurus scrolt
+  niet naar een kop in een verborgen paneel. Een link naar een kop opent het
+  paneel en scrolt er dan naartoe; een klik op een tabblad zet de hash met
+  `history.replaceState`, buiten de router om.
+- **De les krijgt de breedte van de inhoudsopgave** met een regel in
+  `@layer docusaurus.infima`. Docusaurus zet de kolom op 75% met `!important`
+  in een latere layer, en bij `!important` wint de eerste layer; een losse
+  regel verliest, hoe specifiek ook.
+- Op papier staan alle panelen onder elkaar.
+
+`les-tabs.test.ts` en `components/LesTabs/LesTabs.test.tsx` bewaken dit.
+Tabbladen garanderen niet dat een onderdeel op één scherm past:
+`node scripts/meet-les-tabs.mjs <site>` (na een build, met Playwright) meet
+per les en per tabblad op 1280×720 en 1366×768 hoeveel pixels het te lang is.
+Bekende nadelen: Ctrl+F vindt geen tekst in een tabblad dat niet open staat,
+bij een link naar een kop is heel kort het eerste tabblad te zien, Matomo telt
+een tabblad niet als bezoek, en de begrippen-stap markeert het eerste
+voorkomen op de pagina, ook als dat in een later tabblad staat.
+
 ## Code in MDX-expressies
 
 MDX eet van elke vervolgregel in een `{`…`}`-expressie tot twee spaties op.

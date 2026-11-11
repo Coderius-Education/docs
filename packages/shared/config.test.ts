@@ -155,3 +155,39 @@ describe('de kleuren van Python-code (issue #158)', () => {
     expect(editor).not.toMatch(/\bdracula\b/);
   });
 });
+
+describe('createConfig — les-tabbladen (proef)', () => {
+  // Met `lesTabs: true` zet een remark-stap elke ##-sectie van een les in een
+  // tabblad (plugins/les-tabs.js). De stap moet de laatste zijn: Docusaurus
+  // heeft dan de id's van de koppen gezet, en de begrippen-stap is geweest.
+  const { remarkLesTabs } = require('./plugins/les-tabs.js');
+  const docsVan = (config: { presets: [string, { docs?: { remarkPlugins?: unknown[] } }][] }) =>
+    config.presets[0][1].docs?.remarkPlugins ?? [];
+  const basis = {
+    siteId: 'web',
+    title: 'x',
+    presets: [['classic', { docs: { remarkPlugins: ['eerst'] }, blog: false }]],
+  };
+
+  it('zet de stap achteraan in de docs, alleen met de schakelaar aan', () => {
+    expect(docsVan(createConfig({ ...basis, lesTabs: true })).at(-1)).toBe(remarkLesTabs);
+    expect(docsVan(createConfig({ ...basis, lesTabs: true }))).toContain('eerst');
+    expect(docsVan(createConfig(basis))).not.toContain(remarkLesTabs);
+  });
+
+  it('geeft de schakelaar niet door aan Docusaurus, dat een onbekend veld weigert', () => {
+    expect(createConfig({ ...basis, lesTabs: true })).not.toHaveProperty('lesTabs');
+  });
+
+  it('staat alleen bij de web-cursus aan', () => {
+    const aan = SITES.filter((s) => {
+      const pad = join(ROOT, 'sites', s.subject ?? '', s.id, 'docusaurus.config.ts');
+      try {
+        return /\blesTabs:\s*true/.test(readFileSync(pad, 'utf8'));
+      } catch {
+        return false;
+      }
+    }).map((s) => s.id);
+    expect(aan).toEqual(['web']);
+  });
+});

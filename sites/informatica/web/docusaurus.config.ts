@@ -11,6 +11,9 @@ export default createConfig({
   // De oude pagina /html_css is weg; een oude link (werkblad,
   // bladwijzer) komt op de eerste HTML-les uit.
   omleidingen: [{ van: '/html_css', naar: '/docs/html-css/intro-html' }],
+  // Proef: elke ##-sectie van een les is een tabblad, zonder inhoudsopgave
+  // rechts (plugins/les-tabs.js in shared).
+  lesTabs: true,
   // Werk van web.coderius.nl (vóór de verhuizing): zie oude-opslag.js.
   oudeOpslag: {
     indexedDB: [

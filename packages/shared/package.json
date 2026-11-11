@@ -83,6 +83,7 @@
     "./components/Keuzelijst": "./components/Keuzelijst/index.tsx",
     "./components/CodeUitleg": "./components/CodeUitleg/index.tsx",
     "./components/Voorspel": "./components/Voorspel/index.tsx",
+    "./components/LesTabs": "./components/LesTabs/index.tsx",
     "./components/NaslagZoeker": "./components/NaslagZoeker/index.tsx",
     "./components/Handout": "./components/Handout/index.tsx",
     "./components/Schrijflijnen": "./components/Schrijflijnen/index.tsx",
