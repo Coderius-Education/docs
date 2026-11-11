@@ -1,3 +1,4 @@
+import { useInLesTab } from '@coderius/shared/components/LesTabs';
 import { bevestig } from '@coderius/shared/dialoog';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, {
@@ -16,6 +17,8 @@ import { buildDoc } from './buildDoc';
 import { heeftJavaScript } from './heeftJs';
 import { VoorbeeldNavigatie } from './navigatie';
 import { type OnderzoekVraag, stukken } from './onderzoek';
+import { type Opdracht, opdrachtBoven } from './opdracht';
+import { meetRuimte, pasHoogte } from './pasHoogte';
 import { useDebounce } from './useDebounce';
 import { type OpslagStand, useOpslag } from './useOpslag';
 import { kanVolledigScherm, schermStand } from './volledigScherm';
@@ -43,6 +46,23 @@ function zetScrollSlot(aan: boolean): void {
   }
   scrollSloten = Math.max(0, scrollSloten - 1);
   if (scrollSloten === 0) document.body.style.overflow = overflowVoorSlot;
+}
+
+// Vanaf deze breedte staan code en voorbeeld naast elkaar; smaller staan ze
+// onder elkaar (zie de media query in CodeEditor.module.css).
+const BREED = '(min-width: 769px)';
+
+/** Of het scherm breed genoeg is voor code en voorbeeld naast elkaar. */
+function useBreed(): boolean {
+  const [breed, setBreed] = useState(() => window.matchMedia(BREED).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(BREED);
+    const bij = () => setBreed(mq.matches);
+    bij();
+    mq.addEventListener('change', bij);
+    return () => mq.removeEventListener('change', bij);
+  }, []);
+  return breed;
 }
 
 const TAB_LABELS: Record<Tab, string> = {
@@ -107,6 +127,48 @@ function CodeEditorInner({
   const groot = uitgeklapt || volledig;
   const stand = schermStand(uitgeklapt, volledig);
   const containerRef = useRef<HTMLDivElement>(null);
+  const werkvlakRef = useRef<HTMLDivElement>(null);
+
+  // In een les-tabblad moet het paneel op het scherm passen. Daar
+  // staan code en voorbeeld op een breed scherm altijd naast elkaar, ook in
+  // een veld dat anders gestapeld is, en krijgt het veld de hoogte die op het
+  // scherm overblijft (pasHoogte.ts). Buiten een tabblad verandert er niets.
+  const inTab = useInLesTab();
+  const breed = useBreed();
+  const naastElkaar = inTab && breed;
+  const gestapeld = stacked && !naastElkaar;
+  const [passend, setPassend] = useState<number | null>(null);
+  useLayoutEffect(() => {
+    const werkvlak = werkvlakRef.current;
+    const paneel = werkvlak?.closest<HTMLElement>('[data-les-tab]');
+    // Op Groter vult het veld het scherm; de maat van de les geldt dan niet,
+    // en hij blijft staan voor als het veld weer sluit.
+    if (!naastElkaar || groot || !werkvlak || !paneel) return;
+    const meet = () => {
+      const ruimte = meetRuimte(werkvlak, paneel, Number.parseInt(height, 10));
+      if (ruimte) setPassend(pasHoogte(ruimte));
+    };
+    meet();
+    // Het paneel verandert van maat als het tabblad opengaat, als een ander
+    // veld klaar is met laden en als de onderzoeksvragen inklappen.
+    const kijker = new ResizeObserver(meet);
+    kijker.observe(paneel);
+    window.addEventListener('resize', meet);
+    return () => {
+      kijker.disconnect();
+      window.removeEventListener('resize', meet);
+    };
+  }, [naastElkaar, groot, height]);
+  const hoogte = naastElkaar && passend !== null ? `${passend}px` : height;
+
+  // Op Groter en volledig scherm is de les niet meer te zien, en dus ook de
+  // opdracht niet die boven het veld staat. Het veld leest hem dan uit de
+  // pagina en toont hem zelf (opdracht.ts).
+  const [opdracht, setOpdracht] = useState<Opdracht | null>(null);
+  useLayoutEffect(() => {
+    setOpdracht(groot && containerRef.current ? opdrachtBoven(containerRef.current) : null);
+  }, [groot]);
+
   const knopRef = useRef<HTMLButtonElement>(null);
   const volledigKnopRef = useRef<HTMLButtonElement>(null);
   const consoleBodyRef = useRef<HTMLDivElement>(null);
@@ -328,17 +390,21 @@ function CodeEditorInner({
     <div
       ref={containerRef}
       data-zaad={opslag.zaad}
+      // Voor de opmaak van een les-tabblad: de marge om een veld geldt niet
+      // als het veld het scherm vult.
+      data-groot={groot ? '' : undefined}
       className={[
         styles.container,
-        stacked ? styles.containerStacked : '',
+        gestapeld ? styles.containerStacked : '',
         groot ? styles.containerUitgeklapt : '',
       ]
         .filter(Boolean)
         .join(' ')}
     >
+      {opdracht && <OpdrachtBalk opdracht={opdracht} />}
       {onderzoek && onderzoek.length > 0 && <Onderzoek vragen={onderzoek} />}
-      <div className={styles.werkvlak}>
-        <div className={styles.editorSide} style={{ height: stacked ? 'auto' : height }}>
+      <div className={styles.werkvlak} ref={werkvlakRef}>
+        <div className={styles.editorSide} style={{ height: gestapeld ? 'auto' : hoogte }}>
           <div className={styles.tabBar}>
             {visibleTabs.map((tab) => (
               <button
@@ -416,16 +482,18 @@ function CodeEditorInner({
                   // gestapelde vorm meet hij zich normaal naar de code, met de
                   // height-prop als maximum; dat maximum is de lespagina-hoogte en
                   // liet uitgeklapt 150px van de editorkant leeg staan.
-                  height={groot ? '100%' : height}
-                  autoHeight={stacked && !groot}
+                  height={groot ? '100%' : hoogte}
+                  autoHeight={gestapeld && !groot}
                 />
               </Suspense>
             )}
           </div>
         </div>
-        <div className={styles.previewColumn} style={stacked ? undefined : { height }}>
+        <div className={styles.previewColumn} style={gestapeld ? undefined : { height: hoogte }}>
           <PreviewPane
             srcDoc={srcDoc}
+            // Een veld met een Run-knop begint met een leeg voorbeeld.
+            wachtOpRun={!livePreview && srcDoc === ''}
             innerRef={iframeRef}
             weg={weg}
             onTerug={herlaadEigenPagina}
@@ -435,7 +503,7 @@ function CodeEditorInner({
             // is dat juist verkeerd: dan bleef het voorbeeld 160px hoog terwijl
             // er 450px voor hem klaarstond.
             hoogte={
-              stacked && !groot
+              gestapeld && !groot
                 ? `${Math.min(Math.max(previewInhoud ?? 160, 100), Number.parseInt(previewHeight, 10))}px`
                 : undefined
             }
@@ -528,6 +596,31 @@ function Onderzoek({ vragen }: { vragen: OnderzoekVraag[] }) {
           ))}
         </ol>
       )}
+    </div>
+  );
+}
+
+// De opdracht uit de les, zolang het veld het scherm vult. Open, zodat de
+// leerling hem ziet zonder te klikken; wie de ruimte nodig heeft, klapt hem in.
+function OpdrachtBalk({ opdracht }: { opdracht: Opdracht }) {
+  const [open, setOpen] = useState(true);
+  const tekstRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    // Kopieën van de alinea's uit de les; een kopie per keer, want een node
+    // kan maar op één plek staan.
+    if (open) tekstRef.current?.replaceChildren(...opdracht.inhoud.map((n) => n.cloneNode(true)));
+  }, [open, opdracht]);
+  return (
+    <div className={styles.onderzoek} data-opdracht="">
+      <button
+        type="button"
+        className={styles.onderzoekKop}
+        onClick={() => setOpen((aan) => !aan)}
+        aria-expanded={open}
+      >
+        <span aria-hidden="true">{open ? '\u25BE' : '\u25B8'}</span> {opdracht.titel || 'Opdracht'}
+      </button>
+      {open && <div className={styles.opdrachtTekst} ref={tekstRef} />}
     </div>
   );
 }

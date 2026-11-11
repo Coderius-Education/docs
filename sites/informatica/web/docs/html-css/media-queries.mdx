@@ -50,7 +50,7 @@ export const onderzoek = [
   },
   {
     vraag: "Zet onderaan de CSS een tweede media query voor `max-width: 300px` die `.kaart` de `background-color: lightgreen` geeft. Waarom wordt de kaart niet groen als je op Telefoon klikt, terwijl dat de smalste knop is?",
-    antwoord: "Telefoon is 320 pixels breed, en dat is meer dan 300, dus de regel geldt niet. In de stand Vol kan het voorbeeld wel smaller zijn: op een laptopscherm is het vaak maar zo'n 280 pixels, en dan zie je wel groen.",
+    antwoord: "Telefoon is 320 pixels breed, en dat is meer dan 300, dus de regel geldt niet. In de stand Vol hangt de breedte af van je scherm: is het voorbeeld daar smaller dan 300 pixels, dan zie je wel groen.",
   },
   {
     vraag: "Verander `max-width: 500px` in `min-width: 800px`. Bij welke knop wordt de kaart nu lichtrood?",
@@ -104,7 +104,7 @@ Lees dit als: "als de schermbreedte 700px of minder is, gebruik dan deze regels"
 
 Je kunt ze ook combineren: `@media (min-width: 600px) and (max-width: 900px)` → alleen tablets.
 
-### Aanpak: "mobile-first"
+### Mobile-first
 
 Veel ontwikkelaars schrijven hun CSS eerst voor **kleine schermen** (geen media query nodig) en voegen daarna regels toe voor grotere schermen via `min-width`. Je opent dan voor de smalle weergave geen apart blok — die is de basis.
 
@@ -120,23 +120,35 @@ Veel ontwikkelaars schrijven hun CSS eerst voor **kleine schermen** (geen media 
 
 ## Predict
 
-Wat denk je dat er gebeurt met dit blok als je het voorbeeld op een breedte onder 600px bekijkt?
+Dit is een deel van de CSS van het oefenveld. Welke achtergrondkleur heeft de kaart op een scherm van 320 pixels breed, en welke op een scherm van 1100 pixels?
 
 ```css
-.titel { font-size: 3rem; }
-@media (max-width: 600px) {
-  .titel { font-size: 1.5rem; }
+.kaart {
+  background-color: lightblue;
+  padding: 40px;
+  width: 80%;
+  margin: 20px auto;
+}
+
+@media (max-width: 500px) {
+  .kaart {
+    background-color: lightcoral;
+    padding: 10px;
+    width: 100%;
+  }
 }
 ```
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
 
-Op brede schermen is `.titel` 3rem groot (zo'n 48px). Zodra de breedte onder 600px komt, schakelt de browser over naar de media-query-regel en wordt `.titel` 1,5rem (24px) — half zo groot. Kies je weer een bredere stand, dan keert het terug.
+Op 320 pixels lichtrood (`lightcoral`), op 1100 pixels lichtblauw. De regels in het `@media`-blok gelden alleen als het scherm 500 pixels of smaller is; dan overschrijven ze de kleur, de padding en de breedte van `.kaart`. Op een breder scherm slaat de browser het blok over.
 
 </details>
 
 ## Probeer en onderzoek
+
+Boven het voorbeeld staan de knoppen **Telefoon** (320px), **Tablet** (768px) en **Breed** (1100px). Het voorbeeld wordt dan echt zo breed gerekend, ook al is het paneel smaller; de melding eronder zegt op welke breedte je kijkt.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -145,13 +157,9 @@ Op brede schermen is `.titel` 3rem groot (zo'n 48px). Zodra de breedte onder 600
   onderzoek={onderzoek}
 />
 
-:::tip[Test je media query]
-Boven het voorbeeld staan de knoppen **Telefoon** (320px), **Tablet** (768px) en **Breed** (1100px). Het voorbeeld wordt dan echt zo breed gerekend, ook al is het paneel smaller; de melding eronder zegt op welke breedte je kijkt. Zo zie je de breekpunten omschakelen zonder je browservenster aan te raken.
-:::
-
 ## Modify
 
-**Opdracht:** Voeg een tweede breekpunt toe op `max-width: 320px` (heel smal mobiel) waarbij de tekst over één regel verdeeld wordt en de padding nóg kleiner is.
+**Opdracht:** Voeg een tweede breekpunt toe op `max-width: 320px` (een heel smal scherm) waarbij de kop nog kleiner is en de padding ook.
 
 <CodeEditor
   initialHtml={startHtml}

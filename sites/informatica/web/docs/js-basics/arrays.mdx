@@ -96,6 +96,8 @@ Bijna alle programmeertalen tellen vanaf 0. `namen[3]` bestaat hier niet en geef
 
 ## Toevoegen, veranderen, tellen
 
+Een array ligt niet vast. Je zet er items bij, vervangt er een, en vraagt op hoeveel het er zijn:
+
 ```js
 namen.push('Daan');         // voegt 'Daan' toe aan het einde
 namen[0] = 'Anouk';         // vervangt het eerste item
@@ -117,23 +119,26 @@ Door `i < namen.length` als voorwaarde te nemen, klopt de loop vanzelf nog als d
 
 ## Predict
 
-Wat logt dit?
+Dit is de functie uit de startcode van het oefenveld; hij draait als je op de knop klikt. Beantwoord de vraag **voordat** je de code draait.
 
 ```js
-const cijfers = [5, 7, 3, 9];
-console.log(cijfers[1]);
-console.log(cijfers.length);
+function toonNamen() {
+  const namen = ['Anna', 'Bram', 'Chris', 'Daan'];
+  let resultaat = '';
+
+  for (let i = 0; i < namen.length; i++) {
+    resultaat = resultaat + namen[i] + '\n';
+  }
+
+  document.getElementById('lijst').textContent = resultaat;
+  console.log('Totaal: ' + namen.length + ' namen');
+}
 ```
 
 <details>
-<summary>Twee regels — welke getallen?</summary>
+<summary>Welke naam is `namen[1]`, en wat logt de laatste regel?</summary>
 
-```
-7
-4
-```
-
-`cijfers[1]` is het tweede item (index 0 is de 5, index 1 de 7). `cijfers.length` is 4, want er staan vier getallen in de array.
+`namen[1]` is `'Bram'`: de index begint bij 0, dus index 1 is het tweede item. De laatste regel logt `Totaal: 4 namen`, want `namen.length` is het aantal items in de array.
 
 </details>
 

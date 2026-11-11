@@ -45,6 +45,10 @@ export const onderzoek = [
     vraag: "Verwijder de `alert`-regel en klik op Run en dan op de knop. Wat merk je?",
     antwoord: "Na de prompt komt er geen tweede pop-up meer: de zin met je naam staat direct op de pagina. Met de `alert` erin wacht de code tot je op OK klikt, en pas daarna verschijnt de tekst.",
   },
+  {
+    vraag: "Zet achter `naam` in de laatste regel van de functie `+ 4`, zodat er `'Welkom, ' + naam + 4 + '.'` staat. Klik op Run en dan op de knop, en vul bij de prompt `16` in. Voorspel eerst: staat er 20 op de pagina?",
+    antwoord: "Nee, er staat `Welkom, 164.`. Alles wat uit `prompt()` komt is tekst, ook als je een getal typt, en `+` plakt teksten aan elkaar: `'16' + 4` wordt `'164'`. Hoe je er wel mee rekent, leer je in de volgende les, Waarden en operatoren.",
+  },
 ];
 
 export const makeHtml = `<!DOCTYPE html>
@@ -94,17 +98,20 @@ alert('Welkom, ' + naam + '.');
 
 ## Predict
 
-Wat verschijnt er in de console als de gebruiker `16` typt?
+Dit is de functie uit de startcode van het oefenveld; hij draait als je op de knop klikt. Beantwoord de vraag **voordat** je de code draait.
 
 ```js
-const leeftijd = prompt('Hoe oud ben je?');
-console.log(leeftijd + 4);
+function vraagNaam() {
+  const naam = prompt('Hoe heet je?');
+  alert('Hallo ' + naam + '.');
+  document.getElementById('uitvoer').textContent = 'Welkom, ' + naam + '.';
+}
 ```
 
 <details>
-<summary>Wat denk je: 20, of iets anders?</summary>
+<summary>Je typt Sam en klikt op OK. Wat zie je eerst: de pop-up met de groet, of de tekst op de pagina?</summary>
 
-`164`. Alles wat uit `prompt()` komt is **tekst**, ook als de gebruiker een getal typt. `+` plakt teksten aan elkaar: `'16' + 4` wordt `'164'`. Waarom dat zo werkt en hoe je er wél mee rekent, leer je in [Waarden en operatoren](site:web/docs/js-basics/operatoren-types).
+Eerst de pop-up met `Hallo Sam.` De code loopt van boven naar beneden en wacht bij `alert` tot je op OK klikt. Pas daarna zet de laatste regel `Welkom, Sam.` op de pagina.
 
 </details>
 

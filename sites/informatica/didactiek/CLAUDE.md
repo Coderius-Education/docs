@@ -33,6 +33,15 @@ de doelgroep: hij richt zich op **docenten en auteurs**, niet op leerlingen.
   een kop Wat we zagen. Beweer daar alleen wat we deden en zagen, geen
   leeropbrengst die niet gemeten is. De eerste is Kleine stappen met een
   succesmoment.
+- **De tips onderbouwen de werkvormen van een les.** Elk les-tabblad van de
+  web-cursus heeft een werkvorm met een icoon, en de docentenhandleiding linkt
+  per werkvorm naar een of meer tips hier (`packages/shared/werkvormen/werkvormen.json`,
+  zie de root-`CLAUDE.md`). Hernoem of verwijder je een tip die daar staat,
+  pas dat bestand dan mee aan; `packages/shared/werkvormen.test.ts` faalt
+  anders. Daarvoor zijn in november 2026 vier tips uit onderzoek bijgekomen:
+  PRIMM, uitgewerkte voorbeelden, hulp in stappen en leren van fouten. Bij
+  elke tip zegt de pagina ook wat het onderzoek niet laat zien (jonge
+  kinderen en blokken, experimenten in het lab).
 - **Een tip toevoegen:** voeg een item toe aan `src/data/tips.ts` én maak het
   bijbehorende `docs/<slug>.md`. Houd `slug` en `detailPad` (`/bronnen/<slug>`)
   consistent.

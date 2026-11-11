@@ -149,11 +149,16 @@ Elke `<option>` heeft een zichtbare tekst (tussen de tags) en een `value` (de wa
 
 ### Waarom heb je `<label>` nodig?
 
-Een `<label>` is niet alleen mooi — hij is **toegankelijk**. Als je het label aanklikt, springt de cursor in het invoerveld. Screenreaders lezen het label voor zodra het veld actief wordt.
+Een `<label>` is niet alleen mooi — hij is **toegankelijk**. Screenreaders lezen het label voor zodra het veld actief wordt. En een klik op het label doet ook iets; wat, voorspel je bij Predict.
 
 ## Predict
 
-Wat denk je dat er gebeurt als je op het tekst-label "Naam:" klikt in het formulier hieronder?
+Wat denk je dat er gebeurt als je in dit formulier op het tekst-label "Naam:" klikt?
+
+```html
+<label for="naam">Naam:</label>
+<input type="text" id="naam">
+```
 
 <details>
 <summary>Klik hier voor het antwoord</summary>

@@ -177,4 +177,76 @@ export const tips: Tip[] = [
     },
     detailPad: '/bronnen/constructive-alignment',
   },
+  {
+    slug: 'primm',
+    term: 'Eerst lezen, dan schrijven met PRIMM',
+    categorie: 'opdrachten',
+    termen: [
+      'PRIMM',
+      'Predict',
+      'Run',
+      'Investigate',
+      'Modify',
+      'Make',
+      'voorspellen',
+      'code lezen',
+    ],
+    samenvatting:
+      'Laat een leerling werkende code eerst lezen en voorspellen, dan draaien en onderzoeken, en pas daarna aanpassen en zelf maken.',
+    controlevraag: 'Leest en voorspelt de leerling werkende code voordat hij zelf code schrijft?',
+    bron: 'onderzoek',
+    paper: {
+      titel: 'Teaching computer programming with PRIMM: a sociocultural perspective',
+      auteurs: 'Sentance, Waite en Kallia',
+      jaar: 2019,
+    },
+    detailPad: '/bronnen/primm',
+  },
+  {
+    slug: 'uitgewerkte-voorbeelden',
+    term: 'Eerst een uitgewerkt voorbeeld',
+    categorie: 'voorbeelden',
+    termen: ['worked example', 'uitgewerkt voorbeeld', 'voorbeeldcode', 'voorbeeld vóór opgave'],
+    samenvatting:
+      'Laat een beginner een compleet, werkend voorbeeld bestuderen voordat hij zelf een opgave oplost, en geef direct daarna een opgave die erop lijkt.',
+    controlevraag:
+      'Staat er vóór de eerste opdracht een compleet, werkend voorbeeld van wat de leerling daarna zelf doet?',
+    bron: 'onderzoek',
+    paper: {
+      titel: 'The use of worked examples as a substitute for problem solving in learning algebra',
+      auteurs: 'Sweller en Cooper',
+      jaar: 1985,
+    },
+    detailPad: '/bronnen/uitgewerkte-voorbeelden',
+  },
+  {
+    slug: 'hulp-in-stappen',
+    term: 'Hulp in stappen, die je weer weghaalt',
+    categorie: 'opdrachten',
+    termen: ['scaffolding', 'steiger', 'tip', 'antwoord', 'hulp afbouwen'],
+    samenvatting:
+      'Geef een leerling die vastloopt precies zoveel hulp als hij nodig heeft: eerst een aanwijzing, dan pas het antwoord, en bij de volgende opdracht minder.',
+    controlevraag:
+      'Krijgt de leerling bij elke opdracht eerst een tip en pas daarna het antwoord, allebei dichtgeklapt?',
+    bron: 'onderzoek',
+    paper: {
+      titel: 'The role of tutoring in problem solving',
+      auteurs: 'Wood, Bruner en Ross',
+      jaar: 1976,
+    },
+    detailPad: '/bronnen/hulp-in-stappen',
+  },
+  {
+    slug: 'leren-van-fouten',
+    term: 'Laat fouten zien en leg ze uit',
+    categorie: 'fouten',
+    termen: ['fouten', 'foutmelding', 'feedback', 'error-driven learning', 'Er gaat iets mis'],
+    samenvatting:
+      'Verstop fouten niet: laat de leerling een fout maken of zien, met de melding die erbij hoort en de reden erachter.',
+    controlevraag:
+      'Laat de les de fouten zien die een leerling hier maakt, met de melding en de reden erbij?',
+    bron: 'onderzoek',
+    paper: { titel: 'Learning from errors', auteurs: 'Metcalfe', jaar: 2017 },
+    detailPad: '/bronnen/leren-van-fouten',
+  },
 ];

@@ -127,17 +127,22 @@ const overTienJaar = leeftijd + 10;
 
 ## Predict
 
-Wat staat er in `bericht` als de gebruiker "Hallo" typt in het naam-veld?
+Dit is de functie uit de startcode van het oefenveld; hij draait als je op de knop klikt. Beantwoord de vraag **voordat** je de code draait.
 
 ```js
-const naam = document.getElementById('naam').value;
-const bericht = 'Welkom, ' + naam + '.';
+function begroet() {
+  const naam = document.getElementById('naam').value;
+  const leeftijd = Number(document.getElementById('leeftijd').value);
+
+  const bericht = 'Hoi ' + naam + '. Over 10 jaar ben je ' + (leeftijd + 10) + ' jaar.';
+  document.getElementById('uitvoer').textContent = bericht;
+}
 ```
 
 <details>
-<summary>Welke string wordt het?</summary>
+<summary>Je vult Sam en 15 in en klikt op de knop. Welke zin verschijnt er?</summary>
 
-`'Welkom, Hallo.'` — `.value` geeft letterlijk terug wat er in het veld staat, en dat wordt met `+` in de zin geplakt. Het veld heet "naam", maar JavaScript controleert niet wat voor tekst erin staat.
+`Hoi Sam. Over 10 jaar ben je 25 jaar.` De naam komt letterlijk uit het veld. De leeftijd gaat eerst door `Number()`, dus `15 + 10` telt op tot 25.
 
 </details>
 
@@ -153,9 +158,7 @@ const bericht = 'Welkom, ' + naam + '.';
   onderzoek={onderzoek}
 />
 
-:::tip[Waarom `type="button"` op de knop?]
-Een knop binnen een `<form>` verstuurt het formulier standaard (en herlaadt de pagina). Met `type="button"` voorkom je dat: de knop doet alleen wat de listener zegt.
-:::
+De knop heeft `type="button"`. Een knop binnen een `<form>` verstuurt anders het formulier en herlaadt de pagina; zo doet hij alleen wat de listener zegt.
 
 ## Opdracht 1: Extra veld
 

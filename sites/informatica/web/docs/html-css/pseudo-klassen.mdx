@@ -101,10 +101,6 @@ Een element kan er anders uitzien afhankelijk van zijn **toestand** of zijn **pl
 
 ## Theorie
 
-:::info[Wat is `rem`?]
-In de voorbeelden hieronder staan groottes als `1.5rem`. Dat betekent "anderhalf keer de basisgrootte van de pagina". Je hoeft er nu niets mee te doen; het hele verhaal over `px`, `rem`, `em` en `%` staat in [Eenheden in CSS](site:web/docs/html-css/eenheden).
-:::
-
 Een **pseudo-klasse** is een selector die een speciale toestand of positie beschrijft. Je schrijft ze met een dubbele punt direct na de selector:
 
 ```css
@@ -113,7 +109,7 @@ a:hover {
 }
 ```
 
-### Veelgebruikte pseudo-klassen
+### Pseudo-klassen voor een toestand
 
 | Pseudo-klasse | Wanneer actief |
 |---|---|
@@ -122,17 +118,35 @@ a:hover {
 | `:focus` | Als het element "focus" heeft (bijv. een invoerveld waarin je typt) |
 | `:visited` | Een link die de bezoeker al eens heeft bezocht |
 | `:disabled` | Een uitgeschakeld formulier-element (knop of invoerveld) |
+
+`:focus` is vooral nuttig in [formulieren](site:web/docs/html-css/formulieren): geef het actieve invoerveld een opvallende rand, dan ziet ook wie met Tab door de pagina loopt waar hij is.
+
+### Pseudo-klassen voor een positie
+
+| Pseudo-klasse | Wanneer actief |
+|---|---|
 | `:first-child` | Het eerste kind-element van zijn ouder |
 | `:last-child` | Het laatste kind-element van zijn ouder |
 | `:nth-child(n)` | Het n-de kind-element (bijv. `nth-child(2)`) |
 
-:::tip[`:focus` en formulieren]
-`:focus` is vooral nuttig voor [formulieren](site:web/docs/html-css/formulieren) — geef een actief invoerveld of geselecteerde knop een opvallende rand zodat de gebruiker ziet waar hij/zij bezig is. Belangrijk voor toegankelijkheid (mensen die met Tab navigeren).
-:::
-
 ## Predict
 
-Bekijk de CSS hieronder. Wat denk je dat er gebeurt als je:
+Een pagina heeft een link en een knop, met deze CSS:
+
+```css
+a:hover {
+  color: red;
+  text-decoration: none;
+}
+button:active {
+  background-color: orange;
+}
+button:focus {
+  outline: 3px solid dodgerblue;
+}
+```
+
+Wat denk je dat er gebeurt als je:
 1. Je muis over de link beweegt?
 2. Op de knop klikt en de muisknop **ingedrukt houdt**?
 3. Met Tab naar de knop springt zonder te klikken?
@@ -230,6 +244,8 @@ button:active {
   background-color: red;
 }
 ```
+
+`1.2rem` is iets groter dan de basisgrootte van de pagina. Meer daarover staat in [Eenheden in CSS](site:web/docs/html-css/eenheden).
 
 </details>
 

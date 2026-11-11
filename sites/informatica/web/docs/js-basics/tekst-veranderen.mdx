@@ -75,11 +75,17 @@ In de vorige les zag je dit recept al. Nu zoomen we in op het laatste stuk:
 
 Lees de regel van links naar rechts als een zin: *pak het document → zoek het element met id "zin" → zet de tekst ervan op "De zon schijnt."*.
 
-Meerdere knoppen mogen naar hetzelfde element wijzen. Elke knop zet dan zijn eigen tekst in dezelfde `<p>` — de laatste klik wint.
+Meerdere knoppen mogen naar hetzelfde element wijzen.
 
 ## Predict
 
-Bekijk de startcode: twee knoppen, allebei met `getElementById('zin')`.
+Dit is de startcode van het oefenveld: twee knoppen, allebei met `getElementById('zin')`.
+
+```html
+<p id="zin">Klik een knop.</p>
+<button onclick="document.getElementById('zin').textContent = 'De zon schijnt.'">Zin 1</button>
+<button onclick="document.getElementById('zin').textContent = 'Het regent.'">Zin 2</button>
+```
 
 <details>
 <summary>Wat staat er in de `<p>` als je eerst op "Zin 1" en daarna op "Zin 2" klikt?</summary>
@@ -192,7 +198,7 @@ Twee elementen, twee id's, twee knoppen. Controleer per knop of het `id` in de `
 
 ## Er gaat iets mis
 
-**Aanhalingstekens vergeten**
+### Aanhalingstekens vergeten
 
 ```html
 <button onclick="document.getElementById('zin').textContent = Hallo">Klik</button>
@@ -204,7 +210,7 @@ JavaScript fout: Uncaught ReferenceError: Hallo is not defined
 
 Zonder aanhalingstekens denkt de browser dat `Hallo` een stukje code is (een naam die ergens gedefinieerd moet zijn), niet een tekst. Zet letterlijke tekst altijd tussen aanhalingstekens: `'Hallo'`.
 
-**Aanhalingsteken niet gesloten**
+### Aanhalingsteken niet gesloten
 
 ```html
 <button onclick="document.getElementById('zin').textContent = 'Hallo">Klik</button>
@@ -216,7 +222,7 @@ JavaScript fout: Uncaught SyntaxError: Invalid or unexpected token
 
 De tekst begint met `'` maar houdt nooit op, dus de browser leest door tot het eind van de `onclick` en snapt er niets meer van. Een "token" is een los stukje code, zoals een woord of een leesteken. Tel je aanhalingstekens: elk stukje tekst heeft er twee.
 
-**`==` in plaats van `=`: geen melding**
+### `==` in plaats van `=`: geen melding
 
 ```html
 <button onclick="document.getElementById('zin').textContent == 'Hallo'">Klik</button>

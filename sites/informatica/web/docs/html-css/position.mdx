@@ -136,12 +136,30 @@ Het element blijft ruimte innemen op zijn oude plek, maar wordt visueel verschov
 
 ## Predict
 
-Wat denk je dat er gebeurt als je een element `position: relative` geeft met `top: 30px` — wordt de plek waar hij stond opgevuld door het volgende element, of blijft die leeg?
+Dit is een deel van de CSS van het oefenveld; de badge staat in de kaart. Waar komt de badge te staan als je `position: relative` bij `.kaart` weghaalt?
+
+```css
+.kaart {
+  position: relative;
+  border: 2px solid #4a90e2;
+  padding: 20px;
+  width: 250px;
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: red;
+  color: white;
+  padding: 4px 10px;
+}
+```
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
 
-De oude plek **blijft leeg**. `relative` schuift het element visueel, maar laat de ruimte in de tekstvolgorde gereserveerd — het volgende element schuift dus niet op. Bij `absolute` is dat anders: dan wordt de oude plek wél opgevuld.
+Rechtsboven in het voorbeeld, buiten de kaart. Een element met `position: absolute` meet vanaf de dichtstbijzijnde ouder die zelf een `position` heeft. Zonder `relative` op `.kaart` is er zo'n ouder niet, en dan meet de badge vanaf de pagina.
 
 </details>
 

@@ -94,7 +94,17 @@ CSS-eigenschappen met een koppelteken schrijf je in JavaScript als **camelCase**
 
 ## Predict
 
-Bekijk de startcode in de editor. Beantwoord de vraag **voordat** je op Run klikt.
+Dit is de startcode van het oefenveld. Beantwoord de vraag **voordat** je de code draait.
+
+```html
+<p id="tekst">Klik op een knop om de stijl te veranderen.</p>
+<button onclick="document.getElementById('tekst').style.color = 'red'">
+  Rood
+</button>
+<button onclick="document.getElementById('tekst').style.color = 'blue'">
+  Blauw
+</button>
+```
 
 <details>
 <summary>De twee knoppen gebruiken allebei hetzelfde id. Wat is er dan anders?</summary>
@@ -210,7 +220,7 @@ Voor terugzetten: een lege string verwijdert de inline stijl. `style.color = ''`
 
 ## Er gaat iets mis
 
-**CSS-naam met koppelteken gebruiken**
+### CSS-naam met koppelteken gebruiken
 
 ```html
 <!-- Fout: background-color bestaat niet in JavaScript -->
@@ -230,7 +240,7 @@ JavaScript fout: Uncaught SyntaxError: Invalid left-hand side in assignment
 
 JavaScript leest het koppelteken als een min-teken: `style.background` min `color`. Aan een min-som kun je niets toekennen, en dat bedoelt de melding. Schrijf CSS-eigenschappen altijd in camelCase als je ze via `.style` instelt.
 
-**Een waarde die CSS niet kent**
+### Een waarde die CSS niet kent
 
 ```html
 <button onclick="document.getElementById('tekst').style.color = 'blauw'">Blauw</button>

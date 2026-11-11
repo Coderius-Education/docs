@@ -1,0 +1,73 @@
+/* Het icoon van een werkvorm: een lijntekening in de kleur van de tekst
+   eromheen, zo hoog als een regel. */
+.icoon {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+  vertical-align: -0.2em;
+}
+
+.legenda {
+  display: table;
+  width: 100%;
+}
+
+.legenda th,
+.legenda td {
+  vertical-align: top;
+  text-align: left;
+}
+
+/* De literatuur is waar de tabel om gaat: die kolom krijgt de ruimte. */
+.legenda th:last-child,
+.legenda td:last-child {
+  width: 45%;
+}
+
+.naam {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* Op een telefoon past de tabel niet naast elkaar: de pagina schoof 96
+   pixels zijwaarts. Daar schuift de tabel zelf, zoals elke tabel van Infima,
+   en mag de naam van een onderdeel afbreken. */
+@media (max-width: 996px) {
+  .legenda {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .naam {
+    white-space: normal;
+  }
+}
+
+.naam .icoon {
+  margin-right: 0.5rem;
+  color: var(--ifm-color-primary);
+}
+
+.tips {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+/* De paper achter een tip: auteurs en jaar, op een eigen regel. */
+.bron {
+  display: block;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.875rem;
+}
+
+/* De werkvormen van één les op een rij. */
+.rij {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  color: var(--ifm-color-primary);
+}
+
+.vak {
+  display: inline-flex;
+}

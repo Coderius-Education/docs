@@ -91,7 +91,7 @@ export const makeJs = `// Schrijf hier je code
 
 Tot nu toe koppelde je gedrag aan een knop met `onclick` in de HTML. Vanaf deze les doe je dat vanuit JavaScript, met **`addEventListener`** — dan blijven HTML en gedrag gescheiden, en kun je op veel meer reageren dan alleen klikken.
 
-## Stap 1: een functie maken
+## Een functie maken
 
 Dit ken je al uit [De script-tag](site:web/docs/js-basics/script-tag):
 
@@ -101,7 +101,7 @@ function zegHoi() {
 }
 ```
 
-## Stap 2: de functie aan een event koppelen
+## De functie aan een event koppelen
 
 `addEventListener` zet een luisteraar op een element. De drie onderdelen:
 
@@ -116,7 +116,7 @@ document.getElementById('knop').addEventListener('click', zegHoi);
 De functie geef je mee **zonder haakjes**: je noemt zijn naam, zoals je iemand een telefoonnummer geeft. De browser "belt" hem pas bij het event.
 
 :::note[Naamloze functies in andermans code]
-Op internet zie je vaak een functie zonder naam die rechtstreeks in de listener geschreven staat (`addEventListener('click', function() { ... })`). Dat werkt, maar in deze lessen krijgt elke functie een naam: dat leest makkelijker, en je kunt dezelfde functie dan op meer plekken gebruiken.
+Op internet zie je vaak een functie zonder naam, rechtstreeks in de listener: `addEventListener('click', function() { ... })`. Dat werkt, maar in deze lessen krijgt elke functie een naam: dat leest makkelijker, en je kunt hem vaker gebruiken.
 :::
 
 ## Welke events bestaan er?
@@ -130,12 +130,30 @@ Op internet zie je vaak een functie zonder naam die rechtstreeks in de listener 
 | `'keydown'` | Toets wordt ingedrukt |
 
 :::tip[onclick of addEventListener?]
-Voor één knop met één actie is `onclick` in de HTML prima — daarom gebruikten de vorige lessen hem. `addEventListener` kan meer: meerdere listeners op hetzelfde element, andere events dan klikken, en al je gedrag bij elkaar in script.js. Vanaf deze les is het de standaard.
+Voor één knop met één actie is `onclick` prima; daarom stond hij in de vorige lessen. `addEventListener` kan meer: meer listeners op één element, andere events dan klikken, en al je gedrag in script.js. Vanaf nu is het de standaard.
 :::
 
 ## Predict
 
-Bekijk de startcode in het script.js-tabblad. Beantwoord de vraag **voordat** je op Run klikt.
+Dit is de startcode van het oefenveld: een knop en een `<p>` in de HTML, en dit in script.js. Beantwoord de vraag **voordat** je de code draait.
+
+```html
+<button id="knop">Beweeg je muis</button>
+<p id="status">Wachten op een event...</p>
+```
+
+```js
+function muisErop() {
+  document.getElementById('status').textContent = 'Muis erop.';
+}
+
+function muisWeg() {
+  document.getElementById('status').textContent = 'Muis weg.';
+}
+
+document.getElementById('knop').addEventListener('mouseover', muisErop);
+document.getElementById('knop').addEventListener('mouseout', muisWeg);
+```
 
 <details>
 <summary>Wat zie je als je de muis op de knop zet, en wat als je hem weer wegbeweegt?</summary>
@@ -195,7 +213,7 @@ De muis-listeners blijven ook werken: elke listener reageert op zijn eigen event
 
 ## Opdracht 2: Klik-teller
 
-Breid je klik-functie uit tot een teller: bij elke klik komt er 1 bij, en de `<p id="teller">` toont "Aantal klikken: " met het aantal.
+Schrijf een functie `telKlik` die de klikken telt: bij elke klik komt er 1 bij, en de `<p id="teller">` toont "Aantal klikken: " met het aantal. Koppel hem aan het `'click'`-event van de knop.
 
 <CodeEditor
   initialHtml={startHtml}

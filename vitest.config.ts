@@ -20,6 +20,9 @@ export default defineConfig({
       // data van zijn plugin; de test vervangt ze met vi.mock.
       '@docusaurus/Link': '@docusaurus/core/lib/client/exports/Link.js',
       '@docusaurus/useGlobalData': '@docusaurus/core/lib/client/exports/useGlobalData.js',
+      // LesTabs (packages/shared/components/LesTabs) volgt het adres met
+      // useLocation; de test vervangt de router met vi.mock.
+      '@docusaurus/router': '@docusaurus/core/lib/client/exports/router.js',
     },
   },
   test: {

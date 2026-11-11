@@ -87,11 +87,11 @@ Je maakt een bestand `script.js` en koppelt dat in de `<head>` met het `defer`-a
 
 `defer` betekent: laad het script, maar voer het pas uit als de volledige HTML geladen is. Hetzelfde effect als de `<script>`-tag onderaan de body, maar netter in de `<head>`.
 
-In de editor hieronder schrijf je de JavaScript-code in het **script.js-tabblad**.
+In het oefenveld van deze les staat de JavaScript in **script.js**, naast index.html en style.css.
 
 ## De console: een kijkglas op je code
 
-**`console.log()`** toont een bericht in de **console**: een paneel dat bezoekers niet zien, maar jij als programmeur wel. In de editor is dat het consolepanel rechtsonder; in een gewone browser open je hem met **F12** → tabblad "Console".
+**`console.log()`** toont een bericht in de **console**: een paneel dat bezoekers niet zien, maar jij als programmeur wel. In het oefenveld staat hij onder het voorbeeld; in een gewone browser open je hem met **F12** → tabblad "Console".
 
 ```js
 console.log('Knop is geklikt.');
@@ -102,12 +102,24 @@ Je gebruikt `console.log` vooral om te **debuggen** (fouten opsporen): zet hem o
 
 ## Predict
 
-Bekijk de startcode in beide tabbladen. Beantwoord de vraag **voordat** je op Run klikt.
+Dit is de startcode van het oefenveld: de knop in index.html en de functie in script.js. Beantwoord de vraag **voordat** je de code draait.
+
+```html
+<p id="bericht">Klik op de knop.</p>
+<button onclick="verander()">Klik mij</button>
+```
+
+```js
+function verander() {
+  document.getElementById('bericht').textContent = 'Geklikt via script.js.';
+  console.log('De knop is geklikt.');
+}
+```
 
 <details>
-<summary>Wat verschijnt er in het consolepanel na één klik op de knop?</summary>
+<summary>Wat verschijnt er in de console na één klik op de knop?</summary>
 
-Eén regel: `De knop is geklikt.` De functie doet twee dingen — de paginatekst veranderen (zichtbaar in de preview) en een bericht loggen (zichtbaar in de console).
+Eén regel: `De knop is geklikt.` De functie doet twee dingen — de paginatekst veranderen (zichtbaar in het voorbeeld) en een bericht loggen (zichtbaar in de console).
 
 </details>
 
@@ -125,7 +137,7 @@ Eén regel: `De knop is geklikt.` De functie doet twee dingen — de paginatekst
 
 ## Opdracht 1: Wis-knop
 
-Voeg een knop "Wis" toe die de tekst in de `<p>` leegmaakt én `Gewist.` in de console logt. Schrijf de functie in het script.js-tabblad.
+Voeg een knop "Wis" toe die de tekst in de `<p>` leegmaakt én `Gewist.` in de console logt. Schrijf de functie in script.js.
 
 <CodeEditor
   initialHtml={startHtml}

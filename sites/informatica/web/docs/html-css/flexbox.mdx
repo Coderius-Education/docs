@@ -77,10 +77,6 @@ export const makeCss = `/* Schrijf hier je stijl */
 
 ## Theorie
 
-:::info[Wat is `rem`?]
-In de voorbeelden hieronder staan groottes als `1.5rem`. Dat betekent "anderhalf keer de basisgrootte van de pagina". Je hoeft er nu niets mee te doen; het hele verhaal over `px`, `rem`, `em` en `%` staat in [Eenheden in CSS](site:web/docs/html-css/eenheden).
-:::
-
 Standaard staan HTML-elementen als blokken **onder elkaar**. Met `display: flex` op een container zet je de elementen **naast elkaar**:
 
 ```css
@@ -102,7 +98,16 @@ Alle directe kinderen van de container worden dan **flex-items**.
 
 ## Predict
 
-Wat denk je dat er gebeurt als je `flex-direction: column` toevoegt aan de container?
+Drie items staan in een container met deze CSS. Wat denk je dat er gebeurt als je `flex-direction: column` toevoegt?
+
+```css
+.container {
+  display: flex;
+  gap: 10px;
+  background-color: #eee;
+  padding: 10px;
+}
+```
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
@@ -112,6 +117,8 @@ De items komen **onder elkaar** te staan, in plaats van naast elkaar. `column` v
 </details>
 
 ## Probeer en onderzoek
+
+In de CSS staat `1.5rem`: anderhalf keer de basisgrootte van de pagina. Meer daarover in [Eenheden in CSS](site:web/docs/html-css/eenheden).
 
 <CodeEditor
   initialHtml={startHtml}
@@ -205,13 +212,9 @@ Geef `.topbar` de eigenschappen `display: flex;`, `justify-content: space-betwee
 }
 ```
 
-In [Semantische HTML](site:web/docs/html-css/semantische-html) leer je hoe je dit nog beter kunt schrijven met `<header>` en `<nav>` in plaats van `<div>`.
+In [Semantische HTML](site:web/docs/html-css/semantische-html) leer je dat HTML voor deze rollen eigen tags heeft: `<header>` en `<nav>`. Die werken hetzelfde als `<div>`, maar vertellen ook *wat* een stuk pagina is. Dat is goed voor screenreaders en zoekmachines.
 
 </details>
-
-:::tip[Semantische HTML]
-We gebruikten hierboven `<div class="topbar">` en `<div class="menu">`. In [Semantische HTML](site:web/docs/html-css/semantische-html) leer je dat HTML speciale tags heeft voor deze rollen: `<header>` en `<nav>`. Die werken hetzelfde als `<div>`, maar vertellen ook *wat* een stuk pagina is — goed voor screenreaders en zoekmachines.
-:::
 
 ## Er gaat iets mis
 

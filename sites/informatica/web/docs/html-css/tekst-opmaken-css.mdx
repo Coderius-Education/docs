@@ -63,11 +63,11 @@ export const makeCss = `/* Schrijf hier je stijl */
 
 ## Wat ga je leren?
 
-CSS bepaalt hoe je HTML eruitziet. Je past hier de kleur, de grootte en het lettertype van tekst aan, en gebruikt voor het eerst de **style.css**-tab.
+CSS bepaalt hoe je HTML eruitziet. Je past hier de kleur, de grootte en het lettertype van tekst aan, en schrijft voor het eerst in het bestand **style.css**.
 
 ## Theorie
 
-CSS staat voor **Cascading Style Sheets**. Met CSS bepaal je hoe HTML eruitziet: kleuren, lettertypen, groottes en meer.
+CSS staat voor **Cascading Style Sheets**: kleuren, lettertypen, groottes en meer.
 
 Je schrijft CSS in een apart bestand (`style.css`) en koppelt het aan je HTML met een `<link>` tag in de `<head>`:
 
@@ -78,6 +78,8 @@ Je schrijft CSS in een apart bestand (`style.css`) en koppelt het aan je HTML me
 :::note[Let op]
 `<link>` is **geen** klikbare link voor de bezoeker — het koppelt alleen je CSS-bestand aan de pagina. Klikbare links (waar je echt naartoe kunt) leer je in [Pagina's koppelen](site:web/docs/html-css/paginas-koppelen).
 :::
+
+### Selector, eigenschap en waarde
 
 Een CSS-regel ziet er zo uit:
 
@@ -117,7 +119,14 @@ h1 {
 
 ## Predict
 
-Wat denk je dat er verandert als je `color: darkblue` verwijdert uit de CSS?
+Wat denk je dat er verandert als je `color: darkblue` verwijdert uit deze CSS?
+
+```css
+h1 {
+  color: darkblue;
+  font-size: 2rem;
+}
+```
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
@@ -128,7 +137,7 @@ De kop krijgt zijn standaardkleur terug — in de meeste browsers is dat zwart. 
 
 ## Probeer en onderzoek
 
-Let op: de CSS schrijf je in de **style.css** tab.
+Let op: de CSS schrijf je in **style.css**. Klik in het oefenveld op die naam, naast index.html.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -150,7 +159,7 @@ Let op: de CSS schrijf je in de **style.css** tab.
 <details>
 <summary>Tip</summary>
 
-Pas de waarden aan in de **style.css** tab. Verander `color:` bij `h1` en `font-size:` bij `p`.
+Pas de waarden aan in **style.css**. Verander `color:` bij `h1` en `font-size:` bij `p`.
 
 </details>
 
@@ -185,7 +194,7 @@ p {
 <details>
 <summary>Tip</summary>
 
-Je navigeert naar de **style.css** tab en selecteert het element met de HTML-tag naam (bijv. `h1` en `p`).
+Ga naar **style.css** en selecteer het element met de naam van zijn HTML-tag (bijv. `h1` en `p`).
 
 </details>
 
@@ -216,7 +225,7 @@ p {
 
 **`<link>` tag vergeten**
 
-Schrijf je CSS maar vergeet je de `<link>`-tag in de HTML, dan verandert er niets in de preview. De browser weet dan niet dat dat bestand bestaat en laadt het niet.
+Schrijf je CSS maar vergeet je de `<link>`-tag in de HTML, dan verandert er niets in het voorbeeld. De browser weet dan niet dat dat bestand bestaat en laadt het niet.
 
 Controleer altijd of je dit in de `<head>` hebt staan:
 

@@ -60,7 +60,7 @@ Een klikbare link maak je met de `<a>`-tag. Je ziet ook hoe je hem in een nieuw 
 
 ## Theorie
 
-Een link maak je met de `<a>` tag. Het `href` attribuut bevat het webadres:
+Het `href` attribuut van de `<a>` tag bevat het webadres:
 
 ```html
 <a href="https://www.wikipedia.org">Ga naar Wikipedia</a>
@@ -76,10 +76,6 @@ Voeg `target="_blank"` toe om de link in een nieuw tabblad te openen:
 <a href="https://www.wikipedia.org" target="_blank">Wikipedia (nieuw tabblad)</a>
 ```
 
-:::info
-In de preview hieronder werken links: een link zonder `target` opent in het voorbeeldvenster zelf, een link mét `target="_blank"` opent een echt nieuw tabblad. Heb je in het voorbeeld een link gevolgd, dan verschijnt erboven de knop **Terug naar je pagina**; je code staat nog in de editor. Sommige sites weigeren zich in een klein venster te laten tonen; dan blijft het voorbeeld leeg en helpt `target="_blank"` juist.
-:::
-
 ### En knoppen?
 
 Naast links zie je op websites vaak **knoppen** — die maak je met de `<button>` tag. Een knop alleen doet niets, je hebt JavaScript nodig om iets te laten gebeuren bij een klik:
@@ -92,17 +88,31 @@ In de **JavaScript-cursus** leer je hoe je een knop interactief maakt. Voor nu: 
 
 ## Predict
 
-Wat is het verschil tussen een link met en zonder `target="_blank"`?
+Dit zijn de twee links uit het oefenveld. Je klikt eerst op de ene en dan op de andere. Bij welke link verdwijnt je eigen pagina?
+
+```html
+<p>
+  Bezoek <a href="https://www.wikipedia.org">Wikipedia</a>
+  voor meer informatie.
+</p>
+
+<p>
+  <a href="https://www.google.com" target="_blank">
+    Open Google in een nieuw tabblad
+  </a>
+</p>
+```
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
 
-- **Zonder** `target="_blank"`: de pagina opent in **hetzelfde** venster/tabblad. De huidige pagina verdwijnt.
-- **Met** `target="_blank"`: de pagina opent in een **nieuw** tabblad. De huidige pagina blijft open.
+Bij de link naar Wikipedia. Die heeft geen `target`, dus de nieuwe pagina komt op de plek van de pagina waar je was. De link naar Google heeft `target="_blank"`: Google opent in een nieuw tabblad, en je eigen pagina blijft staan.
 
 </details>
 
 ## Probeer en onderzoek
+
+In het voorbeeld werken links: een link zonder `target` opent in het voorbeeldvenster zelf, een link mét `target="_blank"` opent een echt nieuw tabblad. Heb je in het voorbeeld een link gevolgd, dan verschijnt erboven de knop **Terug naar je pagina**; je code staat er nog. Sommige sites weigeren zich in een klein venster te laten tonen; dan blijft het voorbeeld leeg en helpt `target="_blank"` juist.
 
 <CodeEditor
   initialHtml={startHtml}

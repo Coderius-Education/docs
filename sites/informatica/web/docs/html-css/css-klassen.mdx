@@ -66,13 +66,7 @@ Met een **klasse** geef je één specifiek element een eigen stijl in plaats van
 
 ## Theorie
 
-:::info[Wat is `rem`?]
-In de voorbeelden hieronder staan groottes als `1.5rem`. Dat betekent "anderhalf keer de basisgrootte van de pagina". Je hoeft er nu niets mee te doen; het hele verhaal over `px`, `rem`, `em` en `%` staat in [Eenheden in CSS](site:web/docs/html-css/eenheden).
-:::
-
-Tot nu toe heb je elementen gestijld via hun tagnaam (`h1`, `p`). Dat geldt dan voor **alle** `<h1>` of `<p>` elementen. Met een **klasse** kun je één specifiek element een stijl geven.
-
-Je geeft een element een klasse met het `class` attribuut:
+Tot nu toe heb je elementen gestijld via hun tagnaam (`h1`, `p`). Dat geldt dan voor **alle** `<h1>` of `<p>` elementen. Een **klasse** zet je op een element met het `class` attribuut:
 
 ```html
 <p class="rood">Deze paragraaf is rood.</p>
@@ -92,10 +86,8 @@ In CSS selecteer je een klasse met een **punt** voor de naam:
 Een element kan meerdere klassen hebben, gescheiden door een spatie:
 
 ```html
-<p class="rood groot">Rood én groot.</p>
+<p class="rood groot">Twee klassen op één element.</p>
 ```
-
-Beide klassen worden dan tegelijk toegepast.
 
 ### En `id`? — uniek vs herbruikbaar
 
@@ -121,12 +113,24 @@ Vuistregel: gebruik `class` voor stijlen die je vaker wilt hergebruiken, en `id`
 
 ## Predict
 
-Wat zie je als je `class="rood groot"` op een element zet, terwijl `.rood` en `.groot` beide in de CSS staan?
+Dit is de CSS van het oefenveld. In de HTML staat een paragraaf met `class="rood groot"`. Hoe ziet die eruit?
+
+```css
+.rood {
+  color: red;
+}
+
+.groot {
+  font-size: 1.8rem;
+}
+```
+
+`1.8rem` is bijna twee keer de basisgrootte van de pagina; meer daarover in [Eenheden in CSS](site:web/docs/html-css/eenheden).
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
 
-Beide stijlen worden **gecombineerd**: de tekst wordt zowel rood als groot. CSS past alle klassen toe die op een element staan.
+Rood én groot. De browser past elke klasse toe die in het `class`-attribuut staat, dus de regels van `.rood` en `.groot` gelden allebei.
 
 </details>
 

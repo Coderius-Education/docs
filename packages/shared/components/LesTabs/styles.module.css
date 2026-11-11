@@ -1,0 +1,340 @@
+/* Les-tabbladen. Op de wortel en de panelen staat bewust geen
+   transform, filter, contain, overflow, z-index of animatie: elk daarvan
+   maakt een eigen laag, en dan valt een oefenveld dat op Groter staat
+   (position: fixed) onder de navbar of wordt het afgesneden.
+   les-tabs.test.ts bewaakt dat. */
+
+/* Wie verderop in een lang paneel een ander tabblad kiest, komt weer bovenaan
+   de tabbladen uit, onder de navbar. */
+.wortel {
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 0.5rem);
+}
+
+.tablist {
+  position: sticky;
+  top: var(--ifm-navbar-height);
+  z-index: 5;
+  display: flex;
+  gap: 0.125rem;
+  margin: 0 0 1.25rem;
+  padding: 0.5rem 0 0;
+  overflow-x: auto;
+  background: var(--ifm-background-color);
+  border-bottom: 2px solid var(--ifm-color-emphasis-200);
+}
+
+.tab {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 -2px;
+  /* Krap, met opzet: met het icoon erbij moeten acht of negen tabbladen op
+     één regel passen. Een tweede regel kost elk paneel veertig pixels. */
+  padding: 0.35rem 0.5rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 6px 6px 0 0;
+  background: transparent;
+  color: var(--ifm-color-emphasis-700);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Het icoon van de werkvorm, links van het label. */
+.tabIcoon {
+  width: 1em;
+  height: 1em;
+  margin-right: 0.25rem;
+}
+
+.tab:hover {
+  color: var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.tab[aria-selected="true"] {
+  color: var(--ifm-color-primary);
+  border-bottom-color: var(--ifm-color-primary);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: -2px;
+}
+
+.paneel[hidden] {
+  display: none;
+}
+
+/* Een les met tien tabbladen past niet op één rij. Op een breed scherm loopt
+   de rij door op een tweede regel, zodat geen tabblad buiten beeld valt; op
+   een telefoon zouden dat vier regels worden, en daar schuift de rij. */
+@media (min-width: 997px) {
+  .tablist {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+
+/* Het label staat voluit op het tabblad: de kop in het paneel is dan alleen
+   nog voor een schermlezer en als doel van een link. Een paneel heeft één
+   eigen `##`; hij staat niet altijd vooraan, want het leerdoel of een korte
+   inleiding kan ervoor staan.
+
+   `overflow: hidden` hoort erbij: `clip-path` verbergt de tekst, maar hij
+   telt dan nog mee voor de breedte van de pagina. Op een telefoon schoof een
+   scherm met een lange kop daardoor tot 236 pixels zijwaarts. De kop is geen
+   ouder van een oefenveld, dus hier mag het. */
+.kopOpTab > h2 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Het leerdoel van de les, bovenaan het eerste tabblad: het icoon en de zin.
+   De kop "Wat ga je leren?" zit erin, verborgen zoals de kop op een tabblad. */
+.leerdoel {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.leerdoelIcoon {
+  color: var(--ifm-color-primary);
+}
+
+.leerdoelTekst > h2 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.leerdoelTekst > p {
+  margin: 0;
+}
+
+/* De stappen binnen een tabblad: elke `###` van een lange sectie. Een rij
+   genummerde knoppen, die niet meeschuift: het tabblad erboven doet dat al. */
+.stappen {
+  margin-top: 1rem;
+}
+
+.staplist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+}
+
+/* Op een telefoon stonden zes stappen onder elkaar: 240 pixels knoppen boven
+   de tekst. Daar schuift de rij, net als de rij tabbladen. */
+@media (max-width: 996px) {
+  .staplist {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+
+  .stap {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
+.stap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem 0.3rem 0.35rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ifm-color-emphasis-800);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.stap:hover {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+.stap[aria-selected="true"] {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+}
+
+.stap:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+.stapNummer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.stap[aria-selected="true"] .stapNummer {
+  background: var(--coderius-on-primary);
+  color: var(--ifm-color-primary);
+}
+
+/* De kop van een stap staat voluit op zijn knop. Een stap in het tabblad
+   Uitleg is een hele `##`-sectie, en heeft dus een h2. */
+.kopOpStap > h2,
+.kopOpStap > h3 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Een paneel begint bovenaan: de kop van een sectie heeft daar niet de
+   witruimte nodig die hij midden in een lange pagina had. */
+.paneel > :first-child {
+  margin-top: 0;
+}
+
+/* In een tabblad telt elke pixel: het paneel moet op het scherm passen. De
+   kop van een sectie is daar zo groot als een tussenkop, een uitklapblok is
+   lager, en een tip en een antwoord die dicht zijn staan op een breed scherm
+   naast elkaar in plaats van onder elkaar. */
+.paneel > h2 {
+  --ifm-h2-font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.paneel > details,
+.paneel .stappen details {
+  --ifm-alert-padding-vertical: 0.55rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Niet op Groter of volledig scherm (`data-groot` op het veld): daar vult het
+   veld het scherm, en met deze marge bleef er boven en onder een strook van
+   de les zichtbaar. */
+.paneel [data-zaad]:not([data-groot]) {
+  margin: 1rem 0;
+}
+
+@media (min-width: 997px) {
+  .paneel > details:not([open]):has(+ details),
+  .paneel > details + details:not([open]) {
+    display: inline-block;
+    width: calc(50% - 0.5rem);
+    vertical-align: top;
+  }
+
+  /* De ruimte tussen de twee; de spatie in de HTML telt ook mee. */
+  .paneel > details:not([open]):has(+ details) {
+    margin-right: 0.5rem;
+  }
+}
+
+/* Een link naar een kop in het paneel: de kop komt onder de navbar én de rij
+   tabbladen uit, niet erachter. */
+.paneel [id] {
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 6.5rem);
+}
+
+.verder {
+  margin: 0.5rem 0 0;
+  text-align: right;
+}
+
+/* De inhoudsopgave rechts vervalt op een pagina met tabbladen, en de les
+   krijgt die breedte erbij. Docusaurus zet de kolom op 75% met !important. */
+:global(html:has([data-les-tabs]) .col--3:has(> .theme-doc-toc-desktop)),
+:global(html:has([data-les-tabs]) .theme-doc-toc-mobile) {
+  display: none;
+}
+
+/* Docusaurus zet zijn regel (75%, met !important) in de cascade layer
+   docusaurus.theme-classic. Bij !important wint de layer die het eerst is
+   aangemaakt, hoe specifiek een latere regel ook is; daarom staat deze regel
+   in de eerste layer, die van Infima. Of de kolom breed is, meet alleen een
+   browser (scripts/meet-les-tabs.mjs meldt de breedte). */
+@layer docusaurus.infima {
+  :global(html:has([data-les-tabs]) [class*="docItemCol"]) {
+    max-width: 100% !important;
+  }
+}
+
+/* Elke pixel boven de tabbladen gaat van het tabblad af. Op een breed scherm
+   staat de lessenlijst links: het kruimelpad zegt daar niets nieuws en
+   vervalt, en de titel is zo groot als een kop, niet als een omslag. Op een
+   telefoon is de lessenlijst dicht en blijft het kruimelpad staan. */
+@media (min-width: 997px) {
+  :global(html:has([data-les-tabs]) .theme-doc-breadcrumbs) {
+    display: none;
+  }
+
+  :global(html:has([data-les-tabs]) .theme-doc-markdown > header > h1) {
+    --ifm-h1-font-size: 1.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .tablist {
+    margin-bottom: 0.75rem;
+    padding-top: 0;
+  }
+}
+
+/* Op papier staan alle onderdelen onder elkaar. */
+@media print {
+  .tablist,
+  .staplist,
+  .verder {
+    display: none;
+  }
+
+  .paneel[hidden] {
+    display: block;
+  }
+
+  .bovenStappen[hidden] {
+    display: block;
+  }
+
+  .kopOpTab > h2,
+  .kopOpStap > h2,
+  .kopOpStap > h3,
+  .leerdoelTekst > h2 {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: revert;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+  }
+}

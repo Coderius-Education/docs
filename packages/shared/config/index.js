@@ -27,7 +27,9 @@ const sidebarManifest = require('../plugins/sidebar-manifest');
 const klasPlugin = require('../plugins/klas');
 const oudeOpslagPlugin = require('../plugins/oude-opslag');
 const leerdoelenPlugin = require('../plugins/leerdoelen');
+const { remarkLesTabs } = require('../plugins/les-tabs');
 const begrippenPlugin = require('../plugins/begrippen');
+const werkvormenPlugin = require('../plugins/werkvormen');
 const { begrippenBestand } = require('../begrippen');
 const { controleerRegels } = require('../oude-opslag');
 const { gebruiktPyodide, pyodideStaticDir } = require('./pyodide-runtime');
@@ -189,6 +191,24 @@ function metBegrippen(presets, siteDir) {
   });
 }
 
+// Les-tabbladen (plugins/les-tabs.js): met `lesTabs: true` wikkelt een
+// remark-stap elke `##`-sectie van een les in een tabblad. Helemaal achteraan
+// in de docs van het classic preset, ook na de begrippen: die stap slaat een
+// component over, en zou in een paneel dus geen begrip meer markeren.
+function metLesTabs(presets, aan) {
+  if (!aan) return presets;
+  return presets.map((entry) => {
+    if (!Array.isArray(entry)) return entry;
+    const [name, opts] = entry;
+    if ((name !== 'classic' && !/preset-classic$/.test(name)) || !opts?.docs) return entry;
+    const docs = {
+      ...opts.docs,
+      remarkPlugins: [...(opts.docs.remarkPlugins || []), remarkLesTabs],
+    };
+    return [name, { ...opts, docs }];
+  });
+}
+
 /**
  * Docusaurus Faster, op twee onderdelen na:
  *  - swcHtmlMinimizer: die laat aanhalingstekens weg (`href=/python/…`), en
@@ -265,6 +285,7 @@ function createConfig(course = {}) {
     matomoSiteId,
     omleidingen,
     oudeOpslag,
+    lesTabs,
     siteId,
     ...rest
   } = site;
@@ -333,7 +354,11 @@ function createConfig(course = {}) {
       themeConfig.prism[key] = prismThemes[value];
     }
   }
-  const linkbaar = withSiteLinks(metBegrippen(presets, process.cwd()), plugins, registry?.id);
+  const linkbaar = withSiteLinks(
+    metLesTabs(metBegrippen(presets, process.cwd()), lesTabs),
+    plugins,
+    registry?.id,
+  );
   const heeftBegrippen = fs.existsSync(begrippenBestand(process.cwd()));
   const others = otherSites(registry);
   const merk = merkVoorSite(registry);
@@ -464,6 +489,9 @@ function createConfig(course = {}) {
       ...(oudeOpslag ? [[oudeOpslagPlugin, { siteId: registry?.id, regels: oudeOpslag }]] : []),
       ...(heeftLeerdoelen ? [[leerdoelenPlugin, { siteId: registry?.id }]] : []),
       ...(heeftBegrippen ? [begrippenPlugin] : []),
+      // Bij les-tabbladen: per les de werkvormen, voor de docentenhandleiding
+      // (plugins/werkvormen.js).
+      ...(lesTabs ? [werkvormenPlugin] : []),
       // De Pyodide van de site in een eigen cache (plugins/pyodide-cache.js),
       // behalve waar een PWA dat al doet (play).
       ...(gebruiktPyodide(process.cwd()) && !heeftPwa(plugins, process.cwd())

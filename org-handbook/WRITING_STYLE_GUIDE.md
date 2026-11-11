@@ -27,9 +27,24 @@ sidebar_position: <getal>
 ```
 
 - `sidebar_position` bepaalt de volgorde in de sidebar.
-- De rechter inhoudsopgave (TOC) staat standaard aan en toont **alleen H2-koppen** (centraal ingesteld in `packages/shared/config`). Voeg dus géén `hide_table_of_contents` toe; structureer je pagina met `##`-secties zodat ze in de TOC verschijnen. Heeft een oefenveld meer breedte nodig, kies dan een gestapelde veldvorm (zoals `stacked` op de web-`CodeEditor`) in plaats van de TOC te verbergen.
+- **Een les is verdeeld in tabbladen.** Dat is sinds november 2026 de standaard; de web-cursus is de eerste. Elke `##`-sectie is een tabblad bovenaan de pagina, elke `###` in een lange sectie een stap binnen dat tabblad, en de inhoudsopgave rechts vervalt: een leerling hoeft in een les niet te scrollen. Structureer een les dus met `##` en `###`, en schrijf elk scherm volgens "Tabbladen: elk scherm staat op zichzelf" hieronder. Een cursus zet het aan met `lesTabs: true` in `createConfig` (zie de root-`CLAUDE.md`, Les-tabbladen, voor de stappen).
+- **Een cursus die nog niet is omgezet**, houdt de rechter inhoudsopgave (TOC) met **alleen H2-koppen** (centraal ingesteld in `packages/shared/config`). Voeg daar géén `hide_table_of_contents` toe; structureer je pagina met `##`-secties zodat ze in de TOC verschijnen. Heeft een oefenveld meer breedte nodig, kies dan een gestapelde veldvorm in plaats van de TOC te verbergen.
 - Cheatsheets en losse referentiepagina's mogen `displayed_sidebar: null` en `hide_pagination: true` gebruiken.
 - Gebruik `sidebar_label` alleen als de paginatitel te lang is voor de sidebar.
+
+### Tabbladen: elk scherm staat op zichzelf
+
+In een cursus met tabbladen is een tabblad of een stap alles wat de leerling op dat moment ziet. Daar volgt dit uit:
+
+- **Een scherm past op 1280×720**, zonder scrollen. Meet het na een build met `node scripts/meet-les-tabs.mjs <site>`. Past het niet, splits dan eerst (een `###` erbij maakt een stap en kost geen inhoud) en kort daarna pas in.
+- **Wijs alleen naar wat in hetzelfde scherm staat.** "Hieronder", "hierboven" en "de startcode" kloppen op een lange pagina en wijzen in tabbladen naar een ander scherm.
+- **Predict gaat over de startcode van het oefenveld**, en toont die code. De leerling voorspelt, en draait daarna in Probeer en onderzoek dezelfde code om te zien of het klopte.
+- **De uitleg verklapt het antwoord van Predict niet.** Staat het er letterlijk, haal de zin dan weg of vraag iets waarvoor de leerling moet redeneren.
+- **Het leerdoel** (`## Wat ga je leren?`, hooguit twee alinea's) krijgt geen eigen tabblad: het staat bovenaan het tabblad erna.
+- **De uitleg waar een les mee begint, wordt één tabblad met stappen.** Noem een sectie naar zijn onderwerp ("Een item ophalen"), niet "Stap 1": de stappen hebben al een nummer.
+- **Een opdracht bouwt niet voort op het veld van de vorige.** Elk veld begint met zijn eigen startcode.
+- **Noem het oefenveld en zijn onderdelen zoals ze in het veld heten** (bij web: oefenveld, voorbeeld, console), en schrijf geen "rechts" of "rechtsonder": op een telefoon staat het voorbeeld onder de code.
+- **De rij tabbladen staat op één regel.** Dat lukt met hooguit zeven of acht tabbladen.
 
 Voor MDX-pagina's met runnable code, importeer bovenaan:
 
@@ -291,8 +306,12 @@ Voor pagina's onder `jouw_project/` (of vergelijkbaar):
 ## 15. Voor de docent
 
 - **Elke site heeft een Docentenhandleiding** op `/docenten` (`src/pages/docenten.mdx`). De "Docenten"-link in de navbar wordt centraal toegevoegd door `createConfig` — niets per site instellen.
-- Standaardstructuur: `## Wat is dit?`, `## Technische randvoorwaarden`, `## Didactische aanpak (PRIMM)`, `## Klassikaal gebruik & differentiatie`, `## Leerlijn`, `## Feedback & bijdragen`. Zie [web/src/pages/docenten.mdx](../sites/informatica/web/src/pages/docenten.mdx) als referentie.
-- Diepere docent-onderwerpen mogen in een aparte `voor-de-docent/`-docsmap; laat `/docenten` daar dan naartoe linken (zoals play en embedded).
+- **De handleiding schrijft niet voor hoe iemand lesgeeft.** Hij laat zien waar de opbouw van de lessen op steunt, en is verder kort: een halve pagina. Lesadvies ("bespreek Predict plenair"), een beschrijving van elke knop en een tabel met alle lessen horen er niet in.
+- **Wat nodig is om het materiaal te gebruiken, staat in het materiaal zelf.** Het oefenveld legt zijn knoppen en zijn opslag uit, een nakijker zijn eigen stappen, de les zijn opbouw. Mis je zoiets, zet het dan daar, niet in de handleiding.
+- Standaardstructuur: twee of drie zinnen over wat de cursus is; `## Waar de lessen op steunen` met `<Werkvormen />` (per onderdeel van een les de tip van vakdidactiek en de paper); `## Wat je vooraf wilt weten` (hooguit drie regels: installatie, waar werk blijft, de volgorde van de lessen); `## Beoordelen` (links naar leerdoelen, eindopdracht en nakijker); `## Feedback`. Zie [web/src/pages/docenten.mdx](../sites/informatica/web/src/pages/docenten.mdx) als referentie.
+- Een bron noem je alleen als vakdidactiek hem uitlegt: de tabel haalt de tips en de papers uit `packages/shared/werkvormen/werkvormen.json`.
+- Een cursus die nog geen tabbladen heeft, houdt zijn bestaande handleiding tot hij wordt omgezet: `<Werkvormen />` komt met `lesTabs`.
+- Naslag voor de docent die niet over lesgeven gaat (een installatie, een beoordelingsmodel) mag in een aparte `voor-de-docent/`-docsmap; laat `/docenten` daar dan naartoe linken (zoals play en embedded).
 - Andere toon: collegiaal, korter, geen "je leert" — wel "je leerlingen".
 - Voor docent-pagina's mag `hide_table_of_contents` weggelaten worden.
 
@@ -310,6 +329,7 @@ Voor pagina's onder `jouw_project/` (of vergelijkbaar):
 - [ ] Geen holle superlatieven of formulaire openers ("In dit hoofdstuk…", "Laten we…").
 - [ ] Niet alles vet; varieer de openingswoorden van zinnen en bullets.
 - [ ] Voor elk gebruikt concept dat elders is uitgelegd: een `:::info`-verwijzing.
+- [ ] In een cursus met tabbladen: elk scherm past op 1280×720 en wijst alleen naar wat erop staat (§2).
 - [ ] `pnpm tekst` gedraaid en de meldingen over jouw pagina opgelost of gemarkeerd (zie §17).
 
 ---

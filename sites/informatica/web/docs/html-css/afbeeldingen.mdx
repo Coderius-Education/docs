@@ -61,18 +61,12 @@ Met de `<img>` tag voeg je een afbeelding toe. Dit is een **zelfsluitende tag** 
 <img src="https://..." alt="Beschrijving" width="300">
 ```
 
-De belangrijkste attributen:
-
 | Attribuut | Wat het doet |
 |---|---|
 | `src` | Het adres (URL) van de afbeelding |
 | `alt` | Alternatieve tekst als de afbeelding niet laadt, en voor slechtzienden |
-| `width` | Breedte in pixels |
+| `width` | Breedte in pixels. Stel je alleen deze in, dan past de hoogte vanzelf mee |
 | `height` | Hoogte in pixels |
-
-:::tip
-Als je alleen `width` instelt, past de hoogte automatisch mee zodat de afbeelding niet scheef staat.
-:::
 
 ### Het adres van een afbeelding vinden
 
@@ -86,7 +80,8 @@ Twijfel je of je het goede adres hebt? Plak het in de adresbalk van een nieuw ta
 
 **Let op:** bij Google Afbeeldingen zie je eerst een verkleind plaatje. Dat heeft wel een eigen adres, en het slaagt ook voor de controle hierboven, maar het is wazig en werkt vaak maar even. Klik het plaatje aan en ga naar de website waar het vandaan komt; daar klik je met de rechtermuisknop op het grote plaatje.
 
-:::tip[Een icoontje zoeken]
+### Een icoontje zoeken
+
 Zoek je een klein plaatje, zoals een huisje, een hartje of een pijl? Op [Iconify](https://icon-sets.iconify.design/) staan duizenden gratis icoontjes, met een doorzichtige achtergrond. Elk icoon heeft een naam van twee delen, zoals `mdi:home`. Daar maak je zelf het adres van:
 
 ```html
@@ -98,16 +93,23 @@ Zoek je een klein plaatje, zoals een huisje, een hartje of een pijl? Op [Iconify
 ```
 
 Van `mdi:home` wordt dus `mdi/home.svg`: de dubbele punt wordt een `/`, en achter de naam komt `.svg`. Een icoon in één kleur is zwart. Wil je een andere kleur, zet dan `?color=red` achter het adres: `https://api.iconify.design/mdi/home.svg?color=red`.
-:::
 
 ## Predict
 
-Wat denk je dat er te zien is als je een verkeerde `src` invult?
+Dit is de afbeelding uit het oefenveld. Wat denk je dat er te zien is als het adres in `src` niet klopt?
+
+```html
+<img
+  src="https://picsum.photos/id/237/300/200"
+  alt="Een hond"
+  width="300"
+>
+```
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
 
-De browser kan de afbeelding niet laden en toont in plaats daarvan de **`alt` tekst** en een gebroken-afbeelding-icoontje. Dat is precies waarvoor `alt` bedoeld is.
+De browser kan de afbeelding niet laden. Je ziet een icoontje van een kapotte afbeelding met de tekst Een hond ernaast: de **`alt`-tekst**. Daar is `alt` voor bedoeld.
 
 </details>
 
@@ -164,7 +166,7 @@ Vervang de waarde van het `src` attribuut door de nieuwe URL. Vergeet niet de `a
 <details>
 <summary>Tip</summary>
 
-Zoek plaatjes op internet en kopieer het adres zoals hierboven staat, of gebruik *picsum.photos* met een ander getal achter `/id/`. Zorg dat je 3 verschillende `<img>` tags onder elkaar plaatst in je HTML.
+Zoek plaatjes op internet en kopieer het adres zoals bij [Het adres van een afbeelding vinden](#het-adres-van-een-afbeelding-vinden) staat, of gebruik *picsum.photos* met een ander getal achter `/id/`. Zorg dat je 3 verschillende `<img>` tags onder elkaar plaatst in je HTML.
 
 </details>
 
@@ -182,7 +184,7 @@ Zoek plaatjes op internet en kopieer het adres zoals hierboven staat, of gebruik
 
 ## Er gaat iets mis
 
-**De afbeelding laadt niet**
+### De afbeelding laadt niet
 
 Je ziet de `alt` tekst en een gebroken icoontje, terwijl het adres er goed uitziet. Drie oorzaken, in deze volgorde:
 
@@ -190,11 +192,11 @@ Je ziet de `alt` tekst en een gebroken icoontje, terwijl het adres er goed uitzi
 2. Het adres begint met `http://` in plaats van `https://`. Op een beveiligde pagina probeert de browser dan zelf `https://`, en lukt dat niet, dan laat hij het plaatje weg. Zoek een ander plaatje of een andere bron.
 3. De website staat niet toe dat anderen haar plaatjes gebruiken. Dat zie je niet aan het adres; het plaatje blijft leeg. Kies dan een andere bron. Wikimedia Commons en picsum.photos staan het altijd toe.
 
-**Een geblokt vlak achter je plaatje**
+### Een geblokt vlak achter je plaatje
 
-Je zocht een plaatje met een doorzichtige achtergrond, maar op je pagina zie je er grijze en witte blokjes achter. Die blokjes zitten in het plaatje zelf: de maker heeft het patroon van "doorzichtig" erin getekend. Daar kun je in HTML niets aan doen. Kies een ander plaatje. Zoek je een icoontje, neem er dan een van [Iconify](#het-adres-van-een-afbeelding-vinden); die zijn echt doorzichtig.
+Je zocht een plaatje met een doorzichtige achtergrond, maar op je pagina zie je er grijze en witte blokjes achter. Die blokjes zitten in het plaatje zelf: de maker heeft het patroon van "doorzichtig" erin getekend. Daar kun je in HTML niets aan doen. Kies een ander plaatje. Zoek je een icoontje, neem er dan een van [Iconify](#een-icoontje-zoeken); die zijn echt doorzichtig.
 
-**`alt` weglaten**
+### `alt` weglaten
 
 ```html
 <img src="kat.jpg">
