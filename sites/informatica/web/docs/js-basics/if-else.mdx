@@ -130,22 +130,26 @@ JavaScript probeert de voorwaarden van boven naar beneden en stopt bij de eerste
 
 ## Predict
 
-Wat verschijnt er op de pagina als deze code draait?
+Dit is een deel van de startcode van het oefenveld. `score` is het getal dat je in de prompt typt. Beantwoord de vraag **voordat** je de code draait.
 
 ```js
-const leeftijd = 16;
-
-if (leeftijd >= 18) {
-  document.getElementById('uitvoer').textContent = 'Je mag stemmen.';
+if (score >= 90) {
+  cijfer = 'A';
+} else if (score >= 70) {
+  cijfer = 'B';
+} else if (score >= 50) {
+  cijfer = 'C';
 } else {
-  document.getElementById('uitvoer').textContent = 'Nog even wachten.';
+  cijfer = 'Onvoldoende';
 }
+
+document.getElementById('uitvoer').textContent = 'Score: ' + score + ' → ' + cijfer;
 ```
 
 <details>
-<summary>Welke van de twee zinnen wordt het?</summary>
+<summary>Je vult 75 in. Wat komt er op de pagina te staan?</summary>
 
-`Nog even wachten.` De voorwaarde `16 >= 18` is `false`, dus JavaScript slaat het `if`-blok over en voert het `else`-blok uit.
+`Score: 75 → B`. `75 >= 90` is `false`, dus JavaScript gaat door naar de volgende tak. `75 >= 70` is `true`: daar stopt hij, en de takken eronder komen niet meer aan de beurt.
 
 </details>
 
@@ -303,5 +307,5 @@ if (score = 10) {   // Fout: één =-teken
 
 Eén `=`-teken **kent toe** in plaats van **vergelijkt**. Deze regel zet `score` op `10` en geeft die `10` terug — en dat telt in JavaScript als `true`. Het `if`-blok draait dus altijd, wat de oorspronkelijke waarde ook was.
 
-Schrijf voor een vergelijking altijd `===` (drie tekens). De editor of een linter waarschuwt vaak voor deze fout; neem die waarschuwing serieus.
+Schrijf voor een vergelijking altijd `===` (drie tekens). Het oefenveld waarschuwt hier niet voor: de code draait zonder foutmelding. Let er dus zelf op.
 

@@ -26,8 +26,10 @@ type Knoop = {
   children?: Knoop[];
   attributes?: { name: string; value: string }[];
 };
-type Blok = { soort: 'tekst' | 'code' | 'veld' | 'tabel' | 'lijst'; tekst: string };
-type Scherm = { les: string; naam: string; blokken: Blok[] };
+// 'antwoord' is het begin van een uitklapblok: wat erna komt, ziet de leerling
+// pas als hij het opent.
+type Blok = { soort: 'tekst' | 'code' | 'veld' | 'tabel' | 'lijst' | 'antwoord'; tekst: string };
+type Scherm = { les: string; tab: string; naam: string; blokken: Blok[] };
 
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
 const DOCS = join(SITE, 'docs');
@@ -57,7 +59,10 @@ function blokken(nodes: Knoop[], uit: Blok[] = []): Blok[] {
     else if (n.type === 'list') uit.push({ soort: 'lijst', tekst: tekstVan(n) });
     else if (n.name === 'CodeEditor') uit.push({ soort: 'veld', tekst: '' });
     else if (n.name === 'LesStappen') continue;
-    else if (n.type !== 'heading' && n.children) blokken(n.children, uit);
+    else if (n.name === 'details') {
+      uit.push({ soort: 'antwoord', tekst: '' });
+      blokken(n.children ?? [], uit);
+    } else if (n.type !== 'heading' && n.children) blokken(n.children, uit);
   }
   return uit;
 }
@@ -77,17 +82,34 @@ function schermenVan(les: { naam: string; bron: string }): Scherm[] {
   return (tabs?.children ?? []).flatMap((tab) => {
     const label = eigenschap(tab, 'label') ?? '';
     const stappen = tab.children?.find((k) => k.name === 'LesStappen');
-    if (!stappen) return [{ les: les.naam, naam: label, blokken: blokken(tab.children ?? []) }];
-    return (stappen.children ?? []).map((stap) => ({
-      les: les.naam,
-      naam: `${label} › ${eigenschap(stap, 'label')}`,
-      blokken: blokken(stap.children ?? []),
-    }));
+    if (!stappen) {
+      return [{ les: les.naam, tab: label, naam: label, blokken: blokken(tab.children ?? []) }];
+    }
+    // Wat in de rij stappen geen stap is (het leerdoel), staat bij de eerste.
+    const boven = blokken((stappen.children ?? []).filter((k) => k.name !== 'LesStap'));
+    return (stappen.children ?? [])
+      .filter((k) => k.name === 'LesStap')
+      .map((stap, i) => ({
+        les: les.naam,
+        tab: label,
+        naam: `${label} › ${eigenschap(stap, 'label')}`,
+        blokken: [...(i === 0 ? boven : []), ...blokken(stap.children ?? [])],
+      }));
   });
 }
 
 const schermen = lessen.flatMap(schermenVan);
-const isTeZien = (b: Blok) => b.soort !== 'tekst';
+const isTeZien = (b: Blok) => b.soort !== 'tekst' && b.soort !== 'antwoord';
+
+/** De startcode van de oefenvelden van een les, regel voor regel. */
+function startRegels(bron: string): string[] {
+  return (
+    [...bron.matchAll(/export const start\w* = `([\s\S]*?)`;/g)]
+      // In de bron staat de code in een template literal: `\\n` is daar `\n`.
+      .flatMap((m) => m[1].replace(/\\([\\`$])/g, '$1').split('\n'))
+      .map((regel) => regel.trim())
+  );
+}
 
 describe('elk scherm van een les staat op zichzelf', () => {
   it('de lessen zijn in schermen verdeeld', () => {
@@ -119,39 +141,88 @@ describe('elk scherm van een les staat op zichzelf', () => {
     expect(fout).toEqual([]);
   });
 
-  it('wie de startcode noemt, laat hem zien: als code of in een oefenveld', () => {
+  it('wie de startcode noemt, heeft hem in beeld: in een oefenveld, of in Predict', () => {
+    // Een willekeurig codeblok is niet genoeg: loops noemde "de CSS-regel in
+    // de startcode" naast een fragment zonder CSS.
     const fout = schermen
       .filter((s) => s.blokken.some((b) => b.soort === 'tekst' && /\bstartcode\b/i.test(b.tekst)))
-      .filter((s) => !s.blokken.some((b) => b.soort === 'code' || b.soort === 'veld'))
+      .filter((s) => s.tab !== 'Predict' && !s.blokken.some((b) => b.soort === 'veld'))
       .map((s) => `${s.les} | ${s.naam}`);
     expect(fout).toEqual([]);
   });
 
-  it('de startcode in Predict is de startcode van het oefenveld', () => {
-    // De code staat er twee keer: in Predict om te lezen, en in het veld om
-    // te draaien. Verandert de startcode, dan moet Predict mee, anders
-    // voorspelt de leerling iets anders dan hij daarna draait.
+  it('Predict gaat over de startcode van het oefenveld', () => {
+    // De leerling voorspelt, en draait daarna in het veld dezelfde code om te
+    // zien of het klopte. In twaalf lessen ging Predict over een los
+    // fragment (een loop met "Ronde 0, 1, 2") en stond in het veld iets
+    // anders (de tafel van 5): er viel niets na te kijken. De code staat er
+    // nu twee keer; verandert de startcode, dan moet Predict mee.
     const fout: string[] = [];
-    let gecontroleerd = 0;
-    for (const les of lessen) {
-      const start = [...les.bron.matchAll(/export const start\w* = `([\s\S]*?)`;/g)]
-        .flatMap((m) => m[1].split('\n'))
-        .map((regel) => regel.trim());
-      for (const s of schermenVan(les).filter((s) => s.naam === 'Predict')) {
-        if (!s.blokken.some((b) => /startcode van het oefenveld/.test(b.tekst))) continue;
-        gecontroleerd++;
-        // Alleen wat vóór het antwoord staat: het antwoord mag eigen code hebben.
-        const regels = s.blokken
-          .filter((b) => b.soort === 'code')
-          .flatMap((b) => b.tekst.split('\n'))
-          .map((regel) => regel.trim())
-          .filter(Boolean);
-        for (const regel of regels)
-          if (!start.includes(regel)) fout.push(`${les.naam}: niet in de startcode: ${regel}`);
-      }
+    const predicts = schermen.filter((s) => s.tab === 'Predict');
+    for (const s of predicts) {
+      const les = lessen.find((l) => l.naam === s.les);
+      const start = startRegels(les?.bron ?? '');
+      // Alleen wat vóór het antwoord staat: dat is wat de leerling voorspelt.
+      const einde = s.blokken.findIndex((b) => b.soort === 'antwoord');
+      const regels = s.blokken
+        .slice(0, einde < 0 ? undefined : einde)
+        .filter((b) => b.soort === 'code')
+        .flatMap((b) => b.tekst.split('\n'))
+        .map((regel) => regel.trim())
+        .filter(Boolean);
+      if (regels.length === 0) fout.push(`${s.les}: Predict toont geen code`);
+      for (const regel of regels)
+        if (!start.includes(regel)) fout.push(`${s.les}: niet in de startcode: ${regel}`);
     }
     expect(fout).toEqual([]);
-    expect(gecontroleerd).toBeGreaterThanOrEqual(7);
+    expect(predicts.length).toBeGreaterThanOrEqual(30);
+  });
+
+  it('noemt het oefenveld en zijn onderdelen overal hetzelfde', () => {
+    // In het veld staat "Voorbeeld" en "Console". De lessen zeiden ook
+    // "preview", "de editor" en "het consolepanel".
+    const anders = /\b(preview|consolepanel|de editor)\b/i;
+    const fout = schermen.flatMap((s) =>
+      s.blokken
+        .filter((b) => b.soort === 'tekst' && anders.test(b.tekst))
+        .map((b) => `${s.les} | ${s.naam}: ${b.tekst.slice(0, 80)}`),
+    );
+    expect(fout).toEqual([]);
+  });
+
+  it('elk scherm van een les heeft een eigen naam', () => {
+    // Het tabblad Uitleg heeft de secties van de les als stappen; twee
+    // stappen met hetzelfde label zijn in de rij niet uit elkaar te houden.
+    const fout = lessen.flatMap((les) => {
+      const namen = schermenVan(les).map((s) => s.naam);
+      return namen.filter((n, i) => namen.indexOf(n) !== i).map((n) => `${les.naam}: ${n}`);
+    });
+    expect(fout).toEqual([]);
+  });
+
+  it('geen tabblad of stap heet "Stap 1"', () => {
+    // De stappen in een tabblad hebben al een nummer. In events heetten twee
+    // tabbladen "Stap 1" en "Stap 2": dat zegt niet wat erin staat.
+    const fout = schermen
+      .filter((s) => /\bStap \d/.test(s.naam))
+      .map((s) => `${s.les} | ${s.naam}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('de rij tabbladen past op één regel', () => {
+    // Een tweede regel kost elk paneel veertig pixels. In acht lessen over
+    // JavaScript stond hij er, tot de uitleg één tabblad werd. Naast de
+    // lessenlijst is op 1280 pixels 948 pixels over; een tabblad kost er
+    // ongeveer 36 plus 7 per letter. Het echte getal meet alleen een browser
+    // (`node scripts/meet-les-tabs.mjs web`).
+    const fout = lessen.flatMap((les) => {
+      const labels = [...new Set(schermenVan(les).map((s) => s.tab))];
+      const breedte = labels.reduce((som, label) => som + 36 + 7 * label.length, 0);
+      return breedte > 948
+        ? [`${les.naam}: ${labels.length} tabbladen, ongeveer ${breedte} px`]
+        : [];
+    });
+    expect(fout).toEqual([]);
   });
 
   it('een bestand in het oefenveld heet geen tab of tabblad', () => {

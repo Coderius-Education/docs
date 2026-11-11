@@ -82,13 +82,19 @@
 /* Het label staat voluit op het tabblad: de kop in het paneel is dan alleen
    nog voor een schermlezer en als doel van een link. Een paneel heeft één
    eigen `##`; hij staat niet altijd vooraan, want het leerdoel of een korte
-   inleiding kan ervoor staan. */
+   inleiding kan ervoor staan.
+
+   `overflow: hidden` hoort erbij: `clip-path` verbergt de tekst, maar hij
+   telt dan nog mee voor de breedte van de pagina. Op een telefoon schoof een
+   scherm met een lange kop daardoor tot 236 pixels zijwaarts. De kop is geen
+   ouder van een oefenveld, dus hier mag het. */
 .kopOpTab > h2 {
   position: absolute;
   width: 1px;
   height: 1px;
   margin: -1px;
   padding: 0;
+  overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
 }
@@ -113,6 +119,7 @@
   height: 1px;
   margin: -1px;
   padding: 0;
+  overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
 }
@@ -132,6 +139,21 @@
   flex-wrap: wrap;
   gap: 0.4rem;
   margin: 0 0 1rem;
+}
+
+/* Op een telefoon stonden zes stappen onder elkaar: 240 pixels knoppen boven
+   de tekst. Daar schuift de rij, net als de rij tabbladen. */
+@media (max-width: 996px) {
+  .staplist {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+
+  .stap {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
 }
 
 .stap {
@@ -182,13 +204,16 @@
   color: var(--ifm-color-primary);
 }
 
-/* De kop van een stap staat voluit op zijn knop. */
+/* De kop van een stap staat voluit op zijn knop. Een stap in het tabblad
+   Uitleg is een hele `##`-sectie, en heeft dus een h2. */
+.kopOpStap > h2,
 .kopOpStap > h3 {
   position: absolute;
   width: 1px;
   height: 1px;
   margin: -1px;
   padding: 0;
+  overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
 }
@@ -214,7 +239,10 @@
   margin-bottom: 0.5rem;
 }
 
-.paneel [data-zaad] {
+/* Niet op Groter of volledig scherm (`data-groot` op het veld): daar vult het
+   veld het scherm, en met deze marge bleef er boven en onder een strook van
+   de les zichtbaar. */
+.paneel [data-zaad]:not([data-groot]) {
   margin: 1rem 0;
 }
 
@@ -293,13 +321,19 @@
     display: block;
   }
 
+  .bovenStappen[hidden] {
+    display: block;
+  }
+
   .kopOpTab > h2,
+  .kopOpStap > h2,
   .kopOpStap > h3,
   .leerdoelTekst > h2 {
     position: static;
     width: auto;
     height: auto;
     margin: revert;
+    overflow: visible;
     clip-path: none;
     white-space: normal;
   }

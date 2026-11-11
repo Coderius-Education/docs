@@ -71,9 +71,13 @@ function doelUitHash(hash: string): string {
 
 function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): ReactNode {
   const data = DATA[niveau];
-  const tabs = Children.toArray(children).filter(
-    (c): c is ReactElement<Props> => isValidElement(c) && typeof (c.props as Props).id === 'string',
-  );
+  const isTab = (c: unknown): c is ReactElement<Props> =>
+    isValidElement(c) && typeof (c.props as Props).id === 'string';
+  const kinderen = Children.toArray(children);
+  const tabs = kinderen.filter(isTab);
+  // Wat in een rij stappen geen stap is: het leerdoel van de les. Het staat
+  // boven de rij, en alleen bij de eerste stap.
+  const boven = niveau === 'stap' ? kinderen.filter((c) => isValidElement(c) && !isTab(c)) : [];
   const ids = tabs.map((t) => t.props.id);
   const [actief, setActief] = useState(ids[0] ?? '');
   // Waar na het openen van een paneel naartoe gescrold wordt: een kop binnen
@@ -169,6 +173,12 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
       className={niveau === 'tab' ? styles.wortel : styles.stappen}
       {...{ [niveau === 'tab' ? 'data-les-tabs' : 'data-les-stappen']: '' }}
     >
+      {boven.length > 0 && (
+        // Verborgen, niet weg: de kop van het leerdoel is het doel van een link.
+        <div className={styles.bovenStappen} hidden={actief !== ids[0]}>
+          {boven}
+        </div>
+      )}
       <div
         role="tablist"
         aria-label={niveau === 'tab' ? 'Onderdelen van deze les' : 'Stappen in dit onderdeel'}

@@ -113,17 +113,30 @@ Tot nu toe heb je vooral `<div>` gebruikt om elementen te groeperen. Een `<div>`
 
 ## Predict
 
-Wat is het verschil tussen deze twee stukken HTML qua **uiterlijk** in de browser?
+Dit staat in het oefenveld. Wat verandert er in het voorbeeld als je in de HTML `<header>` en `</header>` vervangt door `<div>` en `</div>`, en de CSS laat staan?
 
 ```html
-<div>Hoofdmenu</div>
-<nav>Hoofdmenu</nav>
+<header>
+  <h1>Mijn Blog</h1>
+  <nav>
+    <a href="#">Home</a> |
+    <a href="#">Over</a> |
+    <a href="#">Contact</a>
+  </nav>
+</header>
+```
+
+```css
+header {
+  background-color: #f0f4ff;
+  padding: 20px;
+}
 ```
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
 
-Visueel is er **geen verschil**: allebei tonen ze "Hoofdmenu". Voor screenreaders en zoekmachines wel: die herkennen `<nav>` als de navigatie, terwijl een `<div>` ze niets vertelt.
+De lichtblauwe achtergrond en de ruimte eromheen verdwijnen. Aan de tag ligt dat niet: een `<header>` ziet er hetzelfde uit als een `<div>`. Maar de CSS-regel `header { ... }` zoekt een `<header>`, en die is er niet meer. Verander je de selector mee in `div`, dan ziet alles er weer uit als eerst.
 
 </details>
 

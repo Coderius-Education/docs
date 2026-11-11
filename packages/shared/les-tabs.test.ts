@@ -171,8 +171,10 @@ describe('groepeer', () => {
   });
 
   it('geeft Uitleg een eigen id als een kop al zo heet', () => {
-    const uit = groepeer([alinea('intro'), alinea('meer'), kop(2, 'Uitleg'), kop(2, 'Make')]);
-    expect(tabs(uit).map((t) => t.id)).toEqual(['les-uitleg', 'uitleg', 'make']);
+    const uit = groepeer([alinea('intro'), alinea('meer'), kop(2, 'Predict'), kop(3, 'Uitleg')]);
+    expect(tabs(uit).map((t) => t.id)).toEqual(['uitleg', 'predict']);
+    const bezet = groepeer([alinea('intro'), alinea('meer'), kop(2, 'Uitleg'), kop(2, 'Make')]);
+    expect(tabs(bezet).map((t) => t.id)).toEqual(['les-uitleg', 'make']);
   });
 
   it('geeft elk tabblad zijn werkvorm, en van een rij opdrachten is de laatste zelf maken', () => {
@@ -193,6 +195,102 @@ describe('groepeer', () => {
       'maken',
       'fouten',
     ]);
+  });
+
+  describe('de uitleg waar een les mee begint, is één tabblad met stappen', () => {
+    // Een les over JavaScript begint met drie of vier secties uitleg. Als
+    // losse tabbladen stond de rij in acht van de zestien lessen op 1280
+    // pixels op twee regels (arrays: tien tabbladen).
+    const stappenVan = (tab: Knoop) =>
+      (tab.children?.find((n) => n.name === 'LesStappen')?.children ?? []).map((st) =>
+        Object.fromEntries((st.attributes ?? []).map((a) => [a.name, a.value])),
+      );
+    const les = () =>
+      groepeer([
+        titel,
+        alinea('intro'),
+        alinea('meer'),
+        kop(2, 'Een item ophalen'),
+        alinea('a'),
+        kop(2, 'Combineren met een loop'),
+        alinea('b'),
+        kop(2, 'Predict'),
+        kop(2, 'Opdracht 1: Tel'),
+      ]);
+
+    it('voegt ze samen tot Uitleg, met elke sectie als stap', () => {
+      const uit = les();
+      expect(tabs(uit).map((t) => [t.id, t.label, t.werkvorm])).toEqual([
+        ['uitleg', 'Uitleg', 'uitleg'],
+        ['predict', 'Predict', 'voorspellen'],
+        ['opdracht-1-tel', 'Opdracht 1', 'aanpassen'],
+      ]);
+      expect(stappenVan(uit[1].children[0])).toEqual([
+        { id: 'uitleg-basis', titel: 'De basis', label: 'De basis' },
+        { id: 'een-item-ophalen', titel: 'Een item ophalen', label: 'Een item ophalen' },
+        {
+          id: 'combineren-met-een-loop',
+          titel: 'Combineren met een loop',
+          label: 'Combineren met een loop',
+        },
+      ]);
+    });
+
+    it('de kop van een sectie gaat mee in zijn stap: daar komt een link naar de kop uit', () => {
+      const [, ophalen] = les()[1].children[0].children[0].children;
+      expect(ophalen.children.map((n: Knoop) => n.type)).toEqual(['heading', 'paragraph']);
+      expect(ophalen.children[0].data.id).toBe('een-item-ophalen');
+    });
+
+    it('een sectie die zelf stappen had, levert die stappen op hetzelfde niveau', () => {
+      const uit = groepeer([
+        titel,
+        kop(2, 'De for-loop'),
+        alinea('a'),
+        alinea('b'),
+        kop(3, 'De teller gebruiken'),
+        alinea('c'),
+        kop(2, 'De while-loop'),
+        alinea('d'),
+        kop(2, 'Predict'),
+      ]);
+      expect(tabs(uit).map((t) => t.label)).toEqual(['Uitleg', 'Predict']);
+      const [uitleg] = uit[1].children;
+      // De basis van De for-loop heet nu naar zijn sectie, en heeft de ## erin.
+      expect(stappenVan(uitleg).map((st) => [st.id, st.label])).toEqual([
+        ['de-for-loop', 'De for-loop'],
+        ['de-teller-gebruiken', 'De teller gebruiken'],
+        ['de-while-loop', 'De while-loop'],
+      ]);
+      const [forLoop] = uitleg.children[0].children;
+      expect(forLoop.children.map((n: Knoop) => n.type)).toEqual([
+        'heading',
+        'paragraph',
+        'paragraph',
+      ]);
+    });
+
+    it('één uitleg-tabblad blijft wat het was, ook met Bonus verderop', () => {
+      const uit = groepeer([
+        titel,
+        kop(2, 'Theorie'),
+        kop(2, 'Predict'),
+        kop(2, 'Bonus'),
+        kop(2, 'Er gaat iets mis'),
+      ]);
+      expect(tabs(uit).map((t) => t.label)).toEqual([
+        'Theorie',
+        'Predict',
+        'Bonus',
+        'Er gaat iets mis',
+      ]);
+    });
+
+    it('een les die alleen uit uitleg bestaat, houdt zijn tabbladen', () => {
+      // Anders bleef er één tabblad over, en dat is geen rij.
+      const uit = groepeer([titel, kop(2, 'Wat kan het?'), kop(2, 'Waar staat het?')]);
+      expect(tabs(uit).map((t) => t.label)).toEqual(['Wat kan het?', 'Waar staat het?']);
+    });
   });
 
   it('doet niets met minder dan twee tabbladen', () => {
@@ -294,6 +392,20 @@ describe('metStappen', () => {
     // Zonder stappen: boven de kop van het tabblad.
     const plat = metStappen([kop(2, 'Predict'), alinea('x')], 'predict', vooraf);
     expect(plat.map((n: Knoop) => n.type)).toEqual(['paragraph', 'heading', 'paragraph']);
+  });
+
+  it('het leerdoel staat boven de rij stappen, niet in stap 1', () => {
+    // Onder de rij las het als een deel van de eerste stap ("Elementen
+    // binnen elementen"), terwijl het over de hele les gaat.
+    const leerdoel: Knoop = { type: 'mdxJsxFlowElement', name: 'LesLeerdoel', children: [] };
+    const uit = metStappen([kop(2, 'Theorie'), kop(3, 'Een'), kop(3, 'Twee')], 'theorie', [
+      leerdoel,
+      alinea('kort'),
+    ]);
+    const [, lijst] = uit;
+    expect(lijst.children.map((n: Knoop) => n.name)).toEqual(['LesLeerdoel', 'LesStap', 'LesStap']);
+    // Een korte inleiding hoort wel bij de eerste stap.
+    expect(lijst.children[1].children.map((n: Knoop) => n.type)).toEqual(['paragraph', 'heading']);
   });
 
   it('laat een sectie met maar één stap zoals hij is', () => {
@@ -421,6 +533,34 @@ describe('de opmaak van de tabbladen', () => {
     expect(css).toMatch(/\.kopOpTab > h2\s*\{/);
     expect(css).toMatch(/\.kopOpStap > h3\s*\{/);
     expect(css).not.toMatch(/\.kopOp(Tab|Stap) > h[23]:first-child/);
+    // Een stap in het tabblad Uitleg is een hele ##-sectie.
+    expect(css).toMatch(/\.kopOpStap > h2,/);
+  });
+
+  it('een verborgen kop maakt de pagina niet breder', () => {
+    // clip-path verbergt de tekst, maar hij telt nog mee voor de breedte: op
+    // een telefoon schoven 18 schermen zijwaarts, tot 236 pixels (de kop
+    // "Spatie tussen tag en klasse (p .opvallend vs p.opvallend)").
+    const verborgen = regels.filter(
+      ({ body }) => /clip-path:\s*inset/.test(body) && /white-space:\s*nowrap/.test(body),
+    );
+    expect(verborgen.length).toBeGreaterThanOrEqual(3);
+    for (const { sel, body } of verborgen) {
+      expect(body, sel).toMatch(/overflow:\s*hidden/);
+    }
+  });
+
+  it('de marge om een oefenveld geldt niet als het veld het scherm vult', () => {
+    // Op Groter is het veld position: fixed met inset 0. De marge van het
+    // paneel won van die van het veld (twee klassen tegen één), en dan bleef
+    // er boven en onder 16 pixels van de les zichtbaar. Gezien in Chromium.
+    expect(regels.some(({ sel }) => sel === '.paneel [data-zaad]:not([data-groot])')).toBe(true);
+    expect(regels.some(({ sel }) => sel === '.paneel [data-zaad]')).toBe(false);
+  });
+
+  it('op een telefoon schuift de rij stappen, in plaats van zes regels te vullen', () => {
+    const smal = css.slice(css.indexOf('@media (max-width: 996px)'));
+    expect(smal).toMatch(/\.staplist\s*\{[^}]*flex-wrap:\s*nowrap[^}]*overflow-x:\s*auto/);
   });
 
   it('haalt het kruimelpad alleen weg waar de lessenlijst ernaast staat', () => {

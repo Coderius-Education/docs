@@ -104,7 +104,7 @@ for (let i = 1; i <= 10; i++) {
 document.getElementById('uitvoer').textContent = resultaat;
 ```
 
-Pas ná de loop, als alle regels verzameld zijn, zet je de string in één keer op de pagina. De CSS-regel `white-space: pre-line` in de startcode zorgt dat de regeleindes zichtbaar blijven in de `<p>`.
+Pas ná de loop, als alle regels verzameld zijn, zet je de string in één keer op de pagina. In de CSS van het oefenveld staat daarvoor `white-space: pre-line`: die regel houdt de regeleindes zichtbaar in de `<p>`.
 
 ## De while-loop: zolang iets waar is
 
@@ -120,24 +120,22 @@ Een `while` draait zolang de voorwaarde `true` is. Jij bent zelf verantwoordelij
 
 ## Predict
 
-Wat zie je in de console na deze code?
+Dit is de functie uit de startcode van het oefenveld; hij draait als je op de knop klikt. Beantwoord de vraag **voordat** je de code draait.
 
 ```js
-for (let i = 0; i < 3; i++) {
-  console.log('Ronde ' + i);
+function toonTafel() {
+  let resultaat = '';
+  for (let i = 1; i <= 10; i++) {
+    resultaat = resultaat + '5 × ' + i + ' = ' + (5 * i) + '\n';
+  }
+  document.getElementById('uitvoer').textContent = resultaat;
 }
 ```
 
 <details>
-<summary>Hoeveel regels, en met welke getallen?</summary>
+<summary>Hoeveel regels komen er op de pagina, en wat staat er op de eerste en de laatste?</summary>
 
-```
-Ronde 0
-Ronde 1
-Ronde 2
-```
-
-De loop begint bij `i = 0` en herhaalt zolang `i < 3`: dus voor 0, 1 en 2. Bij `i = 3` is `3 < 3` `false` en stopt de loop.
+Tien regels. De eerste is `5 × 1 = 5`, de laatste `5 × 10 = 50`. De loop begint bij `i = 1` en herhaalt zolang `i <= 10`; bij `i = 11` is de voorwaarde `false` en stopt hij.
 
 </details>
 

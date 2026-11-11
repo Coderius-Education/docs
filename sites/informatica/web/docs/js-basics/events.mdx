@@ -91,7 +91,7 @@ export const makeJs = `// Schrijf hier je code
 
 Tot nu toe koppelde je gedrag aan een knop met `onclick` in de HTML. Vanaf deze les doe je dat vanuit JavaScript, met **`addEventListener`** — dan blijven HTML en gedrag gescheiden, en kun je op veel meer reageren dan alleen klikken.
 
-## Stap 1: een functie maken
+## Een functie maken
 
 Dit ken je al uit [De script-tag](site:web/docs/js-basics/script-tag):
 
@@ -101,7 +101,7 @@ function zegHoi() {
 }
 ```
 
-## Stap 2: de functie aan een event koppelen
+## De functie aan een event koppelen
 
 `addEventListener` zet een luisteraar op een element. De drie onderdelen:
 
@@ -213,7 +213,7 @@ De muis-listeners blijven ook werken: elke listener reageert op zijn eigen event
 
 ## Opdracht 2: Klik-teller
 
-Breid je klik-functie uit tot een teller: bij elke klik komt er 1 bij, en de `<p id="teller">` toont "Aantal klikken: " met het aantal.
+Schrijf een functie `telKlik` die de klikken telt: bij elke klik komt er 1 bij, en de `<p id="teller">` toont "Aantal klikken: " met het aantal. Koppel hem aan het `'click'`-event van de knop.
 
 <CodeEditor
   initialHtml={startHtml}

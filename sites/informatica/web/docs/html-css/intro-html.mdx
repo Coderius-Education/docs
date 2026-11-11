@@ -60,7 +60,7 @@ HTML staat voor **HyperText Markup Language**. Het is de taal die browsers begri
 
 Elke tag heeft een **openingstag** (`<p>`) en een **sluitingstag** (`</p>`). De inhoud staat er tussenin.
 
-### Klein extra: `<strong>`, `<em>`, `<br>`, `<hr>`
+### Nog vier tags: `<strong>`, `<em>`, `<br>`, `<hr>`
 
 Een paar veelgebruikte mini-tags:
 
@@ -105,24 +105,22 @@ Een complete HTML-pagina heeft altijd deze structuur:
 
 ## Predict
 
-Hieronder zie je een stukje code. Wat denk je dat er in de browser te zien is?
+Dit is een regel uit het oefenveld. Hoe ziet de zin eruit in de browser?
 
 ```html
-<b>Hallo!</b>
+<p>HTML is <b>niet</b> zo moeilijk.</p>
 ```
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
 
-{/* stijl-uitzondering: uitroepteken citaat uit het codevoorbeeld erboven */}
-
-De tekst "Hallo!" wordt **vetgedrukt** weergegeven. De tag `<b>` staat voor *bold* (vet).
+Alleen het woord niet is **vetgedrukt**; de rest van de zin is gewone tekst. De tag `<b>` staat voor *bold* (vet) en werkt van `<b>` tot `</b>`.
 
 </details>
 
 ## Probeer en onderzoek
 
-De editor hieronder bevat een complete HTML-pagina. Bekijk de code en de preview aan de rechterkant.
+In het oefenveld staat een complete HTML-pagina: de code, en het voorbeeld dat de browser ervan maakt.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -132,7 +130,7 @@ De editor hieronder bevat een complete HTML-pagina. Bekijk de code en de preview
 
 ## Modify
 
-**Opdracht:** Voeg een tweede paragraaf toe aan de pagina met jouw naam erin.
+**Opdracht:** Voeg een derde paragraaf toe aan de pagina, met jouw naam erin.
 
 <CodeEditor
   initialHtml={startHtml}

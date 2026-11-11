@@ -143,24 +143,26 @@ Toggle de klasse en de CSS doet de rest. Zo blijft de vormgeving in het CSS-best
 
 ## Predict
 
-Wat denk je dat dit doet?
+Dit is een deel van de startcode van het oefenveld: de functie achter de knop, en de CSS voor een kaart met de klasse `actief`. Zonder die klasse is de kaart lichtgrijs. Beantwoord de vraag **voordat** je de code draait.
 
 ```js
-document.querySelector('p').textContent = 'Veranderd.';
+function toggle() {
+  const kaart = document.querySelector('.kaart');
+  kaart.classList.toggle('actief');
+}
 ```
 
-Met deze HTML:
-
-```html
-<p>Eerste</p>
-<p>Tweede</p>
-<p>Derde</p>
+```css
+.kaart.actief {
+  background-color: gold;
+  border: 3px solid orange;
+}
 ```
 
 <details>
-<summary>Welke paragrafen veranderen er?</summary>
+<summary>Je klikt twee keer op de knop. Hoe ziet de kaart eruit na de eerste klik, en hoe na de tweede?</summary>
 
-Alleen de **eerste** `<p>` krijgt de tekst "Veranderd." — `querySelector` stopt bij de eerste match. De andere twee blijven staan.
+Na de eerste klik is de kaart goud met een oranje rand; na de tweede is hij weer lichtgrijs. `toggle` zet de klasse `actief` aan als hij uit staat, en uit als hij aan staat.
 
 </details>
 

@@ -111,18 +111,21 @@ leeftijd < 12 || leeftijd >= 65    // false: geen van beide waar (of)
 
 ## Predict
 
-Wat logt dit?
+Dit is de functie uit de startcode van het oefenveld; hij draait als je op de knop klikt. Beantwoord de vraag **voordat** je de code draait.
 
 ```js
-console.log(16 >= 16);
-console.log('16' === 16);
-console.log(16 >= 12 && 16 <= 15);
+function check() {
+  const leeftijd = Number(prompt('Hoe oud ben je?'));
+  const meerderjarig = leeftijd >= 18;
+  document.getElementById('uitvoer').textContent = 'Meerderjarig: ' + meerderjarig;
+  console.log('leeftijd is', leeftijd, 'en meerderjarig is', meerderjarig);
+}
 ```
 
 <details>
-<summary>Drie regels — welke waarden?</summary>
+<summary>Je vult 16 in. Wat komt er op de pagina te staan?</summary>
 
-`true`, `false`, `false`. De eerste: 16 is groter of gelijk aan 16. De tweede: een string is nooit strikt gelijk aan een number. De derde: de linkerkant is waar, maar de rechterkant niet (16 is niet kleiner of gelijk aan 15), en `&&` eist allebei.
+`Meerderjarig: false`. `16 >= 18` is niet waar, dus `meerderjarig` is de boolean `false`. Met `+` komt die als het woord false achter de tekst te staan.
 
 </details>
 

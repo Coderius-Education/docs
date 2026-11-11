@@ -132,12 +132,27 @@ Vuistregel:
 
 ## Predict
 
-Wat denk je dat er gebeurt als je `display: block` op een `<span>` zet?
+Dit staat in het oefenveld. Wat denk je dat er met de zin gebeurt als je `display: block` toevoegt aan `.highlight`?
+
+```html
+<p>
+  Een <span class="highlight">gemarkeerd woord</span> staat
+  in de tekstregel. Een <b>vetgedrukt</b> woord ook.
+</p>
+```
+
+```css
+.highlight {
+  background-color: yellow;
+  color: darkred;
+  padding: 2px 6px;
+}
+```
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
 
-De `<span>` gaat zich gedragen als een blok — hij begint op een nieuwe regel en vult de hele breedte. Het uiterlijk verandert dus, maar de tag (`<span>`) blijft hetzelfde. `display` overschrijft het standaardgedrag.
+De gemarkeerde tekst krijgt een eigen regel midden in de zin, met een geel vlak over de hele breedte: het woord Een staat erboven, de rest van de zin eronder. Een blok begint op een nieuwe regel en vult de hele breedte. De tag blijft een `<span>`; `display` verandert alleen hoe hij zich gedraagt.
 
 </details>
 

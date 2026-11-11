@@ -15,6 +15,15 @@
 //   pagina  hoeveel pixels de hele pagina hoger is dan het scherm, met de
 //           knoppen naar de vorige en volgende les en de footer erbij.
 //
+// Twee dingen meet het erbij, omdat ze er bij een review doorheen glipten:
+//
+//   tabrij     op hoeveel regels de rij tabbladen staat. Een tweede regel
+//              kost elk paneel veertig pixels; in acht lessen stond hij er.
+//   zijwaarts  hoeveel pixels de pagina breder is dan het scherm, ook op een
+//              telefoon (390×800). Daar hoeft een scherm niet te passen,
+//              maar zijwaarts schuiven hoort nergens: een verborgen kop
+//              maakte 18 schermen tot 236 pixels te breed.
+//
 // Handmatig, niet in CI: het is een meting voor een auteur, geen controle.
 // Eerst bouwen: `pnpm --filter ./sites/informatica/web build`.
 
@@ -35,6 +44,8 @@ const BASIS = `/${SITES_BY_ID[SITE].path}/`;
 const SCHERMEN = [
   { width: 1280, height: 720 },
   { width: 1366, height: 768 },
+  // Op een telefoon scrolt de leerling; hier telt alleen zijwaarts.
+  { width: 390, height: 800, telefoon: true },
 ];
 
 const MIME = {
@@ -97,13 +108,16 @@ const browser = await chromium.launch(
   process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {},
 );
 const rijen = [];
+const tabrijen = [];
 let kolomBreedte = null;
 
 for (const les of lessen()) {
   for (const scherm of SCHERMEN) {
     // Een verse context per les: bewaard werk in een oefenveld verandert de
     // hoogte van het veld.
-    const context = await browser.newContext({ viewport: scherm });
+    const context = await browser.newContext({
+      viewport: { width: scherm.width, height: scherm.height },
+    });
     const pagina = await context.newPage();
     await pagina.goto(`${adres}${les}`);
     await pagina.waitForSelector('[role=tab]');
@@ -111,10 +125,22 @@ for (const les of lessen()) {
       const kolom = document.querySelector('[class*="docItemCol"]');
       return kolom ? Math.round((100 * kolom.clientWidth) / kolom.parentElement.clientWidth) : null;
     });
+    if (!scherm.telefoon) {
+      const regels = await pagina.evaluate(
+        () =>
+          new Set(
+            [...document.querySelectorAll('[data-tab]')].map((t) =>
+              Math.round(t.getBoundingClientRect().top),
+            ),
+          ).size,
+      );
+      tabrijen.push({ les, scherm: `${scherm.width}x${scherm.height}`, regels });
+    }
     const tabs = await pagina.locator('[data-tab]').all();
     for (const tab of tabs) {
       const id = await tab.getAttribute('data-tab');
       const label = (await tab.innerText()).trim();
+      await tab.scrollIntoViewIfNeeded();
       await tab.click();
       // Een oefenveld is klaar als de editor staat; daarna nog even voor de
       // hoogte die het voorbeeld zelf meldt.
@@ -134,8 +160,11 @@ for (const les of lessen()) {
       const paneel = pagina.locator(`[data-les-tab="${id}"]`);
       const stappen = await paneel.locator('[data-stap]').all();
       for (const stap of stappen.length ? stappen : [null]) {
-        if (stap) await stap.click();
-        await pagina.waitForTimeout(400);
+        if (stap) {
+          await stap.scrollIntoViewIfNeeded();
+          await stap.click();
+        }
+        await pagina.waitForTimeout(scherm.telefoon ? 50 : 400);
         await pagina.evaluate(() => window.scrollTo(0, 0));
         const maat = await pagina.evaluate((id) => {
           const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
@@ -144,6 +173,7 @@ for (const les of lessen()) {
             over: Math.round(r.bottom - window.innerHeight),
             boven: Math.round(r.top),
             pagina: document.documentElement.scrollHeight - window.innerHeight,
+            zijwaarts: Math.max(0, document.documentElement.scrollWidth - window.innerWidth),
             velden: paneel.querySelectorAll('[data-zaad]').length,
           };
         }, id);
@@ -151,6 +181,7 @@ for (const les of lessen()) {
           les,
           tab: stap ? `${label} › ${(await stap.innerText()).replace(/\s+/g, ' ').trim()}` : label,
           scherm: `${scherm.width}x${scherm.height}`,
+          telefoon: Boolean(scherm.telefoon),
           ...maat,
         });
       }
@@ -162,10 +193,11 @@ for (const les of lessen()) {
 await browser.close();
 server.close();
 
+const naam = (les) => les.replace(/^docs\//, '');
 if (ALS_JSON) {
-  console.log(JSON.stringify({ kolomBreedte, rijen }, null, 2));
+  console.log(JSON.stringify({ kolomBreedte, rijen, tabrijen }, null, 2));
 } else {
-  for (const { width, height } of SCHERMEN) {
+  for (const { width, height } of SCHERMEN.filter((s) => !s.telefoon)) {
     const scherm = `${width}x${height}`;
     const deze = rijen.filter((r) => r.scherm === scherm);
     const past = deze.filter((r) => r.over <= 0);
@@ -173,7 +205,17 @@ if (ALS_JSON) {
     console.log('| Les | Tabblad of stap | Velden | Te lang (px) |');
     console.log('|---|---|---:|---:|');
     for (const r of deze.filter((r) => r.over > 0).sort((a, b) => b.over - a.over))
-      console.log(`| ${r.les.replace(/^docs\//, '')} | ${r.tab} | ${r.velden} | ${r.over} |`);
+      console.log(`| ${naam(r.les)} | ${r.tab} | ${r.velden} | ${r.over} |`);
+    const dubbel = tabrijen.filter((t) => t.scherm === scherm && t.regels > 1);
+    console.log(
+      dubbel.length
+        ? `\nDe rij tabbladen staat op meer dan één regel in: ${dubbel.map((t) => naam(t.les)).join(', ')}.`
+        : '\nDe rij tabbladen staat in elke les op één regel.',
+    );
   }
+  const breed = rijen.filter((r) => r.zijwaarts > 0);
+  console.log(`\n## Zijwaarts schuiven: ${breed.length} schermen\n`);
+  for (const r of breed.sort((a, b) => b.zijwaarts - a.zijwaarts))
+    console.log(`- ${naam(r.les)} | ${r.tab} | ${r.scherm}: ${r.zijwaarts} px te breed`);
   console.log(`\nDe les gebruikt ${kolomBreedte}% van de breedte naast de lessenlijst.`);
 }

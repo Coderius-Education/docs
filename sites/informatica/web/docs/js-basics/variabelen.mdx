@@ -79,18 +79,18 @@ Een variabele is een plek in het geheugen met een naam. Je maakt hem aan met `le
 let teller = 0;
 ```
 
-- `let`: maakt een nieuwe variabele aan
-- `teller`: de naam (kies zelf; kleine letters, geen spaties)
-- `= 0`: de beginwaarde
+`let` maakt een nieuwe variabele aan, `teller` is de naam (kies zelf; kleine letters, geen spaties) en `= 0` is de beginwaarde.
 
-Daarna kun je de waarde aanpassen en tonen:
+Daarna kun je de waarde aanpassen en tonen, bijvoorbeeld in een functie die bij elke klik draait:
 
 ```js
-teller = teller + 1;  // voeg 1 toe aan de huidige waarde
-document.getElementById('uitvoer').textContent = teller;
+function telOp() {
+  teller = teller + 1;  // voeg 1 toe aan de huidige waarde
+  document.getElementById('uitvoer').textContent = teller;
+}
 ```
 
-Zet de variabele **buiten** de functie: dan blijft hij bestaan tussen de klikken door en onthoudt hij zijn waarde. Dat onthouden is precies waar variabelen voor zijn.
+De regel `let teller = 0;` staat **buiten** de functie: dan blijft de variabele bestaan tussen de klikken door en onthoudt hij zijn waarde. Dat onthouden is precies waar variabelen voor zijn.
 
 ## `let` of `const`?
 

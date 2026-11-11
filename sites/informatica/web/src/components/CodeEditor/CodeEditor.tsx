@@ -17,6 +17,7 @@ import { buildDoc } from './buildDoc';
 import { heeftJavaScript } from './heeftJs';
 import { VoorbeeldNavigatie } from './navigatie';
 import { type OnderzoekVraag, stukken } from './onderzoek';
+import { type Opdracht, opdrachtBoven } from './opdracht';
 import { meetRuimte, pasHoogte } from './pasHoogte';
 import { useDebounce } from './useDebounce';
 import { type OpslagStand, useOpslag } from './useOpslag';
@@ -159,6 +160,14 @@ function CodeEditorInner({
     };
   }, [naastElkaar, groot, height]);
   const hoogte = naastElkaar && passend !== null ? `${passend}px` : height;
+
+  // Op Groter en volledig scherm is de les niet meer te zien, en dus ook de
+  // opdracht niet die boven het veld staat. Het veld leest hem dan uit de
+  // pagina en toont hem zelf (opdracht.ts).
+  const [opdracht, setOpdracht] = useState<Opdracht | null>(null);
+  useLayoutEffect(() => {
+    setOpdracht(groot && containerRef.current ? opdrachtBoven(containerRef.current) : null);
+  }, [groot]);
 
   const knopRef = useRef<HTMLButtonElement>(null);
   const volledigKnopRef = useRef<HTMLButtonElement>(null);
@@ -381,6 +390,9 @@ function CodeEditorInner({
     <div
       ref={containerRef}
       data-zaad={opslag.zaad}
+      // Voor de opmaak van een les-tabblad: de marge om een veld geldt niet
+      // als het veld het scherm vult.
+      data-groot={groot ? '' : undefined}
       className={[
         styles.container,
         gestapeld ? styles.containerStacked : '',
@@ -389,6 +401,7 @@ function CodeEditorInner({
         .filter(Boolean)
         .join(' ')}
     >
+      {opdracht && <OpdrachtBalk opdracht={opdracht} />}
       {onderzoek && onderzoek.length > 0 && <Onderzoek vragen={onderzoek} />}
       <div className={styles.werkvlak} ref={werkvlakRef}>
         <div className={styles.editorSide} style={{ height: gestapeld ? 'auto' : hoogte }}>
@@ -479,6 +492,8 @@ function CodeEditorInner({
         <div className={styles.previewColumn} style={gestapeld ? undefined : { height: hoogte }}>
           <PreviewPane
             srcDoc={srcDoc}
+            // Een veld met een Run-knop begint met een leeg voorbeeld.
+            wachtOpRun={!livePreview && srcDoc === ''}
             innerRef={iframeRef}
             weg={weg}
             onTerug={herlaadEigenPagina}
@@ -581,6 +596,31 @@ function Onderzoek({ vragen }: { vragen: OnderzoekVraag[] }) {
           ))}
         </ol>
       )}
+    </div>
+  );
+}
+
+// De opdracht uit de les, zolang het veld het scherm vult. Open, zodat de
+// leerling hem ziet zonder te klikken; wie de ruimte nodig heeft, klapt hem in.
+function OpdrachtBalk({ opdracht }: { opdracht: Opdracht }) {
+  const [open, setOpen] = useState(true);
+  const tekstRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    // Kopieën van de alinea's uit de les; een kopie per keer, want een node
+    // kan maar op één plek staan.
+    if (open) tekstRef.current?.replaceChildren(...opdracht.inhoud.map((n) => n.cloneNode(true)));
+  }, [open, opdracht]);
+  return (
+    <div className={styles.onderzoek} data-opdracht="">
+      <button
+        type="button"
+        className={styles.onderzoekKop}
+        onClick={() => setOpen((aan) => !aan)}
+        aria-expanded={open}
+      >
+        <span aria-hidden="true">{open ? '\u25BE' : '\u25B8'}</span> {opdracht.titel || 'Opdracht'}
+      </button>
+      {open && <div className={styles.opdrachtTekst} ref={tekstRef} />}
     </div>
   );
 }

@@ -236,7 +236,20 @@ ervoor. Twee dingen krijgen geen eigen tabblad, want dat was een scherm met
 één zin en een knop Volgende: het leerdoel van de les ("Wat ga je leren?",
 hooguit twee alinea's) staat in een `<LesLeerdoel>` bovenaan het tabblad
 erna, met de kop erin voor een link en een schermlezer; en uitleg vóór de
-eerste `##` van één alinea opent het eerste tabblad. De stap staat achteraan in de docs, na de begrippen: Docusaurus heeft
+eerste `##` van één alinea opent het eerste tabblad. Heeft dat tabblad
+stappen, dan staat het leerdoel boven de rij stappen en alleen bij de eerste
+(een kind van `<LesStappen>` dat geen stap is): onder de rij las het als een
+deel van stap 1.
+
+**De uitleg waar een les mee begint, is één tabblad.** Een les over
+JavaScript begint met drie of vier secties uitleg, elk naar zijn onderwerp
+genoemd. Als losse tabbladen stond de rij in acht van de zestien lessen op
+1280 pixels op twee regels. `voegUitlegSamen` maakt er één tabblad Uitleg
+van, met elke sectie als stap (en de stappen van zo'n sectie op hetzelfde
+niveau); zo heeft die les dezelfde vorm als een les over HTML met zijn
+Theorie. Alleen de uitleg vooraan, en alleen als er daarna nog een ander
+tabblad komt. De kop van een sectie gaat mee in zijn stap, dus een link
+ernaartoe blijft werken. De stap staat achteraan in de docs, na de begrippen: Docusaurus heeft
 dan de id's van de koppen gezet.
 
 Een tabblad Theorie met vijf koppen was zelf nog tot 1330 pixels te lang.
@@ -267,8 +280,9 @@ dezelfde stap die de tabbladen maakt, dus de handleiding toont wat de
 leerling ziet. `werkvormen.test.ts` eist dat elke tip bij vakdidactiek
 bestaat onder dezelfde naam; hernoem je daar een tip, pas dan
 `werkvormen.json` mee aan. De rij tabbladen is met opzet krap (0,875rem,
-weinig padding): met de iconen erbij moeten acht of negen tabbladen op één
-regel passen, want een tweede regel kost elk paneel veertig pixels.
+weinig padding) en staat in elke web-les op één regel, want een tweede regel
+kost elk paneel veertig pixels. Dat lukt alleen met hooguit zeven of acht
+tabbladen; `schermen.test.ts` schat de breedte, het meetscript meet hem.
 
 Wat vastligt, en waarom:
 
@@ -313,11 +327,19 @@ dus alleen naar wat in hetzelfde scherm staat, en zet de code waar een vraag
 over gaat erbij. De cursus bewaakt dat zelf
 (`sites/informatica/web/src/docs-tests/schermen.test.ts`).
 
+Een kop die op zijn tabblad of stap al voluit staat, is verborgen voor het
+oog en blijft voor een schermlezer en een link. Bij die verborgen kop hoort
+`overflow: hidden`: `clip-path` verbergt de tekst, maar hij telt dan nog mee
+voor de breedte van de pagina, en op een telefoon schoven 18 schermen
+daardoor zijwaarts. Op een telefoon schuift de rij stappen, net als de rij
+tabbladen; zes stappen onder elkaar waren 240 pixels knoppen.
+
 `les-tabs.test.ts` en `components/LesTabs/LesTabs.test.tsx` bewaken dit.
 Tabbladen garanderen niet dat een onderdeel op één scherm past:
 `node scripts/meet-les-tabs.mjs <site>` (na een build, met Playwright) meet
 per les, per tabblad en per stap op 1280×720 en 1366×768 hoeveel pixels het
-te lang is. Wat dan nog te lang is, is tekst: een stap of een Er gaat iets
+te lang is, op hoeveel regels de rij tabbladen staat, en (ook op 390×800)
+of een scherm zijwaarts schuift. Wat dan nog te lang is, is tekst: een stap of een Er gaat iets
 mis met meer inhoud dan op een scherm past. Dat lost een auteur op, niet de
 opmaak.
 Bekende nadelen: Ctrl+F vindt geen tekst in een tabblad dat niet open staat,

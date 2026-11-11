@@ -79,7 +79,7 @@ Je leert hoe je een twee-dimensionale layout bouwt met **CSS Grid** — rijen é
 
 ## Theorie
 
-In [Flexbox](site:web/docs/html-css/flexbox) gebruikte je Flexbox om elementen op **één lijn** te zetten (rij óf kolom). CSS Grid kun je gebruiken om elementen in een **rooster** te plaatsen — rijen én kolommen tegelijk.
+Met [Flexbox](site:web/docs/html-css/flexbox) zet je elementen op **één lijn**: een rij óf een kolom. CSS Grid plaatst ze in een **rooster**.
 
 Je activeert Grid met `display: grid` op de **container**:
 
@@ -120,22 +120,21 @@ Ze zijn complementair — je kunt ze prima combineren.
 
 ## Predict
 
-Wat denk je dat dit doet?
+Dit is een deel van de CSS van het oefenveld. In `.galerij` staan zes cellen. In hoeveel rijen komen ze te staan?
 
 ```css
 .galerij {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
+  padding: 10px;
 }
 ```
-
-Met zes items in `.galerij`:
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
 
-Drie kolommen, dus de zes items vormen automatisch **twee rijen van drie**. CSS Grid breekt zelf naar een nieuwe rij zodra de kolommen vol zijn. De `gap` geeft 8px ruimte tussen alle items (horizontaal én verticaal).
+In **twee rijen van drie**. Er zijn drie kolommen, en CSS Grid begint zelf een nieuwe rij zodra de kolommen vol zijn. De `gap` geeft 10px ruimte tussen de cellen, naast én onder elkaar.
 
 </details>
 

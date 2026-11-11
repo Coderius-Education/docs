@@ -248,6 +248,47 @@ describe('LesLeerdoel', () => {
   });
 });
 
+describe('het leerdoel boven de stappen', () => {
+  const MetLeerdoel = () => (
+    <LesTabs>
+      <LesTab id="theorie" titel="Theorie" label="Theorie">
+        <LesStappen>
+          <LesLeerdoel>
+            <h2 id="wat-ga-je-leren">Wat ga je leren?</h2>
+            <p>Koppen en lijsten.</p>
+          </LesLeerdoel>
+          <LesStap id="koppen" titel="Koppen" label="Koppen">
+            <h3 id="koppen">Koppen</h3>
+          </LesStap>
+          <LesStap id="lijsten" titel="Lijsten" label="Lijsten">
+            <h3 id="lijsten">Lijsten</h3>
+          </LesStap>
+        </LesStappen>
+      </LesTab>
+      <LesTab id="make" titel="Make" label="Make">
+        <p>Bouw.</p>
+      </LesTab>
+    </LesTabs>
+  );
+
+  it('staat boven de rij stappen, en alleen bij de eerste stap', () => {
+    const { container } = render(<MetLeerdoel />);
+    const leerdoel = container.querySelector('[data-les-leerdoel]') as HTMLElement;
+    const rij = screen.getByRole('tablist', { name: 'Stappen in dit onderdeel' });
+    // Boven de rij: het gaat over de hele les, niet over stap 1.
+    expect(leerdoel.compareDocumentPosition(rij) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(leerdoel.closest('[hidden]')).toBeNull();
+    fireEvent.click(screen.getByRole('tab', { name: /Lijsten/ }));
+    expect(leerdoel.closest('[hidden]')).not.toBeNull();
+    // Het telt niet als stap: er zijn er twee.
+    expect(rij.querySelectorAll('[role="tab"]')).toHaveLength(2);
+  });
+
+  it('blijft in de HTML van de build, voor een link naar zijn kop', () => {
+    expect(renderToStaticMarkup(<MetLeerdoel />)).toContain('id="wat-ga-je-leren"');
+  });
+});
+
 describe('LesStappen', () => {
   it('zet elke stap in de HTML van de build, en toont alleen de eerste', () => {
     const html = renderToStaticMarkup(<LesMetStappen />);

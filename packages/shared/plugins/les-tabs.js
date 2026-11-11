@@ -75,6 +75,16 @@ const idVan = (kop) => {
 const BASIS = 'De basis';
 
 const isAlinea = (node) => node.type === 'paragraph';
+const isLeerdoel = (node) => node.name === 'LesLeerdoel';
+const isStap = (node) => node.name === 'LesStap';
+const isStappen = (node) => node.name === 'LesStappen';
+
+const stappenlijst = (kinderen) => ({
+  type: 'mdxJsxFlowElement',
+  name: 'LesStappen',
+  attributes: [],
+  children: kinderen,
+});
 
 /**
  * Een sectie met `###`-koppen is zelf nog te lang voor één scherm (Theorie in
@@ -90,7 +100,9 @@ const isAlinea = (node) => node.type === 'paragraph';
  *
  * `vooraf` is wat van vóór dit tabblad komt en erbij hoort: het leerdoel van
  * de les of een uitleg van één alinea (zie groepeer). Het staat op het eerste
- * scherm van het tabblad.
+ * scherm van het tabblad. Het leerdoel staat daar bóven de rij stappen (een
+ * kind van <LesStappen> dat geen stap is; het onderdeel toont het alleen bij
+ * de eerste stap): onder de rij las het als een deel van stap 1.
  *
  * @param {object[]} kinderen de kinderen van één sectie, met de `##` vooraan
  * @param {string} sectieId het id van de `##`, voor het id van de eerste stap
@@ -110,19 +122,18 @@ function metStappen(kinderen, sectieId, vooraf = []) {
   const [kop, ...inleiding] = kinderen.slice(0, eerste);
   const kort = inleiding.length === 0 || (inleiding.length === 1 && isAlinea(inleiding[0]));
   if (stappen.length + (kort ? 0 : 1) < 2) return zonderStappen();
+  const leerdoel = vooraf.filter(isLeerdoel);
+  const rest = vooraf.filter((node) => !isLeerdoel(node));
   // Het eerste scherm begint met wat vooraf komt, en bij een korte inleiding
   // ook daarmee.
-  if (kort) stappen[0].kinderen.unshift(...vooraf, ...inleiding);
+  if (kort) stappen[0].kinderen.unshift(...rest, ...inleiding);
   const lesStappen = stappen.map(({ kop: h3, kinderen: inhoud }) =>
     element('LesStap', idVan(h3), tekstVan(h3), inhoud),
   );
   if (!kort) {
-    lesStappen.unshift(element('LesStap', `${sectieId}-basis`, BASIS, [...vooraf, ...inleiding]));
+    lesStappen.unshift(element('LesStap', `${sectieId}-basis`, BASIS, [...rest, ...inleiding]));
   }
-  return [
-    kop,
-    { type: 'mdxJsxFlowElement', name: 'LesStappen', attributes: [], children: lesStappen },
-  ];
+  return [kop, stappenlijst([...leerdoel, ...lesStappen])];
 }
 
 /** Het label van het tabblad met wat vóór de eerste `##` staat. */
@@ -130,6 +141,75 @@ const UITLEG = 'Uitleg';
 
 /** De werkvorm van een sectie die geen eigen tabblad krijgt (zie groepeer). */
 const LEERDOEL = 'leerdoel';
+
+/** De werkvorm van een sectie die naar zijn onderwerp heet. */
+const UITLEG_VORM = 'uitleg';
+
+const eigenschap = (node, naam) => node.attributes.find((a) => a.name === naam)?.value;
+
+/**
+ * De stappen die één uitleg-tabblad oplevert als het opgaat in het tabblad
+ * Uitleg (zie voegUitlegSamen), en wat daar boven de rij stappen hoort.
+ *
+ * @param {object} tab een <LesTab>
+ * @param {string} uitlegId het id van het tabblad met wat vóór de eerste `##` staat
+ */
+function alsStappen(tab, uitlegId) {
+  const id = eigenschap(tab, 'id');
+  const titel = eigenschap(tab, 'titel');
+  // Uitleg vóór de eerste `##` heeft geen kop: het is de eerste stap, De basis.
+  if (id === uitlegId) {
+    return { boven: [], stappen: [element('LesStap', `${id}-basis`, BASIS, tab.children)] };
+  }
+  const lijst = tab.children.find(isStappen);
+  if (!lijst) return { boven: [], stappen: [element('LesStap', id, titel, tab.children)] };
+  // Een sectie die zelf al stappen had: die schuiven een niveau op. De `##`
+  // en wat ervoor stond gaan mee in de eerste, zodat een link naar de `##`
+  // daar uitkomt.
+  const voor = tab.children.filter((node) => node !== lijst);
+  const [eerste, ...rest] = lijst.children.filter(isStap);
+  const inhoud = [...voor, ...eerste.children];
+  const isBasis = eigenschap(eerste, 'id') === `${id}-basis`;
+  return {
+    boven: lijst.children.filter((node) => !isStap(node)),
+    stappen: [
+      isBasis ? element('LesStap', id, titel, inhoud) : { ...eerste, children: inhoud },
+      ...rest,
+    ],
+  };
+}
+
+/**
+ * Een les over JavaScript begint met drie of vier secties uitleg, elk naar
+ * zijn onderwerp genoemd ("Een item ophalen", "Combineren met een loop").
+ * Als losse tabbladen maakten die de rij te lang: in acht van de zestien
+ * lessen stond hij op 1280 pixels op twee regels. Ze worden daarom samen één
+ * tabblad, Uitleg, met elke sectie als stap; zo heeft een les over JavaScript
+ * dezelfde vorm als een les over HTML, met zijn Theorie in stappen.
+ *
+ * Alleen de uitleg waar de les mee begint, en alleen als er daarna nog een
+ * ander tabblad komt: een les die helemaal uit uitleg bestaat, houdt zijn
+ * tabbladen.
+ *
+ * @param {object[]} tabs de <LesTab>-elementen
+ * @param {string[]} vormen de werkvorm van elk tabblad
+ * @param {string | null} uitlegId het id van het tabblad Uitleg, als dat er is
+ */
+function voegUitlegSamen(tabs, vormen, uitlegId) {
+  let aantal = 0;
+  while (aantal < tabs.length && vormen[aantal] === UITLEG_VORM) aantal++;
+  if (aantal < 2 || aantal === tabs.length) return { tabs, vormen };
+  const delen = tabs.slice(0, aantal).map((tab) => alsStappen(tab, uitlegId));
+  const bezet = new Set(tabs.map((tab) => eigenschap(tab, 'id')));
+  const id = uitlegId ?? (bezet.has('uitleg') ? 'les-uitleg' : 'uitleg');
+  const samen = element('LesTab', id, UITLEG, [
+    stappenlijst([...delen.flatMap((d) => d.boven), ...delen.flatMap((d) => d.stappen)]),
+  ]);
+  return {
+    tabs: [samen, ...tabs.slice(aantal)],
+    vormen: [UITLEG_VORM, ...vormen.slice(aantal)],
+  };
+}
 
 /**
  * De kinderen van de pagina met elke `##`-sectie in een <LesTab>, of null als
@@ -142,6 +222,9 @@ const LEERDOEL = 'leerdoel';
  * export verderop blijft op het hoogste niveau: daar hoort hij, en de
  * inhoudsopgave die Docusaurus als laatste export aan de pagina hangt, kwam
  * anders in het laatste paneel.
+ *
+ * De uitleg waar een les mee begint, wordt één tabblad met stappen (zie
+ * voegUitlegSamen).
  *
  * Twee dingen krijgen geen eigen tabblad, want dat was een scherm met één
  * zin en een knop Volgende:
@@ -192,20 +275,25 @@ function groepeer(kinderen) {
     tabs.push(element('LesTab', idVan(kop), tekstVan(kop), metStappen(inhoud, idVan(kop), vooraf)));
     vooraf = [];
   });
+  let uitlegId = null;
   if (uitleg.length && !korteUitleg) {
     // Een id dat geen kop van de les al heeft.
-    const bezet = new Set(tabs.map((t) => t.attributes[0].value));
-    const id = bezet.has('uitleg') ? 'les-uitleg' : 'uitleg';
-    tabs.unshift(element('LesTab', id, UITLEG, uitleg));
+    const bezet = new Set(tabs.map((t) => eigenschap(t, 'id')));
+    uitlegId = bezet.has('uitleg') ? 'les-uitleg' : 'uitleg';
+    tabs.unshift(element('LesTab', uitlegId, UITLEG, uitleg));
   }
   if (tabs.length < 2) return null;
   // Elk tabblad krijgt zijn werkvorm (../werkvormen): het icoon op het
   // tabblad, en de schakel naar de tip van vakdidactiek die hem onderbouwt.
-  const vormen = werkvormenVan(tabs.map((t) => t.attributes[1].value));
-  tabs.forEach((t, i) => t.attributes.push(attribuut('werkvorm', vormen[i])));
+  const samen = voegUitlegSamen(
+    tabs,
+    werkvormenVan(tabs.map((t) => eigenschap(t, 'titel'))),
+    uitlegId,
+  );
+  samen.tabs.forEach((t, i) => t.attributes.push(attribuut('werkvorm', samen.vormen[i])));
   return [
     ...boven,
-    { type: 'mdxJsxFlowElement', name: 'LesTabs', attributes: [], children: tabs },
+    { type: 'mdxJsxFlowElement', name: 'LesTabs', attributes: [], children: samen.tabs },
     ...esm,
   ];
 }

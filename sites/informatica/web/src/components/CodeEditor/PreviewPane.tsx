@@ -20,6 +20,9 @@ interface PreviewPaneProps {
   onTerug?: () => void;
   /** Loopt op bij elke herlaad van de eigen pagina: de iframe wordt dan vervangen. */
   versie?: number;
+  /** Het veld heeft een Run-knop en er is nog niet op geklikt: het voorbeeld
+   *  is leeg, en zegt zelf hoe je het vult. */
+  wachtOpRun?: boolean;
 }
 
 export function PreviewPane({
@@ -29,6 +32,7 @@ export function PreviewPane({
   weg = false,
   onTerug,
   versie = 0,
+  wachtOpRun = false,
 }: PreviewPaneProps) {
   // De preview-kolom is zo'n 330px breed op een laptop, en dat is smaller dan
   // elk breekpunt dat de media-queries-les gebruikt. Zonder deze knoppen ziet
@@ -81,7 +85,7 @@ export function PreviewPane({
         // Volgt de leerling een link in zijn voorbeeld, dan is zijn pagina weg
         // en werkt de Terug-knop van de browser niet in een srcdoc-iframe.
         <div className={styles.terugBalk}>
-          <span>Je volgde een link. Je eigen code staat nog in de editor.</span>
+          <span>Je volgde een link. Je eigen code staat er nog.</span>
           <button type="button" className={styles.viewportKnop} onClick={onTerug}>
             ← Terug naar je pagina
           </button>
@@ -114,6 +118,18 @@ export function PreviewPane({
           sandbox="allow-scripts allow-modals allow-popups allow-popups-to-escape-sandbox"
           title="Code voorbeeld"
         />
+        {wachtOpRun && (
+          // In een les over JavaScript draait de code pas na een klik op Run.
+          // Een leeg wit vlak zei dat niet: in de eerste les stond de knop
+          // nergens in de tekst.
+          <p className={styles.previewLeeg}>
+            {/* Eén span: in een flex-vak is elk los stuk tekst een eigen
+                item, en dan vallen de spaties rond Run weg. */}
+            <span>
+              Klik op <strong>Run</strong> om je code te draaien. Je pagina verschijnt dan hier.
+            </span>
+          </p>
+        )}
       </div>
       {viewport !== null && (
         <div className={styles.viewportMelding}>

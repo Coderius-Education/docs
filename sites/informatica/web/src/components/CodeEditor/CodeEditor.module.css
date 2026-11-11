@@ -33,6 +33,21 @@
   overflow-y: auto;
 }
 
+/* De opdracht uit de les, zolang het veld het scherm vult (opdracht.ts). */
+.opdrachtTekst {
+  margin-top: 0.3rem;
+}
+
+.opdrachtTekst p,
+.opdrachtTekst ul,
+.opdrachtTekst ol {
+  margin: 0 0 0.35rem;
+}
+
+.opdrachtTekst > :last-child {
+  margin-bottom: 0;
+}
+
 .onderzoekKop {
   border: none;
   background: none;
@@ -384,6 +399,21 @@
   color: var(--ifm-color-emphasis-600);
   background: var(--ifm-color-emphasis-100);
   border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
+/* Een veld met een Run-knop, vóór de eerste klik. */
+.previewLeeg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 1rem;
+  text-align: center;
+  color: #555;
+  background: white;
+  pointer-events: none;
 }
 
 .preview {
