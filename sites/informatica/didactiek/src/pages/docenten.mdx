@@ -11,10 +11,19 @@ materiaal is zoals het is, en op welk onderwijsonderzoek dat berust.
 
 ## Wat is dit?
 
-Een doorzoekbare lijst van didactische tips. Elke tip — bijvoorbeeld *Verlaag de
-cognitieve belasting* — verwijst naar een detailpagina die het onderliggende
-onderzoek samenvat en naar de oorspronkelijke paper linkt. Zo zijn de keuzes in
-het lesmateriaal navolgbaar en bespreekbaar.
+Een doorzoekbare lijst van didactische tips, ingedeeld naar onderdeel van een
+les: uitleg, voorbeelden, opdrachten, fouten en feedback, volgorde en opbouw,
+en beoordelen. Er zijn twee soorten tips:
+
+- **Uit onderzoek.** Een tip als *Verlaag de cognitieve belasting* verwijst naar
+  een detailpagina die het onderzoek samenvat en naar de paper linkt.
+- **Uit de praktijk.** Een tip als *Kleine stappen met een succesmoment* is een
+  afspraak die bij ons werkte. De detailpagina zegt wat we zagen en hoe we het
+  toepassen, en doet zich niet voor als onderzoek.
+
+Elke tip heeft één controlevraag: een vraag aan een les, waarop ja betekent dat
+de tip erin zit. Zo zijn de keuzes in het lesmateriaal navolgbaar, en is de
+verzameling ook de lijst waarmee we de cursussen nalopen.
 
 ## Hoe gebruik je het?
 
@@ -24,15 +33,21 @@ het lesmateriaal navolgbaar en bespreekbaar.
   voor het gesprek over een didactische keuze.
 - **Bij twijfel over een aanpak:** de bronpagina geeft de kernbevinding en een
   link naar het volledige onderzoek, zodat je verder kunt lezen.
+- **Bij het nalopen van een les of cursus:** de [checklist](site:didactiek/checklist) zet de
+  controlevragen van alle tips onder elkaar, per categorie. Een categorie
+  zonder tips staat er ook: daar is de verzameling nog leeg.
 
 ## Een tip toevoegen of bijwerken
 
-1. Voeg een item toe aan `src/data/tips.ts` (term, categorie, trefwoorden,
-   samenvatting, paper).
+1. Voeg een item toe aan `src/data/tips.ts`: term, categorie (een van de zes),
+   trefwoorden, samenvatting, controlevraag, en de bron. Bij `bron: 'onderzoek'`
+   hoort een paper, bij `bron: 'praktijk'` één zin over de herkomst.
 2. Maak het bijbehorende bestand `docs/<slug>.md` volgens het vaste stramien:
-   de tip, waar het vandaan komt, het onderzoek, een link naar de paper, en hoe
-   we het toepassen.
-3. Houd `slug` en `detailPad` (`/bronnen/<slug>`) gelijk.
+   de tip, de controlevraag, waar het vandaan komt, het onderzoek met een link
+   naar de paper (of bij een tip uit de praktijk: wat we zagen), en hoe we het
+   toepassen.
+3. Houd `slug` en `detailPad` (`/bronnen/<slug>`) gelijk, en de controlevraag
+   woord voor woord gelijk aan die in `tips.ts`.
 
 ## Feedback & bijdragen
 

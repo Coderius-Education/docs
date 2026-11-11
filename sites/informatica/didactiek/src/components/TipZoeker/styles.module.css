@@ -69,7 +69,7 @@
   text-decoration: none;
 }
 
-.categorie {
+.soort {
   flex-shrink: 0;
   font-size: 0.65rem;
   font-weight: 600;
@@ -112,4 +112,61 @@
   margin: 0.75rem 0 0;
   font-size: 0.8rem;
   color: var(--ifm-color-emphasis-600);
+}
+
+/* De knoppen per categorie, onder het zoekveld. */
+.categorieen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.verborgen {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.groep {
+  margin-top: 1.75rem;
+}
+
+.groep:first-of-type {
+  margin-top: 0.5rem;
+}
+
+.groepKop {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.groepTekst {
+  margin: 0.15rem 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* De controlevraag: wat je aan een les vraagt om te zien of de tip erin zit. */
+.controle {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 0 6px 6px 0;
+  line-height: 1.4;
+}
+
+.controleLabel {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-emphasis-700);
 }

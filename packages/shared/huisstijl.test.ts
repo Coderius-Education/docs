@@ -168,6 +168,18 @@ describe('de homepage van elke cursus past in één scherm', () => {
         .matchAll(/([^{}]+)\{([^{}]*)\}/g),
     ].map(([, sel, body]) => ({ sel: sel.trim().split('\n').pop() ?? '', body }));
 
+  it('de kale hero staat in een gewone container, zonder eigen marge of breedte', () => {
+    // De hero van didactiek (variant plain) gaf zijn container een max-width
+    // en een berekende margin-left. Op een telefoon werd de pagina daardoor
+    // 16px te breed, en buiten 1140 tot 1440 breed stond de kop niet boven
+    // het zoekveld eronder. Of het uitlijnt, meet alleen een browser; hier
+    // staat vast dat de container zelf niet meer verschoven wordt.
+    const f = path.join(__dirname, 'components', 'HomepageSections', 'styles.module.css');
+    const opContainer = regels(f).filter(({ sel }) => /\.plainInner$/.test(sel));
+    expect(opContainer.filter(({ body }) => /margin|width/.test(body))).toEqual([]);
+    expect(regels(f).some(({ sel }) => sel === '.plainInner > *')).toBe(true);
+  });
+
   it('de maten van hero en kaarten winnen van Infima: ze staan op de opgehoogde selector', () => {
     // Infima's .hero, h2, h3 en p staan door de layer-polyfill op
     // :not(#\#):not(#\#). Een kale module-klasse verloor: de hero van elke

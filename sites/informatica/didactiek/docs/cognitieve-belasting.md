@@ -10,6 +10,8 @@ title: Verlaag de cognitieve belasting
 presenteren) en relevant (het opbouwen van schema's) — dus snijd extrinsieke
 belasting weg en houd ruimte over voor de relevante.
 
+**Controlevraag:** Introduceert de pagina hooguit één of twee nieuwe concepten?
+
 ## Waar komt dit vandaan
 
 Cognitive Load Theory beschrijft leren als het opbouwen van schema's in het

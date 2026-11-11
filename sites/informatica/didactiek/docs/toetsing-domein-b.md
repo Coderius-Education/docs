@@ -10,6 +10,8 @@ uitvoeren, een fout zoeken, het aanvullen, een stelling beoordelen en het zelf
 opstellen. Zo zie je wat hij er echt van begrijpt, en kun je met dezelfde
 context makkelijker en moeilijker vragen.
 
+**Controlevraag:** Vraagt de toets een algoritme op meer manieren dan alleen uitvoeren?
+
 ## Waar komt dit vandaan
 
 Voor informatica is er geen centraal examen. Elke docent maakte zijn eigen

@@ -1,0 +1,35 @@
+.groep {
+  margin-top: 1.75rem;
+}
+
+.omschrijving {
+  margin: 0 0 0.6rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.leeg {
+  color: var(--ifm-color-emphasis-600);
+  font-style: italic;
+}
+
+.vragen {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.vragen li {
+  margin: 0 0 0.75rem;
+}
+
+.vragen label {
+  display: block;
+  font-weight: 600;
+}
+
+.tip {
+  display: block;
+  margin-left: 1.45rem;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+}
