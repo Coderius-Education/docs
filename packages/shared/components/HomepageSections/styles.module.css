@@ -73,9 +73,13 @@
 .plain {
   padding: 2.5rem 0 .5rem;
 }
-.plainInner {
+/* De kop staat in dezelfde .container als wat eronder komt, dus hij lijnt op
+   elke breedte uit. Alleen de tekst is smal. Eerst had de container zelf een
+   max-width en een berekende margin-left: op een telefoon schoof de pagina
+   daardoor 16px opzij, en onder 1140px en boven 1440px stond de kop niet
+   boven het zoekveld. */
+.plainInner > * {
   max-width: 720px;
-  margin-left: max(1rem, calc((100vw - var(--ifm-container-width)) / 2));
 }
 .plainTagline {
   margin: .5rem 0 0;
