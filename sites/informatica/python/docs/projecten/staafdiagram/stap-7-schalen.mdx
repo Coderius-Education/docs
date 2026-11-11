@@ -26,6 +26,8 @@ dan een smalle strook in het midden, met getallen die je niet meer kunt
 lezen. Op je eigen computer zoomt turtle niet uit, en steekt de staaf ver
 boven het venster uit.
 
+### Op schaal
+
 Een diagram op schaal lost dat op. De hoogste staaf is altijd 200 hoog, en
 de rest naar verhouding:
 
@@ -36,10 +38,14 @@ hoogte = waarde / hoogste * 200
 print(hoogte)   # 100.0
 ```
 
-55 is de helft van 110, dus die staaf wordt de helft van 200. Daarvoor moet
-het programma eerst weten wat het hoogste getal is. Dat zoek je met een
-loop: begin bij 0, en kom je een groter getal tegen, onthoud dan dat getal.
-Bij 0 beginnen kan, omdat een aantal minuten nooit kleiner is dan 0.
+55 is de helft van 110, dus die staaf wordt de helft van 200.
+
+### De hoogste zoeken
+
+Voor de schaal moet het programma eerst weten wat het hoogste getal is. Dat
+zoek je met een loop: begin bij 0, en kom je een groter getal tegen, onthoud
+dan dat getal. Bij 0 beginnen kan, omdat een aantal minuten nooit kleiner is
+dan 0.
 
 ```python
 cijfers = [6, 9, 7]
@@ -135,6 +141,8 @@ past in beeld, en de getallen kun je weer lezen.
 
 ## Er gaat iets mis
 
+### ZeroDivisionError
+
 {/* foutmelding-van: hoogste = 0\nwaarde = 65\nhoogte = waarde / hoogste * 200 */}
 
 ```
@@ -152,6 +160,8 @@ regel eronder komt nooit aan de beurt.
 **Oplossing:** vergelijk met `if waarde > hoogste:`, en zet daaronder
 `hoogste = waarde`, met `hoogste` links.
 
+### KeyError
+
 {/* foutmelding-van: minuten = {"chatten": 65}\nhoogste = minuten[0] */}
 
 ```
@@ -163,6 +173,8 @@ cijfer in Lijsten. Een lijst heeft plekken 0, 1, 2, en zo verder, maar een
 dictionary zoekt op naam. Een app met de naam 0 is er niet.
 
 **Oplossing:** begin met `hoogste = 0`.
+
+### Een klein, smal diagram
 
 **Je diagram staat er klein en smal in, met piepkleine getallen.**
 

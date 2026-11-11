@@ -322,15 +322,69 @@ describe('groepeer', () => {
       'paragraph',
       'code',
     ]);
-    expect(uitleg.children[1].children.map((n: Knoop) => n.type)).toEqual([
-      'code',
-      'paragraph',
-      'code',
-    ]);
+    // De code links; rechts, in een eigen vak, het woord Uitvoer en het blok.
+    const [links, rechts] = uitleg.children[1].children;
+    expect(links.type).toBe('code');
+    expect(rechts.name).toBe('div');
+    expect(rechts.children.map((n: Knoop) => n.type)).toEqual(['paragraph', 'code']);
     // Ook met een toevoeging achter Uitvoer.
     expect(opdracht.children.map((n: Knoop) => n.name ?? n.type)).toEqual([
       'heading',
       'LesVoorbeeld',
+    ]);
+  });
+
+  it('de toelichting bij een lang programma staat naast de code, onder de uitvoer', () => {
+    // Een programma van 23 regels met één regel uitvoer en drie regels
+    // toelichting eronder paste niet op het scherm, terwijl de helft van de
+    // breedte naast de code leeg was.
+    const code = (value: string): Knoop => ({ type: 'code', value });
+    const lang = code(Array.from({ length: 14 }, (_, i) => `regel_${i} = ${i}`).join('\n'));
+    const rechtsVan = (...na: Knoop[]) =>
+      groepeer([
+        titel,
+        kop(2, 'Een klasse'),
+        lang,
+        alinea('Uitvoer:'),
+        code('13'),
+        ...na,
+        kop(2, 'Opdracht 1: Print'),
+        alinea('Print.'),
+      ])[1].children[0].children;
+    const metToelichting = rechtsVan(
+      alinea('Niets hiervan is nieuw.'),
+      alinea('Het volgende wel.'),
+    );
+    expect(metToelichting.map((n: Knoop) => n.name ?? n.type)).toEqual(['heading', 'LesVoorbeeld']);
+    expect(metToelichting[1].children[1].children.map((n: Knoop) => n.type)).toEqual([
+      'paragraph',
+      'code',
+      'paragraph',
+      'paragraph',
+    ]);
+    // Een zin die het volgende blok aankondigt, hoort daarbij.
+    const metAankondiging = rechtsVan(alinea('Met een lijst gaat het zo:'), code('x = []'));
+    expect(metAankondiging.map((n: Knoop) => n.name ?? n.type)).toEqual([
+      'heading',
+      'LesVoorbeeld',
+      'paragraph',
+      'code',
+    ]);
+    // Bij een kort voorbeeld is er rechts geen ruimte over.
+    const kort = groepeer([
+      titel,
+      kop(2, 'Een klasse'),
+      code('print(1)'),
+      alinea('Uitvoer:'),
+      code('1'),
+      alinea('Dat is alles.'),
+      kop(2, 'Opdracht 1: Print'),
+      alinea('Print.'),
+    ])[1].children[0].children;
+    expect(kort.map((n: Knoop) => n.name ?? n.type)).toEqual([
+      'heading',
+      'LesVoorbeeld',
+      'paragraph',
     ]);
   });
 
@@ -351,6 +405,44 @@ describe('groepeer', () => {
     expect(paar.name).toBe('LesVoorbeeld');
     expect(paar.attributes.map((a: { name: string }) => a.name)).toEqual(['vraag']);
     expect(paar.children.map((n: Knoop) => n.name ?? n.type)).toEqual(['code', 'Voorspel']);
+  });
+
+  it('zet bestanden met hun naam erboven naast elkaar, met de voorspelvraag erachter', () => {
+    // Een module en het programma dat hem importeert, met de vraag wat het
+    // programma print: onder elkaar waren die drie 540 pixels, en de vraag
+    // gaat over allebei de bestanden.
+    const code = (value: string): Knoop => ({ type: 'code', value });
+    const naam = (bestand: string): Knoop => ({
+      type: 'paragraph',
+      children: [{ type: 'strong', children: [{ type: 'inlineCode', value: bestand }] }],
+    });
+    const merk: Knoop = { type: 'mdxFlowExpression', value: '/* niet-draaien: twee bestanden */' };
+    const vraag: Knoop = { type: 'mdxJsxFlowElement', name: 'Voorspel', children: [] };
+    const uit = groepeer([
+      titel,
+      kop(2, 'Je eigen module'),
+      naam('rekenen.py'),
+      code('def dubbel(x):\n    return x * 2'),
+      naam('main.py'),
+      merk,
+      code('import rekenen'),
+      vraag,
+      // Eén bestand is geen rij.
+      naam('los.py'),
+      code('print(1)'),
+      kop(2, 'Opdracht 1: Print'),
+      alinea('Print.'),
+    ]);
+    const [, rij, ...rest] = uit[1].children[0].children;
+    expect(rij.name).toBe('LesVoorbeeld');
+    expect(rij.attributes.map((a: { name: string }) => a.name)).toEqual(['bestanden']);
+    expect(rij.children.map((n: Knoop) => n.name)).toEqual(['div', 'div', 'Voorspel']);
+    expect(rij.children[1].children.map((n: Knoop) => n.type)).toEqual([
+      'paragraph',
+      'mdxFlowExpression',
+      'code',
+    ]);
+    expect(rest.map((n: Knoop) => n.type)).toEqual(['paragraph', 'code']);
   });
 
   it('de uitleg vóór de eerste ## krijgt stappen van zijn ###-koppen', () => {
@@ -440,6 +532,53 @@ describe('groepeer', () => {
       expect(uit[0].children[0].value).toBe('Bij jou kan het anders zijn.');
     });
 
+    it('een punt in de kop, of de kop van een spel met een geheim getal, telt ook', () => {
+      // "(bij cijfer = 4.0)" had een punt, en de kop werd niet herkend.
+      for (const kopje of ['Verwachte uitvoer (bij cijfer = 4.0):', 'Een spel kan zo gaan:']) {
+        expect(namen(opdracht(alinea(kopje), code('1'), veld)), kopje).toEqual(['LesVeld']);
+      }
+      // Een zin die toevallig op een dubbele punt eindigt, is geen kop.
+      expect(namen(opdracht(alinea('Print dit:'), code('1'), veld))).toEqual([
+        'paragraph',
+        'code',
+        'CodeExercise',
+      ]);
+    });
+
+    it('twee gevallen, elk met hun verwachte uitvoer, gaan allebei het veld in', () => {
+      const uit = opdracht(
+        alinea('Print een bericht.'),
+        alinea('Verwachte uitvoer (bij cijfer = 6.5):'),
+        code('Geslaagd'),
+        alinea('Verwachte uitvoer (bij cijfer = 4.0):'),
+        code('Helaas'),
+        veld,
+      );
+      expect(namen(uit)).toEqual(['paragraph', 'LesVeld']);
+      expect(
+        uit[1].children[0].children.map((n: Knoop) => n.value ?? n.children?.[0].value),
+      ).toEqual([
+        'Verwachte uitvoer (bij cijfer = 6.5):',
+        'Geslaagd',
+        'Verwachte uitvoer (bij cijfer = 4.0):',
+        'Helaas',
+      ]);
+    });
+
+    it('een kop over twee regels telt, en een uitvoer met een plaatje gaan samen', () => {
+      // In de bron loopt een lange kop door op de volgende regel; een `.` in
+      // een patroon past niet op een regeleinde, en de kop werd gemist.
+      const lang = alinea('Verwachte uitvoer als je house en cat typt,\nen daarna tree:');
+      const uit = opdracht(alinea('Teken.'), lang, code('Goed.'), plaatje, veld);
+      expect(namen(uit)).toEqual(['paragraph', 'LesVeld']);
+      expect(namen(uit[1].children[0].children)).toEqual([
+        'paragraph',
+        'code',
+        'paragraph',
+        'paragraph',
+      ]);
+    });
+
     it('een doelplaatje krijgt een regel erboven die zegt wat het is', () => {
       const uit = opdracht(alinea('Teken een huis.'), plaatje, veld);
       expect(namen(uit)).toEqual(['paragraph', 'LesVeld']);
@@ -490,12 +629,32 @@ describe('groepeer', () => {
     ]);
     expect(uit[1].children[0].children.map((n: Knoop) => n.name ?? n.type)).toEqual([
       'heading',
-      'mdxFlowExpression',
       'CodeExercise',
+      'mdxFlowExpression',
       'paragraph',
       'code',
       'CodeExercise',
     ]);
+    // Met één alinea tussen het blok en het veld komt het veld op de plek
+    // van het blok, en de alinea eronder.
+    const metAlinea = groepeer([
+      titel,
+      kop(2, 'Een loop'),
+      alinea('Zo tel je tot drie:'),
+      code('for i in range(3):\n    print(i)'),
+      alinea('Druk op Uitvoeren en kijk wat er gebeurt.'),
+      veld('for i in range(3):\n    print(i)'),
+      kop(2, 'Opdracht 1: Print'),
+      alinea('Print.'),
+    ]);
+    const blokken = metAlinea[1].children[0].children;
+    expect(blokken.map((n: Knoop) => n.name ?? n.type)).toEqual([
+      'heading',
+      'paragraph',
+      'CodeExercise',
+      'paragraph',
+    ]);
+    expect(blokken[3].children[0].value).toBe('Druk op Uitvoeren en kijk wat er gebeurt.');
   });
 
   it('doet niets met minder dan twee tabbladen', () => {
@@ -701,8 +860,10 @@ describe('de opmaak van de tabbladen', () => {
     // zelf is geen ouder van een paneel en mag wel schuiven.
     const verboden =
       /(^|[\s;])(transform|filter|contain|will-change|overflow(-[xy])?|z-index|isolation|animation|transition|container-type)\s*:/;
+    // Het vak van een codeblok (`pre`) is nooit de ouder van een oefenveld:
+    // een programma dat hoger is dan het scherm, mag daarin schuiven.
     const fout = regels
-      .filter(({ sel }) => /^\.(wortel|paneel|stappen)\b/.test(sel))
+      .filter(({ sel }) => /^\.(wortel|paneel|stappen)\b/.test(sel) && !/ pre$/.test(sel))
       .filter(({ body }) => verboden.test(body))
       .map(({ sel }) => sel);
     expect(fout).toEqual([]);

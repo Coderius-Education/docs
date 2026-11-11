@@ -136,6 +136,17 @@
   .inTab > :not(.editorSection):not(.resultaat) {
     grid-column: 1 / -1;
   }
+
+  /* Is de uitvoer of het doelplaatje hoger dan de code, dan loopt de editor
+     door tot onderaan het veld. */
+  .inTab > .editorSection {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .inTab > .editorSection > :last-child {
+    flex: 1 1 auto;
+  }
 }
 
 /* Het doel van de opdracht in de uitvoerkolom (useLesDoel): de verwachte
@@ -165,6 +176,27 @@
 .wacht + .doel {
   border-top: 0;
   padding-top: 0;
+}
+
+/* Het doel staat er twee keer: boven de code op een smal scherm, in de
+   uitvoerkolom op een breed scherm. */
+.doelBoven {
+  border-top: 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.doelNaast {
+  display: none;
+}
+
+@media (min-width: 997px) {
+  .doelBoven {
+    display: none;
+  }
+
+  .doelNaast {
+    display: block;
+  }
 }
 
 .loading {

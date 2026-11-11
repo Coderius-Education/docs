@@ -166,6 +166,10 @@ function CodeExerciseInner({
 
   return (
     <div ref={veldRef} className={`${styles.exercise}${inTab ? ` ${styles.inTab}` : ''}`}>
+      {/* Op een smal scherm staat het doel boven de code: onder een startcode
+          van dertig regels zag de leerling pas na het scrollen wat hij moest
+          maken. Op een breed scherm staat het in de uitvoerkolom (hieronder). */}
+      {doel && <div className={`${styles.doel} ${styles.doelBoven}`}>{doel}</div>}
       <div className={styles.editorSection}>
         <div className={styles.toolbar} ref={balkRef}>
           <span className={styles.label}>Probeer het zelf</span>
@@ -222,7 +226,7 @@ function CodeExerciseInner({
         {/* Wat de opdracht moet opleveren (de verwachte uitvoer of het
             doelplaatje), onder wat de leerling zelf kreeg: zo vergelijkt hij
             ze zonder te scrollen. */}
-        {doel && <div className={styles.doel}>{doel}</div>}
+        {doel && <div className={`${styles.doel} ${styles.doelNaast}`}>{doel}</div>}
       </div>
     </div>
   );

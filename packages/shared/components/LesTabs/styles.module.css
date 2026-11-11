@@ -230,7 +230,7 @@
    naast elkaar in plaats van onder elkaar. */
 .paneel > h2 {
   --ifm-h2-font-size: 1.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .paneel > details,
@@ -282,29 +282,60 @@
   max-height: 34vh;
 }
 
-/* Een voorbeeld met zijn uitvoer naast elkaar (LesVoorbeeld): de code links
-   over de volle hoogte, rechts het woord Uitvoer met het uitvoerblok. */
+/* Een programma van meer dan zestien regels is hoger dan wat
+   er op 1280×720 onder de tabbladen past: het schuift dan in zijn eigen vak,
+   en de knop Volgende blijft in beeld. In de Python-cursus zijn dat vier
+   voorbeelden in het hoofdstuk Klassen. Niet in een uitklapblok: wie een
+   oplossing opent, leest hem in zijn geheel. */
+.paneel :global(.theme-code-block):not(details *) pre {
+  max-height: 53vh;
+  overflow-y: auto;
+}
+
+/* Een voorbeeld met zijn uitvoer naast elkaar (LesVoorbeeld): de code links,
+   rechts een <div> met het woord Uitvoer, het uitvoerblok en soms een
+   alinea toelichting. Met een voorspelvraag staat rechts de vraag. */
 @media (min-width: 997px) {
   .voorbeeld {
     display: grid;
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-    grid-template-rows: auto 1fr;
+    align-items: start;
     column-gap: 1rem;
     margin-bottom: var(--ifm-leading);
   }
 
   .voorbeeld > :first-child {
-    grid-row: 1 / span 2;
     margin-bottom: 0;
   }
 
-  .voorbeeld > p {
+  /* Het woord Uitvoer, boven het blok. */
+  .voorbeeld > div > p:first-child {
     margin: 0 0 0.25rem;
     color: var(--ifm-color-emphasis-700);
     font-size: 0.875rem;
   }
 
-  .voorbeeld > :last-child {
+  .voorbeeld > :last-child,
+  .voorbeeld > div > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* Bestanden naast elkaar, elk met zijn naam erboven; een voorspelvraag
+     erachter is de laatste kolom. */
+  .bestanden {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    column-gap: 1rem;
+    margin-bottom: var(--ifm-leading);
+  }
+
+  .bestanden > div > p {
+    margin: 0 0 0.25rem;
+  }
+
+  .bestanden > div > :last-child,
+  .bestanden > :last-child {
     margin-bottom: 0;
   }
 

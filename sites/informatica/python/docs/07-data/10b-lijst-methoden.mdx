@@ -21,6 +21,8 @@ Net als bij strings hebben lijsten methoden die je met een punt aanroept:
 | `lijst.pop()` | Verwijder het laatste element en geef het terug |
 | `lijst.pop(i)` | Verwijder het element op positie `i` en geef het terug |
 
+### De methoden gebruiken
+
 ```python
 dieren = ["kat", "hond", "vis"]
 
@@ -201,8 +203,6 @@ Bouw een to-do lijst met drie functies:
 - `voeg_toe(taken, taak)`: voegt een taak toe
 - `verwijder(taken, nummer)`: verwijdert de taak op die plek (de gebruiker telt vanaf 1)
 
-De functies krijgen de lijst als parameter en veranderen hem met `append` en `pop`. Dat werkt zonder `global` en zonder `return`: je maakt geen nieuwe variabele, je past de lijst aan die je meekreeg.
-
 Verwachte uitvoer:
 
 ```
@@ -224,6 +224,8 @@ Toegevoegd: Kamer opruimen
 
 <details>
 <summary>Klik hier voor een tip.</summary>
+
+De functies krijgen de lijst als parameter en veranderen hem met `append` en `pop`. Dat werkt zonder `global` en zonder `return`: je maakt geen nieuwe variabele, je past de lijst aan die je meekreeg.
 
 - `voeg_toe`: één regel, `taken.append(taak)`.
 - `verwijder`: `taken.pop(nummer - 1)`. De `-1` is nodig omdat de gebruiker bij `1` begint te tellen, maar Python bij `0`.

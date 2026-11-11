@@ -29,6 +29,8 @@ print("#" + links)   # #BYR
 
 Wat links van de `+` staat, komt vooraan.
 
+### Tekst opbouwen in een loop
+
 Een tekst kun je ook in een loop opbouwen, teken voor teken. Je begint met een
 lege tekst: `""`, twee aanhalingstekens met niets ertussen. Elke ronde plak je
 er een teken bij:
@@ -48,6 +50,8 @@ BY
 BYR
 ```
 
+### Stap voor stap
+
 In de eerste ronde is `opgebouwd` nog leeg, en plakt Python er `B` achter.
 Daarna komt `Y` achter `B`, en dan `R` achter `BY`. Klik in het veld hieronder
 op Stap voor stap, en blader door de rondes: je ziet `opgebouwd` per ronde
@@ -64,8 +68,7 @@ drie keer zoveel. In dit kleine veld zie je alles.
 
 ## Opdracht: een vlinder
 
-Plak je programma uit stap 4 in het veld. Ben je het kwijt, neem dan de
-oplossing van [stap 4](site:python/docs/projecten/pixel-art/stap-4-kleuren).
+### Wat je maakt
 
 Schrijf een functie `spiegelrij(regel, x, y)` die een regel tekent met zijn
 spiegelbeeld erachter:
@@ -75,7 +78,9 @@ spiegelbeeld erachter:
 2. Daarna roept hij `rij` aan, met `regel` en het spiegelbeeld aan elkaar
    geplakt.
 
-Teken daarmee deze vlinder, met een loop over de lijst zoals in stap 3. In de
+### De vlinder
+
+Teken met `spiegelrij` deze vlinder, met een loop over de lijst zoals in stap 3. In de
 lijst staat alleen de linkerhelft. Kopieer hem naar je programma. De vlinder
 is blauw, dus zet ook `"B": "blue"` in `kleuren`. De bovenste regel begint op
 `(-140, 120)`.
@@ -96,6 +101,11 @@ vlinder = [
     "..BB...",
 ]
 ```
+
+### Aan de slag
+
+Plak je programma uit stap 4 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 4](site:python/docs/projecten/pixel-art/stap-4-kleuren).
 
 ![Een blauwe vlinder van pixels met gele en rode vlekken op de vleugels, een zwart lijf en twee voelsprieten](./img/stap-5-vlinder.svg)
 
@@ -174,6 +184,8 @@ en klik op Stap voor stap.
 
 ## Er gaat iets mis
 
+### Twee linkerhelften
+
 **Je vlinder heeft twee linkerhelften: beide vleugels wijzen dezelfde kant op,
 en er staan twee lijfjes.**
 
@@ -182,6 +194,8 @@ elk teken achteraan, en krijg je de regel zelf terug in plaats van zijn
 spiegelbeeld.
 
 **Oplossing:** zet het nieuwe teken vooraan: `omgedraaid = teken + omgedraaid`.
+
+### UnboundLocalError
 
 {/* foutmelding-van: blok-eronder */}
 

@@ -38,8 +38,7 @@ het resultaat ook doorgeven aan een andere functie, zoals `rij`.
 
 ## Opdracht: een ruimtemannetje
 
-Plak je programma uit stap 5 in het veld. Ben je het kwijt, neem dan de
-oplossing van [stap 5](site:python/docs/projecten/pixel-art/stap-5-spiegelen).
+### Wat je maakt
 
 Schrijf een functie `spiegel(regel)` die het spiegelbeeld van `regel`
 teruggeeft, en niets tekent. Test hem eerst los: `print(spiegel("BYR"))` moet
@@ -63,6 +62,11 @@ ruimtemannetje = [
     "...GG.",
 ]
 ```
+
+### Aan de slag
+
+Plak je programma uit stap 5 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 5](site:python/docs/projecten/pixel-art/stap-5-spiegelen).
 
 ![Een groen ruimtemannetje van pixels, zoals uit een oud computerspel: twee voelsprieten, twee ogen als gaten, armen opzij en twee voetjes](./img/stap-6-ruimtemannetje.svg)
 
@@ -153,6 +157,8 @@ tekst: de regel met zijn spiegelbeeld erachter. Die gaat in één keer naar
 
 ## Er gaat iets mis
 
+### Alleen de linkerhelft
+
 **`print(spiegel("BYR"))` geeft `B`, en van het ruimtemannetje zie je alleen
 de linkerhelft, met hier en daar één vakje ernaast.**
 
@@ -162,6 +168,8 @@ ronde, als `omgedraaid` pas één teken heeft.
 
 **Oplossing:** laat `return omgedraaid` even ver inspringen als de `for`. Dan
 komt hij pas aan de beurt als de loop klaar is.
+
+### TypeError
 
 {/* foutmelding-van: blok-erboven */}
 

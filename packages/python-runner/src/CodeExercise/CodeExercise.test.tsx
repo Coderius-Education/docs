@@ -127,8 +127,13 @@ describe('CodeExercise', () => {
       </PaneelContext.Provider>,
     );
     await wachtTotGeladen();
-    const doel = screen.getByText('Verwachte uitvoer: 12');
-    // Eerst de melding, dan het doel.
+    // Het doel staat er twee keer: boven de code voor een smal scherm (daar
+    // stond het anders onder een startcode van dertig regels), en in het vak
+    // van de uitvoer voor een breed scherm. De opmaak toont er één.
+    const [boven, doel] = screen.getAllByText('Verwachte uitvoer: 12');
+    expect(boven.compareDocumentPosition(editor()) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(boven.parentElement?.className).not.toBe(doel.parentElement?.className);
+    // In het vak: eerst de melding, dan het doel.
     const melding = screen.getByText(/De uitvoer verschijnt hier/);
     expect(melding.compareDocumentPosition(doel) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     nep.volgende = { stdout: '1\n' };
@@ -138,7 +143,7 @@ describe('CodeExercise', () => {
       (pre) => pre.textContent === '1\n',
     ) as HTMLElement;
     expect(
-      uitvoer.compareDocumentPosition(screen.getByText('Verwachte uitvoer: 12')) &
+      uitvoer.compareDocumentPosition(screen.getAllByText('Verwachte uitvoer: 12')[1]) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });

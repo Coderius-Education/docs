@@ -22,7 +22,7 @@ Uitvoer: `Hallo Sam`. De variabele `naam` staat buiten de functie, en `groet()` 
 
 Veranderen is een ander verhaal.
 
-## Voorspel: wat doet dit?
+### Voorspel
 
 {/* niet-draaien: toont bewust de UnboundLocalError die deze les uitlegt */}
 ```python
@@ -114,6 +114,8 @@ Uitvoer: `2`, net als met `global`. De functie rekent, en buiten de functie bepa
 
 ## Er gaat iets mis
 
+### Een variabele van buiten veranderen
+
 {/* foutmelding-van: fout-helft */}
 ```
 UnboundLocalError: cannot access local variable 'score' where it is not associated with a value
@@ -122,6 +124,8 @@ UnboundLocalError: cannot access local variable 'score' where it is not associat
 **Oorzaak:** een functie verandert een variabele van buiten, zonder `global`.
 
 **Oplossing:** zet `global` bovenaan de functie, of laat de functie de nieuwe waarde teruggeven met `return`.
+
+### Fout en goed
 
 {/* niet-draaien: de FOUT-helft toont juist de fout die deze les uitlegt */}
 ```python

@@ -114,7 +114,14 @@ export function HighlightedEditor({
       className={styles.editorWrapper}
       // Met een maximum schuift de code in de editor zelf; de textarea neemt
       // de gutter en de gekleurde laag mee (zie de scroll-afhandeling).
-      style={maxHeight ? { minHeight, maxHeight, overflow: 'hidden' } : { minHeight }}
+      // De achtergrond van de code ook op het vak zelf: staat de editor naast
+      // een hogere uitvoer (in een les-tabblad), dan loopt het vlak door tot
+      // onderaan in plaats van halverwege op te houden.
+      style={{
+        minHeight,
+        background: theme.plain.backgroundColor,
+        ...(maxHeight ? { maxHeight, overflow: 'hidden' } : {}),
+      }}
     >
       <div ref={gutterRef} className={styles.gutter} aria-hidden="true">
         {Array.from({ length: lineCount }, (_, i) => (

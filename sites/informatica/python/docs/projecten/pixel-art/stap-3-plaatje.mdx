@@ -48,8 +48,7 @@ plaats van `print`.
 
 ## Opdracht: een smiley
 
-Plak je programma uit stap 2 in het veld. Ben je het kwijt, neem dan de
-oplossing van [stap 2](site:python/docs/projecten/pixel-art/stap-2-rij).
+### Wat je maakt
 
 Kopieer deze smiley naar je programma:
 
@@ -69,9 +68,13 @@ smiley = [
 ]
 ```
 
-Teken hem met een for-loop over de lijst, in plaats van de zes losse
-aanroepen voor het hart. De bovenste regel begint op `(-100, 100)`, en elke
-volgende regel 20 lager.
+Teken hem met een for-loop over de lijst: de bovenste regel op
+`(-100, 100)`, elke volgende 20 lager.
+
+### Aan de slag
+
+Plak je programma uit stap 2 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 2](site:python/docs/projecten/pixel-art/stap-2-rij).
 
 ![Een zwarte smiley van pixels: een ronde rand met twee ogen en een lachende mond](./img/stap-3-smiley.svg)
 
@@ -139,6 +142,8 @@ daaroverheen. Aan `rij` verandert niets.
 
 ## Er gaat iets mis
 
+### Eén rij in plaats van een smiley
+
 **Je ziet maar één rij: een streep vol vakjes, en geen smiley.**
 
 **Oorzaak:** `y = 100` staat in de loop. Dan begint elke regel weer op
@@ -146,6 +151,8 @@ hoogte 100, en tekent de schildpad alle regels over elkaar heen.
 
 **Oplossing:** zet `y = 100` boven de loop. In de loop hoort alleen de regel
 die er 20 van afhaalt.
+
+### Losse vakjes naast de smiley
 
 **Naast je smiley staan losse vakjes, een ervan ver naar rechts, en de ogen
 zijn maar één vakje hoog.**

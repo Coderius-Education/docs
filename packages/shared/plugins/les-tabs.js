@@ -150,11 +150,22 @@ const jsx = (name, children, attributes = []) => ({
 
 const isVoorspel = (node) => node?.type === 'mdxJsxFlowElement' && node.name === 'Voorspel';
 
+/** Vanaf zoveel regels is een programma lang, en tot zoveel een uitvoer kort. */
+const LANG = 12;
+const KORT = 5;
+
+/** Een gewone alinea na een voorbeeld, die niets aankondigt. */
+const isToelichting = (node) =>
+  node !== undefined &&
+  isAlinea(node) &&
+  !/:$/.test(tekstVan(node).trim()) &&
+  !node.children.some((k) => k.type === 'image' || k.name === 'img' || k.type === 'strong');
+
 /**
  * Een codeblok dat direct door "Uitvoer:" en een uitvoerblok wordt gevolgd,
- * komt in een <LesVoorbeeld>: de code links, de uitvoer rechts. Onder elkaar
- * kost zo'n voorbeeld honderd pixels meer, en in de Python-cursus staan er
- * 225. Ook "Uitvoer bij 50:" telt.
+ * komt in een <LesVoorbeeld>: de code links, de uitvoer rechts (in een eigen
+ * <div>). Onder elkaar kost zo'n voorbeeld honderd pixels meer, en in de
+ * Python-cursus staan er 225. Ook "Uitvoer bij 50:" telt.
  *
  * Hetzelfde voor een codeblok met de voorspelvraag eronder (<Voorspel>): de
  * code links, de vraag rechts. Onder elkaar waren die twee samen al hoger dan
@@ -167,12 +178,68 @@ function voorbeeldenNaastElkaar(kinderen) {
   for (let i = 0; i < kinderen.length; i++) {
     const [code, kop, uitvoer] = kinderen.slice(i, i + 3);
     if (code.type === 'code' && kop && isUitvoerKop(kop) && uitvoer?.type === 'code') {
-      uit.push(jsx('LesVoorbeeld', [code, kop, uitvoer]));
+      const rechts = [kop, uitvoer];
       i += 2;
+      // Naast een lang programma met een korte uitvoer is rechts ruimte over:
+      // de alinea's die het programma toelichten, staan daar. Een zin die het
+      // volgende blok aankondigt ("Met een lijst gaat het zo:") niet.
+      const regels = (node) => (node.value ?? '').split('\n').length;
+      if (regels(code) >= LANG && regels(uitvoer) <= KORT) {
+        while (rechts.length < 4 && isToelichting(kinderen[i + 1])) rechts.push(kinderen[++i]);
+      }
+      uit.push(jsx('LesVoorbeeld', [code, jsx('div', rechts)]));
     } else if (code.type === 'code' && isVoorspel(kop)) {
       uit.push(jsx('LesVoorbeeld', [code, kop], [attribuut('vraag', 'ja')]));
       i += 1;
     } else uit.push(code);
+  }
+  return uit;
+}
+
+/** Een alinea met alleen een vette bestandsnaam: **`rekenen.py`**. */
+const isBestandsnaam = (node) =>
+  isAlinea(node) &&
+  node.children.length === 1 &&
+  node.children[0].type === 'strong' &&
+  /^[\w.-]+\.\w+$/.test(tekstVan(node).trim());
+
+/**
+ * Twee of meer bestanden onder elkaar, elk met zijn naam erboven
+ * (**`rekenen.py`** en **`main.py`**), staan naast elkaar: een programma dat
+ * een module importeert lees je met de module ernaast. Staat er direct een
+ * voorspelvraag onder, dan is die de laatste kolom: de vraag gaat over beide
+ * bestanden, en onder elkaar pasten de drie niet op het scherm.
+ *
+ * @param {object[]} kinderen
+ */
+function bestandenNaastElkaar(kinderen) {
+  const uit = [];
+  let i = 0;
+  // Een bestand: de naam, een commentaar (`{/* niet-draaien: … */}`), de code.
+  const bestandOp = (plek) => {
+    if (!kinderen[plek] || !isBestandsnaam(kinderen[plek])) return null;
+    let k = plek + 1;
+    while (k < kinderen.length && zetNietsNeer(kinderen[k])) k++;
+    return kinderen[k]?.type === 'code' ? { tot: k + 1 } : null;
+  };
+  while (i < kinderen.length) {
+    const groepen = [];
+    let k = i;
+    for (let b = bestandOp(k); b; b = bestandOp(k)) {
+      groepen.push(jsx('div', kinderen.slice(k, b.tot)));
+      k = b.tot;
+    }
+    if (groepen.length < 2) {
+      uit.push(kinderen[i]);
+      i += 1;
+      continue;
+    }
+    if (isVoorspel(kinderen[k])) {
+      groepen.push(kinderen[k]);
+      k += 1;
+    }
+    uit.push(jsx('LesVoorbeeld', groepen, [attribuut('bestanden', 'ja')]));
+    i = k;
   }
   return uit;
 }
@@ -182,8 +249,11 @@ const VELDEN_MET_DOEL = ['CodeExercise'];
 
 const isVeld = (node) => node.type === 'mdxJsxFlowElement' && VELDEN_MET_DOEL.includes(node.name);
 
+// "Verwachte uitvoer (bij cijfer = 4.0):", "Uitvoer als je 4 en 10 typt:", en
+// bij een spel met een geheim getal "Een spel kan zo gaan:".
 const isVerwachtKop = (node) =>
-  isAlinea(node) && /^(Verwachte uitvoer|Uitvoer)\b[^.]*:$/.test(tekstVan(node).trim());
+  isAlinea(node) &&
+  /^(Verwachte uitvoer|Uitvoer|Een spel kan)\b[\s\S]{0,160}:$/.test(tekstVan(node).trim());
 
 const isPlaatje = (node) => node.type === 'image' || node.name === 'img';
 
@@ -214,23 +284,39 @@ const plat = (code) =>
     .join('\n');
 
 /**
- * Een codeblok met direct daaronder een oefenveld met dezelfde code: het
- * blok vervalt. In twintig projectstappen van de Python-cursus stond de code
- * zo twee keer onder elkaar, het voorbeeld en het veld om het te proberen;
+ * Een codeblok met daaronder een oefenveld met dezelfde code: het blok
+ * vervalt. In twintig projectstappen van de Python-cursus stond de code zo
+ * twee keer onder elkaar, het voorbeeld en het veld om het te proberen;
  * samen waren die hoger dan het scherm. Het veld laat dezelfde code zien.
+ *
+ * Tussen de twee mag een alinea staan ("Druk op Uitvoeren en kijk wat er
+ * gebeurt."): het veld komt dan op de plek van het blok, en de alinea
+ * eronder.
  *
  * @param {object[]} kinderen
  */
 function zonderDubbeleCode(kinderen) {
-  return kinderen.filter((node, i) => {
-    if (node.type !== 'code') return true;
+  const uit = [];
+  for (let i = 0; i < kinderen.length; i++) {
+    const node = kinderen[i];
+    uit.push(node);
+    if (node.type !== 'code') continue;
     let k = i + 1;
-    while (k < kinderen.length && zetNietsNeer(kinderen[k])) k++;
+    let alineas = 0;
+    while (
+      k < kinderen.length &&
+      (zetNietsNeer(kinderen[k]) || (isToelichting(kinderen[k]) && alineas++ < 1))
+    )
+      k++;
     const veld = kinderen[k];
-    if (!veld || !isVeld(veld)) return true;
+    if (!veld || !isVeld(veld)) continue;
     const start = startcode(veld);
-    return start === null || plat(start) !== plat(node.value ?? '');
-  });
+    if (start === null || plat(start) !== plat(node.value ?? '')) continue;
+    uit.pop();
+    uit.push(veld, ...kinderen.slice(i + 1, k));
+    i = k;
+  }
+  return uit;
 }
 
 /**
@@ -259,18 +345,30 @@ function doelNaastVeld(kinderen) {
     const tussen = (n) =>
       zetNietsNeer(n) || (isAlinea(n) && !isPlaatjeAlinea(n) && !isVerwachtKop(n));
     while (i >= 0 && tussen(uit[i]) && (zetNietsNeer(uit[i]) || alineas++ < 2)) i--;
-    let doel = null;
-    let vanaf = i;
-    if (i >= 0 && isPlaatjeAlinea(uit[i])) {
-      doel = [{ type: 'paragraph', children: [{ type: 'text', value: DOEL_PLAATJE }] }, uit[i]];
-    } else if (i >= 0 && uit[i].type === 'code') {
-      let k = i - 1;
+    // Van daar verder terug: elk doelplaatje en elke "Verwachte uitvoer (bij
+    // …):" met zijn blok. Een opdracht die twee gevallen toont, heeft er twee;
+    // een turtle-opdracht met input() heeft een uitvoer én een plaatje.
+    const delen = [];
+    let vanaf = i + 1;
+    for (let k = i; k >= 0; ) {
       while (k >= 0 && zetNietsNeer(uit[k])) k--;
-      if (k >= 0 && isVerwachtKop(uit[k])) {
-        doel = [uit[k], uit[i]];
+      if (k < 0) break;
+      if (isPlaatjeAlinea(uit[k])) {
+        const kopje = { type: 'paragraph', children: [{ type: 'text', value: DOEL_PLAATJE }] };
+        delen.unshift(kopje, uit[k]);
         vanaf = k;
+        k -= 1;
+        continue;
       }
+      if (uit[k].type !== 'code') break;
+      let kop = k - 1;
+      while (kop >= 0 && zetNietsNeer(uit[kop])) kop--;
+      if (kop < 0 || !isVerwachtKop(uit[kop])) break;
+      delen.unshift(uit[kop], uit[k]);
+      vanaf = kop;
+      k = kop - 1;
     }
+    const doel = delen.length ? delen : null;
     if (!doel) {
       uit.push(node);
       continue;
@@ -408,7 +506,9 @@ function voegUitlegSamen(tabs, vormen, uitlegId) {
  * @param {object[]} kinderen de kinderen van de mdast-root
  */
 function groepeer(alles) {
-  const kinderen = doelNaastVeld(voorbeeldenNaastElkaar(zonderDubbeleCode(alles)));
+  const kinderen = doelNaastVeld(
+    voorbeeldenNaastElkaar(bestandenNaastElkaar(zonderDubbeleCode(alles))),
+  );
   const eerste = kinderen.findIndex(isH2);
   if (eerste < 0) return null;
   const boven = [];

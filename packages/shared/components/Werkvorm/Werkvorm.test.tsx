@@ -20,6 +20,17 @@ vi.mock('@docusaurus/useGlobalData', () => ({
         pad: '/web/docs/js-basics/events',
         werkvormen: ['uitleg', 'stap', 'stap', 'uitleg', 'voorspellen', 'aanpassen', 'maken'],
       },
+      'js-basics/loops': {
+        titel: 'Loops',
+        pad: '/web/docs/js-basics/loops',
+        werkvormen: ['uitleg', 'stap', 'voorspellen', 'aanpassen', 'maken'],
+      },
+      // Alleen deze les heeft een leerdoel.
+      'js-basics/intro': {
+        titel: 'Intro',
+        pad: '/web/docs/js-basics/intro',
+        werkvormen: ['leerdoel', 'uitleg'],
+      },
     },
   }),
 }));
@@ -75,6 +86,16 @@ describe('Werkvormen', () => {
     expect(ids.indexOf('uitleg')).toBeLessThan(ids.indexOf('voorspellen'));
     expect(ids.indexOf('aanpassen')).toBeLessThan(ids.indexOf('maken'));
     expect(ids.at(-1)).toBe('fouten');
+  });
+});
+
+describe('wat in maar één les voorkomt', () => {
+  it('staat niet in de tabel: het is geen onderdeel van "een les"', () => {
+    // De python-cursus heeft alleen in zijn introductie een leerdoel. Met die
+    // ene les erbij zei de docentenhandleiding dat elke les ermee begint.
+    render(<Werkvormen />);
+    expect(screen.queryByRole('rowheader', { name: 'Leerdoel' })).toBeNull();
+    expect(screen.getByRole('rowheader', { name: 'Uitleg met een voorbeeld' })).toBeTruthy();
   });
 });
 

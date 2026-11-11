@@ -304,16 +304,19 @@ export function LesLeerdoel({ children }: { children?: ReactNode }): ReactNode {
 export function LesVoorbeeld({
   children,
   vraag,
+  bestanden,
 }: {
   children?: ReactNode;
   /** Rechts staat geen uitvoer maar een voorspelvraag: die krijgt de helft. */
   vraag?: string;
+  /** Twee of meer bestanden naast elkaar, elk in een eigen kolom. */
+  bestanden?: string;
 }): ReactNode {
+  const klasse = bestanden
+    ? styles.bestanden
+    : `${styles.voorbeeld}${vraag ? ` ${styles.metVraag}` : ''}`;
   return (
-    <div
-      className={`${styles.voorbeeld}${vraag ? ` ${styles.metVraag}` : ''}`}
-      data-les-voorbeeld=""
-    >
+    <div className={klasse} data-les-voorbeeld="">
       {children}
     </div>
   );
