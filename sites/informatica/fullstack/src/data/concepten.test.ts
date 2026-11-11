@@ -21,7 +21,7 @@ const pythonBlokken = (bron: string) =>
 
 // Bouwsteen, de les die hem uitlegt, en een woord uit die uitleg.
 const KAART: [string, RegExp, string, RegExp][] = [
-  ['type int', /\w+: int\b/, 'FastAPI/veel-paginas/query-parameters', /Met `int` zet FastAPI/],
+  ['type int', /\w+: int\b/, 'FastAPI/formulieren/forms', /Met `int` zet FastAPI/],
   ['is None', /is None/, 'FastAPI/berichten-tonen/niet-gevonden', /`None` betekent/],
   ['reversed', /reversed\(/, 'FastAPI/onthouden/cookie-of-sessie', /`reversed\(\)` loopt/],
   ['keys()', /\.keys\(\)/, 'FastAPI/accounts/registreren', /`keys\(\)` geeft/],
@@ -53,15 +53,17 @@ describe('elk concept wordt uitgelegd waar het voor het eerst opduikt', () => {
 
   it('de eerste les met een f-string in de code linkt naar de les over f-strings', () => {
     const eerste = lessen.find((id) => /\bf"/.test(pythonBlokken(tekst(id))));
-    expect(eerste).toBe('FastAPI/veel-paginas/path-parameters');
+    expect(eerste).toBe('FastAPI/formulieren/forms');
     expect(tekst(eerste as string)).toContain("to: '/docs/tekst/04a-f-strings'");
   });
 
-  it('get wordt één keer als nieuw uitgelegd; Zoeken verwijst terug naar path-parameters', () => {
-    expect(tekst('FastAPI/sqlitedict/zoeken')).toContain(
-      '](site:fullstack/docs/FastAPI/veel-paginas/path-parameters)',
+  it('get wordt één keer als nieuw uitgelegd, in Zoeken; path-parameters verwijst terug', () => {
+    // Sinds path-parameters vlak voor Berichten tonen staat, komt Zoeken eerst.
+    expect(tekst('FastAPI/sqlitedict/zoeken')).toContain('**`get`**');
+    expect(tekst('FastAPI/veel-paginas/path-parameters')).toContain(
+      '](site:fullstack/docs/FastAPI/sqlitedict/zoeken#korter-met-get)',
     );
-    expect(tekst('FastAPI/sqlitedict/zoeken')).not.toContain('**`get`**');
+    expect(tekst('FastAPI/veel-paginas/path-parameters')).not.toContain('**`get`**');
   });
 
   it('wie bekijk_db.py naast de server draait, hoort van de tweede terminal', () => {

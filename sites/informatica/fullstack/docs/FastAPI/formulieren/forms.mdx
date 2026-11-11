@@ -3,6 +3,7 @@
 <Voorkennis
   items={[
     {site: 'web', to: '/docs/html-css/formulieren', label: 'Formulieren'},
+    {site: 'python', to: '/docs/tekst/04a-f-strings', label: 'F-strings'},
   ]}
 />
 
@@ -71,11 +72,11 @@ Een gewone GET die het formulier toont. Het formulier is een HTML-bestand, dus `
 </Regel>
 
 <Regel n={6}>
-`Form(...)` haalt het veld `naam` uit het verstuurde formulier, niet uit de URL. De drie puntjes zijn hier echte Python, geen plek om iets in te vullen: ze betekenen dat het veld verplicht is. De parameter heet `naam` omdat het veld in de HTML `name="naam"` heeft; die twee namen moeten gelijk zijn.
+`Form(...)` haalt het veld `naam` uit het verstuurde formulier, niet uit de URL. De drie puntjes zijn hier echte Python, geen plek om iets in te vullen: ze betekenen dat het veld verplicht is. De parameter heet `naam` omdat het veld in de HTML `name="naam"` heeft; die twee namen moeten gelijk zijn. Met `naam: str` zeg je dat het tekst is.
 </Regel>
 
-<Regel n={7}>
-De print komt in je terminal terecht, niet in de browser. Zo zie je wat er binnenkomt.
+<Regel n={7} tot={8}>
+De print komt in je terminal terecht, niet in de browser. Zo zie je wat er binnenkomt. De `f` voor de string zet de waarde van `naam` op de plek van `{naam}`.
 </Regel>
 
 </CodeUitleg>
@@ -178,30 +179,6 @@ async def styled():
 @app.get("/about")
 async def about():
     return FileResponse("static/pages/about.html")
-
-DIEREN = {
-    "kat": "Een kat spint als hij tevreden is.",
-    "hond": "Een hond kwispelt als hij blij is.",
-    "vis": "Een vis ademt met kieuwen.",
-}
-
-@app.get("/dier/{naam}", response_class=HTMLResponse)
-async def dier(naam: str):
-    tekst = DIEREN.get(naam, "Dit dier staat nog niet op de site.")
-    return f"""
-    <!DOCTYPE html>
-    <html>
-        <body>
-            <h1>Over dieren</h1>
-            <p>{tekst}</p>
-            <a href="/">Terug naar Home</a>
-        </body>
-    </html>
-    """
-
-@app.get("/zoek")
-async def zoek(term: str):
-    return {"je_zocht": term}
 
 @app.get("/foto")
 async def foto():
@@ -358,7 +335,7 @@ Maak een formulier om je aan te melden, met naam en leeftijd, op het adres `/aan
 <details>
 <summary>Tip</summary>
 
-Je hebt twee `<input>` velden nodig in je HTML (`name="naam"` en `name="leeftijd"`, die laatste met `type="number"`) en twee `Form(...)` parameters in Python. `leeftijd` is wel een `int` en geen `str`.
+Je hebt twee `<input>` velden nodig in je HTML (`name="naam"` en `name="leeftijd"`, die laatste met `type="number"`) en twee `Form(...)` parameters in Python. `leeftijd` is wel een `int` en geen `str`. Met `int` zet FastAPI de waarde om naar een heel getal, en een veld met letters erin weigert hij met een 422.
 
 </details>
 

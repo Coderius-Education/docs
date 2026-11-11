@@ -57,7 +57,8 @@ describe('de bovenkant van main.py', () => {
 
 describe('Run-opdrachten in de eerste hoofdstukken', () => {
   // Je eerste server en wat eerst HTML-pagina's heette: de losse pagina's, de
-  // path-parameters en CSS en afbeeldingen.
+  // path-parameters (die nu vlak voor Berichten tonen staan) en CSS en
+  // afbeeldingen.
   const VROEG = [
     'Je eerste server',
     "Losse pagina's en routes",

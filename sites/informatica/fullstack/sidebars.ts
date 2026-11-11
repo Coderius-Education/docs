@@ -40,14 +40,6 @@ const sidebars: SidebarsConfig = {
       ],
     },
     {
-      // Na de losse pagina's, elk met een eigen route, de oplossing voor veel
-      // pagina's die op elkaar lijken: één route met een path-parameter. Het
-      // opzoeken in een database en de 404 komen later, in Eén item tonen.
-      type: 'category',
-      label: "Eén route voor veel pagina's",
-      items: ['FastAPI/veel-paginas/path-parameters', 'FastAPI/veel-paginas/query-parameters'],
-    },
-    {
       type: 'category',
       label: 'CSS en afbeeldingen',
       items: [
@@ -87,6 +79,17 @@ const sidebars: SidebarsConfig = {
         'FastAPI/berichten-opslaan/eigen-sleutel',
         'FastAPI/berichten-opslaan/redirect',
       ],
+    },
+    {
+      // Vlak voor Berichten tonen, en dus voor Eén item tonen, waar je hem
+      // nodig hebt: één route met een path-parameter voor veel pagina's die
+      // op elkaar lijken. Eerst stond hij direct na de losse pagina's, en dan
+      // zaten de dieren en /dubbel acht lessen lang in main.py zonder dat
+      // iets ze gebruikte. Opzoeken in een database en de 404 komen in Eén
+      // item tonen.
+      type: 'category',
+      label: "Eén route voor veel pagina's",
+      items: ['FastAPI/veel-paginas/path-parameters', 'FastAPI/veel-paginas/query-parameters'],
     },
     {
       type: 'category',

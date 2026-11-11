@@ -38,10 +38,10 @@ CURSUS = "https://informatica.coderius.nl/fullstack"
 HOOFDSTUKKEN = {
     "eerste-server": "Je eerste server",
     "paginas": "Losse pagina's en routes",
-    "veel-paginas": "Eén route voor veel pagina's",
     "css-en-afbeeldingen": "CSS en afbeeldingen",
     "formulieren": "Templates en formulieren",
     "berichten-opslaan": "Berichten opslaan",
+    "veel-paginas": "Eén route voor veel pagina's",
     "berichten-tonen": "Berichten tonen",
     "berichten-verwijderen": "Berichten verwijderen",
     "accounts": "Accounts",
@@ -1797,10 +1797,10 @@ def afronden(c: Controle):
 CONTROLES = {
     "eerste-server": eerste_server,
     "paginas": paginas,
-    "veel-paginas": veel_paginas,
     "css-en-afbeeldingen": css_en_afbeeldingen,
     "formulieren": formulieren,
     "berichten-opslaan": berichten_opslaan,
+    "veel-paginas": veel_paginas,
     "berichten-tonen": berichten_tonen,
     "berichten-verwijderen": berichten_verwijderen,
     "accounts": accounts,

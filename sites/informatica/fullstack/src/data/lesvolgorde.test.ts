@@ -40,16 +40,19 @@ describe('volgorde van de FastAPI-lessen', () => {
   });
 
   // Path-parameters kwamen pas binnen bij Eén item tonen, midden in het
-  // gastenboek en samen met de database en de 404. Nu maakt de leerling eerst
-  // losse pagina's met elk een eigen route, en ziet hij daarna in een eigen
-  // les waarom één route met een plekhouder beter is.
+  // gastenboek en samen met de database en de 404. Daarna stonden ze in een
+  // eigen categorie direct na de losse pagina's, en dan zaten de dieren acht
+  // lessen lang in main.py zonder dat iets ze gebruikte. Nu staat die
+  // categorie vlak voor Berichten tonen: na Berichten opslaan, en dus vlak
+  // voor Eén item tonen, waar de leerling hem nodig heeft.
   it("de eerste route met een path-parameter staat in Eén route voor veel pagina's", () => {
     const pad = /@app\.\w+\("[^"]*\{\w+\}/;
     const eerste = lessen.find((id) => pad.test(tekst(id)));
     expect(eerste).toBe('FastAPI/veel-paginas/path-parameters');
     expect(hoofdtekst('FastAPI/veel-paginas/path-parameters')).toMatch(pad);
     const plek = categorieen.findIndex((c) => c.label === "Eén route voor veel pagina's");
-    expect(categorieen[plek - 1].label).toBe("Losse pagina's en routes");
+    expect(categorieen[plek - 1].label).toBe('Berichten opslaan');
+    expect(categorieen[plek + 1].label).toBe('Berichten tonen');
     // Het probleem staat vóór de oplossing: losse routes per pagina, eerst in
     // de les, dan de plekhouder.
     const les = hoofdtekst('FastAPI/veel-paginas/path-parameters');
@@ -65,8 +68,10 @@ describe('volgorde van de FastAPI-lessen', () => {
     const labels = categorieen.map((c) => c.label);
     const van = labels.indexOf('Gegevens opslaan (SqliteDict)');
     const tot = labels.indexOf('Accounts');
+    // Eén route voor veel pagina's staat ertussen, vlak voor Berichten tonen.
     expect(labels.slice(van + 1, tot)).toEqual([
       'Berichten opslaan',
+      "Eén route voor veel pagina's",
       'Berichten tonen',
       'Berichten verwijderen',
     ]);
