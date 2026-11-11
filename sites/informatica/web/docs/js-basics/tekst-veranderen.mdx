@@ -192,7 +192,7 @@ Twee elementen, twee id's, twee knoppen. Controleer per knop of het `id` in de `
 
 ## Er gaat iets mis
 
-**Aanhalingstekens vergeten**
+### Aanhalingstekens vergeten
 
 ```html
 <button onclick="document.getElementById('zin').textContent = Hallo">Klik</button>
@@ -204,7 +204,7 @@ JavaScript fout: Uncaught ReferenceError: Hallo is not defined
 
 Zonder aanhalingstekens denkt de browser dat `Hallo` een stukje code is (een naam die ergens gedefinieerd moet zijn), niet een tekst. Zet letterlijke tekst altijd tussen aanhalingstekens: `'Hallo'`.
 
-**Aanhalingsteken niet gesloten**
+### Aanhalingsteken niet gesloten
 
 ```html
 <button onclick="document.getElementById('zin').textContent = 'Hallo">Klik</button>
@@ -216,7 +216,7 @@ JavaScript fout: Uncaught SyntaxError: Invalid or unexpected token
 
 De tekst begint met `'` maar houdt nooit op, dus de browser leest door tot het eind van de `onclick` en snapt er niets meer van. Een "token" is een los stukje code, zoals een woord of een leesteken. Tel je aanhalingstekens: elk stukje tekst heeft er twee.
 
-**`==` in plaats van `=`: geen melding**
+### `==` in plaats van `=`: geen melding
 
 ```html
 <button onclick="document.getElementById('zin').textContent == 'Hallo'">Klik</button>

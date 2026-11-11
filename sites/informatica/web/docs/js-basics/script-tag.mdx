@@ -147,9 +147,7 @@ Twee: de tekst én de kleur van de `<p>`. De functie voert bij een aanroep alle 
 
 ## Probeer en onderzoek
 
-:::tip[JavaScript in het HTML-tabblad]
-In deze les staat de JavaScript-code in een `<script>`-tag **binnenin** de HTML. Je vindt de code in het **index.html-tabblad**, onderaan de `<body>`.
-:::
+De JavaScript staat hier in een `<script>`-tag **in** de HTML: kijk in het tabblad **index.html**, onderaan de `<body>`.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -273,7 +271,7 @@ Gebruik `style.backgroundColor` voor de achtergrondkleur, en `''` om hem weer we
 
 ## Er gaat iets mis
 
-**`<script>`-tag staat vóór de HTML-elementen**
+### `<script>`-tag staat vóór de HTML-elementen
 
 ```html
 <head>
@@ -293,9 +291,9 @@ Gebruik `style.backgroundColor` voor de achtergrondkleur, en `''` om hem weer we
 JavaScript fout: Uncaught TypeError: Cannot set properties of null (setting 'textContent')
 ```
 
-De aanroep `verander();` draait zodra de browser de `<script>`-tag in de `<head>` tegenkomt — en op dat moment is de `<body>` nog niet geladen, dus `getElementById` geeft `null`. Alleen de functie *definiëren* in de `<head>` is niet erg (die draait pas later), maar code die meteen een element aanraakt wel. Zet de `<script>`-tag daarom **onderaan** de `<body>`, na alle HTML-elementen. In [script.js](site:web/docs/js-basics/scriptjs) zie je hoe je dit met `defer` ook vanuit de `<head>` oplost.
+De aanroep `verander();` draait zodra de browser de `<script>`-tag in de `<head>` tegenkomt. Dan is de `<body>` nog niet geladen, dus `getElementById` geeft `null`. Een functie *definiëren* in de `<head>` kan wel: die draait pas later. Zet de `<script>`-tag daarom **onderaan** de `<body>`. In [script.js](site:web/docs/js-basics/scriptjs) zie je hoe het met `defer` ook vanuit de `<head>` kan.
 
-**Functienaam verschilt tussen `onclick` en `<script>`**
+### Functienaam verschilt tussen `onclick` en `<script>`
 
 ```html
 <button onclick="veranderTekst()">Klik</button>

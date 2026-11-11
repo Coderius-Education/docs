@@ -78,12 +78,12 @@ Dit is je eerste regel JavaScript, en hij staat rechtstreeks in de HTML:
 Klik op de knop en de tekst in de `<p>` verandert. Er gebeuren twee dingen:
 
 - **`onclick`** is een HTML-attribuut. De code die erin staat, voert de browser uit zodra je op het element klikt.
-- **`document.getElementById('bericht')`** zoekt op de pagina het element met `id="bericht"`. Het `id` is het naamplaatje van een element; `getElementById` vindt het element dat dat naamplaatje draagt.
+- **`document.getElementById('bericht')`** zoekt het element met `id="bericht"`. Het `id` is het naamplaatje van een element.
 
-Het stukje `.textContent = '...'` erachter verandert de tekst van het gevonden element. In [de volgende les](site:web/docs/js-basics/tekst-veranderen) kijk je daar preciezer naar; in deze les draait het om het **vinden** van het juiste element.
+`.textContent = '...'` verandert de tekst van dat element; daar gaat [de volgende les](site:web/docs/js-basics/tekst-veranderen) over. Nu draait het om het **vinden**.
 
 :::note[DOM]
-De browser bewaart alle elementen van je pagina in een boomstructuur, de **DOM** (Document Object Model). `document` is de ingang van die boom, en `getElementById` is een van de manieren om er een element uit op te halen. Alles wat JavaScript op een pagina verandert, verandert het in de DOM.
+De browser bewaart alle elementen van je pagina in een boomstructuur, de **DOM** (Document Object Model). `document` is de ingang van die boom, en `getElementById` haalt er een element uit.
 :::
 
 ## Predict
@@ -97,7 +97,7 @@ De tekst in de `<p>` verandert van "Nog niet geklikt." naar "Je hebt geklikt.". 
 
 </details>
 
-## Probeer en onderzoek
+## De console lezen
 
 Onder het voorbeeld staat de **console**. Loopt je code vast, dan zet de browser daar een rode regel die begint met `JavaScript fout:`. Gebeurt er niets als je klikt, kijk dan eerst daar.
 
@@ -108,6 +108,8 @@ Na `JavaScript fout: Uncaught` staat altijd de soort fout. Aan die soort zie je 
 | `SyntaxError` | Ik kan je code niet lezen. | Haakjes, aanhalingstekens, punten |
 | `ReferenceError` | Deze naam ken ik niet. | Spelling, aanhalingstekens rond tekst |
 | `TypeError` | Dit ding kan dat niet. | Heb je wel iets gevonden? `null` betekent: niets. |
+
+## Probeer en onderzoek
 
 <CodeEditor
   initialHtml={startHtml}
@@ -220,7 +222,7 @@ Alleen de antwoord-`<p>` heeft een `id` nodig: dat is het enige element dat de k
 
 Je klikt en er gebeurt niets. De console onder het voorbeeld vertelt je waarom. Dit zijn de meldingen die je in deze les het vaakst ziet.
 
-**ID verkeerd gespeld**
+### ID verkeerd gespeld
 
 ```html
 <p id="Bericht">Tekst</p>
@@ -233,7 +235,7 @@ JavaScript fout: Uncaught TypeError: Cannot set properties of null (setting 'tex
 
 `getElementById` is hoofdlettergevoelig: `'Bericht'` en `'bericht'` zijn twee verschillende id's. De browser vindt geen element en geeft `null` terug, "niets". Van niets kun je de tekst niet veranderen. Zorg dat het `id` in de HTML en in de `onclick` precies hetzelfde gespeld is.
 
-**`getElementByID` met een hoofdletter D**
+### `getElementByID` met een hoofdletter D
 
 ```html
 <button onclick="document.getElementByID('bericht').textContent = 'Hoi'">Klik</button>
@@ -245,7 +247,7 @@ JavaScript fout: Uncaught TypeError: document.getElementByID is not a function
 
 De functie heet `getElementById`, met een kleine `d` aan het eind. JavaScript kent `getElementByID` niet en zegt dat het geen functie is.
 
-**Dubbele aanhalingstekens binnen de `onclick`**
+### Dubbele aanhalingstekens binnen de `onclick`
 
 ```html
 <button onclick="document.getElementById("bericht").textContent = 'Hoi'">Klik</button>
@@ -257,7 +259,7 @@ JavaScript fout: Uncaught SyntaxError: Unexpected end of input
 
 De `onclick` staat al tussen dubbele aanhalingstekens. Het tweede `"` sluit het attribuut af, dus de browser ziet als code alleen `document.getElementById(`. Die zin houdt halverwege op, en dat betekent "Unexpected end of input". Gebruik binnen de `onclick` enkele aanhalingstekens: `'bericht'`.
 
-**Haakje vergeten**
+### Haakje vergeten
 
 ```html
 <button onclick="document.getElementById('bericht'.textContent = 'Hoi'">Klik</button>
@@ -269,7 +271,7 @@ JavaScript fout: Uncaught SyntaxError: missing ) after argument list
 
 Na `'bericht'` moet het haakje dicht. Een `SyntaxError` betekent dat de browser je code niet eens kan lezen: er klopt iets aan de schrijfwijze, niet aan wat de code doet.
 
-**Een hekje voor het id**
+### Een hekje voor het id
 
 ```html
 <button onclick="document.getElementById('#bericht').textContent = 'Hoi'">Klik</button>
@@ -281,7 +283,7 @@ JavaScript fout: Uncaught TypeError: Cannot set properties of null (setting 'tex
 
 In CSS schrijf je `#bericht`, maar `getElementById` wil alleen de naam: `'bericht'`. Met het hekje zoekt hij een element met `id="#bericht"`, vindt niets en geeft `null`. Het is dezelfde melding als bij een verkeerd gespeld id, en ook dezelfde oorzaak.
 
-**`textcontent` met een kleine c: geen melding**
+### `textcontent` met een kleine c: geen melding
 
 ```html
 <button onclick="document.getElementById('bericht').textcontent = 'Hoi'">Klik</button>

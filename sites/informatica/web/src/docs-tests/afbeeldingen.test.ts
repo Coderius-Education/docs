@@ -15,8 +15,11 @@ const LES = readFileSync(
 );
 
 describe('icoontjes in de les over afbeeldingen', () => {
-  const tip = LES.slice(LES.indexOf(':::tip[Een icoontje zoeken]'));
-  const blok = tip.slice(0, tip.indexOf('\n:::'));
+  // De uitleg over icoontjes is een eigen ###: in een les-tabblad is dat een
+  // stap. Eerst was het een tip onder het zoeken van een adres, en samen
+  // waren die twee 294 pixels te lang voor één scherm.
+  const tip = LES.slice(LES.indexOf('### Een icoontje zoeken'));
+  const blok = tip.slice(0, tip.indexOf('\n## '));
 
   it('het voorbeeldadres hoort bij de naam die de tip noemt', () => {
     const naam = blok.match(/zoals `([a-z0-9-]+):([a-z0-9-]+)`/);
@@ -33,7 +36,10 @@ describe('icoontjes in de les over afbeeldingen', () => {
 
   it('Er gaat iets mis legt het geblokte patroon uit', () => {
     const mis = LES.slice(LES.indexOf('## Er gaat iets mis'));
-    expect(mis).toMatch(/\*\*Een geblokt vlak achter je plaatje\*\*/);
+    expect(mis).toMatch(/^### Een geblokt vlak achter je plaatje$/m);
+    // De verwijzing naar Iconify wijst naar de kop die het uitlegt.
+    expect(LES).toMatch(/^### Een icoontje zoeken$/m);
+    expect(mis).toContain('[Iconify](#een-icoontje-zoeken)');
     expect(mis).toMatch(/zitten in het plaatje zelf/);
   });
 });

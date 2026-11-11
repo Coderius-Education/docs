@@ -157,9 +157,7 @@ Alleen een `<p class="belangrijk">` krijgt nu een gele achtergrond. Een `<h2 cla
 
 ### Welke regel wint? (Specificiteit en prioriteit)
 
-Wanneer meerdere CSS-regels hetzelfde element proberen te stijlen met verschillende waarden, berekent de browser welke selector het meest specifiek is.
-
-De rangorde van laag naar hoog:
+Stijlen meerdere CSS-regels hetzelfde element met verschillende waarden, dan berekent de browser welke selector het meest specifiek is. De rangorde van laag naar hoog:
 
 1. **Tagnaam** (`p`, `div`, `h1`) — 1 punt
 2. **Klasse** (`.bericht`, `.opvallend`) — 10 punten
@@ -171,13 +169,13 @@ Een selector met een hogere score wint altijd van een selector met een lagere sc
 - `.bericht p` (10 + 1 = 11 punten) wint van `.tekst` (10 punten).
 - `#belangrijk` (100 punten) wint van `.bericht p.opvallend` (10 + 1 + 10 = 21 punten).
 
-#### Wat bij een gelijke score?
+### Wat bij een gelijke score?
 
 Als twee selectors exact dezelfde specificiteit hebben, wint de regel die **als laatste** in het CSS-bestand staat. Dit is het 'cascading' principe van CSS (Cascading Style Sheets).
 
 ## Predict
 
-Bekijk deze HTML en CSS:
+Welke kleur krijgt de tekst in de browser?
 
 ```html
 <div class="kaart">
@@ -198,8 +196,6 @@ p {
   color: red;
 }
 ```
-
-Welke kleur krijgt de tekst in de browser?
 
 <details>
 <summary>Klik hier voor het antwoord</summary>
@@ -228,9 +224,9 @@ Omdat `.kaart p` de hoogste score heeft (11 punten), wint de kleur groen.
 
 **Opdracht:**
 Pas de code aan:
-1. Zorg dat links in het hoofdmenu (`.hoofdmenu a`) een gele achtergrond (`background-color: #e8f5e9;`) en `padding: 4px 8px;` krijgen.
-2. Laat het citaat binnen het artikel (`.bericht blockquote p`) cursief worden (`font-style: italic;`) met een grijze tekstkleur (`color: #555555;`).
-3. Voeg een regel toe voor `a` in het algemeen met `color: red;`. Controleer of de links in het hoofdmenu groen blijven door de hogere specificiteit van `.hoofdmenu a`.
+1. Geef de links in het hoofdmenu (`.hoofdmenu a`) `background-color: #e8f5e9;` en `padding: 4px 8px;`.
+2. Maak het citaat in het artikel (`.bericht blockquote p`) cursief (`font-style: italic;`) en grijs (`color: #555555;`).
+3. Voeg een regel toe voor `a` met `color: red;`. Blijven de links in het menu groen? `.hoofdmenu a` is specifieker.
 
 <CodeEditor
   initialHtml={startHtml}
@@ -277,12 +273,10 @@ a {
 ## Make
 
 **Opdracht:** Bouw een menukaart voor een lunchroom.
-- Maak een lijst met ten minste twee categorieën (`<h2>`), zoals Broodjes en Dranken.
-- Plaats onder elke categorie een aantal gerechten in een `<div>` of `<ul>`.
-- Gebruik een groeperende selector (`,`) om alle koppen (`h1, h2`) dezelfde kleur te geven.
-- Gebruik een kind- of geneste selector (bijvoorbeeld `.menu-groep > p` of `.gerecht span`) om de prijzen rechts of vetgedrukt weer te geven.
-- Geef één gerecht de klasse `dagaanbieding` en een ander gerecht het id `#favoriet`.
-- Laat met CSS zien dat `#favoriet` een speciale rand of achtergrond krijgt die sterker is dan de algemene opmaak.
+- Maak minstens twee categorieën met een `<h2>`, zoals Broodjes en Dranken, elk met een paar gerechten in een `<div>` of `<ul>`.
+- Geef alle koppen dezelfde kleur met een groeperende selector (`h1, h2`).
+- Zet de prijzen rechts of vet met een kind- of geneste selector, zoals `.menu-groep > p` of `.gerecht span`.
+- Geef één gerecht de klasse `dagaanbieding` en een ander het id `favoriet`, met een rand of achtergrond die wint.
 
 <CodeEditor
   initialHtml={makeHtml}
@@ -357,7 +351,7 @@ h1, h2 {
 
 ## Er gaat iets mis
 
-**Spatie tussen tag en klasse (`p .opvallend` vs `p.opvallend`)**
+### Spatie tussen tag en klasse (`p .opvallend` vs `p.opvallend`)
 
 ```css
 /* Fout: spatie tussen tag en klasse */
@@ -375,7 +369,7 @@ p.opvallend {
 
 Met een spatie zoekt de browser naar een element met klasse `opvallend` dat *binnen* een `<p>` staat. Zonder spatie selecteer je het `<p>` element dat *zelf* die klasse heeft.
 
-**Komma vergeten bij groeperen (`h1 h2` vs `h1, h2`)**
+### Komma vergeten bij groeperen (`h1 h2` vs `h1, h2`)
 
 ```css
 /* Fout: geen komma */
@@ -393,6 +387,6 @@ h1, h2 {
 
 Zonder komma zoekt CSS naar een `<h2>` die zich binnen een `<h1>` bevindt (wat in geldige HTML nooit voorkomt). Met een komma stijlt de browser zowel `<h1>` als `<h2>`.
 
-**Denken dat HTML-volgorde de prioriteit bepaalt**
+### Denken dat HTML-volgorde de prioriteit bepaalt
 
 Als een element meerdere klassen heeft, zoals `<p class="blauw rood">`, maakt het niet uit welke klasse eerst in de HTML staat. De regel die **als laatste in het CSS-bestand** staat, wint bij gelijke specificiteit.

@@ -116,7 +116,7 @@ document.getElementById('knop').addEventListener('click', zegHoi);
 De functie geef je mee **zonder haakjes**: je noemt zijn naam, zoals je iemand een telefoonnummer geeft. De browser "belt" hem pas bij het event.
 
 :::note[Naamloze functies in andermans code]
-Op internet zie je vaak een functie zonder naam die rechtstreeks in de listener geschreven staat (`addEventListener('click', function() { ... })`). Dat werkt, maar in deze lessen krijgt elke functie een naam: dat leest makkelijker, en je kunt dezelfde functie dan op meer plekken gebruiken.
+Op internet zie je vaak een functie zonder naam, rechtstreeks in de listener: `addEventListener('click', function() { ... })`. Dat werkt, maar in deze lessen krijgt elke functie een naam: dat leest makkelijker, en je kunt hem vaker gebruiken.
 :::
 
 ## Welke events bestaan er?
@@ -130,7 +130,7 @@ Op internet zie je vaak een functie zonder naam die rechtstreeks in de listener 
 | `'keydown'` | Toets wordt ingedrukt |
 
 :::tip[onclick of addEventListener?]
-Voor één knop met één actie is `onclick` in de HTML prima — daarom gebruikten de vorige lessen hem. `addEventListener` kan meer: meerdere listeners op hetzelfde element, andere events dan klikken, en al je gedrag bij elkaar in script.js. Vanaf deze les is het de standaard.
+Voor één knop met één actie is `onclick` prima; daarom stond hij in de vorige lessen. `addEventListener` kan meer: meer listeners op één element, andere events dan klikken, en al je gedrag in script.js. Vanaf nu is het de standaard.
 :::
 
 ## Predict

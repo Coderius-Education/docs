@@ -81,23 +81,18 @@ const meerderjarig = leeftijd >= 18;
 console.log(meerderjarig);   // false
 ```
 
-De vergelijkingsoperatoren:
+## Vergelijkingsoperatoren
 
-| Operator | Wat het doet |
-|---|---|
-| `===` | Gelijk aan |
-| `!==` | Niet gelijk aan |
-| `>` | Groter dan |
-| `<` | Kleiner dan |
-| `>=` | Groter of gelijk |
-| `<=` | Kleiner of gelijk |
+| Operator | Wat het doet | Voorbeeld |
+|---|---|---|
+| `===` | Gelijk aan | `5 === 5` is `true` |
+| `!==` | Niet gelijk aan | `'a' !== 'b'` is `true` |
+| `>` | Groter dan | `5 > 3` is `true` |
+| `<` | Kleiner dan | `5 < 3` is `false` |
+| `>=` | Groter of gelijk | `5 >= 5` is `true` |
+| `<=` | Kleiner of gelijk | `5 <= 3` is `false` |
 
-```js
-5 > 3       // true
-5 === 5     // true
-5 === '5'   // false (number en string zijn niet gelijk)
-'a' !== 'b' // true
-```
+Het type telt mee: `5 === '5'` is `false`, want een number en een string zijn niet gelijk.
 
 ## Voorwaarden combineren met en/of
 

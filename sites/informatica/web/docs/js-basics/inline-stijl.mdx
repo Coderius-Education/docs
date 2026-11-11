@@ -210,7 +210,7 @@ Voor terugzetten: een lege string verwijdert de inline stijl. `style.color = ''`
 
 ## Er gaat iets mis
 
-**CSS-naam met koppelteken gebruiken**
+### CSS-naam met koppelteken gebruiken
 
 ```html
 <!-- Fout: background-color bestaat niet in JavaScript -->
@@ -230,7 +230,7 @@ JavaScript fout: Uncaught SyntaxError: Invalid left-hand side in assignment
 
 JavaScript leest het koppelteken als een min-teken: `style.background` min `color`. Aan een min-som kun je niets toekennen, en dat bedoelt de melding. Schrijf CSS-eigenschappen altijd in camelCase als je ze via `.style` instelt.
 
-**Een waarde die CSS niet kent**
+### Een waarde die CSS niet kent
 
 ```html
 <button onclick="document.getElementById('tekst').style.color = 'blauw'">Blauw</button>
