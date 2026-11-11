@@ -55,9 +55,10 @@ describe('de bovenkant van main.py', () => {
   });
 });
 
-describe('Run-opdrachten in de eerste hoofdstukken', () => {
-  // Je eerste server en wat eerst HTML-pagina's heette: de losse pagina's, de
-  // path-parameters en CSS en afbeeldingen.
+describe("Run-opdrachten in de hoofdstukken over pagina's en routes", () => {
+  // Je eerste server en wat eerst HTML-pagina's heette: de losse pagina's en
+  // CSS en afbeeldingen, en de path-parameters, die sinds november 2026 vlak
+  // voor Berichten tonen staan maar dezelfde soort Run-opdracht hebben.
   const VROEG = [
     'Je eerste server',
     "Losse pagina's en routes",

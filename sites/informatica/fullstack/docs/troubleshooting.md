@@ -529,7 +529,7 @@ async def bericht_detail(request: Request, sleutel: str):
 
 Mag een query-parameter ontbreken, geef hem dan een standaardwaarde: `term: str = ""`. Vergeet `required` op je `<input>` niet, dan verstuurt de browser geen leeg veld.
 
-Meer uitleg: [Een waarde na een vraagteken: query-parameters](site:fullstack/docs/FastAPI/veel-paginas/query-parameters) (wat `loc` zegt), [Een formulier versturen (POST)](site:fullstack/docs/FastAPI/formulieren/forms) en [Eén route voor veel pagina's: path-parameters](site:fullstack/docs/FastAPI/veel-paginas/path-parameters)
+Meer uitleg: [Een formulier versturen (POST)](site:fullstack/docs/FastAPI/formulieren/forms) (wat `loc` zegt), [Een waarde na een vraagteken: query-parameters](site:fullstack/docs/FastAPI/veel-paginas/query-parameters) en [Eén route voor veel pagina's: path-parameters](site:fullstack/docs/FastAPI/veel-paginas/path-parameters)
 
 </details>
 

@@ -40,16 +40,19 @@ describe('volgorde van de FastAPI-lessen', () => {
   });
 
   // Path-parameters kwamen pas binnen bij Eén item tonen, midden in het
-  // gastenboek en samen met de database en de 404. Nu maakt de leerling eerst
-  // losse pagina's met elk een eigen route, en ziet hij daarna in een eigen
-  // les waarom één route met een plekhouder beter is.
+  // gastenboek en samen met de database en de 404. Daarna stonden ze in een
+  // eigen categorie direct na de losse pagina's, en dan zaten de dieren acht
+  // lessen lang in main.py zonder dat iets ze gebruikte. Nu staat die
+  // categorie vlak voor Berichten tonen: na Berichten opslaan, en dus vlak
+  // voor Eén item tonen, waar de leerling hem nodig heeft.
   it("de eerste route met een path-parameter staat in Eén route voor veel pagina's", () => {
     const pad = /@app\.\w+\("[^"]*\{\w+\}/;
     const eerste = lessen.find((id) => pad.test(tekst(id)));
     expect(eerste).toBe('FastAPI/veel-paginas/path-parameters');
     expect(hoofdtekst('FastAPI/veel-paginas/path-parameters')).toMatch(pad);
     const plek = categorieen.findIndex((c) => c.label === "Eén route voor veel pagina's");
-    expect(categorieen[plek - 1].label).toBe("Losse pagina's en routes");
+    expect(categorieen[plek - 1].label).toBe('Berichten opslaan');
+    expect(categorieen[plek + 1].label).toBe('Berichten tonen');
     // Het probleem staat vóór de oplossing: losse routes per pagina, eerst in
     // de les, dan de plekhouder.
     const les = hoofdtekst('FastAPI/veel-paginas/path-parameters');
@@ -65,8 +68,10 @@ describe('volgorde van de FastAPI-lessen', () => {
     const labels = categorieen.map((c) => c.label);
     const van = labels.indexOf('Gegevens opslaan (SqliteDict)');
     const tot = labels.indexOf('Accounts');
+    // Eén route voor veel pagina's staat ertussen, vlak voor Berichten tonen.
     expect(labels.slice(van + 1, tot)).toEqual([
       'Berichten opslaan',
+      "Eén route voor veel pagina's",
       'Berichten tonen',
       'Berichten verwijderen',
     ]);
@@ -222,5 +227,76 @@ describe('verwijzingen naar een les', () => {
       .filter((m) => m[2] !== titelVan(m[1]) && m[2] !== titelVan(m[1]).split(':')[0])
       .map((m) => `${m[2]} → ${titelVan(m[1])}`);
     expect(fout).toEqual([]);
+  });
+});
+
+describe('de dieren en /zoek in de standen van main.py', () => {
+  // De categorie Eén route voor veel pagina's stond direct na de losse
+  // pagina's, en dan zaten DIEREN, /dier/{naam} en /zoek acht lessen lang in
+  // elke stand zonder dat iets ze gebruikte. Nu komen ze pas binnen in hun
+  // eigen les, en staan ze waar de leerling ze neerzet: onder zijn andere
+  // endpoints, dus direct na /berichten, het laatste endpoint van Berichten
+  // opslaan. Een later endpoint komt eronder.
+  const stand = (id: string) =>
+    tekst(id).match(
+      /<summary>Zo ziet je `main\.py` er nu uit<\/summary>[\s\S]*?```python\n([\s\S]*?)```/,
+    )?.[1];
+  const metStand = lessen.filter((id) => stand(id) !== undefined);
+  const plek = (id: string) => lessen.indexOf(id);
+  const pp = plek('FastAPI/veel-paginas/path-parameters');
+  const qp = plek('FastAPI/veel-paginas/query-parameters');
+
+  it('staan in geen stand vóór hun les', () => {
+    const te = metStand
+      .filter((id) => plek(id) < pp)
+      .filter((id) => /DIEREN|@app\.get\("\/zoek"\)/.test(stand(id) as string));
+    expect(te).toEqual([]);
+  });
+
+  it('staan in elke stand vanaf hun les, direct na /berichten', () => {
+    const fout: string[] = [];
+    for (const id of metStand.filter((i) => plek(i) >= pp)) {
+      const code = stand(id) as string;
+      const berichten = code.indexOf('@app.get("/berichten")');
+      const dieren = code.indexOf('DIEREN = {');
+      const tussen = code.slice(berichten + 1, dieren);
+      if (berichten < 0 || dieren < berichten || /\n@app\./.test(tussen))
+        fout.push(`${id}: DIEREN`);
+      if (plek(id) >= qp) {
+        const zoek = code.indexOf('@app.get("/zoek")');
+        const naDier = code.slice(code.indexOf('@app.get("/dier/{naam}")') + 1, zoek);
+        if (zoek < 0 || /\n@app\./.test(naDier)) fout.push(`${id}: /zoek`);
+      } else if (code.includes('@app.get("/zoek")')) fout.push(`${id}: /zoek te vroeg`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('de pagina van een dier is een template, net als de rest van het gastenboek', () => {
+    for (const id of metStand.filter((i) => plek(i) >= pp)) {
+      expect(stand(id), id).toContain('"dier.html"');
+      expect(stand(id), id).not.toMatch(/async def dier\(naam: str\):\n[^\n]*\n\s+return f"""/);
+    }
+    expect(hoofdtekst('FastAPI/veel-paginas/path-parameters')).toContain(
+      '<Bestand pad="templates/dier.html" />',
+    );
+  });
+});
+
+describe('een verwijzing naar de volgende les', () => {
+  // Doorsturen na opslaan beloofde "in de volgende les wordt /berichten een
+  // echte pagina"; sinds path-parameters ertussen staat, klopte dat niet meer.
+  it('linkt naar de les die in de sidebar volgt, of noemt hem niet', () => {
+    const fout: string[] = [];
+    lessen.forEach((id, i) => {
+      for (const zin of tekst(id).match(/[^.\n]*volgende les[^.\n]*/g) ?? []) {
+        if (/volgende lessen/.test(zin)) continue;
+        const link = zin.match(/\(site:fullstack\/docs\/(FastAPI\/[^)#]+)/)?.[1];
+        if (link && link !== lessen[i + 1]) fout.push(`${id}: ${link}`);
+      }
+    });
+    expect(fout).toEqual([]);
+    expect(tekst('FastAPI/berichten-opslaan/redirect')).not.toMatch(
+      /volgende les wordt `\/berichten`/,
+    );
   });
 });

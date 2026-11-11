@@ -27,9 +27,10 @@ describe('leerling-doorloop van de FastAPI-route', () => {
     expect(route).not.toMatch(/eerste \w+ stappen/);
   });
 
-  it('path-parameters noemt alleen pagina’s die in de stand van Links staan', () => {
+  it('path-parameters noemt alleen pagina’s uit de stand van de les ervoor', () => {
     // "/contact" ontstaat alleen in een Make-opdracht van Links, en die mag je
-    // overslaan.
+    // overslaan. Path-parameters staat sinds november 2026 na Berichten
+    // opslaan, maar /contact komt ook daarna in geen enkele stand.
     expect(hoofdtekst(les('veel-paginas/path-parameters'))).not.toContain('/contact');
   });
 

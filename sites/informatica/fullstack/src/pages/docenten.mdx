@@ -55,7 +55,7 @@ Voor een cijfer is [Leerdoelen](site:fullstack/leerdoelen) het overzicht van de 
 
 De lessen staan in de **FastAPI**-sidebar en bouwen op elkaar voort. Die begint met een [startpagina](site:fullstack/docs/FastAPI): wat je leerlingen aan het eind hebben (een nagebouwd plaatje van het gastenboek), de voorkennis uit de andere cursussen, en de route als kaart met per blok een zin en de lessen. Daarna komt [Installatie](site:fullstack/docs/FastAPI/eerste-server/installatie); de [Cheatsheet](site:fullstack/docs/cheatsheet) en [Er gaat iets mis](site:fullstack/docs/troubleshooting) zijn naslag en staan in de navbar. [Projectstructuur](site:fullstack/docs/FastAPI/projectstructuur), met de mappen van het project per les, staat bovenaan de cheatsheet.
 
-De sidebar heeft twee delen. De **basis** eindigt met een werkend gastenboek: een formulier, opslaan, een overzicht, een detailpagina, een nette 404 en accounts met een wachtwoord. Hij loopt van Je eerste server via Losse pagina's en routes, Eén route voor veel pagina's, CSS en afbeeldingen, Templates en formulieren, Gegevens opslaan en de drie categorieën met berichten naar Accounts. Wat volgt zijn drie **uitbreidingen** (htmx, JavaScript, cookies en sessies) en een afronding. Die maken het gastenboek mooier, maar zijn niet nodig om het te laten werken. Heb je weinig tijd, dan kun je na de basis stoppen; wie verder gaat, volgt de uitbreidingen op volgorde, want "Server of browser?" vergelijkt de server met htmx en JavaScript.
+De sidebar heeft twee delen. De **basis** eindigt met een werkend gastenboek: een formulier, opslaan, een overzicht, een detailpagina, een nette 404 en accounts met een wachtwoord. Hij loopt van Je eerste server via Losse pagina's en routes, CSS en afbeeldingen, Templates en formulieren, Gegevens opslaan en Berichten opslaan naar Eén route voor veel pagina's, en daarna via Berichten tonen en Berichten verwijderen naar Accounts. De path-parameters staan vlak voor Berichten tonen, omdat Eén item tonen ze nodig heeft. Wat volgt zijn drie **uitbreidingen** (htmx, JavaScript, cookies en sessies) en een afronding. Die maken het gastenboek mooier, maar zijn niet nodig om het te laten werken. Heb je weinig tijd, dan kun je na de basis stoppen; wie verder gaat, volgt de uitbreidingen op volgorde, want "Server of browser?" vergelijkt de server met htmx en JavaScript.
 
 Vijf keer onderweg staat een diagram van de hele keten, browser links en server rechts, met per stap een link naar de les. Het begint kaal [bij het eerste verzoek](site:fullstack/docs/FastAPI/eerste-server/verzoek-eerste), direct na het eerste endpoint, en groeit mee. [Bij één pagina](site:fullstack/docs/FastAPI/css-en-afbeeldingen/verzoek-static), aan het eind van CSS en afbeeldingen, komen de losse verzoeken voor CSS en afbeeldingen erbij. [Bij klikken en versturen](site:fullstack/docs/FastAPI/accounts/verzoek-get), aan het eind van de basis, de database en de template, en bij een formulier de omleiding. [Zonder herladen](site:fullstack/docs/FastAPI/zonder-herladen/verzoek-htmx), aan het eind van de htmx-uitbreiding, wordt die omleiding een stuk HTML als antwoord; [bij een sessie](site:fullstack/docs/FastAPI/onthouden/verzoek-sessie), direct na de les Sessies, komt de cookie erbij. [Hoe een verzoek werkt](site:fullstack/docs/FastAPI/afronden/hoe-een-verzoek-werkt) bundelt ze bij het afronden met een tabel "waar hoort jouw code".
 
@@ -64,8 +64,6 @@ Vijf keer onderweg staat een diagram van de hele keten, browser links en server 
 | Je eerste endpoint | Een API-route maken en aanroepen |
 | Kijken wat de browser doet | Het tabblad Netwerk: verzoek, antwoord en statuscode |
 | HTML tonen en HTML in bestanden | Pagina's serveren vanuit Python en uit bestanden |
-| Eén route voor veel pagina's: path-parameters | Na de losse pagina's met elk een eigen route: één route met een plekhouder en een dictionary |
-| Een waarde na een vraagteken: query-parameters | `?term=`, een standaardwaarde, de 422, en het type `int` tegenover `str` |
 | CSS in een eigen bestand (static files) | Eén stylesheet voor alle pagina's, en de cache |
 | Templates met Jinja2 | Een pagina met waarden uit Python: `{{ }}`, het dictionary, en wat de browser krijgt |
 | Een formulier versturen (POST) en beantwoorden | GET of POST, `Form(...)`, en een formulier beantwoorden met een template |
@@ -78,6 +76,8 @@ Vijf keer onderweg staat een diagram van de hele keten, browser links en server 
 | Een formulier opslaan | Wat een bezoeker invult in een database zetten, onder één sleutel |
 | Elk bericht bewaren: een eigen sleutel | Het gastenboek: elk bericht een eigen sleutel met `time.time_ns()` |
 | Doorsturen na opslaan (redirect) | Doorsturen na een POST (post/redirect/get) |
+| Eén route voor veel pagina's: path-parameters | Eén route met een plekhouder, een dictionary en één template, in plaats van een route per pagina |
+| Een waarde na een vraagteken: query-parameters | `?term=`, een standaardwaarde, de 422, en het type `int` tegenover `str` |
 | Alles tonen: een for-lus in je template | Opgeslagen records op een pagina zetten met een for-lus |
 | Nog niets? if en else in je template | Een lege lijst opvangen met `{% if %}` |
 | Eén item tonen: de sleutel uit de URL | Een bericht opzoeken met de sleutel uit de URL, en linken vanuit de lijst met `db.items()` |
