@@ -1,0 +1,46 @@
+/* Het icoon van een werkvorm: een lijntekening in de kleur van de tekst
+   eromheen, zo hoog als een regel. */
+.icoon {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+  vertical-align: -0.2em;
+}
+
+.legenda {
+  display: table;
+  width: 100%;
+}
+
+.legenda th,
+.legenda td {
+  vertical-align: top;
+  text-align: left;
+}
+
+.naam {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.naam .icoon {
+  margin-right: 0.5rem;
+  color: var(--ifm-color-primary);
+}
+
+.tips {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+/* De werkvormen van één les op een rij. */
+.rij {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  color: var(--ifm-color-primary);
+}
+
+.vak {
+  display: inline-flex;
+}

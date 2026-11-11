@@ -8,9 +8,14 @@
 // niet: die houdt zijn `##`-koppen, en de tests die een les langs `##`
 // knippen, lezen wat ze altijd lazen.
 //
+// Elk tabblad krijgt ook een werkvorm mee (../werkvormen): voorspellen,
+// onderzoeken, aanpassen, … Het onderdeel toont daar een icoon bij.
+//
 // De stap staat achteraan in de docs van het classic preset. Docusaurus heeft
 // dan zijn eigen stappen gedaan: elke kop heeft zijn id (`data.id`), en de
 // inhoudsopgave is al als export aan de pagina gehangen.
+
+const { werkvormenVan } = require('../werkvormen');
 
 const isH2 = (node) => node.type === 'heading' && node.depth === 2;
 const isH3 = (node) => node.type === 'heading' && node.depth === 3;
@@ -151,6 +156,10 @@ function groepeer(kinderen) {
     const id = bezet.has('uitleg') ? 'les-uitleg' : 'uitleg';
     tabs.unshift(element('LesTab', id, UITLEG, uitleg));
   }
+  // Elk tabblad krijgt zijn werkvorm (../werkvormen): het icoon op het
+  // tabblad, en de schakel naar de tip van vakdidactiek die hem onderbouwt.
+  const vormen = werkvormenVan(tabs.map((t) => t.attributes[1].value));
+  tabs.forEach((t, i) => t.attributes.push(attribuut('werkvorm', vormen[i])));
   return [
     ...boven,
     { type: 'mdxJsxFlowElement', name: 'LesTabs', attributes: [], children: tabs },

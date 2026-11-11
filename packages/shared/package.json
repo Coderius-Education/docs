@@ -64,6 +64,10 @@
       "types": "./klas/index.d.ts",
       "default": "./klas/index.js"
     },
+    "./werkvormen": {
+      "types": "./werkvormen/index.d.ts",
+      "default": "./werkvormen/index.js"
+    },
     "./plugins/sidebar-manifest": "./plugins/sidebar-manifest.js",
     "./plugins/klas": "./plugins/klas.js",
     "./plugins/transpile-shared": "./plugins/transpile-shared.js",
@@ -84,6 +88,7 @@
     "./components/CodeUitleg": "./components/CodeUitleg/index.tsx",
     "./components/Voorspel": "./components/Voorspel/index.tsx",
     "./components/LesTabs": "./components/LesTabs/index.tsx",
+    "./components/Werkvorm": "./components/Werkvorm/index.tsx",
     "./components/NaslagZoeker": "./components/NaslagZoeker/index.tsx",
     "./components/Handout": "./components/Handout/index.tsx",
     "./components/Schrijflijnen": "./components/Schrijflijnen/index.tsx",

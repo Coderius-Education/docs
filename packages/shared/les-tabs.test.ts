@@ -60,8 +60,8 @@ describe('groepeer', () => {
     const uit = groepeer([titel, kop(2, 'Theorie'), alinea('a'), kop(3, 'Koppen'), kop(2, 'Make')]);
     expect(uit.map((n: Knoop) => n.name ?? n.type)).toEqual(['header', 'LesTabs']);
     expect(tabs(uit)).toEqual([
-      { id: 'theorie', titel: 'Theorie', label: 'Theorie' },
-      { id: 'make', titel: 'Make', label: 'Make' },
+      { id: 'theorie', titel: 'Theorie', label: 'Theorie', werkvorm: 'uitleg' },
+      { id: 'make', titel: 'Make', label: 'Make', werkvorm: 'maken' },
     ]);
     const [theorie] = uit[1].children;
     // De kop blijft in het paneel: hij is het doel van een link naar #theorie.
@@ -87,8 +87,8 @@ describe('groepeer', () => {
     // beeld stond.
     const uit = groepeer([titel, alinea('Dit is je eerste regel.'), kop(2, 'Predict')]);
     expect(tabs(uit)).toEqual([
-      { id: 'uitleg', titel: 'Uitleg', label: 'Uitleg' },
-      { id: 'predict', titel: 'Predict', label: 'Predict' },
+      { id: 'uitleg', titel: 'Uitleg', label: 'Uitleg', werkvorm: 'uitleg' },
+      { id: 'predict', titel: 'Predict', label: 'Predict', werkvorm: 'voorspellen' },
     ]);
     expect(uit[1].children[0].children[0].children[0].value).toBe('Dit is je eerste regel.');
   });
@@ -110,6 +110,26 @@ describe('groepeer', () => {
   it('geeft Uitleg een eigen id als een kop al zo heet', () => {
     const uit = groepeer([alinea('intro'), kop(2, 'Uitleg'), kop(2, 'Make')]);
     expect(tabs(uit).map((t) => t.id)).toEqual(['les-uitleg', 'uitleg', 'make']);
+  });
+
+  it('geeft elk tabblad zijn werkvorm, en van een rij opdrachten is de laatste zelf maken', () => {
+    // De werkvorm is de schakel naar vakdidactiek: het icoon op het tabblad,
+    // en in de docentenhandleiding de tip die hem onderbouwt.
+    const uit = groepeer([
+      titel,
+      kop(2, 'Stap 1: een functie'),
+      kop(2, 'Probeer en onderzoek'),
+      kop(2, 'Opdracht 1: Tel'),
+      kop(2, 'Opdracht 2: Reset'),
+      kop(2, 'Er gaat iets mis'),
+    ]);
+    expect(tabs(uit).map((t) => t.werkvorm)).toEqual([
+      'stap',
+      'onderzoeken',
+      'aanpassen',
+      'maken',
+      'fouten',
+    ]);
   });
 
   it('doet niets met minder dan twee tabbladen', () => {

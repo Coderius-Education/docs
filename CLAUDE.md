@@ -243,6 +243,27 @@ de stappen staan. Een sectie die zo maar één stap zou krijgen, blijft zoals
 hij is. De knop Volgende onderaan een tabblad loopt eerst de stappen door en
 gaat dan naar het volgende tabblad.
 
+**Werkvormen: de schakel naar vakdidactiek.** Elk tabblad heeft een werkvorm:
+wat de leerling daar doet (leerdoel, uitleg, stap voor stap, voorspellen,
+onderzoeken, aanpassen, zelf maken, fouten herkennen). De lijst staat in
+`packages/shared/werkvormen/werkvormen.json`: per werkvorm de koppen waaraan
+je hem herkent, een icoon (paden van een lijntekening, geen emoji) en
+minstens één tip van vakdidactiek. Een kop die bij geen werkvorm hoort, is
+uitleg; van een rij genummerde opdrachten is de laatste zelf maken
+(`laatsteVan`). De remark-stap geeft elk `<LesTab>` zijn werkvorm mee en het
+tabblad toont het icoon; voor een leerling is het alleen een herkenningsteken.
+De betekenis staat in de docentenhandleiding: `<Werkvormen />` is de legenda
+met links naar de tips, en `<LesWerkvormen les="html-css/koppen-lijsten" />`
+toont de iconen van één les, voor in de leerlijn (`components/Werkvorm`). De
+gegevens per les komen uit `plugins/werkvormen.js`, die `createConfig` aanzet
+bij `lesTabs`: hij leest elke les met de MDX-parser van Docusaurus zelf en
+dezelfde stap die de tabbladen maakt, dus de handleiding toont wat de
+leerling ziet. `werkvormen.test.ts` eist dat elke tip bij vakdidactiek
+bestaat onder dezelfde naam; hernoem je daar een tip, pas dan
+`werkvormen.json` mee aan. De rij tabbladen is met opzet krap (0,875rem,
+weinig padding): met de iconen erbij moeten acht of negen tabbladen op één
+regel passen, want een tweede regel kost elk paneel veertig pixels.
+
 Wat vastligt, en waarom:
 
 - **Elk paneel blijft gemount en staat in de HTML van de build**; een paneel

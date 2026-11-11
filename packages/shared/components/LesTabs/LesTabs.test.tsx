@@ -194,6 +194,44 @@ const tabblad = () =>
     (k) => k.getAttribute('aria-selected') === 'true',
   )?.textContent;
 
+describe('het icoon van de werkvorm', () => {
+  function LesMetWerkvormen() {
+    return (
+      <LesTabs>
+        <LesTab id="predict" titel="Predict" label="Predict" werkvorm="voorspellen">
+          <p>a</p>
+        </LesTab>
+        <LesTab id="make" titel="Make" label="Make" werkvorm="maken">
+          <p>b</p>
+        </LesTab>
+        <LesTab id="los" titel="Los" label="Los">
+          <p>c</p>
+        </LesTab>
+      </LesTabs>
+    );
+  }
+
+  it('staat op het tabblad, zonder de naam van het tabblad te veranderen', () => {
+    render(<LesMetWerkvormen />);
+    const tab = screen.getByRole('tab', { name: 'Predict' });
+    const icoon = tab.querySelector('svg');
+    expect(icoon?.getAttribute('data-werkvorm')).toBe('voorspellen');
+    // Een schermlezer leest het label; het icoon zegt hem niets nieuws.
+    expect(icoon?.getAttribute('aria-hidden')).toBe('true');
+    expect(icoon?.querySelectorAll('path').length).toBeGreaterThan(0);
+    expect(screen.getByRole('tab', { name: 'Make' }).querySelector('svg')).not.toBeNull();
+  });
+
+  it('een tabblad zonder werkvorm heeft geen icoon', () => {
+    render(<LesMetWerkvormen />);
+    expect(screen.getByRole('tab', { name: 'Los' }).querySelector('svg')).toBeNull();
+  });
+
+  it('staat ook in de HTML van de build', () => {
+    expect(renderToStaticMarkup(<LesMetWerkvormen />)).toMatch(/data-werkvorm="voorspellen"/);
+  });
+});
+
 describe('LesStappen', () => {
   it('zet elke stap in de HTML van de build, en toont alleen de eerste', () => {
     const html = renderToStaticMarkup(<LesMetStappen />);

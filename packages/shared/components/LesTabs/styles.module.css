@@ -15,7 +15,7 @@
   top: var(--ifm-navbar-height);
   z-index: 5;
   display: flex;
-  gap: 0.25rem;
+  gap: 0.125rem;
   margin: 0 0 1.25rem;
   padding: 0.5rem 0 0;
   overflow-x: auto;
@@ -25,18 +25,29 @@
 
 .tab {
   flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
   margin: 0 0 -2px;
-  padding: 0.4rem 0.8rem;
+  /* Krap, met opzet: met het icoon erbij moeten acht of negen tabbladen op
+     één regel passen. Een tweede regel kost elk paneel veertig pixels. */
+  padding: 0.35rem 0.5rem;
   border: 0;
   border-bottom: 2px solid transparent;
   border-radius: 6px 6px 0 0;
   background: transparent;
   color: var(--ifm-color-emphasis-700);
   font: inherit;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
+}
+
+/* Het icoon van de werkvorm, links van het label. */
+.tabIcoon {
+  width: 1em;
+  height: 1em;
+  margin-right: 0.25rem;
 }
 
 .tab:hover {
@@ -243,8 +254,8 @@
   }
 
   .tablist {
-    margin-bottom: 1rem;
-    padding-top: 0.25rem;
+    margin-bottom: 0.75rem;
+    padding-top: 0;
   }
 }
 

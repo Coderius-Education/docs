@@ -12,6 +12,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { WerkvormIcoon } from '../Werkvorm/Icoon';
 import styles from './styles.module.css';
 
 // Les-tabbladen (proef): elke `##`-sectie van een les is een tabblad bovenaan
@@ -28,7 +29,15 @@ import styles from './styles.module.css';
 //    onderdeel volgt daarom zelf het adres: het opent het paneel waarin het
 //    doel staat en scrolt er dan naartoe.
 
-type Props = { id: string; titel: string; label: string; children?: ReactNode };
+type Props = {
+  id: string;
+  titel: string;
+  label: string;
+  /** Wat de leerling in dit tabblad doet (werkvormen.json): het icoon op het
+   *  tabblad. De docentenhandleiding legt de iconen uit. */
+  werkvorm?: string;
+  children?: ReactNode;
+};
 
 /** Tabbladen (per `##`) of stappen binnen een tabblad (per `###`). */
 type Niveau = 'tab' | 'stap';
@@ -181,6 +190,9 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
             onClick={() => kies(t.id)}
           >
             {niveau === 'stap' && <span className={styles.stapNummer}>{i + 1}</span>}
+            {niveau === 'tab' && t.werkvorm && (
+              <WerkvormIcoon id={t.werkvorm} className={styles.tabIcoon} />
+            )}
             {t.label}
           </button>
         ))}

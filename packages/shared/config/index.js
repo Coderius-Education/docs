@@ -29,6 +29,7 @@ const oudeOpslagPlugin = require('../plugins/oude-opslag');
 const leerdoelenPlugin = require('../plugins/leerdoelen');
 const { remarkLesTabs } = require('../plugins/les-tabs');
 const begrippenPlugin = require('../plugins/begrippen');
+const werkvormenPlugin = require('../plugins/werkvormen');
 const { begrippenBestand } = require('../begrippen');
 const { controleerRegels } = require('../oude-opslag');
 const { gebruiktPyodide, pyodideStaticDir } = require('./pyodide-runtime');
@@ -488,6 +489,9 @@ function createConfig(course = {}) {
       ...(oudeOpslag ? [[oudeOpslagPlugin, { siteId: registry?.id, regels: oudeOpslag }]] : []),
       ...(heeftLeerdoelen ? [[leerdoelenPlugin, { siteId: registry?.id }]] : []),
       ...(heeftBegrippen ? [begrippenPlugin] : []),
+      // Bij les-tabbladen: per les de werkvormen, voor de docentenhandleiding
+      // (plugins/werkvormen.js).
+      ...(lesTabs ? [werkvormenPlugin] : []),
       // De Pyodide van de site in een eigen cache (plugins/pyodide-cache.js),
       // behalve waar een PWA dat al doet (play).
       ...(gebruiktPyodide(process.cwd()) && !heeftPwa(plugins, process.cwd())

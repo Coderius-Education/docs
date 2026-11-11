@@ -79,6 +79,21 @@ describe('les-tabbladen in de web-cursus', () => {
     expect(fout).toEqual([]);
   });
 
+  it('de docentenhandleiding legt de iconen uit en toont ze bij elke les', () => {
+    // Elk tabblad heeft een icoon voor de werkvorm. De docentenhandleiding is
+    // de plek waar dat icoon iets betekent: de legenda linkt naar de tips van
+    // vakdidactiek, en de leerlijn toont per les hoe hij wordt aangeleerd.
+    const mdx = readFileSync(join(SITE, 'src/theme/MDXComponents.tsx'), 'utf8');
+    for (const naam of ['Werkvormen', 'LesWerkvormen'])
+      expect(mdx).toMatch(new RegExp(`^\\s+${naam},$`, 'm'));
+    const handleiding = readFileSync(join(SITE, 'src/pages/docenten.mdx'), 'utf8');
+    expect(handleiding).toMatch(/^<Werkvormen \/>$/m);
+    const getoond = [...handleiding.matchAll(/<LesWerkvormen les="([^"]+)" \/>/g)].map((m) => m[1]);
+    // Een les zonder rij ontbreekt in de leerlijn; een rij zonder les stopt
+    // de build pas bij het bouwen.
+    expect([...getoond].sort()).toEqual(lessen.map((l) => l.naam.replace(/\.mdx$/, '')).sort());
+  });
+
   it('geen les zet de tabbladen uit', () => {
     expect(lessen.filter((l) => /^les_tabs:\s*false/m.test(l.inhoud)).map((l) => l.naam)).toEqual(
       [],

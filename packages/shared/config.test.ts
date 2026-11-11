@@ -179,6 +179,15 @@ describe('createConfig — les-tabbladen (proef)', () => {
     expect(createConfig({ ...basis, lesTabs: true })).not.toHaveProperty('lesTabs');
   });
 
+  it('zet de plugin aan die per les de werkvormen levert, alleen met de schakelaar aan', () => {
+    // De docentenhandleiding toont per les de iconen van zijn tabbladen
+    // (<LesWerkvormen>); zonder de plugin heeft dat onderdeel geen gegevens.
+    const werkvormenPlugin = require('./plugins/werkvormen.js');
+    const plugins = (config: { plugins: unknown[] }) => config.plugins;
+    expect(plugins(createConfig({ ...basis, lesTabs: true }))).toContain(werkvormenPlugin);
+    expect(plugins(createConfig(basis))).not.toContain(werkvormenPlugin);
+  });
+
   it('staat alleen bij de web-cursus aan', () => {
     const aan = SITES.filter((s) => {
       const pad = join(ROOT, 'sites', s.subject ?? '', s.id, 'docusaurus.config.ts');
