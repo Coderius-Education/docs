@@ -34,6 +34,10 @@ type Props = {
   id: string;
   titel: string;
   label: string;
+  /** Wat er op het tabblad staat als het label daar te lang is: in een lange
+   *  rij opdrachten alleen het nummer ("5.7.b"). Een schermlezer en de knop
+   *  Volgende houden het label. */
+  kort?: string;
   /** Wat de leerling in dit tabblad doet (werkvormen.json): het icoon op het
    *  tabblad. De docentenhandleiding legt de iconen uit. */
   werkvorm?: string;
@@ -192,13 +196,14 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
             tabIndex={t.id === actief ? 0 : -1}
             className={niveau === 'tab' ? styles.tab : styles.stap}
             title={t.label === t.titel ? undefined : t.titel}
+            aria-label={t.kort ? t.label : undefined}
             onClick={() => kies(t.id)}
           >
             {niveau === 'stap' && <span className={styles.stapNummer}>{i + 1}</span>}
             {niveau === 'tab' && t.werkvorm && (
               <WerkvormIcoon id={t.werkvorm} className={styles.tabIcoon} />
             )}
-            {t.label}
+            {t.kort ?? t.label}
           </button>
         ))}
       </div>
@@ -306,19 +311,22 @@ export function LesVoorbeeld({
   vraag,
   bestanden,
   beeld,
+  toelichting,
 }: {
   children?: ReactNode;
   /** Rechts staat geen uitvoer maar een voorspelvraag: die krijgt de helft. */
   vraag?: string;
   /** Twee of meer bestanden naast elkaar, elk in een eigen kolom. */
   bestanden?: string;
+  /** Rechts staat geen uitvoer maar de lijst die de code uitlegt. */
+  toelichting?: string;
   /** Links staat geen code maar een plaatje, rechts de tekst die erbij hoort.
    *  Met "breed" is het een onderdeel om mee te oefenen, met de vragen ernaast. */
   beeld?: string;
 }): ReactNode {
   const klasse = bestanden
     ? styles.bestanden
-    : `${styles.voorbeeld}${vraag ? ` ${styles.metVraag}` : ''}${beeld ? ` ${beeld === 'breed' ? styles.metBreedBeeld : styles.metBeeld}` : ''}`;
+    : `${styles.voorbeeld}${vraag ? ` ${styles.metVraag}` : ''}${beeld ? ` ${beeld === 'breed' ? styles.metBreedBeeld : styles.metBeeld}` : ''}${toelichting ? ` ${styles.metToelichting}` : ''}`;
   return (
     <div className={klasse} data-les-voorbeeld="">
       {children}

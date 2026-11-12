@@ -52,9 +52,13 @@ Probeer het hier. Sleep de schuif of typ een getal bij **Servo 9 op**, en kijk w
 
 Voor de servo begin je een nieuw programma. Wil je het programma van de sensor bewaren, kies dan in het menu **Mijn projecten** de knop **Opslaan als ...**, typ een naam en klik op **Opslaan**. Je laptop bewaart het dan als bestand. Haal daarna de oude blokken weg: sleep **herhaal voor altijd** uit het Leaphy-blok naar de groepen links. Alles wat erin zit gaat mee, en het Leaphy-blok blijft staan.
 
+### Het servo-blok
+
+Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in de stand van 90 graden. Als je het blok pakt, staat er eerst **Servo 2 op 90**. Klik op de 2 en kies **9**: daar zit je servo.
+
 ### Voorspel
 
-Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in de stand van 90 graden. Als je het blok pakt, staat er eerst **Servo 2 op 90**. Klik op de 2 en kies **9**: daar zit je servo. Bekijk dit programma, maar upload het nog niet:
+Bekijk dit programma, maar upload het nog niet:
 
 <Blokken programma={heenEnWeer} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms." />
 
@@ -67,10 +71,10 @@ Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in 
 
 Het asje draait naar 0°, wacht een seconde, draait naar 90°, wacht weer een seconde, en begint opnieuw. Dat blijft hij doen, want alles staat in **herhaal voor altijd**.
 
+Klik op **Upload naar robot** en kijk of het klopt.
+
   </Uitleg>
 </Voorspel>
-
-Klik op **Upload naar robot** en kijk of je voorspelling klopt.
 
 ## Probeer het zelf
 

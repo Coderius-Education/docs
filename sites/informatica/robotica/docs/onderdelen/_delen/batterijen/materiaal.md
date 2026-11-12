@@ -8,13 +8,6 @@ Zonder batterijen moet je robot aan een USB-kabel hangen. Dat wil je natuurlijk 
 </Onderdelenlijst>
 
 <details>
-<summary>Heb je alles?</summary>
-
-Controleer of je alle onderdelen uit de tabel hebt liggen voordat je verder gaat.
-
-</details>
-
-<details>
 <summary>Controlevraag</summary>
 
 Hoeveel volt verwacht je in totaal als je **6 volle AA-batterijen** in serie zet?

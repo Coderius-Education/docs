@@ -78,7 +78,9 @@ Het scherm blijft leeg. `fill()` en `text()` werken in een kladversie in het geh
 
 Terug naar je script uit Deel 4. De `print`-regel gaat eruit; het scherm komt ervoor in de plaats:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from time import sleep
 from leaphymicropython.sensors.linesensor import AnalogIR
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
@@ -101,9 +103,23 @@ while True:
     sleep(0.2)
 ```
 
-`f'Links: {kleur_links}'` is dezelfde f-string als in je `print` uit [Deel 3](site:robotica/lego_auto/lijnsensor/een-sensor): op het scherm komt `Links: white` of `Links: black`. Hoe een f-string werkt, staat bij [Tekst en getallen combineren met f-strings](site:python/docs/tekst/04a-f-strings).
+<Regel n={7} tot={10}>
+Het scherm-object staat bóven de loop: je zet het één keer klaar. Die opbouw ken je al van de sensoren.
+</Regel>
 
-Let op de opbouw die je al kent: het scherm-object staat bóven de loop (eenmalig klaarzetten), het tekenen zit erin (elke ronde opnieuw). De tweede regel staat op `y=10`, tien pixels lager — anders schrijven de twee regels door elkaar heen.
+<Regel n={16} tot={19}>
+Het tekenen zit in de loop, elke ronde opnieuw.
+</Regel>
+
+<Regel n={17}>
+`f'Links: {kleur_links}'` is dezelfde f-string als in je `print` uit [Deel 3](site:robotica/lego_auto/lijnsensor/een-sensor): op het scherm komt `Links: white` of `Links: black`. Hoe een f-string werkt, staat bij [Tekst en getallen combineren met f-strings](site:python/docs/tekst/04a-f-strings).
+</Regel>
+
+<Regel n={18}>
+De tweede regel staat op `y=10`, tien pixels lager. Anders schrijven de twee regels door elkaar heen.
+</Regel>
+
+</CodeUitleg>
 
 ## Test het
 

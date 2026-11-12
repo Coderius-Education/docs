@@ -102,7 +102,7 @@ Laat het lampje rood branden zolang er geen bal in het gat ligt: zet in de ander
 
 **Oorzaak:** de tweede sensor ziet de bal niet. Hij kijkt naar de verkeerde plek, of je grens past niet bij die plek.
 
-**Zelf vinden:** toon het getal van **A1** op je scherm, zoals bij de grens hierboven, en leg de bal in het gat. Wordt het getal kleiner dan je grens?
+**Zelf vinden:** toon het getal van **A1** op je scherm, zoals bij Een grens voor de tweede sensor, en leg de bal in het gat. Wordt het getal kleiner dan je grens?
 
 **Oplossing:** zet de sensor zo dat hij de bal ziet, en kies dan een nieuwe grens tussen het getal met en zonder bal.
 
@@ -120,7 +120,7 @@ Laat het lampje rood branden zolang er geen bal in het gat ligt: zet in de ander
 
 **Oorzaak:** je gebruikt het blok **Led**. Dat stuurt ook D9 aan, en daar zit je servo.
 
-**Oplossing:** haal het blok Led weg en gebruik **Zet PWM** op pin 10, zoals hierboven.
+**Oplossing:** haal het blok Led weg en gebruik **Zet PWM** op pin 10, zoals in Het programma.
 
 </Probleem>
 

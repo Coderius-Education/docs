@@ -1,3 +1,13 @@
+/* Het codeblok met zijn link: samen één blok, zo breed als de kolom. */
+.metLink {
+  min-width: 0;
+}
+
+/* De link sluit het blok af: de marge eronder is die van het codeblok. */
+.metLink > .editorLink {
+  margin-bottom: var(--ifm-leading);
+}
+
 .editorLink {
   display: flex;
   justify-content: flex-end;

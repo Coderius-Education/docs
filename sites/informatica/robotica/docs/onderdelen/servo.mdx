@@ -54,11 +54,10 @@ De stekker van de servo past precies op het rijtje van **D6**:
 
 :::caution[3,3 V is aan de lage kant]
 
-Een MG90 of SG90 is gemaakt voor 4,8 tot 6 V. Op 3,3 V draait hij wel, maar
-zwakker: met een zware grijper kan hij haperen of halverwege blijven staan.
-Start het bord opnieuw op zodra de servo beweegt? Dan trekt hij meer stroom dan
-het bord kan leveren. Vraag je docent dan om een aparte voeding van 5 V voor de
-servo, met de GND van die voeding aan de GND van het bord.
+Een MG90 of SG90 is gemaakt voor 4,8 tot 6 V. Op 3,3 V draait hij zwakker: met
+een zware grijper kan hij haperen. Start het bord opnieuw op zodra de servo
+beweegt? Dan trekt hij te veel stroom. Vraag je docent dan om een aparte voeding
+van 5 V voor de servo, met de GND daarvan aan de GND van het bord.
 
 :::
 
@@ -86,12 +85,9 @@ set_servo_angle(pin_name, angle)
 - **pin_name**: naam van de pin als tekst, met een `D` ervoor: `"D6"`, `"D7"`, ...
 - **angle**: een getal tussen **0** en **180** graden.
 
-<details>
-<summary>Opdracht: heen en weer zwaaien</summary>
+## Opdracht: heen en weer zwaaien
 
 Laat de servo continu heen en weer zwaaien tussen 0 en 180 graden, met 1 seconde tussen elke stand.
-
-</details>
 
 <details>
 <summary>Oplossing</summary>

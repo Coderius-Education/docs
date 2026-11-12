@@ -56,9 +56,7 @@ Er opent een venster met bovenaan **Toon output op scherm**. Dit is het scherm: 
 
 ### Stap 3: laat de robot opnieuw beginnen
 
-Je robot deed het programma al meteen toen de upload klaar was. Misschien staat de zin daarom al op het scherm, misschien ook niet. Klik eerst op de prullenbak, zodat het scherm leeg is. Dan zie je zeker wat je robot nu doet.
-
-Druk dan op het kleine knopje op de Arduino zelf, met **RST** eronder.
+Je robot deed het programma al meteen toen de upload klaar was. Misschien staat de zin daarom al op het scherm, misschien ook niet. Klik eerst op de prullenbak, zodat het scherm leeg is: dan zie je zeker wat je robot nu doet. Druk daarna op het kleine knopje op de Arduino zelf, met **RST** eronder.
 
 ![Uitsnede van de blauwe Arduino Nano op het shield: in het midden het kleine grijze knopje, met RST eronder.](@site/static/fritzing/golfbot_rst.png)
 

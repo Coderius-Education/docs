@@ -130,7 +130,7 @@ Kijk dan bij welke stap van de overbrenging de beweging ophoudt.
 - Draait het oranje tandwiel niet, of zoemt de servo? Haal dan het grijze tandwiel even van de as. Draait het oranje nu wel, dan zat het grijze ergens tegenaan: kijk of het vrij kan draaien. Draait het oranje ook zonder het grijze niet, dan ligt het aan de servo: bij [de servo](site:robotica/golfbot/servo) staat onder **Er gaat iets mis** wat je dan doet.
 - Draait het oranje wel en het grijze niet, of zitten de stukjes plakband niet meer naast elkaar? Kijk dan bij **Er gaat iets mis**.
 
-## Kies je arm
+### Kies je arm
 
 Nu maak je de arm. Ga verder bij jouw keuze: [de arm namaken](#namaken) of [de arm zelf maken](#zelf-maken).
 
@@ -243,13 +243,13 @@ Begin met een balk met een asgat, recht naar beneden aan de as. Maak hem zo lang
 <details>
 <summary>Antwoord</summary>
 
-Hier hoort geen vast antwoord bij: elke arm die de test hieronder doorstaat, is goed.
+Hier hoort geen vast antwoord bij: elke arm die de test in de volgende stap doorstaat, is goed.
 
 </details>
 
 ### Test je arm
 
-Test je arm voordat je hem op de baan zet. Zet je robot aan met **ON/OFF**, upload het programma **Servo 9 op 90** van hierboven, en kijk of de arm naar beneden hangt. Upload daarna het programma dat heen en weer draait:
+Test je arm voordat je hem op de baan zet. Zet je robot aan met **ON/OFF**, upload het programma **Servo 9 op 90** uit Onderdelenlijst, en kijk of de arm naar beneden hangt. Upload daarna het programma dat heen en weer draait:
 
 1. Draait de arm mee, zonder te slippen op de as?
 2. Draait hij soepel, zonder te zoemen of te haperen?

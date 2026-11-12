@@ -220,6 +220,53 @@ const isToelichting = (node) =>
   !/:$/.test(tekstVan(node).trim()) &&
   !node.children.some((k) => k.type === 'image' || k.name === 'img' || k.type === 'strong');
 
+const regels = (node) => (node.value ?? '').split('\n').length;
+
+/** Meer regels dan dit, en een programma schuift in een paneel in zijn eigen vak. */
+const EIGEN_VAK = 16;
+
+/**
+ * Hoeveel knopen na een codeblok hem toelichten en ernaast kunnen staan:
+ * alinea's, een lijst, een tabel, een waarschuwing, hooguit drie. Er moet een
+ * lijst, een tabel of een blok bij zijn: code met alleen een alinea eronder is lopende uitleg en
+ * blijft onder elkaar. Behalve bij een programma dat in zijn eigen vak
+ * schuift: onder elkaar is dat met een alinea al hoger dan het scherm. Een
+ * alinea die het volgende aankondigt ("Met een lijst gaat het zo:") telt
+ * niet mee als hij de laatste is.
+ *
+ * @param {object[]} kinderen
+ * @param {number} vanaf de eerste knoop na de code
+ * @param {number} lengte het aantal regels van de code
+ */
+function toelichtingNa(kinderen, vanaf, lengte) {
+  const isPunt = (node) => node.type === 'list' || node.type === 'table' || isBlok(node);
+  const hoortErbij = (node) =>
+    node !== undefined &&
+    !isVraagAlinea(node) &&
+    !isUitvoerKop(node) &&
+    !isVerwachtKop(node) &&
+    !isBestandsnaam(node) &&
+    ((isAlinea(node) && !isPlaatjeAlinea(node)) || isPunt(node));
+  let aantal = 0;
+  while (aantal < 3 && hoortErbij(kinderen[vanaf + aantal])) aantal++;
+  // Een aankondiging aan het eind hoort bij wat erna komt.
+  while (aantal > 0 && isAankondiging(kinderen[vanaf + aantal - 1])) aantal--;
+  if (lengte > EIGEN_VAK) return aantal;
+  // Tot en met de laatste lijst of het laatste blok: een alinea daarna is
+  // weer lopende tekst.
+  while (aantal > 0 && !isPunt(kinderen[vanaf + aantal - 1])) aantal--;
+  return aantal;
+}
+
+const isAankondiging = (node) => isAlinea(node) && /:$/.test(tekstVan(node).trim());
+
+/** Een alinea die met een vette "Vraag:" begint. */
+const isVraagAlinea = (node) =>
+  node !== undefined &&
+  isAlinea(node) &&
+  node.children[0]?.type === 'strong' &&
+  /^Vraag\b/.test(tekstVan(node.children[0]).trim());
+
 /**
  * Een codeblok dat direct door "Uitvoer:" en een uitvoerblok wordt gevolgd,
  * komt in een <LesVoorbeeld>: de code links, de uitvoer rechts (in een eigen
@@ -242,11 +289,27 @@ function voorbeeldenNaastElkaar(kinderen) {
       // Naast een lang programma met een korte uitvoer is rechts ruimte over:
       // de alinea's die het programma toelichten, staan daar. Een zin die het
       // volgende blok aankondigt ("Met een lijst gaat het zo:") niet.
-      const regels = (node) => (node.value ?? '').split('\n').length;
       if (regels(code) >= LANG && regels(uitvoer) <= KORT) {
         while (rechts.length < 4 && isToelichting(kinderen[i + 1])) rechts.push(kinderen[++i]);
       }
       uit.push(jsx('LesVoorbeeld', [code, jsx('div', rechts)]));
+    } else if (code.type === 'code' && toelichtingNa(kinderen, i + 1, regels(code)) > 0) {
+      // Code met wat hem toelicht (de naslag van robotica: een fragment, en
+      // per onderdeel een punt in een lijst of een waarschuwing). Naast
+      // elkaar leest de leerling het punt bij de regel, en het scherm is half
+      // zo lang.
+      const aantal = toelichtingNa(kinderen, i + 1, regels(code));
+      const rechts = kinderen.slice(i + 1, i + 1 + aantal);
+      uit.push(jsx('LesVoorbeeld', [code, jsx('div', rechts)], [attribuut('toelichting', 'ja')]));
+      i += aantal;
+    } else if (code.type === 'code' && isVraagAlinea(kop)) {
+      // Code met de vraag eronder ("**Vraag:** hoe vaak …?") en de tip en de
+      // oplossing in uitklapblokken: de vraag gaat over de code, dus die
+      // staat ernaast. Onder elkaar was zo'n opdracht tot 240 pixels te lang.
+      const rechts = [kop];
+      i += 1;
+      while (rechts.length < 4 && isUitklapblok(kinderen[i + 1])) rechts.push(kinderen[++i]);
+      uit.push(jsx('LesVoorbeeld', [code, jsx('div', rechts)], [attribuut('toelichting', 'ja')]));
     } else if ((code.type === 'code' || isBlokprogramma(code)) && isVoorspel(kop)) {
       uit.push(jsx('LesVoorbeeld', [code, kop], [attribuut('vraag', 'ja')]));
       i += 1;
@@ -255,12 +318,12 @@ function voorbeeldenNaastElkaar(kinderen) {
   return uit;
 }
 
-/** Een alinea met alleen een vette bestandsnaam: **`rekenen.py`**. */
+/** Een alinea met alleen een vette bestandsnaam (**`rekenen.py`**) of **Code A:**. */
 const isBestandsnaam = (node) =>
   isAlinea(node) &&
   node.children.length === 1 &&
   node.children[0].type === 'strong' &&
-  /^[\w.-]+\.\w+$/.test(tekstVan(node).trim());
+  /^([\w.-]+\.\w+|Code \w+:?)$/.test(tekstVan(node).trim());
 
 /**
  * Twee of meer bestanden onder elkaar, elk met zijn naam erboven
@@ -514,6 +577,10 @@ function uitlegMetStappen(uitleg, id) {
   return [stappenlijst(lesStappen)];
 }
 
+/** Vanaf zoveel tabbladen past de rij op 1280 pixels niet meer op één regel. */
+const VEEL_TABS = 9;
+/** En meer stappen dan dit passen in een tabblad niet op één regel. */
+const MEESTE_STAPPEN = 8;
 /**
  * Een les over JavaScript begint met drie of vier secties uitleg, elk naar
  * zijn onderwerp genoemd ("Een item ophalen", "Combineren met een loop").
@@ -524,7 +591,7 @@ function uitlegMetStappen(uitleg, id) {
  *
  * Alleen de uitleg waar de les mee begint, en alleen als er daarna nog een
  * ander tabblad komt: een les die helemaal uit uitleg bestaat, houdt zijn
- * tabbladen.
+ * tabbladen. Ook een les waarvan de uitleg samen meer dan acht stappen heeft.
  *
  * @param {object[]} tabs de <LesTab>-elementen
  * @param {string[]} vormen de werkvorm van elk tabblad
@@ -535,6 +602,12 @@ function voegUitlegSamen(tabs, vormen, uitlegId) {
   while (aantal < tabs.length && vormen[aantal] === UITLEG_VORM) aantal++;
   if (aantal < 2 || aantal === tabs.length) return { tabs, vormen };
   const delen = tabs.slice(0, aantal).map((tab) => alsStappen(tab, uitlegId));
+  // Samen meer stappen dan er op één regel passen, terwijl de tabbladen los
+  // wel op één regel staan: dan blijven het tabbladen. Het ingebouwde lampje
+  // van robotica (aanzetten, knipperen, een kleur) had één tabblad Uitleg
+  // met twaalf stappen op twee regels.
+  const stappen = delen.reduce((som, d) => som + d.stappen.length, 0);
+  if (stappen > MEESTE_STAPPEN && tabs.length < VEEL_TABS) return { tabs, vormen };
   const bezet = new Set(tabs.map((tab) => eigenschap(tab, 'id')));
   const id = uitlegId ?? (bezet.has('uitleg') ? 'les-uitleg' : 'uitleg');
   const samen = element('LesTab', id, UITLEG, [
@@ -610,6 +683,8 @@ const isTekstblok = (node, delen) =>
   isBlok(node) ||
   (node.type === 'mdxJsxFlowElement' && delen.has(node.name));
 
+/** Vanaf zoveel plaatjes achter elkaar is het een reeks. */
+const REEKS_VANAF = 3;
 /**
  * Een plaatje met de tekst die erop volgt staat naast elkaar: het plaatje
  * links, de tekst rechts. Bij robotica is dat het aansluitschema met de
@@ -631,7 +706,13 @@ function plaatjesNaastTekst(kinderen) {
   for (let i = 0; i < kinderen.length; i++) {
     const node = kinderen[i];
     const breed = isBreedOnderdeel(node);
-    if (!(isAlinea(node) && isPlaatjeAlinea(node)) && !isBlokprogramma(node) && !breed) {
+    // Drie of meer foto's in één alinea zijn een reeks (zie reeksen), geen
+    // plaatje met tekst ernaast.
+    const eenPlaatje =
+      isAlinea(node) &&
+      isPlaatjeAlinea(node) &&
+      node.children.filter(isPlaatje).length < REEKS_VANAF;
+    if (!eenPlaatje && !isBlokprogramma(node) && !breed) {
       uit.push(node);
       continue;
     }
@@ -655,16 +736,16 @@ function plaatjesNaastTekst(kinderen) {
   return uit;
 }
 
-const isFiguur = (node) => node.type === 'mdxJsxFlowElement' && node.name === 'figure';
-
-/** Vanaf zoveel plaatjes achter elkaar is het een reeks. */
-const REEKS = 3;
+// Een plaatje met een onderschrift, of een los `<img>` op een eigen regel.
+const isFiguur = (node) =>
+  node.type === 'mdxJsxFlowElement' && (node.name === 'figure' || node.name === 'img');
 
 /**
  * Een rij plaatjes met een onderschrift (`<figure>`) direct na elkaar is een
  * reeks bouwstappen: de toren van de Golfbot heeft er tien, de arm vijftien.
  * Onder elkaar was dat tabblad tot 4100 pixels te lang. In een <LesReeks>
  * staat er één tegelijk, met Vorige en Volgende, zoals in een bouwboekje.
+ * Drie of meer foto's in één alinea zijn ook een reeks.
  *
  * @param {object[]} kinderen
  */
@@ -674,9 +755,20 @@ function reeksen(kinderen) {
   while (i < kinderen.length) {
     let j = i;
     while (j < kinderen.length && isFiguur(kinderen[j])) j++;
-    if (j - i >= REEKS) {
+    const fotos = isPlaatjeAlinea(kinderen[i]) ? kinderen[i].children.filter(isPlaatje) : [];
+    if (j - i >= REEKS_VANAF) {
       uit.push(jsx('LesReeks', kinderen.slice(i, j)));
       i = j;
+    } else if (fotos.length >= REEKS_VANAF) {
+      // Foto's zonder onderschrift in één alinea (de drie stappen van de
+      // IR-sensor in zijn adapter): elk een eigen plek in de reeks.
+      uit.push(
+        jsx(
+          'LesReeks',
+          fotos.map((foto) => ({ type: 'paragraph', children: [foto] })),
+        ),
+      );
+      i += 1;
     } else uit.push(kinderen[i++]);
   }
   return uit;
@@ -716,6 +808,20 @@ function foutenNaOpdrachten(tabs, vormen) {
 }
 
 /**
+ * Wat naast elkaar past, naast elkaar: bestanden, een voorbeeld met zijn
+ * uitvoer of zijn toelichting, het doel in het veld, een plaatje met zijn
+ * tekst, en een rij plaatjes als reeks. Voor een les en voor een deel.
+ *
+ * @param {object[]} alles de kinderen van de mdast-root
+ */
+const naastElkaar = (alles) =>
+  reeksen(
+    plaatjesNaastTekst(
+      doelNaastVeld(voorbeeldenNaastElkaar(bestandenNaastElkaar(zonderDubbeleCode(alles)))),
+    ),
+  );
+
+/**
  * De kinderen van de pagina met elke `##`-sectie in een <LesTab>, of null als
  * er niets te groeperen valt (minder dan twee tabbladen).
  *
@@ -739,11 +845,7 @@ function foutenNaOpdrachten(tabs, vormen) {
  * @param {object[]} kinderen de kinderen van de mdast-root
  */
 function groepeer(alles) {
-  const kinderen = reeksen(
-    plaatjesNaastTekst(
-      doelNaastVeld(voorbeeldenNaastElkaar(bestandenNaastElkaar(zonderDubbeleCode(alles)))),
-    ),
-  );
+  const kinderen = naastElkaar(alles);
   const eerste = kinderen.findIndex(isH2);
   if (eerste < 0) return null;
   const boven = [];
@@ -824,11 +926,40 @@ function groepeer(alles) {
     samen.tabs.map((tab, i) => vormNaarStartcode(tab, samen.vormen[i])),
   );
   geordend.tabs.forEach((t, i) => t.attributes.push(attribuut('werkvorm', geordend.vormen[i])));
+  korteOpdrachten(geordend.tabs);
   return [
     ...boven,
     { type: 'mdxJsxFlowElement', name: 'LesTabs', attributes: [], children: geordend.tabs },
     ...esm,
   ];
+}
+
+/** En zoveel opdrachten achter elkaar zijn een reeks. */
+const REEKS_OPDRACHTEN = 4;
+const GENUMMERD = /^Opdracht (\d[\w.]*)$/;
+
+/**
+ * In een lange rij tabbladen met een reeks opdrachten ("Opdracht 5.7.a" tot en
+ * met "5.7.h" in Code beter begrijpen: tien tabbladen op twee regels) staat
+ * het woord Opdracht alleen op de eerste; de volgende tonen hun nummer
+ * (`kort`). Het label blijft voor een schermlezer en de knop Volgende.
+ *
+ * @param {object[]} tabs
+ */
+function korteOpdrachten(tabs) {
+  if (tabs.length < VEEL_TABS) return;
+  const nummer = (tab) => GENUMMERD.exec(eigenschap(tab, 'label') ?? '')?.[1];
+  let begin = 0;
+  while (begin < tabs.length) {
+    let eind = begin;
+    while (eind < tabs.length && nummer(tabs[eind])) eind++;
+    if (eind - begin >= REEKS_OPDRACHTEN) {
+      for (const tab of tabs.slice(begin + 1, eind)) {
+        tab.attributes.push(attribuut('kort', nummer(tab)));
+      }
+    }
+    begin = Math.max(eind, begin + 1);
+  }
 }
 
 /**
@@ -856,8 +987,11 @@ function remarkLesTabs() {
     if (file?.data?.frontMatter?.les_tabs === false) return;
     if (isDeel(file?.path)) {
       const naam = (file.path.split(/[\\/]/).pop() ?? '').replace(/\.mdx?$/, '');
-      const metStap = deelMetStappen(tree.children, naam);
-      if (metStap) tree.children = metStap;
+      // Ook in een deel staat naast elkaar wat naast elkaar past: het bord
+      // met zijn uitleg op de installatiepagina van robotica was anders 72
+      // pixels te lang.
+      const naast = naastElkaar(tree.children);
+      tree.children = deelMetStappen(naast, naam) ?? naast;
       return;
     }
     const nieuw = groepeer(tree.children);

@@ -54,8 +54,7 @@ onderdeel aansluit en programmeert, staat bij [Onderdelen](site:robotica/docs/on
 
 ### Oudere versies
 
-De onderdelen hieronder heb je niet nodig als je de tabel hierboven gebruikt.
-Ze staan er voor wie een oudere robot bijwerkt.
+Alleen voor wie een oudere robot bijwerkt.
 
 | Onderdeel | Links | Credits | Licentie |
 |:---:|---|---|---|
@@ -66,6 +65,8 @@ Ze staan er voor wie een oudere robot bijwerkt.
 | TOF-sensor | [.stl](3d_models/TOF%20Mount%20-%20main.stl) [.step](3d_models/TOF%20Mount%20-%20main.step) | Joost Kramer | [CC-BY-NC](https://creativecommons.org/licenses/by-nc/4.0/deed.nl) |
 | M2x5mm-schroef (voor TOF-model) | [rvspaleis](https://www.rvspaleis.nl/bouten/kruisgleuf/din-7985/din-7985-[-]-a2-[-]-m2/7985-2-2x5_1) | | |
 | OLED-scherm (zet support aan in je slicer) | [.stl](3d_models/Oled%20128x64%20Adapter%20-%20Main.stl) [.step](3d_models/Oled%20128x64%20Adapter%20-%20Main.step) | Joost Kramer | [CC-BY-NC](https://creativecommons.org/licenses/by-nc/4.0/deed.nl) |
+
+### De eerste motorhouder
 
 Nog een oudere versie van de motorhouder:
 

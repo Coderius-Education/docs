@@ -10,16 +10,12 @@ Meet met je multimeter (op **DC voltage**) de spanning van iedere AA-batterij.
 Een oplaadbare batterij geeft vol al minder dan een gewone. Met zes oplaadbare
 krijg je dus ongeveer 7,5V in plaats van 9V, en dat is genoeg voor het shield.
 
-:::tip[Nog nooit een multimeter gebruikt?]
-
-Kijk eerst even bij [Meten met een multimeter](site:robotica/docs/onderdelen/meten).
-
-:::
-
 <details>
 <summary>Welke instellingen heb ik nodig?</summary>
 
 Zet de multimeter op **DC voltage** (V met een streepje). Rode meetpen op de plus (+), zwarte meetpen op de min (-). Je leest een waarde rond de 1,5V af.
+
+Nog nooit een multimeter gebruikt? Kijk dan eerst bij [Meten met een multimeter](site:robotica/docs/onderdelen/meten).
 
 </details>
 

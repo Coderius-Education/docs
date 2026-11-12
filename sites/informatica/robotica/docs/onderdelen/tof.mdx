@@ -35,7 +35,7 @@ Alle TOF-sensoren hebben hetzelfde **I2C-adres**. De microcontroller zou ze niet
 
 </details>
 
-## Eén TOF zonder multiplexer \{#zonder-mux}
+## Zonder multiplexer: één TOF \{#zonder-mux}
 
 ### Aansluiten
 
@@ -86,10 +86,6 @@ Het getal **8191**. Dat betekent: geen geldige meting. Je krijgt het ook als een
 
 </details>
 
-### SDA en SCL \{#sda-scl}
-
-<I2C />
-
 ### Alleen geldige metingen \{#geldige-metingen}
 
 Soms staat er niets voor de sensor, of zit een object buiten bereik. Dan krijg je een hoog getal terug. De regel is simpel: **alles boven 8090 is geen echte afstand**.
@@ -119,6 +115,8 @@ while True:
     of SCL-draad of een verkeerd `channel`. Zie
     [Er gaat iets mis](site:robotica/docs/onderdelen/er-gaat-iets-mis#tof-sensoren).
 
+### Controlevraag
+
 <details>
 <summary>Controlevraag</summary>
 
@@ -133,7 +131,7 @@ Wat zie je in de Shell als je je hand vlak (minder dan 5 cm) voor de sensor houd
 
 </details>
 
-## Eén TOF met multiplexer \{#met-mux}
+## Met multiplexer: één TOF \{#met-mux}
 
 Met de SDA/SCL-module kun je tot acht I2C-apparaten aansluiten op **channels 0 t/m 7**. Elke sensor krijgt zo zijn eigen kanaal.
 
@@ -184,7 +182,7 @@ Welk getal vul je in bij `channel=` als je de sensor in het stel pinnen onder **
 
 </details>
 
-## Twee of meer TOFs met multiplexer \{#twee-met-mux}
+## Twee of meer TOFs: elk op een eigen channel \{#twee-met-mux}
 
 Heb je twee TOFs nodig (bijvoorbeeld om links en rechts te meten)? Dan steek je ze in twee verschillende channels van de multiplexer.
 
@@ -223,12 +221,9 @@ while True:
 
 In de Shell zie je nu twee getallen naast elkaar: de afstand voor sensor 0 en sensor 7.
 
-<details>
-<summary>Opdracht: drie sensoren</summary>
+## Opdracht: drie sensoren
 
 Voeg een derde TOF toe op **channel 3** en print ook die waarde mee.
-
-</details>
 
 <details>
 <summary>Oplossing</summary>
@@ -256,3 +251,7 @@ while True:
 ```
 
 </details>
+
+## SDA en SCL \{#sda-scl}
+
+<I2C />

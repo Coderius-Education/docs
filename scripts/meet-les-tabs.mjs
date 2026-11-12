@@ -239,7 +239,9 @@ async function meetLes(les) {
         .catch(() => {});
       // Een tabblad met stappen meet per stap; zonder stappen één keer.
       const paneel = pagina.locator(`[data-les-tab="${id}"]`);
-      const stappen = await paneel.locator('[data-stap]').all();
+      // Alleen stappen die te zien zijn: een deel met stappen kan in een
+      // uitklapblok staan dat dicht is (de uitleg van I2C bij robotica).
+      const stappen = await paneel.locator('[data-stap]:visible').all();
       for (const stap of stappen.length ? stappen : [null]) {
         if (stap) {
           await stap.scrollIntoViewIfNeeded();

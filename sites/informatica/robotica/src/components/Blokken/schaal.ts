@@ -19,8 +19,8 @@ export function schaalVoor(
 }
 
 // Hoe hoog een programma in een les-tabblad mag zijn: wat er op het scherm
-// overblijft na de titel, de tabbladen, een paar regels tekst en de knop
-// Volgende. Op een smal scherm scrolt de leerling, en geldt er geen grens.
+// overblijft na de titel, de tabbladen, de rij stappen, een paar regels tekst
+// en de knop Volgende. Op een smal scherm scrolt de leerling, en geldt er geen grens.
 export function maxHoogteInTab(schermHoogte: number, breed: boolean): number {
-  return breed ? Math.max(240, schermHoogte - 340) : Number.POSITIVE_INFINITY;
+  return breed ? Math.max(240, schermHoogte - 360) : Number.POSITIVE_INFINITY;
 }

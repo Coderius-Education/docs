@@ -321,7 +321,7 @@
 
   /* Het woord Uitvoer, boven het blok. Naast een plaatje staat daar gewone
      tekst. */
-  .voorbeeld:not(.metBeeld):not(.metBreedBeeld) > div > p:first-child {
+  .voorbeeld:not(.metBeeld):not(.metBreedBeeld):not(.metToelichting) > div > p:first-child {
     margin: 0 0 0.25rem;
     color: var(--ifm-color-emphasis-700);
     font-size: 0.875rem;
@@ -362,6 +362,11 @@
      staat er niet meer onder. */
   .metBeeld {
     grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
+  }
+
+  /* Code met de lijst die hem uitlegt: de lijst heeft de helft nodig. */
+  .metToelichting {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
   /* Een onderdeel om mee te oefenen (de sensorsimulator) met zijn vragen. */

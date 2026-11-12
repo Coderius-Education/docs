@@ -1,4 +1,4 @@
-Een **OLED-scherm** laat je tekst en getallen zien op je robot, zonder dat hij aan de laptop hoeft te hangen. Ideaal om sensorwaardes te volgen tijdens het rijden. Het scherm praat via **I2C** (pinnen SDA en SCL).
+Een **OLED-scherm** laat je tekst en getallen zien op je robot, ook als hij rijdt en niet aan de laptop hangt. Het scherm praat via **I2C** (pinnen SDA en SCL).
 
 <Onderdelenlijst>
   <Onderdeel naam="Nano op het shield" foto="ir-analoog/leaphy_murphy_shield.jpeg" alt="Het Leaphy Murphy Shield, de groene printplaat waar de Nano in past">Arduino Nano RP2040 Connect op het Leaphy Murphy Shield</Onderdeel>

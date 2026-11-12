@@ -115,9 +115,15 @@
     align-items: start;
   }
 
+  /* Boven een stap met code staat nog een alinea of twee: het vak is hier
+     iets lager dan een los codeblok in een paneel. */
+  .inTab > .code :global(.theme-code-block) pre {
+    max-height: 45vh;
+  }
+
   .inTab > .uitleg {
     margin-top: 0;
-    max-height: 53vh;
+    max-height: 45vh;
     overflow-y: auto;
     gap: 0.4rem;
   }

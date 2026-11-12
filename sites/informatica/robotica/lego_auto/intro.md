@@ -17,7 +17,7 @@ Welkom bij de **Lego-auto**. Je bouwt eerst een klein rijdend frame van Lego, en
 
 Verzamel de volgende stukken Lego. De volledige stuklijst staat in de PDF hieronder.
 
-<iframe src={PdfFile} width="100%" height="600px">
+<iframe src={PdfFile} width="100%" title="Stuklijst van het Lego-frame" style={{height: 'clamp(320px, calc(100vh - 270px), 600px)'}}>
     Als de iframe niet wordt weergegeven, kun je de PDF hier downloaden: <a href={PdfFile}>Download PDF</a>
 </iframe>
 

@@ -30,14 +30,17 @@ export default function CodeBlock(props: Props): ReactNode {
   if (!isPython || !code || !verdientEditorLink(code, props.metastring)) {
     return <OriginalCodeBlock {...props} />;
   }
+  // Eén element, geen fragment: naast een vraag of een lijst (LesVoorbeeld)
+  // is het codeblok één kolom. Als twee losse elementen nam de link de tweede
+  // kolom in en viel de vraag eronder.
   return (
-    <>
+    <div className={styles.metLink}>
       <OriginalCodeBlock {...props} />
       <div className={styles.editorLink}>
         <Link to={maakEditorLink(code.replace(/\s+$/, ''))} data-noBrokenLinkCheck>
           Open in de editor →
         </Link>
       </div>
-    </>
+    </div>
   );
 }

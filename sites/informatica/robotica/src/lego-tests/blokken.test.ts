@@ -275,7 +275,7 @@ describe('op een smal scherm blijven de blokken leesbaar', () => {
     expect(schaalVoor(600, 400, 430, 380)).toBeCloseTo(380 / 430);
     expect(schaalVoor(600, 400, 300, 380)).toBe(1);
     expect(schaalVoor(600, 400, 900, 380)).toBe(MINSTE_SCHAAL);
-    expect(maxHoogteInTab(720, true)).toBe(380);
+    expect(maxHoogteInTab(720, true)).toBe(360);
     expect(maxHoogteInTab(500, true)).toBe(240);
     expect(maxHoogteInTab(720, false)).toBe(Number.POSITIVE_INFINITY);
   });
