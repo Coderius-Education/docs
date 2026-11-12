@@ -223,6 +223,27 @@ const tabblad = () =>
     (k) => k.getAttribute('aria-selected') === 'true',
   )?.textContent;
 
+describe('de code van een les', () => {
+  it('wordt opnieuw gemeten als het lettertype van de code geladen is', () => {
+    // Het lettertype van de code laadt pas als er code in beeld komt, en is
+    // breder dan wat er tot dan staat. Een regel die paste toen pasCode.ts
+    // hem mat, was daarna dertig pixels afgesneden (fullstack, Cookies). De
+    // les luistert daarom naar `loadingdone`, en ruimt dat weer op.
+    const letters = new EventTarget();
+    const erbij = vi.spyOn(letters, 'addEventListener');
+    const eraf = vi.spyOn(letters, 'removeEventListener');
+    Object.defineProperty(document, 'fonts', { value: letters, configurable: true });
+    try {
+      const { unmount } = render(<Les />);
+      expect(erbij).toHaveBeenCalledWith('loadingdone', expect.any(Function));
+      unmount();
+      expect(eraf).toHaveBeenCalledWith('loadingdone', expect.any(Function));
+    } finally {
+      Reflect.deleteProperty(document, 'fonts');
+    }
+  });
+});
+
 describe('het icoon van de werkvorm', () => {
   function LesMetWerkvormen() {
     return (

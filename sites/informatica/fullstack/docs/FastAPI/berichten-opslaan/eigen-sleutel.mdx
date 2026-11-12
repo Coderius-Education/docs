@@ -59,7 +59,7 @@ async def berichten():
 ```
 
 <Regel n={8}>
-Zo krijgt elk bericht een nieuwe sleutel, zoals `bericht_1767225600123456789`, en overschrijven twee berichten elkaar niet meer.
+Zo krijgt elk bericht een nieuwe sleutel, zoals `bericht_1767225600123456789`. Neem `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconden): twee berichten in dezelfde seconde krijgen anders dezelfde sleutel, en dan overschrijft het tweede het eerste.
 </Regel>
 
 <Regel n={9}>
@@ -71,10 +71,6 @@ De waarde is een dictionary met beide velden, zoals in [Een dictionary als waard
 </Regel>
 
 </CodeUitleg>
-
-:::caution
-Gebruik `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconden). Twee berichten die binnen dezelfde seconde binnenkomen, krijgen anders dezelfde sleutel, en dan overschrijft het tweede het eerste.
-:::
 
 ## Het gastenboek testen
 

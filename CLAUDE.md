@@ -610,15 +610,35 @@ test:
   zonder vraag staan naast elkaar (alleen als elke regel in de halve breedte
   past, 58 tekens).
 - **Code naast een vraag of naast zijn uitvoer krijgt de breedte van zijn
-  langste regel** (`.metVraag`: veertig tot vierenzestig procent;
-  `.voorbeeld`: zestig tot zeventig). Op een vaste helft was bij twaalf
-  voorspelvragen het eind van een regel afgesneden.
-- **Een regel die niet past, breekt af** waar dat geen kwaad kan: in
-  `<CodeUitleg>` in een tabblad (daar staat het regelnummer ervoor, en het
-  vervolg springt vier tekens verder in dan de regel, `--inspringing`), en in
-  een blok zonder taal in een paneel (een foutmelding, uitvoer van de
-  terminal). Code zonder regelnummers houdt zijn regels. Van de 91 schermen
-  met afgesneden code bleven er twaalf over.
+  langste regel** (`.metVraag`: veertig tot zesenzestig procent;
+  `.voorbeeld`: veertig tot zeventig, de uitvoer krijgt de rest). Op een
+  vaste helft was bij twaalf voorspelvragen het eind van een regel
+  afgesneden.
+- **Een regel code staat heel op één regel.** De opdrachtgever wil geen
+  regel die afbreekt of zijwaarts buiten zijn vak valt. Past de langste regel
+  van een blok niet, dan maakt `components/LesTabs/pasCode.ts` de letters van
+  dat blok kleiner, tot 80% (11,8 pixels). Het draait na elke wissel van
+  tabblad of stap, een klik (een uitklapblok), een andere maat van het
+  venster, en als het lettertype van de code geladen is: dat laadt pas als
+  er code in beeld komt en is breder dan wat er tot dan staat. Op een pagina
+  zonder tabbladen doet de clientmodule `codeOpElkePagina.ts` het
+  (`createConfig` zet hem aan bij `lesTabs`). Code naast de uitleg van een
+  `<CodeUitleg>` krijgt pas een bredere kolom (74%, `data-code-breed`) als
+  kleinere letters niet genoeg zijn: met een altijd bredere kolom was de
+  uitleg zo smal dat het scherm langer werd. Past een regel ook dan niet
+  (`data-code-breekt`), dan breekt alleen een blok zonder taal af (een
+  foutmelding, uitvoer van de terminal: die breekt in een terminal ook af),
+  en in `<CodeUitleg>` een regel met zijn nummer ervoor (het vervolg springt
+  vier tekens verder in, `--inspringing`); dat laatste komt op 1280 pixels
+  niet meer voor. Wat met de kleinste letters niet past, hoort korter in de
+  les: op 1280 pixels passen er 84 tekens naast de uitleg en 123 over de
+  volle breedte. In fullstack zijn 55 regels herschreven (een functiekop met
+  elke parameter op een eigen regel, een dictionary over meer regels), overal
+  dezelfde regel op dezelfde manier, en `schermen.test.ts` houdt de lengte
+  vast. Kleinere letters maken een blok ook lager: een programma dat eerst
+  in zijn vak schoof en mocht krimpen, is dan heel te zien en krimpt niet
+  meer, dus meet na zo'n wijziging opnieuw. Het meetscript meldt afgesneden
+  code, afgebroken regels en de kleinste letters per scherm.
 - **Een codeblok dat heel te zien is, levert hooguit een paar regels in**
   als het scherm anders net niet past (`NOODGREEP` in `speling.ts`, tachtig
   pixels, en nooit onder acht regels); een vak dat al schuift, geeft toe tot

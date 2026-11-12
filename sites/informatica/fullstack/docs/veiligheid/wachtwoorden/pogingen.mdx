@@ -67,7 +67,11 @@ erboven:
 ```python showLineNumbers
 @app.post("/inloggen")
 @limiter.limit("5/minute")
-async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Form(...)):
+async def inloggen(
+    request: Request,
+    naam: str = Form(...),
+    wachtwoord: str = Form(...),
+):
     with SqliteDict("gebruikers.db") as db:
         opgeslagen = db.get(naam, NEP)
     try:
@@ -87,7 +91,7 @@ async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Fo
 Hoogstens vijf pogingen per minuut per computer. Een mens die zich vergist, heeft er genoeg aan; een script dat een lijst afloopt, komt nergens.
 </Regel>
 
-<Regel n={3}>
+<Regel n={4}>
 `request: Request` staat vooraan. Daaruit haalt `slowapi` het adres om te tellen.
 </Regel>
 
@@ -153,7 +157,11 @@ async def registreer(naam: str = Form(...), wachtwoord: str = Form(...)):
 
 @app.post("/inloggen")
 @limiter.limit("5/minute")
-async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Form(...)):
+async def inloggen(
+    request: Request,
+    naam: str = Form(...),
+    wachtwoord: str = Form(...),
+):
     with SqliteDict("gebruikers.db") as db:
         opgeslagen = db.get(naam, NEP)
     try:
@@ -170,7 +178,12 @@ async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Fo
 
 @app.post("/wijzig")
 @limiter.limit("5/minute")
-async def wijzig(request: Request, naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+async def wijzig(
+    request: Request,
+    naam: str = Form(...),
+    oud: str = Form(...),
+    nieuw: str = Form(...),
+):
     with SqliteDict("gebruikers.db") as db:
         opgeslagen = db.get(naam, NEP)
     try:
@@ -247,11 +260,12 @@ getal achter `0x` verschilt per keer.
 {/* niet-compileren: alleen de kop van de functie, zonder inhoud */}
 
 ```python
-# FOUT
-async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
-
-# GOED
-async def wijzig(request: Request, naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+async def wijzig(
+    request: Request,
+    naam: str = Form(...),
+    oud: str = Form(...),
+    nieuw: str = Form(...),
+):
 ```
 
 ### Al bij poging 1 een 429
@@ -429,7 +443,11 @@ from slowapi.util import get_remote_address
 
 @app.post("/inloggen")
 @limiter.limit("5/minute")
-async def inloggen(request: Request, naam: str = Form(...), wachtwoord: str = Form(...)):
+async def inloggen(
+    request: Request,
+    naam: str = Form(...),
+    wachtwoord: str = Form(...),
+):
     with SqliteDict("gebruikers.db") as gebruikers:
         opgeslagen = gebruikers.get(naam, NEP)
     try:

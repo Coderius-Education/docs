@@ -30,9 +30,12 @@
   gap: 0.5rem;
 }
 
+/* De tekst mag smaller worden dan zijn langste woord: een stuk code in de
+   uitleg (`SqliteDict("gebruikers.db")`) hield de kolom anders breed, en dan
+   bleef er naast de uitleg te weinig over voor de code zelf. */
 .uitleg > li {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   gap: 0.75rem;
   align-items: start;
   padding: 0.6rem 0.75rem;
@@ -82,6 +85,7 @@
 
 .tekst {
   min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .tekst > :last-child {
@@ -118,18 +122,25 @@
     align-items: start;
   }
 
+  /* Past de langste regel ook met de kleinste letters niet (pasCode.ts zet
+     dan `data-code-breed`), dan krijgt de code tot vierenzeventig procent.
+     Een regel van 84 tekens past daar; de uitleg is smaller, dus alleen dan. */
+  .inTab[data-code-breed] {
+    grid-template-columns: minmax(40%, max-content) minmax(26%, 1fr);
+  }
+
   /* Boven een stap met code staat nog een alinea of twee: het vak is hier
      iets lager dan een los codeblok in een paneel. */
   .inTab > .code :global(.theme-code-block) pre {
     max-height: calc(45vh - var(--les-codevak-af, 0px));
   }
 
-  /* Een regel die niet in de kolom past, breekt af. In fullstack stond het
-     eind van vijftig functiekoppen (`async def …(naam: str = Form(…), …):`)
-     buiten beeld. Het regelnummer laat zien dat het één regel is; het vervolg
-     springt vier tekens verder in dan de regel (`--inspringing` zet het
-     onderdeel per regel). */
-  .inTab > .code :global(.theme-code-block) pre code {
+  /* Een regel die niet in de kolom past, krijgt kleinere letters
+     (LesTabs/pasCode.ts). Past hij ook dan niet (`data-code-breekt`, op een
+     smal venster), dan breekt hij af: het regelnummer laat zien dat het één
+     regel is, en het vervolg springt vier tekens verder in dan de regel
+     (`--inspringing` zet het onderdeel per regel). */
+  .inTab > .code :global(.theme-code-block) pre[data-code-breekt] code {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
   }

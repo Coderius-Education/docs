@@ -39,14 +39,18 @@ Het endpoint geeft nu het template terug, in plaats van zelf HTML te bouwen:
 async def berichten_lijst(request: Request):
     with SqliteDict("gastenboek.db") as db:
         alle_berichten = list(db.values())
-    return templates.TemplateResponse(request, "berichten_lijst.html", {"berichten": alle_berichten})
+    return templates.TemplateResponse(
+        request,
+        "berichten_lijst.html",
+        {"berichten": alle_berichten}
+    )
 ```
 
 <Regel n={2}>
 Een `TemplateResponse` heeft de `request` nodig, net als in de andere lessen met templates.
 </Regel>
 
-<Regel n={5}>
+<Regel n={5} tot={9}>
 Geen f-string en geen `escape` meer: de berichten gaan naar het template, en Jinja zet ze erin.
 </Regel>
 
@@ -226,13 +230,18 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     with SqliteDict("gastenboek.db") as db:
         db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
         db.commit()
-    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+    tekst = f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek."
+    return HTMLResponse(tekst)
 
 @app.get("/berichten/lijst")
 async def berichten_lijst(request: Request):
     with SqliteDict("gastenboek.db") as db:
         alle_berichten = list(db.values())
-    return templates.TemplateResponse(request, "berichten_lijst.html", {"berichten": alle_berichten})
+    return templates.TemplateResponse(
+        request,
+        "berichten_lijst.html",
+        {"berichten": alle_berichten}
+    )
 
 @app.get("/zoek")
 async def zoek(term: str = ""):
@@ -240,7 +249,9 @@ async def zoek(term: str = ""):
     with SqliteDict("gastenboek.db") as db:
         for bericht in db.values():
             if term.lower() in bericht["bericht"].lower():
-                gevonden += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+                naam = escape(bericht["naam"])
+                tekst = escape(bericht["bericht"])
+                gevonden += f"<li>{naam}: {tekst}</li>"
     return HTMLResponse(f"<p>Je zocht naar: {escape(term)}</p><ul>{gevonden}</ul>")
 ```
 

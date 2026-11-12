@@ -107,7 +107,8 @@ Zo vult de server strook 3, 4 en 11 in, en dit is alles wat de browser krijgt:
 ```python
 from jinja2 import Template
 
-template = Template("{% if berichten %}{% for sleutel, bericht in berichten %}<li>{{ bericht.naam }}</li>{% endfor %}{% endif %}")
+lijst = "{% for sleutel, bericht in berichten %}<li>{{ bericht.naam }}</li>{% endfor %}"
+template = Template("{% if berichten %}" + lijst + "{% endif %}")
 print(template.render(berichten=[("bericht_1", {"naam": "Sam"})]))   # <li>Sam</li>
 ```
 

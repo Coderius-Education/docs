@@ -57,13 +57,16 @@ Wat de browser krijgt:
 ```html
 <ul>
 {% for sleutel, bericht in berichten %}
-    <li><a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}</li>
+<li><a href="/bericht/{{ sleutel }}">{{ bericht.naam }}</a>: {{ bericht.bericht }}</li>
 {% endfor %}
 </ul>
 ```
 
 ```python
-{"berichten": [("bericht_1", {"naam": "Sam", "bericht": "Hoi"}), ("bericht_2", {"naam": "Noor", "bericht": "Leuk"})]}
+{"berichten": [
+    ("bericht_1", {"naam": "Sam", "bericht": "Hoi"}),
+    ("bericht_2", {"naam": "Noor", "bericht": "Leuk"}),
+]}
 ```
 
 Gok eerst: hoeveel `<li>` komen er in de browser? ______
@@ -112,7 +115,8 @@ Met één bericht: ______
 ```python
 from jinja2 import Template
 
-template = Template("<p>Welkom, {{ speler.naam }}. Je hebt {{ speler.punten }} punten.</p><p>Je staat op plek {{ plek }}.</p>")
+tekst = "<p>Welkom, {{ speler.naam }}. Je hebt {{ speler.punten }} punten.</p>"
+template = Template(tekst + "<p>Je staat op plek {{ plek }}.</p>")
 print(template.render({"titel": "Dobbelspel", "speler": {"naam": "Sam", "punten": 12}}))
 ```
 

@@ -15,7 +15,8 @@ naam stuurt:
 ```python
 import httpx
 
-antwoord = httpx.post("http://127.0.0.1:8000/bericht", data={"naam": "   ", "bericht": "hoi"})
+adres = "http://127.0.0.1:8000/bericht"
+antwoord = httpx.post(adres, data={"naam": "   ", "bericht": "hoi"})
 print(antwoord.status_code, antwoord.json())
 ```
 

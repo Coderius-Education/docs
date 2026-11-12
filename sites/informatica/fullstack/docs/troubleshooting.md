@@ -875,7 +875,8 @@ Meer uitleg: [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/
 return RedirectResponse(url="/berichten", status_code=303)
 
 # GOED
-return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+tekst = f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek."
+return HTMLResponse(tekst)
 ```
 
 Meer uitleg: [Zonder herladen met htmx](site:fullstack/docs/FastAPI/zonder-herladen/htmx)

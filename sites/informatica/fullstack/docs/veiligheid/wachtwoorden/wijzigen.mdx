@@ -19,7 +19,11 @@ hetzelfde als bij `/inloggen`:
 
 ```python showLineNumbers
 @app.post("/wijzig")
-async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+async def wijzig(
+    naam: str = Form(...),
+    oud: str = Form(...),
+    nieuw: str = Form(...),
+):
     with SqliteDict("gebruikers.db") as db:
         opgeslagen = db.get(naam, NEP)
     try:
@@ -34,11 +38,11 @@ async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(
     return {"bericht": "Wachtwoord gewijzigd"}
 ```
 
-<Regel n={3} tot={10}>
+<Regel n={7} tot={14}>
 Net als bij inloggen: opzoeken met de nep-hash als reserve, `ph.verify` met het oude wachtwoord, en dezelfde melding bij een onbekende naam.
 </Regel>
 
-<Regel n={11} tot={13}>
+<Regel n={15} tot={17}>
 Pas als het oude wachtwoord klopt, open je de database opnieuw en bewaar je de hash van het nieuwe.
 </Regel>
 
@@ -106,7 +110,11 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     return {"bericht": "Ingelogd"}
 
 @app.post("/wijzig")
-async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+async def wijzig(
+    naam: str = Form(...),
+    oud: str = Form(...),
+    nieuw: str = Form(...),
+):
     with SqliteDict("gebruikers.db") as db:
         opgeslagen = db.get(naam, NEP)
     try:

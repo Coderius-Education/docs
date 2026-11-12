@@ -146,6 +146,52 @@ describe('elk scherm van een les staat op zichzelf', () => {
   });
 });
 
+describe('een regel code staat heel op één regel', () => {
+  // De opdrachtgever wil geen regel code die afbreekt of zijwaarts buiten zijn
+  // vak valt. Past de langste regel van een blok niet, dan maakt de les de
+  // letters kleiner, tot 80% (packages/shared/components/LesTabs/pasCode.ts).
+  // Gemeten in Chromium op 1280 pixels: met de kleinste letters passen er 84
+  // tekens naast de uitleg van een <CodeUitleg>, en 123 over de volle breedte.
+  // Wat langer is, hoort korter in de les: 55 regels zijn zo herschreven (een
+  // functiekop met elke parameter op een eigen regel, een dictionary over
+  // meer regels). Een blok zonder taal (een foutmelding, uitvoer van de
+  // terminal) telt niet mee: dat breekt af, zoals in een terminal. Of het in
+  // de browser past, meet `node scripts/meet-les-tabs.mjs fullstack`.
+  const TALEN = /^(python|html|js|css|json|yaml|bash|jinja)$/;
+  const regels = lessen.flatMap(({ naam, bron }) => {
+    const uit: { naam: string; regel: string; inUitleg: boolean }[] = [];
+    let taal: string | null = null;
+    let inUitleg = false;
+    for (const regel of bron.split('\n')) {
+      if (regel.startsWith('<CodeUitleg')) inUitleg = true;
+      if (regel.startsWith('</CodeUitleg')) inUitleg = false;
+      const hek = /^\s*```(\w*)/.exec(regel);
+      if (hek) taal = taal === null ? hek[1] || 'geen' : null;
+      else if (taal !== null && TALEN.test(taal)) uit.push({ naam, regel, inUitleg });
+    }
+    return uit;
+  });
+
+  it('de test ziet de code van de lessen', () => {
+    expect(regels.length).toBeGreaterThan(5000);
+    expect(regels.filter((r) => r.inUitleg).length).toBeGreaterThan(500);
+  });
+
+  it('naast de uitleg van een <CodeUitleg> hooguit 84 tekens', () => {
+    const fout = regels
+      .filter((r) => r.inUitleg && r.regel.length > 84)
+      .map((r) => `${r.naam} (${r.regel.length}): ${r.regel.trim().slice(0, 60)}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('en verder hooguit 122 tekens', () => {
+    const fout = regels
+      .filter((r) => r.regel.length > 122)
+      .map((r) => `${r.naam} (${r.regel.length}): ${r.regel.trim().slice(0, 60)}`);
+    expect(fout).toEqual([]);
+  });
+});
+
 describe("pagina's waar je zoekt of afvinkt, hebben geen tabbladen", () => {
   it('de cheatsheet, Er gaat iets mis, de overzichten en de hand-outs', () => {
     // Zoeken met Ctrl+F vindt geen tekst in een tabblad dat dicht staat, en

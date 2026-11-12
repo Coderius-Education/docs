@@ -54,7 +54,8 @@ async def gastenboek_opslaan(
     with SqliteDict("gastenboek.db") as db:
         db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
         db.commit()
-    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+    tekst = f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek."
+    return HTMLResponse(tekst)
 ```
 
 ### Wat hetzelfde blijft

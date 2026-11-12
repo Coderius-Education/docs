@@ -170,7 +170,11 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     return {"bericht": "Ingelogd"}
 
 @app.post("/wijzig")
-async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
+async def wijzig(
+    naam: str = Form(...),
+    oud: str = Form(...),
+    nieuw: str = Form(...),
+):
     with SqliteDict("gebruikers.db") as db:
         opgeslagen = db.get(naam, NEP)
     try:

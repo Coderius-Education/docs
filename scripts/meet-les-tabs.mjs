@@ -285,6 +285,21 @@ async function meetLes(les) {
               el.getClientRects().length > 0 && !el.closest('[hidden], details:not([open])');
             const vakken = [...paneel.querySelectorAll('pre')].filter(teZien);
             const afgesneden = Math.max(0, ...vakken.map((v) => v.scrollWidth - v.clientWidth));
+            // Een regel die naar een volgende regel afbreekt: hij is hoger
+            // dan één regel van het blok. En hoe klein de letters zijn
+            // geworden om de langste regel te laten passen (pasCode.ts).
+            const afgebroken = vakken.filter((v) => {
+              const stijl = getComputedStyle(v);
+              const regel =
+                Number.parseFloat(stijl.lineHeight) || Number.parseFloat(stijl.fontSize) * 1.45;
+              return [...v.querySelectorAll('.token-line')].some(
+                (r) => r.getBoundingClientRect().height > regel * 1.5,
+              );
+            }).length;
+            const letters = Math.min(
+              16,
+              ...vakken.map((v) => Number.parseFloat(getComputedStyle(v).fontSize)),
+            );
             const schuift = vakken
               .filter((v) => v.scrollHeight - v.clientHeight > 6)
               .map((v) => {
@@ -308,6 +323,8 @@ async function meetLes(les) {
               .filter((p) => p.schaal < 1 / 3);
             return {
               afgesneden: afgesneden > 6 ? afgesneden : 0,
+              afgebroken,
+              letters: Math.round(letters * 10) / 10,
               schuift,
               klein: plaatjes.length,
               kleinZonderVergroting: plaatjes.filter((p) => !p.groter).length,
@@ -404,6 +421,13 @@ if (ALS_JSON) {
   console.log(`\n## Code zijwaarts afgesneden: ${af.length} schermen\n`);
   for (const r of af.sort((a, b) => b.afgesneden - a.afgesneden))
     console.log(`- ${naam(r.les)} | ${r.tab}: ${r.afgesneden} px verborgen`);
+  const gebroken = klein.filter((r) => r.afgebroken > 0);
+  console.log(`\n## Een regel code die afbreekt: ${gebroken.length} schermen\n`);
+  for (const r of gebroken) console.log(`- ${naam(r.les)} | ${r.tab}`);
+  const kleiner = klein.filter((r) => r.letters < 14);
+  console.log(`\n## Code met kleinere letters: ${kleiner.length} schermen\n`);
+  for (const r of kleiner.sort((a, b) => a.letters - b.letters).slice(0, 20))
+    console.log(`- ${naam(r.les)} | ${r.tab}: ${r.letters} px`);
   const vak = klein.filter((r) => r.schuift.length > 0);
   console.log(`\n## Een programma in een vak dat schuift: ${vak.length} schermen\n`);
   for (const r of vak)

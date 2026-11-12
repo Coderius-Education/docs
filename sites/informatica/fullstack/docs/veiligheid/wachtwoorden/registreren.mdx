@@ -46,13 +46,13 @@ import en `ph = PasswordHasher()` bovenaan je `main.py`, en vervang je
 `/registreer`. `import hashlib` en `/inloggen` blijven staan tot
 [les 8](site:fullstack/docs/veiligheid/wachtwoorden/inloggen).
 
+### Opnieuw registreren
+
 :::caution[Inloggen werkt tot les 8 niet]
 `/inloggen` vergelijkt nog met een `sha256`-hash, en in de database staan nu
 Argon2-hashes. Tot je `/inloggen` in les 8 omzet, lukt inloggen niet, ook niet
 met het goede wachtwoord.
 :::
-
-### Opnieuw registreren
 
 Gooi `gebruikers.db` weg: daar staan nog `sha256`-hashes in uit de lessen
 hiervoor. Draai daarna `registreer.py` en `lees_database.py` opnieuw.

@@ -86,7 +86,8 @@ mappen omhoog: de map van je project, waar `main.py` staat. Een scriptje
 ```python
 import httpx
 
-antwoord = httpx.get("http://127.0.0.1:8000/pagina?naam=../../main.py")
+adres = "http://127.0.0.1:8000/pagina"
+antwoord = httpx.get(adres + "?naam=../../main.py")
 print(antwoord.status_code)
 print(antwoord.text)
 ```

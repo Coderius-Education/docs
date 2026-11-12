@@ -57,7 +57,12 @@ async def bericht_plaatsen(
         sessies[sessie_id] = mijn
         sessies.commit()
     antwoord = JSONResponse({"opgeslagen": sleutel})
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, httponly=True, samesite="lax")
+    antwoord.set_cookie(
+        key="sessie_id",
+        value=sessie_id,
+        httponly=True,
+        samesite="lax",
+    )
     return antwoord
 
 @app.get("/berichten")
@@ -81,15 +86,15 @@ async def alle_sessies():
 Een bericht plaatsen. Het bericht gaat in `gastenboek.db`, en in `sessies.db` onthoudt de server wie het schreef, onder het sessie-id uit de cookie.
 </Regel>
 
-<Regel n={29}>
+<Regel n={29} tot={34}>
 De cookie met het sessie-id. In Sessies stond er `max_age` bij; hier staan `httponly` en `samesite`, twee instellingen die de cookie afschermen. Wat ze doen, leer je later in [Cookies afschermen: `httponly`](site:fullstack/docs/veiligheid/cookies/httponly).
 </Regel>
 
-<Regel n={37} tot={41}>
+<Regel n={42} tot={46}>
 `/ik` zegt wie je bent: de naam uit je sessie, of `onbekend` als je server je sessie-id niet kent.
 </Regel>
 
-<Regel n={43} tot={46}>
+<Regel n={48} tot={51}>
 Het endpoint uit opdracht 3 van Sessies. Het geeft alles uit `sessies.db` terug, met de sessie-id's erbij.
 </Regel>
 
@@ -238,7 +243,12 @@ async def bericht_plaatsen(
         sessies[sessie_id] = mijn
         sessies.commit()
     antwoord = JSONResponse({"opgeslagen": sleutel})
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, httponly=True, samesite="lax")
+    antwoord.set_cookie(
+        key="sessie_id",
+        value=sessie_id,
+        httponly=True,
+        samesite="lax",
+    )
     return antwoord
 
 @app.get("/berichten")

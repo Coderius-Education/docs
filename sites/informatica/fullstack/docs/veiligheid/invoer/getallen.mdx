@@ -30,7 +30,11 @@ async def bericht_plaatsen(
     if not naam.strip():
         raise HTTPException(status_code=400, detail="Vul een naam in")
     with SqliteDict("gastenboek.db") as db:
-        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht, "cijfer": cijfer}
+        db[f"bericht_{time.time_ns()}"] = {
+            "naam": naam,
+            "bericht": bericht,
+            "cijfer": cijfer,
+        }
         db.commit()
     return {"lengte": len(bericht), "cijfer": cijfer}
 ```
@@ -39,7 +43,7 @@ async def bericht_plaatsen(
 `int` zegt: dit moet een geheel getal zijn. `ge=1` betekent groter dan of gelijk aan 1, `le=10` kleiner dan of gelijk aan 10.
 </Regel>
 
-<Regel n={10}>
+<Regel n={10} tot={14}>
 Het cijfer gaat mee de database in.
 </Regel>
 
@@ -156,7 +160,11 @@ async def bericht_plaatsen(
     if not naam.strip():
         raise HTTPException(status_code=400, detail="Vul een naam in")
     with SqliteDict("gastenboek.db") as db:
-        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht, "cijfer": cijfer}
+        db[f"bericht_{time.time_ns()}"] = {
+            "naam": naam,
+            "bericht": bericht,
+            "cijfer": cijfer,
+        }
         db.commit()
     return {"lengte": len(bericht), "cijfer": cijfer}
 ```

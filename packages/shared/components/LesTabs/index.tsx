@@ -15,6 +15,7 @@ import {
 import { WerkvormIcoon } from '../Werkvorm/Icoon';
 import { Vergroot } from './Vergroot';
 import { DoelContext, OpenContext, PaneelContext, type Stap, useInLesTab } from './paneel';
+import { pasCode } from './pasCode';
 import { verdeelSpeling } from './speling';
 import styles from './styles.module.css';
 
@@ -163,17 +164,26 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     let beeld = 0;
     const meet = () => {
       window.cancelAnimationFrame(beeld);
-      beeld = window.requestAnimationFrame(() => verdeelSpeling(el));
+      // Eerst de letters van de code (pasCode.ts): dat verandert de hoogte.
+      beeld = window.requestAnimationFrame(() => {
+        pasCode(el);
+        verdeelSpeling(el);
+      });
     };
     meet();
     el.addEventListener('click', meet);
     el.addEventListener('load', meet, true);
     window.addEventListener('resize', meet);
+    // Het lettertype van de code laadt pas als er code in beeld komt, en is
+    // breder dan het lettertype dat er tot dan staat: de regel die net paste,
+    // was daarna dertig pixels afgesneden.
+    document.fonts?.addEventListener?.('loadingdone', meet);
     return () => {
       window.cancelAnimationFrame(beeld);
       el.removeEventListener('click', meet);
       el.removeEventListener('load', meet, true);
       window.removeEventListener('resize', meet);
+      document.fonts?.removeEventListener?.('loadingdone', meet);
     };
   }, [niveau, actief]);
 

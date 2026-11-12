@@ -27,7 +27,9 @@ async def zoek(term: str = ""):
     with SqliteDict("gastenboek.db") as db:
         for bericht in db.values():
             if term.lower() in bericht["bericht"].lower():
-                gevonden += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+                naam = escape(bericht["naam"])
+                tekst = escape(bericht["bericht"])
+                gevonden += f"<li>{naam}: {tekst}</li>"
     return HTMLResponse(f"<p>Je zocht naar: {term}</p><ul>{gevonden}</ul>")
 ```
 
@@ -35,11 +37,11 @@ async def zoek(term: str = ""):
 Met `lower()` vindt `vet` ook een bericht met `Vet`. Een lege term staat in elk bericht, dus zonder `?term=` zie je ze allemaal.
 </Regel>
 
-<Regel n={7}>
+<Regel n={7} tot={9}>
 De berichten escapet hij, zoals je in [les 3](site:fullstack/docs/veiligheid/xss/escape) leerde.
 </Regel>
 
-<Regel n={8}>
+<Regel n={10}>
 De term niet. Die komt toch van jezelf, lijkt het: je typte hem net.
 </Regel>
 
@@ -265,14 +267,17 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     with SqliteDict("gastenboek.db") as db:
         db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
         db.commit()
-    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+    tekst = f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek."
+    return HTMLResponse(tekst)
 
 @app.get("/berichten/lijst")
 async def berichten_lijst():
     regels = ""
     with SqliteDict("gastenboek.db") as db:
         for bericht in db.values():
-            regels += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+            naam = escape(bericht["naam"])
+            tekst = escape(bericht["bericht"])
+            regels += f"<li>{naam}: {tekst}</li>"
     return HTMLResponse(f"<ul>{regels}</ul>")
 
 @app.get("/zoek")
@@ -281,7 +286,9 @@ async def zoek(term: str = ""):
     with SqliteDict("gastenboek.db") as db:
         for bericht in db.values():
             if term.lower() in bericht["bericht"].lower():
-                gevonden += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+                naam = escape(bericht["naam"])
+                tekst = escape(bericht["bericht"])
+                gevonden += f"<li>{naam}: {tekst}</li>"
     return HTMLResponse(f"<p>Je zocht naar: {escape(term)}</p><ul>{gevonden}</ul>")
 ```
 

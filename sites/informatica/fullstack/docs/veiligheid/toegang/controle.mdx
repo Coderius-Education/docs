@@ -251,7 +251,10 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     return antwoord
 
 @app.post("/bericht")
-async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+async def bericht_plaatsen(
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
     with SqliteDict("sessies.db") as sessies:
         mijn = sessies.get(sessie_id, {})
     if not mijn:

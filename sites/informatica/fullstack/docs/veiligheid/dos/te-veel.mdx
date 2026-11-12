@@ -95,7 +95,8 @@ for nummer in range(6):
     antwoord = httpx.get(adres)
     over = antwoord.headers.get("x-ratelimit-remaining")
     wacht = antwoord.headers.get("retry-after")
-    print(f"Verzoek {nummer + 1}: {antwoord.status_code}, nog {over} over, wacht {wacht} seconden")
+    begin = f"Verzoek {nummer + 1}: {antwoord.status_code}"
+    print(f"{begin}, nog {over} over, wacht {wacht} seconden")
 ```
 
 <Regel n={7}>

@@ -216,7 +216,12 @@ async def bericht_plaatsen(
         sessies[sessie_id] = mijn
         sessies.commit()
     antwoord = JSONResponse({"opgeslagen": sleutel})
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, httponly=True, samesite="lax")
+    antwoord.set_cookie(
+        key="sessie_id",
+        value=sessie_id,
+        httponly=True,
+        samesite="lax",
+    )
     return antwoord
 
 @app.get("/berichten")

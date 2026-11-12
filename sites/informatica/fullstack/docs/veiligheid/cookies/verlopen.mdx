@@ -335,7 +335,10 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     return antwoord
 
 @app.post("/bericht")
-async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+async def bericht_plaatsen(
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
     mijn = sessie_ophalen(sessie_id)
     if not mijn:
         raise HTTPException(status_code=401, detail="Log eerst in")
