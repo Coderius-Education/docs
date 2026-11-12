@@ -98,9 +98,15 @@ const isInfo = (node) =>
  *
  * @param {object[]} nodes
  */
-const basisLabel = (nodes) => {
+const basisLabel = (nodes, kop) => {
   const inhoud = nodes.filter((node) => !zetNietsNeer(node));
   if (inhoud.some(isBlok) && inhoud.every((node) => isBlok(node) || isAlinea(node))) return VOORAF;
+  // Een kop met een dubbele punt heeft het stuk ervoor als label van zijn
+  // tabblad ("Stap 1"). Het stuk erna zegt waar de stap over gaat, en is dan
+  // de naam van het eerste scherm: "Het getal uitlezen" zegt meer dan
+  // "De basis".
+  const naDubbelePunt = kop ? /^[^:]+:\s+(.+)$/.exec(tekstVan(kop).trim())?.[1] : null;
+  if (naDubbelePunt) return naDubbelePunt[0].toUpperCase() + naDubbelePunt.slice(1);
   // Opent de les met de voorspelvraag (de code met <Voorspel> ernaast), dan
   // heet die stap Voorspel, zoals in de lessen waar de vraag verderop staat.
   const eerste = inhoud.find(
@@ -169,7 +175,7 @@ function metStappen(kinderen, sectieId, vooraf = []) {
   );
   if (!kort) {
     lesStappen.unshift(
-      element('LesStap', `${sectieId}-basis`, basisLabel(inleiding), [...rest, ...inleiding]),
+      element('LesStap', `${sectieId}-basis`, basisLabel(inleiding, kop), [...rest, ...inleiding]),
     );
   }
   return [kop, stappenlijst([...leerdoel, ...lesStappen])];
@@ -188,6 +194,20 @@ const jsx = (name, children, attributes = []) => ({
 });
 
 const isVoorspel = (node) => node?.type === 'mdxJsxFlowElement' && node.name === 'Voorspel';
+
+/** Een programma in blokken (de Golfbot van robotica): `<Blokken programma={…} />`. */
+const isBlokprogramma = (node) => node?.type === 'mdxJsxFlowElement' && node.name === 'Blokken';
+
+/**
+ * Een onderdeel waar de leerling mee oefent en dat de breedte nodig heeft (de
+ * sensorsimulator van de Golfbot). De vragen die erbij horen staan ernaast,
+ * in een smallere kolom, ook als het antwoord in een uitklapblok staat.
+ */
+const BREED_ONDERDEEL = ['SensorSimulator'];
+const isBreedOnderdeel = (node) =>
+  node?.type === 'mdxJsxFlowElement' && BREED_ONDERDEEL.includes(node.name);
+const isUitklapblok = (node) =>
+  node?.type === 'mdxJsxFlowElement' && /^details$/i.test(node.name ?? '');
 
 /** Vanaf zoveel regels is een programma lang, en tot zoveel een uitvoer kort. */
 const LANG = 12;
@@ -227,7 +247,7 @@ function voorbeeldenNaastElkaar(kinderen) {
         while (rechts.length < 4 && isToelichting(kinderen[i + 1])) rechts.push(kinderen[++i]);
       }
       uit.push(jsx('LesVoorbeeld', [code, jsx('div', rechts)]));
-    } else if (code.type === 'code' && isVoorspel(kop)) {
+    } else if ((code.type === 'code' || isBlokprogramma(code)) && isVoorspel(kop)) {
       uit.push(jsx('LesVoorbeeld', [code, kop], [attribuut('vraag', 'ja')]));
       i += 1;
     } else uit.push(code);
@@ -551,18 +571,141 @@ function vormNaarStartcode(tab, vorm) {
 }
 
 /**
- * Er gaat iets mis staat na de opdrachten, ook als de bron hem ervoor heeft.
- * In de lessen van de Python-cursus stond hij tussen de uitleg en de eerste
- * opdracht, en bracht de knop Volgende een leerling langs fouten die hij nog
- * niet had kunnen maken; in de projecten en bij web staat hij erna.
+ * Een bestand of map met een `_` vooraan is een deel dat een pagina
+ * importeert (`docs/onderdelen/_delen/dc-motor/pinnen.md` bij robotica), geen
+ * pagina. Docusaurus bouwt het met dezelfde stappen als een les; met eigen
+ * tabbladen stonden die midden in de pagina die het deel gebruikt.
+ *
+ * @param {string | undefined} pad
+ */
+const isDeel = (pad) => /(^|[\\/])_[^\\/]*([\\/]|$)/.test(pad ?? '');
+
+/**
+ * De namen waaronder een pagina een deel importeert: een bestand of map met
+ * een `_` vooraan (`import ShieldRijen from '…/_delen/shield/rijen.md'`). Zo'n
+ * element is tekst van de pagina zelf; een ander onderdeel (een oefenveld,
+ * een 3D-model) is dat niet.
+ *
+ * @param {object[]} kinderen
+ * @returns {Set<string>}
+ */
+function deelNamen(kinderen) {
+  const namen = new Set();
+  for (const node of kinderen) {
+    if (node.type !== 'mdxjsEsm') continue;
+    for (const [, naam, pad] of (node.value ?? '').matchAll(
+      /import\s+(\w+)\s+from\s+['"]([^'"]+)['"]/g,
+    )) {
+      if (isDeel(pad)) namen.add(naam);
+    }
+  }
+  return namen;
+}
+
+/** Tekst die bij een plaatje hoort: alinea's, lijsten, een tabel, een blok. */
+const isTekstblok = (node, delen) =>
+  (isAlinea(node) && !isPlaatjeAlinea(node) && !isVerwachtKop(node)) ||
+  node.type === 'list' ||
+  node.type === 'table' ||
+  isBlok(node) ||
+  (node.type === 'mdxJsxFlowElement' && delen.has(node.name));
+
+/**
+ * Een plaatje met de tekst die erop volgt staat naast elkaar: het plaatje
+ * links, de tekst rechts. Bij robotica is dat het aansluitschema met de
+ * pinnen eronder. Onder elkaar was zo'n scherm tot tweehonderd pixels te
+ * lang, en een plaatje in een paneel is dan hooguit een derde van het scherm
+ * hoog: de legenda van het schema was niet meer te lezen. Naast de tekst mag
+ * het plaatje zo hoog zijn als de tekst lang is.
+ *
+ * Hetzelfde voor een programma in blokken met de tekst erna. Een plaatje waar
+ * geen tekst op volgt (het volgende is een kop, code of nog een plaatje)
+ * blijft staan, en het doelplaatje van een opdracht staat al in
+ * zijn veld (doelNaastVeld).
+ *
+ * @param {object[]} kinderen
+ */
+function plaatjesNaastTekst(kinderen) {
+  const delen = deelNamen(kinderen);
+  const uit = [];
+  for (let i = 0; i < kinderen.length; i++) {
+    const node = kinderen[i];
+    const breed = isBreedOnderdeel(node);
+    if (!(isAlinea(node) && isPlaatjeAlinea(node)) && !isBlokprogramma(node) && !breed) {
+      uit.push(node);
+      continue;
+    }
+    // Commentaar (`{/* stijl-uitzondering: … */}`) zet niets neer en breekt
+    // de rij dus niet af.
+    const hoortErbij = (n) =>
+      isTekstblok(n, delen) || zetNietsNeer(n) || (breed && isUitklapblok(n));
+    const tekst = [];
+    while (i + 1 < kinderen.length && hoortErbij(kinderen[i + 1])) tekst.push(kinderen[++i]);
+    if (!tekst.some((n) => !zetNietsNeer(n))) uit.push(node, ...tekst);
+    else {
+      uit.push(
+        jsx(
+          'LesVoorbeeld',
+          [node, jsx('div', tekst)],
+          [attribuut('beeld', breed ? 'breed' : 'ja')],
+        ),
+      );
+    }
+  }
+  return uit;
+}
+
+const isFiguur = (node) => node.type === 'mdxJsxFlowElement' && node.name === 'figure';
+
+/** Vanaf zoveel plaatjes achter elkaar is het een reeks. */
+const REEKS = 3;
+
+/**
+ * Een rij plaatjes met een onderschrift (`<figure>`) direct na elkaar is een
+ * reeks bouwstappen: de toren van de Golfbot heeft er tien, de arm vijftien.
+ * Onder elkaar was dat tabblad tot 4100 pixels te lang. In een <LesReeks>
+ * staat er één tegelijk, met Vorige en Volgende, zoals in een bouwboekje.
+ *
+ * @param {object[]} kinderen
+ */
+function reeksen(kinderen) {
+  const uit = [];
+  let i = 0;
+  while (i < kinderen.length) {
+    let j = i;
+    while (j < kinderen.length && isFiguur(kinderen[j])) j++;
+    if (j - i >= REEKS) {
+      uit.push(jsx('LesReeks', kinderen.slice(i, j)));
+      i = j;
+    } else uit.push(kinderen[i++]);
+  }
+  return uit;
+}
+
+/** Werkvormen waarin de leerling nog niets zelf doet. */
+const LEZEN = ['leerdoel', 'uitleg', 'voorspellen'];
+
+/**
+ * Er gaat iets mis staat na de opdrachten, als de bron hem tussen de uitleg en
+ * de eerste opdracht heeft. In de lessen van de Python-cursus bracht de knop
+ * Volgende een leerling daar langs fouten die hij nog niet had kunnen maken.
+ *
+ * Alleen in die vorm. Staat er vóór de fouten al een tabblad waarin de
+ * leerling iets doet (de stappen en Test het van de Lego-auto, de opdracht
+ * van een projectstap), dan gaan de fouten over dat werk en blijven ze staan.
+ * En het tabblad komt direct na de rij opdrachten, niet na wat daarop volgt:
+ * een afsluiter als Maak het je eigen of Verder bouwen blijft het laatste.
  *
  * @param {object[]} tabs
  * @param {string[]} vormen
  */
 function foutenNaOpdrachten(tabs, vormen) {
   const fout = vormen.indexOf('fouten');
-  const laatste = vormen.findLastIndex((vorm) => OPDRACHT.includes(vorm));
-  if (fout < 0 || laatste < fout) return { tabs, vormen };
+  if (fout < 0 || !vormen.slice(0, fout).every((vorm) => LEZEN.includes(vorm)))
+    return { tabs, vormen };
+  let laatste = fout;
+  while (OPDRACHT.includes(vormen[laatste + 1])) laatste++;
+  if (laatste === fout) return { tabs, vormen };
   const schuif = (lijst) => [
     ...lijst.slice(0, fout),
     ...lijst.slice(fout + 1, laatste + 1),
@@ -596,8 +739,10 @@ function foutenNaOpdrachten(tabs, vormen) {
  * @param {object[]} kinderen de kinderen van de mdast-root
  */
 function groepeer(alles) {
-  const kinderen = doelNaastVeld(
-    voorbeeldenNaastElkaar(bestandenNaastElkaar(zonderDubbeleCode(alles))),
+  const kinderen = reeksen(
+    plaatjesNaastTekst(
+      doelNaastVeld(voorbeeldenNaastElkaar(bestandenNaastElkaar(zonderDubbeleCode(alles)))),
+    ),
   );
   const eerste = kinderen.findIndex(isH2);
   if (eerste < 0) return null;
@@ -619,7 +764,7 @@ function groepeer(alles) {
   // alleen als er daarna nog twee tabbladen zijn; anders bleef er één over en
   // had de pagina geen tabbladen meer.
   const alineas = uitleg.filter(isAlinea).length;
-  const korteUitleg =
+  const kort =
     (uitleg.length === 1 && isAlinea(uitleg[0])) ||
     (uitleg.length > 0 &&
       secties.length >= 2 &&
@@ -627,25 +772,33 @@ function groepeer(alles) {
       uitleg.filter(isBlok).length === 1 &&
       uitleg.some(isInfo) &&
       uitleg.every((node) => isBlok(node) || isAlinea(node) || zetNietsNeer(node)));
+  const isLeerdoelSectie = ({ kop, kinderen: inhoud }, i) =>
+    werkvormenVan([tekstVan(kop)])[0] === LEERDOEL &&
+    i < secties.length - 1 &&
+    inhoud.length <= 3 &&
+    inhoud.slice(1).every(isAlinea);
+  // Een les die met een inleiding én een leerdoel begint (de Lego-auto: waar
+  // de les over gaat, en dan Wat je nu gaat toevoegen), heeft die twee samen
+  // als eerste tabblad. Bij de eerste stap erbij was dat scherm tot 270
+  // pixels te lang.
+  const opening = uitleg.length > 0 && secties.length >= 3 && isLeerdoelSectie(secties[0], 0);
+  const korteUitleg = !opening && kort;
   // Wat bij het eerstvolgende tabblad komt te staan.
   let vooraf = korteUitleg ? [...uitleg] : [];
   const tabs = [];
-  secties.forEach(({ kop, kinderen: inhoud }, i) => {
-    const tekst = inhoud.slice(1);
-    const isLeerdoel =
-      werkvormenVan([tekstVan(kop)])[0] === LEERDOEL &&
-      i < secties.length - 1 &&
-      tekst.length <= 2 &&
-      tekst.every(isAlinea);
-    if (isLeerdoel) {
+  secties.forEach((sectie, i) => {
+    const { kop, kinderen: inhoud } = sectie;
+    if (isLeerdoelSectie(sectie, i)) {
       // De kop gaat mee: hij is het doel van een link en zegt een schermlezer
       // wat de zin is.
-      vooraf.push({
+      const leerdoel = {
         type: 'mdxJsxFlowElement',
         name: 'LesLeerdoel',
         attributes: [],
         children: inhoud,
-      });
+      };
+      if (opening && i === 0) uitleg.push(leerdoel);
+      else vooraf.push(leerdoel);
       return;
     }
     tabs.push(element('LesTab', idVan(kop), tekstVan(kop), metStappen(inhoud, idVan(kop), vooraf)));
@@ -678,13 +831,46 @@ function groepeer(alles) {
   ];
 }
 
+/**
+ * Een deel heeft geen tabbladen, wel stappen: zijn `###`-koppen, net als in
+ * een sectie van een les. Het deel staat in een tabblad van de pagina die het
+ * importeert (MicroPython kiezen bij robotica: zes koppen, duizend pixels te
+ * lang), of op een pagina die verder alleen een titel heeft.
+ *
+ * @param {object[]} kinderen de kinderen van de mdast-root van het deel
+ * @param {string} naam voor het id van de eerste stap
+ */
+function deelMetStappen(kinderen, naam) {
+  const isEsm = (node) => node.type === 'mdxjsEsm';
+  const inhoud = kinderen.filter((node) => !isEsm(node));
+  // metStappen verwacht de `##` van de sectie vooraan; een deel heeft er geen.
+  const kop = { type: 'paragraph', children: [] };
+  const [, ...rest] = metStappen([kop, ...inhoud], `deel-${naam}`);
+  if (!rest.some((node) => node.name === 'LesStappen')) return null;
+  return [...kinderen.filter(isEsm), ...rest];
+}
+
 /** De remark-stap. */
 function remarkLesTabs() {
   return (tree, file) => {
     if (file?.data?.frontMatter?.les_tabs === false) return;
+    if (isDeel(file?.path)) {
+      const naam = (file.path.split(/[\\/]/).pop() ?? '').replace(/\.mdx?$/, '');
+      const metStap = deelMetStappen(tree.children, naam);
+      if (metStap) tree.children = metStap;
+      return;
+    }
     const nieuw = groepeer(tree.children);
     if (nieuw) tree.children = nieuw;
   };
 }
 
-module.exports = { remarkLesTabs, groepeer, metStappen, tabLabel, tekstVan };
+module.exports = {
+  remarkLesTabs,
+  groepeer,
+  metStappen,
+  tabLabel,
+  tekstVan,
+  isDeel,
+  deelMetStappen,
+};

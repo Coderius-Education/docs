@@ -84,8 +84,10 @@ describe('de les', () => {
   });
 
   it('zegt eerlijk dat de getallen een voorbeeld zijn', () => {
-    const na = LES.slice(LES.indexOf('<SensorSimulator />'));
-    expect(na.slice(0, 400)).toMatch(/Jouw sensor geeft andere getallen/);
+    // Direct bij de simulator, op hetzelfde scherm. Sinds de les tabbladen
+    // heeft staat de zin erboven: ernaast staan de vragen.
+    const plek = LES.indexOf('<SensorSimulator />');
+    expect(LES.slice(plek - 400, plek + 400)).toMatch(/Jouw sensor geeft andere getallen/);
   });
 
   it('noemt in het antwoord de getallen die de simulator echt geeft', () => {

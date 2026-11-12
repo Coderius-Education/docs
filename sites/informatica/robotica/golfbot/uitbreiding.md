@@ -58,11 +58,15 @@ Je bouwt verder op het programma uit [Zie de bal, sla de bal](site:robotica/golf
 3. Sleep uit **Actuatoren** het blok **Zet PWM** in het gat bij **dan**. Een nieuw blok staat eerst op **Zet PWM 3 op 0**. Klik op de 3 en kies **10**, en typ **255** in plaats van 0: dan gaat groen aan.
 4. Sleep nog een **Zet PWM** in het gat bij **anders**. Kies ook hier **10**, en laat de 0 staan: dan gaat groen uit.
 
+### Zo ziet het eruit
+
 <Blokken programma={holeInOne} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms. Daaronder: als Lees anapin A1 kleiner is dan 300, dan Zet PWM 10 op 255, anders Zet PWM 10 op 0." />
 
 **Zet PWM 10 op 255** zet groen aan, **Zet PWM 10 op 0** zet het weer uit. Gebruik voor groen alleen 0 en 255. Een getal ertussen, zoals 100, werkt op D10 niet zolang de servo op D9 zit: die twee pinnen delen in de Arduino een klokje, en dat gebruikt de servo al.
 
 Upload je programma en laat je Golfbot slaan. Gaat de bal in het gat, dan wordt het lampje groen.
+
+### Controlevraag
 
 <Voorspel soort="Controlevraag" vraag="De bal gaat in het gat en het lampje wordt groen. Dan haal je de bal eruit. Wat doet het lampje?">
   <Keuze uitleg="Het lampje volgt wat de tweede sensor nu ziet. Denk na over wat er in de anders-tak staat.">Het blijft groen, want er was een hole in one</Keuze>

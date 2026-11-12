@@ -43,6 +43,8 @@ In stap 4 gaat de servo op **D9** de toren in. Zet je robot eerst uit met de kno
 
 Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft een rode rand. Staat er onder een stap een latje met een getal in een rondje, dan is dat de lengte van de balk of de as: zoveel gaatjes lang. Tel de gaatjes van je stukje, want op je scherm is het latje niet even groot als het echte stukje. Een blauw vierkantje met twee pijlen betekent: draai je Golfbot om, het plaatje laat hem van de andere kant zien.
 
+### De bouwstappen
+
 **Let op bij stap 4:** zet de servo zo in de toren dat het snoertje van de motor **omhoog** wijst, zoals op het plaatje van stap 4 staat.
 
 <figure>
@@ -95,6 +97,10 @@ Bij elke stap zie je linksboven welke stukjes je erbij pakt. Wat nieuw is, heeft
   <figcaption>Stap 10</figcaption>
 </figure>
 
+*Bouwstappen: ClickGolfer-werkboek, ©Stichting Leaphy.*
+
+## Controlevraag
+
 Je toren staat. De servo zit erin, en de lange as van stap 10 steekt erdoorheen. Daar komt straks de arm aan.
 
 <Voorspel soort="Controlevraag" vraag="Waarom moet het snoertje van de servo in stap 4 omhoog wijzen?">
@@ -107,7 +113,5 @@ Met het snoertje omlaag zit de servo andersom in de toren. Hij draait dan net zo
 
   </Uitleg>
 </Voorspel>
-
-*Bouwstappen: ClickGolfer-werkboek, ©Stichting Leaphy.*
 
 Staat je toren? Dan maak je nu [de houten baan](site:robotica/golfbot/hout).

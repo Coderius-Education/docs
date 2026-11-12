@@ -305,16 +305,20 @@ export function LesVoorbeeld({
   children,
   vraag,
   bestanden,
+  beeld,
 }: {
   children?: ReactNode;
   /** Rechts staat geen uitvoer maar een voorspelvraag: die krijgt de helft. */
   vraag?: string;
   /** Twee of meer bestanden naast elkaar, elk in een eigen kolom. */
   bestanden?: string;
+  /** Links staat geen code maar een plaatje, rechts de tekst die erbij hoort.
+   *  Met "breed" is het een onderdeel om mee te oefenen, met de vragen ernaast. */
+  beeld?: string;
 }): ReactNode {
   const klasse = bestanden
     ? styles.bestanden
-    : `${styles.voorbeeld}${vraag ? ` ${styles.metVraag}` : ''}`;
+    : `${styles.voorbeeld}${vraag ? ` ${styles.metVraag}` : ''}${beeld ? ` ${beeld === 'breed' ? styles.metBreedBeeld : styles.metBeeld}` : ''}`;
   return (
     <div className={klasse} data-les-voorbeeld="">
       {children}
@@ -337,6 +341,49 @@ export function LesVeld({ children }: { children?: ReactNode }): ReactNode {
 /** Het doel van een opdracht, binnen <LesVeld>. */
 export function LesDoel({ children }: { children?: ReactNode }): ReactNode {
   return <>{children}</>;
+}
+
+/**
+ * Een reeks plaatjes, één tegelijk in beeld: de bouwstappen van de Golfbot.
+ * De remark-stap zet er elke rij van drie of meer `<figure>`s in. Elk plaatje
+ * blijft in de HTML staan (een plaatje dat niet aan de beurt is, is
+ * `hidden`), en op papier staan ze onder elkaar.
+ */
+export function LesReeks({ children }: { children?: ReactNode }): ReactNode {
+  const items = Children.toArray(children);
+  const [nu, setNu] = useState(0);
+  const laatste = items.length - 1;
+  return (
+    <div className={styles.reeks} data-les-reeks="">
+      {items.map((item, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: de plaatjes staan vast in de les, in deze volgorde.
+        <div key={i} className={styles.reeksItem} hidden={i !== nu}>
+          {item}
+        </div>
+      ))}
+      <div className={styles.reeksKnoppen}>
+        <button
+          type="button"
+          className={styles.reeksKnop}
+          onClick={() => setNu((n) => Math.max(0, n - 1))}
+          disabled={nu === 0}
+        >
+          Vorige
+        </button>
+        <span className={styles.reeksTeller} aria-live="polite">
+          {nu + 1} van {items.length}
+        </span>
+        <button
+          type="button"
+          className={styles.reeksKnop}
+          onClick={() => setNu((n) => Math.min(laatste, n + 1))}
+          disabled={nu === laatste}
+        >
+          Volgende
+        </button>
+      </div>
+    </div>
+  );
 }
 
 /** Eén stap in een tabblad. Buiten <LesStappen> staat hij gewoon open. */

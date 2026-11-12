@@ -1,6 +1,7 @@
 import LesTabs, {
   LesDoel,
   LesLeerdoel,
+  LesReeks,
   LesStap,
   LesStappen,
   LesTab,
@@ -29,6 +30,7 @@ export default {
   LesVoorbeeld,
   LesVeld,
   LesDoel,
+  LesReeks,
   // De docentenhandleiding: de legenda van de iconen op de tabbladen, en per
   // les de werkvormen op een rij.
   Werkvormen,

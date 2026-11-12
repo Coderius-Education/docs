@@ -122,6 +122,8 @@ Hallo, ik ben de Golfbot
 
 </Probleem>
 
+## Controlevraag
+
 <Voorspel soort="Controlevraag" vraag='Je zet een tweede Toon op scherm onder het eerste, met de tekst "Ik ben er klaar voor". Je uploadt, maakt het scherm leeg met de prullenbak en drukt op RST. Hoe vaak zie je elke zin op het scherm?'>
   <Keuze uitleg="De zinnen van na de upload heb je met de prullenbak weggehaald. Die komen niet terug.">Elke zin twee keer: een keer na de upload en een keer na **RST**</Keuze>
   <Keuze uitleg="Het scherm zet elke regel onder de vorige. De eerste zin blijft dus gewoon staan.">Alleen "Ik ben er klaar voor", want die komt over de eerste heen</Keuze>

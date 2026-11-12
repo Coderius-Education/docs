@@ -19,3 +19,61 @@
 .inhoud p {
   margin-bottom: 0.5rem;
 }
+
+/* In een les-tabblad: de titel is een knop, de kaart is dicht tot je klikt. */
+.inTab {
+  margin-bottom: 0.5rem;
+  padding: 0;
+}
+
+.inTab > .titel {
+  margin: 0;
+}
+
+.knop {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--ifm-font-weight-bold);
+  text-align: left;
+  cursor: pointer;
+}
+
+.knop::before {
+  content: "";
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid currentcolor;
+  border-bottom: 2px solid currentcolor;
+  transform: translateY(-0.15rem) rotate(-45deg);
+}
+
+.knop[aria-expanded="true"]::before {
+  transform: translateY(-0.2rem) rotate(45deg);
+}
+
+.knop:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.inTab > .inhoud {
+  padding: 0 1rem 0.75rem 2rem;
+}
+
+/* Op papier staat elke kaart open. */
+@media print {
+  .inTab > .inhoud[hidden] {
+    display: block;
+  }
+
+  .knop::before {
+    display: none;
+  }
+}

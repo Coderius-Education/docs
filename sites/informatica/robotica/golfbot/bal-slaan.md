@@ -10,11 +10,13 @@ Je robot kan de bal zien met [de IR-sensor](site:robotica/golfbot/ir-sensor), en
 
 ## Het programma
 
+### Wat is nieuw?
+
 Alle blokken ken je al. Nieuw is alleen dat de servo-blokken nu in **als … dan** staan. Begin met het programma uit stap 2 van [de IR-sensor](site:robotica/golfbot/ir-sensor). Heb je het bewaard, open het dan met **Mijn projecten** en **Open**. Zo niet, haal dan je servoprogramma weg zoals bij [de servo](site:robotica/golfbot/servo), en bouw stap 2 opnieuw. Daarna haal je Toon op scherm uit als … dan, en zet je de servo-blokken op die plek. Het blok duurt 500 ms onder als … dan mag ook weg, want na een slag wacht de robot al.
 
-<Blokken programma={balSlaan} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms." />
+### Voorspel
 
-Tussen twee slagen staat de servo op 90°, recht in het midden. Ligt er een bal, dan draait hij eerst naar 0°: dat is uithalen. Daarna slaat hij terug naar 90°. Gebruikte je bij [de servo](site:robotica/golfbot/servo) 10°, omdat hij op 0° zoemde? Zet dan hier ook 10 in plaats van 0.
+<Blokken programma={balSlaan} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Servo 9 op 0, duurt 500 ms, Servo 9 op 90, duurt 2000 ms." />
 
 <Voorspel vraag="Wat doet je robot als er géén bal ligt?">
   <Keuze uitleg="De servo-blokken staan nu in als … dan. Die doet de robot alleen als het getal kleiner is dan 300, en dat is het alleen met een bal.">Het asje slaat steeds heen en weer, net als bij de servo</Keuze>
@@ -28,6 +30,10 @@ Misschien draait het asje direct na de upload één keer naar 90°. Dat is geen 
 
   </Uitleg>
 </Voorspel>
+
+### Uploaden en testen
+
+Tussen twee slagen staat de servo op 90°, recht in het midden. Ligt er een bal, dan draait hij eerst naar 0°: dat is uithalen. Daarna slaat hij terug naar 90°. Gebruikte je bij [de servo](site:robotica/golfbot/servo) 10°, omdat hij op 0° zoemde? Zet dan hier ook 10 in plaats van 0.
 
 Gebruik als grens het getal dat jij bij de IR-sensor hebt gekozen. Klik op **Upload naar robot** en leg een bal voor de sensor: het asje draait naar 0° en slaat terug naar 90°. Haal de bal na de slag weg, anders ziet de sensor hem na de wachttijd weer en slaat je robot nog een keer.
 
@@ -52,6 +58,8 @@ Na de slag wacht de robot twee seconden: **duurt 2000 ms**. Op de baan rolt de b
 **Oplossing:** kijk nog eens naar de twee getallen die je bij de IR-sensor opschreef, en kies een grens die daar netjes tussenin ligt.
 
 </Probleem>
+
+## Controlevraag
 
 <Voorspel soort="Controlevraag" vraag="Je haalt herhaal voor altijd weg, zodat als … dan direct in het Leaphy-blok staat. Pas als de upload klaar is, leg je een bal voor de sensor. Wat gebeurt er?">
   <Keuze uitleg="Net als eerst zou betekenen dat de robot steeds opnieuw kijkt. Dat deed herhaal voor altijd, en dat blok is weg.">Hij slaat, net als eerst</Keuze>

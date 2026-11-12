@@ -319,8 +319,9 @@
     margin-bottom: 0;
   }
 
-  /* Het woord Uitvoer, boven het blok. */
-  .voorbeeld > div > p:first-child {
+  /* Het woord Uitvoer, boven het blok. Naast een plaatje staat daar gewone
+     tekst. */
+  .voorbeeld:not(.metBeeld):not(.metBreedBeeld) > div > p:first-child {
     margin: 0 0 0.25rem;
     color: var(--ifm-color-emphasis-700);
     font-size: 0.875rem;
@@ -355,6 +356,94 @@
   .metVraag {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
+
+  /* Een plaatje met zijn tekst ernaast (een aansluitschema met de pinnen).
+     Het plaatje mag hier hoger zijn dan een derde van het scherm: de tekst
+     staat er niet meer onder. */
+  .metBeeld {
+    grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
+  }
+
+  /* Een onderdeel om mee te oefenen (de sensorsimulator) met zijn vragen. */
+  .metBreedBeeld {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+
+  .metBreedBeeld > :first-child {
+    margin-bottom: 0;
+  }
+
+  /* Het plaatje vult het vak naast de tekst, en bepaalt de hoogte dus niet:
+     naast veel tekst is het groot, naast één zin minstens vijftien regels
+     hoog. Met een vaste hoogte maakte een plaatje naast een korte tekst het
+     scherm langer dan nodig. */
+  .metBeeld > p:first-child {
+    position: relative;
+    min-height: 15rem;
+    margin: 0;
+  }
+
+  .paneel .metBeeld > p:first-child img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
+    object-position: left top;
+  }
+}
+
+/* Een reeks bouwstappen (LesReeks): één plaatje tegelijk, met de knoppen
+   eronder. Het plaatje is zo hoog als er op het scherm overblijft. */
+.reeks {
+  margin-bottom: var(--ifm-leading);
+}
+
+.reeksItem > :global(figure) {
+  margin: 0;
+  text-align: center;
+}
+
+/* Zo hoog als er op het scherm overblijft na de titel, de tabbladen, een
+   paar regels tekst erboven, het onderschrift en de knoppen. */
+.paneel .reeksItem img {
+  width: auto;
+  max-width: 100%;
+  max-height: max(200px, calc(100vh - 450px));
+}
+
+.reeksKnoppen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.reeksKnop {
+  padding: 0.35rem 1rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-color-primary);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reeksKnop:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.reeksTeller {
+  min-width: 5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Een link naar een kop in het paneel: de kop komt onder de navbar én de rij
@@ -416,6 +505,14 @@
 
   .paneel[hidden] {
     display: block;
+  }
+
+  .reeksItem[hidden] {
+    display: block;
+  }
+
+  .reeksKnoppen {
+    display: none;
   }
 
   .bovenStappen[hidden] {

@@ -175,6 +175,35 @@ describe('createConfig — les-tabbladen', () => {
     expect(docsVan(createConfig(basis))).not.toContain(remarkLesTabs);
   });
 
+  it('zet de stap ook in een losse docs-plugin', () => {
+    // Robotica heeft de Lego-auto en de Golfbot in eigen docs-plugins, naast
+    // de docs van het preset. Zonder de stap daar hadden juist de lessen geen
+    // tabbladen.
+    const metPlugins = {
+      ...basis,
+      plugins: [
+        'een-andere-plugin',
+        ['@docusaurus/plugin-content-docs', { id: 'lego_auto', remarkPlugins: ['eerst'] }],
+        ['@docusaurus/plugin-content-docs', { id: 'golfbot' }],
+        ['@docusaurus/plugin-content-pages', { id: 'los' }],
+      ],
+    };
+    const remarkVan = (config: { plugins: unknown[] }, id: string) =>
+      (
+        config.plugins.find((p) => Array.isArray(p) && p[1]?.id === id) as [
+          string,
+          { remarkPlugins?: unknown[] },
+        ]
+      )[1].remarkPlugins ?? [];
+    const aan = createConfig({ ...metPlugins, lesTabs: true });
+    expect(remarkVan(aan, 'lego_auto')).toEqual(['eerst', remarkLesTabs]);
+    expect(remarkVan(aan, 'golfbot')).toEqual([remarkLesTabs]);
+    expect(remarkVan(aan, 'los')).not.toContain(remarkLesTabs);
+    const uit = createConfig(metPlugins);
+    expect(remarkVan(uit, 'lego_auto')).toEqual(['eerst']);
+    expect(remarkVan(uit, 'golfbot')).not.toContain(remarkLesTabs);
+  });
+
   it('geeft de schakelaar niet door aan Docusaurus, dat een onbekend veld weigert', () => {
     expect(createConfig({ ...basis, lesTabs: true })).not.toHaveProperty('lesTabs');
   });
@@ -200,6 +229,6 @@ describe('createConfig — les-tabbladen', () => {
         return false;
       }
     }).map((s) => s.id);
-    expect(aan).toEqual(['python', 'web']);
+    expect(aan).toEqual(['python', 'web', 'robotica']);
   });
 });

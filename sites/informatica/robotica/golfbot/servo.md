@@ -18,13 +18,13 @@ Steek een losse Lego-as in het gat van de servo. Dan zie je goed hoe ver het asj
 
 Zet je robot uit met de knop **ON/OFF**. Sluit de servo aan op de rij van **D9** op het [shield](site:robotica/golfbot/microcontroller):
 
+![Uitsnede van het schema: de servo rechtsonder, met de bruine draad naar GND, de rode naar 5V en de oranje naar het signaal van D9 op het shield.](@site/static/fritzing/golfbot_servo.png)
+
 | Draad van de servo | Komt op |
 |---|---|
 | bruin | GND |
 | rood | 5V |
 | oranje | het signaal van **D9** |
-
-![Uitsnede van het schema: de servo rechtsonder, met de bruine draad naar GND, de rode naar 5V en de oranje naar het signaal van D9 op het shield.](@site/static/fritzing/golfbot_servo.png)
 
 Het signaal van **D9** is het pinnetje het dichtst bij de naam D9. Zit alles vast? Zet je robot dan weer aan met **ON/OFF**.
 
@@ -40,13 +40,19 @@ Een servo draait een halve cirkel. Die halve cirkel is verdeeld in 180 stukjes: 
 
 Alles daartussen kan ook, zoals 45° of 135°.
 
+### Probeer het
+
 Probeer het hier. Sleep de schuif of typ een getal bij **Servo 9 op**, en kijk waar het asje heen draait. Op je eigen servo kan 0° ook rechts liggen: dat hangt ervan af hoe hij op tafel ligt.
 
 <ServoSchijf />
 
 ## Heen en weer
 
+### Een nieuw programma
+
 Voor de servo begin je een nieuw programma. Wil je het programma van de sensor bewaren, kies dan in het menu **Mijn projecten** de knop **Opslaan als ...**, typ een naam en klik op **Opslaan**. Je laptop bewaart het dan als bestand. Haal daarna de oude blokken weg: sleep **herhaal voor altijd** uit het Leaphy-blok naar de groepen links. Alles wat erin zit gaat mee, en het Leaphy-blok blijft staan.
+
+### Voorspel
 
 Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in de stand van 90 graden. Als je het blok pakt, staat er eerst **Servo 2 op 90**. Klik op de 2 en kies **9**: daar zit je servo. Bekijk dit programma, maar upload het nog niet:
 
@@ -130,6 +136,8 @@ Begin met het programma van Heen en weer. Wat moet erbij, en welke getallen vera
 **Oplossing:** vraag je docent of er een adapter of batterij bij je robot hoort. Steek die in de aansluiting voor de stroom op het shield, zet **ON/OFF** aan en kijk of het beter gaat.
 
 </Probleem>
+
+## Controlevraag
 
 <Voorspel soort="Controlevraag" vraag="Het programma Heen en weer zet het asje op 0° en daarna op 90°. Welk deel van een hele cirkel draait het asje dan elke keer?">
   <Keuze uitleg="Een halve cirkel is het hele stuk van 0° tot 180°. Het asje stopt al eerder.">Een halve cirkel</Keuze>

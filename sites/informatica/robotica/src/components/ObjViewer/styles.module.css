@@ -57,3 +57,9 @@
   text-align: center;
   padding: 1rem;
 }
+
+/* In een les-tabblad is het model niet hoger dan wat er op het scherm
+   overblijft na de titel, de tabbladen en een paar regels tekst. */
+:global([data-les-tab]) .canvas:not(.canvasVolledig) {
+  max-height: max(260px, calc(100vh - 350px));
+}

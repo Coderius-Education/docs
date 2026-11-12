@@ -6,7 +6,7 @@ import 'blockly/blocks';
 import * as nl from 'blockly/msg/nl';
 import { describe, expect, it } from 'vitest';
 import { registreer } from '../components/Blokken/leaphy';
-import { MINSTE_SCHAAL, schaalVoor } from '../components/Blokken/schaal';
+import { MINSTE_SCHAAL, maxHoogteInTab, schaalVoor } from '../components/Blokken/schaal';
 
 // De blokvoorbeelden van de Golfbot staan als JSON naast de lessen, in
 // de vorm waarin Blockly een programma bewaart. De browser tekent ze pas bij
@@ -271,6 +271,13 @@ describe('op een smal scherm blijven de blokken leesbaar', () => {
     expect(schaalVoor(320, 900)).toBe(MINSTE_SCHAAL);
     expect(schaalVoor(600, 400)).toBe(1);
     expect(schaalVoor(400, 500)).toBeCloseTo(0.8);
+    // In een les-tabblad telt ook de hoogte, tot dezelfde kleinste schaal.
+    expect(schaalVoor(600, 400, 430, 380)).toBeCloseTo(380 / 430);
+    expect(schaalVoor(600, 400, 300, 380)).toBe(1);
+    expect(schaalVoor(600, 400, 900, 380)).toBe(MINSTE_SCHAAL);
+    expect(maxHoogteInTab(720, true)).toBe(380);
+    expect(maxHoogteInTab(500, true)).toBe(240);
+    expect(maxHoogteInTab(720, false)).toBe(Number.POSITIVE_INFINITY);
   });
 
   it('het kader schuift opzij, niet de pagina', () => {

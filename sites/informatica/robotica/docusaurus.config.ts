@@ -44,6 +44,9 @@ export default createConfig({
   title: 'Robotica — Coderius',
   siteId: 'robotica',
   projectName,
+  // Elke ##-sectie van een les is een tabblad (root-CLAUDE.md, Les-tabbladen),
+  // ook in de Lego-auto en de Golfbot, die een eigen docs-plugin hebben.
+  lesTabs: true,
   matomoSiteId: 7,
   // Werk van robotica.coderius.nl (vóór de verhuizing): zie oude-opslag.js.
   oudeOpslag: {

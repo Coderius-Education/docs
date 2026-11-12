@@ -241,11 +241,11 @@ describe('de hardware-uitleg klopt', () => {
     const arm = tekst('arm.md');
     expect(arm).not.toMatch(/as van de servo/);
     const uitleg = arm.slice(
-      arm.indexOf('## Hoe de servo de arm laat draaien'),
+      arm.indexOf('## De overbrenging: hoe de servo de arm laat draaien'),
       arm.indexOf('## Eerst testen: alleen het tandwiel'),
     );
     expect(arm.indexOf('stap-11.jpg')).toBeLessThan(
-      arm.indexOf('## Hoe de servo de arm laat draaien'),
+      arm.indexOf('## De overbrenging: hoe de servo de arm laat draaien'),
     );
     expect(uitleg).toMatch(/oranje tandwiel/);
     expect(uitleg).toMatch(/\*\*overbrenging\*\*/);

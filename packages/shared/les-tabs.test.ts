@@ -11,7 +11,14 @@ import { describe, expect, it } from 'vitest';
 // gebruikte de breedte van de inhoudsopgave niet.
 
 const require = createRequire(import.meta.url);
-const { groepeer, metStappen, tabLabel, remarkLesTabs } = require('./plugins/les-tabs.js');
+const {
+  groepeer,
+  metStappen,
+  tabLabel,
+  remarkLesTabs,
+  isDeel,
+  deelMetStappen,
+} = require('./plugins/les-tabs.js');
 
 type Knoop = {
   type: string;
@@ -594,13 +601,102 @@ describe('groepeer', () => {
         'code',
         'CodeExercise',
       ]);
+      // Een plaatje met drie alinea's voor het veld is geen doel: het staat
+      // dan met die tekst naast elkaar (plaatjesNaastTekst), het veld eronder.
       expect(
         namen(opdracht(plaatje, alinea('Een.'), alinea('Twee.'), alinea('Drie.'), veld)),
-      ).toEqual(['paragraph', 'paragraph', 'paragraph', 'paragraph', 'CodeExercise']);
+      ).toEqual(['LesVoorbeeld', 'CodeExercise']);
     });
 
     it('een veld zonder doel blijft een direct kind van het paneel', () => {
       expect(namen(opdracht(alinea('Print 1.'), veld))).toEqual(['paragraph', 'CodeExercise']);
+    });
+  });
+
+  describe('een plaatje met zijn tekst, en een reeks plaatjes', () => {
+    const plaatje: Knoop = {
+      type: 'paragraph',
+      children: [{ type: 'image', value: 'schema.png' }],
+    };
+    const figuur = (n: number): Knoop => ({
+      type: 'mdxJsxFlowElement',
+      name: 'figure',
+      children: [alinea(`Stap ${n}`)],
+    });
+    // De pagina importeert het deel; alleen dan telt het element als tekst.
+    const importeert: Knoop = {
+      type: 'mdxjsEsm',
+      value: "import ShieldRijen from '@site/docs/onderdelen/_delen/shield/rijen.md'",
+    };
+    const inhoud = (...nodes: Knoop[]): Knoop[] =>
+      groepeer([
+        importeert,
+        titel,
+        kop(2, 'Aansluiten'),
+        ...nodes,
+        kop(2, 'Code'),
+        alinea('Typ dit.'),
+      ])
+        .find((n: Knoop) => n.name === 'LesTabs')
+        .children[0].children.slice(1);
+
+    it('een plaatje met de tekst die erop volgt staat naast elkaar', () => {
+      // Het aansluitschema van robotica met de pinnen eronder: onder elkaar
+      // tot tweehonderd pixels te lang, en het schema was dan zo klein dat de
+      // legenda niet te lezen was.
+      const deel: Knoop = { type: 'mdxJsxFlowElement', name: 'ShieldRijen', children: [] };
+      const lijst: Knoop = { type: 'list', children: [] };
+      const [blok, ...rest] = inhoud(plaatje, deel, alinea('Pinnen:'), lijst);
+      expect(rest).toEqual([]);
+      expect(blok.name).toBe('LesVoorbeeld');
+      expect(blok.attributes?.map((a) => a.name)).toEqual(['beeld']);
+      expect(blok.children?.[0]).toBe(plaatje);
+      expect(blok.children?.[1].children?.map((n: Knoop) => n.name ?? n.type)).toEqual([
+        'ShieldRijen',
+        'paragraph',
+        'list',
+      ]);
+    });
+
+    it('een ander onderdeel na het plaatje hoort er niet bij', () => {
+      // Een oefenveld of een 3D-model is geen tekst bij het plaatje: eerst
+      // kwam een veld zonder eigenschappen zo in de rechterkolom terecht.
+      const model: Knoop = { type: 'mdxJsxFlowElement', name: 'ObjViewer', children: [] };
+      expect(
+        inhoud(plaatje, model, alinea('Draai het model.')).map((n) => n.name ?? n.type),
+      ).toEqual(['paragraph', 'ObjViewer', 'paragraph']);
+    });
+
+    it('een plaatje waar geen tekst op volgt, blijft staan', () => {
+      const code: Knoop = { type: 'code', value: 'x = 1' };
+      expect(inhoud(alinea('Zo ziet het eruit:'), plaatje, code).map((n) => n.type)).toEqual([
+        'paragraph',
+        'paragraph',
+        'code',
+      ]);
+      // Twee plaatjes achter elkaar: alleen het tweede heeft tekst.
+      expect(inhoud(plaatje, plaatje, alinea('Tekst.')).map((n) => n.name ?? n.type)).toEqual([
+        'paragraph',
+        'LesVoorbeeld',
+      ]);
+    });
+
+    it('drie of meer plaatjes met een onderschrift achter elkaar zijn een reeks', () => {
+      // De toren van de Golfbot: tien bouwstappen onder elkaar, 3375 pixels
+      // te lang. In een reeks staat er één tegelijk.
+      const [tekst, reeks, na] = inhoud(
+        alinea('Bouw de toren.'),
+        figuur(1),
+        figuur(2),
+        figuur(3),
+        alinea('Klaar.'),
+      );
+      expect(tekst.type).toBe('paragraph');
+      expect(reeks.name).toBe('LesReeks');
+      expect(reeks.children).toHaveLength(3);
+      expect(na.type).toBe('paragraph');
+      // Twee plaatjes zijn geen reeks.
+      expect(inhoud(figuur(1), figuur(2)).map((n) => n.name)).toEqual(['figure', 'figure']);
     });
   });
 
@@ -707,6 +803,85 @@ describe('groepeer', () => {
         'Uitleg van print',
         'Opdracht',
         'Er gaat iets mis',
+      ]);
+    });
+
+    it('een afsluiter na de opdrachten blijft het laatste tabblad', () => {
+      // Maak het je eigen en Verder bouwen zijn zelf maken. Eerst schoof Er
+      // gaat iets mis ook daar voorbij: in 13 projectstappen van de
+      // Python-cursus eindigde de stap op de fouten in plaats van op de
+      // afsluiter met de link naar de volgende stap.
+      const labels = (uit: Knoop[]) => vormen(uit).map(([label]) => label);
+      expect(
+        labels(
+          groepeer([
+            titel,
+            kop(2, 'Een raam'),
+            alinea('Uitleg.'),
+            kop(2, 'Opdracht: een raam'),
+            alinea('Teken.'),
+            kop(2, 'Er gaat iets mis'),
+            alinea('Een fout.'),
+            kop(2, 'Maak het je eigen'),
+            alinea('Ideeën.'),
+          ]),
+        ),
+      ).toEqual(['Een raam', 'Opdracht', 'Er gaat iets mis', 'Maak het je eigen']);
+    });
+
+    it('een inleiding met een leerdoel is samen het eerste tabblad', () => {
+      // Een les van de Lego-auto begint met waar hij over gaat en met Wat je
+      // nu gaat toevoegen. Bij Stap 1 erbij was dat scherm tot 270 pixels te
+      // lang; samen zijn ze het scherm waar de les mee opent.
+      const uit = groepeer([
+        titel,
+        alinea('Je robot volgt de lijn. Nu stopt hij voor een obstakel.'),
+        kop(2, 'Wat je nu gaat toevoegen'),
+        alinea('De TOF in je robotscript.'),
+        kop(2, 'Stap 1: De TOF erbij'),
+        alinea('Typ dit.'),
+        kop(2, 'Test het'),
+        alinea('Klik op Run.'),
+      ]);
+      expect(vormen(uit).map(([label]) => label)).toEqual(['Uitleg', 'Stap 1', 'Test het']);
+      const uitleg = uit[1].children[0].children;
+      expect(uitleg.map((n: Knoop) => n.name ?? n.type)).toEqual(['paragraph', 'LesLeerdoel']);
+      // Zonder inleiding staat het leerdoel bij het tabblad erna, zoals bij web.
+      const zonder = groepeer([
+        titel,
+        kop(2, 'Wat je nu gaat toevoegen'),
+        alinea('De TOF in je robotscript.'),
+        kop(2, 'Stap 1: De TOF erbij'),
+        alinea('Typ dit.'),
+        kop(2, 'Test het'),
+        alinea('Klik op Run.'),
+      ]);
+      expect(vormen(zonder).map(([label]) => label)).toEqual(['Stap 1', 'Test het']);
+    });
+
+    it('fouten bij het werk dat ervoor staat, blijven daar', () => {
+      // Een les van de Lego-auto: stappen, testen, en dan wat er bij dat
+      // testen mis kan gaan. De opdrachten komen daarna. Die fouten horen
+      // bij de stappen, niet bij de opdrachten.
+      const uit = groepeer([
+        titel,
+        kop(2, 'Wat je nu gaat toevoegen'),
+        alinea('Een loop.'),
+        kop(2, 'Stap 1: De loop erbij'),
+        alinea('Typ dit.'),
+        kop(2, 'Test het'),
+        alinea('Klik op Run.'),
+        kop(2, 'Er gaat iets mis'),
+        alinea('Een fout.'),
+        kop(2, 'Opdracht 2.3.a: Sneller'),
+        alinea('Maak het sneller.'),
+      ]);
+      // "Wat je nu gaat toevoegen" is het leerdoel: het staat bij Stap 1.
+      expect(vormen(uit)).toEqual([
+        ['Stap 1', 'stap'],
+        ['Test het', 'onderzoeken'],
+        ['Er gaat iets mis', 'fouten'],
+        ['Opdracht 2.3.a', 'aanpassen'],
       ]);
     });
 
@@ -1045,6 +1220,56 @@ describe('remarkLesTabs', () => {
 
   it('slaat een pagina over met les_tabs: false in de front matter', async () => {
     expect(await bouw(LES, { les_tabs: false })).not.toMatch(/LesTab/);
+  });
+
+  it('slaat een deel over dat een pagina importeert', async () => {
+    // Bij robotica staat wat twee pagina's delen in docs/onderdelen/_delen/.
+    // Docusaurus bouwt zo'n deel met dezelfde stappen als een les: met eigen
+    // tabbladen stond er een rij tabbladen midden in de pagina die het
+    // deel gebruikt.
+    const metPad = async (path: string) =>
+      String(
+        await compile(
+          { value: LES, path, data: { frontMatter: {} } },
+          { remarkPlugins: [metIds, remarkLesTabs] },
+        ),
+      );
+    expect(await metPad('/site/docs/onderdelen/_delen/dc-motor/pinnen.md')).not.toMatch(
+      /LesTabs?\b/,
+    );
+    expect(await metPad('/site/docs/onderdelen/_pinnen.mdx')).not.toMatch(/LesTabs?\b/);
+    expect(await metPad('/site/docs/onderdelen/dc_motor.mdx')).toMatch(/LesTabs/);
+    expect(isDeel('C:\\site\\docs\\_delen\\pinnen.md')).toBe(true);
+    expect(isDeel(undefined)).toBe(false);
+  });
+
+  it('een deel met ###-koppen krijgt stappen, geen tabbladen', async () => {
+    // MicroPython kiezen bij robotica is een deel met zes koppen: in het
+    // tabblad van de pagina die het importeert was het duizend pixels te
+    // lang, en de stap van de pagina ziet de koppen in een deel niet.
+    const deel = '### Downloaden\n\na\n\n### Op het bord zetten\n\nb\n';
+    const js = String(
+      await compile(
+        { value: deel, path: '/site/docs/_delen/installatie/micropython.md', data: {} },
+        { remarkPlugins: [metIds, remarkLesTabs] },
+      ),
+    );
+    expect(js).toMatch(/LesStappen/);
+    expect(js).not.toMatch(/LesTabs\b/);
+    expect(js).toContain('id: "downloaden"');
+    // Met tekst vóór de eerste kop is dat de eerste stap.
+    const metBasis = deelMetStappen(
+      [alinea('Eerst dit.'), alinea('En dit.'), kop(3, 'Stap een', 'een'), alinea('a')],
+      'bord',
+    );
+    const stappen = metBasis?.find((n: Knoop) => n.name === 'LesStappen')?.children ?? [];
+    expect(stappen.map((n: Knoop) => n.attributes?.find((a) => a.name === 'id')?.value)).toEqual([
+      'deel-bord-basis',
+      'een',
+    ]);
+    // Een deel zonder koppen, of met één, blijft zoals het is.
+    expect(deelMetStappen([alinea('Alleen tekst.')], 'x')).toBeNull();
+    expect(deelMetStappen([kop(3, 'Een kop', 'k'), alinea('a')], 'x')).toBeNull();
   });
 
   it('telt een ## in een uitklapblok niet als sectie', async () => {

@@ -102,17 +102,23 @@ function serveer() {
 }
 
 /** De gebouwde pagina's met tabbladen, als pad onder de site. */
+/** Mappen in de build waar geen lessen staan, en die groot zijn. */
+const GEEN_LESSEN = ['assets', 'img', 'pyodide', 'oud'];
+
 function lessen() {
   const uit = [];
   const loop = (map) => {
     for (const naam of readdirSync(map).sort()) {
       const pad = join(map, naam);
-      if (statSync(pad).isDirectory()) loop(pad);
-      else if (naam === 'index.html' && readFileSync(pad, 'utf8').includes('data-les-tabs'))
+      if (statSync(pad).isDirectory()) {
+        if (!GEEN_LESSEN.includes(relative(BUILD, pad))) loop(pad);
+      } else if (naam === 'index.html' && readFileSync(pad, 'utf8').includes('data-les-tabs'))
         uit.push(relative(BUILD, map));
     }
   };
-  loop(join(BUILD, 'docs'));
+  // De hele build, niet alleen docs/: robotica heeft de Lego-auto en de
+  // Golfbot in eigen docs-plugins, onder lego_auto/ en golfbot/.
+  loop(BUILD);
   return ALLEEN.length ? uit.filter((les) => ALLEEN.some((stuk) => les.includes(stuk))) : uit;
 }
 
