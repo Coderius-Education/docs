@@ -78,23 +78,47 @@ export default function Voorspel({
 
   const o = oordeel(toestand, keuzes);
   const gekozen = toestand.gekozen;
+  // In een tabblad moet het scherm ook na het antwoord passen: bij twintig
+  // van de dertig vragen in fullstack viel de uitleg of de knop Volgende dan
+  // onder de rand. Na het goede antwoord staat daar alleen dat antwoord nog,
+  // met een knop om de andere terug te zien, en de regel "Kies wat jij
+  // denkt" is weg zodra er gekozen is. De terugkoppeling en de uitleg staan
+  // in een vak dat de les laat schuiven als het dan nog niet past
+  // (LesTabs/speling.ts).
+  const [alle, setAlle] = useState(false);
+  // De uitleg komt ook als elk fout antwoord is geprobeerd. Dan staan het
+  // laatst gekozen antwoord en het goede er nog; de andere zijn al afgevallen.
+  const klaar = inTab && toonUitleg(toestand, keuzes);
+  const verborgen = (i: number) =>
+    klaar && !alle && gekozen !== i && (o === 'goed' || toestand.geprobeerd.includes(i));
+  // Een fout antwoord: het kader met "Niet goed", de reden en "Je kunt nog
+  // een keer kiezen" was 112 pixels, en de vraag paste daarna in 25 van de
+  // 180 schermen niet meer. In een tabblad staat de reden daarom in de rij
+  // van het gekozen antwoord, waar "Niet goed" al staat. Het kader blijft
+  // voor een schermlezer: die hoort het via de live-regio.
+  const inRij = inTab && o === 'fout';
 
   return (
     <section
       className={clsx(styles.voorspel, inTab && styles.inTab)}
       aria-labelledby={`${id}-vraag`}
+      // Voor het meetscript: open, fout of goed (scripts/meet-les-tabs.mjs).
+      data-voorspel={o}
     >
       <div className={styles.label}>{soort}</div>
       <div id={`${id}-vraag`} className={styles.vraag}>
         {vraag}
       </div>
-      <div className={styles.hint}>
-        Kies wat jij denkt. Bij het goede antwoord zie je de uitleg.
-      </div>
+      {!(inTab && gekozen !== null) && (
+        <div className={styles.hint}>
+          Kies wat jij denkt. Bij het goede antwoord zie je de uitleg.
+        </div>
+      )}
 
       <fieldset className={styles.keuzes} aria-labelledby={`${id}-vraag`}>
         {keuzeElementen.map((keuze, i) => {
           const m = markering(toestand, keuzes, i);
+          if (verborgen(i)) return null;
           return (
             <button
               // biome-ignore lint/suspicious/noArrayIndexKey: de keuzes staan vast in de les.
@@ -116,38 +140,56 @@ export default function Voorspel({
               {m !== 'open' && (
                 <span className={styles.oordeel}>{m === 'goed' ? 'Goed' : 'Niet goed'}</span>
               )}
+              {inRij && gekozen === i && (
+                <span className={styles.waarom} aria-hidden="true" data-voorspel-waarom="">
+                  {keuze.props.uitleg}
+                </span>
+              )}
             </button>
           );
         })}
       </fieldset>
+      {klaar && keuzeElementen.length > 1 && (
+        <button
+          type="button"
+          className={styles.andere}
+          aria-expanded={alle}
+          onClick={() => setAlle((a) => !a)}
+        >
+          {alle ? 'Verberg de andere antwoorden' : 'Toon de andere antwoorden'}
+        </button>
+      )}
 
       {/* De live-regio staat er altijd, ook leeg, anders mist een schermlezer
           de eerste terugkoppeling. Het kader zit erbinnen. */}
-      <div aria-live="polite">
-        {gekozen !== null && (
-          <div
-            className={clsx(
-              styles.terugkoppeling,
-              o === 'goed' && styles.goed,
-              o === 'fout' && styles.fout,
-            )}
-          >
-            <div className={styles.kop}>
-              <span aria-hidden="true">{o === 'goed' ? '✓ ' : '× '}</span>
-              {kop(toestand, keuzes)}
+      <div className={styles.na} data-voorspel-na="">
+        <div aria-live="polite">
+          {gekozen !== null && (
+            <div
+              className={clsx(
+                styles.terugkoppeling,
+                o === 'goed' && styles.goed,
+                o === 'fout' && styles.fout,
+                inRij && styles.voorlezer,
+              )}
+            >
+              <div className={styles.kop}>
+                <span aria-hidden="true">{o === 'goed' ? '✓ ' : '× '}</span>
+                {kop(toestand, keuzes)}
+              </div>
+              <div>{keuzes[gekozen].uitleg}</div>
+              {o === 'fout' && <div className={styles.opnieuw}>{TEKST.opnieuw}</div>}
             </div>
-            <div>{keuzes[gekozen].uitleg}</div>
-            {o === 'fout' && <div className={styles.opnieuw}>{TEKST.opnieuw}</div>}
+          )}
+        </div>
+
+        {toonUitleg(toestand, keuzes) && uitleg.length > 0 && (
+          <div className={styles.uitleg}>
+            <div className={styles.uitlegKop}>Uitleg</div>
+            {uitleg}
           </div>
         )}
       </div>
-
-      {toonUitleg(toestand, keuzes) && uitleg.length > 0 && (
-        <div className={styles.uitleg}>
-          <div className={styles.uitlegKop}>Uitleg</div>
-          {uitleg}
-        </div>
-      )}
     </section>
   );
 }

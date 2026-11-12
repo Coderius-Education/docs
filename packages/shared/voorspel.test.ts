@@ -153,6 +153,11 @@ function fouten(bron: string): string[] {
     for (const p of problemen(blok.keuzes)) uit.push(`${naam}: ${p}`);
     blok.keuzes.forEach((k, j) => {
       if (!k.tekst) uit.push(`${naam}: keuze ${j + 1} heeft geen tekst`);
+      // MDX maakt van een kaal adres een link, ook in een keuze. Die link
+      // staat dan in de knop: een klik op het adres opende de site in plaats
+      // van het antwoord te kiezen (fullstack, Je site in een container).
+      if (/https?:\/\/|\bwww\./.test(k.tekst.replace(/`[^`]*`/g, '')))
+        uit.push(`${naam}: keuze ${j + 1} heeft een adres zonder backticks; dat wordt een link`);
     });
   });
   // Een <Keuze> buiten een <Voorspel> tekent niets.
@@ -208,6 +213,21 @@ describe('de guard leest <Voorspel> zoals een schrijver hem typt', () => {
     expect(
       fouten(`<Voorspel vraag="?"><Keuze goed uitleg="a">x</Keuze><Keuze>y</Keuze></Voorspel>`),
     ).toEqual(['voorspelling 1: keuze 2 heeft geen uitleg']);
+  });
+});
+
+describe('een adres in een keuze is code, geen link', () => {
+  const blok = (keuze: string) =>
+    `<Voorspel vraag="Waar open je de site?"><Keuze goed uitleg="a">${keuze}</Keuze><Keuze uitleg="b">Nergens</Keuze></Voorspel>`;
+
+  it('meldt een kaal adres', () => {
+    expect(fouten(blok('Poort 9000: http://127.0.0.1:9000'))).toEqual([
+      'voorspelling 1: keuze 1 heeft een adres zonder backticks; dat wordt een link',
+    ]);
+  });
+
+  it('laat een adres tussen backticks staan', () => {
+    expect(fouten(blok('Poort 9000: `http://127.0.0.1:9000`'))).toEqual([]);
   });
 });
 

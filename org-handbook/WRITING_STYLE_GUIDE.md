@@ -64,6 +64,12 @@ In een cursus met tabbladen is een tabblad of een stap alles wat de leerling op 
 - **Een pagina waar je met Ctrl+F zoekt** (een overzicht van foutmeldingen) krijgt `les_tabs: false`: zoeken vindt geen tekst in een tabblad dat dicht staat.
 - **Een controlelijst of een hand-out** krijgt ook `les_tabs: false`: die loop je in één keer af, of je print hem.
 - **Houd een kop kort**: een tabblad of stap heet naar zijn kop, en een rij stappen op twee regels kost elk scherm veertig pixels. Linken andere lessen naar de kop, geef hem dan een vast id voordat je hem inkort.
+- **Een scherm begint niet met een zin die op het vorige doorgaat.** "Daarom maakt de Dockerfile …", "Daaronder legt de tekst uit …" en "Klik op de regel." lezen op de lange pagina goed, en zijn in tabbladen een scherm te laat. Noem waar het over gaat: "Onder `Hello from Docker!` legt de tekst uit …".
+- **Een controlevraag vraagt niet terug wat er net stond.** Hij is een eigen scherm, direct na de uitleg: vraag naar een nieuw geval waarvoor de leerling de uitleg moet toepassen. Ook de `uitleg="…"` van een keuze wijst niet naar "hierboven".
+- **Een adres in een keuze staat tussen backticks**: MDX maakt van een kaal adres een link, en die staat dan in de knop.
+- **Wat de leerling na een opdracht moet opruimen** (een endpoint weghalen, de server weer starten), staat in de opdracht, niet in het antwoord: wie het antwoord niet openklapt, leest het niet.
+- **Het hele bestand na de les** schrijf je als `<details><summary>Zo ziet je `main.py` er nu uit</summary>`: de build maakt er het laatste tabblad van, met de naam van het bestand. Verwijs ernaar als "het tabblad `main.py`".
+- **Een pagina die net zo heet als een tabblad, noem je een pagina**: "op de pagina [Er gaat iets mis](…)". Zonder link is "bij Er gaat iets mis" het tabblad van de les.
 - **Een fout onder Er gaat iets mis toont alleen wat verandert**: de melding (een lange rij uitvoer ingekort met `...`), de oorzaak, de oplossing en hooguit de paar regels code die anders moeten. Wijs daar niet naar "hierboven": de uitleg staat op een ander tabblad.
 
 Voor MDX-pagina's met runnable code, importeer bovenaan:

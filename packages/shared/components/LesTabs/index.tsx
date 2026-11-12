@@ -334,7 +334,7 @@ export function LesTab({
         </ReeksContext.Provider>
       </PaneelContext.Provider>
       {rij && volgende && (
-        <p className={styles.verder}>
+        <p className={styles.verder} data-les-verder="">
           <button
             type="button"
             className="button button--primary button--sm"

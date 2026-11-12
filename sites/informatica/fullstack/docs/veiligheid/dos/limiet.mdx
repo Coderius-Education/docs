@@ -231,7 +231,7 @@ Too Many Requests`.
 Zet een limiet van `10/minute` op je startpagina en sla `main.py` op. Wachten
 hoeft niet: bij het opslaan start `fastapi dev` je server opnieuw, en daarmee
 begint de telling weer bij nul. Draai `test_verzoeken.py`. Hoeveel verzoeken
-krijgen `200`, en hoeveel `429`?
+krijgen `200`, en hoeveel `429`? Zet de limiet daarna terug op `5/minute`: les 6 rekent met vijf.
 
 <details>
 <summary>Antwoord</summary>
@@ -239,14 +239,14 @@ krijgen `200`, en hoeveel `429`?
 Tien krijgen `200`, de andere tien `429`. Aan het eind staat er
 `Gelukt: 10 van de 20`.
 
-Zet de limiet daarna terug op `5/minute`: les 6 rekent met vijf.
-
 </details>
 
 ### Opdracht 3: Investigate - Een strengere grens
 
 Verander de limiet in `"2/minute"`, sla op en draai het script opnieuw. Waarom zou een
 limiet van twee per minuut op een echte site geen goed idee zijn?
+
+Zet de limiet daarna terug op `5/minute`, zoals op het tabblad `main.py`: les 6 rekent met vijf.
 
 <details>
 <summary>Tip</summary>
@@ -263,9 +263,6 @@ Nu krijgen maar twee verzoeken `200` en de rest `429`. Op een echte site is dat
 te streng: een gewone bezoeker die een paar pagina's bekijkt of even
 terugklikt, zit zo aan twee verzoeken, en dan weigert je server hem. Een limiet
 moet hoog genoeg zijn voor een mens, en laag genoeg om een script te stoppen.
-
-Zet de limiet daarna terug op `5/minute`, zoals in de stand hieronder: les 6
-rekent met vijf.
 
 </details>
 

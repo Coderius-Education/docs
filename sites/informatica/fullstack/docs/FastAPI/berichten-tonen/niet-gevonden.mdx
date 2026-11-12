@@ -69,7 +69,7 @@ Hier staat `raise`, geen `return`. Je geeft geen antwoord terug maar onderbreekt
 3. Je krijgt `{"detail":"Dit bericht bestaat niet"}`, en in het tabblad Netwerk staat `404`.
 
 :::danger[Gaat er iets mis?]
-Krijg je een pagina met lege plekken in plaats van een 404? Dan staat je `if bericht is None` waarschijnlijk ná de `return`. Zie je `{"status_code":404,"detail":"Dit bericht bestaat niet","headers":null}` met status 200? Dan schreef je `return` in plaats van `raise`. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Krijg je een pagina met lege plekken in plaats van een 404? Dan staat je `if bericht is None` waarschijnlijk ná de `return`. Zie je `{"status_code":404,"detail":"Dit bericht bestaat niet","headers":null}` met status 200? Dan schreef je `return` in plaats van `raise`. Meer oplossingen staan op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <details>
@@ -302,12 +302,12 @@ Bij `/bericht/onzin` staat `404`, met `{"detail":"Dit bericht bestaat niet"}` op
 
 ### Opdracht 3: Investigate - Return in plaats van raise
 
-Vervang in je endpoint `raise HTTPException(...)` door `return HTTPException(...)`, met verder dezelfde regel. Ga naar `/bericht/onzin` met Netwerk open. Wat zie je, en welke statuscode?
+Vervang in je endpoint `raise HTTPException(...)` door `return HTTPException(...)`, met verder dezelfde regel. Ga naar `/bericht/onzin` met Netwerk open. Wat zie je, en welke statuscode? Zet `raise` daarna terug.
 
 <details>
 <summary>Antwoord</summary>
 
-De pagina toont `{"status_code":404,"detail":"Dit bericht bestaat niet","headers":null}`, en in Netwerk staat `200`. Met `return` geeft je functie de fout terug als gewone data, en FastAPI maakt er JSON van met status 200. Pas `raise` onderbreekt de functie en laat FastAPI een echte 404 sturen. Zet `raise` terug.
+De pagina toont `{"status_code":404,"detail":"Dit bericht bestaat niet","headers":null}`, en in Netwerk staat `200`. Met `return` geeft je functie de fout terug als gewone data, en FastAPI maakt er JSON van met status 200. Pas `raise` onderbreekt de functie en laat FastAPI een echte 404 sturen.
 
 </details>
 

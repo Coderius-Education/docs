@@ -19,6 +19,10 @@
 //
 //   tabrij     op hoeveel regels de rij tabbladen staat. Een tweede regel
 //              kost elk paneel veertig pixels; in acht lessen stond hij er.
+//   stapregels op hoeveel regels de rij stappen van het tabblad staat.
+//   volgendeLes  of de link naar de volgende les in beeld staat terwijl het
+//              scherm zelf een knop Volgende heeft: die slaat de rest van de
+//              les over.
 //   zijwaarts  hoeveel pixels de pagina breder is dan het scherm, ook op een
 //              telefoon (390×800). Daar hoeft een scherm niet te passen,
 //              maar zijwaarts schuiven hoort nergens: een verborgen kop
@@ -31,7 +35,9 @@
 //
 // Met `--klik` doet het in elk scherm met een Python-veld ook wat een leerling
 // doet: het klikt op Uitvoeren en daarna op Stap voor stap, en meet na elke
-// klik opnieuw (`naUitvoeren`, `naStappen`). Een scherm dat past tot je iets
+// klik opnieuw (`naUitvoeren`, `naStappen`). In een scherm met een
+// voorspelvraag kiest het een antwoord na het andere tot het goede, en meet
+// het na elk antwoord (`naAntwoord`). Een scherm dat past tot je iets
 // aanklikt, past niet: Stap voor stap stond eerst onder het veld en maakte
 // het scherm tot 1634 pixels te lang. Een veld met `input()` slaat het over
 // (dat wacht op een antwoord), en een veld dat na een kwartminuut nog draait
@@ -191,6 +197,30 @@ async function meetNaKlik(pagina, paneel, id) {
   return { naUitvoeren, naStappen };
 }
 
+/**
+ * Beantwoordt de vraag in het scherm dat open staat zoals een leerling: een
+ * antwoord na het andere tot het goede, en meet na elk antwoord. Een scherm
+ * met een vraag past tot je antwoordt: dan komen de terugkoppeling en de
+ * uitleg erbij. In fullstack viel bij twintig van de dertig vragen de uitleg
+ * of de knop Volgende daarna onder de rand.
+ */
+async function meetNaAntwoord(pagina, paneel, id) {
+  const vraag = paneel.locator('[data-voorspel]:visible').first();
+  if ((await vraag.count()) === 0) return {};
+  let naAntwoord = null;
+  const keuzes = await vraag.locator('fieldset button').count();
+  for (let i = 0; i < keuzes; i++) {
+    // Na het goede antwoord staan de andere achter een knop; zover komt de
+    // lus niet.
+    await vraag.locator('fieldset button').nth(i).click();
+    await pagina.waitForTimeout(250);
+    await pagina.evaluate(() => window.scrollTo(0, 0));
+    naAntwoord = Math.max(naAntwoord ?? Number.NEGATIVE_INFINITY, await over(pagina, id));
+    if ((await vraag.getAttribute('data-voorspel')) === 'goed') break;
+  }
+  return naAntwoord === null ? {} : { naAntwoord };
+}
+
 async function meetLes(les) {
   for (const scherm of SCHERMEN) {
     // Een verse context per les: bewaard werk in een oefenveld verandert de
@@ -274,8 +304,28 @@ async function meetLes(les) {
             pagina: document.documentElement.scrollHeight - window.innerHeight,
             zijwaarts: Math.max(0, document.documentElement.scrollWidth - window.innerWidth),
             velden: paneel.querySelectorAll('[data-zaad]').length,
+            volgendeLes: volgendeLesInBeeld(paneel),
+            // Op hoeveel regels de rij stappen staat: een tweede regel kost
+            // elk scherm van dat tabblad veertig pixels.
+            stapregels: new Set(
+              [...paneel.querySelectorAll('[data-stap]')]
+                .filter((s) => s.getClientRects().length > 0 && !s.closest('details:not([open])'))
+                .map((s) => Math.round(s.getBoundingClientRect().top)),
+            ).size,
             ...binnenHetScherm(paneel),
           };
+
+          // De link naar de volgende les terwijl dit scherm zelf een knop
+          // Volgende heeft: die zegt hetzelfde en slaat de rest van de les
+          // over.
+          function volgendeLesInBeeld(paneel) {
+            const knop = [...paneel.querySelectorAll('[data-les-verder] button')].some(
+              (k) => k.getClientRects().length > 0,
+            );
+            const link = document.querySelector('.pagination-nav__link--next');
+            if (!knop || !link || link.getClientRects().length === 0) return false;
+            return link.getBoundingClientRect().top < window.innerHeight;
+          }
 
           // Wat "past" niet ziet: een scherm past ook als de code zijwaarts
           // is afgesneden, als een programma in een vak van twaalf regels
@@ -337,7 +387,10 @@ async function meetLes(les) {
         let naKlik = {};
         if (KLIK && !scherm.telefoon) {
           try {
-            naKlik = await meetNaKlik(pagina, paneel, id);
+            naKlik = {
+              ...(await meetNaKlik(pagina, paneel, id)),
+              ...(await meetNaAntwoord(pagina, paneel, id)),
+            };
           } catch (fout) {
             // Een programma dat blijft draaien, houdt de hele pagina vast:
             // de rest van deze les op dit scherm vervalt.
@@ -400,6 +453,7 @@ if (ALS_JSON) {
     for (const [veld, wat] of [
       ['naUitvoeren', 'Uitvoeren'],
       ['naStappen', 'Stap voor stap'],
+      ['naAntwoord', 'een antwoord op de vraag'],
     ]) {
       const gemeten = rijen.filter((r) => r[veld] !== undefined);
       const telang = gemeten.filter((r) => r.over <= 0 && r[veld] > 0);
@@ -410,6 +464,18 @@ if (ALS_JSON) {
         console.log(`- ${naam(r.les)} | ${r.tab} | ${r.scherm}: ${r[veld]} px te lang`);
     }
   }
+  // Per tabblad één keer, op het kleinste brede scherm.
+  const [smal] = SCHERMEN.filter((s) => !s.telefoon);
+  const dubbeleRij = new Map();
+  for (const r of rijen.filter((r) => r.scherm === `${smal.width}x${smal.height}`))
+    if (r.stapregels > 1) dubbeleRij.set(`${naam(r.les)} | ${r.tab.split(' › ')[0]}`, r.stapregels);
+  console.log(`\n## Een rij stappen op meer dan één regel: ${dubbeleRij.size} tabbladen\n`);
+  for (const [waar, regels] of dubbeleRij) console.log(`- ${waar}: ${regels} regels`);
+  const metLink = rijen.filter((r) => r.volgendeLes);
+  console.log(
+    `\n## De link naar de volgende les naast de knop Volgende: ${metLink.length} schermen\n`,
+  );
+  for (const r of metLink) console.log(`- ${naam(r.les)} | ${r.tab} | ${r.scherm}`);
   const breed = rijen.filter((r) => r.zijwaarts > 0);
   console.log(`\n## Zijwaarts schuiven: ${breed.length} schermen\n`);
   for (const r of breed.sort((a, b) => b.zijwaarts - a.zijwaarts))

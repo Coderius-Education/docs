@@ -74,8 +74,8 @@ Elke fout is een dictionary. Voor de te lange naam ziet hij er zo uit:
 | `input` | wat er binnenkwam |
 | `ctx` | de grens die gold, als die er is |
 
-Daarom pak je in het script `fout["loc"][1]`: het tweede stuk van `loc` is de
-naam van het veld.
+Daarom pakt `fouten.py` `fout["loc"][1]`: het tweede stuk van `loc` is de naam
+van het veld.
 
 ## Een leeg veld is al een fout
 
@@ -84,7 +84,7 @@ Het lege bericht gaf `missing`, en dat zonder dat je er iets voor schreef.
 niet ingevuld. Een `min_length=1` erbij is dus niet nodig.
 
 <Voorspel soort="Controlevraag" vraag="Je stuurt met fouten.py een naam van 40 tekens en een bericht van 300 tekens. Hoeveel regels print het onder de 422?">
-  <Keuze uitleg="FastAPI stopt niet bij de eerste fout. Hoeveel fouten meldde hij in de Gelukt hierboven?">Eén: FastAPI stopt bij de eerste fout die hij vindt</Keuze>
+  <Keuze uitleg="FastAPI stopt niet bij de eerste fout. Hoeveel fouten meldde hij toen je fouten.py draaide?">Eén: FastAPI stopt bij de eerste fout die hij vindt</Keuze>
   <Keuze goed uitleg="FastAPI controleert elk veld, en zet elke fout als eigen dictionary in detail. De for-loop print er één regel per.">Twee: één regel voor de naam, en één voor het bericht</Keuze>
   <Keuze uitleg="loc noemt bij elke fout ook het veld, op de tweede plek.">Eén, met in loc alleen body voor het hele formulier</Keuze>
   <Uitleg>

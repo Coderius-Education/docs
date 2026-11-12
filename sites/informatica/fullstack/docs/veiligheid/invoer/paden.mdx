@@ -110,7 +110,7 @@ een bestand met een geheime sleutel. Met `..` uit de bedoelde map klimmen heet
 ## Alleen wat in je lijst staat
 
 Een bestandsnaam controleer je net als de stemming in [les 7](site:fullstack/docs/veiligheid/invoer/keuzes): met
-een lijst met wat mag.
+een lijst met wat mag. Vervang je `/pagina` door dit endpoint:
 
 <CodeUitleg>
 
@@ -136,7 +136,7 @@ Staat de naam niet in de lijst, dan bestaat de pagina voor de bezoeker niet: een
 
 ### Drie namen proberen
 
-Vervang je `/pagina` door deze. Een script `paden.py` probeert er drie:
+Een script `paden.py` vraagt je nieuwe `/pagina` om drie namen:
 
 {/* bestand: paden.py */}
 
@@ -262,7 +262,7 @@ print(httpx.get(adres + "home").status_code)
 print(httpx.get(adres + "..%2F..%2Fmain").status_code)
 ```
 
-**Vraag:** welke twee statuscodes print het?
+**Vraag:** welke twee statuscodes print het? Haal het endpoint daarna weer weg.
 
 <details>
 <summary>Antwoord</summary>
@@ -281,8 +281,7 @@ niet in jouw code. Met `{naam:path}`, dat wel een `/` doorlaat, komt dit
 verzoek wél in je functie, en zoekt de server buiten `static/pages`. Je krijgt
 dan een `500` en niet je code, maar alleen omdat er geen `main.html` is: ook
 dat is geluk. Op Windows is ook `\` een scheiding in een pad, en een `\` past
-wel in een path-parameter. De lijst werkt in alle gevallen. Haal het endpoint
-weer weg.
+wel in een path-parameter. De lijst werkt in alle gevallen.
 
 </details>
 

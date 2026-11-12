@@ -45,7 +45,7 @@ This message shows that your installation appears to be working correctly.
 
 ### Wat er op je computer staat
 
-Daaronder legt de tekst zelf uit wat er gebeurde, in vier stappen. Bekijk daarna wat er op je computer staat:
+Onder `Hello from Docker!` legt de tekst zelf uit wat er gebeurde, in vier stappen. Bekijk daarna wat er op je computer staat:
 
 ```bash
 docker images
@@ -76,6 +76,30 @@ permission denied while trying to connect to the docker API at unix:///var/run/d
 **Oorzaak:** je zit niet in de groep `docker`, of je bent nog niet opnieuw ingelogd sinds `usermod`.
 
 **Oplossing:** typ `groups`. Staat `docker` er niet bij, doe dan de stap van **Jezelf toegang geven** opnieuw, en vergeet `wsl --terminate Ubuntu-24.04` niet. Zet geen `sudo` voor elk `docker`-commando. Het werkt wel, maar wat Docker dan voor jou in je eigen mappen zet, zoals een back-up in [les 37](site:fullstack/docs/online/server/backup), is van `root`, en dan mag je het zelf niet meer weggooien.
+
+### failed to connect to the docker API
+
+```text
+failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory
+```
+
+**Oorzaak:** de dienst van Docker draait niet.
+
+**Oplossing:** start hem, en laat hem voortaan vanzelf starten, zoals in [les 13](site:fullstack/docs/online/docker/installeren):
+
+```bash
+sudo systemctl enable --now docker
+```
+
+### Cannot connect to the Docker daemon
+
+```text
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+```
+
+**Oorzaak:** hetzelfde als bij `failed to connect to the docker API`, in een andere vorm. Het bestand `docker.sock` staat er nog, maar de dienst die erachter hoort te luisteren, draait niet.
+
+**Oplossing:** `sudo systemctl enable --now docker`, en kijk met `systemctl status docker` of er `active (running)` staat.
 
 ### `toomanyrequests`
 

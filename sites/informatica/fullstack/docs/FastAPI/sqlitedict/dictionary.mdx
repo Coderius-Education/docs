@@ -142,7 +142,7 @@ Draai `proef_db.py` uit deze les en daarna `bekijk_db.py`. Staat Sara erbij?
 
 ### Opdracht 3: Investigate - Welke KeyError?
 
-Verander in `proef_db.py` de regel `print(sara["klas"])` in `print(sara["Klas"])` en draai het. Zet hem terug, verander daarna `sara = db["sara"]` in `sara = db["Sara"]` en draai het weer. Beide keren krijg je een `KeyError`. Kijk naar de regels erboven: waaraan zie je of de database of de dictionary de sleutel niet vond?
+Verander in `proef_db.py` de regel `print(sara["klas"])` in `print(sara["Klas"])` en draai het. Zet hem terug, verander daarna `sara = db["sara"]` in `sara = db["Sara"]` en draai het weer. Beide keren krijg je een `KeyError`. Kijk naar de regels erboven: waaraan zie je of de database of de dictionary de sleutel niet vond? Zet beide regels daarna weer terug.
 
 <details>
 <summary>Tip</summary>
@@ -154,7 +154,7 @@ Een foutmelding noemt elk bestand waar Python doorheen ging, van boven naar onde
 <details>
 <summary>Antwoord</summary>
 
-Bij `KeyError: 'Klas'` noemt de foutmelding alleen je eigen `proef_db.py`: de dictionary van Sara heeft geen veld `Klas`. Bij `KeyError: 'Sara'` staat er onder je eigen regel nog een regel uit `sqlitedict.py`, met `raise KeyError(key)`: SqliteDict zocht in de database en vond geen sleutel `Sara`. Zet beide regels daarna weer terug.
+Bij `KeyError: 'Klas'` noemt de foutmelding alleen je eigen `proef_db.py`: de dictionary van Sara heeft geen veld `Klas`. Bij `KeyError: 'Sara'` staat er onder je eigen regel nog een regel uit `sqlitedict.py`, met `raise KeyError(key)`: SqliteDict zocht in de database en vond geen sleutel `Sara`.
 
 </details>
 

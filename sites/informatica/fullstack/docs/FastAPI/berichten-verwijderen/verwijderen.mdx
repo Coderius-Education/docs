@@ -339,12 +339,12 @@ Ja: `/verwijderen` haalt het weg en stuurt je met een 303 terug naar `/berichten
 
 ### Opdracht 3: Investigate - Zonder de controle
 
-Haal in `/verwijderen` de regel `if sleutel in db:` weg (en zet de twee regels eronder een stap terug). Open `/berichten` in twee tabbladen. Verwijder een bericht in het eerste tabblad, en klik daarna in het tweede tabblad bij hetzelfde bericht op Verwijderen. Wat zie je, en wat staat er in je terminal?
+Haal in `/verwijderen` de regel `if sleutel in db:` weg (en zet de twee regels eronder een stap terug). Open `/berichten` in twee tabbladen. Verwijder een bericht in het eerste tabblad, en klik daarna in het tweede tabblad bij hetzelfde bericht op Verwijderen. Wat zie je, en wat staat er in je terminal? Zet de controle daarna terug.
 
 <details>
 <summary>Antwoord</summary>
 
-Het tweede tabblad toont `Internal Server Error`, en in je terminal staat `KeyError` met de sleutel van het bericht, zoals `KeyError: 'bericht_1767225600123456789'`. Het tweede tabblad liet nog de oude lijst zien, met een bericht dat al weg is. Het formulier stuurt die sleutel mee, en `del db[sleutel]` crasht op een sleutel die er niet in staat. Met `if sleutel in db:` gebeurt er dan niets en kom je weer op de lijst. Zet de controle terug.
+Het tweede tabblad toont `Internal Server Error`, en in je terminal staat `KeyError` met de sleutel van het bericht, zoals `KeyError: 'bericht_1767225600123456789'`. Het tweede tabblad liet nog de oude lijst zien, met een bericht dat al weg is. Het formulier stuurt die sleutel mee, en `del db[sleutel]` crasht op een sleutel die er niet in staat. Met `if sleutel in db:` gebeurt er dan niets en kom je weer op de lijst.
 
 </details>
 

@@ -668,6 +668,56 @@ pixels, dus houd de koppen kort; en een lange foutmelding of een FOUT/GOED
 van tien regels maakt een fout in Er gaat iets mis te lang, dus toon alleen
 de regel die verandert.
 
+**Wat een doorloop van fullstack als leerling vond** (november 2026). De
+doorloop beantwoordde elke vraag en klikte op elke knop Volgende in 26
+lessen. Sindsdien:
+
+- **Een scherm met een vraag past ook na het antwoord.** `<Voorspel>` maakt
+  in een tabblad zelf ruimte: de regel "Kies wat jij denkt" is weg zodra er
+  gekozen is; de reden bij een fout antwoord staat in de rij van dat antwoord
+  (het kader blijft voor een schermlezer, in de live-regio); na het goede
+  antwoord staat alleen dat antwoord er nog, met een knop Toon de andere
+  antwoorden; en is elk fout antwoord geprobeerd, dan vallen de eerdere foute
+  weg. De terugkoppeling en de uitleg staan in één vak (`data-voorspel-na`)
+  dat `speling.ts` laat schuiven als het scherm dan nog te lang is. Bij
+  twintig van de dertig vragen viel de uitleg of de knop Volgende eerst
+  onder de rand.
+- **De link naar de volgende les is weg zolang het open tabblad een knop
+  Volgende heeft** (`data-les-verder`, één regel in de opmaak van LesTabs).
+  Die link zegt ook "Volgende", is groter, en stond op 139 van de 226
+  schermen in beeld; wie erop klikte, sloeg de rest van de les over. Op het
+  laatste scherm staat hij er weer.
+- **Het hele bestand na de les is het laatste tabblad** (`standTab`). Een
+  `<details>` met de summary "Zo ziet je `main.py` er nu uit" wordt een
+  tabblad `main.py` met het bestand open, werkvorm controleren. In de bron
+  sluit het de pagina af; in tabbladen stond het in de stap waar het
+  toevallig onder viel (bij 24 lessen onder de laatste opdracht, bij vier
+  onder één fout). Een summary direct onder `<details>`, zonder lege regel,
+  leest MDX als tekst in een alinea: `heeftSummary` vindt hem daar ook.
+- **Een controlevraag staat niet naast commando's voor de terminal**
+  (`isOpdrachtregel`): hij stond naast `git add`, `git commit` en `git push`
+  en was daardoor geen eigen stap.
+- **`<Voorkennis>` met één alinea opent het eerste tabblad, als dat scherm
+  er ruimte voor heeft** (`hoogteScherm`, een schatting uit de bron, geijkt
+  op de meting: tot 470 pixels paste het, vanaf 480 niet). Anders is het een
+  eigen scherm dat Vooraf heet; die stap telt niet mee voor de grens van
+  acht stappen in `voegUitlegSamen`.
+- **Eén tabblad Opdrachten is een opdracht** (werkvorm aanpassen; het had
+  het icoon van uitleg, net als 75 van de 96 tabbladen in de doorloop). De
+  uitleg ervoor is daardoor ook in de lessen zonder Er gaat iets mis één
+  tabblad Uitleg met stappen. Er gaat iets mis blijft vóór zo'n tabblad
+  staan (`isVerzameltab`): de leerling bouwt in de uitleg al mee.
+- **Het meetscript** beantwoordt met `--klik` elke vraag, een antwoord na
+  het andere tot het goede, en meet na elk antwoord (`naAntwoord`). Het
+  meldt ook of de link naar de volgende les naast de knop Volgende staat
+  (`volgendeLes`) en op hoeveel regels een rij stappen staat (`stapregels`).
+- **Lezen vond de rest**: een scherm dat begint met "Daarom" of "Daaronder",
+  een controlevraag die terugvraagt wat er net stond, een opruimactie die
+  alleen in het antwoord stond, een adres in een keuze dat een link werd, en
+  drie betekenissen van Er gaat iets mis (het tabblad, de pagina, de link).
+  De regels staan in schrijfgids §2; `schermen.test.ts` en `naslag.test.ts`
+  van fullstack en `voorspel.test.ts` pinnen ze vast.
+
 ## Code in MDX-expressies
 
 MDX eet van elke vervolgregel in een `{`…`}`-expressie tot twee spaties op.

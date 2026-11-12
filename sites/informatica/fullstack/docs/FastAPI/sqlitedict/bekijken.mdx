@@ -144,12 +144,12 @@ Het kunnen er meer zijn. `bekijk_db.py` toont alles wat ooit in `mijn_data.db` i
 
 ### Opdracht 3: Investigate - De lus naar buiten
 
-Haal in `bekijk_db.py` de inspringing weg voor de twee regels van de lus, zodat ze onder het `with`-blok staan. Draai het. Wat print het nog, en op welke regel stopt het?
+Haal in `bekijk_db.py` de inspringing weg voor de twee regels van de lus, zodat ze onder het `with`-blok staan. Draai het. Wat print het nog, en op welke regel stopt het? Zet de inspringing daarna weer terug.
 
 <details>
 <summary>Antwoord</summary>
 
-Het print nog `2 sleutels`, want die regel staat binnen het blok. Daarna stopt het op de regel met `for` met `AttributeError: 'NoneType' object has no attribute 'select'`: de database is dan al dicht. Zet de inspringing daarna weer terug.
+Het print nog `2 sleutels`, want die regel staat binnen het blok. Daarna stopt het op de regel met `for` met `AttributeError: 'NoneType' object has no attribute 'select'`: de database is dan al dicht.
 
 </details>
 

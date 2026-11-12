@@ -121,7 +121,7 @@
     "id": "aanpassen",
     "label": "Aanpassen",
     "doet": "Een gerichte opdracht op code die er al staat, met een tip en een antwoord.",
-    "koppen": ["^Modify$", "^Opdracht\\b", "^Probeer het zelf$"],
+    "koppen": ["^Modify$", "^Opdracht\\b", "^Opdrachten$", "^Probeer het zelf$"],
     "tips": [
       {
         "slug": "primm",
@@ -160,7 +160,11 @@
     "id": "controle",
     "label": "Controleren",
     "doet": "Ze gaan na of ze het doel van de les hebben gehaald.",
-    "koppen": ["^Controlevraag$", "^Wanneer heb je deze stap gehaald\\?$"],
+    "koppen": [
+      "^Controlevraag$",
+      "^Wanneer heb je deze stap gehaald\\?$",
+      "^Zo ziet je .+ er nu uit$"
+    ],
     "tips": [
       {
         "slug": "constructive-alignment",

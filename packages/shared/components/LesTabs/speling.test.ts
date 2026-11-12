@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from 'vitest';
 import {
+  KLEINSTE_NA,
   KLEINSTE_VAK,
   NOODGREEP,
   plaatjeHoogte,
@@ -188,6 +189,31 @@ describe('verdeelSpeling', () => {
     onderkant(paneel, 748);
     verdeelSpeling(wortel);
     expect(vak.style.maxHeight).toBe('');
+  });
+
+  it('na een antwoord schuiven de terugkoppeling en de uitleg van de vraag in hun vak', () => {
+    // Fullstack: een controlevraag paste tot je antwoordde. De uitleg erbij
+    // maakte het scherm 90 pixels te lang, en de knop Volgende viel weg.
+    const wortel = les('<pre id="code"></pre><div data-voorspel-na id="na"></div>');
+    const na = document.getElementById('na') as HTMLElement;
+    const code = document.getElementById('code') as HTMLElement;
+    const paneel = wortel.querySelector('[data-les-tab="a"]') as Element;
+    maat(na, { offsetHeight: 260 });
+    maat(code, { scrollHeight: 300, clientHeight: 300, offsetHeight: 302 });
+    onderkant(paneel, 798);
+    verdeelSpeling(wortel);
+    // 798 + 12 marge - 720 = 90 te lang: het vak levert die in, de code niets.
+    expect(na.style.maxHeight).toBe('170px');
+    expect(code.style.maxHeight).toBe('');
+    // Niet lager dan een paar regels: de rest is aan de auteur.
+    onderkant(paneel, 1100);
+    verdeelSpeling(wortel);
+    expect(na.style.maxHeight).toBe(`${KLEINSTE_NA}px`);
+    // Een kort vak blijft zoals het is.
+    maat(na, { offsetHeight: 100 });
+    onderkant(paneel, 798);
+    verdeelSpeling(wortel);
+    expect(na.style.maxHeight).toBe('');
   });
 
   it('code met de uitleg ernaast krimpt als één rij, tot het deel dat niet schuift', () => {

@@ -131,7 +131,9 @@ describe('de uitleg staat op één plek', () => {
     .map((b) => b.split('</details>')[0]);
 
   it('vindt de vijf checks met hun hulpblok', () => {
-    expect(installatie.match(/\n## Check \d/g)).toHaveLength(5);
+    // De koppen heten naar wat je controleert ("3. Python"): als tabblad stond
+    // er vijf keer Check.
+    expect(installatie.match(/\n## \d\. /g)).toHaveLength(5);
     expect(blokken).toHaveLength(5);
   });
 
@@ -215,7 +217,7 @@ describe('iedereen werkt met dezelfde Python', () => {
   it('de fullstack-checklist controleert de versie ook in de omgeving', () => {
     // Een .venv die met 3.15 gemaakt is, blijft 3.15, ook nadat de leerling
     // 3.14 installeerde. Check 3 ziet dat niet; check 4 moet het zien.
-    const check4 = installatie.split('## Check 4')[1].split('## Check 5')[0];
+    const check4 = installatie.split('## 4. ')[1].split('## 5. ')[0];
 
     expect(check4).toContain('python --version');
     expect(check4).toContain(`\`Python ${VERSIE}\``);
@@ -237,8 +239,8 @@ describe('iedereen werkt met dezelfde Python', () => {
       ['stap-3-installeren.md', tekst('stap-3-installeren.md')],
       ['stap-4-venv.md', tekst('stap-4-venv.md')],
       ['problemen.md', tekst('problemen.md')],
-      ['fullstack check 3', installatie.split('## Check 3')[1].split('## Check 4')[0]],
-      ['fullstack check 4', installatie.split('## Check 4')[1].split('## Check 5')[0]],
+      ['fullstack check 3', installatie.split('## 3. ')[1].split('## 4. ')[0]],
+      ['fullstack check 4', installatie.split('## 4. ')[1].split('## 5. ')[0]],
     ]
       .filter(([, inhoud]) => !naar.test(inhoud))
       .map(([naam]) => naam);

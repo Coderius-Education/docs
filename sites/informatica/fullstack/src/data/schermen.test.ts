@@ -146,6 +146,110 @@ describe('elk scherm van een les staat op zichzelf', () => {
   });
 });
 
+describe('wat een doorloop als leerling vond', () => {
+  // Een doorloop van 26 lessen las elk scherm zoals een leerling het ziet, en
+  // klikte op elke knop. Wat een script kan vastpinnen, staat hier.
+
+  it('een scherm begint niet met een zin die op het vorige scherm doorgaat', () => {
+    // "Daaronder legt de tekst zelf uit …" na een stap met de uitvoer, "Daarom
+    // maakt de Dockerfile …" na een vraag, "Klik op de regel." na een tabel:
+    // op de lange pagina stond het eronder, nu is het een scherm verder.
+    const DOORGAAND =
+      /^(Daaronder|Daarom|Daarna komt|Daarmee|Daardoor|Hetzelfde kan|Klik op de regel\.|En (maak|onder|zet)\b|Vervang je .{1,30} door deze\.)/;
+    const fout = lessen.flatMap((les) =>
+      les.schermen
+        .slice(1)
+        .filter((s) => s.blokken[0]?.soort === 'tekst' && DOORGAAND.test(s.blokken[0].tekst.trim()))
+        .map((s) => `${s.les} | ${s.naam}: ${s.blokken[0].tekst.trim().slice(0, 60)}`),
+    );
+    expect(fout).toEqual([]);
+  });
+
+  it('de uitleg bij een keuze wijst niet naar "hierboven" of "hieronder"', () => {
+    // Een controlevraag is een eigen scherm. "Hoeveel fouten meldde hij in de
+    // Gelukt hierboven?" stond in `uitleg="…"` van een <Keuze>, en dat leest
+    // de test op alinea's niet.
+    const fout = lessen.flatMap(({ naam, bron }) =>
+      [...bron.matchAll(/<Keuze\b[^>]*\buitleg=(?:"([^"]*)"|'([^']*)')/g)]
+        .map((m) => m[1] ?? m[2])
+        .filter((uitleg) => /\b(hierboven|hieronder|bovenstaande?|onderstaande?)\b/i.test(uitleg))
+        .map((uitleg) => `${naam}: ${uitleg.slice(0, 80)}`),
+    );
+    expect(fout).toEqual([]);
+  });
+
+  it('het hele bestand na de les is het laatste tabblad, niet een stap ergens in de les', () => {
+    // "Zo ziet je main.py er nu uit" stond bij 24 lessen onder de laatste
+    // opdracht en bij vier onder één fout van Er gaat iets mis.
+    const metStand = lessen.filter(
+      (les) =>
+        les.schermen.length > 0 && /<summary>Zo ziet je [^<]+ er nu uit<\/summary>/.test(les.bron),
+    );
+    expect(metStand.length).toBeGreaterThan(50);
+    const fout = metStand
+      .filter((les) => !/\.(py|html)$/.test(les.schermen.at(-1)?.tab ?? ''))
+      .map((les) => `${les.naam}: het laatste tabblad heet ${les.schermen.at(-1)?.tab}`);
+    expect(fout).toEqual([]);
+    // En het staat op dat tabblad open: geen uitklapblok met alleen de code.
+    const dicht = metStand
+      .filter((les) => les.schermen.at(-1)?.blokken.some((b) => b.soort === 'antwoord'))
+      .map((les) => les.naam);
+    expect(dicht).toEqual([]);
+  });
+
+  it('een les heeft hooguit één stap die De basis heet', () => {
+    // In Formulieren, Je site in een image en Compose heetten drie stappen
+    // zo. De stap heet naar wat erin staat: geef het begin van de sectie een
+    // eigen `###`.
+    const fout = lessen.flatMap((les) => {
+      const basis = les.schermen.filter((s) => s.naam.endsWith(' › De basis'));
+      return basis.length > 1 ? [`${les.naam}: ${basis.map((s) => s.naam).join(', ')}`] : [];
+    });
+    expect(fout).toEqual([]);
+  });
+
+  it('wat je na een opdracht terugzet, staat in de opdracht en niet in het antwoord', () => {
+    // "Haal het endpoint weer weg" en "Zet de limiet daarna terug" stonden
+    // aan het eind van het antwoord. Wie het antwoord niet openklapt, leest
+    // het niet, en de les erna gaat uit van de oude code. Een zin die alleen
+    // beschrijft ("Gooi je dat bestand weg, dan …") is geen opdracht.
+    const OPRUIMEN =
+      /(?:^|[.?]\s+|\n)(?:Haal|Zet|Gooi|Start)\b(?! je\b)[^.\n]*\b(?:weer weg|terug|daarna weer)\b[^.\n]*\./;
+    const fout = lessen.flatMap(({ naam, bron }) =>
+      [...bron.matchAll(/### (Opdracht[^\n]*)\n([\s\S]*?)(?=\n### |\n## |$)/g)].flatMap((m) =>
+        m[2]
+          .split('<details>')
+          .slice(1)
+          .filter((blok) => blok.trimStart().startsWith('<summary>Antwoord') && OPRUIMEN.test(blok))
+          .map(() => `${naam}: ${m[1]}`),
+      ),
+    );
+    expect(fout).toEqual([]);
+  });
+
+  it('een opdracht zegt niet "uit het voorbeeld" in een les zonder sectie Voorbeeld', () => {
+    const fout = lessen
+      .filter((les) => !/^## Voorbeeld\b/m.test(les.bron))
+      .filter((les) =>
+        /\b(uit|Bouw) het voorbeeld\b/.test(les.bron.split(/^## Opdrachten\b/m)[1] ?? ''),
+      )
+      .map((les) => les.naam);
+    expect(fout).toEqual([]);
+  });
+
+  it('de Run-opdrachten van Templates en formulieren stellen een vraag', () => {
+    // Ze zeiden "maak het formulier en de endpoints", en dat had de leerling
+    // in de uitleg net gedaan. Nu laat elke Run hem iets waarnemen.
+    for (const naam of ['templates', 'forms', 'post_met_templates']) {
+      const bron = lessen.find((les) => les.naam.endsWith(`formulieren/${naam}.mdx`))?.bron ?? '';
+      const run =
+        /### Opdracht \d+: Run[^\n]*\n\n([\s\S]*?)(?=\n### |\n## |$)/.exec(bron)?.[1] ?? '';
+      expect(run.split('<details>')[0], naam).toContain('?');
+      expect(run, naam).toContain('<summary>Antwoord</summary>');
+    }
+  });
+});
+
 describe('een regel code staat heel op één regel', () => {
   // De opdrachtgever wil geen regel code die afbreekt of zijwaarts buiten zijn
   // vak valt. Past de langste regel van een blok niet, dan maakt de les de
@@ -241,5 +345,14 @@ describe('de docentenhandleiding', () => {
     expect(handleiding.split('\n').length).toBeLessThanOrEqual(50);
     expect(handleiding).not.toMatch(/^## .*(Klassikaal|Didactische aanpak|Leerlijn)/m);
     expect(handleiding).toContain('(site:fullstack/docs/voor-de-docent/schoolserver)');
+  });
+
+  it('telt de diagrammen zoals de pagina waar ze staan', () => {
+    // De handleiding zei vijf, de pagina Hoe een verzoek werkt zes.
+    const pagina = paginas.find((p) => p.naam.endsWith('afronden/hoe-een-verzoek-werkt.mdx'));
+    const aantal = /in (\w+) diagrammen/.exec(pagina?.bron ?? '')?.[1];
+    expect(aantal).toBeTruthy();
+    const handleiding = readFileSync(join(SITE, 'src/pages/docenten.mdx'), 'utf8');
+    expect(handleiding).toContain(`de ${aantal} diagrammen`);
   });
 });

@@ -28,6 +28,9 @@ export const KLEINSTE_VAK = 190;
  */
 export const NOODGREEP = 80;
 
+/** Zo hoog blijft het vak met de terugkoppeling van een vraag minstens. */
+export const KLEINSTE_NA = 120;
+
 /**
  * De hoogte van een codevak dat al schuift, als het paneel `tekort` pixels
  * te lang is voor het scherm. Het vak geeft toe tot het paneel past, maar
@@ -110,6 +113,20 @@ export function verdeelSpeling(wortel: HTMLElement): void {
       el.style.maxHeight = `${hoogte}px`;
       gezet.push(el);
     };
+    // Een vraag die beantwoord is: de terugkoppeling en de uitleg schuiven
+    // in hun eigen vak (Voorspel zet `data-voorspel-na`). Bij twintig van de
+    // dertig vragen in fullstack paste het scherm tot je antwoordde. Daarna
+    // opnieuw meten: naast code wordt het paneel er niet altijd korter van.
+    const na = Array.from(paneel.querySelectorAll<HTMLElement>('[data-voorspel-na]')).filter(
+      (el) => zichtbaar(el) && el.offsetHeight > KLEINSTE_NA,
+    );
+    for (const el of na) {
+      if (tekort <= 0) break;
+      zet(el, Math.max(KLEINSTE_NA, el.offsetHeight - tekort));
+      tekort = Math.ceil(
+        paneel.getBoundingClientRect().bottom + window.scrollY + MARGE - window.innerHeight,
+      );
+    }
     // Code met de uitleg ernaast (CodeUitleg) is één rij: zo hoog als het
     // hoogste van de twee. De rij krimpt, maar niet tot onder code die nu
     // helemaal te zien is.

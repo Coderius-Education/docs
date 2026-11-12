@@ -2161,3 +2161,296 @@ describe('uitleg met veel stappen blijft losse tabbladen als de rij past', () =>
     expect(tabs(uit).map((t) => t.label)).toEqual(['Uitleg', 'Er gaat iets mis', 'Opdrachten']);
   });
 });
+
+describe('wat een doorloop van fullstack als leerling vond', () => {
+  const el = (
+    name: string,
+    attributes: Knoop['attributes'] = [],
+    children: Knoop[] = [],
+  ): Knoop => ({
+    type: 'mdxJsxFlowElement',
+    name,
+    attributes,
+    children,
+  });
+  const vraag = (soort?: string) => el('Voorspel', soort ? [{ name: 'soort', value: soort }] : []);
+  const blok = (lang: string, value: string): Knoop => ({ type: 'code', lang, value }) as Knoop;
+  const tekst = (uit: unknown) => JSON.stringify(uit);
+  const stappenIn = (uit: Knoop[], tab: string) =>
+    (
+      uit
+        .find((n) => n.name === 'LesTabs')
+        ?.children?.find((t) => t.attributes?.some((a) => a.name === 'id' && a.value === tab))
+        ?.children?.find((n) => n.name === 'LesStappen')?.children ?? []
+    )
+      .filter((n) => n.name === 'LesStap')
+      .map((n) => Object.fromEntries((n.attributes ?? []).map((a) => [a.name, a.value])));
+
+  describe('een controlevraag staat niet naast commando’s voor de terminal', () => {
+    // Je site in een image: de les sluit af met `git add`, `git commit` en
+    // `git push`, en dan de controlevraag over de cache van Docker. De vraag
+    // stond naast de git-commando's, alsof hij daarover ging, en was geen
+    // eigen stap meer.
+    const git = blok('bash', 'git add Dockerfile\ngit commit -m "Dockerfile"\ngit push');
+    const les = (code: Knoop, v: Knoop) =>
+      groepeer([
+        titel,
+        kop(2, 'De Dockerfile'),
+        alinea('Uitleg.'),
+        kop(3, 'In git'),
+        alinea('Zet de Dockerfile in git:'),
+        code,
+        v,
+        kop(2, 'Er gaat iets mis'),
+        alinea('x'),
+      ]);
+
+    it('de vraag is een eigen stap, zonder de commando’s ernaast', () => {
+      const uit = les(git, vraag('Controlevraag'));
+      expect(tekst(uit)).not.toMatch(/"name":"vraag"/);
+      expect(stappenIn(uit, 'de-dockerfile').map((s) => s.label)).toEqual([
+        'In git',
+        'Controlevraag',
+      ]);
+    });
+
+    it('een controlevraag over Python-code staat er nog wel naast', () => {
+      const uit = les(blok('python', 'x = 1'), vraag('Controlevraag'));
+      expect(tekst(uit)).toMatch(/"name":"vraag"/);
+    });
+
+    it('en een voorspelvraag over een commando ook', () => {
+      const uit = les(git, vraag());
+      expect(tekst(uit)).toMatch(/"name":"vraag"/);
+    });
+  });
+
+  describe('voorkennis met één alinea is geen tabblad Uitleg', () => {
+    // Templates, Formulieren en Je site in een image begonnen met een tabblad
+    // Uitleg waarop één alinea stond, onder het dichte blok met voorkennis.
+    const voorkennis = el('Voorkennis', [{ name: 'items', value: '[]' }]);
+
+    it('hij opent het eerste tabblad', () => {
+      const uit = groepeer([
+        titel,
+        voorkennis,
+        alinea('Een FileResponse stuurt elke keer hetzelfde bestand.'),
+        kop(2, 'Een dobbelsteen'),
+        alinea('a'),
+        kop(2, 'Opdrachten'),
+        alinea('b'),
+      ]);
+      expect(tabs(uit).map((t) => t.label)).toEqual(['Een dobbelsteen', 'Opdrachten']);
+      const eerste = uit.find((n: Knoop) => n.name === 'LesTabs').children[0];
+      expect(eerste.children.map((n: Knoop) => n.name ?? n.type)).toEqual([
+        'Voorkennis',
+        'paragraph',
+        'heading',
+        'paragraph',
+      ]);
+    });
+
+    it('past het niet boven het eerste scherm, dan is het een eigen scherm dat Vooraf heet', () => {
+      // Templates: het eerste scherm had al een mappenboom en een bestand,
+      // en was met de inleiding erboven 144 pixels te lang.
+      const lang = blok('html', Array.from({ length: 24 }, (_, i) => `<p>${i}</p>`).join('\n'));
+      const uit = groepeer([
+        titel,
+        voorkennis,
+        alinea('Een FileResponse stuurt elke keer hetzelfde bestand.'),
+        kop(2, 'Een dobbelsteen'),
+        alinea('Maak dobbelsteen.html:'),
+        lang,
+        kop(2, 'Opdrachten'),
+        alinea('b'),
+      ]);
+      expect(tabs(uit).map((t) => t.label)).toEqual(['Uitleg', 'Opdrachten']);
+      expect(stappenIn(uit, 'uitleg').map((st) => st.label)).toEqual(['Vooraf', 'Een dobbelsteen']);
+    });
+
+    it('met twee alinea’s blijft het een tabblad', () => {
+      const uit = groepeer([
+        titel,
+        voorkennis,
+        alinea('Een.'),
+        alinea('Twee.'),
+        kop(2, 'Predict'),
+        alinea('a'),
+        kop(2, 'Make'),
+        alinea('b'),
+      ]);
+      expect(tabs(uit).map((t) => t.label)).toEqual(['Uitleg', 'Predict', 'Make']);
+    });
+  });
+
+  describe('het hele bestand na de les is het laatste tabblad', () => {
+    // `<details><summary>Zo ziet je main.py er nu uit</summary>` sluit in de
+    // bron de hoofdtekst of de pagina af. In tabbladen stond het in de stap
+    // waar het toevallig onder viel: bij 24 lessen onder de laatste opdracht,
+    // bij vier onder één fout van Er gaat iets mis.
+    const stand = (naam: Knoop[]): Knoop =>
+      el(
+        'details',
+        [],
+        [
+          el('summary', [], [alinea('').children?.[0] as Knoop, ...naam]),
+          alinea('Dit is je hele bestand na deze les.'),
+          blok('python', 'from fastapi import FastAPI'),
+        ],
+      );
+    const naam = (bestand: string): Knoop[] => [
+      { type: 'text', value: 'Zo ziet je ' },
+      { type: 'inlineCode', value: bestand },
+      { type: 'text', value: ' er nu uit' },
+    ];
+    const main = stand(naam('main.py'));
+    const les = (...extra: Knoop[]) =>
+      groepeer([
+        titel,
+        kop(2, 'Het formulier'),
+        alinea('a'),
+        kop(2, 'Er gaat iets mis'),
+        kop(3, '422 na Verstuur'),
+        alinea('Oorzaak.'),
+        ...extra,
+        kop(2, 'Opdrachten'),
+        alinea('b'),
+      ]);
+
+    it('met de naam van het bestand, na de opdrachten', () => {
+      const uit = les(main);
+      expect(tabs(uit).at(-1)).toEqual({
+        id: 'stand-main-py',
+        titel: 'Zo ziet je main.py er nu uit',
+        label: 'main.py',
+        werkvorm: 'controle',
+      });
+      expect(tabs(uit).map((t) => t.label)).toEqual([
+        'Het formulier',
+        'Er gaat iets mis',
+        'Opdrachten',
+        'main.py',
+      ]);
+    });
+
+    it('het bestand staat er open, onder een kop met een adres', () => {
+      const uit = les(main);
+      const tab = uit.find((n: Knoop) => n.name === 'LesTabs').children.at(-1);
+      expect(tab.children.map((n: Knoop) => n.name ?? n.type)).toEqual([
+        'heading',
+        'paragraph',
+        'code',
+      ]);
+      expect(tab.children[0].data.id).toBe('stand-main-py');
+      expect(tab.children[0].depth).toBe(2);
+      // En het staat niet meer onder de fout.
+      const fouten = uit.find((n: Knoop) => n.name === 'LesTabs').children[1];
+      expect(tekst(fouten)).not.toContain('Dit is je hele bestand');
+    });
+
+    it('een map in de naam staat niet op het tabblad, en twee bestanden zijn twee tabbladen', () => {
+      const uit = les(stand(naam('templates/berichten.html')), main);
+      expect(
+        tabs(uit)
+          .slice(-2)
+          .map((t) => [t.id, t.label]),
+      ).toEqual([
+        ['stand-templates-berichten-html', 'berichten.html'],
+        ['stand-main-py', 'main.py'],
+      ]);
+    });
+
+    it('een les met alleen uitleg houdt zijn tabbladen', () => {
+      // De stand telt niet mee bij "na de uitleg komt nog iets": anders werd
+      // de uitleg van zo'n les één tabblad.
+      const uit = groepeer([titel, kop(2, 'Een'), alinea('a'), kop(2, 'Twee'), alinea('b'), main]);
+      expect(tabs(uit).map((t) => t.label)).toEqual(['Een', 'Twee', 'main.py']);
+    });
+
+    it('ook als de summary direct onder <details> staat', () => {
+      // Zonder lege regel ertussen leest MDX de <summary> als tekst in een
+      // alinea. Zo staan er 43 van de 58 in fullstack.
+      const zo: Knoop = el(
+        'details',
+        [],
+        [
+          {
+            type: 'paragraph',
+            children: [{ ...el('summary', [], naam('main.py')), type: 'mdxJsxTextElement' }],
+          },
+          blok('python', 'from fastapi import FastAPI'),
+        ],
+      );
+      const uit = les(zo);
+      expect(tabs(uit).at(-1)?.label).toBe('main.py');
+      const tab = uit.find((n: Knoop) => n.name === 'LesTabs').children.at(-1);
+      expect(tab.children.map((n: Knoop) => n.name ?? n.type)).toEqual(['heading', 'code']);
+    });
+
+    it('een ander uitklapblok blijft waar het staat', () => {
+      const tip = el('details', [], [el('summary', [], [{ type: 'text', value: 'Tip' }])]);
+      const uit = les(tip);
+      expect(tabs(uit).map((t) => t.label)).toEqual([
+        'Het formulier',
+        'Er gaat iets mis',
+        'Opdrachten',
+      ]);
+    });
+
+    it('zonder tabbladen verandert er niets aan de pagina', () => {
+      const pagina = [titel, alinea('Alleen een alinea.'), main];
+      expect(groepeer(pagina)).toBeNull();
+      expect(pagina).toHaveLength(3);
+    });
+  });
+
+  describe('Er gaat iets mis en één tabblad Opdrachten', () => {
+    const les = (...opdrachten: string[]) =>
+      groepeer([
+        titel,
+        kop(2, 'Het formulier'),
+        alinea('a'),
+        kop(2, 'Er gaat iets mis'),
+        alinea('x'),
+        ...opdrachten.flatMap((naam) => [kop(2, naam), alinea('b')]),
+      ]);
+
+    it('het tabblad Opdrachten heeft het icoon van een opdracht', () => {
+      // Het had dat van uitleg: 75 van de 96 tabbladen in een doorloop
+      // hadden hetzelfde icoon.
+      expect(tabs(les('Opdrachten')).at(-1)?.werkvorm).toBe('aanpassen');
+    });
+
+    it('de fouten blijven ervoor: de leerling bouwt in de uitleg al mee', () => {
+      expect(tabs(les('Opdrachten')).map((t) => t.label)).toEqual([
+        'Het formulier',
+        'Er gaat iets mis',
+        'Opdrachten',
+      ]);
+    });
+
+    it('na een rij genummerde opdrachten komen ze nog wel', () => {
+      expect(tabs(les('Opdracht 1', 'Opdracht 2')).map((t) => t.label)).toEqual([
+        'Het formulier',
+        'Opdracht 1',
+        'Opdracht 2',
+        'Er gaat iets mis',
+      ]);
+    });
+  });
+
+  it('de link naar de volgende les is weg zolang het tabblad een knop Volgende heeft', () => {
+    // Die link zegt ook "Volgende", staat op een kort scherm direct onder de
+    // knop en is groter: op 139 van de 226 schermen stond hij in beeld, en
+    // wie erop klikte sloeg de rest van de les over. Of hij weg is, ziet
+    // alleen een browser (scripts/meet-les-tabs.mjs meldt het).
+    const css = readFileSync(
+      fileURLToPath(new URL('./components/LesTabs/styles.module.css', import.meta.url)),
+      'utf8',
+    );
+    expect(css).toMatch(
+      /html:has\(\[data-les-tab\]:not\(\[hidden\]\) > \[data-les-verder\]\) \.pagination-nav__link--next\) \{\s*display: none;/,
+    );
+    expect(css).not.toMatch(/pagination-nav__link--prev[^{]*\{\s*display: none/);
+  });
+});

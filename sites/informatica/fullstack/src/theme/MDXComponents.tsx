@@ -18,6 +18,7 @@ import Voorspel, { Keuze, Uitleg } from '@coderius/shared/components/Voorspel';
 import { Werkvormen } from '@coderius/shared/components/Werkvorm';
 import Bestand from '@site/src/components/Bestand';
 import Gelukt from '@site/src/components/Gelukt';
+import Vakje from '@site/src/components/Vakje';
 import MDXComponents from '@theme-original/MDXComponents';
 
 // Maakt deze componenten globaal beschikbaar in alle .md/.mdx zonder import:
@@ -52,4 +53,6 @@ export default {
   LesReeks,
   // De docentenhandleiding: de onderdelen van een les met hun literatuur.
   Werkvormen,
+  // Een takenlijst (`- [ ] …`) met vakjes die je kunt aanvinken.
+  input: Vakje,
 };

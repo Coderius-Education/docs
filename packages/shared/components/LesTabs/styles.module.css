@@ -643,6 +643,16 @@
   text-align: right;
 }
 
+/* Zolang het open tabblad een knop Volgende heeft, is de link naar de
+   volgende les weg. Die zegt ook "Volgende", staat op een kort scherm direct
+   onder de knop en is groter: op 139 van de 226 schermen in fullstack stond
+   hij in beeld, en wie erop klikte sloeg de rest van de les over. Op het
+   laatste scherm van de les staat hij er weer. De link naar de vorige les
+   blijft. */
+:global(html:has([data-les-tab]:not([hidden]) > [data-les-verder]) .pagination-nav__link--next) {
+  display: none;
+}
+
 /* De knop Volgende breekt af. Infima houdt een knop op één regel, en met een
    lange naam erin ("Volgende: network web declared as external, but could
    not be found") was de pagina op een telefoon breder dan het scherm. */

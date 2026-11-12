@@ -66,30 +66,6 @@ Active: active (running)
 
 ## Er gaat iets mis
 
-### failed to connect to the docker API
-
-```text
-failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory
-```
-
-**Oorzaak:** de dienst van Docker draait niet.
-
-**Oplossing:** start hem, en laat hem voortaan vanzelf starten:
-
-```bash
-sudo systemctl enable --now docker
-```
-
-### Cannot connect to the Docker daemon
-
-```text
-Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
-```
-
-**Oorzaak:** hetzelfde als bij `failed to connect to the docker API`, in een andere vorm. Het bestand `docker.sock` staat er nog, maar de dienst die erachter hoort te luisteren, draait niet.
-
-**Oplossing:** `sudo systemctl enable --now docker`, en kijk met `systemctl status docker` of er `active (running)` staat.
-
 ### `inactive (dead)` bij systemctl status
 
 **Oorzaak:** de dienst staat uit, of Ubuntu is niet opgestart met systemd.

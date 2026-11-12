@@ -119,14 +119,15 @@ precies een miljoen kwam er nog net door. Die grens beschermt je tegen het
 ergste, maar een bericht in een gastenboek hoort geen megabyte te zijn. De
 echte grens zet je zelf, in [les 3](site:fullstack/docs/veiligheid/invoer/grenzen).
 
-<Voorspel soort="Controlevraag" vraag="Het formulier stopt na 280 tekens. Waarom houdt maxlength groot.py niet tegen?">
-  <Keuze goed uitleg="maxlength staat in de HTML, en die leest alleen de browser. groot.py stuurt het verzoek zonder die HTML.">De grens staat in het formulier, en groot.py gebruikt dat formulier niet</Keuze>
-  <Keuze uitleg="De server leest maxlength helemaal niet, hoe het veld ook heet. Wie leest de HTML wel?">De server leest maxlength, maar het veld heet in groot.py anders</Keuze>
-  <Keuze uitleg="Ook een langzaam script komt erdoor. Het gaat niet om de snelheid, maar om wat er in het verzoek staat.">groot.py stuurt het bericht te snel om het te kunnen tellen</Keuze>
+<Voorspel soort="Controlevraag" vraag="Een klasgenoot haalt in DevTools maxlength uit het formulier in zijn eigen browser, en verstuurt 300 tekens. Komt dat bericht in je database?">
+  <Keuze goed uitleg="De HTML in zijn browser mag hij veranderen, en je endpoint controleert de lengte nog niet.">Ja: de grens stond alleen in zijn browser</Keuze>
+  <Keuze uitleg="Je server stuurt de HTML één keer op. Wat een browser er daarna mee doet, ziet je server niet.">Nee: jouw server stuurde het formulier, dus jouw maxlength geldt nog</Keuze>
+  <Keuze uitleg="Starlette weigert pas boven een megabyte. Hoeveel tekens is dat ongeveer?">Nee: Starlette houdt een te lang veld tegen</Keuze>
   <Uitleg>
 
-  Alles in je HTML is een hulp voor de bezoeker in de browser. Een script stuurt
-  het verzoek zelf, en je endpoint ziet alleen wat erin staat.
+  Alles in je HTML is een hulp voor de bezoeker. Wie de HTML in zijn browser
+  aanpast of een script gebruikt, stuurt wat hij wil, en je endpoint ziet alleen
+  wat er in het verzoek staat.
 
   </Uitleg>
 </Voorspel>

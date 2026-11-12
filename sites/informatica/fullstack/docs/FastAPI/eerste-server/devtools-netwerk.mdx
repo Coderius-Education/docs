@@ -51,7 +51,7 @@ Het is één verzoek, en je ziet het twee keer: in Netwerk wat de browser stuurd
 
 ## Eén verzoek van dichtbij
 
-Klik op de regel. Rechts opent een venster met tabbladen. Bij **Headers** staat wat er over de lijn ging, in drie regels die je herkent:
+Klik in **Netwerk** op de regel van `127.0.0.1`. Rechts opent een venster met tabbladen. Bij **Headers** staat wat er over de lijn ging, in drie regels die je herkent:
 
 ```
 Verzoek-URL:      http://127.0.0.1:8000/
@@ -79,7 +79,7 @@ Soms staat er in Netwerk niets, en de volgende keer wel. Dat ligt bijna altijd a
 3. Vind de methode en de statuscode bij Headers, en je JSON bij Reactie
 
 :::danger[Gaat er iets mis?]
-Blijft de lijst leeg? Loop de vier oorzaken bij [Als de lijst leeg is](#als-de-lijst-leeg-is) langs. Zie je geen tabblad Netwerk? Het paneel is te smal en verbergt tabbladen achter `»` rechts in de rij. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Blijft de lijst leeg? Loop de vier oorzaken bij [Als de lijst leeg is](#als-de-lijst-leeg-is) langs. Zie je geen tabblad Netwerk? Het paneel is te smal en verbergt tabbladen achter `»` rechts in de rij. Meer oplossingen staan op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 ## Opdrachten
@@ -121,11 +121,13 @@ De regel is rood en heeft status `404`. Bij Reactie staat `{"detail":"Not Found"
 
 ### Opdracht 4: Investigate - De server staat uit
 
-Stop je server met Ctrl+C in de terminal. Herlaad de pagina met Netwerk open.
+Stop je server met Ctrl+C in de terminal. Herlaad de pagina met Netwerk open. Wat staat er nu in de regel, en wat in de terminal?
+
+Start je server daarna weer met `fastapi dev main.py`.
 
 <details>
 <summary>Antwoord</summary>
 
-De regel is rood en er staat geen statuscode, maar `(mislukt)` of `(failed)`, vaak met `net::ERR_CONNECTION_REFUSED` erbij. Er was geen server om te antwoorden, dus er is ook geen status. In de terminal staat niets: het verzoek is er nooit aangekomen. Dat is het verschil met de 404 van hiervoor. Start je server daarna weer met `fastapi dev main.py`.
+De regel is rood en er staat geen statuscode, maar `(mislukt)` of `(failed)`, vaak met `net::ERR_CONNECTION_REFUSED` erbij. Er was geen server om te antwoorden, dus er is ook geen status. In de terminal staat niets: het verzoek is er nooit aangekomen. Dat is het verschil met de 404 van hiervoor.
 
 </details>

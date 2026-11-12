@@ -185,6 +185,14 @@ describe('LesTabs', () => {
     expect(actief()).toBe('Opdracht 1');
     expect(paneel('er-gaat-iets-mis').querySelector('button')).toBeNull();
   });
+
+  it('merkt de knop Volgende, zodat de link naar de volgende les dan weg kan', () => {
+    // De opmaak verbergt die link zolang het open tabblad `data-les-verder`
+    // als kind heeft; op het laatste tabblad staat hij er weer.
+    render(<Les />);
+    expect(paneel('theorie').querySelector(':scope > [data-les-verder] button')).not.toBeNull();
+    expect(paneel('er-gaat-iets-mis').querySelector('[data-les-verder]')).toBeNull();
+  });
 });
 
 // Een tabblad met meer ###-koppen toont ze als stappen, één tegelijk.

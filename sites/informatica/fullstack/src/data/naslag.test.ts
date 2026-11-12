@@ -16,14 +16,32 @@ import { IMPORT_VAN } from '../checker/imports';
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
 const lessen = [...alleLesbestanden(`${SITE}/docs`), ...alleLesbestanden(`${SITE}/src/pages`)];
 const lees = (pad: string) => readFileSync(pad, 'utf8');
-const kort = (pad: string) => pad.slice(SITE.length + 1);
+const kort = (pad: string) => pad.slice(SITE.length).replace(/^[\\/]/, '');
+
+// Een link naar de foutenpagina, met wat er op dezelfde regel voor staat.
+const LINK = /([^\n[]*)\[([^\]]+)\]\((?:site:fullstack)?\/docs\/troubleshooting[#)]/g;
 
 describe('naslag en gereedschap', () => {
   it('een link naar de foutenpagina heet zoals in de navbar: Er gaat iets mis', () => {
     const fout = lessen.flatMap((pad) =>
-      [...lees(pad).matchAll(/\[([^\]]+)\]\(\/docs\/troubleshooting[#)]/g)]
-        .filter((m) => !m[1].startsWith('Er gaat iets mis'))
-        .map((m) => `${kort(pad)}: [${m[1]}]`),
+      [...lees(pad).matchAll(LINK)]
+        .filter((m) => !m[2].startsWith('Er gaat iets mis'))
+        .map((m) => `${kort(pad)}: [${m[2]}]`),
+    );
+    expect(fout).toEqual([]);
+    // De test las eerst alleen links als pad (/docs/troubleshooting); sinds de
+    // site:-links vond hij er geen meer.
+    expect(lessen.flatMap((pad) => [...lees(pad).matchAll(LINK)]).length).toBeGreaterThan(20);
+  });
+
+  it('en staat er als pagina: elke les heeft ook een tabblad dat zo heet', () => {
+    // Met tabbladen betekende "Er gaat iets mis" drie dingen: het tabblad van
+    // de les, de pagina in de navbar en de tekst van een link. Zonder link is
+    // het het tabblad ("bij Er gaat iets mis"); de pagina heet "de pagina".
+    const fout = lessen.flatMap((pad) =>
+      [...lees(pad).matchAll(LINK)]
+        .filter((m) => !/pagina\s+$/i.test(m[1]))
+        .map((m) => `${kort(pad)}: "${m[1].trim()} [${m[2]}]"`),
     );
     expect(fout).toEqual([]);
   });
