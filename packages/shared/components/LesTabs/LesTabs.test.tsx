@@ -231,6 +231,23 @@ const tabblad = () =>
     (k) => k.getAttribute('aria-selected') === 'true',
   )?.textContent;
 
+describe('een volle rij stappen', () => {
+  it('heeft de naam van een stap in een eigen vak, en voluit in de titel van de knop', () => {
+    // Op een breed scherm staat de rij op één regel: de knoppen die niet open
+    // staan krimpen, en hun naam eindigt dan op een beletselteken. De opmaak
+    // kort het vak in, niet de knop; de hele naam staat in de titel. Of de
+    // rij op één regel staat, meet het meetscript (`stapregels`).
+    render(<LesMetStappen />);
+    const knop = document.querySelector('[data-stap="koppen"]') as HTMLElement;
+    expect(knop.querySelector('span:last-child')?.textContent).toBe('Koppen');
+    expect(knop.getAttribute('title')).toBe('Koppen');
+    // Een schermlezer leest de naam van de knop, niet de titel.
+    expect(knop.textContent).toBe('2Koppen');
+    // Een tabblad heeft dat vak niet: daar staat het icoon met de naam.
+    expect(document.querySelector('[data-tab="make"]')?.getAttribute('title')).toBeNull();
+  });
+});
+
 describe('de code van een les', () => {
   it('wordt opnieuw gemeten als het lettertype van de code geladen is', () => {
     // Het lettertype van de code laadt pas als er code in beeld komt, en is

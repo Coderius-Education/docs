@@ -1951,6 +1951,27 @@ describe('een controlevraag is een eigen stap', () => {
     expect(JSON.stringify(uit)).not.toContain('aansluiten-controlevraag');
   });
 
+  it('twee lange alinea’s vóór de vraag zijn ook een scherm', () => {
+    // De foutpagina van fullstack: twee alinea's van samen zeshonderd tekens
+    // en de vraag. Het scherm paste, tot je antwoordde: 95 pixels te lang.
+    const lang = 'Zit er een fout in je Python, dan krijgt de bezoeker een 500. '.repeat(4);
+    const les = (tekst: string) =>
+      groepeer([
+        titel,
+        kop(2, 'De handler'),
+        kop(3, 'Een fout blijft een 500'),
+        alinea(tekst),
+        alinea(tekst),
+        vraag(),
+        kop(2, 'Er gaat iets mis'),
+        alinea('x'),
+      ]);
+    expect(stappenIn(les(lang), 'de-handler').map((st) => st.label)).toContain('Controlevraag');
+    expect(stappenIn(les('Kort.'), 'de-handler').map((st) => st.label)).not.toContain(
+      'Controlevraag',
+    );
+  });
+
   it('twee vragen in één tabblad heten Controlevraag en Controlevraag 2', () => {
     const uit = groepeer([
       titel,
@@ -2437,6 +2458,20 @@ describe('wat een doorloop van fullstack als leerling vond', () => {
         'Er gaat iets mis',
       ]);
     });
+  });
+
+  it('de rij stappen staat op een breed scherm op één regel', () => {
+    // Een tweede regel kostte elk scherm van dat tabblad veertig pixels: in
+    // fullstack stond hij er in 41 tabbladen. De knoppen krimpen nu, behalve
+    // die van de stap die open staat.
+    const css = readFileSync(
+      fileURLToPath(new URL('./components/LesTabs/styles.module.css', import.meta.url)),
+      'utf8',
+    ).replace(/\/\*[\s\S]*?\*\//g, '');
+    const breed = /@media \(min-width: 997px\) \{\s*\.staplist \{([^}]*)\}([\s\S]*?)\n\}/.exec(css);
+    expect(breed?.[1]).toMatch(/flex-wrap: nowrap/);
+    expect(breed?.[2]).toMatch(/\.stap\[aria-selected="true"\] \{\s*flex-shrink: 0;/);
+    expect(breed?.[2]).toMatch(/\.stapLabel \{[^}]*text-overflow: ellipsis;/);
   });
 
   it('de link naar de volgende les is weg zolang het tabblad een knop Volgende heeft', () => {

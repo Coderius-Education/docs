@@ -204,6 +204,39 @@
   color: var(--ifm-color-primary);
 }
 
+/* Op een breed scherm staat de rij stappen altijd op één regel. Een tweede
+   regel kostte elk scherm van dat tabblad veertig pixels; in fullstack stond
+   hij er in 41 tabbladen, sinds de uitleg van elke les één tabblad met
+   stappen is. Past de rij niet, dan krimpen de knoppen van de stappen die
+   niet open staan, en eindigt hun naam op een beletselteken; de stap die
+   open staat, heet voluit. De hele naam staat in de titel van de knop, en de
+   knop Volgende noemt de volgende stap ook voluit. */
+@media (min-width: 997px) {
+  .staplist {
+    flex-wrap: nowrap;
+  }
+
+  .stap {
+    flex: 0 1 auto;
+    min-width: 2.5rem;
+  }
+
+  .stap[aria-selected="true"] {
+    flex-shrink: 0;
+  }
+
+  .stapNummer {
+    flex: 0 0 auto;
+  }
+
+  .stapLabel {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 /* De kop van een stap staat voluit op zijn knop. Een stap in het tabblad
    Uitleg is een hele `##`-sectie, en heeft dus een h2. */
 .kopOpStap > h2,

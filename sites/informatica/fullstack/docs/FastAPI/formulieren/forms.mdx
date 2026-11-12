@@ -35,14 +35,15 @@ Maak `static/pages/naam_form.html`:
 
 ## De endpoints
 
-`Form` komt uit `fastapi`, net als `FastAPI` zelf. Zet hem daarom in die regel
-bovenaan je `main.py`:
+Zet `Form` bij de import van `fastapi`, bovenaan je `main.py`:
 
 <Bestand pad="main.py" />
 
 ```python
 from fastapi import FastAPI, Form, Request
 ```
+
+### Twee endpoints
 
 Zet daarna twee endpoints onder je andere endpoints: één dat het formulier toont, en één dat het verstuurde formulier ontvangt:
 

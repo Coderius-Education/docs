@@ -29,7 +29,7 @@ export const KLEINSTE_VAK = 190;
 export const NOODGREEP = 80;
 
 /** Zo hoog blijft het vak met de terugkoppeling van een vraag minstens. */
-export const KLEINSTE_NA = 120;
+export const KLEINSTE_NA = 90;
 
 /**
  * De hoogte van een codevak dat al schuift, als het paneel `tekort` pixels

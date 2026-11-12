@@ -44,7 +44,7 @@ Een webserver hoort daarom te draaien als een gewone gebruiker, die zo weinig ma
 
 ### De map data aan app geven
 
-De databases hebben een map nodig waar `app` wel mag schrijven. De Dockerfile maakt de map `data` daarom zelf, en geeft hem aan `app`. Zet na `COPY . .` deze twee regels:
+De databases komen in een map `data`, die de Dockerfile zelf maakt en aan `app` geeft. Zet na `COPY . .` deze twee regels:
 
 ```dockerfile
 RUN useradd --system app && mkdir data && chown app data

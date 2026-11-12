@@ -517,9 +517,9 @@ in de gedeelde stap en de onderdelen gekomen, elk met een test:
   kaart `<Probleem>` is in een tabblad dicht tot je hem aanklikt, een
   blokprogramma (`Blokken`) schaalt ook op de hoogte van het scherm.
 
-Het meetscript loopt de hele build af, niet alleen `build/docs`. Een rij
-stappen mag op twee regels staan (in web en python gebeurt dat ook); de rij
-tabbladen niet.
+Het meetscript loopt de hele build af, niet alleen `build/docs`. De rij
+tabbladen moet op één regel passen; de rij stappen doet dat op een breed
+scherm vanzelf (zie Wat een doorloop van fullstack als leerling vond).
 
 **Passen is niet genoeg.** Een review van robotica als leerling vond wat
 "past op het scherm" niet ziet: een aansluitschema op 128 bij 240 pixels,
@@ -663,14 +663,15 @@ uitkomst, Test jezelf), de tip boven `## Opdrachten` eronder (dan is hij de
 stap Vooraf en niet het eind van de uitleg), kortere koppen voor de rij
 tabbladen met het oude adres als vast id, en `les_tabs: false` op de
 pagina's waar je zoekt, print of afvinkt. Wat een auteur hieruit meeneemt:
-een rij stappen op twee regels kost elk scherm van dat tabblad veertig
-pixels, dus houd de koppen kort; en een lange foutmelding of een FOUT/GOED
+in een volle rij stappen wordt een lange naam ingekort, dus houd de
+koppen kort; en een lange foutmelding of een FOUT/GOED
 van tien regels maakt een fout in Er gaat iets mis te lang, dus toon alleen
 de regel die verandert.
 
-**Wat een doorloop van fullstack als leerling vond** (november 2026). De
-doorloop beantwoordde elke vraag en klikte op elke knop Volgende in 26
-lessen. Sindsdien:
+**Wat een doorloop van fullstack als leerling vond** (november 2026; alle
+1366 schermen passen op 1280×720 en 1366×768, ook na het antwoord op elk
+van de 180 vragen). De doorloop beantwoordde elke vraag en klikte op elke
+knop Volgende in 26 lessen. Sindsdien:
 
 - **Een scherm met een vraag past ook na het antwoord.** `<Voorspel>` maakt
   in een tabblad zelf ruimte: de regel "Kies wat jij denkt" is weg zodra er
@@ -707,6 +708,17 @@ lessen. Sindsdien:
   uitleg ervoor is daardoor ook in de lessen zonder Er gaat iets mis één
   tabblad Uitleg met stappen. Er gaat iets mis blijft vóór zo'n tabblad
   staan (`isVerzameltab`): de leerling bouwt in de uitleg al mee.
+- **De rij stappen staat op een breed scherm op één regel.** Een tweede
+  regel kostte elk scherm van dat tabblad veertig pixels, en met de uitleg
+  van elke les als één tabblad stond hij er in 41 tabbladen van fullstack.
+  Past de rij niet, dan krimpen de knoppen van de stappen die niet open
+  staan en eindigt hun naam op een beletselteken (`.stapLabel`); de stap die
+  open staat, heet voluit, en de titel van een knop geeft de hele naam. Op
+  een telefoon schuift de rij, zoals eerst. Dit geldt voor elke cursus met
+  tabbladen.
+- **Een controlevraag na twee lange alinea's is ook een eigen stap**
+  (`LANGE_INLEIDING`, vierhonderd tekens): het scherm paste, tot je
+  antwoordde.
 - **Het meetscript** beantwoordt met `--klik` elke vraag, een antwoord na
   het andere tot het goede, en meet na elk antwoord (`naAntwoord`). Het
   meldt ook of de link naar de volgende les naast de knop Volgende staat

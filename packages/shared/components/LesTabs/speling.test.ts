@@ -210,7 +210,7 @@ describe('verdeelSpeling', () => {
     verdeelSpeling(wortel);
     expect(na.style.maxHeight).toBe(`${KLEINSTE_NA}px`);
     // Een kort vak blijft zoals het is.
-    maat(na, { offsetHeight: 100 });
+    maat(na, { offsetHeight: 80 });
     onderkant(paneel, 798);
     verdeelSpeling(wortel);
     expect(na.style.maxHeight).toBe('');

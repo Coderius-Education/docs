@@ -250,7 +250,9 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
             aria-controls={`paneel-${t.id}`}
             tabIndex={t.id === actief ? 0 : -1}
             className={niveau === 'tab' ? styles.tab : styles.stap}
-            title={t.label === t.titel ? undefined : t.titel}
+            // Een stap in een volle rij staat ingekort op zijn knop: dan
+            // zegt de titel hoe hij voluit heet.
+            title={t.label !== t.titel ? t.titel : niveau === 'stap' ? t.label : undefined}
             aria-label={t.kort ? t.label : undefined}
             onClick={() => kies(t.id)}
           >
@@ -258,7 +260,11 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
             {niveau === 'tab' && t.werkvorm && (
               <WerkvormIcoon id={t.werkvorm} className={styles.tabIcoon} />
             )}
-            {t.kort ?? t.label}
+            {niveau === 'stap' ? (
+              <span className={styles.stapLabel}>{t.kort ?? t.label}</span>
+            ) : (
+              (t.kort ?? t.label)
+            )}
           </button>
         ))}
       </div>

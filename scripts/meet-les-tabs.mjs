@@ -208,11 +208,13 @@ async function meetNaAntwoord(pagina, paneel, id) {
   const vraag = paneel.locator('[data-voorspel]:visible').first();
   if ((await vraag.count()) === 0) return {};
   let naAntwoord = null;
+  // Telkens het eerste antwoord dat nog niet is geprobeerd. Zijn alle foute
+  // geweest, dan vallen de eerdere weg en staat het goede er nog: tellen op
+  // plek gaat dan mis.
+  const open = vraag.locator('fieldset button:not(:has-text("Niet goed"))');
   const keuzes = await vraag.locator('fieldset button').count();
-  for (let i = 0; i < keuzes; i++) {
-    // Na het goede antwoord staan de andere achter een knop; zover komt de
-    // lus niet.
-    await vraag.locator('fieldset button').nth(i).click();
+  for (let i = 0; i < keuzes && (await open.count()) > 0; i++) {
+    await open.first().click();
     await pagina.waitForTimeout(250);
     await pagina.evaluate(() => window.scrollTo(0, 0));
     naAntwoord = Math.max(naAntwoord ?? Number.NEGATIVE_INFINITY, await over(pagina, id));

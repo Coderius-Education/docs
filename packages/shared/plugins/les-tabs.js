@@ -154,6 +154,9 @@ const stappenlijst = (kinderen) => ({
   children: kinderen,
 });
 
+/** Zoveel tekens tekst vóór een controlevraag is al een scherm (vier regels). */
+const LANGE_INLEIDING = 400;
+
 /** De naam van de stap met de controlevraag van een sectie. */
 const CONTROLEVRAAG = 'Controlevraag';
 
@@ -196,9 +199,12 @@ function vragenAlsStap(kinderen, sectieId) {
     const ervoor = stuk
       .slice(0, i)
       .filter((node) => node.type !== 'heading' && !zetNietsNeer(node));
+    // Twee lange alinea's vullen een scherm ook: met de vraag eronder paste
+    // het tot je antwoordde (de foutpagina van fullstack, 95 pixels te lang).
     const vult =
       ervoor.some((node) => node.type !== 'paragraph') ||
-      ervoor.filter((node) => node.type === 'paragraph').length >= 3;
+      ervoor.filter((node) => node.type === 'paragraph').length >= 3 ||
+      ervoor.reduce((som, node) => som + tekstVan(node).length, 0) >= LANGE_INLEIDING;
     if (i > 0 && vult && stuk.slice(i + 1).every(hoortBijVraag)) {
       nummer += 1;
       const id = `${sectieId}-controlevraag${nummer > 1 ? `-${nummer}` : ''}`;

@@ -91,14 +91,6 @@ Compose verzint de namen zelf, met de naam van je map ervoor: de container heet 
 | `docker compose logs -f` | meekijken in de logboeken, tot Ctrl+C |
 | `docker compose down` | containers stoppen en weggooien; het volume blijft |
 
-Draait je site zo, zet `compose.yaml` dan in git:
-
-```bash
-git add compose.yaml
-git commit -m "Compose"
-git push
-```
-
 ## Opruimen
 
 ### Wat weg mag
@@ -111,6 +103,14 @@ docker image rm gastenboek
 ```
 
 `docker container prune` vraagt `Are you sure you want to continue? [y/N]`. Typ `y`: hij gooit elke gestopte container weg, en laat je site, die draait, staan. Daarna gebruikt geen container het image `gastenboek` meer, en mag het weg. Het image van `hello-world` gooi je op dezelfde manier weg: `docker image rm hello-world`.
+
+Zet tot slot `compose.yaml` in git:
+
+```bash
+git add compose.yaml
+git commit -m "Compose"
+git push
+```
 
 <Voorspel soort="Controlevraag" vraag="Je verandert main.py en typt docker compose up -d --build. Wat gebeurt er met de berichten in je gastenboek?">
   <Keuze goed uitleg="--build maakt een nieuw image en een nieuwe container. De databases staan in het volume, en dat koppelt Compose opnieuw.">Ze staan er nog: de nieuwe container krijgt hetzelfde volume</Keuze>

@@ -219,11 +219,11 @@ return templates.TemplateResponse(
 )
 ```
 
-<Voorspel vraag="Je vult Sam in en verstuurt het formulier. Wat zie je?">
-  <Keuze uitleg="Dan moet de naam ergens aankomen waar de template hem zoekt. Kijk om welke naam de template vraagt, en of die in het dictionary staat.">`Hallo Sam!`</Keuze>
+<Voorspel vraag="Je vult Sam in en verstuurt. Wat zie je?">
+  <Keuze uitleg="Om welke naam vraagt de template, en staat die in het dictionary?">`Hallo Sam!`</Keuze>
   <Keuze goed uitleg="De template vraagt om naam, maar het dictionary heeft alleen voornaam. Jinja2 laat de plek dan leeg, zonder foutmelding.">Hallo !</Keuze>
-  <Keuze uitleg="Het formulier en de functie gebruiken nog allebei naam, dus FastAPI krijgt wat hij verwacht. Het gaat pas later mis.">Een 422</Keuze>
-  <Keuze uitleg="Een dictionary in Python geeft een KeyError, maar Jinja2 doet dat niet bij een naam die ontbreekt. Wat doet hij dan wel?">Een KeyError in de terminal</Keuze>
+  <Keuze uitleg="Formulier en functie gebruiken allebei nog naam. Het gaat pas later mis.">Een 422</Keuze>
+  <Keuze uitleg="Python geeft dan een KeyError, Jinja2 niet. Wat doet Jinja2 wel?">Een KeyError in de terminal</Keuze>
   <Uitleg>
 
   Het is "Hallo !": een lege plek en geen foutmelding. Juist dat maakt deze fout lastig. Zie je een lege plek in je pagina, vergelijk dan de naam in `{{ }}` met de sleutels in het dictionary.
