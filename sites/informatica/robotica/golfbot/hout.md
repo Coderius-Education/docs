@@ -62,6 +62,8 @@ Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op
   <figcaption>De sensor vastgezet op de baan. Het blauwe schroefje laat je met rust: in dit project lees je de sensor uit als een getal, en dat getal verandert er niet van. Hoe gevoelig je robot is, stel je straks in je programma in.</figcaption>
 </figure>
 
+### De toren erop
+
 Staat de baan in elkaar? Zet je toren dan met de vier hoeken van het Lego-frame op de vier gaatjes van de bodemplaat. Hij staat er los op; of hij vast moet, en hoe, zegt je docent. Kijk daarna of de sensor en de servo nog goed aan het shield zitten, en vergelijk je draden met het hele schema:
 
 ![Het hele schema: links de sensor op de rij van A0, rechts de servo op de rij van D9, allebei op het shield met de Arduino Nano in het midden.](@site/static/fritzing/golfbot_bb.png)
@@ -78,7 +80,7 @@ Je robot staat nog uit van het bouwen. Zet hem aan met **ON/OFF**. Upload dan he
 
 **Oorzaak:** de sensor ziet de bal niet. Hij zit scheef op het blokje, of de bal ligt verder weg dan toen je op tafel je grens koos.
 
-**Zelf vinden:** upload het programma uit stap 1 van [de IR-sensor](site:robotica/golfbot/ir-sensor), dat het getal op je scherm toont. Leg de bal in de halve ronding. Wordt het getal kleiner dan je grens?
+**Zelf vinden:** upload het programma van Uitlezen bij [de IR-sensor](site:robotica/golfbot/ir-sensor), dat het getal op je scherm toont. Leg de bal in de halve ronding. Wordt het getal kleiner dan je grens?
 
 **Oplossing:** zet de sensor recht op het blokje, zodat hij in de halve ronding kijkt. Wordt het getal met de bal wel kleiner, maar niet kleiner dan je grens? Maak je grens dan groter, maar houd hem onder het getal zonder bal.
 
@@ -88,18 +90,13 @@ Je robot staat nog uit van het bouwen. Zet hem aan met **ON/OFF**. Upload dan he
 
 **Oorzaak:** de sensor ziet iets anders, zoals het hout van de baan, en geeft dan ook zonder bal een laag getal.
 
-**Zelf vinden:** toon het getal op je scherm, zoals in stap 1 van [de IR-sensor](site:robotica/golfbot/ir-sensor), en haal de bal weg. Is het getal nu kleiner dan je grens?
+**Zelf vinden:** toon het getal op je scherm, zoals bij Uitlezen van [de IR-sensor](site:robotica/golfbot/ir-sensor), en haal de bal weg. Is het getal nu kleiner dan je grens?
 
 **Oplossing:** kies een nieuwe grens met de getallen die je nu op de baan ziet: één met bal en één zonder. Je grens ligt ertussenin.
 
 </Probleem>
 
-<details>
-<summary>Controlevraag</summary>
-
-Je legt de bal een stukje naast de halve ronding. Waarom ziet je sensor hem dan misschien niet?
-
-</details>
+**Controlevraag:** Je legt de bal een stukje naast de halve ronding. Waarom ziet je sensor hem dan misschien niet?
 
 <details>
 <summary>Antwoord</summary>

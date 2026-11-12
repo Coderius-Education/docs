@@ -1,4 +1,4 @@
-Welkom. Je gaat dit project bouwen met de **Arduino Nano RP2040 Connect**. Dat is een klein microcontroller-bord waarop je sensoren en actuatoren kunt aansluiten. Hieronder zie je het bord met al zijn pinnen.
+Welkom. Je gaat dit project bouwen met de **Arduino Nano RP2040 Connect**. Dat is een klein microcontroller-bord waarop je sensoren en actuatoren kunt aansluiten. Dit is het bord met al zijn pinnen:
 
 ![De pinnen van de Arduino Nano RP2040 Connect met hun namen](/img/pinout_nano_rp2040_connect.png)
 
@@ -6,12 +6,9 @@ De namen op de afbeelding (zoals `D2`, `A0`, `3.3V`, `GND`) gebruik je later ste
 
 In de volgende stappen verbind je het bord met je computer en zet je MicroPython erop.
 
-<details>
-<summary>Controlevraag</summary>
+### Controlevraag
 
 Welke pin gebruik je om een sensor van **3,3V** te voeden?
-
-</details>
 
 <details>
 <summary>Antwoord</summary>

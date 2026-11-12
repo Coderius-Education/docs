@@ -3,6 +3,7 @@ import Handout from '@coderius/shared/components/Handout';
 import LesTabs, {
   LesDoel,
   LesLeerdoel,
+  LesReeks,
   LesStap,
   LesStappen,
   LesTab,
@@ -39,6 +40,7 @@ export default {
   LesVoorbeeld,
   LesVeld,
   LesDoel,
+  LesReeks,
   // De docentenhandleiding: de onderdelen van een les met hun literatuur.
   Werkvormen,
 };

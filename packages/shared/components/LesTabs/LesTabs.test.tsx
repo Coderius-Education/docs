@@ -2,9 +2,11 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { breedsteGroot, getekend } from './Vergroot';
 import LesTabs, {
   LesDoel,
   LesLeerdoel,
+  LesReeks,
   LesStap,
   LesStappen,
   LesTab,
@@ -116,6 +118,23 @@ describe('LesTabs', () => {
     expect(actief()).toBe('Er gaat iets mis');
     expect(paneel('er-gaat-iets-mis').hidden).toBe(false);
     expect(scrol.mock.instances.at(-1)).toBe(document.getElementById('een-fout'));
+  });
+
+  it('laat de pagina staan als het doel al in beeld is', () => {
+    // De arm van de Golfbot: "Eerst de servo op 90°" is een anker bovenaan een
+    // stap. De pagina schoof er 162 pixels naartoe, en de rij tabbladen stond
+    // dan onder de navbar. Of iets in beeld staat, meet jsdom niet: de maten
+    // staan hier vast.
+    const echt = Element.prototype.getBoundingClientRect;
+    Element.prototype.getBoundingClientRect = () => ({ top: 300, bottom: 340 }) as DOMRect;
+    try {
+      locatie = { pathname: '/les', hash: '#een-fout', search: '' };
+      render(<Les />);
+      expect(paneel('er-gaat-iets-mis').hidden).toBe(false);
+      expect(scrol).not.toHaveBeenCalled();
+    } finally {
+      Element.prototype.getBoundingClientRect = echt;
+    }
   });
 
   it('scrolt niet naar de kop van het tabblad zelf', () => {
@@ -332,6 +351,36 @@ describe('LesStappen', () => {
     expect(tabblad()).toBe('Make');
   });
 
+  it('stappen in een uitklapblok houden de knop Volgende niet vast', () => {
+    // Deel 5 van de Lego-auto importeert het deel over I2C in een <details>.
+    // Dat deel heeft drie stappen, en de knop Volgende liep die af terwijl het
+    // blok dicht was: "Volgende: In je code", en er veranderde niets.
+    render(
+      <LesTabs>
+        <LesTab id="stap-1" titel="Stap 1" label="Stap 1">
+          <p>code</p>
+          <details>
+            <summary>Waarom staat er SDA en SCL?</summary>
+            <LesStappen>
+              <LesStap id="twee-draden" titel="Twee draden" label="Twee draden">
+                <p>a</p>
+              </LesStap>
+              <LesStap id="in-je-code" titel="In je code" label="In je code">
+                <p>b</p>
+              </LesStap>
+            </LesStappen>
+          </details>
+        </LesTab>
+        <LesTab id="voorspel" titel="Voorspel" label="Voorspel">
+          <p>vraag</p>
+        </LesTab>
+      </LesTabs>,
+    );
+    expect(screen.queryByRole('button', { name: 'Volgende: In je code' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Voorspel' }));
+    expect(tabblad()).toBe('Voorspel');
+  });
+
   it('een link naar de kop van een stap opent het tabblad en de stap, zonder te scrollen', () => {
     const { rerender } = render(<LesMetStappen />);
     fireEvent.click(document.querySelector('[data-tab="make"]') as HTMLElement);
@@ -460,6 +509,302 @@ describe('LesVoorbeeld', () => {
     const [gewoon, metVraag] = Array.from(container.querySelectorAll('[data-les-voorbeeld]'));
     expect(metVraag.className).not.toBe(gewoon.className);
     expect(metVraag.className).toContain(gewoon.className);
+  });
+
+  it('code met een vraag ernaast heeft een hoger codevak dan code met een lijst', () => {
+    const { container } = render(
+      <>
+        <LesVoorbeeld toelichting="ja">
+          <pre>code</pre>
+        </LesVoorbeeld>
+        <LesVoorbeeld toelichting="vraag">
+          <pre>code</pre>
+        </LesVoorbeeld>
+      </>,
+    );
+    const [lijst, vraag] = Array.from(container.querySelectorAll('[data-les-voorbeeld]'));
+    expect(vraag.className).toContain(lijst.className);
+    expect(vraag.className).not.toBe(lijst.className);
+  });
+});
+
+describe('een kort label op het tabblad', () => {
+  it('toont het nummer, en houdt het label voor een schermlezer en de knop Volgende', () => {
+    // Code beter begrijpen (robotica): tien tabbladen stonden op twee regels.
+    // Na de eerste opdracht staat alleen het nummer op het tabblad.
+    render(
+      <LesTabs>
+        <LesTab id="a" titel="Opdracht 5.7.a: een loop" label="Opdracht 5.7.a">
+          <p>a</p>
+        </LesTab>
+        <LesTab id="b" titel="Opdracht 5.7.b: twee loops" label="Opdracht 5.7.b" kort="5.7.b">
+          <p>b</p>
+        </LesTab>
+      </LesTabs>,
+    );
+    const tab = screen.getByRole('tab', { name: 'Opdracht 5.7.b' });
+    expect(tab.textContent).toBe('5.7.b');
+    expect(tab.getAttribute('title')).toBe('Opdracht 5.7.b: twee loops');
+    expect(screen.getByRole('button', { name: /Volgende/ }).textContent).toContain(
+      'Opdracht 5.7.b',
+    );
+  });
+});
+
+describe('LesReeks', () => {
+  const reeks = () =>
+    render(
+      <LesReeks>
+        <figure>stap 1</figure>
+        <figure>stap 2</figure>
+        <figure>stap 3</figure>
+      </LesReeks>,
+    );
+  const zichtbaar = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll('figure'))
+      .filter((f) => !f.closest('[hidden]'))
+      .map((f) => f.textContent);
+
+  it('toont één plaatje tegelijk, met Vorige en Volgende en een teller', () => {
+    // De toren van de Golfbot: tien bouwstappen onder elkaar waren 3375
+    // pixels te lang. Zoals in een bouwboekje staat er één in beeld.
+    const { container } = reeks();
+    expect(zichtbaar(container)).toEqual(['stap 1']);
+    expect(container.textContent).toContain('Plaatje 1 van 3');
+    const vorige = screen.getByRole('button', { name: 'Vorige' }) as HTMLButtonElement;
+    const volgende = screen.getByRole('button', { name: 'Volgende' }) as HTMLButtonElement;
+    expect(vorige.disabled).toBe(true);
+    fireEvent.click(volgende);
+    fireEvent.click(volgende);
+    expect(zichtbaar(container)).toEqual(['stap 3']);
+    expect(container.textContent).toContain('Plaatje 3 van 3');
+    expect(volgende.disabled).toBe(true);
+    fireEvent.click(vorige);
+    expect(zichtbaar(container)).toEqual(['stap 2']);
+  });
+
+  it('zet elk plaatje in de HTML van de build', () => {
+    // cross-links en een zoekmachine lezen de HTML; een plaatje dat pas na een
+    // klik bestaat, zien ze niet.
+    const html = renderToStaticMarkup(
+      <LesReeks>
+        <figure>stap 1</figure>
+        <figure>stap 2</figure>
+        <figure>stap 3</figure>
+      </LesReeks>,
+    );
+    expect(html.match(/<figure>/g)).toHaveLength(3);
+  });
+});
+
+describe('de knop Volgende bij een reeks plaatjes', () => {
+  // Bij de toren van de Golfbot stonden er twee knoppen Volgende: die van de
+  // reeks, en rechtsonder "Volgende: Controlevraag". De tweede ging verder
+  // terwijl de reeks nog op plaatje 1 van 10 stond.
+  const les = () =>
+    render(
+      <LesTabs>
+        <LesTab id="toren" titel="De toren" label="De toren">
+          <LesStappen>
+            <LesStap id="toren-basis" titel="De basis" label="De basis">
+              <p>vooraf</p>
+            </LesStap>
+            <LesStap id="bouwstappen" titel="De bouwstappen" label="De bouwstappen">
+              <LesReeks>
+                <figure>stap 1</figure>
+                <figure>stap 2</figure>
+                <figure>stap 3</figure>
+              </LesReeks>
+            </LesStap>
+          </LesStappen>
+        </LesTab>
+        <LesTab id="controlevraag" titel="Controlevraag" label="Controlevraag">
+          <p>vraag</p>
+        </LesTab>
+      </LesTabs>,
+    );
+  const teller = () => document.querySelector('[data-les-reeks] [aria-live]')?.textContent;
+
+  it('een reeks in een stap die niet open is, doet niet mee', () => {
+    les();
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: De bouwstappen' }));
+    expect(stap()).toBe('2De bouwstappen');
+  });
+
+  it('loopt eerst de plaatjes af, en gaat dan pas verder', () => {
+    les();
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: De bouwstappen' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: plaatje 2 van 3' }));
+    expect(teller()).toBe('Plaatje 2 van 3');
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: plaatje 3 van 3' }));
+    expect(teller()).toBe('Plaatje 3 van 3');
+    expect(tabblad()).toBe('De toren');
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Controlevraag' }));
+    expect(tabblad()).toBe('Controlevraag');
+  });
+
+  it('wie met de knop van de reeks zelf bladert, komt op hetzelfde uit', () => {
+    les();
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: De bouwstappen' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende' }));
+    expect(screen.getByRole('button', { name: 'Volgende: plaatje 3 van 3' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende' }));
+    expect(screen.getByRole('button', { name: 'Volgende: Controlevraag' })).toBeTruthy();
+  });
+});
+
+describe('een plaatje vergroten', () => {
+  // Een aansluitschema van robotica stond op 128 pixels breed: de namen van
+  // de pinnen waren niet te lezen. Een klik toont het groot. Maten meet jsdom
+  // niet, dus die staan hier vast; of het venster er goed uitziet, is in
+  // Chromium bekeken.
+  const les = () =>
+    render(
+      <LesTabs>
+        <LesTab id="aansluiten" titel="Aansluiten" label="Aansluiten">
+          <p>
+            <img src="/schema.png" alt="Het schema van de joystick" />
+          </p>
+          <button type="button">
+            <img src="/foto.png" alt="Een foto in een knop" />
+          </button>
+        </LesTab>
+        <LesTab id="code" titel="Code" label="Code">
+          <p>code</p>
+        </LesTab>
+      </LesTabs>,
+    );
+  const maten = (img: HTMLElement, natuurlijk: number, getoond: number) => {
+    for (const [naam, waarde] of Object.entries({
+      naturalWidth: natuurlijk,
+      naturalHeight: natuurlijk,
+      clientWidth: getoond,
+      clientHeight: getoond,
+    }))
+      Object.defineProperty(img, naam, { value: waarde, configurable: true });
+  };
+  const toon = vi.fn();
+  beforeEach(() => {
+    toon.mockClear();
+    // jsdom kent showModal niet.
+    HTMLDialogElement.prototype.showModal = toon;
+  });
+
+  it('een klik op een plaatje dat kleiner staat dan het is, toont het groot', () => {
+    const { container } = les();
+    const schema = screen.getByAltText('Het schema van de joystick');
+    maten(schema, 1600, 240);
+    fireEvent.click(schema);
+    expect(toon).toHaveBeenCalledTimes(1);
+    const groot = container.querySelector('dialog img');
+    expect(groot?.getAttribute('src')).toMatch(/\/schema\.png$/);
+    expect(groot?.getAttribute('alt')).toBe('Het schema van de joystick');
+    expect(screen.getByRole('button', { name: 'Sluiten', hidden: true })).toBeTruthy();
+  });
+
+  it('met Enter kan het ook', () => {
+    les();
+    const schema = screen.getByAltText('Het schema van de joystick');
+    maten(schema, 1600, 240);
+    fireEvent.keyDown(schema, { key: 'Enter' });
+    expect(toon).toHaveBeenCalledTimes(1);
+  });
+
+  it('een plaatje op zijn eigen grootte, of in een knop, doet niets', () => {
+    const { container } = les();
+    const schema = screen.getByAltText('Het schema van de joystick');
+    maten(schema, 240, 240);
+    fireEvent.click(schema);
+    const foto = screen.getByAltText('Een foto in een knop');
+    maten(foto, 1600, 100);
+    fireEvent.click(foto);
+    expect(toon).not.toHaveBeenCalled();
+    expect(container.querySelector('dialog img')).toBeNull();
+  });
+});
+
+describe('het label Klik om te vergroten', () => {
+  // Het label hing aan de alinea om het plaatje. Een bouwstap in een <figure>
+  // had er geen, en op een telefoon stond het op 44 plaatjes die in het
+  // venster kleiner werden dan in de les (348 tegen 358 pixels).
+  const maten = (img: HTMLElement, natuurlijk: number, getoond: number) => {
+    for (const [naam, waarde] of Object.entries({
+      naturalWidth: natuurlijk,
+      naturalHeight: natuurlijk,
+      clientWidth: getoond,
+      clientHeight: getoond,
+    }))
+      Object.defineProperty(img, naam, { value: waarde, configurable: true });
+  };
+  const les = () =>
+    render(
+      <LesTabs>
+        <LesTab id="bouwen" titel="Bouwen" label="Bouwen">
+          <figure>
+            <img src="/stap-01.jpg" alt="Bouwstap 1" />
+            <figcaption>Stap 1</figcaption>
+          </figure>
+        </LesTab>
+        <LesTab id="code" titel="Code" label="Code">
+          <p>code</p>
+        </LesTab>
+      </LesTabs>,
+    );
+  const breedte = window.innerWidth;
+  afterEach(() => {
+    Object.defineProperty(window, 'innerWidth', { value: breedte, configurable: true });
+  });
+  const opnieuw = () => fireEvent(window, new Event('resize'));
+
+  it('staat op het element om het plaatje, ook als dat geen alinea is', () => {
+    les();
+    const img = screen.getByAltText('Bouwstap 1');
+    maten(img, 1000, 427);
+    opnieuw();
+    expect(img.hasAttribute('data-vergroot')).toBe(true);
+    expect(img.parentElement?.tagName).toBe('FIGURE');
+    expect(img.parentElement?.hasAttribute('data-vergroot-vak')).toBe(true);
+    // Staat het plaatje daarna op zijn eigen grootte, dan gaat het label weg.
+    maten(img, 1000, 1000);
+    opnieuw();
+    expect(img.hasAttribute('data-vergroot')).toBe(false);
+    expect(img.parentElement?.hasAttribute('data-vergroot-vak')).toBe(false);
+  });
+
+  it('niet op een telefoon: het venster is daar smaller dan het plaatje in de les', () => {
+    const toon = vi.fn();
+    HTMLDialogElement.prototype.showModal = toon;
+    Object.defineProperty(window, 'innerWidth', { value: 390, configurable: true });
+    les();
+    const img = screen.getByAltText('Bouwstap 1');
+    maten(img, 1600, 358);
+    opnieuw();
+    expect(breedsteGroot(390)).toBeLessThan(358 * 1.2);
+    expect(img.hasAttribute('data-vergroot')).toBe(false);
+    fireEvent.click(img);
+    expect(toon).not.toHaveBeenCalled();
+  });
+
+  it('de hoek van het plaatje in zijn vak: daar staat het label, en daar opent het venster', () => {
+    // Een staand schema (1600 bij 3000) in een vak van 500 bij 496: het
+    // plaatje is 265 breed en staat in het midden van het vak.
+    const {
+      x,
+      y,
+      breedte: b,
+      hoogte: h,
+    } = getekend({ breedte: 500, hoogte: 496 }, { breedte: 1600, hoogte: 3000 });
+    expect(Math.round(b)).toBe(265);
+    expect(Math.round(h)).toBe(496);
+    expect(Math.round(x)).toBe(118);
+    expect(y).toBe(0);
+    // Een plaatje dat nog niet geladen is, heeft geen maten.
+    expect(getekend({ breedte: 500, hoogte: 496 }, { breedte: 0, hoogte: 0 })).toEqual({
+      x: 0,
+      y: 0,
+      breedte: 500,
+      hoogte: 496,
+    });
   });
 });
 

@@ -232,3 +232,42 @@
 .knop:hover {
   background: var(--ifm-color-primary-dark);
 }
+
+/* In een les-tabblad op een breed scherm: de schijf links, de schuif met het
+   blok in het midden, de opdracht rechts. Onder elkaar was dit 740 pixels
+   hoog. */
+@media (min-width: 997px) {
+  :global([data-les-tab]) .schijf {
+    display: grid;
+    grid-template-columns: minmax(0, 17rem) minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 1.5rem;
+    align-items: start;
+    max-width: none;
+    padding: 0.75rem 1rem;
+  }
+
+  :global([data-les-tab]) .tekening {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  :global([data-les-tab]) .stand {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+  }
+
+  :global([data-les-tab]) .bediening {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin-bottom: 0;
+  }
+
+  :global([data-les-tab]) .opdracht {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    padding: 0 0 0 1.5rem;
+    border-top: 0;
+    border-left: 1px solid var(--ifm-color-emphasis-300);
+  }
+}

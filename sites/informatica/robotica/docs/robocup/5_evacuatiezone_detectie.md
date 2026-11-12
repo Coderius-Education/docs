@@ -18,6 +18,8 @@ tape ze. Het ene draadje zit aan een pin, het andere aan GND.
 
 ![Aansluitschema: een blauw draadje van D5 en een zwart draadje van GND, allebei op het rijtje van D5, liggen op de aluminiumtape; raken ze allebei de tape, dan wordt D5 0](@site/static/fritzing/shield_aluminiumtape_bb.png)
 
+### De pin uitlezen
+
 ```python
 from machine import Pin
 from time import sleep
@@ -35,16 +37,13 @@ valt pin D5 naar `0`.
 :::danger[Gebruik nooit D2, D3, D4 of D11]
 
 Deze pinnen zijn bezet door het **motor shield**. Kies een andere vrije pin,
-bijvoorbeeld D5 zoals hierboven.
+bijvoorbeeld D5 zoals hier.
 
 :::
 
-<details>
-<summary>Controlevraag</summary>
+### Controlevraag
 
 Waarom staat er `Pin.PULL_UP` en niet alleen `Pin.IN`?
-
-</details>
 
 <details>
 <summary>Antwoord</summary>

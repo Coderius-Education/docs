@@ -20,17 +20,9 @@ schijf zien.
 
 Thonny moet weten dat het met **MicroPython** op de RP2040 moet praten, en niet met de gewone Python op je laptop. Dit doe je via de interpreter rechtsonder.
 
-### Stap 1: open Thonny
-
-Open Thonny op je computer.
-
-### Stap 2: verbind je microcontroller
-
-Sluit de microcontroller aan met de USB-kabel. (Stappen kwijt? Kijk terug bij [Bord verbinden](site:robotica/docs/onderdelen/installatie#verbinden).)
-
-### Stap 3: kies de juiste interpreter
-
-Klik **rechtsonder** in Thonny en kies de optie die begint met `MicroPython`.
+1. Open Thonny op je computer.
+2. Sluit de microcontroller aan met de USB-kabel. Stappen kwijt? Kijk terug bij [Bord verbinden](site:robotica/docs/onderdelen/installatie#verbinden).
+3. Klik **rechtsonder** in Thonny en kies de optie die begint met `MicroPython`.
 
 ![Thonny rechtsonder met de keuzelijst van interpreters, met MicroPython geselecteerd](@site/static/img/micropython_selecteren.png)
 
@@ -47,12 +39,7 @@ Kies:
 
 Klik op **OK**.
 
-<details>
-<summary>Controlevraag</summary>
-
-Wanneer is deze stap gelukt?
-
-</details>
+**Controlevraag:** Wanneer is deze stap gelukt?
 
 <details>
 <summary>Antwoord</summary>

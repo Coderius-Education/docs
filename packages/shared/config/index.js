@@ -209,6 +209,20 @@ function metLesTabs(presets, aan) {
   });
 }
 
+// Een site met meer dan één docs-plugin (robotica: de Lego-auto en de Golfbot
+// naast de docs van het preset) heeft de lessen ook daar. Zonder deze stap
+// kregen alleen de pagina's van het preset tabbladen.
+const DOCS_PLUGIN = /(^|[/-])(plugin-)?content-docs$/;
+function metLesTabsInPlugins(plugins, aan) {
+  if (!aan) return plugins;
+  return (plugins || []).map((entry) => {
+    if (!Array.isArray(entry) || typeof entry[0] !== 'string' || !DOCS_PLUGIN.test(entry[0]))
+      return entry;
+    const [name, opts = {}] = entry;
+    return [name, { ...opts, remarkPlugins: [...(opts.remarkPlugins || []), remarkLesTabs] }];
+  });
+}
+
 /**
  * Docusaurus Faster, op twee onderdelen na:
  *  - swcHtmlMinimizer: die laat aanhalingstekens weg (`href=/python/…`), en
@@ -356,7 +370,7 @@ function createConfig(course = {}) {
   }
   const linkbaar = withSiteLinks(
     metLesTabs(metBegrippen(presets, process.cwd()), lesTabs),
-    plugins,
+    metLesTabsInPlugins(plugins, lesTabs),
     registry?.id,
   );
   const heeftBegrippen = fs.existsSync(begrippenBestand(process.cwd()));

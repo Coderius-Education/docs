@@ -12,12 +12,7 @@ De sensor stuurt een korte lichtpuls naar voren. Het licht kaatst terug op een v
 
 Een TOF is **preciezer** dan een ultrasone (geluids)sensor en heeft geen last van omgevingsgeluid. Hij praat met de microcontroller via **I2C**, dus via de pinnen **SDA** en **SCL**. De afstand komt terug in **millimeters**, en hij meet betrouwbaar tussen ongeveer **5 cm en 200 cm**.
 
-<details>
-<summary>Controlevraag</summary>
-
-Wat meet de sensor eigenlijk om de afstand te bepalen?
-
-</details>
+**Controlevraag:** Wat meet de sensor eigenlijk om de afstand te bepalen?
 
 <details>
 <summary>Antwoord</summary>

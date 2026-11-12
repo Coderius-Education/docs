@@ -146,7 +146,7 @@ describe('de onderdelenlijst klopt met de bouwplaatjes', () => {
       inhoud.indexOf(':::', inhoud.indexOf(':::tip') + 6),
     );
     expect(tip).toMatch(/kleuren/);
-    expect(tip).toMatch(/plaatjes hieronder kloppen/);
+    expect(tip).toMatch(/plaatjes bij de bouwstappen kloppen/);
   });
 
   it('de leerling heeft geen werkboek: het woord staat alleen in de bronvermelding', () => {
@@ -465,13 +465,13 @@ describe('de uitbreiding', () => {
 });
 
 describe('controlevragen', () => {
-  // robotica/CLAUDE.md: na elke uitleg een korte controlevraag in een
-  // <details>-blok, of als <Voorspel soort="Controlevraag"> waarin de
-  // leerling eerst kiest.
+  // robotica/CLAUDE.md: na elke uitleg een korte controlevraag: de vraag
+  // open ("**Controlevraag:** …") met het antwoord in een <details>-blok, of
+  // als <Voorspel soort="Controlevraag"> waarin de leerling eerst kiest.
   it('elke les heeft een controlevraag', () => {
     const zonder = paginas().filter(
       (f) =>
-        !tekst(f).includes('<summary>Controlevraag</summary>') &&
+        !tekst(f).includes('**Controlevraag:**') &&
         !/<Voorspel soort="Controlevraag"/.test(tekst(f)),
     );
     expect(zonder).toEqual([]);

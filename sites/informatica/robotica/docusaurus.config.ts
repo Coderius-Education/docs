@@ -44,6 +44,9 @@ export default createConfig({
   title: 'Robotica — Coderius',
   siteId: 'robotica',
   projectName,
+  // Elke ##-sectie van een les is een tabblad (root-CLAUDE.md, Les-tabbladen),
+  // ook in de Lego-auto en de Golfbot, die een eigen docs-plugin hebben.
+  lesTabs: true,
   matomoSiteId: 7,
   // Werk van robotica.coderius.nl (vóór de verhuizing): zie oude-opslag.js.
   oudeOpslag: {
@@ -326,8 +329,6 @@ export default createConfig({
   // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
   sharedPackages: ['@coderius/shared', '@coderius/checker'],
 
-  // Robotica is (nog) Engelstalig.
-  i18n: { defaultLocale: 'en', locales: ['en'] },
   markdown: { hooks: { onBrokenMarkdownLinks: 'warn' } },
   // De "Open in de editor"-links zetten de code in #code=…, en dat is geen
   // anker; ze slaan de controle over (theme/CodeBlock). Daarna bleef er niets

@@ -6,11 +6,13 @@ title: De afstand uitlezen
 
 # De afstand uitlezen
 
-Je lijnvolger is af; vanaf hier bouw je uit. De TOF-sensor zit gemonteerd en aangesloten op de multiplexer — dezelfde module waar je scherm al op zit. Eerst weer een minimale losse test, zoals bij elk nieuw onderdeel.
+Je lijnvolger is af; vanaf hier bouw je uit. De TOF-sensor zit gemonteerd. Je sluit hem aan op de multiplexer — dezelfde module waar je scherm al op zit. Eerst weer een minimale losse test, zoals bij elk nieuw onderdeel.
 
 ## Aansluiten
 
 Steek de TOF in **channel 0** van de multiplexer. Het cijfer staat boven het stel pinnen. Channel **7** is al bezet: daar zit je OLED-scherm.
+
+Bij elke pin van de multiplexer staat een naam. Steek elke draad van de TOF op de pin met dezelfde naam: VCC, GND, SDA en SCL. Bij channel 0 staan de pinnen andersom dan op de TOF, dus daar kruisen de draden. Hoe dat eruitziet, zie je bij TOF 1 in het schema van [twee TOF-sensoren](site:robotica/docs/onderdelen/tof#twee-met-mux).
 
 ## Stap 1: De sensor alleen
 
@@ -44,12 +46,7 @@ Maakt het sensor-object aan op channel 0 van de multiplexer, op dezelfde pinnen 
 
 Houd je hand op ongeveer 20 cm voor de sensor: de Shell toont rond de `200`. Beweeg je hand langzaam weg en zie het getal meegroeien.
 
-<details>
-<summary>Controlevraag</summary>
-
-Je steekt de sensor om in het stel pinnen onder het cijfer **2**. Wat verandert er in je code?
-
-</details>
+**Controlevraag:** Je steekt de sensor om in het stel pinnen onder het cijfer **2**. Wat verandert er in je code?
 
 <details>
 <summary>Antwoord</summary>

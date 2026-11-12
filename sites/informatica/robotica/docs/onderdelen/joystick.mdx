@@ -21,6 +21,8 @@ Een **joystick** is een stuurknuppeltje. Binnenin zitten twee draaiknopjes (potm
   <Onderdeel naam="jumperdraden" aantal={5} />
 </Onderdelenlijst>
 
+## De vijf pinnen
+
 | Pin | Wat het is |
 |:---:|---|
 | **GND** | de min |
@@ -69,17 +71,12 @@ In de Shell verschijnen steeds twee getallen tussen **0** en **65535**. Laat je 
 - `ADC("A2")` maakt van A2 een pin die een getal leest in plaats van een 0 of een 1, net als bij de [analoge IR-sensor](site:robotica/docs/onderdelen/ir-analoog).
 - `x.read_u16()` geeft dat getal: 0 bij 0 volt, 65535 bij 3,3 volt.
 
-<details>
-<summary>Controlevraag</summary>
-
-Je laat de joystick los. Welk getal geeft `x.read_u16()` ongeveer, en waarom is het niet precies 32768?
-
-</details>
+**Controlevraag:** Je laat de joystick los. Welk getal geeft `x.read_u16()` ongeveer, en waarom is het niet precies 32768?
 
 <details>
 <summary>Antwoord</summary>
 
-Ongeveer het midden, rond de 32000. Het potmetertje staat dan in de middelste stand, maar geen joystick is precies gelijk gemaakt: de ene zit op 31500, de andere op 33000. Daarom gebruik je in je code een marge rond het midden, zoals hieronder.
+Ongeveer het midden, rond de 32000. Het potmetertje staat dan in de middelste stand, maar geen joystick is precies gelijk gemaakt: de ene zit op 31500, de andere op 33000. Daarom gebruik je in je code een marge rond het midden, zoals bij Welke kant op?
 
 </details>
 
@@ -130,17 +127,14 @@ while True:
 
 Tussen 15000 en 50000 telt de joystick als "midden": zo zegt hij niet al "links" als hij een beetje scheef staat. Zegt het programma "links" als je naar rechts duwt? Dan houd je de joystick andersom. Draai hem, of verwissel in de code "links" en "rechts".
 
-<details>
-<summary>Opdracht: lampje bij voor</summary>
+## Opdracht: lampje bij voor
 
 Laat het rode lampje op de Nano branden zolang je de joystick naar voren duwt, en uit gaan als je loslaat.
-
-</details>
 
 <details>
 <summary>Tip</summary>
 
-Gebruik alleen `voor_achter` en de grens uit het programma hierboven. Bij het rode lampje op de Nano is `value(0)` aan en `value(1)` uit.
+Gebruik alleen `voor_achter` en de grens uit het programma van Welke kant op? Bij het rode lampje op de Nano is `value(0)` aan en `value(1)` uit.
 
 </details>
 

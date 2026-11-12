@@ -354,19 +354,3 @@ Verandering! white -> black
 Veel handiger dan `"black"` of `"white"` duizenden keren per seconde te printen.
 
 </details>
-
----
-
-## Klaar
-
-Je hebt nu geoefend met:
-
-- While-loops met een teller
-- Oneindige loops (`while True:`)
-- While-loops met een voorwaarde
-- `sleep()` om de snelheid te beheersen
-- IR-sensoren uitlezen in een loop
-- Meerdere sensoren combineren
-- Veranderingen detecteren
-
-Dit zijn de bouwstenen voor een lijnvolgende robot.

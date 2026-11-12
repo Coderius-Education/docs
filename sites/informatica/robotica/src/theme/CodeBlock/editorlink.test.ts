@@ -20,6 +20,15 @@ describe('"Open in de editor"-links', () => {
     ).toBe(true);
   });
 
+  it('staan met het codeblok in één element', () => {
+    // Naast een vraag of een lijst (LesVoorbeeld) is elk kind een kolom. Als
+    // fragment gaf het codeblok er twee: de link nam de tweede kolom in en de
+    // vraag viel onder de code (gezien in Code beter begrijpen, 1280 breed).
+    const tsx = bron('./index.tsx');
+    expect(tsx).not.toMatch(/<>\s*<OriginalCodeBlock/);
+    expect(tsx).toMatch(/<div className=\{styles\.metLink\}>\s*<OriginalCodeBlock/);
+  });
+
   it('slaan de ankercontrole over, en de site breekt op een echt kapot anker', () => {
     expect(bron('./index.tsx')).toContain('data-noBrokenLinkCheck');
     expect(bron('../../../docusaurus.config.ts')).toMatch(/onBrokenAnchors: 'throw'/);

@@ -27,7 +27,7 @@ sidebar_position: <getal>
 ```
 
 - `sidebar_position` bepaalt de volgorde in de sidebar.
-- **Een les is verdeeld in tabbladen.** Dat is sinds november 2026 de standaard; web en python zijn omgezet. Elke `##`-sectie is een tabblad bovenaan de pagina, elke `###` in een lange sectie een stap binnen dat tabblad, en de inhoudsopgave rechts vervalt: een leerling hoeft in een les niet te scrollen. Structureer een les dus met `##` en `###`, en schrijf elk scherm volgens "Tabbladen: elk scherm staat op zichzelf" hieronder. Een cursus zet het aan met `lesTabs: true` in `createConfig` (zie de root-`CLAUDE.md`, Les-tabbladen, voor de stappen).
+- **Een les is verdeeld in tabbladen.** Dat is sinds november 2026 de standaard; web, python en robotica zijn omgezet. Elke `##`-sectie is een tabblad bovenaan de pagina, elke `###` in een lange sectie een stap binnen dat tabblad, en de inhoudsopgave rechts vervalt: een leerling hoeft in een les niet te scrollen. Structureer een les dus met `##` en `###`, en schrijf elk scherm volgens "Tabbladen: elk scherm staat op zichzelf" hieronder. Een cursus zet het aan met `lesTabs: true` in `createConfig` (zie de root-`CLAUDE.md`, Les-tabbladen, voor de stappen).
 - **Een cursus die nog niet is omgezet**, houdt de rechter inhoudsopgave (TOC) met **alleen H2-koppen** (centraal ingesteld in `packages/shared/config`). Voeg daar géén `hide_table_of_contents` toe; structureer je pagina met `##`-secties zodat ze in de TOC verschijnen. Heeft een oefenveld meer breedte nodig, kies dan een gestapelde veldvorm in plaats van de TOC te verbergen.
 - Cheatsheets en losse referentiepagina's mogen `displayed_sidebar: null` en `hide_pagination: true` gebruiken.
 - Gebruik `sidebar_label` alleen als de paginatitel te lang is voor de sidebar.
@@ -52,6 +52,15 @@ In een cursus met tabbladen is een tabblad of een stap alles wat de leerling op 
 - **Wat de leerling moet kopiëren, staat bij het veld**, na de zin over het plakken van zijn eigen programma, in een uitklapblok. Hij heeft één klembord.
 - **Onder een voorspelvraag staat geen code die het antwoord laat zien.** Wat erna komt, staat in de `<Uitleg>` van de vraag of in een volgende stap.
 - **Er gaat iets mis komt na de opdrachten.** De build zet het tabblad daar ook neer als de bron het ervoor heeft.
+- **Een plaatje staat vóór de tekst die het uitlegt** (het aansluitschema, dan de pinnen): de build zet ze naast elkaar. Drie of meer plaatjes achter elkaar worden een reeks met Vorige en Volgende.
+- **Onder code staat wat hem toelicht als lijst of tabel**, direct eronder of na één alinea: de build zet het ernaast. Voor uitleg per regel gebruik je `<CodeUitleg>`.
+- **Een stap heeft geen nummer in zijn kop.** Schrijf `### Kies de juiste interpreter`, niet `### Stap 1: kies de juiste interpreter`: de knop van de stap nummert al, en een stap ervoor schuift de telling op. Verwijs naar een stap met zijn naam.
+- **Een stap heet naar zijn inhoud**: `### Stap 2: Kies een pin` krijgt in de rij het label "Kies een pin". Geef een `###` dus een titel na de dubbele punt.
+- **Een opdracht is een eigen sectie** (`## Opdracht: <naam>`), niet een uitklapblok onder de code: weggeklapt ziet een leerling hem niet. Tip en oplossing blijven uitklapblokken.
+- **Een vraag staat open; alleen het antwoord is een uitklapblok.** Schrijf `**Controlevraag:** …` met `<details><summary>Antwoord</summary>` eronder, of gebruik `<Voorspel>`. In de uitleg van een voorspelvraag staat niets dat de leerling moet doen: die verschijnt pas bij het goede antwoord.
+- **Een regel code naast zijn toelichting is hooguit 66 tekens.** Langer, en de build zet de code weer over de volle breedte.
+- **Geen twee koppen met dezelfde naam op een pagina**, ook niet in een deel dat de pagina importeert: een kop is ook een adres. Geef een kop in een deel een vast id (`### Controlevraag \{#i2c-controlevraag}`).
+- **Een pagina waar je met Ctrl+F zoekt** (een overzicht van foutmeldingen) krijgt `les_tabs: false`: zoeken vindt geen tekst in een tabblad dat dicht staat.
 
 Voor MDX-pagina's met runnable code, importeer bovenaan:
 

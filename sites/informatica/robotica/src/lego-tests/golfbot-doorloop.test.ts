@@ -363,7 +363,7 @@ describe('een nieuw programma, en het oude', () => {
     // laten weghalen.
     const inhoud = tekst('bal-slaan');
     expect(inhoud).toMatch(/open het dan met \*\*Mijn projecten\*\* en \*\*Open\*\*/);
-    expect(inhoud).toMatch(/bouw stap 2 opnieuw/);
+    expect(inhoud).toMatch(/bouw dat programma opnieuw/);
   });
 });
 
@@ -382,7 +382,7 @@ describe('de IR-sensor', () => {
   });
 
   it('stap 1 zegt waar herhaal voor altijd komt, vóór het voorbeeld', () => {
-    const stap1 = sectie(tekst('ir-sensor'), '## Stap 1');
+    const stap1 = sectie(tekst('ir-sensor'), '## Uitlezen');
     const plek = stap1.search(/\*\*herhaal voor altijd\*\*[^.]*in het Leaphy-blok/);
     expect(plek).toBeGreaterThan(-1);
     expect(plek).toBeLessThan(stap1.indexOf('<Blokken'));

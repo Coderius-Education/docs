@@ -15,7 +15,7 @@ import I2C from '@site/docs/onderdelen/_delen/i2c/pinnen.md';
 />
 
 
-Straks rijdt je robot los van de laptop, en dan is de Shell weg. Vanaf dat moment is het OLED-scherm je venster in de robot: daar zie je wat de sensoren zien. In dit deel vervang je de `print` door het scherm — en daarmee staat het eerste grote mijlpunt: een robot die zelf laat zien wat hij meet.
+Straks rijdt je robot los van de laptop, en dan is de Shell weg. Vanaf dat moment is het OLED-scherm je venster in de robot: daar zie je wat de sensoren zien. In dit deel vervang je de `print` door het scherm — en daarmee staat de eerste grote mijlpaal: een robot die zelf laat zien wat hij meet.
 
 :::danger[A4 en A5 zijn bezet]
 
@@ -27,7 +27,7 @@ De multiplexer en het OLED-scherm praten via **I2C**, en dat gebruikt de pinnen 
 
 ![Aansluitschema: het OLED-scherm op channel 7 van de multiplexer, en de twee IR-sensoren op het rijtje van A0 en van A1](@site/static/fritzing/shield_oled_mux_ir_bb.png)
 
-Het scherm gaat via een 4-pins jumperkabel naar de **multiplexer**, die in de bus rechts op het shield steekt: VCC, GND, SDA en SCL elk naar de pin met dezelfde naam op channel **7**. De IR-sensoren blijven zitten waar ze zaten, op A0 en A1. Steek je hem in een ander channel, pas dan het getal in je code aan.
+Het scherm gaat via een 4-pins jumperkabel naar de **multiplexer**, die in de bus rechts op het shield steekt: VCC, GND, SDA en SCL elk naar de pin met dezelfde naam op channel **7**. De IR-sensoren blijven zitten waar ze zaten, op A0 en A1. Steek je het scherm in een ander channel, pas dan het getal in je code aan.
 
 ## Stap 1: Eerst het scherm alleen
 
@@ -78,7 +78,9 @@ Het scherm blijft leeg. `fill()` en `text()` werken in een kladversie in het geh
 
 Terug naar je script uit Deel 4. De `print`-regel gaat eruit; het scherm komt ervoor in de plaats:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from time import sleep
 from leaphymicropython.sensors.linesensor import AnalogIR
 from leaphymicropython.actuators.oled_screen import OLEDSH1106
@@ -101,9 +103,23 @@ while True:
     sleep(0.2)
 ```
 
-`f'Links: {kleur_links}'` is dezelfde f-string als in je `print` uit [Deel 3](site:robotica/lego_auto/lijnsensor/een-sensor): op het scherm komt `Links: white` of `Links: black`. Hoe een f-string werkt, staat bij [Tekst en getallen combineren met f-strings](site:python/docs/tekst/04a-f-strings).
+<Regel n={7} tot={10}>
+Het scherm-object staat bóven de loop: je zet het één keer klaar. Die opbouw ken je al van de sensoren.
+</Regel>
 
-Let op de opbouw die je al kent: het scherm-object staat bóven de loop (eenmalig klaarzetten), het tekenen zit erin (elke ronde opnieuw). De tweede regel staat op `y=10`, tien pixels lager — anders schrijven de twee regels door elkaar heen.
+<Regel n={16} tot={19}>
+Het tekenen zit in de loop, elke ronde opnieuw.
+</Regel>
+
+<Regel n={17}>
+`f'Links: {kleur_links}'` is dezelfde f-string als in je `print` uit [Deel 3](site:robotica/lego_auto/lijnsensor/een-sensor): op het scherm komt `Links: white` of `Links: black`. Hoe een f-string werkt, staat bij [Tekst en getallen combineren met f-strings](site:python/docs/tekst/04a-f-strings).
+</Regel>
+
+<Regel n={18}>
+De tweede regel staat op `y=10`, tien pixels lager. Anders schrijven de twee regels door elkaar heen.
+</Regel>
+
+</CodeUitleg>
 
 ## Test het
 
@@ -213,12 +229,7 @@ while True:
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom staat er `y=10` bij de tweede tekstregel?
-
-</details>
+**Controlevraag:** Waarom staat er `y=10` bij de tweede tekstregel?
 
 <details>
 <summary>Antwoord</summary>

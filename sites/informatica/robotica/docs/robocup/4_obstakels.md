@@ -24,7 +24,7 @@ Hoe je hem aansluit, staat bij [Time of Flight](site:robotica/docs/onderdelen/to
 
 Een [ultrasone afstandssensor](site:robotica/docs/onderdelen/afstandssensor)
 kan ook, maar die heeft twee eigen digitale pinnen nodig, en een TOF meet
-preciezer. Op de robot hieronder gebruik je daarom een TOF.
+preciezer. Op deze robot gebruik je daarom een TOF.
 
 :::
 

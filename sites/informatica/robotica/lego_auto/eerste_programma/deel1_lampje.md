@@ -50,7 +50,7 @@ Roept de methode `on()` aan op dat object. Nu loopt er stroom, en brandt het lam
 
 ## Test het
 
-Het groene lampje op het bord brandt. Blijft branden, ook — er staat niets in je script dat het weer uitzet.
+Het oranje lampje op het bord brandt. Blijft branden, ook — er staat niets in je script dat het weer uitzet. Het groene lampje brandde al: dat zegt alleen dat het bord stroom krijgt.
 
 ## Voorspel: hoe zet je het uit?
 
@@ -101,12 +101,7 @@ lampje.on()
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Wat betekent `Pin.OUT`?
-
-</details>
+**Controlevraag:** Wat betekent `Pin.OUT`?
 
 <details>
 <summary>Antwoord</summary>

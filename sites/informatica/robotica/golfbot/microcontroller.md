@@ -29,11 +29,17 @@ Naast elke pin van de Arduino zitten op het shield drie pinnetjes op een rij:
 
 Een onderdeel heeft daarom meestal drie draadjes: een voor het signaal, een voor 5V en een voor GND.
 
+### Welk pinnetje is het signaal?
+
 Boven de rijen staat bij twee pinnetjes `<5V` en `<GND`. Bij het signaal staat niets. Dat is het pinnetje het dichtst bij de naam van de pin, zoals **A0/D14** of **D9**. Bij A0 staat ook D14: die pin heeft twee namen. In deze lessen heet hij A0.
+
+### Aan en uit
 
 Onderaan het shield zit een schuifknop, **ON/OFF**, waarmee je je robot aan- en uitzet. Zet hem uit voordat je iets aansluit, en weer aan voordat je een programma test.
 
 ![Uitsnede van het shield: het schuifje met ON links en OFF rechts, naast de tekst VIN = 3-16Vdc.](@site/static/fritzing/golfbot_aan-uit.png)
+
+## Controlevraag
 
 <Voorspel soort="Controlevraag" vraag="Waarom heeft elke pin op het shield drie pinnetjes, en niet één?">
   <Keuze uitleg="Op een rij komt maar één onderdeel. Zet je er meer op, dan weet je robot niet van welk onderdeel het signaal komt.">Zodat je drie onderdelen op één pin kunt aansluiten</Keuze>

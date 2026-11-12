@@ -167,12 +167,7 @@ Met jouw eigen drempel op de plek van `2500`.
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Je drempel staat op 2500 en de sensor meet 2400 boven de lijn. Wat zegt `black_or_white()` dan — en klopt dat?
-
-</details>
+**Controlevraag:** Je drempel staat op 2500 en de sensor meet 2400 boven de lijn. Wat zegt `black_or_white()` dan — en klopt dat?
 
 <details>
 <summary>Antwoord</summary>

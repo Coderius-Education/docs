@@ -17,6 +17,16 @@ export function useInLesTab(): boolean {
   return useContext(PaneelContext) !== null;
 }
 
+/** Of het paneel waar dit onderdeel in staat (tabblad en stap) nu open is.
+ *  Buiten een tabblad is dat altijd zo. */
+export const OpenContext = createContext(true);
+
+/** Of dit onderdeel nu te zien is: het tabblad en de stap waar het in staat,
+ *  zijn open. Een onderdeel dat iets meet, doet dat pas dan. */
+export function useInBeeld(): boolean {
+  return useContext(OpenContext);
+}
+
 /** Wat een opdracht moet opleveren: de verwachte uitvoer of een doelplaatje.
  *  <LesVeld> zet het om het oefenveld; het veld toont het in zijn
  *  uitvoerkolom, naast wat de leerling zelf krijgt. */

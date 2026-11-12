@@ -34,7 +34,7 @@ De pin **DO** laat je weer leeg.
 
 ## Stap 2: Uitlezen en tonen
 
-Twee nieuwe objecten, twee nieuwe kleuren per ronde, en twee regels erbij op het scherm. Je `if`-blok uit Deel 8 laat je staan; hieronder staat het er niet in, zodat je ziet wat er nieuw is.
+Lees de twee nieuwe sensoren uit en toon ze op het scherm. Je `if`-blok uit Deel 8 blijft staan, al staat het hier niet.
 
 <CodeUitleg>
 
@@ -94,16 +94,11 @@ Twee regels lager op het scherm, op hoogte 20 en 30, zodat ze niet over de eerst
 
 </CodeUitleg>
 
-## Test het: de vier sensoren
+### Test de vier sensoren
 
 Houd de robot boven de lijn en schuif hem langzaam opzij. Op het scherm klapt eerst `Links` of `Rechts` om naar `black`, en pas als je verder schuift ook `Buiten L` of `Buiten R`. Klapt een buitenste sensor als eerste om, dan zit hij te dicht bij de binnenste.
 
-<details>
-<summary>Controlevraag</summary>
-
-Je hebt de linker buitensensor per ongeluk op het rijtje van **A3** gestoken. Wat zie je op het scherm als je hem afdekt?
-
-</details>
+**Controlevraag:** Je hebt de linker buitensensor per ongeluk op het rijtje van **A3** gestoken. Wat zie je op het scherm als je hem afdekt?
 
 <details>
 <summary>Antwoord</summary>
@@ -143,11 +138,13 @@ Zet twee takken bovenaan je `if`-blok, en maak van de `if` die er stond een `eli
 
 Daaronder volgen je eigen `elif`-takken uit Opdracht 10.4.a, zoals ze waren.
 
+### Wat de takken doen
+
 Ligt de lijn onder de linker buitensensor, dan staat de linkermotor stil en draait de rechter vol: de robot draait om zijn linkerwiel, scherper dan bij je eigen bijsturen. Rechts precies andersom.
 
-De nieuwe takken staan bovenaan omdat Python de eerste tak neemt die klopt. In de Voorspel hierboven zien de binnenste sensoren wit, en dan zou de tak voor rechtdoor winnen als hij eerst kwam.
+De nieuwe takken staan bovenaan omdat Python de eerste tak neemt die klopt. Ligt de lijn onder een buitensensor, dan zien de binnenste sensoren wit, en dan zou de tak voor rechtdoor winnen als hij eerst kwam.
 
-## Test het: de scherpe bocht
+### Test de scherpe bocht
 
 Zet de robot voor een scherpe bocht en laat los. In een flauwe bocht stuurt hij bij zoals eerst. In de scherpe bocht klapt op het scherm een `Buiten` om, en draait hij hard. Werkt het aan de kabel, zet je script dan weer als `main.py` op het bord ([Batterijen](site:robotica/lego_auto/batterijen/main-py)).
 
@@ -263,7 +260,7 @@ while True:
 
 **Oorzaak:** De buitenste sensoren zitten zo dicht bij het midden dat ze de lijn al in een flauwe bocht zien, en dan wint hun tak.
 
-**Oplossing:** Schuif ze iets naar buiten, maar niet zo ver dat de lijn ertussen past (zie hierboven). **Zelf vinden:** schuif de robot met de hand langzaam door een flauwe bocht en kijk op het scherm. Klapt `Buiten L` of `Buiten R` om, dan zit die sensor te dicht bij het midden.
+**Oplossing:** Schuif ze iets naar buiten, maar niet zo ver dat de lijn ertussen past (zie stap 1). **Zelf vinden:** schuif de robot met de hand langzaam door een flauwe bocht en kijk op het scherm. Klapt `Buiten L` of `Buiten R` om, dan zit die sensor te dicht bij het midden.
 
 </details>
 
@@ -272,7 +269,7 @@ while True:
 
 **Oorzaak:** De drempel van `2500` past niet bij deze sensor, of het draadje zit op een ander rijtje dan je code zegt.
 
-**Oplossing:** Houd de sensor boven de lijn en kijk op het scherm. Zie je geen `black`, kalibreer hem dan zoals in [Opdracht 5.4.a](site:robotica/lego_auto/lijnsensor/een-sensor), met `A2` of `A3` in plaats van `A0`. Klapt een andere regel om dan je verwacht, kijk dan naar de controlevraag hierboven.
+**Oplossing:** Houd de sensor boven de lijn en kijk op het scherm. Zie je geen `black`, kalibreer hem dan zoals in [Opdracht 5.4.a](site:robotica/lego_auto/lijnsensor/een-sensor), met `A2` of `A3` in plaats van `A0`. Klapt een andere regel om dan je verwacht, kijk dan naar de controlevraag bij Test de vier sensoren in stap 2.
 
 </details>
 

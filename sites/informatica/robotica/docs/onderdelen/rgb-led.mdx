@@ -22,12 +22,7 @@ Een **RGB-LED** is een lampje dat in elke kleur kan branden. Hij heeft drie kana
 
 Een RGB-LED-module heeft vier pinnen. Op het printje staan ze als `-`, `R`, `G` en `B`; bij sommige modules in een andere volgorde, dus kijk naar de letters.
 
-<details>
-<summary>Controlevraag</summary>
-
-Hoeveel pinnen heeft deze RGB-LED-module nodig op de microcontroller?
-
-</details>
+**Controlevraag:** Hoeveel pinnen heeft deze RGB-LED-module nodig op de microcontroller?
 
 <details>
 <summary>Antwoord</summary>
@@ -37,15 +32,6 @@ Hoeveel pinnen heeft deze RGB-LED-module nodig op de microcontroller?
 </details>
 
 ## Aansluiten
-
-### Pinnen van de RGB-LED
-
-- **Min (-)**: GND
-- **R**: rood kanaal
-- **G**: groen kanaal
-- **B**: blauw kanaal
-
-### Aansluiten op het shield
 
 ![Aansluitschema: de RGB-LED-module op het shield, met de min aan GND, R aan D10, G aan D9 en B aan D6](@site/static/fritzing/shield_rgb_led_bb.png)
 
@@ -68,12 +54,7 @@ Daarom gebruikt dit voorbeeld D10, D9 en D6, en niet de bezette D11.
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Wat gebeurt er als je een kleur-pin van de RGB-LED aan een pin **zonder PWM** sluit?
-
-</details>
+**Controlevraag:** Wat gebeurt er als je een kleur-pin van de RGB-LED aan een pin **zonder PWM** sluit?
 
 <details>
 <summary>Antwoord</summary>
@@ -122,12 +103,9 @@ Elke kleurwaarde ligt tussen **0** (uit) en **255** (maximaal). Door te mengen k
 - `(255, 255, 255)` = wit
 - `(0, 0, 0)` = uit
 
-<details>
-<summary>Opdracht: regenboog</summary>
+## Opdracht: regenboog
 
 Laat de LED achter elkaar rood, geel, groen, cyaan, blauw en paars laten zien, elk 1 seconde.
-
-</details>
 
 <details>
 <summary>Oplossing</summary>

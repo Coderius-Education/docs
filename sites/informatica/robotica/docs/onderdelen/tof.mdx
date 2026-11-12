@@ -21,12 +21,7 @@ Een **Time of Flight (TOF) sensor** meet afstand met een lichtstraal. Hij is pre
   <Onderdeel naam="SDA/SCL-module" foto="tof/sda_scl_module.jpeg" alt="De SDA/SCL-module (multiplexer) voor het Leaphy Murphy Shield">Een multiplexer, alleen nodig bij twee of meer TOF-sensoren</Onderdeel>
 </Onderdelenlijst>
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom heb je een multiplexer nodig bij **meerdere** TOF-sensoren?
-
-</details>
+**Controlevraag:** Waarom heb je een multiplexer nodig bij **meerdere** TOF-sensoren?
 
 <details>
 <summary>Antwoord</summary>
@@ -35,7 +30,7 @@ Alle TOF-sensoren hebben hetzelfde **I2C-adres**. De microcontroller zou ze niet
 
 </details>
 
-## Eén TOF zonder multiplexer \{#zonder-mux}
+## Zonder multiplexer: één TOF \{#zonder-mux}
 
 ### Aansluiten
 
@@ -72,12 +67,7 @@ while True:
 - `TimeOfFlight(sda_gpio_pin="SDA", scl_gpio_pin="SCL")` maakt een sensor aan op de twee pinnen van I2C. Zonder multiplexer heb je geen `channel` nodig.
 - `tof.get_distance()` geeft de afstand in **millimeters**.
 
-<details>
-<summary>Controlevraag</summary>
-
-Wat krijg je terug als er **niets** voor de sensor staat?
-
-</details>
+**Controlevraag:** Wat krijg je terug als er **niets** voor de sensor staat?
 
 <details>
 <summary>Antwoord</summary>
@@ -85,10 +75,6 @@ Wat krijg je terug als er **niets** voor de sensor staat?
 Het getal **8191**. Dat betekent: geen geldige meting. Je krijgt het ook als een object te ver weg is of juist te dichtbij (onder ongeveer **5 cm**). De TOF meet betrouwbaar tussen ongeveer **5 cm** en **200 cm**.
 
 </details>
-
-### SDA en SCL \{#sda-scl}
-
-<I2C />
 
 ### Alleen geldige metingen \{#geldige-metingen}
 
@@ -109,9 +95,8 @@ while True:
     sleep(1)
 ```
 
-- Alles tot en met **8090** noemt de bibliotheek een afstand, in millimeters.
-  Betrouwbaar meet de sensor tussen ongeveer **50 en 2000 mm** (5 cm tot 2 m).
-  Daarbuiten krijg je soms nog een getal, maar reken er niet op.
+- Alles tot en met **8090** is een afstand in millimeters. Betrouwbaar meet
+  de sensor van ongeveer **50 tot 2000 mm**; reken daarbuiten niet op het getal.
 - Is het getal **groter dan 8090**? Dan is er geen geldige meting:
   - **8191**: de sensor antwoordt, maar ziet niets binnen bereik (te ver, te
     dichtbij of niets ervoor);
@@ -119,12 +104,9 @@ while True:
     of SCL-draad of een verkeerd `channel`. Zie
     [Er gaat iets mis](site:robotica/docs/onderdelen/er-gaat-iets-mis#tof-sensoren).
 
-<details>
-<summary>Controlevraag</summary>
+### Controlevraag
 
 Wat zie je in de Shell als je je hand vlak (minder dan 5 cm) voor de sensor houdt?
-
-</details>
 
 <details>
 <summary>Antwoord</summary>
@@ -133,7 +115,7 @@ Wat zie je in de Shell als je je hand vlak (minder dan 5 cm) voor de sensor houd
 
 </details>
 
-## Eén TOF met multiplexer \{#met-mux}
+## Met multiplexer: één TOF \{#met-mux}
 
 Met de SDA/SCL-module kun je tot acht I2C-apparaten aansluiten op **channels 0 t/m 7**. Elke sensor krijgt zo zijn eigen kanaal.
 
@@ -170,12 +152,7 @@ TimeOfFlight(
 
 Met `channel=7` vertel je de bibliotheek op welk kanaal van de multiplexer de sensor zit. Vergeet niet dit aan te passen als je de sensor in een ander kanaal steekt.
 
-<details>
-<summary>Controlevraag</summary>
-
-Welk getal vul je in bij `channel=` als je de sensor in het stel pinnen onder **0** steekt?
-
-</details>
+**Controlevraag:** Welk getal vul je in bij `channel=` als je de sensor in het stel pinnen onder **0** steekt?
 
 <details>
 <summary>Antwoord</summary>
@@ -184,7 +161,7 @@ Welk getal vul je in bij `channel=` als je de sensor in het stel pinnen onder **
 
 </details>
 
-## Twee of meer TOFs met multiplexer \{#twee-met-mux}
+## Twee of meer TOFs: elk op een eigen channel \{#twee-met-mux}
 
 Heb je twee TOFs nodig (bijvoorbeeld om links en rechts te meten)? Dan steek je ze in twee verschillende channels van de multiplexer.
 
@@ -223,12 +200,13 @@ while True:
 
 In de Shell zie je nu twee getallen naast elkaar: de afstand voor sensor 0 en sensor 7.
 
-<details>
-<summary>Opdracht: drie sensoren</summary>
+## SDA en SCL \{#sda-scl}
+
+<I2C />
+
+## Opdracht: drie sensoren
 
 Voeg een derde TOF toe op **channel 3** en print ook die waarde mee.
-
-</details>
 
 <details>
 <summary>Oplossing</summary>

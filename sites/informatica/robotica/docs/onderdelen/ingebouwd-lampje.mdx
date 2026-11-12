@@ -20,7 +20,7 @@ Je eerste programma. Het hele programma is drie regels — en je bouwt het regel
   ]}
 />
 
-### Stap 1: Haal het gereedschap op
+### Haal het gereedschap op
 
 Typ deze regel in je editor en druk op **Run**:
 
@@ -38,7 +38,7 @@ from machine import Pin
 
 Er gebeurt na Run niets zichtbaars. Dat klopt: je hebt alleen gereedschap klaargelegd, je gebruikt het nog nergens.
 
-### Stap 2: Kies een pin en bewaar hem
+### Kies een pin en bewaar hem
 
 Voeg de tweede regel toe en druk weer op **Run**:
 
@@ -57,7 +57,7 @@ Dat object bewaar je in de variabele `pin_van_lampje`, zodat je er in de volgend
 
 Ook nu zie je nog niets gebeuren. De pin staat klaar, meer niet.
 
-### Stap 3: Zet het lampje aan
+### Zet het lampje aan
 
 Voeg de derde regel toe en druk op **Run**:
 
@@ -78,12 +78,7 @@ Uitzetten is dezelfde variabele met een andere methode:
 pin_van_lampje.off()
 ```
 
-<details>
-<summary>Controlevraag</summary>
-
-Wat doet `Pin.OUT`?
-
-</details>
+**Controlevraag:** Wat doet `Pin.OUT`?
 
 <details>
 <summary>Antwoord</summary>
@@ -94,7 +89,7 @@ Wat doet `Pin.OUT`?
 
 ## Laat het lampje knipperen \{#knipperen}
 
-Je script van hierboven stopt zodra de laatste regel is uitgevoerd. Knipperen is iets anders: aan, even wachten, uit, even wachten — en dat steeds opnieuw. Daarvoor heb je twee nieuwe dingen nodig: herhaling (een **loop**) en tijd (een **pauze**).
+Je script uit Lampje aanzetten stopt zodra de laatste regel is uitgevoerd. Knipperen is iets anders: aan, even wachten, uit, even wachten — en dat steeds opnieuw. Daarvoor heb je twee nieuwe dingen nodig: herhaling (een **loop**) en tijd (een **pauze**).
 
 <Voorkennis
   items={[
@@ -102,7 +97,7 @@ Je script van hierboven stopt zodra de laatste regel is uitgevoerd. Knipperen is
   ]}
 />
 
-### Stap 1: Een tweede import
+### Een tweede import
 
 Pauzeren kan met `sleep`, een functie uit de module `time`. Zet de nieuwe import onder de eerste:
 
@@ -115,7 +110,7 @@ pin_van_lampje = Pin('LED', Pin.OUT)
 
 De regel `pin_van_lampje.on()` heb je hier weggehaald; die komt zo in de loop terecht.
 
-### Stap 2: De loop erbij
+### De loop erbij
 
 Voeg de loop toe en druk op **Run**. Let op het **inspringen**: de regel onder `while True:` staat een tab naar rechts, en dat is niet voor de sier — zo weet Python welke regels bij de loop horen.
 
@@ -131,7 +126,7 @@ while True:
 
 `while True:` betekent: blijf de ingesprongen regels herhalen, voor altijd. Het lampje lijkt nu stil te branden, maar onder water zet de loop het duizenden keren per seconde opnieuw aan.
 
-### Stap 3: Uit, en wachten
+### Uit, en wachten
 
 Vul de loop aan tot vier regels en druk op **Run**:
 
@@ -159,12 +154,7 @@ De loop draait dan duizenden keren per seconde. Het lampje gaat nog steeds aan e
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom staat `pin_van_lampje = Pin('LED', Pin.OUT)` **boven** de loop en niet erin?
-
-</details>
+**Controlevraag:** Waarom staat `pin_van_lampje = Pin('LED', Pin.OUT)` **boven** de loop en niet erin?
 
 <details>
 <summary>Antwoord</summary>
@@ -208,12 +198,9 @@ Verander `'LED_RED'` in `'LED_BLUE'` of `'LED_GREEN'` om een andere kleur te kri
 
 </details>
 
-<details>
-<summary>Opdracht: meerdere kleuren tegelijk</summary>
+## Opdracht: meerdere kleuren tegelijk
 
 Kun je rood en blauw allebei tegelijk aan zetten? Welke kleur krijg je dan?
-
-</details>
 
 <details>
 <summary>Oplossing</summary>
@@ -266,7 +253,7 @@ Rood en blauw samen geeft **paars/magenta**. Probeer ook rood + groen (geel) en 
 
 **Oorzaak:** Eén van de twee `sleep`-regels ontbreekt, of `pin_van_lampje.off()` staat buiten de loop.
 
-**Oplossing:** Vergelijk je script letterlijk met het blok bij Stap 3 van [Laat het lampje knipperen](#knipperen).
+**Oplossing:** Vergelijk je script letterlijk met het blok bij Uit, en wachten van [Laat het lampje knipperen](#knipperen).
 
 **Zelf vinden:** zet `print("rondje")` in de loop. Komen er in de Shell wél regels voorbij maar knippert er niets, dan draait de loop en zit de fout in de aan/uit-regels; zie je niets, dan draait de loop zelf niet.
 

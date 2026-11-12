@@ -38,12 +38,7 @@ Dwaalt de robot naar links af, dan schuift de lijn onder de réchtersensor. Hij 
 
 Situatie 1 bouw je in [Deel 7](site:robotica/lego_auto/lijnvolgen/rechtdoor). Situatie 2 en 3 zijn in [Deel 8](site:robotica/lego_auto/lijnvolgen/nu-jij) aan jou.
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom stuurt "de linkermotor zachter" de robot naar línks?
-
-</details>
+**Controlevraag:** Waarom stuurt "de linkermotor zachter" de robot naar línks?
 
 <details>
 <summary>Antwoord</summary>

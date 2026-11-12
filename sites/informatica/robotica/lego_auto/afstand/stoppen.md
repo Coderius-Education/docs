@@ -123,12 +123,7 @@ De `if` staat bovenaan omdat stoppen voor elke bocht gaat. Stond hij onderaan, d
 
 Zet de robot op de lijn en houd je hand op ongeveer 20 cm voor de TOF. Kom langzaam dichterbij: rond `100` op het scherm stopt de robot. Haal je hand weg en hij rijdt verder.
 
-<details>
-<summary>Controlevraag</summary>
-
-Je wilt dat de robot al op 15 cm stopt. Wat verander je?
-
-</details>
+**Controlevraag:** Je wilt dat de robot al op 15 cm stopt. Wat verander je?
 
 <details>
 <summary>Antwoord</summary>

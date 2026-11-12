@@ -74,13 +74,7 @@ oled.show()
 - `text()` zet tekst klaar op positie (x, y). Een letter is 8 bij 8 pixels.
 - **`show()`** stuurt alles wat je klaargezet hebt naar het scherm. Vergeet deze niet, anders blijft het scherm leeg.
 
-### SDA en SCL \{#sda-scl}
-
-<I2C />
-
-### Andere handige functies
-
-#### Scherm leeg maken
+### Scherm leeg maken
 
 ```python
 oled.fill("white")  # alles wit
@@ -99,7 +93,7 @@ oled.text('Wit op zwart', x=0, y=0, color="white")
 oled.show()
 ```
 
-#### Een getal tonen
+### Een getal tonen
 
 Getallen zet je in een **f-string** om ze als tekst te tonen. Hoe een f-string werkt, staat bij [Tekst en getallen combineren met f-strings](site:python/docs/tekst/04a-f-strings).
 
@@ -110,12 +104,46 @@ oled.text(f'Temp: {temperatuur}C', x=0, y=40)
 oled.show()
 ```
 
-<details>
-<summary>Opdracht: teller op het scherm</summary>
+### Grotere tekst \{#grotere-tekst}
+
+Een meetwaarde lees je van een afstand beter als hij groot op het scherm
+staat. Met **`scale`** maak je de letters groter: bij `scale=2` wordt elke
+pixel een blokje van 2 bij 2, en is een letter 16 bij 16 pixels.
+
+```python
+from leaphymicropython.actuators.oled_screen import OLEDSH1106
+
+oled = OLEDSH1106(
+    width=128, height=64, channel=7,
+    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
+)
+
+oled.fill("white")
+oled.text('Klein', x=0, y=0)
+oled.text('Groot', x=0, y=16, scale=2)
+oled.show()
+```
+
+Hoe groter de letters, hoe minder er op een regel past:
+
+| `scale` | Letter | Per regel |
+|:---:|:---:|:---:|
+| 1 | 8 × 8 | 16 tekens |
+| 2 | 16 × 16 | 8 tekens |
+| 3 | 24 × 24 | 5 tekens |
+
+Wat niet past, valt van het scherm af: de tekst gaat niet verder op een
+nieuwe regel. Zet een volgende regel ook verder omlaag, minstens 8 × `scale`
+pixels. `scale` is een heel getal, dus 1, 2 of 3. Met `scale=1.5` krijg je
+een [foutmelding](site:robotica/docs/onderdelen/er-gaat-iets-mis#oled-scherm).
+
+## SDA en SCL \{#sda-scl}
+
+<I2C />
+
+## Opdracht 1: teller op het scherm
 
 Laat het scherm elke seconde een teller een nummer hoger laten zien (0, 1, 2, 3, ...).
-
-</details>
 
 <details>
 <summary>Tip</summary>
@@ -147,46 +175,10 @@ while True:
 
 </details>
 
-#### Grotere tekst \{#grotere-tekst}
-
-Een meetwaarde lees je van een afstand beter als hij groot op het scherm
-staat. Met **`scale`** maak je de letters groter: bij `scale=2` wordt elke
-pixel een blokje van 2 bij 2, en is een letter 16 bij 16 pixels.
-
-```python
-from leaphymicropython.actuators.oled_screen import OLEDSH1106
-
-oled = OLEDSH1106(
-    width=128, height=64, channel=7,
-    sda_gpio_pin="SDA", scl_gpio_pin="SCL",
-)
-
-oled.fill("white")
-oled.text('Klein', x=0, y=0)
-oled.text('Groot', x=0, y=16, scale=2)
-oled.show()
-```
-
-Hoe groter de letters, hoe minder er op een regel past:
-
-| `scale` | Een letter | Tekens op een regel |
-|:---:|:---:|:---:|
-| 1 | 8 × 8 pixels | 16 |
-| 2 | 16 × 16 pixels | 8 |
-| 3 | 24 × 24 pixels | 5 |
-
-Wat niet past, valt van het scherm af: de tekst gaat niet verder op een
-nieuwe regel. Zet een volgende regel ook verder omlaag, minstens 8 × `scale`
-pixels. `scale` is een heel getal, dus 1, 2 of 3. Met `scale=1.5` krijg je
-een [foutmelding](site:robotica/docs/onderdelen/er-gaat-iets-mis#oled-scherm).
-
-<details>
-<summary>Opdracht: een grote teller</summary>
+## Opdracht 2: een grote teller
 
 Maak de teller van de vorige opdracht groot: het woord `Teller` klein
 bovenaan, en het getal eronder met `scale=3`.
-
-</details>
 
 <details>
 <summary>Tip</summary>

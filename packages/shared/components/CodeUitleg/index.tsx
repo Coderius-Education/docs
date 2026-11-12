@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useInBeeld, useInLesTab } from '../LesTabs/paneel';
 import styles from './styles.module.css';
 
 // De lessen leggen code regel voor regel uit. Dat stond eerst als een rij
@@ -66,19 +67,55 @@ export default function CodeUitleg({ children }: { children?: ReactNode }): Reac
   useEffect(() => {
     const lijnen = codeRef.current?.querySelectorAll<HTMLElement>('.token-line');
     if (!lijnen) return;
+    let eerste: HTMLElement | null = null;
     lijnen.forEach((lijn, i) => {
       const nummer = i + 1;
       const aan = actief !== null && nummer >= actief.n && nummer <= (actief.tot ?? actief.n);
       lijn.classList.toggle(styles.opgelicht, aan);
+      if (aan && !eerste) eerste = lijn;
     });
+    // In een les-tabblad schuift een lang programma in zijn eigen vak. De
+    // regel die oplicht moet dan ook te zien zijn: bij Deel 10 van de
+    // Lego-auto ging de uitleg over regel 34 en 41 van een vak met zeventien
+    // regels. Het vak schuift, niet de pagina.
+    const vak = (eerste as HTMLElement | null)?.closest('pre');
+    if (!eerste || !vak || vak.scrollHeight <= vak.clientHeight) return;
+    const boven =
+      (eerste as HTMLElement).getBoundingClientRect().top - vak.getBoundingClientRect().top;
+    const regel = (eerste as HTMLElement).getBoundingClientRect().height || 20;
+    if (boven < 0 || boven > vak.clientHeight - 2 * regel)
+      vak.scrollTop += boven - vak.clientHeight / 3;
   }, [actief]);
+
+  // In een tabblad staat de uitleg naast de code in plaats van eronder: zo
+  // past een stap met een programma en vier regels uitleg op één scherm.
+  const inTab = useInLesTab();
+
+  // Een lang programma opent op de eerste regel die de uitleg bespreekt. Deel
+  // 7 van de Lego-auto zegt "twee wijzigingen in je loop" en toonde regel 1
+  // tot en met 15 van 35: de nieuwe regels, 31 tot en met 33, stonden buiten
+  // het vak tot je een uitleg aanwees. Eén keer, zodra het paneel open is
+  // (een dicht paneel heeft geen maten); daarna schuift de leerling zelf.
+  const inBeeld = useInBeeld();
+  const geopend = useRef(false);
+  const eersteRegel = regels.length > 0 ? Math.min(...regels.map((r) => r.props.n)) : 0;
+  useEffect(() => {
+    if (!inTab || !inBeeld || geopend.current || !eersteRegel) return;
+    geopend.current = true;
+    const lijn = codeRef.current?.querySelectorAll<HTMLElement>('.token-line')[eersteRegel - 1];
+    const vak = lijn?.closest('pre');
+    if (!lijn || !vak || vak.scrollHeight <= vak.clientHeight) return;
+    const boven = lijn.getBoundingClientRect().top - vak.getBoundingClientRect().top;
+    const regel = lijn.getBoundingClientRect().height || 20;
+    if (boven > vak.clientHeight - 2 * regel) vak.scrollTop += boven - vak.clientHeight / 3;
+  }, [inTab, inBeeld, eersteRegel]);
 
   const zetVast = useCallback((n: number, tot?: number) => {
     setVast((huidig) => (huidig?.n === n ? null : { n, tot }));
   }, []);
 
   return (
-    <div className={styles.blok}>
+    <div className={`${styles.blok}${inTab && regels.length > 0 ? ` ${styles.inTab}` : ''}`}>
       <div className={styles.code} ref={codeRef}>
         {codeblok}
       </div>

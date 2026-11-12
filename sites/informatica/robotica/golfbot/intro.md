@@ -32,6 +32,8 @@ Jouw Golfbot voelt straks met een sensor of er een balletje ligt, en slaat het d
 6. Maak [de arm](site:robotica/golfbot/arm), en sla een hole in one.
 7. Kies [een uitbreiding](site:robotica/golfbot/uitbreiding): een eigen hoofd uit de 3D-printer, of een lampje dat een hole in one viert.
 
+## Controlevraag
+
 <Voorspel soort="Controlevraag" vraag="Waarom kan de Golfbot een robot genoemd worden?">
   <Keuze uitleg="Waar hij van gemaakt is, telt niet. Een huis van Lego noem je ook geen robot.">Hij is van Lego gemaakt</Keuze>
   <Keuze uitleg="Een ventilator heeft ook een motor, en toch noem je die geen robot.">Hij heeft een motor die beweegt</Keuze>

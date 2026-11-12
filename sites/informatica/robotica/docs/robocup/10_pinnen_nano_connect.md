@@ -27,13 +27,8 @@ en D8 (zie [Afstandssensor](site:robotica/docs/onderdelen/afstandssensor)). Een
 [TOF](site:robotica/docs/onderdelen/tof#met-mux) op de multiplexer kost geen
 pinnen, en daarom is dat op deze robot de standaard.
 
-<details>
-<summary>Controlevraag</summary>
-
-Je robot heeft een TOF en een OLED-scherm op de multiplexer, en je wilt twee
+**Controlevraag:** Je robot heeft een TOF en een OLED-scherm op de multiplexer, en je wilt twee
 analoge IR-sensoren toevoegen. Op welke pinnen sluit je de IR-sensoren aan?
-
-</details>
 
 <details>
 <summary>Antwoord</summary>

@@ -1,7 +1,8 @@
+import { useInLesTab } from '@coderius/shared/components/LesTabs/paneel';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { eenmalig } from './eenmalig';
-import { schaalVoor } from './schaal';
+import { maxHoogteInTab, schaalVoor } from './schaal';
 import styles from './styles.module.css';
 
 interface BlokkenProps {
@@ -43,6 +44,10 @@ export default function Blokken({
   const vlak = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<'laden' | 'klaar' | 'mislukt'>('laden');
   const [schuift, setSchuift] = useState(false);
+  // In een ref: het tekenen hieronder start één keer, en leest bij elke
+  // nieuwe breedte of de figuur in een tabblad staat.
+  const inTab = useRef(false);
+  inTab.current = useInLesTab();
 
   useEffect(() => {
     const div = vlak.current;
@@ -114,7 +119,13 @@ export default function Blokken({
         // Binnen de rand van het kader (1 px aan elke kant) is 2 px minder
         // ruimte dan de figuur breed is.
         const ruimte = buiten.clientWidth - 2;
-        const schaal = schaalVoor(ruimte, breedte);
+        // In een les-tabblad past het programma ook in de hoogte op het
+        // scherm: het programma van Zie de bal, sla de bal was er naast zijn
+        // vraag honderd pixels te hoog voor.
+        const maxHoogte = inTab.current
+          ? maxHoogteInTab(window.innerHeight, window.matchMedia('(min-width: 997px)').matches)
+          : Number.POSITIVE_INFINITY;
+        const schaal = schaalVoor(ruimte, breedte, hoogte, maxHoogte);
         setSchuift(Math.ceil(breedte * schaal) > ruimte);
         div.style.width = `${Math.ceil(breedte * schaal)}px`;
         div.style.height = `${Math.ceil(hoogte * schaal)}px`;

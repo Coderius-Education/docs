@@ -14,13 +14,15 @@ Of er een bal ligt, ziet je Golfbot met de **IR-sensor**. Die stuurt onzichtbaar
 
 Zet je robot uit met de knop **ON/OFF**. Sluit de sensor dan aan op de rij van **A0** op het [shield](site:robotica/golfbot/microcontroller):
 
+![Uitsnede van het schema: de blauwe sensor linksboven, met de rode draad naar 5V, de zwarte naar GND en de oranje naar het signaal van A0 op het shield. De pin D0 van de sensor blijft leeg.](@site/static/fritzing/golfbot_sensor.png)
+
 | Pin van de sensor | Komt op |
 |---|---|
 | **VCC** (rode draad) | 5V |
 | **GND** (zwarte draad) | GND |
 | **A0** (oranje draad) | het signaal van **A0**: het pinnetje het dichtst bij de naam A0/D14 |
 
-![Uitsnede van het schema: de blauwe sensor linksboven, met de rode draad naar 5V, de zwarte naar GND en de oranje naar het signaal van A0 op het shield. De pin D0 van de sensor blijft leeg.](@site/static/fritzing/golfbot_sensor.png)
+### De pin D0
 
 De sensor heeft ook een pin **D0**, maar die laat je leeg. D0 zegt alleen "wel bal" of "geen bal". Op **A0** krijg je een getal, en dan kies je zelf vanaf welk getal er een bal ligt.
 
@@ -28,7 +30,7 @@ Op het shield staat ook een D0, bij **D0/TX1**. Daar sluit je niets op aan, want
 
 Zit alles vast? Zet je robot dan weer aan met **ON/OFF**.
 
-## Stap 1: het getal uitlezen
+## Uitlezen: het getal op het scherm
 
 Sleep eerst het blok **herhaal voor altijd** uit **Denk stappen** in het Leaphy-blok. Wat erin staat, doet je robot steeds opnieuw. Zonder dat blok leest hij de sensor één keer en daarna nooit meer.
 
@@ -36,9 +38,13 @@ Het getal van de sensor lees je met het blok **Lees anapin A0** uit de groep **S
 
 Onder Toon op scherm komt **duurt 500 ms**, ook uit Denk stappen. Daarmee wacht de robot een halve seconde, zodat je het getal kunt lezen. In Easybloqs heet het blok **Duurt** en staat er eerst 1000 in; klik op het getal en typ 500. Achter het getal staat een keuzelijstje met ms, μs en s. Laat dat op **ms** staan.
 
+### Het programma
+
 <Blokken programma={uitlezen} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Toon op scherm Lees anapin A0, en daarna duurt 500 ms." />
 
 Klik op **Upload naar robot** en open het scherm met de knop **Toon output op scherm**, zoals bij [je eerste programma](site:robotica/golfbot/easybloqs). Er verschijnt elke halve seconde een nieuw getal. Leg een bal voor de sensor en haal hem weer weg. Wordt het getal lager met een bal ervoor? Schrijf twee getallen op: een zonder bal en een met bal.
+
+### Controlevraag
 
 <Voorspel soort="Controlevraag" vraag="Waarom staat Lees anapin A0 in een herhaal voor altijd?">
   <Keuze goed uitleg="Herhaal voor altijd laat je robot steeds opnieuw lezen. Zo merkt hij ook een bal die je later neerlegt.">Zodat de robot steeds opnieuw kijkt of er een bal ligt</Keuze>
@@ -53,13 +59,15 @@ Zonder herhaal leest de robot de sensor één keer, bij het aanzetten. Je wilt s
 
 ## Een grens kiezen
 
+### Wat is een grens?
+
 Zonder bal geeft je sensor een hoog getal, met een bal een laag getal. Je robot moet dus weten vanaf welk getal er een bal ligt. Dat getal kies je zelf: het heet je **grens**. Is het getal op A0 kleiner dan je grens, dan ligt er een bal.
 
-Hieronder oefen je dat zonder robot. Schuif met de muis of met je vinger, of klik op een schuifje en gebruik de pijltjestoetsen.
+### Oefen zonder robot
+
+Hier oefen je dat zonder robot. Schuif met de muis of met je vinger, of klik op een schuifje en gebruik de pijltjestoetsen. De getallen zijn een voorbeeld. Jouw sensor geeft andere getallen: dat hangt af van de sensor, het licht in de klas en de bal. Daarom kies je straks, bij Reageren, een grens met de getallen die jij bij Uitlezen hebt opgeschreven.
 
 <SensorSimulator />
-
-De getallen hier zijn een voorbeeld. Jouw sensor geeft andere getallen: dat hangt af van de sensor, het licht in de klas en de bal. Daarom kies je in stap 2 een grens met de getallen die jij in stap 1 hebt opgeschreven.
 
 {/* stijl-uitzondering: uitroepteken citaat van de tekst die het programma op het scherm zet */}
 
@@ -78,15 +86,17 @@ De getallen hier zijn een voorbeeld. Jouw sensor geeft andere getallen: dat hang
 
 </details>
 
-## Stap 2: reageren op de bal
+## Reageren: als er een bal ligt
 
-Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijkt hij of het getal kleiner is dan een grens; in het voorbeeld is dat 300. In die groep staan twee blokken **als**: neem het eerste, zonder **anders**. Je bouwt verder op het programma van stap 1:
+Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijkt hij of het getal kleiner is dan een grens; in het voorbeeld is dat 300. In die groep staan twee blokken **als**: neem het eerste, zonder **anders**. Je bouwt verder op het programma van Uitlezen:
 
 1. Sleep als … dan in herhaal voor altijd, helemaal bovenaan. Toon op scherm en duurt schuiven eronder.
 2. Sleep Toon op scherm in het gat onder als … dan. Het blok duurt gaat mee, want een blok neemt alles eronder mee. Sleep duurt daarna terug, onder als … dan.
 3. Het vergelijkblok vind je in **Getal blokken**. In Easybloqs staat er eerst `1 = 1` in. Sleep het in het gat achter het woord als.
 4. Sleep Lees anapin A0 uit Toon op scherm naar het linkervakje van het vergelijkblok. In Toon op scherm komt het tekstvakje terug: typ daarin `klaar om te golfen!`.
 5. Klik op het `=` en kies in het keuzelijstje **`<`**. Typ in het rechtervakje je grens.
+
+### Het programma
 
 <Blokken programma={balKlaar} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: als Lees anapin A0 kleiner is dan 300, dan Toon op scherm 'klaar om te golfen!'. Daarna duurt 500 ms." />
 
@@ -95,7 +105,7 @@ Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stap
 Is het getal kleiner dan 300, dan ligt er een bal en verschijnt "klaar om te golfen!" op het scherm.
 
 :::tip
-300 is maar een voorbeeld. Gebruik de getallen die jij in stap 1 hebt opgeschreven, en kies een grens die er netjes tussenin ligt.
+300 is maar een voorbeeld. Gebruik de getallen die jij bij Uitlezen hebt opgeschreven, en kies een grens die er netjes tussenin ligt.
 :::
 
 ## Er gaat iets mis
@@ -114,11 +124,13 @@ Is het getal kleiner dan 300, dan ligt er een bal en verschijnt "klaar om te gol
 
 **Oorzaak:** in het vergelijkblok staat nog **`=`**, of de grens klopt niet. Met **`=`** moet het getal precies gelijk zijn aan je grens, en dat gebeurt bijna nooit.
 
-**Oplossing:** klik op het teken in het vergelijkblok en kies **`<`**. Kies als grens een getal tussen je twee getallen uit stap 1.
+**Oplossing:** klik op het teken in het vergelijkblok en kies **`<`**. Kies als grens een getal tussen je twee getallen van Uitlezen.
 
-**Zelf vinden:** kijk naar het getal dat je in stap 1 met een bal opschreef. Is dat kleiner dan je grens, dan ligt het aan het teken.
+**Zelf vinden:** kijk naar het getal dat je bij Uitlezen met een bal opschreef. Is dat kleiner dan je grens, dan ligt het aan het teken.
 
 </Probleem>
+
+## Controlevraag
 
 <Voorspel soort="Controlevraag" vraag="De sensor heeft twee pinnen waar een signaal uit komt: A0 en D0. Welke van de twee sluit je aan?">
   <Keuze goed uitleg="A0 geeft een getal, en met een getal kies je zelf een grens.">A0, op het signaal van A0 op het shield</Keuze>

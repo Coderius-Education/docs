@@ -43,6 +43,9 @@ export function pasHoogte({ scherm, boven, onder, max }: Ruimte, min = MIN_HOOGT
  *    weer dicht, dan klopt de meting weer.
  */
 export function meetRuimte(veld: HTMLElement, paneel: HTMLElement, max: number): Ruimte | null {
+  // Een paneel met een veld dat zichzelf passend maakt: de vrije ruimte is
+  // van het veld, niet van een plaatje of codevak ernaast (speling.ts).
+  paneel.setAttribute('data-heeft-veld', '');
   const v = veld.getBoundingClientRect();
   const p = paneel.getBoundingClientRect();
   if (p.width === 0 || v.width === 0) return null;

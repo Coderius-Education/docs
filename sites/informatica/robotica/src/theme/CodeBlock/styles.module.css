@@ -1,3 +1,13 @@
+/* Het codeblok met zijn link: samen één blok, zo breed als de kolom. */
+.metLink {
+  min-width: 0;
+}
+
+/* De link sluit het blok af: de marge eronder is die van het codeblok. */
+.metLink > .editorLink {
+  margin-bottom: var(--ifm-leading);
+}
+
 .editorLink {
   display: flex;
   justify-content: flex-end;
@@ -13,4 +23,13 @@
 .editorLink a:hover {
   color: var(--ifm-color-primary);
   text-decoration: none;
+}
+
+/* In een les-tabblad schuift een lang programma in zijn eigen vak (LesTabs,
+   CodeUitleg). Met de link eronder is dat vak een regel lager, anders stond
+   de knop Volgende vier pixels buiten beeld (Lijnvolgen, 1280×720). Een
+   variabele, geen eigen max-height: die won ook van het lagere vak van
+   CodeUitleg, en dan waren drie stappen van de Lego-auto weer te lang. */
+.metLink {
+  --les-codevak-af: 1.5rem;
 }

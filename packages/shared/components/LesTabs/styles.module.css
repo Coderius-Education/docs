@@ -282,13 +282,105 @@
   max-height: 34vh;
 }
 
+/* Op een telefoon scrolt de leerling toch: een plaatje in de lestekst staat
+   daar op de breedte van het scherm. Een aansluitschema van robotica was er
+   145 pixels breed. Niet het doelplaatje in een oefenveld: dat staat daar
+   boven de code. */
+@media (max-width: 996px) {
+  .paneel > p > img,
+  .paneel [data-les-voorbeeld] > p > img,
+  .paneel [data-les-voorbeeld] > div > p > img {
+    max-height: none;
+  }
+}
+
+/* Een plaatje dat kleiner staat dan het is, toont een klik groot
+   (Vergroot.tsx). */
+.wortel img[data-vergroot] {
+  cursor: zoom-in;
+}
+
+/* Dat je kunt klikken, zie je aan de muis pas als je erop staat. Een klein
+   label op de hoek van het plaatje zegt het. Vergroot.tsx zet
+   `data-vergroot-vak` op het element om het plaatje, met de hoek van het
+   plaatje in --vergroot-x en --vergroot-y: een alinea, een <figure> of het
+   vak van een reeks. */
+.paneel [data-vergroot-vak] {
+  position: relative;
+}
+
+.paneel [data-vergroot-vak]::after {
+  position: absolute;
+  top: calc(var(--vergroot-y, 0px) + 0.4rem);
+  left: calc(var(--vergroot-x, 0px) + 0.4rem);
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 65%);
+  color: #fff;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  content: "Klik om te vergroten";
+  pointer-events: none;
+}
+
+/* Zonder muis klik je niet. */
+@media (hover: none) {
+  .paneel [data-vergroot-vak]::after {
+    content: "Tik om te vergroten";
+  }
+}
+
+.groot {
+  max-width: min(96vw, 1200px);
+  max-height: 94vh;
+  padding: 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  overflow: auto;
+}
+
+.groot::backdrop {
+  background: rgb(0 0 0 / 55%);
+}
+
+.groot img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+/* De knop blijft in beeld als het plaatje hoger is dan het venster. */
+.grootSluiten {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.grootSluiten button {
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: 6px;
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 /* Een programma van meer dan zestien regels is hoger dan wat
    er op 1280×720 onder de tabbladen past: het schuift dan in zijn eigen vak,
    en de knop Volgende blijft in beeld. In de Python-cursus zijn dat vier
    voorbeelden in het hoofdstuk Klassen. Niet in een uitklapblok: wie een
    oplossing opent, leest hem in zijn geheel. */
 .paneel :global(.theme-code-block):not(details *) pre {
-  max-height: 53vh;
+  /* Een site met iets onder het codeblok (robotica: de link Open in de
+     editor) zet --les-codevak-af op de hoogte daarvan. */
+  max-height: calc(53vh - var(--les-codevak-af, 0px));
   overflow-y: auto;
   /* Een schaduw aan de rand waar nog code buiten beeld staat: zonder was er
      in 15k niets aan te zien dat het nieuwe deel van het programma onder de
@@ -319,8 +411,9 @@
     margin-bottom: 0;
   }
 
-  /* Het woord Uitvoer, boven het blok. */
-  .voorbeeld > div > p:first-child {
+  /* Het woord Uitvoer, boven het blok. Naast een plaatje staat daar gewone
+     tekst. */
+  .voorbeeld:not(.metBeeld):not(.metBreedBeeld):not(.metToelichting) > div > p:first-child {
     margin: 0 0 0.25rem;
     color: var(--ifm-color-emphasis-700);
     font-size: 0.875rem;
@@ -341,6 +434,11 @@
     margin-bottom: var(--ifm-leading);
   }
 
+  /* Een regel die net niet in de halve breedte past: de code iets kleiner. */
+  .bestandenSmal {
+    --ifm-code-font-size: 74%;
+  }
+
   .bestanden > div > p {
     margin: 0 0 0.25rem;
   }
@@ -355,6 +453,158 @@
   .metVraag {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
+
+  /* Een plaatje met zijn tekst ernaast (een aansluitschema met de pinnen).
+     Het plaatje mag hier hoger zijn dan een derde van het scherm: de tekst
+     staat er niet meer onder. */
+  .metBeeld {
+    grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
+  }
+
+  /* Code met de lijst die hem uitlegt. De code krijgt de breedte van zijn
+     langste regel, tussen veertig en zeventig procent: op een vaste helft
+     was de importregel van leaphymicropython afgesneden (elf codeblokken
+     bij robotica, vier bij web). De toelichting houdt minstens dertig
+     procent; een regel die ook in zeventig procent niet past, zet de
+     remark-stap niet naast elkaar (pastNaast). */
+  .metToelichting {
+    grid-template-columns: minmax(40%, max-content) minmax(30%, 1fr);
+  }
+
+  /* Code met een vraag ernaast (Code beter begrijpen, robotica): de vraag
+     gaat over het hele programma, en er staat niets boven. Het vak is dan zo
+     hoog als het scherm toelaat: bij 53vh viel de laatste regel van een
+     programma van zeventien regels, print("Klaar!"), onder de rand, en daar
+     ging de vraag over. */
+  .paneel .metCodeVraag :global(.theme-code-block):not(details *) pre {
+    max-height: calc(100vh - 300px - var(--les-codevak-af, 0px));
+  }
+
+  /* Een onderdeel om mee te oefenen (de sensorsimulator) met zijn vragen. */
+  .metBreedBeeld {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+
+  .metBreedBeeld > :first-child {
+    margin-bottom: 0;
+  }
+
+  /* Het plaatje vult het vak naast de tekst, en bepaalt de hoogte dus niet:
+     naast veel tekst is het groot, naast één zin minstens vijftien regels
+     hoog. Met een vaste hoogte maakte een plaatje naast een korte tekst het
+     scherm langer dan nodig. */
+  .metBeeld > p:first-child {
+    position: relative;
+    min-height: 15rem;
+    margin: 0;
+  }
+
+  .paneel .metBeeld > p:first-child img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
+    object-position: left top;
+  }
+}
+
+/* Tussen 997 en 1200 pixels (een iPad liggend, een venster op een deel van
+   het scherm) staat de lessenlijst er nog, en is de les maar zo'n 690 pixels
+   breed. Code met iets ernaast staat daar alleen naast elkaar als zijn
+   langste regel past, en anders onder elkaar: op 1024 bij 768 was op 22
+   schermen van robotica de code afgesneden. Flex in plaats van een raster:
+   de code vraagt de breedte van zijn langste regel, en past dat met dertig
+   procent voor wat ernaast staat niet op de regel, dan breekt de rij.
+   Vanaf 1200 pixels verandert er niets. */
+@media (min-width: 997px) and (max-width: 1199px) {
+  .voorbeeld:not(.metBeeld):not(.metBreedBeeld) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.5rem 1rem;
+  }
+
+  .voorbeeld:not(.metBeeld):not(.metBreedBeeld) > :first-child {
+    flex: 1 0 auto;
+    min-width: 40%;
+    max-width: 100%;
+  }
+
+  .voorbeeld:not(.metBeeld):not(.metBreedBeeld) > :last-child {
+    flex: 1000 1 30%;
+    min-width: 0;
+  }
+
+  /* Twee bestanden naast elkaar zijn elk 330 pixels breed: onder elkaar. */
+  .bestanden {
+    grid-auto-flow: row;
+    row-gap: 0.5rem;
+  }
+
+  /* Staat de toelichting onder de code, dan is er voor een vak van een half
+     scherm geen plaats meer: het begint laag, en wat er op het scherm over
+     is, krijgt het erbij (speling.ts). */
+  .paneel .metToelichting :global(.theme-code-block):not(details *) pre {
+    max-height: calc(30vh - var(--les-codevak-af, 0px));
+  }
+
+  .paneel .metCodeVraag :global(.theme-code-block):not(details *) pre {
+    max-height: calc(100vh - 470px - var(--les-codevak-af, 0px));
+  }
+}
+
+/* Een reeks bouwstappen (LesReeks): één plaatje tegelijk, met de knoppen
+   eronder. Het plaatje is zo hoog als er op het scherm overblijft. */
+.reeks {
+  margin-bottom: var(--ifm-leading);
+}
+
+.reeksItem > :global(figure) {
+  margin: 0;
+  text-align: center;
+}
+
+/* Zo hoog als er op het scherm overblijft na de titel, de tabbladen, een
+   paar regels tekst erboven, het onderschrift en de knoppen. */
+.paneel .reeksItem img {
+  width: auto;
+  max-width: 100%;
+  max-height: max(200px, calc(100vh - 450px));
+}
+
+.reeksKnoppen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.reeksKnop {
+  padding: 0.35rem 1rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-color-primary);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reeksKnop:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.reeksTeller {
+  min-width: 5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Een link naar een kop in het paneel: de kop komt onder de navbar én de rij
@@ -369,9 +619,13 @@
 }
 
 /* De inhoudsopgave rechts vervalt op een pagina met tabbladen, en de les
-   krijgt die breedte erbij. Docusaurus zet de kolom op 75% met !important. */
-:global(html:has([data-les-tabs]) .col--3:has(> .theme-doc-toc-desktop)),
-:global(html:has([data-les-tabs]) .theme-doc-toc-mobile) {
+   krijgt die breedte erbij. Docusaurus zet de kolom op 75% met !important.
+   Een les zonder tabbladen in dezelfde cursus (één sectie, of alleen een
+   deel) heeft de marker data-les-zonder-tabs van de remark-stap en krijgt
+   dezelfde kop en breedte: anders versprong de pagina van les tot les, en
+   was zo'n korte les door het kruimelpad en de grote titel te lang. */
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .col--3:has(> .theme-doc-toc-desktop)),
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .theme-doc-toc-mobile) {
   display: none;
 }
 
@@ -381,7 +635,7 @@
    in de eerste layer, die van Infima. Of de kolom breed is, meet alleen een
    browser (scripts/meet-les-tabs.mjs meldt de breedte). */
 @layer docusaurus.infima {
-  :global(html:has([data-les-tabs]) [class*="docItemCol"]) {
+  :global(html:has([data-les-tabs], [data-les-zonder-tabs]) [class*="docItemCol"]) {
     max-width: 100% !important;
   }
 }
@@ -391,11 +645,11 @@
    vervalt, en de titel is zo groot als een kop, niet als een omslag. Op een
    telefoon is de lessenlijst dicht en blijft het kruimelpad staan. */
 @media (min-width: 997px) {
-  :global(html:has([data-les-tabs]) .theme-doc-breadcrumbs) {
+  :global(html:has([data-les-tabs], [data-les-zonder-tabs]) .theme-doc-breadcrumbs) {
     display: none;
   }
 
-  :global(html:has([data-les-tabs]) .theme-doc-markdown > header > h1) {
+  :global(html:has([data-les-tabs], [data-les-zonder-tabs]) .theme-doc-markdown > header > h1) {
     --ifm-h1-font-size: 1.75rem;
     margin-bottom: 0.25rem;
   }
@@ -414,8 +668,21 @@
     display: none;
   }
 
+  /* Op papier valt er niets te klikken. */
+  .paneel [data-vergroot-vak]::after {
+    content: none;
+  }
+
   .paneel[hidden] {
     display: block;
+  }
+
+  .reeksItem[hidden] {
+    display: block;
+  }
+
+  .reeksKnoppen {
+    display: none;
   }
 
   .bovenStappen[hidden] {

@@ -5,7 +5,22 @@
 export const MINSTE_SCHAAL = 0.6;
 
 // De schaal waarop een programma van `breedte` past in `ruimte`, maar nooit
-// groter dan 1 en nooit kleiner dan MINSTE_SCHAAL.
-export function schaalVoor(ruimte: number, breedte: number): number {
-  return Math.max(MINSTE_SCHAAL, Math.min(1, ruimte / breedte));
+// groter dan 1 en nooit kleiner dan MINSTE_SCHAAL. In een les-tabblad telt ook
+// de hoogte: een programma van `hoogte` is dan niet hoger dan `maxHoogte`, voor
+// zover de kleinste schaal dat toelaat.
+export function schaalVoor(
+  ruimte: number,
+  breedte: number,
+  hoogte = 0,
+  maxHoogte = Number.POSITIVE_INFINITY,
+): number {
+  const opHoogte = hoogte > 0 ? maxHoogte / hoogte : 1;
+  return Math.max(MINSTE_SCHAAL, Math.min(1, ruimte / breedte, opHoogte));
+}
+
+// Hoe hoog een programma in een les-tabblad mag zijn: wat er op het scherm
+// overblijft na de titel, de tabbladen, de rij stappen, een paar regels tekst
+// en de knop Volgende. Op een smal scherm scrolt de leerling, en geldt er geen grens.
+export function maxHoogteInTab(schermHoogte: number, breed: boolean): number {
+  return breed ? Math.max(240, schermHoogte - 360) : Number.POSITIVE_INFINITY;
 }

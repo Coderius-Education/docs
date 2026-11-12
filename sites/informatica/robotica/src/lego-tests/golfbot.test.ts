@@ -228,7 +228,9 @@ describe('de hardware-uitleg klopt', () => {
     expect(tussen).toMatch(/^## Eerst testen: alleen het tandwiel$/m);
     expect(tussen).toMatch(/<Blokken programma=\{heenEnWeer\}/);
     expect(tussen).toMatch(/\*\*Servo 9 op 90\*\*/);
-    expect(tussen).toMatch(/^## Kies je arm$/m);
+    // Een stap in het tabblad Eerst testen: als eigen tabblad stond de rij
+    // van negen op 1280 pixels op twee regels.
+    expect(tussen).toMatch(/^### Kies je arm$/m);
   });
 
   it('de armles beschrijft de overbrenging zoals hij gebouwd is', () => {
@@ -241,11 +243,11 @@ describe('de hardware-uitleg klopt', () => {
     const arm = tekst('arm.md');
     expect(arm).not.toMatch(/as van de servo/);
     const uitleg = arm.slice(
-      arm.indexOf('## Hoe de servo de arm laat draaien'),
+      arm.indexOf('## De overbrenging: hoe de servo de arm laat draaien'),
       arm.indexOf('## Eerst testen: alleen het tandwiel'),
     );
     expect(arm.indexOf('stap-11.jpg')).toBeLessThan(
-      arm.indexOf('## Hoe de servo de arm laat draaien'),
+      arm.indexOf('## De overbrenging: hoe de servo de arm laat draaien'),
     );
     expect(uitleg).toMatch(/oranje tandwiel/);
     expect(uitleg).toMatch(/\*\*overbrenging\*\*/);

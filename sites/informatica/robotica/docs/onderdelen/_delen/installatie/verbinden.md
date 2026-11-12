@@ -18,12 +18,7 @@ Probeer een andere USB-poort of een andere kabel. Sommige kabels zijn alleen ges
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Het groene lampje brandt. Weet je dan zeker dat je computer met het bord kan praten?
-
-</details>
+**Controlevraag:** Het groene lampje brandt. Weet je dan zeker dat je computer met het bord kan praten?
 
 <details>
 <summary>Antwoord</summary>

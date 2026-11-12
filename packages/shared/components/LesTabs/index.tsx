@@ -13,7 +13,9 @@ import {
   useState,
 } from 'react';
 import { WerkvormIcoon } from '../Werkvorm/Icoon';
-import { DoelContext, PaneelContext, type Stap, useInLesTab } from './paneel';
+import { Vergroot } from './Vergroot';
+import { DoelContext, OpenContext, PaneelContext, type Stap, useInLesTab } from './paneel';
+import { verdeelSpeling } from './speling';
 import styles from './styles.module.css';
 
 // Les-tabbladen: elke `##`-sectie van een les is een tabblad bovenaan
@@ -34,6 +36,10 @@ type Props = {
   id: string;
   titel: string;
   label: string;
+  /** Wat er op het tabblad staat als het label daar te lang is: in een lange
+   *  rij opdrachten alleen het nummer ("5.7.b"). Een schermlezer en de knop
+   *  Volgende houden het label. */
+  kort?: string;
   /** Wat de leerling in dit tabblad doet (werkvormen.json): het icoon op het
    *  tabblad. De docentenhandleiding legt de iconen uit. */
   werkvorm?: string;
@@ -50,10 +56,16 @@ const DATA = {
 type Rij = { actief: string; niveau: Niveau; volgende: (id: string) => string | undefined };
 const RijContext = createContext<Rij | null>(null);
 
+/** Voor een reeks plaatjes: het volgende plaatje, voor de knop Volgende van het tabblad. */
+const ReeksContext = createContext<((stap: Stap) => void) | null>(null);
+
 // Wat een tabblad van zijn stappen moet weten: is er nog een volgende stap,
 // dan gaat de knop Volgende daarheen, en pas daarna naar het volgende tabblad
 // (PaneelContext, in paneel.ts).
 export { useInLesTab };
+
+/** Hoger dan dit staat een doel onder de navbar (60 pixels, met wat lucht). */
+const ONDER_NAVBAR = 70;
 
 /** Het stuk na de # in het adres, of een lege tekst. */
 function doelUitHash(hash: string): string {
@@ -110,7 +122,14 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
   // Pas scrollen als het paneel zichtbaar is.
   useEffect(() => {
     if (!scrolNaar) return;
-    document.getElementById(scrolNaar.id)?.scrollIntoView();
+    const doel = document.getElementById(scrolNaar.id);
+    if (!doel) return;
+    // Staat het doel al in beeld, dan blijft de pagina staan. Een anker
+    // bovenaan een stap (de arm van de Golfbot: "Eerst de servo op 90°")
+    // schoof anders de titel en de rij tabbladen onder de navbar.
+    const { top, bottom } = doel.getBoundingClientRect();
+    if (top >= ONDER_NAVBAR && bottom <= window.innerHeight) return;
+    doel.scrollIntoView();
   }, [scrolNaar]);
 
   const kies = useCallback(
@@ -133,12 +152,42 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     [data],
   );
 
+  // Wat er op het scherm over is, gaat naar het codevak of het plaatje van
+  // het open paneel (speling.ts). Na elke wissel van tabblad, en na alles wat
+  // de hoogte van het paneel verandert: een klik (een andere stap), een
+  // plaatje dat laadt, een andere maat van het venster.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `actief` zegt alleen dat er een ander paneel open staat.
+  useEffect(() => {
+    const el = wortel.current;
+    if (niveau !== 'tab' || !el) return;
+    let beeld = 0;
+    const meet = () => {
+      window.cancelAnimationFrame(beeld);
+      beeld = window.requestAnimationFrame(() => verdeelSpeling(el));
+    };
+    meet();
+    el.addEventListener('click', meet);
+    el.addEventListener('load', meet, true);
+    window.addEventListener('resize', meet);
+    return () => {
+      window.cancelAnimationFrame(beeld);
+      el.removeEventListener('click', meet);
+      el.removeEventListener('load', meet, true);
+      window.removeEventListener('resize', meet);
+    };
+  }, [niveau, actief]);
+
   // Een tabblad met stappen: zeg het tabblad welke stap de volgende is.
   const na = tabs[ids.indexOf(actief) + 1]?.props;
   const naId = na?.id;
   const naLabel = na?.label;
   useEffect(() => {
     if (niveau !== 'stap' || !meldStap) return;
+    // Stappen in een uitklapblok doen niet mee: een deel dat een les in een
+    // <details> importeert, heeft zijn eigen stappen. In Deel 5 van de
+    // Lego-auto liep de knop Volgende door de drie stappen van het dichte
+    // blok over I2C, en deden twee klikken niets dat de leerling zag.
+    if (wortel.current?.closest('details')) return;
     meldStap(naId && naLabel ? { label: naLabel, ga: () => kies(naId, true) } : null);
     return () => meldStap(null);
   }, [niveau, meldStap, naId, naLabel, kies]);
@@ -192,13 +241,14 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
             tabIndex={t.id === actief ? 0 : -1}
             className={niveau === 'tab' ? styles.tab : styles.stap}
             title={t.label === t.titel ? undefined : t.titel}
+            aria-label={t.kort ? t.label : undefined}
             onClick={() => kies(t.id)}
           >
             {niveau === 'stap' && <span className={styles.stapNummer}>{i + 1}</span>}
             {niveau === 'tab' && t.werkvorm && (
               <WerkvormIcoon id={t.werkvorm} className={styles.tabIcoon} />
             )}
-            {t.label}
+            {t.kort ?? t.label}
           </button>
         ))}
       </div>
@@ -221,6 +271,7 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
           ),
         )}
       </RijContext.Provider>
+      {niveau === 'tab' && <Vergroot wortel={wortel} opnieuw={actief} />}
     </div>
   );
 }
@@ -248,7 +299,11 @@ export function LesTab({
   const rij = useContext(RijContext);
   const open = !rij || rij.actief === id;
   const [stap, setStap] = useState<Stap>(null);
-  const volgende = stap?.label ?? volgendLabel;
+  // Een reeks plaatjes die nog niet uit is, gaat voor de volgende stap: de
+  // knop Volgende sloeg anders negen van de tien bouwstappen over.
+  const [reeks, setReeks] = useState<Stap>(null);
+  const eerst = reeks ?? stap;
+  const volgende = eerst?.label ?? volgendLabel;
   return (
     <section
       role="tabpanel"
@@ -263,13 +318,17 @@ export function LesTab({
       className={`markdown ${styles.paneel}${label === titel ? ` ${styles.kopOpTab}` : ''}`}
       hidden={!open}
     >
-      <PaneelContext.Provider value={setStap}>{children}</PaneelContext.Provider>
+      <PaneelContext.Provider value={setStap}>
+        <ReeksContext.Provider value={setReeks}>
+          <OpenContext.Provider value={open}>{children}</OpenContext.Provider>
+        </ReeksContext.Provider>
+      </PaneelContext.Provider>
       {rij && volgende && (
         <p className={styles.verder}>
           <button
             type="button"
             className="button button--primary button--sm"
-            onClick={() => (stap ? stap.ga() : rij.volgende(id))}
+            onClick={() => (eerst ? eerst.ga() : rij.volgende(id))}
           >
             Volgende: {volgende}
           </button>
@@ -305,18 +364,31 @@ export function LesVoorbeeld({
   children,
   vraag,
   bestanden,
+  beeld,
+  toelichting,
 }: {
   children?: ReactNode;
   /** Rechts staat geen uitvoer maar een voorspelvraag: die krijgt de helft. */
   vraag?: string;
-  /** Twee of meer bestanden naast elkaar, elk in een eigen kolom. */
+  /** Twee of meer bestanden naast elkaar, elk in een eigen kolom. Met "smal"
+   *  staat de code iets kleiner: een regel past dan net in de halve breedte. */
   bestanden?: string;
+  /** Rechts staat geen uitvoer maar de lijst die de code uitlegt. Met "vraag"
+   *  staat er een vraag over de code, met de tip en de oplossing. */
+  toelichting?: string;
+  /** Links staat geen code maar een plaatje, rechts de tekst die erbij hoort.
+   *  Met "breed" is het een onderdeel om mee te oefenen, met de vragen ernaast. */
+  beeld?: string;
 }): ReactNode {
   const klasse = bestanden
-    ? styles.bestanden
-    : `${styles.voorbeeld}${vraag ? ` ${styles.metVraag}` : ''}`;
+    ? `${styles.bestanden}${bestanden === 'smal' ? ` ${styles.bestandenSmal}` : ''}`
+    : `${styles.voorbeeld}${vraag ? ` ${styles.metVraag}` : ''}${beeld ? ` ${beeld === 'breed' ? styles.metBreedBeeld : styles.metBeeld}` : ''}${toelichting ? ` ${styles.metToelichting}` : ''}${toelichting === 'vraag' ? ` ${styles.metCodeVraag}` : ''}`;
   return (
-    <div className={klasse} data-les-voorbeeld="">
+    <div
+      className={klasse}
+      data-les-voorbeeld=""
+      {...(beeld === 'ja' ? { 'data-les-beeld': '' } : {})}
+    >
       {children}
     </div>
   );
@@ -339,10 +411,67 @@ export function LesDoel({ children }: { children?: ReactNode }): ReactNode {
   return <>{children}</>;
 }
 
+/**
+ * Een reeks plaatjes, één tegelijk in beeld: de bouwstappen van de Golfbot.
+ * De remark-stap zet er elke rij van drie of meer `<figure>`s in. Elk plaatje
+ * blijft in de HTML staan (een plaatje dat niet aan de beurt is, is
+ * `hidden`), en op papier staan ze onder elkaar.
+ */
+export function LesReeks({ children }: { children?: ReactNode }): ReactNode {
+  const items = Children.toArray(children);
+  const [nu, setNu] = useState(0);
+  const laatste = items.length - 1;
+  // Zolang de reeks in beeld is en niet uit, gaat de knop Volgende van het
+  // tabblad naar het volgende plaatje.
+  const meld = useContext(ReeksContext);
+  const inBeeld = useContext(OpenContext);
+  const aantal = items.length;
+  useEffect(() => {
+    if (!meld || !inBeeld || nu >= laatste) return;
+    meld({
+      label: `plaatje ${nu + 2} van ${aantal}`,
+      ga: () => setNu((n) => Math.min(laatste, n + 1)),
+    });
+    return () => meld(null);
+  }, [meld, inBeeld, nu, laatste, aantal]);
+  return (
+    <div className={styles.reeks} data-les-reeks="">
+      {items.map((item, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: de plaatjes staan vast in de les, in deze volgorde.
+        <div key={i} className={styles.reeksItem} hidden={i !== nu}>
+          {item}
+        </div>
+      ))}
+      <div className={styles.reeksKnoppen}>
+        <button
+          type="button"
+          className={styles.reeksKnop}
+          onClick={() => setNu((n) => Math.max(0, n - 1))}
+          disabled={nu === 0}
+        >
+          Vorige
+        </button>
+        <span className={styles.reeksTeller} aria-live="polite">
+          Plaatje {nu + 1} van {items.length}
+        </span>
+        <button
+          type="button"
+          className={styles.reeksKnop}
+          onClick={() => setNu((n) => Math.min(laatste, n + 1))}
+          disabled={nu === laatste}
+        >
+          Volgende
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /** Eén stap in een tabblad. Buiten <LesStappen> staat hij gewoon open. */
 export function LesStap({ id, titel, label, children }: Props): ReactNode {
   const rij = useContext(RijContext);
   const open = !rij || rij.niveau !== 'stap' || rij.actief === id;
+  const tabOpen = useContext(OpenContext);
   return (
     <section
       role="tabpanel"
@@ -352,7 +481,7 @@ export function LesStap({ id, titel, label, children }: Props): ReactNode {
       className={`markdown ${styles.paneel}${label === titel ? ` ${styles.kopOpStap}` : ''}`}
       hidden={!open}
     >
-      {children}
+      <OpenContext.Provider value={open && tabOpen}>{children}</OpenContext.Provider>
     </section>
   );
 }

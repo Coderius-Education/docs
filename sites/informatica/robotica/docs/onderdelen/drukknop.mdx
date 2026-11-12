@@ -56,12 +56,7 @@ In de Shell verschijnt steeds een **1**. Houd je de knop ingedrukt, dan wordt he
 - `Pin("D7", Pin.IN, ...)` maakt van D7 een ingang, net als bij de [digitale IR-sensor](site:robotica/docs/onderdelen/ir-digitaal).
 - `Pin.PULL_UP` zet binnen in de chip een weerstand van D7 naar de plus. Zolang de knop los is, is D7 daardoor 1. Druk je, dan verbindt de knop D7 met GND, en dan is hij 0.
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom leest de pin een 0 als je de knop indrukt, en niet een 1?
-
-</details>
+**Controlevraag:** Waarom leest de pin een 0 als je de knop indrukt, en niet een 1?
 
 <details>
 <summary>Antwoord</summary>
@@ -91,12 +86,9 @@ while True:
 
 Bij het RGB-lampje op de Nano is `value(0)` aan en `value(1)` uit, zie [Het ingebouwde lampje](site:robotica/docs/onderdelen/ingebouwd-lampje).
 
-<details>
-<summary>Opdracht: tel hoe vaak je drukt</summary>
+## Opdracht: tel hoe vaak je drukt
 
 Print bij elke keer drukken hoe vaak je in totaal gedrukt hebt: `Gedrukt: 1 keer`, `Gedrukt: 2 keer`, enzovoort. Houd je de knop lang in, dan telt dat als één keer.
-
-</details>
 
 <details>
 <summary>Tip</summary>

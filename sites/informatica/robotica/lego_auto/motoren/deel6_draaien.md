@@ -57,7 +57,9 @@ Waarschijnlijk minder dan je denkt: een losse motor draait er traag mee, en zodr
 
 De testjes waren losse scripts. In je robotscript komt nu alleen de **setup** erbij, boven de loop:
 
-```python
+<CodeUitleg>
+
+```python showLineNumbers
 from time import sleep
 from leaphymicropython.sensors.linesensor import AnalogIR
 from leaphymicropython.actuators.dcmotor import DCMotors
@@ -90,7 +92,19 @@ while True:
     sleep(0.2)
 ```
 
-De loop doet nog niets met de motoren — dat is bewust. In Deel 7 laat je hem op de sensoren reageren, en dan staat alles al klaar.
+<Regel n={3}>
+De import van de motoren staat bij de andere imports.
+</Regel>
+
+<Regel n={13} tot={20}>
+De setup van de motoren, boven de loop: dezelfde regels als in je testjes.
+</Regel>
+
+<Regel n={22} tot={30}>
+De loop doet nog niets met de motoren, en dat is bewust. In Deel 7 laat je hem op de sensoren reageren, en dan staat alles al klaar.
+</Regel>
+
+</CodeUitleg>
 
 ## Test het
 
@@ -199,12 +213,7 @@ while True:
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom staat de motor-setup wél in je robotscript, maar de rij-opdracht niet?
-
-</details>
+**Controlevraag:** Waarom staat de motor-setup wél in je robotscript, maar de rij-opdracht niet?
 
 <details>
 <summary>Antwoord</summary>

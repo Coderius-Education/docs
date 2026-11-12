@@ -55,12 +55,7 @@ Draai aan de knop. In de Shell gaat het getal van ongeveer **0** naar ongeveer *
 - `ADC("A0")` maakt van A0 een pin die een getal leest in plaats van een 0 of een 1, net als bij de [analoge IR-sensor](site:robotica/docs/onderdelen/ir-analoog).
 - `pot.read_u16()` geeft dat getal: 0 bij 0 volt op de loper, 65535 bij 3,3 volt.
 
-<details>
-<summary>Controlevraag</summary>
-
-Je zet de knop precies halverwege. Welk getal verwacht je ongeveer?
-
-</details>
+**Controlevraag:** Je zet de knop precies halverwege. Welk getal verwacht je ongeveer?
 
 <details>
 <summary>Antwoord</summary>
@@ -109,12 +104,9 @@ Draai aan de knop: het lampje wordt feller of zwakker.
 - `lampje.freq(1000)` zet het lampje duizend keer per seconde aan en uit.
 - `lampje.duty_u16(...)` zegt hoe lang het lampje per keer aan staat, van 0 (uit) tot 65535 (steeds aan). Dat zijn dezelfde getallen als die van `read_u16()`, dus het getal van de potmeter kan er zo in.
 
-<details>
-<summary>Opdracht: rood boven de helft</summary>
+## Opdracht: rood boven de helft
 
 Laat het rode lampje op de Nano branden zodra de knop meer dan halverwege staat, en uit gaan als hij er weer onder komt.
-
-</details>
 
 <details>
 <summary>Tip</summary>
@@ -168,6 +160,6 @@ while True:
 
 **Oorzaak:** dat is normaal. De pin meet heel nauwkeurig, en een heel klein beetje ruis is al te zien.
 
-**Oplossing:** werk met een percentage zoals hierboven. Daar valt die ruis bijna helemaal weg.
+**Oplossing:** werk met een percentage, zoals bij Een getal van 0 tot 100. Daar valt die ruis bijna helemaal weg.
 
 </details>

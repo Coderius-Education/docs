@@ -56,10 +56,26 @@ const zetNietsNeer = (node) =>
   node.type === 'toml' ||
   (node.type === 'mdxFlowExpression' && /^\s*\/\*[\s\S]*\*\/\s*$/.test(node.value ?? ''));
 
+/**
+ * Het label van een stap. De stappen in een tabblad hebben al een nummer:
+ * "Stap 2: Kies een pin" heet in de rij "Kies een pin", niet "Stap 2" (het
+ * ingebouwde lampje van robotica had zo "1 Stap 1, 2 Stap 2, 3 Stap 3").
+ *
+ * @param {string} titel
+ */
+function stapLabel(titel) {
+  const na = /^Stap \d+: (.+)$/.exec(titel)?.[1].trim();
+  return na ? na[0].toUpperCase() + na.slice(1) : tabLabel(titel);
+}
+
 const element = (name, id, titel, kinderen) => ({
   type: 'mdxJsxFlowElement',
   name,
-  attributes: [attribuut('id', id), attribuut('titel', titel), attribuut('label', tabLabel(titel))],
+  attributes: [
+    attribuut('id', id),
+    attribuut('titel', titel),
+    attribuut('label', name === 'LesStap' ? stapLabel(titel) : tabLabel(titel)),
+  ],
   children: kinderen,
 });
 
@@ -98,9 +114,15 @@ const isInfo = (node) =>
  *
  * @param {object[]} nodes
  */
-const basisLabel = (nodes) => {
+const basisLabel = (nodes, kop) => {
   const inhoud = nodes.filter((node) => !zetNietsNeer(node));
   if (inhoud.some(isBlok) && inhoud.every((node) => isBlok(node) || isAlinea(node))) return VOORAF;
+  // Een kop met een dubbele punt heeft het stuk ervoor als label van zijn
+  // tabblad ("Stap 1"). Het stuk erna zegt waar de stap over gaat, en is dan
+  // de naam van het eerste scherm: "Het getal uitlezen" zegt meer dan
+  // "De basis".
+  const naDubbelePunt = kop ? /^[^:]+:\s+(.+)$/.exec(tekstVan(kop).trim())?.[1] : null;
+  if (naDubbelePunt) return naDubbelePunt[0].toUpperCase() + naDubbelePunt.slice(1);
   // Opent de les met de voorspelvraag (de code met <Voorspel> ernaast), dan
   // heet die stap Voorspel, zoals in de lessen waar de vraag verderop staat.
   const eerste = inhoud.find(
@@ -169,7 +191,7 @@ function metStappen(kinderen, sectieId, vooraf = []) {
   );
   if (!kort) {
     lesStappen.unshift(
-      element('LesStap', `${sectieId}-basis`, basisLabel(inleiding), [...rest, ...inleiding]),
+      element('LesStap', `${sectieId}-basis`, basisLabel(inleiding, kop), [...rest, ...inleiding]),
     );
   }
   return [kop, stappenlijst([...leerdoel, ...lesStappen])];
@@ -189,6 +211,20 @@ const jsx = (name, children, attributes = []) => ({
 
 const isVoorspel = (node) => node?.type === 'mdxJsxFlowElement' && node.name === 'Voorspel';
 
+/** Een programma in blokken (de Golfbot van robotica): `<Blokken programma={…} />`. */
+const isBlokprogramma = (node) => node?.type === 'mdxJsxFlowElement' && node.name === 'Blokken';
+
+/**
+ * Een onderdeel waar de leerling mee oefent en dat de breedte nodig heeft (de
+ * sensorsimulator van de Golfbot). De vragen die erbij horen staan ernaast,
+ * in een smallere kolom, ook als het antwoord in een uitklapblok staat.
+ */
+const BREED_ONDERDEEL = ['SensorSimulator'];
+const isBreedOnderdeel = (node) =>
+  node?.type === 'mdxJsxFlowElement' && BREED_ONDERDEEL.includes(node.name);
+const isUitklapblok = (node) =>
+  node?.type === 'mdxJsxFlowElement' && /^details$/i.test(node.name ?? '');
+
 /** Vanaf zoveel regels is een programma lang, en tot zoveel een uitvoer kort. */
 const LANG = 12;
 const KORT = 5;
@@ -199,6 +235,117 @@ const isToelichting = (node) =>
   isAlinea(node) &&
   !/:$/.test(tekstVan(node).trim()) &&
   !node.children.some((k) => k.type === 'image' || k.name === 'img' || k.type === 'strong');
+
+const regels = (node) => (node.value ?? '').split('\n').length;
+
+/**
+ * Naast zijn toelichting krijgt code hooguit zeventig procent van de breedte
+ * (zie de opmaak van LesVoorbeeld): op 1280 pixels passen daar 66 tekens in.
+ * Een bredere regel werd afgesneden, en dan staat de code beter over de volle
+ * breedte: in `inline-onclick` van de web-cursus viel de helft van een regel
+ * weg.
+ */
+const BREEDSTE_NAAST = 66;
+const pastNaast = (code) =>
+  (code.value ?? '').split('\n').every((regel) => regel.length <= BREEDSTE_NAAST);
+
+/** Vanaf zoveel regels code staat een tabel die hem toelicht ernaast. */
+const MET_TABEL = 6;
+
+/** Meer regels dan dit, en een programma schuift in een paneel in zijn eigen vak. */
+const EIGEN_VAK = 16;
+
+/**
+ * Hoeveel knopen na een codeblok hem toelichten en ernaast kunnen staan:
+ * alinea's, een lijst, een tabel, een waarschuwing, hooguit drie. Er moet een
+ * lijst, een tabel of een blok bij zijn: code met alleen een alinea eronder is lopende uitleg en
+ * blijft onder elkaar. Behalve bij een programma dat in zijn eigen vak
+ * schuift: onder elkaar is dat met een alinea al hoger dan het scherm. Een
+ * alinea die het volgende aankondigt ("Met een lijst gaat het zo:") telt
+ * niet mee als hij de laatste is.
+ *
+ * @param {object[]} kinderen
+ * @param {number} vanaf de eerste knoop na de code
+ * @param {number} lengte het aantal regels van de code
+ */
+function toelichtingNa(kinderen, vanaf, lengte) {
+  // Een tabel heeft breedte nodig: naast een fragment van een paar regels
+  // wint het scherm niets en breekt elke cel (les 9e van python: twee regels
+  // code en een tabel van vier kolommen waren naast elkaar 40 pixels te lang).
+  const isPunt = (node) =>
+    node.type === 'list' || isBlok(node) || (node.type === 'table' && lengte >= MET_TABEL);
+  const hoortErbij = (node) =>
+    node !== undefined &&
+    !isVraagAlinea(node) &&
+    !isUitvoerKop(node) &&
+    !isVerwachtKop(node) &&
+    !isBestandsnaam(node) &&
+    ((isAlinea(node) && !isPlaatjeAlinea(node)) || isPunt(node));
+  let aantal = 0;
+  while (aantal < 3 && hoortErbij(kinderen[vanaf + aantal])) aantal++;
+  // Een aankondiging aan het eind hoort bij wat erna komt.
+  while (aantal > 0 && isAankondiging(kinderen[vanaf + aantal - 1])) aantal--;
+  // Tot en met de laatste lijst of het laatste blok: een alinea daarna is
+  // weer lopende tekst. Een programma in zijn eigen vak houdt zijn alinea's.
+  if (lengte <= EIGEN_VAK) {
+    while (aantal > 0 && !isPunt(kinderen[vanaf + aantal - 1])) aantal--;
+  }
+  // En alleen als het scherm er korter van wordt.
+  const code = kinderen[vanaf - 1];
+  return aantal > 0 && naastIsKorter(code, kinderen.slice(vanaf, vanaf + aantal)) ? aantal : 0;
+}
+
+// Maten op 1280 pixels, gemeten in Chromium: de breedte naast de lessenlijst,
+// een teken lopende tekst en een teken code, een regel tekst en een regel code.
+const KOLOM = 948;
+const TEKEN = 8.2;
+const CODE_TEKEN = 9.1;
+const REGEL = 26;
+const CODE_REGEL = 21;
+
+/** Hoe hoog de toelichting ongeveer is in een kolom van `breedte` pixels. */
+function hoogteTekst(nodes, breedte) {
+  const regelsVan = (node) => Math.max(1, Math.ceil((tekstVan(node).length * TEKEN) / breedte));
+  let hoogte = 0;
+  for (const node of nodes) {
+    if (node.type === 'list') {
+      for (const punt of node.children ?? []) hoogte += regelsVan(punt) * REGEL + 6;
+      hoogte += 16;
+    } else if (node.type === 'table') hoogte += (node.children?.length ?? 1) * 47 + 16;
+    else if (isBlok(node)) hoogte += regelsVan(node) * REGEL + 76;
+    else hoogte += regelsVan(node) * REGEL + 16;
+  }
+  return hoogte;
+}
+
+/**
+ * Naast elkaar is alleen beter als het scherm er korter van wordt. De code
+ * krijgt de breedte van zijn langste regel (veertig tot zeventig procent), en
+ * de toelichting de rest. In `events` van de web-cursus stond zo één regel
+ * code van 66 tekens naast een lijst, een alinea en een info-blok in een
+ * kolom van dertig procent: 214 pixels langer dan onder elkaar.
+ *
+ * @param {object} code het codeblok
+ * @param {object[]} nodes de toelichting
+ */
+function naastIsKorter(code, nodes) {
+  const breedste = Math.max(...(code.value ?? '').split('\n').map((regel) => regel.length));
+  const deel = Math.min(0.7, Math.max(0.4, (breedste * CODE_TEKEN + 48) / KOLOM));
+  // Een programma in zijn eigen vak is nooit hoger dan dat vak.
+  const hoogteCode = Math.min(regels(code), EIGEN_VAK + 2) * CODE_REGEL + 48;
+  const naast = Math.max(hoogteCode, hoogteTekst(nodes, KOLOM * (1 - deel) - 16));
+  const onder = hoogteCode + hoogteTekst(nodes, KOLOM);
+  return naast <= onder - REGEL;
+}
+
+const isAankondiging = (node) => isAlinea(node) && /:$/.test(tekstVan(node).trim());
+
+/** Een alinea die met een vette "Vraag:" begint. */
+const isVraagAlinea = (node) =>
+  node !== undefined &&
+  isAlinea(node) &&
+  node.children[0]?.type === 'strong' &&
+  /^Vraag\b/.test(tekstVan(node.children[0]).trim());
 
 /**
  * Een codeblok dat direct door "Uitvoer:" en een uitvoerblok wordt gevolgd,
@@ -222,12 +369,36 @@ function voorbeeldenNaastElkaar(kinderen) {
       // Naast een lang programma met een korte uitvoer is rechts ruimte over:
       // de alinea's die het programma toelichten, staan daar. Een zin die het
       // volgende blok aankondigt ("Met een lijst gaat het zo:") niet.
-      const regels = (node) => (node.value ?? '').split('\n').length;
       if (regels(code) >= LANG && regels(uitvoer) <= KORT) {
         while (rechts.length < 4 && isToelichting(kinderen[i + 1])) rechts.push(kinderen[++i]);
       }
       uit.push(jsx('LesVoorbeeld', [code, jsx('div', rechts)]));
-    } else if (code.type === 'code' && isVoorspel(kop)) {
+    } else if (
+      code.type === 'code' &&
+      pastNaast(code) &&
+      toelichtingNa(kinderen, i + 1, regels(code)) > 0
+    ) {
+      // Code met wat hem toelicht (de naslag van robotica: een fragment, en
+      // per onderdeel een punt in een lijst of een waarschuwing). Naast
+      // elkaar leest de leerling het punt bij de regel, en het scherm is half
+      // zo lang.
+      const aantal = toelichtingNa(kinderen, i + 1, regels(code));
+      const rechts = kinderen.slice(i + 1, i + 1 + aantal);
+      uit.push(jsx('LesVoorbeeld', [code, jsx('div', rechts)], [attribuut('toelichting', 'ja')]));
+      i += aantal;
+    } else if (code.type === 'code' && pastNaast(code) && isVraagAlinea(kop)) {
+      // Code met de vraag eronder ("**Vraag:** hoe vaak …?") en de tip en de
+      // oplossing in uitklapblokken: de vraag gaat over de code, dus die
+      // staat ernaast. Onder elkaar was zo'n opdracht tot 240 pixels te lang.
+      const rechts = [kop];
+      i += 1;
+      while (rechts.length < 4 && isUitklapblok(kinderen[i + 1])) rechts.push(kinderen[++i]);
+      // "vraag": het codevak mag hier hoger zijn, want de vraag gaat over het
+      // hele programma (zie de opmaak van LesVoorbeeld).
+      uit.push(
+        jsx('LesVoorbeeld', [code, jsx('div', rechts)], [attribuut('toelichting', 'vraag')]),
+      );
+    } else if ((code.type === 'code' || isBlokprogramma(code)) && isVoorspel(kop)) {
       uit.push(jsx('LesVoorbeeld', [code, kop], [attribuut('vraag', 'ja')]));
       i += 1;
     } else uit.push(code);
@@ -235,12 +406,15 @@ function voorbeeldenNaastElkaar(kinderen) {
   return uit;
 }
 
-/** Een alinea met alleen een vette bestandsnaam: **`rekenen.py`**. */
+/** Zoveel tekens passen er op 1280 pixels in een codeblok van de halve breedte. */
+const HALVE_KOLOM = 46;
+
+/** Een alinea met alleen een vette bestandsnaam (**`rekenen.py`**) of **Code A:**. */
 const isBestandsnaam = (node) =>
   isAlinea(node) &&
   node.children.length === 1 &&
   node.children[0].type === 'strong' &&
-  /^[\w.-]+\.\w+$/.test(tekstVan(node).trim());
+  /^([\w.-]+\.\w+|Code \w+:?)$/.test(tekstVan(node).trim());
 
 /**
  * Twee of meer bestanden onder elkaar, elk met zijn naam erboven
@@ -277,7 +451,19 @@ function bestandenNaastElkaar(kinderen) {
       groepen.push(kinderen[k]);
       k += 1;
     }
-    uit.push(jsx('LesVoorbeeld', groepen, [attribuut('bestanden', 'ja')]));
+    // Twee bestanden naast elkaar hebben elk de helft: 46 tekens op 1280
+    // pixels. Met een langere regel staat de code iets kleiner ("smal"), dan
+    // passen er 58: de importregel van leaphymicropython was in Code A en
+    // Code B van de Lego-auto afgesneden.
+    const breedste = Math.max(
+      ...groepen.flatMap((groep) =>
+        (groep.children ?? [])
+          .filter((node) => node.type === 'code')
+          .flatMap((node) => (node.value ?? '').split('\n').map((regel) => regel.length)),
+      ),
+    );
+    const smal = groepen.length === 2 && breedste > HALVE_KOLOM;
+    uit.push(jsx('LesVoorbeeld', groepen, [attribuut('bestanden', smal ? 'smal' : 'ja')]));
     i = k;
   }
   return uit;
@@ -428,6 +614,15 @@ const LEERDOEL = 'leerdoel';
 
 const eigenschap = (node, naam) => node.attributes.find((a) => a.name === naam)?.value;
 
+/** De id's van alle koppen in een stuk van de boom, hoe diep ook. */
+function kopIds(nodes, uit = []) {
+  for (const node of nodes) {
+    if (node.type === 'heading' && node.data?.id) uit.push(node.data.id);
+    if (node.children) kopIds(node.children, uit);
+  }
+  return uit;
+}
+
 /**
  * De stappen die één uitleg-tabblad oplevert als het opgaat in het tabblad
  * Uitleg (zie voegUitlegSamen), en wat daar boven de rij stappen hoort.
@@ -494,6 +689,10 @@ function uitlegMetStappen(uitleg, id) {
   return [stappenlijst(lesStappen)];
 }
 
+/** Vanaf zoveel tabbladen past de rij op 1280 pixels niet meer op één regel. */
+const VEEL_TABS = 9;
+/** En meer stappen dan dit passen in een tabblad niet op één regel. */
+const MEESTE_STAPPEN = 8;
 /**
  * Een les over JavaScript begint met drie of vier secties uitleg, elk naar
  * zijn onderwerp genoemd ("Een item ophalen", "Combineren met een loop").
@@ -504,7 +703,7 @@ function uitlegMetStappen(uitleg, id) {
  *
  * Alleen de uitleg waar de les mee begint, en alleen als er daarna nog een
  * ander tabblad komt: een les die helemaal uit uitleg bestaat, houdt zijn
- * tabbladen.
+ * tabbladen. Ook een les waarvan de uitleg samen meer dan acht stappen heeft.
  *
  * @param {object[]} tabs de <LesTab>-elementen
  * @param {string[]} vormen de werkvorm van elk tabblad
@@ -515,7 +714,13 @@ function voegUitlegSamen(tabs, vormen, uitlegId) {
   while (aantal < tabs.length && vormen[aantal] === UITLEG_VORM) aantal++;
   if (aantal < 2 || aantal === tabs.length) return { tabs, vormen };
   const delen = tabs.slice(0, aantal).map((tab) => alsStappen(tab, uitlegId));
-  const bezet = new Set(tabs.map((tab) => eigenschap(tab, 'id')));
+  // Samen meer stappen dan er op één regel passen, terwijl de tabbladen los
+  // wel op één regel staan: dan blijven het tabbladen. Het ingebouwde lampje
+  // van robotica (aanzetten, knipperen, een kleur) had één tabblad Uitleg
+  // met twaalf stappen op twee regels.
+  const stappen = delen.reduce((som, d) => som + d.stappen.length, 0);
+  if (stappen > MEESTE_STAPPEN && tabs.length < VEEL_TABS) return { tabs, vormen };
+  const bezet = new Set([...tabs.map((tab) => eigenschap(tab, 'id')), ...kopIds(tabs)]);
   const id = uitlegId ?? (bezet.has('uitleg') ? 'les-uitleg' : 'uitleg');
   const samen = element('LesTab', id, UITLEG, [
     stappenlijst([...delen.flatMap((d) => d.boven), ...delen.flatMap((d) => d.stappen)]),
@@ -529,6 +734,11 @@ function voegUitlegSamen(tabs, vormen, uitlegId) {
 const OPDRACHT = ['aanpassen', 'maken'];
 const vindVeld = (node) =>
   isVeld(node) ? node : (node.children ?? []).map(vindVeld).find(Boolean);
+const heeftCodeVraag = (node) =>
+  (node.name === 'LesVoorbeeld' && eigenschap(node, 'toelichting') === 'vraag') ||
+  (node.children ?? []).some((kind) =>
+    kind.type === 'paragraph' ? isVraagAlinea(kind) : heeftCodeVraag(kind),
+  );
 
 /**
  * Een opdracht op code die er al staat is aanpassen, een opdracht vanaf een
@@ -543,6 +753,10 @@ const vindVeld = (node) =>
  */
 function vormNaarStartcode(tab, vorm) {
   if (!OPDRACHT.includes(vorm) || !/^Opdracht\b/.test(eigenschap(tab, 'titel'))) return vorm;
+  // Code met "**Vraag:** …" ernaast en geen veld: de leerling schrijft niets,
+  // hij voorspelt (Code beter begrijpen bij robotica: acht opdrachten met het
+  // potlood van aanpassen).
+  if (heeftCodeVraag(tab) && !vindVeld(tab)) return 'voorspellen';
   const veld = vindVeld(tab);
   const start = veld ? startcode(veld) : null;
   if (start === null) return vorm;
@@ -551,18 +765,165 @@ function vormNaarStartcode(tab, vorm) {
 }
 
 /**
- * Er gaat iets mis staat na de opdrachten, ook als de bron hem ervoor heeft.
- * In de lessen van de Python-cursus stond hij tussen de uitleg en de eerste
- * opdracht, en bracht de knop Volgende een leerling langs fouten die hij nog
- * niet had kunnen maken; in de projecten en bij web staat hij erna.
+ * Een bestand of map met een `_` vooraan is een deel dat een pagina
+ * importeert (`docs/onderdelen/_delen/dc-motor/pinnen.md` bij robotica), geen
+ * pagina. Docusaurus bouwt het met dezelfde stappen als een les; met eigen
+ * tabbladen stonden die midden in de pagina die het deel gebruikt.
+ *
+ * @param {string | undefined} pad
+ */
+const isDeel = (pad) => /(^|[\\/])_[^\\/]*([\\/]|$)/.test(pad ?? '');
+
+/**
+ * De namen waaronder een pagina een deel importeert: een bestand of map met
+ * een `_` vooraan (`import ShieldRijen from '…/_delen/shield/rijen.md'`). Zo'n
+ * element is tekst van de pagina zelf; een ander onderdeel (een oefenveld,
+ * een 3D-model) is dat niet.
+ *
+ * @param {object[]} kinderen
+ * @returns {Set<string>}
+ */
+function deelNamen(kinderen) {
+  const namen = new Set();
+  for (const node of kinderen) {
+    if (node.type !== 'mdxjsEsm') continue;
+    for (const [, naam, pad] of (node.value ?? '').matchAll(
+      /import\s+(\w+)\s+from\s+['"]([^'"]+)['"]/g,
+    )) {
+      if (isDeel(pad)) namen.add(naam);
+    }
+  }
+  return namen;
+}
+
+/** Tekst die bij een plaatje hoort: alinea's, lijsten, een tabel, een blok. */
+const isTekstblok = (node, delen) =>
+  (isAlinea(node) && !isPlaatjeAlinea(node) && !isVerwachtKop(node)) ||
+  node.type === 'list' ||
+  node.type === 'table' ||
+  isBlok(node) ||
+  (node.type === 'mdxJsxFlowElement' && delen.has(node.name));
+
+/** Vanaf zoveel plaatjes achter elkaar is het een reeks. */
+const REEKS_VANAF = 3;
+/**
+ * Een plaatje met de tekst die erop volgt staat naast elkaar: het plaatje
+ * links, de tekst rechts. Bij robotica is dat het aansluitschema met de
+ * pinnen eronder. Onder elkaar was zo'n scherm tot tweehonderd pixels te
+ * lang, en een plaatje in een paneel is dan hooguit een derde van het scherm
+ * hoog: de legenda van het schema was niet meer te lezen. Naast de tekst mag
+ * het plaatje zo hoog zijn als de tekst lang is.
+ *
+ * Hetzelfde voor een programma in blokken met de tekst erna. Een plaatje waar
+ * geen tekst op volgt (het volgende is een kop, code of nog een plaatje)
+ * blijft staan, en het doelplaatje van een opdracht staat al in
+ * zijn veld (doelNaastVeld).
+ *
+ * @param {object[]} kinderen
+ */
+function plaatjesNaastTekst(kinderen) {
+  const delen = deelNamen(kinderen);
+  const uit = [];
+  for (let i = 0; i < kinderen.length; i++) {
+    const node = kinderen[i];
+    const breed = isBreedOnderdeel(node);
+    // Drie of meer foto's in één alinea zijn een reeks (zie reeksen), geen
+    // plaatje met tekst ernaast.
+    const eenPlaatje =
+      isAlinea(node) &&
+      isPlaatjeAlinea(node) &&
+      node.children.filter(isPlaatje).length < REEKS_VANAF;
+    if (!eenPlaatje && !isBlokprogramma(node) && !breed) {
+      uit.push(node);
+      continue;
+    }
+    // Commentaar (`{/* stijl-uitzondering: … */}`) zet niets neer en breekt
+    // de rij dus niet af.
+    // Een kort codeblok na de tekst hoort erbij ("In het scherm verschijnt:"
+    // met één regel uitvoer): onder het plaatje stond het los van zijn zin.
+    const tekst = [];
+    const hoortErbij = (n) =>
+      isTekstblok(n, delen) ||
+      zetNietsNeer(n) ||
+      (breed && isUitklapblok(n)) ||
+      (n.type === 'code' && regels(n) <= KORT && tekst.some(isAlinea));
+    while (i + 1 < kinderen.length && hoortErbij(kinderen[i + 1])) tekst.push(kinderen[++i]);
+    if (!tekst.some((n) => !zetNietsNeer(n))) uit.push(node, ...tekst);
+    else {
+      uit.push(
+        jsx(
+          'LesVoorbeeld',
+          [node, jsx('div', tekst)],
+          [attribuut('beeld', breed ? 'breed' : 'ja')],
+        ),
+      );
+    }
+  }
+  return uit;
+}
+
+// Een plaatje met een onderschrift, of een los `<img>` op een eigen regel.
+const isFiguur = (node) =>
+  node.type === 'mdxJsxFlowElement' && (node.name === 'figure' || node.name === 'img');
+
+/**
+ * Een rij plaatjes met een onderschrift (`<figure>`) direct na elkaar is een
+ * reeks bouwstappen: de toren van de Golfbot heeft er tien, de arm vijftien.
+ * Onder elkaar was dat tabblad tot 4100 pixels te lang. In een <LesReeks>
+ * staat er één tegelijk, met Vorige en Volgende, zoals in een bouwboekje.
+ * Drie of meer foto's in één alinea zijn ook een reeks.
+ *
+ * @param {object[]} kinderen
+ */
+function reeksen(kinderen) {
+  const uit = [];
+  let i = 0;
+  while (i < kinderen.length) {
+    let j = i;
+    while (j < kinderen.length && isFiguur(kinderen[j])) j++;
+    const fotos = isPlaatjeAlinea(kinderen[i]) ? kinderen[i].children.filter(isPlaatje) : [];
+    if (j - i >= REEKS_VANAF) {
+      uit.push(jsx('LesReeks', kinderen.slice(i, j)));
+      i = j;
+    } else if (fotos.length >= REEKS_VANAF) {
+      // Foto's zonder onderschrift in één alinea (de drie stappen van de
+      // IR-sensor in zijn adapter): elk een eigen plek in de reeks.
+      uit.push(
+        jsx(
+          'LesReeks',
+          fotos.map((foto) => ({ type: 'paragraph', children: [foto] })),
+        ),
+      );
+      i += 1;
+    } else uit.push(kinderen[i++]);
+  }
+  return uit;
+}
+
+/** Werkvormen waarin de leerling nog niets zelf doet. */
+const LEZEN = ['leerdoel', 'uitleg', 'voorspellen'];
+
+/**
+ * Er gaat iets mis staat na de opdrachten, als de bron hem tussen de uitleg en
+ * de eerste opdracht heeft. In de lessen van de Python-cursus bracht de knop
+ * Volgende een leerling daar langs fouten die hij nog niet had kunnen maken.
+ *
+ * Alleen in die vorm. Staat er vóór de fouten al een tabblad waarin de
+ * leerling iets doet (de stappen en Test het van de Lego-auto, de opdracht
+ * van een projectstap), dan gaan de fouten over dat werk en blijven ze staan.
+ * En het tabblad komt direct na de rij opdrachten, niet na wat daarop volgt:
+ * een afsluiter als Maak het je eigen of Verder bouwen blijft het laatste.
  *
  * @param {object[]} tabs
  * @param {string[]} vormen
  */
 function foutenNaOpdrachten(tabs, vormen) {
   const fout = vormen.indexOf('fouten');
-  const laatste = vormen.findLastIndex((vorm) => OPDRACHT.includes(vorm));
-  if (fout < 0 || laatste < fout) return { tabs, vormen };
+  if (fout < 0 || !vormen.slice(0, fout).every((vorm) => LEZEN.includes(vorm)))
+    return { tabs, vormen };
+  let laatste = fout;
+  while (OPDRACHT.includes(vormen[laatste + 1])) laatste++;
+  if (laatste === fout) return { tabs, vormen };
   const schuif = (lijst) => [
     ...lijst.slice(0, fout),
     ...lijst.slice(fout + 1, laatste + 1),
@@ -571,6 +932,20 @@ function foutenNaOpdrachten(tabs, vormen) {
   ];
   return { tabs: schuif(tabs), vormen: schuif(vormen) };
 }
+
+/**
+ * Wat naast elkaar past, naast elkaar: bestanden, een voorbeeld met zijn
+ * uitvoer of zijn toelichting, het doel in het veld, een plaatje met zijn
+ * tekst, en een rij plaatjes als reeks. Voor een les en voor een deel.
+ *
+ * @param {object[]} alles de kinderen van de mdast-root
+ */
+const naastElkaar = (alles) =>
+  reeksen(
+    plaatjesNaastTekst(
+      doelNaastVeld(voorbeeldenNaastElkaar(bestandenNaastElkaar(zonderDubbeleCode(alles)))),
+    ),
+  );
 
 /**
  * De kinderen van de pagina met elke `##`-sectie in een <LesTab>, of null als
@@ -596,9 +971,7 @@ function foutenNaOpdrachten(tabs, vormen) {
  * @param {object[]} kinderen de kinderen van de mdast-root
  */
 function groepeer(alles) {
-  const kinderen = doelNaastVeld(
-    voorbeeldenNaastElkaar(bestandenNaastElkaar(zonderDubbeleCode(alles))),
-  );
+  const kinderen = naastElkaar(alles);
   const eerste = kinderen.findIndex(isH2);
   if (eerste < 0) return null;
   const boven = [];
@@ -619,7 +992,7 @@ function groepeer(alles) {
   // alleen als er daarna nog twee tabbladen zijn; anders bleef er één over en
   // had de pagina geen tabbladen meer.
   const alineas = uitleg.filter(isAlinea).length;
-  const korteUitleg =
+  const kort =
     (uitleg.length === 1 && isAlinea(uitleg[0])) ||
     (uitleg.length > 0 &&
       secties.length >= 2 &&
@@ -627,25 +1000,33 @@ function groepeer(alles) {
       uitleg.filter(isBlok).length === 1 &&
       uitleg.some(isInfo) &&
       uitleg.every((node) => isBlok(node) || isAlinea(node) || zetNietsNeer(node)));
+  const isLeerdoelSectie = ({ kop, kinderen: inhoud }, i) =>
+    werkvormenVan([tekstVan(kop)])[0] === LEERDOEL &&
+    i < secties.length - 1 &&
+    inhoud.length <= 3 &&
+    inhoud.slice(1).every(isAlinea);
+  // Een les die met een inleiding én een leerdoel begint (de Lego-auto: waar
+  // de les over gaat, en dan Wat je nu gaat toevoegen), heeft die twee samen
+  // als eerste tabblad. Bij de eerste stap erbij was dat scherm tot 270
+  // pixels te lang.
+  const opening = uitleg.length > 0 && secties.length >= 3 && isLeerdoelSectie(secties[0], 0);
+  const korteUitleg = !opening && kort;
   // Wat bij het eerstvolgende tabblad komt te staan.
   let vooraf = korteUitleg ? [...uitleg] : [];
   const tabs = [];
-  secties.forEach(({ kop, kinderen: inhoud }, i) => {
-    const tekst = inhoud.slice(1);
-    const isLeerdoel =
-      werkvormenVan([tekstVan(kop)])[0] === LEERDOEL &&
-      i < secties.length - 1 &&
-      tekst.length <= 2 &&
-      tekst.every(isAlinea);
-    if (isLeerdoel) {
+  secties.forEach((sectie, i) => {
+    const { kop, kinderen: inhoud } = sectie;
+    if (isLeerdoelSectie(sectie, i)) {
       // De kop gaat mee: hij is het doel van een link en zegt een schermlezer
       // wat de zin is.
-      vooraf.push({
+      const leerdoel = {
         type: 'mdxJsxFlowElement',
         name: 'LesLeerdoel',
         attributes: [],
         children: inhoud,
-      });
+      };
+      if (opening && i === 0) uitleg.push(leerdoel);
+      else vooraf.push(leerdoel);
       return;
     }
     tabs.push(element('LesTab', idVan(kop), tekstVan(kop), metStappen(inhoud, idVan(kop), vooraf)));
@@ -654,7 +1035,9 @@ function groepeer(alles) {
   let uitlegId = null;
   if (uitleg.length && !korteUitleg) {
     // Een id dat geen kop van de les al heeft.
-    const bezet = new Set(tabs.map((t) => eigenschap(t, 'id')));
+    // Ook geen `###` verderop: op de LED-pagina van robotica heette een stap
+    // onder Code "Uitleg", en opende het adres van het tabblad Uitleg die stap.
+    const bezet = new Set([...tabs.map((t) => eigenschap(t, 'id')), ...kopIds(kinderen)]);
     uitlegId = bezet.has('uitleg') ? 'les-uitleg' : 'uitleg';
     tabs.unshift(element('LesTab', uitlegId, UITLEG, uitlegMetStappen(uitleg, uitlegId)));
   }
@@ -671,6 +1054,7 @@ function groepeer(alles) {
     samen.tabs.map((tab, i) => vormNaarStartcode(tab, samen.vormen[i])),
   );
   geordend.tabs.forEach((t, i) => t.attributes.push(attribuut('werkvorm', geordend.vormen[i])));
+  korteOpdrachten(geordend.tabs);
   return [
     ...boven,
     { type: 'mdxJsxFlowElement', name: 'LesTabs', attributes: [], children: geordend.tabs },
@@ -678,13 +1062,83 @@ function groepeer(alles) {
   ];
 }
 
+/** En zoveel opdrachten achter elkaar zijn een reeks. */
+const REEKS_OPDRACHTEN = 4;
+const GENUMMERD = /^Opdracht (\d[\w.]*)$/;
+
+/**
+ * In een lange rij tabbladen met een reeks opdrachten ("Opdracht 5.7.a" tot en
+ * met "5.7.h" in Code beter begrijpen: tien tabbladen op twee regels) staat
+ * het woord Opdracht alleen op de eerste; de volgende tonen hun nummer
+ * (`kort`). Het label blijft voor een schermlezer en de knop Volgende.
+ *
+ * @param {object[]} tabs
+ */
+function korteOpdrachten(tabs) {
+  if (tabs.length < VEEL_TABS) return;
+  const nummer = (tab) => GENUMMERD.exec(eigenschap(tab, 'label') ?? '')?.[1];
+  let begin = 0;
+  while (begin < tabs.length) {
+    let eind = begin;
+    while (eind < tabs.length && nummer(tabs[eind])) eind++;
+    if (eind - begin >= REEKS_OPDRACHTEN) {
+      for (const tab of tabs.slice(begin + 1, eind)) {
+        tab.attributes.push(attribuut('kort', nummer(tab)));
+      }
+    }
+    begin = Math.max(eind, begin + 1);
+  }
+}
+
+/**
+ * Een deel heeft geen tabbladen, wel stappen: zijn `###`-koppen, net als in
+ * een sectie van een les. Het deel staat in een tabblad van de pagina die het
+ * importeert (MicroPython kiezen bij robotica: zes koppen, duizend pixels te
+ * lang), of op een pagina die verder alleen een titel heeft.
+ *
+ * @param {object[]} kinderen de kinderen van de mdast-root van het deel
+ * @param {string} naam voor het id van de eerste stap
+ */
+function deelMetStappen(kinderen, naam) {
+  const isEsm = (node) => node.type === 'mdxjsEsm';
+  const inhoud = kinderen.filter((node) => !isEsm(node));
+  // metStappen verwacht de `##` van de sectie vooraan; een deel heeft er geen.
+  const kop = { type: 'paragraph', children: [] };
+  const [, ...rest] = metStappen([kop, ...inhoud], `deel-${naam}`);
+  if (!rest.some((node) => node.name === 'LesStappen')) return null;
+  return [...kinderen.filter(isEsm), ...rest];
+}
+
+const HIDDEN = { type: 'mdxJsxAttribute', name: 'hidden', value: null };
+
 /** De remark-stap. */
 function remarkLesTabs() {
   return (tree, file) => {
     if (file?.data?.frontMatter?.les_tabs === false) return;
+    if (isDeel(file?.path)) {
+      const naam = (file.path.split(/[\\/]/).pop() ?? '').replace(/\.mdx?$/, '');
+      // Ook in een deel staat naast elkaar wat naast elkaar past: het bord
+      // met zijn uitleg op de installatiepagina van robotica was anders 72
+      // pixels te lang.
+      const naast = naastElkaar(tree.children);
+      tree.children = deelMetStappen(naast, naam) ?? naast;
+      return;
+    }
     const nieuw = groepeer(tree.children);
     if (nieuw) tree.children = nieuw;
+    // Geen tabbladen (één sectie, of een pagina met alleen een deel): een
+    // marker, zodat de pagina dezelfde kop en breedte krijgt als de lessen
+    // eromheen (zie de opmaak van LesTabs).
+    else tree.children.push(jsx('div', [], [attribuut('data-les-zonder-tabs', ''), HIDDEN]));
   };
 }
 
-module.exports = { remarkLesTabs, groepeer, metStappen, tabLabel, tekstVan };
+module.exports = {
+  remarkLesTabs,
+  groepeer,
+  metStappen,
+  tabLabel,
+  tekstVan,
+  isDeel,
+  deelMetStappen,
+};

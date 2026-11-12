@@ -4,28 +4,23 @@ Om Python-code te schrijven heb je een editor nodig: een programma waarin je je 
 
 Werk je in Chrome of Microsoft Edge? Dan kun je ook de [online editor](site:robotica/editor) gebruiken: typen, op **Run op board** klikken, klaar. Geen installatie nodig.
 
-Werkt dat niet (andere browser, schoollaptop met restricties)? Volg dan de Thonny-stappen hieronder.
+Werkt dat niet (andere browser, schoollaptop met restricties)? Volg dan de stappen voor Thonny.
 
 :::
 
-Op deze pagina installeren we **Thonny** als fallback en lokaal alternatief. Die werkt meteen met MicroPython op je microcontroller.
+In deze stappen installeer je **Thonny**, een editor op je eigen computer. Die werkt meteen met MicroPython op je microcontroller.
 
-### Stap 1: download Thonny
+### Download Thonny
 
 Ga naar [thonny.org](https://thonny.org/) en kies je besturingssysteem (meestal Windows). Download het bestand dat eindigt op **-x64.exe**, bijvoorbeeld `thonny-5.0.0-x64.exe`. Heeft je laptop een Arm-processor, zoals een Snapdragon? Neem dan het bestand dat eindigt op **-arm64.exe**.
 
 Had je Thonny 4 al? Verwijder die dan eerst, via **Instellingen** → **Apps**. Thonny 5 kan anders een foutmelding geven bij het opstarten.
 
-### Stap 2: installeren
+### Installeren
 
 Voer het installatiebestand uit en klik de installatie door. Open daarna Thonny.
 
-<details>
-<summary>Controlevraag</summary>
-
-Wat zie je als Thonny voor het eerst opent?
-
-</details>
+**Controlevraag:** Wat zie je als Thonny voor het eerst opent?
 
 <details>
 <summary>Antwoord</summary>
