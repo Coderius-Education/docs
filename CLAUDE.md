@@ -479,8 +479,9 @@ in de gedeelde stap en de onderdelen gekomen, elk met een test:
   tegelijk, met Vorige en Volgende, zoals in een bouwboekje. Elk plaatje staat
   in de HTML van de build.
 - **Code met wat hem toelicht staat naast elkaar** (`toelichtingNa`): een
-  lijst, een tabel of een waarschuwing, met hooguit een alinea ertussen; een
-  programma van meer dan zestien regels ook met alleen een alinea. Code met
+  lijst of een waarschuwing, met hooguit een alinea ertussen; een tabel
+  alleen naast code van zes regels of meer (naast een fragment brak elke
+  cel); een programma van meer dan zestien regels ook met alleen een alinea. Code met
   alleen een alinea eronder blijft lopende uitleg. Code met `**Vraag:** …` en
   de tip en oplossing eronder staat naast de vraag; `**Code A:**` en
   `**Code B:**` staan naast elkaar als bestanden.

@@ -238,6 +238,9 @@ const isToelichting = (node) =>
 
 const regels = (node) => (node.value ?? '').split('\n').length;
 
+/** Vanaf zoveel regels code staat een tabel die hem toelicht ernaast. */
+const MET_TABEL = 6;
+
 /** Meer regels dan dit, en een programma schuift in een paneel in zijn eigen vak. */
 const EIGEN_VAK = 16;
 
@@ -255,7 +258,11 @@ const EIGEN_VAK = 16;
  * @param {number} lengte het aantal regels van de code
  */
 function toelichtingNa(kinderen, vanaf, lengte) {
-  const isPunt = (node) => node.type === 'list' || node.type === 'table' || isBlok(node);
+  // Een tabel heeft breedte nodig: naast een fragment van een paar regels
+  // wint het scherm niets en breekt elke cel (les 9e van python: twee regels
+  // code en een tabel van vier kolommen waren naast elkaar 40 pixels te lang).
+  const isPunt = (node) =>
+    node.type === 'list' || isBlok(node) || (node.type === 'table' && lengte >= MET_TABEL);
   const hoortErbij = (node) =>
     node !== undefined &&
     !isVraagAlinea(node) &&

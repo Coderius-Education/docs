@@ -801,6 +801,26 @@ describe('groepeer', () => {
       expect(los.type).toBe('code');
     });
 
+    it('een tabel staat alleen naast code van zes regels of meer', () => {
+      // Grotere tekst bij het OLED-scherm (robotica): elf regels code, "Hoe
+      // groter de letters …:" en een tabel pasten naast elkaar wel op het
+      // scherm. Maar in les 9e van python stonden twee regels code naast een
+      // tabel van vier kolommen: elke cel brak, en het scherm werd 40 pixels
+      // te lang.
+      const tabel: Knoop = { type: 'table', children: [] };
+      const regels = (n: number): Knoop => ({
+        type: 'code',
+        value: Array.from({ length: n }, (_, i) => `regel_${i} = ${i}`).join('\n'),
+      });
+      const [naast] = inhoud(regels(11), alinea('Hoe groter, hoe minder:'), tabel, alinea('x'));
+      expect(naast.children?.[1].children?.map((n) => n.type)).toEqual(['paragraph', 'table']);
+      expect(inhoud(regels(2), alinea('Kies een naam:'), tabel).map((n) => n.type)).toEqual([
+        'code',
+        'paragraph',
+        'table',
+      ]);
+    });
+
     it('een programma dat in zijn eigen vak schuift, heeft zijn uitleg ernaast', () => {
       // Welke kant op? bij de joystick: 23 regels en een alinea eronder
       // waren samen 73 pixels te lang.
