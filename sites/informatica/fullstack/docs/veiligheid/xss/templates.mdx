@@ -28,6 +28,8 @@ de lus over de berichten alleen, met `db.values()` in plaats van `db.items()`:
 </ul>
 ```
 
+### Het endpoint geeft het template terug
+
 Het endpoint geeft nu het template terug, in plaats van zelf HTML te bouwen:
 
 <CodeUitleg>
@@ -49,6 +51,8 @@ Geen f-string en geen `escape` meer: de berichten gaan naar het template, en Jin
 </Regel>
 
 </CodeUitleg>
+
+### De imports
 
 Zet bovenaan `main.py` wat daarvoor nodig is. `Request` komt uit `fastapi`, dus
 die zet je in de regel die er al staat. `Jinja2Templates` komt uit

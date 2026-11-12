@@ -26,6 +26,8 @@ COPY . .
 CMD ["fastapi", "run", "main.py", "--port", "8000"]
 ```
 
+### Regel voor regel
+
 Elke regel is een stap:
 
 | Regel | Wat Docker doet |
@@ -36,6 +38,8 @@ Elke regel is een stap:
 | `RUN python -m pip install -r requirements.txt` | installeer de packages uit je lijst ([les 4](site:fullstack/docs/online/project/requirements)) |
 | `COPY . .` | kopieer de rest van je project naar `/app` |
 | `CMD [...]` | dit commando start een container: `fastapi run`, op poort 8000 |
+
+### RUN en CMD
 
 `RUN` gebeurt één keer, tijdens het bouwen. `CMD` gebeurt elke keer dat een container start. Een virtual environment is hier niet nodig: in het image draait alleen jouw site, en die mag Python voor zichzelf hebben.
 
@@ -71,6 +75,8 @@ docker build -t gastenboek .
  => naming to docker.io/library/gastenboek:latest
 ```
 
+### Een minuut wachten
+
 De eerste keer duurt het een minuut: Docker haalt het Python-image op en installeert alle packages. Bij de pip-stap staat een waarschuwing:
 
 ```text
@@ -83,6 +89,8 @@ WARNING: Running pip as the 'root' user can result in broken permissions and con
 Op je eigen computer is het een goed advies: daar delen Ubuntu en jij dezelfde Python, en daarom maakte je in [les 10](site:fullstack/docs/online/linux/venv) een virtual environment. In een image draait alleen jouw site, en het image gooi je weg en bouw je opnieuw zodra er iets mis is. Hier mag je de waarschuwing laten staan, net als de `[notice]` dat er een nieuwe pip is.
 
 </details>
+
+### Welke images zijn er?
 
 Kijk daarna welke images er zijn:
 
@@ -121,6 +129,8 @@ Binnen een seconde is het klaar, met `CACHED` bij elke stap:
 ```
 
 Docker bewaart het resultaat van elke stap: de **cache**. Is een stap gelijk aan de vorige keer, en alles ervoor ook, dan pakt hij dat resultaat. Verandert er iets, dan doet hij die stap opnieuw, en alle stappen erna. Daarom staat `COPY requirements.txt .` apart, vóór `COPY . .`: de trage pip-stap hangt alleen af van je lijst met packages.
+
+### In git
 
 Zet de Dockerfile en `.dockerignore` in git:
 

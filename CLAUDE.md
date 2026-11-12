@@ -221,8 +221,8 @@ anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
 De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
-(schrijfgids §2 en §15). De web-cursus, de python-cursus en robotica zijn
-omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+(schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica en
+fullstack zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
@@ -236,7 +236,8 @@ Een cursus omzetten is werk per cursus, niet één schakelaar:
 4. Elk scherm nalopen op verwijzingen naar iets dat er niet meer staat, en
    daar een test van maken (bij web en python
    `src/docs-tests/schermen.test.ts`, bij robotica
-   `src/lego-tests/schermen.test.ts`, met `plugins/les-schermen.js`).
+   `src/lego-tests/schermen.test.ts`, bij fullstack
+   `src/data/schermen.test.ts`, met `plugins/les-schermen.js`).
 5. De docentenhandleiding herschrijven (zie Werkvormen hieronder).
 
 Tot een cursus is omgezet, houdt hij de inhoudsopgave rechts en zijn oude
@@ -374,7 +375,7 @@ bestaat onder dezelfde naam en met dezelfde paper; hernoem je daar een tip of
 verander je de bron, pas dan `werkvormen.json` mee aan.
 
 **De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
-de standaard (schrijfgids §15); web, python en robotica hebben hem zo. Hij is een halve pagina: waar de lessen op steunen
+de standaard (schrijfgids §15); web, python, robotica en fullstack hebben hem zo. Hij is een halve pagina: waar de lessen op steunen
 (de tabel hierboven, met de literatuur), wat je vooraf wilt weten in drie
 regels, en links naar leerdoelen, eindopdracht en nakijker. Wat een leerling
 of docent nodig heeft om het materiaal te gebruiken, hoort in het materiaal
@@ -590,6 +591,62 @@ een tabblad niet als bezoek, en de begrippen-stap markeert het eerste
 voorkomen op de pagina, ook als dat in een later tabblad staat. Een lang
 programma schuift in zijn vak, ook met de vrije ruimte erbij: van een script
 van 46 regels zijn er vijftien te zien.
+
+**Wat fullstack erbij bracht** (november 2026; alle 1330 schermen passen op
+1280×720 en 1366×768). De cursus heeft 148 lessen zonder oefenveld: uitleg,
+code met een bestandsnaam erboven (`<Bestand pad>`), een blok `<Gelukt>` en
+meerkeuzevragen. Bij de eerste meting pasten 801 van de 1054 schermen.
+Daarvoor is dit in de gedeelde stap en de onderdelen gekomen, elk met een
+test:
+
+- **Een controlevraag is een eigen stap** (`vragenAlsStap`): een
+  `<Voorspel soort="Controlevraag">` aan het eind van een stap met code en
+  een succesmoment is zelf driehonderd pixels hoog. De stap heet
+  Controlevraag (de tweede in een tabblad Controlevraag 2), met een eigen
+  adres. Alleen als er iets vóór staat dat een scherm vult, en erna alleen
+  nog wat bij de vraag hoort.
+- **De bestanden waar een voorspelvraag over gaat, staan samen links van de
+  vraag** (`heeftLabel`), en twee korte bestanden met een `<Bestand>`-label
+  zonder vraag staan naast elkaar (alleen als elke regel in de halve breedte
+  past, 58 tekens).
+- **Code naast een vraag of naast zijn uitvoer krijgt de breedte van zijn
+  langste regel** (`.metVraag`: veertig tot vierenzestig procent;
+  `.voorbeeld`: zestig tot zeventig). Op een vaste helft was bij twaalf
+  voorspelvragen het eind van een regel afgesneden.
+- **Een regel die niet past, breekt af** waar dat geen kwaad kan: in
+  `<CodeUitleg>` in een tabblad (daar staat het regelnummer ervoor, en het
+  vervolg springt vier tekens verder in dan de regel, `--inspringing`), en in
+  een blok zonder taal in een paneel (een foutmelding, uitvoer van de
+  terminal). Code zonder regelnummers houdt zijn regels. Van de 91 schermen
+  met afgesneden code bleven er twaalf over.
+- **Een codeblok dat heel te zien is, levert hooguit een paar regels in**
+  als het scherm anders net niet past (`NOODGREEP` in `speling.ts`, tachtig
+  pixels, en nooit onder acht regels); een vak dat al schuift, geeft toe tot
+  acht regels. `<CodeUitleg>` krimpt als één rij.
+- **Uitleg met meer dan acht stappen blijft alleen losse tabbladen als de
+  rij past** (`rijPast`: 32 pixels per tabblad plus 7 per letter).
+- **In een paneel** heeft een tabel lagere rijen, staat het label van een
+  voorspelvraag vóór de vraag op dezelfde regel, en breekt de knop Volgende
+  af (een stap heet in Er gaat iets mis naar de foutmelding; op een telefoon
+  schoven acht schermen daardoor zijwaarts).
+- Een onderdeel van de site past zich zelf aan met `useInLesTab()`:
+  `<Gelukt>` zet het vinkje en "Lukt het niet?" op één regel.
+- **De tabel `<Werkvormen />` telt ook wat in een stap zit**
+  (`plugins/werkvormen.js`): een `<Voorspel soort="Controlevraag">` is
+  controleren en geen voorspellen, en een opdracht met zijn werkvorm in de
+  kop ("Opdracht 3: Investigate - …") telt als die werkvorm. In fullstack
+  is Opdrachten één tabblad met de vijf stappen van PRIMM erin; zonder deze
+  regel ontbraken controleren, onderzoeken en zelf maken in de handleiding.
+
+En in de lessen: zo'n tweehonderd `###`-koppen erbij (Het script draaien, De
+uitkomst, Test jezelf), de tip boven `## Opdrachten` eronder (dan is hij de
+stap Vooraf en niet het eind van de uitleg), kortere koppen voor de rij
+tabbladen met het oude adres als vast id, en `les_tabs: false` op de
+pagina's waar je zoekt, print of afvinkt. Wat een auteur hieruit meeneemt:
+een rij stappen op twee regels kost elk scherm van dat tabblad veertig
+pixels, dus houd de koppen kort; en een lange foutmelding of een FOUT/GOED
+van tien regels maakt een fout in Er gaat iets mis te lang, dus toon alleen
+de regel die verandert.
 
 ## Code in MDX-expressies
 

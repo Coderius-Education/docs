@@ -68,6 +68,8 @@ Boven het bericht van Sara staat "Je zocht naar: **vet**", vetgedrukt. Het
 bericht zelf staat er als tekst, met de haakjes. Met een scriptje `zoek.py`
 zie je beide in één antwoord:
 
+### De link als script
+
 {/* bestand: zoek.py */}
 
 ```python
@@ -103,6 +105,8 @@ Zet `escape` om de term, net als om de berichten:
 ```python
     return HTMLResponse(f"<p>Je zocht naar: {escape(term)}</p><ul>{gevonden}</ul>")
 ```
+
+### Opnieuw proberen
 
 Open de link opnieuw, en draai `zoek.py` nog een keer.
 

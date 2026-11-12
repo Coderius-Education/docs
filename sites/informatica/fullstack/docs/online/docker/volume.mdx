@@ -16,6 +16,8 @@ docker run -d --name gastenboek -p 8000:8000 -v gastenboek-data:/app/data gasten
 
 `-v gastenboek-data:/app/data` betekent: koppel het volume `gastenboek-data` aan de map `/app/data` in de container. Voor de dubbele punt staat de naam van het volume, erna de map in de container. Bestaat het volume nog niet, dan maakt Docker het. Wat je site in `/app/data` schrijft, komt in het volume.
 
+### Het volume bekijken
+
 Bekijk het volume:
 
 ```bash

@@ -32,6 +32,8 @@ chown -R sam:sam /home/sam/.ssh
 
 In `authorized_keys` staan de publieke sleutels waarmee je mag inloggen. `chown -R` maakt de map en alles erin van `sam`. Zonder die regel is de kopie van `root`, en mag alleen `root` hem lezen; dan kan ssh je sleutel voor `sam` niet vinden.
 
+### Inloggen als jezelf
+
 Laat deze terminal openstaan, en log in een tweede terminal in als jezelf:
 
 ```bash

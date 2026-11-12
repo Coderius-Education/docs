@@ -126,6 +126,9 @@ describe('de route Online zetten', () => {
         .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '')
         .replace(/<details>[\s\S]*?<\/details>/g, '')
         .replace(/<[^>]+>/g, '')
+        // De koppen van de stappen in een tabblad zijn geen uitleg: ze kwamen
+        // erbij toen de les in schermen werd verdeeld.
+        .replace(/^### .*$/gm, '')
         .replace(/^\|(\s*:?-+:?\s*\|)+$/gm, '');
       const woorden = uitleg.split(/\s+/).filter((w) => /\p{L}/u.test(w)).length;
       if (woorden > 450) fout.push(`${id}: ${woorden} woorden`);

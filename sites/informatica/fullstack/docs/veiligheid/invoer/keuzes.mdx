@@ -54,8 +54,12 @@ De stemming gaat mee de database in, en komt terug in het antwoord. De dictionar
 </CodeUitleg>
 
 Vervang `bericht_plaatsen` door deze, met je controle op het bericht als je die
-hebt, en zet in `static/formulier.html` een `<select>` met dezelfde drie
-woorden binnen het `<form>`:
+hebt.
+
+### De keuzelijst in het formulier
+
+De bezoeker kiest uit dezelfde drie woorden. Zet in `static/formulier.html`
+een `<select>` binnen het `<form>`:
 
 ```html
 <select name="stemming">
@@ -81,6 +85,8 @@ for stemming in ["blij", "vrolijk"]:
     antwoord = httpx.post(adres, data=gegevens)
     print(stemming, "->", antwoord.status_code, antwoord.json())
 ```
+
+### De uitkomst
 
 <Gelukt>
 

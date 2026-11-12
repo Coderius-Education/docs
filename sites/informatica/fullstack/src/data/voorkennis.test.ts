@@ -90,6 +90,7 @@ const ZONDER_BLOK: Record<string, string> = {
   'cheatsheet.md': 'naslag',
   'starten.md': 'naslag: de vier stappen om te beginnen, verwijst per stap naar de editor-cursus',
   'troubleshooting.md': 'naslag',
+  'voor-de-docent/schoolserver.mdx': 'naslag voor de docent, geen les',
   'unplugged/index.mdx': 'overzicht van de hand-outs',
   'unplugged/postbode.mdx': 'hand-out zonder computer; Verder op de site linkt naar de lessen',
   'unplugged/template-invullen.mdx':

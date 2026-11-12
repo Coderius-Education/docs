@@ -8,13 +8,13 @@
 
 In opdracht 3 van de vorige les veranderde je je eigen cookie in een andere naam, en je server geloofde het meteen. Daar kon weinig mis, want je wachtwoord moest nog kloppen. Maar je wilt niet bij elk bericht je wachtwoord typen: je wilt één keer inloggen, en dat je server dat onthoudt. Met de naam in een cookie kan dat niet. Daarvoor heb je een **sessie** nodig.
 
-## Waarom de naam niet in de cookie hoort
+## Niet de naam
 
 Stel dat je server na het inloggen een cookie `naam=sara` zet, en bij elk volgend bericht gelooft dat je Sara bent. Dan typt Alex in het tabblad **App** `sara` in zijn eigen cookie, en schrijft hij als Sara, zonder haar wachtwoord ooit te kennen.
 
 Hier geldt de vuistregel uit [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser): wat op de computer van de bezoeker staat, mag je niet vertrouwen. Wat op jouw server staat wel.
 
-## Alleen een kenmerk in de cookie
+## Een kenmerk
 
 Je maakt de cookie dus leeg van betekenis. In plaats van de naam zet je er een **sessie-id** in: een lang, willekeurig getal dat verder niets betekent. Wie er bij dat getal is ingelogd, bewaar je op de server, met het sessie-id als sleutel.
 
@@ -30,7 +30,7 @@ sessie_id = secrets.token_hex(16)
 
 Dat geeft 32 tekens, bijvoorbeeld `9f2c4a7e10b8d3f5a6c1e0b4d7928f3a`. Een bezoeker kan dat wel veranderen, maar niet in het sessie-id van iemand anders, want daar zijn te veel mogelijkheden voor.
 
-## Inloggen maakt een sessie
+## Een sessie maken \{#inloggen-maakt-een-sessie}
 
 Inloggen wordt een eigen endpoint: één keer naam en wachtwoord, en daarna een sessie. Zet `import secrets` bij je imports, en dit endpoint onder je andere endpoints:
 
@@ -105,6 +105,8 @@ Ook `mijn.get("naam", "")` heeft een standaardwaarde: wie niet is ingelogd, krij
 
 </CodeUitleg>
 
+### De template kiest het formulier
+
 In `templates/gastenboek.html` kiest de template met de naam welk formulier je ziet. Vervang je formulier door:
 
 <Bestand pad="templates/gastenboek.html" />
@@ -126,9 +128,11 @@ In `templates/gastenboek.html` kiest de template met de naam welk formulier je z
 {% endif %}
 ```
 
+### Wat er niet meer in staat
+
 Het formulier om te schrijven heeft geen naam en geen wachtwoord meer. Heeft jouw formulier `hx-post` en `hx-target`, of een `id` voor je tekenteller, laat die dan staan. Staat de `<script>` voor `app.js` in je `<head>`, dan toont de Console zonder inloggen een rode regel: het inlogformulier heeft geen veld voor de teller. Zet de `<script>` dan binnen het `{% if naam %}`-blok, onder het formulier om te schrijven. Het inlogformulier houdt `method` en `action`, zonder htmx: na het inloggen stuurt je server de browser door, en dan hoort de hele pagina te verversen.
 
-## Een bericht op naam van de sessie
+## Bericht op naam \{#een-bericht-op-naam-van-de-sessie}
 
 Vervang ook je `POST /gastenboek`. De controle op de lengte blijft bovenaan; de naam komt nu uit de sessie:
 
@@ -193,11 +197,11 @@ Zie je na het inloggen weer het inlogformulier? Staat er in het tabblad App wel 
   </Uitleg>
 </Voorspel>
 
+## Opdrachten
+
 :::tip[Controleer je server]
 Laat je server draaien en typ in een tweede terminal `python controleer.py onthouden`. Het script logt in, kijkt of je server de sessie onthoudt en of een bericht zonder sessie een 401 krijgt; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Predict - Een vreemd sessie-id
 

@@ -42,6 +42,8 @@ Een webserver hoort daarom te draaien als een gewone gebruiker, die zo weinig ma
   </Uitleg>
 </Voorspel>
 
+### De map data aan app geven
+
 Daarom maakt de Dockerfile de map `data` zelf, en geeft hij hem aan `app`. Zet na `COPY . .` deze twee regels:
 
 ```dockerfile
@@ -67,6 +69,8 @@ USER app
 CMD ["fastapi", "run", "main.py", "--port", "8000"]
 ```
 
+### Bouwen en kijken
+
 Bouw en start opnieuw, en kijk:
 
 ```bash
@@ -87,6 +91,8 @@ app
 En in je gastenboek op `http://127.0.0.1:8000` kun je een account maken en een bericht schrijven, zonder 500.
 
 </Gelukt>
+
+### In git
 
 Met `docker exec gastenboek ls -l data` zie je je databases, met `app` als eigenaar. Zet de Dockerfile in git:
 

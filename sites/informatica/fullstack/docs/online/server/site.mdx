@@ -28,6 +28,8 @@ echo "DOMEIN=gastenboek.voorbeeld.nl" > .env
 docker compose up -d --build
 ```
 
+### Waarom een .env
+
 De `.env` hoort bij deze computer, niet bij je project. Zo werkt dezelfde `compose.yaml` op je laptop en op de server. Je site heeft geen `ports`, net als in WSL: alleen Traefik publiceert iets ([les 32](site:fullstack/docs/online/server/voordeur)).
 
 <Gelukt>

@@ -43,6 +43,8 @@ async def bericht_detail(request: Request, sleutel: str):
 
 `db.get(sleutel)` geeft `None` als de sleutel niet bestaat, in plaats van te crashen met een `KeyError`.
 
+### De template voor één bericht
+
 De template `templates/bericht.html` toont één bericht, met een link terug naar de lijst:
 
 <Bestand pad="templates/bericht.html" />
@@ -84,6 +86,8 @@ async def berichten(request: Request):
 </Regel>
 
 </CodeUitleg>
+
+### De lijst met links
 
 In `templates/berichten.html` loop je nu over twee dingen tegelijk, en wordt de naam een link met de sleutel erin. Vervang de for-lus binnen de `<ul>` door deze:
 

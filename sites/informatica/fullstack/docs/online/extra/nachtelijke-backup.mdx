@@ -29,6 +29,8 @@ Druk op Enter voor nano. Onder de regels met een `#` zet je één regel:
 30 3 * * * bash /home/sam/backup.sh >> /home/sam/backups/log.txt 2>&1
 ```
 
+### De vijf velden
+
 De eerste vijf velden zeggen wanneer:
 
 | Veld | Hier | Betekenis |
@@ -39,11 +41,13 @@ De eerste vijf velden zeggen wanneer:
 | maand | `*` | elke maand |
 | dag van de week | `*` | elke dag van de week |
 
+### Het commando
+
 Daarna komt het commando. Schrijf hele paden, met `/home/sam` en niet `~`. `>> …/log.txt 2>&1` zet alles wat het script zegt, ook de fouten, achter elkaar in `log.txt`. Daar lees je achteraf wat er gebeurde terwijl jij sliep.
 
 Sla op en sluit nano; cron zegt `crontab: installing new crontab`. `crontab -l` toont je lijst.
 
-## Niet tot morgen wachten
+## Nu al testen
 
 Kijk hoe laat de server het vindt:
 
@@ -61,6 +65,8 @@ Let op `UTC`: de server rekent in de tijd van Greenwich, een of twee uur achter 
 12 14 * * * bash /home/sam/backup.sh >> /home/sam/backups/log.txt 2>&1
 ```
 
+### Is het gelukt?
+
 Wacht tot die minuut voorbij is, en kijk:
 
 ```bash
@@ -72,12 +78,9 @@ Zet de tijd daarna met `crontab -e` terug op `30 3`.
 
 <Gelukt>
 
-Het bestand van vandaag in `~/backups` heeft de tijd van die minuut, zoals `14:12`, en `log.txt` toont wat `docker compose` zei, met `Started` als laatste:
+Het bestand van vandaag in `~/backups` heeft de tijd van die minuut, zoals `14:12`, en `log.txt` eindigt met wat `docker compose` zei:
 
 ```text
- Container gastenboek-gastenboek-1 Stopping
- Container gastenboek-gastenboek-1 Stopped
- gastenboek-gastenboek-1 Copying gastenboek-gastenboek-1:/app/data to /home/sam/backups/2026-11-03/data
  gastenboek-gastenboek-1 Copied gastenboek-gastenboek-1:/app/data to /home/sam/backups/2026-11-03/data
  Container gastenboek-gastenboek-1 Starting
  Container gastenboek-gastenboek-1 Started

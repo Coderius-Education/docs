@@ -23,6 +23,8 @@ Zeg liever expliciet dat het niet bestaat, met `HTTPException`. Die komt uit
 from fastapi import FastAPI, Form, HTTPException, Request
 ```
 
+### Het endpoint met een 404
+
 Vervang daarna je endpoint nog een keer:
 
 <Bestand pad="main.py" />
@@ -259,11 +261,11 @@ async def bericht_detail(request: Request, sleutel: str):
   </Uitleg>
 </Voorspel>
 
+## Opdrachten
+
 :::tip[Controleer je server]
 Laat je server draaien en typ in een tweede terminal `python controleer.py berichten-tonen`. Het script kijkt of alles uit dit hoofdstuk werkt; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Predict - Twee keer niet gevonden
 

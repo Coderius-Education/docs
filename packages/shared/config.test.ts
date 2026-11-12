@@ -229,6 +229,6 @@ describe('createConfig — les-tabbladen', () => {
         return false;
       }
     }).map((s) => s.id);
-    expect(aan).toEqual(['python', 'web', 'robotica']);
+    expect(aan).toEqual(['python', 'web', 'fullstack', 'robotica']);
   });
 });

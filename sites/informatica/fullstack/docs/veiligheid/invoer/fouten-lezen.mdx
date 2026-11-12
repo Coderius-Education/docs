@@ -38,6 +38,8 @@ Uit elke fout drie stukken: het veld, het soort fout, en de melding.
 
 </CodeUitleg>
 
+### fouten.py draaien
+
 Draai het, met de server uit les 3.
 
 <Gelukt>
@@ -108,13 +110,10 @@ KeyError: 'detail'
 `{'lengte': 3}`. In dat antwoord staat geen `detail`, dus
 `antwoord.json()["detail"]` bestaat niet.
 
-**Oplossing:** lees `detail` alleen als de server een `422` stuurde:
+**Oplossing:** lees `detail` alleen als de server een `422` stuurde. Onder
+`adres` staat dan:
 
 ```python
-import httpx
-
-adres = "http://127.0.0.1:8000/bericht"
-
 antwoord = httpx.post(adres, data={"naam": "Sara", "bericht": "hoi"})
 print(antwoord.status_code)
 if antwoord.status_code == 422:

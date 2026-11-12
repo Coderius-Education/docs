@@ -57,6 +57,8 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 ```
 
+### De limiet in het endpoint
+
 In `/inloggen` uit [les 10](site:fullstack/docs/veiligheid/wachtwoorden/rehash) veranderen alleen de kop en de regel
 erboven:
 
@@ -115,7 +117,6 @@ keer met hetzelfde foute wachtwoord inlogt:
 import httpx
 
 adres = "http://127.0.0.1:8000/inloggen"
-
 for nummer in range(6):
     antwoord = httpx.post(adres, data={"naam": "sara", "wachtwoord": "fout"})
     print(f"Poging {nummer + 1}: {antwoord.status_code} {antwoord.json()}")
@@ -189,6 +190,8 @@ een wachtwoord controleert: de hele reeks in één server.
 
 </details>
 
+### De uitkomst
+
 <Gelukt>
 
 `python pogingen.py` krijgt vijf keer een melding, en de zesde keer een `429`:
@@ -245,13 +248,9 @@ getal achter `0x` verschilt per keer.
 
 ```python
 # FOUT
-@app.post("/wijzig")
-@limiter.limit("5/minute")
 async def wijzig(naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
 
 # GOED
-@app.post("/wijzig")
-@limiter.limit("5/minute")
 async def wijzig(request: Request, naam: str = Form(...), oud: str = Form(...), nieuw: str = Form(...)):
 ```
 

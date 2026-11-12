@@ -31,6 +31,8 @@ volumes:
   data:
 ```
 
+### Wat er staat
+
 Het is **YAML**: een bestand van namen en waarden, waarin de inspringing zegt wat bij wat hoort. Gebruik spaties, nooit een tab, en steeds twee per niveau.
 
 | Regel | Betekenis |
@@ -51,7 +53,11 @@ docker rm -f gastenboek
 docker compose up -d --build
 ```
 
-`up` maakt en start wat er in `compose.yaml` staat, `-d` zet het op de achtergrond, en `--build` bouwt het image eerst opnieuw. Kijk wat er draait:
+`up` maakt en start wat er in `compose.yaml` staat, `-d` zet het op de achtergrond, en `--build` bouwt het image eerst opnieuw.
+
+### Kijken wat er draait
+
+`docker compose ps` toont wat er draait:
 
 ```bash
 docker compose ps
@@ -70,6 +76,8 @@ En `http://127.0.0.1:8000` toont je gastenboek, gestart met één kort commando.
 
 </Gelukt>
 
+### De commando's van Compose
+
 Compose verzint de namen zelf, met de naam van je map ervoor: de container heet `gastenboek-gastenboek-1`, het image `gastenboek-gastenboek`, en het volume `gastenboek_data`. Je hoeft die namen niet te typen. Elk `docker compose`-commando in deze map gaat over dit project:
 
 | Commando | Wat er gebeurt |
@@ -78,6 +86,8 @@ Compose verzint de namen zelf, met de naam van je map ervoor: de container heet 
 | `docker compose ps` | wat er draait |
 | `docker compose logs -f` | meekijken in de logboeken, tot Ctrl+C |
 | `docker compose down` | containers stoppen en weggooien; het volume blijft |
+
+### In git
 
 Zet `compose.yaml` in git:
 
@@ -157,11 +167,11 @@ Bind for 127.0.0.1:8000 failed: port is already allocated
 
 **Oplossing:** `docker rm -f gastenboek`, en daarna opnieuw `docker compose up -d`.
 
+## Opdrachten
+
 :::tip[Eerst op papier]
 Speel zonder computer na wat er blijft bij `stop`, een nieuwe versie, `down` en `down -v`: [Wat blijft er over?](site:fullstack/docs/unplugged/wat-blijft). Je docent kan de hand-out printen.
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Run - Je site met Compose
 

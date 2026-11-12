@@ -34,6 +34,8 @@ je-project/
 </html>
 ```
 
+### Templates aanzetten in main.py
+
 `{{ worp }}` is een open plek. Wat daar komt te staan, beslist Python. In je `main.py` komen daarvoor drie dingen bij: `import random` helemaal bovenaan, `Request` en `Jinja2Templates` bij de imports, en onder `app.mount` de regel `templates = …`. De bovenkant van je `main.py` ziet er dan zo uit:
 
 <Bestand pad="main.py" />
@@ -58,6 +60,8 @@ templates = Jinja2Templates(directory="templates")
 </Regel>
 
 </CodeUitleg>
+
+### Het endpoint van de dobbelsteen
 
 Zet het endpoint onder je andere endpoints:
 
@@ -89,6 +93,8 @@ async def dobbelsteen(request: Request):
 </Regel>
 
 </CodeUitleg>
+
+### Voorspel
 
 <Voorspel vraag="Je gaat naar /dobbelsteen en herlaadt de pagina drie keer. Wat zie je?">
   <Keuze uitleg="Dat zou gebeuren als de worp één keer werd gegooid, bij het starten van de server. Kijk waar random.randint staat.">Drie keer hetzelfde getal</Keuze>
@@ -147,6 +153,8 @@ return templates.TemplateResponse(
 ```html
 <p>{{ speler }} gooide een {{ worp }}.</p>
 ```
+
+### Een dictionary meesturen
 
 Is een waarde zelf een dictionary, dan haal je er in de template een onderdeel uit met een punt:
 
@@ -293,11 +301,11 @@ async def dobbelsteen(request: Request):
 
 </details>
 
+## Opdrachten
+
 :::tip[Eerst op papier]
 Sorteer eerst zonder computer welke regels op de server draaien en welke in de browser: [Welke taal, waar?](site:fullstack/docs/unplugged/welke-taal-waar). Je docent kan de hand-out printen.
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Predict - Wat zie je?
 

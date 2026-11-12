@@ -19,6 +19,8 @@ en open het formulier uit de map `static`:
 `http://127.0.0.1:8000/static/formulier.html`. Typ een lang bericht in het vak
 `bericht`: na 280 tekens gaat er niets meer bij, want `maxlength` houdt je tegen.
 
+### Een script in plaats van het formulier
+
 Nu een scriptje `groot.py`, naast `main.py`, dat níét via het formulier gaat,
 maar rechtstreeks naar het endpoint:
 
@@ -37,7 +39,7 @@ print(antwoord.json())
 ```
 
 <Regel n={5}>
-Een bericht van een miljoen keer de letter `a`. In het formulier kreeg je dit er nooit in. `1_000_000` is hetzelfde getal als `1000000`; het liggende streepje maakt het leesbaar.
+Een miljoen keer de letter `a`: dat kreeg je er in het formulier nooit in. `1_000_000` is hetzelfde getal als `1000000`, maar leesbaarder.
 </Regel>
 
 <Regel n={6}>
@@ -45,6 +47,8 @@ Hetzelfde verzoek dat de browser zou sturen, maar zonder de grens uit de HTML.
 </Regel>
 
 </CodeUitleg>
+
+### Het script draaien
 
 Draai het met `python groot.py`, en daarna `lees_database.py` uit les 1.
 
@@ -68,6 +72,8 @@ Je server bewaarde een bericht van een miljoen tekens, terwijl het formulier
 na 280 stopte.
 
 </Gelukt>
+
+### Wat er gebeurde
 
 Alle miljoen tekens staan in je database. `maxlength` zat in de HTML, en die
 HTML draaide in de browser die je nu hebt overgeslagen. Het endpoint zag alleen
@@ -104,6 +110,8 @@ Uitvoer:
 {'detail': 'Field exceeded maximum size of 1024KB.'}
 400
 ```
+
+### Wie hield het tegen?
 
 Starlette, het deel van FastAPI dat formulieren leest, weigert zelf een veld
 dat groter is dan een megabyte, ongeveer een miljoen tekens. Het bericht van

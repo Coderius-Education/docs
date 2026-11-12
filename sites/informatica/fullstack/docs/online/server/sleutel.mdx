@@ -25,6 +25,8 @@ PermitRootLogin no
 
 De `00` vooraan doet ertoe. ssh leest de bestanden in die map op alfabet, en de eerste keer dat een instelling voorkomt, telt. Op sommige servers staat er al een bestand, zoals `50-cloud-init.conf`, met `PasswordAuthentication yes`. Jouw bestand komt eerder.
 
+### De instellingen controleren
+
 Controleer de instellingen:
 
 ```bash
@@ -32,6 +34,8 @@ sudo sshd -t
 ```
 
 Zegt `sshd -t` niets, dan klopt alles.
+
+### De instellingen laden
 
 **Let op:** sluit de terminal waarin je als `sam` bent ingelogd niet, ook niet na het laden. Probeer eerst in een tweede terminal of je nog binnenkomt met `ssh sam@203.0.113.10`. Gaat er iets mis, dan herstel je het in de eerste, die nog openstaat. Laad nu de instellingen:
 

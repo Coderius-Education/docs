@@ -21,7 +21,7 @@ Allebei zijn het een 404, en allebei moeten ze straks je eigen pagina tonen. Een
 
 Een **exception handler** is een functie die FastAPI aanroept als er een fout ontstaat, in plaats van zelf JSON te sturen. Jij maakt er een voor 404: een onbekend adres en jouw eigen `raise HTTPException(status_code=404)` gaan er allebei doorheen, en een 401, een 405 of een fout in je code blijven wat ze zijn.
 
-Die bouw je hieronder. Er zijn nog andere manieren; waarom deze de beste keuze is, lees je onder Achtergrond.
+Die bouw je bij De handler bouwen. Er zijn nog andere manieren; waarom deze de beste keuze is, lees je onder Achtergrond.
 
 <details>
 <summary>Achtergrond: twee andere manieren</summary>
@@ -101,6 +101,8 @@ Maak een nieuwe template:
     </body>
 </html>
 ```
+
+### De handler in main.py
 
 Zet de handler onder je andere endpoints:
 
@@ -200,11 +202,11 @@ jinja2.exceptions.TemplateNotFound: '404.html' not found in search path: 'templa
 
 **Oplossing:** gebruik `@app.exception_handler(404)`.
 
+## Opdrachten
+
 :::tip[Controleer je server]
 Laat je server draaien en typ in een tweede terminal `python controleer.py afronden`. Het script kijkt of een onbekend adres je eigen pagina met een 404 geeft, en of andere fouten JSON blijven; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Predict - Een verkeerde methode
 

@@ -35,11 +35,15 @@ networks:
     external: true
 ```
 
+### De labels
+
 De labels zijn voor Traefik:
 
 - `traefik.enable=true`: deze container hoort achter de voordeur.
 - `…routers.gastenboek.rule=Host(…)`: stuur een verzoek voor de naam `gastenboek.localhost` naar deze container. Rond de naam staan backticks. Dubbele aanhalingstekens mogen ook, enkele niet: die kent Traefik niet.
 - `…services.gastenboek.loadbalancer.server.port=8000`: in de container luistert je site op poort 8000.
+
+### Opnieuw starten
 
 ```bash
 cd ~/gastenboek
@@ -91,7 +95,7 @@ Op `http://gastenboek.localhost` zegt Traefik `404 page not found`.
 error while parsing rule Host('gastenboek.localhost'): parsing rule Host('gastenboek.localhost'): 1:6: illegal rune literal
 ```
 
-**Oplossing:** vergelijk je labels letter voor letter met die hierboven, en zet backticks rond de naam. Start opnieuw met `docker compose up -d`. Het logboek van Traefik lees je met `docker compose logs` in `~/traefik`.
+**Oplossing:** vergelijk je labels letter voor letter met die uit de stap De labels, en zet backticks rond de naam. Start opnieuw met `docker compose up -d`. Het logboek van Traefik lees je met `docker compose logs` in `~/traefik`.
 
 ### Bad Gateway
 

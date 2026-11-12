@@ -90,6 +90,8 @@ Vervang `bericht_plaatsen` in je `main.py` door deze. `HTTPException` komt uit
 from fastapi import FastAPI, Form, HTTPException
 ```
 
+### spaties.py opnieuw draaien
+
 Draai `spaties.py` opnieuw.
 
 <Gelukt>
@@ -144,7 +146,8 @@ NameError: name 'HTTPException' is not defined
 de regel met `raise`, en stuurt een `500` met de tekst `Internal Server Error`.
 Dat is geen JSON, dus `antwoord.json()` in je script kan er niets mee.
 
-**Oplossing:** zet `HTTPException` bij de import uit `fastapi`, zoals hierboven.
+**Oplossing:** zet `HTTPException` bij de import uit `fastapi`, zoals bij De
+controle in het endpoint.
 Bij een `500` staat de echte fout altijd in de terminal van je server.
 
 ### `400`, maar het bericht staat er toch in

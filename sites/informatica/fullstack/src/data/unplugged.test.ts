@@ -8,7 +8,7 @@ import sidebars from '../../sidebars';
 // algoritmes-cursus: wat je nodig hebt, de werkvorm met een gok vooraf,
 // Bespreek na, een antwoordblad dat op het scherm dicht staat, en links de
 // site op die niet op papier komen. Elke hand-out hoort bij een les, en die
-// les wijst ernaar met een tip "Eerst op papier" vlak voor de opdrachten.
+// les wijst ernaar met een tip "Eerst op papier" bovenaan de opdrachten.
 
 const SITE = fileURLToPath(new URL('../../', import.meta.url));
 const DOCS = join(SITE, 'docs');
@@ -67,13 +67,17 @@ describe('de unplugged hand-outs van fullstack', () => {
     expect(docenten).toContain('](site:fullstack/docs/unplugged)');
   });
 
-  it('het overzicht en de docentenhandleiding noemen elke hand-out', () => {
+  it('het overzicht noemt elke hand-out, en de docentenhandleiding hoeveel het er zijn', () => {
+    // De handleiding is kort en wijst naar het overzicht (schrijfgids §15);
+    // de tabel met elke hand-out staat alleen daar.
     const overzicht = readFileSync(join(UNPLUGGED, 'index.mdx'), 'utf8');
     const docenten = readFileSync(join(SITE, 'src', 'pages', 'docenten.mdx'), 'utf8');
     for (const { slug } of handouts) {
       expect(overzicht, slug).toContain(`(site:fullstack/docs/unplugged/${slug})`);
-      expect(docenten, slug).toContain(`(site:fullstack/docs/unplugged/${slug})`);
     }
+    const telwoorden = ['nul', 'één', 'twee', 'drie', 'vier', 'vijf', 'zes', 'zeven', 'acht'];
+    telwoorden.push('negen', 'tien', 'elf', 'twaalf');
+    expect(docenten).toContain(`${telwoorden[handouts.length]} hand-outs`);
   });
 
   for (const { slug, naam, tekst } of handouts) {
@@ -117,7 +121,7 @@ describe('de unplugged hand-outs van fullstack', () => {
         expect(losseGokken).toEqual([]);
       });
 
-      it('een les wijst ernaar met Eerst op papier, vlak voor de opdrachten', () => {
+      it('een les wijst ernaar met Eerst op papier, bovenaan de opdrachten', () => {
         const link = `(site:fullstack/docs/unplugged/${slug})`;
         const wijzers = alleMdx(DOCS)
           .filter((p) => !p.startsWith(UNPLUGGED))
@@ -125,12 +129,15 @@ describe('de unplugged hand-outs van fullstack', () => {
         expect(wijzers.length, `geen les met een link naar ${slug}`).toBeGreaterThan(0);
         const metTip = wijzers.filter((p) =>
           new RegExp(
-            String.raw`:::tip\[Eerst op papier\]\n[^\n]*${link.replace(/[()]/g, '\\$&')}[^\n]*\n:::\n\n## Opdrachten`,
+            // De eerste stap van het tabblad Opdrachten (Vooraf): vóór de kop
+            // stond de tip op het scherm van de controlevraag, en paste dat
+            // scherm niet meer.
+            String.raw`## Opdrachten\n\n(?::::tip\[Controleer je server\]\n[^\n]*\n:::\n\n)?:::tip\[Eerst op papier\]\n[^\n]*${link.replace(/[()]/g, '\\$&')}[^\n]*\n:::`,
           ).test(readFileSync(p, 'utf8')),
         );
         expect(
           metTip.map((p) => relative(DOCS, p)),
-          'een tip Eerst op papier direct boven ## Opdrachten',
+          'een tip Eerst op papier direct onder ## Opdrachten',
         ).not.toEqual([]);
       });
     });

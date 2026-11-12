@@ -46,8 +46,12 @@ De pagina zelf is een los bestand `static/gastenboek.html`:
 </html>
 ```
 
+### Wat load en every doen
+
 Door `load` haalt htmx de lijst meteen op als de pagina geladen is, en na de
 komma komt `every 5s` erbij: daarna elke vijf seconden opnieuw.
+
+### De server
 
 Zet `htmx.min.js` uit [Zonder herladen](site:fullstack/docs/FastAPI/zonder-herladen/htmx) in `static/js/`.
 De endpoints staan in `main.py`:
@@ -100,6 +104,8 @@ Doe alles in deze reeks **uitsluitend** op je eigen server op `127.0.0.1`. HTML
 invullen op de site van een ander om te kijken wat er gebeurt, is een aanval op
 die site en op de bezoekers ervan, en strafbaar.
 :::
+
+### Openen in de browser
 
 Start je server met `fastapi dev main.py` en open
 `http://127.0.0.1:8000/static/gastenboek.html`. Vul als naam `Sara` in en als

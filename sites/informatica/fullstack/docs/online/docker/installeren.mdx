@@ -33,6 +33,8 @@ Dat zijn vier pakketten van Ubuntu zelf:
 - `docker-buildx`: het onderdeel dat images bouwt;
 - `git`: dat heb je al, maar op de server typ je straks precies deze regel.
 
+### Draait Docker?
+
 Docker draait als dienst, en die start meteen. Controleer het:
 
 ```bash
@@ -84,7 +86,7 @@ sudo systemctl enable --now docker
 Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
 ```
 
-**Oorzaak:** hetzelfde als hierboven, in een andere vorm. Het bestand `docker.sock` staat er nog, maar de dienst die erachter hoort te luisteren, draait niet.
+**Oorzaak:** hetzelfde als bij `failed to connect to the docker API`, in een andere vorm. Het bestand `docker.sock` staat er nog, maar de dienst die erachter hoort te luisteren, draait niet.
 
 **Oplossing:** `sudo systemctl enable --now docker`, en kijk met `systemctl status docker` of er `active (running)` staat.
 

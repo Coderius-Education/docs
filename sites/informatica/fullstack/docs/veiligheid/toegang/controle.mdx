@@ -78,6 +78,8 @@ print(f"Nog in het gastenboek: {namen}")
 
 {/* weg: gastenboek.db sessies.db gebruikers.db */}
 
+### Het script draaien
+
 Gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, start de server
 opnieuw, en draai het script.
 
@@ -137,7 +139,8 @@ NameError: name 'sessie_id' is not defined
 parameter `sessie_id: str = Cookie(default="")` niet. Dan bestaat `sessie_id`
 niet in de functie.
 
-**Oplossing:** zet de parameter erbij, zoals in regel 2 hierboven.
+**Oplossing:** zet de parameter erbij, zoals in regel 2 van De controle in het
+endpoint.
 
 ### Een `'Alex'` te veel
 

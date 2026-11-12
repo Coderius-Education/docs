@@ -2,11 +2,11 @@
 
 Je kunt nu allebei: een cookie met de naam erin, en een sessie waarbij alleen een sessie-id bij de bezoeker ligt en je server onthoudt wie er inlogde. Allebei lossen ze op dat je server een terugkerende bezoeker niet herkent. Ze doen het alleen op een andere plek, en dat bepaalt welke je kiest.
 
-## Wat ze allebei oplossen
+## Wat ze oplossen
 
 Elk verzoek staat op zichzelf, zag je in [Onthouden met een cookie](site:fullstack/docs/FastAPI/onthouden/cookies#de-server-herkent-je-niet). Een cookie is het enige wat dat gat dicht. De server geeft de browser een stukje tekst mee, en de browser stuurt dat vanaf dan bij élk verzoek terug. Dat geldt voor allebei de aanpakken, want een sessie is ook een cookie. Het verschil zit niet in de techniek, maar in wát er in die cookie staat.
 
-## Het verschil in één zin
+## Het verschil
 
 Bij een cookie staat het antwoord zelf bij de bezoeker. Bij een sessie staat er alleen een nummertje, en het antwoord ligt bij jou.
 
@@ -34,7 +34,7 @@ Kom je daarmee ergens waar je niet hoort, dan moet het een sessie zijn. Denk aan
 
 Dat is dezelfde vraag als in [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser), en het antwoord komt uit dezelfde regel: alles wat op de computer van de bezoeker staat, is van de bezoeker.
 
-## Waarom niet altijd een sessie
+## Niet altijd een sessie
 
 Een sessie is veiliger. Toch is een gewone cookie soms de betere keus, want een sessie kost werk dat je niet altijd nodig hebt. Elk verzoek betekent een extra opzoeking in je database, en je moet die sessies ergens laten. Ze blijven groeien: elke bezoeker die één keer langskomt laat een rij achter, ook zonder ooit terug te komen. Op een echte site ruim je die na verloop van tijd op.
 
@@ -55,17 +55,15 @@ Je server draait nu met sessies. Kijk nog één keer in het tabblad **App** naar
   </Uitleg>
 </Voorspel>
 
+## Opdrachten
+
 :::tip[Eerst op papier]
 Speel eerst zonder computer na waarom een naam in een cookie niet genoeg is, en een sessie wel: [Een postbode zonder geheugen](site:fullstack/docs/unplugged/postbode). Je docent kan de hand-out printen.
 :::
 
-## Opdrachten
-
 ### Opdracht 1: Predict - Wie wint?
 
-Twee sites bewaren allebei je naam. Site A zet `naam=Jan` in een cookie. Site B zet `sessie_id=9f2c...` in een cookie en de naam in een database.
-
-Je opent bij allebei de ontwikkelaarstools en verandert de cookie in de naam van iemand anders.
+Twee sites bewaren je naam. Site A zet `naam=Jan` in een cookie; site B zet `sessie_id=9f2c...` in een cookie en de naam in een database. Bij allebei verander je in de ontwikkelaarstools de cookie in de naam van iemand anders.
 
 <Voorspel vraag="Bij welke site sta je daarna als die ander te boek?">
   <Keuze uitleg="Bij B heb je een sessie-id veranderd, geen naam. Past jouw nieuwe waarde op een sessie die de server kent?">Alleen bij site B</Keuze>

@@ -1,3 +1,7 @@
+---
+les_tabs: false
+---
+
 import NaslagZoeker from '@coderius/shared/components/NaslagZoeker';
 
 # Cheatsheet

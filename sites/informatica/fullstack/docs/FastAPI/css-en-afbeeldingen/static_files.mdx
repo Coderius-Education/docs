@@ -8,7 +8,7 @@
 
 In [HTML tonen](site:fullstack/docs/FastAPI/paginas/html_tonen) zette je CSS in een `<style>`-tag. Met meer pagina's wil je één CSS-bestand dat ze allemaal delen. Zo'n bestand stuurt de server ongewijzigd door, zonder dat er een functie van jou aan te pas komt: een **static file**.
 
-## Mappenstructuur
+## De mappen
 
 Maak in je map `static` naast `pages` een map `css`:
 
@@ -23,7 +23,7 @@ je-project/
         └── about.html
 ```
 
-## Static files configureren
+## Static files
 
 Er komen twee regels bij in je `main.py`: een import bovenaan, en direct onder `app = FastAPI()` de regel met `app.mount`. Je endpoints blijven staan. De bovenkant ziet er dan zo uit:
 
@@ -50,7 +50,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 </CodeUitleg>
 
-## CSS in een eigen bestand
+## Het CSS-bestand
 
 Maak `static/css/style.css`:
 
@@ -66,7 +66,7 @@ p {
 }
 ```
 
-## CSS koppelen aan je pagina
+## CSS koppelen \{#css-koppelen-aan-je-pagina}
 
 Zet in `static/pages/home.html` een `<link>` in de `<head>`. De rest van je pagina blijft staan:
 
@@ -100,7 +100,7 @@ Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000). De kop is blauw: de CSS 
 Werkt je CSS niet? Kijk of `app.mount("/static", ...)` in je code staat en of het pad in `<link>` klopt. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
-## Als je wijziging niet doorkomt
+## De cache \{#als-je-wijziging-niet-doorkomt}
 
 Pas je `style.css` aan en blijft de kop blauw? Dan kijk je waarschijnlijk naar een oude kopie. De browser bewaart van sommige antwoorden een kopie, de **cache**. Vraagt hij hetzelfde adres nog eens, dan pakt hij soms die kopie in plaats van de server te vragen. Bij de JSON van je endpoints gebeurt dat vrijwel nooit, bij bestanden wel: je CSS, je afbeeldingen, en ook een HTML-pagina die je met `FileResponse` terugstuurt.
 
@@ -204,7 +204,7 @@ Je hebt twee pagina's, `home.html` en `about.html`, en in allebei staat dezelfde
   <Keuze uitleg="StaticFiles leest het bestand bij elk verzoek opnieuw van je schijf. De server hoeft er niets voor te doen.">Pas na een herstart van de server</Keuze>
   <Uitleg>
 
-  Eén bestand, en elke pagina met deze `<link>` volgt het. Zie je de nieuwe kleur niet meteen, denk dan aan de cache uit Als je wijziging niet doorkomt.
+  Eén bestand, en elke pagina met deze `<link>` volgt het. Zie je de nieuwe kleur niet meteen, dan zit de cache ertussen: zie het tabblad De cache.
 
   </Uitleg>
 </Voorspel>
@@ -216,7 +216,7 @@ Maak `static/css/style.css` en de `<link>` in `home.html` uit het voorbeeld, en 
 <details>
 <summary>Antwoord</summary>
 
-Staat er een aantal bytes, dan haalde de browser het nieuwe bestand op, en is je kop in de nieuwe kleur. Staat er (geheugencache) of (schijfcache), dan gebruikte hij zijn oude kopie, en kan je kop nog de oude kleur hebben. Wat je dan doet, staat onder Als je wijziging niet doorkomt.
+Staat er een aantal bytes, dan haalde de browser het nieuwe bestand op, en is je kop in de nieuwe kleur. Staat er (geheugencache) of (schijfcache), dan gebruikte hij zijn oude kopie, en kan je kop nog de oude kleur hebben. Wat je dan doet, staat in het tabblad De cache.
 
 </details>
 

@@ -29,6 +29,8 @@ je-project/
 
 Je hoeft niets aan `main.py` te veranderen. De regel `app.mount("/static", StaticFiles(directory="static"), name="static")` uit [CSS in een eigen bestand (static files)](site:fullstack/docs/FastAPI/css-en-afbeeldingen/static_files) serveert alles in die map, dus ook je JavaScript.
 
+### Het script koppelen
+
 De teller in deze les komt op het gastenboekformulier, `static/pages/gastenboek_form.html`. Koppel je script in de `<head>` van dat bestand, onder de script-tag van htmx als die er staat. Heeft het bestand nog geen `<head>`, omdat je het formulierrecept uit de [htmx-recepten](site:fullstack/docs/FastAPI/zonder-herladen/htmx-overzicht) niet bouwde, zet er dan een boven de `<body>`:
 
 <Bestand pad="static/pages/gastenboek_form.html" />
@@ -55,6 +57,8 @@ En zet direct onder dat veld een plek waar de teller kan staan:
 <p id="teller">80 tekens over</p>
 ```
 
+### De code in app.js
+
 De code komt in `static/js/app.js`:
 
 <Bestand pad="static/js/app.js" />
@@ -70,6 +74,8 @@ veld.addEventListener("input", function () {
 ```
 
 Bij elke toetsaanslag stuurt de browser een `input`-event, en jouw functie past de tekst aan.
+
+### Als htmx het formulier leegmaakt
 
 Staat `hx-on::after-request="this.reset()"` uit de htmx-recepten op je formulier, dan maakt htmx het veld leeg zonder `input`-event, en blijft de teller op het oude getal staan. Zet dan onderaan in `app.js`:
 

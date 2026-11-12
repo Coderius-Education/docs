@@ -108,6 +108,8 @@ for nummer in range(6):
 
 </CodeUitleg>
 
+### headers.py draaien
+
 Start je server opnieuw, zodat de telling bij nul begint, en draai het script.
 
 <Gelukt>
@@ -126,6 +128,8 @@ Verzoek 6: 429, nog 0 over, wacht 60 seconden
 ```
 
 </Gelukt>
+
+### Wat de headers zeggen
 
 Bij een `200` hoef je niet te wachten: `retry-after` zegt dan alleen wanneer de
 telling opnieuw begint. Pas bij een `429` moet je die tijd afwachten. Een
@@ -173,13 +177,12 @@ volgende fout.
 
 ### `500` bij de eerste vijf verzoeken
 
-Na `headers_enabled=True` geeft het script:
+Na `headers_enabled=True` geeft het script vijf keer een `500` en dan een
+`429`:
 
 ```
 Verzoek 1: 500, nog None over, wacht None seconden
-Verzoek 2: 500, nog None over, wacht None seconden
-Verzoek 3: 500, nog None over, wacht None seconden
-Verzoek 4: 500, nog None over, wacht None seconden
+...
 Verzoek 5: 500, nog None over, wacht None seconden
 Verzoek 6: 429, nog 0 over, wacht 60 seconden
 ```
@@ -190,23 +193,13 @@ In de terminal van je server eindigt de foutmelding met:
 Exception: parameter `response` must be an instance of starlette.responses.Response
 ```
 
-**Oorzaak:** je endpoint heeft geen parameter `response: Response`. `slowapi`
-wil de headers op het antwoord zetten, maar heeft er dan geen. De limiet telt
-wel mee: ook een verzoek dat op `500` uitloopt, telt als een van je vijf. Het
-zesde weigert `slowapi` dus al met `429`, voordat je functie draait.
+**Oorzaak:** je endpoint heeft geen parameter `response: Response`, en `slowapi`
+wil de headers op het antwoord zetten. Ook een `500` telt als een van je vijf:
+het zesde verzoek weigert `slowapi` dus al met `429`.
 
 **Oplossing:** zet `response: Response` bij de parameters van elk endpoint met
 een limiet dat een dictionary teruggeeft, en `Response` in de import:
-
-{/* niet-compileren: alleen de kop van de functie, zonder inhoud */}
-
-```python
-# FOUT
-async def root(request: Request):
-
-# GOED
-async def root(request: Request, response: Response):
-```
+`async def root(request: Request, response: Response):`.
 
 ## Opdrachten
 

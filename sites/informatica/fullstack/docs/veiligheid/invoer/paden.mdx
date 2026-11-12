@@ -29,6 +29,8 @@ Maak naast `formulier.html` een map `static/pages` met twee pagina's. Eerst
 
 Maak `over.html` net zo, met de kop `Over dit gastenboek`.
 
+### Het endpoint /pagina
+
 `FileResponse` komt uit `fastapi.responses`. Zet deze regel bij de imports
 bovenaan `main.py`:
 
@@ -57,6 +59,8 @@ Het pad naar het bestand, met de naam die de bezoeker koos.
 </Regel>
 
 </CodeUitleg>
+
+### Proberen in de browser
 
 Open `http://127.0.0.1:8000/pagina?naam=home.html`, en daarna
 `?naam=over.html`. Je ziet de twee koppen.
@@ -129,6 +133,8 @@ Staat de naam niet in de lijst, dan bestaat de pagina voor de bezoeker niet: een
 
 </CodeUitleg>
 
+### Drie namen proberen
+
 Vervang je `/pagina` door deze. Een script `paden.py` probeert er drie:
 
 {/* bestand: paden.py */}
@@ -140,6 +146,8 @@ for naam in ["home.html", "../../main.py", "oeps.html"]:
     antwoord = httpx.get(f"http://127.0.0.1:8000/pagina?naam={naam}")
     print(naam, "->", antwoord.status_code)
 ```
+
+### De uitkomst
 
 <Gelukt>
 
@@ -248,8 +256,9 @@ script stuurt twee verzoeken:
 ```python
 import httpx
 
-print(httpx.get("http://127.0.0.1:8000/pagina/home").status_code)
-print(httpx.get("http://127.0.0.1:8000/pagina/..%2F..%2Fmain").status_code)
+adres = "http://127.0.0.1:8000/pagina/"
+print(httpx.get(adres + "home").status_code)
+print(httpx.get(adres + "..%2F..%2Fmain").status_code)
 ```
 
 **Vraag:** welke twee statuscodes print het?

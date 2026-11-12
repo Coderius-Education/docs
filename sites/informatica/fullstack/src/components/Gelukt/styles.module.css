@@ -40,3 +40,36 @@
   font-size: 0.9rem;
   color: var(--ifm-color-emphasis-700);
 }
+
+/* In een les-tabblad: minder lucht, en het vinkje met de verwijzing op één
+   regel. Een blok met veertien regels was 330 pixels hoog, en met de zin
+   erboven en de uitleg eronder net te lang voor een scherm. */
+.blok.inTab:not(#\#):not(#\#) {
+  margin: 0.75rem 0;
+  padding: 0.6rem 1rem 0.65rem;
+}
+
+.blok.inTab:not(#\#):not(#\#) .kop {
+  margin-bottom: 0.3rem;
+}
+
+.blok.inTab:not(#\#):not(#\#) .inhoud > * {
+  margin-bottom: 0.5rem;
+}
+
+.blok.inTab:not(#\#):not(#\#) .inhoud > :last-child {
+  margin-bottom: 0;
+}
+
+.inTab .onder {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.blok.inTab:not(#\#):not(#\#) .vinkje,
+.blok.inTab:not(#\#):not(#\#) .niet {
+  margin-top: 0;
+}

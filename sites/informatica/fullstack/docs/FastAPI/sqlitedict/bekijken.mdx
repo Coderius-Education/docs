@@ -33,6 +33,8 @@ with SqliteDict("mijn_data.db") as db:
 
 </CodeUitleg>
 
+### Het script draaien
+
 Draai `python bekijk_db.py`:
 
 ```
@@ -42,6 +44,8 @@ leeftijd = 16
 ```
 
 Heb je in de vorige les meer opgeslagen, zoals een woonplaats, dan staat die er ook bij en telt het een sleutel meer. Bewaar dit script: in de lessen hierna kijk je er steeds mee wat je server heeft opgeslagen. Verander alleen de bestandsnaam tussen de haakjes, bijvoorbeeld in `"gastenboek.db"`.
+
+### Test jezelf
 
 Test jezelf. In `mijn_data.db` staan `naam` en `leeftijd`. Je draait dit script:
 
@@ -79,14 +83,6 @@ AttributeError: 'NoneType' object has no attribute 'select'
 ```python
 from sqlitedict import SqliteDict
 
-# FOUT: de lus staat na het with-blok
-with SqliteDict("mijn_data.db") as db:
-    paren = db.items()
-
-for sleutel, waarde in paren:
-    print(sleutel, "=", waarde)
-
-# GOED: list() haalt alles op zolang de database open is
 with SqliteDict("mijn_data.db") as db:
     paren = list(db.items())
 

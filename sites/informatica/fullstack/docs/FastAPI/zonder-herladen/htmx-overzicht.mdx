@@ -1,10 +1,10 @@
 # htmx-recepten: formulier, verversen, verwijderen, zoeken
 
-Met `hx-get` en `hx-target` haalde je een zin op zonder herladen. Hetzelfde idee werkt voor alles wat je tot nu toe via een herlaad deed. Hieronder staat per recept de HTML en het endpoint dat erbij hoort. Kies wat je gastenboek nodig heeft; je hoeft ze niet allemaal te bouwen.
+Met `hx-get` en `hx-target` haalde je een zin op zonder herladen. Hetzelfde idee werkt voor alles wat je tot nu toe via een herlaad deed. Elk tabblad is een recept, met de HTML en het endpoint dat erbij hoort. Kies wat je gastenboek nodig heeft; je hoeft ze niet allemaal te bouwen.
 
 Voor elk recept geldt hetzelfde. De pagina met de `hx-`-attributen heeft de script-tag van htmx in de `<head>`, net als `home.html` in [Zonder herladen met htmx](site:fullstack/docs/FastAPI/zonder-herladen/htmx): zonder die regel doet een knop niets en verstuurt een formulier zichzelf als GET. Het endpoint geeft een stukje HTML terug: een zin in een `HTMLResponse`, of een template zonder `<html>` eromheen. En het geeft nooit een omleiding, want htmx volgt die en zet dan de hele pagina in het doel.
 
-## Een formulier versturen
+## Formulier: een formulier versturen \{#een-formulier-versturen}
 
 Het gastenboekformulier zonder herladen. Het staat in `static/pages/gastenboek_form.html` uit [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel), en dat bestand heeft nog geen `<head>`. Zet er een `<head>` met de script-tag bij, boven de `<body>`:
 
@@ -15,6 +15,8 @@ Het gastenboekformulier zonder herladen. Het staat in `static/pages/gastenboek_f
     <script src="/static/js/htmx.min.js"></script>
 </head>
 ```
+
+### hx-post op het formulier
 
 Vervang in de `<form>`-tag `method` en `action` door `hx-post` en `hx-target`, en zet onder het formulier een lege `<p>` erbij. De velden en de knop blijven zoals ze waren:
 
@@ -29,6 +31,8 @@ Vervang in de `<form>`-tag `method` en `action` door `hx-post` en `hx-target`, e
 </form>
 <p id="antwoord"></p>
 ```
+
+### Het endpoint geeft een stukje HTML
 
 In het endpoint uit [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen) verandert één regel: vervang de `return`.
 
@@ -53,6 +57,8 @@ async def gastenboek_opslaan(
     return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
 ```
 
+### Wat hetzelfde blijft
+
 Zet `from html import escape` bovenaan je `main.py`. De naam komt van de bezoeker, en in een f-string komt hij letterlijk in je HTML: typt iemand `<b>Sara</b>`, dan staat er een vette naam. `escape` maakt er gewone tekst van. Een template doet dat vanzelf; een f-string niet. Meer hierover in [HTML van een bezoeker](site:fullstack/docs/veiligheid/xss/gastenboek).
 
 De `Form`-parameters en de controle van het wachtwoord blijven hetzelfde; voor je endpoint is er geen verschil met een formulier zonder htmx. De omleiding met 303 is niet meer nodig, want de browser is nooit weggegaan.
@@ -61,9 +67,15 @@ Klopt het wachtwoord niet, dan antwoordt je endpoint met een 401, net als zonder
 
 Zet je `hx-on::after-request="this.reset()"` op de `<form>`, dan maakt htmx de velden leeg zodra het antwoord binnen is. Dat doet hij ook als het antwoord een fout is, zoals een 401: wat de bezoeker typte, is dan weg. Zet je later een Content-Security-Policy op je site, dan werkt dit attribuut niet meer; wat je dan doet, staat in [HTML van een bezoeker: in de praktijk](site:fullstack/docs/veiligheid/xss/praktijk).
 
-## Een stuk van de pagina verversen
+## Verversen: een stuk van de pagina \{#een-stuk-van-de-pagina-verversen}
 
-Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`. Knip het hele `{% if berichten %}`-blok uit je `berichten.html` en zet het in dat nieuwe bestand. Neem alles mee wat je lijst al had: de link naar de detailpagina uit [Eén item tonen](site:fullstack/docs/FastAPI/berichten-tonen/detailpagina) en het formuliertje om te verwijderen uit [Een bericht verwijderen: een verborgen veld](site:fullstack/docs/FastAPI/berichten-verwijderen/verwijderen). Zo ziet het er dan ongeveer uit:
+Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin maar een lijst, dus die krijgt een eigen template, `templates/berichten_lijst.html`, zonder `<html>` of `<head>`.
+
+Knip het hele `{% if berichten %}`-blok uit je `berichten.html` en zet het in dat nieuwe bestand. Neem alles mee wat je lijst al had: de link naar de detailpagina uit [Eén item tonen](site:fullstack/docs/FastAPI/berichten-tonen/detailpagina) en het formuliertje om te verwijderen uit [Een bericht verwijderen: een verborgen veld](site:fullstack/docs/FastAPI/berichten-verwijderen/verwijderen).
+
+### De lijst in een eigen template
+
+Zo ziet het nieuwe bestand er dan ongeveer uit:
 
 <Bestand pad="templates/berichten_lijst.html" />
 
@@ -85,6 +97,8 @@ Een knop die de lijst met berichten opnieuw ophaalt. Het antwoord is nu geen zin
 {% endif %}
 ```
 
+### Het endpoint voor de lijst
+
 Het endpoint is nieuw, met een eigen pad:
 
 <Bestand pad="main.py" />
@@ -101,6 +115,8 @@ async def berichten_lijst(request: Request):
     )
 ```
 
+### De lijst in de pagina
+
 In `berichten.html` zet je de script-tag van htmx in de `<head>`. Op de plek waar het `{% if %}`-blok stond, komen de knop en een `<div>` met een id:
 
 <Bestand pad="templates/berichten.html" />
@@ -115,7 +131,7 @@ In `berichten.html` zet je de script-tag van htmx in de `<head>`. Op de plek waa
 
 **`{% include %}`** plakt de lijst-template in de pagina, zodat de lijst maar één keer in je project staat: de pagina en het antwoord na een klik gebruiken dezelfde HTML.
 
-## Vanzelf verversen
+## Vanzelf: verversen zonder klik \{#vanzelf-verversen}
 
 Als anderen tegelijk berichten schrijven, wil je die zien verschijnen zonder F5. Dat gebeurt als je je server openzet voor de klas, wat je later doet in [Laat het aan anderen zien](site:fullstack/docs/FastAPI/afronden/laat-het-zien). Met **`hx-trigger`** kies je wanneer het verzoek gaat:
 
@@ -146,6 +162,8 @@ async def bericht_verwijderen(sleutel: str):
     return HTMLResponse("")
 ```
 
+### Een knop per bericht
+
 In `berichten_lijst.html` krijgt elke `<li>` een id, en vervang je het formuliertje door een knop. De link naar de detailpagina blijft staan:
 
 <Bestand pad="templates/berichten_lijst.html" />
@@ -160,9 +178,11 @@ In `berichten_lijst.html` krijgt elke `<li>` een id, en vervang je het formulier
 </li>
 ```
 
+### Waarom het antwoord leeg is
+
 Het antwoord is leeg, en dat is de bedoeling. **`hx-swap`** zegt hoe het antwoord in het doel komt: standaard `innerHTML`, alles bínnen het doel vervangen; `outerHTML` vervangt het doel zelf, dus met een leeg antwoord verdwijnt het hele `<li>`. **`hx-confirm`** laat de browser eerst de vraag stellen; bij Annuleren gaat er geen verzoek.
 
-## Zoeken terwijl je typt
+## Zoeken: terwijl je typt \{#zoeken-terwijl-je-typt}
 
 Een zoekveld dat de server vraagt om berichten met een woord erin. Het komt in `berichten.html`, boven de `<div id="berichten-lijst">` uit het verversrecept:
 
@@ -174,7 +194,11 @@ Een zoekveld dat de server vraagt om berichten met een woord erin. Het komt in `
        hx-trigger="keyup changed delay:300ms">
 ```
 
-Een `<input>` met `hx-get` stuurt zijn eigen waarde mee als query-parameter, dus `/berichten/lijst?term=hoi`. Vervang het endpoint van hierboven door deze versie, met een parameter erbij:
+`delay:300ms` wacht tot je even stopt met typen, anders gaat er bij elke letter een verzoek. En `changed` slaat toetsen over die de tekst niet veranderen, zoals de pijltjes.
+
+### Het endpoint dat zoekt
+
+Een `<input>` met `hx-get` stuurt zijn eigen waarde mee als query-parameter, dus `/berichten/lijst?term=hoi`. Vervang het endpoint `/berichten/lijst` uit Verversen door deze versie, met een parameter erbij:
 
 <Bestand pad="main.py" />
 
@@ -194,9 +218,11 @@ async def berichten_lijst(request: Request, term: str = ""):
     )
 ```
 
-De for-lus houdt alleen de berichten waar de zoekterm in staat. `lower()` maakt van een tekst kleine letters, zodat `Hoi` ook gevonden wordt als je `hoi` typt. `delay:300ms` wacht tot je even stopt met typen, anders gaat er bij elke letter een verzoek. En `changed` slaat toetsen over die de tekst niet veranderen, zoals de pijltjes.
+### Als er niets gevonden is
 
-Vindt de server niets, dan komt het `{% else %}`-blok in beeld. Daar staat "Nog geen berichten. Wees de eerste.", en dat klopt niet als er wel berichten zijn maar geen enkele past. Daarom gaat `term` mee naar de template. Vervang in `berichten_lijst.html` het `{% else %}`-blok door:
+De for-lus houdt alleen de berichten waar de zoekterm in staat. `lower()` maakt van een tekst kleine letters, zodat `Hoi` ook gevonden wordt als je `hoi` typt.
+
+Vindt de server niets, dan toont het `{% else %}`-blok "Nog geen berichten. Wees de eerste.", ook als er wel berichten zijn maar geen enkele past. Daarom gaat `term` mee naar de template. Vervang het `{% else %}`-blok door:
 
 <Bestand pad="templates/berichten_lijst.html" />
 
@@ -212,9 +238,11 @@ Vindt de server niets, dan komt het `{% else %}`-blok in beeld. Daar staat "Nog 
 
 Op `/berichten` en na Ververs is er geen `term`, en zie je de oude zin.
 
+### Zoeken en verversen samen
+
 Zoeken en vanzelf verversen gaan niet samen: de `<div>` die elke tien seconden ververst, stuurt geen `term` mee, en zet dus steeds weer de hele lijst neer. Kies er één van de twee.
 
-## Waar het antwoord komt
+## Doel: waar het antwoord komt \{#waar-het-antwoord-komt}
 
 | Attribuut | Betekenis | Zonder |
 |:---:|---|---|
@@ -239,11 +267,11 @@ Zoeken en vanzelf verversen gaan niet samen: de `<div>` die elke tien seconden v
 
 Bij htmx zie je fouten niet op de pagina. Een 404, een 500 of een server die uit staat: htmx laat het doel dan met rust, en op het scherm gebeurt niets. Kijk daarom bij elk probleem eerst in het tabblad **Netwerk**. htmx meldt de fout ook in het tabblad **Console**, met een rode regel als `Response Status Error Code 404 from /bericht/…`; dat tabblad leer je kennen in [Console en Elementen](site:fullstack/docs/FastAPI/in-de-browser/devtools-console). Een rode regel in Netwerk zegt wat er mis is: 404 is een verkeerd pad in `hx-get` of `hx-post`, 500 een fout in je endpoint (kijk in de terminal), `(mislukt)` een server die niet draait, 405 een `@app.post` waar `hx-delete` op wijst.
 
+## Opdrachten
+
 :::tip[Controleer je server]
 Laat je server draaien en typ in een tweede terminal `python controleer.py zonder-herladen`. Het script kijkt of `/tijd` en de recepten die je bouwde een stukje HTML teruggeven, zonder omleiding; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Predict - De omleiding
 

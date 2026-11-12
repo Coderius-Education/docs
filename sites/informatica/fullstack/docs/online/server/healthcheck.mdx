@@ -21,6 +21,8 @@ Na een nieuwe versie zegt `docker compose ps` `Up`. Nu laat je Docker ook nakijk
 
 `test` is het commando dat Docker in de container draait: een regel Python die je homepage opvraagt. Geeft die een fout of geen antwoord, dan is de test mislukt. In het image staat geen `curl`, maar wel Python. `interval` is hoe vaak Docker kijkt, en in de eerste dertig seconden (`start_period`) kijkt hij elke twee seconden (`start_interval`).
 
+### De nieuwe versie op de server
+
 Commit en push, en zet de nieuwe versie op de server met de twee stappen. Nu staat er meer bij de status:
 
 ```text

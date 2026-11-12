@@ -36,6 +36,8 @@ In je formulier staat:
 
 Dat ziet eruit als een regel: berichten zijn nooit langer dan 80 tekens. Maar `maxlength` is een instructie aan de browser, en de browser is van de bezoeker. Wie het formulier omzeilt en rechtstreeks naar je endpoint stuurt, komt met 500 tekens binnen, en jouw Python-code slaat het op zonder klagen.
 
+### De controle in Python
+
 Wil je echt een grens, dan moet Python die zelf controleren. Zet deze controle bovenaan in je POST-endpoint `/gastenboek`, boven de controle van het wachtwoord uit [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/accounts/inloggen); de rest van de functie blijft zoals hij was:
 
 <Bestand pad="main.py" />
@@ -66,6 +68,8 @@ async def gastenboek_opslaan(
 | **Mag je het vertrouwen** | Ja | Ja | Nee |
 | **Typisch voor** | Opslaan, ophalen, controleren | Hetzelfde, midden op een pagina | Reageren op klikken en typen |
 
+### Hoe je kiest
+
 Moet iets bewaard blijven of zichtbaar zijn voor anderen, dan hoort het op de server. Reageer je op wat de bezoeker doet, met data die al op de pagina staat, dan hoort het in de browser.
 
 De middelste kolom is wat je in [Zonder herladen met htmx](site:fullstack/docs/FastAPI/zonder-herladen/htmx) deed. Het is nog steeds de server, met dezelfde endpoints, database en controles; alleen de pagina blijft staan. Voor de hoofdvraag maakt dat niets uit.
@@ -82,22 +86,20 @@ De middelste kolom is wat je in [Zonder herladen met htmx](site:fullstack/docs/F
   </Uitleg>
 </Voorspel>
 
+## Opdrachten
+
 :::tip[Controleer je server]
 Laat je server draaien en typ in een tweede terminal `python controleer.py in-de-browser`. Het script kijkt of je JavaScript laadt en of je server een te lang bericht weigert; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
 :::
 
-## Opdrachten
-
 ### Opdracht 1: Predict - Waar hoort het?
-
-Voor elk van deze vier: server of browser?
 
 1. Een bezoeker klikt op een naam en er klapt een bericht open dat al op de pagina stond.
 2. Een bezoeker verstuurt een bericht voor het gastenboek.
 3. De achtergrondkleur van de pagina wisselt tussen licht en donker als je op een knop klikt.
 4. Bijhouden hoe vaak een bericht is bekeken.
 
-<Voorspel vraag="Welke verdeling klopt?">
+<Voorspel vraag="Server of browser: welke verdeling klopt voor deze vier?">
   <Keuze uitleg="Bij 4 tel je de keren van alle bezoekers samen. Kan de browser van één bezoeker weten wat de anderen deden?">1, 3 en 4 in de browser, 2 op de server</Keuze>
   <Keuze uitleg="Het bericht bij 1 stond al op de pagina. Moet de server er dan nog iets voor doen?">3 in de browser, 1, 2 en 4 op de server</Keuze>
   <Keuze goed uitleg="Wat bewaard moet blijven of wat anderen zien, gaat naar de server. Wat alleen deze bezoeker nu ziet, doet de browser.">1 en 3 in de browser, 2 en 4 op de server</Keuze>
@@ -127,7 +129,7 @@ Het lange bericht staat ertussen, van begin tot eind. `maxlength` zit alleen in 
 
 ### Opdracht 3: Investigate - Repareer het aan de goede kant
 
-Voeg de controle toe in je POST-endpoint, zoals hierboven, en probeer opdracht 2 opnieuw.
+Voeg de controle toe in je POST-endpoint, zoals bij De derde vraag, en probeer opdracht 2 opnieuw.
 
 <details>
 <summary>Antwoord</summary>

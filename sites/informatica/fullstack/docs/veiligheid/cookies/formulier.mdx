@@ -17,10 +17,9 @@ het eind van de reeks pas je het geleerde toe op je eigen project.
 
 Maak in die map een virtual environment en installeer de packages; hoe dat gaat staat bij [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks).
 
-Een nieuwe map geeft geen nieuwe cookies. Een cookie hoort bij het adres
-`127.0.0.1`, niet bij de map of de poort, dus de cookies van eerdere projecten,
-zoals `naam` en `volgorde`, staan er ook nog. Verwijder ze in het tabblad
-**App**, of werk in deze reeks in een privévenster.
+Een cookie hoort bij het adres `127.0.0.1`, niet bij de map of de poort: die
+van eerdere projecten, zoals `naam` en `volgorde`, staan er dus nog. Verwijder
+ze in het tabblad **App**, of werk in een privévenster.
 :::
 
 :::danger[Alleen je eigen server]
@@ -59,6 +58,8 @@ registreren, een om in te loggen en een voor een bericht.
 </body>
 </html>
 ```
+
+### De map static laten zien
 
 In `main.py` komen er twee regels bij, zodat de server de map `static` laat
 zien:
@@ -162,6 +163,8 @@ async def alles_wissen(sessie_id: str = Cookie(default="")):
 ```
 
 </details>
+
+### De server starten
 
 Start de server in je map `veiligheid-cookies` met `fastapi dev main.py`.
 

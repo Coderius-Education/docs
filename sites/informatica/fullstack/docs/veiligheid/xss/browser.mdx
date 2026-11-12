@@ -11,12 +11,12 @@ heeft gedaan. In [JavaScript erbij](site:fullstack/docs/FastAPI/in-de-browser/ja
 zette je tekst in de pagina met `textContent`. Er is nog een manier, en die
 leest de tekst als HTML.
 
-## Een voorbeeld van je bericht
+## Een voorbeeld
 
 Onder het formulier komt te staan hoe je bericht eruit gaat zien, terwijl je
 typt. Het berichtveld krijgt een `id`, en onder het formulier komt een lege
 `<p>`. Zet dit in `static/gastenboek.html`, met een tweede script-tag in de
-`<head>`:
+`<head>`. Een zoekveld uit les 4 boven het formulier laat je staan.
 
 {/* bestand: static/gastenboek.html */}
 
@@ -40,7 +40,7 @@ typt. Het berichtveld krijgt een `id`, en onder het formulier komt een lege
 </html>
 ```
 
-Heb je in les 4 een zoekveld boven het formulier gezet, laat dat dan staan.
+### Het script
 
 En maak `static/js/voorbeeld.js`:
 
@@ -64,6 +64,8 @@ if (vooraf) {
     toon();
 }
 ```
+
+### innerHTML leest HTML
 
 `innerHTML` zet tekst in een element, net als `textContent`, maar leest hem als
 HTML. Het tweede stuk vult het formulier alvast in met een link, bijvoorbeeld om
@@ -98,7 +100,7 @@ JavaScript, in plaats van via de server. De DOM is de pagina zoals JavaScript
 hem ziet. Een `<script>` dat zo binnenkomt, voert de browser niet uit, maar HTML
 heeft andere manieren om code te laten draaien.
 
-## Waarom `escape` op de server hier niet helpt
+## Waarom `escape` hier niet helpt
 
 Kijk in de terminal van je server. Daar staat één regel met
 `"GET /static/gastenboek.html?bericht=%3Cb%3Evet%3C/b%3E HTTP/1.1" 200`. Open

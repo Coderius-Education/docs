@@ -1,0 +1,25 @@
+---
+title: Eén server voor de klas
+description: Voor docenten. Wat de route Online zetten aan servers vraagt, en hoe één schoolserver met Traefik de sites van een hele klas draait.
+displayed_sidebar: null
+les_tabs: false
+---
+
+# Eén server voor de klas
+
+Naslag voor de docent bij [Online zetten](site:fullstack/docs/online). De eerste drie delen van die route draaien op de laptop van de leerling. Dit gaat over het vierde deel, op een echte server.
+
+## Een server per leerling
+
+Voor het vierde deel is een server nodig. Een VPS bij een hostingbedrijf kost een paar euro per maand, en een domeinnaam is nodig voor HTTPS. Zeg erbij dat een server op internet binnen een uur bezoek krijgt van programma's die proberen in te loggen: les 24 laat dat zien, en les 25 tot en met 29 doen er iets aan. Laat die stappen daarom op dezelfde dag als les 24 doen, en voordat de site erop komt.
+
+## Eén server voor de hele klas
+
+Huren niet alle leerlingen een eigen server, dan kan één schoolserver met Traefik de sites van de hele klas draaien. Dat is dezelfde opzet als in de lessen, met een paar verschillen:
+
+- **Eén voordeur.** Jij draait Traefik met HTTPS, zoals in les 34, en maakt het netwerk `web`. Met een DNS-record `*.klas.school.nl` (een *wildcard*) dat naar de server wijst, hoort elke naam onder dat domein bij deze server.
+- **Een naam per leerling.** Elke leerling krijgt een eigen naam, zoals `sam.klas.school.nl`, in zijn `.env` als `DOMEIN`. Traefik vraagt voor elke naam zelf een certificaat aan.
+- **Unieke namen in de labels.** Het label `traefik.http.routers.gastenboek…` moet per leerling anders heten, anders zitten de sites elkaar in de weg. Laat ze `gastenboek` vervangen door hun eigen naam, ook in `traefik.http.services…`.
+- **Wie mag Docker gebruiken?** Wie in de groep `docker` zit, kan de hele server overnemen, en dus ook bij de databases van klasgenoten. Geef leerlingen daarom geen toegang tot Docker op de gedeelde server. Laat ze hun repository met jou delen (een deploy key per project, alleen lezen), en rol hun sites zelf uit met `git pull` en `docker compose up -d --build`, met een map en een `.env` per leerling. Portainer, via jouw eigen ssh-tunnel, geeft je dan een overzicht van alle containers.
+
+Leerlingen doen in die opzet deel 1, 2 en 3 helemaal zelf, en van deel 4 alleen wat over hun eigen project gaat: de deploy key, de `.env` met hun naam, en controleren dat hun site met HTTPS werkt. Les 24 tot en met 30 lezen ze mee; die doe jij één keer voor de server.

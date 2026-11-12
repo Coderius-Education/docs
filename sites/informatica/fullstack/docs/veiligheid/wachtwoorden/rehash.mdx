@@ -20,6 +20,8 @@ Dat kan alleen als iemand inlogt: dan heb je het wachtwoord even in handen.
 `ph.check_needs_rehash` zegt of een hash met andere instellingen is gemaakt dan
 je `PasswordHasher` nu gebruikt:
 
+### Wat check_needs_rehash zegt
+
 ```python
 from argon2 import PasswordHasher
 
@@ -85,8 +87,7 @@ hoeft te veranderen.
 
 Dit scriptje, `tim.py`, zet voor Tim een hash met oude instellingen in de
 database, logt in als Tim, en laat de hash ervoor en erna zien. Maakte je Tim
-al in opdracht 2 van les 7, dan vervangt het script zijn hash. `[:31]` toont
-alleen het begin: het algoritme en de instellingen, zonder het zout.
+al in opdracht 2 van les 7, dan vervangt het script zijn hash.
 
 {/* bestand: tim.py */}
 
@@ -107,6 +108,28 @@ print(antwoord.json())
 with SqliteDict("gebruikers.db") as db:
     print(db["tim"][:31])
 ```
+
+### De uitkomst
+
+`[:31]` toont alleen het begin van een hash: het algoritme en de instellingen,
+zonder het zout.
+
+<Gelukt>
+
+`python tim.py` laat zien dat de `t=1` na het inloggen een `t=3` is:
+
+{/* draai: tim.py */}
+
+```text
+$argon2id$v=19$m=65536,t=1,p=4$
+{'bericht': 'Ingelogd'}
+$argon2id$v=19$m=65536,t=3,p=4$
+```
+
+Staat er bij jou een ander getal dan 3, dan heeft jouw versie van
+`argon2-cffi` strengere instellingen.
+
+</Gelukt>
 
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
@@ -167,23 +190,6 @@ nog eindeloos wachtwoorden proberen op `/inloggen` en `/wijzig`; in les 11 komt
 er een limiet op het aantal pogingen bij.
 
 </details>
-
-<Gelukt>
-
-`python tim.py` laat zien dat de `t=1` na het inloggen een `t=3` is:
-
-{/* draai: tim.py */}
-
-```text
-$argon2id$v=19$m=65536,t=1,p=4$
-{'bericht': 'Ingelogd'}
-$argon2id$v=19$m=65536,t=3,p=4$
-```
-
-Staat er bij jou een ander getal dan 3, dan heeft jouw versie van
-`argon2-cffi` strengere instellingen.
-
-</Gelukt>
 
 <Voorspel soort="Controlevraag" vraag="Tim heeft nog een hash met t=1, en je server gebruikt t=3. Kan Tim inloggen voordat zijn hash is bijgewerkt?">
   <Keuze uitleg="Het bijwerken komt pas na ph.verify. Hoe zou het ooit gebeuren als hij eerst niet binnenkwam?">Nee, eerst moet check_needs_rehash zijn hash bijwerken</Keuze>

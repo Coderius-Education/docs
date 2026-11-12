@@ -5,205 +5,32 @@ hide_table_of_contents: false
 
 # Docentenhandleiding
 
-Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: wat de site is, welke randvoorwaarden er zijn, en hoe je de lessen indeelt.
+Een cursus fullstack-ontwikkeling met FastAPI: je leerlingen bouwen een gastenboek met een server in Python, beveiligen het en zetten het online. Hoe je ermee lesgeeft, bepaal je zelf. Deze pagina laat zien op welk onderzoek de opbouw van de lessen steunt, en noemt daarna kort wat je vooraf wilt weten.
 
-## Wat is dit?
+## Waar de lessen op steunen
 
-Een interactieve cursus **fullstack-ontwikkeling met FastAPI**: je leerlingen voegen een Python-back-end toe aan een website. Doelgroep: leerlingen die al wat Python, HTML en JavaScript kennen en willen leren hoe front-end en back-end samenwerken.
+Een les heeft vaste onderdelen. In de les zijn het de tabbladen, elk met een eigen icoon. Hieronder staat bij elk onderdeel de literatuur waarop het steunt; een link opent de uitleg bij [vakdidactiek](site:didactiek/).
 
-Per onderwerp staat er een minimale, werkende handler die je daarna uitbreidt met validatie, templates en een database. De nadruk ligt op het samenspel tussen verzoek (browser) en antwoord (server).
+<Werkvormen />
 
-:::note[Voorkennis]
-Deze cursus bouwt voort op Python en op HTML, CSS en JavaScript. Plan die eerst in als je leerlingen daar nog niet mee bekend zijn. Op het [cursusoverzicht](site:fullstack/cursussen) staat welke cursus waarop voortbouwt.
+Een voorspelvraag en een controlevraag zijn meerkeuzevragen die meteen zeggen of het antwoord klopt, met bij elk fout antwoord waarom niet. In Veiligheid en Online zetten eindigt elke stap met een blok Gelukt als je dit ziet, waaraan de leerling zijn eigen uitvoer toetst.
 
-In de lessen zelf staat de voorkennis per les in een dichtgeklapt blok, zodat een leerling die vastloopt op een `def` of een `<form>` terug kan naar de uitleg zonder dat de les daarmee begint.
-:::
+## Wat je vooraf wilt weten
 
-## Technische randvoorwaarden
+- **Python en een editor op de computer.** Je leerlingen werken in VS Code met Python 3; [Installatie](site:fullstack/docs/FastAPI/eerste-server/installatie) zegt wat er moet staan. De site vraagt geen account.
+- **Het werk staat op de computer van de leerling**, niet op de site. Wie het wil bewaren of delen, zet het in [git](site:editor/git).
+- **Drie routes, in deze volgorde.** [FastAPI](site:fullstack/docs/FastAPI) bouwt het gastenboek en vraagt Python, HTML, CSS en JavaScript (zie het [cursusoverzicht](site:fullstack/cursussen)). [Veiligheid](site:fullstack/docs/veiligheid) bouwt daarop verder. [Online zetten](site:fullstack/docs/online) vraagt de [Linux-cursus](site:linux/docs), en voor het laatste deel een server met een domeinnaam: zie [Eén server voor de klas](site:fullstack/docs/voor-de-docent/schoolserver).
 
-| Wat | Antwoord |
-|---|---|
-| Operating system | Windows, macOS of Linux |
-| Oefenen | Veel voorbeelden draaien in de browser |
-| Eigen project | Python 3 en een editor (VS Code) lokaal aanbevolen; wie wil kan er [git](site:editor/git) naast gebruiken |
-| Account | Niet nodig |
-| Internet | Vereist — de site is online |
+## Naast de lessen
 
-## Didactische aanpak (PRIMM)
+- [Unplugged](site:fullstack/docs/unplugged): negen hand-outs zonder computer om te printen, elk gericht op één misvatting. De les waar een hand-out bij hoort, wijst ernaar met de tip Eerst op papier.
+- [Hoe een verzoek werkt](site:fullstack/docs/FastAPI/afronden/hoe-een-verzoek-werkt): de vijf diagrammen van browser tot database bij elkaar.
 
-Elke les volgt hetzelfde vaste patroon, de **PRIMM-methode**, en sluit af met een sectie over wat er mis kan gaan:
+## Beoordelen
 
-1. Predict: je leerling voorspelt wat een endpoint of stuk code doet.
-2. Run: je leerling draait het en controleert die voorspelling.
-3. Investigate: kleine experimenten met het verzoek of het antwoord.
-4. Modify: een opdracht die voortbouwt op de bestaande handler.
-5. Make: een vrijere opdracht waarin je leerling zelf een endpoint bouwt.
-6. Er gaat iets mis: veelvoorkomende fouten, met oorzaak en oplossing.
+- [Leerdoelen](site:fullstack/leerdoelen): per niveau de concepten waarop je beoordeelt, met de les erbij, en hoe je er een cijfer van maakt. Niveau 1 en 2 gaan over het FastAPI-project, niveau 3 over Veiligheid en Online zetten.
+- [Project checken](site:fullstack/project-checken): je leerling uploadt zijn project en ziet welke onderdelen erin zitten en waar zijn bestanden niet op elkaar aansluiten. Jij gebruikt [Project checken voor docenten](site:fullstack/project-checken-docent); wat in geen bestand staat, zoals de installatie of de server, vink je daar zelf aan.
 
-Een Predict is een meerkeuzevraag die meteen zegt of het antwoord klopt. Tips en antwoorden van de andere opdrachten staan in `<details>`-blokken; laat je leerlingen eerst zelf proberen voordat ze openklikken.
+## Feedback
 
-## Klassikaal gebruik & differentiatie
-
-- **Plenair starten**: bespreek de Predict-vraag klassikaal, daarna werken je leerlingen zelfstandig door.
-- **Snelle leerlingen** breiden een endpoint uit met extra validatie of een tweede route.
-- **Langzamere leerlingen** mogen de Make-opdracht overslaan zonder dat de volgende les daarop bouwt.
-- **Beoordelen**: de cursus heeft geen vaste eindopdracht. Het gastenboek dat je leerlingen in de basis bouwen, of een eigen project op dezelfde manier, kunnen ze uploaden op [Project checken](site:fullstack/project-checken). Die nakijker laat zien welke onderwerpen erin terugkomen.
-
-Voor een cijfer is [Leerdoelen](site:fullstack/leerdoelen) het overzicht van de concepten waarop je beoordeelt, met een pagina per niveau (1, 2 en 3) en een vergelijking van de drie; onder elk concept staat de les waarin het aan bod komt. Niveau 1 en 2 gaan over het FastAPI-project. Niveau 3 gaat over wat erna komt: Linux, Veiligheid en Online zetten. Daar is de echte server (firewall, HTTPS, back-up, een nieuwe versie uitrollen) expert. Onderaan staat [Beoordelen met Bloom](site:fullstack/leerdoelen#bloom), met de achtergrond bij vakdidactiek in [Denkvaardigheden volgens Bloom](site:didactiek/bronnen/taxonomie-van-bloom). Upload het project op [Project checken voor docenten](site:fullstack/project-checken-docent), kies bij Leerroute het niveau van de leerling, en kies onder Cijfer de denkvaardigheid die je zag. De moeilijkheid stelt de nakijker voor; klik erop om hem vast te leggen. De installatie en de ontwikkelaarstools staan in geen bestand: die vink je zelf aan als je ze in de les of het gesprek zag. Op niveau 3 geldt dat ook voor alles wat in de terminal of op de server gebeurt; wat in de code of in een bestand van het project staat (Argon2, een limiet met slowapi, een `Dockerfile`), vindt de nakijker zelf. Het cijfer en de zin erbij komen in de PDF.
-
-## Leerlijn
-
-De lessen staan in de **FastAPI**-sidebar en bouwen op elkaar voort. Die begint met een [startpagina](site:fullstack/docs/FastAPI): wat je leerlingen aan het eind hebben (een nagebouwd plaatje van het gastenboek), de voorkennis uit de andere cursussen, en de route als kaart met per blok een zin en de lessen. Daarna komt [Installatie](site:fullstack/docs/FastAPI/eerste-server/installatie); de [Cheatsheet](site:fullstack/docs/cheatsheet) en [Er gaat iets mis](site:fullstack/docs/troubleshooting) zijn naslag en staan in de navbar. [Projectstructuur](site:fullstack/docs/FastAPI/projectstructuur), met de mappen van het project per les, staat bovenaan de cheatsheet.
-
-De sidebar heeft twee delen. De **basis** eindigt met een werkend gastenboek: een formulier, opslaan, een overzicht, een detailpagina, een nette 404 en accounts met een wachtwoord. Hij loopt van Je eerste server via Losse pagina's en routes, CSS en afbeeldingen, Templates en formulieren, Gegevens opslaan en Berichten opslaan naar Eén route voor veel pagina's, en daarna via Berichten tonen en Berichten verwijderen naar Accounts. De path-parameters staan vlak voor Berichten tonen, omdat Eén item tonen ze nodig heeft. Wat volgt zijn drie **uitbreidingen** (htmx, JavaScript, cookies en sessies) en een afronding. Die maken het gastenboek mooier, maar zijn niet nodig om het te laten werken. Heb je weinig tijd, dan kun je na de basis stoppen; wie verder gaat, volgt de uitbreidingen op volgorde, want "Server of browser?" vergelijkt de server met htmx en JavaScript.
-
-Vijf keer onderweg staat een diagram van de hele keten, browser links en server rechts, met per stap een link naar de les. Het begint kaal [bij het eerste verzoek](site:fullstack/docs/FastAPI/eerste-server/verzoek-eerste), direct na het eerste endpoint, en groeit mee. [Bij één pagina](site:fullstack/docs/FastAPI/css-en-afbeeldingen/verzoek-static), aan het eind van CSS en afbeeldingen, komen de losse verzoeken voor CSS en afbeeldingen erbij. [Bij klikken en versturen](site:fullstack/docs/FastAPI/accounts/verzoek-get), aan het eind van de basis, de database en de template, en bij een formulier de omleiding. [Zonder herladen](site:fullstack/docs/FastAPI/zonder-herladen/verzoek-htmx), aan het eind van de htmx-uitbreiding, wordt die omleiding een stuk HTML als antwoord; [bij een sessie](site:fullstack/docs/FastAPI/onthouden/verzoek-sessie), direct na de les Sessies, komt de cookie erbij. [Hoe een verzoek werkt](site:fullstack/docs/FastAPI/afronden/hoe-een-verzoek-werkt) bundelt ze bij het afronden met een tabel "waar hoort jouw code".
-
-| Onderwerp | Leerdoel |
-|---|---|
-| Je eerste endpoint | Een API-route maken en aanroepen |
-| Kijken wat de browser doet | Het tabblad Netwerk: verzoek, antwoord en statuscode |
-| HTML tonen en HTML in bestanden | Pagina's serveren vanuit Python en uit bestanden |
-| CSS in een eigen bestand (static files) | Eén stylesheet voor alle pagina's, en de cache |
-| Templates met Jinja2 | Een pagina met waarden uit Python: `{{ }}`, het dictionary, en wat de browser krijgt |
-| Een formulier versturen (POST) en beantwoorden | GET of POST, `Form(...)`, en een formulier beantwoorden met een template |
-| Gegevens opslaan met SqliteDict | Opslaan, `commit()` en uitlezen, in een los script zonder server |
-| Alles bekijken: len en items | Alles in een database tonen met `bekijk_db.py`, in een los script |
-| Bestaat de sleutel? in en get | Kijken of een sleutel er is, en `get` met een standaardwaarde |
-| Verwijderen met del | `del`, eerst kijken met `in`, en `commit()` |
-| Een dictionary als waarde | Meer velden onder één sleutel, opslaan en ophalen |
-| Een dictionary aanpassen: ophalen, aanpassen, terugzetten | Waarom je een opgehaalde dictionary terugzet |
-| Een formulier opslaan | Wat een bezoeker invult in een database zetten, onder één sleutel |
-| Elk bericht bewaren: een eigen sleutel | Het gastenboek: elk bericht een eigen sleutel met `time.time_ns()` |
-| Doorsturen na opslaan (redirect) | Doorsturen na een POST (post/redirect/get) |
-| Eén route voor veel pagina's: path-parameters | Eén route met een plekhouder, een dictionary en één template, in plaats van een route per pagina |
-| Een waarde na een vraagteken: query-parameters | `?term=`, een standaardwaarde, de 422, en het type `int` tegenover `str` |
-| Alles tonen: een for-lus in je template | Opgeslagen records op een pagina zetten met een for-lus |
-| Nog niets? if en else in je template | Een lege lijst opvangen met `{% if %}` |
-| Eén item tonen: de sleutel uit de URL | Een bericht opzoeken met de sleutel uit de URL, en linken vanuit de lijst met `db.items()` |
-| Een 404 sturen: als het item niet bestaat | Zelf een 404 sturen met `raise HTTPException` |
-| Een bericht verwijderen: een verborgen veld | Een verborgen veld en `del`, en terug naar de lijst |
-| Registreren: een account opslaan | Een account in een eigen database, en een naam die al bestaat weigeren |
-| Inloggen: een wachtwoord controleren | Het wachtwoord controleren voordat een bericht wordt opgeslagen, met 401 |
-| Zonder herladen met htmx *(uitbreiding)* | Een knop die iets aan de server vraagt terwijl de pagina blijft staan |
-| htmx-recepten *(uitbreiding)* | Overzicht van recepten: formulier, verversen, vanzelf verversen, verwijderen, zoeken |
-| JavaScript erbij *(uitbreiding)* | Code die in de browser draait in plaats van op de server |
-| Console en Elementen *(uitbreiding)* | Uitvoer en fouten van JavaScript zien, en de pagina zoals de browser hem nu heeft |
-| Server of browser? *(uitbreiding)* | Kiezen waar iets hoort, en waarom controles op de server moeten |
-| Onthouden met een cookie *(uitbreiding)* | De browser iets laten onthouden tussen twee verzoeken |
-| Onthouden op de server: sessies *(uitbreiding)* | Eén keer inloggen: alleen een sessie-id bij de bezoeker, de naam op de server |
-| Cookie of sessie? *(uitbreiding)* | Kiezen tussen de twee, en waarom je niet alles kunt geloven |
-| Een eigen 404-pagina *(afronding)* | Een handler voor 404 met een template, en waarom een 500 een 500 blijft |
-| Laat het aan anderen zien | De server openzetten voor het netwerk |
-
-De zes korte lessen over SqliteDict draaien nog zonder server: je leerlingen oefenen in losse scripts, met een script `bekijk_db.py` dat ze daarna bij elke database gebruiken. Zo komen de fouten die ze anders pas in de server maken (een vergeten `commit()`, een script in een andere map dat stil een lege database aanmaakt, een dictionary die ze aanpassen maar niet terugzetten) los van FastAPI aan bod. [SqliteDict op een rij](site:fullstack/docs/FastAPI/sqlitedict/op-een-rij) zet alles op één pagina, net als Projectstructuur buiten de sidebar.
-
-Registreren en Inloggen sluiten de basis af met accounts: een naam en een wachtwoord in `gebruikers.db`, en een gastenboek dat een bericht alleen bewaart als het wachtwoord klopt. Een server onthoudt in de basis nog niemand tussen twee verzoeken, dus je leerlingen typen hun wachtwoord bij elk bericht. Dat is bewust: het is eerlijk, het is veilig genoeg om berichten op naam te zetten, en het maakt de uitbreiding Onthouden nodig, waarin ze één keer inloggen. De lessen zeggen zelf wat nog niet veilig is: de wachtwoorden staan leesbaar in de database (dat lost Wachtwoorden in de route Veiligheid op), en verwijderen kan nog iedereen.
-
-"Een formulier opslaan" tot en met "Eén item tonen" bouwen samen het gastenboek. Alles wat een latere les nodig heeft, staat in de hoofdtekst en niet in een opdracht: het gastenboek zelf in "Een formulier opslaan", het verwijderen in "Doorsturen na opslaan". Daarna hebben je leerlingen een werkende webapplicatie met een overzicht, een detailpagina en nette foutafhandeling.
-
-De ontwikkelaarstools van de browser krijgen twee eigen lessen, zonder schermafbeeldingen: de lessen bouwen het paneel na met de Nederlandse en Engelse naam van elk tabblad naast elkaar. "Kijken wat de browser doet" komt direct na het eerste endpoint en leert het tabblad Netwerk: één verzoek en de statuscode. De cache, de reden waarom een wijziging niet doorkomt en de vraag die je in de les het vaakst krijgt, komt bij "CSS in een eigen bestand", waar hij voor het eerst speelt. "Console en Elementen" komt na "JavaScript erbij", als de terminal niets meer laat zien, en bereidt "Server of browser?" voor: wie in Elementen `maxlength` weghaalt, ziet daar wat de bezoeker kan.
-
-Na de basis komt de eerste uitbreiding, "Zonder herladen (htmx)": de server doet het werk, maar de pagina blijft staan, omdat htmx het verzoek stuurt en het antwoord op zijn plek zet. De eerste les is bewust zo klein mogelijk: één knop met twee attributen die de tijd van de server ophaalt, en een endpoint van drie regels. Daarna volgt één les met een overzicht van recepten (formulier, verversen, vanzelf verversen, verwijderen, zoeken), waaruit je leerlingen kiezen wat hun gastenboek nodig heeft. Ze schrijven er geen JavaScript voor; ze hergebruiken alles wat ze al hebben. Elk endpoint geeft een stukje HTML terug in plaats van een omleiding, en dat is ook de fout die je het meest zult zien: een hele pagina in het doel. De tweede valkuil is dat htmx een mislukt verzoek stil negeert; de lessen sturen daarom steeds naar het tabblad Netwerk. Het bestand `htmx.min.js` staat op deze site om te downloaden, zodat het ook werkt op een netwerk dat externe scripts blokkeert.
-
-Vanaf "JavaScript erbij" komt de browserkant in beeld. Je leerlingen kennen JavaScript al uit de web-cursus; nieuw is de vraag wáár code hoort. Die vraag krijgt een eigen les ("Server of browser?") nadat ze de drie smaken hebben gevoeld: een formulier versturen gaat via de server en de pagina verspringt, met htmx blijft de pagina staan, en een tekenteller draait in de browser zonder dat de server er iets van ziet. De tabel in die les heeft voor elk een kolom.
-
-Daarop volgt "Onthouden", drie lessen die het sterkst zijn als je ze achter elkaar plant. In de eerste onthoudt een cookie de naam, en veranderen je leerlingen die cookie in een andere naam: de server neemt het klakkeloos over, en alleen het wachtwoord uit Inloggen houdt ze nog tegen. In de tweede loggen ze één keer in. `/inloggen` maakt een sessie, er gaat alleen een sessie-id naar de bezoeker, en de naam bij een bericht komt voortaan uit de sessie in plaats van uit het formulier. Daarmee wordt "eigenaar van een bericht" iets wat de server zelf weet, en kunnen ze verwijderen afschermen met een 403. Het is voor veel leerlingen het eerste moment waarop beveiliging concreet wordt: de verwijderknop verbergen is niet hetzelfde als verwijderen onmogelijk maken.
-
-"Cookie of sessie?" sluit dat blok af zoals "Server of browser?" het vorige afsluit: niet met nieuwe techniek, maar met de vraag wanneer je wat kiest. De kern is dat een sessie ook een cookie is; het verschil zit in wát erin staat. Leerlingen die alles voor de zekerheid een sessie willen maken, vinden daar het tegenargument: een voorkeur die niemand kan schaden hoort in een gewone cookie.
-
-Daarna sluit de cursus af met een eigen 404-pagina, een overzicht van alle diagrammen en de server openzetten voor het netwerk, zodat de klas elkaars project kan bezoeken. De 404-les zet drie manieren naast elkaar (een handler voor 404, een handler voor elke HTTP-fout die de rest doorgeeft, en een pagina in het eigen endpoint) en werkt de handler voor 404 uit. Een handler voor alle fouten is bewust geen optie: dan lijkt een fout in de code van een leerling een ontbrekende pagina, en zoekt hij op de verkeerde plek. In een opdracht zien je leerlingen dat zelf gebeuren.
-
-Wat hier bewust níét in zit, is `fetch`: JavaScript dat zelf data ophaalt bij een endpoint. Dat vraagt `async`/`await`, JSON verwerken en objecten — stof die de web-cursus nog niet behandelt. Het blok "Zonder herladen" vult dat gat met htmx: de server stuurt HTML, niet JSON. Leerlingen die toch `fetch` willen kun je die kant op sturen; de cursus bouwt er niet op.
-
-### Unplugged
-
-Onder [Unplugged](site:fullstack/docs/unplugged) staan werkvormen zonder
-computer, elk met een printknop. In een webproject gebeurt veel tussen de
-bestanden en tussen browser en server, en dat zie je op het scherm niet. Op
-papier wel. De antwoorden staan op het scherm dicht en komen bij het printen
-op een losse pagina. De les waar een werkvorm bij hoort, wijst ernaar met een
-tip *Eerst op papier* vlak voor de opdrachten.
-
-| Werkvorm | Bij | Misvatting |
-|---|---|---|
-| [Het verzoek-rollenspel](site:fullstack/docs/unplugged/verzoek-rollenspel) | Doorsturen na opslaan | één klik is één verzoek; de server onthoudt het vorige verzoek |
-| [Welke route antwoordt?](site:fullstack/docs/unplugged/welke-route) | Query-parameters | de functienaam bepaalt welke code draait; elke route die past, draait |
-| [Welke taal, waar?](site:fullstack/docs/unplugged/welke-taal-waar) (print het knipblad, de laatste pagina, apart en enkelzijdig) | Templates met Jinja2 | de browser draait Python en Jinja; JavaScript kan bij de database |
-| [Volg de naam](site:fullstack/docs/unplugged/volg-de-naam) | Een formulier beantwoorden met een template | een naam die in één bestand klopt, klopt overal |
-| [Template invullen](site:fullstack/docs/unplugged/template-invullen) | Nog niets? if en else | een ontbrekende sleutel geeft een foutmelding; de browser ziet de `{% for %}` |
-| [Een postbode zonder geheugen](site:fullstack/docs/unplugged/postbode) | Cookie of sessie? | de server weet na het inloggen wie je bent; een cookie is te vertrouwen |
-| [Vertrouw de bezoeker niet](site:fullstack/docs/unplugged/vertrouw-de-bezoeker) | Wie mag wat | `maxlength` en een verborgen knop zijn een controle |
-| [Wat blijft er over?](site:fullstack/docs/unplugged/wat-blijft) (print het knipblad apart) | Online zetten: alles in één bestand | een nieuwe versie gooit de database weg; `down` gooit alles weg; wat in de container staat, blijft |
-| [Waar komt je verzoek langs?](site:fullstack/docs/unplugged/waar-langs) | Online zetten: je domein met HTTPS | de firewall is het enige slot; een `404` komt van je eigen code |
-
-### Losse vragen en terugkoppeling
-
-Elke Predict-opdracht in de lessen is een meerkeuzevraag die meteen zegt of
-het antwoord klopt, met bij elk fout antwoord waarom niet. Elke les met code
-heeft daarnaast één controlevraag vóór de opdrachten. Boven elk codeblok
-staat in welk bestand het hoort en of het op de server of in de browser
-draait, met een eigen kleur per taal.
-
-De nakijker op [Project checken](site:fullstack/project-checken) laat je
-leerlingen ook zien waar hun bestanden niet op elkaar aansluiten: een
-formulierveld zonder parameter, een `{{ naam }}` die het dictionary niet
-meegeeft, een `action` of link zonder route, een bestand in `static/` dat er
-niet is. Juist die fouten geven geen foutmelding in de terminal.
-
-### De reeks Veiligheid
-
-Naast de FastAPI-sidebar staat een tweede sidebar, **Veiligheid**. De meeste reeksen passen na de hele FastAPI-route, dus ook na de drie uitbreidingen: ze bouwen op formulieren, templates, htmx, sessies en `HTTPException`, en je leerlingen hebben dan een eigen gastenboek om te beschermen. Invoer kan al direct na de basis; de verwijzingen naar Server of browser? zijn daar optioneel. Elke reeks werkt in een eigen map met een eigen virtual environment, zodat het gastenboek van de leerling heel blijft; hoe dat gaat staat in [Een map per reeks](site:fullstack/docs/veiligheid/gereedschap#een-map-per-reeks). De route begint met een [startpagina](site:fullstack/docs/veiligheid) (het ene idee, de spelregel, een kaart en een overzicht van statuscodes) en twee pagina's gereedschap, [Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap) en [Een bezoeker die onthoudt](site:fullstack/docs/veiligheid/client), waarin ze met `httpx` verzoeken sturen zonder browser. Daarna volgen de reeksen, van makkelijk naar moeilijk. De eerste, Wat je server laat zien, heeft nog geen aanval. Je leerlingen kijken wat FastAPI zelf op `/docs` zet, en vinden daar het test-endpoint `GET /sessies` uit Sessies terug. Daarna zien ze wat er in hun `.db`-bestanden staat, voordat ze een zip of een repository delen. Te veel verzoeken staat als vierde, want een limiet is één regel boven een endpoint. Wachtwoorden staat achteraan: die reeks is het langst, en zet de limiet uit Te veel verzoeken op het inloggen. Elke reeks gaat van de zwakheid die de leerling zelf nadoet, via de oplossing in FastAPI, naar wat er in de praktijk nog gebeurt, inclusief wat de wet zegt. De reeksen zijn los te volgen; alleen Cookies bouwt op de server uit Wie mag wat. Wie mag wat en Cookies afschermen gebruiken de accounts uit de basis: in hun scripts registreren Sara en Alex, loggen ze in, en is de eigenaar van een bericht wie onder die naam inlogde. Wachtwoorden laat met de `/registreer` en de controle uit de basis zien waarom gewone tekst onveilig is, en maakt ze daarna veilig.
-
-Elke reeks bestaat uit kleine stappen, net als Online zetten. De eerste stap zet de map en de server van de reeks klaar. Elke stap eindigt met een groen blok *Gelukt als je dit ziet*: bij een zwakheid ziet je leerling de zwakheid zelf (het script verwijdert het bericht van een ander), bij een verdediging dat dezelfde proef nu faalt (een 403). Daarna volgt één controlevraag. Een vinkje *Het werkt* onthoudt de browser van de leerling, en de kaart op de startpagina laat per stap zien wat gelukt is. De praktijkpagina's aan het eind van een reeks zijn om te lezen en hebben geen groen blok.
-
-De reeks is opzettelijk defensief. Elke zelftest draait tegen de eigen server op `127.0.0.1` en de eigen database; er staat een `:::danger`-blok boven dat zegt dat het aanvallen van een ander strafbaar is. De demonstratie van een zwakheid is klein: twintig verzoeken, de eigen database bekijken, met de eigen `/sessies` de eigen twee testbezoekers zijn, een vet woord in het gastenboek, de eigen cookie in de Console. Er staat geen script in dat wachtwoorden raadt of een server platlegt. Waarom een snelle hash zwak is, laat de wachtwoordenreeks zien met een meting van de rekentijd.
-
-| Reeks, in volgorde | Zwakheid | Kern van de oplossing |
-|---|---|---|
-| Wat je server laat zien | `/docs` toont elk endpoint, ook een vergeten `GET /sessies`; een zip neemt de databases mee | de handleiding uit met `docs_url=None`, het endpoint weg, een `.gitignore` |
-| Invoer controleren | `maxlength` houdt een script niet tegen; met `?naam=../../main.py` leest een bezoeker je code | de grens in `Form` op de server, en een lijst met wat mag |
-| HTML van een bezoeker (XSS) | ingevulde HTML draait in andermans browser: opgeslagen in het gastenboek, teruggezet uit een link (`?term=`), of door JavaScript met `innerHTML` | escapen bij de uitvoer: `escape()` of een template op de server, `textContent` in de browser |
-| Te veel verzoeken (DoS) | veel verzoeken leggen de server plat | een verzoeklimiet met `slowapi` |
-| Wie mag wat | een verborgen knop is geen slot | de controle op de server, met `403` |
-| Cookies afschermen | een script leest het sessie-id; een sessie die niemand uitlogt, geldt eeuwig | `httponly`, `samesite`, `secure`, uitloggen en een verlooptijd op de server |
-| Wachtwoorden veilig opslaan | de accounts uit de basis bewaren het wachtwoord leesbaar, en een lek geeft ze allemaal weg; `/inloggen` laat eindeloos proberen | hashen met Argon2, en een limiet op `/inloggen` en `/wijzig`, in twaalf kleine lessen |
-
-De beloofde uitvoer en foutmeldingen in deze reeks draaien niet mee in CI, die alleen de Python-syntax controleert. Ze zijn met de hand nagedraaid tegen een echte server. Werk je een les bij, controleer een gewijzigde uitvoer dan zelf in een virtual environment met de echte packages.
-
-### De route Online zetten
-
-Een eigen route in de navbar, na Veiligheid: je leerlingen zetten hun gastenboek op een Linux-server, op een veilige manier, met Docker. De route heeft vier delen en een extra, in 43 kleine stappen. Elke stap doet één ding en eindigt met een groen blok *Gelukt als je dit ziet*: een concrete waarneming, en een vinkje *Het werkt* dat de browser van de leerling onthoudt (alleen daar, in `localStorage`). De kaart op de startpagina van de route zet een vinkje achter elke gelukte stap. Daarna volgt één controlevraag, zodat je leerling niet alleen ziet dát het werkt maar ook snapt waarom.
-
-| Deel | Waar | Lessen |
-|:---|:---|:---|
-| Op Windows | laptop, VS Code | je site met `fastapi run`, dat hij niet herlaadt, waar hij luistert, `requirements.txt`, een README, en je project in een verse map |
-| In Linux | Ubuntu in WSL | git en de ssh-sleutel in Ubuntu, je project klonen, een virtual environment, je site met `fastapi run` in Linux, en pushen vanuit Ubuntu |
-| In een container | Ubuntu in WSL | Docker installeren, een image, een container, niet als `root`, een volume, Compose, Traefik als voordeur |
-| Op een echte server | een VPS | ssh alleen met een sleutel, de firewall en automatische updates, de site erop met een deploy key, HTTPS via Let's Encrypt, een nieuwe versie uitrollen met een healthcheck, een back-up maken en terugzetten, de images bijwerken met `--pull` en opruimen |
-| Extra | de server, en via een ssh-tunnel | Portainer om de containers in de browser te bekijken, en een back-up elke nacht met cron |
-
-De route legt geen Linux uit. Terminal, rechten, `sudo apt`, `nano`, diensten en `ssh` staan in de [Linux-cursus](site:linux/docs), en elke les linkt naar de Linux-les die hij nodig heeft. Laat leerlingen die cursus eerst doen, minstens tot en met de lessen over WSL en ssh.
-
-Vanaf les 7 werken leerlingen alleen nog in Ubuntu in WSL. Ze klonen hun repository daar met ssh (de sleutel uit de Linux-cursus staat op hun GitHub-account) en openen hem met `code .` vanuit Ubuntu. Hun site draait eerst met `fastapi run` in Linux, zonder Docker. Pas daarna komt Docker. Zo is elke overstap één ding: eerst een ander besturingssysteem, dan een container. De kopie op Windows gebruiken ze niet meer; de databases die daar staan, komen niet mee. Docker draait in de lessen als Docker Engine in Ubuntu in WSL, met de pakketten van Ubuntu (`docker.io`, `docker-compose-v2`, `docker-buildx`), en niet als Docker Desktop. Zo is het op de laptop hetzelfde als op de server, en is er geen licentievraag. Leerlingen komen in de groep `docker`; zeg erbij dat dat bijna `root` is. Docker Hub geeft per internetadres een beperkt aantal images per uur, en op school deelt de hele klas één adres. Haal met de klas niet tegelijk images op, of laat leerlingen een gratis account maken en `docker login` doen.
-
-Voor het vierde deel is een server nodig. Een VPS bij een hostingbedrijf kost een paar euro per maand, en een domeinnaam is nodig voor HTTPS. Zeg erbij dat een server op internet binnen een uur bezoek krijgt van programma's die proberen in te loggen: les 24 laat dat zien, en les 25 tot en met 29 doen er iets aan. Laat die stappen daarom op dezelfde dag als les 24 doen, en voordat de site erop komt.
-
-Twee dingen in de route zijn bewust streng. Docker zet een gepubliceerde poort open langs `ufw`, dus op de server publiceert alleen Traefik iets (80 en 443), en Portainer alleen op `127.0.0.1`. En Portainer kan alles wat Docker kan: hij komt nooit achter Traefik of op een open poort, alleen via een ssh-tunnel.
-
-Drie dingen die een echte server nodig heeft, zitten in de route. In les 30 krijgt Docker de log-driver `local`, die per container hoogstens honderd megabyte aan logboeken bewaart; zonder grens loopt de schijf na maanden vol. In les 39 werken leerlingen de images bij met `docker compose build --pull`: `unattended-upgrades` werkt alleen Ubuntu bij, en zonder `--pull` bouwt Docker steeds op het Python-image van de eerste keer. En les 41 en 42 maken de back-up elke nacht, met een script in cron. Die back-ups staan op dezelfde server, dus een kopie op de laptop blijft nodig; zeg dat erbij. Laat leerlingen het terugzetten één keer oefenen in WSL (les 38): wat `docker compose cp` in een container zet, is niet van `app`, en zonder `chown` geeft de site pas bij het eerste nieuwe bericht een 500.
-
-#### Eén server voor de klas
-
-Huren niet alle leerlingen een eigen server, dan kan één schoolserver met Traefik de sites van de hele klas draaien. Dat is dezelfde opzet als in de lessen, met een paar verschillen:
-
-- **Eén voordeur.** Jij draait Traefik met HTTPS, zoals in les 34, en maakt het netwerk `web`. Met een DNS-record `*.klas.school.nl` (een *wildcard*) dat naar de server wijst, hoort elke naam onder dat domein bij deze server.
-- **Een naam per leerling.** Elke leerling krijgt een eigen naam, zoals `sam.klas.school.nl`, in zijn `.env` als `DOMEIN`. Traefik vraagt voor elke naam zelf een certificaat aan.
-- **Unieke namen in de labels.** Het label `traefik.http.routers.gastenboek…` moet per leerling anders heten, anders zitten de sites elkaar in de weg. Laat ze `gastenboek` vervangen door hun eigen naam, ook in `traefik.http.services…`.
-- **Wie mag Docker gebruiken?** Wie in de groep `docker` zit, kan de hele server overnemen, en dus ook bij de databases van klasgenoten. Geef leerlingen daarom geen toegang tot Docker op de gedeelde server. Laat ze hun repository met jou delen (een deploy key per project, alleen lezen), en rol hun sites zelf uit met `git pull` en `docker compose up -d --build`, met een map en een `.env` per leerling. Portainer, via jouw eigen ssh-tunnel, geeft je dan een overzicht van alle containers.
-
-Leerlingen doen in die opzet deel 1, 2 en 3 helemaal zelf, en van deel 4 alleen wat over hun eigen project gaat: de deploy key, de `.env` met hun naam, en controleren dat hun site met HTTPS werkt. Les 24 tot en met 30 lezen ze mee; die doe jij één keer voor de server.
-
-## Feedback & bijdragen
-
-Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs). Alle bijdragen — van een typo tot een nieuwe les — zijn welkom.
+Een fout gevonden of een idee? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs).

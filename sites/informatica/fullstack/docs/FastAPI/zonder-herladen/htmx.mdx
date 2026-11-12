@@ -47,6 +47,8 @@ En zet in de `<body>`, onder je kop, een knop met een lege `<p>` erbij:
 <p id="uitkomst"></p>
 ```
 
+### Wat de attributen doen
+
 De script-tag geldt alleen voor de pagina waar hij in staat. Gebruik je later `hx-`-attributen op een andere pagina, dan zet je hem daar ook in de `<head>`.
 
 **`hx-get`** doet wat een link doet, een GET naar `/tijd`, met één verschil: htmx stuurt het verzoek, en de browser blijft op de pagina. **`hx-target`** zegt waar het antwoord van de server komt: in het element met id `uitkomst`.
@@ -80,7 +82,7 @@ Het antwoord is één zin, geen hele pagina. Je geeft hier zelf een `HTMLRespons
 
 </CodeUitleg>
 
-## Kijk wat er over de lijn gaat
+## Over de lijn
 
 Open het tabblad **Netwerk** zoals in [Kijken wat de browser doet](site:fullstack/docs/FastAPI/eerste-server/devtools-netwerk) en klik op de knop. Er komt één regel bij, en de pagina wordt niet opnieuw geladen:
 

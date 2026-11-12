@@ -584,6 +584,8 @@ describe('elke les in Veiligheid is een kleine stap met een succesmoment', () =>
         .replace(/<Voorspel[\s\S]*?<\/Voorspel>/g, '')
         .replace(/<details>[\s\S]*?<\/details>/g, '')
         .replace(/<[^>]+>/g, '')
+        // De kop van een stap is een label in de rij stappen, geen uitleg.
+        .replace(/^### .*$/gm, '')
         .replace(/^\|(\s*:?-+:?\s*\|)+$/gm, '');
       const woorden = uitleg.split(/\s+/).filter((w) => /\p{L}/u.test(w)).length;
       if (woorden > 450) fout.push(`${id}: ${woorden} woorden`);

@@ -27,12 +27,14 @@ Kies **Netwerk**. De lijst is leeg: het tabblad ziet alleen wat er gebeurt terwi
   <NetwerkTabel rijen={[{ naam: '127.0.0.1', status: 200, type: 'document', grootte: '152 B' }]} />
 </DevtoolsPaneel>
 
-Die regel is stap 2 en stap 5 uit het diagram in één: het verzoek dat de browser stuurde, en het antwoord dat terugkwam.
+Die regel is stap 2 en stap 5 uit het diagram van je eerste verzoek in één: het verzoek dat de browser stuurde, en het antwoord dat terugkwam.
 
 - **Naam** is het adres dat de browser vroeg. Voor `/` staat er de naam van de server.
 - **Status** is het cijfer waarmee de server antwoordde. `200` betekent: gevonden, hier is het.
 - **Type** zegt wat voor antwoord het was. `document` is een pagina.
 - **Grootte** is hoeveel bytes er over het netwerk gingen.
+
+### Hetzelfde in de terminal
 
 Kijk nu naar de terminal waar `fastapi dev` draait. Daar staat dezelfde gebeurtenis, van de andere kant:
 
@@ -80,11 +82,11 @@ Soms staat er in Netwerk niets, en de volgende keer wel. Dat ligt bijna altijd a
 Blijft de lijst leeg? Loop de vier oorzaken bij [Als de lijst leeg is](#als-de-lijst-leeg-is) langs. Zie je geen tabblad Netwerk? Het paneel is te smal en verbergt tabbladen achter `»` rechts in de rij. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
+## Opdrachten
+
 :::tip[Controleer je server]
 Laat je server draaien en typ in een tweede terminal `python controleer.py eerste-server`. Het script kijkt of alles uit dit hoofdstuk werkt; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Predict - Hoeveel regels?
 
