@@ -8,11 +8,11 @@ DC-motoren zijn de wielmotoren van je robot. Ze hebben veel stroom nodig, dus we
 
 Meer over de Nano staat bij [Arduino](https://docs.arduino.cc/hardware/nano-rp2040-connect/).
 
-**Controlevraag:** Waarom heb je een motor shield nodig en kun je de motoren niet rechtstreeks op de Nano aansluiten?
+**Controlevraag:** Welke drie onderdelen leg je klaar voordat je de motoren aansluit?
 
 <details>
 <summary>Antwoord</summary>
 
-DC-motoren trekken veel meer **stroom** dan de pinnen van de microcontroller kunnen leveren. Het shield haalt die stroom uit de batterij en stuurt hem onder controle naar de motoren.
+De Nano op het shield, de motormodule en twee DC-motoren. De motormodule zit ertussen, omdat de motoren meer stroom vragen dan een pin van de Nano kan leveren.
 
 </details>

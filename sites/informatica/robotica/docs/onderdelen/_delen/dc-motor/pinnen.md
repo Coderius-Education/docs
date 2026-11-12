@@ -17,7 +17,7 @@ motoren = DCMotors(
 
 ### Richting en snelheid
 
-Elke motor heeft er twee:
+Elke motor heeft twee pinnen:
 
 | Motor | Richting (`dir_pin_…`) | Snelheid (`pwm_pin_…`) |
 |:---:|:---:|:---:|

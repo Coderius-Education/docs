@@ -15,7 +15,7 @@ import I2C from '@site/docs/onderdelen/_delen/i2c/pinnen.md';
 />
 
 
-Straks rijdt je robot los van de laptop, en dan is de Shell weg. Vanaf dat moment is het OLED-scherm je venster in de robot: daar zie je wat de sensoren zien. In dit deel vervang je de `print` door het scherm — en daarmee staat het eerste grote mijlpunt: een robot die zelf laat zien wat hij meet.
+Straks rijdt je robot los van de laptop, en dan is de Shell weg. Vanaf dat moment is het OLED-scherm je venster in de robot: daar zie je wat de sensoren zien. In dit deel vervang je de `print` door het scherm — en daarmee staat de eerste grote mijlpaal: een robot die zelf laat zien wat hij meet.
 
 :::danger[A4 en A5 zijn bezet]
 
@@ -27,7 +27,7 @@ De multiplexer en het OLED-scherm praten via **I2C**, en dat gebruikt de pinnen 
 
 ![Aansluitschema: het OLED-scherm op channel 7 van de multiplexer, en de twee IR-sensoren op het rijtje van A0 en van A1](@site/static/fritzing/shield_oled_mux_ir_bb.png)
 
-Het scherm gaat via een 4-pins jumperkabel naar de **multiplexer**, die in de bus rechts op het shield steekt: VCC, GND, SDA en SCL elk naar de pin met dezelfde naam op channel **7**. De IR-sensoren blijven zitten waar ze zaten, op A0 en A1. Steek je hem in een ander channel, pas dan het getal in je code aan.
+Het scherm gaat via een 4-pins jumperkabel naar de **multiplexer**, die in de bus rechts op het shield steekt: VCC, GND, SDA en SCL elk naar de pin met dezelfde naam op channel **7**. De IR-sensoren blijven zitten waar ze zaten, op A0 en A1. Steek je het scherm in een ander channel, pas dan het getal in je code aan.
 
 ## Stap 1: Eerst het scherm alleen
 

@@ -79,8 +79,8 @@ describe('de les', () => {
       /^import SensorSimulator from '@site\/src\/components\/SensorSimulator';$/m,
     );
     const plek = LES.indexOf('<SensorSimulator />');
-    expect(plek).toBeGreaterThan(LES.indexOf('## Stap 1'));
-    expect(plek).toBeLessThan(LES.indexOf('## Stap 2'));
+    expect(plek).toBeGreaterThan(LES.indexOf('## Uitlezen'));
+    expect(plek).toBeLessThan(LES.indexOf('## Reageren'));
   });
 
   it('zegt eerlijk dat de getallen een voorbeeld zijn', () => {
@@ -96,7 +96,7 @@ describe('de les', () => {
     expect(GRENS_START).toBe(300);
     expect(balGezien(leesA0(2), 300)).toBe(true);
     expect(balGezien(leesA0(3), 300)).toBe(false);
-    const sectie = LES.slice(LES.indexOf('## Een grens kiezen'), LES.indexOf('## Stap 2'));
+    const sectie = LES.slice(LES.indexOf('## Een grens kiezen'), LES.indexOf('## Reageren'));
     expect(sectie).toContain('Op 2 cm en dichterbij');
     expect(sectie).toContain(`Op 3 cm is het getal ${leesA0(3)}`);
     expect(sectie).toContain(`op 4 cm ${leesA0(4)}`);

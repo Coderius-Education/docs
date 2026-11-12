@@ -7,11 +7,11 @@
 
 Het uiterlijk van het scherm verschilt per merk, maar de aansluitingen zijn hetzelfde. De multiplexer heb je nodig als je ook TOF-sensoren gebruikt: dan werkt alles tegelijk.
 
-**Controlevraag:** Hoeveel pinnen heeft het OLED-scherm minimaal nodig op de microcontroller?
+**Controlevraag:** Wanneer heb je de multiplexer nodig?
 
 <details>
 <summary>Antwoord</summary>
 
-Vier: **VCC** (3,3V), **GND**, **SDA** (A4) en **SCL** (A5).
+Als je naast het scherm ook TOF-sensoren gebruikt. Met de multiplexer werken ze tegelijk.
 
 </details>

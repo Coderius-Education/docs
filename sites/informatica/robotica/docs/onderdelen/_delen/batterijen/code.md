@@ -11,11 +11,11 @@ Zonder USB-kabel kan niemand op **Run** drukken. De code moet dus al **op de mic
 
 Gebruik je de [online editor](site:robotica/editor)? Dan staat je code na
 **Run op board** al als `main.py` op de microcontroller. Je kunt dan meteen naar
-[Klaar](#klaar). De stappen hieronder zijn voor Thonny.
+[Klaar](#klaar). De volgende stappen zijn voor Thonny.
 
 :::
 
-### Stap 1: kies de juiste interpreter
+### Kies de juiste interpreter
 
 Kijk rechtsonder in Thonny. Daar moet **MicroPython (RP2040)** staan.
 
@@ -26,7 +26,7 @@ Klik rechtsonder en kies **MicroPython (RP2040)** uit de lijst. Zie je hem niet?
 
 </details>
 
-### Stap 2: check de REPL
+### Check de REPL
 
 Onderin Thonny zie je de **Shell** (REPL). Als de verbinding goed is, zie je zoiets:
 
@@ -43,11 +43,11 @@ Het versienummer en de datum kunnen bij jou anders zijn. Het belangrijkste is da
 
 - Zit de USB-kabel goed?
 - Druk op de **Stop/Restart**-knop in Thonny.
-- Check of de juiste interpreter is geselecteerd (Stap 1).
+- Check of de juiste interpreter is geselecteerd (zie Kies de juiste interpreter).
 
 </details>
 
-### Stap 3: maak het bestandsvenster open
+### Maak het bestandsvenster open
 
 1. Klik op **View** → **Files**.
 2. Links verschijnen twee lijsten:
@@ -60,7 +60,7 @@ Alleen bestanden met **blokhaken** `[ ]` om de naam in het tabblad staan op de m
 
 :::
 
-### Stap 4: maak `main.py` aan
+### Maak `main.py` aan
 
 1. Klik met de **rechtermuisknop** in de onderste lijst.
 2. Kies **New file...**.

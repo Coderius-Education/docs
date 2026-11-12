@@ -16,10 +16,20 @@ Je robot rijdt rechtdoor zolang beide sensoren wit zien. Zodra hij afdwaalt, zie
 
 ## Opdracht 10.4.a: maak de lijnvolger af
 
+### De opdracht
+
 Breid het `if`-blok uit Deel 7 uit met **twee extra gevallen**, met `elif`:
 
 1. **Links ziet zwart, rechts wit** → de lijn ligt links. Stuur bij.
 2. **Links ziet wit, rechts zwart** → de lijn ligt rechts. Stuur bij.
+
+Drie vragen om je op weg te helpen — beantwoord ze voor jezelf voordat je typt:
+
+1. De lijn ligt **links**. Welke kant moet de robot dan op draaien, en welke motor moet daarvoor zachter?
+2. Hoe véél zachter? Wat verwacht je bij een klein verschil (255 tegenover 200), en wat bij een groot verschil (255 tegenover 0)?
+3. In [Hoe werkt lijnvolgen?](site:robotica/lego_auto/lijnvolgen/hoe-werkt-het) heb je dit al eens beredeneerd. Klopt je antwoord daar nog mee?
+
+### Aan de slag
 
 ```python
     if kleur_links == "white" and kleur_rechts == "white":
@@ -34,14 +44,6 @@ Breid het `if`-blok uit Deel 7 uit met **twee extra gevallen**, met `elif`:
 ```
 
 Vervang elke `# TODO` en de `pass` door de juiste `motor_a.forward(...)` en `motor_b.forward(...)`. Het scherm draait mee — daaraan zie je of je robot het goede geval te pakken heeft.
-
-## Denk na
-
-Drie vragen om je op weg te helpen — beantwoord ze voor jezelf voordat je typt:
-
-1. De lijn ligt **links**. Welke kant moet de robot dan op draaien, en welke motor moet daarvoor zachter?
-2. Hoe véél zachter? Wat verwacht je bij een klein verschil (255 tegenover 200), en wat bij een groot verschil (255 tegenover 0)?
-3. In [Hoe werkt lijnvolgen?](site:robotica/lego_auto/lijnvolgen/hoe-werkt-het) heb je dit al eens beredeneerd. Klopt je antwoord daar nog mee?
 
 <details>
 <summary>Tip — ik kom er niet uit</summary>

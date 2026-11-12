@@ -30,7 +30,7 @@ Op het shield staat ook een D0, bij **D0/TX1**. Daar sluit je niets op aan, want
 
 Zit alles vast? Zet je robot dan weer aan met **ON/OFF**.
 
-## Stap 1: het getal uitlezen
+## Uitlezen: het getal op het scherm
 
 Sleep eerst het blok **herhaal voor altijd** uit **Denk stappen** in het Leaphy-blok. Wat erin staat, doet je robot steeds opnieuw. Zonder dat blok leest hij de sensor één keer en daarna nooit meer.
 
@@ -65,7 +65,7 @@ Zonder bal geeft je sensor een hoog getal, met een bal een laag getal. Je robot 
 
 ### Oefen zonder robot
 
-Hier oefen je dat zonder robot. Schuif met de muis of met je vinger, of klik op een schuifje en gebruik de pijltjestoetsen. De getallen zijn een voorbeeld. Jouw sensor geeft andere getallen: dat hangt af van de sensor, het licht in de klas en de bal. Daarom kies je in stap 2 een grens met de getallen die jij in stap 1 hebt opgeschreven.
+Hier oefen je dat zonder robot. Schuif met de muis of met je vinger, of klik op een schuifje en gebruik de pijltjestoetsen. De getallen zijn een voorbeeld. Jouw sensor geeft andere getallen: dat hangt af van de sensor, het licht in de klas en de bal. Daarom kies je straks, bij Reageren, een grens met de getallen die jij bij Uitlezen hebt opgeschreven.
 
 <SensorSimulator />
 
@@ -86,9 +86,9 @@ Hier oefen je dat zonder robot. Schuif met de muis of met je vinger, of klik op 
 
 </details>
 
-## Stap 2: reageren op de bal
+## Reageren: als er een bal ligt
 
-Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijkt hij of het getal kleiner is dan een grens; in het voorbeeld is dat 300. In die groep staan twee blokken **als**: neem het eerste, zonder **anders**. Je bouwt verder op het programma van stap 1:
+Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stappen** kijkt hij of het getal kleiner is dan een grens; in het voorbeeld is dat 300. In die groep staan twee blokken **als**: neem het eerste, zonder **anders**. Je bouwt verder op het programma van Uitlezen:
 
 1. Sleep als … dan in herhaal voor altijd, helemaal bovenaan. Toon op scherm en duurt schuiven eronder.
 2. Sleep Toon op scherm in het gat onder als … dan. Het blok duurt gaat mee, want een blok neemt alles eronder mee. Sleep duurt daarna terug, onder als … dan.
@@ -105,7 +105,7 @@ Nu laat je de robot zelf beslissen. Met het blok **als … dan** uit **Denk stap
 Is het getal kleiner dan 300, dan ligt er een bal en verschijnt "klaar om te golfen!" op het scherm.
 
 :::tip
-300 is maar een voorbeeld. Gebruik de getallen die jij in stap 1 hebt opgeschreven, en kies een grens die er netjes tussenin ligt.
+300 is maar een voorbeeld. Gebruik de getallen die jij bij Uitlezen hebt opgeschreven, en kies een grens die er netjes tussenin ligt.
 :::
 
 ## Er gaat iets mis
@@ -124,9 +124,9 @@ Is het getal kleiner dan 300, dan ligt er een bal en verschijnt "klaar om te gol
 
 **Oorzaak:** in het vergelijkblok staat nog **`=`**, of de grens klopt niet. Met **`=`** moet het getal precies gelijk zijn aan je grens, en dat gebeurt bijna nooit.
 
-**Oplossing:** klik op het teken in het vergelijkblok en kies **`<`**. Kies als grens een getal tussen je twee getallen uit stap 1.
+**Oplossing:** klik op het teken in het vergelijkblok en kies **`<`**. Kies als grens een getal tussen je twee getallen van Uitlezen.
 
-**Zelf vinden:** kijk naar het getal dat je in stap 1 met een bal opschreef. Is dat kleiner dan je grens, dan ligt het aan het teken.
+**Zelf vinden:** kijk naar het getal dat je bij Uitlezen met een bal opschreef. Is dat kleiner dan je grens, dan ligt het aan het teken.
 
 </Probleem>
 

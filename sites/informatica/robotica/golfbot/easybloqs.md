@@ -41,20 +41,20 @@ Maak dit programma na. Het Leaphy-blok staat al klaar. Het blok **Toon op scherm
 
 Alles wat in het Leaphy-blok staat, doet je robot **één keer**, van boven naar beneden. Zet het programma nu op je robot en kijk of de zin verschijnt.
 
-### Stap 1: upload naar je robot
+### Upload naar je robot
 
 1. Klik rechtsboven op de gekleurde knop **Upload naar robot**.
 2. De eerste keer laat je browser een lijstje zien en vraagt met welk apparaat hij moet praten. Klik op je robot en daarna op de knop om verbinding te maken. Staat er meer dan één regel, trek dan de usb-kabel eruit en kijk welke regel verdwijnt: dat is je robot.
 3. Er opent een venster met eerst **Verbinden met robot...** en dan **Code compileren**: Easybloqs maakt van je blokken een programma. Daarna **Poort openen** en **Code uploaden**: het programma gaat naar je robot. Als het klaar is, staat er **Upload voltooid**.
 4. Klik op **Ga terug naar code scherm**. Je ziet je blokken weer.
 
-### Stap 2: open het scherm
+### Open het scherm
 
 Rechts naast je blokken staat een rij ronde knoppen. Klik op de knop met het plaatje van een vierkantje met liggende streepjes: dat is de knop **Toon output op scherm**.
 
 Er opent een venster met bovenaan **Toon output op scherm**. Dit is het scherm: alles wat je robot met **Toon op scherm** laat zien, komt hier regel voor regel onder elkaar. Voor elke regel staat de tijd waarop hij binnenkwam. Bovenaan het scherm staat een knop met een prullenbak: daarmee maak je het scherm leeg.
 
-### Stap 3: laat de robot opnieuw beginnen
+### Laat de robot opnieuw beginnen
 
 Je robot deed het programma al meteen toen de upload klaar was. Misschien staat de zin daarom al op het scherm, misschien ook niet. Klik eerst op de prullenbak, zodat het scherm leeg is: dan zie je zeker wat je robot nu doet. Druk daarna op het kleine knopje op de Arduino zelf, met **RST** eronder.
 

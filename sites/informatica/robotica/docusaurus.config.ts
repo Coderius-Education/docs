@@ -329,8 +329,6 @@ export default createConfig({
   // @coderius/shared is de standaard; @coderius/checker levert de nakijker.
   sharedPackages: ['@coderius/shared', '@coderius/checker'],
 
-  // Robotica is (nog) Engelstalig.
-  i18n: { defaultLocale: 'en', locales: ['en'] },
   markdown: { hooks: { onBrokenMarkdownLinks: 'warn' } },
   // De "Open in de editor"-links zetten de code in #code=…, en dat is geen
   // anker; ze slaan de controle over (theme/CodeBlock). Daarna bleef er niets

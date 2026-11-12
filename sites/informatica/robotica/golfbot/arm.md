@@ -57,7 +57,7 @@ Kijk daarom eerst of de servo op het signaal van **D9** zit. Zet je robot weer a
 <Blokken programma={servoOp90} beschrijving="Het Leaphy-blok met daarin Servo 9 op 90." />
 :::
 
-### Stap 11: het tandwiel
+### Het tandwiel erop
 
 <figure>
   <img src={useBaseUrl('/golfbot/bouwen/stap-11.jpg')} width="600" alt="Bouwstap 11: Het grijze tandwiel komt op het uiteinde van de lange as, naast het oranje tandwiel van de servo. De tanden van de twee tandwielen grijpen in elkaar." />
@@ -117,11 +117,11 @@ Kijk naar de tandwielen en loop deze vragen langs:
 
 ### De laatste vraag
 
-Upload daarna weer het programma **Servo 9 op 90** uit Onderdelenlijst, zodat de servo in het midden staat. Nu de laatste vraag:
+Upload daarna weer het programma **Servo 9 op 90** uit De servo op 90°, zodat de servo in het midden staat. Nu de laatste vraag:
 
 4. Zitten de twee stukjes plakband weer precies naast elkaar?
 
-Is het antwoord vier keer ja, dan werkt je overbrenging. Zet je robot uit en laat de plakband zitten: zo kun je het straks met de arm eraan nog eens nakijken. Pas dan maak je de arm.
+Was het antwoord bij Draait het goed? drie keer ja, en is het dat hier ook, dan werkt je overbrenging. Zet je robot uit en laat de plakband zitten: zo kun je het straks met de arm eraan nog eens nakijken. Pas dan maak je de arm.
 
 ### Gaat er iets mis?
 
@@ -249,7 +249,7 @@ Hier hoort geen vast antwoord bij: elke arm die de test in de volgende stap door
 
 ### Test je arm
 
-Test je arm voordat je hem op de baan zet. Zet je robot aan met **ON/OFF**, upload het programma **Servo 9 op 90** uit Onderdelenlijst, en kijk of de arm naar beneden hangt. Upload daarna het programma dat heen en weer draait:
+Test je arm voordat je hem op de baan zet. Zet je robot aan met **ON/OFF**, upload het programma **Servo 9 op 90** uit De servo op 90°, en kijk of de arm naar beneden hangt. Upload daarna het programma dat heen en weer draait:
 
 1. Draait de arm mee, zonder te slippen op de as?
 2. Draait hij soepel, zonder te zoemen of te haperen?

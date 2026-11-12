@@ -10,7 +10,7 @@ Een **OLED-scherm** is een klein schermpje dat tekst en getallen laat zien. Het 
 
 Het scherm is handig als je robot **los van de laptop** rijdt: dan kun je de Shell niet meer zien, maar de sensorwaardes wél op het schermpje volgen.
 
-Het scherm praat met de microcontroller via **I2C**, dus via de pinnen **SDA** en **SCL**. In je code werkt het in twee stappen: eerst zet je de tekst klaar, en daarna roep je **`show()`** aan om alles echt op het scherm te tonen. Vergeet je `show()`, dan blijft het scherm leeg.
+Het scherm praat met de microcontroller via **I2C**, dus via de pinnen **SDA** en **SCL**. In je code werkt het in twee stappen: eerst zet je de tekst klaar, en daarna roep je **`show()`** aan om alles echt op het scherm te tonen.
 
 **Controlevraag:** Waarom is een OLED-scherm handig zodra je robot zonder laptop rijdt?
 

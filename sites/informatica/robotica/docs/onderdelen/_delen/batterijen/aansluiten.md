@@ -1,4 +1,4 @@
-### Stap 1: meet elke batterij na
+### Meet elke batterij na
 
 Meet met je multimeter (op **DC voltage**) de spanning van iedere AA-batterij.
 
@@ -19,7 +19,7 @@ Nog nooit een multimeter gebruikt? Kijk dan eerst bij [Meten met een multimeter]
 
 </details>
 
-### Stap 2: meet de batterijhouder na
+### Meet de batterijhouder na
 
 Plaats alle batterijen in de houder. Meet de spanning aan de **rode en zwarte draad** die eruit komen. Verwacht: ongeveer **9V** met gewone batterijen, ongeveer **7,5V** met oplaadbare.
 
@@ -32,7 +32,7 @@ Plaats alle batterijen in de houder. Meet de spanning aan de **rode en zwarte dr
 
 </details>
 
-### Stap 3: batterijhouder op het shield
+### Batterijhouder op het shield
 
 ![Aansluitschema: de rode draad van de batterijhouder in de + van de adapter, de zwarte draad in de -, en de adapter in de ronde bus van het shield](@site/static/fritzing/shield_battery_pack_bb.png)
 
@@ -47,6 +47,6 @@ Als alles goed is, zie je een **groen lampje** op de microcontroller branden.
 
 - Staat de schakelaar op **ON**?
 - Zitten de draden goed vast?
-- Meet de batterijhouder opnieuw (Stap 2).
+- Meet de batterijhouder opnieuw (zie Meet de batterijhouder na).
 
 </details>

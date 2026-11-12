@@ -134,13 +134,15 @@ describe('elk scherm van een les staat op zichzelf', () => {
 
   it('de rij tabbladen past op één regel', () => {
     // Een tweede regel kost elk paneel veertig pixels. Naast de lessenlijst is
-    // op 1280 pixels 948 pixels over; een tabblad kost ongeveer 30 pixels plus
+    // op 1280 pixels 948 pixels over; een tabblad kost ongeveer 32 pixels plus
     // 7 per letter (gemeten in Chromium: "Opdracht 5.7.a" is 128 breed,
-    // "5.7.b" 65). Het echte getal meet alleen een browser
-    // (`node scripts/meet-les-tabs.mjs robotica`).
+    // "5.7.b" 65, en tussen twee tabbladen zit 2 pixels). Met 30 kwam de arm
+    // van de Golfbot met "Onderdelenlijst en tandwiel" op 947 uit, en stond
+    // de rij in de browser op twee regels. Het echte getal meet alleen een
+    // browser (`node scripts/meet-les-tabs.mjs robotica`).
     const fout = lessen.flatMap((les) => {
       const labels = [...new Set(les.schermen.map((s) => s.opTab))];
-      const breedte = labels.reduce((som, label) => som + 30 + 7 * label.length, 0);
+      const breedte = labels.reduce((som, label) => som + 32 + 7 * label.length, 0);
       return breedte > 948
         ? [`${les.naam}: ${labels.length} tabbladen, ongeveer ${breedte} px`]
         : [];
@@ -256,5 +258,99 @@ describe('de docentenhandleiding', () => {
     // De nakijker en de leerdoelen blijven vindbaar.
     expect(handleiding).toContain('site:robotica/robot-checken');
     expect(handleiding).toContain('site:robotica/leerdoelen');
+  });
+});
+
+describe('wat de tweede doorloop als leerling vond', () => {
+  const bron = (pad: string) => readFileSync(join(SITE, pad), 'utf8');
+  const allePaden = alle.map((pad) => pad.replace(/^deel:/, ''));
+
+  it('geen stap heeft een nummer in zijn kop: de knop nummert al', () => {
+    // "Stap 1: kies de juiste interpreter" stond onder knop 2, want er stond
+    // een stap Vooraf voor, en de tekst verwees dan naar "(Stap 1)". Op negen
+    // pagina's, 23 schermen.
+    const fout: string[] = [];
+    for (const pad of allePaden) {
+      for (const m of bron(relative(SITE, pad)).matchAll(/^###+ (Stap \d+\b.*)$/gm))
+        fout.push(`${relative(SITE, pad)}: ${m[1]}`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('in de Golfbot heet geen tabblad "Stap 1"', () => {
+    // De IR-sensor had tabbladen Stap 1 en Stap 2 met eigen genummerde
+    // stappen. "Kies in stap 2 een grens" las je in stap 2 van Een grens
+    // kiezen. De Lego-auto houdt zijn `## Stap N`: dat is daar het lesformat.
+    const fout = lessen
+      .filter((les) => les.naam.startsWith('golfbot/'))
+      .flatMap((les) => les.schermen.filter((s) => /^Stap \d/.test(s.tab)).map((s) => s.naam));
+    expect(fout).toEqual([]);
+    for (const pad of ['bal-slaan.md', 'hout.md', 'uitbreiding.md', 'ir-sensor.md'])
+      expect(bron(`golfbot/${pad}`), pad).not.toMatch(
+        /stap [12] van \[de IR-sensor\]|in stap [12]\b/,
+      );
+  });
+
+  it('het antwoord op een controlevraag noemt geen pin die de pagina nog niet noemde', () => {
+    // Materiaal van de lijnsensor vroeg "op welke pinnen sluit je hem aan?"
+    // voordat er één pin genoemd was, en het antwoord bij het scherm zei
+    // "SDA (A4)", terwijl de cursus overal elders "SDA" schrijft. Een vraag
+    // over wat op een eerdere stap stond, mag: daarom telt de hele pagina
+    // tot aan de vraag, niet alleen het scherm.
+    const PIN = /\b(A[0-7]|D\d{1,2}|SDA|SCL)\b/g;
+    const fout: string[] = [];
+    for (const pad of allePaden) {
+      const tekst = bron(relative(SITE, pad));
+      const vraag =
+        /\*\*Controlevraag:\*\*([^\n]*)\n+<details>\s*<summary>Antwoord<\/summary>([\s\S]*?)<\/details>/g;
+      for (const m of tekst.matchAll(vraag)) {
+        const ervoor = tekst.slice(0, m.index) + m[1];
+        const nieuw = [...new Set([...m[2].matchAll(PIN)].map((p) => p[1]))].filter(
+          (pin) => !ervoor.includes(pin),
+        );
+        if (nieuw.length) fout.push(`${relative(SITE, pad)}: ${nieuw.join(', ')}`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('het lampje dat je in Deel 1 aanzet is oranje; het groene is het stroomlampje', () => {
+    // Volgens de datasheet van de Nano RP2040 Connect is DL1 (groen) het
+    // stroomlampje en DL2 (oranje) het lampje op pin 13. De les zei "het
+    // groene lampje brandt", en dat brandde al voordat je iets deed.
+    const les = bron('lego_auto/eerste_programma/deel1_lampje.md');
+    const test = les.slice(les.indexOf('## Test het'), les.indexOf('## Voorspel'));
+    expect(test).toMatch(/oranje lampje op het bord brandt/);
+    expect(test).toMatch(/groene lampje brandde al/);
+  });
+
+  it('wie in de Lego-auto de TOF aansluit, leest op welke pin elke draad komt', () => {
+    // Er stond alleen "steek de TOF in channel 0". Op channel 0 tot en met 3
+    // staan de pinnen andersom dan op de TOF.
+    const les = bron('lego_auto/afstand/uitlezen.md');
+    const aansluiten = les.slice(les.indexOf('## Aansluiten'), les.indexOf('## Stap 1'));
+    expect(aansluiten).toMatch(/pin met dezelfde naam/);
+    expect(aansluiten).toMatch(/kruisen de draden/);
+    expect(aansluiten).toContain('site:robotica/docs/onderdelen/tof#twee-met-mux');
+    // Het anker bestaat.
+    expect(bron('docs/onderdelen/tof.mdx')).toMatch(/^## .*\\\{#twee-met-mux\}$/m);
+  });
+
+  it('de tip bij Opdracht 10.4.a staat bij de opdracht, niet op een tabblad erna', () => {
+    const les = bron('lego_auto/lijnvolgen/nu_jij.md');
+    expect(les).not.toMatch(/^## Denk na$/m);
+    const opdracht = les.slice(les.indexOf('## Opdracht 10.4.a'), les.indexOf('## Test het'));
+    expect(opdracht).toMatch(/^### De opdracht$/m);
+    expect(opdracht).toMatch(/^### Aan de slag$/m);
+    // De vragen "voordat je typt" staan voor de code, de tip erna.
+    expect(opdracht.indexOf('voordat je typt')).toBeLessThan(opdracht.indexOf('```python'));
+    expect(opdracht.indexOf('<summary>Tip')).toBeGreaterThan(opdracht.indexOf('```python'));
+  });
+
+  it('de site is Nederlandstalig gebouwd', () => {
+    // Met `defaultLocale: 'en'` stond er `lang="en"` op elke pagina, en onder
+    // elke les "Previous" en "Next". createConfig zet nl; de site zet er
+    // niets overheen.
+    expect(bron('docusaurus.config.ts')).not.toMatch(/defaultLocale/);
   });
 });

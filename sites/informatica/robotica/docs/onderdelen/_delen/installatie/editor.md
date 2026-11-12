@@ -10,13 +10,13 @@ Werkt dat niet (andere browser, schoollaptop met restricties)? Volg dan de stapp
 
 In deze stappen installeer je **Thonny**, een editor op je eigen computer. Die werkt meteen met MicroPython op je microcontroller.
 
-### Stap 1: download Thonny
+### Download Thonny
 
 Ga naar [thonny.org](https://thonny.org/) en kies je besturingssysteem (meestal Windows). Download het bestand dat eindigt op **-x64.exe**, bijvoorbeeld `thonny-5.0.0-x64.exe`. Heeft je laptop een Arm-processor, zoals een Snapdragon? Neem dan het bestand dat eindigt op **-arm64.exe**.
 
 Had je Thonny 4 al? Verwijder die dan eerst, via **Instellingen** → **Apps**. Thonny 5 kan anders een foutmelding geven bij het opstarten.
 
-### Stap 2: installeren
+### Installeren
 
 Voer het installatiebestand uit en klik de installatie door. Open daarna Thonny.
 

@@ -47,7 +47,7 @@ Zet je robot daarna weer aan met **ON/OFF**.
 
 ### Een grens voor de tweede sensor
 
-De tweede sensor heeft een eigen grens nodig, want hij kijkt naar een andere plek. Neem het programma uit stap 1 van [de IR-sensor](site:robotica/golfbot/ir-sensor), dat het getal op je scherm toont. Klik in **Lees anapin** op **A0** en kies **A1**. Schrijf het getal op met de bal op zijn plek bij het gat, en zonder bal. Je grens ligt ertussenin.
+De tweede sensor heeft een eigen grens nodig, want hij kijkt naar een andere plek. Neem het programma van Uitlezen bij [de IR-sensor](site:robotica/golfbot/ir-sensor), dat het getal op je scherm toont. Klik in **Lees anapin** op **A0** en kies **A1**. Schrijf het getal op met de bal op zijn plek bij het gat, en zonder bal. Je grens ligt ertussenin.
 
 ### Het programma
 

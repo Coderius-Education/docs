@@ -6,13 +6,13 @@ Gebruik je de [online editor](site:robotica/editor)? Verbind met je board en kli
 
 :::
 
-### Stap 1: download het pakket en pak het uit
+### Download het pakket en pak het uit
 
 Download het zip-bestand: [leaphy-micropython main.zip](https://github.com/leaphy-robotics/leaphy-micropython/archive/refs/heads/main.zip).
 
 Pak het uit op je computer. Je hebt nu een map met onder andere de submap **`leaphymicropython`**.
 
-### Stap 2: kopieer naar de microcontroller
+### Kopieer naar de microcontroller
 
 1. Klik in Thonny op **View** → **Files**. Links zie je nu twee lijsten: boven
    de bestanden op je laptop, onder die op de microcontroller.

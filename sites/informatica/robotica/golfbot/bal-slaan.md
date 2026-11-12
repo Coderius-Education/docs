@@ -12,7 +12,7 @@ Je robot kan de bal zien met [de IR-sensor](site:robotica/golfbot/ir-sensor), en
 
 ### Wat is nieuw?
 
-Alle blokken ken je al. Nieuw is alleen dat de servo-blokken nu in **als … dan** staan. Begin met het programma uit stap 2 van [de IR-sensor](site:robotica/golfbot/ir-sensor). Heb je het bewaard, open het dan met **Mijn projecten** en **Open**. Zo niet, haal dan je servoprogramma weg zoals bij [de servo](site:robotica/golfbot/servo), en bouw stap 2 opnieuw. Daarna haal je Toon op scherm uit als … dan, en zet je de servo-blokken op die plek. Het blok duurt 500 ms onder als … dan mag ook weg, want na een slag wacht de robot al.
+Alle blokken ken je al. Nieuw is alleen dat de servo-blokken nu in **als … dan** staan. Begin met het programma van Reageren bij [de IR-sensor](site:robotica/golfbot/ir-sensor). Heb je het bewaard, open het dan met **Mijn projecten** en **Open**. Zo niet, haal dan je servoprogramma weg zoals bij [de servo](site:robotica/golfbot/servo), en bouw dat programma opnieuw. Daarna haal je Toon op scherm uit als … dan, en zet je de servo-blokken op die plek. Het blok duurt 500 ms onder als … dan mag ook weg, want na een slag wacht de robot al.
 
 ### Voorspel
 

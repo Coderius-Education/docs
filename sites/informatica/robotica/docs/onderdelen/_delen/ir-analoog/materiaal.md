@@ -3,11 +3,11 @@
   <Onderdeel naam="Analoge IR-sensor" foto="ir-analoog/doc_irsensor.png" alt="Een blauwe IR-sensor met vier pinnen en een blauw potmetertje">Met vier pinnen</Onderdeel>
 </Onderdelenlijst>
 
-**Controlevraag:** Op welke pinnen sluit je een analoge IR-sensor aan?
+**Controlevraag:** Wat geeft een analoge IR-sensor terug: een 0 of een 1, of een getal?
 
 <details>
 <summary>Antwoord</summary>
 
-Op een **analoge pin**: `A0`, `A1`, `A2`, `A3`, `A6` of `A7`. Niet op `A4` en `A5` — die zijn nodig voor I2C (SDA en SCL).
+Een getal tussen 0 en 65535. Hoe hoger het getal, hoe minder licht er terugkomt. Waar de grens tussen zwart en wit ligt, kies je zelf.
 
 </details>
