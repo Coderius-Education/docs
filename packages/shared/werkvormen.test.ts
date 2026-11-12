@@ -100,6 +100,37 @@ describe('werkvormVan en werkvormenVan', () => {
     ]);
   });
 
+  it('herkent de koppen van robotica: bouwen, testen en controleren', () => {
+    // Zonder deze koppen was elk tabblad Materiaal, Aansluiten, Test het en
+    // Controlevraag "uitleg", en ging de helft van een Lego-auto-les op in
+    // één tabblad Uitleg.
+    expect(
+      [
+        'Materiaal',
+        'Onderdelenlijst',
+        'Lego-onderdelen',
+        'Aansluiten',
+        'Aansluiten op het shield',
+        'Test het',
+        'Controlevraag',
+        'Wanneer heb je deze stap gehaald?',
+        'Wat je nu gaat toevoegen',
+      ].map(werkvormVan),
+    ).toEqual([
+      'bouwen',
+      'bouwen',
+      'bouwen',
+      'bouwen',
+      'bouwen',
+      'onderzoeken',
+      'controle',
+      'controle',
+      'leerdoel',
+    ]);
+    // "Test het: de vier sensoren" is een kop met een eigen titel, geen vaste kop.
+    expect(werkvormVan('Materiaal en gereedschap')).toBe('uitleg');
+  });
+
   it('van een rij genummerde opdrachten is alleen de laatste zelf maken', () => {
     expect(werkvormenVan(['Opdracht 1: A', 'Opdracht 2: B', 'Opdracht 3: C'])).toEqual([
       'aanpassen',

@@ -52,9 +52,7 @@ onderdeel aansluit en programmeert, staat bij [Onderdelen](site:robotica/docs/on
 | Lijnsensor-connector | [.stl](3d_models/v3/Lijnsensor_connector.stl) [.step](3d_models/v3/Lijnsensor_connector.step) | [Joep van der Zee](https://www.linkedin.com/in/joepvdzee/) | [CC-BY-NC](https://creativecommons.org/licenses/by-nc/4.0/deed.nl) |
 | Tandwiel | [.stl](3d_models/v3/32270_TT_motor.stl) [.step](3d_models/v3/32270_TT_motor.step) | [Joep van der Zee](https://www.linkedin.com/in/joepvdzee/) | [CC-BY-NC](https://creativecommons.org/licenses/by-nc/4.0/deed.nl) |
 
-### Oudere versies
-
-Alleen voor wie een oudere robot bijwerkt.
+### Voor een oudere robot
 
 | Onderdeel | Links | Credits | Licentie |
 |:---:|---|---|---|

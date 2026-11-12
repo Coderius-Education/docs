@@ -146,7 +146,7 @@ describe('de onderdelenlijst klopt met de bouwplaatjes', () => {
       inhoud.indexOf(':::', inhoud.indexOf(':::tip') + 6),
     );
     expect(tip).toMatch(/kleuren/);
-    expect(tip).toMatch(/plaatjes hieronder kloppen/);
+    expect(tip).toMatch(/plaatjes bij de bouwstappen kloppen/);
   });
 
   it('de leerling heeft geen werkboek: het woord staat alleen in de bronvermelding', () => {

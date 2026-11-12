@@ -318,7 +318,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfbot is net anders.
 
 **Zelf vinden:** kijk naar je stukjes plakband. Laat de arm een paar keer slaan, en upload dan **Servo 9 op 90**. Zitten de twee stukjes niet meer naast elkaar, dan zijn de tanden overgeslagen.
 
-**Oplossing:** duw het grijze tandwiel helemaal naar binnen, tot het naast het oranje tandwiel zit en de tanden over hun hele breedte in elkaar grijpen. Kijk ook of de lange as recht door de toren gaat. Zet daarna de arm weer recht, zoals bij de kaart hieronder.
+**Oplossing:** duw het grijze tandwiel helemaal naar binnen, tot het naast het oranje tandwiel zit en de tanden over hun hele breedte in elkaar grijpen. Kijk ook of de lange as recht door de toren gaat. Zet daarna de arm weer recht, zoals bij de kaart De arm staat scheef.
 
 </Probleem>
 

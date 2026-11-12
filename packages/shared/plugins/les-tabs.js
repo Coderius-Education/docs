@@ -56,10 +56,26 @@ const zetNietsNeer = (node) =>
   node.type === 'toml' ||
   (node.type === 'mdxFlowExpression' && /^\s*\/\*[\s\S]*\*\/\s*$/.test(node.value ?? ''));
 
+/**
+ * Het label van een stap. De stappen in een tabblad hebben al een nummer:
+ * "Stap 2: Kies een pin" heet in de rij "Kies een pin", niet "Stap 2" (het
+ * ingebouwde lampje van robotica had zo "1 Stap 1, 2 Stap 2, 3 Stap 3").
+ *
+ * @param {string} titel
+ */
+function stapLabel(titel) {
+  const na = /^Stap \d+: (.+)$/.exec(titel)?.[1].trim();
+  return na ? na[0].toUpperCase() + na.slice(1) : tabLabel(titel);
+}
+
 const element = (name, id, titel, kinderen) => ({
   type: 'mdxJsxFlowElement',
   name,
-  attributes: [attribuut('id', id), attribuut('titel', titel), attribuut('label', tabLabel(titel))],
+  attributes: [
+    attribuut('id', id),
+    attribuut('titel', titel),
+    attribuut('label', name === 'LesStap' ? stapLabel(titel) : tabLabel(titel)),
+  ],
   children: kinderen,
 });
 
@@ -309,7 +325,11 @@ function voorbeeldenNaastElkaar(kinderen) {
       const rechts = [kop];
       i += 1;
       while (rechts.length < 4 && isUitklapblok(kinderen[i + 1])) rechts.push(kinderen[++i]);
-      uit.push(jsx('LesVoorbeeld', [code, jsx('div', rechts)], [attribuut('toelichting', 'ja')]));
+      // "vraag": het codevak mag hier hoger zijn, want de vraag gaat over het
+      // hele programma (zie de opmaak van LesVoorbeeld).
+      uit.push(
+        jsx('LesVoorbeeld', [code, jsx('div', rechts)], [attribuut('toelichting', 'vraag')]),
+      );
     } else if ((code.type === 'code' || isBlokprogramma(code)) && isVoorspel(kop)) {
       uit.push(jsx('LesVoorbeeld', [code, kop], [attribuut('vraag', 'ja')]));
       i += 1;
@@ -718,9 +738,14 @@ function plaatjesNaastTekst(kinderen) {
     }
     // Commentaar (`{/* stijl-uitzondering: … */}`) zet niets neer en breekt
     // de rij dus niet af.
-    const hoortErbij = (n) =>
-      isTekstblok(n, delen) || zetNietsNeer(n) || (breed && isUitklapblok(n));
+    // Een kort codeblok na de tekst hoort erbij ("In het scherm verschijnt:"
+    // met één regel uitvoer): onder het plaatje stond het los van zijn zin.
     const tekst = [];
+    const hoortErbij = (n) =>
+      isTekstblok(n, delen) ||
+      zetNietsNeer(n) ||
+      (breed && isUitklapblok(n)) ||
+      (n.type === 'code' && regels(n) <= KORT && tekst.some(isAlinea));
     while (i + 1 < kinderen.length && hoortErbij(kinderen[i + 1])) tekst.push(kinderen[++i]);
     if (!tekst.some((n) => !zetNietsNeer(n))) uit.push(node, ...tekst);
     else {
@@ -981,6 +1006,8 @@ function deelMetStappen(kinderen, naam) {
   return [...kinderen.filter(isEsm), ...rest];
 }
 
+const HIDDEN = { type: 'mdxJsxAttribute', name: 'hidden', value: null };
+
 /** De remark-stap. */
 function remarkLesTabs() {
   return (tree, file) => {
@@ -996,6 +1023,10 @@ function remarkLesTabs() {
     }
     const nieuw = groepeer(tree.children);
     if (nieuw) tree.children = nieuw;
+    // Geen tabbladen (één sectie, of een pagina met alleen een deel): een
+    // marker, zodat de pagina dezelfde kop en breedte krijgt als de lessen
+    // eromheen (zie de opmaak van LesTabs).
+    else tree.children.push(jsx('div', [], [attribuut('data-les-zonder-tabs', ''), HIDDEN]));
   };
 }
 

@@ -6,6 +6,8 @@ De namen op de afbeelding (zoals `D2`, `A0`, `3.3V`, `GND`) gebruik je later ste
 
 In de volgende stappen verbind je het bord met je computer en zet je MicroPython erop.
 
+### Controlevraag
+
 <details>
 <summary>Controlevraag</summary>
 

@@ -24,3 +24,12 @@
   color: var(--ifm-color-primary);
   text-decoration: none;
 }
+
+/* In een les-tabblad schuift een lang programma in zijn eigen vak (LesTabs,
+   CodeUitleg). Met de link eronder is dat vak een regel lager, anders stond
+   de knop Volgende vier pixels buiten beeld (Lijnvolgen, 1280×720). Een
+   variabele, geen eigen max-height: die won ook van het lagere vak van
+   CodeUitleg, en dan waren drie stappen van de Lego-auto weer te lang. */
+.metLink {
+  --les-codevak-af: 1.5rem;
+}

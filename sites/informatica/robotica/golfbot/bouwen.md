@@ -8,7 +8,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 Je sensor ziet de bal en je servo slaat. Nu komt de Golfbot van Lego eromheen. Je bouwt eerst de toren, met de servo erin. De arm komt later, als ook de houten baan klaar is.
 
 :::tip
-Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](site:robotica/golfbot/intro). Je kunt het draaien en zoomen. Het model komt uit een iets andere versie: sommige kleuren en pinnen wijken af. De plaatjes hieronder kloppen met je doosje.
+Twijfel je hoe een onderdeel eruitziet of waar het komt? Bekijk het [3D-model op de intropagina](site:robotica/golfbot/intro). Je kunt het draaien en zoomen. Het model komt uit een iets andere versie: sommige kleuren en pinnen wijken af. De plaatjes bij de bouwstappen kloppen met je doosje.
 :::
 
 ## Onderdelenlijst

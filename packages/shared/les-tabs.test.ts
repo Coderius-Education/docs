@@ -273,6 +273,31 @@ describe('groepeer', () => {
       expect(ophalen.children[0].data.id).toBe('een-item-ophalen');
     });
 
+    it('een stap die "Stap 2: …" heet, heeft het stuk na de dubbele punt als label', () => {
+      // De stappen in een tabblad hebben al een nummer. Het ingebouwde lampje
+      // van robotica had "1 Stap 1, 2 Stap 2, 3 Stap 3" in de rij.
+      const uit = groepeer([
+        titel,
+        kop(2, 'Lampje aanzetten'),
+        alinea('a'),
+        alinea('b'),
+        kop(3, 'Stap 1: haal het gereedschap op'),
+        alinea('c'),
+        kop(3, 'Stap 2: Kies een pin'),
+        alinea('d'),
+        kop(2, 'Opdracht 1: Twee kleuren'),
+      ]);
+      const [aanzetten] = uit[1].children;
+      expect(stappenVan(aanzetten).map((st) => st.label)).toEqual([
+        'De basis',
+        'Haal het gereedschap op',
+        'Kies een pin',
+      ]);
+      // Een tabblad houdt "Stap 1": de rij tabbladen heeft geen nummers.
+      const tabbladen = groepeer([titel, kop(2, 'Stap 1: De loop'), kop(2, 'Test het')]);
+      expect(tabs(tabbladen).map((t) => t.label)).toEqual(['Stap 1', 'Test het']);
+    });
+
     it('uitleg die samen meer dan acht stappen heeft, blijft losse tabbladen', () => {
       // Het ingebouwde lampje van robotica: aanzetten, knipperen en een kleur
       // kiezen, elk met drie of vier stappen. Samen was dat één tabblad Uitleg
@@ -808,7 +833,10 @@ describe('groepeer', () => {
       const [tip, oplossing] = [blok(), blok()];
       const [naast, na] = inhoud(code, vraag, tip, oplossing, alinea('Daarna.'));
       expect(naast.name).toBe('LesVoorbeeld');
-      expect(naast.attributes?.map((a) => a.name)).toEqual(['toelichting']);
+      // "vraag": het codevak is hier zo hoog als het scherm toelaat, want de
+      // vraag gaat over het hele programma (in 5.7.b viel print("Klaar!")
+      // onder de rand van het vak).
+      expect(naast.attributes?.map((a) => [a.name, a.value])).toEqual([['toelichting', 'vraag']]);
       expect(naast.children?.[0]).toBe(code);
       expect(naast.children?.[1].children).toEqual([vraag, tip, oplossing]);
       expect(na.type).toBe('paragraph');
@@ -871,6 +899,29 @@ describe('groepeer', () => {
         'paragraph',
         'LesVoorbeeld',
       ]);
+    });
+
+    it('een kort codeblok na de tekst staat mee naast het plaatje', () => {
+      // Easybloqs bij de Golfbot: het knopje RST, "In het scherm verschijnt:"
+      // en één regel uitvoer. Onder het plaatje was dat scherm 34 pixels te
+      // lang, en stond de uitvoer los van zijn zin.
+      const plaatje: Knoop = {
+        type: 'paragraph',
+        children: [{ type: 'image' }],
+      };
+      const kort: Knoop = { type: 'code', value: 'Hallo, ik ben de Golfbot' };
+      const [naast, na] = inhoud(plaatje, alinea('In het scherm verschijnt:'), kort, alinea('x'));
+      expect(naast.attributes?.map((a) => a.name)).toEqual(['beeld']);
+      expect(naast.children?.[1].children?.map((n) => n.type)).toEqual([
+        'paragraph',
+        'code',
+        'paragraph',
+      ]);
+      expect(na).toBeUndefined();
+      // Een programma hoort er niet bij, en code direct onder een plaatje ook niet.
+      const lang: Knoop = { type: 'code', value: 'a\nb\nc\nd\ne\nf\ng' };
+      expect(inhoud(plaatje, alinea('Het programma:'), lang)[1].type).toBe('code');
+      expect(inhoud(plaatje, kort).map((n) => n.type)).toEqual(['paragraph', 'code']);
     });
 
     it('drie of meer plaatjes met een onderschrift achter elkaar zijn een reeks', () => {
@@ -1508,6 +1559,25 @@ describe('remarkLesTabs', () => {
     expect(js).not.toMatch(/LesStappen|LesTabs\b/);
   });
 
+  it('een les zonder tabbladen krijgt een marker, en daarmee dezelfde kop en breedte', async () => {
+    // De korte pagina's van de Lego-auto (alleen een deel, of één sectie)
+    // hielden het kruimelpad, de grote titel en de smalle kolom: de pagina
+    // versprong van les tot les, en twee waren daardoor te lang.
+    const js = await bouw('# Les\n\nAlleen een alinea.\n');
+    expect(js).toMatch(/"data-les-zonder-tabs": ""/);
+    expect(js).not.toMatch(/LesTabs\b/);
+    // Een les met tabbladen heeft hem niet, en een pagina die zich afmeldt ook niet.
+    expect(await bouw('# Les\n\n## Een\n\na\n\n## Twee\n\nb\n')).not.toMatch(/zonder-tabs/);
+    const css = readFileSync(
+      fileURLToPath(new URL('./components/LesTabs/styles.module.css', import.meta.url)),
+      'utf8',
+    );
+    expect(css).not.toMatch(/html:has\(\[data-les-tabs\]\)/);
+    expect(css).toMatch(
+      /html:has\(\[data-les-tabs\], \[data-les-zonder-tabs\]\) \.theme-doc-breadcrumbs/,
+    );
+  });
+
   it('telt een ## in een uitklapblok niet als sectie', async () => {
     const js = await bouw(
       '# Les\n\n## Theorie\n\n<details>\n\n## Verstopt\n\n</details>\n\n## Make\n\nx\n',
@@ -1557,8 +1627,10 @@ describe('de opmaak van de tabbladen', () => {
   });
 
   it('haalt de inhoudsopgave weg en geeft de les die breedte', () => {
-    expect(css).toMatch(/html:has\(\[data-les-tabs\]\) \.col--3:has\(> \.theme-doc-toc-desktop\)/);
-    expect(css).toMatch(/html:has\(\[data-les-tabs\]\) \.theme-doc-toc-mobile/);
+    expect(css).toMatch(
+      /html:has\(\[data-les-tabs\][^)]*\) \.col--3:has\(> \.theme-doc-toc-desktop\)/,
+    );
+    expect(css).toMatch(/html:has\(\[data-les-tabs\][^)]*\) \.theme-doc-toc-mobile/);
     // Docusaurus zet de kolom op 75% met !important in een cascade layer.
     // Een losse regel verliest daarvan, hoe specifiek ook: de les bleef op
     // driekwart staan, met een leeg vlak rechts. Alleen een regel in een
@@ -1637,7 +1709,7 @@ describe('de opmaak van de tabbladen', () => {
       css.indexOf('@media print'),
     );
     expect(breed).toMatch(
-      /html:has\(\[data-les-tabs\]\) \.theme-doc-breadcrumbs\)?\s*\{\s*display:\s*none/,
+      /html:has\(\[data-les-tabs\][^)]*\) \.theme-doc-breadcrumbs\)?\s*\{\s*display:\s*none/,
     );
     expect(breed).toMatch(/\.theme-doc-markdown > header > h1\)?\s*\{[^}]*--ifm-h1-font-size/);
     const buiten = css.slice(0, css.indexOf('@media'));

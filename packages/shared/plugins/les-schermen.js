@@ -18,12 +18,24 @@ function tekstVan(node) {
 
 const eigenschap = (node, naam) => node.attributes?.find((a) => a.name === naam)?.value;
 
+/** Wat een plaatje neerzet zonder alinea: `<img>`, `<figure>`, een ingesloten pdf of video. */
+const PLAATJE = ['img', 'figure', 'iframe'];
+
+const isPlaatje = (node) => node.type === 'image' || node.name === 'img';
+
+/** Een alinea met alleen plaatjes: die ziet de leerling, het is geen zin. */
+const alleenPlaatjes = (node) => {
+  const inhoud = (node.children ?? []).filter((k) => !(k.type === 'text' && !k.value.trim()));
+  return inhoud.length > 0 && inhoud.every(isPlaatje);
+};
+
 /**
  * Wat er in een scherm staat, in volgorde. Een blok heeft een soort:
  *  - tekst    een alinea
  *  - code     een codeblok (de code staat in `tekst`)
  *  - veld     een oefenveld
  *  - tabel, lijst
+ *  - plaatje  een plaatje, een reeks plaatjes of een ingesloten pdf of video
  *  - antwoord het begin van een uitklapblok: wat erna komt, ziet de leerling
  *             pas als hij het opent
  *  - vraag    het begin van een voorspelvraag; de keuzes en de uitleg erin
@@ -34,7 +46,9 @@ const eigenschap = (node, naam) => node.attributes?.find((a) => a.name === naam)
  */
 function blokken(nodes, velden, uit = []) {
   for (const n of nodes) {
-    if (n.type === 'paragraph') uit.push({ soort: 'tekst', tekst: tekstVan(n) });
+    if (n.type === 'paragraph' && alleenPlaatjes(n)) uit.push({ soort: 'plaatje', tekst: '' });
+    else if (PLAATJE.includes(n.name)) uit.push({ soort: 'plaatje', tekst: '' });
+    else if (n.type === 'paragraph') uit.push({ soort: 'tekst', tekst: tekstVan(n) });
     else if (n.type === 'code') uit.push({ soort: 'code', tekst: n.value ?? '' });
     else if (n.type === 'table') uit.push({ soort: 'tabel', tekst: tekstVan(n) });
     else if (n.type === 'list') uit.push({ soort: 'lijst', tekst: tekstVan(n) });
@@ -57,7 +71,7 @@ function blokken(nodes, velden, uit = []) {
  * @param {string} bron de inhoud van het bestand
  * @param {(bron: string) => {children: object[]}} parse de MDX-parser (plugins/werkvormen.js, mdxParser)
  * @param {{ velden?: string[] }} [opties]
- * @returns {{ tab: string, naam: string, blokken: { soort: string, tekst: string }[] }[]}
+ * @returns {{ tab: string, opTab: string, naam: string, blokken: { soort: string, tekst: string }[] }[]}
  */
 function schermenVan(bron, parse, { velden = ['CodeEditor'] } = {}) {
   const voorwerk = /^---\r?\n(?:([\s\S]*?)\r?\n)?---\r?\n/.exec(bron);
@@ -72,10 +86,14 @@ function schermenVan(bron, parse, { velden = ['CodeEditor'] } = {}) {
   geefId(tree);
   const tabs = (groepeer(tree.children) ?? []).find((k) => k.name === 'LesTabs');
   return (tabs?.children ?? []).flatMap((tab) => {
-    const label = eigenschap(tab, 'label') ?? '';
+    // Een vast id achter de kop (`## Lussen \{#lussen}`) haalt de build weg.
+    const zonderId = (tekst) => (tekst ?? '').replace(/\s*\\?\{#[\w-]+\}\s*$/, '');
+    const label = zonderId(eigenschap(tab, 'label'));
+    // Wat er op het tabblad staat: in een lange rij opdrachten alleen het nummer.
+    const opTab = eigenschap(tab, 'kort') ?? label;
     const stappen = tab.children?.find((k) => k.name === 'LesStappen');
     if (!stappen)
-      return [{ tab: label, naam: label, blokken: blokken(tab.children ?? [], velden) }];
+      return [{ tab: label, opTab, naam: label, blokken: blokken(tab.children ?? [], velden) }];
     // Wat in de rij stappen geen stap is (het leerdoel), staat bij de eerste.
     const boven = blokken(
       (stappen.children ?? []).filter((k) => k.name !== 'LesStap'),
@@ -85,7 +103,8 @@ function schermenVan(bron, parse, { velden = ['CodeEditor'] } = {}) {
       .filter((k) => k.name === 'LesStap')
       .map((stap, i) => ({
         tab: label,
-        naam: `${label} › ${eigenschap(stap, 'label')}`,
+        opTab,
+        naam: `${label} › ${zonderId(eigenschap(stap, 'label'))}`,
         blokken: [...(i === 0 ? boven : []), ...blokken(stap.children ?? [], velden)],
       }));
   });

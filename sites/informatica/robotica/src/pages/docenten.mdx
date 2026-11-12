@@ -3,61 +3,29 @@ title: Docentenhandleiding
 hide_table_of_contents: false
 ---
 
-import { SITES_BY_ID } from '@coderius/shared/sites';
-
 # Docentenhandleiding
 
-Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: wat de site is, welke randvoorwaarden er zijn, en hoe je de lessen indeelt.
+Een cursus robotica: je leerlingen bouwen een robot en sturen zijn sensoren en motoren aan, in MicroPython op een Arduino Nano RP2040 Connect of met blokken op de Golfbot. Hoe je ermee lesgeeft, bepaal je zelf. Deze pagina laat zien op welk onderzoek de opbouw van de lessen steunt, en noemt daarna kort wat je vooraf wilt weten.
 
-## Wat is dit?
+## Waar de lessen op steunen
 
-Een doe-cursus **robotica**: je leerlingen sturen zelf sensoren en actuatoren aan met een **Arduino Nano RP2040 Connect** en MicroPython. Doelgroep: leerlingen die al wat Python kennen en met echte hardware aan de slag willen.
+Een les heeft vaste onderdelen. In de les zijn het de tabbladen, elk met een eigen icoon. Hieronder staat bij elk onderdeel de literatuur waarop het steunt; een link opent de uitleg bij [vakdidactiek](site:didactiek/).
 
-Elke tutorial bouwt één onderdeel op — een lampje, een sensor, een motor — met de exacte aansluitingen en een minimale werkende schets vóór de uitbreidingen.
+<Werkvormen />
 
-:::note[Voorkennis]
-Handig als je leerlingen de basis van <a href={SITES_BY_ID.python.url}>Python</a> al kennen (variabelen, loops, functies).
-:::
+Een les van de Lego-auto bouwt één script in kleine stappen op, en na elke stap test de leerling op de robot. Een voorspelvraag staat direct bij de code of het blokprogramma waar hij over gaat.
 
-## Technische randvoorwaarden
+## Wat je vooraf wilt weten
 
-| Wat | Antwoord |
-|---|---|
-| Hardware | Arduino Nano RP2040 Connect + USB-kabel; sensoren/actuatoren per les |
-| Software | Een MicroPython-editor (bijv. Thonny) of de webeditor |
-| Operating system | Windows, macOS of Linux |
-| Account | Niet nodig |
-| Internet | Vereist voor de site; de robot zelf werkt offline |
+- **Je hebt hardware nodig.** Per onderdeel staat onder Materiaal wat er op tafel ligt. Voor MicroPython is er de [Editor](site:robotica/editor) in Chrome of Edge, zonder installatie; [Installatie](site:robotica/docs/onderdelen/installatie) zegt wat er op het bord en de laptop moet staan.
+- **De code staat op het bord, niet op de site.** Wat een leerling in de Editor typt, blijft in de browser van dat apparaat; `main.py` op het bord is wat de robot uitvoert.
+- **Er zijn vier ingangen.** De [Lego-auto](site:robotica/lego_auto/frame) en de [Golfbot](site:robotica/golfbot/intro) zijn leerlijnen in volgorde. [Onderdelen](site:robotica/docs/onderdelen) is naslag per sensor en actuator, en [RoboCup Junior](site:robotica/docs/robocup/start) bouwt daarop verder.
 
-## Didactische aanpak
+## Beoordelen
 
-Elke tutorial werkt van **voordoen naar zelf doen**: je leest eerst wat een onderdeel doet en hoe je het aansluit, draait dan een minimale schets, en breidt die daarna uit in opdrachten. Na de uitleg staat vaak een korte controlevraag in een `<details>`-blok, zodat je leerling zelf toetst of het is begrepen.
+- [Leerdoelen](site:robotica/leerdoelen): per niveau de concepten waarop je beoordeelt, met de les erbij, en hoe je er een cijfer van maakt.
+- [Robot checken](site:robotica/robot-checken): je leerling levert zijn `main.py` en foto's van de robot in. Jij opent dezelfde pagina met `-docent` erachter; het wachtwoord is `coderius-docent`.
 
-Laat je leerlingen eerst zelf voorspellen wat een schets doet voordat ze hem uploaden — dat scheelt veel "waarom werkt dit niet"-momenten.
+## Feedback
 
-## Klassikaal gebruik & differentiatie
-
-- **Plenair starten**: bespreek de aansluiting en de eerste schets samen, daarna werken je leerlingen per tweetal aan de hardware.
-- **Snelle leerlingen** pakken de uitbreidingen of een extra sensor erbij.
-- **Langzamere leerlingen** krijgen de minimale werkende schets eerst werkend voordat ze uitbreiden.
-- **Veiligheid**: laat leerlingen altijd de voeding loskoppelen vóór ze de bedrading veranderen.
-
-## Leerlijn
-
-De **Bibliotheek**-sidebar bevat de losse tutorials (lampje, sensoren, motoren, scherm…). Daarnaast is er de [Lego-auto](site:robotica/lego_auto/frame)-leerlijn die alles samenbrengt in één rijdende robot. Snel iets opzoeken kan in de [Cheatsheet](site:robotica/cheatsheet); code uploaden gaat via de [Editor](site:robotica/editor).
-
-Voor het beoordelen is er [Robot checken](site:robotica/robot-checken). Je leerling levert daar zijn `main.py` in plus foto's van de gebouwde robot; jij opent dezelfde pagina met `-docent` erachter en het wachtwoord `coderius-docent`. Daar staat de volledige checklist, met bij Leerroute een keuze tussen niveau 1 (start), niveau 3 en niveau 4 (verdieping). Op niveau 3 en 4 tellen een paar Python-concepten niet mee; welke, staat op [Leerdoelen](site:robotica/leerdoelen/vergelijken). Wat niet in code te zien is — het frame, de batterijen, of hij de lijn echt volgt — vink je zelf aan naast de foto's. Alles komt samen in één PDF, en de bestanden verlaten de browser van je leerling nooit.
-
-Voor een cijfer is [Leerdoelen](site:robotica/leerdoelen) het overzicht van de concepten waarop je beoordeelt, met een pagina per niveau en een vergelijking van de drie. Onder elk concept staat de les waarin het aan bod komt, en voor Python ook een les van de python-cursus. Onderaan staat [Beoordelen met Bloom](site:robotica/leerdoelen#bloom), met de achtergrond bij vakdidactiek in [Denkvaardigheden volgens Bloom](site:didactiek/bronnen/taxonomie-van-bloom). Kies in de nakijker onder Cijfer de denkvaardigheid die je zag; de moeilijkheid stelt hij voor, en een klik legt hem vast. Het cijfer en de zin erbij komen in de PDF.
-
-| Onderwerp | Leerdoel |
-|---|---|
-| Ingebouwd lampje | Een eerste pin aansturen (digital out) |
-| Sensoren (IR, afstand, TOF) | Waarden uitlezen (analog/digital in) |
-| Actuatoren (motor, servo, buzzer) | Beweging en geluid aansturen |
-| Scherm & debuggen | Tussenwaarden zichtbaar maken |
-| Lego-auto | Sensoren en motoren combineren tot één robot |
-
-## Feedback & bijdragen
-
-Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs). Alle bijdragen — van een typo tot een nieuwe tutorial — zijn welkom.
+Een fout gevonden of een idee? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs).

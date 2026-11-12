@@ -63,7 +63,7 @@ Pauzeert een halve seconde. Daarvoor importeer je `sleep` uit de module `time` �
 
 Klik op **Run op board**. Het lampje gaat aan, een halve seconde later uit, weer aan — en dat blijft zo tot je op **Stop** klikt of de stekker eruit trekt. Eén volledige knipper duurt één seconde.
 
-## Voorspel: wat als je de pauzes weghaalt?
+### Voorspel: wat als je de pauzes weghaalt?
 
 <details>
 <summary>Antwoord</summary>
@@ -108,7 +108,7 @@ while True:
 
 **Oorzaak:** Eén van de twee `sleep`-regels ontbreekt, of `lampje.off()` staat buiten de loop.
 
-**Oplossing:** Vergelijk je script letterlijk met "Je script tot nu toe" hierboven. **Zelf vinden:** zet `print("rondje")` in de loop. Zie je in de Shell wél regels voorbijkomen maar knippert er niets, dan draait de loop en zit de fout in de aan/uit-regels; zie je niets, dan draait de loop zelf niet.
+**Oplossing:** Vergelijk je script letterlijk met Je script tot nu toe. **Zelf vinden:** zet `print("rondje")` in de loop. Zie je in de Shell wél regels voorbijkomen maar knippert er niets, dan draait de loop en zit de fout in de aan/uit-regels; zie je niets, dan draait de loop zelf niet.
 
 </details>
 

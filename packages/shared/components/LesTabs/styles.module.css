@@ -288,7 +288,9 @@
    voorbeelden in het hoofdstuk Klassen. Niet in een uitklapblok: wie een
    oplossing opent, leest hem in zijn geheel. */
 .paneel :global(.theme-code-block):not(details *) pre {
-  max-height: 53vh;
+  /* Een site met iets onder het codeblok (robotica: de link Open in de
+     editor) zet --les-codevak-af op de hoogte daarvan. */
+  max-height: calc(53vh - var(--les-codevak-af, 0px));
   overflow-y: auto;
   /* Een schaduw aan de rand waar nog code buiten beeld staat: zonder was er
      in 15k niets aan te zien dat het nieuwe deel van het programma onder de
@@ -367,6 +369,15 @@
   /* Code met de lijst die hem uitlegt: de lijst heeft de helft nodig. */
   .metToelichting {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  /* Code met een vraag ernaast (Code beter begrijpen, robotica): de vraag
+     gaat over het hele programma, en er staat niets boven. Het vak is dan zo
+     hoog als het scherm toelaat: bij 53vh viel de laatste regel van een
+     programma van zeventien regels, print("Klaar!"), onder de rand, en daar
+     ging de vraag over. */
+  .paneel .metCodeVraag :global(.theme-code-block):not(details *) pre {
+    max-height: calc(100vh - 300px - var(--les-codevak-af, 0px));
   }
 
   /* Een onderdeel om mee te oefenen (de sensorsimulator) met zijn vragen. */
@@ -463,9 +474,13 @@
 }
 
 /* De inhoudsopgave rechts vervalt op een pagina met tabbladen, en de les
-   krijgt die breedte erbij. Docusaurus zet de kolom op 75% met !important. */
-:global(html:has([data-les-tabs]) .col--3:has(> .theme-doc-toc-desktop)),
-:global(html:has([data-les-tabs]) .theme-doc-toc-mobile) {
+   krijgt die breedte erbij. Docusaurus zet de kolom op 75% met !important.
+   Een les zonder tabbladen in dezelfde cursus (één sectie, of alleen een
+   deel) heeft de marker data-les-zonder-tabs van de remark-stap en krijgt
+   dezelfde kop en breedte: anders versprong de pagina van les tot les, en
+   was zo'n korte les door het kruimelpad en de grote titel te lang. */
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .col--3:has(> .theme-doc-toc-desktop)),
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .theme-doc-toc-mobile) {
   display: none;
 }
 
@@ -475,7 +490,7 @@
    in de eerste layer, die van Infima. Of de kolom breed is, meet alleen een
    browser (scripts/meet-les-tabs.mjs meldt de breedte). */
 @layer docusaurus.infima {
-  :global(html:has([data-les-tabs]) [class*="docItemCol"]) {
+  :global(html:has([data-les-tabs], [data-les-zonder-tabs]) [class*="docItemCol"]) {
     max-width: 100% !important;
   }
 }
@@ -485,11 +500,11 @@
    vervalt, en de titel is zo groot als een kop, niet als een omslag. Op een
    telefoon is de lessenlijst dicht en blijft het kruimelpad staan. */
 @media (min-width: 997px) {
-  :global(html:has([data-les-tabs]) .theme-doc-breadcrumbs) {
+  :global(html:has([data-les-tabs], [data-les-zonder-tabs]) .theme-doc-breadcrumbs) {
     display: none;
   }
 
-  :global(html:has([data-les-tabs]) .theme-doc-markdown > header > h1) {
+  :global(html:has([data-les-tabs], [data-les-zonder-tabs]) .theme-doc-markdown > header > h1) {
     --ifm-h1-font-size: 1.75rem;
     margin-bottom: 0.25rem;
   }

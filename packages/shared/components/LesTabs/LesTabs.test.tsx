@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import LesTabs, {
   LesDoel,
   LesLeerdoel,
+  LesReeks,
   LesStap,
   LesStappen,
   LesTab,
@@ -460,6 +461,91 @@ describe('LesVoorbeeld', () => {
     const [gewoon, metVraag] = Array.from(container.querySelectorAll('[data-les-voorbeeld]'));
     expect(metVraag.className).not.toBe(gewoon.className);
     expect(metVraag.className).toContain(gewoon.className);
+  });
+
+  it('code met een vraag ernaast heeft een hoger codevak dan code met een lijst', () => {
+    const { container } = render(
+      <>
+        <LesVoorbeeld toelichting="ja">
+          <pre>code</pre>
+        </LesVoorbeeld>
+        <LesVoorbeeld toelichting="vraag">
+          <pre>code</pre>
+        </LesVoorbeeld>
+      </>,
+    );
+    const [lijst, vraag] = Array.from(container.querySelectorAll('[data-les-voorbeeld]'));
+    expect(vraag.className).toContain(lijst.className);
+    expect(vraag.className).not.toBe(lijst.className);
+  });
+});
+
+describe('een kort label op het tabblad', () => {
+  it('toont het nummer, en houdt het label voor een schermlezer en de knop Volgende', () => {
+    // Code beter begrijpen (robotica): tien tabbladen stonden op twee regels.
+    // Na de eerste opdracht staat alleen het nummer op het tabblad.
+    render(
+      <LesTabs>
+        <LesTab id="a" titel="Opdracht 5.7.a: een loop" label="Opdracht 5.7.a">
+          <p>a</p>
+        </LesTab>
+        <LesTab id="b" titel="Opdracht 5.7.b: twee loops" label="Opdracht 5.7.b" kort="5.7.b">
+          <p>b</p>
+        </LesTab>
+      </LesTabs>,
+    );
+    const tab = screen.getByRole('tab', { name: 'Opdracht 5.7.b' });
+    expect(tab.textContent).toBe('5.7.b');
+    expect(tab.getAttribute('title')).toBe('Opdracht 5.7.b: twee loops');
+    expect(screen.getByRole('button', { name: /Volgende/ }).textContent).toContain(
+      'Opdracht 5.7.b',
+    );
+  });
+});
+
+describe('LesReeks', () => {
+  const reeks = () =>
+    render(
+      <LesReeks>
+        <figure>stap 1</figure>
+        <figure>stap 2</figure>
+        <figure>stap 3</figure>
+      </LesReeks>,
+    );
+  const zichtbaar = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll('figure'))
+      .filter((f) => !f.closest('[hidden]'))
+      .map((f) => f.textContent);
+
+  it('toont één plaatje tegelijk, met Vorige en Volgende en een teller', () => {
+    // De toren van de Golfbot: tien bouwstappen onder elkaar waren 3375
+    // pixels te lang. Zoals in een bouwboekje staat er één in beeld.
+    const { container } = reeks();
+    expect(zichtbaar(container)).toEqual(['stap 1']);
+    expect(container.textContent).toContain('1 van 3');
+    const vorige = screen.getByRole('button', { name: 'Vorige' }) as HTMLButtonElement;
+    const volgende = screen.getByRole('button', { name: 'Volgende' }) as HTMLButtonElement;
+    expect(vorige.disabled).toBe(true);
+    fireEvent.click(volgende);
+    fireEvent.click(volgende);
+    expect(zichtbaar(container)).toEqual(['stap 3']);
+    expect(container.textContent).toContain('3 van 3');
+    expect(volgende.disabled).toBe(true);
+    fireEvent.click(vorige);
+    expect(zichtbaar(container)).toEqual(['stap 2']);
+  });
+
+  it('zet elk plaatje in de HTML van de build', () => {
+    // cross-links en een zoekmachine lezen de HTML; een plaatje dat pas na een
+    // klik bestaat, zien ze niet.
+    const html = renderToStaticMarkup(
+      <LesReeks>
+        <figure>stap 1</figure>
+        <figure>stap 2</figure>
+        <figure>stap 3</figure>
+      </LesReeks>,
+    );
+    expect(html.match(/<figure>/g)).toHaveLength(3);
   });
 });
 

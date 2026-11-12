@@ -221,8 +221,8 @@ anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
 De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
-(schrijfgids §2 en §15). De web-cursus en de python-cursus zijn omgezet, de
-andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+(schrijfgids §2 en §15). De web-cursus, de python-cursus en robotica zijn
+omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
@@ -235,7 +235,8 @@ Een cursus omzetten is werk per cursus, niet één schakelaar:
    1280×720 past: eerst splitsen (een `###` erbij), dan inkorten.
 4. Elk scherm nalopen op verwijzingen naar iets dat er niet meer staat, en
    daar een test van maken (bij web en python
-   `src/docs-tests/schermen.test.ts`, met `plugins/les-schermen.js`).
+   `src/docs-tests/schermen.test.ts`, bij robotica
+   `src/lego-tests/schermen.test.ts`, met `plugins/les-schermen.js`).
 5. De docentenhandleiding herschrijven (zie Werkvormen hieronder).
 
 Tot een cursus is omgezet, houdt hij de inhoudsopgave rechts en zijn oude
@@ -287,7 +288,11 @@ tabblad Uitleg met alleen "Deze stap gebruikt …").
 **Er gaat iets mis staat na de opdrachten**, ook als de bron hem ervoor
 heeft (`foutenNaOpdrachten`). In de lessen van de python-cursus stond hij
 tussen de uitleg en de eerste opdracht, en bracht de knop Volgende een
-leerling langs fouten die hij nog niet had kunnen maken.
+leerling langs fouten die hij nog niet had kunnen maken. Alleen in die vorm:
+staat er vóór de fouten al een tabblad waarin de leerling iets doet (de
+stappen en Test het van de Lego-auto), dan gaan de fouten over dat werk en
+blijven ze staan. En het tabblad komt direct na de rij opdrachten: een
+afsluiter als Maak het je eigen of Verder bouwen blijft het laatste.
 
 **Wat de stap naast elkaar zet, of weglaat.** Bij het omzetten van de
 python-cursus paste van de 595 schermen 250 op 1280×720. Deze regels in
@@ -338,8 +343,10 @@ staat in zijn `<Uitleg>` of in een volgende stap. De python-cursus bewaakt
 dit in `src/docs-tests/schermen.test.ts`.
 
 **Werkvormen: de schakel naar vakdidactiek.** Elk tabblad heeft een werkvorm:
-wat de leerling daar doet (leerdoel, uitleg, stap voor stap, voorspellen,
-onderzoeken, aanpassen, zelf maken, fouten herkennen). De lijst staat in
+wat de leerling daar doet (leerdoel, uitleg, stap voor stap, bouwen en
+aansluiten, voorspellen, onderzoeken, aanpassen, zelf maken, controleren,
+fouten herkennen; bouwen en controleren kwamen met robotica, voor Materiaal,
+Aansluiten en de Controlevraag). De lijst staat in
 `packages/shared/werkvormen/werkvormen.json`: per werkvorm de koppen waaraan
 je hem herkent, een icoon (paden van een lijntekening, geen emoji) en
 minstens één tip van vakdidactiek. Een kop die bij geen werkvorm hoort, is
@@ -367,7 +374,7 @@ bestaat onder dezelfde naam en met dezelfde paper; hernoem je daar een tip of
 verander je de bron, pas dan `werkvormen.json` mee aan.
 
 **De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
-de standaard (schrijfgids §15); web en python hebben hem zo. Hij is een halve pagina: waar de lessen op steunen
+de standaard (schrijfgids §15); web, python en robotica hebben hem zo. Hij is een halve pagina: waar de lessen op steunen
 (de tabel hierboven, met de literatuur), wat je vooraf wilt weten in drie
 regels, en links naar leerdoelen, eindopdracht en nakijker. Wat een leerling
 of docent nodig heeft om het materiaal te gebruiken, hoort in het materiaal
@@ -423,8 +430,11 @@ hieronder" klopte op de lange pagina en wijst nu naar een ander tabblad: in
 dus alleen naar wat in hetzelfde scherm staat, en zet de code waar een vraag
 over gaat erbij. Wat op een ander scherm staat, noem je bij zijn naam ("uit
 de uitleg", "in de volgende stap"). De cursus bewaakt dat zelf
-(`src/docs-tests/schermen.test.ts` van web en van python; beide lezen een les
-met `packages/shared/plugins/les-schermen.js`, dezelfde stap als de build).
+(`src/docs-tests/schermen.test.ts` van web en van python,
+`src/lego-tests/schermen.test.ts` van robotica; ze lezen een les met
+`packages/shared/plugins/les-schermen.js`, dezelfde stap als de build; een
+plaatje telt daar als iets dat te zien is, `opTab` is wat er op het tabblad
+staat).
 
 Een kop die op zijn tabblad of stap al voluit staat, is verborgen voor het
 oog en blijft voor een schermlezer en een link. Bij die verborgen kop hoort
@@ -445,10 +455,65 @@ op Stap voor stap en meet het na elke klik opnieuw: een scherm dat past tot
 je iets aanklikt, past niet. Wat
 dan nog te lang is, is tekst: een stap of een Er gaat iets mis met meer
 inhoud dan op een scherm past. Dat lost een auteur op, niet de opmaak.
+**Wat robotica erbij bracht** (november 2026; alle 409 schermen passen op 1280×720 en 1366×768). De cursus heeft drie
+docs-plugins (`docs/`, `lego_auto/`, `golfbot/`), delen die twee pagina's
+importeren, blokprogramma's, aansluitschema's en bouwstappen. Daarvoor is dit
+in de gedeelde stap en de onderdelen gekomen, elk met een test:
+
+- **Elke docs-plugin krijgt de stap** (`metLesTabsInPlugins` in de config),
+  niet alleen die van het preset.
+- **Een deel** (een bestand of map met `_` vooraan, bij robotica
+  `docs/onderdelen/_delen/`) krijgt geen tabbladen: het staat in een tabblad
+  van de pagina die het importeert. Het krijgt wel stappen van zijn
+  `###`-koppen (`deelMetStappen`) en dezelfde naast-elkaar-regels.
+- **Een les zonder tabbladen** (één sectie, of alleen een deel) krijgt de
+  marker `data-les-zonder-tabs` en daarmee dezelfde kop en breedte als de
+  lessen eromheen: geen kruimelpad, een kleine titel, geen lege kolom rechts.
+- **Een les die met een inleiding én een leerdoel begint**, heeft die twee
+  samen als eerste tabblad (`opening`).
+- **Een plaatje met de tekst erna staat naast elkaar** (`plaatjesNaastTekst`,
+  `<LesVoorbeeld beeld>`): het aansluitschema met de pinnen, een
+  blokprogramma met zijn uitleg, de sensorsimulator met zijn vragen. Een kort
+  codeblok na die tekst gaat mee.
+- **Drie of meer plaatjes achter elkaar zijn een reeks** (`<LesReeks>`): één
+  tegelijk, met Vorige en Volgende, zoals in een bouwboekje. Elk plaatje staat
+  in de HTML van de build.
+- **Code met wat hem toelicht staat naast elkaar** (`toelichtingNa`): een
+  lijst, een tabel of een waarschuwing, met hooguit een alinea ertussen; een
+  programma van meer dan zestien regels ook met alleen een alinea. Code met
+  alleen een alinea eronder blijft lopende uitleg. Code met `**Vraag:** …` en
+  de tip en oplossing eronder staat naast de vraag; `**Code A:**` en
+  `**Code B:**` staan naast elkaar als bestanden.
+- **Een lange rij opdrachten** (negen tabbladen of meer, vier opdrachten
+  achter elkaar) toont na de eerste alleen het nummer (`kort` op `<LesTab>`,
+  `korteOpdrachten`); het label blijft voor de knop Volgende en een
+  schermlezer.
+- **Uitleg die samen meer dan acht stappen heeft**, blijft losse tabbladen
+  (`voegUitlegSamen`), zolang de rij tabbladen kort is.
+- **Een stap die "Stap 2: Kies een pin" heet**, heeft "Kies een pin" als
+  label (`stapLabel`): de stappen hebben al een nummer. Een tabblad houdt
+  "Stap 2". De eerste stap van een sectie met een dubbele punt in de kop heet
+  naar het stuk erna (`basisLabel`).
+- **`<CodeUitleg>` zet in een tabblad de uitleg naast de code**, en schuift
+  het codevak naar de regel die oplicht.
+- **Iets onder een codeblok** (de link Open in de editor van robotica) zet
+  `--les-codevak-af` op zijn hoogte: het vak van een lang programma is dan
+  zoveel lager. Het codeblok met zijn link is één element, geen fragment:
+  in een `<LesVoorbeeld>` is elk kind een kolom.
+- Een onderdeel van een site past zich zelf aan met `useInLesTab()`: de
+  kaart `<Probleem>` is in een tabblad dicht tot je hem aanklikt, een
+  blokprogramma (`Blokken`) schaalt ook op de hoogte van het scherm.
+
+Het meetscript loopt de hele build af, niet alleen `build/docs`. Een rij
+stappen mag op twee regels staan (in web en python gebeurt dat ook); de rij
+tabbladen niet.
+
 Bekende nadelen: Ctrl+F vindt geen tekst in een tabblad dat niet open staat,
 bij een link naar een kop is heel kort het eerste tabblad te zien, Matomo telt
 een tabblad niet als bezoek, en de begrippen-stap markeert het eerste
-voorkomen op de pagina, ook als dat in een later tabblad staat.
+voorkomen op de pagina, ook als dat in een later tabblad staat. Een plaatje
+in een paneel is hooguit een derde van het scherm hoog en heeft geen
+vergroting: op de pinout van de Nano zijn de namen dan klein.
 
 ## Code in MDX-expressies
 

@@ -318,7 +318,8 @@ export function LesVoorbeeld({
   vraag?: string;
   /** Twee of meer bestanden naast elkaar, elk in een eigen kolom. */
   bestanden?: string;
-  /** Rechts staat geen uitvoer maar de lijst die de code uitlegt. */
+  /** Rechts staat geen uitvoer maar de lijst die de code uitlegt. Met "vraag"
+   *  staat er een vraag over de code, met de tip en de oplossing. */
   toelichting?: string;
   /** Links staat geen code maar een plaatje, rechts de tekst die erbij hoort.
    *  Met "breed" is het een onderdeel om mee te oefenen, met de vragen ernaast. */
@@ -326,7 +327,7 @@ export function LesVoorbeeld({
 }): ReactNode {
   const klasse = bestanden
     ? styles.bestanden
-    : `${styles.voorbeeld}${vraag ? ` ${styles.metVraag}` : ''}${beeld ? ` ${beeld === 'breed' ? styles.metBreedBeeld : styles.metBeeld}` : ''}${toelichting ? ` ${styles.metToelichting}` : ''}`;
+    : `${styles.voorbeeld}${vraag ? ` ${styles.metVraag}` : ''}${beeld ? ` ${beeld === 'breed' ? styles.metBreedBeeld : styles.metBeeld}` : ''}${toelichting ? ` ${styles.metToelichting}` : ''}${toelichting === 'vraag' ? ` ${styles.metCodeVraag}` : ''}`;
   return (
     <div className={klasse} data-les-voorbeeld="">
       {children}

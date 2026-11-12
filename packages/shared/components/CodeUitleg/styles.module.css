@@ -118,7 +118,7 @@
   /* Boven een stap met code staat nog een alinea of twee: het vak is hier
      iets lager dan een los codeblok in een paneel. */
   .inTab > .code :global(.theme-code-block) pre {
-    max-height: 45vh;
+    max-height: calc(45vh - var(--les-codevak-af, 0px));
   }
 
   .inTab > .uitleg {
