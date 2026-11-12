@@ -18,6 +18,26 @@ export const BREED = 997;
 /** Minder dan dit is het verschuiven niet waard. */
 const MINSTE = 8;
 
+/** Lager dan dit wordt een codevak niet: acht regels code. */
+export const KLEINSTE_VAK = 190;
+
+/**
+ * Zoveel pixels mag een codeblok dat helemaal te zien is, inleveren als het
+ * scherm anders niet past: een regel of vier. Daarboven is het aan de auteur
+ * om de stap te splitsen.
+ */
+export const NOODGREEP = 80;
+
+/**
+ * De hoogte van een codevak dat al schuift, als het paneel `tekort` pixels
+ * te lang is voor het scherm. Het vak geeft toe tot het paneel past, maar
+ * niet verder dan KLEINSTE_VAK.
+ */
+export function vakHoogte(hoogte: number, tekort: number): number {
+  if (tekort <= 0 || hoogte <= KLEINSTE_VAK) return hoogte;
+  return Math.max(KLEINSTE_VAK, hoogte - tekort);
+}
+
 export interface Maten {
   /** De hoogte van het scherm (`window.innerHeight`). */
   scherm: number;
@@ -74,11 +94,80 @@ export function verdeelSpeling(wortel: HTMLElement): void {
     ...Array.from(paneel.querySelectorAll<HTMLElement>('[data-les-stap]')),
   ].some((p) => zichtbaar(p) && p.hasAttribute('data-heeft-veld'));
   if (window.innerWidth < BREED || metVeld) return;
-  const vrij = speling({
-    scherm: window.innerHeight,
-    onderkant: paneel.getBoundingClientRect().bottom + window.scrollY,
-  });
-  if (!vrij) return;
+  const onderkant = paneel.getBoundingClientRect().bottom + window.scrollY;
+  const vrij = speling({ scherm: window.innerHeight, onderkant });
+  if (!vrij) {
+    // Het paneel is te lang. Een codevak dat al schuift, geeft toe: de
+    // leerling schuift daar toch al, en de pagina hoeft dan niet ook nog te
+    // schuiven. In fullstack staat een endpoint van dertig regels met zijn
+    // uitleg ernaast en een alinea eronder: veertig pixels te lang.
+    let tekort = Math.ceil(onderkant + MARGE - window.innerHeight);
+    if (tekort <= 0) return;
+    const schuift = (el: HTMLElement) => el.scrollHeight > el.clientHeight + 4;
+    const gezet: HTMLElement[] = [];
+    const zet = (el: HTMLElement, hoogte: number) => {
+      if (hoogte >= el.offsetHeight) return;
+      el.style.maxHeight = `${hoogte}px`;
+      gezet.push(el);
+    };
+    // Code met de uitleg ernaast (CodeUitleg) is één rij: zo hoog als het
+    // hoogste van de twee. De rij krimpt, maar niet tot onder code die nu
+    // helemaal te zien is.
+    const rijen = Array.from(paneel.querySelectorAll<HTMLElement>('[data-code-uitleg]')).filter(
+      zichtbaar,
+    );
+    for (const rij of rijen) {
+      if (tekort <= 0) break;
+      const code = rij.querySelector<HTMLElement>('pre');
+      const delen = [code, rij.querySelector<HTMLElement>(':scope > ol')].filter(
+        (el): el is HTMLElement => el !== null,
+      );
+      if (!delen.some(schuift)) continue;
+      const nu = Math.max(...delen.map((el) => el.offsetHeight));
+      // Code die helemaal te zien is, blijft heel; de uitleg ernaast mag
+      // schuiven (dat doet hij al boven 45vh).
+      const vast = code && !schuift(code) ? code.offsetHeight : 0;
+      const doel = Math.max(vast, vakHoogte(nu, tekort));
+      if (doel >= nu) continue;
+      for (const el of delen) zet(el, doel);
+      tekort -= nu - doel;
+    }
+    const vakken = Array.from(paneel.querySelectorAll<HTMLElement>('pre'))
+      .filter((pre) => zichtbaar(pre) && schuift(pre) && !pre.closest('[data-code-uitleg]'))
+      .sort((a, b) => b.offsetHeight - a.offsetHeight);
+    for (const pre of vakken) {
+      if (tekort <= 0) break;
+      const hoogte = vakHoogte(pre.offsetHeight, tekort);
+      if (hoogte >= pre.offsetHeight) continue;
+      tekort -= pre.offsetHeight - hoogte;
+      zet(pre, hoogte);
+    }
+    // Past het dan nog net niet, dan levert het hoogste codeblok dat nu heel
+    // te zien is een paar regels in: het schuift in zijn eigen vak, zodat de
+    // pagina het niet hoeft. Een foutmelding met elf regels code eronder was
+    // in fullstack veertig pixels te lang voor het scherm.
+    if (tekort > 0 && tekort <= NOODGREEP) {
+      const heel = Array.from(paneel.querySelectorAll<HTMLElement>('pre'))
+        .filter(
+          (pre) =>
+            zichtbaar(pre) &&
+            !gezet.includes(pre) &&
+            !pre.closest('details') &&
+            pre.offsetHeight - tekort >= KLEINSTE_VAK,
+        )
+        .sort((a, b) => b.offsetHeight - a.offsetHeight)[0];
+      if (heel) {
+        const hoogte = heel.offsetHeight - tekort;
+        zet(heel, hoogte);
+        const uitleg = heel
+          .closest('[data-code-uitleg]')
+          ?.querySelector<HTMLElement>(':scope > ol');
+        if (uitleg) zet(uitleg, hoogte);
+      }
+    }
+    if (gezet.length) aangepast.set(wortel, gezet);
+    return;
+  }
 
   // Eerst een codevak dat schuift: daar is nu iets niet te zien.
   const vak = Array.from(paneel.querySelectorAll<HTMLElement>('pre')).find(

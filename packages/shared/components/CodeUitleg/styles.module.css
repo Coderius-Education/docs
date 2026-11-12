@@ -124,6 +124,22 @@
     max-height: calc(45vh - var(--les-codevak-af, 0px));
   }
 
+  /* Een regel die niet in de kolom past, breekt af. In fullstack stond het
+     eind van vijftig functiekoppen (`async def …(naam: str = Form(…), …):`)
+     buiten beeld. Het regelnummer laat zien dat het één regel is; het vervolg
+     springt vier tekens verder in dan de regel (`--inspringing` zet het
+     onderdeel per regel). */
+  .inTab > .code :global(.theme-code-block) pre code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .inTab > .code :global(.token-line) > [class*="codeLineContent"] {
+    display: table-cell;
+    padding-left: calc((var(--inspringing, 0) + 4) * 1ch);
+    text-indent: calc((var(--inspringing, 0) + 4) * -1ch);
+  }
+
   .inTab > .uitleg {
     margin-top: 0;
     max-height: 45vh;

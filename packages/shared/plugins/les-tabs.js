@@ -145,6 +145,72 @@ const stappenlijst = (kinderen) => ({
   children: kinderen,
 });
 
+/** De naam van de stap met de controlevraag van een sectie. */
+const CONTROLEVRAAG = 'Controlevraag';
+
+const isControlevraag = (node) =>
+  node?.type === 'mdxJsxFlowElement' &&
+  node.name === 'Voorspel' &&
+  node.attributes?.some((a) => a.name === 'soort' && a.value === CONTROLEVRAAG);
+
+/** Wat na een controlevraag nog op hetzelfde scherm mag staan: een tip, een
+ *  slotzin, een uitklapblok. Code of een volgende uitleg niet. */
+const hoortBijVraag = (node) =>
+  zetNietsNeer(node) ||
+  isBlok(node) ||
+  node.type === 'paragraph' ||
+  (node.type === 'mdxJsxFlowElement' && /^details$/i.test(node.name ?? ''));
+
+/**
+ * Een controlevraag is een eigen stap. `<Voorspel soort="Controlevraag">`
+ * staat in fullstack aan het eind van een uitleg met code, een test en een
+ * succesmoment, en is zelf driehonderd pixels hoog: van de 253 schermen die
+ * daar niet op 1280×720 pasten, pasten er 67 zonder de vraag. Op een eigen
+ * scherm beantwoordt de leerling hem ook uit zijn hoofd, niet met de uitleg
+ * erboven.
+ *
+ * De stap krijgt een kop `### Controlevraag` (verborgen, want het label zegt
+ * het al). Alleen als er vóór de vraag iets staat dat een scherm vult (meer
+ * dan alinea's, of drie alinea's), en erna alleen nog wat bij de vraag hoort
+ * (hoortBijVraag): volgt er nog uitleg, dan kiest de auteur zelf waar de stap
+ * ophoudt.
+ *
+ * @param {object[]} kinderen de kinderen van één sectie
+ * @param {string} sectieId
+ */
+function vragenAlsStap(kinderen, sectieId) {
+  const uit = [];
+  let stuk = [];
+  let nummer = 0;
+  const sluit = () => {
+    const i = stuk.findIndex(isControlevraag);
+    const ervoor = stuk
+      .slice(0, i)
+      .filter((node) => node.type !== 'heading' && !zetNietsNeer(node));
+    const vult =
+      ervoor.some((node) => node.type !== 'paragraph') ||
+      ervoor.filter((node) => node.type === 'paragraph').length >= 3;
+    if (i > 0 && vult && stuk.slice(i + 1).every(hoortBijVraag)) {
+      nummer += 1;
+      const id = `${sectieId}-controlevraag${nummer > 1 ? `-${nummer}` : ''}`;
+      stuk.splice(i, 0, {
+        type: 'heading',
+        depth: 3,
+        children: [{ type: 'text', value: CONTROLEVRAAG }],
+        data: { id, hProperties: { id }, lesTabsVraag: true },
+      });
+    }
+    uit.push(...stuk);
+    stuk = [];
+  };
+  for (const node of kinderen) {
+    if (isH3(node)) sluit();
+    stuk.push(node);
+  }
+  sluit();
+  return nummer ? uit : kinderen;
+}
+
 /**
  * Een sectie met `###`-koppen is zelf nog te lang voor één scherm (Theorie in
  * de web-cursus: tot vijf koppen en duizend woorden). Elke `###` wordt daarom
@@ -168,6 +234,16 @@ const stappenlijst = (kinderen) => ({
  * @param {object[]} [vooraf]
  */
 function metStappen(kinderen, sectieId, vooraf = []) {
+  const metVragen = vragenAlsStap(kinderen, sectieId);
+  if (metVragen !== kinderen) {
+    const uit = stappenVan(metVragen, sectieId, vooraf);
+    // Geen stappen geworden (een alinea met een vraag): dan ook geen kop.
+    if (uit.some(isStappen)) return uit;
+  }
+  return stappenVan(kinderen, sectieId, vooraf);
+}
+
+function stappenVan(kinderen, sectieId, vooraf = []) {
   const eerste = kinderen.findIndex(isH3);
   const zonderStappen = () => (vooraf.length ? [...vooraf, ...kinderen] : kinderen);
   if (eerste < 0) return zonderStappen();
@@ -347,6 +423,16 @@ const isVraagAlinea = (node) =>
   node.children[0]?.type === 'strong' &&
   /^Vraag\b/.test(tekstVan(node.children[0]).trim());
 
+/** Het label boven een codeblok dat zegt welk bestand het is (fullstack: `<Bestand pad="main.py" />`). */
+const isBestandLabel = (node) => node?.type === 'mdxJsxFlowElement' && node.name === 'Bestand';
+
+/** Of er voor het codeblok op plek `i` zo'n label staat (met hooguit commentaar ertussen). */
+function heeftLabel(nodes, i) {
+  let j = i - 1;
+  while (j >= 0 && zetNietsNeer(nodes[j])) j -= 1;
+  return j >= 0 && isBestandLabel(nodes[j]);
+}
+
 /**
  * Een codeblok dat direct door "Uitvoer:" en een uitvoerblok wordt gevolgd,
  * komt in een <LesVoorbeeld>: de code links, de uitvoer rechts (in een eigen
@@ -399,7 +485,25 @@ function voorbeeldenNaastElkaar(kinderen) {
         jsx('LesVoorbeeld', [code, jsx('div', rechts)], [attribuut('toelichting', 'vraag')]),
       );
     } else if ((code.type === 'code' || isBlokprogramma(code)) && isVoorspel(kop)) {
-      uit.push(jsx('LesVoorbeeld', [code, kop], [attribuut('vraag', 'ja')]));
+      // De vraag gaat over alle bestanden die er direct voor staan, niet
+      // alleen over het laatste: een formulier en zijn endpoint horen samen
+      // links. Met het eerste bestand boven de rij was zo'n opdracht in
+      // fullstack tot 150 pixels te lang.
+      const links = [code];
+      while (uit.length) {
+        const vorige = uit.at(-1);
+        const isLabel = zetNietsNeer(vorige) || isBestandLabel(vorige);
+        const isBestand = vorige.type === 'code' && heeftLabel(uit, uit.length - 1);
+        if (!isLabel && !isBestand) break;
+        links.unshift(uit.pop());
+      }
+      uit.push(
+        jsx(
+          'LesVoorbeeld',
+          [links.length > 1 ? jsx('div', links) : code, kop],
+          [attribuut('vraag', 'ja')],
+        ),
+      );
       i += 1;
     } else uit.push(code);
   }
@@ -408,6 +512,9 @@ function voorbeeldenNaastElkaar(kinderen) {
 
 /** Zoveel tekens passen er op 1280 pixels in een codeblok van de halve breedte. */
 const HALVE_KOLOM = 46;
+
+/** En zoveel als de code iets kleiner staat (`bestanden="smal"`). */
+const SMALLE_HELFT = 58;
 
 /** Een alinea met alleen een vette bestandsnaam (**`rekenen.py`**) of **Code A:**. */
 const isBestandsnaam = (node) =>
@@ -430,7 +537,8 @@ function bestandenNaastElkaar(kinderen) {
   let i = 0;
   // Een bestand: de naam, een commentaar (`{/* niet-draaien: … */}`), de code.
   const bestandOp = (plek) => {
-    if (!kinderen[plek] || !isBestandsnaam(kinderen[plek])) return null;
+    if (!kinderen[plek] || !(isBestandsnaam(kinderen[plek]) || isBestandLabel(kinderen[plek])))
+      return null;
     let k = plek + 1;
     while (k < kinderen.length && zetNietsNeer(kinderen[k])) k++;
     return kinderen[k]?.type === 'code' ? { tot: k + 1 } : null;
@@ -447,10 +555,6 @@ function bestandenNaastElkaar(kinderen) {
       i += 1;
       continue;
     }
-    if (isVoorspel(kinderen[k])) {
-      groepen.push(kinderen[k]);
-      k += 1;
-    }
     // Twee bestanden naast elkaar hebben elk de helft: 46 tekens op 1280
     // pixels. Met een langere regel staat de code iets kleiner ("smal"), dan
     // passen er 58: de importregel van leaphymicropython was in Code A en
@@ -462,6 +566,21 @@ function bestandenNaastElkaar(kinderen) {
           .flatMap((node) => (node.value ?? '').split('\n').map((regel) => regel.length)),
       ),
     );
+    // Bestanden met een <Bestand>-label (fullstack: twee pagina's die naar
+    // elkaar linken) staan alleen naast elkaar als het er twee zijn en elke
+    // regel past: een endpoint met een regel van zeventig tekens blijft over
+    // de volle breedte. Met een voorspelvraag eronder staan ze samen links
+    // van de vraag (voorbeeldenNaastElkaar).
+    const metLabel = kinderen.slice(i, k).some(isBestandLabel);
+    if (metLabel && (groepen.length !== 2 || breedste > SMALLE_HELFT || isVoorspel(kinderen[k]))) {
+      uit.push(...kinderen.slice(i, k));
+      i = k;
+      continue;
+    }
+    if (isVoorspel(kinderen[k])) {
+      groepen.push(kinderen[k]);
+      k += 1;
+    }
     const smal = groepen.length === 2 && breedste > HALVE_KOLOM;
     uit.push(jsx('LesVoorbeeld', groepen, [attribuut('bestanden', smal ? 'smal' : 'ja')]));
     i = k;
@@ -669,6 +788,15 @@ function alsStappen(tab, uitlegId) {
  * @param {string} id het id van het tabblad Uitleg
  */
 function uitlegMetStappen(uitleg, id) {
+  const metVragen = vragenAlsStap(uitleg, id);
+  if (metVragen !== uitleg) {
+    const uit = uitlegStappen(metVragen, id);
+    if (uit.some(isStappen)) return uit;
+  }
+  return uitlegStappen(uitleg, id);
+}
+
+function uitlegStappen(uitleg, id) {
   const eerste = uitleg.findIndex(isH3);
   if (eerste < 0) return uitleg;
   const stappen = [];
@@ -689,8 +817,39 @@ function uitlegMetStappen(uitleg, id) {
   return [stappenlijst(lesStappen)];
 }
 
+/**
+ * Twee controlevragen in één tabblad (de uitleg van een les met twee secties
+ * die elk met een vraag eindigen) heten Controlevraag en Controlevraag 2: elk
+ * scherm heeft een eigen naam.
+ *
+ * @param {object[]} tabs
+ */
+function nummerVragen(tabs) {
+  for (const tab of tabs) {
+    const vragen = (tab.children.find(isStappen)?.children ?? []).filter(
+      (stap) => isStap(stap) && eigenschap(stap, 'titel') === CONTROLEVRAAG,
+    );
+    vragen.slice(1).forEach((stap, i) => {
+      for (const a of stap.attributes)
+        if (a.name === 'titel' || a.name === 'label') a.value = `${CONTROLEVRAAG} ${i + 2}`;
+    });
+  }
+}
+
 /** Vanaf zoveel tabbladen past de rij op 1280 pixels niet meer op één regel. */
 const VEEL_TABS = 9;
+/**
+ * Of de rij tabbladen op 1280 pixels op één regel past: naast de lessenlijst
+ * is 948 pixels over, en een tabblad kost ongeveer 32 pixels plus 7 per
+ * letter (gemeten in Chromium). Negen tabbladen met korte namen passen wel:
+ * de htmx-recepten van fullstack (Formulier, Verversen, Zoeken, …) hadden
+ * als één tabblad Uitleg zestien stappen op drie regels.
+ *
+ * @param {object[]} tabs
+ */
+const RIJ = 948;
+const rijPast = (tabs) =>
+  tabs.reduce((som, tab) => som + 32 + 7 * (eigenschap(tab, 'label') ?? '').length, 0) <= RIJ;
 /** En meer stappen dan dit passen in een tabblad niet op één regel. */
 const MEESTE_STAPPEN = 8;
 /**
@@ -719,7 +878,9 @@ function voegUitlegSamen(tabs, vormen, uitlegId) {
   // van robotica (aanzetten, knipperen, een kleur) had één tabblad Uitleg
   // met twaalf stappen op twee regels.
   const stappen = delen.reduce((som, d) => som + d.stappen.length, 0);
-  if (stappen > MEESTE_STAPPEN && tabs.length < VEEL_TABS) return { tabs, vormen };
+  if (stappen > MEESTE_STAPPEN && (tabs.length < VEEL_TABS || rijPast(tabs))) {
+    return { tabs, vormen };
+  }
   const bezet = new Set([...tabs.map((tab) => eigenschap(tab, 'id')), ...kopIds(tabs)]);
   const id = uitlegId ?? (bezet.has('uitleg') ? 'les-uitleg' : 'uitleg');
   const samen = element('LesTab', id, UITLEG, [
@@ -1055,6 +1216,7 @@ function groepeer(alles) {
   );
   geordend.tabs.forEach((t, i) => t.attributes.push(attribuut('werkvorm', geordend.vormen[i])));
   korteOpdrachten(geordend.tabs);
+  nummerVragen(geordend.tabs);
   return [
     ...boven,
     { type: 'mdxJsxFlowElement', name: 'LesTabs', attributes: [], children: geordend.tabs },

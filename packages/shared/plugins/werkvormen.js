@@ -15,6 +15,15 @@ const { groepeer } = require('./les-tabs');
 
 const NAAM = 'coderius-werkvormen';
 
+/** De stappen van PRIMM, zoals ze in de kop van een opdracht staan, met hun werkvorm. */
+const PRIMM = {
+  Predict: 'voorspellen',
+  Run: 'onderzoeken',
+  Investigate: 'onderzoeken',
+  Modify: 'aanpassen',
+  Make: 'maken',
+};
+
 /**
  * De MDX-parser van Docusaurus zelf. Hij is geen eigen dependency van dit
  * package; we vinden hem langs de weg waarlangs de build hem ook laadt
@@ -71,13 +80,35 @@ function werkvormenVanLes(bron, parse) {
   // Een voorspelvraag in de uitleg (<Voorspel>, in de python-cursus direct
   // onder de code waar hij over gaat) is voorspellen, ook zonder tabblad
   // Predict.
+  // Een controlevraag (<Voorspel soort="Controlevraag">) is controleren, geen
+  // voorspellen: in fullstack heeft elke les met code er een na de uitleg, en
+  // de handleiding noemde ze Voorspellen.
+  const vragen = (node, uit = []) => {
+    if (node.name === 'Voorspel')
+      uit.push(
+        node.attributes?.some((a) => a.name === 'soort' && a.value === 'Controlevraag')
+          ? 'controle'
+          : 'voorspellen',
+      );
+    for (const kind of node.children ?? []) vragen(kind, uit);
+    return uit;
+  };
+  // Een opdracht die zijn werkvorm in de kop heeft ("Opdracht 3: Investigate -
+  // …", de stappen van het tabblad Opdrachten in fullstack) telt als die
+  // werkvorm: het tabblad zelf is één icoon, de les heeft ze alle vijf.
+  const stappen = (node, uit = []) => {
+    if (node.name === 'LesStap') {
+      const titel = node.attributes?.find((a) => a.name === 'titel')?.value ?? '';
+      const soort = /^Opdracht \d+: (Predict|Run|Investigate|Modify|Make)\b/.exec(titel)?.[1];
+      if (soort) uit.push(PRIMM[soort]);
+    }
+    for (const kind of node.children ?? []) stappen(kind, uit);
+    return uit;
+  };
   return tabs.children.flatMap((tab) => {
     const vorm = tab.attributes.find((a) => a.name === 'werkvorm')?.value ?? null;
-    return [
-      ...(heeft(tab, 'LesLeerdoel') ? ['leerdoel'] : []),
-      vorm,
-      ...(vorm !== 'voorspellen' && heeft(tab, 'Voorspel') ? ['voorspellen'] : []),
-    ];
+    const erbij = [...new Set([...vragen(tab), ...stappen(tab)])].filter((v) => v !== vorm);
+    return [...(heeft(tab, 'LesLeerdoel') ? ['leerdoel'] : []), vorm, ...erbij];
   });
 }
 

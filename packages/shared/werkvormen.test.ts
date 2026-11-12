@@ -239,6 +239,43 @@ describe('de werkvormen van een les (plugins/werkvormen.js)', () => {
     ]);
   });
 
+  it('telt een controlevraag als controleren, en een opdracht naar het woord in zijn kop', async () => {
+    // Fullstack: de uitleg eindigt met <Voorspel soort="Controlevraag">, en
+    // het tabblad Opdrachten heeft per opdracht een stap ("Opdracht 3:
+    // Investigate - …"). De tabel in de docentenhandleiding noemde de
+    // controlevraag Voorspellen, en onderzoeken en zelf maken ontbraken.
+    const parse = await mdxParser();
+    const les = [
+      '# Les',
+      '## Een endpoint',
+      'Uitleg.',
+      '```python\nprint(1)\n```',
+      '<Voorspel soort="Controlevraag" vraag="Wat antwoordt de server?"><Keuze goed>`1`</Keuze></Voorspel>',
+      '## Er gaat iets mis',
+      '### Een fout',
+      'Oorzaak.',
+      '## Opdrachten',
+      '### Opdracht 1: Predict - Wat zie je?',
+      '<Voorspel vraag="Wat zie je?"><Keuze goed>`1`</Keuze></Voorspel>',
+      '### Opdracht 2: Run',
+      'Draai het.',
+      '### Opdracht 3: Investigate - Een ander pad',
+      'Verander het pad.',
+      '### Opdracht 4: Make - Een eigen endpoint',
+      'Maak er een.',
+    ].join('\n\n');
+    const vormen = werkvormenVanLes(les, parse) ?? [];
+    expect(vormen).toContain('controle');
+    expect(vormen).toContain('voorspellen');
+    expect(vormen).toContain('onderzoeken');
+    expect(vormen).toContain('maken');
+    expect(vormen).toContain('fouten');
+    // De controlevraag telt niet ook nog als voorspellen: zonder de opdracht
+    // Predict heeft de les die werkvorm niet.
+    const zonder = les.replace(/### Opdracht 1[\s\S]*?(?=### Opdracht 2)/, '');
+    expect(werkvormenVanLes(zonder, parse)).not.toContain('voorspellen');
+  });
+
   it('leest een info-blok als blok, zoals de build', async () => {
     // Zonder remark-directive is een `:::info` voor de parser een rij
     // alinea's. De build maakt van uitleg met alleen zo'n blok geen tabblad

@@ -200,3 +200,34 @@
     grid-column: 2;
   }
 }
+
+/* In een les-tabblad past een scherm op 1280×720. Een vraag met vier keuzes
+   van twee regels was daar zelf al 440 pixels hoog: in fullstack pasten
+   zeventien opdrachten met alleen een alinea en een vraag daardoor niet. De
+   keuzes staan er dichter op elkaar; de tekst blijft even groot. */
+.inTab {
+  margin-bottom: 1rem;
+  padding: 0.6rem 0.9rem 0.7rem;
+}
+
+.inTab .keuzes {
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.inTab .keuze {
+  padding: 0.3rem 0.6rem;
+  line-height: 1.35;
+}
+
+/* Het label staat in een tabblad vóór de vraag, op dezelfde regel: op een
+   eigen regel kostte het bij elke vraag 27 pixels, en tien opdrachten van
+   fullstack waren precies zoveel te lang. */
+.inTab .label {
+  margin: 0 0.5rem 0 0;
+  vertical-align: 0.1em;
+}
+
+.inTab .vraag {
+  display: inline;
+}

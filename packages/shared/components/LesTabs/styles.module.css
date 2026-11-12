@@ -246,6 +246,23 @@
   margin-bottom: 0.75rem;
 }
 
+/* Een tabel in een paneel heeft lagere rijen: een tabel van tien rijen (waar
+   hoort jouw code, in fullstack) was met de ruime cellen van Infima tachtig
+   pixels te lang. */
+.paneel table {
+  --ifm-table-cell-padding: 0.5rem;
+}
+
+/* Een foutmelding of uitvoer van de terminal breekt af als hij niet past. In
+   fullstack waren 27 meldingen zijwaarts afgesneden (`docker: Error response
+   from daemon: …` van 203 tekens), en van `docker compose ps` stond juist de
+   kolom met `Up` buiten beeld. Alleen een blok zonder taal: code houdt zijn
+   regels. */
+.paneel :global(pre.language-text) code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 /* Niet op Groter of volledig scherm (`data-groot` op het veld): daar vult het
    veld het scherm, en met deze marge bleef er boven en onder een strook van
    de les zichtbaar. */
@@ -399,9 +416,12 @@
    rechts een <div> met het woord Uitvoer, het uitvoerblok en soms een
    alinea toelichting. Met een voorspelvraag staat rechts de vraag. */
 @media (min-width: 997px) {
+  /* De code heeft zestig procent, en tot zeventig als zijn langste regel dat
+     vraagt: bij een script met een regel van zeventig tekens stond het eind
+     naast de uitvoer buiten beeld. */
   .voorbeeld {
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-columns: minmax(60%, max-content) minmax(30%, 1fr);
     align-items: start;
     column-gap: 1rem;
     margin-bottom: var(--ifm-leading);
@@ -449,9 +469,12 @@
   }
 
   /* Code met de voorspelvraag ernaast: de vraag heeft meer breedte nodig dan
-     een uitvoerblok. */
+     een uitvoerblok. De code krijgt de breedte van zijn langste regel, tussen
+     veertig en vierenzestig procent: op een vaste helft was in fullstack bij
+     twaalf voorspelvragen het eind van een regel afgesneden, en dat was vaak
+     de regel waar de vraag over ging. */
   .metVraag {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(40%, max-content) minmax(36%, 1fr);
   }
 
   /* Een plaatje met zijn tekst ernaast (een aansluitschema met de pinnen).
@@ -616,6 +639,14 @@
 .verder {
   margin: 0.5rem 0 0;
   text-align: right;
+}
+
+/* De knop Volgende breekt af. Infima houdt een knop op één regel, en met een
+   lange naam erin ("Volgende: network web declared as external, but could
+   not be found") was de pagina op een telefoon breder dan het scherm. */
+.verder :global(.button) {
+  max-width: 100%;
+  white-space: normal;
 }
 
 /* De inhoudsopgave rechts vervalt op een pagina met tabbladen, en de les

@@ -7,6 +7,7 @@ import {
   useId,
   useState,
 } from 'react';
+import { useInLesTab } from '../LesTabs/paneel';
 import { BEGIN, type KeuzeInfo, TEKST, kies, kop, markering, oordeel, toonUitleg } from './logica';
 import styles from './styles.module.css';
 
@@ -61,6 +62,9 @@ export default function Voorspel({
 }): ReactNode {
   const id = useId();
   const [toestand, setToestand] = useState(BEGIN);
+  // In een les-tabblad is elke regel hoogte er een: daar staat de vraag wat
+  // dichter op elkaar (zie .inTab).
+  const inTab = useInLesTab();
 
   const kinderen = Children.toArray(children);
   const keuzeElementen = kinderen.filter(
@@ -76,7 +80,10 @@ export default function Voorspel({
   const gekozen = toestand.gekozen;
 
   return (
-    <section className={styles.voorspel} aria-labelledby={`${id}-vraag`}>
+    <section
+      className={clsx(styles.voorspel, inTab && styles.inTab)}
+      aria-labelledby={`${id}-vraag`}
+    >
       <div className={styles.label}>{soort}</div>
       <div id={`${id}-vraag`} className={styles.vraag}>
         {vraag}
