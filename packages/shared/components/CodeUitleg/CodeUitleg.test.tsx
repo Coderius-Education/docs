@@ -9,7 +9,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 // de uitleg over regel 34 en 41 van een vak met zeventien regels in beeld.
 
 let inTab = false;
-vi.mock('../LesTabs/paneel', () => ({ useInLesTab: () => inTab }));
+let inBeeld = true;
+vi.mock('../LesTabs/paneel', () => ({ useInLesTab: () => inTab, useInBeeld: () => inBeeld }));
 const { default: CodeUitleg, Regel } = await import('.');
 
 afterEach(cleanup);
@@ -17,8 +18,8 @@ afterEach(cleanup);
 const REGELS = 40;
 const HOOGTE = 20;
 
-function blok() {
-  return render(
+function blok(eerste = 3) {
+  return (
     <CodeUitleg>
       <pre>
         {Array.from({ length: REGELS }, (_, i) => (
@@ -28,11 +29,11 @@ function blok() {
           </span>
         ))}
       </pre>
-      <Regel n={3}>De derde regel.</Regel>
+      <Regel n={eerste}>De eerste regel met uitleg.</Regel>
       <Regel n={34} tot={35}>
         Verderop.
       </Regel>
-    </CodeUitleg>,
+    </CodeUitleg>
   );
 }
 
@@ -52,17 +53,17 @@ function meetbaar(container: HTMLElement) {
 describe('CodeUitleg', () => {
   it('zet de uitleg in een tabblad naast de code, en daarbuiten eronder', () => {
     inTab = false;
-    const buiten = blok().container.firstElementChild?.className ?? '';
+    const buiten = render(blok()).container.firstElementChild?.className ?? '';
     cleanup();
     inTab = true;
-    const binnen = blok().container.firstElementChild?.className ?? '';
+    const binnen = render(blok()).container.firstElementChild?.className ?? '';
     expect(binnen).toContain(buiten);
     expect(binnen).not.toBe(buiten);
   });
 
   it('licht de regels van een uitleg op', () => {
     inTab = true;
-    const { container } = blok();
+    const { container } = render(blok());
     fireEvent.click(screen.getByRole('button', { name: 'Licht regel 34-35 op in de code' }));
     const aan = Array.from(container.querySelectorAll('.token-line'))
       .map((lijn, i) => (lijn.className.split(' ').length > 1 ? i + 1 : 0))
@@ -72,7 +73,7 @@ describe('CodeUitleg', () => {
 
   it('schuift het vak naar een regel die buiten beeld staat, en laat een regel in beeld staan', () => {
     inTab = true;
-    const { container } = blok();
+    const { container } = render(blok());
     const vak = meetbaar(container);
     // Regel 3 staat in beeld: het vak blijft staan.
     fireEvent.click(screen.getByRole('button', { name: 'Licht regel 3 op in de code' }));
@@ -81,5 +82,36 @@ describe('CodeUitleg', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Licht regel 34-35 op in de code' }));
     expect(vak.scrollTop).toBeGreaterThan(660 - 200);
     expect(vak.scrollTop).toBeLessThan(660);
+  });
+
+  it('opent een lang programma op de eerste regel met uitleg, zodra het paneel open is', () => {
+    // Deel 7 van de Lego-auto: "twee wijzigingen in je loop", en te zien waren
+    // regel 1 tot en met 15 van 35. De nieuwe regels stonden vanaf 31.
+    inTab = true;
+    inBeeld = false;
+    const { container, rerender } = render(blok(31));
+    const vak = meetbaar(container);
+    expect(vak.scrollTop).toBe(0);
+    inBeeld = true;
+    rerender(blok(31));
+    // Regel 31 staat op 600 pixels; hij komt op een derde van het vak.
+    expect(vak.scrollTop).toBeCloseTo(600 - 200 / 3, 0);
+    // Eén keer: wie daarna zelf schuift en terugkomt, blijft waar hij was.
+    vak.scrollTop = 0;
+    inBeeld = false;
+    rerender(blok(31));
+    inBeeld = true;
+    rerender(blok(31));
+    expect(vak.scrollTop).toBe(0);
+  });
+
+  it('laat een programma staan waarvan de eerste regel met uitleg al te zien is', () => {
+    inTab = true;
+    inBeeld = false;
+    const { container, rerender } = render(blok(3));
+    const vak = meetbaar(container);
+    inBeeld = true;
+    rerender(blok(3));
+    expect(vak.scrollTop).toBe(0);
   });
 });

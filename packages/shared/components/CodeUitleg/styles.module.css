@@ -150,3 +150,35 @@
     gap: 0.5rem;
   }
 }
+
+/* Tussen 997 en 1200 pixels is de les zo'n 690 pixels breed. De uitleg staat
+   dan alleen naast de code als de langste regel past, en anders eronder
+   (zie LesTabs/styles.module.css). */
+@media (min-width: 997px) and (max-width: 1199px) {
+  .inTab {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .inTab > .code {
+    flex: 1 0 auto;
+    min-width: 40%;
+    max-width: 100%;
+  }
+
+  .inTab > .uitleg {
+    flex: 1000 1 30%;
+    min-width: 0;
+  }
+
+  /* Onder elkaar is er geen plaats voor een vak van bijna een half scherm:
+     het begint laag, en de vrije ruimte van het scherm komt erbij
+     (LesTabs/speling.ts). */
+  .inTab > .code :global(.theme-code-block) pre {
+    max-height: calc(30vh - var(--les-codevak-af, 0px));
+  }
+
+  .inTab > .uitleg {
+    max-height: 30vh;
+  }
+}

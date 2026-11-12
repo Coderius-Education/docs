@@ -14,7 +14,7 @@ import {
 } from 'react';
 import { WerkvormIcoon } from '../Werkvorm/Icoon';
 import { Vergroot } from './Vergroot';
-import { DoelContext, PaneelContext, type Stap, useInLesTab } from './paneel';
+import { DoelContext, OpenContext, PaneelContext, type Stap, useInLesTab } from './paneel';
 import { verdeelSpeling } from './speling';
 import styles from './styles.module.css';
 
@@ -55,6 +55,9 @@ const DATA = {
 
 type Rij = { actief: string; niveau: Niveau; volgende: (id: string) => string | undefined };
 const RijContext = createContext<Rij | null>(null);
+
+/** Voor een reeks plaatjes: het volgende plaatje, voor de knop Volgende van het tabblad. */
+const ReeksContext = createContext<((stap: Stap) => void) | null>(null);
 
 // Wat een tabblad van zijn stappen moet weten: is er nog een volgende stap,
 // dan gaat de knop Volgende daarheen, en pas daarna naar het volgende tabblad
@@ -180,6 +183,11 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
   const naLabel = na?.label;
   useEffect(() => {
     if (niveau !== 'stap' || !meldStap) return;
+    // Stappen in een uitklapblok doen niet mee: een deel dat een les in een
+    // <details> importeert, heeft zijn eigen stappen. In Deel 5 van de
+    // Lego-auto liep de knop Volgende door de drie stappen van het dichte
+    // blok over I2C, en deden twee klikken niets dat de leerling zag.
+    if (wortel.current?.closest('details')) return;
     meldStap(naId && naLabel ? { label: naLabel, ga: () => kies(naId, true) } : null);
     return () => meldStap(null);
   }, [niveau, meldStap, naId, naLabel, kies]);
@@ -291,7 +299,11 @@ export function LesTab({
   const rij = useContext(RijContext);
   const open = !rij || rij.actief === id;
   const [stap, setStap] = useState<Stap>(null);
-  const volgende = stap?.label ?? volgendLabel;
+  // Een reeks plaatjes die nog niet uit is, gaat voor de volgende stap: de
+  // knop Volgende sloeg anders negen van de tien bouwstappen over.
+  const [reeks, setReeks] = useState<Stap>(null);
+  const eerst = reeks ?? stap;
+  const volgende = eerst?.label ?? volgendLabel;
   return (
     <section
       role="tabpanel"
@@ -306,13 +318,17 @@ export function LesTab({
       className={`markdown ${styles.paneel}${label === titel ? ` ${styles.kopOpTab}` : ''}`}
       hidden={!open}
     >
-      <PaneelContext.Provider value={setStap}>{children}</PaneelContext.Provider>
+      <PaneelContext.Provider value={setStap}>
+        <ReeksContext.Provider value={setReeks}>
+          <OpenContext.Provider value={open}>{children}</OpenContext.Provider>
+        </ReeksContext.Provider>
+      </PaneelContext.Provider>
       {rij && volgende && (
         <p className={styles.verder}>
           <button
             type="button"
             className="button button--primary button--sm"
-            onClick={() => (stap ? stap.ga() : rij.volgende(id))}
+            onClick={() => (eerst ? eerst.ga() : rij.volgende(id))}
           >
             Volgende: {volgende}
           </button>
@@ -405,6 +421,19 @@ export function LesReeks({ children }: { children?: ReactNode }): ReactNode {
   const items = Children.toArray(children);
   const [nu, setNu] = useState(0);
   const laatste = items.length - 1;
+  // Zolang de reeks in beeld is en niet uit, gaat de knop Volgende van het
+  // tabblad naar het volgende plaatje.
+  const meld = useContext(ReeksContext);
+  const inBeeld = useContext(OpenContext);
+  const aantal = items.length;
+  useEffect(() => {
+    if (!meld || !inBeeld || nu >= laatste) return;
+    meld({
+      label: `plaatje ${nu + 2} van ${aantal}`,
+      ga: () => setNu((n) => Math.min(laatste, n + 1)),
+    });
+    return () => meld(null);
+  }, [meld, inBeeld, nu, laatste, aantal]);
   return (
     <div className={styles.reeks} data-les-reeks="">
       {items.map((item, i) => (
@@ -442,6 +471,7 @@ export function LesReeks({ children }: { children?: ReactNode }): ReactNode {
 export function LesStap({ id, titel, label, children }: Props): ReactNode {
   const rij = useContext(RijContext);
   const open = !rij || rij.niveau !== 'stap' || rij.actief === id;
+  const tabOpen = useContext(OpenContext);
   return (
     <section
       role="tabpanel"
@@ -451,7 +481,7 @@ export function LesStap({ id, titel, label, children }: Props): ReactNode {
       className={`markdown ${styles.paneel}${label === titel ? ` ${styles.kopOpStap}` : ''}`}
       hidden={!open}
     >
-      {children}
+      <OpenContext.Provider value={open && tabOpen}>{children}</OpenContext.Provider>
     </section>
   );
 }

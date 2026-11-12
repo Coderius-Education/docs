@@ -201,6 +201,10 @@ async function meetLes(les) {
     const pagina = await context.newPage();
     await pagina.goto(`${adres}${les}`);
     await pagina.waitForSelector('[role=tab]');
+    // Met het lettertype van de site zijn de tabbladen breder dan met het
+    // reservelettertype. Zonder hierop te wachten telde het script één regel
+    // waar de leerling er twee zag (de arm van de Golfbot).
+    await pagina.evaluate(() => document.fonts.ready);
     kolomBreedte ??= await pagina.evaluate(() => {
       const kolom = document.querySelector('[class*="docItemCol"]');
       return kolom ? Math.round((100 * kolom.clientWidth) / kolom.parentElement.clientWidth) : null;

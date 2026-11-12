@@ -455,7 +455,7 @@ op Stap voor stap en meet het na elke klik opnieuw: een scherm dat past tot
 je iets aanklikt, past niet. Wat
 dan nog te lang is, is tekst: een stap of een Er gaat iets mis met meer
 inhoud dan op een scherm past. Dat lost een auteur op, niet de opmaak.
-**Wat robotica erbij bracht** (november 2026; alle 399 schermen passen op 1280×720 en 1366×768). De cursus heeft drie
+**Wat robotica erbij bracht** (november 2026; alle 398 schermen passen op 1280×720 en 1366×768). De cursus heeft drie
 docs-plugins (`docs/`, `lego_auto/`, `golfbot/`), delen die twee pagina's
 importeren, blokprogramma's, aansluitschema's en bouwstappen. Daarvoor is dit
 in de gedeelde stap en de onderdelen gekomen, elk met een test:
@@ -546,6 +546,43 @@ twaalf, en een vraag in een dicht blok. Sindsdien:
   programma in een vak dat schuift (met hoeveel regels er te zien zijn),
   plaatjes onder een derde van hun grootte zonder vergroting, en dubbele
   id's op een pagina.
+
+**Wat een tweede doorloop als leerling vond.** De eerste doorloop keek of
+elk scherm te gebruiken was; de tweede las de lessen van voor naar achter en
+klikte op elke knop Volgende. Sindsdien:
+
+- **De knop Volgende kijkt naar wat in beeld is.** Stappen in een
+  uitklapblok doen niet mee (een deel dat een les in een `<details>`
+  importeert, heeft eigen stappen: in Deel 5 van de Lego-auto deden twee
+  klikken niets). Een reeks plaatjes die nog niet uit is, gaat voor: de knop
+  zegt "Volgende: plaatje 2 van 10" en gaat pas na het laatste plaatje naar
+  de volgende stap (`ReeksContext`, en `OpenContext` in `paneel.ts`: een
+  reeks in een stap die dicht is, doet niet mee).
+- **Een stap heeft geen nummer in zijn kop.** De knop nummert al, en een
+  stap Vooraf of De basis schuift de telling op: "Stap 1: kies de juiste
+  interpreter" stond onder knop 2. Een tabblad dat "Stap 2" heet en zelf
+  stappen heeft, maakt "zie stap 2" dubbelzinnig; alleen de Lego-auto houdt
+  zulke tabbladen, omdat `## Stap N` daar het lesformat is.
+- **Het label Klik om te vergroten** staat op de hoek van het plaatje zelf
+  (`data-vergroot-vak` op het element eromheen, met `--vergroot-x` en
+  `--vergroot-y`), ook bij een `<figure>` of in een reeks, en niet waar het
+  venster het plaatje niet groter kan tonen (een telefoon). Het venster
+  opent op de plek waar geklikt is: een staand schema is vergroot drie keer
+  zo hoog als het scherm.
+- **`<CodeUitleg>` opent een lang programma op de eerste regel met uitleg**
+  (`useInBeeld`), één keer: "twee wijzigingen in je loop" met regel 1 tot 15
+  van 35 in beeld liet de nieuwe regels niet zien.
+- **Tussen 997 en 1200 pixels** (een iPad liggend) is de les 690 pixels
+  breed. Code met iets ernaast staat daar in een flex-rij die breekt als de
+  langste regel niet past, en het codevak begint lager. Op 1024×768 is geen
+  code meer afgesneden (dat was op 22 schermen van robotica zo) en passen
+  374 van de 398 schermen; de maat waarop elk scherm moet passen blijft
+  1280×720.
+- **Het meetscript wacht op het lettertype** (`document.fonts.ready`): met
+  het reservelettertype telde het één regel tabbladen waar er twee stonden.
+- **Lezen vindt wat meten niet ziet**: een lampje met de verkeerde kleur,
+  een sensor zonder aansluitschema, een controlevraag over pinnen die nog
+  niet genoemd waren. Een doorloop leest dus ook.
 
 Bekende nadelen: Ctrl+F vindt geen tekst in een tabblad dat niet open staat,
 bij een link naar een kop is heel kort het eerste tabblad te zien, Matomo telt
