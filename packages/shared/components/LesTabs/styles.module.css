@@ -300,6 +300,26 @@
   cursor: zoom-in;
 }
 
+/* Dat je kunt klikken, zie je aan de muis pas als je erop staat, en op een
+   telefoon niet. Een klein label op het plaatje zegt het. */
+.paneel p:has(> img[data-vergroot]) {
+  position: relative;
+}
+
+.paneel p:has(> img[data-vergroot])::after {
+  position: absolute;
+  top: 0.4rem;
+  left: 0.4rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 65%);
+  color: #fff;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  content: "Klik om te vergroten";
+  pointer-events: none;
+}
+
 .groot {
   max-width: min(96vw, 1200px);
   max-height: 94vh;
@@ -591,6 +611,11 @@
   .staplist,
   .verder {
     display: none;
+  }
+
+  /* Op papier valt er niets te klikken. */
+  .paneel p:has(> img[data-vergroot])::after {
+    content: none;
   }
 
   .paneel[hidden] {

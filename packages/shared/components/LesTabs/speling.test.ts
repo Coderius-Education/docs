@@ -81,6 +81,22 @@ describe('verdeelSpeling', () => {
     expect(beeld.style.minHeight).toBe('388px');
   });
 
+  it('telt de hoogte van de tekst naast het plaatje mee', () => {
+    // De joystick van robotica: naast het schema staat 370 pixels tekst. Het
+    // vak van 240 werd 388, en dat maakte het paneel niet langer: 140 pixels
+    // bleven ongebruikt. Het plaatje groeit eerst tot de hoogte van de rij,
+    // en krijgt daarna de vrije ruimte erbij.
+    const wortel = les(
+      '<div data-les-beeld="" id="rij"><p id="beeld"><img id="schema" alt="schema"></p><div>tekst</div></div>',
+    );
+    const beeld = document.getElementById('beeld') as HTMLElement;
+    maat(document.getElementById('rij') as Element, { clientHeight: 370 });
+    maat(beeld, { clientWidth: 513, clientHeight: 240 });
+    maat(document.getElementById('schema') as Element, { naturalWidth: 1600, naturalHeight: 2994 });
+    verdeelSpeling(wortel);
+    expect(beeld.style.minHeight).toBe('518px');
+  });
+
   it('doet niets op een telefoon, met een oefenveld, of met een antwoord open', () => {
     const wortel = les('<pre id="vak"></pre>');
     const vak = document.getElementById('vak') as HTMLElement;

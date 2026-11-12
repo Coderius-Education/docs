@@ -97,10 +97,16 @@ export function verdeelSpeling(wortel: HTMLElement): void {
   ).find(zichtbaar);
   const img = beeld?.querySelector('img');
   if (!beeld || !img) return;
+  // Staat er naast het plaatje meer tekst dan het plaatje hoog is, dan is de
+  // rij al hoger dan het vak: tot die hoogte groeit het plaatje zonder dat
+  // het paneel langer wordt. Zonder dit bleef bij de joystick 140 pixels
+  // ongebruikt: het vak werd 368 hoog, naast 370 pixels tekst.
+  const rij = beeld.parentElement?.clientHeight ?? beeld.clientHeight;
+  const naastTekst = Math.max(0, rij - beeld.clientHeight);
   const hoogte = plaatjeHoogte(
     { breedte: beeld.clientWidth, hoogte: beeld.clientHeight },
     { breedte: img.naturalWidth, hoogte: img.naturalHeight },
-    vrij,
+    vrij + naastTekst,
   );
   if (hoogte <= beeld.clientHeight) return;
   beeld.style.minHeight = `${hoogte}px`;
