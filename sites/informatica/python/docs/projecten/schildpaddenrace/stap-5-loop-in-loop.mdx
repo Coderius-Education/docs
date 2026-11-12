@@ -9,13 +9,15 @@ import CodeExercise from '@site/src/components/CodeExercise';
 # Stap 5: Om de beurt (een loop in een loop)
 
 :::info
-Deze stap gebruikt de for-loop uit [For-loop](site:python/docs/herhalen/06a-for-loop) en de while-loop uit [While-loop](site:python/docs/herhalen/while-loop). Nieuw is dat de ene loop in de andere staat: dat staat hieronder.
+Deze stap gebruikt de for-loop uit [For-loop](site:python/docs/herhalen/06a-for-loop) en de while-loop uit [While-loop](site:python/docs/herhalen/while-loop). Nieuw is dat de ene loop in de andere staat: dat legt deze stap uit.
 :::
 
 In je race staan vier regels die bijna hetzelfde zijn: elke schildpad zet
 een stap. Dat kan met een for-loop over de lijst. Die for-loop komt binnen
 de `while`, want in elke ronde van de race moeten alle schildpadden één
 keer aan de beurt komen.
+
+### Een loop in een loop
 
 Een loop in een loop ziet er zo uit:
 
@@ -114,6 +116,8 @@ Pas daarna stelt de `while` zijn vraag opnieuw.
 
 </details>
 
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
 ## Er gaat iets mis
 
 {/* foutmelding-van: import turtle\nschildpadden = [turtle.Turtle(), turtle.Turtle()]\nschildpadden.forward(10) */}
@@ -127,7 +131,5 @@ lijst. Een lijst kan niet lopen; alleen de schildpadden erin kunnen dat.
 
 **Oplossing:** gebruik in de for-loop de loopvariabele, `schildpad`. Die
 is in elke ronde één schildpad uit de lijst.
-
-Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 6: de winnaar](site:python/docs/projecten/schildpaddenrace/stap-6-break).

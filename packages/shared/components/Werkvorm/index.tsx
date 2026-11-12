@@ -22,13 +22,20 @@ type Data = { lessen: Record<string, Les> };
 
 /**
  * De onderdelen van een les, in de volgorde van de les, elk met de literatuur
- * waarop het steunt. Alleen wat in de lessen van deze cursus voorkomt: een
- * werkvorm die geen les gebruikt, heeft hier niets uit te leggen.
+ * waarop het steunt. Alleen wat in de lessen van deze cursus voorkomt, in meer
+ * dan één les: een werkvorm die geen les gebruikt, heeft hier niets uit te
+ * leggen.
  */
 export function Werkvormen(): ReactNode {
   const data = usePluginData('coderius-werkvormen') as Data | undefined;
-  const gebruikt = data && new Set(Object.values(data.lessen).flatMap((les) => les.werkvormen));
-  const vormen = WERKVORMEN.filter((vorm) => !gebruikt || gebruikt.has(vorm.id));
+  // In hoeveel lessen een werkvorm voorkomt. Eén les is geen onderdeel van
+  // "een les": de python-cursus heeft alleen in zijn introductie een leerdoel,
+  // en de tabel zei dan dat elke les ermee begint.
+  const aantal = new Map<string, number>();
+  for (const les of Object.values(data?.lessen ?? {})) {
+    for (const id of new Set(les.werkvormen)) aantal.set(id, (aantal.get(id) ?? 0) + 1);
+  }
+  const vormen = WERKVORMEN.filter((vorm) => !data || (aantal.get(vorm.id) ?? 0) >= 2);
   return (
     <table className={styles.legenda}>
       <thead>

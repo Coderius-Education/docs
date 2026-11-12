@@ -45,6 +45,8 @@ print(x)
   </Uitleg>
 </Voorspel>
 
+### Het verschil op een rij
+
 Het verschil tussen `print` en `return` op een rij:
 
 | | `print()` | `return` |
@@ -55,9 +57,13 @@ Het verschil tussen `print` en `return` op een rij:
 
 Een functie zónder `return` levert `None` op. Maak je een functie om een **waarde te berekenen**, dan hoort er een `return` in. Toont de functie alleen iets, dan is `print()` genoeg.
 
+:::tip[Eerst op papier]
+Speel dit eerst na zonder computer, als rollenspel met briefjes: [De functiemachine](site:python/docs/projecten/unplugged/functiemachine). Je docent kan de hand-out printen.
+:::
+
 ## Er gaat iets mis
 
-**Rekenen met een functie zonder return**
+### Rekenen met een functie zonder return
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -77,7 +83,7 @@ TypeError: unsupported operand type(s) for +: 'NoneType' and 'int'
 
 De functie print `10` en geeft `None` terug, en bij `None` kun je geen 1 optellen. Vervang de `print` in de functie door `return`.
 
-**Code na return**
+### Code na return
 
 ```python
 def verdubbel(getal):
@@ -88,10 +94,6 @@ print(verdubbel(5))   # 10
 ```
 
 `Klaar met verdubbelen` komt nooit op het scherm. Bij `return` stopt de functie meteen, dus wat eronder staat draait niet. Zet zo'n regel boven de `return`.
-
-:::tip[Eerst op papier]
-Speel dit eerst na zonder computer, als rollenspel met briefjes: [De functiemachine](site:python/docs/projecten/unplugged/functiemachine). Je docent kan de hand-out printen.
-:::
 
 ---
 

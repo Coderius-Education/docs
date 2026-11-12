@@ -2,7 +2,17 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import LesTabs, { LesLeerdoel, LesStap, LesStappen, LesTab, useInLesTab } from './index';
+import LesTabs, {
+  LesDoel,
+  LesLeerdoel,
+  LesStap,
+  LesStappen,
+  LesTab,
+  LesVeld,
+  LesVoorbeeld,
+  useInLesTab,
+} from './index';
+import { useLesDoel } from './paneel';
 
 // react-dom/server heeft hier geen types (zie Voorspel/logica.test.ts).
 const { renderToStaticMarkup } = (await import('react-dom/server' as string)) as {
@@ -394,6 +404,62 @@ describe('useInLesTab', () => {
       </LesTabs>,
     );
     expect(screen.getByRole('status').textContent).toBe('in een tabblad');
+  });
+});
+
+describe('LesVeld', () => {
+  // Een oefenveld dat het doel van zijn opdracht zelf toont.
+  function Veld() {
+    const doel = useLesDoel();
+    return (
+      <div data-veld="">
+        code
+        <div data-uitvoer="">{doel}</div>
+      </div>
+    );
+  }
+
+  it('geeft het doel aan het veld, en zet zelf niets neer', () => {
+    const { container } = render(
+      <section>
+        <LesVeld>
+          <LesDoel>
+            <p>Verwachte uitvoer:</p>
+            <pre>12</pre>
+          </LesDoel>
+          <Veld />
+        </LesVeld>
+      </section>,
+    );
+    // Het veld blijft een direct kind van het paneel: de opmaak van het
+    // paneel (.paneel > …) en de hoogte van het veld rekenen daarop.
+    const sectie = container.querySelector('section') as HTMLElement;
+    expect(Array.from(sectie.children).map((el) => el.hasAttribute('data-veld'))).toEqual([true]);
+    const uitvoer = container.querySelector('[data-uitvoer]') as HTMLElement;
+    expect(uitvoer.textContent).toBe('Verwachte uitvoer:12');
+  });
+
+  it('een veld zonder LesVeld heeft geen doel', () => {
+    const { container } = render(<Veld />);
+    expect(container.querySelector('[data-uitvoer]')?.textContent).toBe('');
+  });
+});
+
+describe('LesVoorbeeld', () => {
+  it('met een voorspelvraag krijgt de vraag de helft van de breedte', () => {
+    const { container } = render(
+      <>
+        <LesVoorbeeld>
+          <pre>code</pre>
+        </LesVoorbeeld>
+        <LesVoorbeeld vraag="ja">
+          <pre>code</pre>
+        </LesVoorbeeld>
+      </>,
+    );
+    const [gewoon, metVraag] = Array.from(container.querySelectorAll('[data-les-voorbeeld]'));
+    expect(metVraag.className).not.toBe(gewoon.className);
+    expect(metVraag.className).toContain(gewoon.className);
   });
 });
 

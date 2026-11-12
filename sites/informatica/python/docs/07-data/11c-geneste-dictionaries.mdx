@@ -46,6 +46,8 @@ print(klas["Alex"]["cijfers"][0]) # 9
 Lees het van links naar rechts: eerst zoek je `"Alex"` op in `klas`, in wat
 daaruit komt zoek je `"cijfers"` op, en van die lijst neem je plek `0`.
 
+### Voorspel
+
 ```python
 klas = {
     "Sara": {"leeftijd": 15, "cijfers": [7, 8, 6]},
@@ -150,7 +152,7 @@ zo dat het bij je gegevens past.
 
 ## Er gaat iets mis
 
-**Een sleutel op de verkeerde laag**
+### Een sleutel op de verkeerde laag
 
 ```python
 klas = {"Sara": {"leeftijd": 15}}
@@ -167,7 +169,7 @@ KeyError: 'leeftijd'
 `klas["Sara"]`. Schrijf eerst de naam, dan de leeftijd:
 `klas["Sara"]["leeftijd"]`.
 
-**Een lijst opzoeken met een tekst**
+### Een lijst opzoeken met een tekst
 
 ```python
 scores = [{"naam": "Sara", "punten": 120}]

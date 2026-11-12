@@ -1,8 +1,11 @@
 import LesTabs, {
+  LesDoel,
   LesLeerdoel,
   LesStap,
   LesStappen,
   LesTab,
+  LesVeld,
+  LesVoorbeeld,
 } from '@coderius/shared/components/LesTabs';
 import SiteLink from '@coderius/shared/components/SiteLink';
 import Voorkennis from '@coderius/shared/components/Voorkennis';
@@ -23,6 +26,9 @@ export default {
   LesStappen,
   LesStap,
   LesLeerdoel,
+  LesVoorbeeld,
+  LesVeld,
+  LesDoel,
   // De docentenhandleiding: de legenda van de iconen op de tabbladen, en per
   // les de werkvormen op een rij.
   Werkvormen,

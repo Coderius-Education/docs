@@ -46,6 +46,7 @@ export function HighlightedEditor({
   onKeyDown,
   disabled,
   minHeight = 250,
+  maxHeight,
   highlightLine,
   readOnly,
   ariaLabel,
@@ -56,6 +57,8 @@ export function HighlightedEditor({
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   disabled: boolean;
   minHeight?: number;
+  /** Hoger wordt de editor niet; langere code schuift erin. */
+  maxHeight?: number;
   /** 1-gebaseerd regelnummer om te markeren; gebruikt door de stapper. */
   highlightLine?: number;
   readOnly?: boolean;
@@ -102,12 +105,39 @@ export function HighlightedEditor({
     }
   };
 
+  // Schuift de code in de editor (maxHeight), dan blijft de gemarkeerde regel
+  // in beeld: de stapper bladert door een programma dat langer kan zijn dan
+  // het vak. Buiten beeld gemarkeerd was de regel voor de leerling weg.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: alleen de regel en de hoogte tellen; handleScroll leest refs.
+  useEffect(() => {
+    const veld = textareaRef.current;
+    if (!veld || !maxHeight || !highlightLine) return;
+    const regel = Number.parseFloat(getComputedStyle(veld).lineHeight) || 21.6;
+    const boven = 16 + (highlightLine - 1) * regel;
+    if (boven < veld.scrollTop + regel) veld.scrollTop = Math.max(0, boven - 2 * regel);
+    else if (boven + 2 * regel > veld.scrollTop + veld.clientHeight)
+      veld.scrollTop = boven - veld.clientHeight + 3 * regel;
+    handleScroll();
+  }, [highlightLine, maxHeight]);
+
   const lineCount = code.split('\n').length;
   // Dezelfde kleuren als de codeblokken van de cursus (prism-thema.js).
   const theme = colorMode === 'dark' ? donker : licht;
 
   return (
-    <div className={styles.editorWrapper} style={{ minHeight }}>
+    <div
+      className={styles.editorWrapper}
+      // Met een maximum schuift de code in de editor zelf; de textarea neemt
+      // de gutter en de gekleurde laag mee (zie de scroll-afhandeling).
+      // De achtergrond van de code ook op het vak zelf: staat de editor naast
+      // een hogere uitvoer (in een les-tabblad), dan loopt het vlak door tot
+      // onderaan in plaats van halverwege op te houden.
+      style={{
+        minHeight,
+        background: theme.plain.backgroundColor,
+        ...(maxHeight ? { maxHeight, overflow: 'hidden' } : {}),
+      }}
+    >
       <div ref={gutterRef} className={styles.gutter} aria-hidden="true">
         {Array.from({ length: lineCount }, (_, i) => (
           <div
@@ -128,7 +158,11 @@ export function HighlightedEditor({
           <pre
             ref={preRef}
             className={styles.highlightPre}
-            style={{ ...style, minHeight }}
+            style={
+              maxHeight
+                ? { ...style, minHeight, maxHeight, overflow: 'hidden' }
+                : { ...style, minHeight }
+            }
             aria-hidden="true"
           >
             {tokens.map((line, i) => {

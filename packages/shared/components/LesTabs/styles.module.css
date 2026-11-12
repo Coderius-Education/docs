@@ -230,13 +230,20 @@
    naast elkaar in plaats van onder elkaar. */
 .paneel > h2 {
   --ifm-h2-font-size: 1.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .paneel > details,
 .paneel .stappen details {
   --ifm-alert-padding-vertical: 0.55rem;
   margin-bottom: 0.5rem;
+}
+
+/* Een blok als "Deze stap gebruikt …" of "Waar kom je dit later weer
+   tegen?" staat in een paneel naast een oefenveld en is daar lager. */
+.paneel :global(.theme-admonition) {
+  --ifm-alert-padding-vertical: 0.55rem;
+  margin-bottom: 0.75rem;
 }
 
 /* Niet op Groter of volledig scherm (`data-groot` op het veld): daar vult het
@@ -257,6 +264,96 @@
   /* De ruimte tussen de twee; de spatie in de HTML telt ook mee. */
   .paneel > details:not([open]):has(+ details) {
     margin-right: 0.5rem;
+  }
+}
+
+/* Een scheidingslijn tussen twee secties (`---` in de bron) scheidde op de
+   lange pagina de opdrachten. In een tabblad staat hij onderaan het paneel,
+   boven de knop Volgende, en kost hij veertig pixels. */
+.paneel > hr {
+  display: none;
+}
+
+/* Een plaatje in een tabblad (het doelplaatje van een turtle-opdracht) is
+   niet hoger dan een derde van het scherm: op volle grootte stond het veld
+   eronder buiten beeld. */
+.paneel img {
+  width: auto;
+  max-height: 34vh;
+}
+
+/* Een programma van meer dan zestien regels is hoger dan wat
+   er op 1280×720 onder de tabbladen past: het schuift dan in zijn eigen vak,
+   en de knop Volgende blijft in beeld. In de Python-cursus zijn dat vier
+   voorbeelden in het hoofdstuk Klassen. Niet in een uitklapblok: wie een
+   oplossing opent, leest hem in zijn geheel. */
+.paneel :global(.theme-code-block):not(details *) pre {
+  max-height: 53vh;
+  overflow-y: auto;
+  /* Een schaduw aan de rand waar nog code buiten beeld staat: zonder was er
+     in 15k niets aan te zien dat het nieuwe deel van het programma onder de
+     rand stond. De twee vlakken in de kleur van het blok schuiven met de code
+     mee en dekken de schaduw af aan het begin en het eind. */
+  background-image: linear-gradient(var(--prism-background-color) 40%, transparent),
+    linear-gradient(transparent, var(--prism-background-color) 60%),
+    linear-gradient(rgb(0 0 0 / 22%), transparent), linear-gradient(transparent, rgb(0 0 0 / 22%));
+  background-position: top, bottom, top, bottom;
+  background-size: 100% 2.5rem, 100% 2.5rem, 100% 0.9rem, 100% 0.9rem;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll;
+}
+
+/* Een voorbeeld met zijn uitvoer naast elkaar (LesVoorbeeld): de code links,
+   rechts een <div> met het woord Uitvoer, het uitvoerblok en soms een
+   alinea toelichting. Met een voorspelvraag staat rechts de vraag. */
+@media (min-width: 997px) {
+  .voorbeeld {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: start;
+    column-gap: 1rem;
+    margin-bottom: var(--ifm-leading);
+  }
+
+  .voorbeeld > :first-child {
+    margin-bottom: 0;
+  }
+
+  /* Het woord Uitvoer, boven het blok. */
+  .voorbeeld > div > p:first-child {
+    margin: 0 0 0.25rem;
+    color: var(--ifm-color-emphasis-700);
+    font-size: 0.875rem;
+  }
+
+  .voorbeeld > :last-child,
+  .voorbeeld > div > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* Bestanden naast elkaar, elk met zijn naam erboven; een voorspelvraag
+     erachter is de laatste kolom. */
+  .bestanden {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    column-gap: 1rem;
+    margin-bottom: var(--ifm-leading);
+  }
+
+  .bestanden > div > p {
+    margin: 0 0 0.25rem;
+  }
+
+  .bestanden > div > :last-child,
+  .bestanden > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* Code met de voorspelvraag ernaast: de vraag heeft meer breedte nodig dan
+     een uitvoerblok. */
+  .metVraag {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 }
 

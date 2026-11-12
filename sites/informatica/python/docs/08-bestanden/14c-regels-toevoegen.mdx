@@ -37,6 +37,8 @@ De `"a"` staat voor *append*, toevoegen. Net als `.append()` bij een lijst
 komt het nieuwe achteraan. Bestaat het bestand nog niet, dan maakt `"a"` het
 aan, net als `"w"`.
 
+### Voorspel
+
 ```python
 with open("logboek.txt", "w") as bestand:
     bestand.write("maandag")
@@ -83,6 +85,8 @@ Uitvoer:
 woensdag: 4 km gelopen
 donderdag: rustdag
 ```
+
+### Twee keer uitvoeren
 
 Druk hieronder twee keer op Uitvoeren. De tweede keer staan er vier regels in
 `training.txt`: het bestand bestaat nog van de eerste keer, en er komen er
@@ -221,7 +225,7 @@ with open("scores.txt") as bestand:
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Kijk naar de functie `noteer` hierboven. Het verschil zit in de f-string:
+Kijk naar de functie `noteer` uit de uitleg. Het verschil zit in de f-string:
 daar komen nu twee waarden in.
 
 </details>

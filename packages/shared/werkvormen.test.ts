@@ -178,6 +178,68 @@ describe('de werkvormen van een les (plugins/werkvormen.js)', () => {
     expect(werkvormenVanLes(les, parse)).toEqual(['leerdoel', 'uitleg', 'maken']);
   });
 
+  it('telt een voorspelvraag in de uitleg als voorspellen', async () => {
+    // De python-cursus heeft geen tabblad Predict: de vraag (<Voorspel>) staat
+    // in de uitleg, onder de code waar hij over gaat. Zonder deze regel stond
+    // voorspellen niet in de tabel van de docentenhandleiding.
+    const parse = await mdxParser();
+    const les = [
+      '# Les',
+      '## De for-loop',
+      'Uitleg.',
+      '<Voorspel vraag="Wat print dit?"><Keuze goed>`1`</Keuze></Voorspel>',
+      '## Er gaat iets mis',
+      'Een fout.',
+      '## Opdracht 1: tellen',
+      'Tel.',
+      '## Opdracht 2: zelf',
+      'Maak.',
+    ].join('\n\n');
+    // Er gaat iets mis staat in de bron vóór de opdrachten, in de tabbladen
+    // erna (foutenNaOpdrachten in les-tabs.js).
+    expect(werkvormenVanLes(les, parse)).toEqual([
+      'uitleg',
+      'voorspellen',
+      'aanpassen',
+      'maken',
+      'fouten',
+    ]);
+  });
+
+  it('leest een info-blok als blok, zoals de build', async () => {
+    // Zonder remark-directive is een `:::info` voor de parser een rij
+    // alinea's. De build maakt van uitleg met alleen zo'n blok geen tabblad
+    // (hij opent het tabblad erna); de handleiding en de test op de schermen
+    // zagen er dan een tabblad Uitleg dat de leerling niet heeft.
+    const parse = await mdxParser();
+    const les = [
+      '# Stap 2',
+      '',
+      ':::info',
+      'Deze stap gebruikt de for-loop.',
+      ':::',
+      '',
+      '## Opdracht: een rij',
+      '',
+      'Teken een rij.',
+      '',
+      '## Er gaat iets mis',
+      '',
+      'De rij staat scheef.',
+      '',
+    ].join('\n');
+    expect(werkvormenVanLes(les, parse)).toEqual(['aanpassen', 'fouten']);
+  });
+
+  it('leest een tabel als tabel, zoals de build', async () => {
+    // Zonder remark-gfm is een tabel een alinea. In les 5c stond er een
+    // vóór de eerste `###`: de test op de schermen zag daar één stap minder
+    // dan de leerling.
+    const parse = await mdxParser();
+    const tree = parse('| a | b |\n|---|---|\n| 1 | 2 |\n');
+    expect(tree.children[0].type).toBe('table');
+  });
+
   it('een les zonder tabbladen heeft geen werkvormen', async () => {
     const parse = await mdxParser();
     expect(werkvormenVanLes('# Les\n\nAlleen tekst.\n', parse)).toBeNull();

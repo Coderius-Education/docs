@@ -22,7 +22,7 @@ Uitvoer: `Hallo Sam`. De variabele `naam` staat buiten de functie, en `groet()` 
 
 Veranderen is een ander verhaal.
 
-## Voorspel: wat doet dit?
+### Voorspel
 
 {/* niet-draaien: toont bewust de UnboundLocalError die deze les uitlegt */}
 ```python
@@ -108,11 +108,13 @@ teller = opgeteld(teller)
 print(teller)
 ```
 
-Uitvoer: `2`, net als hierboven. De functie rekent, en buiten de functie bepaal jij wat er met het antwoord gebeurt.
+Uitvoer: `2`, net als met `global`. De functie rekent, en buiten de functie bepaal jij wat er met het antwoord gebeurt.
 
 **Vuistregel:** kan het met `return`, doe het met `return`. `global` heb je nodig als jij de functie niet zelf aanroept en er dus niets aan kunt teruggeven — bijvoorbeeld een functie die afgaat zodra iemand op een toets drukt. Dat kom je tegen in [4.5 Een score bijhouden](site:play/docs/gebeurtenissen/score_bijhouden) van de play-cursus.
 
 ## Er gaat iets mis
+
+### Een variabele van buiten veranderen
 
 {/* foutmelding-van: fout-helft */}
 ```
@@ -122,6 +124,8 @@ UnboundLocalError: cannot access local variable 'score' where it is not associat
 **Oorzaak:** een functie verandert een variabele van buiten, zonder `global`.
 
 **Oplossing:** zet `global` bovenaan de functie, of laat de functie de nieuwe waarde teruggeven met `return`.
+
+### Fout en goed
 
 {/* niet-draaien: de FOUT-helft toont juist de fout die deze les uitlegt */}
 ```python
@@ -284,7 +288,7 @@ Binnen `begroet` maakt de regel `naam = "Alex"` een nieuwe, lokale `naam`. Die v
 
 {/* foutmelding-los: hier staat juist dat die fout niet optreedt; het blok erboven draait en bewijst het */}
 
-En anders dan bij de teller hierboven krijg je hier géén `UnboundLocalError`: de functie leest de lokale `naam` pas nadat hij een waarde heeft gekregen.
+En anders dan bij de teller uit de uitleg krijg je hier géén `UnboundLocalError`: de functie leest de lokale `naam` pas nadat hij een waarde heeft gekregen.
 
 Wilde je de buitenste `naam` echt veranderen, dan had er `global naam` bovenaan de functie moeten staan.
 

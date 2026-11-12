@@ -21,6 +21,8 @@ en een functie met parameters, uit [Functies](site:python/docs/functies/functies
 en [Parameters](site:python/docs/functies/09a-parameters).
 :::
 
+### Pixel art
+
 Oude computerspellen tekenden hun poppetjes met grote, gekleurde vakjes:
 pixel art. Zo'n plaatje kun je ook als tekst opschrijven, met één teken per
 vakje:
@@ -42,6 +44,8 @@ Alles begint bij één vakje.
 
 ## Opdracht: een bloem van vijf vakjes
 
+### De opdracht
+
 Schrijf een functie `vakje(x, y, kleur)` die een ingekleurd vierkant van 20
 bij 20 tekent:
 
@@ -53,6 +57,8 @@ bij 20 tekent:
 Teken daarmee een bloem van vijf vakjes: een geel hart op `(0, 0)`, met
 links, rechts, boven en onder een rood blaadje. Verstop de schildpad met
 `turtle.hideturtle()`, anders staat hij midden in je bloem.
+
+### Aan de slag
 
 ![Een kleine bloem van vijf vakjes: een geel vakje in het midden met een rood vakje erboven, eronder, links en rechts](./img/stap-1-bloem.svg)
 
@@ -101,6 +107,8 @@ lijn omheen trekt.
 
 </details>
 
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
 ## Er gaat iets mis
 
 {/* foutmelding-van: vakje = print\nvakje(0, 20, red) */}
@@ -114,7 +122,5 @@ zoekt Python een variabele die `red` heet, en die bestaat niet.
 
 **Oplossing:** een kleur is tekst, dus zet hem tussen aanhalingstekens:
 `vakje(0, 20, "red")`.
-
-Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 2: een rij uit tekst](site:python/docs/projecten/pixel-art/stap-2-rij).

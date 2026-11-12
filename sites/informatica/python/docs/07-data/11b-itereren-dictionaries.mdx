@@ -62,6 +62,8 @@ else:
     print("Geen naam bekend.")
 ```
 
+### Voorspel
+
 ```python
 leerling = {"naam": "Sara", "klas": "3B"}
 
@@ -81,7 +83,7 @@ print("Sara" in leerling)
 
 ## Er gaat iets mis
 
-**Twee namen zonder .items()**
+### Twee namen zonder .items()
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -100,7 +102,7 @@ ValueError: too many values to unpack (expected 2)
 
 Zonder `.items()` krijg je per ronde alleen een sleutel, zoals `"naam"`. Die probeert Python over twee namen te verdelen, en dat lukt niet. Schrijf `for sleutel, waarde in leerling.items():`.
 
-**De haakjes achter items vergeten**
+### De haakjes achter items vergeten
 
 {/* foutmelding-van: blok-erboven */}
 

@@ -63,6 +63,8 @@ print(score)   # 10
 
 De variabele onthoudt alleen de **laatst** toegewezen waarde.
 
+### Voorspel
+
 ```python
 a = 5
 b = a
@@ -96,9 +98,13 @@ Uitvoer:
 Hallo Alex
 ```
 
+:::tip[Eerst op papier]
+Speel dit eerst na zonder computer, met kaartjes en etiketten: [Etiketten op waarden](site:python/docs/projecten/unplugged/etiketten). Je docent kan de hand-out printen.
+:::
+
 ## Er gaat iets mis
 
-**Een tikfout in de naam**
+### Een tikfout in de naam
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -115,7 +121,7 @@ NameError: name 'Naam' is not defined. Did you mean: 'naam'?
 
 Voor Python zijn `naam` en `Naam` twee verschillende namen. Gebruik precies dezelfde naam als bij het `=`-teken.
 
-**Een variabele gebruiken voordat hij bestaat**
+### Een variabele gebruiken voordat hij bestaat
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -132,7 +138,7 @@ NameError: name 'leeftijd' is not defined
 
 Python voert je code van boven naar beneden uit. Op regel 1 bestaat `leeftijd` nog niet. Zet de regel met het `=`-teken bovenaan.
 
-**Aanhalingstekens om de naam**
+### Aanhalingstekens om de naam
 
 ```python
 naam = "Sara"
@@ -146,10 +152,6 @@ naam
 ```
 
 Geen foutmelding, maar wel het verkeerde woord. Met aanhalingstekens is `"naam"` tekst, en die zet `print()` letterlijk neer. Wil je de waarde zien, schrijf dan `print(naam)`.
-
-:::tip[Eerst op papier]
-Speel dit eerst na zonder computer, met kaartjes en etiketten: [Etiketten op waarden](site:python/docs/projecten/unplugged/etiketten). Je docent kan de hand-out printen.
-:::
 
 ---
 

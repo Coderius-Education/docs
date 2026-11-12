@@ -221,19 +221,21 @@ anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
 De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
-(schrijfgids §2 en §15). De web-cursus is de eerste, en nog de enige die is
-omgezet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+(schrijfgids §2 en §15). De web-cursus en de python-cursus zijn omgezet, de
+andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
 
 1. `lesTabs: true`, en de onderdelen in `MDXComponents` van de site.
 2. Het oefenveld van de cursus leren zich aan het scherm aan te passen
-   (`useInLesTab`, zoals de web-`CodeEditor` met `pasHoogte.ts`).
+   (`useInLesTab`, zoals de web-`CodeEditor` en de `CodeExercise` van
+   python-runner, met `components/LesTabs/pasHoogte.ts`).
 3. Bouwen en meten met `node scripts/meet-les-tabs.mjs <site>`. Wat niet op
    1280×720 past: eerst splitsen (een `###` erbij), dan inkorten.
 4. Elk scherm nalopen op verwijzingen naar iets dat er niet meer staat, en
-   daar een test van maken (bij web `src/docs-tests/schermen.test.ts`).
+   daar een test van maken (bij web en python
+   `src/docs-tests/schermen.test.ts`, met `plugins/les-schermen.js`).
 5. De docentenhandleiding herschrijven (zie Werkvormen hieronder).
 
 Tot een cursus is omgezet, houdt hij de inhoudsopgave rechts en zijn oude
@@ -242,8 +244,8 @@ docentenhandleiding. Zet `lesTabs` dus niet aan zonder de stappen erna.
 De remark-stap `packages/shared/plugins/les-tabs.js` wikkelt bij het bouwen
 elke `##`-sectie in een `<LesTab>` binnen één `<LesTabs>`, en in een sectie
 met `###`-koppen elke `###` in een `<LesStap>` binnen `<LesStappen>`
-(`packages/shared/components/LesTabs`; de site registreert alle vier in
-`MDXComponents`). De bron van een les verandert niet. De titel en de startcode
+(`packages/shared/components/LesTabs`; de site registreert ze in
+`MDXComponents`, met `LesLeerdoel`, `LesVoorbeeld`, `LesVeld` en `LesDoel`). De bron van een les verandert niet. De titel en de startcode
 blijven boven de tabbladen; uitleg vóór de eerste `##` wordt het eerste
 tabblad, "Uitleg"; een kop met een dubbele punt krijgt als label het stuk
 ervoor. Twee dingen krijgen geen eigen tabblad, want dat was een scherm met
@@ -271,10 +273,69 @@ Daarom de stappen: een rij genummerde knoppen in het tabblad, één stap
 tegelijk in beeld. Wat in een sectie vóór de eerste `###` staat, is de eerste
 stap, "De basis" (id `<sectie>-basis`); één losse alinea hoort bij de eerste
 `###` en staat daar vóór de kop (boven de stappen stond hij bij elke stap
-opnieuw). Een sectie die zo maar één stap zou krijgen, heeft geen stappen.
+opnieuw). Staat er in die eerste stap alleen een blok als "Deze stap
+gebruikt …", dan heet hij Vooraf; opent hij met de voorspelvraag, dan heet
+hij Voorspel (`basisLabel`). Een sectie die zo maar één stap zou krijgen, heeft geen stappen.
 Omdat er iets vóór de kop kan staan, verbergt de opmaak de kop van een
 tabblad of stap met `> h2` en `> h3`, niet met `:first-child`. De knop Volgende onderaan een tabblad loopt eerst de stappen door en
-gaat dan naar het volgende tabblad.
+gaat dan naar het volgende tabblad. Ook de uitleg vóór de eerste `##` krijgt
+stappen van zijn `###`-koppen (`uitlegMetStappen`). Uitleg vóór de eerste
+`##` van één info-blok met hooguit twee alinea's is geen tabblad: hij opent
+het tabblad erna, net als één losse alinea (18 projectstappen hadden een
+tabblad Uitleg met alleen "Deze stap gebruikt …").
+
+**Er gaat iets mis staat na de opdrachten**, ook als de bron hem ervoor
+heeft (`foutenNaOpdrachten`). In de lessen van de python-cursus stond hij
+tussen de uitleg en de eerste opdracht, en bracht de knop Volgende een
+leerling langs fouten die hij nog niet had kunnen maken.
+
+**Wat de stap naast elkaar zet, of weglaat.** Bij het omzetten van de
+python-cursus paste van de 595 schermen 250 op 1280×720. Deze regels in
+`les-tabs.js`, met een `###` boven elke voorspelvraag en elke fout, brachten
+dat naar 590 van de 665; de rest was splitsen en inkorten (724 van de 724):
+
+- Een codeblok met "Uitvoer:" en zijn uitvoerblok komt in een
+  `<LesVoorbeeld>`: de code links, de uitvoer rechts. Is de code twaalf
+  regels of langer en de uitvoer kort, dan staan de alinea's toelichting
+  erna ook rechts. Een codeblok met `<Voorspel>` eronder staat ook naast
+  elkaar. Bestanden met hun naam erboven (**`rekenen.py`**, **`main.py`**)
+  staan naast elkaar, met een voorspelvraag als laatste kolom.
+- Het doel van een opdracht staat in het oefenveld: "Verwachte uitvoer
+  (bij …):" met zijn blok, of het doelplaatje van een turtle-opdracht, vlak
+  voor het veld. De stap zet ze in een `<LesDoel>` binnen `<LesVeld>`, en de
+  `CodeExercise` toont ze met `useLesDoel` in zijn uitvoerkolom, onder wat de
+  leerling zelf krijgt (op een smal scherm boven de code). Een blok zonder
+  die kop blijft staan: gegevens om te kopiëren zijn geen uitvoer. Schrijf
+  de kop dus als eigen regel, niet aan het eind van een zin.
+- Een codeblok met daaronder een oefenveld met dezelfde code vervalt (er
+  mag één alinea tussen staan; het veld komt dan op de plek van het blok).
+- In een paneel vervalt een scheidingslijn (`---`), is een plaatje hooguit
+  een derde van het scherm hoog, is een info-blok lager, en schuift een
+  codeblok van meer dan zestien regels in zijn eigen vak (vier voorbeelden
+  in het hoofdstuk Klassen; niet in een uitklapblok). Zo'n vak heeft een
+  schaduw aan de rand waar nog code buiten beeld staat.
+- Stap voor stap staat in een tabblad op de plek van de editor en de
+  uitvoer, op de hoogte van het veld (`Stapper` met `hoogte`): de code
+  schuift in zijn vak met de regel die aan de beurt is in beeld, en een
+  tekening heeft een eigen kolom. Onder het veld was het scherm tot 1634
+  pixels te lang. Heeft een turtle-opdracht een doelplaatje, dan zijn de
+  eigen tekening en het doel samen niet hoger dan het veld.
+
+Wat een auteur zelf doet: de voorspelvraag van een les staat onder
+`### Voorspel` (met het voorbeeld erboven was dat scherm tot zeshonderd
+pixels te lang; zet de kop boven de zin die de code inleidt), elke fout
+onder Er gaat iets mis heeft een eigen `###`, en een lange projectopdracht
+heeft twee stappen, `### De opdracht` (de beschrijving) en `### Aan de slag`
+(de zin over het programma van de vorige stap, het doelplaatje of de
+verwachte uitvoer, het veld, tip en oplossing). Gegevens die de leerling
+moet kopiëren, staan bij het veld, na "Plak je programma …", in een
+uitklapblok: hij heeft één klembord, en stonden ze op het scherm ervoor,
+dan was zijn programma weg op het moment dat hij het wilde plakken. "Kopieer
+je programma voordat je verdergaat" staat aan het eind van de opdracht, op
+het scherm met het veld, niet op het laatste tabblad. Onder een
+voorspelvraag staat geen code die het antwoord laat zien: wat erna komt,
+staat in zijn `<Uitleg>` of in een volgende stap. De python-cursus bewaakt
+dit in `src/docs-tests/schermen.test.ts`.
 
 **Werkvormen: de schakel naar vakdidactiek.** Elk tabblad heeft een werkvorm:
 wat de leerling daar doet (leerdoel, uitleg, stap voor stap, voorspellen,
@@ -283,14 +344,19 @@ onderzoeken, aanpassen, zelf maken, fouten herkennen). De lijst staat in
 je hem herkent, een icoon (paden van een lijntekening, geen emoji) en
 minstens één tip van vakdidactiek. Een kop die bij geen werkvorm hoort, is
 uitleg; van een rij genummerde opdrachten is de laatste zelf maken
-(`laatsteVan`). De remark-stap geeft elk `<LesTab>` zijn werkvorm mee en het
+(`laatsteVan`), tenzij de startcode van het oefenveld te lezen is: dan is
+een opdracht op code die er al staat aanpassen en een opdracht met een leeg
+veld (alleen commentaar) zelf maken (`vormNaarStartcode`; in de
+python-cursus begint de helft van de opdrachten leeg). De remark-stap geeft elk `<LesTab>` zijn werkvorm mee en het
 tabblad toont het icoon; voor een leerling is het alleen een herkenningsteken.
 De betekenis staat in de docentenhandleiding, en dat is ook waar die
 handleiding over gaat: `<Werkvormen />` toont de onderdelen van een les in de
 volgorde van de les, elk met zijn tip bij vakdidactiek en de paper erbij
 (`bron` in `werkvormen.json`, "Auteurs (jaar)"; een tip uit de praktijk heeft
-er geen). Alleen de werkvormen die in de lessen van de cursus voorkomen staan
-erin. `<LesWerkvormen les="html-css/koppen-lijsten" />` toont de iconen van
+er geen). Alleen de werkvormen die in meer dan één les van de cursus
+voorkomen staan erin (python heeft alleen in zijn introductie een leerdoel),
+en een `<Voorspel>` in de uitleg telt als voorspellen: de python-cursus heeft
+geen tabblad Predict. `<LesWerkvormen les="html-css/koppen-lijsten" />` toont de iconen van
 één les (`components/Werkvorm`); de web-handleiding gebruikt hem niet meer,
 want elke les heeft daar dezelfde rij. De
 gegevens per les komen uit `plugins/werkvormen.js`, die `createConfig` aanzet
@@ -301,8 +367,7 @@ bestaat onder dezelfde naam en met dezelfde paper; hernoem je daar een tip of
 verander je de bron, pas dan `werkvormen.json` mee aan.
 
 **De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
-de standaard (schrijfgids §15), en de web-cursus is de eerste die hem zo
-heeft. Hij is een halve pagina: waar de lessen op steunen
+de standaard (schrijfgids §15); web en python hebben hem zo. Hij is een halve pagina: waar de lessen op steunen
 (de tabel hierboven, met de literatuur), wat je vooraf wilt weten in drie
 regels, en links naar leerdoelen, eindopdracht en nakijker. Wat een leerling
 of docent nodig heeft om het materiaal te gebruiken, hoort in het materiaal
@@ -342,6 +407,9 @@ Wat vastligt, en waarom:
   `height`-prop, nooit lager dan 240 pixels). Staat er in het paneel een tip
   of antwoord open, dan meet het veld niet opnieuw: de editor kromp anders
   onder het typen. Buiten een tabblad en op een telefoon verandert er niets.
+  De `CodeExercise` van python-runner doet hetzelfde vanaf 997px: code links,
+  uitvoer rechts, met het vak voor de uitvoer er al voordat er iets gedraaid
+  is (anders schoof de knop Volgende weg bij de eerste klik op Uitvoeren).
 - **De les krijgt de breedte van de inhoudsopgave** met een regel in
   `@layer docusaurus.infima`. Docusaurus zet de kolom op 75% met `!important`
   in een latere layer, en bij `!important` wint de eerste layer; een losse
@@ -353,8 +421,10 @@ leerling op dat moment ziet. Een zin als "de startcode in de editor
 hieronder" klopte op de lange pagina en wijst nu naar een ander tabblad: in
 14 van de 33 web-lessen vroeg Predict zo naar code die er niet stond. Wijs
 dus alleen naar wat in hetzelfde scherm staat, en zet de code waar een vraag
-over gaat erbij. De cursus bewaakt dat zelf
-(`sites/informatica/web/src/docs-tests/schermen.test.ts`).
+over gaat erbij. Wat op een ander scherm staat, noem je bij zijn naam ("uit
+de uitleg", "in de volgende stap"). De cursus bewaakt dat zelf
+(`src/docs-tests/schermen.test.ts` van web en van python; beide lezen een les
+met `packages/shared/plugins/les-schermen.js`, dezelfde stap als de build).
 
 Een kop die op zijn tabblad of stap al voluit staat, is verborgen voor het
 oog en blijft voor een schermlezer en een link. Bij die verborgen kop hoort
@@ -368,9 +438,13 @@ Tabbladen garanderen niet dat een onderdeel op één scherm past:
 `node scripts/meet-les-tabs.mjs <site>` (na een build, met Playwright) meet
 per les, per tabblad en per stap op 1280×720 en 1366×768 hoeveel pixels het
 te lang is, op hoeveel regels de rij tabbladen staat, en (ook op 390×800)
-of een scherm zijwaarts schuift. Wat dan nog te lang is, is tekst: een stap of een Er gaat iets
-mis met meer inhoud dan op een scherm past. Dat lost een auteur op, niet de
-opmaak.
+of een scherm zijwaarts schuift. Het opent vier lessen tegelijk; met
+`--les=klassen/15f` meet het alleen de lessen met dat stuk in hun pad, en
+met `--klik` klikt het in elk scherm met een Python-veld ook op Uitvoeren en
+op Stap voor stap en meet het na elke klik opnieuw: een scherm dat past tot
+je iets aanklikt, past niet. Wat
+dan nog te lang is, is tekst: een stap of een Er gaat iets mis met meer
+inhoud dan op een scherm past. Dat lost een auteur op, niet de opmaak.
 Bekende nadelen: Ctrl+F vindt geen tekst in een tabblad dat niet open staat,
 bij een link naar een kop is heel kort het eerste tabblad te zien, Matomo telt
 een tabblad niet als bezoek, en de begrippen-stap markeert het eerste

@@ -32,7 +32,7 @@ bello.blaf()
   <Keuze uitleg="blaf heeft de parameter self, maar die vult Python zelf in. Je hoeft niets mee te geven.">Een foutmelding</Keuze>
   <Uitleg>
 
-  Elke hond blaft met zijn eigen naam. Hoe Python dat doet, lees je hieronder bij `self`.
+  Elke hond blaft met zijn eigen naam. Hoe Python dat doet, lees je in de volgende stap, bij `self`.
 
   </Uitleg>
 </Voorspel>
@@ -41,6 +41,11 @@ De methode springt in onder `class`, net als `__init__`. Je roept hem aan met
 een punt, net als een attribuut, maar met haakjes erachter: `rex.blaf()`.
 
 ## Wat is `self`?
+
+```python
+def blaf(self):
+    print(f"{self.naam} zegt: Woef!")
+```
 
 Bij `rex.blaf()` vult Python `self` zelf in met het object vóór de punt:
 `rex`. Daarom print dezelfde methode één keer "Rex" en één keer "Bello".
@@ -52,7 +57,7 @@ hem nooit zelf: `rex.blaf()`, niet `rex.blaf(rex)`.
 
 ## Er gaat iets mis
 
-**`self` vergeten**
+### `self` vergeten
 
 ```python
 class Hond:
@@ -74,7 +79,7 @@ Jij geeft geen argument mee, en toch zegt Python dat er één binnenkomt. Dat
 is `rex`: Python geeft het object altijd mee als eerste argument. Zet `self`
 bovenaan de parameters: `def blaf(self):`.
 
-**De haakjes vergeten**
+### De haakjes vergeten
 
 {/* uitvoer-varieert: het adres van het object verschilt per keer */}
 

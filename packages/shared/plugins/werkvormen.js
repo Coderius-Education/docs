@@ -28,7 +28,16 @@ async function mdxParser() {
   );
   const mdx = require.resolve('@mdx-js/mdx', { paths: [loader] });
   const { createProcessor } = await import(pathToFileURL(mdx).href);
-  const processor = createProcessor({ format: 'mdx' });
+  // Met remark-directive en remark-gfm, zoals de build. Zonder is een
+  // `:::info` of een tabel een rij alinea's, en dan verdeelt de stap van de
+  // tabbladen de les anders dan de leerling hem ziet: geen blok (Vooraf,
+  // korte uitleg), en een tabel vóór de eerste `###` telde als losse zin.
+  const plugin = async (naam) =>
+    (await import(pathToFileURL(require.resolve(naam, { paths: [loader] })).href)).default;
+  const processor = createProcessor({
+    format: 'mdx',
+    remarkPlugins: [await plugin('remark-directive'), await plugin('remark-gfm')],
+  });
   return (bron) => processor.parse(bron);
 }
 
@@ -59,10 +68,17 @@ function werkvormenVanLes(bron, parse) {
   // tabblad erna. Voor de docent is het wel een werkvorm van de les.
   const heeft = (node, naam) =>
     node.name === naam || (node.children ?? []).some((kind) => heeft(kind, naam));
-  return tabs.children.flatMap((tab) => [
-    ...(heeft(tab, 'LesLeerdoel') ? ['leerdoel'] : []),
-    tab.attributes.find((a) => a.name === 'werkvorm')?.value ?? null,
-  ]);
+  // Een voorspelvraag in de uitleg (<Voorspel>, in de python-cursus direct
+  // onder de code waar hij over gaat) is voorspellen, ook zonder tabblad
+  // Predict.
+  return tabs.children.flatMap((tab) => {
+    const vorm = tab.attributes.find((a) => a.name === 'werkvorm')?.value ?? null;
+    return [
+      ...(heeft(tab, 'LesLeerdoel') ? ['leerdoel'] : []),
+      vorm,
+      ...(vorm !== 'voorspellen' && heeft(tab, 'Voorspel') ? ['voorspellen'] : []),
+    ];
+  });
 }
 
 /** De docs van de cursus: van elke docs-plugin de nieuwste versie. */

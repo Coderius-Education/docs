@@ -98,6 +98,134 @@
   border-top: 1px solid var(--ifm-color-emphasis-300);
 }
 
+/* De uitvoer, de tekening en de laadmelding. Buiten een tabblad staat dit
+   vak onder de code en is het er niet als het leeg is. */
+.resultaat:empty {
+  display: none;
+}
+
+.wacht {
+  margin: 0;
+  padding: 0.75rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.825rem;
+}
+
+.bewaart {
+  display: block;
+  margin-top: 0.25rem;
+}
+
+/* In een les-tabblad, op een breed scherm: code links, uitvoer rechts. Een
+   lange uitvoer schuift in zijn eigen vak. Stap voor stap heeft de hele
+   breedte nodig en staat eronder. */
+@media (min-width: 997px) {
+  .inTab {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+
+  .inTab > .resultaat {
+    grid-column: 2;
+    grid-row: 1;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-left: 1px solid var(--ifm-color-emphasis-300);
+    background: var(--ifm-color-emphasis-100);
+  }
+
+  .inTab > .resultaat .output {
+    border-top: 0;
+  }
+
+  .inTab > :not(.editorSection):not(.resultaat) {
+    grid-column: 1 / -1;
+  }
+
+  /* Is de uitvoer of het doelplaatje hoger dan de code, dan loopt de editor
+     door tot onderaan het veld. */
+  .inTab > .editorSection {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .inTab > .editorSection > :last-child {
+    flex: 1 1 auto;
+  }
+
+  /* Stap voor stap op de plek van de editor en de uitvoer, over de hele
+     breedte: de werkbalk dus ook. */
+  .staptInTab > .editorSection {
+    grid-column: 1 / -1;
+  }
+
+  .staptInTab > .editorSection > :last-child,
+  .staptInTab > .resultaat {
+    display: none;
+  }
+
+  /* De eigen tekening en het doelplaatje onder elkaar, samen zo hoog als het
+     veld: de tekening het grootst, het doel eronder. */
+  .inTab > .vergelijk svg {
+    max-height: calc(var(--veld-hoogte, 60vh) * 0.42);
+  }
+
+  .inTab > .vergelijk .doelNaast img {
+    width: auto;
+    max-height: calc(var(--veld-hoogte, 60vh) * 0.24);
+  }
+}
+
+/* Het doel van de opdracht in de uitvoerkolom (useLesDoel): de verwachte
+   uitvoer of het doelplaatje, onder wat de leerling zelf kreeg. */
+.doel {
+  padding: 0.5rem 0.75rem 0.75rem;
+  border-top: 1px dashed var(--ifm-color-emphasis-300);
+  font-size: 0.825rem;
+}
+
+.doel > p {
+  margin: 0 0 0.35rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.doel > :last-child {
+  margin-bottom: 0;
+}
+
+.doel img {
+  display: block;
+  max-width: 100%;
+  max-height: 30vh;
+  background: #fff;
+}
+
+.wacht + .doel {
+  border-top: 0;
+  padding-top: 0;
+}
+
+/* Het doel staat er twee keer: boven de code op een smal scherm, in de
+   uitvoerkolom op een breed scherm. */
+.doelBoven {
+  border-top: 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.doelNaast {
+  display: none;
+}
+
+@media (min-width: 997px) {
+  .doelBoven {
+    display: none;
+  }
+
+  .doelNaast {
+    display: block;
+  }
+}
+
 .loading {
   padding: 0.5rem 0.75rem;
   font-size: 0.8rem;

@@ -30,7 +30,21 @@ Uitvoer:
 8
 ```
 
-Werkt. Nu importeer je de module in je programma:
+Werkt.
+
+### Voorspel
+
+Nu importeer je de module in je programma:
+
+**`rekenen.py`**
+
+```python
+def verdubbel(getal):
+    return getal * 2
+
+
+print(verdubbel(4))
+```
 
 **`main.py`**
 
@@ -71,8 +85,9 @@ if __name__ == "__main__":
 Start je `rekenen.py`, dan zie je `8`. Start je `main.py`, dan zie je alleen
 `20`.
 
-Dat komt door `__name__`, een variabele die Python in elk bestand klaarzet.
-Probeer het:
+### Wat is `__name__`?
+
+`__name__` is een variabele die Python in elk bestand klaarzet. Probeer het:
 
 <CodeExercise>{`print(__name__)`}</CodeExercise>
 

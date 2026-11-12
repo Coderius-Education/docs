@@ -9,8 +9,6 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 Welkom bij je eerste les Python. Je schrijft hier je allereerste programma: een paar regels tekst op het scherm. Het enige wat je nodig hebt is één instructie: `print()`.
 
-## Tekst tonen met print
-
 Alles wat je tussen aanhalingstekens in `print(...)` zet, verschijnt op het scherm:
 
 ```python
@@ -33,7 +31,9 @@ Ik leer Python.
 Dit is mijn eerste programma.
 ```
 
-Tekst moet altijd tussen aanhalingstekens staan. Vergeet je ze, dan geeft Python een foutmelding. Hieronder zie je welke.
+Tekst moet altijd tussen aanhalingstekens staan. Vergeet je ze, dan geeft Python een foutmelding. In de volgende stap zie je welke.
+
+### Voorspel
 
 ```python
 print("5 + 3")
@@ -52,7 +52,7 @@ print("5 + 3")
 
 ## Er gaat iets mis
 
-**Aanhalingstekens vergeten**
+### Aanhalingstekens vergeten
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -72,7 +72,7 @@ Zonder aanhalingstekens is `Hallo` voor Python geen tekst maar een naam, en die 
 
 Staan er meer woorden zonder aanhalingstekens, zoals in `print(Hallo, wereld!)`, dan snapt Python de regel helemaal niet. Dan krijg je een `SyntaxError`.
 
-**Het aanhalingsteken aan het eind vergeten**
+### Het aanhalingsteken aan het eind vergeten
 
 {/* niet-compileren: bewuste syntaxfout, het aanhalingsteken aan het eind ontbreekt */}
 
@@ -90,7 +90,7 @@ SyntaxError: unterminated string literal (detected at line 1)
 
 Python zoekt het aanhalingsteken dat de tekst afsluit, en vindt het niet. Elke tekst heeft er twee: één aan het begin en één aan het eind.
 
-**Print met een hoofdletter**
+### Print met een hoofdletter
 
 {/* foutmelding-van: blok-erboven */}
 

@@ -11,14 +11,11 @@ import CodeExercise from '@site/src/components/CodeExercise';
 Deze les gebruikt `json.dumps` en `json.loads`, uit [JSON](site:python/docs/bestanden/14e-json), en bestanden openen, uit [Een tekstbestand schrijven](site:python/docs/bestanden/14a-tekstbestand-schrijven).
 :::
 
-In 14e zette je gegevens om naar JSON-tekst. Om ze te bewaren tot de volgende
-keer, schrijf je die tekst in een bestand.
+In 14e maakte je JSON-tekst van je gegevens. Die tekst bewaar je in een bestand.
 
 ## Opslaan in een bestand
 
-Het bestand open je met `"w"`, zoals in 14a. In plaats van `bestand.write()`
-gebruik je `json.dump()`: die zet je gegevens om naar JSON en schrijft ze
-meteen in het bestand.
+Open het bestand met `"w"`, zoals in 14a. Schrijven doe je nu met `json.dump()`:
 
 ```python
 import json
@@ -66,6 +63,8 @@ Uitvoer:
 Sara: 120
 Alex: 95
 ```
+
+### Voorspel
 
 Sla je twee keer iets op in hetzelfde bestand, wat lees je dan in?
 

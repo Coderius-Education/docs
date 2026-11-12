@@ -38,13 +38,22 @@ erbuiten staat. Hij moet alleen bestaan op het moment dat je `rij` aanroept.
 
 ## Opdracht: een aardbei
 
-Plak je programma uit stap 3 in het veld. Ben je het kwijt, neem dan de
-oplossing van [stap 3](site:python/docs/projecten/pixel-art/stap-3-plaatje).
+### De opdracht
 
 Pas `rij` aan, zodat elk teken behalve `.` een vakje wordt, in de kleur die
-in `kleuren` bij dat teken hoort. Zet de dictionary van hierboven in je
-programma, kopieer deze aardbei erbij, en teken hem in plaats van de smiley.
+in `kleuren` bij dat teken hoort. Zet de dictionary uit de uitleg in je
+programma, kopieer de lijst `aardbei` erbij (die staat bij het veld), en teken hem in
+plaats van de smiley.
 De bovenste regel begint op `(-100, 120)`.
+
+### Aan de slag
+
+Plak je programma uit stap 3 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 3](site:python/docs/projecten/pixel-art/stap-3-plaatje). Kopieer daarna dit
+naar je programma:
+
+<details>
+<summary>Klik hier voor de lijst `aardbei`.</summary>
 
 ```python
 aardbei = [
@@ -62,6 +71,8 @@ aardbei = [
     "....RR....",
 ]
 ```
+
+</details>
 
 ![Een rode aardbei van pixels met gele pitjes en groene blaadjes bovenop](./img/stap-4-aardbei.svg)
 
@@ -131,6 +142,8 @@ for regel in aardbei:
 
 </details>
 
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
 ## Er gaat iets mis
 
 {/* foutmelding-van: kleuren = {"R": "red"}\nkleuren["r"] */}
@@ -145,7 +158,5 @@ zijn dat twee verschillende tekens.
 
 **Oplossing:** verbeter het teken in je plaatje, of zet het als sleutel in
 `kleuren`. De melding noemt het teken dat ontbreekt.
-
-Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 5: spiegelen](site:python/docs/projecten/pixel-art/stap-5-spiegelen).

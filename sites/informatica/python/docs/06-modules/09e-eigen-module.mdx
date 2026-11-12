@@ -9,7 +9,11 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 In [9d](site:python/docs/modules/09d-modules) haalde je `time` binnen: een module die iemand anders schreef. Een module is niets anders dan een Python-bestand, dus je kunt er zelf een maken.
 
-Twee bestanden, in dezelfde map:
+:::note
+Dit is de eerste les zonder oefenvenster bij de voorbeelden. Dat komt doordat er hier twee bestanden nodig zijn en het venster er maar één heeft. Maak deze bestanden dus in je eigen editor.
+:::
+
+### Twee bestanden
 
 **`rekenen.py`**
 
@@ -42,10 +46,6 @@ print(rekenen.verdubbel(10))
   </Uitleg>
 </Voorspel>
 
-:::note
-Dit is de eerste les zonder oefenvenster bij de voorbeelden. Dat komt doordat er hier twee bestanden nodig zijn en het venster er maar één heeft. Maak deze bestanden dus in je eigen editor.
-:::
-
 ## De bestandsnaam is de modulenaam
 
 `rekenen.py` importeer je als `rekenen`, **zonder** de `.py`:
@@ -56,7 +56,7 @@ import rekenen        # klopt
 import rekenen.py     # klopt niet
 ```
 
-Daarom is de bestandsnaam ineens belangrijk. Kies een naam zonder spaties en zonder streepjes, want die mag je niet typen achter `import`.
+Kies een bestandsnaam zonder spaties en zonder streepjes: die mag je niet typen achter `import`.
 
 | Bestandsnaam | Import | Werkt |
 |:---:|:---:|:---:|
@@ -124,7 +124,7 @@ Maak je een bestand `random.py`, dan vindt Python jóuw bestand in plaats van de
 AttributeError: module 'random' has no attribute 'randint'…
 ```
 
-Python zegt hier: die module heb ik gevonden, maar er zit niet in wat je vraagt. Logisch, want hij kijkt in jouw bestand. Achter die regel zet hij nog het volledige pad van je eigen `random.py` met de tip om hem te hernoemen — precies de oplossing hieronder.
+Python zegt hier: die module heb ik gevonden, maar er zit niet in wat je vraagt. Logisch, want hij kijkt in jouw bestand. Achter die regel zet hij nog het volledige pad van je eigen `random.py` met de tip om hem te hernoemen.
 
 **Oplossing:** geef je bestand een andere naam. `mijn_random.py` mag wel.
 

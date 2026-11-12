@@ -32,6 +32,8 @@ for i in range(5):
   </Uitleg>
 </Voorspel>
 
+### Hoe het werkt
+
 - `range(5)` betekent: "geef vijf getallen, beginnend bij 0" — dus `0, 1, 2, 3, 4`.
 - `i` is de **loop-variabele**. Python vult hem elke ronde met het volgende getal.
 - De code binnen de loop springt **4 spaties** in, net als bij `if`.
@@ -40,9 +42,13 @@ for i in range(5):
 
 De naam `i` is geen wet: je mag de variabele ook `teller` of `getal` noemen. `i` is traditie (van *index*).
 
+:::tip[Eerst op papier]
+Speel dit eerst na zonder computer, met losgeknipte regels code: [Codestroken leggen](site:python/docs/projecten/unplugged/codestroken). Je docent kan de hand-out printen.
+:::
+
 ## Er gaat iets mis
 
-**De dubbele punt vergeten**
+### De dubbele punt vergeten
 
 {/* niet-compileren: bewuste syntaxfout, de dubbele punt ontbreekt */}
 
@@ -61,7 +67,7 @@ SyntaxError: expected ':'
 
 Net als bij `if` staat achter de `for`-regel een dubbele punt.
 
-**range vergeten**
+### range vergeten
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -78,7 +84,7 @@ TypeError: 'int' object is not iterable
 
 Een `for`-loop loopt iets af, en een los getal valt niet af te lopen. Met `range(5)` maak je er vijf getallen van.
 
-**Een regel te veel ingesprongen**
+### Een regel te veel ingesprongen
 
 ```python
 for i in range(3):
@@ -98,10 +104,6 @@ Klaar
 ```
 
 Geen foutmelding, maar `Klaar` staat drie keer op het scherm. Alles wat inspringt hoort bij de loop. Moet een regel één keer na de loop, laat hem dan niet inspringen.
-
-:::tip[Eerst op papier]
-Speel dit eerst na zonder computer, met losgeknipte regels code: [Codestroken leggen](site:python/docs/projecten/unplugged/codestroken). Je docent kan de hand-out printen.
-:::
 
 ---
 

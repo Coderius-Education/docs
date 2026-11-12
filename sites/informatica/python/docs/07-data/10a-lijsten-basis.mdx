@@ -22,6 +22,8 @@ print(len(kleuren))    # 3
 
 `len()` geeft het aantal elementen in de lijst.
 
+### Voorspel
+
 ```python
 kleuren = ["rood", "groen", "blauw"]
 
@@ -34,7 +36,7 @@ print(kleuren[1])
   <Keuze uitleg="Plek 1 is niet het laatste element. Er zijn drie plekken, en Python begint bij 0.">`blauw`</Keuze>
   <Uitleg>
 
-  Je ziet `groen`. Het eerste element staat op plek 0, het tweede op plek 1. Hieronder zie je hoe dat verder gaat.
+  Je ziet `groen`. Het eerste element staat op plek 0, het tweede op plek 1. In de volgende stap zie je hoe dat verder gaat.
 
   </Uitleg>
 </Voorspel>
@@ -75,9 +77,13 @@ blauw
 
 In elke ronde krijgt `kleur` automatisch de volgende waarde uit de lijst.
 
+:::tip[Eerst op papier]
+Speel dit eerst na zonder computer, met een rij bekertjes: [Een rij bekertjes](site:python/docs/projecten/unplugged/bekertjes). Je docent kan de hand-out printen.
+:::
+
 ## Er gaat iets mis
 
-**Een plek die niet bestaat**
+### Een plek die niet bestaat
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -94,7 +100,7 @@ IndexError: list index out of range
 
 Drie elementen staan op plek 0, 1 en 2. Plek 3 bestaat niet. Het laatste element is `kleuren[2]`, of `kleuren[-1]`.
 
-**Ronde haakjes in plaats van blokhaken**
+### Ronde haakjes in plaats van blokhaken
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -110,10 +116,6 @@ TypeError: 'list' object is not callable
 ```
 
 Met ronde haakjes roep je een functie aan, en een lijst is geen functie. Een element opzoeken doe je met blokhaken: `kleuren[0]`.
-
-:::tip[Eerst op papier]
-Speel dit eerst na zonder computer, met een rij bekertjes: [Een rij bekertjes](site:python/docs/projecten/unplugged/bekertjes). Je docent kan de hand-out printen.
-:::
 
 ---
 

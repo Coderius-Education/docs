@@ -9,8 +9,6 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 Je rekenmachine uit [les 3](site:python/docs/basis/rekenmachine) werkte, maar al die spaties in `"Som:     "` tellen was gepruts. Met een **f-string** zet je tekst en variabelen in één zin.
 
-## Een f-string maken
-
 Een f-string is een gewone string met een `f` ervoor. Variabelen zet je tussen `{}`:
 
 ```python
@@ -25,6 +23,8 @@ Uitvoer:
 ```
 Hallo, ik ben Alex en ik ben 15 jaar oud.
 ```
+
+### Rekenen tussen de accolades
 
 Je kunt ook **berekeningen** doen binnen de accolades:
 
@@ -41,6 +41,8 @@ Volgend jaar ben ik 16 jaar.
 ```
 
 Tussen de accolades mag elke Python-uitdrukking staan: een variabele, een berekening, of een functie zoals `len()` uit de [volgende les](site:python/docs/tekst/04b-string-methoden).
+
+### Voorspel
 
 ```python
 naam = "Alex"
@@ -61,11 +63,11 @@ print("Hallo, {naam}")
 
 ## Er gaat iets mis
 
-**De f vergeten**
+### De f vergeten
 
 Zie je in je uitvoer `{naam}` staan in plaats van de naam, dan mist de `f` voor de aanhalingstekens. Python geeft geen foutmelding, dus deze fout zie je alleen aan de uitvoer.
 
-**Tekst en een getal met + aan elkaar plakken**
+### Tekst en een getal met + aan elkaar plakken
 
 {/* foutmelding-van: blok-erboven */}
 

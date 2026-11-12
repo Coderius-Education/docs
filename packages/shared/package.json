@@ -88,6 +88,8 @@
     "./components/CodeUitleg": "./components/CodeUitleg/index.tsx",
     "./components/Voorspel": "./components/Voorspel/index.tsx",
     "./components/LesTabs": "./components/LesTabs/index.tsx",
+    "./components/LesTabs/paneel": "./components/LesTabs/paneel.ts",
+    "./components/LesTabs/pasHoogte": "./components/LesTabs/pasHoogte.ts",
     "./components/Werkvorm": "./components/Werkvorm/index.tsx",
     "./components/NaslagZoeker": "./components/NaslagZoeker/index.tsx",
     "./components/Handout": "./components/Handout/index.tsx",

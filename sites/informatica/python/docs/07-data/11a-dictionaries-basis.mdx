@@ -7,7 +7,7 @@ import CodeExercise from '@site/src/components/CodeExercise';
 
 # 11a Dictionaries
 
-Een lijst slaat waardes op een **positie** op (0, 1, 2, ...). Wil je een waarde opzoeken met een **naam**, zoals in een telefoonboek waar je een naam opzoekt en een nummer vindt, dan gebruik je een **dictionary**.
+Een lijst slaat waardes op een **positie** op (0, 1, 2, ...). Wil je een waarde opzoeken met een **naam**, zoals in een telefoonboek, dan gebruik je een **dictionary**.
 
 ## Een dictionary maken
 
@@ -26,9 +26,9 @@ print(leerling["leeftijd"])  # 15
 
 - De **sleutel** staat links van de dubbele punt (`"naam"`).
 - De **waarde** staat rechts (`"Sara"`).
-- Met `dictionary[sleutel]` haal je de waarde op.
+- Met `dictionary[sleutel]` haal je de waarde op. Een naam leest makkelijker dan een nummer: bij `leerling["naam"]` zie je meteen wat je krijgt.
 
-Opzoeken met een naam leest makkelijker dan met een nummer: bij `leerling["naam"]` zie je meteen wat je krijgt.
+### Voorspel
 
 {/* niet-draaien: valt expres om; de voorspelvraag eronder vraagt waarom */}
 ```python
@@ -60,9 +60,13 @@ leerling["hobby"] = "muziek"     # voegt nieuwe sleutel toe
 
 Bestaat de sleutel al, dan wordt de waarde overschreven. Bestaat hij nog niet, dan wordt hij toegevoegd.
 
+:::tip[Eerst op papier]
+Speel dit eerst na zonder computer, met enveloppen als kluisjes: [Kluisjes met naamkaartjes](site:python/docs/projecten/unplugged/kluisjes). Je docent kan de hand-out printen.
+:::
+
 ## Er gaat iets mis
 
-**Een sleutel die niet bestaat**
+### Een sleutel die niet bestaat
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -79,7 +83,7 @@ KeyError: 'leeftijd'
 
 De melding noemt de sleutel die Python zocht. Controleer de spelling, of voeg de sleutel eerst toe. Hoe je vooraf kijkt of een sleutel bestaat, leer je in de [volgende les](site:python/docs/data/11b-itereren-dictionaries).
 
-**De aanhalingstekens om de sleutel vergeten**
+### De aanhalingstekens om de sleutel vergeten
 
 {/* foutmelding-van: blok-erboven */}
 
@@ -95,10 +99,6 @@ NameError: name 'naam' is not defined
 ```
 
 Zonder aanhalingstekens zoekt Python een variabele `naam`, en die is er niet. De sleutel is de tekst `"naam"`: `leerling["naam"]`.
-
-:::tip[Eerst op papier]
-Speel dit eerst na zonder computer, met enveloppen als kluisjes: [Kluisjes met naamkaartjes](site:python/docs/projecten/unplugged/kluisjes). Je docent kan de hand-out printen.
-:::
 
 ---
 

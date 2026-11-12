@@ -14,18 +14,9 @@ import { describe, expect, it } from 'vitest';
 
 const require = createRequire(import.meta.url);
 const GEDEELD = '../../../../../packages/shared/plugins';
-const { groepeer } = require(`${GEDEELD}/les-tabs.js`);
+const { schermenVan: schermenVanBron } = require(`${GEDEELD}/les-schermen.js`);
 const { mdxParser } = require(`${GEDEELD}/werkvormen.js`);
 
-type Knoop = {
-  type: string;
-  name?: string;
-  value?: string;
-  depth?: number;
-  data?: { id?: string };
-  children?: Knoop[];
-  attributes?: { name: string; value: string }[];
-};
 // 'antwoord' is het begin van een uitklapblok: wat erna komt, ziet de leerling
 // pas als hij het opent.
 type Blok = { soort: 'tekst' | 'code' | 'veld' | 'tabel' | 'lijst' | 'antwoord'; tekst: string };
@@ -44,58 +35,14 @@ const lessen = readdirSync(DOCS, { withFileTypes: true })
       })),
   );
 
-const tekstVan = (n: Knoop): string =>
-  n.type === 'text' || n.type === 'inlineCode'
-    ? (n.value ?? '')
-    : (n.children ?? []).map(tekstVan).join(' ');
-const eigenschap = (n: Knoop, naam: string) => n.attributes?.find((a) => a.name === naam)?.value;
-
-/** Wat er in een scherm staat, in volgorde. */
-function blokken(nodes: Knoop[], uit: Blok[] = []): Blok[] {
-  for (const n of nodes) {
-    if (n.type === 'paragraph') uit.push({ soort: 'tekst', tekst: tekstVan(n) });
-    else if (n.type === 'code') uit.push({ soort: 'code', tekst: n.value ?? '' });
-    else if (n.type === 'table') uit.push({ soort: 'tabel', tekst: tekstVan(n) });
-    else if (n.type === 'list') uit.push({ soort: 'lijst', tekst: tekstVan(n) });
-    else if (n.name === 'CodeEditor') uit.push({ soort: 'veld', tekst: '' });
-    else if (n.name === 'LesStappen') continue;
-    else if (n.name === 'details') {
-      uit.push({ soort: 'antwoord', tekst: '' });
-      blokken(n.children ?? [], uit);
-    } else if (n.type !== 'heading' && n.children) blokken(n.children, uit);
-  }
-  return uit;
-}
-
 const parse = await mdxParser();
 
-/** De schermen van één les: elk tabblad, of elke stap van een tabblad met stappen. */
+/** De schermen van één les (packages/shared/plugins/les-schermen.js). */
 function schermenVan(les: { naam: string; bron: string }): Scherm[] {
-  const tree: Knoop = parse(les.bron.replace(/^---\r?\n(?:[\s\S]*?\r?\n)?---\r?\n/, ''));
-  let n = 0;
-  const geefId = (node: Knoop) => {
-    if (node.type === 'heading') node.data = { id: `kop-${n++}` };
-    for (const kind of node.children ?? []) geefId(kind);
-  };
-  geefId(tree);
-  const tabs = ((groepeer(tree.children) ?? []) as Knoop[]).find((k) => k.name === 'LesTabs');
-  return (tabs?.children ?? []).flatMap((tab) => {
-    const label = eigenschap(tab, 'label') ?? '';
-    const stappen = tab.children?.find((k) => k.name === 'LesStappen');
-    if (!stappen) {
-      return [{ les: les.naam, tab: label, naam: label, blokken: blokken(tab.children ?? []) }];
-    }
-    // Wat in de rij stappen geen stap is (het leerdoel), staat bij de eerste.
-    const boven = blokken((stappen.children ?? []).filter((k) => k.name !== 'LesStap'));
-    return (stappen.children ?? [])
-      .filter((k) => k.name === 'LesStap')
-      .map((stap, i) => ({
-        les: les.naam,
-        tab: label,
-        naam: `${label} › ${eigenschap(stap, 'label')}`,
-        blokken: [...(i === 0 ? boven : []), ...blokken(stap.children ?? [])],
-      }));
-  });
+  return schermenVanBron(les.bron, parse).map((s: Omit<Scherm, 'les'>) => ({
+    les: les.naam,
+    ...s,
+  }));
 }
 
 const schermen = lessen.flatMap(schermenVan);
