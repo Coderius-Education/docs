@@ -86,12 +86,7 @@ robot blijven rijden en meten, zet dat deel dan in een `while True:`-lus.
 
 Koppel de USB-kabel los, zet de batterijhouder op **ON**, en je robot werkt zelfstandig.
 
-<details>
-<summary>Controlevraag</summary>
-
-Wat gebeurt er als je je code als **`programma.py`** opslaat in plaats van **`main.py`**?
-
-</details>
+**Controlevraag:** Wat gebeurt er als je je code als **`programma.py`** opslaat in plaats van **`main.py`**?
 
 <details>
 <summary>Antwoord</summary>

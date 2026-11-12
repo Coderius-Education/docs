@@ -21,12 +21,7 @@ Een **Time of Flight (TOF) sensor** meet afstand met een lichtstraal. Hij is pre
   <Onderdeel naam="SDA/SCL-module" foto="tof/sda_scl_module.jpeg" alt="De SDA/SCL-module (multiplexer) voor het Leaphy Murphy Shield">Een multiplexer, alleen nodig bij twee of meer TOF-sensoren</Onderdeel>
 </Onderdelenlijst>
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom heb je een multiplexer nodig bij **meerdere** TOF-sensoren?
-
-</details>
+**Controlevraag:** Waarom heb je een multiplexer nodig bij **meerdere** TOF-sensoren?
 
 <details>
 <summary>Antwoord</summary>
@@ -72,12 +67,7 @@ while True:
 - `TimeOfFlight(sda_gpio_pin="SDA", scl_gpio_pin="SCL")` maakt een sensor aan op de twee pinnen van I2C. Zonder multiplexer heb je geen `channel` nodig.
 - `tof.get_distance()` geeft de afstand in **millimeters**.
 
-<details>
-<summary>Controlevraag</summary>
-
-Wat krijg je terug als er **niets** voor de sensor staat?
-
-</details>
+**Controlevraag:** Wat krijg je terug als er **niets** voor de sensor staat?
 
 <details>
 <summary>Antwoord</summary>
@@ -105,9 +95,8 @@ while True:
     sleep(1)
 ```
 
-- Alles tot en met **8090** noemt de bibliotheek een afstand, in millimeters.
-  Betrouwbaar meet de sensor tussen ongeveer **50 en 2000 mm** (5 cm tot 2 m).
-  Daarbuiten krijg je soms nog een getal, maar reken er niet op.
+- Alles tot en met **8090** is een afstand in millimeters. Betrouwbaar meet
+  de sensor van ongeveer **50 tot 2000 mm**; reken daarbuiten niet op het getal.
 - Is het getal **groter dan 8090**? Dan is er geen geldige meting:
   - **8191**: de sensor antwoordt, maar ziet niets binnen bereik (te ver, te
     dichtbij of niets ervoor);
@@ -117,12 +106,7 @@ while True:
 
 ### Controlevraag
 
-<details>
-<summary>Controlevraag</summary>
-
 Wat zie je in de Shell als je je hand vlak (minder dan 5 cm) voor de sensor houdt?
-
-</details>
 
 <details>
 <summary>Antwoord</summary>
@@ -168,12 +152,7 @@ TimeOfFlight(
 
 Met `channel=7` vertel je de bibliotheek op welk kanaal van de multiplexer de sensor zit. Vergeet niet dit aan te passen als je de sensor in een ander kanaal steekt.
 
-<details>
-<summary>Controlevraag</summary>
-
-Welk getal vul je in bij `channel=` als je de sensor in het stel pinnen onder **0** steekt?
-
-</details>
+**Controlevraag:** Welk getal vul je in bij `channel=` als je de sensor in het stel pinnen onder **0** steekt?
 
 <details>
 <summary>Antwoord</summary>
@@ -221,6 +200,10 @@ while True:
 
 In de Shell zie je nu twee getallen naast elkaar: de afstand voor sensor 0 en sensor 7.
 
+## SDA en SCL \{#sda-scl}
+
+<I2C />
+
 ## Opdracht: drie sensoren
 
 Voeg een derde TOF toe op **channel 3** en print ook die waarde mee.
@@ -251,7 +234,3 @@ while True:
 ```
 
 </details>
-
-## SDA en SCL \{#sda-scl}
-
-<I2C />

@@ -101,12 +101,7 @@ lampje.on()
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Wat betekent `Pin.OUT`?
-
-</details>
+**Controlevraag:** Wat betekent `Pin.OUT`?
 
 <details>
 <summary>Antwoord</summary>

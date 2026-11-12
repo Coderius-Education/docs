@@ -12,12 +12,7 @@ Met de **richting** van de stroom bepaal je welke kant de motor op draait: de en
 
 DC-motoren hebben veel **stroom** nodig — meer dan de pinnen van de microcontroller kunnen leveren. Daarom sluit je ze niet rechtstreeks op de Nano aan, maar via een **motor shield**. Dat shield haalt de stroom uit de batterij en stuurt hem gecontroleerd naar de motoren, terwijl de microcontroller alleen het "commando" geeft.
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom sluit je de motoren via een motor shield aan en niet rechtstreeks op de microcontroller?
-
-</details>
+**Controlevraag:** Waarom sluit je de motoren via een motor shield aan en niet rechtstreeks op de microcontroller?
 
 <details>
 <summary>Antwoord</summary>

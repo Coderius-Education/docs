@@ -213,12 +213,7 @@ while True:
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom staat de motor-setup wél in je robotscript, maar de rij-opdracht niet?
-
-</details>
+**Controlevraag:** Waarom staat de motor-setup wél in je robotscript, maar de rij-opdracht niet?
 
 <details>
 <summary>Antwoord</summary>

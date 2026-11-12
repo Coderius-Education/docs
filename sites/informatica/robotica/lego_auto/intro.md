@@ -37,12 +37,7 @@ Bekijk het model in 3D: draaien en zoomen met je muis. Wil je de details goed zi
 ### Compleet model
 <ObjViewer src="/models/main.obj" mtl="/models/main.mtl" />
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom bouwen we eerst het frame en pas later de elektronica?
-
-</details>
+**Controlevraag:** Waarom bouwen we eerst het frame en pas later de elektronica?
 
 <details>
 <summary>Antwoord</summary>

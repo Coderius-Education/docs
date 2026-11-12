@@ -56,6 +56,10 @@ In een cursus met tabbladen is een tabblad of een stap alles wat de leerling op 
 - **Onder code staat wat hem toelicht als lijst of tabel**, direct eronder of na één alinea: de build zet het ernaast. Voor uitleg per regel gebruik je `<CodeUitleg>`.
 - **Een stap heet naar zijn inhoud**: `### Stap 2: Kies een pin` krijgt in de rij het label "Kies een pin". Geef een `###` dus een titel na de dubbele punt.
 - **Een opdracht is een eigen sectie** (`## Opdracht: <naam>`), niet een uitklapblok onder de code: weggeklapt ziet een leerling hem niet. Tip en oplossing blijven uitklapblokken.
+- **Een vraag staat open; alleen het antwoord is een uitklapblok.** Schrijf `**Controlevraag:** …` met `<details><summary>Antwoord</summary>` eronder, of gebruik `<Voorspel>`. In de uitleg van een voorspelvraag staat niets dat de leerling moet doen: die verschijnt pas bij het goede antwoord.
+- **Een regel code naast zijn toelichting is hooguit 66 tekens.** Langer, en de build zet de code weer over de volle breedte.
+- **Geen twee koppen met dezelfde naam op een pagina**, ook niet in een deel dat de pagina importeert: een kop is ook een adres. Geef een kop in een deel een vast id (`### Controlevraag \{#i2c-controlevraag}`).
+- **Een pagina waar je met Ctrl+F zoekt** (een overzicht van foutmeldingen) krijgt `les_tabs: false`: zoeken vindt geen tekst in een tabblad dat dicht staat.
 
 Voor MDX-pagina's met runnable code, importeer bovenaan:
 

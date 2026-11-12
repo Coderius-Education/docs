@@ -121,7 +121,7 @@
     "id": "aanpassen",
     "label": "Aanpassen",
     "doet": "Een gerichte opdracht op code die er al staat, met een tip en een antwoord.",
-    "koppen": ["^Modify$", "^Opdracht\\b"],
+    "koppen": ["^Modify$", "^Opdracht\\b", "^Probeer het zelf$"],
     "tips": [
       {
         "slug": "primm",

@@ -12,12 +12,7 @@ Het scherm is handig als je robot **los van de laptop** rijdt: dan kun je de She
 
 Het scherm praat met de microcontroller via **I2C**, dus via de pinnen **SDA** en **SCL**. In je code werkt het in twee stappen: eerst zet je de tekst klaar, en daarna roep je **`show()`** aan om alles echt op het scherm te tonen. Vergeet je `show()`, dan blijft het scherm leeg.
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom is een OLED-scherm handig zodra je robot zonder laptop rijdt?
-
-</details>
+**Controlevraag:** Waarom is een OLED-scherm handig zodra je robot zonder laptop rijdt?
 
 <details>
 <summary>Antwoord</summary>

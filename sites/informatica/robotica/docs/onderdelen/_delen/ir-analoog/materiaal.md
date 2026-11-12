@@ -3,12 +3,7 @@
   <Onderdeel naam="Analoge IR-sensor" foto="ir-analoog/doc_irsensor.png" alt="Een blauwe IR-sensor met vier pinnen en een blauw potmetertje">Met vier pinnen</Onderdeel>
 </Onderdelenlijst>
 
-<details>
-<summary>Controlevraag</summary>
-
-Op welke pinnen sluit je een analoge IR-sensor aan?
-
-</details>
+**Controlevraag:** Op welke pinnen sluit je een analoge IR-sensor aan?
 
 <details>
 <summary>Antwoord</summary>

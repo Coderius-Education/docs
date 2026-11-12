@@ -282,6 +282,66 @@
   max-height: 34vh;
 }
 
+/* Op een telefoon scrolt de leerling toch: een plaatje in de lestekst staat
+   daar op de breedte van het scherm. Een aansluitschema van robotica was er
+   145 pixels breed. Niet het doelplaatje in een oefenveld: dat staat daar
+   boven de code. */
+@media (max-width: 996px) {
+  .paneel > p > img,
+  .paneel [data-les-voorbeeld] > p > img,
+  .paneel [data-les-voorbeeld] > div > p > img {
+    max-height: none;
+  }
+}
+
+/* Een plaatje dat kleiner staat dan het is, toont een klik groot
+   (Vergroot.tsx). */
+.wortel img[data-vergroot] {
+  cursor: zoom-in;
+}
+
+.groot {
+  max-width: min(96vw, 1200px);
+  max-height: 94vh;
+  padding: 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  overflow: auto;
+}
+
+.groot::backdrop {
+  background: rgb(0 0 0 / 55%);
+}
+
+.groot img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+/* De knop blijft in beeld als het plaatje hoger is dan het venster. */
+.grootSluiten {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.grootSluiten button {
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: 6px;
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 /* Een programma van meer dan zestien regels is hoger dan wat
    er op 1280×720 onder de tabbladen past: het schuift dan in zijn eigen vak,
    en de knop Volgende blijft in beeld. In de Python-cursus zijn dat vier
@@ -344,6 +404,11 @@
     margin-bottom: var(--ifm-leading);
   }
 
+  /* Een regel die net niet in de halve breedte past: de code iets kleiner. */
+  .bestandenSmal {
+    --ifm-code-font-size: 74%;
+  }
+
   .bestanden > div > p {
     margin: 0 0 0.25rem;
   }
@@ -366,9 +431,14 @@
     grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
   }
 
-  /* Code met de lijst die hem uitlegt: de lijst heeft de helft nodig. */
+  /* Code met de lijst die hem uitlegt. De code krijgt de breedte van zijn
+     langste regel, tussen veertig en zeventig procent: op een vaste helft
+     was de importregel van leaphymicropython afgesneden (elf codeblokken
+     bij robotica, vier bij web). De toelichting houdt minstens dertig
+     procent; een regel die ook in zeventig procent niet past, zet de
+     remark-stap niet naast elkaar (pastNaast). */
   .metToelichting {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(40%, max-content) minmax(30%, 1fr);
   }
 
   /* Code met een vraag ernaast (Code beter begrijpen, robotica): de vraag

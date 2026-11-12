@@ -108,9 +108,12 @@
    uitleg rechts. De uitleg is niet hoger dan het vak van de code (zie
    LesTabs/styles.module.css: 53vh) en schuift dan zelf. */
 @media (min-width: 997px) {
+  /* De code krijgt de breedte van zijn langste regel, tussen veertig en
+     zeventig procent: op een vaste zestig procent waren de importregels van
+     de Lego-auto afgesneden. */
   .inTab {
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-columns: minmax(40%, max-content) minmax(30%, 1fr);
     gap: 0.75rem;
     align-items: start;
   }

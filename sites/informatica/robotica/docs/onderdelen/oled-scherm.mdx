@@ -126,16 +126,20 @@ oled.show()
 
 Hoe groter de letters, hoe minder er op een regel past:
 
-| `scale` | Een letter | Tekens op een regel |
+| `scale` | Letter | Per regel |
 |:---:|:---:|:---:|
-| 1 | 8 × 8 pixels | 16 |
-| 2 | 16 × 16 pixels | 8 |
-| 3 | 24 × 24 pixels | 5 |
+| 1 | 8 × 8 | 16 tekens |
+| 2 | 16 × 16 | 8 tekens |
+| 3 | 24 × 24 | 5 tekens |
 
 Wat niet past, valt van het scherm af: de tekst gaat niet verder op een
 nieuwe regel. Zet een volgende regel ook verder omlaag, minstens 8 × `scale`
 pixels. `scale` is een heel getal, dus 1, 2 of 3. Met `scale=1.5` krijg je
 een [foutmelding](site:robotica/docs/onderdelen/er-gaat-iets-mis#oled-scherm).
+
+## SDA en SCL \{#sda-scl}
+
+<I2C />
 
 ## Opdracht 1: teller op het scherm
 
@@ -209,7 +213,3 @@ while True:
 Met `scale=3` passen er vijf cijfers op een regel, dus tot 99999.
 
 </details>
-
-## SDA en SCL \{#sda-scl}
-
-<I2C />

@@ -229,12 +229,7 @@ while True:
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom staat er `y=10` bij de tweede tekstregel?
-
-</details>
+**Controlevraag:** Waarom staat er `y=10` bij de tweede tekstregel?
 
 <details>
 <summary>Antwoord</summary>

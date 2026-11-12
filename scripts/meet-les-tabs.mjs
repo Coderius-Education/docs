@@ -136,6 +136,7 @@ const browser = await chromium.launch(
 );
 const rijen = [];
 const tabrijen = [];
+const dubbeleIds = [];
 let kolomBreedte = null;
 
 const over = (pagina, id) =>
@@ -215,6 +216,17 @@ async function meetLes(les) {
       );
       tabrijen.push({ les, scherm: `${scherm.width}x${scherm.height}`, regels });
     }
+    if (!scherm.telefoon) {
+      // Een kop is ook een adres: twee keer hetzelfde id geeft twee schermen
+      // waarvan een link er maar één opent.
+      const dubbel = await pagina.evaluate(() => {
+        const aantal = new Map();
+        for (const el of document.querySelectorAll('.theme-doc-markdown [id]'))
+          aantal.set(el.id, (aantal.get(el.id) ?? 0) + 1);
+        return [...aantal].filter(([, n]) => n > 1).map(([id]) => id);
+      });
+      if (dubbel.length && !dubbeleIds.some((d) => d.les === les)) dubbeleIds.push({ les, dubbel });
+    }
     const tabs = await pagina.locator('[data-tab]').all();
     let vast = false;
     for (const tab of tabs) {
@@ -258,7 +270,45 @@ async function meetLes(les) {
             pagina: document.documentElement.scrollHeight - window.innerHeight,
             zijwaarts: Math.max(0, document.documentElement.scrollWidth - window.innerWidth),
             velden: paneel.querySelectorAll('[data-zaad]').length,
+            ...binnenHetScherm(paneel),
           };
+
+          // Wat "past" niet ziet: een scherm past ook als de code zijwaarts
+          // is afgesneden, als een programma in een vak van twaalf regels
+          // schuift, of als een schema op een tiende van zijn grootte staat.
+          function binnenHetScherm(paneel) {
+            const teZien = (el) =>
+              el.getClientRects().length > 0 && !el.closest('[hidden], details:not([open])');
+            const vakken = [...paneel.querySelectorAll('pre')].filter(teZien);
+            const afgesneden = Math.max(0, ...vakken.map((v) => v.scrollWidth - v.clientWidth));
+            const schuift = vakken
+              .filter((v) => v.scrollHeight - v.clientHeight > 6)
+              .map((v) => {
+                const regels = v.querySelectorAll('.token-line').length;
+                return {
+                  regels,
+                  zichtbaar: Math.round((regels * v.clientHeight) / v.scrollHeight),
+                };
+              });
+            // De schaal waarop een plaatje staat; naast zijn tekst staat het
+            // passend in een vak (object-fit: contain).
+            const plaatjes = [...paneel.querySelectorAll('img')]
+              .filter((img) => teZien(img) && img.naturalWidth > 0 && !img.closest('button, a'))
+              .map((img) => ({
+                schaal: Math.min(
+                  img.clientWidth / img.naturalWidth,
+                  img.clientHeight / img.naturalHeight,
+                ),
+                groter: img.hasAttribute('data-vergroot'),
+              }))
+              .filter((p) => p.schaal < 1 / 3);
+            return {
+              afgesneden: afgesneden > 6 ? afgesneden : 0,
+              schuift,
+              klein: plaatjes.length,
+              kleinZonderVergroting: plaatjes.filter((p) => !p.groter).length,
+            };
+          }
         }, id);
         const naam = stap
           ? `${label} › ${(await stap.innerText()).replace(/\s+/g, ' ').trim()}`
@@ -307,7 +357,7 @@ server.close();
 
 const naam = (les) => les.replace(/^docs\//, '');
 if (ALS_JSON) {
-  console.log(JSON.stringify({ kolomBreedte, rijen, tabrijen }, null, 2));
+  console.log(JSON.stringify({ kolomBreedte, rijen, tabrijen, dubbeleIds }, null, 2));
 } else {
   for (const { width, height } of SCHERMEN.filter((s) => !s.telefoon)) {
     const scherm = `${width}x${height}`;
@@ -343,5 +393,24 @@ if (ALS_JSON) {
   console.log(`\n## Zijwaarts schuiven: ${breed.length} schermen\n`);
   for (const r of breed.sort((a, b) => b.zijwaarts - a.zijwaarts))
     console.log(`- ${naam(r.les)} | ${r.tab} | ${r.scherm}: ${r.zijwaarts} px te breed`);
+  // Wat een scherm dat past toch verbergt, op het kleinste brede scherm.
+  const [eerste] = SCHERMEN.filter((s) => !s.telefoon);
+  const klein = rijen.filter((r) => r.scherm === `${eerste.width}x${eerste.height}`);
+  const af = klein.filter((r) => r.afgesneden > 0);
+  console.log(`\n## Code zijwaarts afgesneden: ${af.length} schermen\n`);
+  for (const r of af.sort((a, b) => b.afgesneden - a.afgesneden))
+    console.log(`- ${naam(r.les)} | ${r.tab}: ${r.afgesneden} px verborgen`);
+  const vak = klein.filter((r) => r.schuift.length > 0);
+  console.log(`\n## Een programma in een vak dat schuift: ${vak.length} schermen\n`);
+  for (const r of vak)
+    for (const v of r.schuift)
+      console.log(`- ${naam(r.les)} | ${r.tab}: ${v.zichtbaar} van de ${v.regels} regels te zien`);
+  const zonder = klein.filter((r) => r.kleinZonderVergroting > 0);
+  console.log(
+    `\n## Plaatjes onder een derde van hun grootte: ${klein.filter((r) => r.klein > 0).length} schermen, waarvan ${zonder.length} zonder vergroting\n`,
+  );
+  for (const r of zonder) console.log(`- ${naam(r.les)} | ${r.tab}`);
+  console.log(`\n## Dubbele id's: ${dubbeleIds.length} pagina's\n`);
+  for (const d of dubbeleIds) console.log(`- ${naam(d.les)}: ${d.dubbel.join(', ')}`);
   console.log(`\nDe les gebruikt ${kolomBreedte}% van de breedte naast de lessenlijst.`);
 }

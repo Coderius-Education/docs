@@ -8,12 +8,7 @@ In de volgende stappen verbind je het bord met je computer en zet je MicroPython
 
 ### Controlevraag
 
-<details>
-<summary>Controlevraag</summary>
-
 Welke pin gebruik je om een sensor van **3,3V** te voeden?
-
-</details>
 
 <details>
 <summary>Antwoord</summary>

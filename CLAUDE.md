@@ -455,7 +455,7 @@ op Stap voor stap en meet het na elke klik opnieuw: een scherm dat past tot
 je iets aanklikt, past niet. Wat
 dan nog te lang is, is tekst: een stap of een Er gaat iets mis met meer
 inhoud dan op een scherm past. Dat lost een auteur op, niet de opmaak.
-**Wat robotica erbij bracht** (november 2026; alle 409 schermen passen op 1280×720 en 1366×768). De cursus heeft drie
+**Wat robotica erbij bracht** (november 2026; alle 399 schermen passen op 1280×720 en 1366×768). De cursus heeft drie
 docs-plugins (`docs/`, `lego_auto/`, `golfbot/`), delen die twee pagina's
 importeren, blokprogramma's, aansluitschema's en bouwstappen. Daarvoor is dit
 in de gedeelde stap en de onderdelen gekomen, elk met een test:
@@ -484,7 +484,17 @@ in de gedeelde stap en de onderdelen gekomen, elk met een test:
   cel); een programma van meer dan zestien regels ook met alleen een alinea. Code met
   alleen een alinea eronder blijft lopende uitleg. Code met `**Vraag:** …` en
   de tip en oplossing eronder staat naast de vraag; `**Code A:**` en
-  `**Code B:**` staan naast elkaar als bestanden.
+  `**Code B:**` staan naast elkaar als bestanden. De code krijgt de breedte
+  van zijn langste regel, tussen veertig en zeventig procent (ook in
+  `<CodeUitleg>`); past een regel daar niet in (meer dan 66 tekens,
+  `pastNaast`), dan blijft de code over de volle breedte. Op een vaste
+  helft was de importregel van leaphymicropython afgesneden, en in
+  `inline-onclick` van web de helft van een regel. En alleen als het scherm
+  er korter van wordt (`naastIsKorter`, een schatting uit de lengte van de
+  code en de toelichting): één regel code naast een lijst, een alinea en een
+  info-blok in een kolom van dertig procent was in `events` van web 214
+  pixels langer dan onder elkaar. Twee bestanden met een
+  regel van meer dan 46 tekens staan iets kleiner (`bestanden="smal"`).
 - **Een lange rij opdrachten** (negen tabbladen of meer, vier opdrachten
   achter elkaar) toont na de eerste alleen het nummer (`kort` op `<LesTab>`,
   `korteOpdrachten`); het label blijft voor de knop Volgende en een
@@ -493,7 +503,8 @@ in de gedeelde stap en de onderdelen gekomen, elk met een test:
   (`voegUitlegSamen`), zolang de rij tabbladen kort is.
 - **Een stap die "Stap 2: Kies een pin" heet**, heeft "Kies een pin" als
   label (`stapLabel`): de stappen hebben al een nummer. Een tabblad houdt
-  "Stap 2". De eerste stap van een sectie met een dubbele punt in de kop heet
+  "Stap 2": de lestekst van de Lego-auto verwijst ernaar ("zie stap 1"), en
+  met de titels past de rij niet op één regel. De eerste stap van een sectie met een dubbele punt in de kop heet
   naar het stuk erna (`basisLabel`).
 - **`<CodeUitleg>` zet in een tabblad de uitleg naast de code**, en schuift
   het codevak naar de regel die oplicht.
@@ -509,12 +520,39 @@ Het meetscript loopt de hele build af, niet alleen `build/docs`. Een rij
 stappen mag op twee regels staan (in web en python gebeurt dat ook); de rij
 tabbladen niet.
 
+**Passen is niet genoeg.** Een review van robotica als leerling vond wat
+"past op het scherm" niet ziet: een aansluitschema op 128 bij 240 pixels,
+code die zijwaarts was afgesneden, een script van 46 regels in een vak van
+twaalf, en een vraag in een dicht blok. Sindsdien:
+
+- **Wat er op het scherm over is, gaat naar het codevak of het plaatje**
+  (`components/LesTabs/speling.ts`, aangeroepen na elke wissel van tabblad of
+  stap, een plaatje dat laadt en een andere maat van het venster): eerst een
+  codevak dat schuift, anders het plaatje naast zijn tekst. Niet op een
+  telefoon, niet met een tip of antwoord open, en niet in een paneel met een
+  oefenveld: dat neemt de ruimte zelf, en `meetRuimte` zet daarvoor
+  `data-heeft-veld` op het paneel.
+- **Een klik op een plaatje dat kleiner staat dan het is, toont het groot**
+  in een `<dialog>` (`components/LesTabs/Vergroot.tsx`); Enter werkt ook.
+  Niet voor een plaatje in een knop of een link.
+- **Op een telefoon heeft een plaatje in de lestekst geen plafond**: daar
+  scrolt de leerling toch. Het doelplaatje in een oefenveld houdt het wel.
+- **Het tabblad Uitleg heet `les-uitleg`** als een kop verderop op de pagina
+  al het id `uitleg` heeft, ook een `###`: een stap is ook een adres.
+- **Een link naar een doel dat al in beeld is, scrolt niet.**
+- **Een opdracht met code en `**Vraag:**`, zonder veld, heeft de werkvorm
+  voorspellen**; "Probeer het zelf" is aanpassen.
+- **Het meetscript meldt ook** code die zijwaarts is afgesneden, een
+  programma in een vak dat schuift (met hoeveel regels er te zien zijn),
+  plaatjes onder een derde van hun grootte zonder vergroting, en dubbele
+  id's op een pagina.
+
 Bekende nadelen: Ctrl+F vindt geen tekst in een tabblad dat niet open staat,
 bij een link naar een kop is heel kort het eerste tabblad te zien, Matomo telt
 een tabblad niet als bezoek, en de begrippen-stap markeert het eerste
-voorkomen op de pagina, ook als dat in een later tabblad staat. Een plaatje
-in een paneel is hooguit een derde van het scherm hoog en heeft geen
-vergroting: op de pinout van de Nano zijn de namen dan klein.
+voorkomen op de pagina, ook als dat in een later tabblad staat. Een lang
+programma schuift in zijn vak, ook met de vrije ruimte erbij: van een script
+van 46 regels zijn er vijftien te zien.
 
 ## Code in MDX-expressies
 

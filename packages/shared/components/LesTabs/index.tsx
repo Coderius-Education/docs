@@ -13,7 +13,9 @@ import {
   useState,
 } from 'react';
 import { WerkvormIcoon } from '../Werkvorm/Icoon';
+import { Vergroot } from './Vergroot';
 import { DoelContext, PaneelContext, type Stap, useInLesTab } from './paneel';
+import { verdeelSpeling } from './speling';
 import styles from './styles.module.css';
 
 // Les-tabbladen: elke `##`-sectie van een les is een tabblad bovenaan
@@ -58,6 +60,9 @@ const RijContext = createContext<Rij | null>(null);
 // dan gaat de knop Volgende daarheen, en pas daarna naar het volgende tabblad
 // (PaneelContext, in paneel.ts).
 export { useInLesTab };
+
+/** Hoger dan dit staat een doel onder de navbar (60 pixels, met wat lucht). */
+const ONDER_NAVBAR = 70;
 
 /** Het stuk na de # in het adres, of een lege tekst. */
 function doelUitHash(hash: string): string {
@@ -114,7 +119,14 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
   // Pas scrollen als het paneel zichtbaar is.
   useEffect(() => {
     if (!scrolNaar) return;
-    document.getElementById(scrolNaar.id)?.scrollIntoView();
+    const doel = document.getElementById(scrolNaar.id);
+    if (!doel) return;
+    // Staat het doel al in beeld, dan blijft de pagina staan. Een anker
+    // bovenaan een stap (de arm van de Golfbot: "Eerst de servo op 90°")
+    // schoof anders de titel en de rij tabbladen onder de navbar.
+    const { top, bottom } = doel.getBoundingClientRect();
+    if (top >= ONDER_NAVBAR && bottom <= window.innerHeight) return;
+    doel.scrollIntoView();
   }, [scrolNaar]);
 
   const kies = useCallback(
@@ -136,6 +148,31 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     },
     [data],
   );
+
+  // Wat er op het scherm over is, gaat naar het codevak of het plaatje van
+  // het open paneel (speling.ts). Na elke wissel van tabblad, en na alles wat
+  // de hoogte van het paneel verandert: een klik (een andere stap), een
+  // plaatje dat laadt, een andere maat van het venster.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `actief` zegt alleen dat er een ander paneel open staat.
+  useEffect(() => {
+    const el = wortel.current;
+    if (niveau !== 'tab' || !el) return;
+    let beeld = 0;
+    const meet = () => {
+      window.cancelAnimationFrame(beeld);
+      beeld = window.requestAnimationFrame(() => verdeelSpeling(el));
+    };
+    meet();
+    el.addEventListener('click', meet);
+    el.addEventListener('load', meet, true);
+    window.addEventListener('resize', meet);
+    return () => {
+      window.cancelAnimationFrame(beeld);
+      el.removeEventListener('click', meet);
+      el.removeEventListener('load', meet, true);
+      window.removeEventListener('resize', meet);
+    };
+  }, [niveau, actief]);
 
   // Een tabblad met stappen: zeg het tabblad welke stap de volgende is.
   const na = tabs[ids.indexOf(actief) + 1]?.props;
@@ -226,6 +263,7 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
           ),
         )}
       </RijContext.Provider>
+      {niveau === 'tab' && <Vergroot wortel={wortel} opnieuw={actief} />}
     </div>
   );
 }
@@ -316,7 +354,8 @@ export function LesVoorbeeld({
   children?: ReactNode;
   /** Rechts staat geen uitvoer maar een voorspelvraag: die krijgt de helft. */
   vraag?: string;
-  /** Twee of meer bestanden naast elkaar, elk in een eigen kolom. */
+  /** Twee of meer bestanden naast elkaar, elk in een eigen kolom. Met "smal"
+   *  staat de code iets kleiner: een regel past dan net in de halve breedte. */
   bestanden?: string;
   /** Rechts staat geen uitvoer maar de lijst die de code uitlegt. Met "vraag"
    *  staat er een vraag over de code, met de tip en de oplossing. */
@@ -326,10 +365,14 @@ export function LesVoorbeeld({
   beeld?: string;
 }): ReactNode {
   const klasse = bestanden
-    ? styles.bestanden
+    ? `${styles.bestanden}${bestanden === 'smal' ? ` ${styles.bestandenSmal}` : ''}`
     : `${styles.voorbeeld}${vraag ? ` ${styles.metVraag}` : ''}${beeld ? ` ${beeld === 'breed' ? styles.metBreedBeeld : styles.metBeeld}` : ''}${toelichting ? ` ${styles.metToelichting}` : ''}${toelichting === 'vraag' ? ` ${styles.metCodeVraag}` : ''}`;
   return (
-    <div className={klasse} data-les-voorbeeld="">
+    <div
+      className={klasse}
+      data-les-voorbeeld=""
+      {...(beeld === 'ja' ? { 'data-les-beeld': '' } : {})}
+    >
       {children}
     </div>
   );
@@ -380,7 +423,7 @@ export function LesReeks({ children }: { children?: ReactNode }): ReactNode {
           Vorige
         </button>
         <span className={styles.reeksTeller} aria-live="polite">
-          {nu + 1} van {items.length}
+          Plaatje {nu + 1} van {items.length}
         </span>
         <button
           type="button"

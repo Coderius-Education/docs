@@ -34,12 +34,7 @@ Op het motor shield zit een **zwarte schakelaar**. Die moet op **ON** staan, and
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Welke pinnen op de Nano kun je niet meer voor sensoren gebruiken zodra het motor shield erop zit?
-
-</details>
+**Controlevraag:** Welke pinnen op de Nano kun je niet meer voor sensoren gebruiken zodra het motor shield erop zit?
 
 <details>
 <summary>Antwoord</summary>

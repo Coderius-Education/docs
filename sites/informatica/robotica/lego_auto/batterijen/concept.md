@@ -12,12 +12,7 @@ Een batterij levert **spanning** (gemeten in volt) en **stroom** (gemeten in amp
 
 Met de **aan/uit-schakelaar** zet je de stroom aan of uit. Let op: vooral de motoren vragen veel stroom, dus met **lege of bijna lege** batterijen rijdt je robot niet goed. Volle batterijen zijn dus belangrijk.
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom rijdt je robot slecht of helemaal niet met bijna lege batterijen?
-
-</details>
+**Controlevraag:** Waarom rijdt je robot slecht of helemaal niet met bijna lege batterijen?
 
 <details>
 <summary>Antwoord</summary>

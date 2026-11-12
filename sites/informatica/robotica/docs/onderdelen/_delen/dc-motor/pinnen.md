@@ -29,7 +29,7 @@ Elke motor heeft er twee:
 
 Laat je de vier weg en schrijf je `DCMotors()`, dan kiest de bibliotheek precies dezelfde pinnen. Alleen zie je dan niet meer welke bezet zijn.
 
-### Controlevraag
+### Controlevraag \{#motorpinnen-controlevraag}
 
 <Voorspel soort="Controlevraag" vraag="Je robot voert motoren.motor_b.backward(200) uit. Wat doet pin D4 dan?">
   <Keuze goed uitleg="backward() zet de richtingspin van motor B uit, en die richtingspin is D4.">Uit.</Keuze>

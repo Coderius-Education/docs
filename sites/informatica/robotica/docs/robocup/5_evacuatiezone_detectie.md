@@ -43,12 +43,7 @@ bijvoorbeeld D5 zoals hier.
 
 ### Controlevraag
 
-<details>
-<summary>Controlevraag</summary>
-
 Waarom staat er `Pin.PULL_UP` en niet alleen `Pin.IN`?
-
-</details>
 
 <details>
 <summary>Antwoord</summary>

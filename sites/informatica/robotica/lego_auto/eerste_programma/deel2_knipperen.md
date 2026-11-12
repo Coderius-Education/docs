@@ -112,12 +112,7 @@ while True:
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom staat `lampje = Pin('LED', Pin.OUT)` **boven** de loop en niet erin?
-
-</details>
+**Controlevraag:** Waarom staat `lampje = Pin('LED', Pin.OUT)` **boven** de loop en niet erin?
 
 <details>
 <summary>Antwoord</summary>

@@ -7,12 +7,7 @@ Zonder batterijen moet je robot aan een USB-kabel hangen. Dat wil je natuurlijk 
   <Onderdeel naam="batterijhouder met aan/uit-schakelaar" />
 </Onderdelenlijst>
 
-<details>
-<summary>Controlevraag</summary>
-
-Hoeveel volt verwacht je in totaal als je **6 volle AA-batterijen** in serie zet?
-
-</details>
+**Controlevraag:** Hoeveel volt verwacht je in totaal als je **6 volle AA-batterijen** in serie zet?
 
 <details>
 <summary>Antwoord</summary>

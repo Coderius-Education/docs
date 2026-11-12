@@ -43,7 +43,7 @@ motoren = DCMotors(
     dir_pin_motor_b="D4",
     pwm_pin_motor_b="D11",
 )
-motor_a = motoren.motor_a  # links (gecheckt met .test() in Deel 6)
+motor_a = motoren.motor_a  # links (getest in Deel 6)
 motor_b = motoren.motor_b  # rechts
 
 while True:

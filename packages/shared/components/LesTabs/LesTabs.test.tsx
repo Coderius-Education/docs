@@ -119,6 +119,23 @@ describe('LesTabs', () => {
     expect(scrol.mock.instances.at(-1)).toBe(document.getElementById('een-fout'));
   });
 
+  it('laat de pagina staan als het doel al in beeld is', () => {
+    // De arm van de Golfbot: "Eerst de servo op 90°" is een anker bovenaan een
+    // stap. De pagina schoof er 162 pixels naartoe, en de rij tabbladen stond
+    // dan onder de navbar. Of iets in beeld staat, meet jsdom niet: de maten
+    // staan hier vast.
+    const echt = Element.prototype.getBoundingClientRect;
+    Element.prototype.getBoundingClientRect = () => ({ top: 300, bottom: 340 }) as DOMRect;
+    try {
+      locatie = { pathname: '/les', hash: '#een-fout', search: '' };
+      render(<Les />);
+      expect(paneel('er-gaat-iets-mis').hidden).toBe(false);
+      expect(scrol).not.toHaveBeenCalled();
+    } finally {
+      Element.prototype.getBoundingClientRect = echt;
+    }
+  });
+
   it('scrolt niet naar de kop van het tabblad zelf', () => {
     locatie = { pathname: '/les', hash: '#opdracht-1-tel', search: '' };
     render(<Les />);
@@ -522,14 +539,14 @@ describe('LesReeks', () => {
     // pixels te lang. Zoals in een bouwboekje staat er één in beeld.
     const { container } = reeks();
     expect(zichtbaar(container)).toEqual(['stap 1']);
-    expect(container.textContent).toContain('1 van 3');
+    expect(container.textContent).toContain('Plaatje 1 van 3');
     const vorige = screen.getByRole('button', { name: 'Vorige' }) as HTMLButtonElement;
     const volgende = screen.getByRole('button', { name: 'Volgende' }) as HTMLButtonElement;
     expect(vorige.disabled).toBe(true);
     fireEvent.click(volgende);
     fireEvent.click(volgende);
     expect(zichtbaar(container)).toEqual(['stap 3']);
-    expect(container.textContent).toContain('3 van 3');
+    expect(container.textContent).toContain('Plaatje 3 van 3');
     expect(volgende.disabled).toBe(true);
     fireEvent.click(vorige);
     expect(zichtbaar(container)).toEqual(['stap 2']);
@@ -546,6 +563,76 @@ describe('LesReeks', () => {
       </LesReeks>,
     );
     expect(html.match(/<figure>/g)).toHaveLength(3);
+  });
+});
+
+describe('een plaatje vergroten', () => {
+  // Een aansluitschema van robotica stond op 128 pixels breed: de namen van
+  // de pinnen waren niet te lezen. Een klik toont het groot. Maten meet jsdom
+  // niet, dus die staan hier vast; of het venster er goed uitziet, is in
+  // Chromium bekeken.
+  const les = () =>
+    render(
+      <LesTabs>
+        <LesTab id="aansluiten" titel="Aansluiten" label="Aansluiten">
+          <p>
+            <img src="/schema.png" alt="Het schema van de joystick" />
+          </p>
+          <button type="button">
+            <img src="/foto.png" alt="Een foto in een knop" />
+          </button>
+        </LesTab>
+        <LesTab id="code" titel="Code" label="Code">
+          <p>code</p>
+        </LesTab>
+      </LesTabs>,
+    );
+  const maten = (img: HTMLElement, natuurlijk: number, getoond: number) => {
+    for (const [naam, waarde] of Object.entries({
+      naturalWidth: natuurlijk,
+      naturalHeight: natuurlijk,
+      clientWidth: getoond,
+      clientHeight: getoond,
+    }))
+      Object.defineProperty(img, naam, { value: waarde, configurable: true });
+  };
+  const toon = vi.fn();
+  beforeEach(() => {
+    toon.mockClear();
+    // jsdom kent showModal niet.
+    HTMLDialogElement.prototype.showModal = toon;
+  });
+
+  it('een klik op een plaatje dat kleiner staat dan het is, toont het groot', () => {
+    const { container } = les();
+    const schema = screen.getByAltText('Het schema van de joystick');
+    maten(schema, 1600, 240);
+    fireEvent.click(schema);
+    expect(toon).toHaveBeenCalledTimes(1);
+    const groot = container.querySelector('dialog img');
+    expect(groot?.getAttribute('src')).toMatch(/\/schema\.png$/);
+    expect(groot?.getAttribute('alt')).toBe('Het schema van de joystick');
+    expect(screen.getByRole('button', { name: 'Sluiten', hidden: true })).toBeTruthy();
+  });
+
+  it('met Enter kan het ook', () => {
+    les();
+    const schema = screen.getByAltText('Het schema van de joystick');
+    maten(schema, 1600, 240);
+    fireEvent.keyDown(schema, { key: 'Enter' });
+    expect(toon).toHaveBeenCalledTimes(1);
+  });
+
+  it('een plaatje op zijn eigen grootte, of in een knop, doet niets', () => {
+    const { container } = les();
+    const schema = screen.getByAltText('Het schema van de joystick');
+    maten(schema, 240, 240);
+    fireEvent.click(schema);
+    const foto = screen.getByAltText('Een foto in een knop');
+    maten(foto, 1600, 100);
+    fireEvent.click(foto);
+    expect(toon).not.toHaveBeenCalled();
+    expect(container.querySelector('dialog img')).toBeNull();
   });
 });
 

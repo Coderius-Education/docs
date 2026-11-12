@@ -96,12 +96,7 @@ Je robot staat nog uit van het bouwen. Zet hem aan met **ON/OFF**. Upload dan he
 
 </Probleem>
 
-<details>
-<summary>Controlevraag</summary>
-
-Je legt de bal een stukje naast de halve ronding. Waarom ziet je sensor hem dan misschien niet?
-
-</details>
+**Controlevraag:** Je legt de bal een stukje naast de halve ronding. Waarom ziet je sensor hem dan misschien niet?
 
 <details>
 <summary>Antwoord</summary>

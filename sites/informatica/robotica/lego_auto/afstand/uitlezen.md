@@ -44,12 +44,7 @@ Maakt het sensor-object aan op channel 0 van de multiplexer, op dezelfde pinnen 
 
 Houd je hand op ongeveer 20 cm voor de sensor: de Shell toont rond de `200`. Beweeg je hand langzaam weg en zie het getal meegroeien.
 
-<details>
-<summary>Controlevraag</summary>
-
-Je steekt de sensor om in het stel pinnen onder het cijfer **2**. Wat verandert er in je code?
-
-</details>
+**Controlevraag:** Je steekt de sensor om in het stel pinnen onder het cijfer **2**. Wat verandert er in je code?
 
 <details>
 <summary>Antwoord</summary>

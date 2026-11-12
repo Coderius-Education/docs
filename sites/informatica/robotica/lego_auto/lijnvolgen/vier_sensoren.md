@@ -98,12 +98,7 @@ Twee regels lager op het scherm, op hoogte 20 en 30, zodat ze niet over de eerst
 
 Houd de robot boven de lijn en schuif hem langzaam opzij. Op het scherm klapt eerst `Links` of `Rechts` om naar `black`, en pas als je verder schuift ook `Buiten L` of `Buiten R`. Klapt een buitenste sensor als eerste om, dan zit hij te dicht bij de binnenste.
 
-<details>
-<summary>Controlevraag</summary>
-
-Je hebt de linker buitensensor per ongeluk op het rijtje van **A3** gestoken. Wat zie je op het scherm als je hem afdekt?
-
-</details>
+**Controlevraag:** Je hebt de linker buitensensor per ongeluk op het rijtje van **A3** gestoken. Wat zie je op het scherm als je hem afdekt?
 
 <details>
 <summary>Antwoord</summary>

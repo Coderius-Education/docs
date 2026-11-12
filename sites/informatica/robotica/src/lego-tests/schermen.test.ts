@@ -156,6 +156,90 @@ describe('elk scherm van een les staat op zichzelf', () => {
   });
 });
 
+describe('wat een leerling moet zien of doen, is niet weggeklapt', () => {
+  const bron = (pad: string) => readFileSync(pad.replace(/^deel:/, ''), 'utf8');
+
+  it('een controlevraag staat open; alleen het antwoord is een uitklapblok', () => {
+    // Vijftig vragen stonden in een dicht blok "Controlevraag" naast een dicht
+    // blok "Antwoord": in een tabblad klikte je even makkelijk eerst op het
+    // antwoord, en op vier schermen met de kop Controlevraag was verder niets
+    // te zien.
+    const fout = alle
+      .filter((pad) => /<summary>\s*Controlevraag\s*<\/summary>/.test(bron(pad)))
+      .map((pad) => relative(SITE, pad.replace(/^deel:/, '')));
+    expect(fout).toEqual([]);
+  });
+
+  it('de uitleg van een voorspelvraag vraagt de leerling niets te doen', () => {
+    // De uitleg verschijnt pas bij het goede antwoord. "Klik op Upload naar
+    // robot" stond er bij de servo van de Golfbot in: wie het antwoord niet
+    // raadde, zag de stap niet.
+    const fout: string[] = [];
+    for (const pad of alle) {
+      for (const m of bron(pad).matchAll(/<Uitleg>([\s\S]*?)<\/Uitleg>/g)) {
+        // Een antwoord in de gebiedende wijs ("Sluit A0 aan op …") mag: dat
+        // herhaalt wat de leerling al deed. Een knop in de editor niet.
+        if (/\b(Klik op|Upload naar|Druk op)\b/.test(m[1]))
+          fout.push(`${relative(SITE, pad.replace(/^deel:/, ''))}: ${m[1].trim().slice(0, 70)}`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('de naslagpagina Er gaat iets mis heeft geen tabbladen', () => {
+    // Wie daar komt, zoekt met Ctrl+F op een foutmelding, en die vindt geen
+    // tekst in een tabblad dat dicht staat.
+    const pagina = bron(join(SITE, 'docs', 'onderdelen', 'er-gaat-iets-mis.mdx'));
+    expect(pagina).toMatch(/^les_tabs: false$/m);
+  });
+});
+
+describe('elke kop op een pagina heeft een eigen adres', () => {
+  // Een kop is ook een adres: een `###` is een stap met het id van zijn kop.
+  // Docusaurus nummert dubbele koppen binnen één bestand, maar een deel is een
+  // eigen bestand: `### Controlevraag` op de TOF-pagina en in het deel over
+  // SDA en SCL gaven twee stappen met het id "controlevraag".
+  const slug = (kop: string) =>
+    kop
+      .toLowerCase()
+      .replace(/`/g, '')
+      .replace(/[^\p{L}\p{N}\s-]/gu, '')
+      .trim()
+      .replace(/\s+/g, '-');
+  const ids = (tekst: string) => {
+    const gezien = new Map<string, number>();
+    return [...tekst.matchAll(/^#{2,4} (.+?)(?: \\\{#([\w-]+)\})?$/gm)].map(([, kop, vast]) => {
+      if (vast) return vast;
+      const basis = slug(kop);
+      const n = gezien.get(basis) ?? 0;
+      gezien.set(basis, n + 1);
+      return n ? `${basis}-${n}` : basis;
+    });
+  };
+  const paginas = alle.filter((pad) => !pad.startsWith('deel:'));
+
+  it('ook met de koppen van de delen die de pagina importeert', () => {
+    const fout: string[] = [];
+    for (const pad of paginas) {
+      const tekst = readFileSync(pad, 'utf8');
+      const delenVan = [...tekst.matchAll(/from '@site\/(docs\/[^']*_delen\/[^']+)'/g)].map(
+        ([, deel]) => join(SITE, deel),
+      );
+      const alles = [tekst, ...delenVan.map((deel) => readFileSync(deel, 'utf8'))].flatMap(ids);
+      const dubbel = [...new Set(alles.filter((id, i) => alles.indexOf(id) !== i))];
+      if (dubbel.length) fout.push(`${relative(SITE, pad)}: ${dubbel.join(', ')}`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('de test ziet een dubbele kop in een deel', () => {
+    // Zonder dit slaagt de test hierboven ook als hij niets leest.
+    expect(ids('## Code\n\n### Uitleg\n\n### Uitleg\n')).toEqual(['code', 'uitleg', 'uitleg-1']);
+    expect(ids('### Controlevraag \\{#i2c-controlevraag}\n')).toEqual(['i2c-controlevraag']);
+    expect(paginas.some((pad) => /_delen\//.test(readFileSync(pad, 'utf8')))).toBe(true);
+  });
+});
+
 describe('de docentenhandleiding', () => {
   it('gaat over de literatuur, en is verder kort', () => {
     // Wij gaan niet over hoe iemand lesgeeft (schrijfgids §15). De oude

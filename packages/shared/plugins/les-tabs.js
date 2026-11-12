@@ -238,6 +238,17 @@ const isToelichting = (node) =>
 
 const regels = (node) => (node.value ?? '').split('\n').length;
 
+/**
+ * Naast zijn toelichting krijgt code hooguit zeventig procent van de breedte
+ * (zie de opmaak van LesVoorbeeld): op 1280 pixels passen daar 66 tekens in.
+ * Een bredere regel werd afgesneden, en dan staat de code beter over de volle
+ * breedte: in `inline-onclick` van de web-cursus viel de helft van een regel
+ * weg.
+ */
+const BREEDSTE_NAAST = 66;
+const pastNaast = (code) =>
+  (code.value ?? '').split('\n').every((regel) => regel.length <= BREEDSTE_NAAST);
+
 /** Vanaf zoveel regels code staat een tabel die hem toelicht ernaast. */
 const MET_TABEL = 6;
 
@@ -274,11 +285,57 @@ function toelichtingNa(kinderen, vanaf, lengte) {
   while (aantal < 3 && hoortErbij(kinderen[vanaf + aantal])) aantal++;
   // Een aankondiging aan het eind hoort bij wat erna komt.
   while (aantal > 0 && isAankondiging(kinderen[vanaf + aantal - 1])) aantal--;
-  if (lengte > EIGEN_VAK) return aantal;
   // Tot en met de laatste lijst of het laatste blok: een alinea daarna is
-  // weer lopende tekst.
-  while (aantal > 0 && !isPunt(kinderen[vanaf + aantal - 1])) aantal--;
-  return aantal;
+  // weer lopende tekst. Een programma in zijn eigen vak houdt zijn alinea's.
+  if (lengte <= EIGEN_VAK) {
+    while (aantal > 0 && !isPunt(kinderen[vanaf + aantal - 1])) aantal--;
+  }
+  // En alleen als het scherm er korter van wordt.
+  const code = kinderen[vanaf - 1];
+  return aantal > 0 && naastIsKorter(code, kinderen.slice(vanaf, vanaf + aantal)) ? aantal : 0;
+}
+
+// Maten op 1280 pixels, gemeten in Chromium: de breedte naast de lessenlijst,
+// een teken lopende tekst en een teken code, een regel tekst en een regel code.
+const KOLOM = 948;
+const TEKEN = 8.2;
+const CODE_TEKEN = 9.1;
+const REGEL = 26;
+const CODE_REGEL = 21;
+
+/** Hoe hoog de toelichting ongeveer is in een kolom van `breedte` pixels. */
+function hoogteTekst(nodes, breedte) {
+  const regelsVan = (node) => Math.max(1, Math.ceil((tekstVan(node).length * TEKEN) / breedte));
+  let hoogte = 0;
+  for (const node of nodes) {
+    if (node.type === 'list') {
+      for (const punt of node.children ?? []) hoogte += regelsVan(punt) * REGEL + 6;
+      hoogte += 16;
+    } else if (node.type === 'table') hoogte += (node.children?.length ?? 1) * 47 + 16;
+    else if (isBlok(node)) hoogte += regelsVan(node) * REGEL + 76;
+    else hoogte += regelsVan(node) * REGEL + 16;
+  }
+  return hoogte;
+}
+
+/**
+ * Naast elkaar is alleen beter als het scherm er korter van wordt. De code
+ * krijgt de breedte van zijn langste regel (veertig tot zeventig procent), en
+ * de toelichting de rest. In `events` van de web-cursus stond zo één regel
+ * code van 66 tekens naast een lijst, een alinea en een info-blok in een
+ * kolom van dertig procent: 214 pixels langer dan onder elkaar.
+ *
+ * @param {object} code het codeblok
+ * @param {object[]} nodes de toelichting
+ */
+function naastIsKorter(code, nodes) {
+  const breedste = Math.max(...(code.value ?? '').split('\n').map((regel) => regel.length));
+  const deel = Math.min(0.7, Math.max(0.4, (breedste * CODE_TEKEN + 48) / KOLOM));
+  // Een programma in zijn eigen vak is nooit hoger dan dat vak.
+  const hoogteCode = Math.min(regels(code), EIGEN_VAK + 2) * CODE_REGEL + 48;
+  const naast = Math.max(hoogteCode, hoogteTekst(nodes, KOLOM * (1 - deel) - 16));
+  const onder = hoogteCode + hoogteTekst(nodes, KOLOM);
+  return naast <= onder - REGEL;
 }
 
 const isAankondiging = (node) => isAlinea(node) && /:$/.test(tekstVan(node).trim());
@@ -316,7 +373,11 @@ function voorbeeldenNaastElkaar(kinderen) {
         while (rechts.length < 4 && isToelichting(kinderen[i + 1])) rechts.push(kinderen[++i]);
       }
       uit.push(jsx('LesVoorbeeld', [code, jsx('div', rechts)]));
-    } else if (code.type === 'code' && toelichtingNa(kinderen, i + 1, regels(code)) > 0) {
+    } else if (
+      code.type === 'code' &&
+      pastNaast(code) &&
+      toelichtingNa(kinderen, i + 1, regels(code)) > 0
+    ) {
       // Code met wat hem toelicht (de naslag van robotica: een fragment, en
       // per onderdeel een punt in een lijst of een waarschuwing). Naast
       // elkaar leest de leerling het punt bij de regel, en het scherm is half
@@ -325,7 +386,7 @@ function voorbeeldenNaastElkaar(kinderen) {
       const rechts = kinderen.slice(i + 1, i + 1 + aantal);
       uit.push(jsx('LesVoorbeeld', [code, jsx('div', rechts)], [attribuut('toelichting', 'ja')]));
       i += aantal;
-    } else if (code.type === 'code' && isVraagAlinea(kop)) {
+    } else if (code.type === 'code' && pastNaast(code) && isVraagAlinea(kop)) {
       // Code met de vraag eronder ("**Vraag:** hoe vaak …?") en de tip en de
       // oplossing in uitklapblokken: de vraag gaat over de code, dus die
       // staat ernaast. Onder elkaar was zo'n opdracht tot 240 pixels te lang.
@@ -344,6 +405,9 @@ function voorbeeldenNaastElkaar(kinderen) {
   }
   return uit;
 }
+
+/** Zoveel tekens passen er op 1280 pixels in een codeblok van de halve breedte. */
+const HALVE_KOLOM = 46;
 
 /** Een alinea met alleen een vette bestandsnaam (**`rekenen.py`**) of **Code A:**. */
 const isBestandsnaam = (node) =>
@@ -387,7 +451,19 @@ function bestandenNaastElkaar(kinderen) {
       groepen.push(kinderen[k]);
       k += 1;
     }
-    uit.push(jsx('LesVoorbeeld', groepen, [attribuut('bestanden', 'ja')]));
+    // Twee bestanden naast elkaar hebben elk de helft: 46 tekens op 1280
+    // pixels. Met een langere regel staat de code iets kleiner ("smal"), dan
+    // passen er 58: de importregel van leaphymicropython was in Code A en
+    // Code B van de Lego-auto afgesneden.
+    const breedste = Math.max(
+      ...groepen.flatMap((groep) =>
+        (groep.children ?? [])
+          .filter((node) => node.type === 'code')
+          .flatMap((node) => (node.value ?? '').split('\n').map((regel) => regel.length)),
+      ),
+    );
+    const smal = groepen.length === 2 && breedste > HALVE_KOLOM;
+    uit.push(jsx('LesVoorbeeld', groepen, [attribuut('bestanden', smal ? 'smal' : 'ja')]));
     i = k;
   }
   return uit;
@@ -538,6 +614,15 @@ const LEERDOEL = 'leerdoel';
 
 const eigenschap = (node, naam) => node.attributes.find((a) => a.name === naam)?.value;
 
+/** De id's van alle koppen in een stuk van de boom, hoe diep ook. */
+function kopIds(nodes, uit = []) {
+  for (const node of nodes) {
+    if (node.type === 'heading' && node.data?.id) uit.push(node.data.id);
+    if (node.children) kopIds(node.children, uit);
+  }
+  return uit;
+}
+
 /**
  * De stappen die één uitleg-tabblad oplevert als het opgaat in het tabblad
  * Uitleg (zie voegUitlegSamen), en wat daar boven de rij stappen hoort.
@@ -635,7 +720,7 @@ function voegUitlegSamen(tabs, vormen, uitlegId) {
   // met twaalf stappen op twee regels.
   const stappen = delen.reduce((som, d) => som + d.stappen.length, 0);
   if (stappen > MEESTE_STAPPEN && tabs.length < VEEL_TABS) return { tabs, vormen };
-  const bezet = new Set(tabs.map((tab) => eigenschap(tab, 'id')));
+  const bezet = new Set([...tabs.map((tab) => eigenschap(tab, 'id')), ...kopIds(tabs)]);
   const id = uitlegId ?? (bezet.has('uitleg') ? 'les-uitleg' : 'uitleg');
   const samen = element('LesTab', id, UITLEG, [
     stappenlijst([...delen.flatMap((d) => d.boven), ...delen.flatMap((d) => d.stappen)]),
@@ -649,6 +734,11 @@ function voegUitlegSamen(tabs, vormen, uitlegId) {
 const OPDRACHT = ['aanpassen', 'maken'];
 const vindVeld = (node) =>
   isVeld(node) ? node : (node.children ?? []).map(vindVeld).find(Boolean);
+const heeftCodeVraag = (node) =>
+  (node.name === 'LesVoorbeeld' && eigenschap(node, 'toelichting') === 'vraag') ||
+  (node.children ?? []).some((kind) =>
+    kind.type === 'paragraph' ? isVraagAlinea(kind) : heeftCodeVraag(kind),
+  );
 
 /**
  * Een opdracht op code die er al staat is aanpassen, een opdracht vanaf een
@@ -663,6 +753,10 @@ const vindVeld = (node) =>
  */
 function vormNaarStartcode(tab, vorm) {
   if (!OPDRACHT.includes(vorm) || !/^Opdracht\b/.test(eigenschap(tab, 'titel'))) return vorm;
+  // Code met "**Vraag:** …" ernaast en geen veld: de leerling schrijft niets,
+  // hij voorspelt (Code beter begrijpen bij robotica: acht opdrachten met het
+  // potlood van aanpassen).
+  if (heeftCodeVraag(tab) && !vindVeld(tab)) return 'voorspellen';
   const veld = vindVeld(tab);
   const start = veld ? startcode(veld) : null;
   if (start === null) return vorm;
@@ -941,7 +1035,9 @@ function groepeer(alles) {
   let uitlegId = null;
   if (uitleg.length && !korteUitleg) {
     // Een id dat geen kop van de les al heeft.
-    const bezet = new Set(tabs.map((t) => eigenschap(t, 'id')));
+    // Ook geen `###` verderop: op de LED-pagina van robotica heette een stap
+    // onder Code "Uitleg", en opende het adres van het tabblad Uitleg die stap.
+    const bezet = new Set([...tabs.map((t) => eigenschap(t, 'id')), ...kopIds(kinderen)]);
     uitlegId = bezet.has('uitleg') ? 'les-uitleg' : 'uitleg';
     tabs.unshift(element('LesTab', uitlegId, UITLEG, uitlegMetStappen(uitleg, uitlegId)));
   }

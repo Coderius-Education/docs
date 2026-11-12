@@ -58,11 +58,9 @@ Het blok **Servo 9 op 90** uit de groep **Actuatoren** zet de servo op pin 9 in 
 
 ### Voorspel
 
-Bekijk dit programma, maar upload het nog niet:
-
 <Blokken programma={heenEnWeer} beschrijving="Leaphy, met daarin herhaal voor altijd. Daarin: Servo 9 op 0, duurt 1000 ms, Servo 9 op 90, duurt 1000 ms." />
 
-<Voorspel vraag="Wat doet het asje?">
+<Voorspel vraag="Bekijk dit programma, maar upload het nog niet. Wat doet het asje?">
   <Keuze goed uitleg="Elk duurt-blok is 1000 ms: een seconde stilstaan voor de volgende stand.">Naar 0°, een seconde wachten, naar 90°, een seconde wachten, en steeds opnieuw</Keuze>
   <Keuze uitleg="Kijk in welk blok de servo-blokken staan. Na één keer stoppen doet alleen het Leaphy-blok.">Het draait één keer naar 0° en terug, en stopt dan</Keuze>
   <Keuze uitleg="Kijk naar het eerste servo-blok in herhaal voor altijd: daar staat geen 90.">Het blijft op 90° staan</Keuze>
@@ -71,10 +69,10 @@ Bekijk dit programma, maar upload het nog niet:
 
 Het asje draait naar 0°, wacht een seconde, draait naar 90°, wacht weer een seconde, en begint opnieuw. Dat blijft hij doen, want alles staat in **herhaal voor altijd**.
 
-Klik op **Upload naar robot** en kijk of het klopt.
-
   </Uitleg>
 </Voorspel>
+
+Klik op **Upload naar robot** en kijk of je voorspelling klopt.
 
 ## Probeer het zelf
 

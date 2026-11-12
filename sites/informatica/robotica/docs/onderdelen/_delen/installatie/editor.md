@@ -20,12 +20,7 @@ Had je Thonny 4 al? Verwijder die dan eerst, via **Instellingen** → **Apps**. 
 
 Voer het installatiebestand uit en klik de installatie door. Open daarna Thonny.
 
-<details>
-<summary>Controlevraag</summary>
-
-Wat zie je als Thonny voor het eerst opent?
-
-</details>
+**Controlevraag:** Wat zie je als Thonny voor het eerst opent?
 
 <details>
 <summary>Antwoord</summary>

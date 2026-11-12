@@ -332,12 +332,7 @@ Er is geen getal dat bij iedereen past: elke baan en elke Golfbot is net anders.
 
 </Probleem>
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom moet de servo op 90° staan als de arm op de as komt?
-
-</details>
+**Controlevraag:** Waarom moet de servo op 90° staan als de arm op de as komt?
 
 <details>
 <summary>Antwoord</summary>

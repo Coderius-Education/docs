@@ -113,12 +113,7 @@ while True:
 
 </details>
 
-<details>
-<summary>Controlevraag</summary>
-
-Waarom heeft elke sensor een eigen object nodig — waarom kun je niet één `AnalogIR` voor allebei gebruiken?
-
-</details>
+**Controlevraag:** Waarom heeft elke sensor een eigen object nodig — waarom kun je niet één `AnalogIR` voor allebei gebruiken?
 
 <details>
 <summary>Antwoord</summary>
