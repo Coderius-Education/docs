@@ -26,6 +26,8 @@ const eigenschap = (node, naam) => node.attributes?.find((a) => a.name === naam)
  *  - tabel, lijst
  *  - antwoord het begin van een uitklapblok: wat erna komt, ziet de leerling
  *             pas als hij het opent
+ *  - vraag    het begin van een voorspelvraag; de keuzes en de uitleg erin
+ *             hebben `inVraag`
  *
  * @param {object[]} nodes
  * @param {string[]} velden de namen van de onderdelen die een oefenveld zijn
@@ -38,7 +40,10 @@ function blokken(nodes, velden, uit = []) {
     else if (n.type === 'list') uit.push({ soort: 'lijst', tekst: tekstVan(n) });
     else if (velden.includes(n.name)) uit.push({ soort: 'veld', tekst: tekstVan(n) });
     else if (n.name === 'LesStappen') continue;
-    else if (n.name === 'details') {
+    else if (n.name === 'Voorspel') {
+      uit.push({ soort: 'vraag', tekst: '' });
+      for (const b of blokken(n.children ?? [], velden)) uit.push({ ...b, inVraag: true });
+    } else if (n.name === 'details') {
       uit.push({ soort: 'antwoord', tekst: '' });
       blokken(n.children ?? [], velden, uit);
     } else if (n.type !== 'heading' && n.children) blokken(n.children, velden, uit);

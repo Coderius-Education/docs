@@ -221,6 +221,130 @@ describe('CodeExercise', () => {
     expect(nep.runs).toEqual([]);
   });
 
+  it('het lege vak zegt dat het veld je code niet bewaart', async () => {
+    // Dat stond alleen in de docentenhandleiding. Wat een leerling nodig
+    // heeft om het veld te gebruiken, zegt het veld zelf.
+    render(
+      <PaneelContext.Provider value={() => {}}>
+        <CodeExercise>{'print(1)'}</CodeExercise>
+      </PaneelContext.Provider>,
+    );
+    await wachtTotGeladen();
+    screen.getByText(/bewaart je code niet/);
+  });
+
+  describe('in een tabblad op een breed scherm', () => {
+    // jsdom heeft geen layout: de maten die het veld opvraagt, staan hier vast.
+    const echteMaat = HTMLElement.prototype.getBoundingClientRect;
+    beforeEach(() => {
+      HTMLElement.prototype.getBoundingClientRect = function () {
+        const paneel = this.hasAttribute('data-les-tab');
+        return {
+          width: 900,
+          height: paneel ? 500 : 300,
+          top: paneel ? 150 : 250,
+          bottom: paneel ? 650 : 550,
+          left: 0,
+          right: 900,
+          x: 0,
+          y: 0,
+          toJSON: () => ({}),
+        } as DOMRect;
+      };
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          observe() {}
+          disconnect() {}
+        },
+      );
+      vi.stubGlobal('matchMedia', () => ({
+        matches: true,
+        addEventListener() {},
+        removeEventListener() {},
+      }));
+    });
+    afterEach(() => {
+      HTMLElement.prototype.getBoundingClientRect = echteMaat;
+      vi.unstubAllGlobals();
+    });
+
+    const inTab = (kind: React.ReactNode) => (
+      <section data-les-tab="opdracht">
+        <PaneelContext.Provider value={() => {}}>{kind}</PaneelContext.Provider>
+      </section>
+    );
+
+    it('Stap voor stap neemt de plek van de editor en de uitvoer in', async () => {
+      // Onder het veld was het scherm tot 1634 pixels te lang, met de code
+      // er twee keer. De stapper krijgt de hoogte die de editor had.
+      const { container } = render(inTab(<CodeExercise>{'x = 1\nprint(x)'}</CodeExercise>));
+      await wachtTotGeladen();
+      const veld = container.querySelector('[class*="exercise"]') as HTMLElement;
+      expect(veld.className).not.toMatch(/staptInTab/);
+      nep.volgende = {
+        opname: {
+          stappen: [
+            {
+              regel: 1,
+              gebeurtenis: 'line',
+              frames: [{ naam: '<module>', variabelen: [] }],
+              uitvoerTot: 0,
+              tekenTot: null,
+            },
+          ],
+          uitvoer: '',
+          afgekapt: false,
+          fout: null,
+        } as unknown as Opname,
+      };
+      fireEvent.click(knop('Stap voor stap'));
+      await screen.findByText(/Stap 1 van 1/);
+      expect(veld.className).toMatch(/staptInTab/);
+      const stapper = container.querySelector('[class*="stapper"]') as HTMLElement;
+      const hoogte = Number.parseInt(stapper.style.getPropertyValue('--stap-hoogte'), 10);
+      expect(hoogte).toBeGreaterThan(0);
+      // Niet hoger dan het veld was.
+      expect(hoogte).toBeLessThan(
+        Number.parseInt(
+          veld.querySelector<HTMLElement>('[class*="resultaat"]')?.style.maxHeight ?? '0',
+          10,
+        ),
+      );
+      fireEvent.click(knop('Sluiten'));
+      expect(veld.className).not.toMatch(/staptInTab/);
+    });
+
+    it('met een doelplaatje zijn de eigen tekening en het doel samen niet hoger dan het veld', async () => {
+      // Na Uitvoeren schoof het doelplaatje onder de eigen tekening uit
+      // beeld: vergelijken kon alleen door te scrollen in het vak.
+      const { container } = render(
+        inTab(
+          <DoelContext.Provider value={<img src="doel.svg" alt="Het doel" />}>
+            <CodeExercise>{'import turtle'}</CodeExercise>
+          </DoelContext.Provider>,
+        ),
+      );
+      await wachtTotGeladen();
+      const vak = container.querySelector('[class*="resultaat"]') as HTMLElement;
+      expect(vak.className).not.toMatch(/vergelijk/);
+      nep.volgende = {
+        tekening: {
+          direct: true,
+          gebeurtenissen: [
+            { t: 'nieuw', id: 0, vorm: 'classic', zichtbaar: true },
+            { t: 'ga', id: 0, x: 100, y: 0, pen: true, kleur: 'black', dikte: 1 },
+          ],
+        },
+      };
+      fireEvent.click(knop(/Uitvoeren/));
+      await waitFor(() => expect(container.querySelector('svg')).not.toBeNull());
+      expect(vak.className).toMatch(/vergelijk/);
+      // De opmaak rekent met de hoogte van het veld.
+      expect(vak.style.getPropertyValue('--veld-hoogte')).toMatch(/^\d+px$/);
+    });
+  });
+
   it('laadt Python niet, dan zegt de uitvoer dat, en Uitvoeren probeert het opnieuw', async () => {
     // Eerst stond de knop na een mislukte lading aan en deed hij niets.
     let pogingen = 0;

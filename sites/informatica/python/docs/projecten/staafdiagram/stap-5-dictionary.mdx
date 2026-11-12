@@ -43,9 +43,23 @@ video's: 110
 
 ## Opdracht: de naam onder elke staaf
 
-### Wat je maakt
+### De opdracht
 
-Vervang de lijst `minuten` door deze dictionary en deze lijst met namen:
+Vervang de lijst `minuten` door een dictionary `minuten` en een lijst `apps`
+met de namen. Ze staan bij het veld.
+
+Loop over de namen in `apps`, en teken weer een staaf per app, met het
+aantal minuten erboven. Schrijf nu ook de naam onder elke staaf, in het
+midden, op hoogte -118.
+
+### Aan de slag
+
+Plak je programma uit stap 4 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 4](site:python/docs/projecten/staafdiagram/stap-4-midden). Kopieer daarna dit
+naar je programma:
+
+<details>
+<summary>Klik hier voor de dictionary en de lijst.</summary>
 
 ```python
 minuten = {
@@ -58,14 +72,7 @@ minuten = {
 apps = ["chatten", "video's", "gamen", "muziek", "foto's"]
 ```
 
-Loop over de namen in `apps`, en teken weer een staaf per app, met het
-aantal minuten erboven. Schrijf nu ook de naam onder elke staaf, in het
-midden, op hoogte -118.
-
-### Aan de slag
-
-Plak je programma uit stap 4 in het veld. Ben je het kwijt, neem dan de
-oplossing van [stap 4](site:python/docs/projecten/staafdiagram/stap-4-midden).
+</details>
 
 ![Vijf lichtblauwe staven met het aantal minuten erboven en de naam eronder: chatten, video's, gamen, muziek en foto's](./img/stap-5-namen.svg)
 
@@ -130,6 +137,8 @@ De staven staan in de volgorde van de lijst `apps`.
 
 </details>
 
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
 ## Er gaat iets mis
 
 {/* foutmelding-van: import turtle\nturtle.forward("chatten") */}
@@ -147,7 +156,5 @@ kommagetal, en een tekst keer een kommagetal kan niet.
 
 **Oplossing:** loop over de namen in `apps`, en zoek het getal op met
 `minuten[naam]`.
-
-Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 6: de namen één keer](site:python/docs/projecten/staafdiagram/stap-6-items).

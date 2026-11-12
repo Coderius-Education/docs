@@ -14,6 +14,8 @@ import styles from './styles.module.css';
 const MIN_VELD = 180;
 /** De hoogte van de werkbalk, tot hij gemeten is. */
 const BALK = 40;
+/** De rand van het veld, boven en onder: die telt mee in zijn hoogte. */
+const RAND = 2;
 
 function CodeExerciseInner({
   starterCode,
@@ -72,6 +74,8 @@ function CodeExerciseInner({
   }, [inTab, stapt]);
   const editorMax =
     veldHoogte === null ? undefined : veldHoogte - (balkRef.current?.offsetHeight ?? BALK);
+  // De hoogte van Stap voor stap in een tabblad: wat de editor had.
+  const stapper = stapt && editorMax !== undefined ? editorMax - 2 * RAND : undefined;
 
   useEffect(() => {
     let cancelled = false;
@@ -165,7 +169,19 @@ function CodeExerciseInner({
   );
 
   return (
-    <div ref={veldRef} className={`${styles.exercise}${inTab ? ` ${styles.inTab}` : ''}`}>
+    <div
+      ref={veldRef}
+      className={[
+        styles.exercise,
+        inTab && styles.inTab,
+        // Stap voor stap neemt in een tabblad de plek van de editor en de
+        // uitvoer in, op dezelfde hoogte: eronder was het scherm tot 1600
+        // pixels te lang, met de code er twee keer.
+        stapper !== undefined && styles.staptInTab,
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
       {/* Op een smal scherm staat het doel boven de code: onder een startcode
           van dertig regels zag de leerling pas na het scrollen wat hij moest
           maken. Op een breed scherm staat het in de uitvoerkolom (hieronder). */}
@@ -210,10 +226,23 @@ function CodeExerciseInner({
           maxHeight={editorMax}
         />
       </div>
-      {opname && <Stapper code={opnameCode} opname={opname} onSluiten={() => setOpname(null)} />}
+      {opname && (
+        <Stapper
+          code={opnameCode}
+          opname={opname}
+          onSluiten={() => setOpname(null)}
+          hoogte={stapper}
+        />
+      )}
       <div
-        className={styles.resultaat}
-        style={veldHoogte === null ? undefined : { maxHeight: veldHoogte }}
+        // Met een doelplaatje erbij zijn de eigen tekening en het doel samen
+        // niet hoger dan het veld: anders schoof het doel na Uitvoeren uit beeld.
+        className={`${styles.resultaat}${doel && tekening ? ` ${styles.vergelijk}` : ''}`}
+        style={
+          veldHoogte === null
+            ? undefined
+            : ({ maxHeight: veldHoogte, '--veld-hoogte': `${veldHoogte}px` } as React.CSSProperties)
+        }
       >
         {tekening && <Tekening tekening={tekening} />}
         {output && <pre className={styles.output}>{output}</pre>}
@@ -221,7 +250,13 @@ function CodeExerciseInner({
         {inTab && !output && !tekening && !opname && !isLoading && (
           // Het vak naast de code is er al voordat er iets gedraaid is: zo
           // verspringt het veld niet, en ziet de leerling waar hij moet kijken.
-          <p className={styles.wacht}>Klik op Uitvoeren. De uitvoer verschijnt hier.</p>
+          <p className={styles.wacht}>
+            Klik op Uitvoeren. De uitvoer verschijnt hier.
+            {/* Wat nodig is om het veld te gebruiken, zegt het veld zelf. */}
+            <span className={styles.bewaart}>
+              Dit veld bewaart je code niet: kopieer wat je wilt houden.
+            </span>
+          </p>
         )}
         {/* Wat de opdracht moet opleveren (de verwachte uitvoer of het
             doelplaatje), onder wat de leerling zelf kreeg: zo vergelijkt hij

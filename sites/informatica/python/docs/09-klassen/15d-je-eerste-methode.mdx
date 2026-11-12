@@ -42,6 +42,11 @@ een punt, net als een attribuut, maar met haakjes erachter: `rex.blaf()`.
 
 ## Wat is `self`?
 
+```python
+def blaf(self):
+    print(f"{self.naam} zegt: Woef!")
+```
+
 Bij `rex.blaf()` vult Python `self` zelf in met het object vóór de punt:
 `rex`. Daarom print dezelfde methode één keer "Rex" en één keer "Bello".
 

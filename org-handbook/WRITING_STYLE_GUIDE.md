@@ -48,7 +48,10 @@ In een cursus met tabbladen is een tabblad of een stap alles wat de leerling op 
 - **Wat op een ander scherm staat, noem je bij zijn naam**: "uit de uitleg", "in de volgende stap", "bij Er gaat iets mis".
 - **In een cursus zonder tabblad Predict** (python) staat de voorspelvraag in de uitleg, onder `### Voorspel`: de code met de vraag ernaast. Zet de kop boven de zin die de code inleidt.
 - **De verwachte uitvoer van een opdracht** staat vlak voor het oefenveld, onder een eigen regel "Verwachte uitvoer:" (of "Verwachte uitvoer (bij `cijfer = 4.0`):"). Het veld toont hem dan naast de uitvoer van de leerling. Een doelplaatje vlak voor het veld komt daar ook.
-- **Een lange opdracht heeft twee stappen**: `### Wat je maakt` met de beschrijving en wat je kopieert, en `### Aan de slag` met het veld, de tip en de oplossing.
+- **Een lange opdracht heeft twee stappen**: `### De opdracht` met de beschrijving, en `### Aan de slag` met het veld, de tip en de oplossing.
+- **Wat de leerling moet kopiëren, staat bij het veld**, na de zin over het plakken van zijn eigen programma, in een uitklapblok. Hij heeft één klembord.
+- **Onder een voorspelvraag staat geen code die het antwoord laat zien.** Wat erna komt, staat in de `<Uitleg>` van de vraag of in een volgende stap.
+- **Er gaat iets mis komt na de opdrachten.** De build zet het tabblad daar ook neer als de bron het ervoor heeft.
 
 Voor MDX-pagina's met runnable code, importeer bovenaan:
 

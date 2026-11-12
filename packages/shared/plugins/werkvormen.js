@@ -28,7 +28,16 @@ async function mdxParser() {
   );
   const mdx = require.resolve('@mdx-js/mdx', { paths: [loader] });
   const { createProcessor } = await import(pathToFileURL(mdx).href);
-  const processor = createProcessor({ format: 'mdx' });
+  // Met remark-directive en remark-gfm, zoals de build. Zonder is een
+  // `:::info` of een tabel een rij alinea's, en dan verdeelt de stap van de
+  // tabbladen de les anders dan de leerling hem ziet: geen blok (Vooraf,
+  // korte uitleg), en een tabel vóór de eerste `###` telde als losse zin.
+  const plugin = async (naam) =>
+    (await import(pathToFileURL(require.resolve(naam, { paths: [loader] })).href)).default;
+  const processor = createProcessor({
+    format: 'mdx',
+    remarkPlugins: [await plugin('remark-directive'), await plugin('remark-gfm')],
+  });
   return (bron) => processor.parse(bron);
 }
 

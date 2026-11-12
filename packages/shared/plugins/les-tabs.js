@@ -74,6 +74,43 @@ const idVan = (kop) => {
 /** Het label van de stap met wat in een sectie vóór de eerste `###` staat. */
 const BASIS = 'De basis';
 
+/** Het label van die stap als er alleen voorkennis in staat (zie basisLabel). */
+const VOORAF = 'Vooraf';
+
+/** Het label van die stap als de les met de voorspelvraag opent. */
+const VOORSPEL = 'Voorspel';
+
+const isBlok = (node) =>
+  node.type === 'containerDirective' ||
+  (node.type === 'mdxJsxFlowElement' && node.name === 'admonition');
+
+/** Een `:::info`: in deze cursussen het blok met wat je al moet kennen. */
+const isInfo = (node) =>
+  isBlok(node) &&
+  (node.type === 'containerDirective'
+    ? node.name === 'info'
+    : node.attributes?.some((a) => a.name === 'type' && a.value === 'info'));
+
+/**
+ * "De basis" is de kern van de uitleg. Staat er vóór de eerste `###` alleen
+ * een blok als "Deze stap gebruikt …" met hooguit wat tekst, dan is dat geen
+ * basis maar wat je vooraf moet weten: de stap heet dan Vooraf.
+ *
+ * @param {object[]} nodes
+ */
+const basisLabel = (nodes) => {
+  const inhoud = nodes.filter((node) => !zetNietsNeer(node));
+  if (inhoud.some(isBlok) && inhoud.every((node) => isBlok(node) || isAlinea(node))) return VOORAF;
+  // Opent de les met de voorspelvraag (de code met <Voorspel> ernaast), dan
+  // heet die stap Voorspel, zoals in de lessen waar de vraag verderop staat.
+  const eerste = inhoud.find(
+    (node) => !isBlok(node) && !isAlinea(node) && node.name !== 'Voorkennis',
+  );
+  return eerste?.name === 'LesVoorbeeld' && eerste.attributes.some((a) => a.name === 'vraag')
+    ? VOORSPEL
+    : BASIS;
+};
+
 const isAlinea = (node) => node.type === 'paragraph';
 const isLeerdoel = (node) => node.name === 'LesLeerdoel';
 const isStap = (node) => node.name === 'LesStap';
@@ -131,7 +168,9 @@ function metStappen(kinderen, sectieId, vooraf = []) {
     element('LesStap', idVan(h3), tekstVan(h3), inhoud),
   );
   if (!kort) {
-    lesStappen.unshift(element('LesStap', `${sectieId}-basis`, BASIS, [...rest, ...inleiding]));
+    lesStappen.unshift(
+      element('LesStap', `${sectieId}-basis`, basisLabel(inleiding), [...rest, ...inleiding]),
+    );
   }
   return [kop, stappenlijst([...leerdoel, ...lesStappen])];
 }
@@ -404,7 +443,10 @@ function alsStappen(tab, uitlegId) {
   if (id === uitlegId) {
     // Heeft die uitleg zelf stappen (uitlegMetStappen), dan zijn dat ze al.
     if (lijst) return { boven: [], stappen: lijst.children.filter(isStap) };
-    return { boven: [], stappen: [element('LesStap', `${id}-basis`, BASIS, tab.children)] };
+    return {
+      boven: [],
+      stappen: [element('LesStap', `${id}-basis`, basisLabel(tab.children), tab.children)],
+    };
   }
   if (!lijst) return { boven: [], stappen: [element('LesStap', id, titel, tab.children)] };
   // Een sectie die zelf al stappen had: die schuiven een niveau op. De `##`
@@ -443,9 +485,11 @@ function uitlegMetStappen(uitleg, id) {
     element('LesStap', idVan(kop), tekstVan(kop), kinderen),
   );
   const basis = uitleg.slice(0, eerste);
-  if (basis.some((node) => !zetNietsNeer(node))) {
-    lesStappen.unshift(element('LesStap', `${id}-basis`, BASIS, basis));
-  } else lesStappen[0].children.unshift(...basis);
+  const inhoud = basis.filter((node) => !zetNietsNeer(node));
+  // Eén losse alinea is geen scherm: hij opent de eerste stap (zie metStappen).
+  const kort = inhoud.length === 0 || (inhoud.length === 1 && isAlinea(inhoud[0]));
+  if (kort) lesStappen[0].children.unshift(...basis);
+  else lesStappen.unshift(element('LesStap', `${id}-basis`, basisLabel(basis), basis));
   if (lesStappen.length < 2) return uitleg;
   return [stappenlijst(lesStappen)];
 }
@@ -480,6 +524,52 @@ function voegUitlegSamen(tabs, vormen, uitlegId) {
     tabs: [samen, ...tabs.slice(aantal)],
     vormen: [UITLEG_VORM, ...vormen.slice(aantal)],
   };
+}
+
+const OPDRACHT = ['aanpassen', 'maken'];
+const vindVeld = (node) =>
+  isVeld(node) ? node : (node.children ?? []).map(vindVeld).find(Boolean);
+
+/**
+ * Een opdracht op code die er al staat is aanpassen, een opdracht vanaf een
+ * leeg veld zelf maken. Aan de kop "Opdracht 3.2" is dat niet te zien, en de
+ * regel "de laatste van de rij is zelf maken" klopte in de Python-cursus voor
+ * de helft: 66 van de 132 opdrachten beginnen met een leeg veld. Heeft het
+ * tabblad een oefenveld waarvan de startcode te lezen is, dan beslist die:
+ * alleen commentaar (of niets) is een leeg veld.
+ *
+ * @param {object} tab een <LesTab>
+ * @param {string} vorm de werkvorm naar de kop
+ */
+function vormNaarStartcode(tab, vorm) {
+  if (!OPDRACHT.includes(vorm) || !/^Opdracht\b/.test(eigenschap(tab, 'titel'))) return vorm;
+  const veld = vindVeld(tab);
+  const start = veld ? startcode(veld) : null;
+  if (start === null) return vorm;
+  const code = start.split('\n').some((regel) => regel.trim() && !regel.trim().startsWith('#'));
+  return code ? 'aanpassen' : 'maken';
+}
+
+/**
+ * Er gaat iets mis staat na de opdrachten, ook als de bron hem ervoor heeft.
+ * In de lessen van de Python-cursus stond hij tussen de uitleg en de eerste
+ * opdracht, en bracht de knop Volgende een leerling langs fouten die hij nog
+ * niet had kunnen maken; in de projecten en bij web staat hij erna.
+ *
+ * @param {object[]} tabs
+ * @param {string[]} vormen
+ */
+function foutenNaOpdrachten(tabs, vormen) {
+  const fout = vormen.indexOf('fouten');
+  const laatste = vormen.findLastIndex((vorm) => OPDRACHT.includes(vorm));
+  if (fout < 0 || laatste < fout) return { tabs, vormen };
+  const schuif = (lijst) => [
+    ...lijst.slice(0, fout),
+    ...lijst.slice(fout + 1, laatste + 1),
+    lijst[fout],
+    ...lijst.slice(laatste + 1),
+  ];
+  return { tabs: schuif(tabs), vormen: schuif(vormen) };
 }
 
 /**
@@ -524,7 +614,19 @@ function groepeer(alles) {
     else secties.at(-1).kinderen.push(node);
   }
 
-  const korteUitleg = uitleg.length === 1 && isAlinea(uitleg[0]);
+  // Uitleg van één alinea, of van een blok als "Deze stap gebruikt …" met een
+  // of twee alinea's, is geen eigen scherm: hij opent het eerste tabblad. Maar
+  // alleen als er daarna nog twee tabbladen zijn; anders bleef er één over en
+  // had de pagina geen tabbladen meer.
+  const alineas = uitleg.filter(isAlinea).length;
+  const korteUitleg =
+    (uitleg.length === 1 && isAlinea(uitleg[0])) ||
+    (uitleg.length > 0 &&
+      secties.length >= 2 &&
+      alineas <= 2 &&
+      uitleg.filter(isBlok).length === 1 &&
+      uitleg.some(isInfo) &&
+      uitleg.every((node) => isBlok(node) || isAlinea(node) || zetNietsNeer(node)));
   // Wat bij het eerstvolgende tabblad komt te staan.
   let vooraf = korteUitleg ? [...uitleg] : [];
   const tabs = [];
@@ -564,10 +666,14 @@ function groepeer(alles) {
     werkvormenVan(tabs.map((t) => eigenschap(t, 'titel'))),
     uitlegId,
   );
-  samen.tabs.forEach((t, i) => t.attributes.push(attribuut('werkvorm', samen.vormen[i])));
+  const geordend = foutenNaOpdrachten(
+    samen.tabs,
+    samen.tabs.map((tab, i) => vormNaarStartcode(tab, samen.vormen[i])),
+  );
+  geordend.tabs.forEach((t, i) => t.attributes.push(attribuut('werkvorm', geordend.vormen[i])));
   return [
     ...boven,
-    { type: 'mdxJsxFlowElement', name: 'LesTabs', attributes: [], children: samen.tabs },
+    { type: 'mdxJsxFlowElement', name: 'LesTabs', attributes: [], children: geordend.tabs },
     ...esm,
   ];
 }

@@ -24,7 +24,11 @@ const GEDEELD = '../../../../../packages/shared/plugins';
 const { schermenVan: schermenVanBron } = require(`${GEDEELD}/les-schermen.js`);
 const { mdxParser } = require(`${GEDEELD}/werkvormen.js`);
 
-type Blok = { soort: 'tekst' | 'code' | 'veld' | 'tabel' | 'lijst' | 'antwoord'; tekst: string };
+type Blok = {
+  soort: 'tekst' | 'code' | 'veld' | 'tabel' | 'lijst' | 'antwoord' | 'vraag';
+  tekst: string;
+  inVraag?: boolean;
+};
 type Scherm = { les: string; tab: string; naam: string; blokken: Blok[] };
 
 const SITE = fileURLToPath(new URL('../..', import.meta.url));
@@ -94,6 +98,100 @@ describe('elk scherm van een les staat op zichzelf', () => {
           fout.push(`${s.les} | ${s.naam}: ${b.tekst.slice(0, 80)}`);
       });
     }
+    expect(fout).toEqual([]);
+  });
+
+  it('"Kopieer je programma" staat op het scherm met het oefenveld', () => {
+    // Het veld bewaart niets. In veertig projectstappen stond de zin op het
+    // laatste tabblad, Er gaat iets mis, waar geen veld staat: wie daar las
+    // dat hij moest kopiëren, moest eerst terug naar zijn programma.
+    const fout = schermen
+      .filter((s) =>
+        s.blokken.some((b) => b.soort === 'tekst' && /Kopieer je programma voordat/.test(b.tekst)),
+      )
+      .filter((s) => !s.blokken.some((b) => b.soort === 'veld'))
+      .map((s) => `${s.les} | ${s.naam}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('gegevens om te kopiëren komen na het plakken van je eigen programma', () => {
+    // Een leerling heeft één klembord. Stond de lijst om te kopiëren op het
+    // scherm vóór "Plak je programma uit stap 3", dan was zijn programma weg
+    // op het moment dat hij het wilde plakken (zes projectstappen).
+    const KOPIEER = /Kopieer (daarna )?(dit|deze)\b/;
+    const PLAK = /Plak je programma/;
+    const fout: string[] = [];
+    for (const les of perLes) {
+      // Alleen in een stap waar de leerling een eerder programma plakt.
+      if (!les.schermen.some((s) => s.blokken.some((b) => PLAK.test(b.tekst)))) continue;
+      for (const s of les.schermen) {
+        const i = s.blokken.findIndex((b) => b.soort === 'tekst' && KOPIEER.test(b.tekst));
+        if (i < 0) continue;
+        const zin = s.blokken[i].tekst;
+        const eerst =
+          PLAK.test(zin.slice(0, zin.search(KOPIEER))) ||
+          s.blokken.slice(0, i).some((b) => b.soort === 'tekst' && PLAK.test(b.tekst));
+        if (!eerst) fout.push(`${s.les} | ${s.naam}`);
+      }
+    }
+    expect(fout).toEqual([]);
+    // De regel is niet leeg: zes stappen laten gegevens kopiëren.
+    expect(
+      schermen.filter((s) => s.blokken.some((b) => b.soort === 'tekst' && KOPIEER.test(b.tekst)))
+        .length,
+    ).toBeGreaterThanOrEqual(6);
+  });
+
+  it('geen zin wijst naar een plek op "de pagina"', () => {
+    // Een les is geen pagina meer waar iets bovenaan of onderaan staat.
+    const fout: string[] = [];
+    for (const s of schermen) {
+      for (const b of s.blokken) {
+        if (
+          b.soort === 'tekst' &&
+          /\b(bovenaan|onderaan|verderop op) (deze|de) pagina\b/i.test(b.tekst)
+        )
+          fout.push(`${s.les} | ${s.naam}: ${b.tekst.slice(0, 80)}`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('de tip "Eerst op papier" staat niet tussen de fouten', () => {
+    // Hij stond vlak voor de eerste opdracht, en dat was in zes lessen de
+    // laatste stap van Er gaat iets mis: een werkvorm om mee te beginnen
+    // onder een foutmelding.
+    const fout = schermen
+      .filter((s) => s.tab === 'Er gaat iets mis')
+      .filter((s) => s.blokken.some((b) => b.soort === 'tekst' && b.tekst === 'Eerst op papier'))
+      .map((s) => `${s.les} | ${s.naam}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('onder een voorspelvraag staat geen code die het antwoord laat zien', () => {
+    // In De rekenmachine en Sets stond direct onder de vraag het voorbeeld
+    // dat het antwoord gaf: wie het scherm overzag, hoefde niet te
+    // voorspellen. Wat na de vraag komt, staat in zijn Uitleg of in een
+    // volgende stap.
+    const fout: string[] = [];
+    for (const s of schermen) {
+      const vraag = s.blokken.map((b) => Boolean(b.inVraag)).lastIndexOf(true);
+      if (vraag < 0) continue;
+      const na = s.blokken.slice(vraag + 1);
+      const dicht = na.findIndex((b) => b.soort === 'antwoord');
+      if ((dicht < 0 ? na : na.slice(0, dicht)).some((b) => b.soort === 'code'))
+        fout.push(`${s.les} | ${s.naam}`);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('een les die met de vraag opent, heeft de stap Voorspel', () => {
+    // In 33 lessen heet de stap met de vraag Voorspel. Acht lessen openen
+    // ermee, en daar heette hij De basis.
+    const fout = schermen
+      .filter((s) => s.blokken.some((b) => b.soort === 'vraag'))
+      .filter((s) => s.naam.endsWith(' › De basis'))
+      .map((s) => `${s.les} | ${s.naam}`);
     expect(fout).toEqual([]);
   });
 

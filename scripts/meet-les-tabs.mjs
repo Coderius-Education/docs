@@ -1,6 +1,6 @@
 // Meet per les en per tabblad of het op één scherm past.
 //
-//   node scripts/meet-les-tabs.mjs [site-id] [--json] [--les=<stuk van het pad>] [--tegelijk=4]
+//   node scripts/meet-les-tabs.mjs [site-id] [--json] [--les=<stuk van het pad>] [--tegelijk=4] [--klik]
 //
 // De les-tabbladen (packages/shared/plugins/les-tabs.js) halen de lange
 // pagina weg, maar een tabblad met een oefenveld of veel theorie kan nog
@@ -29,6 +29,14 @@
 // opnieuw. Het opent vier lessen tegelijk (`--tegelijk=1` voor één): de 150
 // pagina's van de python-cursus kostten na elkaar zestien minuten.
 //
+// Met `--klik` doet het in elk scherm met een Python-veld ook wat een leerling
+// doet: het klikt op Uitvoeren en daarna op Stap voor stap, en meet na elke
+// klik opnieuw (`naUitvoeren`, `naStappen`). Een scherm dat past tot je iets
+// aanklikt, past niet: Stap voor stap stond eerst onder het veld en maakte
+// het scherm tot 1634 pixels te lang. Een veld met `input()` slaat het over
+// (dat wacht op een antwoord), en een veld dat na een kwartminuut nog draait
+// meldt het op stderr. Dit kost per les het laden van Python erbij.
+//
 // Handmatig, niet in CI: het is een meting voor een auteur, geen controle.
 // Eerst bouwen: `pnpm --filter ./sites/informatica/web build`.
 
@@ -48,6 +56,7 @@ const waarden = (vlag) =>
   argumenten.filter((a) => a.startsWith(`--${vlag}=`)).map((a) => a.slice(vlag.length + 3));
 const ALLEEN = waarden('les');
 const TEGELIJK = Math.max(1, Number(waarden('tegelijk')[0] ?? 4));
+const KLIK = argumenten.includes('--klik');
 const BUILD = resolve(join(siteDir(SITE), 'build'));
 const BASIS = `/${SITES_BY_ID[SITE].path}/`;
 const SCHERMEN = [
@@ -67,6 +76,9 @@ const MIME = {
   '.jpg': 'image/jpeg',
   '.ico': 'image/x-icon',
   '.woff2': 'font/woff2',
+  // Voor --klik: Pyodide compileert zijn wasm alleen als stroom met dit type.
+  '.wasm': 'application/wasm',
+  '.mjs': 'text/javascript',
 };
 
 function serveer() {
@@ -120,6 +132,58 @@ const rijen = [];
 const tabrijen = [];
 let kolomBreedte = null;
 
+const over = (pagina, id) =>
+  pagina.evaluate((id) => {
+    const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
+    return Math.round(paneel.getBoundingClientRect().bottom - window.innerHeight);
+  }, id);
+
+// Een knop van het veld, niet de knop van een stap: pixel-art stap 5 heeft
+// een stap die zelf "Stap voor stap" heet.
+const KNOP = 'button:visible:not([role=tab])';
+
+const binnen = (belofte, ms) =>
+  Promise.race([
+    belofte,
+    new Promise((_, nee) => setTimeout(() => nee(new Error('duurt te lang')), ms)),
+  ]);
+
+/**
+ * Klikt in het scherm dat open staat op Uitvoeren en op Stap voor stap, en
+ * meet na elke klik. Leeg als er geen Python-veld staat of het veld op een
+ * antwoord zou wachten.
+ */
+async function meetNaKlik(pagina, paneel, id) {
+  const uitvoeren = paneel.locator(KNOP, { hasText: /Uitvoeren|Laden/ }).first();
+  if ((await uitvoeren.count()) === 0) return {};
+  const code = await paneel.locator('textarea:visible').first().inputValue();
+  if (/\binput\s*\(/.test(code)) return {};
+  const klaar = () =>
+    pagina.waitForFunction(
+      (id) => {
+        const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
+        const knop = [...paneel.querySelectorAll('button')].find(
+          (k) => k.offsetParent && /Uitvoeren/.test(k.textContent),
+        );
+        return knop && !knop.disabled;
+      },
+      id,
+      { timeout: 60_000 },
+    );
+  await klaar();
+  await uitvoeren.click();
+  await binnen(klaar(), 15_000);
+  await pagina.waitForTimeout(400);
+  const naUitvoeren = await binnen(over(pagina, id), 15_000);
+  await paneel.locator(KNOP, { hasText: 'Stap voor stap' }).first().click();
+  const sluiten = paneel.locator(KNOP, { hasText: 'Sluiten' }).first();
+  await sluiten.waitFor({ timeout: 15_000 });
+  await pagina.waitForTimeout(300);
+  const naStappen = await binnen(over(pagina, id), 15_000);
+  await sluiten.click();
+  return { naUitvoeren, naStappen };
+}
+
 async function meetLes(les) {
   for (const scherm of SCHERMEN) {
     // Een verse context per les: bewaard werk in een oefenveld verandert de
@@ -146,7 +210,9 @@ async function meetLes(les) {
       tabrijen.push({ les, scherm: `${scherm.width}x${scherm.height}`, regels });
     }
     const tabs = await pagina.locator('[data-tab]').all();
+    let vast = false;
     for (const tab of tabs) {
+      if (vast) break;
       const id = await tab.getAttribute('data-tab');
       const label = (await tab.innerText()).trim();
       await tab.scrollIntoViewIfNeeded();
@@ -186,13 +252,29 @@ async function meetLes(les) {
             velden: paneel.querySelectorAll('[data-zaad]').length,
           };
         }, id);
+        const naam = stap
+          ? `${label} › ${(await stap.innerText()).replace(/\s+/g, ' ').trim()}`
+          : label;
+        let naKlik = {};
+        if (KLIK && !scherm.telefoon) {
+          try {
+            naKlik = await meetNaKlik(pagina, paneel, id);
+          } catch (fout) {
+            // Een programma dat blijft draaien, houdt de hele pagina vast:
+            // de rest van deze les op dit scherm vervalt.
+            console.error(`${les} | ${naam} | ${scherm.width}: ${fout.message.split('\n')[0]}`);
+            vast = true;
+          }
+        }
         rijen.push({
           les,
-          tab: stap ? `${label} › ${(await stap.innerText()).replace(/\s+/g, ' ').trim()}` : label,
+          tab: naam,
           scherm: `${scherm.width}x${scherm.height}`,
           telefoon: Boolean(scherm.telefoon),
           ...maat,
+          ...naKlik,
         });
+        if (vast) break;
       }
     }
     await context.close();
@@ -234,6 +316,20 @@ if (ALS_JSON) {
         ? `\nDe rij tabbladen staat op meer dan één regel in: ${dubbel.map((t) => naam(t.les)).join(', ')}.`
         : '\nDe rij tabbladen staat in elke les op één regel.',
     );
+  }
+  if (KLIK) {
+    for (const [veld, wat] of [
+      ['naUitvoeren', 'Uitvoeren'],
+      ['naStappen', 'Stap voor stap'],
+    ]) {
+      const gemeten = rijen.filter((r) => r[veld] !== undefined);
+      const telang = gemeten.filter((r) => r.over <= 0 && r[veld] > 0);
+      console.log(
+        `\n## Na een klik op ${wat}: ${telang.length} van ${gemeten.length} metingen niet meer passend\n`,
+      );
+      for (const r of telang.sort((a, b) => b[veld] - a[veld]))
+        console.log(`- ${naam(r.les)} | ${r.tab} | ${r.scherm}: ${r[veld]} px te lang`);
+    }
   }
   const breed = rijen.filter((r) => r.zijwaarts > 0);
   console.log(`\n## Zijwaarts schuiven: ${breed.length} schermen\n`);

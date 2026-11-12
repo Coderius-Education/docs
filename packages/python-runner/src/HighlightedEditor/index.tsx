@@ -105,6 +105,21 @@ export function HighlightedEditor({
     }
   };
 
+  // Schuift de code in de editor (maxHeight), dan blijft de gemarkeerde regel
+  // in beeld: de stapper bladert door een programma dat langer kan zijn dan
+  // het vak. Buiten beeld gemarkeerd was de regel voor de leerling weg.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: alleen de regel en de hoogte tellen; handleScroll leest refs.
+  useEffect(() => {
+    const veld = textareaRef.current;
+    if (!veld || !maxHeight || !highlightLine) return;
+    const regel = Number.parseFloat(getComputedStyle(veld).lineHeight) || 21.6;
+    const boven = 16 + (highlightLine - 1) * regel;
+    if (boven < veld.scrollTop + regel) veld.scrollTop = Math.max(0, boven - 2 * regel);
+    else if (boven + 2 * regel > veld.scrollTop + veld.clientHeight)
+      veld.scrollTop = boven - veld.clientHeight + 3 * regel;
+    handleScroll();
+  }, [highlightLine, maxHeight]);
+
   const lineCount = code.split('\n').length;
   // Dezelfde kleuren als de codeblokken van de cursus (prism-thema.js).
   const theme = colorMode === 'dark' ? donker : licht;

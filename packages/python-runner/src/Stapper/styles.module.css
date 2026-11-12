@@ -64,6 +64,43 @@
   max-height: 22rem;
 }
 
+/* In een les-tabblad (Stapper met `hoogte`): de stapper staat in het veld,
+   zonder eigen rand. De code en de zijkant zijn even hoog en schuiven elk in
+   hun eigen vak; een tekening staat in een derde kolom. */
+.passend {
+  margin-top: 0;
+  border-width: 1px 0 0;
+  border-radius: 0;
+}
+
+.passend .zijkant {
+  max-height: var(--stap-hoogte);
+}
+
+/* De teller en Sluiten staan in de rij knoppen. */
+.passend .knoppen .titel {
+  white-space: nowrap;
+}
+
+.passend .metTekening {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 3fr) minmax(0, 4fr);
+}
+
+.tekenKant {
+  min-width: 0;
+  max-height: var(--stap-hoogte);
+  overflow: hidden;
+  border-left: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.tekenKant > * {
+  border-top: 0;
+}
+
+.tekenKant svg {
+  max-height: calc(var(--stap-hoogte) - 1.75rem);
+}
+
 .scope + .scope {
   border-top: 1px solid var(--ifm-color-emphasis-200);
 }

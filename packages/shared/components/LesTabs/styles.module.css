@@ -290,6 +290,17 @@
 .paneel :global(.theme-code-block):not(details *) pre {
   max-height: 53vh;
   overflow-y: auto;
+  /* Een schaduw aan de rand waar nog code buiten beeld staat: zonder was er
+     in 15k niets aan te zien dat het nieuwe deel van het programma onder de
+     rand stond. De twee vlakken in de kleur van het blok schuiven met de code
+     mee en dekken de schaduw af aan het begin en het eind. */
+  background-image: linear-gradient(var(--prism-background-color) 40%, transparent),
+    linear-gradient(transparent, var(--prism-background-color) 60%),
+    linear-gradient(rgb(0 0 0 / 22%), transparent), linear-gradient(transparent, rgb(0 0 0 / 22%));
+  background-position: top, bottom, top, bottom;
+  background-size: 100% 2.5rem, 100% 2.5rem, 100% 0.9rem, 100% 0.9rem;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll;
 }
 
 /* Een voorbeeld met zijn uitvoer naast elkaar (LesVoorbeeld): de code links,

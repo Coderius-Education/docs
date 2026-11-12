@@ -273,11 +273,21 @@ Daarom de stappen: een rij genummerde knoppen in het tabblad, één stap
 tegelijk in beeld. Wat in een sectie vóór de eerste `###` staat, is de eerste
 stap, "De basis" (id `<sectie>-basis`); één losse alinea hoort bij de eerste
 `###` en staat daar vóór de kop (boven de stappen stond hij bij elke stap
-opnieuw). Een sectie die zo maar één stap zou krijgen, heeft geen stappen.
+opnieuw). Staat er in die eerste stap alleen een blok als "Deze stap
+gebruikt …", dan heet hij Vooraf; opent hij met de voorspelvraag, dan heet
+hij Voorspel (`basisLabel`). Een sectie die zo maar één stap zou krijgen, heeft geen stappen.
 Omdat er iets vóór de kop kan staan, verbergt de opmaak de kop van een
 tabblad of stap met `> h2` en `> h3`, niet met `:first-child`. De knop Volgende onderaan een tabblad loopt eerst de stappen door en
 gaat dan naar het volgende tabblad. Ook de uitleg vóór de eerste `##` krijgt
-stappen van zijn `###`-koppen (`uitlegMetStappen`).
+stappen van zijn `###`-koppen (`uitlegMetStappen`). Uitleg vóór de eerste
+`##` van één info-blok met hooguit twee alinea's is geen tabblad: hij opent
+het tabblad erna, net als één losse alinea (18 projectstappen hadden een
+tabblad Uitleg met alleen "Deze stap gebruikt …").
+
+**Er gaat iets mis staat na de opdrachten**, ook als de bron hem ervoor
+heeft (`foutenNaOpdrachten`). In de lessen van de python-cursus stond hij
+tussen de uitleg en de eerste opdracht, en bracht de knop Volgende een
+leerling langs fouten die hij nog niet had kunnen maken.
 
 **Wat de stap naast elkaar zet, of weglaat.** Bij het omzetten van de
 python-cursus paste van de 595 schermen 250 op 1280×720. Deze regels in
@@ -302,15 +312,30 @@ dat naar 590 van de 665; de rest was splitsen en inkorten (724 van de 724):
 - In een paneel vervalt een scheidingslijn (`---`), is een plaatje hooguit
   een derde van het scherm hoog, is een info-blok lager, en schuift een
   codeblok van meer dan zestien regels in zijn eigen vak (vier voorbeelden
-  in het hoofdstuk Klassen; niet in een uitklapblok).
+  in het hoofdstuk Klassen; niet in een uitklapblok). Zo'n vak heeft een
+  schaduw aan de rand waar nog code buiten beeld staat.
+- Stap voor stap staat in een tabblad op de plek van de editor en de
+  uitvoer, op de hoogte van het veld (`Stapper` met `hoogte`): de code
+  schuift in zijn vak met de regel die aan de beurt is in beeld, en een
+  tekening heeft een eigen kolom. Onder het veld was het scherm tot 1634
+  pixels te lang. Heeft een turtle-opdracht een doelplaatje, dan zijn de
+  eigen tekening en het doel samen niet hoger dan het veld.
 
 Wat een auteur zelf doet: de voorspelvraag van een les staat onder
 `### Voorspel` (met het voorbeeld erboven was dat scherm tot zeshonderd
 pixels te lang; zet de kop boven de zin die de code inleidt), elke fout
 onder Er gaat iets mis heeft een eigen `###`, en een lange projectopdracht
-heeft twee stappen, `### Wat je maakt` (de beschrijving en wat je kopieert)
-en `### Aan de slag` (de zin over het programma van de vorige stap, het
-doelplaatje of de verwachte uitvoer, het veld, tip en oplossing).
+heeft twee stappen, `### De opdracht` (de beschrijving) en `### Aan de slag`
+(de zin over het programma van de vorige stap, het doelplaatje of de
+verwachte uitvoer, het veld, tip en oplossing). Gegevens die de leerling
+moet kopiëren, staan bij het veld, na "Plak je programma …", in een
+uitklapblok: hij heeft één klembord, en stonden ze op het scherm ervoor,
+dan was zijn programma weg op het moment dat hij het wilde plakken. "Kopieer
+je programma voordat je verdergaat" staat aan het eind van de opdracht, op
+het scherm met het veld, niet op het laatste tabblad. Onder een
+voorspelvraag staat geen code die het antwoord laat zien: wat erna komt,
+staat in zijn `<Uitleg>` of in een volgende stap. De python-cursus bewaakt
+dit in `src/docs-tests/schermen.test.ts`.
 
 **Werkvormen: de schakel naar vakdidactiek.** Elk tabblad heeft een werkvorm:
 wat de leerling daar doet (leerdoel, uitleg, stap voor stap, voorspellen,
@@ -319,7 +344,10 @@ onderzoeken, aanpassen, zelf maken, fouten herkennen). De lijst staat in
 je hem herkent, een icoon (paden van een lijntekening, geen emoji) en
 minstens één tip van vakdidactiek. Een kop die bij geen werkvorm hoort, is
 uitleg; van een rij genummerde opdrachten is de laatste zelf maken
-(`laatsteVan`). De remark-stap geeft elk `<LesTab>` zijn werkvorm mee en het
+(`laatsteVan`), tenzij de startcode van het oefenveld te lezen is: dan is
+een opdracht op code die er al staat aanpassen en een opdracht met een leeg
+veld (alleen commentaar) zelf maken (`vormNaarStartcode`; in de
+python-cursus begint de helft van de opdrachten leeg). De remark-stap geeft elk `<LesTab>` zijn werkvorm mee en het
 tabblad toont het icoon; voor een leerling is het alleen een herkenningsteken.
 De betekenis staat in de docentenhandleiding, en dat is ook waar die
 handleiding over gaat: `<Werkvormen />` toont de onderdelen van een les in de
@@ -411,7 +439,10 @@ Tabbladen garanderen niet dat een onderdeel op één scherm past:
 per les, per tabblad en per stap op 1280×720 en 1366×768 hoeveel pixels het
 te lang is, op hoeveel regels de rij tabbladen staat, en (ook op 390×800)
 of een scherm zijwaarts schuift. Het opent vier lessen tegelijk; met
-`--les=klassen/15f` meet het alleen de lessen met dat stuk in hun pad. Wat
+`--les=klassen/15f` meet het alleen de lessen met dat stuk in hun pad, en
+met `--klik` klikt het in elk scherm met een Python-veld ook op Uitvoeren en
+op Stap voor stap en meet het na elke klik opnieuw: een scherm dat past tot
+je iets aanklikt, past niet. Wat
 dan nog te lang is, is tekst: een stap of een Er gaat iets mis met meer
 inhoud dan op een scherm past. Dat lost een auteur op, niet de opmaak.
 Bekende nadelen: Ctrl+F vindt geen tekst in een tabblad dat niet open staat,

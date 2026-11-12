@@ -657,6 +657,218 @@ describe('groepeer', () => {
     expect(blokken[3].children[0].value).toBe('Druk op Uitvoeren en kijk wat er gebeurt.');
   });
 
+  describe('de volgorde en het icoon van de opdrachten', () => {
+    const veld = (start: string): Knoop => ({
+      type: 'mdxJsxFlowElement',
+      name: 'CodeExercise',
+      children: [{ type: 'mdxFlowExpression', value: `\`${start}\`` }],
+    });
+    const vormen = (uit: Knoop[]) =>
+      (uit[1].children ?? []).map((t: Knoop) => [
+        t.attributes?.find((a) => a.name === 'label')?.value,
+        t.attributes?.find((a) => a.name === 'werkvorm')?.value,
+      ]);
+
+    it('Er gaat iets mis staat na de opdrachten, ook als de bron hem ervoor heeft', () => {
+      // In 44 lessen van de Python-cursus stond hij tussen de uitleg en de
+      // eerste opdracht: de knop Volgende bracht een leerling langs fouten
+      // die hij nog niet had kunnen maken.
+      const uit = groepeer([
+        titel,
+        kop(2, 'De for-loop'),
+        alinea('Uitleg.'),
+        kop(2, 'Er gaat iets mis'),
+        alinea('Een fout.'),
+        kop(2, 'Opdracht 1: Tel'),
+        alinea('Tel.'),
+        kop(2, 'Opdracht 2: Meer'),
+        alinea('Meer.'),
+        kop(2, 'En nu?'),
+        alinea('Door.'),
+      ]);
+      expect(vormen(uit).map(([label]) => label)).toEqual([
+        'De for-loop',
+        'Opdracht 1',
+        'Opdracht 2',
+        'Er gaat iets mis',
+        'En nu?',
+      ]);
+      // Staat hij er al na, dan verandert er niets.
+      const erna = groepeer([
+        titel,
+        kop(2, 'Uitleg van print'),
+        alinea('Uitleg.'),
+        kop(2, 'Opdracht: print'),
+        alinea('Print.'),
+        kop(2, 'Er gaat iets mis'),
+        alinea('Een fout.'),
+      ]);
+      expect(vormen(erna).map(([label]) => label)).toEqual([
+        'Uitleg van print',
+        'Opdracht',
+        'Er gaat iets mis',
+      ]);
+    });
+
+    it('een opdracht met startcode is aanpassen, een opdracht met een leeg veld zelf maken', () => {
+      // De docentenhandleiding zegt bij Aanpassen "op code die er al staat".
+      // Naar de kop kreeg elke opdracht behalve de laatste dat icoon, en van
+      // de 132 lesopdrachten van de Python-cursus begint de helft leeg.
+      const uit = groepeer([
+        titel,
+        kop(2, 'Uitleg van print'),
+        alinea('Uitleg.'),
+        kop(2, 'Opdracht 1: Leeg'),
+        veld('# Schrijf hier je code'),
+        kop(2, 'Opdracht 2: Met code'),
+        veld('naam = "Sam"\n# maak het af'),
+        kop(2, 'Opdracht 3: Zonder veld'),
+        alinea('In je eigen editor.'),
+      ]);
+      expect(vormen(uit)).toEqual([
+        ['Uitleg van print', 'uitleg'],
+        ['Opdracht 1', 'maken'],
+        ['Opdracht 2', 'aanpassen'],
+        // Zonder veld beslist de kop: de laatste van de rij is zelf maken.
+        ['Opdracht 3', 'maken'],
+      ]);
+    });
+  });
+
+  describe('korte uitleg en voorkennis', () => {
+    const blok: Knoop = { type: 'containerDirective', name: 'info', children: [alinea('Uit 6a.')] };
+
+    it('een blok met voorkennis en twee zinnen opent het eerste tabblad', () => {
+      // Zes projectstappen hadden een tabblad Uitleg met alleen "Deze stap
+      // gebruikt …" en twee zinnen: een scherm met een knop Volgende.
+      const uit = groepeer([
+        titel,
+        blok,
+        alinea('Na één gok stopt je programma.'),
+        kop(2, 'Opdracht: blijf vragen'),
+        alinea('Vraag door.'),
+        kop(2, 'Er gaat iets mis'),
+        alinea('Een fout.'),
+      ]);
+      expect(tabs(uit).map((t) => t.label)).toEqual(['Opdracht', 'Er gaat iets mis']);
+      expect(uit[1].children[0].children.slice(0, 2).map((n: Knoop) => n.type)).toEqual([
+        'containerDirective',
+        'paragraph',
+      ]);
+      // Blijft er anders maar één tabblad over, dan houdt de uitleg het zijne.
+      const twee = groepeer([
+        titel,
+        blok,
+        alinea('Na één gok stopt je programma.'),
+        kop(2, 'Opdracht: blijf vragen'),
+        alinea('Vraag door.'),
+      ]);
+      expect(tabs(twee).map((t) => t.label)).toEqual(['Uitleg', 'Opdracht']);
+    });
+
+    it('alleen een info-blok: een tip om op te warmen is zelf uitleg', () => {
+      // Les 6a opent met een zin en een tip Opwarmen van twee lange punten.
+      // Bij het eerste tabblad erbij was dat scherm 104 pixels te lang.
+      const tip: Knoop = {
+        type: 'containerDirective',
+        name: 'tip',
+        children: [alinea('Speel eerst lightbot.')],
+      };
+      const uit = groepeer([
+        titel,
+        alinea('Met een for-loop herhaalt Python het werk.'),
+        tip,
+        kop(2, 'Opdracht 6a.1: Vijf keer'),
+        alinea('Print vijf keer hoera.'),
+        kop(2, 'Er gaat iets mis'),
+        alinea('Een fout.'),
+      ]);
+      expect(tabs(uit).map((t) => t.label)).toEqual([
+        'Uitleg',
+        'Opdracht 6a.1',
+        'Er gaat iets mis',
+      ]);
+      // De vorm van de build (een admonition) telt net zo.
+      const alsJsx = (type: string): Knoop => ({
+        type: 'mdxJsxFlowElement',
+        name: 'admonition',
+        attributes: [{ name: 'type', value: type }],
+        children: [alinea('Uit 6a.')],
+      });
+      const metJsx = (type: string) =>
+        tabs(
+          groepeer([
+            titel,
+            alsJsx(type),
+            kop(2, 'Opdracht 1: Een'),
+            alinea('Doe iets.'),
+            kop(2, 'Er gaat iets mis'),
+            alinea('Een fout.'),
+          ]),
+        ).map((t) => t.label);
+      expect(metJsx('info')).toEqual(['Opdracht 1', 'Er gaat iets mis']);
+      expect(metJsx('tip')).toEqual(['Uitleg', 'Opdracht 1', 'Er gaat iets mis']);
+    });
+
+    it('een eerste stap met alleen voorkennis heet Vooraf, niet De basis', () => {
+      const uit = groepeer([
+        titel,
+        blok,
+        alinea('Dit project tekent een staafdiagram.'),
+        kop(3, 'Het diagram', 'diagram'),
+        alinea('Vijf staven.'),
+        { type: 'code', value: 'x = 1' },
+        kop(2, 'Opdracht: een staaf'),
+        alinea('Teken.'),
+        kop(2, 'Er gaat iets mis'),
+        alinea('Een fout.'),
+      ]);
+      const stappen = uit[1].children[0].children[0].children;
+      expect(
+        stappen.map((n: Knoop) => n.attributes?.find((a) => a.name === 'label')?.value),
+      ).toEqual(['Vooraf', 'Het diagram']);
+    });
+
+    it('een les die met de voorspelvraag opent, heeft Voorspel als eerste stap', () => {
+      // In 33 lessen heet de stap met de vraag Voorspel; in acht opende de les
+      // ermee en heette hij De basis.
+      const vraag: Knoop = { type: 'mdxJsxFlowElement', name: 'Voorspel', children: [] };
+      const uit = groepeer([
+        titel,
+        alinea('Soms wil je een ronde overslaan. Wat doet dit?'),
+        { type: 'code', value: 'for i in range(6):\n    print(i)' },
+        vraag,
+        kop(2, 'Wat continue doet', 'continue'),
+        alinea('Hij slaat de rest van de ronde over.'),
+        kop(2, 'Opdracht 1: Sla over'),
+        alinea('Sla over.'),
+      ]);
+      const stappen = uit[1].children[0].children[0].children;
+      expect(
+        stappen.map((n: Knoop) => n.attributes?.find((a) => a.name === 'label')?.value),
+      ).toEqual(['Voorspel', 'Wat continue doet']);
+    });
+
+    it('één losse zin vóór de eerste ### van de uitleg opent die stap', () => {
+      // Anders was "De basis" een scherm met één zin.
+      const uit = groepeer([
+        titel,
+        alinea('In 15j schreef je objecten weg.'),
+        kop(3, 'Voorspel', 'voorspel'),
+        alinea('Wat krijg je terug?'),
+        kop(3, 'Van dictionary naar object', 'terug'),
+        alinea('Zo.'),
+        kop(2, 'Opdracht 1: Lees in'),
+        alinea('Lees.'),
+      ]);
+      const stappen = uit[1].children[0].children[0].children;
+      expect(
+        stappen.map((n: Knoop) => n.attributes?.find((a) => a.name === 'label')?.value),
+      ).toEqual(['Voorspel', 'Van dictionary naar object']);
+      expect(stappen[0].children[0].children[0].value).toBe('In 15j schreef je objecten weg.');
+    });
+  });
+
   it('doet niets met minder dan twee tabbladen', () => {
     expect(groepeer([titel, alinea('alleen tekst')])).toBeNull();
     expect(groepeer([titel, kop(2, 'Enige sectie'), alinea('x')])).toBeNull();
@@ -868,6 +1080,19 @@ describe('de opmaak van de tabbladen', () => {
       .map(({ sel }) => sel);
     expect(fout).toEqual([]);
     expect(regels.some(({ sel }) => sel === '.paneel[hidden]')).toBe(true);
+  });
+
+  it('een codeblok dat in zijn vak schuift, laat zien dat er meer staat', () => {
+    // In 15k stond het nieuwe deel van het programma onder de rand van het
+    // vak, en niets liet zien dat je kon schuiven. De schaduw staat vast aan
+    // de rand (scroll), het vlak dat hem afdekt schuift met de code mee
+    // (local): aan het begin en het eind van de code is er dus geen schaduw.
+    const vak = regels.find(({ sel, body }) => / pre$/.test(sel) && /max-height/.test(body));
+    expect(vak?.body).toMatch(/overflow-y:\s*auto/);
+    expect(vak?.body).toMatch(/background-attachment:\s*local,\s*local,\s*scroll,\s*scroll/);
+    expect(vak?.body).toMatch(/var\(--prism-background-color\)/);
+    // Niet in een uitklapblok: een oplossing lees je in zijn geheel.
+    expect(vak?.sel).toMatch(/:not\(details \*\)/);
   });
 
   it('haalt de inhoudsopgave weg en geeft de les die breedte', () => {

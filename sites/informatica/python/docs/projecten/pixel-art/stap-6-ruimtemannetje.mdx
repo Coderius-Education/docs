@@ -38,17 +38,26 @@ het resultaat ook doorgeven aan een andere functie, zoals `rij`.
 
 ## Opdracht: een ruimtemannetje
 
-### Wat je maakt
+### De opdracht
 
 Schrijf een functie `spiegel(regel)` die het spiegelbeeld van `regel`
 teruggeeft, en niets tekent. Test hem eerst los: `print(spiegel("BYR"))` moet
 `RYB` geven.
 
-Teken daarna dit ruimtemannetje, met in de loop over de lijst een aanroep van
+Teken daarna een ruimtemannetje, met in de loop over de lijst een aanroep van
 `rij` met de regel en zijn spiegelbeeld aan elkaar. `spiegelrij` heb je dan
-niet meer nodig. Kopieer de lijst naar je programma, en laat de vlinder
+niet meer nodig. De lijst `ruimtemannetje` staat bij het veld; laat de vlinder
 staan: die heb je in stap 7 weer nodig. De bovenste regel begint op
 `(-120, 80)`.
+
+### Aan de slag
+
+Plak je programma uit stap 5 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 5](site:python/docs/projecten/pixel-art/stap-5-spiegelen). Kopieer daarna dit
+naar je programma:
+
+<details>
+<summary>Klik hier voor de lijst `ruimtemannetje`.</summary>
 
 ```python
 ruimtemannetje = [
@@ -63,10 +72,7 @@ ruimtemannetje = [
 ]
 ```
 
-### Aan de slag
-
-Plak je programma uit stap 5 in het veld. Ben je het kwijt, neem dan de
-oplossing van [stap 5](site:python/docs/projecten/pixel-art/stap-5-spiegelen).
+</details>
 
 ![Een groen ruimtemannetje van pixels, zoals uit een oud computerspel: twee voelsprieten, twee ogen als gaten, armen opzij en twee voetjes](./img/stap-6-ruimtemannetje.svg)
 
@@ -155,6 +161,8 @@ tekst: de regel met zijn spiegelbeeld erachter. Die gaat in één keer naar
 
 </details>
 
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
+
 ## Er gaat iets mis
 
 ### Alleen de linkerhelft
@@ -193,7 +201,5 @@ Een functie zonder `return` geeft `None` terug, en tekst plus `None` kan
 Python niet aan elkaar plakken.
 
 **Oplossing:** vervang `print(omgedraaid)` door `return omgedraaid`.
-
-Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 7: groot en klein](site:python/docs/projecten/pixel-art/stap-7-groot-en-klein).

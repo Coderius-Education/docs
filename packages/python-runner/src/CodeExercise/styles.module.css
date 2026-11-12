@@ -111,6 +111,11 @@
   font-size: 0.825rem;
 }
 
+.bewaart {
+  display: block;
+  margin-top: 0.25rem;
+}
+
 /* In een les-tabblad, op een breed scherm: code links, uitvoer rechts. Een
    lange uitvoer schuift in zijn eigen vak. Stap voor stap heeft de hele
    breedte nodig en staat eronder. */
@@ -146,6 +151,28 @@
 
   .inTab > .editorSection > :last-child {
     flex: 1 1 auto;
+  }
+
+  /* Stap voor stap op de plek van de editor en de uitvoer, over de hele
+     breedte: de werkbalk dus ook. */
+  .staptInTab > .editorSection {
+    grid-column: 1 / -1;
+  }
+
+  .staptInTab > .editorSection > :last-child,
+  .staptInTab > .resultaat {
+    display: none;
+  }
+
+  /* De eigen tekening en het doelplaatje onder elkaar, samen zo hoog als het
+     veld: de tekening het grootst, het doel eronder. */
+  .inTab > .vergelijk svg {
+    max-height: calc(var(--veld-hoogte, 60vh) * 0.42);
+  }
+
+  .inTab > .vergelijk .doelNaast img {
+    width: auto;
+    max-height: calc(var(--veld-hoogte, 60vh) * 0.24);
   }
 }
 

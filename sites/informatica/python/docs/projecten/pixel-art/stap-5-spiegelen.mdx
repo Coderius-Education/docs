@@ -68,7 +68,7 @@ drie keer zoveel. In dit kleine veld zie je alles.
 
 ## Opdracht: een vlinder
 
-### Wat je maakt
+### De opdracht
 
 Schrijf een functie `spiegelrij(regel, x, y)` die een regel tekent met zijn
 spiegelbeeld erachter:
@@ -78,12 +78,19 @@ spiegelbeeld erachter:
 2. Daarna roept hij `rij` aan, met `regel` en het spiegelbeeld aan elkaar
    geplakt.
 
-### De vlinder
-
-Teken met `spiegelrij` deze vlinder, met een loop over de lijst zoals in stap 3. In de
-lijst staat alleen de linkerhelft. Kopieer hem naar je programma. De vlinder
+Teken daarmee een vlinder, met een loop over de lijst zoals in stap 3. In de
+lijst `vlinder`, die bij het veld staat, staat alleen de linkerhelft. De vlinder
 is blauw, dus zet ook `"B": "blue"` in `kleuren`. De bovenste regel begint op
 `(-140, 120)`.
+
+### Aan de slag
+
+Plak je programma uit stap 4 in het veld. Ben je het kwijt, neem dan de
+oplossing van [stap 4](site:python/docs/projecten/pixel-art/stap-4-kleuren). Kopieer daarna dit
+naar je programma:
+
+<details>
+<summary>Klik hier voor de lijst `vlinder`.</summary>
 
 ```python
 vlinder = [
@@ -102,10 +109,7 @@ vlinder = [
 ]
 ```
 
-### Aan de slag
-
-Plak je programma uit stap 4 in het veld. Ben je het kwijt, neem dan de
-oplossing van [stap 4](site:python/docs/projecten/pixel-art/stap-4-kleuren).
+</details>
 
 ![Een blauwe vlinder van pixels met gele en rode vlekken op de vleugels, een zwart lijf en twee voelsprieten](./img/stap-5-vlinder.svg)
 
@@ -177,10 +181,12 @@ for regel in vlinder:
 
 Bij `"BYR"` is `omgedraaid` na elke ronde `"B"`, dan `"YB"` en dan `"RYB"`:
 elk nieuw teken komt vooraan. Wil je dat zien gebeuren, verander dan in het
-kleine veld bovenaan deze pagina `opgebouwd + teken` in `teken + opgebouwd`,
+kleine veld uit de uitleg `opgebouwd + teken` in `teken + opgebouwd`,
 en klik op Stap voor stap.
 
 </details>
+
+Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 ## Er gaat iets mis
 
@@ -221,7 +227,5 @@ In de eerste ronde wil Python `teken` vóór `omgedraaid` plakken, maar
 
 **Oplossing:** geef `omgedraaid` boven de loop de lege tekst als beginwaarde:
 `omgedraaid = ""`.
-
-Kopieer je programma voordat je verdergaat: de editor bewaart het niet.
 
 Door naar [stap 6: een ruimtemannetje](site:python/docs/projecten/pixel-art/stap-6-ruimtemannetje).
