@@ -92,10 +92,17 @@ export function verdeelSpeling(wortel: HTMLElement): void {
     el.style.removeProperty('min-height');
   }
   aangepast.delete(wortel);
-  const metVeld = [
-    paneel,
-    ...Array.from(paneel.querySelectorAll<HTMLElement>('[data-les-stap]')),
-  ].some((p) => zichtbaar(p) && p.hasAttribute('data-heeft-veld'));
+  // Een oefenveld dat te zien is, neemt de ruimte zelf. Een veld in een stap
+  // die dicht is niet: het tabblad kreeg de markering van zo'n veld, en dan
+  // kromp of groeide er in geen enkele stap van dat tabblad nog iets (een
+  // voorspelvraag in de python-cursus was na het antwoord tachtig pixels te
+  // lang, met een veld twee stappen verder).
+  const velden = Array.from(paneel.querySelectorAll<HTMLElement>('[data-les-veld]'));
+  const metVeld = velden.length
+    ? velden.some(zichtbaar)
+    : [paneel, ...Array.from(paneel.querySelectorAll<HTMLElement>('[data-les-stap]'))].some(
+        (p) => zichtbaar(p) && p.hasAttribute('data-heeft-veld'),
+      );
   if (window.innerWidth < BREED || metVeld) return;
   const onderkant = paneel.getBoundingClientRect().bottom + window.scrollY;
   const vrij = speling({ scherm: window.innerHeight, onderkant });

@@ -150,6 +150,28 @@ describe('verdeelSpeling', () => {
     expect(vak.style.maxHeight).toBe('284px');
   });
 
+  it('een oefenveld in een stap die dicht is, houdt de open stap niet tegen', () => {
+    // Python, Testcode in je module: de voorspelvraag staat in stap 2, een
+    // oefenveld in stap 3. Het tabblad had de markering van dat veld, en het
+    // vak met de uitleg van de vraag kromp daardoor niet: tachtig pixels te
+    // lang na het antwoord.
+    const wortel = les(
+      '<div data-les-stap="een"><div data-voorspel-na id="na"></div></div>' +
+        '<div data-les-stap="twee" hidden><div data-les-veld id="veld"></div></div>',
+    );
+    const paneel = wortel.querySelector('[data-les-tab="a"]') as HTMLElement;
+    const na = document.getElementById('na') as HTMLElement;
+    paneel.setAttribute('data-heeft-veld', '');
+    maat(na, { offsetHeight: 260 });
+    onderkant(paneel, 798);
+    verdeelSpeling(wortel);
+    expect(na.style.maxHeight).toBe('170px');
+    // Staat het veld in de stap die open is, dan blijft alles zoals het is.
+    (document.querySelector('[data-les-stap="twee"]') as HTMLElement).hidden = false;
+    verdeelSpeling(wortel);
+    expect(na.style.maxHeight).toBe('');
+  });
+
   it('niet verder dan acht regels, en een vak dat niet schuift blijft heel', () => {
     expect(vakHoogte(324, 40)).toBe(284);
     expect(vakHoogte(324, 400)).toBe(KLEINSTE_VAK);

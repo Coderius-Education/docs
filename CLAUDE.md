@@ -724,6 +724,12 @@ knop Volgende in 26 lessen. Sindsdien:
 - **Een controlevraag na twee lange alinea's is ook een eigen stap**
   (`LANGE_INLEIDING`, vierhonderd tekens): het scherm paste, tot je
   antwoordde.
+- **Een oefenveld in een stap die dicht is, houdt de open stap niet tegen.**
+  `speling.ts` deed niets in een tabblad met een oefenveld, ook niet in de
+  stappen zonder veld: het tabblad kreeg de markering van het veld. Het veld
+  heeft nu een eigen markering (`data-les-veld`), en alleen een veld dat te
+  zien is, telt. Een voorspelvraag in de python-cursus was daardoor na het
+  antwoord tachtig pixels te lang.
 - **Het meetscript** beantwoordt met `--klik` elke vraag, een antwoord na
   het andere tot het goede, en meet na elk antwoord (`naAntwoord`). Het
   meldt ook of de link naar de volgende les naast de knop Volgende staat
