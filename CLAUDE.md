@@ -113,10 +113,16 @@ een open antwoord).
 les-tabbladen: `meet-les-tabs.mjs --bronnen=changed.json --streng`. Een
 gewijzigde lespagina wordt gemeten (`packages/shared/meet-selectie.js` zoekt
 de les met hetzelfde adres: nummers, `slug` en `id` zoals Docusaurus); een
-onderdeel, de opmaak, een deel of een package meet de hele cursus. Met
+onderdeel, de opmaak, een deel of een package meet de hele cursus, ook als
+er daarnaast een les veranderde (`schermen.viaPakket`: het package waar de
+cursus van afhangt). Verandert de meting zelf (het meetscript, de
+uitzonderingen, `meet-selectie.js`), dan meet hij elke cursus met tabbladen,
+met de build uit de cache of zelf gebouwd zoals `terminal`. Met
 `--streng` faalt hij bij een scherm dat op 1280×720 of 1366×768 te lang is,
 zijwaarts schuift, een rij tabbladen op twee regels, afgesneden code of een
-dubbele id; een bewuste uitzondering staat met een reden in
+dubbele id, ook op een pagina zonder tabbladen (daar ook afgebroken code),
+en bij een gewijzigde les die hij niet in de build vindt
+(`moetGemetenWorden`); een bewuste uitzondering staat met een reden in
 `scripts/meet-les-tabs-uitzonderingen.json` (de overzichten van de
 python-projecten). Hij meet zoals een schoolcomputer met Windows: klassieke
 schuifbalken van 15 pixels, de volledige Chromium (`channel: 'chromium'`; de
@@ -129,8 +135,10 @@ cursussen een paar schermen niet meer; die zijn ingekort of gesplitst, en
 
 **De git-simulator wordt naast een vaste git gelegd**: de job `test` bouwt
 git `GIT_VERSIE` (nu 2.56.1) zelf, eenmaal en daarna uit de cache, want de
-git van de runner veranderde zonder aankondiging. `echte-git.test.ts` eist in
-CI die versie. Een nieuwere git volgen is een bewuste stap: `GIT_VERSIE`
+git van de runner veranderde zonder aankondiging. De cache-sleutel noemt het
+image (`ImageOS`): de git is tegen de bibliotheken van dat image gelinkt.
+`echte-git.test.ts` eist in CI die versie, en `git --version` in de
+simulator zegt dezelfde (`GIT_VERSIE_SIMULATOR`). Een nieuwere git volgen is een bewuste stap: `GIT_VERSIE`
 ophogen en de simulator bijwerken; `naast-git.test.ts` noemt dan elk
 verschil tegelijk, en `ANDERS_IN_243` laat hem ook lokaal met git 2.43
 draaien.
@@ -960,6 +968,28 @@ fout antwoord goedkeurden:
   `commit --amend`, `log` met een revisie.
 - **Een onbekende werkvorm in `doet` stopt de build**: een tikfout liet de
   eigen tekst van een cursus stil weg.
+
+Een vierde review keek naar wat de derde opleverde, en naar de nieuwe CI:
+
+- **Met het toetsenbord kom je uit elk oefenveld.** De git-simulator
+  onderschepte elke Tab, ook Shift+Tab. Nu zoals de oefenterminal: Esc en
+  dan Tab gaat naar de knop Volgende (`VOLGENDE_KNOP`), Shift+Tab gaat
+  altijd terug.
+- **Een doel kijkt per stap.** Een antwoord op één regel met `&&` of `;`
+  geeft dezelfde vinkjes als op losse regels (`naStap`, `verloop` in
+  `opdrachten.ts`); 2.3.a gaf er nul. Een melding zoekt de stap waarin een
+  bestand verdween (`watGebeurdeMet`): na `rm kat.png` kreeg mv de schuld.
+- **De simulator doet wat bash en git doen** met een `;` aan het eind,
+  jokertekens zonder aanhalingstekens, spaties in `.gitignore`, de telling
+  van `git log -n` en een tikfout ("The most similar command is").
+- **Een split maakt een nieuw eerste scherm.** Tekst die "stap 3" van een
+  diagram noemde, stond na het splitsen op een ander scherm dan het
+  diagram, en een scherm begon met "Daar is `break` voor." Lees na een
+  split het nieuwe scherm opnieuw; `DOORGAAND` in `les-schermen.js` is de
+  gedeelde lijst openers die op het vorige scherm doorgaan.
+- **CI meet zonder stille gaten** (zie Incrementele CI): een package naast
+  een les, een wijziging aan alleen de meting, en een pagina zonder
+  tabbladen werden niet of half gemeten.
 
 ## Code in MDX-expressies
 
