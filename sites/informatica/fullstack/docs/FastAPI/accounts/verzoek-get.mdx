@@ -18,11 +18,15 @@ Het JavaScript uit stap 7 komt pas aan bod in de uitbreiding [JavaScript erbij](
 
 ## Een formulier
 
+### Het diagram van een formulier
+
 Een formulier volgt hetzelfde patroon, maar eindigt met een omleiding in plaats van een pagina.
 
 <VerzoekCyclus variant="post" />
 
 De laatste stap start het diagram van de klik opnieuw. Dat is het post/redirect/get-patroon uit [Doorsturen na opslaan (redirect)](site:fullstack/docs/FastAPI/berichten-opslaan/redirect): versturen en tonen zijn twee losse verzoeken, zodat F5 de pagina herlaadt in plaats van je bericht nog een keer op te sturen.
+
+### Waar je controleert
 
 Stap 1 gebeurt in de browser, en die is van de bezoeker. Wat een bezoeker instuurt controleer je daarom in stap 4, in je endpoint, en nooit alleen in de HTML. Waarom dat zo is, zie je in de uitbreiding [Server of browser?](site:fullstack/docs/FastAPI/in-de-browser/server-of-browser).
 

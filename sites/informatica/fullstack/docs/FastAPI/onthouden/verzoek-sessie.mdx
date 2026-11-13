@@ -4,7 +4,11 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 De diagrammen van [één klik](site:fullstack/docs/FastAPI/accounts/verzoek-get) en [één formulier](site:fullstack/docs/FastAPI/accounts/verzoek-get#een-formulier) gaan uit van een verzoek dat op zichzelf staat. Een sessie is het rondje dat dat gat dicht.
 
+## Het rondje
+
 <VerzoekCyclus variant="sessie" />
+
+## In je code
 
 Stap 3 is het hele verschil met een gewone cookie. De server leest niet wat de browser stuurde, maar zoekt het op in zijn eigen database, en alleen het id reist mee in de cookie. Hier hoort bij elke stap de regel uit je `main.py` uit [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies):
 

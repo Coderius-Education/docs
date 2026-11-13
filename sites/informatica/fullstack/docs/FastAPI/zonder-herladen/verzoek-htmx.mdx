@@ -4,7 +4,11 @@ import VerzoekCyclus from '@site/src/components/VerzoekCyclus';
 
 Dezelfde stappen als bij [één klik](site:fullstack/docs/FastAPI/accounts/verzoek-get) en [één formulier](site:fullstack/docs/FastAPI/accounts/verzoek-get#een-formulier), maar nu stuurt htmx het verzoek. Aan de serverkant verandert er bijna niets; het verschil zit aan het begin en aan het eind.
 
+## Het rondje
+
 <VerzoekCyclus variant="htmx" />
+
+## Wat anders is
 
 Vergelijk stap 5 en 6 met stap 5 en 6 van het formulier zonder htmx. Daar was het antwoord een omleiding en begon de browser opnieuw met een GET, de hele pagina over de lijn. Hier is het antwoord een stukje HTML en blijft de pagina staan. Het post/redirect/get-patroon uit [Doorsturen na opslaan (redirect)](site:fullstack/docs/FastAPI/berichten-opslaan/redirect) is niet nodig, want de browser heeft nooit een pagina verlaten.
 
