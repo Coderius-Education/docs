@@ -225,8 +225,12 @@ const adres = `http://127.0.0.1:${server.address().port}${BASIS}`;
 // browser van deze Playwright-versie niet is geïnstalleerd.
 // Zonder `--hide-scrollbars`: klassieke schuifbalken, zoals op een
 // schoolcomputer met Windows (zie boven).
+// Zonder CHROMIUM de volledige Chromium (`channel: 'chromium'`, de nieuwe
+// headless), niet de headless shell die Playwright anders start: die tekent
+// tekst en schuifbalken net anders. In CI viel daarmee in web script-tag 27
+// px code af die in Chromium zelf paste.
 const browser = await chromium.launch({
-  ...(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {}),
+  ...(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : { channel: 'chromium' }),
   ...(VERBORGEN_BALKEN ? {} : { ignoreDefaultArgs: ['--hide-scrollbars'] }),
 });
 /** Een context op de maat van een scherm. Een telefoon heeft schuifbalken

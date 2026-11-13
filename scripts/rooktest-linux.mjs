@@ -104,8 +104,10 @@ const start = Date.now();
 const server = await serveer();
 const adres = `http://127.0.0.1:${server.address().port}`;
 
+// Zonder CHROMIUM de volledige Chromium, niet de headless shell (zie
+// meet-les-tabs.mjs).
 const browser = await chromium.launch({
-  ...(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {}),
+  ...(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : { channel: 'chromium' }),
   ignoreDefaultArgs: ['--hide-scrollbars'],
 });
 
