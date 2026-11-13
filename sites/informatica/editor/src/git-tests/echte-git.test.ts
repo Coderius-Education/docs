@@ -222,6 +222,67 @@ describe('de simulator drukt af wat git afdrukt', () => {
     expect(runCommand(state, 'git status').output.trimEnd()).toBe(echt);
   });
 
+  describe('waar de simulator eerst afweek', () => {
+    // Uit de doorloop, elk naast git gelegd in een eigen map.
+    let map: string;
+    beforeAll(() => {
+      map = mkdtempSync(join(tmpdir(), 'git-afwijking-'));
+      git(['init'], { in: map });
+    });
+    afterAll(() => rmSync(map, { recursive: true, force: true }));
+
+    it('git status noemt bestanden op alfabet, niet in de volgorde van aanmaken', () => {
+      const namen = ['zebra.txt', 'appel.txt', 'Mango.txt'];
+      for (const naam of namen) writeFileSync(join(map, naam), 'x\n');
+      const echt = git(['status'], { in: map }).trimEnd();
+      const state = runCommand(
+        emptyState(Object.fromEntries(namen.map((n) => [n, 'x\n']))),
+        'git init',
+      ).newState;
+      expect(runCommand(state, 'git status').output.trimEnd()).toBe(echt);
+    });
+
+    it('een boodschap zonder aanhalingstekens: het tweede woord is een bestand', () => {
+      git(['add', 'appel.txt'], { in: map });
+      const echt = gitFaalt(['commit', '-m', 'eerste', 'versie'], map).trimEnd();
+      let state = runCommand(emptyState({ 'appel.txt': 'x\n' }), 'git init').newState;
+      state = runCommand(state, 'git add appel.txt').newState;
+      const r = runCommand(state, 'git commit -m eerste versie');
+      expect(r.ok).toBe(false);
+      expect(r.output.split('\n')[0]).toBe(echt);
+      expect(r.newState.commits).toHaveLength(0);
+    });
+
+    it('git log --oneline: per commit de korte id en de boodschap', () => {
+      git(['commit', '-m', 'eerste versie'], { in: map });
+      writeFileSync(join(map, 'appel.txt'), 'y\n');
+      git(['commit', '-am', 'tweede'], { in: map });
+      const echt = git(['log', '--oneline', '--decorate'], { in: map }).trimEnd().split('\n');
+      let state = runCommand(emptyState({ 'appel.txt': 'x\n' }), 'git init').newState;
+      for (const c of ['git add appel.txt', 'git commit -m "eerste versie"'])
+        state = runCommand(state, c).newState;
+      state = { ...state, workingDir: { 'appel.txt': 'y\n' } };
+      for (const c of ['git add .', 'git commit -m "tweede"'])
+        state = runCommand(state, c).newState;
+      const nagemaakt = runCommand(state, 'git log --oneline').output.split('\n');
+      // De id's verschillen; de vorm niet.
+      const vorm = (r: string) => r.replace(/^[0-9a-f]{7}/, 'ID');
+      expect(nagemaakt.map(vorm)).toEqual(echt.map(vorm));
+      expect(nagemaakt[0]).toMatch(/^[0-9a-f]{7} \(HEAD -> main\) tweede$/);
+    });
+
+    it('een optie die git log niet kent', () => {
+      const echt = gitFaalt(['log', '--foo'], map).trimEnd();
+      const state = runCommand(emptyState({}), 'git init').newState;
+      expect(runCommand(state, 'git log --foo').output.split('\n')[0]).toBe(echt);
+    });
+
+    it('twee spaties tellen als één: het commando telt voor het doel', () => {
+      const state = runCommand(emptyState({}), 'git init').newState;
+      expect(runCommand(state, 'git  status').newState.commands).toContain('git status');
+    });
+  });
+
   it('.gitignore geldt niet voor een bestand dat al gecommit is', () => {
     // Dit is waarom de simulator onderscheid maakt tussen gevolgd en
     // niet-gevolgd. Zonder dit bewijs is dat gedrag een aanname.

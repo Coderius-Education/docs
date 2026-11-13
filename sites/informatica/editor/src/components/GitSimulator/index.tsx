@@ -9,8 +9,15 @@ import {
   useState,
 } from 'react';
 import { vulAan } from './autocomplete';
-import { type RepoState, deleteFile, emptyState, runCommand, setFile } from './gitEngine';
-import { scenario } from './scenarios';
+import {
+  type RepoState,
+  deleteFile,
+  emptyState,
+  genegeerd,
+  runCommand,
+  schrijfBestand,
+} from './gitEngine';
+import { doeStap, scenario } from './scenarios';
 import styles from './styles.module.css';
 
 type Props = {
@@ -30,13 +37,23 @@ type HistoryLine = {
 
 type EditorTarget = { mode: 'new' } | { mode: 'edit'; name: string };
 
-// De uitvoer van de terminal heeft een vaste hoogte en schuift daarbinnen:
-// tien regels als het scherm dat toelaat, minder op een scherm waar de stap
-// anders niet op past, maar nooit minder dan vier. Een hoogte die meegroeit
-// met de uitvoer, maakte een stap die bij het openen paste na drie
-// commando's twintig pixels te lang.
-const HOOGSTE_UITVOER = 200;
-const LAAGSTE_UITVOER = 96;
+// De uitvoer van de terminal heeft op een breed scherm een vaste hoogte en
+// schuift daarbinnen: wat er op het scherm over is, tot zestien regels. Een
+// hoogte die meegroeit met de uitvoer, maakte een stap die bij het openen
+// paste na drie commando's twintig pixels te lang.
+//
+// Vanaf 1280 pixels staat de terminal naast de zones (styles.module.css), en
+// heeft de uitvoer minstens tien regels: `git status` schrijft er tien. Met
+// de zones erboven bleven er op 1280×720 vier over, en stond `Untracked
+// files:` buiten beeld in de stap die daarover gaat. Tussen 997 en 1280
+// pixels staan de zones erboven en zijn het er minstens zeven; de stap is daar
+// dan iets langer dan het scherm. Smaller scrolt de pagina toch: daar groeit
+// de uitvoer mee, zoals eerst.
+const HOOGSTE_UITVOER = 320;
+const LAAGSTE_NAAST = 200;
+const LAAGSTE_ONDER = 140;
+const VAST = '(min-width: 997px)';
+const NAAST = '(min-width: 1280px)';
 
 export default function GitSimulator(props: Props): ReactNode {
   return (
@@ -56,11 +73,17 @@ function beginsituatie(id: string): { state: RepoState; history: HistoryLine[] }
   let state = emptyState(initialFiles);
   const history: HistoryLine[] = [];
 
-  for (const cmd of voorbereiding) {
-    const r = runCommand(state, cmd);
-    state = r.newState;
-    history.push({ kind: 'input', text: cmd, eerder: true });
-    if (r.output) history.push({ kind: 'output', text: r.output, eerder: true });
+  for (const stap of voorbereiding) {
+    const r = doeStap(state, stap);
+    state = r.state;
+    if (typeof stap === 'string') {
+      history.push({ kind: 'input', text: stap, eerder: true });
+      if (r.output) history.push({ kind: 'output', text: r.output, eerder: true });
+    } else {
+      // Niet getypt maar geklikt: zeg wat er met het bestand gebeurd is.
+      const wat = stap.soort === 'verwijder' ? 'weggehaald' : 'aangepast';
+      history.push({ kind: 'output', text: `(${stap.naam} ${wat})`, eerder: true });
+    }
   }
   return { state, history };
 }
@@ -80,6 +103,7 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   const [editorName, setEditorName] = useState('');
   const [editorContent, setEditorContent] = useState('');
   const outputRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Een stap is één scherm: de uitleg, de simulator en wat eronder staat. De
   // uitvoer van de terminal krijgt daarom de hoogte die op het scherm
@@ -94,6 +118,11 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
       uitvoer?.closest<HTMLElement>('.theme-doc-markdown');
     if (!uitvoer || !les) return;
     const meet = () => {
+      // Op een smal scherm scrolt de pagina toch: daar groeit de uitvoer mee.
+      if (!window.matchMedia?.(VAST).matches) {
+        setMaxUitvoer(null);
+        return;
+      }
       const u = uitvoer.getBoundingClientRect();
       if (u.width === 0 || les.querySelector('details[open]')) return;
       setMaxUitvoer(
@@ -104,7 +133,7 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
             onder: les.getBoundingClientRect().bottom - u.bottom,
             max: HOOGSTE_UITVOER,
           },
-          LAAGSTE_UITVOER,
+          window.matchMedia(NAAST).matches ? LAAGSTE_NAAST : LAAGSTE_ONDER,
         ),
       );
     };
@@ -119,12 +148,22 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
     };
   }, []);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: history triggert bewust een her-scroll bij nieuwe terminalregels; de body zelf leest alleen de ref.
+  // Ook als de hoogte verandert: die komt na de eerste regels, en de
+  // voorbereiding stond dan bovenaan in beeld in plaats van de laatste regel.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: history en maxUitvoer triggeren bewust een her-scroll; de body zelf leest alleen de ref.
   useEffect(() => {
     if (outputRef.current) {
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
-  }, [history]);
+  }, [history, maxUitvoer]);
+
+  // Een klik in het zwarte vlak zet de cursor in de invoer, zoals in een
+  // terminal. De aanwijzing "Typ een commando" staat in de uitvoer; wie
+  // daarop klikte en begon te typen, typte nergens. Niet als er tekst is
+  // geselecteerd: dan wil iemand kopiëren.
+  const naarInvoer = () => {
+    if (!window.getSelection()?.toString()) inputRef.current?.focus({ preventScroll: true });
+  };
 
   const reset = () => {
     const begin = beginsituatie(scenarioId);
@@ -206,19 +245,7 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
     if (!editor) return;
     const name = editor.mode === 'edit' ? editor.name : editorName.trim();
     if (!name) return;
-    // De negeerlijst is een afgeleide van .gitignore, dus die lezen we hier
-    // opnieuw uit in plaats van hem bij te houden. Regels leeg of met # ervoor
-    // slaat git ook over.
-    const next =
-      name === '.gitignore'
-        ? {
-            ...setFile(state, name, editorContent),
-            ignored: editorContent
-              .split('\n')
-              .map((l) => l.trim())
-              .filter((l) => l && !l.startsWith('#')),
-          }
-        : setFile(state, name, editorContent);
+    const next = schrijfBestand(state, name, editorContent);
     setState(next);
     setEditor(null);
   };
@@ -232,14 +259,18 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   const repoCommits = [...state.commits].reverse();
 
   const objectiveDone = objective ? objective.check(state) : false;
+  // Waarom het doel zo niet meer te halen is (scenarios.ts, `vast`).
+  const vast = !objectiveDone ? (objective?.vast?.(state) ?? null) : null;
 
   return (
     <div className={styles.simulator}>
       {intro}
       {objective && (
         <div className={`${styles.objective} ${objectiveDone ? styles.objectiveDone : ''}`}>
-          <span className={styles.objectiveLabel}>{objectiveDone ? 'Gelukt:' : 'Doel:'}</span>
-          {objectiveDone ? 'klaar voor de volgende oefening.' : objective.description}
+          <span className={styles.objectiveLabel}>
+            {objectiveDone ? 'Gelukt:' : vast ? 'Zo lukt het niet:' : 'Doel:'}
+          </span>
+          {objectiveDone ? 'klaar voor de volgende oefening.' : (vast ?? objective.description)}
         </div>
       )}
 
@@ -253,7 +284,9 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
                 <div
                   key={f}
                   className={`${styles.fileItem} ${
-                    state.ignored.includes(f) ? styles.fileItemIgnored : ''
+                    // Doorgestreept is wat git echt negeert: niet een bestand
+                    // dat in .gitignore staat maar al gevolgd wordt.
+                    genegeerd(state, f) ? styles.fileItemIgnored : ''
                   }`}
                   title={state.workingDir[f]}
                 >
@@ -310,10 +343,17 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
           )}
         </div>
 
-        <div className={styles.terminal}>
+        {/* biome-ignore lint/a11y/useKeyWithClickEvents: de klik zet alleen de cursor in het invoerveld; met het toetsenbord kom je daar met Tab. */}
+        <div className={styles.terminal} onClick={naarInvoer}>
           <div
             className={styles.terminalOutput}
             ref={outputRef}
+            // De uitvoer schuift in zijn vak: met het toetsenbord kan dat
+            // alleen als het vak de focus kan krijgen.
+            role="log"
+            aria-label="Uitvoer van de terminal"
+            // biome-ignore lint/a11y/noNoninteractiveTabindex: een vak dat schuift, moet met het toetsenbord te bereiken zijn.
+            tabIndex={0}
             // `flex: none`: met de `flex: 1` uit de opmaak telt de hoogte niet.
             style={maxUitvoer ? { height: `${maxUitvoer}px`, flex: 'none' } : undefined}
           >
@@ -349,7 +389,9 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
           <div className={styles.terminalInput}>
             <span className={styles.terminalInputPrompt}>$</span>
             <input
+              ref={inputRef}
               className={styles.terminalInputField}
+              placeholder="typ hier een commando"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={onKey}

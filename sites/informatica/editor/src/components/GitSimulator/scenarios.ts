@@ -1,4 +1,11 @@
-import type { RepoState } from './gitEngine';
+import {
+  type RepoState,
+  deleteFile,
+  genegeerd,
+  gevolgd,
+  runCommand,
+  schrijfBestand,
+} from './gitEngine';
 
 // De oefeningen van de basis-tutorial staan hier en niet in de .mdx-pagina's.
 // Reden: een doel dat je niet kunt halen is een stille bug — de leerling blijft
@@ -23,18 +30,52 @@ export type Scenario = {
    * vorige stap. Zonder dit begint elke oefening weer bij `git init`, en typ je
    * in stap 7 zes regels aanloop voordat je aan de les toekomt. De simulator
    * voert deze commando's uit vóór het eerste scherm en toont ze in de
-   * terminal, zodat je ziet waar je binnenkomt.
+   * terminal, zodat je ziet waar je binnenkomt. Een stap begint waar de
+   * vorige ophield: de voorbereiding is die van de vorige stap plus zijn
+   * oplossing (scenarios.test.ts). Stap 6 en 7 begonnen eerst met één commit,
+   * terwijl de leerling er in stap 5 net een tweede had gemaakt.
    */
-  voorbereiding: string[];
+  voorbereiding: (string | Handeling)[];
   objective: {
     description: string;
     check: (state: RepoState) => boolean;
+    /**
+     * Zegt het als het doel zo niet meer te halen is, en wat de leerling dan
+     * doet. In stap 7 stond het doel op groen terwijl git `geheim.txt` gewoon
+     * bleef volgen: wie eerst `git add .` typte, leerde zo het omgekeerde van
+     * de les.
+     */
+    vast?: (state: RepoState) => string | null;
   };
   /** Wat de leerling zelf nog doet om het doel te halen, na de voorbereiding. */
   oplossing: (string | Handeling)[];
 };
 
+/** Eén stap van een voorbereiding of een oplossing: een commando, of iets met een bestand. */
+export function doeStap(
+  state: RepoState,
+  stap: string | Handeling,
+): { state: RepoState; output: string; ok: boolean } {
+  if (typeof stap === 'string') {
+    const r = runCommand(state, stap);
+    return { state: r.newState, output: r.output, ok: r.ok };
+  }
+  if (stap.soort === 'verwijder')
+    return { state: deleteFile(state, stap.naam), output: '', ok: true };
+  return { state: schrijfBestand(state, stap.naam, stap.inhoud), output: '', ok: true };
+}
+
 const HELLO = { 'hello.txt': 'Hallo wereld.\n' };
+
+/** Waar de leerling na stap 5 staat: twee commits. */
+const NA_STAP_5: (string | Handeling)[] = [
+  'git init',
+  'git add .',
+  'git commit -m "eerste versie"',
+  { soort: 'schrijf', naam: 'hello.txt', inhoud: 'Hallo wereld.\nEn nog een regel.\n' },
+  'git add .',
+  'git commit -m "regel toegevoegd"',
+];
 
 export const SCENARIOS: Record<string, Scenario> = {
   'stap-1-init': {
@@ -55,7 +96,7 @@ export const SCENARIOS: Record<string, Scenario> = {
     voorbereiding: ['git init'],
     objective: {
       description: 'Voer git status uit. Je zou hello.txt als untracked moeten zien.',
-      check: (s) => s.initialized && s.commands.some((c) => c.trim() === 'git status'),
+      check: (s) => s.initialized && s.commands.includes('git status'),
     },
     oplossing: ['git status'],
   },
@@ -100,10 +141,11 @@ export const SCENARIOS: Record<string, Scenario> = {
   'stap-6-log': {
     id: 'stap-6-log',
     initialFiles: HELLO,
-    voorbereiding: ['git init', 'git add .', 'git commit -m "eerste versie"'],
+    voorbereiding: NA_STAP_5,
     objective: {
       description: 'Bekijk de geschiedenis met git log.',
-      check: (s) => s.commits.length >= 1 && s.commands.some((c) => c.trim() === 'git log'),
+      check: (s) =>
+        s.commits.length >= 1 && s.commands.some((c) => /^git log( --oneline)?$/.test(c)),
     },
     oplossing: ['git log'],
   },
@@ -111,10 +153,15 @@ export const SCENARIOS: Record<string, Scenario> = {
   'stap-7-gitignore': {
     id: 'stap-7-gitignore',
     initialFiles: HELLO,
-    voorbereiding: ['git init', 'git add .', 'git commit -m "eerste versie"'],
+    voorbereiding: NA_STAP_5,
     objective: {
       description: 'Maak een .gitignore aan die geheim.txt negeert.',
-      check: (s) => s.ignored.includes('geheim.txt'),
+      // Genegeerd is: in .gitignore, en nog niet door git gevolgd.
+      check: (s) => genegeerd(s, 'geheim.txt'),
+      vast: (s) =>
+        s.ignored.includes('geheim.txt') && gevolgd(s, 'geheim.txt')
+          ? 'git volgt geheim.txt al, en dan doet .gitignore niets meer. Klik op herstart oefening en maak .gitignore vóórdat je git add doet.'
+          : null,
     },
     oplossing: [
       { soort: 'schrijf', naam: 'geheim.txt', inhoud: 'wachtwoord123\n' },

@@ -2,8 +2,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { type RepoState, deleteFile, emptyState, runCommand, setFile } from './gitEngine';
-import { SCENARIOS, type Scenario } from './scenarios';
+import { type RepoState, emptyState, runCommand, schrijfBestand } from './gitEngine';
+import { SCENARIOS, type Scenario, doeStap } from './scenarios';
 
 // Een leerdoel dat niet te halen is, is de stilste bug van deze site: het
 // vinkje wordt nooit groen en de leerling weet niet of het aan hem of aan de
@@ -14,38 +14,15 @@ const BASIS = fileURLToPath(new URL('../../../docs/git/basis', import.meta.url))
 /** De toestand waarin de leerling binnenkomt, net als in de simulator. */
 function beginsituatie(s: Scenario): RepoState {
   let state = emptyState(s.initialFiles);
-  for (const cmd of s.voorbereiding) {
-    state = runCommand(state, cmd).newState;
-  }
+  for (const stap of s.voorbereiding) state = doeStap(state, stap).state;
   return state;
 }
 
 function speelNa(s: Scenario): RepoState {
   let state = beginsituatie(s);
-  for (const stap of s.oplossing) {
-    if (typeof stap === 'string') {
-      const r = runCommand(state, stap);
-      state = r.newState;
-      continue;
-    }
-    if (stap.soort === 'verwijder') {
-      state = deleteFile(state, stap.naam);
-      continue;
-    }
-    state = setFile(state, stap.naam, stap.inhoud);
-    // De simulator leidt de negeerlijst af uit .gitignore zodra je die opslaat;
-    // index.tsx doet dat in saveEditor. Hier hetzelfde, anders test deze suite
-    // een ander bestand dan de leerling bewerkt.
-    if (stap.naam === '.gitignore') {
-      state = {
-        ...state,
-        ignored: stap.inhoud
-          .split('\n')
-          .map((l) => l.trim())
-          .filter((l) => l && !l.startsWith('#')),
-      };
-    }
-  }
+  // Dezelfde functie als de simulator: die leidt de negeerlijst af uit
+  // .gitignore zodra je dat bestand opslaat.
+  for (const stap of s.oplossing) state = doeStap(state, stap).state;
   return state;
 }
 
@@ -66,11 +43,7 @@ describe('elk leerdoel is haalbaar', () => {
       let state = beginsituatie(s);
       for (const stap of s.oplossing) {
         if (typeof stap !== 'string') {
-          state = setFile(
-            state,
-            stap.naam,
-            'soort' in stap && stap.soort === 'schrijf' ? stap.inhoud : '',
-          );
+          state = doeStap(state, stap).state;
           continue;
         }
         const r = runCommand(state, stap);
@@ -94,12 +67,31 @@ describe('elke stap begint waar de vorige ophield', () => {
   it('elk voorbereidend commando wordt begrepen', () => {
     for (const s of volgorde) {
       let state = emptyState(s.initialFiles);
-      for (const cmd of s.voorbereiding) {
-        const r = runCommand(state, cmd);
-        expect(r.ok, `${s.id}: voorbereiding '${cmd}' mislukte — ${r.output}`).toBe(true);
-        state = r.newState;
+      for (const stap of s.voorbereiding) {
+        const r = doeStap(state, stap);
+        expect(
+          r.ok,
+          `${s.id}: voorbereiding '${JSON.stringify(stap)}' mislukte — ${r.output}`,
+        ).toBe(true);
+        state = r.state;
       }
     }
+  });
+
+  it('een stap begint met wat de vorige opleverde', () => {
+    // De index belooft: "wat je in de vorige stap deed staat al gedaan". Stap
+    // 6 en 7 begonnen met één commit, terwijl de leerling er in stap 5 net
+    // een tweede had gemaakt: "alle commits, nieuwste eerst" was met één
+    // commit niet te zien.
+    const stand = (st: RepoState) => ({
+      bestanden: st.workingDir,
+      staging: st.staged,
+      commits: st.commits.map((c) => [c.message, c.tree]),
+    });
+    for (let i = 1; i < volgorde.length; i++)
+      expect(stand(beginsituatie(volgorde[i])), volgorde[i].id).toEqual(
+        stand(speelNa(volgorde[i - 1])),
+      );
   });
 
   it('de latere stappen hebben al een commit', () => {
@@ -118,6 +110,39 @@ describe('elke stap begint waar de vorige ophield', () => {
       .map((s) => s.id);
 
     expect(dubbel).toEqual([]);
+  });
+});
+
+describe('stap 7: .gitignore geldt alleen voor wat git nog niet volgt', () => {
+  const s = SCENARIOS['stap-7-gitignore'];
+  const na = (...stappen: Scenario['oplossing']) => {
+    let state = beginsituatie(s);
+    for (const stap of stappen) state = doeStap(state, stap).state;
+    return state;
+  };
+  const geheim = { soort: 'schrijf', naam: 'geheim.txt', inhoud: 'wachtwoord123\n' } as const;
+  const negeer = { soort: 'schrijf', naam: '.gitignore', inhoud: 'geheim.txt\n' } as const;
+
+  it('wie eerst git add . typt, haalt het doel niet', () => {
+    // Uit de doorloop: de balk werd groen en geheim.txt stond doorgestreept,
+    // terwijl het in staging stond en git status `new file: geheim.txt`
+    // meldde. Het doel keek naar de negeerlijst, niet naar wat git doet.
+    const state = na(geheim, 'git add .', negeer);
+    expect(s.objective.check(state)).toBe(false);
+    expect(s.objective.vast?.(state)).toMatch(/herstart oefening/);
+    expect(runCommand(state, 'git status').output).toMatch(/new file: {3}geheim\.txt/);
+  });
+
+  it('in de goede volgorde is er niets vastgelopen', () => {
+    expect(s.objective.vast?.(na(geheim))).toBeNull();
+    const state = na(geheim, negeer);
+    expect(s.objective.check(state)).toBe(true);
+    expect(s.objective.vast?.(state)).toBeNull();
+  });
+
+  it('opslaan in de simulator en in de test is dezelfde functie', () => {
+    const state = schrijfBestand(beginsituatie(s), '.gitignore', '# geheimen\n\ngeheim.txt\n');
+    expect(state.ignored).toEqual(['geheim.txt']);
   });
 });
 

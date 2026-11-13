@@ -67,7 +67,7 @@ function committedTree(state: RepoState): Record<string, string> {
  * Volgt git dit bestand al? Zodra het in een commit of in staging zit, kent git
  * het en blijft hij wijzigingen tonen.
  */
-function gevolgd(state: RepoState, name: string): boolean {
+export function gevolgd(state: RepoState, name: string): boolean {
   return name in committedTree(state) || name in (state.staged ?? {});
 }
 
@@ -77,7 +77,7 @@ function gevolgd(state: RepoState, name: string): boolean {
  * in .gitignore en git vergeet het" — en die deze simulator eerst bevestigde
  * door ook gecommitte bestanden te verbergen.
  */
-function genegeerd(state: RepoState, name: string): boolean {
+export function genegeerd(state: RepoState, name: string): boolean {
   return state.ignored.includes(name) && !gevolgd(state, name);
 }
 
@@ -98,11 +98,11 @@ function statusOutput(state: RepoState): string {
   const modified: string[] = [];
   const untracked: string[] = [];
 
-  const allNames = new Set<string>([
-    ...Object.keys(head),
-    ...Object.keys(staged),
-    ...visibleFiles(state),
-  ]);
+  // Op alfabet, zoals git: eerst stond een nieuw bestand achteraan, in de
+  // volgorde van aanmaken.
+  const allNames = [
+    ...new Set<string>([...Object.keys(head), ...Object.keys(staged), ...visibleFiles(state)]),
+  ].sort();
 
   for (const name of allNames) {
     const inHead = name in head;
@@ -214,6 +214,19 @@ function logOutput(state: RepoState): string {
   return lines.join('\n').trimEnd();
 }
 
+/** `git log --oneline`: per commit de korte id en de boodschap. */
+function logKort(state: RepoState): string {
+  const lines: string[] = [];
+  let id: string | null = state.head;
+  while (id) {
+    const c = state.commits.find((x) => x.id === id);
+    if (!c) break;
+    lines.push(`${c.id.slice(0, 7)}${lines.length ? '' : ' (HEAD -> main)'} ${c.message}`);
+    id = c.parent;
+  }
+  return lines.join('\n');
+}
+
 function parseAdd(rest: string): string[] | null {
   const arg = rest.trim();
   if (!arg) return null;
@@ -221,19 +234,33 @@ function parseAdd(rest: string): string[] | null {
   return arg.split(/\s+/);
 }
 
-function parseCommitMessage(rest: string): string | null {
-  const m = rest.match(/^-m\s+(?:"([^"]*)"|'([^']*)'|(\S+))\s*$/);
+/**
+ * De boodschap achter `-m`, en wat er daarna nog op de regel staat. Zonder
+ * aanhalingstekens is de boodschap één woord, en leest git de rest als
+ * namen van bestanden: `git commit -m eerste versie` zoekt een bestand
+ * `versie`.
+ */
+function parseCommitMessage(rest: string): { boodschap: string; erna: string[] } | null {
+  const m = rest.match(/^-m\s+(?:"([^"]*)"|'([^']*)'|(\S+))(?:\s+(.*))?$/);
   if (!m) return null;
-  return m[1] ?? m[2] ?? m[3] ?? null;
+  return {
+    boodschap: m[1] ?? m[2] ?? m[3] ?? '',
+    erna: (m[4] ?? '').split(/\s+/).filter(Boolean),
+  };
 }
 
 export function runCommand(state: RepoState, input: string): CommandResult {
   const result = _runCommand(state, input);
   const trimmed = input.trim();
   if (!trimmed) return result;
+  // Twee spaties achter elkaar tellen als één, zoals in een shell: `git  status`
+  // werd uitgevoerd, maar het doel "voer git status uit" zag hem niet.
   return {
     ...result,
-    newState: { ...result.newState, commands: [...state.commands, trimmed] },
+    newState: {
+      ...result.newState,
+      commands: [...state.commands, trimmed.replace(/\s+/g, ' ')],
+    },
   };
 }
 
@@ -349,7 +376,18 @@ function _runCommand(state: RepoState, input: string): CommandResult {
           ok: false,
         };
       }
-      const message = parseCommitMessage(rest);
+      const geparsed = parseCommitMessage(rest.trim());
+      if (geparsed?.erna.length) {
+        return {
+          newState: state,
+          output: [
+            `error: pathspec '${geparsed.erna[0]}' did not match any file(s) known to git`,
+            'hint: zet de boodschap tussen aanhalingstekens: git commit -m "wat je veranderd hebt"',
+          ].join('\n'),
+          ok: false,
+        };
+      }
+      const message = geparsed?.boodschap ?? null;
       if (message === null) {
         return {
           newState: state,
@@ -394,7 +432,20 @@ function _runCommand(state: RepoState, input: string): CommandResult {
     }
 
     case 'log': {
-      return { newState: state, output: logOutput(state), ok: state.commits.length > 0 };
+      const optie = rest.trim();
+      if (optie && optie !== '--oneline') {
+        return {
+          newState: state,
+          output: `fatal: unrecognized argument: ${optie.split(/\s+/)[0]}\nhint: deze simulator kent git log en git log --oneline`,
+          ok: false,
+        };
+      }
+      const kort = optie === '--oneline' && state.commits.length > 0;
+      return {
+        newState: state,
+        output: kort ? logKort(state) : logOutput(state),
+        ok: state.commits.length > 0,
+      };
     }
 
     default:
@@ -408,6 +459,23 @@ function _runCommand(state: RepoState, input: string): CommandResult {
 
 export function setFile(state: RepoState, name: string, content: string): RepoState {
   return { ...state, workingDir: { ...state.workingDir, [name]: content } };
+}
+
+/**
+ * Een bestand opslaan zoals de leerling dat in de simulator doet. De
+ * negeerlijst is een afgeleide van .gitignore: wie dat bestand opslaat, zet
+ * hem opnieuw. Lege regels en regels met # ervoor slaat git ook over.
+ */
+export function schrijfBestand(state: RepoState, name: string, content: string): RepoState {
+  const next = setFile(state, name, content);
+  if (name !== '.gitignore') return next;
+  return {
+    ...next,
+    ignored: content
+      .split('\n')
+      .map((l) => l.trim())
+      .filter((l) => l && !l.startsWith('#')),
+  };
 }
 
 export function deleteFile(state: RepoState, name: string): RepoState {

@@ -25,12 +25,12 @@
   margin-right: 0.4rem;
 }
 
-/* Zones boven, terminal eronder over de volle breedte. Naast elkaar leek
-   logischer, maar de terminal hield dan 29 tekens over op een laptopscherm van
-   1100px — en git schrijft regels van 63 tekens, zoals
+/* Zones boven, terminal eronder over de volle breedte: zo staat de simulator
+   op een scherm tot 1280 pixels. Naast elkaar hield de terminal daar te weinig
+   over, en git schrijft regels van 63 tekens, zoals
    `  (use "git add <file>..." to include in what will be committed)`. Die
-   wikkelden tot drie regels en werden onleesbaar. Zelfs op 1920px paste er
-   maar net 60 tekens naast de zones. */
+   wikkelden tot drie regels en werden onleesbaar. Vanaf 1280 pixels is er
+   wel plaats: zie verderop. */
 .body {
   display: grid;
   grid-template-columns: 1fr;
@@ -61,13 +61,59 @@
   border-right: 1px dashed var(--ifm-color-emphasis-200);
   display: flex;
   flex-direction: column;
-  /* Een vaste hoogte, drie bestanden of twee commits, en daarna schuift de
-     zone. Met 180 pixels was de helft van de simulator leeg en paste een stap
-     niet op één scherm; een zone die meegroeit met elk bestand, maakte een
-     stap die bij het openen paste halverwege de oefening te lang. */
-  height: 132px;
-  overflow-y: auto;
+  min-height: 6rem;
   font-size: 0.85rem;
+}
+
+/* Op een scherm waar een stap op één scherm past, heeft een zone een vaste
+   hoogte en schuift hij daarbinnen: een zone die meegroeit met elk bestand,
+   maakte een stap die bij het openen paste halverwege de oefening te lang.
+   Op een smal scherm scrolt de pagina toch, en groeit de zone mee. */
+@media (min-width: 997px) {
+  .zone {
+    height: 120px;
+    min-height: 0;
+    overflow-y: auto;
+  }
+}
+
+/* Vanaf 1280 pixels staat de terminal naast de zones. De simulator is daar
+   948 pixels breed: de terminal krijgt twee derde en iets kleinere letters,
+   genoeg voor de 77 tekens van de langste regel van git status (`nothing
+   added to commit but untracked files present (use "git add" to track)`),
+   en de zones zijn zo hoog als de terminal.
+   Met de zones erboven bleven er voor de uitvoer vier regels over. De linker
+   kolom telt zelf niet mee voor de hoogte van de rij (`height: 0` met
+   `min-height: 100%`): de terminal bepaalt die. */
+@media (min-width: 1280px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  }
+
+  .terminal,
+  .terminalInputField {
+    font-size: 0.75rem;
+  }
+
+  .zone {
+    padding: 0.5rem 0.4rem;
+  }
+
+  .left {
+    height: 0;
+    min-height: 100%;
+    border-bottom: none;
+    border-right: 1px solid var(--ifm-color-emphasis-300);
+  }
+
+  .zones {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .zone {
+    height: auto;
+  }
 }
 
 .zone:last-child {
@@ -141,6 +187,7 @@
   flex: 1;
   padding: 0.6rem 0.8rem;
   overflow-y: auto;
+  min-height: 6rem;
   max-height: 320px;
   white-space: pre-wrap;
   line-height: 1.4;
