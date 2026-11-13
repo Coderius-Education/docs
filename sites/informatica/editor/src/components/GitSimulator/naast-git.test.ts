@@ -117,10 +117,31 @@ function naastGit(begin: Record<string, string>, stappen: Stap[]): Uitkomst[] {
   return uit;
 }
 
+/**
+ * De simulator volgt een nieuwe git (in CI 2.56): leerlingen installeren de
+ * nieuwste Git voor Windows. Waar git 2.43 (Ubuntu 24.04) het anders zei,
+ * staat het hier, zodat de test ook met die git draait.
+ */
+const ANDERS_IN_243: { nieuw: string; oud: string; oudOk: boolean }[] = [
+  { nieuw: "fatal: could not resolve 'HEAD'", oud: 'fatal: could not resolve HEAD', oudOk: false },
+  // 2.43 las er 0 in en toonde niets.
+  { nieuw: "fatal: 'x': not an integer", oud: '', oudOk: true },
+];
+
+const gitVersie = (() => {
+  const m = execFileSync('git', ['--version'], { encoding: 'utf8' }).match(/(\d+)\.(\d+)/);
+  return m ? [Number(m[1]), Number(m[2])] : [0, 0];
+})();
+const ouderDan256 = gitVersie[0] < 2 || (gitVersie[0] === 2 && gitVersie[1] < 56);
+
 function gelijkAanGit(begin: Record<string, string>, stappen: Stap[]): void {
   for (const u of naastGit(begin, stappen)) {
-    expect(u.nagemaakt, u.stap).toBe(u.echt);
-    expect(u.ok, `${u.stap}: slaagt in git ${u.echtOk ? 'wel' : 'niet'}`).toBe(u.echtOk);
+    const anders = ouderDan256 && ANDERS_IN_243.find((a) => a.nieuw === u.nagemaakt);
+    const verwacht = anders
+      ? { tekst: anders.oud, ok: anders.oudOk }
+      : { tekst: u.nagemaakt, ok: u.ok };
+    expect(verwacht.tekst, u.stap).toBe(u.echt);
+    expect(verwacht.ok, `${u.stap}: slaagt in git ${u.echtOk ? 'wel' : 'niet'}`).toBe(u.echtOk);
   }
 }
 

@@ -329,7 +329,7 @@ describe('restore en rm --cached', () => {
     const s = NA_ADD();
     const r = runCommand(s, 'git restore --staged hello.txt');
     expect(r.ok).toBe(false);
-    expect(r.output).toBe('fatal: could not resolve HEAD');
+    expect(r.output).toBe("fatal: could not resolve 'HEAD'");
     expect(r.newState.staged).toEqual(s.staged);
 
     const rm = runCommand(s, 'git rm --cached hello.txt');

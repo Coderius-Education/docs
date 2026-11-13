@@ -756,7 +756,7 @@ function gitRestore(state: RepoState, woorden: string[]): CommandResult {
   const staged = vlaggen.has('staged');
   const werkmap = vlaggen.has('werkmap') || !staged;
   // Zonder commit is er geen versie om staging op terug te zetten.
-  if (staged && !state.head) return nietGelukt(state, 'fatal: could not resolve HEAD');
+  if (staged && !state.head) return nietGelukt(state, "fatal: could not resolve 'HEAD'");
 
   const head = committedTree(state);
   const idx = indexVan(state);
@@ -1182,7 +1182,10 @@ function gitLog(state: RepoState, woorden: string[]): CommandResult {
     else if (w.startsWith('-n') && w.length > 2) hoeveel = atoi(w.slice(2));
     else if (w === '-n') {
       if (i + 1 >= woorden.length) return nietGelukt(state, 'error: -n requires an argument');
-      hoeveel = atoi(woorden[++i]);
+      // Een nieuwere git (2.56) weigert wat geen getal is; 2.43 las er 0 in.
+      const waarde = woorden[++i];
+      if (!/^\d+$/.test(waarde)) return nietGelukt(state, `fatal: '${waarde}': not an integer`);
+      hoeveel = Number(waarde);
     } else if (w.startsWith('--max-count=')) hoeveel = atoi(w.slice('--max-count='.length));
     else if (w === '--max-count') {
       if (i + 1 >= woorden.length)
@@ -1552,6 +1555,11 @@ export const NIEUWER_DAN_243: Record<string, [number, number]> = {
   'diff-pairs': [2, 50],
   repo: [2, 52],
   'last-modified': [2, 52],
+  // Gezien in git 2.56 (CI), niet in 2.43; de versie waarin ze kwamen is
+  // niet nagegaan.
+  history: [2, 56],
+  'format-rev': [2, 56],
+  'url-parse': [2, 56],
 };
 
 /**
