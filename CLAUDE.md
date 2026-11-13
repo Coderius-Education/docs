@@ -221,8 +221,8 @@ anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
 De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
-(schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica en
-fullstack zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+(schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica,
+fullstack en linux zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
@@ -740,6 +740,49 @@ knop Volgende in 26 lessen. Sindsdien:
   drie betekenissen van Er gaat iets mis (het tabblad, de pagina, de link).
   De regels staan in schrijfgids §2; `schermen.test.ts` en `naslag.test.ts`
   van fullstack en `voorspel.test.ts` pinnen ze vast.
+
+**Wat linux erbij bracht** (november 2026; alle 213 schermen passen op
+1280×720 en 1366×768). In de lessen van thema 1 tot en met 4 typt de leerling
+de hele les mee in één oefenterminal: bij de uitleg, bij de voorspelvraag
+("Klik hier als je het hebt geprobeerd") en bij Er gaat iets mis. In
+tabbladen stond die terminal alleen op het scherm waar de bron hem had, en
+viel er op elk ander scherm niets te typen. Daarvoor is dit gekomen:
+
+- **Een oefenveld naast de les** (`<LesNaast>`, `components/LesTabs/Naast.tsx`).
+  De wortel van `<LesTabs>` heeft als laatste kind een lege kolom
+  (`data-les-naast`). Een veld met `heleLes` zet zich daarin en staat dan bij
+  elk tabblad en elke stap: vanaf 1200 pixels rechts van de tekst (47 procent
+  tekst, 53 procent veld), smaller eronder. Een veld zonder `heleLes` (de
+  terminal van een opdracht) staat op een breed scherm in de kolom zolang
+  zijn eigen scherm open is, en op een smal scherm op zijn plek in de tekst.
+  Het veld van de hele les wijkt dan: de opmaak ziet het anker van het eigen
+  veld in het open paneel (`data-les-naast-anker="veld"`).
+- **Het veld verhuist zonder opnieuw te mounten.** Het staat in een eigen
+  element dat van plek wisselt, en React rendert er met een portal in. Een
+  portal die van doel wisselt, mount opnieuw, en dan was het werk in de
+  terminal weg; `Naast.test.tsx` telt de mounts. Alleen voor een veld dat pas
+  in de browser bestaat (binnen `<BrowserOnly>`): een portal staat niet in de
+  HTML van de build.
+- **De kolom plakt niet** (`position: sticky` maakt een eigen laag, en een
+  veld op Groter viel dan onder de navbar) en de wortel is daar een flex-rij,
+  geen raster: in een raster plakte de rij tabbladen niet meer onder de
+  navbar. `les-tabs.test.ts` bewaakt beide, en dat de opmaak dezelfde grens
+  gebruikt als `useBreed`.
+- **In de smalle tekstkolom** staat code met iets ernaast onder elkaar, is
+  de rand van een codeblok smaller, en krimpt een stap die dicht is tot zijn
+  nummer, zodat de naam van de open stap op de regel past.
+- **Een veld dat in een dicht tabblad mount, heeft geen maten.** xterm paste
+  zich daar aan op twee kolommen. De `LinuxTerminal` start pas als hij te
+  zien is en past zich alleen aan zolang hij te zien is; naast de les neemt
+  hij de hoogte die op het scherm over is (`pasHoogte`), zonder
+  `meetRuimte`: de vrije ruimte in het paneel is dan niet van het veld.
+- **Het meetscript telt de kolom mee**: de onderkant van een scherm is die
+  van het paneel of die van het veld ernaast.
+
+In de lessen: achttien `###`-koppen erbij (in de smalle kolom past minder op een
+scherm), "de terminal hieronder" heet de oefenterminal, en elke melding van
+`mv` zonder map is een eigen fout. De cheatsheet en de hand-outs hebben geen
+tabbladen.
 
 ## Code in MDX-expressies
 

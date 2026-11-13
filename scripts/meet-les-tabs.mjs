@@ -145,11 +145,24 @@ const tabrijen = [];
 const dubbeleIds = [];
 let kolomBreedte = null;
 
+// De onderkant van een scherm: die van het paneel, of die van het oefenveld
+// dat naast de les staat (<LesNaast>, de oefenterminal van Linux) als dat
+// lager komt. Als tekst, omdat de functie in de pagina draait.
+const ONDERKANT = `(paneel) => {
+  const r = paneel.getBoundingClientRect();
+  const naast = [...paneel.parentElement.children].find((k) => k.hasAttribute('data-les-naast'));
+  const n = naast?.getBoundingClientRect();
+  return n && n.height > 0 && n.left >= r.right - 1 ? Math.max(r.bottom, n.bottom) : r.bottom;
+}`;
+
 const over = (pagina, id) =>
-  pagina.evaluate((id) => {
-    const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
-    return Math.round(paneel.getBoundingClientRect().bottom - window.innerHeight);
-  }, id);
+  pagina.evaluate(
+    ([id, onderkant]) => {
+      const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
+      return Math.round(new Function(`return ${onderkant}`)()(paneel) - window.innerHeight);
+    },
+    [id, ONDERKANT],
+  );
 
 // Een knop van het veld, niet de knop van een stap: pixel-art stap 5 heeft
 // een stap die zelf "Stap voor stap" heet.
@@ -300,8 +313,16 @@ async function meetLes(les) {
         const maat = await pagina.evaluate((id) => {
           const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
           const r = paneel.getBoundingClientRect();
+          // Een oefenveld naast de les telt mee (zie ONDERKANT).
+          const naast = [...paneel.parentElement.children].find((k) =>
+            k.hasAttribute('data-les-naast'),
+          );
+          const n = naast?.getBoundingClientRect();
+          const onder =
+            n && n.height > 0 && n.left >= r.right - 1 ? Math.max(r.bottom, n.bottom) : r.bottom;
           return {
-            over: Math.round(r.bottom - window.innerHeight),
+            over: Math.round(onder - window.innerHeight),
+            naast: !!n && n.height > 0,
             boven: Math.round(r.top),
             pagina: document.documentElement.scrollHeight - window.innerHeight,
             zijwaarts: Math.max(0, document.documentElement.scrollWidth - window.innerWidth),

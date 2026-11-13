@@ -59,6 +59,8 @@ Elke inlogpoging staat erin, ook de mislukte. Net als in [2.1](site:linux/docs/t
 
 ## Een sleutel in plaats van een wachtwoord
 
+### Een sleutelpaar maken
+
 Een wachtwoord kan geraden worden. Een **sleutelpaar** niet. Maak er een:
 
 ```bash
@@ -74,7 +76,9 @@ Je hebt nu twee bestanden in `~/.ssh`:
 | `id_ed25519` | je **privésleutel**. Geheim. Deze geef je nooit aan iemand en zet je nooit online. |
 | `id_ed25519.pub` | je **publieke sleutel**. Die mag iedereen zien; die zet je op de server. |
 
-Zet je publieke sleutel op de "server":
+### De sleutel op de server
+
+Zet je publieke sleutel, `id_ed25519.pub`, op de "server":
 
 ```bash
 ssh-copy-id localhost

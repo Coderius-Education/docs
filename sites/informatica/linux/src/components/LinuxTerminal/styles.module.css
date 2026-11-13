@@ -5,6 +5,11 @@
   margin: 1.5rem 0;
 }
 
+/* Naast de les (in de kolom van <LesNaast>): bovenaan gelijk met de tekst. */
+.inKolom {
+  margin: 0;
+}
+
 .header {
   display: flex;
   align-items: center;

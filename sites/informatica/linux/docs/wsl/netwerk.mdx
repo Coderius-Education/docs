@@ -49,6 +49,8 @@ rtt min/avg/max/mdev = 11.9/12.1/12.4/0.2 ms
 
 `1.1.1.1` is een bekende computer op internet. `time` is hoe lang een rondje duurde, in milliseconden. Belangrijk is de regel onderaan: `0% packet loss` betekent dat elk pakketje terugkwam. Zonder `-c 3` blijft `ping` doorgaan tot je Ctrl+C drukt.
 
+### Een naam in plaats van een adres
+
 Een naam werkt ook: `ping -c 3 one.one.one.one` is dezelfde computer als `1.1.1.1`. Je computer zoekt dan eerst het adres bij die naam op. Dat opzoeken heet **DNS**. Niet elke computer antwoordt op `ping`: veel websites zetten het uit. Krijg je bij een site `100% packet loss`, dan kan hij dus best werken.
 
 ## Antwoordt de website? curl
@@ -150,7 +152,7 @@ curl: (6) Could not resolve host: example.con
 
 **Oorzaak:** hetzelfde probleem, maar dan in `curl`: de naam bestaat niet, of er is geen verbinding.
 
-**Oplossing:** zie hierboven.
+**Oplossing:** controleer de naam, en kijk met `ping -c 3 1.1.1.1` of er verbinding is.
 
 ### ping blijft maar doorgaan
 

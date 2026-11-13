@@ -287,10 +287,18 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
           ),
         )}
       </RijContext.Provider>
+      {niveau === 'tab' && (
+        // De kolom naast de tabbladen: een oefenveld dat bij de hele les
+        // hoort (<LesNaast>, de oefenterminal van Linux) zet zich hier neer.
+        // Leeg neemt hij geen ruimte in.
+        <div className={styles.naast} data-les-naast="" />
+      )}
       {niveau === 'tab' && <Vergroot wortel={wortel} opnieuw={actief} />}
     </div>
   );
 }
+
+export { LesNaast, useBreed } from './Naast';
 
 export default function LesTabs({ children }: { children?: ReactNode }): ReactNode {
   return <Rij niveau="tab">{children}</Rij>;

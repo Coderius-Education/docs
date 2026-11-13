@@ -5,61 +5,31 @@ hide_table_of_contents: false
 
 # Docentenhandleiding
 
-Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: wat de cursus is, welke randvoorwaarden er zijn, en hoe je de lessen indeelt.
+Een introductie in Linux voor leerlingen zonder voorkennis. Ze werken in de terminal: eerst in een oefenterminal in de browser, daarna op een eigen Ubuntu in WSL, tot en met `apt`, `nano`, diensten en `ssh`. Hoe je ermee lesgeeft, bepaal je zelf. Deze pagina laat zien op welk onderzoek de opbouw van de lessen steunt, en noemt daarna kort wat je vooraf wilt weten.
 
-## Wat is dit?
+## Waar de lessen op steunen
 
-Een **introductie in Linux** voor leerlingen zonder voorkennis. Ze werken in de terminal: eerst in een oefenterminal in de browser, daarna op een eigen Ubuntu in WSL, tot en met `apt`, `nano`, diensten en `ssh`.
+Een les heeft vaste onderdelen. In de les zijn het de tabbladen; het icoon op een tabblad zegt welk onderdeel het is. Hieronder staat bij elk onderdeel de literatuur waarop het steunt; een link opent de uitleg bij [vakdidactiek](site:didactiek/).
 
-De fullstack-cursus verwijst voor alles wat met Linux te maken heeft naar deze cursus, in de route waarin leerlingen hun FastAPI-site online zetten.
+<Werkvormen />
 
-## Technische randvoorwaarden
+In thema 1 tot en met 4 staat de oefenterminal naast de les, bij elk tabblad: je leerling typt de uitleg mee en probeert de voorspelvraag uit. Een opdracht heeft een eigen terminal die vers begint, met de doelen erboven.
 
-| Wat | Antwoord |
-|---|---|
-| Thema 1 tot en met 4 | Elke browser; er hoeft niets geïnstalleerd te worden |
-| Thema 5 tot en met 7 | Windows 10 (versie 2004 of later) of 11, met het recht om WSL te installeren; virtualisatie moet aanstaan in het BIOS |
-| Account | Niet nodig |
-| Internet | Nodig om de site te openen, en vanaf thema 5 voor de installatie en voor `apt` |
+## Wat je vooraf wilt weten
 
-Op laptops van school mag WSL soms niet. Ga dat na voordat je met thema 5 begint. Op een Mac of een Chromebook kunnen leerlingen de thema's 1 tot en met 4 doen; de rest vraagt Ubuntu (WSL, of een Linux-computer).
+- **Thema 1 tot en met 4 draaien in de browser**, zonder installatie en zonder account. Wat een leerling in de oefenterminal maakt, is weg als hij de pagina herlaadt.
+- **Thema 5 tot en met 7 vragen Windows 10 (versie 2004 of later) of 11 met WSL.** Je leerling moet WSL mogen installeren, en virtualisatie moet aanstaan in het BIOS; de installatie (5.1) vraagt een herstart. Op laptops van school mag dat soms niet. Op een Mac of een Chromebook stopt de cursus na thema 4, tenzij er een computer met Ubuntu is.
+- **De lessen staan in volgorde in de lessenlijst**, met achter elke les of je hem in de browser doet of in WSL. Geen les gebruikt een commando dat nog niet is uitgelegd. De [Cheatsheet](site:linux/docs/cheatsheet) en de [Begrippen](site:linux/docs/begrippen) zijn de naslag.
 
-## Didactische aanpak (PRIMM)
+## Naast de lessen
 
-Elke les begint met een klein voorbeeld dat de leerling zelf typt, gevolgd door een **Voorspel** met het antwoord in een uitklapblok. Daarna komen opdrachten met een tip en een antwoord, ook allebei ingeklapt. Elke les sluit af met **Er gaat iets mis**: de foutmeldingen die leerlingen echt tegenkomen, letterlijk zoals Ubuntu ze geeft, met de oorzaak en de oplossing.
+- [Unplugged](site:linux/docs/unplugged): twee hand-outs zonder computer om te printen, elk gericht op één misvatting. [Het bestandssysteem als boom](site:linux/docs/unplugged/boom) hoort bij 1.2, [Mag dit?](site:linux/docs/unplugged/rechten) bij 4.1; de les wijst ernaar met de tip Eerst op papier.
+- De fullstack-cursus bouwt op deze cursus verder: in [Online zetten](site:fullstack/docs/online) zetten je leerlingen hun site op een Linux-server.
 
-In de oefenterminal (thema 1 tot en met 4) kan niets stuk: de knop Opnieuw beginnen zet een oefenterminal terug. Elke opdracht heeft een eigen terminal met de doelen erboven, die afvinken terwijl je leerling typt. Zo ziet hij zelf of hij klaar is, en vergelijkt hij daarna zijn aanpak met het antwoord. Vanaf thema 5 werken leerlingen op hun eigen computer. Wijs ze op de waarschuwingen bij `rm`, `sudo` en `/etc/wsl.conf`.
+## Beoordelen
 
-## Klassikaal gebruik & differentiatie
+- [Je Ubuntu controleren](site:linux/docs#je-ubuntu-controleren): na thema 5, 6 en 7 kijkt een script de Ubuntu van je leerling na. Het verandert niets en zegt per controle of die klopt, met de les erbij.
 
-- **Plenair starten**: doe 1.1 samen, met de oefenterminal op het bord.
-- **WSL vooruit regelen**: laat de installatie van WSL (5.1) thuis of in een aparte les doen; die vraagt een herstart en soms het BIOS.
-- **Snelle leerlingen** gaan door naar [Online zetten](site:fullstack/docs/online) in de fullstack-cursus, als ze die cursus volgen.
-- **Beoordelen**: laat leerlingen een foutmelding uitleggen die ze zelf kregen: wat er stond, waarom, en wat ze deden.
+## Feedback
 
-## Leerlijn
-
-Naslag staat in de [Cheatsheet](site:linux/docs/cheatsheet). De moeilijke woorden (pipe, shell, proces, sleutelpaar) staan op [Begrippen](site:linux/docs/begrippen); in de lessen heeft het eerste voorkomen van zo'n woord op een pagina een stippellijn, en een klik toont de uitleg zonder de pagina te verlaten. Zo raakt je leerling zijn werk in de oefenterminal niet kwijt.
-
-| Onderwerp | Leerdoel |
-|---|---|
-| [1. Rondkijken](site:linux/docs/terminal/eerste-commando) | Commando's en paden, sneller typen met Tab en de geschiedenis (browser) |
-| [2. Bestanden](site:linux/docs/terminal/bestanden-lezen) | Bestanden lezen, maken, kopiëren en weggooien, ook met jokertekens (browser) |
-| [3. Zoeken](site:linux/docs/terminal/zoeken) | Zoeken in bestanden met `grep` en de pipe, bestanden vinden met `find` (browser) |
-| [4. Gebruikers en rechten](site:linux/docs/terminal/rechten) | Eigenaar, groep en rechten lezen (browser) |
-| [5. Linux op je eigen computer](site:linux/docs/wsl/installeren) | Ubuntu in WSL, Windows en Linux naast elkaar, zelf opzoeken met `man` en `--help`, variabelen als `$USER` (WSL) |
-| [6. Programma's, diensten en groepen](site:linux/docs/wsl/apt) | `apt`, `nano`, processen met `ps` en `kill`, diensten met `systemctl`, groepen met `usermod -aG` (WSL) |
-| [7. Netwerk](site:linux/docs/wsl/netwerk) | Je adres en verbinding met `ip`, `ping` en `curl`, inloggen met `ssh`, je sleutel op GitHub, kopiëren met `scp` en een tunnel met `ssh -L` (WSL) |
-
-## Unplugged
-
-Onder [Unplugged](site:linux/docs/unplugged) staan twee werkvormen zonder computer, elk met een printknop. De antwoorden staan op het scherm dicht en komen bij het printen op een losse pagina. De les waar een werkvorm bij hoort, wijst ernaar met een tip *Eerst op papier* vlak voor de eerste opdracht.
-
-| Werkvorm | Bij | Misvatting |
-|---|---|---|
-| [Het bestandssysteem als boom](site:linux/docs/unplugged/boom) | 1.2 Mappen | een pad zonder `/` begint bij de wortel; `cd` kan naar een bestand |
-| [Mag dit?](site:linux/docs/unplugged/rechten) (print het knipblad apart) | 4.1 Van wie is dit? | alle drie de rijtjes tellen mee; wie in de groep zit, mag wat de groep mag, ook als eigenaar |
-
-## Feedback & bijdragen
-
-Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs).
+Een fout gevonden of een idee? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs).

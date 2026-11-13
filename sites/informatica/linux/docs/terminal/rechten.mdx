@@ -21,13 +21,15 @@ Twee regels uit die lijst. Elk bestand op Linux heeft een **eigenaar** (hier `ro
 
 ## De rechten lezen
 
-Vooraan elke regel staan tien tekens. Het eerste zegt wat het is: `-` voor een bestand, `d` voor een map (*directory*). De andere negen zijn drie groepjes van drie:
+Vooraan elke regel van `ls -l` staan tien tekens. Het eerste zegt wat het is: `-` voor een bestand, `d` voor een map (*directory*). De andere negen zijn drie groepjes van drie:
 
 | `-` | `rw-` | `r--` | `r--` |
 |:---:|:---:|:---:|:---:|
 | bestand | eigenaar | groep | de rest |
 
-Per groepje:
+### Wat de letters betekenen
+
+In elk groepje van drie staat wat er mag:
 
 - `r` (*read*): lezen;
 - `w` (*write*): veranderen;
@@ -59,7 +61,11 @@ id
 uid=1000(student) gid=1000(student) groups=1000(student)
 ```
 
-Je zit alleen in je eigen groep `student`. Een nieuw bestand maken is schrijven in de map: je zet er een naam bij. Je thuismap is van jou, dus daar mag dat. De map `/etc` is van `root` en heeft `rwxr-xr-x`: alleen de eigenaar heeft de `w`. Probeer maar:
+Je zit alleen in je eigen groep `student`.
+
+### Schrijven in een map
+
+Een nieuw bestand maken is schrijven in de map: je zet er een naam bij. Je thuismap is van jou, dus daar mag dat. De map `/etc` is van `root` en heeft `rwxr-xr-x`: alleen de eigenaar heeft de `w`. Probeer maar:
 
 ```bash
 touch /etc/test.txt

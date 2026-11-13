@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { compile } from '@mdx-js/mdx';
 import { describe, expect, it } from 'vitest';
+import { BREED } from './components/LesTabs/Naast';
 
 // Les-tabbladen: een remark-stap zet elke `##`-sectie van een les in
 // een tabblad. Wat hier vastligt, is wat er misging toen het voor het eerst
@@ -1731,11 +1732,38 @@ describe('de opmaak van de tabbladen', () => {
     // Het vak van een codeblok (`pre`) is nooit de ouder van een oefenveld:
     // een programma dat hoger is dan het scherm, mag daarin schuiven.
     const fout = regels
-      .filter(({ sel }) => /^\.(wortel|paneel|stappen)\b/.test(sel) && !/ pre$/.test(sel))
-      .filter(({ body }) => verboden.test(body))
+      .filter(({ sel }) => /^\.(wortel|paneel|stappen|naast)\b/.test(sel) && !/ pre$/.test(sel))
+      .filter(({ body }) => verboden.test(body) || /position:\s*sticky/.test(body))
       .map(({ sel }) => sel);
     expect(fout).toEqual([]);
     expect(regels.some(({ sel }) => sel === '.paneel[hidden]')).toBe(true);
+  });
+
+  describe('de kolom naast de les (<LesNaast>)', () => {
+    it('gebruikt dezelfde grens als useBreed', () => {
+      // Staat het veld volgens React in de kolom en de kolom volgens de
+      // opmaak onder de tekst (of andersom), dan klopt de hoogte van het
+      // veld niet.
+      const blok = css.match(/@media ([^{]+)\{\s*\.wortel:has\(> \.naast:not\(:empty\)\) \{/);
+      expect(blok?.[1].trim()).toBe(BREED);
+    });
+
+    it('het veld van de hele les wijkt voor het eigen veld van het open tabblad', () => {
+      expect(css).toMatch(
+        /\.wortel:has\(> \.paneel:not\(\[hidden\]\) \[data-les-naast-anker="veld"\]\)\s*> \.naast\s*> \[data-les-naast-gast="les"\] \{\s*display: none;/,
+      );
+    });
+
+    it('in de smalle kolom staat code met iets ernaast onder elkaar', () => {
+      expect(css).toMatch(
+        /\.wortel:has\(> \.naast:not\(:empty\)\) \.paneel \.voorbeeld:not\(\.metBeeld\):not\(\.metBreedBeeld\),\s*\.wortel:has\(> \.naast:not\(:empty\)\) \.paneel \.bestanden \{\s*display: block;/,
+      );
+    });
+
+    it('op papier staat de kolom onder de les', () => {
+      const print = css.slice(css.indexOf('@media print'));
+      expect(print).toMatch(/\.wortel:has\(> \.naast:not\(:empty\)\) \{\s*display: block;/);
+    });
   });
 
   it('de knop Volgende breekt af als de naam van de volgende stap lang is', () => {

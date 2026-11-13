@@ -8,7 +8,7 @@ import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
 <Voorkennis items={[{to: '/docs/terminal/kopieren', label: 'Kopiëren, verplaatsen en weggooien'}]} />
 
-Tien foto's naar een andere map, met tien keer `mv`? Dat hoeft niet. Maak in de terminal hieronder een paar bestanden:
+Tien foto's verplaatsen met tien keer `mv`? Dat hoeft niet. Maak in de oefenterminal een paar bestanden:
 
 ```bash
 mkdir fotos
@@ -39,6 +39,8 @@ strand.jpg zee.jpg
 
 Daarom werkt een jokerteken bij elk commando: `cp *.txt backup/`, `rm *.jpg`, `cat *.txt`.
 
+### Het vraagteken
+
 Het vraagteken `?` past op precies één teken:
 
 ```bash
@@ -48,6 +50,8 @@ ls ?at.png
 ```
 kat.png
 ```
+
+### Tussen aanhalingstekens
 
 Tussen aanhalingstekens vult de shell niets in. Dan krijgt het commando het sterretje zelf:
 
@@ -59,7 +63,7 @@ echo '*.jpg'
 *.jpg
 ```
 
-## Veel bestanden tegelijk verplaatsen
+## Veel tegelijk verplaatsen \{#veel-bestanden-tegelijk-verplaatsen}
 
 Met een jokerteken en een map aan het eind verplaats je alles in één keer:
 
@@ -170,18 +174,7 @@ ls: cannot access '*.jpeg': No such file or directory
 
 ### Een bestand is weg na mv
 
-**Oorzaak:** je vergat de map aan het eind. Met twee foto's wordt `mv *.jpg` dan `mv strand.jpg zee.jpg`: dat hernoemt `strand.jpg` naar `zee.jpg`, en de oude `zee.jpg` is weg. Met drie of meer krijg je gelukkig een fout:
-
-```
-mv: target 'zee.jpg': Not a directory
-```
-
-Staat er maar één foto, dan krijgt `mv` maar één naam, en mist hij het doel:
-
-```
-mv: missing destination file operand after 'strand.jpg'
-Try 'mv --help' for more information.
-```
+**Oorzaak:** je vergat de map aan het eind. Met twee foto's wordt `mv *.jpg` dan `mv strand.jpg zee.jpg`: dat hernoemt `strand.jpg` naar `zee.jpg`, en de oude `zee.jpg` is weg.
 
 **Oplossing:** zet altijd een map als laatste woord, met een `/` erachter. Bestaat die map niet, dan weigert `mv` in plaats van stil iets te overschrijven.
 
@@ -192,5 +185,26 @@ mv *.jpg
 # GOED
 mv *.jpg vakantie/
 ```
+
+### Not a directory
+
+```
+mv: target 'zee.jpg': Not a directory
+```
+
+**Oorzaak:** ook hier vergat je de map aan het eind, nu met drie foto's of meer. `mv` neemt het laatste woord als doel, en `zee.jpg` is geen map.
+
+**Oplossing:** zet de map erachter: `mv *.jpg vakantie/`.
+
+### missing destination file operand
+
+```
+mv: missing destination file operand after 'strand.jpg'
+Try 'mv --help' for more information.
+```
+
+**Oorzaak:** de map aan het eind ontbreekt, en er past maar één foto op `*.jpg`. Dan krijgt `mv` één naam, en mist hij het doel.
+
+**Oplossing:** zet de map erachter: `mv *.jpg vakantie/`.
 
 Door naar [3.1 Zoeken en doorgeven](site:linux/docs/terminal/zoeken).
