@@ -811,8 +811,8 @@ docentenhandleiding is er een werkvorm Hints bij gekomen (hulp in stappen:
 de hints zijn dicht, en elke hint zegt iets meer), en De challenge telt als
 zelf maken.
 
-**Wat de editor-cursus erbij bracht** (november 2026; 67 van de 67 schermen
-en 41 van de 41 pagina's zonder tabbladen passen). De cursus bestaat uit
+**Wat de editor-cursus erbij bracht** (november 2026; 70 van de 70 schermen
+en 40 van de 40 pagina's zonder tabbladen passen). De cursus bestaat uit
 korte stappen, elk een eigen pagina: een paar regels doen, en dan
 `## Wat je nu ziet`. Met tabbladen was een stap van tien regels twee of drie
 schermen, en moest de leerling doorklikken om te zien of het gelukt was.
@@ -898,7 +898,38 @@ stuk maakten, en wat een melding of doel zegt bij het geval ernaast:
   breedte, kolommen van minstens drie tekens, de laatste kolom zonder
   spaties erachter (`nieuw.test.ts` legt het naast `ls -C` van de machine).
 - **Een kaart op een overzichtspagina heeft geen emoji** (de wikkel
-  `theme/DocCard/Heading`).
+  `theme/DocCard/Heading`). Docusaurus telt een cijfer als emoji: van
+  "3. Acties" maakte hij icoon "3" en titel ". Acties". Komt het icoon uit
+  het label, dan krijgt de titel het hele label terug (`titel.jsx`; een
+  `.js` in de themamap leest Rspack als script, en de build stopte).
+
+Een derde review vond vooral doelen die een goed antwoord afwezen of een
+fout antwoord goedkeurden:
+
+- **Een doel kijkt naar wat het commando deed, niet naar zijn tekst.** "Met
+  één mv" werd groen na `mv kat.png fotos` en dan `mv *.jpg *.png fotos`:
+  het laatste commando noemde alles. De stand heeft nu `voorFs`, het
+  bestandssysteem vóór de regel. Elk jokerteken telt (`?` werd afgekeurd),
+  en elke foute route in `NIET_GOED` eindigt met een melding die noemt wat
+  er gebeurde (`opdrachten.test.ts`). In de simulator telt een doel elk
+  commando dat lukte (`gelukt`), en zegt `tip` hoe het nog kan voordat
+  `vast` zegt dat het niet meer kan.
+- **Het meetscript meet met klassieke schuifbalken** (Windows, 15 pixels),
+  en met `--open` met elk uitklapblok open. Een open antwoord bij een
+  opdracht mag het scherm langer maken (tot 127 pixels in linux): de
+  terminal naast de les plakt, en blijft met zijn doelen in beeld terwijl
+  de leerling het antwoord leest. Een tip alleen past overal.
+- **Een rij die zijwaarts schuift, zet de open knop in beeld**
+  (`schuifRij.ts`), alleen met `scrollLeft`: `scrollIntoView` schoof ook
+  de pagina.
+- **Esc en dan Tab in de oefenterminal gaat naar de knop Volgende**, niet
+  naar Opnieuw beginnen (een Enter daar wiste het werk). `help` past in een
+  terminal van twaalf regels: alleen de namen, en `help ls` voor de uitleg.
+- **De simulator speelt hele reeksen naast echte git af**
+  (`naast-git.test.ts`): `restore`, `rm --cached`, een weggegooid bestand,
+  `commit --amend`, `log` met een revisie.
+- **Een onbekende werkvorm in `doet` stopt de build**: een tikfout liet de
+  eigen tekst van een cursus stil weg.
 
 ## Code in MDX-expressies
 
