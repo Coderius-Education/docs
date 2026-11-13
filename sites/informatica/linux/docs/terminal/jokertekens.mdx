@@ -6,6 +6,8 @@ import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
 # 2.4 Jokertekens
 
+## Het sterretje
+
 <Voorkennis items={[{to: '/docs/terminal/kopieren', label: 'Kopiëren, verplaatsen en weggooien'}]} />
 
 Tien foto's verplaatsen met tien keer `mv`? Dat hoeft niet. Maak in de oefenterminal een paar bestanden:
@@ -37,7 +39,7 @@ echo *.jpg
 strand.jpg zee.jpg
 ```
 
-Daarom werkt een jokerteken bij elk commando: `cp *.txt backup/`, `rm *.jpg`, `cat *.txt`.
+Daarom werkt een jokerteken bij elk commando, niet alleen bij `ls`: ook `cat`, `cp`, `mv` en `rm` krijgen de namen die passen.
 
 ### Het vraagteken
 

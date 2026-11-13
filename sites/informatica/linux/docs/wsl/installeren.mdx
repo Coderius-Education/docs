@@ -4,15 +4,15 @@ sidebar_position: 1
 
 # 5.1 WSL installeren
 
+## Wat is WSL?
+
 Met **WSL** (*Windows Subsystem for Linux*) draait een echte Linux op je Windows-computer, naast je gewone programma's. Je hoeft geen tweede computer te kopen, en Windows blijft werken zoals je gewend bent. In deze les zet je er **Ubuntu** op: de Linux die je ook op de meeste servers tegenkomt.
 
 Je hebt nodig: Windows 11, of Windows 10 met de update van mei 2020 of later, en het recht om programma's te installeren. Op een laptop van school mag dat soms niet; vraag het dan aan je docent.
 
-## Stap 1: PowerShell openen als administrator
+## Installeren \{#stap-2-wsl-en-ubuntu-installeren}
 
-Druk op de Windows-toets, typ `PowerShell`, klik met de rechtermuisknop op **Windows PowerShell** en kies **Als administrator uitvoeren**. Klik op **Ja** als Windows vraagt of het programma wijzigingen mag aanbrengen.
-
-## Stap 2: WSL en Ubuntu installeren
+Open PowerShell als administrator: druk op de Windows-toets, typ `PowerShell`, klik met de rechtermuisknop op **Windows PowerShell** en kies **Als administrator uitvoeren**. Klik op **Ja** als Windows vraagt of het programma wijzigingen mag aanbrengen.
 
 Typ dit commando en druk op Enter:
 
@@ -22,9 +22,9 @@ wsl --install -d Ubuntu-24.04
 
 `-d` kiest welke Linux je krijgt: Ubuntu 24.04. Zonder die toevoeging krijg je de nieuwste versie met lange ondersteuning (*LTS*), en die kan andere meldingen geven dan de lessen hier laten zien. Windows zet nu WSL aan en haalt Ubuntu op. Dat duurt een paar minuten. Staat er dat je computer opnieuw moet opstarten, doe dat dan.
 
-## Stap 3: Een gebruiker kiezen
+## Een gebruiker kiezen \{#stap-3-een-gebruiker-kiezen}
 
-Na het opstarten opent er een zwart venster met Ubuntu. Gebeurt dat niet, zoek dan in het startmenu naar **Ubuntu 24.04** en open het. Ubuntu vraagt om een gebruikersnaam:
+Na de installatie, en de herstart als Windows daarom vroeg, opent er een zwart venster met Ubuntu. Gebeurt dat niet, zoek dan in het startmenu naar **Ubuntu 24.04** en open het. Ubuntu vraagt om een gebruikersnaam:
 
 ```
 Create a default Unix user account:
@@ -34,9 +34,9 @@ Bij een oudere versie van WSL staat er `Enter new UNIX username:`; het is dezelf
 
 **Let op:** terwijl je het wachtwoord typt, zie je niets: geen sterretjes, geen bolletjes. Dat is normaal. Typ het en druk op Enter. Onthoud het goed: je hebt het nodig zodra je iets als beheerder doet.
 
-## Stap 4: Controleren of het werkt
+## Controleren of het werkt \{#stap-4-controleren-of-het-werkt}
 
-Je ziet nu een prompt zoals deze, met jouw naam en die van je computer:
+Na het wachtwoord staat er een prompt zoals deze, met jouw naam en die van je computer:
 
 ```
 sam@laptop:~$
@@ -124,7 +124,7 @@ wsl --list --online
 
 ### Wachtwoord vergeten
 
-**Oorzaak:** je hebt bij stap 3 iets gekozen wat je nu niet meer weet.
+**Oorzaak:** je koos bij de installatie een wachtwoord dat je nu niet meer weet.
 
 **Oplossing:** open PowerShell en log in als beheerder van Ubuntu, en kies een nieuw wachtwoord. Zet je eigen gebruikersnaam op de plek van `sam`:
 

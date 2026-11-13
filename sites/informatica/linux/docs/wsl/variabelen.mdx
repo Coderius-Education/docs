@@ -4,6 +4,8 @@ sidebar_position: 4
 
 # 5.4 Variabelen in de shell
 
+## Een variabele lezen
+
 <Voorkennis items={[{to: '/docs/terminal/maken', label: 'Tekst schrijven met echo'}]} />
 
 ```bash
@@ -16,7 +18,7 @@ sam
 /home/sam
 ```
 
-`$USER` en `$HOME` zijn **variabelen**: een naam met een waarde, net als in Python. Het dollarteken zegt tegen de shell: zet hier de waarde neer. De shell doet dat vóór `echo` start, dus `echo` krijgt `sam` te zien, niet `$USER`. Daarom kun je een commando met `$USER` aan iedereen geven: het werkt bij iedereen met zijn eigen naam.
+`$USER` en `$HOME` zijn **variabelen**: een naam met een waarde. Het dollarteken zegt tegen de shell: zet hier de waarde neer. De shell doet dat vóór `echo` start, dus `echo` krijgt `sam` te zien, niet `$USER`. Daarom kun je een commando met `$USER` aan iedereen geven: het werkt bij iedereen met zijn eigen naam.
 
 ## Zelf een variabele maken
 
@@ -61,7 +63,15 @@ Wat zet `echo` neer?
 []
 ```
 
-Een variabele die je zo maakt, kent alleen deze shell. Een programma dat je vanuit de shell start, zoals een tweede `bash`, krijgt hem niet mee. Wil je dat wel, gebruik dan `export`:
+Een variabele die je zo maakt, kent alleen deze shell. Een programma dat je vanuit de shell start, zoals een tweede `bash`, krijgt hem niet mee.
+
+</details>
+
+## Omgevingsvariabelen
+
+### Meegeven met export
+
+Een variabele als `NAAM=Sam` blijft in de shell waar je hem maakte. Met `export` gaat hij mee naar elk programma dat je vanuit die shell start, ook naar een tweede `bash`:
 
 ```bash
 export NAAM=Sam
@@ -70,11 +80,9 @@ echo "[$NAAM]"
 exit
 ```
 
-Nu staat er `[Sam]`. Een variabele die meegaat naar elk programma heet een **omgevingsvariabele**. `$USER` en `$HOME` zijn er twee. Met `printenv` zie je ze allemaal, en met `printenv NAAM` één.
+Nu zet `echo` `[Sam]` neer. Een variabele die zo meegaat, heet een **omgevingsvariabele**. `$USER` en `$HOME` zijn er twee. Met `printenv` zie je ze allemaal, en met `printenv NAAM` één.
 
-</details>
-
-## Een .env-bestand \{#env}
+### Een .env-bestand \{#env}
 
 Een programma leest zijn instellingen vaak uit omgevingsvariabelen: een wachtwoord, een adres, of de naam van een site. Typ je die elke keer met `export`, dan vergeet je er een. Daarom staan ze vaak in een bestand `.env`, één per regel, in dezelfde vorm:
 

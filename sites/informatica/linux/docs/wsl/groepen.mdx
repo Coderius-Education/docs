@@ -4,6 +4,8 @@ sidebar_position: 6
 
 # 6.5 Groepen
 
+## Je groepen
+
 <Voorkennis items={[{to: '/docs/terminal/rechten', label: 'Rechten lezen met ls -l'}, {to: '/docs/wsl/apt', label: 'Beheerder zijn met sudo'}]} />
 
 ```bash
@@ -84,7 +86,9 @@ en open je Ubuntu opnieuw. Nu staat `klas` bij `groups`, en lukt `touch`. Op een
 
 ## Opdracht 6.5.a: wie mag erin?
 
-Maak een bestand in `/srv/klas`, en kijk met `ls -l` van wie het is. Van welke groep is het: `klas`, of je eigen groep?
+Maak een bestand in `/srv/klas`, en kijk met `ls -l` van wie het is. Van welke groep is het: `klas`, of je eigen groep? Staat `klas` nog niet bij `groups`, kijk dan bij Er gaat iets mis, onder De groep telt niet.
+
+Ruim daarna op: `sudo rm -r /srv/klas` gooit de map weg, `sudo groupdel klas` de groep.
 
 <details>
 <summary>Klik hier voor een tip</summary>
@@ -105,7 +109,7 @@ ls -l /srv/klas
 -rw-rw-r-- 1 sam sam 0 Nov  3 10:30 opdracht.txt
 ```
 
-Het bestand is van jou en van je eigen groep `sam`, niet van `klas`. De groep van de map geeft je het recht om er iets in te maken, maar wat je maakt, krijgt je eigen groep. Ruim op met `sudo rm -r /srv/klas` en `sudo groupdel klas`.
+Het bestand is van jou en van je eigen groep `sam`, niet van `klas`. De groep van de map geeft je het recht om er iets in te maken, maar wat je maakt, krijgt je eigen groep.
 
 </details>
 

@@ -6,9 +6,11 @@ import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
 # 1.2 Door mappen lopen
 
+## De boom
+
 <Voorkennis items={[{to: '/docs/terminal/eerste-commando', label: 'De prompt, pwd en ls'}]} />
 
-Alle bestanden op een Linux-computer hangen aan één boom. Bovenaan staat de map `/`, de **root**. Daaronder hangt de rest:
+Alle bestanden op een Linux-computer hangen aan één boom. Bovenaan staat de map `/`, de **root**. Daaronder hangt de rest. Dit is een stuk ervan:
 
 ```
 /
@@ -16,8 +18,8 @@ Alle bestanden op een Linux-computer hangen aan één boom. Bovenaan staat de ma
 ├── home
 │   └── student
 │       └── notities.txt
-├── tmp
 └── var
+    ├── log
     └── www
 ```
 
@@ -52,6 +54,8 @@ Eerst in `/var`, daarna in `/`. Twee puntjes betekent "de map erboven". Hoger da
 </details>
 
 ## Absolute en relatieve paden
+
+### Waar een pad begint
 
 Een pad dat met `/` begint, is **absoluut**: het begint bij de root, waar je ook staat. `cd /home/student` brengt je altijd naar je thuismap.
 
