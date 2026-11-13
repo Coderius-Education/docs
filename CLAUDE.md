@@ -103,7 +103,37 @@ krijgt een vlag, een functie en een plek in de lus van `blokken`;
 `ci-poort.test.ts` eist dat. De job `browser` opent de gebouwde python-site in
 Chromium en doet daar wat een leerling in de speeltuin doet
 (`scripts/rooktest-speeltuin.mjs`); hij draait als de python-site gebouwd wordt,
-dus ook na een wijziging in `packages/python-runner`.
+dus ook na een wijziging in `packages/python-runner`. De job `terminal` doet
+hetzelfde voor de oefenterminal van linux (`scripts/rooktest-linux.mjs`: Tab
+vult aan, ook na Esc en wegklikken; Esc en dan Tab gaat naar de knop
+Volgende; het antwoord uit de les vinkt elk doel af; de terminal plakt naast
+een open antwoord).
+
+**De job `schermen` meet of elk scherm past**, per gebouwde cursus met
+les-tabbladen: `meet-les-tabs.mjs --bronnen=changed.json --streng`. Een
+gewijzigde lespagina wordt gemeten (`packages/shared/meet-selectie.js` zoekt
+de les met hetzelfde adres: nummers, `slug` en `id` zoals Docusaurus); een
+onderdeel, de opmaak, een deel of een package meet de hele cursus. Met
+`--streng` faalt hij bij een scherm dat op 1280×720 of 1366×768 te lang is,
+zijwaarts schuift, een rij tabbladen op twee regels, afgesneden code of een
+dubbele id; een bewuste uitzondering staat met een reden in
+`scripts/meet-les-tabs-uitzonderingen.json` (de overzichten van de
+python-projecten). Hij meet zoals een schoolcomputer met Windows: klassieke
+schuifbalken van 15 pixels, de volledige Chromium (`channel: 'chromium'`; de
+headless shell tekende tekst en schuifbalken anders, en in CI viel daar code
+af die in Chromium paste), alleen aanvragen naar de eigen server (een
+aanvraag naar buiten bleef op de runner hangen), en per scherm wachten op
+de lettertypen. Met die schuifbalken pasten er bij de invoering in zes
+cursussen een paar schermen niet meer; die zijn ingekort of gesplitst, en
+`pasCode` rekent opnieuw nadat `speling` een codevak laat schuiven.
+
+**De git-simulator wordt naast een vaste git gelegd**: de job `test` bouwt
+git `GIT_VERSIE` (nu 2.56.1) zelf, eenmaal en daarna uit de cache, want de
+git van de runner veranderde zonder aankondiging. `echte-git.test.ts` eist in
+CI die versie. Een nieuwere git volgen is een bewuste stap: `GIT_VERSIE`
+ophogen en de simulator bijwerken; `naast-git.test.ts` noemt dan elk
+verschil tegelijk, en `ANDERS_IN_243` laat hem ook lokaal met git 2.43
+draaien.
 
 ## Een les verhuizen
 
