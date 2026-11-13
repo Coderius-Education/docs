@@ -1764,9 +1764,13 @@ describe('de opmaak van de tabbladen', () => {
     const verboden =
       /(^|[\s;])(transform|filter|contain|will-change|overflow(-[xy])?|z-index|isolation|animation|transition|container-type)\s*:/;
     // Het vak van een codeblok (`pre`) is nooit de ouder van een oefenveld:
-    // een programma dat hoger is dan het scherm, mag daarin schuiven.
+    // een programma dat hoger is dan het scherm, mag daarin schuiven. De rij
+    // stappen ook niet: daar staan alleen knoppen in.
     const fout = regels
-      .filter(({ sel }) => /^\.(wortel|paneel|stappen|naast)\b/.test(sel) && !/ pre$/.test(sel))
+      .filter(
+        ({ sel }) =>
+          /^\.(wortel|paneel|stappen|naast)\b/.test(sel) && !/ (pre|\.staplist)$/.test(sel),
+      )
       .filter(({ body }) => verboden.test(body) || /position:\s*sticky/.test(body))
       .map(({ sel }) => sel);
     expect(fout).toEqual([]);
@@ -1813,11 +1817,17 @@ describe('de opmaak van de tabbladen', () => {
       );
     });
 
-    it('een stap die dicht is, houdt in de smalle kolom een stuk van zijn naam', () => {
-      // Eerst mocht hij tot zijn nummer krimpen. In les 2.4 van Linux stonden
-      // onder Er gaat iets mis dan alleen "2", "3" en "4": wie zijn melding
-      // zocht, moest elke stap openklikken. Past de rij niet, dan komt er
-      // een tweede regel, zoals overal.
+    it('in de smalle kolom schuift de rij stappen, met elke naam voluit', () => {
+      // Eerst mocht een dichte stap tot zijn nummer krimpen (onder Er gaat
+      // iets mis van les 2.4 stonden alleen 2, 3 en 4), daarna tot een paar
+      // letters ("Het vr…"), en wisselde de rij tussen een en twee regels:
+      // de tekst versprong veertig pixels bij elke stap. Nu schuift hij, zoals
+      // op een telefoon.
+      const plat = css.replace(/\s+/g, ' ');
+      expect(plat).toContain(`${MET} .staplist { flex-wrap: nowrap; overflow-x: auto;`);
+      expect(plat).toContain(
+        `${MET} .stap { flex: 0 0 auto; max-width: none; white-space: nowrap;`,
+      );
       const kolom = css.slice(css.indexOf(`${MET} {`), css.indexOf('@media print'));
       expect(kolom).not.toMatch(/\.stap\b[^{]*\{[^}]*min-width/);
     });

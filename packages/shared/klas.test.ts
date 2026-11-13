@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { hoofdstukSleutel, leesKlasCookie, pasKlasToe } from '@coderius/shared/klas';
@@ -139,7 +139,7 @@ describe('sidebar-manifest', () => {
 });
 
 describe('klassen en de rest van de repo', () => {
-  it('geen site swizzlet DocSidebarItems (dat schaduwt de klas-wikkel)', () => {
+  it('geen site swizzlet DocSidebarItems of DocCard/Heading (dat schaduwt de wikkel)', () => {
     const fout: string[] = [];
     for (const vak of readdirSync(join(ROOT, 'sites'))) {
       const vakMap = join(ROOT, 'sites', vak);
@@ -147,10 +147,22 @@ describe('klassen en de rest van de repo', () => {
         ? [vakMap]
         : readdirSync(vakMap).map((s) => join(vakMap, s));
       for (const site of mappen) {
-        if (existsSync(join(site, 'src', 'theme', 'DocSidebarItems'))) fout.push(site);
+        for (const deel of ['DocSidebarItems', 'DocCard'])
+          if (existsSync(join(site, 'src', 'theme', deel))) fout.push(`${site}: ${deel}`);
       }
     }
     expect(fout).toEqual([]);
+  });
+
+  it('een kaart op een overzichtspagina heeft geen emoji-icoon', () => {
+    // De overzichtskaarten van ctf toonden het 📄 van Docusaurus. De wikkel
+    // geeft de kop van de kaart geen icoon mee.
+    const bron = readFileSync(
+      join(ROOT, 'packages/shared/theme/DocCard/Heading/index.jsx'),
+      'utf8',
+    );
+    expect(bron).toContain("from '@theme-init/DocCard/Heading'");
+    expect(bron).toMatch(/icon=\{undefined\}/);
   });
 
   it('geen cursuspad botst met een route van home', () => {

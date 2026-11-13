@@ -1,4 +1,6 @@
-import { useInLesTab } from '@coderius/shared/components/LesTabs';
+// Uit paneel, niet uit de index: die trekt de hele opmaak van de
+// les-tabbladen mee in elke pagina met een editor.
+import { useInLesTab } from '@coderius/shared/components/LesTabs/paneel';
 import { storageKey as siteSleutel } from '@coderius/shared/opslag';
 import clsx from 'clsx';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';

@@ -85,7 +85,7 @@ function useNaHydratatie(): boolean {
  */
 export function LesNaastPlek({ heleLes = false }: { heleLes?: boolean }): ReactNode {
   if (!useInLesTab()) return null;
-  return <div data-les-naast-anker={heleLes ? 'les' : 'veld'} data-les-naast-wacht="" />;
+  return <div data-les-naast-anker={heleLes ? 'les' : 'veld'} />;
 }
 
 export function LesNaast({

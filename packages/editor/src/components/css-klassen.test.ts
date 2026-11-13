@@ -54,6 +54,8 @@ describe('de uitvoer van InlineEditor in een les-tabblad', () => {
     const bron = readFileSync(join(MAP, 'InlineEditor/InlineEditorImpl.tsx'), 'utf8');
     const css = readFileSync(join(MAP, 'InlineEditor/styles.module.css'), 'utf8');
     expect(bron).toMatch(/const inTab = useInLesTab\(\);/);
+    // Uit paneel: de index van LesTabs trekt zijn opmaak mee.
+    expect(bron).toContain("from '@coderius/shared/components/LesTabs/paneel'");
     expect(bron).toMatch(/inTab && !Preview && styles\.outputVast/);
     expect(css).toMatch(/\.outputVast \{\s*height: [\d.]+rem;\s*min-height: 0;/);
   });

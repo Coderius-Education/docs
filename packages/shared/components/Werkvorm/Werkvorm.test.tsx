@@ -11,6 +11,7 @@ import { LesWerkvormen, WerkvormIcoon, Werkvormen } from './index';
 
 const require = createRequire(import.meta.url);
 const { WERKVORMEN } = require('../../werkvormen/index.js');
+const ROOT = require.resolve('../../werkvormen/index.js').replace(/\/packages\/shared\/.*$/, '');
 
 vi.mock('@docusaurus/useGlobalData', () => ({
   usePluginData: () => ({
@@ -86,6 +87,35 @@ describe('Werkvormen', () => {
     expect(ids.indexOf('uitleg')).toBeLessThan(ids.indexOf('voorspellen'));
     expect(ids.indexOf('aanpassen')).toBeLessThan(ids.indexOf('maken'));
     expect(ids.at(-1)).toBe('fouten');
+  });
+});
+
+describe('een cursus zegt zelf wat zijn leerlingen doen', () => {
+  it('vervangt de tekst van een onderdeel, en laat de literatuur staan', () => {
+    // In Linux begint een opdracht in een lege terminal: "op code die er al
+    // staat" klopte daar niet, net zo min als bij de simulator of bij ctf.
+    render(<Werkvormen doet={{ aanpassen: 'Een opdracht in een verse terminal.' }} />);
+    const rij = screen.getByRole('rowheader', { name: 'Aanpassen' }).closest('tr') as HTMLElement;
+    expect(within(rij).getByText('Een opdracht in een verse terminal.')).toBeTruthy();
+    expect(within(rij).queryByText(/code die er al staat/)).toBeNull();
+    expect(within(rij).getAllByRole('link').length).toBeGreaterThan(0);
+    // De andere onderdelen houden hun tekst.
+    const uitleg = screen.getByRole('rowheader', { name: 'Uitleg met een voorbeeld' });
+    expect(uitleg.closest('tr')?.textContent).toContain('met werkende code erbij');
+  });
+
+  it('elke cursus die het gebruikt, noemt alleen werkvormen die bestaan', () => {
+    const ids = new Set(WERKVORMEN.map((w: { id: string }) => w.id));
+    const fout: string[] = [];
+    for (const site of ['linux', 'editor', 'ctf']) {
+      // In jsdom is import.meta.url geen bestand: de tests draaien vanuit de root.
+      const bron = readFileSync(`${ROOT}/sites/informatica/${site}/src/pages/docenten.mdx`, 'utf8');
+      const blok = bron.match(/<Werkvormen\s+doet=\{\{([\s\S]*?)\}\}\s*\/>/);
+      if (!blok) fout.push(`${site}: geen eigen tekst`);
+      for (const m of blok?.[1].matchAll(/^\s*(\w+):/gm) ?? [])
+        if (!ids.has(m[1])) fout.push(`${site}: ${m[1]}`);
+    }
+    expect(fout).toEqual([]);
   });
 });
 

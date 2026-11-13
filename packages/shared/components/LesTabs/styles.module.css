@@ -811,6 +811,22 @@
     > :first-child {
     margin-bottom: 0.5rem;
   }
+
+  /* In de smalle kolom schuift de rij stappen, zoals op een telefoon. Krimpen
+     liet van een dichte stap twee letters over ("Het vr…"), en met een
+     tweede regel versprong de tekst zo'n veertig pixels bij elke stap: de
+     open stap staat voluit, en dan paste de rij soms wel en soms niet. */
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) .staplist {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) .stap {
+    flex: 0 0 auto;
+    max-width: none;
+    white-space: nowrap;
+  }
 }
 
 /* Het veld van de hele les wijkt voor het eigen veld van een scherm dat
