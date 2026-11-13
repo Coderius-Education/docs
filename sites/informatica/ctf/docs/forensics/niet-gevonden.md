@@ -1,6 +1,9 @@
 ---
 sidebar_position: 4
 title: "Forensics - Niet gevonden"
+description: "Je downloadt een bestand dat niet wil openen, en zoekt uit waarom."
+pagination_prev: code/encrypted
+pagination_next: forensics/plaats-delict
 ---
 
 # Forensics - Niet gevonden
@@ -9,36 +12,37 @@ title: "Forensics - Niet gevonden"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Niet gevonden"* onder Forensics.
 
-Je downloadt een bestand, maar het lijkt niet te openen. Misschien is de bestandsextensie niet correct?
+Je downloadt een bestand, maar het lijkt niet te openen. Wat is er mis mee?
 
 - **Moeilijkheid:** Moeilijk
 - **Onderwerp:** Bestandstypes
 
-**Wat je leert**
+**Wat je oefent**
 
-- Dat bestandsextensies slechts een label zijn en niet het werkelijke bestandstype bepalen
-- Hoe je het werkelijke type van een bestand kunt achterhalen
-- Wat magic bytes / file signatures zijn
+- Uitzoeken waarom een bestand niet opent
+- Achterhalen wat voor bestand je echt voor je hebt
+
+Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
 ## Hints
 
 <details>
 <summary>Hint 1</summary>
 
-Download het bestand en bekijk het. Wat klopt er niet? De extensie is niet altijd wat het lijkt.
+Download het bestand en bekijk de naam. De **extensie** is niet altijd wat hij lijkt.
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Een bestandsextensie is slechts een label — het bepaalt niet het werkelijke type. Probeer de extensie te veranderen naar andere veelvoorkomende types en open het bestand opnieuw.
+Een extensie is alleen een label: hij bepaalt niet wat voor bestand het echt is. Verander de extensie in die van andere veelvoorkomende bestandstypes en open het bestand opnieuw.
 
 </details>
 
 <details>
 <summary>Hint 3</summary>
 
-Je kunt ook de eerste bytes van een bestand bekijken (de "magic bytes" of "file signature") om te bepalen welk type bestand het is. Een hex editor kan hierbij helpen.
+Je kunt het echte type ook aflezen aan de eerste bytes van het bestand, de **magic bytes** of file signature. Open het bestand daarvoor in een hex-editor (zie de [Toolbox](site:ctf/toolbox)).
 
 </details>

@@ -1,6 +1,9 @@
 ---
 sidebar_position: 4
 title: "Hacking - Virus"
+description: "Je laat een bestand of URL onderzoeken, en zoekt de flag in wat er terugkomt."
+pagination_prev: forensics/geluidsfragment
+pagination_next: hacking/tekstbestandje
 ---
 
 # Hacking - Virus
@@ -9,36 +12,37 @@ title: "Hacking - Virus"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Virus"* onder Hacking.
 
-Gebruik VirusTotal om een bestand of URL te analyseren en de flag te vinden.
+Analyseer een bestand of URL en vind de flag in de uitkomst.
 
 - **Moeilijkheid:** Gemiddeld
-- **Onderwerp:** Virussen & malware-analyse
+- **Onderwerp:** Virussen en malware
 
-**Wat je leert**
+**Wat je oefent**
 
-- Hoe VirusTotal werkt
-- Hoe je bestanden en URLs kunt scannen op malware
-- Welke informatie een virusscanner kan onthullen over een bestand
+- Een bestand of URL laten scannen op malware
+- Lezen wat een virusscanner over een bestand vertelt
+
+Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
 ## Hints
 
 <details>
 <summary>Hint 1</summary>
 
-Er bestaan online diensten waarmee je bestanden en URLs kunt scannen op malware. Zoek naar een bekende gratis virusscanner-website.
+Er bestaan online diensten waarmee je bestanden en URL's kunt scannen op malware. Zoek naar een bekende gratis virusscanner-website.
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Bekijk de resultaten goed. Gebruik **Ctrl+F** om te zoeken in de resultaten. De flag kan verborgen zijn in de details van de analyse.
+De bekendste is [**VirusTotal**](https://www.virustotal.com/). Bekijk de resultaten goed, en zoek erin met Ctrl+F.
 
 </details>
 
 <details>
 <summary>Hint 3</summary>
 
-Kijk niet alleen naar het overzicht, maar ook naar de **details**, **relations**, en **community** tabs. Soms staat de flag in de metadata of in comments.
+Kijk niet alleen naar het overzicht, maar ook onder **Details**, **Relations** en **Community** op de pagina met resultaten. Soms staat de flag in de metadata of in de comments.
 
 </details>

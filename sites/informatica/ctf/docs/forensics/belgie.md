@@ -1,6 +1,9 @@
 ---
 sidebar_position: 2
 title: "Forensics - België"
+description: "Je krijgt een IP-adres en zoekt uit bij welke plek het hoort."
+pagination_prev: forensics/voor-altijd
+pagination_next: forensics/geluidsfragment
 ---
 
 # Forensics - België
@@ -12,13 +15,14 @@ title: "Forensics - België"
 Je krijgt een IP-adres. Hoe vind je de locatie die bij dit IP-adres hoort?
 
 - **Moeilijkheid:** Makkelijk
-- **Onderwerp:** IP-adres geolocatie
+- **Onderwerp:** IP-adressen
 
-**Wat je leert**
+**Wat je oefent**
 
-- Wat een IP-adres is
-- Hoe je de geografische locatie van een IP-adres kunt vinden
-- Het verschil tussen IPv4 en IPv6
+- Uitzoeken wat een IP-adres over een apparaat verraadt
+- Zelf een online dienst vinden die bij je vraag past
+
+Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
 ## Hints
 
@@ -32,13 +36,13 @@ Elk apparaat op het internet heeft een uniek adres. Er bestaan tools om te achte
 <details>
 <summary>Hint 2</summary>
 
-Zoek op internet naar hoe je de geografische locatie van een IP-adres kunt opzoeken. Er zijn veel gratis online diensten die dit kunnen.
+Wat je zoekt heet **geolocatie**. Zoek op internet naar een dienst die de locatie van een IP-adres opzoekt. Er zijn veel gratis diensten die dit kunnen.
 
 </details>
 
 <details>
 <summary>Hint 3</summary>
 
-Vul het IP-adres in bij een geolocatie-dienst en bekijk de resultaten. Let op het land en de stad die worden weergegeven.
+Vul het IP-adres in bij een geolocatie-dienst (er staat er een in de [Toolbox](site:ctf/toolbox)) en bekijk de resultaten. Let op het land en de stad.
 
 </details>

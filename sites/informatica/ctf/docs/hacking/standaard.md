@@ -1,6 +1,9 @@
 ---
 sidebar_position: 1
 title: "Hacking - Standaard"
+description: "Veel mensen kiezen een zwak, voorspelbaar wachtwoord, en daar maak je hier gebruik van."
+pagination_prev: intro
+pagination_next: hacking/eentje-erbij
 ---
 
 # Hacking - Standaard
@@ -14,11 +17,12 @@ Wat zijn de meest populaire wachtwoorden? Veel mensen kiezen nog steeds zwakke, 
 - **Moeilijkheid:** Makkelijk
 - **Onderwerp:** Wachtwoorden
 
-**Wat je leert**
+**Wat je oefent**
 
-- Waarom sterke wachtwoorden belangrijk zijn
-- Welke wachtwoorden het meest gebruikt worden
-- Hoe brute-force aanvallen werken
+- Bedenken welke wachtwoorden mensen het vaakst kiezen
+- Zien waarom een sterk wachtwoord nodig is
+
+Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
 ## Hints
 
@@ -39,6 +43,6 @@ Er bestaan lijsten met veelgebruikte wachtwoorden. Zoek op internet naar "meest 
 <details>
 <summary>Hint 3</summary>
 
-Begin met de allerbekendste wachtwoorden. Denk simpel — de meeste mensen zijn niet creatief met hun wachtwoorden.
+Begin bovenaan zo'n lijst, bij de allerbekendste wachtwoorden, en probeer ze een voor een. Zo werkt een **brute-force aanval** ook: proberen tot er een klopt.
 
 </details>

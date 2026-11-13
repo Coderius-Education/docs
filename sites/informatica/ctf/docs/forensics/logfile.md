@@ -1,6 +1,9 @@
 ---
 sidebar_position: 6
 title: "Forensics - Logfile"
+description: "Je leest het logbestand van een webserver en zoekt uit wat de statuscodes betekenen."
+pagination_prev: forensics/plaats-delict
+pagination_next: hacking/dubbel
 ---
 
 # Forensics - Logfile
@@ -14,31 +17,32 @@ Je krijgt een logbestand te zien. Wat betekenen de verschillende HTTP-statuscode
 - **Moeilijkheid:** Expert
 - **Onderwerp:** HTTP-statuscodes
 
-**Wat je leert**
+**Wat je oefent**
 
-- Wat HTTP-statuscodes betekenen
-- Hoe logbestanden van webservers te lezen
-- Het verschil tussen verschillende soorten HTTP-responses
+- Het logbestand van een webserver lezen
+- Opzoeken wat een HTTP-statuscode betekent
+
+Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
 ## Hints
 
 <details>
 <summary>Hint 1</summary>
 
-HTTP-statuscodes geven aan wat er is gebeurd bij een verzoek aan een webserver. Elke code heeft een specifieke betekenis. Zoek op internet naar een overzicht.
+Een HTTP-statuscode zegt wat er gebeurde bij een verzoek aan een webserver. Elke code heeft een eigen betekenis. Zoek op internet naar een overzicht.
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Bekijk een referentie zoals [W3Schools HTTP Messages](https://www.w3schools.com/tags/ref_httpmessages.asp) om te begrijpen wat elke code betekent. Welke codes vallen op in het logbestand?
+De codes vallen in groepen: 1xx (informatie), 2xx (gelukt), 3xx (doorverwezen), 4xx (fout van de client) en 5xx (fout van de server). Wat elke code betekent, staat bij [W3Schools HTTP Messages](https://www.w3schools.com/tags/ref_httpmessages.asp).
 
 </details>
 
 <details>
 <summary>Hint 3</summary>
 
-De belangrijkste categorieën: **1xx** (informationeel), **2xx** (succes), **3xx** (redirect), **4xx** (client error), **5xx** (server error). Zoek naar ongebruikelijke codes of patronen.
+Welke codes vallen op in het logbestand? Zoek naar ongebruikelijke codes of naar een patroon.
 
 </details>

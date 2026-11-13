@@ -1,6 +1,9 @@
 ---
 sidebar_position: 5
 title: "Forensics - Plaats delict"
+description: "Bij een afbeelding hoort meer informatie dan je op het eerste gezicht ziet."
+pagination_prev: forensics/niet-gevonden
+pagination_next: forensics/logfile
 ---
 
 # Forensics - Plaats delict
@@ -12,27 +15,28 @@ title: "Forensics - Plaats delict"
 Een afbeelding kan meer informatie bevatten dan je op het eerste gezicht ziet. Hoe kom je in de "code" van een plaatje?
 
 - **Moeilijkheid:** Moeilijk
-- **Onderwerp:** Metadata & verborgen data
+- **Onderwerp:** Verborgen informatie bij een afbeelding
 
-**Wat je leert**
+**Wat je oefent**
 
-- Hoe je de broncode van een webpagina kunt bekijken
-- Dat afbeeldingen metadata kunnen bevatten
-- Hoe je verborgen informatie in webpagina's kunt vinden
+- Zoeken naar informatie die bij een afbeelding hoort maar niet in beeld staat
+- Verder kijken dan wat een pagina toont
+
+Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
 ## Hints
 
 <details>
 <summary>Hint 1</summary>
 
-Afbeeldingen bevatten verborgen data die je niet ziet als je ze gewoon opent. Denk aan **metadata** en **broncode** van de pagina.
+Bij een afbeelding hoort data die je niet ziet als je hem alleen bekijkt. Denk aan **metadata** en aan de **broncode** van de pagina.
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Klik met de rechtermuisknop op de afbeelding en bekijk de **paginabron** of de **broncode** van de pagina. Misschien staat er iets verborgen in de HTML.
+Klik met de rechtermuisknop op de afbeelding en bekijk de paginabron. Misschien staat er iets verborgen in de HTML.
 
 </details>
 

@@ -1,6 +1,9 @@
 ---
 sidebar_position: 6
 title: "Code - Encrypted"
+description: "Een onleesbare tekst, en de vraag hoe hij onleesbaar is gemaakt."
+pagination_prev: code/rotate
+pagination_next: forensics/niet-gevonden
 ---
 
 # Code - Encrypted
@@ -9,41 +12,42 @@ title: "Code - Encrypted"
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Encrypted"* onder Code.
 
-De data is versleuteld. Kun je het ontcijferen?
+De data is versleuteld. Kun je de oorspronkelijke tekst terugvinden?
 
 - **Moeilijkheid:** Moeilijk
-- **Onderwerp:** Versleuteling
+- **Onderwerp:** Versleuteling en codering
 
-**Wat je leert**
+**Wat je oefent**
 
-- Verschillende soorten versleuteling herkennen
-- Hoe je versleutelde data kunt ontcijferen
-- Het gebruik van CyberChef als analyse-tool
+- Aan een onleesbare tekst zien hoe hij onleesbaar is gemaakt
+- De oorspronkelijke tekst terughalen
+
+Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
 ## Hints
 
 <details>
 <summary>Hint 1</summary>
 
-Bekijk de versleutelde tekst goed. Welk type encryptie zou er gebruikt kunnen zijn? Kijk of er aanwijzingen zijn in de challenge.
+Bekijk de tekst goed. Welke tekens komen erin voor, en hoe eindigt hij? Kijk ook of er aanwijzingen in de challenge staan.
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Gebruik tools zoals [CyberChef](https://gchq.github.io/CyberChef/) om verschillende decryptie-methoden te proberen. CyberChef heeft een "Magic" functie die automatisch probeert te detecteren welke encoding is gebruikt.
+Zo wordt tekst in CTF's vaak onleesbaar gemaakt. De eerste drie zijn coderingen, de laatste twee versleutelingen:
+- **Base64** (tekst eindigt vaak op = of ==)
+- **Hex** (alleen de tekens 0-9 en a-f)
+- **Binair** (alleen 0 en 1)
+- **Caesar/ROT** (verschoven letters)
+- **Vigenere** (een ingewikkelder vervanging van letters)
 
 </details>
 
 <details>
 <summary>Hint 3</summary>
 
-Veelvoorkomende versleutelingsmethoden in CTF's:
-- **Base64** (tekst eindigt vaak op = of ==)
-- **Hex** (alleen tekens 0-9 en a-f)
-- **Binary** (alleen 0 en 1)
-- **Caesar/ROT** (verschoven letters)
-- **Vigenere** (complexere letter-substitutie)
+Probeer de methodes uit in [CyberChef](https://gchq.github.io/CyberChef/). De functie **Magic** probeert zelf te ontdekken welke codering is gebruikt.
 
 </details>

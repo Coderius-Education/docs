@@ -1,6 +1,9 @@
 ---
 sidebar_position: 5
 title: "Hacking - Tekstbestandje"
+description: "Op een webserver staat een bestand dat er niet voor iedereen had mogen staan."
+pagination_prev: hacking/virus
+pagination_next: hacking/koekjes-1
 ---
 
 # Hacking - Tekstbestandje
@@ -14,31 +17,32 @@ Net als robots.txt zijn er meer standaard tekstbestanden die op webservers staan
 - **Moeilijkheid:** Gemiddeld
 - **Onderwerp:** Verborgen bestanden
 
-**Wat je leert**
+**Wat je oefent**
 
-- Dat gevoelige bestanden soms publiek toegankelijk zijn op webservers
-- Het belang van goede bestandsbeveiliging
-- Waarom je nooit wachtwoorden in platte tekstbestanden moet opslaan
+- Raden welke bestanden er op een webserver kunnen staan
+- Zien waarom wachtwoorden niet in een tekstbestand horen
+
+Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
 ## Hints
 
 <details>
 <summary>Hint 1</summary>
 
-Je moet achter de URL een bestandsnaam plaatsen. Denk na: als iemand wachtwoorden opslaat in een simpel tekstbestand, welke naam zou dat bestand dan hebben?
+Je zet een bestandsnaam achter de URL, net als bij robots.txt. Welke naam zou iemand geven aan een tekstbestand met wachtwoorden?
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Probeer veelvoorkomende bestandsnamen achter de URL te zetten. Denk in zowel het Engels als Nederlands, met **.txt** als extensie.
+Denk simpel: gevoelige bestanden hebben vaak een voorspelbare naam. Bedenk namen in het Engels en in het Nederlands.
 
 </details>
 
 <details>
 <summary>Hint 3</summary>
 
-Gevoelige bestanden staan soms gewoon publiek op webservers met voorspelbare namen. Probeer meerdere varianten — wees creatief maar denk simpel.
+Zet .txt achter elke naam die je bedenkt, en probeer de varianten een voor een achter de URL tot er een bestand opent.
 
 </details>

@@ -1,6 +1,9 @@
 ---
 sidebar_position: 3
 title: "Forensics - Geluidsfragment"
+description: "Je krijgt een geluidsfragment dat onbegrijpelijk klinkt, en maakt het weer verstaanbaar."
+pagination_prev: forensics/belgie
+pagination_next: hacking/virus
 ---
 
 # Forensics - Geluidsfragment
@@ -14,33 +17,34 @@ Je krijgt een geluidsfragment dat onbegrijpelijk klinkt. Hoe maak je het begrijp
 - **Moeilijkheid:** Makkelijk
 - **Onderwerp:** Audio-analyse
 
-**Wat je leert**
+**Wat je oefent**
 
-- Hoe audio-bestanden gemanipuleerd kunnen worden
-- Hoe je Audacity of vergelijkbare tools kunt gebruiken
-- Wat een spectrogram is en hoe je het kunt lezen
+- Bedenken hoe een geluidsbestand bewerkt kan zijn
+- Een geluidsbestand openen en bewerken in een audio-editor
 
-**Benodigde tools:** [Audacity](https://www.audacityteam.org/) (gratis audio-editor)
+**Benodigde tools:** [Audacity](https://www.audacityteam.org/) (gratis audio-editor, die je moet installeren)
+
+Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
 ## Hints
 
 <details>
 <summary>Hint 1</summary>
 
-Het geluid klinkt misschien vreemd omdat het op een bepaalde manier is gemanipuleerd. Welke bewerkingen kun je op audio toepassen?
+Het geluid klinkt vreemd omdat het op een bepaalde manier is bewerkt. Welke bewerkingen kun je op audio toepassen?
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Open het geluidsfragment in een audio-editor. Probeer het om te keren (reverse), de snelheid aan te passen, of het spectrogram te bekijken.
+Open het fragment in Audacity en draai de bewerking terug. Probeer het geluid om te keren (**reverse**) of de snelheid aan te passen.
 
 </details>
 
 <details>
 <summary>Hint 3</summary>
 
-Bekijk ook het **spectrogram** van het geluid. Soms is er een boodschap visueel verborgen in de frequenties.
+Hoor je dan nog niets begrijpelijks, bekijk dan het **spectrogram** van het geluid. Soms is een boodschap zichtbaar verborgen in de frequenties.
 
 </details>
