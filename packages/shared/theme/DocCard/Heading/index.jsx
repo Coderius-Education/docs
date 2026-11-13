@@ -2,7 +2,7 @@
 // van ctf), zonder het icoon dat Docusaurus ervoor zet: een emoji (📄, 🗃,
 // 🔗). De schrijfgids wil geen emoji, ook niet in de opmaak van de site.
 // Wat Docusaurus als icoon uit het label haalde (ook het nummer van
-// "3. Acties"), komt terug in de titel (titel.js).
+// "3. Acties"), komt terug in de titel (titel.jsx).
 //
 // Een site die DocCard/Heading zelf swizzlet, schaduwt deze wikkel;
 // klas.test.ts bewaakt dat.
