@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 // @vitest-environment jsdom
 import { cleanup, render, screen, within } from '@testing-library/react';
@@ -104,18 +104,39 @@ describe('een cursus zegt zelf wat zijn leerlingen doen', () => {
     expect(uitleg.closest('tr')?.textContent).toContain('met werkende code erbij');
   });
 
+  it('een werkvorm die niet bestaat, stopt de build', () => {
+    // Een tikfout liet de eigen tekst stil weg, en dan stond er de tekst
+    // over code bij een cursus zonder code.
+    const stil = vi.spyOn(console, 'error').mockImplementation(() => {});
+    expect(() => render(<Werkvormen doet={{ aanpasen: 'x' }} />)).toThrow(
+      /geen werkvorm 'aanpasen'/,
+    );
+    stil.mockRestore();
+  });
+
   it('elke cursus die het gebruikt, noemt alleen werkvormen die bestaan', () => {
     const ids = new Set(WERKVORMEN.map((w: { id: string }) => w.id));
     const fout: string[] = [];
-    for (const site of ['linux', 'editor', 'ctf']) {
-      // In jsdom is import.meta.url geen bestand: de tests draaien vanuit de root.
-      const bron = readFileSync(`${ROOT}/sites/informatica/${site}/src/pages/docenten.mdx`, 'utf8');
-      const blok = bron.match(/<Werkvormen\s+doet=\{\{([\s\S]*?)\}\}\s*\/>/);
-      if (!blok) fout.push(`${site}: geen eigen tekst`);
-      for (const m of blok?.[1].matchAll(/^\s*(\w+):/gm) ?? [])
-        if (!ids.has(m[1])) fout.push(`${site}: ${m[1]}`);
+    let gezien = 0;
+    // In jsdom is import.meta.url geen bestand: de tests draaien vanuit de root.
+    for (const vak of readdirSync(`${ROOT}/sites`)) {
+      const vakMap = `${ROOT}/sites/${vak}`;
+      if (!statSync(vakMap).isDirectory()) continue;
+      for (const site of readdirSync(vakMap)) {
+        const pagina = `${vakMap}/${site}/src/pages/docenten.mdx`;
+        if (!existsSync(pagina)) continue;
+        const blok = readFileSync(pagina, 'utf8').match(
+          /<Werkvormen\s+doet=\{\{([\s\S]*?)\}\}\s*\/>/,
+        );
+        if (!blok) continue;
+        gezien++;
+        for (const m of blok[1].matchAll(/^\s*(\w+):/gm))
+          if (!ids.has(m[1])) fout.push(`${site}: ${m[1]}`);
+      }
     }
     expect(fout).toEqual([]);
+    // Linux, de editor-cursus en ctf hebben een eigen tekst.
+    expect(gezien).toBeGreaterThanOrEqual(3);
   });
 });
 

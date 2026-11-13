@@ -38,6 +38,10 @@ export function Werkvormen({
    */
   doet?: Record<string, string>;
 } = {}): ReactNode {
+  // Een tikfout in de naam van een onderdeel liet de eigen tekst stil weg.
+  for (const id of Object.keys(doet))
+    if (!WERKVORMEN.some((vorm) => vorm.id === id))
+      throw new Error(`Werkvormen: geen werkvorm '${id}' in werkvormen.json`);
   const data = usePluginData('coderius-werkvormen') as Data | undefined;
   // In hoeveel lessen een werkvorm voorkomt. Eén les is geen onderdeel van
   // "een les": de python-cursus heeft alleen in zijn introductie een leerdoel,
