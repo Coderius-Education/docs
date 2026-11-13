@@ -15,6 +15,7 @@ import LesTabs, {
   useInLesTab,
 } from './index';
 import { useLesDoel } from './paneel';
+import { MARGE, schuifInRij } from './schuifRij';
 
 // react-dom/server heeft hier geen types (zie Voorspel/logica.test.ts).
 const { renderToStaticMarkup } = (await import('react-dom/server' as string)) as {
@@ -381,6 +382,162 @@ describe('LesLeerdoel', () => {
     // De kop blijft in de HTML: een link naar #wat-ga-je-leren moet zijn doel
     // vinden, en een schermlezer hoort wat de zin is.
     expect(document.getElementById('wat-ga-je-leren')?.tagName).toBe('H2');
+  });
+});
+
+describe('een rij stappen die zijwaarts schuift', () => {
+  // In de smalle kolom naast de oefenterminal van Linux, en op een telefoon,
+  // schuift de rij stappen. Na een link naar een latere stap, de knop
+  // Volgende of het laden met een stap in het adres stond de knop van de
+  // open stap buiten beeld. De rij schuift nu zelf, met scrollLeft: de
+  // pagina verspringt niet (geen scrollIntoView, geen window.scrollTo).
+  //
+  // jsdom heeft geen opmaak: hier is de rij 200 pixels breed en elke knop
+  // 100, naast elkaar, en scrollLeft schuift ze echt.
+  const BREEDTE = 200;
+  const schuif = new WeakMap<Element, number>();
+  const rijVan = (el: Element) => el.closest('[aria-label="Stappen in dit onderdeel"]');
+  const echt = {
+    rect: Element.prototype.getBoundingClientRect,
+    links: Object.getOwnPropertyDescriptor(Element.prototype, 'scrollLeft'),
+    breed: Object.getOwnPropertyDescriptor(Element.prototype, 'scrollWidth'),
+    zicht: Object.getOwnPropertyDescriptor(Element.prototype, 'clientWidth'),
+  };
+  let schuiftRij = true;
+  beforeEach(() => {
+    schuiftRij = true;
+    Object.defineProperty(Element.prototype, 'scrollLeft', {
+      configurable: true,
+      get() {
+        return schuif.get(this) ?? 0;
+      },
+      set(v: number) {
+        const rij = this as Element;
+        const max = rij.querySelectorAll('[data-stap]').length * 100 - BREEDTE;
+        schuif.set(rij, Math.max(0, Math.min(max, v)));
+      },
+    });
+    Object.defineProperty(Element.prototype, 'scrollWidth', {
+      configurable: true,
+      get() {
+        return schuiftRij ? (this as Element).querySelectorAll('[data-stap]').length * 100 : 0;
+      },
+    });
+    Object.defineProperty(Element.prototype, 'clientWidth', {
+      configurable: true,
+      get: () => BREEDTE,
+    });
+    Element.prototype.getBoundingClientRect = function (this: Element) {
+      const rij = rijVan(this);
+      if (this.hasAttribute('data-stap') && rij) {
+        const i = Array.from(rij.querySelectorAll('[data-stap]')).indexOf(this);
+        const left = i * 100 - (schuif.get(rij) ?? 0);
+        return { left, right: left + 100, top: 300, bottom: 340 } as DOMRect;
+      }
+      if (rij === this) return { left: 0, right: BREEDTE, top: 300, bottom: 340 } as DOMRect;
+      return { left: 0, right: 0, top: 300, bottom: 340 } as DOMRect;
+    };
+  });
+  afterEach(() => {
+    Element.prototype.getBoundingClientRect = echt.rect;
+    for (const [naam, d] of [
+      ['scrollLeft', echt.links],
+      ['scrollWidth', echt.breed],
+      ['clientWidth', echt.zicht],
+    ] as const) {
+      if (d) Object.defineProperty(Element.prototype, naam, d);
+      else delete (Element.prototype as unknown as Record<string, unknown>)[naam];
+    }
+  });
+
+  /** Staat de knop van de open stap helemaal in de rij? */
+  const inBeeld = () => {
+    const knop = document.querySelector('[data-stap][aria-selected="true"]') as HTMLElement;
+    const { left, right } = knop.getBoundingClientRect();
+    return left >= 0 && right <= BREEDTE;
+  };
+  const rij = () =>
+    document.querySelector('[aria-label="Stappen in dit onderdeel"]') as HTMLElement;
+
+  it('zet bij het laden met een latere stap in het adres die knop in beeld', () => {
+    const naarBoven = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    locatie = { pathname: '/les', hash: '#lijsten', search: '' };
+    render(<LesMetStappen />);
+    expect(stap()).toBe('3Lijsten');
+    expect(rij().scrollLeft).toBeGreaterThan(0);
+    expect(inBeeld()).toBe(true);
+    // Alleen de rij schuift: de pagina blijft staan.
+    expect(scrol).not.toHaveBeenCalled();
+    expect(naarBoven).not.toHaveBeenCalled();
+    naarBoven.mockRestore();
+  });
+
+  it('volgt de knop Volgende, en een link terug naar de eerste stap', () => {
+    const { rerender } = render(<LesMetStappen />);
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Koppen' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Lijsten' }));
+    expect(stap()).toBe('3Lijsten');
+    expect(inBeeld()).toBe(true);
+    expect(scrol).not.toHaveBeenCalled();
+    locatie = { pathname: '/les', hash: '#theorie-basis', search: '' };
+    rerender(<LesMetStappen />);
+    expect(stap()).toBe('1De basis');
+    expect(rij().scrollLeft).toBe(0);
+  });
+
+  it('zet de knop weer in beeld als het tabblad opnieuw opengaat', () => {
+    // Een rij die niet te zien was, begint in de browser weer links.
+    render(<LesMetStappen />);
+    fireEvent.click(document.querySelector('[data-stap="lijsten"]') as HTMLElement);
+    fireEvent.click(document.querySelector('[data-tab="make"]') as HTMLElement);
+    rij().scrollLeft = 0;
+    fireEvent.click(document.querySelector('[data-tab="theorie"]') as HTMLElement);
+    expect(stap()).toBe('3Lijsten');
+    expect(inBeeld()).toBe(true);
+  });
+
+  it('een rij die niet schuift, blijft staan', () => {
+    schuiftRij = false;
+    locatie = { pathname: '/les', hash: '#lijsten', search: '' };
+    render(<LesMetStappen />);
+    expect(rij().scrollLeft).toBe(0);
+  });
+});
+
+describe('schuifInRij', () => {
+  const maak = (knop: { left: number; right: number }, scrollLeft = 0) => {
+    const rij = {
+      scrollWidth: 600,
+      clientWidth: 200,
+      scrollLeft,
+      getBoundingClientRect: () => ({ left: 0, right: 200 }),
+    } as unknown as HTMLElement;
+    const k = { getBoundingClientRect: () => knop } as unknown as HTMLElement;
+    return { rij, k };
+  };
+
+  it('schuift naar rechts tot de knop er met een stukje van de volgende in staat', () => {
+    const { rij, k } = maak({ left: 250, right: 330 });
+    schuifInRij(rij, k);
+    expect(rij.scrollLeft).toBe(330 - 200 + MARGE);
+  });
+
+  it('schuift naar links voor een knop die links buiten beeld staat', () => {
+    const { rij, k } = maak({ left: -90, right: -10 }, 300);
+    schuifInRij(rij, k);
+    expect(rij.scrollLeft).toBe(300 - 90 - MARGE);
+  });
+
+  it('een knop die breder is dan de rij, begint links in beeld', () => {
+    const { rij, k } = maak({ left: 120, right: 420 });
+    schuifInRij(rij, k);
+    expect(rij.scrollLeft).toBe(120);
+  });
+
+  it('een knop die al in beeld staat, laat de rij staan', () => {
+    const { rij, k } = maak({ left: 20, right: 120 }, 40);
+    schuifInRij(rij, k);
+    expect(rij.scrollLeft).toBe(40);
   });
 });
 

@@ -16,6 +16,7 @@ import { WerkvormIcoon } from '../Werkvorm/Icoon';
 import { Vergroot } from './Vergroot';
 import { DoelContext, OpenContext, PaneelContext, type Stap, useInLesTab } from './paneel';
 import { pasCode } from './pasCode';
+import { schuifInRij } from './schuifRij';
 import { verdeelSpeling } from './speling';
 import styles from './styles.module.css';
 
@@ -92,8 +93,11 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
   // het paneel, of null.
   const [scrolNaar, setScrolNaar] = useState<{ id: string } | null>(null);
   const wortel = useRef<HTMLDivElement>(null);
+  const lijst = useRef<HTMLDivElement>(null);
   const locatie = useLocation();
   const meldStap = useContext(PaneelContext);
+  // Of de rij te zien is: een rij stappen staat in een tabblad dat dicht kan zijn.
+  const inBeeld = useContext(OpenContext);
 
   // Het adres volgen. Het locatie-object is de afhankelijkheid, niet alleen
   // de hash: een tweede klik op dezelfde link moet ook werken.
@@ -146,12 +150,34 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
       // paneel weer bovenaan.
       const boven = el.closest<HTMLElement>('[data-les-tabs]') ?? el;
       if (boven.getBoundingClientRect().top < 0) boven.scrollIntoView();
-      const tab = el.querySelector<HTMLElement>(`[${data.knop}="${CSS.escape(id)}"]`);
-      tab?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-      if (focus) tab?.focus();
+      // De knop zelf komt in beeld na het renderen (hieronder), alleen
+      // zijwaarts in zijn rij: de pagina blijft staan.
+      if (focus)
+        el.querySelector<HTMLElement>(`[${data.knop}="${CSS.escape(id)}"]`)?.focus({
+          preventScroll: true,
+        });
     },
     [data],
   );
+
+  // De knop die open staat, in beeld in een rij die zijwaarts schuift (een
+  // telefoon, of de smalle kolom naast een oefenveld): na een link, de knop
+  // Volgende, het laden met een stap in het adres, en weer na het openen van
+  // het tabblad (een rij die niet te zien was, begint links). Ook als de rij
+  // smaller wordt: het oefenveld komt pas na het hydrateren naast de les.
+  useEffect(() => {
+    const rij = lijst.current;
+    if (!rij || !inBeeld) return;
+    const zet = () => {
+      const knop = rij.querySelector<HTMLElement>(`[${data.knop}="${CSS.escape(actief)}"]`);
+      if (knop) schuifInRij(rij, knop);
+    };
+    zet();
+    if (typeof ResizeObserver === 'undefined') return;
+    const waarnemer = new ResizeObserver(zet);
+    waarnemer.observe(rij);
+    return () => waarnemer.disconnect();
+  }, [actief, inBeeld, data]);
 
   // Wat er op het scherm over is, gaat naar het codevak of het plaatje van
   // het open paneel (speling.ts). Na elke wissel van tabblad, en na alles wat
@@ -239,6 +265,7 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
         </div>
       )}
       <div
+        ref={lijst}
         role="tablist"
         aria-label={niveau === 'tab' ? 'Onderdelen van deze les' : 'Stappen in dit onderdeel'}
         className={niveau === 'tab' ? styles.tablist : styles.staplist}
