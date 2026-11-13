@@ -203,6 +203,11 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
       beeld = window.requestAnimationFrame(() => {
         pasCode(el);
         verdeelSpeling(el);
+        // De speling kan een codevak lager maken, en dan schuift het
+        // verticaal: een klassieke schuifbalk (Windows) neemt breedte, en de
+        // langste regel viel 10 px af (robotica, tof). Dus de letters nog een
+        // keer, nu met de schuifbalk erbij.
+        pasCode(el);
       });
     };
     meet();
