@@ -512,6 +512,13 @@ async function meetLes(les) {
           await stap.click();
         }
         await pagina.waitForTimeout(scherm.telefoon ? 50 : 400);
+        // Het lettertype van de code laadt pas als er code in beeld komt, en
+        // pasCode meet opnieuw als het binnen is (loadingdone). Op de runner
+        // van CI was het na 400 ms nog niet binnen: daar viel code van 62
+        // tekens 27 px af die lokaal paste. Dus wachten tot elk lettertype
+        // er is, en pasCode een frame geven.
+        await pagina.evaluate(() => document.fonts.ready);
+        await pagina.waitForTimeout(scherm.telefoon ? 50 : 150);
         await pagina.evaluate(() => window.scrollTo(0, 0));
         const maat = await pagina.evaluate((id) => {
           const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
