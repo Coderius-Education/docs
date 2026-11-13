@@ -2861,3 +2861,32 @@ describe('een pagina die op één scherm past, heeft geen tabbladen (eenScherm)'
     expect(tree.children.at(-1)?.attributes?.[0]?.name).toBe('data-les-zonder-tabs');
   });
 });
+
+describe('het meetscript (scripts/meet-les-tabs.mjs)', () => {
+  const bron = readFileSync(
+    fileURLToPath(new URL('../../scripts/meet-les-tabs.mjs', import.meta.url)),
+    'utf8',
+  );
+  const code = bron.replace(/^\s*\/\/.*$/gm, '');
+
+  it('meet met klassieke schuifbalken, zoals op een schoolcomputer met Windows', () => {
+    // Playwright start Chromium headless met --hide-scrollbars. Een rij
+    // stappen die zijwaarts schuift, is op Windows vijftien pixels hoger: met
+    // verborgen schuifbalken telde het script die niet.
+    expect(code).toMatch(/ignoreDefaultArgs:\s*\['--hide-scrollbars'\]/);
+    // Een telefoon heeft schuifbalken over de inhoud heen.
+    expect(code).toMatch(/isMobile:\s*true/);
+    // De schuifbalk van de pagina hoort bij innerWidth en innerHeight: het
+    // script rekent met het venster zonder schuifbalken.
+    expect(code).not.toMatch(/window\.inner(Width|Height)/);
+  });
+
+  it('klapt met --open elk uitklapblok open door op zijn summary te klikken', () => {
+    // Het <details> van Docusaurus klapt met een animatie open: een blok dat
+    // alleen het attribuut open krijgt, blijft leeg.
+    expect(code).toMatch(/argumenten\.includes\('--open'\)/);
+    expect(code).toMatch(/:scope > summary/);
+    expect(code).not.toMatch(/\.open\s*=\s*true/);
+    for (const veld of ['naOpen', 'naOpenBlok', 'naAllesOpen']) expect(code).toContain(veld);
+  });
+});
