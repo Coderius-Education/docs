@@ -173,6 +173,7 @@ describe('comprimeren na elke site-build', () => {
     expect(jobs.filter((job) => stappen(job).some(bouwt)).sort()).toEqual([
       'browser',
       'build',
+      'terminal',
       'voorraad',
     ]);
   });

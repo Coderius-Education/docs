@@ -282,6 +282,49 @@ describe('plan', () => {
     expect(web.jobs.browser).toBe(false);
   });
 
+  it('de oefenterminal in de browser: als de linux-site gebouwd wordt, of het script verandert', () => {
+    const les = planVoor({ [`${MAP.linux}/docs/terminal/mappen.mdx`]: [[3, 3]] }, [MAP.linux]);
+    expect(les.jobs.terminal).toBe(true);
+    const script = planVoor({ 'scripts/rooktest-linux.mjs': [[3, 3]] }, []);
+    expect(script.sites).toEqual([]);
+    expect(script.jobs.terminal).toBe(true);
+    const web = planVoor({ [`${MAP.web}/docs/html-css/position.mdx`]: [[3, 3]] }, [MAP.web]);
+    expect(web.jobs.terminal).toBe(false);
+  });
+
+  it('de schermen: elke gebouwde cursus met tabbladen, alles als het meetscript verandert', () => {
+    const metTabbladen = ['web', 'linux'];
+    const voor = (bestanden: Record<string, [number, number][]>, geraakt: string[]) =>
+      plan({ bestanden, geraakt, alleMappen: ALLE_MAPPEN, sites: SITES, tests: [], metTabbladen });
+    // Een les van web: web meten, en alleen de gewijzigde lessen.
+    const les = voor({ [`${MAP.web}/docs/html-css/position.mdx`]: [[3, 3]] }, [MAP.web]);
+    expect(les.schermen).toEqual({ sites: ['web'], alles: false });
+    // Een cursus zonder tabbladen meet niets.
+    const play = voor({ [`${MAP.play}/docs/acties/klonen.md`]: [[3, 3]] }, [MAP.play]);
+    expect(play.schermen.sites).toEqual([]);
+    // Het meetscript zelf: in elke geraakte cursus met tabbladen alles.
+    const script = voor(
+      {
+        'scripts/meet-les-tabs.mjs': [[1, 1]],
+        [`${MAP.linux}/docs/terminal/mappen.mdx`]: [[2, 2]],
+      },
+      [MAP.linux],
+    );
+    expect(script.schermen).toEqual({ sites: ['linux'], alles: true });
+    // Een volledige run meet elke cursus met tabbladen.
+    const alles = plan({
+      bestanden: {},
+      geraakt: [],
+      alleMappen: ALLE_MAPPEN,
+      sites: SITES,
+      tests: [],
+      metTabbladen,
+      volledig: true,
+    });
+    // In de volgorde van het register.
+    expect(alles.schermen).toEqual({ sites: ['web', 'linux'], alles: true });
+  });
+
   it('alleen sites/home', () => {
     const p = planVoor({ 'sites/home/src/routes/+page.svelte': [[8, 9]] }, ['sites/home']);
     expect(p.sites).toEqual(['home']);

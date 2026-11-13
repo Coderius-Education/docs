@@ -19,7 +19,10 @@ export type Plan = {
     tekst: boolean;
     crosslinks: boolean;
     browser: boolean;
+    terminal: boolean;
   };
+  /** De cursussen met les-tabbladen die de job `schermen` meet. */
+  schermen: { sites: string[]; alles: boolean };
   runners: Record<string, Runner>;
   tekst: { alles: boolean; bestanden: string[] };
   vitest: { alles: boolean; bestanden: string[] };
@@ -30,7 +33,7 @@ export type Gewijzigd = Pick<Plan, 'volledig' | 'bestanden'> & Partial<Pick<Plan
 export declare const HEEL_BESTAND: Bereik;
 export declare const GLOBAAL: string[];
 export declare const PER_JOB: Record<
-  'vitest' | 'lint' | 'tekst' | 'crosslinks' | 'browser',
+  'vitest' | 'lint' | 'tekst' | 'crosslinks' | 'browser' | 'terminal' | 'schermen',
   string[]
 >;
 export declare const RUNNERS: Record<string, { site: string; leest: string[]; alles: string[] }>;
@@ -68,4 +71,5 @@ export declare function plan(invoer: {
   volledig?: boolean;
   reden?: string;
   base?: string | null;
+  metTabbladen?: string[];
 }): Plan;

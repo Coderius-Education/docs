@@ -23,7 +23,7 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { appendFileSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -137,7 +137,24 @@ function maakPlan(opties) {
     bestanden = parseDiff(git('diff', '-U0', '--no-color', '--no-renames', '--no-ext-diff', base));
     geraakt = pnpmMappen('--filter', `...[${base}]`);
   }
-  return plan({ bestanden, geraakt, alleMappen, sites, tests, volledig, reden, base });
+  // De cursussen met les-tabbladen: hun schermen meet de job `schermen`.
+  const metTabbladen = sites
+    .filter(({ dir }) => {
+      const config = join(ROOT, dir, 'docusaurus.config.ts');
+      return existsSync(config) && /\blesTabs\s*:/.test(readFileSync(config, 'utf8'));
+    })
+    .map(({ id }) => id);
+  return plan({
+    bestanden,
+    geraakt,
+    alleMappen,
+    sites,
+    tests,
+    volledig,
+    reden,
+    base,
+    metTabbladen,
+  });
 }
 
 function outputs(p) {
@@ -150,6 +167,8 @@ function outputs(p) {
     typecheck: p.pakketten.length > 0,
     ...Object.fromEntries(Object.entries(p.runners).map(([n, r]) => [n, r.draaien])),
     blokken: blokkenNodig(p),
+    schermen: JSON.stringify(p.schermen.sites),
+    meten: p.schermen.sites.length > 0,
   };
   return Object.entries(regels).map(([k, v]) => `${k}=${v}`);
 }

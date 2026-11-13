@@ -1,6 +1,6 @@
 // Meet per les en per tabblad of het op één scherm past.
 //
-//   node scripts/meet-les-tabs.mjs [site-id] [--json] [--les=<stuk van het pad>] [--tegelijk=4] [--klik] [--open] [--verborgen-balken]
+//   node scripts/meet-les-tabs.mjs [site-id] [--json] [--les=<stuk van het pad>] [--tegelijk=4] [--klik] [--open] [--verborgen-balken] [--bronnen=changed.json] [--streng]
 //
 // De les-tabbladen (packages/shared/plugins/les-tabs.js) halen de lange
 // pagina weg, maar een tabblad met een oefenveld of veel theorie kan nog
@@ -71,8 +71,17 @@
 // `innerWidth`. Met `--verborgen-balken` meet het zoals vroeger, zonder
 // schuifbalken: om een meting van voor deze keuze na te spelen.
 //
-// Handmatig, niet in CI: het is een meting voor een auteur, geen controle.
 // Eerst bouwen: `pnpm --filter ./sites/informatica/web build`.
+//
+// In CI (job `schermen`) is het een controle: met `--bronnen=changed.json`
+// meet het alleen de lessen die de wijziging raakt (packages/shared/
+// meet-selectie.js), en met `--streng` stopt het met afsluitcode 1 als een
+// scherm op 1280×720 of 1366×768 niet past, een pagina zijwaarts schuift,
+// de rij tabbladen op twee regels staat, code zijwaarts is afgesneden of een
+// id dubbel is. Een les die bewust niet past, staat met een reden in
+// scripts/meet-les-tabs-uitzonderingen.json. Een open uitklapblok en een
+// klik (`--open`, `--klik`) tellen daar niet: een open antwoord mag het
+// scherm langer maken.
 
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
@@ -93,6 +102,8 @@ const TEGELIJK = Math.max(1, Number(waarden('tegelijk')[0] ?? 4));
 const KLIK = argumenten.includes('--klik');
 const OPEN = argumenten.includes('--open');
 const VERBORGEN_BALKEN = argumenten.includes('--verborgen-balken');
+const STRENG = argumenten.includes('--streng');
+const BRONNEN = waarden('bronnen')[0];
 const BUILD = resolve(join(siteDir(SITE), 'build'));
 const BASIS = `/${SITES_BY_ID[SITE].path}/`;
 const SCHERMEN = [
@@ -157,12 +168,55 @@ function lessen(merk = 'data-les-tabs') {
   // De hele build, niet alleen docs/: robotica heeft de Lego-auto en de
   // Golfbot in eigen docs-plugins, onder lego_auto/ en golfbot/.
   loop(BUILD);
-  return ALLEEN.length ? uit.filter((les) => ALLEEN.some((stuk) => les.includes(stuk))) : uit;
+  const gekozen = KEUZE ? uit.filter((les) => KEUZE.has(les)) : uit;
+  return ALLEEN.length
+    ? gekozen.filter((les) => ALLEEN.some((stuk) => les.includes(stuk)))
+    : gekozen;
+}
+
+/** Alle lessen in de build die gemeten worden: met tabbladen, of als één scherm. */
+function alleLessen() {
+  const uit = [];
+  const loop = (map) => {
+    for (const naam of readdirSync(map).sort()) {
+      const pad = join(map, naam);
+      if (statSync(pad).isDirectory()) {
+        if (!GEEN_LESSEN.includes(relative(BUILD, pad))) loop(pad);
+      } else if (naam === 'index.html') {
+        const html = readFileSync(pad, 'utf8');
+        if (html.includes('data-les-tabs') || html.includes('data-les-zonder-tabs'))
+          uit.push(relative(BUILD, map));
+      }
+    }
+  };
+  loop(BUILD);
+  return uit;
 }
 
 if (!existsSync(BUILD)) {
   console.error(`Geen build in ${BUILD}. Bouw de site eerst.`);
   process.exit(2);
+}
+
+// Met --bronnen: alleen de lessen die de wijziging raakt.
+let KEUZE = null;
+if (BRONNEN) {
+  const { lessenVoorMeting } = require('../packages/shared/meet-selectie.js');
+  const keuze = lessenVoorMeting({
+    plan: JSON.parse(readFileSync(BRONNEN, 'utf8')),
+    siteMap: siteDir(SITE),
+    lessen: alleLessen(),
+    leesBron: (pad) => (existsSync(pad) ? readFileSync(pad, 'utf8') : null),
+  });
+  console.error(
+    keuze.alles
+      ? `Alle ${keuze.lessen.length} lessen: ${keuze.reden}.`
+      : `${keuze.lessen.length} lessen: ${keuze.reden}.`,
+  );
+  for (const pad of keuze.nietGevonden)
+    console.error(`- ${pad}: geen les met tabbladen of één scherm in de build, niets te meten`);
+  if (keuze.lessen.length === 0) process.exit(0);
+  KEUZE = new Set(keuze.lessen);
 }
 
 const server = await serveer();
@@ -756,4 +810,41 @@ if (ALS_JSON) {
   console.log(`\n## Dubbele id's: ${dubbeleIds.length} pagina's\n`);
   for (const d of dubbeleIds) console.log(`- ${naam(d.les)}: ${d.dubbel.join(', ')}`);
   console.log(`\nDe les gebruikt ${kolomBreedte}% van de breedte naast de lessenlijst.`);
+}
+
+if (STRENG) {
+  const uitzonderingen = JSON.parse(
+    readFileSync(new URL('./meet-les-tabs-uitzonderingen.json', import.meta.url), 'utf8'),
+  ).filter((u) => u.site === SITE);
+  const bewust = (les, tab) =>
+    uitzonderingen.some((u) => u.les === les && (u.tab === undefined || u.tab === tab));
+  const fouten = [];
+  for (const r of rijen) {
+    if (bewust(r.les, r.tab)) continue;
+    if (!r.telefoon && r.over > 0)
+      fouten.push(`${r.les} | ${r.tab} | ${r.scherm}: ${r.over} px te lang`);
+    if (r.zijwaarts > 0)
+      fouten.push(`${r.les} | ${r.tab} | ${r.scherm}: ${r.zijwaarts} px te breed`);
+    if (!r.telefoon && r.afgesneden > 0)
+      fouten.push(`${r.les} | ${r.tab} | ${r.scherm}: code ${r.afgesneden} px afgesneden`);
+  }
+  for (const t of tabrijen)
+    if (t.regels > 1 && !bewust(t.les))
+      fouten.push(`${t.les} | ${t.scherm}: de rij tabbladen staat op ${t.regels} regels`);
+  for (const r of zonderTabs) {
+    if (bewust(r.les)) continue;
+    if (!r.telefoon && r.over > 0) fouten.push(`${r.les} | ${r.scherm}: ${r.over} px te lang`);
+    if (r.zijwaarts > 0) fouten.push(`${r.les} | ${r.scherm}: ${r.zijwaarts} px te breed`);
+  }
+  for (const d of dubbeleIds)
+    if (!bewust(d.les)) fouten.push(`${d.les}: dubbele id's ${d.dubbel.join(', ')}`);
+  if (fouten.length) {
+    console.error(`\n${fouten.length} schermen passen niet (zie de schrijfgids, §2):`);
+    for (const f of fouten) console.error(`- ${f}`);
+    console.error(
+      'Splits een te lang scherm met een ### of kort het in; staat het bewust zo, zet het met een reden in scripts/meet-les-tabs-uitzonderingen.json.',
+    );
+    process.exit(1);
+  }
+  console.error('Elk gemeten scherm past.');
 }

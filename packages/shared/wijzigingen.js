@@ -77,6 +77,17 @@ const PER_JOB = {
   // als de python-site gebouwd wordt, dus bij elke wijziging aan de site of
   // aan packages/python-runner.
   browser: ['scripts/rooktest-speeltuin.mjs'],
+  // De rooktest van de oefenterminal van linux in Chromium (job `terminal`):
+  // ook als de linux-site gebouwd wordt.
+  terminal: ['scripts/rooktest-linux.mjs'],
+  // De meting van de schermen (job `schermen`). Verandert hij, dan meet hij
+  // in elke geraakte cursus met tabbladen alle lessen, niet alleen de
+  // gewijzigde. Een cursus die niet gebouwd wordt, meet de nachtelijke run.
+  schermen: [
+    'scripts/meet-les-tabs.mjs',
+    'scripts/meet-les-tabs-uitzonderingen.json',
+    'packages/shared/meet-selectie.js',
+  ],
 };
 
 const COMPILEER = [
@@ -392,6 +403,7 @@ function plan({
   volledig = false,
   reden = '',
   base = null,
+  metTabbladen = [],
 }) {
   const paden = Object.keys(bestanden).sort();
   const bestaat = (p) => bestanden[p].length > 0;
@@ -431,7 +443,16 @@ function plan({
       sites: alleIds,
       ongewijzigd: [],
       pakketten: [...alleMappen].sort(),
-      jobs: { test: true, checks: true, lint: true, tekst: true, crosslinks: true, browser: true },
+      jobs: {
+        test: true,
+        checks: true,
+        lint: true,
+        tekst: true,
+        crosslinks: true,
+        browser: true,
+        terminal: true,
+      },
+      schermen: { sites: alleIds.filter((id) => metTabbladen.includes(id)), alles: true },
       runners: Object.fromEntries(
         Object.keys(RUNNERS).map((n) => [n, { draaien: true, alles: true }]),
       ),
@@ -488,6 +509,13 @@ function plan({
   const crosslinks = geraakteSites.length > 0 || paden.some((p) => past(p, PER_JOB.crosslinks));
   const lint = paden.some((p) => past(p, PER_JOB.lint));
   const browser = geraakteSites.includes('python') || paden.some((p) => past(p, PER_JOB.browser));
+  const terminal = geraakteSites.includes('linux') || paden.some((p) => past(p, PER_JOB.terminal));
+  // De schermen van elke gebouwde cursus met tabbladen (meet-selectie.js
+  // kiest daarin de lessen).
+  const schermen = {
+    sites: geraakteSites.filter((id) => metTabbladen.includes(id)),
+    alles: paden.some((p) => past(p, PER_JOB.schermen)),
+  };
 
   return {
     versie: 1,
@@ -505,7 +533,9 @@ function plan({
       tekst: tekstAlles || tekstBestanden.length > 0,
       crosslinks,
       browser,
+      terminal,
     },
+    schermen,
     runners,
     tekst: { alles: tekstAlles, bestanden: tekstBestanden },
     vitest: { alles: vitestAlles, bestanden: [...vitestBestanden].sort() },
