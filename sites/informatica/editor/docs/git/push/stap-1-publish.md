@@ -13,7 +13,7 @@ Open in VS Code je map `git-oefenen` uit de vorige tutorial. Zorg dat je daar al
 3. VS Code vraagt of je wilt inloggen bij GitHub — klik **Allow** en log in via je browser
 4. VS Code vraagt of de repo **public** of **private** moet zijn. **Belangrijk:** kies hetzelfde als wat je op github.com hebt gekozen, anders maakt VS Code een tweede nieuwe repo aan.
 
-   **Tip:** als je al een lege repo op GitHub hebt gemaakt (in de vorige stap), kies dan de optie die naar die bestaande repo verwijst.
+   **Tip:** je maakte al een lege repository in [GitHub: account en repo](site:editor/git/github/stap-2-repo). Biedt VS Code aan om die bestaande repository te gebruiken, kies dan dat.
 5. Wacht tot VS Code klaar is — bovenaan zie je kort een voortgangsbalk
 
 ## Wat je nu ziet

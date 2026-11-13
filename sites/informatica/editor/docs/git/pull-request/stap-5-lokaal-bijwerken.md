@@ -14,19 +14,19 @@ Online is alles netjes: je commits zitten in `main`, je feature-branch is weg. L
 2. Wissel via de statusbalk linksonder naar **main**
 3. Ga naar **Source Control** en klik **Sync Changes**
 
-   Dat doet `git pull` — de merge-commit komt binnen. Open `hello.txt`: je welkomsbericht staat erin, ook lokaal op `main`.
+   Dat doet `git pull`: de merge-commit komt binnen. Open `hello.txt`: je afscheidsregel staat erin, ook lokaal op `main`.
 
 ## Verwijder de lokale feature-branch
 
 1. Open het **Command Palette** met **Ctrl+Shift+P** (Windows/Linux) of **Cmd+Shift+P** (macOS)
 2. Typ `Git: Delete Branch...` en druk **Enter**
-3. Kies `feature/welkomsbericht`
+3. Kies `feature/afscheid`
 
 Klaar — je werkmap is opgeruimd, `main` is up-to-date, en je hebt je eerste pull-request-cyclus voltooid.
 
 ## Wat je nu ziet
 
-Linksonder staat `main`, `hello.txt` bevat je welkomsbericht, en het menu achter de branchnaam bevat geen `feature/welkomsbericht` meer. In **Source Control Graph** staat bovenaan de merge-commit die GitHub maakte.
+Linksonder staat `main`, `hello.txt` bevat je afscheidsregel, en het menu achter de branchnaam bevat geen `feature/afscheid` meer. In **Source Control Graph** staat bovenaan de merge-commit die GitHub maakte.
 
 ## De complete cyclus, kort
 

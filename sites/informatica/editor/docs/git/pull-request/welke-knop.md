@@ -11,6 +11,7 @@ les_tabs: false
 
 | In VS Code | Doet hetzelfde als |
 |:---|:---|
+| Statusbalk → **+ Create new branch from...** | `git checkout -b <naam>` |
 | **Publish Branch** (op een feature-branch) | `git push -u origin <branch>` |
 | Statusbalk → naar `main` wisselen | `git checkout main` |
 | **Sync Changes** op `main` (na merge online) | `git pull` |

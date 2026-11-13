@@ -33,20 +33,21 @@ VS Code voegt de commits van je feature-branch samen met `main`. Open `hello.txt
 git merge feature/welkomsbericht
 ```
 
-## En als er een conflict is?
+## Zelf een conflict maken
+
+### Wat een conflict is
 
 Als je dezelfde regel op `main` én op de feature-branch hebt aangepast, weet git niet welke versie het moet kiezen. Dat heet een **merge conflict**. Je merge stopt halverwege en git zet allebei de versies in je bestand, met streepjes ertussen.
 
-In deze tutorial werkte je alleen op de feature-branch, dus je hebt er geen gekregen. Wil je weten hoe het eruitziet voordat je het een keer onverwacht tegenkomt, maak er dan zelf een.
+In deze tutorial werkte je alleen op de feature-branch, dus je hebt er geen gekregen. In de volgende stappen maak je er zelf een en los je hem op. Dat duurt vijf minuten, en daarna schrik je niet meer als je er onverwacht een tegenkomt. Wil je dat nu niet, ga dan door naar [stap 5](site:editor/git/branches/stap-5-verwijderen).
 
-<details>
-<summary>Zelf een conflict maken en oplossen</summary>
-
-Dit duurt vijf minuten en is de enige manier om te weten hoe het voelt.
+### Het conflict maken
 
 1. Zorg dat je op `main` staat. Open `hello.txt` en verander de eerste regel in `Hallo vanaf main.` Sla op, stage en commit met de boodschap `regel van main`.
 2. Wissel naar `feature/welkomsbericht`. Verander diezelfde eerste regel in `Hallo vanaf de feature.` Sla op, stage en commit met `regel van de feature`.
-3. Wissel terug naar `main` en merge de feature-branch, zoals je eerder in deze stap deed.
+3. Wissel terug naar `main`. Klik in Source Control op de `...`, kies **Branch** → **Merge Branch...** en kies `feature/welkomsbericht`.
+
+### De melding lezen
 
 Nu klapt het. VS Code meldt bovenin dat er een conflict is, en `hello.txt` ziet er zo uit:
 
@@ -60,7 +61,9 @@ Hallo vanaf de feature.
 
 Lees dat als een keuzemenu. Boven de streep staat wat er op je huidige branch stond (`HEAD`, dus `main`), onder de streep wat de andere branch meebrengt.
 
-VS Code zet vier kleine knoppen boven het blok:
+### Een versie kiezen
+
+VS Code zet vier kleine knoppen boven het blok met de twee versies in `hello.txt`:
 
 | Knop | Wat je overhoudt |
 |:---|:---|
@@ -69,16 +72,17 @@ VS Code zet vier kleine knoppen boven het blok:
 | **Accept Both Changes** | allebei de regels, onder elkaar |
 | **Compare Changes** | de twee versies naast elkaar, om te kiezen |
 
-4. Klik er een aan, of typ zelf iets anders in dat blok — je mag ook een derde versie schrijven die geen van beide is.
-5. Controleer dat `<<<<<<<`, `=======` en `>>>>>>>` weg zijn. Blijft er één staan, dan komt hij letterlijk in je commit.
-6. Stage `hello.txt` en commit. De boodschap staat al voorgevuld met `Merge branch 'feature/welkomsbericht'` — die mag je zo laten.
+Klik er een aan, of typ zelf iets anders in dat blok. Je mag ook een derde versie schrijven die geen van beide is.
+
+### De merge afmaken
+
+1. Controleer dat `<<<<<<<`, `=======` en `>>>>>>>` uit `hello.txt` weg zijn. Blijft er één staan, dan komt hij letterlijk in je commit.
+2. Stage `hello.txt` en commit. De boodschap staat al voorgevuld met `Merge branch 'feature/welkomsbericht'`: die mag je zo laten.
 
 Klaar. Een conflict is geen fout van jou: het is git die weigert te gokken.
 
-**Vastgelopen halverwege?** Je kunt de merge altijd afbreken en doen alsof er niets gebeurd is:
+**Vastgelopen halverwege?** Je kunt de merge altijd afbreken en doen alsof er niets gebeurd is. Open een terminal via **Terminal** → **New Terminal** en typ:
 
 ```bash
 git merge --abort
 ```
-
-</details>

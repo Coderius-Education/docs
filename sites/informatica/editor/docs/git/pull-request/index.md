@@ -29,4 +29,6 @@ De typische cyclus:
 
 ## Aan de slag
 
-Zorg dat je een feature-branch hebt met minstens één commit (uit [Branches: Stap 3](site:editor/git/branches/stap-3-commits)). Begin daarna met **[Stap 1: je feature-branch pushen](site:editor/git/pull-request/stap-1-branch-pushen)**.
+De branch uit [Branches](site:editor/git/branches) heb je daar gemerged en verwijderd. Voor deze tutorial maak je in stap 1 een nieuwe branch, met een nieuwe wijziging.
+
+Begin met **[Stap 1: een nieuwe branch pushen](site:editor/git/pull-request/stap-1-branch-pushen)**.

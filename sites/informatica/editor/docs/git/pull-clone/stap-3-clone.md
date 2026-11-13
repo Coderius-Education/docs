@@ -6,13 +6,9 @@ title: "Stap 3: een bestaand project klonen"
 
 # Stap 3: een bestaand project klonen
 
-**Clonen** is een complete kopie maken van een online repository op je computer. Je gebruikt het wanneer:
+**Clonen** is een complete kopie maken van een online repository op je computer. Dat doe je als je je eigen project op een nieuwe computer wilt zetten (thuis je werk van school ophalen), een project van iemand anders wilt hebben of samenwerkt aan een schoolproject.
 
-- Je je eigen project op een nieuwe computer wil zetten (bijvoorbeeld: thuis je werk van school ophalen).
-- Je een project van iemand anders wil hebben.
-- Je samenwerkt aan een schoolproject.
-
-## Hoe:
+## Zo kloon je
 
 1. Ga naar github.com en open de repository die je wilt klonen
 2. Klik op de groene **Code**-knop

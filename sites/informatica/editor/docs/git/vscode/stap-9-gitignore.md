@@ -16,8 +16,8 @@ Sla op. Maak daarna op dezelfde manier een bestand `geheim.txt` met wat tekst er
 
 **Maak `.gitignore` in VS Code, niet in Verkenner.** Windows laat je in Verkenner geen bestandsnaam typen die met een punt begint.
 
+Kijk in **Source Control**: daar staat alleen `.gitignore` als nieuw bestand. Stage `.gitignore` en commit hem. Die hoort in je repository, want anders weet niemand anders welke bestanden genegeerd moeten worden.
+
 ## Wat je nu ziet
 
-In **Source Control** staat alleen `.gitignore` als nieuw bestand. `geheim.txt` staat er **niet** bij — git negeert het. In het Explorer-paneel is `geheim.txt` grijs geworden.
-
-Stage `.gitignore` en commit hem: die hoort in je repository, want anders weet niemand anders welke bestanden genegeerd moeten worden.
+Het Source Control-paneel is leeg. `geheim.txt` heeft er geen moment bij gestaan: git negeert het. In het Explorer-paneel is `geheim.txt` grijs.

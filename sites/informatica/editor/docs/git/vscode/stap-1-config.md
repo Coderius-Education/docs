@@ -16,7 +16,7 @@ git config --global init.defaultBranch main
 
 Vervang de naam en het e-mailadres door je eigen gegevens. Git slaat dit op voor al je toekomstige projecten.
 
-## Waarom die derde regel
+## Waarom je branch main heet
 
 Zonder de regel `git config --global init.defaultBranch main` noemt git je eerste branch `master`. GitHub en de rest van deze cursus gaan uit van `main`, en dan loopt het mis op het moment dat je gaat pushen:
 
@@ -33,6 +33,8 @@ git branch -m main
 ```
 
 ## Wat je nu ziet
+
+Controleer het in dezelfde terminal van VS Code. Typ:
 
 ```bash
 git config --global --list

@@ -20,8 +20,4 @@ Met een **feature-branch** los je dit op:
 
 Branches zijn vooral handig als je samenwerkt met anderen, maar ook solo zijn ze nuttig om experimenten en stabiele versies gescheiden te houden.
 
-## Aan de slag
-
-Begin met **[Stap 1: een branch aanmaken](site:editor/git/branches/stap-1-aanmaken)**.
-
-Werk in dezelfde `git-oefenen`-map die je in de vorige tutorials hebt gemaakt.
+Werk in dezelfde `git-oefenen`-map die je in de vorige tutorials hebt gemaakt. Begin met **[Stap 1: een branch aanmaken](site:editor/git/branches/stap-1-aanmaken)**.

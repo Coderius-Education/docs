@@ -10,6 +10,21 @@ Deze tutorial gebruikt Python 3.14. Heb je een andere versie, of loopt je projec
 
 Een virtual environment hoort bij de Python waarmee je hem maakte. Installeer je een andere Python, dan wisselt `.venv` niet mee. Je maakt hem dus opnieuw. Je code raak je daarbij niet kwijt: die staat naast `.venv`, niet erin.
 
+<details>
+<summary>Op een Mac of Linux</summary>
+
+Installeer Python 3.14 zoals in [stap 3](site:editor/python/stap-3-installeren). Een andere versie hoef je niet weg te halen: je noemt de versie in het commando. Sluit VS Code en typ in de Terminal, in je projectmap:
+
+```bash
+rm -rf .venv
+python3.14 -m venv .venv
+code .
+```
+
+In de terminal van VS Code is `python3 --version` daarna `Python 3.14`, en je installeert de packages opnieuw met `python3 -m pip`.
+
+</details>
+
 ## Welke versie heb je \{#welke-versie}
 
 Open PowerShell vanuit je projectmap zoals in [stap 2](site:editor/python/stap-2-powershell) en typ:
@@ -18,7 +33,7 @@ Open PowerShell vanuit je projectmap zoals in [stap 2](site:editor/python/stap-2
 python --version
 ```
 
-Begint het antwoord met `Python 3.14`, sla dan het volgende deel over en ga verder bij [De oude omgeving weggooien](#de-oude-omgeving-weggooien).
+Begint het antwoord met `Python 3.14`, sla dan Python 3.14 neerzetten over en ga verder bij [De oude omgeving weggooien](#de-oude-omgeving-weggooien).
 
 ## Python 3.14 neerzetten \{#python-neerzetten}
 
@@ -57,7 +72,7 @@ Twee versies naast elkaar kan, maar dan kiest `python` er zelf een. Werk je met 
 py -3.14 -m venv .venv
 ```
 
-Gebruik dat commando in het deel [Een nieuwe omgeving maken](#een-nieuwe-omgeving-maken) in plaats van `python -m venv .venv`. In de omgeving zelf is `python` daarna altijd 3.14.
+Gebruik dat commando bij [Een nieuwe omgeving maken](#een-nieuwe-omgeving-maken) in plaats van `python -m venv .venv`. In de omgeving zelf is `python` daarna altijd 3.14.
 
 </details>
 
@@ -104,18 +119,3 @@ python --version
 Het antwoord begint met `Python 3.14`. Met `python -m pip list` zie je de packages die je net terugzette.
 
 Staat er nog een andere versie, dan maakte `python` de omgeving met de verkeerde Python. Kijk dan bij [Python 3.14 neerzetten](#python-neerzetten) of er nog een andere versie in de lijst staat.
-
-<details>
-<summary>Op een Mac of Linux</summary>
-
-Installeer Python 3.14 zoals in [stap 3](site:editor/python/stap-3-installeren). Een andere versie hoef je niet weg te halen: je noemt de versie in het commando. Sluit VS Code en typ in de Terminal, in je projectmap:
-
-```bash
-rm -rf .venv
-python3.14 -m venv .venv
-code .
-```
-
-In de terminal van VS Code is `python3 --version` daarna `Python 3.14`, en je installeert de packages opnieuw met `python3 -m pip`.
-
-</details>

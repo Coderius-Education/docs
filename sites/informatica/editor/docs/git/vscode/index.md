@@ -14,16 +14,20 @@ Zorg dat je het volgende hebt:
 - **VS Code** geïnstalleerd (zie [Installatie VS Code](site:editor/installatie-vscode))
 - **Git** geïnstalleerd op je computer
 
-Heb je git nog niet?
+Heb je git nog niet, of weet je het niet zeker? Klik op jouw systeem.
 
-### Windows
+<details>
+<summary>Git op Windows</summary>
 
 1. Ga naar [https://git-scm.com/download/win](https://git-scm.com/download/win)
 2. De download start automatisch
-3. Open het `.exe`-bestand en klik door de installatie — de standaard instellingen zijn prima
+3. Open het `.exe`-bestand en klik door de installatie. De standaardinstellingen zijn prima
 4. Herstart VS Code als die al open stond
 
-### macOS
+</details>
+
+<details>
+<summary>Git op een Mac</summary>
 
 Open de terminal (in VS Code: **Terminal** → **New Terminal**) en typ:
 
@@ -33,9 +37,12 @@ git --version
 
 Als git niet aanwezig is, vraagt macOS om het te installeren. Volg de stappen.
 
-### Linux
+</details>
 
-Git zit meestal al op je systeem. Controleer het met:
+<details>
+<summary>Git op Linux</summary>
+
+Git zit meestal al op je systeem. Controleer het in een terminal (in VS Code: **Terminal** → **New Terminal**) met:
 
 ```bash
 git --version
@@ -49,6 +56,6 @@ sudo dnf install git      # Fedora
 sudo pacman -S git        # Arch, Manjaro
 ```
 
-## Aan de slag
+</details>
 
-Begin met **[Stap 1: vertel git wie je bent](site:editor/git/vscode/stap-1-config)**.
+Staat alles klaar? Begin met **[Stap 1: vertel git wie je bent](site:editor/git/vscode/stap-1-config)**.

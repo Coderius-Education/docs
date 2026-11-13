@@ -162,6 +162,40 @@ describe('de volgorde van de tutorials', () => {
   // build daarover klaagt — de links blijven immers bestaan.
   const VOLGORDE = ['basis', 'github', 'vscode', 'push', 'pull-clone', 'branches', 'pull-request'];
 
+  it('geen tutorial vraagt om een branch die een eerdere tutorial verwijderde', () => {
+    // De pull-request-tutorial vroeg "wissel naar feature/welkomsbericht",
+    // terwijl branches/stap-5 die branch net had weggegooid: wie de tutorials
+    // op volgorde deed, had niets om te pushen. Een branch die een tutorial
+    // verwijdert (`git branch -d <naam>`), noemt een latere tutorial niet
+    // meer in zijn inleiding of zijn stappen. De probleempagina mag het wel:
+    // die legt uit waar de branch gebleven is.
+    const fout: string[] = [];
+    const weg = new Set<string>();
+
+    for (const map of VOLGORDE) {
+      const lessen = paginas().filter(
+        (p) => p.includes(`/${map}/`) && /\/(index|stap-[^/]*)\.mdx?$/.test(p),
+      );
+      for (const pad of lessen) {
+        const tekst = readFileSync(pad, 'utf8');
+        for (const naam of weg) {
+          if (tekst.includes(naam)) fout.push(`${relative(GIT, pad)} noemt ${naam}`);
+        }
+      }
+      for (const pad of lessen) {
+        for (const m of readFileSync(pad, 'utf8').matchAll(/^git branch -d (\S+)/gm)) weg.add(m[1]);
+      }
+    }
+
+    // De test moet iets te bewaken hebben: branches ruimt zijn branch op.
+    expect([...weg]).toContain('feature/welkomsbericht');
+    expect(fout).toEqual([]);
+    // En de pull-request-tutorial maakt daarom zelf een nieuwe branch.
+    expect(readFileSync(join(GIT, 'pull-request/stap-1-branch-pushen.md'), 'utf8')).toContain(
+      'Create new branch',
+    );
+  });
+
   function positie(map: string): number {
     return JSON.parse(readFileSync(join(GIT, map, '_category_.json'), 'utf8')).position;
   }

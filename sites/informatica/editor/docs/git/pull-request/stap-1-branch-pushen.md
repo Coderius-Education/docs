@@ -1,31 +1,40 @@
 ---
 sidebar_position: 1
 sidebar_label: "Stap 1: branch pushen"
-title: "Stap 1: je feature-branch pushen"
+title: "Stap 1: een nieuwe branch pushen"
 ---
 
-# Stap 1: je feature-branch pushen
+# Stap 1: een nieuwe branch pushen
 
-GitHub kent je feature-branch nog niet — die heb je alleen op je eigen computer. Je moet hem eerst pushen.
+Je branch uit [Branches](site:editor/git/branches) is gemerged en verwijderd. Voor een pull request maak je daarom een nieuwe branch met een nieuwe wijziging, en die push je naar GitHub.
 
-1. Open je `git-oefenen`-map in VS Code
-2. Wissel naar je feature-branch via de statusbalk linksonder (bv. `feature/welkomsbericht`)
-3. Zorg dat je minstens één commit op deze branch hebt staan (zo niet: maak er even één, zie [Branches Stap 3](site:editor/git/branches/stap-3-commits))
-4. Ga naar **Source Control** (Ctrl+Shift+G)
-5. Klik op **Publish Branch**
+## Een nieuwe branch met een wijziging
 
-Voor een branch die nog niet op GitHub bestaat, heet de knop **Publish Branch**. Voor een branch die er al staat, heet hij gewoon **Sync Changes**.
+1. Open je `git-oefenen`-map in VS Code en kijk of linksonder `main` staat
+2. Ga naar **Source Control** (Ctrl+Shift+G). Staat er een cijfer bij **Sync Changes**, klik er dan op: zo staat ook je werk uit de vorige tutorial op GitHub
+3. Klik linksonder op `main`, kies **+ Create new branch from...**, kies **main** en noem de branch `feature/afscheid`
+4. Open `hello.txt`, voeg onderaan de regel `Tot de volgende keer.` toe en sla op
+5. Stage (`+`), typ de commit-boodschap `afscheid toegevoegd` en commit
+
+## De branch pushen
+
+GitHub kent `feature/afscheid` nog niet: die branch staat alleen op je eigen computer.
+
+1. Kijk of linksonder `feature/afscheid` staat
+2. Klik in **Source Control** op **Publish Branch**
+
+Voor een branch die nog niet op GitHub bestaat, heet de knop **Publish Branch**. Voor een branch die er al staat, heet hij **Sync Changes**.
 
 **Wat gebeurde er onder de motorkap?**
 
 ```bash
-git push -u origin feature/welkomsbericht
+git push -u origin feature/afscheid
 ```
 
 ## Controleer op GitHub
 
 1. Open je repository-pagina op github.com
-2. Bovenaan zie je een gele banner: **"feature/welkomsbericht had recent pushes — Compare & pull request"**
-3. Boven het bestandenlijstje staat een dropdown waar standaard `main` in staat. Klik erop — je nieuwe branch staat in de lijst.
+2. Bovenaan zie je een gele banner: **"feature/afscheid had recent pushes — Compare & pull request"**
+3. Boven het bestandenlijstje staat een dropdown waar standaard `main` in staat. Klik erop: je nieuwe branch staat in de lijst.
 
 Die gele banner is je toegangskaartje voor de volgende stap.

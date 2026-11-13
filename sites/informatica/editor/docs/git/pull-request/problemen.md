@@ -7,11 +7,17 @@ les_tabs: false
 
 # Er gaat iets mis
 
+## `feature/welkomsbericht` staat niet meer in de lijst met branches
+
+**Oorzaak:** die branch heb je in [Branches](site:editor/git/branches) gemerged en verwijderd. Hij is dus terecht weg.
+
+**Oplossing:** maak een nieuwe branch met een nieuwe wijziging, zoals in [Stap 1](site:editor/git/pull-request/stap-1-branch-pushen).
+
 ## Ik zie geen gele banner "Compare & pull request"
 
 **Oorzaak:** die banner verschijnt alleen kort na een push, en verdwijnt daarna.
 
-**Oplossing:** klik op het tabblad **Pull requests** bovenaan → **New pull request**, en kies bij **compare** je feature-branch. Zie [Stap 2](site:editor/git/pull-request/stap-2-pr-openen).
+**Oplossing:** klik op GitHub op het tabblad **Pull requests** → **New pull request**, en kies bij **compare** je feature-branch. Zie [Stap 2](site:editor/git/pull-request/stap-2-pr-openen).
 
 ## Mijn branch staat niet in de lijst bij `compare`
 
@@ -31,7 +37,13 @@ les_tabs: false
 
 **Oplossing:** haal `main` binnen op je feature-branch en los het conflict lokaal op, zoals in [Branches: Er gaat iets mis](site:editor/git/branches/problemen). Push daarna opnieuw; de PR werkt zichzelf bij en de knop wordt weer groen.
 
-## Na de merge staat mijn welkomsbericht niet in mijn lokale main
+## Onder Files changed staan meer regels dan mijn afscheidsregel
+
+**Oorzaak:** op je `main` stonden nog commits uit de vorige tutorial die niet op GitHub stonden. Je nieuwe branch nam ze mee, en GitHub toont ze nu als nieuw.
+
+**Oplossing:** je hoeft niets te herstellen: merge de pull request, dan staan ze allemaal in `main`. Klik de volgende keer eerst op **Sync Changes** op `main`, zoals in [Stap 1](site:editor/git/pull-request/stap-1-branch-pushen), en maak daarna pas je branch.
+
+## Na de merge staat mijn nieuwe regel niet in mijn lokale main
 
 **Oorzaak:** de merge gebeurde op GitHub's server. Je eigen computer weet daar nog niets van.
 

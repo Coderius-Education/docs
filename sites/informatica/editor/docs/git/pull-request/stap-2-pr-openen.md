@@ -10,16 +10,16 @@ Op je repository-pagina op github.com:
 
 1. Klik op de groene knop **Compare & pull request** in de gele banner
 
-   Geen banner meer? Klik op het tabblad **Pull requests** bovenaan → **New pull request** → kies bij **compare** je feature-branch.
+   Geen banner meer? Klik op GitHub op het tabblad **Pull requests** → **New pull request** → kies bij **compare** je feature-branch.
 
 2. Je komt op een pagina **Open a pull request**. Controleer bovenaan:
    - **base:** `main` — dit is de doel-branch waar je commits in wil mergen
-   - **compare:** `feature/welkomsbericht` — dit is de bron-branch met je nieuwe commits
+   - **compare:** `feature/afscheid` — dit is de bron-branch met je nieuwe commit
 
 3. Vul een duidelijke **titel** in, bijvoorbeeld:
 
 ```
-Welkomsbericht onderaan hello.txt toevoegen
+Afscheidsregel onderaan hello.txt toevoegen
 ```
 
 4. In het beschrijvingsveld kun je extra uitleg geven. Voor een kleine wijziging mag het leeg, maar het is een goede gewoonte om kort uit te leggen *waarom* je het doet.

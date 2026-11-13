@@ -111,13 +111,75 @@ describe('de schermen van de editor-cursus', () => {
     );
   });
 
-  it('de tabbladen van GitHub heten de tabbladen van GitHub', () => {
-    // De les heeft nu zelf tabbladen: "ga naar het tabblad Code bovenaan"
-    // wees daardoor naar twee dingen.
-    const pr = paginas.filter((p) => p.naam.startsWith('git/pull-request/stap-'));
-    for (const p of pr) {
-      for (const regel of p.bron.split('\n').filter((r) => /\btabblad(en)?\b/.test(r)))
-        expect(regel, p.naam).toMatch(/GitHub|github\.com|Pull requests|belangrijkste tabblad/);
+  it('een tabblad van GitHub of VS Code heet zo, op elke pagina', () => {
+    // De les heeft nu zelf tabbladen: "ga naar het tabblad Code bovenaan" en
+    // "in de tab bovenaan staat hello.txt" wezen daardoor naar twee dingen.
+    // Eerst keek deze test alleen naar de pull-request-stappen en alleen naar
+    // het woord tabblad; "de tab" in git/vscode glipte erdoor. Een pagina die
+    // nu één scherm is, kan morgen tabbladen krijgen, dus die telt ook mee.
+    // De Tab-toets (met een hoofdletter) is iets anders.
+    const fout: string[] = [];
+    for (const p of paginas) {
+      if (/^les_tabs: false$/m.test(p.bron)) continue;
+      for (const regel of p.bron.split('\n')) {
+        if (!/\b(tab|[Tt]abblad(en)?)\b/.test(regel)) continue;
+        if (!/GitHub|github\.com|VS Code/.test(regel))
+          fout.push(`${p.naam}: ${regel.slice(0, 80)}`);
+      }
     }
+    expect(fout).toEqual([]);
+  });
+
+  it('een genummerde lijst loopt niet door over een tabblad of stap', () => {
+    // In git/vscode/stap-2 begon het tabblad Maak een bestand met "3.": de
+    // lijst liep door over drie tabbladen, en de leerling zocht 1 en 2. Na
+    // een `##` of `###` begint een lijst dus weer bij 1. Binnen één scherm mag
+    // hij doorlopen na een codeblok of een alinea.
+    const fout: string[] = [];
+    for (const p of paginas) {
+      if (schermen(p.bron).length === 0) continue;
+      let kop = '';
+      let inCode = false;
+      let lijstGezien = false;
+      for (const regel of p.bron.split('\n')) {
+        if (/^\s*```/.test(regel)) inCode = !inCode;
+        if (inCode) continue;
+        if (/^#{2,3} /.test(regel)) {
+          kop = regel;
+          lijstGezien = false;
+          continue;
+        }
+        const nummer = /^(\d+)\. /.exec(regel)?.[1];
+        if (!nummer || !kop || lijstGezien) continue;
+        lijstGezien = true;
+        if (nummer !== '1') fout.push(`${p.naam} | ${kop}: begint met ${nummer}.`);
+      }
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('wat er op een ander systeem anders gaat, staat op het scherm met de stappen', () => {
+    // In de python-tutorial stond "Op een Mac of Linux" (en "De keuze staat
+    // niet in het menu") onder Wat je nu ziet: een tabblad verder dan de
+    // stappen waar een Mac-leerling op vastliep. Zo'n blok staat vóór
+    // `## Wat je nu ziet`, ook op een pagina die nu één scherm is.
+    const fout: string[] = [];
+    for (const p of paginas) {
+      const na = p.bron.split(/^## Wat je nu ziet$/m)[1];
+      if (na === undefined) continue;
+      const tot = na.search(/^## /m);
+      const controle = tot < 0 ? na : na.slice(0, tot);
+      for (const m of controle.matchAll(/<summary>([^<]*)<\/summary>/g)) {
+        if (/Mac|Linux|Windows|staat niet in het menu|geblokkeerd/.test(m[1]))
+          fout.push(`${p.naam}: "${m[1]}" staat onder Wat je nu ziet`);
+      }
+    }
+    expect(fout).toEqual([]);
+    // En de python-tutorial heeft die blokken nog: Windows is de hoofdroute.
+    const metBlok = paginas.filter(
+      (p) =>
+        /^python\/stap-/.test(p.naam) && /<summary>Op een Mac of Linux<\/summary>/.test(p.bron),
+    );
+    expect(metBlok.length).toBeGreaterThanOrEqual(6);
   });
 });
