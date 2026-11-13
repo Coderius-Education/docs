@@ -3,7 +3,9 @@ import {
   deleteFile,
   genegeerd,
   gevolgd,
+  inEenCommit,
   inGitignore,
+  indexVan,
   runCommand,
   schrijfBestand,
 } from './gitEngine';
@@ -41,12 +43,17 @@ export type Scenario = {
     description: string;
     check: (state: RepoState) => boolean;
     /**
-     * Zegt het als het doel zo niet meer te halen is, en wat de leerling dan
-     * doet. In stap 7 stond het doel op groen terwijl git `geheim.txt` gewoon
-     * bleef volgen: wie eerst `git add .` typte, leerde zo het omgekeerde van
-     * de les.
+     * Zegt het als het doel niet meer te halen is, met de echte reden, en
+     * wat de leerling dan doet. Alleen als het echt niet meer kan: in stap 7
+     * stond hier "begin opnieuw" terwijl `git restore --staged geheim.txt`
+     * het nog oploste.
      */
     vast?: (state: RepoState) => string | null;
+    /**
+     * Zegt wat er nog in de weg staat als het doel wel te halen is, maar niet
+     * meer met wat de beschrijving zegt. Staat in plaats van de beschrijving.
+     */
+    tip?: (state: RepoState) => string | null;
   };
   /** Wat de leerling zelf nog doet om het doel te halen, na de voorbereiding. */
   oplossing: (string | Handeling)[];
@@ -97,7 +104,8 @@ export const SCENARIOS: Record<string, Scenario> = {
     voorbereiding: ['git init'],
     objective: {
       description: 'Voer git status uit. Je zou hello.txt als untracked moeten zien.',
-      check: (s) => s.initialized && s.commands.includes('git status'),
+      // Ook `git status -s`: elk status-commando dat lukte.
+      check: (s) => s.initialized && s.gelukt.some((c) => /^git status(\s|$)/.test(c)),
     },
     oplossing: ['git status'],
   },
@@ -145,8 +153,11 @@ export const SCENARIOS: Record<string, Scenario> = {
     voorbereiding: NA_STAP_5,
     objective: {
       description: 'Bekijk de geschiedenis met git log.',
+      // Elk log-commando dat het log toonde: ook `git log -1` en
+      // `git log --oneline -n 2`, niet `git log --foo`. Eerst telden alleen
+      // `git log` en `git log --oneline`.
       check: (s) =>
-        s.commits.length >= 1 && s.commands.some((c) => /^git log( --oneline)?$/.test(c)),
+        s.commits.length >= 1 && s.gelukt.some((c) => /^git( -P| --no-pager)* log(\s|$)/.test(c)),
     },
     oplossing: ['git log'],
   },
@@ -157,12 +168,25 @@ export const SCENARIOS: Record<string, Scenario> = {
     voorbereiding: NA_STAP_5,
     objective: {
       description: 'Maak een .gitignore aan die geheim.txt negeert.',
-      // Genegeerd is: in .gitignore, en nog niet door git gevolgd.
-      check: (s) => genegeerd(s, 'geheim.txt'),
+      // Kijkt naar wat er nu is: geheim.txt staat in de werkmap, .gitignore
+      // negeert het (een weggegooide .gitignore negeert niets meer), git volgt
+      // het niet, en het wachtwoord staat in geen commit.
+      check: (s) =>
+        'geheim.txt' in s.workingDir && genegeerd(s, 'geheim.txt') && !inEenCommit(s, 'geheim.txt'),
       vast: (s) =>
-        inGitignore(s, 'geheim.txt') && gevolgd(s, 'geheim.txt')
-          ? 'git volgt geheim.txt al, en dan doet .gitignore niets meer. Klik op herstart oefening en maak .gitignore vóórdat je git add doet.'
+        inEenCommit(s, 'geheim.txt') && !teRedden(s)
+          ? 'geheim.txt staat al in een commit, en daar haalt .gitignore het niet meer uit: het wachtwoord blijft in de geschiedenis. Klik op herstart oefening en maak .gitignore voordat je git add doet.'
           : null,
+      tip: (s) => {
+        if (!inGitignore(s, 'geheim.txt')) return null;
+        if (inEenCommit(s, 'geheim.txt'))
+          return teRedden(s)
+            ? 'geheim.txt staat in je laatste commit. Haal het eruit met git rm --cached geheim.txt en vervang die commit met git commit --amend -m "…".'
+            : null;
+        return gevolgd(s, 'geheim.txt')
+          ? 'git volgt geheim.txt nog: het staat in staging, en dan doet .gitignore niets. Haal het eruit met git restore --staged geheim.txt.'
+          : null;
+      },
     },
     oplossing: [
       { soort: 'schrijf', naam: 'geheim.txt', inhoud: 'wachtwoord123\n' },
@@ -172,6 +196,23 @@ export const SCENARIOS: Record<string, Scenario> = {
     ],
   },
 };
+
+/**
+ * Staat geheim.txt alleen in de laatste commit, en verandert die commit zonder
+ * geheim.txt nog iets? Dan haalt `git rm --cached` met `git commit --amend`
+ * het uit de geschiedenis. Anders zou --amend een lege commit maken, en die
+ * weigert git (de simulator kent geen `git reset`).
+ */
+function teRedden(s: RepoState): boolean {
+  const laatste = s.commits.find((c) => c.id === s.head);
+  if (!laatste || s.commits.some((c) => c !== laatste && 'geheim.txt' in c.tree)) return false;
+  const ouder = s.commits.find((c) => c.id === laatste.parent)?.tree ?? {};
+  const zonder = Object.fromEntries(
+    Object.entries(indexVan(s)).filter(([naam]) => naam !== 'geheim.txt'),
+  );
+  const namen = new Set([...Object.keys(zonder), ...Object.keys(ouder)]);
+  return [...namen].some((n) => zonder[n] !== ouder[n]);
+}
 
 export function scenario(id: string): Scenario {
   const gevonden = SCENARIOS[id];

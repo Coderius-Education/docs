@@ -53,8 +53,6 @@ type EditorTarget = { mode: 'new' } | { mode: 'edit'; name: string };
 const HOOGSTE_UITVOER = 320;
 const LAAGSTE_NAAST = 200;
 const LAAGSTE_ONDER = 154;
-/** Een tik op een telefoon zet de cursor niet in de invoer: dan springt het toetsenbord open. */
-const MUIS = '(pointer: fine)';
 const VAST = '(min-width: 997px)';
 const NAAST = '(min-width: 1280px)';
 
@@ -108,6 +106,11 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   const [editorFout, setEditorFout] = useState<string | null>(null);
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const vensterRef = useRef<HTMLDialogElement>(null);
+  /** De knop die het venster opende: daar gaat de focus terug als het sluit. */
+  const openerRef = useRef<HTMLElement | null>(null);
+  /** Waarmee de leerling het laatst in de uitvoer drukte: muis, pen of vinger. */
+  const aanwijzerRef = useRef('mouse');
 
   // Een stap is één scherm: de uitleg, de simulator en wat eronder staat. De
   // uitvoer van de terminal krijgt daarom de hoogte die op het scherm
@@ -152,21 +155,41 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
     };
   }, []);
 
-  // Ook als de hoogte verandert: die komt na de eerste regels, en de
-  // voorbereiding stond dan bovenaan in beeld in plaats van de laatste regel.
+  // Na elk commando staat zijn uitvoer in beeld. Past die niet in het vak,
+  // dan staat het commando bovenaan en schuift de rest eronder, zoals in
+  // `less`: onderaan stond na `git log` de oudste commit in beeld, en de
+  // nieuwste, waar het om gaat, erboven buiten het vak. Ook als de hoogte
+  // verandert: die komt na de eerste regels.
   // biome-ignore lint/correctness/useExhaustiveDependencies: history en maxUitvoer triggeren bewust een her-scroll; de body zelf leest alleen de ref.
   useEffect(() => {
-    if (outputRef.current) {
-      outputRef.current.scrollTop = outputRef.current.scrollHeight;
+    const vak = outputRef.current;
+    if (!vak) return;
+    const onderaan = vak.scrollHeight - vak.clientHeight;
+    const invoer = vak.querySelectorAll<HTMLElement>('[data-invoer]');
+    const laatste = invoer[invoer.length - 1];
+    if (!laatste) {
+      vak.scrollTop = onderaan;
+      return;
     }
+    const rand = Number.parseFloat(getComputedStyle(vak).paddingTop) || 0;
+    const boven =
+      laatste.getBoundingClientRect().top - vak.getBoundingClientRect().top + vak.scrollTop;
+    vak.scrollTop = Math.min(onderaan, boven - rand);
   }, [history, maxUitvoer]);
 
   // Een klik in het zwarte vlak zet de cursor in de invoer, zoals in een
   // terminal. De aanwijzing "Typ een commando" staat in de uitvoer; wie
   // daarop klikte en begon te typen, typte nergens. Niet als er tekst is
-  // geselecteerd: dan wil iemand kopiëren.
+  // geselecteerd: dan wil iemand kopiëren. En niet na een tik met een vinger:
+  // dan springt het toetsenbord open bij een tik om te lezen. Dat kijkt naar
+  // waarmee er geklikt is (`pointerType`), niet naar het apparaat: met
+  // `(pointer: fine)` deed een klik met het trackpad van een iPad niets (de
+  // iPad zelf is een aanraakscherm), en `(any-pointer: fine)` zou een tik
+  // met de vinger op een laptop met aanraakscherm wel laten tellen. Of er een
+  // los toetsenbord aan een iPad hangt, ziet een pagina niet: daar blijft
+  // een tik een tik, en tik je op de invoerregel zelf.
   const naarInvoer = () => {
-    if (!window.matchMedia?.(MUIS).matches) return;
+    if (aanwijzerRef.current === 'touch') return;
     if (!window.getSelection()?.toString()) inputRef.current?.focus({ preventScroll: true });
   };
 
@@ -235,27 +258,67 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   };
 
   const sluitEditor = () => {
+    if (vensterRef.current?.open) vensterRef.current.close?.();
     setEditor(null);
     setEditorFout(null);
+    // Terug naar de knop die het venster opende, anders staat de focus
+    // nergens en begint wie met Tab werkt weer bovenaan de pagina.
+    const opener = openerRef.current;
+    openerRef.current = null;
+    if (opener?.isConnected) opener.focus({ preventScroll: true });
   };
-  // Escape sluit het venster, zoals elk venster.
-  const editorToets = (e: KeyboardEvent<HTMLElement>) => {
+
+  // Het venster is een echte <dialog> met showModal: de pagina erachter doet
+  // niet mee zolang hij open is, en hij staat boven alles, ook boven de
+  // navbar (een `position: fixed` in een tabblad viel daar soms onder). De
+  // focus gaat naar zijn eerste veld.
+  const editorOpen = editor !== null;
+  useEffect(() => {
+    const venster = vensterRef.current;
+    if (!editorOpen || !venster) return;
+    if (!venster.open) venster.showModal?.();
+    venster.querySelector<HTMLElement>('input, textarea')?.focus();
+  }, [editorOpen]);
+
+  // Escape sluit het venster, ook als de focus op een knop staat: de toets
+  // hangt aan het venster, niet aan de velden. Tab blijft in het venster.
+  const vensterToets = (e: KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Escape') {
       e.preventDefault();
       sluitEditor();
+      return;
     }
+    if (e.key !== 'Tab' || !vensterRef.current) return;
+    const focusbaar = Array.from(
+      vensterRef.current.querySelectorAll<HTMLElement>('input, textarea, button'),
+    );
+    const eerste = focusbaar[0];
+    const laatste = focusbaar[focusbaar.length - 1];
+    if (e.shiftKey && document.activeElement === eerste) {
+      e.preventDefault();
+      laatste?.focus();
+    } else if (!e.shiftKey && document.activeElement === laatste) {
+      e.preventDefault();
+      eerste?.focus();
+    }
+  };
+
+  const openVenster = (doel: EditorTarget) => {
+    openerRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setEditor(doel);
   };
 
   const openNewFile = () => {
     setEditorName('');
     setEditorContent('');
-    setEditor({ mode: 'new' });
+    openVenster({ mode: 'new' });
   };
 
   const openEditFile = (name: string) => {
     setEditorName(name);
     setEditorContent(state.workingDir[name] ?? '');
-    setEditor({ mode: 'edit', name });
+    openVenster({ mode: 'edit', name });
   };
 
   const saveEditor = () => {
@@ -282,8 +345,10 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   const repoCommits = [...state.commits].reverse();
 
   const objectiveDone = objective ? objective.check(state) : false;
-  // Waarom het doel zo niet meer te halen is (scenarios.ts, `vast`).
+  // Waarom het doel niet meer te halen is (scenarios.ts, `vast`), of wat er
+  // nog in de weg staat (`tip`).
   const vast = !objectiveDone ? (objective?.vast?.(state) ?? null) : null;
+  const tip = !objectiveDone && !vast ? (objective?.tip?.(state) ?? null) : null;
 
   return (
     <div className={styles.simulator}>
@@ -291,9 +356,11 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
       {objective && (
         <div className={`${styles.objective} ${objectiveDone ? styles.objectiveDone : ''}`}>
           <span className={styles.objectiveLabel}>
-            {objectiveDone ? 'Gelukt:' : vast ? 'Zo lukt het niet:' : 'Doel:'}
+            {objectiveDone ? 'Gelukt:' : vast ? 'Zo lukt het niet:' : tip ? 'Nog niet:' : 'Doel:'}
           </span>
-          {objectiveDone ? 'klaar voor de volgende oefening.' : (vast ?? objective.description)}
+          {objectiveDone
+            ? 'klaar voor de volgende oefening.'
+            : (vast ?? tip ?? objective.description)}
         </div>
       )}
 
@@ -323,6 +390,10 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
               {stagedFiles.map((f) => (
                 <div key={f} className={styles.fileItem}>
                   {f}
+                  {/* Een verwijdering die klaarstaat: de volgende commit haalt het bestand weg. */}
+                  {state.staged?.[f] === null && (
+                    <span className={styles.fileLabel}>verwijderd</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -367,7 +438,13 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
         </div>
 
         {/* biome-ignore lint/a11y/useKeyWithClickEvents: de klik zet alleen de cursor in het invoerveld; met het toetsenbord kom je daar met Tab. */}
-        <div className={styles.terminal} onClick={naarInvoer}>
+        <div
+          className={styles.terminal}
+          onPointerDown={(e) => {
+            aanwijzerRef.current = e.pointerType;
+          }}
+          onClick={naarInvoer}
+        >
           <div
             className={styles.terminalOutput}
             ref={outputRef}
@@ -393,7 +470,7 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
               const klasse = `${styles.terminalLine} ${line.eerder ? styles.terminalEerder : ''}`;
               if (line.kind === 'input') {
                 return (
-                  <div key={key} className={klasse}>
+                  <div key={key} className={klasse} data-invoer="">
                     <span className={styles.terminalPrompt}>$ </span>
                     {line.text}
                   </div>
@@ -434,20 +511,34 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
       </div>
 
       {editor && (
-        // biome-ignore lint/a11y/useKeyWithClickEvents: decoratieve overlay, geen tab-stop; de "annuleren"-knop hieronder doet hetzelfde en is met toetsenbord bereikbaar.
-        <div className={styles.editor} onClick={sluitEditor}>
-          {/* biome-ignore lint/a11y/useKeyWithClickEvents: stopt alleen event-bubbling naar de backdrop, geen eigen actie. */}
-          <div className={styles.editorBox} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.editorTitle}>
+        <dialog
+          ref={vensterRef}
+          className={styles.editor}
+          aria-labelledby={`${scenarioId}-venster`}
+          // Escape in de browser: die sluit een dialog zelf, en dan moet de
+          // simulator het ook weten.
+          onCancel={(e) => {
+            e.preventDefault();
+            sluitEditor();
+          }}
+          // Een klik naast het venster (op de achtergrond) sluit het; het
+          // venster zelf is het vak erin.
+          onClick={(e) => {
+            if (e.target === e.currentTarget) sluitEditor();
+          }}
+          onKeyDown={vensterToets}
+        >
+          <div className={styles.editorBox}>
+            <div className={styles.editorTitle} id={`${scenarioId}-venster`}>
               {editor.mode === 'new' ? 'Nieuw bestand' : `Bewerk ${editor.name}`}
             </div>
             {editor.mode === 'new' && (
               <input
                 className={styles.editorInput}
                 placeholder="bestandsnaam, bv. hello.txt"
+                aria-label="Naam van het bestand"
                 value={editorName}
                 onChange={(e) => setEditorName(e.target.value)}
-                onKeyDown={editorToets}
                 aria-invalid={editorFout ? true : undefined}
                 spellCheck={false}
                 autoCapitalize="off"
@@ -458,7 +549,7 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
               className={styles.editorArea}
               value={editorContent}
               onChange={(e) => setEditorContent(e.target.value)}
-              onKeyDown={editorToets}
+              aria-label="Inhoud van het bestand"
               placeholder="inhoud van het bestand"
               spellCheck={false}
             />
@@ -476,7 +567,7 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
               </button>
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </div>
   );

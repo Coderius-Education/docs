@@ -31,28 +31,28 @@ describe('de terminal naast de zones (vanaf 1280 pixels)', () => {
   });
 
   it('tussen 997 en 1280 pixels minstens zeven', () => {
-    const regel = 0.85 * 16 * 1.4;
+    // Letters van 0,8rem: met 0,85rem brak de regel van 77 tekens af.
+    expect(css).toMatch(
+      /@media \(min-width: 997px\) and \(max-width: 1279\.98px\) \{\s*\.terminal,\s*\.terminalInputField \{\s*font-size: 0\.8rem;/,
+    );
+    const regel = 0.8 * 16 * 1.4;
     const rand = 2 * 0.6 * 16;
     expect((getal('LAAGSTE_ONDER') - rand) / regel).toBeGreaterThanOrEqual(7);
   });
 });
 
 describe('een klik in de uitvoer', () => {
-  it('zet de cursor alleen met een muis in de invoer, niet bij een tik', () => {
-    // Op een telefoon sprong het toetsenbord open bij een tik om te lezen.
-    // Of het in de browser werkt, ziet alleen een browser; nagelopen in
-    // Chromium met en zonder hasTouch.
-    expect(bron).toMatch(/const MUIS = '\(pointer: fine\)';/);
-    expect(bron).toMatch(
-      /const naarInvoer = \(\) => \{\s*if \(!window\.matchMedia\?\.\(MUIS\)\.matches\) return;/,
-    );
+  it('kijkt naar waarmee er geklikt is, niet naar het apparaat', () => {
+    // `(pointer: fine)` liet een klik met het trackpad van een iPad niets
+    // doen. Het gedrag zelf staat in GitSimulator.test.tsx.
+    expect(bron).not.toMatch(/matchMedia\?\.\(MUIS\)|const MUIS/);
+    expect(bron).toMatch(/aanwijzerRef\.current = e\.pointerType/);
   });
 });
 
 describe('het venster voor een bestand', () => {
-  it('sluit met Escape en zegt wat er mis is met de naam', () => {
-    expect(bron).toMatch(/if \(e\.key === 'Escape'\)/);
-    expect(bron.match(/onKeyDown=\{editorToets\}/g)).toHaveLength(2);
+  it('zegt wat er mis is met de naam', () => {
+    // Escape, de focus en role="dialog": GitSimulator.test.tsx.
     expect(bron).toMatch(/role="alert"/);
   });
 });

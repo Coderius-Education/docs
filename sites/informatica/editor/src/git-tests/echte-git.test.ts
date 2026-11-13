@@ -5,6 +5,8 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   COMMANDOS_VAN_GIT,
+  COMMANDOS_VAN_SIMULATOR,
+  NIEUWER_DAN_243,
   emptyState,
   runCommand,
   schrijfBestand,
@@ -388,12 +390,40 @@ describe('de simulator drukt af wat git afdrukt', () => {
         rmSync(join(m, 'geheim.txt'));
       });
 
-      it('"is not a git command" alleen voor wat git echt niet kent', () => {
-        const kent = git(['help', '-a'], { in: m });
-        for (const cmd of COMMANDOS_VAN_GIT) {
-          expect(kent, cmd).toMatch(new RegExp(`^\\s+${cmd}\\s`, 'm'));
+      it('"is not a git command" alleen voor wat git echt niet kent, in beide richtingen', () => {
+        // Alleen de commando's: na "User-facing …" noemt `git help -a`
+        // handleidingen (attributes, cli) en wat er op deze machine bij
+        // geïnstalleerd is (lfs).
+        const help = git(['help', '-a'], { in: m });
+        const eind = help.search(/^(User-facing|External commands|Command aliases)/m);
+        const kent = (help.slice(0, eind === -1 ? undefined : eind).match(/^ {3}\S+/gm) ?? []).map(
+          (r) => r.trim(),
+        );
+        expect(kent.length).toBeGreaterThan(100);
+
+        // Van git naar de simulator: elk commando van git staat in een van de
+        // lijsten, en geen ervan heet daar "not a git command". Eerst zeiden
+        // `git ls-files`, `git check-ignore` en `git clean` dat wel.
+        const ontbreekt = kent.filter(
+          (c) => !COMMANDOS_VAN_GIT.includes(c) && !COMMANDOS_VAN_SIMULATOR.includes(c),
+        );
+        expect(ontbreekt, 'zet deze in COMMANDOS_VAN_GIT in gitEngine.ts').toEqual([]);
+        for (const cmd of kent)
           expect(runCommand(start(), `git ${cmd}`).output, cmd).not.toMatch(/not a git command/);
+
+        // Van de simulator naar git: wat hij een commando van git noemt, is
+        // er een. `stage` staat niet in `git help -a` maar bestaat wel; een
+        // commando van na 2.43 bestaat pas vanaf zijn versie.
+        const [groot, klein] = versie();
+        for (const cmd of [...COMMANDOS_VAN_GIT, ...COMMANDOS_VAN_SIMULATOR]) {
+          if (kent.includes(cmd)) continue;
+          const vanaf = NIEUWER_DAN_243[cmd];
+          const ouder = vanaf && (groot < vanaf[0] || (groot === vanaf[0] && klein < vanaf[1]));
+          const melding = gitFaalt([cmd, '-h'], m);
+          if (ouder) expect(melding, cmd).toMatch(/is not a git command/);
+          else expect(melding, cmd).not.toMatch(/is not a git command/);
         }
+
         expect(gitFaalt(['pusj'], m)).toMatch(/is not a git command/);
         expect(runCommand(start(), 'git pusj').output).toMatch(/is not a git command/);
       });

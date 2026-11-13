@@ -100,6 +100,13 @@
   word-break: break-all;
 }
 
+.fileLabel {
+  display: block;
+  font-family: var(--ifm-font-family-base);
+  font-size: 0.7rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
 .fileItemIgnored {
   opacity: 0.5;
   text-decoration: line-through;
@@ -196,14 +203,18 @@
   font-size: 0.85rem;
 }
 
+/* Het venster is een <dialog> met showModal: hij staat in de bovenste laag,
+   en de achtergrond is zijn ::backdrop. Zelf is hij onzichtbaar; het vak
+   erin is het venster, zodat een klik op de dialog een klik ernaast is. */
 .editor {
-  position: fixed;
-  inset: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  overflow: visible;
+}
+
+.editor::backdrop {
   background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
 }
 
 .editorBox {
@@ -314,6 +325,17 @@
   display: block;
 }
 
+/* Tussen 997 en 1280 pixels staat de terminal onder de zones, en is de les
+   minstens 690 pixels breed: met letters van 0,85rem brak de regel van 77
+   tekens van git status daar af. Met 0,8rem past hij. Na de gewone regels,
+   anders winnen die. */
+@media (min-width: 997px) and (max-width: 1279.98px) {
+  .terminal,
+  .terminalInputField {
+    font-size: 0.8rem;
+  }
+}
+
 /* Vanaf 1280 pixels staat de terminal naast de zones. De simulator is daar
    948 pixels breed: de terminal krijgt twee derde en iets kleinere letters,
    genoeg voor de 77 tekens van de langste regel van git status (`nothing
@@ -323,10 +345,21 @@
    0.85rem }` en gold het kleinere lettertype nooit (simulator.test.ts).
    Met de zones erboven bleven er voor de uitvoer vier regels over. De linker
    kolom telt zelf niet mee voor de hoogte van de rij (`height: 0` met
-   `min-height: 100%`): de terminal bepaalt die. */
+   `min-height: 100%`): de terminal bepaalt die.
+
+   De terminal is precies zo breed als die 77 tekens met zijn rand en een
+   schuifbalk (`ch` is de breedte van een teken in zijn eigen letter); de
+   zones krijgen de rest. Met een vaste verhouding van 1 op 2 was een zone op
+   1280 pixels 103 pixels breed, en brak `.gitignore` in de werkmap af. Met
+   die breedte en iets kleinere namen passen er tien tekens op een regel.
+
+   Een zone schuift daar zonder schuifbalk, met een schaduw aan de rand waar
+   nog iets buiten beeld staat. Een schuifbalk van vijftien pixels kwam bij
+   het derde bestand in de werkmap, en dan brak elke naam af: de zone is op
+   1280×720 116 pixels hoog. */
 @media (min-width: 1280px) {
   .body {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .terminal,
@@ -334,8 +367,36 @@
     font-size: 0.75rem;
   }
 
+  .terminal {
+    width: calc(78ch + 1.6rem + 15px);
+  }
+
   .zone {
-    padding: 0.5rem 0.4rem;
+    padding: 0.5rem 0.3rem;
+  }
+
+  .fileItem {
+    padding: 0.1rem 0.25rem;
+    margin-bottom: 0.2rem;
+    font-size: 0.75rem;
+  }
+
+  .zone {
+    scrollbar-width: none;
+    --schaduw: color-mix(in srgb, var(--ifm-font-color-base) 30%, transparent);
+    background:
+      linear-gradient(var(--ifm-background-surface-color) 40%, transparent) center top / 100%
+      1rem no-repeat local,
+      linear-gradient(transparent, var(--ifm-background-surface-color) 60%) center bottom /
+      100% 1rem no-repeat local,
+      radial-gradient(farthest-side at 50% 0, var(--schaduw), transparent) center top / 100%
+      0.5rem no-repeat scroll,
+      radial-gradient(farthest-side at 50% 100%, var(--schaduw), transparent) center bottom /
+      100% 0.5rem no-repeat scroll;
+  }
+
+  .zone::-webkit-scrollbar {
+    display: none;
   }
 
   .left {

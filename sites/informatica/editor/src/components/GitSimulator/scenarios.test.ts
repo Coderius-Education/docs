@@ -129,8 +129,48 @@ describe('stap 7: .gitignore geldt alleen voor wat git nog niet volgt', () => {
     // meldde. Het doel keek naar de negeerlijst, niet naar wat git doet.
     const state = na(geheim, 'git add .', negeer);
     expect(s.objective.check(state)).toBe(false);
-    expect(s.objective.vast?.(state)).toMatch(/herstart oefening/);
     expect(runCommand(state, 'git status').output).toMatch(/new file: {3}geheim\.txt/);
+  });
+
+  it('staat geheim.txt alleen in staging, dan is het niet vast: de tip zegt hoe het eruit gaat', () => {
+    // Eerst stond hier "klik op herstart oefening", terwijl het nog op te
+    // lossen was, met wat git status zelf aanraadt.
+    const state = na(geheim, 'git add .', negeer);
+    expect(s.objective.vast?.(state)).toBeNull();
+    expect(s.objective.tip?.(state)).toMatch(/git restore --staged geheim\.txt/);
+    for (const oplossing of ['git restore --staged geheim.txt', 'git rm --cached geheim.txt']) {
+      const r = runCommand(state, oplossing);
+      expect(r.ok, oplossing).toBe(true);
+      expect(s.objective.check(r.newState), oplossing).toBe(true);
+    }
+  });
+
+  it('staat geheim.txt in een commit, dan is het vast, met de echte reden', () => {
+    const state = na(geheim, 'git add .', 'git commit -m "oeps"', negeer);
+    expect(s.objective.check(state)).toBe(false);
+    expect(s.objective.vast?.(state)).toMatch(/in de geschiedenis.*herstart oefening/);
+    // Ook als git het daarna niet meer volgt: de oude commit heeft het nog.
+    const later = na(
+      geheim,
+      'git add .',
+      'git commit -m "oeps"',
+      negeer,
+      'git rm --cached geheim.txt',
+      'git commit -m "weg"',
+    );
+    expect(s.objective.check(later)).toBe(false);
+    expect(s.objective.vast?.(later)).toMatch(/herstart oefening/);
+  });
+
+  it('zit het in de laatste commit met nog iets anders, dan haalt --amend het eruit', () => {
+    const anders = { soort: 'schrijf', naam: 'hello.txt', inhoud: 'Hallo.\n' } as const;
+    const state = na(geheim, anders, 'git add .', 'git commit -m "oeps"', negeer);
+    expect(s.objective.vast?.(state)).toBeNull();
+    expect(s.objective.tip?.(state)).toMatch(/git rm --cached geheim\.txt.*--amend/);
+    let st = state;
+    for (const c of ['git rm --cached geheim.txt', 'git commit --amend -m "zonder geheim"'])
+      st = runCommand(st, c).newState;
+    expect(s.objective.check(st)).toBe(true);
   });
 
   it('in de goede volgorde is er niets vastgelopen', () => {
@@ -140,9 +180,44 @@ describe('stap 7: .gitignore geldt alleen voor wat git nog niet volgt', () => {
     expect(s.objective.vast?.(state)).toBeNull();
   });
 
+  it('het doel kijkt naar wat er nu is: zonder .gitignore niet meer gehaald', () => {
+    // Na het weggooien van .gitignore bleef het doel groen.
+    const state = na(geheim, negeer, { soort: 'verwijder', naam: '.gitignore' });
+    expect(s.objective.check(state)).toBe(false);
+    expect(runCommand(state, 'git status').output).toContain('\tgeheim.txt');
+  });
+
   it('opslaan in de simulator en in de test is dezelfde functie', () => {
     const state = schrijfBestand(beginsituatie(s), '.gitignore', '# geheimen\n\ngeheim.txt\n');
     expect(state.ignored).toEqual(['geheim.txt']);
+  });
+});
+
+describe('stap 2 en 6 tellen elk commando dat lukte', () => {
+  const begin = (id: string) => beginsituatie(SCENARIOS[id]);
+  const na = (id: string, c: string) => runCommand(begin(id), c).newState;
+
+  it('stap 6: elk log-commando dat het log toont', () => {
+    // Eerst telden alleen `git log` en `git log --oneline`.
+    const { check } = SCENARIOS['stap-6-log'].objective;
+    for (const c of [
+      'git log',
+      'git log -1',
+      'git log -n 2',
+      'git log --oneline -3',
+      'git log main',
+      'git status && git log --oneline',
+      'git --no-pager log',
+    ])
+      expect(check(na('stap-6-log', c)), c).toBe(true);
+    for (const c of ['git log --foo', 'git log --graph', 'git logx', 'git status'])
+      expect(check(na('stap-6-log', c)), c).toBe(false);
+  });
+
+  it('stap 2: ook git status -s', () => {
+    const { check } = SCENARIOS['stap-2-status'].objective;
+    expect(check(na('stap-2-status', 'git status -s'))).toBe(true);
+    expect(check(na('stap-2-status', 'git status --bogus'))).toBe(false);
   });
 });
 
