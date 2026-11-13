@@ -145,7 +145,12 @@ describe('de oefenterminal staat naast de les', () => {
 
   it('de site heeft tabbladen aan, behalve waar je zoekt of print', () => {
     expect(readFileSync(join(SITE, 'docusaurus.config.ts'), 'utf8')).toMatch(/lesTabs: true/);
-    for (const pad of ['cheatsheet.mdx', 'unplugged/boom.mdx', 'unplugged/rechten.mdx'])
+    for (const pad of [
+      'cheatsheet.mdx',
+      'begrippen.mdx',
+      'unplugged/boom.mdx',
+      'unplugged/rechten.mdx',
+    ])
       expect(readFileSync(join(DOCS, pad), 'utf8'), pad).toMatch(/^les_tabs: false$/m);
   });
 });
