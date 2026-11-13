@@ -3,7 +3,12 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { emptyState, runCommand } from '../components/GitSimulator/gitEngine';
+import {
+  COMMANDOS_VAN_GIT,
+  emptyState,
+  runCommand,
+  schrijfBestand,
+} from '../components/GitSimulator/gitEngine';
 
 // De simulator belooft dat je straks in VS Code hetzelfde ziet. Deze test legt
 // die belofte naast de echte git die op deze machine staat. Zonder dit kon de
@@ -280,6 +285,118 @@ describe('de simulator drukt af wat git afdrukt', () => {
     it('twee spaties tellen als één: het commando telt voor het doel', () => {
       const state = runCommand(emptyState({}), 'git init').newState;
       expect(runCommand(state, 'git  status').newState.commands).toContain('git status');
+    });
+    // Uit de tweede review: wat git wel doet en de simulator niet.
+    describe('meer gevallen naast git', () => {
+      let m: string;
+      beforeAll(() => {
+        m = mkdtempSync(join(tmpdir(), 'git-meer-'));
+        git(['init'], { in: m });
+        writeFileSync(join(m, 'hello.txt'), 'a\n');
+        git(['add', 'hello.txt'], { in: m });
+      });
+      afterAll(() => rmSync(m, { recursive: true, force: true }));
+      const start = () => {
+        let st = runCommand(emptyState({ 'hello.txt': 'a\n' }), 'git init').newState;
+        st = runCommand(st, 'git add hello.txt').newState;
+        return st;
+      };
+
+      it('een lege boodschap breekt af', () => {
+        const echt = gitFaalt(['commit', '-m', ''], m).trimEnd();
+        const r = runCommand(start(), 'git commit -m ""');
+        expect(r.output).toBe(echt);
+        expect(r.newState.commits).toHaveLength(0);
+      });
+
+      it('-m"…" zonder spatie is ook een boodschap', () => {
+        const r = runCommand(start(), 'git commit -m"eerste versie"');
+        expect(r.ok).toBe(true);
+        expect(r.newState.commits[0].message).toBe('eerste versie');
+      });
+
+      it('git log met de naam, de datum en de hele hash', () => {
+        git(['commit', '-m', 'eerste versie'], { in: m });
+        const echt = git(['log'], { in: m }).trimEnd().split('\n');
+        const st = runCommand(start(), 'git commit -m "eerste versie"').newState;
+        const nagemaakt = runCommand(st, 'git log').output.split('\n');
+        // De hash en de tijd verschillen; de vorm niet. Git zet (HEAD -> main)
+        // alleen op een terminal, niet als je zijn uitvoer opvangt.
+        const vorm = (r: string) =>
+          r
+            .replace(/^commit [0-9a-f]{40}( \(HEAD -> main\))?$/, 'commit HASH')
+            .replace(/^Date: {3}.+$/, 'Date: DATUM');
+        expect(nagemaakt.map(vorm)).toEqual(echt.map(vorm));
+        expect(nagemaakt[2]).toMatch(
+          /^Date: {3}\w{3} \w{3} \d{1,2} \d\d:\d\d:\d\d \d{4} [+-]\d{4}$/,
+        );
+      });
+
+      it('git commit -am zet een gewijzigd bestand eerst klaar', () => {
+        writeFileSync(join(m, 'hello.txt'), 'a\nb\n');
+        git(['commit', '-am', 'tweede'], { in: m });
+        const echt = git(['status'], { in: m }).trimEnd();
+        let st = runCommand(start(), 'git commit -m "eerste versie"').newState;
+        st = { ...st, workingDir: { 'hello.txt': 'a\nb\n' } };
+        const r = runCommand(st, 'git commit -am "tweede"');
+        expect(r.ok).toBe(true);
+        expect(runCommand(r.newState, 'git status').output.trimEnd()).toBe(echt);
+      });
+
+      it('git log -1 en -n 2 tonen de nieuwste commits', () => {
+        const echt = git(['log', '--oneline', '-1'], { in: m }).trimEnd().split('\n');
+        let st = runCommand(start(), 'git commit -m "eerste versie"').newState;
+        st = { ...st, workingDir: { 'hello.txt': 'a\nb\n' } };
+        st = runCommand(st, 'git commit -am "tweede"').newState;
+        const vorm = (r: string) => r.replace(/^[0-9a-f]{7}( \(HEAD -> main\))?/, 'ID');
+        expect(runCommand(st, 'git log --oneline -1').output.split('\n').map(vorm)).toEqual(
+          echt.map(vorm),
+        );
+        expect(runCommand(st, 'git log --oneline -n 2').output.split('\n')).toHaveLength(2);
+        // Een optie die git kent en de simulator niet: geen verzonnen fatal.
+        expect(runCommand(st, 'git log --graph').output).not.toMatch(/fatal/);
+      });
+
+      it('git restore --staged haalt een nieuw bestand uit staging', () => {
+        writeFileSync(join(m, 'nieuw.txt'), 'n\n');
+        git(['add', 'nieuw.txt'], { in: m });
+        git(['restore', '--staged', 'nieuw.txt'], { in: m });
+        const echt = git(['status'], { in: m }).trimEnd();
+        let st = runCommand(start(), 'git commit -m "eerste versie"').newState;
+        st = { ...st, workingDir: { 'hello.txt': 'a\nb\n', 'nieuw.txt': 'n\n' } };
+        st = runCommand(st, 'git commit -am "tweede"').newState;
+        st = runCommand(st, 'git add nieuw.txt').newState;
+        const r = runCommand(st, 'git restore --staged nieuw.txt');
+        expect(r.ok).toBe(true);
+        expect(runCommand(r.newState, 'git status').output.trimEnd()).toBe(echt);
+        rmSync(join(m, 'nieuw.txt'));
+      });
+
+      it('.gitignore met een patroon: *.txt en /naam', () => {
+        for (const regel of ['*.txt', '/geheim.txt']) {
+          writeFileSync(join(m, 'geheim.txt'), 'w\n');
+          writeFileSync(join(m, '.gitignore'), `${regel}\n`);
+          const echt = git(['status', '--short'], { in: m });
+          let st = runCommand(emptyState({ 'hello.txt': 'a\n' }), 'git init').newState;
+          st = schrijfBestand(st, 'geheim.txt', 'w\n');
+          st = schrijfBestand(st, '.gitignore', `${regel}\n`);
+          const status = runCommand(st, 'git status').output;
+          expect(echt, regel).not.toContain('geheim.txt');
+          expect(status, regel).not.toContain('geheim.txt');
+        }
+        rmSync(join(m, '.gitignore'));
+        rmSync(join(m, 'geheim.txt'));
+      });
+
+      it('"is not a git command" alleen voor wat git echt niet kent', () => {
+        const kent = git(['help', '-a'], { in: m });
+        for (const cmd of COMMANDOS_VAN_GIT) {
+          expect(kent, cmd).toMatch(new RegExp(`^\\s+${cmd}\\s`, 'm'));
+          expect(runCommand(start(), `git ${cmd}`).output, cmd).not.toMatch(/not a git command/);
+        }
+        expect(gitFaalt(['pusj'], m)).toMatch(/is not a git command/);
+        expect(runCommand(start(), 'git pusj').output).toMatch(/is not a git command/);
+      });
     });
   });
 

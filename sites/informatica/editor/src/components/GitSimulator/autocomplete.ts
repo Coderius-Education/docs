@@ -1,11 +1,11 @@
-import type { RepoState } from './gitEngine';
+import { type RepoState, inGitignore } from './gitEngine';
 
 // Tab-aanvulling, zoals in een echte terminal. Dat is niet alleen gemak: een
 // leerling die `git stauts` typt krijgt een foutmelding die over zijn typefout
 // gaat in plaats van over git, en dat leidt af van waar de les over gaat.
 
 /** De subcommando's die de simulator begrijpt. */
-export const SUBCOMMANDOS = ['add', 'commit', 'init', 'log', 'status'];
+export const SUBCOMMANDOS = ['add', 'commit', 'init', 'log', 'restore', 'status'];
 
 export type Aanvulling = {
   /** De nieuwe inhoud van het invoerveld, of null als er niets aan te vullen valt. */
@@ -57,7 +57,7 @@ export function vulAan(invoer: string, state: RepoState): Aanvulling {
   // Daarna: bestandsnamen, maar alleen waar dat betekenis heeft.
   if (woorden[1] === 'add') {
     const bestanden = Object.keys(state.workingDir)
-      .filter((f) => !state.ignored.includes(f))
+      .filter((f) => !inGitignore(state, f))
       .concat('.');
     return vul(invoer, laatste, bestanden);
   }

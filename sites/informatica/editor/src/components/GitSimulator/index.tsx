@@ -11,6 +11,7 @@ import {
 import { vulAan } from './autocomplete';
 import {
   type RepoState,
+  bestandsnaamFout,
   deleteFile,
   emptyState,
   genegeerd,
@@ -51,7 +52,9 @@ type EditorTarget = { mode: 'new' } | { mode: 'edit'; name: string };
 // de uitvoer mee, zoals eerst.
 const HOOGSTE_UITVOER = 320;
 const LAAGSTE_NAAST = 200;
-const LAAGSTE_ONDER = 140;
+const LAAGSTE_ONDER = 154;
+/** Een tik op een telefoon zet de cursor niet in de invoer: dan springt het toetsenbord open. */
+const MUIS = '(pointer: fine)';
 const VAST = '(min-width: 997px)';
 const NAAST = '(min-width: 1280px)';
 
@@ -102,6 +105,7 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   const [editor, setEditor] = useState<EditorTarget | null>(null);
   const [editorName, setEditorName] = useState('');
   const [editorContent, setEditorContent] = useState('');
+  const [editorFout, setEditorFout] = useState<string | null>(null);
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -162,6 +166,7 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   // daarop klikte en begon te typen, typte nergens. Niet als er tekst is
   // geselecteerd: dan wil iemand kopiëren.
   const naarInvoer = () => {
+    if (!window.matchMedia?.(MUIS).matches) return;
     if (!window.getSelection()?.toString()) inputRef.current?.focus({ preventScroll: true });
   };
 
@@ -229,6 +234,18 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
     }
   };
 
+  const sluitEditor = () => {
+    setEditor(null);
+    setEditorFout(null);
+  };
+  // Escape sluit het venster, zoals elk venster.
+  const editorToets = (e: KeyboardEvent<HTMLElement>) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      sluitEditor();
+    }
+  };
+
   const openNewFile = () => {
     setEditorName('');
     setEditorContent('');
@@ -244,10 +261,16 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   const saveEditor = () => {
     if (!editor) return;
     const name = editor.mode === 'edit' ? editor.name : editorName.trim();
-    if (!name) return;
+    // Opslaan zonder naam deed niets en zei niets.
+    const fout = bestandsnaamFout(name, editor.mode === 'new' ? state.workingDir : {});
+    if (fout) {
+      setEditorFout(fout);
+      return;
+    }
+    setEditorFout(null);
     const next = schrijfBestand(state, name, editorContent);
     setState(next);
-    setEditor(null);
+    sluitEditor();
   };
 
   const deleteFromWd = (name: string) => {
@@ -412,7 +435,7 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
 
       {editor && (
         // biome-ignore lint/a11y/useKeyWithClickEvents: decoratieve overlay, geen tab-stop; de "annuleren"-knop hieronder doet hetzelfde en is met toetsenbord bereikbaar.
-        <div className={styles.editor} onClick={() => setEditor(null)}>
+        <div className={styles.editor} onClick={sluitEditor}>
           {/* biome-ignore lint/a11y/useKeyWithClickEvents: stopt alleen event-bubbling naar de backdrop, geen eigen actie. */}
           <div className={styles.editorBox} onClick={(e) => e.stopPropagation()}>
             <div className={styles.editorTitle}>
@@ -424,6 +447,8 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
                 placeholder="bestandsnaam, bv. hello.txt"
                 value={editorName}
                 onChange={(e) => setEditorName(e.target.value)}
+                onKeyDown={editorToets}
+                aria-invalid={editorFout ? true : undefined}
                 spellCheck={false}
                 autoCapitalize="off"
                 autoCorrect="off"
@@ -433,11 +458,17 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
               className={styles.editorArea}
               value={editorContent}
               onChange={(e) => setEditorContent(e.target.value)}
+              onKeyDown={editorToets}
               placeholder="inhoud van het bestand"
               spellCheck={false}
             />
+            {editorFout && (
+              <p className={styles.editorFout} role="alert">
+                {editorFout}
+              </p>
+            )}
             <div className={styles.editorActions}>
-              <button type="button" className={styles.btnSecondary} onClick={() => setEditor(null)}>
+              <button type="button" className={styles.btnSecondary} onClick={sluitEditor}>
                 annuleren
               </button>
               <button type="button" className={styles.btnPrimary} onClick={saveEditor}>

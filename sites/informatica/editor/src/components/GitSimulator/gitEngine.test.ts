@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { type RepoState, addToIgnore, emptyState, runCommand, setFile } from './gitEngine';
+import {
+  type RepoState,
+  addToIgnore,
+  bestandsnaamFout,
+  emptyState,
+  runCommand,
+  setFile,
+} from './gitEngine';
 
 // De simulator is het enige stuk van deze site waar een leerling iets kan
 // "doen" in plaats van lezen. Gaat hij stil verkeerd, dan leert de leerling
@@ -135,9 +142,18 @@ describe('foutmeldingen', () => {
   });
 
   it('noemt de commandos die de simulator wel kent', () => {
+    const r = runCommand(draai(START(), 'git init'), 'git pusj');
+    expect(r.ok).toBe(false);
+    expect(r.output).toContain('init, status, add, commit, log en restore');
+  });
+
+  it('een commando dat git wel kent, heet geen "not a git command"', () => {
+    // git status raadt zelf `git rm --cached` aan; de simulator zei dan dat
+    // rm geen git-commando was. Dat is niet waar.
     const r = runCommand(draai(START(), 'git init'), 'git push');
     expect(r.ok).toBe(false);
-    expect(r.output).toContain('init, status, add, commit en log');
+    expect(r.output).not.toMatch(/is not a git command/);
+    expect(r.output).toMatch(/git kent 'push' wel/);
   });
 
   it('git log zonder commits verwijst naar git commit', () => {
@@ -207,19 +223,33 @@ describe('git log', () => {
 
     expect(regels[0]).toContain('(HEAD -> main)');
     expect(regels[0]).toContain(s.commits[1].id);
-    expect(regels[2]).toBe('    twee');
+    expect(regels[1]).toBe('Author: Leerling <leerling@school.nl>');
+    expect(regels[2]).toMatch(/^Date: {3}\w{3} \w{3} \d{1,2} \d\d:\d\d:\d\d \d{4} [+-]\d{4}$/);
+    expect(regels[4]).toBe('    twee');
     expect(uitvoer(s, 'git log').indexOf('twee')).toBeLessThan(
       uitvoer(s, 'git log').indexOf('een'),
     );
   });
 
-  it('geeft elke commit een id van zeven tekens', () => {
-    // Math.random() levert soms een korte hexweergave op; zonder aanvulling
-    // kreeg een commit dan een id van één teken.
+  it('geeft elke commit een id van veertig tekens, en toont er zeven', () => {
+    // Zoals git: git log toont de hele hash, git commit en --oneline zeven.
     for (let i = 0; i < 200; i++) {
-      const s = draai(START(), 'git init', 'git add .', `git commit -m "nummer ${i}"`);
-      expect(s.commits[0].id).toHaveLength(7);
+      const s0 = draai(START(), 'git init', 'git add .');
+      const r = runCommand(s0, `git commit -m "nummer ${i}"`);
+      const id = r.newState.commits[0].id;
+      expect(id).toMatch(/^[0-9a-f]{40}$/);
+      expect(r.output).toBe(`[main (root-commit) ${id.slice(0, 7)}] nummer ${i}`);
     }
+  });
+});
+
+describe('de naam van een nieuw bestand', () => {
+  it('zegt wat er mis is, in plaats van niets te doen', () => {
+    expect(bestandsnaamFout('', {})).toMatch(/naam/);
+    expect(bestandsnaamFout('gitignore', {})).toMatch(/\.gitignore/);
+    expect(bestandsnaamFout('map/a.txt', {})).toMatch(/mappen/);
+    expect(bestandsnaamFout('hello.txt', { 'hello.txt': 'x' })).toMatch(/bewerk hello\.txt/);
+    expect(bestandsnaamFout('.gitignore', { 'hello.txt': 'x' })).toBeNull();
   });
 });
 

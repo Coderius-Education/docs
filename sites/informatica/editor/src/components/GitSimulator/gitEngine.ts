@@ -17,8 +17,11 @@ const REPO_PAD = '/home/jij/git-oefenen/.git/';
 const NIET_IN_REPO = 'fatal: not a git repository (or any of the parent directories): .git';
 
 export type Commit = {
+  /** Veertig tekens, zoals een echte hash; git toont er meestal zeven. */
   id: string;
   message: string;
+  /** Wanneer de commit gemaakt is, voor de regel Date van `git log`. */
+  tijd?: number;
   parent: string | null;
   tree: Record<string, string>;
 };
@@ -51,10 +54,58 @@ export function emptyState(initialFiles: Record<string, string> = {}): RepoState
   };
 }
 
-function shortId(): string {
-  // Altijd zeven tekens, net als de afgekorte hash die git toont. Math.random()
-  // levert soms een korte hexweergave op ("0.5"), dus aanvullen tot zeven.
-  return Math.random().toString(16).slice(2).padEnd(7, '0').slice(0, 7);
+/** De naam en het adres in `git log`: die van de simulator, niet van de leerling. */
+export const AUTEUR = 'Leerling <leerling@school.nl>';
+
+function nieuweId(): string {
+  // Veertig tekens, zoals de hash van git. `git log` toont hem helemaal,
+  // `git commit` en `git log --oneline` de eerste zeven.
+  let id = '';
+  while (id.length < 40) id += Math.floor(Math.random() * 16).toString(16);
+  return id;
+}
+
+const DAGEN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MAANDEN = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+/** Een tijdstip zoals `git log` het schrijft: `Fri Nov 13 19:16:10 2026 +0100`. */
+export function gitDatum(tijd: number): string {
+  const d = new Date(tijd);
+  const twee = (n: number) => String(n).padStart(2, '0');
+  const verschil = -d.getTimezoneOffset();
+  const zone = `${verschil < 0 ? '-' : '+'}${twee(Math.floor(Math.abs(verschil) / 60))}${twee(Math.abs(verschil) % 60)}`;
+  return `${DAGEN[d.getDay()]} ${MAANDEN[d.getMonth()]} ${d.getDate()} ${twee(d.getHours())}:${twee(d.getMinutes())}:${twee(d.getSeconds())} ${d.getFullYear()} ${zone}`;
+}
+
+/**
+ * Staat deze naam in .gitignore? Een regel is een naam of een patroon:
+ * `*.txt`, `geheim.?`, `/geheim.txt` (een / vooraan: alleen in de map van
+ * .gitignore), `#` is commentaar. Eerst telde alleen een naam die er
+ * letterlijk stond, en negeerde `*.txt` niets.
+ */
+export function inGitignore(state: RepoState, name: string): boolean {
+  return state.ignored.some((regel) => {
+    if (regel.startsWith('!') || regel.endsWith('/')) return false;
+    const patroon = regel.replace(/^\//, '');
+    const regex = patroon
+      .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+      .replace(/\*/g, '[^/]*')
+      .replace(/\?/g, '[^/]');
+    return new RegExp(`^${regex}$`).test(name);
+  });
 }
 
 function committedTree(state: RepoState): Record<string, string> {
@@ -78,7 +129,7 @@ export function gevolgd(state: RepoState, name: string): boolean {
  * door ook gecommitte bestanden te verbergen.
  */
 export function genegeerd(state: RepoState, name: string): boolean {
-  return state.ignored.includes(name) && !gevolgd(state, name);
+  return inGitignore(state, name) && !gevolgd(state, name);
 }
 
 function visibleFiles(state: RepoState): string[] {
@@ -202,9 +253,12 @@ function logOutput(state: RepoState): string {
   while (id) {
     const c = state.commits.find((x) => x.id === id);
     if (!c) break;
-    // Git zet achter de nieuwste commit waar HEAD staat. Author en Date laat
-    // deze simulator weg: hij kent geen naam en geen klok.
+    // Git zet achter de nieuwste commit waar HEAD staat. De auteur is die
+    // van de simulator; op je eigen computer staat daar wat je met git
+    // config hebt ingesteld.
     lines.push(`commit ${c.id}${eerste ? ' (HEAD -> main)' : ''}`);
+    lines.push(`Author: ${AUTEUR}`);
+    lines.push(`Date:   ${gitDatum(c.tijd ?? Date.now())}`);
     lines.push('');
     lines.push(`    ${c.message}`);
     lines.push('');
@@ -235,17 +289,103 @@ function parseAdd(rest: string): string[] | null {
 }
 
 /**
- * De boodschap achter `-m`, en wat er daarna nog op de regel staat. Zonder
+ * De woorden van een regel zoals een shell ze leest: aanhalingstekens
+ * houden een boodschap bij elkaar, en `-m"eerste versie"` is één woord met
+ * de boodschap erin.
+ */
+function woordenVan(rest: string): string[] {
+  const woorden: string[] = [];
+  let huidig: string | null = null;
+  let quote: string | null = null;
+  for (const ch of rest) {
+    if (quote) {
+      if (ch === quote) quote = null;
+      else huidig = (huidig ?? '') + ch;
+    } else if (ch === '"' || ch === "'") {
+      quote = ch;
+      huidig = huidig ?? '';
+    } else if (/\s/.test(ch)) {
+      if (huidig !== null) woorden.push(huidig);
+      huidig = null;
+    } else huidig = (huidig ?? '') + ch;
+  }
+  if (huidig !== null) woorden.push(huidig);
+  return woorden;
+}
+
+type CommitArgs = {
+  boodschap: string | null;
+  alles: boolean;
+  erna: string[];
+  mZonderWaarde: boolean;
+};
+
+/**
+ * `git commit` met zijn opties: `-m "…"`, `-m"…"`, `-a`, `-am "…"`. Zonder
  * aanhalingstekens is de boodschap één woord, en leest git de rest als
  * namen van bestanden: `git commit -m eerste versie` zoekt een bestand
  * `versie`.
  */
-function parseCommitMessage(rest: string): { boodschap: string; erna: string[] } | null {
-  const m = rest.match(/^-m\s+(?:"([^"]*)"|'([^']*)'|(\S+))(?:\s+(.*))?$/);
-  if (!m) return null;
+function parseCommit(rest: string): CommitArgs {
+  const woorden = woordenVan(rest);
+  const uit: CommitArgs = { boodschap: null, alles: false, erna: [], mZonderWaarde: false };
+  for (let i = 0; i < woorden.length; i++) {
+    const w = woorden[i];
+    if (/^-[a-z]+$/.test(w) || /^-[a-z]*m.+$/.test(w)) {
+      const m = w.indexOf('m');
+      const vlaggen = m === -1 ? w.slice(1) : w.slice(1, m);
+      if (vlaggen.includes('a')) uit.alles = true;
+      if (m === -1) continue;
+      if (m < w.length - 1) uit.boodschap = w.slice(m + 1);
+      else if (i + 1 < woorden.length) uit.boodschap = woorden[++i];
+      else uit.mZonderWaarde = true;
+    } else uit.erna.push(w);
+  }
+  return uit;
+}
+
+/** -a: wat git al volgt en veranderd is, gaat eerst naar staging. */
+function metAlles(state: RepoState): RepoState {
+  const head = committedTree(state);
+  const extra: Record<string, string> = {};
+  for (const [naam, inhoud] of Object.entries(state.workingDir))
+    if (naam in head && head[naam] !== inhoud) extra[naam] = inhoud;
+  return { ...state, staged: { ...(state.staged ?? {}), ...extra } };
+}
+
+/** De commit zelf, als de boodschap klopt. */
+function maakCommit(state: RepoState, message: string): CommandResult {
+  const staged = state.staged ?? {};
+  const head = committedTree(state);
+  const stagedNames = Object.keys(staged);
+  const realChange = stagedNames.length > 0 && stagedNames.some((k) => staged[k] !== head[k]);
+
+  if (!realChange) {
+    return {
+      newState: state,
+      output: statusOutput(state),
+      ok: false,
+    };
+  }
+  const newTree: Record<string, string> = { ...head, ...staged };
+  const commit: Commit = {
+    id: nieuweId(),
+    message,
+    tijd: Date.now(),
+    parent: state.head,
+    tree: newTree,
+  };
   return {
-    boodschap: m[1] ?? m[2] ?? m[3] ?? '',
-    erna: (m[4] ?? '').split(/\s+/).filter(Boolean),
+    newState: {
+      ...state,
+      commits: [...state.commits, commit],
+      head: commit.id,
+      staged: {},
+    },
+    // Git zet er bij de allereerste commit '(root-commit)' bij: die heeft
+    // als enige geen ouder.
+    output: `[main ${state.head === null ? '(root-commit) ' : ''}${commit.id.slice(0, 7)}] ${message}`,
+    ok: true,
   };
 }
 
@@ -376,19 +516,8 @@ function _runCommand(state: RepoState, input: string): CommandResult {
           ok: false,
         };
       }
-      const geparsed = parseCommitMessage(rest.trim());
-      if (geparsed?.erna.length) {
-        return {
-          newState: state,
-          output: [
-            `error: pathspec '${geparsed.erna[0]}' did not match any file(s) known to git`,
-            'hint: zet de boodschap tussen aanhalingstekens: git commit -m "wat je veranderd hebt"',
-          ].join('\n'),
-          ok: false,
-        };
-      }
-      const message = geparsed?.boodschap ?? null;
-      if (message === null) {
+      const args = parseCommit(rest);
+      if (args.mZonderWaarde) {
         return {
           newState: state,
           output: [
@@ -398,64 +527,186 @@ function _runCommand(state: RepoState, input: string): CommandResult {
           ok: false,
         };
       }
-      const staged = state.staged ?? {};
-      const head = committedTree(state);
-      const stagedNames = Object.keys(staged);
-      const realChange = stagedNames.length > 0 && stagedNames.some((k) => staged[k] !== head[k]);
-
-      if (!realChange) {
+      if (args.erna.length) {
         return {
           newState: state,
-          output: statusOutput(state),
+          output: [
+            `error: pathspec '${args.erna[0]}' did not match any file(s) known to git`,
+            'hint: zet de boodschap tussen aanhalingstekens: git commit -m "wat je veranderd hebt"',
+          ].join('\n'),
           ok: false,
         };
       }
-      const newTree: Record<string, string> = { ...head, ...staged };
-      const commit: Commit = {
-        id: shortId(),
-        message,
-        parent: state.head,
-        tree: newTree,
-      };
+      if (args.boodschap === null) {
+        // Zonder -m opent git een editor voor de boodschap. De simulator
+        // heeft er geen.
+        return {
+          newState: state,
+          output: [
+            'hint: zonder -m opent git een editor voor de boodschap; deze simulator heeft er geen.',
+            'hint: geef de boodschap mee: git commit -m "wat je veranderd hebt"',
+          ].join('\n'),
+          ok: false,
+        };
+      }
+      if (!args.boodschap.trim()) {
+        return {
+          newState: state,
+          output: 'Aborting commit due to empty commit message.',
+          ok: false,
+        };
+      }
+      const message = args.boodschap;
+      return maakCommit(args.alles ? metAlles(state) : state, message);
+    }
+
+    case 'log': {
+      const woorden = woordenVan(rest);
+      let kort = false;
+      let hoeveel = Number.POSITIVE_INFINITY;
+      for (let i = 0; i < woorden.length; i++) {
+        const w = woorden[i];
+        const getal = w.match(/^-(\d+)$/) ?? w.match(/^-n(\d+)$/) ?? w.match(/^--max-count=(\d+)$/);
+        if (w === '--oneline') kort = true;
+        else if (getal) hoeveel = Number(getal[1]);
+        else if (w === '-n' && /^\d+$/.test(woorden[i + 1] ?? '')) hoeveel = Number(woorden[++i]);
+        else {
+          // Een optie van git die de simulator niet nadoet: git zou hem
+          // gewoon uitvoeren, dus geen fatal. Iets wat git niet kent: wel.
+          const naam = w.split('=')[0];
+          return {
+            newState: state,
+            output: LOG_OPTIES_VAN_GIT.includes(naam)
+              ? `hint: git kent ${naam} wel, maar deze simulator alleen git log, --oneline en -n.`
+              : `fatal: unrecognized argument: ${w}`,
+            ok: false,
+          };
+        }
+      }
+      if (state.commits.length === 0 || !state.initialized)
+        return { newState: state, output: logOutput(state), ok: false };
+      const alles = kort ? logKort(state) : logOutput(state);
+      // -n: alleen de nieuwste commits. Bij het lange log zijn dat blokken
+      // die met `commit ` beginnen.
+      const delen = kort ? alles.split('\n') : alles.split(/\n\n(?=commit )/);
       return {
-        newState: {
-          ...state,
-          commits: [...state.commits, commit],
-          head: commit.id,
-          staged: {},
-        },
-        // Git zet er bij de allereerste commit '(root-commit)' bij: die heeft
-        // als enige geen ouder.
-        output: `[main ${state.head === null ? '(root-commit) ' : ''}${commit.id}] ${message}`,
+        newState: state,
+        output: delen.slice(0, hoeveel).join(kort ? '\n' : '\n\n'),
         ok: true,
       };
     }
 
-    case 'log': {
-      const optie = rest.trim();
-      if (optie && optie !== '--oneline') {
-        return {
-          newState: state,
-          output: `fatal: unrecognized argument: ${optie.split(/\s+/)[0]}\nhint: deze simulator kent git log en git log --oneline`,
-          ok: false,
-        };
+    case 'restore': {
+      // `git restore --staged <bestand>` raadt git status zelf aan om iets
+      // uit staging te halen. In stap 7 zat een leerling daar vast, en zei de
+      // simulator dat restore geen git-commando was.
+      const woorden = woordenVan(rest);
+      const metStaged = woorden.includes('--staged');
+      const namen = woorden.filter((w) => !w.startsWith('-'));
+      if (!namen.length)
+        return { newState: state, output: 'fatal: you must specify path(s) to restore', ok: false };
+      const head = committedTree(state);
+      const staged = { ...(state.staged ?? {}) };
+      const wd = { ...state.workingDir };
+      for (const naam of namen) {
+        if (metStaged) {
+          if (naam in head) staged[naam] = head[naam];
+          else delete staged[naam];
+        } else {
+          const bron = staged[naam] ?? head[naam];
+          if (bron === undefined)
+            return {
+              newState: state,
+              output: `error: pathspec '${naam}' did not match any file(s) known to git`,
+              ok: false,
+            };
+          wd[naam] = bron;
+        }
       }
-      const kort = optie === '--oneline' && state.commits.length > 0;
-      return {
-        newState: state,
-        output: kort ? logKort(state) : logOutput(state),
-        ok: state.commits.length > 0,
-      };
+      // Wat gelijk is aan de laatste commit, staat niet meer klaar.
+      for (const [naam, inhoud] of Object.entries(staged))
+        if (head[naam] === inhoud) delete staged[naam];
+      return { newState: { ...state, staged, workingDir: wd }, output: '', ok: true };
     }
 
     default:
+      // Een commando dat git wel kent, maar de simulator niet: geen "is not
+      // a git command", want dat is niet waar. git status raadt er zelf een
+      // paar aan (git rm --cached).
+      if (COMMANDOS_VAN_GIT.includes(sub)) {
+        return {
+          newState: state,
+          output: [
+            `hint: git kent '${sub}' wel, maar deze simulator niet. Op je eigen computer werkt het.`,
+            'hint: zit je vast? Klik op herstart oefening.',
+          ].join('\n'),
+          ok: false,
+        };
+      }
       return {
         newState: state,
-        output: `git: '${sub}' is not a git command. See 'git --help'.\nhint: deze simulator kent init, status, add, commit en log`,
+        output: `git: '${sub}' is not a git command. See 'git --help'.\nhint: deze simulator kent init, status, add, commit, log en restore`,
         ok: false,
       };
   }
 }
+
+/**
+ * Wat er mis is met de naam van een nieuw bestand in de simulator, of null.
+ * Opslaan zonder naam deed eerst niets en zei niets, en `gitignore` zonder
+ * punt gaf geen enkele aanwijzing.
+ */
+export function bestandsnaamFout(naam: string, bestaand: Record<string, string>): string | null {
+  if (!naam) return 'Geef het bestand een naam, bijvoorbeeld hello.txt.';
+  if (naam.includes('/')) return 'Een naam zonder /: de simulator heeft geen mappen.';
+  if (naam === 'gitignore') return 'Bedoel je .gitignore? Die naam begint met een punt.';
+  if (naam in bestaand)
+    return `Er is al een bestand ${naam}. Klik op bewerk ${naam} om het te veranderen.`;
+  return null;
+}
+
+/** Opties van `git log` die git kent en de simulator niet nadoet. */
+export const LOG_OPTIES_VAN_GIT = [
+  '--graph',
+  '--stat',
+  '-p',
+  '--patch',
+  '--all',
+  '--decorate',
+  '--reverse',
+  '--author',
+  '--since',
+  '--until',
+  '--pretty',
+  '--format',
+  '--name-only',
+  '--abbrev-commit',
+];
+
+/** Commando's die git kent en de simulator niet. echte-git.test.ts legt ze naast `git help -a`. */
+export const COMMANDOS_VAN_GIT = [
+  'branch',
+  'checkout',
+  'switch',
+  'merge',
+  'push',
+  'pull',
+  'clone',
+  'diff',
+  'reset',
+  'stash',
+  'remote',
+  'fetch',
+  'show',
+  'tag',
+  'mv',
+  'rm',
+  'config',
+  'rebase',
+  'revert',
+  'blame',
+  'help',
+];
 
 export function setFile(state: RepoState, name: string, content: string): RepoState {
   return { ...state, workingDir: { ...state.workingDir, [name]: content } };

@@ -77,45 +77,6 @@
   }
 }
 
-/* Vanaf 1280 pixels staat de terminal naast de zones. De simulator is daar
-   948 pixels breed: de terminal krijgt twee derde en iets kleinere letters,
-   genoeg voor de 77 tekens van de langste regel van git status (`nothing
-   added to commit but untracked files present (use "git add" to track)`),
-   en de zones zijn zo hoog als de terminal.
-   Met de zones erboven bleven er voor de uitvoer vier regels over. De linker
-   kolom telt zelf niet mee voor de hoogte van de rij (`height: 0` met
-   `min-height: 100%`): de terminal bepaalt die. */
-@media (min-width: 1280px) {
-  .body {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  }
-
-  .terminal,
-  .terminalInputField {
-    font-size: 0.75rem;
-  }
-
-  .zone {
-    padding: 0.5rem 0.4rem;
-  }
-
-  .left {
-    height: 0;
-    min-height: 100%;
-    border-bottom: none;
-    border-right: 1px solid var(--ifm-color-emphasis-300);
-  }
-
-  .zones {
-    flex: 1;
-    min-height: 0;
-  }
-
-  .zone {
-    height: auto;
-  }
-}
-
 .zone:last-child {
   border-right: none;
 }
@@ -306,6 +267,12 @@
   color: var(--ifm-font-color-base);
 }
 
+.editorFout {
+  margin: 0.25rem 0 0;
+  color: var(--ifm-color-danger-dark);
+  font-size: 0.85rem;
+}
+
 .resetBar {
   display: flex;
   justify-content: flex-end;
@@ -345,4 +312,45 @@
 
 .commitMessage {
   display: block;
+}
+
+/* Vanaf 1280 pixels staat de terminal naast de zones. De simulator is daar
+   948 pixels breed: de terminal krijgt twee derde en iets kleinere letters,
+   genoeg voor de 77 tekens van de langste regel van git status (`nothing
+   added to commit but untracked files present (use "git add" to track)`),
+   en de zones zijn zo hoog als de terminal. Dit blok staat onderaan: met
+   dezelfde selectors vóór de gewone regels won `.terminal { font-size:
+   0.85rem }` en gold het kleinere lettertype nooit (simulator.test.ts).
+   Met de zones erboven bleven er voor de uitvoer vier regels over. De linker
+   kolom telt zelf niet mee voor de hoogte van de rij (`height: 0` met
+   `min-height: 100%`): de terminal bepaalt die. */
+@media (min-width: 1280px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  }
+
+  .terminal,
+  .terminalInputField {
+    font-size: 0.75rem;
+  }
+
+  .zone {
+    padding: 0.5rem 0.4rem;
+  }
+
+  .left {
+    height: 0;
+    min-height: 100%;
+    border-bottom: none;
+    border-right: 1px solid var(--ifm-color-emphasis-300);
+  }
+
+  .zones {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .zone {
+    height: auto;
+  }
 }

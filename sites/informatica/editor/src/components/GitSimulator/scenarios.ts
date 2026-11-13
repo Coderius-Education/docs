@@ -3,6 +3,7 @@ import {
   deleteFile,
   genegeerd,
   gevolgd,
+  inGitignore,
   runCommand,
   schrijfBestand,
 } from './gitEngine';
@@ -117,7 +118,7 @@ export const SCENARIOS: Record<string, Scenario> = {
     initialFiles: HELLO,
     voorbereiding: ['git init', 'git add hello.txt'],
     objective: {
-      description: 'Maak je eerste commit met de boodschap "eerste versie".',
+      description: 'Maak je eerste commit, met een boodschap als "eerste versie".',
       check: (s) => s.commits.length >= 1,
     },
     oplossing: ['git commit -m "eerste versie"'],
@@ -159,7 +160,7 @@ export const SCENARIOS: Record<string, Scenario> = {
       // Genegeerd is: in .gitignore, en nog niet door git gevolgd.
       check: (s) => genegeerd(s, 'geheim.txt'),
       vast: (s) =>
-        s.ignored.includes('geheim.txt') && gevolgd(s, 'geheim.txt')
+        inGitignore(s, 'geheim.txt') && gevolgd(s, 'geheim.txt')
           ? 'git volgt geheim.txt al, en dan doet .gitignore niets meer. Klik op herstart oefening en maak .gitignore vóórdat je git add doet.'
           : null,
     },
