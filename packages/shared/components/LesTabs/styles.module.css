@@ -204,25 +204,29 @@
   color: var(--ifm-color-primary);
 }
 
-/* Op een breed scherm staat de rij stappen altijd op één regel. Een tweede
-   regel kostte elk scherm van dat tabblad veertig pixels; in fullstack stond
-   hij er in 41 tabbladen, sinds de uitleg van elke les één tabblad met
-   stappen is. Past de rij niet, dan krimpen de knoppen van de stappen die
-   niet open staan, en eindigt hun naam op een beletselteken; de stap die
-   open staat, heet voluit. De hele naam staat in de titel van de knop, en de
-   knop Volgende noemt de volgende stap ook voluit. */
+/* Op een breed scherm staat de rij stappen zo lang mogelijk op één regel.
+   Een tweede regel kostte elk scherm van dat tabblad veertig pixels; in
+   fullstack stond hij er in 41 tabbladen, sinds de uitleg van elke les één
+   tabblad met stappen is. Past de rij niet, dan krimpen de knoppen van de
+   stappen die niet open staan, en eindigt hun naam op een beletselteken; de
+   stap die open staat, heet voluit. De hele naam staat in de titel van de
+   knop, en de knop Volgende noemt de volgende stap ook voluit. */
 @media (min-width: 997px) {
-  .staplist {
-    flex-wrap: nowrap;
-  }
-
+  /* Elke knop krijgt een gelijk deel van de rij, maar nooit meer dan zijn
+     naam breed is: wat een korte naam overlaat, gaat naar de lange. Met
+     krimpen naar verhouding bleef van "Vooraf" alleen het nummer over. En
+     nooit minder dan het nummer met een stuk naam (5,5rem, een teken of
+     vijf): past de rij dan nog niet, bij negen stappen of meer, dan komt er
+     een tweede regel en staan de namen voluit. */
   .stap {
-    flex: 0 1 auto;
-    min-width: 2.5rem;
+    flex: 1 1 0;
+    min-width: 5.5rem;
+    max-width: max-content;
   }
 
   .stap[aria-selected="true"] {
-    flex-shrink: 0;
+    flex: 0 0 auto;
+    max-width: none;
   }
 
   .stapNummer {

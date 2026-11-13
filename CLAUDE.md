@@ -519,7 +519,8 @@ in de gedeelde stap en de onderdelen gekomen, elk met een test:
 
 Het meetscript loopt de hele build af, niet alleen `build/docs`. De rij
 tabbladen moet op één regel passen; de rij stappen doet dat op een breed
-scherm vanzelf (zie Wat een doorloop van fullstack als leerling vond).
+scherm tot en met acht stappen vanzelf (zie Wat een doorloop van fullstack
+als leerling vond).
 
 **Passen is niet genoeg.** Een review van robotica als leerling vond wat
 "past op het scherm" niet ziet: een aansluitschema op 128 bij 240 pixels,
@@ -708,13 +709,17 @@ knop Volgende in 26 lessen. Sindsdien:
   uitleg ervoor is daardoor ook in de lessen zonder Er gaat iets mis één
   tabblad Uitleg met stappen. Er gaat iets mis blijft vóór zo'n tabblad
   staan (`isVerzameltab`): de leerling bouwt in de uitleg al mee.
-- **De rij stappen staat op een breed scherm op één regel.** Een tweede
-  regel kostte elk scherm van dat tabblad veertig pixels, en met de uitleg
-  van elke les als één tabblad stond hij er in 41 tabbladen van fullstack.
-  Past de rij niet, dan krimpen de knoppen van de stappen die niet open
-  staan en eindigt hun naam op een beletselteken (`.stapLabel`); de stap die
-  open staat, heet voluit, en de titel van een knop geeft de hele naam. Op
-  een telefoon schuift de rij, zoals eerst. Dit geldt voor elke cursus met
+- **De rij stappen staat op een breed scherm zo lang mogelijk op één
+  regel.** Een tweede regel kostte elk scherm van dat tabblad veertig
+  pixels, en met de uitleg van elke les als één tabblad stond hij er in 41
+  tabbladen van fullstack. Past de rij niet, dan krijgt elke knop een gelijk
+  deel van de rij, maar nooit meer dan zijn naam breed is: een korte naam
+  blijft heel, een lange eindigt op een beletselteken (`.stapLabel`). De
+  stap die open staat, heet voluit, en de titel van een knop geeft de hele
+  naam. Een knop wordt niet smaller dan zijn nummer met een teken of vijf
+  (5,5rem): past de rij dan nog niet, bij negen stappen of meer, dan komt
+  er een tweede regel. In fullstack is dat nog in twee tabbladen zo. Op een
+  telefoon schuift de rij, zoals eerst. Dit geldt voor elke cursus met
   tabbladen.
 - **Een controlevraag na twee lange alinea's is ook een eigen stap**
   (`LANGE_INLEIDING`, vierhonderd tekens): het scherm paste, tot je

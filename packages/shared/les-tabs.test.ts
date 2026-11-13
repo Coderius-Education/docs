@@ -2460,18 +2460,21 @@ describe('wat een doorloop van fullstack als leerling vond', () => {
     });
   });
 
-  it('de rij stappen staat op een breed scherm op één regel', () => {
+  it('de rij stappen staat op een breed scherm zo lang mogelijk op één regel', () => {
     // Een tweede regel kostte elk scherm van dat tabblad veertig pixels: in
     // fullstack stond hij er in 41 tabbladen. De knoppen krimpen nu, behalve
-    // die van de stap die open staat.
+    // die van de stap die open staat, tot er een teken of vijf van de naam
+    // over is; pas daarna komt er een tweede regel.
     const css = readFileSync(
       fileURLToPath(new URL('./components/LesTabs/styles.module.css', import.meta.url)),
       'utf8',
     ).replace(/\/\*[\s\S]*?\*\//g, '');
-    const breed = /@media \(min-width: 997px\) \{\s*\.staplist \{([^}]*)\}([\s\S]*?)\n\}/.exec(css);
-    expect(breed?.[1]).toMatch(/flex-wrap: nowrap/);
-    expect(breed?.[2]).toMatch(/\.stap\[aria-selected="true"\] \{\s*flex-shrink: 0;/);
-    expect(breed?.[2]).toMatch(/\.stapLabel \{[^}]*text-overflow: ellipsis;/);
+    const breed = /@media \(min-width: 997px\) \{\s*(\.stap \{[\s\S]*?)\n\}/.exec(css);
+    // Een gelijk deel per knop, met zijn eigen naam als grens: een korte
+    // naam blijft heel, en de stap die open staat krimpt niet.
+    expect(breed?.[1]).toMatch(/\.stap \{\s*flex: 1 1 0;\s*min-width: 5\.5rem;\s*max-width: max-content;/);
+    expect(breed?.[1]).toMatch(/\.stap\[aria-selected="true"\] \{\s*flex: 0 0 auto;/);
+    expect(breed?.[1]).toMatch(/\.stapLabel \{[^}]*text-overflow: ellipsis;/);
   });
 
   it('de link naar de volgende les is weg zolang het tabblad een knop Volgende heeft', () => {
