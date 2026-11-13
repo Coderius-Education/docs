@@ -151,11 +151,45 @@ jobs:
     needs: plan
     if: needs.plan.outputs.test == 'true'
     runs-on: ubuntu-latest
+    env:
+      # De git waartegen de git-simulator van de editor-cursus wordt gelegd
+      # (echte-git.test.ts, naast-git.test.ts). Zie de stappen hieronder.
+      GIT_VERSIE: '2.56.1'
     steps:
       - uses: actions/checkout@v5
 
       - name: Node, pnpm en dependencies
         uses: ./.github/actions/node-pnpm
+
+      # De git van de runner ligt niet vast: op één dag zagen we 2.56.0 en
+      # 2.56.1, en een nieuwe git maakte dan PR's rood die niets met de
+      # simulator te maken hadden. Daarom een eigen git van een vaste versie,
+      # eenmaal gebouwd en daarna uit de cache. Een nieuwere git volgen is een
+      # bewuste stap: GIT_VERSIE ophogen en de simulator bijwerken tot
+      # naast-git.test.ts groen is (leerlingen installeren de nieuwste Git
+      # voor Windows). De test eist dat deze git de gebruikte is.
+      - name: Git ${{ env.GIT_VERSIE }} uit de cache
+        id: git-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/git-vast
+          key: git-${{ runner.os }}-${{ env.GIT_VERSIE }}
+
+      - name: Git ${{ env.GIT_VERSIE }} bouwen (niet in de cache)
+        if: steps.git-cache.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libcurl4-openssl-dev libexpat1-dev zlib1g-dev libssl-dev gettext tcl
+          curl -fsSL "https://mirrors.edge.kernel.org/pub/software/scm/git/git-${GIT_VERSIE}.tar.xz" \
+            | tar -xJ -C "$RUNNER_TEMP"
+          make -C "$RUNNER_TEMP/git-${GIT_VERSIE}" -j"$(nproc)" prefix="$HOME/git-vast" all
+          make -C "$RUNNER_TEMP/git-${GIT_VERSIE}" prefix="$HOME/git-vast" install
+
+      - name: Git ${{ env.GIT_VERSIE }} vooraan in het pad
+        run: |
+          echo "$HOME/git-vast/bin" >> "$GITHUB_PATH"
+          "$HOME/git-vast/bin/git" --version
 
       # De stap-voor-stap-opnemer is Python die in de browser in Pyodide draait.
       # Zijn test draait hem tegen een echte CPython, en die hoort dezelfde

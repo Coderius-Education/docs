@@ -83,6 +83,16 @@ describe('git staat op deze machine', () => {
     expect(git(['--version'])).toMatch(/^git version \d+\.\d+/);
   });
 
+  it('is in CI de vastgezette versie', () => {
+    // CI bouwt een eigen git van GIT_VERSIE (build.yml, job test): die van
+    // de runner veranderde zonder aankondiging, en dan werden PR's rood die
+    // niets met de simulator te maken hadden. Staat de variabele er, dan
+    // moet het die git zijn, en niet stil die van de runner.
+    const vast = process.env.GIT_VERSIE;
+    if (!vast) return;
+    expect(git(['--version']).trim()).toBe(`git version ${vast}`);
+  });
+
   it('is nieuw genoeg voor de uitvoer die de simulator nabootst', () => {
     const [groot, klein] = versie();
     const oud = groot < MINIMALE_GIT[0] || (groot === MINIMALE_GIT[0] && klein < MINIMALE_GIT[1]);
