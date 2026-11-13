@@ -29,7 +29,7 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-Je hoeft niet te raden. Als wachtwoorden uitlekken, worden ze geteld: daardoor is bekend welke wachtwoorden mensen het vaakst kiezen. Die **ranglijsten** veranderen van jaar tot jaar weinig.
+Raad niet in het wilde weg. Als wachtwoorden uitlekken, worden ze geteld: daardoor is bekend welke wachtwoorden mensen het vaakst kiezen. Die **ranglijsten** veranderen van jaar tot jaar weinig.
 
 </details>
 

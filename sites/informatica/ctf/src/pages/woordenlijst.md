@@ -37,19 +37,19 @@ Een gratis webtool van GCHQ waarmee je data kunt coderen, decoderen, versleutele
 ### DDoS (Distributed Denial of Service)
 Een aanval waarbij een website of server wordt overspoeld met verkeer vanuit vele bronnen tegelijk, waardoor deze onbereikbaar wordt.
 
-### Dictionary attack
-Een aanval waarbij je alleen wachtwoorden probeert die mensen echt kiezen, uit een lijst van uitgelekte of veelgebruikte wachtwoorden. Sneller dan een brute-force aanval, die alle combinaties probeert.
-
 ### Developer Tools (DevTools)
 Ingebouwde tools in je browser (F12) waarmee je webpagina's kunt inspecteren, netwerkverkeer kunt bekijken, cookies kunt beheren en meer.
 
-## E
+### Dictionary attack
+Een aanval waarbij je alleen wachtwoorden probeert die mensen echt kiezen, uit een lijst van uitgelekte of veelgebruikte wachtwoorden. Sneller dan een brute-force aanval, die alle combinaties probeert.
 
-### Encryptie (versleuteling)
-Het proces van het omzetten van leesbare data naar onleesbare data met behulp van een sleutel. Alleen wie de juiste sleutel heeft kan de data weer leesbaar maken.
+## E
 
 ### Encoding (codering)
 Het omzetten van data naar een ander formaat voor transport of opslag. Anders dan encryptie is encoding **niet bedoeld als beveiliging** - iedereen kan het omkeren.
+
+### Encryptie (versleuteling)
+Het proces van het omzetten van leesbare data naar onleesbare data met behulp van een sleutel. Alleen wie de juiste sleutel heeft kan de data weer leesbaar maken.
 
 ## F
 
@@ -72,9 +72,6 @@ Het bepalen van de geografische locatie van een apparaat aan de hand van het IP-
 ### HTTP (HyperText Transfer Protocol)
 Het protocol waarmee je browser communiceert met webservers. Elke keer dat je een webpagina bezoekt, worden HTTP-verzoeken verstuurd.
 
-### HTTPS
-De beveiligde versie van HTTP. De 'S' staat voor Secure. Alle data wordt versleuteld verstuurd, zodat anderen niet kunnen meelezen.
-
 ### HTTP-headers
 Extra informatie die wordt meegestuurd bij HTTP-verzoeken en -antwoorden. Bevatten metadata zoals het type content, cookies, caching-instructies, etc.
 
@@ -85,6 +82,9 @@ Codes die een webserver terugstuurt om aan te geven wat er is gebeurd:
 - **403** - Verboden (geen toegang)
 - **404** - Niet gevonden
 - **500** - Server error
+
+### HTTPS
+De beveiligde versie van HTTP. De 'S' staat voor Secure. Alle data wordt versleuteld verstuurd, zodat anderen niet kunnen meelezen.
 
 ## I
 

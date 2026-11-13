@@ -245,6 +245,66 @@ describe('ctf: een hint brengt iets nieuws', () => {
   });
 });
 
+// Een review vond hints die elkaar tegenspraken, en een hint die iets vroeg
+// wat geen challenge leert.
+describe('ctf: de hints van een challenge passen bij elkaar en bij de reeks', () => {
+  it('een hint zegt niet "niet raden" als een latere hint laat proberen tot er een klopt', () => {
+    // Standaard: hint 1 "Je hoeft niet te raden", hint 3 "probeer de
+    // wachtwoorden een voor een, tot er een klopt".
+    const fout: string[] = [];
+    for (const c of challenges) {
+      const hints = hintsVan(c.bron);
+      hints.forEach((hint, i) => {
+        if (!/\b(hoeft|hoef) niet te raden\b|\bniet (te )?raden\b/i.test(hint)) return;
+        if (hints.slice(i + 1).some((later) => /\b(een voor een|tot er een klopt)\b/i.test(later)))
+          fout.push(`${c.pad}, hint ${i + 1}`);
+      });
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('een hint laat geen header veranderen: Headers leert alleen lezen', () => {
+    // Dubbel zei "zet een waarde in een cookie, een header of een parameter".
+    // Een cookie verander je zoals bij Koekjes 2, een parameter zoals bij
+    // Eentje erbij; een header van een verzoek veranderen leert geen
+    // challenge, en de Developer Tools kunnen het niet zonder meer.
+    const fout: string[] = [];
+    for (const c of challenges)
+      hintsVan(c.bron).forEach((hint, i) => {
+        if (/\b(zet|verander|wijzig|stuur|pas)\b[^.]*\b(in|aan) een (eigen )?header\b/i.test(hint))
+          fout.push(`${c.pad}, hint ${i + 1}`);
+        if (/\bin een cookie, een header\b/i.test(hint)) fout.push(`${c.pad}, hint ${i + 1}`);
+      });
+    expect(fout).toEqual([]);
+  });
+});
+
+describe('ctf: de woordenlijst', () => {
+  const lijst = readFileSync(join(SITE, 'src/pages/woordenlijst.md'), 'utf8');
+
+  it('staat op alfabet, zoals een leerling hem afzoekt', () => {
+    // "Dictionary attack" stond voor "Developer Tools", "Encryptie" voor
+    // "Encoding". Op alfabet zoals een Nederlandse woordenlijst, met een
+    // spatie en een streepje voor een letter (HTTP-headers voor HTTPS).
+    const termen = [...lijst.matchAll(/^### (.+)$/gm)].map((m) => m[1]);
+    expect(termen.length).toBeGreaterThan(30);
+    const opAlfabet = [...termen].sort((a, b) => a.localeCompare(b, 'nl', { sensitivity: 'base' }));
+    expect(termen).toEqual(opAlfabet);
+  });
+
+  it('elke term staat onder zijn eigen letter', () => {
+    const fout: string[] = [];
+    let letter = '';
+    for (const regel of lijst.split('\n')) {
+      const kop = /^## (\S)$/.exec(regel);
+      if (kop) letter = kop[1];
+      const term = /^### (.)/.exec(regel);
+      if (term && term[1].toUpperCase() !== letter) fout.push(regel);
+    }
+    expect(fout).toEqual([]);
+  });
+});
+
 // De link Volgende onder een pagina volgde de lessenlijst: de intro eindigde
 // bij "Volgende: Forensics", en na Robots (nummer 3) kwam Virus (nummer 9).
 // De intro zegt "Begin hier: Hacking - Standaard"; de link zegt nu hetzelfde.

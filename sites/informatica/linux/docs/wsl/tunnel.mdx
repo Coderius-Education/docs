@@ -44,13 +44,13 @@ Je oefent weer op `localhost`, dus de "server" is je eigen Ubuntu. Maak in de tw
 ssh -N -L 9000:127.0.0.1:8000 localhost
 ```
 
-`-L 9000:127.0.0.1:8000` betekent: poort 9000 hier, op mijn computer, gaat naar `127.0.0.1:8000` gezien vanaf de server. `-N` betekent: geen commando's, alleen de tunnel. De terminal lijkt stil te staan; zolang hij open is, staat de tunnel.
+`-L 9000:127.0.0.1:8000` betekent: poort 9000 hier, op mijn computer, gaat door de tunnel naar `127.0.0.1:8000`. `-N` betekent: geen commando's, alleen de tunnel. De terminal lijkt stil te staan; zolang hij open is, staat de tunnel.
 
 Open `http://localhost:9000` in je browser. Daar staat *Alleen op de server*. Stop de tunnel met Ctrl+C en herlaad de pagina: nu krijgt de browser geen verbinding, terwijl de website nog draait. Op poort 9000 luisterde alleen de tunnel.
 
 ### Waarom 8000 hier ook werkt
 
-Windows stuurt `localhost` door naar Ubuntu (les 7.1). Daarom opent `http://localhost:8000` in je browser de site ook zonder tunnel: hier zijn laptop en server dezelfde computer. Bij een echte server is `localhost` je laptop, en daar draait op 8000 niets. Dan kom je alleen via de tunnel bij de site.
+Windows stuurt `localhost` door naar Ubuntu ([5.2](site:linux/docs/wsl/windows-en-linux#een-website-in-linux-de-browser-in-windows)). Daarom opent `http://localhost:8000` in je browser de site ook zonder tunnel: hier zijn laptop en server dezelfde computer. Bij een echte server staan je browser en de site op twee verschillende computers, en kom je alleen via de tunnel bij de site.
 
 ## Voorspel
 

@@ -158,6 +158,50 @@ describe('de schermen van de editor-cursus', () => {
     expect(fout).toEqual([]);
   });
 
+  it('een kop dekt wat eronder staat: Fetch (Prune) staat onder een kop over opruimen', () => {
+    // In Pull request stap 5 stond Fetch (Prune) als stap 4 onder "Verwijder
+    // de lokale feature-branch", terwijl hij de kopie van de branch van GitHub
+    // opruimt. Een kop is ook het label van een tabblad en een adres: hij
+    // zegt wat de leerling daar doet.
+    const fout: string[] = [];
+    let gevonden = 0;
+    for (const p of paginas) {
+      for (const sectie of p.bron.split(/^(?=## )/m)) {
+        if (!/^\d+\. .*`Git: Fetch \(Prune\)`/m.test(sectie)) continue;
+        gevonden++;
+        const kop = sectie.split('\n')[0];
+        if (!/\b(ruim|opruimen)\b/i.test(kop) || /\blokale\b/i.test(kop))
+          fout.push(`${p.naam}: ${kop}`);
+      }
+    }
+    expect(gevonden).toBeGreaterThan(0);
+    expect(fout).toEqual([]);
+  });
+
+  it('de knoppen van een merge conflict staan vet, op elke pagina', () => {
+    // Stap 4 van Branches zette ze vet, Er gaat iets mis niet: dezelfde
+    // knop zag er op twee pagina's anders uit. De eerste keer dat een pagina
+    // een knop noemt, staat hij vet, zoals elke knop van VS Code in de cursus.
+    const KNOPPEN = [
+      'Accept Current Change',
+      'Accept Incoming Change',
+      'Accept Both Changes',
+      'Compare Changes',
+    ];
+    const fout: string[] = [];
+    let gezien = 0;
+    for (const p of paginas) {
+      for (const knop of KNOPPEN) {
+        const eerste = p.bron.indexOf(knop);
+        if (eerste < 0) continue;
+        gezien++;
+        if (p.bron.slice(eerste - 2, eerste) !== '**') fout.push(`${p.naam}: ${knop}`);
+      }
+    }
+    expect(gezien).toBeGreaterThanOrEqual(8);
+    expect(fout).toEqual([]);
+  });
+
   it('wat er op een ander systeem anders gaat, staat op het scherm met de stappen', () => {
     // In de python-tutorial stond "Op een Mac of Linux" (en "De keuze staat
     // niet in het menu") onder Wat je nu ziet: een tabblad verder dan de

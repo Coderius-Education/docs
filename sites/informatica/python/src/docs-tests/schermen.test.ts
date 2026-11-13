@@ -21,11 +21,11 @@ import { describe, expect, it } from 'vitest';
 
 const require = createRequire(import.meta.url);
 const GEDEELD = '../../../../../packages/shared/plugins';
-const { schermenVan: schermenVanBron } = require(`${GEDEELD}/les-schermen.js`);
+const { schermenVan: schermenVanBron, DOORGAAND } = require(`${GEDEELD}/les-schermen.js`);
 const { mdxParser } = require(`${GEDEELD}/werkvormen.js`);
 
 type Blok = {
-  soort: 'tekst' | 'code' | 'veld' | 'tabel' | 'lijst' | 'antwoord' | 'vraag';
+  soort: 'tekst' | 'code' | 'veld' | 'tabel' | 'lijst' | 'antwoord' | 'vraag' | 'plaatje';
   tekst: string;
   inVraag?: boolean;
 };
@@ -182,6 +182,38 @@ describe('elk scherm van een les staat op zichzelf', () => {
       if ((dicht < 0 ? na : na.slice(0, dicht)).some((b) => b.soort === 'code'))
         fout.push(`${s.les} | ${s.naam}`);
     }
+    expect(fout).toEqual([]);
+  });
+
+  it('een scherm begint niet met een zin die op het vorige doorgaat', () => {
+    // De schildpaddenrace werd in stap 6 gesplitst om 24 pixels, en toen
+    // begon de stap over break met "Daar is `break` voor.": het probleem
+    // stond een stap terug. Een scherm noemt zelf waar het over gaat. De lijst
+    // is die van linux en fullstack (packages/shared/plugins/les-schermen.js).
+    expect(DOORGAAND.test('Daar is `break` voor.')).toBe(true);
+    const fout = perLes.flatMap((les) =>
+      les.schermen
+        .slice(1)
+        .filter((s) => s.blokken[0]?.soort === 'tekst' && DOORGAAND.test(s.blokken[0].tekst.trim()))
+        .map((s) => `${s.les} | ${s.naam}: ${s.blokken[0].tekst.trim().slice(0, 60)}`),
+    );
+    expect(fout).toEqual([]);
+  });
+
+  it('een stap verwijst niet naar "het plaatje van stap N": dat staat op een andere pagina', () => {
+    // "Op het plaatje van stap 4" stond in stap 6 van de schildpaddenrace,
+    // en het plaatje stond in stap 4. Laat het plaatje zien, of noem waar het
+    // staat.
+    const fout = perLes.flatMap((les) =>
+      les.schermen.flatMap((s) =>
+        s.blokken
+          .filter(
+            (b) => b.soort === 'tekst' && /\bhet plaatje (van|uit|bij) stap \d/i.test(b.tekst),
+          )
+          .filter(() => !s.blokken.some((b) => b.soort === 'plaatje'))
+          .map((b) => `${s.les} | ${s.naam}: ${b.tekst.slice(0, 60)}`),
+      ),
+    );
     expect(fout).toEqual([]);
   });
 

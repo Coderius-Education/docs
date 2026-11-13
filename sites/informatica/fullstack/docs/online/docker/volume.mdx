@@ -60,7 +60,7 @@ Je site werkt, maar na een `docker rm` zijn de berichten toch weg, zonder foutme
 
 ### Een andere map
 
-Ook nu zijn de berichten na een `docker rm` weg, zonder foutmelding, en klopt de naam van het volume wel.
+Na een `docker rm` zijn de berichten weg, zonder foutmelding, terwijl de naam van het volume wel klopt.
 
 **Oorzaak:** de map na de dubbele punt is niet de map waar je site schrijft, zoals `-v gastenboek-data:/data`. Het volume blijft leeg, en de databases komen in de container, in `/app/data`.
 

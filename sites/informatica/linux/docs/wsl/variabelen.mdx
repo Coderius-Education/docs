@@ -129,7 +129,7 @@ NAAM: command not found
 
 **Oorzaak:** je zette spaties rond het `=`, zoals `NAAM = Sam`. Dan denkt de shell dat `NAAM` een commando is, met `=` en `Sam` als woorden erachter.
 
-Op Ubuntu meldt een hulpprogramma dat een commando niet bestaat. Het zet er geen `bash:` voor, zoals de oefenterminal wel deed. Typte je kleine letters (`naam = Sam`), dan noemt het commando's die erop lijken: `Command 'naam' not found, did you mean:`. Staat er eerst `Could not find command-not-found database`, dan mist het nog zijn lijst; die haal je op in les 6.1. Het komt in elk geval door de spaties.
+Op Ubuntu meldt een hulpprogramma dat een commando niet bestaat. Het zet er geen `bash:` voor, zoals de oefenterminal wel deed. Typte je kleine letters (`naam = Sam`), dan noemt het commando's die erop lijken: `Command 'naam' not found, did you mean:`. Staat er eerst `Could not find command-not-found database`, dan mist het nog zijn lijst; die haal je op in [6.1](site:linux/docs/wsl/apt#sudo-even-beheerder-zijn). Het komt in elk geval door de spaties.
 
 **Oplossing:** typ het zonder spaties: `NAAM=Sam`. Staat er een spatie in de waarde, zet die dan tussen aanhalingstekens: `NAAM="Sam de Vries"`.
 

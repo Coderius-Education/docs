@@ -277,6 +277,20 @@ describe('wat de tweede doorloop als leerling vond', () => {
     expect(fout).toEqual([]);
   });
 
+  it('een zin vergelijkt je script met een script, niet met een tabblad', () => {
+    // "Vergelijk je script letterlijk met het tabblad Je script" las dubbel:
+    // het tabblad heet Je script, en je eigen script heet ook zo. Noem wat
+    // erop staat: "met het script op het tabblad Je script".
+    const fout: string[] = [];
+    for (const pad of allePaden) {
+      for (const m of bron(relative(SITE, pad)).matchAll(
+        /[^\n.]*\bVergelijk\b[^\n.]*\bmet het tabblad\b[^\n.]*/g,
+      ))
+        fout.push(`${relative(SITE, pad)}: ${m[0].trim().slice(0, 80)}`);
+    }
+    expect(fout).toEqual([]);
+  });
+
   it('in de Golfbot heet geen tabblad "Stap 1"', () => {
     // De IR-sensor had tabbladen Stap 1 en Stap 2 met eigen genummerde
     // stappen. "Kies in stap 2 een grens" las je in stap 2 van Een grens

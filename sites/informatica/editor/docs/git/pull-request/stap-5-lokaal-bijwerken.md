@@ -16,7 +16,7 @@ Online is alles netjes: je commits zitten in `main`, je feature-branch is weg. L
 
    Dat doet `git pull`: de merge-commit komt binnen. Open `hello.txt`: je afscheidsregel staat erin, ook lokaal op `main`.
 
-## Verwijder de lokale feature-branch
+## Ruim de oude branch op
 
 1. Open het **Command Palette** met **Ctrl+Shift+P** (Windows/Linux) of **Cmd+Shift+P** (macOS)
 2. Typ `Git: Delete Branch...` en druk **Enter**

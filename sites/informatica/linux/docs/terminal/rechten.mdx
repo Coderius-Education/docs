@@ -38,7 +38,7 @@ In elk groepje van drie staat wat er mag:
 - `x` (*execute*): uitvoeren als programma, of bij een map: erin gaan;
 - `-`: dat mag niet.
 
-`passwd` heeft `rw-r--r--`: `root` mag lezen en schrijven, iedereen mag lezen. Daarom kon je `/etc/passwd` in les 2.1 lezen met `wc -l` en `tail`.
+`passwd` heeft `rw-r--r--`: `root` mag lezen en schrijven, iedereen mag lezen. Daarom kon je `/etc/passwd` in [2.1](site:linux/docs/terminal/bestanden-lezen) lezen met `wc -l` en `tail`.
 
 ### Schrijven in een map
 
@@ -65,7 +65,7 @@ touch: cannot touch '/etc/test.txt': Permission denied
 <details>
 <summary>Klik hier als je het hebt geprobeerd</summary>
 
-Nee. Voor "de rest" staat er `---`: niets. Dat is de `Permission denied` uit les 2.1. Alleen `root` en wie in de groep `shadow` zit, mag erin kijken. Zo komt geen gewone gebruiker bij de wachtwoorden.
+Nee. Voor "de rest" staat er `---`: niets. Dat is de `Permission denied` uit [2.1](site:linux/docs/terminal/bestanden-lezen). Alleen `root` en wie in de groep `shadow` zit, mag erin kijken. Zo komt geen gewone gebruiker bij de wachtwoorden.
 
 </details>
 

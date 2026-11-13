@@ -14,7 +14,7 @@ import { describe, expect, it } from 'vitest';
 
 const require = createRequire(import.meta.url);
 const GEDEELD = '../../../../../packages/shared/plugins';
-const { schermenVan: schermenVanBron } = require(`${GEDEELD}/les-schermen.js`);
+const { schermenVan: schermenVanBron, DOORGAAND } = require(`${GEDEELD}/les-schermen.js`);
 const { mdxParser } = require(`${GEDEELD}/werkvormen.js`);
 
 type Blok = { soort: 'tekst' | 'code' | 'veld' | 'tabel' | 'lijst' | 'antwoord'; tekst: string };
@@ -86,9 +86,8 @@ describe('elk scherm van een les staat op zichzelf', () => {
   it('een scherm begint niet met een zin die op het vorige doorgaat', () => {
     // De doorloop als leerling vond er drie die de lijst niet kende: "Een
     // naam werkt ook:" (7.1), "Na het opstarten opent er" en "Je ziet nu een
-    // prompt" (5.1). Een scherm noemt zelf waar het over gaat.
-    const DOORGAAND =
-      /^(Daaronder|Daarom|Daarna|Daarmee|Daardoor|Daarin|Daarvoor|Hierna|Erna|Eronder|Erboven|Per groepje|Hetzelfde|Ook hier|Draait het|Nu|Dan|Ook|Je ziet nu|Na het opstarten|(Een|De|Het) \S+ (werkt|kan|mag) ook)(?![\wà-ÿ])/;
+    // prompt" (5.1). Een scherm noemt zelf waar het over gaat. De lijst staat
+    // één keer in packages/shared/plugins/les-schermen.js, voor elke cursus.
     for (const zin of [
       'Een naam werkt ook: ping -c 3 one.one.one.one',
       'Na het opstarten opent er een zwart venster.',
@@ -100,6 +99,35 @@ describe('elk scherm van een les staat op zichzelf', () => {
       .filter((s, i) => i > 0 && schermen[i - 1].les === s.les)
       .filter((s) => s.blokken[0]?.soort === 'tekst' && DOORGAAND.test(s.blokken[0].tekst.trim()))
       .map((s) => waar(s, s.blokken[0]));
+    expect(fout).toEqual([]);
+  });
+
+  it('Shift+Tab uit de oefenterminal belooft geen plek die van de breedte afhangt', () => {
+    // "Shift+Tab gaat terug naar de tekst" (1.3) klopte op een telefoon. Op
+    // een breed scherm staat de oefenterminal naast de les, in de HTML na de
+    // panelen, en dan kwam Shift+Tab eerst bij de knop Volgende.
+    const fout = lessen.flatMap((les) =>
+      les.bron
+        .split('\n')
+        .filter((regel) => /Shift\+Tab[^.]*\bnaar de (tekst|les|uitleg)\b/i.test(regel))
+        .map((regel) => `${les.naam}: ${regel.slice(0, 80)}`),
+    );
+    expect(fout).toEqual([]);
+  });
+
+  it('een andere les heet met een site:-link, niet als kale "les 6.1"', () => {
+    // "Die haal je op in les 6.1" (5.4) en "(les 7.1)" (7.5) waren gewone
+    // tekst: geen link, en 7.1 was de verkeerde les (localhost staat in 5.2).
+    // Schrijfgids §12: elke verwijzing naar een pagina is een site:-link, ook
+    // binnen de cursus. Een nummer in de linktekst ("[6.1](site:…)") is goed.
+    const fout = lessen.flatMap((les) =>
+      les.bron
+        .replace(/^---\n[\s\S]*?\n---\n/, '')
+        .replace(/```[\s\S]*?```/g, '')
+        .split('\n')
+        .filter((regel) => /(?<!\[)\bles \d+\.\d+\b(?!\]\()/.test(regel))
+        .map((regel) => `${les.naam}: ${regel.trim().slice(0, 80)}`),
+    );
     expect(fout).toEqual([]);
   });
 

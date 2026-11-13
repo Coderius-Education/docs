@@ -43,6 +43,6 @@ Open de **Developer Tools** (F12) en kijk op elke plek: de broncode, de cookies,
 <details>
 <summary>Hint 3</summary>
 
-Wat je op de ene plek vindt, is vaak de sleutel op een andere. Zet een waarde die je vond in een cookie, een header of een parameter, en verander telkens **één ding tegelijk**. Kijk na elke verandering wat het antwoord van de site anders doet.
+Wat je op de ene plek vindt, is vaak de sleutel op een andere. Twee dingen kun je zelf veranderen: de waarde van een cookie, zoals bij Koekjes 2, en een parameter in de URL, zoals bij Eentje erbij. Zet een waarde die je vond op zo'n plek, en verander telkens **één ding tegelijk**. Kijk na elke verandering wat het antwoord van de site anders doet.
 
 </details>
