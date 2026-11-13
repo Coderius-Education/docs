@@ -29,7 +29,7 @@ Het sterretje `*` is een **jokerteken**: het past op elk stuk tekst, ook op niet
 
 ## De shell vult het in
 
-De **shell** is het programma dat leest wat je typt en daarna het commando start. Op Ubuntu heet hij `bash`: daarom begint een melding als `bash: whomai: command not found` met zijn naam. Niet `ls` zoekt de bestanden, maar de shell: die vervangt `*.jpg` door de namen die passen, voordat het commando start. Met `echo` zie je wat het commando dan krijgt:
+De **shell** is het programma dat leest wat je typt en daarna het commando start. Op Ubuntu heet hij `bash`: daarom begint een melding als `bash: cd: www: No such file or directory` met zijn naam. Niet `ls` zoekt de bestanden, maar de shell: die vervangt `*.jpg` door de namen die passen, voordat het commando start. Met `echo` zie je wat het commando dan krijgt:
 
 ```bash
 echo *.jpg
@@ -94,7 +94,7 @@ Je staat in `fotos`, met `kat.png`, `verslag.txt` en de map `vakantie`. Je typt 
 rm: cannot remove 'vakantie': Is a directory
 ```
 
-`rm *` is een van de gevaarlijkste regels die je kunt typen. Kijk daarom eerst met `ls *` (of `echo *`) wat er past, en gooi dan pas weg.
+`rm *` is een van de gevaarlijkste regels die je kunt typen. Kijk daarom eerst met `echo *` wat er past: dat zijn precies de namen die `rm` krijgt. `ls *` laat van een map ook de inhoud zien, hier `strand.jpg` en `zee.jpg`, terwijl `rm *` die laat staan.
 
 </details>
 
@@ -145,7 +145,7 @@ In de map `project` staan bestanden die op `.tmp` eindigen: rommel die een progr
 <details>
 <summary>Klik hier voor een tip</summary>
 
-Gebruik bij `ls` en bij `rm` hetzelfde jokerteken. Wat `ls` laat zien, is precies wat `rm` weggooit.
+Gebruik bij `ls` en bij `rm` hetzelfde jokerteken. Vindt het alleen bestanden, zoals hier, dan laat `ls` precies zien wat `rm` weggooit.
 
 </details>
 
@@ -158,7 +158,7 @@ ls *.tmp
 rm *.tmp
 ```
 
-Eerst `ls`, dan pas `rm`: dat is een gewoonte die je bij elk jokerteken houdt.
+Eerst kijken, dan pas `rm`: dat is een gewoonte die je bij elk jokerteken houdt. Kan het jokerteken ook een map vinden, kijk dan met `echo`.
 
 </details>
 
@@ -217,6 +217,6 @@ mv: cannot move 'fotos' to a subdirectory of itself, 'fotos/fotos'
 
 **Oorzaak:** je typte `mv * fotos/`. Het sterretje past op alles, ook op de map `fotos` zelf, en een map kan niet in zichzelf. De rest is wel verplaatst, ook wat geen foto is.
 
-**Oplossing:** noem alleen wat je wilt verplaatsen, zoals `mv *.jpg *.png fotos/`. Kijk eerst met `ls` en dezelfde jokertekens wat er past.
+**Oplossing:** noem alleen wat je wilt verplaatsen, zoals `mv *.jpg *.png fotos/`. Kijk eerst met `echo` en dezelfde jokertekens wat er past.
 
 Door naar [3.1 Zoeken en doorgeven](site:linux/docs/terminal/zoeken).
