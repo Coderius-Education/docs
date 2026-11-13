@@ -172,6 +172,10 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     };
     meet();
     el.addEventListener('click', meet);
+    // Een uitklapblok is op het moment van de klik nog dicht: de code erin
+    // heeft dan geen breedte, en bleef op volle grootte afgesneden staan.
+    // `toggle` komt als het blok open is (en borrelt niet: vangen).
+    el.addEventListener('toggle', meet, true);
     el.addEventListener('load', meet, true);
     window.addEventListener('resize', meet);
     // Het lettertype van de code laadt pas als er code in beeld komt, en is
@@ -181,6 +185,7 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     return () => {
       window.cancelAnimationFrame(beeld);
       el.removeEventListener('click', meet);
+      el.removeEventListener('toggle', meet, true);
       el.removeEventListener('load', meet, true);
       window.removeEventListener('resize', meet);
       document.fonts?.removeEventListener?.('loadingdone', meet);
@@ -298,7 +303,7 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
   );
 }
 
-export { LesNaast, useBreed } from './Naast';
+export { LesNaast, LesNaastPlek, useBreed } from './Naast';
 
 export default function LesTabs({ children }: { children?: ReactNode }): ReactNode {
   return <Rij niveau="tab">{children}</Rij>;
@@ -354,7 +359,8 @@ export function LesTab({
             className="button button--primary button--sm"
             onClick={() => (eerst ? eerst.ga() : rij.volgende(id))}
           >
-            Volgende: {volgende}
+            {/* Een tabblad dat "Volgende tutorial" heet: niet "Volgende: Volgende tutorial". */}
+            {/^Volgende\b/.test(volgende) ? volgende : `Volgende: ${volgende}`}
           </button>
         </p>
       )}

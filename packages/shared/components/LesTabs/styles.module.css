@@ -755,7 +755,10 @@
    kolom `.naast` is het laatste kind van de wortel en leeg, tot een veld er
    zijn element in zet. Op een breed scherm staat hij dan rechts van het
    paneel, zodat het veld bij elk scherm van de les te gebruiken is; op een
-   smal scherm staat hij eronder.
+   smal scherm staat hij eronder. De les staat in twee kolommen zodra er in
+   de kolom een veld te zien is, of ergens in de les het anker van een veld
+   voor de hele les staat: dat anker staat al in de HTML van de build
+   (<LesNaastPlek>), zodat de tekst niet verspringt als het veld er komt.
 
    Flex en geen raster: het blok waarin een flex-item staat, is de hele
    wortel, en de rij tabbladen blijft dus plakken onder de navbar. In een
@@ -764,14 +767,14 @@
    navbar. Vanaf 1200 pixels (BREED in Naast.tsx): smaller is de les maar
    690 pixels breed. */
 @media (min-width: 1200px) {
-  .wortel:has(> .naast:not(:empty)) {
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
     column-gap: 1rem;
   }
 
-  .wortel:has(> .naast:not(:empty)) > .tablist {
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) > .tablist {
     flex: 0 0 100%;
     min-width: 0;
   }
@@ -782,42 +785,40 @@
      en in een codeblok met de kleinste letters 58 tekens: de meldingen van
      de terminallessen zijn 51 tot 57 tekens. Daarvoor is ook de rand van
      een codeblok hier smaller. */
-  .wortel:has(> .naast:not(:empty)) > .paneel {
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) > .paneel {
     flex: 0 0 calc(47% - 0.5rem);
     min-width: 0;
     --ifm-pre-padding: 0.75rem;
   }
 
-  .wortel:has(> .naast:not(:empty)) > .naast {
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) > .naast {
     flex: 0 0 calc(53% - 0.5rem);
     min-width: 0;
   }
 
   /* In de smalle kolom is voor code met iets ernaast geen plaats: onder
      elkaar, zoals op een smal scherm. */
-  .wortel:has(> .naast:not(:empty)) .paneel .voorbeeld:not(.metBeeld):not(.metBreedBeeld),
-  .wortel:has(> .naast:not(:empty)) .paneel .bestanden {
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"])
+    .paneel
+    .voorbeeld:not(.metBeeld):not(.metBreedBeeld),
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) .paneel .bestanden {
     display: block;
   }
 
-  .wortel:has(> .naast:not(:empty))
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"])
     .paneel
     .voorbeeld:not(.metBeeld):not(.metBreedBeeld)
     > :first-child {
     margin-bottom: 0.5rem;
   }
-
-  /* De rij stappen staat in de smalle kolom: een stap die dicht is, mag tot
-     zijn nummer krimpen, zodat de naam van de open stap op de regel past. */
-  .wortel:has(> .naast:not(:empty)) .stap:not([aria-selected="true"]) {
-    min-width: 2.25rem;
-  }
 }
 
-/* Het veld van de hele les wijkt voor het eigen veld van een tabblad: een
-   opdracht met een eigen terminal. Het anker van dat veld blijft in het
-   paneel staan, ook als het veld zelf in de kolom staat. */
-.wortel:has(> .paneel:not([hidden]) [data-les-naast-anker="veld"])
+/* Het veld van de hele les wijkt voor het eigen veld van een scherm dat
+   open staat: een opdracht met een eigen terminal. Het anker van dat veld
+   blijft in het paneel staan, ook als het veld zelf in de kolom staat, en
+   zegt of zijn scherm open is. Het anker in een stap die dicht is, telt dus
+   niet: de kolom was dan leeg. */
+.wortel:has([data-les-naast-anker="veld"][data-les-naast-open])
   > .naast
   > [data-les-naast-gast="les"] {
   display: none;
@@ -831,8 +832,13 @@
     display: none;
   }
 
-  .wortel:has(> .naast:not(:empty)) {
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) {
     display: block;
+  }
+
+  /* Een oefenveld doet op papier niets. */
+  .naast {
+    display: none;
   }
 
   /* Op papier valt er niets te klikken. */

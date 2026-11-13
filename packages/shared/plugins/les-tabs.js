@@ -363,14 +363,21 @@ function toelichtingNa(kinderen, vanaf, lengte) {
   // Een tabel heeft breedte nodig: naast een fragment van een paar regels
   // wint het scherm niets en breekt elke cel (les 9e van python: twee regels
   // code en een tabel van vier kolommen waren naast elkaar 40 pixels te lang).
+  // Een genummerde lijst die doortelt (`5. Druk op Enter` na een codeblok
+  // dat de lijst onderbrak) is het vervolg van de stappen, geen toelichting:
+  // naast de code las "5. Druk op Enter" als uitleg bij de naam van de branch.
+  const teltDoor = (node) => node.type === 'list' && node.ordered && (node.start ?? 1) > 1;
   const isPunt = (node) =>
-    node.type === 'list' || isBlok(node) || (node.type === 'table' && lengte >= MET_TABEL);
+    (node.type === 'list' && !teltDoor(node)) ||
+    isBlok(node) ||
+    (node.type === 'table' && lengte >= MET_TABEL);
   const hoortErbij = (node) =>
     node !== undefined &&
     !isVraagAlinea(node) &&
     !isUitvoerKop(node) &&
     !isVerwachtKop(node) &&
     !isBestandsnaam(node) &&
+    !teltDoor(node) &&
     ((isAlinea(node) && !isPlaatjeAlinea(node)) || isPunt(node));
   let aantal = 0;
   while (aantal < 3 && hoortErbij(kinderen[vanaf + aantal])) aantal++;
@@ -566,11 +573,25 @@ function sluitAan(uitleg, secties) {
   };
   const u = [...uitleg];
   const s = secties.map((sectie) => ({ kop: sectie.kop, kinderen: [...sectie.kinderen] }));
+  // Wat de build boven het eerste tabblad zet (een korte uitleg, het
+  // leerdoel), staat ook op dat scherm.
+  const { korteUitleg, isLeerdoelSectie } = openingVan(uitleg, secties);
+  const eersteTab = secties.findIndex((sectie, i) => !isLeerdoelSectie(sectie, i));
+  const erboven = (i) =>
+    i !== eersteTab
+      ? 0
+      : (korteUitleg ? hoogteMetLijsten(uitleg) : 0) +
+        secties.slice(0, i).reduce((som, sectie) => som + hoogteMetLijsten(sectie.kinderen), 0);
   for (let i = s.length - 1; i >= 0; i--) {
     if (!isAfsluiter(s[i])) continue;
+    // Niet onder het leerdoel: dat is dan geen leerdoel van twee alinea's
+    // meer, en werd een eigen tabblad.
+    if (i > 0 && isLeerdoelSectie(secties[i - 1], i - 1)) continue;
     const voor = i === 0 ? u : s[i - 1].kinderen;
     if (!staatEr(voor) || voor.some(isH3) || s[i].kinderen.some(isH3)) continue;
-    if (hoogteMetLijsten(voor) + hoogteMetLijsten(s[i].kinderen) + KOP_AFSLUITER > SCHERM) continue;
+    const samen =
+      hoogteMetLijsten(voor) + hoogteMetLijsten(s[i].kinderen) + KOP_AFSLUITER + erboven(i - 1);
+    if (samen > SCHERM) continue;
     // In een eigen element: de opmaak verbergt de kop van een tabblad met
     // `> h2`, en deze kop moet te zien blijven. De klasse markdown, zodat
     // Infima de alinea's en lijsten opmaakt als in de les.
@@ -1384,8 +1405,9 @@ function standTab(node, naam, bezet) {
  *
  * @param {object[]} uitleg wat er vóór de eerste `##` staat
  * @param {{kop: object, kinderen: object[]}[]} secties
+ * @param {number} [aantal] het aantal secties in de bron
  */
-function openingVan(uitleg, secties) {
+function openingVan(uitleg, secties, aantal = secties.length) {
   // Uitleg van één alinea, of van een blok als "Deze stap gebruikt …" met een
   // of twee alinea's, is geen eigen scherm: hij opent het eerste tabblad. Maar
   // alleen als er daarna nog twee tabbladen zijn; anders bleef er één over en
@@ -1421,14 +1443,41 @@ function openingVan(uitleg, secties) {
   // de les over gaat, en dan Wat je nu gaat toevoegen), heeft die twee samen
   // als eerste tabblad. Bij de eerste stap erbij was dat scherm tot 270
   // pixels te lang.
-  const opening = uitleg.length > 0 && secties.length >= 3 && isLeerdoelSectie(secties[0], 0);
+  // `aantal`: de secties van de bron. Een afsluiter die bij het scherm
+  // ervoor is gezet (sluitAan), verandert niet hoe de les opent.
+  const opening = uitleg.length > 0 && aantal >= 3 && isLeerdoelSectie(secties[0], 0);
   const korteUitleg = !opening && kort;
   return { opening, korteUitleg, isLeerdoelSectie };
 }
 
+/**
+ * De pagina in stukken: wat boven de tabbladen blijft (de titel, imports),
+ * de uitleg vóór de eerste `##`, de secties, en de imports en exports
+ * verderop. Null zonder `##`.
+ *
+ * @param {object[]} kinderen de kinderen van de mdast-root
+ */
+function verdeel(kinderen) {
+  const eerste = kinderen.findIndex(isH2);
+  if (eerste < 0) return null;
+  const boven = [];
+  const uitleg = [];
+  for (const node of kinderen.slice(0, eerste)) {
+    (zetNietsNeer(node) || isTitel(node) ? boven : uitleg).push(node);
+  }
+  const secties = [];
+  const esm = [];
+  for (const node of kinderen.slice(eerste)) {
+    if (node.type === 'mdxjsEsm') esm.push(node);
+    else if (isH2(node)) secties.push({ kop: node, kinderen: [node] });
+    else secties.at(-1).kinderen.push(node);
+  }
+  return { boven, uitleg, secties, esm };
+}
+
 /** Hoeveel tabbladen er van deze uitleg en secties komen. */
-function openingVanTabs({ uitleg, secties }) {
-  const { korteUitleg, isLeerdoelSectie } = openingVan(uitleg, secties);
+function openingVanTabs({ uitleg, secties }, aantal) {
+  const { korteUitleg, isLeerdoelSectie } = openingVan(uitleg, secties, aantal);
   return (
     secties.filter((sectie, i) => !isLeerdoelSectie(sectie, i)).length +
     (uitleg.length && !korteUitleg ? 1 : 0)
@@ -1463,34 +1512,30 @@ function groepeer(alles, { eenScherm = false } = {}) {
   // fout hoort hij niet (zie standTab).
   const vanaf = alles.findIndex(isH2);
   const standen = vanaf < 0 ? [] : alles.filter((node, i) => i > vanaf && standVan(node));
-  const kinderen = naastElkaar(standen.length ? alles.filter((n) => !standen.includes(n)) : alles);
-  const eerste = kinderen.findIndex(isH2);
-  if (eerste < 0) return null;
-  const boven = [];
-  let uitleg = [];
-  for (const node of kinderen.slice(0, eerste)) {
-    (zetNietsNeer(node) || isTitel(node) ? boven : uitleg).push(node);
-  }
-  let secties = [];
-  const esm = [];
-  for (const node of kinderen.slice(eerste)) {
-    if (node.type === 'mdxjsEsm') esm.push(node);
-    else if (isH2(node)) secties.push({ kop: node, kinderen: [node] });
-    else secties.at(-1).kinderen.push(node);
-  }
+  const bron = standen.length ? alles.filter((n) => !standen.includes(n)) : alles;
   // Een pagina die in haar geheel op één scherm past, heeft geen tabbladen.
   // Een keuze van de cursus (`lesTabs: { eenScherm: true }`): de editor-cursus
   // bestaat uit korte stappen, en daar was een stap van tien regels drie
-  // schermen.
-  if (eenScherm && !standen.length && pastOpEenScherm(uitleg, secties)) return null;
+  // schermen. De schatting kijkt naar de bron: zo'n pagina blijft zoals ze
+  // is, en zet dus niets naast elkaar.
+  if (eenScherm && !standen.length) {
+    const zoals = verdeel(bron);
+    if (zoals && pastOpEenScherm(zoals.uitleg, zoals.secties)) return null;
+  }
+  const kinderen = naastElkaar(bron);
+  const verdeeld = verdeel(kinderen);
+  if (!verdeeld) return null;
+  const { boven, esm } = verdeeld;
+  let { uitleg, secties } = verdeeld;
+  const aantal = secties.length;
   // Een korte afsluiter (Wat je nu ziet) hoort bij het scherm ervoor, als de
   // pagina dan nog tabbladen heeft.
   const metSlot = sluitAan(uitleg, secties);
-  if (metSlot && openingVanTabs(metSlot) >= 2) {
+  if (metSlot && openingVanTabs(metSlot, aantal) >= 2) {
     uitleg = metSlot.uitleg;
     secties = metSlot.secties;
   }
-  const { opening, korteUitleg, isLeerdoelSectie } = openingVan(uitleg, secties);
+  const { opening, korteUitleg, isLeerdoelSectie } = openingVan(uitleg, secties, aantal);
   // Wat bij het eerstvolgende tabblad komt te staan.
   let vooraf = korteUitleg ? [...uitleg] : [];
   const tabs = [];
@@ -1640,4 +1685,5 @@ module.exports = {
   eersteScherm,
   sluitAan,
   pastOpEenScherm,
+  naastElkaar,
 };

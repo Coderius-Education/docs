@@ -1,5 +1,5 @@
 /// <reference path="./react-dom.d.ts" />
-import { type ReactNode, useLayoutEffect, useRef, useState } from 'react';
+import { type ReactNode, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { useInBeeld, useInLesTab } from './paneel';
 
@@ -14,16 +14,26 @@ import { useInBeeld, useInLesTab } from './paneel';
 //    behalve naast een tabblad met een eigen veld (een opdracht met een
 //    eigen terminal); op een smal scherm staat het onder het tabblad.
 //  - Zonder `heleLes` hoort het veld bij zijn eigen scherm: op een breed
-//    scherm staat het in de kolom zolang dat scherm open is, op een smal
-//    scherm op zijn plek in de tekst.
+//    scherm staat het in de kolom en is het alleen te zien zolang dat scherm
+//    open is, op een smal scherm staat het op zijn plek in de tekst.
 //
 // Het veld verhuist zonder opnieuw te mounten: het staat in een eigen element
 // (de gast) dat van plek wisselt, en React rendert er met een portal in. Een
 // veld dat opnieuw mount, raakt zijn werk kwijt.
 //
-// Alleen voor een veld dat pas in de browser bestaat (binnen <BrowserOnly>):
-// een portal staat niet in de HTML van de build. Buiten een tabblad, en op
-// de server, staat het veld gewoon op zijn plek.
+// De gast verhuist alleen als het venster over de grens van `BREED` gaat,
+// niet bij een wissel van tabblad: dan is hij `hidden`. Een element dat uit
+// het document gaat en er weer in komt, is zijn schuifpositie kwijt, en de
+// terminal van een opdracht stond na elke wissel bovenaan zonder dat je nog
+// terug kon schuiven. Met `hidden` bewaart de browser die positie.
+//
+// Een portal staat niet in de HTML van de build. Een veld dat daar wel in
+// staat, staat bij het hydrateren dus eerst op zijn plek in de tekst, en
+// gaat daarna pas naar de kolom (het mount dan één keer opnieuw). Een veld
+// binnen <BrowserOnly> bestaat pas na het hydrateren en staat meteen in de
+// kolom; zet in de `fallback` dan <LesNaastPlek>, zodat de opmaak de kolom
+// al vrijhoudt en de tekst niet verspringt als het veld er komt. Buiten een
+// tabblad staat het veld gewoon op zijn plek.
 
 /** Vanaf deze breedte past er een kolom naast de les. Tussen 997 en 1200
  *  pixels staat de lessenlijst er al, en is de les maar 690 pixels breed:
@@ -55,6 +65,29 @@ export function naastVan(el: Element | null): HTMLElement | null {
   return (naast as HTMLElement | undefined) ?? null;
 }
 
+const nooit = () => () => {};
+
+/** Of dit een render in de browser is die niet hydrateert: dan mag de uitvoer
+ *  afwijken van de HTML van de build. */
+function useNaHydratatie(): boolean {
+  return useSyncExternalStore(
+    nooit,
+    () => true,
+    () => false,
+  );
+}
+
+/**
+ * De plek van een veld dat nog moet komen: voor de `fallback` van een
+ * <BrowserOnly> om een veld met <LesNaast heleLes>. De opmaak ziet het anker
+ * en zet de les al in twee kolommen. Zonder stond de tekst eerst over de
+ * volle breedte en versprong hij als de terminal er kwam.
+ */
+export function LesNaastPlek({ heleLes = false }: { heleLes?: boolean }): ReactNode {
+  if (!useInLesTab()) return null;
+  return <div data-les-naast-anker={heleLes ? 'les' : 'veld'} data-les-naast-wacht="" />;
+}
+
 export function LesNaast({
   heleLes = false,
   children,
@@ -65,24 +98,40 @@ export function LesNaast({
   const inTab = useInLesTab();
   const inBeeld = useInBeeld();
   const breed = useBreed();
+  const naHydratatie = useNaHydratatie();
   const anker = useRef<HTMLDivElement>(null);
   const [gast] = useState(() =>
     inTab && typeof document !== 'undefined' ? document.createElement('div') : null,
   );
+  const verhuisd = gast && naHydratatie;
 
   useLayoutEffect(() => {
-    if (!gast || !anker.current) return;
+    if (!verhuisd || !anker.current) return;
     gast.setAttribute('data-les-naast-gast', heleLes ? 'les' : 'veld');
     const naast = naastVan(anker.current);
-    const plek = naast && (heleLes || (breed && inBeeld)) ? naast : anker.current;
-    if (gast.parentNode !== plek) plek.appendChild(gast);
-  }, [gast, heleLes, breed, inBeeld]);
+    const plek = naast && (heleLes || breed) ? naast : anker.current;
+    if (gast.parentNode !== plek) {
+      // Wie in het veld aan het typen was, typt na het verhuizen door.
+      const focus = gast.contains(document.activeElement)
+        ? (document.activeElement as HTMLElement)
+        : null;
+      plek.appendChild(gast);
+      focus?.focus({ preventScroll: true });
+    }
+    // In de kolom is het veld van één scherm alleen te zien zolang dat
+    // scherm open is. Op zijn plek in de tekst verbergt het paneel het.
+    gast.hidden = plek === naast && !heleLes && !inBeeld;
+  }, [verhuisd, gast, heleLes, breed, inBeeld]);
   useLayoutEffect(() => () => gast?.remove(), [gast]);
 
-  if (!gast) return children;
+  if (!verhuisd) return children;
   return (
     <>
-      <div ref={anker} data-les-naast-anker={heleLes ? 'les' : 'veld'} />
+      <div
+        ref={anker}
+        data-les-naast-anker={heleLes ? 'les' : 'veld'}
+        data-les-naast-open={inBeeld ? '' : undefined}
+      />
       {createPortal(children, gast)}
     </>
   );

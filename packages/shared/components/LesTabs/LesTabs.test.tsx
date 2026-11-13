@@ -269,6 +269,67 @@ describe('de code van een les', () => {
   });
 });
 
+describe('de knop Volgende', () => {
+  it('zegt niet twee keer Volgende als het volgende tabblad zo heet', () => {
+    // De laatste stap van Git basis: het tabblad Volgende tutorial stond op
+    // de knop als "Volgende: Volgende tutorial".
+    render(
+      <LesTabs>
+        <LesTab id="a" titel="Probeer het zelf" label="Probeer het zelf">
+          <p>a</p>
+        </LesTab>
+        <LesTab id="b" titel="Volgende tutorial" label="Volgende tutorial">
+          <p>b</p>
+        </LesTab>
+      </LesTabs>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende tutorial' }));
+    expect(document.getElementById('paneel-b')?.hasAttribute('hidden')).toBe(false);
+  });
+});
+
+describe('code in een uitklapblok', () => {
+  it('wordt gemeten als het blok open is, niet bij de klik', async () => {
+    // Bij de klik op de summary is het blok nog dicht en heeft de code geen
+    // breedte. In les 2.1 van Linux bleef de uitvoer in het antwoord van de
+    // voorspelvraag daardoor op volle grootte staan, 383 pixels afgesneden:
+    // het woord waar de vraag om draait, viel weg. De les luistert nu naar
+    // `toggle`, dat komt als het blok open is.
+    render(
+      <LesTabs>
+        <LesTab id="a" titel="A" label="A">
+          <details>
+            <summary>Antwoord</summary>
+            <div className="theme-code-block">
+              <pre>
+                <code>een lange regel uitvoer</code>
+              </pre>
+            </div>
+          </details>
+        </LesTab>
+        <LesTab id="b" titel="B" label="B">
+          <p>b</p>
+        </LesTab>
+      </LesTabs>,
+    );
+    const beeld = () => new Promise((klaar) => window.requestAnimationFrame(() => klaar(null)));
+    const details = document.querySelector('details') as HTMLDetailsElement;
+    const pre = document.querySelector('pre') as HTMLPreElement;
+    Object.defineProperty(pre, 'clientWidth', { value: 400, configurable: true });
+    Object.defineProperty(pre, 'scrollWidth', {
+      configurable: true,
+      get: () => (pre.style.fontSize ? 400 : 440),
+    });
+    await beeld();
+    // Dicht: niets gemeten.
+    expect(pre.style.fontSize).toBe('');
+    details.open = true;
+    details.dispatchEvent(new Event('toggle'));
+    await beeld();
+    expect(pre.style.fontSize).not.toBe('');
+  });
+});
+
 describe('het icoon van de werkvorm', () => {
   function LesMetWerkvormen() {
     return (

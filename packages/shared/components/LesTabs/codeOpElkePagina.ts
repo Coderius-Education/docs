@@ -14,6 +14,8 @@ const straks = () => window.requestAnimationFrame(pas);
 if (typeof window !== 'undefined') {
   window.addEventListener('resize', straks);
   document.addEventListener('click', straks);
+  // Een uitklapblok is bij de klik nog dicht; `toggle` komt als het open is.
+  document.addEventListener('toggle', straks, true);
   // Het lettertype van de code is breder dan wat er staat tot het geladen is.
   document.fonts?.addEventListener?.('loadingdone', straks);
 }
