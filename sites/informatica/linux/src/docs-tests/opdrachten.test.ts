@@ -38,8 +38,8 @@ function antwoord(s: Sectie): string[] {
   return (blok?.[1] ?? '').split('\n').filter((r) => r.trim() && !r.trim().startsWith('#'));
 }
 
-function speel(id: string, regels: string[]): boolean[] {
-  const sessie = maakSessie(OPDRACHTEN[id].bestanden);
+function speel(id: string, regels: string[], kolommen = 80): boolean[] {
+  const sessie = maakSessie(OPDRACHTEN[id].bestanden, { kolommen: () => kolommen });
   let klaar: boolean[] = [];
   for (const regel of regels) klaar = volgDoelen(OPDRACHTEN[id], klaar, sessie.typ(regel).stand);
   return OPDRACHTEN[id].doelen.map((_, i) => klaar[i] ?? false);
@@ -118,6 +118,17 @@ describe('een terminal per opdracht', () => {
     ],
     '2.3.a': [
       ['mkdir oud', 'cp notities.txt oud/kopie.txt', 'mv notities.txt todo.txt', 'rm -r oud', 'ls'],
+      // Controleren met ls -l: todo.txt staat aan het eind van de regel.
+      ['mkdir oud', 'cp notities.txt oud', 'mv notities.txt todo.txt', 'rm -r oud', 'ls -l'],
+    ],
+    '2.4.a': [
+      // Controleren met de jokertekens van daarnet: ls zet de map ervoor.
+      ['cd downloads', 'mkdir fotos', 'mv *.jpg *.png fotos', 'ls fotos/*'],
+    ],
+    '2.4.b': [
+      // De voorspelvraag van de les raadt `ls *` of `echo *` aan.
+      ['cd project', 'ls -l *.tmp', 'rm *.tmp'],
+      ['cd project', 'echo *.tmp', 'rm *.tmp'],
     ],
     '3.1.a': [
       ['grep inloggen /var/log/apache2/access.log'],
@@ -145,6 +156,18 @@ describe('een terminal per opdracht', () => {
       ],
       // Twee mv's met een jokerteken: alles staat er, maar niet "met één mv".
       ['cd downloads', 'mkdir fotos', 'mv *.jpg fotos', 'mv *.png fotos', 'ls fotos'],
+      // Ook niet op één regel.
+      ['cd downloads', 'mkdir fotos', 'mv *.jpg fotos && mv *.png fotos', 'ls fotos'],
+      ['cd downloads', 'mkdir fotos', 'mv *.jpg fotos/; mv *.png fotos/', 'ls fotos'],
+      // Alles verplaatsen is niet alleen de foto's.
+      ['cd downloads', 'mkdir fotos', 'mv * fotos/', 'ls fotos'],
+      // Eén mv, maar zonder jokertekens.
+      ['cd downloads', 'mkdir fotos', 'mv vakantie1.jpg vakantie2.jpg kat.png fotos/', 'ls fotos'],
+    ],
+    '2.4.b': [
+      // Twee keer rm is niet "met één rm".
+      ['cd project', 'ls *.tmp', 'rm cache1.tmp', 'rm cache2.tmp'],
+      ['cd project', 'ls *.tmp', 'rm cache1.tmp; rm cache2.tmp'],
     ],
   };
 
@@ -179,6 +202,55 @@ describe('een terminal per opdracht', () => {
       expect(met.length).toBeLessThan(zonderUit.length);
     });
   }
+
+  it('op een smalle terminal haalt het antwoord uit de les ook elk doel', () => {
+    // ls zet zijn namen in kolommen op de breedte van de terminal. Op een
+    // telefoon van 320 pixels (36 kolommen) stond vakantie2.jpg dan vóór
+    // vakantie1.jpg, en kwam het laatste vinkje van 2.4.a nooit: het doel
+    // keek naar de volgorde op het scherm.
+    for (const s of secties.filter((x) => x.id in OPDRACHTEN))
+      for (const kolommen of [20, 36, 41])
+        expect(speel(s.id, antwoord(s), kolommen), `${s.id} bij ${kolommen}`).toEqual(
+          OPDRACHTEN[s.id].doelen.map(() => true),
+        );
+  });
+
+  describe('de melding noemt de echte reden', () => {
+    // Uit de tweede doorloop: elke melding klopte voor één scenario, en
+    // zei bij de buren iets wat niet waar was.
+    const melding = (id: string, regels: string[]) => {
+      const opdracht = OPDRACHTEN[id];
+      const sessie = maakSessie(opdracht.bestanden);
+      let klaar: boolean[] = [];
+      let tekst: string | null = null;
+      for (const regel of regels) {
+        const { stand } = sessie.typ(regel);
+        klaar = volgDoelen(opdracht, klaar, stand);
+        tekst = opdracht.vast?.(stand, klaar) ?? null;
+      }
+      return tekst;
+    };
+
+    it('1.2.a met een absoluut pad: het relatieve pad ontbreekt', () => {
+      expect(melding('1.2.a', ['cd /var/log', 'cd /var/www/html'])).toMatch(/relatief pad/);
+    });
+
+    it("2.4.a: een mv zonder jokertekens, meer dan de foto's, of mv vóór mkdir", () => {
+      expect(
+        melding('2.4.a', ['cd downloads', 'mkdir fotos', 'mv vakantie1.jpg kat.png fotos/']),
+      ).toMatch(/jokertekens/);
+      expect(melding('2.4.a', ['cd downloads', 'mkdir fotos', 'mv * fotos/'])).toMatch(
+        /meer verplaatst/,
+      );
+      expect(melding('2.4.a', ['cd downloads', 'mv *.png fotos'])).toMatch(/fotos is een bestand/);
+    });
+
+    it('2.4.b: hernoemd is niet weg, en eerst kijken met echo telt', () => {
+      expect(melding('2.4.b', ['cd project', 'mv cache1.tmp oud.tmp'])).toMatch(/hernoemd/);
+      expect(melding('2.4.b', ['cd project', 'echo *.tmp', 'rm *.tmp'])).toBeNull();
+      expect(melding('2.4.b', ['cd project', 'ls *.tmp', 'rm cache1.tmp'])).toMatch(/één rm/);
+    });
+  });
 
   describe('een opdracht die is vastgelopen, zegt dat', () => {
     // Uit de doorloop: wie in 2.4.b eerst `rm *.tmp` typte, kon geen doel

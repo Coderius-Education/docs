@@ -508,6 +508,29 @@ function lsEen(args, target, env, { doorgeven = false } = {}) {
   return { output: uitvoer, exitCode: 0 };
 }
 
+/** De regels van `help`: het commando en wat het doet. */
+const HULP = [
+  ['ls [pad]', 'bestanden tonen'],
+  ['cat <bestand>', 'inhoud tonen'],
+  ['cd [pad]', 'naar een map gaan'],
+  ['pwd', 'de map waar je bent'],
+  ['whoami, id', 'wie je bent'],
+  ['echo <tekst>', 'tekst tonen'],
+  ['grep <patroon> <bestand>', 'zoeken in tekst'],
+  ['head, tail [-n N]', 'eerste of laatste regels'],
+  ['wc [-l|-w|-c]', 'regels, woorden, tekens'],
+  ["find <pad> -name '...'", 'bestanden vinden'],
+  ['mkdir [-p] <map>', 'map maken'],
+  ['touch <bestand>', 'leeg bestand maken'],
+  ['cp <bron> <doel>', 'kopiëren'],
+  ['mv <bron> <doel>', 'verplaatsen, hernoemen'],
+  ['rm [-r] <pad>', 'weggooien, voorgoed'],
+  ['echo <tekst> > <bestand>', 'tekst in een bestand'],
+  ['uname [-a], hostname', 'over deze computer'],
+  ['history', 'wat je eerder typte'],
+  ['clear', 'scherm leegmaken'],
+];
+
 const COMMANDS = {
   ls(args, env, stdin, opties = {}) {
     const doelen = args.filter((a) => !a.startsWith('-'));
@@ -681,32 +704,20 @@ const COMMANDS = {
     return { output: '', exitCode: 0 };
   },
 
-  help() {
+  help(args, env) {
+    // Op een smalle terminal (een telefoon, 41 kolommen) staat de uitleg
+    // onder het commando: naast elkaar brak xterm hem midden in een woord.
+    const breed = (env.kolommen?.() ?? 80) >= 53;
+    const regels = HULP.flatMap(([cmd, wat]) =>
+      breed ? [`  ${cmd.padEnd(25)}${wat}`] : [`  ${cmd}`, `      ${wat}`],
+    );
     return {
       output: [
         "Beschikbare commando's:",
-        '  ls [pad]                 bestanden tonen',
-        '  cat <bestand>            inhoud tonen',
-        '  cd [pad]                 naar een map gaan',
-        '  pwd                      de map waar je bent',
-        '  whoami, id               wie je bent',
-        '  echo <tekst>             tekst tonen',
-        '  grep <patroon> <bestand> zoeken in tekst',
-        '  head, tail [-n N]        eerste of laatste regels',
-        '  wc [-l|-w|-c]            regels, woorden, tekens',
-        "  find <pad> -name '...'   bestanden vinden",
-        '  mkdir [-p] <map>         map maken',
-        '  touch <bestand>          leeg bestand maken',
-        '  cp <bron> <doel>         kopiëren',
-        '  mv <bron> <doel>         verplaatsen, hernoemen',
-        '  rm [-r] <pad>            weggooien, voorgoed',
-        '  echo <tekst> > <bestand> tekst in een bestand',
-        '  uname [-a], hostname     over deze computer',
-        '  history                  wat je eerder typte',
-        '  clear                    scherm leegmaken',
+        ...regels,
         '',
         'Tab vult een commando of naam aan.',
-        'Pijltje omhoog haalt een vorig commando terug.',
+        'Pijltje omhoog: een vorig commando.',
       ].join('\n'),
       exitCode: 0,
     };
@@ -956,6 +967,10 @@ const OPTIES = {
 
 /** De eerste optie die dit commando hier niet kent, of null. */
 function onbekendeOptie(naam, args) {
+  // echo van bash kent -n, -e en -E vooraan; elk ander woord met een streepje
+  // drukt hij gewoon af (`echo -x` geeft -x). De oefenterminal kent ze niet,
+  // en schreef `echo -e "a\nb"` als "-e a\nb".
+  if (naam === 'echo') return /^-[neE]+$/.test(args[0] ?? '') ? args[0] : null;
   const kent = OPTIES[naam];
   if (kent === undefined) return null;
   for (const a of args) {

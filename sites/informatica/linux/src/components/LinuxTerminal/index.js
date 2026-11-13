@@ -252,7 +252,9 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
         screenReaderMode: true,
       });
       // Esc en dan Tab laat de terminal los (regel.js, maakUitweg).
-      term.attachCustomKeyEventHandler(maakUitweg());
+      const uitweg = maakUitweg();
+      term.attachCustomKeyEventHandler(uitweg);
+      term.textarea?.addEventListener('blur', uitweg.vergeet);
 
       const fitAddon = new FitAddon();
       term.loadAddon(fitAddon);

@@ -1,3 +1,7 @@
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { vulAan } from './aanvullen';
 import { maakSessie } from './opdrachten';
@@ -509,8 +513,64 @@ describe('ls op een smalle terminal', () => {
 
   it('een kleur telt niet mee voor de breedte', () => {
     const kleur = (n: string) => `<${n}>`;
-    expect(inKolommen(['aa', 'b', 'cc'], 6, kleur)).toBe('<aa>  <cc>\n<b>');
+    expect(inKolommen(['aa', 'b', 'cc'], 8, kleur)).toBe('<aa>  <cc>\n<b>');
   });
+
+  it('rekent zoals coreutils: korter dan de breedte, en kolommen van minstens drie', () => {
+    // Uit de review: met `<=` en zonder de ondergrens week 247 van 4200
+    // gevallen af van ls -C. Een regel even breed als de terminal past niet.
+    // Nagedraaid met ls -C -T 0 -w 7 en -w 8 (coreutils 9.4).
+    expect(inKolommen(['ab', 'cd'], 7)).toBe('ab\ncd');
+    expect(inKolommen(['ab', 'cd'], 8)).toBe('ab  cd');
+  });
+
+  const gnu = (() => {
+    try {
+      return execFileSync('ls', ['--version'], { encoding: 'utf8' }).includes('GNU coreutils');
+    } catch {
+      return false;
+    }
+  })();
+
+  it.runIf(gnu)(
+    'geeft dezelfde kolommen als ls -C van deze machine',
+    () => {
+      // 60 willekeurige mappen op acht breedtes, naast de echte ls gelegd.
+      let zaad = 7;
+      const kans = () => {
+        zaad = (zaad * 1103515245 + 12345) % 2147483648;
+        return zaad / 2147483648;
+      };
+      const fout: string[] = [];
+      for (let t = 0; t < 60; t++) {
+        const map = mkdtempSync(join(tmpdir(), 'kolommen-'));
+        const aantal = 1 + Math.floor(kans() * 14);
+        const namen = new Set<string>();
+        while (namen.size < aantal)
+          namen.add(
+            Array.from({ length: 1 + Math.floor(kans() * 16) }, () =>
+              String.fromCharCode(97 + Math.floor(kans() * 26)),
+            ).join(''),
+          );
+        for (const naam of namen) writeFileSync(join(map, naam), '');
+        const env = { ...process.env, LC_ALL: 'C' };
+        const opAlfabet = execFileSync('ls', ['-1', map], { encoding: 'utf8', env })
+          .trim()
+          .split('\n');
+        for (const breedte of [10, 20, 30, 41, 53, 58, 64, 80]) {
+          const echt = execFileSync('ls', ['-C', '-T', '0', '-w', String(breedte), map], {
+            encoding: 'utf8',
+            env,
+          }).replace(/\n$/, '');
+          if (inKolommen(opAlfabet, breedte) !== echt)
+            fout.push(`${breedte}: ${opAlfabet.join(' ')}`);
+        }
+        rmSync(map, { recursive: true });
+      }
+      expect(fout).toEqual([]);
+    },
+    30000,
+  );
 
   it('ls gebruikt de breedte van de terminal', () => {
     const bestanden = {
@@ -528,12 +588,28 @@ describe('ls op een smalle terminal', () => {
     expect(maakSessie(bestanden).typ('ls downloads').stand.uitvoer).toEqual([NAMEN.join('  ')]);
   });
 
-  it('help past op de smalste terminal naast de les', () => {
+  it('help past op de smalste terminal naast de les, en op een telefoon', () => {
     // Op 1200 pixels heeft de terminal 53 kolommen; een regel van 61 tekens
-    // brak af als "(standaar" en "d 10)".
+    // brak af als "(standaar" en "d 10)". Op een telefoon zijn het er 41:
+    // daar staat de uitleg onder het commando.
+    for (const kolommen of [53, 41]) {
+      const uitvoer = maakSessie(undefined, { kolommen: () => kolommen }).typ('help').stand.uitvoer;
+      for (const regel of uitvoer)
+        expect(regel.length, `${kolommen}: ${regel}`).toBeLessThan(kolommen);
+    }
+    // grep, find en > staan erin.
+    const tekst = maakSessie().typ('help').stand.uitvoer.join('\n');
+    for (const cmd of ['grep', 'find', '> <bestand>']) expect(tekst).toContain(cmd);
+  });
+
+  it('echo -e zegt dat het hier niet werkt, in plaats van -e af te drukken', () => {
+    // `echo -e "a\nb"` schreef "-e a\nb". Een ander woord met een streepje
+    // drukt echo gewoon af, zoals in bash.
     const { typ } = terminal();
-    for (const regel of typ('help').split('\n'))
-      expect(regel.length, regel).toBeLessThanOrEqual(53);
+    expect(typ('echo -e "a\\nb"')).toBe(
+      'oefenterminal: echo -e werkt hier niet, wel op je eigen Linux.',
+    );
+    expect(typ('echo -x')).toBe('-x');
   });
 });
 
@@ -557,6 +633,13 @@ describe('met het toetsenbord de terminal uit', () => {
     uitweg(toetsDown('Escape'));
     expect(uitweg(toetsDown('Shift'))).toBe(true);
     expect(uitweg(toetsDown('Tab'))).toBe(false);
+  });
+
+  it('wie na Esc wegklikt, vult bij terugkomst met Tab gewoon aan', () => {
+    const uitweg = maakUitweg();
+    uitweg(toetsDown('Escape'));
+    uitweg.vergeet();
+    expect(uitweg(toetsDown('Tab'))).toBe(true);
   });
 
   it('een andere toets na Esc: Tab vult weer aan', () => {

@@ -147,23 +147,44 @@ const commandos = (s: Stand): string[][] =>
     .map(({ cmd }: { cmd: string }) => cmd.trim().split(/\s+/))
     .filter((w: string[]) => w[0]);
 const gebruikt = (s: Stand, naam: string) => commandos(s).some((w) => w[0] === naam);
-/** Past deze naam op een van de jokertekens van dit commando op de regel? */
-const noemt = (s: Stand, commando: string, naam: string) =>
-  commandos(s)
-    .filter((w) => w[0] === commando)
-    .some((w) =>
-      w.slice(1).some((patroon) => {
-        const kaal = patroon.split('/').pop() ?? '';
-        if (!/[*?]/.test(kaal)) return false;
-        const regex = kaal
-          .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-          .replace(/\*/g, '.*')
-          .replace(/\?/g, '.');
-        return new RegExp(`^${regex}$`).test(naam);
-      }),
-    );
 const OPNIEUW = 'Klik op Opnieuw beginnen en probeer het nog een keer.';
 const woorden = (s: Stand) => new Set(s.uitvoer.flatMap((r) => r.split(/\s+/)));
+/**
+ * De namen in de uitvoer van ls of echo, op alfabet en zonder map ervoor.
+ * Niet in de volgorde van het scherm: `ls` zet ze in kolommen op de breedte
+ * van de terminal, en op een smalle terminal (een telefoon) stond
+ * vakantie2.jpg dan vóór vakantie1.jpg, en kwam het vinkje nooit. Van een
+ * regel van `ls -l` telt het laatste woord, en de regel `total` telt niet.
+ */
+const namen = (s: Stand) =>
+  s.uitvoer
+    .filter((r) => !/^total \d+$/.test(r))
+    .flatMap((r) => (/^[-dl][rwx-]{9} /.test(r) ? [r.split(/\s+/).at(-1) ?? ''] : r.split(/\s+/)))
+    .filter(Boolean)
+    .map((n) => n.split('/').pop() ?? n)
+    .sort();
+/** Past dit woord (een naam of een jokerteken, met of zonder map) op deze naam? */
+const pastOp = (woord: string, naam: string) => {
+  const kaal = woord.split('/').pop() ?? '';
+  const regex = kaal
+    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+    .replace(/\*/g, '.*')
+    .replace(/\?/g, '.');
+  return new RegExp(`^${regex}$`).test(naam);
+};
+/**
+ * Het enige commando met deze naam op de regel noemt elk van deze namen, en
+ * gebruikt een jokerteken. Zo telt "met één mv" alleen voor één commando
+ * dat alles in één keer doet: twee regels mv, of twee op één regel, niet.
+ */
+const inEenKeer = (s: Stand, naam: string, wat: string[], laatsteIsDoel = false) => {
+  const cmds = commandos(s).filter((w) => w[0] === naam);
+  if (cmds.length !== 1) return false;
+  const bronnen = cmds[0]
+    .slice(1, laatsteIsDoel ? -1 : undefined)
+    .filter((a) => !a.startsWith('-'));
+  return bronnen.some((a) => /[*?]/.test(a)) && wat.every((n) => bronnen.some((a) => pastOp(a, n)));
+};
 
 const begin = createFilesystem();
 const NOTITIES = readFile(begin, `${HOME}/notities.txt`).content as string;
@@ -172,6 +193,7 @@ const BEZOEKEN = (readFile(begin, '/var/log/apache2/access.log').content as stri
   .filter((r) => r.includes('inloggen.html'));
 
 const FOTOS = ['kat.png', 'vakantie1.jpg', 'vakantie2.jpg'];
+const ANDERE = ['liedje.mp3', 'opdracht.pdf', 'verslag.docx'];
 const LOGS = ['/var/log/apache2/access.log', '/var/log/apache2/error.log', '/var/log/auth.log'];
 const MAPPEN_VAR = [
   '/var',
@@ -218,10 +240,12 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
       { tekst: 'Ga terug naar je thuismap.', klaar: (s) => s.cwd === HOME },
     ],
     // Twee stappen (cd .. en dan cd www/html), of een absoluut pad: het
-    // vinkje komt pas na één relatief pad vanuit /var/log.
+    // vinkje komt pas na één relatief pad vanuit /var/log. De melding noemt
+    // beide: "in één keer" alleen klonk als een verwijt aan wie het met een
+    // absoluut pad in één keer deed.
     vast: (s, klaar) =>
       klaar[0] && !klaar[1] && s.cwd !== '/var/log'
-        ? 'Het tweede doel telt alleen in één keer vanuit /var/log. Ga daar eerst naar terug.'
+        ? `Je staat in ${s.cwd}. Het tweede doel telt alleen met één relatief pad (zonder / vooraan) vanuit /var/log. Ga terug naar /var/log en probeer het opnieuw.`
         : null,
   },
   '1.2.b': {
@@ -310,7 +334,8 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
       { tekst: 'Gooi de map oud weg.', klaar: (s) => !bestaat(s, '~/oud') },
       {
         tekst: 'Controleer met ls dat alleen todo.txt over is.',
-        klaar: (s) => gebruikt(s, 'ls') && s.uitvoer.join(' ').trim() === 'todo.txt',
+        // Ook met ls -l: dan staat todo.txt aan het eind van de regel.
+        klaar: (s) => gebruikt(s, 'ls') && namen(s).join(' ') === 'todo.txt',
       },
     ],
   },
@@ -334,23 +359,35 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
       { tekst: 'Maak in downloads een map fotos.', klaar: (s) => isMap(s, '~/downloads/fotos') },
       {
         tekst: 'Verplaats alle .jpg- en .png-bestanden naar fotos, met één mv en jokertekens.',
-        // Eén mv: de regel zelf noemt elke foto. Met twee losse mv's stond
-        // alles er ook, en kwam het vinkje voor iets dat niet zo gedaan was.
+        // Eén mv-commando met een jokerteken, en daarna staan precies de
+        // foto's in fotos. Twee losse mv's (ook op één regel, met ; of &&)
+        // tellen niet, en `mv * fotos/` ook niet: dan staan het liedje, de
+        // pdf en het verslag er ook in.
         klaar: (s) =>
-          FOTOS.every((f) => noemt(s, 'mv', f)) &&
+          inEenKeer(s, 'mv', FOTOS, true) &&
           FOTOS.every((f) => bestaat(s, `~/downloads/fotos/${f}`)) &&
-          FOTOS.every((f) => !bestaat(s, `~/downloads/${f}`)),
+          FOTOS.every((f) => !bestaat(s, `~/downloads/${f}`)) &&
+          ANDERE.every((f) => bestaat(s, `~/downloads/${f}`)),
       },
       {
         tekst: 'Laat zien wat er nu in fotos staat.',
-        klaar: (s) =>
-          gebruikt(s, 'ls') && s.uitvoer.join(' ').split(/\s+/).join(' ') === FOTOS.join(' '),
+        // `ls fotos` en `ls fotos/*` allebei; de volgorde op het scherm doet
+        // er niet toe (zie namen).
+        klaar: (s) => gebruikt(s, 'ls') && namen(s).join(' ') === FOTOS.join(' '),
       },
     ],
-    vast: (s, klaar) =>
-      klaar[0] && !klaar[1] && FOTOS.some((f) => !bestaat(s, `~/downloads/${f}`))
-        ? `Een deel van de foto's is al verplaatst of weg: met één mv lukt het zo niet meer. ${OPNIEUW}`
-        : null,
+    vast: (s, klaar) => {
+      // Eerst mv en dan pas mkdir: dan heet de foto nu fotos, als bestand.
+      const node = getNode(s.fs, pad(s, '~/downloads/fotos'));
+      if (node.exists && !node.isDir)
+        return `fotos is een bestand geworden en geen map: mv hernoemt een bestand als de map er nog niet is. ${OPNIEUW}`;
+      if (klaar[1]) return null;
+      if (ANDERE.some((f) => !bestaat(s, `~/downloads/${f}`)))
+        return `Er is meer verplaatst dan de .jpg- en .png-bestanden. ${OPNIEUW}`;
+      if (FOTOS.some((f) => !bestaat(s, `~/downloads/${f}`)))
+        return `Een deel van de foto's staat al niet meer in downloads. Het doel vraagt één mv met jokertekens die ze allemaal tegelijk verplaatst. ${OPNIEUW}`;
+      return null;
+    },
   },
   '2.4.b': {
     opVolgorde: true,
@@ -368,20 +405,19 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
     },
     doelen: [
       {
-        tekst: 'Kijk eerst met ls welke .tmp-bestanden je gaat weggooien.',
+        tekst:
+          'Kijk eerst met ls (of echo) en een jokerteken welke .tmp-bestanden je gaat weggooien.',
+        // Ook ls -l en echo: de voorspelvraag van de les raadt `ls *` of
+        // `echo *` aan.
         klaar: (s) =>
-          gebruikt(s, 'ls') &&
+          (gebruikt(s, 'ls') || gebruikt(s, 'echo')) &&
           s.regel.includes('*') &&
-          s.uitvoer
-            .join(' ')
-            .split(/\s+/)
-            .map((n) => n.split('/').pop())
-            .join(' ') === 'cache1.tmp cache2.tmp',
+          namen(s).join(' ') === 'cache1.tmp cache2.tmp',
       },
       {
         tekst: 'Gooi ze weg met één rm, en laat de rest staan.',
         klaar: (s) =>
-          gebruikt(s, 'rm') &&
+          inEenKeer(s, 'rm', ['cache1.tmp', 'cache2.tmp']) &&
           !bestaat(s, '~/project/cache1.tmp') &&
           !bestaat(s, '~/project/cache2.tmp') &&
           bestaat(s, '~/project/main.py') &&
@@ -390,10 +426,12 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
     ],
     vast: (s, klaar) => {
       const weg = (naam: string) => !bestaat(s, `~/project/${naam}`);
-      if (!klaar[0] && (weg('cache1.tmp') || weg('cache2.tmp')))
-        return `De .tmp-bestanden zijn al weg, dus er valt niets meer te bekijken. ${OPNIEUW}`;
       if (!klaar[1] && (weg('main.py') || weg('README.md')))
         return `Er is meer weg dan de .tmp-bestanden. ${OPNIEUW}`;
+      if (!klaar[0] && (weg('cache1.tmp') || weg('cache2.tmp')))
+        return `cache1.tmp of cache2.tmp is weg of hernoemd voordat je bekeek welke bestanden je jokerteken vindt. ${OPNIEUW}`;
+      if (klaar[0] && !klaar[1] && weg('cache1.tmp') !== weg('cache2.tmp'))
+        return `Eén .tmp-bestand is al weg: met één rm lukt het zo niet meer. ${OPNIEUW}`;
       return null;
     },
   },

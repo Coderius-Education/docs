@@ -135,39 +135,52 @@ export function omKolommen(tekst, kolommen, inspring = '  ') {
 
 /**
  * Namen in kolommen, zoals `ls` ze op een terminal zet: van boven naar
- * beneden gevuld, elke kolom zo breed als zijn langste naam plus twee
- * spaties, en zoveel kolommen als er op `breedte` passen. Past alles op één
- * regel, dan staan de namen achter elkaar met twee spaties ertussen. Met
- * namen die aan elkaar geplakt waren, brak de terminal naast de les (53 tot
- * 64 kolommen) `vakantie2.jpg` af als "vakantie" en "2.jpg": dat leest als
- * twee bestanden.
+ * beneden gevuld, zoveel kolommen als er op `breedte` passen. Met namen die
+ * aan elkaar geplakt waren, brak de terminal naast de les (53 tot 64
+ * kolommen) `vakantie2.jpg` af als "vakantie" en "2.jpg": dat leest als twee
+ * bestanden.
  *
- * `toon` maakt van een naam wat er op het scherm komt (een map in kleur); de
- * breedte rekent met de naam zelf.
+ * Dezelfde rekensom als coreutils (calculate_columns in ls.c): elke kolom is
+ * minstens drie tekens, een naam telt met twee spaties erachter behalve in
+ * de laatste kolom, en een regel moet korter zijn dan de breedte, niet even
+ * breed. Een kolom staat precies zo breed op het scherm, behalve de laatste
+ * van een regel. `toon` maakt van een naam wat er op het scherm komt (een
+ * map in kleur); de breedte rekent met de naam zelf.
  */
 export function inKolommen(namen, breedte, toon = (n) => n) {
-  if (namen.length === 0) return '';
-  for (let kolommen = namen.length; kolommen >= 1; kolommen--) {
-    const rijen = Math.ceil(namen.length / kolommen);
-    const breed = [];
-    for (let k = 0; k * rijen < namen.length; k++)
-      breed.push(Math.max(...namen.slice(k * rijen, (k + 1) * rijen).map((n) => n.length)));
-    const totaal = breed.reduce((a, b) => a + b, 0) + 2 * (breed.length - 1);
-    if (totaal > breedte && kolommen > 1) continue;
-    const regels = [];
-    for (let r = 0; r < rijen; r++) {
-      let regel = '';
-      for (let k = 0; k < breed.length; k++) {
-        const naam = namen[k * rijen + r];
-        if (naam === undefined) break;
-        const laatste = namen[(k + 1) * rijen + r] === undefined;
-        regel += toon(naam) + (laatste ? '' : ' '.repeat(breed[k] - naam.length + 2));
+  const n = namen.length;
+  if (n === 0) return '';
+  const MIN = 3;
+  const hoogste = Math.min(n, Math.max(1, Math.floor(breedte / MIN)));
+  let gekozen = null;
+  for (let kolommen = 1; kolommen <= hoogste; kolommen++) {
+    const rijen = Math.ceil(n / kolommen);
+    const breed = new Array(kolommen).fill(MIN);
+    let regel = kolommen * MIN;
+    let past = true;
+    namen.forEach((naam, i) => {
+      const k = Math.floor(i / rijen);
+      const echt = naam.length + (k === kolommen - 1 ? 0 : 2);
+      if (breed[k] < echt) {
+        regel += echt - breed[k];
+        breed[k] = echt;
+        past = regel < breedte;
       }
-      regels.push(regel);
-    }
-    return regels.join('\n');
+    });
+    if (past) gekozen = { rijen, breed };
   }
-  return '';
+  const { rijen, breed } = gekozen ?? { rijen: n, breed: [0] };
+  const regels = [];
+  for (let r = 0; r < rijen; r++) {
+    let regel = '';
+    for (let k = 0; k * rijen + r < n; k++) {
+      const naam = namen[k * rijen + r];
+      const laatste = (k + 1) * rijen + r >= n;
+      regel += toon(naam) + (laatste ? '' : ' '.repeat(Math.max(0, breed[k] - naam.length)));
+    }
+    regels.push(regel);
+  }
+  return regels.join('\n');
 }
 
 /**
@@ -181,7 +194,7 @@ export function inKolommen(namen, breedte, toon = (n) => n) {
  */
 export function maakUitweg() {
   let los = false;
-  return (e) => {
+  const uitweg = (e) => {
     if (e.type !== 'keydown') return true;
     if (e.key === 'Escape') {
       los = true;
@@ -194,4 +207,9 @@ export function maakUitweg() {
     if (e.key !== 'Shift') los = false;
     return true;
   };
+  // Wie Esc drukt en dan wegklikt, vult bij terugkomst met Tab gewoon aan.
+  uitweg.vergeet = () => {
+    los = false;
+  };
+  return uitweg;
 }
