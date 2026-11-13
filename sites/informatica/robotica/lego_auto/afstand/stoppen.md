@@ -158,7 +158,7 @@ Het scherm heeft deze ronde al getoond wat er bovenaan staat. In de tak die stop
 
 </details>
 
-## Je script tot nu toe
+## Je script
 
 <details>
 <summary>Klik hier om te vergelijken</summary>

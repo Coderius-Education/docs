@@ -67,7 +67,7 @@ Dezelfde variabele, een andere methode. Zet je die regel direct onder `lampje.on
 
 </details>
 
-## Je script tot nu toe
+## Je script
 
 <details>
 <summary>Klik hier om te vergelijken</summary>

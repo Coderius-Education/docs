@@ -12,7 +12,7 @@ Je hoeft hier niets voor te kunnen. Ook als je nog nooit hebt geprogrammeerd, ko
 
 ## Bekijk het robotje
 
-Hieronder zie je de Golfbot in 3D. Sleep met je muis of je vinger om hem te draaien. Zoom in en uit met het scrollwiel, of met twee vingers. Met de knop **Volledig scherm** rechtsboven in het model maak je hem zo groot als je scherm; met Esc of **Sluiten** kom je terug.
+Hieronder staat de Golfbot in 3D. Sleep met je muis of vinger om hem te draaien, en zoom met het scrollwiel of met twee vingers. **Volledig scherm** rechtsboven in het model maakt hem zo groot als je scherm; Esc of **Sluiten** brengt je terug.
 
 <ObjViewer src="/models/golfer.obj" mtl="/models/golfer.mtl" />
 

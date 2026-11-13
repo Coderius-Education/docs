@@ -72,7 +72,7 @@ De loop draait dan duizenden keren per seconde. Het lampje gaat nog steeds aan e
 
 </details>
 
-## Je script tot nu toe
+## Je script
 
 <details>
 <summary>Klik hier om te vergelijken</summary>
@@ -108,7 +108,7 @@ while True:
 
 **Oorzaak:** Eén van de twee `sleep`-regels ontbreekt, of `lampje.off()` staat buiten de loop.
 
-**Oplossing:** Vergelijk je script letterlijk met Je script tot nu toe. **Zelf vinden:** zet `print("rondje")` in de loop. Zie je in de Shell wél regels voorbijkomen maar knippert er niets, dan draait de loop en zit de fout in de aan/uit-regels; zie je niets, dan draait de loop zelf niet.
+**Oplossing:** Vergelijk je script letterlijk met het tabblad Je script. **Zelf vinden:** zet `print("rondje")` in de loop. Zie je in de Shell wél regels voorbijkomen maar knippert er niets, dan draait de loop en zit de fout in de aan/uit-regels; zie je niets, dan draait de loop zelf niet.
 
 </details>
 

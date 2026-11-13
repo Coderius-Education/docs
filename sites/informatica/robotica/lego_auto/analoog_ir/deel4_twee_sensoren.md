@@ -72,7 +72,7 @@ Allebei prima — als code en werkelijkheid maar hetzelfde zeggen. Noteer je keu
 
 </details>
 
-## Je script tot nu toe
+## Je script
 
 <details>
 <summary>Klik hier om te vergelijken</summary>

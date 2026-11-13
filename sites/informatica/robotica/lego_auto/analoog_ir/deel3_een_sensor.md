@@ -126,7 +126,7 @@ De `2900` is hier een voorbeeld — jouw getal hangt af van jouw sensor, de hoog
 
 </details>
 
-## Je script tot nu toe
+## Je script
 
 <details>
 <summary>Klik hier om te vergelijken</summary>

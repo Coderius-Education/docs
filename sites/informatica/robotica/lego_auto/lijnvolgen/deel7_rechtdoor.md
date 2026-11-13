@@ -85,7 +85,7 @@ Niets nieuws. Er is maar één `if`-tak, en die klopt dan niet meer — dus niem
 
 </details>
 
-## Je script tot nu toe
+## Je script
 
 <details>
 <summary>Klik hier om te vergelijken</summary>
