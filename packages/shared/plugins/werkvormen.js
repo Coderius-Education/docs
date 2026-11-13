@@ -12,6 +12,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { groepeer } = require('./les-tabs');
+const { werkvormenVan } = require('../werkvormen');
 
 const NAAM = 'coderius-werkvormen';
 
@@ -57,7 +58,7 @@ async function mdxParser() {
  * @param {string} bron de inhoud van het bestand
  * @param {(bron: string) => {children: object[]}} parse
  */
-function werkvormenVanLes(bron, parse) {
+function werkvormenVanLes(bron, parse, opties = {}) {
   // Ook een lege front matter (twee regels met streepjes) telt.
   const voorwerk = /^---\r?\n(?:([\s\S]*?)\r?\n)?---\r?\n/.exec(bron);
   if (voorwerk && /^les_tabs:\s*false\s*$/m.test(voorwerk[1] ?? '')) return null;
@@ -71,7 +72,7 @@ function werkvormenVanLes(bron, parse) {
     for (const kind of node.children ?? []) geefId(kind);
   };
   geefId(tree);
-  const tabs = (groepeer(tree.children) ?? []).find((node) => node.name === 'LesTabs');
+  const tabs = (groepeer(tree.children, opties) ?? []).find((node) => node.name === 'LesTabs');
   if (!tabs) return null;
   // Het leerdoel van de les heeft geen eigen tabblad: het staat bovenaan het
   // tabblad erna. Voor de docent is het wel een werkvorm van de les.
@@ -105,9 +106,28 @@ function werkvormenVanLes(bron, parse) {
     for (const kind of node.children ?? []) stappen(kind, uit);
     return uit;
   };
+  // Een korte afsluiter die bij het scherm ervoor is gezet (Wat je nu ziet in
+  // de editor-cursus, zie sluitAan in les-tabs.js) is geen tabblad meer, maar
+  // de leerling doet het wel: hij telt als de werkvorm van zijn kop.
+  const tekst = (node) => node.value ?? (node.children ?? []).map(tekst).join('');
+  const afsluiters = (node, uit = []) => {
+    // Een `:::info` heeft zijn attributen als object, geen lijst.
+    if (
+      Array.isArray(node.attributes) &&
+      node.attributes.some((a) => a.name === 'data-les-afsluiter')
+    ) {
+      const kop = node.children?.find((kind) => kind.type === 'heading');
+      const vorm = kop ? werkvormenVan([tekst(kop)])[0] : null;
+      if (vorm && vorm !== 'uitleg') uit.push(vorm);
+    }
+    for (const kind of node.children ?? []) afsluiters(kind, uit);
+    return uit;
+  };
   return tabs.children.flatMap((tab) => {
     const vorm = tab.attributes.find((a) => a.name === 'werkvorm')?.value ?? null;
-    const erbij = [...new Set([...vragen(tab), ...stappen(tab)])].filter((v) => v !== vorm);
+    const erbij = [...new Set([...vragen(tab), ...stappen(tab), ...afsluiters(tab)])].filter(
+      (v) => v !== vorm,
+    );
     return [...(heeft(tab, 'LesLeerdoel') ? ['leerdoel'] : []), vorm, ...erbij];
   });
 }
@@ -121,7 +141,7 @@ function docsVan(allContent) {
   });
 }
 
-module.exports = function werkvormenPlugin(context) {
+module.exports = function werkvormenPlugin(context, opties = {}) {
   return {
     name: NAAM,
     async allContentLoaded({ allContent, actions }) {
@@ -129,7 +149,9 @@ module.exports = function werkvormenPlugin(context) {
       const lessen = {};
       for (const doc of docsVan(allContent)) {
         const bestand = path.join(context.siteDir, doc.source.replace(/^@site\//, ''));
-        const werkvormen = werkvormenVanLes(fs.readFileSync(bestand, 'utf8'), parse);
+        const werkvormen = werkvormenVanLes(fs.readFileSync(bestand, 'utf8'), parse, {
+          eenScherm: Boolean(opties.eenScherm),
+        });
         if (werkvormen) lessen[doc.id] = { titel: doc.title, pad: doc.permalink, werkvormen };
       }
       actions.setGlobalData({ lessen });

@@ -111,15 +111,17 @@ function serveer() {
 /** Mappen in de build waar geen lessen staan, en die groot zijn. */
 const GEEN_LESSEN = ['assets', 'img', 'pyodide', 'oud'];
 
-function lessen() {
+function lessen(merk = 'data-les-tabs') {
   const uit = [];
   const loop = (map) => {
     for (const naam of readdirSync(map).sort()) {
       const pad = join(map, naam);
       if (statSync(pad).isDirectory()) {
         if (!GEEN_LESSEN.includes(relative(BUILD, pad))) loop(pad);
-      } else if (naam === 'index.html' && readFileSync(pad, 'utf8').includes('data-les-tabs'))
-        uit.push(relative(BUILD, map));
+      } else if (naam === 'index.html') {
+        const html = readFileSync(pad, 'utf8');
+        if (html.includes(merk)) uit.push(relative(BUILD, map));
+      }
     }
   };
   // De hele build, niet alleen docs/: robotica heeft de Lego-auto en de
@@ -436,8 +438,40 @@ async function meetLes(les) {
   }
 }
 
+// Een les zonder tabbladen (één sectie, of een korte stap waarvan de
+// afsluiter bij de tekst erboven staat) is één scherm: de tekst van de les
+// hoort dan ook op het scherm te passen. In de editor-cursus is dat de helft
+// van de pagina's, met de git-simulator erop.
+const zonderTabs = [];
+async function meetZonderTabs(les) {
+  for (const scherm of SCHERMEN) {
+    const context = await browser.newContext({
+      viewport: { width: scherm.width, height: scherm.height },
+    });
+    const pagina = await context.newPage();
+    await pagina.goto(`${adres}${les}`);
+    await pagina.waitForSelector('.theme-doc-markdown');
+    await pagina.evaluate(() => document.fonts.ready);
+    await pagina.waitForTimeout(scherm.telefoon ? 100 : 500);
+    zonderTabs.push({
+      les,
+      scherm: `${scherm.width}x${scherm.height}`,
+      telefoon: Boolean(scherm.telefoon),
+      ...(await pagina.evaluate(() => {
+        const tekst = document.querySelector('.theme-doc-markdown');
+        return {
+          over: Math.round(tekst.getBoundingClientRect().bottom - window.innerHeight),
+          zijwaarts: Math.max(0, document.documentElement.scrollWidth - window.innerWidth),
+        };
+      })),
+    });
+    await context.close();
+  }
+}
+
 // Een paar lessen tegelijk, elk in zijn eigen context. De uitkomst staat
 // daarna weer in de volgorde van de lessen.
+const los = lessen('data-les-zonder-tabs');
 const wachtrij = lessen();
 const volgorde = new Map(wachtrij.map((les, i) => [les, i]));
 await Promise.all(
@@ -449,12 +483,20 @@ const opVolgorde = (a, b) => volgorde.get(a.les) - volgorde.get(b.les);
 rijen.sort(opVolgorde);
 tabrijen.sort(opVolgorde);
 
+const plek = new Map(los.map((les, i) => [les, i]));
+await Promise.all(
+  Array.from({ length: TEGELIJK }, async () => {
+    for (let les = los.shift(); les; les = los.shift()) await meetZonderTabs(les);
+  }),
+);
+zonderTabs.sort((a, b) => plek.get(a.les) - plek.get(b.les));
+
 await browser.close();
 server.close();
 
 const naam = (les) => les.replace(/^docs\//, '');
 if (ALS_JSON) {
-  console.log(JSON.stringify({ kolomBreedte, rijen, tabrijen, dubbeleIds }, null, 2));
+  console.log(JSON.stringify({ kolomBreedte, rijen, tabrijen, dubbeleIds, zonderTabs }, null, 2));
 } else {
   for (const { width, height } of SCHERMEN.filter((s) => !s.telefoon)) {
     const scherm = `${width}x${height}`;
@@ -527,6 +569,15 @@ if (ALS_JSON) {
     `\n## Plaatjes onder een derde van hun grootte: ${klein.filter((r) => r.klein > 0).length} schermen, waarvan ${zonder.length} zonder vergroting\n`,
   );
   for (const r of zonder) console.log(`- ${naam(r.les)} | ${r.tab}`);
+  for (const { width, height } of SCHERMEN.filter((sch) => !sch.telefoon)) {
+    const scherm = `${width}x${height}`;
+    const deze = zonderTabs.filter((r) => r.scherm === scherm);
+    const telang = deze.filter((r) => r.over > 0).sort((a, b) => b.over - a.over);
+    console.log(
+      `\n## ${scherm}, pagina's zonder tabbladen: ${deze.length - telang.length} van ${deze.length} passen\n`,
+    );
+    for (const r of telang) console.log(`- ${naam(r.les)}: ${r.over} px te lang`);
+  }
   console.log(`\n## Dubbele id's: ${dubbeleIds.length} pagina's\n`);
   for (const d of dubbeleIds) console.log(`- ${naam(d.les)}: ${d.dubbel.join(', ')}`);
   console.log(`\nDe les gebruikt ${kolomBreedte}% van de breedte naast de lessenlijst.`);

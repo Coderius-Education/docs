@@ -222,7 +222,7 @@ De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
 (schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica,
-fullstack, linux en ctf zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+fullstack, linux, ctf en de editor-cursus zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
@@ -794,6 +794,43 @@ challenge en Hints (`src/docs-tests/schermen.test.ts` van ctf). Voor de
 docentenhandleiding is er een werkvorm Hints bij gekomen (hulp in stappen:
 de hints zijn dicht, en elke hint zegt iets meer), en De challenge telt als
 zelf maken.
+
+**Wat de editor-cursus erbij bracht** (november 2026; 80 van de 80 schermen
+en 38 van de 38 pagina's zonder tabbladen passen). De cursus bestaat uit
+korte stappen, elk een eigen pagina: een paar regels doen, en dan
+`## Wat je nu ziet`. Met tabbladen was een stap van tien regels twee of drie
+schermen, en moest de leerling doorklikken om te zien of het gelukt was.
+
+- **Een pagina die in haar geheel op één scherm past, heeft geen tabbladen**
+  (`lesTabs: { eenScherm: true }`, `pastOpEenScherm`). Een keuze van de
+  cursus, niet de standaard: 61 tests met korte voorbeeldlessen gaan uit van
+  tabbladen, en in robotica verloren drie pagina's ze. De stap, de plugin van
+  de werkvormen en `les-schermen.js` krijgen dezelfde keuze
+  (`config.test.ts`). Niet voor een pagina met een plaatje: hoe hoog dat is,
+  staat niet in de bron.
+- **Een korte afsluiter staat onder het scherm ervoor** (`sluitAan`):
+  `## Wat je nu ziet`, en `## Aan de slag` of `## Volgende tutorial` van een
+  of twee alinea's. Alleen als ze samen passen, de pagina dan nog twee
+  tabbladen heeft en het scherm ervoor geen stappen heeft. De kop gaat mee in
+  een eigen element (`data-les-afsluiter`): de opmaak verbergt de kop van een
+  tabblad met `> h2`. De docentenhandleiding telt zo'n afsluiter als de
+  werkvorm van zijn kop (`plugins/werkvormen.js`).
+- **De schatting telt een lijst punt voor punt** (`hoogteMetLijsten`): een
+  stappenlijst met een codeblok of een tweede alinea in een punt was tot
+  tweehonderd pixels hoger dan `hoogteScherm` schatte. Geijkt op de meting:
+  de onderkant van een pagina zonder tabbladen is de schatting plus 75
+  pixels per `##` plus zo'n 125.
+- **Het meetscript meet een pagina zonder tabbladen als één scherm**
+  (`zonderTabs` in de uitvoer): de onderkant van de lestekst tegen het
+  scherm. Zonder die meting viel niet op dat zes van de zeven stappen met de
+  git-simulator te lang waren.
+- **Een oefenveld is even hoog voor en na het oefenen.** De git-simulator
+  groeide met elk bestand en elke regel uitvoer: een stap die bij het openen
+  paste, was na drie commando's twintig pixels te lang. De zones en de
+  uitvoer hebben nu een vaste hoogte en schuiven daarbinnen. Meet een veld
+  dus ook nadat je het hebt gebruikt.
+- De tabbladen van GitHub en VS Code heten in de tekst "het tabblad op
+  GitHub": de pagina heeft nu zelf tabbladen.
 
 ## Code in MDX-expressies
 

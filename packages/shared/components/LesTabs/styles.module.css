@@ -270,6 +270,17 @@
   margin-bottom: 0.5rem;
 }
 
+/* Een korte afsluiter die bij dit scherm is gezet (Wat je nu ziet, Aan de
+   slag; zie sluitAan in plugins/les-tabs.js): zijn kop is een tussenkop. */
+.paneel [data-les-afsluiter] > h2 {
+  --ifm-h2-font-size: 1.25rem;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.paneel [data-les-afsluiter] > :last-child {
+  margin-bottom: 0;
+}
+
 .paneel > details,
 .paneel .stappen details {
   --ifm-alert-padding-vertical: 0.55rem;

@@ -181,7 +181,8 @@
     "koppen": [
       "^Controlevraag$",
       "^Wanneer heb je deze stap gehaald\\?$",
-      "^Zo ziet je .+ er nu uit$"
+      "^Zo ziet je .+ er nu uit$",
+      "^Wat je nu ziet$"
     ],
     "tips": [
       {

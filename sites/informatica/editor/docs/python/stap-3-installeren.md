@@ -27,7 +27,7 @@ python --version
 
 ## Wat je nu ziet
 
-Een regel die begint met `Python 3.14`, bijvoorbeeld `Python 3.14.2`. Opent de Microsoft Store opnieuw, dan is de installatie niet afgerond: loop de vier stappen hierboven nog eens na.
+Een regel die begint met `Python 3.14`, bijvoorbeeld `Python 3.14.2`. Opent de Microsoft Store opnieuw, dan is de installatie niet afgerond: loop de vier stappen van de installatie nog eens na.
 
 Staat er een ander nummer, zoals `Python 3.15.0` of `Python 3.12.4`, dan had je al een Python. Zet eerst 3.14 neer zoals in [Van Python-versie wisselen](site:editor/python/andere-versie), voordat je verdergaat met stap 4.
 

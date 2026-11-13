@@ -8,14 +8,17 @@ import GitSimulator from '@site/src/components/GitSimulator';
 
 # Stap 7: bestanden negeren met `.gitignore`
 
-Soms wil je dat git bepaalde bestanden **negeert** — bijvoorbeeld tijdelijke bestanden of wachtwoorden. Daarvoor maak je een speciaal bestand: `.gitignore`. Elke regel in `.gitignore` is een bestandsnaam die git moet overslaan.
+Soms wil je dat git bepaalde bestanden **negeert** — bijvoorbeeld tijdelijke bestanden of wachtwoorden. Daarvoor maak je een speciaal bestand: `.gitignore`. Elke regel in `.gitignore` is een bestandsnaam die git moet overslaan. Een `.gitignore` die het bestand `geheim.txt` negeert, heeft één regel:
 
-Probeer het hieronder:
+```
+geheim.txt
+```
 
-1. Klik op **"+ nieuw bestand"** en maak een bestand `geheim.txt`.
-2. Doe `git status` — git ziet `geheim.txt` als niet-gevolgd.
-3. Klik weer op **"+ nieuw bestand"** en maak een bestand `.gitignore` met als inhoud één regel: `geheim.txt`.
-4. Doe opnieuw `git status` — `geheim.txt` is verdwenen uit de lijst en wordt doorgestreept in de werkmap.
+## Probeer het zelf
+
+1. Klik op **"+ nieuw bestand"**, maak een bestand `geheim.txt` en doe `git status`: git ziet het als niet-gevolgd.
+2. Maak op dezelfde manier een bestand `.gitignore`, met één regel: `geheim.txt`.
+3. Doe opnieuw `git status` — `geheim.txt` is weg uit de lijst en in de werkmap doorgestreept.
 
 <GitSimulator scenarioId="stap-7-gitignore" />
 

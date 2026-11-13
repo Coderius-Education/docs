@@ -46,7 +46,7 @@ Dit duurt vijf minuten en is de enige manier om te weten hoe het voelt.
 
 1. Zorg dat je op `main` staat. Open `hello.txt` en verander de eerste regel in `Hallo vanaf main.` Sla op, stage en commit met de boodschap `regel van main`.
 2. Wissel naar `feature/welkomsbericht`. Verander diezelfde eerste regel in `Hallo vanaf de feature.` Sla op, stage en commit met `regel van de feature`.
-3. Wissel terug naar `main` en merge de feature-branch, net als hierboven.
+3. Wissel terug naar `main` en merge de feature-branch, zoals je eerder in deze stap deed.
 
 Nu klapt het. VS Code meldt bovenin dat er een conflict is, en `hello.txt` ziet er zo uit:
 

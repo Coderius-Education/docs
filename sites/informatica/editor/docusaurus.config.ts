@@ -6,6 +6,10 @@ export default createConfig({
   siteId: 'editor',
   projectName: 'editor-docs',
   matomoSiteId: 6,
+  // Elke ##-sectie van een pagina is een tabblad (zie de root-CLAUDE.md).
+  // Een stap is hier vaak tien regels: een pagina die in haar geheel op één
+  // scherm past, krijgt geen tabbladen.
+  lesTabs: { eenScherm: true },
 
   presets: [
     [

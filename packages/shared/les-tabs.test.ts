@@ -2522,3 +2522,170 @@ describe('wat een doorloop van fullstack als leerling vond', () => {
     expect(css).not.toMatch(/pagination-nav__link--prev[^{]*\{\s*display: none/);
   });
 });
+
+describe('een korte afsluiter hoort bij het scherm ervoor', () => {
+  // De editor-cursus: elke stap van een doe-tutorial eindigt met
+  // `## Wat je nu ziet`, waaraan de leerling ziet dat het gelukt is. Als
+  // eigen tabblad was dat een scherm met één alinea, en moest hij doorklikken
+  // om te zien of wat hij net deed gelukt was.
+  const lang = (n: number) => Array.from({ length: n }, (_, i) => alinea(`Zin ${i}. `.repeat(120)));
+  const afsluiter = (uit: Knoop[], tab = 0): Knoop | undefined => {
+    const zoek = (node: Knoop): Knoop | undefined =>
+      node.attributes?.some((a) => a.name === 'data-les-afsluiter')
+        ? node
+        : (node.children ?? []).map(zoek).find(Boolean);
+    const paneel = uit.find((n) => n.name === 'LesTabs')?.children?.[tab];
+    return paneel ? zoek(paneel) : undefined;
+  };
+
+  it('Wat je nu ziet staat onder de stap waar het bij hoort, met zijn kop', () => {
+    const uit = groepeer([
+      titel,
+      kop(2, 'Maak een bestand'),
+      alinea('Klik op New File.'),
+      kop(2, 'Wat je nu ziet'),
+      alinea('Het bestand staat in de Explorer.'),
+      kop(2, 'Er gaat iets mis'),
+      alinea('Staat het er niet?'),
+    ]);
+    expect(tabs(uit).map((t) => t.titel)).toEqual(['Maak een bestand', 'Er gaat iets mis']);
+    const blok = afsluiter(uit);
+    // De kop gaat mee: een link naar #wat-je-nu-ziet blijft werken, en de
+    // opmaak verbergt alleen de kop van het tabblad zelf (`> h2`).
+    expect(blok?.children?.[0]).toMatchObject({ type: 'heading', depth: 2 });
+    expect(blok?.attributes).toContainEqual({
+      type: 'mdxJsxAttribute',
+      name: 'className',
+      value: 'markdown',
+    });
+  });
+
+  it('niet als het scherm ervoor al vol is', () => {
+    const uit = groepeer([
+      titel,
+      kop(2, 'Maak een bestand'),
+      ...lang(5),
+      kop(2, 'Wat je nu ziet'),
+      alinea('Het bestand staat in de Explorer.'),
+      kop(2, 'Er gaat iets mis'),
+      alinea('Staat het er niet?'),
+    ]);
+    expect(tabs(uit).map((t) => t.titel)).toEqual([
+      'Maak een bestand',
+      'Wat je nu ziet',
+      'Er gaat iets mis',
+    ]);
+  });
+
+  it('niet als de pagina dan geen tabbladen meer had', () => {
+    // Een lange stap en een korte controle: twee schermen. Samen was het één
+    // scherm dat niet past.
+    const uit = groepeer([
+      titel,
+      ...lang(2),
+      kop(2, 'Wat je nu ziet'),
+      alinea('Het bestand staat in de Explorer.'),
+    ]);
+    expect(tabs(uit).map((t) => t.titel)).toEqual(['Uitleg', 'Wat je nu ziet']);
+  });
+
+  it('Aan de slag met alleen een link sluit aan, met een stappenlijst niet', () => {
+    const begin = [
+      titel,
+      kop(2, 'Wat is git?'),
+      alinea('Versiebeheer.'),
+      kop(2, 'De zones'),
+      alinea('Drie.'),
+    ];
+    const link = groepeer([...begin, kop(2, 'Aan de slag'), alinea('Begin met stap 1.')]);
+    expect(tabs(link).map((t) => t.titel)).toEqual(['Wat is git?', 'De zones']);
+    expect(afsluiter(link, 1)).toBeDefined();
+    // De intro van ctf: onder Aan de slag staat hoe je een account maakt.
+    const lijst = groepeer([...begin, kop(2, 'Aan de slag'), punten('Registreer.', 'Log in.')]);
+    expect(tabs(lijst).map((t) => t.titel)).toEqual(['Wat is git?', 'De zones', 'Aan de slag']);
+  });
+
+  it('niet bij een scherm met stappen: de afsluiter stond dan alleen in de laatste stap', () => {
+    const uit = groepeer([
+      titel,
+      kop(2, 'Voorbereiding'),
+      alinea('Kies je systeem.'),
+      kop(3, 'Windows'),
+      alinea('Download git.'),
+      kop(3, 'macOS'),
+      alinea('Typ git.'),
+      kop(2, 'Aan de slag'),
+      alinea('Begin met stap 1.'),
+    ]);
+    expect(tabs(uit).map((t) => t.titel)).toEqual(['Voorbereiding', 'Aan de slag']);
+  });
+
+  it('laat de invoer zoals hij was', () => {
+    const { sluitAan } = require('./plugins/les-tabs.js');
+    const voor = { kop: kop(2, 'Stap'), kinderen: [kop(2, 'Stap'), alinea('Doe dit.')] };
+    const na = {
+      kop: kop(2, 'Wat je nu ziet'),
+      kinderen: [kop(2, 'Wat je nu ziet'), alinea('Dit.')],
+    };
+    const uit = sluitAan([], [voor, na]);
+    expect(uit.secties).toHaveLength(1);
+    expect(voor.kinderen).toHaveLength(2);
+  });
+});
+
+describe('een pagina die op één scherm past, heeft geen tabbladen (eenScherm)', () => {
+  // Een keuze van de cursus: `lesTabs: { eenScherm: true }`. In de
+  // editor-cursus was een stap van tien regels drie schermen.
+  const kort = [
+    titel,
+    alinea('Klik op New File.'),
+    kop(2, 'Wat je nu ziet'),
+    alinea('Het bestand staat in de Explorer.'),
+    kop(2, 'Let op'),
+    alinea('Sla het op.'),
+  ];
+  const lang = (n: number) => Array.from({ length: n }, (_, i) => alinea(`Zin ${i}. `.repeat(120)));
+
+  it('zonder de keuze houdt een korte pagina haar tabbladen', () => {
+    expect(tabs(groepeer(kort)).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('met de keuze niet, en de pagina blijft zoals in de bron', () => {
+    expect(groepeer(kort, { eenScherm: true })).toBeNull();
+  });
+
+  it('een pagina die niet past, houdt haar tabbladen', () => {
+    const uit = groepeer(
+      [titel, ...lang(3), kop(2, 'Wat je nu ziet'), ...lang(2), kop(2, 'Let op'), alinea('x')],
+      {
+        eenScherm: true,
+      },
+    );
+    expect(tabs(uit).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('een pagina met een plaatje ook: hoe hoog dat is, staat niet in de bron', () => {
+    const plaatje: Knoop = { type: 'paragraph', children: [{ type: 'image' }] };
+    const uit = groepeer(
+      [
+        titel,
+        alinea('Kijk.'),
+        plaatje,
+        kop(2, 'Aansluiten'),
+        alinea('a'),
+        kop(2, 'Test het'),
+        alinea('b'),
+      ],
+      {
+        eenScherm: true,
+      },
+    );
+    expect(uit).not.toBeNull();
+  });
+
+  it('de remark-stap zet dan de marker van een les zonder tabbladen', () => {
+    const tree = { type: 'root', children: [...kort] };
+    remarkLesTabs({ eenScherm: true })(tree, {});
+    expect(tree.children.at(-1)?.attributes?.[0]?.name).toBe('data-les-zonder-tabs');
+  });
+});

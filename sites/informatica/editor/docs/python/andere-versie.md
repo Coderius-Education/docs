@@ -116,6 +116,6 @@ python3.14 -m venv .venv
 code .
 ```
 
-In de terminal van VS Code is `python3 --version` daarna `Python 3.14`, en je installeert de packages met `python3 -m pip` zoals hierboven.
+In de terminal van VS Code is `python3 --version` daarna `Python 3.14`, en je installeert de packages opnieuw met `python3 -m pip`.
 
 </details>

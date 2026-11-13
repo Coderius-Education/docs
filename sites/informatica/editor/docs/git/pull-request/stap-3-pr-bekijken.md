@@ -6,7 +6,7 @@ title: "Stap 3: de pull request bekijken"
 
 # Stap 3: de pull request bekijken
 
-Op de PR-pagina zie je drie tabbladen bovenaan:
+Op de PR-pagina van GitHub zie je drie tabbladen bovenaan:
 
 ## Conversation
 

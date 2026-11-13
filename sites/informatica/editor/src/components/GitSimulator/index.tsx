@@ -1,5 +1,13 @@
+import { pasHoogte } from '@coderius/shared/components/LesTabs/pasHoogte';
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
+import {
+  type KeyboardEvent,
+  type ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { vulAan } from './autocomplete';
 import { type RepoState, deleteFile, emptyState, runCommand, setFile } from './gitEngine';
 import { scenario } from './scenarios';
@@ -21,6 +29,14 @@ type HistoryLine = {
 };
 
 type EditorTarget = { mode: 'new' } | { mode: 'edit'; name: string };
+
+// De uitvoer van de terminal heeft een vaste hoogte en schuift daarbinnen:
+// tien regels als het scherm dat toelaat, minder op een scherm waar de stap
+// anders niet op past, maar nooit minder dan vier. Een hoogte die meegroeit
+// met de uitvoer, maakte een stap die bij het openen paste na drie
+// commando's twintig pixels te lang.
+const HOOGSTE_UITVOER = 200;
+const LAAGSTE_UITVOER = 96;
 
 export default function GitSimulator(props: Props): ReactNode {
   return (
@@ -64,6 +80,44 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   const [editorName, setEditorName] = useState('');
   const [editorContent, setEditorContent] = useState('');
   const outputRef = useRef<HTMLDivElement>(null);
+
+  // Een stap is één scherm: de uitleg, de simulator en wat eronder staat. De
+  // uitvoer van de terminal krijgt daarom de hoogte die op het scherm
+  // overblijft na wat erboven en eronder staat, in het tabblad of, op een
+  // pagina zonder tabbladen, in de les. Staat er een tip of oplossing open,
+  // dan is de pagina hoe dan ook langer, en blijft de maat zoals hij was.
+  const [maxUitvoer, setMaxUitvoer] = useState<number | null>(null);
+  useLayoutEffect(() => {
+    const uitvoer = outputRef.current;
+    const les =
+      uitvoer?.closest<HTMLElement>('[data-les-tab]') ??
+      uitvoer?.closest<HTMLElement>('.theme-doc-markdown');
+    if (!uitvoer || !les) return;
+    const meet = () => {
+      const u = uitvoer.getBoundingClientRect();
+      if (u.width === 0 || les.querySelector('details[open]')) return;
+      setMaxUitvoer(
+        pasHoogte(
+          {
+            scherm: window.innerHeight,
+            boven: u.top + window.scrollY,
+            onder: les.getBoundingClientRect().bottom - u.bottom,
+            max: HOOGSTE_UITVOER,
+          },
+          LAAGSTE_UITVOER,
+        ),
+      );
+    };
+    meet();
+    // De zones groeien met elk bestand, en het tabblad kan nog dicht zijn.
+    const kijker = new ResizeObserver(meet);
+    kijker.observe(les);
+    window.addEventListener('resize', meet);
+    return () => {
+      kijker.disconnect();
+      window.removeEventListener('resize', meet);
+    };
+  }, []);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: history triggert bewust een her-scroll bij nieuwe terminalregels; de body zelf leest alleen de ref.
   useEffect(() => {
@@ -257,7 +311,12 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
         </div>
 
         <div className={styles.terminal}>
-          <div className={styles.terminalOutput} ref={outputRef}>
+          <div
+            className={styles.terminalOutput}
+            ref={outputRef}
+            // `flex: none`: met de `flex: 1` uit de opmaak telt de hoogte niet.
+            style={maxUitvoer ? { height: `${maxUitvoer}px`, flex: 'none' } : undefined}
+          >
             {history.length === 0 && (
               <div className={styles.terminalLine} style={{ color: '#888' }}>
                 Typ een commando, bijvoorbeeld <span style={{ color: '#dcdcaa' }}>git init</span>.

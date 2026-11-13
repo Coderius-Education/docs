@@ -21,10 +21,6 @@ body {
 h1 {
     color: #333;
 }
-
-p {
-    color: #666;
-}
 ```
 
 3. Sla het bestand op

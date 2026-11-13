@@ -17,7 +17,7 @@ Op je PR-pagina, onderaan de **Conversation**-tab, staat een groene knop **Merge
 
 ## Wat je nu ziet
 
-Ga naar het tabblad **`<> Code`** bovenaan en kijk in `hello.txt`. Je welkomsbericht staat erin — gemerged in `main`.
+Ga op GitHub naar het tabblad **`<> Code`** bovenaan en kijk in `hello.txt`. Je welkomsbericht staat erin — gemerged in `main`.
 
 Klik op het kloktje-icoon (**commits**). Je ziet een nieuwe commit met een boodschap als:
 

@@ -463,6 +463,128 @@ function hoogteScherm(nodes) {
 /** Wat er op 1280×720 in een paneel past, onder de titel, de tabbladen en een rij stappen. */
 const SCHERM = 470;
 
+// Een afsluiter die bij het scherm ervoor hoort. In de editor-cursus eindigt
+// elke stap van een doe-tutorial met `## Wat je nu ziet` (waaraan je ziet dat
+// het gelukt is), en een overzichtspagina met `## Aan de slag` of
+// `## Volgende tutorial`: één zin met een link. Als eigen tabblad was dat een
+// scherm met één alinea, en moest de leerling doorklikken om te zien of wat
+// hij net deed gelukt was.
+const CONTROLE_ERNA = /^Wat je nu ziet$/;
+const VERDER = /^(Aan de slag|Volgende tutorial)$/;
+/** De kop van een afsluiter in het scherm ervoor, met de ruimte erboven. */
+const KOP_AFSLUITER = 60;
+/** Een `##` op een pagina zonder tabbladen, met de ruimte erboven. */
+const KOP_PAGINA = 75;
+/** Wat er op 1280×720 onder de titel past op een pagina zonder tabbladen. */
+const PAGINA = 560;
+
+/**
+ * Hoe hoog een stuk van een scherm is, met een lijst punt voor punt geteld.
+ * hoogteScherm telt een punt als één alinea; een stappenlijst met een
+ * codeblok of een tweede alinea in een punt (elke stap van de editor-cursus)
+ * was daardoor tot tweehonderd pixels hoger dan geschat.
+ *
+ * @param {object[]} nodes
+ */
+function hoogteMetLijsten(nodes) {
+  let hoogte = 0;
+  for (const node of nodes) {
+    if (node.type !== 'list') {
+      hoogte += hoogteScherm([node]);
+      continue;
+    }
+    for (const punt of node.children ?? []) {
+      const delen = punt.children ?? [];
+      // Een punt van één alinea heeft geen eigen marge.
+      hoogte +=
+        delen.length === 1 && isAlinea(delen[0])
+          ? hoogteScherm(delen) - 10
+          : hoogteMetLijsten(delen);
+    }
+    hoogte += 16;
+  }
+  return hoogte;
+}
+
+/**
+ * Of de hele pagina op één scherm past, zonder tabbladen (een schatting: of
+ * het klopt, meet scripts/meet-les-tabs.mjs, dat een pagina zonder tabbladen
+ * als één scherm meet). Zo'n pagina krijgt geen tabbladen: die zijn er om
+ * niet te hoeven scrollen, en op een pagina die al past, verstoppen ze alleen
+ * tekst. In de editor-cursus was een stap van tien regels drie schermen.
+ *
+ * Niet voor een pagina met een plaatje: hoe hoog dat is, staat niet in de
+ * bron.
+ *
+ * @param {object[]} uitleg wat er vóór de eerste `##` staat
+ * @param {{kop: object, kinderen: object[]}[]} secties
+ */
+function pastOpEenScherm(uitleg, secties) {
+  const alles = [uitleg, ...secties.map((sectie) => sectie.kinderen)];
+  const heeftPlaatje = (node) =>
+    node.type === 'image' ||
+    node.type === 'imageReference' ||
+    node.name === 'img' ||
+    node.name === 'figure' ||
+    (node.children ?? []).some(heeftPlaatje);
+  if (alles.some((nodes) => nodes.some(heeftPlaatje))) return false;
+  const koppen = alles.reduce((som, nodes) => som + nodes.filter(isH2).length, 0);
+  const tussenkoppen = alles.reduce((som, nodes) => som + nodes.filter(isH3).length, 0);
+  const hoogte =
+    alles.reduce((som, nodes) => som + hoogteMetLijsten(nodes), 0) +
+    koppen * KOP_PAGINA +
+    tussenkoppen * KOP_AFSLUITER;
+  return hoogte <= PAGINA;
+}
+
+/**
+ * Zet een korte afsluiter bij het scherm ervoor, als ze samen op een scherm
+ * passen (een schatting, zie pastOpEenScherm). Wat je nu ziet mag elke inhoud
+ * hebben; Aan de slag en Volgende tutorial alleen als ze een of twee alinea's
+ * zijn, want de intro van ctf heeft onder Aan de slag een stappenlijst. Niet
+ * bij een scherm met stappen: de afsluiter stond dan alleen in de laatste
+ * stap.
+ *
+ * De invoer blijft zoals hij was: het antwoord heeft eigen lijsten. Blijft er
+ * zo minder dan twee tabbladen over, dan neemt groepeer het antwoord niet
+ * over: de pagina paste niet op één scherm (pastOpEenScherm), dus ze houdt
+ * haar tabbladen.
+ *
+ * @param {object[]} uitleg wat er vóór de eerste `##` staat
+ * @param {{kop: object, kinderen: object[]}[]} secties
+ * @returns {{uitleg: object[], secties: object[]} | null}
+ */
+function sluitAan(uitleg, secties) {
+  const staatEr = (nodes) => nodes.some((node) => !zetNietsNeer(node) && !isH2(node));
+  const isAfsluiter = ({ kop, kinderen }) => {
+    const titel = tekstVan(kop);
+    const inhoud = kinderen.slice(1);
+    return (
+      CONTROLE_ERNA.test(titel) ||
+      (VERDER.test(titel) && inhoud.length <= 2 && inhoud.every(isAlinea))
+    );
+  };
+  const u = [...uitleg];
+  const s = secties.map((sectie) => ({ kop: sectie.kop, kinderen: [...sectie.kinderen] }));
+  for (let i = s.length - 1; i >= 0; i--) {
+    if (!isAfsluiter(s[i])) continue;
+    const voor = i === 0 ? u : s[i - 1].kinderen;
+    if (!staatEr(voor) || voor.some(isH3) || s[i].kinderen.some(isH3)) continue;
+    if (hoogteMetLijsten(voor) + hoogteMetLijsten(s[i].kinderen) + KOP_AFSLUITER > SCHERM) continue;
+    // In een eigen element: de opmaak verbergt de kop van een tabblad met
+    // `> h2`, en deze kop moet te zien blijven. De klasse markdown, zodat
+    // Infima de alinea's en lijsten opmaakt als in de les.
+    voor.push(
+      jsx('div', s[i].kinderen, [
+        attribuut('className', 'markdown'),
+        attribuut('data-les-afsluiter', ''),
+      ]),
+    );
+    s.splice(i, 1);
+  }
+  return s.length < secties.length ? { uitleg: u, secties: s } : null;
+}
+
 /**
  * Het eerste scherm van een sectie: tot de eerste `###`, of, als daar hooguit
  * één alinea voor staat, tot de tweede (zie stappenVan).
@@ -1258,49 +1380,12 @@ function standTab(node, naam, bezet) {
 }
 
 /**
- * De kinderen van de pagina met elke `##`-sectie in een <LesTab>, of null als
- * er niets te groeperen valt (minder dan twee tabbladen).
+ * Hoe een les opent: of de uitleg vóór de eerste `##` een eigen tabblad is.
  *
- * De titel en de startcode (`export const …`) blijven boven de tabbladen
- * staan. Staat er vóór de eerste `##` ook uitleg, zoals in de lessen over
- * JavaScript, dan wordt die het eerste tabblad, "Uitleg": anders stond hij
- * boven elk tabblad en schoof alles eronder van het scherm. Een import of
- * export verderop blijft op het hoogste niveau: daar hoort hij, en de
- * inhoudsopgave die Docusaurus als laatste export aan de pagina hangt, kwam
- * anders in het laatste paneel.
- *
- * De uitleg waar een les mee begint, wordt één tabblad met stappen (zie
- * voegUitlegSamen).
- *
- * Twee dingen krijgen geen eigen tabblad, want dat was een scherm met één
- * zin en een knop Volgende:
- *  - het leerdoel van de les ("Wat ga je leren?", een of twee alinea's): het
- *    staat in een <LesLeerdoel> bovenaan het tabblad erna;
- *  - uitleg vóór de eerste `##` van één alinea: die opent het eerste tabblad.
- *
- * @param {object[]} kinderen de kinderen van de mdast-root
+ * @param {object[]} uitleg wat er vóór de eerste `##` staat
+ * @param {{kop: object, kinderen: object[]}[]} secties
  */
-function groepeer(alles) {
-  // De stand van een bestand gaat er eerst uit: naast een vraag of onder een
-  // fout hoort hij niet (zie standTab).
-  const vanaf = alles.findIndex(isH2);
-  const standen = vanaf < 0 ? [] : alles.filter((node, i) => i > vanaf && standVan(node));
-  const kinderen = naastElkaar(standen.length ? alles.filter((n) => !standen.includes(n)) : alles);
-  const eerste = kinderen.findIndex(isH2);
-  if (eerste < 0) return null;
-  const boven = [];
-  const uitleg = [];
-  for (const node of kinderen.slice(0, eerste)) {
-    (zetNietsNeer(node) || isTitel(node) ? boven : uitleg).push(node);
-  }
-  const secties = [];
-  const esm = [];
-  for (const node of kinderen.slice(eerste)) {
-    if (node.type === 'mdxjsEsm') esm.push(node);
-    else if (isH2(node)) secties.push({ kop: node, kinderen: [node] });
-    else secties.at(-1).kinderen.push(node);
-  }
-
+function openingVan(uitleg, secties) {
   // Uitleg van één alinea, of van een blok als "Deze stap gebruikt …" met een
   // of twee alinea's, is geen eigen scherm: hij opent het eerste tabblad. Maar
   // alleen als er daarna nog twee tabbladen zijn; anders bleef er één over en
@@ -1338,6 +1423,74 @@ function groepeer(alles) {
   // pixels te lang.
   const opening = uitleg.length > 0 && secties.length >= 3 && isLeerdoelSectie(secties[0], 0);
   const korteUitleg = !opening && kort;
+  return { opening, korteUitleg, isLeerdoelSectie };
+}
+
+/** Hoeveel tabbladen er van deze uitleg en secties komen. */
+function openingVanTabs({ uitleg, secties }) {
+  const { korteUitleg, isLeerdoelSectie } = openingVan(uitleg, secties);
+  return (
+    secties.filter((sectie, i) => !isLeerdoelSectie(sectie, i)).length +
+    (uitleg.length && !korteUitleg ? 1 : 0)
+  );
+}
+
+/**
+ * De kinderen van de pagina met elke `##`-sectie in een <LesTab>, of null als
+ * er niets te groeperen valt (minder dan twee tabbladen).
+ *
+ * De titel en de startcode (`export const …`) blijven boven de tabbladen
+ * staan. Staat er vóór de eerste `##` ook uitleg, zoals in de lessen over
+ * JavaScript, dan wordt die het eerste tabblad, "Uitleg": anders stond hij
+ * boven elk tabblad en schoof alles eronder van het scherm. Een import of
+ * export verderop blijft op het hoogste niveau: daar hoort hij, en de
+ * inhoudsopgave die Docusaurus als laatste export aan de pagina hangt, kwam
+ * anders in het laatste paneel.
+ *
+ * De uitleg waar een les mee begint, wordt één tabblad met stappen (zie
+ * voegUitlegSamen).
+ *
+ * Twee dingen krijgen geen eigen tabblad, want dat was een scherm met één
+ * zin en een knop Volgende:
+ *  - het leerdoel van de les ("Wat ga je leren?", een of twee alinea's): het
+ *    staat in een <LesLeerdoel> bovenaan het tabblad erna;
+ *  - uitleg vóór de eerste `##` van één alinea: die opent het eerste tabblad.
+ *
+ * @param {object[]} kinderen de kinderen van de mdast-root
+ */
+function groepeer(alles, { eenScherm = false } = {}) {
+  // De stand van een bestand gaat er eerst uit: naast een vraag of onder een
+  // fout hoort hij niet (zie standTab).
+  const vanaf = alles.findIndex(isH2);
+  const standen = vanaf < 0 ? [] : alles.filter((node, i) => i > vanaf && standVan(node));
+  const kinderen = naastElkaar(standen.length ? alles.filter((n) => !standen.includes(n)) : alles);
+  const eerste = kinderen.findIndex(isH2);
+  if (eerste < 0) return null;
+  const boven = [];
+  let uitleg = [];
+  for (const node of kinderen.slice(0, eerste)) {
+    (zetNietsNeer(node) || isTitel(node) ? boven : uitleg).push(node);
+  }
+  let secties = [];
+  const esm = [];
+  for (const node of kinderen.slice(eerste)) {
+    if (node.type === 'mdxjsEsm') esm.push(node);
+    else if (isH2(node)) secties.push({ kop: node, kinderen: [node] });
+    else secties.at(-1).kinderen.push(node);
+  }
+  // Een pagina die in haar geheel op één scherm past, heeft geen tabbladen.
+  // Een keuze van de cursus (`lesTabs: { eenScherm: true }`): de editor-cursus
+  // bestaat uit korte stappen, en daar was een stap van tien regels drie
+  // schermen.
+  if (eenScherm && !standen.length && pastOpEenScherm(uitleg, secties)) return null;
+  // Een korte afsluiter (Wat je nu ziet) hoort bij het scherm ervoor, als de
+  // pagina dan nog tabbladen heeft.
+  const metSlot = sluitAan(uitleg, secties);
+  if (metSlot && openingVanTabs(metSlot) >= 2) {
+    uitleg = metSlot.uitleg;
+    secties = metSlot.secties;
+  }
+  const { opening, korteUitleg, isLeerdoelSectie } = openingVan(uitleg, secties);
   // Wat bij het eerstvolgende tabblad komt te staan.
   let vooraf = korteUitleg ? [...uitleg] : [];
   const tabs = [];
@@ -1447,8 +1600,13 @@ function deelMetStappen(kinderen, naam) {
 
 const HIDDEN = { type: 'mdxJsxAttribute', name: 'hidden', value: null };
 
-/** De remark-stap. */
-function remarkLesTabs() {
+/**
+ * De remark-stap.
+ *
+ * @param {{ eenScherm?: boolean }} [opties] `eenScherm`: een pagina die in
+ *   haar geheel op één scherm past, krijgt geen tabbladen (pastOpEenScherm).
+ */
+function remarkLesTabs(opties = {}) {
   return (tree, file) => {
     if (file?.data?.frontMatter?.les_tabs === false) return;
     if (isDeel(file?.path)) {
@@ -1460,7 +1618,7 @@ function remarkLesTabs() {
       tree.children = deelMetStappen(naast, naam) ?? naast;
       return;
     }
-    const nieuw = groepeer(tree.children);
+    const nieuw = groepeer(tree.children, opties);
     if (nieuw) tree.children = nieuw;
     // Geen tabbladen (één sectie, of een pagina met alleen een deel): een
     // marker, zodat de pagina dezelfde kop en breedte krijgt als de lessen
@@ -1478,5 +1636,8 @@ module.exports = {
   isDeel,
   deelMetStappen,
   hoogteScherm,
+  hoogteMetLijsten,
   eersteScherm,
+  sluitAan,
+  pastOpEenScherm,
 };

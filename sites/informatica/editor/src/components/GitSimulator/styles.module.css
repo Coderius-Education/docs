@@ -1,14 +1,14 @@
 .simulator {
   border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: 8px;
-  margin: 1.5rem 0;
+  margin: 1rem 0;
   background: var(--ifm-background-surface-color);
   overflow: hidden;
   font-family: var(--ifm-font-family-base);
 }
 
 .objective {
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
   background: var(--ifm-color-warning-contrast-background);
   color: var(--ifm-color-warning-contrast-foreground);
   border-bottom: 1px solid var(--ifm-color-emphasis-300);
@@ -35,7 +35,6 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 0;
-  min-height: 320px;
 }
 
 .left {
@@ -62,7 +61,12 @@
   border-right: 1px dashed var(--ifm-color-emphasis-200);
   display: flex;
   flex-direction: column;
-  min-height: 180px;
+  /* Een vaste hoogte, drie bestanden of twee commits, en daarna schuift de
+     zone. Met 180 pixels was de helft van de simulator leeg en paste een stap
+     niet op één scherm; een zone die meegroeit met elk bestand, maakte een
+     stap die bij het openen paste halverwege de oefening te lang. */
+  height: 132px;
+  overflow-y: auto;
   font-size: 0.85rem;
 }
 

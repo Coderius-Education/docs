@@ -22,7 +22,7 @@ Een venster met een prompt die eindigt op het pad van je map, gevolgd door een `
 PS C:\Users\jij\Documenten\python-project>
 ```
 
-Staat daar een ander pad, dan heb je PowerShell vanuit de verkeerde map geopend. Sluit het venster en begin opnieuw bij stap 1 hierboven.
+Staat daar een ander pad, dan heb je PowerShell vanuit de verkeerde map geopend. Sluit het venster en open PowerShell opnieuw, nu vanuit je projectmap in de Verkenner.
 
 <details>
 <summary>De keuze staat niet in het menu</summary>

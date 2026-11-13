@@ -27,7 +27,7 @@ sidebar_position: <getal>
 ```
 
 - `sidebar_position` bepaalt de volgorde in de sidebar.
-- **Een les is verdeeld in tabbladen.** Dat is sinds november 2026 de standaard; web, python, robotica en fullstack zijn omgezet. Elke `##`-sectie is een tabblad bovenaan de pagina, elke `###` in een lange sectie een stap binnen dat tabblad, en de inhoudsopgave rechts vervalt: een leerling hoeft in een les niet te scrollen. Structureer een les dus met `##` en `###`, en schrijf elk scherm volgens "Tabbladen: elk scherm staat op zichzelf" hieronder. Een cursus zet het aan met `lesTabs: true` in `createConfig` (zie de root-`CLAUDE.md`, Les-tabbladen, voor de stappen).
+- **Een les is verdeeld in tabbladen.** Dat is sinds november 2026 de standaard; web, python, robotica, fullstack, linux, ctf en de editor-cursus zijn omgezet. Elke `##`-sectie is een tabblad bovenaan de pagina, elke `###` in een lange sectie een stap binnen dat tabblad, en de inhoudsopgave rechts vervalt: een leerling hoeft in een les niet te scrollen. Structureer een les dus met `##` en `###`, en schrijf elk scherm volgens "Tabbladen: elk scherm staat op zichzelf" hieronder. Een cursus zet het aan met `lesTabs: true` in `createConfig` (zie de root-`CLAUDE.md`, Les-tabbladen, voor de stappen).
 - **Een cursus die nog niet is omgezet**, houdt de rechter inhoudsopgave (TOC) met **alleen H2-koppen** (centraal ingesteld in `packages/shared/config`). Voeg daar géén `hide_table_of_contents` toe; structureer je pagina met `##`-secties zodat ze in de TOC verschijnen. Heeft een oefenveld meer breedte nodig, kies dan een gestapelde veldvorm in plaats van de TOC te verbergen.
 - Cheatsheets en losse referentiepagina's mogen `displayed_sidebar: null` en `hide_pagination: true` gebruiken.
 - Gebruik `sidebar_label` alleen als de paginatitel te lang is voor de sidebar.
@@ -36,6 +36,9 @@ sidebar_position: <getal>
 
 In een cursus met tabbladen is een tabblad of een stap alles wat de leerling op dat moment ziet. Daar volgt dit uit:
 
+- **Een sectie van één regel is geen scherm.** Een challenge van ctf had vier secties van een of twee regels en werd vijf bijna lege tabbladen; hij heeft er nu twee, De challenge en Hints. Zet bij elkaar wat de leerling samen nodig heeft, en gebruik een `##` alleen voor wat een scherm vult.
+- **In een cursus van korte stappen heeft een pagina die op één scherm past geen tabbladen** (de editor-cursus, `lesTabs: { eenScherm: true }`). Schrijf een stap dan zo dat hij op 1280×720 past, met `## Wat je nu ziet` onder de tekst. Een korte `## Wat je nu ziet`, `## Aan de slag` of `## Volgende tutorial` op een langere pagina zet de build onder het scherm ervoor.
+- **Een oefenveld dat bij de hele les hoort, staat naast de les** (de oefenterminal van Linux): bij elk tabblad, op een breed scherm naast de tekst en op een telefoon eronder. Noem het bij zijn naam ("de oefenterminal"), niet "de terminal hieronder", en houd de schermen kort: de tekst staat daar in een kolom van de halve breedte.
 - **Een scherm past op 1280×720**, zonder scrollen. Meet het na een build met `node scripts/meet-les-tabs.mjs <site>`. Past het niet, splits dan eerst (een `###` erbij maakt een stap en kost geen inhoud) en kort daarna pas in.
 - **Wijs alleen naar wat in hetzelfde scherm staat.** "Hieronder", "hierboven" en "de startcode" kloppen op een lange pagina en wijzen in tabbladen naar een ander scherm.
 - **Predict gaat over de startcode van het oefenveld**, en toont die code. De leerling voorspelt, en draait daarna in Probeer en onderzoek dezelfde code om te zien of het klopte.

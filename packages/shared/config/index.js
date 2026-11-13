@@ -195,6 +195,14 @@ function metBegrippen(presets, siteDir) {
 // remark-stap elke `##`-sectie van een les in een tabblad. Helemaal achteraan
 // in de docs van het classic preset, ook na de begrippen: die stap slaat een
 // component over, en zou in een paneel dus geen begrip meer markeren.
+//
+// `lesTabs: { eenScherm: true }` zet ze ook aan, met de keuze dat een pagina
+// die in haar geheel op één scherm past geen tabbladen krijgt (de
+// editor-cursus, met stappen van tien regels).
+const lesTabsOpties = (aan) => (aan && typeof aan === 'object' ? aan : {});
+// Zonder opties de plugin zelf, zoals met `lesTabs: true` altijd al.
+const metOpties = (plugin, aan) =>
+  Object.keys(lesTabsOpties(aan)).length ? [plugin, lesTabsOpties(aan)] : plugin;
 function metLesTabs(presets, aan) {
   if (!aan) return presets;
   return presets.map((entry) => {
@@ -203,7 +211,7 @@ function metLesTabs(presets, aan) {
     if ((name !== 'classic' && !/preset-classic$/.test(name)) || !opts?.docs) return entry;
     const docs = {
       ...opts.docs,
-      remarkPlugins: [...(opts.docs.remarkPlugins || []), remarkLesTabs],
+      remarkPlugins: [...(opts.docs.remarkPlugins || []), metOpties(remarkLesTabs, aan)],
     };
     return [name, { ...opts, docs }];
   });
@@ -219,7 +227,13 @@ function metLesTabsInPlugins(plugins, aan) {
     if (!Array.isArray(entry) || typeof entry[0] !== 'string' || !DOCS_PLUGIN.test(entry[0]))
       return entry;
     const [name, opts = {}] = entry;
-    return [name, { ...opts, remarkPlugins: [...(opts.remarkPlugins || []), remarkLesTabs] }];
+    return [
+      name,
+      {
+        ...opts,
+        remarkPlugins: [...(opts.remarkPlugins || []), metOpties(remarkLesTabs, aan)],
+      },
+    ];
   });
 }
 
@@ -513,7 +527,7 @@ function createConfig(course = {}) {
       ...(heeftBegrippen ? [begrippenPlugin] : []),
       // Bij les-tabbladen: per les de werkvormen, voor de docentenhandleiding
       // (plugins/werkvormen.js).
-      ...(lesTabs ? [werkvormenPlugin] : []),
+      ...(lesTabs ? [metOpties(werkvormenPlugin, lesTabs)] : []),
       // De Pyodide van de site in een eigen cache (plugins/pyodide-cache.js),
       // behalve waar een PWA dat al doet (play).
       ...(gebruiktPyodide(process.cwd()) && !heeftPwa(plugins, process.cwd())

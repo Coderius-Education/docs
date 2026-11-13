@@ -18,13 +18,13 @@ Vervang de naam en het e-mailadres door je eigen gegevens. Git slaat dit op voor
 
 ## Waarom die derde regel
 
-Zonder die regel noemt git je eerste branch `master`. GitHub en de rest van deze cursus gaan uit van `main`, en dan loopt het mis op het moment dat je gaat pushen:
+Zonder de regel `git config --global init.defaultBranch main` noemt git je eerste branch `master`. GitHub en de rest van deze cursus gaan uit van `main`, en dan loopt het mis op het moment dat je gaat pushen:
 
 ```
 error: src refspec main does not match any
 ```
 
-Git zegt daar: "je vraagt me `main` te versturen, maar die branch bestaat hier niet." Met de regel hierboven heten al je nieuwe repositories meteen `main` en kom je die fout niet tegen.
+Git zegt daar: "je vraagt me `main` te versturen, maar die branch bestaat hier niet." Met `init.defaultBranch main` heten al je nieuwe repositories meteen `main` en kom je die fout niet tegen.
 
 **Heb je al een map met `git init` gemaakt?** Dan staat die nog op `master`. Open een terminal in die map en hernoem hem:
 

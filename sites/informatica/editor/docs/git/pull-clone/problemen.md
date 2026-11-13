@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
 title: "Er gaat iets mis"
+# Hier zoek je je melding: geen tabbladen, want zoeken vindt niets in een tabblad dat dicht is.
+les_tabs: false
 ---
 
 # Er gaat iets mis
