@@ -35,6 +35,8 @@ rm -rf "$MAP" "$MAP.tar.gz.tmp"
 ls -1t ~/backups/*.tar.gz | tail -n +8 | xargs -r rm
 ```
 
+### Wat eromheen staat
+
 Het middelste stuk ken je uit les 37. Nieuw is wat eromheen staat:
 
 | Regel | Wat hij doet |
@@ -106,7 +108,7 @@ ls: cannot access '/home/sam/backups/*.tar.gz': No such file or directory
 
 **Oorzaak:** er staat nog geen enkele back-up in `~/backups`: `tar` mislukte, en de shell vond niets bij `*.tar.gz`.
 
-**Oplossing:** lees de melding erboven; daar staat waarom `tar` of het kopiëren misging. Bij `no space left on device` helpt de oplossing hierboven.
+**Oplossing:** lees de melding erboven; daar staat waarom `tar` of het kopiëren misging. Bij `no space left on device` helpt de oplossing van die fout.
 
 ## Opdrachten
 

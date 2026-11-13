@@ -20,6 +20,8 @@ GELDIG = 60 * 60 * 24 * 30
 
 Dat is 30 dagen in seconden, net als `max_age`. Nu staat het getal op één plek.
 
+### De sessie ophalen en controleren
+
 Zet onder `app.mount(...)` een functie die een sessie ophaalt en controleert:
 
 <CodeUitleg>
@@ -50,6 +52,8 @@ Een verlopen sessie gaat weg, en de functie doet alsof er geen sessie is.
 
 </CodeUitleg>
 
+### Inloggen met een eindtijd
+
 In `inloggen` krijgt de nieuwe sessie een `tot`, en `max_age` gebruikt
 `GELDIG`. Vervang je `inloggen` door:
 
@@ -77,6 +81,8 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     )
     return antwoord
 ```
+
+### De andere endpoints
 
 In `bericht_plaatsen`, `bericht_verwijderen` en `alles_wissen` vervang je het
 `with`-blok van `sessies.db` door één regel:
@@ -142,6 +148,8 @@ De `Client` van Sara heeft de cookie nog, en probeert er haar eigen bericht mee 
 </Regel>
 
 </CodeUitleg>
+
+### Draai verlopen.py
 
 Draai het script in een tweede terminal.
 
@@ -209,7 +217,8 @@ server wel, maar roept de functie zichzelf eindeloos aan: de terminal toont
 `RecursionError: maximum recursion depth exceeded`, en `verlopen.py` stopt met
 `json.decoder.JSONDecodeError`.
 
-**Oplossing:** zet in `sessie_ophalen` het `with`-blok terug, zoals hierboven.
+**Oplossing:** zet in `sessie_ophalen` het `with`-blok terug, zoals bij De sessie
+ophalen en controleren.
 Vervang het alleen in de drie endpoints, één voor één.
 
 ### KeyError bij `sessies[sessie_id]`
@@ -326,7 +335,10 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     return antwoord
 
 @app.post("/bericht")
-async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+async def bericht_plaatsen(
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
     mijn = sessie_ophalen(sessie_id)
     if not mijn:
         raise HTTPException(status_code=401, detail="Log eerst in")

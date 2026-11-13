@@ -64,6 +64,8 @@ Bij elk pad staan de methoden, zoals `get` of `post`. `upper()` maakt er hoofdle
 
 </CodeUitleg>
 
+### Het script draaien
+
 Draai het in een tweede terminal, zoals in
 [Een script als bezoeker](site:fullstack/docs/veiligheid/gereedschap).
 
@@ -131,7 +133,7 @@ async def tijd():
     return {"tijd": time.time()}
 ```
 
-**Vraag:** wat print het script nu?
+**Vraag:** wat print het script nu? Haal `/tijd` daarna weer weg.
 
 <details>
 <summary>Tip</summary>
@@ -152,7 +154,7 @@ GET /tijd
 ```
 
 Het nieuwe endpoint staat er meteen bij. Je hoeft niets bij te houden: wat in
-`main.py` staat, staat ook in de handleiding. Haal `/tijd` daarna weer weg.
+`main.py` staat, staat ook in de handleiding.
 
 </details>
 
@@ -205,7 +207,12 @@ async def bericht_plaatsen(
         sessies[sessie_id] = mijn
         sessies.commit()
     antwoord = JSONResponse({"opgeslagen": sleutel})
-    antwoord.set_cookie(key="sessie_id", value=sessie_id, httponly=True, samesite="lax")
+    antwoord.set_cookie(
+        key="sessie_id",
+        value=sessie_id,
+        httponly=True,
+        samesite="lax",
+    )
     return antwoord
 
 @app.get("/berichten")

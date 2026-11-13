@@ -100,21 +100,27 @@ import httpx
 
 adres = "http://127.0.0.1:8000/registreer"
 
-gebruikers = [("sara", "welkom123"), ("alex", "Zonnebloem-Fiets-42"), ("noor", "welkom123")]
+gebruikers = [
+    ("sara", "welkom123"),
+    ("alex", "Zonnebloem-Fiets-42"),
+    ("noor", "welkom123"),
+]
 for naam, wachtwoord in gebruikers:
     antwoord = httpx.post(adres, data={"naam": naam, "wachtwoord": wachtwoord})
     print(antwoord.json())
 ```
 
-<Regel n={5}>
+<Regel n={5} tot={9}>
 Drie gebruikers, elk een tuple van naam en wachtwoord. Sara en Noor kozen hetzelfde wachtwoord.
 </Regel>
 
-<Regel n={7}>
+<Regel n={11}>
 `httpx.post` stuurt een formulier: `data` zijn de velden, net als `name="naam"` en `name="wachtwoord"` in een HTML-formulier.
 </Regel>
 
 </CodeUitleg>
+
+### Het script draaien
 
 Draai het in een tweede terminal, in dezelfde map.
 

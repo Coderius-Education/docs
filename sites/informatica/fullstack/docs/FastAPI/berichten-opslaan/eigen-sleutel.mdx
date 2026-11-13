@@ -59,7 +59,7 @@ async def berichten():
 ```
 
 <Regel n={8}>
-Zo krijgt elk bericht een nieuwe sleutel, zoals `bericht_1767225600123456789`, en overschrijven twee berichten elkaar niet meer.
+Zo krijgt elk bericht een nieuwe sleutel, zoals `bericht_1767225600123456789`. Neem `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconden): twee berichten in dezelfde seconde krijgen anders dezelfde sleutel, en dan overschrijft het tweede het eerste.
 </Regel>
 
 <Regel n={9}>
@@ -72,10 +72,6 @@ De waarde is een dictionary met beide velden, zoals in [Een dictionary als waard
 
 </CodeUitleg>
 
-:::caution
-Gebruik `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconden). Twee berichten die binnen dezelfde seconde binnenkomen, krijgen anders dezelfde sleutel, en dan overschrijft het tweede het eerste.
-:::
-
 ## Het gastenboek testen
 
 1. Ga naar `http://127.0.0.1:8000/gastenboek` en verstuur twee berichten.
@@ -83,7 +79,7 @@ Gebruik `time.time_ns()` (nanoseconden) en niet `int(time.time())` (hele seconde
 3. Stop de server, start hem opnieuw en kijk nog een keer: ze staan er nog.
 
 :::danger[Gaat er iets mis?]
-Blijft je data niet bewaard? Kijk dan of je `db.commit()` niet bent vergeten. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Blijft je data niet bewaard? Kijk dan of je `db.commit()` niet bent vergeten. Meer oplossingen staan op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <details>

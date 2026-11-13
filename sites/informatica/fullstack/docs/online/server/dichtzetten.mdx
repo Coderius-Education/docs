@@ -20,11 +20,15 @@ sudo ufw allow 443/tcp
 sudo ufw enable
 ```
 
+### Aanzetten
+
 `ufw enable` waarschuwt nog een keer:
 
 ```text
 Command may disrupt existing ssh connections. Proceed with operation (y|n)?
 ```
+
+### Kijken wat er openstaat
 
 Typ `y`. Er staat dan `Firewall is active and enabled on system startup`. Kijk wat er openstaat:
 
@@ -44,6 +48,8 @@ OpenSSH (v6)               ALLOW       Anywhere (v6)
 80/tcp (v6)                ALLOW       Anywhere (v6)
 443/tcp (v6)               ALLOW       Anywhere (v6)
 ```
+
+### Elke deur twee keer
 
 Elke deur staat er twee keer: één keer voor gewone internetadressen, en met `(v6)` voor de nieuwere IPv6-adressen. Wat niet in de lijst staat, houdt ufw tegen. Ook als je later per ongeluk een programma op `0.0.0.0` laat luisteren. Met één uitzondering, en dat is Docker; die zie je in [les 32](site:fullstack/docs/online/server/voordeur).
 

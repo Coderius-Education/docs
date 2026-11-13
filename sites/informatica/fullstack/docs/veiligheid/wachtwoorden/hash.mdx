@@ -23,6 +23,8 @@ wachtwoord = "welkom123"
 print(hashlib.sha256(wachtwoord.encode()).hexdigest())
 ```
 
+### Wat eruit komt
+
 `.encode()` maakt van de tekst bytes, want daar rekent `sha256` mee, en
 `.hexdigest()` schrijft de uitkomst als tekst van cijfers en de letters a tot
 en met f.

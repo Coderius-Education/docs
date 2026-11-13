@@ -1,5 +1,6 @@
 ---
 description: Een bezoeker kan elk verzoek zelf schrijven, buiten je formulier om. Zoek bij zes brieven de controle die de server beschermt.
+les_tabs: false
 ---
 
 # Vertrouw de bezoeker niet
@@ -21,7 +22,10 @@ moet gelden op de server.
 
 ```python
 @app.post("/bericht")
-async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+async def bericht_plaatsen(
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
     with SqliteDict("sessies.db") as sessies:
         mijn = sessies.get(sessie_id, {})
     with SqliteDict("gastenboek.db") as db:

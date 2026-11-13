@@ -60,6 +60,8 @@ Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000) in je browser. Je ziet:
 
 Misschien staat het er bij jou zonder spaties: `{"bericht":"Hallo wereld!"}`. Dat is dezelfde JSON; spaties tussen de onderdelen tellen niet mee. Dat geldt voor alle JSON in deze cursus.
 
+### Tijdens het werken
+
 :::note[Laat de server draaien]
 Je hoeft de server niet opnieuw te starten als je `main.py` aanpast. Sla op met **Ctrl+S**, en `fastapi dev` ziet de wijziging en start zichzelf opnieuw. In de terminal verschijnt dan `WatchFiles detected changes in 'main.py'. Reloading...`, en even later `Application startup complete.` Daarna herlaad je de pagina in je browser.
 
@@ -83,7 +85,7 @@ async def info():
 Ga naar [http://127.0.0.1:8000/info](http://127.0.0.1:8000/info) om dit te testen.
 
 :::danger[Gaat er iets mis?]
-Start je server niet, met `NameError: name 'app' is not defined`? Dan staat je endpoint bóven de regel `app = FastAPI()`. Python leest van boven naar beneden. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Start je server niet, met `NameError: name 'app' is not defined`? Dan staat je endpoint bóven de regel `app = FastAPI()`. Python leest van boven naar beneden. Meer oplossingen staan op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 
 VS Code ziet zo'n fout vaak al voordat je de server start. Onder een naam die
 Python niet kent, zet hij een kronkel, en in het tabblad **Problems**

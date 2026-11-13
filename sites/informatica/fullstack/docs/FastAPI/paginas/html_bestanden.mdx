@@ -68,7 +68,7 @@ Het pad is dat van het bestand op je schijf, gerekend vanaf de map waarin je `fa
 Ga naar [http://127.0.0.1:8000](http://127.0.0.1:8000). Je ziet de pagina uit `home.html`.
 
 :::danger[Gaat er iets mis?]
-Zie je de pagina niet? Kijk of het pad in `FileResponse("...")` precies klopt en of het bestand echt op die plek staat. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Zie je de pagina niet? Kijk of het pad in `FileResponse("...")` precies klopt en of het bestand echt op die plek staat. Meer oplossingen staan op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <details>
@@ -168,11 +168,11 @@ async def contact():
 
 ### Opdracht 2: Run
 
-Maak de mappenstructuur uit het voorbeeld (`static/pages/home.html`) en pas je `main.py` aan met `FileResponse`. Laadt `/` de pagina uit `home.html`? En werken `/pagina` en `/styled` nog?
+Maak de mappenstructuur uit de uitleg (`static/pages/home.html`) en pas je `main.py` aan met `FileResponse`. Laadt `/` de pagina uit `home.html`? En werken `/pagina` en `/styled` nog?
 
 ### Opdracht 3: Investigate - Fout pad
 
-Toets je voorspelling uit opdracht 1. Verander het pad in je endpoint voor `/` naar een bestand dat niet bestaat, bijvoorbeeld `FileResponse("static/pages/oeps.html")`, en herlaad. Wat zegt de browser, en welke regel in de terminal vertelt je wat er mis is?
+Toets je voorspelling uit opdracht 1. Verander het pad in je endpoint voor `/` naar een bestand dat niet bestaat, bijvoorbeeld `FileResponse("static/pages/oeps.html")`, en herlaad. Wat zegt de browser, en welke regel in de terminal vertelt je wat er mis is? Zet het pad daarna terug op `home.html`.
 
 <details>
 <summary>Antwoord</summary>
@@ -183,7 +183,7 @@ De browser toont alleen `Internal Server Error`. In de terminal staat een lange 
 RuntimeError: File at path static/pages/oeps.html does not exist.
 ```
 
-Dat is de regel die je iets vertelt: het bestand bestaat niet op dat pad. Een typfout in het pad geeft precies deze fout. Zet het pad daarna terug op `home.html`.
+Dat is de regel die je iets vertelt: het bestand bestaat niet op dat pad. Een typfout in het pad geeft precies deze fout.
 
 </details>
 

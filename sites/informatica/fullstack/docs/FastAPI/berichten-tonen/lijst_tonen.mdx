@@ -88,7 +88,7 @@ De lijst gaat mee onder de naam `berichten`, en dat is precies de naam die de te
 3. Vul het formulier op `/gastenboek` nog een keer in. Na het versturen kom je vanzelf op de lijst uit, en die is gegroeid
 
 :::danger[Gaat er iets mis?]
-Blijft de lijst leeg terwijl er wel data in je database staat? Dan komt de lijst waarschijnlijk onder een andere naam binnen dan de template verwacht. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Blijft de lijst leeg terwijl er wel data in je database staat? Dan komt de lijst waarschijnlijk onder een andere naam binnen dan de template verwacht. Meer oplossingen staan op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <details>
@@ -300,11 +300,11 @@ return templates.TemplateResponse(request, "namen.html", {"namen": namen})
 
 ### Opdracht 2: Run
 
-Maak `templates/berichten.html` uit het voorbeeld en pas je `/berichten` endpoint aan. Vul het gastenboek een paar keer in en kijk of je lijst groeit.
+Maak `templates/berichten.html` uit de uitleg en pas je `/berichten` endpoint aan. Vul het gastenboek een paar keer in en kijk of je lijst groeit.
 
 ### Opdracht 3: Investigate - Endfor vergeten
 
-Haal in je complete `berichten.html` de regel `{% endfor %}` weg en herlaad de pagina.
+Haal in je complete `berichten.html` de regel `{% endfor %}` weg en herlaad de pagina. Zet de regel daarna terug.
 
 <details>
 <summary>Antwoord</summary>
@@ -315,7 +315,7 @@ De browser zegt `Internal Server Error`. Onderaan in je terminal staat:
 jinja2.exceptions.TemplateSyntaxError: Unexpected end of template. Jinja was looking for the following tags: 'endfor' or 'else'. The innermost block that needs to be closed is 'for'.
 ```
 
-Jinja2 leest je template van boven naar beneden. De lus is nog open als het bestand ophoudt, en dan weet hij niet waar de herhaling stopt. Elke `{% for %}` heeft een `{% endfor %}` nodig. Zet de regel terug.
+Jinja2 leest je template van boven naar beneden. De lus is nog open als het bestand ophoudt, en dan weet hij niet waar de herhaling stopt. Elke `{% for %}` heeft een `{% endfor %}` nodig.
 
 </details>
 

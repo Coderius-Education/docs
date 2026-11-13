@@ -200,3 +200,82 @@
     grid-column: 2;
   }
 }
+
+/* In een les-tabblad past een scherm op 1280×720. Een vraag met vier keuzes
+   van twee regels was daar zelf al 440 pixels hoog: in fullstack pasten
+   zeventien opdrachten met alleen een alinea en een vraag daardoor niet. De
+   keuzes staan er dichter op elkaar; de tekst blijft even groot. */
+.inTab {
+  margin-bottom: 1rem;
+  padding: 0.6rem 0.9rem 0.7rem;
+}
+
+.inTab .keuzes {
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.inTab .keuze {
+  padding: 0.3rem 0.6rem;
+  line-height: 1.35;
+}
+
+/* Het label staat in een tabblad vóór de vraag, op dezelfde regel: op een
+   eigen regel kostte het bij elke vraag 27 pixels, en tien opdrachten van
+   fullstack waren precies zoveel te lang. */
+.inTab .label {
+  margin: 0 0.5rem 0 0;
+  vertical-align: 0.1em;
+}
+
+.inTab .vraag {
+  display: inline;
+}
+
+/* De terugkoppeling en de uitleg samen. In een tabblad geeft de les dit vak
+   een hoogte als het scherm na het antwoord te lang is (LesTabs/speling.ts);
+   dan schuift het hier, en de pagina niet. */
+.na {
+  overflow-y: auto;
+}
+
+/* Na het goede antwoord staan in een tabblad de andere antwoorden achter
+   deze knop. Een knop zonder browserstijl, klein, als een link. */
+.andere {
+  margin-top: 0.35rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ifm-color-primary);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.andere:focus-visible {
+  outline: 3px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+/* De reden bij een fout antwoord, in de rij van dat antwoord (alleen in een
+   tabblad): onder de tekst van de keuze, over de volle breedte ernaast. */
+.waarom {
+  grid-column: 2 / -1;
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+/* Er wel voor een schermlezer, niet voor het oog. */
+.voorlezer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

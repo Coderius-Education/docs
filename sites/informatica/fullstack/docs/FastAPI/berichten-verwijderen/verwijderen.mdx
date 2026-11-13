@@ -297,11 +297,11 @@ async def bericht_detail(request: Request, sleutel: str):
   </Uitleg>
 </Voorspel>
 
+## Opdrachten
+
 :::tip[Controleer je server]
 Laat je server draaien en typ in een tweede terminal `python controleer.py berichten-verwijderen`. Het script kijkt of alles uit dit hoofdstuk werkt; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Predict - Wat ziet de bezoeker?
 
@@ -314,11 +314,11 @@ Laat je server draaien en typ in een tweede terminal `python controleer.py beric
 </form>
 ```
 
-<Voorspel vraag="Wat ziet de bezoeker van dit formulier op de pagina? En wat komt er binnen bij /verwijderen als hij op de knop klikt?">
+<Voorspel vraag="Wat ziet de bezoeker, en wat komt er binnen bij /verwijderen?">
   <Keuze uitleg="Kijk naar het type van de input. Niet elk invoerveld staat op het scherm.">Een tekstvak met `bericht_17` erin, en de knop</Keuze>
-  <Keuze uitleg="Een veld hoeft niet zichtbaar te zijn om mee te gaan. Wat bepaalt of een veld meegaat: of je het ziet, of dat het een name heeft?">Alleen de knop, en er komt niets binnen, want de bezoeker vulde niets in</Keuze>
-  <Keuze goed uitleg="Een veld met type hidden staat niet op het scherm, maar gaat wel mee met zijn name en zijn value.">Alleen de knop, en bij `/verwijderen` komt `sleutel` binnen met `"bericht_17"`</Keuze>
-  <Keuze uitleg="Het formulier stuurt alleen de velden met een name, met hun value. Welke value staat er in het verborgen veld?">De knop, en bij `/verwijderen` komt het hele bericht binnen</Keuze>
+  <Keuze uitleg="Een veld gaat ook mee als je het niet ziet. Heeft dit veld een name?">Alleen de knop, en er komt niets binnen</Keuze>
+  <Keuze goed uitleg="Een veld met type hidden staat niet op het scherm, maar gaat wel mee met zijn name en zijn value.">Alleen de knop, en `sleutel` komt binnen met `"bericht_17"`</Keuze>
+  <Keuze uitleg="Een formulier stuurt de value van elk veld. Welke value heeft dit veld?">De knop, en het hele bericht komt binnen</Keuze>
   <Uitleg>
 
   Het verborgen veld zie je niet op de pagina, maar het staat wel in de HTML. Wie de broncode van de pagina bekijkt (Ctrl+U), ziet hem staan. Verborgen is dus niet geheim: zet er nooit iets in wat een bezoeker niet mag weten.
@@ -339,12 +339,12 @@ Ja: `/verwijderen` haalt het weg en stuurt je met een 303 terug naar `/berichten
 
 ### Opdracht 3: Investigate - Zonder de controle
 
-Haal in `/verwijderen` de regel `if sleutel in db:` weg (en zet de twee regels eronder een stap terug). Open `/berichten` in twee tabbladen. Verwijder een bericht in het eerste tabblad, en klik daarna in het tweede tabblad bij hetzelfde bericht op Verwijderen. Wat zie je, en wat staat er in je terminal?
+Haal in `/verwijderen` de regel `if sleutel in db:` weg (en zet de twee regels eronder een stap terug). Open `/berichten` in twee tabbladen. Verwijder een bericht in het eerste tabblad, en klik daarna in het tweede tabblad bij hetzelfde bericht op Verwijderen. Wat zie je, en wat staat er in je terminal? Zet de controle daarna terug.
 
 <details>
 <summary>Antwoord</summary>
 
-Het tweede tabblad toont `Internal Server Error`, en in je terminal staat `KeyError` met de sleutel van het bericht, zoals `KeyError: 'bericht_1767225600123456789'`. Het tweede tabblad liet nog de oude lijst zien, met een bericht dat al weg is. Het formulier stuurt die sleutel mee, en `del db[sleutel]` crasht op een sleutel die er niet in staat. Met `if sleutel in db:` gebeurt er dan niets en kom je weer op de lijst. Zet de controle terug.
+Het tweede tabblad toont `Internal Server Error`, en in je terminal staat `KeyError` met de sleutel van het bericht, zoals `KeyError: 'bericht_1767225600123456789'`. Het tweede tabblad liet nog de oude lijst zien, met een bericht dat al weg is. Het formulier stuurt die sleutel mee, en `del db[sleutel]` crasht op een sleutel die er niet in staat. Met `if sleutel in db:` gebeurt er dan niets en kom je weer op de lijst.
 
 </details>
 

@@ -27,6 +27,8 @@ ander account. Zoek in het tabblad **Elementen** bij dat bericht de link naar de
 detailpagina, `<a href="/bericht/bericht_…">`, en kopieer het stuk vanaf
 `bericht_`.
 
+### Een script voor Alex
+
 Maak in de map van je project een script `test_eigen.py`. Het maakt een account
 voor Alex, logt in en probeert het bericht te verwijderen. Zet bij `sleutel` de
 waarde die je kopieerde:
@@ -45,6 +47,8 @@ print("POST /verwijderen:", alex.post("/verwijderen", data={"sleutel": sleutel})
 print("DELETE /bericht:", alex.delete(f"/bericht/{sleutel}").status_code)
 ```
 
+### De uitvoer lezen
+
 Registreren en inloggen geven `303`: je gastenboek stuurt door, zoals na elk
 formulier. `Bestaat` vraagt de detailpagina op; `200` betekent dat de sleutel
 klopt. Draai het script.
@@ -53,6 +57,8 @@ Staat er bij `POST /verwijderen` of `DELETE /bericht` iets anders dan `403` of
 `405`, dan staat dat endpoint open. Zet de controle erin zoals bij
 [Er gaat iets mis](#er-gaat-iets-mis), schrijf een nieuw bericht als Sara en
 draai het script opnieuw met de nieuwe sleutel.
+
+### De uitkomst
 
 <Gelukt>
 
@@ -81,7 +87,7 @@ Sara staat in je browser nog in de lijst.
   <Keuze uitleg="Een knop verbergen houdt niemand tegen die het verzoek zelf stuurt.">Dat het dicht is als de knop verborgen is</Keuze>
   <Uitleg>
 
-  Eén `403` laat zien dat één endpoint controleert. Elk endpoint dat iets verandert, kan de controle vergeten. Daarom loop je ze in de opdracht hieronder allemaal langs.
+  Eén `403` laat zien dat één endpoint controleert. Elk endpoint dat iets verandert, kan de controle vergeten. Daarom loop je ze in de opdracht van deze les allemaal langs.
 
   </Uitleg>
 </Voorspel>
@@ -113,7 +119,7 @@ regel van `DELETE /bericht` zegt dan niets meer, want het bericht is al weg.
 **Oplossing:** zet `sessie_id: str = Cookie(default="")` naast `sleutel`, en
 zet in de functie de controle vóór de `del`, zoals in
 [opdracht 5 van Sessies](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen).
-Binnen de functie staat dan:
+Boven de `return RedirectResponse(...)` staat dan:
 
 ```python
 with SqliteDict("sessies.db") as sessies:
@@ -126,19 +132,16 @@ with SqliteDict("gastenboek.db") as db:
         db.commit()
 ```
 
-De `return RedirectResponse(...)` eronder blijft.
-
 ### DELETE /bericht: 200
 
-Het script print `POST /verwijderen: 403`, maar `DELETE /bericht: 200`, en het
-bericht van Sara is weg.
+Het script print `DELETE /bericht: 200`, en het bericht van Sara is weg.
 
 **Oorzaak:** de knop van het htmx-recept gebruikt `DELETE /bericht/{sleutel}`,
 en daar staat de controle nog niet in. Het formulier naar `/verwijderen` is
 beschermd, maar dat gebruikt je pagina niet meer.
 
 **Oplossing:** zet `sessie_id: str = Cookie(default="")` naast `sleutel`, en
-zet de controle vóór de `del`. Binnen de functie staat dan:
+zet de controle vóór de `del`. Boven de `return HTMLResponse("")` staat dan:
 
 ```python
 with SqliteDict("sessies.db") as sessies:
@@ -150,9 +153,6 @@ with SqliteDict("gastenboek.db") as db:
     del db[sleutel]
     db.commit()
 ```
-
-De `return HTMLResponse("")` eronder blijft. Bij een `403` laat htmx de pagina
-met rust: het bericht blijft staan, en in **Netwerk** zie je een rode regel.
 
 ### Registreren: 400 en Inloggen: 401
 
@@ -205,7 +205,7 @@ Loop deze lijst af:
 Heb je in [Onthouden op de server: sessies](site:fullstack/docs/FastAPI/onthouden/sessies#opdracht-5-make---echt-afschermen)
 opdracht 5 gemaakt, dan heeft `POST /verwijderen` deze controle al. Bouwde je
 het htmx-recept Verwijderen, zet hem dan ook in `DELETE /bericht/{sleutel}`,
-zoals bij [DELETE /bericht: 200](#delete-bericht-200) hierboven.
+zoals bij [DELETE /bericht: 200](#delete-bericht-200).
 
 Heb je een knop Alles wissen, dan krijgt `alles_wissen` dezelfde grens als in
 [les 5](site:fullstack/docs/veiligheid/toegang/elk-endpoint). In je gastenboek

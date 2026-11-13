@@ -14,6 +14,8 @@ daarom in die regel bovenaan je `main.py`:
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 ```
 
+### Het endpoint vervangen
+
 Vervang dan je POST-endpoint `/gastenboek` uit [Elk bericht bewaren: een eigen sleutel](site:fullstack/docs/FastAPI/berichten-opslaan/eigen-sleutel). Alleen de laatste regel verandert:
 
 <Bestand pad="main.py" />
@@ -56,7 +58,7 @@ Eerst een POST en dan doorsturen naar een GET: dat heet het **post/redirect/get*
 3. Druk op F5. De pagina herlaadt, zonder vraag over opnieuw versturen
 
 :::danger[Gaat er iets mis?]
-Krijg je **405 Method Not Allowed** meteen na het versturen? Dan mist `status_code=303`. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Krijg je **405 Method Not Allowed** meteen na het versturen? Dan mist `status_code=303`. Meer oplossingen staan op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <details>
@@ -211,6 +213,8 @@ async def berichten():
   </Uitleg>
 </Voorspel>
 
+## Opdrachten
+
 :::tip[Controleer je server]
 Laat je server draaien en typ in een tweede terminal `python controleer.py berichten-opslaan`. Het script kijkt of alles uit dit hoofdstuk werkt; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
 :::
@@ -218,8 +222,6 @@ Laat je server draaien en typ in een tweede terminal `python controleer.py beric
 :::tip[Eerst op papier]
 Speel na wat er bij één klik heen en weer gaat, met briefjes en zonder computer: [Het verzoek-rollenspel](site:fullstack/docs/unplugged/verzoek-rollenspel). Je docent kan de hand-out printen.
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Predict - Waar kom je uit?
 

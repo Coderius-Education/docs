@@ -72,7 +72,7 @@ describe('HTML van een bezoeker (XSS)', () => {
 
   it('de les over innerHTML zegt waarom escape op de server niet helpt, en eindigt met textContent', () => {
     const tekst = lees('browser');
-    expect(tekst).toContain('## Waarom `escape` op de server hier niet helpt');
+    expect(tekst).toContain('## Waarom `escape` hier niet helpt');
     expect(blokken(tekst, 'js')[0]).toContain('voorbeeld.innerHTML = veld.value;');
     const js = blokken(lees('textcontent'), 'js');
     expect(js[0]).toContain('voorbeeld.textContent = veld.value;');

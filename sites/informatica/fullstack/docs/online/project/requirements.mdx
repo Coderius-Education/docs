@@ -19,6 +19,8 @@ Open je project in VS Code, en typ in de terminal van VS Code (waar je virtual e
 python -m pip freeze | Out-File -Encoding ascii requirements.txt
 ```
 
+### Wat er in de lijst staat
+
 `python -m pip freeze` schrijft elk package in je virtual environment op, met de precieze versie. De pipe `|` geeft die lijst door aan `Out-File`, dat hem in een bestand zet; de pipe ken je uit [Zoeken en doorgeven](site:linux/docs/terminal/zoeken) in de Linux-cursus. In Linux zou je `>` gebruiken, maar in de PowerShell van Windows schrijft `>` een bestand dat git en Linux niet als gewone tekst lezen. `-Encoding ascii` maakt er gewone tekst van. Open `requirements.txt`:
 
 ```text

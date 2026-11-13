@@ -29,6 +29,8 @@ hangt af van wat er op de andere site gebeurt:
 Bij `none` gaat de cookie alleen mee als hij ook `secure` heeft; daarover gaat
 [Er gaat iets mis](#er-gaat-iets-mis).
 
+### Een link is een GET
+
 Een klik op een link is altijd een GET-verzoek. Met `lax` gaat je cookie daarbij
 mee, dus een endpoint dat iets verandert, mag nooit een GET zijn. Een POST
 van een andere site gaat zonder cookie: je server ziet dan geen sessie, en een
@@ -58,6 +60,8 @@ Sites die niet alleen op de browser willen vertrouwen, zetten daarnaast een
 eigen code in elk formulier. Hoe dat werkt, lees je in
 [de praktijk](site:fullstack/docs/veiligheid/cookies/praktijk); voor je gastenboek is `lax` genoeg.
 
+### Zet het toch in je code
+
 Zet `samesite` toch in je code, zodat een lezer ziet dat het een keuze is.
 Vervang in `inloggen` de `set_cookie` door:
 
@@ -71,6 +75,8 @@ Vervang in `inloggen` de `set_cookie` door:
         samesite="lax",
     )
 ```
+
+### Opnieuw inloggen
 
 Log daarna opnieuw in.
 
@@ -145,7 +151,7 @@ klikt op de schoolsite op een link naar jouw gastenboek.
 <details>
 <summary>Tip</summary>
 
-Kijk in de tabel naar de kolom met de link.
+Kijk in de tabel uit Wat `samesite` doet naar de kolom met de link.
 
 </details>
 

@@ -35,11 +35,15 @@ networks:
     external: true
 ```
 
+### De labels
+
 De labels zijn voor Traefik:
 
 - `traefik.enable=true`: deze container hoort achter de voordeur.
 - `…routers.gastenboek.rule=Host(…)`: stuur een verzoek voor de naam `gastenboek.localhost` naar deze container. Rond de naam staan backticks. Dubbele aanhalingstekens mogen ook, enkele niet: die kent Traefik niet.
 - `…services.gastenboek.loadbalancer.server.port=8000`: in de container luistert je site op poort 8000.
+
+### Opnieuw starten
 
 ```bash
 cd ~/gastenboek
@@ -68,7 +72,7 @@ Voor je site komt elk verzoek nu van Traefik. Traefik zet het adres van de echte
 
 `*` is hier veilig om één reden: je site heeft geen `ports` meer. Elk verzoek komt via Traefik, dus elke `X-Forwarded-For` komt van Traefik. Zet je `ports` ooit terug, haal dan ook deze regel weg.
 
-<Voorspel soort="Controlevraag" vraag="Wie is de bezoeker? Je haalt FORWARDED_ALLOW_IPS=* weg en start je site opnieuw. Tien klasgenoten openen hem. Welk adres ziet je site bij hun verzoeken?">
+<Voorspel soort="Controlevraag" vraag="Je haalt FORWARDED_ALLOW_IPS=* weg en start je site opnieuw. Tien klasgenoten openen hem. Welk adres ziet je site bij hun verzoeken?">
   <Keuze uitleg="Traefik zet het echte adres wel in X-Forwarded-For. Maar gelooft fastapi run die kop nog?">Het adres van elke klasgenoot, want Traefik zet het in X-Forwarded-For</Keuze>
   <Keuze goed uitleg="fastapi run gelooft X-Forwarded-For alleen van 127.0.0.1. Traefik heeft een ander adres, dus je site kijkt naar wie het verzoek echt stuurde: Traefik.">Bij elk verzoek het adres van Traefik</Keuze>
   <Keuze uitleg="127.0.0.1 is het adres van de container zelf. Wie stuurt de verzoeken naar je site?">127.0.0.1, want iedereen komt via je eigen computer binnen</Keuze>
@@ -91,7 +95,7 @@ Op `http://gastenboek.localhost` zegt Traefik `404 page not found`.
 error while parsing rule Host('gastenboek.localhost'): parsing rule Host('gastenboek.localhost'): 1:6: illegal rune literal
 ```
 
-**Oplossing:** vergelijk je labels letter voor letter met die hierboven, en zet backticks rond de naam. Start opnieuw met `docker compose up -d`. Het logboek van Traefik lees je met `docker compose logs` in `~/traefik`.
+**Oplossing:** vergelijk je labels letter voor letter met die uit de stap De labels, en zet backticks rond de naam. Start opnieuw met `docker compose up -d`. Het logboek van Traefik lees je met `docker compose logs` in `~/traefik`.
 
 ### Bad Gateway
 
@@ -133,12 +137,12 @@ networks:
     external: true
 ```
 
-Open `http://whoami.localhost`. Dit kleine programma laat elk verzoek zien zoals het binnenkwam. Welke kop zette Traefik erbij met jouw adres? Waarom staat er geen label met een poort?
+Open `http://whoami.localhost`: je ziet elk verzoek zoals het binnenkwam. Welke kop zette Traefik erbij met jouw adres? Waarom staat er geen label met een poort? Gooi de site daarna weg: `docker compose down` in `~/whoami`.
 
 <details>
 <summary>Antwoord</summary>
 
-Je ziet onder andere `X-Forwarded-For` en `X-Real-Ip`, met het adres waarvan jouw browser kwam, en `X-Forwarded-Host: whoami.localhost`. Dat zijn de koppen die Traefik toevoegt. In WSL is dat adres iets als `172.18.0.1`: je browser komt via Windows en het netwerk van Docker binnen. Op de server staat er het adres van de bezoeker op internet. Een label met de poort is hier niet nodig: het image van `whoami` zegt zelf op welke poort het luistert, en dan vindt Traefik hem. Jouw image zegt dat niet, daarom heeft je gastenboek het label wel. Gooi de tweede site daarna weg met `docker compose down` in `~/whoami`.
+Je ziet onder andere `X-Forwarded-For` en `X-Real-Ip`, met het adres waarvan jouw browser kwam, en `X-Forwarded-Host: whoami.localhost`. Dat zijn de koppen die Traefik toevoegt. In WSL is dat adres iets als `172.18.0.1`: je browser komt via Windows en het netwerk van Docker binnen. Op de server staat er het adres van de bezoeker op internet. Een label met de poort is hier niet nodig: het image van `whoami` zegt zelf op welke poort het luistert, en dan vindt Traefik hem. Jouw image zegt dat niet, daarom heeft je gastenboek het label wel.
 
 </details>
 

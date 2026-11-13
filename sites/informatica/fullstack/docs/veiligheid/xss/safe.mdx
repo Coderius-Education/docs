@@ -24,7 +24,9 @@ async def berichten_lijst(request: Request):
     with SqliteDict("gastenboek.db") as db:
         alle_berichten = list(db.values())
     return templates.TemplateResponse(
-        request, "berichten_lijst.html", {"berichten": alle_berichten, "welkom": WELKOM}
+        request,
+        "berichten_lijst.html",
+        {"berichten": alle_berichten, "welkom": WELKOM}
     )
 ```
 
@@ -32,7 +34,7 @@ async def berichten_lijst(request: Request):
 Deze tekst schreef jij, in je eigen code. Geen bezoeker kan hem veranderen.
 </Regel>
 
-<Regel n={8}>
+<Regel n={8} tot={10}>
 Het template krijgt nu twee dingen mee: de berichten en de welkomsttekst.
 </Regel>
 
@@ -47,6 +49,8 @@ En bovenaan `templates/berichten_lijst.html`:
 ```
 
 {/* weg: gastenboek.db */}
+
+### Kijk wat er gebeurt
 
 Sla beide op, gooi `gastenboek.db` weg, open je gastenboek opnieuw en vul als
 Sara weer `<b>vet</b>` in.
@@ -212,14 +216,17 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     with SqliteDict("gastenboek.db") as db:
         db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
         db.commit()
-    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+    tekst = f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek."
+    return HTMLResponse(tekst)
 
 @app.get("/berichten/lijst")
 async def berichten_lijst(request: Request):
     with SqliteDict("gastenboek.db") as db:
         alle_berichten = list(db.values())
     return templates.TemplateResponse(
-        request, "berichten_lijst.html", {"berichten": alle_berichten, "welkom": WELKOM}
+        request,
+        "berichten_lijst.html",
+        {"berichten": alle_berichten, "welkom": WELKOM}
     )
 
 @app.get("/zoek")
@@ -228,7 +235,9 @@ async def zoek(term: str = ""):
     with SqliteDict("gastenboek.db") as db:
         for bericht in db.values():
             if term.lower() in bericht["bericht"].lower():
-                gevonden += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+                naam = escape(bericht["naam"])
+                tekst = escape(bericht["bericht"])
+                gevonden += f"<li>{naam}: {tekst}</li>"
     return HTMLResponse(f"<p>Je zocht naar: {escape(term)}</p><ul>{gevonden}</ul>")
 ```
 

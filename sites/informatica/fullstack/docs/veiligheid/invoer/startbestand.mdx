@@ -37,6 +37,8 @@ tekst in elk vak, de `placeholder`, zegt welk vak welk is:
 </html>
 ```
 
+### De server
+
 Zet dit `main.py` in de map `veiligheid-invoer`, naast `static`. De server
 slaat op wat binnenkomt, en geeft terug hoe lang het bericht was:
 
@@ -80,7 +82,8 @@ een aanval, en strafbaar.
 
 Start je server met `fastapi dev main.py` en open
 `http://127.0.0.1:8000/static/formulier.html`. Typ je naam in het vak `naam`
-en `hoi` in het vak `bericht`, en klik op **Verstuur**.
+en `hoi` in het vak `bericht`, en klik op **Verstuur**. Je browser toont dan
+`{"lengte":3}`: zo lang is `hoi`.
 
 ## Kijk in je database
 
@@ -111,11 +114,13 @@ De naam staat tussen blokhaken, zodat je ook ziet of er spaties in staan. Dat ko
 
 </CodeUitleg>
 
+### lees_database.py draaien
+
 Draai het in de tweede terminal met `python lees_database.py`.
 
 <Gelukt>
 
-Na **Verstuur** toont je browser:
+Na **Verstuur** toonde je browser:
 
 {/* verstuur: /bericht naam=Sara&bericht=hoi */}
 

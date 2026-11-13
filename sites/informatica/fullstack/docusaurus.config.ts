@@ -33,6 +33,10 @@ export default createConfig({
     'Leer een back-end bouwen met FastAPI (Python). Van frontend naar database, direct in je browser.',
   keywords: 'fastapi leren, fullstack python, backend leren beginners, sqlite database python',
 
+  // Elke ##-sectie van een les is een tabblad, elke ### in een sectie een stap
+  // (root-CLAUDE.md, Les-tabbladen).
+  lesTabs: true,
+
   // Oude adressen van verhuisde lessen sturen door; de lijst en de reden staan
   // in src/data/omleidingen.ts.
   omleidingen,

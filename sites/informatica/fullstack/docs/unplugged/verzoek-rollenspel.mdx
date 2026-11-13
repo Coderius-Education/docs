@@ -1,5 +1,6 @@
 ---
 description: Speel met briefjes na wat er tussen browser en server heen en weer gaat, en ontdek dat één klik vaak meer dan één verzoek is.
+les_tabs: false
 ---
 
 # Het verzoek-rollenspel
@@ -168,7 +169,8 @@ Zo ziet het er uit als programma, met hetzelfde antwoord:
 from fastapi.testclient import TestClient
 
 klant = TestClient(app)
-antwoord = klant.post("/gastenboek", data={"naam": "Sam", "bericht": "Hoi"}, follow_redirects=False)
+gegevens = {"naam": "Sam", "bericht": "Hoi"}
+antwoord = klant.post("/gastenboek", data=gegevens, follow_redirects=False)
 print(antwoord.status_code)              # 303
 print(antwoord.headers["location"])      # /berichten
 ```

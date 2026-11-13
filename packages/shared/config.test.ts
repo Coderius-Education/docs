@@ -204,6 +204,15 @@ describe('createConfig — les-tabbladen', () => {
     expect(remarkVan(uit, 'golfbot')).not.toContain(remarkLesTabs);
   });
 
+  it('zet de module aan die code op een pagina zonder tabbladen passend maakt', () => {
+    // Een pagina met tabbladen past de letters van zijn code zelf aan
+    // (LesTabs, pasCode.ts); de cheatsheet heeft dat onderdeel niet.
+    const module = (config: { clientModules?: string[] }) =>
+      (config.clientModules ?? []).filter((m) => m.endsWith('codeOpElkePagina.ts'));
+    expect(module(createConfig({ ...basis, lesTabs: true }))).toHaveLength(1);
+    expect(module(createConfig(basis))).toEqual([]);
+  });
+
   it('geeft de schakelaar niet door aan Docusaurus, dat een onbekend veld weigert', () => {
     expect(createConfig({ ...basis, lesTabs: true })).not.toHaveProperty('lesTabs');
   });
@@ -229,6 +238,6 @@ describe('createConfig — les-tabbladen', () => {
         return false;
       }
     }).map((s) => s.id);
-    expect(aan).toEqual(['python', 'web', 'robotica']);
+    expect(aan).toEqual(['python', 'web', 'fullstack', 'robotica']);
   });
 });

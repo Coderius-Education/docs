@@ -121,7 +121,8 @@ Gebruik je in je gastenboek het htmx-formulier, dan is dat de `return` van je
 {/* niet-compileren: alleen de laatste regel van je POST /gastenboek */}
 
 ```python
-    return HTMLResponse(f"Bedankt, {escape(mijn['naam'])}. Je bericht staat in het gastenboek.")
+    tekst = f"Bedankt, {escape(mijn['naam'])}. Je bericht staat in het gastenboek."
+    return HTMLResponse(tekst)
 ```
 
 Heb je de sessies niet gebouwd, dan staat er `escape(naam)`.

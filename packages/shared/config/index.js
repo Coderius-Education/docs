@@ -486,7 +486,15 @@ function createConfig(course = {}) {
       ...[pyodideStaticDir(process.cwd())].filter(Boolean),
     ],
     presets: withSharedCustomCss(linkbaar.presets, merk),
-    clientModules: [...LETTER_CSS, ...(rest.clientModules || [])],
+    clientModules: [
+      ...LETTER_CSS,
+      // Code heel op één regel, ook op een pagina zonder tabbladen (de
+      // cheatsheet): zie components/LesTabs/pasCode.ts.
+      ...(lesTabs
+        ? [path.join(__dirname, '..', 'components', 'LesTabs', 'codeOpElkePagina.ts')]
+        : []),
+      ...(rest.clientModules || []),
+    ],
     plugins: [
       ...linkbaar.plugins,
       ...(managed ? [[managedManifest, { settings: managed }]] : []),

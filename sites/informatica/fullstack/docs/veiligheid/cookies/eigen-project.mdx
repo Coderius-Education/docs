@@ -32,6 +32,8 @@ in `POST /inloggen`, met `key="sessie_id"`. Zet er `httponly=True` en
     )
 ```
 
+### Opnieuw inloggen
+
 Start je server, open je gastenboek en log opnieuw in, zodat de server een
 nieuwe cookie zet.
 
@@ -85,7 +87,7 @@ hebben.
 
 Geef in je eigen project de sessie een eigen verlooptijd, en zorg voor een knop
 om uit te loggen. Kijk ook of elke `set_cookie` voor `sessie_id` de twee
-instellingen van hierboven heeft.
+instellingen uit De sessie-cookie afschermen heeft.
 
 <details>
 <summary>Tip</summary>

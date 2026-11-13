@@ -53,6 +53,8 @@ networks:
     external: true
 ```
 
+### Wat de nieuwe regels doen
+
 | Nieuw | Betekenis |
 |:---|:---|
 | `web.http.redirections.entrypoint.to=websecure` | stuur elk verzoek op poort 80 door naar `https` |
@@ -62,6 +64,8 @@ networks:
 | `letsencrypt.acme.storage=…` | waar de certificaten bewaard worden: in het volume `letsencrypt` |
 
 Zonder dat volume vraagt Traefik bij elke herstart een nieuw certificaat aan, en Let's Encrypt geeft er maar een paar per week voor dezelfde naam. Start Traefik opnieuw:
+
+### Traefik opnieuw starten
 
 ```bash
 docker compose up -d
@@ -77,6 +81,8 @@ Nu de route rond is, zie je de hele weg van een verzoek. Elke melding uit de les
 
 <VerzoekCyclus variant="online" />
 
+### Waar het mis kan gaan
+
 Een verzoek dat bij stap 3 niet door mag, krijgt geen antwoord: de browser wacht en geeft het op. Bij stap 4 antwoordt Traefik zelf, met `404 page not found` of `Bad Gateway`. Pas bij stap 5 draait jouw code.
 
 <Gelukt>
@@ -87,7 +93,7 @@ Een verzoek dat bij stap 3 niet door mag, krijgt geen antwoord: de browser wacht
 
 <Voorspel soort="Controlevraag" vraag="Een bezoeker typt http://gastenboek.voorbeeld.nl, zonder s. Wat gebeurt er?">
   <Keuze uitleg="Traefik luistert nog op poort 80. Wat doet hij nu met een verzoek dat daar binnenkomt?">Hij ziet je site, maar zonder versleuteling</Keuze>
-  <Keuze goed uitleg="De ingang web stuurt elk verzoek door naar dezelfde pagina op https.">Hij komt vanzelf op https://gastenboek.voorbeeld.nl</Keuze>
+  <Keuze goed uitleg="De ingang web stuurt elk verzoek door naar dezelfde pagina op https.">Hij komt vanzelf op `https://gastenboek.voorbeeld.nl`</Keuze>
   <Keuze uitleg="Poort 80 staat open, en Traefik luistert erop. Er is wel iemand die antwoordt.">Zijn browser krijgt geen antwoord, want alleen 443 doet nog mee</Keuze>
   <Uitleg>
 
@@ -114,11 +120,11 @@ Op `http://203.0.113.10` krijg je een waarschuwing over de verbinding, en daarna
 
 **Oplossing:** open je site met je domeinnaam. Dat is ook het adres dat je aan anderen geeft.
 
+## Opdrachten
+
 :::tip[Eerst op papier]
 Speel zonder computer na langs welke stations een verzoek reist, en waar het stopt bij elke melding uit deze route: [Waar komt je verzoek langs?](site:fullstack/docs/unplugged/waar-langs). Je docent kan de hand-out printen.
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Run - HTTPS voor je site
 

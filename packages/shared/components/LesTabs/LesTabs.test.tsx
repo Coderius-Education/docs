@@ -185,6 +185,14 @@ describe('LesTabs', () => {
     expect(actief()).toBe('Opdracht 1');
     expect(paneel('er-gaat-iets-mis').querySelector('button')).toBeNull();
   });
+
+  it('merkt de knop Volgende, zodat de link naar de volgende les dan weg kan', () => {
+    // De opmaak verbergt die link zolang het open tabblad `data-les-verder`
+    // als kind heeft; op het laatste tabblad staat hij er weer.
+    render(<Les />);
+    expect(paneel('theorie').querySelector(':scope > [data-les-verder] button')).not.toBeNull();
+    expect(paneel('er-gaat-iets-mis').querySelector('[data-les-verder]')).toBeNull();
+  });
 });
 
 // Een tabblad met meer ###-koppen toont ze als stappen, één tegelijk.
@@ -222,6 +230,44 @@ const tabblad = () =>
   Array.from(document.querySelectorAll('[data-tab]')).find(
     (k) => k.getAttribute('aria-selected') === 'true',
   )?.textContent;
+
+describe('een volle rij stappen', () => {
+  it('heeft de naam van een stap in een eigen vak, en voluit in de titel van de knop', () => {
+    // Op een breed scherm staat de rij op één regel: de knoppen die niet open
+    // staan krimpen, en hun naam eindigt dan op een beletselteken. De opmaak
+    // kort het vak in, niet de knop; de hele naam staat in de titel. Of de
+    // rij op één regel staat, meet het meetscript (`stapregels`).
+    render(<LesMetStappen />);
+    const knop = document.querySelector('[data-stap="koppen"]') as HTMLElement;
+    expect(knop.querySelector('span:last-child')?.textContent).toBe('Koppen');
+    expect(knop.getAttribute('title')).toBe('Koppen');
+    // Een schermlezer leest de naam van de knop, niet de titel.
+    expect(knop.textContent).toBe('2Koppen');
+    // Een tabblad heeft dat vak niet: daar staat het icoon met de naam.
+    expect(document.querySelector('[data-tab="make"]')?.getAttribute('title')).toBeNull();
+  });
+});
+
+describe('de code van een les', () => {
+  it('wordt opnieuw gemeten als het lettertype van de code geladen is', () => {
+    // Het lettertype van de code laadt pas als er code in beeld komt, en is
+    // breder dan wat er tot dan staat. Een regel die paste toen pasCode.ts
+    // hem mat, was daarna dertig pixels afgesneden (fullstack, Cookies). De
+    // les luistert daarom naar `loadingdone`, en ruimt dat weer op.
+    const letters = new EventTarget();
+    const erbij = vi.spyOn(letters, 'addEventListener');
+    const eraf = vi.spyOn(letters, 'removeEventListener');
+    Object.defineProperty(document, 'fonts', { value: letters, configurable: true });
+    try {
+      const { unmount } = render(<Les />);
+      expect(erbij).toHaveBeenCalledWith('loadingdone', expect.any(Function));
+      unmount();
+      expect(eraf).toHaveBeenCalledWith('loadingdone', expect.any(Function));
+    } finally {
+      Reflect.deleteProperty(document, 'fonts');
+    }
+  });
+});
 
 describe('het icoon van de werkvorm', () => {
   function LesMetWerkvormen() {

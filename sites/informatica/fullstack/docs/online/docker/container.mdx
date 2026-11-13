@@ -21,6 +21,8 @@ Je site opent, nu uit een container. In de terminal komt bij elk verzoek een reg
 
 </Gelukt>
 
+### Een leeg gastenboek
+
 Het gastenboek is leeg. De databases uit les 11 staan nog in je projectmap, maar `.dockerignore` hield ze buiten het image. Een container begint met wat er in het image staat, en daar zit geen enkele database in.
 
 Stop de container met Ctrl+C.
@@ -32,9 +34,9 @@ Een container is afgeschermd: van buiten kan niemand erbij, ook jij niet. Met `-
 Nu zie je ook waarom de container op `0.0.0.0` luistert. Een verzoek via `-p` komt de container binnen over zijn eigen netwerk. Luisterde je site op `127.0.0.1`, dan nam hij alleen verzoeken aan van binnen de container zelf, en kwam jouw browser nooit binnen.
 
 <Voorspel soort="Controlevraag" vraag="Je start je container met docker run -p 9000:8000 gastenboek. Welk adres open je in je browser?">
-  <Keuze uitleg="Het tweede getal is de poort in de container. Komt je browser daar rechtstreeks?">Net als eerst: http://127.0.0.1:8000</Keuze>
-  <Keuze goed uitleg="Het eerste getal is de poort van je computer. Docker stuurt wat daar binnenkomt door naar poort 8000 in de container.">Poort 9000 van je computer: http://127.0.0.1:9000</Keuze>
-  <Keuze uitleg="0.0.0.0 is het adres waarop je site in de container luistert, geen adres om te openen.">Het adres uit de terminal, met 9000: http://0.0.0.0:9000</Keuze>
+  <Keuze uitleg="Het tweede getal is de poort in de container. Komt je browser daar rechtstreeks?">Net als eerst: `http://127.0.0.1:8000`</Keuze>
+  <Keuze goed uitleg="Het eerste getal is de poort van je computer. Docker stuurt wat daar binnenkomt door naar poort 8000 in de container.">Poort 9000 van je computer: `http://127.0.0.1:9000`</Keuze>
+  <Keuze uitleg="0.0.0.0 is het adres waarop je site in de container luistert, geen adres om te openen.">Het adres uit de terminal, met 9000: `http://0.0.0.0:9000`</Keuze>
   <Uitleg>
 
   Je browser praat met je computer, dus met het eerste getal. In de container luistert je site nog steeds op 8000, en dat hoeft niet te veranderen. Zo kun je twee containers die allebei op 8000 luisteren, naast elkaar draaien: `-p 8000:8000` en `-p 9000:8000`.

@@ -93,7 +93,7 @@ describe('een bestandsnaam van een bezoeker', () => {
     expect(onveilig.every((b) => b.gemarkeerd)).toBe(true);
     // Nagedraaide uitvoer: de query-parameter geeft main.py, de path-parameter
     // een 404, de lijst een 404.
-    expect(tekst).toContain('httpx.get("http://127.0.0.1:8000/pagina?naam=../../main.py")');
+    expect(tekst).toContain('httpx.get(adres + "?naam=../../main.py")');
     expect(tekst).toContain('../../main.py -> 404');
     expect(tekst).toMatch(/```\n200\n404\n```/);
   });

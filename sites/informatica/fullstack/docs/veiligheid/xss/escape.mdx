@@ -53,14 +53,17 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     with SqliteDict("gastenboek.db") as db:
         db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
         db.commit()
-    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+    tekst = f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek."
+    return HTMLResponse(tekst)
 
 @app.get("/berichten/lijst")
 async def berichten_lijst():
     regels = ""
     with SqliteDict("gastenboek.db") as db:
         for bericht in db.values():
-            regels += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+            naam = escape(bericht["naam"])
+            tekst = escape(bericht["bericht"])
+            regels += f"<li>{naam}: {tekst}</li>"
     return HTMLResponse(f"<ul>{regels}</ul>")
 ```
 
@@ -68,11 +71,11 @@ async def berichten_lijst():
 Het bericht gaat de database in zoals het getypt is. Escapen doe je pas bij het tonen.
 </Regel>
 
-<Regel n={6}>
+<Regel n={6} tot={7}>
 De naam in het antwoord na het versturen.
 </Regel>
 
-<Regel n={13}>
+<Regel n={14} tot={16}>
 De naam en het bericht in de lijst, elk apart.
 </Regel>
 
@@ -139,11 +142,11 @@ Eén vergeten plek is genoeg.
 naam.
 
 ```python
-# FOUT
-regels += f"<li>{bericht['naam']}: {escape(bericht['bericht'])}</li>"
+# FOUT: de naam gaat zoals hij is de HTML in
+naam = bericht["naam"]
 
 # GOED
-regels += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+naam = escape(bericht["naam"])
 ```
 
 Omdat je zo makkelijk een plek vergeet, doet een template het in
@@ -217,14 +220,17 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     with SqliteDict("gastenboek.db") as db:
         db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
         db.commit()
-    return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+    tekst = f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek."
+    return HTMLResponse(tekst)
 
 @app.get("/berichten/lijst")
 async def berichten_lijst():
     regels = ""
     with SqliteDict("gastenboek.db") as db:
         for bericht in db.values():
-            regels += f"<li>{escape(bericht['naam'])}: {escape(bericht['bericht'])}</li>"
+            naam = escape(bericht["naam"])
+            tekst = escape(bericht["bericht"])
+            regels += f"<li>{naam}: {tekst}</li>"
     return HTMLResponse(f"<ul>{regels}</ul>")
 ```
 

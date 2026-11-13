@@ -81,11 +81,11 @@ Je endpoint `/berichten` hoeft niet te veranderen: de template kijkt zelf of de 
   </Uitleg>
 </Voorspel>
 
+## Opdrachten
+
 :::tip[Eerst op papier]
 Speel eerst zonder computer Jinja, met `{% for %}` en `{% if %}`: [Template invullen](site:fullstack/docs/unplugged/template-invullen). Je docent kan de hand-out printen.
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Predict - Leeg of niet?
 
@@ -124,7 +124,7 @@ Ja. Zonder `gastenboek.db` maakt SqliteDict een nieuwe, lege database aan, en is
 
 ### Opdracht 3: Investigate - Endif vergeten
 
-Haal in je `berichten.html` de regel `{% endif %}` weg en herlaad de pagina.
+Haal in je `berichten.html` de regel `{% endif %}` weg en herlaad de pagina. Zet de regel daarna terug.
 
 <details>
 <summary>Antwoord</summary>
@@ -135,7 +135,7 @@ De browser zegt `Internal Server Error`. Onderaan in je terminal staat:
 jinja2.exceptions.TemplateSyntaxError: Unexpected end of template. Jinja was looking for the following tags: 'endif'. The innermost block that needs to be closed is 'if'.
 ```
 
-Net als bij een vergeten `{% endfor %}`: Jinja2 komt aan het eind van het bestand terwijl het `{% if %}`-blok nog openstaat. Elke `{% if %}` heeft een `{% endif %}` nodig. Zet de regel terug.
+Net als bij een vergeten `{% endfor %}`: Jinja2 komt aan het eind van het bestand terwijl het `{% if %}`-blok nog openstaat. Elke `{% if %}` heeft een `{% endif %}` nodig.
 
 </details>
 

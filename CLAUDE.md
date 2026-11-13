@@ -221,8 +221,8 @@ anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
 De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
-(schrijfgids §2 en §15). De web-cursus, de python-cursus en robotica zijn
-omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+(schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica en
+fullstack zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
@@ -236,7 +236,8 @@ Een cursus omzetten is werk per cursus, niet één schakelaar:
 4. Elk scherm nalopen op verwijzingen naar iets dat er niet meer staat, en
    daar een test van maken (bij web en python
    `src/docs-tests/schermen.test.ts`, bij robotica
-   `src/lego-tests/schermen.test.ts`, met `plugins/les-schermen.js`).
+   `src/lego-tests/schermen.test.ts`, bij fullstack
+   `src/data/schermen.test.ts`, met `plugins/les-schermen.js`).
 5. De docentenhandleiding herschrijven (zie Werkvormen hieronder).
 
 Tot een cursus is omgezet, houdt hij de inhoudsopgave rechts en zijn oude
@@ -374,7 +375,7 @@ bestaat onder dezelfde naam en met dezelfde paper; hernoem je daar een tip of
 verander je de bron, pas dan `werkvormen.json` mee aan.
 
 **De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
-de standaard (schrijfgids §15); web, python en robotica hebben hem zo. Hij is een halve pagina: waar de lessen op steunen
+de standaard (schrijfgids §15); web, python, robotica en fullstack hebben hem zo. Hij is een halve pagina: waar de lessen op steunen
 (de tabel hierboven, met de literatuur), wat je vooraf wilt weten in drie
 regels, en links naar leerdoelen, eindopdracht en nakijker. Wat een leerling
 of docent nodig heeft om het materiaal te gebruiken, hoort in het materiaal
@@ -516,9 +517,10 @@ in de gedeelde stap en de onderdelen gekomen, elk met een test:
   kaart `<Probleem>` is in een tabblad dicht tot je hem aanklikt, een
   blokprogramma (`Blokken`) schaalt ook op de hoogte van het scherm.
 
-Het meetscript loopt de hele build af, niet alleen `build/docs`. Een rij
-stappen mag op twee regels staan (in web en python gebeurt dat ook); de rij
-tabbladen niet.
+Het meetscript loopt de hele build af, niet alleen `build/docs`. De rij
+tabbladen moet op één regel passen; de rij stappen doet dat op een breed
+scherm tot en met acht stappen vanzelf (zie Wat een doorloop van fullstack
+als leerling vond).
 
 **Passen is niet genoeg.** Een review van robotica als leerling vond wat
 "past op het scherm" niet ziet: een aansluitschema op 128 bij 240 pixels,
@@ -590,6 +592,154 @@ een tabblad niet als bezoek, en de begrippen-stap markeert het eerste
 voorkomen op de pagina, ook als dat in een later tabblad staat. Een lang
 programma schuift in zijn vak, ook met de vrije ruimte erbij: van een script
 van 46 regels zijn er vijftien te zien.
+
+**Wat fullstack erbij bracht** (november 2026; alle 1330 schermen passen op
+1280×720 en 1366×768). De cursus heeft 148 lessen zonder oefenveld: uitleg,
+code met een bestandsnaam erboven (`<Bestand pad>`), een blok `<Gelukt>` en
+meerkeuzevragen. Bij de eerste meting pasten 801 van de 1054 schermen.
+Daarvoor is dit in de gedeelde stap en de onderdelen gekomen, elk met een
+test:
+
+- **Een controlevraag is een eigen stap** (`vragenAlsStap`): een
+  `<Voorspel soort="Controlevraag">` aan het eind van een stap met code en
+  een succesmoment is zelf driehonderd pixels hoog. De stap heet
+  Controlevraag (de tweede in een tabblad Controlevraag 2), met een eigen
+  adres. Alleen als er iets vóór staat dat een scherm vult, en erna alleen
+  nog wat bij de vraag hoort.
+- **De bestanden waar een voorspelvraag over gaat, staan samen links van de
+  vraag** (`heeftLabel`), en twee korte bestanden met een `<Bestand>`-label
+  zonder vraag staan naast elkaar (alleen als elke regel in de halve breedte
+  past, 58 tekens).
+- **Code naast een vraag of naast zijn uitvoer krijgt de breedte van zijn
+  langste regel** (`.metVraag`: veertig tot zesenzestig procent;
+  `.voorbeeld`: veertig tot zeventig, de uitvoer krijgt de rest). Op een
+  vaste helft was bij twaalf voorspelvragen het eind van een regel
+  afgesneden.
+- **Een regel code staat heel op één regel.** De opdrachtgever wil geen
+  regel die afbreekt of zijwaarts buiten zijn vak valt. Past de langste regel
+  van een blok niet, dan maakt `components/LesTabs/pasCode.ts` de letters van
+  dat blok kleiner, tot 80% (11,8 pixels). Het draait na elke wissel van
+  tabblad of stap, een klik (een uitklapblok), een andere maat van het
+  venster, en als het lettertype van de code geladen is: dat laadt pas als
+  er code in beeld komt en is breder dan wat er tot dan staat. Op een pagina
+  zonder tabbladen doet de clientmodule `codeOpElkePagina.ts` het
+  (`createConfig` zet hem aan bij `lesTabs`). Code naast de uitleg van een
+  `<CodeUitleg>` krijgt pas een bredere kolom (74%, `data-code-breed`) als
+  kleinere letters niet genoeg zijn: met een altijd bredere kolom was de
+  uitleg zo smal dat het scherm langer werd. Past een regel ook dan niet
+  (`data-code-breekt`), dan breekt alleen een blok zonder taal af (een
+  foutmelding, uitvoer van de terminal: die breekt in een terminal ook af),
+  en in `<CodeUitleg>` een regel met zijn nummer ervoor (het vervolg springt
+  vier tekens verder in, `--inspringing`); dat laatste komt op 1280 pixels
+  niet meer voor. Wat met de kleinste letters niet past, hoort korter in de
+  les: op 1280 pixels passen er 84 tekens naast de uitleg en 123 over de
+  volle breedte. In fullstack zijn 55 regels herschreven (een functiekop met
+  elke parameter op een eigen regel, een dictionary over meer regels), overal
+  dezelfde regel op dezelfde manier, en `schermen.test.ts` houdt de lengte
+  vast. Kleinere letters maken een blok ook lager: een programma dat eerst
+  in zijn vak schoof en mocht krimpen, is dan heel te zien en krimpt niet
+  meer, dus meet na zo'n wijziging opnieuw. Het meetscript meldt afgesneden
+  code, afgebroken regels en de kleinste letters per scherm.
+- **Een codeblok dat heel te zien is, levert hooguit een paar regels in**
+  als het scherm anders net niet past (`NOODGREEP` in `speling.ts`, tachtig
+  pixels, en nooit onder acht regels); een vak dat al schuift, geeft toe tot
+  acht regels. `<CodeUitleg>` krimpt als één rij.
+- **Uitleg met meer dan acht stappen blijft alleen losse tabbladen als de
+  rij past** (`rijPast`: 32 pixels per tabblad plus 7 per letter).
+- **In een paneel** heeft een tabel lagere rijen, staat het label van een
+  voorspelvraag vóór de vraag op dezelfde regel, en breekt de knop Volgende
+  af (een stap heet in Er gaat iets mis naar de foutmelding; op een telefoon
+  schoven acht schermen daardoor zijwaarts).
+- Een onderdeel van de site past zich zelf aan met `useInLesTab()`:
+  `<Gelukt>` zet het vinkje en "Lukt het niet?" op één regel.
+- **De tabel `<Werkvormen />` telt ook wat in een stap zit**
+  (`plugins/werkvormen.js`): een `<Voorspel soort="Controlevraag">` is
+  controleren en geen voorspellen, en een opdracht met zijn werkvorm in de
+  kop ("Opdracht 3: Investigate - …") telt als die werkvorm. In fullstack
+  is Opdrachten één tabblad met de vijf stappen van PRIMM erin; zonder deze
+  regel ontbraken controleren, onderzoeken en zelf maken in de handleiding.
+
+En in de lessen: zo'n tweehonderd `###`-koppen erbij (Het script draaien, De
+uitkomst, Test jezelf), de tip boven `## Opdrachten` eronder (dan is hij de
+stap Vooraf en niet het eind van de uitleg), kortere koppen voor de rij
+tabbladen met het oude adres als vast id, en `les_tabs: false` op de
+pagina's waar je zoekt, print of afvinkt. Wat een auteur hieruit meeneemt:
+in een volle rij stappen wordt een lange naam ingekort, dus houd de
+koppen kort; en een lange foutmelding of een FOUT/GOED
+van tien regels maakt een fout in Er gaat iets mis te lang, dus toon alleen
+de regel die verandert.
+
+**Wat een doorloop van fullstack als leerling vond** (november 2026; alle
+1366 schermen passen op 1280×720 en 1366×768, ook na het antwoord op elk
+van de 180 vragen). De doorloop beantwoordde elke vraag en klikte op elke
+knop Volgende in 26 lessen. Sindsdien:
+
+- **Een scherm met een vraag past ook na het antwoord.** `<Voorspel>` maakt
+  in een tabblad zelf ruimte: de regel "Kies wat jij denkt" is weg zodra er
+  gekozen is; de reden bij een fout antwoord staat in de rij van dat antwoord
+  (het kader blijft voor een schermlezer, in de live-regio); na het goede
+  antwoord staat alleen dat antwoord er nog, met een knop Toon de andere
+  antwoorden; en is elk fout antwoord geprobeerd, dan vallen de eerdere foute
+  weg. De terugkoppeling en de uitleg staan in één vak (`data-voorspel-na`)
+  dat `speling.ts` laat schuiven als het scherm dan nog te lang is. Bij
+  twintig van de dertig vragen viel de uitleg of de knop Volgende eerst
+  onder de rand.
+- **De link naar de volgende les is weg zolang het open tabblad een knop
+  Volgende heeft** (`data-les-verder`, één regel in de opmaak van LesTabs).
+  Die link zegt ook "Volgende", is groter, en stond op 139 van de 226
+  schermen in beeld; wie erop klikte, sloeg de rest van de les over. Op het
+  laatste scherm staat hij er weer.
+- **Het hele bestand na de les is het laatste tabblad** (`standTab`). Een
+  `<details>` met de summary "Zo ziet je `main.py` er nu uit" wordt een
+  tabblad `main.py` met het bestand open, werkvorm controleren. In de bron
+  sluit het de pagina af; in tabbladen stond het in de stap waar het
+  toevallig onder viel (bij 24 lessen onder de laatste opdracht, bij vier
+  onder één fout). Een summary direct onder `<details>`, zonder lege regel,
+  leest MDX als tekst in een alinea: `heeftSummary` vindt hem daar ook.
+- **Een controlevraag staat niet naast commando's voor de terminal**
+  (`isOpdrachtregel`): hij stond naast `git add`, `git commit` en `git push`
+  en was daardoor geen eigen stap.
+- **`<Voorkennis>` met één alinea opent het eerste tabblad, als dat scherm
+  er ruimte voor heeft** (`hoogteScherm`, een schatting uit de bron, geijkt
+  op de meting: tot 470 pixels paste het, vanaf 480 niet). Anders is het een
+  eigen scherm dat Vooraf heet; die stap telt niet mee voor de grens van
+  acht stappen in `voegUitlegSamen`.
+- **Eén tabblad Opdrachten is een opdracht** (werkvorm aanpassen; het had
+  het icoon van uitleg, net als 75 van de 96 tabbladen in de doorloop). De
+  uitleg ervoor is daardoor ook in de lessen zonder Er gaat iets mis één
+  tabblad Uitleg met stappen. Er gaat iets mis blijft vóór zo'n tabblad
+  staan (`isVerzameltab`): de leerling bouwt in de uitleg al mee.
+- **De rij stappen staat op een breed scherm zo lang mogelijk op één
+  regel.** Een tweede regel kostte elk scherm van dat tabblad veertig
+  pixels, en met de uitleg van elke les als één tabblad stond hij er in 41
+  tabbladen van fullstack. Past de rij niet, dan krijgt elke knop een gelijk
+  deel van de rij, maar nooit meer dan zijn naam breed is: een korte naam
+  blijft heel, een lange eindigt op een beletselteken (`.stapLabel`). De
+  stap die open staat, heet voluit, en de titel van een knop geeft de hele
+  naam. Een knop wordt niet smaller dan zijn nummer met een teken of vijf
+  (5,5rem): past de rij dan nog niet, bij negen stappen of meer, dan komt
+  er een tweede regel. In fullstack is dat nog in twee tabbladen zo. Op een
+  telefoon schuift de rij, zoals eerst. Dit geldt voor elke cursus met
+  tabbladen.
+- **Een controlevraag na twee lange alinea's is ook een eigen stap**
+  (`LANGE_INLEIDING`, vierhonderd tekens): het scherm paste, tot je
+  antwoordde.
+- **Een oefenveld in een stap die dicht is, houdt de open stap niet tegen.**
+  `speling.ts` deed niets in een tabblad met een oefenveld, ook niet in de
+  stappen zonder veld: het tabblad kreeg de markering van het veld. Het veld
+  heeft nu een eigen markering (`data-les-veld`), en alleen een veld dat te
+  zien is, telt. Een voorspelvraag in de python-cursus was daardoor na het
+  antwoord tachtig pixels te lang.
+- **Het meetscript** beantwoordt met `--klik` elke vraag, een antwoord na
+  het andere tot het goede, en meet na elk antwoord (`naAntwoord`). Het
+  meldt ook of de link naar de volgende les naast de knop Volgende staat
+  (`volgendeLes`) en op hoeveel regels een rij stappen staat (`stapregels`).
+- **Lezen vond de rest**: een scherm dat begint met "Daarom" of "Daaronder",
+  een controlevraag die terugvraagt wat er net stond, een opruimactie die
+  alleen in het antwoord stond, een adres in een keuze dat een link werd, en
+  drie betekenissen van Er gaat iets mis (het tabblad, de pagina, de link).
+  De regels staan in schrijfgids §2; `schermen.test.ts` en `naslag.test.ts`
+  van fullstack en `voorspel.test.ts` pinnen ze vast.
 
 ## Code in MDX-expressies
 

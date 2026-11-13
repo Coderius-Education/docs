@@ -80,7 +80,7 @@ Het dictionary brengt de waarde uit het formulier naar de template: `{"naam": na
 3. Je ziet een pagina met "Hallo" en jouw naam.
 
 :::danger[Gaat er iets mis?]
-Krijg je de foutmelding **TemplateNotFound**? Controleer of je template in de map `templates/` staat en of de bestandsnaam klopt. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Krijg je de foutmelding **TemplateNotFound**? Controleer of je template in de map `templates/` staat en of de bestandsnaam klopt. Meer oplossingen staan op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <details>
@@ -185,7 +185,7 @@ async def groet_verwerk(request: Request, naam: str = Form(...)):
 
 </details>
 
-<Voorspel soort="Controlevraag" vraag='Je verandert in het formulier name="naam" in name="voornaam". De functie en de template laat je zoals ze zijn. Wat krijg je na het versturen?'>
+<Voorspel soort="Controlevraag" vraag='Je verandert in het formulier name="naam" in name="voornaam". De functie en de template laat je zoals ze zijn. Je vult Sam in. Wat krijg je na het versturen?'>
   <Keuze uitleg="Dan zou de naam wel bij de template aankomen. Kijk welke naam de functie uit het formulier verwacht, en of die nog meekomt.">`Hallo Sam!`</Keuze>
   <Keuze uitleg="Zo ver komt het niet: de template wordt nooit ingevuld. Kijk wat FastAPI doet voordat je functie begint.">Hallo !</Keuze>
   <Keuze goed uitleg="De functie vraagt met Form(...) om een veld naam. Het formulier stuurt alleen voornaam, dus FastAPI weigert het verzoek voordat je functie begint.">Een 422 met een melding dat het veld naam ontbreekt</Keuze>
@@ -196,6 +196,8 @@ async def groet_verwerk(request: Request, naam: str = Form(...)):
   </Uitleg>
 </Voorspel>
 
+## Opdrachten
+
 :::tip[Controleer je server]
 Laat je server draaien en typ in een tweede terminal `python controleer.py formulieren`. Het script kijkt of alles uit dit hoofdstuk werkt; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
 :::
@@ -203,8 +205,6 @@ Laat je server draaien en typ in een tweede terminal `python controleer.py formu
 :::tip[Eerst op papier]
 Volg eerst zonder computer een naam door het formulier, `main.py` en de template: [Volg de naam](site:fullstack/docs/unplugged/volg-de-naam). Je docent kan de hand-out printen.
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Predict - Vier keer dezelfde naam
 
@@ -214,14 +214,16 @@ De naam uit het formulier gaat vier keer over: `name="naam"` in het formulier, `
 
 {/* niet-compileren: fragment uit een handler */}
 ```python
-return templates.TemplateResponse(request, "groet_resultaat.html", {"voornaam": naam})
+return templates.TemplateResponse(
+    request, "groet_resultaat.html", {"voornaam": naam}
+)
 ```
 
-<Voorspel vraag="Wat zie je na het versturen van het formulier?">
-  <Keuze uitleg="Dan moet de naam ergens aankomen waar de template hem zoekt. Kijk om welke naam de template vraagt, en of die in het dictionary staat.">`Hallo Sam!`</Keuze>
+<Voorspel vraag="Je vult Sam in en verstuurt. Wat zie je?">
+  <Keuze uitleg="Om welke naam vraagt de template, en staat die in het dictionary?">`Hallo Sam!`</Keuze>
   <Keuze goed uitleg="De template vraagt om naam, maar het dictionary heeft alleen voornaam. Jinja2 laat de plek dan leeg, zonder foutmelding.">Hallo !</Keuze>
-  <Keuze uitleg="Het formulier en de functie gebruiken nog allebei naam, dus FastAPI krijgt wat hij verwacht. Het gaat pas later mis.">Een 422</Keuze>
-  <Keuze uitleg="Een dictionary in Python geeft een KeyError, maar Jinja2 doet dat niet bij een naam die ontbreekt. Wat doet hij dan wel?">Een KeyError in de terminal</Keuze>
+  <Keuze uitleg="Formulier en functie gebruiken allebei nog naam. Het gaat pas later mis.">Een 422</Keuze>
+  <Keuze uitleg="Python geeft dan een KeyError, Jinja2 niet. Wat doet Jinja2 wel?">Een KeyError in de terminal</Keuze>
   <Uitleg>
 
   Het is "Hallo !": een lege plek en geen foutmelding. Juist dat maakt deze fout lastig. Zie je een lege plek in je pagina, vergelijk dan de naam in `{{ }}` met de sleutels in het dictionary.
@@ -231,7 +233,14 @@ return templates.TemplateResponse(request, "groet_resultaat.html", {"voornaam": 
 
 ### Opdracht 2: Run
 
-Maak het formulier, de template en de endpoints uit het voorbeeld. Vul een naam in en kijk of de pagina je begroet.
+Vul op `/groet` je naam in, verstuur, en klik op de pagina die je terugkrijgt op Terug. Kijk dan in je terminal. Welke drie verzoeken staan er, en wat is het verschil tussen de eerste twee?
+
+<details>
+<summary>Antwoord</summary>
+
+`GET /groet` voor het formulier, `POST /groet` voor het versturen, en weer `GET /groet` na Terug. De eerste twee gaan naar hetzelfde adres met een andere methode, en komen daarom bij twee verschillende functies uit.
+
+</details>
 
 ### Opdracht 3: Make - Favoriete eten
 

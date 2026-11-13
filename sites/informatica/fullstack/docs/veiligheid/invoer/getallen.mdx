@@ -12,6 +12,9 @@ staat dat netjes:
 <input type="number" name="cijfer" placeholder="cijfer" min="1" max="10" required>
 ```
 
+Zet die regel in `static/formulier.html`, binnen het `<form>`: dan stuurt ook
+het formulier een cijfer mee.
+
 Maar `min` en `max` zijn net als `maxlength` uit [les 2](site:fullstack/docs/veiligheid/invoer/maxlength): de
 browser houdt je tegen, een script niet. Op de server kan een cijfer dan
 `honderd` zijn, of `11`, of `0`.
@@ -30,7 +33,11 @@ async def bericht_plaatsen(
     if not naam.strip():
         raise HTTPException(status_code=400, detail="Vul een naam in")
     with SqliteDict("gastenboek.db") as db:
-        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht, "cijfer": cijfer}
+        db[f"bericht_{time.time_ns()}"] = {
+            "naam": naam,
+            "bericht": bericht,
+            "cijfer": cijfer,
+        }
         db.commit()
     return {"lengte": len(bericht), "cijfer": cijfer}
 ```
@@ -39,7 +46,7 @@ async def bericht_plaatsen(
 `int` zegt: dit moet een geheel getal zijn. `ge=1` betekent groter dan of gelijk aan 1, `le=10` kleiner dan of gelijk aan 10.
 </Regel>
 
-<Regel n={10}>
+<Regel n={10} tot={14}>
 Het cijfer gaat mee de database in.
 </Regel>
 
@@ -48,10 +55,7 @@ Het cijfer gaat mee de database in.
 Vervang `bericht_plaatsen` door deze. Zette je in opdracht 2 van
 [les 5](site:fullstack/docs/veiligheid/invoer/inhoud) ook een controle op het bericht, neem die twee regels dan
 mee, onder de controle op de naam. In de code van deze les staan ze niet, net
-als in de stand van les 5.
-
-Zet het `<input>` met `name="cijfer"` in `static/formulier.html`, binnen het
-`<form>`, zodat ook het formulier een cijfer meestuurt.
+als op het tabblad `main.py` van les 5.
 
 ## Doe de test
 
@@ -72,6 +76,8 @@ for cijfer in ["8", "honderd", "11", "0"]:
         print(cijfer, "->", antwoord.status_code, antwoord.json()["detail"][0]["msg"])
 ```
 
+### De uitkomst
+
 <Gelukt>
 
 `cijfer.py` laat alleen de `8` door:
@@ -91,10 +97,10 @@ Een formulier stuurt alles als tekst, ook `"8"`. FastAPI maakt er een getal van,
 en weigert wat geen getal is of buiten de grens valt. In je functie is `cijfer`
 dus altijd een getal van 1 tot en met 10.
 
-<Voorspel soort="Controlevraag" vraag="Een formulier stuurt elk veld als tekst, ook het cijfer 8. Wat is cijfer in je functie?">
-  <Keuze uitleg="Met int in de parameter maakt FastAPI van de tekst een getal, voordat je functie draait.">De tekst 8, want een formulier stuurt alleen tekst</Keuze>
-  <Keuze goed uitleg="FastAPI ziet int bij de parameter, en maakt van de tekst 8 het getal 8. Daarom staat er in het antwoord 8 zonder aanhalingstekens.">Het getal 8, want FastAPI maakt van de tekst een int</Keuze>
-  <Keuze uitleg="Tekst die een geheel getal is, keurt FastAPI goed. Welke cijfers gaven een 422?">Niets: FastAPI weigert tekst met een 422</Keuze>
+<Voorspel soort="Controlevraag" vraag="Een bezoeker stuurt het cijfer 8. Wat geeft cijfer + 1 in je functie?">
+  <Keuze uitleg="Dat zou kloppen als cijfer nog tekst was. Wat staat er achter cijfer in de parameters?">Een TypeError: bij tekst kun je geen getal optellen</Keuze>
+  <Keuze goed uitleg="FastAPI ziet int bij de parameter, en maakt van de tekst 8 het getal 8 voordat je functie begint.">9, want cijfer is in je functie een getal</Keuze>
+  <Keuze uitleg="Python plakt een getal niet achter tekst. En is cijfer in je functie nog tekst?">81, want de 1 komt achter de tekst 8</Keuze>
   <Uitleg>
 
   De parameter zegt wat je functie krijgt. Met `int` en de grenzen erbij
@@ -154,7 +160,11 @@ async def bericht_plaatsen(
     if not naam.strip():
         raise HTTPException(status_code=400, detail="Vul een naam in")
     with SqliteDict("gastenboek.db") as db:
-        db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht, "cijfer": cijfer}
+        db[f"bericht_{time.time_ns()}"] = {
+            "naam": naam,
+            "bericht": bericht,
+            "cijfer": cijfer,
+        }
         db.commit()
     return {"lengte": len(bericht), "cijfer": cijfer}
 ```

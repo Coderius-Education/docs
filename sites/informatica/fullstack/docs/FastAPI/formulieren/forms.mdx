@@ -28,23 +28,22 @@ Maak `static/pages/naam_form.html`:
 </html>
 ```
 
-### Belangrijke onderdelen
-
 - `method="post"` stuurt de data met POST.
 - `action="/verstuur"` is het endpoint waar de data naartoe gaat.
 - Onder `name="naam"` komt de waarde in Python binnen. Een `id`, zoals in de web-cursus, gaat niet mee: alleen een `name`.
-- `required` laat de browser het formulier pas versturen als het veld is ingevuld. Een `placeholder="…"` is de grijze tekst die in een leeg veld staat.
+- `required` laat de browser het formulier pas versturen als het veld is ingevuld.
 
 ## De endpoints
 
-`Form` komt uit `fastapi`, net als `FastAPI` zelf. Zet hem daarom in die regel
-bovenaan je `main.py`:
+Zet `Form` bij de import van `fastapi`, bovenaan je `main.py`:
 
 <Bestand pad="main.py" />
 
 ```python
 from fastapi import FastAPI, Form, Request
 ```
+
+### Twee endpoints
 
 Zet daarna twee endpoints onder je andere endpoints: één dat het formulier toont, en één dat het verstuurde formulier ontvangt:
 
@@ -112,7 +111,7 @@ Grofweg zeg je met GET "Geef me iets" en met POST "Hier is iets". Wat een formul
 4. In de terminal: `Naam ontvangen: Jan`
 
 :::danger[Gaat er iets mis?]
-Zie je `"msg":"Field required"` in je browser, en een 422 in je terminal? Controleer of de `name` in je HTML gelijk is aan de naam van de parameter in Python. Krijg je een **405 Method Not Allowed**, dan stuur je een GET naar een POST-endpoint of andersom. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Zie je `"msg":"Field required"` in je browser, en een 422 in je terminal? Controleer of de `name` in je HTML gelijk is aan de naam van de parameter in Python. Krijg je een **405 Method Not Allowed**, dan stuur je een GET naar een POST-endpoint of andersom. Meer oplossingen staan op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <details>
@@ -253,7 +252,14 @@ async def begroeting(naam: str = Form(...)):
 
 ### Opdracht 2: Run
 
-Maak het formulier en de endpoints uit het voorbeeld. Test of je een naam kunt invullen en het bericht terugkrijgt.
+Open het tabblad **Netwerk** en verstuur het formulier op `/naam` met je eigen naam. Staat je naam daarna in de adresbalk? En waar vind je hem in Netwerk?
+
+<details>
+<summary>Antwoord</summary>
+
+In de adresbalk staat alleen `/verstuur`. In Netwerk klik je op het verzoek `verstuur` en kies je **Payload**: daar staat `naam` met wat je invulde. Een POST stuurt zijn data in de body mee, niet in de URL.
+
+</details>
 
 ### Opdracht 3: Investigate - Zonder name
 

@@ -10,10 +10,8 @@ de browser, in de functie `toon`. Daar hoort de bescherming dus ook.
 
 ## `textContent` in plaats van `innerHTML`
 
-De regel blijft dezelfde als in de lessen hiervoor: de bescherming hoort op de
-plek waar tekst HTML wordt. Hier is dat de browser, en daar doet `textContent`
-wat `escape` op de server doet. Vervang de regel in `toon` in
-`static/js/voorbeeld.js`:
+In de browser doet `textContent` wat `escape` op de server doet. Vervang de
+regel in `toon` in `static/js/voorbeeld.js`:
 
 ```js
     voorbeeld.textContent = veld.value;
@@ -33,6 +31,8 @@ In het voorbeeld staat nu `<b>vet</b>`, met de haakjes erbij, en niets is vet.
 Typ je zelf `<i>hoi</i>` in het berichtveld, dan staat ook dat er als tekst.
 
 </Gelukt>
+
+### Wanneer innerHTML wel mag
 
 Gebruik `innerHTML` alleen voor HTML die je zelf in je code schreef, net als
 `|safe` in [les 6](site:fullstack/docs/veiligheid/xss/safe). Voor tekst uit een veld of de URL is

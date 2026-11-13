@@ -68,6 +68,6 @@ staan zoals hij was. Morgen open je VS Code en staat alles er weer.
 - **`Address already in use`** — er draait nog een server van een
   vorige keer.
 
-Beide meldingen staan met hun oplossing bij [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Beide meldingen staan met hun oplossing op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 
 Werkt de installatie zelf nog niet? Dan is [Installatie](site:fullstack/docs/FastAPI/eerste-server/installatie) de controlelijst: vijf checks met per check wat je hoort te zien.

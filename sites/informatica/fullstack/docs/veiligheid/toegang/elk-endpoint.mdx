@@ -55,6 +55,8 @@ Daarna pas gaan ze weg. Bij een gewone dictionary mag je niets weghalen terwijl 
 
 ## Test het
 
+### Het script
+
 Maak een script `test_wissen.py`, waarin Alex alles wist:
 
 {/* bestand: test_wissen.py */}
@@ -83,6 +85,8 @@ print(f"Nog in het gastenboek: {namen}")
 ```
 
 {/* weg: gastenboek.db sessies.db gebruikers.db */}
+
+### Het script draaien
 
 Gooi `gastenboek.db`, `sessies.db` en `gebruikers.db` weg, start de server
 opnieuw, en draai het script.
@@ -150,7 +154,8 @@ sessie is `mijn` een lege dictionary, en die heeft geen sleutel `naam`. Bij
 het eerste bericht in de for-lus antwoordt je server met een `500`, en die
 tekst is geen JSON.
 
-**Oplossing:** schrijf `mijn.get("naam")`, zoals hierboven, of zet eerst de
+**Oplossing:** schrijf `mijn.get("naam")`, zoals bij Alles wissen, maar
+alleen van jou, of zet eerst de
 `401` erin, zoals in opdracht 1.
 
 ## Opdrachten
@@ -252,7 +257,10 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
     return antwoord
 
 @app.post("/bericht")
-async def bericht_plaatsen(bericht: str = Form(...), sessie_id: str = Cookie(default="")):
+async def bericht_plaatsen(
+    bericht: str = Form(...),
+    sessie_id: str = Cookie(default=""),
+):
     with SqliteDict("sessies.db") as sessies:
         mijn = sessies.get(sessie_id, {})
     if not mijn:

@@ -15,6 +15,8 @@ Met `-d` (*detached*) draait de container op de achtergrond, en met `--name` gee
 docker run -d --name gastenboek -p 8000:8000 gastenboek
 ```
 
+### Kijken of hij draait
+
 Docker geeft een lange code terug, het nummer van de container, en je prompt is meteen weer vrij. Kijk wat er draait:
 
 ```bash
@@ -26,15 +28,19 @@ docker ps
 `docker ps` toont je container met `Up` bij de status:
 
 ```text
-CONTAINER ID   IMAGE        COMMAND                  CREATED         STATUS         PORTS                    NAMES
-c6e0858343ca   gastenboek   "fastapi run main.py…"   3 seconds ago   Up 3 seconds   0.0.0.0:8000->8000/tcp   gastenboek
+CONTAINER ID   IMAGE        COMMAND                  CREATED         STATUS        PORTS                    NAMES
+c6e0858343ca   gastenboek   "fastapi run main.py…"   3 seconds ago   Up 3 seconds  0.0.0.0:8000->8000/tcp   gastenboek
 ```
 
 En op `http://127.0.0.1:8000` in je browser op Windows staat je site, uit een container die op de achtergrond draait.
 
 </Gelukt>
 
-Bij `PORTS` zie je de deur die `-p` openzette. Wat je site in de terminal zou zetten, lees je nu met `logs`:
+Bij `PORTS` zie je de deur die `-p` openzette.
+
+### Meekijken met logs
+
+Wat je site in de terminal zou zetten, lees je nu met `logs`:
 
 ```bash
 docker logs gastenboek

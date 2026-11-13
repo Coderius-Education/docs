@@ -26,7 +26,9 @@ fastapi dev main.py --host 0.0.0.0
 Server started at http://0.0.0.0:8000
 ```
 
-Dat is geen adres om naar toe te gaan, en ook niet om door te geven. Zelf blijf je `http://127.0.0.1:8000` gebruiken; je klasgenoot krijgt het adres hieronder.
+Dat is geen adres om naar toe te gaan, en ook niet om door te geven. Zelf blijf je `http://127.0.0.1:8000` gebruiken; je klasgenoot krijgt het adres uit de volgende stap.
+
+### Het adres van je computer
 
 Nu heb je nog het adres van je computer op het netwerk nodig:
 
@@ -46,6 +48,8 @@ Op Windows zoek je de regel `IPv4-adres` (in het Engels `IPv4 Address`); macOS g
 ```
 http://192.168.1.42:8000/berichten
 ```
+
+### Iemand anders kijkt mee
 
 Het is hetzelfde project met dezelfde database, maar nu ziet iemand anders het.
 
@@ -70,7 +74,7 @@ Een adres dat begint met `192.168.` werkt alleen binnen hetzelfde netwerk. Wil j
 Dat valt buiten deze cursus, maar het is dezelfde `main.py`. Wat je hier hebt gebouwd is niet een oefenversie van een echte webapplicatie; het is er een.
 
 :::danger[Gaat er iets mis?]
-Kan je klasgenoot er niet bij? Meestal mist `--host 0.0.0.0`, of zitten jullie niet op hetzelfde netwerk. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Kan je klasgenoot er niet bij? Meestal mist `--host 0.0.0.0`, of zitten jullie niet op hetzelfde netwerk. Meer oplossingen staan op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <Voorspel soort="Controlevraag" vraag="Je klasgenoot is ingelogd op jouw gastenboek. Hij haalt in Elementen de maxlength van het berichtveld weg en verstuurt een bericht van 200 tekens. Wat ziet hij in Netwerk?">
@@ -104,7 +108,7 @@ Je server draait op `127.0.0.1:8000`. Je klasgenoot zit op hetzelfde wifi-netwer
 
 ### Opdracht 2: Run - Samen testen
 
-Start je server met `--host 0.0.0.0`, zoek je adres op zoals hierboven, en laat iemand naast je een account maken en een bericht achterlaten in je gastenboek. Kijk in je eigen terminal wat er gebeurt terwijl hij typt en verstuurt.
+Start je server met `--host 0.0.0.0`, zoek je adres op zoals bij Openzetten, en laat iemand naast je een account maken en een bericht achterlaten in je gastenboek. Kijk in je eigen terminal wat er gebeurt terwijl hij typt en verstuurt.
 
 <details>
 <summary>Tip</summary>

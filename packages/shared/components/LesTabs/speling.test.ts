@@ -1,6 +1,14 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from 'vitest';
-import { plaatjeHoogte, speling, verdeelSpeling } from './speling';
+import {
+  KLEINSTE_NA,
+  KLEINSTE_VAK,
+  NOODGREEP,
+  plaatjeHoogte,
+  speling,
+  vakHoogte,
+  verdeelSpeling,
+} from './speling';
 
 // Wat er op het scherm over is, gaat naar het plaatje of het codevak. Bij de
 // joystick van robotica stond het aansluitschema op 128 bij 240 pixels met
@@ -122,8 +130,140 @@ describe('verdeelSpeling', () => {
     maat(vak, { scrollHeight: 480, clientHeight: 380, offsetHeight: 382 });
     verdeelSpeling(wortel);
     expect(vak.style.maxHeight).not.toBe('');
-    onderkant(wortel.querySelector('[data-les-tab="a"]') as Element, 800);
+    // Het paneel past precies, en het vak schuift niet meer: niets te doen.
+    onderkant(wortel.querySelector('[data-les-tab="a"]') as Element, 705);
+    maat(vak, { scrollHeight: 380, clientHeight: 380, offsetHeight: 382 });
     verdeelSpeling(wortel);
+    expect(vak.style.maxHeight).toBe('');
+  });
+
+  it('een codevak dat al schuift, geeft toe als het paneel te lang is', () => {
+    // Fullstack: een endpoint van dertig regels met zijn uitleg ernaast en een
+    // alinea eronder was veertig pixels te lang. Het vak schoof al; nu is het
+    // veertig pixels lager en past het scherm.
+    const wortel = les('<pre id="vak"></pre>');
+    const vak = document.getElementById('vak') as HTMLElement;
+    onderkant(wortel.querySelector('[data-les-tab="a"]') as Element, 748);
+    maat(vak, { scrollHeight: 700, clientHeight: 322, offsetHeight: 324 });
+    verdeelSpeling(wortel);
+    // 748 + 12 marge - 720 = 40 te veel.
+    expect(vak.style.maxHeight).toBe('284px');
+  });
+
+  it('een oefenveld in een stap die dicht is, houdt de open stap niet tegen', () => {
+    // Python, Testcode in je module: de voorspelvraag staat in stap 2, een
+    // oefenveld in stap 3. Het tabblad had de markering van dat veld, en het
+    // vak met de uitleg van de vraag kromp daardoor niet: tachtig pixels te
+    // lang na het antwoord.
+    const wortel = les(
+      '<div data-les-stap="een"><div data-voorspel-na id="na"></div></div>' +
+        '<div data-les-stap="twee" hidden><div data-les-veld id="veld"></div></div>',
+    );
+    const paneel = wortel.querySelector('[data-les-tab="a"]') as HTMLElement;
+    const na = document.getElementById('na') as HTMLElement;
+    paneel.setAttribute('data-heeft-veld', '');
+    maat(na, { offsetHeight: 260 });
+    onderkant(paneel, 798);
+    verdeelSpeling(wortel);
+    expect(na.style.maxHeight).toBe('170px');
+    // Staat het veld in de stap die open is, dan blijft alles zoals het is.
+    (document.querySelector('[data-les-stap="twee"]') as HTMLElement).hidden = false;
+    verdeelSpeling(wortel);
+    expect(na.style.maxHeight).toBe('');
+  });
+
+  it('niet verder dan acht regels, en een vak dat niet schuift blijft heel', () => {
+    expect(vakHoogte(324, 40)).toBe(284);
+    expect(vakHoogte(324, 400)).toBe(KLEINSTE_VAK);
+    expect(vakHoogte(150, 40)).toBe(150);
+    expect(vakHoogte(324, 0)).toBe(324);
+    const wortel = les('<pre id="vak"></pre>');
+    const vak = document.getElementById('vak') as HTMLElement;
+    onderkant(wortel.querySelector('[data-les-tab="a"]') as Element, 748);
+    // Het hele programma is te zien, en het scherm is veel te lang: dan
+    // knippen we er niets af. Dat is werk voor de auteur.
+    onderkant(wortel.querySelector('[data-les-tab="a"]') as Element, 900);
+    maat(vak, { scrollHeight: 322, clientHeight: 322, offsetHeight: 324 });
+    verdeelSpeling(wortel);
+    expect(vak.style.maxHeight).toBe('');
+  });
+
+  it('een codeblok dat heel te zien is, levert alleen een paar regels in', () => {
+    // Fullstack, Er gaat iets mis: een foutmelding, de oorzaak, de oplossing
+    // en elf regels code waren veertig pixels te lang. Het blok schuift nu
+    // in zijn eigen vak, zodat de pagina niet schuift.
+    const wortel = les('<pre id="kort"></pre><pre id="vak"></pre>');
+    const vak = document.getElementById('vak') as HTMLElement;
+    const kort = document.getElementById('kort') as HTMLElement;
+    const paneel = wortel.querySelector('[data-les-tab="a"]') as Element;
+    maat(vak, { scrollHeight: 280, clientHeight: 280, offsetHeight: 282 });
+    maat(kort, { scrollHeight: 70, clientHeight: 70, offsetHeight: 72 });
+    onderkant(paneel, 748);
+    verdeelSpeling(wortel);
+    expect(vak.style.maxHeight).toBe('242px');
+    expect(kort.style.maxHeight).toBe('');
+    // Meer dan een regel of vier te lang: dan niet.
+    onderkant(paneel, 720 - 12 + NOODGREEP + 1);
+    verdeelSpeling(wortel);
+    expect(vak.style.maxHeight).toBe('');
+    // En een blok dat daarmee onder acht regels komt, blijft heel.
+    maat(vak, { scrollHeight: 200, clientHeight: 200, offsetHeight: 202 });
+    onderkant(paneel, 748);
+    verdeelSpeling(wortel);
+    expect(vak.style.maxHeight).toBe('');
+  });
+
+  it('na een antwoord schuiven de terugkoppeling en de uitleg van de vraag in hun vak', () => {
+    // Fullstack: een controlevraag paste tot je antwoordde. De uitleg erbij
+    // maakte het scherm 90 pixels te lang, en de knop Volgende viel weg.
+    const wortel = les('<pre id="code"></pre><div data-voorspel-na id="na"></div>');
+    const na = document.getElementById('na') as HTMLElement;
+    const code = document.getElementById('code') as HTMLElement;
+    const paneel = wortel.querySelector('[data-les-tab="a"]') as Element;
+    maat(na, { offsetHeight: 260 });
+    maat(code, { scrollHeight: 300, clientHeight: 300, offsetHeight: 302 });
+    onderkant(paneel, 798);
+    verdeelSpeling(wortel);
+    // 798 + 12 marge - 720 = 90 te lang: het vak levert die in, de code niets.
+    expect(na.style.maxHeight).toBe('170px');
+    expect(code.style.maxHeight).toBe('');
+    // Niet lager dan een paar regels: de rest is aan de auteur.
+    onderkant(paneel, 1100);
+    verdeelSpeling(wortel);
+    expect(na.style.maxHeight).toBe(`${KLEINSTE_NA}px`);
+    // Een kort vak blijft zoals het is.
+    maat(na, { offsetHeight: 80 });
+    onderkant(paneel, 798);
+    verdeelSpeling(wortel);
+    expect(na.style.maxHeight).toBe('');
+  });
+
+  it('code met de uitleg ernaast krimpt als één rij, tot het deel dat niet schuift', () => {
+    const wortel = les(
+      '<div data-code-uitleg><div><pre id="vak"></pre></div><ol id="uitleg"></ol></div>',
+    );
+    const vak = document.getElementById('vak') as HTMLElement;
+    const uitleg = document.getElementById('uitleg') as HTMLElement;
+    const paneel = wortel.querySelector('[data-les-tab="a"]') as Element;
+    // Een lang programma en een korte uitleg: beide naar 284.
+    onderkant(paneel, 748);
+    maat(vak, { scrollHeight: 700, clientHeight: 322, offsetHeight: 324 });
+    maat(uitleg, { scrollHeight: 320, clientHeight: 320, offsetHeight: 320 });
+    verdeelSpeling(wortel);
+    expect(vak.style.maxHeight).toBe('284px');
+    expect(uitleg.style.maxHeight).toBe('284px');
+    // Fullstack, Het account opslaan: twaalf regels code (288 pixels, alles
+    // te zien) met vijf punten uitleg ernaast die schuiven (324). De uitleg
+    // krimpt tot de code, niet verder: de code blijft heel.
+    maat(vak, { scrollHeight: 288, clientHeight: 288, offsetHeight: 288 });
+    maat(uitleg, { scrollHeight: 500, clientHeight: 322, offsetHeight: 324 });
+    onderkant(paneel, 720);
+    verdeelSpeling(wortel);
+    expect(uitleg.style.maxHeight).toBe('312px');
+    expect(vak.style.maxHeight).toBe('');
+    onderkant(paneel, 900);
+    verdeelSpeling(wortel);
+    expect(uitleg.style.maxHeight).toBe('288px');
     expect(vak.style.maxHeight).toBe('');
   });
 });

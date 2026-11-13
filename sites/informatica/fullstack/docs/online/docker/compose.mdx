@@ -15,6 +15,8 @@ Elke keer moet je die precies goed typen, en één tikfout geeft een leeg volume
 
 ## compose.yaml
 
+### Het bestand
+
 Maak naast de Dockerfile een bestand `compose.yaml`:
 
 ```yaml
@@ -31,6 +33,8 @@ volumes:
   data:
 ```
 
+### Wat er staat
+
 Het is **YAML**: een bestand van namen en waarden, waarin de inspringing zegt wat bij wat hoort. Gebruik spaties, nooit een tab, en steeds twee per niveau.
 
 | Regel | Betekenis |
@@ -44,6 +48,8 @@ Het is **YAML**: een bestand van namen en waarden, waarin de inspringing zegt wa
 
 ## Starten en stoppen
 
+### Starten
+
 Gooi eerst de container uit de vorige les weg, want die heeft poort 8000. Start daarna alles:
 
 ```bash
@@ -51,7 +57,11 @@ docker rm -f gastenboek
 docker compose up -d --build
 ```
 
-`up` maakt en start wat er in `compose.yaml` staat, `-d` zet het op de achtergrond, en `--build` bouwt het image eerst opnieuw. Kijk wat er draait:
+`up` maakt en start wat er in `compose.yaml` staat, `-d` zet het op de achtergrond, en `--build` bouwt het image eerst opnieuw.
+
+### Kijken wat er draait
+
+`docker compose ps` toont wat er draait:
 
 ```bash
 docker compose ps
@@ -70,6 +80,8 @@ En `http://127.0.0.1:8000` toont je gastenboek, gestart met één kort commando.
 
 </Gelukt>
 
+### De commando's van Compose
+
 Compose verzint de namen zelf, met de naam van je map ervoor: de container heet `gastenboek-gastenboek-1`, het image `gastenboek-gastenboek`, en het volume `gastenboek_data`. Je hoeft die namen niet te typen. Elk `docker compose`-commando in deze map gaat over dit project:
 
 | Commando | Wat er gebeurt |
@@ -79,15 +91,9 @@ Compose verzint de namen zelf, met de naam van je map ervoor: de container heet 
 | `docker compose logs -f` | meekijken in de logboeken, tot Ctrl+C |
 | `docker compose down` | containers stoppen en weggooien; het volume blijft |
 
-Zet `compose.yaml` in git:
-
-```bash
-git add compose.yaml
-git commit -m "Compose"
-git push
-```
-
 ## Opruimen
+
+### Wat weg mag
 
 Het image `gastenboek` van je losse container heb je niet meer nodig: Compose bouwt zijn eigen image. Ook de containers van `hello-world` en die uit les 16 staan nog in `docker ps -a`, gestopt. Ruim ze op:
 
@@ -98,13 +104,21 @@ docker image rm gastenboek
 
 `docker container prune` vraagt `Are you sure you want to continue? [y/N]`. Typ `y`: hij gooit elke gestopte container weg, en laat je site, die draait, staan. Daarna gebruikt geen container het image `gastenboek` meer, en mag het weg. Het image van `hello-world` gooi je op dezelfde manier weg: `docker image rm hello-world`.
 
-<Voorspel soort="Controlevraag" vraag="Je schrijft een bericht, en typt daarna docker compose down en docker compose up -d. Staat je bericht er nog?">
-  <Keuze goed uitleg="down gooit de container weg, maar niet het volume. De nieuwe container koppelt hetzelfde volume.">Ja, want down laat het volume staan</Keuze>
-  <Keuze uitleg="down gooit de container weg. Maar waar stonden de databases?">Nee, want down gooit alles weg wat up maakte</Keuze>
-  <Keuze uitleg="Het image staat er nog, en het volume ook. up maakt alleen een nieuwe container.">Nee, want up bouwt een nieuw image en begint opnieuw</Keuze>
+Zet tot slot `compose.yaml` in git:
+
+```bash
+git add compose.yaml
+git commit -m "Compose"
+git push
+```
+
+<Voorspel soort="Controlevraag" vraag="Je verandert main.py en typt docker compose up -d --build. Wat gebeurt er met de berichten in je gastenboek?">
+  <Keuze goed uitleg="--build maakt een nieuw image en een nieuwe container. De databases staan in het volume, en dat koppelt Compose opnieuw.">Ze staan er nog: de nieuwe container krijgt hetzelfde volume</Keuze>
+  <Keuze uitleg="In het image zit geen database, dat klopt. Maar stonden de berichten in het image?">Weg: een nieuw image begint met een lege map data</Keuze>
+  <Keuze uitleg="De oude container gooit Compose weg. Stonden de berichten in die container?">Even weg, tot je de oude container weer start</Keuze>
   <Uitleg>
 
-  `docker compose down` laat volumes bewust staan. Alleen met `docker compose down -v` gooit hij ze ook weg, en dan zijn je berichten weg. Typ die `-v` nooit op een server.
+  Een volume hoort niet bij één container of één image. Ook `docker compose down` laat het bewust staan. Alleen met `docker compose down -v` gooit hij het weg, en dan zijn je berichten weg. Typ die `-v` nooit op een server.
 
   </Uitleg>
 </Voorspel>
@@ -157,15 +171,15 @@ Bind for 127.0.0.1:8000 failed: port is already allocated
 
 **Oplossing:** `docker rm -f gastenboek`, en daarna opnieuw `docker compose up -d`.
 
+## Opdrachten
+
 :::tip[Eerst op papier]
 Speel zonder computer na wat er blijft bij `stop`, een nieuwe versie, `down` en `down -v`: [Wat blijft er over?](site:fullstack/docs/unplugged/wat-blijft). Je docent kan de hand-out printen.
 :::
 
-## Opdrachten
-
 ### Opdracht 1: Run - Je site met Compose
 
-Maak `compose.yaml`, start je site met `docker compose up -d --build`, en schrijf een bericht. Typ daarna in PowerShell `wsl --shutdown`, zodat Linux helemaal uitgaat, en open Ubuntu opnieuw. Draait je site nog?
+Je site draait nu met Compose. Schrijf een bericht in je gastenboek. Typ daarna in PowerShell `wsl --shutdown`, zodat Linux helemaal uitgaat, en open Ubuntu opnieuw. Draait je site nog?
 
 <details>
 <summary>Antwoord</summary>

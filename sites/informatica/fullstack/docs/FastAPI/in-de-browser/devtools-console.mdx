@@ -19,6 +19,8 @@ veld.addEventListener("input", function () {
 });
 ```
 
+### Kijken in de Console
+
 Herlaad en typ een paar letters. Bij elke toetsaanslag komt er een regel bij, met rechts het bestand en het regelnummer waar de `console.log` staat:
 
 <DevtoolsPaneel tab="Console">
@@ -31,6 +33,8 @@ Herlaad en typ een paar letters. Bij elke toetsaanslag komt er een regel bij, me
   />
 </DevtoolsPaneel>
 
+### Fouten in het rood
+
 Fouten staan er in het rood, met dezelfde verwijzing. Dit is wat je ziet als `defer` ontbreekt in je script-tag: het script draait voordat het formulier bestaat, `veld` is dan `null`, en de teller doet niets meer.
 
 <DevtoolsPaneel tab="Console">
@@ -42,6 +46,8 @@ Fouten staan er in het rood, met dezelfde verwijzing. Dit is wat je ziet als `de
 </DevtoolsPaneel>
 
 Klik op `app.js:4` en de browser opent het bestand op die regel: de regel met `addEventListener`, want daar ging het mis.
+
+### Zelf typen in de Console
 
 Je kunt in de Console ook zelf typen. Onderin staat een prompt. Typ dit en druk op Enter:
 
@@ -68,7 +74,7 @@ Dubbelklik op een tekst of een attribuut en je kunt hem aanpassen. Verander `80 
 3. Open Elementen op de teller, pas de tekst aan, en herlaad
 
 :::danger[Gaat er iets mis?]
-Blijft de Console leeg terwijl je typt? Kijk of je het bestand hebt opgeslagen en herlaad zonder cache (zie [Als je wijziging niet doorkomt](site:fullstack/docs/FastAPI/css-en-afbeeldingen/static_files#als-je-wijziging-niet-doorkomt)). Staat er een rode regel, klik dan op de bestandsnaam rechts: die brengt je naar de regel die de fout maakt. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Blijft de Console leeg terwijl je typt? Kijk of je het bestand hebt opgeslagen en herlaad zonder cache (zie [De cache](site:fullstack/docs/FastAPI/css-en-afbeeldingen/static_files#als-je-wijziging-niet-doorkomt)). Staat er een rode regel, klik dan op de bestandsnaam rechts: die brengt je naar de regel die de fout maakt. Meer oplossingen staan op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <Voorspel soort="Controlevraag" vraag="Je maakt een tikfout in app.js, en de teller doet niets meer. Waar zie je de foutmelding?">

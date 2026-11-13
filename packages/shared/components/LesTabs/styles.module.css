@@ -204,6 +204,43 @@
   color: var(--ifm-color-primary);
 }
 
+/* Op een breed scherm staat de rij stappen zo lang mogelijk op één regel.
+   Een tweede regel kostte elk scherm van dat tabblad veertig pixels; in
+   fullstack stond hij er in 41 tabbladen, sinds de uitleg van elke les één
+   tabblad met stappen is. Past de rij niet, dan krimpen de knoppen van de
+   stappen die niet open staan, en eindigt hun naam op een beletselteken; de
+   stap die open staat, heet voluit. De hele naam staat in de titel van de
+   knop, en de knop Volgende noemt de volgende stap ook voluit. */
+@media (min-width: 997px) {
+  /* Elke knop krijgt een gelijk deel van de rij, maar nooit meer dan zijn
+     naam breed is: wat een korte naam overlaat, gaat naar de lange. Met
+     krimpen naar verhouding bleef van "Vooraf" alleen het nummer over. En
+     nooit minder dan het nummer met een stuk naam (5,5rem, een teken of
+     vijf): past de rij dan nog niet, bij negen stappen of meer, dan komt er
+     een tweede regel en staan de namen voluit. */
+  .stap {
+    flex: 1 1 0;
+    min-width: 5.5rem;
+    max-width: max-content;
+  }
+
+  .stap[aria-selected="true"] {
+    flex: 0 0 auto;
+    max-width: none;
+  }
+
+  .stapNummer {
+    flex: 0 0 auto;
+  }
+
+  .stapLabel {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 /* De kop van een stap staat voluit op zijn knop. Een stap in het tabblad
    Uitleg is een hele `##`-sectie, en heeft dus een h2. */
 .kopOpStap > h2,
@@ -244,6 +281,24 @@
 .paneel :global(.theme-admonition) {
   --ifm-alert-padding-vertical: 0.55rem;
   margin-bottom: 0.75rem;
+}
+
+/* Een tabel in een paneel heeft lagere rijen: een tabel van tien rijen (waar
+   hoort jouw code, in fullstack) was met de ruime cellen van Infima tachtig
+   pixels te lang. */
+.paneel table {
+  --ifm-table-cell-padding: 0.5rem;
+}
+
+/* Een regel code staat heel op één regel: past hij niet, dan maakt
+   pasCode.ts de letters van het blok kleiner. Past hij ook met de kleinste
+   letters niet (`data-code-breekt`), dan breekt een foutmelding of uitvoer
+   van de terminal af, zoals in een terminal: `docker: Error response from
+   daemon: …` is 203 tekens. Alleen een blok zonder taal: code houdt zijn
+   regels. */
+:global(pre.language-text[data-code-breekt]) code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 /* Niet op Groter of volledig scherm (`data-groot` op het veld): daar vult het
@@ -399,9 +454,13 @@
    rechts een <div> met het woord Uitvoer, het uitvoerblok en soms een
    alinea toelichting. Met een voorspelvraag staat rechts de vraag. */
 @media (min-width: 997px) {
+  /* De code krijgt de breedte van zijn langste regel, tussen veertig en
+     zeventig procent, en de uitvoer de rest. Op een vaste zestig procent
+     stond het eind van een regel van zeventig tekens buiten beeld, en brak
+     naast een kort script een regel uitvoer van vijftig tekens af. */
   .voorbeeld {
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-columns: minmax(40%, max-content) minmax(30%, 1fr);
     align-items: start;
     column-gap: 1rem;
     margin-bottom: var(--ifm-leading);
@@ -449,9 +508,12 @@
   }
 
   /* Code met de voorspelvraag ernaast: de vraag heeft meer breedte nodig dan
-     een uitvoerblok. */
+     een uitvoerblok. De code krijgt de breedte van zijn langste regel, tussen
+     veertig en zesenzestig procent: op een vaste helft was in fullstack bij
+     twaalf voorspelvragen het eind van een regel afgesneden, en dat was vaak
+     de regel waar de vraag over ging. */
   .metVraag {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(40%, max-content) minmax(34%, 1fr);
   }
 
   /* Een plaatje met zijn tekst ernaast (een aansluitschema met de pinnen).
@@ -616,6 +678,24 @@
 .verder {
   margin: 0.5rem 0 0;
   text-align: right;
+}
+
+/* Zolang het open tabblad een knop Volgende heeft, is de link naar de
+   volgende les weg. Die zegt ook "Volgende", staat op een kort scherm direct
+   onder de knop en is groter: op 139 van de 226 schermen in fullstack stond
+   hij in beeld, en wie erop klikte sloeg de rest van de les over. Op het
+   laatste scherm van de les staat hij er weer. De link naar de vorige les
+   blijft. */
+:global(html:has([data-les-tab]:not([hidden]) > [data-les-verder]) .pagination-nav__link--next) {
+  display: none;
+}
+
+/* De knop Volgende breekt af. Infima houdt een knop op één regel, en met een
+   lange naam erin ("Volgende: network web declared as external, but could
+   not be found") was de pagina op een telefoon breder dan het scherm. */
+.verder :global(.button) {
+  max-width: 100%;
+  white-space: normal;
 }
 
 /* De inhoudsopgave rechts vervalt op een pagina met tabbladen, en de les

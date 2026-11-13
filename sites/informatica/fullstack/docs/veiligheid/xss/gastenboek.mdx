@@ -46,8 +46,12 @@ De pagina zelf is een los bestand `static/gastenboek.html`:
 </html>
 ```
 
+### Wat load en every doen
+
 Door `load` haalt htmx de lijst meteen op als de pagina geladen is, en na de
 komma komt `every 5s` erbij: daarna elke vijf seconden opnieuw.
+
+### De server
 
 Zet `htmx.min.js` uit [Zonder herladen](site:fullstack/docs/FastAPI/zonder-herladen/htmx) in `static/js/`.
 De endpoints staan in `main.py`:
@@ -72,7 +76,8 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     with SqliteDict("gastenboek.db") as db:
         db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
         db.commit()
-    return HTMLResponse(f"Bedankt, {naam}. Je bericht staat in het gastenboek.")
+    tekst = f"Bedankt, {naam}. Je bericht staat in het gastenboek."
+    return HTMLResponse(tekst)
 
 @app.get("/berichten/lijst")
 async def berichten_lijst():
@@ -83,11 +88,11 @@ async def berichten_lijst():
     return HTMLResponse(f"<ul>{regels}</ul>")
 ```
 
-<Regel n={16}>
+<Regel n={16} tot={17}>
 Het antwoord na het versturen, zoals in het recept Een formulier versturen, maar zonder `escape` om de naam.
 </Regel>
 
-<Regel n={20} tot={24}>
+<Regel n={21} tot={25}>
 Elk bericht wordt een `<li>`, met een f-string. De naam en het bericht komen erin zoals de bezoeker ze typte.
 </Regel>
 
@@ -100,6 +105,8 @@ Doe alles in deze reeks **uitsluitend** op je eigen server op `127.0.0.1`. HTML
 invullen op de site van een ander om te kijken wat er gebeurt, is een aanval op
 die site en op de bezoekers ervan, en strafbaar.
 :::
+
+### Openen in de browser
 
 Start je server met `fastapi dev main.py` en open
 `http://127.0.0.1:8000/static/gastenboek.html`. Vul als naam `Sara` in en als
@@ -153,7 +160,8 @@ async def gastenboek_opslaan(naam: str = Form(...), bericht: str = Form(...)):
     with SqliteDict("gastenboek.db") as db:
         db[f"bericht_{time.time_ns()}"] = {"naam": naam, "bericht": bericht}
         db.commit()
-    return HTMLResponse(f"Bedankt, {naam}. Je bericht staat in het gastenboek.")
+    tekst = f"Bedankt, {naam}. Je bericht staat in het gastenboek."
+    return HTMLResponse(tekst)
 
 @app.get("/berichten/lijst")
 async def berichten_lijst():

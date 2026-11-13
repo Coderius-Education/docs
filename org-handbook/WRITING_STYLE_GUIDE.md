@@ -27,7 +27,7 @@ sidebar_position: <getal>
 ```
 
 - `sidebar_position` bepaalt de volgorde in de sidebar.
-- **Een les is verdeeld in tabbladen.** Dat is sinds november 2026 de standaard; web, python en robotica zijn omgezet. Elke `##`-sectie is een tabblad bovenaan de pagina, elke `###` in een lange sectie een stap binnen dat tabblad, en de inhoudsopgave rechts vervalt: een leerling hoeft in een les niet te scrollen. Structureer een les dus met `##` en `###`, en schrijf elk scherm volgens "Tabbladen: elk scherm staat op zichzelf" hieronder. Een cursus zet het aan met `lesTabs: true` in `createConfig` (zie de root-`CLAUDE.md`, Les-tabbladen, voor de stappen).
+- **Een les is verdeeld in tabbladen.** Dat is sinds november 2026 de standaard; web, python, robotica en fullstack zijn omgezet. Elke `##`-sectie is een tabblad bovenaan de pagina, elke `###` in een lange sectie een stap binnen dat tabblad, en de inhoudsopgave rechts vervalt: een leerling hoeft in een les niet te scrollen. Structureer een les dus met `##` en `###`, en schrijf elk scherm volgens "Tabbladen: elk scherm staat op zichzelf" hieronder. Een cursus zet het aan met `lesTabs: true` in `createConfig` (zie de root-`CLAUDE.md`, Les-tabbladen, voor de stappen).
 - **Een cursus die nog niet is omgezet**, houdt de rechter inhoudsopgave (TOC) met **alleen H2-koppen** (centraal ingesteld in `packages/shared/config`). Voeg daar géén `hide_table_of_contents` toe; structureer je pagina met `##`-secties zodat ze in de TOC verschijnen. Heeft een oefenveld meer breedte nodig, kies dan een gestapelde veldvorm in plaats van de TOC te verbergen.
 - Cheatsheets en losse referentiepagina's mogen `displayed_sidebar: null` en `hide_pagination: true` gebruiken.
 - Gebruik `sidebar_label` alleen als de paginatitel te lang is voor de sidebar.
@@ -59,8 +59,19 @@ In een cursus met tabbladen is een tabblad of een stap alles wat de leerling op 
 - **Een opdracht is een eigen sectie** (`## Opdracht: <naam>`), niet een uitklapblok onder de code: weggeklapt ziet een leerling hem niet. Tip en oplossing blijven uitklapblokken.
 - **Een vraag staat open; alleen het antwoord is een uitklapblok.** Schrijf `**Controlevraag:** …` met `<details><summary>Antwoord</summary>` eronder, of gebruik `<Voorspel>`. In de uitleg van een voorspelvraag staat niets dat de leerling moet doen: die verschijnt pas bij het goede antwoord.
 - **Een regel code naast zijn toelichting is hooguit 66 tekens.** Langer, en de build zet de code weer over de volle breedte.
+- **Een regel code staat heel op één regel.** Past hij niet, dan maakt de les de letters van dat blok kleiner (tot 80%); hij breekt niet af en valt niet buiten zijn vak. Wat dan nog niet past, schrijf je korter: in een `<CodeUitleg>` hooguit 84 tekens, verder hooguit 122. Zet bij een lange functiekop elke parameter op een eigen regel, en een lange dictionary over meer regels. Alleen een foutmelding of uitvoer van de terminal mag afbreken.
 - **Geen twee koppen met dezelfde naam op een pagina**, ook niet in een deel dat de pagina importeert: een kop is ook een adres. Geef een kop in een deel een vast id (`### Controlevraag \{#i2c-controlevraag}`).
 - **Een pagina waar je met Ctrl+F zoekt** (een overzicht van foutmeldingen) krijgt `les_tabs: false`: zoeken vindt geen tekst in een tabblad dat dicht staat.
+- **Een controlelijst of een hand-out** krijgt ook `les_tabs: false`: die loop je in één keer af, of je print hem.
+- **Houd een kop kort**: een tabblad of stap heet naar zijn kop. De rij tabbladen moet op één regel passen, en in een volle rij stappen wordt een lange naam ingekort tot de stap open staat. Meer dan acht stappen in een tabblad staan op twee regels, en dat kost elk scherm veertig pixels. Linken andere lessen naar de kop, geef hem dan een vast id voordat je hem inkort.
+- **Een scherm begint niet met een zin die op het vorige doorgaat.** "Daarom maakt de Dockerfile …", "Daaronder legt de tekst uit …" en "Klik op de regel." lezen op de lange pagina goed, en zijn in tabbladen een scherm te laat. Noem waar het over gaat: "Onder `Hello from Docker!` legt de tekst uit …".
+- **De reden bij een fout antwoord is kort** (`uitleg="…"` van een `<Keuze>`, hooguit een regel of twee, zo'n 75 tekens): hij staat in de rij van dat antwoord, en naast code is die rij smal.
+- **Een controlevraag vraagt niet terug wat er net stond.** Hij is een eigen scherm, direct na de uitleg: vraag naar een nieuw geval waarvoor de leerling de uitleg moet toepassen. Ook de `uitleg="…"` van een keuze wijst niet naar "hierboven".
+- **Een adres in een keuze staat tussen backticks**: MDX maakt van een kaal adres een link, en die staat dan in de knop.
+- **Wat de leerling na een opdracht moet opruimen** (een endpoint weghalen, de server weer starten), staat in de opdracht, niet in het antwoord: wie het antwoord niet openklapt, leest het niet.
+- **Het hele bestand na de les** schrijf je als `<details><summary>Zo ziet je `main.py` er nu uit</summary>`: de build maakt er het laatste tabblad van, met de naam van het bestand. Verwijs ernaar als "het tabblad `main.py`".
+- **Een pagina die net zo heet als een tabblad, noem je een pagina**: "op de pagina [Er gaat iets mis](…)". Zonder link is "bij Er gaat iets mis" het tabblad van de les.
+- **Een fout onder Er gaat iets mis toont alleen wat verandert**: de melding (een lange rij uitvoer ingekort met `...`), de oorzaak, de oplossing en hooguit de paar regels code die anders moeten. Wijs daar niet naar "hierboven": de uitleg staat op een ander tabblad.
 
 Voor MDX-pagina's met runnable code, importeer bovenaan:
 
@@ -326,6 +337,7 @@ Voor pagina's onder `jouw_project/` (of vergelijkbaar):
 - **Wat nodig is om het materiaal te gebruiken, staat in het materiaal zelf.** Het oefenveld legt zijn knoppen en zijn opslag uit, een nakijker zijn eigen stappen, de les zijn opbouw. Mis je zoiets, zet het dan daar, niet in de handleiding.
 - Standaardstructuur: twee of drie zinnen over wat de cursus is; `## Waar de lessen op steunen` met `<Werkvormen />` (per onderdeel van een les de tip van vakdidactiek en de paper); `## Wat je vooraf wilt weten` (hooguit drie regels: installatie, waar werk blijft, de volgorde van de lessen); `## Beoordelen` (links naar leerdoelen, eindopdracht en nakijker); `## Feedback`. Zie [web/src/pages/docenten.mdx](../sites/informatica/web/src/pages/docenten.mdx) als referentie.
 - Een bron noem je alleen als vakdidactiek hem uitlegt: de tabel haalt de tips en de papers uit `packages/shared/werkvormen/werkvormen.json`.
+- Naslag die bij het omzetten uit de handleiding verdwijnt en geen lesadvies is (bij fullstack: één server voor de klas), verhuist naar `voor-de-docent/`.
 - Een cursus die nog geen tabbladen heeft, houdt zijn bestaande handleiding tot hij wordt omgezet: `<Werkvormen />` komt met `lesTabs`.
 - Naslag voor de docent die niet over lesgeven gaat (een installatie, een beoordelingsmodel) mag in een aparte `voor-de-docent/`-docsmap; laat `/docenten` daar dan naartoe linken (zoals play en embedded).
 - Andere toon: collegiaal, korter, geen "je leert" — wel "je leerlingen".

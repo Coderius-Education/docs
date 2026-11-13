@@ -50,6 +50,8 @@ Binnen het blok gedraagt `db` zich als een dictionary: een sleutel, een waarde.
 
 </CodeUitleg>
 
+### Voorspel
+
 <Voorspel vraag="Je draait python test_db.py. Wat zie je in de terminal, en wat verandert er in je map?">
   <Keuze goed uitleg="De print staat na het with-blok, en SqliteDict maakt het bestand aan omdat het nog niet bestond.">`Data opgeslagen`, en er staat een nieuw bestand `mijn_data.db`</Keuze>
   <Keuze uitleg="SqliteDict maakt een bestand dat nog niet bestaat zelf aan. Er komt dus geen foutmelding.">Een foutmelding, want `mijn_data.db` bestaat nog niet</Keuze>
@@ -75,6 +77,8 @@ with SqliteDict("mijn_data.db") as db:
     print(db["leeftijd"])
 ```
 
+### Het leesscript draaien
+
 Draai `python lees_db.py`:
 
 ```
@@ -90,6 +94,8 @@ Jan
 Een database slaat wijzigingen niet meteen op in het bestand. Met `db.commit()` zeg je: "Sla nu alles echt op." Vergeet je dat, dan verdwijnen je wijzigingen zodra de database sluit, aan het eind van het `with`-blok. Vergelijk het met een Word-document: je moet op "Opslaan" klikken, anders ben je je werk kwijt.
 
 </details>
+
+### Test jezelf
 
 Test jezelf met een script dat na `commit()` nog iets verandert:
 
@@ -118,12 +124,7 @@ with SqliteDict("proef.db") as db:
 
 ### Je wijziging komt niet aan
 
-Je verandert in `test_db.py` de naam in `"Sara"` en draait het. Daarna geeft `lees_db.py` nog steeds:
-
-```
-Jan
-16
-```
+Je verandert in `test_db.py` de naam in `"Sara"` en draait het. Daarna geeft `lees_db.py` nog steeds `Jan` en `16`.
 
 **Oorzaak:** de regel `db.commit()` ontbreekt, of staat buiten het `with`-blok. SqliteDict gooit de wijziging dan weg zodra het blok sluit, zonder foutmelding. Wat je eerder wél opsloeg, staat er nog.
 
@@ -196,10 +197,12 @@ with SqliteDict("test.db") as db:
 
 Verander in `test_db.py` de leeftijd in `17` en draai het nog een keer. Wat geeft `lees_db.py` nu: twee leeftijden, of één?
 
+Zet de leeftijd daarna terug op `16` en draai `test_db.py` nog een keer: de lessen hierna gaan uit van `Jan` en `16`.
+
 <details>
 <summary>Antwoord</summary>
 
-Eén: `17`. Onder elke sleutel staat één waarde, net als in een dictionary. Een nieuwe waarde onder dezelfde sleutel overschrijft de oude. Zet de leeftijd daarna terug op `16` en draai `test_db.py` nog een keer: de lessen hierna gaan uit van `Jan` en `16`.
+Eén: `17`. Onder elke sleutel staat één waarde, net als in een dictionary. Een nieuwe waarde onder dezelfde sleutel overschrijft de oude.
 
 </details>
 

@@ -41,11 +41,12 @@ Eén `PasswordHasher` voor de hele server, met instellingen die veilig zijn voor
 
 </CodeUitleg>
 
-Neem niet het hele blok over: alleen de regels met `PasswordHasher` en
-`/registreer` zijn nieuw. Zet de import en `ph = PasswordHasher()` bovenaan je
-`main.py`, en vervang je `/registreer` door deze. `import hashlib` en
-`/inloggen` laat je staan: die zet je in
-[les 8](site:fullstack/docs/veiligheid/wachtwoorden/inloggen) om.
+Alleen de regels met `PasswordHasher` en `/registreer` zijn nieuw: zet de
+import en `ph = PasswordHasher()` bovenaan je `main.py`, en vervang je
+`/registreer`. `import hashlib` en `/inloggen` blijven staan tot
+[les 8](site:fullstack/docs/veiligheid/wachtwoorden/inloggen).
+
+### Opnieuw registreren
 
 :::caution[Inloggen werkt tot les 8 niet]
 `/inloggen` vergelijkt nog met een `sha256`-hash, en in de database staan nu
@@ -93,6 +94,8 @@ async def inloggen(naam: str = Form(...), wachtwoord: str = Form(...)):
 `/inloggen` rekent hier nog met `sha256`; dat verandert in les 8.
 
 </details>
+
+### De uitkomst
 
 <Gelukt>
 
@@ -157,7 +160,7 @@ dus je nieuwe `/registreer` weigert ze voordat hij een Argon2-hash maakt.
 ### Opdracht 1: Investigate - Twee keer hashen
 
 Draai dit scriptje een paar keer, en leg de twee regels steeds naast de tabel
-hierboven:
+uit Wat er in de hash staat:
 
 ```python
 from argon2 import PasswordHasher

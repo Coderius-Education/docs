@@ -61,6 +61,35 @@ describe('CodeUitleg', () => {
     expect(binnen).not.toBe(buiten);
   });
 
+  it('geeft in een tabblad elke regel zijn inspringing mee, voor het vervolg van een regel die afbreekt', () => {
+    // Fullstack: een functiekop van 97 tekens paste niet in de kolom naast de
+    // uitleg en was afgesneden. Hij breekt nu af, en het vervolg springt
+    // verder in dan de regel zelf. Of dat er goed uitziet, meet alleen een
+    // browser (scripts/meet-les-tabs.mjs telt afgesneden code).
+    const code = (
+      <CodeUitleg>
+        <pre>
+          <span className="token-line">{'def f():'}</span>
+          <span className="token-line">{'        raise Fout("lang")'}</span>
+        </pre>
+        <Regel n={1}>Uitleg.</Regel>
+      </CodeUitleg>
+    );
+    inTab = true;
+    const lijnen = render(code).container.querySelectorAll<HTMLElement>('.token-line');
+    expect(Array.from(lijnen).map((l) => l.style.getPropertyValue('--inspringing'))).toEqual([
+      '0',
+      '8',
+    ]);
+    cleanup();
+    inTab = false;
+    const buiten = render(code).container.querySelectorAll<HTMLElement>('.token-line');
+    expect(Array.from(buiten).map((l) => l.style.getPropertyValue('--inspringing'))).toEqual([
+      '',
+      '',
+    ]);
+  });
+
   it('licht de regels van een uitleg op', () => {
     inTab = true;
     const { container } = render(blok());

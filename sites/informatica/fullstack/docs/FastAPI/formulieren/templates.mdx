@@ -34,6 +34,8 @@ je-project/
 </html>
 ```
 
+### Templates aanzetten in main.py
+
 `{{ worp }}` is een open plek. Wat daar komt te staan, beslist Python. In je `main.py` komen daarvoor drie dingen bij: `import random` helemaal bovenaan, `Request` en `Jinja2Templates` bij de imports, en onder `app.mount` de regel `templates = …`. De bovenkant van je `main.py` ziet er dan zo uit:
 
 <Bestand pad="main.py" />
@@ -58,6 +60,8 @@ templates = Jinja2Templates(directory="templates")
 </Regel>
 
 </CodeUitleg>
+
+### Het endpoint van de dobbelsteen
 
 Zet het endpoint onder je andere endpoints:
 
@@ -90,6 +94,8 @@ async def dobbelsteen(request: Request):
 
 </CodeUitleg>
 
+### Voorspel
+
 <Voorspel vraag="Je gaat naar /dobbelsteen en herlaadt de pagina drie keer. Wat zie je?">
   <Keuze uitleg="Dat zou gebeuren als de worp één keer werd gegooid, bij het starten van de server. Kijk waar random.randint staat.">Drie keer hetzelfde getal</Keuze>
   <Keuze goed uitleg="Bij elk verzoek draait de functie opnieuw, gooit opnieuw en vult de template opnieuw in.">Steeds een getal van 1 tot en met 6, vaak een ander</Keuze>
@@ -105,13 +111,7 @@ Ga naar [http://127.0.0.1:8000/dobbelsteen](http://127.0.0.1:8000/dobbelsteen) e
 
 ## Wat de browser krijgt
 
-Klik met de rechtermuisknop op de pagina en kies **Paginabron weergeven** (of druk op Ctrl+U). Het verzoek was:
-
-```
-GET /dobbelsteen
-```
-
-En dit is het antwoord dat de browser kreeg:
+Klik met de rechtermuisknop op de pagina en kies **Paginabron weergeven** (of druk op Ctrl+U). Op het verzoek `GET /dobbelsteen` kreeg de browser dit antwoord:
 
 <Bestand antwoord />
 
@@ -147,6 +147,8 @@ return templates.TemplateResponse(
 ```html
 <p>{{ speler }} gooide een {{ worp }}.</p>
 ```
+
+### Een dictionary meesturen
 
 Is een waarde zelf een dictionary, dan haal je er in de template een onderdeel uit met een punt:
 
@@ -210,7 +212,7 @@ jinja2.exceptions.TemplateNotFound: 'dobbelsteen.html' not found in search path:
 
 **Oplossing:** zet het bestand in `templates/`, naast `main.py`, en controleer de bestandsnaam. Geef alleen de naam door, zonder `templates/` ervoor.
 
-Meer uitleg: [Er gaat iets mis](site:fullstack/docs/troubleshooting#templates-jinja2)
+Meer uitleg: de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting#templates-jinja2)
 
 <details>
 <summary>Zo ziet je `main.py` er nu uit</summary>
@@ -293,11 +295,11 @@ async def dobbelsteen(request: Request):
 
 </details>
 
+## Opdrachten
+
 :::tip[Eerst op papier]
 Sorteer eerst zonder computer welke regels op de server draaien en welke in de browser: [Welke taal, waar?](site:fullstack/docs/unplugged/welke-taal-waar). Je docent kan de hand-out printen.
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Predict - Wat zie je?
 
@@ -332,7 +334,14 @@ return templates.TemplateResponse(request, "welkom.html", {
 
 ### Opdracht 2: Run
 
-Maak de map `templates`, het bestand `dobbelsteen.html` en het endpoint `/dobbelsteen`. Herlaad een paar keer en bekijk de paginabron.
+Open `/dobbelsteen` en herlaad een paar keer. Bekijk daarna de paginabron met Ctrl+U: staat daar `{{ worp }}`, of een getal?
+
+<details>
+<summary>Antwoord</summary>
+
+Een getal, bij elke keer herladen een nieuw. Jinja2 vult de open plek in op de server. De browser krijgt gewone HTML, en ziet niet dat er een template was.
+
+</details>
 
 ### Opdracht 3: Investigate - De oude schrijfwijze
 
@@ -435,4 +444,4 @@ async def kaart(request: Request):
 
 </details>
 
-Je template vult nu waarden uit Python in. In [Een formulier beantwoorden met een template](site:fullstack/docs/FastAPI/formulieren/post_met_templates) komt die waarde van de bezoeker.
+Je template vult nu waarden uit Python in. De volgende les gaat over formulieren. In de les daarna, [Een formulier beantwoorden met een template](site:fullstack/docs/FastAPI/formulieren/post_met_templates), komt die waarde van de bezoeker.

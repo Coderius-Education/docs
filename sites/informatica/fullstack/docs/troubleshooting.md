@@ -1,3 +1,7 @@
+---
+les_tabs: false
+---
+
 import NaslagZoeker from '@coderius/shared/components/NaslagZoeker';
 
 # Er gaat iets mis
@@ -397,7 +401,7 @@ Meer uitleg: [CSS in een eigen bestand (static files)](site:fullstack/docs/FastA
 3. Herstart de server (Ctrl+C, dan opnieuw `fastapi dev main.py`)
 4. Check of je het juiste bestand hebt aangepast
 
-Meer uitleg: [Als je wijziging niet doorkomt](site:fullstack/docs/FastAPI/css-en-afbeeldingen/static_files#als-je-wijziging-niet-doorkomt)
+Meer uitleg: [De cache](site:fullstack/docs/FastAPI/css-en-afbeeldingen/static_files#als-je-wijziging-niet-doorkomt)
 
 </details>
 
@@ -871,7 +875,8 @@ Meer uitleg: [Inloggen: een wachtwoord controleren](site:fullstack/docs/FastAPI/
 return RedirectResponse(url="/berichten", status_code=303)
 
 # GOED
-return HTMLResponse(f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek.")
+tekst = f"Bedankt, {escape(naam)}. Je bericht staat in het gastenboek."
+return HTMLResponse(tekst)
 ```
 
 Meer uitleg: [Zonder herladen met htmx](site:fullstack/docs/FastAPI/zonder-herladen/htmx)

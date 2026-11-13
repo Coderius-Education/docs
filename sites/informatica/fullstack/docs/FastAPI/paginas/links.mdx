@@ -57,6 +57,8 @@ Twee pagina's die naar elkaar linken. Vervang je `home.html` door deze versie, m
 </html>
 ```
 
+### Het endpoint voor /about
+
 Je endpoint voor `/` heb je al. Zet in `main.py` een endpoint voor `/about` eronder:
 
 <Bestand pad="main.py" />
@@ -70,7 +72,7 @@ async def about():
 Klik je op "Ga naar Over Mij", dan ga je naar `/about`. Met "Terug naar Home" kom je weer op `/`.
 
 :::danger[Gaat er iets mis?]
-Krijg je een 404 als je op een link klikt? Dan bestaat het endpoint waarschijnlijk niet in je `main.py`. Meer oplossingen staan op [Er gaat iets mis](site:fullstack/docs/troubleshooting).
+Krijg je een 404 als je op een link klikt? Dan bestaat het endpoint waarschijnlijk niet in je `main.py`. Meer oplossingen staan op de pagina [Er gaat iets mis](site:fullstack/docs/troubleshooting).
 :::
 
 <details>
@@ -147,11 +149,11 @@ async def about():
   </Uitleg>
 </Voorspel>
 
+## Opdrachten
+
 :::tip[Controleer je server]
 Laat je server draaien en typ in een tweede terminal `python controleer.py paginas`. Het script kijkt of alles uit dit hoofdstuk werkt; je downloadt het op [Project checken](site:fullstack/project-checken#je-server-controleren).
 :::
-
-## Opdrachten
 
 ### Opdracht 1: Predict - Waar ga je heen?
 

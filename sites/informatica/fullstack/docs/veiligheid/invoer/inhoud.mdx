@@ -15,7 +15,8 @@ naam stuurt:
 ```python
 import httpx
 
-antwoord = httpx.post("http://127.0.0.1:8000/bericht", data={"naam": "   ", "bericht": "hoi"})
+adres = "http://127.0.0.1:8000/bericht"
+antwoord = httpx.post(adres, data={"naam": "   ", "bericht": "hoi"})
 print(antwoord.status_code, antwoord.json())
 ```
 
@@ -90,6 +91,8 @@ Vervang `bericht_plaatsen` in je `main.py` door deze. `HTTPException` komt uit
 from fastapi import FastAPI, Form, HTTPException
 ```
 
+### spaties.py opnieuw draaien
+
 Draai `spaties.py` opnieuw.
 
 <Gelukt>
@@ -112,10 +115,10 @@ past bij wat er in `Form` staat. Een 400 stuur meestal jij, voor een regel die
 je zelf bedacht. De uitzondering zag je in [les 2](site:fullstack/docs/veiligheid/invoer/maxlength): bij een veld
 boven een megabyte stuurt Starlette zelf een 400.
 
-<Voorspel soort="Controlevraag" vraag="Een naam van drie spaties kwam langs max_length en Form(...). Waarom?">
-  <Keuze uitleg="Drie tekens is ruim onder de 30. Zou een kortere grens helpen?">max_length=30 staat te ruim, met 3 erbij was hij tegengehouden</Keuze>
-  <Keuze goed uitleg="Drie spaties zijn drie tekens: niet leeg en niet te lang. Of er iets zichtbaars staat, ziet FastAPI niet.">FastAPI kijkt naar hoeveel tekens er staan, niet wat het zijn</Keuze>
-  <Keuze uitleg="Een spatie is ook voor FastAPI een teken. Telt een veld met drie tekens als leeg?">FastAPI ziet een spatie niet als teken, dus de naam telt als leeg</Keuze>
+<Voorspel soort="Controlevraag" vraag="Een script stuurt als naam een tab en een enter, en verder niets. Wat doet je endpoint nu?">
+  <Keuze uitleg="Probeer het in Python: een tekst met alleen een tab en een enter, met strip() erachter. Wat blijft er over?">Het bericht komt in de database: strip() haalt alleen spaties weg</Keuze>
+  <Keuze goed uitleg="strip() haalt alle witruimte aan de randen weg, niet alleen spaties. Er blijft niets over, dus je controle stuurt de 400.">Je endpoint stuurt een 400: voor strip() zijn een tab en een enter ook witruimte</Keuze>
+  <Keuze uitleg="Voor FastAPI zijn een tab en een enter twee tekens: niet leeg en niet te lang. Wie kijkt wat het voor tekens zijn?">Zover komt het niet: Form(...) weigert het veld met een 422</Keuze>
   <Uitleg>
 
   `max_length` en `Form(...)` gaan over de lengte. Wat erin staat, controleer
@@ -144,7 +147,8 @@ NameError: name 'HTTPException' is not defined
 de regel met `raise`, en stuurt een `500` met de tekst `Internal Server Error`.
 Dat is geen JSON, dus `antwoord.json()` in je script kan er niets mee.
 
-**Oplossing:** zet `HTTPException` bij de import uit `fastapi`, zoals hierboven.
+**Oplossing:** zet `HTTPException` bij de import uit `fastapi`, zoals bij De
+controle in het endpoint.
 Bij een `500` staat de echte fout altijd in de terminal van je server.
 
 ### `400`, maar het bericht staat er toch in
@@ -178,7 +182,7 @@ with SqliteDict("gastenboek.db") as db:
 
 ### Opdracht 1: Predict - Spaties eromheen
 
-Je stuurt de naam `" Sara "`, met een spatie ervoor en erachter.
+Je stuurt de naam `" Sara "`, met een spatie ervoor en erachter, en het bericht `hoi`.
 
 **Vraag:** geeft de server `200` of `400`? En wat komt er in de database?
 

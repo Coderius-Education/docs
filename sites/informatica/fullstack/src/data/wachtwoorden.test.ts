@@ -144,7 +144,7 @@ describe('inlogpogingen beperken', () => {
       const stuk = endpoint(stand, kop);
       expect(stuk).toContain('ph.verify');
       expect(stuk).toMatch(
-        /^@app\.post\("[^"]+"\)\n@limiter\.limit\("5\/minute"\)\nasync def \w+\(request: Request, /,
+        /^@app\.post\("[^"]+"\)\n@limiter\.limit\("5\/minute"\)\nasync def \w+\(\s*request: Request,\s/,
       );
     },
   );

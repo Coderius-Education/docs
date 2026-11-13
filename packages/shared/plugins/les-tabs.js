@@ -117,6 +117,14 @@ const isInfo = (node) =>
 const basisLabel = (nodes, kop) => {
   const inhoud = nodes.filter((node) => !zetNietsNeer(node));
   if (inhoud.some(isBlok) && inhoud.every((node) => isBlok(node) || isAlinea(node))) return VOORAF;
+  // Ook <Voorkennis> met één alinea: wat je al moet kennen, en waar de les
+  // over gaat.
+  if (
+    inhoud.some(isVoorkennis) &&
+    inhoud.filter(isAlinea).length === 1 &&
+    inhoud.every((node) => isVoorkennis(node) || isAlinea(node))
+  )
+    return VOORAF;
   // Een kop met een dubbele punt heeft het stuk ervoor als label van zijn
   // tabblad ("Stap 1"). Het stuk erna zegt waar de stap over gaat, en is dan
   // de naam van het eerste scherm: "Het getal uitlezen" zegt meer dan
@@ -134,6 +142,7 @@ const basisLabel = (nodes, kop) => {
 };
 
 const isAlinea = (node) => node.type === 'paragraph';
+const isVoorkennis = (node) => node.type === 'mdxJsxFlowElement' && node.name === 'Voorkennis';
 const isLeerdoel = (node) => node.name === 'LesLeerdoel';
 const isStap = (node) => node.name === 'LesStap';
 const isStappen = (node) => node.name === 'LesStappen';
@@ -144,6 +153,78 @@ const stappenlijst = (kinderen) => ({
   attributes: [],
   children: kinderen,
 });
+
+/** Zoveel tekens tekst vóór een controlevraag is al een scherm (vier regels). */
+const LANGE_INLEIDING = 400;
+
+/** De naam van de stap met de controlevraag van een sectie. */
+const CONTROLEVRAAG = 'Controlevraag';
+
+const isControlevraag = (node) =>
+  node?.type === 'mdxJsxFlowElement' &&
+  node.name === 'Voorspel' &&
+  node.attributes?.some((a) => a.name === 'soort' && a.value === CONTROLEVRAAG);
+
+/** Wat na een controlevraag nog op hetzelfde scherm mag staan: een tip, een
+ *  slotzin, een uitklapblok. Code of een volgende uitleg niet. */
+const hoortBijVraag = (node) =>
+  zetNietsNeer(node) ||
+  isBlok(node) ||
+  node.type === 'paragraph' ||
+  (node.type === 'mdxJsxFlowElement' && /^details$/i.test(node.name ?? ''));
+
+/**
+ * Een controlevraag is een eigen stap. `<Voorspel soort="Controlevraag">`
+ * staat in fullstack aan het eind van een uitleg met code, een test en een
+ * succesmoment, en is zelf driehonderd pixels hoog: van de 253 schermen die
+ * daar niet op 1280×720 pasten, pasten er 67 zonder de vraag. Op een eigen
+ * scherm beantwoordt de leerling hem ook uit zijn hoofd, niet met de uitleg
+ * erboven.
+ *
+ * De stap krijgt een kop `### Controlevraag` (verborgen, want het label zegt
+ * het al). Alleen als er vóór de vraag iets staat dat een scherm vult (meer
+ * dan alinea's, of drie alinea's), en erna alleen nog wat bij de vraag hoort
+ * (hoortBijVraag): volgt er nog uitleg, dan kiest de auteur zelf waar de stap
+ * ophoudt.
+ *
+ * @param {object[]} kinderen de kinderen van één sectie
+ * @param {string} sectieId
+ */
+function vragenAlsStap(kinderen, sectieId) {
+  const uit = [];
+  let stuk = [];
+  let nummer = 0;
+  const sluit = () => {
+    const i = stuk.findIndex(isControlevraag);
+    const ervoor = stuk
+      .slice(0, i)
+      .filter((node) => node.type !== 'heading' && !zetNietsNeer(node));
+    // Twee lange alinea's vullen een scherm ook: met de vraag eronder paste
+    // het tot je antwoordde (de foutpagina van fullstack, 95 pixels te lang).
+    const vult =
+      ervoor.some((node) => node.type !== 'paragraph') ||
+      ervoor.filter((node) => node.type === 'paragraph').length >= 3 ||
+      ervoor.reduce((som, node) => som + tekstVan(node).length, 0) >= LANGE_INLEIDING;
+    if (i > 0 && vult && stuk.slice(i + 1).every(hoortBijVraag)) {
+      nummer += 1;
+      const id = `${sectieId}-controlevraag${nummer > 1 ? `-${nummer}` : ''}`;
+      stuk.splice(i, 0, {
+        type: 'heading',
+        depth: 3,
+        children: [{ type: 'text', value: CONTROLEVRAAG }],
+        data: { id, hProperties: { id }, lesTabsVraag: true },
+      });
+    }
+    uit.push(...stuk);
+    stuk = [];
+  };
+  for (const node of kinderen) {
+    if (isH3(node)) sluit();
+    stuk.push(node);
+  }
+  sluit();
+  return nummer ? uit : kinderen;
+}
 
 /**
  * Een sectie met `###`-koppen is zelf nog te lang voor één scherm (Theorie in
@@ -168,6 +249,16 @@ const stappenlijst = (kinderen) => ({
  * @param {object[]} [vooraf]
  */
 function metStappen(kinderen, sectieId, vooraf = []) {
+  const metVragen = vragenAlsStap(kinderen, sectieId);
+  if (metVragen !== kinderen) {
+    const uit = stappenVan(metVragen, sectieId, vooraf);
+    // Geen stappen geworden (een alinea met een vraag): dan ook geen kop.
+    if (uit.some(isStappen)) return uit;
+  }
+  return stappenVan(kinderen, sectieId, vooraf);
+}
+
+function stappenVan(kinderen, sectieId, vooraf = []) {
   const eerste = kinderen.findIndex(isH3);
   const zonderStappen = () => (vooraf.length ? [...vooraf, ...kinderen] : kinderen);
   if (eerste < 0) return zonderStappen();
@@ -338,6 +429,56 @@ function naastIsKorter(code, nodes) {
   return naast <= onder - REGEL;
 }
 
+/**
+ * Hoe hoog een stuk van een scherm ongeveer is, in pixels op 1280 breed. Een
+ * schatting uit de bron: de echte maat meet alleen een browser
+ * (scripts/meet-les-tabs.mjs). Genoeg om te zien of er boven een scherm nog
+ * een alinea bij kan (zie groepeer, `metVoorkennis`).
+ *
+ * @param {object[]} nodes
+ */
+function hoogteScherm(nodes) {
+  let hoogte = 0;
+  for (const node of nodes) {
+    if (zetNietsNeer(node) || node.type === 'heading') continue;
+    if (node.type === 'code') hoogte += Math.min(regels(node), EIGEN_VAK + 2) * CODE_REGEL + 48;
+    else if (node.type !== 'mdxJsxFlowElement') hoogte += hoogteTekst([node], KOLOM);
+    else if (isVoorkennis(node) || isUitklapblok(node)) hoogte += 60;
+    else if (isBestandLabel(node)) hoogte += 40;
+    else if (isVoorspel(node)) hoogte += 300;
+    else if (node.name === 'LesVoorbeeld')
+      // Kolommen naast elkaar: zo hoog als de hoogste.
+      hoogte += Math.max(
+        ...node.children.map((kind) => hoogteScherm(kind.name === 'div' ? kind.children : [kind])),
+      );
+    else if (node.name === 'CodeUitleg')
+      hoogte += hoogteScherm(node.children.filter((k) => k.type === 'code'));
+    else if ((node.children ?? []).length) hoogte += hoogteScherm(node.children) + 40;
+    // Een onderdeel zonder inhoud in de bron (een diagram, een paneel).
+    else hoogte += 300;
+  }
+  return hoogte;
+}
+
+/** Wat er op 1280×720 in een paneel past, onder de titel, de tabbladen en een rij stappen. */
+const SCHERM = 470;
+
+/**
+ * Het eerste scherm van een sectie: tot de eerste `###`, of, als daar hooguit
+ * één alinea voor staat, tot de tweede (zie stappenVan).
+ *
+ * @param {object[]} inhoud de kinderen van de sectie, met de `##` vooraan
+ */
+function eersteScherm(inhoud) {
+  const rest = inhoud.slice(1);
+  const eerste = rest.findIndex(isH3);
+  if (eerste < 0) return rest;
+  const inleiding = rest.slice(0, eerste);
+  if (inleiding.length > 1 || (inleiding.length === 1 && !isAlinea(inleiding[0]))) return inleiding;
+  const tweede = rest.findIndex((node, i) => i > eerste && isH3(node));
+  return tweede < 0 ? rest : rest.slice(0, tweede);
+}
+
 const isAankondiging = (node) => isAlinea(node) && /:$/.test(tekstVan(node).trim());
 
 /** Een alinea die met een vette "Vraag:" begint. */
@@ -346,6 +487,25 @@ const isVraagAlinea = (node) =>
   isAlinea(node) &&
   node.children[0]?.type === 'strong' &&
   /^Vraag\b/.test(tekstVan(node.children[0]).trim());
+
+/**
+ * Commando's voor de terminal. Een controlevraag die daarop volgt, gaat over
+ * de les en niet over die commando's: in drie lessen over Docker stond de
+ * vraag naast `git add`, `git commit` en `git push`. Zonder die rij is de
+ * vraag een eigen stap (vragenAlsStap).
+ */
+const isOpdrachtregel = (node) =>
+  node?.type === 'code' && /^(bash|sh|shell|console|powershell|cmd)$/.test(node.lang ?? '');
+
+/** Het label boven een codeblok dat zegt welk bestand het is (fullstack: `<Bestand pad="main.py" />`). */
+const isBestandLabel = (node) => node?.type === 'mdxJsxFlowElement' && node.name === 'Bestand';
+
+/** Of er voor het codeblok op plek `i` zo'n label staat (met hooguit commentaar ertussen). */
+function heeftLabel(nodes, i) {
+  let j = i - 1;
+  while (j >= 0 && zetNietsNeer(nodes[j])) j -= 1;
+  return j >= 0 && isBestandLabel(nodes[j]);
+}
 
 /**
  * Een codeblok dat direct door "Uitvoer:" en een uitvoerblok wordt gevolgd,
@@ -398,8 +558,30 @@ function voorbeeldenNaastElkaar(kinderen) {
       uit.push(
         jsx('LesVoorbeeld', [code, jsx('div', rechts)], [attribuut('toelichting', 'vraag')]),
       );
-    } else if ((code.type === 'code' || isBlokprogramma(code)) && isVoorspel(kop)) {
-      uit.push(jsx('LesVoorbeeld', [code, kop], [attribuut('vraag', 'ja')]));
+    } else if (
+      (code.type === 'code' || isBlokprogramma(code)) &&
+      isVoorspel(kop) &&
+      !(isControlevraag(kop) && isOpdrachtregel(code))
+    ) {
+      // De vraag gaat over alle bestanden die er direct voor staan, niet
+      // alleen over het laatste: een formulier en zijn endpoint horen samen
+      // links. Met het eerste bestand boven de rij was zo'n opdracht in
+      // fullstack tot 150 pixels te lang.
+      const links = [code];
+      while (uit.length) {
+        const vorige = uit.at(-1);
+        const isLabel = zetNietsNeer(vorige) || isBestandLabel(vorige);
+        const isBestand = vorige.type === 'code' && heeftLabel(uit, uit.length - 1);
+        if (!isLabel && !isBestand) break;
+        links.unshift(uit.pop());
+      }
+      uit.push(
+        jsx(
+          'LesVoorbeeld',
+          [links.length > 1 ? jsx('div', links) : code, kop],
+          [attribuut('vraag', 'ja')],
+        ),
+      );
       i += 1;
     } else uit.push(code);
   }
@@ -408,6 +590,9 @@ function voorbeeldenNaastElkaar(kinderen) {
 
 /** Zoveel tekens passen er op 1280 pixels in een codeblok van de halve breedte. */
 const HALVE_KOLOM = 46;
+
+/** En zoveel als de code iets kleiner staat (`bestanden="smal"`). */
+const SMALLE_HELFT = 58;
 
 /** Een alinea met alleen een vette bestandsnaam (**`rekenen.py`**) of **Code A:**. */
 const isBestandsnaam = (node) =>
@@ -430,7 +615,8 @@ function bestandenNaastElkaar(kinderen) {
   let i = 0;
   // Een bestand: de naam, een commentaar (`{/* niet-draaien: … */}`), de code.
   const bestandOp = (plek) => {
-    if (!kinderen[plek] || !isBestandsnaam(kinderen[plek])) return null;
+    if (!kinderen[plek] || !(isBestandsnaam(kinderen[plek]) || isBestandLabel(kinderen[plek])))
+      return null;
     let k = plek + 1;
     while (k < kinderen.length && zetNietsNeer(kinderen[k])) k++;
     return kinderen[k]?.type === 'code' ? { tot: k + 1 } : null;
@@ -447,10 +633,6 @@ function bestandenNaastElkaar(kinderen) {
       i += 1;
       continue;
     }
-    if (isVoorspel(kinderen[k])) {
-      groepen.push(kinderen[k]);
-      k += 1;
-    }
     // Twee bestanden naast elkaar hebben elk de helft: 46 tekens op 1280
     // pixels. Met een langere regel staat de code iets kleiner ("smal"), dan
     // passen er 58: de importregel van leaphymicropython was in Code A en
@@ -462,6 +644,21 @@ function bestandenNaastElkaar(kinderen) {
           .flatMap((node) => (node.value ?? '').split('\n').map((regel) => regel.length)),
       ),
     );
+    // Bestanden met een <Bestand>-label (fullstack: twee pagina's die naar
+    // elkaar linken) staan alleen naast elkaar als het er twee zijn en elke
+    // regel past: een endpoint met een regel van zeventig tekens blijft over
+    // de volle breedte. Met een voorspelvraag eronder staan ze samen links
+    // van de vraag (voorbeeldenNaastElkaar).
+    const metLabel = kinderen.slice(i, k).some(isBestandLabel);
+    if (metLabel && (groepen.length !== 2 || breedste > SMALLE_HELFT || isVoorspel(kinderen[k]))) {
+      uit.push(...kinderen.slice(i, k));
+      i = k;
+      continue;
+    }
+    if (isVoorspel(kinderen[k])) {
+      groepen.push(kinderen[k]);
+      k += 1;
+    }
     const smal = groepen.length === 2 && breedste > HALVE_KOLOM;
     uit.push(jsx('LesVoorbeeld', groepen, [attribuut('bestanden', smal ? 'smal' : 'ja')]));
     i = k;
@@ -669,6 +866,15 @@ function alsStappen(tab, uitlegId) {
  * @param {string} id het id van het tabblad Uitleg
  */
 function uitlegMetStappen(uitleg, id) {
+  const metVragen = vragenAlsStap(uitleg, id);
+  if (metVragen !== uitleg) {
+    const uit = uitlegStappen(metVragen, id);
+    if (uit.some(isStappen)) return uit;
+  }
+  return uitlegStappen(uitleg, id);
+}
+
+function uitlegStappen(uitleg, id) {
   const eerste = uitleg.findIndex(isH3);
   if (eerste < 0) return uitleg;
   const stappen = [];
@@ -689,8 +895,39 @@ function uitlegMetStappen(uitleg, id) {
   return [stappenlijst(lesStappen)];
 }
 
+/**
+ * Twee controlevragen in één tabblad (de uitleg van een les met twee secties
+ * die elk met een vraag eindigen) heten Controlevraag en Controlevraag 2: elk
+ * scherm heeft een eigen naam.
+ *
+ * @param {object[]} tabs
+ */
+function nummerVragen(tabs) {
+  for (const tab of tabs) {
+    const vragen = (tab.children.find(isStappen)?.children ?? []).filter(
+      (stap) => isStap(stap) && eigenschap(stap, 'titel') === CONTROLEVRAAG,
+    );
+    vragen.slice(1).forEach((stap, i) => {
+      for (const a of stap.attributes)
+        if (a.name === 'titel' || a.name === 'label') a.value = `${CONTROLEVRAAG} ${i + 2}`;
+    });
+  }
+}
+
 /** Vanaf zoveel tabbladen past de rij op 1280 pixels niet meer op één regel. */
 const VEEL_TABS = 9;
+/**
+ * Of de rij tabbladen op 1280 pixels op één regel past: naast de lessenlijst
+ * is 948 pixels over, en een tabblad kost ongeveer 32 pixels plus 7 per
+ * letter (gemeten in Chromium). Negen tabbladen met korte namen passen wel:
+ * de htmx-recepten van fullstack (Formulier, Verversen, Zoeken, …) hadden
+ * als één tabblad Uitleg zestien stappen op drie regels.
+ *
+ * @param {object[]} tabs
+ */
+const RIJ = 948;
+const rijPast = (tabs) =>
+  tabs.reduce((som, tab) => som + 32 + 7 * (eigenschap(tab, 'label') ?? '').length, 0) <= RIJ;
 /** En meer stappen dan dit passen in een tabblad niet op één regel. */
 const MEESTE_STAPPEN = 8;
 /**
@@ -718,8 +955,14 @@ function voegUitlegSamen(tabs, vormen, uitlegId) {
   // wel op één regel staan: dan blijven het tabbladen. Het ingebouwde lampje
   // van robotica (aanzetten, knipperen, een kleur) had één tabblad Uitleg
   // met twaalf stappen op twee regels.
-  const stappen = delen.reduce((som, d) => som + d.stappen.length, 0);
-  if (stappen > MEESTE_STAPPEN && tabs.length < VEEL_TABS) return { tabs, vormen };
+  // Een stap Vooraf (voorkennis en één alinea) telt niet mee: met die stap
+  // erbij viel de uitleg van Templates, acht stappen, weer in losse
+  // tabbladen uiteen.
+  const vooraf = delen[0]?.stappen[0] && eigenschap(delen[0].stappen[0], 'label') === VOORAF;
+  const stappen = delen.reduce((som, d) => som + d.stappen.length, 0) - (vooraf ? 1 : 0);
+  if (stappen > MEESTE_STAPPEN && (tabs.length < VEEL_TABS || rijPast(tabs))) {
+    return { tabs, vormen };
+  }
   const bezet = new Set([...tabs.map((tab) => eigenschap(tab, 'id')), ...kopIds(tabs)]);
   const id = uitlegId ?? (bezet.has('uitleg') ? 'les-uitleg' : 'uitleg');
   const samen = element('LesTab', id, UITLEG, [
@@ -900,6 +1143,13 @@ function reeksen(kinderen) {
   return uit;
 }
 
+/**
+ * Eén tabblad Opdrachten met de opdrachten als stappen (fullstack) is geen
+ * rij opdrachten. De leerling bouwt daar in de uitleg al mee in zijn eigen
+ * project, dus de fouten gaan over dat werk en blijven ervoor staan.
+ */
+const isVerzameltab = (tab) => eigenschap(tab, 'titel') === 'Opdrachten';
+
 /** Werkvormen waarin de leerling nog niets zelf doet. */
 const LEZEN = ['leerdoel', 'uitleg', 'voorspellen'];
 
@@ -922,7 +1172,7 @@ function foutenNaOpdrachten(tabs, vormen) {
   if (fout < 0 || !vormen.slice(0, fout).every((vorm) => LEZEN.includes(vorm)))
     return { tabs, vormen };
   let laatste = fout;
-  while (OPDRACHT.includes(vormen[laatste + 1])) laatste++;
+  while (OPDRACHT.includes(vormen[laatste + 1]) && !isVerzameltab(tabs[laatste + 1])) laatste++;
   if (laatste === fout) return { tabs, vormen };
   const schuif = (lijst) => [
     ...lijst.slice(0, fout),
@@ -946,6 +1196,66 @@ const naastElkaar = (alles) =>
       doelNaastVeld(voorbeeldenNaastElkaar(bestandenNaastElkaar(zonderDubbeleCode(alles)))),
     ),
   );
+
+const STAND = /^Zo ziet je (.+) er nu uit$/;
+
+/** De naam van het bestand als dit uitklapblok de stand van een bestand is. */
+/**
+ * De <summary> van een uitklapblok is een kind, of zit in een alinea: staat
+ * hij direct onder `<details>`, zonder lege regel, dan leest MDX hem als tekst.
+ */
+const heeftSummary = (kind) =>
+  kind.name === 'summary' ||
+  (isAlinea(kind) && kind.children.length > 0 && kind.children.every((k) => k.name === 'summary'));
+
+function standVan(node) {
+  if (!isUitklapblok(node)) return null;
+  const kop = node.children.find(heeftSummary);
+  const naam = kop && STAND.exec(tekstVan(kop).replace(/[`\\]/g, '').trim())?.[1];
+  return naam || null;
+}
+
+/**
+ * Het hele bestand na de les (`<details><summary>Zo ziet je `main.py` er nu
+ * uit</summary>`) is een eigen tabblad, het laatste, met de naam van het
+ * bestand. In de bron sluit het de hoofdtekst of de pagina af. In tabbladen
+ * was dat de stap waar het toevallig onder viel: bij de ene les onder Testen,
+ * bij 24 lessen onder de laatste opdracht, bij vier onder één fout van Er
+ * gaat iets mis. Een leerling die de draad kwijt is, zoekt het daar niet.
+ *
+ * Op het tabblad staat het bestand open: het uitklapblok zou er het enige
+ * zijn. De code schuift in zijn vak (speling.ts geeft hem de rest van het
+ * scherm).
+ *
+ * @param {object} node het uitklapblok
+ * @param {string} naam `main.py`, `templates/berichten.html`
+ * @param {Set<string>} bezet de id's die de pagina al heeft
+ */
+function standTab(node, naam, bezet) {
+  let id = `stand-${naam
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')}`;
+  while (bezet.has(id)) id += '-2';
+  bezet.add(id);
+  const kop = {
+    type: 'heading',
+    depth: 2,
+    children: [
+      { type: 'text', value: 'Zo ziet je ' },
+      { type: 'inlineCode', value: naam },
+      { type: 'text', value: ' er nu uit' },
+    ],
+    data: { id, hProperties: { id } },
+  };
+  const tab = element('LesTab', id, tekstVan(kop), [
+    kop,
+    ...node.children.filter((kind) => !heeftSummary(kind)),
+  ]);
+  // Op het tabblad staat alleen de naam van het bestand, zonder de map.
+  for (const a of tab.attributes) if (a.name === 'label') a.value = naam.split('/').at(-1);
+  return tab;
+}
 
 /**
  * De kinderen van de pagina met elke `##`-sectie in een <LesTab>, of null als
@@ -971,7 +1281,11 @@ const naastElkaar = (alles) =>
  * @param {object[]} kinderen de kinderen van de mdast-root
  */
 function groepeer(alles) {
-  const kinderen = naastElkaar(alles);
+  // De stand van een bestand gaat er eerst uit: naast een vraag of onder een
+  // fout hoort hij niet (zie standTab).
+  const vanaf = alles.findIndex(isH2);
+  const standen = vanaf < 0 ? [] : alles.filter((node, i) => i > vanaf && standVan(node));
+  const kinderen = naastElkaar(standen.length ? alles.filter((n) => !standen.includes(n)) : alles);
   const eerste = kinderen.findIndex(isH2);
   if (eerste < 0) return null;
   const boven = [];
@@ -992,7 +1306,20 @@ function groepeer(alles) {
   // alleen als er daarna nog twee tabbladen zijn; anders bleef er één over en
   // had de pagina geen tabbladen meer.
   const alineas = uitleg.filter(isAlinea).length;
+  // Hetzelfde voor <Voorkennis> met één alinea: het blok is een dichte regel,
+  // en het tabblad Uitleg was dan een scherm met één alinea en een knop
+  // Volgende (in fullstack bij Formulieren en Je site in een image). Alleen
+  // als het scherm waar het bij komt er ruimte voor heeft: bij zestien lessen
+  // van fullstack was dat eerste scherm er tot tweehonderd pixels te lang
+  // door. Past het niet, dan blijft het een eigen scherm, Vooraf (basisLabel).
+  const metVoorkennis =
+    secties.length >= 2 &&
+    alineas === 1 &&
+    uitleg.some(isVoorkennis) &&
+    uitleg.every((node) => isVoorkennis(node) || isAlinea(node) || zetNietsNeer(node)) &&
+    hoogteScherm(uitleg) + hoogteScherm(eersteScherm(secties[0].kinderen)) <= SCHERM;
   const kort =
+    metVoorkennis ||
     (uitleg.length === 1 && isAlinea(uitleg[0])) ||
     (uitleg.length > 0 &&
       secties.length >= 2 &&
@@ -1041,7 +1368,7 @@ function groepeer(alles) {
     uitlegId = bezet.has('uitleg') ? 'les-uitleg' : 'uitleg';
     tabs.unshift(element('LesTab', uitlegId, UITLEG, uitlegMetStappen(uitleg, uitlegId)));
   }
-  if (tabs.length < 2) return null;
+  if (tabs.length + standen.length < 2) return null;
   // Elk tabblad krijgt zijn werkvorm (../werkvormen): het icoon op het
   // tabblad, en de schakel naar de tip van vakdidactiek die hem onderbouwt.
   const samen = voegUitlegSamen(
@@ -1054,7 +1381,16 @@ function groepeer(alles) {
     samen.tabs.map((tab, i) => vormNaarStartcode(tab, samen.vormen[i])),
   );
   geordend.tabs.forEach((t, i) => t.attributes.push(attribuut('werkvorm', geordend.vormen[i])));
+  // De stand komt erna, zodat hij niet meetelt bij wat uitleg is en wat een
+  // opdracht: een les met alleen uitleg houdt zijn tabbladen.
+  const bezet = new Set(kopIds(kinderen));
+  for (const node of standen) {
+    const tab = standTab(node, standVan(node), bezet);
+    tab.attributes.push(attribuut('werkvorm', werkvormenVan([eigenschap(tab, 'titel')])[0]));
+    geordend.tabs.push(tab);
+  }
   korteOpdrachten(geordend.tabs);
+  nummerVragen(geordend.tabs);
   return [
     ...boven,
     { type: 'mdxJsxFlowElement', name: 'LesTabs', attributes: [], children: geordend.tabs },
@@ -1141,4 +1477,6 @@ module.exports = {
   tekstVan,
   isDeel,
   deelMetStappen,
+  hoogteScherm,
+  eersteScherm,
 };

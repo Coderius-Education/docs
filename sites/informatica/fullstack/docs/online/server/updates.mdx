@@ -22,6 +22,8 @@ APT::Periodic::Unattended-Upgrade "1";
 
 Staat er twee keer `"1"`, dan is het goed. Kijk niet naar `systemctl status unattended-upgrades`: die dienst draait altijd, ook als de updates uitstaan. Bestaat het bestand niet, of staat er een `"0"`, kijk dan bij Er gaat iets mis.
 
+### Als een herstart nodig is
+
 Soms is een herstart nodig, bijvoorbeeld na een update van de kern van Linux. Dan staat er een bestand:
 
 ```bash

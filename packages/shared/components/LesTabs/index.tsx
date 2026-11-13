@@ -15,6 +15,7 @@ import {
 import { WerkvormIcoon } from '../Werkvorm/Icoon';
 import { Vergroot } from './Vergroot';
 import { DoelContext, OpenContext, PaneelContext, type Stap, useInLesTab } from './paneel';
+import { pasCode } from './pasCode';
 import { verdeelSpeling } from './speling';
 import styles from './styles.module.css';
 
@@ -163,17 +164,26 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     let beeld = 0;
     const meet = () => {
       window.cancelAnimationFrame(beeld);
-      beeld = window.requestAnimationFrame(() => verdeelSpeling(el));
+      // Eerst de letters van de code (pasCode.ts): dat verandert de hoogte.
+      beeld = window.requestAnimationFrame(() => {
+        pasCode(el);
+        verdeelSpeling(el);
+      });
     };
     meet();
     el.addEventListener('click', meet);
     el.addEventListener('load', meet, true);
     window.addEventListener('resize', meet);
+    // Het lettertype van de code laadt pas als er code in beeld komt, en is
+    // breder dan het lettertype dat er tot dan staat: de regel die net paste,
+    // was daarna dertig pixels afgesneden.
+    document.fonts?.addEventListener?.('loadingdone', meet);
     return () => {
       window.cancelAnimationFrame(beeld);
       el.removeEventListener('click', meet);
       el.removeEventListener('load', meet, true);
       window.removeEventListener('resize', meet);
+      document.fonts?.removeEventListener?.('loadingdone', meet);
     };
   }, [niveau, actief]);
 
@@ -240,7 +250,9 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
             aria-controls={`paneel-${t.id}`}
             tabIndex={t.id === actief ? 0 : -1}
             className={niveau === 'tab' ? styles.tab : styles.stap}
-            title={t.label === t.titel ? undefined : t.titel}
+            // Een stap in een volle rij staat ingekort op zijn knop: dan
+            // zegt de titel hoe hij voluit heet.
+            title={t.label !== t.titel ? t.titel : niveau === 'stap' ? t.label : undefined}
             aria-label={t.kort ? t.label : undefined}
             onClick={() => kies(t.id)}
           >
@@ -248,7 +260,11 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
             {niveau === 'tab' && t.werkvorm && (
               <WerkvormIcoon id={t.werkvorm} className={styles.tabIcoon} />
             )}
-            {t.kort ?? t.label}
+            {niveau === 'stap' ? (
+              <span className={styles.stapLabel}>{t.kort ?? t.label}</span>
+            ) : (
+              (t.kort ?? t.label)
+            )}
           </button>
         ))}
       </div>
@@ -324,7 +340,7 @@ export function LesTab({
         </ReeksContext.Provider>
       </PaneelContext.Provider>
       {rij && volgende && (
-        <p className={styles.verder}>
+        <p className={styles.verder} data-les-verder="">
           <button
             type="button"
             className="button button--primary button--sm"

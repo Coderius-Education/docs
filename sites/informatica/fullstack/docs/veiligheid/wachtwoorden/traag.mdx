@@ -59,6 +59,8 @@ Een `PasswordHasher` rekent Argon2-hashes uit. In les 7 gebruik je hem in je ser
 
 </CodeUitleg>
 
+### De uitkomst
+
 <Gelukt>
 
 `python meten.py` print na een paar seconden twee regels. Op de computer
@@ -81,7 +83,7 @@ is steeds enorm: tienduizenden tot honderdduizenden keren.
 Je server rekent één hash uit als iemand inlogt. Of dat een miljoenste of een
 twintigste seconde duurt, merkt de gebruiker niet. Wie de database heeft
 gestolen en per gebruiker 5000 veelgebruikte wachtwoorden wil proberen,
-merkt het wel. Met de getallen hierboven kost dat met `sha256` een paar
+merkt het wel. Met de getallen uit Meet het zelf kost dat met `sha256` een paar
 duizendste seconde, en met Argon2 ruim vier minuten, voor elke gebruiker
 opnieuw. Bij duizend gebruikers is dat ruim drie dagen.
 

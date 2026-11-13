@@ -110,12 +110,28 @@ export default function CodeUitleg({ children }: { children?: ReactNode }): Reac
     if (boven > vak.clientHeight - 2 * regel) vak.scrollTop += boven - vak.clientHeight / 3;
   }, [inTab, inBeeld, eersteRegel]);
 
+  // In een tabblad breekt een regel die niet in de kolom past af, in plaats
+  // van dat zijn eind buiten beeld valt (zie .inTab in de opmaak). Het vervolg
+  // springt vier tekens verder in dan de regel zelf, zoals in een editor: op
+  // de kantlijn las het als een nieuwe regel zonder inspringing.
+  useEffect(() => {
+    if (!inTab) return;
+    const lijnen = codeRef.current?.querySelectorAll<HTMLElement>('.token-line') ?? [];
+    for (const lijn of Array.from(lijnen)) {
+      const spaties = /^ */.exec(lijn.textContent ?? '')?.[0].length ?? 0;
+      lijn.style.setProperty('--inspringing', String(spaties));
+    }
+  }, [inTab]);
+
   const zetVast = useCallback((n: number, tot?: number) => {
     setVast((huidig) => (huidig?.n === n ? null : { n, tot }));
   }, []);
 
   return (
-    <div className={`${styles.blok}${inTab && regels.length > 0 ? ` ${styles.inTab}` : ''}`}>
+    <div
+      className={`${styles.blok}${inTab && regels.length > 0 ? ` ${styles.inTab}` : ''}`}
+      data-code-uitleg=""
+    >
       <div className={styles.code} ref={codeRef}>
         {codeblok}
       </div>

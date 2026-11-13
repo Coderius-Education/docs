@@ -25,6 +25,8 @@ with SqliteDict("sessies.db") as sessies:
         print(sessie_id, sessie["naam"])
 ```
 
+### Het script draaien
+
 Draai het met `python lees_sessies.py`. Je server hoeft er niet voor te
 draaien.
 
@@ -63,6 +65,8 @@ dan je zelf maakte:
 | `sessies.db` | de sessie-id's van je bezoekers | nee |
 | `.venv/` | de virtual environment met alle packages | nee |
 | `__pycache__/` | bestanden die Python zelf maakt om sneller te starten | nee |
+
+### Wat je deelt en wat niet
 
 Een `.db`-bestand hoort bij je server, niet bij je code. De berichten zijn van
 je bezoekers, en een sessie-id is een sleutel. `.venv` bevat geen geheimen,
@@ -138,7 +142,7 @@ heeft, heeft alle sessies die je server kent.
 ### Opdracht 2: Investigate - Een zip voor je docent
 
 Je wilt je project inleveren als zip. Welke bestanden en mappen uit de tabel
-stop je erin, en welke niet?
+bij Wat er nog meer in je map staat stop je erin, en welke niet?
 
 <details>
 <summary>Antwoord</summary>
