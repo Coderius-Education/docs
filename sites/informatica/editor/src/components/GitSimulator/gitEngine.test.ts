@@ -268,6 +268,25 @@ describe('de naam van een nieuw bestand', () => {
     for (const naam of ['a"b.txt', "it's.txt", 'a\\b', '*.txt', 'a;b', '-n'])
       expect(bestandsnaamFout(naam, {}), naam).not.toBeNull();
   });
+
+  it('een naam die op .gitignore lijkt, zegt het: git leest alleen .gitignore', () => {
+    // Alleen `gitignore` zonder punt werd opgevangen. Met `.gitignore.txt`
+    // of `.gitingore` gebeurde niets, en zag de leerling alleen dat git
+    // geheim.txt bleef tonen.
+    for (const naam of [
+      '.gitignore.txt',
+      'gitignore.txt',
+      '.gitingore',
+      '.gitignor',
+      '.gitigore',
+      '.Gitignore',
+      '.GITIGNORE',
+      '.gitignores',
+    ])
+      expect(bestandsnaamFout(naam, {}), naam).toMatch(/Bedoel je \.gitignore\?/);
+    for (const naam of ['.gitignore', 'geheim.txt', 'hello.txt', '.github', '.gitkeep', 'git.txt'])
+      expect(bestandsnaamFout(naam, {}), naam).toBeNull();
+  });
 });
 
 describe('een bestand dat weg is', () => {
@@ -381,6 +400,21 @@ describe('de regel zoals een shell hem leest', () => {
     const mis = runCommand(s, 'git add nope.txt && git commit -m "een"');
     expect(mis.ok).toBe(false);
     expect(mis.newState.commits).toHaveLength(0);
+  });
+
+  it('een ; aan het eind voert het commando uit; een && aan het eind wacht, en doet niets', () => {
+    // `git status;` gaf een rode fout. Een regel die op && eindigt, voert
+    // een terminal pas uit als de rest er is: eerst deed de simulator het
+    // eerste deel al.
+    const s = draai(START(), 'git init');
+    const puntkomma = runCommand(s, 'git add . ;');
+    expect(puntkomma.ok).toBe(true);
+    expect(puntkomma.output).toBe('');
+    expect(Object.keys(puntkomma.newState.staged ?? {})).not.toEqual([]);
+    const open = runCommand(s, 'git add . &&');
+    expect(open.ok).toBe(false);
+    expect(open.output).toMatch(/^hint: na && hoort nog een commando/);
+    expect(open.newState.staged).toEqual({});
   });
 
   it('een naam met een spatie tussen aanhalingstekens', () => {

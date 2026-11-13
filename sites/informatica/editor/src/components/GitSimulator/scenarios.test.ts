@@ -173,6 +173,62 @@ describe('stap 7: .gitignore geldt alleen voor wat git nog niet volgt', () => {
     expect(s.objective.check(st)).toBe(true);
   });
 
+  it('na git rm --cached noemt de tip alleen nog de --amend', () => {
+    // De tip bleef `git rm --cached geheim.txt` aanraden nadat de leerling
+    // dat al deed, en nog een keer gaf `fatal: pathspec 'geheim.txt' did
+    // not match any files`.
+    const anders = { soort: 'schrijf', naam: 'hello.txt', inhoud: 'Hallo.\n' } as const;
+    const state = na(
+      geheim,
+      anders,
+      'git add .',
+      'git commit -m "oeps"',
+      negeer,
+      'git rm --cached geheim.txt',
+    );
+    expect(s.objective.vast?.(state)).toBeNull();
+    const tip = s.objective.tip?.(state) ?? '';
+    expect(tip).toMatch(/git commit --amend/);
+    expect(tip).not.toMatch(/git rm --cached/);
+    expect(runCommand(state, 'git rm --cached geheim.txt').ok).toBe(false);
+    expect(s.objective.check(runCommand(state, 'git commit --amend -m "zonder"').newState)).toBe(
+      true,
+    );
+  });
+
+  it('is geheim.txt weg uit de werkmap, dan zegt de tip het, en hoe het terugkomt', () => {
+    // Weggegooid met de knop x, of met git rm en --amend: het doel bleef
+    // open, zonder dat iets zei waarom.
+    const anders = { soort: 'schrijf', naam: 'hello.txt', inhoud: 'Hallo.\n' } as const;
+    const weg = { soort: 'verwijder', naam: 'geheim.txt' } as const;
+    for (const [hoe, state] of [
+      ['met de knop x', na(geheim, negeer, weg)],
+      [
+        'met git rm en --amend',
+        na(
+          geheim,
+          anders,
+          'git add .',
+          'git commit -m "oeps"',
+          negeer,
+          'git rm geheim.txt',
+          'git commit --amend -m "zonder"',
+        ),
+      ],
+    ] as const) {
+      expect(s.objective.check(state), hoe).toBe(false);
+      expect(s.objective.vast?.(state), hoe).toBeNull();
+      expect(s.objective.tip?.(state), hoe).toMatch(/niet in de werkmap.*\+ nieuw bestand/);
+      expect(s.objective.check(doeStap(state, geheim).state), hoe).toBe(true);
+    }
+  });
+
+  it('een spatie voor geheim.txt in .gitignore: de tip zegt dat git die meeleest', () => {
+    const state = na(geheim, { soort: 'schrijf', naam: '.gitignore', inhoud: ' geheim.txt\n' });
+    expect(s.objective.check(state)).toBe(false);
+    expect(s.objective.tip?.(state)).toMatch(/spatie voor geheim\.txt/);
+  });
+
   it('in de goede volgorde is er niets vastgelopen', () => {
     expect(s.objective.vast?.(na(geheim))).toBeNull();
     const state = na(geheim, negeer);

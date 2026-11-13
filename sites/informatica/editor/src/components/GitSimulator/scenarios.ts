@@ -178,14 +178,25 @@ export const SCENARIOS: Record<string, Scenario> = {
           ? 'geheim.txt staat al in een commit, en daar haalt .gitignore het niet meer uit: het wachtwoord blijft in de geschiedenis. Klik op herstart oefening en maak .gitignore voordat je git add doet.'
           : null,
       tip: (s) => {
-        if (!inGitignore(s, 'geheim.txt')) return null;
-        if (inEenCommit(s, 'geheim.txt'))
-          return teRedden(s)
-            ? 'geheim.txt staat in je laatste commit. Haal het eruit met git rm --cached geheim.txt en vervang die commit met git commit --amend -m "…".'
+        if (!inGitignore(s, 'geheim.txt'))
+          return spatieVoorGeheim(s)
+            ? 'In je .gitignore staat een spatie voor geheim.txt. Git leest die spatie als deel van de naam: haal hem weg.'
             : null;
-        return gevolgd(s, 'geheim.txt')
-          ? 'git volgt geheim.txt nog: het staat in staging, en dan doet .gitignore niets. Haal het eruit met git restore --staged geheim.txt.'
-          : null;
+        if (inEenCommit(s, 'geheim.txt')) {
+          if (!teRedden(s)) return null;
+          // Na git rm --cached staat het niet meer in de index: nog een keer
+          // gaf `fatal: pathspec 'geheim.txt' did not match any files`.
+          return gevolgd(s, 'geheim.txt')
+            ? 'geheim.txt staat in je laatste commit. Haal het eruit met git rm --cached geheim.txt en vervang die commit met git commit --amend -m "…".'
+            : 'git volgt geheim.txt niet meer, maar het staat nog in je laatste commit. Vervang die commit met git commit --amend -m "…".';
+        }
+        if (gevolgd(s, 'geheim.txt'))
+          return 'git volgt geheim.txt nog: het staat in staging, en dan doet .gitignore niets. Haal het eruit met git restore --staged geheim.txt.';
+        // Weggegooid met de knop x, of met git rm: dan valt er niets te
+        // negeren, en bleef het doel open zonder dat iets zei waarom.
+        return 'geheim.txt' in s.workingDir
+          ? null
+          : 'Je .gitignore negeert geheim.txt, maar geheim.txt staat niet in de werkmap. Maak het opnieuw met + nieuw bestand: dan zie je dat git het negeert.';
       },
     },
     oplossing: [
@@ -212,6 +223,16 @@ function teRedden(s: RepoState): boolean {
   );
   const namen = new Set([...Object.keys(zonder), ...Object.keys(ouder)]);
   return [...namen].some((n) => zonder[n] !== ouder[n]);
+}
+
+/**
+ * Staat geheim.txt in .gitignore met een spatie of tab ervoor? Git leest die
+ * als deel van de naam, en negeert geheim.txt dan niet.
+ */
+function spatieVoorGeheim(s: RepoState): boolean {
+  return (s.workingDir['.gitignore'] ?? '')
+    .split('\n')
+    .some((r) => /^\s/.test(r) && r.trim() === 'geheim.txt');
 }
 
 export function scenario(id: string): Scenario {

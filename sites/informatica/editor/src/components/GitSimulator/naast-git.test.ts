@@ -1,10 +1,11 @@
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
-  GIT_VERSIE,
+  GIT_VERSIE_SIMULATOR,
   type RepoState,
   deleteFile,
   emptyState,
@@ -13,7 +14,8 @@ import {
 } from './gitEngine';
 
 // Elke reeks hieronder loopt twee keer: in de simulator, en met de echte git
-// in een lege map. Na elk commando moeten de uitvoer en het slagen gelijk
+// in een lege map, in bash: wat de shell met een regel doet (`*` invullen,
+// een `;` aan het eind), doet de simulator ook. Na elk commando moeten de uitvoer en het slagen gelijk
 // zijn (de exitcode van git tegen `ok` van de simulator). Wat de simulator
 // zelf toevoegt, een `hint:` in het Nederlands, telt niet mee; git's eigen
 // hints ook niet. Hashes en datums verschillen per keer en worden gelijk
@@ -53,11 +55,16 @@ const omgeving = () => ({
   GIT_PAGER: 'cat',
 });
 
-/** Hashes, datums en het pad van de repository: die verschillen altijd. */
+/**
+ * Hashes, datums en het pad van de repository: die verschillen altijd. Een
+ * syntaxfout zet `bash -c` als `bash: -c: line 1: …` met de regel eronder;
+ * in een terminal staat er alleen `bash: …`.
+ */
 function vorm(uitvoer: string): string {
   return uitvoer
     .split('\n')
-    .filter((r) => !r.startsWith('hint: '))
+    .filter((r) => !r.startsWith('hint: ') && !/^bash: -c: line \d+: `/.test(r))
+    .map((r) => r.replace(/^bash: -c: line \d+: /, 'bash: '))
     .join('\n')
     .replace(/[0-9a-f]{40}/g, 'HASH')
     .replace(/^\[main (\(root-commit\) )?[0-9a-f]{7}\]/gm, '[main $1ID]')
@@ -90,7 +97,7 @@ function naastGit(begin: Record<string, string>, stappen: Stap[]): Uitkomst[] {
       let echt: string;
       let echtOk = true;
       try {
-        echt = execFileSync('sh', ['-c', `{ ${commando}\n} 2>&1`], {
+        echt = execFileSync('bash', ['-c', `{ ${commando}\n} 2>&1`], {
           cwd: map,
           encoding: 'utf8',
           env: omgeving(),
@@ -98,7 +105,9 @@ function naastGit(begin: Record<string, string>, stappen: Stap[]): Uitkomst[] {
         });
       } catch (e) {
         echtOk = false;
-        echt = (e as { stdout?: string }).stdout ?? '';
+        // Een syntaxfout meldt bash zelf, buiten de 2>&1 om.
+        const fout = e as { stdout?: string; stderr?: string };
+        echt = `${fout.stdout ?? ''}${fout.stderr ?? ''}`;
       }
       const r = runCommand(state, commando);
       state = r.newState;
@@ -130,6 +139,19 @@ const ANDERS_IN_243: { nieuw: string; oud: string; oudOk: boolean }[] = [
     nieuw: "fatal: '3x': not an integer",
     oud: "fatal: '3x': not a non-negative integer",
     oudOk: false,
+  },
+  // 2.43 las bij -n en --max-count de cijfers vooraan in, en anders 0.
+  { nieuw: "fatal: '=3': not an integer", oud: '', oudOk: true },
+  { nieuw: "fatal: 'abc': not an integer", oud: '', oudOk: true },
+  { nieuw: "fatal: '': not an integer", oud: '', oudOk: true },
+  { nieuw: "fatal: '2x': not an integer", oud: 'ID (HEAD -> main) drie\nID twee', oudOk: true },
+  { nieuw: "fatal: '1x': not an integer", oud: 'ID (HEAD -> main) drie', oudOk: true },
+  { nieuw: "fatal: '1.5': not an integer", oud: 'ID (HEAD -> main) drie', oudOk: true },
+  // Te groot voor een int: 2.43 toonde alles.
+  {
+    nieuw: "fatal: '99999999999': not an integer",
+    oud: 'ID (HEAD -> main) drie\nID twee\nID een',
+    oudOk: true,
   },
 ];
 
@@ -404,6 +426,31 @@ describe('git log', () => {
       'git --no-pager log --oneline',
     ]);
   });
+
+  it('een telling die geen geheel getal is, weigert git 2.56', () => {
+    // Uit een review: de simulator las de cijfers vooraan (`-n2x` was 2)
+    // of 0, en weigerde `-n -1`, dat in git alles toont.
+    gelijkAanGit(HELLO, [
+      ...DRIE,
+      'git log --oneline -n=3',
+      'git log --oneline --max-count=abc',
+      'git log --oneline --max-count=2x',
+      'git log --oneline --max-count 2x',
+      'git log --oneline --max-count=',
+      'git log --oneline -n2x',
+      'git log --oneline -n 1x',
+      'git log --oneline -n 1.5',
+      "git log --oneline -n ''",
+      'git log --oneline -n 99999999999',
+      'git log --oneline -n -1',
+      'git log --oneline -n-1',
+      'git log --oneline --max-count=-1',
+      'git log --oneline -n -0',
+      'git log --oneline -n 03',
+      'git log --oneline -n +2',
+      "git log --oneline -n ' 2'",
+    ]);
+  });
 });
 
 describe('git add', () => {
@@ -457,6 +504,14 @@ describe('.gitignore met patronen', () => {
     '# geheim.txt',
     'geheim.tx?',
     '*',
+    // Een spatie vooraan hoort bij de naam; spaties achteraan telt git niet
+    // mee, tenzij er een backslash voor staat, en een tab wel. Eerst haalde
+    // de simulator alles weg, en negeerde hij wat git bleef tonen.
+    ' geheim.txt',
+    'geheim.txt   ',
+    'geheim.txt\\ ',
+    'geheim.txt\t',
+    '\tgeheim.txt',
   ]) {
     it(JSON.stringify(patroon), () => {
       gelijkAanGit({ ...HELLO, 'geheim.txt': 'w\n', '#notitie.txt': 'n\n' }, [
@@ -505,8 +560,100 @@ describe('de shell om git heen', () => {
     for (const c of ['git --version', 'git -v', 'git version']) {
       const r = runCommand(emptyState(), c);
       expect(r.ok, c).toBe(true);
-      if (echt === `git version ${GIT_VERSIE}`) expect(r.output, c).toBe(echt);
+      if (echt === `git version ${GIT_VERSIE_SIMULATOR}`) expect(r.output, c).toBe(echt);
       else expect(r.output, c).toMatch(/^git version \d+\.\d+\.\d+$/);
     }
+  });
+
+  it('git --version noemt de git die de simulator volgt: die van CI', () => {
+    // Er stond 2.43.0, terwijl de simulator git 2.56 volgt. De versie van
+    // CI staat in build.yml (GIT_VERSIE, job test).
+    const build = readFileSync(
+      fileURLToPath(new URL('../../../../../../.github/workflows/build.yml', import.meta.url)),
+      'utf8',
+    );
+    const ci = build.match(/^\s*GIT_VERSIE: '([\d.]+)'/m)?.[1];
+    expect(ci).toBeTruthy();
+    expect(GIT_VERSIE_SIMULATOR).toBe(ci);
+    expect(runCommand(emptyState(), 'git --version').output).toBe(`git version ${ci}`);
+  });
+
+  it('een ; aan het eind mag; ervoor, dubbel of zonder commando is het een fout van bash', () => {
+    // `git status;` gaf een rode fout, terwijl bash het gewoon uitvoert.
+    gelijkAanGit(HELLO, [
+      'git init',
+      'git status;',
+      'git add . ;',
+      'git status -s ;  ',
+      'git status -s; git log --oneline;',
+      ';git status',
+      'git status;;',
+      'git status; ;',
+      'git status && ; git log',
+      ';',
+    ]);
+  });
+
+  it('een tikfout: git noemt het commando dat erop lijkt', () => {
+    // Echte git zegt onder "is not a git command" welk commando je
+    // bedoelde; de simulator zei het niet.
+    gelijkAanGit(HELLO, [
+      'git init',
+      'git stauts',
+      'git innit',
+      'git ad .',
+      'git comit -m "x"',
+      'git commmit -m "x"',
+      'git statsu',
+      'git sttaus',
+      'git stat',
+      'git lgo',
+      'git inti',
+      'git resotre .',
+      'git restor',
+      'git psuh',
+      'git pusj',
+      'git xyzzy',
+    ]);
+  });
+});
+
+describe('woorden met * ? of [ zonder aanhalingstekens vult de shell in', () => {
+  // In een terminal krijgt git niet `*` maar de namen die erop passen,
+  // zonder de namen met een punt vooraan. Eerst las de simulator `*` als
+  // patroon van git, en sloeg hij geheim.txt stil over waar git het met
+  // naam kreeg en weigerde.
+  it('git add *, *.md, geh*, h?llo.txt en [bh]*', () => {
+    gelijkAanGit({ ...HELLO, 'geheim.txt': 'w\n', 'b.md': 'b\n' }, [
+      'git init',
+      { schrijf: '.gitignore', inhoud: 'geheim.txt\n' },
+      'git add *',
+      'git status -s',
+      'git rm --cached *',
+      'git add *.md',
+      'git add geh*',
+      'git add h?llo.txt',
+      'git status -s',
+      'git rm --cached [bh]*',
+      'git add [bh]*',
+      'git status -s',
+    ]);
+  });
+
+  it('zonder treffer, of tussen aanhalingstekens, krijgt git het patroon zelf', () => {
+    gelijkAanGit({ ...HELLO, 'geheim.txt': 'w\n', 'b.md': 'b\n' }, [
+      'git init',
+      { schrijf: '.gitignore', inhoud: 'geheim.txt\n' },
+      'git add *.py',
+      'git add \\*.txt',
+      'git status -s',
+      'git rm --cached hello.txt',
+      'git add "*".txt',
+      'git status -s',
+      "git add 'b'*",
+      'git status -s',
+      'git commit -m "x" *',
+      'git log --oneline -- *.md',
+    ]);
   });
 });

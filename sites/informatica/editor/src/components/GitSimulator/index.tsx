@@ -1,3 +1,4 @@
+import { VOLGENDE_KNOP } from '@coderius/shared/components/LesTabs/paneel';
 import { pasHoogte } from '@coderius/shared/components/LesTabs/pasHoogte';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import {
@@ -111,6 +112,10 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   const openerRef = useRef<HTMLElement | null>(null);
   /** Waarmee de leerling het laatst in de uitvoer drukte: muis, pen of vinger. */
   const aanwijzerRef = useRef('mouse');
+  /** Esc is net ingedrukt in de invoer: de volgende Tab laat hem los. */
+  const losRef = useRef(false);
+  /** De muis ging omlaag op de achtergrond van het venster, niet erin. */
+  const naastVensterRef = useRef(false);
 
   // Een stap is één scherm: de uitleg, de simulator en wat eronder staat. De
   // uitvoer van de terminal krijgt daarom de hoogte die op het scherm
@@ -218,6 +223,32 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
   };
 
   const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    // Tab vult aan, dus met Tab alleen kom je de invoer niet uit (WCAG
+    // 2.1.2). Esc en dan Tab gaat naar de knop Volgende van het open
+    // tabblad, zoals in de oefenterminal van Linux (maakUitweg in
+    // LinuxTerminal/regel.js); is die er niet, dan zet de browser de focus
+    // verder. Elke andere toets zet de uitweg weer uit.
+    if (e.key === 'Escape') {
+      losRef.current = true;
+      return;
+    }
+    // Shift+Tab vult niets aan: daarmee gaat de focus altijd terug.
+    if (e.key === 'Tab' && e.shiftKey) {
+      losRef.current = false;
+      return;
+    }
+    if (e.key === 'Tab' && losRef.current) {
+      losRef.current = false;
+      const knop = (
+        inputRef.current?.closest('[data-les-tabs]') ?? document
+      ).querySelector<HTMLElement>(VOLGENDE_KNOP);
+      if (knop) {
+        e.preventDefault();
+        knop.focus();
+      }
+      return;
+    }
+    if (e.key !== 'Shift') losRef.current = false;
     if (e.key === 'Tab') {
       // Aanvullen zoals een echte shell: één kandidaat vult aan, meer
       // kandidaten tonen de lijst. Zonder preventDefault springt de focus uit
@@ -491,10 +522,14 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
             <input
               ref={inputRef}
               className={styles.terminalInputField}
-              placeholder="typ hier een commando"
+              placeholder="typ een commando, Esc en dan Tab gaat verder"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={onKey}
+              // Wie Esc drukt en wegklikt, vult bij terugkomst met Tab aan.
+              onBlur={() => {
+                losRef.current = false;
+              }}
               spellCheck={false}
               autoCapitalize="off"
               autoCorrect="off"
@@ -522,9 +557,17 @@ function SimulatorInner({ scenarioId, allowFileEditing = true, intro }: Props): 
             sluitEditor();
           }}
           // Een klik naast het venster (op de achtergrond) sluit het; het
-          // venster zelf is het vak erin.
+          // venster zelf is het vak erin. Alleen als de muis daar ook omlaag
+          // ging: wie in het vak tekst selecteerde en de knop buiten het vak
+          // losliet, kreeg ook een klik op de achtergrond, en dan was het
+          // getypte weg.
+          onPointerDown={(e) => {
+            naastVensterRef.current = e.target === e.currentTarget;
+          }}
           onClick={(e) => {
-            if (e.target === e.currentTarget) sluitEditor();
+            const naast = naastVensterRef.current;
+            naastVensterRef.current = false;
+            if (naast && e.target === e.currentTarget) sluitEditor();
           }}
           onKeyDown={vensterToets}
         >

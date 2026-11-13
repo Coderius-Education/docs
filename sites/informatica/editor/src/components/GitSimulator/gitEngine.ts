@@ -10,14 +10,21 @@
 // opties afdrukt (`usage: …`), staat alleen zijn eerste regel en daaronder
 // een hint: veertig regels opties passen niet in de terminal van een stap.
 //
-// De strings hieronder zijn overgenomen van git 2.43 en worden bewaakt door
-// echte-git.test.ts, die ze naast de uitvoer van de geïnstalleerde git legt.
+// De strings hieronder volgen git 2.56 (de git die CI zelf bouwt, en die een
+// leerling met de nieuwste Git voor Windows thuis heeft). echte-git.test.ts
+// en naast-git.test.ts leggen ze naast de uitvoer van de geïnstalleerde git;
+// waar git 2.43 (Ubuntu 24.04) iets anders zegt, staat dat in
+// `ANDERS_IN_243` van naast-git.test.ts.
 
 /** Waar de repository "staat". Alleen voor de tekst van `git init`. */
 const REPO_PAD = '/home/jij/git-oefenen/.git/';
 
-/** De versie die `git --version` noemt: die waarmee de uitvoer is vergeleken. */
-export const GIT_VERSIE = '2.43.0';
+/**
+ * De versie die `git --version` noemt: die waarmee de uitvoer is vergeleken,
+ * en dezelfde als `GIT_VERSIE` in build.yml (naast-git.test.ts). Een andere
+ * naam dan die variabele van CI, zodat de twee niet door elkaar lopen.
+ */
+export const GIT_VERSIE_SIMULATOR = '2.56.1';
 
 const NIET_IN_REPO = 'fatal: not a git repository (or any of the parent directories): .git';
 const NIET_IN_REPO_HINT = `${NIET_IN_REPO}\nhint: van deze map is nog geen repository gemaakt — begin met 'git init'`;
@@ -174,12 +181,37 @@ export function inGitignore(state: RepoState, name: string): boolean {
   return uit;
 }
 
-/** De regels van .gitignore die git leest: geen lege regels en geen `#`-commentaar. */
+/**
+ * Spaties aan het eind van een regel telt git niet mee, tenzij er een
+ * backslash voor staat (`geheim.txt\ `). Alleen spaties: een tab blijft.
+ * Zo doet git het in `trim_trailing_spaces` (dir.c).
+ */
+function zonderSpatiesAchter(regel: string): string {
+  let eersteSpatie = -1;
+  for (let i = 0; i < regel.length; i++) {
+    if (regel[i] === ' ') {
+      if (eersteSpatie === -1) eersteSpatie = i;
+    } else if (regel[i] === '\\') {
+      i++;
+      if (i >= regel.length) return regel;
+      eersteSpatie = -1;
+    } else eersteSpatie = -1;
+  }
+  return eersteSpatie === -1 ? regel : regel.slice(0, eersteSpatie);
+}
+
+/**
+ * De regels van .gitignore die git leest: geen lege regels en geen
+ * `#`-commentaar. Een spatie vooraan hoort bij de naam: ` geheim.txt`
+ * negeert geheim.txt niet. Eerst haalde de simulator hem weg, en negeerde
+ * hij wat git bleef tonen.
+ */
 function regelsVanGitignore(inhoud: string): string[] {
   return inhoud
     .split('\n')
-    .map((l) => l.trim())
-    .filter((l) => l && !l.startsWith('#'));
+    .filter((l) => !l.startsWith('#'))
+    .map((l) => zonderSpatiesAchter(l.replace(/\r$/, '')))
+    .filter((l) => l);
 }
 
 function boomVan(state: RepoState, id: string | null): Record<string, string> {
@@ -414,29 +446,78 @@ function statusKort(state: RepoState, opties: StatusOpties): string {
  * maakt het volgende teken gewoon (`mijn\ bestand.txt`). `open` is het
  * aanhalingsteken dat niet gesloten is; een shell wacht dan op meer.
  */
-export function woordenVan(regel: string): { woorden: string[]; open: string | null } {
+export function woordenVan(regel: string): {
+  woorden: string[];
+  open: string | null;
+  /**
+   * Per woord het patroon voor de shell als er een `*`, `?` of `[` buiten
+   * aanhalingstekens in staat, anders null. Wat tussen aanhalingstekens of
+   * na een backslash staat, is in het patroon gewoon tekst (`\*`).
+   */
+  jokers: (string | null)[];
+} {
   const woorden: string[] = [];
+  const jokers: (string | null)[] = [];
   let huidig: string | null = null;
+  let patroon = '';
+  let joker = false;
   let quote: string | null = null;
+  const letterlijk = (ch: string) => {
+    huidig = (huidig ?? '') + ch;
+    patroon += /[*?[\]\\]/.test(ch) ? `\\${ch}` : ch;
+  };
+  const sluit = () => {
+    if (huidig !== null) {
+      woorden.push(huidig);
+      jokers.push(joker ? patroon : null);
+    }
+    huidig = null;
+    patroon = '';
+    joker = false;
+  };
   for (let i = 0; i < regel.length; i++) {
     const ch = regel[i];
     if (quote) {
       if (ch === quote) quote = null;
       else if (quote === '"' && ch === '\\' && /["\\$`]/.test(regel[i + 1] ?? ''))
-        huidig = (huidig ?? '') + regel[++i];
-      else huidig = (huidig ?? '') + ch;
+        letterlijk(regel[++i]);
+      else letterlijk(ch);
     } else if (ch === '"' || ch === "'") {
       quote = ch;
       huidig = huidig ?? '';
     } else if (ch === '\\' && i + 1 < regel.length) {
-      huidig = (huidig ?? '') + regel[++i];
+      letterlijk(regel[++i]);
     } else if (/\s/.test(ch)) {
-      if (huidig !== null) woorden.push(huidig);
-      huidig = null;
-    } else huidig = (huidig ?? '') + ch;
+      sluit();
+    } else {
+      huidig = (huidig ?? '') + ch;
+      patroon += ch;
+      if (ch === '*' || ch === '?' || ch === '[') joker = true;
+    }
   }
-  if (huidig !== null) woorden.push(huidig);
-  return { woorden, open: quote };
+  sluit();
+  return { woorden, open: quote, jokers };
+}
+
+/**
+ * Wat de shell doet voordat git iets ziet: een woord met `*`, `?` of `[`
+ * buiten aanhalingstekens wordt de namen in de werkmap die erop passen, op
+ * volgorde. Een naam met een punt vooraan (.gitignore) alleen als het
+ * patroon zelf met een punt begint. Past er niets, dan blijft het woord
+ * staan zoals het was, en leest git het als patroon. Eerst kreeg git
+ * `git add *` letterlijk, en sloeg hij een genegeerd bestand stil over,
+ * terwijl git in een terminal `geheim.txt` met naam krijgt en weigert.
+ */
+function vulJokersIn(woorden: string[], jokers: (string | null)[], werkmap: string[]): string[] {
+  return woorden.flatMap((woord, i) => {
+    const patroon = jokers[i];
+    if (patroon === undefined || patroon === null) return [woord];
+    const regex = new RegExp(`^${globRegex(patroon, '[^/]*')}$`);
+    const treffers = werkmap
+      .filter((n) => (patroon.startsWith('.') || !n.startsWith('.')) && regex.test(n))
+      .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+    return treffers.length ? treffers : [woord];
+  });
 }
 
 /**
@@ -1142,10 +1223,19 @@ function diepte(state: RepoState, id: string | null): number {
   return n;
 }
 
-/** Een getal zoals git het leest met atoi: de cijfers vooraan, anders nul. */
-function atoi(w: string): number {
-  const m = w.match(/^\d+/);
-  return m ? Number(m[0]) : 0;
+/**
+ * Hoeveel commits `-n`, `-<getal>` en `--max-count` vragen, zoals git 2.56
+ * het leest (`parse_count` met `strtol_i`): een heel getal, met spaties
+ * ervoor en een + of - mag, binnen een int. Negatief is alles. Iets anders
+ * is een fout: `-n=3`, `-n2x` en `--max-count=abc` toonden in de simulator
+ * een log, in git 2.56 `fatal: '…': not an integer`.
+ */
+function telling(state: RepoState, w: string): number | CommandResult {
+  const m = w.match(/^[ \t\n\v\f\r]*([+-]?\d+)$/);
+  const n = m ? Number(m[1]) : Number.NaN;
+  if (!m || n > 2 ** 31 - 1 || n < -(2 ** 31))
+    return nietGelukt(state, `fatal: '${w}': not an integer`);
+  return n < 0 ? Number.POSITIVE_INFINITY : n;
 }
 
 function gitLog(state: RepoState, woorden: string[]): CommandResult {
@@ -1176,20 +1266,32 @@ function gitLog(state: RepoState, woorden: string[]): CommandResult {
     else if (w === '--decorate' || w === '-q' || w === '--quiet') {
       // Doet niets dat je hier ziet: de versiering staat al aan, en -q
       // zwijgt alleen over een diff.
-    } else if (/^-\d+$/.test(w)) hoeveel = Number(w.slice(1));
-    else if (/^-\d+/.test(w)) return nietGelukt(state, `fatal: '${w.slice(1)}': not an integer`);
-    else if (w.startsWith('-n') && w.length > 2) hoeveel = atoi(w.slice(2));
-    else if (w === '-n') {
-      if (i + 1 >= woorden.length) return nietGelukt(state, 'error: -n requires an argument');
-      // Een nieuwere git (2.56) weigert wat geen getal is; 2.43 las er 0 in.
-      const waarde = woorden[++i];
-      if (!/^\d+$/.test(waarde)) return nietGelukt(state, `fatal: '${waarde}': not an integer`);
-      hoeveel = Number(waarde);
-    } else if (w.startsWith('--max-count=')) hoeveel = atoi(w.slice('--max-count='.length));
-    else if (w === '--max-count') {
-      if (i + 1 >= woorden.length)
-        return nietGelukt(state, "fatal: Option '--max-count' requires a value");
-      hoeveel = atoi(woorden[++i]);
+    } else if (
+      w.startsWith('--max-count=') ||
+      w === '--max-count' ||
+      /^-\d/.test(w) ||
+      w.startsWith('-n')
+    ) {
+      // Dezelfde volgorde als git (revision.c): `--max-count`, dan
+      // `-<getal>`, dan `-n` met het getal als volgend woord of erachter.
+      // Een nieuwere git (2.56) weigert wat geen getal is; 2.43 las er
+      // meestal 0 of de cijfers vooraan in (ANDERS_IN_243 in naast-git.test.ts).
+      let waarde: string;
+      if (w.startsWith('--max-count=')) waarde = w.slice('--max-count='.length);
+      else if (/^-\d/.test(w)) waarde = w.slice(1);
+      else if (w === '-n' || w === '--max-count') {
+        if (i + 1 >= woorden.length)
+          return nietGelukt(
+            state,
+            w === '-n'
+              ? 'error: -n requires an argument'
+              : "fatal: Option '--max-count' requires a value",
+          );
+        waarde = woorden[++i];
+      } else waarde = w.slice(2);
+      const getal = telling(state, waarde);
+      if (typeof getal !== 'number') return getal;
+      hoeveel = getal;
     } else if (w.startsWith('-')) {
       // Een optie van git die de simulator niet nadoet: git zou hem
       // gewoon uitvoeren, dus geen fatal. Iets wat git niet kent: wel.
@@ -1311,7 +1413,7 @@ function gitCommando(state: RepoState, woorden: string[]): CommandResult {
   while (i < woorden.length && woorden[i].startsWith('-')) {
     const w = woorden[i];
     if (w === '--version' || w === '-v')
-      return { newState: state, output: `git version ${GIT_VERSIE}`, ok: true };
+      return { newState: state, output: `git version ${GIT_VERSIE_SIMULATOR}`, ok: true };
     if (w === '--no-pager' || w === '-P' || w === '-p' || w === '--paginate') {
       i++;
       continue;
@@ -1372,11 +1474,11 @@ function gitCommando(state: RepoState, woorden: string[]): CommandResult {
     case 'log':
       return gitLog(state, args);
     case 'version':
-      return { newState: state, output: `git version ${GIT_VERSIE}`, ok: true };
+      return { newState: state, output: `git version ${GIT_VERSIE_SIMULATOR}`, ok: true };
     default:
       // Een commando dat git wel kent, maar de simulator niet: geen "is not
       // a git command", want dat is niet waar.
-      if (COMMANDOS_VAN_GIT.includes(sub)) {
+      if (COMMANDOS_VAN_GIT.includes(sub) || HULPCOMMANDOS_VAN_GIT.includes(sub)) {
         return nietGelukt(
           state,
           [
@@ -1387,7 +1489,11 @@ function gitCommando(state: RepoState, woorden: string[]): CommandResult {
       }
       return nietGelukt(
         state,
-        `git: '${sub}' is not a git command. See 'git --help'.\nhint: deze simulator kent ${KENT}`,
+        [
+          `git: '${sub}' is not a git command. See 'git --help'.`,
+          ...bedoeldeCommandos(sub),
+          `hint: deze simulator kent ${KENT}`,
+        ].join('\n'),
       );
   }
 }
@@ -1396,7 +1502,8 @@ function gitCommando(state: RepoState, woorden: string[]): CommandResult {
 function _runCommand(state: RepoState, input: string): CommandResult {
   const trimmed = input.trim();
   if (!trimmed) return { newState: state, output: '', ok: true };
-  const { woorden, open } = woordenVan(trimmed);
+  const { woorden: getypt, open, jokers } = woordenVan(trimmed);
+  const woorden = vulJokersIn(getypt, jokers, Object.keys(state.workingDir));
   if (open) {
     return nietGelukt(
       state,
@@ -1414,12 +1521,23 @@ function _runCommand(state: RepoState, input: string): CommandResult {
 
 type Deel = { commando: string; na: '&&' | '||' | ';' | null };
 
+type Keten =
+  | { delen: Deel[] }
+  /** Een teken dat de simulator niet doet: `|`, `>`, `<`, `&`. */
+  | { niet: string }
+  /** Wat bash een syntaxfout noemt: `;git status`, `git status;;`. */
+  | { syntax: string }
+  /** Een regel die op `&&` of `||` eindigt: een terminal wacht op meer. */
+  | { open: '&&' | '||' };
+
 /**
- * Een regel met `&&`, `||` of `;` in losse commando's, zoals een shell:
+ * Een regel met `&&`, `||` of `;` in losse commando's, zoals bash:
  * `git add . && git commit -m "x"`. Tussen aanhalingstekens telt het niet.
- * Null als er iets in staat dat de simulator niet doet (`|`, `>`, `&`).
+ * Een `;` aan het eind mag (`git status;`): eerst gaf dat een rode fout.
+ * Een teken tussen twee commando's zonder commando ervoor (`;git status`,
+ * `git add . && ; git status`) en `;;` zijn in bash een syntaxfout.
  */
-function ketens(regel: string): Deel[] | string {
+function ketens(regel: string): Keten {
   const delen: Deel[] = [];
   let huidig = '';
   let quote: string | null = null;
@@ -1442,17 +1560,20 @@ function ketens(regel: string): Deel[] | string {
     if (ch === '"' || ch === "'") quote = ch;
     const twee = regel.slice(i, i + 2);
     if (twee === '&&' || twee === '||' || ch === ';') {
+      const teken = twee === ';;' || twee === '&&' || twee === '||' ? twee : ';';
+      if (teken === ';;' || !huidig.trim()) return { syntax: teken };
       delen.push({ commando: huidig, na: vorige });
-      vorige = ch === ';' ? ';' : (twee as '&&' | '||');
+      vorige = teken as Deel['na'];
       huidig = '';
-      if (ch !== ';') i++;
+      i += teken.length - 1;
       continue;
     }
-    if (ch === '|' || ch === '>' || ch === '<' || ch === '&') return ch;
+    if (ch === '|' || ch === '>' || ch === '<' || ch === '&') return { niet: ch };
     huidig += ch;
   }
-  delen.push({ commando: huidig, na: vorige });
-  return delen;
+  if (huidig.trim() || vorige === null) delen.push({ commando: huidig, na: vorige });
+  else if (vorige !== ';') return { open: vorige };
+  return { delen };
 }
 
 /**
@@ -1460,29 +1581,31 @@ function ketens(regel: string): Deel[] | string {
  * .gitignore`): de negeerlijst volgt dan mee.
  */
 export function runCommand(state: RepoState, input: string): CommandResult {
-  const delen = ketens(input);
-  if (typeof delen === 'string') {
+  const keten = ketens(input);
+  if (!('delen' in keten)) {
+    const melding =
+      'niet' in keten
+        ? `hint: deze simulator doet geen ${keten.niet}: typ één git-commando, of twee met && ertussen.`
+        : 'syntax' in keten
+          ? [
+              `bash: syntax error near unexpected token \`${keten.syntax}'`,
+              keten.syntax === ';;'
+                ? "hint: tussen twee commando's staat één ;, zoals in git status; git log."
+                : `hint: voor ${keten.syntax} hoort een commando, zoals in git status${keten.syntax === ';' ? ';' : ` ${keten.syntax}`} git log.`,
+            ].join('\n')
+          : `hint: na ${keten.open} hoort nog een commando. Een terminal wacht dan op de rest; typ het erachter.`;
     return {
-      ...nietGelukt(
-        state,
-        `hint: deze simulator doet geen ${delen}: typ één git-commando, of twee met && ertussen.`,
-      ),
+      ...nietGelukt(state, melding),
       newState: { ...state, commands: [...state.commands, input.trim().replace(/\s+/g, ' ')] },
     };
   }
   let st = state;
   const uitvoer: string[] = [];
   let ok = true;
-  for (const { commando, na } of delen) {
+  for (const { commando, na } of keten.delen) {
     if ((na === '&&' && !ok) || (na === '||' && ok)) continue;
     const trimmed = commando.trim();
-    if (!trimmed) {
-      if (delen.length > 1) {
-        ok = false;
-        uitvoer.push('hint: tussen && of ; hoort een commando.');
-      }
-      continue;
-    }
+    if (!trimmed) continue;
     const gitignoreVoor = st.workingDir['.gitignore'];
     const r = _runCommand(st, trimmed);
     // Twee spaties achter elkaar tellen als één, zoals in een shell: `git  status`
@@ -1501,6 +1624,20 @@ export function runCommand(state: RepoState, input: string): CommandResult {
 }
 
 /**
+ * Lijkt deze naam op .gitignore zonder het te zijn? `.gitignore.txt`,
+ * `.gitingore`, `.Gitignore`, `gitignore.txt`: git leest zo'n bestand niet,
+ * en de leerling ziet alleen dat er niets genegeerd wordt.
+ */
+function lijktOpGitignore(naam: string): boolean {
+  if (naam === '.gitignore') return false;
+  const kern = naam
+    .toLowerCase()
+    .replace(/\.(txt|text|md|rtf|doc|docx)$/, '')
+    .replace(/^\.?/, '.');
+  return afstand(kern, '.gitignore', 1, 1, 1, 1) <= 2;
+}
+
+/**
  * Wat er mis is met de naam van een nieuw bestand in de simulator, of null.
  * Opslaan zonder naam deed eerst niets en zei niets, en `gitignore` zonder
  * punt gaf geen enkele aanwijzing. Een spatie mag (je typt de naam dan
@@ -1511,6 +1648,10 @@ export function bestandsnaamFout(naam: string, bestaand: Record<string, string>)
   if (!naam) return 'Geef het bestand een naam, bijvoorbeeld hello.txt.';
   if (naam.includes('/')) return 'Een naam zonder /: de simulator heeft geen mappen.';
   if (naam === 'gitignore') return 'Bedoel je .gitignore? Die naam begint met een punt.';
+  if (lijktOpGitignore(naam))
+    return /^\.?gitignore/i.test(naam)
+      ? 'Bedoel je .gitignore? Git leest alleen een bestand dat precies zo heet: met een punt ervoor, in kleine letters en zonder iets erachter.'
+      : 'Bedoel je .gitignore? Kijk de spelling na: git leest alleen een bestand dat precies zo heet.';
   if (naam === '.' || naam === '..') return 'Die naam heeft de map zelf al. Kies een andere.';
   if (naam.startsWith('-'))
     return 'Een naam die met - begint, leest git als een optie. Kies een andere.';
@@ -1709,6 +1850,142 @@ export const COMMANDOS_VAN_GIT = [
   'stage',
   ...Object.keys(NIEUWER_DAN_243),
 ];
+
+/**
+ * Commando's die git heeft maar `git help -a` niet noemt: hulpjes die git
+ * zelf aanroept, oude namen, en `lfs` (Git voor Windows levert git-lfs mee).
+ * Ze tellen mee als git een commando zoekt dat op een tikfout lijkt
+ * (`bedoeldeCommandos`), zoals in git.
+ */
+export const HULPCOMMANDOS_VAN_GIT = [
+  'lfs',
+  'checkout--worker',
+  'credential-cache--daemon',
+  'difftool--helper',
+  'fsck-objects',
+  'fsmonitor--daemon',
+  'init-db',
+  'merge-octopus',
+  'merge-ours',
+  'merge-recursive',
+  'merge-recursive-ours',
+  'merge-recursive-theirs',
+  'merge-resolve',
+  'merge-subtree',
+  'mergetool--lib',
+  'pickaxe',
+  'receive-pack',
+  'remote-ext',
+  'remote-fd',
+  'sh-i18n--envsubst',
+  'shell',
+  'submodule--helper',
+  'upload-archive',
+  'upload-archive--writer',
+  'upload-pack',
+  'web--browse',
+];
+
+/**
+ * De commando's die `git help` als eerste noemt (in git 2.56). Begint een
+ * daarvan met wat de leerling typte (`git sta`), dan noemt git het altijd.
+ */
+const GEWONE_COMMANDOS = [
+  'add',
+  'backfill',
+  'bisect',
+  'branch',
+  'clone',
+  'commit',
+  'diff',
+  'fetch',
+  'grep',
+  'history',
+  'init',
+  'log',
+  'merge',
+  'mv',
+  'pull',
+  'push',
+  'rebase',
+  'reset',
+  'restore',
+  'rm',
+  'show',
+  'status',
+  'switch',
+  'tag',
+];
+
+/**
+ * De afstand tussen twee woorden zoals git hem rekent (levenshtein.c): wat
+ * een omwisseling (`w`), een ander teken (`s`), een teken erbij (`a`) en
+ * een teken eraf (`d`) kost. Twee letters omgewisseld is één stap.
+ */
+export function afstand(
+  van: string,
+  naar: string,
+  w: number,
+  s: number,
+  a: number,
+  d: number,
+): number {
+  let rij0 = new Array<number>(naar.length + 1).fill(0);
+  let rij1 = Array.from({ length: naar.length + 1 }, (_, j) => j * a);
+  let rij2 = new Array<number>(naar.length + 1).fill(0);
+  for (let i = 0; i < van.length; i++) {
+    rij2[0] = (i + 1) * d;
+    for (let j = 0; j < naar.length; j++) {
+      rij2[j + 1] = rij1[j] + s * (van[i] !== naar[j] ? 1 : 0);
+      if (
+        i > 0 &&
+        j > 0 &&
+        van[i - 1] === naar[j] &&
+        van[i] === naar[j - 1] &&
+        rij2[j + 1] > rij0[j - 1] + w
+      )
+        rij2[j + 1] = rij0[j - 1] + w;
+      if (rij2[j + 1] > rij1[j + 1] + d) rij2[j + 1] = rij1[j + 1] + d;
+      if (rij2[j + 1] > rij2[j] + a) rij2[j + 1] = rij2[j] + a;
+    }
+    [rij0, rij1, rij2] = [rij1, rij2, rij0];
+  }
+  return rij1[naar.length];
+}
+
+/**
+ * Wat git onder "is not a git command" zet als het getypte op een commando
+ * lijkt: `The most similar command is` met dat commando (`git stauts`), of
+ * `The most similar commands are` met een rij (`git ad`: add en am). Zoals
+ * `help_unknown_cmd` in help.c: de afstand met de gewichten van git, een
+ * gewoon commando dat met het getypte begint telt als het beste, en alleen
+ * wat dichtbij genoeg is (minder dan zeven) noemt hij.
+ */
+function bedoeldeCommandos(getypt: string): string[] {
+  const namen = [
+    ...new Set([...COMMANDOS_VAN_SIMULATOR, ...COMMANDOS_VAN_GIT, ...HULPCOMMANDOS_VAN_GIT]),
+  ];
+  const gescoord = namen
+    .map((naam) => ({
+      naam,
+      score:
+        GEWONE_COMMANDOS.includes(naam) && naam.startsWith(getypt)
+          ? 0
+          : afstand(getypt, naam, 0, 2, 1, 3) + 1,
+    }))
+    .sort((x, y) => x.score - y.score || (x.naam < y.naam ? -1 : x.naam > y.naam ? 1 : 0));
+  let n = 0;
+  while (n < gescoord.length && gescoord[n].score === 0) n++;
+  if (n >= gescoord.length) return [];
+  const beste = gescoord[n++].score;
+  while (n < gescoord.length && gescoord[n].score === beste) n++;
+  if (beste >= 7) return [];
+  return [
+    '',
+    n === 1 ? 'The most similar command is' : 'The most similar commands are',
+    ...gescoord.slice(0, n).map((c) => `\t${c.naam}`),
+  ];
+}
 
 /** De commando's die de simulator zelf nadoet. */
 export const COMMANDOS_VAN_SIMULATOR = [

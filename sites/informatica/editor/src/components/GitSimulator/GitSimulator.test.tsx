@@ -100,6 +100,107 @@ describe('het venster voor een bestand', () => {
   });
 });
 
+describe('het venster sluit alleen na een klik naast het vak', () => {
+  it('tekst selecteren en de muis buiten het vak loslaten, sluit het niet', () => {
+    // De klik ging dan naar de dialog zelf, en het getypte was weg.
+    render(<GitSimulator scenarioId="stap-7-gitignore" />);
+    fireEvent.click(screen.getByRole('button', { name: 'bewerk hello.txt' }));
+    const venster = screen.getByRole('dialog');
+    const inhoud = screen.getByRole('textbox', { name: 'Inhoud van het bestand' });
+    fireEvent.change(inhoud, { target: { value: 'Hallo wereld.\nEen nieuwe regel.\n' } });
+    fireEvent.pointerDown(inhoud, { pointerType: 'mouse' });
+    fireEvent.click(venster);
+    expect(screen.getByRole('dialog')).toBe(venster);
+    expect((inhoud as HTMLTextAreaElement).value).toContain('Een nieuwe regel.');
+  });
+
+  it('omlaag en los op de achtergrond sluit het wel', () => {
+    render(<GitSimulator scenarioId="stap-7-gitignore" />);
+    fireEvent.click(screen.getByRole('button', { name: 'bewerk hello.txt' }));
+    const venster = screen.getByRole('dialog');
+    fireEvent.pointerDown(venster, { pointerType: 'mouse' });
+    fireEvent.click(venster);
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+});
+
+describe('met alleen het toetsenbord kom je de invoer uit', () => {
+  // Tab vult aan en kreeg altijd preventDefault, ook Shift+Tab, en Esc deed
+  // niets: wie geen muis gebruikt, zat vast in de invoer (WCAG 2.1.2).
+  beforeEach(() => {
+    // In een tabblad meet de simulator zijn hoogte; jsdom kent dit niet.
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe() {}
+        disconnect() {}
+      },
+    );
+  });
+
+  function inTabblad() {
+    render(
+      <div data-les-tabs="">
+        <div data-les-tab="probeer-het-zelf">
+          <GitSimulator scenarioId="stap-6-log" />
+          <p data-les-verder="">
+            <button type="button">Volgende</button>
+          </p>
+        </div>
+      </div>,
+    );
+    terminal().focus();
+    return screen.getByRole('button', { name: 'Volgende' });
+  }
+  /** Of de browser zijn eigen gang mag gaan: fireEvent geeft false na preventDefault. */
+  const toets = (key: string, extra: { shiftKey?: boolean } = {}) =>
+    fireEvent.keyDown(document.activeElement as Element, { key, ...extra });
+
+  it('Tab alleen vult aan en blijft in de invoer', () => {
+    inTabblad();
+    fireEvent.change(terminal(), { target: { value: 'git st' } });
+    expect(toets('Tab')).toBe(false);
+    expect(document.activeElement).toBe(terminal());
+    expect((terminal() as HTMLInputElement).value).toBe('git status ');
+  });
+
+  it('Esc en dan Tab gaat naar de knop Volgende van het open tabblad', () => {
+    const volgende = inTabblad();
+    toets('Escape');
+    expect(toets('Tab')).toBe(false);
+    expect(document.activeElement).toBe(volgende);
+  });
+
+  it('Shift+Tab laat de browser de focus terugzetten, ook na Esc', () => {
+    inTabblad();
+    expect(toets('Tab', { shiftKey: true })).toBe(true);
+    toets('Escape');
+    toets('Shift');
+    expect(toets('Tab', { shiftKey: true })).toBe(true);
+  });
+
+  it('een andere toets na Esc, of weg en terug, zet de uitweg weer uit', () => {
+    inTabblad();
+    fireEvent.change(terminal(), { target: { value: 'git st' } });
+    toets('Escape');
+    toets('a');
+    expect(toets('Tab')).toBe(false);
+    expect(document.activeElement).toBe(terminal());
+    toets('Escape');
+    fireEvent.blur(terminal());
+    terminal().focus();
+    expect(toets('Tab')).toBe(false);
+    expect(document.activeElement).toBe(terminal());
+  });
+
+  it('zonder knop Volgende gaat de browser na Esc en Tab gewoon verder', () => {
+    render(<GitSimulator scenarioId="stap-6-log" />);
+    terminal().focus();
+    toets('Escape');
+    expect(toets('Tab')).toBe(true);
+  });
+});
+
 describe('een klik in de uitvoer', () => {
   const uitvoer = () => screen.getByRole('log', { name: 'Uitvoer van de terminal' });
 
