@@ -372,7 +372,11 @@ bij `lesTabs`: hij leest elke les met de MDX-parser van Docusaurus zelf en
 dezelfde stap die de tabbladen maakt, dus de handleiding toont wat de
 leerling ziet. `werkvormen.test.ts` eist dat elke tip bij vakdidactiek
 bestaat onder dezelfde naam en met dezelfde paper; hernoem je daar een tip of
-verander je de bron, pas dan `werkvormen.json` mee aan.
+verander je de bron, pas dan `werkvormen.json` mee aan. De tekst bij een
+onderdeel (`doet`) gaat over code. Een cursus waar dat niet klopt (een
+terminal, de git-simulator, een challenge op een ander platform), zegt het
+zelf: `<Werkvormen doet={{ aanpassen: '…' }} />`; de literatuur blijft
+gelijk (linux, editor en ctf, `Werkvorm.test.tsx`).
 
 **De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
 de standaard (schrijfgids §15); web, python, robotica en fullstack hebben hem zo. Hij is een halve pagina: waar de lessen op steunen
@@ -778,9 +782,11 @@ viel er op elk ander scherm niets te typen. Daarvoor is dit gekomen:
   `LinuxTerminal` doet dat, zodat hij in beeld blijft als een antwoord open
   staat.
 - **In de smalle tekstkolom** staat code met iets ernaast onder elkaar en is
-  de rand van een codeblok smaller. Een stap die dicht is, krimpt niet tot
-  zijn nummer: in les 2.4 stonden onder Er gaat iets mis dan alleen 2, 3 en
-  4, en wie zijn melding zocht, moest elke stap openklikken.
+  de rand van een codeblok smaller. De rij stappen schuift er, zoals op een
+  telefoon, met elke naam voluit. Krimpen liet van een dichte stap eerst
+  alleen het nummer over (in les 2.4 moest wie zijn melding zocht elke stap
+  openklikken), daarna twee letters, en een rij die wisselde tussen een en
+  twee regels liet de tekst bij elke stap verspringen.
 - **Een veld dat in een dicht tabblad mount, heeft geen maten.** xterm paste
   zich daar aan op twee kolommen. De `LinuxTerminal` start pas als hij te
   zien is en past zich alleen aan zolang hij te zien is; naast de les neemt
@@ -868,6 +874,31 @@ gebruiken niet. Sindsdien:
   de hulp staat op het scherm waar je vastloopt, en een tutorial noemt geen
   branch die een eerdere al verwijderde. Een docentenhandleiding belooft
   alleen wat de cursus overal doet.
+
+Een tweede review van dezelfde lezers vond wat de eerste reparaties
+stuk maakten, en wat een melding of doel zegt bij het geval ernaast:
+
+- **Een doel kijkt naar wat er gebeurde, niet naar de vorm op het scherm.**
+  Het doel van 2.4.a vergeleek de volgorde van `ls`; met kolommen op een
+  telefoon kwam het vinkje nooit (`namen` in `opdrachten.ts`, en
+  `opdrachten.test.ts` speelt elk antwoord ook op 20, 36 en 41 kolommen).
+  "Met één mv" vraagt één commando dat elke foto noemt (`inEenKeer`); twee
+  commando's op één regel tellen niet.
+- **Een melding noemt de echte reden**: een absoluut pad is geen "twee
+  stappen", hernoemd is niet weg. `opdrachten.test.ts` pint per melding het
+  geval ernaast.
+- **De simulator volgt git ook naast de les**: `git log` met naam, datum en
+  de hele hash, `-n` en `-1`, `commit -m"…"` en `-am`, een lege boodschap,
+  `restore --staged`, patronen in `.gitignore`, en geen "not a git command"
+  voor wat git wel kent (`COMMANDOS_VAN_GIT`, naast `git help -a` gelegd).
+  Elk geval staat in `echte-git.test.ts`.
+- **Een CSS-blok voor een groter scherm staat na de gewone regels.** Met
+  dezelfde selector ervoor won de gewone regel stil (`simulator.test.ts`).
+- **`ls` rekent zoals coreutils**, tot op de grens: een regel korter dan de
+  breedte, kolommen van minstens drie tekens, de laatste kolom zonder
+  spaties erachter (`nieuw.test.ts` legt het naast `ls -C` van de machine).
+- **Een kaart op een overzichtspagina heeft geen emoji** (de wikkel
+  `theme/DocCard/Heading`).
 
 ## Code in MDX-expressies
 
