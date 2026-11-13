@@ -3,9 +3,9 @@ sidebar_position: 1
 pagination_next: hacking/standaard
 ---
 
-# Welkom bij coderius-ctf
+# Welkom bij Capture the Flag
 
-Welkom bij de Cybersecurity **Capture the Flag** challenges van Coderius. De challenges staan op [**ctf.hackchallenges.nl**](https://ctf.hackchallenges.nl/). Op deze site vind je bij elke challenge een pagina met een korte beschrijving en hints.
+Dit zijn de **Capture the Flag**-challenges over cybersecurity van Coderius. De challenges staan op [**ctf.hackchallenges.nl**](https://ctf.hackchallenges.nl/). Op deze site vind je bij elke challenge een pagina met een korte beschrijving en hints.
 
 ## Aan de slag
 
@@ -29,19 +29,19 @@ De challenges zijn verdeeld in drie categorieën:
 Begin met de makkelijke challenges om de basis te leren, en werk daarna door naar de moeilijkere. De link Volgende onder elke challenge volgt deze volgorde.
 
 ### Makkelijk - Begin hier
-1. [Hacking - Standaard](site:ctf/docs/hacking/standaard) - Zwakke wachtwoorden
+1. [Hacking - Standaard](site:ctf/docs/hacking/standaard) - Wachtwoorden
 2. [Hacking - Eentje erbij](site:ctf/docs/hacking/eentje-erbij) - Gegevens opvragen bij een website
 3. [Hacking - Robots](site:ctf/docs/hacking/robots) - Zoekmachines en websites
 4. [Code - Plakken](site:ctf/docs/code/plakken) - Code uitvoeren
-5. [Code - Broncode](site:ctf/docs/code/broncode) - De broncode van een pagina
+5. [Code - Broncode](site:ctf/docs/code/broncode) - HTML-broncode
 6. [Forensics - Voor altijd](site:ctf/docs/forensics/voor-altijd) - Oude versies van websites
 7. [Forensics - België](site:ctf/docs/forensics/belgie) - IP-adressen
-8. [Forensics - Geluidsfragment](site:ctf/docs/forensics/geluidsfragment) - Audio-analyse (je installeert er Audacity voor)
+8. [Forensics - Geluidsfragment](site:ctf/docs/forensics/geluidsfragment) - Audio-analyse (je installeert er een audio-editor voor)
 
 ### Gemiddeld - Nu wordt het interessanter
 9. [Hacking - Virus](site:ctf/docs/hacking/virus) - Virussen en malware
 10. [Hacking - Tekstbestandje](site:ctf/docs/hacking/tekstbestandje) - Verborgen bestanden
-11. [Hacking - Koekjes 1](site:ctf/docs/hacking/koekjes-1) - Cookies bekijken
+11. [Hacking - Koekjes 1](site:ctf/docs/hacking/koekjes-1) - Cookies
 12. [Hacking - Headers](site:ctf/docs/hacking/headers) - HTTP-headers
 13. [Code - Obfuscated](site:ctf/docs/code/obfuscated) - Onleesbaar gemaakte code
 
@@ -55,7 +55,7 @@ Begin met de makkelijke challenges om de basis te leren, en werk daarna door naa
 
 ### Expert - De moeilijkste twee
 20. [Forensics - Logfile](site:ctf/docs/forensics/logfile) - HTTP-statuscodes
-21. [Hacking - Dubbel](site:ctf/docs/hacking/dubbel) - Nog nooit opgelost
+21. [Hacking - Dubbel](site:ctf/docs/hacking/dubbel) - Kwetsbaarheden in websites
 
 ## Tips
 

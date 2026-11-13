@@ -169,6 +169,55 @@ describe('ctf: een hint brengt iets nieuws', () => {
     expect(fout).toEqual([]);
   });
 
+  // Bij twaalf challenges zei hint 1 niets wat De challenge niet al zei, in
+  // andere woorden: "Wat je oefent: een bestand laten scannen op malware" en
+  // hint 1 "er bestaan diensten die bestanden scannen op malware". De vette
+  // term hierboven vangt dat niet, want hint 1 zet vaak niets vet. Hint 1
+  // brengt dus minstens één inhoudswoord dat niet op De challenge, in de
+  // titel of in de omschrijving op de kaart staat.
+  it('hint 1 brengt een woord dat De challenge en de omschrijving niet hebben', () => {
+    const STOP = new Set(
+      'aan als bij dan dat die dit een het hem hij hoe ook kan kun maar met naar niet nog of om op te tot van voor wat je jij je kunt welke wordt worden zijn staat staan heeft hebben deze zoals waar soms vaak goed maak weer eerst daarna altijd nooit iets alles andere eigen echt zelf zich'.split(
+        ' ',
+      ),
+    );
+    const woorden = (tekst: string) =>
+      new Set(
+        tekst
+          .replace(/\]\([^)]*\)/g, ']')
+          .toLowerCase()
+          .match(/\p{L}[\p{L}-]*/gu)
+          ?.filter((w) => w.length >= 5 && !STOP.has(w))
+          // De eerste vijf letters: "scannen" en "scant" zijn hetzelfde woord.
+          .map((w) => w.slice(0, 5)) ?? [],
+      );
+    const fout: string[] = [];
+    for (const c of challenges) {
+      const bekend = woorden(
+        [deChallenge(c.bron), veld(c.bron, 'description'), veld(c.bron, 'title')].join('\n'),
+      );
+      const nieuw = [...woorden(hintsVan(c.bron)[0])].filter((w) => !bekend.has(w));
+      if (nieuw.length === 0) fout.push(c.pad);
+    }
+    expect(fout).toEqual([]);
+  });
+
+  it('een tool onder Benodigde tools is niet wat een hint brengt', () => {
+    // Geluidsfragment noemde Audacity bij de tools, en hint 2 zei "open het
+    // fragment in Audacity": het gereedschap van de hint stond al vooraan.
+    const fout: string[] = [];
+    for (const c of challenges) {
+      const regel = c.bron.match(/^\*\*Benodigde tools:\*\*(.*)$/m)?.[1] ?? '';
+      const tools = [...regel.matchAll(/\[([^\]]+)\]/g)].map((m) => m[1]);
+      hintsVan(c.bron).forEach((hint, i) => {
+        for (const tool of tools)
+          if (noemt(hint, tool))
+            fout.push(`${c.pad}, hint ${i + 1}: "${tool}" staat al bij Benodigde tools`);
+      });
+    }
+    expect(fout).toEqual([]);
+  });
+
   it('geen zin staat op twee tabbladen', () => {
     const zinnen = (tekst: string) =>
       tekst
@@ -215,6 +264,19 @@ describe('ctf: de link Volgende volgt de aanbevolen volgorde', () => {
       expect(veld(c.bron, 'pagination_prev'), c.pad).toBe(i === 0 ? 'intro' : volgorde[i - 1]);
       expect(veld(c.bron, 'pagination_next'), c.pad).toBe(volgorde[i + 1] ?? 'null');
     }
+  });
+
+  it('de intro noemt bij elke challenge het onderwerp van zijn pagina', () => {
+    // De intro zei "Zwakke wachtwoorden" en "Nog nooit opgelost" waar de
+    // pagina "Wachtwoorden" en "Gecombineerde technieken" had.
+    const fout: string[] = [];
+    for (const m of intro.matchAll(/^\d+\. \[[^\]]+\]\(site:ctf\/docs\/([\w/-]+)\) - (.+)$/gm)) {
+      const c = challenges.find((x) => x.id === m[1]);
+      const onderwerp = c?.bron.match(/^- \*\*Onderwerp:\*\* (.+)$/m)?.[1];
+      const label = m[2].replace(/ \(.*\)$/, '');
+      if (label !== onderwerp) fout.push(`${m[1]}: intro "${label}", pagina "${onderwerp}"`);
+    }
+    expect(fout).toEqual([]);
   });
 
   it('elk doel van een link Vorige of Volgende is een pagina', () => {

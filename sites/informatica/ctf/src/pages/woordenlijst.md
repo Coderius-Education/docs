@@ -92,7 +92,7 @@ Een kwetsbaarheid waarbij je door het aanpassen van een parameter (bijvoorbeeld 
 De controle die een website doet op wat een bezoeker invult of opvraagt, vóórdat hij er iets mee doet. Ontbreekt die controle, dan kan een aanvaller invoer sturen waar de website niet op rekent.
 
 ### IP-adres
-Een uniek nummer dat elk apparaat op het internet identificeert. **IPv4** gebruikt 4 getallen (bijv. 192.168.1.1), **IPv6** gebruikt langere hexadecimale adressen.
+Het nummer waarmee een apparaat in een netwerk bereikbaar is. **IPv4** gebruikt 4 getallen (bijvoorbeeld 8.8.8.8, een openbaar adres van Google), **IPv6** gebruikt langere hexadecimale adressen. Een adres als 192.168.1.1 is een adres in je eigen thuis- of schoolnetwerk: op internet deelt dat hele netwerk één openbaar adres.
 
 ## M
 

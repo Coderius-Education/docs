@@ -19,10 +19,10 @@ Je krijgt een geluidsfragment dat onbegrijpelijk klinkt. Hoe maak je het begrijp
 
 **Wat je oefent**
 
-- Bedenken hoe een geluidsbestand bewerkt kan zijn
-- Een geluidsbestand openen en bewerken in een audio-editor
+- Goed luisteren naar wat er met een geluid mis is
+- Een geluidsbestand onderzoeken in een audio-editor
 
-**Benodigde tools:** [Audacity](https://www.audacityteam.org/) (gratis audio-editor, die je moet installeren)
+**Benodigde tools:** een audio-editor die je installeert, bijvoorbeeld [Audacity](https://www.audacityteam.org/) (gratis)
 
 Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
@@ -31,14 +31,14 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-Het geluid klinkt vreemd omdat het op een bepaalde manier is bewerkt. Welke bewerkingen kun je op audio toepassen?
+Speel het fragment een paar keer af. Klinkt het als spraak die **achterstevoren** loopt, of als iemand die veel te snel of te langzaam praat?
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Open het fragment in Audacity en draai de bewerking terug. Probeer het geluid om te keren (**reverse**) of de snelheid aan te passen.
+Open het fragment in de audio-editor en draai die bewerking terug: keer het geluid om (**reverse**) of pas de snelheid aan.
 
 </details>
 

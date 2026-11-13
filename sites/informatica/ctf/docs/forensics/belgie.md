@@ -19,8 +19,7 @@ Je krijgt een IP-adres. Hoe vind je de locatie die bij dit IP-adres hoort?
 
 **Wat je oefent**
 
-- Uitzoeken wat een IP-adres over een apparaat verraadt
-- Zelf een online dienst vinden die bij je vraag past
+- Uitzoeken wat een IP-adres over een apparaat verraadt, en wat niet
 
 Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
@@ -29,7 +28,7 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-Elk apparaat op het internet heeft een uniek adres. Er bestaan tools om te achterhalen waar zo'n adres zich fysiek bevindt.
+Een openbaar IP-adres is geen huisadres, maar het hoort wel bij een internetprovider en vaak bij een regio. Er bestaan diensten die bijhouden welke reeks adressen waar in gebruik is.
 
 </details>
 

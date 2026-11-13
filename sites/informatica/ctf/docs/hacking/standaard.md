@@ -19,7 +19,7 @@ Wat zijn de meest populaire wachtwoorden? Veel mensen kiezen nog steeds zwakke, 
 
 **Wat je oefent**
 
-- Bedenken welke wachtwoorden mensen het vaakst kiezen
+- Denken als iemand die wil inbreken
 - Zien waarom een sterk wachtwoord nodig is
 
 Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
@@ -29,20 +29,20 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-Denk na over welke wachtwoorden het meest voorspelbaar zijn. Wat zou iemand als eerste proberen?
+Je hoeft het wachtwoord niet zelf te verzinnen. Er bestaan **lijsten** met de wachtwoorden die mensen het vaakst kiezen, gemaakt uit gelekte gegevens.
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Er bestaan lijsten met veelgebruikte wachtwoorden. Zoek op internet naar "meest gebruikte wachtwoorden".
+Zoek op internet naar "meest gebruikte wachtwoorden". Bovenaan zo'n lijst staan de allerbekendste.
 
 </details>
 
 <details>
 <summary>Hint 3</summary>
 
-Begin bovenaan zo'n lijst, bij de allerbekendste wachtwoorden, en probeer ze een voor een. Zo werkt een **brute-force aanval** ook: proberen tot er een klopt.
+Begin bovenaan de lijst en probeer de wachtwoorden een voor een, tot er een klopt. Zo werkt een **brute-force aanval** ook.
 
 </details>

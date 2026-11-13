@@ -15,12 +15,11 @@ pagination_next: hacking/koekjes-2
 De code is moeilijk te lezen omdat deze is **geobfusceerd** (onleesbaar gemaakt). Hoe kom je er toch achter wat hij doet?
 
 - **Moeilijkheid:** Gemiddeld
-- **Onderwerp:** Code obfuscation
+- **Onderwerp:** Onleesbaar gemaakte code
 
 **Wat je oefent**
 
-- Uitzoeken wat code doet zonder hem regel voor regel te lezen
-- Zien waarvoor obfuscation wordt gebruikt
+- Doorzetten bij code die je niet kunt lezen
 
 Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 

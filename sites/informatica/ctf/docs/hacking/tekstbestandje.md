@@ -19,7 +19,7 @@ Net als robots.txt zijn er meer standaard tekstbestanden die op webservers staan
 
 **Wat je oefent**
 
-- Raden welke bestanden er op een webserver kunnen staan
+- Denken als iemand die slordig met zijn bestanden omgaat
 - Zien waarom wachtwoorden niet in een tekstbestand horen
 
 Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
@@ -29,7 +29,7 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-Je zet een bestandsnaam achter de URL, net als bij robots.txt. Welke naam zou iemand geven aan een tekstbestand met wachtwoorden?
+Een bestand op een webserver open je door zijn naam achter de basis-URL te typen, zoals je bij Robots deed. Je hoeft dus alleen de **bestandsnaam** te raden.
 
 </details>
 

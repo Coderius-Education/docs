@@ -20,7 +20,7 @@ Je krijgt een logbestand te zien. Wat betekenen de verschillende HTTP-statuscode
 **Wat je oefent**
 
 - Het logbestand van een webserver lezen
-- Opzoeken wat een HTTP-statuscode betekent
+- In veel regels de paar vinden die ertoe doen
 
 Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
@@ -29,7 +29,7 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-Een HTTP-statuscode zegt wat er gebeurde bij een verzoek aan een webserver. Elke code heeft een eigen betekenis. Zoek op internet naar een overzicht.
+Elke regel in het logbestand is één verzoek aan de webserver. Zoek in een regel het getal van drie cijfers: dat is de statuscode, en die zegt hoe het verzoek afliep.
 
 </details>
 
@@ -43,6 +43,6 @@ De codes vallen in groepen: 1xx (informatie), 2xx (gelukt), 3xx (doorverwezen), 
 <details>
 <summary>Hint 3</summary>
 
-Welke codes vallen op in het logbestand? Zoek naar ongebruikelijke codes of naar een patroon.
+Zoek de codes die maar één of twee keer in het logbestand staan, en lees die regels helemaal: ook de tijd en het pad dat werd opgevraagd. Zoek de betekenis van zo'n zeldzame code op.
 
 </details>

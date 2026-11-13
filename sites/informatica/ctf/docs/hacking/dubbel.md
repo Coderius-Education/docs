@@ -1,7 +1,7 @@
 ---
 sidebar_position: 10
 title: "Hacking - Dubbel"
-description: "De moeilijkste challenge: nog nooit heeft iemand hem opgelost."
+description: "De moeilijkste challenge van de reeks, voor wie de andere al gedaan heeft."
 pagination_prev: forensics/logfile
 pagination_next: null
 ---
@@ -12,15 +12,15 @@ pagination_next: null
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Dubbel"* onder Hacking.
 
-Deze challenge heeft nog nooit iemand opgelost. Durf jij het aan?
+Dit is de moeilijkste challenge van de reeks. Durf jij het aan?
 
 - **Moeilijkheid:** Expert
-- **Onderwerp:** Gecombineerde technieken
+- **Onderwerp:** Kwetsbaarheden in websites
 
 **Wat je oefent**
 
-- Technieken uit de andere challenges combineren
 - Doorzetten als je eerste aanpak niets oplevert
+- Bijhouden wat je al hebt geprobeerd
 
 Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints twee hints: open ze een voor een.
 
@@ -29,7 +29,7 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints twee hin
 <details>
 <summary>Hint 1</summary>
 
-Deze challenge is bewust extra moeilijk. Combineer wat je bij de andere challenges hebt geleerd.
+Deze challenge is bewust extra moeilijk. Eén techniek is niet genoeg: combineer wat je bij de andere challenges hebt geleerd.
 
 </details>
 

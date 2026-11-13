@@ -19,8 +19,8 @@ Analyseer een bestand of URL en vind de flag in de uitkomst.
 
 **Wat je oefent**
 
-- Een bestand of URL laten scannen op malware
-- Lezen wat een virusscanner over een bestand vertelt
+- Lezen wat een onderzoek naar malware over een bestand vertelt
+- Een lang rapport doorzoeken op wat ertoe doet
 
 Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
@@ -29,7 +29,7 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-Er bestaan online diensten waarmee je bestanden en URL's kunt scannen op malware. Zoek naar een bekende gratis virusscanner-website.
+Je hoeft niets te installeren. Er bestaan websites die een bestand of URL laten nakijken door tientallen **virusscanners** tegelijk.
 
 </details>
 

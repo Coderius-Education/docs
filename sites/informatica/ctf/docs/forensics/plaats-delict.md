@@ -43,6 +43,6 @@ Klik met de rechtermuisknop op de afbeelding en bekijk de paginabron. Misschien 
 <details>
 <summary>Hint 3</summary>
 
-Gebruik de **Developer Tools** (F12) om de elementen te inspecteren. Kijk naar de HTML-attributen van de afbeelding.
+Klik met de rechtermuisknop op de afbeelding en kies **Inspecteren** (*Inspect*): de Developer Tools tonen dan de tag `<img>` van die afbeelding. Lees al zijn attributen, zoals `alt`, `title` en `src`, ook de naam van het bestand in `src`.
 
 </details>

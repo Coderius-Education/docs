@@ -1,7 +1,7 @@
 ---
 sidebar_position: 5
 title: "Code - Rotate"
-description: "De letters van een tekst zijn verschoven, en jij zet ze terug."
+description: "Een tekst is onleesbaar gemaakt, en de naam van de challenge zegt hoe."
 pagination_prev: hacking/hallo
 pagination_next: code/encrypted
 ---
@@ -29,7 +29,7 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-De naam van de challenge is een aanwijzing. Wat gebeurt er als je de letters van het alfabet "draait" of verschuift?
+Elke letter is een paar plekken in het alfabet opgeschoven: schuif je drie plekken, dan wordt een A een D. Zoek in de tekst een kort woord en probeer uit hoeveel plekken je het terug moet schuiven.
 
 </details>
 

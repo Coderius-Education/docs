@@ -19,9 +19,8 @@ Websites gebruiken een speciaal bestand om zoekmachines te vertellen welke pagin
 
 **Wat je oefent**
 
-- Opzoeken hoe zoekmachines een website indexeren
-- Een bestand van een website rechtstreeks opvragen
-- Zien dat "niet indexeren" iets anders is dan beveiligen
+- Uitzoeken hoe zoekmachines een website lezen
+- Zien wat een website over zichzelf verraadt
 
 Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
@@ -30,7 +29,7 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-Zoek op internet hoe zoekmachines weten welke pagina's ze niet mogen indexeren. Het bestand waarin dat staat, heeft op elke website dezelfde naam.
+Dat bestand heeft op elke website dezelfde naam en staat direct achter de basis-URL, dus niet in een submap. Zoek op internet hoe het heet.
 
 </details>
 

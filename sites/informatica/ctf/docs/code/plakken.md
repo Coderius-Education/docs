@@ -21,8 +21,7 @@ Je krijgt een stuk code te zien. Voer de code uit om de flag te vinden.
 
 **Wat je oefent**
 
-- Herkennen in welke programmeertaal code geschreven is
-- Code uitvoeren zonder iets te installeren
+- Code van een ander draaien zonder hem helemaal te begrijpen
 
 Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
@@ -31,23 +30,23 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-Kopieer de code en plak hem in een omgeving die de taal van de code kan uitvoeren. In welke taal is de code geschreven?
+Je hoeft de code niet te begrijpen, wel te weten in welke **programmeertaal** hij is geschreven. Kijk naar de woorden: `print(` wijst op Python, `console.log(` op JavaScript.
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Bepaal eerst de programmeertaal. Daarna weet je waar je de code uitvoert:
-- **Python**: de editor op het tabblad Probeer het hier
-- **JavaScript**: de browserconsole (F12 > Console)
+Elke taal heeft zijn eigen plek om code uit te voeren:
+- Python: de editor op het tabblad Probeer het hier
+- JavaScript: de **browserconsole** (F12 > Console)
 
 </details>
 
 <details>
 <summary>Hint 3</summary>
 
-Voer de code uit en bekijk de uitvoer. Daar zou de flag in moeten staan.
+Kopieer de hele code, van de eerste tot de laatste regel, en plak hem in één keer. Krijg je een foutmelding, kijk dan of de inspringing is meegekomen: in Python telt die mee. De flag staat in de uitvoer.
 
 </details>
 

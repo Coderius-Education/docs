@@ -19,8 +19,7 @@ Wat mag wel en wat mag niet? Soms accepteert een website invoer die hij had moet
 
 **Wat je oefent**
 
-- Uitproberen wat een invoerveld allemaal accepteert
-- Zien waarom een website invoer moet controleren
+- Een website testen zoals een aanvaller dat doet
 
 Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
