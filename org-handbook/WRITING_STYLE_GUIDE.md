@@ -57,6 +57,8 @@ In een cursus met tabbladen is een tabblad of een stap alles wat de leerling op 
 - **Er gaat iets mis komt na de opdrachten.** De build zet het tabblad daar ook neer als de bron het ervoor heeft.
 - **Een plaatje staat vóór de tekst die het uitlegt** (het aansluitschema, dan de pinnen): de build zet ze naast elkaar. Drie of meer plaatjes achter elkaar worden een reeks met Vorige en Volgende.
 - **Onder code staat wat hem toelicht als lijst of tabel**, direct eronder of na één alinea: de build zet het ernaast. Voor uitleg per regel gebruik je `<CodeUitleg>`.
+- **Een les begint met een kop naar zijn inhoud.** Wat vóór de eerste `###` van een sectie staat, wordt een stap die De basis heet; in Linux waren dat er twintig. Begin dus met een `##` of `###` die zegt waar het over gaat ("Lezen met cat").
+- **Alternatieven per systeem zijn geen tabbladen.** Windows, macOS en Linux als `##` liet de knop Volgende een leerling langs systemen leiden die niet de zijne zijn. Zet de hoofdroute zichtbaar en de andere systemen elk in een `<details>`, op het scherm met de stappen en niet onder Wat je nu ziet.
 - **Een stap heeft geen nummer in zijn kop.** Schrijf `### Kies de juiste interpreter`, niet `### Stap 1: kies de juiste interpreter`: de knop van de stap nummert al, en een stap ervoor schuift de telling op. Verwijs naar een stap met zijn naam.
 - **Een stap heet naar zijn inhoud**: `### Stap 2: Kies een pin` krijgt in de rij het label "Kies een pin". Geef een `###` dus een titel na de dubbele punt.
 - **Een opdracht is een eigen sectie** (`## Opdracht: <naam>`), niet een uitklapblok onder de code: weggeklapt ziet een leerling hem niet. Tip en oplossing blijven uitklapblokken.

@@ -741,7 +741,7 @@ knop Volgende in 26 lessen. Sindsdien:
   De regels staan in schrijfgids §2; `schermen.test.ts` en `naslag.test.ts`
   van fullstack en `voorspel.test.ts` pinnen ze vast.
 
-**Wat linux erbij bracht** (november 2026; alle 213 schermen passen op
+**Wat linux erbij bracht** (november 2026; alle 207 schermen passen op
 1280×720 en 1366×768). In de lessen van thema 1 tot en met 4 typt de leerling
 de hele les mee in één oefenterminal: bij de uitleg, bij de voorspelvraag
 ("Klik hier als je het hebt geprobeerd") en bij Er gaat iets mis. In
@@ -753,24 +753,34 @@ viel er op elk ander scherm niets te typen. Daarvoor is dit gekomen:
   (`data-les-naast`). Een veld met `heleLes` zet zich daarin en staat dan bij
   elk tabblad en elke stap: vanaf 1200 pixels rechts van de tekst (47 procent
   tekst, 53 procent veld), smaller eronder. Een veld zonder `heleLes` (de
-  terminal van een opdracht) staat op een breed scherm in de kolom zolang
-  zijn eigen scherm open is, en op een smal scherm op zijn plek in de tekst.
-  Het veld van de hele les wijkt dan: de opmaak ziet het anker van het eigen
-  veld in het open paneel (`data-les-naast-anker="veld"`).
+  terminal van een opdracht) staat op een breed scherm in de kolom en is
+  daar `hidden` zolang zijn eigen scherm dicht is; op een smal scherm staat
+  het op zijn plek in de tekst. Het veld van de hele les wijkt voor een eigen
+  veld waarvan het scherm open is: het anker van dat veld blijft in het
+  paneel en draagt `data-les-naast-open` (een anker in een dichte stap telde
+  eerst ook mee, en dan was de kolom leeg).
 - **Het veld verhuist zonder opnieuw te mounten.** Het staat in een eigen
   element dat van plek wisselt, en React rendert er met een portal in. Een
   portal die van doel wisselt, mount opnieuw, en dan was het werk in de
-  terminal weg; `Naast.test.tsx` telt de mounts. Alleen voor een veld dat pas
-  in de browser bestaat (binnen `<BrowserOnly>`): een portal staat niet in de
-  HTML van de build.
+  terminal weg; `Naast.test.tsx` telt de mounts. Het verhuist alleen als het
+  venster over de grens van 1200 pixels gaat, niet bij een wissel van
+  tabblad: een element dat uit het document gaat, is zijn schuifpositie kwijt
+  (de terminal van een opdracht stond na elke wissel bovenaan). Een portal
+  staat niet in de HTML van de build: een veld daarbuiten verhuist pas na het
+  hydrateren. Een veld binnen `<BrowserOnly>` zet in zijn `fallback` een
+  `<LesNaastPlek>`, zodat de kolom al in de HTML vrij is en de tekst niet
+  verspringt als het veld er komt.
 - **De kolom plakt niet** (`position: sticky` maakt een eigen laag, en een
   veld op Groter viel dan onder de navbar) en de wortel is daar een flex-rij,
   geen raster: in een raster plakte de rij tabbladen niet meer onder de
   navbar. `les-tabs.test.ts` bewaakt beide, en dat de opmaak dezelfde grens
-  gebruikt als `useBreed`.
-- **In de smalle tekstkolom** staat code met iets ernaast onder elkaar, is
-  de rand van een codeblok smaller, en krimpt een stap die dicht is tot zijn
-  nummer, zodat de naam van de open stap op de regel past.
+  gebruikt als `useBreed`. Een veld zonder knop Groter mag zelf plakken: de
+  `LinuxTerminal` doet dat, zodat hij in beeld blijft als een antwoord open
+  staat.
+- **In de smalle tekstkolom** staat code met iets ernaast onder elkaar en is
+  de rand van een codeblok smaller. Een stap die dicht is, krimpt niet tot
+  zijn nummer: in les 2.4 stonden onder Er gaat iets mis dan alleen 2, 3 en
+  4, en wie zijn melding zocht, moest elke stap openklikken.
 - **Een veld dat in een dicht tabblad mount, heeft geen maten.** xterm paste
   zich daar aan op twee kolommen. De `LinuxTerminal` start pas als hij te
   zien is en past zich alleen aan zolang hij te zien is; naast de les neemt
@@ -795,8 +805,8 @@ docentenhandleiding is er een werkvorm Hints bij gekomen (hulp in stappen:
 de hints zijn dicht, en elke hint zegt iets meer), en De challenge telt als
 zelf maken.
 
-**Wat de editor-cursus erbij bracht** (november 2026; 80 van de 80 schermen
-en 38 van de 38 pagina's zonder tabbladen passen). De cursus bestaat uit
+**Wat de editor-cursus erbij bracht** (november 2026; 67 van de 67 schermen
+en 41 van de 41 pagina's zonder tabbladen passen). De cursus bestaat uit
 korte stappen, elk een eigen pagina: een paar regels doen, en dan
 `## Wat je nu ziet`. Met tabbladen was een stap van tien regels twee of drie
 schermen, en moest de leerling doorklikken om te zien of het gelukt was.
@@ -831,6 +841,33 @@ schermen, en moest de leerling doorklikken om te zien of het gelukt was.
   dus ook nadat je het hebt gebruikt.
 - De tabbladen van GitHub en VS Code heten in de tekst "het tabblad op
   GitHub": de pagina heeft nu zelf tabbladen.
+
+**Wat een review van linux, ctf en de editor-cursus vond** (november 2026).
+Vier lezers: een op de code, een op ctf en de handleidingen, en twee die
+linux en de editor-cursus als leerling doorliepen. Meten liet alles passen;
+gebruiken niet. Sindsdien:
+
+- **Een oefenveld is ook te gebruiken.** De git-simulator paste met vier
+  regels uitvoer, terwijl `git status` er tien schrijft; vanaf 1280 pixels
+  staat zijn terminal naast de zones. De terminal van Linux brak een
+  bestandsnaam van `ls` midden door (nu kolommen zoals coreutils), liet je
+  met Tab niet meer los (Esc en dan Tab), en bestond niet voor een
+  schermlezer (`screenReaderMode`). Een opdracht die is vastgelopen, zegt
+  dat (`vast` in `opdrachten.ts` en in de scenario's van de simulator).
+- **Een doel kijkt naar wat er echt gebeurde.** Stap 7 van Git basis werd
+  groen na `git add .`, terwijl git het bestand bleef volgen; 2.4.a gaf een
+  vinkje "met één mv" voor twee regels mv.
+- **Code in een uitklapblok** wordt verkleind als het blok open is
+  (`toggle`), niet bij de klik: dan is het nog dicht.
+- **Een genummerde lijst die doortelt, staat niet naast code**: "5. Druk op
+  Enter" las als uitleg bij de naam van een branch.
+- **De schatting van `eenScherm` kijkt naar de bron**, en `sluitAan` telt
+  mee wat boven het eerste scherm komt.
+- **In de lessen**: geen stap heet De basis, alternatieven per systeem
+  staan in een uitklapblok en niet als tabbladen die je allemaal door moet,
+  de hulp staat op het scherm waar je vastloopt, en een tutorial noemt geen
+  branch die een eerdere al verwijderde. Een docentenhandleiding belooft
+  alleen wat de cursus overal doet.
 
 ## Code in MDX-expressies
 
