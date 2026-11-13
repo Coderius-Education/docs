@@ -126,6 +126,11 @@ const ANDERS_IN_243: { nieuw: string; oud: string; oudOk: boolean }[] = [
   { nieuw: "fatal: could not resolve 'HEAD'", oud: 'fatal: could not resolve HEAD', oudOk: false },
   // 2.43 las er 0 in en toonde niets.
   { nieuw: "fatal: 'x': not an integer", oud: '', oudOk: true },
+  {
+    nieuw: "fatal: '3x': not an integer",
+    oud: "fatal: '3x': not a non-negative integer",
+    oudOk: false,
+  },
 ];
 
 const gitVersie = (() => {
@@ -134,15 +139,23 @@ const gitVersie = (() => {
 })();
 const ouderDan256 = gitVersie[0] < 2 || (gitVersie[0] === 2 && gitVersie[1] < 56);
 
+/**
+ * Alle verschillen van een reeks in één keer: met een andere git (een
+ * nieuwere in CI) zag je anders per run alleen het eerste.
+ */
 function gelijkAanGit(begin: Record<string, string>, stappen: Stap[]): void {
+  const verschillen: string[] = [];
   for (const u of naastGit(begin, stappen)) {
     const anders = ouderDan256 && ANDERS_IN_243.find((a) => a.nieuw === u.nagemaakt);
     const verwacht = anders
       ? { tekst: anders.oud, ok: anders.oudOk }
       : { tekst: u.nagemaakt, ok: u.ok };
-    expect(verwacht.tekst, u.stap).toBe(u.echt);
-    expect(verwacht.ok, `${u.stap}: slaagt in git ${u.echtOk ? 'wel' : 'niet'}`).toBe(u.echtOk);
+    if (verwacht.tekst !== u.echt)
+      verschillen.push(`${u.stap}\n  git:       ${u.echt}\n  simulator: ${verwacht.tekst}`);
+    else if (verwacht.ok !== u.echtOk)
+      verschillen.push(`${u.stap}: slaagt in git ${u.echtOk ? 'wel' : 'niet'}`);
   }
+  expect(verschillen, `git ${gitVersie.join('.')}`).toEqual([]);
 }
 
 const HELLO = { 'hello.txt': 'Hallo wereld.\n' };

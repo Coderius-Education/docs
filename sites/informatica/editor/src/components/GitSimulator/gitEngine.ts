@@ -1177,8 +1177,7 @@ function gitLog(state: RepoState, woorden: string[]): CommandResult {
       // Doet niets dat je hier ziet: de versiering staat al aan, en -q
       // zwijgt alleen over een diff.
     } else if (/^-\d+$/.test(w)) hoeveel = Number(w.slice(1));
-    else if (/^-\d+/.test(w))
-      return nietGelukt(state, `fatal: '${w.slice(1)}': not a non-negative integer`);
+    else if (/^-\d+/.test(w)) return nietGelukt(state, `fatal: '${w.slice(1)}': not an integer`);
     else if (w.startsWith('-n') && w.length > 2) hoeveel = atoi(w.slice(2));
     else if (w === '-n') {
       if (i + 1 >= woorden.length) return nietGelukt(state, 'error: -n requires an argument');
