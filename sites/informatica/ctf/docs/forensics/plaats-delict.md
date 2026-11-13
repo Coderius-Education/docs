@@ -36,7 +36,7 @@ Bij een afbeelding hoort data die je niet ziet als je hem alleen bekijkt. Denk a
 <details>
 <summary>Hint 2</summary>
 
-Klik met de rechtermuisknop op de afbeelding en bekijk de paginabron. Misschien staat er iets verborgen in de HTML.
+Bekijk de paginabron: klik met de rechtermuisknop op een lege plek van de pagina en kies de optie om de paginabron te bekijken (in het Engels *View page source*), of druk op Ctrl+U. Zoek daarin naar de naam van de afbeelding: misschien staat er iets verborgen in de HTML.
 
 </details>
 

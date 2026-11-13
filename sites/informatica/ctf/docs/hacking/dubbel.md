@@ -22,20 +22,27 @@ Dit is de moeilijkste challenge van de reeks. Durf jij het aan?
 - Doorzetten als je eerste aanpak niets oplevert
 - Bijhouden wat je al hebt geprobeerd
 
-Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints twee hints: open ze een voor een.
+Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
 ## Hints
 
 <details>
 <summary>Hint 1</summary>
 
-Deze challenge is bewust extra moeilijk. Eén techniek is niet genoeg: combineer wat je bij de andere challenges hebt geleerd.
+Eén techniek is hier niet genoeg. Maak eerst een lijstje van wat je bij de andere challenges deed: waar keek je, en wat veranderde je? Dat lijstje loop je hier af.
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Bekijk de broncode, de cookies, de headers en de URL-parameters: alles wat je kunt vinden. De oplossing kan een combinatie van technieken zijn.
+Open de **Developer Tools** (F12) en kijk op elke plek: de broncode, de cookies, de headers van het antwoord, en de parameters in de URL. Schrijf op wat je overal vindt, ook wat niets lijkt te betekenen.
+
+</details>
+
+<details>
+<summary>Hint 3</summary>
+
+Wat je op de ene plek vindt, is vaak de sleutel op een andere. Zet een waarde die je vond in een cookie, een header of een parameter, en verander telkens **één ding tegelijk**. Kijk na elke verandering wat het antwoord van de site anders doet.
 
 </details>

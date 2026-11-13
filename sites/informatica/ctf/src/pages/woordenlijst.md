@@ -37,6 +37,9 @@ Een gratis webtool van GCHQ waarmee je data kunt coderen, decoderen, versleutele
 ### DDoS (Distributed Denial of Service)
 Een aanval waarbij een website of server wordt overspoeld met verkeer vanuit vele bronnen tegelijk, waardoor deze onbereikbaar wordt.
 
+### Dictionary attack
+Een aanval waarbij je alleen wachtwoorden probeert die mensen echt kiezen, uit een lijst van uitgelekte of veelgebruikte wachtwoorden. Sneller dan een brute-force aanval, die alle combinaties probeert.
+
 ### Developer Tools (DevTools)
 Ingebouwde tools in je browser (F12) waarmee je webpagina's kunt inspecteren, netwerkverkeer kunt bekijken, cookies kunt beheren en meer.
 

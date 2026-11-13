@@ -29,7 +29,7 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-Je hoeft het wachtwoord niet zelf te verzinnen. Er bestaan **lijsten** met de wachtwoorden die mensen het vaakst kiezen, gemaakt uit gelekte gegevens.
+Je hoeft niet te raden. Als wachtwoorden uitlekken, worden ze geteld: daardoor is bekend welke wachtwoorden mensen het vaakst kiezen. Die **ranglijsten** veranderen van jaar tot jaar weinig.
 
 </details>
 
@@ -43,6 +43,6 @@ Zoek op internet naar "meest gebruikte wachtwoorden". Bovenaan zo'n lijst staan 
 <details>
 <summary>Hint 3</summary>
 
-Begin bovenaan de lijst en probeer de wachtwoorden een voor een, tot er een klopt. Zo werkt een **brute-force aanval** ook.
+Begin bovenaan de lijst en probeer de wachtwoorden een voor een, tot er een klopt. Zo werkt een **dictionary attack**: je probeert alleen wachtwoorden die mensen echt kiezen. Een brute-force aanval probeert alle combinaties, en duurt veel langer.
 
 </details>

@@ -29,7 +29,7 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-Er bestaan diensten die oude versies van websites bewaren, ook als die offline zijn gegaan. Zoek naar een internet-archiefdienst.
+Er zijn organisaties die het web bewaren: een programma bezoekt websites en slaat van elke pagina een kopie op, met de datum erbij. Zoek naar een **archief** van het internet.
 
 </details>
 

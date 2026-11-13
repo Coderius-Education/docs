@@ -12,7 +12,7 @@ pagination_next: hacking/koekjes-1
 
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Tekstbestandje"* onder Hacking.
 
-Net als robots.txt zijn er meer standaard tekstbestanden die op webservers staan. Wat zou een logische naam zijn voor een bestand met wachtwoorden?
+Een webserver laat je de pagina's zien waar een link naar wijst. Er kunnen meer bestanden op staan, ook een die er niet had mogen staan.
 
 - **Moeilijkheid:** Gemiddeld
 - **Onderwerp:** Verborgen bestanden
@@ -20,7 +20,7 @@ Net als robots.txt zijn er meer standaard tekstbestanden die op webservers staan
 **Wat je oefent**
 
 - Denken als iemand die slordig met zijn bestanden omgaat
-- Zien waarom wachtwoorden niet in een tekstbestand horen
+- Zien waarom geheimen niet op een webserver horen
 
 Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
@@ -36,7 +36,7 @@ Een bestand op een webserver open je door zijn naam achter de basis-URL te typen
 <details>
 <summary>Hint 2</summary>
 
-Denk simpel: gevoelige bestanden hebben vaak een voorspelbare naam. Bedenk namen in het Engels en in het Nederlands.
+Denk aan wat iemand slordig zou opslaan, zoals **wachtwoorden**. Zo'n bestand heeft vaak een voorspelbare naam: bedenk namen in het Engels en in het Nederlands.
 
 </details>
 

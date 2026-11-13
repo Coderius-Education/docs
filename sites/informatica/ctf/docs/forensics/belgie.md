@@ -28,14 +28,14 @@ Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hin
 <details>
 <summary>Hint 1</summary>
 
-Een openbaar IP-adres is geen huisadres, maar het hoort wel bij een internetprovider en vaak bij een regio. Er bestaan diensten die bijhouden welke reeks adressen waar in gebruik is.
+Elk openbaar IP-adres is uitgegeven aan een **internetprovider**, en die gebruikt zijn adressen in een land en vaak in een bepaalde stad. Een huisadres staat er niet in, een plaats vaak wel.
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Wat je zoekt heet **geolocatie**. Zoek op internet naar een dienst die de locatie van een IP-adres opzoekt. Er zijn veel gratis diensten die dit kunnen.
+De plaats bij een IP-adres opzoeken heet **geolocatie**. Zoek op internet naar een dienst die dat doet; er zijn veel gratis diensten.
 
 </details>
 
