@@ -2472,7 +2472,9 @@ describe('wat een doorloop van fullstack als leerling vond', () => {
     const breed = /@media \(min-width: 997px\) \{\s*(\.stap \{[\s\S]*?)\n\}/.exec(css);
     // Een gelijk deel per knop, met zijn eigen naam als grens: een korte
     // naam blijft heel, en de stap die open staat krimpt niet.
-    expect(breed?.[1]).toMatch(/\.stap \{\s*flex: 1 1 0;\s*min-width: 5\.5rem;\s*max-width: max-content;/);
+    expect(breed?.[1]).toMatch(
+      /\.stap \{\s*flex: 1 1 0;\s*min-width: 5\.5rem;\s*max-width: max-content;/,
+    );
     expect(breed?.[1]).toMatch(/\.stap\[aria-selected="true"\] \{\s*flex: 0 0 auto;/);
     expect(breed?.[1]).toMatch(/\.stapLabel \{[^}]*text-overflow: ellipsis;/);
   });
