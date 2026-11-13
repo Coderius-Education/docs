@@ -187,12 +187,13 @@ export function inKolommen(namen, breedte, toon = (n) => n) {
  * Tab vult in de terminal een naam aan, en dus kwam je er met Tab niet meer
  * uit: wie met het toetsenbord door de pagina loopt, zat vast, en bereikte
  * de knop Opnieuw beginnen en de volgende les niet. Esc en daarna Tab (of
- * Shift+Tab) laat de terminal los: die ene Tab is dan voor de browser.
+ * Shift+Tab) laat de terminal los: die ene Tab is dan voor de browser, of
+ * gaat naar de knop Volgende als `naarVerder` die vindt en de focus geeft.
  *
  * Geeft de functie voor `attachCustomKeyEventHandler` van xterm: `false`
  * betekent dat xterm de toets niet zelf afhandelt.
  */
-export function maakUitweg() {
+export function maakUitweg(naarVerder) {
   let los = false;
   const uitweg = (e) => {
     if (e.type !== 'keydown') return true;
@@ -202,6 +203,11 @@ export function maakUitweg() {
     }
     if (e.key === 'Tab' && los) {
       los = false;
+      // Vooruit naar de knop Volgende van het open tabblad. Na de terminal
+      // komt Opnieuw beginnen, en een Enter daar gooide het werk weg; nog
+      // een Tab en je was de les uit. Zonder knop Volgende (het laatste
+      // tabblad) gaat de browser gewoon verder.
+      if (!e.shiftKey && naarVerder?.()) e.preventDefault?.();
       return false;
     }
     if (e.key !== 'Shift') los = false;

@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -602,6 +602,38 @@ describe('ls op een smalle terminal', () => {
     for (const cmd of ['grep', 'find', '> <bestand>']) expect(tekst).toContain(cmd);
   });
 
+  it('help past ook in de hoogte: in een terminal van twaalf regels alleen de namen', () => {
+    // Bij een opdracht en in een tabblad heeft de terminal twaalf regels. Van
+    // de lijst van 23 regels zag een leerling op een telefoon alleen de
+    // laatste tien; `help ls` geeft de uitleg van één commando.
+    for (const [kolommen, rijen] of [
+      [41, 12],
+      [80, 12],
+      [41, 24],
+    ]) {
+      const sessie = maakSessie(undefined, { kolommen: () => kolommen, rijen: () => rijen });
+      const uitvoer = sessie.typ('help').stand.uitvoer;
+      expect(uitvoer.length, `${kolommen}x${rijen}`).toBeLessThan(rijen);
+      for (const regel of uitvoer) expect(regel.length).toBeLessThan(kolommen);
+      const namen = uitvoer.join(' ');
+      for (const cmd of ['ls', 'grep', 'find', 'hostname', 'history', 'clear'])
+        expect(namen).toMatch(new RegExp(`\\b${cmd}\\b`));
+      expect(sessie.typ('help ls').stand.uitvoer.join(' ')).toContain('bestanden tonen');
+      expect(sessie.typ('help tail').stand.uitvoer.join(' ')).toContain('eerste of laatste');
+    }
+    // In een terminal van 24 regels en 80 kolommen staat de hele lijst.
+    expect(maakSessie().typ('help').stand.uitvoer.length).toBe(23);
+    expect(maakSessie().typ('help bestaatniet').stand.uitvoer).toEqual([
+      "help: geen uitleg bij bestaatniet. Typ help voor alle commando's.",
+    ]);
+  });
+
+  it('ls met meer namen zet ze op naam, zoals ls', () => {
+    const { typ } = terminal();
+    expect(typ('ls /tmp /etc').split('\n')[0]).toBe('/etc:');
+    expect(typ('ls /etc/passwd /etc/hosts')).toBe('/etc/hosts  /etc/passwd');
+  });
+
   it('echo -e zegt dat het hier niet werkt, in plaats van -e af te drukken', () => {
     // `echo -e "a\nb"` schreef "-e a\nb". Een ander woord met een streepje
     // drukt echo gewoon af, zoals in bash.
@@ -640,6 +672,49 @@ describe('met het toetsenbord de terminal uit', () => {
     uitweg(toetsDown('Escape'));
     uitweg.vergeet();
     expect(uitweg(toetsDown('Tab'))).toBe(true);
+  });
+
+  it('Esc en dan Tab gaat naar de knop Volgende, als die er is', () => {
+    // Na de terminal kwam Opnieuw beginnen: een Enter wiste het werk.
+    let gevraagd = 0;
+    let tegengehouden = 0;
+    const tab = (shiftKey = false) => ({
+      type: 'keydown',
+      key: 'Tab',
+      shiftKey,
+      preventDefault: () => {
+        tegengehouden++;
+      },
+    });
+    const metKnop = maakUitweg(() => {
+      gevraagd++;
+      return true;
+    });
+    metKnop(toetsDown('Escape'));
+    expect(metKnop(tab())).toBe(false);
+    expect([gevraagd, tegengehouden]).toEqual([1, 1]);
+    // Terug (Shift+Tab) laat de browser zijn gang gaan.
+    metKnop(toetsDown('Escape'));
+    metKnop(toetsDown('Shift'));
+    expect(metKnop(tab(true))).toBe(false);
+    expect([gevraagd, tegengehouden]).toEqual([1, 1]);
+    // Zonder knop (het laatste tabblad) ook.
+    const zonder = maakUitweg(() => false);
+    zonder(toetsDown('Escape'));
+    expect(zonder(tab())).toBe(false);
+    expect(tegengehouden).toBe(1);
+  });
+
+  it('de luisteraar die Esc vergeet, hangt aan de textarea van xterm na open', () => {
+    // Ervoor bestond die textarea nog niet: `term.textarea?.` deed niets,
+    // en wie Esc drukte, wegklikte en terugkwam, verliet de terminal met
+    // de eerste Tab. Alleen in een browser na te spelen; de bron moet het
+    // in deze volgorde doen.
+    const bron = readFileSync(new URL('./index.js', import.meta.url), 'utf8');
+    const open = bron.indexOf('term.open(termRef.current)');
+    const blur = bron.indexOf("addEventListener('blur', uitweg.vergeet)");
+    expect(open).toBeGreaterThan(0);
+    expect(blur).toBeGreaterThan(open);
   });
 
   it('een andere toets na Esc: Tab vult weer aan', () => {

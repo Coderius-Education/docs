@@ -102,6 +102,7 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
         },
         // `ls` zet zijn namen in kolommen op de breedte van de terminal.
         kolommen: () => xtermRef.current?.cols ?? 80,
+        rijen: () => xtermRef.current?.rows ?? 24,
       }),
     [extraFs, doelen],
   );
@@ -251,14 +252,24 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
         // uitvoer in een live-regio.
         screenReaderMode: true,
       });
-      // Esc en dan Tab laat de terminal los (regel.js, maakUitweg).
-      const uitweg = maakUitweg();
+      // Esc en dan Tab laat de terminal los, naar de knop Volgende van het
+      // open tabblad (regel.js, maakUitweg).
+      const uitweg = maakUitweg(() => {
+        const knop = (termRef.current?.closest('[data-les-tabs]') ?? document).querySelector(
+          '[data-les-tab]:not([hidden]) > [data-les-verder] button',
+        );
+        knop?.focus();
+        return Boolean(knop);
+      });
       term.attachCustomKeyEventHandler(uitweg);
-      term.textarea?.addEventListener('blur', uitweg.vergeet);
 
       const fitAddon = new FitAddon();
       term.loadAddon(fitAddon);
       term.open(termRef.current);
+      // Pas na open bestaat de textarea van xterm. Ervoor hing de luisteraar
+      // nergens aan, en wie Esc drukte, wegklikte en terugkwam, verliet de
+      // terminal met de eerste Tab.
+      term.textarea?.addEventListener('blur', uitweg.vergeet);
       term.textarea?.setAttribute('aria-label', `Invoer van de ${naam.toLowerCase()}`);
       // Meteen passend maken, zodat de welkomsttekst op de echte breedte
       // wordt afgebroken; het tweede fit vangt een container die nog groeit.

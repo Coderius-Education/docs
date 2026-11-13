@@ -531,6 +531,13 @@ const HULP = [
   ['clear', 'scherm leegmaken'],
 ];
 
+/** De commando's in een regel van HULP: `head, tail [-n N]` -> head, tail. */
+const namenIn = (cmd) =>
+  cmd
+    .split(/,\s*/)
+    .map((deel) => deel.split(' ')[0])
+    .filter((naam) => /^[a-z]+$/.test(naam));
+
 const COMMANDS = {
   ls(args, env, stdin, opties = {}) {
     const doelen = args.filter((a) => !a.startsWith('-'));
@@ -547,6 +554,9 @@ const COMMANDS = {
       else if (node.isDir) mappen.push(doel);
       else bestanden.push(doel);
     }
+    // Op naam, zoals ls: `ls /tmp /etc` toont eerst /etc.
+    bestanden.sort();
+    mappen.sort();
     const blokken = [];
     if (bestanden.length) {
       const regelsVan = bestanden.map((b) => lsEen(opts, b, env, opties).output);
@@ -705,16 +715,43 @@ const COMMANDS = {
   },
 
   help(args, env) {
-    // Op een smalle terminal (een telefoon, 41 kolommen) staat de uitleg
-    // onder het commando: naast elkaar brak xterm hem midden in een woord.
-    const breed = (env.kolommen?.() ?? 80) >= 53;
-    const regels = HULP.flatMap(([cmd, wat]) =>
-      breed ? [`  ${cmd.padEnd(25)}${wat}`] : [`  ${cmd}`, `      ${wat}`],
-    );
+    const kolommen = env.kolommen?.() ?? 80;
+    // `help ls`: alleen de regel van dat commando.
+    const gevraagd = args.find((a) => !a.startsWith('-'));
+    const regel = ([cmd, wat]) =>
+      kolommen >= 53 ? [`  ${cmd.padEnd(25)}${wat}`] : [`  ${cmd}`, `      ${wat}`];
+    if (gevraagd) {
+      const gevonden = HULP.filter(([cmd]) => namenIn(cmd).includes(gevraagd));
+      if (!gevonden.length)
+        return {
+          output: `help: geen uitleg bij ${gevraagd}. Typ help voor alle commando's.`,
+          exitCode: 1,
+        };
+      return { output: gevonden.flatMap(regel).join('\n'), exitCode: 0 };
+    }
+    // De hele lijst is 23 regels, plus de prompt. Past hij niet in de terminal (een
+    // telefoon, of een opdracht met twaalf regels), dan staan alleen de
+    // namen er, in kolommen, en geeft `help ls` de uitleg: van de lange
+    // lijst zag een leerling alleen de laatste tien regels.
+    if ((env.rijen?.() ?? 24) < HULP.length + 5 || kolommen < 53) {
+      const namen = [...new Set(HULP.flatMap(([cmd]) => namenIn(cmd)))];
+      return {
+        output: [
+          "Beschikbare commando's:",
+          inKolommen(namen, kolommen),
+          '',
+          'Typ help en een commando voor uitleg,',
+          'zoals help ls.',
+          'Tab vult een commando of naam aan.',
+          'Pijltje omhoog: een vorig commando.',
+        ].join('\n'),
+        exitCode: 0,
+      };
+    }
     return {
       output: [
         "Beschikbare commando's:",
-        ...regels,
+        ...HULP.flatMap(regel),
         '',
         'Tab vult een commando of naam aan.',
         'Pijltje omhoog: een vorig commando.',
