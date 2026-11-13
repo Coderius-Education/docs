@@ -2862,20 +2862,6 @@ describe('een pagina die op één scherm past, heeft geen tabbladen (eenScherm)'
   });
 });
 
-describe('code past ook met een schuifbalk', () => {
-  it('pasCode rekent na de speling opnieuw', () => {
-    // verdeelSpeling kan een codevak lager maken; dan schuift het verticaal,
-    // en een klassieke schuifbalk nam 10 px van de breedte (robotica, tof:
-    // de langste regel viel af). Alleen in een browser te zien; de volgorde
-    // in de bron moet pasCode, verdeelSpeling, pasCode zijn.
-    const bron = readFileSync(
-      fileURLToPath(new URL('./components/LesTabs/index.tsx', import.meta.url)),
-      'utf8',
-    );
-    expect(bron).toMatch(/pasCode\(el\);\s*verdeelSpeling\(el\);[\s\S]{0,400}?pasCode\(el\);/);
-  });
-});
-
 describe('het meetscript (scripts/meet-les-tabs.mjs)', () => {
   const bron = readFileSync(
     fileURLToPath(new URL('../../scripts/meet-les-tabs.mjs', import.meta.url)),

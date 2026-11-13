@@ -16,6 +16,7 @@ import LesTabs, {
   useInLesTab,
 } from './index';
 import { useLesDoel } from './paneel';
+import { pasCode } from './pasCode';
 import { MARGE, schuifInRij } from './schuifRij';
 
 // react-dom/server heeft hier geen types (zie Voorspel/logica.test.ts).
@@ -31,6 +32,30 @@ const { renderToStaticMarkup } = (await import('react-dom/server' as string)) as
 
 let locatie = { pathname: '/les', hash: '', search: '' };
 vi.mock('@docusaurus/router', () => ({ useLocation: () => locatie }));
+
+// pasCode en verdeelSpeling doen hun echte werk, en schrijven op wanneer ze
+// draaien: de volgorde staat vast in 'pasCode rekent na de speling opnieuw'.
+const aanroepen = vi.hoisted(() => [] as string[]);
+vi.mock('./pasCode', async (echt) => {
+  const m = await echt<typeof import('./pasCode')>();
+  return {
+    ...m,
+    pasCode: (...a: Parameters<typeof m.pasCode>) => {
+      aanroepen.push('pasCode');
+      m.pasCode(...a);
+    },
+  };
+});
+vi.mock('./speling', async (echt) => {
+  const m = await echt<typeof import('./speling')>();
+  return {
+    ...m,
+    verdeelSpeling: (...a: Parameters<typeof m.verdeelSpeling>) => {
+      aanroepen.push('verdeelSpeling');
+      m.verdeelSpeling(...a);
+    },
+  };
+});
 
 const scrol = vi.fn();
 beforeEach(() => {
@@ -288,6 +313,74 @@ describe('de code van een les', () => {
   });
 });
 
+describe('code past ook met een schuifbalk', () => {
+  it('pasCode rekent na de speling opnieuw', () => {
+    // verdeelSpeling kan een codevak lager maken; dan schuift het verticaal,
+    // en een klassieke schuifbalk nam 10 px van de breedte (robotica, tof:
+    // de langste regel viel af). Na elke wissel van tabblad dus eerst de
+    // letters (dat verandert de hoogte), dan de speling, en dan de letters
+    // nog een keer, nu met de schuifbalk erbij. Welke pixels dat zijn, ziet
+    // alleen een browser; de volgorde staat hier vast.
+    const beeld = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((terug) => {
+      terug(0);
+      return 1;
+    });
+    aanroepen.length = 0;
+    try {
+      render(<Les />);
+      expect(aanroepen).toEqual(['pasCode', 'verdeelSpeling', 'pasCode']);
+      aanroepen.length = 0;
+      fireEvent.click(screen.getByRole('tab', { name: /Opdracht 1/ }));
+      // Een klik in de les meet ook (een andere stap), dus het rondje kan
+      // twee keer gaan; elk rondje heeft dezelfde volgorde.
+      expect(aanroepen.length).toBeGreaterThanOrEqual(3);
+      expect(aanroepen.length % 3).toBe(0);
+      for (let i = 0; i < aanroepen.length; i += 3)
+        expect(aanroepen.slice(i, i + 3)).toEqual(['pasCode', 'verdeelSpeling', 'pasCode']);
+    } finally {
+      beeld.mockRestore();
+      aanroepen.length = 0;
+    }
+  });
+});
+
+describe('de verwachte uitvoer in een oefenveld', () => {
+  it('krijgt geen kleinere letters: hij breekt af, zoals uitvoer in een terminal', () => {
+    // De CodeExercise van python-runner toont de verwachte uitvoer in zijn
+    // uitvoerkolom, en daar breekt een lange regel af (`.doel pre code`).
+    // pasCode maakte de letters eerst tot 80% kleiner, en daarna brak de
+    // regel toch: klein en afgebroken. Een blok dat zelf afbreekt, slaat
+    // pasCode over, net als de uitvoer van het veld.
+    const stijl = document.createElement('style');
+    stijl.textContent = '.doel pre code { white-space: pre-wrap; }';
+    document.head.append(stijl);
+    const wortel = document.createElement('div');
+    const blok = '<div class="theme-code-block"><pre><code>een lange regel</code></pre></div>';
+    wortel.innerHTML = `<div class="doel"><p>Verwachte uitvoer:</p>${blok}</div>${blok}`;
+    document.body.append(wortel);
+    try {
+      const [doel, les] = Array.from(wortel.querySelectorAll('pre'));
+      for (const pre of [doel, les]) {
+        Object.defineProperty(pre, 'clientWidth', { value: 400, configurable: true });
+        Object.defineProperty(pre, 'scrollWidth', {
+          configurable: true,
+          get: () => (pre.style.fontSize ? 400 : 440),
+        });
+      }
+      // Was hij al verkleind (een venster dat smaller werd), dan gaat dat eraf.
+      doel.style.fontSize = '12px';
+      pasCode(wortel);
+      expect(doel.style.fontSize).toBe('');
+      expect(doel.hasAttribute('data-code-breekt')).toBe(false);
+      // Een gewoon codeblok van de les krijgt wel kleinere letters.
+      expect(les.style.fontSize).not.toBe('');
+    } finally {
+      wortel.remove();
+      stijl.remove();
+    }
+  });
+});
+
 describe('de knop Volgende', () => {
   it('zegt niet twee keer Volgende als het volgende tabblad zo heet', () => {
     // De laatste stap van Git basis: het tabblad Volgende tutorial stond op
@@ -539,6 +632,44 @@ describe('een rij stappen die zijwaarts schuift', () => {
       schuiftRij = true;
       for (const [el, terug] of waarnemers) if (el === rij()) terug();
       expect(inBeeld()).toBe(true);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('koppelt de oude waarnemer los na een wissel van stap, en alles bij het weggaan', () => {
+    // Na elke wissel van stap komt er een nieuwe ResizeObserver op de rij.
+    // Zonder disconnect bleef elke oude meekijken, en zette hij bij elke
+    // andere maat een knop in beeld die niet meer open stond.
+    const waarnemers: { el: Element; los: number }[] = [];
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        eigen: { el: Element; los: number }[] = [];
+        observe(el: Element) {
+          const w = { el, los: 0 };
+          this.eigen.push(w);
+          waarnemers.push(w);
+        }
+        disconnect() {
+          for (const w of this.eigen) w.los++;
+        }
+      },
+    );
+    try {
+      const { unmount } = render(<LesMetStappen />);
+      const opRij = () => waarnemers.filter((w) => w.el === rij());
+      const voor = opRij().length;
+      expect(voor).toBeGreaterThan(0);
+      expect(opRij().every((w, i) => (i < voor - 1 ? w.los === 1 : w.los === 0))).toBe(true);
+      fireEvent.click(screen.getByRole('button', { name: 'Volgende: Koppen' }));
+      const na = opRij();
+      expect(na.length).toBeGreaterThan(voor);
+      // De oude zijn elk één keer losgekoppeld, alleen de nieuwste kijkt nog.
+      expect(na.slice(0, -1).map((w) => w.los)).toEqual(na.slice(0, -1).map(() => 1));
+      expect(na.at(-1)?.los).toBe(0);
+      unmount();
+      expect(waarnemers.every((w) => w.los === 1)).toBe(true);
     } finally {
       vi.unstubAllGlobals();
     }
