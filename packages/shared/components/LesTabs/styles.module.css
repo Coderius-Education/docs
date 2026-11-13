@@ -820,6 +820,9 @@
     flex-wrap: nowrap;
     overflow-x: auto;
     padding-bottom: 0.25rem;
+    /* Een klassieke schuifbalk (Windows) is vijftien pixels: die kostte elk
+       scherm met een schuivende rij een regel. Dun is hij nog te zien. */
+    scrollbar-width: thin;
   }
 
   .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) .stap {

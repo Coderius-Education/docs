@@ -116,14 +116,10 @@ mkdir: cannot create directory ‘oud’: File exists
 
 **Oorzaak:** je typte `cp notities.txt oud` voordat er een map `oud` was. Bestaat het doel niet, dan maakt `cp` een kopie met die naam. Nu is `oud` een bestand, en kan `mkdir` geen map met die naam meer maken. In `ls` is `oud` wit, niet blauw.
 
-**Oplossing:** gooi het bestand weg met `rm oud`. Maak dan eerst de map, en kopieer daarna.
+**Oplossing:** gooi het bestand weg, maak eerst de map, en kopieer daarna:
 
 ```bash
-# FOUT
-cp notities.txt oud
-mkdir oud
-
-# GOED
+rm oud
 mkdir oud
 cp notities.txt oud
 ```
