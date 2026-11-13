@@ -12,7 +12,7 @@ Online is alles netjes: je commits zitten in `main`, je feature-branch is weg. L
 
 1. Open VS Code in je `git-oefenen`-map
 2. Wissel via de statusbalk linksonder naar **main**
-3. Ga naar **Source Control** en klik **Sync Changes**
+3. Ga naar **Source Control**, klik op de **`...`** bovenaan het paneel en kies **Pull**
 
    Dat doet `git pull`: de merge-commit komt binnen. Open `hello.txt`: je afscheidsregel staat erin, ook lokaal op `main`.
 
@@ -36,6 +36,6 @@ Voor elke nieuwe feature herhaal je voortaan:
 2. Werk, commit, push (`Publish Branch`)
 3. Op GitHub: open een pull request
 4. Bekijk Files changed, merge, delete branch (online)
-5. Lokaal: wissel naar `main`, sync, verwijder lokale branch
+5. Lokaal: wissel naar `main`, pull, verwijder lokale branch
 
 Dit is hoe miljoenen ontwikkelaars elke dag werken.

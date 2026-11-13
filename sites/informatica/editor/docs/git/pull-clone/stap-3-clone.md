@@ -17,14 +17,14 @@ title: "Stap 3: een bestaand project klonen"
 5. Open het **Command Palette** met **Ctrl+Shift+P** (Windows/Linux) of **Cmd+Shift+P** (macOS)
 6. Typ `Git: Clone` en druk **Enter**
 7. Plak de URL en druk **Enter**
-8. Kies een map op je computer waar de kopie moet komen
+8. Kies een map waar de kopie moet komen. Kloon je je eigen `git-oefenen`, kies dan niet de map waar die al staat, maar maak een nieuwe map, bijvoorbeeld `kloon`
 9. Klik op **Open** om de gekloonde map in VS Code te openen
 
 ## Wat je nu ziet
 
 Bovenaan het Explorer-paneel staat de naam van je repository, met de bestanden eronder. Linksonder staat de branchnaam. Open de terminal (**Terminal** → **New Terminal**) en typ `git log`: de hele geschiedenis staat er, ook de commits die je op een andere computer maakte.
 
-Je hebt nu een complete kopie van de repository, **inclusief alle commits**. Vanaf hier werk je gewoon zoals je gewend bent: aanpassen, committen, en met **Sync Changes** weer pushen.
+Je hebt nu een complete kopie van de repository, **inclusief alle commits**. In de volgende tutorials werk je verder in je eigen `git-oefenen`, niet in de kloon. De kloon mag je weggooien.
 
 **Wat gebeurde er onder de motorkap?**
 

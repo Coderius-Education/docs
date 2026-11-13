@@ -19,10 +19,11 @@ Heb je git nog niet, of weet je het niet zeker? Klik op jouw systeem.
 <details>
 <summary>Git op Windows</summary>
 
-1. Ga naar [https://git-scm.com/download/win](https://git-scm.com/download/win)
-2. De download start automatisch
-3. Open het `.exe`-bestand en klik door de installatie. De standaardinstellingen zijn prima
-4. Herstart VS Code als die al open stond
+Open in VS Code een terminal via **Terminal** → **New Terminal** en typ `git --version`. Staat er een versienummer, zoals `git version 2.47.1.windows.1`, dan heb je git al. Zegt de terminal dat hij `git` niet kent, installeer het dan:
+
+1. Ga naar [https://git-scm.com/download/win](https://git-scm.com/download/win); de download start vanzelf
+2. Open het `.exe`-bestand en klik door de installatie. De standaardinstellingen zijn prima
+3. Herstart VS Code als die al open stond
 
 </details>
 

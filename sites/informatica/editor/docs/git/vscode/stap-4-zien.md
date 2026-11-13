@@ -8,8 +8,8 @@ title: "Stap 4: zien wat git ziet"
 
 Zodra je geïnitialiseerd hebt, verschijnt er onder **Source Control** een lijst met **Changes**. Dit is precies wat `git status` je in de simulator liet zien:
 
-- **Changes** = je werkmap (in de simulator: de linker kolom)
-- **Staged Changes** = de staging-zone (in de simulator: de middelste kolom)
+- **Changes** = je werkmap (in de simulator: de zone Werkmap)
+- **Staged Changes** = de staging-zone (in de simulator: de zone Staging)
 
 ## Wat je nu ziet
 

@@ -14,7 +14,7 @@ les_tabs: false
 | Statusbalk → **+ Create new branch from...** | `git checkout -b <naam>` |
 | **Publish Branch** (op een feature-branch) | `git push -u origin <branch>` |
 | Statusbalk → naar `main` wisselen | `git checkout main` |
-| **Sync Changes** op `main` (na merge online) | `git pull` |
+| Source Control **...** → **Pull** op `main` (na merge online) | `git pull` |
 | **Command Palette** → **Git: Delete Branch...** | `git branch -d <branch>` |
 
 ## Op github.com

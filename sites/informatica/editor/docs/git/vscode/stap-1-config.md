@@ -6,6 +6,8 @@ title: "Stap 1: vertel git wie je bent"
 
 # Stap 1: vertel git wie je bent
 
+## Naam, e-mailadres en branch instellen
+
 Eenmalig moet je git twee dingen vertellen: wie commits maakt, en hoe je eerste branch moet heten. Open in VS Code een terminal via **Terminal** → **New Terminal** en typ:
 
 ```bash

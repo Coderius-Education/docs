@@ -136,6 +136,28 @@ describe('de cursus is intern consistent', () => {
     expect(fout).toEqual([]);
   });
 
+  it('koppelt de repository uit GitHub stap 2 voordat Publish Branch komt', () => {
+    // GitHub stap 2 laat de leerling een lege repository git-oefenen maken.
+    // Zonder remote biedt Publish Branch "Publish to GitHub" aan, en dat maakt
+    // altijd een nieuwe repository: de naam git-oefenen bestond al, en de tip
+    // "biedt VS Code aan om die bestaande repository te gebruiken" beloofde
+    // een keuze die er niet is. Eerst Git: Add Remote... met de URL.
+    const publish = readFileSync(join(GIT, 'push/stap-1-publish.md'), 'utf8');
+    expect(readFileSync(join(GIT, 'github/stap-2-repo.md'), 'utf8')).toContain('git-oefenen');
+    expect(publish).toContain('Git: Add Remote...');
+    expect(publish.indexOf('Git: Add Remote...')).toBeLessThan(
+      publish.indexOf('**Publish Branch**'),
+    );
+    const fout = paginas()
+      .filter((p) =>
+        /bestaande repository te gebruiken|anders maakt VS Code een tweede/.test(
+          readFileSync(p, 'utf8'),
+        ),
+      )
+      .map((p) => relative(GIT, p));
+    expect(fout).toEqual([]);
+  });
+
   it('legt init.defaultBranch uit voordat er een repository gemaakt wordt', () => {
     const config = readFileSync(join(GIT, 'vscode/stap-1-config.md'), 'utf8');
     expect(config).toContain('init.defaultBranch main');

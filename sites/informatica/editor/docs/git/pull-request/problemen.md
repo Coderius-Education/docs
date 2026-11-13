@@ -39,12 +39,15 @@ les_tabs: false
 
 ## Onder Files changed staan meer regels dan mijn afscheidsregel
 
-**Oorzaak:** op je `main` stonden nog commits uit de vorige tutorial die niet op GitHub stonden. Je nieuwe branch nam ze mee, en GitHub toont ze nu als nieuw.
+**Oorzaak:** er zijn twee mogelijkheden.
 
-**Oplossing:** je hoeft niets te herstellen: merge de pull request, dan staan ze allemaal in `main`. Klik de volgende keer eerst op **Sync Changes** op `main`, zoals in [Stap 1](site:editor/git/pull-request/stap-1-branch-pushen), en maak daarna pas je branch.
+- Staat de regel erboven één keer rood en één keer groen, met dezelfde tekst, dan eindigde `hello.txt` zonder regeleinde. VS Code zet er standaard geen neer, dus toen je onderaan een regel toevoegde, kreeg de regel erboven er een bij. Dat telt git als een veranderde regel.
+- Staan er regels uit de vorige tutorial bij, dan stonden die commits nog niet op GitHub. Je nieuwe branch nam ze mee, en GitHub toont ze nu als nieuw.
+
+**Oplossing:** je hoeft niets te herstellen: merge de pull request. Voor de tweede oorzaak: klik de volgende keer eerst op **Sync Changes** op `main`, zoals in [Stap 1](site:editor/git/pull-request/stap-1-branch-pushen), en maak daarna pas je branch.
 
 ## Na de merge staat mijn nieuwe regel niet in mijn lokale main
 
 **Oorzaak:** de merge gebeurde op GitHub's server. Je eigen computer weet daar nog niets van.
 
-**Oplossing:** wissel naar `main` en klik **Sync Changes**. Zie [Stap 5](site:editor/git/pull-request/stap-5-lokaal-bijwerken).
+**Oplossing:** wissel naar `main`, klik op de **`...`** bovenaan het Source Control-paneel en kies **Pull**. Zie [Stap 5](site:editor/git/pull-request/stap-5-lokaal-bijwerken).

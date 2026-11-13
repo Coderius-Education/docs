@@ -23,6 +23,8 @@ Dit doe je op GitHub onder **Files changed**.
 
 ## Wat je nu ziet
 
-Onder **Files changed** staat `hello.txt` met één groene regel: je afscheidsregel. Bovenaan staat `1 changed file` met `+1 −0` ernaast: één toegevoegde regel, geen weggehaalde.
+Onder **Files changed** staat `hello.txt`, met in het groen je regel `Tot de volgende keer.`
+
+Staat de regel erboven één keer in het rood en één keer in het groen, met dezelfde tekst? Dan eindigde `hello.txt` zonder regeleinde. VS Code zet er standaard geen neer, en toen je onderaan een regel toevoegde, kreeg de regel erboven er een bij. Je hebt niets fout gedaan.
 
 Dit is *de* manier waarop teams code reviewen. Ook voor jezelf is het waardevol om hier kritisch naar je eigen diff te kijken: zie ik nog typo's? Heb ik commentaar laten staan? Vergat ik een bestand?

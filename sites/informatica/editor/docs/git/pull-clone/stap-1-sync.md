@@ -1,18 +1,30 @@
 ---
 sidebar_position: 1
-sidebar_label: "Stap 1: Sync Changes"
-title: "Stap 1: pull via Sync Changes"
+sidebar_label: "Stap 1: pull"
+title: "Stap 1: een wijziging van GitHub binnenhalen"
 ---
 
-# Stap 1: pull via Sync Changes
+# Stap 1: een wijziging van GitHub binnenhalen
 
-In VS Code is **Sync Changes** (de wolk/pijl-knop in Source Control) tegelijk een pull en een push.
+Pullen zie je alleen als er online iets nieuws staat. Dat maak je eerst zelf, op GitHub.
+
+## Verander iets op GitHub
+
+1. Open je repository `git-oefenen` op github.com en klik op `hello.txt`
+2. Klik rechtsboven het bestand op het potlood (**Edit this file**)
+3. Zet onderaan een regel bij, bijvoorbeeld `Deze regel komt van GitHub.`
+4. Klik op **Commit changes...** en bevestig
+
+Op GitHub staat nu een commit die je computer nog niet heeft.
+
+## Haal hem binnen in VS Code
 
 1. Open je project `git-oefenen` in VS Code
 2. Klik op **Source Control** (Ctrl+Shift+G)
-3. Klik op **Sync Changes**
+3. Staat er een knop **Sync Changes**, klik erop. Staat hij er niet, klik dan op de **`...`** bovenaan het Source Control-paneel en kies **Pull**
+
+**Sync Changes** staat er alleen als VS Code al weet dat je branch achterloopt. Weet hij dat nog niet, dan doet **Pull** in het menu hetzelfde werk.
 
 ## Wat je nu ziet
 
-- Zijn er nieuwe commits op GitHub die jij nog niet had? Dan downloadt VS Code ze en verschijnen ze in **Source Control Graph**.
-- Zijn er geen nieuwe commits? Dan gebeurt er niets zichtbaars — dat is goed. Geen melding betekent hier: niets aan de hand.
+Open `hello.txt` in VS Code: de regel die je op GitHub schreef, staat er nu ook. In **Source Control Graph** staat bovenaan de commit die je op GitHub maakte.
