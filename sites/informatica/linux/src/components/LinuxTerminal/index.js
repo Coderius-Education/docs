@@ -1,10 +1,19 @@
-import { LesNaast, useBreed, useInLesTab } from '@coderius/shared/components/LesTabs';
+import { LesNaast, LesNaastPlek, useBreed, useInLesTab } from '@coderius/shared/components/LesTabs';
 import { pasHoogte } from '@coderius/shared/components/LesTabs/pasHoogte';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { useEffect, useLayoutEffect, useRef, useCallback, useState } from 'react';
 import { promptPad } from './filesystem';
 import { OPDRACHTEN, maakSessie, volgDoelen } from './opdrachten';
-import { LEEG, omKolommen, plekVan, toets, verplaats, zichtbaar } from './regel';
+import {
+  LEEG,
+  inKolommen,
+  maakUitweg,
+  omKolommen,
+  plekVan,
+  toets,
+  verplaats,
+  zichtbaar,
+} from './regel';
 import styles from './styles.module.css';
 
 // In een les-tabblad staat de terminal naast de les (<LesNaast>): op een
@@ -31,6 +40,7 @@ const LAAGSTE = 8 * RIJ + RAND;
 function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdracht }) {
   const doelen = opdracht ? OPDRACHTEN[opdracht] : null;
   if (opdracht && !doelen) throw new Error(`LinuxTerminal: onbekende opdracht ${opdracht}`);
+  const naam = title || (opdracht ? `Oefenterminal voor opdracht ${opdracht}` : 'Oefenterminal');
   const termRef = useRef(null);
   const wortelRef = useRef(null);
   const xtermRef = useRef(null);
@@ -51,11 +61,14 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
       if (wortel.offsetWidth === 0) return;
       const b = body.getBoundingClientRect();
       const w = wortel.getBoundingClientRect();
+      // De terminal plakt onder de rij tabbladen: zijn plek op de pagina is
+      // die van de kolom, niet waar hij na het scrollen staat.
+      const kolom = wortel.closest('[data-les-naast]')?.getBoundingClientRect() ?? w;
       setHoogte(
         pasHoogte(
           {
             scherm: window.innerHeight,
-            boven: b.top + window.scrollY,
+            boven: b.top - w.top + kolom.top + window.scrollY,
             onder: w.bottom - b.bottom,
             max: HOOGSTE,
           },
@@ -81,15 +94,24 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
   const promptRij = useRef(0);
   const netLeeg = useRef(false);
   const sessieRef = useRef(null);
+  const nieuweSessie = useCallback(
+    () =>
+      maakSessie(extraFs ?? doelen?.bestanden, {
+        clear: () => {
+          netLeeg.current = true;
+        },
+        // `ls` zet zijn namen in kolommen op de breedte van de terminal.
+        kolommen: () => xtermRef.current?.cols ?? 80,
+      }),
+    [extraFs, doelen],
+  );
   if (sessieRef.current === null) {
-    sessieRef.current = maakSessie(extraFs ?? doelen?.bestanden, {
-      clear: () => {
-        netLeeg.current = true;
-      },
-    });
+    sessieRef.current = nieuweSessie();
   }
   const klaarRef = useRef([]);
   const [klaar, setKlaar] = useState([]);
+  // Waarom het volgende doel zo niet meer te halen is (opdrachten.ts, `vast`).
+  const [vast, setVast] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const getPrompt = useCallback(() => {
@@ -133,6 +155,7 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
       if (doelen) {
         klaarRef.current = volgDoelen(doelen, klaarRef.current, stand);
         setKlaar(klaarRef.current);
+        setVast(doelen.vast?.(stand, klaarRef.current) ?? null);
       }
 
       for (const result of results) {
@@ -167,18 +190,15 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
   const opnieuw = useCallback(() => {
     const term = xtermRef.current;
     if (!term) return;
-    sessieRef.current = maakSessie(extraFs ?? doelen?.bestanden, {
-      clear: () => {
-        netLeeg.current = true;
-      },
-    });
+    sessieRef.current = nieuweSessie();
     standRef.current = LEEG;
     klaarRef.current = [];
     setKlaar([]);
+    setVast(null);
     term.reset();
     welkom(term);
     term.focus();
-  }, [extraFs, welkom, doelen]);
+  }, [nieuweSessie, welkom]);
 
   useEffect(() => {
     let isMounted = true;
@@ -225,11 +245,19 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
         // Bij een opdracht minder hoog: er staan er een paar op een pagina.
         // In een tabblad ook: op een smal scherm staat hij onder de tekst.
         rows: doelen || inTab ? 12 : 24,
+        // De regels staan anders alleen op een canvas of in een boom met
+        // aria-hidden: voor een schermlezer bestond de uitvoer niet. Met
+        // deze modus houdt xterm een leesbare kopie bij en meldt het nieuwe
+        // uitvoer in een live-regio.
+        screenReaderMode: true,
       });
+      // Esc en dan Tab laat de terminal los (regel.js, maakUitweg).
+      term.attachCustomKeyEventHandler(maakUitweg());
 
       const fitAddon = new FitAddon();
       term.loadAddon(fitAddon);
       term.open(termRef.current);
+      term.textarea?.setAttribute('aria-label', `Invoer van de ${naam.toLowerCase()}`);
       // Meteen passend maken, zodat de welkomsttekst op de echte breedte
       // wordt afgebroken; het tweede fit vangt een container die nog groeit.
       if (teZien()) fitAddon.fit();
@@ -293,7 +321,7 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
           naPrompt(stand);
         } else if (actie === 'opties') {
           // De tweede Tab: wat er past, en dan de regel opnieuw.
-          term.write(`\r\n${opties.join('  ')}`);
+          term.write(`\r\n${inKolommen(opties, term.cols).replace(/\n/g, '\r\n')}`);
           standRef.current = stand;
           schrijfPrompt(term, '\r\n');
           naPrompt(stand);
@@ -339,6 +367,7 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
     doelen,
     schrijfPrompt,
     inTab,
+    naam,
   ]);
 
   const allesKlaar = doelen?.doelen.every((_, i) => klaar[i]);
@@ -348,6 +377,9 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
       ref={wortelRef}
       className={inKolom ? `${styles.terminal} ${styles.inKolom}` : styles.terminal}
       data-terminal={opdracht || 'les'}
+      // biome-ignore lint/a11y/useSemanticElements: een fieldset tekent een eigen kader om de terminal.
+      role="group"
+      aria-label={naam}
     >
       <div className={styles.header}>
         <div className={styles.dots}>
@@ -355,9 +387,7 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
           <span className={styles.dotYellow} />
           <span className={styles.dotGreen} />
         </div>
-        <span className={styles.title}>
-          {title || (opdracht ? `Oefenterminal voor opdracht ${opdracht}` : 'Oefenterminal')}
-        </span>
+        <span className={styles.title}>{naam}</span>
       </div>
       {doelen && (
         <div className={styles.doelen}>
@@ -375,9 +405,11 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
           <p className={styles.status} aria-live="polite">
             {allesKlaar
               ? 'Klaar. Kijk in het antwoord of je het ook zo deed.'
-              : doelen.opVolgorde
-                ? 'Doe het in deze volgorde. Het vinkje komt zodra je het gedaan hebt.'
-                : 'Het vinkje komt zodra je het gedaan hebt.'}
+              : vast
+                ? vast
+                : doelen.opVolgorde
+                  ? 'Doe het in deze volgorde. Het vinkje komt zodra je het gedaan hebt.'
+                  : 'Het vinkje komt zodra je het gedaan hebt.'}
           </p>
         </div>
       )}
@@ -390,15 +422,24 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
         <button type="button" className={styles.opnieuw} onClick={opnieuw} disabled={!isLoaded}>
           Opnieuw beginnen
         </button>
-        <span className={styles.hint}>Tab vult aan, ↑ haalt terug</span>
+        <span className={styles.hint}>Tab vult aan, ↑ haalt terug, Esc en dan Tab gaat verder</span>
       </div>
     </div>
   );
 }
 
+// Tot de terminal er is. In een tabblad houdt de terminal van de les alleen
+// zijn kolom vrij (<LesNaastPlek>): een blok "Terminal laden" in de tekst
+// duwde de les eerst omlaag, en daarna versprong hij.
+function Wacht({ heleLes }) {
+  const inTab = useInLesTab();
+  if (inTab && heleLes) return <LesNaastPlek heleLes />;
+  return <div className={styles.fallback}>Terminal laden...</div>;
+}
+
 export default function LinuxTerminal(props) {
   return (
-    <BrowserOnly fallback={<div className={styles.fallback}>Terminal laden...</div>}>
+    <BrowserOnly fallback={<Wacht heleLes={!props.opdracht} />}>
       {() => (
         // De terminal van de les hoort bij elk scherm; die van een opdracht
         // bij zijn eigen tabblad.

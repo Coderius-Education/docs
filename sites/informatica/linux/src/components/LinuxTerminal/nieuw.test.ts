@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { vulAan } from './aanvullen';
 import { maakSessie } from './opdrachten';
-import { LEEG, omKolommen, plekVan, toets, verplaats, zichtbaar } from './regel';
+import {
+  LEEG,
+  inKolommen,
+  maakUitweg,
+  omKolommen,
+  plekVan,
+  toets,
+  verplaats,
+  zichtbaar,
+} from './regel';
 
 // Jokertekens, ls/cp/mv/grep met meer namen, find, history, Tab en het
 // bewerken van de regel. Elke verwachte uitvoer is nagedraaid op Ubuntu 24.04
@@ -457,5 +466,107 @@ describe('zoals op Ubuntu', () => {
     const { typ } = terminal();
     expect(typ('tail -1 /etc/passwd')).toBe(typ('tail -n 1 /etc/passwd'));
     expect(typ('head -2 /etc/passwd').split('\n')).toHaveLength(2);
+  });
+});
+
+describe('ls op een smalle terminal', () => {
+  // Naast de les is de terminal 53 tot 64 kolommen breed. `ls downloads` in
+  // opdracht 2.4.a plakte zes namen met twee spaties aan elkaar (72 tekens),
+  // en de terminal brak af midden in `vakantie2.jpg`: "vakantie" en "2.jpg"
+  // lezen als twee bestanden, in de opdracht waar je .jpg-bestanden zoekt.
+  // De echte ls zet namen in kolommen op de breedte van het venster.
+  const NAMEN = [
+    'kat.png',
+    'liedje.mp3',
+    'opdracht.pdf',
+    'vakantie1.jpg',
+    'vakantie2.jpg',
+    'verslag.docx',
+  ];
+
+  it('zet namen in kolommen, van boven naar beneden, zoals coreutils', () => {
+    // Nagedraaid met `ls -w 58` en `ls -w 30` op Ubuntu 24.04.
+    expect(inKolommen(NAMEN, 58)).toBe(
+      'kat.png     opdracht.pdf   vakantie2.jpg\nliedje.mp3  vakantie1.jpg  verslag.docx',
+    );
+    expect(inKolommen(NAMEN, 30)).toBe(
+      'kat.png       vakantie1.jpg\nliedje.mp3    vakantie2.jpg\nopdracht.pdf  verslag.docx',
+    );
+    expect(inKolommen(NAMEN, 10)).toBe(NAMEN.join('\n'));
+  });
+
+  it('wat op één regel past, staat achter elkaar met twee spaties', () => {
+    expect(inKolommen(NAMEN, 80)).toBe(NAMEN.join('  '));
+    expect(inKolommen(['a'], 5)).toBe('a');
+    expect(inKolommen([], 80)).toBe('');
+  });
+
+  it('geen naam valt over de rand, op geen enkele breedte', () => {
+    for (let breedte = 14; breedte <= 80; breedte++)
+      for (const regel of inKolommen(NAMEN, breedte).split('\n'))
+        expect(regel.length, `${breedte}: ${regel}`).toBeLessThanOrEqual(breedte);
+  });
+
+  it('een kleur telt niet mee voor de breedte', () => {
+    const kleur = (n: string) => `<${n}>`;
+    expect(inKolommen(['aa', 'b', 'cc'], 6, kleur)).toBe('<aa>  <cc>\n<b>');
+  });
+
+  it('ls gebruikt de breedte van de terminal', () => {
+    const bestanden = {
+      home: { student: { downloads: Object.fromEntries(NAMEN.map((n) => [n, ''])) } },
+    };
+    const smal = maakSessie(bestanden, { kolommen: () => 58 });
+    expect(smal.typ('ls downloads').stand.uitvoer).toEqual([
+      'kat.png     opdracht.pdf   vakantie2.jpg',
+      'liedje.mp3  vakantie1.jpg  verslag.docx',
+    ]);
+    expect(smal.typ('ls downloads/*').stand.uitvoer).toHaveLength(3);
+    // Naar een pipe blijft het één naam per regel.
+    expect(smal.typ('ls downloads | wc -l').stand.uitvoer).toEqual(['6']);
+    // Zonder terminal (een test) is de breedte 80, zoals een gewoon venster.
+    expect(maakSessie(bestanden).typ('ls downloads').stand.uitvoer).toEqual([NAMEN.join('  ')]);
+  });
+
+  it('help past op de smalste terminal naast de les', () => {
+    // Op 1200 pixels heeft de terminal 53 kolommen; een regel van 61 tekens
+    // brak af als "(standaar" en "d 10)".
+    const { typ } = terminal();
+    for (const regel of typ('help').split('\n'))
+      expect(regel.length, regel).toBeLessThanOrEqual(53);
+  });
+});
+
+describe('met het toetsenbord de terminal uit', () => {
+  // Tab vult aan, dus Tab bracht je nooit naar de knop Opnieuw beginnen of
+  // de rest van de pagina. Esc en dan Tab doet dat wel. `false` betekent
+  // dat xterm de toets aan de browser laat.
+  const toetsDown = (key: string) => ({ type: 'keydown', key });
+
+  it('Tab is voor de terminal, tot je eerst Esc drukt', () => {
+    const uitweg = maakUitweg();
+    expect(uitweg(toetsDown('Tab'))).toBe(true);
+    expect(uitweg(toetsDown('Escape'))).toBe(true);
+    expect(uitweg(toetsDown('Tab'))).toBe(false);
+    // Daarna vult Tab weer aan.
+    expect(uitweg(toetsDown('Tab'))).toBe(true);
+  });
+
+  it('Shift+Tab na Esc gaat terug de pagina in', () => {
+    const uitweg = maakUitweg();
+    uitweg(toetsDown('Escape'));
+    expect(uitweg(toetsDown('Shift'))).toBe(true);
+    expect(uitweg(toetsDown('Tab'))).toBe(false);
+  });
+
+  it('een andere toets na Esc: Tab vult weer aan', () => {
+    const uitweg = maakUitweg();
+    uitweg(toetsDown('Escape'));
+    uitweg(toetsDown('l'));
+    expect(uitweg(toetsDown('Tab'))).toBe(true);
+    // Een keyup verandert niets.
+    uitweg(toetsDown('Escape'));
+    expect(uitweg({ type: 'keyup', key: 'Escape' })).toBe(true);
+    expect(uitweg(toetsDown('Tab'))).toBe(false);
   });
 });

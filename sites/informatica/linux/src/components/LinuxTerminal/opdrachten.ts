@@ -25,6 +25,9 @@ export type Stand = {
 
 export type Doel = { tekst: string; klaar: (s: Stand) => boolean };
 
+/** Waarom het volgende doel zo niet meer te halen is, en wat de leerling dan doet. */
+export type Vast = (s: Stand, klaar: boolean[]) => string | null;
+
 export type Opdracht = {
   doelen: Doel[];
   /**
@@ -40,13 +43,25 @@ export type Opdracht = {
    * oud weg" klopt ook voordat je iets gedaan hebt.
    */
   opVolgorde?: boolean;
+  /**
+   * Zegt het als de leerling zo niet meer verder kan. In 2.4.b gooide wie
+   * eerst `rm *.tmp` typte (de fout waar de opdracht over gaat) de bestanden
+   * weg die het eerste doel wil zien, en de terminal bleef "Doe het in deze
+   * volgorde" zeggen. De tekst komt onder de doelen te staan.
+   */
+  vast?: Vast;
 };
 
 const KLEUR = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
 
 /** Eén oefenterminal: een eigen bestandssysteem en een eigen map. */
-export function maakSessie(extraFs?: object, { clear }: { clear?: () => void } = {}) {
+export function maakSessie(
+  extraFs?: object,
+  { clear, kolommen }: { clear?: () => void; kolommen?: () => number } = {},
+) {
   const env = {
+    // De breedte van de terminal: `ls` zet zijn namen in kolommen die erop passen.
+    kolommen: () => kolommen?.() ?? 80,
     cwd: HOME,
     fs: createFilesystem(extraFs),
     geschiedenis: [] as string[],
@@ -132,6 +147,22 @@ const commandos = (s: Stand): string[][] =>
     .map(({ cmd }: { cmd: string }) => cmd.trim().split(/\s+/))
     .filter((w: string[]) => w[0]);
 const gebruikt = (s: Stand, naam: string) => commandos(s).some((w) => w[0] === naam);
+/** Past deze naam op een van de jokertekens van dit commando op de regel? */
+const noemt = (s: Stand, commando: string, naam: string) =>
+  commandos(s)
+    .filter((w) => w[0] === commando)
+    .some((w) =>
+      w.slice(1).some((patroon) => {
+        const kaal = patroon.split('/').pop() ?? '';
+        if (!/[*?]/.test(kaal)) return false;
+        const regex = kaal
+          .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+          .replace(/\*/g, '.*')
+          .replace(/\?/g, '.');
+        return new RegExp(`^${regex}$`).test(naam);
+      }),
+    );
+const OPNIEUW = 'Klik op Opnieuw beginnen en probeer het nog een keer.';
 const woorden = (s: Stand) => new Set(s.uitvoer.flatMap((r) => r.split(/\s+/)));
 
 const begin = createFilesystem();
@@ -176,7 +207,7 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
     doelen: [
       { tekst: 'Ga naar /var/log.', klaar: (s) => s.cwd === '/var/log' },
       {
-        tekst: 'Ga van daaruit met een relatief pad naar /var/www/html.',
+        tekst: 'Ga van daaruit in één keer, met een relatief pad, naar /var/www/html.',
         klaar: (s) =>
           s.voor === '/var/log' &&
           s.cwd === '/var/www/html' &&
@@ -186,6 +217,12 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
       },
       { tekst: 'Ga terug naar je thuismap.', klaar: (s) => s.cwd === HOME },
     ],
+    // Twee stappen (cd .. en dan cd www/html), of een absoluut pad: het
+    // vinkje komt pas na één relatief pad vanuit /var/log.
+    vast: (s, klaar) =>
+      klaar[0] && !klaar[1] && s.cwd !== '/var/log'
+        ? 'Het tweede doel telt alleen in één keer vanuit /var/log. Ga daar eerst naar terug.'
+        : null,
   },
   '1.2.b': {
     doelen: [
@@ -297,9 +334,10 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
       { tekst: 'Maak in downloads een map fotos.', klaar: (s) => isMap(s, '~/downloads/fotos') },
       {
         tekst: 'Verplaats alle .jpg- en .png-bestanden naar fotos, met één mv en jokertekens.',
+        // Eén mv: de regel zelf noemt elke foto. Met twee losse mv's stond
+        // alles er ook, en kwam het vinkje voor iets dat niet zo gedaan was.
         klaar: (s) =>
-          gebruikt(s, 'mv') &&
-          s.regel.includes('*') &&
+          FOTOS.every((f) => noemt(s, 'mv', f)) &&
           FOTOS.every((f) => bestaat(s, `~/downloads/fotos/${f}`)) &&
           FOTOS.every((f) => !bestaat(s, `~/downloads/${f}`)),
       },
@@ -309,6 +347,10 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
           gebruikt(s, 'ls') && s.uitvoer.join(' ').split(/\s+/).join(' ') === FOTOS.join(' '),
       },
     ],
+    vast: (s, klaar) =>
+      klaar[0] && !klaar[1] && FOTOS.some((f) => !bestaat(s, `~/downloads/${f}`))
+        ? `Een deel van de foto's is al verplaatst of weg: met één mv lukt het zo niet meer. ${OPNIEUW}`
+        : null,
   },
   '2.4.b': {
     opVolgorde: true,
@@ -346,6 +388,14 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
           bestaat(s, '~/project/README.md'),
       },
     ],
+    vast: (s, klaar) => {
+      const weg = (naam: string) => !bestaat(s, `~/project/${naam}`);
+      if (!klaar[0] && (weg('cache1.tmp') || weg('cache2.tmp')))
+        return `De .tmp-bestanden zijn al weg, dus er valt niets meer te bekijken. ${OPNIEUW}`;
+      if (!klaar[1] && (weg('main.py') || weg('README.md')))
+        return `Er is meer weg dan de .tmp-bestanden. ${OPNIEUW}`;
+      return null;
+    },
   },
   '3.1.a': {
     doelen: [

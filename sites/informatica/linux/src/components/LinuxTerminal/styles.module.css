@@ -10,6 +10,21 @@
   margin: 0;
 }
 
+/* De terminal blijft in beeld als de tekst langer is dan het scherm: met een
+   antwoord open schoof hij anders weg terwijl je het antwoord las. Hij plakt
+   onder de rij tabbladen. Dat mag hier: deze terminal heeft geen knop Groter
+   (een veld dat beeldvullend kan, valt in een eigen laag onder de navbar). */
+@media (min-width: 1200px) {
+  :global([data-les-naast]):has(.inKolom) {
+    align-self: stretch;
+  }
+
+  :global([data-les-naast-gast]):has(> .inKolom) {
+    position: sticky;
+    top: calc(var(--ifm-navbar-height) + 3.75rem);
+  }
+}
+
 .header {
   display: flex;
   align-items: center;

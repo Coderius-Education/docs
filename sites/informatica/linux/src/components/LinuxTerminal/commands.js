@@ -19,6 +19,7 @@ import {
   splitPad,
   writeFile,
 } from './filesystem';
+import { inKolommen } from './regel';
 
 /** De regels van een tekst, zonder het lege stuk na het laatste regeleinde. */
 function regels(tekst) {
@@ -495,10 +496,16 @@ function lsEen(args, target, env, { doorgeven = false } = {}) {
   // Naar een pipe of een bestand: één naam per regel en geen kleur, net
   // als de echte ls. Dan werkt `ls /etc | grep host`.
   if (doorgeven) return { output: entries.map((e) => e.name).join('\n'), exitCode: 0 };
-  const names = entries.map((e) =>
-    e.isDir || e.pad === GEHEIME_MAP ? `\x1b[1;34m${e.name}\x1b[0m` : e.name,
+  // Op een terminal in kolommen op de breedte van het venster, zoals ls.
+  const mappen = new Set(
+    entries.filter((e) => e.isDir || e.pad === GEHEIME_MAP).map((e) => e.name),
   );
-  return { output: names.join('  '), exitCode: 0 };
+  const uitvoer = inKolommen(
+    entries.map((e) => e.name),
+    env.kolommen?.() ?? 80,
+    (naam) => (mappen.has(naam) ? `\x1b[1;34m${naam}\x1b[0m` : naam),
+  );
+  return { output: uitvoer, exitCode: 0 };
 }
 
 const COMMANDS = {
@@ -521,7 +528,11 @@ const COMMANDS = {
     if (bestanden.length) {
       const regelsVan = bestanden.map((b) => lsEen(opts, b, env, opties).output);
       const lang = opts.some((o) => o.includes('l'));
-      blokken.push(regelsVan.join(lang || opties.doorgeven ? '\n' : '  '));
+      blokken.push(
+        lang || opties.doorgeven
+          ? regelsVan.join('\n')
+          : inKolommen(regelsVan, env.kolommen?.() ?? 80),
+      );
     }
     for (const map of mappen) blokken.push(`${map}:\n${lsEen(opts, map, env, opties).output}`);
     const uitvoer = [...fouten, blokken.join('\n\n')].filter(Boolean).join('\n');
@@ -674,31 +685,28 @@ const COMMANDS = {
     return {
       output: [
         "Beschikbare commando's:",
-        '  ls [pad]          - Bestanden tonen',
-        '  cat <bestand>     - Bestandsinhoud tonen',
-        '  cd [pad]          - Van map wisselen',
-        '  pwd               - Huidige map tonen',
-        '  whoami            - Gebruikersnaam tonen',
-        '  id                - Gebruikersinformatie tonen',
-        '  echo <tekst>      - Tekst tonen',
-        '  grep <patroon>    - Zoeken in tekst',
-        '  head [-n N] <bestand> - Eerste N regels tonen (standaard 10)',
-        '  tail [-n N] <bestand> - Laatste N regels tonen (standaard 10)',
-        '  wc [-l|-w|-c] <bestand> - Regels/woorden/tekens tellen',
-        "  find <pad> -name '<patroon>' [-type f|d] - Bestanden vinden",
-        '  mkdir [-p] <map>  - Map maken',
-        '  touch <bestand>   - Leeg bestand maken',
-        '  cp <bron> <doel>  - Bestand kopiëren',
-        '  mv <bron> <doel>  - Verplaatsen of hernoemen',
-        '  rm [-r] <pad>     - Weggooien (er is geen prullenbak)',
-        '  echo <tekst> > <bestand> - Tekst in een bestand zetten (>> vult aan)',
-        '  uname [-a]        - Systeeminformatie tonen',
-        '  hostname          - Hostnaam tonen',
-        "  history           - De commando's die je typte",
-        '  clear             - Scherm leegmaken',
-        '  help              - Dit hulpoverzicht tonen',
+        '  ls [pad]                 bestanden tonen',
+        '  cat <bestand>            inhoud tonen',
+        '  cd [pad]                 naar een map gaan',
+        '  pwd                      de map waar je bent',
+        '  whoami, id               wie je bent',
+        '  echo <tekst>             tekst tonen',
+        '  grep <patroon> <bestand> zoeken in tekst',
+        '  head, tail [-n N]        eerste of laatste regels',
+        '  wc [-l|-w|-c]            regels, woorden, tekens',
+        "  find <pad> -name '...'   bestanden vinden",
+        '  mkdir [-p] <map>         map maken',
+        '  touch <bestand>          leeg bestand maken',
+        '  cp <bron> <doel>         kopiëren',
+        '  mv <bron> <doel>         verplaatsen, hernoemen',
+        '  rm [-r] <pad>            weggooien, voorgoed',
+        '  echo <tekst> > <bestand> tekst in een bestand',
+        '  uname [-a], hostname     over deze computer',
+        '  history                  wat je eerder typte',
+        '  clear                    scherm leegmaken',
         '',
-        'Tab vult een commando of naam aan; pijltje omhoog haalt een vorig commando terug.',
+        'Tab vult een commando of naam aan.',
+        'Pijltje omhoog haalt een vorig commando terug.',
       ].join('\n'),
       exitCode: 0,
     };

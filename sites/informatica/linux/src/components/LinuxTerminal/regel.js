@@ -132,3 +132,66 @@ export function omKolommen(tekst, kolommen, inspring = '  ') {
   if (regel) regels.push(regel);
   return regels.map((r) => inspring + r);
 }
+
+/**
+ * Namen in kolommen, zoals `ls` ze op een terminal zet: van boven naar
+ * beneden gevuld, elke kolom zo breed als zijn langste naam plus twee
+ * spaties, en zoveel kolommen als er op `breedte` passen. Past alles op één
+ * regel, dan staan de namen achter elkaar met twee spaties ertussen. Met
+ * namen die aan elkaar geplakt waren, brak de terminal naast de les (53 tot
+ * 64 kolommen) `vakantie2.jpg` af als "vakantie" en "2.jpg": dat leest als
+ * twee bestanden.
+ *
+ * `toon` maakt van een naam wat er op het scherm komt (een map in kleur); de
+ * breedte rekent met de naam zelf.
+ */
+export function inKolommen(namen, breedte, toon = (n) => n) {
+  if (namen.length === 0) return '';
+  for (let kolommen = namen.length; kolommen >= 1; kolommen--) {
+    const rijen = Math.ceil(namen.length / kolommen);
+    const breed = [];
+    for (let k = 0; k * rijen < namen.length; k++)
+      breed.push(Math.max(...namen.slice(k * rijen, (k + 1) * rijen).map((n) => n.length)));
+    const totaal = breed.reduce((a, b) => a + b, 0) + 2 * (breed.length - 1);
+    if (totaal > breedte && kolommen > 1) continue;
+    const regels = [];
+    for (let r = 0; r < rijen; r++) {
+      let regel = '';
+      for (let k = 0; k < breed.length; k++) {
+        const naam = namen[k * rijen + r];
+        if (naam === undefined) break;
+        const laatste = namen[(k + 1) * rijen + r] === undefined;
+        regel += toon(naam) + (laatste ? '' : ' '.repeat(breed[k] - naam.length + 2));
+      }
+      regels.push(regel);
+    }
+    return regels.join('\n');
+  }
+  return '';
+}
+
+/**
+ * Tab vult in de terminal een naam aan, en dus kwam je er met Tab niet meer
+ * uit: wie met het toetsenbord door de pagina loopt, zat vast, en bereikte
+ * de knop Opnieuw beginnen en de volgende les niet. Esc en daarna Tab (of
+ * Shift+Tab) laat de terminal los: die ene Tab is dan voor de browser.
+ *
+ * Geeft de functie voor `attachCustomKeyEventHandler` van xterm: `false`
+ * betekent dat xterm de toets niet zelf afhandelt.
+ */
+export function maakUitweg() {
+  let los = false;
+  return (e) => {
+    if (e.type !== 'keydown') return true;
+    if (e.key === 'Escape') {
+      los = true;
+      return true;
+    }
+    if (e.key === 'Tab' && los) {
+      los = false;
+      return false;
+    }
+    if (e.key !== 'Shift') los = false;
+    return true;
+  };
+}

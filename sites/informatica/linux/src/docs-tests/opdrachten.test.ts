@@ -143,6 +143,8 @@ describe('een terminal per opdracht', () => {
         'mv kat.png fotos/',
         'ls fotos',
       ],
+      // Twee mv's met een jokerteken: alles staat er, maar niet "met één mv".
+      ['cd downloads', 'mkdir fotos', 'mv *.jpg fotos', 'mv *.png fotos', 'ls fotos'],
     ],
   };
 
@@ -177,6 +179,52 @@ describe('een terminal per opdracht', () => {
       expect(met.length).toBeLessThan(zonderUit.length);
     });
   }
+
+  describe('een opdracht die is vastgelopen, zegt dat', () => {
+    // Uit de doorloop: wie in 2.4.b eerst `rm *.tmp` typte, kon geen doel
+    // meer halen, en de terminal bleef "Doe het in deze volgorde" zeggen.
+    const vast = (id: string, regels: string[]) => {
+      const opdracht = OPDRACHTEN[id];
+      const sessie = maakSessie(opdracht.bestanden);
+      let klaar: boolean[] = [];
+      let melding: string | null = null;
+      for (const regel of regels) {
+        const { stand } = sessie.typ(regel);
+        klaar = volgDoelen(opdracht, klaar, stand);
+        melding = opdracht.vast?.(stand, klaar) ?? null;
+      }
+      return melding;
+    };
+
+    it('2.4.b: de .tmp-bestanden zijn weg voordat je ze bekeken hebt', () => {
+      expect(vast('2.4.b', ['cd project', 'rm *.tmp'])).toMatch(/Opnieuw beginnen/);
+      expect(vast('2.4.b', ['cd project', 'ls *.tmp', 'rm *'])).toMatch(/Opnieuw beginnen/);
+    });
+
+    it('2.4.a: met twee mv-regels lukt "met één mv" niet meer', () => {
+      expect(vast('2.4.a', ['cd downloads', 'mkdir fotos', 'mv *.jpg fotos'])).toMatch(
+        /Opnieuw beginnen/,
+      );
+    });
+
+    it('1.2.a: na twee stappen moet je terug naar /var/log', () => {
+      expect(vast('1.2.a', ['cd /var/log', 'cd ..', 'cd www/html'])).toMatch(/\/var\/log/);
+      expect(vast('1.2.a', ['cd /var/log', 'cd ..', 'cd log'])).toBeNull();
+    });
+
+    it('het antwoord uit de les loopt nergens vast', () => {
+      for (const s of secties.filter((x) => OPDRACHTEN[x.id]?.vast)) {
+        const regels = antwoord(s);
+        for (let n = 1; n <= regels.length; n++)
+          expect(vast(s.id, regels.slice(0, n)), `${s.id}: ${regels[n - 1]}`).toBeNull();
+      }
+    });
+
+    it('rondkijken is niet vastlopen', () => {
+      for (const id of Object.keys(OPDRACHTEN))
+        expect(vast(id, ['pwd', 'ls', 'help']), id).toBeNull();
+    });
+  });
 
   it('1.2.a: met een absoluut pad telt de tweede stap niet', () => {
     expect(speel('1.2.a', ['cd /var/log', 'cd /var/www/html', 'cd ~'])).toEqual([
