@@ -5,17 +5,17 @@ title: "Hacking - Virus"
 
 # Hacking - Virus
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Virus"* onder Hacking.
 
-**Moeilijkheid:** Gemiddeld
-
-## Onderwerp
-**Virussen & malware-analyse**
-
-## Beschrijving
 Gebruik VirusTotal om een bestand of URL te analyseren en de flag te vinden.
 
-## Wat je leert
+- **Moeilijkheid:** Gemiddeld
+- **Onderwerp:** Virussen & malware-analyse
+
+**Wat je leert**
+
 - Hoe VirusTotal werkt
 - Hoe je bestanden en URLs kunt scannen op malware
 - Welke informatie een virusscanner kan onthullen over een bestand

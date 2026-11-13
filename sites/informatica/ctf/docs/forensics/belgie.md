@@ -5,17 +5,17 @@ title: "Forensics - België"
 
 # Forensics - België
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"België"* onder Forensics.
 
-**Moeilijkheid:** Makkelijk
-
-## Onderwerp
-**IP-adres geolocatie**
-
-## Beschrijving
 Je krijgt een IP-adres. Hoe vind je de locatie die bij dit IP-adres hoort?
 
-## Wat je leert
+- **Moeilijkheid:** Makkelijk
+- **Onderwerp:** IP-adres geolocatie
+
+**Wat je leert**
+
 - Wat een IP-adres is
 - Hoe je de geografische locatie van een IP-adres kunt vinden
 - Het verschil tussen IPv4 en IPv6

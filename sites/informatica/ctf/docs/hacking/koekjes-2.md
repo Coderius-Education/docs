@@ -5,17 +5,17 @@ title: "Hacking - Koekjes 2"
 
 # Hacking - Koekjes 2
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Koekjes 2"* onder Hacking.
 
-**Moeilijkheid:** Moeilijk
-
-## Onderwerp
-**Cookies (wijzigen)**
-
-## Beschrijving
 Je kunt cookies niet alleen bekijken, maar ook **wijzigen**. Wat gebeurt er als je de waarde van een cookie aanpast?
 
-## Wat je leert
+- **Moeilijkheid:** Moeilijk
+- **Onderwerp:** Cookies (wijzigen)
+
+**Wat je leert**
+
 - Hoe je cookies kunt wijzigen via de Developer Tools
 - Waarom je nooit alleen op client-side cookies moet vertrouwen voor beveiliging
 - Het gevaar van het opslaan van autorisatie-informatie in cookies

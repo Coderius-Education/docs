@@ -5,17 +5,17 @@ title: "Forensics - Plaats delict"
 
 # Forensics - Plaats delict
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Plaats delict"* onder Forensics.
 
-**Moeilijkheid:** Moeilijk
-
-## Onderwerp
-**Metadata & verborgen data**
-
-## Beschrijving
 Een afbeelding kan meer informatie bevatten dan je op het eerste gezicht ziet. Hoe kom je in de "code" van een plaatje?
 
-## Wat je leert
+- **Moeilijkheid:** Moeilijk
+- **Onderwerp:** Metadata & verborgen data
+
+**Wat je leert**
+
 - Hoe je de broncode van een webpagina kunt bekijken
 - Dat afbeeldingen metadata kunnen bevatten
 - Hoe je verborgen informatie in webpagina's kunt vinden

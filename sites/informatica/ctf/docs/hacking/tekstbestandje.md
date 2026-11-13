@@ -5,17 +5,17 @@ title: "Hacking - Tekstbestandje"
 
 # Hacking - Tekstbestandje
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Tekstbestandje"* onder Hacking.
 
-**Moeilijkheid:** Gemiddeld
-
-## Onderwerp
-**Verborgen bestanden**
-
-## Beschrijving
 Net als robots.txt zijn er meer standaard tekstbestanden die op webservers staan. Wat zou een logische naam zijn voor een bestand met wachtwoorden?
 
-## Wat je leert
+- **Moeilijkheid:** Gemiddeld
+- **Onderwerp:** Verborgen bestanden
+
+**Wat je leert**
+
 - Dat gevoelige bestanden soms publiek toegankelijk zijn op webservers
 - Het belang van goede bestandsbeveiliging
 - Waarom je nooit wachtwoorden in platte tekstbestanden moet opslaan

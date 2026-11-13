@@ -7,17 +7,17 @@ import InlineEditor from '@coderius/editor/InlineEditor';
 
 # Code - Plakken
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Plakken"* onder Code.
 
-**Moeilijkheid:** Makkelijk
-
-## Onderwerp
-**Code uitvoeren**
-
-## Beschrijving
 Je krijgt een stuk code te zien. Voer de code uit om de flag te vinden.
 
-## Wat je leert
+- **Moeilijkheid:** Makkelijk
+- **Onderwerp:** Code uitvoeren
+
+**Wat je leert**
+
 - Hoe je code kunt herkennen en uitvoeren
 - Hoe je online code-editors kunt gebruiken
 

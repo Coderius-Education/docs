@@ -5,17 +5,17 @@ title: "Hacking - Eentje erbij"
 
 # Hacking - Eentje erbij
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Eentje erbij"* onder Hacking.
 
-**Moeilijkheid:** Makkelijk
-
-## Onderwerp
-**URL-manipulatie**
-
-## Beschrijving
 Soms is de oplossing zo simpel als het aanpassen van de URL in je browser.
 
-## Wat je leert
+- **Moeilijkheid:** Makkelijk
+- **Onderwerp:** URL-manipulatie
+
+**Wat je leert**
+
 - Wat IDOR (Insecure Direct Object Reference) is
 - Hoe URL-parameters werken
 - Waarom input-validatie belangrijk is aan de serverzijde

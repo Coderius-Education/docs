@@ -5,17 +5,17 @@ title: "Hacking - Hallo"
 
 # Hacking - Hallo
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Hallo"* onder Hacking.
 
-**Moeilijkheid:** Moeilijk
-
-## Onderwerp
-**Cross-Site Scripting (XSS)**
-
-## Beschrijving
 Wat mag wel en wat mag niet? Soms accepteert een website invoer die het eigenlijk niet zou moeten accepteren.
 
-## Wat je leert
+- **Moeilijkheid:** Moeilijk
+- **Onderwerp:** Cross-Site Scripting (XSS)
+
+**Wat je leert**
+
 - Wat Cross-Site Scripting (XSS) is
 - Waarom input-validatie cruciaal is
 - Hoe aanvallers onveilige invoervelden kunnen misbruiken

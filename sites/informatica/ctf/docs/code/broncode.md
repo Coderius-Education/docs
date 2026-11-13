@@ -5,17 +5,17 @@ title: "Code - Broncode"
 
 # Code - Broncode
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Broncode"* onder Code.
 
-**Moeilijkheid:** Makkelijk
-
-## Onderwerp
-**HTML-broncode**
-
-## Beschrijving
 De flag is verborgen in de broncode van de pagina. Zoek goed.
 
-## Wat je leert
+- **Moeilijkheid:** Makkelijk
+- **Onderwerp:** HTML-broncode
+
+**Wat je leert**
+
 - Hoe je de broncode van een webpagina kunt bekijken
 - Hoe informatie verborgen kan worden in HTML
 - Het verschil tussen wat je ziet en wat er werkelijk in de code staat

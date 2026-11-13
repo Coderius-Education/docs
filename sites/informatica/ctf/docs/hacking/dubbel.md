@@ -5,17 +5,17 @@ title: "Hacking - Dubbel"
 
 # Hacking - Dubbel
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Dubbel"* onder Hacking.
 
-**Moeilijkheid:** Expert
-
-## Onderwerp
-**Gecombineerde technieken**
-
-## Beschrijving
 Deze challenge is nog nooit opgelost door iemand. Durf jij het aan?
 
-## Wat je leert
+- **Moeilijkheid:** Expert
+- **Onderwerp:** Gecombineerde technieken
+
+**Wat je leert**
+
 - Hoe je meerdere hacking-technieken kunt combineren
 - Creatief denken en doorzettingsvermogen bij cybersecurity
 

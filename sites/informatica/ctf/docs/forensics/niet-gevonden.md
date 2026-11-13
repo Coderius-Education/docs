@@ -5,17 +5,17 @@ title: "Forensics - Niet gevonden"
 
 # Forensics - Niet gevonden
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Niet gevonden"* onder Forensics.
 
-**Moeilijkheid:** Moeilijk
-
-## Onderwerp
-**Bestandstypes**
-
-## Beschrijving
 Je downloadt een bestand, maar het lijkt niet te openen. Misschien is de bestandsextensie niet correct?
 
-## Wat je leert
+- **Moeilijkheid:** Moeilijk
+- **Onderwerp:** Bestandstypes
+
+**Wat je leert**
+
 - Dat bestandsextensies slechts een label zijn en niet het werkelijke bestandstype bepalen
 - Hoe je het werkelijke type van een bestand kunt achterhalen
 - Wat magic bytes / file signatures zijn

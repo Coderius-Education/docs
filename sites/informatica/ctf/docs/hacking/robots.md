@@ -5,17 +5,17 @@ title: "Hacking - Robots"
 
 # Hacking - Robots
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Robots"* onder Hacking.
 
-**Moeilijkheid:** Makkelijk
-
-## Onderwerp
-**robots.txt**
-
-## Beschrijving
 Websites gebruiken een speciaal bestand om zoekmachines te vertellen welke pagina's ze wel en niet mogen indexeren. Dit bestand is publiek toegankelijk.
 
-## Wat je leert
+- **Moeilijkheid:** Makkelijk
+- **Onderwerp:** robots.txt
+
+**Wat je leert**
+
 - Wat het robots.txt bestand is en waarvoor het dient
 - Hoe zoekmachines websites indexeren
 - Dat robots.txt geen beveiligingsmechanisme is

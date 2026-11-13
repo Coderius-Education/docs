@@ -5,17 +5,17 @@ title: "Hacking - Koekjes 1"
 
 # Hacking - Koekjes 1
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Koekjes 1"* onder Hacking.
 
-**Moeilijkheid:** Gemiddeld
-
-## Onderwerp
-**Cookies**
-
-## Beschrijving
 Websites slaan informatie op in je browser via cookies. Kun je de cookies van deze website bekijken?
 
-## Wat je leert
+- **Moeilijkheid:** Gemiddeld
+- **Onderwerp:** Cookies
+
+**Wat je leert**
+
 - Wat cookies zijn en hoe ze werken
 - Hoe je cookies kunt bekijken in de Developer Tools
 - Welke informatie websites opslaan in je browser

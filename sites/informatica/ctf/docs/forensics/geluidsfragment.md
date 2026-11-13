@@ -5,23 +5,22 @@ title: "Forensics - Geluidsfragment"
 
 # Forensics - Geluidsfragment
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Geluidsfragment"* onder Forensics.
 
-**Moeilijkheid:** Makkelijk
-
-## Onderwerp
-**Audio-analyse**
-
-## Beschrijving
 Je krijgt een geluidsfragment dat onbegrijpelijk klinkt. Hoe maak je het begrijpelijk?
 
-## Wat je leert
+- **Moeilijkheid:** Makkelijk
+- **Onderwerp:** Audio-analyse
+
+**Wat je leert**
+
 - Hoe audio-bestanden gemanipuleerd kunnen worden
 - Hoe je Audacity of vergelijkbare tools kunt gebruiken
 - Wat een spectrogram is en hoe je het kunt lezen
 
-## Benodigde tools
-- [Audacity](https://www.audacityteam.org/) (gratis audio-editor)
+**Benodigde tools:** [Audacity](https://www.audacityteam.org/) (gratis audio-editor)
 
 ## Hints
 

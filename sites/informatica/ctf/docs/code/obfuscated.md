@@ -5,17 +5,17 @@ title: "Code - Obfuscated"
 
 # Code - Obfuscated
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Obfuscated"* onder Code.
 
-**Moeilijkheid:** Gemiddeld
-
-## Onderwerp
-**Code obfuscation**
-
-## Beschrijving
 De code is moeilijk te lezen omdat deze is **geobfusceerd** (onleesbaar gemaakt). Maar kun je de code wel uitvoeren?
 
-## Wat je leert
+- **Moeilijkheid:** Gemiddeld
+- **Onderwerp:** Code obfuscation
+
+**Wat je leert**
+
 - Wat code obfuscation is en waarvoor het wordt gebruikt
 - Dat geobfusceerde code nog steeds uitvoerbaar is
 - Hoe je geobfusceerde code kunt deobfusceren

@@ -5,17 +5,17 @@ title: "Code - Rotate"
 
 # Code - Rotate
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Rotate"* onder Code.
 
-**Moeilijkheid:** Moeilijk
-
-## Onderwerp
-**Caesar cipher**
-
-## Beschrijving
 De tekst is geroteerd/verschoven. Kun je de originele tekst terugvinden?
 
-## Wat je leert
+- **Moeilijkheid:** Moeilijk
+- **Onderwerp:** Caesar cipher
+
+**Wat je leert**
+
 - Wat een Caesar cipher is
 - Hoe ROT13 en andere rotatie-versleutelingen werken
 - Hoe je versleutelde tekst kunt decoderen

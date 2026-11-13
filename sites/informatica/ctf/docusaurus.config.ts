@@ -8,6 +8,8 @@ export default createConfig({
   siteId: 'ctf',
   projectName: 'ctf-docs',
   matomoSiteId: 8,
+  // Elke ##-sectie van een pagina is een tabblad (zie de root-CLAUDE.md).
+  lesTabs: true,
   // Werk van ctf.coderius.nl (vóór de verhuizing): zie oude-opslag.js.
   oudeOpslag: {
     localStorage: [

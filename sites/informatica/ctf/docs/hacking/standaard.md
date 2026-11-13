@@ -5,17 +5,17 @@ title: "Hacking - Standaard"
 
 # Hacking - Standaard
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Standaard"* onder Hacking.
 
-**Moeilijkheid:** Makkelijk
-
-## Onderwerp
-**Wachtwoorden**
-
-## Beschrijving
 Wat zijn de meest populaire wachtwoorden? Veel mensen kiezen nog steeds zwakke, voorspelbare wachtwoorden.
 
-## Wat je leert
+- **Moeilijkheid:** Makkelijk
+- **Onderwerp:** Wachtwoorden
+
+**Wat je leert**
+
 - Waarom sterke wachtwoorden belangrijk zijn
 - Welke wachtwoorden het meest gebruikt worden
 - Hoe brute-force aanvallen werken

@@ -5,17 +5,17 @@ title: "Forensics - Voor altijd"
 
 # Forensics - Voor altijd
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Voor altijd"* onder Forensics.
 
-**Moeilijkheid:** Makkelijk
-
-## Onderwerp
-**Wayback Machine**
-
-## Beschrijving
 Sommige informatie op het internet verdwijnt nooit helemaal. Zelfs als een website offline gaat, kan de inhoud ergens bewaard zijn gebleven.
 
-## Wat je leert
+- **Moeilijkheid:** Makkelijk
+- **Onderwerp:** Wayback Machine
+
+**Wat je leert**
+
 - Hoe de Wayback Machine werkt
 - Dat informatie op het internet zelden echt verdwijnt
 - Hoe je historische versies van websites kunt bekijken

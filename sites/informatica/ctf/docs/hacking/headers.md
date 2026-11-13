@@ -5,17 +5,17 @@ title: "Hacking - Headers"
 
 # Hacking - Headers
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Headers"* onder Hacking.
 
-**Moeilijkheid:** Gemiddeld
-
-## Onderwerp
-**HTTP Headers**
-
-## Beschrijving
 Elke keer dat je browser een pagina opvraagt, worden er HTTP-headers meegestuurd. Deze bevatten extra informatie over het verzoek en het antwoord.
 
-## Wat je leert
+- **Moeilijkheid:** Gemiddeld
+- **Onderwerp:** HTTP Headers
+
+**Wat je leert**
+
 - Wat HTTP-headers zijn
 - Hoe je HTTP-headers kunt bekijken in de Developer Tools
 - Welke standaard en aangepaste headers er bestaan

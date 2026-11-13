@@ -222,7 +222,7 @@ De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
 (schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica,
-fullstack en linux zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+fullstack, linux en ctf zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
@@ -783,6 +783,17 @@ In de lessen: achttien `###`-koppen erbij (in de smalle kolom past minder op een
 scherm), "de terminal hieronder" heet de oefenterminal, en elke melding van
 `mv` zonder map is een eigen fout. De cheatsheet en de hand-outs hebben geen
 tabbladen.
+
+**Wat ctf erbij bracht** (november 2026; 49 van de 49 schermen passen). Een
+challenge is een korte pagina bij een opgave op een ander platform: een
+beschrijving, wat je leert en drie hints. Met zijn vier secties van één of
+twee regels werden dat vijf tabbladen die elk bijna leeg waren, terwijl alle
+115 schermen "pasten". Passen is dus ook hier niet genoeg: **een sectie van
+één regel is geen scherm.** Een challenge heeft nu twee tabbladen, De
+challenge en Hints (`src/docs-tests/schermen.test.ts` van ctf). Voor de
+docentenhandleiding is er een werkvorm Hints bij gekomen (hulp in stappen:
+de hints zijn dicht, en elke hint zegt iets meer), en De challenge telt als
+zelf maken.
 
 ## Code in MDX-expressies
 

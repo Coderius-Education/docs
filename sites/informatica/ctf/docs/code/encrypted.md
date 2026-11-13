@@ -5,17 +5,17 @@ title: "Code - Encrypted"
 
 # Code - Encrypted
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Encrypted"* onder Code.
 
-**Moeilijkheid:** Moeilijk
-
-## Onderwerp
-**Versleuteling**
-
-## Beschrijving
 De data is versleuteld. Kun je het ontcijferen?
 
-## Wat je leert
+- **Moeilijkheid:** Moeilijk
+- **Onderwerp:** Versleuteling
+
+**Wat je leert**
+
 - Verschillende soorten versleuteling herkennen
 - Hoe je versleutelde data kunt ontcijferen
 - Het gebruik van CyberChef als analyse-tool

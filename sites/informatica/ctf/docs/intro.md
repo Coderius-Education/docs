@@ -4,9 +4,7 @@ sidebar_position: 1
 
 # Welkom bij coderius-ctf
 
-Welkom bij de Cybersecurity **Capture the Flag** challenges van Coderius.
-
-De challenges worden gehost op [**ctf.hackchallenges.nl**](https://ctf.hackchallenges.nl/). Op deze site vind je per challenge een uitleg, hints en achtergrondinformatie.
+Welkom bij de Cybersecurity **Capture the Flag** challenges van Coderius. De challenges worden gehost op [**ctf.hackchallenges.nl**](https://ctf.hackchallenges.nl/). Op deze site vind je per challenge een uitleg, hints en achtergrondinformatie.
 
 ## Aan de slag
 
@@ -15,7 +13,9 @@ De challenges worden gehost op [**ctf.hackchallenges.nl**](https://ctf.hackchall
 3. Log in op het platform
 4. Kies een challenge en probeer de flag te vinden
 
-## Categorieën
+:::caution[Alleen in het lab]
+Wat je hier leert, gebruik je alleen op systemen waarvoor je toestemming hebt, zoals dit platform. Inbreken op het systeem van een ander is strafbaar.
+:::
 
 De challenges zijn verdeeld in drie categorieën:
 
@@ -58,7 +58,7 @@ Begin met de makkelijke challenges om de basis te leren, en werk daarna door naa
 
 ## Tips
 
-- Lees de hints als je vastloopt (de meeste challenges hebben er drie)
+- Lees de hints als je vastloopt: ze staan bij elke challenge op het tabblad Hints (de meeste challenges hebben er drie)
 - Gebruik de **Developer Tools** van je browser (F12)
 - Google is je vriend - zoek naar termen die je niet kent
 - Werk samen en deel kennis met je klasgenoten

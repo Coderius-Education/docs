@@ -5,17 +5,17 @@ title: "Forensics - Logfile"
 
 # Forensics - Logfile
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Logfile"* onder Forensics.
 
-**Moeilijkheid:** Expert
-
-## Onderwerp
-**HTTP-statuscodes**
-
-## Beschrijving
 Je krijgt een logbestand te zien. Wat betekenen de verschillende HTTP-statuscodes die je tegenkomt?
 
-## Wat je leert
+- **Moeilijkheid:** Expert
+- **Onderwerp:** HTTP-statuscodes
+
+**Wat je leert**
+
 - Wat HTTP-statuscodes betekenen
 - Hoe logbestanden van webservers te lezen
 - Het verschil tussen verschillende soorten HTTP-responses
