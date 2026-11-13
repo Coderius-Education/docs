@@ -14,7 +14,15 @@ import {
 } from 'react';
 import { WerkvormIcoon } from '../Werkvorm/Icoon';
 import { Vergroot } from './Vergroot';
-import { DoelContext, OpenContext, PaneelContext, type Stap, useInLesTab } from './paneel';
+import {
+  DoelContext,
+  LES_TAB,
+  LES_VERDER,
+  OpenContext,
+  PaneelContext,
+  type Stap,
+  useInLesTab,
+} from './paneel';
 import { pasCode } from './pasCode';
 import { schuifInRij } from './schuifRij';
 import { verdeelSpeling } from './speling';
@@ -51,7 +59,7 @@ type Props = {
 /** Tabbladen (per `##`) of stappen binnen een tabblad (per `###`). */
 type Niveau = 'tab' | 'stap';
 const DATA = {
-  tab: { paneel: 'data-les-tab', knop: 'data-tab', sleutel: 'lesTab' },
+  tab: { paneel: LES_TAB, knop: 'data-tab', sleutel: 'lesTab' },
   stap: { paneel: 'data-les-stap', knop: 'data-stap', sleutel: 'lesStap' },
 } as const;
 
@@ -65,6 +73,7 @@ const ReeksContext = createContext<((stap: Stap) => void) | null>(null);
 // dan gaat de knop Volgende daarheen, en pas daarna naar het volgende tabblad
 // (PaneelContext, in paneel.ts).
 export { useInLesTab };
+export { VOLGENDE_KNOP } from './paneel';
 
 /** Hoger dan dit staat een doel onder de navbar (60 pixels, met wat lucht). */
 const ONDER_NAVBAR = 70;
@@ -364,7 +373,7 @@ export function LesTab({
     <section
       role="tabpanel"
       id={`paneel-${id}`}
-      data-les-tab={id}
+      {...{ [LES_TAB]: id }}
       aria-labelledby={`tab-${id}`}
       // De klasse markdown: Infima maakt koppen en alinea's op met
       // `.markdown > …`, en in een paneel zijn ze geen kind meer van de les.
@@ -380,7 +389,7 @@ export function LesTab({
         </ReeksContext.Provider>
       </PaneelContext.Provider>
       {rij && volgende && (
-        <p className={styles.verder} data-les-verder="">
+        <p className={styles.verder} {...{ [LES_VERDER]: '' }}>
           <button
             type="button"
             className="button button--primary button--sm"

@@ -1,4 +1,10 @@
-import { LesNaast, LesNaastPlek, useBreed, useInLesTab } from '@coderius/shared/components/LesTabs';
+import {
+  LesNaast,
+  LesNaastPlek,
+  VOLGENDE_KNOP,
+  useBreed,
+  useInLesTab,
+} from '@coderius/shared/components/LesTabs';
 import { pasHoogte } from '@coderius/shared/components/LesTabs/pasHoogte';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { useEffect, useLayoutEffect, useRef, useCallback, useState } from 'react';
@@ -256,7 +262,7 @@ function LinuxTerminalInner({ title, filesystem: extraFs, initialCommands, opdra
       // open tabblad (regel.js, maakUitweg).
       const uitweg = maakUitweg(() => {
         const knop = (termRef.current?.closest('[data-les-tabs]') ?? document).querySelector(
-          '[data-les-tab]:not([hidden]) > [data-les-verder] button',
+          VOLGENDE_KNOP,
         );
         knop?.focus();
         return Boolean(knop);

@@ -12,6 +12,7 @@ import LesTabs, {
   LesTab,
   LesVeld,
   LesVoorbeeld,
+  VOLGENDE_KNOP,
   useInLesTab,
 } from './index';
 import { useLesDoel } from './paneel';
@@ -193,6 +194,23 @@ describe('LesTabs', () => {
     render(<Les />);
     expect(paneel('theorie').querySelector(':scope > [data-les-verder] button')).not.toBeNull();
     expect(paneel('er-gaat-iets-mis').querySelector('[data-les-verder]')).toBeNull();
+  });
+
+  it('vindt met VOLGENDE_KNOP de knop Volgende van het open tabblad', () => {
+    // De oefenterminal van Linux zet met Esc en dan Tab de focus op deze
+    // knop. Een selector die niets meer vindt, valt daar stil: de Tab gaat
+    // dan naar Opnieuw beginnen.
+    render(<Les />);
+    expect(document.querySelector(VOLGENDE_KNOP)).toBe(
+      screen.getByRole('button', { name: 'Volgende: Opdracht 1' }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Opdracht 1' }));
+    const knop = document.querySelector(VOLGENDE_KNOP);
+    expect(knop).toBe(screen.getByRole('button', { name: 'Volgende: Er gaat iets mis' }));
+    expect(paneel('opdracht-1-tel').contains(knop)).toBe(true);
+    // Het laatste tabblad heeft geen knop Volgende.
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Er gaat iets mis' }));
+    expect(document.querySelector(VOLGENDE_KNOP)).toBeNull();
   });
 });
 
@@ -494,6 +512,36 @@ describe('een rij stappen die zijwaarts schuift', () => {
     fireEvent.click(document.querySelector('[data-tab="theorie"]') as HTMLElement);
     expect(stap()).toBe('3Lijsten');
     expect(inBeeld()).toBe(true);
+  });
+
+  it('zet de knop in beeld als de rij pas later gaat schuiven', () => {
+    // Het oefenveld komt pas na het hydrateren naast de les: dan wordt de
+    // rij smaller en gaat hij schuiven. jsdom heeft geen ResizeObserver.
+    const waarnemers: [Element, () => void][] = [];
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        terug: () => void;
+        constructor(terug: () => void) {
+          this.terug = terug;
+        }
+        observe(el: Element) {
+          waarnemers.push([el, this.terug]);
+        }
+        disconnect() {}
+      },
+    );
+    try {
+      schuiftRij = false;
+      locatie = { pathname: '/les', hash: '#lijsten', search: '' };
+      render(<LesMetStappen />);
+      expect(rij().scrollLeft).toBe(0);
+      schuiftRij = true;
+      for (const [el, terug] of waarnemers) if (el === rij()) terug();
+      expect(inBeeld()).toBe(true);
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it('een rij die niet schuift, blijft staan', () => {

@@ -185,6 +185,16 @@ describe('klassen en de rest van de repo', () => {
     expect(kaart('#1 Bovenaan')).toBe('#1 Bovenaan');
     expect(kaart('Voor de eerste keer Python?')).toBe('Voor de eerste keer Python?');
     expect(kaart('Acties')).toBe('Acties');
+    // En de wikkel geeft die titel ook door, na {...props}: zonder die regel
+    // bleef de titel van Docusaurus (". Acties") staan.
+    const wikkel = readFileSync(
+      join(ROOT, 'packages/shared/theme/DocCard/Heading/index.jsx'),
+      'utf8',
+    );
+    expect(wikkel).toMatch(/import \{ kaartTitel \} from '\.\/titel'/);
+    expect(wikkel).toMatch(
+      /\{\.\.\.props\}[\s\S]*title=\{kaartTitel\(props\.item, props\.title, props\.icon\)\}/,
+    );
   });
 
   it('geen cursuspad botst met een route van home', () => {
