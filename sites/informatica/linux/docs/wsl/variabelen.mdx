@@ -90,7 +90,7 @@ Een programma leest zijn instellingen vaak uit omgevingsvariabelen: een wachtwoo
 DOMEIN=gastenboek.voorbeeld.nl
 ```
 
-De shell leest dat bestand niet vanzelf: na `cat .env` is `$DOMEIN` nog steeds leeg. Het programma zelf leest het, Docker Compose bijvoorbeeld. Een `.env` hoort bij één computer, en er staan vaak geheimen in. Daarom zet je hem nooit in git.
+De shell leest dat bestand niet vanzelf: na `cat .env` is `$DOMEIN` nog steeds leeg. Het programma dat de instellingen nodig heeft, leest het zelf. Een `.env` hoort bij één computer, en er staan vaak geheimen in. Daarom zet je hem nooit in git.
 
 ## Opdracht 5.4.a: een begroeting
 

@@ -209,4 +209,14 @@ Try 'mv --help' for more information.
 
 **Oplossing:** zet de map erachter: `mv *.jpg vakantie/`.
 
+### subdirectory of itself
+
+```
+mv: cannot move 'fotos' to a subdirectory of itself, 'fotos/fotos'
+```
+
+**Oorzaak:** je typte `mv * fotos/`. Het sterretje past op alles, ook op de map `fotos` zelf, en een map kan niet in zichzelf. De rest is wel verplaatst, ook wat geen foto is.
+
+**Oplossing:** noem alleen wat je wilt verplaatsen, zoals `mv *.jpg *.png fotos/`. Kijk eerst met `ls` en dezelfde jokertekens wat er past.
+
 Door naar [3.1 Zoeken en doorgeven](site:linux/docs/terminal/zoeken).

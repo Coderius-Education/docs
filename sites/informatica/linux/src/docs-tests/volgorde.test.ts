@@ -73,6 +73,24 @@ function gebruik(id: string, { open = true }: { open?: boolean } = {}): Gebruik[
   return uit;
 }
 
+/**
+ * De opties uit een zin als "Net als bij `rm` heb je `-r` nodig" die de les
+ * van dat commando niet noemt, als "commando -optie".
+ */
+function verkeerdeVergelijkingen(tekst: string): string[] {
+  const uit: string[] = [];
+  for (const zin of tekst.split(/(?<=[.:;])\s+/)) {
+    const m = /[Nn]et als bij `([a-z]+)`/.exec(zin);
+    if (!m || !Object.hasOwn(EERSTE_LES, m[1])) continue;
+    const { pagina } = EERSTE_LES[m[1] as keyof typeof EERSTE_LES];
+    const les = readFileSync(`${DOCS}/${pagina}.mdx`, 'utf8');
+    for (const [, optie] of zin.matchAll(/`(-[a-zA-Z]+)`/g)) {
+      if (!new RegExp(`\\b${m[1]} ${optie}\\b`).test(les)) uit.push(`${m[1]} ${optie}`);
+    }
+  }
+  return uit;
+}
+
 describe('de volgorde van de commando’s', () => {
   it('de tabel klopt met de sidebar: elk nummer hoort bij zijn pagina', () => {
     const fout = Object.entries(EERSTE_LES)
@@ -110,6 +128,21 @@ describe('de volgorde van de commando’s', () => {
     expect(
       zonderUitklapblokken('a\n<details>\n<summary>x</summary>\n`export A=1`\n</details>\nb'),
     ).toBe('a\n\nb');
+  });
+
+  it('"net als bij" een commando noemt een optie die zijn les uitlegt', () => {
+    // In 7.4 stond "Net als bij `cp` heb je voor een map `-r` nodig", maar
+    // geen les legt `cp -r` uit: 2.3 leert `rm -r`. Een leerling denkt dan
+    // dat hij iets gemist heeft.
+    expect(verkeerdeVergelijkingen('Net als bij `cp` heb je voor een map `-r` nodig.')).toEqual([
+      'cp -r',
+    ]);
+    const fout = lessen.flatMap((id) =>
+      verkeerdeVergelijkingen(readFileSync(`${DOCS}/${id}.mdx`, 'utf8')).map(
+        (o) => `${nummer.get(id)} ${id}: ${o}`,
+      ),
+    );
+    expect(fout).toEqual([]);
   });
 
   it('geen les gebruikt een commando vóór zijn les, tenzij de alinea ernaar linkt', () => {

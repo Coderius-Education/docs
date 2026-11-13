@@ -138,6 +138,17 @@ describe('elk scherm van een les staat op zichzelf', () => {
     expect(fout).toEqual([]);
   });
 
+  it('een les begint met een stap naar zijn inhoud, niet met Vooraf of De basis', () => {
+    // Uitleg vóór de eerste `##` (<Voorkennis> en een alinea) werd in 7.1 en
+    // 7.5 een eigen stap Vooraf: een scherm met één alinea, waar de andere
+    // lessen met een kop naar hun inhoud beginnen.
+    const fout = lessen
+      .map((les) => schermen.find((s) => s.les === les.naam))
+      .filter((s): s is Scherm => s !== undefined && /(^| › )(Vooraf|De basis)$/.test(s.naam))
+      .map((s) => `${s.les} | ${s.naam}`);
+    expect(fout).toEqual([]);
+  });
+
   it('geen twee koppen met dezelfde naam op een pagina', () => {
     // Een kop is ook een adres: een link naar de tweede kwam bij de eerste uit.
     const fout = lessen.flatMap((les) => {

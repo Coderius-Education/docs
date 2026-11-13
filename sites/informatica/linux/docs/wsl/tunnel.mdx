@@ -4,13 +4,13 @@ sidebar_position: 10
 
 # 7.5 Een tunnel met ssh
 
+## Een website die alleen op de server staat
+
 <Voorkennis items={[{to: '/docs/wsl/ssh', label: 'Inloggen met ssh'}, {to: '/docs/wsl/windows-en-linux', label: 'Een website uit Linux in je browser'}]} />
 
 Een programma op een server dat alleen op `127.0.0.1` luistert, is van buiten niet te bereiken. Dat is veilig, en soms wil jij er toch bij: een beheerpagina, bijvoorbeeld. Met ssh maak je dan een **tunnel**: een poort op je eigen computer die via ssh uitkomt bij een poort op de server.
 
-## Een website die alleen op de server staat
-
-Zet een kleine website neer, die alleen op `127.0.0.1` luistert:
+Zet eerst een kleine website neer, die alleen op `127.0.0.1` luistert:
 
 ```bash
 mkdir site
@@ -19,7 +19,9 @@ cd site
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Je oefent weer op `localhost`, dus de "server" is je eigen Ubuntu. Open een tweede terminal, en maak de tunnel:
+## De tunnel maken
+
+De website draait in je eerste terminal. Je oefent weer op `localhost`, dus de "server" is je eigen Ubuntu. Open een tweede terminal, en maak de tunnel:
 
 ```bash
 ssh -N -L 9000:127.0.0.1:8000 localhost
