@@ -231,11 +231,21 @@ const browser = await chromium.launch({
 });
 /** Een context op de maat van een scherm. Een telefoon heeft schuifbalken
  *  die over de inhoud liggen en geen muis. */
-const nieuweContext = (scherm) =>
-  browser.newContext({
+async function nieuweContext(scherm) {
+  const context = await browser.newContext({
     viewport: { width: scherm.width, height: scherm.height },
     ...(scherm.telefoon ? { isMobile: true, hasTouch: true } : {}),
   });
+  // Alleen de eigen server: een aanvraag naar buiten (de statistieken, een
+  // lettertype) bleef op de runner van CI hangen, en dan haalde een pagina
+  // zijn `load` niet binnen dertig seconden. Lokaal weigerde de proxy hem
+  // meteen. Wat de les zelf nodig heeft, staat in de build.
+  await context.route(
+    (url) => url.hostname !== '127.0.0.1',
+    (route) => route.abort(),
+  );
+  return context;
+}
 const rijen = [];
 const tabrijen = [];
 const dubbeleIds = [];

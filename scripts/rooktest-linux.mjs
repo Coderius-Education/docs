@@ -128,6 +128,12 @@ const eis = (waar, melding) => {
 
 async function nieuwePagina(scherm, opties = {}) {
   const context = await browser.newContext({ viewport: scherm, ...opties });
+  // Alleen de eigen server: een aanvraag naar buiten (de statistieken, een
+  // lettertype) kan op de runner van CI blijven hangen (meet-les-tabs.mjs).
+  await context.route(
+    (url) => url.hostname !== '127.0.0.1',
+    (route) => route.abort(),
+  );
   const page = await context.newPage();
   page.on('pageerror', (e) => paginaFouten.push(e.message));
   return page;
