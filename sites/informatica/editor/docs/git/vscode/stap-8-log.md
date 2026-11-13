@@ -19,3 +19,5 @@ Past de uitvoer niet in de terminal, dan toont git hem in een venstertje waar je
 ## Wat je nu ziet
 
 Twee blokken, met bovenaan je laatste commit. Bij elke commit staan op de regel `Author:` de naam en het e-mailadres die je in [stap 1](site:editor/git/vscode/stap-1-config) instelde. Achter de bovenste staat `(HEAD -> main)`: dat is waar je nu bent.
+
+Dezelfde commits staan zonder terminal in het Source Control-paneel, in het blok **Source Control Graph**: elke commit een bolletje op een lijn, met de nieuwste bovenaan.

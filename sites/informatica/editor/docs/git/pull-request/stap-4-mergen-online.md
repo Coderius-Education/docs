@@ -22,7 +22,7 @@ Ga op GitHub naar het tabblad **`<> Code`** en kijk in `hello.txt`. Je afscheids
 Klik op het kloktje-icoon (**commits**). Je ziet een nieuwe commit met een boodschap als:
 
 ```
-Merge pull request #1 from <gebruiker>/feature/afscheid
+Merge pull request #1 from <gebruikersnaam>/feature/afscheid
 ```
 
 Dat is de **merge-commit**: het officiële markeringspunt waarop deze PR in `main` is opgenomen.

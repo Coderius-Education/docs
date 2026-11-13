@@ -6,7 +6,7 @@ title: "Stap 1: eerste publish vanuit VS Code"
 
 # Stap 1: eerste publish vanuit VS Code
 
-Open in VS Code je map `git-oefenen` uit de vorige tutorial. Zorg dat je daar al **minstens één commit** hebt gemaakt, anders is er niets om te pushen. Houd de URL van je repository bij de hand: die van [GitHub: account en repo](site:editor/git/github/stap-2-repo), zoals `https://github.com/<jouw-naam>/git-oefenen`.
+Open in VS Code je map `git-oefenen` uit de vorige tutorial. Zorg dat je daar al **minstens één commit** hebt gemaakt, anders is er niets om te pushen. Houd de URL van je repository bij de hand: die van [GitHub: account en repo](site:editor/git/github/stap-2-repo), zoals `https://github.com/<gebruikersnaam>/git-oefenen`.
 
 ## Koppel je map aan je repository
 
@@ -26,14 +26,14 @@ Sla dit niet over. Zonder remote biedt **Publish Branch** "Publish to GitHub" aa
 
 ## Wat je nu ziet
 
-Ververs je github.com-pagina (`https://github.com/<gebruiker>/git-oefenen`). Waar eerst instructies stonden, staat nu je bestandenlijst met `hello.txt` erin. Linksboven staat een keuzemenu met de branchnaam `main`, dat was er nog niet toen de repository leeg was.
+Ververs je github.com-pagina (`https://github.com/<gebruikersnaam>/git-oefenen`). Waar eerst instructies stonden, staat nu je bestandenlijst met `hello.txt` erin. Linksboven staat een keuzemenu met de branchnaam `main`, dat was er nog niet toen de repository leeg was.
 
 In VS Code is de knop **Publish Branch** weg: `main` staat nu ook op GitHub.
 
 **Wat gebeurde er onder de motorkap?**
 
 ```bash
-git remote add origin https://github.com/<gebruiker>/git-oefenen.git
+git remote add origin https://github.com/<gebruikersnaam>/git-oefenen.git
 git push -u origin main
 ```
 

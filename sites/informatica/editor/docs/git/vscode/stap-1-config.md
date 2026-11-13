@@ -18,6 +18,8 @@ git config --global init.defaultBranch main
 
 Vervang de naam en het e-mailadres door je eigen gegevens. Git slaat dit op voor al je toekomstige projecten.
 
+**Let op:** naam en e-mailadres staan in elke commit, en op GitHub kan iedereen ze lezen. Wil je je eigen adres niet laten zien, zet dan op GitHub bij **Settings** → **Emails** het vinkje **Keep my email addresses private** aan. Daaronder staat een adres dat eindigt op `@users.noreply.github.com`: vul dat hier in.
+
 ## Waarom je branch main heet
 
 Zonder de regel `git config --global init.defaultBranch main` noemt git je eerste branch `master`. GitHub en de rest van deze cursus gaan uit van `main`, en dan loopt het mis op het moment dat je gaat pushen:

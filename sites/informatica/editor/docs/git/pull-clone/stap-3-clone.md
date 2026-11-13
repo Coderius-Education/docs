@@ -29,7 +29,7 @@ Je hebt nu een complete kopie van de repository, **inclusief alle commits**. In 
 **Wat gebeurde er onder de motorkap?**
 
 ```bash
-git clone https://github.com/<gebruiker>/git-oefenen.git
+git clone https://github.com/<gebruikersnaam>/git-oefenen.git
 ```
 
 Clonen doet in één keer wat je bij je eigen project in stappen deed: het maakt de map, zet er een repository in, haalt alle commits op en koppelt `origin` alvast aan de URL. Je hoeft dus geen `git init` en geen `git remote add` meer te doen.

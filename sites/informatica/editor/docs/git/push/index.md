@@ -14,7 +14,7 @@ Een **remote** is een online kopie van je repository. Tot nu toe had je alleen e
 De standaardnaam voor je belangrijkste remote is **`origin`**. Je kunt het zien als een bijnaam: in plaats van elke keer de hele URL te typen, schrijf je `origin`.
 
 ```
-[jouw computer]  ←→  [origin = github.com/jouw-naam/git-oefenen]
+[jouw computer]  ←→  [origin = github.com/<gebruikersnaam>/git-oefenen]
    commits A,B          commits A,B
 ```
 

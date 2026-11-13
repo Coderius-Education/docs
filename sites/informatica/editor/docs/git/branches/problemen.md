@@ -29,7 +29,7 @@ les_tabs: false
 
 **Oorzaak:** een merge conflict. Dezelfde regel is op allebei de branches aangepast en git weet niet welke versie moet blijven.
 
-**Oplossing:** VS Code zet knoppen boven het conflict: **Accept Current Change**, **Accept Incoming Change**, **Accept Both Changes**. Kies er een, of bewerk het stuk met de hand tot er staat wat je wilt. Haal daarna de regels met `<<<<<<<`, `=======` en `>>>>>>>` weg, sla op, stage het bestand en commit. Wil je dit een keer rustig oefenen in plaats van onder druk: in [Stap 4](site:editor/git/branches/stap-4-mergen) staat hoe je zelf een conflict maakt.
+**Oplossing:** VS Code zet vier knoppen boven het conflict: Accept Current Change, Accept Incoming Change, Accept Both Changes en Compare Changes. De eerste drie kiezen wat er blijft en halen de regels met `<<<<<<<`, `=======` en `>>>>>>>` zelf weg; Compare Changes zet de twee versies alleen naast elkaar. Bewerk je het stuk met de hand, haal die regels dan zelf weg. Sla daarna op, stage het bestand en commit. Wil je dit een keer rustig oefenen in plaats van onder druk: in [Stap 4](site:editor/git/branches/stap-4-mergen) staat hoe je zelf een conflict maakt.
 
 Liever helemaal terug naar hoe het was? `git merge --abort` breekt de merge af.
 
