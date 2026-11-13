@@ -21,8 +21,13 @@ export type Plan = {
     browser: boolean;
     terminal: boolean;
   };
-  /** De cursussen met les-tabbladen die de job `schermen` meet. */
-  schermen: { sites: string[]; alles: boolean };
+  /**
+   * De cursussen met les-tabbladen die de job `schermen` meet. `alles`: de
+   * meting zelf veranderde, dus elke cursus met tabbladen, helemaal.
+   * `viaPakket`: per cursus een gewijzigd bestand in een package waar hij van
+   * afhangt; dan meet de job de hele cursus.
+   */
+  schermen: { sites: string[]; alles: boolean; viaPakket: Record<string, string> };
   runners: Record<string, Runner>;
   tekst: { alles: boolean; bestanden: string[] };
   vitest: { alles: boolean; bestanden: string[] };
@@ -72,4 +77,12 @@ export declare function plan(invoer: {
   reden?: string;
   base?: string | null;
   metTabbladen?: string[];
+  afhankelijkheden?: Record<string, string[]>;
 }): Plan;
+/** Zet deze docusaurus.config.ts de les-tabbladen aan (een ware `lesTabs`)? */
+export declare function heeftLesTabs(bron: string): boolean;
+/** De cursussen met les-tabbladen, in de volgorde van `sites`. */
+export declare function cursussenMetTabbladen(
+  sites: { id: string; dir: string }[],
+  leesConfig: (dir: string) => string | null,
+): string[];

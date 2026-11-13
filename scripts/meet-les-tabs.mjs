@@ -78,7 +78,10 @@
 // meet-selectie.js), en met `--streng` stopt het met afsluitcode 1 als een
 // scherm op 1280×720 of 1366×768 niet past, een pagina zijwaarts schuift,
 // de rij tabbladen op twee regels staat, code zijwaarts is afgesneden of een
-// id dubbel is. Een les die bewust niet past, staat met een reden in
+// id dubbel is; op een pagina zonder tabbladen ook als een regel code (geen
+// foutmelding of uitvoer) afbreekt. En als een gewijzigde les in een
+// docs-map geen les in de build heeft, zonder `les_tabs: false`: die zou CI
+// anders stil niet meten. Een les die bewust niet past, staat met een reden in
 // scripts/meet-les-tabs-uitzonderingen.json. Een open uitklapblok en een
 // klik (`--open`, `--klik`) tellen daar niet: een open antwoord mag het
 // scherm langer maken.
@@ -201,20 +204,31 @@ if (!existsSync(BUILD)) {
 // Met --bronnen: alleen de lessen die de wijziging raakt.
 let KEUZE = null;
 if (BRONNEN) {
-  const { lessenVoorMeting } = require('../packages/shared/meet-selectie.js');
+  const { docsMappen, lessenVoorMeting } = require('../packages/shared/meet-selectie.js');
+  const config = join(siteDir(SITE), 'docusaurus.config.ts');
   const keuze = lessenVoorMeting({
     plan: JSON.parse(readFileSync(BRONNEN, 'utf8')),
+    site: SITE,
     siteMap: siteDir(SITE),
     lessen: alleLessen(),
     leesBron: (pad) => (existsSync(pad) ? readFileSync(pad, 'utf8') : null),
+    mappen: existsSync(config) ? docsMappen(readFileSync(config, 'utf8')) : ['docs'],
   });
   console.error(
     keuze.alles
       ? `Alle ${keuze.lessen.length} lessen: ${keuze.reden}.`
       : `${keuze.lessen.length} lessen: ${keuze.reden}.`,
   );
-  for (const pad of keuze.nietGevonden)
-    console.error(`- ${pad}: geen les met tabbladen of één scherm in de build, niets te meten`);
+  for (const pad of keuze.nietGevonden.filter((p) => !keuze.ontbreekt.includes(p)))
+    console.error(`- ${pad}: een pagina zonder tabbladen, niets te meten`);
+  // Een les in een docs-map die de build niet heeft: dan meet CI hem stil
+  // niet. Een fout in meet-selectie.js (het adres klopt niet met dat van
+  // Docusaurus) of een les die de build kwijtraakte.
+  for (const pad of keuze.ontbreekt)
+    console.error(
+      `${STRENG ? '::error::' : '- '}${pad}: geen les met tabbladen of één scherm in de build gevonden; zonder tabbladen hoort er les_tabs: false in de front matter`,
+    );
+  if (STRENG && keuze.ontbreekt.length) process.exit(1);
   if (keuze.lessen.length === 0) process.exit(0);
   KEUZE = new Set(keuze.lessen);
 }
@@ -264,6 +278,68 @@ const ONDERKANT = `(paneel) => {
   const n = naast?.getBoundingClientRect();
   return n && n.height > 0 && n.left >= r.right - 1 ? Math.max(r.bottom, n.bottom) : r.bottom;
 }`;
+
+// Wat "past" niet ziet: een scherm past ook als de code zijwaarts is
+// afgesneden, als een programma in een vak van twaalf regels schuift, of als
+// een schema op een tiende van zijn grootte staat. Voor een paneel, en voor
+// de tekst van een pagina zonder tabbladen (`.theme-doc-markdown`). Draait
+// in de pagina (als tekst, met `toString`), dus zonder iets van buiten.
+function binnenHetScherm(wortel) {
+  const teZien = (el) =>
+    el.getClientRects().length > 0 && !el.closest('[hidden], details:not([open])');
+  const vakken = [...wortel.querySelectorAll('pre')].filter(teZien);
+  const afgesneden = Math.max(0, ...vakken.map((v) => v.scrollWidth - v.clientWidth));
+  // Een regel die naar een volgende regel afbreekt: hij is hoger dan één
+  // regel van het blok. En hoe klein de letters zijn geworden om de langste
+  // regel te laten passen (pasCode.ts).
+  const breekt = vakken.filter((v) => {
+    const stijl = getComputedStyle(v);
+    const regel = Number.parseFloat(stijl.lineHeight) || Number.parseFloat(stijl.fontSize) * 1.45;
+    return [...v.querySelectorAll('.token-line')].some(
+      (r) => r.getBoundingClientRect().height > regel * 1.5,
+    );
+  });
+  // Alleen een blok zonder taal (een foutmelding, uitvoer van de terminal)
+  // mag afbreken, zoals in een terminal (pasCode.ts); code niet.
+  const afgebrokenCode = breekt.filter((v) => !v.classList.contains('language-text')).length;
+  const letters = Math.min(
+    16,
+    ...vakken.map((v) => Number.parseFloat(getComputedStyle(v).fontSize)),
+  );
+  const schuift = vakken
+    .filter((v) => v.scrollHeight - v.clientHeight > 6)
+    .map((v) => {
+      const regels = v.querySelectorAll('.token-line').length;
+      return { regels, zichtbaar: Math.round((regels * v.clientHeight) / v.scrollHeight) };
+    });
+  // De schaal waarop een plaatje staat; naast zijn tekst staat het passend
+  // in een vak (object-fit: contain).
+  const plaatjes = [...wortel.querySelectorAll('img')]
+    .filter((img) => teZien(img) && img.naturalWidth > 0 && !img.closest('button, a'))
+    .map((img) => ({
+      schaal: Math.min(img.clientWidth / img.naturalWidth, img.clientHeight / img.naturalHeight),
+      groter: img.hasAttribute('data-vergroot'),
+    }))
+    .filter((p) => p.schaal < 1 / 3);
+  return {
+    afgesneden: afgesneden > 6 ? afgesneden : 0,
+    afgebroken: breekt.length,
+    afgebrokenCode,
+    letters: Math.round(letters * 10) / 10,
+    schuift,
+    klein: plaatjes.length,
+    kleinZonderVergroting: plaatjes.filter((p) => !p.groter).length,
+  };
+}
+
+// Een kop is ook een adres: twee keer hetzelfde id geeft twee schermen
+// waarvan een link er maar één opent. Draait in de pagina.
+function dubbeleIdsOpPagina() {
+  const aantal = new Map();
+  for (const el of document.querySelectorAll('.theme-doc-markdown [id]'))
+    aantal.set(el.id, (aantal.get(el.id) ?? 0) + 1);
+  return [...aantal].filter(([, n]) => n > 1).map(([id]) => id);
+}
 
 const over = (pagina, id) =>
   pagina.evaluate(
@@ -473,14 +549,7 @@ async function meetLes(les) {
       tabrijen.push({ les, scherm: `${scherm.width}x${scherm.height}`, regels });
     }
     if (!scherm.telefoon) {
-      // Een kop is ook een adres: twee keer hetzelfde id geeft twee schermen
-      // waarvan een link er maar één opent.
-      const dubbel = await pagina.evaluate(() => {
-        const aantal = new Map();
-        for (const el of document.querySelectorAll('.theme-doc-markdown [id]'))
-          aantal.set(el.id, (aantal.get(el.id) ?? 0) + 1);
-        return [...aantal].filter(([, n]) => n > 1).map(([id]) => id);
-      });
+      const dubbel = await pagina.evaluate(dubbeleIdsOpPagina);
       if (dubbel.length && !dubbeleIds.some((d) => d.les === les)) dubbeleIds.push({ les, dubbel });
     }
     const tabs = await pagina.locator('[data-tab]').all();
@@ -524,105 +593,54 @@ async function meetLes(les) {
         await pagina.evaluate(() => document.fonts.ready);
         await pagina.waitForTimeout(scherm.telefoon ? 50 : 150);
         await pagina.evaluate(() => window.scrollTo(0, 0));
-        const maat = await pagina.evaluate((id) => {
-          const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
-          const r = paneel.getBoundingClientRect();
-          // Een oefenveld naast de les telt mee (zie ONDERKANT).
-          const naast = [...paneel.parentElement.children].find((k) =>
-            k.hasAttribute('data-les-naast'),
-          );
-          const n = naast?.getBoundingClientRect();
-          const onder =
-            n && n.height > 0 && n.left >= r.right - 1 ? Math.max(r.bottom, n.bottom) : r.bottom;
-          return {
-            over: Math.round(onder - document.documentElement.clientHeight),
-            naast: !!n && n.height > 0,
-            boven: Math.round(r.top),
-            pagina: document.documentElement.scrollHeight - document.documentElement.clientHeight,
-            // Niet innerWidth: daar hoort de schuifbalk van de pagina bij, en
-            // op een telefoon groeit hij mee met een pagina die te breed is.
-            zijwaarts: Math.max(
-              0,
-              document.documentElement.scrollWidth - document.documentElement.clientWidth,
-            ),
-            velden: paneel.querySelectorAll('[data-zaad]').length,
-            volgendeLes: volgendeLesInBeeld(paneel),
-            // Op hoeveel regels de rij stappen staat: een tweede regel kost
-            // elk scherm van dat tabblad veertig pixels.
-            stapregels: new Set(
-              [...paneel.querySelectorAll('[data-stap]')]
-                .filter((s) => s.getClientRects().length > 0 && !s.closest('details:not([open])'))
-                .map((s) => Math.round(s.getBoundingClientRect().top)),
-            ).size,
-            ...binnenHetScherm(paneel),
-          };
-
-          // De link naar de volgende les terwijl dit scherm zelf een knop
-          // Volgende heeft: die zegt hetzelfde en slaat de rest van de les
-          // over.
-          function volgendeLesInBeeld(paneel) {
-            const knop = [...paneel.querySelectorAll('[data-les-verder] button')].some(
-              (k) => k.getClientRects().length > 0,
+        const maat = await pagina.evaluate(
+          ([id, binnen]) => {
+            const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
+            const r = paneel.getBoundingClientRect();
+            // Een oefenveld naast de les telt mee (zie ONDERKANT).
+            const naast = [...paneel.parentElement.children].find((k) =>
+              k.hasAttribute('data-les-naast'),
             );
-            const link = document.querySelector('.pagination-nav__link--next');
-            if (!knop || !link || link.getClientRects().length === 0) return false;
-            return link.getBoundingClientRect().top < document.documentElement.clientHeight;
-          }
-
-          // Wat "past" niet ziet: een scherm past ook als de code zijwaarts
-          // is afgesneden, als een programma in een vak van twaalf regels
-          // schuift, of als een schema op een tiende van zijn grootte staat.
-          function binnenHetScherm(paneel) {
-            const teZien = (el) =>
-              el.getClientRects().length > 0 && !el.closest('[hidden], details:not([open])');
-            const vakken = [...paneel.querySelectorAll('pre')].filter(teZien);
-            const afgesneden = Math.max(0, ...vakken.map((v) => v.scrollWidth - v.clientWidth));
-            // Een regel die naar een volgende regel afbreekt: hij is hoger
-            // dan één regel van het blok. En hoe klein de letters zijn
-            // geworden om de langste regel te laten passen (pasCode.ts).
-            const afgebroken = vakken.filter((v) => {
-              const stijl = getComputedStyle(v);
-              const regel =
-                Number.parseFloat(stijl.lineHeight) || Number.parseFloat(stijl.fontSize) * 1.45;
-              return [...v.querySelectorAll('.token-line')].some(
-                (r) => r.getBoundingClientRect().height > regel * 1.5,
-              );
-            }).length;
-            const letters = Math.min(
-              16,
-              ...vakken.map((v) => Number.parseFloat(getComputedStyle(v).fontSize)),
-            );
-            const schuift = vakken
-              .filter((v) => v.scrollHeight - v.clientHeight > 6)
-              .map((v) => {
-                const regels = v.querySelectorAll('.token-line').length;
-                return {
-                  regels,
-                  zichtbaar: Math.round((regels * v.clientHeight) / v.scrollHeight),
-                };
-              });
-            // De schaal waarop een plaatje staat; naast zijn tekst staat het
-            // passend in een vak (object-fit: contain).
-            const plaatjes = [...paneel.querySelectorAll('img')]
-              .filter((img) => teZien(img) && img.naturalWidth > 0 && !img.closest('button, a'))
-              .map((img) => ({
-                schaal: Math.min(
-                  img.clientWidth / img.naturalWidth,
-                  img.clientHeight / img.naturalHeight,
-                ),
-                groter: img.hasAttribute('data-vergroot'),
-              }))
-              .filter((p) => p.schaal < 1 / 3);
+            const n = naast?.getBoundingClientRect();
+            const onder =
+              n && n.height > 0 && n.left >= r.right - 1 ? Math.max(r.bottom, n.bottom) : r.bottom;
             return {
-              afgesneden: afgesneden > 6 ? afgesneden : 0,
-              afgebroken,
-              letters: Math.round(letters * 10) / 10,
-              schuift,
-              klein: plaatjes.length,
-              kleinZonderVergroting: plaatjes.filter((p) => !p.groter).length,
+              over: Math.round(onder - document.documentElement.clientHeight),
+              naast: !!n && n.height > 0,
+              boven: Math.round(r.top),
+              pagina: document.documentElement.scrollHeight - document.documentElement.clientHeight,
+              // Niet innerWidth: daar hoort de schuifbalk van de pagina bij, en
+              // op een telefoon groeit hij mee met een pagina die te breed is.
+              zijwaarts: Math.max(
+                0,
+                document.documentElement.scrollWidth - document.documentElement.clientWidth,
+              ),
+              velden: paneel.querySelectorAll('[data-zaad]').length,
+              volgendeLes: volgendeLesInBeeld(paneel),
+              // Op hoeveel regels de rij stappen staat: een tweede regel kost
+              // elk scherm van dat tabblad veertig pixels.
+              stapregels: new Set(
+                [...paneel.querySelectorAll('[data-stap]')]
+                  .filter((s) => s.getClientRects().length > 0 && !s.closest('details:not([open])'))
+                  .map((s) => Math.round(s.getBoundingClientRect().top)),
+              ).size,
+              ...new Function(`return ${binnen}`)()(paneel),
             };
-          }
-        }, id);
+
+            // De link naar de volgende les terwijl dit scherm zelf een knop
+            // Volgende heeft: die zegt hetzelfde en slaat de rest van de les
+            // over.
+            function volgendeLesInBeeld(paneel) {
+              const knop = [...paneel.querySelectorAll('[data-les-verder] button')].some(
+                (k) => k.getClientRects().length > 0,
+              );
+              const link = document.querySelector('.pagination-nav__link--next');
+              if (!knop || !link || link.getClientRects().length === 0) return false;
+              return link.getBoundingClientRect().top < document.documentElement.clientHeight;
+            }
+          },
+          [id, binnenHetScherm.toString()],
+        );
         const naam = stap
           ? `${label} › ${(await stap.innerText()).replace(/\s+/g, ' ').trim()}`
           : label;
@@ -669,7 +687,10 @@ async function meetLes(les) {
 // Een les zonder tabbladen (één sectie, of een korte stap waarvan de
 // afsluiter bij de tekst erboven staat) is één scherm: de tekst van de les
 // hoort dan ook op het scherm te passen. In de editor-cursus is dat de helft
-// van de pagina's, met de git-simulator erop.
+// van de pagina's, met de git-simulator erop. Ook hier telt wat "past" niet
+// ziet: code die zijwaarts is afgesneden of afbreekt, en een dubbel id.
+// Eerst mat het alleen de hoogte en de breedte, en zag `--streng` de rest
+// op 67 pagina's niet.
 const zonderTabs = [];
 async function meetZonderTabs(les) {
   for (const scherm of SCHERMEN) {
@@ -679,11 +700,18 @@ async function meetZonderTabs(les) {
     await pagina.waitForSelector('.theme-doc-markdown');
     await pagina.evaluate(() => document.fonts.ready);
     await pagina.waitForTimeout(scherm.telefoon ? 100 : 500);
+    // Het lettertype van de code laadt pas als er code in beeld komt, en
+    // pasCode meet opnieuw als het binnen is (zie meetLes).
+    await pagina.evaluate(() => document.fonts.ready);
+    if (!scherm.telefoon) {
+      const dubbel = await pagina.evaluate(dubbeleIdsOpPagina);
+      if (dubbel.length && !dubbeleIds.some((d) => d.les === les)) dubbeleIds.push({ les, dubbel });
+    }
     zonderTabs.push({
       les,
       scherm: `${scherm.width}x${scherm.height}`,
       telefoon: Boolean(scherm.telefoon),
-      ...(await pagina.evaluate(() => {
+      ...(await pagina.evaluate((binnen) => {
         const tekst = document.querySelector('.theme-doc-markdown');
         return {
           over: Math.round(
@@ -693,8 +721,9 @@ async function meetZonderTabs(les) {
             0,
             document.documentElement.scrollWidth - document.documentElement.clientWidth,
           ),
+          ...new Function(`return ${binnen}`)()(tekst),
         };
-      })),
+      }, binnenHetScherm.toString())),
     });
     await context.close();
   }
@@ -828,6 +857,19 @@ if (ALS_JSON) {
     );
     for (const r of telang) console.log(`- ${naam(r.les)}: ${r.over} px te lang`);
   }
+  const zonderKlein = zonderTabs.filter((r) => r.scherm === `${eerste.width}x${eerste.height}`);
+  const zonderAf = zonderKlein.filter((r) => r.afgesneden > 0);
+  console.log(`\n## Pagina's zonder tabbladen, code zijwaarts afgesneden: ${zonderAf.length}\n`);
+  for (const r of zonderAf.sort((a, b) => b.afgesneden - a.afgesneden))
+    console.log(`- ${naam(r.les)}: ${r.afgesneden} px verborgen`);
+  const zonderGebroken = zonderKlein.filter((r) => r.afgebroken > 0);
+  console.log(
+    `\n## Pagina's zonder tabbladen, een regel code die afbreekt: ${zonderGebroken.length}\n`,
+  );
+  for (const r of zonderGebroken)
+    console.log(
+      `- ${naam(r.les)}: ${r.afgebroken} blokken${r.afgebrokenCode ? `, waarvan ${r.afgebrokenCode} met een taal` : ''}`,
+    );
   console.log(`\n## Dubbele id's: ${dubbeleIds.length} pagina's\n`);
   for (const d of dubbeleIds) console.log(`- ${naam(d.les)}: ${d.dubbel.join(', ')}`);
   console.log(`\nDe les gebruikt ${kolomBreedte}% van de breedte naast de lessenlijst.`);
@@ -856,6 +898,13 @@ if (STRENG) {
     if (bewust(r.les)) continue;
     if (!r.telefoon && r.over > 0) fouten.push(`${r.les} | ${r.scherm}: ${r.over} px te lang`);
     if (r.zijwaarts > 0) fouten.push(`${r.les} | ${r.scherm}: ${r.zijwaarts} px te breed`);
+    if (!r.telefoon && r.afgesneden > 0)
+      fouten.push(`${r.les} | ${r.scherm}: code ${r.afgesneden} px afgesneden`);
+    // Een foutmelding of uitvoer van de terminal mag afbreken, code niet.
+    if (!r.telefoon && r.afgebrokenCode > 0)
+      fouten.push(
+        `${r.les} | ${r.scherm}: ${r.afgebrokenCode} codeblokken met een regel die afbreekt`,
+      );
   }
   for (const d of dubbeleIds)
     if (!bewust(d.les)) fouten.push(`${d.les}: dubbele id's ${d.dubbel.join(', ')}`);

@@ -171,12 +171,22 @@ jobs:
       # bewuste stap: GIT_VERSIE ophogen en de simulator bijwerken tot
       # naast-git.test.ts groen is (leerlingen installeren de nieuwste Git
       # voor Windows). De test eist dat deze git de gebruikte is.
+      #
+      # De sleutel noemt het image (ImageOS, bv. ubuntu24): de git is tegen de
+      # bibliotheken van dat image gelinkt (libcurl, libssl), en toen
+      # ubuntu-latest naar 26.04 ging, kwam anders een git van 24.04 uit de
+      # cache. Niet ImageVersion: die verandert elke week. ImageOS staat
+      # alleen in de omgeving van de runner, niet in de context `env`.
+      - name: Cache-sleutel van git ${{ env.GIT_VERSIE }}
+        id: git-sleutel
+        run: echo "sleutel=git-${RUNNER_OS}-${ImageOS}-${GIT_VERSIE}" >> "$GITHUB_OUTPUT"
+
       - name: Git ${{ env.GIT_VERSIE }} uit de cache
         id: git-cache
-        uses: actions/cache@v5
+        uses: actions/cache/restore@v5
         with:
           path: ~/git-vast
-          key: git-${{ runner.os }}-${{ env.GIT_VERSIE }}
+          key: ${{ steps.git-sleutel.outputs.sleutel }}
 
       - name: Git ${{ env.GIT_VERSIE }} bouwen (niet in de cache)
         if: steps.git-cache.outputs.cache-hit != 'true'
@@ -188,6 +198,16 @@ jobs:
             | tar -xJ -C "$RUNNER_TEMP"
           make -C "$RUNNER_TEMP/git-${GIT_VERSIE}" -j"$(nproc)" prefix="$HOME/git-vast" all
           make -C "$RUNNER_TEMP/git-${GIT_VERSIE}" prefix="$HOME/git-vast" install
+
+      # Meteen na het bouwen, niet aan het eind van de job zoals actions/cache
+      # doet: die bewaart alleen als de job slaagt, en dan bouwde elke run
+      # na een rode test de git opnieuw (een paar minuten).
+      - name: Git ${{ env.GIT_VERSIE }} in de cache
+        if: steps.git-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: ~/git-vast
+          key: ${{ steps.git-sleutel.outputs.sleutel }}
 
       - name: Git ${{ env.GIT_VERSIE }} vooraan in het pad
         run: |
@@ -963,6 +983,11 @@ jobs:
   # package veranderde; packages/shared/meet-selectie.js), met klassieke
   # schuifbalken zoals op Windows. Een scherm dat bewust niet past, staat met
   # een reden in scripts/meet-les-tabs-uitzonderingen.json.
+  #
+  # Verandert de meting zelf (scripts/meet-les-tabs.mjs, de uitzonderingen,
+  # meet-selectie.js), dan meet hij elke cursus met tabbladen, ook een die
+  # deze wijziging niet bouwt: die build komt dan uit de cache, of wordt
+  # hier gebouwd, net als in `terminal`. Eerst viel de job dan weg.
   schermen:
     needs: [plan, build]
     if: >-
@@ -974,20 +999,39 @@ jobs:
       fail-fast: false
       matrix:
         site: ${{ fromJSON(needs.plan.outputs.schermen) }}
+    env:
+      GEBOUWD: ${{ contains(fromJSON(needs.plan.outputs.sites), matrix.site) }}
     steps:
       - uses: actions/checkout@v5
 
       - name: Node, pnpm en dependencies
         uses: ./.github/actions/node-pnpm
 
-      - name: Map van ${{ matrix.site }}
+      - name: Map en cache-sleutel van ${{ matrix.site }}
         id: map
-        run: echo "dir=$(node scripts/sites-json.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "dir=$(node scripts/sites-json.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
+          echo "sleutel=site-${{ runner.os }}-${{ matrix.site }}-$(node scripts/site-hash.mjs ${{ matrix.site }})" >> "$GITHUB_OUTPUT"
 
       - uses: actions/download-artifact@v6
+        if: env.GEBOUWD == 'true'
         with:
           name: ${{ matrix.site }}-gebouwd
           path: ${{ steps.map.outputs.dir }}/build
+
+      - name: Uit de cache
+        id: cache
+        if: env.GEBOUWD != 'true'
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ steps.map.outputs.dir }}/build
+          key: ${{ steps.map.outputs.sleutel }}
+
+      - name: Build ${{ matrix.site }} (niet gebouwd en niet in de cache)
+        if: env.GEBOUWD != 'true' && steps.cache.outputs.cache-hit != 'true'
+        run: |
+          pnpm --filter "./${{ steps.map.outputs.dir }}" build
+          node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
 
       - uses: actions/download-artifact@v6
         with:

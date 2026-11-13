@@ -87,8 +87,13 @@ describe('git staat op deze machine', () => {
     // CI bouwt een eigen git van GIT_VERSIE (build.yml, job test): die van
     // de runner veranderde zonder aankondiging, en dan werden PR's rood die
     // niets met de simulator te maken hadden. Staat de variabele er, dan
-    // moet het die git zijn, en niet stil die van de runner.
+    // moet het die git zijn, en niet stil die van de runner. In CI moet hij
+    // er staan: viel hij weg uit build.yml, dan slaagde deze test stil met
+    // elke git (ci-setup.test.ts eist hem ook in de job test).
     const vast = process.env.GIT_VERSIE;
+    if (process.env.CI) {
+      expect(vast, 'GIT_VERSIE in CI (build.yml, job test)').toMatch(/^\d+\.\d+\.\d+$/);
+    }
     if (!vast) return;
     expect(git(['--version']).trim()).toBe(`git version ${vast}`);
   });

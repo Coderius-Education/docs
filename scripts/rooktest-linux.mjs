@@ -318,12 +318,25 @@ try {
     // pagina maar 90 pixels, en dan staat ook een terminal die niet plakt
     // nog net onder de navbar. Hij schuift mee tot zijn plakplek, en niet
     // verder.
+    //
+    // Dat bewijst alleen iets als de pagina verder schuift dan de afstand
+    // tot de plakplek: anders staat een terminal die niet plakt op dezelfde
+    // plek (ervoor - geschoven), en slaagt deze controle stil. Een korter
+    // antwoord of een terminal die hoger begint, laat hem dan falen.
+    eis(
+      Number.isFinite(maat.plakplek),
+      'de terminal staat niet in een plakkende kolom naast de les (data-les-naast-gast)',
+    );
+    eis(
+      geschoven > ervoor - maat.plakplek,
+      `de pagina schoof maar ${geschoven}px, de terminal stond ${ervoor - maat.plakplek}px onder zijn plakplek (${maat.plakplek}px): of hij plakt, is zo niet te zien`,
+    );
     const verwacht = Math.max(ervoor - geschoven, Math.min(ervoor, maat.plakplek));
     eis(
       Math.abs(maat.top - verwacht) <= 2,
       `de terminal plakt niet: hij ging van ${ervoor}px naar ${maat.top}px, niet naar ${verwacht}px (${geschoven}px geschoven)`,
     );
-    return `${geschoven}px geschoven, terminal van ${ervoor}px naar ${maat.top}px, navbar tot ${maat.navbar}px`;
+    return `${geschoven}px geschoven, terminal van ${ervoor}px naar ${maat.top}px (plakplek ${maat.plakplek}px), navbar tot ${maat.navbar}px`;
   });
   await joker.context().close();
 

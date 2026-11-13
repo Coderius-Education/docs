@@ -13,13 +13,22 @@
 //                gewijzigde regels (`--regels changed.json`)
 //   blokrunners  alleen codeblokken waarvan een regel veranderde, plus de
 //                blokken die erop doorbouwen (`--alleen changed.json`)
+//   browser      de speeltuin van python in Chromium: als de python-site
+//                gebouwd wordt, of scripts/rooktest-speeltuin.mjs verandert
+//   terminal     de oefenterminal van linux in Chromium: als de linux-site
+//                gebouwd wordt, of scripts/rooktest-linux.mjs verandert
+//   schermen     de schermen van elke gebouwde cursus met tabbladen
+//                (meet-selectie.js kiest daarin de lessen). Verandert de
+//                meting zelf, dan elke cursus met tabbladen, helemaal; een
+//                cursus die niet gebouwd wordt, komt dan uit de cache.
 //
 // Vorm van changed.json (versie 1):
 //
 //   { versie, base, volledig, reden,
 //     bestanden: { 'pad/van/bestand': [[start, eind], ...] },
 //     sites: [id], ongewijzigd: [id], pakketten: ['sites/informatica/python'],
-//     jobs: { test, checks, lint, tekst, crosslinks },
+//     jobs: { test, checks, lint, tekst, crosslinks, browser, terminal },
+//     schermen: { sites: [id], alles, viaPakket: { id: 'pad' } },
 //     runners: { python: { draaien, alles }, ... },
 //     tekst: { alles, bestanden: [pad] },
 //     vitest: { alles, bestanden: [pad] } }
@@ -81,8 +90,10 @@ const PER_JOB = {
   // ook als de linux-site gebouwd wordt.
   terminal: ['scripts/rooktest-linux.mjs'],
   // De meting van de schermen (job `schermen`). Verandert hij, dan meet hij
-  // in elke geraakte cursus met tabbladen alle lessen, niet alleen de
-  // gewijzigde. Een cursus die niet gebouwd wordt, meet de nachtelijke run.
+  // in elke cursus met tabbladen alle lessen, ook in een cursus die deze
+  // wijziging niet bouwt: de job haalt die build uit de cache. Eerst mat hij
+  // dan alleen de geraakte cursussen, en met alleen het script gewijzigd
+  // geen enkele: de job viel weg en de check build was groen.
   schermen: [
     'scripts/meet-les-tabs.mjs',
     'scripts/meet-les-tabs-uitzonderingen.json',
@@ -383,6 +394,74 @@ function pakketVan(pad, pakketMappen) {
 }
 
 /**
+ * Per geraakte cursus met tabbladen het eerste gewijzigde bestand in een
+ * workspace-package waar hij van afhangt (niet de cursus zelf), zoals pnpm
+ * hem geraakt noemt: elk bestand in zo'n package telt. Een package kan elke
+ * les raken (de opmaak van de tabbladen, speling.ts), dus dan meet de job
+ * `schermen` de hele cursus, ook als er daarnaast een les veranderde.
+ *
+ * @returns {Record<string, string>}
+ */
+function viaPakket({ paden, alleMappen, geraakt, sites, afhankelijkheden, metTabbladen }) {
+  const siteMappen = new Set(sites.map((s) => s.dir));
+  const uit = {};
+  for (const { id, dir } of sites) {
+    if (!metTabbladen.includes(id) || !geraakt.includes(dir)) continue;
+    const deps = afhankelijkheden?.[id] ?? alleMappen.filter((d) => !siteMappen.has(d));
+    const pad = paden.find((p) => {
+      const pakket = pakketVan(p, alleMappen);
+      return pakket && pakket !== dir && deps.includes(pakket) && geraakt.includes(pakket);
+    });
+    if (pad) uit[id] = pad;
+  }
+  return uit;
+}
+
+/** Een waarde van lesTabs die de tabbladen uit laat (createConfig kijkt of hij waar is). */
+const ONWAAR = /^(?:false|null|undefined|0|''|""|``|void 0)$/;
+
+/**
+ * Zet deze docusaurus.config.ts de les-tabbladen aan? `createConfig` zet ze
+ * aan bij elke ware `lesTabs` (`true`, `{ eenScherm: true }`); `lesTabs:
+ * false` niet. De vorm `{ ...basis, lesTabs }` leest de waarde van de
+ * variabele `lesTabs`. Een waarde die hier niet te lezen is (een
+ * voorwaarde), telt als aan: een meting te veel is beter dan een cursus
+ * waarvan de schermen stil niet gemeten worden.
+ *
+ * @param {string} bron
+ * @returns {boolean}
+ */
+function heeftLesTabs(bron) {
+  const code = bron.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+  const aan = (waarde) => !ONWAAR.test(waarde.trim().replace(/[,;]$/, '').trim());
+  const sleutel = code.match(/\blesTabs\s*:\s*([^,}\n]*)/);
+  if (sleutel) return aan(sleutel[1] || '{');
+  // Verkort: `lesTabs,` of `lesTabs }` in een object.
+  if (/[{,]\s*lesTabs\s*(?=[,}])/.test(code)) {
+    const variabele = code.match(/\b(?:const|let|var)\s+lesTabs\s*=\s*([^;\n]*)/);
+    return variabele ? aan(variabele[1] || '{') : true;
+  }
+  return false;
+}
+
+/**
+ * De cursussen met les-tabbladen, in de volgorde van het register.
+ *
+ * @param {{id: string, dir: string}[]} sites
+ * @param {(dir: string) => string | null} leesConfig  de docusaurus.config.ts
+ *   van de map, of null als die er niet is (sites/home)
+ * @returns {string[]}
+ */
+function cursussenMetTabbladen(sites, leesConfig) {
+  return sites
+    .filter(({ dir }) => {
+      const bron = leesConfig(dir);
+      return bron !== null && heeftLesTabs(bron);
+    })
+    .map(({ id }) => id);
+}
+
+/**
  * @param {object} invoer
  * @param {Record<string, [number, number][]>} invoer.bestanden  uit parseDiff
  * @param {string[]} invoer.geraakt  mappen van de packages die pnpm geraakt
@@ -393,6 +472,11 @@ function pakketVan(pad, pakketMappen) {
  * @param {boolean} [invoer.volledig]  alles draaien (nightly, handmatig, geen base)
  * @param {string} [invoer.reden]
  * @param {string | null} [invoer.base]
+ * @param {string[]} [invoer.metTabbladen]  de cursussen met les-tabbladen
+ *   (cursussenMetTabbladen): hun schermen meet de job `schermen`
+ * @param {Record<string, string[]>} [invoer.afhankelijkheden]  per cursus met
+ *   tabbladen de workspace-packages waar hij van afhangt
+ *   (workspaceAfhankelijkheden). Zonder: elk package dat geen site is.
  */
 function plan({
   bestanden,
@@ -404,6 +488,7 @@ function plan({
   reden = '',
   base = null,
   metTabbladen = [],
+  afhankelijkheden,
 }) {
   const paden = Object.keys(bestanden).sort();
   const bestaat = (p) => bestanden[p].length > 0;
@@ -452,7 +537,11 @@ function plan({
         browser: true,
         terminal: true,
       },
-      schermen: { sites: alleIds.filter((id) => metTabbladen.includes(id)), alles: true },
+      schermen: {
+        sites: alleIds.filter((id) => metTabbladen.includes(id)),
+        alles: true,
+        viaPakket: {},
+      },
       runners: Object.fromEntries(
         Object.keys(RUNNERS).map((n) => [n, { draaien: true, alles: true }]),
       ),
@@ -511,10 +600,15 @@ function plan({
   const browser = geraakteSites.includes('python') || paden.some((p) => past(p, PER_JOB.browser));
   const terminal = geraakteSites.includes('linux') || paden.some((p) => past(p, PER_JOB.terminal));
   // De schermen van elke gebouwde cursus met tabbladen (meet-selectie.js
-  // kiest daarin de lessen).
+  // kiest daarin de lessen). Verandert de meting zelf, dan elke cursus met
+  // tabbladen: ook een die deze wijziging niet bouwt (uit de cache).
+  const schermenAlles = paden.some((p) => past(p, PER_JOB.schermen));
   const schermen = {
-    sites: geraakteSites.filter((id) => metTabbladen.includes(id)),
-    alles: paden.some((p) => past(p, PER_JOB.schermen)),
+    sites: alleIds.filter(
+      (id) => metTabbladen.includes(id) && (schermenAlles || geraakteSites.includes(id)),
+    ),
+    alles: schermenAlles,
+    viaPakket: viaPakket({ paden, alleMappen, geraakt, sites, afhankelijkheden, metTabbladen }),
   };
 
   return {
@@ -558,5 +652,7 @@ module.exports = {
   MAX_BESTANDEN,
   volledigOpNamen,
   workspaceAfhankelijkheden,
+  heeftLesTabs,
+  cursussenMetTabbladen,
   plan,
 };

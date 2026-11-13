@@ -35,6 +35,8 @@ const {
   binnenWijziging,
   volledigOpNamen,
   blokkenNodig,
+  cursussenMetTabbladen,
+  workspaceAfhankelijkheden,
 } = require('../packages/shared/wijzigingen.js');
 const { alleSiteMappen } = require('../packages/shared/sites.js');
 
@@ -138,12 +140,18 @@ function maakPlan(opties) {
     geraakt = pnpmMappen('--filter', `...[${base}]`);
   }
   // De cursussen met les-tabbladen: hun schermen meet de job `schermen`.
-  const metTabbladen = sites
-    .filter(({ dir }) => {
-      const config = join(ROOT, dir, 'docusaurus.config.ts');
-      return existsSync(config) && /\blesTabs\s*:/.test(readFileSync(config, 'utf8'));
-    })
-    .map(({ id }) => id);
+  const metTabbladen = cursussenMetTabbladen(sites, (dir) => {
+    const config = join(ROOT, dir, 'docusaurus.config.ts');
+    return existsSync(config) ? readFileSync(config, 'utf8') : null;
+  });
+  // Waar elk van die cursussen van afhangt: een gewijzigd bestand daarin
+  // laat de job `schermen` de hele cursus meten.
+  const pakketten = workspacePakketten(alleMappen);
+  const afhankelijkheden = Object.fromEntries(
+    sites
+      .filter(({ id }) => metTabbladen.includes(id))
+      .map(({ id, dir }) => [id, workspaceAfhankelijkheden(pakketten, dir)]),
+  );
   return plan({
     bestanden,
     geraakt,
@@ -154,7 +162,25 @@ function maakPlan(opties) {
     reden,
     base,
     metTabbladen,
+    afhankelijkheden,
   });
+}
+
+/** { dir: { naam, deps } } voor elk workspace-package, zoals in site-hash.mjs. */
+function workspacePakketten(mappen) {
+  const uit = {};
+  for (const dir of mappen) {
+    const pkg = JSON.parse(readFileSync(join(ROOT, dir, 'package.json'), 'utf8'));
+    const deps = Object.entries({
+      ...pkg.dependencies,
+      ...pkg.devDependencies,
+      ...pkg.peerDependencies,
+    })
+      .filter(([, versie]) => String(versie).startsWith('workspace:'))
+      .map(([naam]) => naam);
+    uit[dir] = { naam: pkg.name, deps };
+  }
+  return uit;
 }
 
 function outputs(p) {

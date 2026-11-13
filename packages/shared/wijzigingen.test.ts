@@ -1,9 +1,14 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { alleSiteMappen } from '@coderius/shared/sites';
 import { controleer } from '@coderius/shared/stijl';
 import {
   HEEL_BESTAND,
   MAX_BESTANDEN,
   binnenWijziging,
+  cursussenMetTabbladen,
+  heeftLesTabs,
   isGlobaal,
   opGewijzigdeRegels,
   overlapt,
@@ -298,11 +303,12 @@ describe('plan', () => {
       plan({ bestanden, geraakt, alleMappen: ALLE_MAPPEN, sites: SITES, tests: [], metTabbladen });
     // Een les van web: web meten, en alleen de gewijzigde lessen.
     const les = voor({ [`${MAP.web}/docs/html-css/position.mdx`]: [[3, 3]] }, [MAP.web]);
-    expect(les.schermen).toEqual({ sites: ['web'], alles: false });
+    expect(les.schermen).toEqual({ sites: ['web'], alles: false, viaPakket: {} });
     // Een cursus zonder tabbladen meet niets.
     const play = voor({ [`${MAP.play}/docs/acties/klonen.md`]: [[3, 3]] }, [MAP.play]);
     expect(play.schermen.sites).toEqual([]);
-    // Het meetscript zelf: in elke geraakte cursus met tabbladen alles.
+    // Het meetscript zelf: in elke cursus met tabbladen alles, ook in een
+    // cursus die niet gebouwd wordt (de job haalt hem uit de cache).
     const script = voor(
       {
         'scripts/meet-les-tabs.mjs': [[1, 1]],
@@ -310,7 +316,7 @@ describe('plan', () => {
       },
       [MAP.linux],
     );
-    expect(script.schermen).toEqual({ sites: ['linux'], alles: true });
+    expect(script.schermen).toMatchObject({ sites: ['web', 'linux'], alles: true });
     // Een volledige run meet elke cursus met tabbladen.
     const alles = plan({
       bestanden: {},
@@ -322,7 +328,93 @@ describe('plan', () => {
       volledig: true,
     });
     // In de volgorde van het register.
-    expect(alles.schermen).toEqual({ sites: ['web', 'linux'], alles: true });
+    expect(alles.schermen).toEqual({ sites: ['web', 'linux'], alles: true, viaPakket: {} });
+  });
+
+  // Wie alleen de meting veranderde, kreeg geen enkele cursus: de job
+  // `schermen` viel weg en de check build was groen, terwijl een nieuwe
+  // controle in het script nergens had gedraaid.
+  it.each([
+    'scripts/meet-les-tabs.mjs',
+    'scripts/meet-les-tabs-uitzonderingen.json',
+    'packages/shared/meet-selectie.js',
+  ])('de schermen: alleen %s gewijzigd meet toch elke cursus met tabbladen', (pad) => {
+    const metTabbladen = ['web', 'linux'];
+    const geraakt = pad.startsWith('packages/shared/')
+      ? ['packages/shared', MAP.web, MAP.linux]
+      : [];
+    const p = plan({
+      bestanden: { [pad]: [[1, 1]] },
+      geraakt,
+      alleMappen: ALLE_MAPPEN,
+      sites: SITES,
+      tests: [],
+      metTabbladen,
+    });
+    expect(p.schermen).toMatchObject({ sites: ['web', 'linux'], alles: true });
+  });
+
+  // Een package en een les samen: de les veranderde, maar speling.ts kan elke
+  // les van de cursus raken. Eerst mat de job dan alleen die les.
+  it('de schermen: een package waar de cursus van afhangt, ook naast een les', () => {
+    const metTabbladen = ['web', 'linux'];
+    const bestanden = {
+      'packages/shared/components/LesTabs/speling.ts': [[3, 3]] as [number, number][],
+      [`${MAP.web}/docs/html-css/position.mdx`]: [[3, 3]] as [number, number][],
+    };
+    const geraakt = ['packages/shared', MAP.web, MAP.linux];
+    const metDeps = plan({
+      bestanden,
+      geraakt,
+      alleMappen: ALLE_MAPPEN,
+      sites: SITES,
+      tests: [],
+      metTabbladen,
+      afhankelijkheden: {
+        web: ['packages/shared', MAP.web],
+        linux: ['packages/shared', MAP.linux],
+      },
+    });
+    expect(metDeps.schermen).toEqual({
+      sites: ['web', 'linux'],
+      alles: false,
+      viaPakket: {
+        web: 'packages/shared/components/LesTabs/speling.ts',
+        linux: 'packages/shared/components/LesTabs/speling.ts',
+      },
+    });
+    // Zonder de afhankelijkheden telt elk package dat geen site is.
+    expect(
+      plan({ bestanden, geraakt, alleMappen: ALLE_MAPPEN, sites: SITES, tests: [], metTabbladen })
+        .schermen.viaPakket,
+    ).toEqual(metDeps.schermen.viaPakket);
+    // Een package waar web niet van afhangt, raakt de lessen van web niet.
+    const checker = plan({
+      bestanden: {
+        'packages/checker/src/index.ts': [[3, 3]],
+        [`${MAP.web}/docs/html-css/position.mdx`]: [[3, 3]],
+      },
+      geraakt: ['packages/checker', MAP.web],
+      alleMappen: ALLE_MAPPEN,
+      sites: SITES,
+      tests: [],
+      metTabbladen,
+      afhankelijkheden: {
+        web: ['packages/shared', MAP.web],
+        linux: ['packages/shared', MAP.linux],
+      },
+    });
+    expect(checker.schermen).toEqual({ sites: ['web'], alles: false, viaPakket: {} });
+    // Alleen een les: geen package.
+    const les = plan({
+      bestanden: { [`${MAP.web}/docs/html-css/position.mdx`]: [[3, 3]] },
+      geraakt: [MAP.web],
+      alleMappen: ALLE_MAPPEN,
+      sites: SITES,
+      tests: [],
+      metTabbladen,
+    });
+    expect(les.schermen.viaPakket).toEqual({});
   });
 
   it('alleen sites/home', () => {
@@ -474,5 +566,51 @@ describe('volledigOpNamen', () => {
     );
     expect(volledigOpNamen(namen)).toBeNull();
     expect(volledigOpNamen([])).toBeNull();
+  });
+});
+
+// De plan-job leest uit elke docusaurus.config.ts of de cursus tabbladen
+// heeft; alleen die meet de job `schermen`. Eerst deed een losse regex in
+// scripts/wijzigingen.mjs dat, zonder test: `lesTabs: false` telde als aan,
+// en `{ ...basis, lesTabs }` als uit.
+describe('cursussen met tabbladen', () => {
+  it('een ware lesTabs zet ze aan, zoals in createConfig', () => {
+    expect(heeftLesTabs('createConfig({ siteId: "x", lesTabs: true })')).toBe(true);
+    expect(heeftLesTabs('createConfig({\n  lesTabs: { eenScherm: true },\n})')).toBe(true);
+    expect(heeftLesTabs('createConfig({\n  lesTabs: {\n    eenScherm: true,\n  },\n})')).toBe(true);
+  });
+
+  it('lesTabs: false, een lege waarde of een opmerking zet ze niet aan', () => {
+    expect(heeftLesTabs('createConfig({ lesTabs: false })')).toBe(false);
+    expect(heeftLesTabs('createConfig({\n  lesTabs: false,\n})')).toBe(false);
+    expect(heeftLesTabs('createConfig({ lesTabs: undefined })')).toBe(false);
+    expect(heeftLesTabs('createConfig({ siteId: "x" })')).toBe(false);
+    expect(heeftLesTabs('// lesTabs: true komt later\ncreateConfig({ siteId: "x" })')).toBe(false);
+    expect(heeftLesTabs('/* lesTabs: true */ createConfig({})')).toBe(false);
+  });
+
+  it('de verkorte vorm leest de variabele', () => {
+    expect(heeftLesTabs('const lesTabs = true;\ncreateConfig({ siteId, lesTabs })')).toBe(true);
+    expect(heeftLesTabs('const lesTabs = { eenScherm: true };\ncreateConfig({ lesTabs, x })')).toBe(
+      true,
+    );
+    expect(heeftLesTabs('const lesTabs = false;\ncreateConfig({\n  siteId,\n  lesTabs,\n})')).toBe(
+      false,
+    );
+    // Niet te lezen: liever een meting te veel.
+    expect(heeftLesTabs("import { lesTabs } from './x';\ncreateConfig({ lesTabs })")).toBe(true);
+  });
+
+  it('de lijst in deze repository, naast de config van elke site', () => {
+    const ROOT = fileURLToPath(new URL('../..', import.meta.url));
+    const lees = (dir: string) => {
+      const config = join(ROOT, dir, 'docusaurus.config.ts');
+      return existsSync(config) ? readFileSync(config, 'utf8') : null;
+    };
+    // Komt er een cursus met tabbladen bij, zet hem dan hier: dan meet CI
+    // zijn schermen.
+    expect([...cursussenMetTabbladen(SITES, lees)].sort()).toEqual(
+      ['ctf', 'editor', 'fullstack', 'linux', 'python', 'robotica', 'web'].sort(),
+    );
   });
 });
