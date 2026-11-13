@@ -126,13 +126,23 @@ describe('een terminal per opdracht', () => {
       ['cd downloads', 'mkdir fotos', 'mv *.jpg *.png fotos', 'ls fotos/*'],
     ],
     '2.4.b': [
-      // De voorspelvraag van de les raadt `ls *` of `echo *` aan.
+      // Kijken mag ook met ls -l of echo, en met een ? als jokerteken: dat
+      // leert dezelfde les.
       ['cd project', 'ls -l *.tmp', 'rm *.tmp'],
       ['cd project', 'echo *.tmp', 'rm *.tmp'],
+      ['cd project', 'ls cache?.tmp', 'rm cache?.tmp'],
+      ['cd project', 'echo cache?.tmp', 'rm *.tmp'],
     ],
     '3.1.a': [
       ['grep inloggen /var/log/apache2/access.log'],
       ['cat /var/log/apache2/access.log | grep inloggen.html'],
+      // Met een jokerteken zet grep de bestandsnaam voor elke regel.
+      ['grep inloggen.html /var/log/apache2/*'],
+      ['cd /var/log/apache2', 'grep inloggen.html *'],
+    ],
+    '1.2.b': [
+      // Het absolute pad mag ook uit ls komen.
+      ['ls /var/www/html/config', 'ls /var/www/html/config/instellingen.conf'],
     ],
     '3.2.a': [['cd /var/log', "find . -name '*.log'"], ["find / -name '*.log'"]],
     '3.2.b': [['find /var/ -type d'], ['cd /var', 'find . -type d']],
@@ -163,11 +173,20 @@ describe('een terminal per opdracht', () => {
       ['cd downloads', 'mkdir fotos', 'mv * fotos/', 'ls fotos'],
       // Eén mv, maar zonder jokertekens.
       ['cd downloads', 'mkdir fotos', 'mv vakantie1.jpg vakantie2.jpg kat.png fotos/', 'ls fotos'],
+      // Een tweede mv met jokertekens, nadat de eerste al een foto deed: de
+      // tekst van het laatste commando noemt alles, maar hij deed niet alles.
+      ['cd downloads', 'mkdir fotos', 'mv kat.png fotos', 'mv *.jpg *.png fotos', 'ls fotos'],
     ],
     '2.4.b': [
       // Twee keer rm is niet "met één rm".
       ['cd project', 'ls *.tmp', 'rm cache1.tmp', 'rm cache2.tmp'],
       ['cd project', 'ls *.tmp', 'rm cache1.tmp; rm cache2.tmp'],
+      // Eén rm, maar zonder jokerteken.
+      ['cd project', 'ls *.tmp', 'rm cache1.tmp cache2.tmp'],
+    ],
+    '1.2.b': [
+      // Alleen de map bekijken is nog niet het absolute pad.
+      ['cd /var/www/html', 'ls config'],
     ],
   };
 
@@ -235,14 +254,40 @@ describe('een terminal per opdracht', () => {
       expect(melding('1.2.a', ['cd /var/log', 'cd /var/www/html'])).toMatch(/relatief pad/);
     });
 
-    it("2.4.a: een mv zonder jokertekens, meer dan de foto's, of mv vóór mkdir", () => {
+    it("2.4.a: een deel verplaatst, meer dan de foto's, of mv vóór mkdir", () => {
       expect(
         melding('2.4.a', ['cd downloads', 'mkdir fotos', 'mv vakantie1.jpg kat.png fotos/']),
-      ).toMatch(/jokertekens/);
+      ).toMatch(/^kat.png en vakantie1.jpg staan al in fotos, de rest nog niet/);
       expect(melding('2.4.a', ['cd downloads', 'mkdir fotos', 'mv * fotos/'])).toMatch(
         /meer verplaatst/,
       );
       expect(melding('2.4.a', ['cd downloads', 'mv *.png fotos'])).toMatch(/fotos is een bestand/);
+    });
+
+    it("2.4.a: de melding zegt wat er met de foto's gebeurd is", () => {
+      // Uit de derde doorloop: drie van de vijf foute routes kregen een
+      // melding met een andere oorzaak dan de echte.
+      // De map staat in de thuismap: dan staan de foto's daar.
+      expect(melding('2.4.a', ['mkdir fotos', 'cd downloads', 'mv *.jpg *.png ../fotos/'])).toMatch(
+        /staat nu in ~\/fotos, niet in ~\/downloads\/fotos/,
+      );
+      // Alles voluit in één mv: alles is verplaatst, niet "een deel".
+      const voluit = melding('2.4.a', [
+        'cd downloads',
+        'mkdir fotos',
+        'mv vakantie1.jpg vakantie2.jpg kat.png fotos',
+      ]);
+      expect(voluit).toMatch(/^Alle foto's staan in fotos, maar niet/);
+      expect(voluit).not.toMatch(/een deel/);
+      // mv met twee foto's en geen map: de tweede is overschreven.
+      expect(melding('2.4.a', ['cd downloads', 'mv *.jpg'])).toMatch(/^vakantie1.jpg is weg/);
+    });
+
+    it('2.4.b: met een ? als jokerteken loopt niets vast', () => {
+      expect(melding('2.4.b', ['cd project', 'ls cache?.tmp', 'rm cache?.tmp'])).toBeNull();
+      expect(melding('2.4.b', ['cd project', 'ls *.tmp', 'rm cache1.tmp cache2.tmp'])).toMatch(
+        /niet met één rm en een jokerteken/,
+      );
     });
 
     it('2.4.b: hernoemd is niet weg, en eerst kijken met echo telt', () => {
@@ -290,6 +335,15 @@ describe('een terminal per opdracht', () => {
         for (let n = 1; n <= regels.length; n++)
           expect(vast(s.id, regels.slice(0, n)), `${s.id}: ${regels[n - 1]}`).toBeNull();
       }
+    });
+
+    it('elke foute route in 2.4 eindigt met een melding', () => {
+      // Een route waarop het doel niet meer te halen is, moet dat zeggen. Bij
+      // 2.4.b bleef na `rm cache1.tmp cache2.tmp` de status "Doe het in deze
+      // volgorde" staan, terwijl er niets meer te doen was.
+      for (const id of ['2.4.a', '2.4.b'])
+        for (const route of NIET_GOED[id])
+          expect(vast(id, route), `${id}: ${route.join(' ; ')}`).toMatch(/Opnieuw beginnen/);
     });
 
     it('rondkijken is niet vastlopen', () => {

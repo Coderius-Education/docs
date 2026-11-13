@@ -18,6 +18,8 @@ export type Stand = {
   cwd: string;
   /** De map vóór die regel. */
   voor: string;
+  /** Het bestandssysteem vóór die regel: wat deed dit ene commando? */
+  voorFs: object;
   regel: string;
   /** De uitvoer van die regel, per regel en zonder kleurcodes. */
   uitvoer: string[];
@@ -57,11 +59,17 @@ const KLEUR = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
 /** Eén oefenterminal: een eigen bestandssysteem en een eigen map. */
 export function maakSessie(
   extraFs?: object,
-  { clear, kolommen }: { clear?: () => void; kolommen?: () => number } = {},
+  {
+    clear,
+    kolommen,
+    rijen,
+  }: { clear?: () => void; kolommen?: () => number; rijen?: () => number } = {},
 ) {
   const env = {
     // De breedte van de terminal: `ls` zet zijn namen in kolommen die erop passen.
     kolommen: () => kolommen?.() ?? 80,
+    // De hoogte: `help` kort zijn lijst in als hij er niet in past.
+    rijen: () => rijen?.() ?? 24,
     cwd: HOME,
     fs: createFilesystem(extraFs),
     geschiedenis: [] as string[],
@@ -82,6 +90,7 @@ export function maakSessie(
     },
     typ(regel: string) {
       const voor = env.cwd;
+      const voorFs = structuredClone(env.fs);
       // Zoals Ubuntu het instelt (HISTCONTROL=ignoreboth in ~/.bashrc): een
       // regel die met een spatie begint of gelijk is aan de vorige, komt er
       // niet bij.
@@ -97,6 +106,7 @@ export function maakSessie(
         fs: env.fs,
         cwd: env.cwd,
         voor,
+        voorFs,
         regel,
         uitvoer: tekst ? tekst.split('\n') : [],
       };
@@ -163,27 +173,33 @@ const namen = (s: Stand) =>
     .filter(Boolean)
     .map((n) => n.split('/').pop() ?? n)
     .sort();
-/** Past dit woord (een naam of een jokerteken, met of zonder map) op deze naam? */
-const pastOp = (woord: string, naam: string) => {
-  const kaal = woord.split('/').pop() ?? '';
-  const regex = kaal
-    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-    .replace(/\*/g, '.*')
-    .replace(/\?/g, '.');
-  return new RegExp(`^${regex}$`).test(naam);
-};
+/** Gebruikt de regel een jokerteken (`*`, `?` of `[…]`) in een woord na dit commando? */
+const metJokerteken = (s: Stand, naam: string) =>
+  commandos(s).some((w) => w[0] === naam && w.slice(1).some((a) => /[*?[]/.test(a)));
 /**
- * Het enige commando met deze naam op de regel noemt elk van deze namen, en
- * gebruikt een jokerteken. Zo telt "met één mv" alleen voor één commando
- * dat alles in één keer doet: twee regels mv, of twee op één regel, niet.
+ * Eén commando met deze naam op de regel, met een jokerteken, en dat ene
+ * commando deed het hele werk: vóór de regel stonden al deze bestanden er
+ * nog. Zo telt "met één mv" niet voor twee regels mv, niet voor twee op één
+ * regel, en niet voor een tweede mv nadat de eerste al een deel deed (de
+ * tekst van het laatste commando zei eerst genoeg).
  */
-const inEenKeer = (s: Stand, naam: string, wat: string[], laatsteIsDoel = false) => {
-  const cmds = commandos(s).filter((w) => w[0] === naam);
-  if (cmds.length !== 1) return false;
-  const bronnen = cmds[0]
-    .slice(1, laatsteIsDoel ? -1 : undefined)
-    .filter((a) => !a.startsWith('-'));
-  return bronnen.some((a) => /[*?]/.test(a)) && wat.every((n) => bronnen.some((a) => pastOp(a, n)));
+const inEenKeer = (s: Stand, naam: string, wasEr: string[]) =>
+  commandos(s).filter((w) => w[0] === naam).length === 1 &&
+  metJokerteken(s, naam) &&
+  wasEr.every((p) => getNode(s.voorFs, pad(s, p)).exists);
+/** Waar staat een bestand met deze naam nu, onder de thuismap? */
+const waarIs = (s: Stand, naam: string): string[] => {
+  const gevonden: string[] = [];
+  const zoek = (node: Record<string, unknown>, map: string) => {
+    for (const [kind, waarde] of Object.entries(node)) {
+      const pd = `${map}/${kind}`;
+      if (kind === naam && typeof waarde === 'string') gevonden.push(pd);
+      if (waarde && typeof waarde === 'object') zoek(waarde as Record<string, unknown>, pd);
+    }
+  };
+  const { node, isDir } = getNode(s.fs, HOME);
+  if (isDir) zoek(node as Record<string, unknown>, HOME);
+  return gevonden.map((p) => p.replace(HOME, '~'));
 };
 
 const begin = createFilesystem();
@@ -253,6 +269,15 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
       {
         tekst: 'Laat zien wat er in de map config staat.',
         klaar: (s) => gebruikt(s, 'ls') && woorden(s).has('instellingen.conf'),
+      },
+      {
+        // De tip noemt pwd voor het absolute pad; eerst vroeg het doel
+        // alleen een ls, en kwam er na pwd geen vinkje.
+        tekst: 'Laat het absolute pad van de map config zien, bijvoorbeeld met pwd.',
+        klaar: (s) =>
+          s.uitvoer.some(
+            (r) => r === '/var/www/html/config' || r === '/var/www/html/config/instellingen.conf',
+          ),
       },
     ],
   },
@@ -364,7 +389,11 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
         // tellen niet, en `mv * fotos/` ook niet: dan staan het liedje, de
         // pdf en het verslag er ook in.
         klaar: (s) =>
-          inEenKeer(s, 'mv', FOTOS, true) &&
+          inEenKeer(
+            s,
+            'mv',
+            FOTOS.map((f) => `~/downloads/${f}`),
+          ) &&
           FOTOS.every((f) => bestaat(s, `~/downloads/fotos/${f}`)) &&
           FOTOS.every((f) => !bestaat(s, `~/downloads/${f}`)) &&
           ANDERE.every((f) => bestaat(s, `~/downloads/${f}`)),
@@ -384,8 +413,23 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
       if (klaar[1]) return null;
       if (ANDERE.some((f) => !bestaat(s, `~/downloads/${f}`)))
         return `Er is meer verplaatst dan de .jpg- en .png-bestanden. ${OPNIEUW}`;
-      if (FOTOS.some((f) => !bestaat(s, `~/downloads/${f}`)))
-        return `Een deel van de foto's staat al niet meer in downloads. Het doel vraagt één mv met jokertekens die ze allemaal tegelijk verplaatst. ${OPNIEUW}`;
+      // Elke melding noemt wat er met de foto's gebeurd is: een foto die
+      // ergens anders staat, een die weg is, of alles al in fotos.
+      const elders = FOTOS.flatMap((f) =>
+        bestaat(s, `~/downloads/${f}`) || bestaat(s, `~/downloads/fotos/${f}`)
+          ? []
+          : [{ f, waar: waarIs(s, f) }],
+      );
+      const kwijt = elders.find((e) => e.waar.length === 0);
+      if (kwijt)
+        return `${kwijt.f} is weg. Een mv met twee bestanden en geen map erachter hernoemt het eerste naar het tweede, en dan is het tweede overschreven. ${OPNIEUW}`;
+      if (elders.length)
+        return `${elders[0].f} staat nu in ${elders[0].waar[0].replace(/\/[^/]+$/, '')}, niet in ~/downloads/fotos. Het doel vraagt de map fotos in downloads. ${OPNIEUW}`;
+      const inFotos = FOTOS.filter((f) => bestaat(s, `~/downloads/fotos/${f}`));
+      if (inFotos.length === FOTOS.length)
+        return `Alle foto's staan in fotos, maar niet verplaatst door één mv met jokertekens. Het doel vraagt één mv die ze met een jokerteken allemaal tegelijk verplaatst. ${OPNIEUW}`;
+      if (inFotos.length)
+        return `${inFotos.join(' en ')} ${inFotos.length === 1 ? 'staat' : 'staan'} al in fotos, de rest nog niet: met één mv lukt het zo niet meer. ${OPNIEUW}`;
       return null;
     },
   },
@@ -407,17 +451,15 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
       {
         tekst:
           'Kijk eerst met ls (of echo) en een jokerteken welke .tmp-bestanden je gaat weggooien.',
-        // Ook ls -l en echo: de voorspelvraag van de les raadt `ls *` of
-        // `echo *` aan.
+        // Ook ls -l, echo en een ? als jokerteken: ls cache?.tmp vindt ze ook.
         klaar: (s) =>
-          (gebruikt(s, 'ls') || gebruikt(s, 'echo')) &&
-          s.regel.includes('*') &&
+          (metJokerteken(s, 'ls') || metJokerteken(s, 'echo')) &&
           namen(s).join(' ') === 'cache1.tmp cache2.tmp',
       },
       {
-        tekst: 'Gooi ze weg met één rm, en laat de rest staan.',
+        tekst: 'Gooi ze weg met één rm en een jokerteken, en laat de rest staan.',
         klaar: (s) =>
-          inEenKeer(s, 'rm', ['cache1.tmp', 'cache2.tmp']) &&
+          inEenKeer(s, 'rm', ['~/project/cache1.tmp', '~/project/cache2.tmp']) &&
           !bestaat(s, '~/project/cache1.tmp') &&
           !bestaat(s, '~/project/cache2.tmp') &&
           bestaat(s, '~/project/main.py') &&
@@ -426,13 +468,16 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
     ],
     vast: (s, klaar) => {
       const weg = (naam: string) => !bestaat(s, `~/project/${naam}`);
-      if (!klaar[1] && (weg('main.py') || weg('README.md')))
+      if (klaar[1]) return null;
+      if (weg('main.py') || weg('README.md'))
         return `Er is meer weg dan de .tmp-bestanden. ${OPNIEUW}`;
-      if (!klaar[0] && (weg('cache1.tmp') || weg('cache2.tmp')))
-        return `cache1.tmp of cache2.tmp is weg of hernoemd voordat je bekeek welke bestanden je jokerteken vindt. ${OPNIEUW}`;
-      if (klaar[0] && !klaar[1] && weg('cache1.tmp') !== weg('cache2.tmp'))
-        return `Eén .tmp-bestand is al weg: met één rm lukt het zo niet meer. ${OPNIEUW}`;
-      return null;
+      const tmp = ['cache1.tmp', 'cache2.tmp'].filter(weg);
+      if (tmp.length === 0) return null;
+      if (!klaar[0])
+        return `${tmp.join(' en ')} ${tmp.length === 1 ? 'is' : 'zijn'} weg of hernoemd, en je hebt nog niet met ls of echo en een jokerteken bekeken welke bestanden je jokerteken vindt. ${OPNIEUW}`;
+      if (tmp.length === 1)
+        return `${tmp[0]} is al weg: met één rm voor allebei lukt het zo niet meer. ${OPNIEUW}`;
+      return `De .tmp-bestanden zijn weg, maar niet met één rm en een jokerteken. Het doel vraagt rm met een jokerteken dat ze allebei in één keer vindt. ${OPNIEUW}`;
     },
   },
   '3.1.a': {
@@ -442,7 +487,9 @@ export const OPDRACHTEN: Record<string, Opdracht> = {
         klaar: (s) =>
           gebruikt(s, 'grep') &&
           s.uitvoer.length === BEZOEKEN.length &&
-          s.uitvoer.every((r, i) => r === BEZOEKEN[i]),
+          // Met een jokerteken (apache2/*) zoekt grep in meer bestanden en
+          // zet hij de naam van het bestand voor elke regel.
+          s.uitvoer.every((r, i) => r.replace(/^(?:\S*\/)?access\.log:/, '') === BEZOEKEN[i]),
       },
     ],
   },
