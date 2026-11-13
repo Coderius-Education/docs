@@ -73,6 +73,30 @@ describe('jokertekens', () => {
     expect(typ('echo "*.txt"')).toBe('*.txt');
   });
 
+  it('[...] is een van die tekens, zoals in bash', () => {
+    // `mv *[gG] fotos` telde voor het doel als jokerteken, maar de shell
+    // zocht een bestand dat letterlijk zo heette.
+    const { typ } = metBestanden();
+    expect(typ('echo [ab].txt')).toBe('a.txt b.txt');
+    expect(typ('echo [a-b].txt')).toBe('a.txt b.txt');
+    expect(typ('echo [!a].txt')).toBe('b.txt');
+    expect(typ('echo [^a].txt')).toBe('b.txt');
+    expect(typ('echo *[dD]')).toBe('c.md');
+    // Tussen aanhalingstekens, zonder ] of met een reeks die niet kan: dan
+    // blijft het woord staan (nagedraaid met bash 5.2).
+    expect(typ("echo '[ab].txt'")).toBe('[ab].txt');
+    expect(typ('echo x[')).toBe('x[');
+    expect(typ('echo [z-a]*')).toBe('[z-a]*');
+  });
+
+  it('{a,b} maakt eerst meer woorden, daarna vult de shell de jokertekens in', () => {
+    const { typ } = metBestanden();
+    expect(typ('echo *.{md,txt}')).toBe('c.md a.txt b.txt notities.txt');
+    expect(typ('echo {a,c}.txt')).toBe('a.txt c.txt');
+    expect(typ("echo '{a,c}.txt'")).toBe('{a,c}.txt');
+    expect(typ('echo {a}.txt')).toBe('{a}.txt');
+  });
+
   it('cp en rm met een joker', () => {
     const { typ } = metBestanden();
     typ('mkdir kopie');
@@ -471,6 +495,45 @@ describe('zoals op Ubuntu', () => {
     expect(typ('tail -1 /etc/passwd')).toBe(typ('tail -n 1 /etc/passwd'));
     expect(typ('head -2 /etc/passwd').split('\n')).toHaveLength(2);
   });
+
+  it('head en tail lezen het getal zoals coreutils: -n1, --lines=2 en --lines 2', () => {
+    // `tail -n1` zei eerst dat -1 hier niet werkte, terwijl tail -1 wel werkte.
+    const { typ } = terminal();
+    typ('echo a > f; echo b >> f; echo c >> f; echo d >> f');
+    expect(typ('tail -n1 f')).toBe('d');
+    expect(typ('head -n2 f')).toBe('a\nb');
+    expect(typ('tail --lines=2 f')).toBe('c\nd');
+    expect(typ('head --lines 1 f')).toBe('a');
+    // Met + en - ervoor, en 0: nagedraaid met coreutils 9.4.
+    expect(typ('tail -n +3 f')).toBe('c\nd');
+    expect(typ('head -n -3 f')).toBe('a');
+    expect(typ('tail -n 0 f')).toBe('');
+    expect(typ('tail -n abc f')).toBe('tail: invalid number of lines: \u2018abc\u2019');
+    expect(typ('tail -n')).toBe(
+      "tail: option requires an argument -- 'n'\nTry 'tail --help' for more information.",
+    );
+    expect(typ('head --lines')).toBe(
+      "head: option '--lines' requires an argument\nTry 'head --help' for more information.",
+    );
+    // Een andere optie blijft een optie die hier niet werkt.
+    expect(typ('tail -f f')).toBe('oefenterminal: tail -f werkt hier niet, wel op je eigen Linux.');
+  });
+
+  it('rmdir gooit alleen een lege map weg, met de meldingen van coreutils 9.4', () => {
+    // rmdir gaf "command not found", terwijl Ubuntu het heeft.
+    const { typ } = terminal();
+    typ('mkdir leeg vol');
+    typ('touch vol/x');
+    expect(typ('rmdir vol')).toBe("rmdir: failed to remove 'vol': Directory not empty");
+    expect(typ('rmdir notities.txt')).toBe(
+      "rmdir: failed to remove 'notities.txt': Not a directory",
+    );
+    expect(typ('rmdir nee')).toBe("rmdir: failed to remove 'nee': No such file or directory");
+    expect(typ('rmdir')).toBe("rmdir: missing operand\nTry 'rmdir --help' for more information.");
+    expect(typ('rmdir /etc')).toBe("rmdir: failed to remove '/etc': Permission denied");
+    expect(typ('rmdir leeg')).toBe('');
+    expect(typ('ls')).toBe('notities.txt  vol');
+  });
 });
 
 describe('ls op een smalle terminal', () => {
@@ -613,7 +676,9 @@ describe('ls op een smalle terminal', () => {
     ]) {
       const sessie = maakSessie(undefined, { kolommen: () => kolommen, rijen: () => rijen });
       const uitvoer = sessie.typ('help').stand.uitvoer;
-      expect(uitvoer.length, `${kolommen}x${rijen}`).toBeLessThan(rijen);
+      // Met de regel `$ help` erboven en de nieuwe prompt eronder: op 41
+      // bij 12 waren het er eerst 13, en schoof `$ help` van het scherm.
+      expect(uitvoer.length + 2, `${kolommen}x${rijen}`).toBeLessThanOrEqual(rijen);
       for (const regel of uitvoer) expect(regel.length).toBeLessThan(kolommen);
       const namen = uitvoer.join(' ');
       for (const cmd of ['ls', 'grep', 'find', 'hostname', 'history', 'clear'])
@@ -621,11 +686,20 @@ describe('ls op een smalle terminal', () => {
       expect(sessie.typ('help ls').stand.uitvoer.join(' ')).toContain('bestanden tonen');
       expect(sessie.typ('help tail').stand.uitvoer.join(' ')).toContain('eerste of laatste');
     }
-    // In een terminal van 24 regels en 80 kolommen staat de hele lijst.
-    expect(maakSessie().typ('help').stand.uitvoer.length).toBe(23);
+    // In een terminal van 24 regels en 80 kolommen staat de hele lijst, met
+    // `$ help` en de prompt erbij.
+    expect(maakSessie().typ('help').stand.uitvoer.length).toBe(22);
     expect(maakSessie().typ('help bestaatniet').stand.uitvoer).toEqual([
       "help: geen uitleg bij bestaatniet. Typ help voor alle commando's.",
     ]);
+  });
+
+  it('help bij een commando dat hier niet werkt, zegt wat het commando zelf zegt', () => {
+    // `help nano` zei "geen uitleg", terwijl nano zelf de les noemt.
+    const { typ } = terminal();
+    expect(typ('help nano')).toBe(typ('nano'));
+    expect(typ('help nano')).toMatch(/^oefenterminal: nano werkt hier niet/);
+    expect(typ('help rmdir')).toContain('lege map weggooien');
   });
 
   it('ls met meer namen zet ze op naam, zoals ls', () => {

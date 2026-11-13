@@ -105,6 +105,8 @@ describe('een terminal per opdracht', () => {
     '2.1.a': [
       ['wc /etc/passwd', 'tail -n 1 /etc/passwd'],
       ['cat /etc/passwd | wc -l', 'tail -1 /etc/passwd'],
+      // Het getal vast aan -n, zoals coreutils het ook leest.
+      ['wc -l /etc/passwd', 'tail -n1 /etc/passwd'],
     ],
     '2.2.a': [
       [
@@ -120,10 +122,30 @@ describe('een terminal per opdracht', () => {
       ['mkdir oud', 'cp notities.txt oud/kopie.txt', 'mv notities.txt todo.txt', 'rm -r oud', 'ls'],
       // Controleren met ls -l: todo.txt staat aan het eind van de regel.
       ['mkdir oud', 'cp notities.txt oud', 'mv notities.txt todo.txt', 'rm -r oud', 'ls -l'],
+      // Alles op één regel: elk commando telt apart, zoals op losse regels.
+      // Eerst keek het doel alleen naar het eind van de regel, en dan was oud
+      // al weg: nul vinkjes.
+      ['mkdir oud && cp notities.txt oud && mv notities.txt todo.txt && rm -r oud && ls'],
+      // Een lege map weggooien met rmdir, zoals Ubuntu het kan.
+      [
+        'mkdir oud',
+        'cp notities.txt oud',
+        'mv notities.txt todo.txt',
+        'rm oud/notities.txt',
+        'rmdir oud',
+        'ls',
+      ],
     ],
     '2.4.a': [
       // Controleren met de jokertekens van daarnet: ls zet de map ervoor.
       ['cd downloads', 'mkdir fotos', 'mv *.jpg *.png fotos', 'ls fotos/*'],
+      // Met ls -a staan . en .. erbij; dat zijn geen bestanden in fotos.
+      ['cd downloads', 'mkdir fotos', 'mv *.jpg *.png fotos', 'ls -a fotos'],
+      ['cd downloads', 'mkdir fotos', 'mv *.jpg *.png fotos', 'ls -la fotos'],
+      // [gG] en {jpg,png} vult de shell in, zoals bash.
+      ['cd downloads', 'mkdir fotos', 'mv *[gG] fotos', 'ls fotos'],
+      ['cd downloads', 'mkdir fotos', 'mv *.{jpg,png} fotos', 'ls fotos'],
+      ['cd ~/downloads && mkdir fotos && mv *.jpg *.png fotos && ls fotos'],
     ],
     '2.4.b': [
       // Kijken mag ook met ls -l of echo, en met een ? als jokerteken: dat
@@ -139,6 +161,14 @@ describe('een terminal per opdracht', () => {
       // Met een jokerteken zet grep de bestandsnaam voor elke regel.
       ['grep inloggen.html /var/log/apache2/*'],
       ['cd /var/log/apache2', 'grep inloggen.html *'],
+    ],
+    '1.2.a': [
+      // Op één regel: elke cd telt apart, de tweede vanuit /var/log.
+      ['cd /var/log && cd ../www/html && cd'],
+    ],
+    '1.3.b': [
+      // Met twee spaties is het hetzelfde commando, zoals in bash.
+      ['ls  /etc/hots', 'ls  /etc/hosts'],
     ],
     '1.2.b': [
       // Het absolute pad mag ook uit ls komen.
@@ -188,6 +218,12 @@ describe('een terminal per opdracht', () => {
       // Alleen de map bekijken is nog niet het absolute pad.
       ['cd /var/www/html', 'ls config'],
     ],
+    '1.2.a': [
+      // Twee stappen op één regel zijn nog steeds twee stappen, net als
+      // twee cd's op losse regels (en twee mv's op één regel in 2.4.a). Eerst
+      // telde `cd .. && cd www/html` als één relatief pad vanuit /var/log.
+      ['cd /var/log', 'cd .. && cd www/html', 'cd'],
+    ],
   };
 
   for (const [id, antwoorden] of Object.entries(OOK_GOED)) {
@@ -221,6 +257,38 @@ describe('een terminal per opdracht', () => {
       expect(met.length).toBeLessThan(zonderUit.length);
     });
   }
+
+  describe('het antwoord op één regel geeft dezelfde vinkjes als op losse regels', () => {
+    // Een doel kijkt per commando in de regel (volgDoelen). Eerst keek het
+    // alleen naar het eind van de regel: in 2.3.a gaf het hele antwoord met
+    // && ertussen nul vinkjes en geen melding.
+    const ANDERS: Record<string, string> = {
+      '1.3.c': 'history telt regels, niet commando’s: op één regel is er maar één',
+    };
+    const ANDERS_MET_EN: Record<string, string> = {
+      '1.3.b': 'de typfout geeft een fout, en && stopt daar, net als in bash',
+    };
+    for (const [scheiding, uitzonderingen] of [
+      ['; ', ANDERS],
+      [' && ', { ...ANDERS, ...ANDERS_MET_EN }],
+    ] as const) {
+      it(`met ${scheiding.trim()} ertussen`, () => {
+        for (const s of secties.filter((x) => x.id in OPDRACHTEN && !(x.id in uitzonderingen)))
+          expect(speel(s.id, [antwoord(s).join(scheiding)]), s.id).toEqual(
+            speel(s.id, antwoord(s)),
+          );
+      });
+    }
+
+    it('de uitzonderingen zijn echt anders', () => {
+      for (const id of Object.keys({ ...ANDERS, ...ANDERS_MET_EN })) {
+        const s = secties.find((x) => x.id === id);
+        if (!s) throw new Error(id);
+        const scheiding = id in ANDERS ? '; ' : ' && ';
+        expect(speel(id, [antwoord(s).join(scheiding)]), id).not.toEqual(speel(id, antwoord(s)));
+      }
+    });
+  });
 
   it('op een smalle terminal haalt het antwoord uit de les ook elk doel', () => {
     // ls zet zijn namen in kolommen op de breedte van de terminal. Op een
@@ -280,7 +348,61 @@ describe('een terminal per opdracht', () => {
       expect(voluit).toMatch(/^Alle foto's staan in fotos, maar niet/);
       expect(voluit).not.toMatch(/een deel/);
       // mv met twee foto's en geen map: de tweede is overschreven.
-      expect(melding('2.4.a', ['cd downloads', 'mv *.jpg'])).toMatch(/^vakantie1.jpg is weg/);
+      expect(melding('2.4.a', ['cd downloads', 'mv *.jpg'])).toMatch(
+        /^vakantie1.jpg is weg: mv hernoemde hem naar vakantie2.jpg, en de oude vakantie2.jpg is daarmee overschreven/,
+      );
+      // Ook als er daarna nog een regel kwam.
+      expect(melding('2.4.a', ['cd downloads', 'mv *.jpg', 'ls'])).toMatch(/overschreven/);
+    });
+
+    it('2.4.a: overschreven alleen als mv echt een foto overschreef', () => {
+      // Uit de vierde doorloop: na rm, na een mv naar /tmp en na een gewone
+      // hernoeming zei de melding dat kat.png overschreven was.
+      const rm = melding('2.4.a', ['cd downloads', 'rm kat.png']);
+      expect(rm).toMatch(/^kat.png is weggegooid/);
+      expect(rm).not.toMatch(/overschreven|hernoemt/);
+      expect(melding('2.4.a', ['cd downloads', 'rm *.jpg'])).toMatch(
+        /^vakantie1.jpg en vakantie2.jpg zijn weggegooid/,
+      );
+      // Buiten de thuismap: waarIs zoekt in het hele bestandssysteem.
+      expect(melding('2.4.a', ['cd downloads', 'mv kat.png /tmp'])).toMatch(
+        /^kat.png staat nu in \/tmp, niet in ~\/downloads\/fotos/,
+      );
+      // Hernoemd, en daarna de rest met jokertekens: niets overschreven.
+      for (const route of [
+        ['cd downloads', 'mv kat.png poes.png'],
+        ['cd downloads', 'mkdir fotos', 'mv kat.png poes.png', 'mv *.jpg *.png fotos'],
+      ]) {
+        const tekst = melding('2.4.a', route);
+        expect(tekst, route.join(' ; ')).toMatch(/^kat.png heet nu poes.png/);
+        expect(tekst, route.join(' ; ')).not.toMatch(/overschreven/);
+      }
+    });
+
+    it('2.4.a: na het tweede vinkje zegt hij wat er met de foto of de map gebeurde', () => {
+      // Het derde doel kwam dan nooit, en de terminal zei niets.
+      const na = ['cd downloads', 'mkdir fotos', 'mv *.jpg *.png fotos'];
+      expect(melding('2.4.a', na)).toBeNull();
+      expect(melding('2.4.a', [...na, 'rm fotos/kat.png'])).toMatch(/^kat.png is weggegooid/);
+      expect(melding('2.4.a', [...na, 'mv fotos fotos2'])).toMatch(
+        /^De foto's staan nu in ~\/downloads\/fotos2, niet meer in ~\/downloads\/fotos/,
+      );
+      expect(melding('2.4.a', [...na, 'rm -r fotos'])).toMatch(
+        /^De map ~\/downloads\/fotos is weggegooid, met de foto's erin/,
+      );
+      expect(melding('2.4.a', [...na, 'mv fotos/kat.png .'])).toMatch(
+        /^kat.png staat nu in ~\/downloads, niet meer in ~\/downloads\/fotos/,
+      );
+      expect(melding('2.4.a', [...na, 'mv liedje.mp3 fotos'])).toMatch(
+        /^In fotos staat nu ook liedje.mp3/,
+      );
+      // Wie het terugzet, krijgt het derde vinkje en geen melding meer.
+      expect(
+        melding('2.4.a', [...na, 'mv fotos fotos2', 'mv fotos2 fotos', 'ls fotos']),
+      ).toBeNull();
+      expect(
+        speel('2.4.a', [...na, 'mv fotos fotos2', 'mv fotos2 fotos', 'ls fotos']).every(Boolean),
+      ).toBe(true);
     });
 
     it('2.4.b: met een ? als jokerteken loopt niets vast', () => {
@@ -326,6 +448,10 @@ describe('een terminal per opdracht', () => {
 
     it('1.2.a: na twee stappen moet je terug naar /var/log', () => {
       expect(vast('1.2.a', ['cd /var/log', 'cd ..', 'cd www/html'])).toMatch(/\/var\/log/);
+      // Op één regel net zo: twee stappen blijven twee stappen.
+      expect(vast('1.2.a', ['cd /var/log', 'cd .. && cd www/html'])).toBe(
+        vast('1.2.a', ['cd /var/log', 'cd ..', 'cd www/html']),
+      );
       expect(vast('1.2.a', ['cd /var/log', 'cd ..', 'cd log'])).toBeNull();
     });
 

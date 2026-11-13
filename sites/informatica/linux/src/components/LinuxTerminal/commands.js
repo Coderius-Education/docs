@@ -190,11 +190,15 @@ export function parseCommandLine(line) {
  */
 function parseArgs(cmdStr) {
   const parts = [];
-  // Per woord: staat er een * of ? buiten aanhalingstekens? Alleen dan vult
-  // de shell het in; '*.txt' gaat zoals het is naar het commando.
+  // Per woord: staat er een *, ? of [ buiten aanhalingstekens? Alleen dan
+  // vult de shell het in; '*.txt' gaat zoals het is naar het commando. En
+  // staat er een { buiten aanhalingstekens, dan maakt de shell er eerst meer
+  // woorden van ({jpg,png}).
   const jokers = [];
+  const accolades = [];
   let current = '';
   let joker = false;
+  let accolade = false;
   let gezien = false;
   let inSingleQuote = false;
   let inDoubleQuote = false;
@@ -214,39 +218,101 @@ function parseArgs(cmdStr) {
       if (current || gezien) {
         parts.push(current);
         jokers.push(joker);
+        accolades.push(accolade);
       }
       current = '';
       joker = false;
+      accolade = false;
       gezien = false;
       continue;
     }
-    if ((ch === '*' || ch === '?') && !inSingleQuote && !inDoubleQuote) joker = true;
+    if ((ch === '*' || ch === '?' || ch === '[') && !inSingleQuote && !inDoubleQuote) joker = true;
+    if (ch === '{' && !inSingleQuote && !inDoubleQuote) accolade = true;
     current += ch;
   }
   if (current || gezien) {
     parts.push(current);
     jokers.push(joker);
+    accolades.push(accolade);
   }
 
   // De shell vult ~ in voordat het commando het ziet: mv ~ x krijgt
   // /home/student, en zegt dat ook in een foutmelding.
   const ingevuld = parts.map((p) => (p === '~' || p.startsWith('~/') ? HOME + p.slice(1) : p));
-  return { name: ingevuld[0] || '', args: ingevuld.slice(1), jokers: jokers.slice(1) };
-}
-
-/** Een patroon met * en ? als reguliere expressie, voor één naam (zonder /). */
-export function jokerRegex(patroon) {
-  let bron = '';
-  for (const ch of patroon) {
-    if (ch === '*') bron += '[^/]*';
-    else if (ch === '?') bron += '[^/]';
-    else bron += ch.replace(/[.+^${}()|[\]\\]/g, '\\$&');
-  }
-  return new RegExp(`^${bron}$`);
+  return {
+    name: ingevuld[0] || '',
+    args: ingevuld.slice(1),
+    jokers: jokers.slice(1),
+    accolades: accolades.slice(1),
+  };
 }
 
 /**
- * Vult een woord met * of ? in zoals bash: elk stuk van het pad met een
+ * Maakt van {a,b} meer woorden, zoals bash vóór de jokertekens:
+ * `*.{jpg,png}` wordt `*.jpg *.png`. Alleen met een komma ertussen; een
+ * accolade in een accolade doet de oefenterminal niet.
+ */
+export function vulAccoladesIn(woord) {
+  const m = woord.match(/^(.*?)\{([^{}]*,[^{}]*)\}(.*)$/);
+  if (!m) return [woord];
+  return m[2].split(',').flatMap((deel) => vulAccoladesIn(`${m[1]}${deel}${m[3]}`));
+}
+
+/**
+ * De naam en de woorden van één commando zoals het commando ze krijgt: met
+ * de accolades en jokertekens ingevuld. opdrachten.ts gebruikt dit om na te
+ * gaan wat een commando met een bestand deed.
+ */
+export function argumenten(cmdStr, env) {
+  const { name, args: woorden, jokers, accolades } = parseArgs(cmdStr);
+  const args = woorden.flatMap((w, i) =>
+    (accolades[i] ? vulAccoladesIn(w) : [w]).flatMap((v) =>
+      jokers[i] && /[*?[]/.test(v) ? vulJokersIn(v, env) : [v],
+    ),
+  );
+  return { name, args };
+}
+
+/**
+ * Een patroon met *, ? en [...] als reguliere expressie, voor één naam
+ * (zonder /). [gG] is een van die tekens, [a-c] een reeks, en [!0-9] of
+ * [^0-9] alles behalve; een [ zonder ] is gewoon een teken.
+ */
+export function jokerRegex(patroon) {
+  let bron = '';
+  const tekens = [...patroon];
+  for (let i = 0; i < tekens.length; i++) {
+    const ch = tekens[i];
+    if (ch === '*') bron += '[^/]*';
+    else if (ch === '?') bron += '[^/]';
+    else if (ch === '[' && tekens.indexOf(']', i + 2) !== -1) {
+      let j = i + 1;
+      const niet = tekens[j] === '!' || tekens[j] === '^';
+      if (niet) j++;
+      // Een ] direct na de [ hoort erbij, net als in bash.
+      const eind = tekens.indexOf(']', j + 1);
+      if (eind === -1) {
+        bron += '\\[';
+        continue;
+      }
+      const inhoud = tekens
+        .slice(j, eind)
+        .join('')
+        .replace(/[\\\]^[]/g, '\\$&');
+      bron += `[${niet ? '^/' : ''}${inhoud}]`;
+      i = eind;
+    } else bron += ch.replace(/[.+^${}()|[\]\\]/g, '\\$&');
+  }
+  try {
+    return new RegExp(`^${bron}$`);
+  } catch {
+    // Een reeks die niet kan ([z-a]): dan past alleen de naam zelf.
+    return new RegExp(`^${patroon.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
+  }
+}
+
+/**
+ * Vult een woord met *, ? of [...] in zoals bash: elk stuk van het pad met een
  * joker tegen de namen in die map, op alfabet. Een naam met een punt vooraan
  * telt alleen als het patroon ook met een punt begint. Past er niets, dan
  * blijft het woord staan zoals het was (en zegt ls dat '*.xyz' niet bestaat).
@@ -261,7 +327,7 @@ export function vulJokersIn(woord, env) {
     for (const k of kandidaten) {
       const plak = (naam) => (k.tekst === null ? naam : `${k.tekst}/${naam}`);
       const pad = (naam) => (k.pad === '/' ? `/${naam}` : `${k.pad}/${naam}`);
-      if (!/[*?]/.test(stuk)) {
+      if (!/[*?[]/.test(stuk)) {
         volgende.push({ tekst: plak(stuk), pad: stuk === '' ? k.pad : resolvePath(k.pad, stuk) });
         continue;
       }
@@ -508,6 +574,42 @@ function lsEen(args, target, env, { doorgeven = false } = {}) {
   return { output: uitvoer, exitCode: 0 };
 }
 
+/**
+ * Hoeveel regels head of tail laat zien, zoals coreutils het leest: -3,
+ * -n 3, -n3, --lines=3 en --lines 3. Een getal met + of - ervoor kan ook
+ * (tail -n +2, head -n -2). Met de bestanden die overblijven.
+ */
+function hoeveelRegels(cmd, args) {
+  let aantal = 10;
+  let teken = '';
+  const bestanden = [];
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    let waarde;
+    if (/^-\d+$/.test(a)) waarde = a.slice(1);
+    else if (a === '-n' || a === '--lines') {
+      waarde = args[++i];
+      if (waarde === undefined)
+        return {
+          fout:
+            a === '-n'
+              ? `${cmd}: option requires an argument -- 'n'\nTry '${cmd} --help' for more information.`
+              : `${cmd}: option '--lines' requires an argument\nTry '${cmd} --help' for more information.`,
+        };
+    } else if (a.startsWith('--lines=')) waarde = a.slice('--lines='.length);
+    else if (/^-n./.test(a)) waarde = a.slice(2);
+    else {
+      if (a === '-' || !a.startsWith('-')) bestanden.push(a);
+      continue;
+    }
+    const m = /^([+-]?)(\d+)$/.exec(waarde);
+    if (!m) return { fout: `${cmd}: invalid number of lines: \u2018${waarde}\u2019` };
+    aantal = Number(m[2]);
+    teken = m[1];
+  }
+  return { aantal, teken, bestanden };
+}
+
 /** De regels van `help`: het commando en wat het doet. */
 const HULP = [
   ['ls [pad]', 'bestanden tonen'],
@@ -530,6 +632,12 @@ const HULP = [
   ['history', 'wat je eerder typte'],
   ['clear', 'scherm leegmaken'],
 ];
+
+/**
+ * Commando's die de oefenterminal kent maar die geen les behandelt: niet in
+ * de lijst van `help`, wel bij `help rmdir`.
+ */
+const HULP_LOS = [['rmdir <map>', 'lege map weggooien']];
 
 /** De commando's in een regel van HULP: `head, tail [-n N]` -> head, tail. */
 const namenIn = (cmd) =>
@@ -721,7 +829,10 @@ const COMMANDS = {
     const regel = ([cmd, wat]) =>
       kolommen >= 53 ? [`  ${cmd.padEnd(25)}${wat}`] : [`  ${cmd}`, `      ${wat}`];
     if (gevraagd) {
-      const gevonden = HULP.filter(([cmd]) => namenIn(cmd).includes(gevraagd));
+      const gevonden = [...HULP, ...HULP_LOS].filter(([cmd]) => namenIn(cmd).includes(gevraagd));
+      // `help nano`: hetzelfde als nano zelf, met de les waar het wel kan.
+      if (!gevonden.length && Object.hasOwn(NIET_HIER, gevraagd))
+        return { output: nietHier(gevraagd), exitCode: 1 };
       if (!gevonden.length)
         return {
           output: `help: geen uitleg bij ${gevraagd}. Typ help voor alle commando's.`,
@@ -729,72 +840,49 @@ const COMMANDS = {
         };
       return { output: gevonden.flatMap(regel).join('\n'), exitCode: 0 };
     }
-    // De hele lijst is 23 regels, plus de prompt. Past hij niet in de terminal (een
-    // telefoon, of een opdracht met twaalf regels), dan staan alleen de
-    // namen er, in kolommen, en geeft `help ls` de uitleg: van de lange
-    // lijst zag een leerling alleen de laatste tien regels.
-    if ((env.rijen?.() ?? 24) < HULP.length + 5 || kolommen < 53) {
-      const namen = [...new Set(HULP.flatMap(([cmd]) => namenIn(cmd)))];
-      return {
-        output: [
-          "Beschikbare commando's:",
-          inKolommen(namen, kolommen),
-          '',
-          'Typ help en een commando voor uitleg,',
-          'zoals help ls.',
-          'Tab vult een commando of naam aan.',
-          'Pijltje omhoog: een vorig commando.',
-        ].join('\n'),
-        exitCode: 0,
-      };
-    }
-    return {
-      output: [
-        "Beschikbare commando's:",
-        ...HULP.flatMap(regel),
-        '',
-        'Tab vult een commando of naam aan.',
-        'Pijltje omhoog: een vorig commando.',
-      ].join('\n'),
-      exitCode: 0,
-    };
+    // De lijst moet met de regel `$ help` erboven en de nieuwe prompt eronder
+    // in de terminal passen; anders schuift `$ help` van het scherm. De
+    // hele lijst is 22 regels. Past hij niet (een telefoon, of een opdracht
+    // met twaalf regels), dan staan alleen de namen er, in kolommen, en
+    // geeft `help ls` de uitleg: van de lange lijst zag een leerling alleen
+    // de laatste tien regels.
+    const rijen = env.rijen?.() ?? 24;
+    const tips = ['Tab vult een commando of naam aan.', 'Pijltje omhoog: een vorig commando.'];
+    const hele = ["Beschikbare commando's:", ...HULP.flatMap(regel), ...tips];
+    if (hele.length + 2 <= rijen && kolommen >= 53) return { output: hele.join('\n'), exitCode: 0 };
+    const namen = [...new Set(HULP.flatMap(([cmd]) => namenIn(cmd)))];
+    const kort = [
+      "Beschikbare commando's:",
+      ...inKolommen(namen, kolommen).split('\n'),
+      'Uitleg bij een commando: help ls',
+      ...tips,
+    ];
+    // In een nog lagere terminal vallen eerst de tips weg.
+    while (kort.length + 2 > rijen && tips.includes(kort.at(-1))) kort.pop();
+    return { output: kort.join('\n'), exitCode: 0 };
   },
 
   head(args, env, stdin) {
-    let numLines = 10;
-    const filteredArgs = [];
-    for (let i = 0; i < args.length; i++) {
-      // head -3 is hetzelfde als head -n 3.
-      if (/^-\d+$/.test(args[i])) numLines = Number.parseInt(args[i].slice(1), 10);
-      else if (args[i] === '-n' && args[i + 1]) {
-        numLines = Number.parseInt(args[i + 1], 10) || 10;
-        i++; // skip next arg
-      } else if (!args[i].startsWith('-')) {
-        filteredArgs.push(args[i]);
-      }
-    }
-    const result = vanInvoer(env, 'head', filteredArgs[0], stdin);
+    const { aantal, teken, bestanden, fout } = hoeveelRegels('head', args);
+    if (fout) return { output: fout, exitCode: 1 };
+    const result = vanInvoer(env, 'head', bestanden[0], stdin);
     if (result.error) return { output: result.error, exitCode: 1 };
-    const lines = regels(result.content).slice(0, numLines);
+    const alle = regels(result.content);
+    // head -n -2: alles behalve de laatste twee.
+    const lines =
+      teken === '-' ? alle.slice(0, Math.max(0, alle.length - aantal)) : alle.slice(0, aantal);
     return { output: lines.join('\n'), exitCode: 0 };
   },
 
   tail(args, env, stdin) {
-    let numLines = 10;
-    const filteredArgs = [];
-    for (let i = 0; i < args.length; i++) {
-      // tail -3 is hetzelfde als tail -n 3.
-      if (/^-\d+$/.test(args[i])) numLines = Number.parseInt(args[i].slice(1), 10);
-      else if (args[i] === '-n' && args[i + 1]) {
-        numLines = Number.parseInt(args[i + 1], 10) || 10;
-        i++;
-      } else if (!args[i].startsWith('-')) {
-        filteredArgs.push(args[i]);
-      }
-    }
-    const result = vanInvoer(env, 'tail', filteredArgs[0], stdin);
+    const { aantal, teken, bestanden, fout } = hoeveelRegels('tail', args);
+    if (fout) return { output: fout, exitCode: 1 };
+    const result = vanInvoer(env, 'tail', bestanden[0], stdin);
     if (result.error) return { output: result.error, exitCode: 1 };
-    const lines = regels(result.content).slice(-numLines);
+    const alle = regels(result.content);
+    // tail -n +2: vanaf de tweede regel. tail -n 0 laat niets zien.
+    const lines =
+      teken === '+' ? alle.slice(Math.max(0, aantal - 1)) : aantal ? alle.slice(-aantal) : [];
     return { output: lines.join('\n'), exitCode: 0 };
   },
 
@@ -943,6 +1031,31 @@ const COMMANDS = {
     return { output: fouten.join('\n'), exitCode: fouten.length ? 1 : 0 };
   },
 
+  rmdir(args, env) {
+    // Alleen een lege map, zoals coreutils: rm -r gooit een map met inhoud weg.
+    const mappen = args.filter((a) => !a.startsWith('-'));
+    if (mappen.length === 0) return ontbreekt('rmdir', 'missing operand');
+    const fouten = [];
+    for (const map of mappen) {
+      const absPad = resolvePath(env.cwd, map);
+      const node = getNode(env.fs, absPad);
+      const reden = /(^|\/)\.\/?$/.test(map)
+        ? 'Invalid argument'
+        : !node.exists
+          ? 'No such file or directory'
+          : !node.isDir
+            ? 'Not a directory'
+            : !magVerwijderen(absPad) || node.permissionDenied
+              ? 'Permission denied'
+              : Object.keys(node.node).length
+                ? 'Directory not empty'
+                : null;
+      if (reden) fouten.push(`rmdir: failed to remove '${map}': ${reden}`);
+      else removeNode(env.fs, absPad, { recursive: true });
+    }
+    return { output: fouten.join('\n'), exitCode: fouten.length ? 1 : 0 };
+  },
+
   cp(args, env) {
     return kopieer('cp', args, env, false);
   },
@@ -976,6 +1089,13 @@ export const NIET_HIER = {
   git: null,
 };
 
+/** Wat de oefenterminal zegt bij een commando uit NIET_HIER. */
+function nietHier(naam) {
+  const les = NIET_HIER[naam];
+  const waar = les ? `, vanaf les ${les}` : '';
+  return `oefenterminal: ${naam} werkt hier niet, wel op je eigen Linux${waar}.`;
+}
+
 /**
  * De opties die de oefenterminal per commando echt uitvoert. Een commando
  * dat hier niet staat (echo, find, history), leest zijn opties zelf.
@@ -998,6 +1118,7 @@ const OPTIES = {
   rm: 'rRf',
   cp: '',
   mv: '',
+  rmdir: '',
   clear: '',
   help: '',
 };
@@ -1012,6 +1133,9 @@ function onbekendeOptie(naam, args) {
   if (kent === undefined) return null;
   for (const a of args) {
     if (a === '-' || !a.startsWith('-') || /^-\d+$/.test(a)) continue;
+    // head en tail: het getal mag aan -n vastzitten (tail -n1), en --lines
+    // is hetzelfde als -n (hoeveelRegels).
+    if ((naam === 'head' || naam === 'tail') && /^(-n.+|--lines(=.*)?)$/.test(a)) continue;
     if (a.startsWith('--')) return a;
     for (const ch of a.slice(1)) if (!kent.includes(ch)) return `-${ch}`;
   }
@@ -1026,11 +1150,10 @@ export const COMMANDONAMEN = Object.keys(COMMANDS).sort();
  */
 export function executeCommand(cmdStr, env, stdin, { doorgeven = false } = {}) {
   const { opdracht, naar, aanvullen } = splitRedirect(cmdStr);
-  const { name, args: woorden, jokers } = parseArgs(opdracht);
-  if (!name) return { output: '', exitCode: 0 };
   // De shell vult jokertekens in vóór het commando draait: ls ziet a.txt b.txt,
   // nooit *.txt (tenzij er niets past).
-  const args = woorden.flatMap((w, i) => (jokers[i] ? vulJokersIn(w, env) : [w]));
+  const { name, args } = argumenten(opdracht, env);
+  if (!name) return { output: '', exitCode: 0 };
 
   if (naar === '')
     return { output: "bash: syntax error near unexpected token `newline'", exitCode: 2 };
@@ -1049,14 +1172,7 @@ export function executeCommand(cmdStr, env, stdin, { doorgeven = false } = {}) {
 
   const handler = Object.hasOwn(COMMANDS, name) ? COMMANDS[name] : undefined;
   if (!handler) {
-    if (Object.hasOwn(NIET_HIER, name)) {
-      const les = NIET_HIER[name];
-      const waar = les ? `, vanaf les ${les}` : '';
-      return {
-        output: `oefenterminal: ${name} werkt hier niet, wel op je eigen Linux${waar}.`,
-        exitCode: 127,
-      };
-    }
+    if (Object.hasOwn(NIET_HIER, name)) return { output: nietHier(name), exitCode: 127 };
     return { output: `bash: ${name}: command not found`, exitCode: 127 };
   }
 
@@ -1119,10 +1235,13 @@ export function executeCommandLine(line, buiten) {
   const results = [];
   let lastExitCode = 0;
   let pipeOutput = null;
+  // De commando's van de pijplijn die nu loopt (`history | tail -3` is één stap).
+  let stap = [];
 
   for (let i = 0; i < parsed.length; i++) {
     const { cmd, operator } = parsed[i];
     if (!cmd) continue;
+    stap.push(cmd);
 
     let result;
     try {
@@ -1147,10 +1266,20 @@ export function executeCommandLine(line, buiten) {
 
     lastExitCode = result.exitCode;
 
+    // Na elke stap (een commando, of een hele pijplijn) mag de terminal
+    // kijken hoe het erbij staat: opdrachten.ts vinkt doelen per stap af,
+    // zodat `mkdir oud && cp a oud` hetzelfde telt als twee losse regels.
+    if (operator !== '|') {
+      buiten.naStap?.(stap.join(' | '), result);
+      stap = [];
+    }
+
     // Handle && and ||
     if (operator === '&&' && lastExitCode !== 0) break;
     if (operator === '||' && lastExitCode === 0) break;
   }
+  // Een pijplijn die met een lege stap eindigt (`ls |`).
+  if (stap.length) buiten.naStap?.(stap.join(' | '), {});
 
   return results;
 }
