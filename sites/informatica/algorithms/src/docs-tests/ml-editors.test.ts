@@ -77,7 +77,11 @@ describe('een opdracht begint klein', () => {
         }
         // Ook een Bouw zelf: daar zit de grootste sprong (de Méré, slim tegen
         // slim, het paard), en zonder stappen stond de leerling er alleen voor.
-        const stappen = voor.match(/Begin klein[^\n]*\n\n((?:\d+\. .*\n)+)/);
+        // "Begin klein:" boven de lijst, of als begin van stap 1: op een
+        // scherm dat net niet paste, scheelde de losse regel 46 pixels.
+        const stappen =
+          voor.match(/Begin klein[^\n]*\n\n((?:\d+\. .*\n)+)/) ??
+          voor.match(/^(1\. Begin klein.*\n(?:\d+\. .*\n)+)/m);
         if (!stappen || stappen[1].trim().split('\n').length < 2)
           fouten.push(`${kop}: geen genummerde stappen "Begin klein"`);
       }
