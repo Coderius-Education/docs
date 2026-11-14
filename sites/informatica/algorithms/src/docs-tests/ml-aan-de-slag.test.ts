@@ -80,7 +80,13 @@ describe('een while die de leerling schrijft, heeft de waarschuwing bij de edito
         const antwoord =
           aanDeSlag.match(/<summary>Antwoord<\/summary>([\s\S]*?)<\/details>/)?.[1] ?? '';
         if (!/^\s*while /m.test(antwoord)) continue;
-        const waarschuwing = voorDeTip(aanDeSlag).match(/^:::caution\n([\s\S]*?)\n:::/m)?.[1] ?? '';
+        // Een :::caution, of een regel **Pas op:** …: het blok was met zijn
+        // kop honderd pixels hoog, op een scherm met de stappen en het veld.
+        const voor = voorDeTip(aanDeSlag);
+        const waarschuwing =
+          voor.match(/^:::caution\n([\s\S]*?)\n:::/m)?.[1] ??
+          voor.match(/^\*\*Pas op:\*\* (.*(?:\n(?!\n).*)*)/m)?.[1] ??
+          '';
         if (!/tabblad/.test(waarschuwing) || !/vast/.test(waarschuwing))
           fouten.push(`${kop}: geen waarschuwing op het scherm met de editor`);
       }
