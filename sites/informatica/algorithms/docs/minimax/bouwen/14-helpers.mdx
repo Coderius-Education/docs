@@ -135,11 +135,14 @@ def winner(bord):
         if rij[0] == rij[1] == rij[2] and rij[0] is not None:
             return rij[0]
     for j in range(3):
-        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+        if (bord[0][j] == bord[1][j] == bord[2][j]
+                and bord[0][j] is not None):
             return bord[0][j]
-    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+    if (bord[0][0] == bord[1][1] == bord[2][2]
+            and bord[0][0] is not None):
         return bord[0][0]
-    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+    if (bord[0][2] == bord[1][1] == bord[2][0]
+            and bord[0][2] is not None):
         return bord[0][2]
     return None
 def terminal(bord):
@@ -175,7 +178,8 @@ def kort(bord):
 def max_value(bord, diepte):
     inspring = "    " * diepte
     if terminal(bord):
-        print(inspring + "klaar:", kort(bord), "utility", utility(bord))
+        print(inspring + "klaar:", kort(bord),
+              "utility", utility(bord))
         return utility(bord)
     print(inspring + "MAX", kort(bord))
     v = -math.inf
@@ -189,7 +193,8 @@ def max_value(bord, diepte):
 def min_value(bord, diepte):
     inspring = "    " * diepte
     if terminal(bord):
-        print(inspring + "klaar:", kort(bord), "utility", utility(bord))
+        print(inspring + "klaar:", kort(bord),
+              "utility", utility(bord))
         return utility(bord)
     print(inspring + "MIN", kort(bord))
     v = math.inf
@@ -320,11 +325,14 @@ def winner(bord):
         if rij[0] == rij[1] == rij[2] and rij[0] is not None:
             return rij[0]
     for j in range(3):
-        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+        if (bord[0][j] == bord[1][j] == bord[2][j]
+                and bord[0][j] is not None):
             return bord[0][j]
-    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+    if (bord[0][0] == bord[1][1] == bord[2][2]
+            and bord[0][0] is not None):
         return bord[0][0]
-    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+    if (bord[0][2] == bord[1][1] == bord[2][0]
+            and bord[0][2] is not None):
         return bord[0][2]
     return None
 def terminal(bord):
@@ -368,7 +376,9 @@ def min_value(bord):
 # Test 1: terminale borden geven hun utility terug (geen recursie)
 x_wint = [["X","X","X"], ["O","O",None], [None]*3]
 assert max_value(x_wint) == 1, "X wint -> 1"
-assert min_value(x_wint) == 1, "X wint -> 1, ook voor min_value: geen zetten meer"
+assert min_value(x_wint) == 1, (
+    "X wint -> 1, ook voor min_value: geen zetten meer"
+)
 
 o_wint = [["O","X","X"], ["O","X",None], ["O",None,None]]
 assert max_value(o_wint) == -1, "O wint -> -1"
@@ -378,8 +388,9 @@ remise = [["X","O","X"], ["X","O","O"], ["O","X","X"]]
 assert max_value(remise) == 0, "Remise -> 0"
 assert min_value(remise) == 0, "Remise -> 0"
 
-# Test 2: O aan zet, X dreigt op (0,2). Blokkeert O, dan wordt het de
-# positie van de pen-en-papier-pagina: remise. Elke andere O-zet verliest.
+# Test 2: O aan zet, X dreigt op (0,2). Blokkeert O, dan wordt
+# het de positie van de pen-en-papier-pagina: remise. Elke
+# andere O-zet verliest.
 bord = [["X","X",None], ["O","O","X"], [None, None, None]]
 assert min_value(bord) == 0, "O kan X blokkeren naar remise -> 0"
 

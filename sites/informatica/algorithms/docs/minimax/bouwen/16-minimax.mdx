@@ -13,10 +13,10 @@ sidebar_position: 16
 **Leerdoel:** je schrijft de functie die alle vorige bouwstenen gebruikt
 om de beste zet terug te geven, direct in je lokale `tictactoe.py`.
 
+## Wat doet deze functie?
+
 Bij [draai het zelf](site:algorithms/docs/minimax/bouwen/15-zelf-draaien) heb je je negen functies in één
 lokaal bestand gezet, of in de verzamel-PyRunner. Nu de tiende.
-
-## Wat doet deze functie?
 
 `minimax(bord)` geeft de beste zet terug voor de speler die nu aan zet
 is: niet het getal, dat doen `max_value` en `min_value`, maar de tuple
@@ -43,12 +43,10 @@ return beste_zet
 Dezelfde lus als in `max_value`, alleen onthoud je nu ook welke zet de
 beste was.
 
-## Speciaal geval
-
 Is het bord terminal, dan is er geen zet meer mogelijk en geef je `None`
 terug.
 
-## Specificatie
+**Specificatie:**
 
 - **Input**: een `bord` (mag terminal zijn).
 - **Output**: een tuple `(i, j)` met de beste zet, óf `None` als het
@@ -148,7 +146,8 @@ Plak deze tests **onderaan** je lokale `tictactoe.py` (na minimax):
 vol = [["X","O","X"],["X","O","O"],["O","X","X"]]
 assert minimax(vol) is None, "Terminal bord -> None"
 
-# X kan direct winnen op (2,2); de andere twee zetten geven hoogstens remise
+# X kan direct winnen op (2,2); de andere twee zetten
+# geven hoogstens remise
 bord = [["X","O","O"], ["O","X","X"], [None, None, None]]
 zet = minimax(bord)
 assert zet == (2, 2), f"Verwacht (2,2), kreeg {zet}"
@@ -276,7 +275,9 @@ honderdduizenden posities door.
 {/* niet-draaien: startcode; de leerling plakt hier zijn eigen minimax in */}
 <PyRunner rows={24} verborgen="minimax-helpers" initialCode={`def minimax(bord):
     # === Vervang deze functie door je eigen minimax ===
-    raise NotImplementedError("Vervang deze functie door je eigen minimax.")
+    raise NotImplementedError(
+        "Vervang deze functie door je eigen minimax."
+    )
 
 
 # === Tests ===
@@ -285,7 +286,8 @@ honderdduizenden posities door.
 vol = [["X","O","X"],["X","O","O"],["O","X","X"]]
 assert minimax(vol) is None, "Terminal bord -> None"
 
-# X kan direct winnen op (2,2); de andere twee zetten geven hoogstens remise
+# X kan direct winnen op (2,2); de andere twee zetten
+# geven hoogstens remise
 bord = [["X","O","O"], ["O","X","X"], [None, None, None]]
 zet = minimax(bord)
 assert zet == (2, 2), f"Verwacht (2,2), kreeg {zet}"

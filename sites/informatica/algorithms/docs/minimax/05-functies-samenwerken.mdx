@@ -153,8 +153,6 @@ aan:
 
 Elke functie is op zichzelf klein; samen zijn ze een AI.
 
-## Eén gouden regel: één functie, één taak
-
 Een goede functie doet één ding. `winner` zegt wie heeft gewonnen: hij
 print niets, verandert het bord niet en speelt zelf geen zet. Hij geeft
 alleen `"X"`, `"O"` of `None` terug.
@@ -163,8 +161,6 @@ Door je code in zulke kleine functies te splitsen kun je ze los testen:
 `winner` op een vol bord, op een leeg bord, op een bord waar alleen de
 diagonaal vol is. Elk geval apart, zonder dat de hele AI hoeft te
 draaien.
-
-## Wat nu?
 
 De eerste functie is de makkelijkste: `initial_state()`, een leeg bord
 teruggeven.

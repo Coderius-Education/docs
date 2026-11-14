@@ -14,7 +14,7 @@ het spel uitziet: een 3×3-bord waar nog niets is gespeeld, alle negen
 cellen op `None`. De functie heeft geen input, want er is maar één
 antwoord.
 
-## Specificatie
+**Specificatie:**
 
 - **Input**: geen.
 - **Output**: een lijst van 3 lijsten, elk met 3× `None`.
@@ -78,9 +78,11 @@ for rij in bord:
     for cel in rij:
         assert cel is None, "Alle cellen moeten None zijn"
 
-# Belangrijke test: rijen mogen niet hetzelfde object zijn (geen alias)
+# Belangrijke test: rijen zijn niet hetzelfde object (geen alias)
 bord[0][0] = "X"
-assert bord[1][0] is None, "Update aan rij 0 mag rij 1 niet beïnvloeden"
+assert bord[1][0] is None, (
+    "Update aan rij 0 mag rij 1 niet beïnvloeden"
+)
 
 print("Alle tests gehaald ✓")`} />
 

@@ -21,7 +21,7 @@ en dat zijn de cellen die nog leeg (`None`) zijn. Je geeft ze terug als
 een **set** van tuples. Een set, omdat de volgorde er niet toe doet:
 alle lege cellen tellen even zwaar.
 
-## Specificatie
+**Specificatie:**
 
 - **Input**: een `bord`.
 - **Output**: een `set` van `(i, j)` tuples voor alle cellen waar
@@ -67,7 +67,9 @@ je ze ziet maakt niet uit, een set is ongeordend.
 
 # === Tests ===
 leeg = [[None]*3, [None]*3, [None]*3]
-assert len(actions(leeg)) == 9, "Leeg bord heeft 9 mogelijke zetten"
+assert len(actions(leeg)) == 9, (
+    "Leeg bord heeft 9 mogelijke zetten"
+)
 assert (0, 0) in actions(leeg)
 assert (2, 2) in actions(leeg)
 
@@ -85,7 +87,9 @@ vol = [
 ]
 assert actions(vol) == set(), "Vol bord -> lege set"
 
-assert isinstance(actions(leeg), set), "Output moet een set zijn, geen lijst"
+assert isinstance(actions(leeg), set), (
+    "Output moet een set zijn, geen lijst"
+)
 
 print("Alle tests gehaald ✓")`} />
 

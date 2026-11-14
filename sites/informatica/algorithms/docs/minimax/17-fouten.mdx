@@ -9,44 +9,26 @@ minimax-AI, en je weet bij elk symptoom waar je moet kijken.
 
 ## Bord muteren in `result`
 
-### Wat er misgaat: een gedeeld bord
-
 Geen foutmelding, wel een onverklaarbaar verkeerd antwoord. Minimax
 probeert zetten en gaat ervan uit dat het origineel niet mee verandert;
 doet het dat wel, dan raakt het hele algoritme van slag.
 
-**Oorzaak:** zonder `copy.deepcopy` werkt Python met referenties. Een
-wijziging in `nieuw_bord` is ook zichtbaar in `bord`:
+**Oorzaak:** `nieuw = bord` maakt geen kopie: `nieuw` en `bord` zijn
+hetzelfde object, dus een zet in `nieuw` staat ook in `bord`. Ook
+`bord.copy()` of `list(bord)` is niet genoeg: die maken alleen de
+buitenste lijst nieuw, de rijen daaronder blijven gedeeld.
+
+**Oplossing:** maak een diepe kopie met `copy.deepcopy`.
 
 ```python
 # FOUT
-def result(bord, zet):
-    nieuw = bord            # ← nieuw is GEEN kopie, het is hetzelfde object
-    i, j = zet
-    nieuw[i][j] = player(bord)
-    return nieuw
-```
+nieuw = bord
 
-Ook `bord.copy()` of `list(bord)` is niet genoeg: die maken alleen de
-buitenste lijst nieuw, de rijen daaronder blijven gedeeld.
-
-### Oplossing: een diepe kopie
-
-Gebruik `copy.deepcopy(bord)` voor een echte, diepe
-kopie:
-
-```python
 # GOED
-def result(bord, zet):
-    nieuw = copy.deepcopy(bord)
-    i, j = zet
-    nieuw[i][j] = player(bord)
-    return nieuw
+nieuw = copy.deepcopy(bord)
 ```
 
-## `result` vergeten
-
-### Wat er misgaat: eindeloze recursie
+## Zelfde bord in de recursie
 
 {/* foutmelding-van: def max_value(bord):\n    return max_value(bord)\nmax_value([]) */}
 
@@ -55,39 +37,21 @@ browser hangt soms een paar seconden voordat hij komt.
 
 **Oorzaak:** een recursieve aanroep moet een kleiner probleem krijgen.
 Geef je hetzelfde bord door in plaats van het bord na de zet, dan roept
-de functie zichzelf eindeloos aan op precies dezelfde positie:
+de functie zichzelf eindeloos aan op precies dezelfde positie.
+
+**Oplossing:** geef de recursie het bord na de zet,
+`result(bord, zet)`. Dat heeft één cel meer gevuld, dus na hoogstens
+negen stappen is het bord vol en stopt het vanzelf.
 
 ```python
-# FOUT — hetzelfde bord gaat de recursie in
-def max_value(bord):
-    if terminal(bord):
-        return utility(bord)
-    v = -math.inf
-    for zet in actions(bord):
-        v = max(v, min_value(bord))            # ← zet wordt nergens gebruikt
-    return v
-```
+# FOUT
+v = max(v, min_value(bord))
 
-### Oplossing: het bord na de zet
-
-De recursie krijgt altijd `result(bord, zet)`, het bord
-met één cel meer gevuld. Na hoogstens negen stappen is het bord vol en
-stopt het vanzelf:
-
-```python
 # GOED
-def max_value(bord):
-    if terminal(bord):
-        return utility(bord)
-    v = -math.inf
-    for zet in actions(bord):
-        v = max(v, min_value(result(bord, zet)))
-    return v
+v = max(v, min_value(result(bord, zet)))
 ```
 
 ## Geen base case
-
-### Wat er misgaat: geen bodem
 
 {/* foutmelding-los: hier blijft de melding juist uit; de reproductie staat bij de vorige fout */}
 
@@ -100,40 +64,25 @@ verkeerde plek.
 **Oorzaak:** zonder base case speelt de functie door op een bord waar
 al drie op een rij staat. Pas op een vol bord is `actions(bord)` leeg;
 dan draait de lus niet, blijft `v` op `-math.inf` staan en is dát wat
-er terugkomt:
+er terugkomt.
+
+**Oplossing:** check eerst of het bord terminal is, en geef dan de
+utility terug. Dat is de bodem van de recursie. Idem in `min_value`, en
+`minimax` zelf begint met `if terminal(bord): return None`.
 
 ```python
-# FOUT — geen base case
+# FOUT
 def max_value(bord):
     v = -math.inf
-    for zet in actions(bord):
-        v = max(v, min_value(result(bord, zet)))
-    return v
-```
 
-### Oplossing: eerst terminal
-
-Check eerst of het bord terminal is. Zo ja, geef de
-utility terug (`1`, `-1` of `0`). Dat is de bodem van de recursie, en de
-enige plek waar een echt getal de boom in komt:
-
-```python
 # GOED
 def max_value(bord):
     if terminal(bord):
         return utility(bord)
     v = -math.inf
-    for zet in actions(bord):
-        v = max(v, min_value(result(bord, zet)))
-    return v
 ```
 
-Idem in `min_value`, en `minimax` zelf begint met `if terminal(bord):
-return None`.
-
 ## Min en max omgedraaid
-
-### Wat er misgaat: de verkeerde laag
 
 Geen foutmelding, wel een AI die verliest of zwak speelt.
 
@@ -141,47 +90,19 @@ Geen foutmelding, wel een AI die verliest of zwak speelt.
 plaats van `min_value`. Of je verwart wie maximaliseert (X) en wie
 minimaliseert (O).
 
-```python
-# FOUT — max_value roept max_value aan in plaats van min_value
-def max_value(bord):
-    if terminal(bord):
-        return utility(bord)
-    v = -math.inf
-    for zet in actions(bord):
-        v = max(v, max_value(result(bord, zet)))   # ← moet min_value zijn
-    return v
-```
-
-### Oplossing: om de beurt
-
-Onthoud het ritme van de beurten. `max_value` zoekt de
-beste keuze van X; de volgende beurt is van O, dus daar hoort
-`min_value(result(...))`. Andersom geldt hetzelfde.
+**Oplossing:** laat de beurten wisselen. Na een zet van X is O aan de
+beurt, dus `max_value` roept `min_value` aan, en andersom.
 
 ```python
+# FOUT
+v = max(v, max_value(result(bord, zet)))
+
 # GOED
-def max_value(bord):
-    if terminal(bord):
-        return utility(bord)
-    v = -math.inf
-    for zet in actions(bord):
-        v = max(v, min_value(result(bord, zet)))    # ← afwisselend
-    return v
-
-
-def min_value(bord):
-    if terminal(bord):
-        return utility(bord)
-    v = math.inf
-    for zet in actions(bord):
-        v = min(v, max_value(result(bord, zet)))    # ← afwisselend
-    return v
+v = max(v, min_value(result(bord, zet)))
 ```
 
-### De vuistregel
-
-In `max_value` komt het woord `min` voor, en in `min_value` het woord
-`max`. Staat het andersom, dan klopt het niet.
+Een vuistregel: in `max_value` komt het woord `min` voor, en in
+`min_value` het woord `max`.
 
 Door naar [cheatsheet →](site:algorithms/docs/minimax/18-cheatsheet).
 

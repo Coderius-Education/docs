@@ -123,18 +123,7 @@ print(bord[2][1] is None)`} />
 Dit doe je straks in bijna elke functie: twee geneste lussen, één voor
 de rijen en één voor de kolommen.
 
-<PyRunner initialCode={`bord = [
-    ["X", "O", "X"],
-    ["O", "X", "O"],
-    [None, None, None],
-]
-
-for i in range(3):
-    for j in range(3):
-        print(f"bord[{i}][{j}] = {bord[i][j]}")`} />
-
-<details>
-<summary>Verwachte uitvoer</summary>
+Verwachte uitvoer:
 
 ```
 bord[0][0] = X
@@ -148,9 +137,17 @@ bord[2][1] = None
 bord[2][2] = None
 ```
 
-Negen cellen, in rij-volgorde.
+<PyRunner initialCode={`bord = [
+    ["X", "O", "X"],
+    ["O", "X", "O"],
+    [None, None, None],
+]
 
-</details>
+for i in range(3):
+    for j in range(3):
+        print(f"bord[{i}][{j}] = {bord[i][j]}")`} />
+
+Negen cellen, in rij-volgorde.
 
 ## Wat we hierna gaan doen
 

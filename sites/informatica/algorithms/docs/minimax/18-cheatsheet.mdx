@@ -205,7 +205,7 @@ max en `+inf` voor min, en de afwisseling waarin `max_value` steeds
 {/* foutmelding-los: samenvatting van de fouten-pagina, waar de melding gereproduceerd wordt */}
 
 1. **Bord muteren in `result`**: gebruik `copy.deepcopy`.
-2. **`result` vergeten in de recursie**: `RecursionError`. De recursie
+2. **Zelfde bord in de recursie** (`result` vergeten): `RecursionError`. De recursie
    krijgt altijd `result(bord, zet)`, nooit `bord` zelf.
 3. **Base case vergeten in `max_value` of `min_value`**: waardes van
    `inf` en `-inf`, en gewonnen borden blijven ongezien. Check eerst of

@@ -15,7 +15,7 @@ het aantal O's. Zijn ze gelijk, dan is X aan de beurt; heeft X er één
 meer, dan is O aan de beurt. Je hebt geen extra variabele nodig, het
 bord vertelt het zelf.
 
-## Specificatie
+**Specificatie:**
 
 - **Input**: een `bord` (3×3 lijst).
 - **Output**: `"X"` of `"O"` (de speler die nu aan zet is).
@@ -86,17 +86,25 @@ Bij bord b is O aan de beurt (X heeft één voorsprong).
 leeg = [[None]*3, [None]*3, [None]*3]
 assert player(leeg) == "X", "Leeg bord: X begint"
 
-na_een_x = [["X", None, None], [None, None, None], [None, None, None]]
+na_een_x = [["X", None, None],
+            [None, None, None],
+            [None, None, None]]
 assert player(na_een_x) == "O", "Na 1 X: O is aan de beurt"
 
 na_xo = [["X", "O", None], [None, None, None], [None, None, None]]
 assert player(na_xo) == "X", "Na X en O: weer X"
 
-drie_om_twee = [["X", "O", "X"], ["O", "X", None], [None, None, None]]
+drie_om_twee = [["X", "O", "X"],
+                ["O", "X", None],
+                [None, None, None]]
 assert player(drie_om_twee) == "O", "3 X, 2 O: O is aan de beurt"
 
-vier_om_vier = [["X", "O", "X"], ["O", "X", "O"], ["X", "O", None]]
-assert player(vier_om_vier) == "X", "4 X en 4 O: X is aan de beurt"
+vier_om_vier = [["X", "O", "X"],
+                ["O", "X", "O"],
+                ["X", "O", None]]
+assert player(vier_om_vier) == "X", (
+    "4 X en 4 O: X is aan de beurt"
+)
 
 print("Alle tests gehaald ✓")`} />
 

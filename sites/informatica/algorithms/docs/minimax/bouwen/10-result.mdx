@@ -40,7 +40,7 @@ nieuw_bord = copy.deepcopy(bord)
 binnenin. Daarna kun je `nieuw_bord[0][0] = "X"` doen zonder dat `bord`
 verandert.
 
-## Specificatie
+**Specificatie:**
 
 - **Input**: een `bord` en een `zet` (tuple `(i, j)`).
 - **Output**: een **nieuw** bord met de zet van de huidige speler
@@ -122,10 +122,14 @@ def result(bord, zet):
 # === Tests ===
 leeg = initial_state()
 na_zet = result(leeg, (1, 1))
-assert na_zet[1][1] == "X", "X (eerste zet) moet in het midden komen"
+assert na_zet[1][1] == "X", (
+    "X (eerste zet) moet in het midden komen"
+)
 
 # Cruciaal: origineel mag niet veranderen
-assert leeg[1][1] is None, "Origineel bord moet onveranderd zijn — gebruik je deepcopy?"
+assert leeg[1][1] is None, (
+    "Origineel bord moet onveranderd zijn — gebruik je deepcopy?"
+)
 
 # Na X is O aan zet
 na_x = result(leeg, (0, 0))
@@ -134,7 +138,9 @@ assert na_xo[0][0] == "X"
 assert na_xo[1][1] == "O"
 
 # na_x mag ook niet veranderd zijn
-assert na_x[1][1] is None, "Tweede zet mag het tussen-bord niet wijzigen"
+assert na_x[1][1] is None, (
+    "Tweede zet mag het tussen-bord niet wijzigen"
+)
 
 # Een hele reeks zetten
 bord = initial_state()
