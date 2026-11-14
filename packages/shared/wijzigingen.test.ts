@@ -5,7 +5,9 @@ import { alleSiteMappen } from '@coderius/shared/sites';
 import { controleer } from '@coderius/shared/stijl';
 import {
   HEEL_BESTAND,
+  LESSEN_PER_DEEL,
   MAX_BESTANDEN,
+  MAX_DELEN,
   binnenWijziging,
   cursussenMetTabbladen,
   heeftLesTabs,
@@ -15,6 +17,7 @@ import {
   parseDiff,
   plan,
   runnerAlles,
+  schermenMatrix,
   volledigOpNamen,
   workspaceAfhankelijkheden,
 } from '@coderius/shared/wijzigingen';
@@ -329,6 +332,49 @@ describe('plan', () => {
     });
     // In de volgorde van het register.
     expect(alles.schermen).toEqual({ sites: ['web', 'linux'], alles: true, viaPakket: {} });
+  });
+
+  // Een hele cursus op één runner meten kostte tot zestien minuten
+  // (algoritmes), terwijl de rest van CI na drie minuten klaar was. Een
+  // cursus die helemaal gemeten wordt, krijgt daarom meer runners; een paar
+  // gewijzigde lessen blijven op één.
+  it('de schermen: een hele cursus over meer runners, een paar lessen op één', () => {
+    const metTabbladen = ['web', 'linux'];
+    const voor = (bestanden: Record<string, [number, number][]>, geraakt: string[]) =>
+      plan({ bestanden, geraakt, alleMappen: ALLE_MAPPEN, sites: SITES, tests: [], metTabbladen });
+    const opties = {
+      siteMappen: MAP,
+      lesAantallen: { web: 34, linux: 3 * LESSEN_PER_DEEL + 1 },
+    };
+    const delen = (m: { site: string; deel: number; delen: number }[]) =>
+      m.map((r) => `${r.site} ${r.deel}/${r.delen}`);
+    // Een les van linux: één runner, ook in een grote cursus.
+    const les = voor({ [`${MAP.linux}/docs/terminal/mappen.mdx`]: [[3, 3]] }, [MAP.linux]);
+    expect(delen(schermenMatrix(les, opties))).toEqual(['linux 1/1']);
+    // Een onderdeel van linux kan elke les raken: de hele cursus, in delen.
+    const onderdeel = voor({ [`${MAP.linux}/src/components/X/index.tsx`]: [[3, 3]] }, [MAP.linux]);
+    expect(delen(schermenMatrix(onderdeel, opties))).toEqual([
+      'linux 1/4',
+      'linux 2/4',
+      'linux 3/4',
+      'linux 4/4',
+    ]);
+    // Het meetscript: elke cursus helemaal; een kleine cursus blijft op één.
+    const script = voor({ 'scripts/meet-les-tabs.mjs': [[1, 1]] }, []);
+    expect(delen(schermenMatrix(script, opties))).toEqual([
+      'web 1/1',
+      'linux 1/4',
+      'linux 2/4',
+      'linux 3/4',
+      'linux 4/4',
+    ]);
+    // Nooit meer dan MAX_DELEN runners voor één cursus.
+    const groot = schermenMatrix(script, {
+      ...opties,
+      lesAantallen: { web: 1000 * LESSEN_PER_DEEL, linux: 0 },
+    });
+    expect(groot.filter((r) => r.site === 'web')).toHaveLength(MAX_DELEN);
+    expect(delen(groot.filter((r) => r.site === 'linux'))).toEqual(['linux 1/1']);
   });
 
   // Wie alleen de meting veranderde, kreeg geen enkele cursus: de job

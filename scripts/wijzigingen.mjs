@@ -37,7 +37,9 @@ const {
   blokkenNodig,
   cursussenMetTabbladen,
   workspaceAfhankelijkheden,
+  schermenMatrix,
 } = require('../packages/shared/wijzigingen.js');
+const { docsMappen } = require('../packages/shared/meet-selectie.js');
 const { alleSiteMappen } = require('../packages/shared/sites.js');
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -183,6 +185,37 @@ function workspacePakketten(mappen) {
   return uit;
 }
 
+/** Het aantal lespagina's (.md en .mdx) in de docs-mappen van een site. */
+function lesAantal(dir) {
+  const config = join(ROOT, dir, 'docusaurus.config.ts');
+  const mappen = existsSync(config) ? docsMappen(readFileSync(config, 'utf8')) : ['docs'];
+  const tel = (map) => {
+    let n = 0;
+    let items = [];
+    try {
+      items = readdirSync(map, { withFileTypes: true });
+    } catch {
+      return 0;
+    }
+    for (const item of items) {
+      if (item.isDirectory()) n += tel(join(map, item.name));
+      else if (/\.mdx?$/.test(item.name)) n += 1;
+    }
+    return n;
+  };
+  return mappen.reduce((som, m) => som + tel(join(ROOT, dir, m)), 0);
+}
+
+/** De matrix van de job `schermen` (schermenMatrix in wijzigingen.js). */
+function schermenVan(p) {
+  const sites = alleSiteMappen().filter(({ id }) => p.schermen.sites.includes(id));
+  return schermenMatrix(p, {
+    siteMappen: Object.fromEntries(sites.map(({ id, dir }) => [id, dir])),
+    lesAantallen: Object.fromEntries(sites.map(({ id, dir }) => [id, lesAantal(dir)])),
+    leesBron: (pad) => (existsSync(join(ROOT, pad)) ? '' : null),
+  });
+}
+
 function outputs(p) {
   const regels = {
     volledig: p.volledig,
@@ -193,7 +226,8 @@ function outputs(p) {
     typecheck: p.pakketten.length > 0,
     ...Object.fromEntries(Object.entries(p.runners).map(([n, r]) => [n, r.draaien])),
     blokken: blokkenNodig(p),
-    schermen: JSON.stringify(p.schermen.sites),
+    // Per cursus één of meer delen: { site, deel, delen } (schermenMatrix).
+    schermen: JSON.stringify(schermenVan(p)),
     meten: p.schermen.sites.length > 0,
   };
   return Object.entries(regels).map(([k, v]) => `${k}=${v}`);

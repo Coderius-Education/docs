@@ -1,6 +1,6 @@
 // Meet per les en per tabblad of het op één scherm past.
 //
-//   node scripts/meet-les-tabs.mjs [site-id] [--json] [--les=<stuk van het pad>] [--tegelijk=4] [--klik] [--open] [--verborgen-balken] [--bronnen=changed.json] [--streng]
+//   node scripts/meet-les-tabs.mjs [site-id] [--json] [--les=<stuk van het pad>] [--tegelijk=4] [--deel=1/1] [--klik] [--open] [--verborgen-balken] [--bronnen=changed.json] [--streng]
 //
 // De les-tabbladen (packages/shared/plugins/les-tabs.js) halen de lange
 // pagina weg, maar een tabblad met een oefenveld of veel theorie kan nog
@@ -102,6 +102,14 @@ const waarden = (vlag) =>
   argumenten.filter((a) => a.startsWith(`--${vlag}=`)).map((a) => a.slice(vlag.length + 3));
 const ALLEEN = waarden('les');
 const TEGELIJK = Math.max(1, Number(waarden('tegelijk')[0] ?? 4));
+// Met `--deel=2/4` het tweede van vier delen: elke vierde les, vanaf de
+// tweede. De job `schermen` meet een hele cursus zo op meer runners naast
+// elkaar (schermenMatrix in packages/shared/wijzigingen.js).
+const [DEEL, DELEN] = (waarden('deel')[0] ?? '1/1').split('/').map(Number);
+if (!(DELEN >= 1 && DEEL >= 1 && DEEL <= DELEN)) {
+  console.error(`--deel=${waarden('deel')[0]}: schrijf --deel=<deel>/<delen>, zoals --deel=2/4`);
+  process.exit(2);
+}
 const KLIK = argumenten.includes('--klik');
 const OPEN = argumenten.includes('--open');
 const VERBORGEN_BALKEN = argumenten.includes('--verborgen-balken');
@@ -184,9 +192,12 @@ function lessen(merk = 'data-les-tabs') {
   // Golfbot in eigen docs-plugins, onder lego_auto/ en golfbot/.
   loop(BUILD);
   const gekozen = KEUZE ? uit.filter((les) => KEUZE.has(les)) : uit;
-  return ALLEEN.length
+  const gefilterd = ALLEEN.length
     ? gekozen.filter((les) => ALLEEN.some((stuk) => les.includes(stuk)))
     : gekozen;
+  // Om en om over de delen: de lessen van een hoofdstuk lijken op elkaar, en
+  // zo krijgt elk deel er evenveel van.
+  return gefilterd.filter((_, i) => i % DELEN === DEEL - 1);
 }
 
 /** Alle lessen in de build die gemeten worden: met tabbladen, of als één scherm. */
@@ -237,6 +248,7 @@ if (BRONNEN) {
       ? `Alle ${keuze.lessen.length} lessen: ${keuze.reden}.`
       : `${keuze.lessen.length} lessen: ${keuze.reden}.`,
   );
+  if (DELEN > 1) console.error(`Hiervan deel ${DEEL} van ${DELEN}: elke ${DELEN}e les.`);
   for (const pad of keuze.nietGevonden.filter((p) => !keuze.ontbreekt.includes(p)))
     console.error(`- ${pad}: een pagina zonder tabbladen, niets te meten`);
   // Een les in een docs-map die de build niet heeft: dan meet CI hem stil

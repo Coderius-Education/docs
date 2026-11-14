@@ -8,6 +8,7 @@ const require = createRequire(import.meta.url);
 const {
   adresVanBron,
   docsMappen,
+  heleSite,
   lessenVoorMeting,
   moetGemetenWorden,
   houdtNummers,
@@ -96,6 +97,29 @@ describe('welke lessen CI meet', () => {
     expect(meet([`${siteMap}/docs/terminal/_samen.mdx`]).alles).toBe(true);
     // Geen eigen bestand veranderd, wel geraakt: dan een package (LesTabs).
     expect(meet(['packages/shared/components/LesTabs/index.tsx']).alles).toBe(true);
+  });
+
+  // Het plan van CI vraagt het ook (schermenMatrix): een hele cursus krijgt
+  // meer runners. Plan en meetscript moeten dus hetzelfde beslissen.
+  it('heleSite zegt wat lessenVoorMeting doet', () => {
+    const gevallen: [string[], object][] = [
+      [[`${siteMap}/docs/terminal/jokertekens.mdx`], {}],
+      [[`${siteMap}/src/css/custom.css`], {}],
+      [[`${siteMap}/docs/terminal/_samen.mdx`], {}],
+      [['packages/shared/components/LesTabs/index.tsx'], {}],
+      [[`${siteMap}/docs/terminal/mappen.mdx`], { volledig: true }],
+      [[`${siteMap}/docs/terminal/mappen.mdx`], { schermen: { alles: true } }],
+      [[`${siteMap}/docs/terminal/mappen.mdx`], { schermen: { viaPakket: { linux: 'p/a.ts' } } }],
+    ];
+    for (const [bestanden, extra] of gevallen) {
+      const heel = heleSite({ plan: plan(bestanden, extra), site: 'linux', siteMap });
+      expect(heel !== null, bestanden.join()).toBe(meet(bestanden, extra).alles);
+    }
+    // Een weggehaald onderdeel telt niet, net als in de selectie.
+    const weg = `${siteMap}/src/components/Oud.tsx`;
+    const les = `${siteMap}/docs/terminal/jokertekens.mdx`;
+    const leesBron = (pad: string) => (pad === weg ? null : '');
+    expect(heleSite({ plan: plan([weg, les]), site: 'linux', siteMap, leesBron })).toBeNull();
   });
 
   it('alles in een volledige run, of als het meetscript veranderde', () => {

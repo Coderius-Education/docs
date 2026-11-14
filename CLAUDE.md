@@ -117,7 +117,13 @@ onderdeel, de opmaak, een deel of een package meet de hele cursus, ook als
 er daarnaast een les veranderde (`schermen.viaPakket`: het package waar de
 cursus van afhangt). Verandert de meting zelf (het meetscript, de
 uitzonderingen, `meet-selectie.js`), dan meet hij elke cursus met tabbladen,
-met de build uit de cache of zelf gebouwd zoals `terminal`. Met
+met de build uit de cache of zelf gebouwd zoals `terminal`. Een cursus
+die helemaal gemeten wordt, verdeelt het plan over meer runners
+(`schermenMatrix` in `wijzigingen.js`: veertig lespagina's per runner,
+hoogstens zes, met `--deel=2/6` elke zesde les); op één runner kostte
+algoritmes zestien minuten, terwijl de rest van CI na drie minuten klaar
+was. Of een cursus helemaal gemeten wordt, beslist `heleSite` in
+`meet-selectie.js`, voor het plan en het meetscript dezelfde. Met
 `--streng` faalt hij bij een scherm dat op 1280×720 of 1366×768 te lang is,
 zijwaarts schuift, een rij tabbladen op twee regels, afgesneden code of een
 dubbele id, ook op een pagina zonder tabbladen (daar ook afgebroken code),

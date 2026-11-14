@@ -989,6 +989,7 @@ jobs:
   # deze wijziging niet bouwt: die build komt dan uit de cache, of wordt
   # hier gebouwd, net als in `terminal`. Eerst viel de job dan weg.
   schermen:
+    name: schermen (${{ matrix.site }} ${{ matrix.deel }}/${{ matrix.delen }})
     needs: [plan, build]
     if: >-
       !cancelled() && needs.plan.outputs.meten == 'true'
@@ -997,8 +998,12 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
+      # Per cursus één of meer delen ({ site, deel, delen }): een hele cursus
+      # meten meer runners naast elkaar, elk een deel van de lessen
+      # (schermenMatrix in packages/shared/wijzigingen.js). Op één runner
+      # kostte algoritmes zestien minuten.
       matrix:
-        site: ${{ fromJSON(needs.plan.outputs.schermen) }}
+        include: ${{ fromJSON(needs.plan.outputs.schermen) }}
     env:
       GEBOUWD: ${{ contains(fromJSON(needs.plan.outputs.sites), matrix.site) }}
     steps:
@@ -1041,7 +1046,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: De schermen van ${{ matrix.site }} meten
-        run: node scripts/meet-les-tabs.mjs ${{ matrix.site }} --bronnen=changed.json --streng
+        run: node scripts/meet-les-tabs.mjs ${{ matrix.site }} --bronnen=changed.json --deel=${{ matrix.deel }}/${{ matrix.delen }} --streng
 
   # De branch protection eist een check die exact "build" heet, maar een
   # matrix-job rapporteert alleen "build (site)" per site — die eis kon dus

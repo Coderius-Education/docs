@@ -114,6 +114,35 @@ function adresVanBron(rel, bron, { nummers = false } = {}) {
 }
 
 /**
+ * Meet CI in deze site elke les, en waarom? `null`: alleen de gewijzigde
+ * lessen. Het plan van CI (`schermenMatrix` in wijzigingen.js) vraagt het ook:
+ * een hele cursus verdeelt het over meer runners.
+ *
+ * @param {object} opties
+ * @param {object} opties.plan changed.json van de plan-job
+ * @param {string} opties.site het id van de site
+ * @param {string} opties.siteMap de map van de site
+ * @param {(pad: string) => string | null} [opties.leesBron] de bron van een
+ *   bestand, of null als het er niet (meer) is: een weggehaald bestand telt
+ *   niet mee
+ * @returns {string | null}
+ */
+function heleSite({ plan, site, siteMap, leesBron = () => '' }) {
+  if (plan.volledig) return 'volledige run';
+  if (plan.schermen?.alles) return 'het meetscript is veranderd';
+  const via = plan.schermen?.viaPakket?.[site];
+  if (via) return `${via} staat in een package waar de site van afhangt`;
+  const prefix = `${siteMap}/`;
+  const bestanden = Object.keys(plan.bestanden ?? {}).filter((p) => p.startsWith(prefix));
+  if (bestanden.length === 0) return 'een package waar de site van afhangt';
+  // Of een bestand een les is, hangt alleen aan zijn pad (adresVanBron).
+  const pad = bestanden.find(
+    (p) => leesBron(p) !== null && adresVanBron(p.slice(prefix.length), '') === null,
+  );
+  return pad ? `${pad} kan elke les raken` : null;
+}
+
+/**
  * De lessen die CI moet meten.
  *
  * @param {object} opties
@@ -141,13 +170,10 @@ function lessenVoorMeting({
   nummers = false,
 }) {
   const alles = (reden) => ({ alles: true, lessen, nietGevonden: [], ontbreekt: [], reden });
-  if (plan.volledig) return alles('volledige run');
-  if (plan.schermen?.alles) return alles('het meetscript is veranderd');
-  const via = plan.schermen?.viaPakket?.[site];
-  if (via) return alles(`${via} staat in een package waar de site van afhangt`);
+  const heel = heleSite({ plan, site, siteMap, leesBron });
+  if (heel) return alles(heel);
   const prefix = `${siteMap}/`;
   const bestanden = Object.keys(plan.bestanden ?? {}).filter((p) => p.startsWith(prefix));
-  if (bestanden.length === 0) return alles('een package waar de site van afhangt');
   const gekozen = new Set();
   const nietGevonden = [];
   const ontbreekt = [];
@@ -156,7 +182,6 @@ function lessenVoorMeting({
     // Een weggehaalde les valt weg; niets te meten.
     if (bron === null) continue;
     const adres = adresVanBron(pad.slice(prefix.length), bron, { nummers });
-    if (adres === null) return alles(`${pad} kan elke les raken`);
     const passend = lessen.filter((les) => les === adres || les.endsWith(`/${adres}`));
     // Een pagina zonder tabbladen die niet als één scherm meetelt (een
     // cheatsheet met les_tabs: false) staat niet in de lijst: niets te meten.
@@ -178,6 +203,7 @@ function lessenVoorMeting({
 module.exports = {
   adresVanBron,
   docsMappen,
+  heleSite,
   houdtNummers,
   lessenVoorMeting,
   moetGemetenWorden,

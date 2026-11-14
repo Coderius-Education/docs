@@ -20,7 +20,8 @@
 //   schermen     de schermen van elke gebouwde cursus met tabbladen
 //                (meet-selectie.js kiest daarin de lessen). Verandert de
 //                meting zelf, dan elke cursus met tabbladen, helemaal; een
-//                cursus die niet gebouwd wordt, komt dan uit de cache.
+//                cursus die niet gebouwd wordt, komt dan uit de cache. Een
+//                hele cursus meten meer runners naast elkaar (schermenMatrix).
 //
 // Vorm van changed.json (versie 1):
 //
@@ -35,6 +36,8 @@
 //
 // Regelbereiken zijn 1-gebaseerd en inclusief. Een verwijderd bestand staat
 // erin met een lege lijst; een binair bestand met HEEL_BESTAND.
+
+const { heleSite } = require('./meet-selectie.js');
 
 /** Een bereik dat elke regel van een bestand dekt. */
 const HEEL_BESTAND = [1, 1_000_000_000];
@@ -636,6 +639,40 @@ function plan({
   };
 }
 
+/**
+ * Zoveel lespagina's meet één runner van de job `schermen` in een paar
+ * minuten. Een hele cursus op één runner kostte tot zestien minuten
+ * (algoritmes, 284 pagina's), en de rest van CI was na drie minuten klaar.
+ */
+const LESSEN_PER_DEEL = 40;
+/** Meer runners voor één cursus niet: GitHub geeft er twintig tegelijk. */
+const MAX_DELEN = 6;
+
+/**
+ * De matrix van de job `schermen`: per cursus één of meer delen. Een cursus
+ * die helemaal gemeten wordt (heleSite in meet-selectie.js: het meetscript
+ * veranderde, een package, een onderdeel, de nachtelijke run), verdeelt zijn
+ * lessen over `delen` runners, elk met `--deel=<deel>/<delen>`. Wie alleen
+ * een paar lessen veranderde, krijgt één runner.
+ *
+ * @param {ReturnType<typeof plan>} p
+ * @param {object} opties
+ * @param {Record<string, string>} opties.siteMappen per id de map van de site
+ * @param {Record<string, number>} opties.lesAantallen per id het aantal
+ *   lespagina's (.md en .mdx in de docs-mappen)
+ * @param {(pad: string) => string | null} [opties.leesBron]
+ * @returns {{ site: string, deel: number, delen: number }[]}
+ */
+function schermenMatrix(p, { siteMappen, lesAantallen, leesBron }) {
+  return p.schermen.sites.flatMap((site) => {
+    const heel = heleSite({ plan: p, site, siteMap: siteMappen[site], leesBron });
+    const delen = heel
+      ? Math.min(MAX_DELEN, Math.max(1, Math.ceil((lesAantallen[site] ?? 0) / LESSEN_PER_DEEL)))
+      : 1;
+    return Array.from({ length: delen }, (_, i) => ({ site, deel: i + 1, delen }));
+  });
+}
+
 module.exports = {
   HEEL_BESTAND,
   GLOBAAL,
@@ -655,4 +692,7 @@ module.exports = {
   heeftLesTabs,
   cursussenMetTabbladen,
   plan,
+  LESSEN_PER_DEEL,
+  MAX_DELEN,
+  schermenMatrix,
 };
