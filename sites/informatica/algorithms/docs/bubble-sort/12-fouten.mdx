@@ -2,13 +2,11 @@
 sidebar_position: 12
 ---
 
-# Er gaat iets mis — top-3 fouten
+# Er gaat iets mis — vier fouten
 
 **Leerdoel:** je herkent de klassieke valkuilen van bubble sort.
 
-## IndexError: `range(len(lijst))` zonder `- 1`
-
-### Voorbij het eind van de lijst
+## Voorbij het eind: `range(len(lijst))` zonder `- 1`
 
 {/* foutmelding-van: lijst = [3, 2, 1]\nfor i in range(len(lijst)):\n    if lijst[i] > lijst[i + 1]:\n        pass */}
 ```
@@ -20,92 +18,97 @@ IndexError: list index out of range
 **Oorzaak:** bij de laatste ronde is `i = n - 1`, dus `lijst[i + 1]` is
 `lijst[n]`, en die bestaat niet. Vandaar de `IndexError`.
 
-### Tot `n - 1`
+**Oplossing:** gebruik `range(n - 1)`. Vergelijk je `lijst[i]` met
+`lijst[i + 1]`, dan is `n - 2` de laatste geldige `i`, en daar stopt
+`range(n - 1)` precies.
 
-**Oplossing:** gebruik `range(n - 1)`. Bij paarsgewijze vergelijkingen
-(`lijst[i]` met `lijst[i + 1]`) is de laatste geldige `i` altijd één
-minder dan de lijst-lengte.
-
+{/* niet-compileren: fragment; het lijf van de if is weggelaten */}
 ```python
 # FOUT
-def bubble_sort_fout(lijst):
-    n = len(lijst)
-    for ronde in range(n - 1):
-        for i in range(n):                # te ver!
-            if lijst[i] > lijst[i + 1]:   # crash bij i = n - 1
-                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
-    return lijst
+for i in range(n):
+    if lijst[i] > lijst[i + 1]:
 
 # GOED
-for i in range(n - 1):                    # nu loopt i tot n - 2
-    ...
+for i in range(n - 1):
+    if lijst[i] > lijst[i + 1]:
 ```
 
 Meer uitleg: [Bouwsteen 3 — één pass](site:algorithms/docs/bubble-sort/bouwen/06-een-pass).
 
-## SyntaxError: `=` in plaats van `==`
+## Toekennen in een if: `=` in plaats van `==`
 
 {/* foutmelding-van: if lijst[0] = lijst[1]:\n    pass */}
 ```
 SyntaxError: cannot assign to subscript here. Maybe you meant '==' instead of '='?
 ```
 
-**Oorzaak:** `=` is **toekenning**, niet vergelijken. In een `if`-conditie
-heb je een vergelijking nodig: `==`, `<`, `>`, etc. Python ziet dat je aan
-`lijst[i]` probeert toe te kennen en stelt de oplossing zelf al voor.
+**Oorzaak:** `=` is **toekennen**, niet vergelijken. In een `if` heb je een
+vergelijking nodig: `==`, `<`, `>`. Python ziet dat je aan `lijst[i]`
+probeert toe te kennen en stelt de oplossing zelf al voor.
 
-**Oplossing:** gebruik een vergelijking. Voor bubble sort gebruiken we
-trouwens niet `==` maar `>`, want je wilt weten of het paar fout staat.
+**Oplossing:** gebruik een vergelijking. Bij bubble sort is dat niet `==`
+maar `>`, want je wilt weten of het paar fout staat.
 
 {/* niet-compileren: toont bewust de = in plaats van == */}
 ```python
 # FOUT
 if lijst[i] = lijst[i + 1]:
-    ...
 
 # GOED
 if lijst[i] > lijst[i + 1]:
-    ...
 ```
 
-Onthouden: één `=` is toekennen, twee `==` is vergelijken.
+Meer uitleg: [Bouwsteen 1 — vergelijk twee buren](site:algorithms/docs/bubble-sort/bouwen/04-vergelijk-buren).
 
-## `geswapt` op de verkeerde plek initialiseren
+## Een waarde kwijt bij het ruilen
 
-Geen foutmelding, maar de early-exit doet niet meer wat hij moet doen.
+Geen foutmelding, maar na het ruilen staat hetzelfde getal twee keer in de
+lijst: van `[3, 1]` maakt de code `[1, 1]`. De 3 is weg.
 
-**Oorzaak:** `geswapt` wordt **één keer** geïnitialiseerd op `False`, en
-daarna **nooit meer gereset**. Zodra er één swap gebeurt, blijft
-`geswapt = True` voor **alle** verdere rondes. De early-exit gaat dan
-nooit meer af.
+**Oorzaak:** je ruilt in twee regels. Na de eerste regel staat in
+`lijst[i]` al de waarde van `lijst[i + 1]`, en de oude waarde is
+overschreven. De tweede regel kopieert die nieuwe waarde gewoon terug.
 
-**Oplossing:** zet `geswapt = False` **binnen** de buitenste lus, aan het
-begin van elke pass. Algemener: bij elke pass die "iets nieuws" moet
-detecteren, hoort de vlag op `False` aan het begin van die pass.
+**Oplossing:** ruil in één regel, met de tuple-swap. Python rekent dan
+eerst de hele rechterkant uit, voordat er iets wordt overschreven.
 
+{/* niet-draaien: fragment; lijst en i komen uit de lus */}
 ```python
 # FOUT
-def bubble_sort_fout(lijst):
-    n = len(lijst)
-    geswapt = False                       # VOOR de buitenste lus
-    for ronde in range(n - 1):
-        for i in range(n - 1 - ronde):
-            if lijst[i] > lijst[i + 1]:
-                lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
-                geswapt = True
-        if not geswapt:
-            break
-    return lijst
+lijst[i] = lijst[i + 1]
+lijst[i + 1] = lijst[i]
+
+# GOED
+lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
+```
+
+Meer uitleg: [Bouwsteen 2 — twee buren ruilen](site:algorithms/docs/bubble-sort/bouwen/05-swap).
+
+## Een vlag die blijft staan: `geswapt` vóór de lus
+
+Geen foutmelding, maar de vroege uitstap doet niets meer: ook op een
+lijst die al na twee rondes klaar is, doet bubble sort alle rondes.
+
+**Oorzaak:** `geswapt` krijgt **één keer** de waarde `False`, vóór de
+buitenste lus. Na de eerste swap blijft hij `True` voor alle rondes erna,
+dus `if not geswapt` is nooit meer waar.
+
+**Oplossing:** zet `geswapt = False` **binnen** de buitenste lus, aan het
+begin van elke pass. Dan kijkt elke pass opnieuw of er iets wisselt.
+
+{/* niet-compileren: fragment; de binnenste lus is weggelaten */}
+```python
+# FOUT
+geswapt = False
+for ronde in range(n - 1):
+    for i in range(n - 1 - ronde):
 
 # GOED
 for ronde in range(n - 1):
-    geswapt = False                       # elke pass opnieuw op False
+    geswapt = False
     for i in range(n - 1 - ronde):
-        if lijst[i] > lijst[i + 1]:
-            lijst[i], lijst[i + 1] = lijst[i + 1], lijst[i]
-            geswapt = True
-    if not geswapt:
-        break
 ```
+
+Meer uitleg: [Bouwsteen 5 — vroeg klaar](site:algorithms/docs/bubble-sort/bouwen/08-early-exit).
 
 Door naar [cheatsheet](site:algorithms/docs/bubble-sort/13-cheatsheet).

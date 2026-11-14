@@ -153,9 +153,14 @@ Buitenste lus zet de **ronde**. Binnenste loopt door **één pass**.
 <details>
 <summary>Hoe snel?</summary>
 
-- **Beste geval** (al gesorteerd + early-exit): O(n) — één pass.
-- **Slechtste geval** (omgekeerd): O(n²) — `n − 1` passes.
-- **Gemiddeld**: O(n²).
+- **Beste geval** (al gesorteerd + early-exit): één pass. Het werk groeit
+  even hard als de lijst.
+- **Slechtste geval** (omgekeerd): `n − 1` passes. Twee keer zo lang is
+  vier keer zoveel werk.
+- **Gemiddeld**: ook vier keer zoveel bij twee keer zo lang.
+
+In [Big O — het idee](site:algorithms/docs/big-o/01-concept) heet dat
+`O(n)` en `O(n²)`.
 
 | n | beste (sorted) | slechtste (rev) |
 |---:|---:|---:|
@@ -177,13 +182,14 @@ Buitenste lus zet de **ronde**. Binnenste loopt door **één pass**.
 ## Veelgemaakte fouten (snel)
 
 <details>
-<summary>Top-3 fouten</summary>
+<summary>Veelgemaakte fouten</summary>
 
 {/* foutmelding-los: samenvatting van de foutenpagina, waar beide meldingen gereproduceerd worden */}
 
 1. `range(len(lijst))` in binnenste lus zonder `- 1` → `IndexError`.
 2. `=` in `if` waar je `==` of `>` bedoelt → `SyntaxError`.
-3. `geswapt` één keer op `False` vóór de buitenste lus → de vlag wordt niet
+3. Ruilen in twee regels → een waarde raakt kwijt. Gebruik de tuple-swap.
+4. `geswapt` één keer op `False` vóór de buitenste lus → de vlag wordt niet
    gereset → early-exit werkt verkeerd.
 
 </details>
@@ -195,6 +201,6 @@ Klaar met bubble sort? Je hebt nu twee sorteer-algoritmes gezien:
   weinig swaps, niet stabiel.
 - **Bubble sort** — adaptief, stabiel, simpel.
 
-Sneller sorteren dan `O(n²)` kan met merge sort of quicksort. Die staan
+Sneller sorteren dan bubble sort kan met merge sort of quicksort. Die staan
 niet in deze cursus, maar [Big O](site:algorithms/docs/big-o/06-kwadratisch) laat zien
 hoeveel het scheelt.

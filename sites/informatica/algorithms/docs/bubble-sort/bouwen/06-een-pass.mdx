@@ -16,21 +16,19 @@ waarom er `- 1` bij hoort.
 
 ## Wat we willen
 
-Eén pass = één keer door de lijst lopen, elk paar buren bekijken en
-zo nodig swappen.
-
-## De `- 1` is cruciaal
-
-Elke vergelijking pakt `lijst[i]` en `lijst[i + 1]`. De laatste `i` die
-nog kan is dus `len(lijst) - 2`, want dan wijst `i + 1` precies naar het
-laatste element.
+Eén pass is één keer door de lijst lopen, elk paar buren bekijken en zo
+nodig swappen. Elke vergelijking pakt `lijst[i]` en `lijst[i + 1]`. De
+laatste `i` die nog kan is dus `len(lijst) - 2`, want dan wijst `i + 1`
+precies naar het laatste element.
 
 ```python
 for i in range(len(lijst) - 1):     # 0, 1, ..., len-2
     ...
 ```
 
-Vergeten we de `- 1`?
+## De `- 1` is cruciaal
+
+Vergeet je de `- 1`, dan gaat `i` één plek te ver:
 
 ```python
 for i in range(len(lijst)):         # 0, 1, ..., len-1
@@ -117,8 +115,7 @@ moet nog twee plekken naar voren — daarvoor zijn meer passes nodig.
 
 </details>
 
-## Wat nu nog mist
-
-Eén pass is klaar. Nu nog herhalen tot de lijst gesorteerd is.
+Eén pass werkt nu. In de volgende stap herhaal je hem tot de lijst
+gesorteerd is.
 
 Door naar [bouwsteen 4: meerdere passes](site:algorithms/docs/bubble-sort/bouwen/07-meerdere-passes).

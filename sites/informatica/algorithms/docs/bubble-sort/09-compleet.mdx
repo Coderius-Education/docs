@@ -66,11 +66,11 @@ def bubble_sort(lijst):
             break
     return lijst
 
-print(bubble_sort([3, 1, 4, 1, 5, 9, 2, 6]))   # [1, 1, 2, 3, 4, 5, 6, 9]
-print(bubble_sort([1, 2, 3, 4, 5]))     # [1, 2, 3, 4, 5]  (al gesorteerd: 1 pass)
-print(bubble_sort([5, 4, 3, 2, 1]))     # [1, 2, 3, 4, 5]  (omgekeerd: maximaal werk)
-print(bubble_sort([42]))                # [42]
-print(bubble_sort([]))                  # []`} />
+print(bubble_sort([3, 1, 4, 1, 5, 9, 2, 6]))
+print(bubble_sort([1, 2, 3, 4, 5]))   # al gesorteerd
+print(bubble_sort([5, 4, 3, 2, 1]))   # omgekeerd
+print(bubble_sort([42]))
+print(bubble_sort([]))`} />
 
 ### Het model
 
@@ -80,6 +80,10 @@ schrijf je de functie zelf, en draai je de tests erop.
 <AlgorithmModel algorithm="bubble-sort" />
 
 ## Onderzoek — strings en stabiliteit
+
+Bubble sort werkt ook op woorden, en op paren (cijfer, naam) die je alleen
+op het cijfer vergelijkt. Sam en Ali hebben allebei een 7. Voorspel eerst:
+wie van de twee staat na het sorteren vooraan?
 
 <PyRunner initialCode={`def bubble_sort(lijst):
     n = len(lijst)
@@ -96,7 +100,7 @@ schrijf je de functie zelf, en draai je de tests erop.
 # Strings
 print(bubble_sort(["banaan", "appel", "kers"]))
 
-# Stabiliteit-test: sorteer op cijfer, vergelijk alleen lijst[...][0]
+# Sorteer alleen op het cijfer: lijst[i][0]
 def bubble_sort_op_cijfer(lijst):
     n = len(lijst)
     for ronde in range(n - 1):
@@ -154,7 +158,8 @@ def bubble_sort_telt(lijst):
 
 n = 50
 bijna = list(range(n))
-bijna[20], bijna[21] = bijna[21], bijna[20]   # twee buren omgewisseld
+# twee buren omgewisseld
+bijna[20], bijna[21] = bijna[21], bijna[20]
 
 soorten = {
     'al gesorteerd':  list(range(n)),
@@ -165,7 +170,8 @@ soorten = {
 
 for naam, lijst in soorten.items():
     s, v, p = bubble_sort_telt(lijst.copy())
-    print(f"{naam:<20} passes={p:>2}  vergelijkingen={v:>5}  swaps={s}")`} />
+    print(f"{naam:<20} passes={p:>2}",
+          f" vergelijkingen={v:>5}  swaps={s}")`} />
 
 <details>
 <summary>Wat zie je?</summary>
@@ -179,8 +185,10 @@ willekeurig          passes=~40 vergelijkingen=~1100  swaps=~600
 bijna gesorteerd     passes= 2  vergelijkingen=   97  swaps=1
 ```
 
-- Al gesorteerd: één pass dankzij early-exit, dus `O(n)`.
-- Omgekeerd: het maximale werk, `O(n²)`.
+- Al gesorteerd: één pass dankzij early-exit, 49 vergelijkingen voor 50
+  getallen. Het werk groeit even hard als de lijst.
+- Omgekeerd: het maximale werk, 1225 vergelijkingen, ongeveer de helft van
+  50 × 50. Een twee keer zo lange lijst kost vier keer zoveel.
 - Willekeurig: daartussenin, en dichter bij omgekeerd dan je zou denken.
 - Bijna gesorteerd, met één wisseling nodig: één pass om die wisseling op
   te lossen en één om te bevestigen dat het klaar is. Zo snel dat bubble

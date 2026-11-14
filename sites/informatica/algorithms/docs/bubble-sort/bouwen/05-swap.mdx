@@ -13,14 +13,10 @@ sidebar_position: 5
 **Leerdoel:** je kunt twee opeenvolgende elementen ruilen wanneer ze fout
 staan.
 
-## Wat we willen
+## Ruilen in één regel
 
-Bij elk paar dat fout staat (`lijst[i] > lijst[i+1]`): de twee elementen
-omwisselen.
-
-## Eén regel: tuple-swap
-
-Net als bij [selection sort](site:algorithms/docs/selection-sort/bouwen/05-swap) gebruiken
+Staat een paar fout (`lijst[i] > lijst[i+1]`), dan wissel je de twee
+elementen om. Net als bij [selection sort](site:algorithms/docs/selection-sort/bouwen/05-swap) gebruiken
 we de Pythonische *tuple-swap*:
 
 ```python
@@ -68,7 +64,8 @@ print(lijst)`} />
 
 ## Experimenteer
 
-Probeer voor alle geldige `i`'s achter elkaar, net als in bouwsteen 1:
+De code ruilt voor elke `i` van 0 tot en met 3, net als in bouwsteen 1.
+Verander daarna de lijst in `[5, 4, 3, 2, 1]`: waar staat de 5 na afloop?
 
 <PyRunner initialCode={`lijst = [3, 1, 4, 1, 5]
 print("start:", lijst)
@@ -95,16 +92,13 @@ eind: [1, 3, 1, 4, 5]
 ```
 
 Dit is precies één pass van bubble sort over de lijst. De 5 zit nu
-achteraan op zijn juiste plek. Maar de lijst is nog niet helemaal
-gesorteerd — er moeten meer passes komen. En `[0, 1, 2, 3]` uitschrijven
-werkt alleen voor een lijst van vijf; in de volgende stap wordt dat een
-`range` die voor elke lengte klopt.
+achteraan op zijn juiste plek. Bij `[5, 4, 3, 2, 1]` schuift de 5 in vier
+swaps helemaal naar achteren: `[4, 3, 2, 1, 5]`.
 
 </details>
 
-## Wat nu nog mist
-
-Eén pass is meestal niet genoeg. In de volgende stap zetten we vast wat
-een pass precies is, en daarna laten we hem herhalen.
+De lijst is na één pass nog niet gesorteerd: er moeten meer passes komen.
+En `[0, 1, 2, 3]` uitschrijven werkt alleen voor een lijst van vijf. In de
+volgende stap wordt dat een `range` die voor elke lengte klopt.
 
 Door naar [bouwsteen 3: één pass](site:algorithms/docs/bubble-sort/bouwen/06-een-pass).

@@ -61,32 +61,29 @@ bubble sort ook op een gesorteerde lijst alle `n − 1` passes.
 
 </details>
 
-**Stelling 5.** *"De binnenste lus loopt tot `len(lijst)` (inclusief)."*
+**Stelling 5.** *"In één pass over een lijst van vijf getallen doet bubble sort vijf vergelijkingen."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Onjuist.** Hij loopt tot `len(lijst) - 1`. Je vergelijkt `lijst[i]` met
-`lijst[i+1]`, dus de laatste `i` die nog kan is `len(lijst) - 2`, en dat
-is precies wat `range(len(lijst) - 1)` je geeft.
-
-{/* foutmelding-van: lijst = [5, 2, 9]\nfor i in range(len(lijst)):\n    lijst[i + 1] */}
-
-Eén te ver → `IndexError` op `lijst[i+1]`.
+**Onjuist.** Vijf getallen naast elkaar vormen vier paren buren, en een
+pass vergelijkt elk paar één keer: vier vergelijkingen. Het laatste getal
+heeft geen buur rechts van zich.
 
 </details>
 
-**Stelling 6.** *"Bubble sort kan elementen die ver van hun juiste plek staan ook in één
-pass naar voren brengen."*
+**Stelling 6.** *"Een klein getal dat achteraan staat, komt in één pass helemaal vooraan."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Onjuist**, tenminste naar voren. Een kleine waarde schuift per pass maar
-één plek op; een grote kan in één pass helemaal naar achteren bubbelen.
+**Onjuist.** Een klein getal schuift per pass maar één plek naar voren.
+Een groot getal vooraan gaat in één pass wél helemaal naar achteren: het
+wint elke vergelijking en schuift steeds mee.
 
-Die scheefheid is precies wat cocktail sort rechttrekt, door om en om naar
-rechts en naar links te lopen.
+Die scheefheid trekt cocktail sort recht, door om en om naar rechts en
+naar links te lopen. Die maak je in de uitdaging bij
+[Bouw zelf](site:algorithms/docs/bubble-sort/11-zelf-bouwen).
 
 </details>
 
