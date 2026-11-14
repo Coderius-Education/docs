@@ -67,10 +67,10 @@ lijst: van `[3, 1]` maakt de code `[1, 1]`. De 3 is weg.
 
 **Oorzaak:** je ruilt in twee regels. Na de eerste regel staat in
 `lijst[i]` al de waarde van `lijst[i + 1]`, en de oude waarde is
-overschreven. De tweede regel kopieert die nieuwe waarde gewoon terug.
+overschreven. De tweede regel kopieert die nieuwe waarde terug.
 
 **Oplossing:** ruil in één regel, met de tuple-swap. Python rekent dan
-eerst de hele rechterkant uit, voordat er iets wordt overschreven.
+eerst de hele rechterkant uit, voordat hij iets overschrijft.
 
 {/* niet-draaien: fragment; lijst en i komen uit de lus */}
 ```python

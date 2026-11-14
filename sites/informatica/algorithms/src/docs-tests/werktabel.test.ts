@@ -184,9 +184,9 @@ function verwachteUitvoer(tekst: string): string[] {
 // aantal vergelijkingen (= rondes van de while-lus) in de lijst 1 t/m 100.
 describe('de verwachte uitvoer van binair zoeken aanpassen', () => {
   const tekst = readFileSync(`${DOCS}binair-zoeken/10-aanpassen.mdx`, 'utf8');
-  const doelen = [
-    ...tekst.matchAll(/^print\(binair_zoek_met_stappen\(getallen, (\d+)\)\)/gm),
-  ].map((m) => Number(m[1]));
+  const doelen = [...tekst.matchAll(/^print\(binair_zoek_met_stappen\(getallen, (\d+)\)\)/gm)].map(
+    (m) => Number(m[1]),
+  );
   const getallen = Array.from({ length: 100 }, (_, i) => i + 1);
 
   it('elke test in de startcode heeft een regel verwachte uitvoer', () => {
