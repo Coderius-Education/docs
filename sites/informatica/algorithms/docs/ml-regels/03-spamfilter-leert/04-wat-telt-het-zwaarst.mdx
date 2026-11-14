@@ -51,17 +51,16 @@ Het filter weet dus alleen wat in zijn voorbeelden stond.
 
 ## Onderzoek
 
-De tellingen `spam` en `gewoon` uit
+De tellingen uit
 [twee tellingen](site:algorithms/docs/ml-regels/03-spamfilter-leert/02-twee-tellingen)
-staan in de verborgen code onder de editor. Draai de code eerst zoals hij
-is: je ziet score 2 en spam. Pas daarna het bericht aan.
+staan klaar. Draai eerst: score 2, spam. Pas daarna het bericht aan.
 
 1. Probeer `"ben je nu op school"`. Het woord `nu` staat in de spam én in
    de gewone berichten. Wat doet het met de score?
 2. Probeer `"hoe laat is het"`. De meeste woorden heeft het filter nooit
    gezien. Wat gebeurt er met zulke woorden?
-3. Zet onder het bericht de regel `spam["school"] = 3`, alsof `school` drie
-   keer in de spam stond. Wat gebeurt er nu met het bericht uit vraag 1?
+3. Zet onder het bericht `spam["school"] = 3`, alsof `school` drie keer in
+   spam stond. Wat doet dat met het bericht uit vraag 1?
 
 <PyRunner verborgen="spam-tellingen" initialCode={`bericht = "klik hier voor je prijs"
 
@@ -90,19 +89,14 @@ else:
 
 </details>
 
-## Opdracht: wat telt het zwaarst?
+## Opdracht
 
-Laat het filter bij elk woord van het bericht printen wat dat woord aan de
-score bijdraagt.
-
-De tellingen `spam` en `gewoon` staan in de verborgen code onder de editor.
-In de editor loopt het filter over de woorden, met één `if`.
+Wat telt het zwaarst? Laat het filter per woord printen wat het bijdraagt.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij print de spam-telling van elk woord dat in `spam` staat. `je` mist nog.
-2. Zet een tweede `if` in de loop voor `gewoon`, en print daar het woord met min de gewone telling.
-3. Verander het bericht in `"ben je nu op school"`. Je ziet `nu` twee keer: `nu 2` en `nu -1`.
-4. Maak per woord één `bijdrage`: begin op 0, tel de spam-telling erbij en de gewone eraf, en print hem na de twee `if`'s.
+2. Print in een tweede `if` het woord met min zijn telling in `gewoon`. Bij `"ben je nu op school"` zie je `nu` twee keer.
+3. Maak per woord één `bijdrage`: begin op 0, tel de spam-telling erbij en de gewone eraf, en print hem na de twee `if`'s.
 
 Verwachte uitvoer (bij `"klik hier voor je prijs"`):
 
@@ -123,7 +117,7 @@ for woord in bericht.split():
 <details>
 <summary>Tip</summary>
 
-Zie je bij stap 4 nog steeds twee regels voor `nu`? Kijk of de `print` nog
+Zie je bij stap 3 nog steeds twee regels voor `nu`? Kijk of de `print` nog
 in een van de `if`'s staat. Hij hoort eronder, op de hoogte van de `if`'s.
 
 </details>

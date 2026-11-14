@@ -47,20 +47,22 @@ vaak in spam als in gewone berichten, dan zegt het niets over een nieuw
 bericht. Met meer voorbeelden leert het filter beter welke woorden vooral in
 spam staan.
 
-## Bouw zelf: leer het filter jouw berichten
+Echte spamfilters tellen ook woorden in voorbeelden, maar rekenen daarmee
+een kans uit in plaats van een score. Het idee is hetzelfde: het filter
+leert van berichten waarvan je het antwoord al weet.
+
+## Bouw zelf
 
 ### De opdracht
 
-Vervang de voorbeelden door je eigen: zet in `spamwoorden` de woorden uit
-een paar spamberichten die je zelf kreeg (of verzin ze), en in
-`gewone_woorden` de woorden uit gewone berichten van vrienden. Bedenk daarna
-drie nieuwe berichten die het filter nog nooit zag, en kijk of het ze goed
-indeelt.
+Leer het filter jouw berichten. Zet in `spamwoorden` de woorden uit een paar
+spamberichten die je zelf kreeg (of verzin ze), en in `gewone_woorden` de
+woorden uit gewone berichten van vrienden. Bedenk daarna drie nieuwe
+berichten die het filter nog nooit zag, en kijk of het ze goed indeelt.
 
 ### Aan de slag
 
-In de editor staat het filter uit de vorige stappen, met maar drie woorden
-spam en drie gewone woorden. Het bericht staat bovenaan.
+In de editor staat het filter, met maar drie woorden per soort.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code.
@@ -123,9 +125,5 @@ is geen fout in je code. Het weet alleen wat in je voorbeelden stond: met
 pakket.
 
 </details>
-
-Echte spamfilters tellen ook woorden in voorbeelden, maar rekenen daarmee
-een kans uit in plaats van een score. Het idee is hetzelfde: het filter
-leert van berichten waarvan je het antwoord al weet.
 
 Door naar [een afstand](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur/01-een-afstand).

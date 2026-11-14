@@ -49,19 +49,14 @@ Met de tellingen uit de vorige stap geeft het bericht
 kwamen samen vijf keer voor in spam, en `je` kwam drie keer voor in gewone
 berichten. Vijf min drie is twee.
 
-## Opdracht: laat het filter beslissen
+## Opdracht
 
-Reken de score uit voor `"klik hier voor je prijs"`, en laat het filter
-beslissen.
-
-De tellingen `spam` en `gewoon` uit de vorige stap staan in de verborgen code
-onder de editor. Het filter in de editor telt alleen de spam.
+Laat het filter beslissen. In de editor telt het alleen de spam.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: score 5.
-2. Zet in de loop een tweede `if` die de gewone telling van het woord van de score aftrekt. Nu is de score 2.
-3. Zet onder de `print` een `if` en een `else`: is de score groter dan 0, print dan `spam`, en anders `geen spam`.
-4. Verander het bericht in `"zie je morgen"`. Nu zegt het filter `geen spam`.
+2. Trek in een tweede `if` de telling van het woord in `gewoon` van de score af. Nu is de score 2.
+3. Print daaronder `spam` als de score boven 0 is, en anders `geen spam`. Probeer ook `"zie je morgen"`.
 
 Verwachte uitvoer:
 
