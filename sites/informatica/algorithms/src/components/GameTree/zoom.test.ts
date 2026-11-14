@@ -9,7 +9,7 @@ describe('de spelboom in een les-tabblad', () => {
   it('wordt zo klein als nodig om te passen', () => {
     const zoom = boomZoom(400, 633);
     expect(zoom * 633).toBeLessThanOrEqual(400);
-    expect(zoom).toBeGreaterThan(0.6);
+    expect(zoom).toBeGreaterThan(KLEINSTE_ZOOM);
   });
 
   it('wordt niet kleiner dan een bord leesbaar is', () => {

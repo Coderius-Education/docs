@@ -2,7 +2,7 @@ import { useInLesTab } from '@coderius/shared/components/LesTabs/paneel';
 import { MARGE, meetRuimte } from '@coderius/shared/components/LesTabs/pasHoogte';
 import clsx from 'clsx';
 import type React from 'react';
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { type Knoop, bouwBoom, naarTekst, parseBord } from './boom';
 import styles from './styles.module.css';
 import { boomZoom } from './zoom';
@@ -103,15 +103,44 @@ export default function GameTree({ bord, waardes = false }: GameTreeProps): Reac
       breed.removeEventListener('change', meet);
     };
   }, [inTab]);
+  // Uitgezoomd is een bord klein: de knop toont de boom op ware grootte in
+  // een dialog, zoals een plaatje in een les (LesTabs/Vergroot.tsx).
+  const [groot, setGroot] = useState(false);
+  const dialoog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    if (groot) dialoog.current?.showModal?.();
+  }, [groot]);
+  const boom = (
+    <ul className={clsx(styles.boom, styles.kinderen)}>
+      <KnoopWeergave knoop={wortel} waardes={waardes} />
+    </ul>
+  );
+  const klein = zoom !== null && zoom < 1;
   return (
-    <div
-      ref={ref}
-      className={styles.omhulsel}
-      style={zoom === null || zoom === 1 ? undefined : { zoom }}
-    >
-      <ul className={clsx(styles.boom, styles.kinderen)}>
-        <KnoopWeergave knoop={wortel} waardes={waardes} />
-      </ul>
-    </div>
+    <>
+      {klein && (
+        <button type="button" className={styles.vergroot} onClick={() => setGroot(true)}>
+          Bekijk de boom groot
+        </button>
+      )}
+      <div ref={ref} className={styles.omhulsel} style={klein ? { zoom } : undefined}>
+        {boom}
+      </div>
+      {groot && (
+        <dialog
+          ref={dialoog}
+          className={styles.groot}
+          aria-label="De spelboom op ware grootte"
+          onClose={() => setGroot(false)}
+        >
+          <form method="dialog" className={styles.grootSluiten}>
+            <button type="submit" className="button button--secondary button--sm">
+              Sluiten
+            </button>
+          </form>
+          <div className={styles.omhulsel}>{boom}</div>
+        </dialog>
+      )}
+    </>
   );
 }

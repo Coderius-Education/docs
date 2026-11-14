@@ -1,8 +1,12 @@
 // Hoe klein de spelboom in een les-tabblad wordt (index.tsx), los van React
 // zodat het te testen is.
 
-/** Kleiner dan dit is een bord niet meer te lezen. */
-export const KLEINSTE_ZOOM = 0.5;
+/**
+ * Kleiner dan dit is een bord niet meer te lezen. Op 0,5 waren de labels in
+ * minimax 2 zeven pixels hoog; wie het groter wil, klikt op Bekijk de boom
+ * groot (index.tsx).
+ */
+export const KLEINSTE_ZOOM = 0.6;
 
 /**
  * De zoom waarop een boom van `ware` pixels hoog in `ruimte` pixels past: nooit
