@@ -59,8 +59,10 @@ rest is de oefenset.
 
 Regent het morgen? Maak `lees` en `beoordeel` af. Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code, en vul in `lees` `kenmerken` met `[temperatuur, wind, bewolkt]` en `labels` met 1 of 0 voor regen.
-2. Haal de print uit `lees`, en reken in `beoordeel` de gevoeligheid en de specificiteit uit.
+1. Draai de code: `lees` print elke rij, maar geeft nog lege lijsten terug. De code onderaan blijft zo.
+2. Zet in `lees` `[temperatuur, wind, bewolkt]` als getallen in `kenmerken`, en 1 of 0 voor regen in `labels`.
+3. Haal de print weg, en print in `beoordeel` eerst `labels` en `voorspellingen`.
+4. Reken in `beoordeel` de gevoeligheid en de specificiteit uit, en geef ze terug.
 
 Verwachte uitvoer:
 
@@ -105,9 +107,8 @@ print("specificiteit:", specificiteit)`} />
 <details>
 <summary>Tip</summary>
 
-Print in `beoordeel` eerst `labels` en `voorspellingen`: je ziet `[1, 0, 0, 0]`
-en `[1, 0, 1, 0]`. Hoeveel regendagen zitten er in de toets, en hoeveel droge
-dagen noemt de voorspeller ook droog?
+Bij stap 3 zie je `[1, 0, 0, 0]` en `[1, 0, 1, 0]`. Hoeveel regendagen zitten
+er in de toets, en hoeveel droge dagen noemt de voorspeller ook droog?
 
 </details>
 

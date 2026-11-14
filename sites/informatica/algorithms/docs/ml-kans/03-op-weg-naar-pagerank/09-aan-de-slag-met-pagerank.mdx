@@ -58,10 +58,13 @@ in plaats van `model[vandaag]`.
 
 ## Bouw zelf
 
-Twee wegen, één antwoord: maak `steekproef(n)` af. Begin klein, en breid de code stap voor stap uit:
+Twee wegen, één antwoord: maak `steekproef(n)` af, die `n` dagen weer kiest met
+`kansen_morgen` en per weer het deel van de dagen teruggeeft.
+Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code, en kies in `steekproef` vanaf `weer = "zon"` `n` keer het weer met `kansen_morgen(weer)`.
-2. Tel in `telling`, en geef met `for w in telling:` `telling[w] / n` terug. Hoe ver liggen de kolommen uit elkaar?
+1. Draai de code: achter elk weer staat 0, en daarachter de kans die `berekend()` uitrekent.
+2. Kies vanaf `weer = "zon"` `n` keer het weer met `kansen_morgen(weer)`, en tel het in `telling`.
+3. Geef met `for w in telling:` per weer `telling[w] / n` terug. Hoe ver liggen de kolommen uit elkaar?
 
 Verwachte uitvoer, bijvoorbeeld:
 

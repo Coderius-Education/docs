@@ -55,8 +55,10 @@ oefen je in de opdracht met je eigen `voorspel`, die hetzelfde doet.
 
 Koopt een bezoeker in maart met tien pagina's iets? Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code, en maak in de loop `maand = MAANDEN[rij[0]]` en `paginas = int(rij[1])`. Print `(maand, paginas)`.
-2. Zet `((maand, paginas), label)` in `voorbeelden` (`label` is 1 bij `"TRUE"`), en voorspel `(2, 10)` met `k = 1`.
+1. Draai de code: hij print elke rij. `voorspel` staat in de verborgen code.
+2. Maak in de loop `maand = MAANDEN[rij[0]]` en `paginas = int(rij[1])`, en print `(maand, paginas)`.
+3. Maak `label`: 1 als `rij[3]` gelijk is aan `"TRUE"`, en anders 0. Zet `((maand, paginas), label)` in `voorbeelden`.
+4. Print na de loop `voorspel((2, 10), voorbeelden, 1)`.
 
 Verwachte uitvoer:
 
