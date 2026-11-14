@@ -159,6 +159,10 @@ export default function PyRunnerImpl({
   const inTab = useInLesTab();
   const veldRef = useRef<HTMLDivElement>(null);
   const balkRef = useRef<HTMLDivElement>(null);
+  // Het uitklapblok met de code die al klaarstaat, onder de editor: dicht is
+  // het een regel, en die hoort bij de hoogte van het veld (in cfg was elk
+  // scherm met zo'n blok 75 pixels te lang).
+  const verborgenRef = useRef<HTMLDetailsElement>(null);
   const [veldHoogte, setVeldHoogte] = useState<number | null>(null);
   const [veldBreedte, setVeldBreedte] = useState<number | null>(null);
   const [teken, setTeken] = useState(TEKEN_PX);
@@ -380,7 +384,10 @@ export default function PyRunnerImpl({
   const editorMax =
     veldHoogte === null
       ? undefined
-      : veldHoogte - (balkRef.current?.offsetHeight ?? BALK) - (onder ? UITVOER_ONDER : 0);
+      : veldHoogte -
+        (balkRef.current?.offsetHeight ?? BALK) -
+        (verborgenRef.current?.open ? 0 : (verborgenRef.current?.offsetHeight ?? 0)) -
+        (onder ? UITVOER_ONDER : 0);
   // Stap voor stap neemt in een tabblad de plek van de editor en de uitvoer
   // in, op de hoogte die die samen hadden.
   const stapper =
@@ -504,7 +511,7 @@ export default function PyRunnerImpl({
             maxHeight={editorMax}
           />
           {verborgenCode && (
-            <details className={styles.verborgen}>
+            <details className={styles.verborgen} ref={verborgenRef}>
               <summary>
                 Toon de code die al klaarstaat ({verborgenCode.split('\n').length} regels)
               </summary>
