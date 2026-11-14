@@ -106,8 +106,9 @@ Chromium en doet daar wat een leerling in de speeltuin doet
 dus ook na een wijziging in `packages/python-runner`. De job `terminal` doet
 hetzelfde voor de oefenterminal van linux (`scripts/rooktest-linux.mjs`: Tab
 vult aan, ook na Esc en wegklikken; Esc en dan Tab gaat naar de knop
-Volgende; het antwoord uit de les vinkt elk doel af; de terminal plakt naast
-een open antwoord).
+Volgende; het antwoord uit de les vinkt elk doel af; met een open antwoord
+blijven de terminal en zijn doelen in beeld, en schuift het antwoord in zijn
+eigen vak).
 
 **De job `schermen` meet of elk scherm past**, per gebouwde cursus met
 les-tabbladen: `meet-les-tabs.mjs --bronnen=changed.json --streng`. Een
