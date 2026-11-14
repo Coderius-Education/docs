@@ -91,6 +91,8 @@ print(afstand((8, 8), (10, 6)))`} />
 
 ## Opdracht: hoe ver is elk voorbeeld?
 
+### De opdracht
+
 Je hebt een lijst voorbeelden: tuples van een maat en een soort, zoals
 `((8, 8), "appel")`. Print bij elk voorbeeld de soort en de afstand tot
 `nieuw`:
@@ -109,6 +111,8 @@ Begin klein, en breid de code stap voor stap uit:
 1. Draai de code: hij print elk voorbeeld als een tuple.
 2. Pak elk voorbeeld uit in twee variabelen, met `for maten, soort in voorbeelden`, en print `soort` en `maten`.
 3. Print in plaats van `maten` de afstand: `afstand(nieuw, maten)`.
+
+### Aan de slag
 
 <PyRunner initialCode={`def afstand(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])

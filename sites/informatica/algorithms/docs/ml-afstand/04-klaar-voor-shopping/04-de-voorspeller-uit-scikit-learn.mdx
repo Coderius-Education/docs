@@ -49,9 +49,11 @@ hem de oefenset: de kenmerken en de labels. Hij onthoudt ze, net zoals jouw
 lijst nieuwe bezoekers tegelijk, en geeft een lijst labels terug.
 
 scikit-learn draait op je eigen computer, niet in deze browser. Daarom
-oefen je hieronder met je eigen `voorspel`, die hetzelfde doet.
+oefen je in de opdracht met je eigen `voorspel`, die hetzelfde doet.
 
 ## Opdracht: jouw voorspeller op de webshop
+
+### De opdracht
 
 Lees de regels van de webshop, en zet elke bezoeker als voorbeeld in de vorm
 die je eigen `voorspel` kent: `((maand, paginas), label)`. Voorspel dan of
@@ -67,6 +69,8 @@ Begin klein, en breid de code stap voor stap uit:
 2. Maak in de loop `maand = MAANDEN[rij[0]]` en `paginas = int(rij[1])`, en print `(maand, paginas)`.
 3. Maak een variabele `label`: 1 als `rij[3]` gelijk is aan `"TRUE"`, en anders 0. Zet `((maand, paginas), label)` met `.append()` in `voorbeelden`.
 4. Print na de loop `voorspel((2, 10), voorbeelden, 1)`.
+
+### Aan de slag
 
 <PyRunner verborgen="knn" initialCode={`import csv
 
