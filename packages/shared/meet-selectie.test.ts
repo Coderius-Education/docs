@@ -10,6 +10,7 @@ const {
   docsMappen,
   lessenVoorMeting,
   moetGemetenWorden,
+  houdtNummers,
 } = require('./meet-selectie.js');
 const { alleSiteMappen, siteDir } = require('./sites.js');
 const { plan: maakPlan } = require('./wijzigingen.js');
@@ -39,6 +40,19 @@ describe('het adres van een lespagina', () => {
     expect(adresVanBron('docs/02-editor-leren-kennen/01-interface.md', '')).toBe(
       'editor-leren-kennen/interface',
     );
+  });
+
+  it('houdt het nummer als de site dat doet (numberPrefixParser: false)', () => {
+    // Algoritmes: docs/bubble-sort/01-concept.mdx is de les
+    // docs/bubble-sort/01-concept. Zonder nummer vond de meting hem niet.
+    expect(adresVanBron('docs/bubble-sort/bouwen/04-de-swap.mdx', '', { nummers: true })).toBe(
+      'bubble-sort/bouwen/04-de-swap',
+    );
+    expect(houdtNummers("docs: { numberPrefixParser: false, sidebarPath: './s.ts' }")).toBe(true);
+    expect(houdtNummers("docs: { sidebarPath: './s.ts' }")).toBe(false);
+    expect(
+      houdtNummers(readFileSync(join(ROOT, siteDir('algorithms'), 'docusaurus.config.ts'), 'utf8')),
+    ).toBe(true);
   });
 
   it('volgt slug en id uit de front matter', () => {
@@ -216,7 +230,16 @@ describe('in deze repository', () => {
   // Alleen met een build: in CI heeft de job test er geen, en daar bewaakt
   // de job `schermen` het met --streng (`ontbreekt`). Zonder build staat de
   // test op overgeslagen, niet op groen.
-  const CURSUSSEN = ['linux', 'ctf', 'editor', 'web', 'python', 'robotica', 'fullstack'];
+  const CURSUSSEN = [
+    'linux',
+    'ctf',
+    'editor',
+    'web',
+    'python',
+    'algorithms',
+    'robotica',
+    'fullstack',
+  ];
   const gebouwd = CURSUSSEN.filter((site) => existsSync(join(ROOT, siteDir(site), 'build')));
 
   // Elke les van een cursus met tabbladen die al gebouwd is, moet bij zijn
@@ -234,10 +257,12 @@ describe('in deze repository', () => {
           if (statSync(p).isDirectory()) {
             if (!['assets', 'img', 'pyodide', 'oud'].includes(relative(build, p))) loop(p);
           } else if (
-            n === 'index.html' &&
+            /\.html$/.test(n) &&
+            n !== '404.html' &&
             /data-les-(tabs|zonder-tabs)/.test(readFileSync(p, 'utf8'))
           )
-            lessen.push(relative(build, d));
+            // `les/index.html`, of `les.html` bij trailingSlash: false.
+            lessen.push(relative(build, n === 'index.html' ? d : p.slice(0, -'.html'.length)));
         }
       };
       loop(build);
@@ -251,15 +276,17 @@ describe('in deze repository', () => {
         }
       };
       zoek(map);
+      const config = readFileSync(join(map, 'docusaurus.config.ts'), 'utf8');
+      const nummers = houdtNummers(config);
       const adressen = bronnen
-        .map((b) => adresVanBron(b, readFileSync(join(map, b), 'utf8')))
+        .map((b) => adresVanBron(b, readFileSync(join(map, b), 'utf8'), { nummers }))
         .filter((a): a is string => a !== null);
       for (const les of lessen)
         if (!adressen.some((a) => les === a || les.endsWith(`/${a}`))) fout.push(`${site}: ${les}`);
       // Elke lespagina als gewijzigd; een bron zonder adres (een README, een
       // onderdeel) zou de selectie "alles" laten kiezen en blijft weg.
       const lespaginas = bronnen.filter(
-        (b) => adresVanBron(b, readFileSync(join(map, b), 'utf8')) !== null,
+        (b) => adresVanBron(b, readFileSync(join(map, b), 'utf8'), { nummers }) !== null,
       );
       const keuze = lessenVoorMeting({
         plan: {
@@ -270,7 +297,8 @@ describe('in deze repository', () => {
         siteMap: siteDir(site),
         lessen,
         leesBron: (pad: string) => readFileSync(join(ROOT, pad), 'utf8'),
-        mappen: docsMappen(readFileSync(join(map, 'docusaurus.config.ts'), 'utf8')),
+        mappen: docsMappen(config),
+        nummers,
       });
       expect(keuze.alles, site).toBe(false);
       for (const pad of keuze.ontbreekt) fout.push(`${site}: geen les voor ${pad}`);

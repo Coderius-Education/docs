@@ -67,11 +67,27 @@ function moetGemetenWorden(rel, bron, mappen) {
 }
 
 /**
+ * Laat Docusaurus de nummers vooraan staan? Algoritmes zet
+ * `numberPrefixParser: false`: daar is `docs/bubble-sort/01-concept.mdx` de
+ * les `docs/bubble-sort/01-concept`.
+ *
+ * @param {string} config de bron van docusaurus.config.ts
+ */
+function houdtNummers(config) {
+  return /\bnumberPrefixParser:\s*false\b/.test(config);
+}
+
+/**
  * Het adres van een lespagina in de build, zonder de map van de docs-plugin
  * ervoor (`docs/terminal/jokertekens.mdx` -> `terminal/jokertekens`), of
  * null als het bestand geen lespagina is.
+ *
+ * @param {string} rel
+ * @param {string} bron
+ * @param {{ nummers?: boolean }} [opties] `nummers`: de site laat de nummers
+ *   vooraan staan (houdtNummers)
  */
-function adresVanBron(rel, bron) {
+function adresVanBron(rel, bron, { nummers = false } = {}) {
   if (!/\.mdx?$/.test(rel)) return null;
   const delen = rel.split('/');
   // Een pagina in src/pages heeft het pad erna; een les het pad na de map
@@ -82,7 +98,10 @@ function adresVanBron(rel, bron) {
   else return null;
   // Een deel (`_delen/`, `_stap.mdx`) staat in de les die het importeert.
   if (pad.some((d) => d.startsWith('_'))) return null;
-  pad = pad.map((d, i) => zonderNummer(i === pad.length - 1 ? d.replace(/\.mdx?$/, '') : d));
+  pad = pad.map((d, i) => {
+    const deel = i === pad.length - 1 ? d.replace(/\.mdx?$/, '') : d;
+    return nummers ? deel : zonderNummer(deel);
+  });
   const laatste = pad.at(-1) ?? '';
   if (/^(index|readme)$/i.test(laatste) || laatste === pad.at(-2)) pad = pad.slice(0, -1);
   const { slug, id } = frontMatter(bron);
@@ -105,12 +124,22 @@ function adresVanBron(rel, bron) {
  * @param {(pad: string) => string | null} opties.leesBron de bron van een
  *   bestand in de checkout, of null als het er niet (meer) is
  * @param {string[]} [opties.mappen] de docs-mappen van de site (docsMappen)
+ * @param {boolean} [opties.nummers] de site laat de nummers vooraan staan
+ *   (houdtNummers)
  * @returns {{ alles: boolean, lessen: string[], nietGevonden: string[],
  *   ontbreekt: string[], reden: string }} `nietGevonden`: gewijzigde
  *   lespagina's zonder les in de build; `ontbreekt`: wie daarvan er wel een
  *   had moeten hebben (moetGemetenWorden)
  */
-function lessenVoorMeting({ plan, site, siteMap, lessen, leesBron, mappen = ['docs'] }) {
+function lessenVoorMeting({
+  plan,
+  site,
+  siteMap,
+  lessen,
+  leesBron,
+  mappen = ['docs'],
+  nummers = false,
+}) {
   const alles = (reden) => ({ alles: true, lessen, nietGevonden: [], ontbreekt: [], reden });
   if (plan.volledig) return alles('volledige run');
   if (plan.schermen?.alles) return alles('het meetscript is veranderd');
@@ -126,7 +155,7 @@ function lessenVoorMeting({ plan, site, siteMap, lessen, leesBron, mappen = ['do
     const bron = leesBron(pad);
     // Een weggehaalde les valt weg; niets te meten.
     if (bron === null) continue;
-    const adres = adresVanBron(pad.slice(prefix.length), bron);
+    const adres = adresVanBron(pad.slice(prefix.length), bron, { nummers });
     if (adres === null) return alles(`${pad} kan elke les raken`);
     const passend = lessen.filter((les) => les === adres || les.endsWith(`/${adres}`));
     // Een pagina zonder tabbladen die niet als één scherm meetelt (een
@@ -149,6 +178,7 @@ function lessenVoorMeting({ plan, site, siteMap, lessen, leesBron, mappen = ['do
 module.exports = {
   adresVanBron,
   docsMappen,
+  houdtNummers,
   lessenVoorMeting,
   moetGemetenWorden,
   zonderNummer,

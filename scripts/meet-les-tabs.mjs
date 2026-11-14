@@ -151,6 +151,18 @@ function serveer() {
   return new Promise((klaar) => server.listen(0, '127.0.0.1', () => klaar(server)));
 }
 
+/**
+ * De les van een gebouwd html-bestand, als pad onder de site, of null. Een site
+ * met `trailingSlash: false` (algoritmes) bouwt een les als `les.html`, de
+ * andere als `les/index.html`; de server hierboven vindt ze allebei.
+ */
+function lesVan(map, naam) {
+  if (naam === 'index.html') return relative(BUILD, map);
+  if (naam.endsWith('.html') && naam !== '404.html')
+    return relative(BUILD, join(map, naam.slice(0, -'.html'.length)));
+  return null;
+}
+
 /** De gebouwde pagina's met tabbladen, als pad onder de site. */
 /** Mappen in de build waar geen lessen staan, en die groot zijn. */
 const GEEN_LESSEN = ['assets', 'img', 'pyodide', 'oud'];
@@ -162,9 +174,9 @@ function lessen(merk = 'data-les-tabs') {
       const pad = join(map, naam);
       if (statSync(pad).isDirectory()) {
         if (!GEEN_LESSEN.includes(relative(BUILD, pad))) loop(pad);
-      } else if (naam === 'index.html') {
+      } else if (lesVan(map, naam) !== null) {
         const html = readFileSync(pad, 'utf8');
-        if (html.includes(merk)) uit.push(relative(BUILD, map));
+        if (html.includes(merk)) uit.push(lesVan(map, naam));
       }
     }
   };
@@ -185,10 +197,10 @@ function alleLessen() {
       const pad = join(map, naam);
       if (statSync(pad).isDirectory()) {
         if (!GEEN_LESSEN.includes(relative(BUILD, pad))) loop(pad);
-      } else if (naam === 'index.html') {
+      } else if (lesVan(map, naam) !== null) {
         const html = readFileSync(pad, 'utf8');
         if (html.includes('data-les-tabs') || html.includes('data-les-zonder-tabs'))
-          uit.push(relative(BUILD, map));
+          uit.push(lesVan(map, naam));
       }
     }
   };
@@ -204,15 +216,21 @@ if (!existsSync(BUILD)) {
 // Met --bronnen: alleen de lessen die de wijziging raakt.
 let KEUZE = null;
 if (BRONNEN) {
-  const { docsMappen, lessenVoorMeting } = require('../packages/shared/meet-selectie.js');
+  const {
+    docsMappen,
+    houdtNummers,
+    lessenVoorMeting,
+  } = require('../packages/shared/meet-selectie.js');
   const config = join(siteDir(SITE), 'docusaurus.config.ts');
+  const configBron = existsSync(config) ? readFileSync(config, 'utf8') : '';
   const keuze = lessenVoorMeting({
     plan: JSON.parse(readFileSync(BRONNEN, 'utf8')),
     site: SITE,
     siteMap: siteDir(SITE),
     lessen: alleLessen(),
     leesBron: (pad) => (existsSync(pad) ? readFileSync(pad, 'utf8') : null),
-    mappen: existsSync(config) ? docsMappen(readFileSync(config, 'utf8')) : ['docs'],
+    mappen: configBron ? docsMappen(configBron) : ['docs'],
+    nummers: houdtNummers(configBron),
   });
   console.error(
     keuze.alles
