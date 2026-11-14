@@ -47,12 +47,22 @@ van de laatste kolom staat.
 
 ## De CS50-projecten
 
+### Drie projecten kiezen
+
 De CS50-projecten zijn Engelstalig, en je maakt ze op je eigen computer. Bij
 elk project hoort een gratis hoorcollege dat de theorie uitlegt; begin daar.
-Ze staan hier in de volgorde van de route. Voor niveau 1 maak je er drie,
-en welke drie kies je zelf. Traffic is het zwaarste en telt voor twee. Op
-welke concepten je docent je beoordeelt, staat bij
+In de volgende stappen staan ze in de volgorde van de route. Voor niveau 1
+maak je er drie, en welke drie kies je zelf. Traffic is het zwaarste en telt
+voor twee. Op welke concepten je docent je beoordeelt, staat bij
 [de leerdoelen van niveau 1](site:algorithms/leerdoelen/niveau-1).
+
+Liever eerst oefenen zonder iets te installeren?
+[Kaggle Learn](https://www.kaggle.com/learn) heeft korte gratis cursussen
+die volledig in de browser draaien (gratis account nodig). Begin met
+[Intro to Machine Learning](https://www.kaggle.com/learn/intro-to-machine-learning):
+in een paar uur bouw je je eerste voorspellende model met beslisbomen.
+[Intermediate Machine Learning](https://www.kaggle.com/learn/intermediate-machine-learning)
+sluit daar direct op aan.
 
 ### Shopping
 
@@ -128,14 +138,3 @@ Het vraagt veel Python voor wat het aan machine learning toevoegt, daarom
 staat het niet in de route.
 
 [cs50.harvard.edu/ai/projects/3/crossword](https://cs50.harvard.edu/ai/projects/3/crossword/)
-
-## Kaggle: oefenen in de browser
-
-Liever niets installeren? [Kaggle Learn](https://www.kaggle.com/learn) heeft
-korte gratis cursussen die volledig in de browser draaien (gratis account
-nodig). Begin met
-[Intro to Machine Learning](https://www.kaggle.com/learn/intro-to-machine-learning):
-in een paar uur bouw je je eerste voorspellende model met beslisbomen.
-[Intermediate Machine Learning](https://www.kaggle.com/learn/intermediate-machine-learning)
-sluit daar direct op aan.
-
