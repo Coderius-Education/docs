@@ -127,6 +127,15 @@ Vanaf `A` (afstand 0) krijgen `B` en `C` zo in één lus hun afstand.
 
 De lus over de buren van `A`, met een print bij elke update:
 
+Verwachte uitvoer:
+
+```
+Voor: {'A': 0, 'B': inf, 'C': inf, 'D': inf}
+    update B → 4
+    update C → 2
+Na:   {'A': 0, 'B': 4, 'C': 2, 'D': inf}
+```
+
 <PyRunner initialCode={`graph = {
     'A': [('B', 4), ('C', 2)],
     'B': [('A', 4), ('D', 1)],
@@ -134,7 +143,8 @@ De lus over de buren van `A`, met een print bij elke update:
     'D': [('B', 1), ('C', 8)],
 }
 
-afstanden = {'A': 0, 'B': float('inf'), 'C': float('inf'), 'D': float('inf')}
+afstanden = {'A': 0, 'B': float('inf'),
+             'C': float('inf'), 'D': float('inf')}
 huidige = 'A'
 
 print(f"Voor: {afstanden}")
@@ -145,21 +155,7 @@ for buur, gewicht in graph[huidige]:
         print(f"    update {buur} → {nieuwe}")
 print(f"Na:   {afstanden}")`} />
 
-<details>
-<summary>Verwachte uitvoer</summary>
-
-```
-Voor: {'A': 0, 'B': inf, 'C': inf, 'D': inf}
-    update B → 4
-    update C → 2
-Na:   {'A': 0, 'B': 4, 'C': 2, 'D': inf}
-```
-
 Dat is ronde 1 van je papieren tabel.
-
-</details>
-
-## Wat nu nog mist
 
 Eén node uitwerken lukt. Welke node de volgende is, dat is bouwsteen 4.
 

@@ -11,18 +11,21 @@ keer maakt.
 
 ### Wat er misgaat: een kant ontbreekt
 
-Je zet een edge maar één kant op in de dict. Geen foutmelding, wel een fout antwoord: sommige nodes blijven op `inf`
-staan terwijl ze bereikbaar zijn.
+Je zet een edge maar één kant op in de dict. Geen foutmelding, wel een
+fout antwoord: sommige nodes blijven op `inf` staan terwijl ze bereikbaar
+zijn.
 
 **Oorzaak:** in een graph waar je elke weg beide kanten op mag, staat
 elke verbinding twee keer in de dict. Mis je er één, dan bestaat die
 kant voor het algoritme niet.
 
+**Oplossing:** zet de edge ook onder de andere node.
+
 ```python
-# FOUT — A → B staat alleen onder A
+# FOUT: A → B staat alleen onder A
 graph = {
     'A': [('B', 4)],
-    'B': [],            # ← B kan niet terug naar A
+    'B': [],
 }
 
 # GOED
@@ -49,12 +52,10 @@ for u, v, w in edges:
     graph[v].append((u, w))
 ```
 
-## `bezocht.add()` vergeten
+## Markeren vergeten
 
-### Wat er misgaat: een lus zonder eind
-
-Geen foutmelding, Python loopt door zonder einde. De browser-tab
-bevriest, en de Reset-knop reageert dan ook niet meer, want Python
+Geen foutmelding, Python loopt door zonder einde. Het tabblad van de
+browser bevriest, en de Reset-knop reageert dan ook niet meer, want Python
 draait in dezelfde tab als de les. Sluit de tab en open de les opnieuw.
 Je code ben je dan kwijt, dus kopieer hem eerst naar een kladblok als je
 iets uitprobeert wat mis kan gaan.
@@ -62,32 +63,23 @@ iets uitprobeert wat mis kan gaan.
 **Oorzaak:** zonder `bezocht.add(huidige)` blijf je dezelfde node steeds
 opnieuw kiezen. De hoofdlus eindigt nooit.
 
+**Oplossing:** markeer de node zodra je hem gekozen hebt, vóór je opnieuw
+kiest. Of de regel vóór of ná de relax-lus staat, maakt niet uit: die lus
+kijkt niet naar `bezocht`.
+
+{/* niet-compileren: alleen de regels rond de fout, uit de hoofdlus */}
 ```python
-while True:
-    huidige = kies_volgende(afstanden, bezocht)
+# FOUT
     if huidige is None:
         break
-    # bezocht.add(huidige) ← VERGETEN!
     for buur, gewicht in graph[huidige]:
-        ...
+
+# GOED
+    if huidige is None:
+        break
+    bezocht.add(huidige)
+    for buur, gewicht in graph[huidige]:
 ```
-
-### Oplossing: markeer de node
-
-Zet `bezocht.add(huidige)` in de hoofdlus: markeer de node zodra je hem
-gekozen hebt, vóór je opnieuw kiest:
-
-```python
-huidige = kies_volgende(afstanden, bezocht)
-if huidige is None:
-    break
-bezocht.add(huidige)
-for buur, gewicht in graph[huidige]:
-    ...
-```
-
-Of de regel vóór of ná de relax-lus staat maakt niet uit — die lus kijkt
-niet naar `bezocht`. Dat hij er staat wel.
 
 ## Negatieve gewichten
 

@@ -30,12 +30,16 @@ Dezelfde kaart als dict, met per stad zijn buren en de reistijd:
 
 ```python
 steden = {
-    'Amsterdam':  [('Utrecht', 30), ('Den Haag', 25)],
-    'Utrecht':    [('Amsterdam', 30), ('Arnhem', 60), ('Rotterdam', 45)],
-    'Arnhem':     [('Utrecht', 60), ('Maastricht', 80), ('Eindhoven', 90)],
-    'Den Haag':   [('Amsterdam', 25), ('Rotterdam', 25)],
-    'Rotterdam':  [('Utrecht', 45), ('Den Haag', 25), ('Eindhoven', 40)],
-    'Eindhoven':  [('Rotterdam', 40), ('Arnhem', 90), ('Maastricht', 50)],
+    'Amsterdam': [('Utrecht', 30), ('Den Haag', 25)],
+    'Utrecht': [('Amsterdam', 30), ('Arnhem', 60),
+                ('Rotterdam', 45)],
+    'Arnhem': [('Utrecht', 60), ('Maastricht', 80),
+               ('Eindhoven', 90)],
+    'Den Haag': [('Amsterdam', 25), ('Rotterdam', 25)],
+    'Rotterdam': [('Utrecht', 45), ('Den Haag', 25),
+                  ('Eindhoven', 40)],
+    'Eindhoven': [('Rotterdam', 40), ('Arnhem', 90),
+                  ('Maastricht', 50)],
     'Maastricht': [('Arnhem', 80), ('Eindhoven', 50)],
 }
 ```
@@ -48,6 +52,12 @@ Schrijf een functie `kortste_reis(graph, start, doel)` die de afstand
 Vul `kortste_reis` aan; `kies_volgende` staat al klaar, en je code van
 de vorige pagina's mag je gebruiken. De tests zoeken drie reizen op de
 kaart van De uitdaging.
+
+:::caution
+Dijkstra en het pad terugvinden zijn allebei een while-loop. Stopt er een
+nooit, dan loopt het tabblad van de browser vast. Kopieer je code eerst
+naar een kladblok.
+:::
 
 {/* niet-draaien: startcode; de asserts falen tot kortste_reis is ingevuld */}
 <PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
@@ -71,26 +81,38 @@ def kortste_reis(graph, start, doel):
 
 
 steden = {
-    'Amsterdam':  [('Utrecht', 30), ('Den Haag', 25)],
-    'Utrecht':    [('Amsterdam', 30), ('Arnhem', 60), ('Rotterdam', 45)],
-    'Arnhem':     [('Utrecht', 60), ('Maastricht', 80), ('Eindhoven', 90)],
-    'Den Haag':   [('Amsterdam', 25), ('Rotterdam', 25)],
-    'Rotterdam':  [('Utrecht', 45), ('Den Haag', 25), ('Eindhoven', 40)],
-    'Eindhoven':  [('Rotterdam', 40), ('Arnhem', 90), ('Maastricht', 50)],
+    'Amsterdam': [('Utrecht', 30), ('Den Haag', 25)],
+    'Utrecht': [('Amsterdam', 30), ('Arnhem', 60),
+                ('Rotterdam', 45)],
+    'Arnhem': [('Utrecht', 60), ('Maastricht', 80),
+               ('Eindhoven', 90)],
+    'Den Haag': [('Amsterdam', 25), ('Rotterdam', 25)],
+    'Rotterdam': [('Utrecht', 45), ('Den Haag', 25),
+                  ('Eindhoven', 40)],
+    'Eindhoven': [('Rotterdam', 40), ('Arnhem', 90),
+                  ('Maastricht', 50)],
     'Maastricht': [('Arnhem', 80), ('Eindhoven', 50)],
 }
 
 reizen = {
-    ('Amsterdam', 'Maastricht'): (140, ['Amsterdam', 'Den Haag', 'Rotterdam', 'Eindhoven', 'Maastricht']),
-    ('Den Haag', 'Arnhem'): (115, ['Den Haag', 'Amsterdam', 'Utrecht', 'Arnhem']),
-    ('Rotterdam', 'Maastricht'): (90, ['Rotterdam', 'Eindhoven', 'Maastricht']),
+    ('Amsterdam', 'Maastricht'): (140, ['Amsterdam', 'Den Haag',
+        'Rotterdam', 'Eindhoven', 'Maastricht']),
+    ('Den Haag', 'Arnhem'): (115, ['Den Haag', 'Amsterdam',
+        'Utrecht', 'Arnhem']),
+    ('Rotterdam', 'Maastricht'): (90, ['Rotterdam', 'Eindhoven',
+        'Maastricht']),
 }
 
-for (start, doel), (verwachte_afstand, verwacht_pad) in reizen.items():
+for (start, doel), (minuten, route) in reizen.items():
     afstand, pad = kortste_reis(steden, start, doel)
-    print(f"{start} → {doel}: {afstand} min  via {' → '.join(pad)}")
-    assert afstand == verwachte_afstand, f"{start} → {doel} hoort {verwachte_afstand} min te zijn, is {afstand}"
-    assert pad == verwacht_pad, f"{start} → {doel} hoort via {' → '.join(verwacht_pad)} te gaan"
+    via = ' → '.join(pad)
+    print(f"{start} → {doel}: {afstand} min  via {via}")
+    assert afstand == minuten, (
+        f"{start} → {doel} hoort {minuten} min, niet {afstand}"
+    )
+    assert pad == route, (
+        f"{start} → {doel} hoort via {' → '.join(route)} te gaan"
+    )
 print("Alle tests geslaagd.")`} />
 
 <details>
@@ -164,26 +186,38 @@ def kortste_reis(graph, start, doel):
 
 
 steden = {
-    'Amsterdam':  [('Utrecht', 30), ('Den Haag', 25)],
-    'Utrecht':    [('Amsterdam', 30), ('Arnhem', 60), ('Rotterdam', 45)],
-    'Arnhem':     [('Utrecht', 60), ('Maastricht', 80), ('Eindhoven', 90)],
-    'Den Haag':   [('Amsterdam', 25), ('Rotterdam', 25)],
-    'Rotterdam':  [('Utrecht', 45), ('Den Haag', 25), ('Eindhoven', 40)],
-    'Eindhoven':  [('Rotterdam', 40), ('Arnhem', 90), ('Maastricht', 50)],
+    'Amsterdam': [('Utrecht', 30), ('Den Haag', 25)],
+    'Utrecht': [('Amsterdam', 30), ('Arnhem', 60),
+                ('Rotterdam', 45)],
+    'Arnhem': [('Utrecht', 60), ('Maastricht', 80),
+               ('Eindhoven', 90)],
+    'Den Haag': [('Amsterdam', 25), ('Rotterdam', 25)],
+    'Rotterdam': [('Utrecht', 45), ('Den Haag', 25),
+                  ('Eindhoven', 40)],
+    'Eindhoven': [('Rotterdam', 40), ('Arnhem', 90),
+                  ('Maastricht', 50)],
     'Maastricht': [('Arnhem', 80), ('Eindhoven', 50)],
 }
 
 reizen = {
-    ('Amsterdam', 'Maastricht'): (140, ['Amsterdam', 'Den Haag', 'Rotterdam', 'Eindhoven', 'Maastricht']),
-    ('Den Haag', 'Arnhem'): (115, ['Den Haag', 'Amsterdam', 'Utrecht', 'Arnhem']),
-    ('Rotterdam', 'Maastricht'): (90, ['Rotterdam', 'Eindhoven', 'Maastricht']),
+    ('Amsterdam', 'Maastricht'): (140, ['Amsterdam', 'Den Haag',
+        'Rotterdam', 'Eindhoven', 'Maastricht']),
+    ('Den Haag', 'Arnhem'): (115, ['Den Haag', 'Amsterdam',
+        'Utrecht', 'Arnhem']),
+    ('Rotterdam', 'Maastricht'): (90, ['Rotterdam', 'Eindhoven',
+        'Maastricht']),
 }
 
-for (start, doel), (verwachte_afstand, verwacht_pad) in reizen.items():
+for (start, doel), (minuten, route) in reizen.items():
     afstand, pad = kortste_reis(steden, start, doel)
-    print(f"{start} → {doel}: {afstand} min  via {' → '.join(pad)}")
-    assert afstand == verwachte_afstand, f"{start} → {doel} hoort {verwachte_afstand} min te zijn, is {afstand}"
-    assert pad == verwacht_pad, f"{start} → {doel} hoort via {' → '.join(verwacht_pad)} te gaan"
+    via = ' → '.join(pad)
+    print(f"{start} → {doel}: {afstand} min  via {via}")
+    assert afstand == minuten, (
+        f"{start} → {doel} hoort {minuten} min, niet {afstand}"
+    )
+    assert pad == route, (
+        f"{start} → {doel} hoort via {' → '.join(route)} te gaan"
+    )
 print("Alle tests geslaagd.")
 ```
 
@@ -235,7 +269,8 @@ def kortste_reizen(graph, start, doelen):
     return uitkomst
 
 
-reizen_vanuit_amsterdam = kortste_reizen(steden, 'Amsterdam', ['Maastricht', 'Arnhem', 'Eindhoven'])
+doelen = ['Maastricht', 'Arnhem', 'Eindhoven']
+reizen_vanuit_amsterdam = kortste_reizen(steden, 'Amsterdam', doelen)
 for doel, (afstand, pad) in reizen_vanuit_amsterdam.items():
     print(f"{doel}: {afstand} min via {' → '.join(pad)}")
 ```

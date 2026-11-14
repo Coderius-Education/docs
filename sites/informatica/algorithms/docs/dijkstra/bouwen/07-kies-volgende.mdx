@@ -98,6 +98,15 @@ print("Volgende node:", beste_node)`} />
 
 Dit gebeurt elke ronde opnieuw, dus het wordt een functie:
 
+Verwachte uitvoer:
+
+```
+A
+C
+B
+None
+```
+
 <PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
     beste_node = None
     kleinste = float('inf')
@@ -112,28 +121,14 @@ Dit gebeurt elke ronde opnieuw, dus het wordt een functie:
 
 afstanden = {'A': 0, 'B': 4, 'C': 2, 'D': float('inf')}
 
-print(kies_volgende(afstanden, set()))               # A  (niets bezocht)
-print(kies_volgende(afstanden, {'A'}))                # C  (A klaar)
-print(kies_volgende(afstanden, {'A', 'C'}))           # B  (A en C klaar)
-print(kies_volgende(afstanden, {'A', 'B', 'C', 'D'})) # None  (alles klaar)`} />
-
-<details>
-<summary>Verwachte uitvoer</summary>
-
-```
-A
-C
-B
-None
-```
+print(kies_volgende(afstanden, set()))  # A
+print(kies_volgende(afstanden, {'A'}))  # C
+print(kies_volgende(afstanden, {'A', 'C'}))  # B
+print(kies_volgende(afstanden, {'A', 'B', 'C', 'D'}))  # None`} />
 
 Zonder bezochte nodes wint `A` met 0. Met `A` bezocht is `C` de laagste
 die overblijft, met `A` en `C` bezocht wint `B`, en met alles bezocht
 komt niemand door het filter: `None`, ons stopsignaal.
-
-</details>
-
-## Wat nu nog mist
 
 De graph (bouwsteen 1), de tabel (2), relax (3) en kies volgende (4)
 staan er nu elk apart. Samen vormen ze één ronde van Dijkstra, één rij
