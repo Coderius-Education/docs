@@ -34,14 +34,11 @@ tekenen kiest `(7, 7)`, omdat `sorted` bij gelijke afstand verder kijkt.
 
 ## Bekijk de buren
 
-De code in de editor tekent de voorbeelden: elk stuk fruit staat op zijn lengte en
-breedte, het nieuwe stuk is het zwarte kruis, en een stippellijn wijst naar
-elk van de `k` buren die meestemmen. Het tekenen staat in de verborgen code
-onder de editor.
-
-Verander `nieuw` en `k`, en kijk welke buren er meestemmen. Bij `k = 1` wijst
-er één lijn naar de vergissing `(10, 6)`; bij `k = 3` stemmen er twee appels
-mee.
+De code in de editor tekent de voorbeelden: elk stuk fruit staat op zijn
+lengte en breedte, het nieuwe stuk is het zwarte kruis, en een stippellijn
+wijst naar elk van de `k` buren die meestemmen. Verander `nieuw` en `k`, en
+kijk welke buren er meestemmen. Bij `k = 1` wijst er één lijn naar de
+vergissing `(10, 6)`; bij `k = 3` stemmen er twee appels mee.
 
 <PyRunner verborgen="fruit-tekenen" initialCode={`voorbeelden = [
     ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
@@ -63,16 +60,11 @@ zijn de buren.
 Schuif je het kruis van de appels naar de bananen, dan slaat de voorspelling
 ergens om. Daar ligt de **grens** tussen de soorten.
 
-## Opdracht: waar ligt de grens?
+## Opdracht
 
-Schuif een stuk fruit van 6 centimeter breed van lengte 8 naar lengte 18, en
-print bij elke lengte wat `voorspel` zegt.
+Waar ligt de grens tussen appel en banaan? Begin klein, en breid de code stap voor stap uit:
 
-In de editor staan de voorbeelden en één voorspelling; `voorspel` uit de
-vorige stap staat in de verborgen code onder de editor.
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print de voorspelling voor `(10, 6)` met `k = 3`.
+1. Draai de code: `voorspel` uit de klaargezette code voorspelt `(10, 6)` met `k = 3`.
 2. Zet er een loop `for lengte in range(8, 19)` omheen, en print bij elke lengte de voorspelling voor `(lengte, 6)`.
 3. Zet `k` op 1. Bij welke lengte slaat het nu om?
 

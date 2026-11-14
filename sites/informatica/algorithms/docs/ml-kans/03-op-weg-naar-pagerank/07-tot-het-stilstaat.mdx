@@ -51,22 +51,16 @@ de loop eerst `nieuw` uit, dan het verschil met `verdeling`, en pas daarna zet
 je `verdeling = nieuw`. Andersom vergelijk je de nieuwe verdeling met
 zichzelf.
 
-## Opdracht: tot het stilstaat
+## Opdracht
 
-Reken de verdeling door tot hij stilstaat, en print hoeveel dagen dat duurde.
-
-In de editor rekent de code één dag uit, en het verschil met vandaag.
+Reken door tot de verdeling stilstaat, en print hoeveel dagen dat duurde.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij print het verschil met vandaag: 0.5.
-2. Zet `verschil = 1` boven `nieuw = {}`, en zet alles vanaf `nieuw = {}` in een `while verschil >= 0.001:`. Zet aan het eind van de loop `verdeling = nieuw`.
+2. Zet alles vanaf `nieuw = {}` in `while verschil >= 0.001:`, met `verschil = 1` erboven en `verdeling = nieuw` aan het eind.
 3. Tel de dagen in `dagen`, en print na de loop het aantal dagen en de verdeling, afgerond op drie cijfers.
 
-:::caution
-Stopt je `while` nooit, dan loopt het tabblad van de browser vast: de editor
-heeft geen stopknop. Kopieer je code daarom eerst naar een kladblok voordat je
-op Voer uit drukt.
-:::
+**Pas op:** stopt je `while` nooit, dan loopt het tabblad van de browser vast. Kopieer je code eerst naar een kladblok.
 
 Verwachte uitvoer:
 
