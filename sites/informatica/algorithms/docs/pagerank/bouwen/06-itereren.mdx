@@ -61,6 +61,12 @@ grootste van de twee; zo houd je de grootste verandering bij.
 
 ## Bouw en test
 
+:::caution
+Je schrijft hier een while-loop. Haal je de `return` weg zonder er een
+`if` omheen te zetten, dan stopt hij nooit en loopt het tabblad van de
+browser vast. Kopieer je code eerst naar een kladblok.
+:::
+
 {/* niet-draaien: startcode; de return stopt de lus meteen, dus de test faalt op de startverdeling */}
 <PyRunner rows={16} initialCode={`WEB = {
     "A": {"B", "C"},
@@ -90,11 +96,11 @@ def pagerank(web, d=0.85, epsilon=1e-9):
     rank = startverdeling(web)
     while True:
         # Vul aan:
-        # 1. bereken een NIEUWE dict met nieuwe_rank(...) voor elke pagina,
+        # 1. maak een NIEUWE dict met nieuwe_rank(...) per pagina,
         #    op basis van de huidige 'rank'
         # 2. bepaal de grootste verandering t.o.v. 'rank'
         # 3. zet rank = nieuw
-        # 4. stop zodra die verandering < epsilon is: zet de return
+        # 4. stop als die verandering < epsilon is: zet de return
         #    hieronder in een if. Nu stopt de lus al na de start.
         return rank
 
@@ -104,17 +110,13 @@ r = pagerank(WEB)
 afgerond = {}
 for p in r:
     afgerond[p] = round(r[p], 4)
-assert afgerond == {"A": 0.3725, "B": 0.1958, "C": 0.3941, "D": 0.0375}, afgerond
+assert afgerond == {"A": 0.3725, "B": 0.1958,
+                    "C": 0.3941, "D": 0.0375}, afgerond
 assert round(sum(r.values()), 6) == 1.0
 
 print("PageRank werkt ✓")
 for p in sorted(r, key=lambda x: -r[x]):
     print(f"    {p}: {r[p]:.4f}")`} />
-
-Haal je de `return` weg zonder er een `if` omheen te zetten, dan loopt de
-lus **oneindig** door en de tab bevriest: Python draait in dezelfde tab als
-de pagina. Kopieer je code daarom eerst naar een kladblok voordat je op Voer
-uit drukt.
 
 <details>
 <summary>Antwoord</summary>
