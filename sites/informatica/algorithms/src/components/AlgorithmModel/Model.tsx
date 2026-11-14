@@ -462,6 +462,107 @@ export default function Model({
     hoogte === null ? undefined : hoogte - BINNENRAND - (kopRef.current?.offsetHeight ?? PANEELKOP);
   const passedCount = testResults.filter((result) => result.passed).length;
 
+  const testgevallen = (
+    <>
+      <div className={styles.testList}>
+        <div className={styles.testsHeader}>
+          <span>Testgevallen</span>
+          <span>{testPreview.tests.length} tests</span>
+        </div>
+        {testPreview.error ? (
+          <div className={styles.inputError}>{testPreview.error}</div>
+        ) : (
+          testPreview.tests.map((test, index) => (
+            <div key={`${test.label}-${index}`} className={styles.testItem}>
+              <strong>{test.label}</strong>
+              <p>
+                <span>Input</span> {`${model.exercise.functionName}(${formatArguments(test.args)})`}
+              </p>
+              <p>
+                <span>Verwacht</span> {formatValue(test.expected)}
+              </p>
+            </div>
+          ))
+        )}
+      </div>
+      <details className={styles.advancedTests}>
+        <summary>Testgevallen aanpassen</summary>
+        <label className={styles.testsEditor}>
+          <span>JSON</span>
+          <textarea
+            value={testsDraft}
+            onChange={(event) => setTestsDraft(event.target.value)}
+            spellCheck={false}
+            disabled={busy}
+          />
+        </label>
+      </details>
+    </>
+  );
+  const uitkomsten = (
+    <>
+      <div className={styles.exerciseActions}>
+        <button
+          type="button"
+          className={styles.runButton}
+          onClick={runExerciseTests}
+          disabled={busy}
+        >
+          {busy ? 'Bezig...' : 'Draai de tests'}
+        </button>
+        <button
+          type="button"
+          className={styles.traceButton}
+          onClick={runStudentTrace}
+          disabled={busy}
+        >
+          Visualiseer mijn code
+        </button>
+      </div>
+      {exerciseMessage && (
+        <output
+          className={clsx(styles.exerciseStatus, {
+            [styles.exerciseError]: exerciseStatus === 'error',
+          })}
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {exerciseMessage}
+        </output>
+      )}
+      {testResults.length > 0 && (
+        <div className={styles.results}>
+          <strong>
+            {passedCount}/{testResults.length} tests goed
+          </strong>
+          {testResults.map((result) => (
+            <div
+              key={result.label}
+              className={clsx(styles.resultRow, {
+                [styles.resultPass]: result.passed,
+                [styles.resultFail]: !result.passed,
+              })}
+            >
+              <span>{result.passed ? 'goed' : 'fout'}</span>
+              <div>
+                <strong>{result.label}</strong>
+                {result.error ? (
+                  <p>{result.error}</p>
+                ) : (
+                  <p>
+                    verwacht {formatValue(result.expected)}; kreeg {formatValue(result.actual)}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {(stdout || stderr) && (
+        <pre className={styles.consoleOutput}>{[stdout, stderr].filter(Boolean).join('\n')}</pre>
+      )}
+    </>
+  );
   return (
     <section
       className={clsx(styles.model, inTab && styles.inTab)}
@@ -473,7 +574,12 @@ export default function Model({
           {!inTab && <p className={styles.kicker}>Interactief model</p>}
           {/* Geen <h2>: de koppen van een les zijn haar tabbladen en stappen,
               en een kop van het model hoort daar niet tussen. */}
-          <p className={styles.title}>{model.title}</p>
+          {/* Een kop voor een schermlezer, met de maat van de titel: een <h2>
+              kreeg in een tabblad de opmaak van de les. */}
+          {/* biome-ignore lint/a11y/useSemanticElements: een <h2> neemt de opmaak van de les over */}
+          <p className={styles.title} role="heading" aria-level={3}>
+            {model.title}
+          </p>
           <p className={styles.summary}>{model.summary}</p>
         </div>
         {!alleenVisualisatie && (
@@ -624,7 +730,10 @@ export default function Model({
 
               {currentStep && (
                 <div className={styles.explanation}>
-                  <p className={styles.stepTitle}>{currentStep.title}</p>
+                  {/* biome-ignore lint/a11y/useSemanticElements: een <h3> neemt de opmaak van de les over */}
+                  <p className={styles.stepTitle} role="heading" aria-level={4}>
+                    {currentStep.title}
+                  </p>
                   <p>{currentStep.description}</p>
                 </div>
               )}
@@ -695,103 +804,12 @@ export default function Model({
             </div>
 
             <div className={styles.testsPanel}>
-              <div className={styles.testList}>
-                <div className={styles.testsHeader}>
-                  <span>Testgevallen</span>
-                  <span>{testPreview.tests.length} tests</span>
-                </div>
-                {testPreview.error ? (
-                  <div className={styles.inputError}>{testPreview.error}</div>
-                ) : (
-                  testPreview.tests.map((test, index) => (
-                    <div key={`${test.label}-${index}`} className={styles.testItem}>
-                      <strong>{test.label}</strong>
-                      <p>
-                        <span>Input</span>{' '}
-                        {`${model.exercise.functionName}(${formatArguments(test.args)})`}
-                      </p>
-                      <p>
-                        <span>Verwacht</span> {formatValue(test.expected)}
-                      </p>
-                    </div>
-                  ))
-                )}
-              </div>
-              <details className={styles.advancedTests}>
-                <summary>Tests bewerken</summary>
-                <label className={styles.testsEditor}>
-                  <span>JSON</span>
-                  <textarea
-                    value={testsDraft}
-                    onChange={(event) => setTestsDraft(event.target.value)}
-                    spellCheck={false}
-                    disabled={busy}
-                  />
-                </label>
-              </details>
-              <div className={styles.exerciseActions}>
-                <button
-                  type="button"
-                  className={styles.runButton}
-                  onClick={runExerciseTests}
-                  disabled={busy}
-                >
-                  {busy ? 'Bezig...' : 'Run tests'}
-                </button>
-                <button
-                  type="button"
-                  className={styles.traceButton}
-                  onClick={runStudentTrace}
-                  disabled={busy}
-                >
-                  Visualiseer mijn code
-                </button>
-              </div>
-              {exerciseMessage && (
-                <output
-                  className={clsx(styles.exerciseStatus, {
-                    [styles.exerciseError]: exerciseStatus === 'error',
-                  })}
-                  aria-live="polite"
-                  aria-atomic="true"
-                >
-                  {exerciseMessage}
-                </output>
-              )}
-              {testResults.length > 0 && (
-                <div className={styles.results}>
-                  <strong>
-                    {passedCount}/{testResults.length} tests goed
-                  </strong>
-                  {testResults.map((result) => (
-                    <div
-                      key={result.label}
-                      className={clsx(styles.resultRow, {
-                        [styles.resultPass]: result.passed,
-                        [styles.resultFail]: !result.passed,
-                      })}
-                    >
-                      <span>{result.passed ? 'PASS' : 'FAIL'}</span>
-                      <div>
-                        <strong>{result.label}</strong>
-                        {result.error ? (
-                          <p>{result.error}</p>
-                        ) : (
-                          <p>
-                            verwacht {formatValue(result.expected)}; kreeg{' '}
-                            {formatValue(result.actual)}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {(stdout || stderr) && (
-                <pre className={styles.consoleOutput}>
-                  {[stdout, stderr].filter(Boolean).join('\n')}
-                </pre>
-              )}
+              {/* In een tabblad staan de knoppen en de uitkomsten boven de
+                  testgevallen, ook in de DOM: met CSS `order` liep de Tab-toets
+                  eerst langs de lijst en dan pas naar de knoppen. */}
+              {inTab && uitkomsten}
+              {testgevallen}
+              {!inTab && uitkomsten}
             </div>
           </div>
         )}

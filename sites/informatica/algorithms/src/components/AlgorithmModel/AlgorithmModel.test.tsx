@@ -9,7 +9,7 @@ import Model, { type AlgorithmModelProps, MIN_OEFENING } from './Model';
 // bekijk- en de compleet-pagina's. Sinds de cursus les-tabbladen heeft, staat
 // het in een tabblad, en daar moet het op het scherm passen en even hoog
 // blijven: bij een wissel tussen Visualisatie en Code-oefening en voor en na
-// Run tests (root-CLAUDE.md, Les-tabbladen). Wat het in de browser echt meet,
+// Draai de tests (root-CLAUDE.md, Les-tabbladen). Wat het in de browser echt meet,
 // meet scripts/meet-les-tabs.mjs; hier staat de rekensom vast.
 
 const AlgorithmModel = (props: AlgorithmModelProps) => (
@@ -35,12 +35,14 @@ const knop = (naam: string | RegExp) =>
   screen.getByRole('button', { name: naam }) as HTMLButtonElement;
 
 describe('AlgorithmModel', () => {
-  it('heeft geen eigen kop: de koppen van een les zijn haar tabbladen', () => {
-    // Een <h2> in het model stond tussen de koppen van de les, onder een
-    // tabblad dat zelf al een <h2> is. Ook de titel van een stap is geen kop.
+  it('heeft koppen voor een schermlezer, zonder de opmaak van de les', () => {
+    // Een <h2> in het model kreeg in een tabblad de opmaak van de les. Een
+    // <p> zonder rol liet een schermlezer zonder kop; nu is het een kop met
+    // role="heading", onder het tabblad (niveau 3) en de stap (niveau 4).
     const { container } = render(<AlgorithmModel algorithm="linear-search" />);
     expect(container.querySelectorAll('h1, h2, h3, h4, h5, h6')).toHaveLength(0);
-    screen.getByText('Lineair zoeken');
+    screen.getByRole('heading', { name: 'Lineair zoeken', level: 3 });
+    expect(screen.getAllByRole('heading', { level: 4 }).length).toBeGreaterThan(0);
   });
 
   it('toont buiten een tabblad wat het is, en in een tabblad niet nog eens', () => {
@@ -140,7 +142,10 @@ describe('AlgorithmModel in een les-tabblad', () => {
     expect(lijf(container).style.height).toBe(`${MIN_OEFENING}px`);
   });
 
-  it('blijft even hoog na Run tests: de uitkomst schuift in de testkolom', async () => {
+  it('de uitkomst van de tests staat in de testkolom, en het model blijft even hoog', async () => {
+    // Hoe hoog het model in de browser is, meet scripts/meet-les-tabs.mjs; hier
+    // staat vast dat de uitkomst in de kolom komt die in zijn vak schuift
+    // (.testsPanel) en dat de hoogte niet van de uitkomst afhangt.
     runPythonAsync.mockResolvedValue([
       { label: 'gevonden', passed: true, expected: 4, actual: 4, error: null },
       { label: 'niet gevonden', passed: false, expected: -1, actual: 0, error: null },
@@ -151,9 +156,31 @@ describe('AlgorithmModel in een les-tabblad', () => {
     // De editor past in het model: zijn hoogte min de rand en de kop erboven.
     const editor = container.querySelector('textarea')?.parentElement as HTMLElement;
     expect(Number.parseInt(editor.style.maxHeight, 10)).toBe(420 - 34 - 38);
-    fireEvent.click(knop('Run tests'));
-    await screen.findByText('1/2 tests goed');
+    fireEvent.click(knop('Draai de tests'));
+    const uitkomst = await screen.findByText('1/2 tests goed');
+    expect(uitkomst.closest('[class*="testsPanel"]')).not.toBeNull();
     expect(lijf(container).style.height).toBe(voor);
+    // Engels stond er ook: PASS, FAIL en "kreeg undefined".
+    screen.getByText('goed');
+    screen.getByText('fout');
+  });
+
+  it('in een tabblad staan de knoppen vóór de testgevallen, ook voor de Tab-toets', () => {
+    // Met CSS `order` stonden ze er alleen voor het oog boven; de Tab-toets
+    // liep eerst langs de lijst.
+    const { container } = render(inTab(<AlgorithmModel algorithm="linear-search" />));
+    fireEvent.click(knop('Code-oefening'));
+    const lijst = screen.getByText('Testgevallen');
+    expect(knop('Draai de tests').compareDocumentPosition(lijst)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(container).toBeTruthy();
+    cleanup();
+    render(<AlgorithmModel algorithm="linear-search" />);
+    fireEvent.click(knop('Code-oefening'));
+    expect(knop('Draai de tests').compareDocumentPosition(screen.getByText('Testgevallen'))).toBe(
+      Node.DOCUMENT_POSITION_PRECEDING,
+    );
   });
 
   it('zet de melding over jouw code naast de knoppen, niet eronder', async () => {
