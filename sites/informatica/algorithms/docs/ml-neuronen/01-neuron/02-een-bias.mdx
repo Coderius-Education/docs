@@ -90,11 +90,11 @@ ja, je gaat
 
 </details>
 
-## Opdracht: alleen met je huiswerk af
+## Opdracht
 
 ### De opdracht
 
-Je ouders zeggen: je gaat alleen als je huiswerk af is, en dan alleen met je
+Je ouders zeggen: je gaat alleen met je huiswerk af, en dan alleen met je
 vrienden. Je zoekt een bias zodat het neuron alleen ja zegt als je vrienden
 gaan én je huiswerk af is, of het nu regent of niet. De gewichten blijven
 zoals ze zijn: alleen de bias verschuift de grens.
@@ -106,8 +106,7 @@ Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: het neuron zegt nog ja.
 2. Maak de bias kleiner, tot het neuron bij `[1, 0, 0]` nee zegt.
-3. Zet `invoer` op `[1, 1, 1]`: vrienden, huiswerk af, maar regen. Zegt het neuron nee, dan is je bias te streng.
-4. Probeer ook `[0, 1, 0]`: het huiswerk is af, maar je vrienden gaan niet.
+3. Zet `invoer` op `[1, 1, 1]`, met regen: zegt het neuron nee, dan is je bias te streng. Probeer ook `[0, 1, 0]`.
 
 {/* uitvoer-varieert: twee runs met een andere invoer; nagerekend in het antwoord (bias -3) */}
 Verwachte uitvoer (bij `[1, 0, 0]` en bij `[1, 1, 1]`):

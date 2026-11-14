@@ -58,8 +58,8 @@ fout te maken.
 
 1. Draai de code. Welke gewichten en welke bias heeft het neuron na deze ene
    stap?
-2. Zet `gewichten` op `[1, 1]` en `bias` op 1, wat je net kreeg, en leer van
-   het voorbeeld `[0, 1]` met doel 0. Wat zijn de gewichten nu?
+2. Zet `gewichten` op `[1, 1]` en `bias` op 1, en leer van `[0, 1]` met doel 0.
+   Wat zijn de gewichten nu?
 3. Waarom verandert bij vraag 2 het eerste gewicht niet?
 4. Wat gebeurt er als het neuron al gelijk had?
 
@@ -94,7 +94,7 @@ fout: 1 nu: [1, 1] 1
 
 </details>
 
-## Opdracht: leer van elk voorbeeld
+## Opdracht
 
 ### De opdracht
 
@@ -111,7 +111,7 @@ Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij leert van het eerste voorbeeld. Het neuron had gelijk, dus er verandert niets.
 2. Zet het uitrekenen van de fout en het bijstellen in een loop `for invoer, doel in voorbeelden`, en print na elk voorbeeld.
-3. Kijk naar de laatste regel. Zegt het neuron met `[2, 1]` en bias 0 nu EN? Probeer het met `neuron([0, 1], gewichten, bias)` onder de loop.
+3. Zegt het neuron met `[2, 1]` en bias 0 nu EN? Print `neuron([0, 1], gewichten, bias)` onder de loop.
 
 Verwachte uitvoer:
 

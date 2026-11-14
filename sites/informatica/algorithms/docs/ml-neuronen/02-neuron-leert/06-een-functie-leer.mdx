@@ -48,7 +48,7 @@ zijn.
 Een functie kan twee dingen tegelijk teruggeven: `return gewichten, bias`
 geeft een tuple terug, en `gewichten, bias = leer(…)` pakt hem weer uit.
 
-## Bouw zelf: een functie leer
+## Bouw zelf
 
 ### De opdracht
 
@@ -66,10 +66,9 @@ In de editor staat een functie `leer` die nog niets leert.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `leer` geeft nog `([0, 0], 0)` terug.
-2. Zet het leren uit appels en bananen in de functie, met `voorbeelden` en `rondes` in plaats van `fruit` en 10. Nu geeft `leer(en, 10)` hetzelfde als bij rondes: `([2, 1], -2)`.
+2. Zet het leren uit appels en bananen in de functie, met `voorbeelden` en `rondes`. Nu krijg je `([2, 1], -2)`.
 3. Maak het aantal gewichten even groot als het aantal invoeren, zodat de functie ook met drie invoeren werkt.
-4. Maak de acht voorbeelden van "minstens twee van de drie", met drie loops in elkaar en een `if`.
-5. Leer ze met `leer`, en test het neuron op alle acht.
+4. Maak de acht voorbeelden van "minstens twee van de drie" met drie loops in elkaar, leer ze, en test ze.
 
 Verwachte uitvoer:
 

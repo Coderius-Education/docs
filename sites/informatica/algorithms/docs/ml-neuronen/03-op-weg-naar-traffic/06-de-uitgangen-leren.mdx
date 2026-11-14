@@ -52,14 +52,14 @@ uitgang met de grootste som wint. Traffic maakt de doelen op dezelfde manier:
 label 2 wordt een rij met een 1 op positie 2 en verder nullen. Die regel staat
 al in de code die je krijgt.
 
-## Opdracht: een netwerk dat leert
+## Opdracht
 
 ### De opdracht
 
-In de verborgen code staan de tekens uit de vorige stap, maar meer: elk teken
-zoals het hoort, en negen keer met één pixel anders. Laat alle vier de
-uitgangen leren, en herken daarna twee plaatjes die er niet tussen zitten,
-met twee pixels anders.
+Je maakt een netwerk dat leert. In de verborgen code staan de tekens uit de
+vorige stap, maar meer: elk teken zoals het hoort, en negen keer met één
+pixel anders. Laat alle vier de uitgangen leren, en herken daarna twee
+plaatjes die er niet tussen zitten, met twee pixels anders.
 
 ### Aan de slag
 
@@ -67,9 +67,9 @@ In de editor leert alleen de uitgang van `|`.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: alleen de uitgang van `|`, soort 0, leert zijn gewichten.
-2. Zet het leren in een loop `for soort in range(len(soorten))`, met `soort` in plaats van 0. Bewaar de gewichten en de bias van elke uitgang met `append` in `alle_gewichten` en `biases`. Print `biases`: `[0, 0, 0, -4]`.
+2. Leer in een loop `for soort in range(len(soorten))`, met `soort` voor 0, en bewaar alles in `alle_gewichten` en `biases`.
 3. Herken elk plaatje in `nieuwe` met `naar_getallen` en `herken`, en print zijn soort.
-4. Zet het leren in een functie `leer_netwerk(plaatjes, labels, aantal_soorten, rondes)` die `alle_gewichten` en `biases` teruggeeft.
+4. Zet het leren in een functie `leer_netwerk(plaatjes, labels, aantal_soorten, rondes)`.
 
 Verwachte uitvoer:
 

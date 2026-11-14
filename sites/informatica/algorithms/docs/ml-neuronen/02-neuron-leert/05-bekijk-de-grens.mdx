@@ -53,24 +53,35 @@ In de opdracht leert het neuron op het fruit, en tekent de editor daarna de
 voorbeelden en de grens met `teken_grens`. Het tekenen staat in de verborgen
 code.
 
-## Opdracht: schuif de grens
+<details>
+<summary>Waarom lukt "precies één" niet?</summary>
+
+Een neuron trekt altijd één rechte lijn.
+Zet je de vier combinaties van "precies één" zo op papier, met de eerste
+invoer naar rechts en de tweede naar boven, dan liggen `0 1` en `1 0` schuin
+tegenover elkaar, en `0 0` en `1 1` ook. Daar past geen rechte lijn tussen, en
+daarom kan één neuron het niet.
+
+</details>
+
+## Opdracht
 
 ### De opdracht
 
-Wat het neuron leert, hangt af van de voorbeelden. Je zet nieuwe stukken
-fruit bij de voorbeelden, en kijkt hoe de grens meeschuift. Doet de volgorde
-van de voorbeelden ertoe? En lukt het nog als een banaan tussen de appels
-ligt?
+Schuif de grens: wat het neuron leert, hangt af van de voorbeelden. Je zet
+nieuwe stukken fruit bij de voorbeelden, en kijkt hoe de grens meeschuift.
+Doet de volgorde van de voorbeelden ertoe? En lukt het nog als een banaan
+tussen de appels ligt?
 
 ### Aan de slag
 
 In de editor leert het neuron op het fruit, en tekent hij de grens.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code: je ziet het fruit en de grens die het neuron leerde.
+1. Draai de code: het neuron leert `[11, -16]` met bias `-1`, en je ziet het fruit en de grens.
 2. Zet achteraan de lijst een appel van 11 bij 7 bij, `([11, 7], 0)`, en draai opnieuw. Hoe schuift de grens?
 3. Zet dezelfde appel als derde in de lijst, na de appel van 9 bij 8. Leert het neuron hetzelfde?
-4. Laat de appel staan, en zet er ook een banaan bij die dicht bij de appels ligt: `([10, 7], 1)`. Lukt het neuron dat nog?
+4. Laat de appel staan, en zet er een banaan bij die dicht bij de appels ligt, `([10, 7], 1)`. Lukt dat nog?
 
 {/* uitvoer-varieert: na stap 2 van de opdracht; nagedraaid met ([11, 7], 0) achteraan */}
 Verwachte uitvoer (met de appel van 11 bij 7 achteraan):
@@ -105,15 +116,6 @@ print(gewichten, bias)
 teken_grens(fruit, gewichten, bias)`} />
 
 <details>
-<summary>Wat zie je?</summary>
-
-```
-[11, -16] -1
-```
-
-</details>
-
-<details>
 <summary>Tip</summary>
 
 Bij stap 4: zoek de banaan van 10 bij 7 op het plaatje. Welke twee appels
@@ -134,17 +136,6 @@ De banaan van 10 bij 7 lukt niet, ook niet met duizend rondes. Hij ligt
 tussen de appel van 8 bij 7 en die van 11 bij 7 in, en geen rechte lijn houdt
 hem van allebei gescheiden. Een banaan van 10 bij 6 lukt wel, en een van
 9 bij 6 pas na honderden rondes.
-
-</details>
-
-<details>
-<summary>Waarom lukt "precies één" niet?</summary>
-
-Een neuron trekt altijd één rechte lijn.
-Zet je de vier combinaties van "precies één" zo op papier, met de eerste
-invoer naar rechts en de tweede naar boven, dan liggen `0 1` en `1 0` schuin
-tegenover elkaar, en `0 0` en `1 1` ook. Daar past geen rechte lijn tussen, en
-daarom kan één neuron het niet.
 
 </details>
 
