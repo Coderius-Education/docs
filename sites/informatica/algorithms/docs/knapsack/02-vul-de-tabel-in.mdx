@@ -10,6 +10,8 @@ zitten, en snapt **het algoritme** voordat je het codeert.
 
 ## De aanpak
 
+### Van klein naar groot
+
 Je bouwt een tabel op van klein naar groot. Je begint met "0 items in
 de rugzak" (rij 0) en vult rij voor rij door tot "alle 5 items
 beschikbaar".
@@ -22,7 +24,7 @@ Bij het invullen van een cel kijk je alleen naar cellen die al ingevuld
 zijn, in de rij erboven. Geen recursie en geen dubbel rekenwerk: één
 tabel die zichzelf opbouwt.
 
-## Het algoritme in drie regels
+### Het algoritme in drie regels
 
 Elke cel `OPT(i, w)` is "de beste totaalwaarde als je items 1 t/m i
 mag gebruiken en je rugzakcapaciteit `w` is".
@@ -44,7 +46,9 @@ beschikbare ruimte), kun je hem niet meenemen. Kopieer dan de cel
 
 Neem de hoogste: `OPT(i, w) = max(skip, meenemen)`.
 
-## De items
+## De tabel
+
+### De items
 
 Dit zijn de vijf items van het idee, met een rugzak van 11 kg:
 
@@ -56,9 +60,9 @@ Dit zijn de vijf items van het idee, met een rugzak van 11 kg:
 | 4 | 22 | 6 | 3,7 |
 | 5 | 28 | 7 | 4 |
 
-## Sjabloon — vul zelf in
+### Het sjabloon
 
-Hier is de tabel met alleen rij 0 en kolom 0 alvast ingevuld (allemaal 0,
+Vul de tabel zelf in. Hier staan alleen rij 0 en kolom 0 alvast ingevuld (allemaal 0,
 volgens regel 1 en omdat een rugzak van 0 sowieso leeg is):
 
 | `OPT(i,w)` | w=0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 |
@@ -73,7 +77,9 @@ volgens regel 1 en omdat een rugzak van 0 sowieso leeg is):
 Teken hem op papier, of print de [hand-out](site:algorithms/docs/unplugged/05-pak-de-rugzak-in)
 met een kleinere tabel om in te vullen. We vullen hem hier rij voor rij.
 
-## Rij 1 — item 1 (v=1, w=1)
+## Rij voor rij
+
+### Rij 1: item 1 (v=1, w=1)
 
 Item 1 weegt 1. Voor elke kolom `w ≥ 1` past hij. Regel 3:
 
@@ -93,7 +99,7 @@ Item 1 heeft waarde 1; meer kun je niet halen met alleen item 1.
 
 </details>
 
-## Rij 2 — item 2 (v=6, w=2)
+### Rij 2: item 2 (v=6, w=2)
 
 Item 2 weegt 2. Voor `w < 2` past hij niet → regel 2 (kopieer boven).
 Voor `w ≥ 2` past hij wél → regel 3 (max van skip en meenemen).
@@ -115,7 +121,7 @@ meenemen, gewicht 1 + 2 = 3).
 
 </details>
 
-## Rij 3 — item 3 (v=18, w=5)
+### Rij 3: item 3 (v=18, w=5)
 
 Item 3 weegt 5. Voor `w < 5`: regel 2. Voor `w ≥ 5`: regel 3.
 
@@ -137,7 +143,7 @@ waarde met wat je nog aan items 1 en 2 erbij kan pakken.
 
 </details>
 
-## Rij 4 — item 4 (v=22, w=6)
+### Rij 4: item 4 (v=22, w=6)
 
 Item 4 weegt 6. Voor `w < 6`: regel 2. Voor `w ≥ 6`: regel 3.
 
@@ -160,7 +166,7 @@ Let goed op cel `(4, 11) = 40`: items 3 + 4 (gewicht 5 + 6 = 11, waarde
 
 </details>
 
-## Rij 5 — item 5 (v=28, w=7)
+### Rij 5: item 5 (v=28, w=7)
 
 Item 5 weegt 7. Voor `w < 7`: regel 2. Voor `w ≥ 7`: regel 3.
 
@@ -183,7 +189,9 @@ wint van meenemen (35). Dat zegt: in de optimale rugzak zit item 5
 
 </details>
 
-## De complete tabel
+## Welke items?
+
+### De complete tabel
 
 Hier is de hele OPT-tabel als referentie:
 
@@ -198,7 +206,7 @@ Hier is de hele OPT-tabel als referentie:
 
 De beste totale waarde is **40**. Maar... welke items zijn dat?
 
-## Welke items meegenomen?
+### Terug vanaf rechtsonder
 
 De tabel zegt wat de beste waarde is, maar niet meteen welke items.
 Daarvoor loop je de tabel terug vanaf rechtsonder.
@@ -215,7 +223,7 @@ In de tabel kun je dat volgen: een kopieer-cel (regel 2, of skip wint
 in regel 3) wijst naar boven, een meenemen-cel wijst schuin naar
 linksboven.
 
-## Backtrack — stap voor stap
+### Terugzoeken, stap voor stap
 
 Begin bij cel `(i=5, w=11) = 40`.
 
@@ -240,9 +248,9 @@ Ga naar `(2, 5 - 5) = (2, 0)`.
 (en `OPT(1, 0) = OPT(0, 0) = 0`, dus de twee resterende rondes
 voegen niets toe). **Klaar**.
 
-## Het antwoord
+### Het antwoord
 
-**Items meegenomen: {3, 4}**.
+**Items meegenomen: 3 en 4**.
 
 - Totaal waarde: 18 + 22 = **40** ✓
 - Totaal gewicht: 5 + 6 = **11** (precies op de limiet) ✓

@@ -9,6 +9,8 @@ tabel-aanpak van knapsack.
 
 ## Off-by-one in tabel-grootte
 
+### Wat er misgaat: een te kleine tabel
+
 {/* foutmelding-van: tabel = [[0] * 3 for _ in range(2)]\ntabel[2][0] */}
 
 Foutmelding: `IndexError: list index out of range` of een tabel die
@@ -28,7 +30,10 @@ for _ in range(n):
 # Probleem: tabel[n][capaciteit] bestaat niet → crash bij return.
 ```
 
-**Oplossing:**
+### Oplossing: een rij en een kolom extra
+
+De tabel heeft `(n + 1) × (capaciteit + 1)` cellen: een rij voor "geen
+items" en een kolom voor "lege rugzak".
 
 ```python
 # GOED
@@ -41,6 +46,8 @@ Vuistregel: als je naar een cel `[i][w]` wilt kunnen met `i = n` én
 `w = capaciteit`, heb je `n + 1` rijen en `W + 1` kolommen nodig.
 
 ## `i`-loop start bij 0
+
+### Wat er misgaat: `items[-1]`
 
 Geen foutmelding, wel een rij 0 die niet meer 0 is, en soms een
 totaalwaarde die te hoog is.
@@ -60,7 +67,9 @@ for i in range(n + 1):       # start bij 0
     ...
 ```
 
-**Oplossing:**
+### Oplossing: begin bij 1
+
+Rij 0 is al klaar, dus het invullen begint bij `i = 1`:
 
 ```python
 # GOED
@@ -71,9 +80,11 @@ for i in range(1, n + 1):    # start bij 1
 
 Die `1` in `range(1, n + 1)` is het hele punt.
 
-## Backtrack vergeet capaciteit te verminderen
+## Backtrack vergeet `w`
 
-Geen foutmelding, wel een verkeerde lijst van items.
+### Wat er misgaat: dezelfde kolom
+
+De backtrack vergeet de capaciteit `w` te verminderen. Geen foutmelding, wel een verkeerde lijst van items.
 
 **Oorzaak:** bij elke "item meegenomen"-stap moet je niet alleen de
 index opslaan, maar **ook** de capaciteit verminderen met het gewicht
@@ -88,7 +99,9 @@ for i in range(n, 0, -1):
         # w wordt NIET aangepast → fout
 ```
 
-**Oplossing:**
+### Oplossing: schuif naar links
+
+Verminder `w` met het gewicht van elk item dat je meeneemt:
 
 ```python
 # GOED
