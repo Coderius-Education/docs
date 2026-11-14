@@ -113,7 +113,8 @@ print(f"    knapsack(items, 11) = {knapsack(items, 11)}")
 
 print("\\nAndere capaciteiten:")
 for W in [5, 8, 11, 15, 21]:
-    print(f"    W = {W:2}  ->  beste waarde = {knapsack(items, W)}")`} />
+    beste = knapsack(items, W)
+    print(f"    W = {W:2}  ->  beste waarde = {beste}")`} />
 
 Bij W=5 past één item met waarde 18: item 3. Bij W=21 passen ze allemaal:
 1 + 6 + 18 + 22 + 28 = 75, gewicht 21.
