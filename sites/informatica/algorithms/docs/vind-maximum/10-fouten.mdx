@@ -9,11 +9,15 @@ patroon en begrijpt waarom ze optreden.
 
 ## `maximum = 0` als startwaarde
 
+### Een fout antwoord
+
 Geen foutmelding, maar wel een fout antwoord op lijsten met alleen negatieve
 getallen.
 
 **Oorzaak:** geen enkele waarde is groter dan `0`, dus de `if` is nooit
 waar → `maximum` blijft `0`. Maar `0` zit niet in de lijst.
+
+### Een echte waarde als start
 
 **Oplossing:** gebruik `lijst[0]` als startwaarde. Dan is je startwaarde
 **altijd** een echte waarde uit de lijst.
@@ -76,6 +80,8 @@ def vind_maximum(lijst):
 
 ## IndexError op lege lijst
 
+### Geen eerste element
+
 {/* foutmelding-van: [][0] */}
 ```
 IndexError: list index out of range
@@ -83,6 +89,8 @@ IndexError: list index out of range
 
 **Oorzaak:** op een lege lijst bestaat `lijst[0]` niet. Het algoritme heeft
 geen betekenis op een lege input — er **is** geen maximum.
+
+### De lege lijst afvangen
 
 **Oplossing:** vang de lege lijst af voor je begint, of return een
 speciale waarde.
