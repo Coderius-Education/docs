@@ -79,9 +79,8 @@ In de editor leert het neuron op het fruit, en tekent hij de grens.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: het neuron leert `[11, -16]` met bias `-1`, en je ziet het fruit en de grens.
-2. Zet achteraan de lijst een appel van 11 bij 7 bij, `([11, 7], 0)`, en draai opnieuw. Hoe schuift de grens?
-3. Zet dezelfde appel als derde in de lijst, na de appel van 9 bij 8. Leert het neuron hetzelfde?
-4. Laat de appel staan, en zet er een banaan bij die dicht bij de appels ligt, `([10, 7], 1)`. Lukt dat nog?
+2. Zet een appel van 11 bij 7, `([11, 7], 0)`, achteraan de lijst, en daarna als derde. Hoe schuift de grens?
+3. Laat de appel staan, en zet er een banaan bij die dicht bij de appels ligt, `([10, 7], 1)`. Lukt dat nog?
 
 {/* uitvoer-varieert: na stap 2 van de opdracht; nagedraaid met ([11, 7], 0) achteraan */}
 Verwachte uitvoer (met de appel van 11 bij 7 achteraan):
@@ -99,8 +98,10 @@ Verwachte uitvoer (met de appel van 11 bij 7 achteraan):
     return 0
 
 fruit = [
-    ([8, 8], 0), ([9, 8], 0), ([7, 7], 0), ([8, 7], 0),
-    ([18, 4], 1), ([20, 4], 1), ([17, 3], 1), ([19, 4], 1),
+    ([8, 8], 0), ([9, 8], 0),
+    ([7, 7], 0), ([8, 7], 0),
+    ([18, 4], 1), ([20, 4], 1),
+    ([17, 3], 1), ([19, 4], 1),
 ]
 gewichten = [0, 0]
 bias = 0
@@ -118,7 +119,7 @@ teken_grens(fruit, gewichten, bias)`} />
 <details>
 <summary>Tip</summary>
 
-Bij stap 4: zoek de banaan van 10 bij 7 op het plaatje. Welke twee appels
+Bij stap 3: zoek de banaan van 10 bij 7 op het plaatje. Welke twee appels
 liggen er links en rechts van, op dezelfde hoogte? Kan een rechte lijn hem
 van allebei scheiden?
 

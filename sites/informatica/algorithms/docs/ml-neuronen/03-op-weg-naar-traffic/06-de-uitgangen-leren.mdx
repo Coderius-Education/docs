@@ -59,17 +59,18 @@ al in de code die je krijgt.
 Je maakt een netwerk dat leert. In de verborgen code staan de tekens uit de
 vorige stap, maar meer: elk teken zoals het hoort, en negen keer met één
 pixel anders. Laat alle vier de uitgangen leren, en herken daarna twee
-plaatjes die er niet tussen zitten, met twee pixels anders.
+plaatjes die er niet tussen zitten, met twee pixels anders. Zet het leren
+ten slotte in een functie
+`leer_netwerk(plaatjes, labels, aantal_soorten, rondes)`: die gebruik je in de
+volgende stap weer.
 
 ### Aan de slag
 
 In de editor leert alleen de uitgang van `|`.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code: alleen de uitgang van `|`, soort 0, leert zijn gewichten.
-2. Leer in een loop `for soort in range(len(soorten))`, met `soort` voor 0, en bewaar alles in `alle_gewichten` en `biases`.
-3. Herken elk plaatje in `nieuwe` met `naar_getallen` en `herken`, en print zijn soort.
-4. Zet het leren in een functie `leer_netwerk(plaatjes, labels, aantal_soorten, rondes)`.
+1. Draai de code. Leer dan elke uitgang in een loop `for soort in range(len(soorten))`, met `soort` voor 0.
+2. Bewaar alles in `alle_gewichten` en `biases`, en herken elk plaatje in `nieuwe` met `naar_getallen` en `herken`.
 
 Verwachte uitvoer:
 

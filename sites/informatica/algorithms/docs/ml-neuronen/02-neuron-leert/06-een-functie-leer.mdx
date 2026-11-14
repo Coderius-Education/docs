@@ -65,10 +65,8 @@ combinaties.
 In de editor staat een functie `leer` die nog niets leert.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code: `leer` geeft nog `([0, 0], 0)` terug.
-2. Zet het leren uit appels en bananen in de functie, met `voorbeelden` en `rondes`. Nu krijg je `([2, 1], -2)`.
-3. Maak het aantal gewichten even groot als het aantal invoeren, zodat de functie ook met drie invoeren werkt.
-4. Maak de acht voorbeelden van "minstens twee van de drie" met drie loops in elkaar, leer ze, en test ze.
+1. Draai de code. Zet het leren uit appels en bananen in `leer`, met `voorbeelden` en `rondes`: `([2, 1], -2)`.
+2. Geef `leer` evenveel gewichten als invoeren. Maak de acht voorbeelden van "minstens twee van de drie", en test.
 
 Verwachte uitvoer:
 
@@ -96,7 +94,7 @@ print(leer(en, 10))`} />
 <details>
 <summary>Tip</summary>
 
-Bij stap 4: wat zegt `a + b + c` over het aantal enen? Laat je `[0, 0]` staan
+Bij stap 2: wat zegt `a + b + c` over het aantal enen? Laat je `[0, 0]` staan
 bij drie invoeren, dan krijg je de foutmelding van
 [gewichten](site:algorithms/docs/ml-neuronen/01-neuron/01-gewichten#er-gaat-iets-mis).
 

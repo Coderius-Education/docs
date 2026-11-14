@@ -62,18 +62,16 @@ zelf maakte, doet daar de bibliotheek TensorFlow, met zijn onderdeel Keras:
 Oefenen en toetsen, zoals Traffic doet. De verborgen code heeft alles uit dit
 project, en `splits`: die schudt de plaatjes en houdt een deel apart als
 toets. Laat een netwerk leren op de oefenplaatjes, en kijk hoeveel
-toetsplaatjes het goed heeft. Schrijf op wat je daarna probeert, en wat het
-oplevert.
+toetsplaatjes het goed heeft. Probeer daarna 2 rondes, en een ander getal bij
+`random.seed`, en schrijf op wat het oplevert.
 
 ### Aan de slag
 
 In de editor worden de tekens ingelezen en gesplitst.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code: hij leest de 40 tekens in en splitst ze in 24 om te oefenen en 16 om te toetsen.
-2. Laat een netwerk leren op de oefenplaatjes, met `leer_netwerk` en 10 rondes.
-3. Schrijf een functie `score(plaatjes, labels, alle_gewichten, biases)`: hoeveel heeft `herken` goed? Bij het oefenen 24.
-4. Print ook de score op de toets. Probeer dan 2 rondes, en een ander getal bij `random.seed`.
+1. Draai de code: 24 om te oefenen, 16 om te toetsen. Leer een netwerk op de oefenplaatjes, met `leer_netwerk` en 10 rondes.
+2. Schrijf een functie `score(plaatjes, labels, alle_gewichten, biases)`, en print de score op beide delen.
 
 Verwachte uitvoer:
 
