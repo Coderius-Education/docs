@@ -21,36 +21,33 @@ alle indexen waar het doel voorkomt.
 
 ### Aan de slag
 
-De startcode roept je functie aan op de vier lijsten uit de stap De opdracht,
-en print het resultaat naast wat het moet zijn.
+De startcode roept je functie aan op de vier lijsten uit de stap De
+opdracht.
+
+Verwachte uitvoer:
+
+```
+[1, 3]
+[0, 1, 2]
+[]
+[]
+```
 
 {/* uitvoer-varieert: startcode; de functie geeft [] terug tot de leerling hem invult */}
 <PyRunner initialCode={`def alle_indexen(lijst, doel):
     # vul aan
     return []
 
-tests = [
-    ([3, 1, 4, 1, 5], 1, [1, 3]),
-    ([7, 7, 7], 7, [0, 1, 2]),
-    ([], 9, []),
-    ([1, 2, 3], 9, []),
-]
-for lijst, doel, verwacht in tests:
-    r = alle_indexen(lijst, doel)
-    print(f"alle_indexen({lijst}, {doel}) = {r}   verwacht: {verwacht}")`} />
+print(alle_indexen([3, 1, 4, 1, 5], 1))
+print(alle_indexen([7, 7, 7], 7))
+print(alle_indexen([], 9))
+print(alle_indexen([1, 2, 3], 9))`} />
 
 <details>
 <summary>Tip</summary>
 
-Twee dingen veranderen ten opzichte van `zoek`:
-
-1. Je hebt een lijst nodig om de resultaten in te bewaren
-   (`resultaat = []`).
-2. Stop niet bij de eerste match, maar loop door tot het eind.
-
-Aan het eind van de functie return je de lijst.
-
-Welke bouwsteen valt weg? Welke krijgen er een variant?
+`zoek` stopt bij de eerste match. Wat moet er bij een match gebeuren als
+je alle plekken wilt weten, en waar bewaar je ze?
 
 </details>
 
@@ -82,8 +79,11 @@ Wat hier opvalt:
 
 ## Onderzoek
 
+**Vraag:** kun je `alle_indexen` ook eerder laten stoppen, bijvoorbeeld
+als het doel nergens voorkomt?
+
 <details>
-<summary>Kun je `alle_indexen` eerder laten stoppen als het doel nergens voorkomt?</summary>
+<summary>Antwoord</summary>
 
 Nee — en dat is precies het verschil met `zoek`. Bij `zoek` mocht je
 stoppen zodra je het doel één keer had gezien. Bij `alle_indexen` weet je
@@ -101,15 +101,25 @@ Schrijf `eerste_groter_dan(lijst, drempel)` die de index van het eerste
 element returnt dat groter is dan `drempel`, of `-1` als er geen zo'n
 element is.
 
-- `eerste_groter_dan([3, 8, 2, 9], 5)` → `1`
-- `eerste_groter_dan([1, 2, 3], 5)` → `-1`
+Verwachte uitvoer:
+
+```
+1
+-1
+```
+
+{/* uitvoer-varieert: startcode; de functie geeft -1 terug tot de leerling hem invult */}
+<PyRunner initialCode={`def eerste_groter_dan(lijst, drempel):
+    # vul aan
+    return -1
+
+print(eerste_groter_dan([3, 8, 2, 9], 5))
+print(eerste_groter_dan([1, 2, 3], 5))`} />
 
 <details>
 <summary>Tip</summary>
 
-Dit is `zoek` met een andere vergelijking: niet `waarde == doel`, maar
-`waarde > drempel`. Alle vier de bouwstenen blijven staan, ook de `-1`
-aan het eind.
+Welke bouwsteen van `zoek` moet anders? Er verandert maar één regel.
 
 </details>
 
@@ -129,4 +139,4 @@ print(eerste_groter_dan([1, 2, 3], 5))      # -1
 
 </details>
 
-Door naar [veelgemaakte fouten](site:algorithms/docs/lineair-zoeken/11-fouten).
+Door naar [Er gaat iets mis](site:algorithms/docs/lineair-zoeken/11-fouten).
