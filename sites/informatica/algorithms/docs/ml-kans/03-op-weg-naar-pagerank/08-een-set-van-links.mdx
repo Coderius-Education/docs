@@ -76,25 +76,22 @@ print("klik naar", pagina)`} />
 
 ## Opdracht: waar is de surfer geweest?
 
-### De opdracht
-
 Laat de surfer twintig keer klikken vanaf D, en verzamel in een set welke
-pagina's hij heeft gezien. Print de set en het aantal:
+pagina's hij heeft gezien. Print de set en het aantal.
+
+In de editor staat het web met sets, en één klik vanaf D.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: de surfer klikt één keer vanaf D, en komt op C.
+2. Zet de klik en de print in een loop van twintig keer.
+3. Maak boven de loop een lege set `gezien`, zoals in [Zo werkt het](#zo-werkt-het), en voeg in de loop elke pagina toe met `gezien.add(pagina)`. Print na de loop `gezien` en `len(gezien)`, en haal de print in de loop weg.
+
+Verwachte uitvoer (de volgorde van de set kan bij jou anders zijn):
 
 ```
 {'C', 'A', 'B'}
 3
 ```
-
-De volgorde van de set kan bij jou anders zijn.
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: de surfer klikt één keer vanaf D, en komt op C.
-2. Zet de klik en de print in een loop van twintig keer.
-3. Maak boven de loop een lege set `gezien`, met set() zoals in [Zo werkt het](#zo-werkt-het), en voeg in de loop elke pagina toe met `gezien.add(pagina)`. Haal de print in de loop weg, en print na de loop `gezien` en `len(gezien)`.
-
-### Aan de slag
 
 <PyRunner initialCode={`import random
 

@@ -54,27 +54,32 @@ Samen tellen die getallen op tot 1.
 
 Schrijf een functie `steekproef(n)` die `n` dagen weer kiest met
 `kansen_morgen`, en per weer het deel van de dagen teruggeeft. Print hem naast
-de uitgerekende verdeling, bijvoorbeeld:
+de uitgerekende verdeling.
+
+Het model, het seizoen, `kansen_morgen(vandaag)` uit
+[kansen mengen](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/04-kansen-mengen)
+en `berekend()` staan al klaar. `berekend()` rekent door tot het stilstaat,
+zoals in de vorige stappen, met `kansen_morgen(vandaag)` in plaats van
+`model[vandaag]`.
+
+### Aan de slag
+
+Wat al klaarstaat, zit in de verborgen code onder de editor. In de editor
+staat `steekproef`, die nog niets telt.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: achter elk weer staat 0, en daarachter de uitgerekende kans.
+2. Laat `steekproef` vóór de `return` kiezen: begin met `weer = "zon"`, kies `n` keer het weer van morgen met `kansen = kansen_morgen(weer)` en `random.choices`, en tel het in `telling`.
+3. Geef het deel van de dagen terug: vul een dictionary `deel` met `for w in telling:` met `telling[w] / n`, en geef `deel` terug.
+4. Draai een paar keer. Hoe ver liggen de twee kolommen uit elkaar?
+
+Verwachte uitvoer, bijvoorbeeld:
 
 ```
 zon 0.2791 0.277
 wolken 0.3768 0.378
 regen 0.3441 0.345
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: achter elk weer staat 0, want de steekproef telt nog niets, en daarachter de uitgerekende kans.
-2. Laat `steekproef` vóór de `return` kiezen: begin met `weer = "zon"`, kies `n` keer het weer van morgen met `kansen = kansen_morgen(weer)` en `random.choices`, en tel het gekozen weer in `telling`. Je ziet nu tellingen rond de 2770.
-3. Geef het deel van de dagen terug in plaats van de tellingen: maak een dictionary `deel`, vul hem met `for w in telling:` met `telling[w] / n`, en geef `deel` terug.
-4. Draai een paar keer. Hoe ver liggen de twee kolommen uit elkaar?
-
-### Aan de slag
-
-De verborgen code onder de editor zet het model, het seizoen,
-`kansen_morgen(vandaag)` uit [kansen mengen](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/04-kansen-mengen)
-en `berekend()` klaar. `berekend()` rekent door tot het stilstaat, zoals in de
-vorige stappen, met `kansen_morgen(vandaag)` in plaats van `model[vandaag]`.
 
 <PyRunner verborgen="weer-herfst" initialCode={`import random
 
@@ -108,7 +113,8 @@ def steekproef(n):
     weer = "zon"
     for dag in range(n):
         kansen = kansen_morgen(weer)
-        weer = random.choices(list(kansen), weights=list(kansen.values()))[0]
+        weer = random.choices(list(kansen),
+                              weights=list(kansen.values()))[0]
         telling[weer] = telling[weer] + 1
     deel = {}
     for w in telling:

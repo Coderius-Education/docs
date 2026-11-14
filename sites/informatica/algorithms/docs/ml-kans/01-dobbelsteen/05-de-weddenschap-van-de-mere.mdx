@@ -90,15 +90,22 @@ wint. Probeer daarna een tweede: minstens één keer dubbel zes, in 24 worpen
 met twee dobbelstenen. Volgens de Méré moest die even goed uitpakken. Laat je
 simulatie dat zien?
 
+### Aan de slag
+
+In de editor speel je de weddenschap één keer, met een vlag `zes`.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code een paar keer: hij speelt één weddenschap, en print soms `True` en soms `False`.
-2. Speel de weddenschap tien keer: zet `for keer in range(10):` boven `zes = False`, en spring alles eronder één stap verder in. Je ziet nu tien keer `True` of `False`.
-3. Tel de gewonnen weddenschappen: zet `gewonnen = 0` boven de buitenste loop, tel er één bij op als `zes` waar is, en print `gewonnen` na de loop.
-4. Speel `keren = 10000` weddenschappen in plaats van tien, print het percentage met `gewonnen * 100 // keren`, en haal de print van `zes` weg.
+1. Draai de code een paar keer: hij print soms `True` en soms `False`.
+2. Zet `for keer in range(10):` boven `zes = False`, en spring alles eronder één stap verder in. Je ziet nu tien keer `True` of `False`.
+3. Zet `gewonnen = 0` boven de buitenste loop, tel er één bij op als `zes` waar is, en print `gewonnen` na de loop.
+4. Speel `keren = 10000` keer, print het percentage met `gewonnen * 100 // keren`, en haal de print van `zes` weg.
 5. Maak de tweede weddenschap: 24 worpen met twee stenen, en kijk of ze allebei 6 zijn.
 
-### Aan de slag
+Verwachte uitvoer van de eerste weddenschap, bijvoorbeeld:
+
+```
+51 procent gewonnen
+```
 
 <PyRunner initialCode={`import random
 
@@ -111,9 +118,8 @@ print(zes)`} />
 <details>
 <summary>Tip</summary>
 
-Krijg je bijna 100 procent? Kijk waar `zes = False` staat. Hij moet bij elke
-weddenschap opnieuw op `False` beginnen, dus in de buitenste loop, vóór de
-binnenste.
+Krijg je bijna 100 procent? Kijk waar `zes = False` staat: bij elke
+weddenschap begint de vlag opnieuw op `False`.
 
 </details>
 
