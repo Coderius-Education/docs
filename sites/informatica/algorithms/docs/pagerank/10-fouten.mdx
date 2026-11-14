@@ -9,6 +9,8 @@ PageRank het makkelijkst maakt.
 
 ## Het verschil is meteen nul
 
+### Wat er misgaat: twee namen, één dict
+
 Symptoom: de test van [bouwsteen 4](site:algorithms/docs/pagerank/bouwen/06-itereren) faalt, en de
 ranks zien eruit alsof er maar één ronde is gerekend:
 
@@ -23,7 +25,10 @@ geen kopie, maar geeft dezelfde dict een tweede naam. Alles wat je in
 `nieuw` zet, staat dus meteen ook in `rank`. Het verschil tussen de twee is
 daardoor altijd 0, en de lus stopt na de eerste ronde.
 
-**Oplossing:** begin elke ronde met een lege dict.
+### Oplossing: een lege dict per ronde
+
+Begin elke ronde met een lege dict, zodat `nieuw` en `rank` echt twee
+dicts zijn.
 
 ```python
 # FOUT

@@ -9,6 +9,8 @@ Hanoi-oplossing het vaakst voorkomen.
 
 ## Basisgeval vergeten
 
+### Wat er misgaat: geen afslag
+
 {/* foutmelding-van: def f(n):\n    return f(n - 1)\nf(3) */}
 
 Foutmelding: `RecursionError: maximum recursion depth exceeded`.
@@ -26,7 +28,9 @@ def hanoi(n, bron, doel, hulp):
     return zetten
 ```
 
-**Oplossing:** begin met de stopconditie.
+### Oplossing: eerst de stopconditie
+
+Begin de functie met het basisgeval: bij 0 schijven is er niets te doen.
 
 ```python
 # GOED
@@ -36,9 +40,11 @@ def hanoi(n, bron, doel, hulp):
     ...
 ```
 
-## `hulp` en `doel` verwisseld in de recursieve call
+## `hulp` en `doel` verwisseld
 
-Geen foutmelding, maar de test voor 2 schijven faalt. De lijst is even
+### Wat er misgaat: de verkeerde paal
+
+Je verwisselt `hulp` en `doel` in de recursieve call. Geen foutmelding, maar de test voor 2 schijven faalt. De lijst is even
 lang als het hoort, alleen legt de tweede zet de grootste schijf bovenop de
 kleinste: `[("A", "C"), ("A", "C"), ("B", "C")]` in plaats van
 `[("A", "B"), ("A", "C"), ("B", "C")]`. Speel je die zetten na, zoals bij
@@ -55,8 +61,9 @@ zetten.append((bron, doel))
 zetten += hanoi(n - 1, hulp, doel, bron)
 ```
 
-**Oplossing:** in stap 1 staat `hulp` op de doel-plek, en `doel` is de
-tijdelijke hulp.
+### Oplossing: eerst naar de hulp-paal
+
+In stap 1 staat `hulp` op de doel-plek, en `doel` is de tijdelijke hulp.
 
 ```python
 # GOED
@@ -68,9 +75,11 @@ zetten += hanoi(n - 1, hulp, doel, bron)
 Vuistregel: de schijven die je tijdelijk opzij zet gaan naar de paal die
 je in deze stap niet als bron of doel gebruikt.
 
-## `append` in plaats van `+=` bij de recursieve aanroep
+## `append` in plaats van `+=`
 
-Geen foutmelding, maar de test voor 2 schijven faalt terwijl de zetten
+### Wat er misgaat: een lijst in de lijst
+
+Je gebruikt `append` bij de recursieve aanroep. Geen foutmelding, maar de test voor 2 schijven faalt terwijl de zetten
 er goed uitzien. Print je de lijst, dan zit er een lijst ín de lijst:
 `[[[], ("A", "B"), []], ("A", "C"), [[], ("B", "C"), []]]` in plaats van
 `[("A", "B"), ("A", "C"), ("B", "C")]`.
@@ -87,7 +96,9 @@ zetten.append((bron, doel))
 zetten.append(hanoi(n - 1, hulp, doel, bron))
 ```
 
-**Oplossing:** `+=` voor een lijst, `append` voor één zet.
+### Oplossing: plakken met `+=`
+
+`+=` voor een lijst, `append` voor één zet.
 
 ```python
 # GOED

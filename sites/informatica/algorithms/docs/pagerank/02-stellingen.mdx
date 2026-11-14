@@ -7,7 +7,11 @@ sidebar_position: 2
 **Leerdoel:** je controleert of je beeld van PageRank klopt voordat je
 gaat bouwen. Bedenk bij elke stelling eerst zelf je antwoord, en klik dan
 pas open. Alle stellingen gaan over het mini-web van
-[het idee](site:algorithms/docs/pagerank/01-concept):
+[het idee](site:algorithms/docs/pagerank/01-concept).
+
+## Stelling 1
+
+Het mini-web:
 
 ```
 A → B,  A → C
@@ -15,10 +19,6 @@ B → C
 C → A
 D → C
 ```
-
----
-
-### Stelling 1
 
 > Als je de PageRank van alle pagina's in het mini-web optelt, kom je op 1
 > uit.
@@ -34,9 +34,16 @@ als een pagina nergens naartoe linkt, zie je bij
 
 </details>
 
----
+## Stelling 2
 
-### Stelling 2
+Het mini-web:
+
+```
+A → B,  A → C
+B → C
+C → A
+D → C
+```
 
 > De pagina met de meeste inkomende links heeft altijd de hoogste
 > PageRank.
@@ -52,9 +59,16 @@ maar dat hoeft niet.
 
 </details>
 
----
+## Stelling 3
 
-### Stelling 3
+Het mini-web:
+
+```
+A → B,  A → C
+B → C
+C → A
+D → C
+```
 
 > Pagina `D` (waar niemand naar linkt) krijgt PageRank 0.
 
@@ -68,9 +82,16 @@ ook op `D`.
 
 </details>
 
----
+## Stelling 4
 
-### Stelling 4
+Het mini-web:
+
+```
+A → B,  A → C
+B → C
+C → A
+D → C
+```
 
 > Na één ronde rekenen heb je de PageRank van het mini-web al.
 
@@ -85,9 +106,7 @@ waarden pas na zo'n veertig rondes stil.
 
 </details>
 
----
-
-### Stelling 5
+## Stelling 5
 
 > Zonder damping (`d = 1`) werkt het altijd netjes.
 
@@ -101,8 +120,6 @@ uit. Pagina's zonder inkomende links lopen dan helemaal leeg. Met
 bereikbaar.
 
 </details>
-
----
 
 :::info
 Zestien stellingen op papier, voor in de klas: [PageRank: waar of niet waar?](site:algorithms/docs/unplugged/09-waar-of-niet-waar).

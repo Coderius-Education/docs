@@ -49,6 +49,8 @@ slechtste gevallen van alle algoritmes.
 
 ## "Op mijn computer is `O(n²)` even snel als `O(n)`"
 
+### Wat er misgaat: een te kleine test
+
 Een test met `n = 100` waarbij beide algoritmes in 0,001 seconde klaar
 zijn, en dan concluderen: "Big O maakt niet uit."
 
@@ -56,8 +58,10 @@ zijn, en dan concluderen: "Big O maakt niet uit."
 constante factoren overheersen. Big O zegt iets over **schaling**, niet
 over absolute tijd op kleine inputs.
 
-**Oplossing:** test met **grote** `n`. Pas dan zie je de klasse-
-verschillen.
+### Oplossing: test met grote n
+
+Test met **grote** `n`. Pas dan zie je de verschillen tussen `O(n²)` en
+`O(n)`.
 
 ```python
 # n = 100 → onmerkbaar

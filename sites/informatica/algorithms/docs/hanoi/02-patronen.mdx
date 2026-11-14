@@ -8,20 +8,18 @@ sidebar_position: 2
 zetten je minimaal nodig hebt, en hoe je elke toren aanpakt. Dat tweede
 patroon wordt straks de code.
 
-## Patroon 1 — hoeveel zetten?
+## Patroon 1: hoeveel zetten?
+
+### Speel en tel
 
 Speel het spel met 1, 2, 3, 4 en 5 schijven en zoek telkens het kleinste
-aantal zetten. Vul de tabel in, in je hoofd of op papier:
-
-| Schijven | Minimaal aantal zetten |
-|:---:|:---:|
-| 1 | ? |
-| 2 | ? |
-| 3 | ? |
-| 4 | ? |
-| 5 | ? |
+aantal zetten. Schrijf de vijf getallen op, in je hoofd of op papier.
 
 <HanoiGame initialDisks={1} maxDisks={6} />
+
+### Zie je het patroon?
+
+Vergelijk eerst je getallen:
 
 <details>
 <summary>Wat heb jij gevonden?</summary>
@@ -35,8 +33,6 @@ aantal zetten. Vul de tabel in, in je hoofd of op papier:
 | 5 | 31 |
 
 </details>
-
-### Zie je het patroon?
 
 Kijk naar de rij 1, 3, 7, 15, 31. Hoe kom je van het ene getal bij het
 volgende?
@@ -61,7 +57,7 @@ duurt.
 
 </details>
 
-## Patroon 2 — hoe pak je het aan?
+## Patroon 2: hoe pak je het aan?
 
 Het aantal zetten is leuk om te weten, maar dit tweede patroon heb je
 nodig om te programmeren. Speel nog eens met 3 of 4 schijven en let op de grootste
@@ -87,7 +83,9 @@ Je lost het probleem op met een kleinere versie van zichzelf.
 
 ## Het recept
 
-Wat je net ontdekte is een **recursief** recept. Om `n` schijven van bron
+### Een recursief recept
+
+Wat je bij Patroon 2 ontdekte is een **recursief** recept. Om `n` schijven van bron
 naar doel te verplaatsen, met hulp als derde paal:
 
 > 1. verplaats `n − 1` schijven van bron naar hulp;
