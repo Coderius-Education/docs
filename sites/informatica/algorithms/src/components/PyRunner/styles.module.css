@@ -9,10 +9,10 @@
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.375rem;
   align-items: center;
   justify-content: space-between;
-  padding: 0.4rem 0.75rem;
+  padding: 0.4rem 0.5rem;
   background: var(--ifm-color-emphasis-100);
   border-bottom: 1px solid var(--ifm-color-emphasis-200);
 }
@@ -27,7 +27,7 @@
 
 .actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.375rem;
 }
 
 .editor {
@@ -105,9 +105,13 @@
 }
 
 /* De knop ervoor staat in de werkbalk, op de plek van het label Python: als
-   regel onder de editor kostte hij 34 pixels. */
+   regel onder de editor kostte hij 34 pixels. Iets kleiner dan de andere
+   knoppen, zodat de werkbalk ook in een codekolom van 480 pixels (de helft
+   van het veld, met de schuifbalk van Windows) op een regel blijft. */
 .klaarKnop {
   white-space: nowrap;
+  font-size: 0.8rem;
+  padding-inline: 0.5rem;
 }
 
 /* De bomen staan bovenaan de uitvoer, in een balk die opvalt: de knop is
