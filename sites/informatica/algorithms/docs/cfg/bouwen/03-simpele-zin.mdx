@@ -20,8 +20,6 @@ parsen.
 Twee woorden: een zelfstandig naamwoord (`N`) en een werkwoord (`V`). Dit
 is het kleinste skelet van een Engelse zin, een onderwerp dat iets doet.
 
-## Denk na
-
 Je begint met een lege grammatica. Het startsymbool is `S`; daar moet
 elke geldige zin uit voortkomen. Bedenk zelf:
 
@@ -29,10 +27,10 @@ elke geldige zin uit voortkomen. Bedenk zelf:
   werkwoord-deel)?
 - Welke woordsoort vormt elk deel hier?
 
+## Bouw en test
+
 Verzin namen voor je woordgroepen en schrijf de regels. Draai daarna de
 cel: zolang de zin niet op OK staat, klopt er nog iets niet.
-
-## Bouw en test
 
 De parser-motor en het lexicon staan niet in de editor maar draaien wel
 mee; je vindt ze onder de editor achter "Toon de code die al klaarstaat".
@@ -41,8 +39,10 @@ onder de uitvoer de knop "Teken de bomen", die de boom van elke zin
 tekent.
 
 <PyRunner rows={13} verborgen="cfg-parser" initialCode={`# ===== JOUW WERK: schrijf hier je grammaticaregels =====
-# Begin bij het startsymbool S. Een regel schrijf je als:  Kop -> onderdeel(en)
-# De notatie staat op de pagina "het idee". (N en V staan al in het lexicon hieronder.)
+# Begin bij het startsymbool S. Een regel schrijf je als:
+#     Kop -> onderdeel(en)
+# De notatie staat op de pagina "het idee". N en V staan al
+# in het lexicon.
 GRAMMATICA = """
 
 """
