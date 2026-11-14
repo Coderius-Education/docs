@@ -48,8 +48,12 @@ af tot 0 en valt alles op zijn plek.
 
 
 # === Tests ===
-assert hanoi(0, "A", "C", "B") == [], "0 schijven: verwacht een lege lijst"
-assert hanoi(0, "B", "A", "C") == [], "0 schijven, andere palen: verwacht een lege lijst"
+assert hanoi(0, "A", "C", "B") == [], (
+    "0 schijven: verwacht een lege lijst"
+)
+assert hanoi(0, "B", "A", "C") == [], (
+    "0 schijven, andere palen: verwacht een lege lijst"
+)
 
 print("Basisgeval werkt ✓")`} />
 

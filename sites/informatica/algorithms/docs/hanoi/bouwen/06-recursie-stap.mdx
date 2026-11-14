@@ -38,20 +38,31 @@ nodig: `zetten += andere_lijst` plakt alle zetten uit een lijst achter
         return []
 
     zetten = []
-    # 1. verplaats n-1 schijven van bron naar hulp (doel is even de hulp)
+    # 1. verplaats n-1 schijven van bron naar hulp
+    #    (doel is even de hulp)
     #    zetten += hanoi(...)
     # 2. verplaats de grootste schijf van bron naar doel
     #    zetten.append(...)
-    # 3. verplaats die n-1 schijven van hulp naar doel (bron is even de hulp)
+    # 3. verplaats die n-1 schijven van hulp naar doel
+    #    (bron is even de hulp)
     #    zetten += hanoi(...)
     return zetten
 
 
 # === Tests ===
-assert hanoi(1, "A", "C", "B") == [("A", "C")], "1 schijf: verwacht [('A', 'C')]"
-assert hanoi(2, "A", "C", "B") == [("A", "B"), ("A", "C"), ("B", "C")], "2 schijven: verwacht A-B, A-C, B-C"
-assert len(hanoi(3, "A", "C", "B")) == 7, "3 schijven: verwacht 7 zetten"
-assert len(hanoi(6, "A", "C", "B")) == 63, "6 schijven: verwacht 63 zetten (2**6 - 1)"
+assert hanoi(1, "A", "C", "B") == [("A", "C")], (
+    "1 schijf: verwacht [('A', 'C')]"
+)
+twee = [("A", "B"), ("A", "C"), ("B", "C")]
+assert hanoi(2, "A", "C", "B") == twee, (
+    "2 schijven: verwacht A-B, A-C, B-C"
+)
+assert len(hanoi(3, "A", "C", "B")) == 7, (
+    "3 schijven: verwacht 7 zetten"
+)
+assert len(hanoi(6, "A", "C", "B")) == 63, (
+    "6 schijven: verwacht 63 zetten (2**6 - 1)"
+)
 
 print("Alle tests gehaald ✓")`} />
 

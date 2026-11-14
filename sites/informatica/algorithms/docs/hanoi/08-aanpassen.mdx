@@ -24,10 +24,12 @@ probleem, heet een **recurrence**.
 
 {/* niet-draaien: startcode; de leerling vult de recurrence in en de assert faalt tot dan */}
 <PyRunner initialCode={`def tel_zetten(n):
-    # Geef het AANTAL zetten terug (een getal), zonder een lijst te maken.
+    # Geef het AANTAL zetten terug (een getal), zonder een
+    # lijst te maken.
     if n == 0:
         return 0
-    # Vul aan: twee keer een kleiner probleem, plus 1 voor de grootste schijf.
+    # Vul aan: twee keer een kleiner probleem, plus 1 voor de
+    # grootste schijf.
     return ...
 
 
@@ -35,7 +37,9 @@ probleem, heet een **recurrence**.
 assert tel_zetten(0) == 0, "0 schijven: verwacht 0 zetten"
 assert tel_zetten(1) == 1, "1 schijf: verwacht 1 zet"
 assert tel_zetten(3) == 7, "3 schijven: verwacht 7 zetten"
-assert tel_zetten(6) == 63, "6 schijven: verwacht 63 zetten (2**6 - 1)"
+assert tel_zetten(6) == 63, (
+    "6 schijven: verwacht 63 zetten (2**6 - 1)"
+)
 
 print("Tellen werkt ✓")
 for n in range(1, 6):
