@@ -74,11 +74,10 @@ schrijf je de functie zelf, en draai je de tests erop.
 
 ## Onderzoek
 
-Speel met de code. Probeer in elk geval:
-
-1. Wat gebeurt er op een lege lijst `[]`?
-2. En op een lijst met strings, `["banaan", "appel", "kers"]`?
-3. En op een gemengde lijst, `[1, "twee", 3]`?
+1. Druk op Voer uit: wat is het maximum van drie woorden?
+2. Haal het `#` weg voor de regel met `[]`. Wat gebeurt er?
+3. Zet het `#` terug, en haal het weg voor de regel met
+   `[1, "twee", 3]`. Wat gebeurt er nu?
 
 <PyRunner initialCode={`def vind_maximum(lijst):
     maximum = lijst[0]
@@ -87,9 +86,7 @@ Speel met de code. Probeer in elk geval:
             maximum = waarde
     return maximum
 
-# Experimenteer
 print(vind_maximum(["banaan", "appel", "kers"]))
-# Verwijder de # om de crash-cases te zien:
 # print(vind_maximum([]))
 # print(vind_maximum([1, "twee", 3]))`} />
 
@@ -115,12 +112,13 @@ Gemengd → `TypeError: '>' not supported between instances of 'str' and
 ## Hoeveel werk doet dit?
 
 Voor `n` elementen doet dit algoritme `n` vergelijkingen; `lijst[0]` wordt
-ook één keer met zichzelf vergeleken. Dat is `O(n)`: lineair in de
-lijstgrootte.
+ook één keer met zichzelf vergeleken. Het werk groeit even hard als de
+lijst: twee keer zo lang is twee keer zoveel werk.
 
 Wil je écht minimaal werk? Sla het eerste element over met `lijst[1:]`
-(zie [bouwsteen 3](site:algorithms/docs/vind-maximum/bouwen/06-initialisatie)). Dan zijn het `n − 1`
-vergelijkingen. Maar O(n) blijft
-O(n) — die ene vergelijking maakt geen verschil voor de groeisnelheid.
+(zie [bouwsteen 3](site:algorithms/docs/vind-maximum/bouwen/06-initialisatie)).
+Dan zijn het `n − 1` vergelijkingen. Aan hoe hard het werk groeit,
+verandert die ene vergelijking niets. In het hoofdstuk
+[Big O](site:algorithms/docs/big-o/01-concept) heet dat allebei `O(n)`.
 
 Door naar [aanpassen](site:algorithms/docs/vind-maximum/08-aanpassen).

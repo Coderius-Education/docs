@@ -7,12 +7,10 @@ sidebar_position: 6
 **Leerdoel:** je leert waarom de startwaarde van een accumulator-variabele
 zo belangrijk is, en welke keuze altijd werkt.
 
-## Wat we willen
-
-Een startwaarde voor `max_tot_nu_toe` die op **elke** lijst werkt — ook
-op lijsten met alleen negatieve getallen.
-
 ## Het eerste element als start
+
+Je zoekt een startwaarde voor `max_tot_nu_toe` die op **elke** lijst
+werkt, ook op een lijst met alleen negatieve getallen:
 
 ```python
 max_tot_nu_toe = lijst[0]   # gegarandeerd een echte waarde uit de lijst
@@ -97,7 +95,8 @@ een mens het doet, dus dat gebruiken we.
 
 ## Experimenteer
 
-Test op extreme lijsten:
+De code test twee uitersten: een lijst met alleen negatieve getallen, en
+een lijst van één getal. Voorspel eerst wat hij print.
 
 <PyRunner initialCode={`lijst = [-3, -1, -7]
 max_tot_nu_toe = lijst[0]
@@ -124,12 +123,10 @@ print("één element:", max_tot_nu_toe)`} />
 
 </details>
 
-## En een lege lijst?
-
 {/* foutmelding-van: [][0] */}
 
-`lijst[0]` op `[]` geeft `IndexError`. Dat kun je opvangen met een
-`if`-check vooraan. Dat is nog niet *het algoritme zelf*, maar wel een
-keuze die je later moet maken.
+En een lege lijst? Dan geeft `lijst[0]` een `IndexError`. Dat vang je op
+met een `if` vooraan; hoe, staat op de pagina
+[Er gaat iets mis](site:algorithms/docs/vind-maximum/10-fouten).
 
 Door naar [het complete algoritme](site:algorithms/docs/vind-maximum/07-compleet).

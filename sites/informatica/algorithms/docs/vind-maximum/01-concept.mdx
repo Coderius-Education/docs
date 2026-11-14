@@ -65,7 +65,8 @@ naam.
 
 Dan is er geen maximum, want er is niets om te vergelijken. Veel
 algoritmes geven dan een speciale waarde terug (`None`), of crashen met een
-foutmelding. We bespreken dit later expliciet.
+foutmelding. Hoe je dat afvangt, zie je in
+[bouwsteen 3](site:algorithms/docs/vind-maximum/bouwen/06-initialisatie).
 
 </details>
 
@@ -73,7 +74,7 @@ foutmelding. We bespreken dit later expliciet.
 <summary>Hoe snel is dit?</summary>
 
 Voor `n` elementen doet dit algoritme `n` vergelijkingen, één per
-element. Dat heet **O(n)**: lineair in de lengte. Minder dan `n − 1` kan
+element: het werk groeit even hard als de lijst. Minder dan `n − 1` kan
 sowieso niet, want je moet elk element minstens één keer hebben gezien om
 zeker te weten dat het niet het maximum is.
 

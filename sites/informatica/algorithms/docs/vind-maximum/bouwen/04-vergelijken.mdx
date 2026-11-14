@@ -14,15 +14,11 @@ sidebar_position: 4
 **Leerdoel:** je kunt één waarde vergelijken met "het maximum tot nu toe"
 en die laatste bijwerken als nodig.
 
-## Wat we willen
-
-We bouwen ons algoritme stukje voor stukje. Eerst de kleinste bouwsteen:
-**één** vergelijking. Stel je hebt al een variabele `max_tot_nu_toe` en je
-ziet een nieuw getal — wat doe je?
-
 ## Voorspel
 
-Wat denk je dat dit print?
+Je bouwt het algoritme stukje voor stukje. Eerst de kleinste bouwsteen:
+**één** vergelijking. Je hebt al een variabele `max_tot_nu_toe`, en je
+ziet een nieuw getal. Wat denk je dat dit print?
 
 ```python
 max_tot_nu_toe = 3
@@ -75,10 +71,10 @@ Let op het verschil met **vergelijken**:
 
 ## Experimenteer
 
-Probeer verschillende waardes:
+De code vergelijkt 3 met een maximum van 5. Verander `nieuw` in 8, en
+daarna in 5: krijg je dan een update?
 
-<PyRunner initialCode={`# Wijzig de waardes en run opnieuw
-max_tot_nu_toe = 5
+<PyRunner initialCode={`max_tot_nu_toe = 5
 nieuw = 3
 
 if nieuw > max_tot_nu_toe:
@@ -87,9 +83,15 @@ if nieuw > max_tot_nu_toe:
 else:
     print(f"geen update. max blijft {max_tot_nu_toe}")`} />
 
-## Wat nu nog mist
+<details>
+<summary>Wat zie je?</summary>
 
-Dit werkt voor **één** vergelijking. We willen dit doen voor **elk
-element** van de lijst — daarvoor hebben we een lus nodig.
+Met 8 krijg je een update: 8 is groter dan 5. Met 5 niet: 5 is niet
+gróter dan 5, en de `if` vraagt om `>`.
+
+</details>
+
+Dit werkt voor **één** vergelijking. Je wilt het doen voor **elk element**
+van de lijst, en daarvoor heb je een lus nodig.
 
 Door naar [bouwsteen 2: doorlopen](site:algorithms/docs/vind-maximum/bouwen/05-doorlopen).
