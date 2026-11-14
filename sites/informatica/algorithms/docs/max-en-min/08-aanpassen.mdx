@@ -10,10 +10,10 @@ sidebar_position: 8
   ]}
 />
 
-**Leerdoel:** je breidt de tuple uit van 2 naar 4 waardes — `klein`, de
-de index van `klein`, `groot`, en de index van `groot`.
+**Leerdoel:** je breidt de tuple uit van 2 naar 4 waardes: `klein`, de
+index van `klein`, `groot`, en de index van `groot`.
 
-## Opdracht
+## Wat je aanpast
 
 Pas `max_en_min` aan zodat hij vier waardes teruggeeft:
 
@@ -24,6 +24,19 @@ Pas `max_en_min` aan zodat hij vier waardes teruggeeft:
 Voor `[5, 2, 8, 1, 7, 4]` moet het resultaat `(1, 3, 8, 2)` zijn:
 - klein = 1, staat op index 3
 - groot = 8, staat op index 2
+
+## Opdracht
+
+De startcode is `max_en_min` met vier waardes in de `return`, maar de
+indexen blijven nog 0.
+
+Verwachte uitvoer:
+
+```
+(1, 3, 8, 2)
+(1, 1, 5, 4)
+(42, 0, 42, 0)
+```
 
 {/* uitvoer-varieert: startcode; de indexen blijven 0 tot de leerling ze bijhoudt */}
 <PyRunner initialCode={`def max_en_min_met_index(lijst):
@@ -38,19 +51,15 @@ Voor `[5, 2, 8, 1, 7, 4]` moet het resultaat `(1, 3, 8, 2)` zijn:
     return klein, idx_klein, groot, idx_groot
 
 # Tests
-print(max_en_min_met_index([5, 2, 8, 1, 7, 4]))   # verwacht: (1, 3, 8, 2)
-print(max_en_min_met_index([3, 1, 4, 1, 5]))      # verwacht: (1, 1, 5, 4)
-print(max_en_min_met_index([42]))                  # verwacht: (42, 0, 42, 0)`} />
+print(max_en_min_met_index([5, 2, 8, 1, 7, 4]))
+print(max_en_min_met_index([3, 1, 4, 1, 5]))
+print(max_en_min_met_index([42]))`} />
 
 <details>
 <summary>Tip</summary>
 
-Twee dingen veranderen:
-
-1. Loop met `enumerate` door de lijst, dan heb je in elke ronde de index
-   `i` én de waarde.
-2. Zet `idx_klein` op `i` op het moment dat je `klein` bijwerkt, en doe
-   hetzelfde voor `groot` en `idx_groot`.
+Op welk moment in de lus weet je dat je een nieuwe kleinste hebt? En wat
+heb je daar nodig om ook zijn index te onthouden?
 
 </details>
 
@@ -69,6 +78,8 @@ def max_en_min_met_index(lijst):
             groot = waarde
             idx_groot = i
     return klein, idx_klein, groot, idx_groot
+
+print(max_en_min_met_index([3, 1, 4, 1, 5]))   # (1, 1, 5, 4)
 ```
 
 Twee extra regels (`idx_klein = i` en `idx_groot = i`) en de wisseling van

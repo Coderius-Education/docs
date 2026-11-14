@@ -14,14 +14,10 @@ sidebar_position: 6
 **Leerdoel:** je leert hoe je **twee** waardes uit een functie returnt
 met een tuple, en hoe je ze aan de andere kant weer uitpakt.
 
-## Wat we willen
-
-Een functie die `(klein, groot)` teruggeeft, zodat de aanroeper er allebei
-mee verder kan.
-
 ## Twee waardes returnen
 
-In Python:
+Je wilt een functie die `(klein, groot)` teruggeeft, zodat de code die hem
+aanroept met allebei verder kan. In Python:
 
 ```python
 return klein, groot          # zonder haakjes
@@ -77,21 +73,13 @@ resultaat = max_en_min([5, 2, 8, 1, 7, 4])
 print(resultaat)
 print(type(resultaat))`} />
 
-## Tuple uitpakken aan de andere kant
-
-{/* draaien-met: blok-erboven */}
-```python
-k, g = max_en_min([5, 2, 8, 1, 7, 4])
-print(k)   # 1
-print(g)   # 8
-```
+## Tuple uitpakken
 
 {/* foutmelding-van: a, b = (1, 2, 3) */}
 
-Links moeten er net zoveel namen staan als er elementen zitten in
-de tuple rechts. Anders krijg je een `ValueError`.
-
-## Run
+Met `k, g = max_en_min(…)` pak je de tuple uit: `k` krijgt het eerste
+element, `g` het tweede. Links staan net zoveel namen als er elementen in
+de tuple zitten; anders krijg je een `ValueError`.
 
 <PyRunner initialCode={`def max_en_min(lijst):
     klein = groot = lijst[0]
@@ -102,24 +90,16 @@ de tuple rechts. Anders krijg je een `ValueError`.
             groot = waarde
     return klein, groot
 
-# Uitpakken op één regel
 k, g = max_en_min([5, 2, 8, 1, 7, 4])
 print(f"kleinste: {k}")
 print(f"grootste: {g}")
-print(f"bereik:   {g - k}")`} />
+print(f"bereik:   {g - k}")
 
-## Of: indexeren
-
-Pak je de tuple niet uit, dan kun je de elementen ook met index
-benaderen:
-
-{/* draaien-met: blok-erboven */}
-```python
 r = max_en_min([5, 2, 8])
-print(r[0])   # 2  (klein)
-print(r[1])   # 8  (groot)
-```
+print(r[0], r[1])`} />
 
-Maar uitpakken (`k, g = …`) is duidelijker — de namen zeggen wat je hebt.
+Pak je de tuple niet uit, dan haal je de elementen eruit met een index:
+`r[0]` is `klein`, `r[1]` is `groot`. Uitpakken is duidelijker: de namen
+zeggen wat je hebt.
 
 Door naar [het complete algoritme](site:algorithms/docs/max-en-min/07-compleet).

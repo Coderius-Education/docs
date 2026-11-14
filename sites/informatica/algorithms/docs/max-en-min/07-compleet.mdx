@@ -112,13 +112,16 @@ for _ in range(1000):
     willekeurig.append(random.randint(0, 1000))
 aflopend = list(range(1000, 0, -1))
 
-for naam, lijst in [("willekeurig", willekeurig), ("aflopend", aflopend)]:
+soorten = [("willekeurig", willekeurig), ("aflopend", aflopend)]
+for naam, lijst in soorten:
     k1, g1, v_combi = max_en_min_telt(lijst)
     g2, v_max = vind_max_telt(lijst)
     k2, v_min = vind_min_telt(lijst)
     print(naam)
     print(f"    één pass:    {v_combi} vergelijkingen")
-    print(f"    twee passes: {v_max + v_min} vergelijkingen ({v_max} + {v_min})")
+    twee = v_max + v_min
+    print(f"    twee passes: {twee} vergelijkingen",
+          f"({v_max} + {v_min})")
     print(f"    resultaten gelijk? {(k1 == k2) and (g1 == g2)}")`} />
 
 <details>

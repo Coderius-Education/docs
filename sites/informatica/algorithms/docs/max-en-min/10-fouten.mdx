@@ -7,98 +7,26 @@ sidebar_position: 10
 **Leerdoel:** je herkent valkuilen bij het werken met twee accumulators
 tegelijk.
 
-## Twee aparte for-lussen
+## Twee keer door de lijst: twee aparte for-lussen
 
-Geen foutmelding, maar wel het hele punt van dit algoritme gemist.
+Geen foutmelding, maar wel het hele punt van dit algoritme gemist: elk
+element wordt twee keer gelezen.
 
-**Oorzaak:** je doet twee passes over de lijst (één voor max, één voor min)
-in plaats van één pass met twee accumulators. Elk element wordt twee keer
-gelezen.
+**Oorzaak:** je doet twee passes over de lijst, één voor het maximum en
+één voor het minimum, in plaats van één pass met twee accumulators.
 
 **Oplossing:** één for-lus met twee accumulators, en per element hoogstens
 twee vergelijkingen.
 
+{/* niet-draaien: fragment; lijst, klein en groot komen uit de functie */}
 ```python
 # FOUT
-def max_en_min_traag(lijst):
-    groot = lijst[0]
-    for waarde in lijst:           # pass 1
-        if waarde > groot:
-            groot = waarde
-
-    klein = lijst[0]
-    for waarde in lijst:           # pass 2
-        if waarde < klein:
-            klein = waarde
-
-    return klein, groot
-
-# GOED
-def max_en_min(lijst):
-    klein = groot = lijst[0]
-    for waarde in lijst:
-        if waarde < klein:
-            klein = waarde
-        elif waarde > groot:
-            groot = waarde
-    return klein, groot
-```
-
-## Onveilige startwaardes
-
-```python
-klein = 0
-groot = 0
-```
-
-**Oorzaak:** als alle waardes negatief zijn, blijft `groot = 0` (terwijl 0
-niet in de lijst staat). Andersom: bij alleen positieve waardes blijft
-`klein = 0` ten onrechte.
-
-**Oplossing:** start beide op `lijst[0]`. Gegarandeerd een echte waarde uit
-de lijst.
-
-```python
-# FOUT
-def max_en_min_fout(lijst):
-    klein = 0
-    groot = 0
-    for waarde in lijst:
-        if waarde < klein:
-            klein = waarde
-        elif waarde > groot:
-            groot = waarde
-    return klein, groot
-
-print(max_en_min_fout([-3, -1, -7]))   # (-7, 0)  (groot is fout)
-print(max_en_min_fout([3, 5, 7]))       # (0, 7)  (klein is fout)
-
-# GOED
-def max_en_min_goed(lijst):
-    klein = groot = lijst[0]
-    ...
-```
-
-Meer uitleg: [Bouwsteen 1 — twee variabelen](site:algorithms/docs/max-en-min/bouwen/04-twee-variabelen).
-
-## `if … if …` in plaats van `if … elif …`
-
-Geen foutmelding, wel één extra vergelijking per element. Geen
-catastrofe, maar verspilling.
-
-**Oorzaak:** twee aparte `if`'s checken **altijd** allebei de condities,
-ook als de eerste al een update deed.
-
-**Oplossing:** gebruik `elif`. Een waarde kan niet tegelijk kleiner dan
-`klein` én groter dan `groot` zijn (want `klein <= groot`).
-
-```python
-# FOUT (werkt, maar inefficiënt)
+for waarde in lijst:
+    if waarde > groot:
+        groot = waarde
 for waarde in lijst:
     if waarde < klein:
         klein = waarde
-    if waarde > groot:
-        groot = waarde
 
 # GOED
 for waarde in lijst:
@@ -107,5 +35,58 @@ for waarde in lijst:
     elif waarde > groot:
         groot = waarde
 ```
+
+Meer uitleg: [Bouwsteen 2 — beide accumulators updaten](site:algorithms/docs/max-en-min/bouwen/05-twee-updates).
+
+## Een start die niet in de lijst staat: `klein = 0` en `groot = 0`
+
+Geen foutmelding, maar een fout antwoord: voor `[-3, -1, -7]` geeft de
+functie `(-7, 0)`, en voor `[3, 5, 7]` geeft hij `(0, 7)`.
+
+**Oorzaak:** zijn alle waardes negatief, dan is er geen groter dan `0`, en
+blijft `groot` op `0` staan, terwijl 0 niet in de lijst staat. Bij alleen
+positieve waardes gebeurt hetzelfde met `klein`.
+
+**Oplossing:** start beide op `lijst[0]`. Dat is gegarandeerd een echte
+waarde uit de lijst.
+
+{/* niet-draaien: fragment; lijst komt uit de functie */}
+```python
+# FOUT
+klein = 0
+groot = 0
+
+# GOED
+klein = groot = lijst[0]
+```
+
+Meer uitleg: [Bouwsteen 1 — twee variabelen](site:algorithms/docs/max-en-min/bouwen/04-twee-variabelen).
+
+## Een vergelijking te veel: `if … if …` in plaats van `if … elif …`
+
+Geen foutmelding, wel één extra vergelijking per element. Geen ramp, maar
+verspilling.
+
+**Oorzaak:** twee aparte `if`'s checken **altijd** allebei hun conditie,
+ook als de eerste al een update deed.
+
+**Oplossing:** gebruik `elif`. Een waarde kan niet tegelijk kleiner dan
+`klein` én groter dan `groot` zijn, want `klein` is nooit groter dan
+`groot`.
+
+{/* niet-compileren: fragment; het lijf van de laatste tak is weggelaten */}
+```python
+# FOUT
+if waarde < klein:
+    klein = waarde
+if waarde > groot:
+
+# GOED
+if waarde < klein:
+    klein = waarde
+elif waarde > groot:
+```
+
+Meer uitleg: [Bouwsteen 2 — beide accumulators updaten](site:algorithms/docs/max-en-min/bouwen/05-twee-updates).
 
 Door naar [cheatsheet](site:algorithms/docs/max-en-min/11-cheatsheet).
