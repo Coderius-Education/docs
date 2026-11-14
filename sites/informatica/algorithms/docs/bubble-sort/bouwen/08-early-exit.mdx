@@ -48,7 +48,8 @@ ronde 0: lijst=[1, 2, 3, 4, 5], geswapt=False
 ```
 
 Eén ronde zonder swaps, dus `break`. Op een gesorteerde lijst is bubble
-sort klaar na één pass van `n − 1` vergelijkingen, en dat is `O(n)`.
+sort klaar na één pass van `n − 1` vergelijkingen: het werk groeit dan even
+hard als de lijst.
 
 </details>
 
@@ -90,17 +91,12 @@ bubble_sort([1, 2, 4, 3, 5])`} />
 - Bijna gesorteerd: twee rondes. In ronde 0 wisselen de 4 en de 3, en de
   ronde daarna bevestigt zonder swaps dat het klaar is.
 
+De vroege uitstap helpt vooral bij een lijst die al bijna op volgorde
+staat, zoals een gesorteerde lijst waar één element bij is gekomen. Zonder
+vlag doet bubble sort daar `n − 1` passes; met vlag maar een paar.
+
 </details>
 
-## Waarom is dit zo handig?
-
-Vooral bij data die al bijna op volgorde staat, en dat komt vaker voor
-dan je denkt: een gesorteerde lijst waar één element bij is gekomen,
-bijvoorbeeld. Met early-exit is bubble sort daar `O(n)` in plaats van
-`O(n²)`.
-
-## Wat nu?
-
-Je hebt alle bouwstenen. Tijd om ze samen te zien werken.
+Je hebt nu alle bouwstenen. In de volgende stap zie je ze samen werken.
 
 Door naar [het complete algoritme](site:algorithms/docs/bubble-sort/09-compleet).

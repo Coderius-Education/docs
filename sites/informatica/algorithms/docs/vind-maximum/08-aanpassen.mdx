@@ -7,7 +7,7 @@ sidebar_position: 8
 **Leerdoel:** je past `vind_maximum` aan tot `vind_minimum`. Doel: zien hoe
 symmetrisch het accumulator-patroon is.
 
-## Opdracht
+## Wat je aanpast
 
 Schrijf `vind_minimum(lijst)` die de kleinste waarde uit de lijst
 returnt. Begin van een kopie van `vind_maximum` — verander zo min mogelijk.
@@ -15,6 +15,20 @@ returnt. Begin van een kopie van `vind_maximum` — verander zo min mogelijk.
 - `vind_minimum([3, 7, 2, 9, 4])` → `2`
 - `vind_minimum([-3, -1, -7])` → `-7`
 - `vind_minimum([42])` → `42`
+
+## Opdracht
+
+De startcode is `vind_maximum` onder de nieuwe naam: hij vindt nog het
+maximum.
+
+Verwachte uitvoer:
+
+```
+2
+-7
+42
+5
+```
 
 {/* uitvoer-varieert: startcode; hij vindt nog het maximum tot de leerling de vergelijking omdraait */}
 <PyRunner initialCode={`def vind_minimum(lijst):
@@ -25,10 +39,10 @@ returnt. Begin van een kopie van `vind_maximum` — verander zo min mogelijk.
     return minimum
 
 # Tests
-print(vind_minimum([3, 7, 2, 9, 4]))     # verwacht: 2
-print(vind_minimum([-3, -1, -7]))         # verwacht: -7
-print(vind_minimum([42]))                 # verwacht: 42
-print(vind_minimum([5, 5, 5, 5]))         # verwacht: 5`} />
+print(vind_minimum([3, 7, 2, 9, 4]))
+print(vind_minimum([-3, -1, -7]))
+print(vind_minimum([42]))
+print(vind_minimum([5, 5, 5, 5]))`} />
 
 <details>
 <summary>Tip</summary>

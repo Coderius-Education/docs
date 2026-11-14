@@ -9,6 +9,8 @@ ook de positie terug te geven.
 
 ## Opdracht
 
+### De opdracht
+
 Schrijf `vind_index_van_maximum(lijst)` die de index teruggeeft van het
 maximum. Staat het maximum er meerdere keren, geef dan de eerste index.
 
@@ -16,32 +18,35 @@ maximum. Staat het maximum er meerdere keren, geef dan de eerste index.
 - `vind_index_van_maximum([10, 20, 20, 10])` → `1` (eerste 20)
 - `vind_index_van_maximum([42])` → `0`
 
+### Aan de slag
+
 De startcode roept je functie aan op vier lijsten en print de gevonden
-index naast wat het moet zijn.
+index.
+
+Verwachte uitvoer:
+
+```
+3
+1
+0
+1
+```
 
 {/* uitvoer-varieert: startcode; de functie geeft 0 terug tot de leerling hem invult */}
 <PyRunner initialCode={`def vind_index_van_maximum(lijst):
     # vul aan: net als vind_maximum, maar bewaar de INDEX
     return 0
 
-tests = [
-    ([3, 7, 2, 9, 4], 3),
-    ([10, 20, 20, 10], 1),
-    ([42], 0),
-    ([-5, -1, -9, -2], 1),
-]
-for lijst, verwacht in tests:
-    idx = vind_index_van_maximum(lijst)
-    print(f"lijst={lijst} → index={idx}, waarde={lijst[idx]}   verwacht: {verwacht}")`} />
+print(vind_index_van_maximum([3, 7, 2, 9, 4]))
+print(vind_index_van_maximum([10, 20, 20, 10]))
+print(vind_index_van_maximum([42]))
+print(vind_index_van_maximum([-5, -1, -9, -2]))`} />
 
 <details>
 <summary>Tip</summary>
 
-Zelfde patroon als `vind_maximum`, maar nu houd je een index bij in plaats
-van een waarde. Vergelijken doe je via `lijst[max_index]`.
-
-Welke startwaarde kies je voor `max_index`? Welke variabele update je bij
-een nieuwe winnaar?
+Welke startwaarde kies je voor `max_index`, en met welke waarde vergelijk
+je elk nieuw getal als je alleen een index bewaart?
 
 Loop door de lijst met `enumerate` (ken je uit
 [lineair zoeken, bouwsteen 1](site:algorithms/docs/lineair-zoeken/bouwen/04-doorlopen))
@@ -77,11 +82,11 @@ Beide zijn geldige keuzes — kies bewust.
 
 ## Onderzoek
 
-<details>
-<summary>Wat als alle elementen gelijk zijn? Welke index krijg je terug?</summary>
+**Vraag:** wat geeft `vind_index_van_maximum([7, 7, 7, 7])` terug? En wat
+als je `>` in je functie vervangt door `>=`?
 
-Bijvoorbeeld `vind_index_van_maximum([7, 7, 7, 7])`. Probeer het in de
-code-omgeving hierboven.
+<details>
+<summary>Antwoord</summary>
 
 Met de `>`-versie krijg je `0` terug — de eerste 7 wint, want geen latere
 waarde is strikt groter. Met `>=` zou je `3` krijgen, de laatste dus.
@@ -96,15 +101,28 @@ zoeken werkt.
 ## Uitdaging (optioneel)
 
 Schrijf `vind_alle_indexen_van_maximum(lijst)` die een lijst van alle
-indexen returnt waar het maximum staat. Bijv. `[5, 3, 5, 2, 5]` → `[0, 2, 4]`.
+indexen returnt waar het maximum staat.
+
+Verwachte uitvoer:
+
+```
+[0, 2, 4]
+[2]
+```
+
+{/* uitvoer-varieert: startcode; de functie geeft [] terug tot de leerling hem invult */}
+<PyRunner initialCode={`def vind_alle_indexen_van_maximum(lijst):
+    # vul aan
+    return []
+
+print(vind_alle_indexen_van_maximum([5, 3, 5, 2, 5]))
+print(vind_alle_indexen_van_maximum([1, 2, 3]))`} />
 
 <details>
 <summary>Tip</summary>
 
-Twee rondes door de lijst. In de eerste ronde vind je het maximum zelf,
-precies zoals `vind_maximum`. In de tweede ronde loop je opnieuw langs
-alle elementen en bewaar je elke index waar de waarde gelijk is aan dat
-maximum.
+Welke indexen meetellen, weet je pas als je het maximum kent. Hoe kom je
+daar eerst aan?
 
 </details>
 
@@ -127,9 +145,11 @@ print(vind_alle_indexen_van_maximum([5, 3, 5, 2, 5]))   # [0, 2, 4]
 print(vind_alle_indexen_van_maximum([1, 2, 3]))         # [2]
 ```
 
-Het kan niet in één ronde: pas als je de hele lijst hebt gezien weet je
-wat het maximum is, en dus welke eerdere indexen meetellen.
+Zo loop je twee keer door de lijst: eerst om het maximum te vinden, dan
+om de indexen te verzamelen. Het kan ook in één ronde, als je de lijst
+`indexen` opnieuw begint zodra je een groter getal tegenkomt, maar twee
+rondes zijn makkelijker te lezen.
 
 </details>
 
-Door naar [veelgemaakte fouten](site:algorithms/docs/vind-maximum/10-fouten).
+Door naar [Er gaat iets mis](site:algorithms/docs/vind-maximum/10-fouten).

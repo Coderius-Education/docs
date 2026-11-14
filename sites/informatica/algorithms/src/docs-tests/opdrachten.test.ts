@@ -46,15 +46,31 @@ function zonderCode(tekst: string): string {
   return tekst.replace(/```[\s\S]*?```/g, leeg).replace(/initialCode=\{`[\s\S]*?`\}/g, leeg);
 }
 
-type Sectie = { kop: string; inhoud: string };
+type Sectie = { kop: string; niveau: number; inhoud: string; ouder?: string };
 
-/** De secties per H2 of H3; een sectie loopt tot de volgende kop van niveau 2 of 3. */
+/**
+ * De secties per H2 of H3. Een sectie loopt tot de volgende kop van hetzelfde
+ * of een hoger niveau: een H2 met stappen eronder (`### De opdracht`,
+ * `### Aan de slag`, schrijfgids §2) omvat die stappen. Met les-tabbladen is
+ * zo'n H2 één tabblad, en het antwoord staat in de laatste stap ervan.
+ */
 function secties(tekst: string): Sectie[] {
   const proza = zonderCode(tekst);
-  const koppen = [...proza.matchAll(/^##{1,2} (.*)$/gm)];
-  return koppen.map((m, i) => {
-    const eind = i + 1 < koppen.length ? koppen[i + 1].index : proza.length;
-    return { kop: m[1].trim(), inhoud: proza.slice(m.index, eind) };
+  const koppen = [...proza.matchAll(/^(##{1,2}) (.*)$/gm)].map((m) => ({
+    index: m.index ?? 0,
+    niveau: m[1].length,
+    kop: m[2].trim(),
+  }));
+  let ouder: string | undefined;
+  return koppen.map((k, i) => {
+    if (k.niveau === 2) ouder = k.kop;
+    const volgende = koppen.slice(i + 1).find((x) => x.niveau <= k.niveau);
+    return {
+      kop: k.kop,
+      niveau: k.niveau,
+      inhoud: proza.slice(k.index, volgende ? volgende.index : proza.length),
+      ouder: k.niveau === 3 ? ouder : undefined,
+    };
   });
 }
 
@@ -63,6 +79,9 @@ function secties(tekst: string): Sectie[] {
 // onder "Bouw en test". Precies die kop, want "Bouw zelf en test" is de
 // opdracht van elke bouwsteen en die heeft zijn antwoord in zijn eigen sectie.
 const HELE_PAGINA_KOP = /^(De uitdaging|Bouw zelf)$/i;
+
+/** De stappen van een opdracht in twee stappen (schrijfgids §2). */
+const STAP_KOP = /^(De opdracht|Aan de slag)$/i;
 
 /**
  * De koppen die een opdracht aankondigen en geen antwoord hebben. Een
@@ -76,6 +95,11 @@ function zonderAntwoord(tekst: string): string[] {
   const open: string[] = [];
   alle.forEach((s, i) => {
     if (!OPDRACHT_KOP.test(s.kop)) return;
+    // Een stap van een opdracht (`### De opdracht` onder `## Opdracht 2`):
+    // de H2 eromheen heeft het antwoord al nodig, en omvat de stap. Alleen
+    // die stappen: een `### Extra uitdaging` onder een opdracht met antwoord
+    // heeft er zelf een nodig (zie de kop van dit bestand).
+    if (s.ouder && OPDRACHT_KOP.test(s.ouder) && STAP_KOP.test(s.kop)) return;
     let einde = i + 1;
     if (HELE_PAGINA_KOP.test(s.kop)) {
       while (einde < alle.length && !OPDRACHT_KOP.test(alle[einde].kop)) einde += 1;
@@ -90,6 +114,47 @@ function zonderAntwoord(tekst: string): string[] {
 }
 
 describe('zonderAntwoord', () => {
+  it('een extra uitdaging onder een opdracht met antwoord heeft er zelf een nodig', () => {
+    // Bij Torens van Hanoi stond een "### Extra uitdaging" zonder antwoord
+    // onder de opdracht. Toen een H2 zijn stappen ging omvatten, ontsnapte
+    // hij weer: elke opdracht-kop onder een opdracht werd overgeslagen.
+    const pagina = `## Opdracht 1
+
+### Aan de slag
+<details>
+<summary>Antwoord</summary>
+</details>
+
+### Extra uitdaging
+Doe het ook zonder recursie.
+`;
+    expect(zonderAntwoord(pagina)).toEqual(['Extra uitdaging']);
+  });
+
+  it('een opdracht in twee stappen heeft het antwoord in de tweede stap', () => {
+    // Met les-tabbladen krijgt een lange opdracht de stappen De opdracht en
+    // Aan de slag (schrijfgids §2); eerst telde elke ### als een eigen sectie.
+    const pagina = `## Opdracht 1
+
+### De opdracht
+Maak iets.
+
+### Aan de slag
+<details>
+<summary>Antwoord</summary>
+</details>
+
+## Opdracht 2
+
+### De opdracht
+Zonder antwoord.
+
+### Aan de slag
+Ook niet.
+`;
+    expect(zonderAntwoord(pagina)).toEqual(['Opdracht 2']);
+  });
+
   it('een antwoord van een voorspelling verderop telt niet voor een genummerde opdracht', () => {
     const pagina = `## Opdracht 1
 Maak iets.

@@ -106,8 +106,9 @@ Chromium en doet daar wat een leerling in de speeltuin doet
 dus ook na een wijziging in `packages/python-runner`. De job `terminal` doet
 hetzelfde voor de oefenterminal van linux (`scripts/rooktest-linux.mjs`: Tab
 vult aan, ook na Esc en wegklikken; Esc en dan Tab gaat naar de knop
-Volgende; het antwoord uit de les vinkt elk doel af; de terminal plakt naast
-een open antwoord).
+Volgende; het antwoord uit de les vinkt elk doel af; met een open antwoord
+blijven de terminal en zijn doelen in beeld, en schuift het antwoord in zijn
+eigen vak).
 
 **De job `schermen` meet of elk scherm past**, per gebouwde cursus met
 les-tabbladen: `meet-les-tabs.mjs --bronnen=changed.json --streng`. Een
@@ -117,9 +118,24 @@ onderdeel, de opmaak, een deel of een package meet de hele cursus, ook als
 er daarnaast een les veranderde (`schermen.viaPakket`: het package waar de
 cursus van afhangt). Verandert de meting zelf (het meetscript, de
 uitzonderingen, `meet-selectie.js`), dan meet hij elke cursus met tabbladen,
-met de build uit de cache of zelf gebouwd zoals `terminal`. Met
+met de build uit de cache: de job `voorraad` zet een cursus die deze run
+niet bouwt er één keer in (`voorraadSites`), en anders bouwt hij hem zelf.
+Een test, de tests van de lessen (`docs-tests/`), de notities van de cursus
+en een `_category_.json` raken geen scherm en tellen niet mee
+(`raaktGeenScherm`). Een cursus die helemaal gemeten wordt, verdeelt het plan
+over meer runners (`schermenMatrix` in `wijzigingen.js`: veertig
+lespagina's per runner, hoogstens zes per cursus en achttien samen, de
+grootste vooraan; `--deel=2/6` meet elke zesde les, `deelVan` in
+`meet-selectie.js`); op één runner kostte algoritmes zestien minuten,
+terwijl de rest van CI na drie minuten klaar was, en met 23 delen wachtte
+een deel op een vrije runner. Of een cursus helemaal gemeten wordt, beslist
+`heleSite` in `meet-selectie.js`, voor het plan en het meetscript dezelfde.
+Een les die niet binnen dertig seconden laadt, opent het meetscript nog één
+keer (`laad`): één hapering liet anders de meting van een hele cursus
+omvallen. Met
 `--streng` faalt hij bij een scherm dat op 1280×720 of 1366×768 te lang is,
-zijwaarts schuift, een rij tabbladen op twee regels, afgesneden code of een
+zijwaarts schuift, een rij tabbladen op twee regels, afgesneden code, een
+Python-editor die minder dan vijf regels laat zien, of een
 dubbele id, ook op een pagina zonder tabbladen (daar ook afgebroken code),
 en bij een gewijzigde les die hij niet in de build vindt
 (`moetGemetenWorden`); een bewuste uitzondering staat met een reden in
@@ -260,7 +276,7 @@ De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
 (schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica,
-fullstack, linux, ctf en de editor-cursus zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+fullstack, linux, ctf, de editor-cursus en algoritmes zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
@@ -417,7 +433,7 @@ zelf: `<Werkvormen doet={{ aanpassen: '…' }} />`; de literatuur blijft
 gelijk (linux, editor en ctf, `Werkvorm.test.tsx`).
 
 **De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
-de standaard (schrijfgids §15); web, python, robotica en fullstack hebben hem zo. Hij is een halve pagina: waar de lessen op steunen
+de standaard (schrijfgids §15); elke cursus met tabbladen heeft hem zo. Hij is een halve pagina: waar de lessen op steunen
 (de tabel hierboven, met de literatuur), wat je vooraf wilt weten in drie
 regels, en links naar leerdoelen, eindopdracht en nakijker. Wat een leerling
 of docent nodig heeft om het materiaal te gebruiken, hoort in het materiaal
@@ -953,10 +969,11 @@ fout antwoord goedkeurden:
   commando dat lukte (`gelukt`), en zegt `tip` hoe het nog kan voordat
   `vast` zegt dat het niet meer kan.
 - **Het meetscript meet met klassieke schuifbalken** (Windows, 15 pixels),
-  en met `--open` met elk uitklapblok open. Een open antwoord bij een
-  opdracht mag het scherm langer maken (tot 127 pixels in linux): de
-  terminal naast de les plakt, en blijft met zijn doelen in beeld terwijl
-  de leerling het antwoord leest. Een tip alleen past overal.
+  en met `--open` met elk uitklapblok open. Een open tip of antwoord dat het
+  scherm te lang maakt, schuift in zijn eigen vak (`openBlokInVak` in
+  `speling.ts`, sinds algoritmes: daar viel een open tip op elk scherm met
+  een veld onder de rand); de terminal naast de les plakt en blijft met zijn
+  doelen in beeld.
 - **Een rij die zijwaarts schuift, zet de open knop in beeld**
   (`schuifRij.ts`), alleen met `scrollLeft`: `scrollIntoView` schoof ook
   de pagina.
@@ -990,6 +1007,113 @@ Een vierde review keek naar wat de derde opleverde, en naar de nieuwe CI:
 - **CI meet zonder stille gaten** (zie Incrementele CI): een package naast
   een les, een wijziging aan alleen de meting, en een pagina zonder
   tabbladen werden niet of half gemeten.
+
+**Wat algoritmes erbij bracht** (november 2026; alle 1124 schermen passen op
+1280×720 en 1366×768). De cursus heeft 270 lessen met een eigen oefenveld
+(`PyRunner`, met Stap voor stap en verborgen code), een interactief model
+(`AlgorithmModel`), een spelboom (`GameTree`) en de route machine learning.
+Bij de eerste meting pasten 947 van de 1231 schermen. Daarvoor is dit
+gekomen:
+
+- **Het meetscript vindt een les als `les.html`** (`lesVan`): de cursus
+  bouwt met `trailingSlash: false`, en vond eerst geen enkele les. De
+  meetselectie voor CI houdt het nummer in het adres als de site
+  `numberPrefixParser: false` zet (`houdtNummers`): `01-concept` blijft
+  `01-concept`.
+- **De code naast de uitvoer krijgt de breedte van zijn langste regel**
+  (`codeBreedte` in `PyRunner/breedte.ts`, half tot driekwart van het
+  veld); past die niet, dan staat de uitvoer eronder, in een vak van vaste
+  hoogte. Op een vaste zestig procent brak in 184 schermen een regel af.
+  Past de langste regel ook zo niet, dan worden de letters van de editor
+  kleiner, tot 80% (`codeSchaal`), zoals `pasCode` bij een codeblok.
+- **Een teken heeft een vaste breedte** (9,1 pixels in de monospace van de
+  huisstijl). Meten in de browser gaf het reservelettertype: het lettertype
+  van de code laadt pas als er code in beeld komt, en dan brak een regel van
+  95 tekens toch af.
+- **Alles in het veld telt mee voor zijn hoogte**: de werkbalk, het
+  uitklapblok met de klaargezette code en de ruimte eromheen
+  (`rondDeEditor`), en de rand. Elk ontbrekend stukje was een scherm dat
+  6 tot 75 pixels te lang was.
+- **Een onderdeel dat niet kan krimpen, zoomt**: de spelboom van minimax
+  meet de ruimte en zoomt tot 60% (`boomZoom`); `zoom` en geen `transform`.
+  Het model is in beide weergaven even hoog, ook na Draai de tests.
+- **Een opdracht in twee stappen** (`### De opdracht`, `### Aan de slag`):
+  `opdrachten.test.ts` telde elke `###` als een eigen sectie, en keurde zo
+  elke opdracht af waarvan het antwoord in de tweede stap staat. Een H2
+  omvat nu zijn stappen.
+- **"Het tabblad loopt vast" is "het tabblad van de browser"**: de les heeft
+  zelf tabbladen.
+
+In de lessen: elke lange opdracht van de route twee stappen, Run op de
+compleet-pagina's een stap voor de code en een voor het model, pen en papier
+bij dijkstra en knapsack van veertien naar acht en vijf tabbladen (met een
+tabel per ronde die op een scherm past), en een FOUT/GOED met alleen de
+regels die veranderen. `src/docs-tests/schermen.test.ts` bewaakt de
+verwijzingen per scherm, en hand-outs en cheatsheets houden `les_tabs:
+false`.
+
+**Wat een doorloop van algoritmes als leerling vond** (november 2026; alle
+1124 schermen passen weer op 1280×720 en 1366×768, na eerst 144 en 111 die
+dat niet deden). Elk scherm paste, en toch werkte de leerling er niet goed mee: een editor
+van anderhalve regel, een grafiek in een vak van 100 pixels, de opdracht op
+een ander scherm dan het veld. Sindsdien:
+
+- **De editor laat minstens zes regels zien** (`MIN_REGELS` in
+  `PyRunner/opmaak.ts`). Alleen het hele veld had een ondergrens, en daar
+  gingen werkbalk, klaargezette code en uitvoer nog af: op 18 schermen
+  waren hooguit drie regels te zien. Met acht regels pasten 117 schermen
+  van de route niet meer, waar de stappen, het veld, de tip en het antwoord
+  samen op één scherm staan. Een scherm dat met de ondergrens niet past, is
+  in de les ingekort of gesplitst. Het meetscript meldt per scherm hoeveel
+  regels een Python-editor laat zien; minder dan vijf is met `--streng` een
+  fout. Passen is ook hier niet genoeg.
+- **Naast of onder volgt de startcode, niet wat de leerling typt**: bij een
+  regel van 70 tekens sprong het veld onder het typen van naast naar onder.
+  Een regel die met letters op 80 procent naast de uitvoer past, staat er
+  naast.
+- **Een grafiek krijgt ruimte**: naast de code minstens 45 procent van de
+  breedte, onder de code de helft van de ruimte, en in een tabblad staat
+  hij vóór de tekst.
+- **De verwachte uitvoer staat in het veld**, zoals bij de CodeExercise:
+  `les-tabs.js` telt de PyRunner als veld met een doel (`VELDEN_MET_DOEL`).
+  In de route stonden de stappen en de verwachte uitvoer op De opdracht en
+  het veld op Aan de slag; nu staan ze bij het veld, en De opdracht is
+  alleen de beschrijving.
+- **Stap voor stap breekt een regel niet af** (`afbreken={false}` op de
+  HighlightedEditor): de kantlijn telt per echte regel, en bij een
+  afgebroken regel stond nummer 9 naast `}`. Na Sluiten blijft de uitvoer
+  van de opname staan.
+- **De klaargezette code opent met een knop in de werkbalk**
+  (Klaargezette code, op de plek van het label Python), en open staat hij
+  onder de editor. Het uitklapblok onder de editor kreeg in een tabblad de
+  opmaak van een tip en kostte 77 pixels; geen scherm Aan de slag met
+  klaargezette code paste daardoor. De werkbalk blijft ook in een codekolom
+  van 466 pixels (de helft van het veld, met de schuifbalk van Windows) op
+  één regel: op twee regels was het veld 37 pixels hoger.
+- **Een lange verwachte uitvoer rekt het veld niet op**: wat er rond de
+  editor staat, telt tot de onderkant van de inhoud (`rondOm` in
+  `opmaak.ts`), niet van het codevak dat het raster oprekt tot de hoogte
+  van de uitvoerkolom. Eerst hield een hoge kolom zichzelf in stand.
+- **Een open tip of antwoord schuift in zijn eigen vak** (`openBlokInVak`,
+  voor elke cursus met tabbladen).
+- **De spelboom heeft Bekijk de boom groot**: een dialog met de boom op ware
+  grootte.
+- **Het model zegt geen undefined**: Pyodide maakt van `None` `undefined`,
+  en `formatValue` zegt "geen". Knoppen en uitkomsten zijn Nederlands, de
+  titels zijn koppen voor een schermlezer (`role="heading"`), en in een
+  tabblad staan de knoppen ook in de DOM voor de testgevallen.
+- **Onderzoek, Experimenteer, Bouw zelf en Uitdaging** hebben een werkvorm.
+
+In de lessen: een doe-zin staat op het scherm met het veld, een stelling
+deelt een tabblad met hooguit twee andere, de waarschuwing over een `while`
+staat op het scherm waar de leerling hem schrijft (als regel **Pas op:** in
+plaats van een blok van honderd pixels), en een regel van de startcode is
+hooguit 66 tekens. Een scherm Aan de slag heeft een zin over de editor,
+drie of vier stappen van één regel, het veld met de verwachte uitvoer, en
+tip en antwoord; een kop als `## Opdracht: tel de beurten` heet `## Opdracht`
+(voluit stond hij boven de rij stappen, 46 pixels), met de naam in de eerste
+zin van De opdracht. Het spel van Hanoi staat in een tabblad naast zijn
+knoppen.
 
 ## Code in MDX-expressies
 

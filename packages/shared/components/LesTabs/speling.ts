@@ -225,3 +225,61 @@ export function verdeelSpeling(wortel: HTMLElement): void {
   beeld.style.minHeight = `${hoogte}px`;
   aangepast.set(wortel, [beeld]);
 }
+
+/**
+ * De hoogte van de inhoud van een open tip of antwoord als het paneel
+ * `tekort` pixels te lang is: wat past, maar nooit lager dan KLEINSTE_NA.
+ */
+export function blokHoogte(hoogte: number, tekort: number): number {
+  if (tekort <= 0) return hoogte;
+  return Math.max(KLEINSTE_NA, hoogte - tekort);
+}
+
+/** De open blokken die de vorige keer een vak kregen, per wortel. */
+const blokken = new WeakMap<HTMLElement, HTMLElement[]>();
+
+/** De inhoud van een uitklapblok: wat er naast de summary staat. */
+function inhoudVan(blok: HTMLDetailsElement): HTMLElement | null {
+  const rest = Array.from(blok.children).filter((k) => k.tagName !== 'SUMMARY');
+  if (rest.length !== 1) return null;
+  // Docusaurus zet de inhoud in een element dat open- en dichtklapt, met de
+  // inhoud zelf erin: het vak komt op de inhoud, niet op wat animeert.
+  const klapper = rest[0] as HTMLElement;
+  return (klapper.children.length === 1 ? klapper.firstElementChild : klapper) as HTMLElement;
+}
+
+/**
+ * Een tip of antwoord dat de leerling openklapt, schuift in zijn eigen vak
+ * als het paneel anders onder de rand van het scherm komt. In de route
+ * machine learning viel een open tip op elk scherm met een veld 85 tot 128
+ * pixels buiten beeld, en bij binair zoeken een antwoord tot 667 pixels; de
+ * leerling las de eerste regel en moest dan de pagina laten schuiven. Het
+ * onderste blok geeft eerst toe. Roep dit aan na elke klik en elke `toggle`.
+ */
+export function openBlokInVak(wortel: HTMLElement): void {
+  for (const el of blokken.get(wortel) ?? []) {
+    el.style.removeProperty('max-height');
+    el.style.removeProperty('overflow-y');
+  }
+  blokken.delete(wortel);
+  const paneel = wortel.querySelector<HTMLElement>(':scope > [data-les-tab]:not([hidden])');
+  if (!paneel || window.innerWidth < BREED) return;
+  const open = Array.from(paneel.querySelectorAll<HTMLDetailsElement>('details[open]')).filter(
+    (blok) => zichtbaar(blok) && !blok.parentElement?.closest('details'),
+  );
+  const gezet: HTMLElement[] = [];
+  for (const blok of open.reverse()) {
+    const tekort = Math.ceil(
+      paneel.getBoundingClientRect().bottom + window.scrollY + MARGE - window.innerHeight,
+    );
+    if (tekort <= 0) break;
+    const inhoud = inhoudVan(blok);
+    if (!inhoud) continue;
+    const hoogte = blokHoogte(inhoud.offsetHeight, tekort);
+    if (hoogte >= inhoud.offsetHeight) continue;
+    inhoud.style.maxHeight = `${hoogte}px`;
+    inhoud.style.overflowY = 'auto';
+    gezet.push(inhoud);
+  }
+  if (gezet.length) blokken.set(wortel, gezet);
+}

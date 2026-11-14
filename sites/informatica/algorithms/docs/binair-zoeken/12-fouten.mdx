@@ -2,31 +2,53 @@
 sidebar_position: 12
 ---
 
-# Er gaat iets mis — top-3 fouten
+# Er gaat iets mis — vier fouten
 
 **Leerdoel:** je herkent de klassieke valkuilen van binair zoeken.
 
-## Oneindige lus (`laag = midden`)
+## Een kommagetal als index: `/` in plaats van `//`
 
-Geen foutmelding — Python loopt gewoon **oneindig** door. De browser-tab bevriest,
-en de Reset-knop reageert dan ook niet meer, want Python draait in
-dezelfde tab als de les. Sluit de tab en open de les opnieuw. Je code ben je
-dan kwijt, dus kopieer hem eerst naar een kladblok als je iets uitprobeert
+{/* foutmelding-van: lijst = [1, 3, 5, 7]\nmidden = (0 + 3) / 2\nprint(lijst[midden]) */}
+
+```
+TypeError: list indices must be integers or slices, not float
+```
+
+**Oorzaak:** je berekende het midden met `/` in plaats van `//`. Die deling
+geeft altijd een kommagetal, ook als hij precies uitkomt: `(0 + 6) / 2` is
+`3.0`. Een index moet een geheel getal zijn, dus ook `lijst[3.0]` mag niet.
+
+**Oplossing:** deel met `//`. Die rondt naar beneden af op een geheel getal.
+
+{/* niet-draaien: fragment; laag en hoog komen uit de functie */}
+```python
+# FOUT
+midden = (laag + hoog) / 2
+
+# GOED
+midden = (laag + hoog) // 2
+```
+
+Meer uitleg: [Bouwsteen 2 — het midden berekenen](site:algorithms/docs/binair-zoeken/bouwen/05-midden).
+
+## Oneindige lus: `laag = midden`
+
+Geen foutmelding: Python blijft rekenen en het tabblad van de browser loopt
+vast, ook de Reset-knop. Sluit het tabblad en open de les opnieuw. Je code
+ben je dan kwijt: kopieer hem eerst naar een kladblok als je iets uitprobeert
 wat mis kan gaan.
 
-**Oorzaak:** je hebt `laag = midden` geschreven in plaats van
-`laag = midden + 1`. Bij `laag = 1, hoog = 2` blijft `midden = 1` keer op
-keer — het zoekgebied krimpt nooit.
+**Oorzaak:** je schreef `laag = midden` in plaats van `laag = midden + 1`.
+Bij `laag = 1, hoog = 2` blijft `midden = 1`: het zoekgebied krimpt nooit.
 
-**Oplossing:** schrijf `laag = midden + 1`. Door het al-onderzochte midden
-weg te gooien krimpt het zoekgebied elke stap met minstens één element, en
-dan stopt de lus altijd.
+**Oplossing:** schrijf `laag = midden + 1`. Dan valt het onderzochte midden
+af, krimpt het zoekgebied elke ronde, en stopt de lus altijd.
 
 {/* niet-compileren: fragment; alleen de elif-tak van de vergelijking */}
 ```python
 # FOUT
 elif lijst[midden] < doel:
-    laag = midden     # zoekgebied krimpt niet → oneindige lus
+    laag = midden
 
 # GOED
 elif lijst[midden] < doel:
@@ -35,9 +57,10 @@ elif lijst[midden] < doel:
 
 Meer uitleg: [Bouwsteen 3 — vergelijken](site:algorithms/docs/binair-zoeken/bouwen/06-vergelijken).
 
-## `laag <= hoog` vs `laag < hoog`
+## Het laatste element overgeslagen: `laag < hoog`
 
-Geen foutmelding, maar bij sommige lijsten wel een fout antwoord.
+Geen foutmelding, maar bij sommige lijsten wel een fout antwoord:
+`binair_zoek([5], 5)` geeft `-1`, terwijl 5 wél in de lijst staat.
 
 **Oorzaak:** met `while laag < hoog` slaat de lus de laatste ronde over
 zodra `laag == hoog`. Dan blijft één element ongecontroleerd.
@@ -45,41 +68,39 @@ zodra `laag == hoog`. Dan blijft één element ongecontroleerd.
 **Oplossing:** gebruik `while laag <= hoog`. Bij `laag == hoog` is er nog
 één element over om te bekijken.
 
+{/* niet-compileren: vormfragment; het lijf van de lus is weggelaten */}
 ```python
 # FOUT
 while laag < hoog:
-    ...
-
-binair_zoek([5], 5)   # returnt -1, terwijl 5 wél in de lijst staat
 
 # GOED
 while laag <= hoog:
-    ...
 ```
 
-## Ongesorteerde lijst meegeven
+Meer uitleg: [Bouwsteen 4 — herhalen met een while-lus](site:algorithms/docs/binair-zoeken/bouwen/07-while).
 
-Geen foutmelding, alleen een fout antwoord. Dit is de gevaarlijkste soort
-bug, omdat hij stilletjes verkeerde dingen doet.
+## Een ongesorteerde lijst
 
-**Oorzaak:** het algoritme veronderstelt *als `lijst[midden] < doel`, dan
-moet het doel in de rechter helft zitten*. Die aanname klopt alleen op een
-gesorteerde lijst.
+Geen foutmelding, alleen een fout antwoord. Dat maakt deze fout
+gevaarlijk: hij doet stilletjes het verkeerde.
 
-**Oplossing:** zorg dat je input gesorteerd is — sorteer hem eerst of
-bewaar een gesorteerde versie.
+**Oorzaak:** het algoritme gaat ervan uit dat het doel rechts ligt als
+`lijst[midden] < doel`. Die aanname klopt alleen op een gesorteerde lijst.
 
+**Oplossing:** sorteer de lijst eerst, en zoek in de gesorteerde versie.
+
+{/* niet-draaien: fragment; binair_zoek staat op de compleet-pagina */}
 ```python
 # FOUT
-binair_zoek([3, 1, 4, 1, 5], 4)   # output kan -1 zijn, of toevallig 2
+binair_zoek([5, 1, 4, 2, 3], 1)   # -1, terwijl 1 op index 1 staat
 
 # GOED
-lijst = sorted(jouw_lijst)
-binair_zoek(lijst, doel)
+binair_zoek(sorted([5, 1, 4, 2, 3]), 1)
 ```
 
-Zoek je vaak, sorteer dan één keer en bewaar de gesorteerde
-versie. Het sorteren kost O(n log n), maar daarna is elk zoeken O(log n) —
-bij veel zoekopdrachten loont dat.
+Zoek je vaak in dezelfde lijst, sorteer hem dan één keer en bewaar de
+gesorteerde versie. Sorteren kost werk, maar daarna is elk zoeken snel.
+
+Meer uitleg: [Het complete algoritme](site:algorithms/docs/binair-zoeken/09-compleet).
 
 Door naar [cheatsheet](site:algorithms/docs/binair-zoeken/13-cheatsheet).

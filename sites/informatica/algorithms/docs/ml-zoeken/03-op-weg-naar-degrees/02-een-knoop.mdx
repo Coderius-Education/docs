@@ -89,10 +89,24 @@ print(haven.ouder.toestand)`} />
 
 </details>
 
-## Opdracht: terug naar de start
+## Opdracht
 
-Loop vanaf de knoop van Strand terug naar de start. Print bij elke knoop het
-station en de lijn waarmee je er kwam, en print als laatste de start:
+### De opdracht
+
+Een knoop weet waar hij vandaan kwam. Daarmee vind je de weg terug, net als
+met `vorige` in het doolhof. Je loopt vanaf de knoop van Strand terug naar de
+start, en print bij elke knoop het station en de lijn waarmee je er kwam. Als
+laatste print je de start.
+
+### Aan de slag
+
+**Pas op:** zonder `knoop = knoop.ouder` loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
+
+1. Draai de code: in de editor staan de knopen van Zuid naar Strand, en hij print `Strand via rood`.
+2. Zet de print en `knoop = knoop.ouder` in `while knoop.ouder is not None:`.
+3. Print na de loop `knoop.toestand` met `"is de start"`.
+
+Verwachte uitvoer:
 
 ```
 Strand via rood
@@ -100,20 +114,6 @@ Haven via rood
 Markt via blauw
 Zuid is de start
 ```
-
-:::caution
-Schrijf je een while-loop die nooit `knoop = knoop.ouder` doet, dan stopt hij
-nooit. De speeltuin heeft geen stopknop, dus het tabblad loopt vast: herlaad de
-pagina, en je code is weg. Kopieer je code daarom eerst naar een kladblok
-voordat je een nieuwe while-loop draait.
-:::
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print de eerste regel, `Strand via rood`.
-2. Ga één knoop terug met `knoop = knoop.ouder`, en print hetzelfde nog een keer. Nu zie je ook `Haven via rood`.
-3. Zet de print en `knoop = knoop.ouder` in een loop `while knoop.ouder is not None:`, en haal de losse regels erboven weg. Nu zie je de drie stations met een lijn.
-4. Print na de loop `knoop.toestand` met `"is de start"`.
 
 <PyRunner initialCode={`class Knoop:
     def __init__(self, toestand, ouder, actie):

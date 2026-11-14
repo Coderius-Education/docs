@@ -32,7 +32,7 @@ def terminal(bord):
 laat hij aan `winner` over. Dat is waar
 [functies in functies](site:algorithms/docs/minimax/bouwen/09-functies-in-functies) over ging.
 
-## Specificatie
+**Specificatie:**
 
 - **Input**: een `bord`.
 - **Output**: `True` of `False`.
@@ -65,11 +65,14 @@ winnaar.
         if rij[0] == rij[1] == rij[2] and rij[0] is not None:
             return rij[0]
     for j in range(3):
-        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+        if (bord[0][j] == bord[1][j] == bord[2][j]
+                and bord[0][j] is not None):
             return bord[0][j]
-    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+    if (bord[0][0] == bord[1][1] == bord[2][2]
+            and bord[0][0] is not None):
         return bord[0][0]
-    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+    if (bord[0][2] == bord[1][1] == bord[2][0]
+            and bord[0][2] is not None):
         return bord[0][2]
     return None
 
@@ -83,18 +86,26 @@ def terminal(bord):
 
 
 # === Tests ===
-assert terminal([[None]*3, [None]*3, [None]*3]) is False, "Leeg -> niet terminal"
+assert terminal([[None]*3, [None]*3, [None]*3]) is False, (
+    "Leeg -> niet terminal"
+)
 
-assert terminal([["X","X","X"], [None]*3, [None]*3]) is True, "X wint -> terminal"
+assert terminal([["X","X","X"], [None]*3, [None]*3]) is True, (
+    "X wint -> terminal"
+)
 
 remise = [["X","O","X"], ["X","O","O"], ["O","X","X"]]
-assert terminal(remise) is True, "Vol bord, geen winnaar -> terminal"
+assert terminal(remise) is True, (
+    "Vol bord, geen winnaar -> terminal"
+)
 
 bezig = [["X","O", None], ["O","X", None], [None, None, None]]
 assert terminal(bezig) is False, "Spel loopt nog -> niet terminal"
 
 bijna_vol = [["X","O","X"], ["X","O","O"], ["O","X", None]]
-assert terminal(bijna_vol) is False, "8 cellen, geen winnaar -> niet terminal"
+assert terminal(bijna_vol) is False, (
+    "8 cellen, geen winnaar -> niet terminal"
+)
 
 print("Alle tests gehaald ✓")`} />
 

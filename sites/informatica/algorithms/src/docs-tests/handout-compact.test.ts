@@ -42,7 +42,7 @@ const compact = readdirSync(UNPLUGGED)
 // Invultabellen die nog los staan, exact: de kaarten-hand-out past op zijn vel
 // zonder de omhulling, dus die blijft zoals hij is tot iemand hem aanraakt.
 const LOSSE_TABELLEN = new Map<string, number[]>([
-  ['01-zoeken-en-sorteren-met-kaarten.mdx', [26, 60]],
+  ['01-zoeken-en-sorteren-met-kaarten.mdx', [27, 61]],
 ]);
 
 const ANTWOORD = ['handout-paginawissel', 'handout-alleen-scherm', 'handout-antwoorden'];

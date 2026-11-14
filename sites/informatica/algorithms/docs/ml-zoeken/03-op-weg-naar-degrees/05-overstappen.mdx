@@ -42,27 +42,32 @@ Om te zien of de lijn verandert, onthoud je de lijn van de vorige halte in
 niet: daar stap je in. Daarom begint `vorige_lijn` met `None`, en tel je een
 overstap alleen als `vorige_lijn is not None`.
 
-## Bouw zelf: hoe vaak overstappen?
+## Bouw zelf
 
-Schrijf een functie `overstappen(weg)` die telt hoe vaak je op een weg moet
-overstappen. Van Zuid naar Museum zijn het er 2, naar Strand 1 en naar Markt 0.
+### De opdracht
+
+De kortste weg is niet altijd de fijnste: elke overstap kost tijd. Je schrijft
+een functie `overstappen(weg)` die telt hoe vaak je op een weg moet
+overstappen. Van Zuid naar Museum zijn het er 2, naar Strand 1 en naar Markt
+0.
+
+Het netwerk staat in de verborgen code. Wil je je eigen netwerk proberen, zet
+dan een eigen lijst `verbindingen` boven `reis`: die vervangt de lijst uit de
+verborgen code.
+
+### Aan de slag
+
+1. Begin klein: draai de code in de editor. `reis` uit de vorige stap print de weg van Zuid naar Museum.
+2. Tel met `for lijn, station in weg:` en `vorige_lijn`, die met `None` begint, de overstappen. Voor Museum zijn het er 2.
+3. Maak er een functie `overstappen(weg)` van, en test hem ook met de wegen naar Strand en Markt.
+
+Verwachte uitvoer:
 
 ```
 2
 1
 0
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code. In de editor staat `reis` uit de vorige stap; hij print de weg van Zuid naar Museum.
-2. Loop met `for lijn, station in weg:` langs de weg, en print bij elke halte `lijn`. Je ziet blauw, rood en geel.
-3. Tel de overstappen, met `vorige_lijn` uit het voorspel, en print het aantal. Voor Museum is het 2.
-4. Maak er een functie `overstappen(weg)` van die het aantal teruggeeft, en test hem ook met `reis("Zuid", "Strand")` en `reis("Zuid", "Markt")`.
-
-Het netwerk staat in de verborgen code. Wil je je eigen netwerk proberen, zet
-dan een eigen lijst `verbindingen` boven `reis`: die vervangt de lijst uit de
-verborgen code.
 
 <PyRunner verborgen="metro-zoeken" initialCode={`def reis(van, naar):
     wachtrij = Wachtrij()

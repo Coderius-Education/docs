@@ -50,6 +50,7 @@ export function HighlightedEditor({
   highlightLine,
   readOnly,
   ariaLabel,
+  afbreken = true,
 }: {
   code: string;
   onChange: (value: string) => void;
@@ -64,6 +65,13 @@ export function HighlightedEditor({
   readOnly?: boolean;
   /** Naam van dit veld voor schermlezers, als er meerdere op een pagina staan. */
   ariaLabel?: string;
+  /**
+   * Breekt een lange regel af (standaard). Uit voor de stapper: daar wijst
+   * het regelnummer de regel aan die draait, en een afgebroken regel liet de
+   * nummers in de kantlijn achterlopen op de code (in de route machine
+   * learning stond 9 naast `}`). Zonder afbreken schuift een lange regel.
+   */
+  afbreken?: boolean;
 }) {
   const { colorMode } = useColorMode();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -126,7 +134,7 @@ export function HighlightedEditor({
 
   return (
     <div
-      className={styles.editorWrapper}
+      className={afbreken ? styles.editorWrapper : `${styles.editorWrapper} ${styles.nietAfbreken}`}
       // Met een maximum schuift de code in de editor zelf; de textarea neemt
       // de gutter en de gekleurde laag mee (zie de scroll-afhandeling).
       // De achtergrond van de code ook op het vak zelf: staat de editor naast
@@ -198,6 +206,7 @@ export function HighlightedEditor({
         disabled={disabled}
         readOnly={readOnly}
         aria-label={ariaLabel}
+        wrap={afbreken ? 'soft' : 'off'}
         autoCapitalize="off"
         autoCorrect="off"
         autoComplete="off"

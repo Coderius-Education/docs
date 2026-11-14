@@ -7,7 +7,7 @@ sidebar_position: 9
 **Leerdoel:** je past selection sort aan zodat hij sorteert van **groot
 naar klein** in plaats van klein naar groot.
 
-## Opdracht
+## Wat je aanpast
 
 Pas `selection_sort` aan zodat het resultaat aflopend is.
 
@@ -16,6 +16,19 @@ Pas `selection_sort` aan zodat het resultaat aflopend is.
 
 Hint: in plaats van *de kleinste* vooraan zetten, zet je *de grootste*
 vooraan.
+
+## Opdracht
+
+De startcode is `selection_sort` onder de nieuwe naam: hij sorteert nog
+oplopend.
+
+Verwachte uitvoer:
+
+```
+[8, 5, 4, 2, 1]
+[9, 6, 5, 4, 3, 2, 1, 1]
+[3, 2, 1]
+```
 
 {/* uitvoer-varieert: startcode; hij sorteert nog oplopend tot de leerling de vergelijking omdraait */}
 <PyRunner initialCode={`def selection_sort_aflopend(lijst):
@@ -29,9 +42,9 @@ vooraan.
     return lijst
 
 # Tests
-print(selection_sort_aflopend([5, 2, 8, 1, 4]))               # [8, 5, 4, 2, 1]
-print(selection_sort_aflopend([3, 1, 4, 1, 5, 9, 2, 6]))      # [9, 6, 5, 4, 3, 2, 1, 1]
-print(selection_sort_aflopend([1, 2, 3]))                      # [3, 2, 1]`} />
+print(selection_sort_aflopend([5, 2, 8, 1, 4]))
+print(selection_sort_aflopend([3, 1, 4, 1, 5, 9, 2, 6]))
+print(selection_sort_aflopend([1, 2, 3]))`} />
 
 <details>
 <summary>Tip</summary>
@@ -54,6 +67,8 @@ def selection_sort_aflopend(lijst):
                 max_index = j
         lijst[i], lijst[max_index] = lijst[max_index], lijst[i]
     return lijst
+
+print(selection_sort_aflopend([5, 2, 8, 1, 4]))   # [8, 5, 4, 2, 1]
 ```
 
 Eén teken anders, van `<` naar `>`, plus de variabelenaam. Verder is de

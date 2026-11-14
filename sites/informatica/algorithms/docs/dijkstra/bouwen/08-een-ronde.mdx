@@ -5,7 +5,7 @@ sidebar_position: 8
 # Bouwsteen 5 — doe één ronde
 
 **Leerdoel:** je combineert kies volgende en relax tot precies één ronde
-van Dijkstra, zonder lus. Eén rij van je papieren tabel.
+van Dijkstra, zonder lus. Eén ronde van je papieren tabel.
 
 ## Wat we willen
 
@@ -22,21 +22,20 @@ for buur, gewicht in graph[huidige]:           # stap 3
         afstanden[buur] = nieuwe
 ```
 
-Meer is een ronde niet. De herhaling komt pas in bouwsteen 6.
-
-## Waarom markeren?
-
 Stap 2 is de kortste regel van de drie, en de enige die `kies_volgende`
 ziet. Die functie slaat alles over wat in `bezocht` zit; wat er niet in
 zit kan volgende ronde opnieuw gekozen worden. Met het markeren zegt
 een ronde tegen de volgende: deze is af.
+
+Meer is een ronde niet. De herhaling komt pas in bouwsteen 6.
 
 ## Voorspel
 
 We starten met stap 0:
 
 ```python
-afstanden = {'A': 0, 'B': float('inf'), 'C': float('inf'), 'D': float('inf')}
+afstanden = {'A': 0, 'B': float('inf'),
+                'C': float('inf'), 'D': float('inf')}
 bezocht = set()
 ```
 
@@ -58,6 +57,16 @@ ronde 1 van je papieren tabel.
 
 ## Run — één ronde vanaf de start
 
+Verwachte uitvoer:
+
+```
+Kies: A
+Bezocht: {'A'}
+    update B → 4
+    update C → 2
+Afstanden: {'A': 0, 'B': 4, 'C': 2, 'D': inf}
+```
+
 <PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
     beste_node = None
     kleinste = float('inf')
@@ -77,7 +86,8 @@ graph = {
     'D': [('B', 1), ('C', 8)],
 }
 
-afstanden = {'A': 0, 'B': float('inf'), 'C': float('inf'), 'D': float('inf')}
+afstanden = {'A': 0, 'B': float('inf'),
+                'C': float('inf'), 'D': float('inf')}
 bezocht = set()
 
 # Eén ronde
@@ -95,65 +105,12 @@ for buur, gewicht in graph[huidige]:
 
 print(f"Afstanden: {afstanden}")`} />
 
-<details>
-<summary>Verwachte uitvoer</summary>
-
-```
-Kies: A
-Bezocht: {'A'}
-    update B → 4
-    update C → 2
-Afstanden: {'A': 0, 'B': 4, 'C': 2, 'D': inf}
-```
-
-</details>
-
 ## Doe een tweede ronde
 
 Hieronder staat de ronde in een functie, en die roepen we vier keer
-aan. Kijk hoe de tabel verder verandert:
+aan. Kijk hoe de tabel verder verandert.
 
-<PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
-    beste_node = None
-    kleinste = float('inf')
-    for node, d in afstanden.items():
-        if node in bezocht:
-            continue
-        if d < kleinste:
-            kleinste = d
-            beste_node = node
-    return beste_node
-
-
-graph = {
-    'A': [('B', 4), ('C', 2)],
-    'B': [('A', 4), ('D', 1)],
-    'C': [('A', 2), ('D', 8)],
-    'D': [('B', 1), ('C', 8)],
-}
-
-afstanden = {'A': 0, 'B': float('inf'), 'C': float('inf'), 'D': float('inf')}
-bezocht = set()
-
-def ronde():
-    huidige = kies_volgende(afstanden, bezocht)
-    print(f"\\nRonde — kies {huidige}")
-    bezocht.add(huidige)
-    for buur, gewicht in graph[huidige]:
-        nieuwe = afstanden[huidige] + gewicht
-        if nieuwe < afstanden[buur]:
-            afstanden[buur] = nieuwe
-            print(f"    update {buur} → {nieuwe}")
-    print(f"    afstanden: {afstanden}")
-
-# Vier keer hetzelfde — eens kijken hoe ver we komen
-ronde()
-ronde()
-ronde()
-ronde()`} />
-
-<details>
-<summary>Verwachte uitvoer</summary>
+Verwachte uitvoer:
 
 ```
 Ronde — kies A
@@ -173,12 +130,48 @@ Ronde — kies D
     afstanden: {'A': 0, 'B': 4, 'C': 2, 'D': 5}
 ```
 
+<PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
+    beste_node = None
+    kleinste = float('inf')
+    for node, d in afstanden.items():
+        if node in bezocht:
+            continue
+        if d < kleinste:
+            kleinste = d
+            beste_node = node
+    return beste_node
+
+
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('D', 1)],
+    'C': [('A', 2), ('D', 8)],
+    'D': [('B', 1), ('C', 8)],
+}
+
+afstanden = {'A': 0, 'B': float('inf'),
+                'C': float('inf'), 'D': float('inf')}
+bezocht = set()
+
+def ronde():
+    huidige = kies_volgende(afstanden, bezocht)
+    print(f"\\nRonde — kies {huidige}")
+    bezocht.add(huidige)
+    for buur, gewicht in graph[huidige]:
+        nieuwe = afstanden[huidige] + gewicht
+        if nieuwe < afstanden[buur]:
+            afstanden[buur] = nieuwe
+            print(f"    update {buur} → {nieuwe}")
+    print(f"    afstanden: {afstanden}")
+
+# Vier keer hetzelfde — eens kijken hoe ver we komen
+ronde()
+ronde()
+ronde()
+ronde()`} />
+
 Dezelfde rondes als op je papieren tabel. In ronde 3 zakt `D` van 10
 naar 5, omdat de route via `B` korter is dan die via `C`.
-
-</details>
-
-## Wat nu nog mist
 
 Vier keer `ronde()` typen is nog met de hand tellen. Een `while`-lus
 eromheen laat het algoritme zelf stoppen.

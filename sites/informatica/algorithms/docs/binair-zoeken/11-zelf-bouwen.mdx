@@ -9,38 +9,64 @@ telt het werk. De theorie wordt nu meetbaar.
 
 ## Opdracht
 
-Schrijf beide algoritmes zo dat ze het aantal vergelijkingen tellen.
-De startcode laat ze los op gesorteerde lijsten van 10 tot 100.000
-getallen, in het slechtste geval: het doel komt niet voor.
+### De opdracht
+
+Schrijf beide algoritmes zo dat ze het aantal vergelijkingen tellen, en
+laat ze los op gesorteerde lijsten van 10 tot 100.000 getallen.
+
+De startcode zoekt in het slechtste geval voor binair zoeken: het doel komt
+niet voor en is groter dan alles in de lijst. Dan gaat binair zoeken elke
+ronde naar de rechter helft, en die is bij een even aantal net één groter
+dan de linker. Lineair zoeken bekijkt dan elk getal.
+
+- `lineair_tellen(lijst, doel)` geeft het aantal vergelijkingen van lineair
+  zoeken terug.
+- `binair_tellen(lijst, doel)` doet hetzelfde voor binair zoeken.
+
+### Aan de slag
+
+:::caution
+`binair_tellen` heeft een while-lus. Krimpt het zoekgebied niet in elke
+ronde, dan stopt hij nooit en loopt het tabblad van de browser vast: de
+speeltuin heeft geen stopknop. Kopieer je code eerst naar een kladblok.
+:::
+
+Verwachte uitvoer:
+
+```
+n        lineair    binair
+10       10         4
+100      100        7
+1000     1000       10
+10000    10000      14
+100000   100000     17
+```
 
 {/* uitvoer-varieert: startcode; de functies geven 0 terug tot de leerling ze invult */}
 <PyRunner initialCode={`def lineair_tellen(lijst, doel):
-    # vul aan: doorloop de lijst, tel elke vergelijking,
-    # return het totaal aantal vergelijkingen
+    # vul aan: doorloop de lijst en tel elke vergelijking
     return 0
 
 def binair_tellen(lijst, doel):
-    # vul aan: zelfde als binair_zoek, maar return het aantal vergelijkingen
+    # vul aan: binair zoeken dat de vergelijkingen telt
     return 0
 
-# Slechtste geval: doel komt NIET voor
 groottes = [10, 100, 1000, 10000, 100000]
 
 print("n        lineair    binair")
 for n in groottes:
-    lijst = list(range(n))   # 0..n-1, gesorteerd
-    doel = -1                # bestaat niet
-    print(f"{n:<8} {lineair_tellen(lijst, doel):<10} {binair_tellen(lijst, doel)}")`} />
+    lijst = list(range(n))   # 0 t/m n-1, gesorteerd
+    doel = n                 # groter dan alles in de lijst
+    lineair = lineair_tellen(lijst, doel)
+    binair = binair_tellen(lijst, doel)
+    print(f"{n:<8} {lineair:<10} {binair}")`} />
 
 <details>
 <summary>Tip</summary>
 
-Voor `lineair_tellen`: doorloop de lijst, hoog elke ronde een teller op,
-returnt aan het eind die teller — ook als je niets vond.
-
-Voor `binair_tellen`: kopieer `binair_zoek` en vervang de `return midden`
-en `return -1` door `return vergelijkingen`. Hoog `vergelijkingen` op
-binnen de while-lus.
+Waar in `binair_zoek` vergelijkt de code `lijst[midden]` met het doel? Daar
+hoort de teller omhoog te gaan, en wat geef je terug in plaats van een
+index?
 
 </details>
 
@@ -71,53 +97,90 @@ def binair_tellen(lijst, doel):
             hoog = midden - 1
     return vergelijkingen
 
-print(lineair_tellen(list(range(1000)), -1))   # 1000
-print(binair_tellen(list(range(1000)), -1))    # 9
+print(lineair_tellen(list(range(1000)), 1000))   # 1000
+print(binair_tellen(list(range(1000)), 1000))    # 10
 ```
 
 </details>
 
 ## Wat zie je?
 
-<details>
-<summary>Interpretatie</summary>
+Kloppen beide functies, dan print de code deze tabel:
 
 ```
 n        lineair    binair
-10       10         3
-100      100        6
-1000     1000       9
-10000    10000      13
-100000   100000     16
+10       10         4
+100      100        7
+1000     1000       10
+10000    10000      14
+100000   100000     17
 ```
 
-- Lineair: tien keer zo'n lange lijst kost tien keer zoveel werk. Het
-  groeit even hard als `n`.
-- Binair: tien keer zo'n lange lijst kost drie of vier vergelijkingen
-  extra. Elke vergelijking halveert wat er nog over is, dus het werk
-  groeit met het aantal keer dat je `n` kunt halveren.
+**Vraag:** hoeveel extra werk kost een lijst die tien keer zo lang is, bij
+lineair en bij binair zoeken?
+
+<details>
+<summary>Antwoord</summary>
+
+- Lineair: tien keer zoveel. Het werk groeit even hard als de lijst.
+- Binair: drie of vier vergelijkingen extra. Elke vergelijking halveert
+  wat er over is, dus een lijst die twee keer zo lang is, kost één
+  vergelijking meer.
 
 Op een lijst van een miljard zou het verschil nog groter zijn: een
-miljard vergelijkingen tegenover ongeveer 30.
+miljard vergelijkingen tegenover 30.
 
 </details>
 
 ## Uitdaging (optioneel)
 
-Pas binair zoeken aan zodat het bij duplicaten de eerste voorkomende
-index returnt. Hint: stop niet bij de eerste match — blijf doorzoeken in
-de linker helft.
+### De opdracht
+
+Komt een waarde meer dan eens voor, dan geeft `binair_zoek` de index waar
+het midden toevallig landt. Bij `[1, 2, 2, 2, 3]` en doel 2 is dat index 2.
+Pas binair zoeken aan zodat het de **eerste** index met die waarde
+teruggeeft.
 
 - `binair_zoek_eerste([1, 2, 2, 2, 3], 2)` → `1`
 - `binair_zoek_eerste([1, 2, 2, 2, 3], 4)` → `-1`
 
+### Aan de slag
+
+:::caution
+Je past hier een while-lus aan. Krimpt het zoekgebied niet in elke ronde,
+ook niet na een match, dan stopt hij nooit en loopt het tabblad van de
+browser vast. Kopieer je code eerst naar een kladblok.
+:::
+
+Verwachte uitvoer:
+
+```
+1
+-1
+```
+
+{/* uitvoer-varieert: startcode; geeft index 2 tot de leerling de functie aanpast */}
+<PyRunner initialCode={`def binair_zoek_eerste(lijst, doel):
+    laag = 0
+    hoog = len(lijst) - 1
+    while laag <= hoog:
+        midden = (laag + hoog) // 2
+        if lijst[midden] == doel:
+            return midden
+        elif lijst[midden] < doel:
+            laag = midden + 1
+        else:
+            hoog = midden - 1
+    return -1
+
+print(binair_zoek_eerste([1, 2, 2, 2, 3], 2))
+print(binair_zoek_eerste([1, 2, 2, 2, 3], 4))`} />
+
 <details>
 <summary>Tip</summary>
 
-Bewaar een match in een variabele `gevonden` in plaats van meteen te
-returnen, en verklein daarna het zoekgebied naar links met
-`hoog = midden - 1`. Elke nieuwe match links van de vorige overschrijft
-`gevonden`. Als de lus stopt, staat daar de eerste.
+Bij een match weet je dat het doel er is, maar niet of het de eerste is.
+Waar kan een eerdere staan, en hoe onthoud je de match die je al had?
 
 </details>
 
@@ -144,9 +207,9 @@ print(binair_zoek_eerste([1, 2, 2, 2, 3], 2))   # 1
 print(binair_zoek_eerste([1, 2, 2, 2, 3], 4))   # -1
 ```
 
-De lus stopt nog steeds gegarandeerd: ook bij een match krimpt het
-zoekgebied, want `hoog` gaat omlaag.
+De lus stopt nog steeds: ook bij een match krimpt het zoekgebied, want
+`hoog` gaat omlaag.
 
 </details>
 
-Door naar [veelgemaakte fouten](site:algorithms/docs/binair-zoeken/12-fouten).
+Door naar [Er gaat iets mis](site:algorithms/docs/binair-zoeken/12-fouten).

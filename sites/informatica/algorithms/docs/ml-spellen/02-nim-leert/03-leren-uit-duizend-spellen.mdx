@@ -107,26 +107,30 @@ for stapel in range(2, 11):
 
 </details>
 
-## Opdracht: waar verlies je altijd?
+## Opdracht
 
-Zoek uit bij welke stapels de computer geen enkele zet heeft gevonden die
-wint: elke zet die daar mag, heeft een score van 0 of lager.
+### De opdracht
+
+Na 2000 spellen weet de computer bij de meeste stapels welke zet wint. Maar
+bij sommige stapels heeft hij geen enkele zet gevonden die wint: elke zet die
+daar mag, heeft een score van 0 of lager. Je zoekt uit welke stapels dat zijn.
+Klopt het met de truc van `slim`?
+
+### Aan de slag
+
+In de editor leert de computer van 2000 spellen.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print `waarde(score, 9, 1)`, de score van pak 1 bij 9 lucifers.
+2. Tel hoeveel zetten uit `mogelijk(9)`, de zetten die bij 9 mogen, een score boven 0 hebben.
+3. Doe dat voor elke stapel van 2 tot en met 10, en print alleen de stapels waar die telling 0 is.
+
+Verwachte uitvoer:
 
 ```
 bij 5 verlies je altijd
 bij 9 verlies je altijd
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij leert, en print de score van pak 1 bij 9 lucifers.
-2. Print de score van elke zet uit `mogelijk(9)`: de zetten die bij 9 lucifers mogen.
-3. Tel bij 9 lucifers hoeveel zetten een score boven 0 hebben.
-4. Doe dat voor elke stapel van 2 tot en met 10, en print alleen de stapels waar die telling 0 is.
-
-In de verborgen code staan `mogelijk(stapel)`, de zetten die bij een stapel
-mogen, en `waarde(score, stapel, pak)`, de score van een zet, of 0 als hij er
-nog niet in staat.
 
 <PyRunner verborgen="nim-leren" initialCode={`import random
 
@@ -149,7 +153,7 @@ print(waarde(score, 9, 1))`} />
 <details>
 <summary>Tip</summary>
 
-Bij stap 4 begint de telling bij elke stapel opnieuw bij 0. Waar staat die
+Bij stap 3 begint de telling bij elke stapel opnieuw bij 0. Waar staat die
 regel dan: binnen of buiten de loop over de stapels?
 
 </details>

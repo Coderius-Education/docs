@@ -15,15 +15,9 @@ zonder een waarde te verliezen.
 
 ## Wat we willen
 
-Twee elementen in een lijst van plaats laten ruilen. Bijvoorbeeld:
-
-```
-[5, 2, 8, 1, 4]  →  swap index 0 en 3  →  [1, 2, 8, 5, 4]
-```
-
-## Een veelgemaakte beginnersfout
-
-Probeer dit te volgen. Wat denk je dat eruit komt?
+Je wilt twee elementen in een lijst van plaats laten ruilen, bijvoorbeeld
+index 0 en 3: van `[5, 2, 8, 1, 4]` naar `[1, 2, 8, 5, 4]`. Dit is een
+veelgemaakte beginnersfout. Wat denk je dat eruit komt?
 
 ```python
 lijst = [5, 2, 8, 1, 4]
@@ -107,7 +101,9 @@ print("na swap:  ", lijst)`} />
 
 ## Experimenteer
 
-Probeer ook met de tijdelijke-variabele versie. Zelfde resultaat?
+Deze code ruilt met de tijdelijke variabele uit de uitleg. Geeft hij
+hetzelfde als de tuple-swap bij Run? Verander daarna de 0 en de 3 in twee
+andere indexen.
 
 <PyRunner initialCode={`lijst = [5, 2, 8, 1, 4]
 print("voor:", lijst)
@@ -118,8 +114,6 @@ lijst[0] = lijst[3]
 lijst[3] = tijdelijk
 
 print("na:  ", lijst)`} />
-
-## Wat nu nog mist
 
 Je hebt nu twee bouwstenen: de kleinste-index vinden, en swappen. In de
 volgende stap wordt de eerste flexibeler, zodat hij vanaf een bepaalde

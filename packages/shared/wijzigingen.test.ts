@@ -5,7 +5,10 @@ import { alleSiteMappen } from '@coderius/shared/sites';
 import { controleer } from '@coderius/shared/stijl';
 import {
   HEEL_BESTAND,
+  LESSEN_PER_DEEL,
   MAX_BESTANDEN,
+  MAX_DELEN,
+  MAX_SCHERMEN,
   binnenWijziging,
   cursussenMetTabbladen,
   heeftLesTabs,
@@ -15,7 +18,9 @@ import {
   parseDiff,
   plan,
   runnerAlles,
+  schermenMatrix,
   volledigOpNamen,
+  voorraadSites,
   workspaceAfhankelijkheden,
 } from '@coderius/shared/wijzigingen';
 import { describe, expect, it } from 'vitest';
@@ -331,6 +336,116 @@ describe('plan', () => {
     expect(alles.schermen).toEqual({ sites: ['web', 'linux'], alles: true, viaPakket: {} });
   });
 
+  // Een hele cursus op één runner meten kostte tot zestien minuten
+  // (algoritmes), terwijl de rest van CI na drie minuten klaar was. Een
+  // cursus die helemaal gemeten wordt, krijgt daarom meer runners; een paar
+  // gewijzigde lessen blijven op één.
+  it('de schermen: een hele cursus over meer runners, een paar lessen op één', () => {
+    const metTabbladen = ['web', 'linux'];
+    const voor = (bestanden: Record<string, [number, number][]>, geraakt: string[]) =>
+      plan({ bestanden, geraakt, alleMappen: ALLE_MAPPEN, sites: SITES, tests: [], metTabbladen });
+    const opties = {
+      siteMappen: MAP,
+      lesAantallen: { web: 34, linux: 3 * LESSEN_PER_DEEL + 1 },
+    };
+    const delen = (m: { site: string; deel: number; delen: number }[]) =>
+      m.map((r) => `${r.site} ${r.deel}/${r.delen}`);
+    // Een les van linux: één runner, ook in een grote cursus.
+    const les = voor({ [`${MAP.linux}/docs/terminal/mappen.mdx`]: [[3, 3]] }, [MAP.linux]);
+    expect(delen(schermenMatrix(les, opties))).toEqual(['linux 1/1']);
+    // Een onderdeel van linux kan elke les raken: de hele cursus, in delen.
+    const onderdeel = voor({ [`${MAP.linux}/src/components/X/index.tsx`]: [[3, 3]] }, [MAP.linux]);
+    expect(delen(schermenMatrix(onderdeel, opties))).toEqual([
+      'linux 1/4',
+      'linux 2/4',
+      'linux 3/4',
+      'linux 4/4',
+    ]);
+    // Het meetscript: elke cursus helemaal; een kleine cursus blijft op één.
+    const script = voor({ 'scripts/meet-les-tabs.mjs': [[1, 1]] }, []);
+    expect(delen(schermenMatrix(script, opties))).toEqual([
+      'web 1/1',
+      'linux 1/4',
+      'linux 2/4',
+      'linux 3/4',
+      'linux 4/4',
+    ]);
+    // Nooit meer dan MAX_DELEN runners voor één cursus.
+    const groot = schermenMatrix(script, {
+      ...opties,
+      lesAantallen: { web: 1000 * LESSEN_PER_DEEL, linux: 0 },
+    });
+    expect(groot.filter((r) => r.site === 'web')).toHaveLength(MAX_DELEN);
+    expect(delen(groot.filter((r) => r.site === 'linux'))).toEqual(['linux 1/1']);
+  });
+
+  // Een volledige meting startte 23 delen naast cross-links, browser en de
+  // staart van test: meer dan de twintig runners van GitHub. Een deel van
+  // algoritmes wachtte anderhalve minuut en werd het langste pad.
+  it('de schermen: samen niet meer dan MAX_SCHERMEN delen, de grootste eerst', () => {
+    const sites = [
+      'web',
+      'linux',
+      'python',
+      'fullstack',
+      'algorithms',
+      'robotica',
+      'ctf',
+      'editor',
+    ];
+    const p = plan({
+      bestanden: {},
+      geraakt: [],
+      alleMappen: ALLE_MAPPEN,
+      sites: SITES,
+      tests: [],
+      metTabbladen: sites,
+      volledig: true,
+    });
+    const lesAantallen = {
+      web: 34,
+      linux: 30,
+      python: 150,
+      fullstack: 170,
+      algorithms: 284,
+      robotica: 101,
+      ctf: 22,
+      editor: 78,
+    };
+    const m = schermenMatrix(p, { siteMappen: MAP, lesAantallen });
+    expect(m.length).toBeLessThanOrEqual(MAX_SCHERMEN);
+    // Elke cursus houdt minstens één deel, en zijn delen zijn compleet.
+    for (const site of sites) {
+      const delen = m.filter((r) => r.site === site);
+      expect(delen.length, site).toBeGreaterThan(0);
+      expect(
+        delen.map((r) => r.deel),
+        site,
+      ).toEqual(Array.from({ length: delen[0].delen }, (_, i) => i + 1));
+    }
+    // De cursus met de meeste lessen per runner staat vooraan.
+    const per = (site: string) =>
+      lesAantallen[site as keyof typeof lesAantallen] /
+      (m.find((r) => r.site === site)?.delen ?? 1);
+    const volgorde = [...new Set(m.map((r) => r.site))];
+    expect(volgorde.map(per)).toEqual([...volgorde.map(per)].sort((a, b) => b - a));
+  });
+
+  it('de voorraad: elke ongewijzigde site voor cross-links, en wat schermen uit de cache meet', () => {
+    const metTabbladen = ['web', 'linux'];
+    const voor = (bestanden: Record<string, [number, number][]>, geraakt: string[]) =>
+      plan({ bestanden, geraakt, alleMappen: ALLE_MAPPEN, sites: SITES, tests: [], metTabbladen });
+    // Alleen het meetscript: niets gebouwd, geen cross-links; schermen meet
+    // web en linux uit de cache, en die zet voorraad er één keer in.
+    expect(voorraadSites(voor({ 'scripts/meet-les-tabs.mjs': [[1, 1]] }, [])).sort()).toEqual([
+      'linux',
+      'web',
+    ]);
+    // Een les van web: cross-links draait, dus elke ongewijzigde site.
+    const les = voor({ [`${MAP.web}/docs/html-css/position.mdx`]: [[3, 3]] }, [MAP.web]);
+    expect(voorraadSites(les)).toEqual(les.ongewijzigd);
+  });
+
   // Wie alleen de meting veranderde, kreeg geen enkele cursus: de job
   // `schermen` viel weg en de check build was groen, terwijl een nieuwe
   // controle in het script nergens had gedraaid.
@@ -610,7 +725,7 @@ describe('cursussen met tabbladen', () => {
     // Komt er een cursus met tabbladen bij, zet hem dan hier: dan meet CI
     // zijn schermen.
     expect([...cursussenMetTabbladen(SITES, lees)].sort()).toEqual(
-      ['ctf', 'editor', 'fullstack', 'linux', 'python', 'robotica', 'web'].sort(),
+      ['algorithms', 'ctf', 'editor', 'fullstack', 'linux', 'python', 'robotica', 'web'].sort(),
     );
   });
 });

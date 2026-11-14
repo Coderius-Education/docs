@@ -7,7 +7,7 @@ sidebar_position: 9
 **Leerdoel:** je past het algoritme aan voor een nieuwe vraag. Een klein
 verschil in de eis leidt vaak tot een klein, gericht verschil in de code.
 
-## Opdracht
+## Wat je aanpast
 
 Pas `zoek` aan zodat de functie telt hoe vaak `doel` in de lijst
 voorkomt, in plaats van de index van de eerste te returnen.
@@ -18,25 +18,35 @@ voorkomt, in plaats van de index van de eerste te returnen.
 
 Voorbeeld: `tel([3, 1, 4, 1, 5], 1)` moet `2` returnen.
 
+## Opdracht
+
+De startcode geeft nog altijd `0` terug.
+
+Verwachte uitvoer:
+
+```
+2
+0
+0
+4
+```
+
 {/* uitvoer-varieert: startcode; de teller returnt 0 tot de leerling hem invult */}
 <PyRunner initialCode={`def tel(lijst, doel):
     # vul aan
     return 0
 
 # Tests
-print(tel([3, 1, 4, 1, 5], 1))   # verwacht: 2
-print(tel([3, 1, 4, 1, 5], 9))   # verwacht: 0
-print(tel([], 1))                # verwacht: 0
-print(tel([7, 7, 7, 7], 7))      # verwacht: 4`} />
+print(tel([3, 1, 4, 1, 5], 1))
+print(tel([3, 1, 4, 1, 5], 9))
+print(tel([], 1))
+print(tel([7, 7, 7, 7], 7))`} />
 
 <details>
 <summary>Tip</summary>
 
-Return niet zodra je een match vindt, want dan kun je niet verder tellen.
-Houd een teller bij die je bij elke match ophoogt, en geef die pas na de
-lus terug.
-
-Welke bouwsteen verandert er? Welke blijft hetzelfde?
+`zoek` stopt bij de eerste match. Wat moet er bij een match gebeuren als
+je wilt tellen, en wanneer weet je het antwoord pas?
 
 </details>
 

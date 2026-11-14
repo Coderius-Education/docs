@@ -73,7 +73,8 @@ zetten = hanoi(AANTAL, "A", "C", "B")
 for i, (bron, doel) in enumerate(zetten, start=1):
     print(f"{i}. verplaats een schijf van {bron} naar {doel}")
 
-print(f"\\nTotaal: {len(zetten)} zetten   (2^{AANTAL} - 1 = {2 ** AANTAL - 1})")`} />
+formule = f"(2^{AANTAL} - 1 = {2 ** AANTAL - 1})"
+print(f"\\nTotaal: {len(zetten)} zetten   {formule}")`} />
 
 `enumerate(zetten, start=1)` geeft elke zet een nummer, vanaf 1 in plaats
 van 0, en `(bron, doel)` pakt de tuple van die zet meteen uit.

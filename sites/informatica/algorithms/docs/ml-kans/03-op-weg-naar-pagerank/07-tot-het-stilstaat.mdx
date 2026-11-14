@@ -51,15 +51,18 @@ de loop eerst `nieuw` uit, dan het verschil met `verdeling`, en pas daarna zet
 je `verdeling = nieuw`. Andersom vergelijk je de nieuwe verdeling met
 zichzelf.
 
-:::caution
-Stopt je `while` nooit, dan loopt het tabblad vast: de speeltuin heeft geen
-stopknop. Kopieer je code daarom eerst naar een kladblok voordat je op Voer
-uit drukt.
-:::
+## Opdracht
 
-## Opdracht: tot het stilstaat
+Reken door tot de verdeling stilstaat, en print hoeveel dagen dat duurde.
+Begin klein, en breid de code stap voor stap uit:
 
-Reken de verdeling door tot hij stilstaat, en print hoeveel dagen dat duurde:
+1. Draai de code: hij print het verschil met vandaag: 0.5.
+2. Zet alles vanaf `nieuw = {}` in `while verschil >= 0.001:`, met `verschil = 1` erboven en `verdeling = nieuw` aan het eind.
+3. Tel de dagen in `dagen`, en print na de loop het aantal dagen en de verdeling, afgerond op drie cijfers.
+
+**Pas op:** stopt je `while` nooit, dan loopt het tabblad van de browser vast. Kopieer je code eerst naar een kladblok.
+
+Verwachte uitvoer:
 
 ```
 6 dagen
@@ -67,12 +70,6 @@ zon 0.338
 wolken 0.366
 regen 0.296
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij rekent één dag uit, en print het verschil met vandaag: 0.5.
-2. Zet `verschil = 1` boven de berekening, en zet alles vanaf `nieuw = {}` in een `while verschil >= 0.001:`. Zet aan het eind van de loop `verdeling = nieuw`. Hij print nu elke dag een kleiner verschil.
-3. Tel de dagen in `dagen`, en print na de loop het aantal dagen en de verdeling, afgerond op drie cijfers.
 
 <PyRunner initialCode={`model = {
     "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},

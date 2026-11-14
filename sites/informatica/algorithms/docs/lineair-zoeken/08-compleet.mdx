@@ -41,6 +41,8 @@ def zoek(lijst, doel):
 
 ## Run
 
+### De code draaien
+
 <PyRunner editable={false} initialCode={`def zoek(lijst, doel):
     for i, waarde in enumerate(lijst):
         if waarde == doel:
@@ -52,16 +54,21 @@ print(zoek(getallen, 5))    # verwacht: 4
 print(zoek(getallen, 7))    # verwacht: -1
 print(zoek([], 5))           # verwacht: -1`} />
 
+### Het model
+
+Kies een lijst en volg het algoritme stap voor stap. Onder Code-oefening
+schrijf je de functie zelf, en draai je de tests erop.
+
 <AlgorithmModel algorithm="linear-search" />
 
 ## Onderzoek
 
-Speel met de code. Probeer in elk geval:
+De code zoekt drie keer. Voorspel eerst wat elke regel print, en druk dan
+op Voer uit:
 
-1. Zoek een waarde die meerdere keren voorkomt. Welke index krijg je?
-2. Vervang de lijst door strings: `["appel", "peer", "kers"]`, doel
-   `"peer"`. Werkt het?
-3. Wat gebeurt er als de lijst leeg is?
+1. Een 7 in een lijst met vier zevens. Welke index krijg je?
+2. Het woord `"peer"` in een lijst met woorden. Werkt dat?
+3. `"Peer"`, met een hoofdletter, in dezelfde lijst. Wat krijg je nu?
 
 <PyRunner initialCode={`def zoek(lijst, doel):
     for i, waarde in enumerate(lijst):
@@ -69,10 +76,9 @@ Speel met de code. Probeer in elk geval:
             return i
     return -1
 
-# Experimenteer hier:
 print(zoek([7, 7, 7, 7], 7))
 print(zoek(["appel", "peer", "kers"], "peer"))
-print(zoek([], "iets"))`} />
+print(zoek(["appel", "peer", "kers"], "Peer"))`} />
 
 <details>
 <summary>Wat zie je?</summary>
@@ -84,8 +90,9 @@ print(zoek([], "iets"))`} />
 ```
 
 - Staat een waarde meerdere keren in de lijst, dan krijg je de eerste.
-- Strings werken precies hetzelfde — `==` vergelijkt ook strings.
-- Bij een lege lijst draait de `for`-lus nul keer en volgt meteen `return -1`.
+- Strings werken precies hetzelfde: `==` vergelijkt ook strings.
+- Maar `"Peer"` is niet gelijk aan `"peer"`: `==` let op hoofdletters,
+  dus de functie geeft `-1`.
 
 Lineair zoeken is *type-onafhankelijk*: het werkt op alles waar `==`
 betekenis heeft.

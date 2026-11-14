@@ -54,17 +54,11 @@ laag = 0
 hoog = len(lijst) - 1
 print(laag, hoog)`} />
 
-## Waarom `-1`?
-
-```python
-hoog = len(lijst) - 1
-```
-
 {/* foutmelding-van: [1, 2, 3, 4, 5, 6, 7, 8][8] */}
 
-Python-lijsten zijn **0-geïndexeerd**: een lijst met 8 elementen heeft
-indexen 0, 1, 2, 3, 4, 5, 6, **7** — niet 8. Als je `lijst[8]` opvraagt,
-krijg je een `IndexError`.
+Waarom `- 1`? Python-lijsten zijn **0-geïndexeerd**: een lijst met 8
+elementen heeft indexen 0, 1, 2, 3, 4, 5, 6, **7**, niet 8. Vraag je
+`lijst[8]` op, dan krijg je een `IndexError`.
 
 ## Experimenteer
 
@@ -89,9 +83,7 @@ dus nooit een ronde te doen — meteen "niet gevonden" returnen.
 
 </details>
 
-## Wat nu nog mist
-
-We hebben grenzen, maar doen er nog niets mee. In de volgende stap berekenen
-we het **midden** van het zoekgebied.
+Je hebt nu grenzen, maar je doet er nog niets mee. In de volgende stap
+bereken je het **midden** van het zoekgebied.
 
 Door naar [bouwsteen 2: het midden](site:algorithms/docs/binair-zoeken/bouwen/05-midden).

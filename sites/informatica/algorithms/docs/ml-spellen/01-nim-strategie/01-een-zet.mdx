@@ -58,13 +58,9 @@ Een `while`-loop herhaalt zolang de voorwaarde waar is. Hier is dat zolang er
 lucifers liggen. Een `for`-loop past niet: je weet vooraf niet hoeveel beurten
 het spel duurt. De `if` zorgt dat je nooit meer pakt dan er ligt.
 
-:::caution
 Een while-loop stopt pas als de voorwaarde onwaar wordt. Vergeet je in de loop
 de stapel kleiner te maken, dan blijven er altijd lucifers liggen en stopt hij
-nooit. De speeltuin heeft geen stopknop, dus het tabblad loopt vast: herlaad de
-pagina, en je code is weg. Twijfel je of je loop stopt, druk dan eerst op Stap
-voor stap. Die neemt hoogstens 1000 stappen op.
-:::
+nooit.
 
 ## Onderzoek
 
@@ -92,11 +88,24 @@ while stapel > 0:
 
 </details>
 
-## Opdracht: tel de beurten
+## Opdracht
 
-Een speler pakt steeds 2 lucifers van een stapel van 11, of de rest als er
-minder liggen. Laat zien hoeveel er na elke zet liggen, en hoeveel beurten
-het duurt tot de stapel op is:
+### De opdracht
+
+Je telt de beurten van een speler die steeds 2 lucifers pakt van een stapel
+van 11, of de rest als er minder liggen. Je programma laat zien hoeveel er na
+elke zet liggen, en telt hoeveel beurten het duurt tot de stapel op is. Daarvoor
+schrijf je je eerste while-loop.
+
+### Aan de slag
+
+**Pas op:** krimpt de stapel niet, dan loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
+
+1. Draai de code: een speler pakt één keer 2 lucifers van 11, en er liggen nog 9.
+2. Zet het pakken en de print in een loop `while stapel > 0:`, en pak nooit meer dan er ligt.
+3. Tel in `beurten` hoeveel zetten er zijn, en print dat na de loop.
+
+Verwachte uitvoer:
 
 ```
 er liggen nog 9
@@ -108,13 +117,6 @@ er liggen nog 0
 6 beurten
 ```
 
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: de speler pakt één keer 2.
-2. Zet het pakken en de print in een while-loop die doorgaat zolang `stapel > 0`. Kijk naar de laatste regel: daar gaat iets mis.
-3. Zorg dat de speler nooit meer pakt dan er ligt. Nu eindigt de stapel op 0.
-4. Zet vóór de loop `beurten = 0`, tel er in de loop 1 bij op, en print na de loop hoeveel beurten het waren.
-
 <PyRunner initialCode={`stapel = 11
 stapel = stapel - 2
 print("er liggen nog", stapel)`} />
@@ -122,7 +124,7 @@ print("er liggen nog", stapel)`} />
 <details>
 <summary>Tip</summary>
 
-Bij stap 3: maak van de 2 eerst een variabele `pak`. Dan kun je met een `if`
+Bij stap 2: maak van de 2 eerst een variabele `pak`. Dan kun je met een `if`
 kijken of er genoeg liggen, en `pak` kleiner maken als dat niet zo is.
 
 </details>

@@ -123,11 +123,14 @@
   box-shadow: 0 0 0 2px var(--ifm-color-primary);
 }
 
+/* De paal staat boven de naam van de paal: tot onderaan liep hij door de
+   letter A, B of C heen, en was die niet te lezen. 2.4rem is de onderrand
+   (0.5rem) plus de naam (een regel en 0.4rem marge). */
 .pole {
   position: absolute;
-  bottom: 0.5rem;
+  bottom: 2.4rem;
   width: 6px;
-  height: calc(100% - 1rem);
+  height: calc(100% - 2.9rem);
   border-radius: 3px;
   background: var(--ifm-color-emphasis-300);
 }
@@ -180,4 +183,42 @@
 .statusWin {
   background: var(--ifm-color-success-contrast-background, #e6f6e6);
   color: var(--ifm-color-success-dark, #1a7f37);
+}
+
+/* In een les-tabblad op een breed scherm: de palen links, uitleg, knoppen en
+   melding rechts ervan. Onder elkaar paste het tabblad Speel niet op 1280 bij
+   720. Dezelfde grens als de lessenlijst (997px). Na de gewone regels, anders
+   wint die stil. */
+@media (min-width: 997px) {
+  .inTab {
+    display: grid;
+    grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      "board header"
+      "board controls"
+      "board status";
+    column-gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  .inTab .header {
+    grid-area: header;
+  }
+
+  .inTab .controls {
+    grid-area: controls;
+    margin: 0.75rem 0;
+  }
+
+  .inTab .board {
+    grid-area: board;
+    align-self: start;
+  }
+
+  .inTab .status {
+    grid-area: status;
+    align-self: end;
+    margin-top: 0;
+  }
 }

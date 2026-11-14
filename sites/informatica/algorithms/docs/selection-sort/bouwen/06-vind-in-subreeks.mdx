@@ -7,12 +7,10 @@ sidebar_position: 6
 **Leerdoel:** je breidt de "vind index van kleinste"-functie uit zodat hij
 vanaf een gegeven startpositie zoekt — niet vanaf 0.
 
-## Waarom dit nodig is
+## Zoeken vanaf een positie
 
 Na ronde `k` staan de eerste `k` elementen al goed. Daar hoef je niet
 opnieuw te zoeken; alleen de rest, vanaf index `k`, is nog interessant.
-
-## Wat we willen
 
 `index_van_kleinste_vanaf(lijst, start)` geeft de index van het kleinste
 element in `lijst[start:]`. Let op: die index telt vanaf het begin van de
@@ -75,8 +73,6 @@ print(index_van_kleinste_vanaf(lijst, 1))
 print(index_van_kleinste_vanaf(lijst, 2))
 print(index_van_kleinste_vanaf(lijst, 3))`} />
 
-## Wat is nieuw?
-
 Twee veranderingen ten opzichte van [bouwsteen 1](site:algorithms/docs/selection-sort/bouwen/04-vind-kleinste-index):
 
 1. De startwaarde is `min_index = start` en niet `0`. Anders vergelijk je
@@ -87,6 +83,9 @@ Twee veranderingen ten opzichte van [bouwsteen 1](site:algorithms/docs/selection
 
 ## Experimenteer — wat als `start` te groot is?
 
+Haal het `#` weg voor de laatste regel, zodat de functie ook met
+`start = 3` draait. Wat doet `start = 3` op een lijst van lengte 3?
+
 <PyRunner initialCode={`def index_van_kleinste_vanaf(lijst, start):
     min_index = start
     for i in range(start, len(lijst)):
@@ -95,11 +94,14 @@ Twee veranderingen ten opzichte van [bouwsteen 1](site:algorithms/docs/selection
     return min_index
 
 lijst = [1, 2, 3]
-print(index_van_kleinste_vanaf(lijst, 2))  # 2  (zoek in [3])
-# print(index_van_kleinste_vanaf(lijst, 3))  # leeg zoekgebied — wat zou er gebeuren?`} />
+print(index_van_kleinste_vanaf(lijst, 2))
+# print(index_van_kleinste_vanaf(lijst, 3))`} />
 
 <details>
-<summary>Wat doet `start = 3` op een lijst van lengte 3?</summary>
+<summary>Wat zie je?</summary>
+
+De eerste regel print `2`: de functie zoekt in `[3]`. Met `start = 3`:
+
 
 - `min_index = 3` — maar `lijst[3]` bestaat niet. Pas op: we proberen dat
   pas te lezen als de lus iets doet.
@@ -113,9 +115,7 @@ check toevoegen.
 
 </details>
 
-## Wat nu nog mist
-
-We hebben alle ingrediënten:
+Je hebt nu alle ingrediënten:
 
 - het kleinste vinden vanaf een positie ([bouwsteen 3](site:algorithms/docs/selection-sort/bouwen/06-vind-in-subreeks))
 - swappen ([bouwsteen 2](site:algorithms/docs/selection-sort/bouwen/05-swap))

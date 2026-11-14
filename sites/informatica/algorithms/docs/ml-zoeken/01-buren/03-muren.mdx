@@ -62,7 +62,8 @@ vakje dat bestaat, kun je in het doolhof opzoeken.
 def buren(vakje):
     rij, kolom = vakje
     resultaat = []
-    for r, k in [(rij - 1, kolom), (rij + 1, kolom), (rij, kolom - 1), (rij, kolom + 1)]:
+    for r, k in [(rij - 1, kolom), (rij + 1, kolom),
+                    (rij, kolom - 1), (rij, kolom + 1)]:
         if r >= 0 and r < len(doolhof) and k >= 0 and k < len(doolhof[0]):
             if doolhof[r][k] != "#":
                 resultaat.append((r, k))
@@ -86,24 +87,31 @@ print(buren((2, 1)))`} />
 
 </details>
 
-## Opdracht: muren rondom
+## Opdracht
 
-Schrijf een functie `muren(vakje)` die telt hoeveel muren er naast een vakje
+### De opdracht
+
+Een robot met een sensor ziet alleen de vakjes direct om zich heen. Je
+schrijft een functie `muren(vakje)` die telt hoeveel muren er naast een vakje
 staan: erboven, eronder, links en rechts. De rand van het doolhof telt niet
 als muur.
+
+### Aan de slag
+
+In de editor geeft `muren` nog altijd 0 terug.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet de buren van drie vakjes, en drie keer 0.
+2. Tel met `teller = teller + 1` alleen de buren binnen de randen, zoals in het onderzoek. Haal de print weg.
+3. Tel alleen de buren waar een `#` op staat. Nu print hij 1, 1 en 2.
+
+Verwachte uitvoer:
 
 ```
 1
 1
 2
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: `muren` geeft nog steeds 0, voor elk vakje.
-2. Zet in `muren` de loop over de vier buren uit `buren`, en tel in de loop elke buur met `teller = teller + 1`. Nu print hij drie keer 4.
-3. Tel alleen de buren binnen de randen, met de eerste `if` uit `buren`. Nu geeft `(0, 0)` er 2.
-4. Tel alleen de buren waar een `#` op staat. Nu print hij 1, 1 en 2.
 
 <PyRunner initialCode={`doolhof = [
     "S.....",
@@ -116,6 +124,9 @@ Begin klein, en breid de code stap voor stap uit:
 def muren(vakje):
     rij, kolom = vakje
     teller = 0
+    for r, k in [(rij - 1, kolom), (rij + 1, kolom),
+                    (rij, kolom - 1), (rij, kolom + 1)]:
+        print("buur", r, k)
     return teller
 
 print(muren((2, 1)))
@@ -125,7 +136,7 @@ print(muren((3, 5)))`} />
 <details>
 <summary>Tip</summary>
 
-Krijg je in stap 4 een foutmelding? Kijk dan in welke volgorde je de twee
+Krijg je in stap 3 een foutmelding? Kijk dan in welke volgorde je de twee
 `if`'s hebt gezet.
 
 </details>
@@ -140,7 +151,8 @@ Dit vervangt de functie `muren` en de prints in de editor:
 def muren(vakje):
     rij, kolom = vakje
     teller = 0
-    for r, k in [(rij - 1, kolom), (rij + 1, kolom), (rij, kolom - 1), (rij, kolom + 1)]:
+    for r, k in [(rij - 1, kolom), (rij + 1, kolom),
+                    (rij, kolom - 1), (rij, kolom + 1)]:
         if r >= 0 and r < len(doolhof) and k >= 0 and k < len(doolhof[0]):
             if doolhof[r][k] == "#":
                 teller = teller + 1

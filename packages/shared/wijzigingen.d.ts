@@ -86,3 +86,20 @@ export declare function cursussenMetTabbladen(
   sites: { id: string; dir: string }[],
   leesConfig: (dir: string) => string | null,
 ): string[];
+/** Zoveel lespagina's meet één runner van de job `schermen`. */
+export declare const LESSEN_PER_DEEL: number;
+/** Zoveel runners hoogstens voor één cursus. */
+export declare const MAX_DELEN: number;
+/** Zoveel delen van de job `schermen` hoogstens samen. */
+export declare const MAX_SCHERMEN: number;
+/** De sites waarvan de job `voorraad` de build in de cache zet. */
+export declare function voorraadSites(p: Plan): string[];
+/** De matrix van de job `schermen`: een hele cursus in meer delen. */
+export declare function schermenMatrix(
+  p: Plan,
+  opties: {
+    siteMappen: Record<string, string>;
+    lesAantallen: Record<string, number>;
+    leesBron?: (pad: string) => string | null;
+  },
+): { site: string; deel: number; delen: number }[];

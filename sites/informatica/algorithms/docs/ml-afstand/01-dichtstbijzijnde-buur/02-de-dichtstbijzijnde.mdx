@@ -60,12 +60,8 @@ veranderen samen, in dezelfde `if`.
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 voorbeelden = [
-    ((8, 8), "appel"),
-    ((9, 8), "appel"),
-    ((7, 7), "appel"),
-    ((18, 4), "banaan"),
-    ((20, 4), "banaan"),
-    ((17, 3), "banaan"),
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
 ]
 
 nieuw = (10, 7)
@@ -92,33 +88,29 @@ print("Het is een", beste_soort, "op afstand", beste_afstand)`} />
 
 </details>
 
-## Opdracht: de dichtstbijzijnde van elke soort
+## Opdracht
 
-Bij `(13, 6)` scheelde het weinig tussen appel en banaan. Zoek uit hoeveel:
-print de afstand tot de dichtstbijzijnde appel en tot de dichtstbijzijnde
-banaan.
+Zoek de dichtstbijzijnde van elke soort: hoeveel scheelt het bij `(13, 6)`
+tussen appel en banaan? In de editor staan `afstand`, de voorbeelden en
+`nieuw = (13, 6)`. Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de soort en de afstand van elk voorbeeld tot `(13, 6)`.
+2. Zet vóór de loop `beste_appel = 1000`, onthoud de kleinste afstand van een appel, en print hem.
+3. Doe hetzelfde voor de bananen, met `beste_banaan`.
+
+Verwachte uitvoer:
 
 ```
 dichtstbijzijnde appel: 6
 dichtstbijzijnde banaan: 7
 ```
 
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print de soort en de afstand van elk voorbeeld tot `(13, 6)`.
-2. Zet vóór de loop `beste_appel = 1000`. Onthoud in de loop met een `if` de kleinste afstand, maar alleen bij een appel, en print `beste_appel` na de loop.
-3. Doe hetzelfde voor de bananen, met `beste_banaan`.
-
 <PyRunner initialCode={`def afstand(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 voorbeelden = [
-    ((8, 8), "appel"),
-    ((9, 8), "appel"),
-    ((7, 7), "appel"),
-    ((18, 4), "banaan"),
-    ((20, 4), "banaan"),
-    ((17, 3), "banaan"),
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
 ]
 nieuw = (13, 6)
 

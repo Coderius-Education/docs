@@ -81,23 +81,22 @@ else:
 
 </details>
 
-## Opdracht: twee regels erbij
+## Opdracht
 
-Geef de chatbot een regel voor `"naam"`, die `Ik heet Bot. En jij?`
-antwoordt, en een voor `"doei"`, die `Doei, tot de volgende keer.`
-antwoordt. Alle andere zinnen krijgen `Daar weet ik niets van.` Met de zin
-uit de editor wordt de uitvoer:
+Geef de chatbot twee regels erbij, voor `"naam"` en `"doei"`, en een antwoord
+op alle andere zinnen. In de editor heeft hij alleen de regel voor `"hoi"`.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. Bij deze zin zegt de chatbot nog niets.
+2. Zet onder de `if` een `elif` voor `"naam"` die `Ik heet Bot. En jij?` print, en draai opnieuw.
+3. Voeg een `elif` toe voor `"doei"` met `Doei, tot de volgende keer.`, en test hem met `zin = "doei bot"`.
+4. Zet er een `else` onder met `Daar weet ik niets van.`, en test met een zin zonder trefwoord.
+
+Verwachte uitvoer (bij `"wat is je naam?"`):
 
 ```
 Ik heet Bot. En jij?
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code. Bij deze zin zegt de chatbot nog niets: er is maar één regel.
-2. Zet onder de `if` een `elif` voor `"naam"`, en draai opnieuw.
-3. Voeg een `elif` toe voor `"doei"`. Verander `zin` in `"doei bot"` om hem te testen.
-4. Zet er een `else` onder voor alle andere zinnen, en test met een zin zonder trefwoord.
 
 <PyRunner initialCode={`zin = "wat is je naam?"
 
@@ -153,16 +152,10 @@ voorwaarde, dus Python verwacht direct na `else` de dubbele punt.
 {/* niet-compileren: toont bewust een else met een voorwaarde */}
 ```python
 # FOUT
-zin = "doei"
-if "hoi" in zin:
-    print("Hallo.")
 else "doei" in zin:
     print("Doei.")
 
 # GOED
-zin = "doei"
-if "hoi" in zin:
-    print("Hallo.")
 elif "doei" in zin:
     print("Doei.")
 ```

@@ -5,8 +5,11 @@ sidebar_position: 2
 # Stellingen — eerst voorspellen
 
 **Leerdoel:** je toetst je beeld van een context-vrije grammatica
-voordat je gaat bouwen. Denk eerst zelf na, klik dan open. De stellingen
-gaan over het mini-voorbeeld van de vorige pagina:
+voordat je gaat bouwen. Denk eerst zelf na, klik dan open.
+
+## Stellingen 1 tot 3
+
+De grammatica uit [het idee](site:algorithms/docs/cfg/01-concept):
 
 ```
 Zin   -> Groet Naam
@@ -14,42 +17,30 @@ Groet -> "hallo" | "hoi"
 Naam  -> "sam" | "kim"
 ```
 
----
-
-### Stelling 1
-
-> Deze grammatica accepteert de zin **hallo sam**.
+**Stelling 1.** *"Deze grammatica accepteert de zin **hallo sam**."*
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Waar.** `hallo` is een geldige `Groet` en `sam` een geldige `Naam`,
 dus samen vormen ze een `Zin`.
 
 </details>
 
----
-
-### Stelling 2
-
-> De grammatica accepteert ook **sam hallo**.
+**Stelling 2.** *"De grammatica accepteert ook **sam hallo**."*
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Niet waar.** De regel `Zin -> Groet Naam` zegt: eerst een groet, dan
 een naam. Hier staat het andersom, dus de zin is afgekeurd.
 
 </details>
 
----
-
-### Stelling 3
-
-> `Groet` en `Naam` zijn terminals.
+**Stelling 3.** *"`Groet` en `Naam` zijn terminals."*
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Niet waar.** `Groet` en `Naam` zijn non-terminals: groepen die uit
 andere bouwstenen bestaan. De terminals zijn de echte woorden tussen
@@ -57,14 +48,13 @@ aanhalingstekens, `"hallo"`, `"hoi"`, `"sam"` en `"kim"`.
 
 </details>
 
----
+## Stellingen 4 tot 6
 
-### Stelling 4
-
-> Een grammatica controleert of een zin qua **betekenis** klopt.
+**Stelling 4.** *"Een grammatica controleert of een zin qua **betekenis**
+klopt."*
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Niet waar.** Een CFG kijkt alleen naar de vorm. Of de zin ergens op
 slaat, kan de grammatica niets schelen: *hoi kim* komt erdoor, ook al
@@ -72,14 +62,10 @@ weet de computer niet wie Kim is.
 
 </details>
 
----
-
-### Stelling 5
-
-> Eén zin kan nooit meer dan één boom hebben.
+**Stelling 5.** *"Eén zin kan nooit meer dan één boom hebben."*
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Niet waar.** Sommige zinnen zijn **ambigu**: er zijn meerdere geldige
 manieren om ze te ontleden. Denk aan "Ik zag de man met de verrekijker":
@@ -89,15 +75,11 @@ zelf tegen.
 
 </details>
 
----
-
-### Stelling 6
-
-> Als je een nieuwe regel **toevoegt** om een extra zin te accepteren,
-> blijven alle eerder geaccepteerde zinnen geldig.
+**Stelling 6.** *"Als je een nieuwe regel **toevoegt** om een extra zin te
+accepteren, blijven alle eerder geaccepteerde zinnen geldig."*
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Waar.** Een regel toevoegen maakt de grammatica alleen maar ruimer;
 elke boom die er was, is er nog. Daarom kun je in deze track zin voor
@@ -108,7 +90,5 @@ regels *verandert* of vervangt, en dát kan een oude zin wél kapotmaken.
 Zolang je alleen toevoegt, is alles wat werkte veilig.
 
 </details>
-
----
 
 Door naar [de eerste zin →](site:algorithms/docs/cfg/bouwen/03-simpele-zin).

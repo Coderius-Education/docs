@@ -11,19 +11,17 @@ sidebar_position: 5
   ]}
 />
 
-**Leerdoel:** je vertaalt de twee kolommen van je papieren tabel naar
-Python: een dict `afstanden` en een set `bezocht`.
+**Leerdoel:** je vertaalt de twee dingen die je papieren tabel per node
+bijhoudt naar Python: een dict `afstanden` en een set `bezocht`.
 
 ## Wat we willen
 
 Op papier zag je tabel er na ronde 1 van de kleine graph zo uit:
 
-| node | bekend? | afstand |
-|---|---|---|
-| A | ja | 0 |
-| B | nee | 4 |
-| C | nee | 2 |
-| D | nee | ? |
+| node | A | B | C | D |
+|---|:---:|:---:|:---:|:---:|
+| bekend? | ja | nee | nee | nee |
+| afstand | 0 | 4 | 2 | ? |
 
 In Python worden dat twee dingen: een dict `afstanden` van node naar
 zijn huidige beste afstand, en een set `bezocht` met de nodes die al
@@ -141,8 +139,6 @@ print('B' in bezocht)   # False
 ```
 
 Daarmee is de boekhouding op orde.
-
-## Wat nu nog mist
 
 Alle afstanden staan op oneindig, op de start na. Ze bijwerken aan de
 hand van de buren is de relax-stap.

@@ -38,8 +38,8 @@ komen alle voorbeelden langs.
 
 ## Zo werkt het
 
-Eén keer alle voorbeelden langs heet een **ronde**. De code hieronder doet tien
-rondes, en telt per ronde hoe vaak het neuron het fout had. Heeft het in een
+Eén keer alle voorbeelden langs heet een **ronde**. De code van het onderzoek doet
+tien rondes, en telt per ronde hoe vaak het neuron het fout had. Heeft het in een
 ronde geen enkele fout, dan is elke fout 0, en verandert er daarna niets meer.
 
 ## Onderzoek
@@ -104,27 +104,28 @@ ronde 10 : 0 fouten
 
 </details>
 
-## Opdracht: wanneer is het klaar?
+## Opdracht
 
-Laat het programma zelf zeggen in welke ronde het neuron voor het eerst geen
-fouten meer maakte. Lukt dat in geen enkele ronde, dan zegt het dat:
+### De opdracht
+
+Wanneer is het neuron klaar? Als het een hele ronde geen fout meer maakt. Je
+laat het programma zeggen in welke ronde het neuron voor het eerst foutloos
+was, of dat het in geen enkele ronde lukte. Zo zie je welke regels een neuron
+kan leren, en welke niet.
+
+### Aan de slag
+
+In de editor leert het neuron EN, en telt het per ronde de `fouten`.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. Geef dan `klaar` na elke ronde het nummer van die ronde, als `fouten` 0 is en `klaar` nog 0: 6.
+2. Print "klaar na ronde 6", of "niet geleerd in 10 rondes" als `klaar` 0 blijft. Probeer ook de doelen van OF en "precies één".
+
+Verwachte uitvoer (bij EN):
 
 ```
 klaar na ronde 6
 ```
-
-Met de doelen van "precies één" print het:
-
-```
-niet geleerd in 10 rondes
-```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij leert tien rondes en print alleen de gewichten en de bias.
-2. Geef `klaar` na elke ronde het nummer van die ronde, als `fouten` 0 is en `klaar` nog 0 is. Print `klaar` na de loop: 6.
-3. Print "klaar na ronde 6" als `klaar` meer dan 0 is, en anders "niet geleerd in 10 rondes".
-4. Verander de doelen in die van OF, en daarna in die van "precies één".
 
 <PyRunner verborgen="neuron" initialCode={`voorbeelden = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
 gewichten = [0, 0]

@@ -1,3 +1,4 @@
+import { useInLesTab } from '@coderius/shared/components/LesTabs/paneel';
 import clsx from 'clsx';
 import type React from 'react';
 import { useCallback, useMemo, useState } from 'react';
@@ -38,6 +39,12 @@ export default function HanoiGame({
   const [bron, setBron] = useState<number | null>(null);
   const [zetten, setZetten] = useState(0);
   const [melding, setMelding] = useState('');
+
+  // In een les-tabblad staat het spel op een breed scherm naast zijn uitleg en
+  // knoppen (styles.inTab): onder elkaar was het 510 pixels hoog, en met de
+  // vragen erbij paste het tabblad Speel niet op 1280 bij 720. Wat het is,
+  // zegt het tabblad al, dus de kop "Speel zelf" vervalt daar.
+  const inTab = useInLesTab();
 
   const opgelost = useMemo(() => isOpgelost(pegs, aantal), [pegs, aantal]);
 
@@ -92,10 +99,13 @@ export default function HanoiGame({
   );
 
   return (
-    <section className={styles.game} aria-label="Torens van Hanoi, speelbaar">
+    <section
+      className={clsx(styles.game, inTab && styles.inTab)}
+      aria-label="Torens van Hanoi, speelbaar"
+    >
       <div className={styles.header}>
         <div>
-          <p className={styles.kicker}>Speel zelf</p>
+          {!inTab && <p className={styles.kicker}>Speel zelf</p>}
           <p className={styles.summary}>
             Klik een paal om de bovenste schijf op te pakken, klik dan een andere paal om hem neer
             te leggen. Verplaats de hele toren naar paal C.

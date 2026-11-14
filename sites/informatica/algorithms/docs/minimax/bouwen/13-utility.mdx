@@ -20,14 +20,10 @@ Minimax wil de uitkomst als een getal:
 Waarom zo? X is MAX en wil maximaliseren, dus een hoger getal is beter
 voor X. O is MIN en wil minimaliseren, dus een lager getal is beter voor
 O. Met `+1`, `−1` en `0` werken `max(...)` en `min(...)` van Python
-meteen goed.
-
-## Hergebruik `winner`
-
-Net als `terminal` leunt deze functie op `winner`: één aanroep, drie
+meteen goed. Net als `terminal` leunt deze functie op `winner`: één aanroep, drie
 gevallen.
 
-## Specificatie
+**Specificatie:**
 
 - **Input**: een **terminale** bord (de aanroeper garandeert dat
   `terminal(bord) == True`).
@@ -58,11 +54,14 @@ Bij `a` wint X, dus `+1`. Bij `b` wint O, dus `-1`. `c` is remise, `0`.
         if rij[0] == rij[1] == rij[2] and rij[0] is not None:
             return rij[0]
     for j in range(3):
-        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+        if (bord[0][j] == bord[1][j] == bord[2][j]
+                and bord[0][j] is not None):
             return bord[0][j]
-    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+    if (bord[0][0] == bord[1][1] == bord[2][2]
+            and bord[0][0] is not None):
         return bord[0][0]
-    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+    if (bord[0][2] == bord[1][1] == bord[2][0]
+            and bord[0][2] is not None):
         return bord[0][2]
     return None
 

@@ -13,10 +13,10 @@ sidebar_position: 16
 **Leerdoel:** je schrijft de functie die alle vorige bouwstenen gebruikt
 om de beste zet terug te geven, direct in je lokale `tictactoe.py`.
 
+## Wat doet deze functie?
+
 Bij [draai het zelf](site:algorithms/docs/minimax/bouwen/15-zelf-draaien) heb je je negen functies in één
 lokaal bestand gezet, of in de verzamel-PyRunner. Nu de tiende.
-
-## Wat doet deze functie?
 
 `minimax(bord)` geeft de beste zet terug voor de speler die nu aan zet
 is: niet het getal, dat doen `max_value` en `min_value`, maar de tuple
@@ -43,12 +43,10 @@ return beste_zet
 Dezelfde lus als in `max_value`, alleen onthoud je nu ook welke zet de
 beste was.
 
-## Speciaal geval
-
 Is het bord terminal, dan is er geen zet meer mogelijk en geef je `None`
 terug.
 
-## Specificatie
+**Specificatie:**
 
 - **Input**: een `bord` (mag terminal zijn).
 - **Output**: een tuple `(i, j)` met de beste zet, óf `None` als het
@@ -136,9 +134,9 @@ naast de beste score ook bij welke zet die hoorde.
 
 </details>
 
-## Test je minimax in `tictactoe.py`
+## Test je minimax
 
-Plak deze tests **onderaan** je lokale bestand (na minimax):
+Plak deze tests **onderaan** je lokale `tictactoe.py` (na minimax):
 
 {/* niet-draaien: hoort onderaan het lokale tictactoe.py van de leerling */}
 ```python
@@ -148,7 +146,8 @@ Plak deze tests **onderaan** je lokale bestand (na minimax):
 vol = [["X","O","X"],["X","O","O"],["O","X","X"]]
 assert minimax(vol) is None, "Terminal bord -> None"
 
-# X kan direct winnen op (2,2); de andere twee zetten geven hoogstens remise
+# X kan direct winnen op (2,2); de andere twee zetten
+# geven hoogstens remise
 bord = [["X","O","O"], ["O","X","X"], [None, None, None]]
 zet = minimax(bord)
 assert zet == (2, 2), f"Verwacht (2,2), kreeg {zet}"
@@ -170,9 +169,10 @@ python tictactoe.py
 
 Verwachte output: `Alle tests gehaald ✓`.
 
-## De AI-vs-AI demo
+## AI tegen AI
 
-Werkt het? Plak dan dit blok onderaan, **na** de tests:
+Slagen je tests? Plak dan dit blok onderaan `tictactoe.py`, **na** de
+tests:
 
 {/* niet-draaien: hoort onderaan het lokale tictactoe.py, na de tests */}
 ```python
@@ -218,7 +218,9 @@ tic-tac-toe in elkaar bij optimaal spel.
 Op je laptop is dit een **paar seconden**, niet 30. Dat is het verschil
 tussen Python in de browser en Python op je eigen computer.
 
-## Bonus — CS50's `runner.py` met clickable GUI
+## Bonus: speel tegen je AI
+
+### Het project van CS50
 
 CS50 levert bij dit project een tweede bestand, `runner.py`, dat een
 venster opent waarin jij tegen je eigen AI speelt. Het gebruikt het
@@ -237,11 +239,17 @@ venster opent waarin jij tegen je eigen AI speelt. Het gebruikt het
    ```
    Het CS50-project spreekt jouw bestand aan met die drie namen; jouw
    functies gebruiken de waardes zelf, dus verder verandert er niets.
-3. Installeer eenmalig `pygame`:
+
+### Installeren en draaien
+
+Heb je het project van CS50 met jouw `tictactoe.py` erin? Dan nog twee
+stappen:
+
+1. Installeer eenmalig `pygame`:
    ```
    python -m pip install pygame
    ```
-4. Draai:
+2. Draai:
    ```
    python runner.py
    ```
@@ -249,15 +257,17 @@ venster opent waarin jij tegen je eigen AI speelt. Het gebruikt het
 Er opent een venster. Je klikt op een vakje en je AI antwoordt:
 boter-kaas-en-eieren tegen een tegenstander die nooit blundert.
 
-## Geen lokale Python? Noodoplossing met PyRunner
+## Noodoplossing
+
+Geen lokale Python? Dan kun je `minimax` ook in de browser testen.
 
 <details>
 <summary>Open dit alleen als je echt niet lokaal kan draaien</summary>
 
 Vervang de lege `minimax` op de aangegeven plek door je eigen versie,
 inclusief de regel `def`. De andere negen functies staan al klaar: ze
-draaien mee, en je leest ze onder de editor via "Toon de code die al
-klaarstaat". Onder `minimax` staan dezelfde tests als hierboven.
+draaien mee, en je leest ze achter de knop Klaargezette code boven de
+editor. Onder `minimax` staan dezelfde tests als in het tabblad Test je minimax.
 Halen die het, dan speelt de AI tegen zichzelf. **Let op**: die demo kan
 in de browser zo'n **30 seconden** duren — minimax rekent
 honderdduizenden posities door.
@@ -265,7 +275,9 @@ honderdduizenden posities door.
 {/* niet-draaien: startcode; de leerling plakt hier zijn eigen minimax in */}
 <PyRunner rows={24} verborgen="minimax-helpers" initialCode={`def minimax(bord):
     # === Vervang deze functie door je eigen minimax ===
-    raise NotImplementedError("Vervang deze functie door je eigen minimax.")
+    raise NotImplementedError(
+        "Vervang deze functie door je eigen minimax."
+    )
 
 
 # === Tests ===
@@ -274,7 +286,8 @@ honderdduizenden posities door.
 vol = [["X","O","X"],["X","O","O"],["O","X","X"]]
 assert minimax(vol) is None, "Terminal bord -> None"
 
-# X kan direct winnen op (2,2); de andere twee zetten geven hoogstens remise
+# X kan direct winnen op (2,2); de andere twee zetten
+# geven hoogstens remise
 bord = [["X","O","O"], ["O","X","X"], [None, None, None]]
 zet = minimax(bord)
 assert zet == (2, 2), f"Verwacht (2,2), kreeg {zet}"

@@ -38,10 +38,18 @@ getal groter, dan springt de surfer. Daarvoor heb je de lijst van alle
 pagina's nodig: `list(web)` maakt een lijst van de sleutels van het web, hier
 `['A', 'B', 'C', 'D']`.
 
-## Opdracht: de surfer springt soms
+## Opdracht
 
-Bouw het springen in de surfer. Met 10.000 klikken kom je bijvoorbeeld hierop
-uit; de laatste cijfers zijn elke keer anders:
+De surfer springt soms: bouw het springen in, en laat hem 10.000 keer klikken.
+In de editor kiest hij één keer tussen een link volgen en springen.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code een paar keer: meestal zegt hij link, gemiddeld 85 van de 100 keer.
+2. Kies bij link `pagina = random.choice(web[pagina])`, en bij springen een pagina uit `list(web)`. Print `pagina`.
+3. Zet de keuze in een loop van `klikken = 10000` keer, en tel in `bezocht` hoe vaak hij op elke pagina komt.
+4. Print met `for p in bezocht:` elke `bezocht[p] / klikken`, en teken de staven zoals bij [twee dobbelstenen](site:algorithms/docs/ml-kans/01-dobbelsteen/04-twee-dobbelstenen#opdracht-twee-dobbelstenen).
+
+Verwachte uitvoer, bijvoorbeeld (de laatste cijfers zijn elke keer anders):
 
 ```
 A 0.3741
@@ -49,19 +57,6 @@ B 0.1932
 C 0.3951
 D 0.0376
 ```
-
-Teken het daarna als staafdiagram, net als bij
-[twee dobbelstenen](site:algorithms/docs/ml-kans/01-dobbelsteen/04-twee-dobbelstenen#opdracht-twee-dobbelstenen),
-met `bezocht` in plaats van `telling`.
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code een paar keer. Meestal zegt hij link: dat gebeurt gemiddeld 85 van de 100 keer.
-2. Laat de surfer bij link een link kiezen van de pagina waar hij is, met `pagina = random.choice(web[pagina])`, en bij springen een pagina uit `list(web)`. Print `pagina` na de keuze.
-3. Zet `klikken = 10000` bovenaan, zet de keuze in een loop van `klikken` keer, en tel met `bezocht` hoe vaak hij op elke pagina komt, zoals in [duizend klikken](site:algorithms/docs/ml-kans/02-surfer/03-duizend-klikken#onderzoek).
-4. Loop na de klikken met `for p in bezocht:` langs de pagina's, print per pagina `bezocht[p] / klikken`, en zet de drie regels matplotlib eronder.
-
-In de editor staan het web, de startpagina en één keuze tussen een link volgen en springen.
 
 <PyRunner initialCode={`import random
 

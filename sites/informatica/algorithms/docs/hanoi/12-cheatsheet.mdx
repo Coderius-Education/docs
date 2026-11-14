@@ -1,5 +1,6 @@
 ---
 sidebar_position: 12
+les_tabs: false
 ---
 
 # Cheatsheet — Torens van Hanoi
@@ -105,8 +106,8 @@ het minimum; met drie palen kan het niet sneller.
 {/* foutmelding-los: samenvatting van de fouten-pagina, waar de melding gereproduceerd wordt */}
 
 1. Basisgeval vergeten → `RecursionError`.
-2. `hulp` en `doel` verwisseld in de recursieve call → de test voor 2 schijven faalt, de grootste schijf komt bovenop de kleinste.
-3. `append` in plaats van `+=` bij de recursieve aanroep → een lijst ín de lijst.
+2. Hulp en doel verwisseld (`hulp` en `doel` in de recursieve aanroep) → de test voor 2 schijven faalt, de grootste schijf komt bovenop de kleinste.
+3. Lijst in de lijst: `append` in plaats van `+=` bij de recursieve aanroep.
 
 </details>
 

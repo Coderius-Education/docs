@@ -67,11 +67,27 @@ function moetGemetenWorden(rel, bron, mappen) {
 }
 
 /**
+ * Laat Docusaurus de nummers vooraan staan? Algoritmes zet
+ * `numberPrefixParser: false`: daar is `docs/bubble-sort/01-concept.mdx` de
+ * les `docs/bubble-sort/01-concept`.
+ *
+ * @param {string} config de bron van docusaurus.config.ts
+ */
+function houdtNummers(config) {
+  return /\bnumberPrefixParser:\s*false\b/.test(config);
+}
+
+/**
  * Het adres van een lespagina in de build, zonder de map van de docs-plugin
  * ervoor (`docs/terminal/jokertekens.mdx` -> `terminal/jokertekens`), of
  * null als het bestand geen lespagina is.
+ *
+ * @param {string} rel
+ * @param {string} bron
+ * @param {{ nummers?: boolean }} [opties] `nummers`: de site laat de nummers
+ *   vooraan staan (houdtNummers)
  */
-function adresVanBron(rel, bron) {
+function adresVanBron(rel, bron, { nummers = false } = {}) {
   if (!/\.mdx?$/.test(rel)) return null;
   const delen = rel.split('/');
   // Een pagina in src/pages heeft het pad erna; een les het pad na de map
@@ -82,7 +98,10 @@ function adresVanBron(rel, bron) {
   else return null;
   // Een deel (`_delen/`, `_stap.mdx`) staat in de les die het importeert.
   if (pad.some((d) => d.startsWith('_'))) return null;
-  pad = pad.map((d, i) => zonderNummer(i === pad.length - 1 ? d.replace(/\.mdx?$/, '') : d));
+  pad = pad.map((d, i) => {
+    const deel = i === pad.length - 1 ? d.replace(/\.mdx?$/, '') : d;
+    return nummers ? deel : zonderNummer(deel);
+  });
   const laatste = pad.at(-1) ?? '';
   if (/^(index|readme)$/i.test(laatste) || laatste === pad.at(-2)) pad = pad.slice(0, -1);
   const { slug, id } = frontMatter(bron);
@@ -92,6 +111,52 @@ function adresVanBron(rel, bron) {
   }
   if (id) return [...pad.slice(0, -1), id].join('/');
   return pad.join('/');
+}
+
+/**
+ * Meet CI in deze site elke les, en waarom? `null`: alleen de gewijzigde
+ * lessen. Het plan van CI (`schermenMatrix` in wijzigingen.js) vraagt het ook:
+ * een hele cursus verdeelt het over meer runners.
+ *
+ * @param {object} opties
+ * @param {object} opties.plan changed.json van de plan-job
+ * @param {string} opties.site het id van de site
+ * @param {string} opties.siteMap de map van de site
+ * @param {(pad: string) => string | null} [opties.leesBron] de bron van een
+ *   bestand, of null als het er niet (meer) is: een weggehaald bestand telt
+ *   niet mee
+ * @returns {string | null}
+ */
+/**
+ * Bestanden van een site die geen scherm raken: een test, de tests van de
+ * lessen, de notities van de cursus en de labels van de lessenlijst. Eerst
+ * liet zo'n wijziging de hele cursus meten, en met de meting in delen kostte
+ * dat zes runners voor algoritmes.
+ *
+ * @param {string} rel het pad binnen de site
+ */
+function raaktGeenScherm(rel) {
+  return (
+    /\.test\.[cm]?[jt]sx?$/.test(rel) ||
+    /(^|\/)docs-tests\//.test(rel) ||
+    /^[^/]+\.md$/.test(rel) ||
+    /(^|\/)_category_\.json$/.test(rel)
+  );
+}
+
+function heleSite({ plan, site, siteMap, leesBron = () => '' }) {
+  if (plan.volledig) return 'volledige run';
+  if (plan.schermen?.alles) return 'het meetscript is veranderd';
+  const via = plan.schermen?.viaPakket?.[site];
+  if (via) return `${via} staat in een package waar de site van afhangt`;
+  const prefix = `${siteMap}/`;
+  const bestanden = Object.keys(plan.bestanden ?? {}).filter((p) => p.startsWith(prefix));
+  if (bestanden.length === 0) return 'een package waar de site van afhangt';
+  // Of een bestand een les is, hangt alleen aan zijn pad (adresVanBron).
+  const pad = bestanden
+    .filter((p) => !raaktGeenScherm(p.slice(prefix.length)))
+    .find((p) => leesBron(p) !== null && adresVanBron(p.slice(prefix.length), '') === null);
+  return pad ? `${pad} kan elke les raken` : null;
 }
 
 /**
@@ -105,29 +170,36 @@ function adresVanBron(rel, bron) {
  * @param {(pad: string) => string | null} opties.leesBron de bron van een
  *   bestand in de checkout, of null als het er niet (meer) is
  * @param {string[]} [opties.mappen] de docs-mappen van de site (docsMappen)
+ * @param {boolean} [opties.nummers] de site laat de nummers vooraan staan
+ *   (houdtNummers)
  * @returns {{ alles: boolean, lessen: string[], nietGevonden: string[],
  *   ontbreekt: string[], reden: string }} `nietGevonden`: gewijzigde
  *   lespagina's zonder les in de build; `ontbreekt`: wie daarvan er wel een
  *   had moeten hebben (moetGemetenWorden)
  */
-function lessenVoorMeting({ plan, site, siteMap, lessen, leesBron, mappen = ['docs'] }) {
+function lessenVoorMeting({
+  plan,
+  site,
+  siteMap,
+  lessen,
+  leesBron,
+  mappen = ['docs'],
+  nummers = false,
+}) {
   const alles = (reden) => ({ alles: true, lessen, nietGevonden: [], ontbreekt: [], reden });
-  if (plan.volledig) return alles('volledige run');
-  if (plan.schermen?.alles) return alles('het meetscript is veranderd');
-  const via = plan.schermen?.viaPakket?.[site];
-  if (via) return alles(`${via} staat in een package waar de site van afhangt`);
+  const heel = heleSite({ plan, site, siteMap, leesBron });
+  if (heel) return alles(heel);
   const prefix = `${siteMap}/`;
   const bestanden = Object.keys(plan.bestanden ?? {}).filter((p) => p.startsWith(prefix));
-  if (bestanden.length === 0) return alles('een package waar de site van afhangt');
   const gekozen = new Set();
   const nietGevonden = [];
   const ontbreekt = [];
   for (const pad of bestanden) {
+    if (raaktGeenScherm(pad.slice(prefix.length))) continue;
     const bron = leesBron(pad);
     // Een weggehaalde les valt weg; niets te meten.
     if (bron === null) continue;
-    const adres = adresVanBron(pad.slice(prefix.length), bron);
-    if (adres === null) return alles(`${pad} kan elke les raken`);
+    const adres = adresVanBron(pad.slice(prefix.length), bron, { nummers });
     const passend = lessen.filter((les) => les === adres || les.endsWith(`/${adres}`));
     // Een pagina zonder tabbladen die niet als één scherm meetelt (een
     // cheatsheet met les_tabs: false) staat niet in de lijst: niets te meten.
@@ -146,10 +218,50 @@ function lessenVoorMeting({ plan, site, siteMap, lessen, leesBron, mappen = ['do
   };
 }
 
+/**
+ * De les van een gebouwd html-bestand in map `map` (relatief aan de build), of
+ * null. Een site met `trailingSlash: false` (algoritmes) bouwt een les als
+ * `les.html`, de andere als `les/index.html`.
+ *
+ * @param {string} map de map van het bestand, relatief aan de build ('' is de build)
+ * @param {string} naam de naam van het bestand
+ * @returns {string | null}
+ */
+function lesVan(map, naam) {
+  const pad = (...delen) => delen.filter(Boolean).join('/');
+  if (naam === 'index.html') return map;
+  if (naam.endsWith('.html') && naam !== '404.html') return pad(map, naam.slice(0, -5));
+  return null;
+}
+
+/**
+ * Deel `deel` van `delen` (1-gebaseerd) van een lijst lessen: om en om, want
+ * de lessen van een hoofdstuk lijken op elkaar, en zo krijgt elk deel er
+ * evenveel van. Samen bevatten de delen elke les precies één keer
+ * (meet-selectie.test.ts). De job `schermen` meet een hele cursus zo op meer
+ * runners naast elkaar (`--deel=2/6`, schermenMatrix in wijzigingen.js).
+ *
+ * @template T
+ * @param {T[]} lessen
+ * @param {number} deel
+ * @param {number} delen
+ * @returns {T[]}
+ */
+function deelVan(lessen, deel, delen) {
+  if (!Number.isInteger(deel) || !Number.isInteger(delen) || deel < 1 || deel > delen)
+    throw new Error(`geen geldig deel: ${deel}/${delen}`);
+  return lessen.filter((_, i) => i % delen === deel - 1);
+}
+
 module.exports = {
   adresVanBron,
+  deelVan,
   docsMappen,
+  heleSite,
+  houdtNummers,
+  lesVan,
   lessenVoorMeting,
+  raaktGeenScherm,
   moetGemetenWorden,
   zonderNummer,
 };

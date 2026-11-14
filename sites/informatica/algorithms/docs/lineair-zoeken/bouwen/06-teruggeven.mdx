@@ -65,15 +65,14 @@ print(zoek([3, 1, 4, 1, 5], 1))
 print(zoek([3, 1, 4, 1, 5], 4))
 print(zoek([3, 1, 4, 1, 5], 1))`} />
 
-## Belangrijk: `return` stopt de functie
-
-Zodra Python `return i` uitvoert, springt hij de functie uit en gaat de
-`for`-lus niet verder. Dat is precies de bedoeling: stoppen bij de eerste
-match.
+**Let op:** zodra Python `return i` uitvoert, springt hij de functie uit en
+gaat de `for`-lus niet verder. Dat is precies de bedoeling: stoppen bij de
+eerste match.
 
 ## Wat als we het niet vinden?
 
-Probeer dit:
+Deze code zoekt een 9, die niet in de lijst staat. Voorspel eerst wat er
+geprint wordt, en druk dan op Voer uit.
 
 <PyRunner initialCode={`def zoek(lijst, doel):
     for i, waarde in enumerate(lijst):

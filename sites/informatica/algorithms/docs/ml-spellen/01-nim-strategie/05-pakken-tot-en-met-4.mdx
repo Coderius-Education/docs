@@ -98,29 +98,29 @@ print("slim wint", gewonnen, "van de 100")`} />
 
 </details>
 
-## Opdracht: pakken tot en met 4
+## Opdracht
 
-Verander de regels: je mag nu 1, 2, 3 of 4 lucifers pakken, en het spel begint
-met 12. Pas `slim` aan, zodat hij weer alle 100 spellen wint:
+### De opdracht
+
+De regels veranderen: je mag nu 1, 2, 3 of 4 lucifers pakken, en het spel
+begint met 12. Je past `slim` aan, zodat hij weer alle 100 spellen wint. En
+hij moet ook een goede zet doen bij een stapel waar hij niet kan winnen, zoals
+11: daar pakt hij 1.
+
+### Aan de slag
+
+**Pas op:** pakt `slim` 0, dan loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
+
+1. Draai de code: `slim` bovenaan pakt altijd 1, en wint lang niet alles.
+2. Reken in `slim` met `%` uit hoeveel hij pakt, nu voor 1 tot en met 4. Kijk naar de laatste regel.
+3. Een zet van 0 is geen zet. Zet er een `if` bij die dan 1 pakt.
+
+Verwachte uitvoer:
 
 ```
 slim wint 100 van de 100
+bij 11 pakt slim 1
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: `slim` pakt nu altijd 1, en wint lang niet alles.
-2. Laat `slim` met `%` uitrekenen hoeveel hij pakt, zoals `slim` in het onderzoek, maar dan voor 1 tot en met 4.
-3. Print in `slim` hoeveel hij pakt, en draai één keer `speel(11)` in plaats van de 100 spellen. Pakt hij ergens 0? Zet er dan een `if` bij voor als het 0 is, en haal de print weg.
-
-In de editor staat het spel tot en met 4 al klaar: `willekeurig` pakt 1 tot
-en met 4. Alleen `slim` doet nog niets slims.
-
-:::caution
-`speel` heeft een while-loop. Pakt `slim` ergens 0, dan wordt de stapel niet
-kleiner, stopt de loop nooit en loopt het tabblad vast. Kopieer je code eerst
-naar een kladblok, en druk bij twijfel op Stap voor stap.
-:::
 
 <PyRunner initialCode={`import random
 
@@ -145,7 +145,8 @@ gewonnen = 0
 for spel in range(100):
     if speel(12) == "slim":
         gewonnen = gewonnen + 1
-print("slim wint", gewonnen, "van de 100")`} />
+print("slim wint", gewonnen, "van de 100")
+print("bij 11 pakt slim", slim(11))`} />
 
 <details>
 <summary>Tip</summary>
@@ -185,11 +186,19 @@ gewonnen = 0
 for spel in range(100):
     if speel(12) == "slim":
         gewonnen = gewonnen + 1
-print("slim wint", gewonnen, "van de 100")   # slim wint 100 van de 100
+print("slim wint", gewonnen, "van de 100")
+print("bij 11 pakt slim", slim(11))
+```
+
+```
+slim wint 100 van de 100
+bij 11 pakt slim 1
 ```
 
 Samen pak je elke ronde 5, dus laat `slim` steeds een vijfvoud plus 1 over:
-11, 6 en 1.
+11, 6 en 1. Na stap 2 won `slim` al alles, want bij 12 komt hij nooit op 11,
+6 of 1. Maar bij 11 pakte hij 0, en een `slim` die niets pakt, is geen
+strategie.
 
 </details>
 

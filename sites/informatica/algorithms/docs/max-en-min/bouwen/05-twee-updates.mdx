@@ -17,8 +17,9 @@ toe, zodat zowel `klein` als `groot` aangepast worden.
 
 ## Wat we willen
 
-Per element checken: *is het kleiner dan onze huidige `klein`? Is het
-groter dan onze huidige `groot`?* Zo ja, dan updaten.
+Per element check je: *is het kleiner dan `klein`? Is het groter dan
+`groot`?* Zo ja, dan werk je die bij. Dat zijn twee vergelijkingen in één
+lus, en elk element komt maar één keer langs.
 
 ## Voorspel
 
@@ -90,7 +91,8 @@ niets meer opleveren.
 
 ## Experimenteer
 
-Test extreme inputs:
+De code draait de functie op vier lijsten, ook een paar uitersten.
+Voorspel eerst `klein` en `groot` voor elke lijst.
 
 <PyRunner initialCode={`def max_en_min_los(lijst):
     klein = groot = lijst[0]
@@ -118,10 +120,8 @@ max_en_min_los([3, 3, 3])`} />
 
 </details>
 
-## Wat nu nog mist
-
-De logica klopt, maar hij print alleen. De aanroeper krijgt de waardes
-niet terug. In de volgende stap stoppen we dit in een functie die er twee
-teruggeeft.
+De logica klopt, maar de code print alleen: wie de functie aanroept,
+krijgt de waardes niet terug. In de volgende stap maak je er een functie
+van die er twee teruggeeft.
 
 Door naar [bouwsteen 3: tuple teruggeven](site:algorithms/docs/max-en-min/bouwen/06-tuple-return).

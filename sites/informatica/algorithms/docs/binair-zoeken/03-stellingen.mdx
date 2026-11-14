@@ -7,9 +7,9 @@ sidebar_position: 3
 **Leerdoel:** je toetst of je het *idee* van binair zoeken (halveren) snapt,
 voordat je gaat programmeren.
 
-## Stelling 1
+## Stellingen 1 tot 3
 
-*"Binair zoeken werkt ook op een ongesorteerde lijst."*
+**Stelling 1.** *"Binair zoeken werkt ook op een ongesorteerde lijst."*
 
 <details>
 <summary>Antwoord</summary>
@@ -20,23 +20,19 @@ gesorteerd is. Op een rommelige lijst krijg je willekeurige antwoorden.
 
 </details>
 
-## Stelling 2
-
-*"Bij een lijst van 1000 elementen heb je in het ergste geval maximaal 10
-stappen nodig."*
+**Stelling 2.** *"Bij een lijst van 1000 elementen heb je in het ergste geval maximaal 10
+vergelijkingen nodig."*
 
 <details>
 <summary>Antwoord</summary>
 
 **Juist.** Elke stap halveert het zoekgebied. Hoe vaak kun je 1000
-halveren voor er 1 over is? Tien keer, want 2¹⁰ = 1024. Tien stappen dus,
-ook als het doel niet bestaat.
+halveren voor er 1 over is? Negen keer, en dat laatste getal moet je
+nog bekijken: tien vergelijkingen, ook als het doel niet bestaat.
 
 </details>
 
-## Stelling 3
-
-*"Als een waarde meerdere keren voorkomt, geeft binair zoeken altijd de
+**Stelling 3.** *"Als een waarde meerdere keren voorkomt, geeft binair zoeken altijd de
 **eerste** voorkomende index."*
 
 <details>
@@ -49,31 +45,29 @@ landt. Het kan elk van de gelijke waardes zijn. Wil je per se de
 
 </details>
 
-## Stelling 4
+## Stellingen 4 tot 6
 
-*"Voor een lijst van 8 elementen zijn er maximaal 8 stappen nodig."*
+**Stelling 4.** *"Voor een lijst van 8 elementen zijn er maximaal 8 vergelijkingen nodig."*
 
 <details>
 <summary>Antwoord</summary>
 
-**Onjuist.** Voor 8 elementen zijn er maximaal **4** stappen nodig. Bij een
-lijst van 8:
+**Onjuist.** Voor 8 elementen zijn er maximaal **4** vergelijkingen nodig.
+Bij een lijst van 8:
 
-- Na stap 1 blijven er 4 elementen over.
-- Na stap 2 nog 2.
-- Na stap 3 nog 1.
-- Stap 4 vergelijkt dat laatste element, en dan ben je klaar.
+- Na vergelijking 1 blijven er 4 elementen over.
+- Vergelijking 2 laat er 2 over.
+- Na de derde is er nog 1.
+- Vergelijking 4 bekijkt dat laatste element, en dan ben je klaar.
 
 Veel mensen schatten 3 omdat `2³ = 8`, maar na 3 halveringen ligt er nog
-één element dat je nog moet bekijken. Vandaar de vierde stap.
+één element dat je nog moet bekijken. Vandaar de vierde vergelijking.
 
-Het zou *lineair* zoeken zijn dat tot 8 stappen nodig heeft.
+Het zou *lineair* zoeken zijn dat tot 8 vergelijkingen nodig heeft.
 
 </details>
 
-## Stelling 5
-
-*"Bij elke stap valt ongeveer de helft van het zoekgebied af."*
+**Stelling 5.** *"Bij elke stap valt ongeveer de helft van het zoekgebied af."*
 
 <details>
 <summary>Antwoord</summary>
@@ -84,9 +78,7 @@ het idee maakt dat niet uit: elke stap laat ongeveer de helft over.
 
 </details>
 
-## Stelling 6
-
-*"Binair zoeken is een soort recept dat je in je hoofd kunt uitvoeren, op
+**Stelling 6.** *"Binair zoeken is een soort recept dat je in je hoofd kunt uitvoeren, op
 elke gesorteerde lijst."*
 
 <details>

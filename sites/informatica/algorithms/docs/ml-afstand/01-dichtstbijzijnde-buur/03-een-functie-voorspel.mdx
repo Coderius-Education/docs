@@ -47,35 +47,30 @@ Je functie `voorspel` krijgt twee parameters: het nieuwe fruit en de lijst
 voorbeelden. Zo werkt hij ook met een andere lijst voorbeelden, zoals de
 honden en katten in de volgende stap.
 
-## Opdracht: een functie voorspel
+## Opdracht
 
 Maak een functie `voorspel(nieuw, voorbeelden)` die de soort van de
-dichtstbijzijnde buur teruggeeft. Test hem zo:
-
-{/* niet-draaien: fragment; voorspel en voorbeelden schrijft de leerling zelf */}
-```python
-print(voorspel((10, 7), voorbeelden))   # appel
-print(voorspel((15, 5), voorbeelden))   # banaan
-```
-
+dichtstbijzijnde buur teruggeeft. In de editor staat hij al, met twee tests
+onderaan: `(10, 7)` is een appel, `(15, 5)` een banaan.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `voorspel` geeft nog `"?"` terug.
 2. Loop in de functie over de voorbeelden, en print met `afstand` hoe ver elk voorbeeld weg is.
-3. Onthoud met een `if` de kleinste afstand en de soort die erbij hoort, zoals in de vorige stap. Haal de print weg, en geef de soort terug.
+3. Onthoud de kleinste afstand en zijn soort, zoals in de vorige stap. Haal de print weg, en geef de soort terug.
 
-In de editor staan `afstand`, de voorbeelden en een functie die nog niets doet.
+Verwachte uitvoer:
+
+```
+appel
+banaan
+```
 
 <PyRunner initialCode={`def afstand(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 voorbeelden = [
-    ((8, 8), "appel"),
-    ((9, 8), "appel"),
-    ((7, 7), "appel"),
-    ((18, 4), "banaan"),
-    ((20, 4), "banaan"),
-    ((17, 3), "banaan"),
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
 ]
 
 def voorspel(nieuw, voorbeelden):
@@ -111,12 +106,8 @@ def voorspel(nieuw, voorbeelden):
     return beste_soort
 
 voorbeelden = [
-    ((8, 8), "appel"),
-    ((9, 8), "appel"),
-    ((7, 7), "appel"),
-    ((18, 4), "banaan"),
-    ((20, 4), "banaan"),
-    ((17, 3), "banaan"),
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
 ]
 print(voorspel((10, 7), voorbeelden))   # appel
 print(voorspel((15, 5), voorbeelden))   # banaan

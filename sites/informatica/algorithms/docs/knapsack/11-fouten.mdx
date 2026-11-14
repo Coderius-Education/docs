@@ -7,98 +7,78 @@ sidebar_position: 11
 **Leerdoel:** je herkent de drie klassieke valkuilen bij de
 tabel-aanpak van knapsack.
 
-## Off-by-one in tabel-grootte
+## Tabel te klein
 
 {/* foutmelding-van: tabel = [[0] * 3 for _ in range(2)]\ntabel[2][0] */}
 
 Foutmelding: `IndexError: list index out of range` of een tabel die
 te klein is.
 
-**Oorzaak:** vergeet de `+1` bij rijen of kolommen. De tabel heeft
-`(n + 1) × (capaciteit + 1)` cellen, niet `n × capaciteit`. Die extra
-rij is voor "geen items" (basisgeval); die extra kolom is voor "lege
-rugzak".
+**Oorzaak:** je vergeet de `+ 1` bij de rijen of de kolommen. De tabel
+heeft `(n + 1) × (capaciteit + 1)` cellen, niet `n × capaciteit`: een rij
+extra voor "geen items" (het basisgeval) en een kolom extra voor "lege
+rugzak". Zonder die extra's bestaat `tabel[n][capaciteit]` niet, en
+crasht de `return`.
+
+**Oplossing:** maak de tabel een rij en een kolom groter.
 
 ```python
 # FOUT
-tabel = []
 for _ in range(n):
     tabel.append([0] * capaciteit)
 
-# Probleem: tabel[n][capaciteit] bestaat niet → crash bij return.
-```
-
-**Oplossing:**
-
-```python
 # GOED
-tabel = []
 for _ in range(n + 1):
     tabel.append([0] * (capaciteit + 1))
 ```
 
-Vuistregel: als je naar een cel `[i][w]` wilt kunnen met `i = n` én
-`w = capaciteit`, heb je `n + 1` rijen en `W + 1` kolommen nodig.
-
-## `i`-loop start bij 0
+## Lus begint bij rij 0
 
 Geen foutmelding, wel een rij 0 die niet meer 0 is, en soms een
 totaalwaarde die te hoog is.
 
 **Oorzaak:** rij 0 in de tabel is al ingevuld (basisgeval: allemaal 0).
-Je werkelijke "vul-rij"-werk start bij `i = 1`. Begin je bij `i = 0`,
-dan haal je `items[-1]` op, en Python's negatieve index geeft je het
-**laatste** item. Dat item komt zo in rij 0 terecht en kan daarna nog
-een keer meetellen: één item van waarde 10 en gewicht 1 in een rugzak
-van 2 geeft dan 20. Op het voorbeeld van de les komt er toevallig nog
-40 uit, met een rij 0 vol 28'en.
+Begin je bij `i = 0`, dan haal je `items[-1]` op, en Python's negatieve
+index geeft je het **laatste** item. Dat item komt zo in rij 0 terecht en
+kan daarna nog een keer meetellen: één item van waarde 10 en gewicht 1 in
+een rugzak van 2 geeft dan 20. Op het voorbeeld van de les komt er
+toevallig nog 40 uit, met een rij 0 vol 28'en.
+
+**Oplossing:** rij 0 is al klaar, dus het invullen begint bij `i = 1`.
 
 ```python
 # FOUT
-for i in range(n + 1):       # start bij 0
-    waarde, gewicht = items[i - 1]   # items[-1] = laatste item
-    ...
-```
-
-**Oplossing:**
-
-```python
-# GOED
-for i in range(1, n + 1):    # start bij 1
+for i in range(n + 1):
     waarde, gewicht = items[i - 1]
-    ...
+
+# GOED
+for i in range(1, n + 1):
+    waarde, gewicht = items[i - 1]
 ```
 
-Die `1` in `range(1, n + 1)` is het hele punt.
+## Capaciteit niet verminderd
 
-## Backtrack vergeet capaciteit te verminderen
+De backtrack vergeet de capaciteit `w` te verminderen. Geen foutmelding,
+wel een verkeerde lijst van items.
 
-Geen foutmelding, wel een verkeerde lijst van items.
+**Oorzaak:** bij elk item dat je meeneemt, moet je niet alleen de index
+opslaan, maar **ook** de capaciteit verminderen met het gewicht van dat
+item. Vergeet je dat, dan blijf je naar dezelfde kolom kijken en lijken
+meer items "meegenomen" dan klopt.
 
-**Oorzaak:** bij elke "item meegenomen"-stap moet je niet alleen de
-index opslaan, maar **ook** de capaciteit verminderen met het gewicht
-van dat item. Vergeet je dat, dan blijf je naar dezelfde kolom kijken
-en lijken meer items "meegenomen" dan klopt.
+**Oplossing:** verminder `w` met het gewicht van elk item dat je
+meeneemt. Je schuift dan naar links, want dit item neemt zijn gewicht al
+in: er is minder capaciteit over voor de rest.
 
 ```python
 # FOUT
-for i in range(n, 0, -1):
-    if tabel[i][w] != tabel[i - 1][w]:
-        keuze.append(i - 1)
-        # w wordt NIET aangepast → fout
-```
+if tabel[i][w] != tabel[i - 1][w]:
+    keuze.append(i - 1)
 
-**Oplossing:**
-
-```python
 # GOED
-for i in range(n, 0, -1):
-    if tabel[i][w] != tabel[i - 1][w]:
-        keuze.append(i - 1)
-        w -= items[i - 1][1]    # cruciaal!
+if tabel[i][w] != tabel[i - 1][w]:
+    keuze.append(i - 1)
+    w -= items[i - 1][1]
 ```
-
-Je schuift naar links omdat dit item zijn gewicht al heeft ingenomen:
-er is minder capaciteit over voor de rest.
 
 Door naar [cheatsheet →](site:algorithms/docs/knapsack/12-cheatsheet).

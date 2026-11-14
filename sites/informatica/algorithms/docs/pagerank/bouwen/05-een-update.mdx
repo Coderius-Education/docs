@@ -61,7 +61,8 @@ def nieuwe_rank(web, rank, p, d=0.85):
 # === Tests ===
 assert round(nieuwe_rank(WEB, huidige, "C"), 5) == 0.56875
 assert round(nieuwe_rank(WEB, huidige, "A"), 5) == 0.25
-assert round(nieuwe_rank(WEB, huidige, "D"), 4) == 0.0375   # niemand linkt naar D
+# niemand linkt naar D:
+assert round(nieuwe_rank(WEB, huidige, "D"), 4) == 0.0375
 
 print("Update van één pagina werkt ✓")`} />
 

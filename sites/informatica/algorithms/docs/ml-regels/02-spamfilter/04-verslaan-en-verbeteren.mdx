@@ -46,14 +46,15 @@ ander woord met dezelfde betekenis, en het bericht glipt erdoor.
 Jij kunt woorden aan de lijst toevoegen. Maar de spammer ziet welke berichten
 niet aankomen, en verzint dan een nieuw woord.
 
-## Bouw zelf: verslaan en verbeteren
+## Bouw zelf
 
-Schrijf een spambericht dat door het filter glipt: het is overduidelijk
-spam, maar het krijgt een score onder de drempel. Voeg daarna woorden aan de
-lijst `verdacht` toe zodat je eigen bericht wél als spam herkend wordt.
-In de editor staat de versie met `.split()` uit
+Versla het filter, en verbeter het. Schrijf een spambericht dat door het
+filter glipt: het is overduidelijk spam, maar het krijgt een score onder de
+drempel. Voeg daarna woorden aan de lijst `verdacht` toe zodat je eigen
+bericht wél als spam herkend wordt.
+
+In de editor staat het filter met `.split()` uit
 [hele woorden](site:algorithms/docs/ml-regels/02-spamfilter/03-hele-woorden).
-
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: het filter ziet dit bericht als spam.
@@ -89,7 +90,8 @@ Spammers schrijven woorden net anders, zodat ze niet in de lijst staan:
 <summary>Antwoord</summary>
 
 ```python
-verdacht = ["gratis", "winnen", "klik", "nu", "geld", "gr4tis", "cadeau", "prijs"]
+verdacht = ["gratis", "winnen", "klik", "nu", "geld",
+            "gr4tis", "cadeau", "prijs"]
 
 bericht = "Je hebt een gr4tis cadeau gewonnen, haal je prijs op"
 bericht = bericht.lower()
@@ -100,7 +102,16 @@ for woord in woorden:
     if woord in verdacht:
         score = score + 1
 
-print("score:", score)   # score: 3
+print("score:", score)
+if score >= 2:
+    print("spam")
+else:
+    print("geen spam")
+```
+
+```
+score: 3
+spam
 ```
 
 Met de oude lijst kreeg dit bericht score 0. Je kunt de lijst blijven

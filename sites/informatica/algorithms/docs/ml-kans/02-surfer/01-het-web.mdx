@@ -5,12 +5,10 @@ sidebar_label: "1. Het web"
 
 # Het web
 
-Welke pagina van het web is het belangrijkst? Larry Page en Sergey Brin,
-de oprichters van Google, stelden zich een surfer voor die eindeloos
-doorklikt en op elke pagina een willekeurige link kiest. Waar hij het vaakst
-uitkomt, die pagina is het belangrijkst. Hun idee kun je met de dobbelsteen
-van het vorige project naspelen: laat een surfer duizend keer klikken, en
-tel waar hij komt. Eerst zet je het web in Python.
+Welke pagina van het web is het belangrijkst? De oprichters van Google
+stelden zich een surfer voor die eindeloos willekeurige links volgt: de pagina
+waar hij het vaakst komt, is het belangrijkst. Je speelt dat na zoals de
+dobbelsteen, en zet eerst het web in Python.
 
 :::info
 Je gebruikt in dit project `random.choice` uit
@@ -85,7 +83,15 @@ for pagina in web:
 
 ## Opdracht: wie linkt naar C?
 
-Print elke pagina die naar C linkt, en daarna hoeveel het er zijn:
+Print elke pagina die naar C linkt, en daarna hoeveel het er zijn. In de
+editor staat het web, met een loop over zijn pagina's.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print elke pagina van het web.
+2. Zet een `if` om de print: print een pagina alleen als `"C" in web[pagina]`. Je ziet nu A, B en D.
+3. Tel de pagina's in `aantal`, en print dat na de loop.
+
+Verwachte uitvoer:
 
 ```
 A
@@ -93,12 +99,6 @@ B
 D
 3 pagina's linken naar C
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print elke pagina van het web.
-2. Zet een `if` om de print: print een pagina alleen als `"C" in web[pagina]`. Je ziet nu A, B en D.
-3. Tel de pagina's in `aantal`, en print dat na de loop.
 
 <PyRunner initialCode={`web = {
     "A": ["B", "C"],

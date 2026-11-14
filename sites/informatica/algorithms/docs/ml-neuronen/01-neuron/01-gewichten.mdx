@@ -65,7 +65,7 @@ invoer en met `gewichten[i]` het gewicht dat erbij hoort.
    droog. Wat is de som nu?
 4. Bij welke invoer wordt de som het grootst?
 
-<PyRunner initialCode={`# de invoer is: gaan je vrienden, is je huiswerk af, regent het (1 is ja)
+<PyRunner initialCode={`# invoer: vrienden gaan, huiswerk af, het regent (1 is ja)
 invoer = [1, 0, 1]
 gewichten = [3, 2, -1]
 
@@ -96,22 +96,28 @@ na positie 2 is de som 2
 
 </details>
 
-## Opdracht: een vierde reden
+## Opdracht
 
-Er speelt een band die je leuk vindt. Geef het neuron een vierde invoer
-daarvoor, met gewicht 2. Met vrienden, zonder huiswerk, met regen en met de
-band print het:
+### De opdracht
+
+Een vierde reden: er speelt een band die je leuk vindt, en dat telt ook mee.
+Je geeft het neuron een vierde invoer voor de band, met gewicht 2. Met
+vrienden, zonder huiswerk, met regen en met de band komt de som dan op 4.
+
+### Aan de slag
+
+In de editor staat het neuron met drie invoeren.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: de som is 2.
+2. Zet een 1 achteraan `invoer`, voor de band, en draai. Je krijgt een foutmelding: er is nog geen gewicht voor de band.
+3. Zet het gewicht van de band, 2, achteraan `gewichten`: de som is 4. Wat is hij bij `[0, 0, 0, 1]`, alleen de band?
+
+Verwachte uitvoer:
 
 ```
 4
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: de som is 2.
-2. Zet een 1 achteraan `invoer`, voor de band, en draai. Je krijgt een foutmelding: die staat hieronder bij "Er gaat iets mis".
-3. Zet het gewicht van de band achteraan `gewichten`. Nu is de som 4.
-4. Zet `invoer` op `[0, 0, 0, 1]`: alleen de band. Wat is de som?
 
 <PyRunner initialCode={`invoer = [1, 0, 1]
 gewichten = [3, 2, -1]
@@ -142,14 +148,14 @@ for i in range(len(invoer)):
 print(som)   # 4
 ```
 
-De band staat op positie 3, en zijn gewicht ook. Met alleen de band, in
-stap 4, is de som 2.
+De band staat op positie 3, en zijn gewicht ook. Met alleen de band is de
+som 2.
 
 </details>
 
 ## Er gaat iets mis
 
-{/* foutmelding-van: fout-helft */}
+{/* foutmelding-van: invoer = [1, 0, 1, 1]\ngewichten = [3, 2, -1]\nsom = 0\nfor i in range(len(invoer)):\n    som = som + invoer[i] * gewichten[i] */}
 ```
 IndexError: list index out of range
 ```
@@ -164,16 +170,10 @@ ook een gewicht bij.
 # FOUT
 invoer = [1, 0, 1, 1]
 gewichten = [3, 2, -1]
-som = 0
-for i in range(len(invoer)):
-    som = som + invoer[i] * gewichten[i]
 
 # GOED
 invoer = [1, 0, 1, 1]
-gewichten = [3, 2, -1, 1]
-som = 0
-for i in range(len(invoer)):
-    som = som + invoer[i] * gewichten[i]
+gewichten = [3, 2, -1, 2]
 ```
 
 Meer uitleg: [Lijsten](site:python/docs/data/10a-lijsten-basis).

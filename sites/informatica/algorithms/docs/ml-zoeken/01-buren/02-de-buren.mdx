@@ -65,7 +65,8 @@ kolommen links en rechts.
 def buren(vakje):
     rij, kolom = vakje
     resultaat = []
-    for r, k in [(rij - 1, kolom), (rij + 1, kolom), (rij, kolom - 1), (rij, kolom + 1)]:
+    for r, k in [(rij - 1, kolom), (rij + 1, kolom),
+                    (rij, kolom - 1), (rij, kolom + 1)]:
         resultaat.append((r, k))
     return resultaat
 
@@ -85,22 +86,29 @@ print(buren((2, 1)))`} />
 
 </details>
 
-## Opdracht: binnen de randen
+## Opdracht
 
-Laat `buren` alleen de vakjes geven die binnen het doolhof liggen. Voor de
-start en de uitgang geeft hij dan:
+### De opdracht
+
+Een robot kan niet van het doolhof af lopen. Je zorgt dat `buren` alleen de
+vakjes geeft die binnen het doolhof liggen. Bij de start en de uitgang, in een
+hoek, houdt hij er dan maar twee over.
+
+### Aan de slag
+
+In de editor geeft `buren` nog alle vier de vakjes.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `buren((0, 0))` geeft vier vakjes, ook `(-1, 0)` en `(0, -1)`.
+2. Zet de `append` in een `if r >= 0 and k >= 0:`. Nu geeft hij `[(1, 0), (0, 1)]`.
+3. Vraag ook `buren((4, 5))`, en zet er `r < len(doolhof)` en `k < len(doolhof[0])` bij.
+
+Verwachte uitvoer:
 
 ```
 [(1, 0), (0, 1)]
 [(3, 5), (4, 4)]
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: `buren((0, 0))` geeft vier vakjes, ook `(-1, 0)` en `(0, -1)`.
-2. Zet de `append` in een `if r >= 0:`. Nu is `(-1, 0)` weg.
-3. Zet er met `and` de voorwaarde `k >= 0` bij. Nu geeft hij `[(1, 0), (0, 1)]`.
-4. Vraag ook `buren((4, 5))`, en zet er de twee voorwaarden voor de onderrand en de rechterrand bij: `r < len(doolhof)` en `k < len(doolhof[0])`.
 
 <PyRunner initialCode={`doolhof = [
     "S.....",
@@ -113,7 +121,8 @@ Begin klein, en breid de code stap voor stap uit:
 def buren(vakje):
     rij, kolom = vakje
     resultaat = []
-    for r, k in [(rij - 1, kolom), (rij + 1, kolom), (rij, kolom - 1), (rij, kolom + 1)]:
+    for r, k in [(rij - 1, kolom), (rij + 1, kolom),
+                    (rij, kolom - 1), (rij, kolom + 1)]:
         resultaat.append((r, k))
     return resultaat
 
@@ -137,7 +146,8 @@ Dit vervangt de functie `buren` en de print in de editor:
 def buren(vakje):
     rij, kolom = vakje
     resultaat = []
-    for r, k in [(rij - 1, kolom), (rij + 1, kolom), (rij, kolom - 1), (rij, kolom + 1)]:
+    for r, k in [(rij - 1, kolom), (rij + 1, kolom),
+                    (rij, kolom - 1), (rij, kolom + 1)]:
         if r >= 0 and r < len(doolhof) and k >= 0 and k < len(doolhof[0]):
             resultaat.append((r, k))
     return resultaat

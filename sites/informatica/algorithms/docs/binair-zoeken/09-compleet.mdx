@@ -90,6 +90,8 @@ print(binair_zoek([42], 42))
 
 ## Run
 
+### De code draaien
+
 <PyRunner editable={false} initialCode={`def binair_zoek(lijst, doel):
     laag = 0
     hoog = len(lijst) - 1
@@ -109,15 +111,23 @@ print(binair_zoek(getallen, 4))
 print(binair_zoek([], 5))
 print(binair_zoek([42], 42))`} />
 
+### Het model
+
+Kies een lijst en volg het algoritme stap voor stap. Onder Code-oefening
+schrijf je de functie zelf, en draai je de tests erop.
+
 <AlgorithmModel algorithm="binary-search" />
 
 ## Onderzoek
 
-Speel met de code. Probeer in elk geval:
+Binair zoeken gaat ervan uit dat de lijst gesorteerd is. Wat gebeurt er
+als dat niet zo is? De code zoekt in `rommel`, een lijst die niet op
+volgorde staat.
 
-1. Wat gebeurt er op een lege lijst?
-2. En op een lijst met één element?
-3. En op een ongesorteerde lijst?
+1. Druk op Voer uit. Klopt het antwoord voor 4? En voor 1?
+2. Zoek ook 2, 3 en 5 in `rommel`. Welke vindt de functie?
+3. Zet `rommel = sorted(rommel)` onder de regel met `rommel`. Wat geeft de
+   functie nu voor 1?
 
 <PyRunner initialCode={`def binair_zoek(lijst, doel):
     laag = 0
@@ -132,20 +142,31 @@ Speel met de code. Probeer in elk geval:
             hoog = midden - 1
     return -1
 
-# Experimenteer
-print(binair_zoek([], 5))                # -1
-print(binair_zoek([42], 42))             # 0
-print(binair_zoek([3, 1, 4, 1, 5], 4))   # 2  (ongesorteerd: toevallig raak)`} />
+rommel = [5, 1, 4, 2, 3]
+print(binair_zoek(rommel, 4))
+print(binair_zoek(rommel, 1))`} />
 
 <details>
 <summary>Wat zie je?</summary>
 
-- Bij een lege lijst is `hoog = -1`, dus `laag` is meteen groter en de
-  while draait nul keer: `return -1`. Veilig.
-- Bij één element zijn `laag` en `hoog` allebei 0, en de eerste check is
-  meteen raak.
-- Op een ongesorteerde lijst komt er een toevallig antwoord uit, meestal
-  het verkeerde. Het algoritme is daar simpelweg niet voor gemaakt.
+```
+2
+-1
+```
+
+- 4 vindt de functie: het eerste midden is index 2, en daar staat
+  toevallig 4. Dat is geluk.
+- 1 vindt hij niet, terwijl 1 op index 1 staat. Het midden is 4, te
+  groot, dus zoekt hij links verder, in `[5, 1]`. Daar is het midden 5,
+  weer te groot, dus nog verder naar links, en dan is er niets meer over.
+- 2, 3 en 5 vindt hij ook niet: elke keer stuurt een midden hem de
+  verkeerde kant op.
+- Na `sorted` is de lijst `[1, 2, 3, 4, 5]` en geeft de functie voor 1
+  index 0.
+
+Op een ongesorteerde lijst krijg je dus meestal `-1` voor een getal dat er
+wél in staat, en soms toevallig het goede antwoord. Aan het antwoord zie
+je niet welke van de twee.
 
 </details>
 

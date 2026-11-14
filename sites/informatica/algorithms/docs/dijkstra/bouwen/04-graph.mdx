@@ -107,7 +107,14 @@ print(graph['A'])`} />
 ## Door de buren lopen
 
 Met `for buur, gewicht in graph['A']:` pak je elke tuple uit in twee
-losse variabelen:
+losse variabelen.
+
+Verwachte uitvoer:
+
+```
+A → B (gewicht 4)
+A → C (gewicht 2)
+```
 
 <PyRunner initialCode={`graph = {
     'A': [('B', 4), ('C', 2)],
@@ -118,18 +125,6 @@ losse variabelen:
 
 for buur, gewicht in graph['A']:
     print(f"A → {buur} (gewicht {gewicht})")`} />
-
-<details>
-<summary>Verwachte uitvoer</summary>
-
-```
-A → B (gewicht 4)
-A → C (gewicht 2)
-```
-
-</details>
-
-## Wat nu nog mist
 
 De graph staat erin en de buren komen eruit. Er is nog geen plek voor
 de afstanden en voor wie al bekend is; dat is bouwsteen 2.

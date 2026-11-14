@@ -698,6 +698,15 @@ describe('groepeer', () => {
       expect(hetVeld).toBe(veld);
     });
 
+    // In de route machine learning van algoritmes stond de verwachte uitvoer
+    // op een ander scherm dan het veld: de leerling klikte heen en weer.
+    it('ook om de PyRunner van algoritmes', () => {
+      const runner: Knoop = { type: 'mdxJsxFlowElement', name: 'PyRunner', children: [] };
+      const uit = opdracht(alinea('Verwachte uitvoer:'), code('1'), runner);
+      expect(namen(uit)).toEqual(['LesVeld']);
+      expect(uit[0].children[1]).toBe(runner);
+    });
+
     it('ook met een toevoeging achter de kop, en met een alinea tussen doel en veld', () => {
       const uit = opdracht(
         alinea('Verwachte uitvoer als de loop bij 3 begint:'),

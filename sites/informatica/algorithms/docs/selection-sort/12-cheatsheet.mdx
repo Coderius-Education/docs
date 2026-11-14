@@ -1,5 +1,6 @@
 ---
 sidebar_position: 12
+les_tabs: false
 ---
 
 # Cheatsheet — selection sort
@@ -117,7 +118,10 @@ Totaal aantal iteraties: ongeveer `n²/2`.
 <details>
 <summary>Hoe snel?</summary>
 
-- **Beste, gemiddelde, slechtste geval**: allemaal `O(n²)`.
+- **Beste, gemiddelde, slechtste geval**: allemaal even veel werk. Een
+  lijst die twee keer zo lang is, kost vier keer zoveel vergelijkingen. In
+  [Big O — het idee](site:algorithms/docs/big-o/01-concept) heet dat
+  `O(n²)`.
 - **Vergelijkingen**: altijd `n(n + 1)/2`.
 - **Swaps**: één regel per ronde, waarvan er hoogstens `n − 1` echt iets
   verplaatsen.
@@ -158,5 +162,5 @@ Bij grote `n` is dit te traag.
 ---
 
 Klaar? Probeer ook [bubble sort](site:algorithms/docs/bubble-sort/01-concept) — een andere
-manier om in O(n²) te sorteren, maar met meer swaps en minder uniforme
-vergelijkingen.
+manier van sorteren die net zo hard groeit, maar met meer swaps en minder
+uniforme vergelijkingen.

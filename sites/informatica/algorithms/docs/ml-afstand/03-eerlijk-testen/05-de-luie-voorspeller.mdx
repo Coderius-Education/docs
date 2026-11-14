@@ -45,25 +45,30 @@ dan de rest, dan scoort hij hoog, terwijl hij niets herkent.
 Nieuw in de opdracht: `["kijkt"] * 19` is een lijst met negentien keer
 `"kijkt"`, en met `+` plak je er een tweede lijst achter.
 
-## Bouw zelf: de luie voorspeller
+## Bouw zelf
 
-Een webshop wil voorspellen welke bezoekers iets kopen. Van twintig
-bezoekers kocht er één iets. Een luie voorspeller zegt over iedereen
-`"kijkt"`, zonder ergens naar te kijken.
+### De opdracht
+
+De luie voorspeller zegt over elke bezoeker van een webshop `"kijkt"`, zonder
+ergens naar te kijken. Van twintig bezoekers kocht er één iets.
 
 Schrijf code die uitrekent hoeveel procent de luie voorspeller goed heeft,
-en daarna hoeveel van de kopers hij herkent. Begin zo:
+en daarna hoeveel van de kopers hij herkent.
 
-```python
-bezoekers = ["kijkt"] * 19 + ["koopt"]
-```
+### Aan de slag
 
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code, en print `bezoekers` om te zien wat erin staat.
-2. Loop over `bezoekers`. De luie voorspeller zegt bij elke bezoeker `"kijkt"`: zet dat in een variabele `voorspeld`. Tel hoe vaak `voorspeld` gelijk is aan wat de bezoeker echt deed.
-3. Reken dat om naar procenten: deel door `len(bezoekers)`, en vermenigvuldig met 100.
-4. Tel ook hoeveel kopers er zijn, en hoeveel daarvan de voorspeller herkent: bij hoeveel kopers `voorspeld` ook `"koopt"` is.
+1. Draai de code, en print `bezoekers`: negentien keer `"kijkt"` en één keer `"koopt"`.
+2. Tel hoe vaak `voorspeld = "kijkt"` klopt met wat de bezoeker deed, en reken dat om naar procenten.
+3. Tel ook hoeveel kopers er zijn, en bij hoeveel daarvan `voorspeld` ook `"koopt"` is.
+
+Verwachte uitvoer:
+
+```
+95.0 procent goed
+0 van de 1 kopers herkend
+```
 
 <PyRunner initialCode={`bezoekers = ["kijkt"] * 19 + ["koopt"]`} />
 

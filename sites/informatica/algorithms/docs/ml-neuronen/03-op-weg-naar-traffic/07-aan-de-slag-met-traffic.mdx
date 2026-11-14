@@ -55,12 +55,25 @@ zelf maakte, doet daar de bibliotheek TensorFlow, met zijn onderdeel Keras:
 | `leer` met tien rondes | Staat klaar: tien rondes, die Keras *epochs* noemt. Keras stelt ook de verborgen lagen bij. |
 | de score op de toets | Staat klaar, en print hoeveel procent van de toets goed is. |
 
-## Bouw zelf: oefenen en toetsen
+## Bouw zelf
 
-De verborgen code heeft alles uit dit project, en `splits`: die schudt de
-plaatjes en houdt een deel apart als toets, zoals Traffic doet. Laat een
-netwerk leren op de oefenplaatjes, en kijk hoeveel toetsplaatjes het goed
-heeft:
+### De opdracht
+
+Oefenen en toetsen, zoals Traffic doet. De klaargezette code heeft alles uit
+dit project, en `splits`: die schudt de plaatjes en houdt een deel apart als
+toets. Laat een netwerk leren op de oefenplaatjes, en kijk hoeveel
+toetsplaatjes het goed heeft. Probeer daarna 2 rondes, en een ander getal bij
+`random.seed`, en schrijf op wat het oplevert.
+
+### Aan de slag
+
+In de editor worden de tekens ingelezen en gesplitst.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: 24 om te oefenen, 16 om te toetsen. Leer een netwerk op de oefenplaatjes, met `leer_netwerk` en 10 rondes.
+2. Schrijf een functie `score(plaatjes, labels, alle_gewichten, biases)`, en print de score op beide delen.
+
+Verwachte uitvoer:
 
 ```
 24 om te oefenen, 16 om te toetsen
@@ -68,20 +81,14 @@ oefenen: 24 van de 24 goed
 toetsen: 13 van de 16 goed
 ```
 
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij leest de 40 tekens in en splitst ze in 24 om te oefenen en 16 om te toetsen.
-2. Laat een netwerk leren op de oefenplaatjes, met `leer_netwerk` en 10 rondes.
-3. Schrijf een functie `score(plaatjes, labels, alle_gewichten, biases)` die telt hoeveel plaatjes `herken` goed heeft. Op de oefenplaatjes zijn dat er 24.
-4. Print ook de score op de toetsplaatjes.
-5. Probeer 2 rondes in plaats van 10, en daarna een ander getal bij `random.seed`. Schrijf op wat je probeert en wat het oplevert.
-
 <PyRunner verborgen="tekens-toetsen" initialCode={`import random
 
 random.seed(2)
 plaatjes, labels = lees_tekens(mappen)
-oefen_plaatjes, toets_plaatjes, oefen_labels, toets_labels = splits(plaatjes, labels, 0.4)
-print(len(oefen_plaatjes), "om te oefenen,", len(toets_plaatjes), "om te toetsen")`} />
+(oefen_plaatjes, toets_plaatjes,
+    oefen_labels, toets_labels) = splits(plaatjes, labels, 0.4)
+print(len(oefen_plaatjes), "om te oefenen,",
+        len(toets_plaatjes), "om te toetsen")`} />
 
 <details>
 <summary>Tip</summary>

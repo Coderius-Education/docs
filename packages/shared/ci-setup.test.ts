@@ -299,3 +299,29 @@ describe('de eigen git van de job test', () => {
     ).toEqual([]);
   });
 });
+
+// Een hele cursus op één runner meten kostte tot zestien minuten. Het plan
+// verdeelt hem in delen (schermenMatrix in wijzigingen.js); zonder `--deel`
+// zou elke runner van de matrix toch de hele cursus meten.
+describe('de job schermen meet in delen', () => {
+  const begin = workflow.indexOf('\n  schermen:\n');
+  const job = workflow.slice(begin, workflow.indexOf('\n    steps:\n', begin));
+
+  it('de matrix komt uit het plan, met site, deel en delen', () => {
+    expect(job).toContain('include: ${{ fromJSON(needs.plan.outputs.schermen) }}');
+    expect(job).toContain('${{ matrix.deel }}/${{ matrix.delen }}');
+  });
+
+  it('een cursus uit de cache bouwt voorraad één keer, niet elk deel', () => {
+    expect(job).toMatch(/needs: \[plan, build, voorraad\]/);
+    const voorraad = workflow.slice(workflow.indexOf('\n  voorraad:\n'));
+    expect(voorraad.slice(0, 400)).toContain('fromJSON(needs.plan.outputs.voorraad)');
+  });
+
+  it('het meetscript krijgt zijn deel', () => {
+    const v = stappen('schermen');
+    expect(v[plek(v, 'De schermen van')].tekst).toContain(
+      '--deel=${{ matrix.deel }}/${{ matrix.delen }}',
+    );
+  });
+});

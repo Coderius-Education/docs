@@ -9,7 +9,9 @@ positie uitrekenen wat de beste haalbare utility is voor X (`max_value`)
 of voor O (`min_value`). Het zijn de boom-doorlopers van de
 pen-en-papier-pagina, maar dan in code.
 
-## Wat doen deze functies?
+## Uitleg
+
+### Wat doen deze functies?
 
 Op de [pen-en-papier-pagina](site:algorithms/docs/minimax/02-pen-en-papier) rekende je de waarde
 van elke knoop van onderop terug naar boven. Die vraag, wat is deze
@@ -22,7 +24,7 @@ geven ze `1`, `-1` of `0` terug.
 Ze geven dus niet de zet terug, alleen het getal dat de positie waard
 is. De zet zelf bepaal je straks in `minimax`.
 
-## Wat is recursie?
+### Wat is recursie?
 
 Een functie die zichzelf aanroept. Een klein voorbeeld dat niets met
 tic-tac-toe te maken heeft:
@@ -38,6 +40,8 @@ def aftellen(n):
 aftellen(3)
 ```
 
+Uitvoer:
+
 ```
 3
 2
@@ -52,7 +56,7 @@ nieuwe aanroep; een **recursieve aanroep**, waarin de functie zichzelf
 aanroept op een kleinere input; en de zekerheid dat die kleinere input
 uiteindelijk bij de base case uitkomt.
 
-## Het recept, in woorden
+### Het recept, in woorden
 
 Zo beschrijft CS50 de twee functies, nog zonder Python:
 
@@ -72,7 +76,10 @@ min_value(bord):
     geef v terug
 ```
 
-Leg dat naast het recept van de pen-en-papier-pagina. De base case is
+### Het recept naast de boom
+
+Leg het recept uit de vorige stap naast dat van de
+pen-en-papier-pagina. De base case is
 een terminal bord: daar is de utility al bekend, dus daar stopt de
 recursie, met `terminal(bord)` en `utility(bord)` uit bouwsteen 6 en 7.
 De recursieve aanroep is "kijk wat de tegenstander daarna doet": na een
@@ -86,7 +93,7 @@ oneindig en houdt het hoogste bij, `min_value` begint op plus oneindig
 en houdt het laagste bij. Voor "oneindig" heeft Python `math.inf`, na
 `import math`. Je begint zo laag dat elke echte uitkomst hoger is.
 
-## Kijk hoe de recursie de boom doorloopt
+### Kijk hoe de recursie de boom doorloopt
 
 Dit is de positie van de pen-en-papier-pagina. De twee functies
 hieronder zijn af, met één toevoeging: ze printen bij elke aanroep waar
@@ -128,11 +135,14 @@ def winner(bord):
         if rij[0] == rij[1] == rij[2] and rij[0] is not None:
             return rij[0]
     for j in range(3):
-        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+        if (bord[0][j] == bord[1][j] == bord[2][j]
+                and bord[0][j] is not None):
             return bord[0][j]
-    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+    if (bord[0][0] == bord[1][1] == bord[2][2]
+            and bord[0][0] is not None):
         return bord[0][0]
-    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+    if (bord[0][2] == bord[1][1] == bord[2][0]
+            and bord[0][2] is not None):
         return bord[0][2]
     return None
 def terminal(bord):
@@ -168,7 +178,8 @@ def kort(bord):
 def max_value(bord, diepte):
     inspring = "    " * diepte
     if terminal(bord):
-        print(inspring + "klaar:", kort(bord), "utility", utility(bord))
+        print(inspring + "klaar:", kort(bord),
+                "utility", utility(bord))
         return utility(bord)
     print(inspring + "MAX", kort(bord))
     v = -math.inf
@@ -182,7 +193,8 @@ def max_value(bord, diepte):
 def min_value(bord, diepte):
     inspring = "    " * diepte
     if terminal(bord):
-        print(inspring + "klaar:", kort(bord), "utility", utility(bord))
+        print(inspring + "klaar:", kort(bord),
+                "utility", utility(bord))
         return utility(bord)
     print(inspring + "MIN", kort(bord))
     v = math.inf
@@ -239,21 +251,21 @@ MAX geeft 0
 
 </details>
 
-Lees de uitvoer naast de boom, met bij elke knoop het bord:
+### De wandeling in de boom
+
+Leg de uitvoer van de vorige stap naast de boom, met bij elke knoop het
+bord:
 
 <GameTree bord="XXO/OOX/..." waardes />
 
-Het is dezelfde wandeling als op de pen-en-papier-pagina, in dezelfde
-volgorde: eerst de linkertak helemaal naar beneden tot een `klaar`, dan
+### De uitvoer volgt de boom
+
+De uitvoer van de helpers is dezelfde wandeling als op de pen-en-papier-pagina, in
+dezelfde volgorde: eerst de linkertak helemaal naar beneden tot een `klaar`, dan
 de waarde weer omhoog, dan de volgende tak. Elke regel `MAX` of `MIN` is
 één aanroep van `max_value` of `min_value`, en elke inspringing is een
 laag dieper in de boom. Pas helemaal onderaan, als alle drie de takken
 terug zijn, kent de wortel zijn waarde: `MAX geeft 0`.
-
-## Specificatie
-
-- **Input** voor beide: een `bord`.
-- **Output** voor beide: een geheel getal `1`, `-1` of `0`.
 
 ## Voorspel
 
@@ -276,8 +288,9 @@ een terminal bord is `min_value(bord) == max_value(bord) == utility(bord)`.
 
 ## Bouw zelf en test
 
-Schrijf beide functies uit het recept, zonder de prints. Boven de
-starter staan de zeven bouwstenen die je al hebt.
+Schrijf beide functies uit het recept, zonder de prints. Ze krijgen
+allebei een `bord` en geven een geheel getal terug: `1`, `-1` of `0`. Boven
+de starter staan de zeven bouwstenen die je al hebt.
 
 {/* niet-draaien: startcode; de asserts falen tot de leerling de opdracht afmaakt */}
 <PyRunner initialCode={`import copy
@@ -312,11 +325,14 @@ def winner(bord):
         if rij[0] == rij[1] == rij[2] and rij[0] is not None:
             return rij[0]
     for j in range(3):
-        if bord[0][j] == bord[1][j] == bord[2][j] and bord[0][j] is not None:
+        if (bord[0][j] == bord[1][j] == bord[2][j]
+                and bord[0][j] is not None):
             return bord[0][j]
-    if bord[0][0] == bord[1][1] == bord[2][2] and bord[0][0] is not None:
+    if (bord[0][0] == bord[1][1] == bord[2][2]
+            and bord[0][0] is not None):
         return bord[0][0]
-    if bord[0][2] == bord[1][1] == bord[2][0] and bord[0][2] is not None:
+    if (bord[0][2] == bord[1][1] == bord[2][0]
+            and bord[0][2] is not None):
         return bord[0][2]
     return None
 def terminal(bord):
@@ -360,7 +376,9 @@ def min_value(bord):
 # Test 1: terminale borden geven hun utility terug (geen recursie)
 x_wint = [["X","X","X"], ["O","O",None], [None]*3]
 assert max_value(x_wint) == 1, "X wint -> 1"
-assert min_value(x_wint) == 1, "X wint -> 1, ook voor min_value: geen zetten meer"
+assert min_value(x_wint) == 1, (
+    "X wint -> 1, ook voor min_value: geen zetten meer"
+)
 
 o_wint = [["O","X","X"], ["O","X",None], ["O",None,None]]
 assert max_value(o_wint) == -1, "O wint -> -1"
@@ -370,8 +388,9 @@ remise = [["X","O","X"], ["X","O","O"], ["O","X","X"]]
 assert max_value(remise) == 0, "Remise -> 0"
 assert min_value(remise) == 0, "Remise -> 0"
 
-# Test 2: O aan zet, X dreigt op (0,2). Blokkeert O, dan wordt het de
-# positie van de pen-en-papier-pagina: remise. Elke andere O-zet verliest.
+# Test 2: O aan zet, X dreigt op (0,2). Blokkeert O, dan wordt
+# het de positie van de pen-en-papier-pagina: remise. Elke
+# andere O-zet verliest.
 bord = [["X","X",None], ["O","O","X"], [None, None, None]]
 assert min_value(bord) == 0, "O kan X blokkeren naar remise -> 0"
 

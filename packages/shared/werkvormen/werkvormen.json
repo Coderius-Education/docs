@@ -107,7 +107,13 @@
     "id": "onderzoeken",
     "label": "Draaien en onderzoeken",
     "doet": "Ze draaien de code en veranderen er telkens één ding aan.",
-    "koppen": ["^Probeer en onderzoek$", "^Test het$", "^Probeer het hier$"],
+    "koppen": [
+      "^Probeer en onderzoek$",
+      "^Test het$",
+      "^Probeer het hier$",
+      "^Onderzoek\\b",
+      "^Experimenteer\\b"
+    ],
     "tips": [
       {
         "slug": "primm",
@@ -140,7 +146,14 @@
     "id": "maken",
     "label": "Zelf maken",
     "doet": "Een vrijere opdracht vanaf een bijna lege pagina.",
-    "koppen": ["^Make$", "^Maak het je eigen$", "^Verder (bouwen|tekenen)$", "^De challenge$"],
+    "koppen": [
+      "^Make$",
+      "^Maak het je eigen$",
+      "^Verder (bouwen|tekenen)$",
+      "^De challenge$",
+      "^Bouw (zelf|en test)\\b",
+      "^Uitdaging\\b"
+    ],
     "laatsteVan": "^Opdracht \\d+",
     "tips": [
       {

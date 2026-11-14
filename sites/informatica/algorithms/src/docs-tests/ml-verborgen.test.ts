@@ -175,6 +175,7 @@ describe('verborgen code van de route machine learning', () => {
       ['tekens-toetsen', 'tekens-leren'],
       ['muis-leert', 'muis-gang'],
       ['metro-zoeken', 'metro'],
+      ['fruit-toets', 'knn'],
     ];
     for (const [groot, klein] of delen) {
       for (const [, def] of VERBORGEN[klein].matchAll(/^def (\w+)\(/gm)) {
@@ -190,5 +191,30 @@ describe('verborgen code van de route machine learning', () => {
       `${VERBORGEN['weer-herfst']}\nk = berekend()\nprint(round(k["zon"], 3), round(k["wolken"], 3), round(k["regen"], 3))`,
     );
     expect(uit).toBe('0.277 0.378 0.345');
+  });
+
+  it('fruit-toets: het fruit is dat van "Zo test je niet"', () => {
+    // De runners van eerlijk testen zetten het fruit in de verborgen code,
+    // zodat de code die de leerling aanpast bovenaan de editor staat. De
+    // leerling ziet het fruit één keer, in "Zo test je niet"; de seed en de
+    // antwoorden hangen aan precies die lijst in precies die volgorde.
+    const zoTestJeNiet = runner(les('ml-afstand/03-eerlijk-testen/01-oefenen-en-toetsen.mdx'));
+    const fruit = (code: string) => code.match(/^fruit = \[[\s\S]*?^\]/m)?.[0];
+    expect(fruit(zoTestJeNiet)).toBeDefined();
+    expect(python(`${VERBORGEN['fruit-toets']}\nprint(fruit)`)).toBe(
+      python(`${fruit(zoTestJeNiet)}\nprint(fruit)`),
+    );
+  });
+
+  it('spam-tellingen: de tellingen zijn wat "twee tellingen" uitrekent', () => {
+    // Bij de score en wat telt het zwaarst staan de tellingen in de verborgen
+    // code; ze moeten zijn wat de leerling in de stap ervoor zelf telde.
+    const antwoord = blokken(les('ml-regels/03-spamfilter-leert/02-twee-tellingen.mdx')).find((b) =>
+      b.includes('gewoon = {}'),
+    );
+    expect(antwoord).toBeDefined();
+    expect(python(`${VERBORGEN['spam-tellingen']}\nprint(spam)\nprint(gewoon)`)).toBe(
+      python(antwoord as string),
+    );
   });
 });

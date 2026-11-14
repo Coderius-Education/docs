@@ -5,78 +5,32 @@ hide_table_of_contents: false
 
 # Docentenhandleiding
 
-Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: wat de site is, welke randvoorwaarden er zijn, en hoe je de lessen indeelt.
+Een cursus algoritmes voor leerlingen die al wat Python kennen: van zoeken en sorteren tot grafen, speltheorie en machine learning. Hoe je ermee lesgeeft, bepaal je zelf. Deze pagina laat zien op welk onderzoek de opbouw van de lessen steunt, en noemt daarna kort wat je vooraf wilt weten.
 
-## Wat is dit?
+## Waar de lessen op steunen
 
-Een interactieve cursus **algoritmes** waarin je leerlingen elk algoritme zelf stap voor stap opbouwen en in de browser uitvoeren — van zoeken en sorteren tot grafen en speltheorie. Doelgroep: leerlingen die al wat Python kennen en willen begrijpen *hoe* en *waarom* een algoritme werkt.
+Een les heeft vaste onderdelen. In de les zijn het de tabbladen, elk met een eigen icoon. Hieronder staat bij elk onderdeel de literatuur waarop het steunt; een link opent de uitleg bij [vakdidactiek](site:didactiek/).
 
-## Technische randvoorwaarden
+<Werkvormen />
 
-| Wat | Antwoord |
-|---|---|
-| Operating system | Alles met een moderne browser |
-| Installatie | Geen — de code draait in de browser |
-| Account | Niet nodig |
-| Internet | Vereist — de site is online |
+De zes zoek- en sorteeralgoritmes hebben dezelfde reeks lessen, in de volgorde van de lessenlijst: het concept, het algoritme bekijken, stellingen om te voorspellen, de bouwstenen met elk één klein stuk code, de complete code, aanpassen, zelf bouwen, fouten en een cheatsheet. De andere hoofdstukken volgen die reeks losser: Dijkstra, knapsack en minimax beginnen met pen en papier, Big O heeft geen code om zelf te bouwen.
 
-## Didactische aanpak
+## Wat je vooraf wilt weten
 
-Elk algoritme volgt dezelfde vaste opbouw, zodat je leerlingen het patroon herkennen:
+- **Geen installatie, geen account.** Python draait in de browser. Alleen de projecten van CS50 AI aan het eind van de route machine learning doen je leerlingen op hun eigen computer.
+- **Het oefenveld en het model bewaren niets**: wat je leerlingen willen houden, kopiëren ze. Een lus die nooit stopt, laat het tabblad van de browser vastlopen; de les waarschuwt op het scherm waar je leerlingen zelf een `while` schrijven.
+- **Elk algoritme staat op zichzelf.** Alleen [de route machine learning](site:algorithms/docs/machine-learning) heeft een vaste volgorde, in zes fases.
 
-1. **Concept** — korte uitleg met een analogie en een visueel voorbeeld.
-2. **Bekijk het algoritme** — een interactief model van het hele algoritme, met een lijst die je leerling zelf kiest en vooraf een vraag om te voorspellen (bij de zes zoek- en sorteeralgoritmes).
-3. **Stellingen** — een Predict-fase: waar/niet-waar-vragen met het antwoord verborgen.
-4. **Bouwen** — in een ingeklapte submap: per pagina één klein stukje code (≤ 10 regels), uit te voeren met de runner. Het overzicht in de concept-les toont de stappen vooraf.
-5. **Compleet** — de volledige werkende implementatie, met het model en een code-oefening met tests.
-6. **Aanpassen** — varianten op de basisoplossing.
-7. **Zelf bouwen** — een uitdaging die je leerling vanaf nul oplost.
-8. **Fouten** & **Cheatsheet** — veelgemaakte fouten en een naslag.
+## Beoordelen
 
-Laat je leerlingen bij "Stellingen" eerst zelf kiezen voordat ze het antwoord openklikken.
+- [Leerdoelen: niveau 1](site:algorithms/leerdoelen/niveau-1): de route machine learning, met per project wat je leerlingen ermee laten zien.
+- [Leerdoelen: niveau 2](site:algorithms/leerdoelen/niveau-2): het papieren tentamen, met de zeven manieren om een algoritme te kennen en bij elke manier de les waarin je leerlingen hem oefenen. De vraagtypes komen uit [Toetsen van algoritmiek in zeven vraagtypes](site:didactiek/bronnen/toetsing-domein-b).
 
-## Klassikaal gebruik & differentiatie
+## Naast de lessen
 
-- **Plenair starten**: bespreek het concept en de stellingen samen, daarna bouwen je leerlingen zelf.
-- **Snelle leerlingen** doen de "zelf bouwen"-uitdaging of een volgend algoritme.
-- **Langzamere leerlingen** stoppen bij "Compleet" — de "aanpassen"- en "zelf bouwen"-stappen zijn optioneel.
-- **Beoordelen**: laat leerlingen een algoritme uitleggen aan de hand van een eigen voorbeeld.
+- [Unplugged](site:algorithms/docs/unplugged): negen hand-outs zonder computer om te printen, de meeste bij een hoofdstuk van de cursus.
+- [Conceptenkaart](site:algorithms/conceptenkaart): welke Python elk algoritme gebruikt, met links naar de lessen van de python-cursus.
 
-## Toetsen
+## Feedback
 
-Niveau 1 is de route machine learning: kleine projecten in de browser, in zes fases van een chatbot met regels tot een neuron dat zelf leert. Fase B tot en met F eindigen elk bij een project van CS50 AI op de eigen computer: Shopping, PageRank, Nim en Tic-Tac-Toe, Degrees en Traffic. Elk project bouwt voort op het vorige: het zet een klein stuk Python bij wat je leerlingen al kunnen (uit de python-cursus of een eerder project), samen met één nieuw idee. Op [Leerdoelen: niveau 1](site:algorithms/leerdoelen/niveau-1) staan de projecten en de Python die je leerlingen erin laten zien. Gevorderd zijn eerlijk testen, Nim die leert, de kortste weg, het neuron dat leert, elke opstap, en drie van de zes CS50-projecten; welke drie, kiest de leerling zelf. Traffic is het zwaarste en telt voor twee. De andere projecten zijn basis. Bij Python zijn tuples (ook als sleutel van een dictionary), een module, een CSV-bestand, `zip` en een klasse gevorderd. PageRank en minimax zijn hoofdstukken van niveau 2 die de route leent als opstap naar hun CS50-project. De route met alle fases staat op [Machine learning: de route](site:algorithms/docs/machine-learning).
-
-Niveau 2 sluiten je leerlingen af met een papieren tentamen. Op [Leerdoelen: niveau 2](site:algorithms/leerdoelen/niveau-2) staat wat erin komt: zeven manieren om een algoritme te kennen, de zes zoek- en sorteeralgoritmes waarvoor ze alle zeven gelden, de speciale gevallen en de Python-concepten. Bij elke manier staat de les waarin je leerlingen hem oefenen, want de hoofdstukken van de zes zoek- en sorteeralgoritmes volgen dezelfde manieren: stellingen, bouwstenen om aan te vullen, fouten om te vinden, en zelf bouwen.
-
-De vraagtypes komen uit *Toetsing domein B: Grondslagen* van SLO, met voorbeeldvragen, variaties om een vraag makkelijker of moeilijker te maken en een overzicht van misconcepten. Wat erin staat en hoe het tentamen erop aansluit, lees je bij [Toetsen van algoritmiek in zeven vraagtypes](site:didactiek/bronnen/toetsing-domein-b).
-
-## Unplugged activiteiten
-
-Onder [Unplugged](site:algorithms/docs/unplugged) staan werkvormen zonder computer, elk met een printknop op de pagina:
-
-- [Zoeken en sorteren met kaarten](site:algorithms/docs/unplugged/01-zoeken-en-sorteren-met-kaarten) — vier algoritmes uitvoeren met een gewoon kaartspel. Geschikt als les-opener voordat je leerlingen hetzelfde algoritme in Python bouwen.
-- [Van code naar klasse](site:algorithms/docs/unplugged/02-van-code-naar-klasse) — knipkaartjes met Python-snippets sorteren naar Big O-klasse. Sluit aan op hoofdstuk 7.
-- [De kortste route — Dijkstra op papier](site:algorithms/docs/unplugged/03-dijkstra-op-papier) — in tweetallen Dijkstra uitvoeren op een kaart met zeven plekken, met een gok-vooraf als opener. Sluit aan op hoofdstuk 8.
-- [De perfecte speler — minimax op papier](site:algorithms/docs/unplugged/04-minimax-op-papier) — een boom uitrekenen en een boter-kaas-en-eieren-eindspel doorrekenen en naspelen. Sluit aan op hoofdstuk 9.
-- [Pak de rugzak in](site:algorithms/docs/unplugged/05-pak-de-rugzak-in) — item-kaartjes, een gok-vooraf die meestal verliest, en de OPT-tabel op klein formaat. Sluit aan op hoofdstuk 10.
-- [Een grammatica op papier](site:algorithms/docs/unplugged/06-zinnen-bouwen-met-kaartjes) — de tien Holmes-zinnen van de CFG-opdracht op twee kantjes, met de woordsoort achter elk woord zodat leerlingen niets hoeven op te zoeken. Zin 1 is voorgedaan; na elke zin staat schrijfruimte voor de grammatica tot dan toe. Het antwoordblad geeft één mogelijke grammatica voor alle tien en staat op het scherm dicht; op de site ontdekken leerlingen daarna of de parser het met ze eens is. Sluit aan op hoofdstuk 11.
-- [Torens van Hanoi op tafel](site:algorithms/docs/unplugged/07-hanoi-op-tafel) — met muntjes het 2ⁿ−1-patroon en het recursieve recept ontdekken. Sluit aan op hoofdstuk 12.
-- [Stemmen met fiches](site:algorithms/docs/unplugged/08-stemmen-met-fiches) — PageRank naspelen op het mini-web uit de les. Sluit aan op hoofdstuk 13.
-
-## Leerlijn
-
-Kies op de [startpagina](site:algorithms/) een algoritme; elk is zelfstandig te doen. De cursus behandelt onder meer:
-
-| Thema | Algoritmes |
-|---|---|
-| Zoeken | Lineair zoeken, binair zoeken, vind-maximum, max & min |
-| Sorteren | Bubble sort, selection sort |
-| Complexiteit | Big-O |
-| Grafen | Dijkstra, PageRank |
-| Recursie & optimalisatie | Torens van Hanoi, knapsack, minimax |
-
-Is een leerling door alle modules heen? Op [Machine learning: de route](site:algorithms/docs/machine-learning) staan de projecten van Harvard's CS50 AI in de volgorde van de route (minimax en PageRank zijn hier al in bewerking gedaan), en de gratis cursussen van Kaggle.
-
-## Feedback & bijdragen
-
-Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs). Alle bijdragen — van een typo tot een nieuw algoritme — zijn welkom.
+Een fout gevonden of een idee? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs).

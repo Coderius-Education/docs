@@ -86,8 +86,9 @@ print(f"Eind: {afstanden}")`} />
 
 ## Wat als de buur al beter is?
 
-Hetzelfde, maar nu vanuit `C` (afstand 2) naar buur `A` (gewicht 2). De
-kandidaat is 2 + 2 = 4, en `A` heeft al 0. Dus niets.
+Dezelfde relax-stap als bij Run, maar nu vanuit `C` (afstand 2) naar
+buur `A` (gewicht 2). De kandidaat is 2 + 2 = 4, en `A` heeft al 0. Dus
+niets.
 
 <PyRunner initialCode={`afstanden = {'A': 0, 'B': 4, 'C': 2, 'D': 10}
 huidige = 'C'
@@ -107,6 +108,8 @@ print(f"Eind: {afstanden}")`} />
 
 ## Voor **alle** buren van een node
 
+### Eén lus over de buren
+
 Straks doe je dit per ronde voor alle buren tegelijk, met één `for`-lus
 over `graph[huidige]`:
 
@@ -120,6 +123,19 @@ for buur, gewicht in graph[huidige]:
 
 Vanaf `A` (afstand 0) krijgen `B` en `C` zo in één lus hun afstand.
 
+### Draai de lus
+
+De lus over de buren van `A`, met een print bij elke update.
+
+Verwachte uitvoer:
+
+```
+Voor: {'A': 0, 'B': inf, 'C': inf, 'D': inf}
+    update B → 4
+    update C → 2
+Na:   {'A': 0, 'B': 4, 'C': 2, 'D': inf}
+```
+
 <PyRunner initialCode={`graph = {
     'A': [('B', 4), ('C', 2)],
     'B': [('A', 4), ('D', 1)],
@@ -127,7 +143,8 @@ Vanaf `A` (afstand 0) krijgen `B` en `C` zo in één lus hun afstand.
     'D': [('B', 1), ('C', 8)],
 }
 
-afstanden = {'A': 0, 'B': float('inf'), 'C': float('inf'), 'D': float('inf')}
+afstanden = {'A': 0, 'B': float('inf'),
+                'C': float('inf'), 'D': float('inf')}
 huidige = 'A'
 
 print(f"Voor: {afstanden}")
@@ -138,21 +155,7 @@ for buur, gewicht in graph[huidige]:
         print(f"    update {buur} → {nieuwe}")
 print(f"Na:   {afstanden}")`} />
 
-<details>
-<summary>Verwachte uitvoer</summary>
-
-```
-Voor: {'A': 0, 'B': inf, 'C': inf, 'D': inf}
-    update B → 4
-    update C → 2
-Na:   {'A': 0, 'B': 4, 'C': 2, 'D': inf}
-```
-
 Dat is ronde 1 van je papieren tabel.
-
-</details>
-
-## Wat nu nog mist
 
 Eén node uitwerken lukt. Welke node de volgende is, dat is bouwsteen 4.
 

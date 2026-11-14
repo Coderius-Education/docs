@@ -17,7 +17,7 @@ Niet zomaar een route, maar de snelste, en dat kan hij bewijzen. Dat is
 wat het algoritme van **Dijkstra** doet. Om het te bouwen moet je eerst
 weten hoe een wegennet eruitziet als je het in een computer stopt.
 
-## Drie nieuwe woorden
+## Nodes en edges
 
 ```
        4
@@ -29,7 +29,7 @@ weten hoe een wegennet eruitziet als je het in een computer stopt.
        8
 ```
 
-Wat zie je?
+Drie nieuwe woorden in dit plaatje:
 
 - De letters `A`, `B`, `C` en `D` zijn **nodes**: knopen, of op een
   routekaart plaatsen.
@@ -61,10 +61,10 @@ Niet altijd intuïtief: `C` ligt het dichtst bij `A` (2), maar vanaf `C`
 is de weg naar `D` lang (8). De duurdere eerste stap naar `B` (4) wint,
 omdat `B` vlak bij `D` ligt (1).
 
-## Gewichten zijn niet altijd letterlijk afstanden
+## Gewichten
 
-Een gewicht is wat een stap je kost, en wat dat is hangt af van je
-probleem:
+Een gewicht is niet altijd letterlijk een afstand. Het is wat een stap
+je kost, en wat dat is hangt af van je probleem:
 
 | Wat is je graph? | Wat is een gewicht? |
 |---|---|
@@ -76,24 +76,23 @@ probleem:
 Dijkstra geeft niets om wat de gewichten betekenen. Hij wil alleen het
 totaal zo laag mogelijk hebben.
 
-## Eén belangrijke aanname
-
-Dijkstra werkt alleen met **positieve gewichten**. Geen negatieve, geen
-weg die je tijd oplevert in plaats van kost. Voor negatieve gewichten
-bestaat een ander algoritme, Bellman-Ford, en dat doen we hier niet.
-
-## Wat we gaan leren
+## De vraag
 
 Dijkstra beantwoordt één vraag: vanaf deze startnode, wat is de kortste
 afstand naar elke andere node? Alle bestemmingen in één keer, niet één
 per keer. Hoe hij dat doet, voer je eerst zelf uit met pen en papier,
 voordat je een letter Python schrijft.
 
+Eén belangrijke aanname: Dijkstra werkt alleen met **positieve
+gewichten**. Geen negatieve, geen weg die je tijd oplevert in plaats van
+kost. Voor negatieve gewichten bestaat een ander algoritme,
+Bellman-Ford, en dat doen we hier niet.
+
 ## Video
 
 Het algoritme stap voor stap uitgetekend (Engels gesproken):
 
-<iframe width="100%" height="500px" src="https://www.youtube.com/embed/pVfj6mxhdMw" title="Graph Data Structure 4. Dijkstra's Shortest Path Algorithm" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="100%" height="420px" src="https://www.youtube.com/embed/pVfj6mxhdMw" title="Graph Data Structure 4. Dijkstra's Shortest Path Algorithm" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Zo bouw je het op
 

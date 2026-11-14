@@ -5,14 +5,19 @@ import type {
 } from '@coderius/python-runner/PyodideProvider';
 import { tracePython } from '@coderius/python-runner/PyodideProvider';
 import Stapper from '@coderius/python-runner/Stapper';
+import { useInLesTab, useLesDoel } from '@coderius/shared/components/LesTabs/paneel';
+import { meetRuimte, pasHoogte } from '@coderius/shared/components/LesTabs/pasHoogte';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import clsx from 'clsx';
 import type React from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import ParseTree from '../ParseTree';
 import { type Getiteld, leesBomen } from '../ParseTree/boom';
+import { codeSchaal } from './breedte';
 import { draaiInVerseMain } from './draai';
 import { heeftMatplotlibNodig } from './matplotlib';
+import { naStappen } from './naStappen';
+import { MIN_REGELS, editorHoogte, rondOm, veldOpmaak } from './opmaak';
 import styles from './styles.module.css';
 import {
   type PyodideInterface,
@@ -27,6 +32,15 @@ import { verborgenCode as haalVerborgen } from './verborgen';
 // (0.85rem × 2 ≈ 27px). Used so callers can keep passing `rows` props.
 const LINE_HEIGHT_PX = 22;
 const EDITOR_PADDING_PX = 28;
+/** De hoogte van de werkbalk, tot hij gemeten is. */
+const BALK = 40;
+/** De rand van het veld, boven en onder: die telt mee in zijn hoogte. */
+const RAND = 2;
+/**
+ * Lager wordt het veld in een tabblad niet: de werkbalk en de editor met zijn
+ * minimum aan regels (opmaak.ts). Een scherm dat dan niet past, splits je.
+ */
+const MIN_VELD = BALK + editorHoogte(MIN_REGELS) + 2 * RAND;
 
 export type PyRunnerProps = {
   initialCode?: string;
@@ -137,10 +151,74 @@ export default function PyRunnerImpl({
   const matplotlibLoadedRef = useRef(false);
   const pyodideIndexURL = useBaseUrl('/pyodide/');
 
+  // In een les-tabblad moet het paneel op het scherm passen, zoals de
+  // CodeExercise van de python-cursus: op een breed scherm staat de uitvoer
+  // naast de code, en het veld is niet hoger dan wat er na de rest van het
+  // paneel overblijft (pasHoogte.ts). Langere code schuift in de editor, een
+  // lange uitvoer in zijn eigen vak.
+  const inTab = useInLesTab();
+  const veldRef = useRef<HTMLDivElement>(null);
+  const balkRef = useRef<HTMLDivElement>(null);
+  // De code die al klaarstaat: een knop in de werkbalk, en open een vak onder
+  // de editor. Eerst was het een uitklapblok onder de editor, en die regel
+  // (34 pixels) maakte zestien schermen Aan de slag van de route machine
+  // learning op 1280×720 te lang.
+  const verborgenRef = useRef<HTMLDivElement>(null);
+  const [toonKlaar, setToonKlaar] = useState(false);
+  const klaarId = useId();
+  const codeVakRef = useRef<HTMLDivElement>(null);
+  const [veldHoogte, setVeldHoogte] = useState<number | null>(null);
+  const [veldBreedte, setVeldBreedte] = useState<number | null>(null);
+  const stapt = opname !== null;
+  useLayoutEffect(() => {
+    const veld = veldRef.current;
+    const paneel = veld?.closest<HTMLElement>('[data-les-tab]');
+    if (!inTab || !veld || !paneel || typeof ResizeObserver === 'undefined') return;
+    const breed = window.matchMedia('(min-width: 997px)');
+    const meet = () => {
+      // Op een smal scherm scrolt de leerling, en staat de uitvoer onder de
+      // code: dan zegt de ruimte in het paneel niets over het veld.
+      if (!breed.matches) {
+        setVeldBreedte(null);
+        return setVeldHoogte(null);
+      }
+      // Een veld in een dicht tabblad heeft geen maten.
+      if (veld.clientWidth === 0) return;
+      setVeldBreedte(veld.clientWidth);
+      if (stapt) return;
+      const ruimte = meetRuimte(veld, paneel, Number.POSITIVE_INFINITY);
+      if (ruimte) setVeldHoogte(pasHoogte(ruimte, MIN_VELD));
+    };
+    meet();
+    const kijker = new ResizeObserver(meet);
+    kijker.observe(paneel);
+    // Ook het veld zelf: zijn breedte kan veranderen zonder dat het paneel
+    // hoger of lager wordt (de schuifbalk van de pagina, de lessenlijst die
+    // laadt). Met een te brede meting bleven de letters gewoon, en brak een
+    // regel van 95 tekens af. Kleinere letters veranderen de breedte niet.
+    kijker.observe(veld);
+    window.addEventListener('resize', meet);
+    breed.addEventListener('change', meet);
+    return () => {
+      kijker.disconnect();
+      window.removeEventListener('resize', meet);
+      breed.removeEventListener('change', meet);
+    };
+  }, [inTab, stapt]);
+
   const needsMatplotlib = useMemo(
     () => heeftMatplotlibNodig(code, verborgenCode),
     [code, verborgenCode],
   );
+  // Of het veld een grafiek tekent, voor de opmaak: uit de startcode, net als
+  // naast of onder (opmaak.ts), zodat het veld niet verspringt onder het typen.
+  const tekentGrafiek = useMemo(
+    () => heeftMatplotlibNodig(source, verborgenCode),
+    [source, verborgenCode],
+  );
+  // Wat de opdracht moet opleveren (de verwachte uitvoer): <LesVeld> zet het
+  // om het veld, en het veld toont het onder de uitvoer van de leerling.
+  const doel = useLesDoel();
 
   // Start de Pyodide-download op de achtergrond zodra de pagina idle is, zodat
   // de eerste "Voer uit" (bijna) direct start. Wheels voor matplotlib worden
@@ -312,63 +390,67 @@ export default function PyRunnerImpl({
     plots.length > 0 ||
     bomen.length > 0;
 
-  return (
-    <div className={styles.runner}>
-      <div className={styles.toolbar}>
-        <span className={styles.label}>Python</span>
-        <div className={styles.actions}>
-          {editable && (
-            <button
-              type="button"
-              onClick={handleReset}
-              disabled={busy}
-              className={clsx('button button--sm button--secondary')}
-            >
-              ↺ Reset
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={handleStap}
-            disabled={busy}
-            title="Loop regel voor regel door je code en zie wat elke variabele doet"
-            className={clsx('button button--sm button--secondary')}
-          >
-            Stap voor stap
-          </button>
-          <button
-            type="button"
-            onClick={handleRun}
-            disabled={busy}
-            className={clsx('button button--sm button--primary')}
-          >
-            {busy ? '… bezig' : '▶ Voer uit'}
-          </button>
-        </div>
-      </div>
-      <HighlightedEditor
-        code={code}
-        onChange={setCode}
-        onKeyDown={handleKeyDown}
-        readOnly={!editable}
-        disabled={busy}
-        minHeight={rows * LINE_HEIGHT_PX + EDITOR_PADDING_PX}
-      />
-      {verborgenCode && (
-        <details className={styles.verborgen}>
-          <summary>
-            Toon de code die al klaarstaat ({verborgenCode.split('\n').length} regels)
-          </summary>
-          <HighlightedEditor
-            code={verborgenCode}
-            onChange={() => undefined}
-            readOnly
-            disabled={false}
-            minHeight={0}
-            ariaLabel="Code die al klaarstaat, alleen-lezen"
-          />
-        </details>
-      )}
+  const minEditor = rows * LINE_HEIGHT_PX + EDITOR_PADDING_PX;
+  // Wat er in het codevak naast de editor staat en de ruimte eromheen.
+  // Gemeten, want eerst telde alleen het blok met de klaargezette code, en dan
+  // was elk scherm met zo'n runner nog 14 tot 22 pixels te lang. De code die
+  // al klaarstaat telt niet als de leerling hem opent: dan groeit het paneel,
+  // zoals bij een tip die open staat. Gemeten tot de onderkant van de inhoud,
+  // niet van het vak (rondOm in opmaak.ts).
+  const rondDeEditor = () => {
+    const vak = codeVakRef.current;
+    const editor = vak?.firstElementChild as HTMLElement | null | undefined;
+    const laatste = vak?.lastElementChild as HTMLElement | null | undefined;
+    if (!vak || !editor || !laatste) return 0;
+    const blok = verborgenRef.current;
+    const open = blok
+      ? blok.offsetHeight + (Number.parseFloat(getComputedStyle(blok).marginTop) || 0)
+      : 0;
+    const e = editor.getBoundingClientRect();
+    return rondOm({
+      vakBoven: vak.getBoundingClientRect().top,
+      editorBoven: e.top,
+      editorOnder: e.bottom,
+      inhoudOnder:
+        laatste.getBoundingClientRect().bottom +
+        (Number.parseFloat(getComputedStyle(laatste).marginBottom) || 0),
+      open,
+    });
+  };
+  // Naast of onder, de grootte van de letters en de hoogte van editor en
+  // uitvoer (opmaak.ts): uit de startcode, en met een ondergrens voor de editor.
+  const balk = balkRef.current?.offsetHeight ?? BALK;
+  const opmaak = veldOpmaak({
+    code: source,
+    breedte: veldBreedte,
+    ruimte: veldHoogte === null ? null : veldHoogte - balk - rondDeEditor() - 2 * RAND,
+    plaatjes: tekentGrafiek,
+  });
+  const { naast, schaal, editorMax } = opmaak;
+  const onder = inTab && opmaak.onder;
+  // De klaargezette code staat in dezelfde kolom: zijn eigen lettergrootte,
+  // en een regel die ook zo niet past, schuift (afbreken={false}).
+  const verborgenSchaal =
+    verborgenCode && veldBreedte !== null ? codeSchaal(verborgenCode, naast ?? veldBreedte) : 1;
+  // Stap voor stap neemt in een tabblad de plek van de editor en de uitvoer
+  // in, op de hoogte die die samen hadden.
+  const stapper =
+    stapt && editorMax !== undefined
+      ? editorMax + rondDeEditor() + (onder ? opmaak.uitvoerOnder + 1 : 0)
+      : undefined;
+  // In een tabblad staat een grafiek vóór de tekst: het vak voor de uitvoer
+  // is daar zo hoog als het scherm toelaat, en in Big-O viel de grafiek onder
+  // de tabel met getallen buiten beeld.
+  const grafieken = plots.map((b64, i) => (
+    <img
+      key={b64}
+      src={`data:image/png;base64,${b64}`}
+      alt={`Plot ${i + 1}`}
+      className={styles.plot}
+    />
+  ));
+  const uitvoer = (
+    <>
       {statusMsg && (
         <div
           className={clsx(styles.status, {
@@ -379,7 +461,6 @@ export default function PyRunnerImpl({
           {statusMsg}
         </div>
       )}
-      {opname && <Stapper code={opnameCode} opname={opname} onSluiten={() => setOpname(null)} />}
       {hasOutput && (
         <div className={styles.output}>
           {bomen.length > 0 && (
@@ -412,18 +493,163 @@ export default function PyRunnerImpl({
               )}
             </div>
           )}
+          {inTab && grafieken}
           {stdout && <pre className={styles.stdout}>{stdout}</pre>}
           {stderr && <pre className={clsx(styles.stdout, styles.stderr)}>{stderr}</pre>}
           {errorMsg && <pre className={clsx(styles.stdout, styles.error)}>{errorMsg}</pre>}
-          {plots.map((b64, i) => (
-            <img
-              key={b64}
-              src={`data:image/png;base64,${b64}`}
-              alt={`Plot ${i + 1}`}
-              className={styles.plot}
-            />
-          ))}
+          {!inTab && grafieken}
         </div>
+      )}
+    </>
+  );
+
+  return (
+    <div
+      ref={veldRef}
+      className={clsx(
+        styles.runner,
+        inTab && styles.inTab,
+        onder && styles.onder,
+        stapper !== undefined && styles.staptInTab,
+      )}
+      style={
+        {
+          ...(naast === null ? {} : { '--code-breedte': `${naast}px` }),
+          ...(schaal === 1 ? {} : { '--code-schaal': schaal }),
+          ...(onder ? { '--uitvoer-hoogte': `${opmaak.uitvoerOnder}px` } : {}),
+        } as React.CSSProperties
+      }
+    >
+      <div className={styles.codeKolom}>
+        <div className={styles.toolbar} ref={balkRef}>
+          {verborgenCode ? (
+            <button
+              type="button"
+              className={clsx('button button--sm button--secondary', styles.klaarKnop)}
+              aria-expanded={toonKlaar}
+              aria-controls={klaarId}
+              title={`${toonKlaar ? 'Verberg' : 'Toon'} de code die al klaarstaat (${verborgenCode.split('\n').length} regels)`}
+              onClick={() => setToonKlaar((v) => !v)}
+            >
+              {toonKlaar ? '▾' : '▸'} Klaargezette code
+            </button>
+          ) : (
+            <span className={styles.label}>Python</span>
+          )}
+          <div className={styles.actions}>
+            {editable && (
+              <button
+                type="button"
+                onClick={handleReset}
+                disabled={busy}
+                className={clsx('button button--sm button--secondary')}
+              >
+                ↺ Reset
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={handleStap}
+              disabled={busy}
+              title="Loop regel voor regel door je code en zie wat elke variabele doet"
+              className={clsx('button button--sm button--secondary')}
+            >
+              Stap voor stap
+            </button>
+            <button
+              type="button"
+              onClick={handleRun}
+              disabled={busy}
+              className={clsx('button button--sm button--primary')}
+            >
+              {busy ? '… bezig' : '▶ Voer uit'}
+            </button>
+          </div>
+        </div>
+        <div className={styles.codeVak} ref={codeVakRef}>
+          <HighlightedEditor
+            code={code}
+            onChange={setCode}
+            onKeyDown={handleKeyDown}
+            readOnly={!editable}
+            disabled={busy}
+            minHeight={
+              editorMax === undefined
+                ? minEditor
+                : Math.max(opmaak.editorMin, Math.min(minEditor, editorMax))
+            }
+            maxHeight={editorMax}
+          />
+          {verborgenCode && toonKlaar && (
+            <div
+              className={styles.verborgen}
+              id={klaarId}
+              ref={verborgenRef}
+              style={
+                verborgenSchaal === 1
+                  ? undefined
+                  : ({ '--code-schaal': verborgenSchaal } as React.CSSProperties)
+              }
+            >
+              <HighlightedEditor
+                code={verborgenCode}
+                onChange={() => undefined}
+                readOnly
+                disabled={false}
+                minHeight={0}
+                afbreken={false}
+                ariaLabel="Code die al klaarstaat, alleen-lezen"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+      {opname && (
+        <Stapper
+          code={opnameCode}
+          opname={opname}
+          onSluiten={() => {
+            // Wat de opname printte, blijft staan (naStappen.ts).
+            const na = naStappen(opname);
+            setStdout(na.stdout);
+            setErrorMsg(na.errorMsg);
+            setStatusMsg(na.statusMsg);
+            setStatus(na.errorMsg ? 'error' : 'done');
+            setOpname(null);
+          }}
+          hoogte={stapper}
+        />
+      )}
+      {inTab ? (
+        <div
+          className={styles.resultaat}
+          style={
+            onder
+              ? { height: opmaak.uitvoerOnder }
+              : editorMax === undefined
+                ? undefined
+                : { maxHeight: editorMax + rondDeEditor() + balk + 2 * RAND }
+          }
+        >
+          {uitvoer}
+          {!statusMsg && !hasOutput && (
+            // Het vak naast de code is er al voordat er iets gedraaid is: zo
+            // verspringt het veld niet, en ziet de leerling waar hij moet kijken.
+            <p className={styles.wacht}>
+              Klik op Voer uit. De uitvoer verschijnt hier.
+              {/* Wat nodig is om het veld te gebruiken, zegt het veld zelf. */}
+              <span className={styles.bewaart}>
+                Dit veld bewaart je code niet: kopieer wat je wilt houden.
+              </span>
+            </p>
+          )}
+          {doel && <div className={styles.doel}>{doel}</div>}
+        </div>
+      ) : (
+        <>
+          {uitvoer}
+          {doel && <div className={styles.doel}>{doel}</div>}
+        </>
       )}
     </div>
   );

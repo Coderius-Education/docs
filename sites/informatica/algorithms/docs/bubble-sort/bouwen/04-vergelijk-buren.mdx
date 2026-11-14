@@ -16,14 +16,11 @@ sidebar_position: 4
 **Leerdoel:** je kunt twee opeenvolgende elementen vergelijken en
 detecteren of ze fout staan.
 
-## Wat we willen
-
-Twee buren in een lijst: `lijst[i]` en `lijst[i+1]`. We willen weten of
-ze in de goede volgorde staan, dus de kleinste links.
-
 ## Voorspel
 
-Wat denk je dat dit print?
+Twee buren in een lijst zijn `lijst[i]` en `lijst[i+1]`. Je wilt weten of
+ze in de goede volgorde staan, dus de kleinste links. Wat denk je dat dit
+print?
 
 ```python
 lijst = [3, 1, 4, 1, 5]
@@ -71,13 +68,13 @@ if lijst[i] > lijst[i + 1]:
 
 `i + 1` moet wel een index zijn die bestaat, dus `i` mag hoogstens
 `len(lijst) - 2` zijn. Anders krijg je een `IndexError` op `lijst[i + 1]`.
-
-We komen daar in bouwsteen 3 op terug — daar wordt de lus-grens precies
-goed gezet.
+In [bouwsteen 3](site:algorithms/docs/bubble-sort/bouwen/06-een-pass) zet
+je de grens van de lus precies goed.
 
 ## Experimenteer
 
-Probeer verschillende waardes van `i`:
+De code bekijkt de buren voor elke `i` van 0 tot en met 3. Zet daarna ook
+4 in de lijst `[0, 1, 2, 3]`: wat gebeurt er dan?
 
 <PyRunner initialCode={`lijst = [3, 1, 4, 1, 5]
 
@@ -97,14 +94,14 @@ i=2: 4>1 → fout
 i=3: 1<=5 → goed
 ```
 
-Bij `i=4` zou het mislopen: `lijst[5]` bestaat niet. Daarom stoppen we
-de lus bij `i = 3`.
+{/* foutmelding-van: lijst = [3, 1, 4, 1, 5]\ni = 4\nlijst[i + 1] */}
+
+Met `i=4` loopt het mis: `lijst[5]` bestaat niet, en Python stopt met een
+`IndexError`. Daarom stopt de lus bij `i = 3`.
 
 </details>
 
-## Wat nu nog mist
-
-Je ziet nu wel dat een paar fout staat, maar er gebeurt niets mee. In de
-volgende stap ruil je de twee buren om, net als bij selection sort.
+De code ziet nu wel dat een paar fout staat, maar doet er nog niets mee. In
+de volgende stap ruil je de twee buren om, net als bij selection sort.
 
 Door naar [bouwsteen 2: swap](site:algorithms/docs/bubble-sort/bouwen/05-swap).

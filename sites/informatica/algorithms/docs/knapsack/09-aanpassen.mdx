@@ -26,7 +26,7 @@ Voor elke rij `i`:
 
 In Python is dat één for-loop van groot naar klein.
 
-## Specificatie
+**Specificatie:**
 
 - **Input**: `items`, `capaciteit`.
 - **Output**: een lijst van **Python-indexen** van de meegenomen items.
@@ -45,7 +45,9 @@ In Python is dat één for-loop van groot naar klein.
             if gewicht > w:
                 tabel[i][w] = tabel[i - 1][w]
             else:
-                tabel[i][w] = max(tabel[i - 1][w], waarde + tabel[i - 1][w - gewicht])
+                skip = tabel[i - 1][w]
+                meenemen = waarde + tabel[i - 1][w - gewicht]
+                tabel[i][w] = max(skip, meenemen)
     return tabel
 
 
@@ -54,7 +56,7 @@ def knapsack_items(items, capaciteit):
     # 1. bouw de hele tabel met knapsack_tabel
     # 2. start bij w = capaciteit
     # 3. loop i van n omlaag naar 1:
-    #    - als tabel[i][w] != tabel[i-1][w]: item (i-1) is meegenomen,
+    #    - als tabel[i][w] != tabel[i-1][w]: item (i-1) is mee,
     #      voeg toe aan keuze, en doe w -= gewicht_i
     # 4. return de lijst (in willekeurige volgorde is prima)
     return []
@@ -66,7 +68,9 @@ keuze = knapsack_items(items, 11)
 keuze_gesorteerd = sorted(keuze)
 
 # Indexen 2 en 3 (= item 3 en item 4)
-assert keuze_gesorteerd == [2, 3], f"Verwacht [2, 3], kreeg {keuze_gesorteerd}"
+assert keuze_gesorteerd == [2, 3], (
+    f"Verwacht [2, 3], kreeg {keuze_gesorteerd}"
+)
 
 # Totaal moet 40 zijn
 totale_waarde = 0
@@ -80,7 +84,9 @@ assert totaal_gewicht == 11
 # Klein voorbeeld voor zekerheid
 mini = [(6, 2), (5, 3), (8, 4)]
 keuze2 = sorted(knapsack_items(mini, 5))
-assert keuze2 == [0, 1], f"Verwacht items A en B = [0, 1], kreeg {keuze2}"
+assert keuze2 == [0, 1], (
+    f"Verwacht items A en B = [0, 1], kreeg {keuze2}"
+)
 
 print("Alle tests gehaald ✓")`} />
 
@@ -118,6 +124,19 @@ def knapsack_items(items, capaciteit):
 
 ## Print de keuze
 
+Verwachte uitvoer:
+
+```
+Indexen (Python): [2, 3]
+Items (mens-nummering): [3, 4]
+Totale waarde: 40
+Totaal gewicht: 11 (van 11 toegestaan)
+
+Details per item:
+    item 3: waarde=18, gewicht=5
+    item 4: waarde=22, gewicht=6
+```
+
 <PyRunner initialCode={`def knapsack_tabel(items, capaciteit):
     n = len(items)
     tabel = []
@@ -129,7 +148,9 @@ def knapsack_items(items, capaciteit):
             if gewicht > w:
                 tabel[i][w] = tabel[i - 1][w]
             else:
-                tabel[i][w] = max(tabel[i - 1][w], waarde + tabel[i - 1][w - gewicht])
+                skip = tabel[i - 1][w]
+                meenemen = waarde + tabel[i - 1][w - gewicht]
+                tabel[i][w] = max(skip, meenemen)
     return tabel
 
 
@@ -167,23 +188,7 @@ for i in keuze:
     waarde, gewicht = items[i]
     print(f"    item {i + 1}: waarde={waarde}, gewicht={gewicht}")`} />
 
-<details>
-<summary>Verwachte uitvoer</summary>
-
-```
-Indexen (Python): [2, 3]
-Items (mens-nummering): [3, 4]
-Totale waarde: 40
-Totaal gewicht: 11 (van 11 toegestaan)
-
-Details per item:
-    item 3: waarde=18, gewicht=5
-    item 4: waarde=22, gewicht=6
-```
-
 Dezelfde items als met de hand. De backtrack in Python doet precies wat
 jij op papier deed.
-
-</details>
 
 Door naar [bouw zelf →](site:algorithms/docs/knapsack/10-zelf-bouwen).

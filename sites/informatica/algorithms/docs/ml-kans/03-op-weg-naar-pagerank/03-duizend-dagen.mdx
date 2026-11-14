@@ -18,7 +18,8 @@ import random
 kansen = {"zon": 0.5, "wolken": 0.3, "regen": 0.2}
 telling = {"zon": 0, "wolken": 0, "regen": 0}
 for dag in range(1000):
-    morgen = random.choices(list(kansen), weights=list(kansen.values()))[0]
+    morgen = random.choices(list(kansen),
+                            weights=list(kansen.values()))[0]
     telling[morgen] = telling[morgen] + 1
 print(telling)
 ```
@@ -41,7 +42,8 @@ In een reeks dagen kies je elke dag met de kansen van het weer van gisteren:
 {/* niet-draaien: fragment; leunt op model en weer uit de editor */}
 ```python
 kansen = model[weer]
-weer = random.choices(list(kansen), weights=list(kansen.values()))[0]
+weer = random.choices(list(kansen),
+                        weights=list(kansen.values()))[0]
 ```
 
 Het gekozen weer wordt de volgende dag het weer van gisteren. Dat deed de
@@ -67,7 +69,8 @@ model = {
 weer = "zon"
 for dag in range(10):
     kansen = model[weer]
-    weer = random.choices(list(kansen), weights=list(kansen.values()))[0]
+    weer = random.choices(list(kansen),
+                            weights=list(kansen.values()))[0]
     print("dag", dag + 1, weer)`} />
 
 <details>
@@ -81,25 +84,24 @@ for dag in range(10):
 
 </details>
 
-## Opdracht: duizend dagen
+## Opdracht
 
-Maak een reeks van 1000 dagen, tel hoe vaak elk weer voorkomt, en print per
-weer welk deel van de dagen het was. Bijvoorbeeld:
+Duizend dagen: maak een reeks van 1000 dagen, tel hoe vaak elk weer voorkomt,
+en print per weer welk deel van de dagen het was. Maakt het uit of je op zon of
+op regen begint? Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij kiest het weer van één dag na een zonnige dag.
+2. Zet de keuze in een loop van 1000 dagen, en tel elke dag met `telling[weer] = telling[weer] + 1`. Print `telling`.
+3. Print na de loop met `for w in telling:` per weer `telling[w] / 1000`.
+4. Begin op `"regen"` in plaats van `"zon"`, en vergelijk.
+
+Verwachte uitvoer, bijvoorbeeld:
 
 ```
 zon 0.341
 wolken 0.37
 regen 0.289
 ```
-
-Maakt het uit of je op zon of op regen begint?
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij kiest het weer van één dag na een zonnige dag.
-2. Zet de twee regels met `kansen` en `weer` in een loop van 1000 dagen, en tel elke dag met `telling[weer] = telling[weer] + 1`. Print `telling` na de loop.
-3. Loop na de dagen met `for w in telling:` langs het weer, en print per weer `telling[w] / 1000`.
-4. Begin op `"regen"` in plaats van `"zon"`, en vergelijk.
 
 <PyRunner initialCode={`import random
 
@@ -112,7 +114,8 @@ telling = {"zon": 0, "wolken": 0, "regen": 0}
 
 weer = "zon"
 kansen = model[weer]
-weer = random.choices(list(kansen), weights=list(kansen.values()))[0]
+weer = random.choices(list(kansen),
+                        weights=list(kansen.values()))[0]
 print(weer)`} />
 
 <details>
@@ -133,7 +136,8 @@ Dit vervangt alles vanaf `weer = "zon"` in de editor:
 weer = "zon"
 for dag in range(1000):
     kansen = model[weer]
-    weer = random.choices(list(kansen), weights=list(kansen.values()))[0]
+    weer = random.choices(list(kansen),
+                            weights=list(kansen.values()))[0]
     telling[weer] = telling[weer] + 1
 
 for w in telling:

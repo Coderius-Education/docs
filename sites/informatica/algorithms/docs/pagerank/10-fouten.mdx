@@ -9,7 +9,7 @@ PageRank het makkelijkst maakt.
 
 ## Het verschil is meteen nul
 
-Symptoom: de test van [bouwsteen 4](site:algorithms/docs/pagerank/bouwen/06-itereren) faalt, en de
+De test van [bouwsteen 4](site:algorithms/docs/pagerank/bouwen/06-itereren) faalt, en de
 ranks zien eruit alsof er maar één ronde is gerekend:
 
 {/* foutmelding-los: de fout zit in de pagerank van de leerling; src/docs-tests/pagerank.test.ts rekent deze melding na */}
@@ -18,54 +18,51 @@ ranks zien eruit alsof er maar één ronde is gerekend:
 AssertionError: {'A': 0.25, 'B': 0.1437, 'C': 0.4784, 'D': 0.0375}
 ```
 
-**Oorzaak:** `nieuw` en `rank` zijn dezelfde dict. `nieuw = rank` maakt
-geen kopie, maar geeft dezelfde dict een tweede naam. Alles wat je in
-`nieuw` zet, staat dus meteen ook in `rank`. Het verschil tussen de twee is
-daardoor altijd 0, en de lus stopt na de eerste ronde.
+**Oorzaak:** `nieuw = rank` maakt geen kopie, maar geeft dezelfde dict een
+tweede naam. Wat je in `nieuw` zet, staat meteen ook in `rank`, dus het
+verschil is altijd 0 en de lus stopt na de eerste ronde.
 
-**Oplossing:** begin elke ronde met een lege dict.
+**Oplossing:** begin elke ronde met een lege dict. Zet ook `rank = nieuw`
+pas ná het meten van het verschil: ervoor vergelijk je `nieuw` met
+zichzelf, en toont de test `'C': 0.5687`.
 
 ```python
 # FOUT
-nieuw = rank          # geen nieuwe dict, maar een tweede naam
-for p in web:
-    nieuw[p] = nieuwe_rank(web, rank, p, d)
+nieuw = rank
 
 # GOED
 nieuw = {}
-for p in web:
-    nieuw[p] = nieuwe_rank(web, rank, p, d)
 ```
-
-Hetzelfde gebeurt als je `rank = nieuw` vóór het meten van het verschil
-zet: dan vergelijk je `nieuw` met zichzelf. De test toont dan
-`'C': 0.5687`.
 
 Meer uitleg: [Bouwsteen 4](site:algorithms/docs/pagerank/bouwen/06-itereren)
 
-## Het basisdeel `(1 − d)/N` vergeten
+## Basisdeel vergeten
 
-Symptoom: de som van de ranks zakt onder de 1, en de pagina's lopen leeg.
+De som van de ranks zakt onder de 1, en de pagina's lopen leeg.
 
-**Oorzaak:** je rekent alleen `d · Σ ...` en laat de willekeurige sprong
-weg. Elke ronde gaat er dan een deel van het belang verloren.
+**Oorzaak:** je rekent alleen `d · Σ ...` en laat het basisdeel
+`(1 − d)/N` weg, de willekeurige sprong. Elke ronde gaat er dan een deel
+van het belang verloren.
+
+**Oplossing:** tel het basisdeel weer op.
 
 ```python
 # FOUT
-nieuw[p] = d * som          # basisdeel ontbreekt
+nieuw[p] = d * som
 
 # GOED
 nieuw[p] = (1 - d) / n + d * som
 ```
 
-## Dangling nodes — pagina's zonder uitgaande links
+## Pagina zonder links
 
-Symptoom: zodra een pagina nergens naartoe linkt, telt de som niet meer op
-tot 1.
+Zodra een pagina nergens naartoe linkt, telt de som niet meer op tot 1.
 
-**Oorzaak:** een doodlopende pagina geeft haar belang aan niemand door,
-dus het verdwijnt. In het mini-web linkt elke pagina ergens naartoe. Voeg je op [de compleet-pagina](site:algorithms/docs/pagerank/07-compleet) een pagina zonder
-links toe, dan zie je het meteen aan de som.
+**Oorzaak:** een doodlopende pagina (een *dangling node*) geeft haar
+belang aan niemand door, dus het verdwijnt. In het mini-web linkt elke
+pagina ergens naartoe. Voeg je op
+[de compleet-pagina](site:algorithms/docs/pagerank/07-compleet) een
+pagina zonder links toe, dan zie je het meteen aan de som.
 
 **Oplossing:** doe alsof een pagina zonder uitgaande links naar alle
 pagina's linkt. De surfer springt dan vanaf die pagina willekeurig

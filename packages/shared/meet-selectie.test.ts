@@ -7,9 +7,13 @@ import { describe, expect, it } from 'vitest';
 const require = createRequire(import.meta.url);
 const {
   adresVanBron,
+  deelVan,
   docsMappen,
+  heleSite,
+  lesVan,
   lessenVoorMeting,
   moetGemetenWorden,
+  houdtNummers,
 } = require('./meet-selectie.js');
 const { alleSiteMappen, siteDir } = require('./sites.js');
 const { plan: maakPlan } = require('./wijzigingen.js');
@@ -39,6 +43,19 @@ describe('het adres van een lespagina', () => {
     expect(adresVanBron('docs/02-editor-leren-kennen/01-interface.md', '')).toBe(
       'editor-leren-kennen/interface',
     );
+  });
+
+  it('houdt het nummer als de site dat doet (numberPrefixParser: false)', () => {
+    // Algoritmes: docs/bubble-sort/01-concept.mdx is de les
+    // docs/bubble-sort/01-concept. Zonder nummer vond de meting hem niet.
+    expect(adresVanBron('docs/bubble-sort/bouwen/04-de-swap.mdx', '', { nummers: true })).toBe(
+      'bubble-sort/bouwen/04-de-swap',
+    );
+    expect(houdtNummers("docs: { numberPrefixParser: false, sidebarPath: './s.ts' }")).toBe(true);
+    expect(houdtNummers("docs: { sidebarPath: './s.ts' }")).toBe(false);
+    expect(
+      houdtNummers(readFileSync(join(ROOT, siteDir('algorithms'), 'docusaurus.config.ts'), 'utf8')),
+    ).toBe(true);
   });
 
   it('volgt slug en id uit de front matter', () => {
@@ -82,6 +99,89 @@ describe('welke lessen CI meet', () => {
     expect(meet([`${siteMap}/docs/terminal/_samen.mdx`]).alles).toBe(true);
     // Geen eigen bestand veranderd, wel geraakt: dan een package (LesTabs).
     expect(meet(['packages/shared/components/LesTabs/index.tsx']).alles).toBe(true);
+  });
+
+  // Het plan van CI (schermenMatrix) beslist met heleSite of een cursus in
+  // delen gemeten wordt; het meetscript beslist met lessenVoorMeting. Het plan
+  // kent alleen bestaat-of-niet (scripts/wijzigingen.mjs), het meetscript de
+  // inhoud. Liepen ze uiteen, dan kreeg een hele cursus één runner, of een paar
+  // lessen zes.
+  it('het plan en het meetscript beslissen hetzelfde, ook met een weggehaald bestand', () => {
+    const weg = `${siteMap}/src/components/Oud.tsx`;
+    const les = `${siteMap}/docs/terminal/jokertekens.mdx`;
+    const wegLes = `${siteMap}/docs/terminal/oud.mdx`;
+    const bestaat = (pad: string) => ![weg, wegLes].includes(pad);
+    const planLees = (pad: string) => (bestaat(pad) ? '' : null);
+    const scriptLees = (pad: string) => (bestaat(pad) ? lees({})(pad) : null);
+    const gevallen: [string[], object][] = [
+      [[les], {}],
+      [[`${siteMap}/src/css/custom.css`], {}],
+      [[`${siteMap}/src/css/custom.css`, les], {}],
+      [[`${siteMap}/docs/terminal/_samen.mdx`], {}],
+      [['packages/shared/components/LesTabs/index.tsx'], {}],
+      [[weg, les], {}],
+      [[wegLes], {}],
+      [[les], { volledig: true }],
+      [[les], { schermen: { alles: true } }],
+      [[les], { schermen: { viaPakket: { linux: 'p/a.ts' } } }],
+    ];
+    for (const [bestanden, extra] of gevallen) {
+      const p = plan(bestanden, extra);
+      const heel = heleSite({ plan: p, site: 'linux', siteMap, leesBron: planLees });
+      const keuze = lessenVoorMeting({
+        plan: p,
+        site: 'linux',
+        siteMap,
+        lessen: LESSEN,
+        leesBron: scriptLees,
+      });
+      expect(heel !== null, bestanden.join()).toBe(keuze.alles);
+    }
+  });
+
+  it('een test, de notities of de labels van de lessenlijst raken geen scherm', () => {
+    // Eerst maten ze de hele cursus, met de meting in delen zes runners.
+    for (const pad of [
+      'src/docs-tests/opdrachten.test.ts',
+      'src/components/PyRunner/breedte.test.ts',
+      'CLAUDE.md',
+      'docs/terminal/_category_.json',
+    ]) {
+      const keuze = meet([`${siteMap}/${pad}`]);
+      expect(keuze, pad).toMatchObject({ alles: false, lessen: [], nietGevonden: [] });
+      expect(
+        heleSite({ plan: plan([`${siteMap}/${pad}`]), site: 'linux', siteMap }),
+        pad,
+      ).toBeNull();
+    }
+    // Een test naast een onderdeel: het onderdeel telt.
+    expect(
+      meet([`${siteMap}/src/components/X/a.test.ts`, `${siteMap}/src/components/X/a.ts`]).alles,
+    ).toBe(true);
+  });
+
+  it('de delen bevatten samen elke les precies één keer', () => {
+    const lessen = Array.from({ length: 23 }, (_, i) => `docs/les-${i}`);
+    for (const delen of [1, 2, 4, 6, 30]) {
+      const samen = Array.from({ length: delen }, (_, i) => deelVan(lessen, i + 1, delen)).flat();
+      expect(samen.sort(), `${delen} delen`).toEqual([...lessen].sort());
+    }
+    // Om en om: een hoofdstuk komt niet in één deel terecht.
+    expect(deelVan(lessen, 2, 4).slice(0, 2)).toEqual(['docs/les-1', 'docs/les-5']);
+    for (const fout of [
+      [0, 2],
+      [3, 2],
+      [1.5, 2],
+      [1, 0],
+    ] as const)
+      expect(() => deelVan(lessen, ...fout), fout.join('/')).toThrow();
+  });
+
+  it('een les is `les/index.html`, of `les.html` bij trailingSlash: false', () => {
+    expect(lesVan('docs/terminal/mappen', 'index.html')).toBe('docs/terminal/mappen');
+    expect(lesVan('docs/hanoi', '01-spel.html')).toBe('docs/hanoi/01-spel');
+    expect(lesVan('', '404.html')).toBeNull();
+    expect(lesVan('docs', 'plaatje.png')).toBeNull();
   });
 
   it('alles in een volledige run, of als het meetscript veranderde', () => {
@@ -216,7 +316,16 @@ describe('in deze repository', () => {
   // Alleen met een build: in CI heeft de job test er geen, en daar bewaakt
   // de job `schermen` het met --streng (`ontbreekt`). Zonder build staat de
   // test op overgeslagen, niet op groen.
-  const CURSUSSEN = ['linux', 'ctf', 'editor', 'web', 'python', 'robotica', 'fullstack'];
+  const CURSUSSEN = [
+    'linux',
+    'ctf',
+    'editor',
+    'web',
+    'python',
+    'algorithms',
+    'robotica',
+    'fullstack',
+  ];
   const gebouwd = CURSUSSEN.filter((site) => existsSync(join(ROOT, siteDir(site), 'build')));
 
   // Elke les van een cursus met tabbladen die al gebouwd is, moet bij zijn
@@ -234,10 +343,11 @@ describe('in deze repository', () => {
           if (statSync(p).isDirectory()) {
             if (!['assets', 'img', 'pyodide', 'oud'].includes(relative(build, p))) loop(p);
           } else if (
-            n === 'index.html' &&
+            lesVan(relative(build, d), n) !== null &&
             /data-les-(tabs|zonder-tabs)/.test(readFileSync(p, 'utf8'))
           )
-            lessen.push(relative(build, d));
+            // Dezelfde lesVan als het meetscript.
+            lessen.push(lesVan(relative(build, d), n) as string);
         }
       };
       loop(build);
@@ -251,15 +361,17 @@ describe('in deze repository', () => {
         }
       };
       zoek(map);
+      const config = readFileSync(join(map, 'docusaurus.config.ts'), 'utf8');
+      const nummers = houdtNummers(config);
       const adressen = bronnen
-        .map((b) => adresVanBron(b, readFileSync(join(map, b), 'utf8')))
+        .map((b) => adresVanBron(b, readFileSync(join(map, b), 'utf8'), { nummers }))
         .filter((a): a is string => a !== null);
       for (const les of lessen)
         if (!adressen.some((a) => les === a || les.endsWith(`/${a}`))) fout.push(`${site}: ${les}`);
       // Elke lespagina als gewijzigd; een bron zonder adres (een README, een
       // onderdeel) zou de selectie "alles" laten kiezen en blijft weg.
       const lespaginas = bronnen.filter(
-        (b) => adresVanBron(b, readFileSync(join(map, b), 'utf8')) !== null,
+        (b) => adresVanBron(b, readFileSync(join(map, b), 'utf8'), { nummers }) !== null,
       );
       const keuze = lessenVoorMeting({
         plan: {
@@ -270,7 +382,8 @@ describe('in deze repository', () => {
         siteMap: siteDir(site),
         lessen,
         leesBron: (pad: string) => readFileSync(join(ROOT, pad), 'utf8'),
-        mappen: docsMappen(readFileSync(join(map, 'docusaurus.config.ts'), 'utf8')),
+        mappen: docsMappen(config),
+        nummers,
       });
       expect(keuze.alles, site).toBe(false);
       for (const pad of keuze.ontbreekt) fout.push(`${site}: geen les voor ${pad}`);

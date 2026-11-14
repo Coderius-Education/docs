@@ -78,21 +78,22 @@ for ogen in telling:
 
 </details>
 
-## Opdracht: vijf of zes
+## Opdracht
 
-Je speelt een spel: gooi je 5 of 6, dan win je. Speel het 1000 keer na, en
-print hoeveel procent van de keren je wint. Bijvoorbeeld:
-
-```
-33 procent gewonnen
-```
-
+Vijf of zes: gooi je 5 of 6, dan win je. Speel het spel 1000 keer na, en print
+hoeveel procent van de keren je wint. In de editor speel je het één keer.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code een paar keer: hij gooit één keer, en zegt soms `gewonnen`.
 2. Zet de worp en de `if` in een loop van `worpen` keer. Je ziet nu een paar honderd keer `gewonnen`.
-3. Tel de keren in plaats van ze te printen: zet `gewonnen = 0` boven de loop, tel er in de `if` één bij op, en print `gewonnen` na de loop.
+3. Tel de keren: zet `gewonnen = 0` boven de loop, tel er in de `if` één bij op, en print `gewonnen` na de loop.
 4. Print het percentage, met `gewonnen * 100 // worpen`.
+
+Verwachte uitvoer, bijvoorbeeld:
+
+```
+33 procent gewonnen
+```
 
 <PyRunner initialCode={`import random
 

@@ -1,4 +1,5 @@
 import { readFileSync, readdirSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -76,7 +77,11 @@ describe('een opdracht begint klein', () => {
         }
         // Ook een Bouw zelf: daar zit de grootste sprong (de Méré, slim tegen
         // slim, het paard), en zonder stappen stond de leerling er alleen voor.
-        const stappen = voor.match(/Begin klein[^\n]*\n\n((?:\d+\. .*\n)+)/);
+        // "Begin klein:" boven de lijst, of als begin van stap 1: op een
+        // scherm dat net niet paste, scheelde de losse regel 46 pixels.
+        const stappen =
+          voor.match(/Begin klein[^\n]*\n\n((?:\d+\. .*\n)+)/) ??
+          voor.match(/^(1\. Begin klein.*\n(?:\d+\. .*\n)+)/m);
         if (!stappen || stappen[1].trim().split('\n').length < 2)
           fouten.push(`${kop}: geen genummerde stappen "Begin klein"`);
       }
@@ -175,7 +180,7 @@ describe('een stap gebruikt alleen namen die er zijn', () => {
 // Een eindeloze while-loop laat het tabblad vastlopen: de speeltuin heeft geen
 // stopknop. Bij het paard gebeurde dat met elke sprong van het bord af, en de
 // pagina waarschuwde nergens. Elke pagina waar de leerling een while schrijft,
-// heeft een :::caution die het zegt.
+// heeft een waarschuwing die het zegt.
 
 describe('een pagina met een while waarschuwt voor een tabblad dat vastloopt', () => {
   for (const pad of projecten) {
@@ -185,7 +190,12 @@ describe('een pagina met een while waarschuwt voor een tabblad dat vastloopt', (
         .map((m) => m[1])
         .join('\n');
       if (!/^\s*while /m.test(antwoorden)) return;
-      const waarschuwingen = [...tekst.matchAll(/^:::caution\n([\s\S]*?)\n:::/gm)].map((m) => m[1]);
+      // Een :::caution, of een alinea **Pas op:** … (zoals ml-aan-de-slag.test.ts):
+      // het blok was met zijn kop honderd pixels hoog, op het scherm met het veld.
+      const waarschuwingen = [
+        ...tekst.matchAll(/^:::caution\n([\s\S]*?)\n:::/gm),
+        ...tekst.matchAll(/^\*\*Pas op:\*\* (.*(?:\n(?!\n).*)*)/gm),
+      ].map((m) => m[1]);
       expect(waarschuwingen.some((w) => /tabblad/.test(w) && /vast/.test(w))).toBe(true);
     });
   }
@@ -206,6 +216,148 @@ describe('een antwoord dat op de editor voortbouwt, zegt waar het komt', () => {
           /<summary>Antwoord<\/summary>\n\n([\s\S]*?)\{\/\* draaien-met: blok-erboven \*\/\}/,
         );
         if (antwoord && !/Dit (vervangt|komt onder)/.test(antwoord[1])) fouten.push(delen[i]);
+      }
+      expect(fouten).toEqual([]);
+    });
+  }
+});
+
+// De opdracht en de editor op één scherm. Eerst stonden de stappen van
+// "Begin klein" en de verwachte uitvoer op De opdracht, en de editor op Aan
+// de slag: de leerling klikte per stap heen en weer, en elf keer zei De
+// opdracht "in de editor staat …" op een scherm zonder editor. De stappen
+// staan nu op het scherm met de editor, en De opdracht noemt de editor niet.
+// De test leest de schermen zoals de build ze maakt (les-schermen.js).
+
+const require = createRequire(import.meta.url);
+const GEDEELD = '../../../../../packages/shared/plugins';
+const { schermenVan } = require(`${GEDEELD}/les-schermen.js`);
+const { mdxParser } = require(`${GEDEELD}/werkvormen.js`);
+const parse = await mdxParser();
+
+type Blok = { soort: string; tekst: string };
+type Scherm = { tab: string; naam: string; blokken: Blok[] };
+
+/** De fases waarvoor dit al geldt; D tot en met F volgen in dezelfde ronde. */
+const FASES_OP_EEN_SCHERM = ['ml-regels', 'ml-afstand', 'ml-kans'];
+const opEenScherm = projecten.filter((pad) => FASES_OP_EEN_SCHERM.includes(pad.split('/')[0]));
+
+const schermen = (pad: string): Scherm[] =>
+  schermenVan(readFileSync(join(DOCS, pad), 'utf8'), parse, { velden: ['PyRunner'] });
+
+/** Wat de leerling ziet voordat hij een uitklapblok opent. */
+const zichtbaar = (s: Scherm) => {
+  const i = s.blokken.findIndex((b) => b.soort === 'antwoord');
+  return i < 0 ? s.blokken : s.blokken.slice(0, i);
+};
+
+const isOpdracht = (s: Scherm) => /^(Opdracht|Bouw zelf)/.test(s.tab);
+
+describe('de opdracht en de editor staan op één scherm', () => {
+  it('de route heeft pagina’s om te lezen', () => {
+    expect(opEenScherm.length).toBeGreaterThan(40);
+  });
+
+  for (const pad of opEenScherm) {
+    it(pad, () => {
+      const fouten: string[] = [];
+      const lijst = schermen(pad);
+      for (const s of lijst.filter(isOpdracht)) {
+        const tekst = zichtbaar(s).filter((b) => b.soort !== 'veld');
+        if (s.naam.endsWith('› De opdracht')) {
+          if (tekst.some((b) => /\beditor\b/i.test(b.tekst)))
+            fouten.push(`${s.naam}: noemt de editor, die op een ander scherm staat`);
+          if (tekst.some((b) => /^Verwachte uitvoer/.test(b.tekst.trim())))
+            fouten.push(`${s.naam}: de verwachte uitvoer hoort bij de editor`);
+        }
+        const begin = s.blokken.findIndex((b) => /Begin klein/.test(b.tekst));
+        if (begin >= 0 && !s.blokken.slice(begin).some((b) => b.soort === 'veld'))
+          fouten.push(`${s.naam}: de stappen van "Begin klein" staan niet bij de editor`);
+      }
+      // Elke opdracht en Bouw zelf heeft zijn stappen: anders controleert de
+      // lus hierboven niets.
+      for (const tab of new Set(lijst.filter(isOpdracht).map((s) => s.tab))) {
+        const metStappen = lijst.some(
+          (s) => s.tab === tab && s.blokken.some((b) => /Begin klein/.test(b.tekst)),
+        );
+        if (!metStappen) fouten.push(`${tab}: geen "Begin klein"`);
+      }
+      expect(fouten).toEqual([]);
+    });
+  }
+});
+
+describe('de waarschuwing voor een while staat bij de editor', () => {
+  // Bij tot het stilstaat stond de waarschuwing op Zo werkt het, twee
+  // tabbladen van het veld waar de leerling de while schrijft.
+  for (const pad of opEenScherm) {
+    it(pad, () => {
+      const lijst = schermen(pad);
+      const metWhile = lijst.filter(
+        (s) =>
+          isOpdracht(s) && s.blokken.some((b) => b.soort === 'code' && /^\s*while /m.test(b.tekst)),
+      );
+      for (const s of metWhile) {
+        const veld = lijst.find(
+          (v) => v.tab === s.tab && v.blokken.some((b) => b.soort === 'veld'),
+        ) as Scherm;
+        expect(veld, s.tab).toBeDefined();
+        const tekst = zichtbaar(veld).map((b) => b.tekst);
+        expect(
+          tekst.some((t) => /tabblad/.test(t) && /vast/.test(t)),
+          `${veld.naam}: geen waarschuwing`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
+// Een regel van de startcode is hooguit 66 tekens. Een langere regel zet de
+// uitvoer onder de code in plaats van ernaast, en dan zie je maar een paar
+// regels. Voorbeelden uit de review: `spam = {…}` op één regel van 95
+// tekens, de .split()-regels van zo'n 90 tekens, het fruit van eerlijk testen
+// in regels van 90 tekens.
+
+const MAX_REGEL = 66;
+
+// `buren` in het onderzoek van Muren is letterlijk de verborgen code
+// doolhof-buren (ml-verborgen.test.ts). Zijn `for` staat over twee regels;
+// de `if` met vier voorwaarden (74 tekens) is wat de les uitlegt, en past met
+// letters op 80 procent naast de uitvoer (PyRunner/opmaak.ts).
+const LANGE_REGEL_MAG = new Map([['ml-zoeken/01-buren/03-muren.mdx', 1]]);
+
+describe('een regel van de startcode is hooguit 66 tekens', () => {
+  for (const pad of projecten) {
+    it(pad, () => {
+      const tekst = readFileSync(join(DOCS, pad), 'utf8');
+      const lang = [...tekst.matchAll(/<PyRunner\b[^>]*?initialCode=\{`([\s\S]*?)`\}/g)]
+        .flatMap((m) => m[1].split('\n'))
+        .filter((r) => r.length > MAX_REGEL);
+      expect(lang.length, lang.join('\n')).toBeLessThanOrEqual(LANGE_REGEL_MAG.get(pad) ?? 0);
+    });
+  }
+});
+
+// Het antwoord van verslaan en verbeteren liet de if en else weg die
+// "spam" of "geen spam" printen, terwijl de opdracht eindigt met "tot het
+// filter het wel als spam ziet". Beslist het filter in de editor, dan beslist
+// het ook in het antwoord.
+
+describe('een antwoord houdt de beslissing van het filter', () => {
+  for (const pad of projecten) {
+    it(pad, () => {
+      const delen = readFileSync(join(DOCS, pad), 'utf8').split(/^(## .*)$/m);
+      const fouten: string[] = [];
+      for (let i = 1; i < delen.length; i += 2) {
+        if (!/^## (Opdracht|Bouw zelf)\b/.test(delen[i])) continue;
+        const code = startcode(delen[i + 1]);
+        if (code === null || !code.includes('print("spam")')) continue;
+        const antwoord = delen[i + 1].match(
+          /<summary>Antwoord<\/summary>([\s\S]*?)```python\n([\s\S]*?)```/,
+        );
+        // Een antwoord dat zegt wat het vervangt, is een stuk van het programma.
+        if (!antwoord || /Dit (vervangt|komt onder)/.test(antwoord[1])) continue;
+        if (!antwoord[2].includes('print("spam")')) fouten.push(delen[i]);
       }
       expect(fouten).toEqual([]);
     });

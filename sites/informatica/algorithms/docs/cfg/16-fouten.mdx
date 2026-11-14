@@ -20,43 +20,36 @@ Naam  -> "sam" | "kim"
 
 {/* foutmelding-van: kop, rest = "Naam => sam".split("->") */}
 
-Symptoom: geen `FOUT (0x)`, maar een rode Python-foutmelding die eindigt
-op `ValueError: not enough values to unpack (expected 2, got 1)`, en
-de motor komt aan geen enkele zin toe.
+Geen `FOUT (0x)`, maar een rode Python-foutmelding die eindigt op
+`ValueError: not enough values to unpack (expected 2, got 1)`, en de
+motor komt aan geen enkele zin toe.
 
 **Oorzaak:** een regel in `GRAMMATICA` zonder `->`. Een typfout zoals
 `=>`, een los woord op een eigen regel, of een zin uit de les die per
-ongeluk mee is gekopieerd. Een kopje met `#` ervoor is het niet: alles
-achter een `#` slaat de motor over, net als in Python. Twee pijlen op
-één regel geven de spiegelbeeldige melding, `too many values to unpack
-(expected 2)`.
-De motor splitst elke regel op `->` en verwacht links een kop en rechts
-de onderdelen; staat er geen pijl, dan valt hij daar om, nog voordat hij
-naar een zin kijkt.
+ongeluk mee is gekopieerd. De motor splitst elke regel op `->` en
+verwacht links een kop en rechts de onderdelen; staat er geen pijl, dan
+valt hij daar om, nog voordat hij naar een zin kijkt. Twee pijlen op één
+regel geven de spiegelbeeldige melding, `too many values to unpack
+(expected 2)`. Een kopje met `#` ervoor is het niet: alles achter een `#`
+slaat de motor over, net als in Python.
+
+**Oplossing:** geef elke regel die niet leeg is precies één `->`. Kijk
+bij deze melding dus niet naar je zinnen, maar naar de regel die je het
+laatst hebt getypt of geplakt.
 
 ```
 # FOUT
 Naam => "sam"
 
-# De motor zoekt de pijl -> en vindt hem niet: ValueError.
-```
-
-**Oplossing:**
-
-```
 # GOED
 Naam -> "sam"
 ```
 
-Vuistregel: elke regel in `GRAMMATICA` die niet leeg is, heeft precies
-één `->`. Kijk bij deze melding dus niet naar je zinnen, maar naar de
-regel die je het laatst hebt getypt of geplakt.
+## Aanhalingstekens vergeten
 
-## Aanhalingstekens vergeten bij een terminal
-
-Symptoom: bovenaan de uitvoer staat `LET OP: "sam" in de regel
-"Naam -> sam" heeft nergens een regel`, en de zin blijft op `FOUT (0x)` of
-`Kon de zin niet ontleden`.
+Je vergeet de aanhalingstekens bij een terminal. Bovenaan de uitvoer
+staat `LET OP: "sam" in de regel "Naam -> sam" heeft nergens een regel`,
+en de zin blijft op `FOUT (0x)` of `Kon de zin niet ontleden`.
 
 **Oorzaak:** een echt woord (een terminal) hoort tussen aanhalingstekens.
 Laat je ze weg, dan denkt de motor dat `sam` een groep is, en die groep
@@ -64,68 +57,53 @@ heeft geen regels, dus hij matcht nooit een woord. Dezelfde melding
 krijg je bij `conj` waar het lexicon `Conj` heet: hoofdletters tellen
 mee, en de motor zegt er dan bij welke naam hij wél kent.
 
+**Oplossing:** zet het woord tussen aanhalingstekens. Echte woorden
+krijgen aanhalingstekens, groepen niet; dat geldt voor de namen die jij
+verzint en voor woordsoorten als `N`, `V` en `Det`.
+
 ```
 # FOUT
 Naam -> sam
 
-# De motor zoekt nu naar een non-terminal 'sam' die nergens
-# gedefinieerd is. 'hallo sam' parseert niet.
-```
-
-**Oplossing:**
-
-```
 # GOED
 Naam -> "sam"
 ```
 
-Vuistregel: echte woorden krijgen aanhalingstekens, groepen niet. Dat
-geldt voor de namen die jij verzint en voor woordsoorten als `N`, `V`
-en `Det`.
-
 ## Een regel vergeten
 
-Symptoom: één bepaalde zin blijft `FOUT (0x)`, terwijl de rest op OK staat.
+Eén bepaalde zin blijft `FOUT (0x)`, terwijl de rest op OK staat.
 
 **Oorzaak:** er is geen regel voor de constructie die in die zin
 voorkomt. Een grammatica accepteert alleen wat de regels toelaten; is er
 geen pad van het startsymbool naar de woorden, dan is de zin ongeldig.
+Hier is er wel een `Groet` en een `Naam`, maar geen regel die `Zin`
+maakt, dus `hallo sam` lukt niet.
+
+**Oplossing:** kijk welke zin faalt, ontleed hem met de hand in groepen,
+en voeg de regel toe voor de groep die nog ontbreekt.
 
 ```
-# FOUT — wel een Groet, maar geen regel die 'Zin' definieert
+# FOUT
 Groet -> "hallo" | "hoi"
 Naam  -> "sam" | "kim"
-# 'hallo sam' lukt niet: er is geen Zin -> Groet Naam
-```
 
-**Oplossing:** voeg de ontbrekende regel toe.
-
-```
 # GOED
-Zin -> Groet Naam
+Zin   -> Groet Naam
+Groet -> "hallo" | "hoi"
 ```
 
-Aanpak: kijk welke zin faalt, ontleed hem met de hand in groepen, en
-zoek de groep waarvoor je nog geen regel hebt.
+## Woord niet in het lexicon
 
-## Woord staat niet in het lexicon (of hoofdletters/leestekens)
+`Kon de zin niet ontleden`, ook al lijkt je grammatica compleet.
 
-Symptoom: `Kon de zin niet ontleden`, ook al lijkt je grammatica
-compleet.
+**Oorzaak:** het woord staat niet in het lexicon, of er zit een
+hoofdletter of leesteken aan. De motor zet alles eerst om naar kleine
+letters en splitst op spaties. Een woord dat niet precies zo, in kleine
+letters, in het lexicon staat, herkent hij nooit. Het lexicon kent `sam`,
+maar niet `alex`, dus `hallo alex` lukt niet.
 
-**Oorzaak:** het woord staat niet in het lexicon. De motor zet alles
-eerst om naar kleine letters en splitst op spaties. Een woord dat niet
-precies zo, in kleine letters, in het lexicon staat, herkent hij nooit.
-
-```
-# Lexicon kent 'sam', maar niet 'alex'
-# 'hallo alex' -> Kon de zin niet ontleden
-```
-
-**Oplossing:** voeg het woord toe bij de juiste woordsoort, bv.
-`Naam -> "alex"`.
-
-Leestekens horen er niet bij: typ `hallo sam`, niet `hallo sam.`, want
-het woord `sam.` met punt staat niet in het lexicon.
+**Oplossing:** voeg het woord toe bij de juiste woordsoort, bijvoorbeeld
+`Naam -> "alex"`. Leestekens horen er niet bij: typ `hallo sam`, niet
+`hallo sam.`, want het woord `sam.` met punt staat niet in het lexicon.
 
 Door naar [cheatsheet →](site:algorithms/docs/cfg/17-cheatsheet).

@@ -55,14 +55,8 @@ voorste element uit de lijst en geeft het terug, zodat je het in een variabele
 kunt zetten.
 
 Met `while len(wachtrij) > 0:` ga je door zolang er nog iemand in de rij
-staat. Komt er onderweg iemand bij, dan komt die ook nog aan de beurt.
-
-:::caution
-De loop stopt pas als de wachtrij leeg is. Komt er steeds iemand bij, dan
-stopt hij nooit. De speeltuin heeft geen stopknop, dus het tabblad loopt vast:
-herlaad de pagina, en je code is weg. Kopieer je code daarom eerst naar een
-kladblok voordat je een nieuwe while-loop draait.
-:::
+staat. Komt er onderweg iemand bij, dan komt die ook nog aan de beurt. De loop
+stopt pas als de wachtrij leeg is.
 
 ## Onderzoek
 
@@ -88,11 +82,24 @@ print("De wachtrij is leeg")`} />
 
 </details>
 
-## Opdracht: een kettingbericht
+## Opdracht
 
-Anna stuurt een bericht naar haar vrienden, en elke vriend stuurt het door
+### De opdracht
+
+Anna stuurt een kettingbericht naar haar vrienden, en elke vriend stuurt het door
 naar zijn eigen vrienden. In welke volgorde lezen ze het, als iedereen in een
-wachtrij op zijn beurt wacht?
+wachtrij op zijn beurt wacht? Dat zoek je uit met een wachtrij en een
+while-loop. Zo zoekt de robot straks ook door het doolhof.
+
+### Aan de slag
+
+**Pas op:** komt er steeds iemand bij, dan loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
+
+1. Draai de code: in de editor staat een wachtrij met alleen Anna, en Anna leest het bericht.
+2. Zet met een for-loop over `vrienden[persoon]` de vrienden achteraan in de wachtrij. Print `wachtrij`.
+3. Zet alles vanaf `persoon = wachtrij.pop(0)` in `while len(wachtrij) > 0:`. Probeer daarna `pop()`.
+
+Verwachte uitvoer (met `pop(0)`):
 
 ```
 Anna leest het bericht
@@ -102,13 +109,6 @@ Dirk leest het bericht
 Eva leest het bericht
 Fen leest het bericht
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: Anna leest het bericht.
-2. Zet de vrienden van `persoon` achteraan in de wachtrij, met een for-loop over `vrienden[persoon]`. Zet onderaan `print(wachtrij)`: daar staan nu Bob en Cem.
-3. Zet alles vanaf `persoon = wachtrij.pop(0)` in een loop `while len(wachtrij) > 0:`. Nu leest iedereen het bericht. Haal daarna de `print(wachtrij)` weg.
-4. Verander `pop(0)` in `pop()`. In welke volgorde lezen ze het nu?
 
 <PyRunner initialCode={`vrienden = {
     "Anna": ["Bob", "Cem"],

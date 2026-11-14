@@ -44,27 +44,31 @@ tuple, net als `rij, kolom = vakje`.
 
 Er zijn geen muren, maar een sprong mag niet van het bord af: rij en kolom
 blijven van 0 tot en met 7. Dat is dezelfde controle als de randen van het
-doolhof.
+doolhof. Zonder die controle springt het paard eindeloos verder.
 
-:::caution
-Zonder die controle springt het paard eindeloos verder, en stopt de
-while-loop nooit. De speeltuin heeft geen stopknop, dus het tabblad loopt
-vast: herlaad de pagina, en je code is weg. Kopieer je code daarom eerst naar
-een kladblok voordat je een nieuwe while-loop draait.
-:::
+## Bouw zelf
 
-## Bouw zelf: het paard op het schaakbord
+### De opdracht
 
 Hoeveel sprongen heeft een paard nodig van de ene hoek, `(0, 0)`, naar de hoek
 er schuin tegenover, `(7, 7)`? En hoeveel naar `(1, 1)`, het vakje er schuin
-naast? Gebruik breedte-eerst zoeken op een bord van 8 bij 8.
+naast? Breedte-eerst zoeken werkt niet alleen in een doolhof: je gebruikt het
+op een schaakbord van 8 bij 8, met de sprongen van het paard als buren.
 
-Begin klein, en breid de code stap voor stap uit:
+### Aan de slag
 
-1. Draai de code: `sprongen` geeft één sprong.
-2. Zet de andere zeven sprongen erbij. Een lijst met de acht richtingen en een loop erover scheelt typwerk.
-3. Houd met een `if` alleen de sprongen die op het bord blijven. `sprongen((0, 0))` geeft er dan twee: `(1, 2)` en `(2, 1)`.
-4. Zet het zoeken uit [breedte-eerst](site:algorithms/docs/ml-zoeken/02-kortste-weg/02-breedte-eerst) eronder, met `sprongen` in plaats van `buren`. Het vult de dictionary `afstand`; print daarna `afstand[(7, 7)]`.
+**Pas op:** een paard naast het bord laat het tabblad van de browser vastlopen. Kopieer je code eerst. Begin klein:
+
+1. Draai de code: `sprongen` kent nog maar één sprong.
+2. Zet de andere zeven erbij met een lijst van de acht richtingen, en houd met een `if` alleen de sprongen op het bord.
+3. Zet het zoeken uit [breedte-eerst](site:algorithms/docs/ml-zoeken/02-kortste-weg/02-breedte-eerst) eronder, met `sprongen` als buren. Print de afstand van `(7, 7)` en `(1, 1)`.
+
+Verwachte uitvoer:
+
+```
+6
+4
+```
 
 <PyRunner initialCode={`def sprongen(vakje):
     rij, kolom = vakje

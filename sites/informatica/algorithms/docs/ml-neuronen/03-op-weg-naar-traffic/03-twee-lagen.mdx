@@ -45,7 +45,8 @@ en zegt 0.
 Het laatste neuron kijkt niet naar de invoer zelf, maar naar wat OF en EN
 ervan vinden. Met gewichten `[1, -2]` zegt het: OF pleit voor ja, EN pleit
 dubbel zo hard voor nee. Dat is precies één: minstens één, maar niet allebei.
-`neuron` en `laag` staan in de verborgen code onder de editor.
+`neuron` en `laag` staan klaar onder de knop Klaargezette code, boven de
+editor.
 
 De laag ertussen heet een **verborgen laag**: je ziet hem niet aan de invoer
 of aan de uitkomst. Hier kreeg je de gewichten van de verborgen laag. Je
@@ -89,11 +90,24 @@ van CS50 uit.
 
 </details>
 
-## Opdracht: allebei hetzelfde
+## Opdracht
 
-Maak een netwerk dat 1 zegt als de twee invoeren gelijk zijn: allebei 0 of
-allebei 1. Ook dat kan één neuron niet. Houd de eerste laag, OF en EN, en
-zoek gewichten en een bias voor het laatste neuron:
+### De opdracht
+
+Je maakt een netwerk dat 1 zegt als de twee invoeren allebei hetzelfde zijn:
+allebei 0 of allebei 1. Ook dat kan één neuron niet. De eerste laag, OF en EN,
+blijft zoals hij is; je zoekt gewichten en een bias voor het laatste neuron.
+
+### Aan de slag
+
+In de editor gaat de eerste laag naar een laatste neuron met gewichten
+`[0, 0]`.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: bij `0 0` zegt het laatste neuron nog 0. Zet het in een loop in een loop over de vier combinaties.
+2. Zoek gewichten en een bias voor het laatste neuron.
+
+Verwachte uitvoer:
 
 ```
 0 0 -> 1
@@ -101,12 +115,6 @@ zoek gewichten en een bias voor het laatste neuron:
 1 0 -> 0
 1 1 -> 1
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: met gewichten `[0, 0]` zegt het laatste neuron bij `0 0` nog 0.
-2. Zet het in een loop in een loop over de vier combinaties.
-3. Zoek gewichten en een bias voor het laatste neuron.
 
 <PyRunner verborgen="neuron-laag" initialCode={`a = 0
 b = 0

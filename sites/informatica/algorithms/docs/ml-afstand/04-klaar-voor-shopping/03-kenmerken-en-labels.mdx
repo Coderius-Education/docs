@@ -40,9 +40,11 @@ op plek 0 van `kenmerken`, en of hij iets kocht op plek 0 van `labels`.
 Een label is een getal: 1 als de bezoeker iets kocht, en anders 0. Daarmee
 kan de voorspeller net zo goed rekenen als met een tekst.
 
-## Opdracht: van tekst naar getallen
+## Opdracht
 
-Maak van elke rij twee dingen:
+### De opdracht
+
+Van tekst naar getallen: maak van elke rij twee dingen:
 
 - een lijst **kenmerken** met drie getallen: de maand (januari is 0,
   december is 11), het aantal pagina's, en 1 voor een terugkerende bezoeker
@@ -50,20 +52,23 @@ Maak van elke rij twee dingen:
 - een **label**: 1 als de bezoeker iets kocht, en anders 0.
 
 Zet alle kenmerken in de lijst `kenmerken` en alle labels in de lijst
-`labels`. Met de regels hieronder print je aan het eind:
+`labels`.
+
+### Aan de slag
+
+In de editor staan de regels van de webshop, `MAANDEN` en twee lege lijsten.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print elke rij als een lijst teksten, zoals `['Feb', '3', 'TRUE', 'FALSE']`.
+2. Print in de loop het getal van de maand, `MAANDEN[rij[0]]`, en het aantal pagina's, `int(rij[1])`.
+3. Maak met een `if` van `rij[2]` en `rij[3]` een 1 of 0, vul `kenmerken` en `labels`, en haal de prints weg.
+
+Verwachte uitvoer:
 
 ```
 [[1, 3, 1], [2, 12, 0], [2, 1, 0], [10, 25, 1]]
 [0, 1, 0, 1]
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print elke rij als een lijst teksten, zoals `['Feb', '3', 'TRUE', 'FALSE']`.
-2. Print in de loop alleen het getal van de maand: `MAANDEN[rij[0]]`.
-3. Print ook het aantal pagina's als getal, met `int(rij[1])`.
-4. Maak met een `if` van `rij[2]` een 1 of een 0, en zet de drie getallen in een lijst. Voeg die met `.append()` toe aan `kenmerken`.
-5. Doe hetzelfde met `rij[3]` voor `labels`, en haal de prints uit de loop.
 
 <PyRunner initialCode={`import csv
 
@@ -93,8 +98,7 @@ print(labels)`} />
 <summary>Tip</summary>
 
 `rij[2]` is de tekst `'TRUE'` of `'FALSE'`, niet de waarde `True`. Vergelijk
-hem dus met een tekst: `if rij[2] == "TRUE":`. Een lijst met drie getallen
-maak je met `[maand, paginas, terug]`.
+hem dus met een tekst: `if rij[2] == "TRUE":`.
 
 </details>
 

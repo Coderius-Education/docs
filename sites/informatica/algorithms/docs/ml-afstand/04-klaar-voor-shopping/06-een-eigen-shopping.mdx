@@ -42,37 +42,35 @@ Wat print dit programma?
 
 ## Zo werkt het
 
-Onderaan de editor staat code die je niet verandert, zoals CS50 je ook een
-deel van de code geeft. Die roept twee functies aan die jij afmaakt:
+In de editor van Bouw zelf staat onderaan code die je niet verandert, zoals
+CS50 je ook een deel van de code geeft. Die roept twee functies aan die jij afmaakt:
 
 - `lees(regels)` maakt van de regels twee lijsten, `kenmerken` en `labels`,
   en geeft ze allebei terug;
 - `beoordeel(labels, voorspellingen)` geeft de gevoeligheid en de
   specificiteit terug.
 
-Het voorspellen zelf doet `voorspel_lijst` in de verborgen code onder de
-editor. Dat is wat scikit-learn bij Shopping voor je doet: de dichtstbijzijnde
+Het voorspellen zelf doet `voorspel_lijst`, die klaarstaat achter de knop
+Klaargezette code boven de editor. Dat is wat scikit-learn bij Shopping voor je doet: de dichtstbijzijnde
 buur zoeken voor elke dag in de toets. De eerste vier dagen zijn de toets, de
 rest is de oefenset.
 
-## Bouw zelf: regent het morgen?
+## Bouw zelf
 
-Elke regel is een dag: de temperatuur, de wind, of het bewolkt was, en of
-het de dag erna regende. Maak `lees` en `beoordeel` af, zodat de code onderaan
-dit print:
+Regent het morgen? Maak `lees` en `beoordeel` af. Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `lees` print elke rij, maar geeft nog lege lijsten terug. De code onderaan blijft zo.
+2. Zet in `lees` `[temperatuur, wind, bewolkt]` als getallen in `kenmerken`, en 1 of 0 voor regen in `labels`.
+3. Haal de print weg, en print in `beoordeel` eerst `labels` en `voorspellingen`.
+4. Reken in `beoordeel` de gevoeligheid en de specificiteit uit, en geef ze terug.
+
+Verwachte uitvoer:
 
 ```
 12 dagen
 gevoeligheid: 1.0
 specificiteit: 0.6666666666666666
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: `lees` print elke rij, maar geeft nog twee lege lijsten terug. Daarom staat er `0 dagen`, en geeft `beoordeel` nog twee nullen.
-2. Maak in `lees` van elke rij de kenmerken `[temperatuur, wind, bewolkt]` als getallen, en het label: 1 bij regen, anders 0. Zet ze in `kenmerken` en `labels`, en haal de print weg. Nu staat er `12 dagen`.
-3. Print in `beoordeel` eerst `labels` en `voorspellingen`, zodat je ziet wat de voorspeller over de vier toetsdagen zei.
-4. Reken in `beoordeel` de gevoeligheid en de specificiteit uit, zoals in de vorige stap, en geef ze terug met `return gevoeligheid, specificiteit`.
 
 <PyRunner verborgen="buur-model" initialCode={`import csv
 
@@ -81,7 +79,8 @@ regels = [
     "12.5,5,TRUE,TRUE", "21.0,2,FALSE,FALSE", "9.5,6,TRUE,FALSE",
     "15.0,3,FALSE,FALSE", "11.0,6,TRUE,TRUE", "8.5,4,TRUE,TRUE",
     "14.0,5,TRUE,TRUE", "10.0,7,TRUE,TRUE", "22.5,1,FALSE,FALSE",
-    "19.0,3,FALSE,FALSE", "16.5,2,TRUE,FALSE", "13.5,4,FALSE,FALSE",
+    "19.0,3,FALSE,FALSE", "16.5,2,TRUE,FALSE",
+    "13.5,4,FALSE,FALSE",
 ]
 
 def lees(regels):
@@ -98,8 +97,10 @@ def beoordeel(labels, voorspellingen):
 
 kenmerken, labels = lees(regels)
 print(len(kenmerken), "dagen")
-voorspellingen = voorspel_lijst(kenmerken[4:], labels[4:], kenmerken[:4])
-gevoeligheid, specificiteit = beoordeel(labels[:4], voorspellingen)
+toets = kenmerken[:4]
+voorspellingen = voorspel_lijst(kenmerken[4:], labels[4:], toets)
+echt = labels[:4]
+gevoeligheid, specificiteit = beoordeel(echt, voorspellingen)
 print("gevoeligheid:", gevoeligheid)
 print("specificiteit:", specificiteit)`} />
 
@@ -155,8 +156,10 @@ def beoordeel(labels, voorspellingen):
 
 kenmerken, labels = lees(regels)
 print(len(kenmerken), "dagen")
-voorspellingen = voorspel_lijst(kenmerken[4:], labels[4:], kenmerken[:4])
-gevoeligheid, specificiteit = beoordeel(labels[:4], voorspellingen)
+toets = kenmerken[:4]
+voorspellingen = voorspel_lijst(kenmerken[4:], labels[4:], toets)
+echt = labels[:4]
+gevoeligheid, specificiteit = beoordeel(echt, voorspellingen)
 print("gevoeligheid:", gevoeligheid)
 print("specificiteit:", specificiteit)
 ```

@@ -13,8 +13,8 @@ eerlijk verdeelt.
 :::info
 Je gebruikt hier `voorspel(nieuw, voorbeelden, k)` uit
 [laat de buren stemmen](site:algorithms/docs/ml-afstand/02-k-buren/03-de-winnaar#opdracht-voorspel-met-k).
-Die functie staat in de code hieronder al klaar: klap onder de editor de
-verborgen code open om hem te lezen. Je gebruikt ook slicing uit
+Die functie staat bij deze stap klaar: de knop Klaargezette code boven de
+editor laat hem zien. Je gebruikt ook slicing uit
 [de buren sorteren](site:algorithms/docs/ml-afstand/02-k-buren/01-de-buren-sorteren),
 en `import` uit [Modules](site:python/docs/modules/09d-modules).
 :::
@@ -39,12 +39,16 @@ Hieronder staan 24 stuks fruit. De code laat de voorspeller elk stuk
 voorspellen, met alle 24 als voorbeelden.
 
 <PyRunner verborgen="knn" initialCode={`fruit = [
-    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
-    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
-    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
-    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
-    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
-    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((8, 7), "appel"), ((9, 9), "appel"), ((7, 8), "appel"),
+    ((10, 9), "appel"), ((8, 9), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
+    ((19, 4), "banaan"), ((16, 4), "banaan"), ((21, 5), "banaan"),
+    ((18, 3), "banaan"), ((17, 4), "banaan"),
+    ((9, 6), "citroen"), ((10, 6), "citroen"),
+    ((8, 6), "citroen"), ((9, 5), "citroen"),
+    ((10, 7), "citroen"), ((11, 6), "citroen"),
+    ((8, 5), "citroen"), ((10, 5), "citroen"),
 ]
 
 goed = 0
@@ -82,23 +86,14 @@ tweeën: `fruit[:18]` zijn de eerste 18, `fruit[18:]` de rest.
 
 ## Onderzoek
 
-1. Draai de code. Hoeveel stukken fruit zitten er in de oefenset, en welke
-   soorten zitten er in de toets?
+1. Draai de code; de 24 stuks fruit uit Zo test je niet staan in de klaargezette
+   code. Hoeveel stukken zitten er in de oefenset, en welke soorten in de toets?
 2. Zet een `#` voor `random.shuffle(fruit)`. Welke soorten zitten nu in de
    toets?
 3. Haal de `#` weg, en verander de seed in 4. Wat zit er nu in de toets?
 4. Zet een `#` voor `random.seed(4)`, en draai een paar keer.
 
-<PyRunner initialCode={`import random
-
-fruit = [
-    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
-    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
-    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
-    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
-    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
-    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
-]
+<PyRunner verborgen="fruit-toets" initialCode={`import random
 
 random.seed(3)
 random.shuffle(fruit)

@@ -16,7 +16,9 @@ sidebar_position: 1
 doet en je tegenstander ook zijn beste zet doet, welke zet is dan voor
 jou de beste? Nog geen code.
 
-## Het verhaal
+## Het idee
+
+### Het verhaal
 
 Je speelt boter-kaas-en-eieren (tic-tac-toe) tegen iemand die net zo
 goed nadenkt als jij, zonder blunders en zonder mazzel. Welke zet doe je?
@@ -27,7 +29,7 @@ De vraag die je wilt beantwoorden is een andere: welke zet zorgt dat ik
 **niet verlies**, ook als mijn tegenstander daarna zijn allerbeste
 tegenzet kiest? Dat is minimax in één zin.
 
-## Twee spelers, twee doelen
+### Twee spelers, twee doelen
 
 In een spel zijn er twee perspectieven:
 
@@ -40,6 +42,8 @@ De spelers zijn om de beurt, en allebei kiezen ze telkens de zet die
 voor hén het best is. Minimax rekent uit waar dat op uitkomt.
 
 ## Een game tree
+
+### Een kleine boom
 
 Een **game tree** is een boom van toekomstige zetten. Aan de top staat
 de huidige positie. Elke "tak" is een mogelijke zet. Aan de bladeren
@@ -62,8 +66,10 @@ Een MAX-knoop tekenen we als een driehoek omhoog (▲), want die wil
 omhoog, en een MIN-knoop als een driehoek omlaag (▼). Zo tekent CS50 ze
 ook, en zo staan ze in de rest van dit hoofdstuk.
 
-Wij (MAX) kiezen tussen tak `A` en tak `B`. Daarna kiest de
-tegenstander (MIN) tussen zijn twee opties.
+### Terugrekenen
+
+In de kleine boom kiezen wij (MAX) tussen tak `A` en tak `B`. Daarna
+kiest de tegenstander (MIN) tussen zijn twee opties.
 
 Redeneer eerst als de tegenstander. Onder tak `A` kiest MIN uit `+1` en
 `-1`, en hij pakt het laagste: `-1`. Onder tak `B` kiest hij uit `0` en
@@ -73,7 +79,7 @@ Nu wij. Tak `A` levert `-1` op, want daar pakt MIN de `-1`. Tak `B`
 levert `0` op. Wij nemen het hoogste, dus `B`. Beter een gegarandeerde
 remise dan een gegarandeerd verlies.
 
-## Het sleutelwoord: *gegarandeerd*
+### Het sleutelwoord: *gegarandeerd*
 
 Minimax denkt van het einde naar het begin. Pas als de uitkomst van
 een blad bekend is, kun je terugrekenen wat het niveau erboven waard
@@ -81,7 +87,9 @@ is, en zo verder, helemaal terug naar de zet van nu. Dat heet
 **terug-redeneren** (in het Engels *backwards induction*), en het werkt
 omdat we aannemen dat beide spelers optimaal spelen.
 
-## Waarom tic-tac-toe?
+## Tic-tac-toe en verder
+
+### Waarom tic-tac-toe?
 
 Tic-tac-toe heeft een klein aantal mogelijke spellen, zo'n 250.000 als
 je alles meerekent. Een computer rekent die hele game tree in een
@@ -91,7 +99,7 @@ Voor schaken, met meer dan 10⁴⁰ posities, is de hele tree te groot.
 Daar gebruik je slimmere varianten zoals *alpha-beta pruning* of *Monte
 Carlo Tree Search*, maar het fundament blijft minimax.
 
-## Waar minimax echt is gebruikt
+### Waar minimax echt is gebruikt
 
 - [Claude Shannon](https://en.wikipedia.org/wiki/Claude_Shannon)
   beschreef in 1950 hoe een computer zou kunnen schaken: een game tree
@@ -119,14 +127,12 @@ netwerk. De uitleg in dit hoofdstuk volgt
 [lecture 0 van CS50 AI](https://cs50.harvard.edu/ai/notes/0/), die
 minimax voor het eerst voordoet.
 
-## Wat we gaan bouwen
+## Zo bouw je het op
 
 Aan het eind van dit hoofdstuk heb je tien Python-functies die samen
 een tic-tac-toe-AI vormen die nooit verliest. Als beide spelers
 optimaal spelen, eindigt tic-tac-toe altijd in remise, en jouw AI
 speelt optimaal. Eerst met pen en papier.
-
-## Zo bouw je het op
 
 De code bouw je in kleine stappen, elk op een eigen pagina in de map "Bouwen, stap voor stap":
 

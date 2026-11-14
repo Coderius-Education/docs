@@ -45,11 +45,24 @@ Anna pakt de laatste lucifers, dus Anna verliest.
 zet `speler` op de ander. Zo wisselt hij van Anna naar Bob en terug, zolang
 de loop draait.
 
-## Opdracht: wie wint?
+## Opdracht
 
-Anna en Bob pakken allebei steeds 3 lucifers, of de rest als er minder dan 3
-liggen. Ze beginnen met 10, en Anna begint. Laat zien wie wat pakt, en print
-aan het eind wie er wint:
+### De opdracht
+
+Wie wint er? Anna en Bob pakken allebei steeds 3 lucifers, of de rest als er
+minder dan 3 liggen. Ze beginnen met 10, en Anna begint. Je programma laat zien
+wie wat pakt, en zegt aan het eind wie er wint. Daarvoor houd je bij wie er aan
+de beurt is.
+
+### Aan de slag
+
+**Pas op:** krimpt de stapel niet, dan loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
+
+1. Draai de code: één speler pakt de hele stapel leeg, maar je ziet niet wie.
+2. Zet vóór de loop `speler = "Anna"`, print in de loop ook `speler`, en wissel na elke zet van speler.
+3. Print na de loop wie er wint. Wie de laatste lucifer pakt, verliest.
+
+Verwachte uitvoer:
 
 ```
 Anna pakt 3 en laat 7 liggen
@@ -58,18 +71,6 @@ Anna pakt 3 en laat 1 liggen
 Bob pakt 1 en laat 0 liggen
 Anna wint
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: één speler pakt de hele stapel leeg.
-2. Zet vóór de loop `speler = "Anna"`, en print in de loop ook wie er pakt. Nu pakt Anna alles.
-3. Laat `speler` na elke zet wisselen, zoals in Voorspel. Nu pakken Anna en Bob om de beurt.
-4. Print na de loop wie er wint. Wie de laatste lucifer pakt, verliest.
-
-:::caution
-Ook deze loop stopt alleen als de stapel kleiner wordt. Haal je de regel weg
-die pakt, dan loopt het tabblad vast, zie [een zet](site:algorithms/docs/ml-spellen/01-nim-strategie/01-een-zet#zo-werkt-het).
-:::
 
 <PyRunner initialCode={`stapel = 10
 while stapel > 0:

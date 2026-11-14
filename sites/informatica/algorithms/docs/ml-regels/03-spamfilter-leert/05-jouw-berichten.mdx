@@ -47,21 +47,31 @@ vaak in spam als in gewone berichten, dan zegt het niets over een nieuw
 bericht. Met meer voorbeelden leert het filter beter welke woorden vooral in
 spam staan.
 
-## Bouw zelf: leer het filter jouw berichten
+Echte spamfilters tellen ook woorden in voorbeelden, maar rekenen daarmee
+een kans uit in plaats van een score. Het idee is hetzelfde: het filter
+leert van berichten waarvan je het antwoord al weet.
 
-Vervang de voorbeelden door je eigen: zet in `spamwoorden` de woorden uit
-een paar spamberichten die je zelf kreeg (of verzin ze), en in
-`gewone_woorden` de woorden uit gewone berichten van vrienden. Bedenk daarna
-drie nieuwe berichten die het filter nog nooit zag, en kijk of het ze goed
-indeelt.
+## Bouw zelf
 
+### De opdracht
+
+Leer het filter jouw berichten. Zet in `spamwoorden` de woorden uit een paar
+spamberichten die je zelf kreeg (of verzin ze), en in `gewone_woorden` de
+woorden uit gewone berichten van vrienden. Bedenk daarna drie nieuwe
+berichten die het filter nog nooit zag, en kijk of het ze goed indeelt.
+
+### Aan de slag
+
+In de editor staat het filter, met maar drie woorden per soort.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code. In de editor staat het filter uit de vorige stappen, met maar drie woorden spam en drie gewone woorden.
+1. Draai de code.
 2. Zet in `spamwoorden` de woorden uit een paar spamberichten, en in `gewone_woorden` die uit gewone berichten.
 3. Bedenk drie nieuwe berichten, en kijk bij elk of het filter het goed indeelt.
 
-<PyRunner initialCode={`spamwoorden = "win nu gratis".split()
+<PyRunner initialCode={`bericht = "klik hier voor je prijs"
+
+spamwoorden = "win nu gratis".split()
 gewone_woorden = "zie je morgen".split()
 
 spam = {}
@@ -77,7 +87,6 @@ for woord in gewone_woorden:
     else:
         gewoon[woord] = 1
 
-bericht = "klik hier voor je prijs"
 score = 0
 for woord in bericht.split():
     if woord in spam:
@@ -102,7 +111,7 @@ gewone woorden als `je` en `het` leert herkennen.
 <details>
 <summary>Antwoord</summary>
 
-Een voorbeeld van het begin:
+Een voorbeeld van het begin. Dit vervangt de twee lijsten in de editor:
 
 ```python
 spamwoorden = "je pakket wacht betaal nu je account is geblokkeerd log nu in".split()
@@ -116,9 +125,5 @@ is geen fout in je code. Het weet alleen wat in je voorbeelden stond: met
 pakket.
 
 </details>
-
-Echte spamfilters tellen ook woorden in voorbeelden, maar rekenen daarmee
-een kans uit in plaats van een score. Het idee is hetzelfde: het filter
-leert van berichten waarvan je het antwoord al weet.
 
 Door naar [een afstand](site:algorithms/docs/ml-afstand/01-dichtstbijzijnde-buur/01-een-afstand).

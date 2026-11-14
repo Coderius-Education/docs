@@ -35,8 +35,6 @@ voorgangers = {'B': 'A', 'C': 'A', 'D': 'B'}
 
 De voorganger van `B` is `A`, die van `C` ook, en die van `D` is `B`.
 
-## Het pad terugvinden
-
 Het pad van `A` naar `D` vind je door bij `D` te beginnen en de
 voorgangers terug te lopen: `voorgangers['D']` is `B`, `voorgangers['B']`
 is `A`, en `A` is de start. Dat geeft `[D, B, A]`; omgedraaid is het
@@ -46,6 +44,12 @@ pad `[A, B, D]`.
 
 Pas `dijkstra` aan om `voorgangers` mee te houden. Schrijf een
 hulpfunctie `reconstrueer_pad` die het pad teruggeeft.
+
+:::caution
+In `reconstrueer_pad` schrijf je een while-loop. Wordt `huidige` nooit
+`None` en nooit de start, dan stopt hij nooit en loopt het tabblad van de
+browser vast. Kopieer je code eerst naar een kladblok.
+:::
 
 {/* niet-draaien: startcode; de asserts falen tot voorgangers en het pad zijn ingevuld */}
 <PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
@@ -77,7 +81,7 @@ def dijkstra(graph, start):
             nieuwe = afstanden[huidige] + gewicht
             if nieuwe < afstanden[buur]:
                 afstanden[buur] = nieuwe
-                # vul aan: noteer dat huidige de voorganger is van buur
+                # vul aan: huidige is de voorganger van buur
 
     return afstanden, voorgangers
 
@@ -105,8 +109,13 @@ print("Afstanden:  ", afstanden)
 print("Voorgangers:", voorgangers)
 print("Pad A→D:    ", pad)
 
-assert voorgangers == {'B': 'A', 'C': 'A', 'D': 'B'}, f"voorgangers hoort {{'B': 'A', 'C': 'A', 'D': 'B'}} te zijn, is {voorgangers}"
-assert pad == ['A', 'B', 'D'], f"het pad hoort ['A', 'B', 'D'] te zijn, is {pad}"
+verwacht = {'B': 'A', 'C': 'A', 'D': 'B'}
+assert voorgangers == verwacht, (
+    f"voorgangers hoort {verwacht} te zijn, is {voorgangers}"
+)
+assert pad == ['A', 'B', 'D'], (
+    f"het pad hoort ['A', 'B', 'D'] te zijn, is {pad}"
+)
 print("Alle tests geslaagd.")`} />
 
 <details>
@@ -189,8 +198,13 @@ print("Afstanden:  ", afstanden)
 print("Voorgangers:", voorgangers)
 print("Pad A→D:    ", pad)
 
-assert voorgangers == {'B': 'A', 'C': 'A', 'D': 'B'}, f"voorgangers hoort {{'B': 'A', 'C': 'A', 'D': 'B'}} te zijn, is {voorgangers}"
-assert pad == ['A', 'B', 'D'], f"het pad hoort ['A', 'B', 'D'] te zijn, is {pad}"
+verwacht = {'B': 'A', 'C': 'A', 'D': 'B'}
+assert voorgangers == verwacht, (
+    f"voorgangers hoort {verwacht} te zijn, is {voorgangers}"
+)
+assert pad == ['A', 'B', 'D'], (
+    f"het pad hoort ['A', 'B', 'D'] te zijn, is {pad}"
+)
 print("Alle tests geslaagd.")
 ```
 
@@ -299,8 +313,10 @@ for node, (x, y) in posities.items():
         kleur = 'lightcoral'
     else:
         kleur = 'lightyellow'
-    ax.scatter(x, y, s=700, color=kleur, edgecolors='black', zorder=2)
-    ax.text(x, y, node, ha='center', va='center', fontsize=13, zorder=3)
+    ax.scatter(x, y, s=700, color=kleur,
+                edgecolors='black', zorder=2)
+    ax.text(x, y, node, ha='center', va='center',
+            fontsize=13, zorder=3)
 ax.set_xlim(-0.5, 1.5); ax.set_ylim(-0.5, 1.5)
 ax.axis('off')
 ax.set_title(f"Kortste pad {start} → {doel}")

@@ -69,25 +69,26 @@ print(stemmen)`} />
    Voor een nieuwe soort hoef je niets aan de code te veranderen.
 3. Python stopt met een foutmelding over `'banaan'`: de eerste keer staat
    banaan nog niet in `stemmen`, dus er is niets om 1 bij op te tellen. Zie
-   [er gaat iets mis](#er-gaat-iets-mis) hieronder.
+   [er gaat iets mis](#er-gaat-iets-mis).
 
 </details>
 
 ## Opdracht: tel de stemmen van de buren
 
-In de editor staat het zoeken van de buren uit de vorige stap. Tel de
-stemmen van die buren:
-
-```
-buren: [(1, 'banaan'), (2, 'appel'), (3, 'appel')]
-stemmen: {'banaan': 1, 'appel': 2}
-```
-
+Tel hoeveel stemmen elke soort krijgt van de `k` dichtstbijzijnde buren. In
+de editor staat het zoeken van de buren uit de vorige stap.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij print de drie buren.
 2. Tel met een dictionary `stemmen` hoeveel buren elke soort heeft, en print `stemmen`.
 3. Zet `k` op 1, op 2 en op 7, en bekijk bij elke `k` de stemmen.
+
+Verwachte uitvoer:
+
+```
+buren: [(1, 'banaan'), (2, 'appel'), (3, 'appel')]
+stemmen: {'banaan': 1, 'appel': 2}
+```
 
 <PyRunner initialCode={`def afstand(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])

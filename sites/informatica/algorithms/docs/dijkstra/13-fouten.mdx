@@ -7,31 +7,32 @@ sidebar_position: 13
 **Leerdoel:** je herkent de drie fouten die iedereen bij Dijkstra een
 keer maakt.
 
-## Edge maar één kant op zetten
+## Edge maar één kant op
 
-Geen foutmelding, wel een fout antwoord: sommige nodes blijven op `inf`
-staan terwijl ze bereikbaar zijn.
+### Wat er misgaat: een kant ontbreekt
+
+Je zet een edge maar één kant op in de dict. Geen foutmelding, wel een
+fout antwoord: sommige nodes blijven op `inf` staan terwijl ze bereikbaar
+zijn.
 
 **Oorzaak:** in een graph waar je elke weg beide kanten op mag, staat
 elke verbinding twee keer in de dict. Mis je er één, dan bestaat die
 kant voor het algoritme niet.
 
+**Oplossing:** zet de edge ook onder de andere node.
+
 ```python
-# FOUT — A → B staat alleen onder A
-graph = {
-    'A': [('B', 4)],
-    'B': [],            # ← B kan niet terug naar A
-}
+# FOUT: A → B staat alleen onder A
+graph = {'A': [('B', 4)], 'B': []}
 
 # GOED
-graph = {
-    'A': [('B', 4)],
-    'B': [('A', 4)],
-}
+graph = {'A': [('B', 4)], 'B': [('A', 4)]}
 ```
 
-**Tip:** bouw de dict op uit een lijst van edges, dan kun je geen kant
-vergeten:
+### Tip: bouw de dict uit edges
+
+Bouw de dict op uit een lijst van edges, dan kun je in een graph waar
+elke weg beide kanten op mag geen kant vergeten:
 
 ```python
 edges = [('A', 'B', 4), ('A', 'C', 2), ('B', 'D', 1), ('C', 'D', 8)]
@@ -45,10 +46,10 @@ for u, v, w in edges:
     graph[v].append((u, w))
 ```
 
-## `bezocht.add()` vergeten — oneindige lus
+## Markeren vergeten
 
-Geen foutmelding, Python loopt door zonder einde. De browser-tab
-bevriest, en de Reset-knop reageert dan ook niet meer, want Python
+Geen foutmelding, Python loopt door zonder einde. Het tabblad van de
+browser bevriest, en de Reset-knop reageert dan ook niet meer, want Python
 draait in dezelfde tab als de les. Sluit de tab en open de les opnieuw.
 Je code ben je dan kwijt, dus kopieer hem eerst naar een kladblok als je
 iets uitprobeert wat mis kan gaan.
@@ -56,39 +57,41 @@ iets uitprobeert wat mis kan gaan.
 **Oorzaak:** zonder `bezocht.add(huidige)` blijf je dezelfde node steeds
 opnieuw kiezen. De hoofdlus eindigt nooit.
 
+**Oplossing:** markeer de node zodra je hem gekozen hebt, vóór je opnieuw
+kiest. Of de regel vóór of ná de relax-lus staat, maakt niet uit: die lus
+kijkt niet naar `bezocht`.
+
+{/* niet-compileren: alleen de regels rond de fout, uit de hoofdlus */}
 ```python
-while True:
-    huidige = kies_volgende(afstanden, bezocht)
+# FOUT
     if huidige is None:
         break
-    # bezocht.add(huidige) ← VERGETEN!
     for buur, gewicht in graph[huidige]:
-        ...
+
+# GOED
+    if huidige is None:
+        break
+    bezocht.add(huidige)
+    for buur, gewicht in graph[huidige]:
 ```
 
-**Oplossing:** markeer de node zodra je hem gekozen hebt, vóór je
-opnieuw kiest:
+## Negatieve gewichten
 
-```python
-huidige = kies_volgende(afstanden, bezocht)
-if huidige is None:
-    break
-bezocht.add(huidige)
-for buur, gewicht in graph[huidige]:
-    ...
-```
+### Wat er misgaat: klaar is niet klaar
 
-Of de regel vóór of ná de relax-lus staat maakt niet uit — die lus kijkt
-niet naar `bezocht`. Dat hij er staat wel.
-
-## Negatieve gewichten gebruiken
-
-Geen foutmelding, wel een antwoord dat stilletjes niet klopt.
+Je geeft Dijkstra een graph met negatieve gewichten. Geen foutmelding,
+wel een antwoord dat stilletjes niet klopt.
 
 **Oorzaak:** Dijkstra gaat ervan uit dat een node die "klaar" is zijn
 afstand niet meer kan verbeteren. Een negatieve edge kan dat omgooien:
 een node die al klaar was wordt alsnog korter, maar zijn buren zijn al
 uitgerekend met de oude afstand.
+
+**Oplossing:** voor negatieve gewichten gebruik je Bellman-Ford, een
+ander algoritme. Routekaarten, vluchtprijzen en netwerkvertragingen
+hebben alleen positieve gewichten, en daar is Dijkstra voor.
+
+### Probeer het: een negatieve edge
 
 Dit voorbeeld heeft eenrichtingswegen: elke edge staat maar aan één
 kant in de dict. Dat moet wel, want een negatieve weg die je ook terug
@@ -147,9 +150,5 @@ Wat er gebeurde: `B` werd klaar verklaard op afstand 1 en `D` kreeg
 `B` was al klaar, dus niemand rekende `D` opnieuw uit.
 
 </details>
-
-**Oplossing:** voor negatieve gewichten gebruik je Bellman-Ford, een
-ander algoritme. Routekaarten, vluchtprijzen en netwerkvertragingen
-hebben alleen positieve gewichten, en daar is Dijkstra voor.
 
 Door naar [cheatsheet →](site:algorithms/docs/dijkstra/14-cheatsheet).

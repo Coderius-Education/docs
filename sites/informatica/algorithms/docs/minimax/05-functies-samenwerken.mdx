@@ -115,21 +115,10 @@ def plus_drie(x):
 print(plus_drie(verdubbel(5)))
 print(verdubbel(plus_drie(5)))`} />
 
-## Een functie kan ook een **andere functie aanroepen**
+## Functie roept functie
 
 Tot nu toe zagen we functies stapelen *bij de aanroep*. Maar een functie
-mag binnenin zijn body ook een andere aanroepen:
-
-```python
-def kwadraat(x):
-    return x * x
-
-def som_van_kwadraten(a, b):
-    return kwadraat(a) + kwadraat(b)
-```
-
-`som_van_kwadraten` doet zelf weinig: hij laat `kwadraat` het werk doen.
-Dat heet **compositie**, een functie bouwen uit andere functies.
+kan binnenin zijn body ook een **andere functie aanroepen**:
 
 <PyRunner initialCode={`def kwadraat(x):
     return x * x
@@ -138,6 +127,9 @@ def som_van_kwadraten(a, b):
     return kwadraat(a) + kwadraat(b)
 
 print(som_van_kwadraten(3, 4))      # 25  (9 + 16)`} />
+
+`som_van_kwadraten` doet zelf weinig: hij laat `kwadraat` het werk doen.
+Dat heet **compositie**, een functie bouwen uit andere functies.
 
 ## Waarom dit relevant is
 
@@ -153,8 +145,6 @@ aan:
 
 Elke functie is op zichzelf klein; samen zijn ze een AI.
 
-## Eén gouden regel: één functie, één taak
-
 Een goede functie doet één ding. `winner` zegt wie heeft gewonnen: hij
 print niets, verandert het bord niet en speelt zelf geen zet. Hij geeft
 alleen `"X"`, `"O"` of `None` terug.
@@ -163,8 +153,6 @@ Door je code in zulke kleine functies te splitsen kun je ze los testen:
 `winner` op een vol bord, op een leeg bord, op een bord waar alleen de
 diagonaal vol is. Elk geval apart, zonder dat de hele AI hoeft te
 draaien.
-
-## Wat nu?
 
 De eerste functie is de makkelijkste: `initial_state()`, een leeg bord
 teruggeven.

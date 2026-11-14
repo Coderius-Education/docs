@@ -24,6 +24,11 @@ Een functie die de **index** teruggeeft van de plek waar de kleinste
 waarde staat. Niet de waarde zelf: om straks te kunnen ruilen moet je
 weten wáár het kleinste staat.
 
+Dat gaat bijna net zo als
+[vind het maximum](site:algorithms/docs/vind-maximum/01-concept), met twee
+verschillen: je houdt een index bij in plaats van een waarde, en je
+vergelijkt met `<` in plaats van `>`.
+
 ## Voorspel
 
 Wat denk je dat dit print?
@@ -58,6 +63,8 @@ print(index_van_kleinste([3, 3, 3]))
 
 ## Run
 
+Draai de code en kijk of je voorspelling klopt.
+
 <PyRunner initialCode={`def index_van_kleinste(lijst):
     min_index = 0
     for i, waarde in enumerate(lijst):
@@ -69,9 +76,9 @@ print(index_van_kleinste([5, 2, 8, 1, 4]))
 print(index_van_kleinste([10, 20, 30]))
 print(index_van_kleinste([3, 3, 3]))`} />
 
-## Vergelijking met *vind het maximum*
+## Naast vind het maximum
 
-Bijna hetzelfde:
+Zo verschilt deze functie van vind het maximum:
 
 | | vind max | vind min-index |
 |---|---|---|
@@ -80,12 +87,13 @@ Bijna hetzelfde:
 | Update | `maximum = waarde` | `min_index = i` |
 | Return | `maximum` | `min_index` |
 
-Twee verschillen dus: je houdt een index bij in plaats van een waarde, en
-je vergelijkt met `<` in plaats van `>`. Het patroon eronder is hetzelfde.
+Het patroon eronder is hetzelfde.
 
 ## Experimenteer
 
-Probeer ook negatieve lijsten en lege lijsten:
+De code roept de functie aan op een lijst met negatieve getallen, een
+lijst van één getal en een lege lijst. Voorspel eerst wat elke regel print,
+en druk dan op Voer uit.
 
 <PyRunner initialCode={`def index_van_kleinste(lijst):
     min_index = 0
@@ -94,20 +102,28 @@ Probeer ook negatieve lijsten en lege lijsten:
             min_index = i
     return min_index
 
-print(index_van_kleinste([-3, -1, -7]))    # verwacht: 2
-print(index_van_kleinste([42]))             # verwacht: 0
-print(index_van_kleinste([]))               # verwacht: 0  (geen crash: de lus doet niets)`} />
+print(index_van_kleinste([-3, -1, -7]))
+print(index_van_kleinste([42]))
+print(index_van_kleinste([]))`} />
+
+<details>
+<summary>Wat zie je?</summary>
+
+```
+2
+0
+0
+```
 
 Een lege lijst geeft ook `0`, en dat is een leugen: index 0 bestaat niet.
 De functie crasht niet, want `lijst[min_index]` wordt alleen gelezen in de
 lus, en die doet bij een lege lijst nul rondes. Voor selection sort maakt
 het niet uit, die roept de functie nooit met een lege lijst aan.
 
-## Wat nu nog mist
+</details>
 
 Je kunt nu het kleinste vinden in de hele lijst. Selection sort moet ook
-kunnen zoeken vanaf een bepaalde positie, en dat is bouwsteen 3.
-
-Eerst de andere helft van het algoritme: swappen.
+kunnen zoeken vanaf een bepaalde positie; dat is bouwsteen 3. Eerst de
+andere helft van het algoritme: swappen.
 
 Door naar [bouwsteen 2: swappen](site:algorithms/docs/selection-sort/bouwen/05-swap).

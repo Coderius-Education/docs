@@ -45,9 +45,24 @@ Of een vakje op de weg ligt, vraag je met `(rij, kolom) in weg`: `in` werkt op
 een lijst van tuples net als op een lijst van woorden. De `S` en de `E` laat
 je staan, dus een `*` komt alleen op een vakje met een punt.
 
-## Opdracht: teken de weg
+## Opdracht
 
-Print het doolhof opnieuw, met een `*` op elk vrij vakje van de weg:
+### De opdracht
+
+Een lijst met vakjes is lastig te lezen. In het doolhof zelf zie je de weg in
+één oogopslag. Je tekent de weg: je print het doolhof opnieuw, met een `*` op
+elk vrij vakje van de weg.
+
+### Aan de slag
+
+In de editor staan het doolhof en de weg uit de vorige stap.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print het doolhof, nog zonder weg.
+2. Plak in `regel = ""` met `for kolom in range(len(doolhof[0])):` elk teken van de rij, en print `regel`.
+3. Plak een `*` in plaats van het teken als `(rij, kolom)` in `weg` staat en er een punt staat.
+
+Verwachte uitvoer:
 
 ```
 S*....
@@ -57,14 +72,6 @@ S*....
 #****E
 ```
 
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print het doolhof, nog zonder weg.
-2. Bouw elke rij zelf op: zet in de loop `regel = ""`, loop met `for kolom in range(len(doolhof[0])):` langs de kolommen, plak elk teken `doolhof[rij][kolom]` achter `regel`, en print `regel` in plaats van `doolhof[rij]`. Je ziet hetzelfde doolhof.
-3. Plak een `*` in plaats van het teken als `(rij, kolom)` in `weg` staat en er een punt op dat vakje staat. Nu zie je de weg.
-
-In de editor staat de weg uit de vorige stap.
-
 <PyRunner initialCode={`doolhof = [
     "S.....",
     "#.##..",
@@ -72,7 +79,8 @@ In de editor staat de weg uit de vorige stap.
     "..###.",
     "#....E",
 ]
-weg = [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5)]
+weg = [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1),
+        (4, 1), (4, 2), (4, 3), (4, 4), (4, 5)]
 
 for rij in range(len(doolhof)):
     print(doolhof[rij])`} />

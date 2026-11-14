@@ -5,18 +5,13 @@ sidebar_label: "1. Een klasse"
 
 # Een klasse
 
-Bij Nim die leert stonden de tabel `score` en de functies die hem gebruiken
-los van elkaar. In het project Nim van CS50 AI zitten ze samen in een
-**klasse**: één ding met een tabel en de functies die erbij horen. Dit
-project oefent dat op een ander spel: een muis in een gang, die leert waar de
-kaas ligt. Je begint met de klasse zelf. Nieuw zijn `class`, `__init__` en
-`self`.
+De tabel en de functies van Nim die leert zitten bij CS50 AI samen in een
+**klasse**. Die oefen je met een muis die de kaas zoekt.
 
 :::info
-Je gebruikt in dit project `class`, `__init__` en `self` uit
-[Je eerste klasse](site:python/docs/klassen/15a-je-eerste-klasse), een
-attribuut met een beginwaarde uit
-[Attributen veranderen](site:python/docs/klassen/15c-attributen-veranderen),
+Je gebruikt hier `class`, `__init__` en `self` uit
+[Je eerste klasse](site:python/docs/klassen/15a-je-eerste-klasse), attributen
+uit [Attributen veranderen](site:python/docs/klassen/15c-attributen-veranderen),
 methoden uit [Je eerste methode](site:python/docs/klassen/15d-je-eerste-methode)
 en [Methoden met return](site:python/docs/klassen/15f-methoden-met-return),
 `random.random()` uit
@@ -107,22 +102,30 @@ print(snuf.vakje, snuf.q)`} />
 
 </details>
 
-## Opdracht: twee muizen
+## Opdracht
 
-Geef de muis een naam en een teller voor zijn stappen. Laat `piep` twee
-stappen naar rechts zetten, en maak een tweede muis `snuf` in vakje 1:
+### De opdracht
+
+Elke muis die je met `Muis(…)` maakt, heeft zijn eigen attributen. Dat laat
+je zien met twee muizen. Je geeft de muis een naam en een teller voor zijn
+stappen, laat `piep` twee stappen naar rechts zetten, en maakt een tweede muis
+`snuf` in vakje 1. Zijn teller blijft op 0 staan.
+
+### Aan de slag
+
+In de editor staat een klasse `Muis` met alleen een vakje.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet in welk vakje de muis `piep` zit.
+2. Geef `__init__` een parameter `naam` en een attribuut `stappen` dat op 0 begint. Print ze allebei.
+3. Zet `piep` twee keer een vakje naar rechts en tel de stappen. Maak dan `snuf` in vakje 1.
+
+Verwachte uitvoer:
 
 ```
 Piep zit in vakje 4 na 2 stappen
 Snuf zit in vakje 1 na 0 stappen
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: je ziet in welk vakje `piep` zit.
-2. Geef `__init__` een tweede parameter `naam`, bewaar hem in de muis, en print de naam in plaats van het woord piep.
-3. Geef elke muis een attribuut `stappen` dat op 0 begint. Zet `piep` twee keer een vakje naar rechts, en tel elke keer een stap bij zijn `stappen` op.
-4. Maak een tweede muis `snuf` in vakje 1, en print hem ook.
 
 <PyRunner initialCode={`class Muis:
     def __init__(self, vakje):
@@ -173,7 +176,7 @@ daar een methode van.
 
 ## Er gaat iets mis
 
-{/* foutmelding-van: fout-helft */}
+{/* foutmelding-van: class Muis:\n    def __init__(self, vakje):\n        self.vakje = vakje\n        q = {}\npiep = Muis(2)\npiep.q[(2, "rechts")] = 0.5 */}
 ```
 AttributeError: 'Muis' object has no attribute 'q'
 ```
@@ -183,24 +186,17 @@ variabele die alleen in `__init__` bestaat, en krijgt de muis zelf geen tabel.
 
 **Oplossing:** zet `self.` voor elk attribuut dat de muis moet onthouden.
 
+{/* niet-compileren: fragment; alleen de regels van __init__ die veranderen */}
 ```python
 # FOUT
-class Muis:
     def __init__(self, vakje):
         self.vakje = vakje
         q = {}
 
-piep = Muis(2)
-piep.q[(2, "rechts")] = 0.5
-
 # GOED
-class Muis:
     def __init__(self, vakje):
         self.vakje = vakje
         self.q = {}
-
-piep = Muis(2)
-piep.q[(2, "rechts")] = 0.5
 ```
 
 Meer uitleg: [Je eerste klasse](site:python/docs/klassen/15a-je-eerste-klasse).

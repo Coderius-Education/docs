@@ -25,6 +25,13 @@ code.
 
 ## Bouw en test
 
+:::caution
+`pagerank` in de code is een while-loop. Verander je er iets aan waardoor
+het verschil nooit kleiner wordt dan `epsilon`, dan stopt hij nooit en
+loopt het tabblad van de browser vast. Kopieer je code eerst naar een
+kladblok.
+:::
+
 {/* niet-draaien: startcode; de simulatie schrijft de leerling zelf */}
 <PyRunner rows={18} initialCode={`import random
 
@@ -35,7 +42,7 @@ WEB = {
     "D": {"C"},
 }
 
-# De exacte berekening uit de vorige stappen (gegeven, ter vergelijking):
+# De exacte berekening uit de vorige stappen, ter vergelijking:
 def pagerank(web, d=0.85, epsilon=1e-9):
     n = len(web)
     rank = {}
@@ -68,7 +75,7 @@ def random_surfer(web, d=0.85, n=50000, seed=42):
         tel[huidig] += 1
         links = list(web[huidig])
         # Vul aan: bepaal de volgende pagina 'huidig'.
-        # - met kans d en als er links zijn: volg een willekeurige link
+        # - met kans d, als er links zijn: volg een link
         # - anders: spring naar een willekeurige pagina
         ...
     verdeling = {}
@@ -81,12 +88,14 @@ def random_surfer(web, d=0.85, n=50000, seed=42):
 exact = pagerank(WEB)
 schatting = random_surfer(WEB, n=50000, seed=42)
 for p in WEB:
-    assert abs(schatting[p] - exact[p]) < 0.02, (p, schatting[p], exact[p])
+    verschil = abs(schatting[p] - exact[p])
+    assert verschil < 0.02, (p, schatting[p], exact[p])
 assert round(sum(schatting.values()), 6) == 1.0
 
 print("De random surfer benadert PageRank ✓")
 for p in sorted(WEB):
-    print(f"    {p}: simulatie {schatting[p]:.4f}  vs  exact {exact[p]:.4f}")`} />
+    s, e = schatting[p], exact[p]
+    print(f"    {p}: simulatie {s:.4f}  vs  exact {e:.4f}")`} />
 
 <details>
 <summary>Antwoord</summary>

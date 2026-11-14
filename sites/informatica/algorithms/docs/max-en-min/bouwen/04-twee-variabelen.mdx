@@ -14,14 +14,11 @@ sidebar_position: 4
 **Leerdoel:** je kunt twee accumulators in één keer initialiseren, beide
 op `lijst[0]`.
 
-## Wat we willen
-
-Twee variabelen — `klein` en `groot` — die allebei starten op een veilige
-waarde (een waarde die zeker in de lijst staat).
-
 ## Voorspel
 
-Wat denk je dat dit print?
+Je wilt twee variabelen, `klein` en `groot`, die allebei starten op een
+veilige waarde: een waarde die zeker in de lijst staat. Wat denk je dat dit
+print?
 
 ```python
 lijst = [5, 2, 8, 1, 7, 4]
@@ -51,7 +48,7 @@ klein = lijst[0]
 groot = lijst[0]
 print(klein, groot)`} />
 
-## Pythonische korte notatie
+## Korter opschrijven
 
 Python laat je op één regel meerdere namen dezelfde waarde geven:
 
@@ -66,7 +63,7 @@ hetzelfde.
 klein = groot = lijst[0]
 print(klein, groot)`} />
 
-## Waarom niet `klein = 999, groot = -999`?
+## Waarom niet 999?
 
 Soms zie je code als:
 
@@ -83,16 +80,21 @@ antwoord — fout.
 
 ## Experimenteer
 
-Test wat er gebeurt met `lijst[0]` op verschillende lijsten:
+De code zet `klein` en `groot` op `lijst[0]` voor vier lijsten. Voorspel
+eerst de startwaardes, en zet er daarna een eigen lijst bij.
 
-<PyRunner initialCode={`for lijst in [[5, 2, 8, 1, 7, 4], [-3, -1, -7], [42], [100, 100, 100]]:
+<PyRunner initialCode={`lijsten = [
+    [5, 2, 8, 1, 7, 4],
+    [-3, -1, -7],
+    [42],
+    [100, 100, 100],
+]
+for lijst in lijsten:
     klein = groot = lijst[0]
     print(f"lijst={lijst} → start: klein={klein}, groot={groot}")`} />
 
-## Wat nu nog mist
-
-We hebben startwaardes. Maar de variabelen veranderen nog niet — we doen
-nog niets met de rest van de lijst. In de volgende stap voegen we de
+Je hebt nu startwaardes, maar de variabelen veranderen nog niet: de rest
+van de lijst doet nog niet mee. In de volgende stap voeg je de
 **updates** toe.
 
 Door naar [bouwsteen 2: twee updates per element](site:algorithms/docs/max-en-min/bouwen/05-twee-updates).

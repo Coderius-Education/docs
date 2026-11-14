@@ -21,7 +21,7 @@ winner, terminal, utility, max_value, min_value
 functies in acht bouwstenen. De laatste bouwsteen, `minimax`, komt op de
 volgende pagina; eerst breng je die negen bij elkaar.
 
-## Waarom uit de PyRunner stappen?
+## Waarom lokaal?
 
 Tot nu toe stonden je functies op losse pagina's. Om te leren werkt dat
 prima, maar `minimax` heeft alle negen nodig, en in de PyRunner betekent
@@ -29,9 +29,9 @@ dat elke keer opnieuw plakken. De browser kan een lange minimax-run
 bovendien niet onderbreken, en je hebt geen echt bestand met je werk.
 Twee opties lossen dat op; kies wat bij jou past.
 
-## Optie A — verzamel-PyRunner (alleen als noodoplossing)
+## Optie A, in de browser
 
-Voor wie écht geen Python lokaal kan installeren (bv. op een
+Dit is alleen een noodoplossing, voor wie écht geen Python lokaal kan installeren (bv. op een
 Chromebook waar je geen software mag installeren). Plak je negen functies
 in de PyRunner hieronder en print een sanity-check: zo zie je dat ze
 samen werken. Op de volgende pagina staat voor deze route een eigen
@@ -43,7 +43,8 @@ lokale route.
 import math
 
 
-# Plak hier je negen functies (initial_state t/m min_value) uit de bouwstenen:
+# Plak hier je negen functies uit de bouwstenen
+# (initial_state t/m min_value):
 
 def initial_state():
     # vul aan
@@ -91,12 +92,13 @@ print("Aantal mogelijke zetten:", len(actions(bord)))`} />
 Als die output klopt (3×3 None, "X" aan zet, 9 zetten), zijn je negen
 functies klaar voor minimax.
 
-## Optie B — lokaal in VS Code (aanbevolen)
+## Optie B, in VS Code
 
-Zo werken programmeurs ook: één bestand, in een eigen editor. Je
-installeert één keer wat, en daarna heb je een echt Python-project.
+### Python en VS Code installeren
 
-### Stap 1 — Python en VS Code installeren
+Dit is de aanbevolen route. Zo werken programmeurs ook: één bestand, in
+een eigen editor. Je installeert één keer wat, en daarna heb je een
+echt Python-project.
 
 Volg de Coderius-tutorial [Python in VS Code](site:editor/python).
 Daar wordt stap voor stap uitgelegd hoe je:
@@ -108,7 +110,7 @@ Daar wordt stap voor stap uitgelegd hoe je:
 
 Dat is eenmalig werk.
 
-### Stap 2 — een project-map maken
+### Een projectmap maken
 
 Open VS Code en maak een nieuwe map aan voor dit project, bijvoorbeeld:
 
@@ -119,7 +121,7 @@ minimax-tictactoe/
 
 `tictactoe.py` is een leeg bestand voor je code.
 
-### Stap 3 — je negen functies in `tictactoe.py` plakken
+### Je negen functies plakken
 
 Open elke bouwsteen-pagina van deze site, kopieer **jouw
 oplossing** uit elke PyRunner, en plak ze onder elkaar in
@@ -137,7 +139,7 @@ import copy
 import math
 ```
 
-### Stap 4 — sanity check
+### Een sanity check
 
 Plak helemaal onderaan `tictactoe.py` een paar regels om te checken dat
 alles laadt:
@@ -149,7 +151,10 @@ print("Wie is aan zet?", player(bord))
 print("Aantal mogelijke zetten:", len(actions(bord)))
 ```
 
-Open een **terminal** in VS Code via het menu **Terminal** → **New
+### Het bestand draaien
+
+Heb je de sanity check onderaan `tictactoe.py` gezet? Open dan een
+**terminal** in VS Code via het menu **Terminal** → **New
 Terminal** en typ:
 
 ```
@@ -166,8 +171,6 @@ Aantal mogelijke zetten: 9
 
 Werkt het? Haal de sanity-check straks weer weg, want `minimax` komt op
 die plek.
-
-## Tijd voor de laatste bouwsteen
 
 Je hebt nu alles bij elkaar. Op de volgende pagina schrijf je `minimax`,
 direct in je lokale `tictactoe.py` of in de noodoplossing van optie A.

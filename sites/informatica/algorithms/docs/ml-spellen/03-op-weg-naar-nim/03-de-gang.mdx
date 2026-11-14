@@ -107,20 +107,29 @@ for vakje, actie, nieuw, beloning in wandeling:
 
 </details>
 
-## Opdracht: een blinde muis
+## Opdracht
 
-Laat de muis 1000 keer blind wandelen, en tel hoe vaak hij bij de kaas
-uitkomt:
+### De opdracht
+
+Een muis die niets weet, loopt blind: links of rechts, wat het toeval zegt.
+Hoe vaak vindt hij zo de kaas, en hoe vaak loopt hij in de val? Je laat hem
+1000 keer blind wandelen, en telt hoe vaak hij bij de kaas uitkomt. Dat is
+het getal waar een muis die leert boven moet komen.
+
+### Aan de slag
+
+In de editor wandelt de muis één keer blind.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet de laatste stap van één wandeling.
+2. Haal met `vakje, actie, nieuw, beloning = wandeling[-1]` de stap uit elkaar, en print `nieuw == 4`.
+3. Doe 1000 wandelingen, en tel hoe vaak de muis de kaas vindt.
+
+Verwachte uitvoer:
 
 ```
 kaas: 504 van de 1000
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: je ziet de laatste stap van één wandeling.
-2. Haal met `vakje, actie, nieuw, beloning = wandeling[-1]` de delen van die stap uit elkaar, en print `nieuw == 4`: is de muis bij de kaas?
-3. Doe 1000 wandelingen, en tel hoe vaak de muis de kaas vindt.
 
 <PyRunner verborgen="muis-gang" initialCode={`import random
 

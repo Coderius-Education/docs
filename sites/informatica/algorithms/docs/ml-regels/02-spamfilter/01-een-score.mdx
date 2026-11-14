@@ -7,9 +7,8 @@ sidebar_label: "1. Een score"
 
 Je mailbox krijgt elke dag berichten die je niet wilt: reclame, nep-prijzen,
 pogingen om je wachtwoord te stelen. Een spamfilter haalt ze eruit. Je
-eerste spamfilter werkt met een lijst verdachte woorden, en elk verdacht
-woord in een bericht levert een punt op. In deze eerste stap tel je die
-punten.
+eerste filter geeft een bericht een punt voor elk verdacht woord, en die
+punten tel je hier.
 
 :::info
 In dit project gebruik je een lijst en een `for`-loop uit
@@ -94,10 +93,18 @@ print("score:", score)`} />
 
 </details>
 
-## Opdracht: welke woorden vond het filter?
+## Opdracht
 
-Laat het filter printen welke verdachte woorden het vond, en daarna de
-score. Met het bericht uit de editor wordt de uitvoer:
+Welke woorden vond het filter? Laat het die printen, en daarna de score. In de
+editor loopt het filter alleen nog de lijst `verdacht` langs.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet elk woord uit `verdacht`, ook de woorden die niet in het bericht staan.
+2. Zet een `if` om de `print`, zodat alleen de woorden uit het bericht verschijnen. Zet `"gevonden:"` ervoor.
+3. Zet `score = 0` boven de loop, tel er in de `if` 1 bij op, en print de score na de loop.
+4. Verander het bericht in `"je nieuwe nummer is binnen"`. Nu vindt het filter alleen `nu`, en is de score 1.
+
+Verwachte uitvoer:
 
 ```
 gevonden: gratis
@@ -105,13 +112,6 @@ gevonden: klik
 gevonden: nu
 score: 3
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: je ziet elk woord uit `verdacht`, ook de woorden die niet in het bericht staan.
-2. Zet een `if` om de `print`, zodat alleen de woorden uit het bericht verschijnen. Zet `"gevonden:"` ervoor in de `print`.
-3. Zet `score = 0` boven de loop, tel er in de `if` 1 bij op, en print de score na de loop.
-4. Verander het bericht in `"je nieuwe nummer is binnen"`. Nu vindt het filter alleen `nu`, en is de score 1.
 
 <PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
 bericht = "klik nu en win een gratis telefoon"

@@ -72,18 +72,16 @@ plt.show()`} />
 
 </details>
 
-## Opdracht: twee dobbelstenen
+## Opdracht \{#opdracht-twee-dobbelstenen}
 
-Gooi 6000 keer met twee dobbelstenen, en tel hoe vaak elke som voorkomt, van
-2 tot en met 12. Print per som hoe vaak hij voorkwam, en teken het als
-staafdiagram. Welke som komt het vaakst?
-
+Twee dobbelstenen: gooi 6000 keer met twee stenen, en tel hoe vaak elke som van
+2 tot en met 12 voorkomt. Welke som komt het vaakst?
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij gooit één keer met twee stenen.
 2. Zet het gooien in een loop van 10 keer, en print alleen de som.
-3. Tel de sommen in een dictionary `telling`, en print die na de loop. Zet de loop daarna op 6000, en haal de print van de som weg.
-4. Print per som van 2 tot en met 12 een regel, en zet de drie regels matplotlib uit het onderzoek eronder.
+3. Tel de sommen in een dictionary `telling` en print hem. Zet de loop dan op 6000, zonder de print van de som.
+4. Print per som een regel, en teken de staven met de drie regels matplotlib uit Zo werkt het.
 
 <PyRunner initialCode={`import random
 
@@ -94,9 +92,8 @@ print(eerste, tweede, eerste + tweede)`} />
 <details>
 <summary>Tip</summary>
 
-Tel je zoals in het spamfilter, met `if som in telling`, dan werkt het, maar
-staan de sommen in de volgorde waarin ze voor het eerst vielen. Zet je vóór de
-loop elke som van 2 tot en met 12 op 0, dan staan ze op volgorde.
+Staan de sommen niet op volgorde? Zet vóór de loop elke som van 2 tot en met
+12 op 0, met een loop zoals in Voorspel.
 
 </details>
 

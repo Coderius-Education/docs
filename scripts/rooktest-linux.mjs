@@ -281,62 +281,47 @@ try {
     eis((await summary.count()) === 1, `${await summary.count()} zichtbare antwoorden`);
     await summary.click();
     const blok = summary.locator('xpath=..');
-    // Het <details> van Docusaurus klapt open met een animatie.
+    // Het <details> van Docusaurus klapt open met een animatie, en daarna
+    // krijgt een antwoord dat het scherm te lang maakt een eigen vak
+    // (openBlokInVak in LesTabs/speling.ts, 400 ms na de toggle).
     await joker.waitForFunction(
       (el) => el.open && el.getBoundingClientRect().height > 100,
       await blok.elementHandle(),
     );
-    await joker.waitForTimeout(400);
-    const terminalTop = () =>
-      joker.evaluate(() =>
-        Math.round(document.querySelector('[data-terminal="2.4.a"]').getBoundingClientRect().top),
-      );
-    const ervoor = await terminalTop();
-    const geschoven = await blok.evaluate((el) => {
-      const voor = window.scrollY;
-      window.scrollBy(0, el.getBoundingClientRect().bottom - window.innerHeight);
-      return window.scrollY - voor;
-    });
-    await joker.waitForTimeout(100);
+    await joker.waitForTimeout(700);
+    // Eerst schoof het antwoord de pagina, en bleef de terminal in beeld
+    // doordat hij plakte. Nu past het paneel met het antwoord open: wat niet
+    // past, schuift in het antwoord zelf. Dan hoeft de pagina niet te
+    // schuiven, en staan de terminal en zijn doelen heel in beeld.
     const maat = await joker.evaluate(() => {
-      const el = document.querySelector('[data-terminal="2.4.a"]');
+      const paneel = document.querySelector('[data-les-tab]:not([hidden])');
+      const term = document.querySelector('[data-terminal="2.4.a"]');
       const nav = document.querySelector('.navbar').getBoundingClientRect();
-      // Waar de terminal naast de les plakt (LinuxTerminal/styles.module.css).
-      const gast = el.closest('[data-les-naast-gast]');
+      const antwoord = [...paneel.querySelectorAll('details[open]')].pop();
+      const vak = [...(antwoord?.querySelectorAll('*') ?? [])].find((el) => el.style.maxHeight);
       return {
-        top: Math.round(el.getBoundingClientRect().top),
-        navbar: Math.round(nav.bottom),
+        paneel: Math.round(paneel.getBoundingClientRect().bottom),
         hoog: window.innerHeight,
-        plakplek: gast ? Number.parseFloat(getComputedStyle(gast).top) : Number.NaN,
+        navbar: Math.round(nav.bottom),
+        doelen: [...term.querySelectorAll('li')].map((li) => {
+          const r = li.getBoundingClientRect();
+          return { top: Math.round(r.top), bottom: Math.round(r.bottom) };
+        }),
+        schuift: vak ? getComputedStyle(vak).overflowY : null,
       };
     });
     eis(
-      maat.top >= maat.navbar - 1 && maat.top < maat.hoog,
-      `de bovenkant van de terminal staat op ${maat.top}px (navbar tot ${maat.navbar}px, venster ${maat.hoog}px, ${geschoven}px geschoven)`,
+      maat.paneel <= maat.hoog,
+      `met het antwoord open eindigt het paneel op ${maat.paneel}px, het venster is ${maat.hoog}px`,
     );
-    // Binnen het venster is niet genoeg: in 2.4.a schuift het antwoord de
-    // pagina maar 90 pixels, en dan staat ook een terminal die niet plakt
-    // nog net onder de navbar. Hij schuift mee tot zijn plakplek, en niet
-    // verder.
-    //
-    // Dat bewijst alleen iets als de pagina verder schuift dan de afstand
-    // tot de plakplek: anders staat een terminal die niet plakt op dezelfde
-    // plek (ervoor - geschoven), en slaagt deze controle stil. Een korter
-    // antwoord of een terminal die hoger begint, laat hem dan falen.
+    eis(maat.doelen.length > 0, 'de terminal heeft geen doelen');
+    const weg = maat.doelen.filter((d) => d.top < maat.navbar - 1 || d.bottom > maat.hoog);
+    eis(weg.length === 0, `${weg.length} van de ${maat.doelen.length} doelen buiten beeld`);
     eis(
-      Number.isFinite(maat.plakplek),
-      'de terminal staat niet in een plakkende kolom naast de les (data-les-naast-gast)',
+      maat.schuift === null || maat.schuift === 'auto',
+      `het vak van het antwoord schuift niet (${maat.schuift})`,
     );
-    eis(
-      geschoven > ervoor - maat.plakplek,
-      `de pagina schoof maar ${geschoven}px, de terminal stond ${ervoor - maat.plakplek}px onder zijn plakplek (${maat.plakplek}px): of hij plakt, is zo niet te zien`,
-    );
-    const verwacht = Math.max(ervoor - geschoven, Math.min(ervoor, maat.plakplek));
-    eis(
-      Math.abs(maat.top - verwacht) <= 2,
-      `de terminal plakt niet: hij ging van ${ervoor}px naar ${maat.top}px, niet naar ${verwacht}px (${geschoven}px geschoven)`,
-    );
-    return `${geschoven}px geschoven, terminal van ${ervoor}px naar ${maat.top}px (plakplek ${maat.plakplek}px), navbar tot ${maat.navbar}px`;
+    return `paneel tot ${maat.paneel}px, ${maat.doelen.length} doelen in beeld${maat.schuift ? ', het antwoord schuift in zijn vak' : ''}`;
   });
   await joker.context().close();
 

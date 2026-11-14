@@ -170,3 +170,60 @@ describe('de tabel van binair zoeken', () => {
     expect(tekst).toContain('⌊log₂(n)⌋ + 1');
   });
 });
+
+/** Het kale codeblok direct onder een alinea "Verwachte uitvoer:". */
+function verwachteUitvoer(tekst: string): string[] {
+  const m = tekst.match(/^Verwachte uitvoer:\n\n```\n([\s\S]*?)\n```/m);
+  if (!m) throw new Error('geen "Verwachte uitvoer:" met een codeblok');
+  return m[1].split('\n');
+}
+
+// De aanpassen-pagina van binair zoeken printte "verwacht: (0, ?)": de
+// leerling zag niet wat zijn teller moest geven. Nu staat de verwachte
+// uitvoer bij het veld, en die leggen we naast de trace: de index en het
+// aantal vergelijkingen (= rondes van de while-lus) in de lijst 1 t/m 100.
+describe('de verwachte uitvoer van binair zoeken aanpassen', () => {
+  const tekst = readFileSync(`${DOCS}binair-zoeken/10-aanpassen.mdx`, 'utf8');
+  const doelen = [...tekst.matchAll(/^print\(binair_zoek_met_stappen\(getallen, (\d+)\)\)/gm)].map(
+    (m) => Number(m[1]),
+  );
+  const getallen = Array.from({ length: 100 }, (_, i) => i + 1);
+
+  it('elke test in de startcode heeft een regel verwachte uitvoer', () => {
+    expect(doelen.length).toBe(4);
+    expect(verwachteUitvoer(tekst).length).toBe(doelen.length);
+  });
+
+  it.each([0, 1, 2, 3])('regel %i is (index, stappen) van de trace', (i) => {
+    const laatste = traceBinarySearch(getallen, doelen[i]).at(-1);
+    expect(verwachteUitvoer(tekst)[i]).toBe(`(${laatste?.result}, ${laatste?.stats.comparisons})`);
+  });
+});
+
+// Bouw zelf zocht doel -1: dan gaat binair zoeken steeds naar links, en dat
+// is bij een even lengte de kleinere helft. De tabel gaf 9 vergelijkingen bij
+// 1000 elementen, terwijl stelling 2 van hetzelfde hoofdstuk "maximaal 10"
+// zegt. Het doel is nu n, groter dan alles in de lijst: het slechtste geval.
+describe('de tabel van binair zoeken bouw zelf', () => {
+  const tekst = readFileSync(`${DOCS}binair-zoeken/11-zelf-bouwen.mdx`, 'utf8');
+
+  it('de startcode zoekt een doel rechts van de lijst', () => {
+    expect(tekst).toMatch(/^ {4}doel = n\b/m);
+  });
+
+  it('de verwachte uitvoer en de tabel bij Wat zie je? zijn gelijk', () => {
+    const wat = tekst.slice(tekst.indexOf('## Wat zie je?'));
+    const tabel = wat.match(/```\n([\s\S]*?)\n```/)?.[1].split('\n');
+    expect(tabel).toEqual(verwachteUitvoer(tekst));
+  });
+
+  it('elke rij telt lineair n en binair het slechtste geval van de trace', () => {
+    const rijen = verwachteUitvoer(tekst).slice(1);
+    expect(rijen.length).toBeGreaterThanOrEqual(3);
+    for (const rij of rijen) {
+      const [n, lineair, binair] = rij.trim().split(/\s+/).map(Number);
+      expect(lineair).toBe(n);
+      expect(binair).toBe(stappenInHetSlechtsteGeval(n));
+    }
+  });
+});

@@ -809,8 +809,12 @@ function bestandenNaastElkaar(kinderen) {
   return uit;
 }
 
-/** De oefenvelden die een doel naast hun uitvoer kunnen tonen (useLesDoel). */
-const VELDEN_MET_DOEL = ['CodeExercise'];
+/**
+ * De oefenvelden die een doel naast hun uitvoer kunnen tonen (useLesDoel): de
+ * CodeExercise van python-runner en de PyRunner van algoritmes. In de route
+ * machine learning stond de verwachte uitvoer op een ander scherm dan het veld.
+ */
+const VELDEN_MET_DOEL = ['CodeExercise', 'PyRunner'];
 
 const isVeld = (node) => node.type === 'mdxJsxFlowElement' && VELDEN_MET_DOEL.includes(node.name);
 

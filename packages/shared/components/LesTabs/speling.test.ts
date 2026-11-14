@@ -1,9 +1,12 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from 'vitest';
+import { MARGE } from './pasHoogte';
 import {
   KLEINSTE_NA,
   KLEINSTE_VAK,
   NOODGREEP,
+  blokHoogte,
+  openBlokInVak,
   plaatjeHoogte,
   speling,
   vakHoogte,
@@ -265,5 +268,76 @@ describe('verdeelSpeling', () => {
     verdeelSpeling(wortel);
     expect(uitleg.style.maxHeight).toBe('288px');
     expect(vak.style.maxHeight).toBe('');
+  });
+});
+
+// Een open tip of antwoord viel onder de rand: in de route machine learning
+// op elk scherm met een veld 85 tot 128 pixels, bij binair zoeken tot 667.
+describe('openBlokInVak', () => {
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  const les = (inhoud: string, bottom: number) => {
+    document.body.innerHTML = `<div id="wortel"><section data-les-tab="a">${inhoud}</section></div>`;
+    const wortel = document.getElementById('wortel') as HTMLElement;
+    const paneel = wortel.querySelector('[data-les-tab]') as HTMLElement;
+    paneel.getBoundingClientRect = () => ({ bottom }) as DOMRect;
+    Object.defineProperty(window, 'innerHeight', { value: 720, configurable: true });
+    Object.defineProperty(window, 'innerWidth', { value: 1280, configurable: true });
+    return wortel;
+  };
+  const blok = (id: string, open = true) =>
+    `<details${open ? ' open' : ''}><summary>Tip</summary><div><div id="${id}">tekst</div></div></details>`;
+  const hoog = (id: string, offsetHeight: number) =>
+    Object.defineProperty(document.getElementById(id), 'offsetHeight', {
+      value: offsetHeight,
+      configurable: true,
+    });
+
+  it('geeft de inhoud een vak dat schuift, zo hoog als past', () => {
+    const wortel = les(blok('inhoud'), 820);
+    hoog('inhoud', 300);
+    openBlokInVak(wortel);
+    const inhoud = document.getElementById('inhoud') as HTMLElement;
+    // 820 + marge − 720: zoveel te lang; de inhoud levert dat in.
+    expect(inhoud.style.maxHeight).toBe(`${300 - (820 + MARGE - 720)}px`);
+    expect(inhoud.style.overflowY).toBe('auto');
+  });
+
+  it('niet lager dan een paar regels, en niets als het past of op een telefoon', () => {
+    let wortel = les(blok('inhoud'), 1400);
+    hoog('inhoud', 300);
+    openBlokInVak(wortel);
+    expect((document.getElementById('inhoud') as HTMLElement).style.maxHeight).toBe(
+      `${KLEINSTE_NA}px`,
+    );
+    wortel = les(blok('inhoud'), 600);
+    hoog('inhoud', 300);
+    openBlokInVak(wortel);
+    expect((document.getElementById('inhoud') as HTMLElement).style.maxHeight).toBe('');
+    wortel = les(blok('inhoud'), 900);
+    hoog('inhoud', 300);
+    Object.defineProperty(window, 'innerWidth', { value: 390, configurable: true });
+    openBlokInVak(wortel);
+    expect((document.getElementById('inhoud') as HTMLElement).style.maxHeight).toBe('');
+  });
+
+  it('zet het vak terug als het blok weer dicht is', () => {
+    const wortel = les(blok('inhoud'), 820);
+    hoog('inhoud', 300);
+    openBlokInVak(wortel);
+    const inhoud = document.getElementById('inhoud') as HTMLElement;
+    expect(inhoud.style.maxHeight).not.toBe('');
+    inhoud.closest('details')?.removeAttribute('open');
+    openBlokInVak(wortel);
+    expect(inhoud.style.maxHeight).toBe('');
+    expect(inhoud.style.overflowY).toBe('');
+  });
+
+  it('blokHoogte', () => {
+    expect(blokHoogte(300, 0)).toBe(300);
+    expect(blokHoogte(300, 100)).toBe(200);
+    expect(blokHoogte(300, 1000)).toBe(KLEINSTE_NA);
   });
 });

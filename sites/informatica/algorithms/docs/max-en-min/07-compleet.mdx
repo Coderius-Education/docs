@@ -44,6 +44,8 @@ naast elkaar, dan heb je er twee nodig en lees je de lijst twee keer.
 
 ## Run
 
+### De code draaien
+
 <PyRunner editable={false} initialCode={`def max_en_min(lijst):
     klein = groot = lijst[0]
     for waarde in lijst:
@@ -57,6 +59,11 @@ print(max_en_min([5, 2, 8, 1, 7, 4]))    # (1, 8)
 print(max_en_min([-3, -1, -7]))           # (-7, -1)
 print(max_en_min([42]))                   # (42, 42)
 print(max_en_min([3, 3, 3]))              # (3, 3)`} />
+
+### Het model
+
+Kies een lijst en volg het algoritme stap voor stap. Onder Code-oefening
+schrijf je de functie zelf, en draai je de tests erop.
 
 <AlgorithmModel algorithm="min-and-max" />
 
@@ -105,13 +112,16 @@ for _ in range(1000):
     willekeurig.append(random.randint(0, 1000))
 aflopend = list(range(1000, 0, -1))
 
-for naam, lijst in [("willekeurig", willekeurig), ("aflopend", aflopend)]:
+soorten = [("willekeurig", willekeurig), ("aflopend", aflopend)]
+for naam, lijst in soorten:
     k1, g1, v_combi = max_en_min_telt(lijst)
     g2, v_max = vind_max_telt(lijst)
     k2, v_min = vind_min_telt(lijst)
     print(naam)
     print(f"    één pass:    {v_combi} vergelijkingen")
-    print(f"    twee passes: {v_max + v_min} vergelijkingen ({v_max} + {v_min})")
+    twee = v_max + v_min
+    print(f"    twee passes: {twee} vergelijkingen",
+            f"({v_max} + {v_min})")
     print(f"    resultaten gelijk? {(k1 == k2) and (g1 == g2)}")`} />
 
 <details>

@@ -85,3 +85,18 @@ describe('verborgen code van de PyRunner', () => {
     }
   });
 });
+
+describe('de lestekst noemt de knop Klaargezette code', () => {
+  // De klaargezette code stond eerst in een uitklapblok "Toon de code die al
+  // klaarstaat" onder de editor; nu opent hij met een knop in de werkbalk.
+  // Een les die nog "onder de editor" zei, stuurde de leerling naar een
+  // regel die er niet meer is.
+  const OUD =
+    /Toon de code die al klaarstaat|(?:verborgen code|klaarstaat|klaargezet)[^.]{0,30}\bonder\s+de\s+editor/i;
+  it('geen les wijst naar het oude uitklapblok', () => {
+    const fout = lessen(DOCS)
+      .filter((pad) => OUD.test(readFileSync(pad, 'utf8')))
+      .map((pad) => relative(DOCS, pad));
+    expect(fout).toEqual([]);
+  });
+});

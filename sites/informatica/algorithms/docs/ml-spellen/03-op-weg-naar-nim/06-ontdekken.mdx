@@ -46,24 +46,31 @@ heen en weer blijft lopen. Hij geeft het vakje terug waar de muis eindigt.
 met kans `ontdekken` een willekeurige actie, en anders de beste. Bij CS50 heet
 die kans `epsilon`.
 
-## Opdracht: de muis kiest zelf
+## Opdracht
 
-Schrijf de methode `kies(vakje, ontdekken)`. Laat daarna een nieuwe muis
-100 keer wandelen, en tel hoe vaak hij bij de kaas eindigt. Doe dat voor
-ontdekken 0, 0.2 en 1:
+### De opdracht
+
+Een muis die leert, kiest zelf waar hij heen loopt, en leert onderweg. Je
+schrijft de methode `kies(vakje, ontdekken)`, en laat daarna een nieuwe muis 100 keer
+wandelen. Hoe vaak eindigt hij bij de kaas? Je vergelijkt ontdekken 0, 0.2
+en 1.
+
+### Aan de slag
+
+In de editor zegt `kies` nog altijd links.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: de muis loopt tien keer in de val, vakje 0.
+2. Laat `kies` met kans `ontdekken` een willekeurige actie uit `acties` kiezen, en anders de beste.
+3. Tel hoe vaak `wandel(piep, ontdekken)` in 100 wandelingen 4 geeft, voor ontdekken 0, 0.2 en 1.
+
+Verwachte uitvoer:
 
 ```
 99 keer kaas met ontdekken 0
 98 keer kaas met ontdekken 0.2
 56 keer kaas met ontdekken 1
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: `kies` zegt altijd links, en de muis loopt tien keer in de val, vakje 0.
-2. Laat `kies` de actie met de hoogste waarde teruggeven, zoals `beste_actie` in [methoden](site:algorithms/docs/ml-spellen/03-op-weg-naar-nim/02-methoden#opdracht-de-beste-actie). Nu loopt hij één keer in de val, en vindt hij daarna de kaas.
-3. Zet daarvoor: met kans `ontdekken` een willekeurige actie uit `acties`.
-4. Tel hoe vaak `wandel(piep, ontdekken)` in 100 wandelingen 4 teruggeeft, voor ontdekken 0, 0.2 en 1. Begin elke keer met `random.seed(1)` en een nieuwe muis.
 
 <PyRunner verborgen="muis-gang" initialCode={`import random
 
@@ -78,7 +85,8 @@ class Muis:
         return 0
 
     def bijwerken(self, vakje, actie, oud, beloning, toekomst):
-        self.q[(vakje, actie)] = oud + self.tempo * (beloning + toekomst - oud)
+        nieuwe = oud + self.tempo * (beloning + toekomst - oud)
+        self.q[(vakje, actie)] = nieuwe
 
     def beste_toekomst(self, vakje):
         beste = self.waarde(vakje, acties[0])

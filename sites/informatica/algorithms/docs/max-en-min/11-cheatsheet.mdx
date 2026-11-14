@@ -1,5 +1,6 @@
 ---
 sidebar_position: 11
+les_tabs: false
 ---
 
 # Cheatsheet — max én min in één pass
@@ -100,7 +101,9 @@ Bij wederzijds uitsluitende condities: `elif` (efficiënter en duidelijker).
 - Eén pass met twee losse `if`'s: altijd `2n` vergelijkingen.
 - Twee aparte passes: `2n` vergelijkingen én `2n` leesacties.
 
-Alle drie zijn `O(n)`; het verschil zit in de constante ervoor.
+Bij alle drie groeit het werk even hard als de lijst; het verschil is een
+vaste factor. In [Big O — het idee](site:algorithms/docs/big-o/01-concept)
+heten ze alle drie `O(n)`.
 
 </details>
 

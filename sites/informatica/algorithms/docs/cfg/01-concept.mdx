@@ -19,7 +19,9 @@ sidebar_position: 1
 het verschil tussen een **terminal** en een **non-terminal**. Nog geen
 opdracht, eerst snappen.
 
-## Het probleem
+## Het idee
+
+### Het probleem
 
 Een computer ziet een zin als een rij losse woorden:
 
@@ -34,7 +36,7 @@ volgorde en in de structuur: welke woorden horen bij elkaar, en welke
 rol spelen ze? Daar is een **grammatica** voor: een verzameling regels
 die beschrijven hoe je een geldige zin opbouwt.
 
-## De bouwsteen-analogie
+### De bouwsteen-analogie
 
 Denk aan LEGO. De losse blokjes zijn de woorden zelf: `holmes`, `lit`,
 `a`, `pipe`. Je kunt ze niet verder uit elkaar halen, en daarom heten ze
@@ -43,7 +45,9 @@ op vastklikt tot een groter geheel, en die gehelen bestaan weer uit
 andere bouwstenen: dat zijn de **non-terminals**. Een grammatica zegt
 hoe je blokjes en platen aan elkaar klikt.
 
-## De notatie: regels met een pijl
+## De notatie
+
+### Regels met een pijl
 
 De notatie oefen je eerst met een mini-voorbeeld dat niets met de
 opdracht te maken heeft, een grammaticaatje voor begroetingen:
@@ -61,9 +65,10 @@ betekent "of": `Groet -> "hallo" | "hoi"` zegt dat een groet *hallo* of
 *hoi* is. Een terminal, een echt woord, staat tussen aanhalingstekens:
 `"hallo"`, `"sam"`.
 
-## Een zin als boom
+### Een zin als boom
 
-Met dit grammaticaatje kun je de zin *hallo sam* helemaal ontleden. Dat
+Met het grammaticaatje voor begroetingen uit de vorige stap kun je de zin
+*hallo sam* helemaal ontleden. Dat
 ziet eruit als een **boom**:
 
 ```
@@ -79,7 +84,7 @@ die eindigen bij de echte woorden (de terminals).
 `"hoi"`, `"sam"` en `"kim"` zijn **terminals** (woorden). Het bovenste
 non-terminal heet het **startsymbool** — daar begint elke geldige zin.
 
-## Waarom "context-vrij"?
+### Waarom "context-vrij"?
 
 Een regel zoals `Naam -> "sam"` mag je toepassen overal waar een `Naam`
 nodig is. Het maakt niet uit wat er omheen staat, de *context*; de regel
@@ -88,16 +93,19 @@ staat op zichzelf. Daardoor kun je er zo makkelijk mee rekenen.
 Een grammatica controleert alleen de structuur, niet de betekenis. *hoi
 kim* is grammaticaal prima, ook al ken je geen Kim.
 
-## Waar grammatica's het werk doen
+## In de praktijk
+
+### Waar grammatica's het werk doen
 
 Grammatica's zijn niet alleen iets voor Engelse zinnen. Overal waar een
 computer tekst met een vaste vorm moet begrijpen, staat er een.
 
 - **Python zelf.** Druk je op Voer uit, dan ontleedt Python eerst je code
-  met een grammatica in bijna dezelfde notatie als hierboven (de pijl heet
-  daar een dubbele punt). Hij staat in de
+  met een grammatica in bijna dezelfde notatie als bij De notatie (de pijl
+  heet daar een dubbele punt). Hij staat in de
   [taalbeschrijving van Python](https://docs.python.org/3/reference/grammar.html),
-  honderden regels lang. Hieronder zie je de boom die Python van een som maakt.
+  honderden regels lang. In de volgende stap zie je de boom die Python van
+  een som maakt.
 - **JSON.** Het formaat waarin een server data terugstuurt, zoals in
   [je eerste endpoint](site:fullstack/docs/FastAPI/eerste-server/eerste_endpoint),
   past in een handvol regels. Op [json.org](https://www.json.org/json-nl.html)
@@ -111,7 +119,10 @@ computer tekst met een vaste vorm moet begrijpen, staat er een.
   [Wikipedia](https://nl.wikipedia.org/wiki/Contextvrije_grammatica) noemt
   de rest.
 
-Zo laat Python zijn eigen boom zien. Kijk of `2 * 3` bij elkaar staat:
+### De boom van Python
+
+Python laat zijn eigen boom zien met de module `ast`. Hier ontleedt hij
+de som `1 + 2 * 3`. Kijk of `2 * 3` bij elkaar staat:
 
 <PyRunner initialCode={`import ast
 

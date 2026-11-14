@@ -86,20 +86,21 @@ for p in bezocht:
 
 </details>
 
-## Opdracht: de populairste pagina
+## Opdracht
 
 Een zoekmachine zet de populairste pagina bovenaan. Zoek in de telling van een
-surfer de pagina met het meeste bezoek, en print hem:
+surfer de pagina met het meeste bezoek, en print hem. In de editor staat de
+telling van één run. Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print elke pagina met haar telling.
+2. Zet vóór de loop `beste = "A"`, en zet in de loop `beste = p` als `bezocht[p]` groter is dan `bezocht[beste]`. Print na de loop de zin met `beste` erin.
+3. Verander de telling van B in 500, en draai opnieuw. Nu moet B bovenaan staan.
+
+Verwachte uitvoer:
 
 ```
 C is het populairst
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print elke pagina met haar telling.
-2. Houd de beste pagina tot nu toe bij: zet vóór de loop `beste = "A"`, en zet in de loop `beste = p` als `bezocht[p]` groter is dan `bezocht[beste]`. Print na de loop de zin met `beste` erin.
-3. Verander de telling van B in 500, en draai opnieuw. Nu moet B bovenaan staan.
 
 <PyRunner initialCode={`bezocht = {"A": 401, "B": 196, "C": 403, "D": 0}
 

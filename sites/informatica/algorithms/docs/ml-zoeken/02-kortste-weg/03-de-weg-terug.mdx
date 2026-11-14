@@ -47,14 +47,6 @@ je achterstevoren loopt, zet je elk vakje met `weg.insert(0, vakje)` vooraan
 in de lijst. `insert(0, …)` staat in de tabel van
 [Lijst-methoden](site:python/docs/data/10b-lijst-methoden).
 
-:::caution
-De tweede loop stopt pas bij de start. Kom je daar nooit, bijvoorbeeld omdat je
-`vakje = vorige[vakje]` vergeet, dan stopt hij nooit. De speeltuin heeft geen
-stopknop, dus het tabblad loopt vast: herlaad de pagina, en je code is weg.
-Kopieer je code daarom eerst naar een kladblok voordat je een nieuwe
-while-loop draait.
-:::
-
 ## Onderzoek
 
 1. Draai de code. Welke weg vindt hij van A naar E?
@@ -82,23 +74,28 @@ print(weg)`} />
 
 </details>
 
-## Opdracht: de weg terugvinden
+## Opdracht
 
-Onthoud bij elk nieuw vakje via welk vakje je er kwam, in een dictionary
-`vorige`. Loop daarna vanaf E terug naar de start, en print de weg van S naar
-E:
+### De opdracht
+
+Breedte-eerst zoeken weet hoe ver de uitgang is, maar nog niet langs welke weg.
+Die vind je terug: je onthoudt bij elk nieuw vakje via welk vakje je er kwam, in
+een dictionary `vorige`. Daarna loop je vanaf E terug naar de start, en print je
+de weg van S naar E.
+
+### Aan de slag
+
+**Pas op:** zonder `vakje = vorige[vakje]` loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
+
+1. Draai de code: het zoeken uit de vorige stap print de afstand van E.
+2. Zet `vorige = {}` boven de loop, en vul hem waar je ook de afstand van een buur invult. Print `vorige`.
+3. Ga in een while-loop vanaf `vakje = eind` terug met `vakje = vorige[vakje]`, en zet elk vakje vooraan in `weg`.
+
+Verwachte uitvoer:
 
 ```
 [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (4, 2), (4, 3), (4, 4), (4, 5)]
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print de afstand van E.
-2. Zet `vorige = {}` boven de loop, en vul hem waar je ook de afstand van een buur invult. Print `vorige` om te zien wat erin staat.
-3. Begin met `weg = [eind]` en `vakje = eind`. Ga in een tweede while-loop steeds één vakje terug met `vakje = vorige[vakje]`, en zet dat vakje vooraan in `weg`. Stop als je bij de start bent, en print `weg`.
-
-In de editor staat het zoeken uit de vorige stap.
 
 <PyRunner verborgen="doolhof-buren" initialCode={`doolhof = [
     "S.....",

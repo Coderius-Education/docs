@@ -85,7 +85,9 @@ else:
 
 </details>
 
-## Bouw zelf: een chatbot over jouw onderwerp
+## Bouw zelf
+
+### De opdracht
 
 Bouw een chatbot die over iets praat waar jij veel van weet: voetbal, een
 game, je huisdier. Hij heeft minstens vier regels, en één regel gebruikt
@@ -95,12 +97,14 @@ Zoek daarna een zin die je chatbot verkeerd begrijpt, zoals de chatbot uit
 [meer regels](site:algorithms/docs/ml-regels/01-chatbot/02-meer-regels#onderzoek)
 bij `"ik ga weer naar huis"`.
 
+### Aan de slag
+
+In de editor staat een chatbot met één regel.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Kies je onderwerp. Verander de zin en de eerste regel zo dat ze erover gaan, en draai.
 2. Zet er twee regels bij met `elif`, en een `else` voor de rest. Test elke regel met een eigen zin.
-3. Maak één regel met `and`, en test hem met een zin waar beide trefwoorden in staan, en met een zin met maar één.
-4. Probeer zinnen tot je er een vindt die hij verkeerd begrijpt.
+3. Maak één regel met `and`, en test hem met één en met beide trefwoorden. Zoek dan een zin die hij verkeerd begrijpt.
 
 <PyRunner initialCode={`zin = "Wie heeft er gisteren gewonnen?"
 zin = zin.lower()

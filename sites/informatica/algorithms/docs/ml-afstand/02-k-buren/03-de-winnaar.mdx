@@ -76,24 +76,23 @@ print("Het is een", winnaar)`} />
 
 </details>
 
-## Opdracht: voorspel met k
+## Opdracht \{#opdracht-voorspel-met-k}
 
-Maak van de code een functie `voorspel(nieuw, voorbeelden, k)` die de
-winnaar teruggeeft. Test hem zo:
-
-{/* niet-draaien: fragment; voorspel en voorbeelden schrijft de leerling zelf */}
-```python
-print(voorspel((10, 7), voorbeelden, 1))   # banaan
-print(voorspel((10, 7), voorbeelden, 3))   # appel
-```
-
+Voorspel met `k`: maak een functie `voorspel(nieuw, voorbeelden, k)` die de
+winnaar teruggeeft. In de editor zoekt `voorspel` al de buren, en twee tests
+onderaan verwachten banaan bij `k = 1` en appel bij `k = 3`.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `voorspel` geeft de `k` buren terug, nog niet de winnaar.
 2. Tel met een dictionary `stemmen` hoeveel buren elke soort heeft, en geef `stemmen` terug.
-3. Zoek de soort met de meeste stemmen: loop over `stemmen`, en onthoud met een `if` de soort met het hoogste aantal. Geef die soort terug.
+3. Loop over `stemmen`, onthoud met een `if` de soort met de meeste stemmen, en geef die terug.
 
-In de editor staat `voorspel` met het eerste stuk: de buren zoeken.
+Verwachte uitvoer:
+
+```
+banaan
+appel
+```
 
 <PyRunner initialCode={`def afstand(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
@@ -158,7 +157,7 @@ print(voorspel((10, 7), voorbeelden, 3))   # appel
 ```
 
 Deze functie gebruik je in de volgende stappen en projecten weer. Daar staat
-hij klaar in de verborgen code onder de editor.
+hij klaar achter de knop Klaargezette code boven de editor.
 
 </details>
 

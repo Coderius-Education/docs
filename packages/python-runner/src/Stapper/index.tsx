@@ -127,6 +127,7 @@ export default function Stapper({
             disabled={false}
             readOnly
             highlightLine={stap.regel}
+            afbreken={false}
             minHeight={passend ? Math.min(160, passend) : 160}
             maxHeight={passend}
           />

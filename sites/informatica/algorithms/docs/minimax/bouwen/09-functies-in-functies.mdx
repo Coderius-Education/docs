@@ -45,7 +45,8 @@ def begroet(naam):
     return f"Hallo {naam}!"
 
 def begroet_drie_keer(naam):
-    return begroet(naam) + " " + begroet(naam) + " " + begroet(naam)
+    return (begroet(naam) + " " + begroet(naam)
+            + " " + begroet(naam))
 
 print(begroet_drie_keer("Lotte"))
 ```
@@ -68,7 +69,8 @@ aan elkaar met spaties ertussen.
     return f"Hallo {naam}!"
 
 def begroet_drie_keer(naam):
-    return begroet(naam) + " " + begroet(naam) + " " + begroet(naam)
+    return (begroet(naam) + " " + begroet(naam)
+            + " " + begroet(naam))
 
 print(begroet_drie_keer("Lotte"))
 print(begroet_drie_keer("Yusuf"))`} />

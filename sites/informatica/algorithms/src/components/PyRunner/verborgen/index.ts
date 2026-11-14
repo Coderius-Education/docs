@@ -3,6 +3,7 @@ import cfgParser from './cfg-parser';
 import dijkstraCompleet from './dijkstra-compleet';
 import doolhofBuren from './doolhof-buren';
 import fruitTekenen from './fruit-tekenen';
+import fruitToets from './fruit-toets';
 import knn from './knn';
 import metro from './metro';
 import metroZoeken from './metro-zoeken';
@@ -12,6 +13,7 @@ import muisLeert from './muis-leert';
 import neuron from './neuron';
 import neuronLaag from './neuron-laag';
 import nimLeren from './nim-leren';
+import spamTellingen from './spam-tellingen';
 import tekensLeren from './tekens-leren';
 import tekensToetsen from './tekens-toetsen';
 import weerHerfst from './weer-herfst';
@@ -32,6 +34,7 @@ export const VERBORGEN: Record<string, string> = {
   'dijkstra-compleet': dijkstraCompleet,
   'doolhof-buren': doolhofBuren,
   'fruit-tekenen': fruitTekenen,
+  'fruit-toets': fruitToets,
   knn,
   metro,
   'metro-zoeken': metroZoeken,
@@ -41,6 +44,7 @@ export const VERBORGEN: Record<string, string> = {
   neuron,
   'neuron-laag': neuronLaag,
   'nim-leren': nimLeren,
+  'spam-tellingen': spamTellingen,
   'tekens-leren': tekensLeren,
   'tekens-toetsen': tekensToetsen,
   'weer-herfst': weerHerfst,

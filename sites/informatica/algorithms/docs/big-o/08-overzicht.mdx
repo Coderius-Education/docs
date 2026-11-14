@@ -35,22 +35,16 @@ in actie hebt gezien.
 
 ## Voorbeelden uitgelegd
 
-### Waarom heeft lineair zoeken een `O(1)`-beste-geval?
-
-Als de gezochte waarde toevallig **het eerste element** is, stop je
+**Waarom heeft lineair zoeken een `O(1)`-beste-geval?** Als de gezochte waarde toevallig **het eerste element** is, stop je
 direct. Eén vergelijking, klaar. Maar je kunt daar niet op rekenen — dus
 de **klasse** van lineair zoeken noemen we **O(n)** (slechtste geval).
 
-### Waarom is selection sort altijd `O(n²)`?
-
-Selection sort doet **geen early-exit**: zelfs op een al gesorteerde
+**Waarom is selection sort altijd `O(n²)`?** Selection sort doet **geen early-exit**: zelfs op een al gesorteerde
 lijst loopt hij de hele buitenste én binnenste lus. Dat is "voorspelbaar
 veel werk" — een eigenschap die in sommige situaties juist handig is.
 
-### Waarom heeft bubble sort `O(n)` als beste geval — alleen met
-early-exit?
-
-Zonder early-exit doet bubble sort altijd `n` passes, ook als de lijst
+**Waarom heeft bubble sort `O(n)` als beste geval, alleen met
+early-exit?** Zonder early-exit doet bubble sort altijd `n` passes, ook als de lijst
 al gesorteerd is → `O(n²)`. **Mét** early-exit checkt hij na elke pass
 of er nog geswapt is. Op een gesorteerde lijst is dat: eerste pass = 0
 swaps, stop → `O(n)`. Zie

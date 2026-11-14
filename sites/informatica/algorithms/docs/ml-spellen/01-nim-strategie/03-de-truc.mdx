@@ -59,7 +59,8 @@ die de truc ook kent. Dan pak je 1 en hoop je op een fout.
 
 <PyRunner initialCode={`for stapel in range(1, 13):
     pak = (stapel - 1) % 4
-    print(stapel, "lucifers: pak", pak, "en laat", stapel - pak, "liggen")`} />
+    print(stapel, "lucifers: pak", pak,
+            "en laat", stapel - pak, "liggen")`} />
 
 <details>
 <summary>Antwoorden</summary>
@@ -73,11 +74,25 @@ die de truc ook kent. Dan pak je 1 en hoop je op een fout.
 
 </details>
 
-## Opdracht: de functie slim
+## Opdracht
 
-Schrijf een functie `slim(stapel)` die teruggeeft hoeveel lucifers de truc
-pakt. Ligt er al een viervoud plus 1, dan pakt hij 1. Voor de stapels 1 tot en
-met 12 print hij:
+### De opdracht
+
+Je zet de truc in een functie `slim(stapel)`, die teruggeeft hoeveel lucifers
+je moet pakken om een viervoud plus 1 te laten liggen. Ligt er al een viervoud
+plus 1, dan kun je dat niet: dan pakt hij 1. Met die functie kan een programma
+Nim spelen zonder dat jij erbij hoeft te zijn.
+
+### Aan de slag
+
+In de editor pakt `slim` nog altijd 1.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: bij elke stapel van 1 tot en met 12 pakt `slim` nu 1.
+2. Laat `slim` met `%` uitrekenen hoeveel hij pakt, en geef dat terug. Bij 1, 5 en 9 zie je nu 0.
+3. Zet er een `if` bij die er 1 van maakt als het 0 is.
+
+Verwachte uitvoer:
 
 ```
 1 pak 1
@@ -93,12 +108,6 @@ met 12 print hij:
 11 pak 2
 12 pak 3
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: `slim` pakt nu altijd 1.
-2. Laat `slim` met `%` uitrekenen hoeveel hij pakt, en geef dat terug. Bij 1, 5 en 9 zie je nu 0.
-3. Zet er een `if` bij die er 1 van maakt als het 0 is.
 
 <PyRunner initialCode={`def slim(stapel):
     return 1
@@ -150,7 +159,7 @@ terug, ook bij 1, 5 en 9.
 
 ## Er gaat iets mis
 
-{/* foutmelding-van: fout-helft */}
+{/* foutmelding-van: def slim(stapel):\n    pak = (stapel - 1) % 4\n    if pak > 0:\n        return pak\nstapel = 9\nstapel = stapel - slim(stapel) */}
 ```
 TypeError: unsupported operand type(s) for -: 'int' and 'NoneType'
 ```
@@ -168,18 +177,12 @@ def slim(stapel):
     if pak > 0:
         return pak
 
-stapel = 9
-stapel = stapel - slim(stapel)
-
 # GOED
 def slim(stapel):
     pak = (stapel - 1) % 4
     if pak == 0:
         pak = 1
     return pak
-
-stapel = 9
-stapel = stapel - slim(stapel)
 ```
 
 Meer uitleg: [Return-waarden](site:python/docs/functies/09b-return).

@@ -10,6 +10,8 @@ statistische maat.
 
 ## Opdracht
 
+### De opdracht
+
 Schrijf `bereik(lijst)` die het verschil tussen het grootste en kleinste
 element returnt.
 
@@ -17,8 +19,19 @@ element returnt.
 - `bereik([-3, -1, -7])` → `6` (want -1 − (-7))
 - `bereik([42])` → `0`
 
-De startcode roept je functie aan op vijf lijsten en print het bereik
-naast wat het moet zijn.
+### Aan de slag
+
+De startcode roept je functie aan op vijf lijsten en print het bereik.
+
+Verwachte uitvoer:
+
+```
+7
+6
+0
+0
+999
+```
 
 {/* uitvoer-varieert: startcode; de functie geeft 0 terug tot de leerling hem invult */}
 <PyRunner initialCode={`def max_en_min(lijst):
@@ -34,21 +47,18 @@ def bereik(lijst):
     # vul aan: gebruik max_en_min en return de juiste waarde
     return 0
 
-tests = [
-    ([5, 2, 8, 1, 7, 4], 7),
-    ([-3, -1, -7], 6),
-    ([42], 0),
-    ([10, 10, 10], 0),
-    ([1, 1000], 999),
-]
-for lijst, verwacht in tests:
-    print(f"bereik({lijst}) = {bereik(lijst)}   verwacht: {verwacht}")`} />
+print(bereik([5, 2, 8, 1, 7, 4]))
+print(bereik([-3, -1, -7]))
+print(bereik([42]))
+print(bereik([10, 10, 10]))
+print(bereik([1, 1000]))`} />
 
 <details>
 <summary>Tip</summary>
 
-`max_en_min(lijst)` geeft een tuple terug. Pak hem uit met
-`klein, groot = max_en_min(lijst)` en bereken dan het verschil.
+`max_en_min(lijst)` geeft een tuple terug. Hoe haal je daar `klein` en
+`groot` uit? Dat zag je in
+[bouwsteen 3](site:algorithms/docs/max-en-min/bouwen/06-tuple-return).
 
 </details>
 
@@ -75,10 +85,11 @@ dubbel werk. Uitpakken is netter.
 
 ## Onderzoek
 
-<details>
-<summary>Wat gebeurt er als je `bereik([])` aanroept op een lege lijst?</summary>
+**Vraag:** wat gebeurt er als je `bereik([])` aanroept, op een lege lijst?
+Zet `print(bereik([]))` onder de tests van je eigen code om het te zien.
 
-Probeer het maar — pas de tests-lijst aan en voeg `([], 0)` toe.
+<details>
+<summary>Antwoord</summary>
 
 {/* foutmelding-van: [][0] */}
 
@@ -89,11 +100,13 @@ namelijk vanuit dat er een eerste element bestaat om mee te starten.
 Dat is een afspraak over de invoer en geen bug: `max_en_min` werkt alleen
 op lijsten met minstens één element. Wil je een lege lijst wél aankunnen,
 dan checkt `bereik` of `max_en_min` daar eerst op, bijvoorbeeld met
-`if not lijst: return 0`.
+`if len(lijst) == 0: return 0`.
 
 </details>
 
 ## Uitdaging (optioneel)
+
+### De opdracht
 
 Schrijf `genormaliseerd(lijst)` die elk element omrekent naar een waarde
 tussen 0 en 1, op basis van het bereik:
@@ -102,17 +115,41 @@ tussen 0 en 1, op basis van het bereik:
 genormaliseerd(x) = (x - klein) / (groot - klein)
 ```
 
-Voor `[1, 5, 9]` → `[0.0, 0.5, 1.0]`. Wat gebeurt er als alle waardes
-gelijk zijn? (Hint: deling door 0.)
+Voor `[1, 5, 9]` → `[0.0, 0.5, 1.0]`. Denk ook na over een lijst waarin
+alle waardes gelijk zijn, zoals `[4, 4, 4]`: wat staat er dan onder de
+deelstreep?
+
+### Aan de slag
+
+Verwachte uitvoer:
+
+```
+[0.0, 0.5, 1.0]
+[0.0, 0.0, 0.0]
+```
+
+{/* uitvoer-varieert: startcode; de functie geeft [] terug tot de leerling hem invult */}
+<PyRunner initialCode={`def max_en_min(lijst):
+    klein = groot = lijst[0]
+    for waarde in lijst:
+        if waarde < klein:
+            klein = waarde
+        elif waarde > groot:
+            groot = waarde
+    return klein, groot
+
+def genormaliseerd(lijst):
+    # vul aan
+    return []
+
+print(genormaliseerd([1, 5, 9]))
+print(genormaliseerd([4, 4, 4]))`} />
 
 <details>
 <summary>Tip</summary>
 
-Bereken `klein`, `groot` en het bereik één keer, vóór de lus. Loop dan
-langs de lijst en voeg per element de omgerekende waarde toe aan een
-nieuwe lijst. Is het bereik 0, dan zijn alle waardes gelijk; kies dan
-zelf wat je teruggeeft (bijvoorbeeld overal `0.0`) in plaats van te
-delen.
+Hoeveel keer hoef je `klein` en `groot` te berekenen: één keer, of voor
+elk element opnieuw? En wat geef je terug als je niet kunt delen?
 
 </details>
 
@@ -151,4 +188,4 @@ Zonder de check op `bereik == 0` crasht `[4, 4, 4]` met een
 
 </details>
 
-Door naar [veelgemaakte fouten](site:algorithms/docs/max-en-min/10-fouten).
+Door naar [Er gaat iets mis](site:algorithms/docs/max-en-min/10-fouten).

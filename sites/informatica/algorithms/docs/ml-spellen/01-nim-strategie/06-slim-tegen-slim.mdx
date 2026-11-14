@@ -43,24 +43,39 @@ verliest wie begint bij een viervoud plus 1, als de ander de truc ook kent.
 Bij 5 zag je dat net met de hand. Met een programma reken je het na voor elke
 stapel van 1 tot en met 12, zonder iets met de hand te doen.
 
-## Bouw zelf: slim tegen slim
+## Bouw zelf
 
-Laat `slim` tegen zichzelf spelen, met de gewone regels (1 tot en met 3), en
-print voor elke stapel van 1 tot en met 12 wie er wint, de speler die begint
-of de ander.
+### De opdracht
 
-Begin klein, en breid de code stap voor stap uit:
+Slim tegen slim: wat gebeurt er als beide spelers de truc kennen? Je laat `slim`
+tegen zichzelf spelen, met de gewone regels (1 tot en met 3). Voor elke stapel
+van 1 tot en met 12 print je programma wie er wint: de speler die begint, of de
+ander.
 
-1. Draai de code: de eerste speler doet één zet.
-2. Zet de zet in een while-loop die doorgaat zolang er lucifers liggen, en print na elke zet de stapel.
-3. Houd met een variabele `beurt` bij wie er aan de beurt is, `"eerste"` of `"tweede"`, en wissel na elke zet.
-4. Maak er een functie `slim_tegen_slim(stapel)` van die `beurt` teruggeeft als de stapel op is. Roep hem aan voor elke stapel van 1 tot en met 12, en haal de print uit de loop.
+### Aan de slag
 
-:::caution
-Je schrijft hier een while-loop. Wordt de stapel niet bij elke zet kleiner,
-dan stopt hij nooit en loopt het tabblad vast. Kopieer je code eerst naar een
-kladblok.
-:::
+**Pas op:** krimpt de stapel niet, dan loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
+
+1. Draai de code: met `slim` doet de eerste speler één zet, en laat 9 liggen.
+2. Zet de zet in een while-loop, en houd in `beurt` bij wie er zet: `"eerste"` of `"tweede"`.
+3. Maak er een functie `slim_tegen_slim(stapel)` van die `beurt` teruggeeft, voor de stapels 1 tot en met 12.
+
+Verwachte uitvoer:
+
+```
+1 tweede
+2 eerste
+3 eerste
+4 eerste
+5 tweede
+6 eerste
+7 eerste
+8 eerste
+9 tweede
+10 eerste
+11 eerste
+12 eerste
+```
 
 <PyRunner initialCode={`def slim(stapel):
     pak = (stapel - 1) % 4

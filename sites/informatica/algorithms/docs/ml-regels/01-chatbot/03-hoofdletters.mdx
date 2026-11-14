@@ -82,21 +82,22 @@ else:
 
 </details>
 
-## Opdracht: hoofdletters maken niet uit
+## Opdracht
 
-Maak de chatbot uit de vorige stap ongevoelig voor hoofdletters. Met de zin
-uit de editor wordt de uitvoer:
+Hoofdletters maken niet uit: maak de chatbot uit de vorige stap ongevoelig
+voor hoofdletters. In de editor staat die chatbot, met een zin vol hoofdletters.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. De zin vraagt naar je naam, maar de chatbot zegt `Daar weet ik niets van.`
+2. Zet boven de `if` de regel `print(zin.lower())`. Je ziet de zin in kleine letters, maar het antwoord blijft hetzelfde.
+3. Vervang die regel door `zin = zin.lower()`. Nu antwoordt de chatbot `Ik heet Bot. En jij?`
+4. Test met `"DOEI"` en met `"Doei Bot"`.
+
+Verwachte uitvoer:
 
 ```
 Ik heet Bot. En jij?
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code. De zin vraagt naar je naam, maar de chatbot zegt `Daar weet ik niets van.`
-2. Zet boven de `if` de regel `print(zin.lower())`, en draai. Je ziet de zin in kleine letters, maar het antwoord blijft hetzelfde.
-3. Vervang die regel door `zin = zin.lower()`. Nu antwoordt de chatbot `Ik heet Bot. En jij?`
-4. Test met `"DOEI"` en met `"Doei Bot"`.
 
 <PyRunner initialCode={`zin = "Wat is je NAAM?"
 

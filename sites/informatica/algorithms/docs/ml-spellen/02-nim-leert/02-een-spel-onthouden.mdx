@@ -7,8 +7,8 @@ sidebar_label: "2. Een spel onthouden"
 
 De score van elke zet heeft nu een plek. Na een spel werkt de computer die
 scores bij: elke zet van de winnaar een punt erbij, elke zet van de verliezer
-een punt eraf. Nieuw is `not in`, en een spel dat al klaarstaat in verborgen
-code onder de editor.
+een punt eraf. Nieuw is `not in`, en een spel dat al klaarstaat achter de knop
+Klaargezette code boven de editor.
 
 ## Voorspel
 
@@ -40,7 +40,7 @@ op 0 en telt er dan 1 bij. De derde keer staat hij er al, en wordt hij 2.
 `zet not in score` is het omgekeerde van `zet in score`: het is waar als de
 zet nog geen sleutel is. Dan zet de loop hem eerst op 0.
 
-Het spelen staat al klaar, in de verborgen code onder de editor:
+Het spelen staat al klaar, achter de knop Klaargezette code:
 
 - `speel_tegen_jezelf(score, ontdekken)` speelt één spel met 10 lucifers, met
   twee spelers `"a"` en `"b"` die allebei dezelfde `score` gebruiken. Hij
@@ -95,21 +95,28 @@ verliezer: b
 
 </details>
 
-## Opdracht: een spel onthouden
+## Opdracht
 
-Werk na het spel uit de editor de score bij: elke zet van de winnaar een punt
-erbij, elke zet van de verliezer een punt eraf. Print daarna `score`:
+### De opdracht
 
-```
-{(10, 1): 1, (8, 1): 1, (6, 3): 1, (2, 1): 1, (9, 1): -1, (7, 1): -1, (3, 1): -1, (1, 1): -1}
-```
+De computer onthoudt een spel. Hij speelt één spel tegen zichzelf, en daarna
+werk je de score bij: elke zet van de winnaar krijgt een punt erbij, elke zet
+van de verliezer een punt eraf.
 
+### Aan de slag
+
+In de editor speelt de computer één spel, met een lege `score`.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: je ziet de zetten van `"a"` en `"b"`, en wie er verloor.
 2. Loop met `for speler in zetten` over de spelers, en daarin over `zetten[speler]`. Print elke zet.
-3. Zet elke zet in `score` op 0 als hij er nog niet in staat, en print `score` na de loops.
-4. Geef een zet van de verliezer een punt eraf, en een zet van de winnaar een punt erbij.
+3. Zet een nieuwe zet op 0 in `score`. Geef hem een punt eraf als `speler` verloor, en anders erbij.
+
+Verwachte uitvoer:
+
+```
+{(10, 1): 1, (8, 1): 1, (6, 3): 1, (2, 1): 1, (9, 1): -1, (7, 1): -1, (3, 1): -1, (1, 1): -1}
+```
 
 <PyRunner verborgen="nim-leren" initialCode={`import random
 
@@ -121,7 +128,7 @@ print(zetten, verliezer)`} />
 <details>
 <summary>Tip</summary>
 
-Bij stap 4 weet je in de binnenste loop van wie de zet is: dat is `speler`.
+Bij stap 3 weet je in de binnenste loop van wie de zet is: dat is `speler`.
 Vergelijk die met `verliezer`.
 
 </details>
