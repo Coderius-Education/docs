@@ -43,29 +43,22 @@ verliest wie begint bij een viervoud plus 1, als de ander de truc ook kent.
 Bij 5 zag je dat net met de hand. Met een programma reken je het na voor elke
 stapel van 1 tot en met 12, zonder iets met de hand te doen.
 
-## Bouw zelf: slim tegen slim
+## Bouw zelf
 
 ### De opdracht
 
-Wat gebeurt er als beide spelers de truc kennen? Je laat `slim` tegen
-zichzelf spelen, met de gewone regels (1 tot en met 3). Voor elke stapel van 1
-tot en met 12 print je programma wie er wint: de speler die begint, of de
+Slim tegen slim: wat gebeurt er als beide spelers de truc kennen? Je laat `slim`
+tegen zichzelf spelen, met de gewone regels (1 tot en met 3). Voor elke stapel
+van 1 tot en met 12 print je programma wie er wint: de speler die begint, of de
 ander.
 
 ### Aan de slag
 
-In de editor staat `slim`, en doet de eerste speler onderaan één zet.
-Begin klein, en breid de code stap voor stap uit:
+**Pas op:** krimpt de stapel niet, dan loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
 
-1. Draai de code: de eerste speler laat 9 liggen.
-2. Zet de zet in een while-loop zolang er lucifers liggen, en print na elke zet de stapel.
-3. Houd in `beurt` bij wie er aan de beurt is, `"eerste"` of `"tweede"`, en wissel na elke zet.
-4. Maak er een functie `slim_tegen_slim(stapel)` van die na de loop `beurt` teruggeeft, zonder de print. Roep hem aan voor de stapels 1 tot en met 12.
-
-:::caution
-Wordt de stapel niet bij elke zet kleiner, dan stopt de loop nooit en loopt
-het tabblad van de browser vast. Kopieer je code eerst naar een kladblok.
-:::
+1. Draai de code: met `slim` doet de eerste speler één zet, en laat 9 liggen.
+2. Zet de zet in een while-loop, en houd in `beurt` bij wie er zet: `"eerste"` of `"tweede"`.
+3. Maak er een functie `slim_tegen_slim(stapel)` van die `beurt` teruggeeft, voor de stapels 1 tot en met 12.
 
 Verwachte uitvoer:
 

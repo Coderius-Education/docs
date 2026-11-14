@@ -47,28 +47,22 @@ In `speel` uit [tegen het toeval](site:algorithms/docs/ml-spellen/01-nim-strateg
 stond `slim(stapel)`. Zet je daar `beste_zet(score, stapel)` neer, dan speelt
 de geleerde strategie. De `score` uit het leren blijft daarvoor bestaan.
 
-## Opdracht: speel tegen de geleerde strategie
+## Opdracht
 
 ### De opdracht
 
-`slim` won alle 100 spellen van `willekeurig`. Kan de strategie die de
+Speel tegen de geleerde strategie. `slim` won alle 100 spellen van
+`willekeurig`. Kan de strategie die de
 computer zelf leerde dat ook? Je laat hem 100 keer spelen tegen `willekeurig`,
 met 10 lucifers, en de geleerde strategie begint.
 
 ### Aan de slag
 
-In de editor staan het leren en `willekeurig` al klaar.
-Begin klein, en breid de code stap voor stap uit:
+**Pas op:** krimpt de stapel niet, dan loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
 
-1. Draai de code: hij leert, en print wat hij bij 10 lucifers pakt.
-2. Schrijf een functie `speel(stapel)` zoals in het vorige project, met `beste_zet(score, stapel)` in plaats van `slim(stapel)`.
+1. Draai de code: hij leert, `willekeurig` staat klaar, en hij print wat hij bij 10 lucifers pakt.
+2. Schrijf een functie `speel(stapel)` zoals in het vorige project, maar met `beste_zet(score, stapel)`.
 3. Laat hem 100 keer spelen, en tel hoe vaak de geleerde strategie wint.
-
-:::caution
-Je schrijft hier een while-loop. Wordt de stapel niet bij elke beurt kleiner,
-dan stopt hij nooit en loopt het tabblad van de browser vast. Kopieer je code
-eerst naar een kladblok.
-:::
 
 Verwachte uitvoer:
 

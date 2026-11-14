@@ -89,7 +89,7 @@ print(haven.ouder.toestand)`} />
 
 </details>
 
-## Opdracht: terug naar de start
+## Opdracht
 
 ### De opdracht
 
@@ -100,18 +100,11 @@ laatste print je de start.
 
 ### Aan de slag
 
-In de editor staan de knopen van de weg van Zuid naar Strand.
-Begin klein, en breid de code stap voor stap uit:
+**Pas op:** zonder `knoop = knoop.ouder` loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
 
-1. Draai de code: hij print de eerste regel, `Strand via rood`.
-2. Ga één knoop terug met `knoop = knoop.ouder`, en print hetzelfde nog een keer: `Haven via rood`.
-3. Zet de print en `knoop = knoop.ouder` in `while knoop.ouder is not None:`, zonder de losse regels erboven.
-4. Print na de loop `knoop.toestand` met `"is de start"`.
-
-:::caution
-Doet je while-loop nooit `knoop = knoop.ouder`, dan stopt hij nooit en loopt
-het tabblad van de browser vast. Kopieer je code eerst naar een kladblok.
-:::
+1. Draai de code: in de editor staan de knopen van Zuid naar Strand, en hij print `Strand via rood`.
+2. Zet de print en `knoop = knoop.ouder` in `while knoop.ouder is not None:`.
+3. Print na de loop `knoop.toestand` met `"is de start"`.
 
 Verwachte uitvoer:
 

@@ -98,22 +98,21 @@ print(piep.waarde(3, "links"))`} />
 
 </details>
 
-## Opdracht: de beste actie
+## Opdracht \{#opdracht-de-beste-actie}
 
 ### De opdracht
 
-Een muis die geleerd heeft, moet in elk vakje de actie met de hoogste waarde
-kiezen. Je schrijft daarvoor een methode `beste_actie(vakje)` die `"links"`
-of `"rechts"` teruggeeft. Zijn ze even hoog, dan kiest hij `"links"`.
+Een muis die geleerd heeft, kiest in elk vakje de beste actie: die met de
+hoogste waarde. Je schrijft daarvoor een methode `beste_actie(vakje)` die
+`"links"` of `"rechts"` teruggeeft. Zijn ze even hoog, dan kiest hij `"links"`.
 
 ### Aan de slag
 
-In de editor staat een muis met een paar waarden in zijn tabel, en een
-`beste_actie` die nog niets vergelijkt.
+In de editor heeft een muis een paar waarden in zijn tabel.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `beste_actie` zegt nu altijd `"links"`.
-2. Laat `beste_actie` de waarde van links en die van rechts vergelijken, met `self.waarde(vakje, "links")`, en de actie met de hoogste waarde teruggeven.
+2. Laat `beste_actie` met `self.waarde` links en rechts vergelijken, en de beste teruggeven.
 3. Print de beste actie voor elk vakje van 1 tot en met 3.
 
 Verwachte uitvoer:

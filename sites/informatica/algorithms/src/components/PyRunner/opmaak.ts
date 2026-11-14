@@ -113,3 +113,32 @@ export function veldOpmaak({
   const editorMax = Math.max(editorMin, ruimte - lijn - uitvoerOnder);
   return { naast, onder, schaal, editorMin, editorMax, uitvoerOnder };
 }
+
+/**
+ * Hoeveel pixels er in het codevak boven en onder de editor staan: het
+ * uitklapblok met de code die al klaarstaat (dicht) en de ruimte eromheen.
+ * Gemeten tot de onderkant van de inhoud, niet van het vak: naast de uitvoer
+ * rekt het raster het codevak op tot de hoogte van de uitvoerkolom, en die
+ * kolom mag zo hoog worden als editor plus deze ruimte. Met de onderkant van
+ * het vak hield een hoge uitvoerkolom zichzelf in stand: een lange verwachte
+ * uitvoer maakte het veld 64 pixels hoger dan nodig. `open` is wat een
+ * opengeklapt blok extra kost; dat telt niet mee.
+ */
+export function rondOm({
+  vakBoven,
+  editorBoven,
+  editorOnder,
+  inhoudOnder,
+  open = 0,
+}: {
+  vakBoven: number;
+  editorBoven: number;
+  editorOnder: number;
+  inhoudOnder: number;
+  open?: number;
+}): number {
+  return Math.max(
+    0,
+    Math.round(editorBoven - vakBoven + Math.max(0, inhoudOnder - editorOnder) - open),
+  );
+}

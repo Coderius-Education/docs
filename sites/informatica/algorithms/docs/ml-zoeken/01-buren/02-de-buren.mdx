@@ -86,7 +86,7 @@ print(buren((2, 1)))`} />
 
 </details>
 
-## Opdracht: binnen de randen
+## Opdracht
 
 ### De opdracht
 
@@ -96,14 +96,12 @@ hoek, houdt hij er dan maar twee over.
 
 ### Aan de slag
 
-In de editor staat `buren` uit het onderzoek, die nog alle vier de vakjes
-geeft.
+In de editor geeft `buren` nog alle vier de vakjes.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `buren((0, 0))` geeft vier vakjes, ook `(-1, 0)` en `(0, -1)`.
-2. Zet de `append` in een `if r >= 0:`. Nu is `(-1, 0)` weg.
-3. Zet er met `and` de voorwaarde `k >= 0` bij. Nu geeft hij `[(1, 0), (0, 1)]`.
-4. Vraag ook `buren((4, 5))`, en zet er de twee voorwaarden voor de onderrand en de rechterrand bij: `r < len(doolhof)` en `k < len(doolhof[0])`.
+2. Zet de `append` in een `if r >= 0 and k >= 0:`. Nu geeft hij `[(1, 0), (0, 1)]`.
+3. Vraag ook `buren((4, 5))`, en zet er `r < len(doolhof)` en `k < len(doolhof[0])` bij.
 
 Verwachte uitvoer:
 

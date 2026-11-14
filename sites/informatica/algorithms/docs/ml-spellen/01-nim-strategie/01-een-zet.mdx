@@ -88,31 +88,22 @@ while stapel > 0:
 
 </details>
 
-## Opdracht: tel de beurten
+## Opdracht
 
 ### De opdracht
 
-Een speler pakt steeds 2 lucifers van een stapel van 11, of de rest als er
-minder liggen. Je schrijft een programma dat laat zien hoeveel er na elke zet
-liggen, en dat telt hoeveel beurten het duurt tot de stapel op is. Daarvoor
+Je telt de beurten van een speler die steeds 2 lucifers pakt van een stapel
+van 11, of de rest als er minder liggen. Je programma laat zien hoeveel er na
+elke zet liggen, en telt hoeveel beurten het duurt tot de stapel op is. Daarvoor
 schrijf je je eerste while-loop.
 
 ### Aan de slag
 
-In de editor pakt een speler één keer 2 lucifers van een stapel van 11.
-Begin klein, en breid de code stap voor stap uit:
+**Pas op:** krimpt de stapel niet, dan loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
 
-1. Draai de code: er liggen nog 9.
-2. Zet het pakken en de print in een loop `while stapel > 0:`. De laatste regel klopt niet.
-3. Zorg dat de speler nooit meer pakt dan er ligt. Nu eindigt de stapel op 0.
-4. Tel in `beurten` hoeveel zetten er zijn, en print dat na de loop.
-
-:::caution
-Wordt de stapel niet bij elke zet kleiner, dan stopt de loop nooit en loopt het
-tabblad van de browser vast: je code is dan weg. Kopieer je code eerst naar een
-kladblok, of druk bij twijfel op Stap voor stap: die neemt hoogstens 1000
-stappen op.
-:::
+1. Draai de code: een speler pakt één keer 2 lucifers van 11, en er liggen nog 9.
+2. Zet het pakken en de print in een loop `while stapel > 0:`, en pak nooit meer dan er ligt.
+3. Tel in `beurten` hoeveel zetten er zijn, en print dat na de loop.
 
 Verwachte uitvoer:
 
@@ -133,7 +124,7 @@ print("er liggen nog", stapel)`} />
 <details>
 <summary>Tip</summary>
 
-Bij stap 3: maak van de 2 eerst een variabele `pak`. Dan kun je met een `if`
+Bij stap 2: maak van de 2 eerst een variabele `pak`. Dan kun je met een `if`
 kijken of er genoeg liggen, en `pak` kleiner maken als dat niet zo is.
 
 </details>
