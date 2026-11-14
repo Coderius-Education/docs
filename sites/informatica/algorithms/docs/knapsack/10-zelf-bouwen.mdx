@@ -129,7 +129,27 @@ items kwijt — dat geeft maximum 48.
 ## Uitdaging (optioneel)
 
 Voeg een 7e item toe — een verrekijker met waarde 4 en gewicht 1.
-Verandert de optimale keuze?
+Verandert de optimale keuze? Plak eerst je `kies_rugzak` uit Bouw en
+test op de plek van de lege functie.
+
+{/* niet-draaien: startcode; de leerling plakt hier zijn eigen kies_rugzak */}
+<PyRunner initialCode={`def kies_rugzak(items, capaciteit):
+    # Plak hier je kies_rugzak uit Bouw en test.
+    raise NotImplementedError("Plak hier je eigen kies_rugzak.")
+
+
+items = [
+    (12, 4),    # slaapzak
+    (18, 7),    # tent
+    (8, 3),     # kookstel
+    (10, 2),    # waterfilter
+    (14, 5),    # eten
+    (6, 1),     # powerbank
+]
+
+waarde, keuze = kies_rugzak(items, 15)
+print(f"Totale waarde: {waarde}")
+print(f"Indexen: {sorted(keuze)}")`} />
 
 <details>
 <summary>Tip</summary>
