@@ -25,7 +25,7 @@ import {
 } from './paneel';
 import { pasCode } from './pasCode';
 import { schuifInRij } from './schuifRij';
-import { verdeelSpeling } from './speling';
+import { openBlokInVak, verdeelSpeling } from './speling';
 import styles from './styles.module.css';
 
 // Les-tabbladen: elke `##`-sectie van een les is een tabblad bovenaan
@@ -203,6 +203,7 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
       beeld = window.requestAnimationFrame(() => {
         pasCode(el);
         verdeelSpeling(el);
+        openBlokInVak(el);
         // De speling kan een codevak lager maken, en dan schuift het
         // verticaal: een klassieke schuifbalk (Windows) neemt breedte, en de
         // langste regel viel 10 px af (robotica, tof). Dus de letters nog een
@@ -216,6 +217,14 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     // heeft dan geen breedte, en bleef op volle grootte afgesneden staan.
     // `toggle` komt als het blok open is (en borrelt niet: vangen).
     el.addEventListener('toggle', meet, true);
+    // Een blok van Docusaurus klapt met een animatie open: pas daarna heeft
+    // de inhoud zijn hoogte (openBlokInVak).
+    let klapper = 0;
+    const naKlappen = () => {
+      window.clearTimeout(klapper);
+      klapper = window.setTimeout(meet, 400);
+    };
+    el.addEventListener('toggle', naKlappen, true);
     el.addEventListener('load', meet, true);
     window.addEventListener('resize', meet);
     // Het lettertype van de code laadt pas als er code in beeld komt, en is
@@ -226,6 +235,8 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
       window.cancelAnimationFrame(beeld);
       el.removeEventListener('click', meet);
       el.removeEventListener('toggle', meet, true);
+      el.removeEventListener('toggle', naKlappen, true);
+      window.clearTimeout(klapper);
       el.removeEventListener('load', meet, true);
       window.removeEventListener('resize', meet);
       document.fonts?.removeEventListener?.('loadingdone', meet);
