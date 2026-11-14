@@ -21,13 +21,19 @@ const MIN_CODE_DEEL = 0.5;
  * als de langste regel daar niet past: dan staat de uitvoer onder de code. Een
  * regel code breekt niet af (schrijfgids §2); naast de uitvoer brak in 184
  * schermen van algoritmes een regel af, op een vaste zestig procent.
- * `teken` is de breedte van een teken in de editor (gemeten in de browser).
+ * `teken` is de breedte van een teken in de editor; `maxDeel` hoeveel van het
+ * veld de code hooguit krijgt (met een grafiek minder, zie opmaak.ts).
  */
-export function codeBreedte(code: string, veld: number, teken = TEKEN_PX): number | null {
+export function codeBreedte(
+  code: string,
+  veld: number,
+  teken = TEKEN_PX,
+  maxDeel = MAX_CODE_DEEL,
+): number | null {
   const langste = Math.max(0, ...code.split('\n').map((r) => r.length));
   const nodig = langste * teken + EDITOR_RAND_PX;
-  if (nodig > veld * MAX_CODE_DEEL) return null;
-  return Math.max(nodig, veld * MIN_CODE_DEEL);
+  if (nodig > veld * maxDeel) return null;
+  return Math.min(veld * maxDeel, Math.max(nodig, veld * Math.min(MIN_CODE_DEEL, maxDeel)));
 }
 
 /** Kleiner dan dit worden de letters in de editor niet, net als bij pasCode. */

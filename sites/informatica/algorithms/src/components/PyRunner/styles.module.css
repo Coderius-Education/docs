@@ -219,3 +219,41 @@
 .inTab .codeVak [class*="gutter"] {
   font-size: calc(0.9rem * var(--code-schaal, 1)) !important;
 }
+
+/* Een grafiek onder de code past in zijn vak (--uitvoer-hoogte, opmaak.ts);
+   een klik vergroot hem. In een vak van 100 pixels was eerst alleen de
+   bovenrand te zien. */
+.onder .plot {
+  width: auto;
+  max-height: calc(var(--uitvoer-hoogte, 100px) - 3rem);
+}
+
+/* Het doel van de opdracht (de verwachte uitvoer), onder wat de leerling
+   zelf kreeg, zoals in de CodeExercise van de python-cursus: <LesVeld> zet
+   hem om het veld (useLesDoel). */
+.doel {
+  padding: 0.5rem 0.75rem 0.75rem;
+  border-top: 1px dashed var(--ifm-color-emphasis-300);
+  font-size: 0.825rem;
+}
+
+.doel > p {
+  margin: 0 0 0.35rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.doel > :last-child {
+  margin-bottom: 0;
+}
+
+/* Verwachte uitvoer breekt af als een regel niet past, net als uitvoer in een
+   terminal. */
+.doel pre code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.wacht + .doel {
+  border-top: 0;
+  padding-top: 0;
+}

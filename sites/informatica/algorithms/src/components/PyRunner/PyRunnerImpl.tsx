@@ -5,7 +5,7 @@ import type {
 } from '@coderius/python-runner/PyodideProvider';
 import { tracePython } from '@coderius/python-runner/PyodideProvider';
 import Stapper from '@coderius/python-runner/Stapper';
-import { useInLesTab } from '@coderius/shared/components/LesTabs/paneel';
+import { useInLesTab, useLesDoel } from '@coderius/shared/components/LesTabs/paneel';
 import { meetRuimte, pasHoogte } from '@coderius/shared/components/LesTabs/pasHoogte';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import clsx from 'clsx';
@@ -13,9 +13,11 @@ import type React from 'react';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import ParseTree from '../ParseTree';
 import { type Getiteld, leesBomen } from '../ParseTree/boom';
-import { codeBreedte, codeSchaal } from './breedte';
+import { codeSchaal } from './breedte';
 import { draaiInVerseMain } from './draai';
 import { heeftMatplotlibNodig } from './matplotlib';
+import { naStappen } from './naStappen';
+import { MIN_REGELS, editorHoogte, veldOpmaak } from './opmaak';
 import styles from './styles.module.css';
 import {
   type PyodideInterface,
@@ -30,17 +32,15 @@ import { verborgenCode as haalVerborgen } from './verborgen';
 // (0.85rem × 2 ≈ 27px). Used so callers can keep passing `rows` props.
 const LINE_HEIGHT_PX = 22;
 const EDITOR_PADDING_PX = 28;
-/** Lager wordt het veld in een tabblad niet: de werkbalk en een regel of vijf. */
-const MIN_VELD = 180;
 /** De hoogte van de werkbalk, tot hij gemeten is. */
 const BALK = 40;
 /** De rand van het veld, boven en onder: die telt mee in zijn hoogte. */
 const RAND = 2;
 /**
- * Het vak voor de uitvoer onder de code: altijd even hoog, voor en na Voer uit,
- * zodat het scherm niet langer wordt als er uitvoer komt.
+ * Lager wordt het veld in een tabblad niet: de werkbalk en de editor met zijn
+ * minimum aan regels (opmaak.ts). Een scherm dat dan niet past, splits je.
  */
-const UITVOER_ONDER = 100;
+const MIN_VELD = BALK + editorHoogte(MIN_REGELS) + 2 * RAND;
 
 export type PyRunnerProps = {
   initialCode?: string;
@@ -207,6 +207,15 @@ export default function PyRunnerImpl({
     () => heeftMatplotlibNodig(code, verborgenCode),
     [code, verborgenCode],
   );
+  // Of het veld een grafiek tekent, voor de opmaak: uit de startcode, net als
+  // naast of onder (opmaak.ts), zodat het veld niet verspringt onder het typen.
+  const tekentGrafiek = useMemo(
+    () => heeftMatplotlibNodig(source, verborgenCode),
+    [source, verborgenCode],
+  );
+  // Wat de opdracht moet opleveren (de verwachte uitvoer): <LesVeld> zet het
+  // om het veld, en het veld toont het onder de uitvoer van de leerling.
+  const doel = useLesDoel();
 
   // Start de Pyodide-download op de achtergrond zodra de pagina idle is, zodat
   // de eerste "Voer uit" (bijna) direct start. Wheels voor matplotlib worden
@@ -394,30 +403,38 @@ export default function PyRunnerImpl({
       : 0;
     return Math.max(0, vak.offsetHeight - editor.offsetHeight - open);
   };
-  // Naast elkaar alleen als de langste regel van de code (ook wat de leerling
-  // typt) in de codekolom past; anders de uitvoer eronder.
-  const naast = veldBreedte === null ? null : codeBreedte(code, veldBreedte);
-  const onder = inTab && veldBreedte !== null && naast === null;
-  // Past de langste regel ook zo niet, dan worden de letters kleiner (tot 80%),
-  // zoals bij een codeblok in de les: een regel code breekt niet af.
-  const schaal = veldBreedte === null ? 1 : codeSchaal(code, naast ?? veldBreedte);
-  const editorMax =
-    veldHoogte === null
-      ? undefined
-      : veldHoogte -
-        (balkRef.current?.offsetHeight ?? BALK) -
-        rondDeEditor() -
-        // De rand van het veld (boven en onder), en onder de code de lijn
-        // boven de uitvoer: zonder die pixels was cfg 12 › Bouw en test 6
-        // pixels te lang.
-        2 * RAND -
-        (onder ? UITVOER_ONDER + 1 : 0);
+  // Naast of onder, de grootte van de letters en de hoogte van editor en
+  // uitvoer (opmaak.ts): uit de startcode, en met een ondergrens voor de editor.
+  const balk = balkRef.current?.offsetHeight ?? BALK;
+  const opmaak = veldOpmaak({
+    code: source,
+    breedte: veldBreedte,
+    ruimte: veldHoogte === null ? null : veldHoogte - balk - rondDeEditor() - 2 * RAND,
+    plaatjes: tekentGrafiek,
+  });
+  const { naast, schaal, editorMax } = opmaak;
+  const onder = inTab && opmaak.onder;
+  // De klaargezette code staat in dezelfde kolom: zijn eigen lettergrootte,
+  // en een regel die ook zo niet past, schuift (afbreken={false}).
+  const verborgenSchaal =
+    verborgenCode && veldBreedte !== null ? codeSchaal(verborgenCode, naast ?? veldBreedte) : 1;
   // Stap voor stap neemt in een tabblad de plek van de editor en de uitvoer
   // in, op de hoogte die die samen hadden.
   const stapper =
-    stapt && veldHoogte !== null
-      ? veldHoogte - (balkRef.current?.offsetHeight ?? BALK) - 2 * RAND
+    stapt && editorMax !== undefined
+      ? editorMax + rondDeEditor() + (onder ? opmaak.uitvoerOnder + 1 : 0)
       : undefined;
+  // In een tabblad staat een grafiek vóór de tekst: het vak voor de uitvoer
+  // is daar zo hoog als het scherm toelaat, en in Big-O viel de grafiek onder
+  // de tabel met getallen buiten beeld.
+  const grafieken = plots.map((b64, i) => (
+    <img
+      key={b64}
+      src={`data:image/png;base64,${b64}`}
+      alt={`Plot ${i + 1}`}
+      className={styles.plot}
+    />
+  ));
   const uitvoer = (
     <>
       {statusMsg && (
@@ -462,17 +479,11 @@ export default function PyRunnerImpl({
               )}
             </div>
           )}
+          {inTab && grafieken}
           {stdout && <pre className={styles.stdout}>{stdout}</pre>}
           {stderr && <pre className={clsx(styles.stdout, styles.stderr)}>{stderr}</pre>}
           {errorMsg && <pre className={clsx(styles.stdout, styles.error)}>{errorMsg}</pre>}
-          {plots.map((b64, i) => (
-            <img
-              key={b64}
-              src={`data:image/png;base64,${b64}`}
-              alt={`Plot ${i + 1}`}
-              className={styles.plot}
-            />
-          ))}
+          {!inTab && grafieken}
         </div>
       )}
     </>
@@ -491,6 +502,7 @@ export default function PyRunnerImpl({
         {
           ...(naast === null ? {} : { '--code-breedte': `${naast}px` }),
           ...(schaal === 1 ? {} : { '--code-schaal': schaal }),
+          ...(onder ? { '--uitvoer-hoogte': `${opmaak.uitvoerOnder}px` } : {}),
         } as React.CSSProperties
       }
     >
@@ -534,11 +546,23 @@ export default function PyRunnerImpl({
             onKeyDown={handleKeyDown}
             readOnly={!editable}
             disabled={busy}
-            minHeight={editorMax === undefined ? minEditor : Math.min(minEditor, editorMax)}
+            minHeight={
+              editorMax === undefined
+                ? minEditor
+                : Math.max(opmaak.editorMin, Math.min(minEditor, editorMax))
+            }
             maxHeight={editorMax}
           />
           {verborgenCode && (
-            <details className={styles.verborgen} ref={verborgenRef}>
+            <details
+              className={styles.verborgen}
+              ref={verborgenRef}
+              style={
+                verborgenSchaal === 1
+                  ? undefined
+                  : ({ '--code-schaal': verborgenSchaal } as React.CSSProperties)
+              }
+            >
               <summary>
                 Toon de code die al klaarstaat ({verborgenCode.split('\n').length} regels)
               </summary>
@@ -548,6 +572,7 @@ export default function PyRunnerImpl({
                 readOnly
                 disabled={false}
                 minHeight={0}
+                afbreken={false}
                 ariaLabel="Code die al klaarstaat, alleen-lezen"
               />
             </details>
@@ -558,7 +583,15 @@ export default function PyRunnerImpl({
         <Stapper
           code={opnameCode}
           opname={opname}
-          onSluiten={() => setOpname(null)}
+          onSluiten={() => {
+            // Wat de opname printte, blijft staan (naStappen.ts).
+            const na = naStappen(opname);
+            setStdout(na.stdout);
+            setErrorMsg(na.errorMsg);
+            setStatusMsg(na.statusMsg);
+            setStatus(na.errorMsg ? 'error' : 'done');
+            setOpname(null);
+          }}
           hoogte={stapper}
         />
       )}
@@ -567,10 +600,10 @@ export default function PyRunnerImpl({
           className={styles.resultaat}
           style={
             onder
-              ? { height: UITVOER_ONDER }
-              : veldHoogte === null
+              ? { height: opmaak.uitvoerOnder }
+              : editorMax === undefined
                 ? undefined
-                : { maxHeight: veldHoogte }
+                : { maxHeight: editorMax + rondDeEditor() + balk + 2 * RAND }
           }
         >
           {uitvoer}
@@ -585,9 +618,13 @@ export default function PyRunnerImpl({
               </span>
             </p>
           )}
+          {doel && <div className={styles.doel}>{doel}</div>}
         </div>
       ) : (
-        uitvoer
+        <>
+          {uitvoer}
+          {doel && <div className={styles.doel}>{doel}</div>}
+        </>
       )}
     </div>
   );
