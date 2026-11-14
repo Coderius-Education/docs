@@ -30,6 +30,14 @@
   gap: 0.375rem;
 }
 
+/* Smallere knoppen in de werkbalk: met de knop Klaargezette code erbij past
+   hij zo in een codekolom van 460 pixels (de helft van het veld, met de
+   schuifbalk van Windows) op een regel. Op twee regels was het veld 37
+   pixels hoger. */
+.toolbar :global(.button) {
+  padding-inline: 0.55rem;
+}
+
 .editor {
   display: block;
   width: 100%;
@@ -111,7 +119,6 @@
 .klaarKnop {
   white-space: nowrap;
   font-size: 0.8rem;
-  padding-inline: 0.5rem;
 }
 
 /* De bomen staan bovenaan de uitvoer, in een balk die opvalt: de knop is
