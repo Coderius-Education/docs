@@ -18,6 +18,8 @@ Naam  -> "sam" | "kim"
 
 ## Een regel zonder pijl
 
+### Wat er misgaat: een ValueError
+
 {/* foutmelding-van: kop, rest = "Naam => sam".split("->") */}
 
 Symptoom: geen `FOUT (0x)`, maar een rode Python-foutmelding die eindigt
@@ -41,7 +43,9 @@ Naam => "sam"
 # De motor zoekt de pijl -> en vindt hem niet: ValueError.
 ```
 
-**Oplossing:**
+### Oplossing: precies één pijl
+
+Zet de pijl `->` terug:
 
 ```
 # GOED
@@ -52,9 +56,11 @@ Vuistregel: elke regel in `GRAMMATICA` die niet leeg is, heeft precies
 één `->`. Kijk bij deze melding dus niet naar je zinnen, maar naar de
 regel die je het laatst hebt getypt of geplakt.
 
-## Aanhalingstekens vergeten bij een terminal
+## Aanhalingstekens vergeten
 
-Symptoom: bovenaan de uitvoer staat `LET OP: "sam" in de regel
+### Wat er misgaat: een groep zonder regels
+
+Je vergeet de aanhalingstekens bij een terminal. Symptoom: bovenaan de uitvoer staat `LET OP: "sam" in de regel
 "Naam -> sam" heeft nergens een regel`, en de zin blijft op `FOUT (0x)` of
 `Kon de zin niet ontleden`.
 
@@ -72,7 +78,9 @@ Naam -> sam
 # gedefinieerd is. 'hallo sam' parseert niet.
 ```
 
-**Oplossing:**
+### Oplossing: aanhalingstekens om een woord
+
+Zet het woord tussen aanhalingstekens:
 
 ```
 # GOED
@@ -84,6 +92,8 @@ geldt voor de namen die jij verzint en voor woordsoorten als `N`, `V`
 en `Det`.
 
 ## Een regel vergeten
+
+### Wat er misgaat: geen pad naar de woorden
 
 Symptoom: één bepaalde zin blijft `FOUT (0x)`, terwijl de rest op OK staat.
 
@@ -98,7 +108,9 @@ Naam  -> "sam" | "kim"
 # 'hallo sam' lukt niet: er is geen Zin -> Groet Naam
 ```
 
-**Oplossing:** voeg de ontbrekende regel toe.
+### Oplossing: de ontbrekende regel
+
+Voeg de regel toe die in je grammatica ontbreekt:
 
 ```
 # GOED
@@ -108,9 +120,12 @@ Zin -> Groet Naam
 Aanpak: kijk welke zin faalt, ontleed hem met de hand in groepen, en
 zoek de groep waarvoor je nog geen regel hebt.
 
-## Woord staat niet in het lexicon (of hoofdletters/leestekens)
+## Woord niet in het lexicon
 
-Symptoom: `Kon de zin niet ontleden`, ook al lijkt je grammatica
+### Wat er misgaat: een onbekend woord
+
+Het woord staat niet in het lexicon, of er zit een hoofdletter of
+leesteken aan. Symptoom: `Kon de zin niet ontleden`, ook al lijkt je grammatica
 compleet.
 
 **Oorzaak:** het woord staat niet in het lexicon. De motor zet alles
@@ -122,7 +137,9 @@ precies zo, in kleine letters, in het lexicon staat, herkent hij nooit.
 # 'hallo alex' -> Kon de zin niet ontleden
 ```
 
-**Oplossing:** voeg het woord toe bij de juiste woordsoort, bv.
+### Oplossing: het woord in het lexicon
+
+Voeg het woord toe bij de juiste woordsoort, bijvoorbeeld
 `Naam -> "alex"`.
 
 Leestekens horen er niet bij: typ `hallo sam`, niet `hallo sam.`, want

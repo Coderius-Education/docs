@@ -6,17 +6,17 @@ sidebar_position: 2
 
 **Leerdoel:** je toetst je beeld van een context-vrije grammatica
 voordat je gaat bouwen. Denk eerst zelf na, klik dan open. De stellingen
-gaan over het mini-voorbeeld van de vorige pagina:
+gaan over het mini-voorbeeld van [het idee](site:algorithms/docs/cfg/01-concept).
+
+## Stelling 1
+
+De grammatica uit het idee:
 
 ```
 Zin   -> Groet Naam
 Groet -> "hallo" | "hoi"
 Naam  -> "sam" | "kim"
 ```
-
----
-
-### Stelling 1
 
 > Deze grammatica accepteert de zin **hallo sam**.
 
@@ -28,9 +28,15 @@ dus samen vormen ze een `Zin`.
 
 </details>
 
----
+## Stelling 2
 
-### Stelling 2
+De grammatica uit het idee:
+
+```
+Zin   -> Groet Naam
+Groet -> "hallo" | "hoi"
+Naam  -> "sam" | "kim"
+```
 
 > De grammatica accepteert ook **sam hallo**.
 
@@ -42,9 +48,15 @@ een naam. Hier staat het andersom, dus de zin is afgekeurd.
 
 </details>
 
----
+## Stelling 3
 
-### Stelling 3
+De grammatica uit het idee:
+
+```
+Zin   -> Groet Naam
+Groet -> "hallo" | "hoi"
+Naam  -> "sam" | "kim"
+```
 
 > `Groet` en `Naam` zijn terminals.
 
@@ -57,9 +69,7 @@ aanhalingstekens, `"hallo"`, `"hoi"`, `"sam"` en `"kim"`.
 
 </details>
 
----
-
-### Stelling 4
+## Stelling 4
 
 > Een grammatica controleert of een zin qua **betekenis** klopt.
 
@@ -72,9 +82,7 @@ weet de computer niet wie Kim is.
 
 </details>
 
----
-
-### Stelling 5
+## Stelling 5
 
 > Eén zin kan nooit meer dan één boom hebben.
 
@@ -89,9 +97,7 @@ zelf tegen.
 
 </details>
 
----
-
-### Stelling 6
+## Stelling 6
 
 > Als je een nieuwe regel **toevoegt** om een extra zin te accepteren,
 > blijven alle eerder geaccepteerde zinnen geldig.
@@ -108,7 +114,5 @@ regels *verandert* of vervangt, en dát kan een oude zin wél kapotmaken.
 Zolang je alleen toevoegt, is alles wat werkte veilig.
 
 </details>
-
----
 
 Door naar [de eerste zin →](site:algorithms/docs/cfg/bouwen/03-simpele-zin).
