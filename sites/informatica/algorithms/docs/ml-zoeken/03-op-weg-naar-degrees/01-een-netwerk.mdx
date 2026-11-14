@@ -109,28 +109,31 @@ print(buren("Markt"))`} />
 
 ### De opdracht
 
-Hoeveel haltes is elk station van Zuid? Zoek het met breedte-eerst, net als in
-het doolhof, en print de afstanden:
+Hoeveel haltes is elk station van Zuid? Een metronet is ook een doolhof: de
+stations zijn de vakjes, en de verbindingen zeggen welke vakjes buren zijn. Je
+zoekt het met breedte-eerst, net als in het doolhof, en print de afstanden.
+
+### Aan de slag
+
+In de editor staat de start, Zuid; het netwerk en `buren` staan in de
+verborgen code.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de buren van Zuid.
+2. Zet een wachtrij `[van]` en de while-loop uit het doolhof eronder, met `station = wachtrij.pop(0)`. Print `afstand`.
+3. `buren` geeft paren: loop met `for lijn, buur in buren(station):`. Print ook `afstand["Strand"]`.
+
+:::caution
+Zet je een station dat je al kent toch weer in de wachtrij, dan stopt de loop
+nooit en loopt het tabblad van de browser vast. Kopieer je code eerst naar een
+kladblok.
+:::
+
+Verwachte uitvoer:
 
 ```
 {'Zuid': 0, 'Markt': 1, 'Centraal': 2, 'Haven': 2, 'Park': 2, 'Strand': 3, 'Museum': 3, 'Noord': 3, 'Stadion': 3}
 ```
-
-:::caution
-De while-loop stopt pas als de wachtrij leeg is. Zet je een station dat je al
-kent toch weer in de wachtrij, dan stopt hij nooit. De speeltuin heeft geen
-stopknop, dus het tabblad van de browser loopt vast: herlaad de pagina, en je code is weg.
-Kopieer je code daarom eerst naar een kladblok voordat je een nieuwe
-while-loop draait.
-:::
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print de buren van Zuid. Het netwerk en `buren` staan in de verborgen code.
-2. Zet een wachtrij `[van]` en de while-loop uit het doolhof eronder. Haal in de loop met `station = wachtrij.pop(0)` het voorste station eruit. `buren` geeft nu paren, dus loop met `for lijn, buur in buren(station):`. Print `afstand`.
-3. Print ook hoeveel haltes Strand is, met `afstand["Strand"]`.
-
-### Aan de slag
 
 <PyRunner verborgen="metro" initialCode={`van = "Zuid"
 afstand = {van: 0}

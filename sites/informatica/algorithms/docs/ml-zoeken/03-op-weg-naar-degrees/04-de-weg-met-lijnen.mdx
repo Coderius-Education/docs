@@ -48,13 +48,6 @@ Haal je de knoop van `naar` uit de wachtrij, dan loop je via `ouder` terug.
 Bij elke knoop zet je het paar `(knoop.actie, knoop.toestand)` vooraan in de
 weg. De start komt er niet in: daar nam je geen lijn.
 
-:::caution
-In deze functie staan twee while-loops. Stopt er een nooit, dan loopt het
-tabblad van de browser vast, want de speeltuin heeft geen stopknop: herlaad de pagina, en je
-code is weg. Kopieer je code daarom eerst naar een kladblok voordat je een
-nieuwe while-loop draait.
-:::
-
 ## Onderzoek
 
 1. Draai de code. In welke volgorde komen de stations uit de wachtrij?
@@ -87,23 +80,34 @@ while not wachtrij.is_leeg():
 
 ### De opdracht
 
-Schrijf de functie `reis(van, naar)`, die de weg geeft als lijst paren
-`(lijn, station)`, en `None` als er geen weg is:
+Je zet het zoeken en de weg terug samen in één functie `reis(van, naar)`.
+Die geeft de weg als lijst paren `(lijn, station)`: welke lijn je neemt, en
+waar je uitstapt. Is er geen weg, dan geeft hij `None`. Zo'n functie schrijf
+je straks ook voor Degrees.
+
+### Aan de slag
+
+In de editor staat `reis` met het zoeken met knopen, dat nog `"?"` teruggeeft.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `reis` geeft nog `"?"`.
+2. Geef direct na `haal_eruit` de toestand terug als `knoop.toestand == naar`. Nu print hij `Strand`.
+3. Loop daar in plaats daarvan terug langs `knoop.ouder`, en zet elk paar `(knoop.actie, knoop.toestand)` vooraan in een lijst `weg`.
+4. Vraag ook `reis("Noord", "Museum")` en `reis("Zuid", "Eiland")`, en zet onderaan `return None`.
+
+:::caution
+`reis` heeft twee while-loops. Gaat de tweede nooit naar `knoop.ouder`, dan
+stopt hij nooit en loopt het tabblad van de browser vast. Kopieer je code
+eerst naar een kladblok.
+:::
+
+Verwachte uitvoer:
 
 ```
 [('blauw', 'Markt'), ('rood', 'Haven'), ('rood', 'Strand')]
 [('blauw', 'Park'), ('groen', 'Stadion'), ('geel', 'Museum')]
 None
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: `reis` geeft nog `"?"`.
-2. Kijk in de while-loop, direct na `haal_eruit`, of `knoop.toestand == naar`. Zo ja, geef dan `knoop.toestand` terug. Nu print hij `Strand`.
-3. Loop daar in plaats daarvan terug langs `knoop.ouder`, zoals bij [een knoop](site:algorithms/docs/ml-zoeken/03-op-weg-naar-degrees/02-een-knoop), en zet elk paar vooraan in een lijst `weg`. Geef `weg` terug.
-4. Vraag ook `reis("Noord", "Museum")` en `reis("Zuid", "Eiland")`, en zet onderaan `return None` in plaats van `return "?"`.
-
-### Aan de slag
 
 <PyRunner verborgen="metro-zoeken" initialCode={`def reis(van, naar):
     wachtrij = Wachtrij()

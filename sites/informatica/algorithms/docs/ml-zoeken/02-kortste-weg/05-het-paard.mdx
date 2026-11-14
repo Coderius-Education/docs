@@ -44,14 +44,7 @@ tuple, net als `rij, kolom = vakje`.
 
 Er zijn geen muren, maar een sprong mag niet van het bord af: rij en kolom
 blijven van 0 tot en met 7. Dat is dezelfde controle als de randen van het
-doolhof.
-
-:::caution
-Zonder die controle springt het paard eindeloos verder, en stopt de
-while-loop nooit. De speeltuin heeft geen stopknop, dus het tabblad van de browser loopt
-vast: herlaad de pagina, en je code is weg. Kopieer je code daarom eerst naar
-een kladblok voordat je een nieuwe while-loop draait.
-:::
+doolhof. Zonder die controle springt het paard eindeloos verder.
 
 ## Bouw zelf: het paard op het schaakbord
 
@@ -59,16 +52,31 @@ een kladblok voordat je een nieuwe while-loop draait.
 
 Hoeveel sprongen heeft een paard nodig van de ene hoek, `(0, 0)`, naar de hoek
 er schuin tegenover, `(7, 7)`? En hoeveel naar `(1, 1)`, het vakje er schuin
-naast? Gebruik breedte-eerst zoeken op een bord van 8 bij 8.
+naast? Breedte-eerst zoeken werkt niet alleen in een doolhof: je gebruikt het
+op een schaakbord van 8 bij 8, met de sprongen van het paard als buren.
 
+### Aan de slag
+
+In de editor staat een functie `sprongen` die nog maar één sprong kent.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `sprongen` geeft één sprong.
-2. Zet de andere zeven sprongen erbij. Een lijst met de acht richtingen en een loop erover scheelt typwerk.
-3. Houd met een `if` alleen de sprongen die op het bord blijven. `sprongen((0, 0))` geeft er dan twee: `(1, 2)` en `(2, 1)`.
-4. Zet het zoeken uit [breedte-eerst](site:algorithms/docs/ml-zoeken/02-kortste-weg/02-breedte-eerst) eronder, met `sprongen` in plaats van `buren`. Het vult de dictionary `afstand`; print daarna `afstand[(7, 7)]`.
+2. Zet de andere zeven sprongen erbij, met een lijst van de acht richtingen en een loop erover.
+3. Houd met een `if` alleen de sprongen op het bord. `sprongen((0, 0))` geeft dan `(1, 2)` en `(2, 1)`.
+4. Zet het zoeken uit [breedte-eerst](site:algorithms/docs/ml-zoeken/02-kortste-weg/02-breedte-eerst) eronder, met `sprongen` in plaats van `buren`. Print uit de dictionary `afstand` die van `(7, 7)` en `(1, 1)`.
 
-### Aan de slag
+:::caution
+Springt het paard van het bord af, dan komen er steeds nieuwe vakjes bij en
+stopt het zoeken nooit: het tabblad van de browser loopt vast. Kopieer je code
+eerst naar een kladblok, en zet de `if` van stap 3 erin voordat je zoekt.
+:::
+
+Verwachte uitvoer:
+
+```
+6
+4
+```
 
 <PyRunner initialCode={`def sprongen(vakje):
     rij, kolom = vakje

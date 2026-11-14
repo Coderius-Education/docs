@@ -43,18 +43,28 @@ elke rij evenveel tekens: `buren` meet de breedte aan de eerste rij.
 
 ### De opdracht
 
-Teken een eigen doolhof van minstens 6 bij 6, met een S en een E. Zoek met
-`doodlopend()` de doodlopende vakjes, en schrijf daarna een functie
-`kruispunten()` die de vakjes geeft met drie of meer buren: daar moet de robot
-kiezen. Kloppen ze met wat jij in je doolhof ziet?
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code. In de editor staat `doodlopend()` uit de vorige stap, met het doolhof van de vorige stappen. `buren` staat in de verborgen code.
-2. Zet je eigen doolhof in de plaats van het doolhof in de editor, en kijk of de doodlopende vakjes kloppen met wat je ziet.
-3. Schrijf een functie `kruispunten()`. Test hem eerst met het doolhof van de vorige stappen: dan geeft hij `[(0, 1), (0, 4), (1, 4), (2, 1), (3, 1)]`.
+Werkt je code ook voor een ander doolhof? Je tekent een eigen doolhof van
+minstens 6 bij 6, met een S en een E, en zoekt met `doodlopend()` de
+doodlopende vakjes. Daarna schrijf je een functie `kruispunten()` die de
+vakjes geeft met drie of meer buren: daar moet de robot kiezen. Kloppen ze
+met wat jij in je doolhof ziet?
 
 ### Aan de slag
+
+In de editor staat `doodlopend()` uit de vorige stap, met het doolhof van de
+vorige stappen; `buren` staat in de verborgen code.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet de doodlopende vakjes van het oude doolhof.
+2. Schrijf een functie `kruispunten()`. Met het oude doolhof geeft hij `[(0, 1), (0, 4), (1, 4), (2, 1), (3, 1)]`.
+3. Zet je eigen doolhof in de plaats van het oude, en kijk of beide lijsten kloppen met wat je ziet.
+
+Verwachte uitvoer (met het oude doolhof):
+
+```
+[(0, 0), (3, 0), (3, 5)]
+[(0, 1), (0, 4), (1, 4), (2, 1), (3, 1)]
+```
 
 <PyRunner verborgen="doolhof-buren" initialCode={`doolhof = [
     "S.....",
@@ -68,7 +78,8 @@ def doodlopend():
     lijst = []
     for rij in range(len(doolhof)):
         for kolom in range(len(doolhof[0])):
-            if doolhof[rij][kolom] != "#" and len(buren((rij, kolom))) == 1:
+            geen_muur = doolhof[rij][kolom] != "#"
+            if geen_muur and len(buren((rij, kolom))) == 1:
                 lijst.append((rij, kolom))
     return lijst
 
@@ -93,7 +104,8 @@ def kruispunten():
     lijst = []
     for rij in range(len(doolhof)):
         for kolom in range(len(doolhof[0])):
-            if doolhof[rij][kolom] != "#" and len(buren((rij, kolom))) >= 3:
+            geen_muur = doolhof[rij][kolom] != "#"
+            if geen_muur and len(buren((rij, kolom))) >= 3:
                 lijst.append((rij, kolom))
     return lijst
 

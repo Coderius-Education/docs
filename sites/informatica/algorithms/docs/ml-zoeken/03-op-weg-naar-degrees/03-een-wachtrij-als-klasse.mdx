@@ -98,21 +98,26 @@ while not w.is_leeg():
 ### De opdracht
 
 Geef de wachtrij een methode `bevat(toestand)`, die `True` geeft als er een
-knoop met die toestand in de wachtrij staat, en anders `False`. CS50 geeft
-zijn wachtrij net zo'n methode.
+knoop met die toestand in de wachtrij staat, en anders `False`. Zo zie je of
+een station al op zijn beurt wacht. CS50 geeft zijn wachtrij net zo'n
+methode.
 
-```
-True
-False
-```
+### Aan de slag
 
+In de editor staat de `Wachtrij` met een methode `bevat` die nog altijd
+`False` zegt, en een wachtrij met de knopen van Zuid en Markt.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `bevat` geeft nog steeds `False`.
 2. Loop in `bevat` met `for knoop in self.lijst:` langs de knopen, en print bij elke knoop `knoop.toestand`. Nu zie je twee keer Zuid en Markt.
 3. Haal de print weg. Geef `True` terug zodra `knoop.toestand` gelijk is aan `toestand`, en pas na de loop `False`.
 
-### Aan de slag
+Verwachte uitvoer:
+
+```
+True
+False
+```
 
 <PyRunner initialCode={`class Knoop:
     def __init__(self, toestand, ouder, actie):
@@ -166,7 +171,7 @@ past, kom je bij `return False`.
 
 ## Er gaat iets mis
 
-{/* foutmelding-van: fout-helft */}
+{/* foutmelding-van: class Wachtrij:\n    def __init__(self):\n        self.lijst = []\n    def voeg_toe(iets):\n        self.lijst.append(iets)\nWachtrij().voeg_toe("Zuid") */}
 ```
 TypeError: Wachtrij.voeg_toe() takes 1 positional argument but 2 were given
 ```
@@ -177,26 +182,15 @@ methode had maar plaats voor één.
 
 **Oplossing:** zet `self` als eerste parameter van elke methode.
 
+{/* niet-compileren: fragment; alleen de methode die verandert */}
 ```python
 # FOUT
-class Wachtrij:
-    def __init__(self):
-        self.lijst = []
-
     def voeg_toe(iets):
         self.lijst.append(iets)
 
-Wachtrij().voeg_toe("Zuid")
-
 # GOED
-class Wachtrij:
-    def __init__(self):
-        self.lijst = []
-
     def voeg_toe(self, iets):
         self.lijst.append(iets)
-
-Wachtrij().voeg_toe("Zuid")
 ```
 
 Door naar [de weg met lijnen](site:algorithms/docs/ml-zoeken/03-op-weg-naar-degrees/04-de-weg-met-lijnen).

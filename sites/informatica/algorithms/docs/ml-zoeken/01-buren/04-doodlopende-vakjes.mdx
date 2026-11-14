@@ -88,20 +88,28 @@ print(vrij, "vrije vakjes")`} />
 
 ### De opdracht
 
-Een vakje met maar één buur is doodlopend: je kunt er alleen terug. Schrijf een
-functie `doodlopend()` die een lijst geeft met alle doodlopende vakjes. Voor
-het doolhof van de editor is dat `[(0, 0), (3, 0), (3, 5)]`.
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij kijkt alleen naar het vakje `(0, 0)`.
-2. Zet de `if` in twee loops: `for rij in range(len(doolhof)):` en daarin `for kolom in range(len(doolhof[0])):`. Maak in de binnenste loop `vakje = (rij, kolom)`, en haal de regel `vakje = (0, 0)` weg. Nu print hij elk doodlopend vakje.
-3. Sla de muren over: zet in de `if` met `and` een tweede voorwaarde, dat het vakje geen `#` is. In dit doolhof verandert de uitvoer niet, maar in een ander doolhof kan een muur ook precies één vrij vakje naast zich hebben.
-4. Maak er een functie `doodlopend()` van, die de vakjes in een lijst teruggeeft in plaats van ze te printen.
+Een vakje met maar één buur is doodlopend: je kunt er alleen terug. Een
+robot die daar komt, weet dat hij om moet keren. Je schrijft een functie
+`doodlopend()` die een lijst geeft met alle doodlopende vakjes van het
+doolhof.
 
 ### Aan de slag
 
-`buren` staat klaar in de verborgen code onder de editor. In de editor staan het doolhof en één `if`.
+In de editor staan het doolhof en één `if`; `buren` staat klaar in de
+verborgen code.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij kijkt alleen naar het vakje `(0, 0)`.
+2. Zet de `if` in `for rij in range(len(doolhof)):` en daarin `for kolom in range(len(doolhof[0])):`, met `vakje = (rij, kolom)` in plaats van `(0, 0)`.
+3. Sla de muren over: zet met `and` in de `if` dat het vakje geen `#` is. Hier verandert de uitvoer niet, in een ander doolhof wel.
+4. Maak er een functie `doodlopend()` van, die de vakjes in een lijst teruggeeft.
+
+Verwachte uitvoer:
+
+```
+[(0, 0), (3, 0), (3, 5)]
+```
+
 
 <PyRunner verborgen="doolhof-buren" initialCode={`doolhof = [
     "S.....",

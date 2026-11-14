@@ -95,19 +95,24 @@ print(doolhof[rij][kolom])`} />
 
 ### De opdracht
 
-Tel hoeveel muren er in het doolhof staan. Dat zijn er 9:
+Hoeveel muren staan er in het doolhof? Met het oog tel je er 9. Je laat het
+programma ze tellen, rij voor rij: dat werkt ook voor een doolhof dat te groot
+is om met het oog te tellen.
 
-```
-Er staan 9 muren
-```
+### Aan de slag
 
+In de editor staat het doolhof, met een loop die de muren in één rij telt.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij telt de muren in de bovenste rij. Daar staan er 0.
 2. Verander `doolhof[0]` in `doolhof[1]`. Nu telt hij er 3.
 3. Zet de loop in een tweede loop, `for regel in doolhof:`, en loop in de binnenste loop over `regel` in plaats van over `doolhof[1]`. Nu telt hij alle 9 muren.
 
-### Aan de slag
+Verwachte uitvoer:
+
+```
+Er staan 9 muren
+```
 
 <PyRunner initialCode={`doolhof = [
     "S.....",
