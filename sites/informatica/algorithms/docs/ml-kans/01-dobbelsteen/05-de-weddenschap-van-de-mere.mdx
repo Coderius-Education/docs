@@ -77,29 +77,16 @@ print("minstens één zes:", zes)`} />
 
 </details>
 
-## Bouw zelf: de weddenschappen van de Méré
+## Bouw zelf
 
-### De opdracht
-
-De Franse schrijver Antoine Gombaud, die zich Chevalier de Méré noemde, gokte
-graag. Een bekende weddenschap in zijn tijd: in vier worpen met één
-dobbelsteen gooi je minstens één zes. Hoe vaak win je die?
-
-Speel de weddenschap 10.000 keer na en print hoeveel procent van de keren je
-wint. Probeer daarna een tweede: minstens één keer dubbel zes, in 24 worpen
-met twee dobbelstenen. Volgens de Méré moest die even goed uitpakken. Laat je
-simulatie dat zien?
-
-### Aan de slag
-
-In de editor speel je de weddenschap één keer, met een vlag `zes`.
+De Chevalier de Méré wedde dat je in vier worpen minstens één zes gooit, en in
+24 worpen met twee stenen minstens één keer dubbel zes. Win je die even vaak?
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code een paar keer: hij print soms `True` en soms `False`.
-2. Zet `for keer in range(10):` boven `zes = False`, en spring alles eronder één stap verder in. Je ziet nu tien keer `True` of `False`.
-3. Zet `gewonnen = 0` boven de buitenste loop, tel er één bij op als `zes` waar is, en print `gewonnen` na de loop.
-4. Speel `keren = 10000` keer, print het percentage met `gewonnen * 100 // keren`, en haal de print van `zes` weg.
-5. Maak de tweede weddenschap: 24 worpen met twee stenen, en kijk of ze allebei 6 zijn.
+1. Draai de code een paar keer: hij speelt de eerste weddenschap, en print `True` of `False`.
+2. Zet `for keer in range(10):` boven `zes = False`, en spring alles eronder één stap verder in.
+3. Speel `keren = 10000` keer, tel in `gewonnen` hoe vaak `zes` waar is, en print `gewonnen * 100 // keren`.
+4. Maak de tweede weddenschap: 24 worpen met twee stenen, en kijk of ze allebei 6 zijn.
 
 Verwachte uitvoer van de eerste weddenschap, bijvoorbeeld:
 

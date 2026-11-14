@@ -84,18 +84,15 @@ for dag in range(10):
 
 </details>
 
-## Opdracht: duizend dagen
+## Opdracht
 
-Maak een reeks van 1000 dagen, tel hoe vaak elk weer voorkomt, en print per
-weer welk deel van de dagen het was. Maakt het uit of je op zon of op regen
-begint?
-
-In de editor staan het model, een lege telling en het weer van één dag.
-Begin klein, en breid de code stap voor stap uit:
+Duizend dagen: maak een reeks van 1000 dagen, tel hoe vaak elk weer voorkomt,
+en print per weer welk deel van de dagen het was. Maakt het uit of je op zon of
+op regen begint? Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij kiest het weer van één dag na een zonnige dag.
-2. Zet de regels met `kansen` en `weer` in een loop van 1000 dagen, en tel elke dag met `telling[weer] = telling[weer] + 1`. Print `telling` na de loop.
-3. Loop na de dagen met `for w in telling:` langs het weer, en print per weer `telling[w] / 1000`.
+2. Herhaal de keuze 1000 dagen, en tel elke dag met `telling[weer] = telling[weer] + 1`. Print `telling`.
+3. Print na de loop met `for w in telling:` per weer `telling[w] / 1000`.
 4. Begin op `"regen"` in plaats van `"zon"`, en vergelijk.
 
 Verwachte uitvoer, bijvoorbeeld:

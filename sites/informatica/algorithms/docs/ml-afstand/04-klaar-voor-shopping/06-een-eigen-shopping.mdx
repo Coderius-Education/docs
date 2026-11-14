@@ -55,24 +55,12 @@ editor. Dat is wat scikit-learn bij Shopping voor je doet: de dichtstbijzijnde
 buur zoeken voor elke dag in de toets. De eerste vier dagen zijn de toets, de
 rest is de oefenset.
 
-## Bouw zelf: regent het morgen?
+## Bouw zelf
 
-### De opdracht
+Regent het morgen? Maak `lees` en `beoordeel` af. Begin klein, en breid de code stap voor stap uit:
 
-Elke regel is een dag: de temperatuur, de wind, of het bewolkt was, en of
-het de dag erna regende. Maak `lees` en `beoordeel` af, zodat de code onderaan
-de verwachte uitvoer print.
-
-### Aan de slag
-
-In de editor staan de twaalf dagen, `lees` en `beoordeel` die nog niets doen,
-en onderaan de code die je niet verandert.
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: `lees` print elke rij, maar geeft nog twee lege lijsten terug. Dus zie je `0 dagen` en twee nullen.
-2. Zet in `lees` de kenmerken `[temperatuur, wind, bewolkt]` als getallen in `kenmerken`, en 1 bij regen of anders 0 in `labels`. Haal de print weg.
-3. Print in `beoordeel` eerst `labels` en `voorspellingen`, zodat je ziet wat de voorspeller over de vier toetsdagen zei.
-4. Reken in `beoordeel` de gevoeligheid en de specificiteit uit, en geef ze terug met `return gevoeligheid, specificiteit`.
+1. Draai de code, en vul in `lees` `kenmerken` met `[temperatuur, wind, bewolkt]` en `labels` met 1 of 0 voor regen.
+2. Haal de print uit `lees`, en reken in `beoordeel` de gevoeligheid en de specificiteit uit.
 
 Verwachte uitvoer:
 
@@ -117,8 +105,9 @@ print("specificiteit:", specificiteit)`} />
 <details>
 <summary>Tip</summary>
 
-Bij stap 3 zie je `[1, 0, 0, 0]` en `[1, 0, 1, 0]`. Hoeveel regendagen zitten
-er in de toets, en hoeveel droge dagen noemt de voorspeller ook droog?
+Print in `beoordeel` eerst `labels` en `voorspellingen`: je ziet `[1, 0, 0, 0]`
+en `[1, 0, 1, 0]`. Hoeveel regendagen zitten er in de toets, en hoeveel droge
+dagen noemt de voorspeller ook droog?
 
 </details>
 

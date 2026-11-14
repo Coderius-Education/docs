@@ -48,30 +48,20 @@ Bij CS50 heeft elk onderdeel dat je hier oefende een functie met dezelfde rol:
 Elke functie geeft een dictionary terug met per weer, of per pagina, een getal.
 Samen tellen die getallen op tot 1.
 
-## Bouw zelf: twee wegen, één antwoord
+Bij Bouw zelf schrijf je de steekproef als functie `steekproef(n)`: hij kiest
+`n` dagen weer met `kansen_morgen`, en geeft per weer het deel van de dagen
+terug. De rest staat in de verborgen code onder de editor: het model, het
+seizoen, `kansen_morgen(vandaag)` uit
+[kansen mengen](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/04-kansen-mengen),
+en `berekend()`, die doorrekent tot het stilstaat met `kansen_morgen(vandaag)`
+in plaats van `model[vandaag]`.
 
-### De opdracht
+## Bouw zelf
 
-Schrijf een functie `steekproef(n)` die `n` dagen weer kiest met
-`kansen_morgen`, en per weer het deel van de dagen teruggeeft. Print hem naast
-de uitgerekende verdeling.
+Twee wegen, één antwoord: maak `steekproef(n)` af. Begin klein, en breid de code stap voor stap uit:
 
-Het model, het seizoen, `kansen_morgen(vandaag)` uit
-[kansen mengen](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/04-kansen-mengen)
-en `berekend()` staan al klaar. `berekend()` rekent door tot het stilstaat,
-zoals in de vorige stappen, met `kansen_morgen(vandaag)` in plaats van
-`model[vandaag]`.
-
-### Aan de slag
-
-Wat al klaarstaat, zit in de verborgen code onder de editor. In de editor
-staat `steekproef`, die nog niets telt.
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: achter elk weer staat 0, en daarachter de uitgerekende kans.
-2. Laat `steekproef` vóór de `return` kiezen: begin met `weer = "zon"`, kies `n` keer het weer van morgen met `kansen = kansen_morgen(weer)` en `random.choices`, en tel het in `telling`.
-3. Geef het deel van de dagen terug: vul een dictionary `deel` met `for w in telling:` met `telling[w] / n`, en geef `deel` terug.
-4. Draai een paar keer. Hoe ver liggen de twee kolommen uit elkaar?
+1. Draai de code, en kies in `steekproef` vanaf `weer = "zon"` `n` keer het weer met `kansen_morgen(weer)`.
+2. Tel in `telling`, en geef met `for w in telling:` `telling[w] / n` terug. Hoe ver liggen de kolommen uit elkaar?
 
 Verwachte uitvoer, bijvoorbeeld:
 
