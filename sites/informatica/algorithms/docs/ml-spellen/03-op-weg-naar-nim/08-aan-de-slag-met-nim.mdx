@@ -38,27 +38,32 @@ getallen heeft.
 
 ## Zo werkt het
 
+### Een tuple als sleutel
+
 `tuple(lijst)` is nieuw: het maakt een tuple met dezelfde waarden als de
 lijst. Een lijst kan geen sleutel zijn, zie
 [een score per zet](site:algorithms/docs/ml-spellen/02-nim-leert/01-een-score-per-zet#zo-werkt-het),
 een tuple wel.
+
+### De muis en NimAI
 
 De klasse van CS50 heeft dezelfde onderdelen als de muis, met Engelse namen:
 
 | De muis | Nim bij CS50 |
 |:---:|:---:|
 | `Muis` | `NimAI` |
-| `self.q` | `self.q` |
 | `self.tempo` | `self.alpha` |
 | `waarde(vakje, actie)` | `get_q_value(state, action)` |
 | `bijwerken(vakje, actie, oud, beloning, toekomst)` | `update_q_value(state, action, old_q, reward, future_rewards)` |
 | `beste_toekomst(vakje)` | `best_future_reward(state)` |
 | `kies(vakje, ontdekken)` | `choose_action(state, epsilon)` |
-| `leer` | `update`, staat al klaar |
-| `wandel` | `train`, staat al klaar |
-| `route` | `play`, staat al klaar |
+
+De tabel `self.q` heet bij CS50 ook zo. Voor `leer`, `wandel` en `route` staan
+`update`, `train` en `play` al klaar.
 
 ## Aan de slag met Nim
+
+### Wat er anders is
 
 Nu ben je klaar voor [Nim](https://cs50.harvard.edu/ai/projects/4/nim/) van
 CS50 AI. Het idee is wat je bij Nim die leert en bij de muis deed: een tabel
@@ -74,7 +79,7 @@ en de beste toekomst. Dit is anders:
   `acties` liep.
 - Een stand is een lijst van vier getallen. Als sleutel moet het een tuple
   zijn: met `tuple(stand)` maak je er een van. Vergeet je dat, dan krijg je
-  de fout hieronder.
+  de fout bij Er gaat iets mis.
 - Een gewone zet kost niets. Alleen aan het eind van een spel komt er een
   beloning: -1 voor de zet die verloor, en 1 voor de zet van de winnaar
   daarvoor. Dat regelt de code die al klaarstaat.
@@ -82,6 +87,8 @@ en de beste toekomst. Dit is anders:
   de muis ging dat vanzelf, omdat de val en de kaas nooit in de tabel kwamen.
 - Het spel en het trainen staan al klaar. Jij schrijft de functies die de
   tabel lezen, bijwerken, de beste toekomst geven en een zet kiezen.
+
+### Voordat je begint
 
 Lees de opdracht helemaal door voordat je begint, en kijk in de code die je
 krijgt hoe een stand en een zet eruitzien. Kijk ook hoe de code de kans op
