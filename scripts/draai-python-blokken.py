@@ -23,6 +23,15 @@ speeltuinen zijn precies de plek waar een leerling zijn eigen uitvoer naast die
 van de les legt. De wikkel telt niet als tekst ertussen; verdere tekst (een
 "Ongeveer:" boven een willekeurig resultaat) verbreekt de band wel.
 
+Bij algoritmes staat de verwachte uitvoer van een opdracht vóór het veld:
+"Verwachte uitvoer:" met een kaal blok, vlak boven de `<PyRunner>` (de
+les-tabbladen zetten hem in het veld). Ook dat is een belofte: hij klopt als de
+runner of een blok erna in dezelfde sectie die regels print, aaneengesloten, of
+de runner met de functies uit het antwoord op hun plek (`controleer_doelen`).
+Een antwoord dat normaal alleen compileert, draait daarvoor stil mee. Een doel
+dat uit twee runs of een wijziging van de leerling komt, draagt
+`{/* uitvoer-varieert: reden */}` boven de kop.
+
 Dat verschil doet ertoe. Een blok dat draait maar iets anders print dan de les
 belooft, is voor een leerling verwarrender dan een blok dat omvalt: hij ziet een
 ander getal dan er staat en denkt dat híj iets fout doet. Zo stond er in de les
@@ -129,6 +138,7 @@ Afsluitcode 0 als alles slaagt, 1 zodra er iets misgaat.
 """
 
 import atexit
+import ast
 import json
 import os
 import re
@@ -193,6 +203,10 @@ SITES = {
         # print-belofte erin, of een {/* draaien: reden */}-marker erboven.
         # PyRunner-blokken draaien altijd — daar drukt een leerling op de knop.
         "fences_draaien": False,
+        # "Verwachte uitvoer:" vóór een runner is een belofte (controleer_doelen):
+        # de les-tabbladen zetten hem in het veld, en eerst stond hij als
+        # "Wat zie je?" onder de runner, waar hij wel vergeleken werd.
+        "doelen": True,
     },
 }
 
@@ -318,6 +332,16 @@ STAART_MARKER = "<<eigen-blok>>"
 # Met --json: elk gedraaid blok met de uitvoer van CPython, voor de controle in
 # Pyodide (zie de docstring). None zonder die vlag.
 VOOR_PYODIDE: list[dict] | None = None
+
+# "Verwachte uitvoer:" met zijn blok vlak vóór een runner (de les-tabbladen
+# zetten hem in de uitvoerkolom van het veld). Hij klopt als de runner zelf, of
+# een blok erna in dezelfde sectie (het antwoord van de opdracht), precies die
+# uitvoer geeft. Per doel: (bron, regel, verwacht, bron_pad, van_regel,
+# tot_regel); de kandidaten zijn de blokken in dat bestand tussen van_regel en
+# tot_regel. UITVOER houdt per gedraaid blok bij wat het printte.
+DOELEN: list[tuple] = []
+UITVOER: dict[tuple, str] = {}
+DOEL_KOP_RE = re.compile(r"(?:^|\n)(Verwachte uitvoer\b[^\n]{0,100}:)\s*$")
 NIET_COMPILEREN_RE = re.compile(r"\{/\*\s*niet-compileren:.*?\*/\}\s*$")
 # Sommige uitvoer ligt niet vast: een set heeft geen volgorde, dus het getoonde
 # resultaat is een voorbeeld en geen belofte. Zo'n blok draait wel gewoon.
@@ -434,6 +458,11 @@ def zelftest() -> None:
     assert template_ontsnap(r"print('a\\nb')") == r"print('a\nb')"
     assert template_ontsnap(r"\`") == "`"
     assert template_ontsnap(r"\${x}") == "${x}"
+    assert komt_voor_in("b\nc", ["a", "b\nc\nd"])
+    assert not komt_voor_in("b\nd", ["a\nb\nc\nd"])
+    assert vervang_definities("def f():\n    return 0\nprint(f())", "def f():\n    return 1") == (
+        "def f():\n    return 1\nprint(f())"
+    )
     assert hoort_bij_elkaar(" />\n\n<details>\n<summary>Wat zie je?</summary>\n\n")
     assert hoort_bij_elkaar("\n\n<details>\n<summary>Antwoord — verwacht je dit?</summary>\n\n")
     assert not hoort_bij_elkaar(
@@ -548,6 +577,7 @@ def verzamel():
     geparseerd werd.
     """
     blokken, claims, fouten = [], [], []
+    DOELEN.clear()
     tag_re = re.compile(SITE["component_tag"])
     fence_weg = re.compile(r"^```.*?^```[^\n]*$", re.S | re.M)
 
@@ -564,6 +594,7 @@ def verzamel():
         # blokken (niet-draaien/niet-compileren) doen niet mee.
         erboven_effectief = None
         erboven_afh: tuple = ()
+        doel = None  # een "Verwachte uitvoer:" die op zijn runner wacht
 
         for m in BLOK_RE.finditer(tekst):
             if m.group("anders") is not None:
@@ -605,6 +636,21 @@ def verzamel():
                             claim_afh(tekst, bron_pad, m.start(), m.end()),
                         )
                     )
+                ervoor = tekst[: m.start()].rstrip()
+                kop = DOEL_KOP_RE.search(ervoor)
+                if (
+                    not gepaard
+                    and kop
+                    and "bijvoorbeeld" not in kop.group(1)
+                    and not VARIEERT_RE.search(ervoor[: kop.start()].rstrip())
+                ):
+                    doel = (
+                        tekst[: m.start()].count("\n") + 1,
+                        inspring_weg(m.group("kaalcode")),
+                        m.end(),
+                    )
+                else:
+                    doel = None
                 vorige = None
                 continue
 
@@ -690,6 +736,22 @@ def verzamel():
             if invoer is not None and soort == "compileer":
                 # Antwoorden klaarzetten heeft alleen zin als het blok draait.
                 soort = "draai"
+            if doel is not None and m.group("py") is None and SITE.get("doelen"):
+                tussen = tekst[doel[2] : m.start()]
+                # Hooguit twee alinea's tussen doel en veld, zoals les-tabs.js
+                # het doel bij het veld zet, en geen kop.
+                if tussen.count("\n\n") <= 3 and not re.search(r"^#", tussen, re.M):
+                    volgende_kop = re.search(r"^##? ", tekst[m.end() :], re.M)
+                    tot = (
+                        tekst[: m.end() + volgende_kop.start()].count("\n") + 1
+                        if volgende_kop
+                        else tekst.count("\n") + 1
+                    )
+                    DOELEN.append((bron, doel[0], doel[1], bron_pad, regel, tot))
+                    # Verandert het doel, dan draaien de runner en zijn
+                    # antwoord opnieuw: zie de afh hieronder.
+                    afh += ((bron_pad, doel[0], doel[0] + doel[1].count("\n") + 1),)
+            doel = None
             blokken.append((bron, regel, kaalcode, soort, None, varieert, voorplak, afh, invoer))
             # De keten mag alleen gevoed worden door blokken die op zichzelf
             # kunnen bestaan: een fragment dat zelf niet compileert (een losse
@@ -932,6 +994,7 @@ def draai(bron, regel, code, verwacht, varieert=False, voorplak=0, invoer=None) 
     # Een lege regel vooraan (een print("\\n…") als eerste) is in een fence
     # niet te zien; die telt dus niet mee, net als lege regels achteraan.
     uit = eigen_uitvoer(r.stdout, voorplak)
+    UITVOER[(str(bron), regel)] = uit
 
     if verwacht is not None and uit != verwacht:
         return f"{bron}:{regel}: uitvoerblok belooft {verwacht!r}, geeft {uit!r}"
@@ -1192,6 +1255,98 @@ def controleer_pins() -> str | None:
     )
 
 
+def vervang_definities(runner: str, antwoord: str) -> str | None:
+    """De runner met de functies en klassen uit het antwoord op hun plek: wat
+    een leerling doet bij "Dit vervangt …". Een definitie uit het antwoord die
+    de runner niet heeft, komt vóór de eerste regel die er een gebruikt;
+    zonder definities in het antwoord, of als een van beide niet te lezen is,
+    None."""
+    try:
+        boom_a = ast.parse(antwoord)
+        boom_r = ast.parse(runner)
+    except SyntaxError:
+        return None
+    nieuw = {
+        d.name: ast.get_source_segment(antwoord, d)
+        for d in boom_a.body
+        if isinstance(d, (ast.FunctionDef, ast.ClassDef))
+    }
+    if not nieuw:
+        return None
+    regels = runner.split("\n")
+    vervangen: list[tuple[int, int, str]] = []
+    for d in boom_r.body:
+        if isinstance(d, (ast.FunctionDef, ast.ClassDef)) and d.name in nieuw:
+            begin = (d.decorator_list[0].lineno if d.decorator_list else d.lineno) - 1
+            vervangen.append((begin, d.end_lineno, nieuw.pop(d.name)))
+    for begin, eind, code in sorted(vervangen, reverse=True):
+        regels[begin:eind] = code.split("\n")
+    if nieuw:
+        # Nieuwe definities vóór de eerste regel die geen definitie of import is.
+        eerste = next(
+            (
+                d.lineno - 1
+                for d in ast.parse("\n".join(regels)).body
+                if not isinstance(d, (ast.FunctionDef, ast.ClassDef, ast.Import, ast.ImportFrom))
+                and not (isinstance(d, ast.Assign) and d.lineno == 1)
+            ),
+            len(regels),
+        )
+        regels[eerste:eerste] = "\n\n".join(nieuw.values()).split("\n") + [""]
+    return "\n".join(regels)
+
+
+def komt_voor_in(verwacht: str, uitvoer: list[str | None]) -> bool:
+    """Staan de regels van `verwacht` aaneengesloten in wat de blokken samen
+    printen, in hun volgorde? Een antwoord dat op de runner voortbouwt
+    (draaien-met) print alleen zijn eigen deel, en een verwachte uitvoer
+    toont soms alleen de regels waar de opdracht om gaat."""
+    gezocht = verwacht.split("\n")
+    regels = [r for u in uitvoer if u for r in u.split("\n")]
+    return any(
+        regels[i : i + len(gezocht)] == gezocht for i in range(len(regels) - len(gezocht) + 1)
+    )
+
+
+def controleer_doelen(gedraaid, alle) -> list[str]:
+    """Elke "Verwachte uitvoer:" vóór een runner komt uit de runner, of uit een
+    blok erna in dezelfde sectie: het antwoord van de opdracht. Een antwoord
+    dat normaal alleen compileert, draait hier stil mee, op zichzelf en op de
+    plek van de functies in de runner (vervang_definities); valt het om (een
+    fragment), dan telt het niet. Een doel waarvan geen blok in de selectie
+    zit (--alleen), slaat hij over."""
+    fouten = []
+    for bron, regel, verwacht, _, van, tot in DOELEN:
+        binnen = lambda b: str(b[0]) == str(bron) and van <= b[1] <= tot  # noqa: E731
+        kandidaten = [b for b in gedraaid if binnen(b)]
+        if not kandidaten:
+            continue
+        runner = kandidaten[0]
+        uitvoer = [UITVOER.get((str(b[0]), b[1])) for b in kandidaten]
+        if verwacht not in uitvoer:
+            for b in alle:
+                if not binnen(b) or b is runner or b[1] == runner[1]:
+                    continue
+                if b[3] == "compileer":
+                    draai(b[0], b[1], b[2], None, False, b[6], b[8])
+                    uitvoer.append(UITVOER.get((str(b[0]), b[1])))
+                # De functies van het antwoord in de runner: zo doet een
+                # leerling het bij "Dit vervangt …", met de tests van de runner.
+                eigen = "\n".join(b[2].split("\n")[b[6] :]) if b[6] else b[2]
+                samen = vervang_definities(runner[2], eigen)
+                if samen is not None:
+                    sleutel = (str(b[0]), -b[1])
+                    draai(b[0], -b[1], samen, None, False, runner[6], runner[8])
+                    uitvoer.append(UITVOER.get(sleutel))
+        if verwacht not in uitvoer and not komt_voor_in(verwacht, uitvoer):
+            eerste = next((u for u in uitvoer if u is not None), None)
+            fouten.append(
+                f"{bron}:{regel}: verwachte uitvoer {verwacht!r} komt uit geen blok "
+                f"van de opdracht (de runner geeft {eerste!r})"
+            )
+    return fouten
+
+
 def main() -> int:
     global VOOR_PYODIDE
     argv = [a for a in sys.argv[1:] if a != "--pins"]
@@ -1273,6 +1428,7 @@ def main() -> int:
         fouten += [f for f in resultaten if f]
         fouten += [f for f in pool.map(lambda b: draai_startcode(b[0], b[1], b[2]), startcodes) if f]
         fouten += [f for f in pool.map(controleer_claim, claims) if f]
+    fouten += controleer_doelen(te_draaien, blokken)
     # De achterstand is exact: een startcode die er niet meer in hoort te
     # staan (het bestand bestaat niet of draagt de marker niet meer) valt op.
     # Alleen voor de site die nu draait: de tabel bedient beide cursussen, dus
@@ -1307,7 +1463,8 @@ def main() -> int:
             print(f"  foutmelding {c[0]}:{c[1]} {c[2]!r}")
     print(
         f"Uitgevoerd: {len(te_draaien)} blokken, waarvan {met_belofte} met een "
-        f"beloofde uitvoer; startcodes gedraaid: {len(startcodes)}; "
+        f"beloofde uitvoer; verwachte uitvoer vóór een veld: {len(DOELEN)}; "
+        f"startcodes gedraaid: {len(startcodes)}; "
         f"gecompileerd: {len(te_compileren)}; "
         f"losse foutmeldingen gereproduceerd: {len([c for c in claims if not c[4]])}"
         f"{'' if OORDEELT_OVER_TEKST else ' (tekst niet vergeleken, zie hieronder)'} "
