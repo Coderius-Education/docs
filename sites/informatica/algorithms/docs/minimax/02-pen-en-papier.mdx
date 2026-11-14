@@ -10,8 +10,6 @@ je de hele boom tekent en doorloopt. Geen Python.
 
 ## Deel 1: een abstracte boom
 
-### De boom met cijfers
-
 Eerst een boom waar de bladeren al cijfers hebben; de uitkomst is
 gegeven, en jij rekent alleen de MIN- en MAX-knopen uit.
 
@@ -29,13 +27,15 @@ MAX heeft drie keuzes: tak `A`, `B` of `C`. Onder elk staat MIN met
 twee opties. De cijfers onderaan zijn utilities (hoger = beter voor MAX,
 lager = beter voor MIN).
 
-### Eerst de MIN-knopen
+Reken **van onderop**. Een MIN-knoop kiest het laagste kind, een MAX-knoop
+het hoogste. Wat kiest MIN onder `A`, `B` en `C`? En welke tak kiest MAX
+dan? Reken het eerst zelf uit.
 
-Reken **van onderop**. Een MIN-knoop kiest het laagste kind. Onder tak `A` is dat `min(3, 5)`,
-dus **3**; onder `B` `min(2, 9)`, dus **2**; onder `C` `min(6, 0)`, dus
-**0**.
+<details>
+<summary>Antwoord</summary>
 
-De boom wordt:
+MIN kiest onder `A` `min(3, 5)` = **3**, onder `B` `min(2, 9)` = **2** en
+onder `C` `min(6, 0)` = **0**. De boom wordt:
 
 ```
                  ▲ MAX
@@ -43,19 +43,15 @@ De boom wordt:
               3    2    0
 ```
 
-### Dan MAX
-
-MAX kiest het **hoogste** kind:
-
-`max(3, 2, 0)` = **3**. De beste zet voor MAX is tak `A`, en de waarde
-van het spel bij optimaal spel is 3.
-
-### Wat had je verwacht?
+MAX kiest `max(3, 2, 0)` = **3**: tak `A`, en de waarde van het spel bij
+optimaal spel is 3.
 
 Op het eerste gezicht lijkt tak `B` aantrekkelijk: daar staat de 9, het
 hoogste blad van de hele boom. Maar MIN kiest daar nooit voor, die pakt
 de 2. Alleen tak `A` garandeert MAX een 3. Het hoogste blad is dus
 misleidend, want het kind dat MIN kiest is niet het hoge maar het lage.
+
+</details>
 
 ## Deel 2: een echt eindspel
 
@@ -91,7 +87,7 @@ reken je zo uit; een bord met een stippellijn is klaar.
 
 <GameTree bord="XXO/OOX/..." />
 
-### De linkertak: X speelt `(2,0)`
+### Links
 
 ```
  X speelt (2,0)    O (2,1), X (2,2)   O (2,2), X (2,1)
@@ -101,7 +97,7 @@ reken je zo uit; een bord met een stippellijn is klaar.
  X | . | .         X | O | X          X | X | O
 ```
 
-Na X op `(2,0)` staat er geen drie op een rij, dus O is aan zet (MIN),
+X speelt `(2,0)`. Er staat geen drie op een rij, dus O is aan zet (MIN),
 met twee opties:
 
 - O speelt `(2,1)`, en X moet het laatste vakje `(2,2)` vullen (het
@@ -113,7 +109,7 @@ met twee opties:
 MIN kiest het laagste van `0` en `0`: **0**. De tak waarin X `(2,0)`
 speelt is dus **0** waard.
 
-### De middentak: X speelt `(2,1)`
+### Midden
 
 ```
  X speelt (2,1)    O (2,0)            O (2,2), X (2,0)
@@ -123,7 +119,7 @@ speelt is dus **0** waard.
  . | X | .         O | X | .          X | X | O
 ```
 
-O is aan zet, met twee opties:
+X speelt `(2,1)`. O is aan zet, met twee opties:
 
 - O speelt `(2,0)` (het middelste bord). De diagonaal `(0,2) (1,1)
   (2,0)` is `O O O`: O wint. Terminal, utility **-1**, geen verdere
@@ -134,7 +130,7 @@ O is aan zet, met twee opties:
 MIN kiest `min(-1, 0)` = **-1**. De tak waarin X `(2,1)` speelt is
 **-1** waard: als X daar speelt, wint O.
 
-### De rechtertak: X speelt `(2,2)`
+### Rechts
 
 ```
  X speelt (2,2)    O (2,1), X (2,0)
@@ -144,13 +140,15 @@ MIN kiest `min(-1, 0)` = **-1**. De tak waarin X `(2,1)` speelt is
  . | . | X         X | O | X
 ```
 
+X speelt `(2,2)`. O is aan zet, met twee opties:
+
 - O speelt `(2,0)`: diagonaal `O O O`, O wint, utility **-1**.
 - O speelt `(2,1)`, en X vult `(2,0)` (het bord rechts). Vol, geen
   winnaar, utility **0**.
 
 MIN kiest `min(-1, 0)` = **-1**.
 
-### Terug naar de wortel
+### De wortel
 
 Onder alle drie de takken staan nu waardes. Dit is de boom van de stap
 Teken de boom, ingevuld van de bladeren naar boven:
@@ -173,7 +171,9 @@ X blokkeert de diagonaal van O, maar niet omdat iemand die regel heeft
 geprogrammeerd. De boom wijst de blokkade vanzelf aan: onder de twee
 andere zetten hangt een `-1`, en MIN pakt die.
 
-## Het recept in woorden
+## Het recept
+
+Wat je in beide delen met de hand deed, in vijf stappen:
 
 ```
 1. Begin onderaan met posities die "klaar" zijn (terminal).
@@ -184,8 +184,6 @@ andere zetten hangt een `-1`, en MIN pakt die.
 4. Herhaal tot je bij de wortel bent.
 5. De zet die de waarde van de wortel opleverde, is de beste zet.
 ```
-
-## Naar code
 
 In Python wordt dit een recursieve functie: `max_value(bord)` roept
 `min_value` aan op elk kind, en die roept weer `max_value` aan, tot een

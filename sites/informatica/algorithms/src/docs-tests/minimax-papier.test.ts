@@ -88,4 +88,23 @@ describe('minimax op papier', () => {
       new RegExp(`de uitkomst bij (perfect|optimaal) spel is \\*{0,2}${beste}\\*{0,2}`),
     );
   });
+
+  it('Deel 1 laat de leerling rekenen: de uitkomst staat in het antwoord', () => {
+    // De review als leerling: Deel 1 zei "jij rekent … uit", en het scherm
+    // erna begon met de uitkomst.
+    const deel1 = tekst.slice(tekst.indexOf('## Deel 1'), tekst.indexOf('## Deel 2'));
+    const zichtbaar = deel1.replace(/<details>[\s\S]*?<\/details>/g, '');
+    expect(zichtbaar).not.toMatch(/(min|max)\([\d, ]+\)/);
+    expect(deel1).toMatch(/<summary>Antwoord<\/summary>[\s\S]*max\(3, 2, 0\)/);
+  });
+
+  it('de stappen van Deel 2 hebben korte namen, zodat de rij ze niet inkort', () => {
+    const deel2 = tekst.slice(
+      tekst.indexOf('## Deel 2'),
+      tekst.indexOf('\n## ', tekst.indexOf('## Deel 2') + 1),
+    );
+    const stappen = [...deel2.matchAll(/^### (.+)$/gm)].map((m) => m[1]);
+    expect(stappen.length).toBeGreaterThan(0);
+    for (const stap of stappen) expect(stap.length, stap).toBeLessThanOrEqual(14);
+  });
 });
