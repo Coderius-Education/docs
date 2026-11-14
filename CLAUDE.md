@@ -991,6 +991,50 @@ Een vierde review keek naar wat de derde opleverde, en naar de nieuwe CI:
   een les, een wijziging aan alleen de meting, en een pagina zonder
   tabbladen werden niet of half gemeten.
 
+**Wat algoritmes erbij bracht** (november 2026; alle 1340 schermen passen op
+1280×720 en 1366×768). De cursus heeft 270 lessen met een eigen oefenveld
+(`PyRunner`, met Stap voor stap en verborgen code), een interactief model
+(`AlgorithmModel`), een spelboom (`GameTree`) en de route machine learning.
+Bij de eerste meting pasten 947 van de 1231 schermen. Daarvoor is dit
+gekomen:
+
+- **Het meetscript vindt een les als `les.html`** (`lesVan`): de cursus
+  bouwt met `trailingSlash: false`, en vond eerst geen enkele les. De
+  meetselectie voor CI houdt het nummer in het adres als de site
+  `numberPrefixParser: false` zet (`houdtNummers`): `01-concept` blijft
+  `01-concept`.
+- **De code naast de uitvoer krijgt de breedte van zijn langste regel**
+  (`codeBreedte` in `PyRunner/breedte.ts`, half tot driekwart van het
+  veld); past die niet, dan staat de uitvoer eronder, in een vak van vaste
+  hoogte. Op een vaste zestig procent brak in 184 schermen een regel af.
+  Past de langste regel ook zo niet, dan worden de letters van de editor
+  kleiner, tot 80% (`codeSchaal`), zoals `pasCode` bij een codeblok.
+- **Een teken heeft een vaste breedte** (9,1 pixels in de monospace van de
+  huisstijl). Meten in de browser gaf het reservelettertype: het lettertype
+  van de code laadt pas als er code in beeld komt, en dan brak een regel van
+  95 tekens toch af.
+- **Alles in het veld telt mee voor zijn hoogte**: de werkbalk, het
+  uitklapblok met de klaargezette code en de ruimte eromheen
+  (`rondDeEditor`), en de rand. Elk ontbrekend stukje was een scherm dat
+  6 tot 75 pixels te lang was.
+- **Een onderdeel dat niet kan krimpen, zoomt**: de spelboom van minimax
+  meet de ruimte en zoomt tot 50% (`boomZoom`); `zoom` en geen `transform`.
+  Het model is in beide weergaven even hoog, ook na Run tests.
+- **Een opdracht in twee stappen** (`### De opdracht`, `### Aan de slag`):
+  `opdrachten.test.ts` telde elke `###` als een eigen sectie, en keurde zo
+  elke opdracht af waarvan het antwoord in de tweede stap staat. Een H2
+  omvat nu zijn stappen.
+- **"Het tabblad loopt vast" is "het tabblad van de browser"**: de les heeft
+  zelf tabbladen.
+
+In de lessen: elke lange opdracht van de route twee stappen, Run op de
+compleet-pagina's een stap voor de code en een voor het model, pen en papier
+bij dijkstra en knapsack van veertien naar acht en vijf tabbladen (met een
+tabel per ronde die op een scherm past), en een FOUT/GOED met alleen de
+regels die veranderen. `src/docs-tests/schermen.test.ts` bewaakt de
+verwijzingen per scherm, en hand-outs en cheatsheets houden `les_tabs:
+false`.
+
 ## Code in MDX-expressies
 
 MDX eet van elke vervolgregel in een `{`…`}`-expressie tot twee spaties op.
