@@ -17,7 +17,7 @@ import { codeSchaal } from './breedte';
 import { draaiInVerseMain } from './draai';
 import { heeftMatplotlibNodig } from './matplotlib';
 import { naStappen } from './naStappen';
-import { MIN_REGELS, editorHoogte, veldOpmaak } from './opmaak';
+import { MIN_REGELS, editorHoogte, rondOm, veldOpmaak } from './opmaak';
 import styles from './styles.module.css';
 import {
   type PyodideInterface,
@@ -392,16 +392,27 @@ export default function PyRunnerImpl({
   // die al klaarstaat (dicht: één regel) en de ruimte eromheen. Gemeten, want
   // eerst telde alleen het blok, en dan was elk scherm met zo'n runner nog 14
   // tot 22 pixels te lang. Een blok dat de leerling openklapt, telt niet: dan
-  // groeit het paneel, zoals bij een tip die open staat.
+  // groeit het paneel, zoals bij een tip die open staat. Gemeten tot de
+  // onderkant van de inhoud, niet van het vak (rondOm in opmaak.ts).
   const rondDeEditor = () => {
     const vak = codeVakRef.current;
     const editor = vak?.firstElementChild as HTMLElement | null | undefined;
-    if (!vak || !editor) return 0;
+    const laatste = vak?.lastElementChild as HTMLElement | null | undefined;
+    if (!vak || !editor || !laatste) return 0;
     const blok = verborgenRef.current;
     const open = blok?.open
       ? blok.offsetHeight - (blok.querySelector('summary')?.offsetHeight ?? 0)
       : 0;
-    return Math.max(0, vak.offsetHeight - editor.offsetHeight - open);
+    const e = editor.getBoundingClientRect();
+    return rondOm({
+      vakBoven: vak.getBoundingClientRect().top,
+      editorBoven: e.top,
+      editorOnder: e.bottom,
+      inhoudOnder:
+        laatste.getBoundingClientRect().bottom +
+        (Number.parseFloat(getComputedStyle(laatste).marginBottom) || 0),
+      open,
+    });
   };
   // Naast of onder, de grootte van de letters en de hoogte van editor en
   // uitvoer (opmaak.ts): uit de startcode, en met een ondergrens voor de editor.

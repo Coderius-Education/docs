@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { KLEINSTE_SCHAAL } from './breedte';
-import { MIN_REGELS, REGEL_PX, UITVOER_ONDER, editorHoogte, veldOpmaak } from './opmaak';
+import { MIN_REGELS, REGEL_PX, UITVOER_ONDER, editorHoogte, rondOm, veldOpmaak } from './opmaak';
 
 // De opmaak van een PyRunner in een les-tabblad. Een review als leerling vond
 // editors van anderhalve regel, een grafiek in een vak van 100 pixels en een
@@ -90,5 +90,23 @@ describe('een grafiek krijgt ruimte', () => {
     const krap = veldOpmaak({ code: regel(110), breedte: VELD, ruimte: 150, plaatjes: true });
     expect(krap.uitvoerOnder).toBe(UITVOER_ONDER);
     expect(krap.editorMax).toBe(krap.editorMin);
+  });
+});
+
+describe('wat er rond de editor staat', () => {
+  it('telt het uitklapblok met de code die al klaarstaat', () => {
+    expect(rondOm({ vakBoven: 0, editorBoven: 0, editorOnder: 150, inhoudOnder: 186 })).toBe(36);
+  });
+
+  it('telt niet hoe ver het raster het codevak oprekt', () => {
+    // In "de truc" rekte een verwachte uitvoer van negen regels het codevak op
+    // tot 268 pixels; met de onderkant van het vak bleef het veld zo hoog.
+    expect(rondOm({ vakBoven: 0, editorBoven: 0, editorOnder: 150, inhoudOnder: 150 })).toBe(0);
+  });
+
+  it('telt een opengeklapt blok niet', () => {
+    expect(
+      rondOm({ vakBoven: 0, editorBoven: 0, editorOnder: 150, inhoudOnder: 386, open: 200 }),
+    ).toBe(36);
   });
 });
