@@ -108,6 +108,31 @@ describe('knapsack — de tabellen op de pagina zijn de tabellen van het algorit
       expect(rij, `rij ${i}`).toEqual(tabel[i]);
   });
 
+  it('vul de tabel in: elke rij is een opdracht, de berekening staat in het antwoord', () => {
+    // De review als leerling: de les vroeg "Vul rij 1 in", maar elk scherm
+    // rekende elke cel al voor met de uitkomst vet erachter. Nu doet een stap
+    // hooguit één cel voor (`OPT(i, w)` = max(…) = **n**), en staat de rest
+    // in het uitklapblok.
+    const tekst = readFileSync(`${DOCS}knapsack/02-vul-de-tabel-in.mdx`, 'utf8');
+    const rijen = tekst
+      .slice(tekst.indexOf('## Rij voor rij'), tekst.indexOf('## Welke items?'))
+      .split(/^### /m)
+      .slice(1);
+    expect(rijen).toHaveLength(5);
+    for (const rij of rijen) {
+      const zichtbaar = rij.replace(/<details>[\s\S]*?<\/details>/g, '');
+      const voorgedaan = zichtbaar.match(/= \*\*\d+\*\*/g) ?? [];
+      expect(voorgedaan.length, rij.split('\n')[0]).toBeLessThanOrEqual(1);
+      expect(rij, rij.split('\n')[0]).toMatch(/<summary>Antwoord rij \d<\/summary>/);
+    }
+    // Het sjabloon wijst naar deze tabel, niet naar de hand-out met een andere.
+    const sjabloon = tekst.slice(
+      tekst.indexOf('### Het sjabloon'),
+      tekst.indexOf('## Rij voor rij'),
+    );
+    expect(sjabloon).not.toMatch(/hand-out|kleinere tabel/);
+  });
+
   it('de hand-out: de antwoordtabel voor de vier items en 8 kg, en de beste rugzak', () => {
     const tekst = readFileSync(`${DOCS}unplugged/05-pak-de-rugzak-in.mdx`, 'utf8');
     const items = itemsUit(tekst, '## De items');
