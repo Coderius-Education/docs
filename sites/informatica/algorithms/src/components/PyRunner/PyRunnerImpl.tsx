@@ -13,6 +13,7 @@ import type React from 'react';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import ParseTree from '../ParseTree';
 import { type Getiteld, leesBomen } from '../ParseTree/boom';
+import { TEKEN_PX, codeBreedte, meetTeken } from './breedte';
 import { draaiInVerseMain } from './draai';
 import { heeftMatplotlibNodig } from './matplotlib';
 import styles from './styles.module.css';
@@ -35,6 +36,11 @@ const MIN_VELD = 180;
 const BALK = 40;
 /** De rand van het veld, boven en onder: die telt mee in zijn hoogte. */
 const RAND = 2;
+/**
+ * Het vak voor de uitvoer onder de code: altijd even hoog, voor en na Voer uit,
+ * zodat het scherm niet langer wordt als er uitvoer komt.
+ */
+const UITVOER_ONDER = 140;
 
 export type PyRunnerProps = {
   initialCode?: string;
@@ -154,6 +160,8 @@ export default function PyRunnerImpl({
   const veldRef = useRef<HTMLDivElement>(null);
   const balkRef = useRef<HTMLDivElement>(null);
   const [veldHoogte, setVeldHoogte] = useState<number | null>(null);
+  const [veldBreedte, setVeldBreedte] = useState<number | null>(null);
+  const [teken, setTeken] = useState(TEKEN_PX);
   const stapt = opname !== null;
   useLayoutEffect(() => {
     const veld = veldRef.current;
@@ -163,12 +171,21 @@ export default function PyRunnerImpl({
     const meet = () => {
       // Op een smal scherm scrolt de leerling, en staat de uitvoer onder de
       // code: dan zegt de ruimte in het paneel niets over het veld.
-      if (!breed.matches) return setVeldHoogte(null);
+      if (!breed.matches) {
+        setVeldBreedte(null);
+        return setVeldHoogte(null);
+      }
+      // Een veld in een dicht tabblad heeft geen maten.
+      if (veld.clientWidth === 0) return;
+      setVeldBreedte(veld.clientWidth);
+      setTeken(meetTeken(veld.querySelector('textarea')));
       if (stapt) return;
       const ruimte = meetRuimte(veld, paneel, Number.POSITIVE_INFINITY);
       if (ruimte) setVeldHoogte(pasHoogte(ruimte, MIN_VELD));
     };
     meet();
+    // De breedte van een teken klopt pas als het lettertype van de code er is.
+    document.fonts?.ready.then(meet);
     const kijker = new ResizeObserver(meet);
     kijker.observe(paneel);
     window.addEventListener('resize', meet);
@@ -179,11 +196,6 @@ export default function PyRunnerImpl({
       breed.removeEventListener('change', meet);
     };
   }, [inTab, stapt]);
-  const editorMax =
-    veldHoogte === null ? undefined : veldHoogte - (balkRef.current?.offsetHeight ?? BALK);
-  // Stap voor stap neemt in een tabblad de plek van de editor en de uitvoer
-  // in, op de hoogte die de editor had.
-  const stapper = stapt && editorMax !== undefined ? editorMax - 2 * RAND : undefined;
 
   const needsMatplotlib = useMemo(
     () => heeftMatplotlibNodig(code, verborgenCode),
@@ -361,6 +373,20 @@ export default function PyRunnerImpl({
     bomen.length > 0;
 
   const minEditor = rows * LINE_HEIGHT_PX + EDITOR_PADDING_PX;
+  // Naast elkaar alleen als de langste regel van de code (ook wat de leerling
+  // typt) in de codekolom past; anders de uitvoer eronder.
+  const naast = veldBreedte === null ? null : codeBreedte(code, veldBreedte, teken);
+  const onder = inTab && veldBreedte !== null && naast === null;
+  const editorMax =
+    veldHoogte === null
+      ? undefined
+      : veldHoogte - (balkRef.current?.offsetHeight ?? BALK) - (onder ? UITVOER_ONDER : 0);
+  // Stap voor stap neemt in een tabblad de plek van de editor en de uitvoer
+  // in, op de hoogte die die samen hadden.
+  const stapper =
+    stapt && veldHoogte !== null
+      ? veldHoogte - (balkRef.current?.offsetHeight ?? BALK) - 2 * RAND
+      : undefined;
   const uitvoer = (
     <>
       {statusMsg && (
@@ -427,8 +453,12 @@ export default function PyRunnerImpl({
       className={clsx(
         styles.runner,
         inTab && styles.inTab,
+        onder && styles.onder,
         stapper !== undefined && styles.staptInTab,
       )}
+      style={
+        naast === null ? undefined : ({ '--code-breedte': `${naast}px` } as React.CSSProperties)
+      }
     >
       <div className={styles.codeKolom}>
         <div className={styles.toolbar} ref={balkRef}>
@@ -501,7 +531,13 @@ export default function PyRunnerImpl({
       {inTab ? (
         <div
           className={styles.resultaat}
-          style={veldHoogte === null ? undefined : { maxHeight: veldHoogte }}
+          style={
+            onder
+              ? { height: UITVOER_ONDER }
+              : veldHoogte === null
+                ? undefined
+                : { maxHeight: veldHoogte }
+          }
         >
           {uitvoer}
           {!statusMsg && !hasOutput && (

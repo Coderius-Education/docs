@@ -155,12 +155,19 @@
    de CodeExercise van de python-cursus. Een lange uitvoer schuift in zijn
    eigen vak. Stap voor stap heeft de hele breedte, op de plek van beide. */
 @media (min-width: 997px) {
-  .inTab {
+  /* De code krijgt de breedte van zijn langste regel (codeBreedte), de
+     uitvoer de rest. Past de langste regel niet naast de uitvoer, dan staat
+     de uitvoer eronder (.onder). */
+  .inTab:not(.onder) {
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-columns: minmax(0, var(--code-breedte, 60%)) minmax(0, 1fr);
   }
 
-  .inTab > .codeKolom {
+  .onder > .resultaat {
+    border-top: 1px solid var(--ifm-color-emphasis-200);
+  }
+
+  .inTab:not(.onder) > .codeKolom {
     grid-column: 1;
     grid-row: 1;
     display: flex;
@@ -172,12 +179,15 @@
     flex: 1 1 auto;
   }
 
+  .inTab:not(.onder) > .resultaat {
+    border-left: 1px solid var(--ifm-color-emphasis-200);
+  }
+
   .inTab > .resultaat {
     grid-column: 2;
     grid-row: 1;
     max-height: 60vh;
     overflow-y: auto;
-    border-left: 1px solid var(--ifm-color-emphasis-200);
     background: var(--ifm-code-background);
   }
 
