@@ -74,3 +74,32 @@ describe('stellingen hebben een antwoord zonder voorwaarde', () => {
     expect(Object.fromEntries(metVoorwaarde)).toEqual(Object.fromEntries(ACHTERSTAND));
   });
 });
+
+// Met les-tabbladen was elke stelling een eigen tabblad: een zin en een
+// dicht antwoord op een verder leeg scherm. Nu staan er hooguit drie op een
+// tabblad (`## Stellingen 1 tot 3`), elk als alinea `**Stelling 1.** *"…"*`
+// met zijn antwoord eronder. De hoofdstukken die al zo zijn, staan hier; een
+// hoofdstuk dat omgaat, komt erbij.
+const DRIE_PER_TABBLAD = ['big-o', 'dijkstra', 'knapsack', 'minimax', 'cfg', 'hanoi', 'pagerank'];
+
+describe('stellingen: hooguit drie op een tabblad', () => {
+  const paginas = stellingenPaginas().filter((p) => DRIE_PER_TABBLAD.includes(p.split('/')[0]));
+  it.each(paginas)('%s', (pagina) => {
+    const tekst = readFileSync(join(DOCS, pagina), 'utf8');
+    expect(tekst, 'geen tabblad per stelling').not.toMatch(/^## Stelling \d/m);
+    const secties = tekst.split(/^## /m).slice(1);
+    expect(secties.length).toBeGreaterThan(0);
+    let volgende = 1;
+    for (const sectie of secties) {
+      const kop = sectie.split('\n')[0];
+      const nummers = [...sectie.matchAll(/^\*\*Stelling (\d+)\.\*\* \*"/gm)].map((m) =>
+        Number(m[1]),
+      );
+      expect(nummers.length, kop).toBeGreaterThan(0);
+      expect(nummers.length, kop).toBeLessThanOrEqual(3);
+      for (const n of nummers) expect(n, 'doorlopend genummerd').toBe(volgende++);
+      // Elke stelling heeft zijn eigen antwoord.
+      expect(sectie.match(/<summary>Antwoord<\/summary>/g)?.length, kop).toBe(nummers.length);
+    }
+  });
+});

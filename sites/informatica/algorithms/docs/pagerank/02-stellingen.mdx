@@ -9,7 +9,7 @@ gaat bouwen. Bedenk bij elke stelling eerst zelf je antwoord, en klik dan
 pas open. Alle stellingen gaan over het mini-web van
 [het idee](site:algorithms/docs/pagerank/01-concept).
 
-## Stelling 1
+## Stellingen 1 tot 3
 
 Het mini-web:
 
@@ -20,11 +20,11 @@ C → A
 D → C
 ```
 
-> Als je de PageRank van alle pagina's in het mini-web optelt, kom je op 1
-> uit.
+**Stelling 1.** *"Als je de PageRank van alle pagina's in het mini-web
+optelt, kom je op 1 uit."*
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Waar.** Je kunt PageRank zien als "kans dat de random surfer hier is".
 Alle kansen samen zijn 1. Dat lukt omdat in het mini-web elke pagina
@@ -34,22 +34,11 @@ als een pagina nergens naartoe linkt, zie je bij
 
 </details>
 
-## Stelling 2
-
-Het mini-web:
-
-```
-A → B,  A → C
-B → C
-C → A
-D → C
-```
-
-> De pagina met de meeste inkomende links heeft altijd de hoogste
-> PageRank.
+**Stelling 2.** *"De pagina met de meeste inkomende links heeft altijd de
+hoogste PageRank."*
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Niet waar.** Het gaat niet om het aantal links, maar om wie er linkt en
 hoeveel die zelf te verdelen heeft. Eén link van een heel belangrijke
@@ -59,21 +48,10 @@ maar dat hoeft niet.
 
 </details>
 
-## Stelling 3
-
-Het mini-web:
-
-```
-A → B,  A → C
-B → C
-C → A
-D → C
-```
-
-> Pagina `D` (waar niemand naar linkt) krijgt PageRank 0.
+**Stelling 3.** *"Pagina `D` (waar niemand naar linkt) krijgt PageRank 0."*
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Niet waar.** Door de damping krijgt elke pagina een basisdeel
 `(1 − d)/N`. Met `d = 0,85` en `N = 4` is dat `0,15/4 = 0,0375`. `D`
@@ -82,7 +60,7 @@ ook op `D`.
 
 </details>
 
-## Stelling 4
+## Stellingen 4 en 5
 
 Het mini-web:
 
@@ -93,10 +71,11 @@ C → A
 D → C
 ```
 
-> Na één ronde rekenen heb je de PageRank van het mini-web al.
+**Stelling 4.** *"Na één ronde rekenen heb je de PageRank van het mini-web
+al."*
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Niet waar.** In de eerste ronde stemt elke pagina alsof ze allemaal even
 belangrijk zijn, want zo begin je. Dat zijn ze niet: C krijgt na die ronde
@@ -106,12 +85,10 @@ waarden pas na zo'n veertig rondes stil.
 
 </details>
 
-## Stelling 5
-
-> Zonder damping (`d = 1`) werkt het altijd netjes.
+**Stelling 5.** *"Zonder damping (`d = 1`) werkt het altijd netjes."*
 
 <details>
-<summary>Waar of niet waar?</summary>
+<summary>Antwoord</summary>
 
 **Niet waar.** Zonder damping kan al het belang zich ophopen in een
 groepje pagina's dat alleen naar elkaar linkt: de surfer komt er niet meer
