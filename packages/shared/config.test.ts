@@ -255,6 +255,15 @@ describe('createConfig — les-tabbladen', () => {
         return false;
       }
     }).map((s) => s.id);
-    expect(aan).toEqual(['editor', 'python', 'web', 'algorithms', 'fullstack', 'robotica', 'ctf', 'linux']);
+    expect(aan).toEqual([
+      'editor',
+      'python',
+      'web',
+      'algorithms',
+      'fullstack',
+      'robotica',
+      'ctf',
+      'linux',
+    ]);
   });
 });
