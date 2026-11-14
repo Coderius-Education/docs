@@ -7,9 +7,11 @@ sidebar_position: 13
 **Leerdoel:** je herkent de drie fouten die iedereen bij Dijkstra een
 keer maakt.
 
-## Edge maar één kant op zetten
+## Edge maar één kant op
 
-Geen foutmelding, wel een fout antwoord: sommige nodes blijven op `inf`
+### Wat er misgaat: een kant ontbreekt
+
+Je zet een edge maar één kant op in de dict. Geen foutmelding, wel een fout antwoord: sommige nodes blijven op `inf`
 staan terwijl ze bereikbaar zijn.
 
 **Oorzaak:** in een graph waar je elke weg beide kanten op mag, staat
@@ -30,8 +32,10 @@ graph = {
 }
 ```
 
-**Tip:** bouw de dict op uit een lijst van edges, dan kun je geen kant
-vergeten:
+### Tip: bouw de dict uit edges
+
+Bouw de dict op uit een lijst van edges, dan kun je in een graph waar
+elke weg beide kanten op mag geen kant vergeten:
 
 ```python
 edges = [('A', 'B', 4), ('A', 'C', 2), ('B', 'D', 1), ('C', 'D', 8)]
@@ -45,7 +49,9 @@ for u, v, w in edges:
     graph[v].append((u, w))
 ```
 
-## `bezocht.add()` vergeten — oneindige lus
+## `bezocht.add()` vergeten
+
+### Wat er misgaat: een lus zonder eind
 
 Geen foutmelding, Python loopt door zonder einde. De browser-tab
 bevriest, en de Reset-knop reageert dan ook niet meer, want Python
@@ -66,8 +72,10 @@ while True:
         ...
 ```
 
-**Oplossing:** markeer de node zodra je hem gekozen hebt, vóór je
-opnieuw kiest:
+### Oplossing: markeer de node
+
+Zet `bezocht.add(huidige)` in de hoofdlus: markeer de node zodra je hem
+gekozen hebt, vóór je opnieuw kiest:
 
 ```python
 huidige = kies_volgende(afstanden, bezocht)
@@ -81,14 +89,23 @@ for buur, gewicht in graph[huidige]:
 Of de regel vóór of ná de relax-lus staat maakt niet uit — die lus kijkt
 niet naar `bezocht`. Dat hij er staat wel.
 
-## Negatieve gewichten gebruiken
+## Negatieve gewichten
 
-Geen foutmelding, wel een antwoord dat stilletjes niet klopt.
+### Wat er misgaat: klaar is niet klaar
+
+Je geeft Dijkstra een graph met negatieve gewichten. Geen foutmelding,
+wel een antwoord dat stilletjes niet klopt.
 
 **Oorzaak:** Dijkstra gaat ervan uit dat een node die "klaar" is zijn
 afstand niet meer kan verbeteren. Een negatieve edge kan dat omgooien:
 een node die al klaar was wordt alsnog korter, maar zijn buren zijn al
 uitgerekend met de oude afstand.
+
+**Oplossing:** voor negatieve gewichten gebruik je Bellman-Ford, een
+ander algoritme. Routekaarten, vluchtprijzen en netwerkvertragingen
+hebben alleen positieve gewichten, en daar is Dijkstra voor.
+
+### Probeer het: een negatieve edge
 
 Dit voorbeeld heeft eenrichtingswegen: elke edge staat maar aan één
 kant in de dict. Dat moet wel, want een negatieve weg die je ook terug
@@ -147,9 +164,5 @@ Wat er gebeurde: `B` werd klaar verklaard op afstand 1 en `D` kreeg
 `B` was al klaar, dus niemand rekende `D` opnieuw uit.
 
 </details>
-
-**Oplossing:** voor negatieve gewichten gebruik je Bellman-Ford, een
-ander algoritme. Routekaarten, vluchtprijzen en netwerkvertragingen
-hebben alleen positieve gewichten, en daar is Dijkstra voor.
 
 Door naar [cheatsheet →](site:algorithms/docs/dijkstra/14-cheatsheet).

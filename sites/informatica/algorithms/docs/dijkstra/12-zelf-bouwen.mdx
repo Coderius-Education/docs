@@ -7,9 +7,11 @@ sidebar_position: 12
 **Leerdoel:** je past Dijkstra toe op een groter voorbeeld: zeven
 Nederlandse steden met reistijden die ongeveer kloppen.
 
-## Opdracht
+## De uitdaging
 
-Hier een mini-routekaart:
+### De kaart
+
+Zeven steden met een reistijd op elke weg, als mini-routekaart:
 
 ```
 Amsterdam ── 30 ── Utrecht ── 60 ── Arnhem
@@ -22,7 +24,9 @@ Den Haag ── 25 ── Rotterdam ── 40 ── Eindhoven ── 50 ── 
 (Gewichten zijn benaderingen in minuten — gebruik dit niet om je
 navigatie te vervangen.)
 
-In Python:
+### In Python
+
+Dezelfde kaart als dict, met per stad zijn buren en de reistijd:
 
 ```python
 steden = {
@@ -37,7 +41,13 @@ steden = {
 ```
 
 Schrijf een functie `kortste_reis(graph, start, doel)` die de afstand
-én het pad teruggeeft. Je code van de vorige pagina's mag je gebruiken.
+én het pad teruggeeft.
+
+## Bouw en test
+
+Vul `kortste_reis` aan; `kies_volgende` staat al klaar, en je code van
+de vorige pagina's mag je gebruiken. De tests zoeken drie reizen op de
+kaart van De uitdaging.
 
 {/* niet-draaien: startcode; de asserts falen tot kortste_reis is ingevuld */}
 <PyRunner initialCode={`def kies_volgende(afstanden, bezocht):
@@ -212,7 +222,7 @@ daarna één keer `reconstrueer_pad` per bestemming, in een lus over
 <details>
 <summary>Antwoord</summary>
 
-Met de functies uit het antwoord hierboven:
+Met de functies uit het antwoord bij Bouw en test:
 
 {/* draaien-met: blok-erboven */}
 ```python
