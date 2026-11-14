@@ -222,13 +222,12 @@ in code doet, zie je bij [pas aan](site:algorithms/docs/dijkstra/11-aanpassen).
 
 ### Wat is hier opvallend?
 
-- `B` werd één keer bijgewerkt, van 6 naar 3. De omweg via `C` is de
-  helft van de directe weg.
-- `E` werd ook één keer bijgewerkt, van 6 naar 5, en dat gebeurde pas
-  drie rondes nadat we hem voor het eerst zagen.
-- Alle kortste routes lopen via `C`. Dat raad je op het oog niet.
-- Geen enkele route is direct. De directe `A→B` bestaat wel (6), maar
-  de omweg is korter.
+- `B` werd één keer bijgewerkt, van 6 naar 3. De directe weg `A─B`
+  bestaat wel, maar de omweg via `C` is maar half zo lang.
+- `E` werd ook één keer bijgewerkt, van 6 naar 5, in ronde 4: twee rondes
+  nadat hij in ronde 2 zijn eerste afstand kreeg.
+- Alle kortste routes lopen via `C`, en alleen `C` zelf bereik je direct.
+  Dat raad je op het oog niet.
 
 ### Waarom werkt dit?
 
@@ -248,7 +247,18 @@ werkvorm [De kortste route — Dijkstra op papier](site:algorithms/docs/unplugge
 ## Probeer het zelf: een andere startnode
 
 Doe Dijkstra op dezelfde graph, maar nu vanuit `E` als start. Welke
-afstanden krijg je naar `A`, `B`, `C`, `D`?
+afstanden krijg je naar `A`, `B`, `C` en `D`?
+
+```
+                1
+       A ─────────── C
+       │         ╱   │   ╲
+       │       2     3     5
+       6     ╱       │       ╲
+       │   ╱         │         ╲
+       B ─────────── D ─── 1 ── E
+              2
+```
 
 <details>
 <summary>Antwoord</summary>
@@ -306,14 +316,5 @@ bekend.
 Eindstand: `A` 0, `B` 4, `C` 2, `D` 5.
 
 </details>
-
-## Naar Python
-
-Je weet nu wat Dijkstra doet en waarom het werkt. Elke regel van je
-tabel en elke stap van de gouden regel wordt nu een stukje Python, één
-per pagina.
-
-> De code-pagina's gebruiken de kleine graph die je net op papier deed.
-> Het algoritme is hetzelfde; het voorbeeld is kleiner.
 
 Door naar [de stellingen →](site:algorithms/docs/dijkstra/03-stellingen).

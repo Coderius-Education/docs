@@ -171,6 +171,50 @@ describe('de rondetabellen op papier kloppen met het algoritme', () => {
   });
 });
 
+describe('de grote graph van "Doe het met pen en papier"', () => {
+  // De review als leerling vond twee beweringen die de rondes van de pagina
+  // zelf tegenspraken: "geen enkele route is direct" (C wordt direct bereikt)
+  // en "E werd pas drie rondes later bijgewerkt" (gezien in ronde 2,
+  // bijgewerkt in ronde 4). En het tabblad met de opdracht vanuit E had de
+  // graph niet: die stond alleen op het eerste tabblad.
+  const tekst = lees('dijkstra/02-met-pen-en-papier.mdx');
+  const edges = [
+    ...sectie(tekst, '## De graph').matchAll(/`([A-Z])─([A-Z])` heeft gewicht \*\*(\d+)\*\*/g),
+  ].map((m) => [m[1], m[2], Number(m[3])] as [string, string, number]);
+  const g = graph(edges);
+  const vanA = rondes(g, 'A');
+  const tekening = sectie(tekst, '## De graph').match(/```\n[\s\S]*?```/)?.[0];
+
+  it('de zeven edges staan in "Lees het plaatje"', () => {
+    expect(edges).toHaveLength(7);
+  });
+
+  it('"Wat is hier opvallend?" klopt met de rondes', () => {
+    const opvallend = sectie(tekst, '### Wat is hier opvallend?').replace(/\s+/g, ' ');
+    // De ronde waarin E zijn eerste afstand kreeg, en die waarin hij beter werd.
+    const eerste = vanA.stand.findIndex((r) => r.afstanden.E !== Number.POSITIVE_INFINITY);
+    const beter = vanA.stand.findIndex(
+      (r, i) => i > eerste && r.afstanden.E < vanA.stand[eerste].afstanden.E,
+    );
+    expect([eerste, beter]).toEqual([2, 4]);
+    expect(opvallend).toContain(`in ronde ${beter}`);
+    expect(opvallend).toContain(`in ronde ${eerste}`);
+    // Alleen de knopen met A als voorganger bereik je direct.
+    const direct = Object.keys(vanA.voorgangers).filter((n) => vanA.voorgangers[n] === 'A');
+    expect(direct).toEqual(['C']);
+    expect(opvallend).toContain('alleen `C` zelf bereik je direct');
+  });
+
+  it('"Probeer het zelf" toont de graph en geeft de afstanden vanuit E', () => {
+    const zelf = sectie(tekst, '## Probeer het zelf');
+    expect(tekening).toBeDefined();
+    expect(zelf).toContain(tekening);
+    const vanE = rondes(g, 'E').stand.at(-1)?.afstanden ?? {};
+    const rijen = tabelOnderKop(tekst, '## Probeer het zelf');
+    expect(Object.fromEntries(rijen.map((r) => [r[0], Number.parseInt(r[1], 10)]))).toEqual(vanE);
+  });
+});
+
 describe('de paden op de concept-pagina bestaan en tellen op', () => {
   // De concept-pagina tekent dezelfde kleine graph als "Nu jij"; de edges
   // komen daar vandaan. Elk pad in "Wat is een pad?" wordt nagelopen: elk
