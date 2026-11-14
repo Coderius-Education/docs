@@ -97,14 +97,24 @@
 
 /* De verborgen code (parser-motor, kant-en-klare functies): uitklapbaar
    onder de editor, alleen-lezen. */
-.verborgen {
+/* Het blok met de code die al klaarstaat is geen tip: in een les-tabblad
+   kreeg het de opmaak van een tip of antwoord (binnenruimte, een rand links,
+   16 en 8 pixels marge) en kostte het dicht 77 pixels in plaats van 30. Die
+   regels (.paneel details in LesTabs) wegen even zwaar, vandaar de extra
+   klassen hier. */
+.runner .codeVak details.verborgen {
   margin: 0.25rem 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
   font-size: 0.85rem;
 }
 
-.verborgen > summary {
+.runner .codeVak details.verborgen > summary {
   cursor: pointer;
-  padding: 0.35rem 0.5rem;
+  padding: 0.25rem 0.5rem;
   color: var(--ifm-color-emphasis-700);
 }
 
