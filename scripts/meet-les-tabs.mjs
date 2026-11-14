@@ -551,13 +551,35 @@ async function meetNaOpen(pagina, paneel, id) {
   return { naOpen, naOpenBlok, naAllesOpen, open };
 }
 
+/**
+ * Een les openen in een verse context. Laadt hij niet binnen de tijd, dan
+ * nog één keer: in CI gaf een les van web op één runner geen `load` binnen
+ * dertig seconden, terwijl dezelfde build een run eerder gewoon laadde, en
+ * dan viel de meting van de hele cursus om. Een les die twee keer niet laadt,
+ * is een fout.
+ */
+async function laad(scherm, les) {
+  for (let poging = 1; ; poging++) {
+    const context = await nieuweContext(scherm);
+    const pagina = await context.newPage();
+    try {
+      await pagina.goto(`${adres}${les}`);
+      return { context, pagina };
+    } catch (fout) {
+      await context.close();
+      if (poging >= 2 || fout?.name !== 'TimeoutError') throw fout;
+      console.error(
+        `${STRENG ? '::warning::' : ''}${les} (${scherm.width}x${scherm.height}) laadde niet binnen de tijd; nog een keer`,
+      );
+    }
+  }
+}
+
 async function meetLes(les) {
   for (const scherm of SCHERMEN) {
     // Een verse context per les: bewaard werk in een oefenveld verandert de
     // hoogte van het veld.
-    const context = await nieuweContext(scherm);
-    const pagina = await context.newPage();
-    await pagina.goto(`${adres}${les}`);
+    const { context, pagina } = await laad(scherm, les);
     await pagina.waitForSelector('[role=tab]');
     // Met het lettertype van de site zijn de tabbladen breder dan met het
     // reservelettertype. Zonder hierop te wachten telde het script één regel
@@ -724,9 +746,7 @@ async function meetLes(les) {
 const zonderTabs = [];
 async function meetZonderTabs(les) {
   for (const scherm of SCHERMEN) {
-    const context = await nieuweContext(scherm);
-    const pagina = await context.newPage();
-    await pagina.goto(`${adres}${les}`);
+    const { context, pagina } = await laad(scherm, les);
     await pagina.waitForSelector('.theme-doc-markdown');
     await pagina.evaluate(() => document.fonts.ready);
     await pagina.waitForTimeout(scherm.telefoon ? 100 : 500);
