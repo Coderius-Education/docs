@@ -78,26 +78,23 @@ print("Het is een", winnaar)`} />
 
 ## Opdracht: voorspel met k
 
-### De opdracht
-
 Maak van de code een functie `voorspel(nieuw, voorbeelden, k)` die de
-winnaar teruggeeft. Test hem zo:
+winnaar teruggeeft.
 
-{/* niet-draaien: fragment; voorspel en voorbeelden schrijft de leerling zelf */}
-```python
-print(voorspel((10, 7), voorbeelden, 1))   # banaan
-print(voorspel((10, 7), voorbeelden, 3))   # appel
-```
-
+In de editor staat `voorspel` met het eerste stuk: de buren zoeken. Onderaan
+testen twee regels hem: met `k = 1` wint banaan, met `k = 3` appel.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `voorspel` geeft de `k` buren terug, nog niet de winnaar.
 2. Tel met een dictionary `stemmen` hoeveel buren elke soort heeft, en geef `stemmen` terug.
-3. Zoek de soort met de meeste stemmen: loop over `stemmen`, en onthoud met een `if` de soort met het hoogste aantal. Geef die soort terug.
+3. Loop over `stemmen`, onthoud met een `if` de soort met de meeste stemmen, en geef die terug.
 
-### Aan de slag
+Verwachte uitvoer:
 
-In de editor staat `voorspel` met het eerste stuk: de buren zoeken.
+```
+banaan
+appel
+```
 
 <PyRunner initialCode={`def afstand(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])

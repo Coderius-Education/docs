@@ -43,10 +43,19 @@ naast elkaar.
 
 ## Opdracht: goed per soort
 
-### De opdracht
-
 Tel per soort hoeveel stukken fruit er in de toetsset zitten, en hoeveel
-daarvan de voorspeller goed heeft. Met seed 3 en `k = 1` print je:
+daarvan de voorspeller goed heeft.
+
+In de editor staat het verdelen uit de vorige stappen, met een loop over de
+toetsset. Het fruit en `voorspel` staan in de verborgen code.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de soort van elk stuk fruit in de toetsset.
+2. Tel met een dictionary `totaal` hoeveel stukken fruit van elke soort erin zitten, en print `totaal` na de loop.
+3. Zet in de loop een `if` die kijkt of `voorspel(maten, oefen, k)` gelijk is aan `soort`, en tel dat in een tweede dictionary `goed`.
+4. Loop na de loop over `totaal`, en print per soort een regel zoals in de verwachte uitvoer.
+
+Verwachte uitvoer (bij seed 3 en `k = 1`):
 
 ```
 banaan 2 van de 2 goed
@@ -54,27 +63,8 @@ appel 2 van de 2 goed
 citroen 1 van de 2 goed
 ```
 
-Begin klein, en breid de code stap voor stap uit:
+<PyRunner verborgen="fruit-toets" initialCode={`import random
 
-1. Draai de code: hij print de soort van elk stuk fruit in de toetsset.
-2. Tel met een dictionary `totaal` hoeveel stukken fruit van elke soort erin zitten, zoals je in het spamfilter woorden telde. Print `totaal` na de loop.
-3. Zet in de loop een `if` die kijkt of `voorspel(maten, oefen, k)` gelijk is aan `soort`, en tel dat in een tweede dictionary `goed`.
-4. Loop na de loop over `totaal`, en print per soort een regel zoals hierboven.
-
-### Aan de slag
-
-In de editor staan het fruit en het verdelen uit de vorige stappen, met een loop over de toetsset.
-
-<PyRunner verborgen="knn" initialCode={`import random
-
-fruit = [
-    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
-    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
-    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
-    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
-    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
-    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
-]
 k = 1
 
 random.seed(3)
@@ -88,8 +78,8 @@ for maten, soort in toets:
 <details>
 <summary>Tip</summary>
 
-Stopt Python bij het printen met een foutmelding over een soort? Een soort die
-hij nooit goed heeft, komt dan niet in `goed`. Zet daarom in `goed` aan het begin elke soort op 0.
+Een foutmelding over een soort bij het printen? Een soort die hij nooit goed
+heeft, komt niet in `goed`. Welke beginwaarde geef je `goed` dan?
 
 </details>
 

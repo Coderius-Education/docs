@@ -53,24 +53,24 @@ oefen je in de opdracht met je eigen `voorspel`, die hetzelfde doet.
 
 ## Opdracht: jouw voorspeller op de webshop
 
-### De opdracht
-
 Lees de regels van de webshop, en zet elke bezoeker als voorbeeld in de vorm
 die je eigen `voorspel` kent: `((maand, paginas), label)`. Voorspel dan of
-een nieuwe bezoeker in maart met tien pagina's iets koopt:
+een nieuwe bezoeker in maart met tien pagina's iets koopt.
+
+In de editor staan de regels, `MAANDEN` en een lege lijst `voorbeelden`;
+`voorspel` staat klaar in de verborgen code onder de editor.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print elke rij.
+2. Maak in de loop `maand = MAANDEN[rij[0]]` en `paginas = int(rij[1])`, en print `(maand, paginas)`.
+3. Maak `label`: 1 als `rij[3]` gelijk is aan `"TRUE"`, en anders 0. Zet `((maand, paginas), label)` in `voorbeelden`.
+4. Print na de loop `voorspel((2, 10), voorbeelden, 1)`.
+
+Verwachte uitvoer:
 
 ```
 1
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print elke rij. `voorspel` staat klaar in de verborgen code onder de editor.
-2. Maak in de loop `maand = MAANDEN[rij[0]]` en `paginas = int(rij[1])`, en print `(maand, paginas)`.
-3. Maak een variabele `label`: 1 als `rij[3]` gelijk is aan `"TRUE"`, en anders 0. Zet `((maand, paginas), label)` met `.append()` in `voorbeelden`.
-4. Print na de loop `voorspel((2, 10), voorbeelden, 1)`.
-
-### Aan de slag
 
 <PyRunner verborgen="knn" initialCode={`import csv
 

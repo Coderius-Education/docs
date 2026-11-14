@@ -3,6 +3,7 @@ import cfgParser from './cfg-parser';
 import dijkstraCompleet from './dijkstra-compleet';
 import doolhofBuren from './doolhof-buren';
 import fruitTekenen from './fruit-tekenen';
+import fruitToets from './fruit-toets';
 import knn from './knn';
 import metro from './metro';
 import metroZoeken from './metro-zoeken';
@@ -33,6 +34,7 @@ export const VERBORGEN: Record<string, string> = {
   'dijkstra-compleet': dijkstraCompleet,
   'doolhof-buren': doolhofBuren,
   'fruit-tekenen': fruitTekenen,
+  'fruit-toets': fruitToets,
   knn,
   metro,
   'metro-zoeken': metroZoeken,

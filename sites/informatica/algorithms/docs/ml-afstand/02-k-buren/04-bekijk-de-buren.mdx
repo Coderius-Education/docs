@@ -34,7 +34,7 @@ tekenen kiest `(7, 7)`, omdat `sorted` bij gelijke afstand verder kijkt.
 
 ## Bekijk de buren
 
-Deze runner tekent de voorbeelden: elk stuk fruit staat op zijn lengte en
+De code in de editor tekent de voorbeelden: elk stuk fruit staat op zijn lengte en
 breedte, het nieuwe stuk is het zwarte kruis, en een stippellijn wijst naar
 elk van de `k` buren die meestemmen. Het tekenen staat in de verborgen code
 onder de editor.
@@ -65,10 +65,18 @@ ergens om. Daar ligt de **grens** tussen de soorten.
 
 ## Opdracht: waar ligt de grens?
 
-### De opdracht
-
 Schuif een stuk fruit van 6 centimeter breed van lengte 8 naar lengte 18, en
-print bij elke lengte wat `voorspel` zegt. Met `k = 3`:
+print bij elke lengte wat `voorspel` zegt.
+
+In de editor staan de voorbeelden en één voorspelling; `voorspel` uit de
+vorige stap staat in de verborgen code onder de editor.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de voorspelling voor `(10, 6)` met `k = 3`.
+2. Zet er een loop `for lengte in range(8, 19)` omheen, en print bij elke lengte de voorspelling voor `(lengte, 6)`.
+3. Zet `k` op 1. Bij welke lengte slaat het nu om?
+
+Verwachte uitvoer (bij `k = 3`):
 
 ```
 8 appel
@@ -83,14 +91,6 @@ print bij elke lengte wat `voorspel` zegt. Met `k = 3`:
 17 banaan
 18 banaan
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print de voorspelling voor `(10, 6)` met `k = 3`. `voorspel` uit de vorige stap staat in de verborgen code onder de editor.
-2. Zet er een loop `for lengte in range(8, 19)` omheen, en print bij elke lengte de voorspelling voor `(lengte, 6)`.
-3. Zet `k` op 1. Bij welke lengte slaat het nu om?
-
-### Aan de slag
 
 <PyRunner verborgen="knn" initialCode={`voorbeelden = [
     ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
@@ -136,8 +136,8 @@ for lengte in range(8, 19):
 
 Met `k = 3` ligt de grens tussen 13 en 14, ongeveer halverwege de appels en
 de bananen. Met `k = 1` slaat het al bij 9 om: de ene vergissing `(10, 6)`
-trekt de grens naar de appels toe. Kijk het na in de tekening: zet daar
-`nieuw` op `(9, 6)` en `k` op 1.
+trekt de grens naar de appels toe. Kijk het na in de tekening bij Bekijk de
+buren: zet daar `nieuw` op `(9, 6)` en `k` op 1.
 
 </details>
 

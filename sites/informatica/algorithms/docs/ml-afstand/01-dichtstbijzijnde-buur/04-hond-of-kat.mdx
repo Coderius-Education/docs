@@ -52,21 +52,24 @@ en een grote kat.
 
 ## Bouw zelf: hond of kat?
 
-### De opdracht
-
 Maak je eigen voorbeelden: honden en katten, met voor elk dier een tuple
 `(gewicht in kilo, hoogte in centimeters)`. Verzin er minstens vier van elke
 soort. Gebruik je functie `voorspel` om drie nieuwe dieren in te delen.
 
+In de editor staan bovenaan één kat en één hond, en daaronder `afstand` en
+`voorspel` uit de vorige stap.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code. In de editor staan `afstand` en `voorspel` uit de vorige stap, met één kat en één hond.
+1. Draai de code.
 2. Zet er minstens drie katten en drie honden bij.
 3. Deel drie nieuwe dieren in. Kies er één die tussen een kleine hond en een grote kat in zit.
 
-### Aan de slag
+<PyRunner initialCode={`dieren = [
+    ((4, 25), "kat"),
+    ((30, 60), "hond"),
+]
 
-<PyRunner initialCode={`def afstand(a, b):
+def afstand(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 def voorspel(nieuw, voorbeelden):
@@ -79,10 +82,6 @@ def voorspel(nieuw, voorbeelden):
             beste_soort = soort
     return beste_soort
 
-dieren = [
-    ((4, 25), "kat"),
-    ((30, 60), "hond"),
-]
 print(voorspel((5, 26), dieren))`} />
 
 <details>

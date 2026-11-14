@@ -46,22 +46,16 @@ niet zijn eigen buur zijn.
 
 ## Onderzoek
 
+Het fruit en `voorspel` staan in de verborgen code onder de editor.
+
 1. Draai de code met `k = 1`. Hoeveel van de zes heeft hij goed?
 2. Zet `k` op 3. Wordt het beter?
 3. Zet `k` weer op 1, en verander de seed in 4. Wat gebeurt er met de score?
 4. Zes stukken fruit is een kleine toets. Wat betekent dat voor een score
    als "5 van de 6"?
 
-<PyRunner verborgen="knn" initialCode={`import random
+<PyRunner verborgen="fruit-toets" initialCode={`import random
 
-fruit = [
-    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
-    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
-    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
-    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
-    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
-    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
-]
 k = 1
 
 random.seed(3)
@@ -97,34 +91,26 @@ print(goed, "van de", len(toets), "goed")`} />
 
 ## Opdracht: welke heeft hij fout?
 
-### De opdracht
-
 Een score zegt hoeveel er fout gaan, maar niet welke. Print van elk stuk
 fruit dat de voorspeller fout heeft de maten, de echte soort en de
-voorspelling. Met seed 3 en `k = 1`:
+voorspelling.
 
-```
-(8, 6) citroen voorspeld: appel
-```
-
+In de editor staat het verdelen uit de vorige stap, met een loop over de
+toetsset.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij print elk stuk fruit uit de toetsset met zijn soort.
 2. Zet de voorspelling erachter: `voorspel(maten, oefen, k)`.
 3. Print alleen de stukken fruit die hij fout heeft. Zet daarna `k` op 3.
 
-### Aan de slag
+Verwachte uitvoer (bij seed 3 en `k = 1`):
 
-<PyRunner verborgen="knn" initialCode={`import random
+```
+(8, 6) citroen voorspeld: appel
+```
 
-fruit = [
-    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"), ((8, 7), "appel"),
-    ((9, 9), "appel"), ((7, 8), "appel"), ((10, 9), "appel"), ((8, 9), "appel"),
-    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"), ((19, 4), "banaan"),
-    ((16, 4), "banaan"), ((21, 5), "banaan"), ((18, 3), "banaan"), ((17, 4), "banaan"),
-    ((9, 6), "citroen"), ((10, 6), "citroen"), ((8, 6), "citroen"), ((9, 5), "citroen"),
-    ((10, 7), "citroen"), ((11, 6), "citroen"), ((8, 5), "citroen"), ((10, 5), "citroen"),
-]
+<PyRunner verborgen="fruit-toets" initialCode={`import random
+
 k = 1
 
 random.seed(3)

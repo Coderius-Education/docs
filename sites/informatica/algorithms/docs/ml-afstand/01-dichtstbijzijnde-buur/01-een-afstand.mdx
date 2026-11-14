@@ -91,11 +91,18 @@ print(afstand((8, 8), (10, 6)))`} />
 
 ## Opdracht: hoe ver is elk voorbeeld?
 
-### De opdracht
-
 Je hebt een lijst voorbeelden: tuples van een maat en een soort, zoals
 `((8, 8), "appel")`. Print bij elk voorbeeld de soort en de afstand tot
-`nieuw`:
+`nieuw`.
+
+In de editor staan `afstand`, zes voorbeelden en `nieuw`.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print elk voorbeeld als een tuple.
+2. Pak elk voorbeeld uit met `for maten, soort in voorbeelden`, en print `soort` en `maten`.
+3. Print in plaats van `maten` de afstand: `afstand(nieuw, maten)`.
+
+Verwachte uitvoer:
 
 ```
 appel 3
@@ -106,24 +113,12 @@ banaan 13
 banaan 11
 ```
 
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print elk voorbeeld als een tuple.
-2. Pak elk voorbeeld uit in twee variabelen, met `for maten, soort in voorbeelden`, en print `soort` en `maten`.
-3. Print in plaats van `maten` de afstand: `afstand(nieuw, maten)`.
-
-### Aan de slag
-
 <PyRunner initialCode={`def afstand(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 voorbeelden = [
-    ((8, 8), "appel"),
-    ((9, 8), "appel"),
-    ((7, 7), "appel"),
-    ((18, 4), "banaan"),
-    ((20, 4), "banaan"),
-    ((17, 3), "banaan"),
+    ((8, 8), "appel"), ((9, 8), "appel"), ((7, 7), "appel"),
+    ((18, 4), "banaan"), ((20, 4), "banaan"), ((17, 3), "banaan"),
 ]
 nieuw = (10, 7)
 
@@ -133,9 +128,8 @@ for voorbeeld in voorbeelden:
 <details>
 <summary>Tip</summary>
 
-Een voorbeeld is zelf een tuple met twee dingen erin. Staan er na `for` twee
-namen met een komma ertussen, dan krijgt de eerste naam het eerste ding en de
-tweede naam het tweede.
+Een voorbeeld is een tuple met twee dingen erin. Met twee namen na `for`
+krijgt de eerste naam het eerste ding en de tweede naam het tweede.
 
 </details>
 

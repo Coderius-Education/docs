@@ -54,20 +54,25 @@ bezoekers kocht er één iets. Een luie voorspeller zegt over iedereen
 `"kijkt"`, zonder ergens naar te kijken.
 
 Schrijf code die uitrekent hoeveel procent de luie voorspeller goed heeft,
-en daarna hoeveel van de kopers hij herkent. Begin zo:
+en daarna hoeveel van de kopers hij herkent.
 
-```python
-bezoekers = ["kijkt"] * 19 + ["koopt"]
-```
+### Aan de slag
 
+In de editor staat de lijst `bezoekers`: negentien keer `"kijkt"` en één
+keer `"koopt"`.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code, en print `bezoekers` om te zien wat erin staat.
-2. Loop over `bezoekers`. De luie voorspeller zegt bij elke bezoeker `"kijkt"`: zet dat in een variabele `voorspeld`. Tel hoe vaak `voorspeld` gelijk is aan wat de bezoeker echt deed.
+2. Loop over `bezoekers`, zet `voorspeld = "kijkt"`, en tel hoe vaak `voorspeld` gelijk is aan wat de bezoeker echt deed.
 3. Reken dat om naar procenten: deel door `len(bezoekers)`, en vermenigvuldig met 100.
-4. Tel ook hoeveel kopers er zijn, en hoeveel daarvan de voorspeller herkent: bij hoeveel kopers `voorspeld` ook `"koopt"` is.
+4. Tel ook hoeveel kopers er zijn, en bij hoeveel daarvan `voorspeld` ook `"koopt"` is.
 
-### Aan de slag
+Verwachte uitvoer:
+
+```
+95.0 procent goed
+0 van de 1 kopers herkend
+```
 
 <PyRunner initialCode={`bezoekers = ["kijkt"] * 19 + ["koopt"]`} />
 
