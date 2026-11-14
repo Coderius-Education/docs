@@ -123,7 +123,11 @@ export default function GameTree({ bord, waardes = false }: GameTreeProps): Reac
           Bekijk de boom groot
         </button>
       )}
-      <div ref={ref} className={styles.omhulsel} style={klein ? { zoom } : undefined}>
+      <div
+        ref={ref}
+        className={clsx(styles.omhulsel, inTab && styles.inTab)}
+        style={klein ? { zoom } : undefined}
+      >
         {boom}
       </div>
       {groot && (
