@@ -94,9 +94,8 @@ else:
 Wat telt het zwaarst? Laat het filter per woord printen wat het bijdraagt.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code: hij print de spam-telling van elk woord dat in `spam` staat. `je` mist nog.
-2. Print in een tweede `if` het woord met min zijn telling in `gewoon`. Bij `"ben je nu op school"` zie je `nu` twee keer.
-3. Maak per woord één `bijdrage`: begin op 0, tel de spam-telling erbij en de gewone eraf, en print hem na de twee `if`'s.
+1. Draai de code: `je` mist nog. Print in een tweede `if` het woord met min zijn telling in `gewoon`.
+2. Maak per woord één `bijdrage` (begin op 0, `spam` erbij, `gewoon` eraf), en print hem na de `if`'s. Test `"ben je nu op school"`.
 
 Verwachte uitvoer (bij `"klik hier voor je prijs"`):
 
@@ -117,7 +116,7 @@ for woord in bericht.split():
 <details>
 <summary>Tip</summary>
 
-Zie je bij stap 3 nog steeds twee regels voor `nu`? Kijk of de `print` nog
+Zie je bij stap 2 nog steeds twee regels voor `nu`? Kijk of de `print` nog
 in een van de `if`'s staat. Hij hoort eronder, op de hoogte van de `if`'s.
 
 </details>
