@@ -8,6 +8,8 @@ sidebar_position: 12
 
 ## IndexError: `range(len(lijst))` zonder `- 1`
 
+### Voorbij het eind van de lijst
+
 {/* foutmelding-van: lijst = [3, 2, 1]\nfor i in range(len(lijst)):\n    if lijst[i] > lijst[i + 1]:\n        pass */}
 ```
 IndexError: list index out of range
@@ -17,6 +19,8 @@ IndexError: list index out of range
 
 **Oorzaak:** bij de laatste ronde is `i = n - 1`, dus `lijst[i + 1]` is
 `lijst[n]`, en die bestaat niet. Vandaar de `IndexError`.
+
+### Tot `n - 1`
 
 **Oplossing:** gebruik `range(n - 1)`. Bij paarsgewijze vergelijkingen
 (`lijst[i]` met `lijst[i + 1]`) is de laatste geldige `i` altijd één

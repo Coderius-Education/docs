@@ -31,6 +31,8 @@ zijn plek, achteraan het ongesorteerde stuk.
 
 ## Visualisatie
 
+### De eerste pass
+
 Eén pass over `[3, 1, 4, 1, 5]`:
 
 ```
@@ -44,7 +46,9 @@ paar (4,5):  4 > 5?  nee → laat       [ 1 , 3 , 1 , 4 , 5 ]
 einde pass 1: [ 1 , 3 , 1 , 4 ,(5)]   5 is nu op zijn juiste plek
 ```
 
-Nog niet gesorteerd — we moeten nog een pass doen:
+### De tweede pass
+
+Na pass 1 is `[1, 3, 1, 4, 5]` nog niet gesorteerd, dus volgt pass 2:
 
 ```
 start pass 2: [ 1 , 3 , 1 , 4 , 5 ]
