@@ -63,8 +63,8 @@ Een voorbeeld is een tuple met de invoer en het goede antwoord, het **doel**:
 `([1, 1], 1)`. Met `for invoer, doel in voorbeelden` pak je ze bij elk
 voorbeeld weer uit.
 
-In de runners van dit project staat `neuron` in de verborgen code onder de
-editor. Zo zie je in de editor alleen wat nieuw is.
+In de editors van dit project staat `neuron` in de verborgen code. Zo zie je
+in de editor alleen wat nieuw is.
 
 ## Onderzoek
 
@@ -109,9 +109,21 @@ fout: -1
 
 ### De opdracht
 
-Laat het neuron uit het onderzoek alle vier de voorbeelden van EN langsgaan.
-Print bij elk voorbeeld de invoer, het doel en de fout, en tel hoe vaak de
-fout niet 0 is:
+Hoe goed kent het neuron EN al? Je laat het neuron uit het onderzoek alle vier
+de voorbeelden van EN langsgaan, en print bij elk voorbeeld de invoer, het
+doel en de fout. Daarna tel je hoe vaak de fout niet 0 is: zoveel heeft het
+neuron nog te leren.
+
+### Aan de slag
+
+In de editor staan de vier voorbeelden van EN, en de fout van het eerste.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij rekent de fout uit voor het eerste voorbeeld, en die is 0.
+2. Zet het uitrekenen in een loop `for invoer, doel in voorbeelden`, en print bij elk voorbeeld de fout.
+3. Tel met een teller `fouten` hoe vaak de fout niet 0 is, en print hem na de loop.
+
+Verwachte uitvoer:
 
 ```
 [0, 0] 0 0
@@ -120,14 +132,6 @@ fout niet 0 is:
 [1, 1] 1 0
 2 fouten
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij rekent de fout uit voor het eerste voorbeeld, en die is 0.
-2. Zet het uitrekenen in een loop `for invoer, doel in voorbeelden`, en print bij elk voorbeeld de fout.
-3. Tel met een teller `fouten` hoe vaak de fout niet 0 is, en print hem na de loop.
-
-### Aan de slag
 
 <PyRunner verborgen="neuron" initialCode={`voorbeelden = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
 gewichten = [1, 1]

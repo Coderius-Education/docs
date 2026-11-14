@@ -54,7 +54,7 @@ de som precies 0 is.
    beslist het neuron?
 4. Zet de bias op 0 en probeer `[0, 0, 0]`. Waarom zegt het neuron nee?
 
-<PyRunner initialCode={`# de invoer is: gaan je vrienden, is je huiswerk af, regent het (1 is ja)
+<PyRunner initialCode={`# invoer: vrienden gaan, huiswerk af, het regent (1 is ja)
 invoer = [1, 0, 1]
 gewichten = [3, 2, -1]
 bias = -1
@@ -95,23 +95,26 @@ ja, je gaat
 ### De opdracht
 
 Je ouders zeggen: je gaat alleen als je huiswerk af is, en dan alleen met je
-vrienden. Zoek een bias zodat het neuron alleen ja zegt als je vrienden gaan
-én je huiswerk af is, of het nu regent of niet. Laat de gewichten zoals ze
-zijn. Draai je de code met twee verschillende invoeren, dan zie je:
+vrienden. Je zoekt een bias zodat het neuron alleen ja zegt als je vrienden
+gaan én je huiswerk af is, of het nu regent of niet. De gewichten blijven
+zoals ze zijn: alleen de bias verschuift de grens.
+
+### Aan de slag
+
+In de editor beslist het neuron voor `[1, 0, 0]`: vrienden, geen huiswerk, droog.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: het neuron zegt nog ja.
+2. Maak de bias kleiner, tot het neuron bij `[1, 0, 0]` nee zegt.
+3. Zet `invoer` op `[1, 1, 1]`: vrienden, huiswerk af, maar regen. Zegt het neuron nee, dan is je bias te streng.
+4. Probeer ook `[0, 1, 0]`: het huiswerk is af, maar je vrienden gaan niet.
+
+Verwachte uitvoer (bij `[1, 0, 0]` en bij `[1, 1, 1]`):
 
 ```
 [1, 0, 0] nee
 [1, 1, 1] ja
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: bij `[1, 0, 0]` (vrienden, geen huiswerk, droog) zegt het neuron nog ja.
-2. Maak de bias kleiner, tot het neuron bij `[1, 0, 0]` nee zegt.
-3. Zet `invoer` op `[1, 1, 1]`: vrienden, huiswerk af, maar regen. Zegt het neuron daar nog ja? Zo niet, dan was je bias te streng.
-4. Probeer ook `[0, 1, 0]`: het huiswerk is af, maar je vrienden gaan niet.
-
-### Aan de slag
 
 <PyRunner initialCode={`invoer = [1, 0, 0]
 gewichten = [3, 2, -1]

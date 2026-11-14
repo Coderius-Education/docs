@@ -99,16 +99,16 @@ for a in [0, 1]:
 
 ### De opdracht
 
-Maak een laag van drie neuronen die naar een plaatje van 3 bij 3 kijken. Het
-eerste zegt 1 als de bovenste rij helemaal zwart is, het tweede bij de
-middelste rij, het derde bij de onderste rij. Voor een liggende streep en een
-helemaal zwart plaatje print hij:
+Je maakt een laag van drie neuronen die naar een plaatje van 3 bij 3 kijken.
+Het eerste zegt 1 als de bovenste rij helemaal zwart is, het tweede bij de
+middelste rij, het derde bij de onderste rij. Samen zeggen ze welke rijen
+zwart zijn: bij een liggende streep alleen de middelste, bij een helemaal
+zwart plaatje alle drie.
 
-```
-[0, 1, 0]
-[1, 1, 1]
-```
+### Aan de slag
 
+In de editor staan de liggende streep, het zwarte plaatje en een laag met
+alleen het neuron voor de bovenste rij.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: er is alleen het neuron voor de bovenste rij, en dat zegt `[0]`.
@@ -116,7 +116,12 @@ Begin klein, en breid de code stap voor stap uit:
 3. Zet het neuron voor de onderste rij erbij.
 4. Print ook de laag voor `zwart`.
 
-### Aan de slag
+Verwachte uitvoer:
+
+```
+[0, 1, 0]
+[1, 1, 1]
+```
 
 <PyRunner verborgen="neuron" initialCode={`def laag(invoer, alle_gewichten, biases):
     uit = []

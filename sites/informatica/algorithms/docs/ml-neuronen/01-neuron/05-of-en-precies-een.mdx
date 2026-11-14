@@ -56,14 +56,24 @@ Zoek nu twee andere neuronen met twee invoeren:
 
 Print voor elk neuron de vier combinaties, zoals bij het EN-neuron.
 
+### Aan de slag
+
+In de editor staat `neuron` met gewichten `[0, 0]`, voor één combinatie.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code: met gewichten `[0, 0]` zegt het neuron 0.
-2. Print ook de andere drie combinaties, met de loop in een loop van het EN-neuron.
+1. Draai de code: het neuron zegt 0.
+2. Print ook de andere drie combinaties, met een loop in een loop over `[0, 1]`.
 3. Zoek gewichten en een bias voor OF.
 4. Probeer daarna "precies één". Lukt het na een tijdje nog niet, lees dan het antwoord: waarom lukt het niet?
 
-### Aan de slag
+Verwachte uitvoer (voor OF):
+
+```
+0 0 -> 0
+0 1 -> 1
+1 0 -> 1
+1 1 -> 1
+```
 
 <PyRunner initialCode={`def neuron(invoer, gewichten, bias):
     som = bias

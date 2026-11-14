@@ -53,22 +53,22 @@ later rekent een neuron dat leert er zijn fout mee uit.
 ## Onderzoek
 
 1. Draai de code. Ga je naar het feest?
-2. Probeer `[0, 1, 0]`. Wat beslist het neuron?
+2. Probeer `[0, 1, 0]` in de print. Wat beslist het neuron?
 3. Probeer `[0, 1, 1]`. Wat is de som, en wat beslist het neuron?
 4. Verander één gewicht zodat het neuron bij regen nooit meer gaat, wat de
    rest ook is.
 
-<PyRunner initialCode={`def neuron(invoer, gewichten, bias):
+<PyRunner initialCode={`# invoer: vrienden gaan, huiswerk af, het regent (1 is ja)
+gewichten = [3, 2, -1]
+bias = -1
+
+def neuron(invoer, gewichten, bias):
     som = bias
     for i in range(len(invoer)):
         som = som + invoer[i] * gewichten[i]
     if som > 0:
         return 1
     return 0
-
-# de invoer is: gaan je vrienden, is je huiswerk af, regent het (1 is ja)
-gewichten = [3, 2, -1]
-bias = -1
 
 print(neuron([1, 0, 1], gewichten, bias))`} />
 
@@ -88,8 +88,20 @@ print(neuron([1, 0, 1], gewichten, bias))`} />
 
 ### De opdracht
 
-Dit zijn vijf avonden van een week, met de invoer van elke avond. Print voor
-elke avond wat het neuron zegt, en tel hoe vaak je gaat:
+Een week heeft vijf avonden met een feest, elk met zijn eigen invoer. Je
+laat het neuron voor elke avond beslissen, en telt hoe vaak je gaat. Dat kan
+omdat het neuron 1 of 0 zegt: met getallen kun je rekenen.
+
+### Aan de slag
+
+In de editor staan `neuron` en de invoer van de vijf avonden in `week`.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: hij print de eerste avond.
+2. Print alle vijf de avonden, met een loop over `week`.
+3. Tel de uitkomsten van het neuron op bij een teller `keer`, en print hem na de loop.
+
+Verwachte uitvoer:
 
 ```
 [1, 0, 1] 1
@@ -99,14 +111,6 @@ elke avond wat het neuron zegt, en tel hoe vaak je gaat:
 [0, 0, 1] 0
 je gaat 3 keer
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: hij print de eerste avond.
-2. Print alle vijf de avonden, met een loop over `week`.
-3. Tel hoe vaak je gaat. Omdat het neuron 1 of 0 zegt, kun je zijn uitkomst optellen bij een teller `keer`. Print de teller na de loop.
-
-### Aan de slag
 
 <PyRunner initialCode={`def neuron(invoer, gewichten, bias):
     som = bias

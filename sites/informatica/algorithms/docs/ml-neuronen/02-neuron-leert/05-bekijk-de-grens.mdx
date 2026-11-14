@@ -49,21 +49,22 @@ doet. Precies waar de som 0 is, ligt de **grens**: aan de ene kant zegt het
 appel, aan de andere kant banaan. Bij "langer dan breed" ligt alles wat even
 lang als breed is op die grens, en dat is een rechte lijn.
 
-De runner van de opdracht leert het neuron op het fruit, en tekent daarna de
+In de opdracht leert het neuron op het fruit, en tekent de editor daarna de
 voorbeelden en de grens met `teken_grens`. Het tekenen staat in de verborgen
-code onder de editor.
+code.
 
 ## Opdracht: schuif de grens
 
 ### De opdracht
 
-Zet nieuwe stukken fruit bij de voorbeelden, en kijk hoe de grens meeschuift.
-Met een appel van 11 bij 7 achteraan de lijst print de runner:
+Wat het neuron leert, hangt af van de voorbeelden. Je zet nieuwe stukken
+fruit bij de voorbeelden, en kijkt hoe de grens meeschuift. Doet de volgorde
+van de voorbeelden ertoe? En lukt het nog als een banaan tussen de appels
+ligt?
 
-```
-[6, -14] -1
-```
+### Aan de slag
 
+In de editor leert het neuron op het fruit, en tekent hij de grens.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: je ziet het fruit en de grens die het neuron leerde.
@@ -71,7 +72,11 @@ Begin klein, en breid de code stap voor stap uit:
 3. Zet dezelfde appel als derde in de lijst, na de appel van 9 bij 8. Leert het neuron hetzelfde?
 4. Laat de appel staan, en zet er ook een banaan bij die dicht bij de appels ligt: `([10, 7], 1)`. Lukt het neuron dat nog?
 
-### Aan de slag
+Verwachte uitvoer (met de appel van 11 bij 7 achteraan):
+
+```
+[6, -14] -1
+```
 
 <PyRunner verborgen="fruit-tekenen" initialCode={`def neuron(invoer, gewichten, bias):
     som = bias

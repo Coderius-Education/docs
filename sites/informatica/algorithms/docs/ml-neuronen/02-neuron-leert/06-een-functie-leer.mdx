@@ -52,14 +52,17 @@ geeft een tuple terug, en `gewichten, bias = leer(…)` pakt hem weer uit.
 
 ### De opdracht
 
-Zet het leren in een functie `leer(voorbeelden, rondes)` die de gewichten en
-de bias teruggeeft. Laat hem werken voor elk aantal invoeren: twee, maar ook
-drie of tien.
+Het leren schreef je tot nu toe steeds opnieuw. Je zet het in een functie
+`leer(voorbeelden, rondes)` die de gewichten en de bias teruggeeft, en die
+werkt voor elk aantal invoeren: twee, maar ook drie of tien.
 
 Leer er daarna een neuron mee dat met drie invoeren "minstens twee van de drie"
 herkent: 1 als minstens twee invoeren 1 zijn. Test het op alle acht
 combinaties.
 
+### Aan de slag
+
+In de editor staat een functie `leer` die nog niets leert.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `leer` geeft nog `([0, 0], 0)` terug.
@@ -68,7 +71,20 @@ Begin klein, en breid de code stap voor stap uit:
 4. Maak de acht voorbeelden van "minstens twee van de drie", met drie loops in elkaar en een `if`.
 5. Leer ze met `leer`, en test het neuron op alle acht.
 
-### Aan de slag
+Verwachte uitvoer:
+
+```
+([2, 1], -2)
+[1, 1, 1] -1
+[0, 0, 0] 0 moest 0
+[0, 0, 1] 0 moest 0
+[0, 1, 0] 0 moest 0
+[0, 1, 1] 1 moest 1
+[1, 0, 0] 0 moest 0
+[1, 0, 1] 1 moest 1
+[1, 1, 0] 1 moest 1
+[1, 1, 1] 1 moest 1
+```
 
 <PyRunner verborgen="neuron" initialCode={`def leer(voorbeelden, rondes):
     gewichten = [0, 0]

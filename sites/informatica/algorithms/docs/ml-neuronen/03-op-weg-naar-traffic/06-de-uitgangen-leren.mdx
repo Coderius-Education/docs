@@ -59,15 +59,11 @@ al in de code die je krijgt.
 In de verborgen code staan de tekens uit de vorige stap, maar meer: elk teken
 zoals het hoort, en negen keer met één pixel anders. Laat alle vier de
 uitgangen leren, en herken daarna twee plaatjes die er niet tussen zitten,
-met twee pixels anders:
+met twee pixels anders.
 
-```
-40 plaatjes van 4 soorten
-[0, 0, 0, -4]
-o
-x
-```
+### Aan de slag
 
+In de editor leert alleen de uitgang van `|`.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: alleen de uitgang van `|`, soort 0, leert zijn gewichten.
@@ -75,7 +71,14 @@ Begin klein, en breid de code stap voor stap uit:
 3. Herken elk plaatje in `nieuwe` met `naar_getallen` en `herken`, en print zijn soort.
 4. Zet het leren in een functie `leer_netwerk(plaatjes, labels, aantal_soorten, rondes)` die `alle_gewichten` en `biases` teruggeeft.
 
-### Aan de slag
+Verwachte uitvoer:
+
+```
+40 plaatjes van 4 soorten
+[0, 0, 0, -4]
+o
+x
+```
 
 <PyRunner verborgen="tekens-leren" initialCode={`plaatjes, labels = lees_tekens(mappen)
 print(len(plaatjes), "plaatjes van", len(soorten), "soorten")

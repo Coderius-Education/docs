@@ -59,15 +59,15 @@ van zijn soort. Dat vraagt Traffic ook van de functie die de foto's inleest.
 
 ### De opdracht
 
-Schrijf een functie `lees_tekens(mappen)` die alle plaatjes uit alle mappen
-leest, en de twee lijsten teruggeeft. Voor de mappen in de editor print hij:
+Traffic leest duizenden foto's uit mappen, een map per soort. Je oefent dat
+met een paar tekens: je schrijft een functie `lees_tekens(mappen)` die alle
+plaatjes uit alle mappen leest, en de twee lijsten teruggeeft: de plaatjes
+als getallen, en bij elk plaatje zijn soort.
 
-```
-4 plaatjes
-[0, 0, 1, 1]
-[0, 1, 0, 1, 1, 0, 0, 1, 0]
-```
+### Aan de slag
 
+In de editor staan twee mappen met elk twee plaatjes, en een `lees_tekens`
+die nog twee lege lijsten teruggeeft.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `lees_tekens` geeft nog twee lege lijsten terug, dus 0 plaatjes.
@@ -75,7 +75,13 @@ Begin klein, en breid de code stap voor stap uit:
 3. Zet bij elk plaatje ook zijn soort in `labels`.
 4. Print ook `plaatjes[1]`, het tweede plaatje, als getallen.
 
-### Aan de slag
+Verwachte uitvoer:
+
+```
+4 plaatjes
+[0, 0, 1, 1]
+[0, 1, 0, 1, 1, 0, 0, 1, 0]
+```
 
 <PyRunner initialCode={`def naar_getallen(plaatje):
     invoer = []

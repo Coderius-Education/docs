@@ -115,21 +115,27 @@ print(len(invoer), "getallen")`} />
 
 ### De opdracht
 
-Zet het omzetten in een functie `naar_getallen(plaatje)` die de lijst
-getallen teruggeeft. Test hem op een staande en een liggende streep:
+Een netwerk krijgt geen plaatje, maar een lijst getallen. Dat omzetten doe je
+voor elk plaatje opnieuw, dus je zet het in een functie
+`naar_getallen(plaatje)` die de lijst getallen teruggeeft. Je test hem op een
+staande en een liggende streep.
 
-```
-[0, 1, 0, 0, 1, 0, 0, 1, 0]
-[0, 0, 0, 1, 1, 1, 0, 0, 0]
-```
+### Aan de slag
 
+In de editor staan de twee strepen, en een functie `naar_getallen` die nog
+een lege lijst teruggeeft.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `naar_getallen` geeft nog een lege lijst terug.
 2. Zet de loop in een loop uit het onderzoek in de functie, vóór de `return`. Nu krijg je de staande streep.
 3. Print ook `naar_getallen(liggend)`.
 
-### Aan de slag
+Verwachte uitvoer:
+
+```
+[0, 1, 0, 0, 1, 0, 0, 1, 0]
+[0, 0, 0, 1, 1, 1, 0, 0, 0]
+```
 
 <PyRunner initialCode={`def naar_getallen(plaatje):
     invoer = []

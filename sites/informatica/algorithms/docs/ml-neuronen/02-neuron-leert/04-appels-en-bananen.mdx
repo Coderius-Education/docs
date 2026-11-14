@@ -62,14 +62,14 @@ invoer is nu bijvoorbeeld 18.
 
 ### De opdracht
 
-Laat het neuron tien rondes leren op het fruit, en test het daarna met twee
-stukken fruit die het nooit zag:
+Kan een neuron appels en bananen uit elkaar houden aan hun lengte en
+breedte? Je laat het neuron tien rondes leren op het fruit, en test het
+daarna met twee stukken fruit die het nooit zag.
 
-```
-[10, 7] -> 0
-[15, 5] -> 1
-```
+### Aan de slag
 
+In de editor staan het fruit en de eerste stap van het leren; `neuron` staat
+in de verborgen code.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij rekent de fout uit voor de eerste banaan. Het neuron zegt nog 0, dus de fout is 1.
@@ -78,10 +78,12 @@ Begin klein, en breid de code stap voor stap uit:
 4. Zet die loop in een loop van tien rondes.
 5. Test het neuron met de twee nieuwe stukken fruit.
 
-### Aan de slag
+Verwachte uitvoer:
 
-In de editor staan het fruit en de eerste stap van het leren. `neuron` staat in de
-verborgen code onder de editor.
+```
+[10, 7] -> 0
+[15, 5] -> 1
+```
 
 <PyRunner verborgen="neuron" initialCode={`fruit = [
     ([8, 8], 0), ([9, 8], 0), ([7, 7], 0), ([8, 7], 0),

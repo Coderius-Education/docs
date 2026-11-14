@@ -108,19 +108,15 @@ ronde 10 : 0 fouten
 
 ### De opdracht
 
-Laat het programma zeggen in welke ronde het neuron voor het eerst foutloos
-was, of dat het in geen enkele ronde lukte:
+Een neuron dat een hele ronde geen fout meer maakt, is klaar met leren. Je
+laat het programma zeggen in welke ronde het neuron voor het eerst foutloos
+was, of dat het in geen enkele ronde lukte. Zo zie je welke regels een neuron
+kan leren, en welke niet.
 
-```
-klaar na ronde 6
-```
+### Aan de slag
 
-Met de doelen van "precies één" print het:
-
-```
-niet geleerd in 10 rondes
-```
-
+In de editor leert het neuron EN, tien rondes lang, en telt het in elke ronde
+de `fouten`.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij leert tien rondes en print alleen de gewichten en de bias.
@@ -128,7 +124,11 @@ Begin klein, en breid de code stap voor stap uit:
 3. Print "klaar na ronde 6" als `klaar` meer dan 0 is, en anders "niet geleerd in 10 rondes".
 4. Verander de doelen in die van OF, en daarna in die van "precies één".
 
-### Aan de slag
+Verwachte uitvoer (bij EN):
+
+```
+klaar na ronde 6
+```
 
 <PyRunner verborgen="neuron" initialCode={`voorbeelden = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
 gewichten = [0, 0]
