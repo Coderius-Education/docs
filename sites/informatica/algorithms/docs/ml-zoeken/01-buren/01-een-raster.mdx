@@ -34,8 +34,8 @@ print(doolhof[2][1])
 print(len(doolhof), len(doolhof[0]))
 ```
 
-`S` is de start, `E` de uitgang, `#` een muur en `.` een vrij vakje. Wat
-print dit programma?
+**Vraag:** wat print dit programma? `S` is de start, `E` de uitgang, `#` een
+muur en `.` een vrij vakje.
 
 <details>
 <summary>Antwoord</summary>
@@ -93,6 +93,8 @@ print(doolhof[rij][kolom])`} />
 
 ## Opdracht: muren tellen
 
+### De opdracht
+
 Tel hoeveel muren er in het doolhof staan. Dat zijn er 9:
 
 ```
@@ -104,6 +106,8 @@ Begin klein, en breid de code stap voor stap uit:
 1. Draai de code: hij telt de muren in de bovenste rij. Daar staan er 0.
 2. Verander `doolhof[0]` in `doolhof[1]`. Nu telt hij er 3.
 3. Zet de loop in een tweede loop, `for regel in doolhof:`, en loop in de binnenste loop over `regel` in plaats van over `doolhof[1]`. Nu telt hij alle 9 muren.
+
+### Aan de slag
 
 <PyRunner initialCode={`doolhof = [
     "S.....",

@@ -55,6 +55,8 @@ een kladblok voordat je een nieuwe while-loop draait.
 
 ## Bouw zelf: het paard op het schaakbord
 
+### De opdracht
+
 Hoeveel sprongen heeft een paard nodig van de ene hoek, `(0, 0)`, naar de hoek
 er schuin tegenover, `(7, 7)`? En hoeveel naar `(1, 1)`, het vakje er schuin
 naast? Gebruik breedte-eerst zoeken op een bord van 8 bij 8.
@@ -65,6 +67,8 @@ Begin klein, en breid de code stap voor stap uit:
 2. Zet de andere zeven sprongen erbij. Een lijst met de acht richtingen en een loop erover scheelt typwerk.
 3. Houd met een `if` alleen de sprongen die op het bord blijven. `sprongen((0, 0))` geeft er dan twee: `(1, 2)` en `(2, 1)`.
 4. Zet het zoeken uit [breedte-eerst](site:algorithms/docs/ml-zoeken/02-kortste-weg/02-breedte-eerst) eronder, met `sprongen` in plaats van `buren`. Het vult de dictionary `afstand`; print daarna `afstand[(7, 7)]`.
+
+### Aan de slag
 
 <PyRunner initialCode={`def sprongen(vakje):
     rij, kolom = vakje

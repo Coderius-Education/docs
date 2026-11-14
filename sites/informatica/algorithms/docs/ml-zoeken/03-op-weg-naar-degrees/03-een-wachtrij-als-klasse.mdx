@@ -95,6 +95,8 @@ while not w.is_leeg():
 
 ## Opdracht: zit hij erin?
 
+### De opdracht
+
 Geef de wachtrij een methode `bevat(toestand)`, die `True` geeft als er een
 knoop met die toestand in de wachtrij staat, en anders `False`. CS50 geeft
 zijn wachtrij net zo'n methode.
@@ -109,6 +111,8 @@ Begin klein, en breid de code stap voor stap uit:
 1. Draai de code: `bevat` geeft nog steeds `False`.
 2. Loop in `bevat` met `for knoop in self.lijst:` langs de knopen, en print bij elke knoop `knoop.toestand`. Nu zie je twee keer Zuid en Markt.
 3. Haal de print weg. Geef `True` terug zodra `knoop.toestand` gelijk is aan `toestand`, en pas na de loop `False`.
+
+### Aan de slag
 
 <PyRunner initialCode={`class Knoop:
     def __init__(self, toestand, ouder, actie):

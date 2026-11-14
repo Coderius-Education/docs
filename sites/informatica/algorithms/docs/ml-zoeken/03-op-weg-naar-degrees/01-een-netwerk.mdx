@@ -64,7 +64,7 @@ dus `buren` kijkt naar `a` én naar `b`.
 
 ## Onderzoek
 
-1. Draai de code. Welke buren heeft Markt? Kloppen ze met de lijnen hierboven?
+1. Draai de code. Welke buren heeft Markt? Kloppen ze met de lijnen uit Zo werkt het?
 2. Vraag `buren("Zuid")`. Waarom is het er maar één?
 3. Haal de tweede `if` en zijn `append` weg. Welke buren heeft Markt nu?
 4. Vraag `buren("Eiland")`, een station dat niet in het netwerk staat.
@@ -107,6 +107,8 @@ print(buren("Markt"))`} />
 
 ## Opdracht: hoeveel haltes?
 
+### De opdracht
+
 Hoeveel haltes is elk station van Zuid? Zoek het met breedte-eerst, net als in
 het doolhof, en print de afstanden:
 
@@ -127,6 +129,8 @@ Begin klein, en breid de code stap voor stap uit:
 1. Draai de code: hij print de buren van Zuid. Het netwerk en `buren` staan in de verborgen code.
 2. Zet een wachtrij `[van]` en de while-loop uit het doolhof eronder. Haal in de loop met `station = wachtrij.pop(0)` het voorste station eruit. `buren` geeft nu paren, dus loop met `for lijn, buur in buren(station):`. Print `afstand`.
 3. Print ook hoeveel haltes Strand is, met `afstand["Strand"]`.
+
+### Aan de slag
 
 <PyRunner verborgen="metro" initialCode={`van = "Zuid"
 afstand = {van: 0}

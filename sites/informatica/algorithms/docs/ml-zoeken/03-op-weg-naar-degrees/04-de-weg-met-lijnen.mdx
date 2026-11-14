@@ -85,6 +85,8 @@ while not wachtrij.is_leeg():
 
 ## Opdracht: een reis plannen
 
+### De opdracht
+
 Schrijf de functie `reis(van, naar)`, die de weg geeft als lijst paren
 `(lijn, station)`, en `None` als er geen weg is:
 
@@ -100,6 +102,8 @@ Begin klein, en breid de code stap voor stap uit:
 2. Kijk in de while-loop, direct na `haal_eruit`, of `knoop.toestand == naar`. Zo ja, geef dan `knoop.toestand` terug. Nu print hij `Strand`.
 3. Loop daar in plaats daarvan terug langs `knoop.ouder`, zoals bij [een knoop](site:algorithms/docs/ml-zoeken/03-op-weg-naar-degrees/02-een-knoop), en zet elk paar vooraan in een lijst `weg`. Geef `weg` terug.
 4. Vraag ook `reis("Noord", "Museum")` en `reis("Zuid", "Eiland")`, en zet onderaan `return None` in plaats van `return "?"`.
+
+### Aan de slag
 
 <PyRunner verborgen="metro-zoeken" initialCode={`def reis(van, naar):
     wachtrij = Wachtrij()
