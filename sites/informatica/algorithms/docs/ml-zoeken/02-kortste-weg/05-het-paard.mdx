@@ -46,7 +46,7 @@ Er zijn geen muren, maar een sprong mag niet van het bord af: rij en kolom
 blijven van 0 tot en met 7. Dat is dezelfde controle als de randen van het
 doolhof. Zonder die controle springt het paard eindeloos verder.
 
-## Bouw zelf: het paard op het schaakbord
+## Bouw zelf
 
 ### De opdracht
 
@@ -57,19 +57,12 @@ op een schaakbord van 8 bij 8, met de sprongen van het paard als buren.
 
 ### Aan de slag
 
-In de editor staat een functie `sprongen` die nog maar één sprong kent.
+**Pas op:** springt het paard van het bord af, dan stopt het zoeken nooit en loopt het tabblad van de browser vast. Kopieer je code eerst naar een kladblok.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code: `sprongen` geeft één sprong.
-2. Zet de andere zeven sprongen erbij, met een lijst van de acht richtingen en een loop erover.
-3. Houd met een `if` alleen de sprongen op het bord. `sprongen((0, 0))` geeft dan `(1, 2)` en `(2, 1)`.
-4. Zet het zoeken uit [breedte-eerst](site:algorithms/docs/ml-zoeken/02-kortste-weg/02-breedte-eerst) eronder, met `sprongen` in plaats van `buren`. Print uit de dictionary `afstand` die van `(7, 7)` en `(1, 1)`.
-
-:::caution
-Springt het paard van het bord af, dan komen er steeds nieuwe vakjes bij en
-stopt het zoeken nooit: het tabblad van de browser loopt vast. Kopieer je code
-eerst naar een kladblok, en zet de `if` van stap 3 erin voordat je zoekt.
-:::
+1. Draai de code: `sprongen` kent nog maar één sprong.
+2. Zet de andere zeven erbij met een lijst van de acht richtingen, en houd met een `if` alleen de sprongen op het bord.
+3. Zet het zoeken uit [breedte-eerst](site:algorithms/docs/ml-zoeken/02-kortste-weg/02-breedte-eerst) eronder, met `sprongen` als buren. Print de afstand van `(7, 7)` en `(1, 1)`.
 
 Verwachte uitvoer:
 

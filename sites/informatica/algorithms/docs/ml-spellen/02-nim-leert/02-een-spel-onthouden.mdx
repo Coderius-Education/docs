@@ -95,23 +95,22 @@ verliezer: b
 
 </details>
 
-## Opdracht: een spel onthouden
+## Opdracht
 
 ### De opdracht
 
-De computer speelt één spel tegen zichzelf. Daarna werk je de score bij:
-elke zet van de winnaar krijgt een punt erbij, elke zet van de verliezer een
-punt eraf. Zo onthoudt hij wat dit spel hem leerde.
+De computer onthoudt een spel. Hij speelt één spel tegen zichzelf, en daarna
+werk je de score bij: elke zet van de winnaar krijgt een punt erbij, elke zet
+van de verliezer een punt eraf.
 
 ### Aan de slag
 
-In de editor speelt de computer één spel tegen zichzelf, met een lege `score`.
+In de editor speelt de computer één spel, met een lege `score`.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: je ziet de zetten van `"a"` en `"b"`, en wie er verloor.
 2. Loop met `for speler in zetten` over de spelers, en daarin over `zetten[speler]`. Print elke zet.
-3. Zet elke zet in `score` op 0 als hij er nog niet in staat, en print `score` na de loops.
-4. Geef een zet van de verliezer een punt eraf, en een zet van de winnaar een punt erbij.
+3. Zet een nieuwe zet op 0 in `score`. Geef hem een punt eraf als `speler` verloor, en anders erbij.
 
 Verwachte uitvoer:
 
@@ -129,7 +128,7 @@ print(zetten, verliezer)`} />
 <details>
 <summary>Tip</summary>
 
-Bij stap 4 weet je in de binnenste loop van wie de zet is: dat is `speler`.
+Bij stap 3 weet je in de binnenste loop van wie de zet is: dat is `speler`.
 Vergelijk die met `verliezer`.
 
 </details>

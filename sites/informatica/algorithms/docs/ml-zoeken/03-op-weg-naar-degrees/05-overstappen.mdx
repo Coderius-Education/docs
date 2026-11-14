@@ -42,7 +42,7 @@ Om te zien of de lijn verandert, onthoud je de lijn van de vorige halte in
 niet: daar stap je in. Daarom begint `vorige_lijn` met `None`, en tel je een
 overstap alleen als `vorige_lijn is not None`.
 
-## Bouw zelf: hoe vaak overstappen?
+## Bouw zelf
 
 ### De opdracht
 
@@ -61,9 +61,8 @@ In de editor staat `reis` uit de vorige stap.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij print de weg van Zuid naar Museum.
-2. Loop met `for lijn, station in weg:` langs de weg, en print bij elke halte `lijn`: blauw, rood en geel.
-3. Tel de overstappen met `vorige_lijn`, die met `None` begint, en print het aantal. Voor Museum is het 2.
-4. Maak er een functie `overstappen(weg)` van, en test hem ook met `reis("Zuid", "Strand")` en `reis("Zuid", "Markt")`.
+2. Tel met `for lijn, station in weg:` en `vorige_lijn`, die met `None` begint, de overstappen. Voor Museum zijn het er 2.
+3. Maak er een functie `overstappen(weg)` van, en test hem ook met de wegen naar Strand en Markt.
 
 Verwachte uitvoer:
 

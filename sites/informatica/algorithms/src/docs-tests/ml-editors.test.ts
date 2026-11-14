@@ -176,7 +176,7 @@ describe('een stap gebruikt alleen namen die er zijn', () => {
 // Een eindeloze while-loop laat het tabblad vastlopen: de speeltuin heeft geen
 // stopknop. Bij het paard gebeurde dat met elke sprong van het bord af, en de
 // pagina waarschuwde nergens. Elke pagina waar de leerling een while schrijft,
-// heeft een :::caution die het zegt.
+// heeft een waarschuwing die het zegt.
 
 describe('een pagina met een while waarschuwt voor een tabblad dat vastloopt', () => {
   for (const pad of projecten) {
@@ -186,7 +186,12 @@ describe('een pagina met een while waarschuwt voor een tabblad dat vastloopt', (
         .map((m) => m[1])
         .join('\n');
       if (!/^\s*while /m.test(antwoorden)) return;
-      const waarschuwingen = [...tekst.matchAll(/^:::caution\n([\s\S]*?)\n:::/gm)].map((m) => m[1]);
+      // Een :::caution, of een alinea **Pas op:** … (zoals ml-aan-de-slag.test.ts):
+      // het blok was met zijn kop honderd pixels hoog, op het scherm met het veld.
+      const waarschuwingen = [
+        ...tekst.matchAll(/^:::caution\n([\s\S]*?)\n:::/gm),
+        ...tekst.matchAll(/^\*\*Pas op:\*\* (.*(?:\n(?!\n).*)*)/gm),
+      ].map((m) => m[1]);
       expect(waarschuwingen.some((w) => /tabblad/.test(w) && /vast/.test(w))).toBe(true);
     });
   }

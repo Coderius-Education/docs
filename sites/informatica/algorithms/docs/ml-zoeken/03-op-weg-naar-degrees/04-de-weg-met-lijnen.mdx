@@ -76,30 +76,23 @@ while not wachtrij.is_leeg():
 
 </details>
 
-## Opdracht: een reis plannen
+## Opdracht
 
 ### De opdracht
 
-Je zet het zoeken en de weg terug samen in één functie `reis(van, naar)`.
+Je plant een reis: je zet het zoeken en de weg terug samen in één functie `reis(van, naar)`.
 Die geeft de weg als lijst paren `(lijn, station)`: welke lijn je neemt, en
 waar je uitstapt. Is er geen weg, dan geeft hij `None`. Zo'n functie schrijf
 je straks ook voor Degrees.
 
 ### Aan de slag
 
-In de editor staat `reis` met het zoeken met knopen, dat nog `"?"` teruggeeft.
+**Pas op:** gaat je tweede while-loop nooit naar `knoop.ouder`, dan stopt hij nooit en loopt het tabblad van de browser vast. Kopieer je code eerst naar een kladblok.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code: `reis` geeft nog `"?"`.
-2. Geef direct na `haal_eruit` de toestand terug als `knoop.toestand == naar`. Nu print hij `Strand`.
-3. Loop daar in plaats daarvan terug langs `knoop.ouder`, en zet elk paar `(knoop.actie, knoop.toestand)` vooraan in een lijst `weg`.
-4. Vraag ook `reis("Noord", "Museum")` en `reis("Zuid", "Eiland")`, en zet onderaan `return None`.
-
-:::caution
-`reis` heeft twee while-loops. Gaat de tweede nooit naar `knoop.ouder`, dan
-stopt hij nooit en loopt het tabblad van de browser vast. Kopieer je code
-eerst naar een kladblok.
-:::
+1. Draai de code: `reis` zoekt met knopen, maar geeft nog `"?"`.
+2. Is `knoop.toestand == naar`, loop dan terug langs `knoop.ouder` en zet elk paar vooraan in een lijst `weg`.
+3. Vraag ook `reis("Noord", "Museum")` en `reis("Zuid", "Eiland")`, en zet onderaan `return None`.
 
 Verwachte uitvoer:
 

@@ -44,7 +44,7 @@ actie, zonder dat hij ontdekt. Roep je daarna alleen `stap` aan, en niet
 Zo speel je bij CS50 tegen de geleerde computer: hij kiest steeds zijn beste
 zet, en leert niet meer.
 
-## Bouw zelf: de route van de muis
+## Bouw zelf
 
 ### De opdracht
 
@@ -55,19 +55,12 @@ teruggeeft. Zo zie je de route na 0, 1, 2, 5 en 10 wandelingen.
 
 ### Aan de slag
 
-In de editor leert de muis van 5 wandelingen.
+**Pas op:** deze muis kan heen en weer blijven lopen. Stop dus bij 20 vakjes, anders loopt het tabblad van de browser vast. Kopieer je code eerst naar een kladblok.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code: je ziet welke kant hij in vakje 2 kiest.
-2. Laat `piep` vanuit vakje 2 lopen tot `klaar(vakje)`, met `piep.kies(vakje, 0)` en `stap`. Print na elke stap het vakje.
-3. Maak er een functie `route(muis)` van, met een lijst `pad`: het startvakje, en na elke stap het nieuwe vakje. Stop ook bij 20 vakjes.
-4. Print de route na 0, 1, 2, 5 en 10 wandelingen, elke keer met `random.seed(1)` en een nieuwe muis.
-
-:::caution
-Een muis kan heen en weer blijven lopen: na één wandeling doet deze muis dat.
-Zonder de grens van 20 vakjes stopt je while-loop dan nooit, en loopt het
-tabblad van de browser vast. Kopieer je code eerst naar een kladblok.
-:::
+1. Draai de code: de muis leert van 5 wandelingen, en je ziet welke kant hij in vakje 2 kiest.
+2. Schrijf een functie `route(muis)` die vanaf vakje 2 loopt tot `klaar(vakje)`, met `muis.kies(vakje, 0)` en `stap`.
+3. Print de route na 0, 1, 2, 5 en 10 wandelingen, elke keer met `random.seed(1)` en een nieuwe muis.
 
 Verwachte uitvoer:
 
