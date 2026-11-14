@@ -8,6 +8,8 @@
 
 .toolbar {
   display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   align-items: center;
   justify-content: space-between;
   padding: 0.4rem 0.75rem;
@@ -95,27 +97,17 @@
   background: white;
 }
 
-/* De verborgen code (parser-motor, kant-en-klare functies): uitklapbaar
-   onder de editor, alleen-lezen. */
-/* Het blok met de code die al klaarstaat is geen tip: in een les-tabblad
-   kreeg het de opmaak van een tip of antwoord (binnenruimte, een rand links,
-   16 en 8 pixels marge) en kostte het dicht 77 pixels in plaats van 30. Die
-   regels (.paneel details in LesTabs) wegen even zwaar, vandaar de extra
-   klassen hier. */
-.runner .codeVak details.verborgen {
+/* De code die al klaarstaat: open staat hij onder de editor, alleen-lezen. */
+.runner .codeVak .verborgen {
   margin: 0.25rem 0 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
   font-size: 0.85rem;
 }
 
-.runner .codeVak details.verborgen > summary {
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  color: var(--ifm-color-emphasis-700);
+/* De knop ervoor staat in de werkbalk, op de plek van het label Python: als
+   regel onder de editor kostte hij 34 pixels. */
+.klaarKnop {
+  white-space: nowrap;
 }
 
 /* De bomen staan bovenaan de uitvoer, in een balk die opvalt: de knop is
