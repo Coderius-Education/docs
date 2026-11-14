@@ -203,15 +203,14 @@ niet via `C`.
 
 ## Onderzoek
 
-`kies_volgende` en `dijkstra` uit het tabblad Alles samen staan al
-klaar; in het veld staan alleen de start en de graph. Pas ze aan:
+De functies uit het tabblad Alles samen staan al klaar. Pas de start en
+de graph aan:
 
 1. Een andere startnode: zet `start` op `'D'`.
-2. Maak `A → B` veel duurder (bv. gewicht 100). Hoe verandert de
-   afstand naar `B`?
-3. Voeg een extra node `E` toe met een verbinding naar `B`. Welk gewicht
-   mag die edge hoogstens hebben als `E` op afstand 6 of minder moet
-   liggen?
+2. Maak `A → B` veel duurder (gewicht 100). Hoe verandert de afstand
+   naar `B`?
+3. Voeg een node `E` toe met een edge naar `B`. Hoe zwaar mag die edge
+   hoogstens zijn als `E` op afstand 6 of minder moet liggen?
 
 <PyRunner verborgen="dijkstra-compleet" initialCode={`start = 'A'
 graph = {

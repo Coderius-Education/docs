@@ -120,17 +120,6 @@ print(verdubbel(plus_drie(5)))`} />
 Tot nu toe zagen we functies stapelen *bij de aanroep*. Maar een functie
 kan binnenin zijn body ook een **andere functie aanroepen**:
 
-```python
-def kwadraat(x):
-    return x * x
-
-def som_van_kwadraten(a, b):
-    return kwadraat(a) + kwadraat(b)
-```
-
-`som_van_kwadraten` doet zelf weinig: hij laat `kwadraat` het werk doen.
-Dat heet **compositie**, een functie bouwen uit andere functies.
-
 <PyRunner initialCode={`def kwadraat(x):
     return x * x
 
@@ -138,6 +127,9 @@ def som_van_kwadraten(a, b):
     return kwadraat(a) + kwadraat(b)
 
 print(som_van_kwadraten(3, 4))      # 25  (9 + 16)`} />
+
+`som_van_kwadraten` doet zelf weinig: hij laat `kwadraat` het werk doen.
+Dat heet **compositie**, een functie bouwen uit andere functies.
 
 ## Waarom dit relevant is
 

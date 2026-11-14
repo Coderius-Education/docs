@@ -6,18 +6,15 @@ sidebar_position: 2
 
 **Leerdoel:** je controleert of je beeld van PageRank klopt voordat je
 gaat bouwen. Bedenk bij elke stelling eerst zelf je antwoord, en klik dan
-pas open. Alle stellingen gaan over het mini-web van
-[het idee](site:algorithms/docs/pagerank/01-concept).
+pas open.
 
 ## Stellingen 1 tot 3
 
-Het mini-web:
+Het mini-web uit [het idee](site:algorithms/docs/pagerank/01-concept):
 
 ```
 A → B,  A → C
-B → C
-C → A
-D → C
+B → C,  C → A,  D → C
 ```
 
 **Stelling 1.** *"Als je de PageRank van
@@ -66,9 +63,7 @@ Het mini-web:
 
 ```
 A → B,  A → C
-B → C
-C → A
-D → C
+B → C,  C → A,  D → C
 ```
 
 **Stelling 4.** *"Na één ronde rekenen heb je de PageRank van het mini-web

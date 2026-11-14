@@ -4,21 +4,19 @@ sidebar_position: 11
 
 # Er gaat iets mis — top-3 fouten
 
-**Leerdoel:** je herkent veelvoorkomende foutmeldingen en begrijpt **waarom**
-ze optreden. Een fout is geen tegenslag — het is informatie.
+**Leerdoel:** je herkent veelvoorkomende fouten en begrijpt **waarom** ze
+optreden.
 
-## Te vroeg klaar: `return -1` op de verkeerde inspringing
+## Te vroeg klaar
 
 Geen foutmelding, maar wel een logische fout: de functie geeft `-1` terug
 voor een doel dat wél in de lijst staat.
 
-**Oorzaak:** `return -1` staat binnen de `for`-lus. Is het eerste element
-niet het doel, dan voert Python al in de eerste ronde `return -1` uit, en
-de rest van de lijst komt hij nooit tegen.
+**Oorzaak:** `return -1` staat binnen de `for`-lus. In Python bepaalt de
+inspringing bij welk blok een regel hoort. Is het eerste element niet het
+doel, dan voert Python al in de eerste ronde `return -1` uit.
 
-**Oplossing:** laat `return -1` even ver inspringen als `for`, niet als
-`if`. In Python is inspringing geen versiering: ze bepaalt bij welk blok
-een regel hoort.
+**Oplossing:** laat `return -1` even ver inspringen als `for`, niet als `if`.
 
 {/* niet-compileren: fragment uit de functie, met zijn inspringing */}
 ```python

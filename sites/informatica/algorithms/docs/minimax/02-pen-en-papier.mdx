@@ -8,10 +8,10 @@ sidebar_position: 2
 abstracte boom met cijfers, en dan een echt tic-tac-toe-eindspel waarvan
 je de hele boom tekent en doorloopt. Geen Python.
 
-## Deel 1: een abstracte boom
+## Deel 1
 
-Eerst een boom waar de bladeren al cijfers hebben; de uitkomst is
-gegeven, en jij rekent alleen de MIN- en MAX-knopen uit.
+Eerst een abstracte boom: de bladeren hebben al cijfers, en jij rekent
+alleen de MIN- en MAX-knopen uit.
 
 ```
                  ▲ MAX
@@ -53,12 +53,12 @@ misleidend, want het kind dat MIN kiest is niet het hoge maar het lage.
 
 </details>
 
-## Deel 2: een echt eindspel
+## Deel 2
 
 ### De positie
 
-Een echt spel: een positie waar nog drie vakjes leeg zijn, en X is aan
-zet.
+Een echt eindspel: een positie waar nog drie vakjes leeg zijn, en X
+is aan zet.
 
 ```
  X | X | O
@@ -81,9 +81,8 @@ winnaar is `0`.
 
 ### Teken de boom
 
-Bovenaan staat het bord van nu, met X aan zet: een MAX-knoop. Eronder is O
-aan zet (MIN), en daaronder ligt de laatste zet van X vast. Elk vraagteken
-reken je zo uit; een bord met een stippellijn is klaar.
+▲ is X aan zet (MAX), ▼ is O (MIN). Elk vraagteken reken je zo uit; een
+bord met een stippellijn is klaar.
 
 <GameTree bord="XXO/OOX/..." />
 

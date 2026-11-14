@@ -23,16 +23,10 @@ kant voor het algoritme niet.
 
 ```python
 # FOUT: A → B staat alleen onder A
-graph = {
-    'A': [('B', 4)],
-    'B': [],
-}
+graph = {'A': [('B', 4)], 'B': []}
 
 # GOED
-graph = {
-    'A': [('B', 4)],
-    'B': [('A', 4)],
-}
+graph = {'A': [('B', 4)], 'B': [('A', 4)]}
 ```
 
 ### Tip: bouw de dict uit edges

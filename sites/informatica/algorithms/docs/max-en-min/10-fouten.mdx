@@ -7,7 +7,9 @@ sidebar_position: 10
 **Leerdoel:** je herkent valkuilen bij het werken met twee accumulators
 tegelijk.
 
-## Twee keer door de lijst: twee aparte for-lussen
+## Twee keer door de lijst
+
+### Wat er misgaat: twee lussen
 
 Geen foutmelding, maar wel het hele punt van dit algoritme gemist: elk
 element wordt twee keer gelezen.
@@ -17,6 +19,10 @@ element wordt twee keer gelezen.
 
 **Oplossing:** één for-lus met twee accumulators, en per element hoogstens
 twee vergelijkingen.
+
+### Eén lus in plaats van twee
+
+Eerst de twee lussen, dan de ene lus die beide accumulators bijwerkt:
 
 {/* niet-draaien: fragment; lijst, klein en groot komen uit de functie */}
 ```python

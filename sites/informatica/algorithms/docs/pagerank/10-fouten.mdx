@@ -18,13 +18,13 @@ ranks zien eruit alsof er maar één ronde is gerekend:
 AssertionError: {'A': 0.25, 'B': 0.1437, 'C': 0.4784, 'D': 0.0375}
 ```
 
-**Oorzaak:** `nieuw` en `rank` zijn dezelfde dict. `nieuw = rank` maakt
-geen kopie, maar geeft dezelfde dict een tweede naam. Alles wat je in
-`nieuw` zet, staat dus meteen ook in `rank`. Het verschil tussen de twee is
-daardoor altijd 0, en de lus stopt na de eerste ronde.
+**Oorzaak:** `nieuw = rank` maakt geen kopie, maar geeft dezelfde dict een
+tweede naam. Wat je in `nieuw` zet, staat meteen ook in `rank`, dus het
+verschil is altijd 0 en de lus stopt na de eerste ronde.
 
-**Oplossing:** begin elke ronde met een lege dict, zodat `nieuw` en `rank`
-echt twee dicts zijn.
+**Oplossing:** begin elke ronde met een lege dict. Zet ook `rank = nieuw`
+pas ná het meten van het verschil: ervoor vergelijk je `nieuw` met
+zichzelf, en toont de test `'C': 0.5687`.
 
 ```python
 # FOUT
@@ -33,10 +33,6 @@ nieuw = rank
 # GOED
 nieuw = {}
 ```
-
-Hetzelfde gebeurt als je `rank = nieuw` vóór het meten van het verschil
-zet: dan vergelijk je `nieuw` met zichzelf. De test toont dan
-`'C': 0.5687`.
 
 Meer uitleg: [Bouwsteen 4](site:algorithms/docs/pagerank/bouwen/06-itereren)
 

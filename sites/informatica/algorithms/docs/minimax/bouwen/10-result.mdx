@@ -4,9 +4,8 @@ sidebar_position: 10
 
 # Bouwsteen 4 — `result(bord, zet)`
 
-**Leerdoel:** je past een zet toe op een bord zonder het
-oorspronkelijke bord te veranderen. Dit is de eerste functie die een
-eerder geschreven functie (`player`) hergebruikt.
+**Leerdoel:** je past een zet toe zonder het oorspronkelijke bord te
+veranderen, en hergebruikt daarbij je eigen `player`.
 
 ## Wat doet deze functie?
 
@@ -17,6 +16,18 @@ toegepast. Welke speler de zet doet, bepaal je met `player(bord)` uit
 Het originele `bord` mag je niet veranderen. Minimax gaat straks
 honderden zetten proberen zonder het echte spel aan te raken, en dat
 lukt alleen als elke `result`-aanroep een vers bord teruggeeft.
+
+**Specificatie:**
+
+- **Input**: een `bord` en een `zet` (tuple `(i, j)`).
+- **Output**: een **nieuw** bord met de zet van de huidige speler
+    ingevuld op `(i, j)`.
+- **Voorbeeld**:
+    ```
+    bord = leeg
+    result(bord, (1, 1)) → bord met "X" in het midden
+    bord is daarna NOG STEEDS leeg
+    ```
 
 ## Waarom is dit subtiel?
 
@@ -39,18 +50,6 @@ nieuw_bord = copy.deepcopy(bord)
 `deepcopy` maakt een volledig onafhankelijke kopie, ook van de rijen
 binnenin. Daarna kun je `nieuw_bord[0][0] = "X"` doen zonder dat `bord`
 verandert.
-
-**Specificatie:**
-
-- **Input**: een `bord` en een `zet` (tuple `(i, j)`).
-- **Output**: een **nieuw** bord met de zet van de huidige speler
-    ingevuld op `(i, j)`.
-- **Voorbeeld**:
-    ```
-    bord = leeg
-    result(bord, (1, 1)) → bord met "X" in het midden
-    bord is daarna NOG STEEDS leeg
-    ```
 
 ## Voorspel
 
