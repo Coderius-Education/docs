@@ -80,6 +80,9 @@ function secties(tekst: string): Sectie[] {
 // opdracht van elke bouwsteen en die heeft zijn antwoord in zijn eigen sectie.
 const HELE_PAGINA_KOP = /^(De uitdaging|Bouw zelf)$/i;
 
+/** De stappen van een opdracht in twee stappen (schrijfgids §2). */
+const STAP_KOP = /^(De opdracht|Aan de slag)$/i;
+
 /**
  * De koppen die een opdracht aankondigen en geen antwoord hebben. Een
  * genummerde opdracht heeft het antwoord in zijn eigen sectie; alleen een
@@ -93,8 +96,10 @@ function zonderAntwoord(tekst: string): string[] {
   alle.forEach((s, i) => {
     if (!OPDRACHT_KOP.test(s.kop)) return;
     // Een stap van een opdracht (`### De opdracht` onder `## Opdracht 2`):
-    // de H2 eromheen heeft het antwoord al nodig, en omvat de stap.
-    if (s.ouder && OPDRACHT_KOP.test(s.ouder)) return;
+    // de H2 eromheen heeft het antwoord al nodig, en omvat de stap. Alleen
+    // die stappen: een `### Extra uitdaging` onder een opdracht met antwoord
+    // heeft er zelf een nodig (zie de kop van dit bestand).
+    if (s.ouder && OPDRACHT_KOP.test(s.ouder) && STAP_KOP.test(s.kop)) return;
     let einde = i + 1;
     if (HELE_PAGINA_KOP.test(s.kop)) {
       while (einde < alle.length && !OPDRACHT_KOP.test(alle[einde].kop)) einde += 1;
@@ -109,6 +114,23 @@ function zonderAntwoord(tekst: string): string[] {
 }
 
 describe('zonderAntwoord', () => {
+  it('een extra uitdaging onder een opdracht met antwoord heeft er zelf een nodig', () => {
+    // Bij Torens van Hanoi stond een "### Extra uitdaging" zonder antwoord
+    // onder de opdracht. Toen een H2 zijn stappen ging omvatten, ontsnapte
+    // hij weer: elke opdracht-kop onder een opdracht werd overgeslagen.
+    const pagina = `## Opdracht 1
+
+### Aan de slag
+<details>
+<summary>Antwoord</summary>
+</details>
+
+### Extra uitdaging
+Doe het ook zonder recursie.
+`;
+    expect(zonderAntwoord(pagina)).toEqual(['Extra uitdaging']);
+  });
+
   it('een opdracht in twee stappen heeft het antwoord in de tweede stap', () => {
     // Met les-tabbladen krijgt een lange opdracht de stappen De opdracht en
     // Aan de slag (schrijfgids §2); eerst telde elke ### als een eigen sectie.
