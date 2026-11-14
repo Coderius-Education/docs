@@ -50,6 +50,8 @@ Samen tellen die getallen op tot 1.
 
 ## Bouw zelf: twee wegen, één antwoord
 
+### De opdracht
+
 Schrijf een functie `steekproef(n)` die `n` dagen weer kiest met
 `kansen_morgen`, en per weer het deel van de dagen teruggeeft. Print hem naast
 de uitgerekende verdeling, bijvoorbeeld:
@@ -60,17 +62,19 @@ wolken 0.3768 0.378
 regen 0.3441 0.345
 ```
 
-De verborgen code onder de editor zet het model, het seizoen,
-`kansen_morgen(vandaag)` uit [kansen mengen](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/04-kansen-mengen)
-en `berekend()` klaar. `berekend()` rekent door tot het stilstaat, zoals in de
-vorige stappen, met `kansen_morgen(vandaag)` in plaats van `model[vandaag]`.
-
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: achter elk weer staat 0, want de steekproef telt nog niets, en daarachter de uitgerekende kans.
 2. Laat `steekproef` vóór de `return` kiezen: begin met `weer = "zon"`, kies `n` keer het weer van morgen met `kansen = kansen_morgen(weer)` en `random.choices`, en tel het gekozen weer in `telling`. Je ziet nu tellingen rond de 2770.
 3. Geef het deel van de dagen terug in plaats van de tellingen: maak een dictionary `deel`, vul hem met `for w in telling:` met `telling[w] / n`, en geef `deel` terug.
 4. Draai een paar keer. Hoe ver liggen de twee kolommen uit elkaar?
+
+### Aan de slag
+
+De verborgen code onder de editor zet het model, het seizoen,
+`kansen_morgen(vandaag)` uit [kansen mengen](site:algorithms/docs/ml-kans/03-op-weg-naar-pagerank/04-kansen-mengen)
+en `berekend()` klaar. `berekend()` rekent door tot het stilstaat, zoals in de
+vorige stappen, met `kansen_morgen(vandaag)` in plaats van `model[vandaag]`.
 
 <PyRunner verborgen="weer-herfst" initialCode={`import random
 

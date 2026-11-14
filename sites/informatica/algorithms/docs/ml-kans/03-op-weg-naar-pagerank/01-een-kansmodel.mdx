@@ -5,12 +5,11 @@ sidebar_label: "1. Een kansmodel"
 
 # Een kansmodel
 
-Na de surfer en het hoofdstuk
-[PageRank](site:algorithms/docs/pagerank/01-concept) bouw je bij PageRank van
-CS50 AI allebei, de surfer en het rekenen in rondes, op je eigen computer. Wat je daarvoor
-nodig hebt, oefen je hier eerst op een ander probleem: het weer van morgen.
-Morgen hangt af van vandaag, zoals de volgende pagina van de surfer afhangt van
-de pagina waar hij is. Je begint met de kansen.
+Bij PageRank van CS50 AI bouw je de surfer en het rekenen in rondes uit het
+hoofdstuk [PageRank](site:algorithms/docs/pagerank/01-concept) op je eigen
+computer. Dat oefen je hier eerst op het weer van morgen, dat van
+vandaag afhangt zoals de volgende pagina van de surfer van de pagina waar hij
+is.
 
 :::info
 Je gebruikt in dit project een dictionary in een dictionary uit
@@ -20,7 +19,7 @@ Je gebruikt in dit project een dictionary in een dictionary uit
 `abs` en `max` uit
 [itereren tot het stabiel is](site:algorithms/docs/pagerank/bouwen/06-itereren),
 en een set uit [Sets](site:python/docs/data/sets). Kiezen met kansen en
-afronden zijn nieuw: die leer je onderweg.
+afronden zijn nieuw.
 :::
 
 ## Voorspel
@@ -89,6 +88,8 @@ for vandaag in model:
 
 ## Opdracht: klopt het model?
 
+### De opdracht
+
 In het model in de editor zit een fout. Print per weer de som van zijn rij, en
 verbeter het model tot je dit ziet:
 
@@ -103,6 +104,8 @@ Begin klein, en breid de code stap voor stap uit:
 1. Draai de code: hij print elke rij van het model.
 2. Tel de kansen van een rij op: zet in de loop `som = 0`, loop met `for morgen in model[vandaag]:` langs het weer van morgen, tel `model[vandaag][morgen]` bij `som` op, en print `vandaag` en `som`. Eén rij komt op 1.1 uit.
 3. Verbeter die rij, zodat elke rij op 1.0 uitkomt.
+
+### Aan de slag
 
 <PyRunner initialCode={`model = {
     "zon": {"zon": 0.5, "wolken": 0.3, "regen": 0.2},
