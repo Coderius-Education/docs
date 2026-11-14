@@ -43,7 +43,7 @@ In een reeks dagen kies je elke dag met de kansen van het weer van gisteren:
 ```python
 kansen = model[weer]
 weer = random.choices(list(kansen),
-                      weights=list(kansen.values()))[0]
+                        weights=list(kansen.values()))[0]
 ```
 
 Het gekozen weer wordt de volgende dag het weer van gisteren. Dat deed de
@@ -70,7 +70,7 @@ weer = "zon"
 for dag in range(10):
     kansen = model[weer]
     weer = random.choices(list(kansen),
-                          weights=list(kansen.values()))[0]
+                            weights=list(kansen.values()))[0]
     print("dag", dag + 1, weer)`} />
 
 <details>
@@ -118,7 +118,7 @@ telling = {"zon": 0, "wolken": 0, "regen": 0}
 weer = "zon"
 kansen = model[weer]
 weer = random.choices(list(kansen),
-                      weights=list(kansen.values()))[0]
+                        weights=list(kansen.values()))[0]
 print(weer)`} />
 
 <details>
@@ -140,7 +140,7 @@ weer = "zon"
 for dag in range(1000):
     kansen = model[weer]
     weer = random.choices(list(kansen),
-                          weights=list(kansen.values()))[0]
+                            weights=list(kansen.values()))[0]
     telling[weer] = telling[weer] + 1
 
 for w in telling:

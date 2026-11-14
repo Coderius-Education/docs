@@ -9,7 +9,7 @@ def buren(vakje):
     rij, kolom = vakje
     resultaat = []
     for r, k in [(rij - 1, kolom), (rij + 1, kolom),
-                 (rij, kolom - 1), (rij, kolom + 1)]:
+                    (rij, kolom - 1), (rij, kolom + 1)]:
         if r >= 0 and r < len(doolhof) and k >= 0 and k < len(doolhof[0]):
             if doolhof[r][k] != "#":
                 resultaat.append((r, k))

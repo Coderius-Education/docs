@@ -114,7 +114,7 @@ def steekproef(n):
     for dag in range(n):
         kansen = kansen_morgen(weer)
         weer = random.choices(list(kansen),
-                              weights=list(kansen.values()))[0]
+                                weights=list(kansen.values()))[0]
         telling[weer] = telling[weer] + 1
     deel = {}
     for w in telling:
