@@ -89,26 +89,8 @@ describe('een while die de leerling schrijft, heeft de waarschuwing bij de edito
   }
 });
 
-// Een regel van de startcode van meer dan 66 tekens zet de uitvoer onder de
-// code, en dan zie je maar een paar regels. In het onderzoek van Gewichten
-// viel zo de derde regel uitvoer weg, terwijl de eerste vraag hem nodig had.
-// `buren` in het onderzoek van Muren is letterlijk de verborgen code
-// doolhof-buren (ml-verborgen.test.ts). Zijn `for` staat over twee regels;
-// de `if` met vier voorwaarden (74 tekens) is wat de les uitlegt, en past met
-// letters op 80 procent naast de uitvoer (PyRunner/opmaak.ts).
-const LANGE_REGEL_MAG = new Map([['ml-zoeken/01-buren/03-muren', 1]]);
-
-describe('de startcode heeft regels van hooguit 66 tekens', () => {
-  for (const id of paginas) {
-    it(id, () => {
-      const tekst = readFileSync(routeBestand(id), 'utf8');
-      const lang = [...tekst.matchAll(/initialCode=\{`([\s\S]*?)`\}/g)]
-        .flatMap((m) => m[1].split('\n'))
-        .filter((r) => r.length > 66);
-      expect(lang.length, lang.join('\n')).toBeLessThanOrEqual(LANGE_REGEL_MAG.get(id) ?? 0);
-    });
-  }
-});
+// De regels van hooguit 66 tekens bewaakt ml-editors.test.ts voor de hele
+// route.
 
 describe('inhoudelijke fouten uit de review', () => {
   const les = (id: string) => readFileSync(routeBestand(id), 'utf8');

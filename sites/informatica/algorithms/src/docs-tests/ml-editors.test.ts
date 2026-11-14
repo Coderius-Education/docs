@@ -311,32 +311,20 @@ describe('de waarschuwing voor een while staat bij de editor', () => {
 
 const MAX_REGEL = 66;
 
-/**
- * Pagina's van fase D tot en met F die in dezelfde ronde worden ingekort.
- * Haal een pagina weg zodra zijn startcode past.
- */
-const NOG_TE_LANG = new Set([
-  'ml-neuronen/01-neuron/01-gewichten.mdx',
-  'ml-neuronen/01-neuron/02-een-bias.mdx',
-  'ml-neuronen/01-neuron/03-ja-of-nee.mdx',
-  'ml-neuronen/03-op-weg-naar-traffic/07-aan-de-slag-met-traffic.mdx',
-  'ml-spellen/01-nim-strategie/03-de-truc.mdx',
-  'ml-spellen/03-op-weg-naar-nim/05-de-beste-toekomst.mdx',
-  'ml-spellen/03-op-weg-naar-nim/06-ontdekken.mdx',
-  'ml-zoeken/01-buren/02-de-buren.mdx',
-  'ml-zoeken/01-buren/03-muren.mdx',
-  'ml-zoeken/01-buren/05-je-eigen-doolhof.mdx',
-  'ml-zoeken/02-kortste-weg/04-de-weg-tekenen.mdx',
-]);
+// `buren` in het onderzoek van Muren is letterlijk de verborgen code
+// doolhof-buren (ml-verborgen.test.ts). Zijn `for` staat over twee regels;
+// de `if` met vier voorwaarden (74 tekens) is wat de les uitlegt, en past met
+// letters op 80 procent naast de uitvoer (PyRunner/opmaak.ts).
+const LANGE_REGEL_MAG = new Map([['ml-zoeken/01-buren/03-muren.mdx', 1]]);
 
 describe('een regel van de startcode is hooguit 66 tekens', () => {
   for (const pad of projecten) {
-    it.skipIf(NOG_TE_LANG.has(pad))(pad, () => {
+    it(pad, () => {
       const tekst = readFileSync(join(DOCS, pad), 'utf8');
       const lang = [...tekst.matchAll(/<PyRunner\b[^>]*?initialCode=\{`([\s\S]*?)`\}/g)]
         .flatMap((m) => m[1].split('\n'))
         .filter((r) => r.length > MAX_REGEL);
-      expect(lang).toEqual([]);
+      expect(lang.length, lang.join('\n')).toBeLessThanOrEqual(LANGE_REGEL_MAG.get(pad) ?? 0);
     });
   }
 });
