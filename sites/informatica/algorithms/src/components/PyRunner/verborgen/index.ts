@@ -12,6 +12,7 @@ import muisLeert from './muis-leert';
 import neuron from './neuron';
 import neuronLaag from './neuron-laag';
 import nimLeren from './nim-leren';
+import spamTellingen from './spam-tellingen';
 import tekensLeren from './tekens-leren';
 import tekensToetsen from './tekens-toetsen';
 import weerHerfst from './weer-herfst';
@@ -41,6 +42,7 @@ export const VERBORGEN: Record<string, string> = {
   neuron,
   'neuron-laag': neuronLaag,
   'nim-leren': nimLeren,
+  'spam-tellingen': spamTellingen,
   'tekens-leren': tekensLeren,
   'tekens-toetsen': tekensToetsen,
   'weer-herfst': weerHerfst,

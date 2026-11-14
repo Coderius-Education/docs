@@ -54,7 +54,7 @@ dictionary:
 - staat het woord al in `telling`, dan komt er 1 bij;
 - staat het er nog niet in, dan zet je het erin met waarde 1.
 
-Na de loop weet de dictionary hoe vaak elk woord voorkwam. In de runner van
+Na de loop weet de dictionary hoe vaak elk woord voorkwam. In de editor bij
 Onderzoek staat dat patroon voor negen spamwoorden.
 
 ## Onderzoek
@@ -65,7 +65,8 @@ Onderzoek staat dat patroon voor negen spamwoorden.
 3. Haal de `if` en de `else` weg, en laat alleen
    `telling[woord] = telling[woord] + 1` in de loop staan. Wat gebeurt er?
 
-<PyRunner initialCode={`spamwoorden = ["gratis", "geld", "klik", "nu", "gratis", "prijs", "klik", "geld", "gratis"]
+<PyRunner initialCode={`spamwoorden = ["gratis", "geld", "klik", "nu", "gratis",
+               "prijs", "klik", "geld", "gratis"]
 
 telling = {}
 for woord in spamwoorden:
@@ -92,21 +93,20 @@ print(telling)`} />
 
 ## Opdracht: tel de woorden van een zin
 
-### De opdracht
+Tel hoe vaak elk woord in een zin voorkomt.
 
-Tel hoe vaak elk woord in de zin uit de editor voorkomt. De uitvoer wordt:
+In de editor staat de zin, al geknipt in woorden, en een lege `telling`.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet elk woord van de zin onder elkaar, en daarna een lege dictionary `{}`.
+2. Vervang in de loop de `print` door `telling[woord] = 1`. Elk woord staat nu in `telling`, met waarde 1.
+3. Maak er een `if` en een `else` van: staat `woord` al in `telling`, tel er dan 1 bij op, en zet het er anders in met 1. Nu heeft `de` de waarde 4.
+
+Verwachte uitvoer:
 
 ```
 {'de': 4, 'kat': 1, 'zit': 2, 'op': 2, 'mat': 1, 'en': 1, 'hond': 1, 'bank': 1}
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: je ziet elk woord van de zin onder elkaar, en daarna een lege dictionary `{}`.
-2. Vervang in de loop de `print` door `telling[woord] = 1`, en draai. Elk woord staat nu in `telling`, maar allemaal met waarde 1.
-3. Maak er een `if` en een `else` van: staat `woord` al in `telling`, tel er dan 1 bij op, en zet het er anders in met 1. Nu heeft `de` de waarde 4.
-
-### Aan de slag
 
 <PyRunner initialCode={`zin = "de kat zit op de mat en de hond zit op de bank"
 woorden = zin.split()

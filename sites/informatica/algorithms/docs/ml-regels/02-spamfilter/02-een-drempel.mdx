@@ -80,24 +80,23 @@ else:
 
 ## Opdracht: twijfel
 
-### De opdracht
-
 Geef het filter een derde uitkomst. Is de score minstens de drempel, dan is
 het `spam`. Is hij lager maar minstens 1, dan print het `twijfel`. Bij score
-0 is het `geen spam`. Met de score uit de editor wordt de uitvoer:
+0 is het `geen spam`.
+
+In de editor staat alleen de beslissing, met een vaste score.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: bij score 1 zegt het filter `geen spam`.
+2. Zet tussen de `if` en de `else` een `elif score >= 1:` die `twijfel` print.
+3. Verander `score` in 0, en daarna in 3. Elke score geeft nu een ander antwoord.
+4. Zet `drempel` op 3. Nu twijfelt het filter bij score 1 en bij score 2.
+
+Verwachte uitvoer:
 
 ```
 twijfel
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: bij score 1 zegt het filter `geen spam`.
-2. Zet tussen de `if` en de `else` een `elif score >= 1:` die `twijfel` print, en draai opnieuw.
-3. Verander `score` in 0, en daarna in 3. Elke score geeft nu een ander antwoord.
-4. Zet `drempel` op 3. Nu twijfelt het filter bij score 1 en bij score 2.
-
-### Aan de slag
 
 <PyRunner initialCode={`score = 1
 drempel = 2

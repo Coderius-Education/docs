@@ -57,15 +57,19 @@ een paar spamberichten die je zelf kreeg (of verzin ze), en in
 drie nieuwe berichten die het filter nog nooit zag, en kijk of het ze goed
 indeelt.
 
+### Aan de slag
+
+In de editor staat het filter uit de vorige stappen, met maar drie woorden
+spam en drie gewone woorden. Het bericht staat bovenaan.
 Begin klein, en breid de code stap voor stap uit:
 
-1. Draai de code. In de editor staat het filter uit de vorige stappen, met maar drie woorden spam en drie gewone woorden.
+1. Draai de code.
 2. Zet in `spamwoorden` de woorden uit een paar spamberichten, en in `gewone_woorden` die uit gewone berichten.
 3. Bedenk drie nieuwe berichten, en kijk bij elk of het filter het goed indeelt.
 
-### Aan de slag
+<PyRunner initialCode={`bericht = "klik hier voor je prijs"
 
-<PyRunner initialCode={`spamwoorden = "win nu gratis".split()
+spamwoorden = "win nu gratis".split()
 gewone_woorden = "zie je morgen".split()
 
 spam = {}
@@ -81,7 +85,6 @@ for woord in gewone_woorden:
     else:
         gewoon[woord] = 1
 
-bericht = "klik hier voor je prijs"
 score = 0
 for woord in bericht.split():
     if woord in spam:

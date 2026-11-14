@@ -95,10 +95,18 @@ print("score:", score)`} />
 
 ## Opdracht: welke woorden vond het filter?
 
-### De opdracht
-
 Laat het filter printen welke verdachte woorden het vond, en daarna de
-score. Met het bericht uit de editor wordt de uitvoer:
+score.
+
+In de editor loopt het filter alleen nog de lijst `verdacht` langs.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet elk woord uit `verdacht`, ook de woorden die niet in het bericht staan.
+2. Zet een `if` om de `print`, zodat alleen de woorden uit het bericht verschijnen. Zet `"gevonden:"` ervoor.
+3. Zet `score = 0` boven de loop, tel er in de `if` 1 bij op, en print de score na de loop.
+4. Verander het bericht in `"je nieuwe nummer is binnen"`. Nu vindt het filter alleen `nu`, en is de score 1.
+
+Verwachte uitvoer:
 
 ```
 gevonden: gratis
@@ -106,15 +114,6 @@ gevonden: klik
 gevonden: nu
 score: 3
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: je ziet elk woord uit `verdacht`, ook de woorden die niet in het bericht staan.
-2. Zet een `if` om de `print`, zodat alleen de woorden uit het bericht verschijnen. Zet `"gevonden:"` ervoor in de `print`.
-3. Zet `score = 0` boven de loop, tel er in de `if` 1 bij op, en print de score na de loop.
-4. Verander het bericht in `"je nieuwe nummer is binnen"`. Nu vindt het filter alleen `nu`, en is de score 1.
-
-### Aan de slag
 
 <PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
 bericht = "klik nu en win een gratis telefoon"

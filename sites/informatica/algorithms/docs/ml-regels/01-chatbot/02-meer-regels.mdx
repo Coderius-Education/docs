@@ -83,25 +83,23 @@ else:
 
 ## Opdracht: twee regels erbij
 
-### De opdracht
-
 Geef de chatbot een regel voor `"naam"`, die `Ik heet Bot. En jij?`
 antwoordt, en een voor `"doei"`, die `Doei, tot de volgende keer.`
-antwoordt. Alle andere zinnen krijgen `Daar weet ik niets van.` Met de zin
-uit de editor wordt de uitvoer:
+antwoordt. Alle andere zinnen krijgen `Daar weet ik niets van.`
+
+In de editor heeft de chatbot alleen de regel voor `"hoi"`.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code. Bij deze zin zegt de chatbot nog niets.
+2. Zet onder de `if` een `elif` voor `"naam"`, en draai opnieuw.
+3. Voeg een `elif` toe voor `"doei"`, en test hem met `zin = "doei bot"`.
+4. Zet er een `else` onder, en test met een zin zonder trefwoord.
+
+Verwachte uitvoer (bij `"wat is je naam?"`):
 
 ```
 Ik heet Bot. En jij?
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code. Bij deze zin zegt de chatbot nog niets: er is maar één regel.
-2. Zet onder de `if` een `elif` voor `"naam"`, en draai opnieuw.
-3. Voeg een `elif` toe voor `"doei"`. Verander `zin` in `"doei bot"` om hem te testen.
-4. Zet er een `else` onder voor alle andere zinnen, en test met een zin zonder trefwoord.
-
-### Aan de slag
 
 <PyRunner initialCode={`zin = "wat is je naam?"
 

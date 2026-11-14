@@ -83,24 +83,24 @@ print("je" in woorden)`} />
 
 ## Opdracht: hele woorden vergelijken
 
-### De opdracht
-
 Pas het filter aan: loop over de woorden van het bericht, en tel een punt
-voor elk woord dat in de lijst `verdacht` staat. Met
-`"Je nieuwe nummer is binnen"` moet de score 0 worden:
+voor elk woord dat in de lijst `verdacht` staat.
 
-```
-score: 0
-```
-
+In de editor knipt het filter het bericht al in woorden.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: je ziet de lijst woorden van het bericht.
 2. Loop met `for` over die woorden, en print elk woord.
-3. Zet in de loop een `if`: staat het woord in `verdacht`, print het dan. Bij dit bericht print hij niets, want geen woord is verdacht. Probeer daarom ook `"Klik nu voor gratis geld"`.
-4. Tel nu in plaats van te printen: begin boven de loop met `score = 0`, tel er bij elk verdacht woord 1 bij op, en print de score na de loop. Met `"Je nieuwe nummer is binnen"` is hij 0.
+3. Print in de loop alleen een woord dat in `verdacht` staat. Hier is dat geen enkel woord, dus probeer ook `"Klik nu voor gratis geld"`.
+4. Tel de verdachte woorden in `score` in plaats van ze te printen, en print de score na de loop.
 
-### Aan de slag
+Verwachte uitvoer (bij `"Je nieuwe nummer is binnen"`):
+
+Verwachte uitvoer:
+
+```
+score: 0
+```
 
 <PyRunner initialCode={`verdacht = ["gratis", "winnen", "klik", "nu", "geld"]
 

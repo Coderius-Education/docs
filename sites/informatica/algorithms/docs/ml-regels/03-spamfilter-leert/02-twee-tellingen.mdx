@@ -54,7 +54,10 @@ aan elke dictionary apart, met twee losse `if`'s.
 3. Verander de tweede `if` in `elif`, en probeer `"nu"` nog eens. Wat mis je
    nu?
 
-<PyRunner initialCode={`spam = {"win": 1, "nu": 2, "gratis": 2, "geld": 2, "prijs": 1, "klik": 2, "hier": 1, "voor": 1}
+<PyRunner initialCode={`spam = {
+    "win": 1, "nu": 2, "gratis": 2, "geld": 2,
+    "prijs": 1, "klik": 2, "hier": 1, "voor": 1,
+}
 gewoon = {
     "zie": 1, "je": 3, "morgen": 1, "op": 1, "school": 2, "heb": 1,
     "het": 1, "huiswerk": 1, "al": 1, "kom": 1, "nu": 1, "naar": 1,
@@ -81,26 +84,27 @@ if woord in gewoon:
 
 ## Opdracht: tel ook de gewone woorden
 
-### De opdracht
+Tel ook de woorden uit `gewone_woorden`, in een dictionary `gewoon`.
 
-In de editor telt het filter de spamwoorden al. Tel ook de woorden uit
-`gewone_woorden`, in een dictionary `gewoon`. De uitvoer wordt:
+In de editor telt het filter de spamwoorden al.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet de telling van de spamwoorden.
+2. Maak onder de `print` een lege dictionary `gewoon`, en print hem. Je ziet nu ook `{}`.
+3. Zet tussen die twee nieuwe regels een loop die `gewone_woorden` telt in `gewoon`, net als de loop van `spam`.
+
+Verwachte uitvoer:
 
 ```
 {'win': 1, 'nu': 2, 'gratis': 2, 'geld': 2, 'prijs': 1, 'klik': 2, 'hier': 1, 'voor': 1}
 {'zie': 1, 'je': 3, 'morgen': 1, 'op': 1, 'school': 2, 'heb': 1, 'het': 1, 'huiswerk': 1, 'al': 1, 'kom': 1, 'nu': 1, 'naar': 1}
 ```
 
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: je ziet de telling van de spamwoorden.
-2. Maak onder de `print` een lege dictionary `gewoon`, en print hem. Je ziet nu ook `{}`.
-3. Zet tussen die twee nieuwe regels een loop die de woorden uit `gewone_woorden` telt in `gewoon`, net als de loop van `spam`. Nu staat `'je': 3` erin.
-
-### Aan de slag
-
-<PyRunner initialCode={`spamwoorden = "win nu gratis geld gratis prijs klik nu klik hier voor geld".split()
-gewone_woorden = "zie je morgen op school heb je het huiswerk al kom je nu naar school".split()
+<PyRunner initialCode={`spamwoorden = ["win", "nu", "gratis", "geld", "gratis", "prijs",
+               "klik", "nu", "klik", "hier", "voor", "geld"]
+gewone_woorden = ["zie", "je", "morgen", "op", "school", "heb",
+                  "je", "het", "huiswerk", "al", "kom", "je",
+                  "nu", "naar", "school"]
 
 spam = {}
 for woord in spamwoorden:
@@ -122,8 +126,11 @@ Het zijn er vijf: één keer de lijst, en vier keer de dictionary.
 <summary>Antwoord</summary>
 
 ```python
-spamwoorden = "win nu gratis geld gratis prijs klik nu klik hier voor geld".split()
-gewone_woorden = "zie je morgen op school heb je het huiswerk al kom je nu naar school".split()
+spamwoorden = ["win", "nu", "gratis", "geld", "gratis", "prijs",
+               "klik", "nu", "klik", "hier", "voor", "geld"]
+gewone_woorden = ["zie", "je", "morgen", "op", "school", "heb",
+                  "je", "het", "huiswerk", "al", "kom", "je",
+                  "nu", "naar", "school"]
 
 spam = {}
 for woord in spamwoorden:
