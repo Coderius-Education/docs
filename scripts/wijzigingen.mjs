@@ -38,6 +38,7 @@ const {
   cursussenMetTabbladen,
   workspaceAfhankelijkheden,
   schermenMatrix,
+  voorraadSites,
 } = require('../packages/shared/wijzigingen.js');
 const { docsMappen } = require('../packages/shared/meet-selectie.js');
 const { alleSiteMappen } = require('../packages/shared/sites.js');
@@ -228,9 +229,18 @@ function outputs(p) {
     blokken: blokkenNodig(p),
     // Per cursus één of meer delen: { site, deel, delen } (schermenMatrix).
     schermen: JSON.stringify(schermenVan(p)),
+    // Ook de cursussen die `schermen` uit de cache meet (voorraadSites).
+    voorraad: JSON.stringify(voorraadSites(p)),
     meten: p.schermen.sites.length > 0,
   };
   return Object.entries(regels).map(([k, v]) => `${k}=${v}`);
+}
+
+/** Welke cursussen `schermen` meet, en in hoeveel delen. */
+function schermenTekst(p) {
+  const delen = new Map(schermenVan(p).map((r) => [r.site, r.delen]));
+  if (delen.size === 0) return 'niets te meten';
+  return [...delen].map(([site, n]) => (n > 1 ? `${site} in ${n} delen` : site)).join(', ');
 }
 
 function samenvatting(p) {
@@ -254,6 +264,8 @@ function samenvatting(p) {
     `Tests: ${p.vitest.alles ? 'alle' : `${p.vitest.bestanden.length} bestanden (vitest related)`}. Tekst: ${
       p.tekst.alles ? 'alle lespagina’s' : `${p.tekst.bestanden.length} lespagina’s`
     }.`,
+    '',
+    `Schermen: ${schermenTekst(p)}.`,
     '',
     '| Runner | Draait | Wat |',
     '| --- | --- | --- |',

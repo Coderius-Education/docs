@@ -77,14 +77,16 @@
 // meet het alleen de lessen die de wijziging raakt (packages/shared/
 // meet-selectie.js), en met `--streng` stopt het met afsluitcode 1 als een
 // scherm op 1280×720 of 1366×768 niet past, een pagina zijwaarts schuift,
-// de rij tabbladen op twee regels staat, code zijwaarts is afgesneden of een
-// id dubbel is; op een pagina zonder tabbladen ook als een regel code (geen
+// de rij tabbladen op twee regels staat, code zijwaarts is afgesneden, een
+// Python-editor minder dan vijf regels laat zien (een veld dat past maar niet
+// te gebruiken is) of een id dubbel is; op een pagina zonder tabbladen ook
+// als een regel code (geen
 // foutmelding of uitvoer) afbreekt. En als een gewijzigde les in een
 // docs-map geen les in de build heeft, zonder `les_tabs: false`: die zou CI
 // anders stil niet meten. Een les die bewust niet past, staat met een reden in
 // scripts/meet-les-tabs-uitzonderingen.json. Een open uitklapblok en een
-// klik (`--open`, `--klik`) tellen daar niet: een open antwoord mag het
-// scherm langer maken.
+// klik (`--open`, `--klik`) tellen daar niet: een open antwoord schuift in
+// zijn eigen vak als het scherm anders te lang wordt (openBlokInVak).
 
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
@@ -94,6 +96,7 @@ import { chromium } from 'playwright';
 
 const require = createRequire(import.meta.url);
 const { SITES_BY_ID, siteDir } = require('../packages/shared/sites.js');
+const { deelVan, lesVan: lesVanInBuild } = require('../packages/shared/meet-selectie.js');
 
 const argumenten = process.argv.slice(2);
 const SITE = argumenten.find((a) => !a.startsWith('--')) ?? 'web';
@@ -106,11 +109,20 @@ const TEGELIJK = Math.max(1, Number(waarden('tegelijk')[0] ?? 4));
 // tweede. De job `schermen` meet een hele cursus zo op meer runners naast
 // elkaar (schermenMatrix in packages/shared/wijzigingen.js).
 const [DEEL, DELEN] = (waarden('deel')[0] ?? '1/1').split('/').map(Number);
-if (!(DELEN >= 1 && DEEL >= 1 && DEEL <= DELEN)) {
+try {
+  deelVan([], DEEL, DELEN);
+} catch {
   console.error(`--deel=${waarden('deel')[0]}: schrijf --deel=<deel>/<delen>, zoals --deel=2/4`);
   process.exit(2);
 }
 const KLIK = argumenten.includes('--klik');
+/** Zoveel regels laat een editor in een tabblad zien (MIN_REGELS in PyRunner/opmaak.ts). */
+const MIN_EDITOR = 8;
+/**
+ * Minder regels is met --streng een fout: zo laag gaat geen veld (de
+ * CodeExercise van python-runner houdt er vijf over).
+ */
+const KLEINSTE_EDITOR = 5;
 const OPEN = argumenten.includes('--open');
 const VERBORGEN_BALKEN = argumenten.includes('--verborgen-balken');
 const STRENG = argumenten.includes('--streng');
@@ -159,17 +171,8 @@ function serveer() {
   return new Promise((klaar) => server.listen(0, '127.0.0.1', () => klaar(server)));
 }
 
-/**
- * De les van een gebouwd html-bestand, als pad onder de site, of null. Een site
- * met `trailingSlash: false` (algoritmes) bouwt een les als `les.html`, de
- * andere als `les/index.html`; de server hierboven vindt ze allebei.
- */
-function lesVan(map, naam) {
-  if (naam === 'index.html') return relative(BUILD, map);
-  if (naam.endsWith('.html') && naam !== '404.html')
-    return relative(BUILD, join(map, naam.slice(0, -'.html'.length)));
-  return null;
-}
+/** De les van een gebouwd html-bestand, als pad onder de site (meet-selectie.js). */
+const lesVan = (map, naam) => lesVanInBuild(relative(BUILD, map), naam);
 
 /** De gebouwde pagina's met tabbladen, als pad onder de site. */
 /** Mappen in de build waar geen lessen staan, en die groot zijn. */
@@ -195,9 +198,7 @@ function lessen(merk = 'data-les-tabs') {
   const gefilterd = ALLEEN.length
     ? gekozen.filter((les) => ALLEEN.some((stuk) => les.includes(stuk)))
     : gekozen;
-  // Om en om over de delen: de lessen van een hoofdstuk lijken op elkaar, en
-  // zo krijgt elk deel er evenveel van.
-  return gefilterd.filter((_, i) => i % DELEN === DEEL - 1);
+  return deelVan(gefilterd, DEEL, DELEN);
 }
 
 /** Alle lessen in de build die gemeten worden: met tabbladen, of als één scherm. */
@@ -351,7 +352,18 @@ function binnenHetScherm(wortel) {
       groter: img.hasAttribute('data-vergroot'),
     }))
     .filter((p) => p.schaal < 1 / 3);
+  // Hoeveel regels een Python-editor laat zien (HighlightedEditor van
+  // python-runner, ook de PyRunner van algoritmes): een veld dat past maar
+  // twee regels toont, is niet te gebruiken. In algoritmes waren dat er 18.
+  const editors = [...wortel.querySelectorAll('textarea[placeholder^="Schrijf hier je Python"]')]
+    .filter((t) => teZien(t) && !t.readOnly)
+    .map((t) => {
+      const regel = Number.parseFloat(getComputedStyle(t).lineHeight) || 21.6;
+      const regels = t.value.split('\n').length;
+      return { regels, zichtbaar: Math.min(regels, Math.floor((t.clientHeight - 28) / regel)) };
+    });
   return {
+    editors,
     afgesneden: afgesneden > 6 ? afgesneden : 0,
     afgebroken: breekt.length,
     afgebrokenCode,
@@ -398,7 +410,8 @@ const binnen = (belofte, ms) =>
  * antwoord zou wachten.
  */
 async function meetNaKlik(pagina, paneel, id) {
-  const uitvoeren = paneel.locator(KNOP, { hasText: /Uitvoeren|Laden/ }).first();
+  // "Uitvoeren" bij de CodeExercise, "Voer uit" bij de PyRunner van algoritmes.
+  const uitvoeren = paneel.locator(KNOP, { hasText: /Uitvoeren|Voer uit|Laden/ }).first();
   if ((await uitvoeren.count()) === 0) return {};
   const code = await paneel.locator('textarea:visible').first().inputValue();
   if (/\binput\s*\(/.test(code)) return {};
@@ -407,7 +420,7 @@ async function meetNaKlik(pagina, paneel, id) {
       (id) => {
         const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
         const knop = [...paneel.querySelectorAll('button')].find(
-          (k) => k.offsetParent && /Uitvoeren/.test(k.textContent),
+          (k) => k.offsetParent && /Uitvoeren|Voer uit/.test(k.textContent),
         );
         return knop && !knop.disabled;
       },
@@ -783,6 +796,12 @@ async function meetZonderTabs(les) {
 // daarna weer in de volgorde van de lessen.
 const los = lessen('data-les-zonder-tabs');
 const wachtrij = lessen();
+if (DELEN > 1 && los.length + wachtrij.length === 0) {
+  // Minder lessen dan delen: dit deel heeft er geen. Meld het, zodat een
+  // leeg deel niet stil "Elk gemeten scherm past" zegt.
+  console.error(`Deel ${DEEL} van ${DELEN}: geen lessen.`);
+  process.exit(0);
+}
 const volgorde = new Map(wachtrij.map((les, i) => [les, i]));
 await Promise.all(
   Array.from({ length: TEGELIJK }, async () => {
@@ -893,6 +912,15 @@ if (ALS_JSON) {
   for (const r of vak)
     for (const v of r.schuift)
       console.log(`- ${naam(r.les)} | ${r.tab}: ${v.zichtbaar} van de ${v.regels} regels te zien`);
+  const weinig = klein.filter((r) =>
+    (r.editors ?? []).some((e) => e.zichtbaar < Math.min(MIN_EDITOR, e.regels)),
+  );
+  console.log(
+    `\n## Een editor met minder dan ${MIN_EDITOR} regels in beeld: ${weinig.length} schermen\n`,
+  );
+  for (const r of weinig)
+    for (const e of r.editors)
+      console.log(`- ${naam(r.les)} | ${r.tab}: ${e.zichtbaar} van de ${e.regels} regels te zien`);
   const zonder = klein.filter((r) => r.kleinZonderVergroting > 0);
   console.log(
     `\n## Plaatjes onder een derde van hun grootte: ${klein.filter((r) => r.klein > 0).length} schermen, waarvan ${zonder.length} zonder vergroting\n`,
@@ -940,6 +968,11 @@ if (STRENG) {
       fouten.push(`${r.les} | ${r.tab} | ${r.scherm}: ${r.zijwaarts} px te breed`);
     if (!r.telefoon && r.afgesneden > 0)
       fouten.push(`${r.les} | ${r.tab} | ${r.scherm}: code ${r.afgesneden} px afgesneden`);
+    for (const e of r.telefoon ? [] : (r.editors ?? []))
+      if (e.zichtbaar < Math.min(KLEINSTE_EDITOR, e.regels))
+        fouten.push(
+          `${r.les} | ${r.tab} | ${r.scherm}: de editor laat ${e.zichtbaar} van de ${e.regels} regels zien`,
+        );
   }
   for (const t of tabrijen)
     if (t.regels > 1 && !bewust(t.les))

@@ -127,6 +127,23 @@ function adresVanBron(rel, bron, { nummers = false } = {}) {
  *   niet mee
  * @returns {string | null}
  */
+/**
+ * Bestanden van een site die geen scherm raken: een test, de tests van de
+ * lessen, de notities van de cursus en de labels van de lessenlijst. Eerst
+ * liet zo'n wijziging de hele cursus meten, en met de meting in delen kostte
+ * dat zes runners voor algoritmes.
+ *
+ * @param {string} rel het pad binnen de site
+ */
+function raaktGeenScherm(rel) {
+  return (
+    /\.test\.[cm]?[jt]sx?$/.test(rel) ||
+    /(^|\/)docs-tests\//.test(rel) ||
+    /^[^/]+\.md$/.test(rel) ||
+    /(^|\/)_category_\.json$/.test(rel)
+  );
+}
+
 function heleSite({ plan, site, siteMap, leesBron = () => '' }) {
   if (plan.volledig) return 'volledige run';
   if (plan.schermen?.alles) return 'het meetscript is veranderd';
@@ -136,9 +153,9 @@ function heleSite({ plan, site, siteMap, leesBron = () => '' }) {
   const bestanden = Object.keys(plan.bestanden ?? {}).filter((p) => p.startsWith(prefix));
   if (bestanden.length === 0) return 'een package waar de site van afhangt';
   // Of een bestand een les is, hangt alleen aan zijn pad (adresVanBron).
-  const pad = bestanden.find(
-    (p) => leesBron(p) !== null && adresVanBron(p.slice(prefix.length), '') === null,
-  );
+  const pad = bestanden
+    .filter((p) => !raaktGeenScherm(p.slice(prefix.length)))
+    .find((p) => leesBron(p) !== null && adresVanBron(p.slice(prefix.length), '') === null);
   return pad ? `${pad} kan elke les raken` : null;
 }
 
@@ -178,6 +195,7 @@ function lessenVoorMeting({
   const nietGevonden = [];
   const ontbreekt = [];
   for (const pad of bestanden) {
+    if (raaktGeenScherm(pad.slice(prefix.length))) continue;
     const bron = leesBron(pad);
     // Een weggehaalde les valt weg; niets te meten.
     if (bron === null) continue;
@@ -200,12 +218,50 @@ function lessenVoorMeting({
   };
 }
 
+/**
+ * De les van een gebouwd html-bestand in map `map` (relatief aan de build), of
+ * null. Een site met `trailingSlash: false` (algoritmes) bouwt een les als
+ * `les.html`, de andere als `les/index.html`.
+ *
+ * @param {string} map de map van het bestand, relatief aan de build ('' is de build)
+ * @param {string} naam de naam van het bestand
+ * @returns {string | null}
+ */
+function lesVan(map, naam) {
+  const pad = (...delen) => delen.filter(Boolean).join('/');
+  if (naam === 'index.html') return map;
+  if (naam.endsWith('.html') && naam !== '404.html') return pad(map, naam.slice(0, -5));
+  return null;
+}
+
+/**
+ * Deel `deel` van `delen` (1-gebaseerd) van een lijst lessen: om en om, want
+ * de lessen van een hoofdstuk lijken op elkaar, en zo krijgt elk deel er
+ * evenveel van. Samen bevatten de delen elke les precies één keer
+ * (meet-selectie.test.ts). De job `schermen` meet een hele cursus zo op meer
+ * runners naast elkaar (`--deel=2/6`, schermenMatrix in wijzigingen.js).
+ *
+ * @template T
+ * @param {T[]} lessen
+ * @param {number} deel
+ * @param {number} delen
+ * @returns {T[]}
+ */
+function deelVan(lessen, deel, delen) {
+  if (!Number.isInteger(deel) || !Number.isInteger(delen) || deel < 1 || deel > delen)
+    throw new Error(`geen geldig deel: ${deel}/${delen}`);
+  return lessen.filter((_, i) => i % delen === deel - 1);
+}
+
 module.exports = {
   adresVanBron,
+  deelVan,
   docsMappen,
   heleSite,
   houdtNummers,
+  lesVan,
   lessenVoorMeting,
+  raaktGeenScherm,
   moetGemetenWorden,
   zonderNummer,
 };

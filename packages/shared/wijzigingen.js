@@ -645,15 +645,24 @@ function plan({
  * (algoritmes, 284 pagina's), en de rest van CI was na drie minuten klaar.
  */
 const LESSEN_PER_DEEL = 40;
-/** Meer runners voor één cursus niet: GitHub geeft er twintig tegelijk. */
+/** Meer runners voor één cursus niet. */
 const MAX_DELEN = 6;
+/**
+ * Meer delen samen niet: GitHub geeft twintig runners tegelijk, en naast de
+ * delen draaien dan nog cross-links, browser, terminal en de staart van test.
+ * Met 23 delen wachtte een deel van algoritmes anderhalve minuut op een
+ * runner, en werd het het langste pad van de run.
+ */
+const MAX_SCHERMEN = 18;
 
 /**
  * De matrix van de job `schermen`: per cursus één of meer delen. Een cursus
  * die helemaal gemeten wordt (heleSite in meet-selectie.js: het meetscript
  * veranderde, een package, een onderdeel, de nachtelijke run), verdeelt zijn
  * lessen over `delen` runners, elk met `--deel=<deel>/<delen>`. Wie alleen
- * een paar lessen veranderde, krijgt één runner.
+ * een paar lessen veranderde, krijgt één runner. Zijn het samen meer dan
+ * MAX_SCHERMEN, dan levert de cursus met de meeste delen er een in; de
+ * grootste cursussen staan vooraan, zodat GitHub die het eerst start.
  *
  * @param {ReturnType<typeof plan>} p
  * @param {object} opties
@@ -664,13 +673,42 @@ const MAX_DELEN = 6;
  * @returns {{ site: string, deel: number, delen: number }[]}
  */
 function schermenMatrix(p, { siteMappen, lesAantallen, leesBron }) {
-  return p.schermen.sites.flatMap((site) => {
+  const per = p.schermen.sites.map((site) => {
     const heel = heleSite({ plan: p, site, siteMap: siteMappen[site], leesBron });
     const delen = heel
       ? Math.min(MAX_DELEN, Math.max(1, Math.ceil((lesAantallen[site] ?? 0) / LESSEN_PER_DEEL)))
       : 1;
-    return Array.from({ length: delen }, (_, i) => ({ site, deel: i + 1, delen }));
+    return { site, delen, lessen: lesAantallen[site] ?? 0 };
   });
+  const totaal = () => per.reduce((som, c) => som + c.delen, 0);
+  while (totaal() > MAX_SCHERMEN) {
+    // De cursus met de meeste lessen per runner na het inleveren blijft het
+    // langst bezig: lever in waar dat het minst kost.
+    const kandidaten = per.filter((c) => c.delen > 1);
+    if (!kandidaten.length) break;
+    const kosten = (c) => c.lessen / (c.delen - 1);
+    kandidaten.sort((a, b) => kosten(a) - kosten(b));
+    kandidaten[0].delen -= 1;
+  }
+  return per
+    .slice()
+    .sort((a, b) => b.lessen / b.delen - a.lessen / a.delen)
+    .flatMap(({ site, delen }) =>
+      Array.from({ length: delen }, (_, i) => ({ site, deel: i + 1, delen })),
+    );
+}
+
+/**
+ * De sites waarvan de job `voorraad` de build in de cache zet: voor
+ * cross-links elke ongewijzigde site, en voor `schermen` elke cursus die hij
+ * meet maar die deze run niet bouwt. Zonder dat bouwde bij een cache-misser
+ * elk deel van `schermen` de cursus zelf: zes keer algoritmes.
+ *
+ * @param {ReturnType<typeof plan>} p
+ * @returns {string[]}
+ */
+function voorraadSites(p) {
+  return p.ongewijzigd.filter((id) => p.jobs.crosslinks || p.schermen.sites.includes(id));
 }
 
 module.exports = {
@@ -694,5 +732,7 @@ module.exports = {
   plan,
   LESSEN_PER_DEEL,
   MAX_DELEN,
+  MAX_SCHERMEN,
   schermenMatrix,
+  voorraadSites,
 };

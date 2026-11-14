@@ -63,6 +63,7 @@ jobs:
       blokken: ${{ steps.plan.outputs.blokken }}
       schermen: ${{ steps.plan.outputs.schermen }}
       meten: ${{ steps.plan.outputs.meten }}
+      voorraad: ${{ steps.plan.outputs.voorraad }}
     steps:
       # De hele geschiedenis, maar zonder blobs: git merge-base en pnpm's
       # `[<base>]`-filter hebben alleen commits en trees nodig, en git diff
@@ -735,14 +736,17 @@ jobs:
   # een eerdere build (main vult hem bij elke push en elke nacht), en bij een
   # misser alsnog gebouwd. Bewust als `<site>-voorraad` en kort bewaard: de
   # hostingbackend pakt alleen `<site>-static` op, en deze sites staan al live.
+  # Ook voor `schermen`: een cursus die die job meet maar die deze run niet
+  # bouwt, komt zo één keer in de cache. Eerst bouwde bij een misser elk deel
+  # van `schermen` hem zelf (voorraadSites in wijzigingen.js).
   voorraad:
     needs: plan
-    if: needs.plan.outputs.crosslinks == 'true' && needs.plan.outputs.ongewijzigd != '[]'
+    if: needs.plan.outputs.voorraad != '[]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        site: ${{ fromJSON(needs.plan.outputs.ongewijzigd) }}
+        site: ${{ fromJSON(needs.plan.outputs.voorraad) }}
     steps:
       - uses: actions/checkout@v5
 
@@ -990,7 +994,7 @@ jobs:
   # hier gebouwd, net als in `terminal`. Eerst viel de job dan weg.
   schermen:
     name: schermen (${{ matrix.site }} ${{ matrix.deel }}/${{ matrix.delen }})
-    needs: [plan, build]
+    needs: [plan, build, voorraad]
     if: >-
       !cancelled() && needs.plan.outputs.meten == 'true'
     # Vast op 24.04, zoals `browser`: Playwright 1.56.1 installeert op 26.04
