@@ -13,7 +13,7 @@ import type React from 'react';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import ParseTree from '../ParseTree';
 import { type Getiteld, leesBomen } from '../ParseTree/boom';
-import { TEKEN_PX, codeBreedte, codeSchaal, meetTeken } from './breedte';
+import { codeBreedte, codeSchaal } from './breedte';
 import { draaiInVerseMain } from './draai';
 import { heeftMatplotlibNodig } from './matplotlib';
 import styles from './styles.module.css';
@@ -166,7 +166,6 @@ export default function PyRunnerImpl({
   const codeVakRef = useRef<HTMLDivElement>(null);
   const [veldHoogte, setVeldHoogte] = useState<number | null>(null);
   const [veldBreedte, setVeldBreedte] = useState<number | null>(null);
-  const [teken, setTeken] = useState(TEKEN_PX);
   const stapt = opname !== null;
   useLayoutEffect(() => {
     const veld = veldRef.current;
@@ -183,16 +182,18 @@ export default function PyRunnerImpl({
       // Een veld in een dicht tabblad heeft geen maten.
       if (veld.clientWidth === 0) return;
       setVeldBreedte(veld.clientWidth);
-      setTeken(meetTeken(veld.querySelector('textarea')));
       if (stapt) return;
       const ruimte = meetRuimte(veld, paneel, Number.POSITIVE_INFINITY);
       if (ruimte) setVeldHoogte(pasHoogte(ruimte, MIN_VELD));
     };
     meet();
-    // De breedte van een teken klopt pas als het lettertype van de code er is.
-    document.fonts?.ready.then(meet);
     const kijker = new ResizeObserver(meet);
     kijker.observe(paneel);
+    // Ook het veld zelf: zijn breedte kan veranderen zonder dat het paneel
+    // hoger of lager wordt (de schuifbalk van de pagina, de lessenlijst die
+    // laadt). Met een te brede meting bleven de letters gewoon, en brak een
+    // regel van 95 tekens af. Kleinere letters veranderen de breedte niet.
+    kijker.observe(veld);
     window.addEventListener('resize', meet);
     breed.addEventListener('change', meet);
     return () => {
@@ -395,18 +396,22 @@ export default function PyRunnerImpl({
   };
   // Naast elkaar alleen als de langste regel van de code (ook wat de leerling
   // typt) in de codekolom past; anders de uitvoer eronder.
-  const naast = veldBreedte === null ? null : codeBreedte(code, veldBreedte, teken);
+  const naast = veldBreedte === null ? null : codeBreedte(code, veldBreedte);
   const onder = inTab && veldBreedte !== null && naast === null;
   // Past de langste regel ook zo niet, dan worden de letters kleiner (tot 80%),
   // zoals bij een codeblok in de les: een regel code breekt niet af.
-  const schaal = veldBreedte === null ? 1 : codeSchaal(code, naast ?? veldBreedte, teken);
+  const schaal = veldBreedte === null ? 1 : codeSchaal(code, naast ?? veldBreedte);
   const editorMax =
     veldHoogte === null
       ? undefined
       : veldHoogte -
         (balkRef.current?.offsetHeight ?? BALK) -
         rondDeEditor() -
-        (onder ? UITVOER_ONDER : 0);
+        // De rand van het veld (boven en onder), en onder de code de lijn
+        // boven de uitvoer: zonder die pixels was cfg 12 › Bouw en test 6
+        // pixels te lang.
+        2 * RAND -
+        (onder ? UITVOER_ONDER + 1 : 0);
   // Stap voor stap neemt in een tabblad de plek van de editor en de uitvoer
   // in, op de hoogte die die samen hadden.
   const stapper =

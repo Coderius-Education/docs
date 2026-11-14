@@ -2,8 +2,11 @@
 // staat (PyRunnerImpl.tsx), los van React zodat het te testen is.
 
 /**
- * Een teken in de editor, als het nog niet gemeten is: 0,9rem in de monospace
- * van de huisstijl (Atkinson Hyperlegible Mono) is 9,1 pixels.
+ * Een teken in de editor: 0,9rem in de monospace van de huisstijl (Atkinson
+ * Hyperlegible Mono) is 9,095 pixels. Een vaste waarde en geen meting: het
+ * lettertype van de code laadt pas als er code in beeld komt, en een meting
+ * daarvoor gaf het smallere reservelettertype (9,006 pixels), waarna een
+ * regel van 95 tekens toch afbrak. Een smaller lettertype past altijd.
  */
 export const TEKEN_PX = 9.1;
 /** Regelnummers en marges van de editor (56 + 16), de rand en een schuifbalk van Windows. */
@@ -25,16 +28,6 @@ export function codeBreedte(code: string, veld: number, teken = TEKEN_PX): numbe
   const nodig = langste * teken + EDITOR_RAND_PX;
   if (nodig > veld * MAX_CODE_DEEL) return null;
   return Math.max(nodig, veld * MIN_CODE_DEEL);
-}
-
-/** De breedte van een teken in het lettertype van een textarea, in pixels. */
-export function meetTeken(textarea: HTMLTextAreaElement | null): number {
-  if (!textarea) return TEKEN_PX;
-  const ctx = document.createElement('canvas').getContext('2d');
-  if (!ctx) return TEKEN_PX;
-  ctx.font = getComputedStyle(textarea).font;
-  const breedte = ctx.measureText('x'.repeat(100)).width / 100;
-  return breedte > 0 ? breedte : TEKEN_PX;
 }
 
 /** Kleiner dan dit worden de letters in de editor niet, net als bij pasCode. */
