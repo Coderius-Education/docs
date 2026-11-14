@@ -78,15 +78,14 @@ print(weg)`} />
 
 ### De opdracht
 
-Breedte-eerst zoeken weet hoe ver de uitgang is, maar nog niet langs welke
-weg. Die vind je terug: je onthoudt bij elk nieuw vakje via welk vakje je er kwam, in een
-dictionary `vorige`. Daarna loop je vanaf E terug naar de start, en print je
+Breedte-eerst zoeken weet hoe ver de uitgang is, maar nog niet langs welke weg.
+Die vind je terug: je onthoudt bij elk nieuw vakje via welk vakje je er kwam, in
+een dictionary `vorige`. Daarna loop je vanaf E terug naar de start, en print je
 de weg van S naar E.
 
 ### Aan de slag
 
-**Pas op:** vergeet je `vakje = vorige[vakje]`, dan stopt je loop nooit en loopt het tabblad van de browser vast. Kopieer je code eerst naar een kladblok.
-Begin klein, en breid de code stap voor stap uit:
+**Pas op:** zonder `vakje = vorige[vakje]` loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
 
 1. Draai de code: het zoeken uit de vorige stap print de afstand van E.
 2. Zet `vorige = {}` boven de loop, en vul hem waar je ook de afstand van een buur invult. Print `vorige`.

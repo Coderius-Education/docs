@@ -80,15 +80,14 @@ while not wachtrij.is_leeg():
 
 ### De opdracht
 
-Je plant een reis: je zet het zoeken en de weg terug samen in één functie `reis(van, naar)`.
-Die geeft de weg als lijst paren `(lijn, station)`: welke lijn je neemt, en
-waar je uitstapt. Is er geen weg, dan geeft hij `None`. Zo'n functie schrijf
-je straks ook voor Degrees.
+Je plant een reis: je zet het zoeken en de weg terug samen in één functie
+`reis(van, naar)`. Die geeft de weg als lijst paren `(lijn, station)`: welke
+lijn je neemt, en waar je uitstapt. Is er geen weg, dan geeft hij `None`. Zo'n
+functie schrijf je straks ook voor Degrees.
 
 ### Aan de slag
 
-**Pas op:** gaat je tweede while-loop nooit naar `knoop.ouder`, dan stopt hij nooit en loopt het tabblad van de browser vast. Kopieer je code eerst naar een kladblok.
-Begin klein, en breid de code stap voor stap uit:
+**Pas op:** zonder `knoop = knoop.ouder` loopt het tabblad van de browser vast. Kopieer je code eerst. Begin klein:
 
 1. Draai de code: `reis` zoekt met knopen, maar geeft nog `"?"`.
 2. Is `knoop.toestand == naar`, loop dan terug langs `knoop.ouder` en zet elk paar vooraan in een lijst `weg`.
