@@ -159,3 +159,30 @@ describe('de regel die aan de beurt is, blijft in beeld', () => {
     expect((screen.getByRole('textbox') as HTMLTextAreaElement).scrollTop).toBe(0);
   });
 });
+
+// In de route machine learning brak een regel van 45 tekens af in de smalle
+// codekolom van de stapper. De nummers in de kantlijn tellen per echte regel,
+// de code per schermregel: bij stap 7 stond 9 naast `}`, en de variabelen
+// hoorden bij een regel buiten beeld. De stapper breekt een regel dus niet af;
+// hij schuift. Of het er goed uitziet, ziet alleen een browser.
+describe('de stapper breekt een regel niet af', () => {
+  const lang = `print("${'x'.repeat(80)}")\nprint(1)`;
+
+  it('de code van de stapper schuift zijwaarts', () => {
+    const { container } = render(
+      <Stapper code={lang} opname={opname(false)} onSluiten={() => {}} hoogte={300} />,
+    );
+    const veld = container.querySelector('textarea') as HTMLTextAreaElement;
+    expect(veld.getAttribute('wrap')).toBe('off');
+    expect(veld.parentElement?.className).toMatch(/nietAfbreken/);
+  });
+
+  it('een gewone editor breekt wel af', () => {
+    const { container } = render(
+      <HighlightedEditor code={lang} onChange={() => {}} disabled={false} />,
+    );
+    const veld = container.querySelector('textarea') as HTMLTextAreaElement;
+    expect(veld.getAttribute('wrap')).toBe('soft');
+    expect(veld.parentElement?.className).not.toMatch(/nietAfbreken/);
+  });
+});

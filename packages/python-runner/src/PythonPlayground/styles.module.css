@@ -138,6 +138,15 @@
   overflow: auto;
 }
 
+/* Zonder afbreken (de stapper): een lange regel schuift zijwaarts, en de
+   gekleurde laag schuift mee (handleScroll zet scrollLeft). */
+.nietAfbreken .highlightPre,
+.nietAfbreken .editorTextarea {
+  white-space: pre;
+  word-wrap: normal;
+  overflow-wrap: normal;
+}
+
 /* Doorzichtig, want de tekst in het veld is dat ook: de gekleurde code ligt
    eronder en zou onder een dekkende selectie verdwijnen. */
 .editorTextarea::selection {
