@@ -260,7 +260,7 @@ De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
 (schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica,
-fullstack, linux, ctf en de editor-cursus zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+fullstack, linux, ctf, de editor-cursus en algoritmes zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
@@ -417,7 +417,7 @@ zelf: `<Werkvormen doet={{ aanpassen: '…' }} />`; de literatuur blijft
 gelijk (linux, editor en ctf, `Werkvorm.test.tsx`).
 
 **De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
-de standaard (schrijfgids §15); web, python, robotica en fullstack hebben hem zo. Hij is een halve pagina: waar de lessen op steunen
+de standaard (schrijfgids §15); elke cursus met tabbladen heeft hem zo. Hij is een halve pagina: waar de lessen op steunen
 (de tabel hierboven, met de literatuur), wat je vooraf wilt weten in drie
 regels, en links naar leerdoelen, eindopdracht en nakijker. Wat een leerling
 of docent nodig heeft om het materiaal te gebruiken, hoort in het materiaal
