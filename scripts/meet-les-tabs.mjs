@@ -1,6 +1,6 @@
 // Meet per les en per tabblad of het op één scherm past.
 //
-//   node scripts/meet-les-tabs.mjs [site-id] [--json] [--les=<stuk van het pad>] [--tegelijk=4] [--klik]
+//   node scripts/meet-les-tabs.mjs [site-id] [--json] [--les=<stuk van het pad>] [--tegelijk=4] [--klik] [--open] [--verborgen-balken] [--bronnen=changed.json] [--streng]
 //
 // De les-tabbladen (packages/shared/plugins/les-tabs.js) halen de lange
 // pagina weg, maar een tabblad met een oefenveld of veel theorie kan nog
@@ -43,8 +43,48 @@
 // (dat wacht op een antwoord), en een veld dat na een kwartminuut nog draait
 // meldt het op stderr. Dit kost per les het laden van Python erbij.
 //
-// Handmatig, niet in CI: het is een meting voor een auteur, geen controle.
+// Met `--open` klapt het in elk scherm elk uitklapblok open dat er te zien
+// is (een tip, een antwoord, de voorkennis), eerst elk los en daarna alle
+// tegelijk, en meet het na elk blok opnieuw (`naOpen` met de summary van het
+// ergste blok in `naOpenBlok`, en `naAllesOpen`). Het klikt op de summary,
+// zoals een leerling: het <details> van Docusaurus klapt met een animatie
+// open, en een blok dat alleen het attribuut `open` krijgt, blijft leeg.
+// In Linux was met het antwoord open 9 van de 10 opdrachten te lang.
+//
+// Schuifbalken. Playwright start Chromium headless met `--hide-scrollbars`:
+// dan heeft geen enkel vak een schuifbalk. Een schoolcomputer met Windows
+// heeft klassieke schuifbalken die ruimte innemen: een rij stappen die
+// zijwaarts schuift (een telefoon, de smalle kolom naast de oefenterminal
+// van Linux) is daar vijftien pixels hoger, en een codevak dat schuift ook.
+// Dit script laat die vlag daarom weg (`ignoreDefaultArgs`). Chromium op
+// Linux tekent dan zijn klassieke schuifbalk van 15 pixels: even dik als die
+// van Chrome en Edge op Windows 11 (de Fluent-schuifbalk, 15 pixels), en
+// twee pixels dunner dan de oude van Windows 10 (17). Een CSS-regel als
+// `::-webkit-scrollbar { height: 15px }` was geen goede vervanging: die
+// verandert ook de dunne schuifbalken die Infima zelf opmaakt
+// (`.thin-scrollbar`, de lessenlijst), en een vak met `scrollbar-width`
+// negeert hem. Op een telefoon (390×800) liggen de schuifbalken over de
+// inhoud heen; daar emuleert het script een telefoon (`isMobile`, `hasTouch`),
+// en dan tekent Chromium ze ook zo. Omdat de schuifbalk van de pagina nu
+// ruimte inneemt, telt het script met de maat van het venster zonder
+// schuifbalken (`documentElement.clientWidth` en `clientHeight`), niet met
+// `innerWidth`. Met `--verborgen-balken` meet het zoals vroeger, zonder
+// schuifbalken: om een meting van voor deze keuze na te spelen.
+//
 // Eerst bouwen: `pnpm --filter ./sites/informatica/web build`.
+//
+// In CI (job `schermen`) is het een controle: met `--bronnen=changed.json`
+// meet het alleen de lessen die de wijziging raakt (packages/shared/
+// meet-selectie.js), en met `--streng` stopt het met afsluitcode 1 als een
+// scherm op 1280×720 of 1366×768 niet past, een pagina zijwaarts schuift,
+// de rij tabbladen op twee regels staat, code zijwaarts is afgesneden of een
+// id dubbel is; op een pagina zonder tabbladen ook als een regel code (geen
+// foutmelding of uitvoer) afbreekt. En als een gewijzigde les in een
+// docs-map geen les in de build heeft, zonder `les_tabs: false`: die zou CI
+// anders stil niet meten. Een les die bewust niet past, staat met een reden in
+// scripts/meet-les-tabs-uitzonderingen.json. Een open uitklapblok en een
+// klik (`--open`, `--klik`) tellen daar niet: een open antwoord mag het
+// scherm langer maken.
 
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
@@ -63,6 +103,10 @@ const waarden = (vlag) =>
 const ALLEEN = waarden('les');
 const TEGELIJK = Math.max(1, Number(waarden('tegelijk')[0] ?? 4));
 const KLIK = argumenten.includes('--klik');
+const OPEN = argumenten.includes('--open');
+const VERBORGEN_BALKEN = argumenten.includes('--verborgen-balken');
+const STRENG = argumenten.includes('--streng');
+const BRONNEN = waarden('bronnen')[0];
 const BUILD = resolve(join(siteDir(SITE), 'build'));
 const BASIS = `/${SITES_BY_ID[SITE].path}/`;
 const SCHERMEN = [
@@ -111,21 +155,45 @@ function serveer() {
 /** Mappen in de build waar geen lessen staan, en die groot zijn. */
 const GEEN_LESSEN = ['assets', 'img', 'pyodide', 'oud'];
 
-function lessen() {
+function lessen(merk = 'data-les-tabs') {
   const uit = [];
   const loop = (map) => {
     for (const naam of readdirSync(map).sort()) {
       const pad = join(map, naam);
       if (statSync(pad).isDirectory()) {
         if (!GEEN_LESSEN.includes(relative(BUILD, pad))) loop(pad);
-      } else if (naam === 'index.html' && readFileSync(pad, 'utf8').includes('data-les-tabs'))
-        uit.push(relative(BUILD, map));
+      } else if (naam === 'index.html') {
+        const html = readFileSync(pad, 'utf8');
+        if (html.includes(merk)) uit.push(relative(BUILD, map));
+      }
     }
   };
   // De hele build, niet alleen docs/: robotica heeft de Lego-auto en de
   // Golfbot in eigen docs-plugins, onder lego_auto/ en golfbot/.
   loop(BUILD);
-  return ALLEEN.length ? uit.filter((les) => ALLEEN.some((stuk) => les.includes(stuk))) : uit;
+  const gekozen = KEUZE ? uit.filter((les) => KEUZE.has(les)) : uit;
+  return ALLEEN.length
+    ? gekozen.filter((les) => ALLEEN.some((stuk) => les.includes(stuk)))
+    : gekozen;
+}
+
+/** Alle lessen in de build die gemeten worden: met tabbladen, of als één scherm. */
+function alleLessen() {
+  const uit = [];
+  const loop = (map) => {
+    for (const naam of readdirSync(map).sort()) {
+      const pad = join(map, naam);
+      if (statSync(pad).isDirectory()) {
+        if (!GEEN_LESSEN.includes(relative(BUILD, pad))) loop(pad);
+      } else if (naam === 'index.html') {
+        const html = readFileSync(pad, 'utf8');
+        if (html.includes('data-les-tabs') || html.includes('data-les-zonder-tabs'))
+          uit.push(relative(BUILD, map));
+      }
+    }
+  };
+  loop(BUILD);
+  return uit;
 }
 
 if (!existsSync(BUILD)) {
@@ -133,23 +201,156 @@ if (!existsSync(BUILD)) {
   process.exit(2);
 }
 
+// Met --bronnen: alleen de lessen die de wijziging raakt.
+let KEUZE = null;
+if (BRONNEN) {
+  const { docsMappen, lessenVoorMeting } = require('../packages/shared/meet-selectie.js');
+  const config = join(siteDir(SITE), 'docusaurus.config.ts');
+  const keuze = lessenVoorMeting({
+    plan: JSON.parse(readFileSync(BRONNEN, 'utf8')),
+    site: SITE,
+    siteMap: siteDir(SITE),
+    lessen: alleLessen(),
+    leesBron: (pad) => (existsSync(pad) ? readFileSync(pad, 'utf8') : null),
+    mappen: existsSync(config) ? docsMappen(readFileSync(config, 'utf8')) : ['docs'],
+  });
+  console.error(
+    keuze.alles
+      ? `Alle ${keuze.lessen.length} lessen: ${keuze.reden}.`
+      : `${keuze.lessen.length} lessen: ${keuze.reden}.`,
+  );
+  for (const pad of keuze.nietGevonden.filter((p) => !keuze.ontbreekt.includes(p)))
+    console.error(`- ${pad}: een pagina zonder tabbladen, niets te meten`);
+  // Een les in een docs-map die de build niet heeft: dan meet CI hem stil
+  // niet. Een fout in meet-selectie.js (het adres klopt niet met dat van
+  // Docusaurus) of een les die de build kwijtraakte.
+  for (const pad of keuze.ontbreekt)
+    console.error(
+      `${STRENG ? '::error::' : '- '}${pad}: geen les met tabbladen of één scherm in de build gevonden; zonder tabbladen hoort er les_tabs: false in de front matter`,
+    );
+  if (STRENG && keuze.ontbreekt.length) process.exit(1);
+  if (keuze.lessen.length === 0) process.exit(0);
+  KEUZE = new Set(keuze.lessen);
+}
+
 const server = await serveer();
 const adres = `http://127.0.0.1:${server.address().port}${BASIS}`;
 // Met CHROMIUM=<pad> een Chromium die al op de computer staat, voor als de
 // browser van deze Playwright-versie niet is geïnstalleerd.
-const browser = await chromium.launch(
-  process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {},
-);
+// Zonder `--hide-scrollbars`: klassieke schuifbalken, zoals op een
+// schoolcomputer met Windows (zie boven).
+// Zonder CHROMIUM de volledige Chromium (`channel: 'chromium'`, de nieuwe
+// headless), niet de headless shell die Playwright anders start: die tekent
+// tekst en schuifbalken net anders. In CI viel daarmee in web script-tag 27
+// px code af die in Chromium zelf paste.
+const browser = await chromium.launch({
+  ...(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : { channel: 'chromium' }),
+  ...(VERBORGEN_BALKEN ? {} : { ignoreDefaultArgs: ['--hide-scrollbars'] }),
+});
+/** Een context op de maat van een scherm. Een telefoon heeft schuifbalken
+ *  die over de inhoud liggen en geen muis. */
+async function nieuweContext(scherm) {
+  const context = await browser.newContext({
+    viewport: { width: scherm.width, height: scherm.height },
+    ...(scherm.telefoon ? { isMobile: true, hasTouch: true } : {}),
+  });
+  // Alleen de eigen server: een aanvraag naar buiten (de statistieken, een
+  // lettertype) bleef op de runner van CI hangen, en dan haalde een pagina
+  // zijn `load` niet binnen dertig seconden. Lokaal weigerde de proxy hem
+  // meteen. Wat de les zelf nodig heeft, staat in de build.
+  await context.route(
+    (url) => url.hostname !== '127.0.0.1',
+    (route) => route.abort(),
+  );
+  return context;
+}
 const rijen = [];
 const tabrijen = [];
 const dubbeleIds = [];
 let kolomBreedte = null;
 
+// De onderkant van een scherm: die van het paneel, of die van het oefenveld
+// dat naast de les staat (<LesNaast>, de oefenterminal van Linux) als dat
+// lager komt. Als tekst, omdat de functie in de pagina draait.
+const ONDERKANT = `(paneel) => {
+  const r = paneel.getBoundingClientRect();
+  const naast = [...paneel.parentElement.children].find((k) => k.hasAttribute('data-les-naast'));
+  const n = naast?.getBoundingClientRect();
+  return n && n.height > 0 && n.left >= r.right - 1 ? Math.max(r.bottom, n.bottom) : r.bottom;
+}`;
+
+// Wat "past" niet ziet: een scherm past ook als de code zijwaarts is
+// afgesneden, als een programma in een vak van twaalf regels schuift, of als
+// een schema op een tiende van zijn grootte staat. Voor een paneel, en voor
+// de tekst van een pagina zonder tabbladen (`.theme-doc-markdown`). Draait
+// in de pagina (als tekst, met `toString`), dus zonder iets van buiten.
+function binnenHetScherm(wortel) {
+  const teZien = (el) =>
+    el.getClientRects().length > 0 && !el.closest('[hidden], details:not([open])');
+  const vakken = [...wortel.querySelectorAll('pre')].filter(teZien);
+  const afgesneden = Math.max(0, ...vakken.map((v) => v.scrollWidth - v.clientWidth));
+  // Een regel die naar een volgende regel afbreekt: hij is hoger dan één
+  // regel van het blok. En hoe klein de letters zijn geworden om de langste
+  // regel te laten passen (pasCode.ts).
+  const breekt = vakken.filter((v) => {
+    const stijl = getComputedStyle(v);
+    const regel = Number.parseFloat(stijl.lineHeight) || Number.parseFloat(stijl.fontSize) * 1.45;
+    return [...v.querySelectorAll('.token-line')].some(
+      (r) => r.getBoundingClientRect().height > regel * 1.5,
+    );
+  });
+  // Alleen een blok zonder taal (een foutmelding, uitvoer van de terminal)
+  // mag afbreken, zoals in een terminal (pasCode.ts); code niet.
+  const afgebrokenCode = breekt.filter((v) => !v.classList.contains('language-text')).length;
+  const letters = Math.min(
+    16,
+    ...vakken.map((v) => Number.parseFloat(getComputedStyle(v).fontSize)),
+  );
+  const schuift = vakken
+    .filter((v) => v.scrollHeight - v.clientHeight > 6)
+    .map((v) => {
+      const regels = v.querySelectorAll('.token-line').length;
+      return { regels, zichtbaar: Math.round((regels * v.clientHeight) / v.scrollHeight) };
+    });
+  // De schaal waarop een plaatje staat; naast zijn tekst staat het passend
+  // in een vak (object-fit: contain).
+  const plaatjes = [...wortel.querySelectorAll('img')]
+    .filter((img) => teZien(img) && img.naturalWidth > 0 && !img.closest('button, a'))
+    .map((img) => ({
+      schaal: Math.min(img.clientWidth / img.naturalWidth, img.clientHeight / img.naturalHeight),
+      groter: img.hasAttribute('data-vergroot'),
+    }))
+    .filter((p) => p.schaal < 1 / 3);
+  return {
+    afgesneden: afgesneden > 6 ? afgesneden : 0,
+    afgebroken: breekt.length,
+    afgebrokenCode,
+    letters: Math.round(letters * 10) / 10,
+    schuift,
+    klein: plaatjes.length,
+    kleinZonderVergroting: plaatjes.filter((p) => !p.groter).length,
+  };
+}
+
+// Een kop is ook een adres: twee keer hetzelfde id geeft twee schermen
+// waarvan een link er maar één opent. Draait in de pagina.
+function dubbeleIdsOpPagina() {
+  const aantal = new Map();
+  for (const el of document.querySelectorAll('.theme-doc-markdown [id]'))
+    aantal.set(el.id, (aantal.get(el.id) ?? 0) + 1);
+  return [...aantal].filter(([, n]) => n > 1).map(([id]) => id);
+}
+
 const over = (pagina, id) =>
-  pagina.evaluate((id) => {
-    const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
-    return Math.round(paneel.getBoundingClientRect().bottom - window.innerHeight);
-  }, id);
+  pagina.evaluate(
+    ([id, onderkant]) => {
+      const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
+      return Math.round(
+        new Function(`return ${onderkant}`)()(paneel) - document.documentElement.clientHeight,
+      );
+    },
+    [id, ONDERKANT],
+  );
 
 // Een knop van het veld, niet de knop van een stap: pixel-art stap 5 heeft
 // een stap die zelf "Stap voor stap" heet.
@@ -223,13 +424,108 @@ async function meetNaAntwoord(pagina, paneel, id) {
   return naAntwoord === null ? {} : { naAntwoord };
 }
 
+/** Wacht tot een uitklapblok (een ElementHandle) helemaal open of dicht is. Het <details> van
+ *  Docusaurus klapt met een animatie: open is het pas als de hoogte van de
+ *  inhoud weer `auto` is, dicht pas als het attribuut `open` weg is. */
+const klaarGeklapt = (blok, open) =>
+  blok
+    .evaluate(
+      (d, open) =>
+        new Promise((klaar) => {
+          const eind = Date.now() + 3000;
+          const kijk = () => {
+            const inhoud = [...d.children].find((k) => k.tagName !== 'SUMMARY');
+            const hoogte = inhoud?.style.height ?? '';
+            const docusaurus = d.hasAttribute('data-collapsed');
+            const af = open
+              ? d.open &&
+                (!docusaurus ||
+                  (d.dataset.collapsed === 'false' && (hoogte === '' || hoogte === 'auto')))
+              : !d.open;
+            if (af || Date.now() > eind) klaar(af);
+            else setTimeout(kijk, 50);
+          };
+          kijk();
+        }),
+      open,
+    )
+    .catch(() => false);
+
+/** Klikt op de summary van een uitklapblok en wacht tot het open of dicht is. */
+async function klap(blok, open) {
+  if ((await blok.evaluate((d) => d.open)) === open) return;
+  const summary = await blok.$(':scope > summary');
+  if (!summary) return;
+  await summary.click();
+  await klaarGeklapt(blok, open);
+}
+
+/**
+ * Klapt in het scherm dat open staat elk uitklapblok open dat er te zien is,
+ * eerst elk los en daarna alle tegelijk (ook de blokken die pas in een open
+ * blok te zien zijn), en meet na elk blok. Een scherm met een tip of een
+ * antwoord past tot je het openklapt; speling.ts maakt daar bewust geen
+ * ruimte meer (de editor kromp anders onder het typen).
+ */
+async function meetNaOpen(pagina, paneel, id) {
+  // Vaste verwijzingen, geen locator met een nummer: een blok dat opengaat,
+  // maakt de blokken erin zichtbaar, en dan schuift de telling.
+  const zichtbaar = async () => {
+    const uit = [];
+    for (const blok of await paneel.locator('details').elementHandles())
+      if (await blok.isVisible()) uit.push(blok);
+    return uit;
+  };
+  const blokken = [];
+  for (const blok of await zichtbaar())
+    if (!(await blok.evaluate((d) => d.open))) blokken.push(blok);
+  if (blokken.length === 0) return {};
+  const meet = async () => {
+    // Na het klappen: pasCode en speling meten opnieuw in een animatieframe.
+    await pagina.waitForTimeout(250);
+    await pagina.evaluate(() => window.scrollTo(0, 0));
+    return over(pagina, id);
+  };
+  const samenvatting = (blok) =>
+    blok.evaluate((d) => (d.querySelector(':scope > summary')?.textContent ?? '').trim());
+  let naOpen = Number.NEGATIVE_INFINITY;
+  let naOpenBlok = '';
+  const open = [];
+  for (const blok of blokken) {
+    await klap(blok, true);
+    const px = await meet();
+    const tekst = await samenvatting(blok);
+    open.push({ blok: tekst, over: px });
+    if (px > naOpen) {
+      naOpen = px;
+      naOpenBlok = tekst;
+    }
+    await klap(blok, false);
+  }
+  // Alle tegelijk, en wat in een open blok weer een blok is ook: tot er
+  // niets meer dicht is (hooguit drie lagen diep).
+  const geopend = [];
+  for (let laag = 0; laag < 3; laag++) {
+    const dicht = [];
+    for (const blok of await zichtbaar())
+      if (!(await blok.evaluate((d) => d.open))) dicht.push(blok);
+    if (dicht.length === 0) break;
+    for (const blok of dicht) {
+      await klap(blok, true);
+      geopend.push(blok);
+    }
+  }
+  const naAllesOpen = await meet();
+  // Weer dicht, binnenste eerst: het volgende scherm begint zoals de leerling het ziet.
+  for (const blok of geopend.reverse()) await klap(blok, false);
+  return { naOpen, naOpenBlok, naAllesOpen, open };
+}
+
 async function meetLes(les) {
   for (const scherm of SCHERMEN) {
     // Een verse context per les: bewaard werk in een oefenveld verandert de
     // hoogte van het veld.
-    const context = await browser.newContext({
-      viewport: { width: scherm.width, height: scherm.height },
-    });
+    const context = await nieuweContext(scherm);
     const pagina = await context.newPage();
     await pagina.goto(`${adres}${les}`);
     await pagina.waitForSelector('[role=tab]');
@@ -253,14 +549,7 @@ async function meetLes(les) {
       tabrijen.push({ les, scherm: `${scherm.width}x${scherm.height}`, regels });
     }
     if (!scherm.telefoon) {
-      // Een kop is ook een adres: twee keer hetzelfde id geeft twee schermen
-      // waarvan een link er maar één opent.
-      const dubbel = await pagina.evaluate(() => {
-        const aantal = new Map();
-        for (const el of document.querySelectorAll('.theme-doc-markdown [id]'))
-          aantal.set(el.id, (aantal.get(el.id) ?? 0) + 1);
-        return [...aantal].filter(([, n]) => n > 1).map(([id]) => id);
-      });
+      const dubbel = await pagina.evaluate(dubbeleIdsOpPagina);
       if (dubbel.length && !dubbeleIds.some((d) => d.les === les)) dubbeleIds.push({ les, dubbel });
     }
     const tabs = await pagina.locator('[data-tab]').all();
@@ -296,96 +585,75 @@ async function meetLes(les) {
           await stap.click();
         }
         await pagina.waitForTimeout(scherm.telefoon ? 50 : 400);
+        // Het lettertype van de code laadt pas als er code in beeld komt, en
+        // pasCode meet opnieuw als het binnen is (loadingdone). Op de runner
+        // van CI was het na 400 ms nog niet binnen: daar viel code van 62
+        // tekens 27 px af die lokaal paste. Dus wachten tot elk lettertype
+        // er is, en pasCode een frame geven.
+        await pagina.evaluate(() => document.fonts.ready);
+        await pagina.waitForTimeout(scherm.telefoon ? 50 : 150);
         await pagina.evaluate(() => window.scrollTo(0, 0));
-        const maat = await pagina.evaluate((id) => {
-          const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
-          const r = paneel.getBoundingClientRect();
-          return {
-            over: Math.round(r.bottom - window.innerHeight),
-            boven: Math.round(r.top),
-            pagina: document.documentElement.scrollHeight - window.innerHeight,
-            zijwaarts: Math.max(0, document.documentElement.scrollWidth - window.innerWidth),
-            velden: paneel.querySelectorAll('[data-zaad]').length,
-            volgendeLes: volgendeLesInBeeld(paneel),
-            // Op hoeveel regels de rij stappen staat: een tweede regel kost
-            // elk scherm van dat tabblad veertig pixels.
-            stapregels: new Set(
-              [...paneel.querySelectorAll('[data-stap]')]
-                .filter((s) => s.getClientRects().length > 0 && !s.closest('details:not([open])'))
-                .map((s) => Math.round(s.getBoundingClientRect().top)),
-            ).size,
-            ...binnenHetScherm(paneel),
-          };
-
-          // De link naar de volgende les terwijl dit scherm zelf een knop
-          // Volgende heeft: die zegt hetzelfde en slaat de rest van de les
-          // over.
-          function volgendeLesInBeeld(paneel) {
-            const knop = [...paneel.querySelectorAll('[data-les-verder] button')].some(
-              (k) => k.getClientRects().length > 0,
+        const maat = await pagina.evaluate(
+          ([id, binnen]) => {
+            const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
+            const r = paneel.getBoundingClientRect();
+            // Een oefenveld naast de les telt mee (zie ONDERKANT).
+            const naast = [...paneel.parentElement.children].find((k) =>
+              k.hasAttribute('data-les-naast'),
             );
-            const link = document.querySelector('.pagination-nav__link--next');
-            if (!knop || !link || link.getClientRects().length === 0) return false;
-            return link.getBoundingClientRect().top < window.innerHeight;
-          }
-
-          // Wat "past" niet ziet: een scherm past ook als de code zijwaarts
-          // is afgesneden, als een programma in een vak van twaalf regels
-          // schuift, of als een schema op een tiende van zijn grootte staat.
-          function binnenHetScherm(paneel) {
-            const teZien = (el) =>
-              el.getClientRects().length > 0 && !el.closest('[hidden], details:not([open])');
-            const vakken = [...paneel.querySelectorAll('pre')].filter(teZien);
-            const afgesneden = Math.max(0, ...vakken.map((v) => v.scrollWidth - v.clientWidth));
-            // Een regel die naar een volgende regel afbreekt: hij is hoger
-            // dan één regel van het blok. En hoe klein de letters zijn
-            // geworden om de langste regel te laten passen (pasCode.ts).
-            const afgebroken = vakken.filter((v) => {
-              const stijl = getComputedStyle(v);
-              const regel =
-                Number.parseFloat(stijl.lineHeight) || Number.parseFloat(stijl.fontSize) * 1.45;
-              return [...v.querySelectorAll('.token-line')].some(
-                (r) => r.getBoundingClientRect().height > regel * 1.5,
-              );
-            }).length;
-            const letters = Math.min(
-              16,
-              ...vakken.map((v) => Number.parseFloat(getComputedStyle(v).fontSize)),
-            );
-            const schuift = vakken
-              .filter((v) => v.scrollHeight - v.clientHeight > 6)
-              .map((v) => {
-                const regels = v.querySelectorAll('.token-line').length;
-                return {
-                  regels,
-                  zichtbaar: Math.round((regels * v.clientHeight) / v.scrollHeight),
-                };
-              });
-            // De schaal waarop een plaatje staat; naast zijn tekst staat het
-            // passend in een vak (object-fit: contain).
-            const plaatjes = [...paneel.querySelectorAll('img')]
-              .filter((img) => teZien(img) && img.naturalWidth > 0 && !img.closest('button, a'))
-              .map((img) => ({
-                schaal: Math.min(
-                  img.clientWidth / img.naturalWidth,
-                  img.clientHeight / img.naturalHeight,
-                ),
-                groter: img.hasAttribute('data-vergroot'),
-              }))
-              .filter((p) => p.schaal < 1 / 3);
+            const n = naast?.getBoundingClientRect();
+            const onder =
+              n && n.height > 0 && n.left >= r.right - 1 ? Math.max(r.bottom, n.bottom) : r.bottom;
             return {
-              afgesneden: afgesneden > 6 ? afgesneden : 0,
-              afgebroken,
-              letters: Math.round(letters * 10) / 10,
-              schuift,
-              klein: plaatjes.length,
-              kleinZonderVergroting: plaatjes.filter((p) => !p.groter).length,
+              over: Math.round(onder - document.documentElement.clientHeight),
+              naast: !!n && n.height > 0,
+              boven: Math.round(r.top),
+              pagina: document.documentElement.scrollHeight - document.documentElement.clientHeight,
+              // Niet innerWidth: daar hoort de schuifbalk van de pagina bij, en
+              // op een telefoon groeit hij mee met een pagina die te breed is.
+              zijwaarts: Math.max(
+                0,
+                document.documentElement.scrollWidth - document.documentElement.clientWidth,
+              ),
+              velden: paneel.querySelectorAll('[data-zaad]').length,
+              volgendeLes: volgendeLesInBeeld(paneel),
+              // Op hoeveel regels de rij stappen staat: een tweede regel kost
+              // elk scherm van dat tabblad veertig pixels.
+              stapregels: new Set(
+                [...paneel.querySelectorAll('[data-stap]')]
+                  .filter((s) => s.getClientRects().length > 0 && !s.closest('details:not([open])'))
+                  .map((s) => Math.round(s.getBoundingClientRect().top)),
+              ).size,
+              ...new Function(`return ${binnen}`)()(paneel),
             };
-          }
-        }, id);
+
+            // De link naar de volgende les terwijl dit scherm zelf een knop
+            // Volgende heeft: die zegt hetzelfde en slaat de rest van de les
+            // over.
+            function volgendeLesInBeeld(paneel) {
+              const knop = [...paneel.querySelectorAll('[data-les-verder] button')].some(
+                (k) => k.getClientRects().length > 0,
+              );
+              const link = document.querySelector('.pagination-nav__link--next');
+              if (!knop || !link || link.getClientRects().length === 0) return false;
+              return link.getBoundingClientRect().top < document.documentElement.clientHeight;
+            }
+          },
+          [id, binnenHetScherm.toString()],
+        );
         const naam = stap
           ? `${label} › ${(await stap.innerText()).replace(/\s+/g, ' ').trim()}`
           : label;
+        let naOpen = {};
+        if (OPEN && !scherm.telefoon) {
+          try {
+            naOpen = await meetNaOpen(pagina, paneel, id);
+          } catch (fout) {
+            console.error(
+              `${les} | ${naam} | ${scherm.width} (--open): ${fout.message.split('\n')[0]}`,
+            );
+          }
+        }
         let naKlik = {};
         if (KLIK && !scherm.telefoon) {
           try {
@@ -406,6 +674,7 @@ async function meetLes(les) {
           scherm: `${scherm.width}x${scherm.height}`,
           telefoon: Boolean(scherm.telefoon),
           ...maat,
+          ...naOpen,
           ...naKlik,
         });
         if (vast) break;
@@ -415,8 +684,54 @@ async function meetLes(les) {
   }
 }
 
+// Een les zonder tabbladen (één sectie, of een korte stap waarvan de
+// afsluiter bij de tekst erboven staat) is één scherm: de tekst van de les
+// hoort dan ook op het scherm te passen. In de editor-cursus is dat de helft
+// van de pagina's, met de git-simulator erop. Ook hier telt wat "past" niet
+// ziet: code die zijwaarts is afgesneden of afbreekt, en een dubbel id.
+// Eerst mat het alleen de hoogte en de breedte, en zag `--streng` de rest
+// op 67 pagina's niet.
+const zonderTabs = [];
+async function meetZonderTabs(les) {
+  for (const scherm of SCHERMEN) {
+    const context = await nieuweContext(scherm);
+    const pagina = await context.newPage();
+    await pagina.goto(`${adres}${les}`);
+    await pagina.waitForSelector('.theme-doc-markdown');
+    await pagina.evaluate(() => document.fonts.ready);
+    await pagina.waitForTimeout(scherm.telefoon ? 100 : 500);
+    // Het lettertype van de code laadt pas als er code in beeld komt, en
+    // pasCode meet opnieuw als het binnen is (zie meetLes).
+    await pagina.evaluate(() => document.fonts.ready);
+    if (!scherm.telefoon) {
+      const dubbel = await pagina.evaluate(dubbeleIdsOpPagina);
+      if (dubbel.length && !dubbeleIds.some((d) => d.les === les)) dubbeleIds.push({ les, dubbel });
+    }
+    zonderTabs.push({
+      les,
+      scherm: `${scherm.width}x${scherm.height}`,
+      telefoon: Boolean(scherm.telefoon),
+      ...(await pagina.evaluate((binnen) => {
+        const tekst = document.querySelector('.theme-doc-markdown');
+        return {
+          over: Math.round(
+            tekst.getBoundingClientRect().bottom - document.documentElement.clientHeight,
+          ),
+          zijwaarts: Math.max(
+            0,
+            document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          ),
+          ...new Function(`return ${binnen}`)()(tekst),
+        };
+      }, binnenHetScherm.toString())),
+    });
+    await context.close();
+  }
+}
+
 // Een paar lessen tegelijk, elk in zijn eigen context. De uitkomst staat
 // daarna weer in de volgorde van de lessen.
+const los = lessen('data-les-zonder-tabs');
 const wachtrij = lessen();
 const volgorde = new Map(wachtrij.map((les, i) => [les, i]));
 await Promise.all(
@@ -428,12 +743,20 @@ const opVolgorde = (a, b) => volgorde.get(a.les) - volgorde.get(b.les);
 rijen.sort(opVolgorde);
 tabrijen.sort(opVolgorde);
 
+const plek = new Map(los.map((les, i) => [les, i]));
+await Promise.all(
+  Array.from({ length: TEGELIJK }, async () => {
+    for (let les = los.shift(); les; les = los.shift()) await meetZonderTabs(les);
+  }),
+);
+zonderTabs.sort((a, b) => plek.get(a.les) - plek.get(b.les));
+
 await browser.close();
 server.close();
 
 const naam = (les) => les.replace(/^docs\//, '');
 if (ALS_JSON) {
-  console.log(JSON.stringify({ kolomBreedte, rijen, tabrijen, dubbeleIds }, null, 2));
+  console.log(JSON.stringify({ kolomBreedte, rijen, tabrijen, dubbeleIds, zonderTabs }, null, 2));
 } else {
   for (const { width, height } of SCHERMEN.filter((s) => !s.telefoon)) {
     const scherm = `${width}x${height}`;
@@ -465,6 +788,25 @@ if (ALS_JSON) {
       for (const r of telang.sort((a, b) => b[veld] - a[veld]))
         console.log(`- ${naam(r.les)} | ${r.tab} | ${r.scherm}: ${r[veld]} px te lang`);
     }
+  }
+  if (OPEN) {
+    const gemeten = rijen.filter((r) => r.naOpen !== undefined);
+    const telang = gemeten.filter((r) => r.over <= 0 && r.naOpen > 0);
+    console.log(
+      `\n## Met een uitklapblok open: ${telang.length} van ${gemeten.length} metingen niet meer passend\n`,
+    );
+    for (const r of telang.sort((a, b) => b.naOpen - a.naOpen))
+      console.log(
+        `- ${naam(r.les)} | ${r.tab} | ${r.scherm}: "${r.naOpenBlok}" ${r.naOpen} px te lang`,
+      );
+    const alles = gemeten.filter((r) => r.over <= 0 && r.naAllesOpen > 0 && r.open.length > 1);
+    console.log(
+      `\n## Met alle uitklapblokken tegelijk open (schermen met meer dan één): ${alles.length} niet meer passend\n`,
+    );
+    for (const r of alles.sort((a, b) => b.naAllesOpen - a.naAllesOpen))
+      console.log(
+        `- ${naam(r.les)} | ${r.tab} | ${r.scherm}: ${r.naAllesOpen} px te lang (${r.open.map((o) => `"${o.blok}"`).join(', ')})`,
+      );
   }
   // Per tabblad één keer, op het kleinste brede scherm.
   const [smal] = SCHERMEN.filter((s) => !s.telefoon);
@@ -506,7 +848,73 @@ if (ALS_JSON) {
     `\n## Plaatjes onder een derde van hun grootte: ${klein.filter((r) => r.klein > 0).length} schermen, waarvan ${zonder.length} zonder vergroting\n`,
   );
   for (const r of zonder) console.log(`- ${naam(r.les)} | ${r.tab}`);
+  for (const { width, height } of SCHERMEN.filter((sch) => !sch.telefoon)) {
+    const scherm = `${width}x${height}`;
+    const deze = zonderTabs.filter((r) => r.scherm === scherm);
+    const telang = deze.filter((r) => r.over > 0).sort((a, b) => b.over - a.over);
+    console.log(
+      `\n## ${scherm}, pagina's zonder tabbladen: ${deze.length - telang.length} van ${deze.length} passen\n`,
+    );
+    for (const r of telang) console.log(`- ${naam(r.les)}: ${r.over} px te lang`);
+  }
+  const zonderKlein = zonderTabs.filter((r) => r.scherm === `${eerste.width}x${eerste.height}`);
+  const zonderAf = zonderKlein.filter((r) => r.afgesneden > 0);
+  console.log(`\n## Pagina's zonder tabbladen, code zijwaarts afgesneden: ${zonderAf.length}\n`);
+  for (const r of zonderAf.sort((a, b) => b.afgesneden - a.afgesneden))
+    console.log(`- ${naam(r.les)}: ${r.afgesneden} px verborgen`);
+  const zonderGebroken = zonderKlein.filter((r) => r.afgebroken > 0);
+  console.log(
+    `\n## Pagina's zonder tabbladen, een regel code die afbreekt: ${zonderGebroken.length}\n`,
+  );
+  for (const r of zonderGebroken)
+    console.log(
+      `- ${naam(r.les)}: ${r.afgebroken} blokken${r.afgebrokenCode ? `, waarvan ${r.afgebrokenCode} met een taal` : ''}`,
+    );
   console.log(`\n## Dubbele id's: ${dubbeleIds.length} pagina's\n`);
   for (const d of dubbeleIds) console.log(`- ${naam(d.les)}: ${d.dubbel.join(', ')}`);
   console.log(`\nDe les gebruikt ${kolomBreedte}% van de breedte naast de lessenlijst.`);
+}
+
+if (STRENG) {
+  const uitzonderingen = JSON.parse(
+    readFileSync(new URL('./meet-les-tabs-uitzonderingen.json', import.meta.url), 'utf8'),
+  ).filter((u) => u.site === SITE);
+  const bewust = (les, tab) =>
+    uitzonderingen.some((u) => u.les === les && (u.tab === undefined || u.tab === tab));
+  const fouten = [];
+  for (const r of rijen) {
+    if (bewust(r.les, r.tab)) continue;
+    if (!r.telefoon && r.over > 0)
+      fouten.push(`${r.les} | ${r.tab} | ${r.scherm}: ${r.over} px te lang`);
+    if (r.zijwaarts > 0)
+      fouten.push(`${r.les} | ${r.tab} | ${r.scherm}: ${r.zijwaarts} px te breed`);
+    if (!r.telefoon && r.afgesneden > 0)
+      fouten.push(`${r.les} | ${r.tab} | ${r.scherm}: code ${r.afgesneden} px afgesneden`);
+  }
+  for (const t of tabrijen)
+    if (t.regels > 1 && !bewust(t.les))
+      fouten.push(`${t.les} | ${t.scherm}: de rij tabbladen staat op ${t.regels} regels`);
+  for (const r of zonderTabs) {
+    if (bewust(r.les)) continue;
+    if (!r.telefoon && r.over > 0) fouten.push(`${r.les} | ${r.scherm}: ${r.over} px te lang`);
+    if (r.zijwaarts > 0) fouten.push(`${r.les} | ${r.scherm}: ${r.zijwaarts} px te breed`);
+    if (!r.telefoon && r.afgesneden > 0)
+      fouten.push(`${r.les} | ${r.scherm}: code ${r.afgesneden} px afgesneden`);
+    // Een foutmelding of uitvoer van de terminal mag afbreken, code niet.
+    if (!r.telefoon && r.afgebrokenCode > 0)
+      fouten.push(
+        `${r.les} | ${r.scherm}: ${r.afgebrokenCode} codeblokken met een regel die afbreekt`,
+      );
+  }
+  for (const d of dubbeleIds)
+    if (!bewust(d.les)) fouten.push(`${d.les}: dubbele id's ${d.dubbel.join(', ')}`);
+  if (fouten.length) {
+    console.error(`\n${fouten.length} schermen passen niet (zie de schrijfgids, §2):`);
+    for (const f of fouten) console.error(`- ${f}`);
+    console.error(
+      'Splits een te lang scherm met een ### of kort het in; staat het bewust zo, zet het met een reden in scripts/meet-les-tabs-uitzonderingen.json.',
+    );
+    process.exit(1);
+  }
+  console.error('Elk gemeten scherm past.');
 }

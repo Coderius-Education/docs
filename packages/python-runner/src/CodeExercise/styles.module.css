@@ -184,6 +184,16 @@
   font-size: 0.825rem;
 }
 
+/* De verwachte uitvoer breekt af als een regel niet past, net als uitvoer in
+   een terminal: in een smalle kolom (op Windows nog smaller door de
+   schuifbalk van de pagina) viel het eind van een regel eerst weg, zoals
+   "geslaagd!" in 5b.3. Wat de leerling zelf kreeg, staat erboven op
+   dezelfde manier. */
+.doel pre code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .doel > p {
   margin: 0 0 0.35rem;
   color: var(--ifm-color-emphasis-700);

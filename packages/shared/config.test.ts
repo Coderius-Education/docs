@@ -226,6 +226,23 @@ describe('createConfig — les-tabbladen', () => {
     expect(plugins(createConfig(basis))).not.toContain(werkvormenPlugin);
   });
 
+  it('geeft de keuzes van een cursus door aan de stap en aan de werkvormen', () => {
+    // `lesTabs: { eenScherm: true }` (de editor-cursus): een pagina die in
+    // haar geheel op één scherm past, krijgt geen tabbladen. De stap die de
+    // tabbladen maakt en de plugin die de werkvormen telt, moeten dezelfde
+    // keuze krijgen: anders toont de docentenhandleiding tabbladen die de
+    // leerling niet ziet.
+    const require = createRequire(import.meta.url);
+    const werkvormenPlugin = require('./plugins/werkvormen.js');
+    const config = createConfig({ ...basis, lesTabs: { eenScherm: true } });
+    expect(docsVan(config).at(-1)).toEqual([remarkLesTabs, { eenScherm: true }]);
+    expect((config as { plugins: unknown[] }).plugins).toContainEqual([
+      werkvormenPlugin,
+      { eenScherm: true },
+    ]);
+    expect(config).not.toHaveProperty('lesTabs');
+  });
+
   it('staat aan bij de cursussen die zijn omgezet, en alleen daar', () => {
     // Aanzetten is de eerste van vijf stappen (root-CLAUDE.md, Les-tabbladen):
     // zonder meten en inkorten staat een cursus vol schermen die niet passen.
@@ -233,11 +250,11 @@ describe('createConfig — les-tabbladen', () => {
     const aan = SITES.filter((s) => {
       const pad = join(ROOT, 'sites', s.subject ?? '', s.id, 'docusaurus.config.ts');
       try {
-        return /\blesTabs:\s*true/.test(readFileSync(pad, 'utf8'));
+        return /\blesTabs:\s*(true|\{)/.test(readFileSync(pad, 'utf8'));
       } catch {
         return false;
       }
     }).map((s) => s.id);
-    expect(aan).toEqual(['python', 'web', 'fullstack', 'robotica']);
+    expect(aan).toEqual(['editor', 'python', 'web', 'fullstack', 'robotica', 'ctf', 'linux']);
   });
 });

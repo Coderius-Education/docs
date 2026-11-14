@@ -5,48 +5,31 @@ hide_table_of_contents: false
 
 # Docentenhandleiding
 
-Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: wat de site is, welke randvoorwaarden er zijn, en hoe je de lessen indeelt.
+Een cursus cybersecurity waarin je leerlingen Capture the Flag-challenges oplossen: codes kraken, digitale sporen onderzoeken en kwetsbaarheden in websites vinden. De challenges staan op een apart platform; deze site heeft bij elke challenge een pagina met een korte beschrijving en hints. Hoe je ermee lesgeeft, bepaal je zelf.
 
-## Wat is dit?
+## Waar de challenges op steunen
 
-Een interactieve cursus **cybersecurity** waarin je leerlingen Capture the Flag-challenges oplossen: codes kraken, forensisch onderzoek en het vinden van kwetsbaarheden in webapplicaties. Doelgroep: leerlingen met enige basis in programmeren die ethisch hacken willen verkennen.
+Zo'n pagina heeft twee tabbladen: De challenge (in de tabel Zelf maken) en Hints. Plakken heeft er een derde, met een Python-editor. Een link in de tabel opent de uitleg bij [vakdidactiek](site:didactiek/).
 
-:::caution[Ethische context]
-Alles gebeurt in een **gecontroleerde lab-omgeving**. Bespreek expliciet met je leerlingen dat deze technieken alleen zijn toegestaan op systemen waarvoor je toestemming hebt — nooit op systemen van anderen.
-:::
+<Werkvormen
+  doet={{
+    maken: 'Ze zoeken zelf de flag van een challenge op het platform. Code lezen en aanpassen deden ze in de cursussen Python en web; hier passen ze zelf toe, met de hints achter de hand.',
+  }}
+/>
 
-## Technische randvoorwaarden
+Bij een challenge is niets voorgedaan: je leerling zoekt de flag zelf. De hints zijn de steiger. Ze zijn dicht en lopen op: de richting, het gereedschap, bijna de stap.
 
-| Wat | Antwoord |
-|---|---|
-| Operating system | Alles met een moderne browser |
-| Installatie | Geen voor de lessen; sommige challenges gebruiken tools uit de [Toolbox](site:ctf/toolbox) |
-| Account | Nodig voor het CTF-platform (registratie via de site) |
-| Internet | Vereist |
+## Wat je vooraf wilt weten
 
-## Didactische aanpak
+- **Account en netwerk.** De challenges draaien op [ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/register); je leerlingen maken daar een account met de CTF-code uit de [introductie](site:ctf/docs/intro). Daar staat ook dat deze technieken alleen mogen op systemen waarvoor je toestemming hebt. Een deel van de challenges gebruikt daarnaast openbare websites, zoals de Wayback Machine en VirusTotal: ze staan in de [Toolbox](site:ctf/toolbox).
+- **Installatie.** Een moderne browser is genoeg voor bijna alles. Forensics - Geluidsfragment vraagt een audio-editor, zoals Audacity. Bij Forensics - Niet gevonden noemt de laatste hint een hex-editor, zoals HxD (Windows).
+- **Voorkennis en volgorde.** De cursus gaat uit van [Python](site:python/) en [webontwikkeling](site:web/). De introductie geeft een volgorde van makkelijk naar expert; de link Volgende onder een challenge volgt die.
 
-Elke challenge volgt een vaste opbouw in **PRIMM-stijl**: eerst leg je het concept (de kwetsbaarheid) uit, dan volgt een walkthrough, en daarna lossen je leerlingen zelf een variant op. Elk lab sluit af met een korte "Wat heb je geleerd?".
+## Beoordelen
 
-Laat je leerlingen eerst zelf nadenken over een aanpak voordat ze de walkthrough openklikken — het zelf ontdekken is het leerdoel.
+- Het platform keurt een flag goed of af.
+- [Presentatie](site:ctf/presentatie): de opzet van de presentatie van zeven minuten die je leerlingen naast de challenges geven, met mogelijke onderwerpen.
 
-## Klassikaal gebruik & differentiatie
+## Feedback
 
-- **Plenair starten**: doe de eerste challenge van een categorie samen voor, daarna werken je leerlingen zelfstandig door.
-- **Snelle leerlingen** pakken de moeilijkere challenges binnen dezelfde categorie.
-- **Langzamere leerlingen** gebruiken de walkthrough als steiger en herhalen daarna een variant.
-- **Beoordelen**: gebruik de flags als objectieve check dat een challenge is opgelost.
-
-## Leerlijn
-
-De **Challenges**-sidebar is gegroepeerd per soort. Begin bij [de introductie](site:ctf/docs/intro); de [Toolbox](site:ctf/toolbox) en [Woordenlijst](site:ctf/woordenlijst) zijn naslag.
-
-| Categorie | Leerdoel |
-|---|---|
-| Codes | Versleutelde tekst herkennen en kraken |
-| Forensics | Verborgen informatie in bestanden vinden |
-| Hacking | Webkwetsbaarheden herkennen en misbruiken (in het lab) |
-
-## Feedback & bijdragen
-
-Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs). Alle bijdragen — van een typo tot een nieuwe challenge — zijn welkom.
+Een fout gevonden of een idee? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs).

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 6
 title: "Welke knop is welk commando?"
+# Een tabel om iets in op te zoeken: geen tabbladen.
+les_tabs: false
 ---
 
 # Welke knop is welk commando?
@@ -9,9 +11,10 @@ title: "Welke knop is welk commando?"
 
 | In VS Code | Doet hetzelfde als |
 |:---|:---|
+| Statusbalk → **+ Create new branch from...** | `git checkout -b <naam>` |
 | **Publish Branch** (op een feature-branch) | `git push -u origin <branch>` |
 | Statusbalk → naar `main` wisselen | `git checkout main` |
-| **Sync Changes** op `main` (na merge online) | `git pull` |
+| Source Control **...** → **Pull** op `main` (na merge online) | `git pull` |
 | **Command Palette** → **Git: Delete Branch...** | `git branch -d <branch>` |
 
 ## Op github.com

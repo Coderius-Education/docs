@@ -6,7 +6,9 @@ import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
 # 1.1 Je eerste commando's
 
-Hieronder staat een oefenterminal. Klik erin en typ `whoami`, en druk op Enter.
+## De oefenterminal
+
+Bij deze les hoort een oefenterminal: het zwarte vlak naast of onder de tekst. Klik erin, typ `whoami` en druk op Enter.
 
 <LinuxTerminal title="Oefenterminal" />
 
@@ -87,7 +89,7 @@ uname
 ls /etc
 ```
 
-`hostname` geeft `oefenpc`, dezelfde naam als in de prompt. `uname` geeft `Linux`; met `-a` erbij krijg je ook de versie. Welke soort Linux het precies is (er zijn er veel, zoals Ubuntu, Debian en Fedora), lees je in les 2.1 in een bestand. `ls /etc` toont onder andere `hostname`, `hosts` en `passwd`: in `/etc` staan de instellingen van de hele computer.
+`hostname` geeft `oefenpc`, dezelfde naam als in de prompt. `uname` geeft `Linux`; met `-a` erbij krijg je ook de versie. Welke soort Linux het precies is (er zijn er veel, zoals Ubuntu, Debian en Fedora), lees je in [2.1](site:linux/docs/terminal/bestanden-lezen) in een bestand. `ls /etc` toont onder andere `hostname`, `hosts` en `passwd`: in `/etc` staan de instellingen van de hele computer.
 
 </details>
 
@@ -111,7 +113,17 @@ Whoami
 whoami
 ```
 
-Dezelfde melding krijg je bij een typfout (`whomai`). Typ je het dollarteken van de prompt mee (`$ whoami`), dan noemt hij het dollarteken: `bash: $: command not found`.
+Dezelfde melding krijg je bij een typfout (`whomai`).
+
+### Het dollarteken meegetypt
+
+```
+bash: $: command not found
+```
+
+**Oorzaak:** je typte het dollarteken van de prompt mee: `$ whoami`. Linux leest het eerste woord als commando, en een commando dat `$` heet, bestaat niet.
+
+**Oplossing:** neem alleen over wat na het dollarteken staat.
 
 ### Er gebeurt niets
 

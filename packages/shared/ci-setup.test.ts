@@ -173,6 +173,8 @@ describe('comprimeren na elke site-build', () => {
     expect(jobs.filter((job) => stappen(job).some(bouwt)).sort()).toEqual([
       'browser',
       'build',
+      'schermen',
+      'terminal',
       'voorraad',
     ]);
   });
@@ -211,5 +213,89 @@ describe('comprimeren na elke site-build', () => {
       .filter((blok) => !/^ {4}runs-on: ubuntu-\d{2}\.\d{2}$/m.test(blok))
       .map((blok) => blok.slice(0, blok.indexOf(':')));
     expect(fout).toEqual([]);
+  });
+});
+
+// Een job die een gebouwde site in Chromium opent, krijgt de build van deze
+// run als die site gebouwd is, en anders uit de cache van een eerdere build
+// (de sleutel van scripts/site-hash.mjs, dezelfde als in `build`), en anders
+// bouwt hij hem zelf. De job `schermen` haalde eerst alleen het artifact op:
+// met alleen het meetscript gewijzigd was er geen, en viel de job weg.
+describe('een site in de browser: artifact, cache of zelf bouwen', () => {
+  const sleutel = (site: string) =>
+    `site-\${{ runner.os }}-${site}-$(node scripts/site-hash.mjs ${site})`;
+  const s = stappen('build');
+  const inBuild = s[plek(s, 'Map en cache-sleutel')].tekst;
+
+  it.each([
+    ['browser', 'python'],
+    ['terminal', 'linux'],
+    ['schermen', '${{ matrix.site }}'],
+  ])('%s', (job, site) => {
+    const v = stappen(job);
+    expect(inBuild).toContain(sleutel('${{ matrix.site }}'));
+    const map = plek(v, 'Map en cache-sleutel');
+    expect(map, `${job}: de sleutel`).toBeGreaterThan(-1);
+    expect(v[map].tekst).toContain(sleutel(site));
+    const artifact = v.findIndex(
+      (st) => st.uses.startsWith('actions/download-artifact@') && st.tekst.includes('-gebouwd'),
+    );
+    const cache = v.findIndex((st) => st.uses.startsWith('actions/cache/restore@'));
+    const build = v.findIndex((st) => /pnpm --filter "[^"]+" build/.test(st.tekst));
+    expect(artifact, `${job}: het artifact`).toBeGreaterThan(map);
+    expect(v[artifact].if).toBe("env.GEBOUWD == 'true'");
+    expect(cache, `${job}: de cache`).toBeGreaterThan(artifact);
+    expect(v[cache].if).toBe("env.GEBOUWD != 'true'");
+    expect(v[cache].tekst).toContain('key: ${{ steps.map.outputs.sleutel }}');
+    expect(build, `${job}: zelf bouwen`).toBeGreaterThan(cache);
+    expect(v[build].if).toBe("env.GEBOUWD != 'true' && steps.cache.outputs.cache-hit != 'true'");
+    // GEBOUWD: staat de site in de lijst die de job build bouwt?
+    const begin = workflow.indexOf(`\n  ${job}:\n`);
+    const kop = workflow.slice(begin, workflow.indexOf('\n    steps:\n', begin));
+    expect(kop).toContain(
+      `GEBOUWD: \${{ contains(fromJSON(needs.plan.outputs.sites), ${site.startsWith('$') ? 'matrix.site' : `'${site}'`}) }}`,
+    );
+  });
+});
+
+// De git waartegen de git-simulator wordt gelegd (echte-git.test.ts). Zijn
+// cache kende het image niet: na de overstap van ubuntu-latest naar een
+// nieuwe Ubuntu kwam er een git uit die tegen de bibliotheken van de oude
+// gelinkt was. En actions/cache bewaart pas aan het eind van een geslaagde
+// job, dus na een rode test bouwde elke run de git opnieuw.
+describe('de eigen git van de job test', () => {
+  const v = stappen('test');
+  const begin = workflow.indexOf('\n  test:\n');
+  const kop = workflow.slice(begin, workflow.indexOf('\n    steps:\n', begin));
+
+  it('zet GIT_VERSIE voor de hele job, zodat de test hem ziet', () => {
+    expect(kop).toMatch(/^ {4}env:\n(?: {6}#.*\n)* {6}GIT_VERSIE: '\d+\.\d+\.\d+'$/m);
+    const test = v[plek(v, 'Test (nakijker')];
+    expect(test.tekst).not.toMatch(/GIT_VERSIE:/);
+  });
+
+  it('de cache-sleutel noemt het image, niet zijn wekelijkse versie', () => {
+    const sleutel = v[plek(v, 'Cache-sleutel van git')];
+    expect(sleutel.tekst).toContain(
+      'echo "sleutel=git-${RUNNER_OS}-${ImageOS}-${GIT_VERSIE}" >> "$GITHUB_OUTPUT"',
+    );
+    expect(sleutel.tekst.match(/^\s*run: .*$/m)?.[0]).not.toContain('ImageVersion');
+  });
+
+  it('haalt op met cache/restore en bewaart meteen na het bouwen met cache/save', () => {
+    const ophalen = plek(v, 'uit de cache');
+    const bouwen = plek(v, 'bouwen (niet in de cache)');
+    const bewaren = v.findIndex((st) => / in de cache$/.test(st.name) && !st.name.includes('niet'));
+    expect(v[ophalen].uses).toBe('actions/cache/restore@v5');
+    expect(v[ophalen].tekst).toContain('key: ${{ steps.git-sleutel.outputs.sleutel }}');
+    expect(bouwen).toBe(ophalen + 1);
+    expect(bewaren).toBe(bouwen + 1);
+    expect(v[bewaren].uses).toBe('actions/cache/save@v5');
+    expect(v[bewaren].if).toBe("steps.git-cache.outputs.cache-hit != 'true'");
+    expect(v[bewaren].tekst).toContain('key: ${{ steps.git-sleutel.outputs.sleutel }}');
+    expect(v[bewaren].tekst).toContain('path: ~/git-vast');
+    expect(
+      v.filter((st) => st.uses === 'actions/cache@v5' && st.tekst.includes('git-vast')),
+    ).toEqual([]);
   });
 });

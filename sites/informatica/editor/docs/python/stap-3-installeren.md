@@ -8,7 +8,9 @@ title: "Stap 3: Python installeren"
 
 Windows levert Python niet mee. Je hoeft er geen website voor te zoeken: typ het commando en Windows wijst je zelf de weg.
 
-Je installeert **Python 3.14**, ook als er al een nieuwere versie is. Packages lopen een paar maanden achter op een nieuwe Python: op 3.15 liet FastAPI zich niet installeren.
+## Installeren
+
+Je installeert **Python 3.14**, ook als er een nieuwere is: op 3.15 liet FastAPI zich niet installeren.
 
 1. Typ in PowerShell:
 
@@ -16,20 +18,8 @@ Je installeert **Python 3.14**, ook als er al een nieuwere versie is. Packages l
 python
 ```
 
-2. Windows opent de Microsoft Store op de pagina van Python. Kijk naar de titel: daar moet **Python 3.14** staan. Staat er een ander nummer, typ dan bovenin de Store `Python 3.14` en kies die. Klik op **Ophalen** en wacht tot de installatie klaar is
+2. Windows opent de Microsoft Store op de pagina van Python. In de titel moet **Python 3.14** staan. Zo niet, typ dan bovenin de Store `Python 3.14` en kies die. Klik op **Ophalen** en wacht tot de installatie klaar is
 3. Sluit het PowerShell-venster. Een venster dat al open stond kent het nieuwe commando nog niet
-4. Ga in de Verkenner opnieuw naar je projectmap en open PowerShell zoals in [stap 2](site:editor/python/stap-2-powershell)
-5. Controleer of het gelukt is:
-
-```bash
-python --version
-```
-
-## Wat je nu ziet
-
-Een regel die begint met `Python 3.14`, bijvoorbeeld `Python 3.14.2`. Opent de Microsoft Store opnieuw, dan is de installatie niet afgerond: loop de vier stappen hierboven nog eens na.
-
-Staat er een ander nummer, zoals `Python 3.15.0` of `Python 3.12.4`, dan had je al een Python. Zet eerst 3.14 neer zoals in [Van Python-versie wisselen](site:editor/python/andere-versie), voordat je verdergaat met stap 4.
 
 <details>
 <summary>De Microsoft Store doet niets, of is geblokkeerd</summary>
@@ -49,3 +39,18 @@ Op een computer van school staat de Store vaak dicht. Dan installeer je Python v
 Daar opent `python` geen Store. Download Python 3.14 van [python.org/downloads](https://www.python.org/downloads/) (de nieuwste release die met 3.14 begint, niet 3.15) en installeer het. Het commando heet er `python3`, dus je controleert met `python3 --version`. In de rest van deze tutorial lees je overal `python3` waar `python` staat.
 
 </details>
+
+## Controleren
+
+1. Ga in de Verkenner opnieuw naar je projectmap en open PowerShell zoals in [stap 2](site:editor/python/stap-2-powershell)
+2. Typ:
+
+```bash
+python --version
+```
+
+## Wat je nu ziet
+
+Een regel die begint met `Python 3.14`, bijvoorbeeld `Python 3.14.2`. Opent de Microsoft Store opnieuw, dan is de installatie niet afgerond: loop de stappen onder Installeren nog eens na.
+
+Staat er een ander nummer, zoals `Python 3.15.0` of `Python 3.12.4`, dan had je al een Python. Zet eerst 3.14 neer zoals in [Van Python-versie wisselen](site:editor/python/andere-versie), voordat je verdergaat met stap 4.

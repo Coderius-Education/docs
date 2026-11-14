@@ -175,7 +175,7 @@ Het ene wiel vooruit en het andere achteruit: de robot draait nu om zijn midden 
 
 </details>
 
-## Je script tot nu toe
+## Je script
 
 <details>
 <summary>Klik hier om te vergelijken</summary>

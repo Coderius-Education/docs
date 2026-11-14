@@ -4,6 +4,8 @@ sidebar_position: 9
 
 # 7.4 Bestanden kopiëren met scp
 
+## Eén bestand
+
 <Voorkennis items={[{to: '/docs/wsl/ssh', label: 'Inloggen met ssh'}, {to: '/docs/terminal/kopieren', label: 'Kopiëren met cp'}]} />
 
 Met `cp` kopieer je op één computer. Met **scp** (*secure copy*) kopieer je van de ene computer naar de andere, over ssh. Je oefent weer op `localhost`, met de ssh-dienst uit [7.2](site:linux/docs/wsl/ssh) aan.
@@ -23,7 +25,7 @@ scp localhost:kopie.txt .
 
 ## Een hele map
 
-Net als bij `cp` heb je voor een map `-r` nodig:
+Net als bij `rm` in [2.3](site:linux/docs/terminal/kopieren#een-map-weggooien) heb je voor een map `-r` nodig:
 
 ```bash
 mkdir proef

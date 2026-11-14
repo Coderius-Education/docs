@@ -27,7 +27,7 @@ sidebar_position: <getal>
 ```
 
 - `sidebar_position` bepaalt de volgorde in de sidebar.
-- **Een les is verdeeld in tabbladen.** Dat is sinds november 2026 de standaard; web, python, robotica en fullstack zijn omgezet. Elke `##`-sectie is een tabblad bovenaan de pagina, elke `###` in een lange sectie een stap binnen dat tabblad, en de inhoudsopgave rechts vervalt: een leerling hoeft in een les niet te scrollen. Structureer een les dus met `##` en `###`, en schrijf elk scherm volgens "Tabbladen: elk scherm staat op zichzelf" hieronder. Een cursus zet het aan met `lesTabs: true` in `createConfig` (zie de root-`CLAUDE.md`, Les-tabbladen, voor de stappen).
+- **Een les is verdeeld in tabbladen.** Dat is sinds november 2026 de standaard; web, python, robotica, fullstack, linux, ctf en de editor-cursus zijn omgezet. Elke `##`-sectie is een tabblad bovenaan de pagina, elke `###` in een lange sectie een stap binnen dat tabblad, en de inhoudsopgave rechts vervalt: een leerling hoeft in een les niet te scrollen. Structureer een les dus met `##` en `###`, en schrijf elk scherm volgens "Tabbladen: elk scherm staat op zichzelf" hieronder. Een cursus zet het aan met `lesTabs: true` in `createConfig` (zie de root-`CLAUDE.md`, Les-tabbladen, voor de stappen).
 - **Een cursus die nog niet is omgezet**, houdt de rechter inhoudsopgave (TOC) met **alleen H2-koppen** (centraal ingesteld in `packages/shared/config`). Voeg daar géén `hide_table_of_contents` toe; structureer je pagina met `##`-secties zodat ze in de TOC verschijnen. Heeft een oefenveld meer breedte nodig, kies dan een gestapelde veldvorm in plaats van de TOC te verbergen.
 - Cheatsheets en losse referentiepagina's mogen `displayed_sidebar: null` en `hide_pagination: true` gebruiken.
 - Gebruik `sidebar_label` alleen als de paginatitel te lang is voor de sidebar.
@@ -36,6 +36,9 @@ sidebar_position: <getal>
 
 In een cursus met tabbladen is een tabblad of een stap alles wat de leerling op dat moment ziet. Daar volgt dit uit:
 
+- **Een sectie van één regel is geen scherm.** Een challenge van ctf had vier secties van een of twee regels en werd vijf bijna lege tabbladen; hij heeft er nu twee, De challenge en Hints. Zet bij elkaar wat de leerling samen nodig heeft, en gebruik een `##` alleen voor wat een scherm vult.
+- **In een cursus van korte stappen heeft een pagina die op één scherm past geen tabbladen** (de editor-cursus, `lesTabs: { eenScherm: true }`). Schrijf een stap dan zo dat hij op 1280×720 past, met `## Wat je nu ziet` onder de tekst. Een korte `## Wat je nu ziet`, `## Aan de slag` of `## Volgende tutorial` op een langere pagina zet de build onder het scherm ervoor.
+- **Een oefenveld dat bij de hele les hoort, staat naast de les** (de oefenterminal van Linux): bij elk tabblad, op een breed scherm naast de tekst en op een telefoon eronder. Noem het bij zijn naam ("de oefenterminal"), niet "de terminal hieronder", en houd de schermen kort: de tekst staat daar in een kolom van de halve breedte.
 - **Een scherm past op 1280×720**, zonder scrollen. Meet het na een build met `node scripts/meet-les-tabs.mjs <site>`. Past het niet, splits dan eerst (een `###` erbij maakt een stap en kost geen inhoud) en kort daarna pas in.
 - **Wijs alleen naar wat in hetzelfde scherm staat.** "Hieronder", "hierboven" en "de startcode" kloppen op een lange pagina en wijzen in tabbladen naar een ander scherm.
 - **Predict gaat over de startcode van het oefenveld**, en toont die code. De leerling voorspelt, en draait daarna in Probeer en onderzoek dezelfde code om te zien of het klopte.
@@ -54,6 +57,8 @@ In een cursus met tabbladen is een tabblad of een stap alles wat de leerling op 
 - **Er gaat iets mis komt na de opdrachten.** De build zet het tabblad daar ook neer als de bron het ervoor heeft.
 - **Een plaatje staat vóór de tekst die het uitlegt** (het aansluitschema, dan de pinnen): de build zet ze naast elkaar. Drie of meer plaatjes achter elkaar worden een reeks met Vorige en Volgende.
 - **Onder code staat wat hem toelicht als lijst of tabel**, direct eronder of na één alinea: de build zet het ernaast. Voor uitleg per regel gebruik je `<CodeUitleg>`.
+- **Een les begint met een kop naar zijn inhoud.** Wat vóór de eerste `###` van een sectie staat, wordt een stap die De basis heet; in Linux waren dat er twintig. Begin dus met een `##` of `###` die zegt waar het over gaat ("Lezen met cat").
+- **Alternatieven per systeem zijn geen tabbladen.** Windows, macOS en Linux als `##` liet de knop Volgende een leerling langs systemen leiden die niet de zijne zijn. Zet de hoofdroute zichtbaar en de andere systemen elk in een `<details>`, op het scherm met de stappen en niet onder Wat je nu ziet.
 - **Een stap heeft geen nummer in zijn kop.** Schrijf `### Kies de juiste interpreter`, niet `### Stap 1: kies de juiste interpreter`: de knop van de stap nummert al, en een stap ervoor schuift de telling op. Verwijs naar een stap met zijn naam.
 - **Een stap heet naar zijn inhoud**: `### Stap 2: Kies een pin` krijgt in de rij het label "Kies een pin". Geef een `###` dus een titel na de dubbele punt.
 - **Een opdracht is een eigen sectie** (`## Opdracht: <naam>`), niet een uitklapblok onder de code: weggeklapt ziet een leerling hem niet. Tip en oplossing blijven uitklapblokken.

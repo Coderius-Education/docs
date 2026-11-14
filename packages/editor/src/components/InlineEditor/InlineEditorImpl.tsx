@@ -1,3 +1,6 @@
+// Uit paneel, niet uit de index: die trekt de hele opmaak van de
+// les-tabbladen mee in elke pagina met een editor.
+import { useInLesTab } from '@coderius/shared/components/LesTabs/paneel';
 import { storageKey as siteSleutel } from '@coderius/shared/opslag';
 import clsx from 'clsx';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -44,6 +47,7 @@ export default function InlineEditorImpl({
   title,
 }: InlineEditorProps): ReactNode {
   const siteId = useSiteId();
+  const inTab = useInLesTab();
   const entryPath =
     entry ?? (files ? Object.keys(files)[0] : (DEFAULT_ENTRY[runnerId] ?? 'main.py'));
 
@@ -181,7 +185,15 @@ export default function InlineEditorImpl({
           }}
         />
       </div>
-      <div className={clsx(styles.output, Preview && styles.outputSplit)}>
+      <div
+        className={clsx(
+          styles.output,
+          Preview && styles.outputSplit,
+          // In een les-tabblad groeit de uitvoer niet mee: een scherm dat bij
+          // het openen paste, was na negen regels uitvoer te lang (ctf, Plakken).
+          inTab && !Preview && styles.outputVast,
+        )}
+      >
         {Preview && (
           <div className={styles.preview}>
             <Preview session={session} />

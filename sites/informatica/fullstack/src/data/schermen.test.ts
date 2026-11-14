@@ -19,7 +19,7 @@ import { describe, expect, it } from 'vitest';
 
 const require = createRequire(import.meta.url);
 const GEDEELD = '../../../../../packages/shared/plugins';
-const { schermenVan } = require(`${GEDEELD}/les-schermen.js`);
+const { schermenVan, DOORGAAND } = require(`${GEDEELD}/les-schermen.js`);
 const { mdxParser } = require(`${GEDEELD}/werkvormen.js`);
 
 type Blok = { soort: string; tekst: string; inVraag?: boolean };
@@ -153,15 +153,64 @@ describe('wat een doorloop als leerling vond', () => {
   it('een scherm begint niet met een zin die op het vorige scherm doorgaat', () => {
     // "Daaronder legt de tekst zelf uit …" na een stap met de uitvoer, "Daarom
     // maakt de Dockerfile …" na een vraag, "Klik op de regel." na een tabel:
-    // op de lange pagina stond het eronder, nu is het een scherm verder.
-    const DOORGAAND =
-      /^(Daaronder|Daarom|Daarna komt|Daarmee|Daardoor|Hetzelfde kan|Klik op de regel\.|En (maak|onder|zet)\b|Vervang je .{1,30} door deze\.)/;
+    // op de lange pagina stond het eronder, nu is het een scherm verder. De
+    // lijst staat één keer in packages/shared/plugins/les-schermen.js.
+    for (const zin of ['Daaronder legt de tekst zelf uit', 'Klik op de regel.', 'Daarom maakt'])
+      expect(DOORGAAND.test(zin), zin).toBe(true);
     const fout = lessen.flatMap((les) =>
       les.schermen
         .slice(1)
         .filter((s) => s.blokken[0]?.soort === 'tekst' && DOORGAAND.test(s.blokken[0].tekst.trim()))
         .map((s) => `${s.les} | ${s.naam}: ${s.blokken[0].tekst.trim().slice(0, 60)}`),
     );
+    expect(fout).toEqual([]);
+  });
+
+  it('een scherm dat een stap van <VerzoekCyclus> noemt, toont het diagram of noemt de titel', () => {
+    // "Stap 3 is het hele verschil", "Vergelijk stap 5 en 6": op de lange
+    // pagina stond het diagram erboven, in tabbladen een scherm terug. Een
+    // stap heet daarom naar zijn titel ("de stap De server zoekt de sessie
+    // op"), of het diagram staat op hetzelfde scherm.
+    const bron = readFileSync(join(SITE, 'src/components/VerzoekCyclus/index.tsx'), 'utf8');
+    const reeksen = new Map(
+      [...bron.matchAll(/const (\w+): Stap\[\] = \[([\s\S]*?)\n\];/g)].map((m) => [
+        m[1],
+        [...m[2].matchAll(/titel: '([^']+)'/g)].map((t) => t[1]),
+      ]),
+    );
+    const titels = new Map(
+      [...bron.matchAll(/^\s+(\w+): \{ stappen: (\w+),/gm)].map((m) => [
+        m[1],
+        reeksen.get(m[2]) ?? [],
+      ]),
+    );
+    expect(titels.get('sessie')?.[2]).toBe('De server zoekt de sessie op');
+    const metDiagram = lessen.filter((les) => les.bron.includes('<VerzoekCyclus'));
+    expect(metDiagram.length).toBeGreaterThan(10);
+    const fout = metDiagram.flatMap((les) => {
+      const varianten = [...les.bron.matchAll(/<VerzoekCyclus variant="(\w+)"/g)].map((m) => m[1]);
+      // Alleen het diagram telt hier als veld: een DevtoolsPaneel is geen diagram.
+      const schermen = schermenVan(les.bron, parse, { velden: ['VerzoekCyclus'] }) as Scherm[];
+      return schermen
+        .filter((s) => !s.blokken.some((b) => b.soort === 'veld'))
+        .flatMap((s) => {
+          const tekst = s.blokken
+            .filter((b) => ['tekst', 'lijst'].includes(b.soort))
+            .map((b) => b.tekst)
+            .join(' ');
+          return [...tekst.matchAll(/\b[Ss]tap(?:pen)?\s+\d+(?:\s*(?:,|en|of|tot)\s*\d+)*/g)]
+            .filter((m) =>
+              (m[0].match(/\d+/g) ?? []).some(
+                (n) =>
+                  !varianten.some((v) => {
+                    const titel = titels.get(v)?.[Number(n) - 1];
+                    return titel && tekst.includes(titel);
+                  }),
+              ),
+            )
+            .map((m) => `${les.naam} | ${s.naam}: ${m[0]}`);
+        });
+    });
     expect(fout).toEqual([]);
   });
 

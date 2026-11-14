@@ -14,16 +14,6 @@ title: "Stap 2: PowerShell openen vanuit je map"
 
 Op Windows 10 heet die keuze **PowerShell-venster hier openen**, en die verschijnt pas als je de Shift-toets ingedrukt houdt terwijl je rechtsklikt.
 
-## Wat je nu ziet
-
-Een venster met een prompt die eindigt op het pad van je map, gevolgd door een `>`:
-
-```
-PS C:\Users\jij\Documenten\python-project>
-```
-
-Staat daar een ander pad, dan heb je PowerShell vanuit de verkeerde map geopend. Sluit het venster en begin opnieuw bij stap 1 hierboven.
-
 <details>
 <summary>De keuze staat niet in het menu</summary>
 
@@ -42,3 +32,13 @@ Het resultaat is hetzelfde: een prompt die op je projectmap staat.
 Daar heet het de Terminal. In Finder klik je met de rechtermuisknop op de map en kies je **Diensten** → **Nieuwe terminal bij map**. Staat die optie er niet, open dan de Terminal en typ `cd`, een spatie, en sleep de map het venster in; druk daarna op Enter.
 
 </details>
+
+## Wat je nu ziet
+
+Een venster met een prompt die eindigt op het pad van je map, gevolgd door een `>`:
+
+```
+PS C:\Users\jij\Documenten\python-project>
+```
+
+Staat daar een ander pad, dan heb je PowerShell vanuit de verkeerde map geopend. Sluit het venster en open PowerShell opnieuw, nu vanuit je projectmap in de Verkenner.

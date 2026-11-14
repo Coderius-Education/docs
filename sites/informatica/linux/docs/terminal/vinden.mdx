@@ -6,9 +6,11 @@ import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
 # 3.2 Bestanden vinden
 
+## Zoeken met find
+
 <Voorkennis items={[{to: '/docs/terminal/jokertekens', label: 'Jokertekens'}, {to: '/docs/terminal/zoeken', label: 'Zoeken in een bestand met grep'}]} />
 
-`grep` zoekt iets *in* een bestand. Weet je niet eens waar het bestand staat, dan zoek je het met `find`. Je geeft een map, en `find` loopt alles eronder af, map in map:
+`grep` zoekt *in* een bestand, `find` zoekt het bestand zelf. Je geeft een map, en `find` loopt alles eronder af, map in map:
 
 ```bash
 find /var/www
@@ -23,7 +25,7 @@ find /var/www
 /var/www/html/inloggen.html
 ```
 
-Elke regel is een pad dat je zo kunt gebruiken, bijvoorbeeld achter `cat`.
+Elke regel is een pad: zet hem zo achter `cat`.
 
 <LinuxTerminal title="Oefenterminal" />
 
@@ -40,13 +42,29 @@ find /var/www -name '*.html'
 /var/www/html/inloggen.html
 ```
 
-Zonder aanhalingstekens vult de shell het sterretje al in voordat `find` het ziet, als er in de map waar jij staat iets op past. Dan krijgt `find` die namen in plaats van het patroon. Past er niets, dan blijft het patroon staan en werkt het toevallig. Zet een patroon bij `grep` en `-name` daarom altijd tussen aanhalingstekens: dan hangt het niet af van de map waar je staat.
-
 `-iname` zoekt zonder op hoofdletters te letten: `-iname '*.JPG'` vindt ook `foto.jpg`.
 
-## Alleen mappen, of alleen bestanden
+### Zonder aanhalingstekens
 
-Met `-type d` (*directory*) noemt `find` alleen mappen, met `-type f` (*file*) alleen bestanden. Je kunt het combineren met `-name`.
+Zonder aanhalingstekens vult de shell het sterretje al in voordat `find` het ziet, als er in de map waar jij staat iets op past. Dan krijgt `find` die namen in plaats van het patroon. Staat er één bestand dat past, dan zoekt `find` stil alleen naar die ene naam. Past er niets, dan blijft het patroon staan en werkt het toevallig.
+
+Zet een patroon bij `grep` en `-name` daarom altijd tussen aanhalingstekens: dan hangt het niet af van de map waar je staat.
+
+## Mappen of bestanden \{#alleen-mappen-of-alleen-bestanden}
+
+Met `-type f` (*file*) noemt `find` alleen bestanden:
+
+```bash
+find /var/www -type f
+```
+
+```
+/var/www/html/config/instellingen.conf
+/var/www/html/index.html
+/var/www/html/inloggen.html
+```
+
+Met `-type d` (*directory*) noemt hij alleen mappen. Je kunt `-type` combineren met `-name`.
 
 ## Voorspel
 
@@ -151,10 +169,9 @@ find /var -type d
 
 ```
 find: paths must precede expression: `b.txt'
-find: possible unquoted pattern after predicate `-name'?
 ```
 
-**Oorzaak:** je zette het patroon niet tussen aanhalingstekens. De shell vulde `*.txt` in met de namen uit de map waar je stond, en `find` kreeg `-name a.txt b.txt`: één naam te veel. Staat er maar één `.txt` in je map, dan krijg je geen fout, maar zoekt `find` stil alleen naar die ene naam.
+**Oorzaak:** je zette het patroon niet tussen aanhalingstekens. De shell vulde `*.txt` in met de namen uit de map waar je stond, en `find` kreeg `-name a.txt b.txt`: één naam te veel. In een tweede regel raadt `find` dat zelf al: `possible unquoted pattern`.
 
 **Oplossing:** zet het patroon tussen aanhalingstekens.
 

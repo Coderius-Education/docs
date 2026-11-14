@@ -26,7 +26,22 @@ type Data = { lessen: Record<string, Les> };
  * dan één les: een werkvorm die geen les gebruikt, heeft hier niets uit te
  * leggen.
  */
-export function Werkvormen(): ReactNode {
+export function Werkvormen({
+  doet = {},
+}: {
+  /**
+   * Wat de leerlingen van deze cursus in een onderdeel doen, als dat anders
+   * is dan in werkvormen.json. Die tekst gaat over code ("een opdracht op
+   * code die er al staat"); in Linux begint een opdracht in een lege
+   * terminal, in de editor-cursus in VS Code, en bij ctf op een ander
+   * platform. Het onderdeel en zijn literatuur blijven gelijk.
+   */
+  doet?: Record<string, string>;
+} = {}): ReactNode {
+  // Een tikfout in de naam van een onderdeel liet de eigen tekst stil weg.
+  for (const id of Object.keys(doet))
+    if (!WERKVORMEN.some((vorm) => vorm.id === id))
+      throw new Error(`Werkvormen: geen werkvorm '${id}' in werkvormen.json`);
   const data = usePluginData('coderius-werkvormen') as Data | undefined;
   // In hoeveel lessen een werkvorm voorkomt. Eén les is geen onderdeel van
   // "een les": de python-cursus heeft alleen in zijn introductie een leerdoel,
@@ -52,7 +67,7 @@ export function Werkvormen(): ReactNode {
               <WerkvormIcoon id={vorm.id} />
               {vorm.label}
             </th>
-            <td>{vorm.doet}</td>
+            <td>{doet[vorm.id] ?? vorm.doet}</td>
             <td>
               <ul className={styles.tips}>
                 {vorm.tips.map((tip) => (

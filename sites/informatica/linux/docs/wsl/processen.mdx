@@ -4,6 +4,8 @@ sidebar_position: 5
 
 # 6.3 Processen
 
+## Wat draait er?
+
 <Voorkennis items={[{to: '/docs/terminal/zoeken', label: 'De pipe en grep'}, {to: '/docs/terminal/sneller', label: 'Ctrl+C'}]} />
 
 Een programma dat draait, heet een **proces**. Elk proces krijgt een nummer, de **PID** (*process id*). Met dat nummer kun je het opzoeken en stoppen. `ps` laat de processen in deze terminal zien:
@@ -40,9 +42,11 @@ pgrep -a sleep
 
 `pgrep` zoekt processen op naam en geeft de PID. Met `-a` zie je ook het hele commando.
 
+Wil je live meekijken, typ dan `top`. Je ziet elke paar seconden opnieuw welke processen het meest van de processor en het geheugen gebruiken, met de drukste bovenaan. Stoppen doe je met `q`.
+
 ## Een proces stoppen
 
-Draait het in de terminal voor je neus, dan stop je het met **Ctrl+C**. Vanuit een ander venster gebruik je `kill` met de PID:
+Draait een proces in de terminal voor je neus, dan stop je het met **Ctrl+C**. Vanuit een ander venster gebruik je `kill` met de PID:
 
 ```bash
 kill 734
@@ -51,10 +55,6 @@ kill 734
 In het eerste venster staat nu `Terminated`, en je kunt weer typen. Op naam kan ook: `pkill sleep` stopt elk proces dat `sleep` heet. Kijk daarom eerst met `pgrep -a` wat je raakt.
 
 `kill` vraagt een proces netjes om te stoppen, zodat het nog kan opruimen. Luistert het niet, dan dwingt `kill -9` het: dan stopt het meteen, zonder opruimen. Gebruik dat pas als het gewone `kill` niet werkt.
-
-## Live meekijken met top
-
-`top` laat elke paar seconden zien welke processen het meest van de processor en het geheugen gebruiken, met de drukste bovenaan. Stoppen doe je met `q`.
 
 ## Voorspel
 

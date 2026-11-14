@@ -6,6 +6,8 @@ import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
 # 1.3 Sneller typen
 
+## Minder typen
+
 <Voorkennis items={[{to: '/docs/terminal/mappen', label: 'Paden en cd'}]} />
 
 Wie veel in een terminal werkt, typt bijna nooit een hele naam uit. De terminal vult aan, onthoudt wat je typte, en laat je een fout verbeteren zonder alles opnieuw te typen.
@@ -16,7 +18,7 @@ Deze les gaat over Tab en de pijltjes. Die zitten niet op het toetsenbord van ee
 
 ## Tab vult aan
 
-Typ in de terminal hieronder `cd /va` en druk op **Tab**. Er staat nu:
+Typ in de oefenterminal `cd /va` en druk op **Tab**. Er staat nu:
 
 ```
 student@oefenpc:~$ cd /var/
@@ -24,7 +26,7 @@ student@oefenpc:~$ cd /var/
 
 Er is in `/` maar één naam die met `va` begint, dus de terminal weet wat je bedoelt. Achter een map zet Tab een `/`, zodat je meteen verder kunt typen: `ww` en weer Tab wordt `cd /var/www/`. Druk op Enter om erheen te gaan.
 
-Tab werkt voor namen van bestanden en mappen, en als eerste woord ook voor commando's: `hostn` en Tab wordt `hostname`.
+Tab werkt voor namen van bestanden en mappen, en als eerste woord ook voor commando's: `hostn` en Tab wordt `hostname`. Wil je met het toetsenbord de oefenterminal uit, druk dan op Esc en daarna op Tab: dan sta je op de knop Volgende. Met Esc en Shift+Tab ga je de andere kant op, terug door de pagina.
 
 <LinuxTerminal title="Oefenterminal" />
 
@@ -47,9 +49,13 @@ Typ een `s` erbij en druk weer op Tab, of typ `name`. Doet Tab helemaal niets, d
 
 ## Terug naar een vorig commando
 
+### De pijltjes
+
 Met **pijltje omhoog** haal je het vorige commando terug, en met nog een keer het commando daarvoor. Met **pijltje omlaag** ga je weer de andere kant op. Met **pijltje links en rechts** zet je de cursor ergens in de regel, om een typfout te verbeteren. Daarna druk je op Enter; de cursor hoeft niet aan het eind te staan.
 
-`history` laat alles zien wat je in deze terminal typte, met een nummer ervoor. Druk eerst op **Opnieuw beginnen** onder de terminal, dan zie je precies dit:
+### Wat je typte
+
+`history` laat alles zien wat je in de oefenterminal typte, met een nummer ervoor. Klik eerst op **Opnieuw beginnen** in de oefenterminal, dan zie je precies dit:
 
 ```bash
 pwd
@@ -64,7 +70,7 @@ history
 
 `history 5` laat alleen de laatste vijf zien.
 
-Nog drie toetsen:
+### Nog drie toetsen
 
 | Toets | Wat hij doet |
 |:---:|:---|

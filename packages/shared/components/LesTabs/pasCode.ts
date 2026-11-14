@@ -30,6 +30,18 @@ const zichtbaar = (el: HTMLElement) =>
   el.clientWidth > 0 && !el.closest('[hidden], details:not([open])');
 
 /**
+ * Een blok dat zelf afbreekt: de verwachte uitvoer in een python-oefenveld
+ * (`.doel pre code` in python-runner), of een blok waarop de leerling de knop
+ * om af te breken aanzette. Dat breekt zoals uitvoer in een terminal, dus
+ * kleinere letters maken het alleen slechter leesbaar: de verwachte uitvoer
+ * werd eerst tot 80% verkleind en brak daarna toch af. Zoals de uitvoer van
+ * een oefenveld blijft het zoals het is. `data-code-breekt` is er dan al af:
+ * een blok dat pasCode zelf liet afbreken, telt hier niet.
+ */
+const breektZelf = (code: HTMLElement) =>
+  /^(pre-wrap|break-spaces|pre-line)$/.test(window.getComputedStyle(code).whiteSpace);
+
+/**
  * Maak de letters van één blok zo klein als nodig is, en zeg of de langste
  * regel dan past.
  */
@@ -59,7 +71,8 @@ function pasBlok(pre: HTMLElement, code: HTMLElement): boolean {
  * in beeld brengt of zijn breedte verandert: een ander tabblad of een andere
  * stap, een uitklapblok dat opengaat, een andere maat van het venster.
  * Alleen de codeblokken van de les (`.theme-code-block`): de uitvoer van een
- * oefenveld is ook een <pre>, en die blijft zoals hij is.
+ * oefenveld is ook een <pre>, en die blijft zoals hij is, net als een blok
+ * dat zelf afbreekt (de verwachte uitvoer in het oefenveld, `breektZelf`).
  *
  * Code met de uitleg ernaast (<CodeUitleg>) krijgt eerst kleinere letters. Is
  * dat niet genoeg, dan krijgt de code ook een bredere kolom
@@ -73,6 +86,10 @@ export function pasCode(wortel: ParentNode): void {
     const rij = pre.closest<HTMLElement>('[data-code-uitleg]');
     rij?.removeAttribute('data-code-breed');
     pre.removeAttribute('data-code-breekt');
+    if (breektZelf(code)) {
+      pre.style.removeProperty('font-size');
+      continue;
+    }
     let past = pasBlok(pre, code);
     if (!past && rij) {
       rij.setAttribute('data-code-breed', '');

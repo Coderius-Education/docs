@@ -270,6 +270,17 @@
   margin-bottom: 0.5rem;
 }
 
+/* Een korte afsluiter die bij dit scherm is gezet (Wat je nu ziet, Aan de
+   slag; zie sluitAan in plugins/les-tabs.js): zijn kop is een tussenkop. */
+.paneel [data-les-afsluiter] > h2 {
+  --ifm-h2-font-size: 1.25rem;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.paneel [data-les-afsluiter] > :last-child {
+  margin-bottom: 0;
+}
+
 .paneel > details,
 .paneel .stappen details {
   --ifm-alert-padding-vertical: 0.55rem;
@@ -740,11 +751,112 @@
   }
 }
 
+/* Een oefenveld naast de les (<LesNaast>, de oefenterminal van Linux). De
+   kolom `.naast` is het laatste kind van de wortel en leeg, tot een veld er
+   zijn element in zet. Op een breed scherm staat hij dan rechts van het
+   paneel, zodat het veld bij elk scherm van de les te gebruiken is; op een
+   smal scherm staat hij eronder. De les staat in twee kolommen zodra er in
+   de kolom een veld te zien is, of ergens in de les het anker van een veld
+   voor de hele les staat: dat anker staat al in de HTML van de build
+   (<LesNaastPlek>), zodat de tekst niet verspringt als het veld er komt.
+
+   Flex en geen raster: het blok waarin een flex-item staat, is de hele
+   wortel, en de rij tabbladen blijft dus plakken onder de navbar. In een
+   raster is dat blok de eigen rij. De kolom plakt zelf niet: `position:
+   sticky` maakt een eigen laag, en een veld op Groter viel dan onder de
+   navbar. Vanaf 1200 pixels (BREED in Naast.tsx): smaller is de les maar
+   690 pixels breed. */
+@media (min-width: 1200px) {
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    column-gap: 1rem;
+  }
+
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) > .tablist {
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+
+  /* De tekst krijgt de smalle kolom: een regel van zestig tekens leest goed,
+     en het veld heeft de breedte nodig. Op 1280 pixels past er met deze
+     verdeling in de terminal van Linux een regel van `ls -la` (59 tekens),
+     en in een codeblok met de kleinste letters 58 tekens: de meldingen van
+     de terminallessen zijn 51 tot 57 tekens. Daarvoor is ook de rand van
+     een codeblok hier smaller. */
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) > .paneel {
+    flex: 0 0 calc(47% - 0.5rem);
+    min-width: 0;
+    --ifm-pre-padding: 0.75rem;
+  }
+
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) > .naast {
+    flex: 0 0 calc(53% - 0.5rem);
+    min-width: 0;
+  }
+
+  /* In de smalle kolom is voor code met iets ernaast geen plaats: onder
+     elkaar, zoals op een smal scherm. */
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"])
+    .paneel
+    .voorbeeld:not(.metBeeld):not(.metBreedBeeld),
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) .paneel .bestanden {
+    display: block;
+  }
+
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"])
+    .paneel
+    .voorbeeld:not(.metBeeld):not(.metBreedBeeld)
+    > :first-child {
+    margin-bottom: 0.5rem;
+  }
+
+  /* In de smalle kolom schuift de rij stappen, zoals op een telefoon. Krimpen
+     liet van een dichte stap twee letters over ("Het vr…"), en met een
+     tweede regel versprong de tekst zo'n veertig pixels bij elke stap: de
+     open stap staat voluit, en dan paste de rij soms wel en soms niet. */
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) .staplist {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    /* Een klassieke schuifbalk (Windows) is vijftien pixels: die kostte elk
+       scherm met een schuivende rij een regel. Dun is hij nog te zien. */
+    scrollbar-width: thin;
+  }
+
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) .stap {
+    flex: 0 0 auto;
+    max-width: none;
+    white-space: nowrap;
+  }
+}
+
+/* Het veld van de hele les wijkt voor het eigen veld van een scherm dat
+   open staat: een opdracht met een eigen terminal. Het anker van dat veld
+   blijft in het paneel staan, ook als het veld zelf in de kolom staat, en
+   zegt of zijn scherm open is. Het anker in een stap die dicht is, telt dus
+   niet: de kolom was dan leeg. */
+.wortel:has([data-les-naast-anker="veld"][data-les-naast-open])
+  > .naast
+  > [data-les-naast-gast="les"] {
+  display: none;
+}
+
 /* Op papier staan alle onderdelen onder elkaar. */
 @media print {
   .tablist,
   .staplist,
   .verder {
+    display: none;
+  }
+
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) {
+    display: block;
+  }
+
+  /* Een oefenveld doet op papier niets. */
+  .naast {
     display: none;
   }
 

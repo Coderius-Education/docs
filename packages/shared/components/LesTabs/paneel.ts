@@ -36,3 +36,16 @@ export const DoelContext = createContext<ReactNode>(null);
 export function useLesDoel(): ReactNode {
   return useContext(DoelContext);
 }
+
+/** Het attribuut op het paneel van een tabblad, met zijn id als waarde. */
+export const LES_TAB = 'data-les-tab';
+
+/** Het attribuut op de alinea met de knop Volgende onderaan een tabblad. De
+ *  opmaak verbergt er de link naar de volgende les mee. */
+export const LES_VERDER = 'data-les-verder';
+
+/** De knop Volgende van het tabblad dat open is. Een oefenveld dat het
+ *  toetsenbord vasthoudt (de terminal van Linux, Esc en dan Tab), zet de
+ *  focus daarop; met deze selector valt het niet stil als LesTabs zijn
+ *  opmaak verandert (LesTabs.test.tsx). */
+export const VOLGENDE_KNOP = `[${LES_TAB}]:not([hidden]) > [${LES_VERDER}] button`;

@@ -1,6 +1,8 @@
 ---
 sidebar_position: 10
 title: "Welke knop is welk commando?"
+# Een tabel om iets in op te zoeken: geen tabbladen.
+les_tabs: false
 ---
 
 # Welke knop is welk commando?

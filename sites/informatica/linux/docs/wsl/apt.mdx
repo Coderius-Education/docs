@@ -4,6 +4,8 @@ sidebar_position: 3
 
 # 6.1 Programma's installeren
 
+## Wat is apt?
+
 <Voorkennis items={[{to: '/docs/terminal/rechten', label: 'Eigenaar, rechten en root'}]} />
 
 Op Windows download je een programma van een website. Op Ubuntu haal je het met **apt** uit één grote verzameling, die Ubuntu zelf bijhoudt en controleert. Probeer eerst dit:
@@ -16,7 +18,7 @@ tree
 Command 'tree' not found, but can be installed with:
 ```
 
-Ubuntu kent het programma, maar het staat nog niet op je computer. Hij zegt er meteen bij hoe je het krijgt: eronder staat een regel met `sudo apt install tree`, en vaak ook een met `sudo snap install tree`. Hier gebruik je apt. Staat er `Could not find command-not-found database`, dan kent Ubuntu de lijst nog niet; die haal je zo meteen op.
+Ubuntu kent het programma, maar het staat nog niet op je computer. Hij zegt er meteen bij hoe je het krijgt: eronder staat een regel met `sudo apt install tree`, en vaak ook een met `sudo snap install tree`. Hier gebruik je apt. Staat er `Could not find command-not-found database`, dan kent Ubuntu de lijst nog niet; `apt update` uit de volgende stap haalt hem op.
 
 ## sudo: even beheerder zijn
 
@@ -30,7 +32,7 @@ sudo apt update
 [sudo] password for sam:
 ```
 
-Ubuntu vraagt jouw wachtwoord, dat van stap 3 bij de installatie. Je ziet weer niets terwijl je typt. Daarna onthoudt `sudo` het een kwartier.
+Ubuntu vraagt het wachtwoord dat je bij de installatie koos. Je ziet weer niets terwijl je typt. Daarna onthoudt `sudo` het een kwartier.
 
 `apt update` haalt de nieuwste lijst op van wat er te krijgen is. Doe het voor je iets installeert: met een oude lijst zoekt apt naar versies die er niet meer zijn.
 
@@ -48,6 +50,10 @@ Nu werkt het:
 tree ~
 ```
 
+:::tip
+Een handig programma om nu te installeren: `tldr`. Het geeft korte voorbeelden in plaats van een hele handleiding zoals `man` uit [5.3](site:linux/docs/wsl/hulp). Installeer het met `sudo apt install tldr`, haal één keer de voorbeelden op met `tldr --update`, en typ dan bijvoorbeeld `tldr tar`.
+:::
+
 ## Voorspel
 
 Je typt `apt install tree`, zonder `sudo`. Wat gebeurt er?
@@ -63,10 +69,6 @@ E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), are y
 apt mag als `sam` niet in `/var/lib/dpkg` schrijven, en vraagt aan het eind of je wel `root` bent. Er gaat niets kapot: zet `sudo` ervoor en het lukt.
 
 </details>
-
-:::tip
-Een handig programma om nu te installeren: `tldr`. Het geeft korte voorbeelden in plaats van een hele handleiding zoals `man` uit [5.3](site:linux/docs/wsl/hulp). Installeer het met `sudo apt install tldr`, haal één keer de voorbeelden op met `tldr --update`, en typ dan bijvoorbeeld `tldr tar`.
-:::
 
 ## Alles bijwerken
 

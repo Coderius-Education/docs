@@ -9,6 +9,8 @@ export default createConfig({
   // Hetzelfde nummer als de DVWA-site die hier eerst stond: dezelfde cursus-
   // plek in Matomo.
   matomoSiteId: 10,
+  // Elke ##-sectie van een les is een tabblad (zie de root-CLAUDE.md).
+  lesTabs: true,
 
   description:
     'Leer Linux in de terminal, direct in je browser, en zet Linux op je eigen computer met WSL: apt, nano, diensten en ssh.',

@@ -4,6 +4,8 @@ sidebar_position: 4
 
 # 5.4 Variabelen in de shell
 
+## Een variabele lezen
+
 <Voorkennis items={[{to: '/docs/terminal/maken', label: 'Tekst schrijven met echo'}]} />
 
 ```bash
@@ -16,7 +18,7 @@ sam
 /home/sam
 ```
 
-`$USER` en `$HOME` zijn **variabelen**: een naam met een waarde, net als in Python. Het dollarteken zegt tegen de shell: zet hier de waarde neer. De shell doet dat vóór `echo` start, dus `echo` krijgt `sam` te zien, niet `$USER`. Daarom kun je een commando met `$USER` aan iedereen geven: het werkt bij iedereen met zijn eigen naam.
+`$USER` en `$HOME` zijn **variabelen**: een naam met een waarde. Het dollarteken zegt tegen de shell: zet hier de waarde neer. De shell doet dat vóór `echo` start, dus `echo` krijgt `sam` te zien, niet `$USER`. Daarom kun je een commando met `$USER` aan iedereen geven: het werkt bij iedereen met zijn eigen naam.
 
 ## Zelf een variabele maken
 
@@ -61,7 +63,15 @@ Wat zet `echo` neer?
 []
 ```
 
-Een variabele die je zo maakt, kent alleen deze shell. Een programma dat je vanuit de shell start, zoals een tweede `bash`, krijgt hem niet mee. Wil je dat wel, gebruik dan `export`:
+Een variabele die je zo maakt, kent alleen deze shell. Een programma dat je vanuit de shell start, zoals een tweede `bash`, krijgt hem niet mee.
+
+</details>
+
+## Omgevingsvariabelen
+
+### Meegeven met export
+
+Een variabele als `NAAM=Sam` blijft in de shell waar je hem maakte. Met `export` gaat hij mee naar elk programma dat je vanuit die shell start, ook naar een tweede `bash`:
 
 ```bash
 export NAAM=Sam
@@ -70,11 +80,9 @@ echo "[$NAAM]"
 exit
 ```
 
-Nu staat er `[Sam]`. Een variabele die meegaat naar elk programma heet een **omgevingsvariabele**. `$USER` en `$HOME` zijn er twee. Met `printenv` zie je ze allemaal, en met `printenv NAAM` één.
+Nu zet `echo` `[Sam]` neer. Een variabele die zo meegaat, heet een **omgevingsvariabele**. `$USER` en `$HOME` zijn er twee. Met `printenv` zie je ze allemaal, en met `printenv NAAM` één.
 
-</details>
-
-## Een .env-bestand \{#env}
+### Een .env-bestand \{#env}
 
 Een programma leest zijn instellingen vaak uit omgevingsvariabelen: een wachtwoord, een adres, of de naam van een site. Typ je die elke keer met `export`, dan vergeet je er een. Daarom staan ze vaak in een bestand `.env`, één per regel, in dezelfde vorm:
 
@@ -82,7 +90,7 @@ Een programma leest zijn instellingen vaak uit omgevingsvariabelen: een wachtwoo
 DOMEIN=gastenboek.voorbeeld.nl
 ```
 
-De shell leest dat bestand niet vanzelf: na `cat .env` is `$DOMEIN` nog steeds leeg. Het programma zelf leest het, Docker Compose bijvoorbeeld. Een `.env` hoort bij één computer, en er staan vaak geheimen in. Daarom zet je hem nooit in git.
+De shell leest dat bestand niet vanzelf: na `cat .env` is `$DOMEIN` nog steeds leeg. Het programma dat de instellingen nodig heeft, leest het zelf. Een `.env` hoort bij één computer, en er staan vaak geheimen in. Daarom zet je hem nooit in git.
 
 ## Opdracht 5.4.a: een begroeting
 
@@ -113,13 +121,15 @@ Klaar met thema 5? Typ in je thuismap `bash controleer.sh 5`. Het script kijkt o
 
 ## Er gaat iets mis
 
-### `NAAM: command not found`
+### Spaties rond het `=` \{#naam-command-not-found}
 
 ```
 NAAM: command not found
 ```
 
 **Oorzaak:** je zette spaties rond het `=`, zoals `NAAM = Sam`. Dan denkt de shell dat `NAAM` een commando is, met `=` en `Sam` als woorden erachter.
+
+Op Ubuntu meldt een hulpprogramma dat een commando niet bestaat. Het zet er geen `bash:` voor, zoals de oefenterminal wel deed. Typte je kleine letters (`naam = Sam`), dan noemt het commando's die erop lijken: `Command 'naam' not found, did you mean:`. Staat er eerst `Could not find command-not-found database`, dan mist het nog zijn lijst; die haal je op in [6.1](site:linux/docs/wsl/apt#sudo-even-beheerder-zijn). Het komt in elk geval door de spaties.
 
 **Oplossing:** typ het zonder spaties: `NAAM=Sam`. Staat er een spatie in de waarde, zet die dan tussen aanhalingstekens: `NAAM="Sam de Vries"`.
 

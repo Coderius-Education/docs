@@ -23,7 +23,7 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { appendFileSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -35,6 +35,8 @@ const {
   binnenWijziging,
   volledigOpNamen,
   blokkenNodig,
+  cursussenMetTabbladen,
+  workspaceAfhankelijkheden,
 } = require('../packages/shared/wijzigingen.js');
 const { alleSiteMappen } = require('../packages/shared/sites.js');
 
@@ -137,7 +139,48 @@ function maakPlan(opties) {
     bestanden = parseDiff(git('diff', '-U0', '--no-color', '--no-renames', '--no-ext-diff', base));
     geraakt = pnpmMappen('--filter', `...[${base}]`);
   }
-  return plan({ bestanden, geraakt, alleMappen, sites, tests, volledig, reden, base });
+  // De cursussen met les-tabbladen: hun schermen meet de job `schermen`.
+  const metTabbladen = cursussenMetTabbladen(sites, (dir) => {
+    const config = join(ROOT, dir, 'docusaurus.config.ts');
+    return existsSync(config) ? readFileSync(config, 'utf8') : null;
+  });
+  // Waar elk van die cursussen van afhangt: een gewijzigd bestand daarin
+  // laat de job `schermen` de hele cursus meten.
+  const pakketten = workspacePakketten(alleMappen);
+  const afhankelijkheden = Object.fromEntries(
+    sites
+      .filter(({ id }) => metTabbladen.includes(id))
+      .map(({ id, dir }) => [id, workspaceAfhankelijkheden(pakketten, dir)]),
+  );
+  return plan({
+    bestanden,
+    geraakt,
+    alleMappen,
+    sites,
+    tests,
+    volledig,
+    reden,
+    base,
+    metTabbladen,
+    afhankelijkheden,
+  });
+}
+
+/** { dir: { naam, deps } } voor elk workspace-package, zoals in site-hash.mjs. */
+function workspacePakketten(mappen) {
+  const uit = {};
+  for (const dir of mappen) {
+    const pkg = JSON.parse(readFileSync(join(ROOT, dir, 'package.json'), 'utf8'));
+    const deps = Object.entries({
+      ...pkg.dependencies,
+      ...pkg.devDependencies,
+      ...pkg.peerDependencies,
+    })
+      .filter(([, versie]) => String(versie).startsWith('workspace:'))
+      .map(([naam]) => naam);
+    uit[dir] = { naam: pkg.name, deps };
+  }
+  return uit;
 }
 
 function outputs(p) {
@@ -150,6 +193,8 @@ function outputs(p) {
     typecheck: p.pakketten.length > 0,
     ...Object.fromEntries(Object.entries(p.runners).map(([n, r]) => [n, r.draaien])),
     blokken: blokkenNodig(p),
+    schermen: JSON.stringify(p.schermen.sites),
+    meten: p.schermen.sites.length > 0,
   };
   return Object.entries(regels).map(([k, v]) => `${k}=${v}`);
 }

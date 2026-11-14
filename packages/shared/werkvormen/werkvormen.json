@@ -107,7 +107,7 @@
     "id": "onderzoeken",
     "label": "Draaien en onderzoeken",
     "doet": "Ze draaien de code en veranderen er telkens één ding aan.",
-    "koppen": ["^Probeer en onderzoek$", "^Test het$"],
+    "koppen": ["^Probeer en onderzoek$", "^Test het$", "^Probeer het hier$"],
     "tips": [
       {
         "slug": "primm",
@@ -140,7 +140,7 @@
     "id": "maken",
     "label": "Zelf maken",
     "doet": "Een vrijere opdracht vanaf een bijna lege pagina.",
-    "koppen": ["^Make$", "^Maak het je eigen$", "^Verder (bouwen|tekenen)$"],
+    "koppen": ["^Make$", "^Maak het je eigen$", "^Verder (bouwen|tekenen)$", "^De challenge$"],
     "laatsteVan": "^Opdracht \\d+",
     "tips": [
       {
@@ -157,13 +157,32 @@
     "icoon": ["M4 13h7v7H4z", "M13 13h7v7h-7z", "M8.5 4h7v7h-7z"]
   },
   {
+    "id": "hints",
+    "label": "Hints",
+    "doet": "Ze openen een hint pas als ze vastlopen; elke hint zegt iets meer dan de vorige.",
+    "koppen": ["^Hints$"],
+    "tips": [
+      {
+        "slug": "hulp-in-stappen",
+        "term": "Hulp in stappen, die je weer weghaalt",
+        "bron": "Wood, Bruner en Ross (1976)"
+      }
+    ],
+    "icoon": [
+      "M9 18h6",
+      "M10 21h4",
+      "M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"
+    ]
+  },
+  {
     "id": "controle",
     "label": "Controleren",
     "doet": "Ze gaan na of ze het doel van de les hebben gehaald.",
     "koppen": [
       "^Controlevraag$",
       "^Wanneer heb je deze stap gehaald\\?$",
-      "^Zo ziet je .+ er nu uit$"
+      "^Zo ziet je .+ er nu uit$",
+      "^Wat je nu ziet$"
     ],
     "tips": [
       {

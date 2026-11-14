@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { type RepoState, addToIgnore, emptyState, runCommand, setFile } from './gitEngine';
+import {
+  type RepoState,
+  addToIgnore,
+  bestandsnaamFout,
+  deleteFile,
+  emptyState,
+  inGitignore,
+  runCommand,
+  schrijfBestand,
+  setFile,
+} from './gitEngine';
 
 // De simulator is het enige stuk van deze site waar een leerling iets kan
 // "doen" in plaats van lezen. Gaat hij stil verkeerd, dan leert de leerling
@@ -135,9 +145,18 @@ describe('foutmeldingen', () => {
   });
 
   it('noemt de commandos die de simulator wel kent', () => {
+    const r = runCommand(draai(START(), 'git init'), 'git pusj');
+    expect(r.ok).toBe(false);
+    expect(r.output).toContain('init, status, add, commit, log, restore en rm');
+  });
+
+  it('een commando dat git wel kent, heet geen "not a git command"', () => {
+    // git status raadt zelf `git rm --cached` aan; de simulator zei dan dat
+    // rm geen git-commando was. Dat is niet waar.
     const r = runCommand(draai(START(), 'git init'), 'git push');
     expect(r.ok).toBe(false);
-    expect(r.output).toContain('init, status, add, commit en log');
+    expect(r.output).not.toMatch(/is not a git command/);
+    expect(r.output).toMatch(/git kent 'push' wel/);
   });
 
   it('git log zonder commits verwijst naar git commit', () => {
@@ -207,19 +226,219 @@ describe('git log', () => {
 
     expect(regels[0]).toContain('(HEAD -> main)');
     expect(regels[0]).toContain(s.commits[1].id);
-    expect(regels[2]).toBe('    twee');
+    expect(regels[1]).toBe('Author: Leerling <leerling@school.nl>');
+    expect(regels[2]).toMatch(/^Date: {3}\w{3} \w{3} \d{1,2} \d\d:\d\d:\d\d \d{4} [+-]\d{4}$/);
+    expect(regels[4]).toBe('    twee');
     expect(uitvoer(s, 'git log').indexOf('twee')).toBeLessThan(
       uitvoer(s, 'git log').indexOf('een'),
     );
   });
 
-  it('geeft elke commit een id van zeven tekens', () => {
-    // Math.random() levert soms een korte hexweergave op; zonder aanvulling
-    // kreeg een commit dan een id van één teken.
+  it('geeft elke commit een id van veertig tekens, en toont er zeven', () => {
+    // Zoals git: git log toont de hele hash, git commit en --oneline zeven.
     for (let i = 0; i < 200; i++) {
-      const s = draai(START(), 'git init', 'git add .', `git commit -m "nummer ${i}"`);
-      expect(s.commits[0].id).toHaveLength(7);
+      const s0 = draai(START(), 'git init', 'git add .');
+      const r = runCommand(s0, `git commit -m "nummer ${i}"`);
+      const id = r.newState.commits[0].id;
+      expect(id).toMatch(/^[0-9a-f]{40}$/);
+      expect(r.output).toBe(
+        [
+          `[main (root-commit) ${id.slice(0, 7)}] nummer ${i}`,
+          ' 1 file changed, 1 insertion(+)',
+          ' create mode 100644 hello.txt',
+        ].join('\n'),
+      );
     }
+  });
+});
+
+describe('de naam van een nieuw bestand', () => {
+  it('zegt wat er mis is, in plaats van niets te doen', () => {
+    expect(bestandsnaamFout('', {})).toMatch(/naam/);
+    expect(bestandsnaamFout('gitignore', {})).toMatch(/\.gitignore/);
+    expect(bestandsnaamFout('map/a.txt', {})).toMatch(/mappen/);
+    expect(bestandsnaamFout('hello.txt', { 'hello.txt': 'x' })).toMatch(/bewerk hello\.txt/);
+    expect(bestandsnaamFout('.gitignore', { 'hello.txt': 'x' })).toBeNull();
+  });
+
+  it('een spatie mag, tekens die in een terminal iets anders doen niet', () => {
+    // Een naam met een aanhalingsteken was aan te maken en daarna met geen
+    // enkel commando te noemen.
+    expect(bestandsnaamFout('mijn bestand.txt', {})).toBeNull();
+    for (const naam of ['a"b.txt', "it's.txt", 'a\\b', '*.txt', 'a;b', '-n'])
+      expect(bestandsnaamFout(naam, {}), naam).not.toBeNull();
+  });
+
+  it('een naam die op .gitignore lijkt, zegt het: git leest alleen .gitignore', () => {
+    // Alleen `gitignore` zonder punt werd opgevangen. Met `.gitignore.txt`
+    // of `.gitingore` gebeurde niets, en zag de leerling alleen dat git
+    // geheim.txt bleef tonen.
+    for (const naam of [
+      '.gitignore.txt',
+      'gitignore.txt',
+      '.gitingore',
+      '.gitignor',
+      '.gitigore',
+      '.Gitignore',
+      '.GITIGNORE',
+      '.gitignores',
+    ])
+      expect(bestandsnaamFout(naam, {}), naam).toMatch(/Bedoel je \.gitignore\?/);
+    for (const naam of ['.gitignore', 'geheim.txt', 'hello.txt', '.github', '.gitkeep', 'git.txt'])
+      expect(bestandsnaamFout(naam, {}), naam).toBeNull();
+  });
+});
+
+describe('een bestand dat weg is', () => {
+  // Met de knop x was een bestand weg, en zei git status daarna "working
+  // tree clean": de verwijdering was niet te zien en niet te committen.
+  it('git status toont het, git add zet het klaar, commit legt het vast', () => {
+    let s = draai(START(), 'git init', 'git add .', 'git commit -m "een"');
+    s = deleteFile(s, 'hello.txt');
+    expect(uitvoer(s, 'git status')).toContain('\tdeleted:    hello.txt');
+    s = draai(s, 'git add hello.txt');
+    expect(s.staged).toEqual({ 'hello.txt': null });
+    const r = runCommand(s, 'git commit -m "weg"');
+    expect(r.output.split('\n').slice(1)).toEqual([
+      ' 1 file changed, 1 deletion(-)',
+      ' delete mode 100644 hello.txt',
+    ]);
+    expect(r.newState.commits[1].tree).toEqual({});
+  });
+
+  it('git add . en git add -A zetten de verwijdering ook klaar', () => {
+    for (const c of ['git add .', 'git add -A', 'git add --all', 'git commit -am "x"']) {
+      let s = draai(START(), 'git init', 'git add .', 'git commit -m "een"');
+      s = deleteFile(s, 'hello.txt');
+      const r = runCommand(s, c);
+      expect(r.output, c).not.toMatch(/pathspec/);
+      expect(r.ok, c).toBe(true);
+      expect(uitvoer(r.newState, 'git status -s'), c).not.toContain(' D hello.txt');
+    }
+  });
+});
+
+describe('restore en rm --cached', () => {
+  const NA_ADD = () => draai(START(), 'git init', 'git add .');
+
+  it('restore --staged . haalt echt alles uit staging', () => {
+    // Het deed niets en meldde succes.
+    let s = draai(NA_ADD(), 'git commit -m "een"');
+    s = setFile(s, 'hello.txt', 'anders\n');
+    s = draai(s, 'git add .', 'git restore --staged .');
+    expect(s.staged).toEqual({});
+  });
+
+  it('restore . zet de werkmap terug', () => {
+    // Het gaf een pathspec-fout.
+    let s = draai(NA_ADD(), 'git commit -m "een"');
+    s = setFile(s, 'hello.txt', 'anders\n');
+    const r = runCommand(s, 'git restore .');
+    expect(r.ok).toBe(true);
+    expect(r.newState.workingDir['hello.txt']).toBe('Hallo wereld.\n');
+  });
+
+  it('restore op een onbekend bestand mislukt', () => {
+    const r = runCommand(draai(NA_ADD(), 'git commit -m "een"'), 'git restore nope.txt');
+    expect(r.ok).toBe(false);
+    expect(r.output).toBe("error: pathspec 'nope.txt' did not match any file(s) known to git");
+  });
+
+  it('restore --staged voor de eerste commit kan niet, rm --cached wel', () => {
+    const s = NA_ADD();
+    const r = runCommand(s, 'git restore --staged hello.txt');
+    expect(r.ok).toBe(false);
+    expect(r.output).toBe("fatal: could not resolve 'HEAD'");
+    expect(r.newState.staged).toEqual(s.staged);
+
+    const rm = runCommand(s, 'git rm --cached hello.txt');
+    expect(rm.output).toBe("rm 'hello.txt'");
+    expect(rm.newState.staged).toEqual({});
+    expect(rm.newState.workingDir).toEqual(s.workingDir);
+  });
+});
+
+describe('.gitignore volgt het bestand', () => {
+  it('een weggegooide .gitignore negeert niets meer', () => {
+    let s = draai(START(), 'git init');
+    s = schrijfBestand(s, 'geheim.txt', 'w\n');
+    s = schrijfBestand(s, '.gitignore', 'geheim.txt\n');
+    expect(uitvoer(s, 'git status')).not.toContain('geheim.txt');
+    s = deleteFile(s, '.gitignore');
+    expect(s.ignored).toEqual([]);
+    expect(uitvoer(s, 'git status')).toContain('\tgeheim.txt');
+  });
+
+  it('git restore .gitignore zet de regels terug', () => {
+    let s = draai(START(), 'git init');
+    s = schrijfBestand(s, '.gitignore', 'geheim.txt\n');
+    s = draai(s, 'git add .', 'git commit -m "een"');
+    s = deleteFile(s, '.gitignore');
+    s = draai(s, 'git restore .gitignore');
+    expect(inGitignore(s, 'geheim.txt')).toBe(true);
+  });
+
+  it('**/, ! en [..] zoals git (echte-git: naast-git.test.ts)', () => {
+    const met = (regels: string) => schrijfBestand(START(), '.gitignore', regels);
+    expect(inGitignore(met('**/geheim.txt'), 'geheim.txt')).toBe(true);
+    expect(inGitignore(met('*.txt\n!hello.txt'), 'hello.txt')).toBe(false);
+    expect(inGitignore(met('*.txt\n!hello.txt'), 'geheim.txt')).toBe(true);
+    expect(inGitignore(met('[gG]eheim.txt'), 'Geheim.txt')).toBe(true);
+    expect(inGitignore(met('geheim.txt/'), 'geheim.txt')).toBe(false);
+  });
+});
+
+describe('de regel zoals een shell hem leest', () => {
+  it('&& voert het volgende commando alleen uit als het vorige lukte', () => {
+    const s = draai(START(), 'git init');
+    const r = runCommand(s, 'git add . && git commit -m "een"');
+    expect(r.ok).toBe(true);
+    expect(r.newState.commits).toHaveLength(1);
+    // Elk commando telt los voor een doel.
+    expect(r.newState.commands.slice(-2)).toEqual(['git add .', 'git commit -m "een"']);
+
+    const mis = runCommand(s, 'git add nope.txt && git commit -m "een"');
+    expect(mis.ok).toBe(false);
+    expect(mis.newState.commits).toHaveLength(0);
+  });
+
+  it('een ; aan het eind voert het commando uit; een && aan het eind wacht, en doet niets', () => {
+    // `git status;` gaf een rode fout. Een regel die op && eindigt, voert
+    // een terminal pas uit als de rest er is: eerst deed de simulator het
+    // eerste deel al.
+    const s = draai(START(), 'git init');
+    const puntkomma = runCommand(s, 'git add . ;');
+    expect(puntkomma.ok).toBe(true);
+    expect(puntkomma.output).toBe('');
+    expect(Object.keys(puntkomma.newState.staged ?? {})).not.toEqual([]);
+    const open = runCommand(s, 'git add . &&');
+    expect(open.ok).toBe(false);
+    expect(open.output).toMatch(/^hint: na && hoort nog een commando/);
+    expect(open.newState.staged).toEqual({});
+  });
+
+  it('een naam met een spatie tussen aanhalingstekens', () => {
+    // Zo'n naam kon je aanmaken, maar met geen enkel commando gebruiken.
+    const s = draai(emptyState({ 'mijn bestand.txt': 'a\n' }), 'git init');
+    expect(Object.keys(draai(s, 'git add "mijn bestand.txt"').staged ?? {})).toEqual([
+      'mijn bestand.txt',
+    ]);
+    expect(Object.keys(draai(s, 'git add mijn\\ bestand.txt').staged ?? {})).toEqual([
+      'mijn bestand.txt',
+    ]);
+    const zonder = runCommand(s, 'git add mijn bestand.txt');
+    expect(zonder.ok).toBe(false);
+    expect(zonder.output).toContain('git add "mijn bestand.txt"');
+  });
+
+  it('zegt het als een aanhalingsteken openstaat of iets geen git is', () => {
+    const s = draai(START(), 'git init', 'git add .');
+    const open = runCommand(s, 'git commit -m "een');
+    expect(open.ok).toBe(false);
+    expect(open.newState.commits).toHaveLength(0);
+    expect(open.output).toMatch(/^hint: /);
+    expect(runCommand(s, 'git log | head').output).toMatch(/^hint: .*\|/);
+    expect(runCommand(s, 'gitx status').output).toMatch(/^gitx: command not found/);
   });
 });
 

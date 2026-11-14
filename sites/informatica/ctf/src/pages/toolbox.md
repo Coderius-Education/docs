@@ -48,6 +48,11 @@ Simpele tool specifiek voor Base64 decodering. Plak de gecodeerde tekst en krijg
 
 Specifiek voor ROT13 decodering. Werkt ook voor andere rotaties (ROT1 t/m ROT25).
 
+### Code leesbaar maken
+[deobfuscate.io](https://deobfuscate.io/) en [beautifier.io](https://beautifier.io/)
+
+Zetten onleesbaar gemaakte JavaScript om naar code die je weer kunt lezen.
+
 ### IP Geolocatie
 [iplocation.net](https://www.iplocation.net/)
 

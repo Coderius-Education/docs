@@ -14,8 +14,17 @@ import {
 } from 'react';
 import { WerkvormIcoon } from '../Werkvorm/Icoon';
 import { Vergroot } from './Vergroot';
-import { DoelContext, OpenContext, PaneelContext, type Stap, useInLesTab } from './paneel';
+import {
+  DoelContext,
+  LES_TAB,
+  LES_VERDER,
+  OpenContext,
+  PaneelContext,
+  type Stap,
+  useInLesTab,
+} from './paneel';
 import { pasCode } from './pasCode';
+import { schuifInRij } from './schuifRij';
 import { verdeelSpeling } from './speling';
 import styles from './styles.module.css';
 
@@ -50,7 +59,7 @@ type Props = {
 /** Tabbladen (per `##`) of stappen binnen een tabblad (per `###`). */
 type Niveau = 'tab' | 'stap';
 const DATA = {
-  tab: { paneel: 'data-les-tab', knop: 'data-tab', sleutel: 'lesTab' },
+  tab: { paneel: LES_TAB, knop: 'data-tab', sleutel: 'lesTab' },
   stap: { paneel: 'data-les-stap', knop: 'data-stap', sleutel: 'lesStap' },
 } as const;
 
@@ -64,6 +73,7 @@ const ReeksContext = createContext<((stap: Stap) => void) | null>(null);
 // dan gaat de knop Volgende daarheen, en pas daarna naar het volgende tabblad
 // (PaneelContext, in paneel.ts).
 export { useInLesTab };
+export { VOLGENDE_KNOP } from './paneel';
 
 /** Hoger dan dit staat een doel onder de navbar (60 pixels, met wat lucht). */
 const ONDER_NAVBAR = 70;
@@ -92,8 +102,11 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
   // het paneel, of null.
   const [scrolNaar, setScrolNaar] = useState<{ id: string } | null>(null);
   const wortel = useRef<HTMLDivElement>(null);
+  const lijst = useRef<HTMLDivElement>(null);
   const locatie = useLocation();
   const meldStap = useContext(PaneelContext);
+  // Of de rij te zien is: een rij stappen staat in een tabblad dat dicht kan zijn.
+  const inBeeld = useContext(OpenContext);
 
   // Het adres volgen. Het locatie-object is de afhankelijkheid, niet alleen
   // de hash: een tweede klik op dezelfde link moet ook werken.
@@ -146,12 +159,34 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
       // paneel weer bovenaan.
       const boven = el.closest<HTMLElement>('[data-les-tabs]') ?? el;
       if (boven.getBoundingClientRect().top < 0) boven.scrollIntoView();
-      const tab = el.querySelector<HTMLElement>(`[${data.knop}="${CSS.escape(id)}"]`);
-      tab?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-      if (focus) tab?.focus();
+      // De knop zelf komt in beeld na het renderen (hieronder), alleen
+      // zijwaarts in zijn rij: de pagina blijft staan.
+      if (focus)
+        el.querySelector<HTMLElement>(`[${data.knop}="${CSS.escape(id)}"]`)?.focus({
+          preventScroll: true,
+        });
     },
     [data],
   );
+
+  // De knop die open staat, in beeld in een rij die zijwaarts schuift (een
+  // telefoon, of de smalle kolom naast een oefenveld): na een link, de knop
+  // Volgende, het laden met een stap in het adres, en weer na het openen van
+  // het tabblad (een rij die niet te zien was, begint links). Ook als de rij
+  // smaller wordt: het oefenveld komt pas na het hydrateren naast de les.
+  useEffect(() => {
+    const rij = lijst.current;
+    if (!rij || !inBeeld) return;
+    const zet = () => {
+      const knop = rij.querySelector<HTMLElement>(`[${data.knop}="${CSS.escape(actief)}"]`);
+      if (knop) schuifInRij(rij, knop);
+    };
+    zet();
+    if (typeof ResizeObserver === 'undefined') return;
+    const waarnemer = new ResizeObserver(zet);
+    waarnemer.observe(rij);
+    return () => waarnemer.disconnect();
+  }, [actief, inBeeld, data]);
 
   // Wat er op het scherm over is, gaat naar het codevak of het plaatje van
   // het open paneel (speling.ts). Na elke wissel van tabblad, en na alles wat
@@ -168,10 +203,19 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
       beeld = window.requestAnimationFrame(() => {
         pasCode(el);
         verdeelSpeling(el);
+        // De speling kan een codevak lager maken, en dan schuift het
+        // verticaal: een klassieke schuifbalk (Windows) neemt breedte, en de
+        // langste regel viel 10 px af (robotica, tof). Dus de letters nog een
+        // keer, nu met de schuifbalk erbij.
+        pasCode(el);
       });
     };
     meet();
     el.addEventListener('click', meet);
+    // Een uitklapblok is op het moment van de klik nog dicht: de code erin
+    // heeft dan geen breedte, en bleef op volle grootte afgesneden staan.
+    // `toggle` komt als het blok open is (en borrelt niet: vangen).
+    el.addEventListener('toggle', meet, true);
     el.addEventListener('load', meet, true);
     window.addEventListener('resize', meet);
     // Het lettertype van de code laadt pas als er code in beeld komt, en is
@@ -181,6 +225,7 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     return () => {
       window.cancelAnimationFrame(beeld);
       el.removeEventListener('click', meet);
+      el.removeEventListener('toggle', meet, true);
       el.removeEventListener('load', meet, true);
       window.removeEventListener('resize', meet);
       document.fonts?.removeEventListener?.('loadingdone', meet);
@@ -234,6 +279,7 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
         </div>
       )}
       <div
+        ref={lijst}
         role="tablist"
         aria-label={niveau === 'tab' ? 'Onderdelen van deze les' : 'Stappen in dit onderdeel'}
         className={niveau === 'tab' ? styles.tablist : styles.staplist}
@@ -287,10 +333,18 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
           ),
         )}
       </RijContext.Provider>
+      {niveau === 'tab' && (
+        // De kolom naast de tabbladen: een oefenveld dat bij de hele les
+        // hoort (<LesNaast>, de oefenterminal van Linux) zet zich hier neer.
+        // Leeg neemt hij geen ruimte in.
+        <div className={styles.naast} data-les-naast="" />
+      )}
       {niveau === 'tab' && <Vergroot wortel={wortel} opnieuw={actief} />}
     </div>
   );
 }
+
+export { LesNaast, LesNaastPlek, useBreed } from './Naast';
 
 export default function LesTabs({ children }: { children?: ReactNode }): ReactNode {
   return <Rij niveau="tab">{children}</Rij>;
@@ -324,7 +378,7 @@ export function LesTab({
     <section
       role="tabpanel"
       id={`paneel-${id}`}
-      data-les-tab={id}
+      {...{ [LES_TAB]: id }}
       aria-labelledby={`tab-${id}`}
       // De klasse markdown: Infima maakt koppen en alinea's op met
       // `.markdown > …`, en in een paneel zijn ze geen kind meer van de les.
@@ -340,13 +394,14 @@ export function LesTab({
         </ReeksContext.Provider>
       </PaneelContext.Provider>
       {rij && volgende && (
-        <p className={styles.verder} data-les-verder="">
+        <p className={styles.verder} {...{ [LES_VERDER]: '' }}>
           <button
             type="button"
             className="button button--primary button--sm"
             onClick={() => (eerst ? eerst.ga() : rij.volgende(id))}
           >
-            Volgende: {volgende}
+            {/* Een tabblad dat "Volgende tutorial" heet: niet "Volgende: Volgende tutorial". */}
+            {/^Volgende\b/.test(volgende) ? volgende : `Volgende: ${volgende}`}
           </button>
         </p>
       )}

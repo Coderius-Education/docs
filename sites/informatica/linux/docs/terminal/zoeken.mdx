@@ -6,6 +6,8 @@ import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
 # 3.1 Zoeken en doorgeven
 
+## Zoeken met grep
+
 <Voorkennis items={[{to: '/docs/terminal/bestanden-lezen', label: 'Bestanden lezen met cat, head en tail'}]} />
 
 Met `grep` zoek je in een bestand naar een woord. Je krijgt alleen de regels te zien waar het in staat:
@@ -96,7 +98,7 @@ Twee bezoeken van dezelfde computer: eerst haalt hij het formulier op (`GET`), d
 **Oplossing:** probeer het met `-i`, of zoek op een kleiner stuk van het woord.
 
 ```bash
-# niets: in het bestand staat Failed met een hoofdletter
+# niets: er staat Failed, met een hoofdletter
 grep failed /var/log/auth.log
 
 # drie regels

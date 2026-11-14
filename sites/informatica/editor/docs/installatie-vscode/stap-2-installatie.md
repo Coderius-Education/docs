@@ -5,9 +5,9 @@ title: "Stap 2: installatie"
 
 # Stap 2: installatie
 
-## Windows
+Dit zijn de stappen voor Windows. Werk je op een Mac of op Linux, klik dan onder de lijst op jouw systeem.
 
-De installatie spreekt de taal van je Windows. Hieronder staan de Engelse knoppen, met de Nederlandse ernaast.
+De installatie spreekt de taal van je Windows. In de lijst staan de Engelse knoppen, met de Nederlandse ernaast.
 
 1. Open het gedownloade `.exe`-bestand
 2. Accepteer de licentieovereenkomst en klik op **Next** (**Volgende**)
@@ -18,16 +18,22 @@ De installatie spreekt de taal van je Windows. Hieronder staan de Engelse knoppe
 4. Klik op **Install** (**Installeren**) en wacht tot de installatie klaar is
 5. Klik op **Finish** (**Voltooien**). VS Code opent vanzelf.
 
-## macOS
+<details>
+<summary>Op een Mac</summary>
 
 1. Dubbelklik op het gedownloade `.zip`-bestand. Er verschijnt een bestand **Visual Studio Code** (met het app-icoon) in je Downloads-map.
 2. Sleep dat bestand naar je map **Applications** (**Programma's**). Laat je het in Downloads staan, dan werken updates niet goed.
 3. Open VS Code vanuit Applications. De eerste keer vraagt macOS of je een app van internet wilt openen: klik op **Open**.
 
-## Linux
+</details>
+
+<details>
+<summary>Op Linux</summary>
 
 Kies op de downloadpagina het pakket voor jouw distributie: `.deb` voor Ubuntu en Debian, `.rpm` voor Fedora. Dubbelklik op het gedownloade bestand en installeer het via de softwarewinkel van je systeem, of typ in een terminal (Ubuntu):
 
 ```bash
 sudo apt install ./code_*.deb
 ```
+
+</details>

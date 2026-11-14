@@ -1,21 +1,33 @@
 ---
 sidebar_position: 6
 title: "Er gaat iets mis"
+# Hier zoek je je melding: geen tabbladen, want zoeken vindt niets in een tabblad dat dicht is.
+les_tabs: false
 ---
 
 # Er gaat iets mis
 
-## Ik klik op Sync Changes en er gebeurt niets
+## Er staat geen knop Sync Changes
 
-**Oorzaak:** er is niets te synchroniseren. Geen nieuwe commits online, en geen van jou die nog moeten.
+**Oorzaak:** **Sync Changes** staat er alleen als VS Code weet dat je branch voor- of achterloopt op GitHub. Heb je net een commit op GitHub gemaakt, dan weet VS Code dat nog niet.
 
-**Oplossing:** niets doen — dit is de normale uitkomst. Wil je zeker weten dat de verbinding werkt, kijk dan op github.com of de laatste commit die je ziet dezelfde is als bovenin je **Source Control Graph**.
+**Oplossing:** klik op de **`...`** bovenaan het Source Control-paneel en kies **Pull**. Staat er online niets nieuws, dan gebeurt er niets zichtbaars, en dat is de normale uitkomst.
+
+Meer uitleg: [Stap 1: een wijziging van GitHub binnenhalen](site:editor/git/pull-clone/stap-1-sync).
 
 ## `Please commit your changes or stash them before you merge`
 
 **Oorzaak:** je hebt wijzigingen in je werkmap die nog niet gecommit zijn, en de commits die binnenkomen raken dezelfde bestanden. Git wil je werk niet overschrijven.
 
-**Oplossing:** commit je eigen wijziging eerst, en pull daarna opnieuw. Ben je die wijziging niet kwijt willen raken maar ook niet klaar om te committen? Commit hem dan toch — je kunt altijd nog een tweede commit maken die hem afmaakt.
+**Oplossing:** commit je eigen wijziging eerst, en pull daarna opnieuw. Is je wijziging nog niet af, commit hem dan toch: je kunt altijd nog een tweede commit maken die hem afmaakt.
+
+## `destination path 'git-oefenen' already exists and is not an empty directory`
+
+**Oorzaak:** in de map die je bij **Git: Clone** koos, staat al een map `git-oefenen`: je eigen project uit de vorige tutorials. Git zet een kloon in een nieuwe map met de naam van de repository, en overschrijft geen map die al bestaat.
+
+**Oplossing:** kloon opnieuw en kies een andere map, bijvoorbeeld een nieuwe map `kloon` in je Documenten. Je eigen `git-oefenen` blijft dan staan.
+
+Meer uitleg: [Stap 3: een bestaand project klonen](site:editor/git/pull-clone/stap-3-clone).
 
 ## De gekloonde map is leeg
 

@@ -18,9 +18,9 @@ Die laatste knop staat bovenaan met een wolk- of pijl-icoon, vaak met een cijfer
 
 ## Wat je nu ziet
 
-De knop **Sync Changes** toont geen cijfer meer: alles staat online. Ververs je github.com-pagina en je nieuwe commit staat erop, met jouw boodschap ernaast.
+De knop **Sync Changes** is weg: alles staat online en er valt niets te synchroniseren. Ververs je github.com-pagina en je nieuwe commit staat erop, met jouw boodschap ernaast.
 
-**Sync Changes** doet eigenlijk twee dingen:
+**Sync Changes** doet twee dingen:
 
 - `git pull` — eventuele nieuwe commits van GitHub ophalen
 - `git push` — jouw nieuwe commits uploaden

@@ -44,3 +44,19 @@ describe('elke gebruikte CSS-klasse bestaat', () => {
     expect(ontbreekt).toEqual([]);
   });
 });
+
+describe('de uitvoer van InlineEditor in een les-tabblad', () => {
+  // Ctf, Plakken: de uitvoer groeide met elke regel tot 16rem, en het tabblad
+  // Probeer het hier paste na negen regels niet meer op het scherm. In een
+  // tabblad heeft de uitvoer een vaste hoogte en schuift hij (de console
+  // heeft overflow-y: auto). Of het past, meet scripts/meet-les-tabs.mjs.
+  it('heeft in een tabblad een vaste hoogte', () => {
+    const bron = readFileSync(join(MAP, 'InlineEditor/InlineEditorImpl.tsx'), 'utf8');
+    const css = readFileSync(join(MAP, 'InlineEditor/styles.module.css'), 'utf8');
+    expect(bron).toMatch(/const inTab = useInLesTab\(\);/);
+    // Uit paneel: de index van LesTabs trekt zijn opmaak mee.
+    expect(bron).toContain("from '@coderius/shared/components/LesTabs/paneel'");
+    expect(bron).toMatch(/inTab && !Preview && styles\.outputVast/);
+    expect(css).toMatch(/\.outputVast \{\s*height: [\d.]+rem;\s*min-height: 0;/);
+  });
+});

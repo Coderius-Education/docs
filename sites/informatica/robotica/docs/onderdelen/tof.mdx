@@ -54,7 +54,10 @@ Op een nieuwe TOF zit vaak een doorzichtig plastic stickertje. Trek dat er voorz
 from leaphymicropython.sensors.tof import TimeOfFlight
 from time import sleep
 
-tof = TimeOfFlight(sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+tof = TimeOfFlight(
+    sda_gpio_pin="SDA",
+    scl_gpio_pin="SCL",
+)
 
 while True:
     afstand = tof.get_distance()
@@ -84,7 +87,10 @@ Soms staat er niets voor de sensor, of zit een object buiten bereik. Dan krijg j
 from leaphymicropython.sensors.tof import TimeOfFlight
 from time import sleep
 
-tof = TimeOfFlight(sda_gpio_pin="SDA", scl_gpio_pin="SCL")
+tof = TimeOfFlight(
+    sda_gpio_pin="SDA",
+    scl_gpio_pin="SCL",
+)
 
 while True:
     afstand = tof.get_distance()

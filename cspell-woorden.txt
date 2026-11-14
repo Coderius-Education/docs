@@ -226,6 +226,7 @@ meeschalen
 meeschuift
 meeschuiven
 meescrollende
+meegetypt
 meescrollt
 meetpen
 meetypen

@@ -14,4 +14,4 @@ Zweef met je muis over `hello.txt` in de **Changes**-lijst. Er verschijnen drie 
 
 ## Wat je nu ziet
 
-Er staan twee koppen in het paneel: **Staged Changes** met `hello.txt` erin, en **Changes** is verdwenen omdat er niets meer in staat. De letter naast het bestand is veranderd van **U** naar **A** (Added).
+In het paneel staat de kop **Staged Changes** met `hello.txt` erin. De kop **Changes** is verdwenen, omdat er niets meer in staat. De letter naast het bestand is veranderd van **U** naar **A** (Added).

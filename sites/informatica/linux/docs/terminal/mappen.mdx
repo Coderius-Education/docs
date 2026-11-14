@@ -6,9 +6,11 @@ import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
 # 1.2 Door mappen lopen
 
+## De boom
+
 <Voorkennis items={[{to: '/docs/terminal/eerste-commando', label: 'De prompt, pwd en ls'}]} />
 
-Alle bestanden op een Linux-computer hangen aan één boom. Bovenaan staat de map `/`, de **root**. Daaronder hangt de rest:
+Alle bestanden op een Linux-computer hangen aan één boom. Bovenaan staat de map `/`, de **root**. Daaronder hangt de rest. Dit is een stuk ervan:
 
 ```
 /
@@ -16,8 +18,8 @@ Alle bestanden op een Linux-computer hangen aan één boom. Bovenaan staat de ma
 ├── home
 │   └── student
 │       └── notities.txt
-├── tmp
 └── var
+    ├── log
     └── www
 ```
 
@@ -25,7 +27,7 @@ Windows heeft voor elke schijf een eigen begin (`C:\`, `D:\`). Linux heeft er ma
 
 ## Van map wisselen met cd
 
-Met `cd` (*change directory*) ga je naar een andere map. Probeer het in de terminal hieronder:
+Met `cd` (*change directory*) ga je naar een andere map. Probeer het in de oefenterminal:
 
 ```bash
 cd /var/www
@@ -53,9 +55,13 @@ Eerst in `/var`, daarna in `/`. Twee puntjes betekent "de map erboven". Hoger da
 
 ## Absolute en relatieve paden
 
+### Waar een pad begint
+
 Een pad dat met `/` begint, is **absoluut**: het begint bij de root, waar je ook staat. `cd /home/student` brengt je altijd naar je thuismap.
 
 Een pad zonder `/` vooraan is **relatief**: het begint in de map waar je nu staat. Sta je in `/var`, dan brengt `cd www` je naar `/var/www`. Sta je ergens anders, dan bestaat `www` daar meestal niet.
+
+### Drie korte namen
 
 Drie korte namen kom je steeds tegen:
 
@@ -125,9 +131,11 @@ ls
 cd html
 ls
 ls config
+cd config
+pwd
 ```
 
-Het bestand is `/var/www/html/config/instellingen.conf`.
+`pwd` geeft `/var/www/html/config`, dus het bestand is `/var/www/html/config/instellingen.conf`.
 
 </details>
 
@@ -144,7 +152,7 @@ bash: cd: www: No such file or directory
 **Oplossing:** kijk met `pwd` waar je staat en met `ls` wat er is. Twijfel je, gebruik dan het absolute pad.
 
 ```bash
-# FOUT: je staat in /home/student, daar is geen www
+# FOUT: in /home/student is geen www
 cd www
 
 # GOED

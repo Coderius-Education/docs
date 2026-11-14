@@ -8,19 +8,19 @@ import GitSimulator from '@site/src/components/GitSimulator';
 
 # Stap 4: een snapshot maken met `git commit`
 
-Een **commit** is een opgeslagen snapshot. Je geeft elke commit een korte boodschap die uitlegt wat je veranderd hebt.
-
-`hello.txt` staat hieronder al klaar in staging, dus je kunt meteen committen.
+Een **commit** is een opgeslagen snapshot. Je geeft elke commit een korte boodschap die uitlegt wat je veranderd hebt. De boodschap staat tussen aanhalingstekens: zonder leest git het tweede woord als de naam van een bestand.
 
 ```bash
 git commit -m "eerste versie"
 ```
 
-Na de commit:
+## Probeer het zelf
+
+`hello.txt` staat in de simulator al klaar in staging. Maak de commit, en typ daarna `git status`. Je ziet dan drie dingen:
 
 - staging is weer leeg
-- in de repository-kolom verschijnt een nieuwe commit
-- `git status` antwoordt `nothing to commit, working tree clean` — niets te committen, je werkmap is schoon
+- in de kolom Repository staat een commit
+- `git status` antwoordt `nothing to commit, working tree clean`: niets te committen, je werkmap is schoon
 
 <GitSimulator scenarioId="stap-4-commit" />
 

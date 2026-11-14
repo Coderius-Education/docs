@@ -3,7 +3,14 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { emptyState, runCommand } from '../components/GitSimulator/gitEngine';
+import {
+  COMMANDOS_VAN_GIT,
+  COMMANDOS_VAN_SIMULATOR,
+  NIEUWER_DAN_243,
+  emptyState,
+  runCommand,
+  schrijfBestand,
+} from '../components/GitSimulator/gitEngine';
 
 // De simulator belooft dat je straks in VS Code hetzelfde ziet. Deze test legt
 // die belofte naast de echte git die op deze machine staat. Zonder dit kon de
@@ -74,6 +81,21 @@ function versie(): [number, number] {
 describe('git staat op deze machine', () => {
   it('is te vinden en noemt zijn versie', () => {
     expect(git(['--version'])).toMatch(/^git version \d+\.\d+/);
+  });
+
+  it('is in CI de vastgezette versie', () => {
+    // CI bouwt een eigen git van GIT_VERSIE (build.yml, job test): die van
+    // de runner veranderde zonder aankondiging, en dan werden PR's rood die
+    // niets met de simulator te maken hadden. Staat de variabele er, dan
+    // moet het die git zijn, en niet stil die van de runner. In CI moet hij
+    // er staan: viel hij weg uit build.yml, dan slaagde deze test stil met
+    // elke git (ci-setup.test.ts eist hem ook in de job test).
+    const vast = process.env.GIT_VERSIE;
+    if (process.env.CI) {
+      expect(vast, 'GIT_VERSIE in CI (build.yml, job test)').toMatch(/^\d+\.\d+\.\d+$/);
+    }
+    if (!vast) return;
+    expect(git(['--version']).trim()).toBe(`git version ${vast}`);
   });
 
   it('is nieuw genoeg voor de uitvoer die de simulator nabootst', () => {
@@ -220,6 +242,207 @@ describe('de simulator drukt af wat git afdrukt', () => {
     state = { ...state, workingDir: { ...state.workingDir, 'nieuw.txt': 'iets\n' } };
 
     expect(runCommand(state, 'git status').output.trimEnd()).toBe(echt);
+  });
+
+  describe('waar de simulator eerst afweek', () => {
+    // Uit de doorloop, elk naast git gelegd in een eigen map.
+    let map: string;
+    beforeAll(() => {
+      map = mkdtempSync(join(tmpdir(), 'git-afwijking-'));
+      git(['init'], { in: map });
+    });
+    afterAll(() => rmSync(map, { recursive: true, force: true }));
+
+    it('git status noemt bestanden op alfabet, niet in de volgorde van aanmaken', () => {
+      const namen = ['zebra.txt', 'appel.txt', 'Mango.txt'];
+      for (const naam of namen) writeFileSync(join(map, naam), 'x\n');
+      const echt = git(['status'], { in: map }).trimEnd();
+      const state = runCommand(
+        emptyState(Object.fromEntries(namen.map((n) => [n, 'x\n']))),
+        'git init',
+      ).newState;
+      expect(runCommand(state, 'git status').output.trimEnd()).toBe(echt);
+    });
+
+    it('een boodschap zonder aanhalingstekens: het tweede woord is een bestand', () => {
+      git(['add', 'appel.txt'], { in: map });
+      const echt = gitFaalt(['commit', '-m', 'eerste', 'versie'], map).trimEnd();
+      let state = runCommand(emptyState({ 'appel.txt': 'x\n' }), 'git init').newState;
+      state = runCommand(state, 'git add appel.txt').newState;
+      const r = runCommand(state, 'git commit -m eerste versie');
+      expect(r.ok).toBe(false);
+      expect(r.output.split('\n')[0]).toBe(echt);
+      expect(r.newState.commits).toHaveLength(0);
+    });
+
+    it('git log --oneline: per commit de korte id en de boodschap', () => {
+      git(['commit', '-m', 'eerste versie'], { in: map });
+      writeFileSync(join(map, 'appel.txt'), 'y\n');
+      git(['commit', '-am', 'tweede'], { in: map });
+      const echt = git(['log', '--oneline', '--decorate'], { in: map }).trimEnd().split('\n');
+      let state = runCommand(emptyState({ 'appel.txt': 'x\n' }), 'git init').newState;
+      for (const c of ['git add appel.txt', 'git commit -m "eerste versie"'])
+        state = runCommand(state, c).newState;
+      state = { ...state, workingDir: { 'appel.txt': 'y\n' } };
+      for (const c of ['git add .', 'git commit -m "tweede"'])
+        state = runCommand(state, c).newState;
+      const nagemaakt = runCommand(state, 'git log --oneline').output.split('\n');
+      // De id's verschillen; de vorm niet.
+      const vorm = (r: string) => r.replace(/^[0-9a-f]{7}/, 'ID');
+      expect(nagemaakt.map(vorm)).toEqual(echt.map(vorm));
+      expect(nagemaakt[0]).toMatch(/^[0-9a-f]{7} \(HEAD -> main\) tweede$/);
+    });
+
+    it('een optie die git log niet kent', () => {
+      const echt = gitFaalt(['log', '--foo'], map).trimEnd();
+      const state = runCommand(emptyState({}), 'git init').newState;
+      expect(runCommand(state, 'git log --foo').output.split('\n')[0]).toBe(echt);
+    });
+
+    it('twee spaties tellen als één: het commando telt voor het doel', () => {
+      const state = runCommand(emptyState({}), 'git init').newState;
+      expect(runCommand(state, 'git  status').newState.commands).toContain('git status');
+    });
+    // Uit de tweede review: wat git wel doet en de simulator niet.
+    describe('meer gevallen naast git', () => {
+      let m: string;
+      beforeAll(() => {
+        m = mkdtempSync(join(tmpdir(), 'git-meer-'));
+        git(['init'], { in: m });
+        writeFileSync(join(m, 'hello.txt'), 'a\n');
+        git(['add', 'hello.txt'], { in: m });
+      });
+      afterAll(() => rmSync(m, { recursive: true, force: true }));
+      const start = () => {
+        let st = runCommand(emptyState({ 'hello.txt': 'a\n' }), 'git init').newState;
+        st = runCommand(st, 'git add hello.txt').newState;
+        return st;
+      };
+
+      it('een lege boodschap breekt af', () => {
+        const echt = gitFaalt(['commit', '-m', ''], m).trimEnd();
+        const r = runCommand(start(), 'git commit -m ""');
+        expect(r.output).toBe(echt);
+        expect(r.newState.commits).toHaveLength(0);
+      });
+
+      it('-m"…" zonder spatie is ook een boodschap', () => {
+        const r = runCommand(start(), 'git commit -m"eerste versie"');
+        expect(r.ok).toBe(true);
+        expect(r.newState.commits[0].message).toBe('eerste versie');
+      });
+
+      it('git log met de naam, de datum en de hele hash', () => {
+        git(['commit', '-m', 'eerste versie'], { in: m });
+        const echt = git(['log'], { in: m }).trimEnd().split('\n');
+        const st = runCommand(start(), 'git commit -m "eerste versie"').newState;
+        const nagemaakt = runCommand(st, 'git log').output.split('\n');
+        // De hash en de tijd verschillen; de vorm niet. Git zet (HEAD -> main)
+        // alleen op een terminal, niet als je zijn uitvoer opvangt.
+        const vorm = (r: string) =>
+          r
+            .replace(/^commit [0-9a-f]{40}( \(HEAD -> main\))?$/, 'commit HASH')
+            .replace(/^Date: {3}.+$/, 'Date: DATUM');
+        expect(nagemaakt.map(vorm)).toEqual(echt.map(vorm));
+        expect(nagemaakt[2]).toMatch(
+          /^Date: {3}\w{3} \w{3} \d{1,2} \d\d:\d\d:\d\d \d{4} [+-]\d{4}$/,
+        );
+      });
+
+      it('git commit -am zet een gewijzigd bestand eerst klaar', () => {
+        writeFileSync(join(m, 'hello.txt'), 'a\nb\n');
+        git(['commit', '-am', 'tweede'], { in: m });
+        const echt = git(['status'], { in: m }).trimEnd();
+        let st = runCommand(start(), 'git commit -m "eerste versie"').newState;
+        st = { ...st, workingDir: { 'hello.txt': 'a\nb\n' } };
+        const r = runCommand(st, 'git commit -am "tweede"');
+        expect(r.ok).toBe(true);
+        expect(runCommand(r.newState, 'git status').output.trimEnd()).toBe(echt);
+      });
+
+      it('git log -1 en -n 2 tonen de nieuwste commits', () => {
+        const echt = git(['log', '--oneline', '-1'], { in: m }).trimEnd().split('\n');
+        let st = runCommand(start(), 'git commit -m "eerste versie"').newState;
+        st = { ...st, workingDir: { 'hello.txt': 'a\nb\n' } };
+        st = runCommand(st, 'git commit -am "tweede"').newState;
+        const vorm = (r: string) => r.replace(/^[0-9a-f]{7}( \(HEAD -> main\))?/, 'ID');
+        expect(runCommand(st, 'git log --oneline -1').output.split('\n').map(vorm)).toEqual(
+          echt.map(vorm),
+        );
+        expect(runCommand(st, 'git log --oneline -n 2').output.split('\n')).toHaveLength(2);
+        // Een optie die git kent en de simulator niet: geen verzonnen fatal.
+        expect(runCommand(st, 'git log --graph').output).not.toMatch(/fatal/);
+      });
+
+      it('git restore --staged haalt een nieuw bestand uit staging', () => {
+        writeFileSync(join(m, 'nieuw.txt'), 'n\n');
+        git(['add', 'nieuw.txt'], { in: m });
+        git(['restore', '--staged', 'nieuw.txt'], { in: m });
+        const echt = git(['status'], { in: m }).trimEnd();
+        let st = runCommand(start(), 'git commit -m "eerste versie"').newState;
+        st = { ...st, workingDir: { 'hello.txt': 'a\nb\n', 'nieuw.txt': 'n\n' } };
+        st = runCommand(st, 'git commit -am "tweede"').newState;
+        st = runCommand(st, 'git add nieuw.txt').newState;
+        const r = runCommand(st, 'git restore --staged nieuw.txt');
+        expect(r.ok).toBe(true);
+        expect(runCommand(r.newState, 'git status').output.trimEnd()).toBe(echt);
+        rmSync(join(m, 'nieuw.txt'));
+      });
+
+      it('.gitignore met een patroon: *.txt en /naam', () => {
+        for (const regel of ['*.txt', '/geheim.txt']) {
+          writeFileSync(join(m, 'geheim.txt'), 'w\n');
+          writeFileSync(join(m, '.gitignore'), `${regel}\n`);
+          const echt = git(['status', '--short'], { in: m });
+          let st = runCommand(emptyState({ 'hello.txt': 'a\n' }), 'git init').newState;
+          st = schrijfBestand(st, 'geheim.txt', 'w\n');
+          st = schrijfBestand(st, '.gitignore', `${regel}\n`);
+          const status = runCommand(st, 'git status').output;
+          expect(echt, regel).not.toContain('geheim.txt');
+          expect(status, regel).not.toContain('geheim.txt');
+        }
+        rmSync(join(m, '.gitignore'));
+        rmSync(join(m, 'geheim.txt'));
+      });
+
+      it('"is not a git command" alleen voor wat git echt niet kent, in beide richtingen', () => {
+        // Alleen de commando's: na "User-facing …" noemt `git help -a`
+        // handleidingen (attributes, cli) en wat er op deze machine bij
+        // geïnstalleerd is (lfs).
+        const help = git(['help', '-a'], { in: m });
+        const eind = help.search(/^(User-facing|External commands|Command aliases)/m);
+        const kent = (help.slice(0, eind === -1 ? undefined : eind).match(/^ {3}\S+/gm) ?? []).map(
+          (r) => r.trim(),
+        );
+        expect(kent.length).toBeGreaterThan(100);
+
+        // Van git naar de simulator: elk commando van git staat in een van de
+        // lijsten, en geen ervan heet daar "not a git command". Eerst zeiden
+        // `git ls-files`, `git check-ignore` en `git clean` dat wel.
+        const ontbreekt = kent.filter(
+          (c) => !COMMANDOS_VAN_GIT.includes(c) && !COMMANDOS_VAN_SIMULATOR.includes(c),
+        );
+        expect(ontbreekt, 'zet deze in COMMANDOS_VAN_GIT in gitEngine.ts').toEqual([]);
+        for (const cmd of kent)
+          expect(runCommand(start(), `git ${cmd}`).output, cmd).not.toMatch(/not a git command/);
+
+        // Van de simulator naar git: wat hij een commando van git noemt, is
+        // er een. `stage` staat niet in `git help -a` maar bestaat wel; een
+        // commando van na 2.43 bestaat pas vanaf zijn versie.
+        const [groot, klein] = versie();
+        for (const cmd of [...COMMANDOS_VAN_GIT, ...COMMANDOS_VAN_SIMULATOR]) {
+          if (kent.includes(cmd)) continue;
+          const vanaf = NIEUWER_DAN_243[cmd];
+          const ouder = vanaf && (groot < vanaf[0] || (groot === vanaf[0] && klein < vanaf[1]));
+          const melding = gitFaalt([cmd, '-h'], m);
+          if (ouder) expect(melding, cmd).toMatch(/is not a git command/);
+          else expect(melding, cmd).not.toMatch(/is not a git command/);
+        }
+
+        expect(gitFaalt(['pusj'], m)).toMatch(/is not a git command/);
+        expect(runCommand(start(), 'git pusj').output).toMatch(/is not a git command/);
+      });
+    });
   });
 
   it('.gitignore geldt niet voor een bestand dat al gecommit is', () => {

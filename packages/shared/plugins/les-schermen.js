@@ -66,14 +66,53 @@ function blokken(nodes, velden, uit = []) {
 }
 
 /**
+ * Een zin die op het vorige scherm doorgaat. Op de lange pagina stond hij
+ * eronder ("Daaronder legt de tekst uit …", "Daar is `break` voor."), in
+ * tabbladen is hij het begin van een scherm, en verwijst hij naar iets dat
+ * de leerling niet meer ziet. Een scherm noemt zelf waar het over gaat. De
+ * schermtests van linux, fullstack en python lezen deze ene lijst; wat een
+ * doorloop als leerling vindt, komt erbij.
+ */
+const DOORGAAND = new RegExp(
+  `^(${[
+    'Daar is',
+    'Daaronder',
+    'Daarom',
+    'Daarna',
+    'Daarmee',
+    'Daardoor',
+    'Daarin',
+    'Daarvoor',
+    'Hierna',
+    'Erna',
+    'Eronder',
+    'Erboven',
+    'Per groepje',
+    'Hetzelfde',
+    'Ook hier',
+    'Draait het',
+    'Nu',
+    'Dan',
+    'Ook',
+    'Je ziet nu',
+    'Na het opstarten',
+    'Klik op de regel\\.',
+    'En (maak|onder|zet)',
+    'Vervang je .{1,30} door deze\\.',
+    '(Een|De|Het) \\S+ (werkt|kan|mag) ook',
+  ].join('|')})(?![\\wà-ÿ])`,
+);
+
+/**
  * De schermen van één les, of een lege lijst als de les geen tabbladen heeft.
  *
  * @param {string} bron de inhoud van het bestand
  * @param {(bron: string) => {children: object[]}} parse de MDX-parser (plugins/werkvormen.js, mdxParser)
- * @param {{ velden?: string[] }} [opties]
+ * @param {{ velden?: string[], eenScherm?: boolean }} [opties] `eenScherm` zoals de cursus hem in
+ *   `lesTabs` heeft staan (plugins/les-tabs.js)
  * @returns {{ tab: string, opTab: string, naam: string, blokken: { soort: string, tekst: string }[] }[]}
  */
-function schermenVan(bron, parse, { velden = ['CodeEditor'] } = {}) {
+function schermenVan(bron, parse, { velden = ['CodeEditor'], eenScherm = false } = {}) {
   const voorwerk = /^---\r?\n(?:([\s\S]*?)\r?\n)?---\r?\n/.exec(bron);
   if (voorwerk && /^les_tabs:\s*false\s*$/m.test(voorwerk[1] ?? '')) return [];
   const tree = parse(voorwerk ? bron.slice(voorwerk[0].length) : bron);
@@ -84,7 +123,7 @@ function schermenVan(bron, parse, { velden = ['CodeEditor'] } = {}) {
     for (const kind of node.children ?? []) geefId(kind);
   };
   geefId(tree);
-  const tabs = (groepeer(tree.children) ?? []).find((k) => k.name === 'LesTabs');
+  const tabs = (groepeer(tree.children, { eenScherm }) ?? []).find((k) => k.name === 'LesTabs');
   return (tabs?.children ?? []).flatMap((tab) => {
     // Een vast id achter de kop (`## Lussen \{#lussen}`) haalt de build weg.
     const zonderId = (tekst) => (tekst ?? '').replace(/\s*\\?\{#[\w-]+\}\s*$/, '');
@@ -110,4 +149,4 @@ function schermenVan(bron, parse, { velden = ['CodeEditor'] } = {}) {
   });
 }
 
-module.exports = { schermenVan, blokken };
+module.exports = { schermenVan, blokken, DOORGAAND };

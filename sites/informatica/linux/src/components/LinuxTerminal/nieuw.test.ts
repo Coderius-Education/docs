@@ -1,7 +1,20 @@
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { vulAan } from './aanvullen';
 import { maakSessie } from './opdrachten';
-import { LEEG, omKolommen, plekVan, toets, verplaats, zichtbaar } from './regel';
+import {
+  LEEG,
+  inKolommen,
+  maakUitweg,
+  omKolommen,
+  plekVan,
+  toets,
+  verplaats,
+  zichtbaar,
+} from './regel';
 
 // Jokertekens, ls/cp/mv/grep met meer namen, find, history, Tab en het
 // bewerken van de regel. Elke verwachte uitvoer is nagedraaid op Ubuntu 24.04
@@ -58,6 +71,30 @@ describe('jokertekens', () => {
     const { typ } = metBestanden();
     expect(typ("echo '*.txt'")).toBe('*.txt');
     expect(typ('echo "*.txt"')).toBe('*.txt');
+  });
+
+  it('[...] is een van die tekens, zoals in bash', () => {
+    // `mv *[gG] fotos` telde voor het doel als jokerteken, maar de shell
+    // zocht een bestand dat letterlijk zo heette.
+    const { typ } = metBestanden();
+    expect(typ('echo [ab].txt')).toBe('a.txt b.txt');
+    expect(typ('echo [a-b].txt')).toBe('a.txt b.txt');
+    expect(typ('echo [!a].txt')).toBe('b.txt');
+    expect(typ('echo [^a].txt')).toBe('b.txt');
+    expect(typ('echo *[dD]')).toBe('c.md');
+    // Tussen aanhalingstekens, zonder ] of met een reeks die niet kan: dan
+    // blijft het woord staan (nagedraaid met bash 5.2).
+    expect(typ("echo '[ab].txt'")).toBe('[ab].txt');
+    expect(typ('echo x[')).toBe('x[');
+    expect(typ('echo [z-a]*')).toBe('[z-a]*');
+  });
+
+  it('{a,b} maakt eerst meer woorden, daarna vult de shell de jokertekens in', () => {
+    const { typ } = metBestanden();
+    expect(typ('echo *.{md,txt}')).toBe('c.md a.txt b.txt notities.txt');
+    expect(typ('echo {a,c}.txt')).toBe('a.txt c.txt');
+    expect(typ("echo '{a,c}.txt'")).toBe('{a,c}.txt');
+    expect(typ('echo {a}.txt')).toBe('{a}.txt');
   });
 
   it('cp en rm met een joker', () => {
@@ -457,5 +494,311 @@ describe('zoals op Ubuntu', () => {
     const { typ } = terminal();
     expect(typ('tail -1 /etc/passwd')).toBe(typ('tail -n 1 /etc/passwd'));
     expect(typ('head -2 /etc/passwd').split('\n')).toHaveLength(2);
+  });
+
+  it('head en tail lezen het getal zoals coreutils: -n1, --lines=2 en --lines 2', () => {
+    // `tail -n1` zei eerst dat -1 hier niet werkte, terwijl tail -1 wel werkte.
+    const { typ } = terminal();
+    typ('echo a > f; echo b >> f; echo c >> f; echo d >> f');
+    expect(typ('tail -n1 f')).toBe('d');
+    expect(typ('head -n2 f')).toBe('a\nb');
+    expect(typ('tail --lines=2 f')).toBe('c\nd');
+    expect(typ('head --lines 1 f')).toBe('a');
+    // Met + en - ervoor, en 0: nagedraaid met coreutils 9.4.
+    expect(typ('tail -n +3 f')).toBe('c\nd');
+    expect(typ('head -n -3 f')).toBe('a');
+    expect(typ('tail -n 0 f')).toBe('');
+    expect(typ('tail -n abc f')).toBe('tail: invalid number of lines: \u2018abc\u2019');
+    expect(typ('tail -n')).toBe(
+      "tail: option requires an argument -- 'n'\nTry 'tail --help' for more information.",
+    );
+    expect(typ('head --lines')).toBe(
+      "head: option '--lines' requires an argument\nTry 'head --help' for more information.",
+    );
+    // Een andere optie blijft een optie die hier niet werkt.
+    expect(typ('tail -f f')).toBe('oefenterminal: tail -f werkt hier niet, wel op je eigen Linux.');
+  });
+
+  it('rmdir gooit alleen een lege map weg, met de meldingen van coreutils 9.4', () => {
+    // rmdir gaf "command not found", terwijl Ubuntu het heeft.
+    const { typ } = terminal();
+    typ('mkdir leeg vol');
+    typ('touch vol/x');
+    expect(typ('rmdir vol')).toBe("rmdir: failed to remove 'vol': Directory not empty");
+    expect(typ('rmdir notities.txt')).toBe(
+      "rmdir: failed to remove 'notities.txt': Not a directory",
+    );
+    expect(typ('rmdir nee')).toBe("rmdir: failed to remove 'nee': No such file or directory");
+    expect(typ('rmdir')).toBe("rmdir: missing operand\nTry 'rmdir --help' for more information.");
+    expect(typ('rmdir /etc')).toBe("rmdir: failed to remove '/etc': Permission denied");
+    expect(typ('rmdir leeg')).toBe('');
+    expect(typ('ls')).toBe('notities.txt  vol');
+  });
+});
+
+describe('ls op een smalle terminal', () => {
+  // Naast de les is de terminal 53 tot 64 kolommen breed. `ls downloads` in
+  // opdracht 2.4.a plakte zes namen met twee spaties aan elkaar (72 tekens),
+  // en de terminal brak af midden in `vakantie2.jpg`: "vakantie" en "2.jpg"
+  // lezen als twee bestanden, in de opdracht waar je .jpg-bestanden zoekt.
+  // De echte ls zet namen in kolommen op de breedte van het venster.
+  const NAMEN = [
+    'kat.png',
+    'liedje.mp3',
+    'opdracht.pdf',
+    'vakantie1.jpg',
+    'vakantie2.jpg',
+    'verslag.docx',
+  ];
+
+  it('zet namen in kolommen, van boven naar beneden, zoals coreutils', () => {
+    // Nagedraaid met `ls -w 58` en `ls -w 30` op Ubuntu 24.04.
+    expect(inKolommen(NAMEN, 58)).toBe(
+      'kat.png     opdracht.pdf   vakantie2.jpg\nliedje.mp3  vakantie1.jpg  verslag.docx',
+    );
+    expect(inKolommen(NAMEN, 30)).toBe(
+      'kat.png       vakantie1.jpg\nliedje.mp3    vakantie2.jpg\nopdracht.pdf  verslag.docx',
+    );
+    expect(inKolommen(NAMEN, 10)).toBe(NAMEN.join('\n'));
+  });
+
+  it('wat op één regel past, staat achter elkaar met twee spaties', () => {
+    expect(inKolommen(NAMEN, 80)).toBe(NAMEN.join('  '));
+    expect(inKolommen(['a'], 5)).toBe('a');
+    expect(inKolommen([], 80)).toBe('');
+  });
+
+  it('geen naam valt over de rand, op geen enkele breedte', () => {
+    for (let breedte = 14; breedte <= 80; breedte++)
+      for (const regel of inKolommen(NAMEN, breedte).split('\n'))
+        expect(regel.length, `${breedte}: ${regel}`).toBeLessThanOrEqual(breedte);
+  });
+
+  it('een kleur telt niet mee voor de breedte', () => {
+    const kleur = (n: string) => `<${n}>`;
+    expect(inKolommen(['aa', 'b', 'cc'], 8, kleur)).toBe('<aa>  <cc>\n<b>');
+  });
+
+  it('rekent zoals coreutils: korter dan de breedte, en kolommen van minstens drie', () => {
+    // Uit de review: met `<=` en zonder de ondergrens week 247 van 4200
+    // gevallen af van ls -C. Een regel even breed als de terminal past niet.
+    // Nagedraaid met ls -C -T 0 -w 7 en -w 8 (coreutils 9.4).
+    expect(inKolommen(['ab', 'cd'], 7)).toBe('ab\ncd');
+    expect(inKolommen(['ab', 'cd'], 8)).toBe('ab  cd');
+  });
+
+  const gnu = (() => {
+    try {
+      return execFileSync('ls', ['--version'], { encoding: 'utf8' }).includes('GNU coreutils');
+    } catch {
+      return false;
+    }
+  })();
+
+  it.runIf(gnu)(
+    'geeft dezelfde kolommen als ls -C van deze machine',
+    () => {
+      // 60 willekeurige mappen op acht breedtes, naast de echte ls gelegd.
+      let zaad = 7;
+      const kans = () => {
+        zaad = (zaad * 1103515245 + 12345) % 2147483648;
+        return zaad / 2147483648;
+      };
+      const fout: string[] = [];
+      for (let t = 0; t < 60; t++) {
+        const map = mkdtempSync(join(tmpdir(), 'kolommen-'));
+        const aantal = 1 + Math.floor(kans() * 14);
+        const namen = new Set<string>();
+        while (namen.size < aantal)
+          namen.add(
+            Array.from({ length: 1 + Math.floor(kans() * 16) }, () =>
+              String.fromCharCode(97 + Math.floor(kans() * 26)),
+            ).join(''),
+          );
+        for (const naam of namen) writeFileSync(join(map, naam), '');
+        const env = { ...process.env, LC_ALL: 'C' };
+        const opAlfabet = execFileSync('ls', ['-1', map], { encoding: 'utf8', env })
+          .trim()
+          .split('\n');
+        for (const breedte of [10, 20, 30, 41, 53, 58, 64, 80]) {
+          const echt = execFileSync('ls', ['-C', '-T', '0', '-w', String(breedte), map], {
+            encoding: 'utf8',
+            env,
+          }).replace(/\n$/, '');
+          if (inKolommen(opAlfabet, breedte) !== echt)
+            fout.push(`${breedte}: ${opAlfabet.join(' ')}`);
+        }
+        rmSync(map, { recursive: true });
+      }
+      expect(fout).toEqual([]);
+    },
+    30000,
+  );
+
+  it('ls gebruikt de breedte van de terminal', () => {
+    const bestanden = {
+      home: { student: { downloads: Object.fromEntries(NAMEN.map((n) => [n, ''])) } },
+    };
+    const smal = maakSessie(bestanden, { kolommen: () => 58 });
+    expect(smal.typ('ls downloads').stand.uitvoer).toEqual([
+      'kat.png     opdracht.pdf   vakantie2.jpg',
+      'liedje.mp3  vakantie1.jpg  verslag.docx',
+    ]);
+    expect(smal.typ('ls downloads/*').stand.uitvoer).toHaveLength(3);
+    // Naar een pipe blijft het één naam per regel.
+    expect(smal.typ('ls downloads | wc -l').stand.uitvoer).toEqual(['6']);
+    // Zonder terminal (een test) is de breedte 80, zoals een gewoon venster.
+    expect(maakSessie(bestanden).typ('ls downloads').stand.uitvoer).toEqual([NAMEN.join('  ')]);
+  });
+
+  it('help past op de smalste terminal naast de les, en op een telefoon', () => {
+    // Op 1200 pixels heeft de terminal 53 kolommen; een regel van 61 tekens
+    // brak af als "(standaar" en "d 10)". Op een telefoon zijn het er 41:
+    // daar staat de uitleg onder het commando.
+    for (const kolommen of [53, 41]) {
+      const uitvoer = maakSessie(undefined, { kolommen: () => kolommen }).typ('help').stand.uitvoer;
+      for (const regel of uitvoer)
+        expect(regel.length, `${kolommen}: ${regel}`).toBeLessThan(kolommen);
+    }
+    // grep, find en > staan erin.
+    const tekst = maakSessie().typ('help').stand.uitvoer.join('\n');
+    for (const cmd of ['grep', 'find', '> <bestand>']) expect(tekst).toContain(cmd);
+  });
+
+  it('help past ook in de hoogte: in een terminal van twaalf regels alleen de namen', () => {
+    // Bij een opdracht en in een tabblad heeft de terminal twaalf regels. Van
+    // de lijst van 23 regels zag een leerling op een telefoon alleen de
+    // laatste tien; `help ls` geeft de uitleg van één commando.
+    for (const [kolommen, rijen] of [
+      [41, 12],
+      [80, 12],
+      [41, 24],
+    ]) {
+      const sessie = maakSessie(undefined, { kolommen: () => kolommen, rijen: () => rijen });
+      const uitvoer = sessie.typ('help').stand.uitvoer;
+      // Met de regel `$ help` erboven en de nieuwe prompt eronder: op 41
+      // bij 12 waren het er eerst 13, en schoof `$ help` van het scherm.
+      expect(uitvoer.length + 2, `${kolommen}x${rijen}`).toBeLessThanOrEqual(rijen);
+      for (const regel of uitvoer) expect(regel.length).toBeLessThan(kolommen);
+      const namen = uitvoer.join(' ');
+      for (const cmd of ['ls', 'grep', 'find', 'hostname', 'history', 'clear'])
+        expect(namen).toMatch(new RegExp(`\\b${cmd}\\b`));
+      expect(sessie.typ('help ls').stand.uitvoer.join(' ')).toContain('bestanden tonen');
+      expect(sessie.typ('help tail').stand.uitvoer.join(' ')).toContain('eerste of laatste');
+    }
+    // In een terminal van 24 regels en 80 kolommen staat de hele lijst, met
+    // `$ help` en de prompt erbij.
+    expect(maakSessie().typ('help').stand.uitvoer.length).toBe(22);
+    expect(maakSessie().typ('help bestaatniet').stand.uitvoer).toEqual([
+      "help: geen uitleg bij bestaatniet. Typ help voor alle commando's.",
+    ]);
+  });
+
+  it('help bij een commando dat hier niet werkt, zegt wat het commando zelf zegt', () => {
+    // `help nano` zei "geen uitleg", terwijl nano zelf de les noemt.
+    const { typ } = terminal();
+    expect(typ('help nano')).toBe(typ('nano'));
+    expect(typ('help nano')).toMatch(/^oefenterminal: nano werkt hier niet/);
+    expect(typ('help rmdir')).toContain('lege map weggooien');
+  });
+
+  it('ls met meer namen zet ze op naam, zoals ls', () => {
+    const { typ } = terminal();
+    expect(typ('ls /tmp /etc').split('\n')[0]).toBe('/etc:');
+    expect(typ('ls /etc/passwd /etc/hosts')).toBe('/etc/hosts  /etc/passwd');
+  });
+
+  it('echo -e zegt dat het hier niet werkt, in plaats van -e af te drukken', () => {
+    // `echo -e "a\nb"` schreef "-e a\nb". Een ander woord met een streepje
+    // drukt echo gewoon af, zoals in bash.
+    const { typ } = terminal();
+    expect(typ('echo -e "a\\nb"')).toBe(
+      'oefenterminal: echo -e werkt hier niet, wel op je eigen Linux.',
+    );
+    expect(typ('echo -x')).toBe('-x');
+  });
+});
+
+describe('met het toetsenbord de terminal uit', () => {
+  // Tab vult aan, dus Tab bracht je nooit naar de knop Opnieuw beginnen of
+  // de rest van de pagina. Esc en dan Tab doet dat wel. `false` betekent
+  // dat xterm de toets aan de browser laat.
+  const toetsDown = (key: string) => ({ type: 'keydown', key });
+
+  it('Tab is voor de terminal, tot je eerst Esc drukt', () => {
+    const uitweg = maakUitweg();
+    expect(uitweg(toetsDown('Tab'))).toBe(true);
+    expect(uitweg(toetsDown('Escape'))).toBe(true);
+    expect(uitweg(toetsDown('Tab'))).toBe(false);
+    // Daarna vult Tab weer aan.
+    expect(uitweg(toetsDown('Tab'))).toBe(true);
+  });
+
+  it('Shift+Tab na Esc gaat terug de pagina in', () => {
+    const uitweg = maakUitweg();
+    uitweg(toetsDown('Escape'));
+    expect(uitweg(toetsDown('Shift'))).toBe(true);
+    expect(uitweg(toetsDown('Tab'))).toBe(false);
+  });
+
+  it('wie na Esc wegklikt, vult bij terugkomst met Tab gewoon aan', () => {
+    const uitweg = maakUitweg();
+    uitweg(toetsDown('Escape'));
+    uitweg.vergeet();
+    expect(uitweg(toetsDown('Tab'))).toBe(true);
+  });
+
+  it('Esc en dan Tab gaat naar de knop Volgende, als die er is', () => {
+    // Na de terminal kwam Opnieuw beginnen: een Enter wiste het werk.
+    let gevraagd = 0;
+    let tegengehouden = 0;
+    const tab = (shiftKey = false) => ({
+      type: 'keydown',
+      key: 'Tab',
+      shiftKey,
+      preventDefault: () => {
+        tegengehouden++;
+      },
+    });
+    const metKnop = maakUitweg(() => {
+      gevraagd++;
+      return true;
+    });
+    metKnop(toetsDown('Escape'));
+    expect(metKnop(tab())).toBe(false);
+    expect([gevraagd, tegengehouden]).toEqual([1, 1]);
+    // Terug (Shift+Tab) laat de browser zijn gang gaan.
+    metKnop(toetsDown('Escape'));
+    metKnop(toetsDown('Shift'));
+    expect(metKnop(tab(true))).toBe(false);
+    expect([gevraagd, tegengehouden]).toEqual([1, 1]);
+    // Zonder knop (het laatste tabblad) ook.
+    const zonder = maakUitweg(() => false);
+    zonder(toetsDown('Escape'));
+    expect(zonder(tab())).toBe(false);
+    expect(tegengehouden).toBe(1);
+  });
+
+  it('de luisteraar die Esc vergeet, hangt aan de textarea van xterm na open', () => {
+    // Ervoor bestond die textarea nog niet: `term.textarea?.` deed niets,
+    // en wie Esc drukte, wegklikte en terugkwam, verliet de terminal met
+    // de eerste Tab. Alleen in een browser na te spelen; de bron moet het
+    // in deze volgorde doen.
+    const bron = readFileSync(new URL('./index.js', import.meta.url), 'utf8');
+    const open = bron.indexOf('term.open(termRef.current)');
+    const blur = bron.indexOf("addEventListener('blur', uitweg.vergeet)");
+    expect(open).toBeGreaterThan(0);
+    expect(blur).toBeGreaterThan(open);
+  });
+
+  it('een andere toets na Esc: Tab vult weer aan', () => {
+    const uitweg = maakUitweg();
+    uitweg(toetsDown('Escape'));
+    uitweg(toetsDown('l'));
+    expect(uitweg(toetsDown('Tab'))).toBe(true);
+    // Een keyup verandert niets.
+    uitweg(toetsDown('Escape'));
+    expect(uitweg({ type: 'keyup', key: 'Escape' })).toBe(true);
+    expect(uitweg(toetsDown('Tab'))).toBe(false);
   });
 });

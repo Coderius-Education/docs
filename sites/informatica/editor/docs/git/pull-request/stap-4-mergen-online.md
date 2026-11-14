@@ -6,7 +6,7 @@ title: "Stap 4: de pull request mergen"
 
 # Stap 4: de pull request mergen
 
-Op je PR-pagina, onderaan de **Conversation**-tab, staat een groene knop **Merge pull request** (zolang er geen conflicten zijn).
+Op je PR-pagina, onderaan het tabblad **Conversation** van GitHub, staat een groene knop **Merge pull request** (zolang er geen conflicten zijn).
 
 1. Klik op **Merge pull request**
 2. GitHub vraagt om bevestiging — klik op **Confirm merge**
@@ -17,12 +17,12 @@ Op je PR-pagina, onderaan de **Conversation**-tab, staat een groene knop **Merge
 
 ## Wat je nu ziet
 
-Ga naar het tabblad **`<> Code`** bovenaan en kijk in `hello.txt`. Je welkomsbericht staat erin — gemerged in `main`.
+Ga op GitHub naar het tabblad **`<> Code`** en kijk in `hello.txt`. Je afscheidsregel staat erin, gemerged in `main`.
 
 Klik op het kloktje-icoon (**commits**). Je ziet een nieuwe commit met een boodschap als:
 
 ```
-Merge pull request #1 from <gebruiker>/feature/welkomsbericht
+Merge pull request #1 from <gebruikersnaam>/feature/afscheid
 ```
 
 Dat is de **merge-commit**: het officiële markeringspunt waarop deze PR in `main` is opgenomen.
@@ -32,6 +32,6 @@ Dat is de **merge-commit**: het officiële markeringspunt waarop deze PR in `mai
 ```bash
 # op GitHub's server:
 git checkout main
-git merge --no-ff feature/welkomsbericht
-git branch -d feature/welkomsbericht   # (alleen als je "Delete branch" klikte)
+git merge --no-ff feature/afscheid
+git branch -d feature/afscheid   # (alleen als je "Delete branch" klikte)
 ```

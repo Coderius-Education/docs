@@ -61,6 +61,11 @@
   max-height: 16rem;
 }
 
+.outputVast {
+  height: 7rem;
+  min-height: 0;
+}
+
 .outputSplit {
   display: grid;
   grid-template-columns: 1fr 1fr;

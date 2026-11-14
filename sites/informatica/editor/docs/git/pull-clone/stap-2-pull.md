@@ -6,15 +6,17 @@ title: "Stap 2: pull-only via het Command Palette"
 
 # Stap 2: pull-only via het Command Palette
 
-Soms wil je alleen pullen, zonder te pushen — bijvoorbeeld als je nog niets te pushen hebt, of als je gewoon wil controleren of er nieuwe commits zijn.
+Soms wil je alleen pullen, zonder te pushen: bijvoorbeeld als je nog niets te pushen hebt, of als je wilt controleren of er nieuwe commits zijn.
 
-1. Open het **Command Palette** met **Ctrl+Shift+P** (Windows/Linux) of **Cmd+Shift+P** (macOS)
-2. Typ `Git: Pull` en druk **Enter**
-3. VS Code haalt de nieuwste commits binnen
+1. Verander op GitHub nog een regel in `hello.txt`, met het potlood en **Commit changes...** zoals in [stap 1](site:editor/git/pull-clone/stap-1-sync)
+2. Open in VS Code het **Command Palette** met **Ctrl+Shift+P** (Windows/Linux) of **Cmd+Shift+P** (macOS)
+3. Typ `Git: Pull` en druk **Enter**
 
 ## Wat je nu ziet
 
-Waren er nieuwe commits, dan veranderen je bestanden voor je ogen en verschijnen de commits in **Source Control Graph**. Was er niets nieuws, dan gebeurt er niets zichtbaars — geen melding, geen vinkje. Dat voelt alsof het mislukt is, maar het is de normale uitkomst.
+`hello.txt` verandert voor je ogen, en de commit van GitHub staat bovenaan in **Source Control Graph**.
+
+Pull je terwijl er online niets nieuws staat, dan gebeurt er niets zichtbaars: geen melding, geen vinkje. Dat voelt alsof het mislukt is, maar het is de normale uitkomst.
 
 **Wat gebeurt er onder de motorkap?**
 

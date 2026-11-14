@@ -6,6 +6,8 @@ title: "Stap 1: vertel git wie je bent"
 
 # Stap 1: vertel git wie je bent
 
+## Naam, e-mailadres en branch instellen
+
 Eenmalig moet je git twee dingen vertellen: wie commits maakt, en hoe je eerste branch moet heten. Open in VS Code een terminal via **Terminal** → **New Terminal** en typ:
 
 ```bash
@@ -16,15 +18,17 @@ git config --global init.defaultBranch main
 
 Vervang de naam en het e-mailadres door je eigen gegevens. Git slaat dit op voor al je toekomstige projecten.
 
-## Waarom die derde regel
+**Let op:** naam en e-mailadres staan in elke commit, en op GitHub kan iedereen ze lezen. Wil je je eigen adres niet laten zien, zet dan op GitHub bij **Settings** → **Emails** het vinkje **Keep my email addresses private** aan. Daaronder staat een adres dat eindigt op `@users.noreply.github.com`: vul dat hier in.
 
-Zonder die regel noemt git je eerste branch `master`. GitHub en de rest van deze cursus gaan uit van `main`, en dan loopt het mis op het moment dat je gaat pushen:
+## Waarom je branch main heet
+
+Zonder de regel `git config --global init.defaultBranch main` noemt git je eerste branch `master`. GitHub en de rest van deze cursus gaan uit van `main`, en dan loopt het mis op het moment dat je gaat pushen:
 
 ```
 error: src refspec main does not match any
 ```
 
-Git zegt daar: "je vraagt me `main` te versturen, maar die branch bestaat hier niet." Met de regel hierboven heten al je nieuwe repositories meteen `main` en kom je die fout niet tegen.
+Git zegt daar: "je vraagt me `main` te versturen, maar die branch bestaat hier niet." Met `init.defaultBranch main` heten al je nieuwe repositories meteen `main` en kom je die fout niet tegen.
 
 **Heb je al een map met `git init` gemaakt?** Dan staat die nog op `master`. Open een terminal in die map en hernoem hem:
 
@@ -33,6 +37,8 @@ git branch -m main
 ```
 
 ## Wat je nu ziet
+
+Controleer het in dezelfde terminal van VS Code. Typ:
 
 ```bash
 git config --global --list

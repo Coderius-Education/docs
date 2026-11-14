@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { compile } from '@mdx-js/mdx';
 import { describe, expect, it } from 'vitest';
+import { BREED } from './components/LesTabs/Naast';
 
 // Les-tabbladen: een remark-stap zet elke `##`-sectie van een les in
 // een tabblad. Wat hier vastligt, is wat er misging toen het voor het eerst
@@ -28,6 +29,8 @@ type Knoop = {
   children?: Knoop[];
   attributes?: { name: string; value: string }[];
   data?: { id?: string };
+  ordered?: boolean;
+  start?: number;
 };
 
 const kop = (depth: number, tekst: string, id?: string): Knoop => ({
@@ -841,6 +844,38 @@ describe('groepeer', () => {
         'code',
         'paragraph',
       ]);
+    });
+
+    it('een genummerde lijst die doortelt, is geen toelichting bij de code', () => {
+      // De editor-cursus, Branches stap 1: "4. Typ de naam:", een codeblok
+      // met de naam, en dan "5. Druk op Enter". Markdown breekt de lijst op
+      // het codeblok af, en het vervolg stond als toelichting naast de naam
+      // van de branch.
+      const code: Knoop = { type: 'code', value: 'feature/welkomsbericht' };
+      const vervolg: Knoop = {
+        ...punten('Druk op Enter', 'Kijk linksonder'),
+        ordered: true,
+        start: 5,
+      };
+      expect(inhoud(code, vervolg, alinea('Daarna.')).map((n) => n.type)).toEqual([
+        'code',
+        'list',
+        'paragraph',
+      ]);
+      // Ook met een alinea ertussen.
+      expect(inhoud(code, alinea('Zonder spaties.'), vervolg).map((n) => n.type)).toEqual([
+        'code',
+        'paragraph',
+        'list',
+      ]);
+      // Een lijst die bij 1 begint, licht de code toe.
+      const stappen: Knoop = {
+        ...punten('het onderdeel', 'de pin', 'wat het doet'),
+        ordered: true,
+        start: 1,
+      };
+      const lang: Knoop = { type: 'code', value: "oled.text('Hallo', 0, 0)\noled.show()" };
+      expect(inhoud(lang, stappen, alinea('x'))[0].name).toBe('LesVoorbeeld');
     });
 
     it('een alinea of een waarschuwing tussen de code en de lijst gaat mee', () => {
@@ -1729,13 +1764,79 @@ describe('de opmaak van de tabbladen', () => {
     const verboden =
       /(^|[\s;])(transform|filter|contain|will-change|overflow(-[xy])?|z-index|isolation|animation|transition|container-type)\s*:/;
     // Het vak van een codeblok (`pre`) is nooit de ouder van een oefenveld:
-    // een programma dat hoger is dan het scherm, mag daarin schuiven.
+    // een programma dat hoger is dan het scherm, mag daarin schuiven. De rij
+    // stappen ook niet: daar staan alleen knoppen in.
     const fout = regels
-      .filter(({ sel }) => /^\.(wortel|paneel|stappen)\b/.test(sel) && !/ pre$/.test(sel))
-      .filter(({ body }) => verboden.test(body))
+      .filter(
+        ({ sel }) =>
+          /^\.(wortel|paneel|stappen|naast)\b/.test(sel) && !/ (pre|\.staplist)$/.test(sel),
+      )
+      .filter(({ body }) => verboden.test(body) || /position:\s*sticky/.test(body))
       .map(({ sel }) => sel);
     expect(fout).toEqual([]);
     expect(regels.some(({ sel }) => sel === '.paneel[hidden]')).toBe(true);
+  });
+
+  describe('de kolom naast de les (<LesNaast>)', () => {
+    // De les staat in twee kolommen als er in de kolom een veld te zien is,
+    // of als ergens het anker van een veld voor de hele les staat.
+    const MET = '.wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"])';
+    const met = MET.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    it('gebruikt dezelfde grens als useBreed', () => {
+      // Staat het veld volgens React in de kolom en de kolom volgens de
+      // opmaak onder de tekst (of andersom), dan klopt de hoogte van het
+      // veld niet.
+      const blok = css.match(new RegExp(`@media ([^{]+)\\{\\s*${met} \\{`));
+      expect(blok?.[1].trim()).toBe(BREED);
+    });
+
+    it('houdt de kolom al vrij voor een veld dat nog moet komen', () => {
+      // Het anker staat in de HTML van de build (<LesNaastPlek>), de kolom
+      // is dan nog leeg. Keek de opmaak alleen naar de kolom, dan stond de
+      // tekst eerst over de volle breedte en versprong hij.
+      expect(css).not.toMatch(/\.naast:not\(:empty\)/);
+      expect(css).toContain(`${MET} > .paneel {`);
+    });
+
+    it('het veld van de hele les wijkt voor een eigen veld waarvan het scherm open is', () => {
+      // Niet voor een anker in een stap die dicht is: de kolom was dan leeg.
+      expect(css).toMatch(
+        /\.wortel:has\(\[data-les-naast-anker="veld"\]\[data-les-naast-open\]\)\s*> \.naast\s*> \[data-les-naast-gast="les"\] \{\s*display: none;/,
+      );
+      expect(css).not.toMatch(/\.paneel:not\(\[hidden\]\) \[data-les-naast-anker/);
+    });
+
+    it('in de smalle kolom staat code met iets ernaast onder elkaar', () => {
+      // Zonder witruimte: de formatter breekt een lange selector af.
+      const plat = css.replace(/\s+/g, ' ');
+      expect(plat).toMatch(
+        new RegExp(
+          `${met} \\.paneel \\.voorbeeld:not\\(\\.metBeeld\\):not\\(\\.metBreedBeeld\\), ${met} \\.paneel \\.bestanden \\{ display: block;`,
+        ),
+      );
+    });
+
+    it('in de smalle kolom schuift de rij stappen, met elke naam voluit', () => {
+      // Eerst mocht een dichte stap tot zijn nummer krimpen (onder Er gaat
+      // iets mis van les 2.4 stonden alleen 2, 3 en 4), daarna tot een paar
+      // letters ("Het vr…"), en wisselde de rij tussen een en twee regels:
+      // de tekst versprong veertig pixels bij elke stap. Nu schuift hij, zoals
+      // op een telefoon.
+      const plat = css.replace(/\s+/g, ' ');
+      expect(plat).toContain(`${MET} .staplist { flex-wrap: nowrap; overflow-x: auto;`);
+      expect(plat).toContain(
+        `${MET} .stap { flex: 0 0 auto; max-width: none; white-space: nowrap;`,
+      );
+      const kolom = css.slice(css.indexOf(`${MET} {`), css.indexOf('@media print'));
+      expect(kolom).not.toMatch(/\.stap\b[^{]*\{[^}]*min-width/);
+    });
+
+    it('op papier staat de les in één kolom, zonder het oefenveld', () => {
+      const print = css.slice(css.indexOf('@media print'));
+      expect(print).toMatch(new RegExp(`${met} \\{\\s*display: block;`));
+      expect(print).toMatch(/\.naast \{\s*display: none;/);
+    });
   });
 
   it('de knop Volgende breekt af als de naam van de volgende stap lang is', () => {
@@ -2492,5 +2593,300 @@ describe('wat een doorloop van fullstack als leerling vond', () => {
       /html:has\(\[data-les-tab\]:not\(\[hidden\]\) > \[data-les-verder\]\) \.pagination-nav__link--next\) \{\s*display: none;/,
     );
     expect(css).not.toMatch(/pagination-nav__link--prev[^{]*\{\s*display: none/);
+  });
+});
+
+describe('een korte afsluiter hoort bij het scherm ervoor', () => {
+  // De editor-cursus: elke stap van een doe-tutorial eindigt met
+  // `## Wat je nu ziet`, waaraan de leerling ziet dat het gelukt is. Als
+  // eigen tabblad was dat een scherm met één alinea, en moest hij doorklikken
+  // om te zien of wat hij net deed gelukt was.
+  const lang = (n: number) => Array.from({ length: n }, (_, i) => alinea(`Zin ${i}. `.repeat(120)));
+  const afsluiter = (uit: Knoop[], tab = 0): Knoop | undefined => {
+    const zoek = (node: Knoop): Knoop | undefined =>
+      node.attributes?.some((a) => a.name === 'data-les-afsluiter')
+        ? node
+        : (node.children ?? []).map(zoek).find(Boolean);
+    const paneel = uit.find((n) => n.name === 'LesTabs')?.children?.[tab];
+    return paneel ? zoek(paneel) : undefined;
+  };
+
+  it('Wat je nu ziet staat onder de stap waar het bij hoort, met zijn kop', () => {
+    const uit = groepeer([
+      titel,
+      kop(2, 'Maak een bestand'),
+      alinea('Klik op New File.'),
+      kop(2, 'Wat je nu ziet'),
+      alinea('Het bestand staat in de Explorer.'),
+      kop(2, 'Er gaat iets mis'),
+      alinea('Staat het er niet?'),
+    ]);
+    expect(tabs(uit).map((t) => t.titel)).toEqual(['Maak een bestand', 'Er gaat iets mis']);
+    const blok = afsluiter(uit);
+    // De kop gaat mee: een link naar #wat-je-nu-ziet blijft werken, en de
+    // opmaak verbergt alleen de kop van het tabblad zelf (`> h2`).
+    expect(blok?.children?.[0]).toMatchObject({ type: 'heading', depth: 2 });
+    expect(blok?.attributes).toContainEqual({
+      type: 'mdxJsxAttribute',
+      name: 'className',
+      value: 'markdown',
+    });
+  });
+
+  it('niet als het scherm ervoor al vol is', () => {
+    const uit = groepeer([
+      titel,
+      kop(2, 'Maak een bestand'),
+      ...lang(5),
+      kop(2, 'Wat je nu ziet'),
+      alinea('Het bestand staat in de Explorer.'),
+      kop(2, 'Er gaat iets mis'),
+      alinea('Staat het er niet?'),
+    ]);
+    expect(tabs(uit).map((t) => t.titel)).toEqual([
+      'Maak een bestand',
+      'Wat je nu ziet',
+      'Er gaat iets mis',
+    ]);
+  });
+
+  it('niet als de pagina dan geen tabbladen meer had', () => {
+    // Een lange stap en een korte controle: twee schermen. Samen was het één
+    // scherm dat niet past.
+    const uit = groepeer([
+      titel,
+      ...lang(2),
+      kop(2, 'Wat je nu ziet'),
+      alinea('Het bestand staat in de Explorer.'),
+    ]);
+    expect(tabs(uit).map((t) => t.titel)).toEqual(['Uitleg', 'Wat je nu ziet']);
+  });
+
+  it('Aan de slag met alleen een link sluit aan, met een stappenlijst niet', () => {
+    const begin = [
+      titel,
+      kop(2, 'Wat is git?'),
+      alinea('Versiebeheer.'),
+      kop(2, 'De zones'),
+      alinea('Drie.'),
+    ];
+    const link = groepeer([...begin, kop(2, 'Aan de slag'), alinea('Begin met stap 1.')]);
+    expect(tabs(link).map((t) => t.titel)).toEqual(['Wat is git?', 'De zones']);
+    expect(afsluiter(link, 1)).toBeDefined();
+    // De intro van ctf: onder Aan de slag staat hoe je een account maakt.
+    const lijst = groepeer([...begin, kop(2, 'Aan de slag'), punten('Registreer.', 'Log in.')]);
+    expect(tabs(lijst).map((t) => t.titel)).toEqual(['Wat is git?', 'De zones', 'Aan de slag']);
+  });
+
+  it('niet bij een scherm met stappen: de afsluiter stond dan alleen in de laatste stap', () => {
+    const uit = groepeer([
+      titel,
+      kop(2, 'Voorbereiding'),
+      alinea('Kies je systeem.'),
+      kop(3, 'Windows'),
+      alinea('Download git.'),
+      kop(3, 'macOS'),
+      alinea('Typ git.'),
+      kop(2, 'Aan de slag'),
+      alinea('Begin met stap 1.'),
+    ]);
+    expect(tabs(uit).map((t) => t.titel)).toEqual(['Voorbereiding', 'Aan de slag']);
+  });
+
+  it('telt mee wat de build boven het scherm zet', () => {
+    // Een korte uitleg vóór de eerste `##` opent het eerste tabblad. Met de
+    // afsluiter erbij was dat scherm dan langer dan de schatting zei.
+    const stap = [kop(2, 'Maak een bestand'), ...lang(1), alinea('Klik op New File.')];
+    const rest = [
+      kop(2, 'Wat je nu ziet'),
+      alinea('Het bestand staat in de Explorer.'),
+      kop(2, 'Er gaat iets mis'),
+      alinea('Staat het er niet?'),
+      kop(2, 'Verder'),
+      alinea('Door naar stap 3.'),
+    ];
+    // Zonder iets erboven past de afsluiter erbij.
+    expect(tabs(groepeer([titel, ...stap, ...rest])).map((t) => t.titel)).not.toContain(
+      'Wat je nu ziet',
+    );
+    // Met een alinea van een half scherm erboven niet meer.
+    const opening = alinea('Zin. '.repeat(260));
+    expect(tabs(groepeer([titel, opening, ...stap, ...rest])).map((t) => t.titel)).toContain(
+      'Wat je nu ziet',
+    );
+  });
+
+  it('verandert niet hoe de les opent', () => {
+    // Een inleiding en een leerdoel zijn samen het eerste tabblad, als de
+    // les drie secties heeft. Telde de afsluiter daarna niet meer mee, dan
+    // verhuisde het leerdoel naar het tabblad erna.
+    const les = [
+      titel,
+      alinea('Je auto rijdt.'),
+      alinea('Nu leer je hem sturen.'),
+      kop(2, 'Wat ga je leren?'),
+      alinea('Sturen met twee motoren.'),
+      kop(2, 'Aansluiten'),
+      alinea('Sluit de motor aan.'),
+      kop(2, 'Wat je nu ziet'),
+      alinea('De auto draait.'),
+    ];
+    const uit = groepeer(les);
+    expect(tabs(uit).map((t) => t.titel)).toEqual(['Uitleg', 'Aansluiten']);
+    const eerste = uit.find((n: Knoop) => n.name === 'LesTabs')?.children?.[0];
+    expect(JSON.stringify(eerste)).toContain('LesLeerdoel');
+  });
+
+  it('niet onder het leerdoel: dat werd dan een eigen tabblad', () => {
+    const uit = groepeer([
+      titel,
+      kop(2, 'Wat ga je leren?'),
+      alinea('Een bestand maken.'),
+      kop(2, 'Wat je nu ziet'),
+      alinea('Een lege map.'),
+      kop(2, 'Maak een bestand'),
+      alinea('Klik op New File.'),
+      kop(2, 'Er gaat iets mis'),
+      alinea('Staat het er niet?'),
+    ]);
+    expect(tabs(uit).map((t) => t.titel)).toEqual([
+      'Wat je nu ziet',
+      'Maak een bestand',
+      'Er gaat iets mis',
+    ]);
+  });
+
+  it('laat de invoer zoals hij was', () => {
+    const { sluitAan } = require('./plugins/les-tabs.js');
+    const voor = { kop: kop(2, 'Stap'), kinderen: [kop(2, 'Stap'), alinea('Doe dit.')] };
+    const na = {
+      kop: kop(2, 'Wat je nu ziet'),
+      kinderen: [kop(2, 'Wat je nu ziet'), alinea('Dit.')],
+    };
+    const uit = sluitAan([], [voor, na]);
+    expect(uit.secties).toHaveLength(1);
+    expect(voor.kinderen).toHaveLength(2);
+  });
+});
+
+describe('een pagina die op één scherm past, heeft geen tabbladen (eenScherm)', () => {
+  // Een keuze van de cursus: `lesTabs: { eenScherm: true }`. In de
+  // editor-cursus was een stap van tien regels drie schermen.
+  const kort = [
+    titel,
+    alinea('Klik op New File.'),
+    kop(2, 'Wat je nu ziet'),
+    alinea('Het bestand staat in de Explorer.'),
+    kop(2, 'Let op'),
+    alinea('Sla het op.'),
+  ];
+  const lang = (n: number) => Array.from({ length: n }, (_, i) => alinea(`Zin ${i}. `.repeat(120)));
+
+  it('zonder de keuze houdt een korte pagina haar tabbladen', () => {
+    expect(tabs(groepeer(kort)).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('met de keuze niet, en de pagina blijft zoals in de bron', () => {
+    expect(groepeer(kort, { eenScherm: true })).toBeNull();
+  });
+
+  it('een pagina die niet past, houdt haar tabbladen', () => {
+    const uit = groepeer(
+      [titel, ...lang(3), kop(2, 'Wat je nu ziet'), ...lang(2), kop(2, 'Let op'), alinea('x')],
+      {
+        eenScherm: true,
+      },
+    );
+    expect(tabs(uit).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('een pagina met een plaatje ook: hoe hoog dat is, staat niet in de bron', () => {
+    const plaatje: Knoop = { type: 'paragraph', children: [{ type: 'image' }] };
+    const uit = groepeer(
+      [
+        titel,
+        alinea('Kijk.'),
+        plaatje,
+        kop(2, 'Aansluiten'),
+        alinea('a'),
+        kop(2, 'Test het'),
+        alinea('b'),
+      ],
+      {
+        eenScherm: true,
+      },
+    );
+    expect(uit).not.toBeNull();
+  });
+
+  it('de schatting kijkt naar de bron, niet naar wat de tabbladen naast elkaar zetten', () => {
+    // Een pagina zonder tabbladen blijft zoals in de bron: code en zijn
+    // toelichting staan daar onder elkaar. Met de schatting van naast elkaar
+    // paste een pagina "op één scherm" die het in het echt niet deed.
+    const code: Knoop = {
+      type: 'code',
+      value: Array.from({ length: 10 }, (_, i) => `regel_${i} = ${i}`).join('\n'),
+    };
+    const toelichting = punten(
+      ...Array.from(
+        { length: 6 },
+        (_, i) => `Punt ${i}: wat deze regel doet en waarom hij er staat.`,
+      ),
+    );
+    const pagina = [
+      titel,
+      alinea('Zo ziet het script eruit.'),
+      code,
+      toelichting,
+      kop(2, 'Wat je nu ziet'),
+      alinea('De uitvoer.'),
+      kop(2, 'Let op'),
+      alinea('Sla het op.'),
+    ];
+    const { pastOpEenScherm, naastElkaar } = require('./plugins/les-tabs.js');
+    const sectie = (vanaf: number, tot?: number) => {
+      const kinderen = pagina.slice(vanaf, tot);
+      return { kop: kinderen[0], kinderen };
+    };
+    const secties = [sectie(4, 6), sectie(6)];
+    // Naast elkaar geschat past het, onder elkaar niet.
+    expect(pastOpEenScherm(naastElkaar(pagina.slice(1, 4)), secties)).toBe(true);
+    expect(pastOpEenScherm(pagina.slice(1, 4), secties)).toBe(false);
+    expect(groepeer(pagina, { eenScherm: true })).not.toBeNull();
+  });
+
+  it('de remark-stap zet dan de marker van een les zonder tabbladen', () => {
+    const tree = { type: 'root', children: [...kort] };
+    remarkLesTabs({ eenScherm: true })(tree, {});
+    expect(tree.children.at(-1)?.attributes?.[0]?.name).toBe('data-les-zonder-tabs');
+  });
+});
+
+describe('het meetscript (scripts/meet-les-tabs.mjs)', () => {
+  const bron = readFileSync(
+    fileURLToPath(new URL('../../scripts/meet-les-tabs.mjs', import.meta.url)),
+    'utf8',
+  );
+  const code = bron.replace(/^\s*\/\/.*$/gm, '');
+
+  it('meet met klassieke schuifbalken, zoals op een schoolcomputer met Windows', () => {
+    // Playwright start Chromium headless met --hide-scrollbars. Een rij
+    // stappen die zijwaarts schuift, is op Windows vijftien pixels hoger: met
+    // verborgen schuifbalken telde het script die niet.
+    expect(code).toMatch(/ignoreDefaultArgs:\s*\['--hide-scrollbars'\]/);
+    // Een telefoon heeft schuifbalken over de inhoud heen.
+    expect(code).toMatch(/isMobile:\s*true/);
+    // De schuifbalk van de pagina hoort bij innerWidth en innerHeight: het
+    // script rekent met het venster zonder schuifbalken.
+    expect(code).not.toMatch(/window\.inner(Width|Height)/);
+  });
+
+  it('klapt met --open elk uitklapblok open door op zijn summary te klikken', () => {
+    // Het <details> van Docusaurus klapt met een animatie open: een blok dat
+    // alleen het attribuut open krijgt, blijft leeg.
+    expect(code).toMatch(/argumenten\.includes\('--open'\)/);
+    expect(code).toMatch(/:scope > summary/);
+    expect(code).not.toMatch(/\.open\s*=\s*true/);
+    for (const veld of ['naOpen', 'naOpenBlok', 'naAllesOpen']) expect(code).toContain(veld);
   });
 });

@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { DoelContext, PaneelContext } from '@coderius/shared/components/LesTabs/paneel';
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -360,5 +361,17 @@ describe('CodeExercise', () => {
     await waitFor(() => expect(nep.runs).toEqual(['print(1)']));
     expect(pogingen).toBe(2);
     expect(screen.queryByText(/Fout bij het laden/)).toBeNull();
+  });
+});
+
+describe('de verwachte uitvoer in de uitvoerkolom', () => {
+  it('breekt af als een regel niet past, net als de uitvoer van de leerling', () => {
+    // In een smalle kolom (op Windows nog smaller door de schuifbalk van de
+    // pagina) viel het eind van een regel weg: "geslaagd!" in les 5b.3.
+    // Alleen in een browser te zien; in jsdom is import.meta.url geen
+    // bestandsadres, dus het pad vanuit de root.
+    const css = readFileSync('packages/python-runner/src/CodeExercise/styles.module.css', 'utf8');
+    expect(css).toMatch(/\.doel pre code\s*\{[^}]*white-space:\s*pre-wrap/);
+    expect(css).toMatch(/\.output\s*\{[^}]*white-space:\s*pre-wrap/);
   });
 });

@@ -76,6 +76,39 @@ describe('bestandsnamen achter git add', () => {
   });
 });
 
+describe('bestandsnamen achter git rm en git restore', () => {
+  it('biedt aan wat git volgt', () => {
+    const s = runCommand(
+      repo({ 'hello.txt': 'a', 'nieuw.txt': 'b' }),
+      'git add hello.txt',
+    ).newState;
+    expect(vulAan('git rm --cached ', s).kandidaten).toEqual(['hello.txt']);
+    expect(vulAan('git restore --staged he', s).aangevuld).toBe('git restore --staged hello.txt ');
+  });
+});
+
+describe('een naam met een spatie', () => {
+  // Bash zet er een backslash voor; hier aanhalingstekens, die leest de
+  // simulator ook.
+  const s = repo({ 'mijn bestand.txt': 'a', 'mijn tekst.txt': 'b' });
+
+  it('vult aan tussen aanhalingstekens', () => {
+    expect(vulAan('git add mijn b', s).aangevuld).toBeNull();
+    expect(vulAan('git add "mijn b', s).aangevuld).toBe('git add "mijn bestand.txt" ');
+  });
+
+  it('laat het aanhalingsteken open zolang er meer kan volgen', () => {
+    const r = vulAan('git add mi', s);
+    expect(r.aangevuld).toBe('git add "mijn ');
+    expect(r.kandidaten).toEqual(['mijn bestand.txt', 'mijn tekst.txt']);
+  });
+
+  it('wat aanvulling oplevert, werkt', () => {
+    const { aangevuld } = vulAan('git add "mijn b', s);
+    expect(runCommand(s, aangevuld ?? '').ok).toBe(true);
+  });
+});
+
 describe('git commit', () => {
   it('biedt de -m vlag aan, want zonder boodschap werkt commit niet', () => {
     expect(vulAan('git commit ', repo()).aangevuld).toBe('git commit -m ');

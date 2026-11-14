@@ -1,47 +1,50 @@
 ---
 sidebar_position: 3
 title: "Forensics - Geluidsfragment"
+description: "Je krijgt een geluidsfragment dat onbegrijpelijk klinkt, en maakt het weer verstaanbaar."
+pagination_prev: forensics/belgie
+pagination_next: hacking/virus
 ---
 
 # Forensics - Geluidsfragment
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Geluidsfragment"* onder Forensics.
 
-**Moeilijkheid:** Makkelijk
-
-## Onderwerp
-**Audio-analyse**
-
-## Beschrijving
 Je krijgt een geluidsfragment dat onbegrijpelijk klinkt. Hoe maak je het begrijpelijk?
 
-## Wat je leert
-- Hoe audio-bestanden gemanipuleerd kunnen worden
-- Hoe je Audacity of vergelijkbare tools kunt gebruiken
-- Wat een spectrogram is en hoe je het kunt lezen
+- **Moeilijkheid:** Makkelijk
+- **Onderwerp:** Audio-analyse
 
-## Benodigde tools
-- [Audacity](https://www.audacityteam.org/) (gratis audio-editor)
+**Wat je oefent**
+
+- Goed luisteren naar wat er met een geluid mis is
+- Een geluidsbestand onderzoeken in een audio-editor
+
+**Benodigde tools:** een audio-editor die je installeert, bijvoorbeeld [Audacity](https://www.audacityteam.org/) (gratis)
+
+Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
 ## Hints
 
 <details>
 <summary>Hint 1</summary>
 
-Het geluid klinkt misschien vreemd omdat het op een bepaalde manier is gemanipuleerd. Welke bewerkingen kun je op audio toepassen?
+Speel het fragment een paar keer af. Klinkt het als spraak die **achterstevoren** loopt, of als iemand die veel te snel of te langzaam praat?
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Open het geluidsfragment in een audio-editor. Probeer het om te keren (reverse), de snelheid aan te passen, of het spectrogram te bekijken.
+Open het fragment in de audio-editor en draai die bewerking terug: keer het geluid om (**reverse**) of pas de snelheid aan.
 
 </details>
 
 <details>
 <summary>Hint 3</summary>
 
-Bekijk ook het **spectrogram** van het geluid. Soms is er een boodschap visueel verborgen in de frequenties.
+Hoor je dan nog niets begrijpelijks, bekijk dan het **spectrogram** van het geluid. Soms is een boodschap zichtbaar verborgen in de frequenties.
 
 </details>

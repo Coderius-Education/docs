@@ -8,9 +8,9 @@ import GitSimulator from '@site/src/components/GitSimulator';
 
 # Stap 5: een tweede commit
 
-Een project bestaat zelden uit één commit. Elke keer dat je iets verandert, herhaal je dezelfde drie stappen: aanpassen → `git add` → `git commit`.
+Een project heeft veel commits. Bij elke verandering herhaal je drie stappen: aanpassen → `git add` → `git commit`.
 
-In de simulator hieronder staat de eerste commit er al. Je kunt een bestand toevoegen of bewerken via de knoppen onder de zones. Voeg een tweede bestand toe, of pas `hello.txt` aan, en maak nog een commit.
+In de simulator hieronder staat de eerste commit er al. Voeg met de knoppen onder de zones een tweede bestand toe, of pas `hello.txt` aan, en maak nog een commit.
 
 <GitSimulator scenarioId="stap-5-tweede-commit" />
 
@@ -18,5 +18,17 @@ In de simulator hieronder staat de eerste commit er al. Je kunt een bestand toev
 <summary>Klik hier voor een tip.</summary>
 
 De eerste commit staat er al. Klik op **"+ nieuw bestand"** of **"bewerk hello.txt"** om iets te veranderen, en doe daarna `git add ...` en `git commit -m "..."`.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+Klik op **"bewerk hello.txt"**, zet er een regel bij en sla op. Typ daarna:
+
+```bash
+git add .
+git commit -m "regel toegevoegd"
+```
 
 </details>

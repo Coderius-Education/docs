@@ -103,7 +103,45 @@ krijgt een vlag, een functie en een plek in de lus van `blokken`;
 `ci-poort.test.ts` eist dat. De job `browser` opent de gebouwde python-site in
 Chromium en doet daar wat een leerling in de speeltuin doet
 (`scripts/rooktest-speeltuin.mjs`); hij draait als de python-site gebouwd wordt,
-dus ook na een wijziging in `packages/python-runner`.
+dus ook na een wijziging in `packages/python-runner`. De job `terminal` doet
+hetzelfde voor de oefenterminal van linux (`scripts/rooktest-linux.mjs`: Tab
+vult aan, ook na Esc en wegklikken; Esc en dan Tab gaat naar de knop
+Volgende; het antwoord uit de les vinkt elk doel af; de terminal plakt naast
+een open antwoord).
+
+**De job `schermen` meet of elk scherm past**, per gebouwde cursus met
+les-tabbladen: `meet-les-tabs.mjs --bronnen=changed.json --streng`. Een
+gewijzigde lespagina wordt gemeten (`packages/shared/meet-selectie.js` zoekt
+de les met hetzelfde adres: nummers, `slug` en `id` zoals Docusaurus); een
+onderdeel, de opmaak, een deel of een package meet de hele cursus, ook als
+er daarnaast een les veranderde (`schermen.viaPakket`: het package waar de
+cursus van afhangt). Verandert de meting zelf (het meetscript, de
+uitzonderingen, `meet-selectie.js`), dan meet hij elke cursus met tabbladen,
+met de build uit de cache of zelf gebouwd zoals `terminal`. Met
+`--streng` faalt hij bij een scherm dat op 1280×720 of 1366×768 te lang is,
+zijwaarts schuift, een rij tabbladen op twee regels, afgesneden code of een
+dubbele id, ook op een pagina zonder tabbladen (daar ook afgebroken code),
+en bij een gewijzigde les die hij niet in de build vindt
+(`moetGemetenWorden`); een bewuste uitzondering staat met een reden in
+`scripts/meet-les-tabs-uitzonderingen.json` (de overzichten van de
+python-projecten). Hij meet zoals een schoolcomputer met Windows: klassieke
+schuifbalken van 15 pixels, de volledige Chromium (`channel: 'chromium'`; de
+headless shell tekende tekst en schuifbalken anders, en in CI viel daar code
+af die in Chromium paste), alleen aanvragen naar de eigen server (een
+aanvraag naar buiten bleef op de runner hangen), en per scherm wachten op
+de lettertypen. Met die schuifbalken pasten er bij de invoering in zes
+cursussen een paar schermen niet meer; die zijn ingekort of gesplitst, en
+`pasCode` rekent opnieuw nadat `speling` een codevak laat schuiven.
+
+**De git-simulator wordt naast een vaste git gelegd**: de job `test` bouwt
+git `GIT_VERSIE` (nu 2.56.1) zelf, eenmaal en daarna uit de cache, want de
+git van de runner veranderde zonder aankondiging. De cache-sleutel noemt het
+image (`ImageOS`): de git is tegen de bibliotheken van dat image gelinkt.
+`echte-git.test.ts` eist in CI die versie, en `git --version` in de
+simulator zegt dezelfde (`GIT_VERSIE_SIMULATOR`). Een nieuwere git volgen is een bewuste stap: `GIT_VERSIE`
+ophogen en de simulator bijwerken; `naast-git.test.ts` noemt dan elk
+verschil tegelijk, en `ANDERS_IN_243` laat hem ook lokaal met git 2.43
+draaien.
 
 ## Een les verhuizen
 
@@ -221,8 +259,8 @@ anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
 De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
-(schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica en
-fullstack zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+(schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica,
+fullstack, linux, ctf en de editor-cursus zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
@@ -372,7 +410,11 @@ bij `lesTabs`: hij leest elke les met de MDX-parser van Docusaurus zelf en
 dezelfde stap die de tabbladen maakt, dus de handleiding toont wat de
 leerling ziet. `werkvormen.test.ts` eist dat elke tip bij vakdidactiek
 bestaat onder dezelfde naam en met dezelfde paper; hernoem je daar een tip of
-verander je de bron, pas dan `werkvormen.json` mee aan.
+verander je de bron, pas dan `werkvormen.json` mee aan. De tekst bij een
+onderdeel (`doet`) gaat over code. Een cursus waar dat niet klopt (een
+terminal, de git-simulator, een challenge op een ander platform), zegt het
+zelf: `<Werkvormen doet={{ aanpassen: '…' }} />`; de literatuur blijft
+gelijk (linux, editor en ctf, `Werkvorm.test.tsx`).
 
 **De docentenhandleiding schrijft niet voor hoe iemand lesgeeft.** Dat is
 de standaard (schrijfgids §15); web, python, robotica en fullstack hebben hem zo. Hij is een halve pagina: waar de lessen op steunen
@@ -740,6 +782,214 @@ knop Volgende in 26 lessen. Sindsdien:
   drie betekenissen van Er gaat iets mis (het tabblad, de pagina, de link).
   De regels staan in schrijfgids §2; `schermen.test.ts` en `naslag.test.ts`
   van fullstack en `voorspel.test.ts` pinnen ze vast.
+
+**Wat linux erbij bracht** (november 2026; alle 207 schermen passen op
+1280×720 en 1366×768). In de lessen van thema 1 tot en met 4 typt de leerling
+de hele les mee in één oefenterminal: bij de uitleg, bij de voorspelvraag
+("Klik hier als je het hebt geprobeerd") en bij Er gaat iets mis. In
+tabbladen stond die terminal alleen op het scherm waar de bron hem had, en
+viel er op elk ander scherm niets te typen. Daarvoor is dit gekomen:
+
+- **Een oefenveld naast de les** (`<LesNaast>`, `components/LesTabs/Naast.tsx`).
+  De wortel van `<LesTabs>` heeft als laatste kind een lege kolom
+  (`data-les-naast`). Een veld met `heleLes` zet zich daarin en staat dan bij
+  elk tabblad en elke stap: vanaf 1200 pixels rechts van de tekst (47 procent
+  tekst, 53 procent veld), smaller eronder. Een veld zonder `heleLes` (de
+  terminal van een opdracht) staat op een breed scherm in de kolom en is
+  daar `hidden` zolang zijn eigen scherm dicht is; op een smal scherm staat
+  het op zijn plek in de tekst. Het veld van de hele les wijkt voor een eigen
+  veld waarvan het scherm open is: het anker van dat veld blijft in het
+  paneel en draagt `data-les-naast-open` (een anker in een dichte stap telde
+  eerst ook mee, en dan was de kolom leeg).
+- **Het veld verhuist zonder opnieuw te mounten.** Het staat in een eigen
+  element dat van plek wisselt, en React rendert er met een portal in. Een
+  portal die van doel wisselt, mount opnieuw, en dan was het werk in de
+  terminal weg; `Naast.test.tsx` telt de mounts. Het verhuist alleen als het
+  venster over de grens van 1200 pixels gaat, niet bij een wissel van
+  tabblad: een element dat uit het document gaat, is zijn schuifpositie kwijt
+  (de terminal van een opdracht stond na elke wissel bovenaan). Een portal
+  staat niet in de HTML van de build: een veld daarbuiten verhuist pas na het
+  hydrateren. Een veld binnen `<BrowserOnly>` zet in zijn `fallback` een
+  `<LesNaastPlek>`, zodat de kolom al in de HTML vrij is en de tekst niet
+  verspringt als het veld er komt.
+- **De kolom plakt niet** (`position: sticky` maakt een eigen laag, en een
+  veld op Groter viel dan onder de navbar) en de wortel is daar een flex-rij,
+  geen raster: in een raster plakte de rij tabbladen niet meer onder de
+  navbar. `les-tabs.test.ts` bewaakt beide, en dat de opmaak dezelfde grens
+  gebruikt als `useBreed`. Een veld zonder knop Groter mag zelf plakken: de
+  `LinuxTerminal` doet dat, zodat hij in beeld blijft als een antwoord open
+  staat.
+- **In de smalle tekstkolom** staat code met iets ernaast onder elkaar en is
+  de rand van een codeblok smaller. De rij stappen schuift er, zoals op een
+  telefoon, met elke naam voluit. Krimpen liet van een dichte stap eerst
+  alleen het nummer over (in les 2.4 moest wie zijn melding zocht elke stap
+  openklikken), daarna twee letters, en een rij die wisselde tussen een en
+  twee regels liet de tekst bij elke stap verspringen.
+- **Een veld dat in een dicht tabblad mount, heeft geen maten.** xterm paste
+  zich daar aan op twee kolommen. De `LinuxTerminal` start pas als hij te
+  zien is en past zich alleen aan zolang hij te zien is; naast de les neemt
+  hij de hoogte die op het scherm over is (`pasHoogte`), zonder
+  `meetRuimte`: de vrije ruimte in het paneel is dan niet van het veld.
+- **Het meetscript telt de kolom mee**: de onderkant van een scherm is die
+  van het paneel of die van het veld ernaast.
+
+In de lessen: achttien `###`-koppen erbij (in de smalle kolom past minder op een
+scherm), "de terminal hieronder" heet de oefenterminal, en elke melding van
+`mv` zonder map is een eigen fout. De cheatsheet en de hand-outs hebben geen
+tabbladen.
+
+**Wat ctf erbij bracht** (november 2026; 49 van de 49 schermen passen). Een
+challenge is een korte pagina bij een opgave op een ander platform: een
+beschrijving, wat je leert en drie hints. Met zijn vier secties van één of
+twee regels werden dat vijf tabbladen die elk bijna leeg waren, terwijl alle
+115 schermen "pasten". Passen is dus ook hier niet genoeg: **een sectie van
+één regel is geen scherm.** Een challenge heeft nu twee tabbladen, De
+challenge en Hints (`src/docs-tests/schermen.test.ts` van ctf). Voor de
+docentenhandleiding is er een werkvorm Hints bij gekomen (hulp in stappen:
+de hints zijn dicht, en elke hint zegt iets meer), en De challenge telt als
+zelf maken.
+
+**Wat de editor-cursus erbij bracht** (november 2026; 70 van de 70 schermen
+en 40 van de 40 pagina's zonder tabbladen passen). De cursus bestaat uit
+korte stappen, elk een eigen pagina: een paar regels doen, en dan
+`## Wat je nu ziet`. Met tabbladen was een stap van tien regels twee of drie
+schermen, en moest de leerling doorklikken om te zien of het gelukt was.
+
+- **Een pagina die in haar geheel op één scherm past, heeft geen tabbladen**
+  (`lesTabs: { eenScherm: true }`, `pastOpEenScherm`). Een keuze van de
+  cursus, niet de standaard: 61 tests met korte voorbeeldlessen gaan uit van
+  tabbladen, en in robotica verloren drie pagina's ze. De stap, de plugin van
+  de werkvormen en `les-schermen.js` krijgen dezelfde keuze
+  (`config.test.ts`). Niet voor een pagina met een plaatje: hoe hoog dat is,
+  staat niet in de bron.
+- **Een korte afsluiter staat onder het scherm ervoor** (`sluitAan`):
+  `## Wat je nu ziet`, en `## Aan de slag` of `## Volgende tutorial` van een
+  of twee alinea's. Alleen als ze samen passen, de pagina dan nog twee
+  tabbladen heeft en het scherm ervoor geen stappen heeft. De kop gaat mee in
+  een eigen element (`data-les-afsluiter`): de opmaak verbergt de kop van een
+  tabblad met `> h2`. De docentenhandleiding telt zo'n afsluiter als de
+  werkvorm van zijn kop (`plugins/werkvormen.js`).
+- **De schatting telt een lijst punt voor punt** (`hoogteMetLijsten`): een
+  stappenlijst met een codeblok of een tweede alinea in een punt was tot
+  tweehonderd pixels hoger dan `hoogteScherm` schatte. Geijkt op de meting:
+  de onderkant van een pagina zonder tabbladen is de schatting plus 75
+  pixels per `##` plus zo'n 125.
+- **Het meetscript meet een pagina zonder tabbladen als één scherm**
+  (`zonderTabs` in de uitvoer): de onderkant van de lestekst tegen het
+  scherm. Zonder die meting viel niet op dat zes van de zeven stappen met de
+  git-simulator te lang waren.
+- **Een oefenveld is even hoog voor en na het oefenen.** De git-simulator
+  groeide met elk bestand en elke regel uitvoer: een stap die bij het openen
+  paste, was na drie commando's twintig pixels te lang. De zones en de
+  uitvoer hebben nu een vaste hoogte en schuiven daarbinnen. Meet een veld
+  dus ook nadat je het hebt gebruikt.
+- De tabbladen van GitHub en VS Code heten in de tekst "het tabblad op
+  GitHub": de pagina heeft nu zelf tabbladen.
+
+**Wat een review van linux, ctf en de editor-cursus vond** (november 2026).
+Vier lezers: een op de code, een op ctf en de handleidingen, en twee die
+linux en de editor-cursus als leerling doorliepen. Meten liet alles passen;
+gebruiken niet. Sindsdien:
+
+- **Een oefenveld is ook te gebruiken.** De git-simulator paste met vier
+  regels uitvoer, terwijl `git status` er tien schrijft; vanaf 1280 pixels
+  staat zijn terminal naast de zones. De terminal van Linux brak een
+  bestandsnaam van `ls` midden door (nu kolommen zoals coreutils), liet je
+  met Tab niet meer los (Esc en dan Tab), en bestond niet voor een
+  schermlezer (`screenReaderMode`). Een opdracht die is vastgelopen, zegt
+  dat (`vast` in `opdrachten.ts` en in de scenario's van de simulator).
+- **Een doel kijkt naar wat er echt gebeurde.** Stap 7 van Git basis werd
+  groen na `git add .`, terwijl git het bestand bleef volgen; 2.4.a gaf een
+  vinkje "met één mv" voor twee regels mv.
+- **Code in een uitklapblok** wordt verkleind als het blok open is
+  (`toggle`), niet bij de klik: dan is het nog dicht.
+- **Een genummerde lijst die doortelt, staat niet naast code**: "5. Druk op
+  Enter" las als uitleg bij de naam van een branch.
+- **De schatting van `eenScherm` kijkt naar de bron**, en `sluitAan` telt
+  mee wat boven het eerste scherm komt.
+- **In de lessen**: geen stap heet De basis, alternatieven per systeem
+  staan in een uitklapblok en niet als tabbladen die je allemaal door moet,
+  de hulp staat op het scherm waar je vastloopt, en een tutorial noemt geen
+  branch die een eerdere al verwijderde. Een docentenhandleiding belooft
+  alleen wat de cursus overal doet.
+
+Een tweede review van dezelfde lezers vond wat de eerste reparaties
+stuk maakten, en wat een melding of doel zegt bij het geval ernaast:
+
+- **Een doel kijkt naar wat er gebeurde, niet naar de vorm op het scherm.**
+  Het doel van 2.4.a vergeleek de volgorde van `ls`; met kolommen op een
+  telefoon kwam het vinkje nooit (`namen` in `opdrachten.ts`, en
+  `opdrachten.test.ts` speelt elk antwoord ook op 20, 36 en 41 kolommen).
+  "Met één mv" vraagt één commando dat elke foto noemt (`inEenKeer`); twee
+  commando's op één regel tellen niet.
+- **Een melding noemt de echte reden**: een absoluut pad is geen "twee
+  stappen", hernoemd is niet weg. `opdrachten.test.ts` pint per melding het
+  geval ernaast.
+- **De simulator volgt git ook naast de les**: `git log` met naam, datum en
+  de hele hash, `-n` en `-1`, `commit -m"…"` en `-am`, een lege boodschap,
+  `restore --staged`, patronen in `.gitignore`, en geen "not a git command"
+  voor wat git wel kent (`COMMANDOS_VAN_GIT`, naast `git help -a` gelegd).
+  Elk geval staat in `echte-git.test.ts`.
+- **Een CSS-blok voor een groter scherm staat na de gewone regels.** Met
+  dezelfde selector ervoor won de gewone regel stil (`simulator.test.ts`).
+- **`ls` rekent zoals coreutils**, tot op de grens: een regel korter dan de
+  breedte, kolommen van minstens drie tekens, de laatste kolom zonder
+  spaties erachter (`nieuw.test.ts` legt het naast `ls -C` van de machine).
+- **Een kaart op een overzichtspagina heeft geen emoji** (de wikkel
+  `theme/DocCard/Heading`). Docusaurus telt een cijfer als emoji: van
+  "3. Acties" maakte hij icoon "3" en titel ". Acties". Komt het icoon uit
+  het label, dan krijgt de titel het hele label terug (`titel.jsx`; een
+  `.js` in de themamap leest Rspack als script, en de build stopte).
+
+Een derde review vond vooral doelen die een goed antwoord afwezen of een
+fout antwoord goedkeurden:
+
+- **Een doel kijkt naar wat het commando deed, niet naar zijn tekst.** "Met
+  één mv" werd groen na `mv kat.png fotos` en dan `mv *.jpg *.png fotos`:
+  het laatste commando noemde alles. De stand heeft nu `voorFs`, het
+  bestandssysteem vóór de regel. Elk jokerteken telt (`?` werd afgekeurd),
+  en elke foute route in `NIET_GOED` eindigt met een melding die noemt wat
+  er gebeurde (`opdrachten.test.ts`). In de simulator telt een doel elk
+  commando dat lukte (`gelukt`), en zegt `tip` hoe het nog kan voordat
+  `vast` zegt dat het niet meer kan.
+- **Het meetscript meet met klassieke schuifbalken** (Windows, 15 pixels),
+  en met `--open` met elk uitklapblok open. Een open antwoord bij een
+  opdracht mag het scherm langer maken (tot 127 pixels in linux): de
+  terminal naast de les plakt, en blijft met zijn doelen in beeld terwijl
+  de leerling het antwoord leest. Een tip alleen past overal.
+- **Een rij die zijwaarts schuift, zet de open knop in beeld**
+  (`schuifRij.ts`), alleen met `scrollLeft`: `scrollIntoView` schoof ook
+  de pagina.
+- **Esc en dan Tab in de oefenterminal gaat naar de knop Volgende**, niet
+  naar Opnieuw beginnen (een Enter daar wiste het werk). `help` past in een
+  terminal van twaalf regels: alleen de namen, en `help ls` voor de uitleg.
+- **De simulator speelt hele reeksen naast echte git af**
+  (`naast-git.test.ts`): `restore`, `rm --cached`, een weggegooid bestand,
+  `commit --amend`, `log` met een revisie.
+- **Een onbekende werkvorm in `doet` stopt de build**: een tikfout liet de
+  eigen tekst van een cursus stil weg.
+
+Een vierde review keek naar wat de derde opleverde, en naar de nieuwe CI:
+
+- **Met het toetsenbord kom je uit elk oefenveld.** De git-simulator
+  onderschepte elke Tab, ook Shift+Tab. Nu zoals de oefenterminal: Esc en
+  dan Tab gaat naar de knop Volgende (`VOLGENDE_KNOP`), Shift+Tab gaat
+  altijd terug.
+- **Een doel kijkt per stap.** Een antwoord op één regel met `&&` of `;`
+  geeft dezelfde vinkjes als op losse regels (`naStap`, `verloop` in
+  `opdrachten.ts`); 2.3.a gaf er nul. Een melding zoekt de stap waarin een
+  bestand verdween (`watGebeurdeMet`): na `rm kat.png` kreeg mv de schuld.
+- **De simulator doet wat bash en git doen** met een `;` aan het eind,
+  jokertekens zonder aanhalingstekens, spaties in `.gitignore`, de telling
+  van `git log -n` en een tikfout ("The most similar command is").
+- **Een split maakt een nieuw eerste scherm.** Tekst die "stap 3" van een
+  diagram noemde, stond na het splitsen op een ander scherm dan het
+  diagram, en een scherm begon met "Daar is `break` voor." Lees na een
+  split het nieuwe scherm opnieuw; `DOORGAAND` in `les-schermen.js` is de
+  gedeelde lijst openers die op het vorige scherm doorgaan.
+- **CI meet zonder stille gaten** (zie Incrementele CI): een package naast
+  een les, een wijziging aan alleen de meting, en een pagina zonder
+  tabbladen werden niet of half gemeten.
 
 ## Code in MDX-expressies
 

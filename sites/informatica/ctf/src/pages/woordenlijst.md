@@ -40,13 +40,16 @@ Een aanval waarbij een website of server wordt overspoeld met verkeer vanuit vel
 ### Developer Tools (DevTools)
 Ingebouwde tools in je browser (F12) waarmee je webpagina's kunt inspecteren, netwerkverkeer kunt bekijken, cookies kunt beheren en meer.
 
-## E
+### Dictionary attack
+Een aanval waarbij je alleen wachtwoorden probeert die mensen echt kiezen, uit een lijst van uitgelekte of veelgebruikte wachtwoorden. Sneller dan een brute-force aanval, die alle combinaties probeert.
 
-### Encryptie (versleuteling)
-Het proces van het omzetten van leesbare data naar onleesbare data met behulp van een sleutel. Alleen wie de juiste sleutel heeft kan de data weer leesbaar maken.
+## E
 
 ### Encoding (codering)
 Het omzetten van data naar een ander formaat voor transport of opslag. Anders dan encryptie is encoding **niet bedoeld als beveiliging** - iedereen kan het omkeren.
+
+### Encryptie (versleuteling)
+Het proces van het omzetten van leesbare data naar onleesbare data met behulp van een sleutel. Alleen wie de juiste sleutel heeft kan de data weer leesbaar maken.
 
 ## F
 
@@ -69,9 +72,6 @@ Het bepalen van de geografische locatie van een apparaat aan de hand van het IP-
 ### HTTP (HyperText Transfer Protocol)
 Het protocol waarmee je browser communiceert met webservers. Elke keer dat je een webpagina bezoekt, worden HTTP-verzoeken verstuurd.
 
-### HTTPS
-De beveiligde versie van HTTP. De 'S' staat voor Secure. Alle data wordt versleuteld verstuurd, zodat anderen niet kunnen meelezen.
-
 ### HTTP-headers
 Extra informatie die wordt meegestuurd bij HTTP-verzoeken en -antwoorden. Bevatten metadata zoals het type content, cookies, caching-instructies, etc.
 
@@ -83,15 +83,24 @@ Codes die een webserver terugstuurt om aan te geven wat er is gebeurd:
 - **404** - Niet gevonden
 - **500** - Server error
 
+### HTTPS
+De beveiligde versie van HTTP. De 'S' staat voor Secure. Alle data wordt versleuteld verstuurd, zodat anderen niet kunnen meelezen.
+
 ## I
 
 ### IDOR (Insecure Direct Object Reference)
 Een kwetsbaarheid waarbij je door het aanpassen van een parameter (bijvoorbeeld een ID in de URL) toegang kunt krijgen tot gegevens van andere gebruikers.
 
+### Input-validatie
+De controle die een website doet op wat een bezoeker invult of opvraagt, vóórdat hij er iets mee doet. Ontbreekt die controle, dan kan een aanvaller invoer sturen waar de website niet op rekent.
+
 ### IP-adres
-Een uniek nummer dat elk apparaat op het internet identificeert. **IPv4** gebruikt 4 getallen (bijv. 192.168.1.1), **IPv6** gebruikt langere hexadecimale adressen.
+Het nummer waarmee een apparaat in een netwerk bereikbaar is. **IPv4** gebruikt 4 getallen (bijvoorbeeld 8.8.8.8, een openbaar adres van Google), **IPv6** gebruikt langere hexadecimale adressen. Een adres als 192.168.1.1 is een adres in je eigen thuis- of schoolnetwerk: op internet deelt dat hele netwerk één openbaar adres.
 
 ## M
+
+### Malware
+Software die gemaakt is om schade aan te richten of gegevens te stelen. Een virus is één soort malware.
 
 ### Metadata
 "Data over data" - extra informatie die is opgeslagen in een bestand. Een foto kan bijvoorbeeld metadata bevatten over wanneer en waar deze is genomen.
@@ -125,7 +134,15 @@ Een specifieke Caesar cipher waarbij elke letter 13 posities wordt verschoven. O
 ### Spectrogram
 Een visuele weergave van de frequenties in een geluidsfragment over tijd. Soms wordt informatie visueel verborgen in een spectrogram.
 
+## U
+
+### URL-parameter
+Een waarde die je in een webadres meegeeft, vaak na een vraagteken: in `pagina?id=5` is `id` de parameter en `5` de waarde. De website gebruikt die waarde om te bepalen wat hij laat zien.
+
 ## V
+
+### Vigenere cipher
+Een versleuteling waarbij elke letter verschuift, net als bij een Caesar cipher, maar niet elke letter even ver: een sleutelwoord bepaalt de verschuiving per letter.
 
 ### VirusTotal
 Een gratis online dienst van Google waarmee je bestanden en URLs kunt laten scannen door tientallen antivirusprogramma's tegelijk.

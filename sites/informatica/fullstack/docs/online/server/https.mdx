@@ -77,13 +77,13 @@ Twee dingen moeten kloppen voordat het lukt: het A-record wijst naar je server (
 
 ## De hele weg
 
-Nu de route rond is, zie je de hele weg van een verzoek. Elke melding uit de lessen hiervoor hoort bij één stap.
+Met de route rond zie je de hele weg van een verzoek. Elke melding uit de lessen hiervoor hoort bij één stap.
 
 <VerzoekCyclus variant="online" />
 
 ### Waar het mis kan gaan
 
-Een verzoek dat bij stap 3 niet door mag, krijgt geen antwoord: de browser wacht en geeft het op. Bij stap 4 antwoordt Traefik zelf, met `404 page not found` of `Bad Gateway`. Pas bij stap 5 draait jouw code.
+Een verzoek dat ufw niet doorlaat, krijgt geen antwoord: de browser wacht en geeft het op. Kiest Traefik geen container, dan antwoordt hij zelf, met `404 page not found` of `Bad Gateway`. Pas bij de stap Je site draait als app komt jouw code aan de beurt.
 
 <Gelukt>
 

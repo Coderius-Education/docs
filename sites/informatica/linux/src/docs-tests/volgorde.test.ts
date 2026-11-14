@@ -37,8 +37,22 @@ function commandosIn(regel: string): string[] {
     .filter((c) => c && Object.hasOwn(EERSTE_LES, c));
 }
 
-function gebruik(id: string): Gebruik[] {
-  const tekst = readFileSync(`${DOCS}/${id}.mdx`, 'utf8').replace(/^---[\s\S]*?---/, '');
+/** De les zonder wat in een uitklapblok staat: dat ziet een leerling pas als hij het opent. */
+const zonderUitklapblokken = (tekst: string) => tekst.replace(/<details>[\s\S]*?<\/details>/g, '');
+
+/**
+ * Commando's die de leerling in een opdracht zelf moet vinden: die staan met
+ * opzet alleen in het antwoord. Elk met de opdracht en hoe hij het vindt.
+ */
+const ZELF_VINDEN: Record<string, string> = {
+  hostname: '1.1.a: de leerling zoekt het op met help',
+  uname: '1.1.a: de leerling zoekt het op met help',
+  sort: '5.3.b: de leerling zoekt het op met apropos',
+};
+
+function gebruik(id: string, { open = true }: { open?: boolean } = {}): Gebruik[] {
+  const bron = readFileSync(`${DOCS}/${id}.mdx`, 'utf8').replace(/^---[\s\S]*?---/, '');
+  const tekst = open ? bron : zonderUitklapblokken(bron);
   const uit: Gebruik[] = [];
   const delen = tekst.split(/^(```[a-z]*\n[\s\S]*?^```)\s*$/m);
   for (const deel of delen) {
@@ -59,6 +73,24 @@ function gebruik(id: string): Gebruik[] {
   return uit;
 }
 
+/**
+ * De opties uit een zin als "Net als bij `rm` heb je `-r` nodig" die de les
+ * van dat commando niet noemt, als "commando -optie".
+ */
+function verkeerdeVergelijkingen(tekst: string): string[] {
+  const uit: string[] = [];
+  for (const zin of tekst.split(/(?<=[.:;])\s+/)) {
+    const m = /[Nn]et als bij `([a-z]+)`/.exec(zin);
+    if (!m || !Object.hasOwn(EERSTE_LES, m[1])) continue;
+    const { pagina } = EERSTE_LES[m[1] as keyof typeof EERSTE_LES];
+    const les = readFileSync(`${DOCS}/${pagina}.mdx`, 'utf8');
+    for (const [, optie] of zin.matchAll(/`(-[a-zA-Z]+)`/g)) {
+      if (!new RegExp(`\\b${m[1]} ${optie}\\b`).test(les)) uit.push(`${m[1]} ${optie}`);
+    }
+  }
+  return uit;
+}
+
 describe('de volgorde van de commando’s', () => {
   it('de tabel klopt met de sidebar: elk nummer hoort bij zijn pagina', () => {
     const fout = Object.entries(EERSTE_LES)
@@ -71,6 +103,45 @@ describe('de volgorde van de commando’s', () => {
     const fout = Object.entries(EERSTE_LES)
       .filter(([c, { pagina }]) => !gebruik(pagina).some((g) => g.commando === c))
       .map(([c, { pagina }]) => `${c} niet in ${pagina}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('een commando dat alleen in een uitklapblok staat, is niet uitgelegd', () => {
+    // In 5.4 stonden `export` en `printenv` alleen in het antwoord van de
+    // voorspelvraag, en begon het tabblad erna met "Typ je die elke keer met
+    // export". Wie het antwoord niet opende, miste de kern van de les. Een
+    // tip, een antwoord en het antwoord van Voorspel tellen dus niet mee.
+    const fout = Object.entries(EERSTE_LES)
+      .filter(([c]) => !Object.hasOwn(ZELF_VINDEN, c))
+      .filter(([c, { pagina }]) => !gebruik(pagina, { open: false }).some((g) => g.commando === c))
+      .map(([c, { pagina }]) => `${c} staat in ${pagina} alleen in een uitklapblok`);
+    expect(fout).toEqual([]);
+    // Een uitzondering die niet meer nodig is, is een oude regel.
+    const onnodig = Object.keys(ZELF_VINDEN).filter((c) => {
+      const { pagina } = EERSTE_LES[c as keyof typeof EERSTE_LES];
+      return gebruik(pagina, { open: false }).some((g) => g.commando === c);
+    });
+    expect(onnodig).toEqual([]);
+  });
+
+  it('de regel ziet een commando in een uitklapblok niet', () => {
+    expect(
+      zonderUitklapblokken('a\n<details>\n<summary>x</summary>\n`export A=1`\n</details>\nb'),
+    ).toBe('a\n\nb');
+  });
+
+  it('"net als bij" een commando noemt een optie die zijn les uitlegt', () => {
+    // In 7.4 stond "Net als bij `cp` heb je voor een map `-r` nodig", maar
+    // geen les legt `cp -r` uit: 2.3 leert `rm -r`. Een leerling denkt dan
+    // dat hij iets gemist heeft.
+    expect(verkeerdeVergelijkingen('Net als bij `cp` heb je voor een map `-r` nodig.')).toEqual([
+      'cp -r',
+    ]);
+    const fout = lessen.flatMap((id) =>
+      verkeerdeVergelijkingen(readFileSync(`${DOCS}/${id}.mdx`, 'utf8')).map(
+        (o) => `${nummer.get(id)} ${id}: ${o}`,
+      ),
+    );
     expect(fout).toEqual([]);
   });
 

@@ -10,15 +10,16 @@ Wisselen tussen branches gaat via dezelfde knop in de statusbalk.
 
 1. Klik linksonder op de huidige branch (`feature/welkomsbericht`)
 2. Bovenaan opent een menu met al je branches
-3. Kies **main**
+3. Kies **main** en kijk naar `hello.txt`
+4. Wissel op dezelfde manier terug naar `feature/welkomsbericht`. Daar werk je in de volgende stap verder
+
+**Let op:** heb je wijzigingen die je nog niet gecommit hebt? Dan kan git ze meenemen naar de andere branch, of weigeren te wisselen. Commit dus eerst, en wissel daarna.
 
 ## Wat je nu ziet
 
-Linksonder staat `main`. Je `hello.txt` ziet er nog net zo uit als voordat je de branch maakte — je hebt op de feature-branch immers nog niets gecommit.
+Linksonder stond eerst `main` en staat nu weer `feature/welkomsbericht`. Je `hello.txt` zag er op `main` net zo uit als op je branch: je hebt op de feature-branch nog niets gecommit.
 
 **Belangrijk:** je bestanden op je harde schijf **veranderen mee** met de branch. Als je op `feature/...` een wijziging committe en je wisselt naar `main`, dan zie je die wijziging niet meer in je editor — git heeft de bestanden teruggezet naar hoe ze op `main` staan.
-
-Wissel nu terug naar `feature/welkomsbericht` voor de volgende stap.
 
 **Wat gebeurde er onder de motorkap?**
 
@@ -26,7 +27,3 @@ Wissel nu terug naar `feature/welkomsbericht` voor de volgende stap.
 git checkout main
 git checkout feature/welkomsbericht
 ```
-
-## Let op: niet-gecommitte wijzigingen
-
-Heb je nog wijzigingen in je werkmap die je **niet** gecommit hebt? Dan kan git ze meenemen naar de andere branch, of weigeren te wisselen. Zorg dat je elke wijziging eerst commit voordat je wisselt — dat voorkomt verwarring.

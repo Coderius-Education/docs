@@ -233,6 +233,26 @@ describe('iedereen werkt met dezelfde Python', () => {
     expect(wissel).toMatch(/\n## Wat je nu ziet/);
   });
 
+  it('die uitleg begint met de vraag of je hem nodig hebt', () => {
+    // De link Volgende onder stap 7 leidt naar deze pagina. Wie Python 3.14
+    // had, las er eerst "ga verder bij De oude omgeving weggooien", en het
+    // Mac-blok bovenaan begon met `rm -rf .venv`: een werkende omgeving ging
+    // weg. De eerste sectie controleert de versie en zegt dat je bij 3.14
+    // niets doet; elk commando dat .venv weggooit, komt pas na een controle.
+    const wissel = tekst('andere-versie.md');
+    const eerste = wissel.split(/\n## /)[1];
+
+    expect(eerste).toMatch(/^Heb je deze pagina nodig\?/);
+    expect(eerste).toContain('python --version');
+    expect(eerste).toMatch(/`Python 3\.14`[^.]*hoef je hier niets te doen/);
+    for (const weg of ['rm -rf .venv', 'Remove-Item -Recurse -Force .venv']) {
+      const voor = wissel.slice(0, wissel.indexOf(weg));
+      expect(voor, weg).toMatch(/python3? --version/);
+    }
+    const mac = wissel.match(/<summary>Op een Mac of Linux<\/summary>([\s\S]*?)<\/details>/)?.[1];
+    expect(mac?.indexOf('python3 --version')).toBeLessThan(mac?.indexOf('rm -rf .venv') ?? -1);
+  });
+
   it('wijst bij een verkeerde versie naar die uitleg', () => {
     const naar = /\]\(site:editor\/python\/andere-versie[)#]/;
     const zonder = [

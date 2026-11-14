@@ -1,0 +1,12 @@
+[
+  {
+    "site": "python",
+    "les": "docs/projecten",
+    "reden": "Het overzicht van alle projecten: een rij kaarten waaruit je kiest. Daar scrol je, net als in de lessenlijst; het is geen les."
+  },
+  {
+    "site": "python",
+    "les": "docs/projecten/turtle",
+    "reden": "Het overzicht van de projecten met turtle: een rij kaarten waaruit je kiest, geen les."
+  }
+]

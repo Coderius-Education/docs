@@ -1,10 +1,12 @@
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { hoofdstukSleutel, leesKlasCookie, pasKlasToe } from '@coderius/shared/klas';
 import { DOCENTEN_SITES, SITES } from '@coderius/shared/sites';
 import { describe, expect, it } from 'vitest';
 import sidebarManifest from './plugins/sidebar-manifest';
+import { kaartTitel } from './theme/DocCard/Heading/titel';
 
 // Klassen: build (sidebar-manifest.json) en browser (de sidebar-props) moeten
 // dezelfde sleutel per hoofdstuk berekenen, anders verbergt een klas niets.
@@ -139,7 +141,7 @@ describe('sidebar-manifest', () => {
 });
 
 describe('klassen en de rest van de repo', () => {
-  it('geen site swizzlet DocSidebarItems (dat schaduwt de klas-wikkel)', () => {
+  it('geen site swizzlet DocSidebarItems of DocCard/Heading (dat schaduwt de wikkel)', () => {
     const fout: string[] = [];
     for (const vak of readdirSync(join(ROOT, 'sites'))) {
       const vakMap = join(ROOT, 'sites', vak);
@@ -147,10 +149,52 @@ describe('klassen en de rest van de repo', () => {
         ? [vakMap]
         : readdirSync(vakMap).map((s) => join(vakMap, s));
       for (const site of mappen) {
-        if (existsSync(join(site, 'src', 'theme', 'DocSidebarItems'))) fout.push(site);
+        for (const deel of ['DocSidebarItems', 'DocCard'])
+          if (existsSync(join(site, 'src', 'theme', deel))) fout.push(`${site}: ${deel}`);
       }
     }
     expect(fout).toEqual([]);
+  });
+
+  it('een kaart op een overzichtspagina heeft geen emoji-icoon', () => {
+    // De overzichtskaarten van ctf toonden het 📄 van Docusaurus. De wikkel
+    // geeft de kop van de kaart geen icoon mee.
+    const bron = readFileSync(
+      join(ROOT, 'packages/shared/theme/DocCard/Heading/index.jsx'),
+      'utf8',
+    );
+    expect(bron).toContain("from '@theme-init/DocCard/Heading'");
+    expect(bron).toMatch(/icon=\{undefined\}/);
+  });
+
+  it('een kaart houdt het nummer uit zijn label', async () => {
+    // Docusaurus telt een cijfer als emoji: van "3. Acties" (play) maakte hij
+    // icoon "3" en titel ". Acties". Zonder icoon stond er ". Acties".
+    const require = createRequire(join(ROOT, 'sites/informatica/play/package.json'));
+    const lib = join(require.resolve('@docusaurus/theme-common'), '..');
+    const { extractLeadingEmoji } = await import(
+      pathToFileURL(join(lib, 'utils/emojiUtils.js')).href
+    );
+    const kaart = (label: string) => {
+      const { emoji, rest } = extractLeadingEmoji(label);
+      // Zoals DocCard: zonder emoji in het label het reserve-icoon.
+      return kaartTitel({ label }, rest.trim(), emoji ?? '📄️');
+    };
+    expect(extractLeadingEmoji('3. Acties').emoji).toBe('3');
+    expect(kaart('3. Acties')).toBe('3. Acties');
+    expect(kaart('#1 Bovenaan')).toBe('#1 Bovenaan');
+    expect(kaart('Voor de eerste keer Python?')).toBe('Voor de eerste keer Python?');
+    expect(kaart('Acties')).toBe('Acties');
+    // En de wikkel geeft die titel ook door, na {...props}: zonder die regel
+    // bleef de titel van Docusaurus (". Acties") staan.
+    const wikkel = readFileSync(
+      join(ROOT, 'packages/shared/theme/DocCard/Heading/index.jsx'),
+      'utf8',
+    );
+    expect(wikkel).toMatch(/import \{ kaartTitel \} from '\.\/titel'/);
+    expect(wikkel).toMatch(
+      /\{\.\.\.props\}[\s\S]*title=\{kaartTitel\(props\.item, props\.title, props\.icon\)\}/,
+    );
   });
 
   it('geen cursuspad botst met een route van home', () => {

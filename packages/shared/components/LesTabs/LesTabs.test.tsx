@@ -12,9 +12,12 @@ import LesTabs, {
   LesTab,
   LesVeld,
   LesVoorbeeld,
+  VOLGENDE_KNOP,
   useInLesTab,
 } from './index';
 import { useLesDoel } from './paneel';
+import { pasCode } from './pasCode';
+import { MARGE, schuifInRij } from './schuifRij';
 
 // react-dom/server heeft hier geen types (zie Voorspel/logica.test.ts).
 const { renderToStaticMarkup } = (await import('react-dom/server' as string)) as {
@@ -29,6 +32,30 @@ const { renderToStaticMarkup } = (await import('react-dom/server' as string)) as
 
 let locatie = { pathname: '/les', hash: '', search: '' };
 vi.mock('@docusaurus/router', () => ({ useLocation: () => locatie }));
+
+// pasCode en verdeelSpeling doen hun echte werk, en schrijven op wanneer ze
+// draaien: de volgorde staat vast in 'pasCode rekent na de speling opnieuw'.
+const aanroepen = vi.hoisted(() => [] as string[]);
+vi.mock('./pasCode', async (echt) => {
+  const m = await echt<typeof import('./pasCode')>();
+  return {
+    ...m,
+    pasCode: (...a: Parameters<typeof m.pasCode>) => {
+      aanroepen.push('pasCode');
+      m.pasCode(...a);
+    },
+  };
+});
+vi.mock('./speling', async (echt) => {
+  const m = await echt<typeof import('./speling')>();
+  return {
+    ...m,
+    verdeelSpeling: (...a: Parameters<typeof m.verdeelSpeling>) => {
+      aanroepen.push('verdeelSpeling');
+      m.verdeelSpeling(...a);
+    },
+  };
+});
 
 const scrol = vi.fn();
 beforeEach(() => {
@@ -193,6 +220,23 @@ describe('LesTabs', () => {
     expect(paneel('theorie').querySelector(':scope > [data-les-verder] button')).not.toBeNull();
     expect(paneel('er-gaat-iets-mis').querySelector('[data-les-verder]')).toBeNull();
   });
+
+  it('vindt met VOLGENDE_KNOP de knop Volgende van het open tabblad', () => {
+    // De oefenterminal van Linux zet met Esc en dan Tab de focus op deze
+    // knop. Een selector die niets meer vindt, valt daar stil: de Tab gaat
+    // dan naar Opnieuw beginnen.
+    render(<Les />);
+    expect(document.querySelector(VOLGENDE_KNOP)).toBe(
+      screen.getByRole('button', { name: 'Volgende: Opdracht 1' }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Opdracht 1' }));
+    const knop = document.querySelector(VOLGENDE_KNOP);
+    expect(knop).toBe(screen.getByRole('button', { name: 'Volgende: Er gaat iets mis' }));
+    expect(paneel('opdracht-1-tel').contains(knop)).toBe(true);
+    // Het laatste tabblad heeft geen knop Volgende.
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Er gaat iets mis' }));
+    expect(document.querySelector(VOLGENDE_KNOP)).toBeNull();
+  });
 });
 
 // Een tabblad met meer ###-koppen toont ze als stappen, één tegelijk.
@@ -269,6 +313,135 @@ describe('de code van een les', () => {
   });
 });
 
+describe('code past ook met een schuifbalk', () => {
+  it('pasCode rekent na de speling opnieuw', () => {
+    // verdeelSpeling kan een codevak lager maken; dan schuift het verticaal,
+    // en een klassieke schuifbalk nam 10 px van de breedte (robotica, tof:
+    // de langste regel viel af). Na elke wissel van tabblad dus eerst de
+    // letters (dat verandert de hoogte), dan de speling, en dan de letters
+    // nog een keer, nu met de schuifbalk erbij. Welke pixels dat zijn, ziet
+    // alleen een browser; de volgorde staat hier vast.
+    const beeld = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((terug) => {
+      terug(0);
+      return 1;
+    });
+    aanroepen.length = 0;
+    try {
+      render(<Les />);
+      expect(aanroepen).toEqual(['pasCode', 'verdeelSpeling', 'pasCode']);
+      aanroepen.length = 0;
+      fireEvent.click(screen.getByRole('tab', { name: /Opdracht 1/ }));
+      // Een klik in de les meet ook (een andere stap), dus het rondje kan
+      // twee keer gaan; elk rondje heeft dezelfde volgorde.
+      expect(aanroepen.length).toBeGreaterThanOrEqual(3);
+      expect(aanroepen.length % 3).toBe(0);
+      for (let i = 0; i < aanroepen.length; i += 3)
+        expect(aanroepen.slice(i, i + 3)).toEqual(['pasCode', 'verdeelSpeling', 'pasCode']);
+    } finally {
+      beeld.mockRestore();
+      aanroepen.length = 0;
+    }
+  });
+});
+
+describe('de verwachte uitvoer in een oefenveld', () => {
+  it('krijgt geen kleinere letters: hij breekt af, zoals uitvoer in een terminal', () => {
+    // De CodeExercise van python-runner toont de verwachte uitvoer in zijn
+    // uitvoerkolom, en daar breekt een lange regel af (`.doel pre code`).
+    // pasCode maakte de letters eerst tot 80% kleiner, en daarna brak de
+    // regel toch: klein en afgebroken. Een blok dat zelf afbreekt, slaat
+    // pasCode over, net als de uitvoer van het veld.
+    const stijl = document.createElement('style');
+    stijl.textContent = '.doel pre code { white-space: pre-wrap; }';
+    document.head.append(stijl);
+    const wortel = document.createElement('div');
+    const blok = '<div class="theme-code-block"><pre><code>een lange regel</code></pre></div>';
+    wortel.innerHTML = `<div class="doel"><p>Verwachte uitvoer:</p>${blok}</div>${blok}`;
+    document.body.append(wortel);
+    try {
+      const [doel, les] = Array.from(wortel.querySelectorAll('pre'));
+      for (const pre of [doel, les]) {
+        Object.defineProperty(pre, 'clientWidth', { value: 400, configurable: true });
+        Object.defineProperty(pre, 'scrollWidth', {
+          configurable: true,
+          get: () => (pre.style.fontSize ? 400 : 440),
+        });
+      }
+      // Was hij al verkleind (een venster dat smaller werd), dan gaat dat eraf.
+      doel.style.fontSize = '12px';
+      pasCode(wortel);
+      expect(doel.style.fontSize).toBe('');
+      expect(doel.hasAttribute('data-code-breekt')).toBe(false);
+      // Een gewoon codeblok van de les krijgt wel kleinere letters.
+      expect(les.style.fontSize).not.toBe('');
+    } finally {
+      wortel.remove();
+      stijl.remove();
+    }
+  });
+});
+
+describe('de knop Volgende', () => {
+  it('zegt niet twee keer Volgende als het volgende tabblad zo heet', () => {
+    // De laatste stap van Git basis: het tabblad Volgende tutorial stond op
+    // de knop als "Volgende: Volgende tutorial".
+    render(
+      <LesTabs>
+        <LesTab id="a" titel="Probeer het zelf" label="Probeer het zelf">
+          <p>a</p>
+        </LesTab>
+        <LesTab id="b" titel="Volgende tutorial" label="Volgende tutorial">
+          <p>b</p>
+        </LesTab>
+      </LesTabs>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende tutorial' }));
+    expect(document.getElementById('paneel-b')?.hasAttribute('hidden')).toBe(false);
+  });
+});
+
+describe('code in een uitklapblok', () => {
+  it('wordt gemeten als het blok open is, niet bij de klik', async () => {
+    // Bij de klik op de summary is het blok nog dicht en heeft de code geen
+    // breedte. In les 2.1 van Linux bleef de uitvoer in het antwoord van de
+    // voorspelvraag daardoor op volle grootte staan, 383 pixels afgesneden:
+    // het woord waar de vraag om draait, viel weg. De les luistert nu naar
+    // `toggle`, dat komt als het blok open is.
+    render(
+      <LesTabs>
+        <LesTab id="a" titel="A" label="A">
+          <details>
+            <summary>Antwoord</summary>
+            <div className="theme-code-block">
+              <pre>
+                <code>een lange regel uitvoer</code>
+              </pre>
+            </div>
+          </details>
+        </LesTab>
+        <LesTab id="b" titel="B" label="B">
+          <p>b</p>
+        </LesTab>
+      </LesTabs>,
+    );
+    const beeld = () => new Promise((klaar) => window.requestAnimationFrame(() => klaar(null)));
+    const details = document.querySelector('details') as HTMLDetailsElement;
+    const pre = document.querySelector('pre') as HTMLPreElement;
+    Object.defineProperty(pre, 'clientWidth', { value: 400, configurable: true });
+    Object.defineProperty(pre, 'scrollWidth', {
+      configurable: true,
+      get: () => (pre.style.fontSize ? 400 : 440),
+    });
+    await beeld();
+    // Dicht: niets gemeten.
+    expect(pre.style.fontSize).toBe('');
+    details.open = true;
+    details.dispatchEvent(new Event('toggle'));
+    await beeld();
+    expect(pre.style.fontSize).not.toBe('');
+  });
+});
+
 describe('het icoon van de werkvorm', () => {
   function LesMetWerkvormen() {
     return (
@@ -320,6 +493,230 @@ describe('LesLeerdoel', () => {
     // De kop blijft in de HTML: een link naar #wat-ga-je-leren moet zijn doel
     // vinden, en een schermlezer hoort wat de zin is.
     expect(document.getElementById('wat-ga-je-leren')?.tagName).toBe('H2');
+  });
+});
+
+describe('een rij stappen die zijwaarts schuift', () => {
+  // In de smalle kolom naast de oefenterminal van Linux, en op een telefoon,
+  // schuift de rij stappen. Na een link naar een latere stap, de knop
+  // Volgende of het laden met een stap in het adres stond de knop van de
+  // open stap buiten beeld. De rij schuift nu zelf, met scrollLeft: de
+  // pagina verspringt niet (geen scrollIntoView, geen window.scrollTo).
+  //
+  // jsdom heeft geen opmaak: hier is de rij 200 pixels breed en elke knop
+  // 100, naast elkaar, en scrollLeft schuift ze echt.
+  const BREEDTE = 200;
+  const schuif = new WeakMap<Element, number>();
+  const rijVan = (el: Element) => el.closest('[aria-label="Stappen in dit onderdeel"]');
+  const echt = {
+    rect: Element.prototype.getBoundingClientRect,
+    links: Object.getOwnPropertyDescriptor(Element.prototype, 'scrollLeft'),
+    breed: Object.getOwnPropertyDescriptor(Element.prototype, 'scrollWidth'),
+    zicht: Object.getOwnPropertyDescriptor(Element.prototype, 'clientWidth'),
+  };
+  let schuiftRij = true;
+  beforeEach(() => {
+    schuiftRij = true;
+    Object.defineProperty(Element.prototype, 'scrollLeft', {
+      configurable: true,
+      get() {
+        return schuif.get(this) ?? 0;
+      },
+      set(v: number) {
+        const rij = this as Element;
+        const max = rij.querySelectorAll('[data-stap]').length * 100 - BREEDTE;
+        schuif.set(rij, Math.max(0, Math.min(max, v)));
+      },
+    });
+    Object.defineProperty(Element.prototype, 'scrollWidth', {
+      configurable: true,
+      get() {
+        return schuiftRij ? (this as Element).querySelectorAll('[data-stap]').length * 100 : 0;
+      },
+    });
+    Object.defineProperty(Element.prototype, 'clientWidth', {
+      configurable: true,
+      get: () => BREEDTE,
+    });
+    Element.prototype.getBoundingClientRect = function (this: Element) {
+      const rij = rijVan(this);
+      if (this.hasAttribute('data-stap') && rij) {
+        const i = Array.from(rij.querySelectorAll('[data-stap]')).indexOf(this);
+        const left = i * 100 - (schuif.get(rij) ?? 0);
+        return { left, right: left + 100, top: 300, bottom: 340 } as DOMRect;
+      }
+      if (rij === this) return { left: 0, right: BREEDTE, top: 300, bottom: 340 } as DOMRect;
+      return { left: 0, right: 0, top: 300, bottom: 340 } as DOMRect;
+    };
+  });
+  afterEach(() => {
+    Element.prototype.getBoundingClientRect = echt.rect;
+    for (const [naam, d] of [
+      ['scrollLeft', echt.links],
+      ['scrollWidth', echt.breed],
+      ['clientWidth', echt.zicht],
+    ] as const) {
+      if (d) Object.defineProperty(Element.prototype, naam, d);
+      else delete (Element.prototype as unknown as Record<string, unknown>)[naam];
+    }
+  });
+
+  /** Staat de knop van de open stap helemaal in de rij? */
+  const inBeeld = () => {
+    const knop = document.querySelector('[data-stap][aria-selected="true"]') as HTMLElement;
+    const { left, right } = knop.getBoundingClientRect();
+    return left >= 0 && right <= BREEDTE;
+  };
+  const rij = () =>
+    document.querySelector('[aria-label="Stappen in dit onderdeel"]') as HTMLElement;
+
+  it('zet bij het laden met een latere stap in het adres die knop in beeld', () => {
+    const naarBoven = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    locatie = { pathname: '/les', hash: '#lijsten', search: '' };
+    render(<LesMetStappen />);
+    expect(stap()).toBe('3Lijsten');
+    expect(rij().scrollLeft).toBeGreaterThan(0);
+    expect(inBeeld()).toBe(true);
+    // Alleen de rij schuift: de pagina blijft staan.
+    expect(scrol).not.toHaveBeenCalled();
+    expect(naarBoven).not.toHaveBeenCalled();
+    naarBoven.mockRestore();
+  });
+
+  it('volgt de knop Volgende, en een link terug naar de eerste stap', () => {
+    const { rerender } = render(<LesMetStappen />);
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Koppen' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Lijsten' }));
+    expect(stap()).toBe('3Lijsten');
+    expect(inBeeld()).toBe(true);
+    expect(scrol).not.toHaveBeenCalled();
+    locatie = { pathname: '/les', hash: '#theorie-basis', search: '' };
+    rerender(<LesMetStappen />);
+    expect(stap()).toBe('1De basis');
+    expect(rij().scrollLeft).toBe(0);
+  });
+
+  it('zet de knop weer in beeld als het tabblad opnieuw opengaat', () => {
+    // Een rij die niet te zien was, begint in de browser weer links.
+    render(<LesMetStappen />);
+    fireEvent.click(document.querySelector('[data-stap="lijsten"]') as HTMLElement);
+    fireEvent.click(document.querySelector('[data-tab="make"]') as HTMLElement);
+    rij().scrollLeft = 0;
+    fireEvent.click(document.querySelector('[data-tab="theorie"]') as HTMLElement);
+    expect(stap()).toBe('3Lijsten');
+    expect(inBeeld()).toBe(true);
+  });
+
+  it('zet de knop in beeld als de rij pas later gaat schuiven', () => {
+    // Het oefenveld komt pas na het hydrateren naast de les: dan wordt de
+    // rij smaller en gaat hij schuiven. jsdom heeft geen ResizeObserver.
+    const waarnemers: [Element, () => void][] = [];
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        terug: () => void;
+        constructor(terug: () => void) {
+          this.terug = terug;
+        }
+        observe(el: Element) {
+          waarnemers.push([el, this.terug]);
+        }
+        disconnect() {}
+      },
+    );
+    try {
+      schuiftRij = false;
+      locatie = { pathname: '/les', hash: '#lijsten', search: '' };
+      render(<LesMetStappen />);
+      expect(rij().scrollLeft).toBe(0);
+      schuiftRij = true;
+      for (const [el, terug] of waarnemers) if (el === rij()) terug();
+      expect(inBeeld()).toBe(true);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('koppelt de oude waarnemer los na een wissel van stap, en alles bij het weggaan', () => {
+    // Na elke wissel van stap komt er een nieuwe ResizeObserver op de rij.
+    // Zonder disconnect bleef elke oude meekijken, en zette hij bij elke
+    // andere maat een knop in beeld die niet meer open stond.
+    const waarnemers: { el: Element; los: number }[] = [];
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        eigen: { el: Element; los: number }[] = [];
+        observe(el: Element) {
+          const w = { el, los: 0 };
+          this.eigen.push(w);
+          waarnemers.push(w);
+        }
+        disconnect() {
+          for (const w of this.eigen) w.los++;
+        }
+      },
+    );
+    try {
+      const { unmount } = render(<LesMetStappen />);
+      const opRij = () => waarnemers.filter((w) => w.el === rij());
+      const voor = opRij().length;
+      expect(voor).toBeGreaterThan(0);
+      expect(opRij().every((w, i) => (i < voor - 1 ? w.los === 1 : w.los === 0))).toBe(true);
+      fireEvent.click(screen.getByRole('button', { name: 'Volgende: Koppen' }));
+      const na = opRij();
+      expect(na.length).toBeGreaterThan(voor);
+      // De oude zijn elk één keer losgekoppeld, alleen de nieuwste kijkt nog.
+      expect(na.slice(0, -1).map((w) => w.los)).toEqual(na.slice(0, -1).map(() => 1));
+      expect(na.at(-1)?.los).toBe(0);
+      unmount();
+      expect(waarnemers.every((w) => w.los === 1)).toBe(true);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('een rij die niet schuift, blijft staan', () => {
+    schuiftRij = false;
+    locatie = { pathname: '/les', hash: '#lijsten', search: '' };
+    render(<LesMetStappen />);
+    expect(rij().scrollLeft).toBe(0);
+  });
+});
+
+describe('schuifInRij', () => {
+  const maak = (knop: { left: number; right: number }, scrollLeft = 0) => {
+    const rij = {
+      scrollWidth: 600,
+      clientWidth: 200,
+      scrollLeft,
+      getBoundingClientRect: () => ({ left: 0, right: 200 }),
+    } as unknown as HTMLElement;
+    const k = { getBoundingClientRect: () => knop } as unknown as HTMLElement;
+    return { rij, k };
+  };
+
+  it('schuift naar rechts tot de knop er met een stukje van de volgende in staat', () => {
+    const { rij, k } = maak({ left: 250, right: 330 });
+    schuifInRij(rij, k);
+    expect(rij.scrollLeft).toBe(330 - 200 + MARGE);
+  });
+
+  it('schuift naar links voor een knop die links buiten beeld staat', () => {
+    const { rij, k } = maak({ left: -90, right: -10 }, 300);
+    schuifInRij(rij, k);
+    expect(rij.scrollLeft).toBe(300 - 90 - MARGE);
+  });
+
+  it('een knop die breder is dan de rij, begint links in beeld', () => {
+    const { rij, k } = maak({ left: 120, right: 420 });
+    schuifInRij(rij, k);
+    expect(rij.scrollLeft).toBe(120);
+  });
+
+  it('een knop die al in beeld staat, laat de rij staan', () => {
+    const { rij, k } = maak({ left: 20, right: 120 }, 40);
+    schuifInRij(rij, k);
+    expect(rij.scrollLeft).toBe(40);
   });
 });
 

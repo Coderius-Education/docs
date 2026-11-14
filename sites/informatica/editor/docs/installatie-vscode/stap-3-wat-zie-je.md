@@ -11,7 +11,7 @@ Dit zijn de vaste onderdelen van het venster:
 
 - **Activiteitenbalk** (de smalle kolom helemaal links) — een rij iconen. Het bovenste, twee bladen op elkaar, opent de Explorer.
 - **Explorer** (links) — de bestanden en mappen van je project. Nu nog leeg: er is nog geen map open, daarover gaat de volgende stap.
-- **Editor** (midden) — hier bewerk je je bestanden, elk in een eigen tabblad.
+- **Editor** (midden) — hier bewerk je je bestanden, elk in een eigen tabblad van VS Code.
 - **Terminal** (onder) — een ingebouwde opdrachtregel. Die staat niet standaard open; je opent hem via **Terminal** → **New Terminal**.
 - **Statusbalk** (de balk helemaal onderaan) — informatie over je bestand en project, zoals de regel waar je cursor staat.
 

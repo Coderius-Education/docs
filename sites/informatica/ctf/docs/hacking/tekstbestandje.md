@@ -1,44 +1,48 @@
 ---
 sidebar_position: 5
 title: "Hacking - Tekstbestandje"
+description: "Op een webserver staat een bestand dat er niet voor iedereen had mogen staan."
+pagination_prev: hacking/virus
+pagination_next: hacking/koekjes-1
 ---
 
 # Hacking - Tekstbestandje
 
+## De challenge
+
 > **[Open deze challenge op ctf.hackchallenges.nl](https://ctf.hackchallenges.nl/)** - zoek naar *"Tekstbestandje"* onder Hacking.
 
-**Moeilijkheid:** Gemiddeld
+Een webserver laat je de pagina's zien waar een link naar wijst. Er kunnen meer bestanden op staan, ook een die er niet had mogen staan.
 
-## Onderwerp
-**Verborgen bestanden**
+- **Moeilijkheid:** Gemiddeld
+- **Onderwerp:** Verborgen bestanden
 
-## Beschrijving
-Net als robots.txt zijn er meer standaard tekstbestanden die op webservers staan. Wat zou een logische naam zijn voor een bestand met wachtwoorden?
+**Wat je oefent**
 
-## Wat je leert
-- Dat gevoelige bestanden soms publiek toegankelijk zijn op webservers
-- Het belang van goede bestandsbeveiliging
-- Waarom je nooit wachtwoorden in platte tekstbestanden moet opslaan
+- Denken als iemand die slordig met zijn bestanden omgaat
+- Zien waarom geheimen niet op een webserver horen
+
+Probeer het eerst zelf. Loop je vast, dan staan er op het tabblad Hints drie hints: open ze een voor een.
 
 ## Hints
 
 <details>
 <summary>Hint 1</summary>
 
-Je moet achter de URL een bestandsnaam plaatsen. Denk na: als iemand wachtwoorden opslaat in een simpel tekstbestand, welke naam zou dat bestand dan hebben?
+Een bestand op een webserver open je door zijn naam achter de basis-URL te typen, zoals je bij Robots deed. Je hoeft dus alleen de **bestandsnaam** te raden.
 
 </details>
 
 <details>
 <summary>Hint 2</summary>
 
-Probeer veelvoorkomende bestandsnamen achter de URL te zetten. Denk in zowel het Engels als Nederlands, met **.txt** als extensie.
+Denk aan wat iemand slordig zou opslaan, zoals **wachtwoorden**. Zo'n bestand heeft vaak een voorspelbare naam: bedenk namen in het Engels en in het Nederlands.
 
 </details>
 
 <details>
 <summary>Hint 3</summary>
 
-Gevoelige bestanden staan soms gewoon publiek op webservers met voorspelbare namen. Probeer meerdere varianten — wees creatief maar denk simpel.
+Zet .txt achter elke naam die je bedenkt, en probeer de varianten een voor een achter de URL tot er een bestand opent.
 
 </details>

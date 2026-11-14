@@ -4,6 +4,8 @@ sidebar_position: 5
 
 # 6.4 Diensten
 
+## Wat is een dienst?
+
 <Voorkennis items={[{to: '/docs/wsl/apt', label: 'Installeren met sudo apt'}, {to: '/docs/wsl/windows-en-linux', label: 'Een website in WSL bekijken'}]} />
 
 De webserver uit [5.2](site:linux/docs/wsl/windows-en-linux) stopte zodra je Ctrl+C drukte of de terminal sloot. Een echte server moet blijven draaien, ook als niemand is ingelogd, en vanzelf weer starten na een herstart. Zo'n programma heet een **dienst**. Op Ubuntu regelt **systemd** de diensten, en je praat ermee via `systemctl`.
@@ -54,7 +56,7 @@ Na `stop` geeft de browser een foutmelding, zoiets als **Kan deze pagina niet be
 
 </details>
 
-## Wat er gebeurde: het logboek
+## Het logboek \{#wat-er-gebeurde-het-logboek}
 
 Elke dienst schrijft wat hij doet naar een logboek. Dat lees je met `journalctl`:
 

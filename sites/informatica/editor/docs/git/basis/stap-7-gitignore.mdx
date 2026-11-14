@@ -8,19 +8,24 @@ import GitSimulator from '@site/src/components/GitSimulator';
 
 # Stap 7: bestanden negeren met `.gitignore`
 
-Soms wil je dat git bepaalde bestanden **negeert** — bijvoorbeeld tijdelijke bestanden of wachtwoorden. Daarvoor maak je een speciaal bestand: `.gitignore`. Elke regel in `.gitignore` is een bestandsnaam die git moet overslaan.
+Soms wil je dat git bepaalde bestanden **negeert** — bijvoorbeeld tijdelijke bestanden of wachtwoorden. Daarvoor maak je een speciaal bestand: `.gitignore`. Elke regel in `.gitignore` is een bestandsnaam die git moet overslaan. Een `.gitignore` die het bestand `geheim.txt` negeert, heeft één regel:
 
-Probeer het hieronder:
+```
+geheim.txt
+```
 
-1. Klik op **"+ nieuw bestand"** en maak een bestand `geheim.txt`.
-2. Doe `git status` — git ziet `geheim.txt` als niet-gevolgd.
-3. Klik weer op **"+ nieuw bestand"** en maak een bestand `.gitignore` met als inhoud één regel: `geheim.txt`.
-4. Doe opnieuw `git status` — `geheim.txt` is verdwenen uit de lijst en wordt doorgestreept in de werkmap.
+## Probeer het zelf
+
+1. Klik op **"+ nieuw bestand"**, maak een bestand `geheim.txt` en typ `git status`: git ziet het als niet-gevolgd. Typ nog geen `git add`.
+2. Maak op dezelfde manier een bestand `.gitignore`, met één regel: `geheim.txt`.
+3. Typ opnieuw `git status`: `geheim.txt` is weg uit de lijst en in de werkmap doorgestreept.
+
+**Let op:** `.gitignore` werkt alleen voor een bestand dat git nog niet volgt.
 
 <GitSimulator scenarioId="stap-7-gitignore" />
 
 ## Volgende tutorial
 
-Voordat je dit op je eigen computer doet, regel je eerst je GitHub-account: **[GitHub: account en repo](site:editor/git/github)**.
+Hierna doe je hetzelfde op je eigen computer, in VS Code, en zet je je werk online. Daarvoor heb je een account op GitHub nodig, en dat regel je eerst: **[GitHub: account en repo](site:editor/git/github)**.
 
-Dat lijkt een omweg, maar het bevestigen van je e-mailadres kan even duren. Doe je dat nu, dan staat alles klaar zodra je het nodig hebt — in plaats van dat je halverwege moet wachten.
+Gebruik een e-mailadres dat je nu kunt openen. GitHub stuurt er een mail heen om het te bevestigen, en die kan even op zich laten wachten: daarom komt GitHub vóór VS Code.

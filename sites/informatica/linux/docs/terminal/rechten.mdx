@@ -6,6 +6,8 @@ import LinuxTerminal from '@site/src/components/LinuxTerminal';
 
 # 4.1 Van wie is dit?
 
+## Eigenaar en groep
+
 <Voorkennis items={[{to: '/docs/terminal/bestanden-lezen', label: 'Permission denied bij cat'}]} />
 
 Typ in de oefenterminal `ls -l /etc`. De `-l` staat voor *long*: je krijgt per bestand een hele regel.
@@ -17,24 +19,44 @@ Typ in de oefenterminal `ls -l /etc`. De `-l` staat voor *long*: je krijgt per b
 -rw-r----- 1 root shadow 1024 Mar 26 10:00 shadow
 ```
 
-Twee regels uit die lijst. Elk bestand op Linux heeft een **eigenaar** (hier `root`) en een **groep** (`root` of `shadow`). `root` is de beheerder van de computer: die mag alles.
+Twee regels uit die lijst. Bovenaan de lijst staat `total 24`: zoveel kilobyte nemen de bestanden samen in op de schijf. Dat is meer dan de groottes bij elkaar, want een bestand neemt minstens 4 KB, hoe klein het ook is. Elk bestand op Linux heeft een **eigenaar** (hier `root`) en een **groep** (`root` of `shadow`). `root` is de beheerder van de computer: die mag alles.
 
 ## De rechten lezen
 
-Vooraan elke regel staan tien tekens. Het eerste zegt wat het is: `-` voor een bestand, `d` voor een map (*directory*). De andere negen zijn drie groepjes van drie:
+Vooraan elke regel van `ls -l` staan tien tekens. Het eerste zegt wat het is: `-` voor een bestand, `d` voor een map (*directory*). De andere negen zijn drie groepjes van drie:
 
 | `-` | `rw-` | `r--` | `r--` |
 |:---:|:---:|:---:|:---:|
 | bestand | eigenaar | groep | de rest |
 
-Per groepje:
+### Wat de letters betekenen
+
+In elk groepje van drie staat wat er mag:
 
 - `r` (*read*): lezen;
 - `w` (*write*): veranderen;
 - `x` (*execute*): uitvoeren als programma, of bij een map: erin gaan;
 - `-`: dat mag niet.
 
-`passwd` heeft `rw-r--r--`: `root` mag lezen en schrijven, iedereen mag lezen. Daarom lukte `cat /etc/passwd` in les 2.1.
+`passwd` heeft `rw-r--r--`: `root` mag lezen en schrijven, iedereen mag lezen. Daarom kon je `/etc/passwd` in [2.1](site:linux/docs/terminal/bestanden-lezen) lezen met `wc -l` en `tail`.
+
+### Schrijven in een map
+
+Een nieuw bestand maken is schrijven in de map: je zet er een naam bij. Je thuismap is van jou, dus daar mag dat. De rechten van de map `/etc` zelf staan niet in `ls -l /etc`, want dat toont wat erin staat. Ze staan in `ls -l /`, op de regel van `etc`:
+
+```
+drwxr-xr-x 2 root root 4096 Mar 26 10:00 etc
+```
+
+`/etc` is van `root`, en alleen de eigenaar heeft de `w`. Probeer maar:
+
+```bash
+touch /etc/test.txt
+```
+
+```
+touch: cannot touch '/etc/test.txt': Permission denied
+```
 
 ## Voorspel
 
@@ -43,7 +65,7 @@ Per groepje:
 <details>
 <summary>Klik hier als je het hebt geprobeerd</summary>
 
-Nee. Voor "de rest" staat er `---`: niets. Dat is de `Permission denied` uit les 2.1. Alleen `root` en wie in de groep `shadow` zit, mag erin kijken. Zo komt geen gewone gebruiker bij de wachtwoorden.
+Nee. Voor "de rest" staat er `---`: niets. Dat is de `Permission denied` uit [2.1](site:linux/docs/terminal/bestanden-lezen). Alleen `root` en wie in de groep `shadow` zit, mag erin kijken. Zo komt geen gewone gebruiker bij de wachtwoorden.
 
 </details>
 
@@ -59,15 +81,7 @@ id
 uid=1000(student) gid=1000(student) groups=1000(student)
 ```
 
-Je zit alleen in je eigen groep `student`. Een nieuw bestand maken is schrijven in de map: je zet er een naam bij. Je thuismap is van jou, dus daar mag dat. De map `/etc` is van `root` en heeft `rwxr-xr-x`: alleen de eigenaar heeft de `w`. Probeer maar:
-
-```bash
-touch /etc/test.txt
-```
-
-```
-touch: cannot touch '/etc/test.txt': Permission denied
-```
+Je zit alleen in je eigen groep `student`. Voor een bestand van `root` met de groep `shadow` geldt voor jou dus het derde rijtje: dat van de rest.
 
 :::tip[Eerst op papier]
 Oefen met kaartjes welk rijtje van `ls -l` voor wie geldt: [Mag dit?](site:linux/docs/unplugged/rechten). Je docent kan de hand-out printen.

@@ -4,13 +4,13 @@ sidebar_position: 10
 
 # 7.5 Een tunnel met ssh
 
+## Een website die alleen op de server staat
+
 <Voorkennis items={[{to: '/docs/wsl/ssh', label: 'Inloggen met ssh'}, {to: '/docs/wsl/windows-en-linux', label: 'Een website uit Linux in je browser'}]} />
 
 Een programma op een server dat alleen op `127.0.0.1` luistert, is van buiten niet te bereiken. Dat is veilig, en soms wil jij er toch bij: een beheerpagina, bijvoorbeeld. Met ssh maak je dan een **tunnel**: een poort op je eigen computer die via ssh uitkomt bij een poort op de server.
 
-## Een website die alleen op de server staat
-
-Zet een kleine website neer, die alleen op `127.0.0.1` luistert:
+Zet eerst een kleine website neer, die alleen op `127.0.0.1` luistert:
 
 ```bash
 mkdir site
@@ -19,15 +19,38 @@ cd site
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Je oefent weer op `localhost`, dus de "server" is je eigen Ubuntu. Open een tweede terminal, en maak de tunnel:
+## De tunnel maken
+
+### Alleen op 127.0.0.1
+
+De website draait in je eerste terminal. Open een tweede terminal, en vraag de site op bij twee adressen van je Ubuntu: `127.0.0.1`, en het adres van `eth0` uit `ip -br a` (bij jou een ander getal):
+
+```bash
+curl -I http://127.0.0.1:8000
+curl -I http://172.27.80.14:8000
+```
+
+De eerste geeft `HTTP/1.0 200 OK`. De tweede gebruikt het adres van de aansluiting naar buiten, en daar luistert de website niet:
+
+```
+curl: (7) Failed to connect to 172.27.80.14 port 8000 after 0 ms: Couldn't connect to server
+```
+
+### Poort 9000 naar poort 8000
+
+Je oefent weer op `localhost`, dus de "server" is je eigen Ubuntu. Maak in de tweede terminal de tunnel:
 
 ```bash
 ssh -N -L 9000:127.0.0.1:8000 localhost
 ```
 
-`-L 9000:127.0.0.1:8000` betekent: poort 9000 hier, op mijn computer, gaat naar `127.0.0.1:8000` gezien vanaf de server. `-N` betekent: geen commando's, alleen de tunnel. De terminal lijkt stil te staan; zolang hij open is, staat de tunnel.
+`-L 9000:127.0.0.1:8000` betekent: poort 9000 hier, op mijn computer, gaat door de tunnel naar `127.0.0.1:8000`. `-N` betekent: geen commando's, alleen de tunnel. De terminal lijkt stil te staan; zolang hij open is, staat de tunnel.
 
-Open `http://localhost:9000` in je browser. Daar staat *Alleen op de server*.
+Open `http://localhost:9000` in je browser. Daar staat *Alleen op de server*. Stop de tunnel met Ctrl+C en herlaad de pagina: nu krijgt de browser geen verbinding, terwijl de website nog draait. Op poort 9000 luisterde alleen de tunnel.
+
+### Waarom 8000 hier ook werkt
+
+Windows stuurt `localhost` door naar Ubuntu ([5.2](site:linux/docs/wsl/windows-en-linux#een-website-in-linux-de-browser-in-windows)). Daarom opent `http://localhost:8000` in je browser de site ook zonder tunnel: hier zijn laptop en server dezelfde computer. Bij een echte server staan je browser en de site op twee verschillende computers, en kom je alleen via de tunnel bij de site.
 
 ## Voorspel
 
