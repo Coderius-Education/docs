@@ -9,11 +9,15 @@ ze optreden. Een fout is geen tegenslag — het is informatie.
 
 ## `return -1` op de verkeerde inspringing
 
+### Te vroeg klaar
+
 Geen foutmelding, maar wel een logische fout: de functie returnt te
 vroeg en geeft daardoor verkeerde antwoorden.
 
 **Oorzaak:** `return -1` staat binnen de `for`-lus en wordt al bij de
 eerste iteratie uitgevoerd.
+
+### Even ver als de `for`
 
 **Oplossing:** zorg dat `return -1` even ver ingesprongen staat als `for`,
 niet als `if`. In Python is inspringing geen versiering — het bepaalt de
