@@ -155,16 +155,10 @@ voorwaarde, dus Python verwacht direct na `else` de dubbele punt.
 {/* niet-compileren: toont bewust een else met een voorwaarde */}
 ```python
 # FOUT
-zin = "doei"
-if "hoi" in zin:
-    print("Hallo.")
 else "doei" in zin:
     print("Doei.")
 
 # GOED
-zin = "doei"
-if "hoi" in zin:
-    print("Hallo.")
 elif "doei" in zin:
     print("Doei.")
 ```

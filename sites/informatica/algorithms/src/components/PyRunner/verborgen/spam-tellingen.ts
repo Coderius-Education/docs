@@ -11,7 +11,8 @@ spam = {
     "prijs": 1, "klik": 2, "hier": 1, "voor": 1,
 }
 gewoon = {
-    "zie": 1, "je": 3, "morgen": 1, "op": 1, "school": 2, "heb": 1,
-    "het": 1, "huiswerk": 1, "al": 1, "kom": 1, "nu": 1, "naar": 1,
+    "zie": 1, "je": 3, "morgen": 1, "op": 1, "school": 2,
+    "heb": 1, "het": 1, "huiswerk": 1, "al": 1, "kom": 1,
+    "nu": 1, "naar": 1,
 }
 `;
