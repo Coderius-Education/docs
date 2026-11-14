@@ -51,24 +51,30 @@ de geleerde strategie. De `score` uit het leren blijft daarvoor bestaan.
 
 ### De opdracht
 
-Laat de geleerde strategie 100 keer spelen tegen `willekeurig`, met 10
-lucifers, waarbij de geleerde strategie begint. Hoe vaak wint hij? Het leren
-en `willekeurig` staan in de editor al klaar.
+`slim` won alle 100 spellen van `willekeurig`. Kan de strategie die de
+computer zelf leerde dat ook? Je laat hem 100 keer spelen tegen `willekeurig`,
+met 10 lucifers, en de geleerde strategie begint.
 
+### Aan de slag
+
+In de editor staan het leren en `willekeurig` al klaar.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij leert, en print wat hij bij 10 lucifers pakt.
 2. Schrijf een functie `speel(stapel)` zoals in het vorige project, met `beste_zet(score, stapel)` in plaats van `slim(stapel)`.
 3. Laat hem 100 keer spelen, en tel hoe vaak de geleerde strategie wint.
 
-### Aan de slag
-
 :::caution
-Je `speel` heeft een while-loop. Wordt de stapel niet in elke beurt kleiner,
-dan stopt hij nooit en loopt het tabblad van de browser vast, net als bij
-[een zet](site:algorithms/docs/ml-spellen/01-nim-strategie/01-een-zet#zo-werkt-het).
-Kopieer je code eerst naar een kladblok.
+Je schrijft hier een while-loop. Wordt de stapel niet bij elke beurt kleiner,
+dan stopt hij nooit en loopt het tabblad van de browser vast. Kopieer je code
+eerst naar een kladblok.
 :::
+
+Verwachte uitvoer:
+
+```
+geleerd wint 100 van de 100
+```
 
 <PyRunner verborgen="nim-leren" initialCode={`import random
 

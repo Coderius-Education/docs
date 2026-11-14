@@ -108,20 +108,25 @@ for stapel in range(2, 11):
 
 ### De opdracht
 
-Laat de geleerde computer 1000 keer een zet kiezen bij 10 lucifers, met
-`kies(score, 10, 0.2)`, en tel hoe vaak hij elke zet kiest. Ongeveer zo:
+Met ontdekken 0.2 kiest de computer in 2 van de 10 keer een willekeurige zet.
+Hoe vaak kiest hij dan iets anders dan zijn beste zet? Je laat de geleerde
+computer 1000 keer een zet kiezen bij 10 lucifers, met
+`kies(score, 10, 0.2)`, en telt hoe vaak hij elke zet kiest.
 
-```
-{1: 866, 2: 73, 3: 61}
-```
+### Aan de slag
 
+In de editor leert de computer van 2000 spellen, zoals in het onderzoek.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij leert, en kiest één keer een zet bij 10 lucifers.
 2. Laat `kies` 1000 keer kiezen, en tel in een dictionary `keer` hoe vaak elke zet gekozen is. Print `keer`.
 3. Doe hetzelfde met ontdekken 0 en met ontdekken 1, in plaats van 0.2.
 
-### Aan de slag
+Verwachte uitvoer (bij ontdekken 0.2):
+
+```
+{1: 866, 2: 73, 3: 61}
+```
 
 <PyRunner verborgen="nim-leren" initialCode={`import random
 

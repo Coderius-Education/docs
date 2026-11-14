@@ -58,13 +58,9 @@ Een `while`-loop herhaalt zolang de voorwaarde waar is. Hier is dat zolang er
 lucifers liggen. Een `for`-loop past niet: je weet vooraf niet hoeveel beurten
 het spel duurt. De `if` zorgt dat je nooit meer pakt dan er ligt.
 
-:::caution
 Een while-loop stopt pas als de voorwaarde onwaar wordt. Vergeet je in de loop
 de stapel kleiner te maken, dan blijven er altijd lucifers liggen en stopt hij
-nooit. De speeltuin heeft geen stopknop, dus het tabblad van de browser loopt vast: herlaad de
-pagina, en je code is weg. Twijfel je of je loop stopt, druk dan eerst op Stap
-voor stap. Die neemt hoogstens 1000 stappen op.
-:::
+nooit.
 
 ## Onderzoek
 
@@ -97,8 +93,28 @@ while stapel > 0:
 ### De opdracht
 
 Een speler pakt steeds 2 lucifers van een stapel van 11, of de rest als er
-minder liggen. Laat zien hoeveel er na elke zet liggen, en hoeveel beurten
-het duurt tot de stapel op is:
+minder liggen. Je schrijft een programma dat laat zien hoeveel er na elke zet
+liggen, en dat telt hoeveel beurten het duurt tot de stapel op is. Daarvoor
+schrijf je je eerste while-loop.
+
+### Aan de slag
+
+In de editor pakt een speler één keer 2 lucifers van een stapel van 11.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: er liggen nog 9.
+2. Zet het pakken en de print in een loop `while stapel > 0:`. De laatste regel klopt niet.
+3. Zorg dat de speler nooit meer pakt dan er ligt. Nu eindigt de stapel op 0.
+4. Tel in `beurten` hoeveel zetten er zijn, en print dat na de loop.
+
+:::caution
+Wordt de stapel niet bij elke zet kleiner, dan stopt de loop nooit en loopt het
+tabblad van de browser vast: je code is dan weg. Kopieer je code eerst naar een
+kladblok, of druk bij twijfel op Stap voor stap: die neemt hoogstens 1000
+stappen op.
+:::
+
+Verwachte uitvoer:
 
 ```
 er liggen nog 9
@@ -109,15 +125,6 @@ er liggen nog 1
 er liggen nog 0
 6 beurten
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: de speler pakt één keer 2.
-2. Zet het pakken en de print in een while-loop die doorgaat zolang `stapel > 0`. Kijk naar de laatste regel: daar gaat iets mis.
-3. Zorg dat de speler nooit meer pakt dan er ligt. Nu eindigt de stapel op 0.
-4. Zet vóór de loop `beurten = 0`, tel er in de loop 1 bij op, en print na de loop hoeveel beurten het waren.
-
-### Aan de slag
 
 <PyRunner initialCode={`stapel = 11
 stapel = stapel - 2

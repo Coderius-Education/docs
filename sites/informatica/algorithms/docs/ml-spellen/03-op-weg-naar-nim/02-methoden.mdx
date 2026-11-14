@@ -102,23 +102,27 @@ print(piep.waarde(3, "links"))`} />
 
 ### De opdracht
 
-Schrijf een methode `beste_actie(vakje)` die de actie met de hoogste waarde
-teruggeeft: `"links"` of `"rechts"`. Zijn ze even hoog, dan kiest hij
-`"links"`. Met de tabel uit de editor print hij:
+Een muis die geleerd heeft, moet in elk vakje de actie met de hoogste waarde
+kiezen. Je schrijft daarvoor een methode `beste_actie(vakje)` die `"links"`
+of `"rechts"` teruggeeft. Zijn ze even hoog, dan kiest hij `"links"`.
 
-```
-1 rechts
-2 links
-3 rechts
-```
+### Aan de slag
 
+In de editor staat een muis met een paar waarden in zijn tabel, en een
+`beste_actie` die nog niets vergelijkt.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: `beste_actie` zegt nu altijd `"links"`.
 2. Laat `beste_actie` de waarde van links en die van rechts vergelijken, met `self.waarde(vakje, "links")`, en de actie met de hoogste waarde teruggeven.
 3. Print de beste actie voor elk vakje van 1 tot en met 3.
 
-### Aan de slag
+Verwachte uitvoer:
+
+```
+1 rechts
+2 links
+3 rechts
+```
 
 <PyRunner initialCode={`class Muis:
     def __init__(self):
@@ -192,7 +196,7 @@ als 0, en wint links met 0.25.
 
 ## Er gaat iets mis
 
-{/* foutmelding-van: fout-helft */}
+{/* foutmelding-van: class Muis:\n    def __init__(self):\n        self.q = {}\n    def waarde(vakje, actie):\n        return 0\npiep = Muis()\nprint(piep.waarde(3, "rechts")) */}
 ```
 TypeError: Muis.waarde() takes 2 positional arguments but 3 were given
 ```
@@ -203,28 +207,13 @@ geeft er drie mee: `piep`, 3 en `"rechts"`.
 
 **Oplossing:** zet `self` vooraan bij de parameters.
 
+{/* niet-compileren: fragment; alleen de kop van de methode die verandert */}
 ```python
 # FOUT
-class Muis:
-    def __init__(self):
-        self.q = {}
-
     def waarde(vakje, actie):
-        return 0
-
-piep = Muis()
-print(piep.waarde(3, "rechts"))
 
 # GOED
-class Muis:
-    def __init__(self):
-        self.q = {}
-
     def waarde(self, vakje, actie):
-        return 0
-
-piep = Muis()
-print(piep.waarde(3, "rechts"))
 ```
 
 Meer uitleg: [Je eerste methode](site:python/docs/klassen/15d-je-eerste-methode).

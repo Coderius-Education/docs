@@ -89,26 +89,29 @@ for beloning in [1, 1, -1, 1]:
 
 ### De opdracht
 
-Geef de muis een methode `bijwerken(vakje, actie, beloning)` die de waarde
-van een stap met het leertempo naar de beloning schuift. Laat hem leren van
-1000 blinde wandelingen, en print zijn tabel:
+Een muis die alleen de laatste beloning onthoudt, vergeet alles wat hij
+eerder leerde. Je geeft de muis een methode `bijwerken(vakje, actie, beloning)`
+die de waarde van een stap met het leertempo een stukje naar de beloning
+schuift. Dan laat je hem leren van 1000 blinde wandelingen, en print je zijn
+tabel.
+
+### Aan de slag
+
+In de editor staat een muis met een `bijwerken` die de beloning overschrijft.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `bijwerken` zet nu de beloning van één wandeling in de tabel.
+2. Laat `bijwerken` de oude waarde, `self.waarde(vakje, actie)`, met `self.tempo` naar de beloning schuiven, zoals `schatting + tempo * (1 - schatting)` naar 1 schoof.
+3. Leer van 1000 wandelingen in plaats van één.
+4. Print voor elk vakje van 1 tot en met 3 de waarde van links en van rechts.
+
+Verwachte uitvoer:
 
 ```
 1 -1.0 -0.25
 2 -0.25 -0.25
 3 -0.25 1.0
 ```
-
-Per vakje staan er de waarde van links en die van rechts.
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: `bijwerken` zet nu de beloning van één wandeling in de tabel.
-2. Laat `bijwerken` de waarde met `self.tempo` een stukje naar de beloning schuiven, zoals in Voorspel. De oude waarde krijg je met `self.waarde(vakje, actie)`.
-3. Leer van 1000 wandelingen in plaats van één.
-4. Print voor elk vakje van 1 tot en met 3 de waarde van links en van rechts.
-
-### Aan de slag
 
 <PyRunner verborgen="muis-gang" initialCode={`import random
 

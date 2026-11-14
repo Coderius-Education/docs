@@ -43,12 +43,15 @@ dezelfde seed en een lege `score`.
 
 ### De opdracht
 
-Zoek uit hoeveel spellen de computer nodig heeft om alles goed te leren.
-Probeer 1, 2, 5, 10, 20 en 50 spellen, en tel bij elk aantal bij hoeveel
-stapels hij iets anders kiest dan `slim`. Kijk alleen naar de stapels waar je
-kunt winnen: 2, 3, 4, 6, 7, 8 en 10. Gebruik bij elk aantal opnieuw
-`random.seed(1)` en een lege `score`.
+Hoeveel spellen heeft de computer nodig om alles goed te leren? Je probeert
+1, 2, 5, 10, 20 en 50 spellen, en telt bij elk aantal bij hoeveel stapels hij
+iets anders kiest dan `slim`. Kijk alleen naar de stapels waar je kunt winnen:
+2, 3, 4, 6, 7, 8 en 10. Gebruik bij elk aantal opnieuw `random.seed(1)` en een
+lege `score`, zodat je de aantallen eerlijk vergelijkt.
 
+### Aan de slag
+
+In de editor staan `slim` en het leren van 10 spellen.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: hij leert van 10 spellen, en print wat hij bij 10 lucifers pakt.
@@ -56,7 +59,16 @@ Begin klein, en breid de code stap voor stap uit:
 3. Tel bij hoeveel van de stapels 2, 3, 4, 6, 7, 8 en 10 ze verschillen.
 4. Maak van het leren een functie `leer(spellen)` die `score` teruggeeft, met `random.seed(1)` en een lege `score` erin. Roep hem aan voor 1, 2, 5, 10, 20 en 50 spellen.
 
-### Aan de slag
+Verwachte uitvoer:
+
+```
+1 spellen: 2 fout
+2 spellen: 2 fout
+5 spellen: 1 fout
+10 spellen: 0 fout
+20 spellen: 0 fout
+50 spellen: 0 fout
+```
 
 <PyRunner verborgen="nim-leren" initialCode={`import random
 

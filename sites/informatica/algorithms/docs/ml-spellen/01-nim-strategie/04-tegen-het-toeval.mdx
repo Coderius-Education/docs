@@ -80,28 +80,30 @@ for keer in range(10):
 
 ### De opdracht
 
-Laat `slim` en `willekeurig` om de beurt pakken van een stapel van 10, met
-`slim` als eerste. Speel 100 spellen, en tel hoe vaak `slim` wint:
+Je laat `slim` en `willekeurig` om de beurt pakken van een stapel van 10, met
+`slim` als eerste. Speel 100 spellen, en tel hoe vaak `slim` wint. Wint hij
+ze allemaal, dan werkt de truc ook tegen een speler die je niet kent.
+
+### Aan de slag
+
+In de editor staan `slim` en `willekeurig` klaar, en doet `slim` onderaan één zet.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: `slim` laat 9 liggen.
+2. Laat ze om de beurt pakken in een while-loop, met een variabele `beurt` zoals `speler` bij Anna en Bob. Print na elke zet de stapel.
+3. Zet het spel in een functie `speel(stapel)` die na de loop `beurt` teruggeeft. Print `speel(10)`.
+4. Speel 100 spellen, en tel hoe vaak `speel(10)` `"slim"` teruggeeft.
+
+:::caution
+Wordt de stapel niet bij elke beurt kleiner, dan stopt de loop nooit en loopt
+het tabblad van de browser vast. Kopieer je code eerst naar een kladblok.
+:::
+
+Verwachte uitvoer:
 
 ```
 slim wint 100 van de 100
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: `slim` doet één zet.
-2. Zet de zet in een while-loop met een variabele `beurt`, zoals `speler` bij Anna en Bob. Is `beurt` gelijk aan `"slim"`, dan pakt `slim`, en anders `willekeurig`. Print na elke zet de stapel.
-3. Maak er een functie `speel(stapel)` van die `beurt` teruggeeft als de stapel op is, en haal de print uit de loop. Print `speel(10)`.
-4. Speel 100 spellen, en tel hoe vaak `speel(10)` `"slim"` teruggeeft.
-
-### Aan de slag
-
-:::caution
-Je `speel` heeft een while-loop. Wordt de stapel niet in elke beurt kleiner,
-dan stopt hij nooit en loopt het tabblad van de browser vast, net als bij
-[een zet](site:algorithms/docs/ml-spellen/01-nim-strategie/01-een-zet#zo-werkt-het).
-Kopieer je code eerst naar een kladblok.
-:::
 
 <PyRunner initialCode={`import random
 

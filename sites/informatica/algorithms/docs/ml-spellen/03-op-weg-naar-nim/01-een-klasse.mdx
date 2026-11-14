@@ -106,14 +106,14 @@ print(snuf.vakje, snuf.q)`} />
 
 ### De opdracht
 
-Geef de muis een naam en een teller voor zijn stappen. Laat `piep` twee
-stappen naar rechts zetten, en maak een tweede muis `snuf` in vakje 1:
+Elke muis die je met `Muis(…)` maakt, heeft zijn eigen attributen. Dat laat
+je zien met twee muizen. Je geeft de muis een naam en een teller voor zijn
+stappen, laat `piep` twee stappen naar rechts zetten, en maakt een tweede muis
+`snuf` in vakje 1. Zijn teller blijft op 0 staan.
 
-```
-Piep zit in vakje 4 na 2 stappen
-Snuf zit in vakje 1 na 0 stappen
-```
+### Aan de slag
 
+In de editor staat de klasse `Muis` met alleen een vakje, en de muis `piep`.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: je ziet in welk vakje `piep` zit.
@@ -121,7 +121,12 @@ Begin klein, en breid de code stap voor stap uit:
 3. Geef elke muis een attribuut `stappen` dat op 0 begint. Zet `piep` twee keer een vakje naar rechts, en tel elke keer een stap bij zijn `stappen` op.
 4. Maak een tweede muis `snuf` in vakje 1, en print hem ook.
 
-### Aan de slag
+Verwachte uitvoer:
+
+```
+Piep zit in vakje 4 na 2 stappen
+Snuf zit in vakje 1 na 0 stappen
+```
 
 <PyRunner initialCode={`class Muis:
     def __init__(self, vakje):
@@ -172,7 +177,7 @@ daar een methode van.
 
 ## Er gaat iets mis
 
-{/* foutmelding-van: fout-helft */}
+{/* foutmelding-van: class Muis:\n    def __init__(self, vakje):\n        self.vakje = vakje\n        q = {}\npiep = Muis(2)\npiep.q[(2, "rechts")] = 0.5 */}
 ```
 AttributeError: 'Muis' object has no attribute 'q'
 ```
@@ -182,24 +187,17 @@ variabele die alleen in `__init__` bestaat, en krijgt de muis zelf geen tabel.
 
 **Oplossing:** zet `self.` voor elk attribuut dat de muis moet onthouden.
 
+{/* niet-compileren: fragment; alleen de regels van __init__ die veranderen */}
 ```python
 # FOUT
-class Muis:
     def __init__(self, vakje):
         self.vakje = vakje
         q = {}
 
-piep = Muis(2)
-piep.q[(2, "rechts")] = 0.5
-
 # GOED
-class Muis:
     def __init__(self, vakje):
         self.vakje = vakje
         self.q = {}
-
-piep = Muis(2)
-piep.q[(2, "rechts")] = 0.5
 ```
 
 Meer uitleg: [Je eerste klasse](site:python/docs/klassen/15a-je-eerste-klasse).

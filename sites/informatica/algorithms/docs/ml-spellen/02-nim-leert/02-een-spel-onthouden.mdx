@@ -99,13 +99,13 @@ verliezer: b
 
 ### De opdracht
 
-Werk na het spel uit de editor de score bij: elke zet van de winnaar een punt
-erbij, elke zet van de verliezer een punt eraf. Print daarna `score`:
+De computer speelt één spel tegen zichzelf. Daarna werk je de score bij:
+elke zet van de winnaar krijgt een punt erbij, elke zet van de verliezer een
+punt eraf. Zo onthoudt hij wat dit spel hem leerde.
 
-```
-{(10, 1): 1, (8, 1): 1, (6, 3): 1, (2, 1): 1, (9, 1): -1, (7, 1): -1, (3, 1): -1, (1, 1): -1}
-```
+### Aan de slag
 
+In de editor speelt de computer één spel tegen zichzelf, met een lege `score`.
 Begin klein, en breid de code stap voor stap uit:
 
 1. Draai de code: je ziet de zetten van `"a"` en `"b"`, en wie er verloor.
@@ -113,7 +113,11 @@ Begin klein, en breid de code stap voor stap uit:
 3. Zet elke zet in `score` op 0 als hij er nog niet in staat, en print `score` na de loops.
 4. Geef een zet van de verliezer een punt eraf, en een zet van de winnaar een punt erbij.
 
-### Aan de slag
+Verwachte uitvoer:
+
+```
+{(10, 1): 1, (8, 1): 1, (6, 3): 1, (2, 1): 1, (9, 1): -1, (7, 1): -1, (3, 1): -1, (1, 1): -1}
+```
 
 <PyRunner verborgen="nim-leren" initialCode={`import random
 

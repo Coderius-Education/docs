@@ -48,9 +48,28 @@ zet, en leert niet meer.
 
 ### De opdracht
 
-Schrijf een functie `route(muis)` die de muis vanuit vakje 2 laat lopen met
-zijn beste actie, zonder te leren, en de lijst van vakjes teruggeeft. Print de
-route na 0, 1, 2, 5 en 10 wandelingen:
+Wat heeft de muis geleerd? Dat zie je aan de route die hij loopt als hij
+alleen nog zijn beste actie kiest. Je schrijft een functie `route(muis)` die
+de muis vanuit vakje 2 laat lopen, zonder te leren, en de lijst van vakjes
+teruggeeft. Zo zie je de route na 0, 1, 2, 5 en 10 wandelingen.
+
+### Aan de slag
+
+In de editor leert de muis van 5 wandelingen.
+Begin klein, en breid de code stap voor stap uit:
+
+1. Draai de code: je ziet welke kant hij in vakje 2 kiest.
+2. Laat `piep` vanuit vakje 2 lopen tot `klaar(vakje)`, met `piep.kies(vakje, 0)` en `stap`. Print na elke stap het vakje.
+3. Maak er een functie `route(muis)` van, met een lijst `pad`: het startvakje, en na elke stap het nieuwe vakje. Stop ook bij 20 vakjes.
+4. Print de route na 0, 1, 2, 5 en 10 wandelingen, elke keer met `random.seed(1)` en een nieuwe muis.
+
+:::caution
+Een muis kan heen en weer blijven lopen: na één wandeling doet deze muis dat.
+Zonder de grens van 20 vakjes stopt je while-loop dan nooit, en loopt het
+tabblad van de browser vast. Kopieer je code eerst naar een kladblok.
+:::
+
+Verwachte uitvoer:
 
 ```
 0 wandelingen: [2, 1, 0]
@@ -59,22 +78,6 @@ route na 0, 1, 2, 5 en 10 wandelingen:
 5 wandelingen: [2, 3, 4]
 10 wandelingen: [2, 3, 4]
 ```
-
-Begin klein, en breid de code stap voor stap uit:
-
-1. Draai de code: de muis leert van 5 wandelingen, en zegt welke kant hij in vakje 2 kiest.
-2. Laat `piep` vanuit vakje 2 lopen tot `klaar(vakje)`, met `piep.kies(vakje, 0)` en `stap`. Print na elke stap het vakje.
-3. Maak er een functie `route(muis)` van die de lijst van vakjes teruggeeft, zoals `pad` in Voorspel. Stop ook als de lijst 20 vakjes lang is.
-4. Print de route na 0, 1, 2, 5 en 10 wandelingen, elke keer met `random.seed(1)` en een nieuwe muis.
-
-### Aan de slag
-
-:::caution
-Je schrijft hier een while-loop, en een muis kan heen en weer blijven lopen:
-na één wandeling doet deze muis dat. Zonder de grens van 20 vakjes stopt de
-loop dan nooit, en loopt het tabblad van de browser vast. Kopieer je code eerst naar een
-kladblok.
-:::
 
 <PyRunner verborgen="muis-leert" initialCode={`import random
 
