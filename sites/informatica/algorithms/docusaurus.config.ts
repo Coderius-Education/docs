@@ -19,6 +19,9 @@ export default createConfig({
   // Verhuisde lessen houden hun oude adres; de lijst staat in
   // src/data/omleidingen.ts.
   omleidingen,
+  // Elke ##-sectie van een les is een tabblad (zie Les-tabbladen in de
+  // root-CLAUDE.md).
+  lesTabs: true,
 
   presets: [
     [

@@ -137,3 +137,65 @@
   gap: 1rem 2rem;
   align-items: flex-start;
 }
+
+/* Het vak voor de uitvoer in een les-tabblad, voordat er iets gedraaid is. */
+.wacht {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.825rem;
+}
+
+.bewaart {
+  display: block;
+  margin-top: 0.25rem;
+}
+
+/* In een les-tabblad, op een breed scherm: code links, uitvoer rechts, zoals
+   de CodeExercise van de python-cursus. Een lange uitvoer schuift in zijn
+   eigen vak. Stap voor stap heeft de hele breedte, op de plek van beide. */
+@media (min-width: 997px) {
+  .inTab {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+
+  .inTab > .codeKolom {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .inTab > .codeKolom > .codeVak {
+    flex: 1 1 auto;
+  }
+
+  .inTab > .resultaat {
+    grid-column: 2;
+    grid-row: 1;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-left: 1px solid var(--ifm-color-emphasis-200);
+    background: var(--ifm-code-background);
+  }
+
+  .inTab > .resultaat .status,
+  .inTab > .resultaat .output {
+    border-top: 0;
+  }
+
+  .inTab > :not(.codeKolom):not(.resultaat) {
+    grid-column: 1 / -1;
+  }
+
+  .staptInTab > .codeKolom {
+    grid-column: 1 / -1;
+  }
+
+  .staptInTab > .codeKolom > .codeVak,
+  .staptInTab > .resultaat {
+    display: none;
+  }
+}

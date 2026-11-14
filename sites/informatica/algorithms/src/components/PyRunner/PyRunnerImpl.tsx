@@ -5,10 +5,12 @@ import type {
 } from '@coderius/python-runner/PyodideProvider';
 import { tracePython } from '@coderius/python-runner/PyodideProvider';
 import Stapper from '@coderius/python-runner/Stapper';
+import { useInLesTab } from '@coderius/shared/components/LesTabs/paneel';
+import { meetRuimte, pasHoogte } from '@coderius/shared/components/LesTabs/pasHoogte';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import clsx from 'clsx';
 import type React from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import ParseTree from '../ParseTree';
 import { type Getiteld, leesBomen } from '../ParseTree/boom';
 import { draaiInVerseMain } from './draai';
@@ -27,6 +29,12 @@ import { verborgenCode as haalVerborgen } from './verborgen';
 // (0.85rem × 2 ≈ 27px). Used so callers can keep passing `rows` props.
 const LINE_HEIGHT_PX = 22;
 const EDITOR_PADDING_PX = 28;
+/** Lager wordt het veld in een tabblad niet: de werkbalk en een regel of vijf. */
+const MIN_VELD = 180;
+/** De hoogte van de werkbalk, tot hij gemeten is. */
+const BALK = 40;
+/** De rand van het veld, boven en onder: die telt mee in zijn hoogte. */
+const RAND = 2;
 
 export type PyRunnerProps = {
   initialCode?: string;
@@ -136,6 +144,46 @@ export default function PyRunnerImpl({
   const pyodideRef = useRef<PyodideInterface | null>(null);
   const matplotlibLoadedRef = useRef(false);
   const pyodideIndexURL = useBaseUrl('/pyodide/');
+
+  // In een les-tabblad moet het paneel op het scherm passen, zoals de
+  // CodeExercise van de python-cursus: op een breed scherm staat de uitvoer
+  // naast de code, en het veld is niet hoger dan wat er na de rest van het
+  // paneel overblijft (pasHoogte.ts). Langere code schuift in de editor, een
+  // lange uitvoer in zijn eigen vak.
+  const inTab = useInLesTab();
+  const veldRef = useRef<HTMLDivElement>(null);
+  const balkRef = useRef<HTMLDivElement>(null);
+  const [veldHoogte, setVeldHoogte] = useState<number | null>(null);
+  const stapt = opname !== null;
+  useLayoutEffect(() => {
+    const veld = veldRef.current;
+    const paneel = veld?.closest<HTMLElement>('[data-les-tab]');
+    if (!inTab || !veld || !paneel || typeof ResizeObserver === 'undefined') return;
+    const breed = window.matchMedia('(min-width: 997px)');
+    const meet = () => {
+      // Op een smal scherm scrolt de leerling, en staat de uitvoer onder de
+      // code: dan zegt de ruimte in het paneel niets over het veld.
+      if (!breed.matches) return setVeldHoogte(null);
+      if (stapt) return;
+      const ruimte = meetRuimte(veld, paneel, Number.POSITIVE_INFINITY);
+      if (ruimte) setVeldHoogte(pasHoogte(ruimte, MIN_VELD));
+    };
+    meet();
+    const kijker = new ResizeObserver(meet);
+    kijker.observe(paneel);
+    window.addEventListener('resize', meet);
+    breed.addEventListener('change', meet);
+    return () => {
+      kijker.disconnect();
+      window.removeEventListener('resize', meet);
+      breed.removeEventListener('change', meet);
+    };
+  }, [inTab, stapt]);
+  const editorMax =
+    veldHoogte === null ? undefined : veldHoogte - (balkRef.current?.offsetHeight ?? BALK);
+  // Stap voor stap neemt in een tabblad de plek van de editor en de uitvoer
+  // in, op de hoogte die de editor had.
+  const stapper = stapt && editorMax !== undefined ? editorMax - 2 * RAND : undefined;
 
   const needsMatplotlib = useMemo(
     () => heeftMatplotlibNodig(code, verborgenCode),
@@ -312,63 +360,9 @@ export default function PyRunnerImpl({
     plots.length > 0 ||
     bomen.length > 0;
 
-  return (
-    <div className={styles.runner}>
-      <div className={styles.toolbar}>
-        <span className={styles.label}>Python</span>
-        <div className={styles.actions}>
-          {editable && (
-            <button
-              type="button"
-              onClick={handleReset}
-              disabled={busy}
-              className={clsx('button button--sm button--secondary')}
-            >
-              ↺ Reset
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={handleStap}
-            disabled={busy}
-            title="Loop regel voor regel door je code en zie wat elke variabele doet"
-            className={clsx('button button--sm button--secondary')}
-          >
-            Stap voor stap
-          </button>
-          <button
-            type="button"
-            onClick={handleRun}
-            disabled={busy}
-            className={clsx('button button--sm button--primary')}
-          >
-            {busy ? '… bezig' : '▶ Voer uit'}
-          </button>
-        </div>
-      </div>
-      <HighlightedEditor
-        code={code}
-        onChange={setCode}
-        onKeyDown={handleKeyDown}
-        readOnly={!editable}
-        disabled={busy}
-        minHeight={rows * LINE_HEIGHT_PX + EDITOR_PADDING_PX}
-      />
-      {verborgenCode && (
-        <details className={styles.verborgen}>
-          <summary>
-            Toon de code die al klaarstaat ({verborgenCode.split('\n').length} regels)
-          </summary>
-          <HighlightedEditor
-            code={verborgenCode}
-            onChange={() => undefined}
-            readOnly
-            disabled={false}
-            minHeight={0}
-            ariaLabel="Code die al klaarstaat, alleen-lezen"
-          />
-        </details>
-      )}
+  const minEditor = rows * LINE_HEIGHT_PX + EDITOR_PADDING_PX;
+  const uitvoer = (
+    <>
       {statusMsg && (
         <div
           className={clsx(styles.status, {
@@ -379,7 +373,6 @@ export default function PyRunnerImpl({
           {statusMsg}
         </div>
       )}
-      {opname && <Stapper code={opnameCode} opname={opname} onSluiten={() => setOpname(null)} />}
       {hasOutput && (
         <div className={styles.output}>
           {bomen.length > 0 && (
@@ -424,6 +417,107 @@ export default function PyRunnerImpl({
             />
           ))}
         </div>
+      )}
+    </>
+  );
+
+  return (
+    <div
+      ref={veldRef}
+      className={clsx(
+        styles.runner,
+        inTab && styles.inTab,
+        stapper !== undefined && styles.staptInTab,
+      )}
+    >
+      <div className={styles.codeKolom}>
+        <div className={styles.toolbar} ref={balkRef}>
+          <span className={styles.label}>Python</span>
+          <div className={styles.actions}>
+            {editable && (
+              <button
+                type="button"
+                onClick={handleReset}
+                disabled={busy}
+                className={clsx('button button--sm button--secondary')}
+              >
+                ↺ Reset
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={handleStap}
+              disabled={busy}
+              title="Loop regel voor regel door je code en zie wat elke variabele doet"
+              className={clsx('button button--sm button--secondary')}
+            >
+              Stap voor stap
+            </button>
+            <button
+              type="button"
+              onClick={handleRun}
+              disabled={busy}
+              className={clsx('button button--sm button--primary')}
+            >
+              {busy ? '… bezig' : '▶ Voer uit'}
+            </button>
+          </div>
+        </div>
+        <div className={styles.codeVak}>
+          <HighlightedEditor
+            code={code}
+            onChange={setCode}
+            onKeyDown={handleKeyDown}
+            readOnly={!editable}
+            disabled={busy}
+            minHeight={editorMax === undefined ? minEditor : Math.min(minEditor, editorMax)}
+            maxHeight={editorMax}
+          />
+          {verborgenCode && (
+            <details className={styles.verborgen}>
+              <summary>
+                Toon de code die al klaarstaat ({verborgenCode.split('\n').length} regels)
+              </summary>
+              <HighlightedEditor
+                code={verborgenCode}
+                onChange={() => undefined}
+                readOnly
+                disabled={false}
+                minHeight={0}
+                ariaLabel="Code die al klaarstaat, alleen-lezen"
+              />
+            </details>
+          )}
+        </div>
+      </div>
+      {opname && (
+        <Stapper
+          code={opnameCode}
+          opname={opname}
+          onSluiten={() => setOpname(null)}
+          hoogte={stapper}
+        />
+      )}
+      {inTab ? (
+        <div
+          className={styles.resultaat}
+          style={veldHoogte === null ? undefined : { maxHeight: veldHoogte }}
+        >
+          {uitvoer}
+          {!statusMsg && !hasOutput && (
+            // Het vak naast de code is er al voordat er iets gedraaid is: zo
+            // verspringt het veld niet, en ziet de leerling waar hij moet kijken.
+            <p className={styles.wacht}>
+              Klik op Voer uit. De uitvoer verschijnt hier.
+              {/* Wat nodig is om het veld te gebruiken, zegt het veld zelf. */}
+              <span className={styles.bewaart}>
+                Dit veld bewaart je code niet: kopieer wat je wilt houden.
+              </span>
+            </p>
+          )}
+        </div>
+      ) : (
+        uitvoer
       )}
     </div>
   );
