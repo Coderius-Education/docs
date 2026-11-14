@@ -50,6 +50,8 @@ geeft een tuple terug, en `gewichten, bias = leer(…)` pakt hem weer uit.
 
 ## Bouw zelf: een functie leer
 
+### De opdracht
+
 Zet het leren in een functie `leer(voorbeelden, rondes)` die de gewichten en
 de bias teruggeeft. Laat hem werken voor elk aantal invoeren: twee, maar ook
 drie of tien.
@@ -65,6 +67,8 @@ Begin klein, en breid de code stap voor stap uit:
 3. Maak het aantal gewichten even groot als het aantal invoeren, zodat de functie ook met drie invoeren werkt.
 4. Maak de acht voorbeelden van "minstens twee van de drie", met drie loops in elkaar en een `if`.
 5. Leer ze met `leer`, en test het neuron op alle acht.
+
+### Aan de slag
 
 <PyRunner verborgen="neuron" initialCode={`def leer(voorbeelden, rondes):
     gewichten = [0, 0]

@@ -38,8 +38,8 @@ komen alle voorbeelden langs.
 
 ## Zo werkt het
 
-Eén keer alle voorbeelden langs heet een **ronde**. De code hieronder doet tien
-rondes, en telt per ronde hoe vaak het neuron het fout had. Heeft het in een
+Eén keer alle voorbeelden langs heet een **ronde**. De code van het onderzoek doet
+tien rondes, en telt per ronde hoe vaak het neuron het fout had. Heeft het in een
 ronde geen enkele fout, dan is elke fout 0, en verandert er daarna niets meer.
 
 ## Onderzoek
@@ -106,8 +106,10 @@ ronde 10 : 0 fouten
 
 ## Opdracht: wanneer is het klaar?
 
-Laat het programma zelf zeggen in welke ronde het neuron voor het eerst geen
-fouten meer maakte. Lukt dat in geen enkele ronde, dan zegt het dat:
+### De opdracht
+
+Laat het programma zeggen in welke ronde het neuron voor het eerst foutloos
+was, of dat het in geen enkele ronde lukte:
 
 ```
 klaar na ronde 6
@@ -125,6 +127,8 @@ Begin klein, en breid de code stap voor stap uit:
 2. Geef `klaar` na elke ronde het nummer van die ronde, als `fouten` 0 is en `klaar` nog 0 is. Print `klaar` na de loop: 6.
 3. Print "klaar na ronde 6" als `klaar` meer dan 0 is, en anders "niet geleerd in 10 rondes".
 4. Verander de doelen in die van OF, en daarna in die van "precies één".
+
+### Aan de slag
 
 <PyRunner verborgen="neuron" initialCode={`voorbeelden = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
 gewichten = [0, 0]

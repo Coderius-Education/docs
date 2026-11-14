@@ -96,6 +96,8 @@ fout: 1 nu: [1, 1] 1
 
 ## Opdracht: leer van elk voorbeeld
 
+### De opdracht
+
 Laat het neuron van alle vier de voorbeelden van EN leren, één keer na elkaar.
 Het begint nu met gewichten `[1, 1]` en bias 0, het OF-neuron. Print na elk
 voorbeeld de invoer, de fout, de gewichten en de bias:
@@ -112,6 +114,8 @@ Begin klein, en breid de code stap voor stap uit:
 1. Draai de code: hij leert van het eerste voorbeeld. Het neuron had gelijk, dus er verandert niets.
 2. Zet het uitrekenen van de fout en het bijstellen in een loop `for invoer, doel in voorbeelden`, en print na elk voorbeeld.
 3. Kijk naar de laatste regel. Zegt het neuron met `[2, 1]` en bias 0 nu EN? Probeer het met `neuron([0, 1], gewichten, bias)` onder de loop.
+
+### Aan de slag
 
 <PyRunner verborgen="neuron" initialCode={`voorbeelden = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
 gewichten = [1, 1]

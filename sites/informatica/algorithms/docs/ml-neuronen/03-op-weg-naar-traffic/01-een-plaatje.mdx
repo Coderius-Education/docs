@@ -40,8 +40,8 @@ for rij in plaatje:
 print(invoer)
 ```
 
-Het plaatje is een plusteken: `#` is een zwarte pixel, `.` een witte. Wat
-print dit programma?
+**Vraag:** wat print dit programma? Het plaatje is een plusteken: `#` is een
+zwarte pixel, `.` een witte.
 
 <details>
 <summary>Antwoord</summary>
@@ -113,6 +113,8 @@ print(len(invoer), "getallen")`} />
 
 ## Opdracht: een functie naar_getallen
 
+### De opdracht
+
 Zet het omzetten in een functie `naar_getallen(plaatje)` die de lijst
 getallen teruggeeft. Test hem op een staande en een liggende streep:
 
@@ -126,6 +128,8 @@ Begin klein, en breid de code stap voor stap uit:
 1. Draai de code: `naar_getallen` geeft nog een lege lijst terug.
 2. Zet de loop in een loop uit het onderzoek in de functie, vóór de `return`. Nu krijg je de staande streep.
 3. Print ook `naar_getallen(liggend)`.
+
+### Aan de slag
 
 <PyRunner initialCode={`def naar_getallen(plaatje):
     invoer = []
@@ -178,8 +182,7 @@ AttributeError: 'NoneType' object has no attribute 'append'
 ```
 
 **Oorzaak:** je schreef `invoer = invoer.append(1)`. `append` verandert de
-lijst zelf en geeft niets terug, `None`. Daarna is `invoer` geen lijst meer,
-en bij de volgende pixel kan Python er niets aan vastmaken.
+lijst zelf en geeft `None` terug. Daarna is `invoer` geen lijst meer.
 
 **Oplossing:** schrijf alleen `invoer.append(1)`, zonder `invoer =` ervoor.
 

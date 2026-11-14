@@ -49,11 +49,13 @@ doet. Precies waar de som 0 is, ligt de **grens**: aan de ene kant zegt het
 appel, aan de andere kant banaan. Bij "langer dan breed" ligt alles wat even
 lang als breed is op die grens, en dat is een rechte lijn.
 
-De runner hieronder leert het neuron op het fruit, en tekent daarna de
+De runner van de opdracht leert het neuron op het fruit, en tekent daarna de
 voorbeelden en de grens met `teken_grens`. Het tekenen staat in de verborgen
 code onder de editor.
 
 ## Opdracht: schuif de grens
+
+### De opdracht
 
 Zet nieuwe stukken fruit bij de voorbeelden, en kijk hoe de grens meeschuift.
 Met een appel van 11 bij 7 achteraan de lijst print de runner:
@@ -68,6 +70,8 @@ Begin klein, en breid de code stap voor stap uit:
 2. Zet achteraan de lijst een appel van 11 bij 7 bij, `([11, 7], 0)`, en draai opnieuw. Hoe schuift de grens?
 3. Zet dezelfde appel als derde in de lijst, na de appel van 9 bij 8. Leert het neuron hetzelfde?
 4. Laat de appel staan, en zet er ook een banaan bij die dicht bij de appels ligt: `([10, 7], 1)`. Lukt het neuron dat nog?
+
+### Aan de slag
 
 <PyRunner verborgen="fruit-tekenen" initialCode={`def neuron(invoer, gewichten, bias):
     som = bias
@@ -127,10 +131,15 @@ hem van allebei gescheiden. Een banaan van 10 bij 6 lukt wel, en een van
 
 </details>
 
+<details>
+<summary>Waarom lukt "precies één" niet?</summary>
+
 Een neuron trekt altijd één rechte lijn.
 Zet je de vier combinaties van "precies één" zo op papier, met de eerste
 invoer naar rechts en de tweede naar boven, dan liggen `0 1` en `1 0` schuin
 tegenover elkaar, en `0 0` en `1 1` ook. Daar past geen rechte lijn tussen, en
 daarom kan één neuron het niet.
+
+</details>
 
 Door naar [een functie leer](site:algorithms/docs/ml-neuronen/02-neuron-leert/06-een-functie-leer).
