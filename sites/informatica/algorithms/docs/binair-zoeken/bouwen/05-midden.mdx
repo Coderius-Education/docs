@@ -10,16 +10,16 @@ en `hoog`.
 ## Wat we willen
 
 De kern van binair zoeken: kies steeds **het midden** van het zoekgebied,
-en kijk wat daar staat. Daarom: een formule voor de middel-index.
-
-## Twee soorten deling in Python
-
-Eén nieuw stukje syntax:
+en kijk wat daar staat. Je hebt dus een formule nodig voor de middel-index, en daarvoor één
+nieuw stukje Python: twee soorten deling.
 
 - `/` → gewone deling (`7 / 2 == 3.5`)
 - `//` → integer-deling (`7 // 2 == 3`)
 
-Voor een **index** willen we een geheel getal, dus we gebruiken `//`.
+{/* foutmelding-van: [1, 3, 5, 7][7 / 2] */}
+
+Een **index** moet een geheel getal zijn: `lijst[3.5]` geeft een
+`TypeError`. Daarom gebruik je `//`.
 
 ## Voorspel
 
@@ -58,10 +58,11 @@ print(f"waarde op midden: {lijst[midden]}")`} />
 
 ## Experimenteer
 
-Verander `laag` en `hoog` met de hand. Wat is het midden tussen 2 en 5?
-Tussen 4 en 4?
+De code rekent het midden uit voor vijf paren `laag` en `hoog`. Voorspel
+eerst: wat is het midden tussen 2 en 5? Tussen 4 en 4? Druk dan op Voer
+uit, en zet er daarna een eigen paar bij in `gevallen`.
 
-<PyRunner initialCode={`# Vul zelf verschillende grenzen in:
+<PyRunner initialCode={`# Zet er gerust een eigen paar bij:
 gevallen = [(0, 7), (0, 0), (2, 5), (4, 4), (3, 6)]
 for laag, hoog in gevallen:
     midden = (laag + hoog) // 2
@@ -81,10 +82,8 @@ inclusief).
 
 </details>
 
-## Wat nu nog mist
-
-We weten waar te kijken — maar nog niet wat te doen met het resultaat. In
-de volgende stap **vergelijken** we `lijst[midden]` met het doel en kiezen
-we welke helft we behouden.
+Je weet nu waar je moet kijken, maar nog niet wat je met de waarde daar
+doet. In de volgende stap **vergelijk** je `lijst[midden]` met het doel en
+kies je welke helft je houdt.
 
 Door naar [bouwsteen 3: vergelijken](site:algorithms/docs/binair-zoeken/bouwen/06-vergelijken).

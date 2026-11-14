@@ -34,10 +34,9 @@ Zo ben je er bij 100 getallen in hooguit zeven gokken (want
 Dat is **binair zoeken** in één zin: *kies steeds het midden, halveer het
 zoekgebied, herhaal.*
 
-## Voorwaarde
-
-Binair zoeken werkt alleen op een gesorteerde lijst. Anders zegt "het
-midden" geen betekenis — je weet niet of het doel links of rechts ligt.
+Dat lukt alleen op een **gesorteerde** lijst. Bij het raadspel weet je dat
+alles onder 50 kleiner is dan 50; in een rommelige lijst zegt het midden
+niets over waar het doel ligt.
 
 ## Wel gevonden
 
@@ -82,11 +81,12 @@ Voor een lijst van 1.000.000 elementen:
 | | Lineair zoeken | Binair zoeken |
 |---|---|---|
 | Werkt op ongesorteerd | ja | nee |
-| Max. vergelijkingen | 1.000.000 | ~20 |
-| Snelheidsklasse | O(n) | O(log n) |
+| Max. vergelijkingen | 1.000.000 | 20 |
+| Lijst twee keer zo lang | twee keer zoveel werk | één vergelijking meer |
 
-Dat scheelt een factor 50.000. Bij een miljard zou het verschil al
-nog veel groter zijn — *exponentieel* groter zelfs.
+Dat scheelt een factor 50.000. Bij een miljard elementen is het een miljard
+vergelijkingen tegen dertig. Hoe je zulke groei kort opschrijft, leer je in
+[Big O — het idee](site:algorithms/docs/big-o/01-concept).
 
 :::info
 Dit halveren voel je pas echt met kaarten in je handen: probeer de werkvorm in [Zoeken en sorteren met kaarten](site:algorithms/docs/unplugged/01-zoeken-en-sorteren-met-kaarten).

@@ -162,7 +162,8 @@ while voorwaarde:
 
 - Beste geval: het doel ligt meteen op het midden, dus één vergelijking.
 - Slechtste geval: `⌊log₂(n)⌋ + 1` vergelijkingen.
-- Dat noemen we `O(log n)`.
+- Een lijst die twee keer zo lang is, kost één vergelijking meer. In
+  [Big O — het idee](site:algorithms/docs/big-o/01-concept) heet dat `O(log n)`.
 
 | n | max. vergelijkingen |
 |---:|---:|
@@ -177,11 +178,12 @@ while voorwaarde:
 ## Veelgemaakte fouten (snel)
 
 <details>
-<summary>Top-3 fouten</summary>
+<summary>Veelgemaakte fouten</summary>
 
-1. `laag = midden` zonder `+ 1` → **oneindige lus**.
-2. `laag < hoog` in de while waar `laag <= hoog` hoort → het laatste element wordt overgeslagen.
-3. Ongesorteerde input → fout antwoord, geen exception.
+1. `/` in plaats van `//` voor het midden → een kommagetal als index, en dus een foutmelding.
+2. `laag = midden` zonder `+ 1` → **oneindige lus**.
+3. `laag < hoog` in de while waar `laag <= hoog` hoort → het laatste element wordt overgeslagen.
+4. Ongesorteerde input → fout antwoord, geen exception.
 
 </details>
 
