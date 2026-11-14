@@ -9,6 +9,8 @@ minimax-AI, en je weet bij elk symptoom waar je moet kijken.
 
 ## Bord muteren in `result`
 
+### Wat er misgaat: een gedeeld bord
+
 Geen foutmelding, wel een onverklaarbaar verkeerd antwoord. Minimax
 probeert zetten en gaat ervan uit dat het origineel niet mee verandert;
 doet het dat wel, dan raakt het hele algoritme van slag.
@@ -28,7 +30,9 @@ def result(bord, zet):
 Ook `bord.copy()` of `list(bord)` is niet genoeg: die maken alleen de
 buitenste lijst nieuw, de rijen daaronder blijven gedeeld.
 
-**Oplossing:** gebruik `copy.deepcopy(bord)` voor een echte, diepe
+### Oplossing: een diepe kopie
+
+Gebruik `copy.deepcopy(bord)` voor een echte, diepe
 kopie:
 
 ```python
@@ -40,7 +44,9 @@ def result(bord, zet):
     return nieuw
 ```
 
-## `result` vergeten in de recursie
+## `result` vergeten
+
+### Wat er misgaat: eindeloze recursie
 
 {/* foutmelding-van: def max_value(bord):\n    return max_value(bord)\nmax_value([]) */}
 
@@ -62,7 +68,9 @@ def max_value(bord):
     return v
 ```
 
-**Oplossing:** de recursie krijgt altijd `result(bord, zet)`, het bord
+### Oplossing: het bord na de zet
+
+De recursie krijgt altijd `result(bord, zet)`, het bord
 met één cel meer gevuld. Na hoogstens negen stappen is het bord vol en
 stopt het vanzelf:
 
@@ -77,11 +85,14 @@ def max_value(bord):
     return v
 ```
 
-## Base case vergeten in `max_value` of `min_value`
+## Geen base case
+
+### Wat er misgaat: geen bodem
 
 {/* foutmelding-los: hier blijft de melding juist uit; de reproductie staat bij de vorige fout */}
 
-Geen foutmelding, wel een AI die gewonnen borden niet ziet en waardes
+Je bent de base case vergeten in `max_value` of `min_value`. Geen
+foutmelding, wel een AI die gewonnen borden niet ziet en waardes
 van `inf` of `-inf` teruggeeft. Geen `RecursionError`: het bord
 raakt na negen zetten vol, dus de recursie stopt wel, alleen op de
 verkeerde plek.
@@ -100,7 +111,9 @@ def max_value(bord):
     return v
 ```
 
-**Oplossing:** check eerst of het bord terminal is. Zo ja, geef de
+### Oplossing: eerst terminal
+
+Check eerst of het bord terminal is. Zo ja, geef de
 utility terug (`1`, `-1` of `0`). Dat is de bodem van de recursie, en de
 enige plek waar een echt getal de boom in komt:
 
@@ -118,7 +131,9 @@ def max_value(bord):
 Idem in `min_value`, en `minimax` zelf begint met `if terminal(bord):
 return None`.
 
-## Min en max omdraaien per laag
+## Min en max omgedraaid
+
+### Wat er misgaat: de verkeerde laag
 
 Geen foutmelding, wel een AI die verliest of zwak speelt.
 
@@ -137,7 +152,9 @@ def max_value(bord):
     return v
 ```
 
-**Oplossing:** onthoud het ritme van de beurten. `max_value` zoekt de
+### Oplossing: om de beurt
+
+Onthoud het ritme van de beurten. `max_value` zoekt de
 beste keuze van X; de volgende beurt is van O, dus daar hoort
 `min_value(result(...))`. Andersom geldt hetzelfde.
 

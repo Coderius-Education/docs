@@ -9,7 +9,9 @@ positie uitrekenen wat de beste haalbare utility is voor X (`max_value`)
 of voor O (`min_value`). Het zijn de boom-doorlopers van de
 pen-en-papier-pagina, maar dan in code.
 
-## Wat doen deze functies?
+## Uitleg
+
+### Wat doen deze functies?
 
 Op de [pen-en-papier-pagina](site:algorithms/docs/minimax/02-pen-en-papier) rekende je de waarde
 van elke knoop van onderop terug naar boven. Die vraag, wat is deze
@@ -22,7 +24,7 @@ geven ze `1`, `-1` of `0` terug.
 Ze geven dus niet de zet terug, alleen het getal dat de positie waard
 is. De zet zelf bepaal je straks in `minimax`.
 
-## Wat is recursie?
+### Wat is recursie?
 
 Een functie die zichzelf aanroept. Een klein voorbeeld dat niets met
 tic-tac-toe te maken heeft:
@@ -52,7 +54,7 @@ nieuwe aanroep; een **recursieve aanroep**, waarin de functie zichzelf
 aanroept op een kleinere input; en de zekerheid dat die kleinere input
 uiteindelijk bij de base case uitkomt.
 
-## Het recept, in woorden
+### Het recept, in woorden
 
 Zo beschrijft CS50 de twee functies, nog zonder Python:
 
@@ -72,7 +74,10 @@ min_value(bord):
     geef v terug
 ```
 
-Leg dat naast het recept van de pen-en-papier-pagina. De base case is
+### Het recept naast de boom
+
+Leg het recept uit de vorige stap naast dat van de
+pen-en-papier-pagina. De base case is
 een terminal bord: daar is de utility al bekend, dus daar stopt de
 recursie, met `terminal(bord)` en `utility(bord)` uit bouwsteen 6 en 7.
 De recursieve aanroep is "kijk wat de tegenstander daarna doet": na een
@@ -86,7 +91,7 @@ oneindig en houdt het hoogste bij, `min_value` begint op plus oneindig
 en houdt het laagste bij. Voor "oneindig" heeft Python `math.inf`, na
 `import math`. Je begint zo laag dat elke echte uitkomst hoger is.
 
-## Kijk hoe de recursie de boom doorloopt
+### Kijk hoe de recursie de boom doorloopt
 
 Dit is de positie van de pen-en-papier-pagina. De twee functies
 hieronder zijn af, met één toevoeging: ze printen bij elke aanroep waar
@@ -239,18 +244,21 @@ MAX geeft 0
 
 </details>
 
-Lees de uitvoer naast de boom, met bij elke knoop het bord:
+### De wandeling in de boom
+
+Leg de uitvoer van de vorige stap naast de boom, met bij elke knoop het
+bord:
 
 <GameTree bord="XXO/OOX/..." waardes />
 
-Het is dezelfde wandeling als op de pen-en-papier-pagina, in dezelfde
-volgorde: eerst de linkertak helemaal naar beneden tot een `klaar`, dan
+De uitvoer is dezelfde wandeling als op de pen-en-papier-pagina, in
+dezelfde volgorde: eerst de linkertak helemaal naar beneden tot een `klaar`, dan
 de waarde weer omhoog, dan de volgende tak. Elke regel `MAX` of `MIN` is
 één aanroep van `max_value` of `min_value`, en elke inspringing is een
 laag dieper in de boom. Pas helemaal onderaan, als alle drie de takken
 terug zijn, kent de wortel zijn waarde: `MAX geeft 0`.
 
-## Specificatie
+### Specificatie
 
 - **Input** voor beide: een `bord`.
 - **Output** voor beide: een geheel getal `1`, `-1` of `0`.
