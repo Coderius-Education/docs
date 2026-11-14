@@ -72,6 +72,20 @@ describe('werkvormen.json', () => {
 });
 
 describe('werkvormVan en werkvormenVan', () => {
+  // In algoritmes hadden Onderzoek en Bouw zelf het icoon van uitleg, en
+  // ontbrak onderzoeken in de tabel van de docentenhandleiding.
+  it('herkent de koppen van algoritmes', () => {
+    expect(
+      [
+        'Onderzoek',
+        'Experimenteer',
+        'Bouw zelf: een spamfilter',
+        'Bouw en test',
+        'Uitdaging (optioneel)',
+      ].map(werkvormVan),
+    ).toEqual(['onderzoeken', 'onderzoeken', 'maken', 'maken', 'maken']);
+  });
+
   it('herkent de vaste koppen van een les', () => {
     expect(
       [
