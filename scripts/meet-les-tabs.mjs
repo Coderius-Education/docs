@@ -117,7 +117,7 @@ try {
 }
 const KLIK = argumenten.includes('--klik');
 /** Zoveel regels laat een editor in een tabblad zien (MIN_REGELS in PyRunner/opmaak.ts). */
-const MIN_EDITOR = 8;
+const MIN_EDITOR = 6;
 /**
  * Minder regels is met --streng een fout: zo laag gaat geen veld (de
  * CodeExercise van python-runner houdt er vijf over).

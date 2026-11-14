@@ -9,9 +9,12 @@ import { KLEINSTE_SCHAAL, TEKEN_PX, codeBreedte, codeSchaal } from './breedte';
  * alleen het hele veld een ondergrens (180 pixels), en daar gingen de werkbalk,
  * de klaargezette code en het uitvoervak nog af: op 18 schermen waren er
  * hooguit drie regels te zien, en in "Goed per soort" anderhalve van de 19.
- * Een scherm dat met deze ondergrens niet past, splits je in de les.
+ * Met acht regels pasten 117 schermen van de route machine learning niet meer
+ * op 1280×720: de stappen, het veld, de tip en het antwoord staan daar op één
+ * scherm. Zes is een regel meer dan het meetscript met --streng eist. Een
+ * scherm dat met deze ondergrens niet past, splits je in de les.
  */
-export const MIN_REGELS = 8;
+export const MIN_REGELS = 6;
 /** Een regel in de editor: 0,9rem met regelhoogte 1,5. */
 export const REGEL_PX = 21.6;
 /** De ruimte boven en onder de code in de editor. */

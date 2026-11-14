@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { KLEINSTE_SCHAAL } from './breedte';
 import { MIN_REGELS, REGEL_PX, UITVOER_ONDER, editorHoogte, veldOpmaak } from './opmaak';
@@ -23,6 +24,19 @@ describe('de editor laat altijd een paar regels zien', () => {
     expect(m.onder).toBe(true);
     expect(m.editorMax).toBeGreaterThanOrEqual(m.editorMin);
     expect(m.uitvoerOnder).toBe(UITVOER_ONDER);
+  });
+
+  it('zes regels: één meer dan het meetscript met --streng eist, en het meldt elke editor eronder', () => {
+    // Met acht regels pasten 117 schermen van de route machine learning niet.
+    const script = readFileSync(
+      new URL('../../../../../../scripts/meet-les-tabs.mjs', import.meta.url),
+      'utf8',
+    );
+    const getal = (naam: string) =>
+      Number(script.match(new RegExp(`const ${naam} = (\\d+);`))?.[1]);
+    expect(MIN_REGELS).toBe(6);
+    expect(getal('MIN_EDITOR')).toBe(MIN_REGELS);
+    expect(getal('KLEINSTE_EDITOR')).toBe(MIN_REGELS - 1);
   });
 
   it('met ruimte genoeg neemt de editor de ruimte', () => {
@@ -69,11 +83,11 @@ describe('een grafiek krijgt ruimte', () => {
   });
 
   it('is er weinig ruimte, dan gaat de editor voor', () => {
-    const m = veldOpmaak({ code: regel(110), breedte: VELD, ruimte: 300, plaatjes: true });
+    const m = veldOpmaak({ code: regel(110), breedte: VELD, ruimte: 250, plaatjes: true });
     expect(m.editorMax).toBe(m.editorMin);
-    expect(m.uitvoerOnder).toBe(300 - 1 - m.editorMin);
+    expect(m.uitvoerOnder).toBe(250 - 1 - m.editorMin);
     // Met nog minder ruimte nooit onder het vaste vak.
-    const krap = veldOpmaak({ code: regel(110), breedte: VELD, ruimte: 200, plaatjes: true });
+    const krap = veldOpmaak({ code: regel(110), breedte: VELD, ruimte: 150, plaatjes: true });
     expect(krap.uitvoerOnder).toBe(UITVOER_ONDER);
     expect(krap.editorMax).toBe(krap.editorMin);
   });
