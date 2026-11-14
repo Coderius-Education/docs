@@ -189,19 +189,13 @@ lijst zelf en geeft `None` terug. Daarna is `invoer` geen lijst meer.
 ```python
 # FOUT
 invoer = []
-for teken in ".#.":
-    if teken == "#":
-        invoer = invoer.append(1)
-    else:
-        invoer = invoer.append(0)
+invoer = invoer.append(1)
+invoer = invoer.append(0)
 
 # GOED
 invoer = []
-for teken in ".#.":
-    if teken == "#":
-        invoer.append(1)
-    else:
-        invoer.append(0)
+invoer.append(1)
+invoer.append(0)
 ```
 
 Meer uitleg: [Lijst-methoden](site:python/docs/data/10b-lijst-methoden#er-gaat-iets-mis).

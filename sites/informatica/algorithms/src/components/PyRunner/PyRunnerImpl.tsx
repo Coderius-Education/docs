@@ -40,7 +40,7 @@ const RAND = 2;
  * Het vak voor de uitvoer onder de code: altijd even hoog, voor en na Voer uit,
  * zodat het scherm niet langer wordt als er uitvoer komt.
  */
-const UITVOER_ONDER = 140;
+const UITVOER_ONDER = 100;
 
 export type PyRunnerProps = {
   initialCode?: string;
@@ -163,6 +163,7 @@ export default function PyRunnerImpl({
   // het een regel, en die hoort bij de hoogte van het veld (in cfg was elk
   // scherm met zo'n blok 75 pixels te lang).
   const verborgenRef = useRef<HTMLDetailsElement>(null);
+  const codeVakRef = useRef<HTMLDivElement>(null);
   const [veldHoogte, setVeldHoogte] = useState<number | null>(null);
   const [veldBreedte, setVeldBreedte] = useState<number | null>(null);
   const [teken, setTeken] = useState(TEKEN_PX);
@@ -377,6 +378,21 @@ export default function PyRunnerImpl({
     bomen.length > 0;
 
   const minEditor = rows * LINE_HEIGHT_PX + EDITOR_PADDING_PX;
+  // Wat er in het codevak naast de editor staat: het uitklapblok met de code
+  // die al klaarstaat (dicht: één regel) en de ruimte eromheen. Gemeten, want
+  // eerst telde alleen het blok, en dan was elk scherm met zo'n runner nog 14
+  // tot 22 pixels te lang. Een blok dat de leerling openklapt, telt niet: dan
+  // groeit het paneel, zoals bij een tip die open staat.
+  const rondDeEditor = () => {
+    const vak = codeVakRef.current;
+    const editor = vak?.firstElementChild as HTMLElement | null | undefined;
+    if (!vak || !editor) return 0;
+    const blok = verborgenRef.current;
+    const open = blok?.open
+      ? blok.offsetHeight - (blok.querySelector('summary')?.offsetHeight ?? 0)
+      : 0;
+    return Math.max(0, vak.offsetHeight - editor.offsetHeight - open);
+  };
   // Naast elkaar alleen als de langste regel van de code (ook wat de leerling
   // typt) in de codekolom past; anders de uitvoer eronder.
   const naast = veldBreedte === null ? null : codeBreedte(code, veldBreedte, teken);
@@ -386,7 +402,7 @@ export default function PyRunnerImpl({
       ? undefined
       : veldHoogte -
         (balkRef.current?.offsetHeight ?? BALK) -
-        (verborgenRef.current?.open ? 0 : (verborgenRef.current?.offsetHeight ?? 0)) -
+        rondDeEditor() -
         (onder ? UITVOER_ONDER : 0);
   // Stap voor stap neemt in een tabblad de plek van de editor en de uitvoer
   // in, op de hoogte die die samen hadden.
@@ -500,7 +516,7 @@ export default function PyRunnerImpl({
             </button>
           </div>
         </div>
-        <div className={styles.codeVak}>
+        <div className={styles.codeVak} ref={codeVakRef}>
           <HighlightedEditor
             code={code}
             onChange={setCode}

@@ -9,7 +9,7 @@ export const TEKEN_PX = 9.1;
 /** Regelnummers en marges van de editor (56 + 16), de rand en een schuifbalk van Windows. */
 const EDITOR_RAND_PX = 56 + 16 + 2 + 15;
 /** Zo breed mag de codekolom naast de uitvoer hooguit worden. */
-const MAX_CODE_DEEL = 0.7;
+const MAX_CODE_DEEL = 0.75;
 /** Zo breed is de codekolom naast de uitvoer minstens. */
 const MIN_CODE_DEEL = 0.5;
 
