@@ -15,17 +15,6 @@
   --ifm-list-item-margin: 0;
 }
 
-/* In een les-tabblad op een breed scherm: kleiner, zodat de boom met de zin
-   erboven op het scherm past. Op ware grootte is hij 633 pixels hoog, en dan
-   paste hij zelfs alleen in een stap niet op 1280 bij 720. `zoom` en geen
-   `transform`: een transform houdt de oude ruimte vast en maakt een eigen
-   laag (root-CLAUDE.md, Wat vastligt). */
-@media screen and (min-width: 997px) {
-  :global([data-les-tab]) .omhulsel {
-    zoom: 0.72;
-  }
-}
-
 /* Op papier is er geen scrollbalk. De boom past op de breedte van een
    A4-bladspiegel en hoort in zijn geheel op één pagina; de hand-out van
    minimax print hem twee keer. */

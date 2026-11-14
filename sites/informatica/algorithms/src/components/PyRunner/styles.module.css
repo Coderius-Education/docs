@@ -209,3 +209,13 @@
     display: none;
   }
 }
+
+/* Kleinere letters in de editor als de langste regel anders afbreekt
+   (codeSchaal in breedte.ts). De editor van python-runner zet 0,9rem met
+   !important op de gekleurde laag; textarea, gekleurde laag en regelnummers
+   moeten precies dezelfde maat houden, anders staat de cursor ernaast. */
+.inTab .codeVak textarea,
+.inTab .codeVak pre,
+.inTab .codeVak [class*="gutter"] {
+  font-size: calc(0.9rem * var(--code-schaal, 1)) !important;
+}

@@ -105,7 +105,10 @@ print("Afstanden:  ", afstanden)
 print("Voorgangers:", voorgangers)
 print("Pad A→D:    ", pad)
 
-assert voorgangers == {'B': 'A', 'C': 'A', 'D': 'B'}, f"voorgangers hoort {{'B': 'A', 'C': 'A', 'D': 'B'}} te zijn, is {voorgangers}"
+verwachte_voorgangers = {'B': 'A', 'C': 'A', 'D': 'B'}
+assert voorgangers == verwachte_voorgangers, (
+    f"voorgangers hoort {verwachte_voorgangers} te zijn, is {voorgangers}"
+)
 assert pad == ['A', 'B', 'D'], f"het pad hoort ['A', 'B', 'D'] te zijn, is {pad}"
 print("Alle tests geslaagd.")`} />
 
@@ -189,7 +192,10 @@ print("Afstanden:  ", afstanden)
 print("Voorgangers:", voorgangers)
 print("Pad A→D:    ", pad)
 
-assert voorgangers == {'B': 'A', 'C': 'A', 'D': 'B'}, f"voorgangers hoort {{'B': 'A', 'C': 'A', 'D': 'B'}} te zijn, is {voorgangers}"
+verwachte_voorgangers = {'B': 'A', 'C': 'A', 'D': 'B'}
+assert voorgangers == verwachte_voorgangers, (
+    f"voorgangers hoort {verwachte_voorgangers} te zijn, is {voorgangers}"
+)
 assert pad == ['A', 'B', 'D'], f"het pad hoort ['A', 'B', 'D'] te zijn, is {pad}"
 print("Alle tests geslaagd.")
 ```

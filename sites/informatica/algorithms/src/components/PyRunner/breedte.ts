@@ -36,3 +36,20 @@ export function meetTeken(textarea: HTMLTextAreaElement | null): number {
   const breedte = ctx.measureText('x'.repeat(100)).width / 100;
   return breedte > 0 ? breedte : TEKEN_PX;
 }
+
+/** Kleiner dan dit worden de letters in de editor niet, net als bij pasCode. */
+export const KLEINSTE_SCHAAL = 0.8;
+
+/**
+ * Hoeveel kleiner de letters in de editor moeten om de langste regel heel op
+ * één regel te houden in een kolom van `breedte` pixels: 1 als hij past,
+ * nooit minder dan KLEINSTE_SCHAAL. Zo doet een codeblok in een les het ook
+ * (components/LesTabs/pasCode.ts); een regel die met de kleinste letters nog
+ * niet past, hoort korter in de les.
+ */
+export function codeSchaal(code: string, breedte: number, teken = TEKEN_PX): number {
+  const langste = Math.max(0, ...code.split('\n').map((r) => r.length));
+  const ruimte = breedte - EDITOR_RAND_PX;
+  if (langste === 0 || langste * teken <= ruimte) return 1;
+  return Math.max(KLEINSTE_SCHAAL, Math.floor((ruimte / (langste * teken)) * 100) / 100);
+}

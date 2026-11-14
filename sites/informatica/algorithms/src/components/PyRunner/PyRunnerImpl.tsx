@@ -13,7 +13,7 @@ import type React from 'react';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import ParseTree from '../ParseTree';
 import { type Getiteld, leesBomen } from '../ParseTree/boom';
-import { TEKEN_PX, codeBreedte, meetTeken } from './breedte';
+import { TEKEN_PX, codeBreedte, codeSchaal, meetTeken } from './breedte';
 import { draaiInVerseMain } from './draai';
 import { heeftMatplotlibNodig } from './matplotlib';
 import styles from './styles.module.css';
@@ -397,6 +397,9 @@ export default function PyRunnerImpl({
   // typt) in de codekolom past; anders de uitvoer eronder.
   const naast = veldBreedte === null ? null : codeBreedte(code, veldBreedte, teken);
   const onder = inTab && veldBreedte !== null && naast === null;
+  // Past de langste regel ook zo niet, dan worden de letters kleiner (tot 80%),
+  // zoals bij een codeblok in de les: een regel code breekt niet af.
+  const schaal = veldBreedte === null ? 1 : codeSchaal(code, naast ?? veldBreedte, teken);
   const editorMax =
     veldHoogte === null
       ? undefined
@@ -480,7 +483,10 @@ export default function PyRunnerImpl({
         stapper !== undefined && styles.staptInTab,
       )}
       style={
-        naast === null ? undefined : ({ '--code-breedte': `${naast}px` } as React.CSSProperties)
+        {
+          ...(naast === null ? {} : { '--code-breedte': `${naast}px` }),
+          ...(schaal === 1 ? {} : { '--code-schaal': schaal }),
+        } as React.CSSProperties
       }
     >
       <div className={styles.codeKolom}>

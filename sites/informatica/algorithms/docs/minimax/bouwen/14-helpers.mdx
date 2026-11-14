@@ -253,17 +253,14 @@ bord:
 
 <GameTree bord="XXO/OOX/..." waardes />
 
-De uitvoer is dezelfde wandeling als op de pen-en-papier-pagina, in
+### De uitvoer volgt de boom
+
+De uitvoer van de helpers is dezelfde wandeling als op de pen-en-papier-pagina, in
 dezelfde volgorde: eerst de linkertak helemaal naar beneden tot een `klaar`, dan
 de waarde weer omhoog, dan de volgende tak. Elke regel `MAX` of `MIN` is
 één aanroep van `max_value` of `min_value`, en elke inspringing is een
 laag dieper in de boom. Pas helemaal onderaan, als alle drie de takken
 terug zijn, kent de wortel zijn waarde: `MAX geeft 0`.
-
-### Specificatie
-
-- **Input** voor beide: een `bord`.
-- **Output** voor beide: een geheel getal `1`, `-1` of `0`.
 
 ## Voorspel
 
@@ -286,8 +283,9 @@ een terminal bord is `min_value(bord) == max_value(bord) == utility(bord)`.
 
 ## Bouw zelf en test
 
-Schrijf beide functies uit het recept, zonder de prints. Boven de
-starter staan de zeven bouwstenen die je al hebt.
+Schrijf beide functies uit het recept, zonder de prints. Ze krijgen
+allebei een `bord` en geven een geheel getal terug: `1`, `-1` of `0`. Boven
+de starter staan de zeven bouwstenen die je al hebt.
 
 {/* niet-draaien: startcode; de asserts falen tot de leerling de opdracht afmaakt */}
 <PyRunner initialCode={`import copy

@@ -1,8 +1,11 @@
+import { useInLesTab } from '@coderius/shared/components/LesTabs/paneel';
+import { MARGE, meetRuimte } from '@coderius/shared/components/LesTabs/pasHoogte';
 import clsx from 'clsx';
 import type React from 'react';
-import { useMemo } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { type Knoop, bouwBoom, naarTekst, parseBord } from './boom';
 import styles from './styles.module.css';
+import { boomZoom } from './zoom';
 
 type GameTreeProps = {
   /** De positie bovenaan, als `"XXO/OOX/..."` (`.` is leeg). */
@@ -66,8 +69,46 @@ function KnoopWeergave({ knoop, waardes }: { knoop: Knoop; waardes: boolean }): 
  */
 export default function GameTree({ bord, waardes = false }: GameTreeProps): React.ReactElement {
   const wortel = useMemo(() => bouwBoom(parseBord(bord)), [bord]);
+  // In een les-tabblad op een breed scherm wordt de boom zo klein als nodig
+  // om met de tekst erboven op het scherm te passen (boomZoom). Op ware
+  // grootte is hij 633 pixels hoog: dan paste hij ook alleen in een stap niet
+  // op 1280 bij 720.
+  const inTab = useInLesTab();
+  const ref = useRef<HTMLDivElement>(null);
+  const ware = useRef(0);
+  const [zoom, setZoom] = useState<number | null>(null);
+  useLayoutEffect(() => {
+    const omhulsel = ref.current;
+    const paneel = omhulsel?.closest<HTMLElement>('[data-les-tab]');
+    if (!inTab || !omhulsel || !paneel || typeof ResizeObserver === 'undefined') return;
+    const breed = window.matchMedia('(min-width: 997px)');
+    const meet = () => {
+      if (!breed.matches) return setZoom(null);
+      const ruimte = meetRuimte(omhulsel, paneel, Number.POSITIVE_INFINITY);
+      if (!ruimte) return;
+      // De ware hoogte één keer, zolang er nog geen zoom op staat.
+      if (ware.current === 0 && !omhulsel.style.zoom) ware.current = omhulsel.offsetHeight;
+      if (ware.current === 0) return;
+      const vrij = ruimte.scherm - ruimte.boven - ruimte.onder - MARGE;
+      setZoom(boomZoom(vrij, ware.current));
+    };
+    meet();
+    const kijker = new ResizeObserver(meet);
+    kijker.observe(paneel);
+    window.addEventListener('resize', meet);
+    breed.addEventListener('change', meet);
+    return () => {
+      kijker.disconnect();
+      window.removeEventListener('resize', meet);
+      breed.removeEventListener('change', meet);
+    };
+  }, [inTab]);
   return (
-    <div className={styles.omhulsel}>
+    <div
+      ref={ref}
+      className={styles.omhulsel}
+      style={zoom === null || zoom === 1 ? undefined : { zoom }}
+    >
       <ul className={clsx(styles.boom, styles.kinderen)}>
         <KnoopWeergave knoop={wortel} waardes={waardes} />
       </ul>
