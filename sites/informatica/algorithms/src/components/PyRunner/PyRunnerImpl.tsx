@@ -10,7 +10,7 @@ import { meetRuimte, pasHoogte } from '@coderius/shared/components/LesTabs/pasHo
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import clsx from 'clsx';
 import type React from 'react';
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import ParseTree from '../ParseTree';
 import { type Getiteld, leesBomen } from '../ParseTree/boom';
 import { codeSchaal } from './breedte';
@@ -159,10 +159,13 @@ export default function PyRunnerImpl({
   const inTab = useInLesTab();
   const veldRef = useRef<HTMLDivElement>(null);
   const balkRef = useRef<HTMLDivElement>(null);
-  // Het uitklapblok met de code die al klaarstaat, onder de editor: dicht is
-  // het een regel, en die hoort bij de hoogte van het veld (in cfg was elk
-  // scherm met zo'n blok 75 pixels te lang).
-  const verborgenRef = useRef<HTMLDetailsElement>(null);
+  // De code die al klaarstaat: een knop in de werkbalk, en open een vak onder
+  // de editor. Eerst was het een uitklapblok onder de editor, en die regel
+  // (34 pixels) maakte zestien schermen Aan de slag van de route machine
+  // learning op 1280×720 te lang.
+  const verborgenRef = useRef<HTMLDivElement>(null);
+  const [toonKlaar, setToonKlaar] = useState(false);
+  const klaarId = useId();
   const codeVakRef = useRef<HTMLDivElement>(null);
   const [veldHoogte, setVeldHoogte] = useState<number | null>(null);
   const [veldBreedte, setVeldBreedte] = useState<number | null>(null);
@@ -388,20 +391,20 @@ export default function PyRunnerImpl({
     bomen.length > 0;
 
   const minEditor = rows * LINE_HEIGHT_PX + EDITOR_PADDING_PX;
-  // Wat er in het codevak naast de editor staat: het uitklapblok met de code
-  // die al klaarstaat (dicht: één regel) en de ruimte eromheen. Gemeten, want
-  // eerst telde alleen het blok, en dan was elk scherm met zo'n runner nog 14
-  // tot 22 pixels te lang. Een blok dat de leerling openklapt, telt niet: dan
-  // groeit het paneel, zoals bij een tip die open staat. Gemeten tot de
-  // onderkant van de inhoud, niet van het vak (rondOm in opmaak.ts).
+  // Wat er in het codevak naast de editor staat en de ruimte eromheen.
+  // Gemeten, want eerst telde alleen het blok met de klaargezette code, en dan
+  // was elk scherm met zo'n runner nog 14 tot 22 pixels te lang. De code die
+  // al klaarstaat telt niet als de leerling hem opent: dan groeit het paneel,
+  // zoals bij een tip die open staat. Gemeten tot de onderkant van de inhoud,
+  // niet van het vak (rondOm in opmaak.ts).
   const rondDeEditor = () => {
     const vak = codeVakRef.current;
     const editor = vak?.firstElementChild as HTMLElement | null | undefined;
     const laatste = vak?.lastElementChild as HTMLElement | null | undefined;
     if (!vak || !editor || !laatste) return 0;
     const blok = verborgenRef.current;
-    const open = blok?.open
-      ? blok.offsetHeight - (blok.querySelector('summary')?.offsetHeight ?? 0)
+    const open = blok
+      ? blok.offsetHeight + (Number.parseFloat(getComputedStyle(blok).marginTop) || 0)
       : 0;
     const e = editor.getBoundingClientRect();
     return rondOm({
@@ -519,7 +522,20 @@ export default function PyRunnerImpl({
     >
       <div className={styles.codeKolom}>
         <div className={styles.toolbar} ref={balkRef}>
-          <span className={styles.label}>Python</span>
+          {verborgenCode ? (
+            <button
+              type="button"
+              className={clsx('button button--sm button--secondary', styles.klaarKnop)}
+              aria-expanded={toonKlaar}
+              aria-controls={klaarId}
+              title={`${toonKlaar ? 'Verberg' : 'Toon'} de code die al klaarstaat (${verborgenCode.split('\n').length} regels)`}
+              onClick={() => setToonKlaar((v) => !v)}
+            >
+              {toonKlaar ? '▾' : '▸'} Klaargezette code
+            </button>
+          ) : (
+            <span className={styles.label}>Python</span>
+          )}
           <div className={styles.actions}>
             {editable && (
               <button
@@ -564,9 +580,10 @@ export default function PyRunnerImpl({
             }
             maxHeight={editorMax}
           />
-          {verborgenCode && (
-            <details
+          {verborgenCode && toonKlaar && (
+            <div
               className={styles.verborgen}
+              id={klaarId}
               ref={verborgenRef}
               style={
                 verborgenSchaal === 1
@@ -574,9 +591,6 @@ export default function PyRunnerImpl({
                   : ({ '--code-schaal': verborgenSchaal } as React.CSSProperties)
               }
             >
-              <summary>
-                Toon de code die al klaarstaat ({verborgenCode.split('\n').length} regels)
-              </summary>
               <HighlightedEditor
                 code={verborgenCode}
                 onChange={() => undefined}
@@ -586,7 +600,7 @@ export default function PyRunnerImpl({
                 afbreken={false}
                 ariaLabel="Code die al klaarstaat, alleen-lezen"
               />
-            </details>
+            </div>
           )}
         </div>
       </div>
