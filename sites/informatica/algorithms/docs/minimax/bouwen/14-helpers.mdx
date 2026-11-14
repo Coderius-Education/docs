@@ -179,7 +179,7 @@ def max_value(bord, diepte):
     inspring = "    " * diepte
     if terminal(bord):
         print(inspring + "klaar:", kort(bord),
-              "utility", utility(bord))
+                "utility", utility(bord))
         return utility(bord)
     print(inspring + "MAX", kort(bord))
     v = -math.inf
@@ -194,7 +194,7 @@ def min_value(bord, diepte):
     inspring = "    " * diepte
     if terminal(bord):
         print(inspring + "klaar:", kort(bord),
-              "utility", utility(bord))
+                "utility", utility(bord))
         return utility(bord)
     print(inspring + "MIN", kort(bord))
     v = math.inf

@@ -83,13 +83,13 @@ assert winner([[None]*3]*3) is None, "Leeg bord -> None"
 assert winner([["X","X","X"], [None]*3, [None]*3]) == "X", "X-rij"
 
 assert winner([["O","X",None], ["O","X",None],
-               ["O",None,None]]) == "O", "O-kolom"
+                ["O",None,None]]) == "O", "O-kolom"
 
 assert winner([["X","O",None], ["O","X",None],
-               [None,None,"X"]]) == "X", "X hoofd-diagonaal"
+                [None,None,"X"]]) == "X", "X hoofd-diagonaal"
 
 assert winner([[None,None,"O"], [None,"O",None],
-               ["O",None,None]]) == "O", "O anti-diagonaal"
+                ["O",None,None]]) == "O", "O anti-diagonaal"
 
 # Remise: vol bord zonder drie op een rij
 remise = [["X","O","X"], ["X","O","O"], ["O","X","X"]]

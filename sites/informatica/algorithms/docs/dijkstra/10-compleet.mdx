@@ -184,7 +184,7 @@ for node, (x, y) in plek.items():
     if node == 'A':
         kleur = 'lightgreen'
     ax.scatter(x, y, s=900, color=kleur,
-               edgecolors='black', zorder=2)
+                edgecolors='black', zorder=2)
     ax.text(x, y, f"{node}\\nd={afstanden[node]}",
             ha='center', va='center', zorder=3)
 ax.set_xlim(-0.5, 1.5)
