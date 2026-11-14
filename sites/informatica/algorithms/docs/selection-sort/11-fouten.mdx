@@ -6,63 +6,53 @@ sidebar_position: 11
 
 **Leerdoel:** je herkent de klassieke valkuilen bij selection sort.
 
-## Zoeken vanaf index 0 in plaats van vanaf `i`
+## Het gesorteerde stuk vernield: zoeken vanaf 0 in plaats van vanaf `i`
 
-### Het gesorteerde stuk vernield
+Geen foutmelding, maar wel een stille fout: de getallen die vooraan al
+goed stonden, worden door nieuwe swaps weer weggezet. Van
+`[5, 2, 8, 1, 4]` maakt de code `[2, 8, 5, 4, 1]`.
 
-Geen foutmelding, maar wel een stille fout: de elementen die vooraan al
-goed stonden worden door nieuwe swaps overschreven.
+**Oorzaak:** elke ronde zoek je nog in de **hele** lijst, ook in het
+gesorteerde stuk vooraan. De 1 die in ronde 0 vooraan kwam, is in elke
+ronde erna weer de kleinste, en wordt steeds verder naar achteren
+geruild.
 
-**Oorzaak:** elke ronde zoek je nog steeds in de **hele** lijst — ook in
-het al gesorteerde stuk vooraan. En je swapt met `lijst[i]`, wat een
-al-gesorteerde plek kan zijn. Het sorted-stuk wordt vernield.
+**Oplossing:** zoek vanaf `i`, en begin de zoektocht met `min_index = i`.
+Dan blijft het gesorteerde deel met rust.
 
-### Zoeken vanaf `i`
-
-**Oplossing:** zoek vanaf `i` en begin de zoektocht met `min_index = i`.
-Zo laat je het al-gesorteerde deel met rust.
-
+{/* niet-compileren: fragment; het lijf van de binnenste lus is weggelaten */}
 ```python
 # FOUT
-def selection_sort_fout(lijst):
-    n = len(lijst)
-    for i in range(n):
-        min_index = 0
-        for j in range(0, n):
-            if lijst[j] < lijst[min_index]:
-                min_index = j
-        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
-    return lijst
+for i in range(n):
+    min_index = 0
+    for j in range(0, n):
 
 # GOED
 for i in range(n):
     min_index = i
     for j in range(i, n):
-        ...
 ```
 
-## Verkeerde swap — informatie verliezen
+Meer uitleg: [Bouwsteen 3 — zoek vanaf een bepaalde positie](site:algorithms/docs/selection-sort/bouwen/06-vind-in-subreeks).
+
+## Een waarde kwijt bij het ruilen
+
+Geen foutmelding, maar na het ruilen staat hetzelfde getal twee keer in de
+lijst, en een ander getal is weg.
 
 **Oorzaak:** je overschrijft `lijst[a]` met `lijst[b]` voordat je de
-oude waarde van `lijst[a]` ergens hebt bewaard. Daarna is de oude waarde
-weg.
+oude waarde van `lijst[a]` ergens hebt bewaard. De tweede regel kopieert
+dan de nieuwe waarde terug.
 
-**Oplossing:** gebruik een tijdelijke variabele, of de Pythonische
-tuple-swap.
+**Oplossing:** gebruik de tuple-swap, of eerst een tijdelijke variabele.
 
+{/* niet-draaien: fragment; lijst, a en b komen uit de code eromheen */}
 ```python
 # FOUT
-lijst = [5, 2, 8, 1, 4]
-a, b = 0, 3
-lijst[a] = lijst[b]   # lijst[0] wordt 1; de 5 is weg
-lijst[b] = lijst[a]   # lijst[3] wordt 1 (alweer)
-
-# GOED (klassiek)
-tijdelijk = lijst[a]
 lijst[a] = lijst[b]
-lijst[b] = tijdelijk
+lijst[b] = lijst[a]
 
-# GOED (Pythonisch)
+# GOED
 lijst[a], lijst[b] = lijst[b], lijst[a]
 ```
 
@@ -70,33 +60,26 @@ Meer uitleg: [Bouwsteen 2 — swappen](site:algorithms/docs/selection-sort/bouwe
 
 ## Eén te kort: `range(i, n - 1)`
 
-Geen Python-foutmelding — de lijst komt er bijna goed uit, maar het
-laatste element doet niet mee.
+Geen foutmelding, maar de lijst komt er bijna goed uit: van
+`[5, 2, 8, 1, 4]` maakt de code `[1, 2, 5, 8, 4]`. De 4 achteraan is nooit
+bekeken.
 
-**Oorzaak:** bij bubble sort hoort een `- 1` in de lus, omdat je daar
-`lijst[i + 1]` bekijkt. Bij selection sort niet: de binnenste lus kijkt
-alleen naar `lijst[j]`, dus `j` mag tot en met het laatste element gaan.
-Met `range(i, n - 1)` wordt het laatste element nooit als kleinste
-gevonden.
+**Oorzaak:** een `- 1` hoort alleen in een lus die ook naar de buur
+`lijst[j + 1]` kijkt. De binnenste lus van selection sort kijkt alleen naar
+`lijst[j]`, dus `j` mag tot en met het laatste element gaan.
 
 **Oplossing:** `for j in range(i, n)`. Het laatste element hoort bij het
 ongesorteerde stuk.
 
+{/* niet-compileren: fragment; het lijf van de lus is weggelaten */}
 ```python
-def selection_sort_fout(lijst):
-    n = len(lijst)
-    for i in range(n):
-        min_index = i
-        for j in range(i, n - 1):    # FOUT: het laatste element doet niet mee
-            if lijst[j] < lijst[min_index]:
-                min_index = j
-        lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
-    return lijst
+# FOUT
+for j in range(i, n - 1):
 
-print(selection_sort_fout([5, 2, 8, 1, 4]))   # [1, 2, 5, 8, 4]
+# GOED
+for j in range(i, n):
 ```
 
-De 4 achteraan is nooit bekeken en blijft staan. Met `range(i, n)` komt er
-`[1, 2, 4, 5, 8]` uit.
+Meer uitleg: [Bouwsteen 4 — de bouwstenen aan elkaar rijgen](site:algorithms/docs/selection-sort/bouwen/07-buitenste-lus).
 
 Door naar [cheatsheet](site:algorithms/docs/selection-sort/12-cheatsheet).

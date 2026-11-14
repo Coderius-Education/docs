@@ -84,12 +84,13 @@ De buitenste lus met `i` bepaalt welke positie de volgende kleinste
 krijgt. De binnenste lus met `j` zoekt dat kleinste in het stuk dat nog
 ongesorteerd is.
 
-Twee geneste lussen doen samen ongeveer `n × n / 2` vergelijkingen, dus
-`n²/2`. Dat is `O(n²)`.
+Twee geneste lussen doen samen ongeveer `n × n / 2` vergelijkingen. Maak
+je de lijst twee keer zo lang, dan is dat vier keer zoveel werk.
 
 ## Visualiseer de stappen
 
-Voeg een print per ronde toe om te zien hoe de lijst groeit:
+Deze versie print de lijst na elke ronde. Kijk hoe het gesorteerde stuk
+vooraan groeit:
 
 <PyRunner initialCode={`def selection_sort_uitleg(lijst):
     n = len(lijst)
@@ -100,7 +101,8 @@ Voeg een print per ronde toe om te zien hoe de lijst groeit:
                 min_index = j
         # swap
         lijst[i], lijst[min_index] = lijst[min_index], lijst[i]
-        print(f"na ronde i={i}: {lijst}    (kleinste gevonden op orig. positie {min_index})")
+        print(f"na ronde i={i}: {lijst}",
+              f"   (kleinste stond op index {min_index})")
     return lijst
 
 selection_sort_uitleg([5, 2, 8, 1, 4])`} />
@@ -109,11 +111,11 @@ selection_sort_uitleg([5, 2, 8, 1, 4])`} />
 <summary>Wat zie je?</summary>
 
 ```
-na ronde i=0: [1, 2, 8, 5, 4]    (kleinste gevonden op orig. positie 3)
-na ronde i=1: [1, 2, 8, 5, 4]    (kleinste gevonden op orig. positie 1)
-na ronde i=2: [1, 2, 4, 5, 8]    (kleinste gevonden op orig. positie 4)
-na ronde i=3: [1, 2, 4, 5, 8]    (kleinste gevonden op orig. positie 3)
-na ronde i=4: [1, 2, 4, 5, 8]    (kleinste gevonden op orig. positie 4)
+na ronde i=0: [1, 2, 8, 5, 4]    (kleinste stond op index 3)
+na ronde i=1: [1, 2, 8, 5, 4]    (kleinste stond op index 1)
+na ronde i=2: [1, 2, 4, 5, 8]    (kleinste stond op index 4)
+na ronde i=3: [1, 2, 4, 5, 8]    (kleinste stond op index 3)
+na ronde i=4: [1, 2, 4, 5, 8]    (kleinste stond op index 4)
 ```
 
 Bij i=1 is `lijst[1]` (2) toevallig al de kleinste van het ongesorteerde
