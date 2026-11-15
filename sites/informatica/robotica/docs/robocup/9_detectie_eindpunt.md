@@ -42,5 +42,3 @@ Een bal die je vlak voor de drempel loslaat, rolt terug. Rijd een stukje over
 de drempel, of laat de bal pas los als beide IR-sensoren zwart zien.
 
 </details>
-
-Door naar het [Pinoverzicht](site:robotica/docs/robocup/pinnen_nano_connect).

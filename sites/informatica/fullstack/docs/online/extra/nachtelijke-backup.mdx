@@ -132,5 +132,3 @@ permission denied while trying to connect to the docker API at unix:///var/run/d
 **Oorzaak:** je zette de regel met `sudo crontab -e` in de lijst van `root`. Het script draait dan als `root`, en voor `root` is `~` de map `/root`.
 
 **Oplossing:** haal de regel daar weg met `sudo crontab -e`, en zet hem in je eigen lijst met `crontab -e`, zonder `sudo`.
-
-Door naar [les 43: de back-ups naar je laptop](site:fullstack/docs/online/extra/ophalen).

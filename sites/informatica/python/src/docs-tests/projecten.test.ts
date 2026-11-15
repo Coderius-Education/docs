@@ -67,26 +67,19 @@ function commandos(code: string): string[] {
 
 const LIJN = join(PROJECTEN, 'turtle');
 
-/** De projecten van de turtle-lijn in de volgorde van de "Door naar"-links. */
+/**
+ * De projecten van de turtle-lijn in de volgorde van de sidebar: de
+ * `position` in hun `_category_.json`. De knop Volgende loopt die volgorde
+ * af; een "Door naar"-link onder de laatste stap zei eerst hetzelfde.
+ */
+function positieVan(map: string): number {
+  return JSON.parse(readFileSync(join(LIJN, map, '_category_.json'), 'utf8')).position;
+}
+
 function lijnVolgorde(): string[] {
-  const mappen = readdirSync(LIJN).filter((n) => statSync(join(LIJN, n)).isDirectory());
-  const volgende = new Map<string, string>();
-  for (const map of mappen) {
-    for (const n of readdirSync(join(LIJN, map)).filter((x) => x.endsWith('.mdx'))) {
-      const m = readFileSync(join(LIJN, map, n), 'utf8').match(
-        /Door naar het volgende project: \[[^\]]+\]\(site:python\/docs\/projecten\/turtle\/([\w-]+)\//,
-      );
-      if (m) volgende.set(map, m[1]);
-    }
-  }
-  const doelen = new Set(volgende.values());
-  let huidig = mappen.find((m) => !doelen.has(m));
-  const volgorde: string[] = [];
-  while (huidig && !volgorde.includes(huidig)) {
-    volgorde.push(huidig);
-    huidig = volgende.get(huidig);
-  }
-  return volgorde;
+  return readdirSync(LIJN)
+    .filter((n) => statSync(join(LIJN, n)).isDirectory())
+    .sort((a, b) => positieVan(a) - positieVan(b));
 }
 
 function stappenVan(map: string): string[] {
@@ -98,10 +91,7 @@ function stappenVan(map: string): string[] {
 
 /** Een pagina zonder het blok Maak het je eigen: ideeën leren niets aan. */
 function zonderEigen(tekst: string): string {
-  return tekst.replace(
-    /^## Maak het je eigen[\s\S]*?(?=^## |^Door naar|^Terug naar|(?![\s\S]))/m,
-    '',
-  );
+  return tekst.replace(/^## Maak het je eigen[\s\S]*?(?=^## |^Terug naar|(?![\s\S]))/m, '');
 }
 
 function commandosVanDeLijn(tot?: string): string[] {
@@ -117,9 +107,8 @@ function commandosVanDeLijn(tot?: string): string[] {
 describe('de turtle-lijn', () => {
   const volgorde = lijnVolgorde();
 
-  it('is één ketting van "Door naar"-links langs alle projecten', () => {
-    const mappen = readdirSync(LIJN).filter((n) => statSync(join(LIJN, n)).isDirectory());
-    expect([...volgorde].sort()).toEqual([...mappen].sort());
+  it('heeft elk project op een eigen plek in de sidebar', () => {
+    expect(volgorde.map(positieVan)).toEqual(volgorde.map((_, i) => i + 1));
   });
 
   // Elk project eindigt met open ideeën; eerst stonden er bij twee projecten
@@ -128,7 +117,7 @@ describe('de turtle-lijn', () => {
     it(`${map}: de laatste stap eindigt met Maak het je eigen, met wat de leerling al kent`, () => {
       const laatste = stappenVan(join(LIJN, map)).at(-1) ?? '';
       const blok = laatste.match(
-        /^## Maak het je eigen\n([\s\S]*?)(?=^## |^Door naar|^Terug naar|(?![\s\S]))/m,
+        /^## Maak het je eigen\n([\s\S]*?)(?=^## |^Terug naar|(?![\s\S]))/m,
       )?.[1];
       expect(blok, `${map}: geen ## Maak het je eigen`).toBeDefined();
       const bullets = (blok ?? '').split('\n').filter((r) => /^- /.test(r));
@@ -181,21 +170,6 @@ describe('projecten in de python-cursus', () => {
           expect(s.tekst, s.naam).toContain('<summary>Klik hier voor een tip.</summary>');
           expect(s.tekst, s.naam).toContain('<summary>Klik hier voor de oplossing.</summary>');
         }
-      });
-
-      it('elke stap wijst naar de volgende, de laatste terug naar het overzicht', () => {
-        stappen.forEach((s, i) => {
-          const volgende = stappen[i + 1];
-          if (volgende) {
-            const route = `/docs/projecten/${project}/${volgende.naam.replace(/\.mdx$/, '')}`;
-            expect(s.tekst, s.naam).toContain(`](site:python${route})`);
-          } else {
-            // Door naar het volgende project, of terug naar een overzicht: de
-            // laatste link van de pagina, niet een verwijzing ergens halverwege.
-            const links = [...s.tekst.matchAll(/\]\(([^)\s]+)\)/g)].map((m) => m[1]);
-            expect(links.at(-1), s.naam).toMatch(/^site:python\/docs\/projecten([/#]|$)/);
-          }
-        });
       });
 
       it('elke stap noemt zijn concept in de sidebar', () => {

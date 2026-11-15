@@ -95,5 +95,3 @@ je zelf, met de maten uit de [spelregels](site:robotica/docs/robocup/start#spelr
 | De evacuatiezone | ongeveer 90 bij 60 cm, met een muur van minstens 10 cm hoog |
 | Het evacuatiepunt | een zwarte rechthoekige driehoek met korte zijden van 30 cm, in een hoek |
 | Slachtoffers | zilveren ballen van 4 à 5 cm die stroom geleiden, bijvoorbeeld een pingpongbal in aluminiumfolie |
-
-Door naar [Lijn volgen](site:robotica/docs/robocup/lijnvolgen).

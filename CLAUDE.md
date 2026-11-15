@@ -792,6 +792,10 @@ knop Volgende in 26 lessen. Sindsdien:
   de naam bij Vorige op een beletselteken. De knop Volgende heeft
   `data-les-volgende`, en `VOLGENDE_KNOP` vindt alleen hem: niet Vorige, en
   niet de link naar de volgende les (een Enter daar verlaat de pagina).
+  Een les eindigt daarom niet met een regel "Door naar [les](…)": die zei
+  hetzelfde als de knop eronder, in 491 lessen van vijf cursussen
+  (`links-in-lestekst.test.ts`). Wijkt de weg af van de sidebar, zeg dan
+  waar je daarna verdergaat ("Na het hoofdstuk PageRank ga je verder met …").
 - **Het hele bestand na de les is het laatste tabblad** (`standTab`). Een
   `<details>` met de summary "Zo ziet je `main.py` er nu uit" wordt een
   tabblad `main.py` met het bestand open, werkvorm controleren. In de bron

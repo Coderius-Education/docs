@@ -46,5 +46,3 @@ Leg eerst een bal stil voor de robot en kijk welke afstand je TOF geeft. Pas als
 dat klopt, laat je de robot er zelf naar zoeken.
 
 </details>
-
-Door naar [Ballen grijpen](site:robotica/docs/robocup/grijpen_van_een_bal).

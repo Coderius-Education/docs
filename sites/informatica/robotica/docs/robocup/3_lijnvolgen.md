@@ -54,5 +54,3 @@ hele baan rondrijdt. Een derde of vierde sensor is pas nodig als je robot in
 een scherpe bocht de lijn kwijtraakt.
 
 </details>
-
-Door naar [Gaten in de lijn](site:robotica/docs/robocup/gaten).

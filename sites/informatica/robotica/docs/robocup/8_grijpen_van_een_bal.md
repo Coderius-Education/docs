@@ -38,5 +38,3 @@ Test de grijpbeweging eerst met de hand, met `set_servo_angle("D6", 0)` en
 `set_servo_angle("D6", 180)`, voordat je hem aan de TOF koppelt.
 
 </details>
-
-Door naar [Het evacuatiepunt](site:robotica/docs/robocup/detectie_eindpunt).

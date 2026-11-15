@@ -74,5 +74,3 @@ voordat het in je wedstrijdprogramma komt:
 | Grijpen | [Servo](site:robotica/docs/onderdelen/servo) |
 | Laten zien wat je robot denkt | [OLED-scherm](site:robotica/docs/onderdelen/oled-scherm) |
 | Zonder kabel rijden | [Batterijen](site:robotica/docs/onderdelen/batterijen) |
-
-Door naar de [Materiaallijst](site:robotica/docs/robocup/the_material).

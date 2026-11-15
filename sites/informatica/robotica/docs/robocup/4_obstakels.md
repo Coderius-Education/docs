@@ -112,5 +112,3 @@ Kijk in elke ronde van je `while`-lus eerst naar de TOF. Is er een obstakel,
 rijd er dan omheen. Is er niets, volg dan de lijn.
 
 </details>
-
-Door naar [De ingang van de evacuatiezone](site:robotica/docs/robocup/evacuatiezone_detectie).

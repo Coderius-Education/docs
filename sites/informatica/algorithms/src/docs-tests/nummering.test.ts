@@ -160,26 +160,8 @@ describe('de links tussen lessen', () => {
   });
 });
 
-/** Elke pagina onder docs/, ook die van de route machine learning. */
-function allePaginas(dir = DOCS): string[] {
-  return readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
-    const pad = join(dir, e.name);
-    if (e.isDirectory()) return allePaginas(pad);
-    return /\.mdx?$/.test(e.name) ? [pad] : [];
-  });
-}
-
 describe('naar de volgende les', () => {
-  // Onderaan het laatste scherm van een les staat de knop "Volgende: <les>".
-  // Daarboven stond in 257 lessen nog "Door naar [<les>](…)", met dezelfde
-  // les: twee keer hetzelfde, en het scherm werd er 46 pixels langer van.
-  it('geen les eindigt met een Door naar-regel', () => {
-    const kapot = allePaginas()
-      .filter((pad) => /^Door naar /m.test(readFileSync(pad, 'utf8')))
-      .map((pad) => pad.slice(DOCS.length));
-    expect(kapot).toEqual([]);
-  });
-
+  // Geen Door naar-regel meer: zie packages/shared/links-in-lestekst.test.ts.
   it('de bouwstappen hebben geen eigen overzichtspagina', () => {
     // Met een generated-index ging Volgende vanaf de stellingen naar een
     // pagina met kaarten van de stappen, en pas daarna naar bouwsteen 1. Het
