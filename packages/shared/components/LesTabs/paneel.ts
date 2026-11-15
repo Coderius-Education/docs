@@ -40,6 +40,26 @@ export function useLesDoel(): ReactNode {
   return useContext(DoelContext);
 }
 
+/** De hulp bij een opdracht: de tip en het antwoord, elk als lestekst. */
+export type Hulp = {
+  tip?: ReactNode;
+  antwoord?: ReactNode;
+  /** Hoe de les het antwoord noemt: "oplossing" of "antwoord". */
+  naam?: string;
+  /** De code van het antwoord: het veld kan hem uitvoeren. */
+  code?: string;
+};
+
+/** De tip en het antwoord van de opdracht waar een oefenveld bij hoort.
+ *  <LesVeld> zet ze om het veld; het veld toont ze op de plek van de
+ *  uitvoer, naast de code van de leerling. */
+export const HulpContext = createContext<Hulp | null>(null);
+
+/** De hulp bij de opdracht waar dit oefenveld bij hoort, of null. */
+export function useLesHulp(): Hulp | null {
+  return useContext(HulpContext);
+}
+
 /** Het attribuut op het paneel van een tabblad, met zijn id als waarde. */
 export const LES_TAB = 'data-les-tab';
 

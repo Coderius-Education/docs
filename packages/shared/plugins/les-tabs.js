@@ -950,6 +950,83 @@ function doelNaastVeld(kinderen) {
   return uit;
 }
 
+/** Het veld in een node: het veld zelf, of het veld in zijn <LesVeld>. */
+const veldIn = (node) =>
+  isVeld(node) ? node : node.name === 'LesVeld' ? node.children.find(isVeld) : undefined;
+
+/** Welke hulp een uitklapblok is: een tip, of de oplossing van de opdracht. */
+function hulpSoort(node) {
+  if (!isUitklapblok(node)) return null;
+  const kop = node.children.find(heeftSummary);
+  const tekst = kop ? tekstVan(kop) : '';
+  if (/\btip\b/i.test(tekst)) return { soort: 'tip', naam: 'tip' };
+  if (/\boplossing\b/i.test(tekst)) return { soort: 'antwoord', naam: 'oplossing' };
+  if (/\bantwoord\b/i.test(tekst)) return { soort: 'antwoord', naam: 'antwoord' };
+  return null;
+}
+
+/**
+ * De tip en de oplossing van een opdracht staan in het oefenveld, op de plek
+ * van de uitvoer: het veld heeft knoppen Uitvoer, Tip en Oplossing, en de
+ * code van de leerling blijft ernaast staan. Als uitklapblok onder het veld
+ * kreeg een open oplossing alleen de ruimte die het veld overliet: bij
+ * opdracht 6a.3 van python twee regels (issue 212).
+ *
+ * De uitklapblokken direct na het veld (eerst de tip, dan de oplossing; elk
+ * mag ontbreken) komen als <LesHulp> in het <LesVeld>. Het eerste codeblok
+ * van de oplossing gaat ook als tekst mee (`code`): het veld kan hem dan
+ * uitvoeren zonder de code van de leerling aan te raken. Een oefenveld in
+ * de oplossing met diezelfde code vervalt daarom. Staat er een ander veld
+ * in, dan blijft de oplossing een uitklapblok.
+ *
+ * Een proef: een pagina zet het aan met `les_hulp: veld` in de front matter.
+ *
+ * @param {object[]} kinderen
+ */
+function hulpInVeld(kinderen) {
+  const uit = [];
+  for (let i = 0; i < kinderen.length; i++) {
+    const node = kinderen[i];
+    const veld = veldIn(node);
+    if (!veld) {
+      uit.push(node);
+      continue;
+    }
+    const hulp = [];
+    const tussen = [];
+    let k = i + 1;
+    for (const soort of ['tip', 'antwoord']) {
+      let j = k;
+      while (j < kinderen.length && zetNietsNeer(kinderen[j])) j++;
+      const blok = kinderen[j];
+      const wat = hulpSoort(blok);
+      if (wat?.soort !== soort) continue;
+      const inhoud = blok.children.filter((kind) => !heeftSummary(kind));
+      const attributen = [attribuut('soort', soort), attribuut('naam', wat.naam)];
+      let tekst = inhoud;
+      if (soort === 'antwoord') {
+        const code = inhoud.find((n) => n.type === 'code');
+        const dubbel = (n) =>
+          isVeld(n) && code && plat(startcode(n) ?? '') === plat(code.value ?? '');
+        if (inhoud.some((n) => veldIn(n) && !dubbel(n))) continue;
+        tekst = inhoud.filter((n) => !dubbel(n));
+        if (code) attributen.push(attribuut('code', code.value ?? ''));
+      }
+      tussen.push(...kinderen.slice(k, j));
+      hulp.push(jsx('LesHulp', tekst, attributen));
+      k = j + 1;
+    }
+    if (!hulp.length) {
+      uit.push(node);
+      continue;
+    }
+    const doel = node.name === 'LesVeld' ? node.children.filter((n) => n !== veld) : [];
+    uit.push(jsx('LesVeld', [...doel, ...hulp, veld]), ...tussen);
+    i = k - 1;
+  }
+  return uit;
+}
+
 /** Het label van het tabblad met wat vóór de eerste `##` staat. */
 const UITLEG = 'Uitleg';
 
@@ -1336,13 +1413,15 @@ function foutenNaOpdrachten(tabs, vormen) {
  * tekst, en een rij plaatjes als reeks. Voor een les en voor een deel.
  *
  * @param {object[]} alles de kinderen van de mdast-root
+ * @param {{ hulp?: boolean }} [opties] `hulp`: tip en oplossing in het veld
+ *   (hulpInVeld)
  */
-const naastElkaar = (alles) =>
-  reeksen(
-    plaatjesNaastTekst(
-      doelNaastVeld(voorbeeldenNaastElkaar(bestandenNaastElkaar(zonderDubbeleCode(alles)))),
-    ),
+const naastElkaar = (alles, { hulp = false } = {}) => {
+  const velden = doelNaastVeld(
+    voorbeeldenNaastElkaar(bestandenNaastElkaar(zonderDubbeleCode(alles))),
   );
+  return reeksen(plaatjesNaastTekst(hulp ? hulpInVeld(velden) : velden));
+};
 
 const STAND = /^Zo ziet je (.+) er nu uit$/;
 
@@ -1511,7 +1590,7 @@ function openingVanTabs({ uitleg, secties }, aantal) {
  *
  * @param {object[]} kinderen de kinderen van de mdast-root
  */
-function groepeer(alles, { eenScherm = false } = {}) {
+function groepeer(alles, { eenScherm = false, hulp = false } = {}) {
   // De stand van een bestand gaat er eerst uit: naast een vraag of onder een
   // fout hoort hij niet (zie standTab).
   const vanaf = alles.findIndex(isH2);
@@ -1526,7 +1605,7 @@ function groepeer(alles, { eenScherm = false } = {}) {
     const zoals = verdeel(bron);
     if (zoals && pastOpEenScherm(zoals.uitleg, zoals.secties)) return null;
   }
-  const kinderen = naastElkaar(bron);
+  const kinderen = naastElkaar(bron, { hulp });
   const verdeeld = verdeel(kinderen);
   if (!verdeeld) return null;
   const { boven, esm } = verdeeld;
@@ -1692,7 +1771,9 @@ function remarkLesTabs(opties = {}) {
       tree.children = deelMetStappen(naast, naam) ?? naast;
       return;
     }
-    const nieuw = groepeer(tree.children, opties);
+    // Een proef: tip en oplossing in het oefenveld (hulpInVeld).
+    const hulp = file?.data?.frontMatter?.les_hulp === 'veld';
+    const nieuw = groepeer(tree.children, { ...opties, hulp });
     if (nieuw) tree.children = titelBijTabs(nieuw);
     // Geen tabbladen (één sectie, of een pagina met alleen een deel): een
     // marker, zodat de pagina dezelfde kop en breedte krijgt als de lessen
@@ -1716,4 +1797,5 @@ module.exports = {
   pastOpEenScherm,
   naastElkaar,
   titelBijTabs,
+  hulpInVeld,
 };

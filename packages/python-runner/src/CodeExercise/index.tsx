@@ -1,4 +1,9 @@
-import { useInLesTab, useLesDoel } from '@coderius/shared/components/LesTabs/paneel';
+import {
+  type Hulp,
+  useInLesTab,
+  useLesDoel,
+  useLesHulp,
+} from '@coderius/shared/components/LesTabs/paneel';
 import { meetRuimte, pasHoogte } from '@coderius/shared/components/LesTabs/pasHoogte';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import type React from 'react';
@@ -17,12 +22,19 @@ const BALK = 40;
 /** De rand van het veld, boven en onder: die telt mee in zijn hoogte. */
 const RAND = 2;
 
+/** Wat er naast de code staat: de uitvoer, de tip of het antwoord. */
+type Weergave = 'uitvoer' | 'tip' | 'antwoord';
+
+const hoofdletter = (woord: string) => woord.charAt(0).toUpperCase() + woord.slice(1);
+
 function CodeExerciseInner({
   starterCode,
   doel,
+  hulp,
 }: {
   starterCode: string;
   doel?: React.ReactNode;
+  hulp?: Hulp | null;
 }) {
   const [code, setCode] = useState(starterCode);
   const [output, setOutput] = useState('');
@@ -30,6 +42,12 @@ function CodeExerciseInner({
   const [isRunning, setIsRunning] = useState(false);
   const [opname, setOpname] = useState<Opname | null>(null);
   const [tekening, setTekening] = useState<TekeningData | null>(null);
+  // De tip en het antwoord van de opdracht staan op de plek van de uitvoer
+  // (useLesHulp): de code van de leerling blijft ernaast staan. Het antwoord
+  // draait los van die code, met een eigen uitvoer.
+  const [weergave, setWeergave] = useState<Weergave>('uitvoer');
+  const [antwoordUit, setAntwoordUit] = useState<string | null>(null);
+  const [antwoordTekening, setAntwoordTekening] = useState<TekeningData | null>(null);
   // De code zoals hij was toen de opname werd gemaakt: de leerling mag intussen
   // doortypen, en dan zouden de regelnummers uit de opname naar de verkeerde
   // regels wijzen.
@@ -72,6 +90,18 @@ function CodeExerciseInner({
       breed.removeEventListener('change', meet);
     };
   }, [inTab, stapt]);
+  // Het veld wordt niet lager als de leerling naar de tip of het antwoord
+  // wisselt: een korte tip liet het veld krimpen, en dan versprong alles wat
+  // eronder staat. De kolom houdt de grootste hoogte die hij had.
+  const kolomRef = useRef<HTMLDivElement>(null);
+  const [kolomMin, setKolomMin] = useState(0);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: een andere hoogte van het veld begint opnieuw.
+  useLayoutEffect(() => setKolomMin(0), [veldHoogte]);
+  useLayoutEffect(() => {
+    if (!hulp || veldHoogte === null) return;
+    const hoogte = kolomRef.current?.offsetHeight ?? 0;
+    if (hoogte > kolomMin) setKolomMin(hoogte);
+  });
   const editorMax =
     veldHoogte === null ? undefined : veldHoogte - (balkRef.current?.offsetHeight ?? BALK);
   // De hoogte van Stap voor stap in een tabblad: wat de editor had.
@@ -124,6 +154,7 @@ function CodeExerciseInner({
     const pyodide = await zorgVoorPyodide();
     if (!pyodide) return;
     setIsRunning(true);
+    setWeergave('uitvoer');
     setOutput('');
     setOpname(null);
     setTekening(null);
@@ -144,6 +175,7 @@ function CodeExerciseInner({
     const pyodide = await zorgVoorPyodide();
     if (!pyodide) return;
     setIsRunning(true);
+    setWeergave('uitvoer');
     setOutput('');
     setTekening(null);
     try {
@@ -157,6 +189,25 @@ function CodeExerciseInner({
     }
   }, [code, isRunning, zorgVoorPyodide]);
 
+  // Het antwoord uitvoeren raakt de code en de uitvoer van de leerling niet:
+  // hij ziet wat het antwoord doet, en zijn eigen werk staat er nog.
+  const antwoordCode = hulp?.code;
+  const voerAntwoordUit = useCallback(async () => {
+    if (isRunning || !antwoordCode) return;
+    const pyodide = await zorgVoorPyodide();
+    if (!pyodide) return;
+    setIsRunning(true);
+    try {
+      const { haalTekening, runPython } = await import('../PyodideProvider');
+      setAntwoordUit(await runPython(pyodide, antwoordCode, { turtle: true }));
+      setAntwoordTekening(haalTekening(pyodide));
+    } catch (err) {
+      setAntwoordUit(err instanceof Error ? err.message : String(err));
+    } finally {
+      setIsRunning(false);
+    }
+  }, [antwoordCode, isRunning, zorgVoorPyodide]);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       // Tab, Shift+Tab en Enter regelt HighlightedEditor zelf; hier alleen Ctrl+Enter.
@@ -166,6 +217,29 @@ function CodeExerciseInner({
       }
     },
     [execCode],
+  );
+
+  const uitvoer = (
+    <>
+      {tekening && <Tekening tekening={tekening} />}
+      {output && <pre className={styles.output}>{output}</pre>}
+      {isLoading && <div className={styles.loading}>Python wordt geladen...</div>}
+      {inTab && !output && !tekening && !opname && !isLoading && (
+        // Het vak naast de code is er al voordat er iets gedraaid is: zo
+        // verspringt het veld niet, en ziet de leerling waar hij moet kijken.
+        <p className={styles.wacht}>
+          Klik op Uitvoeren. De uitvoer verschijnt hier.
+          {/* Wat nodig is om het veld te gebruiken, zegt het veld zelf. */}
+          <span className={styles.bewaart}>
+            Dit veld bewaart je code niet: kopieer wat je wilt houden.
+          </span>
+        </p>
+      )}
+      {/* Wat de opdracht moet opleveren (de verwachte uitvoer of het
+            doelplaatje), onder wat de leerling zelf kreeg: zo vergelijkt hij
+            ze zonder te scrollen. */}
+      {doel && <div className={`${styles.doel} ${styles.doelNaast}`}>{doel}</div>}
+    </>
   );
 
   return (
@@ -178,6 +252,9 @@ function CodeExerciseInner({
         // uitvoer in, op dezelfde hoogte: eronder was het scherm tot 1600
         // pixels te lang, met de code er twee keer.
         stapper !== undefined && styles.staptInTab,
+        // Naast het antwoord krijgt de code de helft van het veld: zo staan
+        // de twee programma's even breed naast elkaar.
+        weergave === 'antwoord' && styles.naastAntwoord,
       ]
         .filter(Boolean)
         .join(' ')}
@@ -237,31 +314,65 @@ function CodeExerciseInner({
       <div
         // Met een doelplaatje erbij zijn de eigen tekening en het doel samen
         // niet hoger dan het veld: anders schoof het doel na Uitvoeren uit beeld.
+        ref={kolomRef}
         className={`${styles.resultaat}${doel && tekening ? ` ${styles.vergelijk}` : ''}`}
         style={
           veldHoogte === null
             ? undefined
-            : ({ maxHeight: veldHoogte, '--veld-hoogte': `${veldHoogte}px` } as React.CSSProperties)
+            : ({
+                maxHeight: veldHoogte,
+                minHeight: kolomMin || undefined,
+                '--veld-hoogte': `${veldHoogte}px`,
+              } as React.CSSProperties)
         }
       >
-        {tekening && <Tekening tekening={tekening} />}
-        {output && <pre className={styles.output}>{output}</pre>}
-        {isLoading && <div className={styles.loading}>Python wordt geladen...</div>}
-        {inTab && !output && !tekening && !opname && !isLoading && (
-          // Het vak naast de code is er al voordat er iets gedraaid is: zo
-          // verspringt het veld niet, en ziet de leerling waar hij moet kijken.
-          <p className={styles.wacht}>
-            Klik op Uitvoeren. De uitvoer verschijnt hier.
-            {/* Wat nodig is om het veld te gebruiken, zegt het veld zelf. */}
-            <span className={styles.bewaart}>
-              Dit veld bewaart je code niet: kopieer wat je wilt houden.
-            </span>
-          </p>
+        {hulp ? (
+          <>
+            <fieldset className={styles.keuze} aria-label="Naast je code">
+              {(['uitvoer', 'tip', 'antwoord'] as const)
+                .filter((w) => w === 'uitvoer' || hulp[w])
+                .map((w) => (
+                  <button
+                    key={w}
+                    type="button"
+                    className={styles.keuzeKnop}
+                    aria-pressed={weergave === w}
+                    onClick={() => setWeergave(w)}
+                  >
+                    {hoofdletter(w === 'antwoord' ? (hulp.naam ?? w) : w)}
+                  </button>
+                ))}
+            </fieldset>
+            <div hidden={weergave !== 'uitvoer'}>{uitvoer}</div>
+            {hulp.tip && (
+              <div className={styles.hulp} hidden={weergave !== 'tip'}>
+                {hulp.tip}
+              </div>
+            )}
+            {hulp.antwoord && (
+              <div className={styles.hulp} hidden={weergave !== 'antwoord'}>
+                {hulp.antwoord}
+                {antwoordCode && (
+                  <button
+                    type="button"
+                    className={styles.antwoordKnop}
+                    onClick={voerAntwoordUit}
+                    disabled={isLoading || isRunning}
+                    title="Je eigen code blijft staan"
+                  >
+                    ▶ Voer {hulp.naam === 'oplossing' ? 'de oplossing' : 'het antwoord'} uit
+                  </button>
+                )}
+                {antwoordTekening && <Tekening tekening={antwoordTekening} />}
+                {antwoordUit !== null && (
+                  <pre className={styles.output}>{antwoordUit || '(geen uitvoer)'}</pre>
+                )}
+              </div>
+            )}
+          </>
+        ) : (
+          uitvoer
         )}
-        {/* Wat de opdracht moet opleveren (de verwachte uitvoer of het
-            doelplaatje), onder wat de leerling zelf kreeg: zo vergelijkt hij
-            ze zonder te scrollen. */}
-        {doel && <div className={`${styles.doel} ${styles.doelNaast}`}>{doel}</div>}
       </div>
     </div>
   );
@@ -271,16 +382,26 @@ export default function CodeExercise({ children }: { children: string }) {
   const code = (children || '').trim();
   // In een les-tabblad zet <LesVeld> het doel van de opdracht om het veld.
   const doel = useLesDoel();
+  // En de tip en het antwoord, op de plek van de uitvoer.
+  const hulp = useLesHulp();
   return (
     <BrowserOnly
       fallback={
         <div className={styles.exercise}>
           <pre>{code}</pre>
           {doel && <div className={styles.doel}>{doel}</div>}
+          {/* In de HTML van de build, voor een link in de tip of het antwoord;
+              dicht tot het veld er is. */}
+          {hulp && (
+            <div hidden>
+              {hulp.tip}
+              {hulp.antwoord}
+            </div>
+          )}
         </div>
       }
     >
-      {() => <CodeExerciseInner starterCode={code} doel={doel} />}
+      {() => <CodeExerciseInner starterCode={code} doel={doel} hulp={hulp} />}
     </BrowserOnly>
   );
 }

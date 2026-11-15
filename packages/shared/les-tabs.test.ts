@@ -3004,3 +3004,134 @@ describe('het meetscript (scripts/meet-les-tabs.mjs)', () => {
     for (const veld of ['naOpen', 'naOpenBlok', 'naAllesOpen']) expect(code).toContain(veld);
   });
 });
+
+describe('de tip en de oplossing staan in het oefenveld', () => {
+  // Issue 212: een open oplossing onder het veld kreeg alleen de ruimte die
+  // het veld overliet, bij opdracht 6a.3 van python twee regels. In het veld
+  // staan tip en oplossing op de plek van de uitvoer, naast de code van de
+  // leerling. Een proef: een pagina zet het aan met `les_hulp: veld`.
+  const { hulpInVeld } = require('./plugins/les-tabs.js');
+  const code = (value: string): Knoop => ({ type: 'code', value });
+  const veld = (start = '# Schrijf hier je code'): Knoop => ({
+    type: 'mdxJsxFlowElement',
+    name: 'CodeExercise',
+    children: [{ type: 'mdxFlowExpression', value: `\`${start}\`` }],
+  });
+  const blok = (summary: string, ...inhoud: Knoop[]): Knoop => ({
+    type: 'mdxJsxFlowElement',
+    name: 'details',
+    children: [
+      { type: 'mdxJsxFlowElement', name: 'summary', children: [alinea(summary)] },
+      ...inhoud,
+    ],
+  });
+  const merk: Knoop = { type: 'mdxFlowExpression', value: '/* niet-draaien: valt om */' };
+  const namen = (nodes: Knoop[]) => nodes.map((n) => n.name ?? n.type);
+  const attr = (node: Knoop, naam: string) => node.attributes?.find((a) => a.name === naam)?.value;
+  const antwoord = 'for i in range(10):\n    print(i)';
+
+  it('de tip en de oplossing na het veld gaan het veld in', () => {
+    const hetVeld = veld();
+    const uit = hulpInVeld([
+      alinea('Print de tafel van 2.'),
+      hetVeld,
+      blok('Klik hier voor een tip.', alinea('Gebruik range.')),
+      blok('Klik hier voor de oplossing.', code(antwoord), alinea('Zo werkt het.')),
+      alinea('Daarna.'),
+    ]);
+    expect(namen(uit)).toEqual(['paragraph', 'LesVeld', 'paragraph']);
+    const [tip, oplossing, laatste] = uit[1].children;
+    expect([attr(tip, 'soort'), attr(tip, 'naam')]).toEqual(['tip', 'tip']);
+    expect(namen(tip.children)).toEqual(['paragraph']);
+    expect([attr(oplossing, 'soort'), attr(oplossing, 'naam')]).toEqual(['antwoord', 'oplossing']);
+    // De code gaat ook als tekst mee: het veld kan de oplossing uitvoeren.
+    expect(attr(oplossing, 'code')).toBe(antwoord);
+    expect(namen(oplossing.children)).toEqual(['code', 'paragraph']);
+    // Het veld blijft dezelfde node, achteraan.
+    expect(laatste).toBe(hetVeld);
+  });
+
+  it('een oefenveld in de oplossing met dezelfde code vervalt', () => {
+    // De knop Voer de oplossing uit doet wat dat tweede veld deed.
+    const uit = hulpInVeld([
+      veld(),
+      blok('Klik hier voor de oplossing.', code(antwoord), veld(antwoord)),
+    ]);
+    expect(namen(uit[0].children[0].children)).toEqual(['code']);
+  });
+
+  it('een oplossing met een ander oefenveld blijft een uitklapblok', () => {
+    const uit = hulpInVeld([
+      veld(),
+      blok('Klik hier voor de oplossing.', code(antwoord), veld('print("anders")')),
+    ]);
+    expect(namen(uit)).toEqual(['CodeExercise', 'details']);
+  });
+
+  it('het doel van de opdracht blijft in het veld, en een commentaar blijft staan', () => {
+    const doel: Knoop = { type: 'mdxJsxFlowElement', name: 'LesDoel', children: [code('1')] };
+    const metDoel: Knoop = {
+      type: 'mdxJsxFlowElement',
+      name: 'LesVeld',
+      children: [doel, veld()],
+    };
+    const uit = hulpInVeld([metDoel, merk, blok('Antwoord', alinea('Het is 1.'))]);
+    expect(namen(uit)).toEqual(['LesVeld', 'mdxFlowExpression']);
+    expect(namen(uit[0].children)).toEqual(['LesDoel', 'LesHulp', 'CodeExercise']);
+    expect(attr(uit[0].children[1], 'naam')).toBe('antwoord');
+    // Zonder codeblok is er niets om uit te voeren.
+    expect(attr(uit[0].children[1], 'code')).toBeUndefined();
+  });
+
+  it('een uitklapblok dat geen tip of oplossing is, of niet direct na het veld staat, blijft', () => {
+    const achtergrond = blok('Achtergrond: hoe range werkt', alinea('Tekst.'));
+    expect(namen(hulpInVeld([veld(), achtergrond]))).toEqual(['CodeExercise', 'details']);
+    const later = [veld(), alinea('Tussendoor.'), blok('Klik hier voor een tip.', alinea('Tip.'))];
+    expect(namen(hulpInVeld(later))).toEqual(['CodeExercise', 'paragraph', 'details']);
+  });
+
+  it('alleen een pagina met les_hulp: veld krijgt het', async () => {
+    const bron = [
+      '# Les',
+      '',
+      '## Uitleg van print',
+      '',
+      'Uitleg.',
+      '',
+      '## Opdracht 1: Print',
+      '',
+      'Print 1.',
+      '',
+      '<CodeExercise>{`# code`}</CodeExercise>',
+      '',
+      '<details>',
+      '<summary>Klik hier voor de oplossing.</summary>',
+      '',
+      '```python',
+      'print(1)',
+      '```',
+      '',
+      '</details>',
+    ].join('\n');
+    const metIds = () => (tree: Knoop) => {
+      for (const n of tree.children ?? []) {
+        if (n.type === 'heading')
+          n.data = { id: (n.children?.[0]?.value ?? '').toLowerCase().replace(/\W+/g, '-') };
+      }
+    };
+    const bouw = async (frontMatter: object) =>
+      String(
+        await compile(
+          { value: bron, data: { frontMatter } },
+          { remarkPlugins: [metIds, remarkLesTabs] },
+        ),
+      );
+    const zonder = await bouw({});
+    expect(zonder).not.toContain('LesHulp');
+    expect(zonder).toContain('details');
+    const met = await bouw({ les_hulp: 'veld' });
+    expect(met).toContain('LesHulp');
+    expect(met).toContain('code: "print(1)"');
+    expect(met).not.toContain('details');
+  });
+});

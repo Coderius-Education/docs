@@ -18,6 +18,8 @@ import { Vergroot } from './Vergroot';
 import { useBuren } from './buren';
 import {
   DoelContext,
+  type Hulp,
+  HulpContext,
   LES_TAB,
   LES_VERDER,
   LES_VOLGENDE,
@@ -573,8 +575,37 @@ export function LesVoorbeeld({
  * onderdeel niets neer, zodat het veld een direct kind van het paneel blijft.
  */
 export function LesVeld({ children }: { children?: ReactNode }): ReactNode {
-  const [doel, ...veld] = Children.toArray(children);
-  return <DoelContext.Provider value={doel}>{veld}</DoelContext.Provider>;
+  const alles = Children.toArray(children);
+  const hulpen = alles.filter(isHulp);
+  const rest = alles.filter((kind) => !isHulp(kind));
+  // Het doel staat vooraan, vóór het veld; een veld met alleen hulp heeft
+  // er geen.
+  const [doel, ...veld] = rest.length > 1 ? rest : [null, ...rest];
+  const hulp: Hulp | null = hulpen.length ? {} : null;
+  for (const { props } of hulpen) {
+    if (!hulp) break;
+    if (props.soort === 'tip') hulp.tip = props.children;
+    else Object.assign(hulp, { antwoord: props.children, naam: props.naam, code: props.code });
+  }
+  return (
+    <DoelContext.Provider value={doel}>
+      <HulpContext.Provider value={hulp}>{veld}</HulpContext.Provider>
+    </DoelContext.Provider>
+  );
+}
+
+type HulpProps = { soort: 'tip' | 'antwoord'; naam?: string; code?: string; children?: ReactNode };
+
+const isHulp = (kind: unknown): kind is ReactElement<HulpProps> =>
+  isValidElement(kind) && kind.type === LesHulp;
+
+/**
+ * De tip of het antwoord van een opdracht, binnen <LesVeld> (de remark-stap
+ * zet ze erin, `hulpInVeld`). Het veld toont ze op de plek van zijn uitvoer;
+ * zelf zet dit onderdeel niets neer.
+ */
+export function LesHulp({ children }: HulpProps): ReactNode {
+  return <>{children}</>;
 }
 
 /** Het doel van een opdracht, binnen <LesVeld>. */

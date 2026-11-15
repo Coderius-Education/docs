@@ -547,6 +547,22 @@ op Stap voor stap en meet het na elke klik opnieuw: een scherm dat past tot
 je iets aanklikt, past niet. Wat
 dan nog te lang is, is tekst: een stap of een Er gaat iets mis met meer
 inhoud dan op een scherm past. Dat lost een auteur op, niet de opmaak.
+**Een proef: tip en oplossing in het oefenveld** (november 2026, issue 212;
+alleen les 6a van python, met `les_hulp: veld` in de front matter). Een open
+oplossing onder het veld kreeg alleen de ruimte die het veld overliet: bij
+opdracht 6a.3 twee regels. `hulpInVeld` in `les-tabs.js` zet de uitklapblokken
+direct na een veld (de tip, dan de oplossing) als `<LesHulp>` in het
+`<LesVeld>`, en de `CodeExercise` toont ze met `useLesHulp` op de plek van de
+uitvoer: knoppen Uitvoer, Tip en Oplossing boven dat vak. De code van de
+leerling blijft ernaast staan, naast de oplossing op de halve breedte. Voer de
+oplossing uit draait de oplossing los van de code en de uitvoer van de
+leerling; een tweede oefenveld in de oplossing met dezelfde code vervalt
+daarom. Het vak wordt niet lager als je wisselt. Tip en oplossing staan ook
+dicht in de HTML van de build, voor `cross-links`. Nog niet gedaan: de uitvoer
+van de leerling naast die van de oplossing leggen, en de werkvormen-plugin en
+`les-schermen.js` zien de proef niet (die lezen de front matter niet). De bron
+van een les verandert niet: uitzetten is de regel uit de front matter halen.
+
 **Wat robotica erbij bracht** (november 2026; alle 398 schermen passen op 1280×720 en 1366×768). De cursus heeft drie
 docs-plugins (`docs/`, `lego_auto/`, `golfbot/`), delen die twee pagina's
 importeren, blokprogramma's, aansluitschema's en bouwstappen. Daarvoor is dit

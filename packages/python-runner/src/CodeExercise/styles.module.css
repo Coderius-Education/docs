@@ -242,3 +242,77 @@
   color: var(--ifm-color-emphasis-600);
   background: var(--ifm-color-emphasis-100);
 }
+
+/* De tip en het antwoord van de opdracht staan op de plek van de uitvoer
+   (useLesHulp): drie knoppen boven dat vak kiezen wat de leerling naast
+   zijn code ziet. Als uitklapblok onder het veld kreeg een open antwoord
+   alleen de ruimte die het veld overliet, soms twee regels. */
+.keuze {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  gap: 0.25rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0.35rem 0.5rem;
+  border: 0;
+  background: var(--ifm-color-emphasis-100);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.keuzeKnop {
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: var(--ifm-global-radius);
+  background: transparent;
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.keuzeKnop[aria-pressed="true"] {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+  font-weight: 600;
+}
+
+.hulp {
+  padding: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.hulp > :last-child {
+  margin-bottom: 0;
+}
+
+.hulp .output {
+  margin-top: 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-color);
+}
+
+.antwoordKnop {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  background: transparent;
+  color: var(--ifm-color-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.antwoordKnop:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Naast het antwoord krijgt de code de helft van het veld. */
+@media (min-width: 997px) {
+  .inTab.naastAntwoord {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
