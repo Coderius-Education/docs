@@ -716,6 +716,110 @@
   white-space: normal;
 }
 
+/* De links naar de vorige en de volgende les zijn op een les net zo klein
+   als de knop Volgende: "« Vorige: Intro tot HTML" in een knop van één
+   regel. Infima maakte er kaarten van, 76 pixels hoog met 48 pixels erboven,
+   en dan was de footer op geen enkel scherm te zien. De link naar de vorige
+   les is een omlijnde knop, die naar de volgende (op het laatste scherm)
+   een gevulde, zoals Volgende. Ook de ruimte onder de links is kleiner. */
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem !important;
+}
+
+:global(
+    html:has([data-les-tabs], [data-les-zonder-tabs])
+    main[class*="docMainContainer"]
+    > .container
+  ) {
+  padding-bottom: 0.75rem !important;
+}
+
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav__link) {
+  display: inline-flex;
+  flex: 0 1 auto;
+  align-items: baseline;
+  max-width: 100%;
+  padding: calc(var(--ifm-button-padding-vertical) * 0.8)
+    calc(var(--ifm-button-padding-horizontal) * 0.8);
+  border: var(--ifm-button-border-width) solid var(--ifm-color-primary);
+  border-radius: var(--ifm-button-border-radius);
+  color: var(--ifm-color-primary);
+  font-size: calc(0.875rem * 0.8);
+  font-weight: var(--ifm-button-font-weight);
+  line-height: 1.5;
+}
+
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav__link--next) {
+  margin-left: auto;
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+}
+
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav__link:hover) {
+  text-decoration: none;
+  border-color: var(--ifm-color-primary-dark);
+}
+
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav__sublabel),
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav__label) {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
+/* De footer staat in beeld als het scherm er ruimte voor heeft. De lijst
+   met lessen links is in Docusaurus zo hoog als het venster (een lange lijst
+   schuift in zijn eigen vak), en duwde de footer daarmee altijd net onder de
+   rand, ook onder een kort scherm. Met `contain: size` telt de lijst niet
+   meer mee voor de hoogte van de pagina: de les bepaalt die, en de lijst
+   schuift binnen de hoogte van de les. De kolom is geen ouder van een
+   oefenveld, dus een eigen laag geeft hier niets. Zijn breedte zet
+   Docusaurus zelf. */
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .theme-doc-sidebar-container) {
+  contain: size;
+}
+
+/* Een kort scherm schuift dan niet meer, een lang wel. Zonder vaste ruimte
+   voor de schuifbalk werd de les bij het wisselen van tabblad 15 pixels
+   breder of smaller (de schuifbalk van Windows), en verschoof alles. */
+:global(html:has([data-les-tabs], [data-les-zonder-tabs])) {
+  scrollbar-gutter: stable;
+}
+
+/* Het woord en de naam van de les op één regel: "« Vorige: Intro tot HTML". */
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav__sublabel::after) {
+  content: ":\00a0";
+}
+
+:global(
+    html:has([data-les-tabs], [data-les-zonder-tabs])
+    .pagination-nav__link--prev
+    .pagination-nav__sublabel::before
+  ) {
+  content: "«\00a0";
+}
+
+:global(
+    html:has([data-les-tabs], [data-les-zonder-tabs])
+    .pagination-nav__link--prev
+    .pagination-nav__label::before
+  ) {
+  content: none;
+}
+
+:global(
+    html:has([data-les-tabs], [data-les-zonder-tabs])
+    .pagination-nav__link--next
+    .pagination-nav__label::after
+  ) {
+  content: "\00a0»";
+}
+
 /* De inhoudsopgave rechts vervalt op een pagina met tabbladen, en de les
    krijgt die breedte erbij. Docusaurus zet de kolom op 75% met !important.
    Een les zonder tabbladen in dezelfde cursus (één sectie, of alleen een

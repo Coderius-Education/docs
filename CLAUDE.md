@@ -281,6 +281,18 @@ CC BY-NC 4.0, en een bronvermelding (minimax naar CS50 AI) staat in de les
 die de bron gebruikt. Zet geen lange lijst lessen in de footer; daar is de
 sidebar voor.
 
+Onder een les met tabbladen staat de footer in beeld als het scherm er
+ruimte voor heeft (opmaak van LesTabs). De links naar de vorige en de
+volgende les zijn een kleine knop zoals Volgende ("« Vorige: Intro tot
+HTML"), geen kaarten van 76 pixels met 48 erboven; de lijst met lessen links
+telt met `contain: size` niet mee voor de hoogte van de pagina (Docusaurus
+maakt hem zo hoog als het venster, en duwde de footer zo altijd net onder de
+rand); en `scrollbar-gutter: stable` houdt de les even breed op een scherm
+dat schuift en een dat dat niet doet. Onder het paneel kost dat samen 96
+pixels: op 1280×720 staat de footer zo in beeld op 171 van de 186 schermen
+zonder oefenveld in web en 444 van de 475 in python. Een oefenveld neemt de
+ruimte tot de rand zelf, en daar staat hij eronder.
+
 ## Les-tabbladen
 
 De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.

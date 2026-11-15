@@ -2005,6 +2005,26 @@ describe('de opmaak van de tabbladen', () => {
     expect(buiten).toMatch(/\.kopRij \{\s*display: contents;/);
     expect(buiten).not.toMatch(/theme-doc-breadcrumbs/);
   });
+
+  it('houdt onder een les plaats voor de footer', () => {
+    // De links naar de vorige en volgende les waren kaarten van 76 pixels met
+    // 48 erboven, en de lijst met lessen links was zo hoog als het venster:
+    // de footer stond op geen enkel scherm in beeld. Nu een kleine knop zoals
+    // Volgende, en de lijst telt niet mee voor de hoogte van de pagina.
+    const les = 'html:has\\(\\[data-les-tabs\\], \\[data-les-zonder-tabs\\]\\)';
+    expect(css).toMatch(new RegExp(`${les} \\.pagination-nav\\) \\{[^}]*display: flex;`));
+    expect(css).toMatch(
+      new RegExp(
+        `${les} \\.pagination-nav__link\\) \\{[^}]*font-size: calc\\(0\\.875rem \\* 0\\.8\\)`,
+      ),
+    );
+    expect(css).toMatch(
+      new RegExp(`${les} \\.theme-doc-sidebar-container\\) \\{\\s*contain: size;`),
+    );
+    // Een kort scherm schuift niet, een lang wel: de les mag daardoor niet
+    // van breedte wisselen.
+    expect(css).toMatch(new RegExp(`${les}\\) \\{\\s*scrollbar-gutter: stable;`));
+  });
 });
 
 describe('een controlevraag is een eigen stap', () => {
