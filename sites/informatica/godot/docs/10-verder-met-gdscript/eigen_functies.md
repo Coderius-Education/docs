@@ -16,7 +16,9 @@ Je karakter-script werkt, maar `_physics_process` is een lang blok geworden: val
   ]}
 />
 
-## Je script als beginpunt
+## Voorspel: waar knip je?
+
+### Je script als beginpunt
 
 De les gaat uit van je karakter-script zoals het is na [Animaties in code](site:godot/docs/animaties_code) en [Een power-up](site:godot/docs/power_up). Zo ziet het eruit:
 
@@ -67,9 +69,9 @@ func geef_sprongboost() -> void:
 
 Heb je bij opdracht 7.6.a van `SPEED` een `var snelheid` gemaakt, dan staat bij jou `snelheid` waar hier `SPEED` staat, en heb je onderaan ook `geef_snelheidsboost()`. Voor deze les maakt dat niets uit: laat die functie staan zoals hij is.
 
-## Voorspel: waar knip je?
+### Waar knip je?
 
-Lees `_physics_process` van boven naar beneden. **Uit hoeveel stukken bestaat hij, waar begint en eindigt elk stuk, en welke naam zou je elk stuk geven?** Schrijf het op voordat je verder leest.
+Lees `_physics_process` in je script van boven naar beneden. **Uit hoeveel stukken bestaat hij, waar begint en eindigt elk stuk, en welke naam zou je elk stuk geven?** Schrijf het op voordat je verder leest.
 
 <details>
 <summary>Antwoord</summary>
@@ -87,7 +89,7 @@ Namen bedenk je zelf. In deze les heten ze `val`, `spring`, `beweeg` en `kies_an
 
 </details>
 
-## Een eigen functie \{#eigen-functie}
+## Eigen functie \{#eigen-functie}
 
 Je kent functies al: `_physics_process` en `_ready` roept Godot zelf aan, en `geef_sprongboost()` uit de power-up-les riep je power-up aan. Een functie voor een stuk van je eigen script werkt hetzelfde, alleen roep je hem nu zelf aan:
 
@@ -115,11 +117,11 @@ func val(delta: float) -> void:
         velocity += get_gravity() * delta
 ```
 
-Haal ze daarna weg uit `_physics_process`, en zet op hun plek één regel: `val(delta)`.
+### Roep de functie aan
+
+Haal de twee regels voor de zwaartekracht weg uit `_physics_process`, en zet op hun plek één regel: `val(delta)`.
 
 Start je spel met `F5`. Je karakter valt zoals altijd. Er is niets veranderd aan wat het spel doet, alleen aan hoe je script eruitziet.
-
-## Waarom `delta` mee moet
 
 `delta` hoort bij `_physics_process`: Godot geeft hem mee als het die functie aanroept, en hij bestaat alleen daarbinnen. Een andere functie kent hem niet. Daarom geef je hem door als parameter, zoals je in [Spawnen](site:godot/docs/spawnen) de positie aan `spawn_muntje(x, y)` meegaf: `val(delta)` stuurt de waarde mee, en `func val(delta: float)` vangt hem op.
 

@@ -52,12 +52,8 @@ Alle UI-nodes uit deze les staan met hun instellingen in de [Nodes cheatsheet](s
 
 ## Stap 3: Koppel een script en de `pressed`-signalen
 
-### Een script aan de root
-
 1. Selecteer de `Control`-root (`Menu`).
 2. Klik op het script-icoontje → **Attach Script** → **Create**. Sla op als `menu.gd`.
-
-### De signalen koppelen
 
 Per knop koppel je het `pressed`-signaal aan een functie in `menu.gd`. Dat doe je op dezelfde manier als `body_entered` in [7.1](site:godot/docs/signals_muntje).
 
@@ -66,7 +62,9 @@ Per knop koppel je het `pressed`-signaal aan een functie in `menu.gd`. Dat doe j
 3. Dubbelklik op `pressed`.
 4. Kies de `Menu`-root als ontvanger. Onderin, bij **Receiver Method**, staat de naam die Godot voorstelt: `_on_button_pressed`. Verander die in `_on_start_pressed` en klik op **Connect**. Godot zet de functie met die naam in `menu.gd`.
 
-Doe hetzelfde voor de `Afsluiten`-knop, met `_on_afsluiten_pressed` bij **Receiver Method**.
+### De tweede knop
+
+Koppel `pressed` van de `Afsluiten`-knop zoals bij de eerste knop, met `_on_afsluiten_pressed` bij **Receiver Method**.
 
 :::caution
 Verander de naam in het dialoogvenster, niet achteraf in je script. De verbinding onthoudt de naam van toen. Hernoem je de functie later, dan zoekt de knop bij een klik nog de oude naam, en gebeurt er niets, zonder foutmelding. Alleen onderin de scripteditor waarschuwt Godot: `Missing connected method '_on_button_pressed' for signal 'pressed' …`.

@@ -80,7 +80,9 @@ Met een variabele houd je bij of het muntje al gepakt is. Zet de `3.0` terug op 
 
 En dan de controle op winnen uit opdracht 7.5.a. Die telde op `<= 1`, omdat het gepakte muntje tot het eind van het frame in de group bleef. Nu blijft het een halve seconde, en pak je twee muntjes kort na elkaar, dan zitten ze er allebei nog: je wint nooit. Haal het muntje daarom meteen uit de group als je het pakt, met `remove_from_group`. Dan telt het niet meer mee, en win je bij nul.
 
-Zo ziet je hele muntje-script er dan uit:
+### Je hele muntje-script
+
+Zo ziet je hele muntje-script eruit met de variabele `gepakt` en met `remove_from_group`:
 
 ```gdscript
 extends Area2D

@@ -5,13 +5,13 @@ slug: /spel-flappy_bird
 
 # Flappy Bird-kloon
 
-<GodotVersie />
-
 ## Het idee
 
 Een vogel die tegen de zwaartekracht in moet vechten. Eén toets indrukken = even een flapje omhoog. Tussen de buizen door zien te komen. Raak je er een, dan is het Game Over. Hoe verder je komt, hoe hoger je score.
 
 Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpassen op het moment dat de speler een toets indrukt. Maar nu zonder grond — alleen jij houdt de vogel in de lucht.
+
+<GodotVersie />
 
 ## Wat ga je leren?
 
@@ -19,6 +19,11 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 - Scenes "instantiëren" met `preload()` + `instantiate()` (zie [Spawnen: nodes maken in code](site:godot/docs/spawnen)).
 - Een Area2D als game-over-trigger inzetten.
 - Score per gepasseerde buis verhogen via een tweede Area2D.
+
+Externe links:
+
+- [Itch.io: gratis vogel-assets](https://itch.io/game-assets/free/tag-bird) — sprite-sheets om mee te beginnen.
+- [Godot Docs — Instancing scenes](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [8.3](site:godot/docs/spawnen).
 
 ## Nodes die je nodig hebt
 
@@ -46,11 +51,6 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 | `Timer.timeout` (signal) | Trigger om elke X seconden een nieuwe buis te spawnen. |
 | `body_entered` (signal) | Detecteert dat de vogel een buis raakt → game over. |
 | `get_tree().reload_current_scene()` | Herstart het level bij game over. |
-
-## Externe links
-
-- [Itch.io: gratis vogel-assets](https://itch.io/game-assets/free/tag-bird) — sprite-sheets om mee te beginnen.
-- [Godot Docs — Instancing scenes](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [8.3](site:godot/docs/spawnen).
 
 ## Eerste stappen
 

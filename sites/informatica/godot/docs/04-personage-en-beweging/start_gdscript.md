@@ -86,7 +86,7 @@ In Uitvoer staat `Punten per level: 30`. Dat getal staat nergens in je script: G
 <details>
 <summary>Antwoord</summary>
 
-`_ready()` draait één keer bij start. `_process(delta)` draait **elke frame** (~60 keer per seconde). Je Uitvoer-tabblad raakt dan in een paar seconden vol met dezelfde twee regels. Handig om bewegende waardes te volgen, niet handig voor een eenmalige startmelding.
+`_ready()` draait één keer bij start. `_process(delta)` draait **elke frame** (~60 keer per seconde). Je Uitvoer-tabblad raakt dan in een paar seconden vol met dezelfde regels. Handig om bewegende waardes te volgen, niet handig voor een eenmalige startmelding.
 
 </details>
 

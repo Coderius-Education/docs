@@ -48,6 +48,8 @@ In het SpriteFrames-paneel zie je linksboven een lijst met animaties. Standaard 
 3. Er opent een dialoog. Stel bovenin **Horizontal** en **Vertical** in zodat de blauwe lijnen netjes elke afzonderlijke frame omkaderen — voor een sprite-sheet van 11 frames op één rij is dat `Horizontal: 11`, `Vertical: 1`.
 4. Selecteer alle frames (sleep een rechthoek over de rij, of klik elke frame aan) en klik op de knop rechtsonder. Die telt mee hoeveel je er hebt gekozen, dus er staat bijvoorbeeld **Add 6 Frame(s)**.
 
+Kom je er niet uit? Op het tabblad Video van deze les zie je de stappen in beeld.
+
 ### De `run`- en `jump`-animatie
 
 1. Klik linksboven in het SpriteFrames-paneel op het `+`-icoontje om een nieuwe animatie toe te voegen en noem deze `run`.
@@ -62,7 +64,7 @@ Werk je liever met losse PNG-bestanden (één per frame)? Zie [Je eigen animatie
 Zet de **FPS** (frames per seconde) van elke animatie op een waarde die er soepel uitziet. Probeer 8 of 10 als startpunt.
 :::
 
-### De stappen in een video
+## Video
 
 Het SpriteFrames-paneel is even wennen. In deze video zie je hoe het gaat: het sprite-sheet erin slepen, de frames uitsnijden en de animatie afspelen.
 

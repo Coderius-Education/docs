@@ -43,13 +43,9 @@ Godot ziet alleen bestanden die **in je projectmap** staan. Vanuit de editor kun
 2. Klik met de **rechtermuisknop** op `res://` in het **FileSystem**-paneel (linksonder).
 3. Kies **Open in File Manager** (heet **Openen in Bestandsbeheer** als je editor Nederlands is) — Verkenner opent nu je projectmap.
 
-:::note[Chromebook / online editor]
-Gebruik je de [online editor](https://editor.godotengine.org/)? Dan kun je geen bestanden via de Verkenner kopiëren. Sleep de uitgepakte bestanden in plaats daarvan rechtstreeks naar het **FileSystem**-paneel in de editor.
-:::
-
 ### De assets kopiëren
 
-1. Laat het venster met je projectmap open staan en open in een tweede Verkenner-venster de uitgepakte asset-map.
+1. Open in een tweede Verkenner-venster de uitgepakte asset-map.
 2. Maak in je projectmap een nieuwe map `assets` en sleep de mappen die je nodig hebt (bijvoorbeeld `Background`) daarin. In latere lessen verwijzen we naar deze `assets`-map.
 
 :::tip
@@ -57,6 +53,10 @@ Je hoeft niet alles te kopiëren. Voor de achtergrond heb je alleen de map `Back
 :::
 
 Ga terug naar Godot — de bestanden verschijnen automatisch in het FileSystem-paneel.
+
+:::note[Chromebook / online editor]
+Gebruik je de [online editor](https://editor.godotengine.org/)? Dan kun je geen bestanden via de Verkenner kopiëren. Sleep de uitgepakte bestanden in plaats daarvan rechtstreeks naar het **FileSystem**-paneel in de editor.
+:::
 
 ## Voorspel: wat betekent `res://`?
 

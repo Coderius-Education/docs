@@ -88,7 +88,7 @@ Start je spel en pak een muntje. In **Uitvoer** gaat de score met tien omhoog.
 
 ## Stap 2: Elk muntje een eigen soort \{#export}
 
-Nu is elk muntje goud. Je wilt per muntje in je level kunnen kiezen welke soort het is. Zet daarvoor `@export` voor de variabele:
+Elk muntje is goud, want `soort` staat vast in het script. Je wilt per muntje in je level kunnen kiezen welke soort het is. Zet daarvoor `@export` voor de variabele:
 
 ```gdscript
 @export var soort = "brons"

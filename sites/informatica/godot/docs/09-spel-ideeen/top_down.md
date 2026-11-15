@@ -5,13 +5,13 @@ slug: /spel-top_down
 
 # Top-down dungeon crawler
 
-<GodotVersie />
-
 ## Het idee
 
 Een Zelda-achtig spel: je kijkt van bovenaf op de wereld, loopt in vier of acht richtingen door dungeons, raapt items op en komt door deuren naar een volgende kamer. Geen zwaartekracht — alleen jij beslist waar je naartoe gaat.
 
 De grootste verandering ten opzichte van de platformer: je gebruikt **beide** assen van `velocity`, en zwaartekracht laat je weg.
+
+<GodotVersie />
 
 ## Wat ga je leren?
 
@@ -19,6 +19,12 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 - Een dungeon bouwen met `TileMapLayer` (zonder gravity-tegels).
 - De camera laten meebewegen met de speler in beide richtingen.
 - Per richting de juiste loop-animatie afspelen.
+
+Externe links:
+
+- [Godot Docs — Your first 2D game](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html) — top-down voorbeeld in het officiële tutorial.
+- [Itch.io — top-down assets](https://itch.io/game-assets/free/tag-top-down) — gratis tileset- en karakter-packs.
+- [Godot Docs — Input.get_vector()](https://docs.godotengine.org/en/stable/classes/class_input.html#class-input-method-get-vector) — officiële uitleg.
 
 ## Nodes die je nodig hebt
 
@@ -42,12 +48,6 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 | `direction.x > 0` / `direction.y > 0` | Kies de juiste animatie op basis van de richting. |
 | `body_entered` (signal op `Area2D`) | Detecteert dat de speler een deur, item of vijand-zone raakt. |
 | `get_tree().change_scene_to_file(...)` | Wissel naar de volgende kamer/dungeon. |
-
-## Externe links
-
-- [Godot Docs — Your first 2D game](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html) — top-down voorbeeld in het officiële tutorial.
-- [Itch.io — top-down assets](https://itch.io/game-assets/free/tag-top-down) — gratis tileset- en karakter-packs.
-- [Godot Docs — Input.get_vector()](https://docs.godotengine.org/en/stable/classes/class_input.html#class-input-method-get-vector) — officiële uitleg.
 
 ## Eerste stappen
 

@@ -5,13 +5,13 @@ slug: /spel-endless_runner
 
 # Endless runner
 
-<GodotVersie />
-
 ## Het idee
 
 Een eindeloze platform-loop, zoals Geometry Dash of Subway Surfers. De speler beweegt automatisch vooruit (of de wereld komt op hem af) en moet op het juiste moment springen om obstakels te ontwijken. Hoe langer je het volhoudt, hoe hoger je score.
 
 De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aangemaakt — je hoeft niet vooraf een level te bouwen.
+
+<GodotVersie />
 
 ## Wat ga je leren?
 
@@ -19,6 +19,12 @@ De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aan
 - Een `Timer` gebruiken als spawn-klok, zoals in [Automatisch spawnen met een Timer](site:godot/docs/spawn_timer).
 - Oude nodes opruimen met `queue_free()` om geheugen vrij te maken.
 - Een meescrollende achtergrond met `ParallaxBackground`.
+
+Externe links:
+
+- [Godot Docs — Instancing](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [8.3](site:godot/docs/spawnen).
+- [Godot Docs — ParallaxBackground](https://docs.godotengine.org/en/stable/classes/class_parallaxbackground.html) — meescrollende achtergrond.
+- [Godot Docs — Timer](https://docs.godotengine.org/en/stable/classes/class_timer.html) — alle opties van het Timer-node.
 
 ## Nodes die je nodig hebt
 
@@ -45,12 +51,6 @@ De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aan
 | `randi_range(0, 2)` | Kies een willekeurig type obstakel uit een array. |
 | `randf_range(0.5, 1.5)` | Variatie in spawn-interval voor minder voorspelbaarheid. |
 | `get_tree().reload_current_scene()` | Herstart bij game over. |
-
-## Externe links
-
-- [Godot Docs — Instancing](https://docs.godotengine.org/en/stable/getting_started/step_by_step/instancing.html) — verdieping op `preload()` + `instantiate()` uit [8.3](site:godot/docs/spawnen).
-- [Godot Docs — ParallaxBackground](https://docs.godotengine.org/en/stable/classes/class_parallaxbackground.html) — meescrollende achtergrond.
-- [Godot Docs — Timer](https://docs.godotengine.org/en/stable/classes/class_timer.html) — alle opties van het Timer-node.
 
 ## Eerste stappen
 
