@@ -2696,6 +2696,18 @@ describe('wat een doorloop van fullstack als leerling vond', () => {
     // staat vóór die van Vorige: bij gelijke specificiteit wint de laatste.
     expect(css.indexOf('.verder :global(.button)')).toBeLessThan(css.indexOf('.verder .terug'));
   });
+
+  it('zet de rij een halve regel onder de tekst, niet een hele', () => {
+    // De marge van de rij valt samen met die van de alinea erboven, en de
+    // grootste (20 pixels) won. Met de rij ook op het laatste scherm waren
+    // drie schermen van algoritmes daardoor 9 pixels te lang.
+    const css = readFileSync(
+      fileURLToPath(new URL('./components/LesTabs/styles.module.css', import.meta.url)),
+      'utf8',
+    );
+    expect(css).toMatch(/\.paneel > :has\(\+ \.verder\) \{\s*margin-bottom: 0\.5rem;/);
+    expect(css).toMatch(/\n\.verder \{[^}]*margin: 0\.5rem 0 0;/);
+  });
 });
 
 describe('een korte afsluiter hoort bij het scherm ervoor', () => {

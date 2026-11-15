@@ -704,6 +704,14 @@
   margin: 0.5rem 0 0;
 }
 
+/* Boven de rij staat een halve regel, niet de ruimte onder een alinea
+   (20 pixels): de marges vallen samen, en de grootste won. Op het laatste
+   scherm van een les staat de rij sinds Vorige en Volgende er samen in, en
+   vier schermen van algoritmes waren daardoor 9 pixels te lang. */
+.paneel > :has(+ .verder) {
+  margin-bottom: 0.5rem;
+}
+
 /* Volgende staat rechts, ook als er geen Vorige is. */
 .vooruit {
   flex: 0 0 auto;

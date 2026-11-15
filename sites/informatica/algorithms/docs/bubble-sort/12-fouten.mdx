@@ -96,17 +96,15 @@ dus `if not geswapt` is nooit meer waar.
 **Oplossing:** zet `geswapt = False` **binnen** de buitenste lus, aan het
 begin van elke pass. Dan kijkt elke pass opnieuw of er iets wisselt.
 
-{/* niet-compileren: fragment; de binnenste lus is weggelaten */}
+{/* niet-compileren: fragment; de rest van de lus is weggelaten */}
 ```python
 # FOUT
 geswapt = False
 for ronde in range(n - 1):
-    for i in range(n - 1 - ronde):
 
 # GOED
 for ronde in range(n - 1):
     geswapt = False
-    for i in range(n - 1 - ronde):
 ```
 
 Meer uitleg: [Bouwsteen 5 — vroeg klaar](site:algorithms/docs/bubble-sort/bouwen/08-early-exit).
