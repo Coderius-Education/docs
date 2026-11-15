@@ -1781,7 +1781,11 @@ describe('remarkLesTabs', () => {
       fileURLToPath(new URL('./components/LesTabs/styles.module.css', import.meta.url)),
       'utf8',
     );
-    expect(css).not.toMatch(/html:has\(\[data-les-tabs\]\)/);
+    // Alleen de rij van Docusaurus onder de les verschilt: een les met
+    // tabbladen heeft Vorige en Volgende onderaan het tabblad.
+    expect(css.match(/html:has\(\[data-les-tabs\]\)[^{]*/g)).toEqual([
+      'html:has([data-les-tabs]) .pagination-nav) ',
+    ]);
     expect(css).toMatch(
       /html:has\(\[data-les-tabs\], \[data-les-zonder-tabs\]\) \.theme-doc-breadcrumbs/,
     );
@@ -2009,13 +2013,16 @@ describe('de opmaak van de tabbladen', () => {
   it('houdt onder een les plaats voor de footer', () => {
     // De links naar de vorige en volgende les waren kaarten van 76 pixels met
     // 48 erboven, en de lijst met lessen links was zo hoog als het venster:
-    // de footer stond op geen enkel scherm in beeld. Nu een kleine knop zoals
-    // Volgende, en de lijst telt niet mee voor de hoogte van de pagina.
+    // de footer stond op geen enkel scherm in beeld. Op een les met
+    // tabbladen staan ze nu in de rij onderaan het tabblad; op een pagina
+    // zonder tabbladen zijn ze een kleine knop zoals Volgende. De lijst telt
+    // niet mee voor de hoogte van de pagina.
     const les = 'html:has\\(\\[data-les-tabs\\], \\[data-les-zonder-tabs\\]\\)';
-    expect(css).toMatch(new RegExp(`${les} \\.pagination-nav\\) \\{[^}]*display: flex;`));
+    const zonder = 'html:has\\(\\[data-les-zonder-tabs\\]\\)';
+    expect(css).toMatch(new RegExp(`${zonder} \\.pagination-nav\\) \\{[^}]*display: flex;`));
     expect(css).toMatch(
       new RegExp(
-        `${les} \\.pagination-nav__link\\) \\{[^}]*font-size: calc\\(0\\.875rem \\* 0\\.8\\)`,
+        `${zonder} \\.pagination-nav__link\\) \\{[^}]*font-size: calc\\(0\\.875rem \\* 0\\.8\\)`,
       ),
     );
     expect(css).toMatch(
@@ -2654,19 +2661,40 @@ describe('wat een doorloop van fullstack als leerling vond', () => {
     expect(breed?.[1]).toMatch(/\.stapLabel \{[^}]*text-overflow: ellipsis;/);
   });
 
-  it('de link naar de volgende les is weg zolang het tabblad een knop Volgende heeft', () => {
-    // Die link zegt ook "Volgende", staat op een kort scherm direct onder de
-    // knop en is groter: op 139 van de 226 schermen stond hij in beeld, en
-    // wie erop klikte sloeg de rest van de les over. Of hij weg is, ziet
-    // alleen een browser (scripts/meet-les-tabs.mjs meldt het).
+  it('de link naar de volgende les staat niet naast de knop Volgende', () => {
+    // Die link zegt ook "Volgende", stond op een kort scherm direct onder de
+    // knop en was groter: op 139 van de 226 schermen stond hij in beeld, en
+    // wie erop klikte sloeg de rest van de les over. Op een les met
+    // tabbladen vervalt de rij van Docusaurus; de link naar de volgende les
+    // staat alleen op het laatste scherm, in de rij van het tabblad
+    // (LesTabs.test.tsx). Of hij weg is, ziet alleen een browser
+    // (scripts/meet-les-tabs.mjs meldt het).
     const css = readFileSync(
       fileURLToPath(new URL('./components/LesTabs/styles.module.css', import.meta.url)),
       'utf8',
     );
-    expect(css).toMatch(
-      /html:has\(\[data-les-tab\]:not\(\[hidden\]\) > \[data-les-verder\]\) \.pagination-nav__link--next\) \{\s*display: none;/,
+    expect(css).toMatch(/html:has\(\[data-les-tabs\]\) \.pagination-nav\) \{\s*display: none;/);
+  });
+
+  it('houdt Vorige en Volgende op een breed scherm op één regel', () => {
+    // Naast de oefenterminal van linux is de tekstkolom 431 pixels: met
+    // beide namen voluit kwam Volgende op een tweede regel, en was 1.2 Door
+    // mappen lopen 1 pixel te lang. Vorige levert in; Volgende blijft heel.
+    // Op een telefoon mag de rij weer breken: met één regel schoven negen
+    // schermen van linux zijwaarts.
+    const css = readFileSync(
+      fileURLToPath(new URL('./components/LesTabs/styles.module.css', import.meta.url)),
+      'utf8',
     );
-    expect(css).not.toMatch(/pagination-nav__link--prev[^{]*\{\s*display: none/);
+    expect(css).not.toMatch(/\n\.verder \{[^}]*flex-wrap: wrap/);
+    expect(css).toMatch(
+      /\.verder \.terug \{[^}]*text-overflow: ellipsis;[^}]*white-space: nowrap;/,
+    );
+    expect(css).toMatch(/\.vooruit \{\s*flex: 0 0 auto;/);
+    expect(css).toMatch(/@media \(max-width: 996px\) \{\s*\.verder \{\s*flex-wrap: wrap;/);
+    // De regel die een knop laat afbreken (een lange naam op een telefoon)
+    // staat vóór die van Vorige: bij gelijke specificiteit wint de laatste.
+    expect(css.indexOf('.verder :global(.button)')).toBeLessThan(css.indexOf('.verder .terug'));
   });
 });
 

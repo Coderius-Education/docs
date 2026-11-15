@@ -144,7 +144,10 @@ describe('met alleen het toetsenbord kom je de invoer uit', () => {
         <div data-les-tab="probeer-het-zelf">
           <GitSimulator scenarioId="stap-6-log" />
           <p data-les-verder="">
-            <button type="button">Volgende</button>
+            <button type="button">Vorige</button>
+            <button type="button" data-les-volgende="">
+              Volgende
+            </button>
           </p>
         </div>
       </div>,

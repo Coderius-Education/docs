@@ -32,6 +32,19 @@ const { renderToStaticMarkup } = (await import('react-dom/server' as string)) as
 
 let locatie = { pathname: '/les', hash: '', search: '' };
 vi.mock('@docusaurus/router', () => ({ useLocation: () => locatie }));
+vi.mock('@docusaurus/Link', () => ({
+  default: ({ to, children, ...rest }: { to: string; children: React.ReactNode }) => (
+    <a href={to} {...rest}>
+      {children}
+    </a>
+  ),
+}));
+// De vorige en de volgende les (useDoc van Docusaurus); per test in te stellen.
+let buren: {
+  vorige?: { titel: string; adres: string };
+  volgende?: { titel: string; adres: string };
+} = {};
+vi.mock('./buren', () => ({ useBuren: () => buren }));
 
 // pasCode en verdeelSpeling doen hun echte werk, en schrijven op wanneer ze
 // draaien: de volgorde staat vast in 'pasCode rekent na de speling opnieuw'.
@@ -245,15 +258,49 @@ describe('LesTabs', () => {
     render(<Les />);
     fireEvent.click(screen.getByRole('button', { name: 'Volgende: Opdracht 1' }));
     expect(actief()).toBe('Opdracht 1');
-    expect(paneel('er-gaat-iets-mis').querySelector('button')).toBeNull();
+    expect(paneel('er-gaat-iets-mis').querySelector('[data-les-volgende]')).toBeNull();
   });
 
-  it('merkt de knop Volgende, zodat de link naar de volgende les dan weg kan', () => {
-    // De opmaak verbergt die link zolang het open tabblad `data-les-verder`
-    // als kind heeft; op het laatste tabblad staat hij er weer.
+  it('heeft Vorige en Volgende in één rij: een tabblad terug, en verder', () => {
+    // Eerst stond Vorige (de vorige les) onder het paneel en Volgende erin,
+    // op een andere hoogte dan op een pagina zonder tabbladen. Nu staan ze
+    // samen in de rij onderaan het paneel, en gaat Vorige een stap terug.
     render(<Les />);
-    expect(paneel('theorie').querySelector(':scope > [data-les-verder] button')).not.toBeNull();
-    expect(paneel('er-gaat-iets-mis').querySelector('[data-les-verder]')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Opdracht 1' }));
+    const rij = paneel('opdracht-1-tel').querySelector(':scope > [data-les-verder]');
+    expect(Array.from(rij?.children ?? [], (k) => k.textContent)).toEqual([
+      '« Vorige: Theorie',
+      'Volgende: Er gaat iets mis',
+    ]);
+    fireEvent.click(screen.getByRole('button', { name: '« Vorige: Theorie' }));
+    expect(actief()).toBe('Theorie');
+    // Het eerste tabblad heeft geen tabblad ervoor, en zonder vorige les
+    // ook geen knop Vorige.
+    expect(paneel('theorie').textContent).not.toContain('Vorige');
+  });
+
+  it('gaat op het eerste scherm naar de vorige les, en op het laatste naar de volgende', () => {
+    buren = {
+      vorige: { titel: 'Intro tot HTML', adres: '/web/docs/html-css/intro-html' },
+      volgende: { titel: 'Tekst opmaken', adres: '/web/docs/html-css/tekst' },
+    };
+    try {
+      render(<Les />);
+      const vorige = screen.getByRole('link', { name: '« Vorige: Intro tot HTML' });
+      expect(vorige.getAttribute('href')).toBe('/web/docs/html-css/intro-html');
+      expect(paneel('theorie').contains(vorige)).toBe(true);
+      // Het laatste tabblad is dicht; zijn link staat wel in de pagina.
+      const volgende = screen.getByRole('link', {
+        name: 'Volgende: Tekst opmaken »',
+        hidden: true,
+      });
+      expect(paneel('er-gaat-iets-mis').contains(volgende)).toBe(true);
+      // Op de andere schermen gaan de knoppen binnen de les: geen link naar
+      // een andere les, die de rest van deze les zou overslaan.
+      expect(screen.getAllByRole('link', { name: /Tekst opmaken/, hidden: true })).toHaveLength(1);
+    } finally {
+      buren = {};
+    }
   });
 
   it('vindt met VOLGENDE_KNOP de knop Volgende van het open tabblad', () => {
@@ -268,9 +315,15 @@ describe('LesTabs', () => {
     const knop = document.querySelector(VOLGENDE_KNOP);
     expect(knop).toBe(screen.getByRole('button', { name: 'Volgende: Er gaat iets mis' }));
     expect(paneel('opdracht-1-tel').contains(knop)).toBe(true);
-    // Het laatste tabblad heeft geen knop Volgende.
-    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Er gaat iets mis' }));
-    expect(document.querySelector(VOLGENDE_KNOP)).toBeNull();
+    // Het laatste tabblad heeft geen knop Volgende; de link naar de volgende
+    // les telt niet mee (een Enter daar verlaat de pagina).
+    buren = { volgende: { titel: 'Verder', adres: '/verder' } };
+    try {
+      fireEvent.click(screen.getByRole('button', { name: 'Volgende: Er gaat iets mis' }));
+      expect(document.querySelector(VOLGENDE_KNOP)).toBeNull();
+    } finally {
+      buren = {};
+    }
   });
 });
 
@@ -827,6 +880,23 @@ describe('LesStappen', () => {
     expect(tabblad()).toBe('Theorie');
     fireEvent.click(screen.getByRole('button', { name: 'Volgende: Make' }));
     expect(tabblad()).toBe('Make');
+  });
+
+  it('Vorige loopt de stappen terug, en gaat van het eerste scherm van een tabblad naar het vorige', () => {
+    render(<LesMetStappen />);
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Koppen' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Lijsten' }));
+    fireEvent.click(screen.getByRole('button', { name: '« Vorige: Koppen' }));
+    expect(stap()).toBe('2Koppen');
+    fireEvent.click(screen.getByRole('button', { name: '« Vorige: De basis' }));
+    expect(stap()).toBe('1De basis');
+    // Op de eerste stap van het eerste tabblad is er niets ervoor.
+    expect(screen.queryByRole('button', { name: /Vorige/ })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Koppen' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Lijsten' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Volgende: Make' }));
+    fireEvent.click(screen.getByRole('button', { name: '« Vorige: Theorie' }));
+    expect(tabblad()).toBe('Theorie');
   });
 
   it('stappen in een uitklapblok houden de knop Volgende niet vast', () => {

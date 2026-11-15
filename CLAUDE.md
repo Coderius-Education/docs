@@ -282,9 +282,11 @@ die de bron gebruikt. Zet geen lange lijst lessen in de footer; daar is de
 sidebar voor.
 
 Onder een les met tabbladen staat de footer in beeld als het scherm er
-ruimte voor heeft (opmaak van LesTabs). De links naar de vorige en de
-volgende les zijn een kleine knop zoals Volgende ("« Vorige: Intro tot
-HTML"), geen kaarten van 76 pixels met 48 erboven; de lijst met lessen links
+ruimte voor heeft (opmaak van LesTabs). Vorige en Volgende staan daar in de
+rij onderaan het tabblad (zie Les-tabbladen), en de rij van Docusaurus onder
+de les vervalt; op een pagina zonder tabbladen is die rij een kleine knop
+zoals Volgende ("« Vorige: Intro tot HTML"), geen kaarten van 76 pixels met
+48 erboven. De lijst met lessen links
 telt met `contain: size` niet mee voor de hoogte van de pagina (Docusaurus
 maakt hem zo hoog als het venster, en duwde de footer zo altijd net onder de
 rand); en `scrollbar-gutter: stable` houdt de les even breed op een scherm
@@ -773,11 +775,23 @@ knop Volgende in 26 lessen. Sindsdien:
   dat `speling.ts` laat schuiven als het scherm dan nog te lang is. Bij
   twintig van de dertig vragen viel de uitleg of de knop Volgende eerst
   onder de rand.
-- **De link naar de volgende les is weg zolang het open tabblad een knop
-  Volgende heeft** (`data-les-verder`, één regel in de opmaak van LesTabs).
-  Die link zegt ook "Volgende", is groter, en stond op 139 van de 226
-  schermen in beeld; wie erop klikte, sloeg de rest van de les over. Op het
-  laatste scherm staat hij er weer.
+- **De link naar de volgende les staat alleen op het laatste scherm.**
+  Die link zegt ook "Volgende", was groter, en stond op 139 van de 226
+  schermen in beeld; wie erop klikte, sloeg de rest van de les over. Sinds
+  november 2026 staan Vorige en Volgende samen in één rij onderaan elk
+  tabblad (`data-les-verder`): Vorige gaat een stap of tabblad terug, en op
+  het eerste scherm naar de vorige les; Volgende op het laatste scherm naar
+  de volgende les. Eerst stond Vorige (de vorige les) onder het paneel, op
+  een andere hoogte dan Volgende, en op een pagina zonder tabbladen weer
+  naast hem. De vorige en de volgende les komen uit de paginator van
+  Docusaurus (`theme/DocPaginator`, een wikkel die ze in
+  `components/LesTabs/buren.ts` zet): `useDoc()` gooit in het gedeelde
+  pakket, dat een andere kopie van de docs-plugin ziet dan het thema. Ze
+  staan er dus pas na het laden. De rij blijft op een breed scherm één
+  regel: past hij niet (de smalle kolom naast de oefenterminal), dan eindigt
+  de naam bij Vorige op een beletselteken. De knop Volgende heeft
+  `data-les-volgende`, en `VOLGENDE_KNOP` vindt alleen hem: niet Vorige, en
+  niet de link naar de volgende les (een Enter daar verlaat de pagina).
 - **Het hele bestand na de les is het laatste tabblad** (`standTab`). Een
   `<details>` met de summary "Zo ziet je `main.py` er nu uit" wordt een
   tabblad `main.py` met het bestand open, werkvorm controleren. In de bron

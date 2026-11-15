@@ -693,18 +693,29 @@
   scroll-margin-top: calc(var(--ifm-navbar-height) + 6.5rem);
 }
 
+/* Onderaan elk tabblad een rij met Vorige links en Volgende rechts: een
+   stap of tabblad terug of verder, op het eerste scherm naar de vorige les en
+   op het laatste naar de volgende. Dezelfde rij als op een pagina zonder
+   tabbladen, op dezelfde plek. */
 .verder {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin: 0.5rem 0 0;
-  text-align: right;
 }
 
-/* Zolang het open tabblad een knop Volgende heeft, is de link naar de
-   volgende les weg. Die zegt ook "Volgende", staat op een kort scherm direct
-   onder de knop en is groter: op 139 van de 226 schermen in fullstack stond
-   hij in beeld, en wie erop klikte sloeg de rest van de les over. Op het
-   laatste scherm van de les staat hij er weer. De link naar de vorige les
-   blijft. */
-:global(html:has([data-les-tab]:not([hidden]) > [data-les-verder]) .pagination-nav__link--next) {
+/* Volgende staat rechts, ook als er geen Vorige is. */
+.vooruit {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+/* Op een les met tabbladen staan de links naar de vorige en de volgende les
+   in die rij, en de rij van Docusaurus onder de les vervalt. Eerst stond hij
+   eronder, met Vorige op een andere hoogte dan Volgende; en de link naar de
+   volgende les stond op 139 van de 226 schermen van fullstack naast de knop
+   Volgende, en wie erop klikte sloeg de rest van de les over. */
+:global(html:has([data-les-tabs]) .pagination-nav) {
   display: none;
 }
 
@@ -716,13 +727,36 @@
   white-space: normal;
 }
 
-/* De links naar de vorige en de volgende les zijn op een les net zo klein
-   als de knop Volgende: "« Vorige: Intro tot HTML" in een knop van één
+/* De rij blijft één regel: een tweede kostte het scherm 36 pixels. Past het
+   niet (de smalle tekstkolom naast de oefenterminal van linux, 431 pixels,
+   of een telefoon), dan levert Vorige in: zijn naam eindigt op een
+   beletselteken, en de titel van de knop geeft hem voluit. Volgende is wat
+   de leerling het vaakst nodig heeft, en blijft heel. */
+.verder .terug {
+  flex: 0 4 auto;
+  min-width: 5.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Op een telefoon scrolt de pagina toch: daar mag de rij over twee regels,
+   en schuift er niets zijwaarts. Met beide knoppen op één regel was een
+   scherm met een lange naam bij Volgende tot 71 pixels te breed. */
+@media (max-width: 996px) {
+  .verder {
+    flex-wrap: wrap;
+  }
+}
+
+/* Op een les zonder tabbladen (de korte stappen van de editor-cursus) zijn
+   de links naar de vorige en de volgende les net zo klein als de knoppen in
+   de rij van een tabblad: "« Vorige: Intro tot HTML" in een knop van één
    regel. Infima maakte er kaarten van, 76 pixels hoog met 48 pixels erboven,
    en dan was de footer op geen enkel scherm te zien. De link naar de vorige
-   les is een omlijnde knop, die naar de volgende (op het laatste scherm)
-   een gevulde, zoals Volgende. Ook de ruimte onder de links is kleiner. */
-:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav) {
+   les is een omlijnde knop, die naar de volgende een gevulde. Ook de ruimte
+   onder de links is kleiner. */
+:global(html:has([data-les-zonder-tabs]) .pagination-nav) {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -738,7 +772,7 @@
   padding-bottom: 0.75rem !important;
 }
 
-:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav__link) {
+:global(html:has([data-les-zonder-tabs]) .pagination-nav__link) {
   display: inline-flex;
   flex: 0 1 auto;
   align-items: baseline;
@@ -753,19 +787,19 @@
   line-height: 1.5;
 }
 
-:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav__link--next) {
+:global(html:has([data-les-zonder-tabs]) .pagination-nav__link--next) {
   margin-left: auto;
   background: var(--ifm-color-primary);
   color: var(--coderius-on-primary);
 }
 
-:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav__link:hover) {
+:global(html:has([data-les-zonder-tabs]) .pagination-nav__link:hover) {
   text-decoration: none;
   border-color: var(--ifm-color-primary-dark);
 }
 
-:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav__sublabel),
-:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav__label) {
+:global(html:has([data-les-zonder-tabs]) .pagination-nav__sublabel),
+:global(html:has([data-les-zonder-tabs]) .pagination-nav__label) {
   margin: 0;
   font-size: inherit;
   font-weight: inherit;

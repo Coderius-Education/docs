@@ -24,6 +24,14 @@ const { hydrateRoot } = (await import('react-dom/client' as string)) as {
 
 let locatie = { pathname: '/les', hash: '', search: '' };
 vi.mock('@docusaurus/router', () => ({ useLocation: () => locatie }));
+vi.mock('@docusaurus/Link', () => ({
+  default: ({ to, children, ...rest }: { to: string; children: React.ReactNode }) => (
+    <a href={to} {...rest}>
+      {children}
+    </a>
+  ),
+}));
+vi.mock('./buren', () => ({ useBuren: () => ({}) }));
 
 let breed = true;
 const luisteraars = new Set<() => void>();
