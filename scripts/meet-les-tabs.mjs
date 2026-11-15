@@ -696,9 +696,9 @@ async function meetLes(les) {
             // Volgende heeft: die zegt hetzelfde en slaat de rest van de les
             // over.
             function volgendeLesInBeeld(paneel) {
-              const knop = [...paneel.querySelectorAll('[data-les-verder] button')].some(
-                (k) => k.getClientRects().length > 0,
-              );
+              const knop = [
+                ...paneel.querySelectorAll('[data-les-verder] [data-les-volgende]'),
+              ].some((k) => k.getClientRects().length > 0);
               const link = document.querySelector('.pagination-nav__link--next');
               if (!knop || !link || link.getClientRects().length === 0) return false;
               return link.getBoundingClientRect().top < document.documentElement.clientHeight;

@@ -72,5 +72,3 @@ verder uit elkaar, of zet een stukje isolatietape tussen de uiteinden.
 de vloer, of de robot rijdt zo snel dat de tape tussen twee metingen in valt.
 Haal de `sleep()` uit je wedstrijdlus en kijk of de draadjes de vloer echt
 raken.
-
-Door naar [Rijden in de evacuatiezone](site:robotica/docs/robocup/rijden_evacuatiezone).

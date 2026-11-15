@@ -33,17 +33,12 @@ describe('RoboCup Junior', () => {
     expect(zonder).toEqual([]);
   });
 
-  it('elke pagina linkt aan het eind naar de volgende, de laatste terug naar het begin', () => {
+  it('de laatste pagina linkt terug naar het begin', () => {
     // De uitdagingen liepen niet door: wie klaar was met een pagina, moest
-    // terug naar de sidebar.
-    const fout: string[] = [];
-    paginas.forEach((p, i) => {
-      const volgende = paginas[i + 1]?.slug ?? 'start';
-      const laatste = p.tekst.trim().split('\n').at(-1) ?? '';
-      if (!laatste.includes(`(site:robotica/docs/robocup/${volgende})`))
-        fout.push(`${p.bestand}: eindigt niet met een link naar ${volgende}`);
-    });
-    expect(fout).toEqual([]);
+    // terug naar de sidebar. Nu gaat de knop Volgende onderaan het laatste
+    // scherm naar de volgende pagina; alleen de laatste heeft geen Volgende.
+    const laatste = paginas.at(-1)?.tekst.trim().split('\n').at(-1) ?? '';
+    expect(laatste).toContain('(site:robotica/docs/robocup/start)');
   });
 
   it('elke hindernis die punten oplevert, heeft een pagina die de startpagina noemt', () => {

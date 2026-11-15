@@ -51,5 +51,3 @@ rechtdoor voordat je weer bijstuurt.
 **De robot rijdt in een scherpe bocht rechtdoor de tegel af.** Je teller denkt
 dat het een gat is. Kijk of de robot in een bocht een sensor op zwart ziet
 voordat hij de lijn kwijt is, en zet de teller alleen aan als hij recht reed.
-
-Door naar [Drempels en troep](site:robotica/docs/robocup/drempels).

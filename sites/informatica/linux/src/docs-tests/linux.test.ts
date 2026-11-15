@@ -11,7 +11,7 @@ import sidebars from '../../sidebars';
 //   "Er gaat iets mis";
 // - opdrachten zijn genummerd naar de les (1.3.a, 1.3.b) en hebben elk een
 //   tip en een antwoord in <details>;
-// - elke les eindigt met een link naar de volgende les in de sidebar.
+// - de volgorde van de lessen is die van de sidebar (de knop Volgende).
 // Of de oefenterminal doet wat de lessen beloven, staat in
 // src/components/LinuxTerminal/schrijven.test.ts.
 
@@ -105,17 +105,6 @@ describe('de Linux-cursus', () => {
             fout.push(`${id}: ${nr} zonder antwoord`);
         });
       });
-    });
-    expect(fout).toEqual([]);
-  });
-
-  it('elke les eindigt met een link naar de volgende les', () => {
-    const fout: string[] = [];
-    lessen.forEach((id, i) => {
-      const volgende = lessen[i + 1];
-      if (!volgende) return;
-      const laatste = inhoud(id).trim().split('\n').pop() ?? '';
-      if (!laatste.includes(`(site:linux/docs/${volgende})`)) fout.push(`${id}: "${laatste}"`);
     });
     expect(fout).toEqual([]);
   });

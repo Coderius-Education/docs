@@ -11,6 +11,9 @@ export type Stap = { label: string; ga: () => void } | null;
 /** Staat om elk paneel van een tabblad; daarbuiten is hij null. */
 export const PaneelContext = createContext<((stap: Stap) => void) | null>(null);
 
+/** De vorige stap in een tabblad met stappen, voor de knop Vorige. */
+export const TerugContext = createContext<((stap: Stap) => void) | null>(null);
+
 /** Of dit onderdeel in een les-tabblad staat. Een oefenveld past zich daar
  *  aan het scherm aan. */
 export function useInLesTab(): boolean {
@@ -40,12 +43,18 @@ export function useLesDoel(): ReactNode {
 /** Het attribuut op het paneel van een tabblad, met zijn id als waarde. */
 export const LES_TAB = 'data-les-tab';
 
-/** Het attribuut op de alinea met de knop Volgende onderaan een tabblad. De
- *  opmaak verbergt er de link naar de volgende les mee. */
+/** Het attribuut op de rij onderaan een tabblad, met Vorige en Volgende. */
 export const LES_VERDER = 'data-les-verder';
+
+/** Het attribuut op de knop Volgende in die rij: naar de volgende stap of
+ *  het volgende tabblad. Niet op de link naar de volgende les, die op het
+ *  laatste scherm op die plek staat. */
+export const LES_VOLGENDE = 'data-les-volgende';
 
 /** De knop Volgende van het tabblad dat open is. Een oefenveld dat het
  *  toetsenbord vasthoudt (de terminal van Linux, Esc en dan Tab), zet de
  *  focus daarop; met deze selector valt het niet stil als LesTabs zijn
- *  opmaak verandert (LesTabs.test.tsx). */
-export const VOLGENDE_KNOP = `[${LES_TAB}]:not([hidden]) > [${LES_VERDER}] button`;
+ *  opmaak verandert (LesTabs.test.tsx). Niet de knop Vorige ervoor, en niet
+ *  de link naar de volgende les: een Enter daar verlaat de pagina, en dan is
+ *  het werk in de terminal weg. */
+export const VOLGENDE_KNOP = `[${LES_TAB}]:not([hidden]) > [${LES_VERDER}] [${LES_VOLGENDE}]`;

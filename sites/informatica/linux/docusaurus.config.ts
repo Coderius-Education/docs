@@ -1,5 +1,5 @@
 import { createConfig } from '@coderius/shared/config';
-import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
+import { REPO_URL } from '@coderius/shared/sites';
 
 export default createConfig({
   title: 'Linux — Coderius',
@@ -28,7 +28,6 @@ export default createConfig({
           path: 'docs',
           routeBasePath: 'docs',
           sidebarPath: './sidebars.js',
-          editUrl: repoEditUrl('linux'),
         },
         blog: false,
         theme: { customCss: './src/css/custom.css' },

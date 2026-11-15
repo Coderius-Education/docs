@@ -97,30 +97,6 @@ describe('de reeks Veiligheid', () => {
     expect(fout).toEqual([]);
   });
 
-  it('het gereedschap wijst door naar de eerste les van de eerste reeks', () => {
-    // Toen Wat je server laat zien voor Invoer kwam, wees Een script als
-    // bezoeker nog naar Invoer. Het gereedschap is twee pagina's; de tweede,
-    // Een bezoeker die onthoudt, wijst door.
-    const tekst = readFileSync(join(VEILIGHEID, 'client.mdx'), 'utf8');
-    const eerste = categorieen[0].items[0].slice('veiligheid/'.length);
-    expect(
-      tekst.match(
-        /Door naar de eerste reeks: \[[^\]]+\]\(site:fullstack\/docs\/veiligheid\/([^)]+)\)/,
-      )?.[1],
-    ).toBe(eerste);
-  });
-
-  it('elke reeks wijst aan het eind naar de volgende, de laatste naar de afsluiter', () => {
-    categorieen.forEach((categorie, i) => {
-      const map = eersteMap(categorie);
-      const volgende = categorieen[i + 1];
-      const doel = volgende
-        ? `](site:fullstack/docs/${volgende.items[0]})`
-        : '](site:fullstack/docs/veiligheid/eigen-project)';
-      expect(lees(map, 'praktijk'), `${map}/praktijk`).toContain(doel);
-    });
-  });
-
   it("de losse pagina's richten zich alleen op de eigen computer", () => {
     for (const pagina of ['index', 'gereedschap', 'client', 'eigen-project']) {
       const tekst = readFileSync(join(VEILIGHEID, `${pagina}.mdx`), 'utf8');
@@ -200,14 +176,6 @@ describe('de reeks Veiligheid', () => {
 
       it('eindigt met de praktijk', () => {
         expect(stappen.at(-1)).toBe('praktijk');
-      });
-
-      it('elke stap wijst naar de volgende', () => {
-        stappen.slice(0, -1).forEach((stap, i) => {
-          expect(lees(map, stap), `${map}/${stap}`).toContain(
-            `](site:fullstack/docs/veiligheid/${map}/${stappen[i + 1]})`,
-          );
-        });
       });
 
       it('elke opdracht heeft een antwoord', () => {
@@ -455,17 +423,14 @@ describe('verwijzingen en vaste vormen in de route Veiligheid', () => {
 
   it('een verwijzing naar een latere reeks zegt dat die later komt', () => {
     // XSS in de praktijk verwees naar Cookies en Wie mag wat alsof de
-    // leerling die al had gedaan. De laatste regel van een praktijkpagina
-    // ("Door naar de volgende reeks") telt niet. Sinds alle links de vorm
+    // leerling die al had gedaan. Sinds alle links de vorm
     // site:fullstack/docs/… hebben, telt ook een link die vroeger absoluut was;
     // "tot je de reeks … doet" zegt ook dat die nog komt.
     const zegtLater = /\blater\b|\btot je de reeks\b/;
     const fout: string[] = [];
     reeksen.forEach((map, i) => {
       for (const stap of stappenVan(map)) {
-        const zinnen = lees(map, stap)
-          .replace(/^Door naar de volgende reeks:.*$/m, '')
-          .split(/(?<=[.?])\s+(?=[A-Z])/);
+        const zinnen = lees(map, stap).split(/(?<=[.?])\s+(?=[A-Z])/);
         for (const zin of zinnen) {
           for (const m of zin.matchAll(/\]\(site:fullstack\/docs\/veiligheid\/([a-z-]+)\//g)) {
             const j = reeksen.indexOf(m[1]);

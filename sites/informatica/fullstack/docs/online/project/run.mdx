@@ -72,5 +72,3 @@ Je klikte op `http://0.0.0.0:8000` in de terminal, en de browser zegt dat het ad
 **Oorzaak:** bij de eerste `fastapi run` vroeg de firewall van Windows of Python het netwerk op mag, en je stond het toe. Nu kan iedereen op hetzelfde wifi bij je site als hij draait met `fastapi run`.
 
 **Oplossing:** start je site op je laptop met `--host 127.0.0.1` ([les 3](site:fullstack/docs/online/project/adres)), of met `fastapi dev`. Wil je de toestemming intrekken, zoek dan in het startmenu naar **Een app toestaan via Windows Firewall** en haal de vinkjes bij Python weg.
-
-Door naar [les 2: fastapi run herlaadt niet](site:fullstack/docs/online/project/herstarten).

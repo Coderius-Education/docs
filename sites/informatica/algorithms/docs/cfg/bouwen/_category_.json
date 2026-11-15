@@ -3,9 +3,5 @@
   "position": 3,
   "collapsible": true,
   "collapsed": true,
-  "link": {
-    "type": "generated-index",
-    "title": "Context-vrije grammatica: bouwen, stap voor stap",
-    "description": "Eén bouwsteen per pagina, in deze volgorde."
-  }
+  "link": null
 }

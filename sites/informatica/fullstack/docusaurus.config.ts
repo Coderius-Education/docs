@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
 import { createConfig } from '@coderius/shared/config';
-import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
+import { REPO_URL } from '@coderius/shared/sites';
 import { omleidingen } from './src/data/omleidingen';
 
 // <Routekaart> leest de sidebar met useDocsSidebar() uit
@@ -52,7 +52,6 @@ export default createConfig({
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: repoEditUrl('fullstack'),
         },
         blog: false,
         theme: { customCss: './src/css/custom.css' },

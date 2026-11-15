@@ -1,5 +1,5 @@
 import { createConfig } from '@coderius/shared/config';
-import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
+import { REPO_URL } from '@coderius/shared/sites';
 import lesstofPlugin from './src/checker/lesstof-plugin';
 
 export default createConfig({
@@ -44,7 +44,6 @@ export default createConfig({
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: repoEditUrl('web'),
         },
         blog: false,
       },

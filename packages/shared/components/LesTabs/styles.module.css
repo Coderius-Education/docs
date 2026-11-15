@@ -23,6 +23,13 @@
   border-bottom: 2px solid var(--ifm-color-emphasis-200);
 }
 
+/* De titel van de les en de rij tabbladen (titelBijTabs in plugins/les-tabs.js).
+   Op een smal scherm staan ze onder elkaar en plakt alleen de rij, zoals
+   eerst: het element eromheen telt dan niet mee. */
+.kopRij {
+  display: contents;
+}
+
 .tab {
   flex: 0 0 auto;
   display: inline-flex;
@@ -686,18 +693,37 @@
   scroll-margin-top: calc(var(--ifm-navbar-height) + 6.5rem);
 }
 
+/* Onderaan elk tabblad een rij met Vorige links en Volgende rechts: een
+   stap of tabblad terug of verder, op het eerste scherm naar de vorige les en
+   op het laatste naar de volgende. Dezelfde rij als op een pagina zonder
+   tabbladen, op dezelfde plek. */
 .verder {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin: 0.5rem 0 0;
-  text-align: right;
 }
 
-/* Zolang het open tabblad een knop Volgende heeft, is de link naar de
-   volgende les weg. Die zegt ook "Volgende", staat op een kort scherm direct
-   onder de knop en is groter: op 139 van de 226 schermen in fullstack stond
-   hij in beeld, en wie erop klikte sloeg de rest van de les over. Op het
-   laatste scherm van de les staat hij er weer. De link naar de vorige les
-   blijft. */
-:global(html:has([data-les-tab]:not([hidden]) > [data-les-verder]) .pagination-nav__link--next) {
+/* Boven de rij staat een halve regel, niet de ruimte onder een alinea
+   (20 pixels): de marges vallen samen, en de grootste won. Op het laatste
+   scherm van een les staat de rij sinds Vorige en Volgende er samen in, en
+   vier schermen van algoritmes waren daardoor 9 pixels te lang. */
+.paneel > :has(+ .verder) {
+  margin-bottom: 0.5rem;
+}
+
+/* Volgende staat rechts, ook als er geen Vorige is. */
+.vooruit {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+/* Op een les met tabbladen staan de links naar de vorige en de volgende les
+   in die rij, en de rij van Docusaurus onder de les vervalt. Eerst stond hij
+   eronder, met Vorige op een andere hoogte dan Volgende; en de link naar de
+   volgende les stond op 139 van de 226 schermen van fullstack naast de knop
+   Volgende, en wie erop klikte sloeg de rest van de les over. */
+:global(html:has([data-les-tabs]) .pagination-nav) {
   display: none;
 }
 
@@ -707,6 +733,133 @@
 .verder :global(.button) {
   max-width: 100%;
   white-space: normal;
+}
+
+/* De rij blijft één regel: een tweede kostte het scherm 36 pixels. Past het
+   niet (de smalle tekstkolom naast de oefenterminal van linux, 431 pixels,
+   of een telefoon), dan levert Vorige in: zijn naam eindigt op een
+   beletselteken, en de titel van de knop geeft hem voluit. Volgende is wat
+   de leerling het vaakst nodig heeft, en blijft heel. */
+.verder .terug {
+  flex: 0 4 auto;
+  min-width: 5.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Op een telefoon scrolt de pagina toch: daar mag de rij over twee regels,
+   en schuift er niets zijwaarts. Met beide knoppen op één regel was een
+   scherm met een lange naam bij Volgende tot 71 pixels te breed. */
+@media (max-width: 996px) {
+  .verder {
+    flex-wrap: wrap;
+  }
+}
+
+/* Op een les zonder tabbladen (de korte stappen van de editor-cursus) zijn
+   de links naar de vorige en de volgende les net zo klein als de knoppen in
+   de rij van een tabblad: "« Vorige: Intro tot HTML" in een knop van één
+   regel. Infima maakte er kaarten van, 76 pixels hoog met 48 pixels erboven,
+   en dan was de footer op geen enkel scherm te zien. De link naar de vorige
+   les is een omlijnde knop, die naar de volgende een gevulde. Ook de ruimte
+   onder de links is kleiner. */
+:global(html:has([data-les-zonder-tabs]) .pagination-nav) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem !important;
+}
+
+:global(
+    html:has([data-les-tabs], [data-les-zonder-tabs])
+    main[class*="docMainContainer"]
+    > .container
+  ) {
+  padding-bottom: 0.75rem !important;
+}
+
+:global(html:has([data-les-zonder-tabs]) .pagination-nav__link) {
+  display: inline-flex;
+  flex: 0 1 auto;
+  align-items: baseline;
+  max-width: 100%;
+  padding: calc(var(--ifm-button-padding-vertical) * 0.8)
+    calc(var(--ifm-button-padding-horizontal) * 0.8);
+  border: var(--ifm-button-border-width) solid var(--ifm-color-primary);
+  border-radius: var(--ifm-button-border-radius);
+  color: var(--ifm-color-primary);
+  font-size: calc(0.875rem * 0.8);
+  font-weight: var(--ifm-button-font-weight);
+  line-height: 1.5;
+}
+
+:global(html:has([data-les-zonder-tabs]) .pagination-nav__link--next) {
+  margin-left: auto;
+  background: var(--ifm-color-primary);
+  color: var(--coderius-on-primary);
+}
+
+:global(html:has([data-les-zonder-tabs]) .pagination-nav__link:hover) {
+  text-decoration: none;
+  border-color: var(--ifm-color-primary-dark);
+}
+
+:global(html:has([data-les-zonder-tabs]) .pagination-nav__sublabel),
+:global(html:has([data-les-zonder-tabs]) .pagination-nav__label) {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
+/* De footer staat in beeld als het scherm er ruimte voor heeft. De lijst
+   met lessen links is in Docusaurus zo hoog als het venster (een lange lijst
+   schuift in zijn eigen vak), en duwde de footer daarmee altijd net onder de
+   rand, ook onder een kort scherm. Met `contain: size` telt de lijst niet
+   meer mee voor de hoogte van de pagina: de les bepaalt die, en de lijst
+   schuift binnen de hoogte van de les. De kolom is geen ouder van een
+   oefenveld, dus een eigen laag geeft hier niets. Zijn breedte zet
+   Docusaurus zelf. */
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .theme-doc-sidebar-container) {
+  contain: size;
+}
+
+/* Een kort scherm schuift dan niet meer, een lang wel. Zonder vaste ruimte
+   voor de schuifbalk werd de les bij het wisselen van tabblad 15 pixels
+   breder of smaller (de schuifbalk van Windows), en verschoof alles. */
+:global(html:has([data-les-tabs], [data-les-zonder-tabs])) {
+  scrollbar-gutter: stable;
+}
+
+/* Het woord en de naam van de les op één regel: "« Vorige: Intro tot HTML". */
+:global(html:has([data-les-tabs], [data-les-zonder-tabs]) .pagination-nav__sublabel::after) {
+  content: ":\00a0";
+}
+
+:global(
+    html:has([data-les-tabs], [data-les-zonder-tabs])
+    .pagination-nav__link--prev
+    .pagination-nav__sublabel::before
+  ) {
+  content: "«\00a0";
+}
+
+:global(
+    html:has([data-les-tabs], [data-les-zonder-tabs])
+    .pagination-nav__link--prev
+    .pagination-nav__label::before
+  ) {
+  content: none;
+}
+
+:global(
+    html:has([data-les-tabs], [data-les-zonder-tabs])
+    .pagination-nav__link--next
+    .pagination-nav__label::after
+  ) {
+  content: "\00a0»";
 }
 
 /* De inhoudsopgave rechts vervalt op een pagina met tabbladen, en de les
@@ -745,9 +898,43 @@
     margin-bottom: 0.25rem;
   }
 
-  .tablist {
-    margin-bottom: 0.75rem;
-    padding-top: 0;
+  /* De titel staat klein vóór de rij tabbladen, in dezelfde balk: boven de
+     rij kostte hij elk scherm vijftig pixels. Past hij er niet naast, dan
+     staat hij op een eigen regel erboven (flex-wrap): de rij tabbladen gaat
+     voor, en een tabblad valt nooit weg voor de titel. De balk plakt onder
+     de navbar, met de titel erin; hij is geen ouder van een paneel. */
+  .kopRij {
+    position: sticky;
+    top: var(--ifm-navbar-height);
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 1rem;
+    margin: 0 0 0.75rem;
+    background: var(--ifm-background-color);
+    border-bottom: 2px solid var(--ifm-color-emphasis-200);
+  }
+
+  .kopRij > .tablist {
+    position: static;
+    flex: 0 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .titel {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .titel :global(h1) {
+    --ifm-h1-font-size: 1.125rem;
+    margin: 0;
+    line-height: 1.3;
+    color: var(--ifm-color-emphasis-800);
   }
 }
 
@@ -774,7 +961,7 @@
     column-gap: 1rem;
   }
 
-  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) > .tablist {
+  .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) > .kopRij {
     flex: 0 0 100%;
     min-width: 0;
   }
@@ -849,6 +1036,11 @@
   .staplist,
   .verder {
     display: none;
+  }
+
+  .kopRij {
+    position: static;
+    border: 0;
   }
 
   .wortel:has(> .naast > :not([hidden]), [data-les-naast-anker="les"]) {

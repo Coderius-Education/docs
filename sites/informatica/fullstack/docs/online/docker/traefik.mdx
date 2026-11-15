@@ -145,5 +145,3 @@ Open `http://whoami.localhost`: je ziet elk verzoek zoals het binnenkwam. Welke 
 Je ziet onder andere `X-Forwarded-For` en `X-Real-Ip`, met het adres waarvan jouw browser kwam, en `X-Forwarded-Host: whoami.localhost`. Dat zijn de koppen die Traefik toevoegt. In WSL is dat adres iets als `172.18.0.1`: je browser komt via Windows en het netwerk van Docker binnen. Op de server staat er het adres van de bezoeker op internet. Een label met de poort is hier niet nodig: het image van `whoami` zegt zelf op welke poort het luistert, en dan vindt Traefik hem. Jouw image zegt dat niet, daarom heeft je gastenboek het label wel.
 
 </details>
-
-Door naar [les 24: een server huren](site:fullstack/docs/online/server/huren).

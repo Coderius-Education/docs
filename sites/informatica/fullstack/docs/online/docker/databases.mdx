@@ -124,5 +124,3 @@ Een nieuwe container begint niet leeg, maar met de berichten die je zonder Docke
 **Oorzaak:** `data/` staat niet in `.dockerignore`. Dan kopieert `COPY . .` de map `data` uit je project mee het image in, met je testdatabases.
 
 **Oplossing:** zet `data/` in `.dockerignore`, en bouw opnieuw.
-
-Door naar [les 19: niet als root](site:fullstack/docs/online/docker/niet-als-root).

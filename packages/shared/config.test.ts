@@ -204,6 +204,28 @@ describe('createConfig — les-tabbladen', () => {
     expect(remarkVan(uit, 'golfbot')).not.toContain(remarkLesTabs);
   });
 
+  it('haalt de link Bewerk deze pagina weg, alleen met de schakelaar aan', () => {
+    // Hij stond onder elk scherm van een les; die ruimte is van de les.
+    const metLink = {
+      ...basis,
+      presets: [['classic', { docs: { editUrl: 'https://x/edit' } }]],
+      plugins: [
+        ['@docusaurus/plugin-content-docs', { id: 'lego_auto', editUrl: 'https://x/edit' }],
+      ],
+    };
+    const links = (config: {
+      presets: [string, { docs: object }][];
+      plugins: [string, object][];
+    }) => [
+      config.presets[0][1].docs,
+      config.plugins.find((p) => Array.isArray(p) && p[0].endsWith('content-docs'))?.[1],
+    ];
+    for (const docs of links(createConfig({ ...metLink, lesTabs: true })))
+      expect(docs).not.toHaveProperty('editUrl');
+    for (const docs of links(createConfig(metLink)))
+      expect(docs).toHaveProperty('editUrl', 'https://x/edit');
+  });
+
   it('zet de module aan die code op een pagina zonder tabbladen passend maakt', () => {
     // Een pagina met tabbladen past de letters van zijn code zelf aan
     // (LesTabs, pasCode.ts); de cheatsheet heeft dat onderdeel niet.
@@ -265,5 +287,46 @@ describe('createConfig — les-tabbladen', () => {
       'ctf',
       'linux',
     ]);
+  });
+});
+
+describe('createConfig — de footer op één regel', () => {
+  // theme/Footer toont de eerste kolom links (de cursus), de licentie in het
+  // midden en de tweede kolom rechts (Coderius).
+  const links = (config: { themeConfig: { footer: { links: { items: object[] }[] } } }) =>
+    config.themeConfig.footer.links.map((k) => k.items);
+
+  it('zet links de cursus en rechts Coderius, zonder copyright', () => {
+    const config = createConfig({ siteId: 'web', title: 'x' });
+    const [cursus, coderius] = links(config);
+    expect(cursus).toContainEqual({ label: 'Docenten', to: '/docenten' });
+    expect(coderius).toEqual([
+      { label: 'coderius.nl', href: 'https://coderius.nl' },
+      { label: 'Privacy', to: '/privacy' },
+    ]);
+    expect(config.themeConfig.footer).not.toHaveProperty('copyright');
+  });
+
+  it('neemt de links van de site mee in de kolom van de cursus, zonder dubbele', () => {
+    const config = createConfig({
+      siteId: 'ctf',
+      title: 'x',
+      themeConfig: {
+        footer: {
+          copyright: 'eigen',
+          links: [
+            { title: 'Links', items: [{ label: 'CTF Platform', href: 'https://ctf.example' }] },
+            { title: 'Meer', items: [{ label: 'Privacy', to: '/privacy' }] },
+          ],
+        },
+      },
+    });
+    const [cursus, coderius] = links(config);
+    expect(cursus).toEqual([
+      { label: 'Docenten', to: '/docenten' },
+      { label: 'CTF Platform', href: 'https://ctf.example' },
+    ]);
+    expect(coderius).toHaveLength(2);
+    expect(config.themeConfig.footer).not.toHaveProperty('copyright');
   });
 });

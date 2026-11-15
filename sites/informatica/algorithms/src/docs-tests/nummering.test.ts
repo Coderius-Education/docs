@@ -7,8 +7,8 @@ import { describe, expect, it } from 'vitest';
 // sidebar_position moeten gelijklopen en per hoofdstuk aaneengesloten zijn.
 // De H1 (tevens sidebar-label) draagt geen nummer; de sidebar is de volgorde.
 // Bij het invoegen van 02-bekijk schoven zestig bestanden op; niets bewaakte
-// tot dan of de "Door naar"-links nog klopten. Docusaurus vangt alleen
-// kapotte links, niet een verkeerde volgorde.
+// tot dan of de links naar de volgende les nog klopten. Docusaurus vangt
+// alleen kapotte links, niet een verkeerde volgorde.
 //
 // De bouwstappen staan in een submap bouwen/ met een eigen _category_.json,
 // maar tellen mee in de nummering van het hoofdstuk: de nummers van de
@@ -157,6 +157,22 @@ describe('de links tussen lessen', () => {
   it('de lescontrole herkent een verzonnen pad wél als kapot', () => {
     expect(bestaat('lineair-zoeken/01-concept')).toBe(true);
     expect(bestaat('lineair-zoeken/99-onzin')).toBe(false);
+  });
+});
+
+describe('naar de volgende les', () => {
+  // Geen Door naar-regel meer: zie packages/shared/links-in-lestekst.test.ts.
+  it('de bouwstappen hebben geen eigen overzichtspagina', () => {
+    // Met een generated-index ging Volgende vanaf de stellingen naar een
+    // pagina met kaarten van de stappen, en pas daarna naar bouwsteen 1. Het
+    // overzicht staat al in de eerste les ("Zo bouw je het op").
+    const metPagina = hoofdstukken()
+      .filter((h) => existsSync(join(DOCS, h, 'bouwen', '_category_.json')))
+      .filter((h) => {
+        const cat = JSON.parse(readFileSync(join(DOCS, h, 'bouwen', '_category_.json'), 'utf8'));
+        return cat.link !== null;
+      });
+    expect(metPagina).toEqual([]);
   });
 });
 

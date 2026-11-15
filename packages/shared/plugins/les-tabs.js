@@ -1650,6 +1650,31 @@ function deelMetStappen(kinderen, naam) {
 const HIDDEN = { type: 'mdxJsxAttribute', name: 'hidden', value: null };
 
 /**
+ * De titel van de les gaat in <LesTabs>, als eerste kind: op een breed scherm
+ * staat hij dan klein naast de rij tabbladen, en past hij daar niet, op een
+ * regel erboven (de opmaak van LesTabs). Boven de tabbladen kostte hij elk
+ * scherm vijftig pixels. Alleen de `#`-kop van de les zelf, en alleen als er
+ * tussen hem en de tabbladen niets staat dat iets op de pagina zet. Een titel
+ * uit de front matter zet Docusaurus zelf boven de pagina; die blijft staan.
+ *
+ * Een stap apart van groepeer: wat de tabbladen van een les zijn (de
+ * werkvormen, de schermen), verandert er niet door.
+ *
+ * @param {object[]} kinderen de kinderen van de pagina, na groepeer
+ */
+function titelBijTabs(kinderen) {
+  const tabs = kinderen.findIndex((node) => node.name === 'LesTabs');
+  let i = tabs - 1;
+  while (i >= 0 && zetNietsNeer(kinderen[i])) i--;
+  if (tabs < 0 || i < 0 || !isTitel(kinderen[i])) return kinderen;
+  const titel = kinderen[i];
+  const lesTabs = { ...kinderen[tabs], children: [titel, ...kinderen[tabs].children] };
+  return kinderen.flatMap((node) =>
+    node === titel ? [] : node === kinderen[tabs] ? [lesTabs] : [node],
+  );
+}
+
+/**
  * De remark-stap.
  *
  * @param {{ eenScherm?: boolean }} [opties] `eenScherm`: een pagina die in
@@ -1668,7 +1693,7 @@ function remarkLesTabs(opties = {}) {
       return;
     }
     const nieuw = groepeer(tree.children, opties);
-    if (nieuw) tree.children = nieuw;
+    if (nieuw) tree.children = titelBijTabs(nieuw);
     // Geen tabbladen (één sectie, of een pagina met alleen een deel): een
     // marker, zodat de pagina dezelfde kop en breedte krijgt als de lessen
     // eromheen (zie de opmaak van LesTabs).
@@ -1690,4 +1715,5 @@ module.exports = {
   sluitAan,
   pastOpEenScherm,
   naastElkaar,
+  titelBijTabs,
 };

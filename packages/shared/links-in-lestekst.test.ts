@@ -155,3 +155,19 @@ describe('geen hardcoded cursus-URL in lestekst', () => {
     expect(dood).toEqual([]);
   });
 });
+
+describe('naar de volgende les', () => {
+  // Onderaan het laatste scherm van een les staat de knop "Volgende: <les>",
+  // naar de les die in de sidebar volgt. Daarboven stond in 491 lessen nog
+  // "Door naar [<les>](…)", met dezelfde les: twee keer hetzelfde, en een
+  // regel die het scherm langer maakte. Wijkt de weg af van de sidebar (de
+  // route machine learning na een geleend hoofdstuk), schrijf dan waar je
+  // daarna verdergaat: "Na het hoofdstuk PageRank ga je verder met …".
+  it('geen lestekst heeft een Door naar-regel', () => {
+    const fout = bestanden
+      .filter((b) => b.content)
+      .filter((b) => /(^|\. )Door naar /m.test(readFileSync(b.pad, 'utf8')))
+      .map((b) => b.kort);
+    expect(fout).toEqual([]);
+  });
+});

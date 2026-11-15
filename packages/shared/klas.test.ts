@@ -141,7 +141,7 @@ describe('sidebar-manifest', () => {
 });
 
 describe('klassen en de rest van de repo', () => {
-  it('geen site swizzlet DocSidebarItems of DocCard/Heading (dat schaduwt de wikkel)', () => {
+  it('geen site swizzlet DocSidebarItems, DocCard/Heading of DocPaginator (dat schaduwt de wikkel)', () => {
     const fout: string[] = [];
     for (const vak of readdirSync(join(ROOT, 'sites'))) {
       const vakMap = join(ROOT, 'sites', vak);
@@ -149,7 +149,7 @@ describe('klassen en de rest van de repo', () => {
         ? [vakMap]
         : readdirSync(vakMap).map((s) => join(vakMap, s));
       for (const site of mappen) {
-        for (const deel of ['DocSidebarItems', 'DocCard'])
+        for (const deel of ['DocSidebarItems', 'DocCard', 'DocPaginator'])
           if (existsSync(join(site, 'src', 'theme', deel))) fout.push(`${site}: ${deel}`);
       }
     }

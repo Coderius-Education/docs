@@ -44,5 +44,3 @@ hand over de drempel. Zie je een rare waarde als hij kantelt? Dan weet je dat
 je code die waarde even moet negeren.
 
 </details>
-
-Door naar [Obstakels ontwijken](site:robotica/docs/robocup/obstakels).

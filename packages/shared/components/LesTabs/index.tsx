@@ -1,3 +1,4 @@
+import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
 import {
   Children,
@@ -14,13 +15,16 @@ import {
 } from 'react';
 import { WerkvormIcoon } from '../Werkvorm/Icoon';
 import { Vergroot } from './Vergroot';
+import { useBuren } from './buren';
 import {
   DoelContext,
   LES_TAB,
   LES_VERDER,
+  LES_VOLGENDE,
   OpenContext,
   PaneelContext,
   type Stap,
+  TerugContext,
   useInLesTab,
 } from './paneel';
 import { pasCode } from './pasCode';
@@ -63,7 +67,12 @@ const DATA = {
   stap: { paneel: 'data-les-stap', knop: 'data-stap', sleutel: 'lesStap' },
 } as const;
 
-type Rij = { actief: string; niveau: Niveau; volgende: (id: string) => string | undefined };
+type Rij = {
+  actief: string;
+  niveau: Niveau;
+  volgende: (id: string) => string | undefined;
+  vorige: (id: string) => string | undefined;
+};
 const RijContext = createContext<Rij | null>(null);
 
 /** Voor een reeks plaatjes: het volgende plaatje, voor de knop Volgende van het tabblad. */
@@ -95,7 +104,11 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
   const tabs = kinderen.filter(isTab);
   // Wat in een rij stappen geen stap is: het leerdoel van de les. Het staat
   // boven de rij, en alleen bij de eerste stap.
-  const boven = niveau === 'stap' ? kinderen.filter((c) => isValidElement(c) && !isTab(c)) : [];
+  // In een rij tabbladen: de titel van de les (titelBijTabs in
+  // plugins/les-tabs.js). Hij staat naast de rij.
+  const geenTab = kinderen.filter((c) => isValidElement(c) && !isTab(c));
+  const boven = niveau === 'stap' ? geenTab : [];
+  const titel = niveau === 'tab' ? geenTab : [];
   const ids = tabs.map((t) => t.props.id);
   const [actief, setActief] = useState(ids[0] ?? '');
   // Waar na het openen van een paneel naartoe gescrold wordt: een kop binnen
@@ -105,6 +118,7 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
   const lijst = useRef<HTMLDivElement>(null);
   const locatie = useLocation();
   const meldStap = useContext(PaneelContext);
+  const meldTerug = useContext(TerugContext);
   // Of de rij te zien is: een rij stappen staat in een tabblad dat dicht kan zijn.
   const inBeeld = useContext(OpenContext);
 
@@ -258,6 +272,17 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     return () => meldStap(null);
   }, [niveau, meldStap, naId, naLabel, kies]);
 
+  // En welke stap de vorige is, voor de knop Vorige van het tabblad.
+  const voor = tabs[ids.indexOf(actief) - 1]?.props;
+  const voorId = voor?.id;
+  const voorLabel = voor?.label;
+  useEffect(() => {
+    if (niveau !== 'stap' || !meldTerug) return;
+    if (wortel.current?.closest('details')) return;
+    meldTerug(voorId && voorLabel ? { label: voorLabel, ga: () => kies(voorId, true) } : null);
+    return () => meldTerug(null);
+  }, [niveau, meldTerug, voorId, voorLabel, kies]);
+
   const opToets = (e: KeyboardEvent<HTMLDivElement>) => {
     const i = ids.indexOf(actief);
     const naar =
@@ -277,6 +302,46 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     kies(naar, true);
   };
 
+  // De rij knoppen. Bij de tabbladen staat hij met de titel in één balk.
+  const knoppen = (
+    <div
+      ref={lijst}
+      role="tablist"
+      aria-label={niveau === 'tab' ? 'Onderdelen van deze les' : 'Stappen in dit onderdeel'}
+      className={niveau === 'tab' ? styles.tablist : styles.staplist}
+      onKeyDown={opToets}
+    >
+      {tabs.map(({ props: t }, i) => (
+        <button
+          key={t.id}
+          type="button"
+          role="tab"
+          id={`tab-${t.id}`}
+          {...{ [data.knop]: t.id }}
+          aria-selected={t.id === actief}
+          aria-controls={`paneel-${t.id}`}
+          tabIndex={t.id === actief ? 0 : -1}
+          className={niveau === 'tab' ? styles.tab : styles.stap}
+          // Een stap in een volle rij staat ingekort op zijn knop: dan
+          // zegt de titel hoe hij voluit heet.
+          title={t.label !== t.titel ? t.titel : niveau === 'stap' ? t.label : undefined}
+          aria-label={t.kort ? t.label : undefined}
+          onClick={() => kies(t.id)}
+        >
+          {niveau === 'stap' && <span className={styles.stapNummer}>{i + 1}</span>}
+          {niveau === 'tab' && t.werkvorm && (
+            <WerkvormIcoon id={t.werkvorm} className={styles.tabIcoon} />
+          )}
+          {niveau === 'stap' ? (
+            <span className={styles.stapLabel}>{t.kort ?? t.label}</span>
+          ) : (
+            (t.kort ?? t.label)
+          )}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <div
       ref={wortel}
@@ -289,42 +354,14 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
           {boven}
         </div>
       )}
-      <div
-        ref={lijst}
-        role="tablist"
-        aria-label={niveau === 'tab' ? 'Onderdelen van deze les' : 'Stappen in dit onderdeel'}
-        className={niveau === 'tab' ? styles.tablist : styles.staplist}
-        onKeyDown={opToets}
-      >
-        {tabs.map(({ props: t }, i) => (
-          <button
-            key={t.id}
-            type="button"
-            role="tab"
-            id={`tab-${t.id}`}
-            {...{ [data.knop]: t.id }}
-            aria-selected={t.id === actief}
-            aria-controls={`paneel-${t.id}`}
-            tabIndex={t.id === actief ? 0 : -1}
-            className={niveau === 'tab' ? styles.tab : styles.stap}
-            // Een stap in een volle rij staat ingekort op zijn knop: dan
-            // zegt de titel hoe hij voluit heet.
-            title={t.label !== t.titel ? t.titel : niveau === 'stap' ? t.label : undefined}
-            aria-label={t.kort ? t.label : undefined}
-            onClick={() => kies(t.id)}
-          >
-            {niveau === 'stap' && <span className={styles.stapNummer}>{i + 1}</span>}
-            {niveau === 'tab' && t.werkvorm && (
-              <WerkvormIcoon id={t.werkvorm} className={styles.tabIcoon} />
-            )}
-            {niveau === 'stap' ? (
-              <span className={styles.stapLabel}>{t.kort ?? t.label}</span>
-            ) : (
-              (t.kort ?? t.label)
-            )}
-          </button>
-        ))}
-      </div>
+      {niveau === 'tab' ? (
+        <div className={styles.kopRij}>
+          {titel.length > 0 && <div className={styles.titel}>{titel}</div>}
+          {knoppen}
+        </div>
+      ) : (
+        knoppen
+      )}
       <RijContext.Provider
         value={{
           actief,
@@ -334,11 +371,21 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
             if (volgend) kies(volgend, true);
             return volgend;
           },
+          vorige: (id) => {
+            const vorig = ids[ids.indexOf(id) - 1];
+            if (vorig) kies(vorig, true);
+            return vorig;
+          },
         }}
       >
         {tabs.map((t, i) =>
           niveau === 'tab' ? (
-            <LesTab key={t.props.id} {...t.props} volgendLabel={tabs[i + 1]?.props.label} />
+            <LesTab
+              key={t.props.id}
+              {...t.props}
+              volgendLabel={tabs[i + 1]?.props.label}
+              vorigLabel={tabs[i - 1]?.props.label}
+            />
           ) : (
             <LesStap key={t.props.id} {...t.props} />
           ),
@@ -375,16 +422,28 @@ export function LesTab({
   titel,
   label,
   volgendLabel,
+  vorigLabel,
   children,
-}: Props & { volgendLabel?: string }): ReactNode {
+}: Props & { volgendLabel?: string; vorigLabel?: string }): ReactNode {
   const rij = useContext(RijContext);
   const open = !rij || rij.actief === id;
   const [stap, setStap] = useState<Stap>(null);
+  const [terugStap, setTerugStap] = useState<Stap>(null);
+  // Vorige gaat een stap of een tabblad terug, en op het eerste scherm naar
+  // de vorige les; Volgende op het laatste scherm naar de volgende les. Zo
+  // staan ze op elk scherm samen in één rij, net als op een pagina zonder
+  // tabbladen. Eerst stond Vorige (de vorige les) onder het paneel en
+  // Volgende in het paneel, op een andere hoogte dan elders.
+  const buren = useBuren();
+  const terug = terugStap?.label ?? vorigLabel;
+  const vorigeLes = terug ? undefined : buren.vorige;
   // Een reeks plaatjes die nog niet uit is, gaat voor de volgende stap: de
   // knop Volgende sloeg anders negen van de tien bouwstappen over.
   const [reeks, setReeks] = useState<Stap>(null);
   const eerst = reeks ?? stap;
   const volgende = eerst?.label ?? volgendLabel;
+  const volgendeLes = volgende ? undefined : buren.volgende;
+  const heeftRij = rij && (terug || vorigeLes || volgende || volgendeLes);
   return (
     <section
       role="tabpanel"
@@ -400,20 +459,50 @@ export function LesTab({
       hidden={!open}
     >
       <PaneelContext.Provider value={setStap}>
-        <ReeksContext.Provider value={setReeks}>
-          <OpenContext.Provider value={open}>{children}</OpenContext.Provider>
-        </ReeksContext.Provider>
+        <TerugContext.Provider value={setTerugStap}>
+          <ReeksContext.Provider value={setReeks}>
+            <OpenContext.Provider value={open}>{children}</OpenContext.Provider>
+          </ReeksContext.Provider>
+        </TerugContext.Provider>
       </PaneelContext.Provider>
-      {rij && volgende && (
+      {heeftRij && (
         <p className={styles.verder} {...{ [LES_VERDER]: '' }}>
-          <button
-            type="button"
-            className="button button--primary button--sm"
-            onClick={() => (eerst ? eerst.ga() : rij.volgende(id))}
-          >
-            {/* Een tabblad dat "Volgende tutorial" heet: niet "Volgende: Volgende tutorial". */}
-            {/^Volgende\b/.test(volgende) ? volgende : `Volgende: ${volgende}`}
-          </button>
+          {terug ? (
+            <button
+              type="button"
+              className={`button button--outline button--primary button--sm ${styles.terug}`}
+              title={`Vorige: ${terug}`}
+              onClick={() => (terugStap ? terugStap.ga() : rij.vorige(id))}
+            >
+              « Vorige: {terug}
+            </button>
+          ) : vorigeLes ? (
+            <Link
+              className={`button button--outline button--primary button--sm ${styles.terug}`}
+              title={`Vorige les: ${vorigeLes.titel}`}
+              to={vorigeLes.adres}
+            >
+              « Vorige: {vorigeLes.titel}
+            </Link>
+          ) : null}
+          {volgende ? (
+            <button
+              type="button"
+              className={`button button--primary button--sm ${styles.vooruit}`}
+              {...{ [LES_VOLGENDE]: '' }}
+              onClick={() => (eerst ? eerst.ga() : rij.volgende(id))}
+            >
+              {/* Een tabblad dat "Volgende tutorial" heet: niet "Volgende: Volgende tutorial". */}
+              {/^Volgende\b/.test(volgende) ? volgende : `Volgende: ${volgende}`}
+            </button>
+          ) : volgendeLes ? (
+            <Link
+              className={`button button--primary button--sm ${styles.vooruit}`}
+              to={volgendeLes.adres}
+            >
+              Volgende: {volgendeLes.titel} »
+            </Link>
+          ) : null}
         </p>
       )}
     </section>

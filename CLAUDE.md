@@ -258,8 +258,7 @@ layer-polyfill. Zie `packages/shared/huisstijl/README.md`.
 De homepage van elke cursus past in één scherm, footer meegerekend, vanaf
 1280×720: de hero en de kaarten (stijlen van `HomepageHero` en
 `HomepageFeatures`, gebruikt door `HomepageSections`) zijn compact, en
-`ManagedHomepage` zet de klasse `coderius-homepage`, waardoor de footer daar op
-één regel per kolom staat (`packages/shared/css/custom.css`). De homepage vult het scherm
+`ManagedHomepage` zet de klasse `coderius-homepage`. De homepage vult het scherm
 tot de footer: een hero gevolgd door een sectie of `main` vangt het grootste
 deel van de extra ruimte op, en de kaarten staan gecentreerd in de rest
 (`ManagedHomepage/styles.module.css`); zo staat er op een groot scherm geen
@@ -269,6 +268,32 @@ de site en meet in headless Chromium dat
 1366×768, in licht en donker. Een module-klasse die een maat van Infima wil
 overschrijven (`.hero`, `h2`, `h3`, `p`) staat op dezelfde opgehoogde selector,
 anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
+
+De footer staat op elke pagina op één regel (`packages/shared/theme/Footer`,
+opmaak in `css/custom.css`): links de cursus (Leerdoelen, Docenten en wat de
+site in zijn footer zet), in het midden de licentie als het kleine plaatje
+van Creative Commons (`static/img/cc-by-nc.svg`, uit `@creativecommons/cc-assets`),
+rechts coderius.nl, Privacy en eventueel Werk van het oude adres. Op een breed
+scherm is hij 47 pixels hoog; eerst stond elke kolom met zijn titel onder
+elkaar en de licentie in een zin eronder, 270 pixels. `createConfig` maakt de
+twee kolommen en haalt een eigen `copyright` weg: de licentie is overal
+CC BY-NC 4.0, en een bronvermelding (minimax naar CS50 AI) staat in de les
+die de bron gebruikt. Zet geen lange lijst lessen in de footer; daar is de
+sidebar voor.
+
+Onder een les met tabbladen staat de footer in beeld als het scherm er
+ruimte voor heeft (opmaak van LesTabs). Vorige en Volgende staan daar in de
+rij onderaan het tabblad (zie Les-tabbladen), en de rij van Docusaurus onder
+de les vervalt; op een pagina zonder tabbladen is die rij een kleine knop
+zoals Volgende ("« Vorige: Intro tot HTML"), geen kaarten van 76 pixels met
+48 erboven. De lijst met lessen links
+telt met `contain: size` niet mee voor de hoogte van de pagina (Docusaurus
+maakt hem zo hoog als het venster, en duwde de footer zo altijd net onder de
+rand); en `scrollbar-gutter: stable` houdt de les even breed op een scherm
+dat schuift en een dat dat niet doet. Onder het paneel kost dat samen 96
+pixels: op 1280×720 staat de footer zo in beeld op 171 van de 186 schermen
+zonder oefenveld in web en 444 van de 475 in python. Een oefenveld neemt de
+ruimte tot de rand zelf, en daar staat hij eronder.
 
 ## Les-tabbladen
 
@@ -461,8 +486,16 @@ Wat vastligt, en waarom:
   router om. Het doel van een adres is een kop óf een paneel: het tabblad
   Uitleg en de stap De basis hebben geen kop.
 - **Boven de tabbladen staat zo weinig mogelijk.** Op een breed scherm
-  (vanaf 997px, waar de lessenlijst links staat) vervalt het kruimelpad en is
-  de titel 1,75rem; dat scheelt honderd pixels per tabblad. In een paneel is
+  (vanaf 997px, waar de lessenlijst links staat) vervalt het kruimelpad, en
+  staat de titel klein vóór de rij tabbladen, in dezelfde balk die onder de
+  navbar plakt (`titelBijTabs` in `les-tabs.js` zet de `#`-kop in
+  `<LesTabs>`; de werkvormen en de schermen ziet hij niet). Past de titel er
+  niet naast, dan staat hij op een regel erboven: de rij tabbladen gaat voor.
+  Een titel uit de front matter zet Docusaurus zelf boven de pagina; die
+  blijft daar, op 1,75rem. Op een telefoon staan titel en rij onder elkaar,
+  zoals eerst. Een cursus met tabbladen heeft geen link Bewerk deze pagina
+  (`createConfig` haalt `editUrl` weg, ook in een losse docs-plugin): hij
+  stond onder elk scherm. In een paneel is
   de `##` zo groot als een tussenkop, is een uitklapblok lager, en staan een
   tip en een antwoord die dicht zijn naast elkaar.
 - **Een oefenveld in een tabblad past zich aan het scherm aan.** Het veld
@@ -742,11 +775,27 @@ knop Volgende in 26 lessen. Sindsdien:
   dat `speling.ts` laat schuiven als het scherm dan nog te lang is. Bij
   twintig van de dertig vragen viel de uitleg of de knop Volgende eerst
   onder de rand.
-- **De link naar de volgende les is weg zolang het open tabblad een knop
-  Volgende heeft** (`data-les-verder`, één regel in de opmaak van LesTabs).
-  Die link zegt ook "Volgende", is groter, en stond op 139 van de 226
-  schermen in beeld; wie erop klikte, sloeg de rest van de les over. Op het
-  laatste scherm staat hij er weer.
+- **De link naar de volgende les staat alleen op het laatste scherm.**
+  Die link zegt ook "Volgende", was groter, en stond op 139 van de 226
+  schermen in beeld; wie erop klikte, sloeg de rest van de les over. Sinds
+  november 2026 staan Vorige en Volgende samen in één rij onderaan elk
+  tabblad (`data-les-verder`): Vorige gaat een stap of tabblad terug, en op
+  het eerste scherm naar de vorige les; Volgende op het laatste scherm naar
+  de volgende les. Eerst stond Vorige (de vorige les) onder het paneel, op
+  een andere hoogte dan Volgende, en op een pagina zonder tabbladen weer
+  naast hem. De vorige en de volgende les komen uit de paginator van
+  Docusaurus (`theme/DocPaginator`, een wikkel die ze in
+  `components/LesTabs/buren.ts` zet): `useDoc()` gooit in het gedeelde
+  pakket, dat een andere kopie van de docs-plugin ziet dan het thema. Ze
+  staan er dus pas na het laden. De rij blijft op een breed scherm één
+  regel: past hij niet (de smalle kolom naast de oefenterminal), dan eindigt
+  de naam bij Vorige op een beletselteken. De knop Volgende heeft
+  `data-les-volgende`, en `VOLGENDE_KNOP` vindt alleen hem: niet Vorige, en
+  niet de link naar de volgende les (een Enter daar verlaat de pagina).
+  Een les eindigt daarom niet met een regel "Door naar [les](…)": die zei
+  hetzelfde als de knop eronder, in 491 lessen van vijf cursussen
+  (`links-in-lestekst.test.ts`). Wijkt de weg af van de sidebar, zeg dan
+  waar je daarna verdergaat ("Na het hoofdstuk PageRank ga je verder met …").
 - **Het hele bestand na de les is het laatste tabblad** (`standTab`). Een
   `<details>` met de summary "Zo ziet je `main.py` er nu uit" wordt een
   tabblad `main.py` met het bestand open, werkvorm controleren. In de bron

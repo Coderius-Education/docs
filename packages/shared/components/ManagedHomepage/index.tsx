@@ -42,8 +42,8 @@ export default function ManagedHomepage({
         {frontMatter.image && <meta name="twitter:image" content={image} />}
         {frontMatter.keywords && <meta name="keywords" content={frontMatter.keywords.join(', ')} />}
       </Head>
-      {/* coderius-homepage: op deze pagina staat de footer compact, zodat alles
-          in één scherm past (packages/shared/css/custom.css). */}
+      {/* coderius-homepage: de homepage van een cursus, die met de footer in
+          één scherm past (huisstijl.test.ts). */}
       <div
         className={clsx(
           'coderius-homepage',

@@ -211,9 +211,25 @@ describe('de homepage van elke cursus past in één scherm', () => {
     expect(fout).toEqual([]);
   });
 
-  it('elke homepage draagt coderius-homepage, zodat de footer daar compact staat', () => {
+  it('de footer staat op elke pagina op één regel', () => {
+    // Eerst alleen op de homepage compact (94 pixels), en op een les 270:
+    // elke kolom met zijn titel onder elkaar, en de licentie in een zin.
     const custom = fs.readFileSync(path.join(__dirname, 'css', 'custom.css'), 'utf8');
-    expect(custom).toMatch(/html:has\(\.coderius-homepage\) \.footer__items/);
+    expect(custom).not.toMatch(/coderius-homepage\) \.footer/);
+    expect(custom).toMatch(
+      /\.coderius-footer__rij:not\(#\\#\):not\(#\\#\) \{[^}]*grid-template-columns: 1fr auto 1fr;/,
+    );
+    const footer = fs.readFileSync(path.join(__dirname, 'theme', 'Footer', 'index.jsx'), 'utf8');
+    expect(footer).toContain("useBaseUrl('/img/cc-by-nc.svg')");
+    expect(fs.existsSync(path.join(__dirname, 'static', 'img', 'cc-by-nc.svg'))).toBe(true);
+    // Geen site met een eigen footer: die schaduwt deze.
+    const eigen = alleSiteMappen()
+      .filter(({ dir }) => fs.existsSync(path.join(ROOT, dir, 'src', 'theme', 'Footer')))
+      .map(({ id }) => id);
+    expect(eigen).toEqual([]);
+  });
+
+  it('elke homepage draagt coderius-homepage', () => {
     // ManagedHomepage zet de klasse; elke homepage loopt daardoorheen.
     const managed = fs.readFileSync(
       path.join(__dirname, 'components', 'ManagedHomepage', 'index.tsx'),

@@ -141,16 +141,6 @@ describe('de route Online zetten', () => {
     expect(fout).toEqual([]);
   });
 
-  it('elke les linkt aan het eind naar de volgende, en de laatste naar de controlelijst van Veiligheid', () => {
-    const fout: string[] = [];
-    lessen.forEach((id, i) => {
-      const laatste = lees(id).trim().split('\n').pop() ?? '';
-      const doel = lessen[i + 1] ?? 'veiligheid/eigen-project';
-      if (!laatste.includes(`(site:fullstack/docs/${doel})`)) fout.push(`${id}: "${laatste}"`);
-    });
-    expect(fout).toEqual([]);
-  });
-
   it('Linux en git staan in hun eigen cursus: de startpagina noemt ze allebei', () => {
     expect(lees('online/index')).toContain('(site:linux/docs)');
     expect(lees('online/index')).toContain('(site:linux/docs/wsl/installeren)');

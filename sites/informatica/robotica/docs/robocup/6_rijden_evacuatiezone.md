@@ -38,5 +38,3 @@ Begin met willekeurig rijden en tel hoeveel ballen je robot in vijf minuten
 tegenkomt. Kies pas een slimmere strategie als die werkt.
 
 </details>
-
-Door naar [Ballen vinden](site:robotica/docs/robocup/vinden_van_ballen).
