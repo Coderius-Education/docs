@@ -272,11 +272,6 @@
   font-weight: 700;
 }
 
-.onder {
-  margin: 0.6rem 0 0;
-  font-size: 0.85rem;
-}
-
 /* Op een telefoon: titel en "vanaf les" op één regel, daaronder de rest. */
 @media (max-width: 600px) {
   .rij,

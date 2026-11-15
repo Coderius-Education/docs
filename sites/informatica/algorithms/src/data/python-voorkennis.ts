@@ -1,7 +1,8 @@
-// Data voor de conceptenkaart (/conceptenkaart): welke python-lessen zijn
-// voorkennis voor welk algoritme. Dit spiegelt de <Voorkennis>-blokken in
-// docs/**/*.mdx — src/data/voorkennis.test.ts bewaakt dat beide gelijk
-// blijven (pnpm test).
+// Welke python-lessen zijn voorkennis voor welk algoritme. Dit spiegelt de
+// <Voorkennis>-blokken in docs/**/*.mdx; src/data/voorkennis.test.ts bewaakt
+// dat beide gelijk blijven (pnpm test). De projectkiezer van de python-cursus
+// toont de algoritmes met deze gegevens (projectkiezer.test.ts daar). Tot
+// november 2026 tekende de pagina /conceptenkaart ze ook; die is weg.
 
 export type PythonConcept = {
   /** Korte sleutel, gebruikt in voorkennisPerAlgoritme. */
@@ -12,8 +13,7 @@ export type PythonConcept = {
   to: string;
 };
 
-// Volgorde = lesvolgorde in de python-cursus; bepaalt de verticale volgorde
-// van de linkerkolom op de kaart.
+// Volgorde = lesvolgorde in de python-cursus.
 export const pythonConcepten: PythonConcept[] = [
   { id: 'f-strings', label: 'F-strings', to: '/docs/tekst/04a-f-strings' },
   { id: 'if-else', label: 'If en else', to: '/docs/beslissen/05b-if-else' },
@@ -115,12 +115,13 @@ export const voorkennisPerAlgoritme: Record<string, string[]> = {
 };
 
 // De kern: per algoritme alleen de Python-concepten waar het algoritme echt
-// op draait. Dit tekent de kaart. voorkennisPerAlgoritme hierboven is alles
+// op draait: wat je met het algoritme oefent, in de projectkiezer van de
+// python-cursus. voorkennisPerAlgoritme hierboven is alles
 // wat de lessen als voorkennis noemen, ook bijzaken: max én min geeft zijn
 // twee uitkomsten terug als tuple, maar het algoritme gaat over twee
 // variabelen bijhouden in één loop, niet over tuples. Bij de sorteer-
 // algoritmes hoort de tuple wél bij de kern: de swap `a, b = b, a` is het
-// sorteren zelf. conceptenkaart.test.ts eist dat de kern een deel van de
+// sorteren zelf. python-voorkennis.test.ts eist dat de kern een deel van de
 // voorkennis is.
 export const kernPerAlgoritme: Record<string, string[]> = {
   'lineair-zoeken': ['if-else', 'for-loop', 'return', 'lijsten'],
@@ -137,8 +138,3 @@ export const kernPerAlgoritme: Record<string, string[]> = {
   hanoi: ['if-else', 'functies', 'return', 'lijsten'],
   pagerank: ['for-loop', 'while-loop', 'dictionaries', 'itereren-dicts'],
 };
-
-/** De concepten die in de kern van minstens één algoritme zitten, in lesvolgorde. */
-export const kernConcepten: PythonConcept[] = pythonConcepten.filter((c) =>
-  Object.values(kernPerAlgoritme).some((ids) => ids.includes(c.id)),
-);

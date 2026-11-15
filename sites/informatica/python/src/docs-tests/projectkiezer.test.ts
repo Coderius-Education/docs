@@ -7,7 +7,7 @@ import {
   kernPerAlgoritme,
   pythonConcepten,
   voorkennisPerAlgoritme,
-} from '../../../algorithms/src/data/conceptenkaart';
+} from '../../../algorithms/src/data/python-voorkennis';
 import { lessen } from '../data/lessen';
 import {
   type Activiteit,

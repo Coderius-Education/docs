@@ -1,4 +1,3 @@
-import SiteLink from '@coderius/shared/components/SiteLink';
 import { SITES_BY_ID, normalizeUrl } from '@coderius/shared/sites';
 import Link from '@docusaurus/Link';
 import TabItem from '@theme/TabItem';
@@ -243,15 +242,6 @@ function Groep({
             />
           ))}
         </div>
-      )}
-      {items.some((a) => a.soort === 'algoritme') && (
-        <p className={styles.onder}>
-          Hoe de algoritmes op de lessen voortbouwen, zie je op de{' '}
-          <SiteLink site="algorithms" to="/conceptenkaart">
-            conceptenkaart
-          </SiteLink>
-          .
-        </p>
       )}
     </>
   );

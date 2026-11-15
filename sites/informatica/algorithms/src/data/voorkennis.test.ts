@@ -3,10 +3,10 @@ import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { algoritmes } from './algorithms';
-import { pythonConcepten, voorkennisPerAlgoritme } from './conceptenkaart';
+import { pythonConcepten, voorkennisPerAlgoritme } from './python-voorkennis';
 
-// Bewaakt dat conceptenkaart.ts gelijk blijft aan de echte <Voorkennis>-
-// blokken in docs/**/*.mdx, en dat elke python-les die de kaart noemt
+// Bewaakt dat python-voorkennis.ts gelijk blijft aan de echte <Voorkennis>-
+// blokken in docs/**/*.mdx, en dat elke python-les die daar voorkennis is
 // terugwijst naar deze cursus. Stond eerst in scripts/check-voorkennis.mjs,
 // dat nergens in CI draaide. De vorm van de links bewaakt
 // packages/shared/links-in-lestekst.test.ts monorepo-breed; of doel en anker
@@ -39,7 +39,7 @@ function voorkennisUitDocs(): { perHoofdstuk: Map<string, Set<string>>; paden: S
   return { perHoofdstuk, paden };
 }
 
-describe('conceptenkaart.ts versus de <Voorkennis>-blokken in docs/', () => {
+describe('python-voorkennis.ts versus de <Voorkennis>-blokken in docs/', () => {
   const { perHoofdstuk, paden } = voorkennisUitDocs();
   const slugs = algoritmes.map((a) => a.slug).sort();
   const padPerId = new Map(pythonConcepten.map((c) => [c.id, c.to]));
@@ -54,7 +54,7 @@ describe('conceptenkaart.ts versus de <Voorkennis>-blokken in docs/', () => {
   });
 
   it.each([...perHoofdstuk.entries()])(
-    '%s: de kaart noemt precies de voorkennis uit de lessen',
+    '%s: de lijst noemt precies de voorkennis uit de lessen',
     (hoofdstuk, mdxPaden) => {
       const dataPaden = (voorkennisPerAlgoritme[hoofdstuk] ?? []).map((id) => {
         const pad = padPerId.get(id);
@@ -89,40 +89,11 @@ describe('de omgekeerde richting: python-lessen wijzen terug naar deze cursus', 
     '%s heeft een terugverwijzing',
     (_label, concept) => {
       const bron = padNaarBestand.get(concept.to);
-      expect(bron, `kaart-pad '${concept.to}' hoort bij geen python-les`).toBeDefined();
+      expect(bron, `pad '${concept.to}' hoort bij geen python-les`).toBeDefined();
       if (!bron) return;
       const inhoud = readFileSync(bron, 'utf8');
       expect(inhoud).toContain(TERUG_KOP);
       expect(inhoud).toContain('](site:algorithms/');
     },
   );
-});
-
-// Een python-les die de kaart noemt, zei "alle dertien algoritmes bouwen
-// hierop", terwijl de kaart er twee of acht toonde: sinds de kaart alleen de
-// kern tekent, loopt zo'n getal in de tekst stil uit de pas. Noem daar dus
-// geen aantal.
-describe('python-lessen noemen geen aantal algoritmes van de kaart', () => {
-  const AANTAL =
-    /\b(alle|van de)\s+(\d+|twee|drie|vier|vijf|zes|zeven|acht|negen|tien|elf|twaalf|dertien|veertien|vijftien)\b/i;
-  const bestanden = mdxBestanden(PYTHON_DOCS).filter((b) =>
-    readFileSync(b, 'utf8').includes('/conceptenkaart'),
-  );
-
-  it('vindt lessen die naar de kaart linken', () => {
-    expect(bestanden.length).toBeGreaterThan(2);
-  });
-
-  it.each(bestanden.map((b) => [relative(PYTHON_DOCS, b), b]))('%s', (_naam, bestand) => {
-    const alineas = readFileSync(bestand, 'utf8')
-      .split(/\n\s*\n/)
-      .filter((a) => a.includes('/conceptenkaart'));
-    for (const alinea of alineas) expect(alinea).not.toMatch(AANTAL);
-  });
-
-  it('de controle herkent de zin die misging', () => {
-    expect('laat zien dat alle dertien hierop bouwen').toMatch(AANTAL);
-    expect('tien van de dertien algoritmes').toMatch(AANTAL);
-    expect('zie je welke algoritmes op deze les draaien').not.toMatch(AANTAL);
-  });
 });

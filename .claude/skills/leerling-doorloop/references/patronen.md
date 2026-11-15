@@ -156,7 +156,7 @@ had gezien. Meer dan één: te veel. Nul uitleg en nul link: een bevinding.
 Controleer of de voorkennis-cursus het wel behandelt; `enumerate` stond in
 drie hoofdstukken en in geen enkele python-les.
 
-**Test.** De conceptenkaart-test (`voorkennis.test.ts`) bewaakt dat elke
+**Test.** De voorkennis-test (`voorkennis.test.ts`) bewaakt dat elke
 `<Voorkennis>`-link bestaat en terugwijst, niet dat de link er is.
 
 ## Fouten-pagina met de verkeerde fouten

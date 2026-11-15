@@ -5,18 +5,13 @@ import { siteDir } from '@coderius/shared/sites';
 import { lesBestaat } from '@coderius/shared/voorkennis';
 import { describe, expect, it } from 'vitest';
 import { algoritmes } from './algorithms';
-import {
-  kernConcepten,
-  kernPerAlgoritme,
-  pythonConcepten,
-  voorkennisPerAlgoritme,
-} from './conceptenkaart';
+import { kernPerAlgoritme, pythonConcepten, voorkennisPerAlgoritme } from './python-voorkennis';
 
-// Bewaakt de interne consistentie van de kaartdata en of alles waar ze naar
-// wijst op schijf bestaat. voorkennis.test.ts hiernaast vergelijkt de kaart
-// met de <Voorkennis>-blokken in de lessen; wat daar niet aan bod komt staat
-// hier: dubbele ids, een concept dat niemand gebruikt, een startPad naar een
-// hernoemde les, en de lesvolgorde die de linkerkolom van de kaart bepaalt.
+// Bewaakt de interne consistentie van python-voorkennis.ts en of alles waar
+// het naar wijst op schijf bestaat. voorkennis.test.ts hiernaast vergelijkt
+// de lijst met de <Voorkennis>-blokken in de lessen; wat daar niet aan bod
+// komt staat hier: dubbele ids, een concept dat niemand gebruikt, een
+// startPad naar een hernoemde les, en de lesvolgorde van de concepten.
 // Cross-site paden vallen buiten de linkcheck van `pnpm build`.
 
 // De repo-root: lesBestaat zoekt de map van een site zelf op in de registry.
@@ -62,8 +57,6 @@ describe('pythonConcepten', () => {
   });
 
   it('staat in de lesvolgorde van de python-cursus', () => {
-    // De lijst bepaalt de verticale volgorde van de linkerkolom; een concept
-    // op de verkeerde plek laat de lijnen op de kaart elkaar kruisen.
     const posities = pythonConcepten.map((c) => lesPositie(c.to)?.join('/') ?? `?${c.to}`);
     expect(posities).toEqual([...posities].sort());
   });
@@ -133,19 +126,13 @@ describe('kernPerAlgoritme', () => {
     expect(voorkennisPerAlgoritme['max-en-min']).toContain('tuples');
   });
 
-  it('de kaart laat voorkennis zonder kern weg, en elk getoond concept heeft een algoritme', () => {
-    // Een vaste lijst in plaats van de definitie van kernConcepten nog eens:
-    // f-strings of break staan in de voorkennis van een algoritme, maar geen
-    // algoritme draait erom, dus ze horen niet op de kaart.
-    const getoond = kernConcepten.map((c) => c.id);
+  it('voorkennis die een bijzaak is, hoort bij geen enkele kern', () => {
+    // F-strings of break staan in de voorkennis van een algoritme, maar geen
+    // algoritme draait erom: in de projectkiezer oefen je ze er niet mee.
+    const kern = new Set(Object.values(kernPerAlgoritme).flat());
     for (const id of ['f-strings', 'break', 'continue', 'lijst-methoden', 'parameters']) {
-      expect(getoond, id).not.toContain(id);
+      expect(kern.has(id), id).toBe(false);
       expect(Object.values(voorkennisPerAlgoritme).flat(), id).toContain(id);
     }
-    for (const id of getoond) {
-      const algoritmes = slugs.filter((slug) => kernPerAlgoritme[slug]?.includes(id));
-      expect(algoritmes.length, id).toBeGreaterThan(0);
-    }
-    expect(getoond).toEqual(pythonConcepten.map((c) => c.id).filter((id) => getoond.includes(id)));
   });
 });
