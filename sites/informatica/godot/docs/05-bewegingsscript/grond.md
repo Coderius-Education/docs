@@ -95,9 +95,6 @@ Deze les repareerde dus iets wat je niet kón zien zonder `print` — en dat is 
 
 ## Je script tot nu toe
 
-<details>
-<summary>Klik hier om te vergelijken</summary>
-
 ```gdscript
 extends CharacterBody2D
 
@@ -107,8 +104,6 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 ```
-
-</details>
 
 ## Er gaat iets mis
 
@@ -166,7 +161,3 @@ func _physics_process(delta: float) -> void:
 **Oplossing:** Elke regel die een blok opent eindigt op een dubbele punt, net als in Python.
 
 </details>
-
----
-
-← [Deel 3 — Delta](site:godot/docs/movement-delta) · **Volgende:** [Deel 5 — Lopen](site:godot/docs/movement-krachten) →

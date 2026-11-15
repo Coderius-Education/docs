@@ -1,6 +1,7 @@
 ---
 sidebar_position: 91
 slug: /meer-leren
+les_tabs: false
 ---
 
 # Wat nu?

@@ -79,9 +79,6 @@ Laat je de toets los, dan staat hij meteen stil. Dat komt doordat `direction` da
 
 ## Je script tot nu toe
 
-<details>
-<summary>Klik hier om te vergelijken</summary>
-
 ```gdscript
 extends CharacterBody2D
 
@@ -96,8 +93,6 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 ```
-
-</details>
 
 ## Opdracht 5.5.a: kies je eigen loopsnelheid
 
@@ -147,7 +142,3 @@ Ergens tussen `250.0` en `400.0` speelt een platformer meestal prettig. Noteer w
 **Oplossing:** De regel hoort te zijn: `velocity.x = direction * SPEED`. Met `.x` raak je alleen de horizontale snelheid aan.
 
 </details>
-
----
-
-← [Deel 4 — Je eerste if](site:godot/docs/movement-grond) · **Volgende:** [Deel 6 — Stoppen](site:godot/docs/movement-remmen) →

@@ -195,6 +195,8 @@
       "^Controlevraag$",
       "^Wanneer heb je deze stap gehaald\\?$",
       "^Zo ziet je .+ er nu uit$",
+      "^Je script tot nu toe$",
+      "^Je complete script$",
       "^Wat je nu ziet$"
     ],
     "tips": [

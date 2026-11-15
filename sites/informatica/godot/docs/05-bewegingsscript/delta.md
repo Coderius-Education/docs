@@ -93,9 +93,6 @@ Onthoud de vuistregel: **staat er een snelheid per seconde in je berekening, dan
 
 Deze les heeft er niets aan veranderd. Dat is de bedoeling: van de zeven delen is dit het enige waarin je geen regel toevoegt, maar er één beter begrijpt.
 
-<details>
-<summary>Klik hier om te vergelijken</summary>
-
 ```gdscript
 extends CharacterBody2D
 
@@ -104,8 +101,6 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 ```
-
-</details>
 
 ## Er gaat iets mis
 
@@ -136,7 +131,3 @@ func _ready() -> void:
 **Oplossing:** De regel hoort precies zo te luiden: `velocity += get_gravity() * delta`.
 
 </details>
-
----
-
-← [Deel 2 — Vallen](site:godot/docs/movement-motor) · **Volgende:** [Deel 4 — Je eerste if](site:godot/docs/movement-grond) →

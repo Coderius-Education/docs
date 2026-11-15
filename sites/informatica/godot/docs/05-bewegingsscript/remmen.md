@@ -99,9 +99,6 @@ Wat "nog nét bestuurbaar" is, hangt af van je level: hoe smaller je platforms, 
 
 ## Je script tot nu toe
 
-<details>
-<summary>Klik hier om te vergelijken</summary>
-
 ```gdscript
 extends CharacterBody2D
 
@@ -119,8 +116,6 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 ```
-
-</details>
 
 ## Er gaat iets mis
 
@@ -202,7 +197,3 @@ func _physics_process(delta: float) -> void:
 **Zelf vinden:** zet een `print("remmen")` vlak onder `if direction == 0:`. Zie je die regel nooit verschijnen als je de toets loslaat, dan wordt het remmen niet bereikt.
 
 </details>
-
----
-
-← [Deel 5 — Lopen](site:godot/docs/movement-krachten) · **Volgende:** [Deel 7 — Springen](site:godot/docs/movement-afsluiter) →

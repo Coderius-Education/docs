@@ -221,6 +221,50 @@ describe('groepeer', () => {
     expect(tabs(les(5)).some((t) => t.kort)).toBe(false);
   });
 
+  it('een lange rij stappen toont na de eerste ook alleen het nummer', () => {
+    // Het startmenu van Godot: Uitleg, Voorspel, zeven stappen, een opdracht
+    // en Er gaat iets mis stonden op 1280 pixels op twee regels. De stappen
+    // zijn daar tabbladen (`## Stap N`), net als bij de Lego-auto.
+    const les = (stappen: number, opdrachten: number) =>
+      groepeer([
+        titel,
+        kop(2, 'Voorspel: wat zie je?'),
+        ...Array.from({ length: stappen }, (_, i) => kop(2, `Stap ${i + 1}: doe iets`)),
+        ...Array.from({ length: opdrachten }, (_, i) => kop(2, `Opdracht 8.2.${'abcd'[i]}: iets`)),
+        kop(2, 'Er gaat iets mis'),
+      ]) as Knoop[];
+    const lang = tabs(les(7, 1));
+    expect(lang.map((t) => t.kort)).toEqual([
+      undefined,
+      undefined,
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      undefined,
+      undefined,
+    ]);
+    expect(lang[2].label).toBe('Stap 2');
+    // Stappen en opdrachten zijn elk een eigen reeks: drie stappen en drie
+    // opdrachten zijn samen geen reeks van zes.
+    expect(tabs(les(3, 3)).some((t) => t.kort)).toBe(false);
+    // Na vier stappen begint een reeks opdrachten weer voluit.
+    expect(tabs(les(4, 4)).map((t) => t.kort)).toEqual([
+      undefined,
+      undefined,
+      '2',
+      '3',
+      '4',
+      undefined,
+      '8.2.b',
+      '8.2.c',
+      '8.2.d',
+      undefined,
+    ]);
+  });
+
   it('het tabblad Uitleg krijgt een eigen id als een kop verderop Uitleg heet', () => {
     // De LED-pagina van robotica: uitleg vooraf (tabblad Uitleg) en onder Code
     // een stap `### Uitleg`. Allebei hadden het id "uitleg": wie op het

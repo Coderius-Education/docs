@@ -5,64 +5,41 @@ hide_table_of_contents: false
 
 # Docentenhandleiding
 
-Praktische informatie voor docenten die deze cursus klassikaal willen inzetten: wat de site is, welke randvoorwaarden er zijn, en hoe je de lessen indeelt.
+Een cursus 2D-gamedevelopment met Godot 4: je leerlingen bouwen een platformer met een level, een karakter, animaties, muntjes en een menu, en schrijven elk script zelf vanaf een leeg bestand. Hoe je ermee lesgeeft, bepaal je zelf.
 
-## Wat is dit?
+## Waar de lessen op steunen
 
-Een interactieve cursus **2D-gamedevelopment met Godot 4**: je leerlingen bouwen stap voor stap hun eerste speelbare game met sprites, GDScript, animaties en collisions. Doelgroep: leerlingen die een eigen game willen maken; programmeerervaring is handig maar niet vereist.
+Een les heeft vaste onderdelen. In de les zijn het de tabbladen; het icoon op een tabblad zegt welk onderdeel het is. Hieronder staat bij elk onderdeel de literatuur waarop het steunt; een link opent de uitleg bij [vakdidactiek](site:didactiek/).
 
-Veel handelingen zijn UI-acties in de Godot-editor, ondersteund met screenshots. GDScript volgt dezelfde conventies als Python, dus de overstap is klein.
+<Werkvormen
+  doet={{
+    uitleg: 'Eén nieuw idee: een node, een paneel van de editor of een paar regels GDScript, met een schermafbeelding of de code erbij.',
+    stap: 'Je leerlingen doen in Godot wat de stap voordoet: een node toevoegen, een eigenschap instellen of een paar regels typen. Na de laatste stap draait het spel weer.',
+    voorspellen: 'Je leerlingen zeggen wat het spel of de code gaat doen, voordat ze het antwoord openen of op Play drukken.',
+    aanpassen: 'Een gerichte opdracht in hun eigen project, met een tip en een oplossing. Vanaf hoofdstuk 6 heeft de oplossing vaker gaten.',
+    controle: 'Het hele script zoals het na de les hoort te zijn, om naast hun eigen script te leggen.',
+    fouten: 'Wat er in deze les misgaat: de melding van Godot als die er is, de oorzaak, de oplossing, en bij een fout zonder melding hoe ze hem zelf hadden kunnen vinden.',
+  }}
+/>
 
-**Je leerlingen schrijven elk script zelf, vanaf een leeg bestand.** Godot kan een kant-en-klaar bewegingsscript invullen; deze cursus doet dat bewust niet. Elke les voegt een paar regels toe, legt het concept erachter uit, en eindigt met een spel dat draait. Deel 3 is de uitzondering: daar komt er niets bij, maar onderzoeken leerlingen wat `delta` doet door het weg te halen. Daarnaast loopt de interactieve cursus [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/) van GDQuest mee: bij elke nieuwe regel staat welk lesnummer daar hetzelfde concept los oefent.
+## Wat je vooraf wilt weten
 
-## Technische randvoorwaarden
+- **Godot 4 op de computer.** Gratis, voor Windows, macOS en Linux, één download zonder installatieprogramma; [Installatie](site:godot/docs/installatie) zegt welke versie, en heeft een route voor een Chromebook. De site vraagt geen account, en Godot werkt daarna zonder internet.
+- **Het werk staat in de projectmap van de leerling**, niet op de site. [Je projectmap terugvinden](site:godot/docs/exporteren) leert hem die te vinden en in te leveren. Wie zijn project wil bewaren of delen, zet het in [git](site:editor/git).
+- **De lessen staan in volgorde in de lessenlijst.** Hoofdstuk 5 bouwt het bewegingsscript in zeven korte delen; naast elke nieuwe regel staat de les van [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/) die hetzelfde los oefent. GDScript lijkt op Python, en waar de [Python-cursus](site:python/) iets al uitlegt, wijst de les ernaar. Hoofdstuk 9 en 10 zijn voor wie een eigen spel maakt.
 
-| Wat | Antwoord |
-|---|---|
-| Operating system | Windows, macOS of Linux |
-| Software | Godot 4 (gratis; één download, geen installatie-rompslomp) |
-| Account | Niet nodig |
-| Internet | Vereist voor de site; Godot zelf werkt offline |
+## Naast de lessen
 
-## Didactische aanpak
+- [Nodes cheatsheet](site:godot/cheatsheet) en [GDScript-tips](site:godot/gdscript-tips): de naslag bij alle lessen.
+- [Conceptenkaart](site:godot/conceptenkaart): per leerlijn (editor, nodes en GDScript) in welke les een concept wordt uitgelegd en waar het terugkomt.
+- [Fouten zoeken](site:godot/docs/fouten-zoeken): de methode om een onbekende fout zelf terug te vinden. [Opdracht 5.7.b](site:godot/docs/movement-afsluiter) is de eerste zonder uitgewerkte oplossing; de les zegt dat zelf.
+- [Godot-versies](site:godot/docs/godot-versies): wat er anders is in een oudere of nieuwere Godot dan de cursus gebruikt.
 
-Elke les bouwt één stukje game op: je voegt een node of script toe, draait het spel, en kijkt of het doet wat je verwachtte. Laat je leerlingen voorspellen wat een aanpassing doet vóór ze op **Play** drukken — dat maakt het verband tussen code en gedrag zichtbaar.
+## Beoordelen
 
-Tips en uitwerkingen staan in `<details>`-blokken. Laat je leerlingen eerst zelf proberen.
+- [Leerdoelen](site:godot/leerdoelen): per niveau (1, 3 en 4) de concepten waarop je beoordeelt, met de les erbij, en hoe je er een cijfer van maakt.
+- [Game checken](site:godot/game-checken): je leerling uploadt zijn projectmap en ziet hoeveel bestanden hij heeft. Jij gebruikt [Game checken voor docenten](site:godot/game-checken-docent): kies het niveau en de denkvaardigheid die je zag, en het cijfer met de zin erbij komt in de PDF.
 
-De begeleiding neemt bewust af naarmate de cursus vordert. In hoofdstuk 1 tot en met 3 staat elke oplossing uitgeschreven; in hoofdstuk 6 en verder krijgen leerlingen code met gaten erin; en [Opdracht 5.7.b](site:godot/docs/movement-afsluiter) is de eerste zonder uitgewerkte oplossing. Dat wordt in de les zelf aangekondigd, zodat het niet als een omissie voelt. Wijs leerlingen die vastlopen op [Fouten zoeken](site:godot/docs/fouten-zoeken): daar staat de methode om een onbekende fout zelf terug te vinden.
+## Feedback
 
-**Tempo:** zelf typen kost meer tijd dan meelezen. Het bewegingsscript is opgeknipt in zeven korte delen die elk één of twee begrippen behandelen; reken op twee lesuren in plaats van één. Heb je die tijd niet, sla dan de opdrachten binnen die delen over — de zeven stappen zelf zijn de kern.
-
-## Klassikaal gebruik & differentiatie
-
-- **Plenair starten**: doe een nieuwe scene of node samen voor, daarna werken je leerlingen zelfstandig door.
-- **Snelle leerlingen** pakken de "spel-ideeën" en breiden hun game uit.
-- **Langzamere leerlingen** houden zich aan de kern-stappen; uitbreidingen zijn optioneel.
-- **Beoordelen**: laat leerlingen hun projectmap inleveren ([Je projectmap terugvinden](site:godot/docs/exporteren) leert ze die te vinden) en hun game presenteren. Exporteren naar een `.exe` staat op diezelfde pagina en is optioneel.
-- **Leerdoelen en cijfer**: [Leerdoelen](site:godot/leerdoelen) is het overzicht van de concepten waarop je beoordeelt, met een pagina per niveau (1, 3 en 4) en een vergelijking van de niveaus; onder elk concept staat de les waarin het aan bod komt. Onderaan staat [Beoordelen met Bloom](site:godot/leerdoelen#bloom), met de achtergrond bij vakdidactiek in [Denkvaardigheden volgens Bloom](site:didactiek/bronnen/taxonomie-van-bloom). Upload het project op [Game checken voor docenten](site:godot/game-checken-docent), kies bij Leerroute het niveau van de leerling, en kies onder **Cijfer** de denkvaardigheid die je zag. De moeilijkheid stelt de nakijker voor; klik erop om hem vast te leggen. Het cijfer en de zin erbij komen in de PDF.
-
-## Leerlijn
-
-De lessen lopen van installatie naar een complete game. Begin bij [Installatie](site:godot/docs/installatie); de [Nodes cheatsheet](site:godot/cheatsheet) en [GDScript-tips](site:godot/gdscript-tips) zijn naslag. De cursus verweeft drie leerlijnen (editor-handelingen, nodes en GDScript); de [Conceptenkaart](site:godot/conceptenkaart) heeft per leerlijn een kaart die laat zien in welke les een concept wordt uitgelegd en waar het daarna terugkomt.
-
-| Blok | Leerdoel |
-|---|---|
-| Aan de slag | Godot installeren en je project opzetten |
-| Editor leren kennen | Scenes, nodes en de interface |
-| Level bouwen | Een speelbaar level met sprites |
-| Je personage | Een speelbaar karakter en je eerste eigen script |
-| Het bewegingsscript bouwen | In zeven delen van een leeg script naar lopen en springen, en fouten leren zoeken |
-| Animaties | Sprites laten bewegen |
-| Signals & score | Gebeurtenissen en een scorebord |
-| Meer levels & menu | Scenes wisselen en een menu |
-| Uitdagende spel-ideeën | Een eigen spel bouwen met wat de cursus gaf |
-| Verder met GDScript | Eigen functies, lijsten, dictionaries, JSON en tweens; in de leerdoelen op elk niveau gevorderd of expert |
-
-## Versiebeheer
-
-Een Godot-project is een map met tekstbestanden en leent zich goed voor git. De cursus verplicht het niet, maar wijst ernaar bij het opslaan van de eerste scène en als vervolgstap op de "Wat nu?"-pagina. De volledige git-leerlijn (simulator, VS Code, GitHub, pull requests) staat op de [editor-site](site:editor/git) en is los van deze cursus te gebruiken.
-
-## Feedback & bijdragen
-
-Suggesties, fouten of nieuwe ideeën? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs). Alle bijdragen — van een typo tot een nieuwe les — zijn welkom.
+Een fout gevonden of een idee? Open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs).

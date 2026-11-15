@@ -255,7 +255,3 @@ Elke les in deze cursus eindigt met een blok **Er gaat iets mis** waarin de fout
 | Verder met GDScript | [Eigen functies](site:godot/docs/eigen_functies), [Lijsten](site:godot/docs/lijsten), [Dictionaries](site:godot/docs/dictionaries), [JSON](site:godot/docs/json_opslaan), [Tweens](site:godot/docs/tweens) |
 
 Losse code-voorbeelden staan in de [GDScript-tips](site:godot/gdscript-tips), en alle node-instellingen in de [Nodes cheatsheet](site:godot/cheatsheet).
-
----
-
-← [Deel 7 — Springen](site:godot/docs/movement-afsluiter) · **Volgende:** [Camera die de speler volgt](site:godot/docs/camera2d) →

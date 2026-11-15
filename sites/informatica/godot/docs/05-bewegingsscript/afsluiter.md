@@ -273,7 +273,3 @@ Zo weet je bij een fout meteen aan welke kant je moet zoeken: bij het uitlezen v
 **Oplossing:** Zet `and is_on_floor()` achter de check op de toets, zoals in Stap 2.
 
 </details>
-
----
-
-← [Deel 6 — Stoppen](site:godot/docs/movement-remmen) · **Volgende:** [Fouten zoeken](site:godot/docs/fouten-zoeken) →

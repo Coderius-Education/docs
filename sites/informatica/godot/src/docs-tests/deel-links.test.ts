@@ -50,7 +50,9 @@ describe('links naar een deel van het bewegingsscript', () => {
       }
     }
     expect(DELEN.size).toBe(7);
-    expect(gezien).toBeGreaterThan(10);
+    // De regel met de vorige en de volgende les onder elk deel is weg: de
+    // knoppen Vorige en Volgende doen dat nu. De links in de lestekst blijven.
+    expect(gezien).toBeGreaterThan(5);
     expect(fout).toEqual([]);
   });
 

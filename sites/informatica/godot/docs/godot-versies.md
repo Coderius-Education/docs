@@ -1,6 +1,7 @@
 ---
 sidebar_position: 92
 slug: /godot-versies
+les_tabs: false
 ---
 
 # Godot-versies & compatibiliteit

@@ -1720,28 +1720,31 @@ function groepeer(alles, { eenScherm = false } = {}) {
   ];
 }
 
-/** En zoveel opdrachten achter elkaar zijn een reeks. */
+/** En zoveel opdrachten of stappen achter elkaar zijn een reeks. */
 const REEKS_OPDRACHTEN = 4;
-const GENUMMERD = /^Opdracht (\d[\w.]*)$/;
+const GENUMMERD = /^(Opdracht|Stap) (\d[\w.]*)$/;
 
 /**
  * In een lange rij tabbladen met een reeks opdrachten ("Opdracht 5.7.a" tot en
  * met "5.7.h" in Code beter begrijpen: tien tabbladen op twee regels) staat
  * het woord Opdracht alleen op de eerste; de volgende tonen hun nummer
  * (`kort`). Het label blijft voor een schermlezer en de knop Volgende.
+ * Hetzelfde voor een reeks stappen ("Stap 1" tot en met "Stap 7" in het
+ * startmenu van Godot: elf tabbladen): Stap 1, 2, 3.
  *
  * @param {object[]} tabs
  */
 function korteOpdrachten(tabs) {
   if (tabs.length < VEEL_TABS) return;
-  const nummer = (tab) => GENUMMERD.exec(eigenschap(tab, 'label') ?? '')?.[1];
+  const delen = (tab) => GENUMMERD.exec(eigenschap(tab, 'label') ?? '');
   let begin = 0;
   while (begin < tabs.length) {
+    const soort = delen(tabs[begin])?.[1];
     let eind = begin;
-    while (eind < tabs.length && nummer(tabs[eind])) eind++;
+    while (eind < tabs.length && soort && delen(tabs[eind])?.[1] === soort) eind++;
     if (eind - begin >= REEKS_OPDRACHTEN) {
       for (const tab of tabs.slice(begin + 1, eind)) {
-        tab.attributes.push(attribuut('kort', nummer(tab)));
+        tab.attributes.push(attribuut('kort', delen(tab)[2]));
       }
     }
     begin = Math.max(eind, begin + 1);

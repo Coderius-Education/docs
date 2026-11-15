@@ -128,17 +128,12 @@ Wij bouwen beweging met botsingen, dus `_physics_process`. Deze tabel staat ook 
 
 ## Je script tot nu toe
 
-<details>
-<summary>Klik hier om te vergelijken</summary>
-
 ```gdscript
 extends CharacterBody2D
 
 func _physics_process(delta: float) -> void:
     move_and_slide()
 ```
-
-</details>
 
 ## Er gaat iets mis
 
@@ -204,7 +199,3 @@ func _physics_process(delta: float) -> void
 **Oplossing:** Elke functie-regel eindigt op een dubbele punt: `func _physics_process(delta: float) -> void:`. Net als in Python.
 
 </details>
-
----
-
-**Volgende:** [Deel 2 — Vallen](site:godot/docs/movement-motor) →

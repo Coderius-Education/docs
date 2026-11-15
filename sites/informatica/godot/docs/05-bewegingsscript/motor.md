@@ -83,9 +83,6 @@ Let op de volgorde: `move_and_slide()` blijft de **laatste** regel in de functie
 
 ## Je script tot nu toe
 
-<details>
-<summary>Klik hier om te vergelijken</summary>
-
 ```gdscript
 extends CharacterBody2D
 
@@ -94,8 +91,6 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 ```
-
-</details>
 
 ## Er gaat iets mis
 
@@ -140,7 +135,3 @@ func _physics_process(delta: float) -> void:
 **Oplossing:** Controleer dat er bovenaan `extends CharacterBody2D` staat.
 
 </details>
-
----
-
-← [Deel 1 — Een script dat draait](site:godot/docs/basis_movement_begrijpen) · **Volgende:** [Deel 3 — Delta](site:godot/docs/movement-delta) →

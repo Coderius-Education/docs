@@ -1,5 +1,5 @@
 import { createConfig } from '@coderius/shared/config';
-import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
+import { REPO_URL } from '@coderius/shared/sites';
 
 export default createConfig({
   title: 'Games met Godot — Coderius',
@@ -7,6 +7,10 @@ export default createConfig({
   siteId: 'godot',
   projectName: 'GoDot',
   matomoSiteId: 9,
+
+  // Elke ##-sectie van een les is een tabblad (zie de root-CLAUDE.md,
+  // Les-tabbladen); de inhoudsopgave rechts vervalt.
+  lesTabs: true,
 
   // @coderius/shared is de standaard; @coderius/checker levert de nakijk-validator.
   sharedPackages: ['@coderius/shared', '@coderius/checker'],
@@ -17,7 +21,6 @@ export default createConfig({
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: repoEditUrl('godot'),
         },
         blog: false,
       },
