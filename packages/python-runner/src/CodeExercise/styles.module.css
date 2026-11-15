@@ -242,3 +242,36 @@
   color: var(--ifm-color-emphasis-600);
   background: var(--ifm-color-emphasis-100);
 }
+
+/* De uitvoer van de oplossing, in het vak van het antwoord (Hulp.tsx). */
+[data-les-hulp] .output {
+  margin-top: 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-color);
+}
+
+.antwoordKnop {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  background: transparent;
+  color: var(--ifm-color-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.antwoordKnop:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Met de tip of de oplossing open krijgt die kolom de breedte die zijn
+   langste regel code nodig heeft (hulpBreedte), minstens de helft van het
+   veld; de code van de leerling krijgt de rest. */
+@media (min-width: 997px) {
+  .inTab.naastHulp {
+    grid-template-columns: minmax(0, 1fr) var(--hulp-breedte, 50%);
+  }
+}

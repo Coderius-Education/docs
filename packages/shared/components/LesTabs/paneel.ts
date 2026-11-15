@@ -40,6 +40,61 @@ export function useLesDoel(): ReactNode {
   return useContext(DoelContext);
 }
 
+/** De hulp bij een opdracht: de tip en het antwoord, elk als lestekst. */
+export type Hulp = {
+  tip?: ReactNode;
+  antwoord?: ReactNode;
+  /** Hoe de les het antwoord noemt: "oplossing" of "antwoord". */
+  naam?: string;
+  /** De code van het antwoord: het veld kan hem uitvoeren. */
+  code?: string;
+  /** De langste regel code in het antwoord, in tekens. */
+  tekens?: number;
+  /** De langste regel code in de tip, in tekens. */
+  tipTekens?: number;
+};
+
+/** De tip en het antwoord van de opdracht waar een oefenveld bij hoort.
+ *  <LesVeld> zet ze om het veld; het veld toont ze op de plek van de
+ *  uitvoer, naast de code van de leerling. */
+export const HulpContext = createContext<Hulp | null>(null);
+
+/** De hulp bij de opdracht waar dit oefenveld bij hoort, of null. */
+export function useLesHulp(): Hulp | null {
+  return useContext(HulpContext);
+}
+
+/**
+ * Een teken code in het vak, in pixels, met de letters op hun kleinst: past
+ * een regel niet, dan maakt pasCode de letters van het blok kleiner, tot 80%.
+ */
+const TEKEN_PX = 7;
+/** De ruimte om de code: de rand van het vak en die van het codeblok. */
+const RAND_PX = 56;
+/** De kolom met regelnummers van een codeblok (algoritmes). */
+const NUMMERS_PX = 36;
+/** Meer dan dit deel van het veld krijgt de hulp niet: de code blijft te zien. */
+const MEESTE_DEEL = 0.7;
+
+/**
+ * Hoe breed de kolom met de tip of het antwoord is, in pixels: zo breed als
+ * de langste regel code erin nodig heeft (`tekens`, uit de build), minstens
+ * `minDeel` van het veld en hoogstens zeventig procent. De code van de
+ * leerling levert in, zolang de hulp open staat: in een kolom van 418 pixels
+ * was van een antwoord met een regel van 64 tekens het eind afgesneden, en
+ * bij de helft van de antwoorden van web past de langste regel niet in de
+ * kolom van het voorbeeld. Onder de code zetten hielp niet: in een veld van
+ * driehonderd pixels bleef er voor het antwoord één regel over.
+ */
+export function hulpBreedte(
+  tekens: number | undefined,
+  veld: number,
+  { minDeel = 0.5, nummers = false }: { minDeel?: number; nummers?: boolean } = {},
+): number {
+  const nodig = tekens ? tekens * TEKEN_PX + RAND_PX + (nummers ? NUMMERS_PX : 0) : 0;
+  return Math.round(Math.min(veld * MEESTE_DEEL, Math.max(veld * minDeel, nodig)));
+}
+
 /** Het attribuut op het paneel van een tabblad, met zijn id als waarde. */
 export const LES_TAB = 'data-les-tab';
 

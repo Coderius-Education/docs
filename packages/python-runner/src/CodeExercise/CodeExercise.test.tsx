@@ -1,5 +1,10 @@
 import { readFileSync } from 'node:fs';
-import { DoelContext, PaneelContext } from '@coderius/shared/components/LesTabs/paneel';
+import {
+  DoelContext,
+  type Hulp,
+  HulpContext,
+  PaneelContext,
+} from '@coderius/shared/components/LesTabs/paneel';
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type React from 'react';
@@ -373,5 +378,106 @@ describe('de verwachte uitvoer in de uitvoerkolom', () => {
     const css = readFileSync('packages/python-runner/src/CodeExercise/styles.module.css', 'utf8');
     expect(css).toMatch(/\.doel pre code\s*\{[^}]*white-space:\s*pre-wrap/);
     expect(css).toMatch(/\.output\s*\{[^}]*white-space:\s*pre-wrap/);
+  });
+});
+
+describe('de tip en de oplossing in het veld', () => {
+  // Issue 212: als uitklapblok onder het veld kreeg een open oplossing alleen
+  // de ruimte die het veld overliet, soms twee regels. Nu staan tip en
+  // oplossing op de plek van de uitvoer, en blijft de code van de leerling
+  // ernaast staan (LesVeld zet de hulp om het veld).
+  const hulp: Hulp = {
+    tip: <p>Gebruik range.</p>,
+    antwoord: <p>Zo kan het.</p>,
+    naam: 'oplossing',
+    code: 'print("goed")',
+  };
+  const metHulp = (h: Hulp = hulp) =>
+    render(
+      <PaneelContext.Provider value={() => {}}>
+        <HulpContext.Provider value={h}>
+          <CodeExercise>{'# Schrijf hier je code'}</CodeExercise>
+        </HulpContext.Provider>
+      </PaneelContext.Provider>,
+    );
+  const ingedrukt = () =>
+    screen
+      .getAllByRole('button')
+      .filter((b) => b.getAttribute('aria-pressed') === 'true')
+      .map((b) => b.textContent);
+  /** Of de tekst nu te zien is: geen voorouder is `hidden`. */
+  const teZien = (tekst: string | RegExp) => !screen.getByText(tekst).closest('[hidden]');
+
+  it('zonder hulp heeft het veld geen knoppen Tip en Oplossing', async () => {
+    render(<CodeExercise>{'print(1)'}</CodeExercise>);
+    await wachtTotGeladen();
+    expect(screen.queryByRole('button', { name: 'Tip' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Uitvoer' })).toBeNull();
+  });
+
+  it('begint bij de uitvoer; tip en oplossing zijn dicht maar staan in de pagina', async () => {
+    metHulp();
+    await wachtTotGeladen();
+    expect(ingedrukt()).toEqual(['Uitvoer']);
+    expect(teZien(/De uitvoer verschijnt hier/)).toBe(true);
+    expect(teZien('Gebruik range.')).toBe(false);
+    expect(teZien('Zo kan het.')).toBe(false);
+  });
+
+  it('een klik op Tip of Oplossing toont die, en de code van de leerling blijft staan', async () => {
+    metHulp();
+    await wachtTotGeladen();
+    fireEvent.change(editor(), { target: { value: 'print("eigen")' } });
+    fireEvent.click(knop('Tip'));
+    expect(ingedrukt()).toEqual(['Tip']);
+    expect(teZien('Gebruik range.')).toBe(true);
+    expect(teZien(/De uitvoer verschijnt hier/)).toBe(false);
+    // De les noemt het antwoord een oplossing: zo heet de knop ook.
+    fireEvent.click(knop('Oplossing'));
+    expect(ingedrukt()).toEqual(['Oplossing']);
+    expect(teZien('Zo kan het.')).toBe(true);
+    expect(teZien('Gebruik range.')).toBe(false);
+    expect(editor().value).toBe('print("eigen")');
+  });
+
+  it('Voer de oplossing uit draait de oplossing, niet de code van de leerling', async () => {
+    const { container } = metHulp();
+    await wachtTotGeladen();
+    fireEvent.change(editor(), { target: { value: 'print("eigen")' } });
+    nep.volgende = { stdout: 'eigen\n' };
+    fireEvent.click(knop(/Uitvoeren/));
+    await waitFor(() => expect(container.textContent).toContain('eigen\n'));
+    fireEvent.click(knop('Oplossing'));
+    nep.volgende = { stdout: 'goed\n' };
+    fireEvent.click(knop(/Voer de oplossing uit/));
+    await waitFor(() => expect(screen.getByText('goed')).toBeTruthy());
+    expect(nep.runs.at(-1)).toContain('print("goed")');
+    // De eigen code en de eigen uitvoer staan er nog.
+    expect(editor().value).toBe('print("eigen")');
+    fireEvent.click(knop('Uitvoer'));
+    const vak = container.querySelector('[class*="resultaat"]') as HTMLElement;
+    const uitvoer = Array.from(vak.querySelectorAll('pre')).filter(
+      (pre) => !pre.closest('[hidden]'),
+    );
+    expect(uitvoer.map((pre) => pre.textContent)).toEqual(['eigen\n']);
+  });
+
+  it('Uitvoeren gaat terug naar de uitvoer', async () => {
+    metHulp();
+    await wachtTotGeladen();
+    fireEvent.click(knop('Tip'));
+    nep.volgende = { stdout: '1\n' };
+    fireEvent.click(knop(/Uitvoeren/));
+    await waitFor(() => expect(ingedrukt()).toEqual(['Uitvoer']));
+  });
+
+  it('een antwoord zonder code heeft geen knop om het uit te voeren', async () => {
+    metHulp({ antwoord: <p>Het is 12.</p>, naam: 'antwoord' });
+    await wachtTotGeladen();
+    // Zonder tip is er ook geen knop Tip.
+    expect(screen.queryByRole('button', { name: 'Tip' })).toBeNull();
+    fireEvent.click(knop('Antwoord'));
+    expect(teZien('Het is 12.')).toBe(true);
+    expect(screen.queryByRole('button', { name: /Voer/ })).toBeNull();
   });
 });

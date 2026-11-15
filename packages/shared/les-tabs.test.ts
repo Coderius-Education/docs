@@ -3004,3 +3004,159 @@ describe('het meetscript (scripts/meet-les-tabs.mjs)', () => {
     for (const veld of ['naOpen', 'naOpenBlok', 'naAllesOpen']) expect(code).toContain(veld);
   });
 });
+
+describe('de tip en de oplossing staan in het oefenveld', () => {
+  // Issue 212: een open oplossing onder het veld kreeg alleen de ruimte die
+  // het veld overliet, bij opdracht 6a.3 van python twee regels. In het veld
+  // staan tip en oplossing op de plek van de uitvoer, naast de code van de
+  // leerling.
+  const { hulpInVeld } = require('./plugins/les-tabs.js');
+  const code = (value: string): Knoop => ({ type: 'code', value });
+  const veld = (start = '# Schrijf hier je code'): Knoop => ({
+    type: 'mdxJsxFlowElement',
+    name: 'CodeExercise',
+    children: [{ type: 'mdxFlowExpression', value: `\`${start}\`` }],
+  });
+  const blok = (summary: string, ...inhoud: Knoop[]): Knoop => ({
+    type: 'mdxJsxFlowElement',
+    name: 'details',
+    children: [
+      { type: 'mdxJsxFlowElement', name: 'summary', children: [alinea(summary)] },
+      ...inhoud,
+    ],
+  });
+  const merk: Knoop = { type: 'mdxFlowExpression', value: '/* niet-draaien: valt om */' };
+  const namen = (nodes: Knoop[]) => nodes.map((n) => n.name ?? n.type);
+  const attr = (node: Knoop, naam: string) => node.attributes?.find((a) => a.name === naam)?.value;
+  const antwoord = 'for i in range(10):\n    print(i)';
+
+  it('de tip en de oplossing na het veld gaan het veld in', () => {
+    const hetVeld = veld();
+    const uit = hulpInVeld([
+      alinea('Print de tafel van 2.'),
+      hetVeld,
+      blok('Klik hier voor een tip.', alinea('Gebruik range.')),
+      blok('Klik hier voor de oplossing.', code(antwoord), alinea('Zo werkt het.')),
+      alinea('Daarna.'),
+    ]);
+    expect(namen(uit)).toEqual(['paragraph', 'LesVeld', 'paragraph']);
+    const [eerste, tip, oplossing] = uit[1].children;
+    expect([attr(tip, 'soort'), attr(tip, 'naam')]).toEqual(['tip', 'tip']);
+    expect(namen(tip.children)).toEqual(['paragraph']);
+    expect([attr(oplossing, 'soort'), attr(oplossing, 'naam')]).toEqual(['antwoord', 'oplossing']);
+    // De code gaat ook als tekst mee: het veld kan de oplossing uitvoeren.
+    expect(attr(oplossing, 'code')).toBe(antwoord);
+    expect(namen(oplossing.children)).toEqual(['code', 'paragraph']);
+    // Het veld blijft dezelfde node, vóór zijn hulp: een oplossing die
+    // "hierboven" zegt, wijst naar de code in het veld.
+    expect(eerste).toBe(hetVeld);
+  });
+
+  it('een oefenveld in de oplossing met dezelfde code vervalt', () => {
+    // De knop Voer de oplossing uit doet wat dat tweede veld deed.
+    const uit = hulpInVeld([
+      veld(),
+      blok('Klik hier voor de oplossing.', code(antwoord), veld(antwoord)),
+    ]);
+    expect(namen(uit[0].children[1].children)).toEqual(['code']);
+  });
+
+  it('een fragment dat niet los draait, gaat niet als code mee', () => {
+    // De knop Voer de oplossing uit gaf er een NameError mee.
+    for (const marker of ['niet-draaien: leunt op het blok erboven', 'draaien-met: blok-erboven']) {
+      const uit = hulpInVeld([
+        veld(),
+        blok(
+          'Klik hier voor de oplossing.',
+          { type: 'mdxFlowExpression', value: `/* ${marker} */` },
+          code('print(totaal)'),
+        ),
+      ]);
+      const oplossing = uit[0].children[1];
+      expect(namen(oplossing.children)).toEqual(['mdxFlowExpression', 'code']);
+      expect(attr(oplossing, 'code'), marker).toBeUndefined();
+    }
+    // Een andere marker (het doelplaatje van een turtle-opdracht) hindert niet.
+    const turtle = hulpInVeld([
+      veld(),
+      blok(
+        'Klik hier voor de oplossing.',
+        { type: 'mdxFlowExpression', value: '/* turtle-plaatje: img/stap-1.svg */' },
+        code(antwoord),
+      ),
+    ]);
+    expect(attr(turtle[0].children[1], 'code')).toBe(antwoord);
+  });
+
+  it('een oplossing met een ander oefenveld blijft een uitklapblok', () => {
+    const uit = hulpInVeld([
+      veld(),
+      blok('Klik hier voor de oplossing.', code(antwoord), veld('print("anders")')),
+    ]);
+    expect(namen(uit)).toEqual(['CodeExercise', 'details']);
+  });
+
+  it('het doel van de opdracht blijft in het veld, en een commentaar blijft staan', () => {
+    const doel: Knoop = { type: 'mdxJsxFlowElement', name: 'LesDoel', children: [code('1')] };
+    const metDoel: Knoop = {
+      type: 'mdxJsxFlowElement',
+      name: 'LesVeld',
+      children: [doel, veld()],
+    };
+    const uit = hulpInVeld([metDoel, merk, blok('Antwoord', alinea('Het is 1.'))]);
+    expect(namen(uit)).toEqual(['LesVeld', 'mdxFlowExpression']);
+    expect(namen(uit[0].children)).toEqual(['LesDoel', 'CodeExercise', 'LesHulp']);
+    expect(attr(uit[0].children[2], 'naam')).toBe('antwoord');
+    // Zonder codeblok is er niets om uit te voeren.
+    expect(attr(uit[0].children[2], 'code')).toBeUndefined();
+  });
+
+  it('een uitklapblok dat geen tip of oplossing is, of niet direct na het veld staat, blijft', () => {
+    const achtergrond = blok('Achtergrond: hoe range werkt', alinea('Tekst.'));
+    expect(namen(hulpInVeld([veld(), achtergrond]))).toEqual(['CodeExercise', 'details']);
+    const later = [veld(), alinea('Tussendoor.'), blok('Klik hier voor een tip.', alinea('Tip.'))];
+    expect(namen(hulpInVeld(later))).toEqual(['CodeExercise', 'paragraph', 'details']);
+  });
+
+  it('de build zet ze in het veld: de uitklapblokken zijn weg', async () => {
+    const bron = [
+      '# Les',
+      '',
+      '## Uitleg van print',
+      '',
+      'Uitleg.',
+      '',
+      '## Opdracht 1: Print',
+      '',
+      'Print 1.',
+      '',
+      '<CodeExercise>{`# code`}</CodeExercise>',
+      '',
+      '<details>',
+      '<summary>Klik hier voor de oplossing.</summary>',
+      '',
+      '```python',
+      'print(1)',
+      '```',
+      '',
+      '</details>',
+    ].join('\n');
+    const metIds = () => (tree: Knoop) => {
+      for (const n of tree.children ?? []) {
+        if (n.type === 'heading')
+          n.data = { id: (n.children?.[0]?.value ?? '').toLowerCase().replace(/\W+/g, '-') };
+      }
+    };
+    const bouw = async (frontMatter: object = {}) =>
+      String(
+        await compile(
+          { value: bron, data: { frontMatter } },
+          { remarkPlugins: [metIds, remarkLesTabs] },
+        ),
+      );
+    const uit = await bouw();
+    expect(uit).toContain('LesHulp');
+    expect(uit).toContain('code: "print(1)"');
+    expect(uit).not.toContain('details');
+  });
+});

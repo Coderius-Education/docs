@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { breedsteGroot, getekend } from './Vergroot';
 import LesTabs, {
   LesDoel,
+  LesHulp,
   LesLeerdoel,
   LesReeks,
   LesStap,
@@ -15,7 +16,7 @@ import LesTabs, {
   VOLGENDE_KNOP,
   useInLesTab,
 } from './index';
-import { useLesDoel } from './paneel';
+import { useLesDoel, useLesHulp } from './paneel';
 import { pasCode } from './pasCode';
 import { MARGE, schuifInRij } from './schuifRij';
 
@@ -1039,6 +1040,79 @@ describe('LesVeld', () => {
   it('een veld zonder LesVeld heeft geen doel', () => {
     const { container } = render(<Veld />);
     expect(container.querySelector('[data-uitvoer]')?.textContent).toBe('');
+  });
+
+  describe('met de tip en het antwoord van de opdracht', () => {
+    // Issue 212: tip en antwoord staan in het veld, niet eronder.
+    function VeldMetHulp() {
+      const doel = useLesDoel();
+      const hulp = useLesHulp();
+      return (
+        <div data-veld="">
+          <div data-uitvoer="">{doel}</div>
+          <div data-tip="">{hulp?.tip}</div>
+          <div data-antwoord="" data-naam={hulp?.naam} data-code={hulp?.code}>
+            {hulp?.antwoord}
+          </div>
+        </div>
+      );
+    }
+    const tekst = (container: HTMLElement, naam: string) =>
+      container.querySelector(`[data-${naam}]`)?.textContent;
+
+    it('geeft ze aan het veld, naast het doel, en zet zelf niets neer', () => {
+      const { container } = render(
+        <section>
+          <LesVeld>
+            <LesDoel>
+              <pre>12</pre>
+            </LesDoel>
+            <LesHulp soort="tip" naam="tip">
+              <p>Gebruik range.</p>
+            </LesHulp>
+            <LesHulp soort="antwoord" naam="oplossing" code="print(12)">
+              <p>Zo kan het.</p>
+            </LesHulp>
+            <VeldMetHulp />
+          </LesVeld>
+        </section>,
+      );
+      const sectie = container.querySelector('section') as HTMLElement;
+      expect(Array.from(sectie.children).map((el) => el.hasAttribute('data-veld'))).toEqual([true]);
+      expect(tekst(container, 'uitvoer')).toBe('12');
+      expect(tekst(container, 'tip')).toBe('Gebruik range.');
+      expect(tekst(container, 'antwoord')).toBe('Zo kan het.');
+      const antwoord = container.querySelector('[data-antwoord]') as HTMLElement;
+      expect(antwoord.dataset.naam).toBe('oplossing');
+      expect(antwoord.dataset.code).toBe('print(12)');
+    });
+
+    it('een veld met alleen hulp heeft geen doel', () => {
+      const { container } = render(
+        <LesVeld>
+          <LesHulp soort="antwoord" naam="antwoord">
+            <p>Het is 12.</p>
+          </LesHulp>
+          <VeldMetHulp />
+        </LesVeld>,
+      );
+      expect(tekst(container, 'uitvoer')).toBe('');
+      expect(tekst(container, 'tip')).toBe('');
+      expect(tekst(container, 'antwoord')).toBe('Het is 12.');
+    });
+
+    it('een veld zonder hulp krijgt er geen', () => {
+      const { container } = render(
+        <LesVeld>
+          <LesDoel>
+            <pre>12</pre>
+          </LesDoel>
+          <VeldMetHulp />
+        </LesVeld>,
+      );
+      expect(tekst(container, 'uitvoer')).toBe('12');
+      expect(tekst(container, 'antwoord')).toBe('');
+    });
   });
 });
 

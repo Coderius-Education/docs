@@ -1,4 +1,6 @@
 import { useInLesTab } from '@coderius/shared/components/LesTabs';
+import { HulpKeuze, HulpVak, type Weergave } from '@coderius/shared/components/LesTabs/Hulp';
+import { hulpBreedte, useLesHulp } from '@coderius/shared/components/LesTabs/paneel';
 import { bevestig } from '@coderius/shared/dialoog';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, {
@@ -134,10 +136,18 @@ function CodeEditorInner({
   // een veld dat anders gestapeld is, en krijgt het veld de hoogte die op het
   // scherm overblijft (pasHoogte.ts). Buiten een tabblad verandert er niets.
   const inTab = useInLesTab();
+  // De tip en het antwoord van de opdracht staan op de plek van het voorbeeld
+  // (Hulp.tsx, <LesVeld> zet ze om het veld): de code van de leerling blijft
+  // ernaast staan. Als uitklapblok onder het veld kreeg een open antwoord
+  // alleen de ruimte die het veld overliet. Een antwoord is hier vaak een
+  // fragment, dus het veld voert het niet uit.
+  const hulp = useLesHulp();
+  const [weergave, setWeergave] = useState<Weergave>('uitvoer');
   const breed = useBreed();
   const naastElkaar = inTab && breed;
   const gestapeld = stacked && !naastElkaar;
   const [passend, setPassend] = useState<number | null>(null);
+  const [veldBreedte, setVeldBreedte] = useState<number | null>(null);
   useLayoutEffect(() => {
     const werkvlak = werkvlakRef.current;
     const paneel = werkvlak?.closest<HTMLElement>('[data-les-tab]');
@@ -145,6 +155,7 @@ function CodeEditorInner({
     // en hij blijft staan voor als het veld weer sluit.
     if (!naastElkaar || groot || !werkvlak || !paneel) return;
     const meet = () => {
+      if (werkvlak.clientWidth > 0) setVeldBreedte(werkvlak.clientWidth);
       const ruimte = meetRuimte(werkvlak, paneel, Number.parseInt(height, 10));
       if (ruimte) setPassend(pasHoogte(ruimte));
     };
@@ -160,6 +171,17 @@ function CodeEditorInner({
     };
   }, [naastElkaar, groot, height]);
   const hoogte = naastElkaar && passend !== null ? `${passend}px` : height;
+  // Met de tip of het antwoord open krijgt die kolom de breedte die zijn
+  // langste regel code nodig heeft, minstens de veertig procent van het
+  // voorbeeld: de code van de leerling levert in. Bij de helft van de
+  // antwoorden was het eind van een regel anders afgesneden. Op Groter en
+  // gestapeld heeft de kolom de ruimte al.
+  const hulpKolom =
+    weergave !== 'uitvoer' && naastElkaar && !groot && veldBreedte !== null
+      ? hulpBreedte(weergave === 'tip' ? hulp?.tipTekens : hulp?.tekens, veldBreedte, {
+          minDeel: 0.4,
+        })
+      : null;
 
   // Op Groter en volledig scherm is de les niet meer te zien, en dus ook de
   // opdracht niet die boven het veld staat. Het veld leest hem dan uit de
@@ -219,6 +241,7 @@ function CodeEditorInner({
   }, [debouncedHtml, debouncedCss, debouncedJs, livePreview, veldId]);
 
   const handleRun = useCallback(() => {
+    setWeergave('uitvoer');
     setConsoleLogs([]);
     setSrcDoc(buildDoc(html, css, js, veldId));
     // Ongewijzigde code geeft dezelfde srcDoc, en dan laadde het voorbeeld
@@ -489,67 +512,99 @@ function CodeEditorInner({
             )}
           </div>
         </div>
-        <div className={styles.previewColumn} style={gestapeld ? undefined : { height: hoogte }}>
-          <PreviewPane
-            srcDoc={srcDoc}
-            // Een veld met een Run-knop begint met een leeg voorbeeld.
-            wachtOpRun={!livePreview && srcDoc === ''}
-            innerRef={iframeRef}
-            weg={weg}
-            onTerug={herlaadEigenPagina}
-            versie={versie}
-            // Gestapeld eindigt het voorbeeld waar zijn inhoud eindigt, zodat een
-            // veld met twee regels uitvoer geen half scherm beslaat. Uitgeklapt
-            // is dat juist verkeerd: dan bleef het voorbeeld 160px hoog terwijl
-            // er 450px voor hem klaarstond.
-            hoogte={
-              gestapeld && !groot
-                ? `${Math.min(Math.max(previewInhoud ?? 160, 100), Number.parseInt(previewHeight, 10))}px`
-                : undefined
-            }
-          />
-          <div className={`${styles.consolePanel} ${consoleOpen ? '' : styles.consolePanelDicht}`}>
-            <div className={styles.consolePanelHeader}>
-              <button
-                type="button"
-                className={styles.consoleToggle}
-                onClick={() => setConsoleOpen((open) => !open)}
-                aria-expanded={consoleOpen}
-                title={consoleOpen ? 'Console inklappen' : 'Console openklappen'}
-              >
-                <span aria-hidden="true">{consoleOpen ? '\u25BE' : '\u25B8'}</span> Console
-                {!consoleOpen && consoleLogs.length > 0 && ` (${consoleLogs.length})`}
-              </button>
-              {consoleOpen && consoleLogs.length > 0 && (
-                <button
-                  type="button"
-                  className={styles.consoleClear}
-                  onClick={() => setConsoleLogs([])}
-                >
-                  wissen
-                </button>
-              )}
-            </div>
-            {consoleOpen && (
-              <div className={styles.consolePanelBody} ref={consoleBodyRef}>
-                {consoleLogs.length === 0 ? (
-                  <span className={styles.consolePlaceholder}>
-                    {jsGezien
-                      ? 'Nog geen uitvoer. Gebruik console.log() om hier iets te tonen.'
-                      : 'Nog geen JavaScript in deze pagina. Gebruik je console.log(), dan verschijnt de uitvoer hier.'}
-                  </span>
-                ) : (
-                  consoleLogs.map((log, i) => (
-                    <div
-                      key={`${i}-${log.text}`}
-                      className={`${styles.consoleLine} ${styles[`consoleLevel_${log.level}`]}`}
-                    >
-                      {log.text}
-                    </div>
-                  ))
+        <div
+          className={styles.previewColumn}
+          style={
+            gestapeld
+              ? undefined
+              : hulpKolom === null
+                ? { height: hoogte }
+                : { height: hoogte, flex: `0 0 ${hulpKolom}px` }
+          }
+        >
+          {hulp && (
+            <>
+              <HulpKeuze hulp={hulp} weergave={weergave} kies={setWeergave} eerste="Voorbeeld" />
+              <div className={styles.hulpKolom} hidden={weergave === 'uitvoer'}>
+                {hulp.tip && (
+                  <HulpVak soort="tip" open={weergave === 'tip'}>
+                    {hulp.tip}
+                  </HulpVak>
+                )}
+                {hulp.antwoord && (
+                  <HulpVak soort="antwoord" open={weergave === 'antwoord'}>
+                    {hulp.antwoord}
+                  </HulpVak>
                 )}
               </div>
-            )}
+            </>
+          )}
+          {/* Het voorbeeld en de console blijven staan als de tip of het
+              antwoord open is: het voorbeeld laadt dan niet opnieuw. */}
+          <div className={styles.voorbeeldVak} hidden={hulp !== null && weergave !== 'uitvoer'}>
+            <PreviewPane
+              srcDoc={srcDoc}
+              // Een veld met een Run-knop begint met een leeg voorbeeld.
+              wachtOpRun={!livePreview && srcDoc === ''}
+              innerRef={iframeRef}
+              weg={weg}
+              onTerug={herlaadEigenPagina}
+              versie={versie}
+              // Gestapeld eindigt het voorbeeld waar zijn inhoud eindigt, zodat een
+              // veld met twee regels uitvoer geen half scherm beslaat. Uitgeklapt
+              // is dat juist verkeerd: dan bleef het voorbeeld 160px hoog terwijl
+              // er 450px voor hem klaarstond.
+              hoogte={
+                gestapeld && !groot
+                  ? `${Math.min(Math.max(previewInhoud ?? 160, 100), Number.parseInt(previewHeight, 10))}px`
+                  : undefined
+              }
+            />
+            <div
+              className={`${styles.consolePanel} ${consoleOpen ? '' : styles.consolePanelDicht}`}
+            >
+              <div className={styles.consolePanelHeader}>
+                <button
+                  type="button"
+                  className={styles.consoleToggle}
+                  onClick={() => setConsoleOpen((open) => !open)}
+                  aria-expanded={consoleOpen}
+                  title={consoleOpen ? 'Console inklappen' : 'Console openklappen'}
+                >
+                  <span aria-hidden="true">{consoleOpen ? '\u25BE' : '\u25B8'}</span> Console
+                  {!consoleOpen && consoleLogs.length > 0 && ` (${consoleLogs.length})`}
+                </button>
+                {consoleOpen && consoleLogs.length > 0 && (
+                  <button
+                    type="button"
+                    className={styles.consoleClear}
+                    onClick={() => setConsoleLogs([])}
+                  >
+                    wissen
+                  </button>
+                )}
+              </div>
+              {consoleOpen && (
+                <div className={styles.consolePanelBody} ref={consoleBodyRef}>
+                  {consoleLogs.length === 0 ? (
+                    <span className={styles.consolePlaceholder}>
+                      {jsGezien
+                        ? 'Nog geen uitvoer. Gebruik console.log() om hier iets te tonen.'
+                        : 'Nog geen JavaScript in deze pagina. Gebruik je console.log(), dan verschijnt de uitvoer hier.'}
+                    </span>
+                  ) : (
+                    consoleLogs.map((log, i) => (
+                      <div
+                        key={`${i}-${log.text}`}
+                        className={`${styles.consoleLine} ${styles[`consoleLevel_${log.level}`]}`}
+                      >
+                        {log.text}
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -663,14 +718,26 @@ export function CodeEditor(props: CodeEditorProps) {
   // De editor bestaat alleen in de browser, maar de vragen staan ook in de
   // gebouwde HTML: zonder JavaScript, en voordat de editor geladen is.
   const { onderzoek } = props;
+  // Ook de tip en het antwoord van de opdracht: dicht, tot het veld er is.
+  const hulp = useLesHulp();
+  const dicht = hulp && (
+    <div hidden>
+      {hulp.tip}
+      {hulp.antwoord}
+    </div>
+  );
   const fallback =
     onderzoek && onderzoek.length > 0 ? (
       <div className={styles.container}>
         <Onderzoek vragen={onderzoek} />
         <div className={styles.loading}>Editor laden...</div>
+        {dicht}
       </div>
     ) : (
-      <div className={styles.loading}>Editor laden...</div>
+      <div className={styles.loading}>
+        Editor laden...
+        {dicht}
+      </div>
     );
   return <BrowserOnly fallback={fallback}>{() => <CodeEditorInner {...props} />}</BrowserOnly>;
 }

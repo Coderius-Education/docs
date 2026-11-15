@@ -5,7 +5,8 @@ import type {
 } from '@coderius/python-runner/PyodideProvider';
 import { tracePython } from '@coderius/python-runner/PyodideProvider';
 import Stapper from '@coderius/python-runner/Stapper';
-import { useInLesTab, useLesDoel } from '@coderius/shared/components/LesTabs/paneel';
+import { HulpKeuze, HulpVak, type Weergave } from '@coderius/shared/components/LesTabs/Hulp';
+import { useInLesTab, useLesDoel, useLesHulp } from '@coderius/shared/components/LesTabs/paneel';
 import { meetRuimte, pasHoogte } from '@coderius/shared/components/LesTabs/pasHoogte';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import clsx from 'clsx';
@@ -219,6 +220,26 @@ export default function PyRunnerImpl({
   // Wat de opdracht moet opleveren (de verwachte uitvoer): <LesVeld> zet het
   // om het veld, en het veld toont het onder de uitvoer van de leerling.
   const doel = useLesDoel();
+  // En de tip en het antwoord van de opdracht, op de plek van de uitvoer: de
+  // code van de leerling blijft ernaast staan (Hulp.tsx). Als uitklapblok
+  // onder het veld kreeg een open antwoord alleen de ruimte die overbleef.
+  // Een antwoord bouwt hier vaak voort op de editor ("Dit vervangt …"), dus
+  // het veld voert het niet uit.
+  const hulp = useLesHulp();
+  const [weergave, setWeergave] = useState<Weergave>('uitvoer');
+  const hulpOpen = hulp !== null && weergave !== 'uitvoer';
+  // Het veld wordt niet lager als de leerling naar een korte tip wisselt:
+  // dan versprong alles wat eronder staat. De kolom naast de code houdt de
+  // grootste hoogte die hij had.
+  const kolomRef = useRef<HTMLDivElement>(null);
+  const [kolomMin, setKolomMin] = useState(0);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: een andere maat van het veld begint opnieuw.
+  useLayoutEffect(() => setKolomMin(0), [veldHoogte, veldBreedte]);
+  useLayoutEffect(() => {
+    if (!hulp || veldHoogte === null) return;
+    const hoogte = kolomRef.current?.offsetHeight ?? 0;
+    if (hoogte > kolomMin) setKolomMin(hoogte);
+  });
 
   // Start de Pyodide-download op de achtergrond zodra de pagina idle is, zodat
   // de eerste "Voer uit" (bijna) direct start. Wheels voor matplotlib worden
@@ -271,6 +292,7 @@ export default function PyRunnerImpl({
     setPlots([]);
     setBomen([]);
     setOpname(null);
+    setWeergave('uitvoer');
     try {
       const py = await maakKlaar();
 
@@ -328,6 +350,7 @@ export default function PyRunnerImpl({
     setPlots([]);
     setBomen([]);
     setOpname(null);
+    setWeergave('uitvoer');
     try {
       const py = await maakKlaar();
 
@@ -425,6 +448,8 @@ export default function PyRunnerImpl({
     breedte: veldBreedte,
     ruimte: veldHoogte === null ? null : veldHoogte - balk - rondDeEditor() - 2 * RAND,
     plaatjes: tekentGrafiek,
+    hulp: hulpOpen,
+    hulpTekens: weergave === 'tip' ? hulp?.tipTekens : hulp?.tekens,
   });
   const { naast, schaal, editorMax } = opmaak;
   const onder = inTab && opmaak.onder;
@@ -503,6 +528,27 @@ export default function PyRunnerImpl({
     </>
   );
 
+  // De uitvoer, met de tip en het antwoord erbij als de opdracht die heeft.
+  const metHulp = (inhoud: React.ReactNode) =>
+    hulp ? (
+      <>
+        <HulpKeuze hulp={hulp} weergave={weergave} kies={setWeergave} />
+        <div hidden={weergave !== 'uitvoer'}>{inhoud}</div>
+        {hulp.tip && (
+          <HulpVak soort="tip" open={weergave === 'tip'}>
+            {hulp.tip}
+          </HulpVak>
+        )}
+        {hulp.antwoord && (
+          <HulpVak soort="antwoord" open={weergave === 'antwoord'}>
+            {hulp.antwoord}
+          </HulpVak>
+        )}
+      </>
+    ) : (
+      inhoud
+    );
+
   return (
     <div
       ref={veldRef}
@@ -579,6 +625,10 @@ export default function PyRunnerImpl({
                 : Math.max(opmaak.editorMin, Math.min(minEditor, editorMax))
             }
             maxHeight={editorMax}
+            // Naast de tip of het antwoord is de code smaller. Een regel die
+            // dan niet past, schuift: afgebroken telde de kantlijn hem als
+            // twee regels.
+            afbreken={!hulpOpen}
           />
           {verborgenCode && toonKlaar && (
             <div
@@ -622,34 +672,44 @@ export default function PyRunnerImpl({
       )}
       {inTab ? (
         <div
+          ref={kolomRef}
           className={styles.resultaat}
           style={
             onder
               ? { height: opmaak.uitvoerOnder }
               : editorMax === undefined
                 ? undefined
-                : { maxHeight: editorMax + rondDeEditor() + balk + 2 * RAND }
+                : {
+                    maxHeight: editorMax + rondDeEditor() + balk + 2 * RAND,
+                    minHeight: kolomMin || undefined,
+                  }
           }
         >
-          {uitvoer}
-          {!statusMsg && !hasOutput && (
-            // Het vak naast de code is er al voordat er iets gedraaid is: zo
-            // verspringt het veld niet, en ziet de leerling waar hij moet kijken.
-            <p className={styles.wacht}>
-              Klik op Voer uit. De uitvoer verschijnt hier.
-              {/* Wat nodig is om het veld te gebruiken, zegt het veld zelf. */}
-              <span className={styles.bewaart}>
-                Dit veld bewaart je code niet: kopieer wat je wilt houden.
-              </span>
-            </p>
+          {metHulp(
+            <>
+              {uitvoer}
+              {!statusMsg && !hasOutput && (
+                // Het vak naast de code is er al voordat er iets gedraaid is: zo
+                // verspringt het veld niet, en ziet de leerling waar hij moet kijken.
+                <p className={styles.wacht}>
+                  Klik op Voer uit. De uitvoer verschijnt hier.
+                  {/* Wat nodig is om het veld te gebruiken, zegt het veld zelf. */}
+                  <span className={styles.bewaart}>
+                    Dit veld bewaart je code niet: kopieer wat je wilt houden.
+                  </span>
+                </p>
+              )}
+              {doel && <div className={styles.doel}>{doel}</div>}
+            </>,
           )}
-          {doel && <div className={styles.doel}>{doel}</div>}
         </div>
       ) : (
-        <>
-          {uitvoer}
-          {doel && <div className={styles.doel}>{doel}</div>}
-        </>
+        metHulp(
+          <>
+            {uitvoer}
+            {doel && <div className={styles.doel}>{doel}</div>}
+          </>,
+        )
       )}
     </div>
   );

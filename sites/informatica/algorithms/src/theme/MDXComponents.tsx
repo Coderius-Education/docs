@@ -3,6 +3,7 @@ import CodeUitleg, { Regel } from '@coderius/shared/components/CodeUitleg';
 import Handout from '@coderius/shared/components/Handout';
 import LesTabs, {
   LesDoel,
+  LesHulp,
   LesLeerdoel,
   LesReeks,
   LesStap,
@@ -44,6 +45,7 @@ export default {
   LesVoorbeeld,
   LesVeld,
   LesDoel,
+  LesHulp,
   LesReeks,
   // De docentenhandleiding: de onderdelen van een les met hun literatuur.
   Werkvormen,

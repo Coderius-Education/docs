@@ -2,6 +2,7 @@
 // of onder de uitvoer, hoe groot de letters zijn en hoe hoog de editor en de
 // uitvoer worden. Los van React, zodat het te testen is (opmaak.test.ts).
 
+import { hulpBreedte } from '@coderius/shared/components/LesTabs/paneel';
 import { KLEINSTE_SCHAAL, TEKEN_PX, codeBreedte, codeSchaal } from './breedte';
 
 /**
@@ -29,6 +30,13 @@ export const UITVOER_ONDER = 100;
  * kwart voor de code stond de k-NN-plot op 208 bij 129 pixels.
  */
 const CODE_DEEL_MET_PLAATJE = 0.55;
+/**
+ * Met de tip of het antwoord open krijgt die kolom minstens dit deel van de
+ * breedte, en meer als zijn langste regel code dat vraagt (hulpBreedte): het
+ * antwoord is zelf code, en in een kwart van het veld viel het eind van elke
+ * regel weg.
+ */
+const HULP_DEEL = 0.45;
 
 export type Opmaak = {
   /** De breedte van de codekolom naast de uitvoer, of null: uitvoer onder de code. */
@@ -62,17 +70,26 @@ export function editorHoogte(regels: number, schaal = 1): number {
  * editor en de uitvoer onder de code is (het veld min de werkbalk, de
  * klaargezette code en de rand); null zolang er niets gemeten is.
  * `plaatjes`: de code tekent met matplotlib.
+ * `hulp`: de tip of het antwoord staat open op de plek van de uitvoer. Naast
+ * of onder verandert daar niet van; de code levert breedte of hoogte in,
+ * zolang de hulp open staat.
+ * `hulpTekens`: de langste regel code van de hulp die open staat: zo breed
+ * wordt de kolom ernaast.
  */
 export function veldOpmaak({
   code,
   breedte,
   ruimte,
   plaatjes = false,
+  hulp = false,
+  hulpTekens,
 }: {
   code: string;
   breedte: number | null;
   ruimte: number | null;
   plaatjes?: boolean;
+  hulp?: boolean;
+  hulpTekens?: number;
 }): Opmaak {
   if (breedte === null)
     return {
@@ -91,6 +108,12 @@ export function veldOpmaak({
     if (klein !== null) naast = klein;
   }
   const onder = naast === null;
+  // De codeblokken van deze cursus hebben regelnummers.
+  if (hulp && naast !== null)
+    naast = Math.min(
+      naast,
+      breedte - hulpBreedte(hulpTekens, breedte, { minDeel: HULP_DEEL, nummers: true }),
+    );
   const schaal = codeSchaal(code, naast ?? breedte);
   const editorMin = editorHoogte(MIN_REGELS, schaal);
   if (ruimte === null) return { naast, onder, schaal, editorMin, uitvoerOnder: UITVOER_ONDER };
@@ -103,13 +126,18 @@ export function veldOpmaak({
       editorMax: Math.max(editorMin, ruimte),
       uitvoerOnder: UITVOER_ONDER,
     };
-  // Onder de code: een vak van vaste hoogte, met een grafiek de helft van de
-  // ruimte (in een vak van 100 pixels was de grafiek van Big-O niet te zien),
-  // en nooit zoveel dat de editor onder zijn minimum komt.
+  // Onder de code: een vak van vaste hoogte, met een grafiek of met de tip of
+  // het antwoord open de helft van de ruimte (in een vak van 100 pixels was
+  // de grafiek van Big-O niet te zien), en nooit zoveel dat de editor onder
+  // zijn minimum komt.
   const lijn = 1;
-  const uitvoerOnder = plaatjes
-    ? Math.max(UITVOER_ONDER, Math.min(Math.floor((ruimte - lijn) / 2), ruimte - lijn - editorMin))
-    : UITVOER_ONDER;
+  const uitvoerOnder =
+    plaatjes || hulp
+      ? Math.max(
+          UITVOER_ONDER,
+          Math.min(Math.floor((ruimte - lijn) / 2), ruimte - lijn - editorMin),
+        )
+      : UITVOER_ONDER;
   const editorMax = Math.max(editorMin, ruimte - lijn - uitvoerOnder);
   return { naast, onder, schaal, editorMin, editorMax, uitvoerOnder };
 }
