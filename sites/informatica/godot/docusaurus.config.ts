@@ -46,7 +46,6 @@ export default createConfig({
     navbar: {
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: '1e 2D game' },
-        { to: '/conceptenkaart', label: 'Conceptenkaart', position: 'left' },
         { to: '/cheatsheet', label: 'Nodes cheatsheet', position: 'left' },
         { to: '/gdscript-tips', label: 'GDScript-tips', position: 'left' },
         { to: '/game-checken', label: 'Game checken', position: 'left' },
