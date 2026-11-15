@@ -41,19 +41,16 @@ Een signal is een bericht dat een node verstuurt zodra er iets gebeurt. Andere n
 
 In Godot is het precies zo: een node *stuurt* een signal, een andere node *vangt* het op en voert code uit. De `Area2D`-node die je zo gebruikt staat in de [Nodes cheatsheet](site:godot/cheatsheet#collectibles-vijanden); de signal-code vind je terug in de [GDScript-tips](site:godot/gdscript-tips#signals).
 
-## Stap 1: Maak een muntje-scène \{#area2d}
+## Stap 1: Maak een muntje-scène met een sprite \{#area2d}
 
 1. Ga naar **Scene** → **New Scene**.
 2. Kies **Other Node** en zoek naar `Area2D`. `Area2D` is een node die botsingen kan detecteren zonder zelf physics te krijgen (geen zwaartekracht, niet wegrollen).
 3. Hernoem de `Area2D` naar `Muntje`.
+4. Klik met rechts op `Muntje` → **Add Child Node**.
+5. Voeg een `Sprite2D` toe.
+6. Sleep je muntje-afbeelding naar **Texture** in de Inspector.
 
-## Stap 2: Voeg een sprite toe
-
-1. Klik met rechts op `Muntje` → **Add Child Node**.
-2. Voeg een `Sprite2D` toe.
-3. Sleep je muntje-afbeelding naar **Texture** in de Inspector.
-
-## Stap 3: Voeg een collision shape toe
+## Stap 2: Voeg een collision shape toe
 
 Zonder collision shape kan Godot geen botsing detecteren.
 
@@ -72,7 +69,7 @@ Muntje (Area2D)
 
 Sla de scène op als `muntje.tscn` (`Ctrl + S`).
 
-## Stap 4: Koppel een script en het signal \{#signal-koppelen}
+## Stap 3: Koppel een script en het signal \{#signal-koppelen}
 
 1. Selecteer de `Muntje`-node.
 2. Klik op het script-icoontje of klik met rechts → **Attach Script**. Zet **Template** op **`Object: Empty`** en klik op **Create**.
@@ -93,9 +90,9 @@ Dit is een gewone functie, zoals je er zelf ook een schrijft. Het enige verschil
 
 De parameter `body` is de node die het muntje raakte. Die krijg je meegeleverd, net zoals `delta` bij `_physics_process`.
 
-## Stap 5: Laat het muntje verdwijnen \{#signal-functie}
+## Stap 4: Laat het muntje verdwijnen \{#signal-functie}
 
-Vervang de `pass` door:
+Vervang de `pass` in `_on_body_entered` door je eigen code:
 
 ```gdscript
 extends Area2D
@@ -111,7 +108,7 @@ func _on_body_entered(body: Node2D) -> void:
 | `body`                        | De node die het muntje raakt (jouw karakter)       |
 | `queue_free()`                | Verwijdert deze node (het muntje) uit het spel     |
 
-## Stap 6: Plaats het muntje in je level
+## Stap 5: Plaats het muntje in je level
 
 1. Open je level/world-scène.
 2. Sleep `muntje.tscn` vanuit het FileSystem-paneel naar je level.
@@ -165,10 +162,6 @@ func _on_body_entered(body: Node2D) -> void:
 5. Sla op als `vijand.tscn` en sleep hem in je level.
 
 </details>
-
-:::tip
-In de volgende les bouw je een **score-teller** in je karakter, zodat opgepakte muntjes ook echt geteld worden.
-:::
 
 ## Er gaat iets mis
 

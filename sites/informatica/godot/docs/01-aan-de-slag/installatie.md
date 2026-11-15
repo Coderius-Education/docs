@@ -29,9 +29,13 @@ Dubbelklik erop en kies bovenaan voor **Alles uitpakken**. Verplaats de uitgepak
 
 ## Stap 3: De editor openen
 
+### Het bestand starten
+
 Dubbelklik op het Godot-bestand — de bestandsnaam ziet er ongeveer zo uit:
 
 ![Verkenner met het uitvoerbare Godot-bestand](download.png)
+
+### De Project Manager
 
 Godot opent en je belandt in het **Project Manager**-venster:
 
@@ -66,8 +70,6 @@ Kijk langs de randen van het venster: bovenaan zitten tabbladen, rechtsboven een
 Laat de taal op Engels staan. Deze cursus gebruikt de Engelse namen van knoppen en menu's, dus dan komt alles op je scherm overeen met de lessen.
 
 </details>
-
-In de volgende les maak je je eerste project aan.
 
 ## Er gaat iets mis
 

@@ -28,6 +28,8 @@ Een animatie is een serie afbeeldingen (frames) die snel achter elkaar worden ge
 
 `AnimatedSprite2D` lijkt op `Sprite2D`, maar kan meerdere animaties bevatten die je vanuit code afspeelt.
 
+De `AnimatedSprite2D`-instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
+
 ## Stap 2: Maak een `SpriteFrames`-resource
 
 1. Selecteer de `AnimatedSprite2D`.
@@ -37,18 +39,20 @@ Een animatie is een serie afbeeldingen (frames) die snel achter elkaar worden ge
 
 ## Stap 3: Maak drie animaties: `idle`, `run`, `jump`
 
+### De `idle`-animatie
+
 In het SpriteFrames-paneel zie je linksboven een lijst met animaties. Standaard staat er één animatie genaamd `default`.
 
 1. Hernoem `default` naar `idle`.
 2. Klik in het SpriteFrames-paneel op het icoontje **Add Frames from Sprite Sheet** (een rooster-icoontje, naast de andere knoppen bovenin het paneel). Kies in het FileSystem het sprite-sheet voor je idle-animatie — bijvoorbeeld `Idle (32x32).png` uit het Pixel Adventure-pack. Dit is **één** afbeelding waarin meerdere frames naast elkaar staan.
 3. Er opent een dialoog. Stel bovenin **Horizontal** en **Vertical** in zodat de blauwe lijnen netjes elke afzonderlijke frame omkaderen — voor een sprite-sheet van 11 frames op één rij is dat `Horizontal: 11`, `Vertical: 1`.
 4. Selecteer alle frames (sleep een rechthoek over de rij, of klik elke frame aan) en klik op de knop rechtsonder. Die telt mee hoeveel je er hebt gekozen, dus er staat bijvoorbeeld **Add 6 Frame(s)**.
-5. Voor `run`: klik linksboven op het `+`-icoontje om een nieuwe animatie toe te voegen, noem deze `run`, en herhaal stap 2–4 met het sprite-sheet voor rennen (bijv. `Run (32x32).png`).
-6. Doe hetzelfde voor `jump`.
 
-Dit venster is even wennen. In deze video zie je dezelfde stappen in beeld: het sprite-sheet erin slepen, de frames uitsnijden en de animatie afspelen.
+### De `run`- en `jump`-animatie
 
-<iframe width="100%" height="500px" src="https://www.youtube-nocookie.com/embed/5V9f3MT86M8?start=712&end=868" title="Start Your Game Creation Journey Today. (Godot beginner tutorial)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+1. Klik linksboven in het SpriteFrames-paneel op het `+`-icoontje om een nieuwe animatie toe te voegen en noem deze `run`.
+2. Voeg de frames toe zoals bij `idle`, met het sprite-sheet voor rennen (bijv. `Run (32x32).png`).
+3. Doe hetzelfde voor `jump`.
 
 :::tip
 Werk je liever met losse PNG-bestanden (één per frame)? Zie [Je eigen animaties maken](site:godot/docs/eigen_animaties) voor hoe je die zelf produceert — anders kun je ze direct vanuit het FileSystem in het frame-paneel slepen.
@@ -58,9 +62,11 @@ Werk je liever met losse PNG-bestanden (één per frame)? Zie [Je eigen animatie
 Zet de **FPS** (frames per seconde) van elke animatie op een waarde die er soepel uitziet. Probeer 8 of 10 als startpunt.
 :::
 
-In de volgende les laat je via code de juiste animatie afspelen op het juiste moment.
+### De stappen in een video
 
-De `AnimatedSprite2D`-instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
+Het SpriteFrames-paneel is even wennen. In deze video zie je hoe het gaat: het sprite-sheet erin slepen, de frames uitsnijden en de animatie afspelen.
+
+<iframe width="100%" height="420px" src="https://www.youtube-nocookie.com/embed/5V9f3MT86M8?start=712&end=868" title="Start Your Game Creation Journey Today. (Godot beginner tutorial)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Er gaat iets mis
 

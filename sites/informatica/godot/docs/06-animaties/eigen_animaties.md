@@ -5,7 +5,7 @@ slug: /eigen_animaties
 
 # Je eigen animaties maken
 
-Tot nu toe heb je gewerkt met kant-en-klare sprite-sheets uit het Pixel Adventure-pack. Tijd om dat los te laten en je eigen personage te animeren — uit een eigen tekening, een geknipte GIF of een afbeelding die je ergens vond. In deze les leer je hoe je losse frames maakt, ze transparant achtergrondje geeft en in Godot zet.
+Tot nu toe heb je gewerkt met kant-en-klare sprite-sheets uit het Pixel Adventure-pack. Tijd om dat los te laten en je eigen personage te animeren — uit een eigen tekening, een geknipte GIF of een afbeelding die je ergens vond. In deze les leer je hoe je losse frames maakt, ze een transparante achtergrond geeft en in Godot zet.
 
 <GodotVersie />
 
@@ -60,33 +60,41 @@ Heb je een animatie als GIF (bijvoorbeeld uit een tutorial of YouTube)?
 
 ## Stap 2: Maak de achtergrond transparant
 
+### Test eerst of het nodig is
+
 Zonder transparantie zit er straks een witte (of een andere) rechthoek achter je karakter in Godot. **Een PNG kan transparantie bevatten via het zogeheten alpha-kanaal** — pixels zijn dan letterlijk doorzichtig.
 
-### Drie manieren
+:::tip
+Sommige downloads (vooral van itch.io of opengameart.org) hebben **al** een transparante achtergrond. Test eerst: sleep je PNG in Godot en kijk of er een rechthoek omheen zit. Geen rechthoek = al transparant, sla Stap 2 over.
+:::
 
-**Manier 1 — Piskel of LibreSprite** (aanbevolen voor pixel-art)
+Zit er wel een rechthoek omheen? Dan zijn er drie manieren om hem weg te halen, elk in een eigen stap. Kies er één.
+
+### Met Piskel of LibreSprite
+
+**Piskel of LibreSprite** (aanbevolen voor pixel-art)
 
 - Open je PNG → menu **File → Import**.
 - Bij het importeren wordt de witte achtergrond standaard transparant gemaakt zodra je hem aanklikt.
 - Exporteer terug als PNG via **Export → PNG**.
 
-**Manier 2 — Photopea** (browser-based Photoshop-alternatief)
+### Met Photopea
+
+**Photopea** (browser-based Photoshop-alternatief)
 
 1. Ga naar [photopea.com](https://www.photopea.com/) → **File → Open** → kies je PNG.
 2. Klik op de witte achtergrond met de **Magic Wand**-tool (toverstaf).
 3. Druk op **Delete** — de witte achtergrond verdwijnt, je ziet een schaakbord (= transparant).
 4. **File → Export As → PNG**.
 
-**Manier 3 — GIMP** (open-source, lokaal)
+### Met GIMP
+
+**GIMP** (open-source, lokaal)
 
 1. Open je PNG → **Layer → Transparency → Add Alpha Channel**.
 2. **Select → By Color** → klik op de witte achtergrond.
 3. Druk **Delete**.
 4. **File → Export As → `.png`**.
-
-:::tip
-Sommige downloads (vooral van itch.io of opengameart.org) hebben **al** een transparante achtergrond. Test eerst: sleep je PNG in Godot en kijk of er een rechthoek omheen zit. Geen rechthoek = al transparant, sla Stap 2 over.
-:::
 
 ## Stap 3: Importeer in Godot
 

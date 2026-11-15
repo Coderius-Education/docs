@@ -46,8 +46,6 @@ Ik heb 3 levens.
 
 Dit tabblad wordt je belangrijkste gereedschap. Telkens als je niet zeker weet of een stuk code draait, zet je er een `print()` in en kijk je hier. In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je daar systematisch mee werkt.
 
-Haal deze `_ready()`-functie daarna weer weg. In het volgende hoofdstuk begin je met een schone lei aan het bewegingsscript.
-
 ## Opdracht 4.3.a: laat Godot rekenen
 
 Breid je `_ready()` uit zodat Uitvoer drie regels toont:
@@ -92,6 +90,8 @@ In Uitvoer staat `Punten per level: 30`. Dat getal staat nergens in je script: G
 
 </details>
 
+Haal de `_ready()`-functie hierna weer weg, zodat alleen `extends CharacterBody2D` overblijft. In [Het bewegingsscript bouwen](site:godot/docs/basis_movement_begrijpen) begin je met een schone lei: in zeven korte lessen schrijf je daar het script waarmee je karakter valt, loopt en springt.
+
 ## Er gaat iets mis
 
 <details>
@@ -123,7 +123,3 @@ Onderin het scriptvenster staat dan een rode regel. De twee die je hier het vaak
 **Zelf vinden:** zet `print("hier")` als allereerste regel in de functie. Blijft Uitvoer ook dan leeg, dan draait je script niet en ligt het aan de scène, niet aan je code.
 
 </details>
-
-## Wat daarna?
-
-In [Het bewegingsscript bouwen](site:godot/docs/basis_movement_begrijpen) schrijf je in zeven korte lessen het script waarmee je karakter valt, loopt en springt.

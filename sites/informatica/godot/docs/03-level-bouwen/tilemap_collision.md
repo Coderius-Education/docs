@@ -38,7 +38,7 @@ Er staat nu een `Layer 0`. De standaard-instellingen zijn prima — die hoef je 
 
 ## Stap 2: Collision verven met de Paint-tool
 
-Nu vertel je per tegel of die massief is of niet.
+Met de Paint-tool vertel je per tegel of die massief is of niet.
 
 1. Zorg dat je onderin in het tabblad **TileSet** zit (NIET TileMap — daar tekende je je level mee; hier definieer je tegels).
 2. Klik bovenaan in dat paneel op de knop **Paint** (het verfroller- of kwastje-icoontje).

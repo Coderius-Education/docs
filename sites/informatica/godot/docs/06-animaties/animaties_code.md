@@ -164,7 +164,7 @@ Let op `elif`: de `idle`-animatie wordt alleen geprobeerd als `jump` níet aan i
 
 ## Opdracht 6.2.b: de run-animatie en spiegelen
 
-Nu de laatste twee takken van de keten. Met `$AnimatedSprite2D.flip_h = true` spiegel je het plaatje zodat je karakter naar links kijkt; met `false` kijkt hij weer naar rechts.
+De animatie-keten uit Opdracht 6.2.a krijgt zijn laatste twee takken: rennen naar rechts en rennen naar links. Met `$AnimatedSprite2D.flip_h = true` spiegel je het plaatje zodat je karakter naar links kijkt; met `false` kijkt hij weer naar rechts.
 
 ```gdscript
     elif velocity.x > 0:

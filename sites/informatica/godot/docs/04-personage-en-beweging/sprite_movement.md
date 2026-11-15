@@ -9,8 +9,6 @@ Je karakter staat op het scherm, maar doet niets. Vanaf hier ga je hem zelf late
 
 <GodotVersie />
 
-## Waarom je zelf begint met een leeg bestand
-
 Godot kan een startscript voor je invullen. Handig, maar dan lees je iets wat je niet zelf hebt bedacht, en bij de eerste foutmelding weet je niet waar je moet kijken.
 
 In deze cursus begin je daarom leeg. Elke regel die erbij komt, komt erbij omdat jij hem nodig hebt. Na elke les draait je spel weer, en doet het net iets meer dan daarvoor.
@@ -32,7 +30,7 @@ Meer niet. Dat is precies de bedoeling.
 
 ## Stap 2: Wat die ene regel doet
 
-**Wat denk je dat er gebeurt als je die regel weghaalt?**
+**Wat denk je dat er gebeurt als je de regel `extends CharacterBody2D` weghaalt?**
 
 <details>
 <summary>Antwoord</summary>

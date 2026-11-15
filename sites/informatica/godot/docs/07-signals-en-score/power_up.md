@@ -46,7 +46,9 @@ Twee dingen veranderen tegelijk, en allebei met reden:
 - `const` wordt `var`, want de waarde gaat straks veranderen.
 - De naam gaat van hoofdletters naar kleine letters. Hoofdletters zijn in GDScript het teken dat iets een constante is; een variabele die er zo uitziet leest als een belofte die je niet nakomt.
 
-Zoek nu in `_physics_process` de regel waar je springt, en gebruik de nieuwe naam:
+### Gebruik de nieuwe naam
+
+Zoek in `_physics_process` de regel waar je springt, en gebruik daar de naam `sprongkracht`:
 
 ```gdscript
     if Input.is_action_just_pressed("ui_accept") and is_on_floor():
@@ -119,6 +121,10 @@ func geef_sprongboost() -> void:
 
 Start je spel, pak de power-up en spring. Vijf seconden lang spring je hoog, daarna weer normaal, en in **Uitvoer** zie je de twee berichten na elkaar verschijnen.
 
+### De regel in drie delen
+
+De regel `await get_tree().create_timer(5.0).timeout` bestaat uit drie delen:
+
 |                 Code                  | Wat doet het?                                                |
 | :-----------------------------------: | :----------------------------------------------------------- |
 | `get_tree().create_timer(5.0)`        | Maakt ter plekke een stopwatch van vijf seconden             |
@@ -127,7 +133,7 @@ Start je spel, pak de power-up en spring. Vijf seconden lang spring je hoog, daa
 
 Merk op wat je hier afwacht: een **signal**, net als het `body_entered` van je muntje. Alleen komt dit signal niet van een node die je in je scène hebt gezet. Je vraagt Godot om één stopwatch, voor deze ene keer, en die gooit hij daarna zelf weg. In hoofdstuk 8 kom je `timeout` terug tegen, dan van een echte `Timer`-node.
 
-## Wat `await` met je functie doet
+### Wat `await` met je functie doet
 
 `await` pauzeert **alleen de functie waar het in staat**. Je spel loopt gewoon door: je kunt rondlopen, springen en muntjes pakken terwijl `geef_sprongboost` staat te wachten.
 

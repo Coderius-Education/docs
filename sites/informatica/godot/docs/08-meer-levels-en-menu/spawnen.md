@@ -25,7 +25,9 @@ In GDScript zijn dat drie functies: `preload()`, `instantiate()` en `add_child()
 
 </details>
 
-## De scène inladen met `preload()` \{#preload}
+## Spawnen in code
+
+### De scène inladen met `preload()` \{#preload}
 
 ```gdscript
 const MUNTJE = preload("res://muntje.tscn")
@@ -35,7 +37,7 @@ const MUNTJE = preload("res://muntje.tscn")
 
 **Let op:** de bouwtekening zelf is nog geen muntje in je level. Vergelijk het met de scène in je FileSystem-paneel: die staat ook pas in je spel als je hem ergens neerzet.
 
-## Een exemplaar maken met `instantiate()` \{#instantiate}
+### Een exemplaar maken met `instantiate()` \{#instantiate}
 
 ```gdscript
 var nieuw_muntje = MUNTJE.instantiate()
@@ -79,7 +81,7 @@ Start met `F5`. Er hangt nu een muntje op `(200, 100)` dat je nooit in de editor
 
 ## Stap 3: Maak er een eigen functie van
 
-Straks wil je vanaf meerdere plekken kunnen spawnen. Verplaats de drie regels daarom naar een eigen functie met de positie als parameters:
+Straks wil je vanaf meerdere plekken kunnen spawnen. Verplaats de drie regels uit `_ready()` daarom naar een eigen functie met de positie als parameters:
 
 ```gdscript
 extends Node2D

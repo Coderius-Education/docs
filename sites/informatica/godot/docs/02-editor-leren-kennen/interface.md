@@ -11,7 +11,7 @@ Open je project. Je belandt in de editor: een venster vol panelen, knoppen en ta
 
 ## Voorspel: waar staan de nodes?
 
-Kijk goed naar het scherm voordat je verder leest. **Waar denk je dat je de lijst met alle nodes (de Scene Tree) vindt — links, rechts, midden of onderin?**
+Kijk goed naar de editor voordat je verder leest. **Waar denk je dat je de lijst met alle nodes (de Scene Tree) vindt — links, rechts, midden of onderin?**
 
 <details>
 <summary>Antwoord</summary>

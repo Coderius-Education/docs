@@ -52,8 +52,6 @@ CharacterBody2D
 └── CollisionShape2D
 ```
 
-In de volgende les voegen we beweging toe.
-
 Deze drie nodes vormen samen je speler; hun instellingen staan in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
 
 ## Er gaat iets mis

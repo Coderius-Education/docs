@@ -20,18 +20,16 @@ Je maakt een apart script (bijvoorbeeld `global.gd`) dat *niet* aan een node han
 
 </details>
 
-## Het probleem in één regel
+## Stap 1: Maak een script met je variabelen
 
 Variabelen die je in een node-script zet, leven alleen zolang die node bestaat. `Global` lost dat op door buiten de Scene Tree te leven.
-
-## Stap 1: Maak een nieuw script
 
 1. Ga naar **FileSystem** (linksonder).
 2. Klik met rechts → **New Script**.
 3. Noem het `global.gd`.
 4. Zorg dat er **geen node** aan gekoppeld is — het is een los script.
 
-## Stap 2: Voeg je variabelen toe
+Zet je variabelen in dat script:
 
 ```gdscript
 extends Node
@@ -42,7 +40,7 @@ var levens = 3
 
 Dat is alles. Dit script bevat variabelen die je overal wilt gebruiken.
 
-## Stap 3: Stel het in als Autoload \{#autoload-instellen}
+## Stap 2: Stel het in als Autoload \{#autoload-instellen}
 
 Dit is de belangrijkste stap. Door het script als **Autoload** te registreren, laadt Godot het automatisch bij het opstarten en is het overal beschikbaar.
 
@@ -58,7 +56,7 @@ De Autoload-instelling staat ook in de [Nodes cheatsheet](site:godot/cheatsheet#
 
 ### Voorspel: wat als je deze stap vergeet?
 
-**Wat denk je dat er gebeurt als je Stap 3 overslaat en meteen `Global.score += 1` in je muntje-script zet?**
+**Wat denk je dat er gebeurt als je het instellen als Autoload overslaat en meteen `Global.score += 1` in je muntje-script zet?**
 
 <details>
 <summary>Antwoord</summary>
@@ -67,7 +65,7 @@ Je krijgt de melding `Identifier "Global" not declared in the current scope`, en
 
 </details>
 
-## Stap 4: Refactor naar `Global.score` \{#global-score}
+## Stap 3: Refactor naar `Global.score` \{#global-score}
 
 In de vorige les hoogde je de score op via `body.score += 1`. Nu we een `Global` hebben, gebruiken we dat.
 
@@ -86,7 +84,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 Overal dezelfde syntax: `Global.variabelnaam`. Geen `get_node(...)`, geen kapotte links bij hernoemen.
 
-## Functies in je global script
+## Functies: ook in je global script
 
 Je kunt ook **functies** toevoegen aan je global script:
 
@@ -113,9 +111,11 @@ Global.verlies_leven()
 Global.reset()
 ```
 
-## Een functie die antwoord geeft \{#return}
+## Return: een functie die antwoord geeft \{#return}
 
-De functies hierboven **doen** iets: ze zetten waarden goed of printen iets. Daarom staat er `-> void` achter zodra je het type opschrijft. Dat pijltje betekent: deze functie geeft niets terug.
+### Een waarde teruggeven
+
+De functies `reset()` en `verlies_leven()` **doen** iets: ze zetten waarden goed of printen iets. Daarom staat er `-> void` achter zodra je het type opschrijft. Dat pijltje betekent: deze functie geeft niets terug.
 
 Vaak wil je een functie juist iets laten **teruggeven**, zodat je het antwoord kunt gebruiken. Zet daarnaast in je global script:
 
@@ -131,6 +131,8 @@ if Global.is_game_over():
     print("Je hebt geen levens meer")
 ```
 
+### Vergelijken met Python
+
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/functies/09b-return', label: 'Return'},
@@ -145,6 +147,8 @@ In Python levert een functie zonder `return` de waarde `None` op. GDScript noemt
 | `func is_game_over() -> bool:` | `true` of `false` | `return levens <= 0` |
 | `func aantal_levens() -> int:` | een heel getal | `return levens` |
 
+### Waarom een aparte functie?
+
 **Waarom zou je `is_game_over()` maken in plaats van overal `if Global.levens <= 0:` te schrijven?**
 
 <details>
@@ -158,8 +162,6 @@ De naam helpt bovendien mee: `if Global.is_game_over():` lees je als een zin, `i
 
 :::tip
 Gebruik global variables voor dingen die je in meerdere scènes nodig hebt: score, levens, instellingen. Gebruik gewone `var` voor dingen die alleen in één node leven.
-
-In de **volgende les** zet je `Global.score` op het scherm met een `Label`.
 :::
 
 ## Opdracht 7.3.a: voeg `levens` toe aan `Global`

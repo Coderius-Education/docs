@@ -33,26 +33,30 @@ Je hebt nu een map met alle afbeeldingen uit het pack.
 
 ## Stap 3: Kopieer naar je projectmap \{#projectmap}
 
+### De projectmap openen
+
 Godot ziet alleen bestanden die **in je projectmap** staan. Vanuit de editor kun je die map snel openen.
+
+![Rechtsklikmenu op res:// met Openen in Bestandsbeheer](../images/res.png)
 
 1. Open je project in Godot.
 2. Klik met de **rechtermuisknop** op `res://` in het **FileSystem**-paneel (linksonder).
 3. Kies **Open in File Manager** (heet **Openen in Bestandsbeheer** als je editor Nederlands is) — Verkenner opent nu je projectmap.
 
-![Rechtsklikmenu op res:// met Openen in Bestandsbeheer](../images/res.png)
+:::note[Chromebook / online editor]
+Gebruik je de [online editor](https://editor.godotengine.org/)? Dan kun je geen bestanden via de Verkenner kopiëren. Sleep de uitgepakte bestanden in plaats daarvan rechtstreeks naar het **FileSystem**-paneel in de editor.
+:::
 
-4. Open in een tweede Verkenner-venster de uitgepakte asset-map.
-5. Maak in je projectmap een nieuwe map `assets` en sleep de mappen die je nodig hebt (bijvoorbeeld `Background`) daarin. In latere lessen verwijzen we naar deze `assets`-map.
+### De assets kopiëren
+
+1. Laat het venster met je projectmap open staan en open in een tweede Verkenner-venster de uitgepakte asset-map.
+2. Maak in je projectmap een nieuwe map `assets` en sleep de mappen die je nodig hebt (bijvoorbeeld `Background`) daarin. In latere lessen verwijzen we naar deze `assets`-map.
 
 :::tip
 Je hoeft niet alles te kopiëren. Voor de achtergrond heb je alleen de map `Background` nodig. Later kun je altijd meer toevoegen.
 :::
 
 Ga terug naar Godot — de bestanden verschijnen automatisch in het FileSystem-paneel.
-
-:::note[Chromebook / online editor]
-Gebruik je de [online editor](https://editor.godotengine.org/)? Dan kun je geen bestanden via de Verkenner kopiëren. Sleep de uitgepakte bestanden in plaats daarvan rechtstreeks naar het **FileSystem**-paneel in de editor.
-:::
 
 ## Voorspel: wat betekent `res://`?
 

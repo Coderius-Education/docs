@@ -21,20 +21,18 @@ In Godot zit er een ingebouwde node-type voor knoppen. **Hoe denk je dat hij hee
 
 </details>
 
-## Stap 1: Nieuwe scène voor het menu \{#control-button}
+## Stap 1: Nieuwe scène met een `VBoxContainer` \{#control-button}
 
 1. Klik op **Scene** → **New Scene**.
 2. Kies dit keer **User Interface** (geen 2D Scene) — Godot maakt automatisch een `Control`-node als root. `Control` is de basis voor alle UI; hij vult standaard het hele scherm.
 3. Sla op via `Ctrl + S` als `menu.tscn`.
-
-## Stap 2: Layout met een `VBoxContainer`
 
 Een `VBoxContainer` stapelt zijn child-nodes netjes verticaal onder elkaar — perfect voor een lijstje knoppen.
 
 1. Klik met rechts op de `Control`-root → **Add Child Node** → `VBoxContainer`.
 2. Selecteer de `VBoxContainer`. Onder **Layout** in de Inspector vind je **Anchors Preset**: daarmee plak je een UI-node aan een vast punt van het scherm, zodat hij op elke schermgrootte op die plek blijft. Kies **Center** — de container zit nu mooi in het midden.
 
-## Stap 3: Twee knoppen en een titel
+## Stap 2: Twee knoppen en een titel
 
 1. Klik met rechts op de `VBoxContainer` → **Add Child Node** → `Label`. Stel **Text** in op `Mijn 2D Game` (of een eigen titel).
 2. Klik nogmaals met rechts op de `VBoxContainer` → **Add Child Node** → `Button`. Stel **Text** in op `Start spel`.
@@ -52,12 +50,14 @@ Menu (Control)
 
 Alle UI-nodes uit deze les staan met hun instellingen in de [Nodes cheatsheet](site:godot/cheatsheet#ui-menu).
 
-## Stap 4: Script aan de root koppelen
+## Stap 3: Koppel een script en de `pressed`-signalen
+
+### Een script aan de root
 
 1. Selecteer de `Control`-root (`Menu`).
 2. Klik op het script-icoontje → **Attach Script** → **Create**. Sla op als `menu.gd`.
 
-## Stap 5: Koppel de `pressed`-signalen
+### De signalen koppelen
 
 Per knop koppel je het `pressed`-signaal aan een functie in `menu.gd`. Dat doe je op dezelfde manier als `body_entered` in [7.1](site:godot/docs/signals_muntje).
 
@@ -72,7 +72,9 @@ Doe hetzelfde voor de `Afsluiten`-knop, met `_on_afsluiten_pressed` bij **Receiv
 Verander de naam in het dialoogvenster, niet achteraf in je script. De verbinding onthoudt de naam van toen. Hernoem je de functie later, dan zoekt de knop bij een klik nog de oude naam, en gebeurt er niets, zonder foutmelding. Alleen onderin de scripteditor waarschuwt Godot: `Missing connected method '_on_button_pressed' for signal 'pressed' …`.
 :::
 
-## Stap 6: Vul de callbacks
+## Stap 4: Vul de callbacks
+
+### De code in `menu.gd`
 
 ```gdscript
 extends Control
@@ -85,17 +87,19 @@ func _on_afsluiten_pressed() -> void:
     get_tree().quit()
 ```
 
+:::tip
+Heb je `Global.reset()` niet gedefinieerd? Voeg in `global.gd` een functie toe die `score = 0` en `levens = 3` zet — zie [Global variables](site:godot/docs/global_variables).
+:::
+
+### Wat de regels doen
+
 | Code                                          | Wat doet het?                                                |
 | :-------------------------------------------- | :----------------------------------------------------------- |
 | `Global.reset()`                              | Zet `score` en `levens` terug op beginwaarde (zie [7.3](site:godot/docs/global_variables)) |
 | `change_scene_to_file("res://level1.tscn")`   | Laadt level 1 (zoals je leerde in [8.1](site:godot/docs/tweede_level))   |
 | `get_tree().quit()`                           | Sluit het hele spel-venster                                  |
 
-:::tip
-Heb je `Global.reset()` niet gedefinieerd? Voeg in `global.gd` een functie toe die `score = 0` en `levens = 3` zet — zie [Global variables](site:godot/docs/global_variables).
-:::
-
-## Stap 7: Maak het menu de Main Scene \{#main-scene}
+## Stap 5: Maak het menu de Main Scene \{#main-scene}
 
 Zo zorg je dat het menu opent zodra je het spel start, in plaats van level 1.
 
@@ -163,7 +167,7 @@ Bonus: voeg een vierde knop **Credits** toe die naar een derde scène `credits.t
 
 **Oorzaak:** `Global.score` blijft de hele speelsessie bestaan — dat is precies de bedoeling van een Autoload. Maar bij een **nieuwe start** wil je dat hij weer op 0 begint.
 
-**Oplossing:** Roep `Global.reset()` aan in `_on_start_pressed()` *vóór* je het level laadt (zoals in Stap 6 hierboven). Heb je nog geen `reset()`-functie? Voeg in `global.gd` toe:
+**Oplossing:** Roep `Global.reset()` aan in `_on_start_pressed()` *vóór* je het level laadt (zoals in Stap 4). Heb je nog geen `reset()`-functie? Voeg in `global.gd` toe:
 
 ```gdscript
 func reset() -> void:
@@ -178,6 +182,6 @@ func reset() -> void:
 
 **Oorzaak:** De Main Scene staat nog op `level1.tscn` (of `world.tscn`).
 
-**Oplossing:** Volg Stap 7 opnieuw — Project → Project Settings → zoek `main scene` → kies `menu.tscn`.
+**Oplossing:** Volg Stap 5 opnieuw — Project → Project Settings → zoek `main scene` → kies `menu.tscn`.
 
 </details>
