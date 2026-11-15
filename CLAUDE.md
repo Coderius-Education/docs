@@ -547,21 +547,47 @@ op Stap voor stap en meet het na elke klik opnieuw: een scherm dat past tot
 je iets aanklikt, past niet. Wat
 dan nog te lang is, is tekst: een stap of een Er gaat iets mis met meer
 inhoud dan op een scherm past. Dat lost een auteur op, niet de opmaak.
-**Een proef: tip en oplossing in het oefenveld** (november 2026, issue 212;
-alleen les 6a van python, met `les_hulp: veld` in de front matter). Een open
-oplossing onder het veld kreeg alleen de ruimte die het veld overliet: bij
-opdracht 6a.3 twee regels. `hulpInVeld` in `les-tabs.js` zet de uitklapblokken
-direct na een veld (de tip, dan de oplossing) als `<LesHulp>` in het
-`<LesVeld>`, en de `CodeExercise` toont ze met `useLesHulp` op de plek van de
-uitvoer: knoppen Uitvoer, Tip en Oplossing boven dat vak. De code van de
-leerling blijft ernaast staan, naast de oplossing op de halve breedte. Voer de
-oplossing uit draait de oplossing los van de code en de uitvoer van de
-leerling; een tweede oefenveld in de oplossing met dezelfde code vervalt
-daarom. Het vak wordt niet lager als je wisselt. Tip en oplossing staan ook
-dicht in de HTML van de build, voor `cross-links`. Nog niet gedaan: de uitvoer
-van de leerling naast die van de oplossing leggen, en de werkvormen-plugin en
-`les-schermen.js` zien de proef niet (die lezen de front matter niet). De bron
-van een les verandert niet: uitzetten is de regel uit de front matter halen.
+**De tip en de oplossing van een opdracht staan in het oefenveld** (november
+2026, issue 212). Een open oplossing onder het veld kreeg alleen de ruimte
+die het veld overliet: bij opdracht 6a.3 van python twee regels. `hulpInVeld`
+in `les-tabs.js` zet de uitklapblokken direct na een veld (de tip, dan de
+oplossing; elk mag ontbreken) als `<LesHulp>` in het `<LesVeld>`, en het veld
+toont ze met `useLesHulp` op de plek van zijn uitvoer: knoppen Uitvoer, Tip en
+Oplossing boven dat vak (`components/LesTabs/Hulp.tsx`, voor elk veld
+dezelfde; de knop heet Oplossing of Antwoord, zoals de les het noemt). De code
+van de leerling blijft ernaast staan. Drie velden doen het: de `CodeExercise`
+van python-runner, de `PyRunner` van algoritmes en de `CodeEditor` van web
+(`VELDEN_MET_HULP`; daar heet de eerste knop Voorbeeld). De bron van een les
+verandert niet: een auteur schrijft de tip en de oplossing als `<details>`
+direct na het veld, zoals altijd. Wat per veld verschilt:
+
+- **De CodeExercise voert de oplossing uit** (Voer de oplossing uit), los van
+  de code en de uitvoer van de leerling. Het eerste codeblok van de oplossing
+  gaat daarvoor als tekst mee, tenzij er `niet-draaien`, `niet-compileren` of
+  `draaien-met` boven staat: een fragment gaf een NameError. Een tweede
+  oefenveld in de oplossing met dezelfde code vervalt.
+- **De PyRunner en de CodeEditor voeren het antwoord niet uit**: daar bouwt
+  een antwoord vaak voort op de editor ("Dit vervangt …") of is het een
+  fragment.
+- **De hulp krijgt de breedte die zijn langste regel code nodig heeft**
+  (`hulpBreedte` in `paneel.ts`; de build geeft het aantal tekens mee als
+  `tekens`): minstens de helft van het veld bij de CodeExercise, 45 procent
+  bij de PyRunner en de 40 procent van het voorbeeld bij web, en hoogstens
+  70 procent. De code van de leerling levert in zolang de hulp open staat, en
+  een regel die dan niet past, schuift (`afbreken={false}`: afgebroken telde
+  de kantlijn hem als twee regels). In een vaste kolom paste de langste regel
+  bij algoritmes en web naar schatting bij twee op de drie antwoorden niet
+  (geteld in de bron), en was het eind dan afgesneden. Het antwoord onder de
+  code zetten is geprobeerd en teruggedraaid: in een veld van driehonderd
+  pixels bleef er dan één regel van het antwoord over.
+- **Het vak wordt niet lager als je wisselt**: een korte tip liet het veld
+  krimpen, en dan versprong alles eronder.
+- **Tip en oplossing staan ook dicht in de HTML van de build**, in de
+  fallback van het veld: `cross-links` zoekt een link erin.
+- Een uitklapblok dat niet direct na een veld staat (een opdracht zonder
+  veld, een oplossing met een ander oefenveld erin) blijft een uitklapblok.
+- Het meetscript klikt met `--klik` ook op Tip en Oplossing en voert de
+  oplossing uit (`naHulp`).
 
 **Wat robotica erbij bracht** (november 2026; alle 398 schermen passen op 1280×720 en 1366×768). De cursus heeft drie
 docs-plugins (`docs/`, `lego_auto/`, `golfbot/`), delen die twee pagina's

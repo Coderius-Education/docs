@@ -115,6 +115,29 @@
   border-left: 1px solid var(--ifm-color-emphasis-300);
 }
 
+/* Het voorbeeld met de console. Een eigen element, zodat het dicht kan als
+   de tip of het antwoord open staat; voor de opmaak telt het niet mee. */
+.voorbeeldVak {
+  display: contents;
+}
+
+.voorbeeldVak[hidden] {
+  display: none;
+}
+
+/* De tip of het antwoord op de plek van het voorbeeld (Hulp.tsx): het vak
+   vult de kolom en schuift zelf als het antwoord langer is. */
+.hulpKolom {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--ifm-background-color);
+}
+
+.hulpKolom[hidden] {
+  display: none;
+}
+
 .previewSide {
   flex: 1;
   display: flex;

@@ -1,5 +1,7 @@
+import { HulpKeuze, HulpVak, type Weergave } from '@coderius/shared/components/LesTabs/Hulp';
 import {
   type Hulp,
+  hulpBreedte,
   useInLesTab,
   useLesDoel,
   useLesHulp,
@@ -17,15 +19,12 @@ import styles from './styles.module.css';
 
 /** Lager wordt het veld in een tabblad niet: de werkbalk en een regel of vijf. */
 const MIN_VELD = 180;
+/** Lager wordt de editor niet. */
+const MIN_EDITOR = 120;
 /** De hoogte van de werkbalk, tot hij gemeten is. */
 const BALK = 40;
 /** De rand van het veld, boven en onder: die telt mee in zijn hoogte. */
 const RAND = 2;
-
-/** Wat er naast de code staat: de uitvoer, de tip of het antwoord. */
-type Weergave = 'uitvoer' | 'tip' | 'antwoord';
-
-const hoofdletter = (woord: string) => woord.charAt(0).toUpperCase() + woord.slice(1);
 
 function CodeExerciseInner({
   starterCode,
@@ -65,6 +64,7 @@ function CodeExerciseInner({
   const veldRef = useRef<HTMLDivElement>(null);
   const balkRef = useRef<HTMLDivElement>(null);
   const [veldHoogte, setVeldHoogte] = useState<number | null>(null);
+  const [veldBreedte, setVeldBreedte] = useState<number | null>(null);
   const stapt = opname !== null;
   useLayoutEffect(() => {
     const veld = veldRef.current;
@@ -75,6 +75,7 @@ function CodeExerciseInner({
       // Op een smal scherm scrolt de leerling, en Stap voor stap staat onder
       // het veld: dan zegt de ruimte in het paneel niets over het veld.
       if (!breed.matches) return setVeldHoogte(null);
+      if (veld.clientWidth > 0) setVeldBreedte(veld.clientWidth);
       if (stapt) return;
       const ruimte = meetRuimte(veld, paneel, Number.POSITIVE_INFINITY);
       if (ruimte) setVeldHoogte(pasHoogte(ruimte, MIN_VELD));
@@ -104,6 +105,13 @@ function CodeExerciseInner({
   });
   const editorMax =
     veldHoogte === null ? undefined : veldHoogte - (balkRef.current?.offsetHeight ?? BALK);
+  // Met de tip of de oplossing open krijgt die kolom de breedte die zijn
+  // langste regel code nodig heeft, minstens de helft van het veld: de code
+  // van de leerling levert in. Anders was het eind van een regel afgesneden.
+  const hulpKolom =
+    weergave !== 'uitvoer' && veldBreedte !== null
+      ? hulpBreedte(weergave === 'tip' ? hulp?.tipTekens : hulp?.tekens, veldBreedte)
+      : null;
   // De hoogte van Stap voor stap in een tabblad: wat de editor had.
   const stapper = stapt && editorMax !== undefined ? editorMax - 2 * RAND : undefined;
 
@@ -252,12 +260,15 @@ function CodeExerciseInner({
         // uitvoer in, op dezelfde hoogte: eronder was het scherm tot 1600
         // pixels te lang, met de code er twee keer.
         stapper !== undefined && styles.staptInTab,
-        // Naast het antwoord krijgt de code de helft van het veld: zo staan
-        // de twee programma's even breed naast elkaar.
-        weergave === 'antwoord' && styles.naastAntwoord,
+        hulpKolom !== null && styles.naastHulp,
       ]
         .filter(Boolean)
         .join(' ')}
+      style={
+        hulpKolom === null
+          ? undefined
+          : ({ '--hulp-breedte': `${hulpKolom}px` } as React.CSSProperties)
+      }
     >
       {/* Op een smal scherm staat het doel boven de code: onder een startcode
           van dertig regels zag de leerling pas na het scrollen wat hij moest
@@ -299,8 +310,12 @@ function CodeExerciseInner({
           onChange={setCode}
           onKeyDown={handleKeyDown}
           disabled={isLoading}
-          minHeight={120}
+          minHeight={MIN_EDITOR}
           maxHeight={editorMax}
+          // Naast de tip of de oplossing is de code smaller. Een regel die
+          // dan niet past, schuift: afgebroken telde de kantlijn hem als
+          // twee regels.
+          afbreken={hulpKolom === null}
         />
       </div>
       {opname && (
@@ -328,29 +343,15 @@ function CodeExerciseInner({
       >
         {hulp ? (
           <>
-            <fieldset className={styles.keuze} aria-label="Naast je code">
-              {(['uitvoer', 'tip', 'antwoord'] as const)
-                .filter((w) => w === 'uitvoer' || hulp[w])
-                .map((w) => (
-                  <button
-                    key={w}
-                    type="button"
-                    className={styles.keuzeKnop}
-                    aria-pressed={weergave === w}
-                    onClick={() => setWeergave(w)}
-                  >
-                    {hoofdletter(w === 'antwoord' ? (hulp.naam ?? w) : w)}
-                  </button>
-                ))}
-            </fieldset>
+            <HulpKeuze hulp={hulp} weergave={weergave} kies={setWeergave} />
             <div hidden={weergave !== 'uitvoer'}>{uitvoer}</div>
             {hulp.tip && (
-              <div className={styles.hulp} hidden={weergave !== 'tip'}>
+              <HulpVak soort="tip" open={weergave === 'tip'}>
                 {hulp.tip}
-              </div>
+              </HulpVak>
             )}
             {hulp.antwoord && (
-              <div className={styles.hulp} hidden={weergave !== 'antwoord'}>
+              <HulpVak soort="antwoord" open={weergave === 'antwoord'}>
                 {hulp.antwoord}
                 {antwoordCode && (
                   <button
@@ -367,7 +368,7 @@ function CodeExerciseInner({
                 {antwoordUit !== null && (
                   <pre className={styles.output}>{antwoordUit || '(geen uitvoer)'}</pre>
                 )}
-              </div>
+              </HulpVak>
             )}
           </>
         ) : (

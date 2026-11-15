@@ -93,6 +93,66 @@ describe('een grafiek krijgt ruimte', () => {
   });
 });
 
+describe('de tip of het antwoord staat open in het veld', () => {
+  // Issue 212: tip en antwoord staan op de plek van de uitvoer. Het antwoord
+  // is zelf code: in een kwart van het veld brak elke regel ervan af, en
+  // onder de code in een vak van 100 pixels waren er vier regels te zien.
+  const lang = regel(58);
+
+  it('naast de code krijgt het antwoord minstens 45 procent', () => {
+    const dicht = veldOpmaak({ code: lang, breedte: VELD, ruimte: 400 });
+    expect(dicht.naast ?? 0).toBeGreaterThan(VELD * 0.55);
+    const open = veldOpmaak({ code: lang, breedte: VELD, ruimte: 400, hulp: true });
+    expect(open.naast).toBe(VELD - Math.round(VELD * 0.45));
+    // De code houdt zijn regels heel zolang dat met kleinere letters kan.
+    expect(open.schaal).toBeLessThan(dicht.schaal);
+    expect(open.schaal).toBeGreaterThanOrEqual(KLEINSTE_SCHAAL);
+  });
+
+  it('korte code naast de uitvoer verandert niet', () => {
+    const dicht = veldOpmaak({ code: kort, breedte: VELD, ruimte: 400 });
+    expect(veldOpmaak({ code: kort, breedte: VELD, ruimte: 400, hulp: true })).toEqual(dicht);
+  });
+
+  it('naast of onder verandert niet: het veld verspringt niet bij een klik', () => {
+    for (const code of [kort, lang, regel(110)]) {
+      const dicht = veldOpmaak({ code, breedte: VELD, ruimte: 500 });
+      for (const hulpTekens of [undefined, 30, 64, 120]) {
+        const open = veldOpmaak({ code, breedte: VELD, ruimte: 500, hulp: true, hulpTekens });
+        expect(open.onder, `${code} ${hulpTekens}`).toBe(dicht.onder);
+      }
+    }
+  });
+
+  it('een antwoord met een lange regel krijgt een bredere kolom', () => {
+    // In een kolom van 418 pixels was van een regel van 64 tekens het eind
+    // afgesneden.
+    const open = veldOpmaak({ code: kort, breedte: VELD, ruimte: 500, hulp: true, hulpTekens: 64 });
+    expect(VELD - (open.naast ?? VELD)).toBe(64 * 7 + 56 + 36);
+    // De code houdt minstens dertig procent van het veld.
+    const breed = veldOpmaak({
+      code: lang,
+      breedte: VELD,
+      ruimte: 500,
+      hulp: true,
+      hulpTekens: 150,
+    });
+    expect(breed.naast).toBe(VELD - Math.round(VELD * 0.7));
+  });
+
+  it('onder de code krijgt het antwoord de helft, en de editor zijn minimum', () => {
+    const open = veldOpmaak({ code: regel(110), breedte: VELD, ruimte: 500, hulp: true });
+    expect(open.onder).toBe(true);
+    expect(open.uitvoerOnder).toBe(249);
+    expect(open.editorMax).toBe(250);
+    // Samen even hoog als met de uitvoer: het veld wordt er niet hoger van.
+    const dicht = veldOpmaak({ code: regel(110), breedte: VELD, ruimte: 500 });
+    expect((open.editorMax ?? 0) + open.uitvoerOnder).toBe(
+      (dicht.editorMax ?? 0) + dicht.uitvoerOnder,
+    );
+  });
+});
+
 describe('wat er rond de editor staat', () => {
   it('telt het uitklapblok met de code die al klaarstaat', () => {
     expect(rondOm({ vakBoven: 0, editorBoven: 0, editorOnder: 150, inhoudOnder: 186 })).toBe(36);

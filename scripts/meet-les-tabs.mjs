@@ -35,7 +35,8 @@
 //
 // Met `--klik` doet het in elk scherm met een Python-veld ook wat een leerling
 // doet: het klikt op Uitvoeren en daarna op Stap voor stap, en meet na elke
-// klik opnieuw (`naUitvoeren`, `naStappen`). In een scherm met een
+// klik opnieuw (`naUitvoeren`, `naStappen`), en op Tip en Oplossing boven het
+// uitvoervak, met de oplossing uitgevoerd (`naHulp`). In een scherm met een
 // voorspelvraag kiest het een antwoord na het andere tot het goede, en meet
 // het na elk antwoord (`naAntwoord`). Een scherm dat past tot je iets
 // aanklikt, past niet: Stap voor stap stond eerst onder het veld en maakte
@@ -442,6 +443,47 @@ async function meetNaKlik(pagina, paneel, id) {
 }
 
 /**
+ * Klikt in het veld dat open staat op Tip en op Oplossing (de knoppen boven
+ * het uitvoervak), voert de oplossing uit, en meet na elke klik: de hulp
+ * staat in het veld, en dat mag er niet hoger van worden. Daarna terug naar
+ * de uitvoer. Leeg als het veld geen hulp heeft.
+ */
+async function meetNaHulp(pagina, paneel, id) {
+  const keuze = paneel.locator('[data-les-hulp-keuze]:visible').first();
+  if ((await keuze.count()) === 0) return {};
+  let naHulp = Number.NEGATIVE_INFINITY;
+  const meet = async () => {
+    await pagina.waitForTimeout(250);
+    naHulp = Math.max(naHulp, await binnen(over(pagina, id), 15_000));
+  };
+  const knoppen = keuze.locator('button');
+  for (let i = 1; i < (await knoppen.count()); i++) {
+    await knoppen.nth(i).click();
+    await meet();
+    const voerUit = paneel.locator(KNOP, { hasText: /^▶ Voer (de oplossing|het antwoord) uit$/ });
+    if ((await voerUit.count()) === 0) continue;
+    // Een oplossing met input() wacht op een antwoord.
+    const code = await paneel.locator('[data-les-hulp]:visible').first().innerText();
+    if (/\binput\s*\(/.test(code)) continue;
+    await voerUit.first().click();
+    await pagina.waitForFunction(
+      (id) => {
+        const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
+        const knop = [...paneel.querySelectorAll('button')].find(
+          (k) => k.offsetParent && /^▶ Voer (de oplossing|het antwoord) uit$/.test(k.textContent),
+        );
+        return knop && !knop.disabled;
+      },
+      id,
+      { timeout: 30_000 },
+    );
+    await meet();
+  }
+  await knoppen.first().click();
+  return { naHulp };
+}
+
+/**
  * Beantwoordt de vraag in het scherm dat open staat zoals een leerling: een
  * antwoord na het andere tot het goede, en meet na elk antwoord. Een scherm
  * met een vraag past tot je antwoordt: dan komen de terugkoppeling en de
@@ -724,6 +766,7 @@ async function meetLes(les) {
           try {
             naKlik = {
               ...(await meetNaKlik(pagina, paneel, id)),
+              ...(await meetNaHulp(pagina, paneel, id)),
               ...(await meetNaAntwoord(pagina, paneel, id)),
             };
           } catch (fout) {
@@ -847,6 +890,7 @@ if (ALS_JSON) {
     for (const [veld, wat] of [
       ['naUitvoeren', 'Uitvoeren'],
       ['naStappen', 'Stap voor stap'],
+      ['naHulp', 'Tip en Oplossing in het veld'],
       ['naAntwoord', 'een antwoord op de vraag'],
     ]) {
       const gemeten = rijen.filter((r) => r[veld] !== undefined);

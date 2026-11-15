@@ -1,4 +1,4 @@
-import { useLesDoel } from '@coderius/shared/components/LesTabs/paneel';
+import { useLesDoel, useLesHulp } from '@coderius/shared/components/LesTabs/paneel';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import type { ReactNode } from 'react';
 import type { PyRunnerProps } from './PyRunnerImpl';
@@ -18,6 +18,8 @@ export default function PyRunner(props: PyRunnerProps): ReactNode {
 function PyRunnerFallback() {
   // Het doel van de opdracht staat ook in de HTML van de build.
   const doel = useLesDoel();
+  // En de tip en het antwoord: dicht, tot het veld er is.
+  const hulp = useLesHulp();
   return (
     <div className={styles.runner}>
       <div className={styles.toolbar}>
@@ -25,6 +27,12 @@ function PyRunnerFallback() {
       </div>
       <div className={styles.status}>Code-omgeving wordt voorbereid…</div>
       {doel && <div className={styles.doel}>{doel}</div>}
+      {hulp && (
+        <div hidden>
+          {hulp.tip}
+          {hulp.antwoord}
+        </div>
+      )}
     </div>
   );
 }

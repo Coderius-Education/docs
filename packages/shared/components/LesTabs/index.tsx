@@ -584,8 +584,18 @@ export function LesVeld({ children }: { children?: ReactNode }): ReactNode {
   const hulp: Hulp | null = hulpen.length ? {} : null;
   for (const { props } of hulpen) {
     if (!hulp) break;
-    if (props.soort === 'tip') hulp.tip = props.children;
-    else Object.assign(hulp, { antwoord: props.children, naam: props.naam, code: props.code });
+    if (props.soort === 'tip')
+      Object.assign(hulp, {
+        tip: props.children,
+        tipTekens: props.tekens ? Number(props.tekens) : undefined,
+      });
+    else
+      Object.assign(hulp, {
+        antwoord: props.children,
+        naam: props.naam,
+        code: props.code,
+        tekens: props.tekens ? Number(props.tekens) : undefined,
+      });
   }
   return (
     <DoelContext.Provider value={doel}>
@@ -594,7 +604,13 @@ export function LesVeld({ children }: { children?: ReactNode }): ReactNode {
   );
 }
 
-type HulpProps = { soort: 'tip' | 'antwoord'; naam?: string; code?: string; children?: ReactNode };
+type HulpProps = {
+  soort: 'tip' | 'antwoord';
+  naam?: string;
+  code?: string;
+  tekens?: string;
+  children?: ReactNode;
+};
 
 const isHulp = (kind: unknown): kind is ReactElement<HulpProps> =>
   isValidElement(kind) && kind.type === LesHulp;
