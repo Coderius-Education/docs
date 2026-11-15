@@ -204,6 +204,28 @@ describe('createConfig — les-tabbladen', () => {
     expect(remarkVan(uit, 'golfbot')).not.toContain(remarkLesTabs);
   });
 
+  it('haalt de link Bewerk deze pagina weg, alleen met de schakelaar aan', () => {
+    // Hij stond onder elk scherm van een les; die ruimte is van de les.
+    const metLink = {
+      ...basis,
+      presets: [['classic', { docs: { editUrl: 'https://x/edit' } }]],
+      plugins: [
+        ['@docusaurus/plugin-content-docs', { id: 'lego_auto', editUrl: 'https://x/edit' }],
+      ],
+    };
+    const links = (config: {
+      presets: [string, { docs: object }][];
+      plugins: [string, object][];
+    }) => [
+      config.presets[0][1].docs,
+      config.plugins.find((p) => Array.isArray(p) && p[0].endsWith('content-docs'))?.[1],
+    ];
+    for (const docs of links(createConfig({ ...metLink, lesTabs: true })))
+      expect(docs).not.toHaveProperty('editUrl');
+    for (const docs of links(createConfig(metLink)))
+      expect(docs).toHaveProperty('editUrl', 'https://x/edit');
+  });
+
   it('zet de module aan die code op een pagina zonder tabbladen passend maakt', () => {
     // Een pagina met tabbladen past de letters van zijn code zelf aan
     // (LesTabs, pasCode.ts); de cheatsheet heeft dat onderdeel niet.

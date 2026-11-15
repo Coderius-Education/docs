@@ -203,6 +203,10 @@ const lesTabsOpties = (aan) => (aan && typeof aan === 'object' ? aan : {});
 // Zonder opties de plugin zelf, zoals met `lesTabs: true` altijd al.
 const metOpties = (plugin, aan) =>
   Object.keys(lesTabsOpties(aan)).length ? [plugin, lesTabsOpties(aan)] : plugin;
+// Een cursus met tabbladen heeft geen link "Bewerk deze pagina": hij stond
+// onder elk scherm, en elke pixel daar gaat van de les af. Een site kan hem
+// niet terugzetten; de bron staat in de repo.
+const zonderBewerken = ({ editUrl, ...opts }) => opts;
 function metLesTabs(presets, aan) {
   if (!aan) return presets;
   return presets.map((entry) => {
@@ -210,7 +214,7 @@ function metLesTabs(presets, aan) {
     const [name, opts] = entry;
     if ((name !== 'classic' && !/preset-classic$/.test(name)) || !opts?.docs) return entry;
     const docs = {
-      ...opts.docs,
+      ...zonderBewerken(opts.docs),
       remarkPlugins: [...(opts.docs.remarkPlugins || []), metOpties(remarkLesTabs, aan)],
     };
     return [name, { ...opts, docs }];
@@ -230,7 +234,7 @@ function metLesTabsInPlugins(plugins, aan) {
     return [
       name,
       {
-        ...opts,
+        ...zonderBewerken(opts),
         remarkPlugins: [...(opts.remarkPlugins || []), metOpties(remarkLesTabs, aan)],
       },
     ];

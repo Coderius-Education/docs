@@ -461,8 +461,16 @@ Wat vastligt, en waarom:
   router om. Het doel van een adres is een kop óf een paneel: het tabblad
   Uitleg en de stap De basis hebben geen kop.
 - **Boven de tabbladen staat zo weinig mogelijk.** Op een breed scherm
-  (vanaf 997px, waar de lessenlijst links staat) vervalt het kruimelpad en is
-  de titel 1,75rem; dat scheelt honderd pixels per tabblad. In een paneel is
+  (vanaf 997px, waar de lessenlijst links staat) vervalt het kruimelpad, en
+  staat de titel klein vóór de rij tabbladen, in dezelfde balk die onder de
+  navbar plakt (`titelBijTabs` in `les-tabs.js` zet de `#`-kop in
+  `<LesTabs>`; de werkvormen en de schermen ziet hij niet). Past de titel er
+  niet naast, dan staat hij op een regel erboven: de rij tabbladen gaat voor.
+  Een titel uit de front matter zet Docusaurus zelf boven de pagina; die
+  blijft daar, op 1,75rem. Op een telefoon staan titel en rij onder elkaar,
+  zoals eerst. Een cursus met tabbladen heeft geen link Bewerk deze pagina
+  (`createConfig` haalt `editUrl` weg, ook in een losse docs-plugin): hij
+  stond onder elk scherm. In een paneel is
   de `##` zo groot als een tussenkop, is een uitklapblok lager, en staan een
   tip en een antwoord die dicht zijn naast elkaar.
 - **Een oefenveld in een tabblad past zich aan het scherm aan.** Het veld

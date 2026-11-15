@@ -95,7 +95,11 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
   const tabs = kinderen.filter(isTab);
   // Wat in een rij stappen geen stap is: het leerdoel van de les. Het staat
   // boven de rij, en alleen bij de eerste stap.
-  const boven = niveau === 'stap' ? kinderen.filter((c) => isValidElement(c) && !isTab(c)) : [];
+  // In een rij tabbladen: de titel van de les (titelBijTabs in
+  // plugins/les-tabs.js). Hij staat naast de rij.
+  const geenTab = kinderen.filter((c) => isValidElement(c) && !isTab(c));
+  const boven = niveau === 'stap' ? geenTab : [];
+  const titel = niveau === 'tab' ? geenTab : [];
   const ids = tabs.map((t) => t.props.id);
   const [actief, setActief] = useState(ids[0] ?? '');
   // Waar na het openen van een paneel naartoe gescrold wordt: een kop binnen
@@ -277,6 +281,46 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     kies(naar, true);
   };
 
+  // De rij knoppen. Bij de tabbladen staat hij met de titel in één balk.
+  const knoppen = (
+    <div
+      ref={lijst}
+      role="tablist"
+      aria-label={niveau === 'tab' ? 'Onderdelen van deze les' : 'Stappen in dit onderdeel'}
+      className={niveau === 'tab' ? styles.tablist : styles.staplist}
+      onKeyDown={opToets}
+    >
+      {tabs.map(({ props: t }, i) => (
+        <button
+          key={t.id}
+          type="button"
+          role="tab"
+          id={`tab-${t.id}`}
+          {...{ [data.knop]: t.id }}
+          aria-selected={t.id === actief}
+          aria-controls={`paneel-${t.id}`}
+          tabIndex={t.id === actief ? 0 : -1}
+          className={niveau === 'tab' ? styles.tab : styles.stap}
+          // Een stap in een volle rij staat ingekort op zijn knop: dan
+          // zegt de titel hoe hij voluit heet.
+          title={t.label !== t.titel ? t.titel : niveau === 'stap' ? t.label : undefined}
+          aria-label={t.kort ? t.label : undefined}
+          onClick={() => kies(t.id)}
+        >
+          {niveau === 'stap' && <span className={styles.stapNummer}>{i + 1}</span>}
+          {niveau === 'tab' && t.werkvorm && (
+            <WerkvormIcoon id={t.werkvorm} className={styles.tabIcoon} />
+          )}
+          {niveau === 'stap' ? (
+            <span className={styles.stapLabel}>{t.kort ?? t.label}</span>
+          ) : (
+            (t.kort ?? t.label)
+          )}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <div
       ref={wortel}
@@ -289,42 +333,14 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
           {boven}
         </div>
       )}
-      <div
-        ref={lijst}
-        role="tablist"
-        aria-label={niveau === 'tab' ? 'Onderdelen van deze les' : 'Stappen in dit onderdeel'}
-        className={niveau === 'tab' ? styles.tablist : styles.staplist}
-        onKeyDown={opToets}
-      >
-        {tabs.map(({ props: t }, i) => (
-          <button
-            key={t.id}
-            type="button"
-            role="tab"
-            id={`tab-${t.id}`}
-            {...{ [data.knop]: t.id }}
-            aria-selected={t.id === actief}
-            aria-controls={`paneel-${t.id}`}
-            tabIndex={t.id === actief ? 0 : -1}
-            className={niveau === 'tab' ? styles.tab : styles.stap}
-            // Een stap in een volle rij staat ingekort op zijn knop: dan
-            // zegt de titel hoe hij voluit heet.
-            title={t.label !== t.titel ? t.titel : niveau === 'stap' ? t.label : undefined}
-            aria-label={t.kort ? t.label : undefined}
-            onClick={() => kies(t.id)}
-          >
-            {niveau === 'stap' && <span className={styles.stapNummer}>{i + 1}</span>}
-            {niveau === 'tab' && t.werkvorm && (
-              <WerkvormIcoon id={t.werkvorm} className={styles.tabIcoon} />
-            )}
-            {niveau === 'stap' ? (
-              <span className={styles.stapLabel}>{t.kort ?? t.label}</span>
-            ) : (
-              (t.kort ?? t.label)
-            )}
-          </button>
-        ))}
-      </div>
+      {niveau === 'tab' ? (
+        <div className={styles.kopRij}>
+          {titel.length > 0 && <div className={styles.titel}>{titel}</div>}
+          {knoppen}
+        </div>
+      ) : (
+        knoppen
+      )}
       <RijContext.Provider
         value={{
           actief,

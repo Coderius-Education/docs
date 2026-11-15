@@ -19,6 +19,7 @@ const {
   remarkLesTabs,
   isDeel,
   deelMetStappen,
+  titelBijTabs,
 } = require('./plugins/les-tabs.js');
 
 type Knoop = {
@@ -1622,6 +1623,45 @@ describe('metStappen', () => {
   });
 });
 
+describe('titelBijTabs', () => {
+  // De titel staat op een breed scherm naast de rij tabbladen: boven de rij
+  // kostte hij elk scherm vijftig pixels. Daarvoor gaat hij in <LesTabs>.
+  const namen = (uit: Knoop[]) => uit.map((n) => n.name ?? n.type);
+
+  it('zet de titel als eerste kind in <LesTabs>', () => {
+    const uit = titelBijTabs(groepeer([titel, kop(2, 'Theorie'), alinea('a'), kop(2, 'Make')]));
+    expect(namen(uit)).toEqual(['LesTabs']);
+    const kinderen = uit[0].children;
+    expect(kinderen[0]).toBe(titel);
+    expect(namen(kinderen.slice(1))).toEqual(['LesTab', 'LesTab']);
+  });
+
+  it('laat een import tussen de titel en de tabbladen staan waar hij staat', () => {
+    const uit = titelBijTabs([
+      titel,
+      esm('import X from "x";'),
+      { ...titel, name: 'LesTabs', children: [] },
+    ]);
+    expect(namen(uit)).toEqual(['mdxjsEsm', 'LesTabs']);
+    expect(uit[1].children[0]).toBe(titel);
+  });
+
+  it('laat de titel staan als er iets tussen hem en de tabbladen staat', () => {
+    // Iets dat de pagina laat zien, komt anders onder de titel en de rij.
+    const lesTabs: Knoop = { type: 'mdxJsxFlowElement', name: 'LesTabs', children: [] };
+    const zonder = [titel, alinea('Startcode'), lesTabs];
+    expect(titelBijTabs(zonder)).toEqual(zonder);
+    // En zonder titel in de bron (een titel uit de front matter zet
+    // Docusaurus zelf boven de pagina) verandert er niets.
+    expect(titelBijTabs([lesTabs])).toEqual([lesTabs]);
+  });
+
+  it('laat werkvormen en schermen buiten beschouwing: groepeer houdt de titel boven', () => {
+    const uit = groepeer([titel, kop(2, 'Theorie'), alinea('a'), kop(2, 'Make')]);
+    expect(namen(uit)).toEqual(['header', 'LesTabs']);
+  });
+});
+
 describe('remarkLesTabs', () => {
   // Docusaurus geeft elke kop een id voordat deze stap draait; hier doet een
   // kleine stap dat na.
@@ -1957,7 +1997,12 @@ describe('de opmaak van de tabbladen', () => {
       /html:has\(\[data-les-tabs\][^)]*\) \.theme-doc-breadcrumbs\)?\s*\{\s*display:\s*none/,
     );
     expect(breed).toMatch(/\.theme-doc-markdown > header > h1\)?\s*\{[^}]*--ifm-h1-font-size/);
+    // De titel staat in de balk met de rij tabbladen, en gaat op een eigen
+    // regel als hij er niet naast past: de rij tabbladen gaat voor.
+    expect(breed).toMatch(/\.kopRij \{[^}]*position: sticky[^}]*flex-wrap: wrap/);
+    expect(breed).toMatch(/\.kopRij > \.tablist \{[^}]*position: static/);
     const buiten = css.slice(0, css.indexOf('@media'));
+    expect(buiten).toMatch(/\.kopRij \{\s*display: contents;/);
     expect(buiten).not.toMatch(/theme-doc-breadcrumbs/);
   });
 });

@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
 import { createConfig } from '@coderius/shared/config';
-import { REPO_URL, repoEditUrl } from '@coderius/shared/sites';
+import { REPO_URL } from '@coderius/shared/sites';
 import type { Plugin } from '@docusaurus/types';
 
 const projectName = 'robotica-docs';
@@ -342,11 +342,9 @@ export default createConfig({
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: repoEditUrl('robotica'),
         },
         blog: {
           showReadingTime: true,
-          editUrl: repoEditUrl('robotica'),
         },
         theme: { customCss: './src/css/custom.css' },
       },

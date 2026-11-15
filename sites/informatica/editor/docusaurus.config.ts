@@ -18,7 +18,6 @@ export default createConfig({
         docs: {
           sidebarPath: './sidebars.ts',
           routeBasePath: '/',
-          editUrl: undefined,
         },
         blog: false,
       },

@@ -108,6 +108,41 @@ describe('LesTabs', () => {
     expect(html).toContain('data-les-tabs');
   });
 
+  it('zet de titel van de les in de balk met de rij tabbladen, vóór de rij', () => {
+    // titelBijTabs (plugins/les-tabs.js) geeft de titel mee als eerste kind.
+    // Hij is geen tabblad, en staat in de HTML van de build vóór de rij: een
+    // schermlezer leest eerst de titel.
+    const html = renderToStaticMarkup(
+      <LesTabs>
+        <header>
+          <h1>3.1 Acties</h1>
+        </header>
+        <LesTab id="theorie" titel="Theorie" label="Theorie">
+          <p>Uitleg.</p>
+        </LesTab>
+        <LesTab id="make" titel="Make" label="Make">
+          <p>Maak.</p>
+        </LesTab>
+      </LesTabs>,
+    );
+    expect(html.indexOf('<h1>3.1 Acties</h1>')).toBeLessThan(html.indexOf('role="tablist"'));
+    expect(html.match(/role="tab"/g)).toHaveLength(2);
+    render(
+      <LesTabs>
+        <header>
+          <h1>3.1 Acties</h1>
+        </header>
+        <LesTab id="theorie" titel="Theorie" label="Theorie">
+          <p>Uitleg.</p>
+        </LesTab>
+      </LesTabs>,
+    );
+    const kop = screen.getByRole('heading', { level: 1 });
+    expect(kop.closest('header')?.parentElement?.parentElement).toBe(
+      screen.getByRole('tablist').parentElement,
+    );
+  });
+
   it('toont het label op het tabblad en de hele kop als titel', () => {
     render(<Les />);
     expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual([
