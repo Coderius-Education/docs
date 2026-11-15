@@ -3,9 +3,5 @@
   "position": 4,
   "collapsible": true,
   "collapsed": true,
-  "link": {
-    "type": "generated-index",
-    "title": "Vind het maximum: bouwen, stap voor stap",
-    "description": "Eén bouwsteen per pagina, in deze volgorde."
-  }
+  "link": null
 }
