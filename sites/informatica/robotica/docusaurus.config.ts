@@ -425,7 +425,6 @@ export default createConfig({
     footer: {
       style: 'dark',
       links: [],
-      copyright: `Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</a>.`,
     },
   },
 });

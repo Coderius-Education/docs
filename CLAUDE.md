@@ -258,8 +258,7 @@ layer-polyfill. Zie `packages/shared/huisstijl/README.md`.
 De homepage van elke cursus past in één scherm, footer meegerekend, vanaf
 1280×720: de hero en de kaarten (stijlen van `HomepageHero` en
 `HomepageFeatures`, gebruikt door `HomepageSections`) zijn compact, en
-`ManagedHomepage` zet de klasse `coderius-homepage`, waardoor de footer daar op
-één regel per kolom staat (`packages/shared/css/custom.css`). De homepage vult het scherm
+`ManagedHomepage` zet de klasse `coderius-homepage`. De homepage vult het scherm
 tot de footer: een hero gevolgd door een sectie of `main` vangt het grootste
 deel van de extra ruimte op, en de kaarten staan gecentreerd in de rest
 (`ManagedHomepage/styles.module.css`); zo staat er op een groot scherm geen
@@ -269,6 +268,18 @@ de site en meet in headless Chromium dat
 1366×768, in licht en donker. Een module-klasse die een maat van Infima wil
 overschrijven (`.hero`, `h2`, `h3`, `p`) staat op dezelfde opgehoogde selector,
 anders wint Infima stil; `huisstijl.test.ts` bewaakt dat voor de homepages.
+
+De footer staat op elke pagina op één regel (`packages/shared/theme/Footer`,
+opmaak in `css/custom.css`): links de cursus (Leerdoelen, Docenten en wat de
+site in zijn footer zet), in het midden de licentie als het kleine plaatje
+van Creative Commons (`static/img/cc-by-nc.svg`, uit `@creativecommons/cc-assets`),
+rechts coderius.nl, Privacy en eventueel Werk van het oude adres. Op een breed
+scherm is hij 47 pixels hoog; eerst stond elke kolom met zijn titel onder
+elkaar en de licentie in een zin eronder, 270 pixels. `createConfig` maakt de
+twee kolommen en haalt een eigen `copyright` weg: de licentie is overal
+CC BY-NC 4.0, en een bronvermelding (minimax naar CS50 AI) staat in de les
+die de bron gebruikt. Zet geen lange lijst lessen in de footer; daar is de
+sidebar voor.
 
 ## Les-tabbladen
 

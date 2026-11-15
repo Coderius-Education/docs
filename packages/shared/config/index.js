@@ -86,11 +86,6 @@ function merkVoorSite(site) {
   return site ? CURSUSSEN.find((c) => c.id === site.id) : undefined;
 }
 
-// Coderius gebruikt overal dezelfde licentie (zie org-handbook).
-const CC_BY_NC =
-  'Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.nl" target="_blank" rel="license noopener noreferrer">' +
-  'Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</a>.';
-
 // Sommige gedeelde packages (zoals @coderius/editor) brengen hun eigen
 // static-assets mee (bijv. de self-hosted Monaco-distributie). Elke shared
 // package met een `static`-map wordt automatisch geserveerd door de site.
@@ -271,7 +266,7 @@ const FASTER = {
  *    woordmerk per cursus, gegenereerd uit huisstijl/)
  *  - navbar-merk, naam en favicon van de cursus uit de huisstijl
  *  - gedeelde merk-CSS vóór de site-CSS
- *  - de CC BY-NC 4.0 copyright als de footer er geen heeft
+ *  - de footer op één regel: cursuslinks, de licentie (CC BY-NC 4.0), Coderius
  *  - transpilatie van @coderius/* workspace-componenten
  *  - static-mappen van sharedPackages worden automatisch mee-geserveerd
  *  - de Pyodide-runtime onder <baseUrl>pyodide/, uit node_modules, voor een
@@ -395,40 +390,33 @@ function createConfig(course = {}) {
   const others = otherSites(registry);
   const merk = merkVoorSite(registry);
 
-  // Footer: zorg voor de CC-BY-NC copyright en één teruglink naar de homepage.
-  // Cross-site navigatie tussen cursussen zit in de navbar-dropdown "Cursussen"
-  // en op /cursussen; de footer wijst terug naar de overkoepelende coderius.nl.
-  const footer = themeConfig.footer ? { ...themeConfig.footer } : { style: 'dark' };
-  if (!footer.copyright) footer.copyright = CC_BY_NC;
-  const footerLinks = footer.links ? [...footer.links] : [];
-  const hasHomeLink = footerLinks.some((col) =>
-    (col.items || []).some((item) => item.href === HOME.url),
-  );
-  const hasPrivacyLink = footerLinks.some((col) =>
-    (col.items || []).some((item) => item.to === '/privacy'),
-  );
-  if (!hasHomeLink) {
-    footerLinks.push({
-      title: HOME.label,
-      items: [
-        { label: 'Home', href: HOME.url },
-        ...(hasPrivacyLink ? [] : [{ label: 'Privacy', to: '/privacy' }]),
-      ],
-    });
-  } else if (!hasPrivacyLink) {
-    footerLinks.push({ title: 'Privacy', items: [{ label: 'Privacy', to: '/privacy' }] });
-  }
-  if (oudeOpslag) {
-    // Werk van het oude subdomein ophalen: onder Home en Privacy, voor wie het zoekt.
-    const kolom = footerLinks.find((col) => col.title === HOME.label) ?? footerLinks.at(-1);
-    kolom.items = [...(kolom.items || []), { label: 'Werk van het oude adres', to: '/overzetten' }];
-  }
-  if (heeftLeerdoelen) {
-    // Voor docenten en leerlingen: wat er per niveau van de cursus verwacht wordt.
-    const kolom = footerLinks.find((col) => col.title === HOME.label) ?? footerLinks.at(-1);
-    kolom.items = [...(kolom.items || []), { label: 'Leerdoelen', to: '/leerdoelen' }];
-  }
-  footer.links = footerLinks;
+  // Footer: één regel op elke pagina (theme/Footer). Links de cursus: de
+  // leerdoelen, de docentenhandleiding en wat de site zelf in zijn footer zet;
+  // in het midden de licentie als klein plaatje; rechts Coderius. Twee kolommen
+  // in de config, zodat Docusaurus hem valideert; de kolomtitels toont de
+  // footer niet. Een site kan geen eigen copyright meer zetten: de licentie is
+  // overal CC BY-NC 4.0 (zie org-handbook), en een bronvermelding hoort bij de
+  // les die de bron gebruikt.
+  const { copyright: _eigen, ...footer } = { style: 'dark', ...(themeConfig.footer ?? {}) };
+  const vanSite = (footer.links ?? []).flatMap((kol) => kol.items ?? [kol]);
+  const cursus = [
+    ...(heeftLeerdoelen ? [{ label: 'Leerdoelen', to: '/leerdoelen' }] : []),
+    { label: 'Docenten', to: '/docenten' },
+    ...vanSite.filter(
+      (item) =>
+        item.href !== HOME.url && !['/privacy', '/leerdoelen', '/docenten'].includes(item.to),
+    ),
+  ];
+  const coderius = [
+    { label: 'coderius.nl', href: HOME.url },
+    { label: 'Privacy', to: '/privacy' },
+    // Werk van het oude subdomein ophalen, voor wie het zoekt.
+    ...(oudeOpslag ? [{ label: 'Werk van het oude adres', to: '/overzetten' }] : []),
+  ];
+  footer.links = [
+    { title: registry?.label ?? 'Cursus', items: cursus },
+    { title: HOME.label, items: coderius },
+  ];
   themeConfig.footer = footer;
 
   // Navbar: één "Cursussen"-dropdown (rechts) om naar een andere cursus van
@@ -542,4 +530,4 @@ function createConfig(course = {}) {
   };
 }
 
-module.exports = { createConfig, withSiteLinks, prismThemes, CC_BY_NC, FASTER };
+module.exports = { createConfig, withSiteLinks, prismThemes, FASTER };
