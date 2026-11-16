@@ -3111,6 +3111,19 @@ describe('het meetscript (scripts/meet-les-tabs.mjs)', () => {
     expect(code).not.toMatch(/window\.inner(Width|Height)/);
   });
 
+  it('wacht bij een oefenveld op de editor die dat veld heeft', () => {
+    // Het script wacht per tabblad tot elk veld (`[data-zaad]`) zijn editor
+    // heeft, hoogstens tien seconden. Er stond `.cm-editor`, de editor van
+    // web. Toen het python-veld ook `data-zaad` kreeg, wachtte het script bij
+    // elk tabblad met een python-veld die tien seconden uit: de meting van
+    // python duurde in CI drie keer een kwartier.
+    const { EDITOR_VAN_VELD } = require('./meet-selectie.js');
+    expect(EDITOR_VAN_VELD.split(/,\s*/)).toEqual(['.cm-editor', 'textarea']);
+    expect(code).toMatch(/v\.querySelector\(editor\)/);
+    expect(code).toMatch(/\[id, EDITOR_VAN_VELD\]/);
+    expect(code).not.toMatch(/querySelector\('\.cm-editor'\)/);
+  });
+
   it('klapt met --open elk uitklapblok open door op zijn summary te klikken', () => {
     // Het <details> van Docusaurus klapt met een animatie open: een blok dat
     // alleen het attribuut open krijgt, blijft leeg.

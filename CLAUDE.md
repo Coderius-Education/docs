@@ -149,6 +149,13 @@ de lettertypen. Met die schuifbalken pasten er bij de invoering in zes
 cursussen een paar schermen niet meer; die zijn ingekort of gesplitst, en
 `pasCode` rekent opnieuw nadat `speling` een codevak laat schuiven.
 
+**Een job die Chromium installeert, heeft een grens.** `playwright install`
+duurt twintig seconden, en bleef op één runner een half uur staan; zonder
+grens wacht de workflow zes uur, en de check `build` wacht mee. De stap
+stopt na drie minuten en probeert het één keer opnieuw, en de jobs
+`browser`, `terminal` en `schermen` hebben `timeout-minutes`
+(`ci-setup.test.ts`).
+
 **De git-simulator wordt naast een vaste git gelegd**: de job `test` bouwt
 git `GIT_VERSIE` (nu 2.56.1) zelf, eenmaal en daarna uit de cache, want de
 git van de runner veranderde zonder aankondiging. De cache-sleutel noemt het
@@ -1332,6 +1339,14 @@ Wat er mis was:
   pagina bezig is, komt er geen tik, en ook geen antwoord. Met een twintig
   keer vertraagde processor kwam het werk eerst in drie van de vier velden
   niet terug.
+
+**Een veld met opslag draagt `data-zaad`**, en het meetscript wacht bij zo'n
+veld op zijn editor (`EDITOR_VAN_VELD` in `meet-selectie.js`: de CodeMirror
+van web of de textarea van python), hoogstens tien seconden per tabblad.
+Toen het python-veld `data-zaad` kreeg en het script alleen CodeMirror kende,
+wachtte het bij elk python-scherm die tien seconden uit: de drie meetjobs
+van python duurden een kwartier, vier keer zo lang als nodig. Geef je een
+ander veld opslag, zet zijn editor dan in `EDITOR_VAN_VELD`.
 
 `oefenveld/useOpslag.test.tsx` speelt beide na en faalt zonder de reparatie.
 Of een schrijfactie bij herladen aankomt, ziet alleen een browser: speel het

@@ -97,7 +97,11 @@ import { chromium } from 'playwright';
 
 const require = createRequire(import.meta.url);
 const { SITES_BY_ID, siteDir } = require('../packages/shared/sites.js');
-const { deelVan, lesVan: lesVanInBuild } = require('../packages/shared/meet-selectie.js');
+const {
+  EDITOR_VAN_VELD,
+  deelVan,
+  lesVan: lesVanInBuild,
+} = require('../packages/shared/meet-selectie.js');
 
 const argumenten = process.argv.slice(2);
 const SITE = argumenten.find((a) => !a.startsWith('--')) ?? 'web';
@@ -667,17 +671,18 @@ async function meetLes(les) {
       const label = (await tab.innerText()).trim();
       await tab.scrollIntoViewIfNeeded();
       await tab.click();
-      // Een oefenveld is klaar als de editor staat; daarna nog even voor de
-      // hoogte die het voorbeeld zelf meldt.
+      // Een oefenveld is klaar als de editor staat (EDITOR_VAN_VELD in
+      // meet-selectie.js); daarna nog even voor de hoogte die het voorbeeld
+      // zelf meldt.
       await pagina
         .waitForFunction(
-          (id) => {
+          ([id, editor]) => {
             const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
             return [...paneel.querySelectorAll('[data-zaad]')].every((v) =>
-              v.querySelector('.cm-editor'),
+              v.querySelector(editor),
             );
           },
-          id,
+          [id, EDITOR_VAN_VELD],
           { timeout: 10_000 },
         )
         .catch(() => {});

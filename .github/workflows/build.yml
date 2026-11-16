@@ -879,6 +879,7 @@ jobs:
   # hier gebouwd.
   browser:
     needs: [plan, build]
+    timeout-minutes: 15
     if: >-
       !cancelled() && needs.plan.outputs.browser == 'true'
       && (needs.build.result == 'success' || needs.build.result == 'skipped')
@@ -922,7 +923,13 @@ jobs:
           node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
 
       - name: Chromium
-        run: pnpm exec playwright install --with-deps chromium
+        # Twintig seconden op een gewone dag. Op één runner bleef de stap een
+        # half uur staan, en zonder grens had de job zes uur gehangen: de
+        # check `build` wacht erop. Dus na drie minuten nog één keer, en dan
+        # rood (ci-setup.test.ts).
+        run: |
+          timeout 180 pnpm exec playwright install --with-deps chromium ||
+            timeout 180 pnpm exec playwright install --with-deps chromium
 
       - name: De speeltuin in Chromium
         run: node scripts/rooktest-speeltuin.mjs "${{ steps.map.outputs.dir }}/build" --eis-compressie
@@ -935,6 +942,7 @@ jobs:
   # stil mis, terwijl de tests in node groen bleven.
   terminal:
     needs: [plan, build]
+    timeout-minutes: 15
     if: >-
       !cancelled() && needs.plan.outputs.terminal == 'true'
       && (needs.build.result == 'success' || needs.build.result == 'skipped')
@@ -975,7 +983,10 @@ jobs:
           node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
 
       - name: Chromium
-        run: pnpm exec playwright install --with-deps chromium
+        # Met een grens en één herkansing, zoals in `browser`.
+        run: |
+          timeout 180 pnpm exec playwright install --with-deps chromium ||
+            timeout 180 pnpm exec playwright install --with-deps chromium
 
       - name: De oefenterminal in Chromium
         run: node scripts/rooktest-linux.mjs "${{ steps.map.outputs.dir }}/build"
@@ -1000,6 +1011,8 @@ jobs:
     # Vast op 24.04, zoals `browser`: Playwright 1.56.1 installeert op 26.04
     # geen Chromium (ci-setup.test.ts).
     runs-on: ubuntu-24.04
+    # Een deel meet in vijf tot zes minuten; wat een half uur duurt, hangt.
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       # Per cursus één of meer delen ({ site, deel, delen }): een hele cursus
@@ -1047,7 +1060,10 @@ jobs:
           name: wijzigingen
 
       - name: Chromium
-        run: pnpm exec playwright install --with-deps chromium
+        # Met een grens en één herkansing, zoals in `browser`.
+        run: |
+          timeout 180 pnpm exec playwright install --with-deps chromium ||
+            timeout 180 pnpm exec playwright install --with-deps chromium
 
       - name: De schermen van ${{ matrix.site }} meten
         run: node scripts/meet-les-tabs.mjs ${{ matrix.site }} --bronnen=changed.json --deel=${{ matrix.deel }}/${{ matrix.delen }} --streng

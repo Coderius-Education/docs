@@ -9,6 +9,7 @@ import {
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { EDITOR_VAN_VELD } from '../../../shared/meet-selectie.js';
 import type { Opname } from '../PyodideProvider';
 import { setPyodideLoader } from '../PyodideProvider';
 import { type Nep, nepPyodide } from '../nep-pyodide';
@@ -618,6 +619,18 @@ describe('het veld bewaart de code van de leerling', () => {
     fireEvent.click(knop('Reset'));
     await act(async () => {});
     expect(dialoog.vragen).toEqual([]);
+  });
+
+  it('het meetscript ziet dat het veld klaar is', async () => {
+    // Het veld draagt `data-zaad`, net als het web-veld, en het meetscript
+    // wacht bij zo'n veld op zijn editor (EDITOR_VAN_VELD). Kent het script
+    // de editor van dit veld niet, dan wacht het bij elk scherm tien
+    // seconden: de meting van python duurde zo drie keer een kwartier.
+    const { container } = render(<CodeExercise site="python">{'x = 1'}</CodeExercise>);
+    await wachtTotGeladen();
+    const veld = container.querySelector('[data-zaad]');
+    expect(veld).not.toBeNull();
+    expect(veld?.querySelector(EDITOR_VAN_VELD)).not.toBeNull();
   });
 
   it('het veld zegt zelf of het bewaart', async () => {

@@ -255,7 +255,21 @@ function deelVan(lessen, deel, delen) {
   return lessen.filter((_, i) => i % delen === deel - 1);
 }
 
+/**
+ * Waaraan het meetscript ziet dat een oefenveld (`[data-zaad]`) zijn editor
+ * heeft: de CodeMirror van het web-veld, die pas komt als het bewaarde werk
+ * geladen is, of de textarea van het python-veld. Het script wacht daar per
+ * tabblad hoogstens tien seconden op.
+ *
+ * Eerst stond er alleen `.cm-editor`. Toen het python-veld ook `data-zaad`
+ * kreeg (het bewaart sindsdien zijn code), wachtte het script bij elk
+ * tabblad met een python-veld die tien seconden uit: de drie meetjobs van
+ * python duurden een kwartier, en de rest van CI was na zeven minuten klaar.
+ */
+const EDITOR_VAN_VELD = '.cm-editor, textarea';
+
 module.exports = {
+  EDITOR_VAN_VELD,
   adresVanBron,
   deelVan,
   docsMappen,
