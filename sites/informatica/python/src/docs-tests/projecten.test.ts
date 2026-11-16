@@ -209,7 +209,7 @@ describe('projecten in de python-cursus', () => {
           });
         });
 
-        it('de editor bewaart niets, dus elke stap zegt: kopieer je programma', () => {
+        it('de volgende stap begint met een leeg veld, dus elke stap zegt: kopieer je programma', () => {
           for (const s of stappen.slice(0, -1)) {
             expect(s.tekst, s.naam).toContain('Kopieer je programma');
           }

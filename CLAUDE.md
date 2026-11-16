@@ -1297,6 +1297,53 @@ overhoudt. Schrijf code in een les dus gewoon met vier spaties;
 `mdx-inspringing.test.ts` pint het MDX-gedrag vast voor als een upgrade het
 verandert.
 
+## Oefenvelden bewaren hun code
+
+Het oefenveld van web (`CodeEditor`) en dat van python (`CodeExercise`)
+bewaren de code van de leerling in de IndexedDB van zijn browser. De opslag
+en de hook staan in `packages/shared/oefenveld` (`maakOpslag`, `useOpslag`);
+een veld zegt welke site het is en uit welke delen zijn code bestaat (web:
+html, css en js; python: code). Elke site heeft een eigen database
+(`coderius:<site>:oefenvelden`, store `velden`), en een veld vindt zijn werk
+met het pad van de les, de vingerafdruk van zijn startcode (het zaad) en het
+hoeveelste veld met die startcode het is. Een andere startcode is dus een
+nieuw veld, en een veld dat je ertussen zet, schuift het werk één veld op.
+Naam, zaad, sleutel en de vorm van een regel liggen vast in
+`oefenveld/opslag.test.ts`: verander je er een, dan is het werk van elke
+leerling onvindbaar.
+
+Issue 216 ("codeblokken worden niet meer onthouden") bracht dit bij elkaar.
+Wat er mis was:
+
+- **Het veld van python bewaarde niets**, en zei dat zelf. Het python-veld
+  krijgt zijn opslag van de site (`site="python"` in
+  `src/components/CodeExercise`); zonder `site` bewaart een veld niets.
+- **Wie typte en binnen een halve seconde herlaadde, was dat werk kwijt.**
+  Het veld schrijft een halve seconde na de laatste toets, en bij `pagehide`
+  meteen; maar een schrijfactie naar IndexedDB die dan begint, breekt de
+  browser af. In Chromium gemeten: tot 450 ms na de laatste toets was het
+  werk weg, vanaf 600 ms niet. Bij vertrek gaat de code daarom ook als
+  noodkopie naar localStorage (dat schrijft meteen); het veld leest hem bij
+  het volgende laden, zet hem in de database en gooit hem weg.
+- **Op een trage computer gaf het veld het lezen op.** Na anderhalve seconde
+  zonder antwoord opent een veld met zijn startcode en bewaart het die sessie
+  niets (schrijven over werk dat niet te lezen was, gooit het weg). Die
+  anderhalve seconde telt nu in tikken van 100 ms: zolang de processor met de
+  pagina bezig is, komt er geen tik, en ook geen antwoord. Met een twintig
+  keer vertraagde processor kwam het werk eerst in drie van de vier velden
+  niet terug.
+
+`oefenveld/useOpslag.test.tsx` speelt beide na en faalt zonder de reparatie.
+Of een schrijfactie bij herladen aankomt, ziet alleen een browser: speel het
+na een wijziging na (typen, meteen herladen, kijken of het er staat).
+
+**Een veld van python met alleen commentaar is leeg.** "# Schrijf hier je
+code" moest een leerling eerst weghalen (116 velden). `startcode.ts` in
+`packages/python-runner` maakt van startcode met alleen commentaar een leeg
+veld met die tekst als aanwijzing (grijs, weg zodra er iets staat); de les
+verandert er niet voor. Commentaar tussen code blijft staan. Reset vraagt in
+een veld met opslag eerst of het zeker is: wat bewaard was, komt niet terug.
+
 ## Leerdoelen
 
 Een cursus met leerdoelen heeft één bestand, `src/leerdoelen.json`: de tabel

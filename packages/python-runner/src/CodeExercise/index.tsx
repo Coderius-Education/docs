@@ -7,14 +7,18 @@ import {
   useLesHulp,
 } from '@coderius/shared/components/LesTabs/paneel';
 import { meetRuimte, pasHoogte } from '@coderius/shared/components/LesTabs/pasHoogte';
+import { bevestig } from '@coderius/shared/dialoog';
+import { useOpslag } from '@coderius/shared/oefenveld/useOpslag';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import type React from 'react';
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { HighlightedEditor } from '../HighlightedEditor';
 import type { Opname, PyodideInterface } from '../PyodideProvider';
 import Stapper from '../Stapper';
 import Tekening from '../Tekening';
 import type { Tekening as TekeningData } from '../Tekening/tekening';
+import { type Code, opslagVoor } from './opslag';
+import { startcode } from './startcode';
 import styles from './styles.module.css';
 
 /** Lager wordt het veld in een tabblad niet: de werkbalk en een regel of vijf. */
@@ -28,10 +32,14 @@ const RAND = 2;
 
 function CodeExerciseInner({
   starterCode,
+  aanwijzing,
+  site,
   doel,
   hulp,
 }: {
   starterCode: string;
+  aanwijzing?: string;
+  site?: string;
   doel?: React.ReactNode;
   hulp?: Hulp | null;
 }) {
@@ -63,6 +71,36 @@ function CodeExerciseInner({
   // scherm. Langere code schuift in de editor zelf.
   const veldRef = useRef<HTMLDivElement>(null);
   const balkRef = useRef<HTMLDivElement>(null);
+  // De code blijft bewaard in deze browser (packages/shared/oefenveld), als
+  // de cursus zegt welke site hij is. Eerst was het werk weg bij herladen en
+  // bij de volgende les, en zei het veld dat er zelf bij (issue 216).
+  const huidig = useMemo<Code>(() => ({ code }), [code]);
+  const bewaard = useOpslag<Code>({
+    opslag: site ? opslagVoor(site) : null,
+    start: { code: starterCode },
+    huidig,
+    containerRef: veldRef,
+    onHerstel: (werk) => setCode(werk.code),
+  });
+  const nietBewaard = bewaard.stand === 'vol' || bewaard.stand === 'geweigerd';
+  const waaromNiet =
+    bewaard.stand === 'vol'
+      ? 'Niet bewaard: de opslag van je browser is vol. Kopieer je code als je hem wilt houden.'
+      : 'Niet bewaard: deze browser slaat hier niets op (privévenster?). Kopieer je code als je hem wilt houden.';
+  // Reset gooit ook weg wat er bewaard is, en dat komt niet meer terug:
+  // dan eerst vragen. Zonder opslag, of zonder wijziging, is er niets te
+  // verliezen.
+  const handleReset = useCallback(async () => {
+    if (site && code !== starterCode) {
+      const zeker = await bevestig(
+        'Je code in dit veld gaat verloren, ook de versie die in deze browser bewaard is.',
+        { titel: 'Terug naar de startcode?', bevestigLabel: 'Reset', gevaarlijk: true },
+      );
+      if (!zeker) return;
+    }
+    bewaard.wis();
+    setCode(starterCode);
+  }, [site, code, starterCode, bewaard.wis]);
   const [veldHoogte, setVeldHoogte] = useState<number | null>(null);
   const [veldBreedte, setVeldBreedte] = useState<number | null>(null);
   const stapt = opname !== null;
@@ -239,7 +277,11 @@ function CodeExerciseInner({
           Klik op Uitvoeren. De uitvoer verschijnt hier.
           {/* Wat nodig is om het veld te gebruiken, zegt het veld zelf. */}
           <span className={styles.bewaart}>
-            Dit veld bewaart je code niet: kopieer wat je wilt houden.
+            {!site
+              ? 'Dit veld bewaart je code niet: kopieer wat je wilt houden.'
+              : nietBewaard
+                ? waaromNiet
+                : 'Je code blijft bewaard in deze browser.'}
           </span>
         </p>
       )}
@@ -253,6 +295,8 @@ function CodeExerciseInner({
   return (
     <div
       ref={veldRef}
+      // Het hoeveelste veld met deze startcode: daar hangt zijn opslag aan.
+      data-zaad={bewaard.zaad || undefined}
       className={[
         styles.exercise,
         inTab && styles.inTab,
@@ -276,12 +320,22 @@ function CodeExerciseInner({
       {doel && <div className={`${styles.doel} ${styles.doelBoven}`}>{doel}</div>}
       <div className={styles.editorSection}>
         <div className={styles.toolbar} ref={balkRef}>
-          <span className={styles.label}>Probeer het zelf</span>
+          <span className={styles.label}>
+            {bewaard.stand === 'bewaard' ? (
+              <output title="Je code staat in deze browser op dit apparaat. Op een andere computer, in een privévenster of na het wissen van je browsergegevens is hij er niet.">
+                Bewaard
+              </output>
+            ) : nietBewaard ? (
+              <output title={waaromNiet}>Niet bewaard</output>
+            ) : (
+              'Probeer het zelf'
+            )}
+          </span>
           <div className={styles.buttons}>
             <button
               type="button"
               className={styles.resetButton}
-              onClick={() => setCode(starterCode)}
+              onClick={handleReset}
               title="Reset naar begincode"
             >
               Reset
@@ -309,7 +363,10 @@ function CodeExerciseInner({
           code={code}
           onChange={setCode}
           onKeyDown={handleKeyDown}
-          disabled={isLoading}
+          // Tot het bewaarde werk er is: wat de leerling eerder typte, zou
+          // eroverheen komen.
+          disabled={isLoading || !bewaard.geladen}
+          placeholder={aanwijzing ?? 'Schrijf hier je code'}
           minHeight={MIN_EDITOR}
           maxHeight={editorMax}
           // Naast de tip of de oplossing is de code smaller. Een regel die
@@ -379,8 +436,20 @@ function CodeExerciseInner({
   );
 }
 
-export default function CodeExercise({ children }: { children: string }) {
-  const code = (children || '').trim();
+export default function CodeExercise({
+  children,
+  site,
+}: {
+  children: string;
+  /**
+   * Het registry-id van de cursus ('python'). Daarmee bewaart het veld de
+   * code van de leerling in deze browser; zonder bewaart het niets.
+   */
+  site?: string;
+}) {
+  // Startcode met alleen commentaar is een leeg veld met die tekst als
+  // aanwijzing (startcode.ts).
+  const { start: code, aanwijzing } = startcode((children || '').trim());
   // In een les-tabblad zet <LesVeld> het doel van de opdracht om het veld.
   const doel = useLesDoel();
   // En de tip en het antwoord, op de plek van de uitvoer.
@@ -389,7 +458,7 @@ export default function CodeExercise({ children }: { children: string }) {
     <BrowserOnly
       fallback={
         <div className={styles.exercise}>
-          <pre>{code}</pre>
+          <pre>{code || <span className={styles.aanwijzing}>{aanwijzing}</span>}</pre>
           {doel && <div className={styles.doel}>{doel}</div>}
           {/* In de HTML van de build, voor een link in de tip of het antwoord;
               dicht tot het veld er is. */}
@@ -402,7 +471,15 @@ export default function CodeExercise({ children }: { children: string }) {
         </div>
       }
     >
-      {() => <CodeExerciseInner starterCode={code} doel={doel} hulp={hulp} />}
+      {() => (
+        <CodeExerciseInner
+          starterCode={code}
+          aanwijzing={aanwijzing}
+          site={site}
+          doel={doel}
+          hulp={hulp}
+        />
+      )}
     </BrowserOnly>
   );
 }

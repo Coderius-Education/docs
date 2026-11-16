@@ -102,7 +102,7 @@ describe('elk scherm van een les staat op zichzelf', () => {
   });
 
   it('"Kopieer je programma" staat op het scherm met het oefenveld', () => {
-    // Het veld bewaart niets. In veertig projectstappen stond de zin op het
+    // De volgende stap begint met een leeg veld. In veertig projectstappen stond de zin op het
     // laatste tabblad, Er gaat iets mis, waar geen veld staat: wie daar las
     // dat hij moest kopiëren, moest eerst terug naar zijn programma.
     const fout = schermen
