@@ -8,8 +8,6 @@ sidebar_label: "Deel 4: Je eerste if"
 
 Je karakter valt, ook als hij allang op de vloer ligt. Dat zie je niet, maar het gaat straks wel wringen. In deze les schrijf je je eerste voorwaarde.
 
-<GodotVersie />
-
 <GDQuestLes slug="movement-grond" />
 
 <Voorkennis
@@ -89,14 +87,11 @@ Het verschil zit in de getallen. Zet tijdelijk `print(velocity)` boven `move_and
 - **Zonder** de `if` staat er op de vloer `(0, 16.33)`, elke frame opnieuw.
 - **Met** de `if` staat er `(0, 0)`.
 
-Nu zegt je code wat je bedoelt: trek hem alleen naar beneden als hij in de lucht hangt. Dit is ook precies wat Godot zelf doet in het sjabloon dat je in de eerste les hebt weggegooid.
+Haal de `print` daarna weer weg. Je code zegt nu wat je bedoelt: trek hem alleen naar beneden als hij in de lucht hangt. Dit is ook precies wat Godot zelf doet in het sjabloon dat je in [Je eerste eigen script](site:godot/docs/sprite_movement) hebt overgeslagen.
 
 Deze les repareerde dus iets wat je niet kón zien zonder `print` — en dat is bij programmeren vaker het geval dan je zou denken.
 
 ## Je script tot nu toe
-
-<details>
-<summary>Klik hier om te vergelijken</summary>
 
 ```gdscript
 extends CharacterBody2D
@@ -107,8 +102,6 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 ```
-
-</details>
 
 ## Er gaat iets mis
 
@@ -166,7 +159,3 @@ func _physics_process(delta: float) -> void:
 **Oplossing:** Elke regel die een blok opent eindigt op een dubbele punt, net als in Python.
 
 </details>
-
----
-
-← [Deel 3 — Delta](site:godot/docs/movement-delta) · **Volgende:** [Deel 5 — Lopen](site:godot/docs/movement-krachten) →

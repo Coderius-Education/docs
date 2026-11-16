@@ -42,7 +42,6 @@ export default createConfig({
     navbar: {
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Algoritmes' },
-        { to: '/conceptenkaart', label: 'Conceptenkaart', position: 'left' },
         { to: '/docs/unplugged', label: 'Unplugged', position: 'left' },
         { type: 'docSidebar', sidebarId: 'mlSidebar', position: 'left', label: 'Machine learning' },
       ],

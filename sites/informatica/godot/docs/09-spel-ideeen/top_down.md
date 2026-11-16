@@ -5,8 +5,6 @@ slug: /spel-top_down
 
 # Top-down dungeon crawler
 
-<GodotVersie />
-
 ## Het idee
 
 Een Zelda-achtig spel: je kijkt van bovenaf op de wereld, loopt in vier of acht richtingen door dungeons, raapt items op en komt door deuren naar een volgende kamer. Geen zwaartekracht — alleen jij beslist waar je naartoe gaat.
@@ -16,7 +14,7 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 ## Wat ga je leren?
 
 - Bewegen in twee dimensies tegelijk met `Input.get_vector(...)`.
-- Een dungeon bouwen met `TileMapLayer` (zonder gravity-tegels).
+- Een dungeon bouwen met `TileMapLayer`: een vloer, en muren waar je tegenaan botst.
 - De camera laten meebewegen met de speler in beide richtingen.
 - Per richting de juiste loop-animatie afspelen.
 
@@ -35,7 +33,7 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 
 | Functie / property | Wat doet het? |
 |---|---|
-| `Input.get_vector("ui_left","ui_right","ui_up","ui_down")` | Geeft een genormaliseerde `Vector2` terug — perfect voor 8-richtingen-beweging. |
+| `Input.get_vector("ui_left","ui_right","ui_up","ui_down")` | Geeft een `Vector2` terug met de richting waarin je drukt: links, rechts, omhoog, omlaag of schuin. Schuin ga je even snel als recht. |
 | `velocity = direction * SPEED` | Past de richting direct toe op de snelheid — **geen** `+= get_gravity()` deze keer. |
 | `move_and_slide()` | Past `velocity` toe en behandelt collisions met muren. |
 | `AnimatedSprite2D.play("walk_down")` | Speel de animatie af die bij de huidige richting hoort. |
@@ -43,17 +41,11 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 | `body_entered` (signal op `Area2D`) | Detecteert dat de speler een deur, item of vijand-zone raakt. |
 | `get_tree().change_scene_to_file(...)` | Wissel naar de volgende kamer/dungeon. |
 
-## Externe links
+## Eerste stappen: bouw de kern
 
-- [Godot Docs — Your first 2D game](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html) — top-down voorbeeld in het officiële tutorial.
-- [Itch.io — top-down assets](https://itch.io/game-assets/free/tag-top-down) — gratis tileset- en karakter-packs.
-- [Godot Docs — Input.get_vector()](https://docs.godotengine.org/en/stable/classes/class_input.html#class-input-method-get-vector) — officiële uitleg.
-
-## Eerste stappen
-
-1. Maak een nieuwe scene met een `Node2D` als root.
+1. Maak een nieuwe scène met een `Node2D` als root.
 2. Voeg een `TileMapLayer` toe en teken een eerste kamer (vloer + muren). Vergeet de **Physics Layer** niet op de muren.
-3. Bouw je speler-scene (`speler.tscn`): `CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D` + `Camera2D`.
+3. Bouw je speler-scène (`speler.tscn`): `CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D` + `Camera2D`.
 4. Vervang in je speler-script de platformer-logica door:
 
    ```gdscript
@@ -62,6 +54,17 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
    move_and_slide()
    ```
 
-5. Voeg een `Area2D` toe als deur en koppel `body_entered` aan `get_tree().change_scene_to_file("res://kamer2.tscn")`.
+5. Voeg een `Area2D` toe als deur en koppel `body_entered` aan `get_tree().change_scene_to_file("res://kamer2.tscn")`, zoals de vlag in [Een tweede level toevoegen](site:godot/docs/tweede_level).
 
-Polish: voeg vijanden toe als `Area2D`'s die de speler raken (game over), of als `CharacterBody2D`'s die de speler volgen met een `NavigationAgent2D` (zie [Wat nu?](site:godot/docs/meer-leren)).
+### Mogelijke uitbreidingen
+
+- Vijanden als `Area2D`: raak je er een, dan is het game over.
+- Vijanden die je achterna lopen, met een `NavigationAgent2D` (zie [Wat nu?](site:godot/docs/meer-leren), onder Tegenstanders laten volgen).
+- Sleutels die je oppakt zoals een muntje, en een deur die pas opengaat als je er een hebt.
+- Meer kamers, met de volgorde in een lijst zoals in [Lijsten: één vlag voor al je levels](site:godot/docs/lijsten).
+
+Meer lezen:
+
+- [Godot Docs: Your first 2D game](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html): een top-down voorbeeld in de officiële tutorial.
+- [Itch.io: top-down assets](https://itch.io/game-assets/free/tag-top-down): gratis tileset- en karakter-packs.
+- [Godot Docs: Input.get_vector()](https://docs.godotengine.org/en/stable/classes/class_input.html#class-input-method-get-vector): de officiële uitleg.

@@ -7,8 +7,6 @@ slug: /camera2d
 
 Tot nu toe stond je beeld stil terwijl je speler bewoog. Bij grotere levels betekent dat: zodra je karakter naar rechts loopt, verdwijnt hij gewoon uit beeld. Tijd voor een **camera die meebeweegt**.
 
-<GodotVersie />
-
 ## Voorspel: hoe laat je een camera meebewegen?
 
 In Godot bestaat er een aparte `Camera2D`-node. **Waar zou je hem in de Scene Tree neerzetten zodat hij automatisch meeschuift met je speler?**
@@ -38,7 +36,7 @@ CharacterBody2D
 
 Alle `Camera2D`-instellingen uit deze les staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
 
-## Stap 2: Check dat Enabled aan staat
+## Stap 2: Check Enabled en test
 
 Selecteer de `Camera2D` en zoek in de Inspector de eigenschap **Enabled**. Die staat standaard al aan — controleer dat het vinkje aan staat.
 
@@ -48,11 +46,9 @@ Zonder deze property aan is er geen actieve camera en blijft het beeld stilstaan
 Heb je per ongeluk meerdere `Camera2D`'s in je scène (bijvoorbeeld nog eentje in een level)? Maar **één** mag tegelijk `Enabled` aan hebben — anders weet Godot niet welke hij moet gebruiken.
 :::
 
-## Stap 3: Test
+Druk daarna op `F5` en loop met je speler naar rechts. Het beeld schuift nu mee — je karakter blijft in het midden.
 
-Druk op `F5` en loop met je speler naar rechts. Het beeld schuift nu mee — je karakter blijft in het midden.
-
-## Stap 4: Vloeiend volgen met Position Smoothing
+## Stap 3: Vloeiend volgen met Position Smoothing
 
 Standaard kleeft de camera *exact* aan de speler. Dat oogt soms wat schokkerig, vooral bij springen. Met **Position Smoothing** loopt de camera met een lichte vertraging mee, wat veel natuurlijker voelt.
 
@@ -61,7 +57,7 @@ Standaard kleeft de camera *exact* aan de speler. Dat oogt soms wat schokkerig, 
 3. Vink **Enabled** aan.
 4. Speel eventueel met **Speed** (standaard 5.0 is meestal prima — hoger = sneller meeschuiven).
 
-## Stap 5: Inzoomen op je speler
+## Stap 4: Inzoomen op je speler
 
 Voor pixel-art is je karakter vaak heel klein. Met **Zoom** kun je dichterbij kijken.
 
@@ -72,7 +68,7 @@ Voor pixel-art is je karakter vaak heel klein. Met **Zoom** kun je dichterbij ki
 Hogere Zoom-waarde = **dichterbij** (groter), niet verder weg. Dat is contra-intuïtief. Zet je Zoom op `(0.5, 0.5)` om juist verder uit te zoomen.
 :::
 
-## Stap 6: Limit zodat de camera niet voorbij de level-rand kijkt
+## Stap 5: Limit zodat de camera niet voorbij de level-rand kijkt
 
 Als je level eindigt bij een muur, wil je niet dat de camera in de zwarte leegte erachter blijft kijken. Met **Limit** stel je grenzen in.
 
@@ -88,9 +84,9 @@ Pas de **Limit**-waarden aan zodat de camera precies binnen jouw level blijft. L
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-- Selecteer je `TileMapLayer` in de Scene Tree.
-- Kijk in de Inspector naar **Position** en de grootte van je level (bijv. 64 tiles × 32 pixels = 2048 pixels breed).
-- Vul die getallen in bij **Limit Left/Right/Top/Bottom** van je `Camera2D`.
+- Je hoeft de grenzen niet uit te rekenen. Begin met de waarden uit Stap 5, start het spel en loop naar de rechterrand van je level.
+- Zie je leegte voorbij je laatste tegel? Maak de waarde voor rechts kleiner. Stopt de camera al voordat je de rand ziet? Maak hem groter.
+- Doe hetzelfde voor de andere drie: **Limit Left/Right/Top/Bottom** van je `Camera2D`.
 
 </details>
 
@@ -106,7 +102,7 @@ Voor een level van bijvoorbeeld 2048 × 720 pixels, met de oorsprong linksboven:
 | Top    | 0      |
 | Bottom | 720    |
 
-Je level zal per project anders zijn — meet of bereken de exacte grenzen van jouw tegels.
+Je level zal per project anders zijn. De goede waarden zijn die waarbij je aan elke rand van je level net geen leegte meer ziet.
 
 </details>
 
@@ -129,19 +125,19 @@ Je level zal per project anders zijn — meet of bereken de exacte grenzen van j
 
 **Oorzaak:** Position Smoothing staat uit, dus de camera kleeft exact aan de pixel-positie van de speler.
 
-**Oplossing:** Zet **Position Smoothing → Enabled** aan (Stap 4). Eventueel **Speed** verlagen voor nog vloeiendere beweging.
+**Oplossing:** Zet **Position Smoothing → Enabled** aan (Stap 3). Eventueel **Speed** verlagen voor nog vloeiendere beweging.
 
 </details>
 
 <details>
 <summary>Ik zie zwarte randen aan de zijkant</summary>
 
-**Oorzaak:** De **Limit** is krapper ingesteld dan je level breed is, of je level zelf is kleiner dan je viewport.
+**Oorzaak:** De **Limit** is ruimer ingesteld dan je level breed is, of je level is kleiner dan wat de camera in één keer laat zien.
 
 **Oplossing:**
 
-1. Controleer in de Inspector of de **Limit**-waarden kloppen met de echte level-grootte.
-2. Is je level kleiner dan het scherm? Maak hem groter, of verlaag de **Zoom** zodat hij past.
+1. Controleer in de Inspector of de **Limit**-waarden kloppen met de echte level-grootte, en maak ze kleiner als de camera voorbij je laatste tegels kijkt.
+2. Is je level kleiner dan het beeld? Maak je level groter, of verhoog de **Zoom**: een hogere waarde is dichterbij (Stap 4), dus dan laat de camera minder zien.
 
 </details>
 
@@ -153,7 +149,3 @@ Je level zal per project anders zijn — meet of bereken de exacte grenzen van j
 **Oplossing:** Selecteer de `Camera2D` in de Scene Tree en druk `F` in de viewport om er meteen op te zoomen. Reset zo nodig de `Position`-property in de Inspector terug naar `(0, 0)` — als child van de speler hoort hij op `(0, 0)` te staan.
 
 </details>
-
----
-
-← [Fouten zoeken](site:godot/docs/fouten-zoeken) · **Volgende:** [Animaties aanmaken](site:godot/docs/animaties) →

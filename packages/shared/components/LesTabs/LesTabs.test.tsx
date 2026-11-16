@@ -529,6 +529,56 @@ describe('code in een uitklapblok', () => {
     await beeld();
     expect(pre.style.fontSize).not.toBe('');
   });
+
+  it('meet opnieuw als een uitklapblok klaar is met openklappen', async () => {
+    // Docusaurus klapt een blok met een animatie open, en die duurt langer
+    // naarmate het blok hoger is: 503 ms bij de oplossing van opdracht 10.1.b
+    // van Godot (zeventig regels). De les mat 400 ms na de klik, halverwege,
+    // en het vak dat het antwoord kreeg was 115 pixels te hoog. Het einde van
+    // de animatie is `transitionend` op de hoogte.
+    render(
+      <LesTabs>
+        <LesTab id="a" titel="A" label="A">
+          <details open>
+            <summary>Oplossing</summary>
+            <div>
+              <div className="theme-code-block">
+                <pre>
+                  <code>een lange regel code</code>
+                </pre>
+              </div>
+            </div>
+          </details>
+        </LesTab>
+        <LesTab id="b" titel="B" label="B">
+          <p>b</p>
+        </LesTab>
+      </LesTabs>,
+    );
+    const beeld = () => new Promise((klaar) => window.requestAnimationFrame(() => klaar(null)));
+    const klapper = document.querySelector('details > div') as HTMLElement;
+    const pre = document.querySelector('pre') as HTMLPreElement;
+    await beeld();
+    // Tijdens de animatie heeft de code nog geen maten.
+    expect(pre.style.fontSize).toBe('');
+    Object.defineProperty(pre, 'clientWidth', { value: 400, configurable: true });
+    Object.defineProperty(pre, 'scrollWidth', {
+      configurable: true,
+      get: () => (pre.style.fontSize ? 400 : 440),
+    });
+    const einde = (eigenschap: string) => {
+      const e = new Event('transitionend', { bubbles: true });
+      Object.defineProperty(e, 'propertyName', { value: eigenschap });
+      klapper.dispatchEvent(e);
+    };
+    // Een knop die van kleur wisselt, is geen reden om te meten.
+    einde('background-color');
+    await beeld();
+    expect(pre.style.fontSize).toBe('');
+    einde('height');
+    await beeld();
+    expect(pre.style.fontSize).not.toBe('');
+  });
 });
 
 describe('het icoon van de werkvorm', () => {

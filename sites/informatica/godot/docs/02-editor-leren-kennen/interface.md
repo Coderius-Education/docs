@@ -7,11 +7,9 @@ slug: /interface
 
 Open je project. Je belandt in de editor: een venster vol panelen, knoppen en tabbladen. Op deze pagina leer je hoe de panelen heten en waar ze staan. Wat ze precies doen, ervaar je vanzelf in de volgende lessen.
 
-<GodotVersie />
-
 ## Voorspel: waar staan de nodes?
 
-Kijk goed naar het scherm voordat je verder leest. **Waar denk je dat je de lijst met alle nodes (de Scene Tree) vindt — links, rechts, midden of onderin?**
+Kijk goed naar de editor voordat je verder leest. **Waar denk je dat je de lijst met alle nodes (de Scene Tree) vindt — links, rechts, midden of onderin?**
 
 <details>
 <summary>Antwoord</summary>
@@ -23,31 +21,25 @@ De **Scene Tree** staat **linksboven**. Dat past bij hoe je leest: van links naa
 ## De layout
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   Toolbar (▶ Stop ⚙)                │
-├──────────────┬──────────────────────┬────────────────┤
-│              │                      │                │
-│    Scene     │      Viewport        │   Inspector    │
-│   (links)    │     (midden)         │   (rechts)     │
-│              │                      │                │
-├──────────────┴──────────────────────┴────────────────┤
-│              FileSystem (linksonder)                 │
-│              Uitvoer (onderin)                       │
-└─────────────────────────────────────────────────────┘
++----------------------------------------------------+
+|                Toolbar (bovenaan)                  |
++--------------+----------------------+--------------+
+|              |                      |              |
+|    Scene     |       Viewport       |  Inspector   |
+|   (links)    |       (midden)       |  (rechts)    |
+|              |                      |              |
++--------------+----------------------+--------------+
+|             FileSystem (linksonder)                |
+|             Uitvoer (onderin)                      |
++----------------------------------------------------+
 ```
 
 - **Viewport** (midden) — je gamewereld; hier zie je wat je bouwt.
 - **Scene Tree** (linksboven) — alle nodes in je huidige scène.
 - **Inspector** (rechtsboven) — eigenschappen van de geselecteerde node.
 - **FileSystem** (linksonder) — alle bestanden in je project.
-- **Uitvoer** (onderin) — foutmeldingen en `print()`-output. Vanaf [Je eerste regels code](site:godot/docs/start_gdscript) ga je hier vaak naartoe.
-
-## Het spel starten en stoppen \{#spel-starten}
-
-|     Actie     |       Knop       | Sneltoets         |
-| :-----------: | :--------------: | :---------------- |
-| Spel starten  | ▶ (rechtsboven) | `F5`              |
-| Spel stoppen  | ■ (rechtsboven) | `F8` of `Escape`  |
+- **Uitvoer** (onderin) — foutmeldingen en `print()`-output. In een Engelse editor staat er **Output** op dit paneel; de lessen noemen het Uitvoer. Vanaf [Je eerste regels code](site:godot/docs/start_gdscript) kijk je er vaak.
+- **Toolbar** (bovenaan) — met ▶ (rechtsboven) of `F5` start je je spel, met ■ (rechtsboven) of `F8` (of `Escape`) stop je het.
 
 ## Opdracht 2.1.a: sloop de layout en herstel hem
 

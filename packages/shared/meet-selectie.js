@@ -131,14 +131,16 @@ function adresVanBron(rel, bron, { nummers = false } = {}) {
  * Bestanden van een site die geen scherm raken: een test, de tests van de
  * lessen, de notities van de cursus en de labels van de lessenlijst. Eerst
  * liet zo'n wijziging de hele cursus meten, en met de meting in delen kostte
- * dat zes runners voor algoritmes.
+ * dat zes runners voor algoritmes. Elke map die op `-tests` eindigt telt:
+ * `src/docs-tests`, maar ook het testproject van Godot (`godot-tests/`) en
+ * `src/godot-tests/labels.ts`, de lijst namen die geen knop van Godot zijn.
  *
  * @param {string} rel het pad binnen de site
  */
 function raaktGeenScherm(rel) {
   return (
     /\.test\.[cm]?[jt]sx?$/.test(rel) ||
-    /(^|\/)docs-tests\//.test(rel) ||
+    /(^|\/)[a-z]+-tests\//.test(rel) ||
     /^[^/]+\.md$/.test(rel) ||
     /(^|\/)_category_\.json$/.test(rel)
   );

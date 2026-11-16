@@ -7,7 +7,16 @@ slug: /bestanden-downloaden
 
 Voor je spel heb je afbeeldingen nodig: een achtergrond, een karakter, vijanden, muntjes. Die afbeeldingen noemen we **assets**. Je hoeft ze niet zelf te tekenen — voor deze cursus gebruiken we een gratis asset-pack van internet.
 
-<GodotVersie />
+## Voorspel: wat betekent `res://`?
+
+Open je project in Godot en kijk naar het FileSystem-paneel (linksonder). Bovenaan staat `res://`. **Wat denk je dat dat is?** Denk terug aan [Opdracht 1.2.a](site:godot/docs/project#opdracht-12a-vind-je-projectmap-terug), waar je je projectmap opzocht in de Verkenner.
+
+<details>
+<summary>Antwoord</summary>
+
+`res://` is je **projectmap**, gezien vanuit Godot. `res` staat voor *resources*: alle bestanden van je project. Straks betekent een pad als `res://assets/Background/Green.png` dus: het bestand `Green.png`, in de map `assets/Background`, binnen je projectmap. Zo kan een project verwijzen naar zijn eigen bestanden, op welke computer het ook staat.
+
+</details>
 
 ## Stap 1: Download het asset-pack
 
@@ -33,19 +42,23 @@ Je hebt nu een map met alle afbeeldingen uit het pack.
 
 ## Stap 3: Kopieer naar je projectmap \{#projectmap}
 
+### De projectmap openen
+
 Godot ziet alleen bestanden die **in je projectmap** staan. Vanuit de editor kun je die map snel openen.
+
+![Rechtsklikmenu op res:// met Openen in Bestandsbeheer](../images/res.png)
 
 1. Open je project in Godot.
 2. Klik met de **rechtermuisknop** op `res://` in het **FileSystem**-paneel (linksonder).
 3. Kies **Open in File Manager** (heet **Openen in Bestandsbeheer** als je editor Nederlands is) — Verkenner opent nu je projectmap.
 
-![Rechtsklikmenu op res:// met Openen in Bestandsbeheer](../images/res.png)
+### De assets kopiëren
 
-4. Open in een tweede Verkenner-venster de uitgepakte asset-map.
-5. Maak in je projectmap een nieuwe map `assets` en sleep de mappen die je nodig hebt (bijvoorbeeld `Background`) daarin. In latere lessen verwijzen we naar deze `assets`-map.
+1. Open in een tweede Verkenner-venster de uitgepakte asset-map.
+2. Maak in je projectmap een nieuwe map `assets` en sleep alle mappen uit het pack daarin. De lessen verwijzen naar deze `assets`-map.
 
 :::tip
-Je hoeft niet alles te kopiëren. Voor de achtergrond heb je alleen de map `Background` nodig. Later kun je altijd meer toevoegen.
+Kopieer alles in één keer. In hoofdstuk 3 en 4 gebruik je de achtergronden (`Background`), de afbeelding met de tegels en de figuren (`Main Characters`); de rest komt in latere hoofdstukken.
 :::
 
 Ga terug naar Godot — de bestanden verschijnen automatisch in het FileSystem-paneel.
@@ -53,17 +66,6 @@ Ga terug naar Godot — de bestanden verschijnen automatisch in het FileSystem-p
 :::note[Chromebook / online editor]
 Gebruik je de [online editor](https://editor.godotengine.org/)? Dan kun je geen bestanden via de Verkenner kopiëren. Sleep de uitgepakte bestanden in plaats daarvan rechtstreeks naar het **FileSystem**-paneel in de editor.
 :::
-
-## Voorspel: wat betekent `res://`?
-
-Bovenaan het FileSystem-paneel staat `res://`. **Wat denk je dat dat is?** Denk terug aan [Opdracht 1.2.a](site:godot/docs/project#opdracht-12a-vind-je-projectmap-terug), waar je je projectmap opzocht in de Verkenner.
-
-<details>
-<summary>Antwoord</summary>
-
-`res://` is je **projectmap**, gezien vanuit Godot. `res` staat voor *resources*: alle bestanden van je project. Een pad als `res://assets/Background/Green.png` betekent dus: het bestand `Green.png`, in de map `assets/Background`, binnen je projectmap. Zo kan een project verwijzen naar zijn eigen bestanden, op welke computer het ook staat.
-
-</details>
 
 ## Opdracht 2.3.a: verken het asset-pack
 

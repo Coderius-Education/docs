@@ -7,8 +7,6 @@ slug: /dictionaries
 
 Elk muntje is nu één punt waard. Een gouden muntje dat tien punten oplevert, maakt je level spannender: je springt er een extra keer voor. Je kunt daar drie muntje-scènes voor maken, maar dan heb je drie scripts die bijna gelijk zijn. Met een **dictionary** zet je de waarde van elke soort in één tabel.
 
-<GodotVersie />
-
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/data/11a-dictionaries-basis', label: 'Dictionaries'},
@@ -61,7 +59,7 @@ Opzoeken met blokhaken en een sleutel toevoegen gaan zoals in Python. `has` doet
 
 ## Stap 1: De waarde uit de tabel
 
-Open het script van je muntje. Nu staat er `Global.score += 1`. Zet er een tabel boven, en een variabele met de soort van dit muntje. De group en de controle op winnen uit opdracht 7.5.a blijven staan; deed je die opdracht niet, dan laat je die regels weg.
+Open het script van je muntje. Nu staat er `Global.score += 1`. Zet er een tabel boven, en een variabele met de soort van dit muntje. De group en de controle op winnen uit opdracht 7.5.a blijven staan; deed je die opdracht niet, dan laat je die regels weg. Een regel met `call_group` uit opdracht 7.5.b blijft ook staan.
 
 ```gdscript
 extends Area2D
@@ -88,7 +86,7 @@ Start je spel en pak een muntje. In **Uitvoer** gaat de score met tien omhoog.
 
 ## Stap 2: Elk muntje een eigen soort \{#export}
 
-Nu is elk muntje goud. Je wilt per muntje in je level kunnen kiezen welke soort het is. Zet daarvoor `@export` voor de variabele:
+Elk muntje is goud, want `soort` staat vast in het script. Je wilt per muntje in je level kunnen kiezen welke soort het is. Zet daarvoor `@export` voor de variabele:
 
 ```gdscript
 @export var soort = "brons"
@@ -116,10 +114,11 @@ Je ziet nog niet welk muntje goud is. Geef elk muntje bij de start de kleur van 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-```gdscript
-extends Area2D
+Er komen twee regels bij: de tabel `KLEUREN`, onder `WAARDES`, en de regel met `modulate` in `_ready()`. De rest van je script blijft zoals het was.
 
-const WAARDES = {"brons": 1, "zilver": 5, "goud": 10}
+{/* compileer-als: extends Area2D */}
+
+```gdscript
 const KLEUREN = {"brons": Color.SANDY_BROWN, "zilver": Color.SILVER, "goud": Color.GOLD}
 
 @export var soort = "brons"
@@ -127,15 +126,9 @@ const KLEUREN = {"brons": Color.SANDY_BROWN, "zilver": Color.SILVER, "goud": Col
 func _ready() -> void:
     add_to_group("muntjes")
     modulate = KLEUREN[soort]
-
-
-func _on_body_entered(body: Node2D) -> void:
-    Global.score += WAARDES[soort]
-    print("Score: ", Global.score)
-    queue_free()
-    if get_tree().get_nodes_in_group("muntjes").size() <= 1:
-        print("Je hebt gewonnen!")
 ```
+
+Had je nog geen `_ready()`, omdat je opdracht 7.5.a niet deed? Dan zet je de functie erbij, zonder de regel met de group.
 
 `modulate` mengt de kleur met die van je afbeelding. Een witte of grijze afbeelding kleurt het mooist; een geel muntje wordt met zilver alleen wat donkerder.
 

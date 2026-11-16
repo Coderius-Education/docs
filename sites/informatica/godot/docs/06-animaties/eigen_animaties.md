@@ -5,16 +5,16 @@ slug: /eigen_animaties
 
 # Je eigen animaties maken
 
-Tot nu toe heb je gewerkt met kant-en-klare sprite-sheets uit het Pixel Adventure-pack. Tijd om dat los te laten en je eigen personage te animeren — uit een eigen tekening, een geknipte GIF of een afbeelding die je ergens vond. In deze les leer je hoe je losse frames maakt, ze transparant achtergrondje geeft en in Godot zet.
+Tot nu toe heb je gewerkt met kant-en-klare sprite-sheets uit het Pixel Adventure-pack. Tijd om dat los te laten en je eigen personage te animeren — uit een eigen tekening, een geknipte GIF of een afbeelding die je ergens vond. In deze les maak je de plaatjes zelf en zet je ze in Godot.
 
-<GodotVersie />
+## Voorspel: een plaatje met een witte achtergrond
 
-## Voorspel: wat heb je nodig om je eigen animatie te maken?
-
-**Drie ingrediënten zijn nodig. Welke denk je?**
+Je tekent een karakter op een wit vel, slaat het op als PNG en zet het in je level. **Wat zie je in je spel rond je karakter, en waarom zie je dat niet bij de sprites uit het Pixel Adventure-pack?**
 
 <details>
 <summary>Antwoord</summary>
+
+Een witte rechthoek. Een afbeelding is altijd een rechthoek, en wit is ook een kleur. Bij de sprites uit het pack zijn de pixels rond het karakter doorzichtig. Voor een eigen animatie heb je dus drie dingen nodig:
 
 1. **Losse PNG-frames** — één afbeelding per pose (bijv. 6 frames voor een loop-cyclus).
 2. **Transparante achtergrond** op elke PNG (anders zit er een witte rechthoek achter je karakter).
@@ -24,23 +24,19 @@ Tot nu toe heb je gewerkt met kant-en-klare sprite-sheets uit het Pixel Adventur
 
 ## Stap 1: Verzamel je frames
 
-Drie aanpakken, kies wat past:
+Er zijn drie manieren om aan frames te komen, elk in een eigen stap van dit tabblad: Screenshots uit een sprite-sheet, Zelf tekenen in een pixel-art tool en Frames knippen uit een GIF. Je hebt er één nodig. Kies er een, sla de andere twee over, en ga daarna naar het tabblad Stap 2.
 
-### Aanpak A — Screenshots uit een sprite-sheet
+### Screenshots uit een sprite-sheet
 
 Heb je een sprite-sheet (één afbeelding met meerdere poses naast elkaar) maar Godot herkent de frames niet automatisch? Knip ze handmatig:
 
 1. Open de afbeelding in je standaard fotoviewer of in een browser-tab.
 2. Zoom voldoende in zodat één frame goed zichtbaar is.
-3. Druk op `Win + Shift + S` → **Rechthoekige selectie** → trek een vierkant strak rond één frame.
+3. Maak een schermafbeelding van een deel van je scherm. Op Windows: `Win + Shift + S` → **Rechthoekige selectie**; op een Mac: `Cmd + Shift + 4`. Trek een vierkant strak rond één frame.
 4. Plak het screenshot in een nieuwe afbeelding (Paint, Photopea, Piskel…) en sla op als `frame_01.png`.
-5. Herhaal voor elke frame met **dezelfde uitsnijding-grootte** (anders schalen je frames straks niet gelijk in Godot).
+5. Herhaal voor elke frame, op een canvas van steeds hetzelfde formaat (bijvoorbeeld 32×32 of 64×64 pixels). Met frames van verschillende grootte springt je animatie.
 
-:::tip
-Werk altijd met een **vast canvas-formaat** (bijv. 32×32 of 64×64 pixels). Plak elk screenshot in een nieuw frame van datzelfde canvas in Piskel of LibreSprite — zo blijven alle frames identiek.
-:::
-
-### Aanpak B — Eigen frames tekenen in een pixel-art tool
+### Zelf tekenen in een pixel-art tool
 
 Wil je een volledig eigen karakter tekenen?
 
@@ -49,7 +45,7 @@ Wil je een volledig eigen karakter tekenen?
 3. Teken je idle-pose. Klik op **Add Frame** en teken de volgende fase. Herhaal tot je 4-8 frames hebt.
 4. Exporteer als losse PNG's **of** als sprite-sheet — beide werkt in Godot.
 
-### Aanpak C — Frames knippen uit een GIF
+### Frames knippen uit een GIF
 
 Heb je een animatie als GIF (bijvoorbeeld uit een tutorial of YouTube)?
 
@@ -60,33 +56,41 @@ Heb je een animatie als GIF (bijvoorbeeld uit een tutorial of YouTube)?
 
 ## Stap 2: Maak de achtergrond transparant
 
+### Test eerst of het nodig is
+
 Zonder transparantie zit er straks een witte (of een andere) rechthoek achter je karakter in Godot. **Een PNG kan transparantie bevatten via het zogeheten alpha-kanaal** — pixels zijn dan letterlijk doorzichtig.
 
-### Drie manieren
+:::tip
+Sommige downloads (vooral van itch.io of opengameart.org) hebben **al** een transparante achtergrond. Test eerst: sleep je PNG in Godot en kijk of er een rechthoek omheen zit. Geen rechthoek? Dan is hij al transparant: sla de rest van dit tabblad over en ga naar het tabblad Stap 3.
+:::
 
-**Manier 1 — Piskel of LibreSprite** (aanbevolen voor pixel-art)
+Zit er wel een rechthoek omheen? Dan zijn er drie manieren om hem weg te halen, elk in een eigen stap van dit tabblad: Met Piskel of LibreSprite, Met Photopea en Met GIMP. Kies er één en sla de andere twee over.
+
+### Met Piskel of LibreSprite
+
+Aanbevolen voor pixel-art.
 
 - Open je PNG → menu **File → Import**.
 - Bij het importeren wordt de witte achtergrond standaard transparant gemaakt zodra je hem aanklikt.
 - Exporteer terug als PNG via **Export → PNG**.
 
-**Manier 2 — Photopea** (browser-based Photoshop-alternatief)
+### Met Photopea
+
+Photopea werkt in je browser en lijkt op Photoshop.
 
 1. Ga naar [photopea.com](https://www.photopea.com/) → **File → Open** → kies je PNG.
 2. Klik op de witte achtergrond met de **Magic Wand**-tool (toverstaf).
 3. Druk op **Delete** — de witte achtergrond verdwijnt, je ziet een schaakbord (= transparant).
 4. **File → Export As → PNG**.
 
-**Manier 3 — GIMP** (open-source, lokaal)
+### Met GIMP
+
+GIMP installeer je op je eigen computer.
 
 1. Open je PNG → **Layer → Transparency → Add Alpha Channel**.
 2. **Select → By Color** → klik op de witte achtergrond.
 3. Druk **Delete**.
 4. **File → Export As → `.png`**.
-
-:::tip
-Sommige downloads (vooral van itch.io of opengameart.org) hebben **al** een transparante achtergrond. Test eerst: sleep je PNG in Godot en kijk of er een rechthoek omheen zit. Geen rechthoek = al transparant, sla Stap 2 over.
-:::
 
 ## Stap 3: Importeer in Godot
 
@@ -96,7 +100,7 @@ Sommige downloads (vooral van itch.io of opengameart.org) hebben **al** een tran
 4. Zet de **FPS** op 8 of 10, zet **Loop** aan voor doorlopende animaties (idle, run) of uit voor eenmalige (jump).
 5. Speel af via je script (zie [Animaties in code](site:godot/docs/animaties_code)).
 
-## Handige open-source tools
+## Gratis tools
 
 | Tool | Wat doet het? | Waar? |
 |---|---|---|
@@ -123,7 +127,7 @@ Sommige downloads (vooral van itch.io of opengameart.org) hebben **al** een tran
 
 **Oorzaak:** De PNG heeft geen alpha-kanaal (transparantie).
 
-**Oplossing:** Doorloop Stap 2 met Photopea of GIMP. Test daarna opnieuw door de PNG in Godot te slepen — geen rechthoek meer = klaar.
+**Oplossing:** Doorloop het tabblad Stap 2, met de stap Met Photopea of Met GIMP. Test daarna opnieuw door de PNG in Godot te slepen — geen rechthoek meer = klaar.
 
 </details>
 
@@ -150,3 +154,5 @@ Sommige downloads (vooral van itch.io of opengameart.org) hebben **al** een tran
 Vanaf nu worden alle afbeeldingen in je project scherp weergegeven.
 
 </details>
+
+Staat je fout er niet bij? In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je hem zelf opspoort.

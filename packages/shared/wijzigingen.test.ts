@@ -725,7 +725,17 @@ describe('cursussen met tabbladen', () => {
     // Komt er een cursus met tabbladen bij, zet hem dan hier: dan meet CI
     // zijn schermen.
     expect([...cursussenMetTabbladen(SITES, lees)].sort()).toEqual(
-      ['algorithms', 'ctf', 'editor', 'fullstack', 'linux', 'python', 'robotica', 'web'].sort(),
+      [
+        'algorithms',
+        'ctf',
+        'editor',
+        'fullstack',
+        'godot',
+        'linux',
+        'python',
+        'robotica',
+        'web',
+      ].sort(),
     );
   });
 });

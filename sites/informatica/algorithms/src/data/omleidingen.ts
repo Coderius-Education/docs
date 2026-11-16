@@ -1,7 +1,7 @@
 // Lessen die verhuisd zijn, met hun oude adres. createConfig zet op elk oud
 // adres een pagina die doorstuurt (packages/shared/plugins/omleidingen.js).
-// src/docs-tests/omleidingen.test.ts eist dat elk doel een stap van de route
-// is en dat op geen oud adres nog een pagina staat.
+// src/docs-tests/omleidingen.test.ts eist dat elk doel van een verhuisde les
+// een stap van de route is en dat op geen oud adres nog een pagina staat.
 
 export type Omleiding = { van: string; naar: string };
 
@@ -24,7 +24,13 @@ const ml: [string, string][] = [
   ['ml-neuronen/02-neuron-leert', '01-de-fout'],
 ];
 
-export const omleidingen: Omleiding[] = [
+// Pagina's die weg zijn. De conceptenkaart (welke Python elk algoritme
+// gebruikt) stond in de navbar en vier python-lessen linkten ernaar; hij is in
+// november 2026 weggehaald. Wie het adres bewaard heeft, komt uit op de
+// startpagina, bij het overzicht van de algoritmes.
+export const weg: Omleiding[] = [{ van: '/conceptenkaart', naar: '/' }];
+
+export const verhuisd: Omleiding[] = [
   ...ml.map(([project, stap]) => ({ van: `/docs/${project}`, naar: `/docs/${project}/${stap}` })),
   // Klaar voor Shopping kreeg ook een andere mapnaam.
   {
@@ -32,3 +38,5 @@ export const omleidingen: Omleiding[] = [
     naar: '/docs/ml-afstand/04-klaar-voor-shopping/01-een-csv-lezen',
   },
 ];
+
+export const omleidingen: Omleiding[] = [...verhuisd, ...weg];

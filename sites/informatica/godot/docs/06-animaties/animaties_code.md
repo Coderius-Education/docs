@@ -7,8 +7,6 @@ slug: /animaties_code
 
 Je hebt nu drie animaties — `idle`, `run` en `jump` — maar ze spelen nog niet automatisch op het juiste moment. In deze les koppel je de animaties aan wat je karakter doet: op de grond rennen, in de lucht springen, of stilstaan.
 
-<GodotVersie />
-
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/beslissen/05a-booleans-en-vergelijken', label: 'Booleans en vergelijken'},
@@ -73,7 +71,7 @@ func _physics_process(delta: float) -> void:
 
 </details>
 
-## Nieuw stukje GDScript: het `$`-teken \{#dollar-teken}
+## Het dollarteken: `$` pakt een node uit je scène \{#dollar-teken}
 
 In deze les gebruik je voor het eerst regels als deze:
 
@@ -124,7 +122,7 @@ Voeg dit toe **vóór** `move_and_slide()` in je `_physics_process`, even ver in
     move_and_slide()
 ```
 
-**Zo weet je dat het klopt:** start met `F5`. Sta je stil op de grond, dan speelt `idle`. Loop je, dan niet.
+**Zo weet je dat het klopt:** start met `F5`. Sta je stil op de grond, dan speelt `idle`. Voor lopen heeft je keten nog geen tak, dus daar kiest je script nog geen andere animatie. Die tak maak je in Opdracht 6.2.b.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -164,7 +162,7 @@ Let op `elif`: de `idle`-animatie wordt alleen geprobeerd als `jump` níet aan i
 
 ## Opdracht 6.2.b: de run-animatie en spiegelen
 
-Nu de laatste twee takken van de keten. Met `$AnimatedSprite2D.flip_h = true` spiegel je het plaatje zodat je karakter naar links kijkt; met `false` kijkt hij weer naar rechts.
+De animatie-keten uit Opdracht 6.2.a krijgt zijn laatste twee takken: rennen naar rechts en rennen naar links. Met `$AnimatedSprite2D.flip_h = true` spiegel je het plaatje zodat je karakter naar links kijkt; met `false` kijkt hij weer naar rechts.
 
 ```gdscript
     elif velocity.x > 0:
@@ -184,6 +182,19 @@ Elke tak heeft twee regels nodig: één om de animatie te starten en één om `f
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
+
+De twee takken, onder de `elif staat_stil:` uit Opdracht 6.2.a:
+
+```gdscript
+    elif velocity.x > 0:
+        $AnimatedSprite2D.play('run')
+        $AnimatedSprite2D.flip_h = false
+    elif velocity.x < 0:
+        $AnimatedSprite2D.play('run')
+        $AnimatedSprite2D.flip_h = true
+```
+
+Je hele script, om te vergelijken:
 
 ```gdscript
 extends CharacterBody2D
@@ -264,6 +275,31 @@ Over dat tweede: met stap `SPEED` (zoals in [Deel 6 — Stoppen](site:godot/docs
 
 - Controleer dat `elif staat_stil:` staat tussen `if not op_de_grond:` en `elif velocity.x > 0:`.
 - Werk `staat_stil` bij **vlak voor** je if-keten, dus ná de regel met `move_toward`.
+
+</details>
+
+<details>
+<summary>Foutmelding: <code>Attempt to call function 'play' in base 'null instance' on a null instance.</code></summary>
+
+**Oorzaak:** Godot kan de node uit je script niet vinden: de naam achter `$` komt niet overeen met de naam in de Scene Tree. Vlak boven deze melding staat welke naam Godot zocht, bijvoorbeeld `Node not found: "AnimatedSprite"`.
+
+{/* verwacht-runtime-fout: Attempt to call function 'play' in base 'null instance' on a null instance. */}
+
+```gdscript
+# FOUT
+extends CharacterBody2D
+
+func _ready() -> void:
+    $AnimatedSprite.play("idle")
+```
+
+**Oplossing:**
+
+- Klik op `AnimatedSprite2D` in de Scene Tree en controleer de exacte naam (hoofdlettergevoelig).
+- Zorg dat je script `$AnimatedSprite2D` gebruikt met exact dezelfde naam.
+- Controleer dat `AnimatedSprite2D` een **child** is van `CharacterBody2D`, niet los in de scène.
+
+**Zelf vinden:** sleep de node vanuit de Scene Tree je script in met `Ctrl` ingedrukt. Godot typt het pad dan zelf, en verschilt dat van wat er stond, dan heb je je fout. Zie ook [Meldingen tijdens het spelen](site:godot/docs/fouten-zoeken#runtime-meldingen).
 
 </details>
 

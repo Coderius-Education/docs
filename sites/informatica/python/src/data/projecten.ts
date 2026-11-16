@@ -9,8 +9,8 @@ import { type Les, lessen } from './lessen';
 // nodig heeft (weglaten = gelijk aan concepten); beide zijn id's uit
 // lessen.ts. projectkiezer.test.ts bewaakt dat elk project in docs/projecten
 // hier staat met het juiste aantal stappen, en dat de algoritmes gelijk zijn
-// aan algorithms.ts en de conceptenkaart van de algoritmes-cursus: concepten
-// is de kern van de kaart, lessen de volledige voorkennis.
+// aan algorithms.ts en python-voorkennis.ts van de algoritmes-cursus:
+// concepten is de kern van een algoritme, lessen de volledige voorkennis.
 
 export type Soort = 'project' | 'turtle' | 'unplugged' | 'puzzel' | 'spel' | 'algoritme';
 

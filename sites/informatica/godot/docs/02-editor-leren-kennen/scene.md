@@ -7,8 +7,6 @@ slug: /scene
 
 Een scène in Godot is één "bouwsteen" van je game: een level, een speler, een muntje. Voor je begint moet je beslissen of je een **2D-game** of een **3D-game** maakt. Godot ondersteunt allebei, maar de aanpak is totaal anders.
 
-<GodotVersie />
-
 ## Voorspel: waarom 2D?
 
 **Waarom denk je dat we in deze cursus 2D kiezen en geen 3D?** Probeer minstens twee redenen te bedenken voordat je verder leest.
@@ -38,7 +36,7 @@ Wij maken een **2D platformer**, dus we kiezen 2D. De hoofdnode van onze scène 
 ## Stap 1: Een 2D-scène aanmaken \{#node2d}
 
 1. Klik bovenaan op **Scene** → **New Scene** (of op het `+`-tabblad boven de viewport).
-2. Kies in het keuzemenu **2D Scene**.
+2. Kies **2D Scene** als soort scène.
 
 Godot maakt automatisch een `Node2D` aan als root-node. Dit is de basis van je 2D-wereld en je ziet hem linksboven in de **Scene Tree** verschijnen.
 
@@ -56,7 +54,7 @@ Krijg je bij het eerste keer starten de vraag welke scène als **Main Scene** mo
 
 ## Opdracht 2.2.a: voeg een child-node toe en hernoem hem \{#node-toevoegen}
 
-In de komende hoofdstukken voeg je tientallen nodes toe aan je Scene Tree. Oefen die handeling nu een keer los:
+In de komende hoofdstukken voeg je tientallen nodes toe aan je Scene Tree. Dat gaat steeds via het rechtermuisknop-menu van een node: klik met rechts op de node waar de nieuwe onder moet komen en kies **Add Child Node**. Oefen die handeling nu een keer los:
 
 1. Voeg een child-node van het type `Node2D` toe aan je root-node.
 2. Hernoem hem naar `Oefening`.
@@ -65,7 +63,7 @@ In de komende hoofdstukken voeg je tientallen nodes toe aan je Scene Tree. Oefen
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Alle drie de acties zitten in het rechtermuisknop-menu op een node in de Scene Tree. Hernoemen kan ook met `F2` of door te dubbelklikken op de naam.
+Hernoemen en verwijderen staan in hetzelfde rechtermuisknop-menu als toevoegen. Hernoemen kan ook met `F2` of door te dubbelklikken op de naam.
 
 </details>
 

@@ -284,6 +284,7 @@ describe('createConfig — les-tabbladen', () => {
       'algorithms',
       'fullstack',
       'robotica',
+      'godot',
       'ctf',
       'linux',
     ]);

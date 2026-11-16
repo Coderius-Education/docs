@@ -1,67 +1,63 @@
 ---
 sidebar_position: 92
 slug: /godot-versies
+les_tabs: false
 ---
 
 # Godot-versies & compatibiliteit
 
-**Na deze pagina:** weet je welke Godot-versie het curriculum gebruikt en waar je op moet letten als je een andere versie hebt.
+De cursus is geschreven voor één versie van Godot. Op deze pagina staat welke, en waar je op let als jij een andere versie hebt. Je komt hier via de link Godot 4.7 bovenaan elke pagina.
 
-## Doel-versie
+## De versie van de cursus
 
-Het curriculum is geschreven voor **Godot 4.7.x** (de nieuwste 4.7-stable op het moment van schrijven).
+De cursus is geschreven voor **Godot 4.7.x**.
 
-In de [installatie-les](site:godot/docs/installatie) lees je waar je deze versie downloadt. Controleer na installatie via menu **Help → About Godot** dat je echt `4.7.x` draait.
+In [Installatie](site:godot/docs/installatie) lees je waar je deze versie downloadt. Controleer na het installeren via het menu **Help → About Godot** dat je `4.7.x` hebt.
 
-## Minimum-vereisten per concept
+## Heb je een oudere versie?
 
-Sommige nodes en functies zijn pas in een specifieke 4.x-versie toegevoegd. Voor een student die per ongeluk een oudere editor heeft:
+Sommige nodes en functies bestaan pas vanaf een bepaalde versie. In de tabel zie je vanaf welke versie een onderdeel van de cursus werkt:
 
-| Concept | Minimum-versie | Tutorial |
+| Onderdeel | Werkt vanaf | Les |
 |---|---|---|
-| `TileMapLayer` | **4.3+** | [Level tekenen met een TileMap](site:godot/docs/tilemap_opzetten) |
-| `get_gravity()` op `CharacterBody2D` | **4.2+** | [Sprite movement](site:godot/docs/sprite_movement) |
-| `move_and_slide()` zonder parameters | **4.0+** | [Sprite movement](site:godot/docs/sprite_movement) |
-| `AnimatedSprite2D` met `SpriteFrames` | **4.0+** | [Animaties](site:godot/docs/animaties) |
-| `Area2D.body_entered`-signal | **4.0+** | [Signals & muntje](site:godot/docs/signals_muntje) |
-| Autoload-mechanisme | **4.0+** (tot en met 4.3 een eigen tabblad in Project Settings, vanaf 4.4 onder **Globals**) | [Global variables](site:godot/docs/global_variables) |
+| `TileMapLayer` | **4.3** | [Level tekenen met een TileMap](site:godot/docs/tilemap_opzetten) |
+| `get_gravity()` op `CharacterBody2D` | **4.2** | [Deel 2 — Vallen](site:godot/docs/movement-motor) |
+| `move_and_slide()` zonder parameters | **4.0** | [Deel 1 — Een script dat draait](site:godot/docs/basis_movement_begrijpen) |
+| `AnimatedSprite2D` met `SpriteFrames` | **4.0** | [Animaties aanmaken](site:godot/docs/animaties) |
+| Het signal `body_entered` van `Area2D` | **4.0** | [Signals & een muntje oppakken](site:godot/docs/signals_muntje) |
+| Autoload | **4.0** (tot en met 4.3 een eigen tabblad in Project Settings, vanaf 4.4 onder **Globals**) | [Global variables (Autoload)](site:godot/docs/global_variables) |
 
-In `<` 4.3 heet de tile-node `TileMap` (zonder "Layer"). De tutorial werkt dan met aanpassingen, maar de Paint-tool / Physics Layer-workflow is anders georganiseerd.
+In versies ouder dan 4.3 heet de tile-node `TileMap` (zonder "Layer"). De lessen over het level kun je dan nog volgen, maar het tekenen en de Physics Layer zitten op een andere plek.
 
-## Latere versies (4.8 en hoger)
+## Heb je een nieuwere versie?
 
-Toekomstige minor-versies van Godot **kunnen** UI-paden of property-namen verschuiven. Bekende risicogebieden:
+Een nieuwere versie van Godot kan een menu of een instelling op een andere plek hebben. Dat gebeurt het vaakst bij:
 
-- **Project Settings**-navigatie (Autoload onder Globals, Main Scene-instelling, Default Texture Filter).
-- **TileSet-editor**-toolbar (Paint-knop, Physics Layer-dropdown).
-- **Anchors Preset** in `TextureRect`.
-- Menu-volgorde **Editor → Editor Layout**.
+- **Project Settings** (Autoload onder Globals, de Main Scene, Default Texture Filter).
+- De werkbalk van de **TileSet-editor** (de Paint-knop, de Physics Layer).
+- **Anchors Preset** bij een `TextureRect`.
+- Het menu **Editor → Editor Layout**.
 
 :::note[Editor-thema]
-Sinds **Godot 4.6** is het standaard editor-thema grijswaarden ("Modern") in plaats van het oude blauw-getinte thema. Sommige screenshots in deze cursus kunnen er daardoor nog blauwig uitzien — de stappen blijven hetzelfde. Wil je het oude uiterlijk terug? Ga naar **Editor → Editor Settings → Interface → Theme** en kies `Classic`.
+Sinds **Godot 4.6** is het standaard editor-thema grijs ("Modern") in plaats van het oude blauwe thema. Sommige schermafbeeldingen in deze cursus zien er daardoor nog blauw uit; de stappen blijven hetzelfde. Wil je het oude uiterlijk terug? Ga naar **Editor → Editor Settings → Interface → Theme** en kies `Classic`.
 :::
 
-Als je tijdens een tutorial een menu-item niet kunt vinden:
+Kun je in een les een menu-item niet vinden?
 
-1. Typ de naam in de **zoekbalk** bovenin Project Settings (werkt voor de meeste settings).
+1. Typ de naam in de **zoekbalk** bovenin Project Settings. Dat werkt voor de meeste instellingen.
 2. Bekijk de officiële [Godot Docs](https://docs.godotengine.org/) voor jouw versie.
-3. Meld het op de [GitHub-repository van dit curriculum](https://github.com/Coderius-Education/docs/issues) — dan kunnen we de tutorial bijwerken.
+3. Meld het bij je docent, of op de [GitHub-pagina van de cursus](https://github.com/Coderius-Education/docs/issues). Dan passen we de les aan.
 
-## Externe afhankelijkheden
+## Als een site van iemand anders niet werkt
 
-Het curriculum gebruikt drie externe bronnen die offline kunnen gaan:
+De cursus gebruikt drie sites die niet van ons zijn. Werkt er een niet, dan kun je zo verder:
 
-| Bron | Gebruikt in | Wat als hij offline is? |
+| Site | Gebruikt in | Wat doe je dan? |
 |---|---|---|
-| [GDQuest learn-gdscript](https://gdquest.github.io/learn-gdscript/) | [Het bewegingsscript bouwen](site:godot/docs/basis_movement_begrijpen) | Gebruik de officiële [GDScript-docs](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html). |
-| [Pixel Adventure asset pack](https://pixelfrog-assets.itch.io/pixel-adventure-1) | [Bestanden downloaden](site:godot/docs/bestanden-downloaden) | Andere gratis pixel-art packs op [itch.io](https://itch.io/game-assets/free/tag-2d) of [opengameart.org](https://opengameart.org/) werken ook. Belangrijk: zorg dat het pack `.png`-sprites bevat. |
-| [Godot online editor](https://editor.godotengine.org/) | [Installatie](site:godot/docs/installatie) (Chromebook-route) | Offline gaan is onwaarschijnlijk (officieel Godot). Anders: installeer Godot lokaal op een ander apparaat. |
+| [GDQuest learn-gdscript](https://gdquest.github.io/learn-gdscript/) | [Deel 1 — Een script dat draait](site:godot/docs/basis_movement_begrijpen) en de delen erna | Gebruik de officiële [GDScript-docs](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html). |
+| [Pixel Adventure asset pack](https://pixelfrog-assets.itch.io/pixel-adventure-1) | [Bestanden downloaden](site:godot/docs/bestanden-downloaden) | Andere gratis pixel-art packs op [itch.io](https://itch.io/game-assets/free/tag-2d) of [opengameart.org](https://opengameart.org/) werken ook, zolang er `.png`-sprites in zitten. |
+| [Godot online editor](https://editor.godotengine.org/) | [Installatie](site:godot/docs/installatie) (de route voor een Chromebook) | Installeer Godot op een ander apparaat. |
 
-## Hoe houden we dit up-to-date?
+## Voor docenten: de cursus bijhouden
 
-Bij elke nieuwe Godot-minor-release (bv. 4.8):
-
-1. Doorloop het curriculum één keer in de nieuwe versie.
-2. Noteer afwijkingen in de UI-paden.
-3. Werk de bovenstaande tabellen bij.
-4. Update de versie-banner bovenaan elke tutorial.
+Bij een nieuwe versie van Godot (bijvoorbeeld 4.8) lopen we de cursus één keer door in die versie, noteren we waar een menu of instelling anders is, en werken we deze pagina en het versienummer van de cursus bij.

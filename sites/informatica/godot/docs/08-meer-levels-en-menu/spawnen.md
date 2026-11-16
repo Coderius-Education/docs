@@ -7,8 +7,6 @@ slug: /spawnen
 
 Tot nu toe heb je elke node met de hand in de editor gezet: muntjes gesleept, vijanden geplaatst, tegels getekend. Maar veel spellen maken dingen aan **terwijl het spel draait** — een nieuwe vijand elke paar seconden, een kogel bij elke druk op de knop. Dat aanmaken tijdens het spel heet **spawnen**. In deze les spawn je de muntjes uit [Signals & een muntje oppakken](site:godot/docs/signals_muntje) met code in plaats van met slepen.
 
-<GodotVersie />
-
 ## Voorspel: wat heeft je code nodig?
 
 In de editor sleep je `muntje.tscn` vanuit het FileSystem naar je level. **Welke twee dingen moet je code weten of doen om datzelfde voor elkaar te krijgen?**
@@ -25,7 +23,11 @@ In GDScript zijn dat drie functies: `preload()`, `instantiate()` en `add_child()
 
 </details>
 
-## De scène inladen met `preload()` \{#preload}
+## Spawnen in code
+
+Lees deze twee stukjes GDScript eerst. Typen doe je vanaf Stap 1.
+
+### De scène inladen met `preload()` \{#preload}
 
 ```gdscript
 const MUNTJE = preload("res://muntje.tscn")
@@ -35,7 +37,7 @@ const MUNTJE = preload("res://muntje.tscn")
 
 **Let op:** de bouwtekening zelf is nog geen muntje in je level. Vergelijk het met de scène in je FileSystem-paneel: die staat ook pas in je spel als je hem ergens neerzet.
 
-## Een exemplaar maken met `instantiate()` \{#instantiate}
+### Een exemplaar maken met `instantiate()` \{#instantiate}
 
 ```gdscript
 var nieuw_muntje = MUNTJE.instantiate()
@@ -79,7 +81,7 @@ Start met `F5`. Er hangt nu een muntje op `(200, 100)` dat je nooit in de editor
 
 ## Stap 3: Maak er een eigen functie van
 
-Straks wil je vanaf meerdere plekken kunnen spawnen. Verplaats de drie regels daarom naar een eigen functie met de positie als parameters:
+Straks wil je vanaf meerdere plekken kunnen spawnen. Verplaats de drie regels uit `_ready()` daarom naar een eigen functie met de positie als parameters:
 
 ```gdscript
 extends Node2D
@@ -95,7 +97,7 @@ func spawn_muntje(x: float, y: float) -> void:
     add_child(nieuw_muntje)
 ```
 
-Het spel doet exact hetzelfde als in Stap 2, maar een extra muntje spawnen is nu één regel. In de [volgende les](site:godot/docs/spawn_timer) laat je een Timer deze functie aanroepen.
+Het spel doet exact hetzelfde als in Stap 2, maar een extra muntje spawnen is nu één regel. In [Automatisch spawnen met een Timer](site:godot/docs/spawn_timer) laat je een Timer deze functie aanroepen.
 
 Deze drie functies staan ook kort bij elkaar in de [GDScript-tips](site:godot/gdscript-tips#nodes-scenes).
 
@@ -205,3 +207,5 @@ func _ready() -> void:
 ```
 
 </details>
+
+Staat je fout er niet bij? In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je hem zelf opspoort.

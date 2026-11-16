@@ -7,8 +7,6 @@ slug: /background_image
 
 Tijd om je lege scène iets minder grijs te maken. In deze les zet je een achtergrondafbeelding op je scherm.
 
-<GodotVersie />
-
 :::note
 Heb je de assets nog niet gedownload? Volg eerst de stappen op [Bestanden downloaden](site:godot/docs/bestanden-downloaden).
 :::
@@ -19,7 +17,7 @@ Een `TextureRect` is een node die een afbeelding toont. Voor een achtergrond is 
 
 1. Klik met rechts op de root-node van je scène → **Add Child Node**.
 2. Zoek naar `TextureRect` en voeg deze toe.
-3. Sleep hem in de Scene Tree **bovenaan**, boven al je andere nodes. Godot tekent van boven naar beneden, dus wat bovenaan staat in de tree komt onderaan in beeld — precies wat je wilt voor een achtergrond.
+3. Je scène is nog leeg, dus de `TextureRect` staat vanzelf **bovenaan** in de Scene Tree. Laat hem daar staan als je straks meer nodes toevoegt: Godot tekent van boven naar beneden, dus wat bovenaan staat in de tree ligt in beeld achter de rest. Dat wil je voor een achtergrond.
 
 De `TextureRect`-instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#level-wereld).
 

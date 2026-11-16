@@ -9,13 +9,11 @@ Je hebt net een script van nul opgebouwd. Grote kans dat er onderweg iets misgin
 
 Dat hoort erbij. Wat je nu leert is niet hoe je fouten voorkomt, maar hoe je ze **zelf terugvindt** — want vanaf hier ga je dingen bouwen waarvan het antwoord niet in deze cursus staat.
 
-<GodotVersie />
-
 <GDQuestLes slug="fouten-zoeken" />
 
-## Drie soorten fouten \{#drie-soorten}
+## Drie soorten \{#drie-soorten}
 
-Ze zien er anders uit en vragen een andere eerste stap. Bepaal daarom altijd eerst welke je voor je hebt.
+Er zijn drie soorten fouten. Ze zien er anders uit en vragen een andere eerste stap. Bepaal daarom altijd eerst welke je voor je hebt.
 
 | Wat je ziet | Wat het is | Waar je begint |
 | :--- | :--- | :--- |
@@ -25,7 +23,9 @@ Ze zien er anders uit en vragen een andere eerste stap. Bepaal daarom altijd eer
 
 De derde is de lastigste, want er is niets kapot. Alleen jij weet dat het niet klopt.
 
-## Een foutmelding lezen \{#foutmelding-lezen}
+## Meldingen
+
+### Een foutmelding lezen \{#foutmelding-lezen}
 
 Een melding in Uitvoer ziet er zo uit:
 
@@ -37,7 +37,7 @@ Lees hem in drie stukken:
 
 1. **`res://scripts/speler.gd`** — in welk bestand het misgaat.
 2. **`:15`** — op welke regel. Dubbelklik op de melding en Godot springt er meteen naartoe.
-3. **De rest** — wat er mis is. Hier: de functie `plya` bestaat niet. Dat is een typefout voor `play`.
+3. **De rest** — wat er mis is. Hier: de functie `plya` bestaat niet. Dat is een typefout voor `play`, waarmee je in hoofdstuk 6 een animatie afspeelt.
 
 De laatste zin is vaak Engels en klinkt technischer dan hij is. Zoek de woorden die je herkent: een naam die je zelf hebt getypt, of een node-type uit je scène.
 
@@ -45,42 +45,48 @@ De laatste zin is vaak Engels en klinkt technischer dan hij is. Zoek de woorden 
 Krijg je meerdere meldingen tegelijk? Los alleen de **bovenste** op en start opnieuw. De rest is vaak gevolgschade en verdwijnt vanzelf.
 :::
 
-## Drie meldingen die je zult tegenkomen \{#runtime-meldingen}
+### Tijdens het spelen \{#runtime-meldingen}
 
-Deze drie komen tijdens het spelen, niet bij het starten. Je spel draait dus al even en klapt er dan uit. Ze zeggen alle drie iets anders over waar je moet kijken.
+Sommige fouten merk je pas tijdens het spelen, niet bij het starten. Je spel draait dan al even. Vanaf hoofdstuk 6, als je script met andere nodes gaat praten, kom je er drie vaak tegen. Elk heeft in dit tabblad een eigen stap; kom hier terug als je er een ziet.
 
-### `Attempt to call function 'x' in base 'null instance' on a null instance`
+- `null instance` in de melding: je vraagt iets aan een node die er niet is.
+- `Invalid access` in de melding: de node bestaat, maar heeft die eigenschap niet.
+- Geen melding, en toch gebeurt er niets: een functie is nooit aangeroepen.
 
-Je vraagt iets aan een node die er niet is. **`null`** betekent leeg: de variabele bestaat, maar er zit geen node in. Vlak erboven zegt Godot welke node hij niet vond:
+### `null instance`
+
+De melding `Attempt to call function 'x' in base 'null instance' on a null instance` betekent: je vraagt iets aan een node die er niet is. **`null`** betekent leeg: de variabele bestaat, maar er zit geen node in. Vlak erboven zegt Godot welke node hij niet vond:
 
 ```
 Node not found: "Sprite" (relative to "/root/Level1/CharacterBody2D").
 Attempt to call function 'play' in base 'null instance' on a null instance.
 ```
 
-Bijna altijd staat er een `$Naam` in je regel die niet klopt met de Scene Tree. Vergelijk letter voor letter: `$AnimatedSprite2D` vindt niets als je node `$Sprite` heet. Twijfel je over de schrijfwijze, sleep de node dan vanuit de Scene Tree je script in met `Ctrl` ingedrukt — Godot typt het pad dan zelf.
+Met `$Naam` wijs je in code een node uit je Scene Tree aan; dat leer je in [Animaties in code](site:godot/docs/animaties_code). Bijna altijd staat er een `$Naam` in je regel die niet klopt met de Scene Tree. Vergelijk letter voor letter: `$AnimatedSprite2D` vindt niets als je node `$Sprite` heet. Twijfel je over de schrijfwijze, sleep de node dan vanuit de Scene Tree je script in met `Ctrl` ingedrukt — Godot typt het pad dan zelf.
 
-### `Invalid access to property or key 'x' on a base object of type 'y'`
+### `Invalid access`
 
-De node bestaat wél, maar die eigenschap heeft hij niet.
+De melding `Invalid access to property or key 'x' on a base object of type 'y'` betekent: de node bestaat, maar die eigenschap heeft hij niet.
 
 ```
 Invalid access to property or key 'text' on a base object of type 'Node2D'.
 ```
 
-Lees het achterste stuk eerst: `type 'Node2D'`. Dat is wat Godot denkt dat je te pakken hebt. Een `Node2D` heeft geen `text` — een `Label` wel. Meestal wijs je dus naar de verkeerde node, of ligt de eigenschap één laag dieper: niet op je `CanvasLayer` maar op het `Label` daaronder.
+Lees het achterste stuk eerst: `type 'Node2D'`. Dat is wat Godot denkt dat je te pakken hebt. Een `Node2D` heeft geen `text`. Een `Label` wel: dat is de node waarmee je in hoofdstuk 7 je score op het scherm zet. Meestal wijs je dus naar de verkeerde node, of ligt de eigenschap één laag dieper: niet op je `CanvasLayer` maar op het `Label` daaronder.
 
-### Helemaal geen melding
+### Geen melding
 
-Het derde geval is het vervelendst: je klikt, je springt, je raakt het muntje — en er gebeurt niets. Godot zegt niets, want er is niets kapot. Er is alleen nooit iets aangeroepen.
+Je klikt, je springt, je raakt een muntje, en er gebeurt niets. Godot zegt niets, want er is niets kapot. Er is alleen nooit iets aangeroepen.
 
-Bij een signal is dat bijna altijd de oorzaak: de functie staat in je script, maar het signal is niet verbonden. Controleer het zo:
+Vanaf hoofdstuk 7 laat je nodes elkaar iets melden met een signal, en dan is dit bijna altijd de oorzaak: de functie staat in je script, maar het signal is niet verbonden. Controleer het zo:
 
 1. Selecteer de node, open het **Node**-paneel rechtsboven en kies **Signals**.
 2. Onder een verbonden signal staat de naam van de functie ingesprongen. Staat daar niets, dan is het nooit gekoppeld.
 3. Zet ter controle `print("hier")` als eerste regel in de functie. Blijft Uitvoer leeg terwijl je het muntje raakt, dan weet je het zeker.
 
-## Print op drie plekken \{#print-drie}
+## Zoeken
+
+### Print op drie plekken \{#print-drie}
 
 Draait je spel zonder foutmelding, maar gebeurt er niets? Dan weet je nog niets — en dat is precies het probleem. `print()` maakt zichtbaar wat je code doet.
 
@@ -104,7 +110,7 @@ func _physics_process(delta: float) -> void:
 
 Haal je prints daarna weg. Een `print` in `_physics_process` levert zestig regels per seconde op, en dan zie je de echte melding niet meer.
 
-## Halveer je probleem \{#halveren}
+### Halveer je probleem \{#halveren}
 
 Weet je niet welke regel de boosdoener is, zet dan de helft uit met een `#` ervoor en kijk of het probleem blijft.
 
@@ -120,15 +126,15 @@ Herhaal dit met de helft die overblijft. Na een paar keer heb je nog twee of dri
 
 Dit werkt ook buiten je code: zet een node tijdelijk op onzichtbaar, of haal een tegel weg. De vraag is steeds dezelfde — verandert het probleem als ik dit wegneem?
 
-## Vergelijk met iets dat wél werkt \{#vergelijken}
+### Vergelijk met iets dat wél werkt \{#vergelijken}
 
 In Godot zit een fout vaak niet in je code maar in de editor: een signal dat niet verbonden is, een `Shape` die leeg is, een node die net anders heet.
 
 Heb je twee dingen die op elkaar lijken en werkt er één? Zet ze dan naast elkaar en schrijf de verschillen op. Klik beide nodes aan en vergelijk de Inspector regel voor regel. Meestal vind je hem binnen een minuut, en meestal is het iets kleins dat je nooit had bedacht.
 
-## De vier vragen \{#vier-vragen}
+### De vier vragen \{#vier-vragen}
 
-Als je echt vastzit, beantwoord deze vier op papier of hardop. Ze dwingen je van "het werkt niet" naar iets dat je kunt onderzoeken.
+Als je echt vastzit, beantwoord deze vier vragen op papier of hardop. Ze dwingen je van "het werkt niet" naar iets dat je kunt onderzoeken.
 
 1. **Wat verwacht ik precies?** Niet "hij moet springen", maar "als ik spatie druk moet `velocity.y` op `-400` staan".
 2. **Wat gebeurt er precies?** Niet "niets", maar "de print binnen de `if` verschijnt nooit".
@@ -233,29 +239,32 @@ Er is geen foutmelding en er ontbreekt niets. Vraag jezelf af hoe vaak deze `if`
         velocity.y = JUMP_VELOCITY
 ```
 
-Zie [Deel 7 — Springen](site:godot/docs/movement-afsluiter) voor het volledige verhaal.
+Het volledige verhaal staat in [Deel 7 — Springen](site:godot/docs/movement-afsluiter#just_pressed-of-pressed), bij `just_pressed` of `pressed`.
 
 </details>
 
-## Waar staan de veelgemaakte fouten? \{#foutenindex}
+## Foutenindex: waar staan de veelgemaakte fouten? \{#foutenindex}
 
-Elke les in deze cursus eindigt met een blok **Er gaat iets mis** waarin de fouten staan die bij dat onderwerp horen. Zoek daar eerst, voordat je zelf gaat graven.
+### Van installatie tot beweging
+
+Elke les heeft een tabblad **Er gaat iets mis**, met de fouten van dat onderwerp. Zoek daar eerst; de links brengen je er meteen heen.
 
 | Waar het misgaat | Kijk hier |
 | :--- | :--- |
-| Installatie en projectmap | [Installatie](site:godot/docs/installatie), [Nieuw project aanmaken](site:godot/docs/project), [Je projectmap terugvinden](site:godot/docs/exporteren) |
-| Editor, scènes en bestanden | [De Godot-interface](site:godot/docs/interface), [Je eerste 2D-scène](site:godot/docs/scene), [Bestanden downloaden](site:godot/docs/bestanden-downloaden) |
-| Level en tegels | [Level tekenen](site:godot/docs/tilemap_opzetten), [Collision op je tegels](site:godot/docs/tilemap_collision), [Achtergrond](site:godot/docs/background_image) |
-| Karakter en eerste code | [Een speelbaar karakter](site:godot/docs/sprite), [Je eerste regels code](site:godot/docs/start_gdscript), [Je eerste eigen script](site:godot/docs/sprite_movement) |
-| Beweging en springen | [Deel 1 — Een script dat draait](site:godot/docs/basis_movement_begrijpen), [Deel 2 — Vallen](site:godot/docs/movement-motor), [Deel 3 — Delta](site:godot/docs/movement-delta), [Deel 4 — Je eerste if](site:godot/docs/movement-grond), [Deel 5 — Lopen](site:godot/docs/movement-krachten), [Deel 6 — Stoppen](site:godot/docs/movement-remmen), [Deel 7 — Springen](site:godot/docs/movement-afsluiter) |
-| Camera | [Camera die de speler volgt](site:godot/docs/camera2d) |
-| Animaties | [Animaties maken](site:godot/docs/animaties), [Animaties in code](site:godot/docs/animaties_code), [Je eigen animaties](site:godot/docs/eigen_animaties) |
-| Signals en score | [Signals & een muntje](site:godot/docs/signals_muntje), [Score in je karakter](site:godot/docs/score_in_karakter), [Global variables](site:godot/docs/global_variables), [Score op het scherm](site:godot/docs/score_op_scherm), [Groups](site:godot/docs/groups), [Een power-up](site:godot/docs/power_up) |
-| Levels, menu en spawnen | [Een tweede level](site:godot/docs/tweede_level), [Een startmenu](site:godot/docs/start_menu), [Spawnen](site:godot/docs/spawnen), [Timer](site:godot/docs/spawn_timer) |
-| Verder met GDScript | [Eigen functies](site:godot/docs/eigen_functies), [Lijsten](site:godot/docs/lijsten), [Dictionaries](site:godot/docs/dictionaries), [JSON](site:godot/docs/json_opslaan), [Tweens](site:godot/docs/tweens) |
+| Installatie en projectmap | [Installatie](site:godot/docs/installatie#er-gaat-iets-mis), [Nieuw project aanmaken](site:godot/docs/project#er-gaat-iets-mis), [Je projectmap terugvinden](site:godot/docs/exporteren#er-gaat-iets-mis) |
+| Editor, scènes en bestanden | [De Godot-interface](site:godot/docs/interface#er-gaat-iets-mis), [Je eerste 2D-scène](site:godot/docs/scene#er-gaat-iets-mis), [Bestanden downloaden](site:godot/docs/bestanden-downloaden#er-gaat-iets-mis) |
+| Level en tegels | [Achtergrond](site:godot/docs/background_image#er-gaat-iets-mis), [Level tekenen met een TileMap](site:godot/docs/tilemap_opzetten#er-gaat-iets-mis), [Collision op je tegels](site:godot/docs/tilemap_collision#er-gaat-iets-mis) |
+| Karakter en eerste code | [Een speelbaar karakter](site:godot/docs/sprite#er-gaat-iets-mis), [Je eerste eigen script](site:godot/docs/sprite_movement#er-gaat-iets-mis), [Je eerste regels code](site:godot/docs/start_gdscript#er-gaat-iets-mis) |
+| Beweging en springen | [Deel 1 — Een script dat draait](site:godot/docs/basis_movement_begrijpen#er-gaat-iets-mis), [Deel 2 — Vallen](site:godot/docs/movement-motor#er-gaat-iets-mis), [Deel 3 — Delta](site:godot/docs/movement-delta#er-gaat-iets-mis), [Deel 4 — Je eerste if](site:godot/docs/movement-grond#er-gaat-iets-mis), [Deel 5 — Lopen](site:godot/docs/movement-krachten#er-gaat-iets-mis), [Deel 6 — Stoppen](site:godot/docs/movement-remmen#er-gaat-iets-mis), [Deel 7 — Springen](site:godot/docs/movement-afsluiter#er-gaat-iets-mis) |
+
+### Van camera tot GDScript
+
+| Waar het misgaat | Kijk hier |
+| :--- | :--- |
+| Camera | [Een camera die de speler volgt](site:godot/docs/camera2d#er-gaat-iets-mis) |
+| Animaties | [Animaties aanmaken](site:godot/docs/animaties#er-gaat-iets-mis), [Animaties in code](site:godot/docs/animaties_code#er-gaat-iets-mis), [Je eigen animaties maken](site:godot/docs/eigen_animaties#er-gaat-iets-mis) |
+| Signals en score | [Signals & een muntje](site:godot/docs/signals_muntje#er-gaat-iets-mis), [Score in je karakter](site:godot/docs/score_in_karakter#er-gaat-iets-mis), [Global variables](site:godot/docs/global_variables#er-gaat-iets-mis), [Score op het scherm](site:godot/docs/score_op_scherm#er-gaat-iets-mis), [Groups](site:godot/docs/groups#er-gaat-iets-mis), [Een power-up](site:godot/docs/power_up#er-gaat-iets-mis) |
+| Levels, menu en spawnen | [Een tweede level](site:godot/docs/tweede_level#er-gaat-iets-mis), [Een startmenu](site:godot/docs/start_menu#er-gaat-iets-mis), [Spawnen](site:godot/docs/spawnen#er-gaat-iets-mis), [Timer](site:godot/docs/spawn_timer#er-gaat-iets-mis) |
+| Verder met GDScript | [Eigen functies](site:godot/docs/eigen_functies#er-gaat-iets-mis), [Lijsten](site:godot/docs/lijsten#er-gaat-iets-mis), [Dictionaries](site:godot/docs/dictionaries#er-gaat-iets-mis), [JSON](site:godot/docs/json_opslaan#er-gaat-iets-mis), [Tweens](site:godot/docs/tweens#er-gaat-iets-mis) |
 
 Losse code-voorbeelden staan in de [GDScript-tips](site:godot/gdscript-tips), en alle node-instellingen in de [Nodes cheatsheet](site:godot/cheatsheet).
-
----
-
-← [Deel 7 — Springen](site:godot/docs/movement-afsluiter) · **Volgende:** [Camera die de speler volgt](site:godot/docs/camera2d) →

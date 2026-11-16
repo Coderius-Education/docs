@@ -294,6 +294,16 @@
   margin-bottom: 0.5rem;
 }
 
+/* Een uitklapblok klapt in een paneel meteen open. Docusaurus animeert de
+   hoogte (een halve seconde bij een lange oplossing), en zolang dat loopt,
+   heeft het blok zijn vak nog niet (openBlokInVak): het klapte eerst open tot
+   ver onder de rand en sprong dan terug. 1 ms en niet 0: Docusaurus rondt het
+   openen af bij het einde van de transitie, en zonder transitie komt dat
+   einde niet (zo doet het thema het zelf bij minder beweging). */
+.paneel :global(details) > div {
+  transition-duration: 1ms !important;
+}
+
 /* Een blok als "Deze stap gebruikt …" of "Waar kom je dit later weer
    tegen?" staat in een paneel naast een oefenveld en is daar lager. */
 .paneel :global(.theme-admonition) {

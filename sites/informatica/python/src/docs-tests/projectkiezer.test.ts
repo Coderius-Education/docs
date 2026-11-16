@@ -7,7 +7,7 @@ import {
   kernPerAlgoritme,
   pythonConcepten,
   voorkennisPerAlgoritme,
-} from '../../../algorithms/src/data/conceptenkaart';
+} from '../../../algorithms/src/data/python-voorkennis';
 import { lessen } from '../data/lessen';
 import {
   type Activiteit,
@@ -87,7 +87,7 @@ describe('projecten.ts', () => {
 
   it('de algoritmes zijn die van de algoritmes-cursus: kern als concept, voorkennis als nodig', () => {
     const lesVanPad = new Map(lessen.map((l) => [l.pad, l.id]));
-    const opKaart = new Map(pythonConcepten.map((c) => [c.id, c.to]));
+    const padVanConcept = new Map(pythonConcepten.map((c) => [c.id, c.to]));
     const alg = activiteiten.filter((a) => a.soort === 'algoritme');
     expect(alg.map((a) => a.id)).toEqual(algoritmes.map((a) => `algoritme-${a.slug}`));
     for (const a of algoritmes) {
@@ -96,7 +96,7 @@ describe('projecten.ts', () => {
       expect(kaart.wat).toBe(a.samenvatting);
       expect(kaart.link).toEqual({ site: 'algorithms', to: a.startPad });
       const naarLes = (ids: string[]) =>
-        [...new Set(ids.map((c) => lesVanPad.get(opKaart.get(c) ?? '')))].sort();
+        [...new Set(ids.map((c) => lesVanPad.get(padVanConcept.get(c) ?? '')))].sort();
       expect([...(kaart.lessen ?? [])].sort(), a.slug).toEqual(
         naarLes(voorkennisPerAlgoritme[a.slug]),
       );

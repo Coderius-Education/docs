@@ -5,9 +5,7 @@ slug: /lijsten
 
 # Lijsten: één vlag voor al je levels
 
-In [Een tweede level](site:godot/docs/tweede_level) kreeg elk level een eigen vlag met een eigen script. Die scripts verschillen maar in één woord: de naam van het volgende level. Bij tien levels heb je tien bijna gelijke scripts, en wil je de volgorde veranderen, dan pas je er een paar aan. Met een **lijst** zet je de volgorde op één plek, en werkt dezelfde vlag in elk level.
-
-<GodotVersie />
+In [Een tweede level toevoegen](site:godot/docs/tweede_level) kreeg elk level een eigen vlag met een eigen script. Die scripts verschillen maar in één woord: de naam van het volgende level. Bij tien levels heb je tien bijna gelijke scripts, en wil je de volgorde veranderen, dan pas je er een paar aan. Met een **lijst** zet je de volgorde op één plek, en werkt dezelfde vlag in elk level.
 
 <Voorkennis
   items={[
@@ -104,9 +102,9 @@ Na het laatste level ga je terug naar het menu uit [Een startmenu](site:godot/do
 
 ## Stap 4: Dezelfde vlag in elk level
 
-Elk level heeft een vlag nodig, ook het laatste: daar brengt hij je terug naar het menu. Heeft een level er nog geen, bouw hem dan zoals in [Een tweede level](site:godot/docs/tweede_level), Stap 2 en 3, en kies bij het script `vlag.gd` in plaats van een nieuw script.
+Elk level heeft een vlag nodig, ook het laatste: daar brengt hij je terug naar het menu. Heeft een level er nog geen, bouw hem dan zoals in [Een tweede level toevoegen](site:godot/docs/tweede_level), Stap 2 en 3. Maak daarbij geen nieuw script: sleep `vlag.gd` vanuit **FileSystem** op de `Vlag`-node.
 
-Heeft een level al een vlag met een eigen script, open dan dat level, selecteer de `Vlag`-node en sleep `vlag.gd` vanuit **FileSystem** op de node. De koppeling met `body_entered` blijft staan, want de functie heet in elk script `_on_body_entered`.
+Heeft een level al een vlag met een eigen script, open dan dat level en sleep `vlag.gd` op dezelfde manier op de `Vlag`-node. De koppeling met `body_entered` blijft staan, want de functie heet in elk script `_on_body_entered`.
 
 Start het spel vanaf level 1 en speel alle levels uit. Na het laatste level kom je in het menu.
 
@@ -114,12 +112,12 @@ Wil je de volgorde omgooien, dan pas je alleen de lijst aan. Een nieuw level zet
 
 ## Opdracht 10.2.a: welk level speel je?
 
-Zet linksboven in elk level een `Label` met de tekst `Level 2 van 3`, met het juiste nummer. Het label rekent dat zelf uit.
+Zet in elk level een `Label` in beeld met de tekst `Level 2 van 3`, met het juiste nummer. Het label rekent dat zelf uit.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-- Bouw het label zoals de score in [Score op het scherm](site:godot/docs/score_op_scherm): een `CanvasLayer` met een `Label` erin, en een script aan het label.
+- Bouw het label zoals de score in [Score op het scherm tonen](site:godot/docs/score_op_scherm): een `Label` in een `CanvasLayer`, met een script aan het label. Heb je `scorebord.tscn` uit Een tweede level toevoegen, zet het label dan daarin, op een eigen plek: dan staat het meteen in elk level.
 - De tekst verandert niet tijdens het level, dus je zet hem één keer in `_ready()`, niet elke frame in `_process`.
 - `find` geeft `0` voor het eerste level. Wat moet je erbij optellen om `1` te krijgen?
 - Het label heeft ook de lijst nodig. Kopiëren werkt, maar dan staat hij op twee plekken. Kijk of je hem in `Global` kunt zetten, met een naam die niet op `levens` lijkt.

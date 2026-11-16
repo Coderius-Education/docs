@@ -6,7 +6,7 @@ import styles from './styles.module.css';
 
 // Naast de algoritmes één kaart voor de route machine learning (niveau 1).
 // Hij staat niet in algorithms.ts: dat zijn de algoritmehoofdstukken, waar
-// de conceptenkaart en voorkennis.test.ts op leunen.
+// python-voorkennis.ts en voorkennis.test.ts op leunen.
 const ROUTE = {
   slug: 'machine-learning',
   titel: 'Machine learning',

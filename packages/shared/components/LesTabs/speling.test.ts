@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { MARGE } from './pasHoogte';
 import {
   KLEINSTE_NA,
+  KLEINSTE_OPEN,
   KLEINSTE_VAK,
   NOODGREEP,
   blokHoogte,
@@ -297,21 +298,29 @@ describe('openBlokInVak', () => {
 
   it('geeft de inhoud een vak dat schuift, zo hoog als past', () => {
     const wortel = les(blok('inhoud'), 820);
-    hoog('inhoud', 300);
+    hoog('inhoud', 400);
     openBlokInVak(wortel);
     const inhoud = document.getElementById('inhoud') as HTMLElement;
     // 820 + marge − 720: zoveel te lang; de inhoud levert dat in.
-    expect(inhoud.style.maxHeight).toBe(`${300 - (820 + MARGE - 720)}px`);
+    expect(inhoud.style.maxHeight).toBe(`${400 - (820 + MARGE - 720)}px`);
     expect(inhoud.style.overflowY).toBe('auto');
   });
 
-  it('niet lager dan een paar regels, en niets als het past of op een telefoon', () => {
+  it('niet lager dan acht regels, en niets als het past of op een telefoon', () => {
+    // Een oplossing van 35 regels stond in Godot (opdracht 6.2.b) in een vak
+    // van 89 pixels: drie regels. Het scherm paste, lezen ging niet.
     let wortel = les(blok('inhoud'), 1400);
     hoog('inhoud', 300);
     openBlokInVak(wortel);
     expect((document.getElementById('inhoud') as HTMLElement).style.maxHeight).toBe(
-      `${KLEINSTE_NA}px`,
+      `${KLEINSTE_OPEN}px`,
     );
+    // Een blok dat al lager is dan acht regels, krijgt geen vak: liever
+    // schuift de pagina een regel dan dat de laatste zin wegvalt.
+    wortel = les(blok('inhoud'), 760);
+    hoog('inhoud', 142);
+    openBlokInVak(wortel);
+    expect((document.getElementById('inhoud') as HTMLElement).style.maxHeight).toBe('');
     wortel = les(blok('inhoud'), 600);
     hoog('inhoud', 300);
     openBlokInVak(wortel);
@@ -335,9 +344,30 @@ describe('openBlokInVak', () => {
     expect(inhoud.style.overflowY).toBe('');
   });
 
+  it('naast een oefenveld voor de hele les mag het vak tot een paar regels krimpen', () => {
+    // De oefenterminal van Linux staat naast de tekst: schuift de pagina,
+    // dan staat de opdracht niet meer naast de terminal (rooktest-linux).
+    const wortel = les(blok('inhoud'), 1400);
+    wortel.insertAdjacentHTML('beforeend', '<div data-les-naast><div>terminal</div></div>');
+    hoog('inhoud', 300);
+    openBlokInVak(wortel);
+    expect((document.getElementById('inhoud') as HTMLElement).style.maxHeight).toBe(
+      `${KLEINSTE_NA}px`,
+    );
+    // Een kolom zonder veld in beeld telt niet.
+    const leeg = les(blok('inhoud'), 1400);
+    leeg.insertAdjacentHTML('beforeend', '<div data-les-naast><div hidden>terminal</div></div>');
+    hoog('inhoud', 300);
+    openBlokInVak(leeg);
+    expect((document.getElementById('inhoud') as HTMLElement).style.maxHeight).toBe(
+      `${KLEINSTE_OPEN}px`,
+    );
+  });
+
   it('blokHoogte', () => {
     expect(blokHoogte(300, 0)).toBe(300);
     expect(blokHoogte(300, 100)).toBe(200);
-    expect(blokHoogte(300, 1000)).toBe(KLEINSTE_NA);
+    expect(blokHoogte(300, 1000)).toBe(KLEINSTE_OPEN);
+    expect(blokHoogte(300, 1000, KLEINSTE_NA)).toBe(KLEINSTE_NA);
   });
 });

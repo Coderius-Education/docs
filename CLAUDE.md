@@ -301,7 +301,7 @@ De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
 (schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica,
-fullstack, linux, ctf, de editor-cursus en algoritmes zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+fullstack, linux, ctf, de editor-cursus, algoritmes en Godot zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
@@ -1205,6 +1205,84 @@ tip en antwoord; een kop als `## Opdracht: tel de beurten` heet `## Opdracht`
 (voluit stond hij boven de rij stappen, 46 pixels), met de naam in de eerste
 zin van De opdracht. Het spel van Hanoi staat in een tabblad naast zijn
 knoppen.
+
+**Wat Godot erbij bracht** (november 2026; alle 346 schermen passen op
+1280×720 en 1366×768, na eerst 354 van de 370). De cursus heeft geen
+oefenveld: de leerling werkt in de editor van Godot, en een les is uitleg,
+een voorspelvraag, `## Stap N` met schermafbeeldingen of een paar regels
+GDScript, het hele script tot dan toe, opdrachten en Er gaat iets mis.
+Daarvoor is dit gekomen:
+
+- **Een lange rij `## Stap N` toont na de eerste alleen het nummer**
+  (`korteOpdrachten`: vier of meer stappen achter elkaar in een rij van
+  negen tabbladen of meer), zoals de opdrachten dat al deden. Stappen en
+  opdrachten zijn elk een eigen reeks. Alleen als de rij met de volle namen
+  niet past (`rijPast`): een tabblad dat "2" heet is 42 pixels breed, en
+  dezelfde vier stappen heetten in de ene les "Stap 2" en in de andere "2".
+  De stappen zijn hier tabbladen, net als bij de Lego-auto: de lestekst
+  verwijst ernaar ("in Stap 3").
+- **Je script tot nu toe en Je complete script hebben de werkvorm
+  controleren.** Het script staat er direct, niet in een uitklapblok
+  "Klik hier om te vergelijken": het tabblad is zelf al de klik.
+- **Een open uitklapblok wordt gemeten als het klaar is met openklappen**
+  (`transitionend` op de hoogte, in `LesTabs`). Docusaurus klapt een blok
+  met een animatie open die langer duurt naarmate het blok hoger is: 503 ms
+  bij een oplossing van zeventig regels. De les mat na een vaste 400 ms,
+  halverwege, en het vak van `openBlokInVak` was dan 115 pixels te hoog. In
+  een paneel duurt die animatie nu 1 ms (`transition-duration` in de opmaak;
+  niet 0, want het thema rondt het openen af bij het einde van de
+  transitie): het blok klapte anders eerst open tot ver onder de rand en
+  sprong dan terug in zijn vak.
+- **Een open tip of oplossing is minstens acht regels hoog**
+  (`KLEINSTE_OPEN` in `speling.ts`, 190 pixels). Passen is ook hier niet
+  genoeg: met de ondergrens van 90 pixels liet een open oplossing drie
+  regels zien van een script van 35, en twee van een recept van vijf
+  stappen, en dat telde als passend. Is er zo weinig ruimte, dan schuift de
+  pagina voor de rest. Alleen naast een oefenveld voor de hele les (de
+  oefenterminal van Linux) krimpt het vak nog tot 90: daar moet de tekst
+  naast het veld blijven staan (`rooktest-linux`). Een procedure van meer
+  dan een paar regels hoort geen uitklapblok te zijn maar stappen.
+- **De docentenhandleiding zegt zelf wat een onderdeel is** (`doet`): een
+  stap is een handeling in de editor, een opdracht staat in het eigen
+  project, en controleren is je script naast dat van de les leggen.
+- **De versie van Godot staat in de navbar**, niet meer als blok bovenaan
+  elke les. Met dat blok onder de inleiding was het eerste scherm van bijna
+  elke les een alinea en een banner; zonder opent de inleiding het tabblad
+  erna, zoals in de andere cursussen.
+
+In de lessen: de regel met de vorige en de volgende les onder elke les van
+hoofdstuk 5 is weg (de knoppen doen dat), veertien tabbladen in de afsluiter
+van het bewegingsscript zijn er acht (de sprong is één tabblad met vijf
+stappen), Fouten zoeken heeft vier tabbladen uitleg met korte namen in
+plaats van tien stappen op twee regels, een tabel direct onder code van zes
+regels of meer staat niet ernaast in een smalle kolom (zet er een alinea
+tussen, of geef hem een eigen stap als hij met zijn code niet op één scherm
+past), en een video is een eigen stap of tabblad van hooguit 420 pixels
+hoog. Een `## Stap N: Test het` van één regel staat onder de stap ervoor.
+Godot-versies en Wat nu? houden `les_tabs: false`: naslag en een keuzelijst.
+
+**Wat een review van Godot vond** (november 2026). Drie lezers: een op de
+code, twee die de cursus als leerling doorliepen. Alle schermen pasten, en
+toch: een oplossing in een vak van drie regels, een stap die code besprak
+van het scherm ervoor, drie stappen die doortelden ("De tweede is …"), een
+zin die bij het splitsen was weggevallen, en twee tabbladen die Voorspel
+heetten. In de lessen is dat hersteld, met wat er inhoudelijk al fout stond
+(een bestand dat de cursus nergens maakte, oorzaken onder Er gaat iets mis
+die het symptoom niet gaven). `src/docs-tests/schermen.test.ts` van godot
+bewaakt nu: "hieronder" en "hierboven" per scherm, ook in een lijst; een
+scherm dat met "Nu", "Daarom" of "De tweede" begint, ook als het met een
+lijst opent; hooguit tien tabbladen per les, geteld als tabbladen en niet
+als namen; geen twee tabbladen met dezelfde naam; elke "Stap N" in de tekst
+bestaat in de les of in de les waar de regel naar linkt; geen stap De
+basis; geen eigen regel met de volgende les, in welke vorm ook; en het
+script tot nu toe als eerste dat op zijn tabblad te zien is. Een "tabblad"
+is in deze lessen vaak een tabblad van Godot (TileSet, Uitvoer); zeg er dan
+bij waar het staat ("onderin", "in de Project Manager"). De labelcontrole
+van de Godot-runner leest elk vetgedrukt Engels woord als een knop van de
+editor: zet de naam van een extern programma niet vet, of zet hem met een
+reden in `GEEN_UI_LABEL` (`src/godot-tests/labels.ts`). Die controle en het
+compileren van de blokken draaien alleen in CI, en CI draait pas bij een
+PR: open die dus voordat je een omzetting klaar noemt.
 
 ## Code in MDX-expressies
 

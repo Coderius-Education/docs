@@ -7,8 +7,6 @@ slug: /start_gdscript
 
 Je karakter staat op het scherm en er hangt een script aan met één regel erin. Voordat je aan het bewegingsscript begint, gebruik je dat script één keer om te zien dat je code echt draait.
 
-<GodotVersie />
-
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Variabelen'},
@@ -44,9 +42,7 @@ Het spel is gestart.
 Ik heb 3 levens.
 ```
 
-Dit tabblad wordt je belangrijkste gereedschap. Telkens als je niet zeker weet of een stuk code draait, zet je er een `print()` in en kijk je hier. In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je daar systematisch mee werkt.
-
-Haal deze `_ready()`-functie daarna weer weg. In het volgende hoofdstuk begin je met een schone lei aan het bewegingsscript.
+Uitvoer wordt je belangrijkste gereedschap. Telkens als je niet zeker weet of een stuk code draait, zet je er een `print()` in en kijk je in Uitvoer. In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je daar systematisch mee werkt.
 
 ## Opdracht 4.3.a: laat Godot rekenen
 
@@ -88,9 +84,11 @@ In Uitvoer staat `Punten per level: 30`. Dat getal staat nergens in je script: G
 <details>
 <summary>Antwoord</summary>
 
-`_ready()` draait één keer bij start. `_process(delta)` draait **elke frame** (~60 keer per seconde). Je Uitvoer-tabblad raakt dan in een paar seconden vol met dezelfde twee regels. Handig om bewegende waardes te volgen, niet handig voor een eenmalige startmelding.
+`_ready()` draait één keer bij start. `_process(delta)` draait **elke frame** (~60 keer per seconde). Je Uitvoer-tabblad raakt dan in een paar seconden vol met dezelfde regels. Handig om bewegende waardes te volgen, niet handig voor een eenmalige startmelding.
 
 </details>
+
+Haal de functie hierna weer weg, ook als je er `_process` van hebt gemaakt, zodat alleen `extends CharacterBody2D` overblijft. In [Het bewegingsscript bouwen](site:godot/docs/basis_movement_begrijpen) begin je met een schone lei: in zeven korte lessen schrijf je daar het script waarmee je karakter valt, loopt en springt.
 
 ## Er gaat iets mis
 
@@ -118,12 +116,8 @@ Onderin het scriptvenster staat dan een rode regel. De twee die je hier het vaak
 
 1. Druk op `F5` om het spel te starten.
 2. Klik onderin op het tabblad **Uitvoer** (Engels: **Output**) — soms staat het verstopt naast **Debugger** of **Audio**.
-3. Geen `F5`-knop? Stel eerst een Main Scene in via **Project → Project Settings → Run → Main Scene** ([zie Je eerste 2D-scène](site:godot/docs/scene)).
+3. Start er niets en vraagt Godot om een Main Scene? Stel die eerst in via **Project → Project Settings → Run → Main Scene** (zie [Er gaat iets mis in Je eerste 2D-scène](site:godot/docs/scene#er-gaat-iets-mis)).
 
 **Zelf vinden:** zet `print("hier")` als allereerste regel in de functie. Blijft Uitvoer ook dan leeg, dan draait je script niet en ligt het aan de scène, niet aan je code.
 
 </details>
-
-## Wat daarna?
-
-In [Het bewegingsscript bouwen](site:godot/docs/basis_movement_begrijpen) schrijf je in zeven korte lessen het script waarmee je karakter valt, loopt en springt.

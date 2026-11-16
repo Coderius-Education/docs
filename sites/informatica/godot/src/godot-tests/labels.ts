@@ -43,7 +43,6 @@ export const GEEN_UI_LABEL: Record<string, string> = {
   'More info': 'melding van Windows SmartScreen',
   'Run anyway': 'melding van Windows SmartScreen',
   'Split to frames': 'knop in een externe sprite-sheet-splitter',
-  'Add 6 Frame(s)': 'Godot vult het aantal zelf in (Add %d Frame(s))',
   'Physics Layer 0': 'Godot nummert de laag zelf',
   'Global variable': 'begrip uit de les, geen knop',
   'Node Name': 'veldnaam die Godot uit de node samenstelt',

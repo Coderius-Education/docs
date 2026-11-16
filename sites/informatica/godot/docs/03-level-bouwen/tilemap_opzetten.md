@@ -7,16 +7,14 @@ slug: /tilemap_opzetten
 
 Een tile-gebaseerd level is een rooster van kleine afbeeldingen (**tiles**) die je naast en op elkaar zet. Veel platformers werken zo: één tegeltje gras dat je honderden keren gebruikt. In deze les leg je de basis: tegels importeren en je level tekenen. De **botsingen** komen in de volgende les.
 
-<GodotVersie />
-
 :::info
 `TileMapLayer` is geïntroduceerd in **Godot 4.3**. In oudere versies heet de node `TileMap` en werkt de workflow iets anders.
 :::
 
 ## Stap 1: Een `TileMapLayer` toevoegen \{#tilemaplayer}
 
-1. Open je level-scène.
-2. Klik met rechts op de hoofd-node (bijvoorbeeld `Node2D`) → **Add Child Node**.
+1. Open je scène `world.tscn`.
+2. Klik met rechts op de root-node (`Node2D`) → **Add Child Node**.
 3. Zoek naar `TileMapLayer` en voeg deze toe.
 
 `TileMapLayer` is de node die de tegels op het scherm tekent.
@@ -31,8 +29,8 @@ Een `TileSet` is de verzameling afbeeldingen die je als tegels gebruikt — je p
 2. Kijk rechts in de **Inspector**. Helemaal bovenaan zie je de eigenschap `Tile Set` met de waarde `<empty>`.
 3. Klik op `<empty>` — Godot maakt direct een nieuwe TileSet aan.
 4. Klik vervolgens *op* de nieuw aangemaakte TileSet om de instellingen open te klappen.
-5. Kijk helemaal onderin het Godot-scherm en klik op het tabblad **TileSet** (naast **Uitvoer**).
-6. Sleep vanuit je FileSystem (bijvoorbeeld uit je `assets`-map) je tegel-afbeelding rechtstreeks in het grote lege vak onderin het scherm.
+5. Kijk helemaal onderin het Godot-scherm en klik op het tabblad **TileSet** (naast Uitvoer).
+6. Zoek in het FileSystem-paneel, in je `assets`-map, de afbeelding met de tegels: één plaatje waarop alle grond- en muurtegels in een raster naast en onder elkaar staan. Sleep dat rechtstreeks in het grote lege vak onderin het scherm. Staan er in `assets` alleen achtergronden, kopieer dan eerst de rest van het pack, zoals in [Bestanden downloaden](site:godot/docs/bestanden-downloaden#projectmap).
 7. Godot vraagt of hij automatisch tiles moet aanmaken ("Automatically create tiles?"). Klik op **Yes**.
 
 ## Stap 3: Je level tekenen
@@ -49,7 +47,7 @@ Met de **rechtermuisknop** gum je een tegel weer weg.
 
 ## Voorspel: wat gebeurt er straks als je een karakter toevoegt?
 
-Je hebt een mooi level getekend met een grasvloer. Straks (in [Een speelbaar karakter](site:godot/docs/sprite)) voeg je een karakter toe. **Wat denk je dat er dan gebeurt als jouw karakter op deze grastegels probeert te lopen?**
+Je hebt een level getekend met een vloer. In hoofdstuk 4 voeg je een karakter toe, en in hoofdstuk 5 leer je hem vallen en lopen. **Wat denk je dat er dan gebeurt als jouw karakter op deze tegels terechtkomt?**
 
 <details>
 <summary>Antwoord</summary>
@@ -79,7 +77,7 @@ Er is geen fout of goed level, maar controleer deze drie dingen:
 
 - De vloer stopt ergens en gaat verderop weer door — dat is je gat.
 - Vanaf de vloer kun je in gedachten via de plateaus omhoog "klimmen", zonder sprongen van meer dan een paar tegels.
-- Alles wat begaanbaar moet zijn valt binnen de roze stippelrand, of net erbuiten — de camera leert je pas later meebewegen.
+- Alles wat begaanbaar moet zijn valt binnen de roze stippelrand, of net erbuiten. De camera laat je pas in [Een camera die de speler volgt](site:godot/docs/camera2d) meebewegen.
 
 Testen of de sprongen écht haalbaar zijn kan nog niet: daarvoor heb je het springende karakter uit hoofdstuk 5 nodig. Grote kans dat je hier dan nog iets bijstelt, en dat hoort erbij.
 

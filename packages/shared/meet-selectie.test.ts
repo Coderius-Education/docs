@@ -143,6 +143,10 @@ describe('welke lessen CI meet', () => {
     // Eerst maten ze de hele cursus, met de meting in delen zes runners.
     for (const pad of [
       'src/docs-tests/opdrachten.test.ts',
+      // De uitzonderingen van de labelcontrole en het testproject van Godot.
+      'src/godot-tests/labels.ts',
+      'godot-tests/tests/test_runner.gd',
+      'src/lego-tests/schemas.ts',
       'src/components/PyRunner/breedte.test.ts',
       'CLAUDE.md',
       'docs/terminal/_category_.json',

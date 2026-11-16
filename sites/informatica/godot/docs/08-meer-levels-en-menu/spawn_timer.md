@@ -5,18 +5,16 @@ slug: /spawn_timer
 
 # Automatisch spawnen met een Timer
 
-In de [vorige les](site:godot/docs/spawnen) spawn je muntjes bij de start van het level, met vaste coördinaten in `_ready()`. In deze les laat je het level dat zélf blijven doen terwijl je speelt: elke paar seconden een nieuw muntje, steeds op een andere plek.
+In [Spawnen: nodes maken in code](site:godot/docs/spawnen) spawn je muntjes bij de start van het level, met vaste coördinaten in `_ready()`. In deze les laat je het level dat zélf blijven doen terwijl je speelt: elke paar seconden een nieuw muntje, steeds op een andere plek.
 
-<GodotVersie />
+## Voorspel: waarom is één stopwatch niet genoeg?
 
-## Voorspel: hoe doe je "elke 2 seconden"?
-
-Je wilt dat `spawn_muntje()` elke 2 seconden wordt aangeroepen. **Hoe zou Godot dat oplossen?** Denk aan wat je in [Signals & een muntje oppakken](site:godot/docs/signals_muntje) leerde over hoe nodes elkaar iets laten weten.
+Je wilt dat `spawn_muntje()` elke 2 seconden wordt aangeroepen. In [Een power-up: tijdelijk hoger springen](site:godot/docs/power_up) wachtte je met `await get_tree().create_timer(5.0).timeout`. **Wat gebeurt er als je zo'n regel met `2.0` in `_ready()` zet, met `spawn_muntje()` eronder?**
 
 <details>
 <summary>Antwoord</summary>
 
-Met een node en een signal — zoals bijna alles in Godot:
+Na twee seconden spawnt er één muntje, en daarna niets meer: die stopwatch loopt één keer af. Je hebt er een nodig die telkens opnieuw begint. Dat doe je met een node en een signal, zoals bijna alles in Godot:
 
 - De node heet **`Timer`**: een onzichtbare stopwatch die telkens opnieuw aftelt.
 - Zodra de tijd om is, stuurt hij het signal **`timeout`**. Daar koppel je je spawn-functie aan, net zoals je `body_entered` aan het muntje koppelde.
@@ -96,7 +94,7 @@ De `Timer`-instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet
 
 ## Opdracht 8.4.a: spawn ook vijanden
 
-Muntjes verzamelen zonder gevaar is te makkelijk. Laat het level óók vijanden spawnen, langzamer dan de muntjes — bijvoorbeeld één per 5 seconden. Gebruik de vijand-scène uit [Opdracht 7.1.a](site:godot/docs/signals_muntje).
+Muntjes verzamelen zonder gevaar is te makkelijk. Laat het level óók vijanden spawnen, langzamer dan de muntjes — bijvoorbeeld één per 5 seconden. Gebruik de vijand-scène uit opdracht 7.1.a, in [Signals & een muntje oppakken](site:godot/docs/signals_muntje).
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -175,7 +173,7 @@ Elke timer telt onafhankelijk af: muntjes elke 2 seconden, vijanden elke 5.
 
 **Oorzaak:** De grenzen van `randf_range()` of de vaste y-waarde passen niet bij jouw level.
 
-**Oplossing:** Meet je level na in de editor: selecteer een tegel aan de linker- en rechterrand en lees **Position** af. Gebruik die x-waarden als grenzen, en een y die ruim boven je vloer ligt.
+**Oplossing:** Meet je level na in de editor: zet tijdelijk een node, bijvoorbeeld een muntje, op de linkerrand van je level en lees **Position** af in de Inspector. Doe hetzelfde op de rechterrand. Gebruik die x-waarden als grenzen, en een y die ruim boven je vloer ligt.
 
 </details>
 
