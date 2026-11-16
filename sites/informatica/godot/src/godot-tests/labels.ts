@@ -37,6 +37,8 @@ export const GEEN_UI_LABEL: Record<string, string> = {
   'Openen in Bestandsbeheer': 'knop in het besturingssysteem',
   'Rechthoekige selectie': 'gereedschap in een tekenprogramma',
   'Magic Wand': 'gereedschap in GIMP of Photopea',
+  GIMP: 'naam van een extern tekenprogramma',
+  Photopea: 'naam van een extern tekenprogramma',
   'Paint-tool': 'extern tekenprogramma',
   'Download Now': 'knop op godotengine.org',
   'Download frames as ZIP': 'knop op een externe assets-site',
