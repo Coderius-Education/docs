@@ -222,19 +222,23 @@ describe('groepeer', () => {
   });
 
   it('een lange rij stappen toont na de eerste ook alleen het nummer', () => {
-    // Het startmenu van Godot: Uitleg, Voorspel, zeven stappen, een opdracht
-    // en Er gaat iets mis stonden op 1280 pixels op twee regels. De stappen
-    // zijn daar tabbladen (`## Stap N`), net als bij de Lego-auto.
-    const les = (stappen: number, opdrachten: number) =>
+    // Signals en een muntje van Godot: Uitleg, Voorspel, Wat zijn signals?,
+    // zes stappen, een opdracht en Er gaat iets mis stonden op 1280 pixels op
+    // twee regels. De stappen zijn daar tabbladen (`## Stap N`), net als bij
+    // de Lego-auto.
+    const les = (stappen: number, opdrachten: number, extra: string[] = []) =>
       groepeer([
         titel,
         kop(2, 'Voorspel: wat zie je?'),
+        ...extra.map((naam) => kop(2, naam)),
         ...Array.from({ length: stappen }, (_, i) => kop(2, `Stap ${i + 1}: doe iets`)),
         ...Array.from({ length: opdrachten }, (_, i) => kop(2, `Opdracht 8.2.${'abcd'[i]}: iets`)),
         kop(2, 'Er gaat iets mis'),
       ]) as Knoop[];
-    const lang = tabs(les(7, 1));
+    const lang = tabs(les(7, 1, ['Wat zijn signals?', 'Je script tot nu toe']));
     expect(lang.map((t) => t.kort)).toEqual([
+      undefined,
+      undefined,
       undefined,
       undefined,
       '2',
@@ -246,12 +250,16 @@ describe('groepeer', () => {
       undefined,
       undefined,
     ]);
-    expect(lang[2].label).toBe('Stap 2');
+    expect(lang[4].label).toBe('Stap 2');
     // Stappen en opdrachten zijn elk een eigen reeks: drie stappen en drie
     // opdrachten zijn samen geen reeks van zes.
-    expect(tabs(les(3, 3)).some((t) => t.kort)).toBe(false);
+    const kort = ['Wat zijn signals?', 'Je script tot nu toe', 'Hoe anderen dit doen'];
+    expect(tabs(les(3, 3, kort)).some((t) => t.kort)).toBe(false);
     // Na vier stappen begint een reeks opdrachten weer voluit.
-    expect(tabs(les(4, 4)).map((t) => t.kort)).toEqual([
+    expect(tabs(les(4, 4, kort)).map((t) => t.kort)).toEqual([
+      undefined,
+      undefined,
+      undefined,
       undefined,
       undefined,
       '2',
@@ -263,6 +271,60 @@ describe('groepeer', () => {
       '8.2.d',
       undefined,
     ]);
+  });
+
+  it('een rij die met de volle namen past, houdt ze', () => {
+    // Een tabblad dat "2" heet, is 42 pixels breed: het smalste doel in de
+    // les. In Godot heetten dezelfde vier stappen in Deel 2 "Stap 2" en in
+    // Deel 5 "2", alleen omdat Deel 5 een tabblad meer had; de rij was daar
+    // niet vol. Negen tabbladen is dus niet genoeg: de rij moet ook niet
+    // passen (rijPast).
+    const deel5 = tabs(
+      groepeer([
+        titel,
+        kop(2, 'Voorspel: hoe vertaal je een toets?'),
+        ...[1, 2, 3, 4].map((n) => kop(2, `Stap ${n}: doe iets`)),
+        kop(2, 'Je script tot nu toe'),
+        kop(2, 'Opdracht 5.5.a: kies je snelheid'),
+        kop(2, 'Er gaat iets mis'),
+        kop(2, 'Verder'),
+      ]) as Knoop[],
+    );
+    expect(deel5.length).toBeGreaterThanOrEqual(9);
+    expect(deel5.some((t) => t.kort)).toBe(false);
+  });
+
+  it('twee reeksen naast elkaar en een onderbroken reeks', () => {
+    // Twee randgevallen die geen les nu heeft, vastgelegd zodat ze niet stil
+    // veranderen. Opdrachten met een kaal nummer na een reeks stappen:
+    // "Stap 1 | 2 | 3 | 4 | Opdracht 1 | 2 | 3 | 4" leest als acht stappen,
+    // dus schrijf opdrachten als "Opdracht 8.2.a". En een reeks die een
+    // ander tabblad onderbreekt, begint daarna opnieuw te tellen: drie
+    // stappen erna zijn geen reeks.
+    const lang = ['Wat zijn signals precies?', 'Je script tot nu toe', 'Hoe anderen dit doen'];
+    const rij = (koppen: string[]) =>
+      tabs(
+        groepeer([
+          titel,
+          ...[...lang, ...koppen].map((k) => kop(2, k)),
+          kop(2, 'Klaar'),
+        ]) as Knoop[],
+      )
+        .slice(lang.length)
+        .map((t) => t.kort ?? t.label);
+    expect(
+      rij([
+        ...[1, 2, 3, 4].map((n) => `Stap ${n}: doe`),
+        ...[1, 2, 3, 4].map((n) => `Opdracht ${n}: maak`),
+      ]),
+    ).toEqual(['Stap 1', '2', '3', '4', 'Opdracht 1', '2', '3', '4', 'Klaar']);
+    expect(
+      rij([
+        ...[1, 2, 3, 4].map((n) => `Stap ${n}: doe`),
+        'Voorspel: wat nu?',
+        ...[5, 6, 7].map((n) => `Stap ${n}: doe`),
+      ]),
+    ).toEqual(['Stap 1', '2', '3', '4', 'Voorspel', 'Stap 5', 'Stap 6', 'Stap 7', 'Klaar']);
   });
 
   it('het tabblad Uitleg krijgt een eigen id als een kop verderop Uitleg heet', () => {
@@ -1872,6 +1934,16 @@ describe('de opmaak van de tabbladen', () => {
       .map(({ sel }) => sel);
     expect(fout).toEqual([]);
     expect(regels.some(({ sel }) => sel === '.paneel[hidden]')).toBe(true);
+  });
+
+  it('een uitklapblok klapt in een paneel meteen open', () => {
+    // Docusaurus animeert de hoogte van een <details> (503 ms bij een
+    // oplossing van zeventig regels). Zolang dat loopt, heeft het blok zijn
+    // vak nog niet: het klapte open tot ver onder de rand en sprong dan
+    // terug. 1 ms en geen 0: het thema rondt het openen af bij het einde van
+    // de transitie, en zonder transitie komt dat einde niet.
+    const regel = regels.find(({ sel }) => sel === '.paneel :global(details) > div');
+    expect(regel?.body).toMatch(/transition-duration:\s*1ms\s*!important/);
   });
 
   describe('de kolom naast de les (<LesNaast>)', () => {

@@ -7,8 +7,6 @@ slug: /exporteren
 
 Je project is een gewone map op je computer. In Godot zie je hem als `res://`, maar op je schijf heeft hij een echte plek, met een pad als `C:\Users\sam\Documents\mijn-eerste-game`. Die plek moet je kunnen terugvinden: om je werk in te leveren, mee te nemen op een USB-stick, of thuis verder te werken.
 
-<GodotVersie />
-
 ## Voorspel: waarom is de map die je ziet niet de map die je nodig hebt?
 
 Je opent je projectmap vanuit Godot en ziet meteen `project.godot`, je scenes en je scripts. Toch is dát niet wat je meeneemt of inlevert. **Waarom niet?**
@@ -125,18 +123,17 @@ Wil je vanaf hier weer verder werken: start Godot, en de Project Manager toont j
 
 ## Optioneel: je game exporteren naar een `.exe`
 
+### Voor je begint
+
 Wil je je spel laten spelen door iemand die Godot niet heeft — een klasgenoot, je ouders, of tijdens een presentatie? Dan bouw je je project om tot één `.exe`-bestand dat op elke Windows-computer start.
 
 Dit is niet nodig om je werk in te leveren of te bewaren; daarvoor volstaat je projectmap. Zie het als de laatste stap wanneer je game af is.
 
-<details>
-<summary>Klik hier voor de stappen.</summary>
+Controleer eerst je Main Scene. Ga naar **Project → Project Settings**, zoek `main scene` in de zoekbalk en kijk of er een scène staat (vaak `menu.tscn` of `level1.tscn`). Staat er niets, dan opent je `.exe` straks een zwart scherm.
 
-**Stap 1: Check je Main Scene**
+### De Export Templates
 
-Ga naar **Project → Project Settings**, zoek `main scene` in de zoekbalk en controleer dat er een scène staat (vaak `menu.tscn` of `level1.tscn`). Staat er niets, dan opent je `.exe` straks een zwart scherm.
-
-**Stap 2: Download de Export Templates (eenmalig)**
+Godot heeft Export Templates nodig om een `.exe` te bouwen. Die download je één keer.
 
 1. Klik op **Editor → Manage Export Templates**.
 2. Klik op **Go Online**. Godot haalt de templates dan op bij een mirror en installeert ze; dat duurt even.
@@ -144,28 +141,25 @@ Ga naar **Project → Project Settings**, zoek `main scene` in de zoekbalk en co
 
 De templates horen bij één Godot-versie. Update je later naar een nieuwere versie, dan download je ze opnieuw.
 
-**Stap 3: Maak een Windows-preset**
+### Een Windows-preset
 
 1. Klik op **Project → Export...**
 2. Klik linksboven op **Add...** en kies **Windows Desktop**.
 3. Rechts verschijnen de instellingen. Die kun je vrijwel allemaal laten staan.
+4. Klap **Binary Format** open en vink **Embed PCK** aan.
 
-**Stap 4: Vink Embed PCK aan**
+Zonder Embed PCK maakt Godot twee bestanden: een `.exe` én een `.pck`. Ze zijn allebei nodig, dus stuur je alleen de `.exe` door, dan start het spel bij de ander niet. Met Embed PCK zit alles in één bestand.
 
-Klap **Binary Format** open en vink **Embed PCK** aan.
+### Exporteren en testen
 
-Zonder deze optie maakt Godot twee bestanden: een `.exe` én een `.pck`. Ze zijn allebei nodig, dus stuur je alleen de `.exe` door, dan start het spel bij de ander niet. Met Embed PCK zit alles in één bestand.
-
-**Stap 5: Exporteren en testen**
-
-1. Klik onderaan op **Export Project...**
+1. Klik onderaan het export-venster op **Export Project...**
 2. Kies een lege map en geef het bestand een naam, bijvoorbeeld `mijn-game.exe`.
 3. Vink **Export With Debug** uit.
 4. Klik op **Save**, open daarna die map en dubbelklik op je `.exe`.
 
 Je spel start buiten Godot om.
 
-</details>
+### Als het vastloopt
 
 Loopt het exporteren vast? Dit zijn de drie meest voorkomende meldingen.
 

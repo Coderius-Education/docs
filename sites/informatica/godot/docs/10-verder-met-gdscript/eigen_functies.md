@@ -7,8 +7,6 @@ slug: /eigen_functies
 
 Je karakter-script werkt, maar `_physics_process` is een lang blok geworden: vallen, springen, lopen en animaties staan allemaal onder elkaar. Wil je iets aan het springen veranderen, dan zoek je eerst tussen twintig regels. Je knipt het blok op in functies met een eigen naam, zodat elke naam zegt wat dat stuk doet. Waar je knipt en hoe de stukken heten, bepaal je zelf.
 
-<GodotVersie />
-
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
@@ -20,7 +18,7 @@ Je karakter-script werkt, maar `_physics_process` is een lang blok geworden: val
 
 ### Je script als beginpunt
 
-De les gaat uit van je karakter-script zoals het is na [Animaties in code](site:godot/docs/animaties_code) en [Een power-up](site:godot/docs/power_up). Zo ziet het eruit:
+De les gaat uit van je karakter-script zoals het is na [Animaties in code](site:godot/docs/animaties_code) en [Een power-up: tijdelijk hoger springen](site:godot/docs/power_up). Zo ziet het eruit. In deze les gaat het om het middelste stuk: `_physics_process`, van `func _physics_process` tot en met `move_and_slide()`.
 
 ```gdscript
 extends CharacterBody2D
@@ -71,7 +69,7 @@ Heb je bij opdracht 7.6.a van `SPEED` een `var snelheid` gemaakt, dan staat bij 
 
 ### Waar knip je?
 
-Lees `_physics_process` in je script van boven naar beneden. **Uit hoeveel stukken bestaat hij, waar begint en eindigt elk stuk, en welke naam zou je elk stuk geven?** Schrijf het op voordat je verder leest.
+Open je karakter-script in Godot en lees `_physics_process` van boven naar beneden. **Uit hoeveel stukken bestaat hij, waar begint en eindigt elk stuk, en welke naam zou je elk stuk geven?** Schrijf het op voordat je verder leest.
 
 <details>
 <summary>Antwoord</summary>
@@ -123,7 +121,7 @@ Haal de twee regels voor de zwaartekracht weg uit `_physics_process`, en zet op 
 
 Start je spel met `F5`. Je karakter valt zoals altijd. Er is niets veranderd aan wat het spel doet, alleen aan hoe je script eruitziet.
 
-`delta` hoort bij `_physics_process`: Godot geeft hem mee als het die functie aanroept, en hij bestaat alleen daarbinnen. Een andere functie kent hem niet. Daarom geef je hem door als parameter, zoals je in [Spawnen](site:godot/docs/spawnen) de positie aan `spawn_muntje(x, y)` meegaf: `val(delta)` stuurt de waarde mee, en `func val(delta: float)` vangt hem op.
+`delta` hoort bij `_physics_process`: Godot geeft hem mee als het die functie aanroept, en hij bestaat alleen daarbinnen. Een andere functie kent hem niet. Daarom geef je hem door als parameter, zoals je in [Spawnen: nodes maken in code](site:godot/docs/spawnen) de positie aan `spawn_muntje(x, y)` meegaf: `val(delta)` stuurt de waarde mee, en `func val(delta: float)` vangt hem op.
 
 ## Opdracht 10.1.a: knip de rest zelf op
 
@@ -143,6 +141,8 @@ Start je spel na elke functie die je maakt even met `F5`. Gaat er iets mis, dan 
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
+
+De regels boven `_physics_process` blijven zoals ze waren. In `_physics_process` staan nog vijf regels, en daaronder staan de vier functies.
 
 ```gdscript
 extends CharacterBody2D
@@ -228,7 +228,7 @@ Met één lang blok had je bij elk van die vragen twintig regels moeten lezen. N
 
 ## Opdracht 10.1.b: dubbel springen
 
-Je karakter mag in de lucht één keer extra springen, ook als hij van een randje is gelopen. Koos je dit bij opdracht 5.7.b al, dan heb je het werkend; zet het nu in `spring()`, en vergelijk daarna je versie met de oplossing. Daarna moet hij eerst weer landen. Je past daarvoor alleen `spring()` aan, en zet bovenaan één variabele.
+Je karakter mag in de lucht één keer extra springen, ook als hij van een randje is gelopen. Daarna moet hij eerst weer landen. Je past daarvoor alleen `spring()` aan, en zet bovenaan één variabele. Koos je dubbel springen al bij opdracht 5.7.b, dan heb je het werkend: zet het in `spring()`, en vergelijk je versie daarna met de oplossing.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -243,6 +243,30 @@ Merk op dat je in `_physics_process` niets hoeft te veranderen. Dat levert het o
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
+
+Bovenaan je script komt één variabele erbij, onder `var staat_stil`:
+
+```gdscript
+var extra_sprong = true
+```
+
+En `spring()` wordt:
+
+```gdscript
+func spring() -> void:
+    if is_on_floor():
+        extra_sprong = true
+    if Input.is_action_just_pressed("ui_accept"):
+        if is_on_floor():
+            velocity.y = sprongkracht
+        elif extra_sprong:
+            velocity.y = sprongkracht
+            extra_sprong = false
+```
+
+Loop je van een randje, dan stond je net nog op de grond, dus `extra_sprong` is `true`: je krijgt één sprong in de lucht. Spring je vanaf de grond, dan kost die eerste sprong de extra sprong niet, en heb je er in de lucht ook één.
+
+De rest van je script blijft zoals het was. Je hele script, om te vergelijken:
 
 ```gdscript
 extends CharacterBody2D
@@ -310,8 +334,6 @@ func geef_sprongboost() -> void:
 
 Heb je `geef_snelheidsboost()` uit opdracht 7.6.a, dan staat die er bij jou ook nog onder.
 
-Loop je van een randje, dan stond je net nog op de grond, dus `extra_sprong` is `true`: je krijgt één sprong in de lucht. Spring je vanaf de grond, dan kost die eerste sprong de extra sprong niet, en heb je er in de lucht ook één.
-
 </details>
 
 ## Er gaat iets mis
@@ -367,7 +389,7 @@ func val(delta: float) -> void:
 
 **Oplossing:** haal de twee regels weg uit `_physics_process`; daar staat alleen nog `val(delta)`.
 
-**Zelf vinden:** zet `print(velocity.y)` vlak boven `move_and_slide()`, zoals in [Bewegingsscript 2](site:godot/docs/movement-motor), en laat je karakter vallen. Komt er elke frame zo'n 16 bij, dan klopt het. Komt er zo'n 33 bij, dan telt je script de zwaartekracht dubbel.
+**Zelf vinden:** zet `print(velocity.y)` vlak boven `move_and_slide()`, zoals in [Deel 2 — Vallen](site:godot/docs/movement-motor), en laat je karakter vallen. Komt er elke frame zo'n 16 bij, dan klopt het. Komt er zo'n 33 bij, dan telt je script de zwaartekracht dubbel.
 
 </details>
 

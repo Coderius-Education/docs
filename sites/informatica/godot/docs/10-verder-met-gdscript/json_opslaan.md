@@ -7,8 +7,6 @@ slug: /json_opslaan
 
 Je score staat in `Global`, en die is weg zodra je het spel afsluit. Een highscore die er morgen nog staat, moet in een bestand. Je schrijft hem als **JSON**: dezelfde tekstvorm die je in Python met `json.dump` maakte.
 
-<GodotVersie />
-
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/bestanden/14e-json', label: 'JSON'},
@@ -44,7 +42,7 @@ Die tekst kan in een bestand, en een bestand blijft staan als je het spel afslui
 
 ## De map: een bestand in `user://` \{#json}
 
-Je kent `res://` al: de map van je project. Na het [exporteren](site:godot/docs/exporteren) zit die map ingepakt in je spel, en dan kan je spel er niet meer in schrijven. Voor bestanden die het spel zelf maakt, is er `user://`:
+Je kent `res://` al: de map van je project. Exporteer je je spel (zie [Je projectmap terugvinden](site:godot/docs/exporteren)), dan zit die map ingepakt in je spel, en kan je spel er niet meer in schrijven. Voor bestanden die het spel zelf maakt, is er `user://`:
 
 | Pad       | Wat staat erin?                                 | Kan je spel erin schrijven? |
 | :-------- | :---------------------------------------------- | :-------------------------- |
@@ -69,7 +67,7 @@ Roep `Global.controleer_highscore()` aan op het moment dat een potje klaar is. I
 
 ### Bij game over
 
-Een potje is klaar als je game over gaat. Dat gebeurt in je vijand-script uit opdracht 7.3.a: daar gaat er een leven af. Kijk in `_on_body_entered` met `is_game_over()` of het het laatste was. De rest van je vijand-script, zoals `stop()` uit opdracht 7.5.b, blijft staan.
+Een potje is klaar als je game over gaat. Dat gebeurt in je vijand-script uit opdracht 7.3.a, in de `if` met `is_game_over()`. Zet de controle van de highscore daar bovenaan, vóór de regel die je spel sluit. De rest van je vijand-script, zoals `stop()` uit opdracht 7.5.b, blijft staan.
 
 {/* compileer-als: extends Area2D */}
 
@@ -77,14 +75,18 @@ Een potje is klaar als je game over gaat. Dat gebeurt in je vijand-script uit op
 func _on_body_entered(body: Node2D) -> void:
     Global.levens -= 1
     print("Levens: ", Global.levens)
+
     if Global.is_game_over():
         Global.controleer_highscore()
+        print("GAME OVER")
+        get_tree().quit()
+
     queue_free()
 ```
 
 ### Na het laatste level
 
-Een potje is ook klaar als je het laatste level haalt. Heb je de vlag uit [Lijsten](site:godot/docs/lijsten), dan is dat in de `else`, vlak voordat je teruggaat naar het menu:
+Een potje is ook klaar als je het laatste level haalt. Heb je de vlag uit [Lijsten: één vlag voor al je levels](site:godot/docs/lijsten), dan is dat in de `else`, vlak voordat je teruggaat naar het menu:
 
 ```gdscript
     else:
@@ -107,13 +109,11 @@ func bewaar_highscore() -> void:
     bestand.store_string(JSON.stringify(gegevens))
 ```
 
-### Wat de regels doen
+Drie dingen in die functie zijn nieuw:
 
-|                   Code                   | Wat doet het?                                                    |
-| :--------------------------------------: | :--------------------------------------------------------------- |
-| `FileAccess.open(BESTAND, FileAccess.WRITE)` | Opent het bestand om in te schrijven. Bestaat het nog niet, dan maakt Godot het |
-| `JSON.stringify(gegevens)`               | Maakt van je dictionary een tekst: `{"highscore":40}`             |
-| `bestand.store_string(...)`              | Schrijft die tekst in het bestand                                 |
+- `FileAccess.open(...)` opent het bestand om te schrijven, en maakt het als het er nog niet is.
+- `JSON.stringify(gegevens)` maakt van je dictionary een tekst: `{"highscore":40}`.
+- `bestand.store_string(...)` schrijft die tekst in het bestand.
 
 ### Bewaren bij een nieuwe highscore
 
@@ -151,7 +151,7 @@ De eerste keer dat iemand je spel speelt, is er nog geen bestand. Daarom kijk je
 
 ## Stap 4: Alles bij elkaar
 
-Zo ziet `global.gd` eruit met de highscore erbij, en met wat er uit de eerdere lessen al in stond: `reset()`, `verlies_leven()` en `is_game_over()` uit [Global variables](site:godot/docs/global_variables), en de lijst `level_volgorde` uit opdracht 10.2.a van [Lijsten](site:godot/docs/lijsten). Heb je de lijst niet in `Global` gezet, dan laat je die regel weg. Heeft jouw versie nog meer, dan laat je dat staan.
+Zo ziet `global.gd` eruit met de highscore erbij. Nieuw zijn `BESTAND` en `highscore` bovenaan, `_ready()`, en de drie functies onderaan. De rest stond er al: `reset()`, `verlies_leven()` en `is_game_over()` uit [Global variables (Autoload)](site:godot/docs/global_variables), en de lijst `level_volgorde` uit opdracht 10.2.a van [Lijsten: één vlag voor al je levels](site:godot/docs/lijsten). Heb je de lijst niet in `Global` gezet, dan laat je die regel weg. Heeft jouw versie nog meer, dan laat je dat staan.
 
 ```gdscript
 extends Node
@@ -202,7 +202,7 @@ func lees_highscore() -> void:
     highscore = int(gegevens["highscore"])
 ```
 
-Speel een potje, sluit het spel, en start opnieuw. Print `Global.highscore` in het menu: hij staat er nog.
+Speel een potje, sluit het spel, en start opnieuw. Je highscore staat nog in `highscore.json`; in opdracht 10.4.a zet je hem in het menu.
 
 ## Opdracht 10.4.a: de highscore in het menu
 
@@ -245,7 +245,7 @@ Houd bij hoe vaak iemand op Start heeft gedrukt, ook over het afsluiten heen, en
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-In `global.gd` komt `gespeeld` erbij, en heten de functies voor het bestand nu `bewaar_gegevens` en `lees_gegevens`:
+In `global.gd` verandert dit: `var gespeeld = 0` komt erbij, de functies voor het bestand heten nu `bewaar_gegevens` en `lees_gegevens` en bewaren ook `gespeeld`, en `_ready()` en `controleer_highscore()` roepen ze onder hun nieuwe naam aan. Zo ziet het hele script eruit:
 
 ```gdscript
 extends Node
@@ -338,7 +338,7 @@ Het tellen staat in het menu en niet in `reset()`: die roep je misschien ook aan
 
 **Oorzaak:** het bestand wordt niet geschreven, of niet gelezen. Vaak wordt `controleer_highscore()` niet aangeroepen op de plek waar jouw potje eindigt: je ging game over, maar alleen de vlag roept hem aan. Of `lees_highscore()` staat niet in `_ready()`.
 
-**Oplossing:** kijk of je vijand-script én de vlag van je laatste level `Global.controleer_highscore()` aanroepen, zoals in Stap 1, en of `_ready()` in `global.gd` `lees_highscore()` aanroept.
+**Oplossing:** kijk of je vijand-script én de vlag van je laatste level `Global.controleer_highscore()` aanroepen, zoals in het tabblad Stap 1 onder Bij game over en Na het laatste level, en of `_ready()` in `global.gd` `lees_highscore()` aanroept.
 
 **Zelf vinden:** open met **Open User Data Folder** de map van je spel. Staat er geen `highscore.json`, dan wordt er niets geschreven: zet een `print` in `bewaar_highscore`. Staat het bestand er wel, met de goede score erin, dan wordt het niet gelezen: zet een `print` in `lees_highscore`.
 

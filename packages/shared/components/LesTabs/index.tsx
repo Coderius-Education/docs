@@ -235,10 +235,13 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     el.addEventListener('toggle', meet, true);
     // Een blok van Docusaurus klapt met een animatie open: pas daarna heeft
     // de inhoud zijn hoogte (openBlokInVak). Hoe lang dat duurt, hangt af van
-    // de hoogte: een oplossing van zeventig regels doet er 503 ms over, en
+    // de hoogte: een oplossing van zeventig regels deed er 503 ms over, en
     // met een vaste 400 ms mat de les halverwege (het vak was dan 115 pixels
-    // te hoog, Godot 10.1.b). Dus meten als de animatie klaar is; de wachttijd
-    // blijft voor wie animaties uit heeft staan, want dan komt er geen einde.
+    // te hoog, Godot 10.1.b). Dus meten als de animatie klaar is. In een
+    // paneel duurt die nog 1 ms (styles.module.css): het blok klapte anders
+    // eerst helemaal open, tot ver onder de rand, en sprong dan terug in zijn
+    // vak. De wachttijd is alleen nog een vangnet voor een browser die
+    // transities helemaal uit heeft staan: dan komt er geen einde.
     let klapper = 0;
     const naKlappen = () => {
       window.clearTimeout(klapper);

@@ -8,8 +8,6 @@ sidebar_label: "Deel 2: Vallen"
 
 Je functie draait, maar je karakter staat stil. In deze les geef je hem snelheid, zodat hij valt.
 
-<GodotVersie />
-
 <GDQuestLes slug="movement-motor" />
 
 ## Wat je nu gaat toevoegen
@@ -44,9 +42,19 @@ func _physics_process(delta: float) -> void:
 
 Het stukje `* delta` laat je even voor wat het is — dat is Deel 3.
 
-## Stap 2: Wat `velocity` is
+## Stap 2: Test het
 
-`velocity` is de snelheid van je karakter: een X en een Y in één waarde. Zet tijdelijk `print(velocity)` boven `move_and_slide()` en kijk in **Uitvoer** terwijl je speelt:
+Zet je karakter in de editor een stuk boven de vloer en start met `F5`.
+
+Hij valt en blijft op de vloer liggen. Besturing komt vanaf Deel 5.
+
+:::caution
+Let op de volgorde: `move_and_slide()` blijft de **laatste** regel in de functie. Eerst reken je de snelheid uit, dan pas laat je Godot verplaatsen. Andersom loopt alles één frame achter.
+:::
+
+## Stap 3: Wat `velocity` is
+
+`velocity` is de snelheid van je karakter: een X en een Y in één waarde. Zet tijdelijk `print(velocity)` boven `move_and_slide()`, start opnieuw en kijk in **Uitvoer** terwijl je karakter valt:
 
 ```
 (0, 16.33)
@@ -58,7 +66,9 @@ De X blijft `0`, want je beweegt niet zijwaarts. De Y wordt elke frame `16.33` g
 
 Je kunt `.x` en `.y` los aanspreken, bijvoorbeeld `velocity.y = 0`. Dat gebruik je vanaf Deel 5.
 
-## Stap 3: Waarom `+=` en niet `=`
+Haal de `print` daarna weer weg.
+
+## Stap 4: Waarom `+=` en niet `=`
 
 `velocity += iets` is de korte schrijfwijze van `velocity = velocity + iets`. De zwaartekracht wordt dus **opgeteld bij de snelheid die er al was**, frame na frame. Zo bouwt valsnelheid zich op: na één seconde val je hard, na twee seconden harder.
 
@@ -70,16 +80,6 @@ Je kunt `.x` en `.y` los aanspreken, bijvoorbeeld `velocity.y = 0`. Dat gebruik 
 Je karakter zakt met een constante, hele lage snelheid naar beneden in plaats van versneld. Elke frame zet je `velocity` dan terug op één klein stapje, in plaats van het op te bouwen. Het voelt als zweven, niet als vallen.
 
 </details>
-
-## Stap 4: Test het
-
-Start met `F5` en zet je karakter in de editor boven de grond, of loop van een platform af.
-
-Hij valt en blijft op de vloer liggen. Besturing komt vanaf Deel 5.
-
-:::caution
-Let op de volgorde: `move_and_slide()` blijft de **laatste** regel in de functie. Eerst reken je de snelheid uit, dan pas laat je Godot verplaatsen. Andersom loopt alles één frame achter.
-:::
 
 ## Je script tot nu toe
 

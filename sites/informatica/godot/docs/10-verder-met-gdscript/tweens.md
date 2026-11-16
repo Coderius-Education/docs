@@ -5,15 +5,13 @@ slug: /tweens
 
 # Tweens: een muntje dat wegzweeft
 
-Pak je nu een muntje, dan is het in één frame weg. Dat werkt, maar het voelt kaal. In veel spellen springt een muntje eerst even omhoog en vervaagt het dan. Dat hoef je niet frame voor frame in `_process` uit te rekenen: een **tween** schuift een eigenschap in een aantal seconden van de ene waarde naar de andere.
-
-<GodotVersie />
+Pak je nu een muntje, dan is het in één frame weg. In veel spellen springt het eerst omhoog en vervaagt het dan. Dat reken je niet zelf uit in `_process`: een **tween** schuift een eigenschap in een paar seconden van de ene waarde naar de andere.
 
 ## Voorspel: wat zie je?
 
-Je werkt in deze les vooral in `_on_body_entered` van je muntje; in Stap 3 komt er bovenaan één variabele bij. De soorten uit [Dictionaries](site:godot/docs/dictionaries) blijven zoals ze zijn. Heb je die les overgeslagen, dan staat bij jou `Global.score += 1` in plaats van `Global.score += WAARDES[soort]`; dat werkt net zo.
+Je werkt in deze les in `_on_body_entered` van je muntje. Heb je [Dictionaries: muntjes van brons, zilver en goud](site:godot/docs/dictionaries) overgeslagen, dan staat bij jou `Global.score += 1` in plaats van `Global.score += WAARDES[soort]`; dat werkt net zo.
 
-Dit is `_on_body_entered` met twee nieuwe regels erin, en zonder `queue_free()`. Heb je de controle op winnen uit opdracht 7.5.a, dan laat je die er even uit; in Stap 3 komt hij terug.
+Dit is `_on_body_entered` met twee nieuwe regels en zonder `queue_free()`. De controle op winnen uit opdracht 7.5.a laat je er even uit; die komt terug in Stap 3.
 
 ```gdscript
 func _on_body_entered(body: Node2D) -> void:
@@ -30,11 +28,18 @@ func _on_body_entered(body: Node2D) -> void:
 
 Het muntje schuift in een halve seconde veertig pixels omhoog, en blijft daar hangen. Er staat geen `queue_free()` meer, dus het gaat niet weg.
 
-En er is nog iets: het muntje bestaat nog. Loop je eronder door en spring je er opnieuw tegenaan, dan krijg je de punten van dat muntje nog een keer. Dat los je op in Stap 3.
+En er is nog iets: het muntje bestaat nog. Loop je eronder door en spring je er opnieuw tegenaan, dan krijg je de punten van dat muntje nog een keer. Dat los je op in Stap 3, onder Eén keer tellen.
 
 </details>
 
 ## Een tween \{#tween}
+
+De twee nieuwe regels uit de voorspelvraag maken een tween en geven hem een opdracht:
+
+```gdscript
+    var tween = create_tween()
+    tween.tween_property(self, "position:y", position.y - 40, 0.5)
+```
 
 |                    Code                     | Wat doet het?                                         |
 | :-----------------------------------------: | :---------------------------------------------------- |
@@ -58,15 +63,21 @@ func _on_body_entered(body: Node2D) -> void:
     tween.tween_property(self, "modulate:a", 0.0, 0.2)
 ```
 
-`modulate:a` is de `a` van de kleur `modulate`: hoe doorzichtig de node is. Bij `1.0` zie je hem helemaal, bij `0.0` niet meer. De kleur van de soort, die je in `_ready()` met `modulate` zette, blijft staan; alleen de doorzichtigheid verandert.
+`modulate:a` is de `a` van de kleur `modulate`: hoe doorzichtig de node is. Bij `1.0` zie je hem helemaal, bij `0.0` niet meer. De kleur van de soort, die je in opdracht 10.3.a in `_ready()` met `modulate` zette, blijft staan; alleen de doorzichtigheid verandert.
 
 Start je spel en pak een muntje. Het springt omhoog en vervaagt.
 
 ## Stap 2: Daarna pas weg
 
-Het muntje is onzichtbaar, maar staat nog in je level. Je wilt `queue_free()` aanroepen als de tween klaar is, niet ervoor. Daar is `tween_callback` voor: die roept een functie aan op dat moment in de rij.
+Het muntje is onzichtbaar, maar staat nog in je level. Je wilt `queue_free()` aanroepen als de tween klaar is, niet ervoor. Daar is `tween_callback` voor: die roept een functie aan op dat moment in de rij. Zet hem als laatste regel in `_on_body_entered`, onder de twee regels met `tween_property`:
 
 ```gdscript
+func _on_body_entered(body: Node2D) -> void:
+    Global.score += WAARDES[soort]
+    print("Score: ", Global.score)
+    var tween = create_tween()
+    tween.tween_property(self, "position:y", position.y - 40, 0.3)
+    tween.tween_property(self, "modulate:a", 0.0, 0.2)
     tween.tween_callback(queue_free)
 ```
 
@@ -76,13 +87,34 @@ Let op: `queue_free` staat hier zonder haakjes. Je geeft de functie zelf mee, zo
 
 Het muntje bestaat nog een halve seconde nadat je het pakte. Loop je er in die tijd uit en weer in, dan telt het opnieuw. In een halve seconde lukt dat zelden, dus maak de tween even langzaam om het te zien: zet de `0.3` op `3.0`, start je spel, en loop een paar keer heen en weer door het muntje terwijl het omhoog zweeft. Je score gaat elke keer omhoog.
 
-Met een variabele houd je bij of het muntje al gepakt is. Zet de `3.0` terug op `0.3`.
+Met een variabele houd je bij of het muntje al gepakt is. Zet bovenaan je script `var gepakt = false`, en begin `_on_body_entered` met deze drie regels:
 
-En dan de controle op winnen uit opdracht 7.5.a. Die telde op `<= 1`, omdat het gepakte muntje tot het eind van het frame in de group bleef. Nu blijft het een halve seconde, en pak je twee muntjes kort na elkaar, dan zitten ze er allebei nog: je wint nooit. Haal het muntje daarom meteen uit de group als je het pakt, met `remove_from_group`. Dan telt het niet meer mee, en win je bij nul.
+```gdscript
+    if gepakt:
+        return
+    gepakt = true
+```
+
+De eerste keer is `gepakt` nog `false`, dus het muntje telt. Daarna staat hij op `true`, en stopt de functie meteen bij `return`. Zet de `3.0` terug op `0.3`.
+
+### Winnen bij nul
+
+De controle op winnen uit opdracht 7.5.a telde op `<= 1`, omdat het gepakte muntje tot het eind van het frame in de group bleef. Met de tween blijft het een halve seconde, en pak je twee muntjes kort na elkaar, dan zitten ze er allebei nog: je wint nooit. Haal het muntje daarom meteen uit de group als je het pakt, met `remove_from_group`. Dan telt het niet meer mee, en win je bij nul:
+
+```gdscript
+    gepakt = true
+    remove_from_group("muntjes")
+    Global.score += WAARDES[soort]
+    print("Score: ", Global.score)
+    if get_tree().get_nodes_in_group("muntjes").size() == 0:
+        print("Je hebt gewonnen!")
+```
+
+Deed je opdracht 7.5.a niet, dan sla je deze stap over.
 
 ### Je hele muntje-script
 
-Zo ziet je hele muntje-script eruit met de variabele `gepakt` en met `remove_from_group`:
+Zo ziet je hele muntje-script eruit. Nieuw in deze les zijn `var gepakt` en alles in `_on_body_entered`:
 
 ```gdscript
 extends Area2D
@@ -113,11 +145,11 @@ func _on_body_entered(body: Node2D) -> void:
     tween.tween_callback(queue_free)
 ```
 
-De eerste keer is `gepakt` nog `false`, dus het muntje telt. Daarna staat hij op `true`, en stopt de functie meteen bij `return`. Deed je opdracht 7.5.a niet, dan laat je de regels met de group en `gewonnen` weg.
+Deed je opdracht 7.5.a niet, dan laat je de regels met de group en `gewonnen` weg; zonder opdracht 10.3.a heb je `KLEUREN` en de regel met `modulate` niet. Een regel met `call_group` uit opdracht 7.5.b blijft onder de print van het winnen staan.
 
 ## Opdracht 10.5.a: een power-up die pulseert
 
-Laat je power-up uit [Een power-up](site:godot/docs/power_up) de hele tijd een beetje groter en kleiner worden, zodat de speler ziet dat hij bijzonder is.
+Laat je power-up uit [Een power-up: tijdelijk hoger springen](site:godot/docs/power_up) de hele tijd een beetje groter en kleiner worden, zodat de speler ziet dat hij bijzonder is.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -170,7 +202,7 @@ Kies een moment in je spel dat nu in één frame gebeurt, en maak er met een twe
 <details>
 <summary>Klik hier voor een voorbeeldoplossing.</summary>
 
-Je vijand uit opdracht 7.3.a haalt een leven van je af en verdwijnt meteen. Hier knippert hij eerst twee keer rood. Je zet `var geraakt` bovenaan je vijand-script en vervangt `_on_body_entered`; wat er verder in staat, blijft. Het idee is hetzelfde als bij het muntje: `gepakt` heet hier `geraakt`, en `queue_free` komt aan het eind van de tween. De regels met `Global` zijn die van jou: het leven eraf uit 7.3.a, en de highscore-controle uit de JSON-les. Heb je die les niet gedaan, dan laat je de `if` met `is_game_over()` weg.
+Je vijand uit opdracht 7.3.a haalt een leven van je af en verdwijnt meteen. Hier knippert hij eerst twee keer rood. Je zet `var geraakt` bovenaan je vijand-script en vervangt `_on_body_entered`; wat er verder in staat, blijft. Het idee is hetzelfde als bij het muntje: `gepakt` heet hier `geraakt`, en `queue_free` komt aan het eind van de tween. De regels met `Global` zijn die van jou: het leven eraf en de `if` met `is_game_over()` uit opdracht 7.3.a, en de highscore-controle uit de JSON-les. Heb je die les niet gedaan, dan laat je de regel met `controleer_highscore()` weg. Bij je laatste leven sluit het spel; het knipperen zie je bij de levens ervoor.
 
 {/* compileer-als: extends Area2D */}
 
@@ -185,6 +217,8 @@ func _on_body_entered(body: Node2D) -> void:
     print("Levens: ", Global.levens)
     if Global.is_game_over():
         Global.controleer_highscore()
+        print("GAME OVER")
+        get_tree().quit()
     var tween = create_tween()
     tween.tween_property(self, "modulate", Color.RED, 0.1)
     tween.tween_property(self, "modulate", Color.WHITE, 0.1)

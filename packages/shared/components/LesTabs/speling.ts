@@ -32,6 +32,15 @@ export const NOODGREEP = 80;
 export const KLEINSTE_NA = 90;
 
 /**
+ * En zo hoog blijft een tip of antwoord dat open staat minstens: acht regels
+ * code. Met de 90 pixels van hierboven liet een open oplossing in Godot drie
+ * regels zien van een script van 35 (opdracht 6.2.b), en twee van het
+ * exportrecept: het scherm "paste", maar lezen ging niet. Is er zo weinig
+ * ruimte, dan schuift de pagina voor de rest.
+ */
+export const KLEINSTE_OPEN = 190;
+
+/**
  * De hoogte van een codevak dat al schuift, als het paneel `tekort` pixels
  * te lang is voor het scherm. Het vak geeft toe tot het paneel past, maar
  * niet verder dan KLEINSTE_VAK.
@@ -228,11 +237,11 @@ export function verdeelSpeling(wortel: HTMLElement): void {
 
 /**
  * De hoogte van de inhoud van een open tip of antwoord als het paneel
- * `tekort` pixels te lang is: wat past, maar nooit lager dan KLEINSTE_NA.
+ * `tekort` pixels te lang is: wat past, maar nooit lager dan `kleinst`.
  */
-export function blokHoogte(hoogte: number, tekort: number): number {
+export function blokHoogte(hoogte: number, tekort: number, kleinst = KLEINSTE_OPEN): number {
   if (tekort <= 0) return hoogte;
-  return Math.max(KLEINSTE_NA, hoogte - tekort);
+  return Math.max(kleinst, hoogte - tekort);
 }
 
 /** De open blokken die de vorige keer een vak kregen, per wortel. */
@@ -255,6 +264,11 @@ function inhoudVan(blok: HTMLDetailsElement): HTMLElement | null {
  * pixels buiten beeld, en bij binair zoeken een antwoord tot 667 pixels; de
  * leerling las de eerste regel en moest dan de pagina laten schuiven. Het
  * onderste blok geeft eerst toe. Roep dit aan na elke klik en elke `toggle`.
+ *
+ * Het vak wordt niet lager dan acht regels (KLEINSTE_OPEN): daaronder is een
+ * oplossing niet te lezen, en schuift liever de pagina. Alleen naast een
+ * oefenveld voor de hele les (de oefenterminal van Linux) mag het tot een
+ * paar regels krimpen: daar moet de tekst naast het veld blijven staan.
  */
 export function openBlokInVak(wortel: HTMLElement): void {
   for (const el of blokken.get(wortel) ?? []) {
@@ -267,6 +281,8 @@ export function openBlokInVak(wortel: HTMLElement): void {
   const open = Array.from(paneel.querySelectorAll<HTMLDetailsElement>('details[open]')).filter(
     (blok) => zichtbaar(blok) && !blok.parentElement?.closest('details'),
   );
+  const naastVeld = wortel.querySelector(':scope > [data-les-naast] > :not([hidden])');
+  const kleinst = naastVeld ? KLEINSTE_NA : KLEINSTE_OPEN;
   const gezet: HTMLElement[] = [];
   for (const blok of open.reverse()) {
     const tekort = Math.ceil(
@@ -275,7 +291,7 @@ export function openBlokInVak(wortel: HTMLElement): void {
     if (tekort <= 0) break;
     const inhoud = inhoudVan(blok);
     if (!inhoud) continue;
-    const hoogte = blokHoogte(inhoud.offsetHeight, tekort);
+    const hoogte = blokHoogte(inhoud.offsetHeight, tekort, kleinst);
     if (hoogte >= inhoud.offsetHeight) continue;
     inhoud.style.maxHeight = `${hoogte}px`;
     inhoud.style.overflowY = 'auto';

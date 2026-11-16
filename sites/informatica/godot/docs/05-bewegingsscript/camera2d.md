@@ -7,8 +7,6 @@ slug: /camera2d
 
 Tot nu toe stond je beeld stil terwijl je speler bewoog. Bij grotere levels betekent dat: zodra je karakter naar rechts loopt, verdwijnt hij gewoon uit beeld. Tijd voor een **camera die meebeweegt**.
 
-<GodotVersie />
-
 ## Voorspel: hoe laat je een camera meebewegen?
 
 In Godot bestaat er een aparte `Camera2D`-node. **Waar zou je hem in de Scene Tree neerzetten zodat hij automatisch meeschuift met je speler?**
@@ -86,9 +84,9 @@ Pas de **Limit**-waarden aan zodat de camera precies binnen jouw level blijft. L
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-- Selecteer je `TileMapLayer` in de Scene Tree.
-- Kijk in de Inspector naar **Position** en de grootte van je level (bijv. 64 tiles × 32 pixels = 2048 pixels breed).
-- Vul die getallen in bij **Limit Left/Right/Top/Bottom** van je `Camera2D`.
+- Je hoeft de grenzen niet uit te rekenen. Begin met de waarden uit Stap 5, start het spel en loop naar de rechterrand van je level.
+- Zie je leegte voorbij je laatste tegel? Maak de waarde voor rechts kleiner. Stopt de camera al voordat je de rand ziet? Maak hem groter.
+- Doe hetzelfde voor de andere drie: **Limit Left/Right/Top/Bottom** van je `Camera2D`.
 
 </details>
 
@@ -104,7 +102,7 @@ Voor een level van bijvoorbeeld 2048 × 720 pixels, met de oorsprong linksboven:
 | Top    | 0      |
 | Bottom | 720    |
 
-Je level zal per project anders zijn — meet of bereken de exacte grenzen van jouw tegels.
+Je level zal per project anders zijn. De goede waarden zijn die waarbij je aan elke rand van je level net geen leegte meer ziet.
 
 </details>
 
@@ -134,12 +132,12 @@ Je level zal per project anders zijn — meet of bereken de exacte grenzen van j
 <details>
 <summary>Ik zie zwarte randen aan de zijkant</summary>
 
-**Oorzaak:** De **Limit** is krapper ingesteld dan je level breed is, of je level zelf is kleiner dan je viewport.
+**Oorzaak:** De **Limit** is ruimer ingesteld dan je level breed is, of je level is kleiner dan wat de camera in één keer laat zien.
 
 **Oplossing:**
 
-1. Controleer in de Inspector of de **Limit**-waarden kloppen met de echte level-grootte.
-2. Is je level kleiner dan het scherm? Maak hem groter, of verlaag de **Zoom** zodat hij past.
+1. Controleer in de Inspector of de **Limit**-waarden kloppen met de echte level-grootte, en maak ze kleiner als de camera voorbij je laatste tegels kijkt.
+2. Is je level kleiner dan het beeld? Maak je level groter, of verhoog de **Zoom**: een hogere waarde is dichterbij (Stap 4), dus dan laat de camera minder zien.
 
 </details>
 

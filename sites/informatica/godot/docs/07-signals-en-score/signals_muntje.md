@@ -7,8 +7,6 @@ slug: /signals_muntje
 
 Tijd om iets te kunnen verzamelen in je level. In deze les bouw je een muntje als losse scène en laat je het verdwijnen zodra je karakter het aanraakt. Daarvoor gebruik je **signals** — Godot's manier om nodes met elkaar te laten praten zonder dat ze elkaar hoeven op te zoeken.
 
-<GodotVersie />
-
 <GDQuestLes slug="signals_muntje" />
 
 ## Voorspel: zonder signals?
@@ -115,7 +113,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 1. Open je level/world-scène.
 2. Sleep `muntje.tscn` vanuit het FileSystem-paneel naar je level.
-3. Plaats het waar je wilt.
+3. Plaats het waar je wilt, een stukje boven de grond. Raakt het muntje de tegels, dan is het bij de start al weg (zie Er gaat iets mis).
 4. Sleep meerdere keren om meerdere muntjes neer te zetten.
 
 Start het spel met `F5`, loop tegen een muntje aan en kijk in **Uitvoer**: het muntje verdwijnt en je ziet "Muntje opgepakt".
@@ -124,7 +122,7 @@ Start het spel met `F5`, loop tegen een muntje aan en kijk in **Uitvoer**: het m
 
 Je weet nu hoe een muntje op een botsing reageert. Pas hetzelfde principe toe op een vijand.
 
-Maak een **vijand**-scène. Als de speler de vijand raakt, drukt de vijand een bericht af in **Uitvoer** en verdwijnt daarna.
+Maak een **vijand**-scène. Als de speler de vijand raakt, drukt de vijand een bericht af in **Uitvoer** en verdwijnt daarna. Zet de vijand zo neer dat hij de tegels net niet raakt, om dezelfde reden als bij het muntje.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -176,22 +174,22 @@ func _on_body_entered(body: Node2D) -> void:
 **Oplossing — loop deze checklist langs:**
 
 1. Selecteer het muntje en open het **Node**-tabblad. Staat er bij `body_entered` een groen pijltje (= verbonden)?
-2. Heeft het muntje een `CollisionShape2D` als child?
-3. Heeft die `CollisionShape2D` ook echt een **Shape** ingesteld (bijvoorbeeld `CircleShape2D`)?
+2. Is de root van je muntje een `Area2D`, en geen `Node2D`?
+3. Heeft het muntje een `CollisionShape2D` als child?
+4. Heeft die `CollisionShape2D` ook echt een **Shape** ingesteld (bijvoorbeeld `CircleShape2D`)?
 
 **Zelf vinden:** zet als eerste regel in `_on_body_entered` een `print("geraakt")`. Verschijnt die niet, dan is het een probleem van de scène (signal of collision). Verschijnt hij wél, dan ligt het aan de code eronder.
 
 </details>
 
 <details>
-<summary><code>_on_body_entered</code> wordt nooit aangeroepen</summary>
+<summary>Mijn muntje of vijand is al weg als het spel start</summary>
 
-**Oorzaak:** Het muntje is geen `Area2D`, of de `CollisionShape2D` heeft geen Shape.
+**Oorzaak:** Het raakt de grond. Voor een `Area2D` is je `TileMapLayer` met collision ook een body, dus `_on_body_entered` gaat meteen af, en `queue_free()` haalt het muntje of de vijand weg. In **Uitvoer** staat je bericht dan al voordat je iets hebt gedaan.
 
-**Oplossing:**
+**Oplossing:** Zet het muntje of de vijand iets hoger, zodat zijn `CollisionShape2D` de tegels niet raakt. Bij een vijand die op de grond staat, kun je ook de shape iets kleiner maken dan het plaatje.
 
-- Controleer in de Scene Tree dat de root van je muntje een **`Area2D`** is (niet `Node2D`).
-- Selecteer de `CollisionShape2D` en stel in de Inspector een **Shape** in als die nog leeg is.
+**Zelf vinden:** zet `print(body.name)` als eerste regel in `_on_body_entered`. Je ziet dan welke node het raakte, en of dat je karakter was.
 
 </details>
 

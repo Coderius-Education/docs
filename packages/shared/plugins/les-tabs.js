@@ -1729,13 +1729,18 @@ const GENUMMERD = /^(Opdracht|Stap) (\d[\w.]*)$/;
  * met "5.7.h" in Code beter begrijpen: tien tabbladen op twee regels) staat
  * het woord Opdracht alleen op de eerste; de volgende tonen hun nummer
  * (`kort`). Het label blijft voor een schermlezer en de knop Volgende.
- * Hetzelfde voor een reeks stappen ("Stap 1" tot en met "Stap 7" in het
- * startmenu van Godot: elf tabbladen): Stap 1, 2, 3.
+ * Hetzelfde voor een reeks stappen (`## Stap 1` tot en met `## Stap 6` in
+ * Signals en een muntje van Godot): Stap 1, 2, 3.
+ *
+ * Alleen als de rij met de volle namen niet past (`rijPast`). Een tabblad dat
+ * "2" heet, is 42 pixels breed, het smalste doel in de les, en in Godot
+ * heetten dezelfde vier stappen in de ene les "Stap 2" en in de andere "2",
+ * alleen omdat die les een tabblad meer had.
  *
  * @param {object[]} tabs
  */
 function korteOpdrachten(tabs) {
-  if (tabs.length < VEEL_TABS) return;
+  if (tabs.length < VEEL_TABS || rijPast(tabs)) return;
   const delen = (tab) => GENUMMERD.exec(eigenschap(tab, 'label') ?? '');
   let begin = 0;
   while (begin < tabs.length) {

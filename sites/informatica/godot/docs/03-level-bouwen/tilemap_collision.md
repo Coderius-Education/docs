@@ -7,11 +7,9 @@ slug: /tilemap_collision
 
 In de [vorige les](site:godot/docs/tilemap_opzetten) heb je tegels getekend. Voor Godot zijn die nu nog gewoon plaatjes — een karakter zou er straks dwars doorheen vallen. In deze les vertel je Godot welke tegels **massief** zijn, zodat ze later een echte vloer vormen voor het karakter dat je in [Een speelbaar karakter](site:godot/docs/sprite) toevoegt.
 
-<GodotVersie />
-
 ## Voorspel: hoe weet Godot welke tegels massief zijn?
 
-Je hebt een hele tileset met grastegels, struiken, wolkjes — sommige moeten massief worden (gras), andere niet (wolkjes). **Hoe denk je dat je Godot dat onderscheid vertelt?**
+In je tileset zitten veel verschillende tegels. Sommige moeten massief worden, zoals de grond waar je karakter op staat. Andere niet: een tegel die je alleen als versiering gebruikt, mag je doorheen lopen. **Hoe denk je dat je Godot dat onderscheid vertelt?**
 
 <details>
 <summary>Antwoord</summary>
@@ -40,21 +38,21 @@ Er staat nu een `Layer 0`. De standaard-instellingen zijn prima — die hoef je 
 
 Met de Paint-tool vertel je per tegel of die massief is of niet.
 
-1. Zorg dat je onderin in het tabblad **TileSet** zit (NIET TileMap — daar tekende je je level mee; hier definieer je tegels).
+1. Zorg dat je onderin in het tabblad **TileSet** zit (niet TileMap: daar tekende je je level mee, hier definieer je tegels).
 2. Klik bovenaan in dat paneel op de knop **Paint** (het verfroller- of kwastje-icoontje).
 3. Naast die knop verschijnt een dropdown-menu. Klik hierop en kies **Physics Layer 0**.
-4. Klik en sleep nu over alle tegels in je afbeelding die massief moeten zijn (gras, zand, stenen muren).
+4. Klik en sleep over alle tegels in je afbeelding die massief moeten zijn: de grond en de muren.
 5. De geverfde tegels krijgen een **lichtblauw vierkantje**. Alles wat lichtblauw is, is vanaf nu massief.
 
 :::tip
-Je hoeft niet elke tile collision te geven. Decoratie zoals wolkjes of struiken laat je leeg — een karakter zou daar straks gewoon doorheen kunnen lopen.
+Je hoeft niet elke tile collision te geven. Een tegel die je alleen als versiering gebruikt, laat je leeg: een karakter kan daar straks doorheen lopen.
 :::
 
-De lichtblauwe vakjes zijn jouw bewijs dat collision actief is op die tegels. Echt **testen** kun je dit pas zodra je in de volgende les een karakter toevoegt — dan blijft dat karakter bij `F5` netjes op de gekleurde tegels staan in plaats van erdoorheen te zakken.
+De lichtblauwe vakjes zijn jouw bewijs dat collision actief is op die tegels. Echt **testen** kun je dit pas als je karakter kan vallen, in [Deel 2 — Vallen](site:godot/docs/movement-motor). Daar blijft het bij `F5` op de gekleurde tegels staan in plaats van erdoorheen te zakken.
 
 ## Opdracht 3.3.a: laat één tegel bewust open
 
-Niet-massieve tegels zijn geen vergissing, maar een gereedschap. Kies één decoratieve tegel uit je tileset (een struik, wolkje of ander sier-element), zorg dat die **géén** collision heeft, en zet er een paar van in je level — bijvoorbeeld voor het gat uit Opdracht 3.2.a.
+Niet-massieve tegels zijn geen vergissing, maar een gereedschap. Kies één tegel uit je tileset die je als versiering wilt gebruiken, zorg dat die **géén** collision heeft, en zet er een paar van in je level — bijvoorbeeld voor het gat uit Opdracht 3.2.a.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -66,9 +64,9 @@ Heeft je gekozen tegel al een lichtblauw vakje? Met dezelfde Paint-tool waarmee 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-Controleer in het **TileSet**-tabblad, met de Paint-tool op **Physics Layer 0**, dat jouw decoratie-tegel géén lichtblauw vakje heeft. Teken hem daarna in het **TileMap**-tabblad gewoon in je level.
+Controleer in het **TileSet**-tabblad, met de Paint-tool op **Physics Layer 0**, dat jouw versier-tegel géén lichtblauw vakje heeft. Teken hem daarna in het **TileMap**-tabblad gewoon in je level.
 
-Het resultaat zie je in hoofdstuk 5: je karakter loopt dwars door de struik heen, maar blijft op het gras staan. Zo maak je straks ook doorkijk-elementen, of een nep-vloer boven een valkuil.
+Het resultaat zie je in hoofdstuk 5: je karakter loopt dwars door die tegel heen, maar blijft op de grond staan. Zo maak je straks ook doorkijk-elementen, of een nep-vloer boven een valkuil.
 
 </details>
 

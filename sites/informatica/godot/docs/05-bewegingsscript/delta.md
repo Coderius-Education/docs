@@ -8,8 +8,6 @@ sidebar_label: "Deel 3: Delta"
 
 In je valregel staat een stukje dat je hebt overgetypt zonder uitleg: `* delta`. In deze korte les kom je erachter wat het doet, door het weg te halen.
 
-<GodotVersie />
-
 <GDQuestLes slug="movement-delta" />
 
 ## Wat ga je leren?
@@ -28,6 +26,32 @@ Twee dingen die bij elkaar horen: wat een **parameter** is, en wat **`delta`** d
 Dan tel je zestig keer per seconde 980 op, en zit je na één seconde op `58800` in plaats van `980`. Je karakter valt dan zestig keer te snel.
 
 Je moet elke frame dus maar een klein stukje van die seconde meetellen. Precies dat is wat `delta` is.
+
+</details>
+
+## Opdracht 5.3.a: haal delta weg en kijk
+
+Controleer je voorspelling. Verwijder tijdelijk `* delta` uit je valregel, zodat er `velocity += get_gravity()` staat, en start met `F5`.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Zet je karakter in je level een flink stuk boven de vloer, zodat je het vallen goed ziet.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+Je karakter schiet vrijwel meteen naar beneden. Na vijf frames, een twaalfde seconde, valt hij al met bijna 5000 per seconde; met `* delta` was dat ongeveer 80. Op de vloer houdt `move_and_slide()` hem tegen, dus je ziet vooral een klap in plaats van een val.
+
+Zet `* delta` terug:
+
+```gdscript
+    velocity += get_gravity() * delta
+```
+
+Waarom die twee woorden het verschil maken, zoek je in de rest van deze les uit.
 
 </details>
 
@@ -65,31 +89,7 @@ Zet je de klok van `_physics_process` in **Project Settings → Physics → Comm
 
 **Dat is waar het om gaat:** met `delta` hangt je spel niet af van hoe vaak de functie draait. Zonder `delta` val je bij 120 keer per seconde ineens twee keer zo hard, en in `_process` bepaalt de snelheid van je computer hoe hard je valt.
 
-## Opdracht 5.3.a: haal delta weg en kijk
-
-Verwijder tijdelijk `* delta` uit je valregel, zodat er `velocity += get_gravity()` staat. Start met `F5`.
-
-<details>
-<summary>Klik hier voor een tip.</summary>
-
-Zet je karakter in je level een flink stuk boven de vloer, zodat je het vallen goed ziet.
-
-</details>
-
-<details>
-<summary>Klik hier voor de oplossing.</summary>
-
-Je karakter schiet vrijwel meteen naar beneden. Na vijf frames, een twaalfde seconde, valt hij al met bijna 4000 per seconde; met `* delta` was dat ongeveer 80. Op de vloer houdt `move_and_slide()` hem tegen, dus je ziet vooral een klap in plaats van een val.
-
-Zet `* delta` terug:
-
-```gdscript
-    velocity += get_gravity() * delta
-```
-
 Onthoud de vuistregel: **staat er een snelheid per seconde in je berekening, dan hoort er `* delta` bij.**
-
-</details>
 
 ## Je script tot nu toe
 
@@ -128,7 +128,7 @@ func _ready() -> void:
 <details>
 <summary>Mijn karakter valt nog steeds veel te snel</summary>
 
-**Oorzaak:** `* delta` staat op de verkeerde plek, bijvoorbeeld `velocity += get_gravity() * delta * delta` of alleen achter een deel van de som.
+**Oorzaak:** `* delta` staat niet in je valregel. Meestal is hij na Opdracht 5.3.a niet teruggezet.
 
 **Oplossing:** De regel hoort precies zo te luiden: `velocity += get_gravity() * delta`.
 

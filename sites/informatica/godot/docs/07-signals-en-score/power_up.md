@@ -7,8 +7,6 @@ slug: /power_up
 
 Je karakter springt altijd even hoog. In deze les bouw je een power-up die je vijf seconden lang veel hoger laat springen, en daarna vanzelf uitwerkt. Daarvoor heb je iets nodig wat je nog niet kent: een manier om je code even te laten **wachten**.
 
-<GodotVersie />
-
 ## Voorspel: kan dit?
 
 Je sprongkracht staat bovenaan je karakter-script:
@@ -46,6 +44,8 @@ Twee dingen veranderen tegelijk, en allebei met reden:
 - `const` wordt `var`, want de waarde gaat straks veranderen.
 - De naam gaat van hoofdletters naar kleine letters. Hoofdletters zijn in GDScript het teken dat iets een constante is; een variabele die er zo uitziet leest als een belofte die je niet nakomt.
 
+Koos je in Opdracht 5.7.a een andere sprongkracht dan `-800.0`? Zet dan overal in deze les jouw waarde waar `-800.0` staat.
+
 ### Gebruik de nieuwe naam
 
 Zoek in `_physics_process` de regel waar je springt, en gebruik daar de naam `sprongkracht`:
@@ -69,7 +69,7 @@ func geef_sprongboost() -> void:
     print("Boost!")
 ```
 
-Dit is een gewone functie, zoals `is_game_over()` uit [Global variables](site:godot/docs/global_variables). Hij doet nu nog maar één ding: de sprongkracht omhoog zetten.
+Dit is een gewone functie, zoals `is_game_over()` uit [Global variables (Autoload)](site:godot/docs/global_variables). Hij doet nu nog maar één ding: de sprongkracht omhoog zetten.
 
 ## Stap 3: De power-up die hem aanroept
 
@@ -89,7 +89,7 @@ Bij het muntje deed je `body.score += 1`: je las een variabele van het karakter.
 
 Sleep `power_up.tscn` in je level en start het spel. Loop tegen de power-up aan en spring: je vliegt een stuk hoger, en dat blijft zo. Te lang, want je wilt dat het uitwerkt.
 
-## Voorspel: hoe laat je iets vijf seconden duren?
+## Stap 4: Vijf seconden wachten \{#await}
 
 Je functie zet de sprongkracht op `-1300.0`. Vijf seconden later moet hij weer op `-800.0` staan.
 
@@ -106,7 +106,7 @@ GDScript heeft er één woord voor. Dat is `await`.
 
 </details>
 
-## Stap 4: Wachten met `await` \{#await}
+### Wachten met `await`
 
 Breid `geef_sprongboost()` uit met twee regels:
 
@@ -159,8 +159,8 @@ Maak een tweede power-up die je drie seconden lang sneller laat lopen in plaats 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-- Stap 1 is precies wat je in Stap 1 van deze les deed: `const SPEED` wordt `var snelheid`, en overal waar `SPEED` stond komt `snelheid` te staan. Vergeet de regel in `_physics_process` niet waar je `move_toward` gebruikt.
-- De functie lijkt op `geef_sprongboost`, met andere waardes: `600.0` in plaats van `300.0`, en `3.0` in de timer.
+- Het eerste punt is wat je in het tabblad Stap 1 met de sprongkracht deed: `const SPEED` wordt `var snelheid`, en overal waar `SPEED` stond komt `snelheid` te staan. Vergeet de regel in `_physics_process` niet waar je `move_toward` gebruikt.
+- De functie lijkt op `geef_sprongboost`, met andere waardes: `600.0` in plaats van `300.0`, en `3.0` in de timer. Is jouw loopsnelheid geen `300.0`, neem dan het dubbele van jouw waarde, en zet daarna jouw waarde terug.
 - Het script van de power-up verschilt maar in één woord van dat van de eerste.
 
 </details>
@@ -243,7 +243,7 @@ func geef_sprongboost() -> void:
 
 **Oorzaak:** de sprongkracht staat nog als `const`, en daar kun je geen nieuwe waarde aan geven. Godot ziet dat al voordat je spel draait.
 
-**Oplossing:** maak er een `var` van, zoals in Stap 1. Let op dat je hem overal hernoemt: bovenaan, in `_physics_process` en in je boost-functie.
+**Oplossing:** maak er een `var` van, zoals in het tabblad Stap 1. Let op dat je hem overal hernoemt: bovenaan, in `_physics_process` en in je boost-functie.
 
 </details>
 

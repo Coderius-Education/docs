@@ -7,8 +7,6 @@ slug: /sprite_movement
 
 Je karakter staat op het scherm, maar doet niets. Vanaf hier ga je hem zelf laten bewegen — regel voor regel, in een script dat je van nul opbouwt. In deze les maak je het script aan en schrijf je de eerste regel.
 
-<GodotVersie />
-
 Godot kan een startscript voor je invullen. Handig, maar dan lees je iets wat je niet zelf hebt bedacht, en bij de eerste foutmelding weet je niet waar je moet kijken.
 
 In deze cursus begin je daarom leeg. Elke regel die erbij komt, komt erbij omdat jij hem nodig hebt. Na elke les draait je spel weer, en doet het net iets meer dan daarvoor.
@@ -35,7 +33,7 @@ Meer niet. Dat is precies de bedoeling.
 <details>
 <summary>Antwoord</summary>
 
-Godot geeft een foutmelding en je script doet niets meer. `extends CharacterBody2D` betekent: "dit script *is* een `CharacterBody2D`, met daarbovenop mijn eigen code". Zonder die regel weet Godot niet welk soort node je aanstuurt, en bestaan functies als `is_on_floor()` en `move_and_slide()` niet voor jou.
+Godot geeft een foutmelding en je script doet niets meer. `extends CharacterBody2D` betekent: "dit script *is* een `CharacterBody2D`, met daarbovenop mijn eigen code". Zonder die regel weet Godot niet welk soort node je aanstuurt, en kan je script niets van wat een `CharacterBody2D` kan, zoals bewegen en botsen.
 
 Vergelijk het met een basisrecept. Met `extends` zeg je: ik bak hetzelfde recept, plus mijn eigen toevoegingen.
 
@@ -48,8 +46,26 @@ Start het spel met `F5`. Je karakter staat stil en er verschijnt geen foutmeldin
 Dat is winst: je hebt een script dat draait. In de volgende les zorg je dat het ook iets doet.
 
 :::tip
-Zie je een foutmelding over een ontbrekende Main Scene? Stel die eerst in via **Project → Project Settings**, zoek `main scene` en kies je level-scène.
+Zie je een foutmelding over een ontbrekende Main Scene? Stel die eerst in via **Project → Project Settings**, zoek `main scene` en kies `world.tscn`.
 :::
+
+## Opdracht 4.2.a: zoek je script terug
+
+Je script is een bestand, net als je scène. Zoek het op in het FileSystem-paneel en kijk hoe het heet.
+
+<details>
+<summary>Klik hier voor een tip.</summary>
+
+Een scène herken je aan `.tscn` achter de naam. Een script heeft een eigen extensie. Kijk welk bestand er sinds deze les bij is gekomen.
+
+</details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+Onder `res://` staat een bestand dat op `.gd` eindigt: dat is je script. Het staat in je projectmap, net als `world.tscn`, en gaat dus mee als je die map kopieert of inlevert.
+
+</details>
 
 ## Er gaat iets mis
 

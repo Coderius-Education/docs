@@ -7,8 +7,6 @@ slug: /score_in_karakter
 
 Je raapt nu muntjes op, maar je weet niet hoeveel. In deze les voeg je een **score** toe die elke keer met 1 omhoog gaat als je een muntje raakt.
 
-<GodotVersie />
-
 ## Voorspel: waar leeft de score?
 
 **In welk script zou jij de variabele `score` aanmaken?**
@@ -24,7 +22,7 @@ Het **muntje** is geen goede plek: zodra het muntje wordt opgepakt, verdwijnt he
 
 Het **karakter** is een logische plek: de speler "draagt" zijn eigen score. Zolang het karakter bestaat, bestaat de score.
 
-(In de volgende lessen ontdek je dat een nóg betere plek bestaat: een globale variabele die ook tussen scènes overleeft.)
+(Ook het karakter is niet de laatste plek voor je score. Waarom niet, merk je zodra je spel meer dan één level heeft.)
 
 </details>
 
@@ -62,7 +60,7 @@ func _on_body_entered(body: Node2D) -> void:
 | `body.score`        | De `score`-variabele van die node            |
 | `body.score += 1`   | Verhoog de score met 1                       |
 
-## Stap 3: Test het
+### Test het
 
 Start het spel met `F5` en pak een paar muntjes op. Kijk in **Uitvoer** onderaan:
 
@@ -72,9 +70,7 @@ Score: 2
 Score: 3
 ```
 
-## Voorspel: hoe krijg ik dit op het scherm?
-
-Het werkt in **Uitvoer**, maar je wilt het op het scherm zien. **Hoe zou je dat aanpakken?**
+De score staat nu alleen in **Uitvoer**, en een speler ziet die niet. **Hoe zou je de score op het scherm van je spel krijgen?**
 
 <details>
 <summary>Bekijk een (broze) poging</summary>
@@ -90,7 +86,7 @@ func _process(delta: float) -> void:
 
 > Maak je geen zorgen als `_process` en `str` nieuw zijn — die komen in [Score op het scherm tonen](site:godot/docs/score_op_scherm) aan bod. Dit voorbeeld is alleen om de **pijn** te laten zien.
 
-Dit werkt — *zolang* je karakter precies `CharacterBody2D` heet en op de juiste plek in de Scene Tree staat. Verschuif of hernoem je iets, of laad je een nieuw level? Crash. In de volgende les ([Global variables](site:godot/docs/global_variables)) zie je een schonere oplossing.
+Dit werkt — *zolang* je karakter precies `CharacterBody2D` heet en op de juiste plek in de Scene Tree staat. Verschuif of hernoem je iets, of laad je een nieuw level? Crash. In de volgende les ([Global variables (Autoload)](site:godot/docs/global_variables)) zie je een schonere oplossing.
 
 </details>
 
@@ -99,7 +95,7 @@ Dit werkt — *zolang* je karakter precies `CharacterBody2D` heet en op de juist
 Je hebt nu een score in je karakter. Voeg er een **levens-systeem** aan toe en laat het spel reageren als ze op zijn.
 
 1. Voeg `var levens = 3` toe aan je karakter.
-2. Laat de vijand (uit [Signals & muntje](site:godot/docs/signals_muntje)) bij contact `body.levens -= 1` doen en de waarde printen.
+2. Laat de vijand uit opdracht 7.1.a (in [Signals & een muntje oppakken](site:godot/docs/signals_muntje)) bij contact `body.levens -= 1` doen en de waarde printen.
 3. **Nieuw:** als `body.levens` op 0 (of lager) komt, print `"GAME OVER"` in **Uitvoer** en sluit het spel met `get_tree().quit()`.
 
 <details>
@@ -146,7 +142,7 @@ func _on_body_entered(body: Node2D) -> void:
     queue_free()
 ```
 
-`get_tree().quit()` sluit het hele spel-venster. In een echte game zou je hier een Game Over-scherm laten zien — dat leer je later. Voor nu zie je in elk geval dat de check werkt.
+`get_tree().quit()` sluit het hele spel-venster. In een echte game laat je hier een Game Over-scherm zien. Dat is een scène met een `Label` en knoppen, en zo'n scène bouw je in [Een startmenu](site:godot/docs/start_menu). Voor nu zie je dat de check werkt.
 
 </details>
 
@@ -174,13 +170,17 @@ func _on_body_entered(body: Node2D) -> void:
 
 **Oplossing:** Zet het muntje iets hoger, zodat zijn `CollisionShape2D` de tegels niet raakt. Wil je zeker zijn dat alleen je karakter telt, zet dan `if body is CharacterBody2D:` boven de regel met `score` en laat die regel eronder inspringen.
 
+Bij de vijand uit Opdracht 7.2.a gebeurt hetzelfde met `levens` als hij de tegels raakt. De oplossing is dezelfde.
+
 </details>
 
 <details>
-<summary>Mijn score begint elke keer weer bij 0 als ik het spel herstart</summary>
+<summary>Mijn score begint weer bij 0 als ik het spel opnieuw start</summary>
 
-**Oorzaak:** Bij opnieuw starten wordt het karakter opnieuw aangemaakt, en dus ook `var score = 0`. De score leeft maar zolang het karakter bestaat.
+**Oorzaak:** Dat hoort zo. Bij elke start maakt Godot je karakter opnieuw, en dus ook `var score = 0`. De score leeft zolang het karakter bestaat.
 
-**Oplossing:** Dit lossen we op in [Global variables](site:godot/docs/global_variables) — variabelen die buiten één node leven.
+**Oplossing:** Voor nu niets. In [Global variables (Autoload)](site:godot/docs/global_variables) krijgt de score een plek die een wissel van level overleeft. Een highscore die er na het afsluiten nog staat, maak je in [JSON: een highscore die blijft](site:godot/docs/json_opslaan).
 
 </details>
+
+Staat je fout er niet bij? In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je hem zelf opspoort.

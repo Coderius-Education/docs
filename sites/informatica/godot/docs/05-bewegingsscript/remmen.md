@@ -8,8 +8,6 @@ sidebar_label: "Deel 6: Stoppen"
 
 Je karakter loopt, en staat meteen stil zodra je de toets loslaat. Dat werkt, maar het voelt hard. In deze les geef je hem een echte rem.
 
-<GodotVersie />
-
 <GDQuestLes slug="movement-remmen" />
 
 ## Wat je nu gaat toevoegen
@@ -44,6 +42,8 @@ Vervang je regel `velocity.x = direction * SPEED` door dit:
 
 De `else` hoort op hetzelfde niveau als de `if` erboven; de regels eronder springen allebei één niveau verder in.
 
+Start met `F5`. Lopen en stoppen werken als voorheen. Dat klopt: je hebt nog niets aan het gedrag veranderd, maar je hebt wel een plek waar je het afremmen kunt bijstellen.
+
 ## Stap 2: Wat `direction == 0` vraagt
 
 `==` betekent "is gelijk aan". De `if` vraagt dus precies wat je in de voorspelling bedacht: drukt de speler niets in?
@@ -68,9 +68,25 @@ Je karakter komt niet meer van zijn plek. Alleen de `else` zet `velocity.x` op `
 
 </details>
 
-## Stap 4: Test het
+## Je script tot nu toe
 
-Start met `F5`. Lopen en stoppen werken als voorheen — maar nu heb je een plek waar je het afremmen kunt bijstellen.
+```gdscript
+extends CharacterBody2D
+
+const SPEED = 300.0
+
+func _physics_process(delta: float) -> void:
+    if not is_on_floor():
+        velocity += get_gravity() * delta
+
+    var direction := Input.get_axis("ui_left", "ui_right")
+    if direction == 0:
+        velocity.x = move_toward(velocity.x, 0, SPEED)
+    else:
+        velocity.x = direction * SPEED
+
+    move_and_slide()
+```
 
 ## Opdracht 5.6.a: laat je karakter uitglijden
 
@@ -96,26 +112,6 @@ Bij `30` gaat er elke frame 30 van je snelheid van 300 af: je karakter glijdt no
 Wat "nog nét bestuurbaar" is, hangt af van je level: hoe smaller je platforms, hoe minder glijden je jezelf kunt veroorloven.
 
 </details>
-
-## Je script tot nu toe
-
-```gdscript
-extends CharacterBody2D
-
-const SPEED = 300.0
-
-func _physics_process(delta: float) -> void:
-    if not is_on_floor():
-        velocity += get_gravity() * delta
-
-    var direction := Input.get_axis("ui_left", "ui_right")
-    if direction == 0:
-        velocity.x = move_toward(velocity.x, 0, SPEED)
-    else:
-        velocity.x = direction * SPEED
-
-    move_and_slide()
-```
 
 ## Er gaat iets mis
 
@@ -194,6 +190,6 @@ func _physics_process(delta: float) -> void:
         velocity.x = move_toward(velocity.x, 0, SPEED)
 ```
 
-**Zelf vinden:** zet een `print("remmen")` vlak onder `if direction == 0:`. Zie je die regel nooit verschijnen als je de toets loslaat, dan wordt het remmen niet bereikt.
+**Zelf vinden:** zet `print(velocity.x)` onder de regel met `move_toward`. Staat daar na het loslaten nog steeds `300` of `-300`, dan remt die regel niet en kijk je naar de volgorde van de waardes. Verschijnt er na het loslaten niets, dan wordt het remmen niet bereikt en zit de fout in de `if`.
 
 </details>

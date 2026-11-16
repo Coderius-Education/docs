@@ -147,6 +147,21 @@ describe('werkvormVan en werkvormenVan', () => {
     expect(werkvormVan('Materiaal en gereedschap')).toBe('uitleg');
   });
 
+  it('herkent het script van Godot als controleren', () => {
+    // Elke les van het bewegingsscript eindigt met het hele script tot dan
+    // toe, om naast je eigen script te leggen. Zonder deze koppen was dat
+    // tabblad "uitleg" en verdween de rij Controleren uit de handleiding van
+    // Godot: alle zeven lessen met die werkvorm komen van deze twee koppen.
+    expect(['Je script tot nu toe', 'Je complete script'].map(werkvormVan)).toEqual([
+      'controle',
+      'controle',
+    ]);
+    // De kop van robotica (`## Je script`, de uitleg van het hele programma)
+    // blijft uitleg.
+    expect(werkvormVan('Je script')).toBe('uitleg');
+    expect(werkvormVan('Je script tot nu toe uitgelegd')).toBe('uitleg');
+  });
+
   it('van een rij genummerde opdrachten is alleen de laatste zelf maken', () => {
     expect(werkvormenVan(['Opdracht 1: A', 'Opdracht 2: B', 'Opdracht 3: C'])).toEqual([
       'aanpassen',

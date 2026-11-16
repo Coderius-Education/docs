@@ -45,7 +45,7 @@ export function GDQuestLes({ slug }: { slug: string }): ReactNode {
     <aside className={styles.callout}>
       <span className={styles.badge}>GDQuest</span>
       <span className={styles.text}>
-        Hier schrijf je <strong>{koppeling.concept}</strong>. Dat oefen je los in{' '}
+        Deze les: <strong>{koppeling.concept}</strong>. Dat oefen je los in{' '}
         <strong>{lesTekst(koppeling)}</strong>.{' '}
         <a href={url} target="_blank" rel="noopener noreferrer">
           Open Learn GDScript From Zero →

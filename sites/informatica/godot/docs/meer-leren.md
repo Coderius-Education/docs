@@ -21,12 +21,7 @@ Bij een platformer passen bijvoorbeeld `PointLight2D` (een lamp), `AudioStreamPl
 
 ## Godot for Beginners — deel 2
 
-Een vervolg op wat je hier hebt geleerd. Je bouwt een completer spel met:
-
-- Een camera die de speler volgt
-- Objecten verzamelen
-- Een puntentelling
-- Meerdere levels
+Een tutorial op YouTube die een platformer bouwt met een camera die de speler volgt, objecten om te verzamelen, een puntentelling en meerdere levels. Die onderwerpen ken je uit deze cursus. Hier zie je hoe een ander ze aanpakt, en dat is een goede manier om te merken wat je al begrijpt.
 
 [Bekijk de tutorial op YouTube](https://www.youtube.com/watch?v=zL__a0Ei6Vs)
 
@@ -43,7 +38,7 @@ Je kunt zelf sprites tekenen voor je game, zonder papier. Er zijn gratis tools d
 - [Piskel](https://www.piskelapp.com/) — gratis, werkt in de browser, exporteert als PNG
 - [Pixilart](https://www.pixilart.com/) — iets uitgebreider, ook gratis
 
-Sla je afbeelding op als PNG en kopieer hem naar je Godot-projectmap.
+Sla je afbeelding op als PNG en kopieer hem naar je Godot-projectmap. Hoe je van losse plaatjes een animatie maakt, staat in [Je eigen animaties maken](site:godot/docs/eigen_animaties).
 
 ## Versiebeheer met git
 
@@ -69,8 +64,8 @@ Wat je leert:
 
 [Navigatie in Godot (officiële documentatie)](https://docs.godotengine.org/en/stable/tutorials/navigation/navigation_introduction_2d.html)
 
-## Godot Foundational Series
+## Het YouTube-kanaal van Godot
 
-Een grondige YouTube-serie die alle basisbegrippen van Godot behandelt: scenes, nodes, signals, resources en meer. Een goede stap als je alles wat je tot nu toe hebt geleerd nóg beter wilt begrijpen.
+Op het officiële kanaal van Godot staan video's over de basisbegrippen: scènes, nodes, signals en resources. Een goede stap als je wat je tot nu toe hebt geleerd nog beter wilt begrijpen.
 
 [Godot officieel YouTube-kanaal](https://www.youtube.com/@GodotEngineOfficial)

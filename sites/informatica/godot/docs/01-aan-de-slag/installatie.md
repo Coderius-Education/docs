@@ -7,8 +7,6 @@ slug: /installatie
 
 Voordat je je eerste game kunt bouwen, heb je de Godot-editor nodig. Dat is het programma waarin je je scènes tekent en je code schrijft. Op deze pagina installeer je Godot 4 op je eigen computer.
 
-<GodotVersie />
-
 :::note[Chromebook]
 Op een Chromebook kun je geen programma's installeren. Gebruik in dat geval de **online editor** in je browser: [editor.godotengine.org](https://editor.godotengine.org/). Je kunt daar direct beginnen. Sla je project op door het te exporteren als zip. De rest van de handleiding werkt hetzelfde.
 :::
@@ -31,7 +29,7 @@ Dubbelklik erop en kies bovenaan voor **Alles uitpakken**. Verplaats de uitgepak
 
 ### Het bestand starten
 
-Dubbelklik op het Godot-bestand — de bestandsnaam ziet er ongeveer zo uit:
+Dubbelklik op het Godot-bestand. De bestandsnaam ziet er ongeveer zo uit; op het plaatje staat een oudere versie, bij jou staat er `4.7` in de naam.
 
 ![Verkenner met het uitvoerbare Godot-bestand](download.png)
 
@@ -41,31 +39,33 @@ Godot opent en je belandt in het **Project Manager**-venster:
 
 ![Godot Project Manager bij eerste opstart](godot.png)
 
-Ziet jouw editor er grijzer uit dan op de screenshots? Dat klopt: sinds Godot 4.6 is het standaard thema grijswaarden. De stappen blijven hetzelfde.
+De schermafbeelding komt uit een editor die op Nederlands staat; bij jou staan er Engelse namen op de knoppen. Is jouw editor ook grijzer? Dat klopt: sinds Godot 4.6 is het standaard thema grijswaarden. De stappen blijven hetzelfde.
 
 ## Stap 4: Check je versie
 
-Open in Godot het menu **Help → About Godot**. Er verschijnt een venster met de exacte versie. Controleer dat het versienummer begint met `4.7.` — bijvoorbeeld `4.7-stable` of een latere 4.7-patch. Als je een andere versie ziet, ga terug naar Stap 1 en download de juiste.
+Het versienummer staat in kleine letters onderaan het Project Manager-venster, in de rechterhoek. Op de schermafbeelding uit Stap 3 staat daar `v4.5.1`; bij jou hoort het nummer met `4.7` te beginnen. Zie je een andere versie, ga dan terug naar Stap 1 en download de juiste.
+
+Heb je straks een project open, dan vind je hetzelfde nummer ook via **Help → About Godot**.
 
 ## Opdracht 1.1.a: verken de Project Manager
 
 Voordat je in de volgende les een project aanmaakt, kijk je even rond in het Project Manager-venster. Zoek twee dingen op:
 
 1. Waar je de **taal** van de editor kunt veranderen.
-2. Waar het tabblad **Asset Store** zit (daar kun je later kant-en-klare onderdelen vinden).
+2. Waar je kant-en-klare onderdelen van andere makers kunt vinden (daar heb je later iets aan).
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Kijk langs de randen van het venster: bovenaan zitten tabbladen, rechtsboven een keuzemenu.
+Kijk langs de bovenrand van het Project Manager-venster: in het midden staan twee tabbladen van Godot, in de rechterhoek een knop voor de instellingen.
 
 </details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-- De taal wissel je met het keuzemenu **rechtsboven** in het venster (daar staat nu iets als `EN — English`).
-- **Asset Store** is een tabblad **bovenaan**, naast je projectenlijst.
+- De taal staat bij de instellingen van de Project Manager: de knop in de rechterbovenhoek. Op de schermafbeelding uit Stap 3 heet hij Instellingen, omdat die editor op Nederlands staat.
+- De onderdelen van anderen staan achter het tweede tabblad bovenaan het venster, naast je projectenlijst. In Godot 4.7 heet het **Asset Store**; op de schermafbeelding, van een oudere versie, Asset-bibliotheek.
 
 Laat de taal op Engels staan. Deze cursus gebruikt de Engelse namen van knoppen en menu's, dus dan komt alles op je scherm overeen met de lessen.
 

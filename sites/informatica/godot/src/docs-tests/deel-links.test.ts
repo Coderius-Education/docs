@@ -60,8 +60,8 @@ describe('links naar een deel van het bewegingsscript', () => {
     const fout: string[] = [];
     for (const { pad, tekst } of ALLE) {
       for (const regel of tekst.split('\n')) {
-        // Tabellen en de navigatie onderaan noemen delen zonder uitleg.
-        if (regel.startsWith('|') || regel.startsWith('←')) continue;
+        // Een tabel noemt delen zonder uitleg.
+        if (regel.startsWith('|')) continue;
         for (const zin of regel.split(/(?<=\.)\s+/)) {
           for (const m of zin.matchAll(DEEL_LINK)) {
             const doel = DELEN.get(m[3])?.tekst ?? '';

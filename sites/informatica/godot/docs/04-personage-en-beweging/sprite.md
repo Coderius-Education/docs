@@ -5,13 +5,11 @@ slug: /sprite
 
 # Een speelbaar karakter
 
-Tijd voor een speler. In deze les bouw je je karakter op uit drie nodes die samen één geheel vormen: een lichaam dat kan bewegen en botsen, een sprite die je ziet, en een collision-vorm zodat de physics weet waar het karakter ophoudt.
-
-<GodotVersie />
+Tijd voor een speler. In deze les bouw je je karakter op uit drie nodes die samen één geheel vormen.
 
 ## Voorspel: waarom drie nodes?
 
-Waarom denk je dat we het karakter niet in één node stoppen, maar opbouwen uit drie?
+Je karakter bestaat straks uit een `CharacterBody2D`, een `Sprite2D` en een `CollisionShape2D`. **Wat denk je dat elk van de drie doet, en waarom stoppen we het karakter niet in één node?**
 
 <details>
 <summary>Antwoord</summary>
@@ -24,7 +22,7 @@ Elke node doet één ding goed. `CharacterBody2D` regelt beweging en physics; `S
 
 `CharacterBody2D` is de basis van een speelbaar 2D-karakter. Hij ondersteunt beweging, zwaartekracht en botsingen met andere physics-objecten (zoals je tegels).
 
-1. Klik met rechts in de Scene Tree → **Add Child Node**.
+1. Klik in de Scene Tree met rechts op je root-node (`Node2D`) → **Add Child Node**.
 2. Zoek naar `CharacterBody2D` en voeg hem toe.
 
 ## Stap 2: Voeg een `Sprite2D` toe als child \{#sprite2d}
@@ -33,7 +31,10 @@ Een `Sprite2D` is een platte 2D-afbeelding. We hangen hem onder de `CharacterBod
 
 1. Klik met rechts op de `CharacterBody2D` → **Add Child Node**.
 2. Voeg een `Sprite2D` toe.
-3. Selecteer de `Sprite2D` en sleep je karakter-afbeelding naar het **Texture**-veld in de Inspector.
+3. Kies in het FileSystem-paneel een figuur uit de map `Main Characters` in je `assets`. Zoek in zijn map een afbeelding waarop hij één keer staat.
+4. Selecteer de `Sprite2D` en sleep die afbeelding naar het **Texture**-veld in de Inspector.
+
+Vind je alleen brede bestanden met een rij figuurtjes, zoals `Idle (32x32).png`? Dat zijn de sprite-sheets uit [Opdracht 2.3.a](site:godot/docs/bestanden-downloaden#opdracht-23a-verken-het-asset-pack). Neem er dan een van: je ziet een rij figuurtjes in plaats van één, en dat blijft zo tot je de frames in hoofdstuk 6 van elkaar knipt.
 
 ## Stap 3: Voeg een `CollisionShape2D` toe als child \{#collisionshape2d}
 
@@ -42,7 +43,7 @@ Zonder collision-vorm weet Godot niet waar je karakter eindigt en zakt hij door 
 1. Klik met rechts op de `CharacterBody2D` → **Add Child Node**.
 2. Voeg een `CollisionShape2D` toe.
 3. Selecteer hem en kies bij **Shape** in de Inspector een `RectangleShape2D`.
-4. Pas de grootte aan zodat de rechthoek netjes om je karakter-afbeelding past.
+4. Pas de grootte aan zodat de rechthoek netjes om één figuurtje past.
 
 Je Scene Tree ziet er nu zo uit:
 
@@ -52,22 +53,27 @@ CharacterBody2D
 └── CollisionShape2D
 ```
 
-Deze drie nodes vormen samen je speler; hun instellingen staan in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
+Selecteer tot slot de `CharacterBody2D` in de Scene Tree en sleep hem in de viewport naar een plek een stukje boven je vloer. Deze drie nodes vormen samen je speler; hun instellingen staan in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
 
-## Er gaat iets mis
+## Opdracht 4.1.a: geef je karakter een ander uiterlijk
+
+In `Main Characters` staan meer figuren. Wissel jouw karakter voor een ander figuur, zonder iets opnieuw op te bouwen.
 
 <details>
-<summary>Mijn karakter valt door de vloer</summary>
+<summary>Klik hier voor een tip.</summary>
 
-**Oorzaak:** De `CollisionShape2D` ontbreekt of is niet goed ingesteld, of je tiles hebben nog geen collision.
-
-**Oplossing:**
-
-1. Controleer of je `CharacterBody2D` een `CollisionShape2D` als child heeft.
-2. Controleer of die `CollisionShape2D` een **Shape** heeft ingesteld (bijvoorbeeld `RectangleShape2D`).
-3. Controleer of je `TileMapLayer` een **Physics Layer** heeft — zie [Collision op je tegels](site:godot/docs/tilemap_collision).
+Van de drie nodes regelt er maar één hoe het karakter eruitziet. Alleen daar verandert iets.
 
 </details>
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+Selecteer de `Sprite2D` en sleep de afbeelding van een ander figuur naar het **Texture**-veld in de Inspector. De `CharacterBody2D` en de `CollisionShape2D` blijven staan. Daarom bouw je een karakter uit drie nodes op: je vervangt het uiterlijk zonder aan de beweging of de botsingen te komen.
+
+</details>
+
+## Er gaat iets mis
 
 <details>
 <summary>Ik zie mijn karakter niet in het scherm</summary>
@@ -77,7 +83,7 @@ Deze drie nodes vormen samen je speler; hun instellingen staan in de [Nodes chea
 **Oplossing:**
 
 - Selecteer de `Sprite2D` en sleep een afbeelding naar het **Texture**-veld in de Inspector.
-- Klik op je `CharacterBody2D` en sleep hem in de viewport naar het midden.
+- Klik in de Scene Tree op je `CharacterBody2D` en sleep hem in de viewport naar het midden. Selecteer je de `Sprite2D`, dan verschuif je alleen het plaatje en blijft de collision-vorm achter.
 
 </details>
 

@@ -7,8 +7,6 @@ slug: /groups
 
 Je hebt nu meerdere muntjes en misschien een paar vijanden in je level. Maar hoe spreek je ze *allemaal tegelijk* aan — bijvoorbeeld om te tellen hoeveel muntjes er nog over zijn, of om alle vijanden in één keer te laten stoppen? Daarvoor gebruik je **groups**.
 
-<GodotVersie />
-
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/data/10a-lijsten-basis', label: 'Lijsten'},
@@ -46,11 +44,11 @@ Een node in een group zetten kan op twee manieren. Kies er één.
 2. Ga naar het **Node**-tabblad (rechts, naast de Inspector) en klik op **Groups**.
 3. Typ `muntjes` en klik op **Add**.
 
-**Of in code** — zet dit in het script van het muntje, zodat elk muntje zichzelf bij het opstarten in de group zet:
+**Of in code** — zet deze functie in het script van je muntje erbij, boven `_on_body_entered`. Elk muntje zet zichzelf dan bij het opstarten in de group:
+
+{/* compileer-als: extends Area2D */}
 
 ```gdscript
-extends Area2D
-
 func _ready() -> void:
     add_to_group("muntjes")
 ```
@@ -59,7 +57,7 @@ Doe hetzelfde voor je vijanden met het label `vijanden`.
 
 ## Stap 2: Alle muntjes ophalen en tellen \{#lijst}
 
-Met `get_tree().get_nodes_in_group("muntjes")` krijg je een **lijst** van alle nodes in de group. De lengte daarvan is het aantal muntjes:
+Met `get_tree().get_nodes_in_group("muntjes")` krijg je een **lijst** van alle nodes in de group. De lengte daarvan is het aantal muntjes. Probeer het: zet deze twee regels in `_on_body_entered` van je muntje, boven `queue_free()`, even ver ingesprongen.
 
 ```gdscript
 var aantal = get_tree().get_nodes_in_group("muntjes").size()
@@ -72,13 +70,13 @@ print("Er zijn nog ", aantal, " muntjes.")
 | `get_nodes_in_group("muntjes")`               | De lijst met alle nodes in de group `muntjes`  |
 | `.size()`                                     | Hoeveel het er zijn                            |
 
-Dit is dezelfde soort lijst als in Python, met één verschil in de naam: waar je daar `len(lijst)` schrijft, schrijf je hier `lijst.size()`.
+Pak een muntje: in **Uitvoer** staat hoeveel muntjes er waren. Haal de twee regels daarna weer weg. De lijst is dezelfde soort als in Python; `len(lijst)` heet hier `lijst.size()`.
 
 ## Stap 3: Iets doen met elk item in de lijst \{#for-lus}
 
 Tellen is één ding, maar meestal wil je *iets doen* met elke node in de lijst. Daarvoor loop je er met een `for` doorheen — precies zoals je in Python door een lijst loopt.
 
-Stel je vijand-script heeft een functie `stop()`:
+Stel dat je vijand-script een functie `stop()` heeft. Die schrijf je pas in Opdracht 7.5.b, dus deze stap en Stap 4 lees je alleen. Zo roep je hem op elke vijand aan:
 
 ```gdscript
 for vijand in get_tree().get_nodes_in_group("vijanden"):
@@ -97,7 +95,7 @@ Omdat "roep dezelfde functie aan op elke node in een group" zó vaak voorkomt, h
 get_tree().call_group("vijanden", "stop")
 ```
 
-Deze regel doet exact hetzelfde als de lus uit Stap 3. Handig als je alleen een functie wilt aanroepen — maar zodra je per node iets anders wilt doen (bijvoorbeeld alleen de vijanden links van je speler), heb je de lus nodig.
+Deze regel roept `stop()` aan op elke vijand, net als de lus uit Stap 3. Handig als je alleen een functie wilt aanroepen — maar zodra je per node iets anders wilt doen (bijvoorbeeld alleen de vijanden links van je speler), heb je de lus nodig.
 
 **Wat denk je dat er gebeurt als één vijand geen functie `stop()` heeft?**
 
@@ -115,13 +113,13 @@ Dat verschil is precies waarom de foutmelding van de lus nuttig is tijdens het b
 Laat in **Uitvoer** `Je hebt gewonnen!` verschijnen zodra de speler het laatste muntje oppakt.
 
 :::caution
-`queue_free()` verwijdert een node pas aan het **einde** van het frame. Het zojuist opgepakte muntje zit dus nog even in de group. Tel daarom op `<= 1` in plaats van `== 0`.
+`queue_free()` verwijdert een node pas aan het **einde** van het frame. Het zojuist opgepakte muntje zit dus nog even in de group. Houd daar rekening mee als je telt.
 :::
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Breid het muntje-script uit `_on_body_entered` uit. Vraag ná `queue_free()` hoeveel muntjes er nog in de group `muntjes` zitten, en print je winst-bericht als dat er nog maar één is (het muntje dat net wordt opgeruimd).
+Breid `_on_body_entered` in je muntje-script uit. Vraag ná `queue_free()` hoeveel muntjes er nog in de group `muntjes` zitten, en print je winst-bericht als dat er nog maar één is (het muntje dat net wordt opgeruimd).
 
 </details>
 
@@ -142,42 +140,47 @@ func _on_body_entered(body: Node2D) -> void:
         print("Je hebt gewonnen!")
 ```
 
-De twee regels met `Global.score` staan er al sinds [Global variables](site:godot/docs/global_variables); die laat je staan.
+De twee regels met `Global.score` staan er al sinds [Global variables (Autoload)](site:godot/docs/global_variables); die laat je staan.
 
 Het laatste muntje wordt wel `queue_free()`'d, maar telt in dit frame nog mee — daarom `<= 1`.
 
 </details>
 
-## Opdracht 7.5.b: laat alle vijanden stoppen
+## Opdracht 7.5.b: roep alle vijanden tegelijk aan
 
-Geef je vijanden het label `vijanden` en een functie `stop()` die de vijand op zijn plek laat staan (bijvoorbeeld door een `print` of door beweging uit te zetten). Roep `stop()` op alle vijanden tegelijk aan zodra de speler wint.
+Geef je vijand-script een functie `stop()`, en roep die op alle vijanden tegelijk aan zodra de speler wint. Je vijanden bewegen nog niet, dus laat `stop()` voor nu een bericht printen: zo zie je in **Uitvoer** dat elke vijand de aanroep kreeg. Zitten je vijanden nog niet in de group `vijanden`, doe dat dan eerst, zoals in Stap 1.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Zet de vijand in de group met `add_to_group("vijanden")` in `_ready()`. Gebruik op het moment van winnen `get_tree().call_group("vijanden", "stop")`.
+- De vijand komt in de group met `add_to_group("vijanden")` in `_ready()`, of in de editor.
+- Winnen gebeurt in je muntje-script, op de plek waar je `Je hebt gewonnen!` print. Daar komt `get_tree().call_group("vijanden", "stop")`.
+- Wil je iets zien gebeuren in je spel, zet dan `queue_free()` in `stop()`: dan verdwijnen alle vijanden als je wint.
 
 </details>
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-**In het vijand-script:**
+**In je vijand-script** komen deze twee functies erbij. De `_on_body_entered` uit opdracht 7.3.a blijft staan. Zette je de vijand in Stap 1 in de editor in de group, dan heb je `_ready()` niet nodig.
+
+{/* compileer-als: extends Area2D */}
 
 ```gdscript
-extends Area2D
-
 func _ready() -> void:
     add_to_group("vijanden")
+
 
 func stop() -> void:
     print("Vijand gestopt!")
 ```
 
-**Op het moment dat de speler wint (bijvoorbeeld in het muntje-script):**
+**In je muntje-script** komt er één regel onder de print van opdracht 7.5.a:
 
 ```gdscript
-get_tree().call_group("vijanden", "stop")
+    if get_tree().get_nodes_in_group("muntjes").size() <= 1:
+        print("Je hebt gewonnen!")
+        get_tree().call_group("vijanden", "stop")
 ```
 
 </details>
@@ -206,3 +209,5 @@ get_tree().call_group("vijanden", "stop")
 **Zelf vinden:** zet in `stop()` een `print(name, " stopt")`. Tel je minder regels in Uitvoer dan je vijanden hebt, dan weet je welke er geen `stop()` heeft.
 
 </details>
+
+Staat je fout er niet bij? In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je hem zelf opspoort.

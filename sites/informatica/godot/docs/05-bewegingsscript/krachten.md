@@ -8,8 +8,6 @@ sidebar_label: "Deel 5: Lopen"
 
 Je karakter valt, maar je kunt hem nog niet besturen. In deze les leest je script de pijltjestoetsen uit.
 
-<GodotVersie />
-
 <GDQuestLes slug="movement-krachten" />
 
 ## Wat je nu gaat toevoegen
@@ -46,7 +44,7 @@ Godot weigert het met een foutmelding. Een `const` staat vast. Waarden die tijde
 
 </details>
 
-## Stap 2: De toets uitlezen
+## Stap 2: De toets uitlezen \{#get-axis}
 
 Zet deze twee regels binnen de functie, ónder het valblok en bóven `move_and_slide()`:
 
@@ -55,27 +53,23 @@ Zet deze twee regels binnen de functie, ónder het valblok en bóven `move_and_s
     velocity.x = direction * SPEED
 ```
 
-## Stap 3: Wat `Input.get_axis()` teruggeeft \{#get-axis}
-
-In plaats van twee losse checks doet `get_axis` het in één regel:
+`"ui_left"` en `"ui_right"` zijn **acties**: namen die Godot standaard aan de pijltjestoetsen links en rechts heeft gekoppeld. `Input.get_axis()` kijkt naar allebei en geeft één getal terug:
 
 - niets ingedrukt → `direction` is `0`
 - links ingedrukt → `direction` is `-1`
 - rechts ingedrukt → `direction` is `1`
 
-Probeer het: zet `print(direction)` onder de regel met `get_axis` en kijk in **Uitvoer** terwijl je de pijltjes indrukt.
-
 Dat getal vermenigvuldig je met je snelheid: `-1 * 300` is 300 naar links, `1 * 300` is 300 naar rechts, en `0 * 300` is stilstaan. Eén regel, drie gevallen.
 
-:::tip
-Bij `var direction :=` staat een dubbele punt vóór het isgelijkteken. Daarmee bepaalt Godot zelf het type van je variabele. Je mag ook gewoon `=` schrijven; zie de [GDScript-tips](site:godot/gdscript-tips#variabelen) voor het verschil.
-:::
+De dubbele punt in `:=` laat Godot zelf het type van je variabele bepalen. Je mag ook `=` schrijven; het verschil staat in de [GDScript-tips](site:godot/gdscript-tips#variabelen).
 
-## Stap 4: Test het
+## Stap 3: Test het
 
 Start met `F5`. Je karakter loopt naar links en rechts met de pijltjestoetsen, en valt nog steeds van platforms af.
 
 Laat je de toets los, dan staat hij meteen stil. Dat komt doordat `direction` dan `0` is. In Deel 6 maak je dat stoppen wat netter.
+
+Wil je het getal zelf zien? Zet tijdelijk `print(direction)` onder de regel met `get_axis` en kijk in **Uitvoer** terwijl je de pijltjes indrukt: er staat `-1`, `0` of `1`. Haal de `print` daarna weer weg.
 
 ## Je script tot nu toe
 
@@ -137,7 +131,7 @@ Ergens tussen `250.0` en `400.0` speelt een platformer meestal prettig. Noteer w
 <details>
 <summary>Mijn karakter beweegt alleen omhoog of omlaag</summary>
 
-**Oorzaak:** Je past `velocity` aan in plaats van `velocity.x`, waardoor je ook de valsnelheid overschrijft.
+**Oorzaak:** In de regel staat `velocity.y` waar `velocity.x` hoort. Dan sturen de pijltjes de snelheid omhoog en omlaag in plaats van opzij.
 
 **Oplossing:** De regel hoort te zijn: `velocity.x = direction * SPEED`. Met `.x` raak je alleen de horizontale snelheid aan.
 

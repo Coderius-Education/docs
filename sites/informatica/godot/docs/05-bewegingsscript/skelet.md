@@ -8,9 +8,7 @@ sidebar_label: "Deel 1: Een script dat draait"
 
 ## In deze les
 
-Je script bestaat uit één regel: `extends CharacterBody2D`. In deze les voeg je de functie toe waar de rest van je spel in komt te staan — het kloppend hart dat Godot zestig keer per seconde aanroept.
-
-<GodotVersie />
+Je script bestaat uit één regel: `extends CharacterBody2D`. In deze les voeg je de functie toe waar de rest van je spel in komt te staan.
 
 <Voorkennis
   items={[
@@ -37,7 +35,7 @@ Begin met les 1 en 2. Die kosten samen een kwartier en leggen uit wat code is en
 
 ### Het blok in elke les
 
-Vanaf hier staat in elke les van dit hoofdstuk zo'n blok, bij de regel die je net hebt geschreven:
+Elk van de zeven delen van het bewegingsscript begint met zo'n blok. Het zegt welke GDQuest-les bij dat deel hoort:
 
 <GDQuestLes slug="basis_movement_begrijpen" />
 
@@ -54,11 +52,11 @@ Alles hieruit staat kort bij elkaar in de [GDScript-tips](site:godot/gdscript-ti
 
 ## Wat je nu gaat toevoegen
 
-Een functie die vanzelf draait, met daarin één opdracht aan Godot: verplaats mijn karakter. Na deze les beweegt er nog niets — maar het skelet staat, en alles wat je hierna schrijft komt op deze plek.
+Eén functie, met daarin één opdracht aan Godot: verplaats mijn karakter. Na deze les beweegt er nog niets — maar het skelet staat, en alles wat je hierna schrijft komt op deze plek.
 
 ## Voorspel: hoe vaak draait een functie in een spel?
 
-In Python roep je een functie zelf aan: je schrijft ergens `groet()` en dan gebeurt het. **Hoe zou dat werken in een spel, waar dingen continu doorgaan zonder dat iemand iets aanroept?**
+In [Je eerste regels code](site:godot/docs/start_gdscript) riep Godot `_ready()` voor je aan: één keer, bij de start. Een karakter dat beweegt, moet steeds opnieuw een klein stukje opschuiven. **Hoe vaak zou Godot een functie moeten aanroepen om dat vloeiend te laten lijken?**
 
 <details>
 <summary>Antwoord</summary>
@@ -87,6 +85,11 @@ Zet Godot een gele waarschuwing bij `delta` dat de parameter niet gebruikt wordt
 ## Stap 2: Wat je functie zegt
 
 ### Woord voor woord
+
+```gdscript
+func _physics_process(delta: float) -> void:
+    move_and_slide()
+```
 
 **`func`** begint een functie, net als `def` in Python.
 
