@@ -153,6 +153,14 @@
   background: rgba(100, 100, 255, 0.3);
 }
 
+/* De aanwijzing in een leeg veld ("Schrijf hier je code"). De tekst van het
+   veld zelf is doorzichtig, en in Firefox erft de aanwijzing die kleur: dan
+   stond er niets. */
+.editorTextarea::placeholder {
+  color: var(--ifm-color-emphasis-600);
+  opacity: 1;
+}
+
 .editorTextarea:disabled {
   opacity: 0.5;
 }

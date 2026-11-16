@@ -51,6 +51,8 @@
       "default": "./privacy-content.js"
     },
     "./dialoog": "./dialoog.ts",
+    "./oefenveld/opslag": "./oefenveld/opslag.ts",
+    "./oefenveld/useOpslag": "./oefenveld/useOpslag.ts",
     "./leerdoelen": {
       "types": "./leerdoelen/index.d.ts",
       "default": "./leerdoelen/index.js"

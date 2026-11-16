@@ -51,6 +51,7 @@ export function HighlightedEditor({
   readOnly,
   ariaLabel,
   afbreken = true,
+  placeholder = 'Schrijf hier je Python code...',
 }: {
   code: string;
   onChange: (value: string) => void;
@@ -72,6 +73,8 @@ export function HighlightedEditor({
    * learning stond 9 naast `}`). Zonder afbreken schuift een lange regel.
    */
   afbreken?: boolean;
+  /** Wat er in een leeg veld staat, tot er iets getypt is. */
+  placeholder?: string;
 }) {
   const { colorMode } = useColorMode();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -202,7 +205,7 @@ export function HighlightedEditor({
         onKeyDown={handleKeyDown}
         onScroll={handleScroll}
         spellCheck={false}
-        placeholder="Schrijf hier je Python code..."
+        placeholder={placeholder}
         disabled={disabled}
         readOnly={readOnly}
         aria-label={ariaLabel}

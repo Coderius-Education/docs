@@ -9,6 +9,7 @@ import {
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { EDITOR_VAN_VELD } from '../../../shared/meet-selectie.js';
 import type { Opname } from '../PyodideProvider';
 import { setPyodideLoader } from '../PyodideProvider';
 import { type Nep, nepPyodide } from '../nep-pyodide';
@@ -25,6 +26,37 @@ vi.mock('@docusaurus/BrowserOnly', () => ({
   default: ({ children }: { children: () => React.ReactNode }) => <>{children()}</>,
 }));
 
+// De opslag van het veld: één Map in plaats van de IndexedDB van de browser.
+const kast = vi.hoisted(() => new Map<string, unknown>());
+vi.mock('./opslag', async () => {
+  const { maakOpslag } = await import('@coderius/shared/oefenveld/opslag');
+  const opslag = maakOpslag<{ code: string }>({
+    site: 'python',
+    naam: 'oefenvelden',
+    delen: ['code'],
+    kast: {
+      get: async (sleutel) => kast.get(sleutel),
+      set: async (sleutel, waarde) => {
+        kast.set(sleutel, waarde);
+      },
+      del: async (sleutel) => {
+        kast.delete(sleutel);
+      },
+    },
+    lade: null,
+  });
+  return { opslagVoor: () => opslag };
+});
+
+// Het venster van Reset: `zeker` is wat de leerling antwoordt.
+const dialoog = vi.hoisted(() => ({ zeker: true, vragen: [] as string[] }));
+vi.mock('@coderius/shared/dialoog', () => ({
+  bevestig: async (tekst: string) => {
+    dialoog.vragen.push(tekst);
+    return dialoog.zeker;
+  },
+}));
+
 const knop = (naam: string | RegExp) =>
   screen.getByRole('button', { name: naam }) as HTMLButtonElement;
 const editor = () => screen.getByRole('textbox') as HTMLTextAreaElement;
@@ -34,6 +66,9 @@ let nep: Nep;
 beforeEach(() => {
   nep = nepPyodide();
   setPyodideLoader(async () => nep.pyodide);
+  kast.clear();
+  dialoog.zeker = true;
+  dialoog.vragen = [];
 });
 
 afterEach(() => {
@@ -479,5 +514,133 @@ describe('de tip en de oplossing in het veld', () => {
     fireEvent.click(knop('Antwoord'));
     expect(teZien('Het is 12.')).toBe(true);
     expect(screen.queryByRole('button', { name: /Voer/ })).toBeNull();
+  });
+});
+
+describe('een veld waarin de leerling alles zelf schrijft', () => {
+  // Het begon met "# Schrijf hier je code", en die regel moest eerst weg
+  // (issue 216).
+  it('begint leeg, met het commentaar als aanwijzing', async () => {
+    render(<CodeExercise>{'# Schrijf hier je code'}</CodeExercise>);
+    await wachtTotGeladen();
+    expect(editor().value).toBe('');
+    expect(editor().placeholder).toBe('Schrijf hier je code');
+  });
+
+  it('Reset gaat terug naar het lege veld', async () => {
+    render(<CodeExercise>{'# Plak hier je programma uit stap 1'}</CodeExercise>);
+    await wachtTotGeladen();
+    fireEvent.change(editor(), { target: { value: 'print(1)' } });
+    fireEvent.click(knop('Reset'));
+    expect(editor().value).toBe('');
+    expect(editor().placeholder).toBe('Plak hier je programma uit stap 1');
+  });
+
+  it('commentaar tussen code blijft staan', async () => {
+    const start = 'dieren = ["kat"]\n# Schrijf hier je loop';
+    render(<CodeExercise>{start}</CodeExercise>);
+    await wachtTotGeladen();
+    expect(editor().value).toBe(start);
+  });
+});
+
+describe('het veld bewaart de code van de leerling', () => {
+  // Eerst was het werk weg bij herladen en bij de volgende les (issue 216).
+  // De opslag zelf, ook bij herladen binnen een halve seconde, test
+  // packages/shared/oefenveld; hier wat het veld ermee doet.
+  const inTab = (kind: React.ReactNode) =>
+    render(<PaneelContext.Provider value={() => {}}>{kind}</PaneelContext.Provider>);
+  const label = (container: HTMLElement) =>
+    container.querySelector('[class*="label"]')?.textContent;
+
+  it('typen, de pagina verlaten en terugkomen: de code staat er weer', async () => {
+    const eerste = render(<CodeExercise site="python">{'# Schrijf hier je code'}</CodeExercise>);
+    await wachtTotGeladen();
+    fireEvent.change(editor(), { target: { value: 'print("van mij")' } });
+    eerste.unmount();
+    await act(async () => {});
+    expect(kast.size).toBe(1);
+
+    const { container } = render(
+      <CodeExercise site="python">{'# Schrijf hier je code'}</CodeExercise>,
+    );
+    await wachtTotGeladen();
+    await waitFor(() => expect(editor().value).toBe('print("van mij")'));
+    expect(label(container)).toBe('Bewaard');
+  });
+
+  it('elk veld met dezelfde startcode heeft zijn eigen code', async () => {
+    const twee = () =>
+      render(
+        <>
+          <CodeExercise site="python">{'# Schrijf hier je code'}</CodeExercise>
+          <CodeExercise site="python">{'# Schrijf hier je code'}</CodeExercise>
+        </>,
+      );
+    const eerst = twee();
+    await waitFor(() =>
+      expect(screen.getAllByRole('textbox')[1]).toHaveProperty('disabled', false),
+    );
+    fireEvent.change(screen.getAllByRole('textbox')[1], { target: { value: 'tweede' } });
+    eerst.unmount();
+    await act(async () => {});
+
+    twee();
+    await waitFor(() =>
+      expect(screen.getAllByRole('textbox').map((t) => (t as HTMLTextAreaElement).value)).toEqual([
+        '',
+        'tweede',
+      ]),
+    );
+  });
+
+  it('Reset vraagt het eerst, en wist dan ook wat bewaard is', async () => {
+    const eerste = render(<CodeExercise site="python">{'print("begin")'}</CodeExercise>);
+    await wachtTotGeladen();
+    fireEvent.change(editor(), { target: { value: 'print("eigen")' } });
+
+    dialoog.zeker = false;
+    fireEvent.click(knop('Reset'));
+    await act(async () => {});
+    expect(dialoog.vragen).toHaveLength(1);
+    expect(editor().value).toBe('print("eigen")');
+
+    dialoog.zeker = true;
+    fireEvent.click(knop('Reset'));
+    await waitFor(() => expect(editor().value).toBe('print("begin")'));
+    eerste.unmount();
+    await act(async () => {});
+    expect(kast.size).toBe(0);
+  });
+
+  it('Reset op ongewijzigde code vraagt niets', async () => {
+    render(<CodeExercise site="python">{'print("begin")'}</CodeExercise>);
+    await wachtTotGeladen();
+    fireEvent.click(knop('Reset'));
+    await act(async () => {});
+    expect(dialoog.vragen).toEqual([]);
+  });
+
+  it('het meetscript ziet dat het veld klaar is', async () => {
+    // Het veld draagt `data-zaad`, net als het web-veld, en het meetscript
+    // wacht bij zo'n veld op zijn editor (EDITOR_VAN_VELD). Kent het script
+    // de editor van dit veld niet, dan wacht het bij elk scherm tien
+    // seconden: de meting van python duurde zo drie keer een kwartier.
+    const { container } = render(<CodeExercise site="python">{'x = 1'}</CodeExercise>);
+    await wachtTotGeladen();
+    const veld = container.querySelector('[data-zaad]');
+    expect(veld).not.toBeNull();
+    expect(veld?.querySelector(EDITOR_VAN_VELD)).not.toBeNull();
+  });
+
+  it('het veld zegt zelf of het bewaart', async () => {
+    const met = inTab(<CodeExercise site="python">{'x = 1'}</CodeExercise>);
+    await wachtTotGeladen();
+    expect(met.container.textContent).toContain('Je code blijft bewaard in deze browser.');
+    met.unmount();
+
+    const zonder = inTab(<CodeExercise>{'x = 1'}</CodeExercise>);
+    await wachtTotGeladen();
+    expect(zonder.container.textContent).toContain('Dit veld bewaart je code niet');
   });
 });

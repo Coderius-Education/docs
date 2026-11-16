@@ -3,14 +3,15 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 // Het werk in een oefenveld bleef niet bewaard: verversen en het was weg.
-// Nu staat het in de IndexedDB van de browser (opslag.ts, met eigen tests).
-// Deze bronscan bewaakt hoe het veld die opslag gebruikt; dat gedrag hangt
-// aan React en de browser, en is in node niet na te spelen.
+// Nu staat het in de IndexedDB van de browser. De opslag en de hook staan in
+// packages/shared/oefenveld, met eigen tests (ook wat er bij herladen en op
+// een trage computer gebeurt). Deze bronscan bewaakt hoe het veld van web ze
+// gebruikt.
 
 const lees = (pad: string) => readFileSync(fileURLToPath(new URL(pad, import.meta.url)), 'utf8');
 
 const veld = lees('../components/CodeEditor/CodeEditor.tsx');
-const hook = lees('../components/CodeEditor/useOpslag.ts');
+const opslag = lees('../components/CodeEditor/opslag.ts');
 
 describe('het oefenveld bewaart het werk van de leerling', () => {
   it('toont de editor pas als het bewaarde werk er is', () => {
@@ -20,24 +21,22 @@ describe('het oefenveld bewaart het werk van de leerling', () => {
     expect(veld).toMatch(/!opslag\.geladen \?/);
   });
 
-  it('schrijft de laatste wijziging weg bij verlaten, ook naar de volgende les', () => {
-    expect(hook).toMatch(/addEventListener\('pagehide'/);
-    expect(hook).toMatch(/visibilityState === 'hidden'/);
-    // De cleanup van het effect: doorklikken in Docusaurus is een unmount.
-    expect(hook).toMatch(/removeEventListener\('pagehide', schrijf\);\s*schrijf\(\);/);
+  it('gebruikt de gedeelde hook, met de opslag van web', () => {
+    expect(veld).toMatch(/from '@coderius\/shared\/oefenveld\/useOpslag'/);
+    expect(veld).toMatch(/useOpslag\(\{\s*opslag: veldOpslag,/);
   });
 
   it('onderscheidt velden met dezelfde startcode', () => {
     expect(veld).toMatch(/data-zaad=\{opslag\.zaad\}/);
-    expect(hook).toMatch(/querySelectorAll\(`\[data-zaad=/);
   });
 
   it('Reset wist ook de bewaarde versie', () => {
     expect(veld).toMatch(/opslag\.wis\(\)/);
   });
 
-  it('gebruikt IndexedDB, niet localStorage', () => {
-    expect(veld).not.toMatch(/localStorage/);
-    expect(hook).not.toMatch(/localStorage/);
+  it('de database en de bestanden zijn die van altijd', () => {
+    // Een andere naam of een andere volgorde, en het werk van elke leerling
+    // is onvindbaar (packages/shared/oefenveld/opslag.test.ts pint de rest).
+    expect(opslag).toMatch(/site: 'web',\s*naam: 'oefenvelden',\s*delen: \['html', 'css', 'js'\]/);
   });
 });

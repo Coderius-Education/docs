@@ -8,6 +8,7 @@
     "./PyodideProvider": "./src/PyodideProvider.ts",
     "./PythonPlayground": "./src/PythonPlayground/index.tsx",
     "./CodeExercise": "./src/CodeExercise/index.tsx",
+    "./startcode": "./src/CodeExercise/startcode.ts",
     "./package.json": "./package.json",
     "./Stapper": "./src/Stapper/index.tsx",
     "./HighlightedEditor": "./src/HighlightedEditor/index.tsx",

@@ -3,5 +3,5 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": ["*.ts", "components", "klas"]
+  "include": ["*.ts", "components", "klas", "oefenveld"]
 }

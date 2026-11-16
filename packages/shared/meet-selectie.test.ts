@@ -14,6 +14,7 @@ const {
   lessenVoorMeting,
   moetGemetenWorden,
   houdtNummers,
+  pastNiet,
 } = require('./meet-selectie.js');
 const { alleSiteMappen, siteDir } = require('./sites.js');
 const { plan: maakPlan } = require('./wijzigingen.js');
@@ -393,5 +394,33 @@ describe('in deze repository', () => {
       for (const pad of keuze.ontbreekt) fout.push(`${site}: geen les voor ${pad}`);
     }
     expect(fout).toEqual([]);
+  });
+});
+
+describe('een scherm dat niet past, meet het script nog één keer', () => {
+  // In één run van CI viel er in robotica 12 px code af op een scherm dat in
+  // de runs ervoor en lokaal paste: de les was na de vaste wachttijd nog aan
+  // het rekenen. `pastNiet` zegt welke schermen een tweede meting krijgen;
+  // het zijn dezelfde maten waarop --streng afkeurt.
+  it('te lang, te breed of afgesneden code', () => {
+    expect(pastNiet({ over: 0, zijwaarts: 0, afgesneden: 0 }, false)).toBe(false);
+    expect(pastNiet({ over: -40, zijwaarts: 0, afgesneden: 0 }, false)).toBe(false);
+    expect(pastNiet({ over: 3, zijwaarts: 0, afgesneden: 0 }, false)).toBe(true);
+    expect(pastNiet({ over: 0, zijwaarts: 8, afgesneden: 0 }, false)).toBe(true);
+    expect(pastNiet({ over: 0, zijwaarts: 0, afgesneden: 12 }, false)).toBe(true);
+  });
+
+  it('op een telefoon telt alleen zijwaarts schuiven', () => {
+    expect(pastNiet({ over: 300, zijwaarts: 0, afgesneden: 20 }, true)).toBe(false);
+    expect(pastNiet({ over: 0, zijwaarts: 4, afgesneden: 0 }, true)).toBe(true);
+  });
+
+  it('het meetscript gebruikt die maat, en meldt wat pas de tweede keer paste', () => {
+    const script = readFileSync(join(ROOT, 'scripts/meet-les-tabs.mjs'), 'utf8');
+    expect(script).toMatch(
+      /if \(pastNiet\(maat, Boolean\(scherm\.telefoon\)\)\) \{\s*await pagina\.waitForTimeout\(500\)/,
+    );
+    expect(script).toMatch(/teVroeg\.push/);
+    expect(script).toMatch(/::warning::.*paste pas bij de tweede meting/);
   });
 });

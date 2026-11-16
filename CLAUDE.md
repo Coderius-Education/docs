@@ -149,6 +149,22 @@ de lettertypen. Met die schuifbalken pasten er bij de invoering in zes
 cursussen een paar schermen niet meer; die zijn ingekort of gesplitst, en
 `pasCode` rekent opnieuw nadat `speling` een codevak laat schuiven.
 
+**Een scherm dat niet past, meet het script een halve seconde later nog
+een keer** (`pastNiet` in `meet-selectie.js`). De les rekent na een wissel
+van tabblad zelf nog (kleinere letters, de vrije ruimte, een lettertype dat
+binnenkomt), en op een drukke runner was dat na de vaste wachttijd niet
+altijd klaar: in robotica viel er in één run 12 px code af op een scherm dat
+in de runs ervoor en lokaal paste. Past het de tweede keer wel, dan staat
+het als waarschuwing in het verslag; past het dan nog niet, dan is de job
+rood.
+
+**Een job die Chromium installeert, heeft een grens.** `playwright install`
+duurt twintig seconden, en bleef op één runner een half uur staan; zonder
+grens wacht de workflow zes uur, en de check `build` wacht mee. De stap
+stopt na drie minuten en probeert het één keer opnieuw, en de jobs
+`browser`, `terminal` en `schermen` hebben `timeout-minutes`
+(`ci-setup.test.ts`).
+
 **De git-simulator wordt naast een vaste git gelegd**: de job `test` bouwt
 git `GIT_VERSIE` (nu 2.56.1) zelf, eenmaal en daarna uit de cache, want de
 git van de runner veranderde zonder aankondiging. De cache-sleutel noemt het
@@ -1296,6 +1312,61 @@ overhoudt. Schrijf code in een les dus gewoon met vier spaties;
 `packages/shared/inspringing.test.ts` eist dat ook, en
 `mdx-inspringing.test.ts` pint het MDX-gedrag vast voor als een upgrade het
 verandert.
+
+## Oefenvelden bewaren hun code
+
+Het oefenveld van web (`CodeEditor`) en dat van python (`CodeExercise`)
+bewaren de code van de leerling in de IndexedDB van zijn browser. De opslag
+en de hook staan in `packages/shared/oefenveld` (`maakOpslag`, `useOpslag`);
+een veld zegt welke site het is en uit welke delen zijn code bestaat (web:
+html, css en js; python: code). Elke site heeft een eigen database
+(`coderius:<site>:oefenvelden`, store `velden`), en een veld vindt zijn werk
+met het pad van de les, de vingerafdruk van zijn startcode (het zaad) en het
+hoeveelste veld met die startcode het is. Een andere startcode is dus een
+nieuw veld, en een veld dat je ertussen zet, schuift het werk één veld op.
+Naam, zaad, sleutel en de vorm van een regel liggen vast in
+`oefenveld/opslag.test.ts`: verander je er een, dan is het werk van elke
+leerling onvindbaar.
+
+Issue 216 ("codeblokken worden niet meer onthouden") bracht dit bij elkaar.
+Wat er mis was:
+
+- **Het veld van python bewaarde niets**, en zei dat zelf. Het python-veld
+  krijgt zijn opslag van de site (`site="python"` in
+  `src/components/CodeExercise`); zonder `site` bewaart een veld niets.
+- **Wie typte en binnen een halve seconde herlaadde, was dat werk kwijt.**
+  Het veld schrijft een halve seconde na de laatste toets, en bij `pagehide`
+  meteen; maar een schrijfactie naar IndexedDB die dan begint, breekt de
+  browser af. In Chromium gemeten: tot 450 ms na de laatste toets was het
+  werk weg, vanaf 600 ms niet. Bij vertrek gaat de code daarom ook als
+  noodkopie naar localStorage (dat schrijft meteen); het veld leest hem bij
+  het volgende laden, zet hem in de database en gooit hem weg.
+- **Op een trage computer gaf het veld het lezen op.** Na anderhalve seconde
+  zonder antwoord opent een veld met zijn startcode en bewaart het die sessie
+  niets (schrijven over werk dat niet te lezen was, gooit het weg). Die
+  anderhalve seconde telt nu in tikken van 100 ms: zolang de processor met de
+  pagina bezig is, komt er geen tik, en ook geen antwoord. Met een twintig
+  keer vertraagde processor kwam het werk eerst in drie van de vier velden
+  niet terug.
+
+**Een veld met opslag draagt `data-zaad`**, en het meetscript wacht bij zo'n
+veld op zijn editor (`EDITOR_VAN_VELD` in `meet-selectie.js`: de CodeMirror
+van web of de textarea van python), hoogstens tien seconden per tabblad.
+Toen het python-veld `data-zaad` kreeg en het script alleen CodeMirror kende,
+wachtte het bij elk python-scherm die tien seconden uit: de drie meetjobs
+van python duurden een kwartier, vier keer zo lang als nodig. Geef je een
+ander veld opslag, zet zijn editor dan in `EDITOR_VAN_VELD`.
+
+`oefenveld/useOpslag.test.tsx` speelt beide na en faalt zonder de reparatie.
+Of een schrijfactie bij herladen aankomt, ziet alleen een browser: speel het
+na een wijziging na (typen, meteen herladen, kijken of het er staat).
+
+**Een veld van python met alleen commentaar is leeg.** "# Schrijf hier je
+code" moest een leerling eerst weghalen (116 velden). `startcode.ts` in
+`packages/python-runner` maakt van startcode met alleen commentaar een leeg
+veld met die tekst als aanwijzing (grijs, weg zodra er iets staat); de les
+verandert er niet voor. Commentaar tussen code blijft staan. Reset vraagt in
+een veld met opslag eerst of het zeker is: wat bewaard was, komt niet terug.
 
 ## Leerdoelen
 

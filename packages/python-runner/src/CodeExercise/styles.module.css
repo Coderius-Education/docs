@@ -116,6 +116,12 @@
   margin-top: 0.25rem;
 }
 
+/* De aanwijzing van een leeg veld, in de HTML van de build: tot het veld er
+   is, staat hij er al, in dezelfde kleur als straks in de editor. */
+.aanwijzing {
+  color: var(--ifm-color-emphasis-600);
+}
+
 /* In een les-tabblad, op een breed scherm: code links, uitvoer rechts. Een
    lange uitvoer schuift in zijn eigen vak. Stap voor stap heeft de hele
    breedte nodig en staat eronder. */

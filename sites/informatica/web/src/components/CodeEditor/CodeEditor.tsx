@@ -2,6 +2,7 @@ import { useInLesTab } from '@coderius/shared/components/LesTabs';
 import { HulpKeuze, HulpVak, type Weergave } from '@coderius/shared/components/LesTabs/Hulp';
 import { hulpBreedte, useLesHulp } from '@coderius/shared/components/LesTabs/paneel';
 import { bevestig } from '@coderius/shared/dialoog';
+import { type OpslagStand, useOpslag } from '@coderius/shared/oefenveld/useOpslag';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, {
   lazy,
@@ -20,9 +21,9 @@ import { heeftJavaScript } from './heeftJs';
 import { VoorbeeldNavigatie } from './navigatie';
 import { type OnderzoekVraag, stukken } from './onderzoek';
 import { type Opdracht, opdrachtBoven } from './opdracht';
+import { type Code, opslag as veldOpslag } from './opslag';
 import { meetRuimte, pasHoogte } from './pasHoogte';
 import { useDebounce } from './useDebounce';
-import { type OpslagStand, useOpslag } from './useOpslag';
 import { kanVolledigScherm, schermStand } from './volledigScherm';
 
 const EditorPane = lazy(() => import('./EditorPane').then((mod) => ({ default: mod.EditorPane })));
@@ -216,8 +217,9 @@ function CodeEditorInner({
   }, []);
 
   // Het werk van de leerling blijft bewaard in deze browser (opslag.ts).
-  const huidig = useMemo(() => ({ html, css, js }), [html, css, js]);
+  const huidig = useMemo<Code>(() => ({ html, css, js }), [html, css, js]);
   const opslag = useOpslag({
+    opslag: veldOpslag,
     start: { html: initialHtml, css: initialCss, js: initialJs },
     huidig,
     containerRef,

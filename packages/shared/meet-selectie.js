@@ -255,7 +255,38 @@ function deelVan(lessen, deel, delen) {
   return lessen.filter((_, i) => i % delen === deel - 1);
 }
 
+/**
+ * Waaraan het meetscript ziet dat een oefenveld (`[data-zaad]`) zijn editor
+ * heeft: de CodeMirror van het web-veld, die pas komt als het bewaarde werk
+ * geladen is, of de textarea van het python-veld. Het script wacht daar per
+ * tabblad hoogstens tien seconden op.
+ *
+ * Eerst stond er alleen `.cm-editor`. Toen het python-veld ook `data-zaad`
+ * kreeg (het bewaart sindsdien zijn code), wachtte het script bij elk
+ * tabblad met een python-veld die tien seconden uit: de drie meetjobs van
+ * python duurden een kwartier, en de rest van CI was na zeven minuten klaar.
+ */
+const EDITOR_VAN_VELD = '.cm-editor, textarea';
+
+/**
+ * Past dit scherm niet, naar wat het meetscript mat? Dan meet het script na
+ * een halve seconde nog één keer: de les rekent na een wissel van tabblad
+ * zelf nog, en op een drukke runner was dat niet altijd klaar. Dezelfde
+ * maten waarop `--streng` een scherm afkeurt (te lang telt niet op een
+ * telefoon, afgesneden code ook niet).
+ *
+ * @param {{ over?: number, zijwaarts?: number, afgesneden?: number }} maat
+ * @param {boolean} telefoon
+ */
+function pastNiet(maat, telefoon) {
+  if ((maat.zijwaarts ?? 0) > 0) return true;
+  if (telefoon) return false;
+  return (maat.over ?? 0) > 0 || (maat.afgesneden ?? 0) > 0;
+}
+
 module.exports = {
+  EDITOR_VAN_VELD,
+  pastNiet,
   adresVanBron,
   deelVan,
   docsMappen,

@@ -214,6 +214,30 @@ describe('comprimeren na elke site-build', () => {
       .map((blok) => blok.slice(0, blok.indexOf(':')));
     expect(fout).toEqual([]);
   });
+
+  it('Chromium installeren heeft een grens en één herkansing, en de job ook', () => {
+    // Op één runner bleef `playwright install` een half uur staan (PR 217).
+    // Een workflow zonder grens wacht dan zes uur, en de verplichte check
+    // `build` wacht mee.
+    const jobs = workflow
+      .split(/\n {2}(?=[a-z-]+:\n)/)
+      .slice(1)
+      .filter((blok) => blok.includes('playwright install'));
+    expect(jobs.map((blok) => blok.slice(0, blok.indexOf(':')))).toEqual([
+      'browser',
+      'terminal',
+      'schermen',
+    ]);
+    for (const blok of jobs) {
+      const naam = blok.slice(0, blok.indexOf(':'));
+      const regels = blok.split('\n').filter((r) => r.includes('playwright install'));
+      expect(regels, naam).toHaveLength(2);
+      for (const regel of regels)
+        expect(regel, naam).toMatch(/^\s+timeout \d+ pnpm exec playwright/);
+      expect(regels[0], naam).toMatch(/\|\|$/);
+      expect(blok, naam).toMatch(/^ {4}timeout-minutes: \d+$/m);
+    }
+  });
 });
 
 // Een job die een gebouwde site in Chromium opent, krijgt de build van deze
