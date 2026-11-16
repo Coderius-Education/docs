@@ -149,6 +149,15 @@ de lettertypen. Met die schuifbalken pasten er bij de invoering in zes
 cursussen een paar schermen niet meer; die zijn ingekort of gesplitst, en
 `pasCode` rekent opnieuw nadat `speling` een codevak laat schuiven.
 
+**Een scherm dat niet past, meet het script een halve seconde later nog
+een keer** (`pastNiet` in `meet-selectie.js`). De les rekent na een wissel
+van tabblad zelf nog (kleinere letters, de vrije ruimte, een lettertype dat
+binnenkomt), en op een drukke runner was dat na de vaste wachttijd niet
+altijd klaar: in robotica viel er in één run 12 px code af op een scherm dat
+in de runs ervoor en lokaal paste. Past het de tweede keer wel, dan staat
+het als waarschuwing in het verslag; past het dan nog niet, dan is de job
+rood.
+
 **Een job die Chromium installeert, heeft een grens.** `playwright install`
 duurt twintig seconden, en bleef op één runner een half uur staan; zonder
 grens wacht de workflow zes uur, en de check `build` wacht mee. De stap

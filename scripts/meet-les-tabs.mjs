@@ -101,6 +101,7 @@ const {
   EDITOR_VAN_VELD,
   deelVan,
   lesVan: lesVanInBuild,
+  pastNiet,
 } = require('../packages/shared/meet-selectie.js');
 
 const argumenten = process.argv.slice(2);
@@ -634,6 +635,9 @@ async function laad(scherm, les) {
   }
 }
 
+/** Schermen die bij de eerste meting niet pasten en een halve seconde later wel. */
+const teVroeg = [];
+
 async function meetLes(les) {
   for (const scherm of SCHERMEN) {
     // Een verse context per les: bewaard werk in een oefenveld verandert de
@@ -705,54 +709,76 @@ async function meetLes(les) {
         await pagina.evaluate(() => document.fonts.ready);
         await pagina.waitForTimeout(scherm.telefoon ? 50 : 150);
         await pagina.evaluate(() => window.scrollTo(0, 0));
-        const maat = await pagina.evaluate(
-          ([id, binnen]) => {
-            const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
-            const r = paneel.getBoundingClientRect();
-            // Een oefenveld naast de les telt mee (zie ONDERKANT).
-            const naast = [...paneel.parentElement.children].find((k) =>
-              k.hasAttribute('data-les-naast'),
-            );
-            const n = naast?.getBoundingClientRect();
-            const onder =
-              n && n.height > 0 && n.left >= r.right - 1 ? Math.max(r.bottom, n.bottom) : r.bottom;
-            return {
-              over: Math.round(onder - document.documentElement.clientHeight),
-              naast: !!n && n.height > 0,
-              boven: Math.round(r.top),
-              pagina: document.documentElement.scrollHeight - document.documentElement.clientHeight,
-              // Niet innerWidth: daar hoort de schuifbalk van de pagina bij, en
-              // op een telefoon groeit hij mee met een pagina die te breed is.
-              zijwaarts: Math.max(
-                0,
-                document.documentElement.scrollWidth - document.documentElement.clientWidth,
-              ),
-              velden: paneel.querySelectorAll('[data-zaad]').length,
-              volgendeLes: volgendeLesInBeeld(paneel),
-              // Op hoeveel regels de rij stappen staat: een tweede regel kost
-              // elk scherm van dat tabblad veertig pixels.
-              stapregels: new Set(
-                [...paneel.querySelectorAll('[data-stap]')]
-                  .filter((s) => s.getClientRects().length > 0 && !s.closest('details:not([open])'))
-                  .map((s) => Math.round(s.getBoundingClientRect().top)),
-              ).size,
-              ...new Function(`return ${binnen}`)()(paneel),
-            };
+        const meetScherm = () =>
+          pagina.evaluate(
+            ([id, binnen]) => {
+              const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
+              const r = paneel.getBoundingClientRect();
+              // Een oefenveld naast de les telt mee (zie ONDERKANT).
+              const naast = [...paneel.parentElement.children].find((k) =>
+                k.hasAttribute('data-les-naast'),
+              );
+              const n = naast?.getBoundingClientRect();
+              const onder =
+                n && n.height > 0 && n.left >= r.right - 1
+                  ? Math.max(r.bottom, n.bottom)
+                  : r.bottom;
+              return {
+                over: Math.round(onder - document.documentElement.clientHeight),
+                naast: !!n && n.height > 0,
+                boven: Math.round(r.top),
+                pagina:
+                  document.documentElement.scrollHeight - document.documentElement.clientHeight,
+                // Niet innerWidth: daar hoort de schuifbalk van de pagina bij, en
+                // op een telefoon groeit hij mee met een pagina die te breed is.
+                zijwaarts: Math.max(
+                  0,
+                  document.documentElement.scrollWidth - document.documentElement.clientWidth,
+                ),
+                velden: paneel.querySelectorAll('[data-zaad]').length,
+                volgendeLes: volgendeLesInBeeld(paneel),
+                // Op hoeveel regels de rij stappen staat: een tweede regel kost
+                // elk scherm van dat tabblad veertig pixels.
+                stapregels: new Set(
+                  [...paneel.querySelectorAll('[data-stap]')]
+                    .filter(
+                      (s) => s.getClientRects().length > 0 && !s.closest('details:not([open])'),
+                    )
+                    .map((s) => Math.round(s.getBoundingClientRect().top)),
+                ).size,
+                ...new Function(`return ${binnen}`)()(paneel),
+              };
 
-            // De link naar de volgende les terwijl dit scherm zelf een knop
-            // Volgende heeft: die zegt hetzelfde en slaat de rest van de les
-            // over.
-            function volgendeLesInBeeld(paneel) {
-              const knop = [
-                ...paneel.querySelectorAll('[data-les-verder] [data-les-volgende]'),
-              ].some((k) => k.getClientRects().length > 0);
-              const link = document.querySelector('.pagination-nav__link--next');
-              if (!knop || !link || link.getClientRects().length === 0) return false;
-              return link.getBoundingClientRect().top < document.documentElement.clientHeight;
-            }
-          },
-          [id, binnenHetScherm.toString()],
-        );
+              // De link naar de volgende les terwijl dit scherm zelf een knop
+              // Volgende heeft: die zegt hetzelfde en slaat de rest van de les
+              // over.
+              function volgendeLesInBeeld(paneel) {
+                const knop = [
+                  ...paneel.querySelectorAll('[data-les-verder] [data-les-volgende]'),
+                ].some((k) => k.getClientRects().length > 0);
+                const link = document.querySelector('.pagination-nav__link--next');
+                if (!knop || !link || link.getClientRects().length === 0) return false;
+                return link.getBoundingClientRect().top < document.documentElement.clientHeight;
+              }
+            },
+            [id, binnenHetScherm.toString()],
+          );
+        let maat = await meetScherm();
+        // Past het scherm niet, dan nog één keer na een halve seconde. De les
+        // rekent na een wissel zelf nog (kleinere letters, de vrije ruimte,
+        // een lettertype dat binnenkomt), en op een drukke runner was dat
+        // na de vaste wachttijd niet altijd klaar: in robotica viel er in
+        // één run 12 px code af op een scherm dat in de runs ervoor en
+        // lokaal paste. Wat een leerling blijft zien, staat er dan nog; wat
+        // alleen even zo stond, komt als waarschuwing in het verslag.
+        if (pastNiet(maat, Boolean(scherm.telefoon))) {
+          await pagina.waitForTimeout(500);
+          await pagina.evaluate(() => window.scrollTo(0, 0));
+          const opnieuw = await meetScherm();
+          if (!pastNiet(opnieuw, Boolean(scherm.telefoon)))
+            teVroeg.push({ les, id, scherm: `${scherm.width}x${scherm.height}` });
+          maat = opnieuw;
+        }
         const naam = stap
           ? `${label} › ${(await stap.innerText()).replace(/\s+/g, ' ').trim()}`
           : label;
@@ -1000,6 +1026,17 @@ if (ALS_JSON) {
   console.log(`\n## Dubbele id's: ${dubbeleIds.length} pagina's\n`);
   for (const d of dubbeleIds) console.log(`- ${naam(d.les)}: ${d.dubbel.join(', ')}`);
   console.log(`\nDe les gebruikt ${kolomBreedte}% van de breedte naast de lessenlijst.`);
+}
+
+if (teVroeg.length) {
+  console.log(`\n## Pas bij de tweede meting passend: ${teVroeg.length} schermen\n`);
+  for (const r of teVroeg) {
+    console.log(`- ${r.les} | ${r.id} | ${r.scherm}`);
+    if (STRENG)
+      console.error(
+        `::warning::${r.les} | ${r.id} | ${r.scherm}: paste pas bij de tweede meting (de les was nog aan het rekenen)`,
+      );
+  }
 }
 
 if (STRENG) {
