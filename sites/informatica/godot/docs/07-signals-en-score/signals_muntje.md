@@ -46,9 +46,12 @@ In Godot is het precies zo: een node *stuurt* een signal, een andere node *vangt
 1. Ga naar **Scene** → **New Scene**.
 2. Kies **Other Node** en zoek naar `Area2D`. `Area2D` is een node die botsingen kan detecteren zonder zelf physics te krijgen (geen zwaartekracht, niet wegrollen).
 3. Hernoem de `Area2D` naar `Muntje`.
-4. Klik met rechts op `Muntje` → **Add Child Node**.
-5. Voeg een `Sprite2D` toe.
-6. Sleep je muntje-afbeelding naar **Texture** in de Inspector.
+
+Voeg een sprite toe:
+
+1. Klik met rechts op `Muntje` → **Add Child Node**.
+2. Voeg een `Sprite2D` toe.
+3. Sleep je muntje-afbeelding naar **Texture** in de Inspector.
 
 ## Stap 2: Voeg een collision shape toe
 

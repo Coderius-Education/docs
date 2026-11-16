@@ -38,7 +38,7 @@ Het mooie: de nodes hoeven niets van elkaar te weten — net als bij signals is 
 
 ## Stap 1: Zet je muntjes in een group
 
-Dit kan op twee manieren. Kies er één.
+Een node in een group zetten kan op twee manieren. Kies er één.
 
 **In de editor:**
 

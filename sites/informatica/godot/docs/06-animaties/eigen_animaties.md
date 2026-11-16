@@ -26,7 +26,7 @@ Tot nu toe heb je gewerkt met kant-en-klare sprite-sheets uit het Pixel Adventur
 
 Drie aanpakken, kies wat past:
 
-### Aanpak A — Screenshots uit een sprite-sheet
+### Screenshots uit een sprite-sheet
 
 Heb je een sprite-sheet (één afbeelding met meerdere poses naast elkaar) maar Godot herkent de frames niet automatisch? Knip ze handmatig:
 
@@ -40,7 +40,7 @@ Heb je een sprite-sheet (één afbeelding met meerdere poses naast elkaar) maar 
 Werk altijd met een **vast canvas-formaat** (bijv. 32×32 of 64×64 pixels). Plak elk screenshot in een nieuw frame van datzelfde canvas in Piskel of LibreSprite — zo blijven alle frames identiek.
 :::
 
-### Aanpak B — Eigen frames tekenen in een pixel-art tool
+### Zelf tekenen in een pixel-art tool
 
 Wil je een volledig eigen karakter tekenen?
 
@@ -49,7 +49,7 @@ Wil je een volledig eigen karakter tekenen?
 3. Teken je idle-pose. Klik op **Add Frame** en teken de volgende fase. Herhaal tot je 4-8 frames hebt.
 4. Exporteer als losse PNG's **of** als sprite-sheet — beide werkt in Godot.
 
-### Aanpak C — Frames knippen uit een GIF
+### Frames knippen uit een GIF
 
 Heb je een animatie als GIF (bijvoorbeeld uit een tutorial of YouTube)?
 

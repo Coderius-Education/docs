@@ -126,4 +126,22 @@ describe('elk scherm van een les staat op zichzelf', () => {
       .map((les) => les.naam);
     expect(fout).toEqual([]);
   });
+
+  it('naslag en de keuzelijst Wat nu? hebben geen tabbladen', () => {
+    // Godot-versies is naslag waarin je zoekt, Wat nu? een lijst om uit te
+    // kiezen: als tabbladen liep de knop Volgende ze alle zeven langs.
+    for (const pagina of ['godot-versies.md', 'meer-leren.md'])
+      expect(readFileSync(join(SITE, 'docs', pagina), 'utf8'), pagina).toMatch(
+        /^les_tabs: false$/m,
+      );
+  });
+
+  it('het script tot nu toe staat er direct, niet in een uitklapblok', () => {
+    // Het tabblad is zelf al de klik: met "Klik hier om te vergelijken"
+    // erin was het scherm leeg tot de tweede klik.
+    const fout = lessen
+      .filter((les) => /^## Je (script tot nu toe|complete script)\n+<details>/m.test(les.bron))
+      .map((les) => les.naam);
+    expect(fout).toEqual([]);
+  });
 });

@@ -41,7 +41,9 @@ Een sprong is beweging naar boven, dus `velocity.y` moet negatief worden.
 
 </details>
 
-## Stap 1: De sprongkracht als constante
+## Stap 1: De sprong
+
+### De sprongkracht
 
 Zet deze regel onder je bestaande `const SPEED`:
 
@@ -51,7 +53,7 @@ const JUMP_VELOCITY = -400.0
 
 Een negatief getal, precies zoals je voorspelde. Hoe verder van nul, hoe hoger de sprong.
 
-## Stap 2: De sprong zelf
+### De sprong zelf
 
 Zet dit binnen de functie, ónder het zwaartekracht-blok en bóven de regels voor lopen:
 
@@ -62,7 +64,7 @@ Zet dit binnen de functie, ónder het zwaartekracht-blok en bóven de regels voo
 
 `ui_accept` is een standaardactie van Godot, gekoppeld aan de spatiebalk en Enter.
 
-## Stap 3: `just_pressed` of `pressed`?
+### `just_pressed` of `pressed`?
 
 Godot heeft twee manieren om naar een toets te kijken:
 
@@ -84,9 +86,9 @@ Met `just_pressed` gebeurt het één keer per druk, en moet de speler loslaten v
 
 Het verschil staat ook in de [GDScript-tips](site:godot/gdscript-tips#input).
 
-## Stap 4: Twee voorwaarden met `and`
+### Twee voorwaarden met `and`
 
-De check bestaat uit twee delen: de speler drukt op de knop **en** het karakter staat op de grond. Met `and` moeten ze allebei waar zijn.
+De `if` van je sprong bestaat uit twee delen: de speler drukt op de knop **en** het karakter staat op de grond. Met `and` moeten ze allebei waar zijn.
 
 **Wat gebeurt er zonder dat tweede deel?**
 
@@ -97,11 +99,11 @@ Je kunt in de lucht springen. Tijdens een sprong nog eens drukken geeft opnieuw 
 
 </details>
 
-## Stap 5: `=` en niet `+=`
+### `=` en niet `+=`
 
-Bij de zwaartekracht gebruikte je `+=`, hier gebruik je `=`. Dat is bewust.
+Bij de zwaartekracht gebruikte je `+=`, bij de sprong gebruik je `=`. Dat is bewust.
 
-**Maakt het in jouw script uit als je hier `velocity.y += JUMP_VELOCITY` schrijft?**
+**Maakt het in jouw script uit als je bij de sprong `velocity.y += JUMP_VELOCITY` schrijft?**
 
 <details>
 <summary>Antwoord</summary>
@@ -112,19 +114,23 @@ Het gaat mis zodra je ook in de lucht mag springen, zoals bij dubbel springen in
 
 </details>
 
-## Stap 6: Test het
+## Stap 2: Test je sprong
+
+### Test het
 
 Start met `F5`. Je karakter loopt, springt met de spatiebalk, valt terug en kan niet in de lucht nog een keer springen.
 
 Je bewegingsscript is compleet — en je hebt geen regel gekregen die je niet zelf hebt getypt.
 
-## Hoe anderen dit doen
+### Hoe anderen dit doen
 
 Zoek je straks zelf een tutorial op, dan zie je vaak een andere route: veel makers laten Godot het bewegingsscript invullen met de kant-en-klare template, en passen daarna wat getallen aan. Sneller, maar je slaat het begrijpen over.
 
-Nu je je eigen versie hebt, kun je zo'n video met winst bekijken: je herkent elke regel en je ziet meteen waar iemand iets anders doet dan jij.
+Nu je je eigen versie hebt, kun je zo'n video met winst bekijken, zoals die in de volgende stap: je herkent elke regel en je ziet meteen waar iemand iets anders doet dan jij.
 
-<iframe width="100%" height="500px" src="https://www.youtube-nocookie.com/embed/5V9f3MT86M8?start=570&end=712" title="Start Your Game Creation Journey Today. (Godot beginner tutorial)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+### De video
+
+<iframe width="100%" height="360px" src="https://www.youtube-nocookie.com/embed/5V9f3MT86M8?start=570&end=712" title="Start Your Game Creation Journey Today. (Godot beginner tutorial)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Je complete script
 
@@ -209,6 +215,8 @@ Twee keer zo hard afzetten geeft dus vier keer zo hoog. Vanaf hoofdstuk 6 staat 
 
 ## Opdracht 5.7.b: voeg een eigen kracht toe
 
+### De opdracht
+
 Je script kent nu vallen, lopen en springen. Voeg er zelf iets bij dat niet in de les staat. Kies er één:
 
 - **Sprinten**: houd shift ingedrukt en je loopt sneller.
@@ -218,14 +226,14 @@ Je script kent nu vallen, lopen en springen. Voeg er zelf iets bij dat niet in d
 Dit is de eerste opdracht zonder uitgewerkte oplossing, en dat is met opzet. Tot nu toe kon je je antwoord vergelijken met het onze. Vanaf hier gaat het erom dat je zelf iets bedenkt met wat je kent — een oplossing die je overschrijft leert je iets anders dan een oplossing die je vindt.
 :::
 
-## Denk na
+### Denk na
 
 Beantwoord deze vragen voor jezelf voordat je gaat typen. Ze wijzen allebei de weg.
 
 **Bij sprinten:**
 
 - Welke waarde moet er anders zijn als shift ingedrukt is? En welke regel zet die waarde nu?
-- Je hebt een actie nodig die "shift" heet. Waar maak je die aan? (Zie het WASD-blok hierboven.)
+- Je hebt een actie nodig die "shift" heet. Waar maak je die aan? (Zie het WASD-blok op het tabblad Je complete script.)
 
 **Bij dubbel springen:**
 
@@ -261,7 +269,7 @@ Zo weet je bij een fout meteen aan welke kant je moet zoeken: bij het uitlezen v
 
 **Oorzaak:** Er staat `is_action_pressed` in plaats van `is_action_just_pressed`. Elke keer dat je karakter landt, is de toets nog ingedrukt, dus springt hij meteen weer.
 
-**Oplossing:** Vergelijk je regel letterlijk met die uit Stap 2. Zie Stap 3 voor het verschil.
+**Oplossing:** Vergelijk je regel letterlijk met die bij De sprong zelf, in Stap 1. Het verschil tussen de twee staat daar ook, bij `just_pressed` of `pressed`.
 
 </details>
 
@@ -270,6 +278,6 @@ Zo weet je bij een fout meteen aan welke kant je moet zoeken: bij het uitlezen v
 
 **Oorzaak:** De `and is_on_floor()` ontbreekt. Dan geeft elke druk op de spatie de volle sprongkracht, ook midden in een sprong.
 
-**Oplossing:** Zet `and is_on_floor()` achter de check op de toets, zoals in Stap 2.
+**Oplossing:** Zet `and is_on_floor()` achter de check op de toets, zoals bij De sprong zelf in Stap 1.
 
 </details>

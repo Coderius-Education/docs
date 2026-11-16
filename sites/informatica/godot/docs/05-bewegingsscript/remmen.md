@@ -18,7 +18,7 @@ Twee begrippen: **`else`** om iets te doen als de voorwaarde níét klopt, en **
 
 ## Voorspel: wanneer moet je karakter afremmen?
 
-Nu staat er één regel die altijd draait: `velocity.x = direction * SPEED`. Bij loslaten is `direction` nul, dus de snelheid springt in één klap naar nul.
+In je script staat één regel die altijd draait: `velocity.x = direction * SPEED`. Bij loslaten is `direction` nul, dus de snelheid springt in één klap naar nul.
 
 **Als je dat afremmen wilt regelen, wanneer moet dat dan gebeuren?**
 

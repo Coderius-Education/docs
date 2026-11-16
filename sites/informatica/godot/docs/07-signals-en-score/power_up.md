@@ -108,7 +108,7 @@ GDScript heeft er één woord voor. Dat is `await`.
 
 ## Stap 4: Wachten met `await` \{#await}
 
-Breid je functie uit met twee regels:
+Breid `geef_sprongboost()` uit met twee regels:
 
 ```gdscript
 func geef_sprongboost() -> void:

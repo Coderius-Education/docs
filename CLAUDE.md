@@ -1206,6 +1206,46 @@ tip en antwoord; een kop als `## Opdracht: tel de beurten` heet `## Opdracht`
 zin van De opdracht. Het spel van Hanoi staat in een tabblad naast zijn
 knoppen.
 
+**Wat Godot erbij bracht** (november 2026; alle 361 schermen passen op
+1280×720 en 1366×768, na eerst 354 van de 370). De cursus heeft geen
+oefenveld: de leerling werkt in de editor van Godot, en een les is uitleg,
+een voorspelvraag, `## Stap N` met schermafbeeldingen of een paar regels
+GDScript, het hele script tot dan toe, opdrachten en Er gaat iets mis.
+Daarvoor is dit gekomen:
+
+- **Een lange rij `## Stap N` toont na de eerste alleen het nummer**
+  (`korteOpdrachten`: vier of meer stappen achter elkaar in een rij van
+  negen tabbladen of meer), zoals de opdrachten dat al deden. Stappen en
+  opdrachten zijn elk een eigen reeks. De stappen zijn hier tabbladen, net
+  als bij de Lego-auto: de lestekst verwijst ernaar ("in Stap 3").
+- **Je script tot nu toe en Je complete script hebben de werkvorm
+  controleren.** Het script staat er direct, niet in een uitklapblok
+  "Klik hier om te vergelijken": het tabblad is zelf al de klik.
+- **Een open uitklapblok wordt gemeten als het klaar is met openklappen**
+  (`transitionend` op de hoogte, in `LesTabs`). Docusaurus klapt een blok
+  met een animatie open die langer duurt naarmate het blok hoger is: 503 ms
+  bij een oplossing van zeventig regels. De les mat na een vaste 400 ms,
+  halverwege, en het vak van `openBlokInVak` was dan 115 pixels te hoog. De
+  wachttijd blijft voor wie animaties uit heeft staan.
+- **De docentenhandleiding zegt zelf wat een onderdeel is** (`doet`): een
+  stap is een handeling in de editor, een opdracht staat in het eigen
+  project, en controleren is je script naast dat van de les leggen.
+
+In de lessen: de regel met de vorige en de volgende les onder elke les van
+hoofdstuk 5 is weg (de knoppen doen dat), veertien tabbladen in de afsluiter
+van het bewegingsscript zijn er acht (de sprong is één tabblad met vijf
+stappen), Fouten zoeken heeft vier tabbladen uitleg met korte namen in
+plaats van tien stappen op twee regels, een tabel direct onder code van zes
+regels of meer staat in een eigen stap (naast de code werd hij in de smalle
+kolom te hoog), en een video is een eigen stap of tabblad van hooguit 420
+pixels hoog. Een `## Stap N: Test het` van één regel staat onder de stap
+ervoor. Godot-versies en Wat nu? houden `les_tabs: false`: naslag en een
+keuzelijst. `src/docs-tests/schermen.test.ts` bewaakt de verwijzingen per
+scherm, de openers, hooguit tien tabbladen per les, geen stap De basis en
+geen handgeschreven regel met de volgende les. Een "tabblad" is in deze
+lessen vaak een tabblad van Godot (TileSet, Uitvoer); zeg er dan bij waar
+het staat ("onderin", "in de Project Manager").
+
 ## Code in MDX-expressies
 
 MDX eet van elke vervolgregel in een `{`…`}`-expressie tot twee spaties op.

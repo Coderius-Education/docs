@@ -12,7 +12,7 @@ In je valregel staat een stukje dat je hebt overgetypt zonder uitleg: `* delta`.
 
 <GDQuestLes slug="movement-delta" />
 
-## Wat je nu gaat leren
+## Wat ga je leren?
 
 Twee dingen die bij elkaar horen: wat een **parameter** is, en wat **`delta`** doet. Je schrijft geen nieuwe regels; je onderzoekt de regel die er al staat.
 
@@ -31,7 +31,7 @@ Je moet elke frame dus maar een klein stukje van die seconde meetellen. Precies 
 
 </details>
 
-## `delta` is een parameter
+## Parameter: wat `delta` is
 
 Kijk naar de eerste regel van je functie:
 
@@ -43,7 +43,9 @@ Tussen de haakjes staat `delta`. Dat is een **parameter**: informatie die Godot 
 
 Wat er in zit, is de tijd in seconden sinds de vorige keer dat de functie draaide. `_physics_process` draait zestig keer per seconde, dus dat is een zestigste: ongeveer `0.0167`.
 
-## Onderzoek: kijk zelf wat er in zit
+## Onderzoek: kijk zelf wat er in `delta` zit
+
+### Print `delta`
 
 Zet deze regel bovenin je functie en start met `F5`:
 
@@ -55,11 +57,11 @@ In **Uitvoer** loopt een stroom van steeds hetzelfde getal: `0.01666666666667`. 
 
 Haal de `print` daarna weer weg.
 
-## Waarom `* delta` het probleem oplost
+### Waarom `* delta` het probleem oplost
 
 `980 * 0.0167` is ongeveer `16`. Elke frame komt er dus zo'n 16 bij de snelheid, en na zestig frames — één seconde — zit je op ongeveer 980. Precies wat de bedoeling was.
 
-Zet je die klok in **Project Settings → Physics → Common → Physics Ticks per Second** op 120 (zet rechtsboven **Advanced Settings** aan als je hem niet ziet), dan is `delta` half zo groot en telt elke frame half zoveel mee. Het resultaat na één seconde blijft hetzelfde.
+Zet je de klok van `_physics_process` in **Project Settings → Physics → Common → Physics Ticks per Second** op 120, dan is `delta` half zo groot en telt elke frame half zoveel mee. Het resultaat na één seconde blijft hetzelfde. Zie je de instelling niet, zet dan rechtsboven **Advanced Settings** aan.
 
 **Dat is waar het om gaat:** met `delta` hangt je spel niet af van hoe vaak de functie draait. Zonder `delta` val je bij 120 keer per seconde ineens twee keer zo hard, en in `_process` bepaalt de snelheid van je computer hoe hard je valt.
 

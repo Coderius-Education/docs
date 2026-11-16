@@ -6,6 +6,8 @@ sidebar_label: "Deel 1: Een script dat draait"
 
 # Het bewegingsscript bouwen — Deel 1: Een script dat draait
 
+## In deze les
+
 Je script bestaat uit één regel: `extends CharacterBody2D`. In deze les voeg je de functie toe waar de rest van je spel in komt te staan — het kloppend hart dat Godot zestig keer per seconde aanroept.
 
 <GodotVersie />
@@ -19,15 +21,21 @@ Je script bestaat uit één regel: `extends CharacterBody2D`. In deze les voeg j
 
 ## Een oefenspoor ernaast \{#gdquest}
 
+### Een tweede spoor
+
 Programmeren leer je door het te doen, maar in je eigen game oefenen is lastig: als er iets niet werkt, weet je niet of het aan je code ligt of aan je scène.
 
 Daarom loopt er vanaf hier een tweede spoor mee. **Hier** bouw je je game: elke les brengt het script dat je zelf typt een stap verder, en aan het eind draait je spel weer. **Bij GDQuest** oefen je elk concept los, in je browser, zonder Godot erbij — gaat het daar mis, dan ligt het aan de code, meer kan het niet zijn.
+
+### Learn GDScript From Zero
 
 Ga naar [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/). Je werkt direct in je browser en hoeft niets te installeren.
 
 ![GDQuest learn-gdscript lessenoverzicht met de relevante lessen gemarkeerd](../images/gdscript.png)
 
 Begin met les 1 en 2. Die kosten samen een kwartier en leggen uit wat code is en hoe je een foutmelding leest. Les 3 gaat over `extends` — de regel die al in je script staat.
+
+### Het blok in elke les
 
 Vanaf hier staat in elke les van dit hoofdstuk zo'n blok, bij de regel die je net hebt geschreven:
 
@@ -72,7 +80,13 @@ func _physics_process(delta: float) -> void:
 
 Let op het inspringen: `move_and_slide()` staat één tab naar rechts. Daaraan ziet GDScript dat die regel **binnen** de functie hoort. Alles wat je in de volgende lessen toevoegt komt op datzelfde niveau te staan.
 
-## Stap 2: Wat hier staat, woord voor woord
+:::tip
+Zet Godot een gele waarschuwing bij `delta` dat de parameter niet gebruikt wordt? Dat klopt, en het mag. Vanaf Deel 2 gebruik je hem wel en verdwijnt de waarschuwing.
+:::
+
+## Stap 2: Wat je functie zegt
+
+### Woord voor woord
 
 **`func`** begint een functie, net als `def` in Python.
 
@@ -84,9 +98,16 @@ Let op het inspringen: `move_and_slide()` staat één tab naar rechts. Daaraan z
 
 **`move_and_slide()`** is de opdracht "verplaats mij nu". Godot kijkt naar de snelheid van je karakter, houdt rekening met muren en vloeren, en zet hem op zijn nieuwe plek. Die snelheid is nu nog nul, dus er beweegt niets.
 
-:::tip
-Zet Godot een gele waarschuwing bij `delta` dat de parameter niet gebruikt wordt? Dat klopt, en het mag. Vanaf Deel 2 gebruik je hem wel en verdwijnt de waarschuwing.
-:::
+### `_process` of `_physics_process`?
+
+Godot heeft twee functies die elke frame draaien. Welke je kiest hangt af van of er physics bij komt kijken:
+
+| Functie                   | Wanneer gebruik je het?                                              |
+| :------------------------ | :------------------------------------------------------------------- |
+| `_process(delta)`         | UI bijwerken, tellers, animatie-logica zonder botsingen              |
+| `_physics_process(delta)` | Beweging, zwaartekracht, botsingen — alles waar physics bij hoort     |
+
+Wij bouwen beweging met botsingen, dus `_physics_process`. Deze tabel staat ook in de [GDScript-tips](site:godot/gdscript-tips#functies).
 
 ## Stap 3: Test het
 
@@ -104,7 +125,7 @@ func _physics_process(delta: float) -> void:
 
 In het paneel **Uitvoer** onderin verschijnt nu een eindeloze stroom regels. Haal die `print` daarna weer weg — zestig regels per seconde maakt Uitvoer onbruikbaar.
 
-## Voorspel: wat als je `_physics_process` vervangt door `_ready`?
+**Wat zou er gebeuren als je `_physics_process` vervangt door `_ready`?**
 
 <details>
 <summary>Antwoord</summary>
@@ -114,17 +135,6 @@ In het paneel **Uitvoer** onderin verschijnt nu een eindeloze stroom regels. Haa
 Beide functies bestaan naast elkaar: `_ready` voor wat één keer moet gebeuren, `_physics_process` voor wat continu moet gebeuren.
 
 </details>
-
-## `_process` of `_physics_process`?
-
-Godot heeft twee functies die elke frame draaien. Welke je kiest hangt af van of er physics bij komt kijken:
-
-| Functie                   | Wanneer gebruik je het?                                              |
-| :------------------------ | :------------------------------------------------------------------- |
-| `_process(delta)`         | UI bijwerken, tellers, animatie-logica zonder botsingen              |
-| `_physics_process(delta)` | Beweging, zwaartekracht, botsingen — alles waar physics bij hoort     |
-
-Wij bouwen beweging met botsingen, dus `_physics_process`. Deze tabel staat ook in de [GDScript-tips](site:godot/gdscript-tips#functies).
 
 ## Je script tot nu toe
 

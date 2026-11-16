@@ -54,7 +54,7 @@ Het stukje `* delta` laat je even voor wat het is — dat is Deel 3.
 (0, 49)
 ```
 
-De X blijft `0`, want je beweegt niet zijwaarts. De Y wordt elke frame `16.33` groter: dat is die 980 verdeeld over zestig frames. Steeds hetzelfde stukje erbij, en juist daardoor val je steeds sneller.
+De X blijft `0`, want je beweegt niet zijwaarts. De Y wordt elke frame `16.33` groter: dat is de 980 van de zwaartekracht, verdeeld over zestig frames. Steeds hetzelfde stukje erbij, en juist daardoor val je steeds sneller.
 
 Je kunt `.x` en `.y` los aanspreken, bijvoorbeeld `velocity.y = 0`. Dat gebruik je vanaf Deel 5.
 

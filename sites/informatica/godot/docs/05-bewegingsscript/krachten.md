@@ -63,7 +63,7 @@ In plaats van twee losse checks doet `get_axis` het in één regel:
 - links ingedrukt → `direction` is `-1`
 - rechts ingedrukt → `direction` is `1`
 
-Probeer het: zet `print(direction)` eronder en kijk in **Uitvoer** terwijl je de pijltjes indrukt.
+Probeer het: zet `print(direction)` onder de regel met `get_axis` en kijk in **Uitvoer** terwijl je de pijltjes indrukt.
 
 Dat getal vermenigvuldig je met je snelheid: `-1 * 300` is 300 naar links, `1 * 300` is 300 naar rechts, en `0 * 300` is stilstaan. Eén regel, drie gevallen.
 

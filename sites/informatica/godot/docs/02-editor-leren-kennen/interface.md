@@ -41,13 +41,7 @@ De **Scene Tree** staat **linksboven**. Dat past bij hoe je leest: van links naa
 - **Inspector** (rechtsboven) — eigenschappen van de geselecteerde node.
 - **FileSystem** (linksonder) — alle bestanden in je project.
 - **Uitvoer** (onderin) — foutmeldingen en `print()`-output. Vanaf [Je eerste regels code](site:godot/docs/start_gdscript) ga je hier vaak naartoe.
-
-## Het spel starten en stoppen \{#spel-starten}
-
-|     Actie     |       Knop       | Sneltoets         |
-| :-----------: | :--------------: | :---------------- |
-| Spel starten  | ▶ (rechtsboven) | `F5`              |
-| Spel stoppen  | ■ (rechtsboven) | `F8` of `Escape`  |
+- **Toolbar** (bovenaan) — met ▶ of `F5` start je je spel, met ■ of `F8` (of `Escape`) stop je het.
 
 ## Opdracht 2.1.a: sloop de layout en herstel hem
 

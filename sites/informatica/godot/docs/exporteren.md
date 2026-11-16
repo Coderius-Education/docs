@@ -49,10 +49,10 @@ Die regel kun je selecteren en kopiëren met `Ctrl + C`. Handig om ergens te bew
 
 ## Stap 3: Ga één niveau omhoog
 
-Nu wil je de projectmap als één pictogram zien, in plaats van de inhoud ervan. Twee manieren:
+Je wilt de projectmap als één pictogram zien, in plaats van de inhoud ervan. Dat kan op twee manieren:
 
 - Klik linksboven in de werkbalk op de **pijl-omhoog (↑)**.
-- Klik in de adresbalk op de mapnaam die vóór je projectmap staat (in het voorbeeld hierboven: `Documents`).
+- Klik in de adresbalk op de mapnaam die vóór je projectmap staat (in het voorbeeld uit Stap 2: `Documents`).
 
 Je ziet nu je projectmap tussen de andere mappen staan. Dít is het pictogram dat je sleept, kopieert of inlevert.
 
@@ -60,7 +60,7 @@ Je ziet nu je projectmap tussen de andere mappen staan. Dít is het pictogram da
 Op een Mac werkt het vergelijkbaar: rechtermuisknop op de mapnaam bovenin het Finder-venster toont de mappen erboven, en `Command + ↑` gaat één niveau omhoog.
 :::
 
-## Wat zit er in je projectmap?
+## Bestanden: wat zit er in je projectmap? \{#wat-zit-er-in-je-projectmap}
 
 | Bestand of map | Wat is het? |
 | :--- | :--- |

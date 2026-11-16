@@ -234,13 +234,21 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
     // `toggle` komt als het blok open is (en borrelt niet: vangen).
     el.addEventListener('toggle', meet, true);
     // Een blok van Docusaurus klapt met een animatie open: pas daarna heeft
-    // de inhoud zijn hoogte (openBlokInVak).
+    // de inhoud zijn hoogte (openBlokInVak). Hoe lang dat duurt, hangt af van
+    // de hoogte: een oplossing van zeventig regels doet er 503 ms over, en
+    // met een vaste 400 ms mat de les halverwege (het vak was dan 115 pixels
+    // te hoog, Godot 10.1.b). Dus meten als de animatie klaar is; de wachttijd
+    // blijft voor wie animaties uit heeft staan, want dan komt er geen einde.
     let klapper = 0;
     const naKlappen = () => {
       window.clearTimeout(klapper);
       klapper = window.setTimeout(meet, 400);
     };
+    const naAnimatie = (e: TransitionEvent) => {
+      if (e.propertyName === 'height') meet();
+    };
     el.addEventListener('toggle', naKlappen, true);
+    el.addEventListener('transitionend', naAnimatie);
     el.addEventListener('load', meet, true);
     window.addEventListener('resize', meet);
     // Het lettertype van de code laadt pas als er code in beeld komt, en is
@@ -252,6 +260,7 @@ function Rij({ niveau, children }: { niveau: Niveau; children?: ReactNode }): Re
       el.removeEventListener('click', meet);
       el.removeEventListener('toggle', meet, true);
       el.removeEventListener('toggle', naKlappen, true);
+      el.removeEventListener('transitionend', naAnimatie);
       window.clearTimeout(klapper);
       el.removeEventListener('load', meet, true);
       window.removeEventListener('resize', meet);

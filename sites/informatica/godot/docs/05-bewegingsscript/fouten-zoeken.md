@@ -13,9 +13,9 @@ Dat hoort erbij. Wat je nu leert is niet hoe je fouten voorkomt, maar hoe je ze 
 
 <GDQuestLes slug="fouten-zoeken" />
 
-## Drie soorten fouten \{#drie-soorten}
+## Drie soorten \{#drie-soorten}
 
-Ze zien er anders uit en vragen een andere eerste stap. Bepaal daarom altijd eerst welke je voor je hebt.
+Er zijn drie soorten fouten. Ze zien er anders uit en vragen een andere eerste stap. Bepaal daarom altijd eerst welke je voor je hebt.
 
 | Wat je ziet | Wat het is | Waar je begint |
 | :--- | :--- | :--- |
@@ -25,7 +25,9 @@ Ze zien er anders uit en vragen een andere eerste stap. Bepaal daarom altijd eer
 
 De derde is de lastigste, want er is niets kapot. Alleen jij weet dat het niet klopt.
 
-## Een foutmelding lezen \{#foutmelding-lezen}
+## Meldingen
+
+### Een foutmelding lezen \{#foutmelding-lezen}
 
 Een melding in Uitvoer ziet er zo uit:
 
@@ -45,13 +47,11 @@ De laatste zin is vaak Engels en klinkt technischer dan hij is. Zoek de woorden 
 Krijg je meerdere meldingen tegelijk? Los alleen de **bovenste** op en start opnieuw. De rest is vaak gevolgschade en verdwijnt vanzelf.
 :::
 
-## Drie meldingen die je zult tegenkomen \{#runtime-meldingen}
+### `null instance` \{#runtime-meldingen}
 
-Deze drie komen tijdens het spelen, niet bij het starten. Je spel draait dus al even en klapt er dan uit. Ze zeggen alle drie iets anders over waar je moet kijken.
+Drie meldingen kom je tegen tijdens het spelen, niet bij het starten. Je spel draait dus al even en klapt er dan uit. Ze zeggen alle drie iets anders over waar je moet kijken.
 
-### `Attempt to call function 'x' in base 'null instance' on a null instance`
-
-Je vraagt iets aan een node die er niet is. **`null`** betekent leeg: de variabele bestaat, maar er zit geen node in. Vlak erboven zegt Godot welke node hij niet vond:
+De eerste is `Attempt to call function 'x' in base 'null instance' on a null instance`. Je vraagt iets aan een node die er niet is. **`null`** betekent leeg: de variabele bestaat, maar er zit geen node in. Vlak erboven zegt Godot welke node hij niet vond:
 
 ```
 Node not found: "Sprite" (relative to "/root/Level1/CharacterBody2D").
@@ -60,9 +60,9 @@ Attempt to call function 'play' in base 'null instance' on a null instance.
 
 Bijna altijd staat er een `$Naam` in je regel die niet klopt met de Scene Tree. Vergelijk letter voor letter: `$AnimatedSprite2D` vindt niets als je node `$Sprite` heet. Twijfel je over de schrijfwijze, sleep de node dan vanuit de Scene Tree je script in met `Ctrl` ingedrukt — Godot typt het pad dan zelf.
 
-### `Invalid access to property or key 'x' on a base object of type 'y'`
+### `Invalid access`
 
-De node bestaat wél, maar die eigenschap heeft hij niet.
+De tweede is `Invalid access to property or key 'x' on a base object of type 'y'`. De node bestaat, maar die eigenschap heeft hij niet.
 
 ```
 Invalid access to property or key 'text' on a base object of type 'Node2D'.
@@ -70,7 +70,7 @@ Invalid access to property or key 'text' on a base object of type 'Node2D'.
 
 Lees het achterste stuk eerst: `type 'Node2D'`. Dat is wat Godot denkt dat je te pakken hebt. Een `Node2D` heeft geen `text` — een `Label` wel. Meestal wijs je dus naar de verkeerde node, of ligt de eigenschap één laag dieper: niet op je `CanvasLayer` maar op het `Label` daaronder.
 
-### Helemaal geen melding
+### Geen melding
 
 Het derde geval is het vervelendst: je klikt, je springt, je raakt het muntje — en er gebeurt niets. Godot zegt niets, want er is niets kapot. Er is alleen nooit iets aangeroepen.
 
@@ -80,7 +80,9 @@ Bij een signal is dat bijna altijd de oorzaak: de functie staat in je script, ma
 2. Onder een verbonden signal staat de naam van de functie ingesprongen. Staat daar niets, dan is het nooit gekoppeld.
 3. Zet ter controle `print("hier")` als eerste regel in de functie. Blijft Uitvoer leeg terwijl je het muntje raakt, dan weet je het zeker.
 
-## Print op drie plekken \{#print-drie}
+## Zoeken
+
+### Print op drie plekken \{#print-drie}
 
 Draait je spel zonder foutmelding, maar gebeurt er niets? Dan weet je nog niets — en dat is precies het probleem. `print()` maakt zichtbaar wat je code doet.
 
@@ -104,7 +106,7 @@ func _physics_process(delta: float) -> void:
 
 Haal je prints daarna weg. Een `print` in `_physics_process` levert zestig regels per seconde op, en dan zie je de echte melding niet meer.
 
-## Halveer je probleem \{#halveren}
+### Halveer je probleem \{#halveren}
 
 Weet je niet welke regel de boosdoener is, zet dan de helft uit met een `#` ervoor en kijk of het probleem blijft.
 
@@ -120,15 +122,15 @@ Herhaal dit met de helft die overblijft. Na een paar keer heb je nog twee of dri
 
 Dit werkt ook buiten je code: zet een node tijdelijk op onzichtbaar, of haal een tegel weg. De vraag is steeds dezelfde — verandert het probleem als ik dit wegneem?
 
-## Vergelijk met iets dat wél werkt \{#vergelijken}
+### Vergelijk met iets dat wél werkt \{#vergelijken}
 
 In Godot zit een fout vaak niet in je code maar in de editor: een signal dat niet verbonden is, een `Shape` die leeg is, een node die net anders heet.
 
 Heb je twee dingen die op elkaar lijken en werkt er één? Zet ze dan naast elkaar en schrijf de verschillen op. Klik beide nodes aan en vergelijk de Inspector regel voor regel. Meestal vind je hem binnen een minuut, en meestal is het iets kleins dat je nooit had bedacht.
 
-## De vier vragen \{#vier-vragen}
+### De vier vragen \{#vier-vragen}
 
-Als je echt vastzit, beantwoord deze vier op papier of hardop. Ze dwingen je van "het werkt niet" naar iets dat je kunt onderzoeken.
+Als je echt vastzit, beantwoord deze vier vragen op papier of hardop. Ze dwingen je van "het werkt niet" naar iets dat je kunt onderzoeken.
 
 1. **Wat verwacht ik precies?** Niet "hij moet springen", maar "als ik spatie druk moet `velocity.y` op `-400` staan".
 2. **Wat gebeurt er precies?** Niet "niets", maar "de print binnen de `if` verschijnt nooit".
@@ -237,9 +239,11 @@ Zie [Deel 7 — Springen](site:godot/docs/movement-afsluiter) voor het volledige
 
 </details>
 
-## Waar staan de veelgemaakte fouten? \{#foutenindex}
+## Foutenindex: waar staan de veelgemaakte fouten? \{#foutenindex}
 
-Elke les in deze cursus eindigt met een blok **Er gaat iets mis** waarin de fouten staan die bij dat onderwerp horen. Zoek daar eerst, voordat je zelf gaat graven.
+### Van installatie tot beweging
+
+Elke les eindigt met een blok **Er gaat iets mis**, met de fouten van dat onderwerp. Zoek daar eerst.
 
 | Waar het misgaat | Kijk hier |
 | :--- | :--- |
@@ -248,6 +252,11 @@ Elke les in deze cursus eindigt met een blok **Er gaat iets mis** waarin de fout
 | Level en tegels | [Level tekenen](site:godot/docs/tilemap_opzetten), [Collision op je tegels](site:godot/docs/tilemap_collision), [Achtergrond](site:godot/docs/background_image) |
 | Karakter en eerste code | [Een speelbaar karakter](site:godot/docs/sprite), [Je eerste regels code](site:godot/docs/start_gdscript), [Je eerste eigen script](site:godot/docs/sprite_movement) |
 | Beweging en springen | [Deel 1 — Een script dat draait](site:godot/docs/basis_movement_begrijpen), [Deel 2 — Vallen](site:godot/docs/movement-motor), [Deel 3 — Delta](site:godot/docs/movement-delta), [Deel 4 — Je eerste if](site:godot/docs/movement-grond), [Deel 5 — Lopen](site:godot/docs/movement-krachten), [Deel 6 — Stoppen](site:godot/docs/movement-remmen), [Deel 7 — Springen](site:godot/docs/movement-afsluiter) |
+
+### Van camera tot GDScript
+
+| Waar het misgaat | Kijk hier |
+| :--- | :--- |
 | Camera | [Camera die de speler volgt](site:godot/docs/camera2d) |
 | Animaties | [Animaties maken](site:godot/docs/animaties), [Animaties in code](site:godot/docs/animaties_code), [Je eigen animaties](site:godot/docs/eigen_animaties) |
 | Signals en score | [Signals & een muntje](site:godot/docs/signals_muntje), [Score in je karakter](site:godot/docs/score_in_karakter), [Global variables](site:godot/docs/global_variables), [Score op het scherm](site:godot/docs/score_op_scherm), [Groups](site:godot/docs/groups), [Een power-up](site:godot/docs/power_up) |

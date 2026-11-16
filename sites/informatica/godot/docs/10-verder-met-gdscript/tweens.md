@@ -30,7 +30,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 Het muntje schuift in een halve seconde veertig pixels omhoog, en blijft daar hangen. Er staat geen `queue_free()` meer, dus het gaat niet weg.
 
-En er is nog iets: het muntje bestaat nog. Loop je eronder door en spring je er opnieuw tegenaan, dan krijg je de punten van dat muntje nog een keer. Dat los je verderop op.
+En er is nog iets: het muntje bestaat nog. Loop je eronder door en spring je er opnieuw tegenaan, dan krijg je de punten van dat muntje nog een keer. Dat los je op in Stap 3.
 
 </details>
 
