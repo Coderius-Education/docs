@@ -5,7 +5,7 @@ slug: /json_opslaan
 
 # JSON: een highscore die blijft
 
-Je score staat in `Global`, en die is weg zodra je het spel afsluit. Een highscore die er morgen nog staat, moet in een bestand. Je schrijft hem als **JSON**: dezelfde tekstvorm die je in Python met `json.dump` maakte.
+Je score is weg zodra je het spel afsluit. Een highscore die blijft, schrijf je als **JSON** in een bestand.
 
 <Voorkennis
   items={[
@@ -16,7 +16,7 @@ Je score staat in `Global`, en die is weg zodra je het spel afsluit. Een highsco
 
 ## Voorspel: wat wordt de tekst?
 
-Een dictionary kun je niet zomaar in een bestand zetten: een bestand bevat tekst. `JSON.stringify` maakt van een dictionary tekst:
+Een bestand bevat tekst, geen dictionary. `JSON.stringify` maakt van een dictionary tekst:
 
 ```gdscript
 extends Node
@@ -51,7 +51,9 @@ Je kent `res://` al: de map van je project. Exporteer je je spel (zie [Je projec
 
 Speel je vanuit de editor, dan lukt schrijven in `res://` dus wel. Gebruik het toch niet: je spel werkt dan tot je het exporteert, en daarna niet meer.
 
-## Stap 1: Een highscore bijhouden
+## Stap 1: Bijhouden
+
+### De highscore in Global
 
 Zet in `global.gd`, onder de variabelen die er al staan:
 
@@ -96,7 +98,9 @@ Een potje is ook klaar als je het laatste level haalt. Heb je de vlag uit [Lijst
 
 Heb je die vlag niet, zet de regel dan in het script van de vlag in je laatste level, vóór `change_scene_to_file`.
 
-## Stap 2: De highscore wegschrijven
+## Stap 2: Wegschrijven
+
+### Naar een bestand
 
 De highscore moet ook het afsluiten van je spel overleven. Zet in `global.gd` een functie die hem in een bestand zet:
 
@@ -115,7 +119,7 @@ Drie dingen in die functie zijn nieuw:
 - `JSON.stringify(gegevens)` maakt van je dictionary een tekst: `{"highscore":40}`.
 - `bestand.store_string(...)` schrijft die tekst in het bestand.
 
-### Bewaren bij een nieuwe highscore
+### Bij een nieuwe highscore
 
 Roep `bewaar_highscore()` aan in `controleer_highscore`, zodat een nieuwe highscore meteen wordt bewaard:
 
@@ -128,9 +132,11 @@ func controleer_highscore() -> void:
 
 Speel een potje uit. Kies daarna in Godot **Project** en dan **Open User Data Folder**. Er gaat een map open met `highscore.json` erin. Open het bestand met een teksteditor, zoals Kladblok: er staat `{"highscore":40}`, of jouw score.
 
-## Stap 3: De highscore inlezen
+## Stap 3: Inlezen
 
-Bij de start van het spel lees je het bestand weer in. Een Autoload maakt Godot als allereerste, dus `_ready()` in `global.gd` is de goede plek:
+### Het bestand inlezen
+
+Bij de start lees je het bestand weer in, in `_ready()` van `global.gd`: een Autoload maakt Godot als allereerste.
 
 ```gdscript
 func _ready() -> void:
@@ -145,11 +151,9 @@ func lees_highscore() -> void:
     highscore = int(gegevens["highscore"])
 ```
 
-De eerste keer dat iemand je spel speelt, is er nog geen bestand. Daarom kijk je eerst met `file_exists`, en stop je met `return` als het er niet is. De highscore blijft dan `0`.
+Bij de eerste start is er nog geen bestand: `file_exists` ziet dat, de functie stopt bij `return`, en de highscore blijft `0`. `JSON.parse_string` doet het omgekeerde van `stringify`: van de tekst maakt hij weer een dictionary. Waarom er `int()` omheen staat, lees je bij [Er gaat iets mis](#er-gaat-iets-mis).
 
-`JSON.parse_string` doet het omgekeerde van `stringify`: van de tekst maakt hij weer een dictionary. Waarom er `int()` omheen staat, lees je bij [Er gaat iets mis](#er-gaat-iets-mis).
-
-## Stap 4: Alles bij elkaar
+### Alles bij elkaar
 
 Zo ziet `global.gd` eruit met de highscore erbij. Nieuw zijn `BESTAND` en `highscore` bovenaan, `_ready()`, en de drie functies onderaan. De rest stond er al: `reset()`, `verlies_leven()` en `is_game_over()` uit [Global variables (Autoload)](site:godot/docs/global_variables), en de lijst `level_volgorde` uit opdracht 10.2.a van [Lijsten: één vlag voor al je levels](site:godot/docs/lijsten). Heb je de lijst niet in `Global` gezet, dan laat je die regel weg. Heeft jouw versie nog meer, dan laat je dat staan.
 
@@ -327,7 +331,7 @@ Het tellen staat in het menu en niet in `reset()`: die roep je misschien ook aan
 
 **Oorzaak:** JSON maakt geen verschil tussen hele getallen en kommagetallen. Bij het inlezen maakt Godot van elk getal een kommagetal, dus `40` komt terug als `40.0`.
 
-**Oplossing:** zet er `int()` omheen bij het inlezen, zoals in Stap 3: `highscore = int(gegevens["highscore"])`.
+**Oplossing:** zet er `int()` omheen bij het inlezen, zoals bij Inlezen: `highscore = int(gegevens["highscore"])`.
 
 **Zelf vinden:** print `gegevens` in `lees_highscore`. Je ziet dan `{ "highscore": 40.0 }`: het bestand zelf is goed, het inlezen maakt er een kommagetal van.
 
@@ -338,7 +342,7 @@ Het tellen staat in het menu en niet in `reset()`: die roep je misschien ook aan
 
 **Oorzaak:** het bestand wordt niet geschreven, of niet gelezen. Vaak wordt `controleer_highscore()` niet aangeroepen op de plek waar jouw potje eindigt: je ging game over, maar alleen de vlag roept hem aan. Of `lees_highscore()` staat niet in `_ready()`.
 
-**Oplossing:** kijk of je vijand-script én de vlag van je laatste level `Global.controleer_highscore()` aanroepen, zoals in het tabblad Stap 1 onder Bij game over en Na het laatste level, en of `_ready()` in `global.gd` `lees_highscore()` aanroept.
+**Oplossing:** kijk of je vijand-script én de vlag van je laatste level `Global.controleer_highscore()` aanroepen, zoals in het tabblad Bijhouden, onder Bij game over en Na het laatste level, en of `_ready()` in `global.gd` `lees_highscore()` aanroept.
 
 **Zelf vinden:** open met **Open User Data Folder** de map van je spel. Staat er geen `highscore.json`, dan wordt er niets geschreven: zet een `print` in `bewaar_highscore`. Staat het bestand er wel, met de goede score erin, dan wordt het niet gelezen: zet een `print` in `lees_highscore`.
 

@@ -54,7 +54,7 @@ Registreer je het script als **Autoload**, dan laadt Godot het bij het opstarten
 
 #### Zonder Autoload
 
-**Wat denk je dat er gebeurt als je het instellen als Autoload overslaat en meteen `Global.score += 1` in je muntje-script zet?**
+**Wat gebeurt er als je dit overslaat en meteen `Global.score += 1` in je muntje-script zet?**
 
 <details>
 <summary>Antwoord</summary>

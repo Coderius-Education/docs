@@ -117,7 +117,7 @@ func val(delta: float) -> void:
         velocity += get_gravity() * delta
 ```
 
-Haal de twee regels voor de zwaartekracht daarna weg uit `_physics_process`, en zet op hun plek één regel: `val(delta)`. Start je spel met `F5`: je karakter valt zoals altijd. Aan wat het spel doet is niets veranderd, alleen aan hoe je script eruitziet.
+Haal de twee regels daarna weg uit `_physics_process`, en zet op hun plek één regel: `val(delta)`. Start je spel met `F5`: je karakter valt zoals altijd. Je spel doet hetzelfde, alleen je script ziet er anders uit.
 
 `delta` bestaat alleen binnen `_physics_process`: Godot geeft hem daar mee. Daarom geef je hem door als parameter, zoals de positie in [Spawnen: nodes maken in code](site:godot/docs/spawnen): `val(delta)` stuurt de waarde mee, en `func val(delta: float)` vangt hem op.
 

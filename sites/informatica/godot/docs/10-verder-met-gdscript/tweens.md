@@ -5,13 +5,11 @@ slug: /tweens
 
 # Tweens: een muntje dat wegzweeft
 
-Pak je nu een muntje, dan is het in één frame weg. In veel spellen springt het eerst omhoog en vervaagt het dan. Dat reken je niet zelf uit in `_process`: een **tween** schuift een eigenschap in een paar seconden van de ene waarde naar de andere.
+Pak je nu een muntje, dan is het in één frame weg. Met een **tween** springt het eerst omhoog en vervaagt het dan.
 
 ## Voorspel: wat zie je?
 
-Je werkt in deze les in `_on_body_entered` van je muntje. Heb je [Dictionaries: muntjes van brons, zilver en goud](site:godot/docs/dictionaries) overgeslagen, dan staat bij jou `Global.score += 1` in plaats van `Global.score += WAARDES[soort]`; dat werkt net zo.
-
-Dit is `_on_body_entered` met twee nieuwe regels en zonder `queue_free()`. De controle op winnen uit opdracht 7.5.a laat je er even uit; die komt terug in Stap 3.
+Je werkt in `_on_body_entered` van je muntje; zonder [Dictionaries: muntjes van brons, zilver en goud](site:godot/docs/dictionaries) staat bij jou `Global.score += 1`, en dat werkt net zo. Hier staat de functie met twee nieuwe regels en zonder `queue_free()`. De controle op winnen uit opdracht 7.5.a laat je er even uit; die komt terug bij Eén keer tellen.
 
 ```gdscript
 func _on_body_entered(body: Node2D) -> void:
@@ -28,7 +26,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 Het muntje schuift in een halve seconde veertig pixels omhoog, en blijft daar hangen. Er staat geen `queue_free()` meer, dus het gaat niet weg.
 
-En er is nog iets: het muntje bestaat nog. Loop je eronder door en spring je er opnieuw tegenaan, dan krijg je de punten van dat muntje nog een keer. Dat los je op in Stap 3, onder Eén keer tellen.
+En er is nog iets: het muntje bestaat nog. Loop je eronder door en spring je er opnieuw tegenaan, dan krijg je de punten van dat muntje nog een keer. Dat los je op in het tabblad Eén keer tellen.
 
 </details>
 
@@ -50,7 +48,9 @@ De twee nieuwe regels uit de voorspelvraag maken een tween en geven hem een opdr
 
 Een eigenschap van een eigenschap schrijf je in de tekst met een dubbele punt: `"position:y"` is de `y` van `position`. In gewone code schrijf je `position.y`, maar hier is het een tekst, en daarin gebruikt Godot de dubbele punt.
 
-## Stap 1: Omhoog en vervagen
+## Stap 1: Wegzweven
+
+### Omhoog en vervagen
 
 Een tween kan meer dingen achter elkaar doen. Elke `tween_property` begint pas als de vorige klaar is. Zet er een tweede bij die de doorzichtigheid naar `0` brengt:
 
@@ -67,9 +67,9 @@ func _on_body_entered(body: Node2D) -> void:
 
 Start je spel en pak een muntje. Het springt omhoog en vervaagt.
 
-## Stap 2: Daarna pas weg
+### Opruimen na de tween
 
-Het muntje is onzichtbaar, maar staat nog in je level. Je wilt `queue_free()` aanroepen als de tween klaar is, niet ervoor. Daar is `tween_callback` voor: die roept een functie aan op dat moment in de rij. Zet hem als laatste regel in `_on_body_entered`, onder de twee regels met `tween_property`:
+Na de tween is het muntje onzichtbaar, maar het staat nog in je level. Je wilt `queue_free()` aanroepen als de tween klaar is, niet ervoor. Daar is `tween_callback` voor: die roept een functie aan op dat moment in de rij. Zet hem als laatste regel in `_on_body_entered`, onder de twee regels met `tween_property`:
 
 ```gdscript
 func _on_body_entered(body: Node2D) -> void:
@@ -83,7 +83,9 @@ func _on_body_entered(body: Node2D) -> void:
 
 Let op: `queue_free` staat hier zonder haakjes. Je geeft de functie zelf mee, zodat de tween hem straks kan aanroepen. Met haakjes erachter zou je hem op deze regel al aanroepen, en dat weigert Godot (zie [Er gaat iets mis](#er-gaat-iets-mis)).
 
-## Stap 3: Eén keer tellen
+## Stap 2: Eén keer tellen
+
+### De variabele gepakt
 
 Het muntje bestaat nog een halve seconde nadat je het pakte. Loop je er in die tijd uit en weer in, dan telt het opnieuw. In een halve seconde lukt dat zelden, dus maak de tween even langzaam om het te zien: zet de `0.3` op `3.0`, start je spel, en loop een paar keer heen en weer door het muntje terwijl het omhoog zweeft. Je score gaat elke keer omhoog.
 

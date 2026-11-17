@@ -67,7 +67,7 @@ Dit is een gewone functie, zoals `is_game_over()` uit [Global variables (Autoloa
 
 ## Stap 3: Power-up
 
-De power-up is een `Area2D` met een `Sprite2D` en een `CollisionShape2D`, precies zoals het muntje in [Signals & een muntje oppakken](site:godot/docs/signals_muntje). Maak hem op dezelfde manier, koppel `body_entered`, en sla hem op als `power_up.tscn`. Zet dit in zijn script:
+De power-up is een `Area2D` met een `Sprite2D` en een `CollisionShape2D`, zoals het muntje in [Signals & een muntje oppakken](site:godot/docs/signals_muntje). Maak hem op dezelfde manier, koppel `body_entered` en sla hem op als `power_up.tscn`. Zet dit in zijn script:
 
 ```gdscript
 extends Area2D
@@ -77,9 +77,9 @@ func _on_body_entered(body: Node2D) -> void:
     queue_free()
 ```
 
-Bij het muntje las je met `body.score` een variabele van je karakter. Hier roep je met `body.` een **functie** van hem aan.
+Bij het muntje las je een variabele van `body`, je karakter. Hier roep je er een **functie** van aan.
 
-Sleep `power_up.tscn` in je level en start het spel. Loop tegen de power-up aan en spring: je vliegt een stuk hoger, en dat blijft zo. Te lang: vijf seconden later moet de sprongkracht weer op `-800.0` staan.
+Sleep `power_up.tscn` in je level, start het spel en pak hem op: je springt een stuk hoger, en dat blijft zo. Te lang: na vijf seconden moet de sprongkracht terug naar `-800.0`.
 
 **Hoe zou je dat aanpakken met wat je nu kent?**
 
