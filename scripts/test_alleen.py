@@ -245,11 +245,11 @@ class TestCompileerRunner(unittest.TestCase):
             index = [
                 {"naam": "a", "bron": "docs/les.md", "regel": 10, "begin": 8, "eind": 14},
                 {"naam": "b", "bron": "docs/les.md", "regel": 30, "begin": 28, "eind": 33},
-                # Een editor-template: geen eind, dus het hele bestand.
-                {"naam": "t", "bron": "src/components/WebMicroEditor/templates.ts", "regel": 0},
+                # Een bouwsteen van de editor: geen eind, dus het hele bestand.
+                {"naam": "t", "bron": "src/components/WebMicroEditor/bouwstenen.ts", "regel": 0},
             ]
             les = "sites/informatica/robotica/docs/les.md"
-            tpl = "sites/informatica/robotica/src/components/WebMicroEditor/templates.ts"
+            tpl = "sites/informatica/robotica/src/components/WebMicroEditor/bouwstenen.ts"
 
             def kies(bestanden):
                 return [i["naam"] for i in mod.gekozen(index, site, Selectie(gewijzigd(bestanden), "robotica"))]

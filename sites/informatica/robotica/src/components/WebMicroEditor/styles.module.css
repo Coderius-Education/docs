@@ -27,8 +27,7 @@
   align-items: center;
 }
 
-.toolbarSecundair .btn,
-.toolbarSecundair .select {
+.toolbarSecundair .btn {
   height: 32px;
   padding: 0 10px;
   font-size: 13px;
@@ -202,21 +201,6 @@
   flex: 1;
 }
 
-.select {
-  height: 36px;
-  padding: 0 10px;
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 8px;
-  background: var(--ifm-background-color);
-  color: var(--ifm-color-emphasis-800);
-  font-size: 14px;
-}
-
-.selectIcoon {
-  flex-shrink: 0;
-  color: var(--ifm-color-emphasis-600);
-}
-
 .workArea {
   display: flex;
   flex-direction: row;
@@ -245,6 +229,12 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+/* Het palet met bouwstenen is smaller dan de lijst met bestanden: elke
+   pixel hier gaat van de code af. */
+.workPanePalet {
+  flex-basis: 212px;
 }
 
 @media (max-width: 900px) {
@@ -619,4 +609,226 @@
 
 .fileUp {
   margin-left: 10px;
+}
+
+/* Het palet met bouwstenen, links van de code. Elke groep heeft een eigen
+   kleur aan de linkerrand, zoals de categorieën van een blokkeneditor. */
+.palet {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  height: 380px;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+/* Op een telefoon schuift de pagina al; een tweede schuifvak erin verborg
+   de koppen van de andere groepen. */
+@media (max-width: 900px) {
+  .palet {
+    height: auto;
+  }
+}
+
+.paletGroep {
+  --groep: var(--ifm-color-info-dark);
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.paletGroep[data-groep="actuatoren"] {
+  --groep: var(--ifm-color-success-dark);
+}
+
+.paletGroep[data-groep="python"] {
+  --groep: var(--ifm-color-warning-dark);
+}
+
+.paletKopKnop {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 10px 6px 8px;
+  border: none;
+  border-left: 4px solid var(--groep);
+  background: none;
+  color: var(--ifm-color-emphasis-800);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.paletKopKnop:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.paletKopKnop:focus-visible,
+.steenKnop:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: -2px;
+}
+
+.paletLijst {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0;
+  padding: 2px 8px 8px;
+  list-style: none;
+}
+
+.paletLijst[hidden] {
+  display: none;
+}
+
+.steen {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Een klik toont het voorbeeld van de bouwsteen naast de code. */
+.steenKnop {
+  flex: 1;
+  min-width: 0;
+  padding: 3px 8px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-left: 4px solid var(--groep);
+  border-radius: 6px;
+  background: var(--ifm-background-color);
+  color: var(--ifm-color-emphasis-800);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.steenKnop:hover {
+  border-color: var(--groep);
+  background: var(--ifm-color-emphasis-100);
+}
+
+/* Op een telefoon tik je met een vinger: daar is een bouwsteen hoger. */
+@media (max-width: 900px) {
+  .steenKnop {
+    padding: 8px 10px;
+  }
+}
+
+/* De shell onder zijn kop: dicht terwijl het voorbeeld open staat. */
+.shellDeel {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shellDeel[hidden] {
+  display: none;
+}
+
+/* Met een voorbeeld open is de kolom even breed als de code: de langste
+   import van de bibliotheek (62 tekens) past er dan op één regel in. */
+.workPaneVoorbeeld {
+  flex: 1.6 1 0;
+}
+
+/* Het voorbeeld van een bouwsteen: code om over te typen, een zin uitleg en
+   links naar de lessen. Even hoog als de shell die het vervangt. */
+.voorbeeld {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 426px;
+  padding: 10px 6px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  font-size: 14px;
+}
+
+.voorbeeldKop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 600;
+}
+
+/* Een lang voorbeeld (de motoren, zeventien regels) schuift in zijn eigen
+   vak: de uitleg en de links eronder blijven in beeld. 11,8 pixels is de
+   kleinste letter van de codeblokken in de lessen; daarmee passen er 62
+   tekens naast de code, de langste import van de bibliotheek. */
+.voorbeeldCode {
+  flex: 0 1 auto;
+  min-height: 90px;
+  overflow-y: auto;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  font-size: 11.8px;
+}
+
+/* Een regel die doorloopt, springt in: zo zie je dat het één regel is. */
+.voorbeeldCode :global(.cm-line) {
+  padding: 0 0 0 calc(6px + 2ch);
+  text-indent: -2ch;
+}
+
+/* Op een telefoon schuift de pagina; het voorbeeld is zo hoog als het is. */
+@media (max-width: 900px) {
+  .voorbeeld {
+    height: auto;
+  }
+
+  .voorbeeldCode {
+    overflow-y: visible;
+  }
+}
+
+/* De regels waar de bouwsteen om gaat. */
+.voorbeeldCode :global(.cm-kern) {
+  background: color-mix(in srgb, var(--ifm-color-primary) 16%, transparent);
+  box-shadow: inset 3px 0 0 var(--ifm-color-primary);
+}
+
+.voorbeeldUitleg {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.voorbeeldLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  line-height: 1.35;
+}
+
+.voorbeeldLinks li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.voorbeeldBron {
+  flex: 0 0 5.2rem;
+  font-size: 12px;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.voorbeeldMeer {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.steenKnop[aria-pressed="true"] {
+  border-color: var(--groep);
+  background: color-mix(in srgb, var(--groep) 18%, var(--ifm-background-color));
+  font-weight: 600;
 }

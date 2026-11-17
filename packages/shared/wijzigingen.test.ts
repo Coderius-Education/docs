@@ -214,6 +214,12 @@ describe('plan', () => {
     expect(p.vitest.bestanden).toContain('packages/shared/codeblokken.js');
   });
 
+  it('een voorbeeld van de editor draait als alleen bouwstenen.ts wijzigt', () => {
+    const pad = `${MAP.robotica}/src/components/WebMicroEditor/bouwstenen.ts`;
+    const p = planVoor({ [pad]: [[40, 40]] }, [MAP.robotica]);
+    expect(p.runners.robotica.draaien).toBe(true);
+  });
+
   it('het harnas met leaphymicropython laat alleen robotica alles draaien', () => {
     // scripts/draai-leaphy-blokken.py voert elk robotica-blok uit; een
     // wijziging aan het harnas of aan de commit van de bibliotheek raakt ze allemaal.

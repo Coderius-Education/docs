@@ -5,7 +5,7 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { TEMPLATES } from '../components/WebMicroEditor/templates';
+import { BOUWSTENEN, STARTCODE } from '../components/WebMicroEditor/bouwstenen';
 import { verzamel } from './extract';
 
 const HIER = dirname(fileURLToPath(import.meta.url));
@@ -25,18 +25,23 @@ for (const f of fragmenten) {
   writeFileSync(join(UIT, `${f.naam}.py`), f.code);
 }
 
-// De editor-templates zijn een tweede codebron naast de docs; die compileren
-// mee zodat een kapot startsjabloon net zo hard opvalt als een kapotte les.
-for (const t of TEMPLATES) {
-  const naam = `template_${t.id.replace(/[^a-z0-9]+/gi, '_')}`;
+// De voorbeelden van het palet in de editor zijn een tweede codebron naast de
+// docs; die compileren en draaien mee. Zo valt een kapot voorbeeld net zo hard
+// op als een kapotte les.
+const uitDeEditor = [
+  { id: 'startcode', label: 'De startcode van de editor', code: STARTCODE },
+  ...BOUWSTENEN.map((b) => ({ id: b.id, label: b.label, code: b.voorbeeld })),
+];
+for (const t of uitDeEditor) {
+  const naam = `bouwsteen_${t.id.replace(/[^a-z0-9]+/gi, '_')}`;
   writeFileSync(join(UIT, `${naam}.py`), `${t.code.replace(/\s+$/, '')}\n`);
   fragmenten.push({
     naam,
-    bron: 'src/components/WebMicroEditor/templates.ts',
+    bron: 'src/components/WebMicroEditor/bouwstenen.ts',
     // 0, zodat compileer-blokken.py (regel + e.lineno) het regelnummer bínnen de
-    // template meldt — een bestandsregel van templates.ts zou nergens op slaan.
+    // bouwsteen meldt: een bestandsregel van bouwstenen.ts zou nergens op slaan.
     regel: 0,
-    kop: t.label ?? t.id,
+    kop: t.label,
     code: t.code,
   });
 }
@@ -47,7 +52,7 @@ writeFileSync(
   `${JSON.stringify(
     fragmenten.map((f) => ({
       naam: f.naam,
-      // Docs-fragmenten hebben een absoluut pad, template-entries al een
+      // Docs-fragmenten hebben een absoluut pad, de bouwstenen al een
       // relatief — alleen het eerste geval afkorten.
       bron: f.bron.startsWith(SITE) ? f.bron.slice(SITE.length + 1) : f.bron,
       regel: f.regel,

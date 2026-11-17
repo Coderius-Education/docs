@@ -23,6 +23,9 @@ export default defineConfig({
       // LesTabs (packages/shared/components/LesTabs) volgt het adres met
       // useLocation; de test vervangt de router met vi.mock.
       '@docusaurus/router': '@docusaurus/core/lib/client/exports/router.js',
+      // Het voorbeeld in de robotica-editor (WebMicroEditor/Voorbeeld) linkt
+      // naar een les met de baseUrl ervoor; de test vervangt de hook.
+      '@docusaurus/useBaseUrl': '@docusaurus/core/lib/client/exports/useBaseUrl.js',
     },
   },
   test: {

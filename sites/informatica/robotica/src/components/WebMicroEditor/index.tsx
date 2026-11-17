@@ -11,7 +11,7 @@ import clsx from 'clsx';
 import {
   AArrowDown,
   AArrowUp,
-  BookOpen,
+  Blocks,
   FilePlus,
   FlaskConical,
   FolderOpen,
@@ -55,9 +55,11 @@ function useColorMode(): { colorMode: 'light' | 'dark' } {
   return { colorMode };
 }
 
-import Keuzelijst from '@coderius/shared/components/Keuzelijst';
 import { bevestig, vraag } from '@coderius/shared/dialoog';
 import { storageKey } from '@coderius/shared/opslag';
+import Palet from './Palet';
+import Voorbeeld from './Voorbeeld';
+import type { Bouwsteen } from './bouwstenen';
 import { leesEditorHash } from './codeLink';
 import { friendlyError } from './errorMessages';
 import { BoardFS } from './filesystem';
@@ -73,7 +75,6 @@ import { type PythonFout, splitsFoutSegmenten, vindLaatsteFout } from './pythonE
 import { SerialClient } from './serial';
 import { type SessieStatus, type Stand, sessie } from './sessie';
 import styles from './styles.module.css';
-import { TEMPLATES } from './templates';
 
 // Opnieuw kijken na een dialoog: terwijl de leerling nadacht kan er een
 // andere actie begonnen zijn. Als functie, want TypeScript houdt de stand van
@@ -83,7 +84,7 @@ function nuBezig(ref: { current: string }): boolean {
 }
 
 // Eén vraag voor alle plekken waar nieuwe code over niet-opgeslagen werk heen
-// komt: een bestand openen, een nieuw bestand, een sjabloon.
+// komt: een bestand openen of een nieuw bestand.
 function overschrijvenGoed(): Promise<boolean> {
   return bevestig('Je niet-opgeslagen wijzigingen in de editor gaan verloren.', {
     titel: 'Wijzigingen overschrijven?',
@@ -186,6 +187,7 @@ const pythonTabExtensions = [
 const LEAPHY_REPO_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.leaphyRepo');
 const LEAPHY_BRANCH_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.leaphyBranch');
 const FONT_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.fontSize');
+const PALET_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.bouwstenen');
 
 // Officiële MicroPython-firmware voor de Arduino Nano RP2040 Connect.
 // Nieuwe versie? Pak de laatste .uf2 van de download-pagina hieronder en werk
@@ -247,6 +249,23 @@ export default function WebMicroEditor(): React.JSX.Element {
     const bewaard = Number(localStorage.getItem(FONT_STORAGE_KEY));
     return bewaard >= 12 && bewaard <= 24 ? bewaard : 14;
   });
+  // Het palet met bouwstenen links van de code. Onder de 1100 pixels begint
+  // het dicht: op 1024 breed bleven er naast het palet 49 tekens code over, en
+  // op een telefoon staat het boven de code. Wie het open of dicht zet, houdt
+  // dat.
+  const [paletOpen, setPaletOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    const bewaard = localStorage.getItem(PALET_STORAGE_KEY);
+    if (bewaard !== null) return bewaard === 'open';
+    return !window.matchMedia?.('(max-width: 1100px)').matches;
+  });
+  // De bouwsteen waarvan het voorbeeld is gekozen, en of het voorbeeld of de
+  // shell nu te zien is: ze delen de kolom rechts van de code.
+  const [voorbeeld, setVoorbeeld] = useState<Bouwsteen | null>(null);
+  const [toonVoorbeeld, setToonVoorbeeld] = useState<boolean>(false);
+  // De uitvoer die de leerling al zag; komt er meer bij terwijl het voorbeeld
+  // open staat, dan krijgt het tabblad Shell een stip.
+  const [gezieneUitvoer, setGezieneUitvoer] = useState<string>(() => sessie.replText);
   const samplesRef = useRef<number[][]>([]);
   const lineBufRef = useRef<string>('');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -260,6 +279,7 @@ export default function WebMicroEditor(): React.JSX.Element {
   }, [status]);
 
   const isDirty = code !== loadedCode;
+  const paletZichtbaar = paletOpen && files === null;
 
   // De laatste Python-fout uit de REPL-stroom, voor de banner en de
   // regelmarkering. Wissen van de REPL (bij elke Run) reset dit vanzelf.
@@ -762,16 +782,33 @@ export default function WebMicroEditor(): React.JSX.Element {
     setIdle(operatie);
   }, [schrijf, setBusy, setIdle]);
 
-  const applyTemplate = useCallback(
-    async (id: string) => {
-      if (!id) return;
-      const t = TEMPLATES.find((x) => x.id === id);
-      if (!t) return;
-      if (isDirty && !(await overschrijvenGoed())) return;
-      sessie.zet({ code: t.code, loadedCode: t.code, currentFile: null });
+  // Een klik op een bouwsteen toont zijn voorbeeld; nog een klik sluit het.
+  const kiesBouwsteen = useCallback(
+    (bouwsteen: Bouwsteen) => {
+      const sluit = toonVoorbeeld && voorbeeld?.id === bouwsteen.id;
+      setVoorbeeld(sluit ? null : bouwsteen);
+      setToonVoorbeeld(!sluit);
     },
-    [isDirty],
+    [toonVoorbeeld, voorbeeld],
   );
+
+  // Wie zijn code draait, wil de uitvoer zien: terug naar de shell.
+  useEffect(() => {
+    if (status === 'busy') setToonVoorbeeld(false);
+  }, [status]);
+
+  useEffect(() => {
+    if (!toonVoorbeeld) setGezieneUitvoer(replText);
+  }, [toonVoorbeeld, replText]);
+
+  // Bouwstenen en Bestanden op board delen de kolom links van de code: wie
+  // de ene opent, sluit de andere.
+  const wisselPalet = useCallback(() => {
+    const open = files !== null ? true : !paletOpen;
+    setFiles(null);
+    setPaletOpen(open);
+    localStorage.setItem(PALET_STORAGE_KEY, open ? 'open' : 'dicht');
+  }, [files, paletOpen]);
 
   const downloadFirmware = useCallback(() => {
     // micropython.org levert het bestand als octet-stream, dus de browser
@@ -948,17 +985,16 @@ export default function WebMicroEditor(): React.JSX.Element {
             {files === null ? 'Bestanden op board' : 'Verberg bestanden'}
           </button>
         </fieldset>
-        <Keuzelijst
-          className={styles.select}
-          label="Voorbeeld laden"
-          placeholder="Voorbeeld laden..."
-          // Geen vaste keuze: na het laden staat er weer "Voorbeeld laden...",
-          // zodat je hetzelfde voorbeeld nog eens kunt kiezen.
-          waarde={null}
-          opties={TEMPLATES.map((t) => ({ waarde: t.id, label: t.label }))}
-          onKies={(id) => void applyTemplate(id)}
-          voor={<BookOpen aria-hidden="true" size={15} className={styles.selectIcoon} />}
-        />
+        <button
+          type="button"
+          className={clsx(styles.btn, paletZichtbaar && styles.btnActief)}
+          onClick={wisselPalet}
+          aria-pressed={paletZichtbaar}
+          title="Onderdelen en Python-stappen, elk met een voorbeeld en links naar de uitleg"
+        >
+          <Blocks aria-hidden="true" size={15} />
+          Bouwstenen
+        </button>
 
         <span className={styles.spacer} />
 
@@ -1209,6 +1245,18 @@ export default function WebMicroEditor(): React.JSX.Element {
           </div>
         )}
 
+        {paletZichtbaar && (
+          <div className={clsx(styles.workPaneNarrow, styles.workPanePalet)}>
+            <div className={styles.fileLabel}>
+              <span>Kies een voorbeeld</span>
+            </div>
+            <Palet
+              onKies={kiesBouwsteen}
+              gekozen={toonVoorbeeld ? (voorbeeld?.id ?? null) : null}
+            />
+          </div>
+        )}
+
         <div className={styles.workPaneWide}>
           <div className={styles.fileLabel}>
             <span>
@@ -1240,61 +1288,111 @@ export default function WebMicroEditor(): React.JSX.Element {
           </div>
         </div>
 
-        <div className={styles.workPane}>
+        {/* De shell en het voorbeeld van een bouwsteen delen deze kolom. Het
+            voorbeeld staat zo naast de code terwijl de leerling typt; de shell
+            blijft gemount, want uitvoer komt ook binnen als hij dicht is. */}
+        <div className={clsx(styles.workPane, toonVoorbeeld && styles.workPaneVoorbeeld)}>
           <div className={styles.replWrap}>
             <div className={styles.replHeader}>
-              <span className={styles.replLabel} title="ook wel REPL-output genoemd">
-                Shell
-              </span>
-              <button
-                type="button"
-                className={clsx(styles.btn, styles.btnKlein)}
-                onClick={clearRepl}
-              >
-                Wis
-              </button>
-              <button
-                type="button"
-                className={clsx(styles.btn, styles.btnKlein, plotterAan && styles.btnActief)}
-                onClick={() => setPlotterAan((v) => !v)}
-                title="Tekent getallen uit de uitvoer als grafiek — handig bij het kalibreren van je sensoren"
-              >
-                Plotter
-              </button>
+              {voorbeeld ? (
+                <fieldset className={styles.knopGroep} aria-label="Shell of voorbeeld">
+                  <button
+                    type="button"
+                    className={clsx(
+                      styles.btn,
+                      styles.btnKlein,
+                      !toonVoorbeeld && styles.btnActief,
+                    )}
+                    aria-pressed={!toonVoorbeeld}
+                    onClick={() => setToonVoorbeeld(false)}
+                  >
+                    Shell
+                    {toonVoorbeeld && replText !== gezieneUitvoer && (
+                      <span className={styles.dirtyMark} title="nieuwe uitvoer">
+                        {' '}
+                        •
+                      </span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className={clsx(styles.btn, styles.btnKlein, toonVoorbeeld && styles.btnActief)}
+                    aria-pressed={toonVoorbeeld}
+                    onClick={() => setToonVoorbeeld(true)}
+                  >
+                    Voorbeeld
+                  </button>
+                </fieldset>
+              ) : (
+                <span className={styles.replLabel} title="ook wel REPL-output genoemd">
+                  Shell
+                </span>
+              )}
+              {!toonVoorbeeld && (
+                <>
+                  <button
+                    type="button"
+                    className={clsx(styles.btn, styles.btnKlein)}
+                    onClick={clearRepl}
+                  >
+                    Wis
+                  </button>
+                  <button
+                    type="button"
+                    className={clsx(styles.btn, styles.btnKlein, plotterAan && styles.btnActief)}
+                    onClick={() => setPlotterAan((v) => !v)}
+                    title="Tekent getallen uit de uitvoer als grafiek — handig bij het kalibreren van je sensoren"
+                  >
+                    Plotter
+                  </button>
+                </>
+              )}
             </div>
-            {plotterAan && (
-              <canvas ref={canvasRef} className={styles.plot} width={600} height={160} />
+            {toonVoorbeeld && voorbeeld && (
+              <Voorbeeld
+                bouwsteen={voorbeeld}
+                donker={colorMode === 'dark'}
+                onSluit={() => {
+                  setVoorbeeld(null);
+                  setToonVoorbeeld(false);
+                }}
+              />
             )}
-            <div className={styles.repl} ref={replRef} style={{ fontSize }}>
-              {replText
-                ? (() => {
-                    let positie = 0;
-                    return splitsFoutSegmenten(replText).map((segment) => {
-                      const key = positie;
-                      positie += segment.tekst.length;
-                      return segment.fout ? (
-                        <span key={key} className={styles.replFout}>
-                          {segment.tekst}
-                        </span>
-                      ) : (
-                        <span key={key}>{segment.tekst}</span>
-                      );
-                    });
-                  })()
-                : '(geen output)'}
+            <div className={styles.shellDeel} hidden={toonVoorbeeld}>
+              {plotterAan && (
+                <canvas ref={canvasRef} className={styles.plot} width={600} height={160} />
+              )}
+              <div className={styles.repl} ref={replRef} style={{ fontSize }}>
+                {replText
+                  ? (() => {
+                      let positie = 0;
+                      return splitsFoutSegmenten(replText).map((segment) => {
+                        const key = positie;
+                        positie += segment.tekst.length;
+                        return segment.fout ? (
+                          <span key={key} className={styles.replFout}>
+                            {segment.tekst}
+                          </span>
+                        ) : (
+                          <span key={key}>{segment.tekst}</span>
+                        );
+                      });
+                    })()
+                  : '(geen output)'}
+              </div>
+              <input
+                type="text"
+                className={styles.replInput}
+                style={{ fontSize }}
+                value={replInput}
+                onChange={(e) => setReplInput(e.target.value)}
+                onKeyDown={handleReplKeyDown}
+                disabled={status !== 'connected'}
+                placeholder=">>> voer een regel in"
+                spellCheck={false}
+                autoComplete="off"
+              />
             </div>
-            <input
-              type="text"
-              className={styles.replInput}
-              style={{ fontSize }}
-              value={replInput}
-              onChange={(e) => setReplInput(e.target.value)}
-              onKeyDown={handleReplKeyDown}
-              disabled={status !== 'connected'}
-              placeholder=">>> voer een regel in"
-              spellCheck={false}
-              autoComplete="off"
-            />
           </div>
         </div>
       </div>
