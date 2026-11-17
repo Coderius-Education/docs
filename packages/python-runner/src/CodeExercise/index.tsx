@@ -269,12 +269,21 @@ function CodeExerciseInner({
     <>
       {tekening && <Tekening tekening={tekening} />}
       {output && <pre className={styles.output}>{output}</pre>}
-      {isLoading && <div className={styles.loading}>Python wordt geladen...</div>}
-      {inTab && !output && !tekening && !opname && !isLoading && (
+      {isLoading && !inTab && <div className={styles.loading}>Python wordt geladen...</div>}
+      {inTab && !output && !tekening && !opname && (
         // Het vak naast de code is er al voordat er iets gedraaid is: zo
         // verspringt het veld niet, en ziet de leerling waar hij moet kijken.
+        // Ook terwijl Python laadt: de regel "Python wordt geladen..." was
+        // lager dan dit vak, en dan versprong het veld (op een telefoon 35
+        // pixels) op het moment dat Python er was. De zin die er straks
+        // staat, houdt daarom alvast zijn plek.
         <p className={styles.wacht}>
-          Klik op Uitvoeren. De uitvoer verschijnt hier.
+          <span className={styles.wachtRegel}>
+            <span className={isLoading ? styles.straks : undefined} aria-hidden={isLoading}>
+              Klik op Uitvoeren. De uitvoer verschijnt hier.
+            </span>
+            {isLoading && <span>Python wordt geladen...</span>}
+          </span>
           {/* Wat nodig is om het veld te gebruiken, zegt het veld zelf. */}
           <span className={styles.bewaart}>
             {!site
