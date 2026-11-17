@@ -389,7 +389,9 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
     setPdfError(null);
     try {
       // De PDF bevat altijd het volledige rapport: zet een actief filter uit en
-      // wacht één frame zodat de DOM alle punten toont vóór de capture.
+      // wacht één frame zodat de DOM alle punten toont vóór de capture. Niet
+      // langer wachten dan dat: het venster Opslaan als moet open binnen een
+      // paar seconden na de klik (zie bewaarPdf).
       setActiveLevel(null);
       await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
       const naam = (id && bewaarderRef.current?.get(id)?.naam) || '';
@@ -401,7 +403,10 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       const gelukt = await exportReportToPdf(el, styles.exporting, bestand);
       const ongewijzigd = id && bewaarderRef.current?.get(id)?.bijgewerkt === versie;
       if (gelukt && id && id === actiefIdRef.current && ongewijzigd) setPdfKlaarVoor(id);
-    } catch {
+    } catch (err) {
+      // De melding zegt niet waarom; in de console staat de oorzaak, voor wie
+      // een fout meldt.
+      console.error('PDF maken mislukt:', err);
       setPdfError('Het opslaan als PDF is mislukt. Probeer het opnieuw.');
     } finally {
       exporterendRef.current = false;

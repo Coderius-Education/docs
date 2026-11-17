@@ -1557,6 +1557,20 @@ config `perBestand` (een drempel in één bestand), `metCommentaar` (een concept
 over commentaar) en `detectieVoor` (een herkenning die van het project
 afhangt, zoals de namen van de autoloads).
 
+**De PDF van de nakijker vraagt eerst waar hij moet komen, en wordt dan pas
+gemaakt** (`bewaarPdf` in `packages/checker/src/Checker/exportPdf.ts`, issue
+218). Chrome en Edge openen het venster Opslaan als alleen binnen een paar
+seconden na een klik: in Chromium gemeten opent het tot vier seconden erna, en
+geeft het na zes seconden een SecurityError. Eerst kwam het venster ná het
+maken van de PDF. Met tien telefoonfoto's op een trage computer was dat 6,7
+seconden na de klik, en de docent zag alleen "Het opslaan als PDF is mislukt".
+Nu komt het venster binnen 30 ms. Weigert de browser het venster toch, of lukt
+het schrijven niet, dan komt de PDF als gewone download. Zet dus niets dat
+tijd kost (een import, een render) tussen de klik en `bewaarPdf`. De oorzaak
+van een mislukte export staat in de console (`PDF maken mislukt:`).
+`exportPdf.test.ts` pint de volgorde en de terugval vast; dat een echte browser
+het venster weigert, speelt node niet na.
+
 ## Begrippen
 
 Een cursus met moeilijke woorden heeft `src/begrippen.json`: per begrip een
