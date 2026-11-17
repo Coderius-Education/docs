@@ -110,6 +110,18 @@ Volgende; het antwoord uit de les vinkt elk doel af; met een open antwoord
 blijven de terminal en zijn doelen in beeld, en schuift het antwoord in zijn
 eigen vak).
 
+**De job `test` draait `vitest related`, en dat loopt de imports af zonder
+mocks.** Een test die een onderdeel met `vi.mock` vervangt, is in `pnpm test`
+groen, ook als Vite dat onderdeel niet kan lezen. `related` leest het wel. Een
+site schrijft JSX ook in een `.js` (Docusaurus vertaalt die, Vite niet): sinds
+een test de speeltuin van play importeerde, en die de `CodeEditor.js`, was de
+job rood bij elke PR die geen globaal bestand raakte. De stap `jsMetJsx` in
+`vitest.config.ts` vertaalt een `.js` onder `src/` van een site eerst, en
+`packages/shared/vitest-js-met-jsx.test.ts` legt elk zo'n bestand langs Vite
+met die config. Lokaal naspelen wat CI doet: `node scripts/wijzigingen.mjs plan
+--base origin/main --uit changed.json`, en dan vitest met de uitvoer van
+`node scripts/wijzigingen.mjs vitest changed.json`.
+
 **De job `schermen` meet of elk scherm past**, per gebouwde cursus met
 les-tabbladen: `meet-les-tabs.mjs --bronnen=changed.json --streng`. Een
 gewijzigde lespagina wordt gemeten (`packages/shared/meet-selectie.js` zoekt
