@@ -317,7 +317,7 @@ De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
 (schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica,
-fullstack, linux, ctf, de editor-cursus, algoritmes en Godot zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+fullstack, linux, ctf, de editor-cursus, algoritmes, Godot en play zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
@@ -1299,6 +1299,73 @@ editor: zet de naam van een extern programma niet vet, of zet hem met een
 reden in `GEEN_UI_LABEL` (`src/godot-tests/labels.ts`). Die controle en het
 compileren van de blokken draaien alleen in CI, en CI draait pas bij een
 PR: open die dus voordat je een omzetting klaar noemt.
+
+**Wat play erbij bracht** (november 2026; alle 292 schermen passen op
+1280×720 en 1366×768, na eerst 242 van de 315). De cursus heeft een eigen
+oefenveld, de speeltuin (`PygbagRunner`): code in een editor en een spel dat
+in een los spelvenster draait, één per pagina (`SharedRunner`, een iframe met
+`position: fixed` boven de pagina). Buiten een tabblad komt het spel op de
+plek van de code. Daarvoor is dit gekomen, elk met een test:
+
+- **In een tabblad staan code en spel naast elkaar** (vanaf 997px): de code
+  blijft te lezen terwijl het spel draait, en het veld is voor en na de klik
+  op Speel even hoog. De kolom met het spel bepaalt de hoogte; de code
+  schuift in de hare. Op een smal scherm staat de code er of het spel, zoals
+  eerst. De maten staan in `PygbagRunner/maat.js`.
+- **De kolom van de code volgt de langste regel van de code van de les**
+  (`codeKolom`: 55 tot 68 procent van het veld, daarna kleinere letters tot
+  80 procent). In een vaste kolom brak in een op de drie voorbeelden een regel
+  af. Wat met de kleinste letters niet past (meer dan 84 tekens), hoort korter
+  in de les: vijftien regels zijn herschreven.
+- **Een veld dat het enige op zijn scherm is, neemt de ruimte die over is**
+  (`veldInScherm`, tussen een spel van 240 bij 180 en de hele kolom), en staat
+  ruimte af als er op zijn scherm iets openklapt: de voorkennis, een tip, de
+  oplossing. Eerst hield het zijn volle hoogte, en was met een blok open bijna
+  de helft van de schermen te lang. Een veld in een open oplossing doet
+  hetzelfde (`spelInBlok`). De twee rekenen niet op elkaars hoogte: het veld
+  van de opdracht trekt eerst de kleinste maat van het andere af.
+- **De tip en de oplossing staan in het veld** (`hulpInVeld` kent nu ook de
+  `PygbagRunner`): knoppen Spel, Tip en Oplossing boven het spel. In play is
+  de oplossing zelf een speeltuin, zonder codeblok ernaast; zijn code wordt
+  het codeblok van de hulp (`oplossingInSpeeltuin`), en Speel de oplossing
+  speelt hem af in het vak van het veld, zonder de code van de leerling aan te
+  raken. De console zegt dan dat de oplossing draait. Een opdracht met een
+  eigen veld en een oplossing met een tweede veld paste op geen van de twintig
+  schermen. Achter de tip is het spel niet te zien, maar het draait door.
+- **Een codeblok met dezelfde speeltuin eronder staat er één keer**
+  (`zonderDubbeleCode` kent de `code`-prop van de speeltuin), ook in een
+  oplossing. Dat is de vorm die play voorschrijft: het blok om te lezen, de
+  speeltuin om te draaien. In een tabblad staat de code van de speeltuin
+  altijd in beeld.
+- **Het spel stopt als zijn tabblad, stap of uitklapblok dichtgaat**
+  (`useInBeeld`). Het spelvenster zweeft los boven de pagina en bleef anders
+  over het volgende scherm heen staan.
+- **Het spelvenster volgt zijn vak elk beeld** (`requestAnimationFrame` in
+  `SharedRunner`), niet alleen bij scrollen: een veld dat zich aanpast of een
+  tip die opengaat, verschuift het vak zonder dat er gescrold wordt. Wat onder
+  de navbar of buiten een schuivend vak valt, is afgeknipt (`knip`, met
+  `clip-path`), en een vak dat niet te zien is (`visibility: hidden`),
+  verbergt het venster.
+- **De balk "Python Game" is in een tabblad weg**: hij kostte elk scherm 37
+  pixels, en in een open oplossing schoof de knop Stop erdoor uit beeld. Stop
+  staat naast de knop Speel.
+- **De docentenhandleiding telt een genummerde opdracht en de fouten ook als
+  ze een stap zijn** (`STAP_MET_VORM` in `plugins/werkvormen.js`): in play
+  staat een opdracht als stap in het tabblad van zijn onderwerp.
+- **Het meetscript** klikt met `--klik` op Speel in browser en op Speel de
+  oplossing, en telt de regels code die een speeltuin laat zien.
+
+In de lessen: een `###` naar zijn inhoud in plaats van De basis (32 keer),
+een opdracht met deelvragen a, b en c als eigen tabblad met een stap per
+deelvraag, de code waar een opdracht over gaat op het scherm van de opdracht
+(een eigen speeltuin met die code) in plaats van "pas de code hierboven aan",
+en losse fragmenten met uitleg in hoofdstuk 10 als `<CodeUitleg>`. De
+cheatsheet, de veelgemaakte fouten en de pagina's voor de docent hebben
+`les_tabs: false`. Met een gewone oplossing open (een opdracht zonder eigen
+veld) passen 32 van de 212 metingen niet: daar schuift de oplossing in haar
+vak, of de pagina. `src/docs-tests/schermen.test.ts` van play bewaakt de
+verwijzingen per scherm, en dat een scherm dat de speeltuin noemt er een
+heeft.
 
 ## Code in MDX-expressies
 
