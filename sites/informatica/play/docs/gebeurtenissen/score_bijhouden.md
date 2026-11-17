@@ -170,7 +170,7 @@ Met een score wil je vaak ook iets laten gebeuren zodra hij een bepaalde waarde 
 
 ```python
 if score == 10:
-    score_tekst.words = "Je hebt gewonnen!"
+    score_tekst.words = "Je hebt gewonnen."
 ```
 
 Dit checkt of `score` gelijk is aan `10`. Let op de **dubbele** `==` (vergelijken) in plaats van een enkele `=` (toewijzen).
@@ -225,7 +225,7 @@ def punt():
     score = score + 1
     tekst.words = f"Score: {score}"
     if score == 10:
-        tekst.words = "Je hebt gewonnen!"
+        tekst.words = "Je hebt gewonnen."
         play.stop_program()
 ```
 
@@ -240,7 +240,7 @@ def punt():
     score = score + 1
     tekst.words = f"Score: {score}"
     if score == 10:
-        tekst.words = "Je hebt gewonnen!"
+        tekst.words = "Je hebt gewonnen."
         play.stop_program()`} height={300} />
 
 </details>

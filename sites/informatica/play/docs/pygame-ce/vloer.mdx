@@ -111,7 +111,9 @@ Verander in het programma uit de stap Het volledige programma de `elasticity` va
 
 ## Opdracht 10.9.b: Muren toevoegen
 
-Voeg naast de vloer ook een linker- en rechtermuur toe, zodat de bal niet van het scherm kan vallen.
+Zet in het programma uit de stap Het volledige programma de regel `bal_body.velocity = (300, 0)` onder `bal_body.position = (400, 50)`. De bal krijgt dan een snelheid naar rechts en vliegt het scherm uit.
+
+Voeg naast de vloer ook een linker- en rechtermuur toe, zodat de bal binnen het scherm blijft.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -139,5 +141,7 @@ En teken ze in de game loop:
     pygame.draw.line(scherm, (255, 255, 255), (0, 0), (0, 600), 5)
     pygame.draw.line(scherm, (255, 255, 255), (800, 0), (800, 600), 5)
 ```
+
+De bal stuitert nu tussen de muren heen en weer, elke keer wat langzamer.
 
 </details>

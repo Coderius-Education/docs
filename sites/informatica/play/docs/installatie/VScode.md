@@ -40,13 +40,13 @@ py -m pip install --upgrade coderius-play
 
 Mocht je meldingen krijgen zoals `Toegang geweigerd` kan het helpen om `--user` toe te voegen:
 ```bash
-pip install --upgrade --user coderius-play
+python -m pip install --upgrade --user coderius-play
 ```
 
 
 ## Testen of het gelukt is
 Kopieer het volgende codefragment naar VS code en voer het uit.
-Het hoofdstuk `Executing Python file options` kan hierbij nuttig zijn.
+Hoe je een bestand uitvoert, staat in [Een Python-bestand maken en uitvoeren](site:editor/python/stap-6-bestand).
 
 ```python
 import play

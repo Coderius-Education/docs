@@ -47,7 +47,7 @@ De bal en het batje staan al in de code. Laat ze botsen:
 
 - Laat de bal automatisch naar rechts bewegen
 - Zorg dat de bal niet naar beneden valt
-- Pas het batje aan zodat die ook niet valt en niet kan bewegen.
+- Het batje laat je zoals het is: zonder `start_physics()` valt het niet en blijft het staan.
 - Lukt het om de bal en het batje te laten botsen?
 
 <PygbagRunner code={`import play
@@ -84,17 +84,57 @@ batje = play.new_box(x=300)`} height={300} />
 
 ### De botsing opmerken
 
-Voeg het volgende codefragment aan je code met de bal en het batje toe:
+Voeg dit fragment onder de code toe. Kijk wat er met de tekst gebeurt als de bal tegen het batje botst.
 
 ```python
-text = play.new_text('batje is niet aangeraakt', y=200, font_size=50)
+tekst = play.new_text('batje is niet aangeraakt', y=200, font_size=50)
 
 @bal.when_stopped_touching(batje)
 def weggekaatst():
-    text.words = 'bal is weggekaatst van batje'
+    tekst.words = 'bal is weggekaatst van batje'
 ```
 
-Start je programma en kijk wat er met de tekst gebeurt als de bal tegen het batje botst. Wat de regel met de `@` doet, lees je in het tabblad De event-decorator.
+<PygbagRunner code={`import play
+
+bal = play.new_circle(color="blue", radius=50)
+bal.start_physics(can_move=True, obeys_gravity=False, stable=False, x_speed=40)
+
+batje = play.new_box(x=300)`} height={300} />
+
+<details>
+<summary>Klik hier voor de oplossing.</summary>
+
+```python
+import play
+
+bal = play.new_circle(color="blue", radius=50)
+bal.start_physics(can_move=True, obeys_gravity=False, stable=False, x_speed=40)
+
+batje = play.new_box(x=300)
+
+tekst = play.new_text('batje is niet aangeraakt', y=200, font_size=50)
+
+@bal.when_stopped_touching(batje)
+def weggekaatst():
+    tekst.words = 'bal is weggekaatst van batje'
+```
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(color="blue", radius=50)
+bal.start_physics(can_move=True, obeys_gravity=False, stable=False, x_speed=40)
+
+batje = play.new_box(x=300)
+
+tekst = play.new_text('batje is niet aangeraakt', y=200, font_size=50)
+
+@bal.when_stopped_touching(batje)
+def weggekaatst():
+    tekst.words = 'bal is weggekaatst van batje'`} height={300} />
+
+Wat de regel met de `@` doet, lees je in het tabblad De event-decorator.
+
+</details>
 
 ## De event-decorator
 
@@ -118,7 +158,7 @@ In het codefragment uit opdracht 4.2.a:
 ```python
 @bal.when_stopped_touching(batje)
 def weggekaatst():
-    text.words = 'bal is weggekaatst van batje'
+    tekst.words = 'bal is weggekaatst van batje'
 ```
 
 Hier laat `@bal.when_stopped_touching(batje)` de functie `weggekaatst` één keer afgaan op het moment dat `bal` ophoudt `batje` te raken (dus precies bij de overgang van wel aanraken naar niet meer aanraken). De code binnen `weggekaatst` wordt dan uitgevoerd.

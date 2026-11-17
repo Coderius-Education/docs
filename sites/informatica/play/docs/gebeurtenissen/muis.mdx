@@ -106,6 +106,9 @@ Maak een programma waarbij:
 1. Een rechthoek (het batje) alleen verticaal beweegt met de muis (de x blijft vast)
 2. Een bal heen en weer beweegt en tegen het batje botst
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -128,6 +131,17 @@ bal.start_physics(obeys_gravity=False, x_speed=200)
 def update():
     batje.y = play.mouse.y
 ```
+
+<PygbagRunner code={`import play
+
+batje = play.new_box(x=300, width=15, height=80)
+
+bal = play.new_circle(radius=15, color='red')
+bal.start_physics(obeys_gravity=False, x_speed=200)
+
+@play.repeat_forever
+def update():
+    batje.y = play.mouse.y`} height={300} />
 
 </details>
 

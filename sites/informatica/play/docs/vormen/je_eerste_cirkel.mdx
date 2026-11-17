@@ -39,8 +39,6 @@ Om bijvoorbeeld de cirkel blauw te maken, kun je het volgende doen.
 
 play.new_circle(color='blue')`} height={300} />
 
-{/* Fictieve screenshot: Een groot zwart venster met een grote blauwe cirkel in het midden. */}
-
 ### Kleuren kiezen
 
 Ben je benieuwd uit welke kleuren je allemaal kan kiezen? Op [deze pagina](https://www.pygame.org/docs/ref/color_list.html) zie je alle opties.
@@ -53,7 +51,7 @@ Je kunt kleuren op verschillende manieren opgeven:
 - **Hex-code** (sinds versie 3.3.3): `'#FF0000'` voor rood, `'#00FF00'` voor groen, `'#0000FF'` voor blauw. Op dezelfde [kleurkiezer-site](https://www.w3schools.com/colors/colors_picker.asp) kun je naast de RGB-waarde ook de hex-code aflezen.
 :::
 
-## Opdracht 1.2.a: Een rode cirkel
+## Opdracht 1.2.a: De kleur aanpassen
 
 ### Rood
 
@@ -75,7 +73,6 @@ Het attribuut **color** gebruik je voor de kleur.
 <PygbagRunner code={`import play
 
 play.new_circle(color='red')`} height={300} />
-{/* Fictieve screenshot: Een groot zwart venster met een grote rode cirkel in het midden. */}
 </details>
 
 ### Een kleur uit de lijst
@@ -97,7 +94,6 @@ De lijst van opties vind je op [deze pagina](https://www.pygame.org/docs/ref/col
 
 <PygbagRunner code={`import play
 play.new_circle(color='aquamarine4')`} height={300} />
-{/* Fictieve screenshot: Een groot zwart venster met een grote aquamarijnkleurige cirkel in het midden. */}
 </details>
 
 ### Een hex-code
@@ -120,7 +116,6 @@ Een hex-code begint altijd met `#` gevolgd door 6 tekens (cijfers 0-9 of letters
 <PygbagRunner code={`import play
 
 play.new_circle(color='#FF8800')`} height={300} />
-{/* Fictieve screenshot: Een groot zwart venster met een grote oranje cirkel in het midden. */}
 </details>
 
 ## De positie
@@ -159,7 +154,6 @@ Met `x=0` en `y=0` zet je de cirkel in het midden van het scherm.
 
 play.new_circle(x=0, y=0)`} height={300} />
 
-{/* Fictieve screenshot: Een groot zwart venster met een grote zwarte cirkel precies in het midden. */}
 Zie je de cirkel in het midden staan?
 
 ## Opdracht 1.2.b: De positie aanpassen
@@ -178,7 +172,6 @@ Waar zie je de cirkel verschijnen bij `x=100` en `y=0`?
 <PygbagRunner code={`import play
 
 play.new_circle(x=100, y=0)`} height={300} />
-{/* Fictieve screenshot: Een groot zwart venster met een grote zwarte cirkel iets rechts van het midden. */}
 De cirkel zou een klein stukje rechts van het midden moeten staan.
 
 </details>
@@ -197,7 +190,6 @@ Waar zie je de cirkel verschijnen bij `x=-100` en `y=0`?
 <PygbagRunner code={`import play
 
 play.new_circle(x=-100, y=0)`} height={300} />
-{/* Fictieve screenshot: Een groot zwart venster met een grote zwarte cirkel iets links van het midden. */}
 De cirkel zou een klein stukje links van het midden moeten staan.
 
 </details>
@@ -216,7 +208,6 @@ Waar zie je de cirkel verschijnen bij `x=0` en `y=100`?
 <PygbagRunner code={`import play
 
 play.new_circle(x=0, y=100)`} height={300} />
-{/* Fictieve screenshot: Een groot zwart venster met een grote zwarte cirkel iets boven het midden. */}
 De cirkel zou een klein stukje boven het midden moeten staan.
 
 </details>
@@ -235,7 +226,6 @@ Waar zie je de cirkel verschijnen bij `x=0` en `y=-100`?
 <PygbagRunner code={`import play
 
 play.new_circle(x=0, y=-100)`} height={300} />
-{/* Fictieve screenshot: Een groot zwart venster met een grote zwarte cirkel iets onder het midden. */}
 De cirkel zou een klein stukje onder het midden moeten staan.
 
 </details>
@@ -279,7 +269,6 @@ Kijk verder goed naar welke attributen je nodig hebt.
 
 play.new_circle(x=-200, color='blue')
 play.new_circle(x=200, color='red', border_width=10, border_color='green')`} height={300} />
-{/* Fictieve screenshot: Een groot zwart venster met een blauwe cirkel links en een rode cirkel met een groene rand rechts. */}
 </details>
 
 ## De achtergrond
@@ -290,10 +279,9 @@ Standaard is de achtergrond van je scherm wit. Met **play.set_backdrop** kun je 
 
 <PygbagRunner code={`import play
 
-play.set_backdrop('white')
+play.set_backdrop('light blue')
 
 play.new_circle(color='red')`} height={300} />
-{/* Fictieve screenshot: Een groot wit venster met een grote rode cirkel in het midden. */}
 
 ### Opdracht 1.2.d: Achtergrondkleur
 
@@ -317,5 +305,4 @@ Probeer eens `'black'` als achtergrondkleur en `'yellow'` als cirkelkleur.
 play.set_backdrop('black')
 
 play.new_circle(color='yellow')`} height={300} />
-{/* Fictieve screenshot: Een groot zwart venster met een grote gele cirkel in het midden. */}
 </details>

@@ -12,7 +12,7 @@ sidebar_position: 4
   ]}
 />
 
-Zeker. Mocht je Informatica-ACTIEF gebruiken, is er een mooi hoofdstuk over dictionaries waarin je ook leert om deze als JSON op te slaan. Durf je het aan om dit zelf te doen?
+Zeker. Mocht je [Informatica-ACTIEF](site:play/docs/eerste-keer-python/IA) gebruiken, is er een mooi hoofdstuk over dictionaries waarin je ook leert om deze als JSON op te slaan. Durf je het aan om dit zelf te doen?
 
 ## Wat je nodig hebt
 
@@ -33,7 +33,7 @@ pad_mijn_db = 'database.json'
 mijn_db = None
 
 boven = play.new_text(
-    "Klik op spatie om de teller te verhogen",
+    "Druk op spatie om de teller te verhogen",
     y=100,
     font_size=40,
 )
@@ -80,8 +80,8 @@ def update_database():
 ## Kijken in database.json
 
 - Voer de code van de voorzet uit op je eigen computer
-- Klik op spatie en update de database
-- Zoek naar het bestand `database.json` in **dezelfde** folder als je Python bestand. Als het goed is, zie je de inhoud van het bestand veranderen iedere keer dat je op spatie klikt.
+- Druk op spatie en update de database
+- Zoek naar het bestand `database.json` in **dezelfde** folder als je Python bestand. Als het goed is, zie je de inhoud van het bestand veranderen iedere keer dat je op spatie drukt.
 
 :::info[Waar kom je dit later weer tegen?]
 In [9.3 Wanneer ga je naar het volgende level?](site:play/docs/levels/wanneer-volgende) gebruik je de database om te onthouden hoe ver een speler kwam.
