@@ -70,7 +70,7 @@ Je Label-script gebruikt `_process(delta)`. In je karakter-script gebruikte je e
 | `_physics_process(delta)` | Voor beweging, zwaartekracht, botsingen — alles met physics        |
 | `_process(delta)`         | Voor algemene updates — UI, timers, animatie-logica zonder physics |
 
-Voor een Label die alleen tekst toont is `_process` perfect.
+Een Label die alleen tekst toont heeft geen physics nodig: daar gebruik je `_process`.
 
 ## Opdracht 7.4.a: een levens-Label
 

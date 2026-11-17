@@ -16,9 +16,31 @@ Je karakter-script werkt, maar `_physics_process` is een lang blok geworden: val
 
 ## Voorspel: waar knip je?
 
+### Waar knip je?
+
+De les gaat uit van je karakter-script zoals het is na [Animaties in code](site:godot/docs/animaties_code) en [Een power-up: tijdelijk hoger springen](site:godot/docs/power_up). Het hele script staat in de stap Je script als beginpunt.
+
+Open je karakter-script in Godot en lees `_physics_process` van boven naar beneden. **Uit hoeveel stukken bestaat hij, waar begint en eindigt elk stuk, en welke naam zou je elk stuk geven?** Schrijf het op voordat je het antwoord opent.
+
+<details>
+<summary>Antwoord</summary>
+
+Vier stukken, elk met een eigen taak:
+
+1. de zwaartekracht: de `if not is_on_floor()` met één regel eronder;
+2. springen: de `if` met `ui_accept`;
+3. lopen: van `var direction` tot en met de `else`;
+4. de animatie kiezen: van `staat_stil = ...` tot en met de laatste `flip_h`.
+
+`move_and_slide()` hoort bij geen van de vier: die beweegt het karakter met wat de stukken erboven in `velocity` zetten.
+
+Namen bedenk je zelf. In deze les heten ze `val`, `spring`, `beweeg` en `kies_animatie`, maar `zwaartekracht` of `loop_opzij` zijn net zo goed. Alleen `loop` zou je beter niet kiezen: in Python is een loop een lus, en dan lees je iets anders dan je bedoelt. Een goede naam zegt wat het stuk doet, zodat je hem later terugvindt zonder de regels te lezen.
+
+</details>
+
 ### Je script als beginpunt
 
-De les gaat uit van je karakter-script zoals het is na [Animaties in code](site:godot/docs/animaties_code) en [Een power-up: tijdelijk hoger springen](site:godot/docs/power_up). Zo ziet het eruit. In deze les gaat het om het middelste stuk: `_physics_process`, van `func _physics_process` tot en met `move_and_slide()`.
+Zo ziet je karakter-script eruit na Animaties in code en de power-up. In deze les gaat het om het middelste stuk: `_physics_process`, van `func _physics_process` tot en met `move_and_slide()`.
 
 ```gdscript
 extends CharacterBody2D
@@ -67,26 +89,6 @@ func geef_sprongboost() -> void:
 
 Heb je bij opdracht 7.6.a van `SPEED` een `var snelheid` gemaakt, dan staat bij jou `snelheid` waar hier `SPEED` staat, en heb je onderaan ook `geef_snelheidsboost()`. Voor deze les maakt dat niets uit: laat die functie staan zoals hij is.
 
-### Waar knip je?
-
-Open je karakter-script in Godot en lees `_physics_process` van boven naar beneden. **Uit hoeveel stukken bestaat hij, waar begint en eindigt elk stuk, en welke naam zou je elk stuk geven?** Schrijf het op voordat je verder leest.
-
-<details>
-<summary>Antwoord</summary>
-
-Vier stukken, elk met een eigen taak:
-
-1. de zwaartekracht: de `if not is_on_floor()` met één regel eronder;
-2. springen: de `if` met `ui_accept`;
-3. lopen: van `var direction` tot en met de `else`;
-4. de animatie kiezen: van `staat_stil = ...` tot en met de laatste `flip_h`.
-
-`move_and_slide()` hoort bij geen van de vier: die beweegt het karakter met wat de stukken erboven in `velocity` zetten.
-
-Namen bedenk je zelf. In deze les heten ze `val`, `spring`, `beweeg` en `kies_animatie`, maar `zwaartekracht` of `loop_opzij` zijn net zo goed. Alleen `loop` zou je beter niet kiezen: in Python is een loop een lus, en dan lees je iets anders dan je bedoelt. Een goede naam zegt wat het stuk doet, zodat je hem later terugvindt zonder de regels te lezen.
-
-</details>
-
 ## Eigen functie \{#eigen-functie}
 
 Je kent functies al: `_physics_process` en `_ready` roept Godot zelf aan, en `geef_sprongboost()` uit de power-up-les riep je power-up aan. Een functie voor een stuk van je eigen script werkt hetzelfde, alleen roep je hem nu zelf aan:
@@ -98,7 +100,7 @@ Je kent functies al: `_physics_process` en `_ready` roept Godot zelf aan, en `ge
 
 Namen met een `_` ervoor laat je aan Godot: `_ready` en `_physics_process` roept Godot zelf aan, en `_on_body_entered` maakte Godot voor je bij een signal. Je eigen functies krijgen een naam zonder `_`, het liefst een werkwoord.
 
-## Stap 1: Knip het vallen eruit
+## Stap 1: De functie val
 
 Het eerste stuk doe je samen. Bovenaan `_physics_process` staan de regels voor de zwaartekracht:
 
@@ -115,13 +117,9 @@ func val(delta: float) -> void:
         velocity += get_gravity() * delta
 ```
 
-### Roep de functie aan
+Haal de twee regels voor de zwaartekracht daarna weg uit `_physics_process`, en zet op hun plek één regel: `val(delta)`. Start je spel met `F5`: je karakter valt zoals altijd. Aan wat het spel doet is niets veranderd, alleen aan hoe je script eruitziet.
 
-Haal de twee regels voor de zwaartekracht weg uit `_physics_process`, en zet op hun plek één regel: `val(delta)`.
-
-Start je spel met `F5`. Je karakter valt zoals altijd. Er is niets veranderd aan wat het spel doet, alleen aan hoe je script eruitziet.
-
-`delta` hoort bij `_physics_process`: Godot geeft hem mee als het die functie aanroept, en hij bestaat alleen daarbinnen. Een andere functie kent hem niet. Daarom geef je hem door als parameter, zoals je in [Spawnen: nodes maken in code](site:godot/docs/spawnen) de positie aan `spawn_muntje(x, y)` meegaf: `val(delta)` stuurt de waarde mee, en `func val(delta: float)` vangt hem op.
+`delta` bestaat alleen binnen `_physics_process`: Godot geeft hem daar mee. Daarom geef je hem door als parameter, zoals de positie in [Spawnen: nodes maken in code](site:godot/docs/spawnen): `val(delta)` stuurt de waarde mee, en `func val(delta: float)` vangt hem op.
 
 ## Opdracht 10.1.a: knip de rest zelf op
 

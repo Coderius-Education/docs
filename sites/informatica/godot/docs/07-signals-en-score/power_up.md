@@ -28,7 +28,7 @@ Nu verandert hij wél. Dus hoort hij geen constante meer te zijn, maar een varia
 
 </details>
 
-## Stap 1: Van constante naar variabele \{#const-naar-var}
+## Stap 1: Const wordt var \{#const-naar-var}
 
 Open je karakter-script en vervang de constante door een variabele:
 
@@ -39,27 +39,21 @@ const SPEED = 300.0
 var sprongkracht = -800.0
 ```
 
-Twee dingen veranderen tegelijk, en allebei met reden:
-
 - `const` wordt `var`, want de waarde gaat straks veranderen.
 - De naam gaat van hoofdletters naar kleine letters. Hoofdletters zijn in GDScript het teken dat iets een constante is; een variabele die er zo uitziet leest als een belofte die je niet nakomt.
 
 Koos je in Opdracht 5.7.a een andere sprongkracht dan `-800.0`? Zet dan overal in deze les jouw waarde waar `-800.0` staat.
 
-### Gebruik de nieuwe naam
-
-Zoek in `_physics_process` de regel waar je springt, en gebruik daar de naam `sprongkracht`:
+Zoek daarna in `_physics_process` de regel waar je springt, en gebruik daar de naam `sprongkracht`:
 
 ```gdscript
     if Input.is_action_just_pressed("ui_accept") and is_on_floor():
         velocity.y = sprongkracht
 ```
 
-Start je spel met `F5`. Er hoort niets veranderd te zijn: dezelfde sprong, dezelfde hoogte. Je hebt alleen de waarde verplaatst van een plek waar hij vastligt naar een plek waar hij mag bewegen.
+Start je spel met `F5`. Er hoort niets veranderd te zijn: dezelfde sprong, dezelfde hoogte. Staat verderop in de cursus nog `JUMP_VELOCITY` in een voorbeeld, dan is dat de versie van vóór deze les: lees daar `sprongkracht`.
 
-Kom je verderop in de cursus nog een voorbeeld tegen met `JUMP_VELOCITY` erin, dan is dat de versie van vóór deze les. Jouw script heet vanaf nu `sprongkracht`.
-
-## Stap 2: Een functie die de boost geeft
+## Stap 2: Boost-functie
 
 Het karakter weet zelf het beste hoe hard hij springt, dus daar komt de code. Zet deze functie onderaan je karakter-script, buiten `_physics_process`:
 
@@ -71,11 +65,9 @@ func geef_sprongboost() -> void:
 
 Dit is een gewone functie, zoals `is_game_over()` uit [Global variables (Autoload)](site:godot/docs/global_variables). Hij doet nu nog maar één ding: de sprongkracht omhoog zetten.
 
-## Stap 3: De power-up die hem aanroept
+## Stap 3: Power-up
 
-De power-up is een `Area2D` met een `Sprite2D` en een `CollisionShape2D`, precies zoals het muntje in [Signals & een muntje oppakken](site:godot/docs/signals_muntje). Maak hem op dezelfde manier, koppel `body_entered`, en sla hem op als `power_up.tscn`.
-
-In het script van de power-up:
+De power-up is een `Area2D` met een `Sprite2D` en een `CollisionShape2D`, precies zoals het muntje in [Signals & een muntje oppakken](site:godot/docs/signals_muntje). Maak hem op dezelfde manier, koppel `body_entered`, en sla hem op als `power_up.tscn`. Zet dit in zijn script:
 
 ```gdscript
 extends Area2D
@@ -85,13 +77,9 @@ func _on_body_entered(body: Node2D) -> void:
     queue_free()
 ```
 
-Bij het muntje deed je `body.score += 1`: je las een variabele van het karakter. Hier roep je er een **functie** van aan. Dat is hetzelfde idee — `body` is je karakter, en met een punt erachter kom je bij wat erin zit.
+Bij het muntje las je met `body.score` een variabele van je karakter. Hier roep je met `body.` een **functie** van hem aan.
 
-Sleep `power_up.tscn` in je level en start het spel. Loop tegen de power-up aan en spring: je vliegt een stuk hoger, en dat blijft zo. Te lang, want je wilt dat het uitwerkt.
-
-## Stap 4: Vijf seconden wachten \{#await}
-
-Je functie zet de sprongkracht op `-1300.0`. Vijf seconden later moet hij weer op `-800.0` staan.
+Sleep `power_up.tscn` in je level en start het spel. Loop tegen de power-up aan en spring: je vliegt een stuk hoger, en dat blijft zo. Te lang: vijf seconden later moet de sprongkracht weer op `-800.0` staan.
 
 **Hoe zou je dat aanpakken met wat je nu kent?**
 
@@ -106,9 +94,11 @@ GDScript heeft er één woord voor. Dat is `await`.
 
 </details>
 
-### Wachten met `await`
+## Stap 4: Wachten met await \{#await}
 
-Breid `geef_sprongboost()` uit met twee regels:
+### De boost laten aflopen
+
+Breid `geef_sprongboost()` in je karakter-script uit met drie regels:
 
 ```gdscript
 func geef_sprongboost() -> void:
@@ -159,7 +149,7 @@ Maak een tweede power-up die je drie seconden lang sneller laat lopen in plaats 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-- Het eerste punt is wat je in het tabblad Stap 1 met de sprongkracht deed: `const SPEED` wordt `var snelheid`, en overal waar `SPEED` stond komt `snelheid` te staan. Vergeet de regel in `_physics_process` niet waar je `move_toward` gebruikt.
+- Het eerste punt is wat je in het tabblad Const wordt var met de sprongkracht deed: `const SPEED` wordt `var snelheid`, en overal waar `SPEED` stond komt `snelheid` te staan. Vergeet de regel in `_physics_process` niet waar je `move_toward` gebruikt.
 - De functie lijkt op `geef_sprongboost`, met andere waardes: `600.0` in plaats van `300.0`, en `3.0` in de timer. Is jouw loopsnelheid geen `300.0`, neem dan het dubbele van jouw waarde, en zet daarna jouw waarde terug.
 - Het script van de power-up verschilt maar in één woord van dat van de eerste.
 
@@ -243,7 +233,7 @@ func geef_sprongboost() -> void:
 
 **Oorzaak:** de sprongkracht staat nog als `const`, en daar kun je geen nieuwe waarde aan geven. Godot ziet dat al voordat je spel draait.
 
-**Oplossing:** maak er een `var` van, zoals in het tabblad Stap 1. Let op dat je hem overal hernoemt: bovenaan, in `_physics_process` en in je boost-functie.
+**Oplossing:** maak er een `var` van, zoals in het tabblad Const wordt var. Let op dat je hem overal hernoemt: bovenaan, in `_physics_process` en in je boost-functie.
 
 </details>
 

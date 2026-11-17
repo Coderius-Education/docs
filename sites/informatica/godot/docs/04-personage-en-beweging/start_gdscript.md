@@ -15,7 +15,7 @@ Je karakter staat op het scherm en er hangt een script aan met één regel erin.
   ]}
 />
 
-## Stap 1: Een functie die bij de start draait \{#var}
+## Stap 1: De functie `_ready` \{#var}
 
 Open in Godot het script van je `CharacterBody2D`. Er staat één regel in: `extends CharacterBody2D`. Typ daaronder, met een lege regel ertussen:
 
@@ -30,7 +30,7 @@ func _ready() -> void:
 
 De rest ken je uit Python: `var levens = 3` maakt een variabele, en `print()` zet iets op het scherm. In GDScript schrijf je `var` ervoor; verder werkt het hetzelfde.
 
-## Stap 2: Kijk waar je output landt
+## Stap 2: Uitvoer bekijken
 
 1. Druk op `F5` om je spel te starten.
 2. Kijk onderin je Godot-scherm op het tabblad **Uitvoer** (Engels: **Output**).
@@ -43,6 +43,17 @@ Ik heb 3 levens.
 ```
 
 Uitvoer wordt je belangrijkste gereedschap. Telkens als je niet zeker weet of een stuk code draait, zet je er een `print()` in en kijk je in Uitvoer. In [Fouten zoeken](site:godot/docs/fouten-zoeken) staat hoe je daar systematisch mee werkt.
+
+#### Check je begrip: `_ready()` of `_process()`? \{#func-ready}
+
+**Wat denk je dat er gebeurt als je `_ready()` vervangt door `_process(delta)`?**
+
+<details>
+<summary>Antwoord</summary>
+
+`_ready()` draait één keer bij start. `_process(delta)` draait **elke frame** (~60 keer per seconde). Je Uitvoer-tabblad raakt dan in een paar seconden vol met dezelfde regels. Handig om bewegende waardes te volgen, niet handig voor een eenmalige startmelding.
+
+</details>
 
 ## Opdracht 4.3.a: laat Godot rekenen
 
@@ -77,18 +88,7 @@ In Uitvoer staat `Punten per level: 30`. Dat getal staat nergens in je script: G
 
 </details>
 
-## Check je begrip: `_ready()` versus `_process()` \{#func-ready}
-
-**Wat denk je dat er gebeurt als je `_ready()` vervangt door `_process(delta)`?**
-
-<details>
-<summary>Antwoord</summary>
-
-`_ready()` draait één keer bij start. `_process(delta)` draait **elke frame** (~60 keer per seconde). Je Uitvoer-tabblad raakt dan in een paar seconden vol met dezelfde regels. Handig om bewegende waardes te volgen, niet handig voor een eenmalige startmelding.
-
-</details>
-
-Haal de functie hierna weer weg, ook als je er `_process` van hebt gemaakt, zodat alleen `extends CharacterBody2D` overblijft. In [Het bewegingsscript bouwen](site:godot/docs/basis_movement_begrijpen) begin je met een schone lei: in zeven korte lessen schrijf je daar het script waarmee je karakter valt, loopt en springt.
+Klaar met de opdracht? Haal de functie dan weer weg, ook als je er `_process` van hebt gemaakt, zodat alleen `extends CharacterBody2D` overblijft. In [Het bewegingsscript bouwen](site:godot/docs/basis_movement_begrijpen) begin je met een schone lei: in zeven korte lessen schrijf je daar het script waarmee je karakter valt, loopt en springt.
 
 ## Er gaat iets mis
 

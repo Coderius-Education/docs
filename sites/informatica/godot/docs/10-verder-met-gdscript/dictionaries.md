@@ -5,7 +5,7 @@ slug: /dictionaries
 
 # Dictionaries: muntjes van brons, zilver en goud
 
-Elk muntje is nu één punt waard. Een gouden muntje dat tien punten oplevert, maakt je level spannender: je springt er een extra keer voor. Je kunt daar drie muntje-scènes voor maken, maar dan heb je drie scripts die bijna gelijk zijn. Met een **dictionary** zet je de waarde van elke soort in één tabel.
+Elk muntje is nu één punt waard. Een gouden muntje van tien punten maakt je level spannender, maar drie muntje-scènes geven drie bijna gelijke scripts. Met een **dictionary** zet je de waarde van elke soort in één tabel.
 
 <Voorkennis
   items={[
@@ -26,7 +26,7 @@ func _ready() -> void:
     print(waardes["brons"] + waardes["zilver"])
 ```
 
-**Welke twee getallen verschijnen er in Uitvoer?** Proberen kan net als bij de lijsten: hang het script aan een lege `Node` in een nieuwe scène en start die met `F6`.
+**Welke twee getallen verschijnen er in Uitvoer?** Proberen kan met een lege `Node` in een nieuwe scène en `F6`.
 
 <details>
 <summary>Antwoord</summary>
@@ -40,7 +40,7 @@ func _ready() -> void:
 
 </details>
 
-## Een dictionary in GDScript \{#dictionary}
+## Wat is een dictionary? \{#dictionary}
 
 Een lijst zoek je op met een plek: `levels[0]`. Een dictionary zoek je op met een **sleutel**: een woord dat je zelf kiest. Je schrijft hem met accolades, en elke sleutel krijgt met een dubbele punt zijn waarde:
 
@@ -57,7 +57,7 @@ var waardes = {"brons": 1, "zilver": 5, "goud": 10}
 
 Opzoeken met blokhaken en een sleutel toevoegen gaan zoals in Python. `has` doet wat `in` in Python doet, en `"platina" in waardes` werkt in GDScript ook. `get` is nieuw: die geeft een reservewaarde als de sleutel er niet is.
 
-## Stap 1: De waarde uit de tabel
+## Stap 1: Waarde uit de tabel
 
 Open het script van je muntje. Nu staat er `Global.score += 1`. Zet er een tabel boven, en een variabele met de soort van dit muntje. De group en de controle op winnen uit opdracht 7.5.a blijven staan; deed je die opdracht niet, dan laat je die regels weg. Een regel met `call_group` uit opdracht 7.5.b blijft ook staan.
 
@@ -84,7 +84,7 @@ De tabel verandert niet tijdens het spel, dus het is een `const`, met een naam i
 
 Start je spel en pak een muntje. In **Uitvoer** gaat de score met tien omhoog.
 
-## Stap 2: Elk muntje een eigen soort \{#export}
+## Stap 2: Soort per muntje \{#export}
 
 Elk muntje is goud, want `soort` staat vast in het script. Je wilt per muntje in je level kunnen kiezen welke soort het is. Zet daarvoor `@export` voor de variabele:
 
