@@ -159,8 +159,11 @@
   color: #f88;
 }
 
-/* In een les-tabblad (zie index.js). Op een smal scherm staat de code er, of
-   het spel: zoals buiten een tabblad. */
+/* In een les-tabblad (zie index.jsx). Op een smal scherm staat het spel
+   onder de code en de knoppen, en de code blijft staan terwijl het spel
+   draait: de build haalt het codeblok boven een speeltuin weg (de speeltuin
+   toont de code zelf), dus zonder de editor stond de code waar de les over
+   praat nergens meer in beeld. */
 .inTab {
   margin: 0.75rem 0;
 }
@@ -179,10 +182,6 @@
 
 .inTab.loopt .spelKolom {
   display: block;
-}
-
-.inTab.loopt .codeKolom {
-  display: none;
 }
 
 .wacht {

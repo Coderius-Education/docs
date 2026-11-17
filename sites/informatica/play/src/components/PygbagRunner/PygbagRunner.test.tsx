@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 // @vitest-environment jsdom
 import {
   HulpContext,
@@ -13,13 +15,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // als zijn scherm dichtgaat: het spelvenster zweeft los boven de pagina
 // (SharedRunner) en bleef anders over het volgende scherm heen staan.
 
-const gestart: { ownerId: number; code: string }[] = [];
+type Luisteraars = { onError: (melding: string, fataal: boolean) => void };
+const gestart: { ownerId: number; code: string; listeners: Luisteraars }[] = [];
 const gestopt: number[] = [];
 
 vi.mock('../SharedRunner', () => ({
   schedule: () => {},
-  requestRun: (run: { ownerId: number; code: string }) => {
-    gestart.push({ ownerId: run.ownerId, code: run.code });
+  requestRun: (run: { ownerId: number; code: string; listeners: Luisteraars }) => {
+    gestart.push({ ownerId: run.ownerId, code: run.code, listeners: run.listeners });
     return gestart.length;
   },
   stop: (ownerId: number) => {
@@ -137,6 +140,48 @@ describe('in een tabblad', () => {
   });
 });
 
+describe('als er niets meer draait', () => {
+  it('laat het veld na een fatale fout het spelvenster los', () => {
+    // Start Pyodide niet, dan draait er niets. De knop Stop ging weg, maar
+    // het spelvenster bleef over het vak hangen (het vak staat in een
+    // tabblad altijd in de pagina), zonder knop om het weg te krijgen.
+    const { container } = render(<InTab />);
+    fireEvent.click(knop(container, /Speel in browser/) as HTMLButtonElement);
+    expect(gestopt).toEqual([]);
+
+    act(() => gestart[0].listeners.onError('Pyodide start niet', true));
+    expect(gestopt).toEqual([gestart[0].ownerId]);
+    expect(knop(container, /Stop/)).toBeUndefined();
+    expect(container.textContent).toContain('Pyodide start niet');
+  });
+
+  it('blijft het spel staan na een gewone fout in de code', () => {
+    const { container } = render(<InTab />);
+    fireEvent.click(knop(container, /Speel in browser/) as HTMLButtonElement);
+    act(() => gestart[0].listeners.onError('NameError', false));
+    expect(gestopt).toEqual([]);
+    expect(knop(container, /Stop/)).toBeDefined();
+  });
+});
+
+describe('op een smal scherm', () => {
+  it('blijft de code staan terwijl het spel draait', () => {
+    // De build haalt het codeblok boven een speeltuin weg: de speeltuin toont
+    // de code zelf. Onder 997 pixels verborg het veld zijn code zodra het
+    // spel liep, en dan stond de code waar de volgende alinea over praat
+    // nergens meer. Alleen een browser ziet de opmaak; hier staat vast dat
+    // de regel die de code verborg, niet terugkomt. Nagekeken in Chromium op
+    // 390 pixels breed: de code staat boven het spel.
+    const css = readFileSync(
+      join(process.cwd(), 'sites/informatica/play/src/components/PygbagRunner/styles.module.css'),
+      'utf8',
+    );
+    const buitenMedia = css.slice(0, css.indexOf('@media (min-width: 997px)'));
+    expect(buitenMedia).not.toMatch(/\.loopt \.codeKolom\s*\{[^}]*display:\s*none/);
+    expect(css).not.toMatch(/\.codeKolom\s*\{[^}]*display:\s*none/);
+  });
+});
+
 describe('een opdracht met een tip en een oplossing', () => {
   // Als uitklapblok onder het veld stond de oplossing met een tweede
   // speeltuin erin: twee velden op één scherm, en dat paste nergens. Nu staan
@@ -195,6 +240,21 @@ describe('een opdracht met een tip en een oplossing', () => {
     expect((container.querySelector('textarea') as HTMLTextAreaElement).value).toContain(
       'play.new_box()',
     );
+  });
+
+  it('de knop heet Speel het antwoord waar de les het een antwoord noemt', () => {
+    // Er stond "Speel de antwoord": de naam uit de les ging zo de zin in. Het
+    // meetscript zoekt de knop op zijn naam en klikte hem daardoor nooit aan.
+    const { container } = render(
+      <PaneelContext.Provider value={() => {}}>
+        <HulpContext.Provider value={{ ...hulp, naam: 'antwoord' }}>
+          <PygbagRunner code={CODE} height={300} />
+        </HulpContext.Provider>
+      </PaneelContext.Provider>,
+    );
+    fireEvent.click(knop(container, /^Antwoord$/) as HTMLButtonElement);
+    expect(knop(container, /Speel het antwoord$/)).toBeDefined();
+    expect(knop(container, /Speel de antwoord/)).toBeUndefined();
   });
 
   it('Speel in browser speelt daarna weer de code van de leerling', () => {

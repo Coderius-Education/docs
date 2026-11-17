@@ -3335,6 +3335,21 @@ describe('de tip en de oplossing staan in het oefenveld', () => {
     // oefenveld erin blijft daar een uitklapblok.
     const python = hulpInVeld([veld(), blok('Klik hier voor de oplossing.', veld(antwoord))]);
     expect(namen(python)).toEqual(['CodeExercise', 'details']);
+
+    // Een codeblok in een oplossing van play is een fragment: alleen de regel
+    // die verandert. Het staat in het veld, maar het veld speelt het niet af.
+    // Eerst kreeg het de knop Speel de oplossing, en gaf die in 2.1 een
+    // NameError (`tekst.start_physics(...)` zonder de rest) en in 9.1.a en
+    // 9.3.a een leeg spel onder "Dit is de oplossing van de les".
+    const fragment = hulpInVeld([
+      speeltuin('import play'),
+      blok('Klik hier voor het antwoord.', code('tekst.start_physics(sensor=True)')),
+    ]);
+    expect(namen(fragment)).toEqual(['LesVeld']);
+    const [, antwoordHulp] = fragment[0].children;
+    expect(attr(antwoordHulp, 'soort')).toBe('antwoord');
+    expect(attr(antwoordHulp, 'code')).toBeUndefined();
+    expect(namen(antwoordHulp.children)).toEqual(['code']);
   });
 
   it('een oplossing met een ander oefenveld blijft een uitklapblok', () => {

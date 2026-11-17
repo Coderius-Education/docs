@@ -227,6 +227,14 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
     speel(hulp.code, 'Dit is de oplossing van de les, niet jouw code.');
   }
 
+  // Het spel stoppen: het spelvenster (SharedRunner) laat zijn vak los, en het
+  // veld weet dat er niets meer draait. Op één plek, voor de knop Stop, een
+  // tabblad of uitklapblok dat dichtgaat, en een fout waarna niets meer draait.
+  const stopSpel = useCallback(() => {
+    sharedStop(ownerId);
+    setIsRunning(false);
+  }, [ownerId]);
+
   // Fire the run only AFTER the slot is in the DOM — otherwise slotRef.current
   // is null and SharedRunner has no anchor to position over.
   // biome-ignore lint/correctness/useExhaustiveDependencies: beurt start het spel opnieuw bij een tweede klik op Speel.
@@ -249,38 +257,39 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
         },
         onError: (msg, fatal) => {
           appendLine(msg, true);
-          if (fatal) setIsRunning(false);
+          // Na een fatale fout (Pyodide start niet) draait er niets meer. In
+          // een tabblad blijft het vak van het spel staan: zonder het venster
+          // los te laten bleef dat over de tekst "Klik op Speel in browser"
+          // hangen, zonder knop Stop om het weg te krijgen.
+          if (fatal) stopSpel();
         },
         onPreempted: () => setIsRunning(false),
       },
     });
-  }, [isRunning, beurt, ownerId, appendLine]);
+    // Op een smal scherm staat het spel onder de code en de knoppen: breng
+    // het in beeld, anders begint het onder de rand van het scherm.
+    if (inTab && window.matchMedia && !window.matchMedia('(min-width: 997px)').matches)
+      slotRef.current.scrollIntoView?.({ block: 'nearest' });
+  }, [isRunning, beurt, ownerId, appendLine, stopSpel, inTab]);
 
-  function handleStop() {
-    sharedStop(ownerId);
-    setIsRunning(false);
-  }
+  const handleStop = stopSpel;
 
   // Het spel draait in een iframe die los van de pagina boven dit veld
   // zweeft (SharedRunner). Gaat het tabblad of de stap van dit veld dicht,
   // of het uitklapblok eromheen, dan bleef hij op de oude plek hangen, over
   // het volgende scherm heen. Dan stopt het spel.
   useEffect(() => {
-    if (inBeeld) return;
-    sharedStop(ownerId);
-    setIsRunning(false);
-  }, [inBeeld, ownerId]);
+    if (!inBeeld) stopSpel();
+  }, [inBeeld, stopSpel]);
   useEffect(() => {
     const blok = veldRef.current?.closest('details');
     if (!blok) return;
     const dicht = () => {
-      if (blok.open) return;
-      sharedStop(ownerId);
-      setIsRunning(false);
+      if (!blok.open) stopSpel();
     };
     blok.addEventListener('toggle', dicht);
     return () => blok.removeEventListener('toggle', dicht);
-  }, [ownerId]);
+  }, [stopSpel]);
 
   const kop = (
     <div className={styles.header}>
@@ -346,7 +355,7 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
 
   if (inTab) {
     // Code en spel staan allebei in de pagina; de opmaak zet ze op een breed
-    // scherm naast elkaar, en toont op een smal scherm de code of het spel.
+    // scherm naast elkaar, en op een smal scherm het spel onder de code.
     // De balk met de titel vervalt als de les geen titel geeft (geen enkele
     // les doet dat): "Python Game" boven elk veld kostte elk scherm 37
     // pixels, en in een open oplossing schoof de knop Stop erdoor uit beeld.
@@ -400,7 +409,7 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
                         className={styles.oplossingKnop}
                         title="Je eigen code blijft staan"
                       >
-                        &#x25B6; Speel de {hulp.naam ?? 'oplossing'}
+                        &#x25B6; Speel {hulp.naam === 'antwoord' ? 'het antwoord' : 'de oplossing'}
                       </button>
                     )}
                   </HulpVak>

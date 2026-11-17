@@ -810,11 +810,30 @@ function bestandenNaastElkaar(kinderen) {
 }
 
 /**
- * De oefenvelden die een doel naast hun uitvoer kunnen tonen (useLesDoel): de
- * CodeExercise van python-runner en de PyRunner van algoritmes. In de route
- * machine learning stond de verwachte uitvoer op een ander scherm dan het veld.
+ * Wat elk oefenveld kan, op één plek. Eerst stond de naam van een veld in
+ * vier lijsten en twee functies, en wie er een veld bij zette, moest ze
+ * allemaal vinden.
+ *
+ * - `doel`: toont de verwachte uitvoer naast zijn uitvoer (useLesDoel). In
+ *   de route machine learning stond die op een ander scherm dan het veld.
+ * - `code`: laat zijn startcode zelf zien; een codeblok met dezelfde code
+ *   ervoor vervalt (zonderDubbeleCode).
+ * - `hulp`: toont de tip en het antwoord van zijn opdracht zelf (useLesHulp).
+ * - `oplossingIsVeld`: de oplossing van een opdracht is zelf zo'n veld (de
+ *   speeltuin van play). Alleen zo'n oplossing kan het veld afspelen: een
+ *   codeblok in de oplossing is daar een fragment (alleen de regel die
+ *   verandert), en dat gaf met de knop Speel de oplossing een NameError of
+ *   een leeg spel.
  */
-const VELDEN_MET_DOEL = ['CodeExercise', 'PyRunner'];
+const VELDEN = {
+  CodeExercise: { doel: true, code: true, hulp: true },
+  PyRunner: { doel: true, code: true, hulp: true },
+  CodeEditor: { hulp: true },
+  PygbagRunner: { code: true, hulp: true, oplossingIsVeld: true },
+};
+const veldenMet = (wat) => Object.keys(VELDEN).filter((naam) => VELDEN[naam][wat]);
+
+const VELDEN_MET_DOEL = veldenMet('doel');
 
 const isVeld = (node) => node.type === 'mdxJsxFlowElement' && VELDEN_MET_DOEL.includes(node.name);
 
@@ -854,9 +873,7 @@ function startcode(veld) {
  * lezen met direct eronder de runner met dezelfde code, en in een tabblad
  * stond die code dan twee keer in beeld.
  */
-const VELDEN_MET_CODE = [...VELDEN_MET_DOEL, 'PygbagRunner'];
-const toontCode = (node) =>
-  node.type === 'mdxJsxFlowElement' && VELDEN_MET_CODE.includes(node.name);
+const VELDEN_MET_CODE = veldenMet('code');
 
 // MDX eet inspringing van een expressie op (zie mdx-inspringing.js): alleen
 // de tekst van de regels telt.
@@ -888,7 +905,7 @@ function zonderDubbeleCode(kinderen, velden = VELDEN_MET_CODE) {
     // was de oplossing dan twee keer zo lang als het scherm. Bij de andere
     // velden gaat de oplossing het veld in (hulpInVeld).
     if (isUitklapblok(node))
-      node = { ...node, children: zonderDubbeleCode(node.children, ['PygbagRunner']) };
+      node = { ...node, children: zonderDubbeleCode(node.children, veldenMet('oplossingIsVeld')) };
     uit.push(node);
     if (node.type !== 'code') continue;
     let k = i + 1;
@@ -899,7 +916,7 @@ function zonderDubbeleCode(kinderen, velden = VELDEN_MET_CODE) {
     )
       k++;
     const veld = kinderen[k];
-    if (!veld || !toontCode(veld) || !velden.includes(veld.name)) continue;
+    if (!veld || veld.type !== 'mdxJsxFlowElement' || !velden.includes(veld.name)) continue;
     const start = startcode(veld);
     if (start === null || plat(start) !== plat(node.value ?? '')) continue;
     uit.pop();
@@ -975,7 +992,7 @@ function doelNaastVeld(kinderen) {
  * De oefenvelden die de tip en het antwoord van hun opdracht zelf tonen
  * (useLesHulp): de velden met een doel, en de CodeEditor van web.
  */
-const VELDEN_MET_HULP = [...VELDEN_MET_DOEL, 'CodeEditor', 'PygbagRunner'];
+const VELDEN_MET_HULP = veldenMet('hulp');
 
 const isVeldMetHulp = (node) =>
   node.type === 'mdxJsxFlowElement' && VELDEN_MET_HULP.includes(node.name);
@@ -1030,7 +1047,7 @@ function hulpSoort(node) {
  * @returns {object[] | null} de inhoud met een codeblok op de plek van de speeltuin
  */
 function oplossingInSpeeltuin(veld, inhoud) {
-  if (veld.name !== 'PygbagRunner' || inhoud.some((n) => n.type === 'code')) return null;
+  if (!VELDEN[veld.name]?.oplossingIsVeld || inhoud.some((n) => n.type === 'code')) return null;
   const velden = inhoud.filter((n) => n.type === 'mdxJsxFlowElement' && n.name === veld.name);
   if (velden.length !== 1) return null;
   const code = startcode(velden[0]);
@@ -1089,7 +1106,10 @@ function hulpInVeld(kinderen) {
         const merk = eerste > 0 ? delen[eerste - 1] : undefined;
         const los =
           eerste >= 0 && !(merk && zetNietsNeer(merk) && DRAAIT_NIET_LOS.test(merk.value ?? ''));
-        const code = los ? delen[eerste] : undefined;
+        // Bij een veld waarvan de oplossing zelf een veld is (play), speelt
+        // alleen zo'n oplossing: een los codeblok is daar een fragment.
+        const speelbaar = !VELDEN[veld.name]?.oplossingIsVeld || inSpeeltuin !== null;
+        const code = los && speelbaar ? delen[eerste] : undefined;
         const dubbel = (n) =>
           isVeldMetHulp(n) && code && plat(startcode(n) ?? '') === plat(code.value ?? '');
         if (delen.some((n) => veldIn(n) && !dubbel(n))) continue;

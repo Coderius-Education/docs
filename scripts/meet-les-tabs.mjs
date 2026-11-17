@@ -460,6 +460,16 @@ const binnen = (belofte, ms) =>
  * meet na elke klik. Leeg als er geen Python-veld staat of het veld op een
  * antwoord zou wachten.
  */
+/**
+ * De knop Stop van de speeltuin van play, als hij er is. Na een run die op
+ * een fatale fout eindigt, is hij weg: een klik wachtte dan dertig seconden
+ * en brak de meting van de les af, in plaats van het scherm te meten.
+ */
+async function stopSpel(paneel) {
+  const stop = paneel.locator(KNOP, { hasText: 'Stop' }).first();
+  if ((await stop.count()) > 0) await stop.click({ timeout: 2000 }).catch(() => {});
+}
+
 async function meetNaKlik(pagina, paneel, id) {
   // De speeltuin van play: het spel komt naast de code. Het start in een
   // iframe en meldt niet dat het klaar is; het veld hoort zijn maat meteen
@@ -469,7 +479,7 @@ async function meetNaKlik(pagina, paneel, id) {
     await speel.click();
     await pagina.waitForTimeout(1500);
     const naUitvoeren = await binnen(over(pagina, id), 15_000);
-    await paneel.locator(KNOP, { hasText: 'Stop' }).first().click();
+    await stopSpel(paneel);
     return { naUitvoeren };
   }
   // "Uitvoeren" bij de CodeExercise, "Voer uit" bij de PyRunner van algoritmes.
@@ -527,7 +537,7 @@ async function meetNaHulp(pagina, paneel, id) {
       await speelAf.first().click();
       await pagina.waitForTimeout(1500);
       await meet();
-      await paneel.locator(KNOP, { hasText: 'Stop' }).first().click();
+      await stopSpel(paneel);
       continue;
     }
     const voerUit = paneel.locator(KNOP, { hasText: /^▶ Voer (de oplossing|het antwoord) uit$/ });
