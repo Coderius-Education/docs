@@ -52,6 +52,8 @@ Godot ziet alleen bestanden die **in je projectmap** staan. Vanuit de editor kun
 
 ### De assets kopiëren
 
+De Verkenner staat nu open op je projectmap.
+
 1. Open in een tweede Verkenner-venster de uitgepakte asset-map.
 2. Maak in je projectmap een nieuwe map `assets` en sleep alle mappen uit het pack daarin. De lessen verwijzen naar deze `assets`-map.
 

@@ -21,7 +21,7 @@ Na twee seconden spawnt er één muntje, en daarna niets meer: die stopwatch loo
 
 </details>
 
-## Stap 1: Timer toevoegen \{#timer}
+## Stap 1: Timer \{#timer}
 
 1. Open `level1.tscn`.
 2. Klik met rechts op de root-node → **Add Child Node** → `Timer`.
@@ -35,7 +35,7 @@ Na twee seconden spawnt er één muntje, en daarna niets meer: die stopwatch loo
 
 De `Timer` is onzichtbaar in het spel: het is een stopwatch, geen afbeelding. Zijn instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#spawnen).
 
-## Stap 2: Signaal koppelen
+## Stap 2: `timeout` koppelen
 
 1. Selecteer de `Timer` in de Scene Tree.
 2. Ga naar het **Node**-tabblad rechts naast de Inspector.
@@ -67,7 +67,7 @@ func _on_timer_timeout() -> void:
 
 Vervang `1000` door de breedte van jouw level, en `100` door een hoogte boven je vloer.
 
-## Stap 4: Testen
+## Stap 4: Script en test
 
 Je hele `level1.gd` ziet er nu zo uit:
 

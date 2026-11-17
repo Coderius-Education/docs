@@ -42,7 +42,7 @@ Dat is alles. Dit script bevat variabelen die je overal wilt gebruiken.
 
 ## Stap 2: Autoload \{#autoload-instellen}
 
-Registreer je het script als **Autoload**, dan laadt Godot het bij het opstarten en is het overal beschikbaar.
+Registreer je `global.gd` als **Autoload**, dan laadt Godot het bij het opstarten en is het overal beschikbaar.
 
 1. Ga naar **Project** → **Project Settings**.
 2. Klik bovenin op het tabblad **Globals**, en daarbinnen op Autoload. Het tabblad Globals staat naast **General**; is het venster smal, scroll dan even door de rij.
@@ -84,7 +84,7 @@ Overal dezelfde syntax: `Global.variabelnaam`. Geen `get_node(...)`, geen kapott
 
 Global variables gebruik je voor wat je in meer scènes nodig hebt: score, levens, instellingen. Wat bij één node hoort, blijft een gewone `var` in het script van die node.
 
-## Functies: ook in je global script
+## Functies in Global
 
 ### Twee functies toevoegen
 
@@ -117,11 +117,9 @@ Global.reset()
 
 `reset()` roep je aan in [Een startmenu](site:godot/docs/start_menu), als een nieuw potje begint. `verlies_leven()` laat zien dat zo'n functie ook een `if` mag hebben. In deze cursus trekt je vijand het leven er zelf af.
 
-## Return: een functie die antwoord geeft \{#return}
+### Een waarde teruggeven \{#return}
 
-### Een waarde teruggeven
-
-De functies `reset()` en `verlies_leven()` uit het tabblad Functies **doen** iets: ze zetten waarden goed of printen iets. Daarom staat er `-> void` achter zodra je het type opschrijft. Dat pijltje betekent: deze functie geeft niets terug.
+De functies `reset()` en `verlies_leven()` uit de stap Twee functies toevoegen **doen** iets: ze zetten waarden goed of printen iets. Schrijf je het type erbij, dan staat er `-> void` achter: `func reset() -> void:`. Dat pijltje betekent: deze functie geeft niets terug.
 
 Vaak wil je een functie juist iets laten **teruggeven**, zodat je het antwoord kunt gebruiken. Zet daarnaast in je global script:
 

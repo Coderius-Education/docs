@@ -8,35 +8,6 @@ sidebar_label: "Deel 1: Een script dat draait"
 
 Je script bestaat uit één regel: `extends CharacterBody2D`. In deze les voeg je de functie toe waar de rest van je spel in komt te staan.
 
-## GDQuest: een oefenspoor ernaast \{#gdquest}
-
-### Twee sporen
-
-Programmeren leer je door het te doen, maar in je eigen game oefenen is lastig: als er iets niet werkt, weet je niet of het aan je code ligt of aan je scène.
-
-Daarom loopt er vanaf hier een tweede spoor mee. **Hier** bouw je je game: elke les brengt het script dat je zelf typt een stap verder, en aan het eind draait je spel weer. **Bij GDQuest** oefen je elk concept los, in je browser, zonder Godot erbij — gaat het daar mis, dan ligt het aan de code, meer kan het niet zijn.
-
-Elk van de zeven delen van het bewegingsscript heeft een blok van GDQuest. Het staat onder de code van dat deel, meestal op het tabblad Je script tot nu toe, en zegt welke GDQuest-les erbij hoort.
-
-<details>
-<summary>Welke GDQuest-les hoort bij welke les hier?</summary>
-
-<GDQuestTabel />
-
-Alles hieruit staat kort bij elkaar in de [GDScript-tips](site:godot/gdscript-tips), de naslag bij alle lessen.
-
-</details>
-
-### Learn GDScript From Zero
-
-Ga naar [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/). Je werkt direct in je browser en hoeft niets te installeren.
-
-![GDQuest learn-gdscript lessenoverzicht met de relevante lessen gemarkeerd](../images/gdscript.png)
-
-Begin met les 1 en 2. Die kosten samen een kwartier en leggen uit wat code is en hoe je een foutmelding leest. Les 3 gaat over `extends` — de regel die al in je script staat.
-
-Je hoeft de GDQuest-cursus niet uitgespeeld te hebben; je loopt hem ernaast door, in je eigen tempo.
-
 ## Wat je nu gaat toevoegen
 
 Eén functie, met daarin één opdracht aan Godot: verplaats mijn karakter. Na deze les beweegt er nog niets — maar het skelet staat, en alles wat je hierna schrijft komt op deze plek.
@@ -120,7 +91,7 @@ func _physics_process(delta: float) -> void:
     move_and_slide()
 ```
 
-In het paneel **Uitvoer** onderin verschijnt nu een eindeloze stroom regels. Haal die `print` daarna weer weg — zestig regels per seconde maakt Uitvoer onbruikbaar.
+Start opnieuw met `F5`. In het paneel **Uitvoer** onderin verschijnt een eindeloze stroom regels. Haal die `print` daarna weer weg — zestig regels per seconde maakt Uitvoer onbruikbaar.
 
 #### En met `_ready`?
 
@@ -134,6 +105,35 @@ In het paneel **Uitvoer** onderin verschijnt nu een eindeloze stroom regels. Haa
 Beide functies bestaan naast elkaar: `_ready` voor wat één keer moet gebeuren, `_physics_process` voor wat continu moet gebeuren.
 
 </details>
+
+## GDQuest: een oefenspoor ernaast \{#gdquest}
+
+### Twee sporen
+
+Programmeren leer je door het te doen, maar in je eigen game oefenen is lastig: als er iets niet werkt, weet je niet of het aan je code ligt of aan je scène.
+
+Daarom loopt er vanaf hier een tweede spoor mee. **Hier** bouw je je game: elke les brengt het script dat je zelf typt een stap verder, en aan het eind draait je spel weer. **Bij GDQuest** oefen je elk concept los, in je browser, zonder Godot erbij — gaat het daar mis, dan ligt het aan de code, meer kan het niet zijn.
+
+Elk van de zeven delen van het bewegingsscript eindigt met een regel van GDQuest: welke les daar bij dat deel hoort. De eerste staat op het tabblad Je script tot nu toe van deze les; in Deel 7 staat hij op het tabblad De sprong.
+
+<details>
+<summary>Welke GDQuest-les hoort bij welke les hier?</summary>
+
+<GDQuestTabel />
+
+Alles hieruit staat kort bij elkaar in de [GDScript-tips](site:godot/gdscript-tips), de naslag bij alle lessen.
+
+</details>
+
+### Learn GDScript From Zero
+
+Ga naar [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/). Je werkt direct in je browser en hoeft niets te installeren.
+
+![GDQuest learn-gdscript lessenoverzicht met de relevante lessen gemarkeerd](../images/gdscript.png)
+
+Begin met les 1 en 2. Die kosten samen een kwartier en leggen uit wat code is en hoe je een foutmelding leest. Les 3 gaat over `extends` — de regel die al in je script staat.
+
+Je hoeft de GDQuest-cursus niet uitgespeeld te hebben; je loopt hem ernaast door, in je eigen tempo.
 
 ## Je script tot nu toe
 

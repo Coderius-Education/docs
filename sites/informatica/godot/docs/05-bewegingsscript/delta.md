@@ -79,7 +79,7 @@ In **Uitvoer** loopt een stroom van steeds hetzelfde getal: `0.01666666666667`. 
 
 In je valregel staat `get_gravity() * delta`. Dat is `980 * 0.0167`, ongeveer `16`. Elke frame komt er dus zo'n 16 bij de snelheid, en na zestig frames — één seconde — zit je op ongeveer 980. Precies wat de bedoeling was.
 
-Dat `delta` steeds hetzelfde getal is, is geen toeval. Voor `_physics_process` houdt Godot een vaste klok aan van zestig keer per seconde, ook als je computer het even druk heeft. In `_process`, dat bij elk beeld op je scherm draait, wisselt `delta` wél.
+Bij Wat delta is zag je in Uitvoer steeds hetzelfde getal. Dat is geen toeval: voor `_physics_process` houdt Godot een vaste klok aan van zestig keer per seconde, ook als je computer het even druk heeft. In `_process`, dat bij elk beeld op je scherm draait, wisselt `delta` wél.
 
 Zet je de klok van `_physics_process` in **Project Settings → Physics → Common → Physics Ticks per Second** op 120, dan is `delta` half zo groot en telt elke frame half zoveel mee. Het resultaat na één seconde blijft hetzelfde. Zie je de instelling niet, zet dan rechtsboven **Advanced Settings** aan.
 

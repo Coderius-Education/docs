@@ -18,7 +18,7 @@ Een animatie is een serie afbeeldingen (frames) die snel achter elkaar worden ge
 
 </details>
 
-## Stap 1: Node en SpriteFrames \{#animatedsprite2d}
+## Stap 1: AnimatedSprite2D maken \{#animatedsprite2d}
 
 #### Vervang `Sprite2D` door `AnimatedSprite2D`
 
@@ -49,7 +49,7 @@ Kom je er niet uit? Op het tabblad Video van deze les zie je de stappen in beeld
 ## Stap 3: Run en jump
 
 1. Klik linksboven in het SpriteFrames-paneel op het `+`-icoontje om een nieuwe animatie toe te voegen en noem deze `run`.
-2. Voeg de frames toe zoals op het tabblad De idle-animatie, met het sprite-sheet voor rennen (bijv. `Run (32x32).png`).
+2. Klik op **Add Frames from Sprite Sheet**, kies het sprite-sheet voor rennen (bijv. `Run (32x32).png`), zet **Horizontal** op het aantal frames, selecteer ze en klik op de knop rechtsonder. De uitgebreide stappen staan op het tabblad De idle-animatie.
 3. Doe hetzelfde voor `jump`.
 
 Je drie animaties staan klaar, maar in je spel zie je ze nog niet: een animatie speelt pas als je script hem start. Dat schrijf je in [Animaties in code](site:godot/docs/animaties_code).

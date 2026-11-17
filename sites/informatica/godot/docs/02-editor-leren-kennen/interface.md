@@ -18,7 +18,7 @@ De **Scene Tree** staat **linksboven**. Dat past bij hoe je leest: van links naa
 
 </details>
 
-## De layout
+## Panelen van de editor
 
 ```
 +----------------------------------------------------+

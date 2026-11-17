@@ -18,7 +18,7 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 - De camera laten meebewegen met de speler in beide richtingen.
 - Per richting de juiste loop-animatie afspelen.
 
-## Nodes die je nodig hebt
+## Nodes: wat je nodig hebt
 
 | Node | Waarvoor? |
 |---|---|
@@ -29,7 +29,7 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 | `Camera2D` | Volgt de speler — `Enabled` aan laten staan (standaard). |
 | `Area2D` | Voor deuren, items, schakelaars of vijand-zones. |
 
-## Handige GDScript-functies
+## GDScript-functies: handig voor dit spel
 
 | Functie / property | Wat doet het? |
 |---|---|
@@ -58,7 +58,7 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 
 5. Voeg een `Area2D` toe als deur en koppel `body_entered` aan `get_tree().change_scene_to_file("res://kamer2.tscn")`, zoals de vlag in [Een tweede level toevoegen](site:godot/docs/tweede_level).
 
-### Mogelijke uitbreidingen
+## Uitbreidingen
 
 - Vijanden als `Area2D`: raak je er een, dan is het game over.
 - Vijanden die je achterna lopen, met een `NavigationAgent2D` (zie [Wat nu?](site:godot/docs/meer-leren), onder Tegenstanders laten volgen).

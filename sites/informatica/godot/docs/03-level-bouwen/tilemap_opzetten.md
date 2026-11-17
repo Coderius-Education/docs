@@ -21,7 +21,7 @@ Een tile-gebaseerd level is een rooster van kleine afbeeldingen (**tiles**) die 
 
 De `TileMapLayer` staat met alle stappen ook in de [Nodes cheatsheet](site:godot/cheatsheet#level-wereld).
 
-## Stap 2: TileSet en tekenen
+## Stap 2: Level tekenen
 
 #### Stel de TileSet in
 
@@ -87,7 +87,7 @@ Testen of de sprongen écht haalbaar zijn kan nog niet: daarvoor heb je het spri
 
 **Oorzaak:** Je sleept de afbeelding naar het verkeerde veld.
 
-**Oplossing:** Zorg dat je bij TileSet en tekenen echt onderin op het tabblad **TileSet** hebt geklikt voordat je sleept.
+**Oplossing:** Klik eerst onderin de editor van Godot op het tabblad **TileSet** (punt 5 onder Stel de TileSet in) en sleep dan pas.
 
 </details>
 

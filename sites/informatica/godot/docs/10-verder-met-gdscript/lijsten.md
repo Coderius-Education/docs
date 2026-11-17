@@ -5,7 +5,7 @@ slug: /lijsten
 
 # Lijsten: één vlag voor al je levels
 
-Met een **lijst** zet je de volgorde van je levels op één plek, en werkt dezelfde vlag in elk level.
+Elke vlag heeft nu een eigen script, met het volgende level erin. Met een **lijst** in `vlag.gd` zet je de volgorde van je levels op één plek, en werkt dezelfde vlag in elk level.
 
 <Voorkennis
   items={[
@@ -108,7 +108,7 @@ Na het laatste level ga je terug naar het menu uit [Een startmenu](site:godot/do
 
 ### Dezelfde vlag in elk level
 
-Elk level heeft een vlag nodig, ook het laatste: daar brengt hij je terug naar het menu. Heeft een level er nog geen, bouw hem dan zoals in [Een tweede level toevoegen](site:godot/docs/tweede_level), bij Vlag plaatsen en Signaal koppelen. Maak daarbij geen nieuw script: sleep `vlag.gd` vanuit **FileSystem** op de `Vlag`-node.
+Elk level heeft een vlag nodig, ook het laatste: daar brengt hij je terug naar het menu. Heeft een level er nog geen, bouw hem dan zoals in [Een tweede level toevoegen](site:godot/docs/tweede_level), in de tabbladen De vlag en `body_entered` koppelen. Maak daarbij geen nieuw script: sleep `vlag.gd` vanuit **FileSystem** op de `Vlag`-node.
 
 Heeft een level al een vlag met een eigen script, open dan dat level en sleep `vlag.gd` op dezelfde manier op de `Vlag`-node. De koppeling met `body_entered` blijft staan, want de functie heet in elk script `_on_body_entered`.
 

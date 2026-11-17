@@ -55,7 +55,7 @@ Menu (Control)
 
 Alle UI-nodes uit deze les staan met hun instellingen in de [Nodes cheatsheet](site:godot/cheatsheet#ui-menu).
 
-## Stap 3: Signalen koppelen
+## Stap 3: `pressed` koppelen
 
 1. Selecteer de root, `Menu`.
 2. Klik op het script-icoontje → **Attach Script** → **Create**. Sla op als `menu.gd`.
@@ -71,7 +71,7 @@ Koppel `pressed` van de `Afsluiten`-knop op dezelfde manier, met `_on_afsluiten_
 
 **Let op:** verander de naam in het dialoogvenster, niet achteraf in je script. De verbinding onthoudt de naam van toen: hernoem je de functie later, dan zoekt de knop nog de oude naam en gebeurt er bij een klik niets, zonder foutmelding.
 
-## Stap 4: Code en Main Scene
+## Stap 4: `menu.gd` en Main Scene
 
 Vul in `menu.gd` de twee functies die Godot voor je klaarzette:
 
@@ -90,7 +90,7 @@ func _on_afsluiten_pressed() -> void:
 - `change_scene_to_file("res://level1.tscn")` laadt level 1, zoals de vlag dat met level 2 doet.
 - `get_tree().quit()` sluit het hele spel-venster.
 
-Staat `reset()` nog niet in je `global.gd`? Zet hem er dan eerst in: hij staat in [Global variables (Autoload)](site:godot/docs/global_variables), op het tabblad Functies.
+Staat `reset()` nog niet in je `global.gd`? Zet hem er dan eerst in: hij staat in [Global variables (Autoload)](site:godot/docs/global_variables), op het tabblad Functies in Global.
 
 #### Maak het menu de Main Scene \{#main-scene}
 
@@ -155,7 +155,7 @@ func _on_afsluiten_pressed() -> void:
 
 **Oorzaak:** `Global.score` blijft de hele speelsessie bestaan — dat is precies de bedoeling van een Autoload. Maar bij een **nieuwe start** wil je dat hij weer op 0 begint.
 
-**Oplossing:** Roep `Global.reset()` aan in `_on_start_pressed()` *vóór* je het level laadt, zoals bij Code en Main Scene. Heb je nog geen `reset()`-functie? Voeg in `global.gd` toe:
+**Oplossing:** Roep `Global.reset()` aan in `_on_start_pressed()` *vóór* je het level laadt, zoals bij `menu.gd` en Main Scene. Heb je nog geen `reset()`-functie? Voeg in `global.gd` toe:
 
 ```gdscript
 func reset() -> void:
@@ -170,7 +170,7 @@ func reset() -> void:
 
 **Oorzaak:** De Main Scene staat nog op `level1.tscn` (of `world.tscn`).
 
-**Oplossing:** Stel de Main Scene opnieuw in, zoals bij Code en Main Scene: Project → Project Settings → zoek `main scene` → kies `menu.tscn`.
+**Oplossing:** Stel de Main Scene opnieuw in, zoals bij `menu.gd` en Main Scene: Project → Project Settings → zoek `main scene` → kies `menu.tscn`.
 
 </details>
 

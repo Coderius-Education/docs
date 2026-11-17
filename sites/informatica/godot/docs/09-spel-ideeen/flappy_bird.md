@@ -18,7 +18,7 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 - Een `Area2D` gebruiken voor game over: raakt de vogel een buis, dan begint het level opnieuw.
 - De score ophogen met een `Area2D` in het gat tussen de buizen.
 
-## Nodes die je nodig hebt
+## Nodes: wat je nodig hebt
 
 | Node | Waarvoor? |
 |---|---|
@@ -29,7 +29,7 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 | `Timer` | Spawnt periodiek nieuwe buizen. |
 | `CanvasLayer` + `Label` | Score bovenin het scherm. |
 
-## Handige GDScript-functies
+## GDScript-functies: handig voor dit spel
 
 | Functie / property | Wat doet het? |
 |---|---|
@@ -56,7 +56,7 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 6. Geef `buis.tscn` een script dat de buis in `_process(delta)` naar links schuift (`position.x -= 200 * delta`) en `queue_free()` aanroept zodra `position.x` links van je scherm ligt.
 7. Voeg een `Timer` toe aan de wereld. Koppel `timeout` aan een functie die een buis spawnt, rechts buiten beeld en op een willekeurige hoogte (`randf_range`).
 
-### Mogelijke uitbreidingen
+## Uitbreidingen
 
 - Een achtergrond, en geluid bij een flap en bij een punt. Een node voor geluid zoek je op zoals in [Wat nu?](site:godot/docs/meer-leren), onder Zelf een nieuwe node ontdekken.
 - Een game-over-scherm met je score, gebouwd zoals [Een startmenu](site:godot/docs/start_menu).

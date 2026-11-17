@@ -5,7 +5,7 @@ slug: /dictionaries
 
 # Dictionaries: muntjes van brons, zilver en goud
 
-Elk muntje is nu één punt waard. Met een **dictionary** zet je de waarde van elke soort in één tabel.
+Elk muntje is nu één punt waard. In deze les krijgt je muntje-script een soort (brons, zilver of goud), en zet je met een **dictionary** de waarde van elke soort in één tabel.
 
 <Voorkennis
   items={[

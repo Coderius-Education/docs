@@ -77,9 +77,9 @@ func _on_body_entered(body: Node2D) -> void:
     queue_free()
 ```
 
-Bij het muntje las je een variabele van `body`, je karakter. Hier roep je er een **functie** van aan.
+In [Score bijhouden in je karakter](site:godot/docs/score_in_karakter) deed je muntje `body.score += 1`: een variabele van je karakter. Hier roep je er een **functie** van aan.
 
-Sleep `power_up.tscn` in je level, start het spel en pak hem op: je springt een stuk hoger, en dat blijft zo. Te lang: na vijf seconden moet de sprongkracht terug naar `-800.0`.
+Sleep `power_up.tscn` in je level, start het spel en pak hem op: je springt een stuk hoger, en dat blijft zo. De boost hoort na vijf seconden uit te werken: dan moet de sprongkracht terug naar `-800.0`.
 
 **Hoe zou je dat aanpakken met wat je nu kent?**
 

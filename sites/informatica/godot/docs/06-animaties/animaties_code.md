@@ -32,7 +32,7 @@ Voor de eerste en de derde maak je een variabele. De tweede staat al in je scrip
 
 ## Het dollarteken: `$` pakt een node uit je scène \{#dollar-teken}
 
-In deze les gebruik je voor het eerst regels als deze:
+Om een animatie te starten heb je één nieuw teken nodig. In deze les gebruik je voor het eerst regels als deze:
 
 ```gdscript
 $AnimatedSprite2D.play('run')
@@ -90,7 +90,7 @@ func _physics_process(delta: float) -> void:
 Welke functie kun je gebruiken om te checken of je hoofdpersoon op de grond staat?
 
 - Geef `op_de_grond` de waarde van die functie.
-- Speel de `jump`-animatie af als de hoofdpersoon **niet** op de grond staat.
+- Speel de `jump`-animatie af als de hoofdpersoon **niet** op de grond staat. Hoe je een animatie start, staat bij Het dollarteken.
 
 <details>
 <summary>Bekijk het antwoord</summary>

@@ -89,7 +89,7 @@ func geef_sprongboost() -> void:
 
 Heb je bij opdracht 7.6.a van `SPEED` een `var snelheid` gemaakt, dan staat bij jou `snelheid` waar hier `SPEED` staat, en heb je onderaan ook `geef_snelheidsboost()`. Voor deze les maakt dat niets uit: laat die functie staan zoals hij is.
 
-## Eigen functie \{#eigen-functie}
+## Een eigen functie \{#eigen-functie}
 
 Je kent functies al: `_physics_process` en `_ready` roept Godot zelf aan, en `geef_sprongboost()` uit de power-up-les riep je power-up aan. Een functie voor een stuk van je eigen script werkt hetzelfde, alleen roep je hem nu zelf aan:
 
@@ -100,9 +100,9 @@ Je kent functies al: `_physics_process` en `_ready` roept Godot zelf aan, en `ge
 
 Namen met een `_` ervoor laat je aan Godot: `_ready` en `_physics_process` roept Godot zelf aan, en `_on_body_entered` maakte Godot voor je bij een signal. Je eigen functies krijgen een naam zonder `_`, het liefst een werkwoord.
 
-## Stap 1: De functie val
+## Stap 1: `val()` maken
 
-Het eerste stuk, de zwaartekracht, doe je samen. Bovenaan `_physics_process` staan de regels ervoor:
+Het eerste stuk uit je voorspelling, de zwaartekracht, doe je samen. Bovenaan `_physics_process` staan de regels ervoor:
 
 ```gdscript
     if not is_on_floor():
@@ -119,7 +119,7 @@ func val(delta: float) -> void:
 
 Haal de twee regels daarna weg uit `_physics_process`, en zet op hun plek één regel: `val(delta)`. Start je spel met `F5`: je karakter valt zoals altijd. Je spel doet hetzelfde, alleen je script ziet er anders uit.
 
-`delta` bestaat alleen binnen `_physics_process`: Godot geeft hem daar mee. Daarom geef je hem door als parameter, zoals de positie in [Spawnen: nodes maken in code](site:godot/docs/spawnen): `val(delta)` stuurt de waarde mee, en `func val(delta: float)` vangt hem op.
+`delta` bestaat alleen binnen `_physics_process`: Godot geeft hem daar mee. Daarom geef je hem door als parameter, zoals je in [Spawnen: nodes maken in code](site:godot/docs/spawnen) de positie meegaf aan `spawn_muntje(x, y)`: `val(delta)` stuurt de waarde mee, en `func val(delta: float)` vangt hem op.
 
 ## Opdracht 10.1.a: knip de rest zelf op
 

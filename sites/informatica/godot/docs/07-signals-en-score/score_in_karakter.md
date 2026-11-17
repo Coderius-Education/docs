@@ -60,7 +60,7 @@ func _on_body_entered(body: Node2D) -> void:
 | `body.score`        | De `score`-variabele van die node            |
 | `body.score += 1`   | Verhoog de score met 1                       |
 
-## Stap 3: Testen
+## Stap 3: Score in Uitvoer
 
 Start het spel met `F5` en pak een paar muntjes op. Kijk in **Uitvoer** onderaan:
 

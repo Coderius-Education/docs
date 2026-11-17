@@ -32,7 +32,7 @@ En er is nog iets: het muntje bestaat nog. Loop je eronder door en spring je er 
 
 ## Een tween \{#tween}
 
-De twee nieuwe regels uit de voorspelvraag maken een tween en geven hem een opdracht:
+Een tween schuift een eigenschap in korte tijd van de ene waarde naar de andere. De twee nieuwe regels uit de voorspelvraag maken een tween en geven hem een opdracht:
 
 ```gdscript
     var tween = create_tween()
@@ -85,7 +85,7 @@ Let op: `queue_free` staat hier zonder haakjes. Je geeft de functie zelf mee, zo
 
 ## Stap 2: Eén keer tellen
 
-### De variabele gepakt
+### Al gepakt?
 
 Het muntje bestaat nog een halve seconde nadat je het pakte. Loop je er in die tijd uit en weer in, dan telt het opnieuw. In een halve seconde lukt dat zelden, dus maak de tween even langzaam om het te zien: zet de `0.3` op `3.0`, start je spel, en loop een paar keer heen en weer door het muntje terwijl het omhoog zweeft. Je score gaat elke keer omhoog.
 

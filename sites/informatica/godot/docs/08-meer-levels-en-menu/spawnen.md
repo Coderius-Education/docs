@@ -23,7 +23,7 @@ In GDScript zijn dat drie functies: `preload()`, `instantiate()` en `add_child()
 
 </details>
 
-## Spawnen in code
+## `preload` en `instantiate`
 
 Lees deze twee stukjes GDScript eerst. Typen doe je vanaf het tabblad Level-script.
 
@@ -57,7 +57,7 @@ Zonder de laatste regel bestaat het muntje wel in het geheugen, maar hangt het n
 
 1. Open `level1.tscn` en selecteer de root-node.
 2. Klik op het script-icoontje → **Attach Script** → **Create** en sla op als `level1.gd`.
-3. Zet dit in het nieuwe script. Code over het level als geheel, zoals spawnen, hoort op de level-root.
+3. Code over het level als geheel, zoals spawnen, hoort op de level-root. Vervang de inhoud van het nieuwe script door:
 
 ```gdscript
 extends Node2D
@@ -74,7 +74,7 @@ func _ready() -> void:
 
 Start met `F5`. Er hangt nu een muntje op `(200, 100)` dat je nooit in de editor hebt gesleept. Oppakken werkt meteen: het exemplaar heeft dezelfde children en hetzelfde script als de scène waaruit het gemaakt is.
 
-## Stap 2: Eigen functie
+## Stap 2: Functie `spawn_muntje`
 
 Straks wil je vanaf meerdere plekken kunnen spawnen. Verplaats de drie regels uit `_ready()` daarom naar een eigen functie met de positie als parameters:
 

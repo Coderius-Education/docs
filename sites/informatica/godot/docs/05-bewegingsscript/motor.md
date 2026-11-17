@@ -25,7 +25,7 @@ Zulke kant-en-klare eigenschappen van een node heten member variables.
 
 </details>
 
-## Stap 1: Snelheid opbouwen \{#velocity}
+## Stap 1: Valregel toevoegen \{#velocity}
 
 Zet deze regel **boven** `move_and_slide()`, binnen de functie:
 

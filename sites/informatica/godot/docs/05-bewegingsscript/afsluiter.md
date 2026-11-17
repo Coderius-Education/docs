@@ -100,6 +100,10 @@ Je kunt in de lucht springen. Tijdens een sprong nog eens drukken geeft opnieuw 
 
 </details>
 
+Los oefenen wat je hier gebruikte kan bij GDQuest:
+
+<GDQuestLes slug="movement-afsluiter" />
+
 ### `=` en niet `+=`
 
 Bij de zwaartekracht schreef je `velocity += get_gravity() * delta`, bij de sprong `velocity.y = JUMP_VELOCITY`. De ene keer `+=`, de andere keer `=`: dat is bewust.
@@ -114,10 +118,6 @@ Nu nog niet. Je springt alleen als je op de grond staat, en daar is `velocity.y`
 Het gaat mis zodra je ook in de lucht mag springen, zoals bij dubbel springen in opdracht 5.7.b. Val je al met `velocity.y = 200`, dan geeft `+=` `200 + (-400) = -200`, en springt je karakter half zo hoog. Met `=` vervang je de verticale snelheid helemaal door `-400`. Een sprong is dan altijd even hoog, waar je ook bent.
 
 </details>
-
-Los oefenen wat je hier gebruikte kan bij GDQuest:
-
-<GDQuestLes slug="movement-afsluiter" />
 
 ## Je complete script
 
@@ -145,7 +145,7 @@ func _physics_process(delta: float) -> void:
     move_and_slide()
 ```
 
-## Extra: WASD en een video
+## WASD en video
 
 ### De Input Map openen
 
@@ -221,7 +221,7 @@ Beantwoord deze vragen voor jezelf voordat je gaat typen. Ze wijzen allebei de w
 **Bij sprinten:**
 
 - Welke waarde moet er anders zijn als shift ingedrukt is? En welke regel zet die waarde nu?
-- Je script kijkt naar een actie, niet naar een toets. Kies in de lijst van de Input Map een actie die je nog niet gebruikt en hang daar shift aan, zoals je bij WASD een toets toevoegde (het tabblad Extra van deze les). Welke functie uit het tabblad De sprong kijkt of een actie ingedrukt blijft?
+- Je script kijkt naar een actie, niet naar een toets. Kies in de lijst van de Input Map een actie die je nog niet gebruikt en hang daar shift aan, zoals je bij WASD een toets toevoegde (het tabblad WASD en video van deze les). Welke functie uit het tabblad De sprong kijkt of een actie ingedrukt blijft?
 
 **Bij dubbel springen:**
 

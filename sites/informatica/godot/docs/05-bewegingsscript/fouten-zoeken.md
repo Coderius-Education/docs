@@ -82,7 +82,7 @@ Vanaf hoofdstuk 7 laat je nodes elkaar iets melden met een signal, en dan is dit
 2. Onder een verbonden signal staat de naam van de functie ingesprongen. Staat daar niets, dan is het nooit gekoppeld.
 3. Zet ter controle `print("hier")` als eerste regel in de functie. Blijft Uitvoer leeg terwijl je het muntje raakt, dan weet je het zeker.
 
-## Zoeken
+## Zoekmethodes
 
 ### Print op drie plekken \{#print-drie}
 

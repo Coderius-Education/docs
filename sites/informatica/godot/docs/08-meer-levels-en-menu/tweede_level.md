@@ -40,7 +40,9 @@ In het FileSystem staat nu `karakter.tscn`, met je karakter en alles wat eronder
 
 Doe hetzelfde met de `CanvasLayer` waar je score in staat, en sla die op als `scorebord.tscn`. Zonder scorebord zie je in level 2 geen score.
 
-### Level 1 en level 2
+### Hernoemen en bouwen
+
+#### Hernoem `world.tscn`
 
 Je eerste level heet nog `world.tscn`. Vanaf deze les heet het `level1.tscn`: de lessen hierna gaan van die naam uit.
 
@@ -56,7 +58,7 @@ De Main Scene is de scène die start als je op `F5` drukt. Die stelde je in bij 
 3. Sleep `karakter.tscn` en `scorebord.tscn` vanuit het FileSystem naar je level, zoals je dat met `muntje.tscn` deed.
 4. Sla op via `Ctrl + S` als `level2.tscn`.
 
-## Stap 2: Vlag plaatsen
+## Stap 2: De vlag
 
 Aan het einde van level 1 plaats je een "vlag" die de overgang triggert. De opzet lijkt op het muntje uit [Signals & een muntje oppakken](site:godot/docs/signals_muntje).
 
@@ -77,7 +79,7 @@ Node2D (de root van level 1)
     └── CollisionShape2D
 ```
 
-## Stap 3: Signaal koppelen
+## Stap 3: `body_entered` koppelen
 
 De vlag krijgt een script, en het `body_entered`-signaal dat je van het muntje kent.
 
@@ -179,7 +181,7 @@ func _ready() -> void:
 
 **Oorzaak:** `level2.tscn` bevat geen `CharacterBody2D` — elke scène heeft zijn eigen nodes, de speler uit level 1 verdwijnt mee.
 
-**Oplossing:** Sleep `karakter.tscn` in `level2.tscn`, zoals in het tabblad Level 2 maken, onder Bouw level 2. Geavanceerder is om de speler als Autoload te draaien zodat hij blijft bestaan over scènes heen — maar dat valt buiten deze les.
+**Oplossing:** Sleep `karakter.tscn` in `level2.tscn`, zoals in het tabblad Level 2 maken, stap Hernoemen en bouwen. Geavanceerder is om de speler als Autoload te draaien zodat hij blijft bestaan over scènes heen — maar dat valt buiten deze les.
 
 </details>
 

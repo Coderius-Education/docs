@@ -27,7 +27,7 @@ Je zou elk muntje met de hand kunnen opzoeken via `get_node(...)` en ze tellen. 
 
 ## Stap 1: Group maken \{#group}
 
-Een group is een **label** dat je op een node plakt, en meerdere nodes mogen hetzelfde label dragen. Daarna haal je in één regel alle nodes met dat label **op**, of roep je op allemaal tegelijk een **functie aan**.
+Een group is een **label** dat je op een node plakt, en meerdere nodes mogen hetzelfde label dragen. Daarna kun je in één regel alle nodes met dat label **ophalen**, of op allemaal tegelijk een **functie aanroepen**.
 
 Je muntjes in een group zetten kan op twee manieren. Kies er één.
 
@@ -69,7 +69,7 @@ Pak een muntje: in **Uitvoer** staat hoeveel muntjes er waren. Haal de twee rege
 
 ### Met een for-lus \{#for-lus}
 
-Meestal wil je *iets doen* met elke node in de lijst van een group. Daarvoor loop je er met een `for` doorheen, precies zoals je in Python door een lijst loopt.
+Vaak wil je meer dan tellen: je wilt *iets doen* met elke node in de lijst van een group. Daarvoor loop je er met een `for` doorheen, precies zoals je in Python door een lijst loopt.
 
 Stel dat je vijand-script een functie `stop()` heeft. Die schrijf je pas in Opdracht 7.5.b, dus dit tabblad lees je alleen. Zo roep je hem op elke vijand aan:
 
@@ -90,7 +90,7 @@ Omdat "roep dezelfde functie aan op elke node in een group" zó vaak voorkomt, h
 get_tree().call_group("vijanden", "stop")
 ```
 
-Deze regel roept `stop()` aan op elke vijand, net als de for-lus uit de vorige stap. Handig als je alleen een functie wilt aanroepen — maar zodra je per node iets anders wilt doen (bijvoorbeeld alleen de vijanden links van je speler), heb je de lus nodig.
+Deze regel roept `stop()` aan op elke vijand, net als de lus uit de stap Met een for-lus. Handig als je alleen een functie wilt aanroepen — maar zodra je per node iets anders wilt doen (bijvoorbeeld alleen de vijanden links van je speler), heb je de lus nodig.
 
 **Wat denk je dat er gebeurt als één vijand geen functie `stop()` heeft?**
 

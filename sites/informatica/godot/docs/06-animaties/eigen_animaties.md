@@ -58,11 +58,11 @@ Heb je een animatie als GIF (bijvoorbeeld uit een tutorial of YouTube)?
 
 ## Stap 2: Transparant maken
 
-### Eerst testen, dan Piskel
+### Testen, en met Piskel
 
 Zonder transparantie zit er straks een witte (of een andere) rechthoek achter je karakter in Godot. **Een PNG kan transparantie bevatten via het zogeheten alpha-kanaal** — pixels zijn dan letterlijk doorzichtig.
 
-Sommige downloads (vooral van itch.io of opengameart.org) hebben **al** een transparante achtergrond. Test eerst: sleep je PNG in Godot en kijk of er een rechthoek omheen zit. Geen rechthoek? Dan is hij al transparant: sla de rest van dit tabblad over en ga naar het tabblad Importeren en tools.
+Sommige downloads (vooral van itch.io of opengameart.org) hebben **al** een transparante achtergrond. Test eerst: sleep je PNG in Godot en kijk of er een rechthoek omheen zit. Geen rechthoek? Dan is hij al transparant: sla de rest van dit tabblad over en ga naar het tabblad In Godot zetten.
 
 Zit er wel een rechthoek omheen? Dan zijn er drie manieren om hem weg te halen: met Piskel of LibreSprite (op dit scherm), of met Photopea of GIMP (in de stap Met Photopea of GIMP). Kies er één.
 
@@ -94,7 +94,7 @@ GIMP installeer je op je eigen computer.
 3. Druk **Delete**.
 4. **File → Export As → `.png`**.
 
-## Stap 3: Importeren en tools
+## Stap 3: In Godot zetten
 
 1. Sleep je losse PNG's naar de `assets/`-map in je FileSystem-paneel.
 2. Open de SpriteFrames-editor (zie [Animaties aanmaken](site:godot/docs/animaties) voor de stappen).

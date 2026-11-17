@@ -59,7 +59,7 @@ In tutorials en in het sjabloon van Godot zie je vaak `if direction:`, met de tw
 
 Met `move_toward(velocity.x, 0, SPEED)` breng je je snelheid dus richting nul, met stappen ter grootte van `SPEED`. Omdat je snelheid ook `SPEED` was, sta je meteen stil.
 
-**Wat gebeurt er als je de hele `else`-tak weghaalt?**
+**Wat gebeurt er als je `else:` en `velocity.x = direction * SPEED` eronder weghaalt?**
 
 <details>
 <summary>Antwoord</summary>

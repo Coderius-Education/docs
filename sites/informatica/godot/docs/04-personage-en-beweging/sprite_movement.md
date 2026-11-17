@@ -22,7 +22,7 @@ extends CharacterBody2D
 
 Meer niet. Dat is precies de bedoeling.
 
-## Stap 2: Wat extends doet
+## Stap 2: extends en testen
 
 In je script staat één regel: `extends CharacterBody2D`. **Wat denk je dat er gebeurt als je die regel weghaalt?**
 

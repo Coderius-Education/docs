@@ -44,8 +44,6 @@ Druk daarna op `F5` en loop met je speler naar rechts. Het beeld schuift nu mee 
 
 ## Stap 2: Camera instellen
 
-Alle `Camera2D`-instellingen uit deze les staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
-
 #### Vloeiend volgen met Position Smoothing
 
 Standaard kleeft de camera *exact* aan de speler. Dat oogt schokkerig, vooral bij springen. Met **Position Smoothing** loopt de camera met een lichte vertraging mee.
@@ -64,7 +62,7 @@ Eindigt je level bij een muur, dan wil je niet dat de camera in de leegte eracht
 1. Klap in de Inspector **Limit** open.
 2. Vul de pixel-coördinaten van de grenzen van je level in, bijvoorbeeld `Left: 0`, `Right: 1920`, `Top: 0`, `Bottom: 1080`.
 
-De camera stopt nu bij die grenzen, ook al loopt je speler er nog voorbij.
+De camera stopt nu bij die grenzen, ook al loopt je speler er nog voorbij. Alle `Camera2D`-instellingen uit deze les staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
 
 ## Opdracht 5.9.a: stel Limit in voor jouw level
 

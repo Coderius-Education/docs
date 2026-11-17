@@ -37,12 +37,12 @@ Een signal is een bericht dat een node verstuurt zodra er iets gebeurt. Andere n
 
 In Godot is het precies zo: een node *stuurt* een signal, een andere node *vangt* het op en voert code uit. De `Area2D`-node die je zo gebruikt staat in de [Nodes cheatsheet](site:godot/cheatsheet#collectibles-vijanden); de signal-code vind je terug in de [GDScript-tips](site:godot/gdscript-tips#signals).
 
-## Stap 1: Muntje-scène \{#area2d}
+## Stap 1: Muntje \{#area2d}
 
 1. Ga naar **Scene** → **New Scene**, kies **Other Node** en zoek naar `Area2D`. Een `Area2D` detecteert botsingen zonder zelf physics te krijgen (geen zwaartekracht, niet wegrollen).
 2. Hernoem de `Area2D` naar `Muntje`.
 3. Klik met rechts op `Muntje` → **Add Child Node** en voeg een `Sprite2D` toe. Sleep je muntje-afbeelding naar **Texture** in de Inspector.
-4. Voeg op dezelfde manier een `CollisionShape2D` toe. Zonder collision shape kan Godot geen botsing detecteren.
+4. Klik weer met rechts op `Muntje` (niet op de `Sprite2D`) → **Add Child Node** en voeg een `CollisionShape2D` toe. Zonder collision shape kan Godot geen botsing detecteren.
 5. Kies in de Inspector bij **Shape** een vorm (bijvoorbeeld `CircleShape2D`) en pas de grootte aan zodat de cirkel netjes om het muntje past.
 
 Je Scene Tree ziet er nu zo uit:
@@ -55,7 +55,7 @@ Muntje (Area2D)
 
 Sla de scène op als `muntje.tscn` (`Ctrl + S`).
 
-## Stap 2: Signal koppelen \{#signal-koppelen}
+## Stap 2: `body_entered` koppelen \{#signal-koppelen}
 
 1. Selecteer de `Muntje`-node.
 2. Klik op het script-icoontje of klik met rechts → **Attach Script**. Zet **Template** op **`Object: Empty`** en klik op **Create**.
@@ -76,7 +76,7 @@ Dit is een gewone functie, zoals je er zelf ook een schrijft. Het enige verschil
 
 De parameter `body` is de node die het muntje raakte. Die krijg je meegeleverd, net zoals `delta` bij `_physics_process`.
 
-## Stap 3: Laten verdwijnen \{#signal-functie}
+## Stap 3: Verdwijnen en testen \{#signal-functie}
 
 ### De functie invullen
 
@@ -105,7 +105,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 Start het spel met `F5`, loop tegen een muntje aan en kijk in **Uitvoer**: het muntje verdwijnt en je ziet "Muntje opgepakt".
 
-Los oefenen wat je hier gebruikte kan bij GDQuest:
+Een functie met een parameter, zoals `_on_body_entered(body)`, los oefenen kan bij GDQuest:
 
 <GDQuestLes slug="signals_muntje" />
 

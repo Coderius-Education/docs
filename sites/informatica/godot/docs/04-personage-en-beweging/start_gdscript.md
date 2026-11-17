@@ -55,6 +55,8 @@ Uitvoer wordt je belangrijkste gereedschap. Telkens als je niet zeker weet of ee
 
 </details>
 
+Heb je het uitgeprobeerd? Zet `func _ready() -> void:` terug voordat je naar Opdracht 4.3.a gaat.
+
 ## Opdracht 4.3.a: laat Godot rekenen
 
 Breid je `_ready()` uit zodat Uitvoer drie regels toont:

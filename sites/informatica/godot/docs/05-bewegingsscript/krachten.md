@@ -46,20 +46,20 @@ Godot weigert het met een foutmelding. Een `const` staat vast. Waarden die tijde
 
 #### De toets uitlezen \{#get-axis}
 
-Zet deze twee regels binnen de functie, ónder het valblok en bóven `move_and_slide()`:
+Zet deze twee regels binnen de functie, ónder het valblok en bóven `move_and_slide()`. Wat ze doen, lees je bij Test en get_axis.
 
 ```gdscript
     var direction := Input.get_axis("ui_left", "ui_right")
     velocity.x = direction * SPEED
 ```
 
-## Stap 2: Test en uitleg
+## Stap 2: Test en get_axis
 
 Start met `F5`. Je karakter loopt naar links en rechts met de pijltjestoetsen, en valt nog steeds van platforms af.
 
 #### Wat `get_axis` teruggeeft
 
-`"ui_left"` en `"ui_right"` in je nieuwe regels zijn **acties**: namen die Godot standaard aan de pijltjestoetsen links en rechts heeft gekoppeld. `Input.get_axis()` kijkt naar allebei en geeft één getal terug:
+In `Input.get_axis("ui_left", "ui_right")` zijn `"ui_left"` en `"ui_right"` **acties**: namen die Godot standaard aan de pijltjestoetsen links en rechts heeft gekoppeld. `get_axis` kijkt naar allebei en geeft één getal terug:
 
 - niets ingedrukt → `direction` is `0`
 - links ingedrukt → `direction` is `-1`

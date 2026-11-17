@@ -18,7 +18,7 @@ De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aan
 - Oude nodes opruimen met `queue_free()` om geheugen vrij te maken.
 - Een achtergrond die meeschuift met `ParallaxBackground`. Die node staat niet in de cursus: je zoekt hem op zoals in [Wat nu?](site:godot/docs/meer-leren), onder Zelf een nieuwe node ontdekken.
 
-## Nodes die je nodig hebt
+## Nodes: wat je nodig hebt
 
 | Node | Waarvoor? |
 |---|---|
@@ -30,7 +30,7 @@ De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aan
 | `ParallaxBackground` + `ParallaxLayer` | Een achtergrond die meescrollt voor diepte. |
 | `CanvasLayer` + `Label` | Score (op basis van overleefde tijd of gepasseerde obstakels). |
 
-## Handige GDScript-functies
+## GDScript-functies: handig voor dit spel
 
 | Functie / property | Wat doet het? |
 |---|---|
@@ -69,7 +69,7 @@ Dit is de spawner uit [Spawnen: nodes maken in code](site:godot/docs/spawnen) en
 
 Voeg als laatste een `ParallaxBackground` toe met één of meer `ParallaxLayer`-children voor de schuivende achtergrond.
 
-### Mogelijke uitbreidingen
+## Uitbreidingen
 
 - Een hogere snelheid naarmate de score stijgt.
 - Verschillende soorten obstakels, laag en hoog, met hun scènes in een lijst (zie [Lijsten: één vlag voor al je levels](site:godot/docs/lijsten)).

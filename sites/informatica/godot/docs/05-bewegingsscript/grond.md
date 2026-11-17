@@ -53,7 +53,7 @@ En let op de dubbele punt aan het eind van de `if`-regel. Die hoort er altijd.
 
 Start met `F5`. Aan de buitenkant is er niets veranderd: je karakter valt nog steeds en blijft op de vloer liggen. Wat de `if` wel verandert, meet je bij Wat not doet.
 
-## Stap 2: true en false
+## Stap 2: Wat is_on_floor geeft
 
 `is_on_floor()` geeft `true` als je karakter de vloer raakt en `false` als hij in de lucht hangt. Zulke ja-of-nee-waarden heten **booleans**.
 
@@ -82,7 +82,7 @@ De code binnen de `if` draait alleen als wat erachter staat `true` is. Dus: alle
 
 #### Meet het verschil
 
-Aan je spel zie je de `if` niet, aan de getallen wel. Zet tijdelijk `print(velocity)` boven `move_and_slide()`:
+Aan je spel zie je de `if` niet, aan de getallen wel. Zet tijdelijk `print(velocity)` boven `move_and_slide()`, start met `F5` en kijk in **Uitvoer**:
 
 - **Zonder** de `if` staat er op de vloer `(0, 16.33)`, elke frame opnieuw.
 - **Met** de `if` staat er `(0, 0)`.

@@ -43,7 +43,7 @@ De schermafbeelding komt uit een editor die op Nederlands staat; bij jou staan e
 
 #### Check je versie
 
-Het versienummer staat in kleine letters onderaan het Project Manager-venster, in de rechterhoek. Op de schermafbeelding staat daar `v4.5.1`; bij jou hoort het nummer met `4.7` te beginnen. Zie je een andere versie, download dan de juiste bij Godot downloaden.
+Het versienummer staat in kleine letters onderaan het Project Manager-venster, in de rechterhoek. Op de schermafbeelding staat daar `v4.5.1`; bij jou hoort het nummer met `4.7` te beginnen. Zie je een andere versie, haal dan de juiste op bij Godot downloaden.
 
 Heb je straks een project open, dan vind je hetzelfde nummer ook via **Help → About Godot**.
 
