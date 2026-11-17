@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+les_tabs: false
 ---
 
 # Python leren via coderius-python

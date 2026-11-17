@@ -1,6 +1,6 @@
 // Meet per les en per tabblad of het op één scherm past.
 //
-//   node scripts/meet-les-tabs.mjs [site-id] [--json] [--les=<stuk van het pad>] [--tegelijk=4] [--deel=1/1] [--klik] [--open] [--verborgen-balken] [--bronnen=changed.json] [--streng]
+//   node scripts/meet-les-tabs.mjs [site-id] [--json] [--les=<stuk van het pad>] [--tegelijk=4] [--deel=1/1] [--klik] [--open] [--verborgen-balken] [--vaste-wacht] [--met-python] [--profiel] [--bronnen=changed.json] [--streng]
 //
 // De les-tabbladen (packages/shared/plugins/les-tabs.js) halen de lange
 // pagina weg, maar een tabblad met een oefenveld of veel theorie kan nog
@@ -107,6 +107,22 @@ const {
 const argumenten = process.argv.slice(2);
 const SITE = argumenten.find((a) => !a.startsWith('--')) ?? 'web';
 const ALS_JSON = argumenten.includes('--json');
+// De vaste wachttijd per scherm van vóór `wachtOpRust`: om een meting van
+// toen na te spelen, of de twee naast elkaar te leggen.
+const VASTE_WACHT = argumenten.includes('--vaste-wacht');
+// Waar de tijd blijft (`--profiel`): laden, klikken, wachten en meten, opgeteld
+// over alle lessen. De som is meer dan de looptijd: er lopen lessen tegelijk.
+const PROFIEL = argumenten.includes('--profiel');
+const tijd = {};
+async function klok(wat, werk) {
+  if (!PROFIEL) return werk();
+  const begin = performance.now();
+  try {
+    return await werk();
+  } finally {
+    tijd[wat] = (tijd[wat] ?? 0) + performance.now() - begin;
+  }
+}
 const waarden = (vlag) =>
   argumenten.filter((a) => a.startsWith(`--${vlag}=`)).map((a) => a.slice(vlag.length + 3));
 const ALLEEN = waarden('les');
@@ -122,6 +138,23 @@ try {
   process.exit(2);
 }
 const KLIK = argumenten.includes('--klik');
+/**
+ * Zonder `--klik` draait er geen Python, en dan laadt het script de runtime
+ * ook niet: elke aanvraag onder `pyodide/` blijft onbeantwoord, behalve
+ * `pyodide.js` zelf (een script dat nooit binnenkomt, houdt de `load` van de
+ * pagina tegen). Een veld staat er dan zoals in de eerste seconden van een
+ * les. Elke les opent in een verse context, drie keer (twee schermen en een
+ * telefoon), en haalde en compileerde de runtime elke keer opnieuw: een
+ * derde van algoritmes mat daardoor in 399 seconden in plaats van 143, met
+ * dezelfde uitkomst op elk van de 1191 schermen. Het veld van de
+ * python-cursus was tijdens het laden lager dan erna, en dan hing de meting
+ * af van hoe ver het laden was; het is nu in beide toestanden even hoog, en
+ * de rooktest van de speeltuin meet dat in Chromium. De service worker die
+ * de runtime bewaart, blijft daarbij uit: zijn aanvragen ziet `route` niet.
+ * Met `--met-python` laadt de runtime wel, zoals met `--klik`.
+ */
+const ZONDER_PYTHON = !KLIK && !VASTE_WACHT && !argumenten.includes('--met-python');
+const PYTHON_RUNTIME = /\/pyodide\/(?!pyodide\.js(\?|$))[^/]+$/;
 /** Zoveel regels laat een editor in een tabblad zien (MIN_REGELS in PyRunner/opmaak.ts). */
 const MIN_EDITOR = 6;
 /**
@@ -289,6 +322,7 @@ const browser = await chromium.launch({
 async function nieuweContext(scherm) {
   const context = await browser.newContext({
     viewport: { width: scherm.width, height: scherm.height },
+    ...(ZONDER_PYTHON ? { serviceWorkers: 'block' } : {}),
     ...(scherm.telefoon ? { isMobile: true, hasTouch: true } : {}),
   });
   // Alleen de eigen server: een aanvraag naar buiten (de statistieken, een
@@ -299,6 +333,7 @@ async function nieuweContext(scherm) {
     (url) => url.hostname !== '127.0.0.1',
     (route) => route.abort(),
   );
+  if (ZONDER_PYTHON) await context.route(PYTHON_RUNTIME, () => {});
   return context;
 }
 const rijen = [];
@@ -368,6 +403,16 @@ function binnenHetScherm(wortel) {
       const regels = t.value.split('\n').length;
       return { regels, zichtbaar: Math.min(regels, Math.floor((t.clientHeight - 28) / regel)) };
     });
+  // De speeltuin van play: de code staat in een CodeMirror naast het spel, en
+  // schuift in haar kolom. De hoogte van die kolom volgt het spel; een spel
+  // op zijn kleinst mag de code niet tot een paar regels terugbrengen.
+  for (const vak of wortel.querySelectorAll('[data-play-veld] [class*="codeSection"]')) {
+    const eerste = vak.querySelector('.cm-line');
+    if (!teZien(vak) || !eerste) continue;
+    const regel = Number.parseFloat(getComputedStyle(eerste).lineHeight) || 21;
+    const regels = Math.round(vak.scrollHeight / regel);
+    editors.push({ regels, zichtbaar: Math.min(regels, Math.floor(vak.clientHeight / regel)) });
+  }
   return {
     editors,
     afgesneden: afgesneden > 6 ? afgesneden : 0,
@@ -415,7 +460,28 @@ const binnen = (belofte, ms) =>
  * meet na elke klik. Leeg als er geen Python-veld staat of het veld op een
  * antwoord zou wachten.
  */
+/**
+ * De knop Stop van de speeltuin van play, als hij er is. Na een run die op
+ * een fatale fout eindigt, is hij weg: een klik wachtte dan dertig seconden
+ * en brak de meting van de les af, in plaats van het scherm te meten.
+ */
+async function stopSpel(paneel) {
+  const stop = paneel.locator(KNOP, { hasText: 'Stop' }).first();
+  if ((await stop.count()) > 0) await stop.click({ timeout: 2000 }).catch(() => {});
+}
+
 async function meetNaKlik(pagina, paneel, id) {
+  // De speeltuin van play: het spel komt naast de code. Het start in een
+  // iframe en meldt niet dat het klaar is; het veld hoort zijn maat meteen
+  // te hebben, en te houden als de console zijn eerste regel krijgt.
+  const speel = paneel.locator(KNOP, { hasText: 'Speel in browser' }).first();
+  if ((await speel.count()) > 0) {
+    await speel.click();
+    await pagina.waitForTimeout(1500);
+    const naUitvoeren = await binnen(over(pagina, id), 15_000);
+    await stopSpel(paneel);
+    return { naUitvoeren };
+  }
   // "Uitvoeren" bij de CodeExercise, "Voer uit" bij de PyRunner van algoritmes.
   const uitvoeren = paneel.locator(KNOP, { hasText: /Uitvoeren|Voer uit|Laden/ }).first();
   if ((await uitvoeren.count()) === 0) return {};
@@ -465,6 +531,15 @@ async function meetNaHulp(pagina, paneel, id) {
   for (let i = 1; i < (await knoppen.count()); i++) {
     await knoppen.nth(i).click();
     await meet();
+    // De speeltuin van play speelt de oplossing af in zijn eigen vak.
+    const speelAf = paneel.locator(KNOP, { hasText: /^▶ Speel (de oplossing|het antwoord)$/ });
+    if ((await speelAf.count()) > 0) {
+      await speelAf.first().click();
+      await pagina.waitForTimeout(1500);
+      await meet();
+      await stopSpel(paneel);
+      continue;
+    }
     const voerUit = paneel.locator(KNOP, { hasText: /^▶ Voer (de oplossing|het antwoord) uit$/ });
     if ((await voerUit.count()) === 0) continue;
     // Een oplossing met input() wacht op een antwoord.
@@ -622,6 +697,7 @@ async function laad(scherm, les) {
   for (let poging = 1; ; poging++) {
     const context = await nieuweContext(scherm);
     const pagina = await context.newPage();
+    volgAanvragen(pagina);
     try {
       await pagina.goto(`${adres}${les}`);
       return { context, pagina };
@@ -635,6 +711,143 @@ async function laad(scherm, les) {
   }
 }
 
+/**
+ * Een tabblad of stap aanklikken, in de pagina zelf. Een klik van Playwright
+ * schuift het element eerst in beeld en wacht tot het stilstaat en niets
+ * ervoor staat: een kwart seconde per klik, en in een brede run een derde van
+ * de meettijd. Voor de meting doet alleen ertoe dat het scherm opengaat; of
+ * een leerling de knop kan raken, kijken de rooktests na. Met `--vaste-wacht`
+ * klikt het script zoals eerst.
+ */
+async function klikIn(knop) {
+  if (!VASTE_WACHT) return knop.evaluate((el) => el.click());
+  await knop.scrollIntoViewIfNeeded();
+  await knop.click();
+}
+
+/**
+ * Wacht tot het scherm stilstaat. De les rekent na een wissel van tabblad of
+ * stap zelf nog: kleinere letters (pasCode), de vrije ruimte (speling), een
+ * lettertype of een plaatje dat binnenkomt, een oefenveld dat zijn maat
+ * neemt. Eerst wachtte het script daar een vaste 550 ms op, bij elk scherm;
+ * in een brede run was dat meer dan de helft van de meettijd, en CI wachtte
+ * er acht minuten op. Op de meeste schermen verandert er na het eerste beeld
+ * niets meer.
+ *
+ * Stil is: `stil` ms lang dezelfde maten (de pagina, het paneel, en in het
+ * paneel elk codeblok, plaatje en oefenveld, met de lettergrootte van de
+ * code), zonder een beeld dat op zich liet wachten, elk lettertype geladen,
+ * elk plaatje in beeld binnen, geen aanvraag meer onderweg en geen onderdeel
+ * dat nog laadt. Na `max` ms meet het script hoe dan ook (een onderdeel dat
+ * laadt, krijgt LADEN_MAX); een scherm dat dan niet past, krijgt verderop
+ * nog een tweede meting.
+ */
+const RUST = { stil: 150, max: 1500 };
+const RUST_TELEFOON = { stil: 50, max: 500 };
+/** Een beeld dat zo lang op zich liet wachten: de pagina was bezig, niet stil. */
+const LANG_BEELD = 100;
+/**
+ * Zo lang wacht het script op een onderdeel dat zelf zegt dat het nog laadt
+ * (`data-status="laden"`, het blokprogramma van robotica: Blockly tekent de
+ * blokken pas als het vlak te zien is). Op een drukke runner stond het er na
+ * anderhalve seconde niet altijd, en dan mat het script een leeg vlak: met
+ * de vaste wachttijd in twee van de 1197 metingen van robotica, 53 en 343
+ * pixels te kort.
+ */
+const LADEN_MAX = 8000;
+
+/**
+ * De aanvragen van een pagina die nog lopen. Een onderdeel dat zijn code pas
+ * ophaalt als zijn stap opengaat (het blokprogramma van robotica laadt
+ * Blockly dan), staat er nog niet als de rest van het scherm al stilstaat:
+ * zonder hierop te wachten mat het script vijf schermen van robotica voordat
+ * het blokprogramma er stond. De runtime van Python telt niet mee: die laadt
+ * een oefenveld bij het openen van de les, los van het scherm dat open staat,
+ * en daar wachtte het script ook eerst niet op.
+ */
+const lopend = new WeakMap();
+function volgAanvragen(pagina) {
+  const bezig = new Set();
+  lopend.set(pagina, bezig);
+  pagina.on('request', (aanvraag) => {
+    if (!/\/pyodide\//.test(aanvraag.url())) bezig.add(aanvraag);
+  });
+  pagina.on('requestfinished', (aanvraag) => bezig.delete(aanvraag));
+  pagina.on('requestfailed', (aanvraag) => bezig.delete(aanvraag));
+}
+
+async function wachtOpRust(pagina, id, telefoon) {
+  const { stil, max } = telefoon ? RUST_TELEFOON : RUST;
+  const bezig = lopend.get(pagina);
+  const begin = Date.now();
+  for (;;) {
+    await stilInPagina(pagina, id, stil, Math.max(stil, max - (Date.now() - begin)));
+    if (!bezig?.size || Date.now() - begin >= max) return;
+    // Er loopt nog een aanvraag: wachten tot hij binnen is, en dan opnieuw
+    // tot het scherm stilstaat.
+    while (bezig.size && Date.now() - begin < max) await pagina.waitForTimeout(20);
+  }
+}
+
+function stilInPagina(pagina, id, stil, max) {
+  return pagina.evaluate(
+    ([id, stil, max, langBeeld, ladenMax]) =>
+      new Promise((klaar) => {
+        const paneel = document.querySelector(`[data-les-tab="${CSS.escape(id)}"]`);
+        const DELEN =
+          'pre, img, svg, iframe, canvas, video, textarea, table, details, [data-zaad], [data-play-veld], [data-les-veld], .cm-editor';
+        const stand = () => {
+          const d = document.documentElement;
+          const r = paneel.getBoundingClientRect();
+          const delen = [];
+          for (const el of paneel.querySelectorAll(DELEN)) {
+            const maat = el.getBoundingClientRect();
+            if (maat.width === 0 && maat.height === 0) continue;
+            delen.push(Math.round(maat.width), Math.round(maat.height), el.scrollWidth);
+            if (el.tagName === 'PRE') delen.push(getComputedStyle(el).fontSize);
+          }
+          return [
+            d.scrollHeight,
+            d.scrollWidth,
+            Math.round(r.bottom),
+            Math.round(r.width),
+            ...delen,
+          ].join('|');
+        };
+        const geladen = () =>
+          document.fonts.status === 'loaded' &&
+          [...paneel.querySelectorAll('img')].every(
+            (img) => img.complete || img.getClientRects().length === 0,
+          );
+        const laadt = () =>
+          [...paneel.querySelectorAll('[data-status="laden"]')].some(
+            (el) => el.getClientRects().length > 0,
+          );
+        const begin = performance.now();
+        let vorige = stand();
+        let sinds = begin;
+        let laatste = begin;
+        const kijk = () => {
+          const nu = performance.now();
+          const s = stand();
+          // Iets veranderd, of de pagina was zo druk dat dit beeld op zich
+          // liet wachten: dan is het niet stil geweest.
+          if (s !== vorige || nu - laatste > langBeeld) {
+            vorige = s;
+            sinds = nu;
+          }
+          laatste = nu;
+          const bezig = laadt();
+          if (bezig) sinds = nu;
+          if ((nu - sinds >= stil && geladen()) || nu - begin >= (bezig ? ladenMax : max)) klaar();
+          else requestAnimationFrame(kijk);
+        };
+        requestAnimationFrame(kijk);
+      }),
+    [id, stil, max, LANG_BEELD, LADEN_MAX],
+  );
+}
+
 /** Schermen die bij de eerste meting niet pasten en een halve seconde later wel. */
 const teVroeg = [];
 
@@ -642,7 +855,7 @@ async function meetLes(les) {
   for (const scherm of SCHERMEN) {
     // Een verse context per les: bewaard werk in een oefenveld verandert de
     // hoogte van het veld.
-    const { context, pagina } = await laad(scherm, les);
+    const { context, pagina } = await klok('laden', () => laad(scherm, les));
     await pagina.waitForSelector('[role=tab]');
     // Met het lettertype van de site zijn de tabbladen breder dan met het
     // reservelettertype. Zonder hierop te wachten telde het script één regel
@@ -673,8 +886,7 @@ async function meetLes(les) {
       if (vast) break;
       const id = await tab.getAttribute('data-tab');
       const label = (await tab.innerText()).trim();
-      await tab.scrollIntoViewIfNeeded();
-      await tab.click();
+      await klok('klikken', () => klikIn(tab));
       // Een oefenveld is klaar als de editor staat (EDITOR_VAN_VELD in
       // meet-selectie.js); daarna nog even voor de hoogte die het voorbeeld
       // zelf meldt.
@@ -697,17 +909,20 @@ async function meetLes(les) {
       const stappen = await paneel.locator('[data-stap]:visible').all();
       for (const stap of stappen.length ? stappen : [null]) {
         if (stap) {
-          await stap.scrollIntoViewIfNeeded();
-          await stap.click();
+          await klok('klikken', () => klikIn(stap));
         }
-        await pagina.waitForTimeout(scherm.telefoon ? 50 : 400);
-        // Het lettertype van de code laadt pas als er code in beeld komt, en
-        // pasCode meet opnieuw als het binnen is (loadingdone). Op de runner
-        // van CI was het na 400 ms nog niet binnen: daar viel code van 62
-        // tekens 27 px af die lokaal paste. Dus wachten tot elk lettertype
-        // er is, en pasCode een frame geven.
-        await pagina.evaluate(() => document.fonts.ready);
-        await pagina.waitForTimeout(scherm.telefoon ? 50 : 150);
+        if (VASTE_WACHT) {
+          await pagina.waitForTimeout(scherm.telefoon ? 50 : 400);
+          // Het lettertype van de code laadt pas als er code in beeld komt, en
+          // pasCode meet opnieuw als het binnen is (loadingdone). Op de runner
+          // van CI was het na 400 ms nog niet binnen: daar viel code van 62
+          // tekens 27 px af die lokaal paste. Dus wachten tot elk lettertype
+          // er is, en pasCode een frame geven.
+          await pagina.evaluate(() => document.fonts.ready);
+          await pagina.waitForTimeout(scherm.telefoon ? 50 : 150);
+        } else {
+          await klok('wachten', () => wachtOpRust(pagina, id, Boolean(scherm.telefoon)));
+        }
         await pagina.evaluate(() => window.scrollTo(0, 0));
         const meetScherm = () =>
           pagina.evaluate(
@@ -735,7 +950,7 @@ async function meetLes(les) {
                   0,
                   document.documentElement.scrollWidth - document.documentElement.clientWidth,
                 ),
-                velden: paneel.querySelectorAll('[data-zaad]').length,
+                velden: paneel.querySelectorAll('[data-zaad], [data-play-veld]').length,
                 volgendeLes: volgendeLesInBeeld(paneel),
                 // Op hoeveel regels de rij stappen staat: een tweede regel kost
                 // elk scherm van dat tabblad veertig pixels.
@@ -763,7 +978,7 @@ async function meetLes(les) {
             },
             [id, binnenHetScherm.toString()],
           );
-        let maat = await meetScherm();
+        let maat = await klok('meten', meetScherm);
         // Past het scherm niet, dan nog één keer na een halve seconde. De les
         // rekent na een wissel zelf nog (kleinere letters, de vrije ruimte,
         // een lettertype dat binnenkomt), en op een drukke runner was dat
@@ -898,6 +1113,12 @@ await browser.close();
 server.close();
 
 const naam = (les) => les.replace(/^docs\//, '');
+if (PROFIEL)
+  console.error(
+    `profiel (seconden, opgeteld): ${Object.entries(tijd)
+      .map(([wat, ms]) => `${wat} ${Math.round(ms / 1000)}`)
+      .join(', ')}`,
+  );
 if (ALS_JSON) {
   console.log(JSON.stringify({ kolomBreedte, rijen, tabrijen, dubbeleIds, zonderTabs }, null, 2));
 } else {

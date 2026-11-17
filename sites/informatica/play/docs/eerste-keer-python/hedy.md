@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+les_tabs: false
 ---
 
 # Python leren via Hedy

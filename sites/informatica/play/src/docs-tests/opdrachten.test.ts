@@ -70,8 +70,8 @@ const ZONDER_TIP = new Map([
   ['Opdracht 2.2.b', 'voorspellen en daarna zelf controleren met physics_info()'],
   ['Opdracht 4.1.a', 'uitvoeren en waarnemen wat er gebeurt'],
   ['Opdracht 5.1.a', 'uitvoeren en waarnemen wat er gebeurt'],
-  ['Opdracht 10.1.a', 'twee getallen aanpassen in het voorbeeld er direct boven'],
-  ['Opdracht 10.2.a', 'drie kleuren uitproberen in het voorbeeld er direct boven'],
+  ['Opdracht 10.1.a', 'twee getallen aanpassen in het voorbeeld uit de uitleg'],
+  ['Opdracht 10.2.a', 'drie kleuren uitproberen in het voorbeeld uit de uitleg'],
   ['Opdracht 10.2.b', 'zelfde voorbeeld met een andere kleur en titel'],
   ['Opdracht 10.5.a', 'zelfde voorbeeld met een andere tekst'],
   ['Opdracht 10.7.a', 'terugzoekvragen; de tip zou het antwoord zijn'],
@@ -170,6 +170,33 @@ describe('opdrachten', () => {
         return !sectie.includes('<summary>Klik hier voor de oplossing.</summary>');
       })
       .map(({ pagina, kop }) => `${pagina.pad}: ${kop.tekst}`);
+    expect(fout).toEqual([]);
+  });
+
+  it('met een oplossing die je kunt spelen, hebben een eigen speeltuin direct vóór de tip', () => {
+    // De tip en de oplossing staan in het veld van de opdracht, zoals bij
+    // python: knoppen Spel, Tip en Oplossing naast de code van de leerling
+    // (hulpInVeld in packages/shared/plugins/les-tabs.js). Dat kan alleen als
+    // de opdracht een veld heeft, met de tip en de oplossing er direct na.
+    // Zonder veld bleven ze uitklapblokken onder de tekst, met een tweede
+    // speeltuin in de oplossing: 34 van de 47 opdrachten met een speelbare
+    // oplossing zagen er zo anders uit dan de rest. Een opdracht waarvan de
+    // oplossing niet in de browser draait (pygame-ce, een geluid, een
+    // controller) of een antwoord in woorden houdt zijn uitklapblokken.
+    // Per stap van de opdracht: een `###` in een opdracht is een eigen scherm.
+    const fout = opdrachten
+      .filter(({ pagina, kop }) =>
+        pagina.tekst
+          .slice(kop.start, kop.eind)
+          .split(/^#{3,6} /m)
+          .some((stap) => {
+            const eerste = stap.indexOf('<details');
+            if (eerste === -1 || !stap.slice(eerste).includes('<PygbagRunner')) return false;
+            // Het laatste voor de tip is een speeltuin: `/>` en dan alleen wit.
+            return !/<PygbagRunner code=\{`[^`]*`\}[^>]*\/>\s*$/.test(stap.slice(0, eerste));
+          }),
+      )
+      .map(({ pagina, kop }) => `${pagina.pad}: ${kop.tekst.split(':')[0]}`);
     expect(fout).toEqual([]);
   });
 });

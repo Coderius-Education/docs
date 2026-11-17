@@ -156,6 +156,33 @@ describe('CodeExercise', () => {
     expect(uitvoer).toHaveLength(1);
   });
 
+  it('in een les-tabblad staat dat vak er ook al terwijl Python laadt', async () => {
+    // Tijdens het laden stond er alleen de regel "Python wordt geladen...",
+    // en die was lager dan het vak dat erna kwam: op een telefoon versprong
+    // het veld 35 pixels op het moment dat Python er was, en de meting van
+    // de schermen hing af van hoe ver het laden was (45 van de 2181 metingen
+    // van python verschilden tussen twee runs). De zin van straks houdt nu
+    // zijn plek, met de melding in hetzelfde vak. Dat de hoogte echt gelijk
+    // blijft, ziet alleen een browser: de rooktest van de speeltuin meet het.
+    const { container } = render(
+      <PaneelContext.Provider value={() => {}}>
+        <CodeExercise site="python">{'print(1)'}</CodeExercise>
+      </PaneelContext.Provider>,
+    );
+    const vak = () => container.querySelector('p');
+    const tijdens = screen.getByText(/De uitvoer verschijnt hier/);
+    expect(tijdens.getAttribute('aria-hidden')).toBe('true');
+    expect(tijdens.parentElement).toBe(screen.getByText('Python wordt geladen...').parentElement);
+    const tekstTijdens = vak()?.textContent?.replace('Python wordt geladen...', '');
+    await wachtTotGeladen();
+    expect(screen.queryByText('Python wordt geladen...')).toBeNull();
+    expect(screen.getByText(/De uitvoer verschijnt hier/).getAttribute('aria-hidden')).toBe(
+      'false',
+    );
+    // Verder staat er tijdens en na het laden hetzelfde in het vak.
+    expect(vak()?.textContent).toBe(tekstTijdens);
+  });
+
   it('het doel van de opdracht staat in het vak van de uitvoer, en blijft staan na Uitvoeren', async () => {
     // De verwachte uitvoer stond boven het veld en duwde het van het scherm.
     // In het vak staat hij onder wat de leerling zelf krijgt: zo vergelijkt

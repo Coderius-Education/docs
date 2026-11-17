@@ -14,11 +14,13 @@ De vorige elementen waren om te bedienen. Deze twee zijn om te **tonen**: een ba
 
 ## De voortgangsbalk
 
-**`play.new_progress_bar`** is een balk die zich vult tussen een minimum en een maximum. Je zet de vulling met `balk.value` — de speler kan er zelf niets aan slepen.
+**`play.new_progress_bar`** is een balk die zich vult tussen een minimum en een maximum.
 
 <PygbagRunner code={`import play
 
-balk = play.new_progress_bar(min_value=0, max_value=100, value=0, y=60, show_label=True)
+balk = play.new_progress_bar(
+    min_value=0, max_value=100, value=0, y=60, show_label=True
+)
 knop = play.new_button(text="Laad op", y=-60)
 
 @knop.when_clicked
@@ -26,12 +28,18 @@ def opladen():
     if balk.value < 100:
         balk.value = balk.value + 10`} height={300} />
 
+## De balk regel voor regel
+
+Je zet de vulling van de balk met `balk.value` — de speler kan er zelf niets aan slepen.
+
 <CodeUitleg>
 
 ```python showLineNumbers
 import play
 
-balk = play.new_progress_bar(min_value=0, max_value=100, value=0, y=60, show_label=True)
+balk = play.new_progress_bar(
+    min_value=0, max_value=100, value=0, y=60, show_label=True
+)
 knop = play.new_button(text="Laad op", y=-60)
 
 @knop.when_clicked
@@ -40,19 +48,19 @@ def opladen():
         balk.value = balk.value + 10
 ```
 
-<Regel n={3}>
+<Regel n={3} tot={5}>
 De balk loopt van 0 tot 100 en begint leeg. Met `show_label=True` staat het percentage erin.
 </Regel>
 
-<Regel n={4}>
+<Regel n={6}>
 De knop waarmee de speler de balk vult. De balk zelf reageert nergens op; jij bepaalt wanneer hij verandert.
 </Regel>
 
-<Regel n={8}>
+<Regel n={10}>
 Zonder deze controle zou de balk voorbij zijn `max_value` blijven tellen.
 </Regel>
 
-<Regel n={9}>
+<Regel n={11}>
 Tien procent erbij. `balk.value` uitlezen en zetten gaat allebei via dezelfde naam.
 </Regel>
 
@@ -68,6 +76,8 @@ Een voortgangsbalk is bijvoorbeeld handig als levensbalk, als laadbalk of als ti
 
 knop = play.new_button(text="?")
 play.new_tooltip(text="Deze knop doet nog niets", target=knop)`} height={280} />
+
+## De zweeftekst regel voor regel
 
 <CodeUitleg>
 
@@ -94,6 +104,9 @@ Met `offset_x` en `offset_y` schuif je de tekst wat verder van de muis af.
 
 Maak een levensbalk die op 100 begint en een knop **Au**. Elke klik haalt er 20 vanaf. Is de balk leeg, dan verschijnt de tekst "Game over" en gaat de knop uit.
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -108,7 +121,10 @@ Controleer ín de klikfunctie of `balk.value` op 0 staat. Zo ja: zet `knop.disab
 import play
 
 tekst = play.new_text(words="", y=120)
-balk = play.new_progress_bar(min_value=0, max_value=100, value=100, y=40, bar_color='crimson', show_label=True)
+balk = play.new_progress_bar(
+    min_value=0, max_value=100, value=100, y=40,
+    bar_color='crimson', show_label=True,
+)
 knop = play.new_button(text="Au", y=-60)
 
 @knop.when_clicked
@@ -122,7 +138,10 @@ def au():
 <PygbagRunner code={`import play
 
 tekst = play.new_text(words="", y=120)
-balk = play.new_progress_bar(min_value=0, max_value=100, value=100, y=40, bar_color='crimson', show_label=True)
+balk = play.new_progress_bar(
+    min_value=0, max_value=100, value=100, y=40,
+    bar_color='crimson', show_label=True,
+)
 knop = play.new_button(text="Au", y=-60)
 
 @knop.when_clicked

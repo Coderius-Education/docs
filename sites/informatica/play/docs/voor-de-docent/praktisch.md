@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+les_tabs: false
 ---
 
 # Als docent aan de slag met dit materiaal

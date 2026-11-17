@@ -5,18 +5,39 @@ hide_table_of_contents: false
 
 # Docentenhandleiding
 
-Alles voor docenten die coderius-play klassikaal willen inzetten staat in de sectie **Voor de docent**:
+Met coderius-play maken je leerlingen na een paar weken Python een eigen spel: vormen, fysica, toetsen en muis, een score, levels en een startmenu. De voorbeelden van hoofdstuk 1 tot en met 9 draaien in de les zelf. Hoe je ermee lesgeeft, bepaal je zelf.
 
-- [Praktisch](site:play/docs/voor-de-docent/praktisch) — randvoorwaarden en opzet
-- [Lesplanning](site:play/docs/voor-de-docent/lesplanning) — indeling over de lessen
-- [Examenprogramma](site:play/docs/voor-de-docent/examenprogramma) — koppeling met de eindtermen
-- [Veelgestelde vragen](site:play/docs/voor-de-docent/veelgestelde-vragen)
-- [Foutje gevonden?](site:play/docs/voor-de-docent/bug)
+## Waar de lessen op steunen
 
-## Werk beoordelen
+Een les heeft vaste onderdelen. In de les zijn het de tabbladen; het icoon op een tabblad zegt welk onderdeel het is. Hieronder staat bij elk onderdeel de literatuur waarop het steunt; een link opent de uitleg bij [vakdidactiek](site:didactiek/).
 
-Voor het nakijken is er [Spel checken](site:play/spel-checken). Je leerling uploadt daar zijn `.py`-bestand of een zip van het hele project en ziet meteen welke onderdelen van de cursus erin zitten.
+<Werkvormen
+  doet={{
+    uitleg: 'Eén nieuw idee, met een voorbeeld dat in de les draait: links de code, rechts het spel. Je leerlingen passen de code aan en starten het spel opnieuw.',
+    stap: 'Een handeling in een paar stappen: de installatie, het debuggen van een programma, of een deel van het eigen project.',
+    aanpassen: 'Een gerichte opdracht bij het voorbeeld van de les, met een tip en een oplossing. Een opdracht die bij één onderwerp hoort, staat als stap in het tabblad van dat onderwerp.',
+    maken: 'De laatste opdracht van een les met meer dan één opdracht: je leerlingen schrijven zelf een klein programma met wat de les liet zien. Met een tip en een oplossing.',
+    fouten: 'Wat er in deze les misgaat: de melding van Python, de oorzaak en de oplossing.',
+  }}
+/>
 
-Jij opent dezelfde pagina met `-docent` erachter en het wachtwoord `coderius-docent`. Daar staat de volledige checklist per hoofdstuk, met het onderscheid tussen basis en gevorderd, plus ruimte voor opmerkingen en een PDF-export. De bestanden verlaten de browser van je leerling nooit.
+## Wat je vooraf wilt weten
 
-Voor een cijfer is [Leerdoelen](site:play/leerdoelen) het overzicht van de concepten waarop je beoordeelt: Python en coderius-play, met een pagina per niveau en een vergelijking van de twee. Onder elk concept staat de les waarin het aan bod komt, en bij Python ook de les van de python-cursus. Op niveau 1 zijn de hoofdstukken 1 tot en met 4 de basis, met clone, distance_to en de fysica-instellingen als gevorderd; `repeat_forever` is daar ook basis. De timer, de database, levels en een startmenu met iets van UI zijn gevorderd; voor dat laatste is één element genoeg, een knop of bijvoorbeeld een schuifbalk. Het bestand `database.json` telt op niveau 1 niet mee. Op niveau 2 is alles tot en met hoofdstuk 6 basis. Gevorderd zijn daar het startmenu, levels, een tweede module en een simpel spel in pygame-ce: een eigen venster met een game-loop. Pymunk is expert. Gevorderd vraagt op niveau 2 een gevorderd concept uit twee van de hoofdstukken 7, 9 en 10, bijvoorbeeld een startmenu en levels; een startmenu alleen is niet genoeg. Een `import pygame` alleen telt niet, ook niet als tweede module, en uitgezette code ook niet. Geluid en video tellen op geen van beide niveaus mee. In de nakijker kies je het niveau bij **Leerroute**; een beoordeling die je bewaarde voordat play niveaus had, opent op niveau 1. Onderaan staat [Beoordelen met Bloom](site:play/leerdoelen#bloom), met de achtergrond bij vakdidactiek in [Denkvaardigheden volgens Bloom](site:didactiek/bronnen/taxonomie-van-bloom). Kies in de nakijker onder **Cijfer** de denkvaardigheid die je zag; de moeilijkheid stelt hij voor, en een klik legt hem vast. Het cijfer en de zin erbij komen in de PDF.
+- **De speeltuin in de les vraagt geen installatie.** Voor een eigen project installeren je leerlingen Thonny of VS Code met coderius-play; [Installatie](site:play/docs/installatie) zegt hoe. Hoofdstuk 10 (pygame-ce) en de voorbeelden met een afbeelding, geluid of video draaien alleen op de eigen computer. De site vraagt geen account.
+- **De speeltuin bewaart niets.** Wie de pagina herlaadt, ziet weer de code van de les. Een eigen spel staat op de computer van de leerling; met [git](site:editor/git) bewaart hij elke versie die werkt.
+- **De lessen staan in volgorde in de lessenlijst**, en gaan uit van variabelen, if-statements en functies in Python. Waar de [Python-cursus](site:python/) iets uitlegt, wijst de les ernaar.
+
+## Naast de lessen
+
+- [Cheatsheet](site:play/docs/cheatsheet) en [Foutmeldingen](site:play/er_gaat_iets_mis): de naslag bij alle lessen.
+- [Praktisch](site:play/docs/voor-de-docent/praktisch), [Leerdoelen per hoofdstuk](site:play/docs/voor-de-docent/lesplanning), [Examenprogramma](site:play/docs/voor-de-docent/examenprogramma) en [Veelgestelde vragen](site:play/docs/voor-de-docent/veelgestelde-vragen): de sectie Voor de docent.
+
+## Beoordelen
+
+- [Leerdoelen](site:play/leerdoelen): per niveau de concepten waarop je beoordeelt, met de les erbij, en hoe je er een cijfer van maakt.
+- [Spel checken](site:play/spel-checken): je leerling uploadt zijn `.py`-bestand of een zip van zijn project en ziet welke onderdelen van de cursus erin zitten. De bestanden verlaten zijn browser niet. Jij opent dezelfde pagina met `-docent` erachter en het wachtwoord `coderius-docent`: kies het niveau en de denkvaardigheid die je zag, en het cijfer met de zin erbij komt in de PDF.
+- [Wat telt op welk niveau](site:play/docs/voor-de-docent/beoordelen): hoe de nakijker de concepten telt.
+
+## Feedback
+
+Een fout gevonden of een idee? Kijk bij [Foutje gevonden?](site:play/docs/voor-de-docent/bug), of open een issue of pull request op [GitHub](https://github.com/Coderius-Education/docs).

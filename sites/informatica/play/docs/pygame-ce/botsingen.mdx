@@ -4,21 +4,17 @@ sidebar_position: 7
 
 # 10.7 Pymunk: de bouwstenen
 
+Tot nu toe hebben we beweging zelf geprogrammeerd door x en y te veranderen. Maar wat als je echte fysica wilt, zoals zwaartekracht en botsingen? Dan gebruik je **pymunk**.
+
+## Pymunk heb je al
+
 :::warning[Online speeltuin]
 De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](site:play/docs/installatie).
 :::
 
-Tot nu toe hebben we beweging zelf geprogrammeerd door x en y te veranderen. Maar wat als je echte fysica wilt, zoals zwaartekracht en botsingen? Dan gebruik je **pymunk**.
+Pymunk is een physics-bibliotheek. Het is ook de bibliotheek die coderius-play onder de motorkap gebruikt. Daarom staat pymunk al op je computer: hij is samen met coderius-play geïnstalleerd.
 
-Pymunk is een physics-bibliotheek. Het is ook de bibliotheek die coderius-play onder de motorkap gebruikt.
-
-## Pymunk installeren
-
-```bash
-pip install pymunk
-```
-
-## De drie bouwstenen van pymunk
+## De drie bouwstenen
 
 In pymunk werk je met drie onderdelen:
 

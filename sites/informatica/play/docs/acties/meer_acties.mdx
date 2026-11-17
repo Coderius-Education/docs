@@ -4,13 +4,15 @@ sidebar_position: 4
 
 # 3.4 Meer acties
 
+## Kopiëren met clone
+
+### Een kopie maken
+
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
   ]}
 />
-
-## Een vorm kopiëren met clone
 
 Met `clone()` kun je een exacte kopie maken van een vorm. De kopie heeft dezelfde kleur, grootte en positie als het origineel.
 
@@ -25,7 +27,14 @@ Je hebt nu twee rode cirkels: het origineel links en de kopie rechts.
 
 ### Opdracht 3.4.a: Pas de kopie aan
 
-Pas de code hierboven aan zodat er **drie** cirkels op het scherm staan: het origineel in het midden, een kopie links, en een kopie rechts. Geef de kopieën een andere kleur dan het origineel.
+Pas de code hieronder aan zodat er **drie** cirkels op het scherm staan: het origineel in het midden, een kopie links, en een kopie rechts. Geef de kopieën een andere kleur dan het origineel.
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle(color='red', x=-100, radius=30)
+
+kopie = cirkel.clone()
+kopie.x = 100`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -59,6 +68,9 @@ In deze opdracht gebruik je `@play.when_key_pressed` (zie [4.1 Toetsenbord](site
 
 Maak een programma waarbij elke keer als je op spatie drukt, er een kopie van een cirkel wordt gemaakt op een willekeurige positie.
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -81,7 +93,9 @@ def kloon():
 
 </details>
 
-## Het spel stoppen met stop_program
+## Stoppen met stop_program
+
+### Het spel stoppen
 
 Met `play.stop_program()` kun je het spel beëindigen vanuit je code. Dit is handig voor een game-over scherm.
 
@@ -99,15 +113,15 @@ def stop():
 In deze opdracht gebruik je het `global` keyword. Ken je dat nog niet? Kijk dan bij [4.5 Een score bijhouden](site:play/docs/gebeurtenissen/score_bijhouden).
 :::
 
-Maak een programma waarbij:
-1. Een score begint op 5
-2. Elke keer als je op spatie drukt, gaat de score met 1 omlaag
-3. Als de score op 0 staat, stopt het programma
+Maak een programma met een score die op 5 begint. Elke keer als je op spatie drukt, gaat de score met 1 omlaag. Staat de score op 0, dan stopt het programma.
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
 
-Je hebt twee dingen nodig: `global score` om de score binnen de functie te mogen verlagen, en een `if` die kijkt of de score op nul staat. Zoek in de cheatsheet hoe je een programma laat stoppen.
+Je hebt twee dingen nodig: `global score` om de score binnen de functie te mogen verlagen, en een `if` die na het verlagen kijkt of de score op nul staat. In die `if` stop je het programma, zoals bij de toets Escape in de stap Het spel stoppen.
 
 </details>
 
@@ -129,7 +143,9 @@ def verminder():
 
 </details>
 
-## Een vorm verbergen en weer tonen
+## Verbergen en tonen
+
+### Een vorm verbergen
 
 Met `hide()` en `show()` kun je een vorm onzichtbaar en weer zichtbaar maken:
 
@@ -151,6 +167,9 @@ def toon():
 ### Opdracht 3.4.d: Verstoppertje
 
 Maak een programma met een cirkel die verdwijnt als je op 'h' drukt en weer verschijnt als je op 's' drukt.
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -176,7 +195,9 @@ def toon():
 
 </details>
 
-## Een vorm verwijderen met remove
+## Verwijderen met remove
+
+### Een vorm verwijderen
 
 Met `remove()` kun je een vorm **definitief** verwijderen. Anders dan `hide()` kun je de vorm niet meer terughalen met `show()`.
 
@@ -187,6 +208,11 @@ cirkel.remove()
 
 play.new_text(words=f"cirkel.alive(): {cirkel.alive()}", font_size=30)`} height={300} />
 
+:::info[Waar kom je dit later weer tegen?]
+- `clone()` is handig zodra je meer van hetzelfde nodig hebt: rijen blokken in [9.2 Levels met andere vormen](site:play/docs/levels/andere-vormen), of extra ballen in [het klikspelletje](site:play/docs/jouw_project/klikspelletje).
+- `hide()` en `show()` gebruik je in [Een startmenu maken](site:play/docs/jouw_project/startmenu) om tussen twee schermen te wisselen.
+:::
+
 ### Opdracht 3.4.e: Eén voor één verdwijnen
 
 :::info
@@ -194,6 +220,9 @@ In deze opdracht gebruik je het `global` keyword. Ken je dat nog niet? Kijk dan 
 :::
 
 Maak een programma met 3 cirkels op verschillende posities. Elke keer als je op spatie drukt, verdwijnt er eentje (met `remove()`). Na 3 keer drukken zijn ze allemaal weg.
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -222,8 +251,3 @@ def verwijder():
         teller = teller + 1`} height={300} />
 
 </details>
-
-:::info[Waar kom je dit later weer tegen?]
-- `clone()` is handig zodra je meer van hetzelfde nodig hebt: rijen blokken in [9.2 Levels met andere vormen](site:play/docs/levels/andere-vormen), of extra ballen in [het klikspelletje](site:play/docs/jouw_project/klikspelletje).
-- `hide()` en `show()` gebruik je in [Een startmenu maken](site:play/docs/jouw_project/startmenu) om tussen twee schermen te wisselen.
-:::

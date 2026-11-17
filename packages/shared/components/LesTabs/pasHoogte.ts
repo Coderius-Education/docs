@@ -33,6 +33,20 @@ export function pasHoogte({ scherm, boven, onder, max }: Ruimte, min = MIN_HOOGT
 }
 
 /**
+ * Zegt tegen de rest van de les dat dit veld zichzelf passend maakt. Een
+ * veld dat zijn ruimte zelf uitrekent (de speeltuin van play), roept dit
+ * aan in plaats van de twee attributen over te schrijven.
+ */
+export function merkVeld(veld: HTMLElement, paneel: HTMLElement): void {
+  // Een paneel met een veld dat zichzelf passend maakt: de vrije ruimte is
+  // van het veld, niet van een plaatje of codevak ernaast (speling.ts).
+  paneel.setAttribute('data-heeft-veld', '');
+  // En het veld zelf: staat het in een stap die dicht is, dan is de ruimte
+  // van de stap die open staat niet van dit veld.
+  veld.setAttribute('data-les-veld', '');
+}
+
+/**
  * Meet de ruimte voor een veld in zijn paneel. Null als er niets te meten
  * valt of niet gemeten moet worden; het veld houdt dan de hoogte die het had.
  *
@@ -43,12 +57,7 @@ export function pasHoogte({ scherm, boven, onder, max }: Ruimte, min = MIN_HOOGT
  *    weer dicht, dan klopt de meting weer.
  */
 export function meetRuimte(veld: HTMLElement, paneel: HTMLElement, max: number): Ruimte | null {
-  // Een paneel met een veld dat zichzelf passend maakt: de vrije ruimte is
-  // van het veld, niet van een plaatje of codevak ernaast (speling.ts).
-  paneel.setAttribute('data-heeft-veld', '');
-  // En het veld zelf: staat het in een stap die dicht is, dan is de ruimte
-  // van de stap die open staat niet van dit veld.
-  veld.setAttribute('data-les-veld', '');
+  merkVeld(veld, paneel);
   const v = veld.getBoundingClientRect();
   const p = paneel.getBoundingClientRect();
   if (p.width === 0 || v.width === 0) return null;

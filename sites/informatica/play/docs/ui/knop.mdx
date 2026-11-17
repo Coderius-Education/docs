@@ -13,6 +13,8 @@ sidebar_position: 1
 
 Tot nu toe reageerde je spel op het toetsenbord en de muis. Met **`play.new_button`** maak je een echte knop: hij licht op als je eroverheen beweegt en reageert op een klik.
 
+## Je eerste knop
+
 <PygbagRunner code={`import play
 
 teller = 0
@@ -24,6 +26,8 @@ def geklikt():
     global teller
     teller = teller + 1
     tekst.words = f"{teller} keer geklikt"`} height={300} />
+
+## Regel voor regel
 
 <CodeUitleg>
 
@@ -107,6 +111,9 @@ Een uitgezette knop wordt grijs en zijn `when_clicked`-functie wordt niet meer a
 
 Maak een cirkel en twee knoppen: **Rood** en **Blauw**. Klik je op een knop, dan krijgt de cirkel die kleur.
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -152,6 +159,9 @@ def maak_blauw():
 ## Opdracht 7.1.b: Maar één keer
 
 Maak een knop **Start** die zichzelf uitzet zodra erop geklikt is, en een tekst die daarna "Gestart" laat zien.
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>

@@ -14,7 +14,7 @@ Een knop kent maar twee toestanden: geklikt of niet. Voor instellingen met een *
 
 ## De schuifbalk
 
-**`play.new_slider`** maakt een schuifbalk tussen een minimum en een maximum. Met `@schuif.when_changed` reageer je op elke verandering; de functie krijgt de nieuwe waarde mee als parameter.
+**`play.new_slider`** maakt een schuifbalk tussen een minimum en maximum. Sleep eraan: de cirkel groeit en krimpt mee.
 
 <PygbagRunner code={`import play
 
@@ -24,6 +24,8 @@ schuif = play.new_slider(min_value=10, max_value=100, value=50, y=-120)
 @schuif.when_changed
 def grootte_veranderd(waarde):
     cirkel.radius = int(waarde)`} height={340} />
+
+## De schuifbalk regel voor regel
 
 <CodeUitleg>
 
@@ -56,7 +58,7 @@ Koppelt de functie eronder aan de schuif. Elke verandering roept hem opnieuw aan
 
 </CodeUitleg>
 
-Sleep aan de schuif en de cirkel groeit en krimpt mee. Je kunt de waarde ook altijd direct uitlezen met `schuif.value`.
+Je kunt de waarde ook altijd direct uitlezen met `schuif.value`.
 
 **Tip:** met `show_value=True` toont de schuifbalk zijn eigen waarde, en met `step=5` verspringt hij in stappen van 5.
 
@@ -82,6 +84,9 @@ Uitlezen kan ook hier direct: `vinkje.checked` is `True` of `False`.
 
 Maak een cirkel die naar rechts beweegt en aan de linkerkant weer opnieuw begint. Zet er een schuifbalk onder (van 0 tot 10) die de snelheid bepaalt.
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -96,7 +101,9 @@ Gebruik `@play.repeat_forever` voor de beweging en lees daarbinnen `schuif.value
 import play
 
 cirkel = play.new_circle(color='purple', radius=20, y=60)
-schuif = play.new_slider(min_value=0, max_value=10, value=3, y=-120, show_value=True)
+schuif = play.new_slider(
+    min_value=0, max_value=10, value=3, y=-120, show_value=True
+)
 
 @play.repeat_forever
 def beweeg():
@@ -108,7 +115,9 @@ def beweeg():
 <PygbagRunner code={`import play
 
 cirkel = play.new_circle(color='purple', radius=20, y=60)
-schuif = play.new_slider(min_value=0, max_value=10, value=3, y=-120, show_value=True)
+schuif = play.new_slider(
+    min_value=0, max_value=10, value=3, y=-120, show_value=True
+)
 
 @play.repeat_forever
 def beweeg():

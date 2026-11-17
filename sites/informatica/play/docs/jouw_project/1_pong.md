@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Pong
 
-Pong is een klassieker en een goed project om met `coderius-play` te bouwen. Hieronder staat per stap wat je nodig hebt, met hints erbij — de code schrijf je zelf.
+Pong is een klassieker en een goed project om met `coderius-play` te bouwen. Bij elke stap staat wat je nodig hebt, met hints erbij — de code schrijf je zelf.
 
 Voor voorbeelden ga je uiteraard naar de [Cheatsheet](site:play/docs/cheatsheet).
 

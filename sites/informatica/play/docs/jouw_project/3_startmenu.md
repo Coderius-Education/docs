@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Een startmenu maken
 
-Veel spellen beginnen met een startmenu. In deze tutorial leer je hoe je een simpel menu maakt dat overschakelt naar het spel.
+Veel spellen beginnen met een startmenu. Hier maak je een simpel menu dat met de spatiebalk overschakelt naar het spel.
 
 :::info
 In deze tutorial gebruik je het `global` keyword (zie [4.5 Een score bijhouden](site:play/docs/gebeurtenissen/score_bijhouden)) en `@play.when_key_pressed` (zie [4.1 Toetsenbord](site:play/docs/gebeurtenissen/toetsenbord)).

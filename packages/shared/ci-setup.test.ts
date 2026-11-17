@@ -230,12 +230,46 @@ describe('comprimeren na elke site-build', () => {
     ]);
     for (const blok of jobs) {
       const naam = blok.slice(0, blok.indexOf(':'));
-      const regels = blok.split('\n').filter((r) => r.includes('playwright install'));
+      const regels = blok.split('\n').filter((r) => r.includes('playwright install '));
       expect(regels, naam).toHaveLength(2);
       for (const regel of regels)
         expect(regel, naam).toMatch(/^\s+timeout \d+ pnpm exec playwright/);
       expect(regels[0], naam).toMatch(/\|\|$/);
       expect(blok, naam).toMatch(/^ {4}timeout-minutes: \d+$/m);
+    }
+  });
+
+  it('Chromium komt zonder de pakketten van apt, tenzij hij zonder niet start', () => {
+    // `--with-deps` draaide in elke job met Chromium dertig seconden apt, en
+    // installeerde alleen negen pakketten lettertypen: de bibliotheken staan
+    // al op het image van ubuntu-24.04, en de lessen hebben hun eigen
+    // lettertypen. In een brede run zijn dat twintig jobs waar de check
+    // `build` op wacht. Het image kan veranderen zonder aankondiging (zoals
+    // de git van de runner deed): start Chromium niet, dan komen de
+    // pakketten er alsnog bij, ook met een grens.
+    const jobs = workflow
+      .split(/\n {2}(?=[a-z-]+:\n)/)
+      .slice(1)
+      .filter((blok) => blok.includes('playwright install'));
+    for (const blok of jobs) {
+      const naam = blok.slice(0, blok.indexOf(':'));
+      const stap = blok.slice(blok.indexOf('- name: Chromium'));
+      const regels = stap.slice(0, stap.indexOf('\n\n')).split('\n');
+      expect(regels.filter((r) => /^\s+(timeout|node) /.test(r)).join('\n'), naam).not.toContain(
+        '--with-deps',
+      );
+      const start = regels.findIndex((r) => /^\s+node -e .*chromium\.launch\(/.test(r));
+      expect(start, naam).toBeGreaterThan(-1);
+      // Dezelfde Chromium als het meetscript start.
+      expect(regels[start], naam).toContain("channel: 'chromium'");
+      // En een lettertype voor de losse tekens uit de lessen (▶): zonder
+      // wordt zo'n teken een blokje van een andere breedte, en dan meet de
+      // job iets anders dan er op een schoolcomputer staat.
+      expect(regels[start], naam).toContain("fc-list ':charset=25b6'");
+      expect(regels[start], naam).toMatch(/\|\|$/);
+      expect(regels[start + 1], naam).toMatch(
+        /^\s+timeout \d+ pnpm exec playwright install-deps chromium$/,
+      );
     }
   });
 });
@@ -280,6 +314,36 @@ describe('een site in de browser: artifact, cache of zelf bouwen', () => {
       `GEBOUWD: \${{ contains(fromJSON(needs.plan.outputs.sites), ${site.startsWith('$') ? 'matrix.site' : `'${site}'`}) }}`,
     );
   });
+});
+
+// De jobs die een site in Chromium openen, hebben Playwright nodig en de
+// gebouwde site: niets uit de node_modules van de sites. Eerst installeerden
+// ze de hele workspace, 14 tot 22 seconden per job, en op de delen van
+// `schermen` wacht de check `build`. Bouwt zo'n job de site zelf (geen
+// artifact en niets in de cache), dan installeert hij die site eerst.
+describe('een job met Chromium installeert alleen de root', () => {
+  it.each(['browser', 'terminal', 'schermen'])('%s', (job) => {
+    const v = stappen(job);
+    const setup = v.find((stap) => stap.uses === './.github/actions/node-pnpm');
+    expect(setup?.tekst, job).toMatch(/^ {10}map: \.$/m);
+    const build = v.find((stap) => /pnpm --filter "[^"]+" build/.test(stap.tekst));
+    expect(build?.tekst, job).toMatch(
+      /pnpm install --frozen-lockfile --filter "\{\.\/\$\{\{ steps\.map\.outputs\.dir \}\}\}\.\.\."\n\s+pnpm --filter "[^"]+" build/,
+    );
+  });
+
+  it('de root is alleen de root, met Playwright erin', () => {
+    // `map: .` wordt in de actie --filter "{./.}...".
+    const gekozen = JSON.parse(
+      execFileSync('pnpm', ['list', '--json', '--depth', '-1', '--filter', '{./.}...'], {
+        cwd: ROOT,
+        encoding: 'utf8',
+      }),
+    ).map((p: { name: string }) => p.name);
+    expect(gekozen).toEqual(['coderius-docs']);
+    const root = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
+    expect({ ...root.dependencies, ...root.devDependencies }).toHaveProperty('playwright');
+  }, 30_000);
 });
 
 // De git waartegen de git-simulator wordt gelegd (echte-git.test.ts). Zijn

@@ -4,6 +4,10 @@ sidebar_position: 5
 
 # 4.5 Een score bijhouden met `global`
 
+## Een veelgemaakte fout
+
+### Zonder global
+
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Jij als variabele'},
@@ -14,9 +18,7 @@ sidebar_position: 5
 
 Hoe houd je een score bij in een spel? Als je een variabele, zoals `score`, wilt aanpassen *binnen* een functie, heb je het speciale sleutelwoord `global` nodig.
 
-## Een veelgemaakte fout
-
-Draai het programma en druk een paar keer op de spatiebalk:
+Draai het programma en druk een paar keer op de spatiebalk. Als het goed is verandert er **niets**.
 
 ```python
 import play
@@ -41,7 +43,9 @@ def spatie_ingedrukt():
     score = score + 1
     score_tekst.words = str(score)`} height={300} />
 
-Druk maar eens op spatie. Als het goed is verandert er **niets** en zie je het volgende in je console (de eerste regel kan er bij jou anders uitzien):
+### De foutmelding
+
+Druk je in het programma zonder `global` op de spatiebalk, dan zie je het volgende in je console (de eerste regel kan er bij jou anders uitzien):
 
 ```
 UnboundLocalError: cannot access local variable 'score' where it is not associated with a value
@@ -52,6 +56,8 @@ Daardoor kent hij de `score` van buiten de functie (score = 0) niet.
 Met `global score` geef je aan dat de score die buiten de functie is gemaakt, binnen de functie gebruikt en aangepast moet worden.
 
 ## De oplossing: `global`
+
+### Met global
 
 Met `global score` vertel je Python dat je de variabele van *buiten* de functie wilt gebruiken:
 
@@ -79,6 +85,10 @@ def spatie_ingedrukt():
 
 </CodeUitleg>
 
+### De score telt
+
+Draai het programma met `global` en druk een paar keer op de spatiebalk. De score gaat nu omhoog.
+
 <PygbagRunner code={`import play
 
 score = 0
@@ -90,6 +100,11 @@ def spatie_ingedrukt():
     score = score + 1
     score_tekst.words = str(score)`} height={300} />
 
+:::info[Waar kom je dit later weer tegen?]
+- In [6.2 Een high score bijhouden](site:play/docs/database/highscore) blijft die score bewaard nadat je het spel afsluit.
+- In [9.3 Wanneer ga je naar het volgende level?](site:play/docs/levels/wanneer-volgende) is `global` de manier waarop je level-variabele buiten je functies blijft bestaan.
+:::
+
 ## Opdracht 4.5.a: Score met twee toetsen
 
 Maak een programma waarbij:
@@ -97,6 +112,9 @@ Maak een programma waarbij:
 2. Met spatie gaat de score omhoog
 3. Met `r` wordt de score teruggezet naar 0
 4. De score wordt op het scherm getoond
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -148,11 +166,11 @@ def reset():
 
 ## Handige Python-kennis: `if`-statements
 
-Nu je een score kunt bijhouden, wil je misschien ook iets laten gebeuren op basis van die score. Daarvoor gebruik je een `if`-statement:
+Met een score wil je vaak ook iets laten gebeuren zodra hij een bepaalde waarde heeft. Daarvoor gebruik je een `if`-statement:
 
 ```python
 if score == 10:
-    score_tekst.words = "Je hebt gewonnen!"
+    score_tekst.words = "Je hebt gewonnen."
 ```
 
 Dit checkt of `score` gelijk is aan `10`. Let op de **dubbele** `==` (vergelijken) in plaats van een enkele `=` (toewijzen).
@@ -182,6 +200,9 @@ Maak een programma waarbij:
 2. Met spatie gaat de score +1
 3. Als de score 10 bereikt, verandert de tekst in 'Je hebt gewonnen.' en stopt het programma
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -204,7 +225,7 @@ def punt():
     score = score + 1
     tekst.words = f"Score: {score}"
     if score == 10:
-        tekst.words = "Je hebt gewonnen!"
+        tekst.words = "Je hebt gewonnen."
         play.stop_program()
 ```
 
@@ -219,12 +240,7 @@ def punt():
     score = score + 1
     tekst.words = f"Score: {score}"
     if score == 10:
-        tekst.words = "Je hebt gewonnen!"
+        tekst.words = "Je hebt gewonnen."
         play.stop_program()`} height={300} />
 
 </details>
-
-:::info[Waar kom je dit later weer tegen?]
-- In [6.2 Een high score bijhouden](site:play/docs/database/highscore) blijft die score bewaard nadat je het spel afsluit.
-- In [9.3 Wanneer ga je naar het volgende level?](site:play/docs/levels/wanneer-volgende) is `global` de manier waarop je level-variabele buiten je functies blijft bestaan.
-:::

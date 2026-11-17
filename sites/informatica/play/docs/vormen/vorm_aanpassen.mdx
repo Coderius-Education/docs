@@ -24,6 +24,9 @@ Hoe kan ik de cirkel veranderen **nadat** deze gemaakt is?
 Oftewel, kan ik via code na **play.new_circle()** iets veranderen aan de cirkel?
 
 ## De variabele
+
+### Een naam voor de cirkel
+
 We hebben een **variabele** nodig die ons toegang geeft tot de cirkel. Kijk maar eens goed naar het onderstaande voorbeeld:
 
 <PygbagRunner code={`import play 
@@ -36,21 +39,19 @@ In dit codefragment gebeurt veel:
 - **mijn_cirkel = play.new_circle()**: dit tekent de cirkel EN zorgt ervoor dat de variabele **mijn_cirkel** verwijst naar onze cirkel
 - **mijn_cirkel.color = 'blue'**: dit wijzigt van onze cirkel alleen de kleur naar blauw
 
-Naast kleur kun je ook de x-positie, y-positie etc. aanpassen. Probeer het maar eens in de volgende opdracht.
-
 ### Opdracht 1.6.a: Je aangepaste cirkel
-Maak een nieuwe cirkel en pas deze aan:
+
+Naast kleur kun je ook de x-positie, y-positie etc. aanpassen. Maak een nieuwe cirkel en pas deze aan:
+
 - Verander de kleur naar 'blue' 
 - Verander de x-positie naar 150 
 - Verander de y-positie naar 200 
 - Vergroot de cirkel door de 'radius' (straal) aan te passen naar 200
 
-```python
-import play 
+<PygbagRunner code={`import play
 
 mijn_cirkel = play.new_circle()
-# JOUW CODE HIER
-```
+`} height={300} />
 
 <details>
     <summary>Klik hier voor een tip.</summary>

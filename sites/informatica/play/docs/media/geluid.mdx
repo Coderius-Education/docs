@@ -10,13 +10,19 @@ sidebar_position: 1
   ]}
 />
 
+Een spel zonder geluid is maar half af. Met **`play.new_sound`** laad je een geluidsbestand (`.mp3`, `.wav` of `.ogg`) dat je op elk moment kunt afspelen.
+
+## Een geluid klaarzetten
+
 :::warning[Online speeltuin]
 Geluidsbestanden laden werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code). Zie [installatie](site:play/docs/installatie) als je dat nog niet gedaan hebt.
 :::
 
-Een spel zonder geluid is maar half af. Met **`play.new_sound`** laad je een geluidsbestand (`.mp3`, `.wav` of `.ogg`) dat je op elk moment kunt afspelen.
+Zet eerst een geluidsbestand in **dezelfde map** als je Python-bestand, net als bij een afbeelding.
 
-Zet eerst een geluidsbestand in **dezelfde map** als je Python-bestand, net als bij een afbeelding. Dan:
+## Het geluid afspelen
+
+Staat het bestand in de map, dan speel je het zo af:
 
 ```python
 import play
@@ -43,7 +49,7 @@ muziek.play()
 - `muziek.pause()` pauzeert, nog een keer `.play()` gaat verder waar het was
 - `muziek.stop()` stopt helemaal
 
-## Er gaat iets mis?
+## Er gaat iets mis
 
 Hoor je niets, controleer dan:
 

@@ -124,8 +124,9 @@ Een test, de tests van de lessen (`docs-tests/`), de notities van de cursus
 en een `_category_.json` raken geen scherm en tellen niet mee
 (`raaktGeenScherm`). Een cursus die helemaal gemeten wordt, verdeelt het plan
 over meer runners (`schermenMatrix` in `wijzigingen.js`: veertig
-lespagina's per runner, hoogstens zes per cursus en achttien samen, de
-grootste vooraan; `--deel=2/6` meet elke zesde les, `deelVan` in
+lespagina's per runner, hoogstens zes per cursus en twintig samen, de
+grootste vooraan; een pagina zonder tabbladen telt voor een kwart,
+`lesGewicht`; `--deel=2/6` meet elke zesde les, `deelVan` in
 `meet-selectie.js`); op één runner kostte algoritmes zestien minuten,
 terwijl de rest van CI na drie minuten klaar was, en met 23 delen wachtte
 een deel op een vrije runner. Of een cursus helemaal gemeten wordt, beslist
@@ -158,8 +159,53 @@ in de runs ervoor en lokaal paste. Past het de tweede keer wel, dan staat
 het als waarschuwing in het verslag; past het dan nog niet, dan is de job
 rood.
 
+**De meting wacht niet langer dan nodig** (november 2026). Een brede run
+duurde ruim zeven minuten, waarvan de job `schermen` er vijf nam; de rest
+was na krap drie minuten klaar. Nu duurt hij 3:53: een deel van `schermen` meet
+in een tot anderhalve minuut, en het laatste is klaar na 228 seconden. Wat
+er anders is, elk met dezelfde uitkomst per scherm als ervoor (nagemeten op
+zeven cursussen):
+
+- **Het script wacht tot het scherm stilstaat** (`wachtOpRust`), in plaats
+  van een vaste 550 ms na elke klik: 150 ms lang dezelfde maten, geen beeld
+  dat op zich liet wachten, elk lettertype en plaatje binnen, geen aanvraag
+  meer onderweg, en geen onderdeel dat zegt dat het nog laadt
+  (`data-status="laden"`, het blokprogramma van robotica; dat krijgt acht
+  seconden). Met de vaste wachttijd mat het script twee schermen van
+  robotica voordat de blokken er stonden. Een onderdeel dat later op zijn
+  scherm komt, zet dus `data-status="laden"` tot het er is.
+- **Een klik op een tabblad of stap gebeurt in de pagina** (`klikIn`): een
+  klik van Playwright wacht een kwart seconde tot de knop stilstaat.
+- **Zonder `--klik` laadt de runtime van Python niet**: elke les opent drie
+  keer in een verse context en haalde en compileerde Pyodide elke keer. Een
+  veld staat er dan zoals in de eerste seconden van een les, en moet dus
+  even hoog zijn terwijl Python laadt en erna. Het veld van de python-cursus
+  was dat niet (op een telefoon 35 pixels lager tijdens het laden; 45 van de
+  2181 metingen hingen af van hoe ver het laden was); het vak van de uitvoer
+  staat er nu al tijdens het laden, en de rooktest van de speeltuin meet in
+  Chromium dat de hoogte gelijk blijft. Een nieuw veld met Python: houd het
+  even hoog, en laat de rooktest het meten. `--met-python` laadt de runtime
+  wel.
+- **Een job met Chromium installeert alleen de root** (`map: .` van
+  `node-pnpm`) en haalt Chromium zonder `--with-deps`: de bibliotheken staan
+  op het image, en apt haalde er in dertig seconden alleen lettertypen bij
+  die de lessen niet gebruiken: de tekst komt uit de lettertypen van de
+  site, en de losse tekens daarbuiten (▶ ✓ →) dekt DejaVu Sans, dat op het
+  image staat. Start Chromium niet, of heeft het image geen lettertype met
+  ▶ meer, dan komen de pakketten er alsnog bij (`ci-setup.test.ts`).
+
+Lokaal, vier lessen tegelijk: een derde van algoritmes 399 → 143 seconden,
+python 735 → 243, robotica 324 → 186, play 199 → 120, godot 167 → 88, web
+154 → 97, linux 108 → 58. `--vaste-wacht` meet zoals eerst, `--profiel` zegt waar de
+tijd blijft (laden, klikken, wachten, meten). Meer dan vier lessen tegelijk
+helpt niet: de meting is dan niet meer stabiel. Wat een brede run nu nog
+ophoudt, zijn de runners: bij de start van `schermen` lopen er naast de
+twintig delen nog zeven jobs, dus zes of zeven delen wachten een halve
+minuut. Minder delen maakt elk deel langer; dat wint hooguit twintig
+seconden.
+
 **Een job die Chromium installeert, heeft een grens.** `playwright install`
-duurt twintig seconden, en bleef op één runner een half uur staan; zonder
+duurt zeven seconden, en bleef op één runner een half uur staan; zonder
 grens wacht de workflow zes uur, en de check `build` wacht mee. De stap
 stopt na drie minuten en probeert het één keer opnieuw, en de jobs
 `browser`, `terminal` en `schermen` hebben `timeout-minutes`
@@ -317,7 +363,7 @@ De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
 Elke `##`-sectie van een les is daarom een tabblad bovenaan de pagina, en de
 inhoudsopgave rechts is weg. Dat is sinds november 2026 de standaard
 (schrijfgids §2 en §15). De web-cursus, de python-cursus, robotica,
-fullstack, linux, ctf, de editor-cursus, algoritmes en Godot zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
+fullstack, linux, ctf, de editor-cursus, algoritmes, Godot en play zijn omgezet, de andere nog niet. Een site zet het aan met `lesTabs: true` in `createConfig`; een
 pagina zet het uit met `les_tabs: false` in de front matter.
 
 Een cursus omzetten is werk per cursus, niet één schakelaar:
@@ -1300,6 +1346,81 @@ reden in `GEEN_UI_LABEL` (`src/godot-tests/labels.ts`). Die controle en het
 compileren van de blokken draaien alleen in CI, en CI draait pas bij een
 PR: open die dus voordat je een omzetting klaar noemt.
 
+**Wat play erbij bracht** (november 2026; alle 293 schermen passen op
+1280×720 en 1366×768, na eerst 242 van de 315). De cursus heeft een eigen
+oefenveld, de speeltuin (`PygbagRunner`): code in een editor en een spel dat
+in een los spelvenster draait, één per pagina (`SharedRunner`, een iframe met
+`position: fixed` boven de pagina). Buiten een tabblad komt het spel op de
+plek van de code. Daarvoor is dit gekomen, elk met een test:
+
+- **In een tabblad staan code en spel naast elkaar** (vanaf 997px): de code
+  blijft te lezen terwijl het spel draait, en het veld is voor en na de klik
+  op Speel even hoog. De kolom met het spel bepaalt de hoogte; de code
+  schuift in de hare. Op een smal scherm staat de code er of het spel, zoals
+  eerst. De maten staan in `PygbagRunner/maat.js`.
+- **De kolom van de code volgt de langste regel van de code van de les**
+  (`codeKolom`: 55 tot 68 procent van het veld, daarna kleinere letters tot
+  80 procent). In een vaste kolom brak in een op de drie voorbeelden een regel
+  af. Wat met de kleinste letters niet past (meer dan 84 tekens), hoort korter
+  in de les: vijftien regels zijn herschreven.
+- **Een veld dat het enige op zijn scherm is, neemt de ruimte die over is**
+  (`veldInScherm`, tussen een spel van 240 bij 180 en de hele kolom), en staat
+  ruimte af als er op zijn scherm iets openklapt: de voorkennis, een tip, de
+  oplossing. Eerst hield het zijn volle hoogte, en was met een blok open bijna
+  de helft van de schermen te lang. Een veld in een open oplossing doet
+  hetzelfde (`spelInBlok`). De twee rekenen niet op elkaars hoogte: het veld
+  van de opdracht trekt eerst de kleinste maat van het andere af.
+- **De tip en de oplossing staan in het veld** (`hulpInVeld` kent nu ook de
+  `PygbagRunner`): knoppen Spel, Tip en Oplossing boven het spel. In play is
+  de oplossing zelf een speeltuin, zonder codeblok ernaast; zijn code wordt
+  het codeblok van de hulp (`oplossingInSpeeltuin`), en Speel de oplossing
+  speelt hem af in het vak van het veld, zonder de code van de leerling aan te
+  raken. De console zegt dan dat de oplossing draait. Een opdracht met een
+  eigen veld en een oplossing met een tweede veld paste op geen van de twintig
+  schermen. Achter de tip is het spel niet te zien, maar het draait door.
+- **Een codeblok met dezelfde speeltuin eronder staat er één keer**
+  (`zonderDubbeleCode` kent de `code`-prop van de speeltuin), ook in een
+  oplossing. Dat is de vorm die play voorschrijft: het blok om te lezen, de
+  speeltuin om te draaien. In een tabblad staat de code van de speeltuin
+  altijd in beeld.
+- **Het spel stopt als zijn tabblad, stap of uitklapblok dichtgaat**
+  (`useInBeeld`). Het spelvenster zweeft los boven de pagina en bleef anders
+  over het volgende scherm heen staan.
+- **Het spelvenster volgt zijn vak elk beeld** (`requestAnimationFrame` in
+  `SharedRunner`), niet alleen bij scrollen: een veld dat zich aanpast of een
+  tip die opengaat, verschuift het vak zonder dat er gescrold wordt. Wat onder
+  de navbar of buiten een schuivend vak valt, is afgeknipt (`knip`, met
+  `clip-path`), en een vak dat niet te zien is (`visibility: hidden`),
+  verbergt het venster.
+- **De balk "Python Game" is in een tabblad weg**: hij kostte elk scherm 37
+  pixels, en in een open oplossing schoof de knop Stop erdoor uit beeld. Stop
+  staat naast de knop Speel.
+- **De docentenhandleiding telt een genummerde opdracht en de fouten ook als
+  ze een stap zijn** (`STAP_MET_VORM` in `plugins/werkvormen.js`): in play
+  staat een opdracht als stap in het tabblad van zijn onderwerp.
+- **Het meetscript** klikt met `--klik` op Speel in browser en op Speel de
+  oplossing, en telt de regels code die een speeltuin laat zien.
+
+In de lessen: een `###` naar zijn inhoud in plaats van De basis (32 keer),
+een opdracht met deelvragen a, b en c als eigen tabblad met een stap per
+deelvraag, de code waar een opdracht over gaat op het scherm van de opdracht
+(een eigen speeltuin met die code) in plaats van "pas de code hierboven aan",
+en losse fragmenten met uitleg in hoofdstuk 10 als `<CodeUitleg>`. De
+cheatsheet, de veelgemaakte fouten en de pagina's voor de docent hebben
+`les_tabs: false`. Elke opdracht waarvan de oplossing in de browser speelt,
+heeft een eigen speeltuin vóór de tip (vanaf nul: alleen `import play`),
+zodat de tip en de oplossing overal in het veld staan, zoals bij python
+(`opdrachten.test.ts`); eerst was dat bij 13 van de 47 zo. Een opdracht
+zonder speeltuin (pygame-ce, geluid en video, een controller, een antwoord
+in woorden) houdt zijn uitklapblokken: met zo'n blok open passen 14 van de
+144 metingen niet, en daar schuift de oplossing in haar vak, of de pagina.
+Past een opdracht met zijn veld niet, dan staat de slotnotitie "Waar kom je
+dit later weer tegen?" op het laatste scherm van de uitleg in plaats van
+onder het veld.
+`src/docs-tests/schermen.test.ts` van play bewaakt de
+verwijzingen per scherm, en dat een scherm dat de speeltuin noemt er een
+heeft.
+
 ## Code in MDX-expressies
 
 MDX eet van elke vervolgregel in een `{`…`}`-expressie tot twee spaties op.
@@ -1315,11 +1436,12 @@ verandert.
 
 ## Oefenvelden bewaren hun code
 
-Het oefenveld van web (`CodeEditor`) en dat van python (`CodeExercise`)
-bewaren de code van de leerling in de IndexedDB van zijn browser. De opslag
+Het oefenveld van web (`CodeEditor`), dat van python (`CodeExercise`) en
+de speeltuin van play (`PygbagRunner`, sinds elke opdracht daar een eigen
+veld heeft) bewaren de code van de leerling in de IndexedDB van zijn browser. De opslag
 en de hook staan in `packages/shared/oefenveld` (`maakOpslag`, `useOpslag`);
 een veld zegt welke site het is en uit welke delen zijn code bestaat (web:
-html, css en js; python: code). Elke site heeft een eigen database
+html, css en js; python en play: code). Elke site heeft een eigen database
 (`coderius:<site>:oefenvelden`, store `velden`), en een veld vindt zijn werk
 met het pad van de les, de vingerafdruk van zijn startcode (het zaad) en het
 hoeveelste veld met die startcode het is. Een andere startcode is dus een

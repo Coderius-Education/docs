@@ -648,12 +648,37 @@ const LESSEN_PER_DEEL = 40;
 /** Meer runners voor één cursus niet. */
 const MAX_DELEN = 6;
 /**
- * Meer delen samen niet: GitHub geeft twintig runners tegelijk, en naast de
- * delen draaien dan nog cross-links, browser, terminal en de staart van test.
- * Met 23 delen wachtte een deel van algoritmes anderhalve minuut op een
- * runner, en werd het het langste pad van de run.
+ * Meer delen samen niet: GitHub geeft twintig runners tegelijk. Met 23 delen
+ * wachtte een deel van algoritmes anderhalve minuut op een runner, en werd
+ * het het langste pad van de run. Eerst was dit 18, om plaats te laten voor
+ * cross-links, browser en terminal. Die zijn in een minuut klaar, en de
+ * matrix zet de grootste delen vooraan: wie dan even wacht, is een klein deel.
+ * Met 18 kreeg algoritmes er vier en was het ruim zes minuten bezig, terwijl
+ * de rest van de run na drie minuten klaar was.
  */
-const MAX_SCHERMEN = 18;
+const MAX_SCHERMEN = 20;
+
+/**
+ * Hoe zwaar een pagina telt voor de verdeling over de runners. Een les met
+ * tabbladen kost het meetscript drie tot vier seconden: elk tabblad en elke
+ * stap, op drie schermen. Een pagina zonder tabbladen (minder dan twee
+ * `##`-secties, of `les_tabs: false`) is één scherm, en kost een kwart. De
+ * editor-cursus kreeg met 78 pagina's twee runners die elk veertig seconden
+ * maten, en algoritmes kwam er één tekort.
+ */
+const GEWICHT_ZONDER_TABS = 0.25;
+
+/**
+ * @param {string} bron de inhoud van een lespagina
+ * @returns {number} 1 voor een les met tabbladen, anders GEWICHT_ZONDER_TABS
+ */
+function lesGewicht(bron) {
+  const voorwerk = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(bron);
+  if (voorwerk && /^les_tabs:\s*false\s*$/m.test(voorwerk[1])) return GEWICHT_ZONDER_TABS;
+  // Een `##` in een codeblok is commentaar, geen sectie.
+  const tekst = bron.replace(/^(```|~~~)[\s\S]*?^\1/gm, '');
+  return (tekst.match(/^## /gm) ?? []).length >= 2 ? 1 : GEWICHT_ZONDER_TABS;
+}
 
 /**
  * De matrix van de job `schermen`: per cursus één of meer delen. Een cursus
@@ -668,7 +693,7 @@ const MAX_SCHERMEN = 18;
  * @param {object} opties
  * @param {Record<string, string>} opties.siteMappen per id de map van de site
  * @param {Record<string, number>} opties.lesAantallen per id het aantal
- *   lespagina's (.md en .mdx in de docs-mappen)
+ *   lespagina's (.md en .mdx in de docs-mappen), gewogen met lesGewicht
  * @param {(pad: string) => string | null} [opties.leesBron]
  * @returns {{ site: string, deel: number, delen: number }[]}
  */
@@ -733,6 +758,8 @@ module.exports = {
   LESSEN_PER_DEEL,
   MAX_DELEN,
   MAX_SCHERMEN,
+  GEWICHT_ZONDER_TABS,
+  lesGewicht,
   schermenMatrix,
   voorraadSites,
 };

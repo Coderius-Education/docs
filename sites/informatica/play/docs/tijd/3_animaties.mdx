@@ -36,7 +36,7 @@ async def verander_kleur():
 
 De bal verandert nu steeds van kleur: rood → oranje → geel → groen → blauw → paars → rood, enzovoort.
 
-Hoe werkt dit?
+## Hoe de animatie werkt
 
 ```python
 @play.repeat_forever
@@ -68,14 +68,15 @@ In deze opdracht gebruik je het `global` keyword en `if`-statements. Ken je die 
 - **`if`** checkt of iets waar is. Bijvoorbeeld: `if animatie == 'kleur':` voert de code eronder alleen uit als `animatie` de waarde `'kleur'` heeft.
 :::
 
-### Stappenplan:
+### Stappenplan
 
 1. Maak een variabele `animatie` met de waarde `'kleur'`
 2. Maak een functie met `@play.when_key_pressed('left')` die `animatie` naar `'kleur'` zet (gebruik `global animatie` bovenaan de functie)
 3. Maak een functie met `@play.when_key_pressed('right')` die `animatie` naar `'grootte'` zet
-4. Maak een `@play.repeat_forever` async functie die:
-   - Met `if animatie == 'kleur':` controleert of de kleuranimatie moet draaien
-   - Met `if animatie == 'grootte':` controleert of de grootteanimatie moet draaien
+4. Maak een `@play.repeat_forever` async functie die met `if animatie == 'kleur':` en `if animatie == 'grootte':` kiest welke animatie draait
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>

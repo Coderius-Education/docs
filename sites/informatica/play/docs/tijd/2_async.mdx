@@ -4,6 +4,8 @@ sidebar_position: 2
 
 # 5.2 Wachten met `async` en `await`
 
+### Wachten zonder te bevriezen
+
 :::info[Wat je hier nieuw gaat zien]
 Op deze pagina komen drie dingen samen. Twee daarvan ken je al, één is nieuw:
 - In [5.1 Wachten in je spel](site:play/docs/tijd/bal) zag je dat `time.sleep()` het hele spel bevriest.
@@ -19,7 +21,9 @@ Het idee is simpel:
 - Met `async` vertel je Python: "deze functie mag even wachten"
 - Met `await` vertel je Python: "wacht hier even, maar laat de rest van het spel doorgaan"
 
-Bekijk de code hieronder. Wat is er anders dan de `time.sleep()` versie van de vorige pagina?
+### Zoek de verschillen
+
+In 5.1 begon de functie met `def tijdelijk_sneller():` en stond er `time.sleep(1)` om te wachten. Bekijk de code hieronder. Wat staat er nu op die twee plekken?
 
 <PygbagRunner code={`import play
 
@@ -41,7 +45,7 @@ Er zijn twee veranderingen:
 
 </details>
 
-Hoe werkt dit precies?
+### Regel voor regel
 
 <CodeUitleg>
 
@@ -67,7 +71,9 @@ async def tijdelijk_sneller():
 
 </CodeUitleg>
 
-### Er gaat iets mis?
+## Er gaat iets mis
+
+### await zonder async
 
 Een veelgemaakte fout is `await` gebruiken zonder `async`:
 
@@ -86,7 +92,10 @@ SyntaxError: 'await' outside function
 
 De oplossing: voeg `async` toe voor `def`.
 
-Een andere fout is `play.timer` gebruiken zonder `await`:
+### play.timer zonder await
+
+Een tweede fout is `play.timer` gebruiken zonder `await`:
+
 ```python
 # FOUT - play.timer zonder await doet niets
 async def tijdelijk_sneller():
@@ -95,18 +104,12 @@ async def tijdelijk_sneller():
 
 Dit geeft geen foutmelding, maar de timer wordt genegeerd. Je moet altijd `await` ervoor zetten.
 
-## Samengevat
-
-| Sleutelwoord | Wat doet het? |
-| --- | --- |
-| `async` | Zet je voor `def`. Hiermee mag de functie wachten zonder het spel te pauzeren. |
-| `await` | Wacht op iets (zoals een timer). Kan alleen in een `async` functie. |
-
-Onthoud: `async` en `await` horen altijd bij elkaar. Als je `await` gebruikt, moet de functie `async` zijn.
-
 ## Opdracht 5.2.a: Knipperend vierkant
 
 Maak een vierkant dat bij een muisklik 3 keer knippert (zichtbaar → onzichtbaar → zichtbaar) en dan weer normaal is.
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -144,6 +147,9 @@ Maak een cirkel die:
 1. Normaal blauw is
 2. Bij het indrukken van spatie rood wordt
 3. Na 2 seconden weer blauw wordt
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>

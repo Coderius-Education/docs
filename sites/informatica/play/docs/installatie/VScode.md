@@ -7,11 +7,12 @@ sidebar_custom_props:
 
 # VS Code
 
+## Visual Studio Code installeren
+
 :::caution
 **Belangrijk:** Gaaf dat je VS Code wilt gebruiken. Het kan wel uitdagend zijn vanwege de integratie van Python, een werkende virtuele omgeving en de terminal configuratie. Mocht je de installatie van VS code niet zo fijn vinden, dan kun je altijd Thonny proberen.
 :::
 
-## Visual Studio Code installeren
 Volg [Python in VS Code](site:editor/python) om VS Code met Python werkend te krijgen.
 
 :::info
@@ -39,13 +40,13 @@ py -m pip install --upgrade coderius-play
 
 Mocht je meldingen krijgen zoals `Toegang geweigerd` kan het helpen om `--user` toe te voegen:
 ```bash
-pip install --upgrade --user coderius-play
+python -m pip install --upgrade --user coderius-play
 ```
 
 
 ## Testen of het gelukt is
 Kopieer het volgende codefragment naar VS code en voer het uit.
-Het hoofdstuk `Executing Python file options` kan hierbij nuttig zijn.
+Hoe je een bestand uitvoert, staat in [Een Python-bestand maken en uitvoeren](site:editor/python/stap-6-bestand).
 
 ```python
 import play

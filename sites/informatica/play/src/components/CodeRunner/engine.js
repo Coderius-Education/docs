@@ -330,7 +330,7 @@ export function buildSharedRunnerSrcDoc(codes) {
   html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a2e; }
   body { display: flex; flex-direction: column; }
   #canvas-wrap { flex: 1; min-height: 0; display: flex; justify-content: center; align-items: flex-start; overflow: hidden; }
-  canvas { display: block; max-height: 100%; width: auto; }
+  canvas { display: block; max-height: 100%; max-width: 100%; width: auto; height: auto; }
   #loading { color: #888; font-family: sans-serif; font-size: 14px; padding: 16px; }
 </style>
 </head>

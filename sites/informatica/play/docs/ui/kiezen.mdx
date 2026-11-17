@@ -10,7 +10,7 @@ sidebar_position: 3
   ]}
 />
 
-Moet de speler één ding kiezen uit meerdere mogelijkheden, dan heb je twee opties: een uitklapmenu of een rijtje keuzerondjes.
+Moet de speler één ding kiezen uit meerdere mogelijkheden? Dat kan met een uitklapmenu of met keuzerondjes.
 
 ## Het uitklapmenu
 
@@ -24,6 +24,8 @@ menu = play.new_dropdown(options=["red", "green", "blue"], y=-100)
 @menu.when_changed
 def kleur_gekozen(waarde, plek):
     cirkel.color = waarde`} height={340} />
+
+## De keuzes in het menu
 
 <CodeUitleg>
 
@@ -50,7 +52,9 @@ Bij keuzerondjes ziet de speler alle opties tegelijk, en er kan er maar één aa
 
 tekst = play.new_text(words="Kies een niveau", y=100)
 groep = play.new_radio_group()
-play.new_radio_button(label="Makkelijk", value="makkelijk", group=groep, y=20, selected=True)
+play.new_radio_button(
+    label="Makkelijk", value="makkelijk", group=groep, y=20, selected=True
+)
 play.new_radio_button(label="Normaal", value="normaal", group=groep, y=-30)
 play.new_radio_button(label="Moeilijk", value="moeilijk", group=groep, y=-80)
 
@@ -63,6 +67,9 @@ Let op: `when_changed` zet je op de **groep**, niet op een los rondje. De waarde
 ## Opdracht 7.3.a: Vormenkiezer
 
 Maak drie keuzerondjes: **Klein**, **Normaal** en **Groot**. De keuze bepaalt de straal van een cirkel (bijvoorbeeld 20, 50 en 90).
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -80,7 +87,9 @@ import play
 cirkel = play.new_circle(color='teal', radius=50, x=120)
 groep = play.new_radio_group()
 play.new_radio_button(label="Klein", value="20", group=groep, x=-150, y=60)
-play.new_radio_button(label="Normaal", value="50", group=groep, x=-150, y=10, selected=True)
+play.new_radio_button(
+    label="Normaal", value="50", group=groep, x=-150, y=10, selected=True
+)
 play.new_radio_button(label="Groot", value="90", group=groep, x=-150, y=-40)
 
 @groep.when_changed
@@ -93,7 +102,9 @@ def maat_gekozen(waarde):
 cirkel = play.new_circle(color='teal', radius=50, x=120)
 groep = play.new_radio_group()
 play.new_radio_button(label="Klein", value="20", group=groep, x=-150, y=60)
-play.new_radio_button(label="Normaal", value="50", group=groep, x=-150, y=10, selected=True)
+play.new_radio_button(
+    label="Normaal", value="50", group=groep, x=-150, y=10, selected=True
+)
 play.new_radio_button(label="Groot", value="90", group=groep, x=-150, y=-40)
 
 @groep.when_changed

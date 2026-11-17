@@ -158,3 +158,185 @@
 .errLine {
   color: #f88;
 }
+
+/* In een les-tabblad (zie index.jsx). Op een smal scherm staat het spel
+   onder de code en de knoppen, en de code blijft staan terwijl het spel
+   draait: de build haalt het codeblok boven een speeltuin weg (de speeltuin
+   toont de code zelf), dus zonder de editor stond de code waar de les over
+   praat nergens meer in beeld. */
+.inTab {
+  margin: 0.75rem 0;
+}
+
+.inTab .spelKolom {
+  display: none;
+}
+
+.inTab .actions {
+  flex-wrap: wrap;
+}
+
+.inTab .actions button {
+  white-space: nowrap;
+}
+
+.inTab.loopt .spelKolom {
+  display: block;
+}
+
+.bewaart {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.wacht {
+  margin: 0;
+  padding: 1rem;
+  color: #9a9ab5;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* Een veld met een tip of oplossing: de rij Spel, Tip en Oplossing staat er
+   altijd, ook op een smal scherm voordat het spel draait. Daar staat de tip
+   of de oplossing onder de knoppen, zo hoog als hij is. */
+.inTab.metHulp .spelKolom {
+  display: block;
+}
+
+.inTab.metHulp:not(.loopt) .canvasArea,
+.inTab.metHulp:not(.loopt) .consolePanel,
+.wegVoorHulp {
+  display: none;
+}
+
+/* De knop die de oplossing speelt, zoals Voer de oplossing uit in het veld
+   van de python-cursus: een rand in de kleur van de cursus, geen groen vlak.
+   De groene knop is Speel in browser, voor de code van de leerling zelf. */
+.oplossingKnop {
+  margin-top: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  background: transparent;
+  color: var(--ifm-color-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* De tip en de oplossing staan op dezelfde ondergrond als bij python. */
+.hulpLaag {
+  background: var(--ifm-color-emphasis-100);
+}
+
+/* Vanaf de breedte waar de lessenlijst links staat: code links, spel rechts,
+   en de knoppen onder de code. De kolom met het spel bepaalt de hoogte, en
+   de code schuift in haar vak; anders rekt een lang programma het veld op tot
+   onder de rand van het scherm. */
+@media (min-width: 997px) {
+  .inTab .werkvlak {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .inTab .spelKolom,
+  .inTab.loopt .spelKolom {
+    display: block;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    border-left: 1px solid var(--ifm-color-emphasis-200);
+  }
+
+  .inTab .codeKolom,
+  .inTab.loopt .codeKolom {
+    position: relative;
+    display: block;
+    grid-column: 1;
+    grid-row: 1;
+    min-height: 0;
+  }
+
+  .inTab .codeBinnen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .inTab .codeSection {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    border-bottom: 0;
+  }
+
+  /* De letters van de code, als de langste regel anders niet past (maat.js). */
+  .inTab .codeSection > * {
+    font-size: calc(0.875rem * var(--play-code-schaal, 1));
+  }
+
+  .inTab .actions {
+    grid-column: 1;
+    grid-row: 2;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .inTab .header {
+    padding: 0.35rem 0.75rem;
+  }
+
+  .inTab .playButton,
+  .inTab .copyButton,
+  .inTab .stopButton {
+    padding: 0.3rem 0.9rem;
+  }
+
+  /* Het spel en zijn console houden hun plek als de tip of de oplossing
+     ervoor staat: het veld blijft even hoog, wat de leerling ook kiest. Het
+     spel is dan niet te zien, en het zwevende spelvenster (SharedRunner)
+     verbergt zich mee. */
+  .inTab .spelVlak {
+    position: relative;
+  }
+
+  .inTab.metHulp:not(.loopt) .canvasArea,
+  .inTab.metHulp:not(.loopt) .consolePanel {
+    display: flex;
+  }
+
+  .inTab.metHulp:not(.loopt) .consolePanel {
+    display: block;
+  }
+
+  .inTab .wegVoorHulp {
+    display: block;
+    visibility: hidden;
+  }
+
+  .inTab .hulpLaag {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+  }
+
+  /* De console is er al voordat het spel iets schrijft, op een vaste
+     hoogte: anders verspringt het veld bij de eerste print(). */
+  .inTab .consolePanel {
+    height: 3.4em;
+    max-height: none;
+  }
+}
+
+/* De code zoals hij er staat voordat de pagina in de browser draait. */
+.wachtCode {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  max-height: 400px;
+  overflow: auto;
+  border-radius: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  background: var(--ifm-background-color);
+}

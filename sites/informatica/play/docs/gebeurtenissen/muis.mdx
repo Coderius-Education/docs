@@ -4,6 +4,8 @@ sidebar_position: 3
 
 # 4.3 De muis gebruiken
 
+## Muispositie opvragen
+
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
@@ -12,8 +14,6 @@ sidebar_position: 3
 />
 
 Naast het toetsenbord kun je ook de muis gebruiken in je spel. Met `play.mouse` kun je de positie van de muis opvragen en een vorm de muis laten volgen.
-
-## Muispositie opvragen
 
 <PygbagRunner code={`import play
 
@@ -74,6 +74,9 @@ Maak een programma waarbij:
 1. Een cirkel de muis volgt
 2. Een tekst bovenaan het scherm de muispositie toont
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -103,6 +106,9 @@ Maak een programma waarbij:
 1. Een rechthoek (het batje) alleen verticaal beweegt met de muis (de x blijft vast)
 2. Een bal heen en weer beweegt en tegen het batje botst
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -126,6 +132,17 @@ def update():
     batje.y = play.mouse.y
 ```
 
+<PygbagRunner code={`import play
+
+batje = play.new_box(x=300, width=15, height=80)
+
+bal = play.new_circle(radius=15, color='red')
+bal.start_physics(obeys_gravity=False, x_speed=200)
+
+@play.repeat_forever
+def update():
+    batje.y = play.mouse.y`} height={300} />
+
 </details>
 
 ## Opdracht 4.3.c: Kleur wisselen bij klik
@@ -135,6 +152,9 @@ In deze opdracht gebruik je het `global` keyword. Ken je dat nog niet? Kijk dan 
 :::
 
 Maak een programma waarbij een cirkel elke keer als je klikt van kleur wisselt: blauw → rood → blauw → rood...
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -165,6 +185,9 @@ def wissel_kleur():
 ## Opdracht 4.3.d: Groeiende cirkel
 
 Maak een programma waarbij een cirkel groter wordt zolang je de muis ingedrukt houdt. Als je op 'r' drukt, wordt de cirkel weer klein.
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>

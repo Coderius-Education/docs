@@ -4,6 +4,8 @@ sidebar_position: 2
 
 # 2.2 Soorten fysica
 
+### Het type opvragen
+
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/basis/jouw-naam-op-het-scherm', label: 'Jouw naam op het scherm'},
@@ -30,7 +32,11 @@ cirkel.start_physics()
 
 cirkel.physics_info()`} height={300} />
 
-Je ziet nu in je console informatie over het type fysica. Het type wordt bepaald door drie attributen:
+Je ziet nu in je console informatie over het type fysica.
+
+### Drie attributen
+
+Welk type fysica een vorm heeft, wordt bepaald door drie attributen:
 
 | Attribuut | Wat doet het? |
 | --- | --- |
@@ -38,9 +44,11 @@ Je ziet nu in je console informatie over het type fysica. Het type wordt bepaald
 | **obeys_gravity** | `True` = de zwaartekracht trekt de vorm naar beneden, `False` = geen zwaartekracht |
 | **stable** | `True` = de vorm beweegt niet als iets ertegen botst, `False` = de vorm wordt weggeduwd bij een botsing |
 
-Door deze drie attributen te combineren, krijg je drie soorten fysica:
+Door deze drie attributen te combineren, krijg je drie soorten fysica: dynamic, static en kinematic.
 
 ## Dynamic
+
+### De instellingen van dynamic
 
 Een **dynamic** vorm beweegt vrij rond. De zwaartekracht en botsingen hebben er invloed op. Dit is de standaard.
 
@@ -69,6 +77,8 @@ Print het gevonden type in je console, zodat je kunt controleren of het klopt.
 
 </CodeUitleg>
 
+### Een dynamic bal
+
 <PygbagRunner code={`import play
 
 bal = play.new_circle()
@@ -79,6 +89,8 @@ bal.physics_info()`} height={300} />
 De bal valt naar beneden en stuitert. Dat is dynamic gedrag.
 
 ## Static
+
+### De instellingen van static
 
 Een **static** vorm staat helemaal stil en kan niet bewegen. Andere vormen kunnen er wel tegenaan botsen.
 
@@ -107,6 +119,8 @@ Deze combinatie maakt hem **static**:
 
 </CodeUitleg>
 
+### Een static muur
+
 <PygbagRunner code={`import play
 
 muur = play.new_box(y=-200, width=400, height=20)
@@ -117,6 +131,8 @@ muur.physics_info()`} height={300} />
 De muur blijft op zijn plek, wat er ook tegenaan botst.
 
 ## Kinematic
+
+### De instellingen van kinematic
 
 Een **kinematic** vorm beweegt volgens een vaste snelheid. De zwaartekracht heeft er geen invloed op, maar andere vormen botsen er wel tegenaan.
 
@@ -140,6 +156,8 @@ Deze combinatie, mét een eigen `x_speed`, maakt hem **kinematic**:
 </Regel>
 
 </CodeUitleg>
+
+### Een kinematic platform
 
 <PygbagRunner code={`import play
 
@@ -257,5 +275,5 @@ vorm_c.physics_info()`} height={300} />
 </details>
 
 :::info[Waar kom je dit later weer tegen?]
-Bij [Pong (eindproject)](site:play/docs/jouw_project/pong) pas je deze drie types direct toe: de bal is **dynamic**, de batjes zijn **kinematic**, en de muren zijn **static**. Opdracht 2.2.a hierboven is feitelijk al de voorbereiding op die keuze.
+Bij [Pong (eindproject)](site:play/docs/jouw_project/pong) pas je deze drie types direct toe: de bal is **dynamic**, de batjes zijn **kinematic**, en de muren zijn **static**. Opdracht 2.2.a is feitelijk al de voorbereiding op die keuze.
 :::

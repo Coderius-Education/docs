@@ -1,6 +1,7 @@
 ---
 sidebar_position: 3
 displayed_sidebar: null
+les_tabs: false
 ---
 
 # Foutje gevonden?

@@ -116,6 +116,21 @@
   margin-top: 0.25rem;
 }
 
+/* Terwijl Python laadt, staan "Python wordt geladen..." en de zin die er
+   daarna staat in hetzelfde vak van het raster: de regel is zo hoog als de
+   langste van de twee, en het veld verspringt niet als Python er is. */
+.wachtRegel {
+  display: grid;
+}
+
+.wachtRegel > span {
+  grid-area: 1 / 1;
+}
+
+.straks {
+  visibility: hidden;
+}
+
 /* De aanwijzing van een leeg veld, in de HTML van de build: tot het veld er
    is, staat hij er al, in dezelfde kleur als straks in de editor. */
 .aanwijzing {

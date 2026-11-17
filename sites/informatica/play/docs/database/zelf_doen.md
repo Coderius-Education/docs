@@ -12,16 +12,17 @@ sidebar_position: 4
   ]}
 />
 
-Zeker. Mocht je Informatica-ACTIEF gebruiken, is er een mooi hoofdstuk over dictionaries waarin je ook leert om deze als JSON op te slaan. Durf je het aan om dit zelf te doen?
+Zeker. Mocht je [Informatica-ACTIEF](site:play/docs/eerste-keer-python/IA) gebruiken, is er een mooi hoofdstuk over dictionaries waarin je ook leert om deze als JSON op te slaan. Durf je het aan om dit zelf te doen?
+
+## Wat je nodig hebt
 
 :::warning[Online speeltuin]
 Deze opdracht draait niet in de online speeltuin: je moet het bestand `database.json` op je eigen computer kunnen openen om te zien wat er verandert. Gebruik Thonny of VS Code, zie [installatie](site:play/docs/installatie).
 :::
 
-Hieronder geven we je een voorzet om je op gang te helpen.
-- Kopieer dit codefragment en voer de code uit
-- Klik op spatie en update de database
-- Zoek naar het bestand `database.json` in **dezelfde** folder als je Python bestand. Als het goed is, zie je de inhoud van het bestand veranderen iedere keer dat je op spatie klikt.
+## De voorzet
+
+Hieronder geven we je een voorzet om je op gang te helpen. Kopieer dit codefragment.
 
 ```python
 import play
@@ -32,7 +33,7 @@ pad_mijn_db = 'database.json'
 mijn_db = None
 
 boven = play.new_text(
-    "Klik op spatie om de teller te verhogen",
+    "Druk op spatie om de teller te verhogen",
     y=100,
     font_size=40,
 )
@@ -52,7 +53,8 @@ daarweeronder = play.new_text(
     font_size=40,
 )
 
-@play.when_program_starts  # deze functie wordt automatisch uitgevoerd bij het starten van het programma
+# deze functie wordt automatisch uitgevoerd bij het starten van het programma
+@play.when_program_starts
 def start():
     global mijn_db
     # kijk of jouw 'pad_mijn_db' al bestaat
@@ -74,6 +76,12 @@ def update_database():
     with open(pad_mijn_db, 'w') as outfile:
         json.dump(mijn_db, outfile)
 ```
+
+## Kijken in database.json
+
+- Voer de code van de voorzet uit op je eigen computer
+- Druk op spatie en update de database
+- Zoek naar het bestand `database.json` in **dezelfde** folder als je Python bestand. Als het goed is, zie je de inhoud van het bestand veranderen iedere keer dat je op spatie drukt.
 
 :::info[Waar kom je dit later weer tegen?]
 In [9.3 Wanneer ga je naar het volgende level?](site:play/docs/levels/wanneer-volgende) gebruik je de database om te onthouden hoe ver een speler kwam.

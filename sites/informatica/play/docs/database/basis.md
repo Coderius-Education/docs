@@ -23,9 +23,7 @@ database = play.new_database()`} height={300} />
 
 In dezelfde map als je Python bestand verschijnt nu het bestand **database.json**. Hierin worden je gegevens opgeslagen.
 
-:::note[In de speeltuin]
-Draai je dit hierboven in de browser, dan bestaat `database.json` alleen daar: je vindt het bestand niet op je computer terug en het is weg zodra je de pagina sluit. Op je eigen computer blijft het gewoon staan, naast je Python-bestand.
-:::
+**In de speeltuin:** draai je dit hierboven in de browser, dan bestaat `database.json` alleen daar: je vindt het bestand niet op je computer terug en het is weg zodra je de pagina sluit. Op je eigen computer blijft het gewoon staan, naast je Python-bestand.
 
 ## Gegevens opslaan met set_data
 
@@ -85,7 +83,7 @@ mijn_punten = database.get_data('punten', 0)
 
 Als `'punten'` nog niet in de database staat, krijg je nu `0` terug in plaats van `None`. Dit is handig bij de eerste keer dat je programma start, wanneer de database nog leeg is.
 
-### Er gaat iets mis?
+## Er gaat iets mis
 
 Een veelgemaakte fout is `get_data` aanroepen zonder default waarde wanneer de sleutel nog niet bestaat:
 
@@ -109,6 +107,9 @@ Maak een programma dat:
 2. Je naam opslaat met `set_data('naam', 'jouw naam')`
 3. Je naam ophaalt met `get_data('naam')`
 4. Je naam op het scherm toont
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -151,6 +152,9 @@ Je kunt meerdere gegevens opslaan in dezelfde database. Maak een programma dat:
 2. Je leeftijd opslaat
 3. Je favoriete kleur opslaat
 4. Alle drie de gegevens ophaalt en op het scherm toont
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -206,6 +210,9 @@ Maak een programma dat:
 3. Het level op het scherm toont
 
 Draai het programma twee keer. De eerste keer zou je `1` moeten zien (de default waarde). Voeg daarna een `set_data('level', 5)` toe en draai opnieuw. Wat zie je nu?
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>

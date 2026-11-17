@@ -120,7 +120,11 @@ const adres = `http://127.0.0.1:${server.address().port}`;
 const les = eersteLesMetOefenveld();
 console.log(`Les: ${les}`);
 
-const browser = await chromium.launch();
+// Met CHROMIUM=<pad> een Chromium die al op de computer staat, zoals in
+// meet-les-tabs.mjs.
+const browser = await chromium.launch(
+  process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {},
+);
 // Een eigen context: de controle van de cache opent er een tweede tabblad in.
 const context = await browser.newContext();
 const page = await context.newPage();
@@ -283,6 +287,60 @@ asyncio.ensure_future(vervals())`);
       await tabblad.close();
     }
   });
+
+  // De job `schermen` meet de lessen zonder de runtime van Python te laden
+  // (scripts/meet-les-tabs.mjs): een veld staat er dan zoals in de eerste
+  // seconden van een les. Dat klopt alleen als het veld daarna niet groter
+  // of kleiner wordt. Tijdens het laden stond er eerst alleen de regel
+  // "Python wordt geladen...", en was het veld op een telefoon 35 pixels
+  // lager dan erna.
+  for (const maat of [
+    { width: 1280, height: 720 },
+    { width: 390, height: 800 },
+  ]) {
+    await controleer(
+      `het veld is even hoog terwijl Python laadt en erna (${maat.width} breed)`,
+      async () => {
+        const eigen = await browser.newContext({ viewport: maat, serviceWorkers: 'block' });
+        try {
+          // De runtime komt pas binnen als de hoogte tijdens het laden gemeten is.
+          let laatDoor;
+          const gemeten = new Promise((klaar) => {
+            laatDoor = klaar;
+          });
+          await eigen.route(/\/pyodide\/(?!pyodide\.js(\?|$))[^/]+$/, async (route) => {
+            await gemeten;
+            await route.continue().catch(() => {});
+          });
+          const pagina = await eigen.newPage();
+          await pagina.goto(`${adres}${les}`);
+          const eerste = pagina.locator('[class*="exercise_"]').first();
+          // Het tabblad en de stap van het veld openen, zoals een leerling.
+          const [tab, stap] = await eerste.evaluate((el) => [
+            el.closest('[data-les-tab]')?.getAttribute('data-les-tab'),
+            el.closest('[data-les-stap]')?.getAttribute('data-les-stap'),
+          ]);
+          if (tab) await pagina.locator(`[data-tab="${tab}"]`).click();
+          if (stap) await pagina.locator(`[data-stap="${stap}"]`).click();
+          await eerste.getByRole('button', { name: 'Laden...' }).waitFor({ timeout: 10_000 });
+          await pagina.evaluate(() => document.fonts.ready);
+          await pagina.waitForTimeout(500);
+          const hoogte = () =>
+            eerste.evaluate((el) => Math.round(el.getBoundingClientRect().height));
+          const tijdens = await hoogte();
+          if (tijdens < 100) throw new Error(`het veld is niet te zien (${tijdens} px hoog)`);
+          laatDoor();
+          await eerste.getByRole('button', { name: '▶ Uitvoeren' }).waitFor({ timeout: LADEN_MS });
+          await pagina.waitForTimeout(500);
+          const erna = await hoogte();
+          if (erna !== tijdens)
+            throw new Error(`tijdens het laden ${tijdens} px hoog, erna ${erna} px`);
+        } finally {
+          await eigen.close();
+        }
+      },
+    );
+  }
 
   await controleer('geen JavaScript-fouten op de pagina', async () => {
     if (consoleFouten.length) throw new Error(consoleFouten.join(' | '));

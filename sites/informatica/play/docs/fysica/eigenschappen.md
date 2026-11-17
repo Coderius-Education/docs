@@ -14,10 +14,16 @@ Je hebt al geleerd hoe je vormen kunt laten bewegen en welke soorten fysica er z
 
 ## Bounciness (stuiteren)
 
+### Terugkaatsen
+
 `bounciness` bepaalt hoe hard een vorm terugkaatst na een botsing.
 
 - `1.0` = de vorm kaatst net zo hard terug als dat deze aankwam (dit is het maximum)
 - `0.0` = de vorm kaatst helemaal niet terug
+
+### Een stuiterende bal
+
+De bal in dit voorbeeld heeft `bounciness=1.0` en valt op een vloer:
 
 ```python
 import play
@@ -40,6 +46,9 @@ De bal stuitert bijna eindeloos op en neer (maar verliest heel langzaam energie)
 ### Opdracht 2.3.a: Stuiterballen vergelijken
 
 Maak drie ballen naast elkaar met verschillende `bounciness` waarden: `0.2`, `0.6` en `1.0`. Laat ze allemaal vanaf dezelfde hoogte vallen op een vloer. Welke bal stuitert het hoogst?
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -85,6 +94,8 @@ De groene bal (`bounciness=1.0`) stuitert het hoogst.
 
 ## Mass (massa)
 
+### Zwaar tegen licht
+
 `mass` bepaalt hoe "zwaar" een vorm is. Dit merk je bij botsingen: een zware vorm duwt een lichte vorm makkelijker weg.
 
 ```python
@@ -114,6 +125,9 @@ Maak twee ballen die naar elkaar toe bewegen:
 2. Eén bal met `mass=1`
 
 Wat gebeurt er? Verander daarna de massa van één bal naar `mass=20`. Wat is het verschil?
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -149,6 +163,8 @@ Bij gelijke massa kaatsen de ballen gelijk terug. Met ongelijke massa wordt de l
 
 ## Sensor
 
+### Wat een sensor doet
+
 In [2.1](site:play/docs/fysica/links_en_rechts#een-tekst-in-de-weg) stuiterde de
 bal terug tegen een tekst. Elke vorm houdt andere vormen tegen, ook als je er
 zelf geen `start_physics()` op aanroept: een vierkant, een tekst, en ook een
@@ -163,6 +179,10 @@ scorezone, een finish, of een tekst waar de bal overheen vliegt.
 
 Geef een sensor ook `can_move=False` mee. `start_physics()` zet anders de
 zwaartekracht aan, en dan valt je zone van het scherm.
+
+### Een zone als sensor
+
+De groene zone in dit programma is een sensor. Raakt de bal hem, dan verschijnt er een tekst:
 
 <CodeUitleg>
 
@@ -214,6 +234,8 @@ Zet de melding op het scherm.
 
 </CodeUitleg>
 
+### De zone uitproberen
+
 <PygbagRunner code={`import play
 
 vloer = play.new_box(y=-200, width=600, height=20)
@@ -255,14 +277,22 @@ zone.start_physics(sensor=True)
 zone.start_physics(can_move=False, sensor=True)
 ```
 
+:::info[Waar kom je dit later weer tegen?]
+- `when_touching` zie je terug bij [4.2 Gebeurtenissen bij een vorm](site:play/docs/gebeurtenissen/vormen) om botsingen af te handelen.
+- `bounciness` is essentieel bij [Pong (eindproject)](site:play/docs/jouw_project/pong): zonder stuiterende bal is er geen spel.
+- Sensors zijn handig voor scorezones en triggers — denk aan een onzichtbaar vakje waar je een punt scoort.
+:::
+
 ### Opdracht 2.3.c: Scorezone
 
 Maak een spel met:
 1. Een vloer onderaan het scherm
 2. Een doorzichtige scorezone (gebruik `sensor=True`, `can_move=False` en `transparency=50`) in het midden van het scherm
 3. Een bal die van boven valt
+4. Een tekst "Punt." zodra de bal door de scorezone valt
 
-Als de bal door de scorezone valt, laat een tekst zien: "Punt."
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -311,9 +341,3 @@ def punt():
 De bal valt door de groene zone en landt op de vloer. Zodra de bal de zone raakt, verschijnt "Punt.".
 
 </details>
-
-:::info[Waar kom je dit later weer tegen?]
-- `when_touching` zie je terug bij [4.2 Gebeurtenissen bij een vorm](site:play/docs/gebeurtenissen/vormen) om botsingen af te handelen.
-- `bounciness` is essentieel bij [Pong (eindproject)](site:play/docs/jouw_project/pong): zonder stuiterende bal is er geen spel.
-- Sensors zijn handig voor scorezones en triggers — denk aan een onzichtbaar vakje waar je een punt scoort.
-:::

@@ -4,6 +4,8 @@ sidebar_position: 4
 
 # 1.4 Je eerste tekst
 
+## Een tekst op het scherm
+
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/basis/jouw-naam-op-het-scherm', label: 'Jouw naam op het scherm'},
@@ -12,6 +14,14 @@ sidebar_position: 4
 
 Tekeningen en spellen worden duidelijker met tekst. Met **coderius-play** kun je eenvoudig tekst toevoegen.
 De werkwijze is vergelijkbaar met **play.new_circle** en **play.new_box**.
+
+Hieronder zie je een voorbeeld:
+
+<PygbagRunner code={`import play
+
+play.new_text(words='hallo pythonista', font='default', font_size=30)`} height={300} />
+
+## Wat kan ik allemaal aanpassen?
 
 Voor **play.new_text** kun je de volgende attributen gebruiken:
 - **words**: De tekst die op het scherm moet verschijnen.
@@ -24,24 +34,20 @@ Voor **play.new_text** kun je de volgende attributen gebruiken:
 - **angle**: de hoek van de tekst in graden. Staat standaard op 0.
 - **size**: de schaal van de tekst als percentage. Staat standaard op 100.
 
-Hieronder zie je een voorbeeld:
+## Opdracht 1.4.a: Johan Cruijff
+
+Maak deze afbeelding na:
+
+<img
+  src={require('./cruijff.png').default}
+  alt="Drie regels tekst onder elkaar: een uitspraak van Johan Cruijff met zijn naam eronder"
+  style={{ maxHeight: '150px' }}
+/>
 
 <PygbagRunner code={`import play
 
-play.new_text(words='hallo pythonista', font='default', font_size=30)`} height={300} />
-
-### Opdracht 1.4.a: Johan Cruijff
-
-Maak onderstaande afbeelding na.
-
-![cruijff](cruijff.png)
-
-```python
-import play
-
 # PAS ONDERSTAANDE CODE AAN
-play.new_text(words='Als ik zou willen dat je het begreep,')
-```
+play.new_text(words='Als ik zou willen dat je het begreep,')`} height={300} />
 
 <details>
     <summary>Klik hier voor een tip.</summary>
@@ -56,8 +62,8 @@ De font_size is 40.
 
 <PygbagRunner code={`import play
 
-play.new_text(words='Als ik zou willen dat je het begreep,', y=100, font='default', font_size=40)
-play.new_text(words='zou ik het beter hebben uitgelegd', y=0, font='default', font_size=40)
-play.new_text(words='Johan Cruijff', y=-100, font='default', font_size=40)`} height={300} />
+play.new_text(words='Als ik zou willen dat je het begreep,', y=100, font_size=40)
+play.new_text(words='zou ik het beter hebben uitgelegd', y=0, font_size=40)
+play.new_text(words='Johan Cruijff', y=-100, font_size=40)`} height={300} />
 
 </details>

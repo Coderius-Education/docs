@@ -7,6 +7,8 @@ export default createConfig({
   title: 'Coderius Play',
   tagline: 'Leer nog beter Python door het maken van games',
   siteId: 'play',
+  // Elke ##-sectie van een les is een tabblad (zie de root-CLAUDE.md).
+  lesTabs: true,
   projectName,
   matomoSiteId: 5,
   // @coderius/shared is de standaard; @coderius/checker levert de nakijker.

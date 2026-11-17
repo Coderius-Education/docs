@@ -4,6 +4,8 @@ sidebar_position: 4
 
 # 4.4 Een SNES-controller gebruiken
 
+## Wat je nodig hebt
+
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/herhalen/06a-for-loop', label: 'For-loop'},
@@ -38,7 +40,7 @@ In je console zie je voor elke verbonden controller een nummer en een naam, bijv
 0 usb gamepad
 ```
 
-De `0` is de **index** van je controller. Dit nummer heb je nodig bij de gebeurtenissen hieronder.
+De `0` is de **index** van je controller. Dit nummer heb je nodig bij de gebeurtenissen in de rest van deze les.
 
 ### Er gaat iets mis?
 
@@ -98,7 +100,9 @@ def knop_ingehouden(button):
 
 Het verschil? Met `when_button_pressed` gebeurt de actie één keer. Met `while_button_pressed` gebeurt de actie **elk frame** zolang je de knop inhoudt.
 
-Er is ook `@play.controllers.while_any_button_pressed` om te reageren op een willekeurige knop:
+## Een willekeurige knop inhouden
+
+Met `@play.controllers.while_any_button_pressed` reageer je op een willekeurige knop, zolang die ingedrukt is:
 
 ```python
 import play
@@ -134,7 +138,7 @@ def boven_beneden(axis, value):
         tekst.words = "boven"
 ```
 
-De `richting` (het tweede getal) bepaalt welke as je uitleest:
+De `axis` (het tweede getal) is de as die je uitleest:
 - `0` = links/rechts
 - `1` = boven/beneden
 

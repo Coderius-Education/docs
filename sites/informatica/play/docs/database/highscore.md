@@ -55,6 +55,9 @@ Maak een programma waarbij:
 3. De teller wordt opgeslagen in de database
 4. Als je het programma opnieuw start, begint de teller waar je was gebleven
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -108,6 +111,9 @@ Bij een echte high score sla je alleen de score op als die **hoger** is dan de v
 2. Bij elke spatie gaat de score omhoog
 3. Bij de toets `r` wordt de score gereset naar 0
 4. Alleen als de score hoger is dan de high score, wordt de high score bijgewerkt
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>

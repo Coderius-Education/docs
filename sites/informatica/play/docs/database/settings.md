@@ -34,6 +34,9 @@ Maak een programma waarbij:
 3. De gekozen kleur wordt opgeslagen in de database
 4. Als je het programma opnieuw start, heeft de cirkel meteen de kleur die je de vorige keer had gekozen
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -101,6 +104,9 @@ Maak een programma waarbij:
 2. De moeilijkheid staat op het scherm
 3. Met de toets `1` kies je makkelijk, met `2` normaal, met `3` moeilijk
 4. De keuze wordt opgeslagen in de database
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
