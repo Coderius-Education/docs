@@ -1,3 +1,5 @@
+import { acceptCompletion, completionStatus } from '@codemirror/autocomplete';
+import { indentMore } from '@codemirror/commands';
 import { python } from '@codemirror/lang-python';
 import { indentUnit } from '@codemirror/language';
 import { type Extension, Prec } from '@codemirror/state';
@@ -56,11 +58,11 @@ function useColorMode(): { colorMode: 'light' | 'dark' } {
 import { bevestig, vraag } from '@coderius/shared/dialoog';
 import { storageKey } from '@coderius/shared/opslag';
 import Palet from './Palet';
+import Voorbeeld from './Voorbeeld';
 import type { Bouwsteen } from './bouwstenen';
 import { leesEditorHash } from './codeLink';
 import { friendlyError } from './errorMessages';
 import { BoardFS } from './filesystem';
-import type { Invoeging } from './invoegen';
 import {
   DEFAULT_LEAPHY_BRANCH,
   DEFAULT_LEAPHY_REPO,
@@ -68,7 +70,6 @@ import {
   type LeaphyMeta,
   installLeaphyLibrary,
 } from './leaphyInstaller';
-import { paletUitbreiding, sleepLos, sleepOver, sleepWeg, zetBouwsteen } from './paletEditor';
 import { MAX_REEKSEN, voegSample } from './plotter';
 import { type PythonFout, splitsFoutSegmenten, vindLaatsteFout } from './pythonErrors';
 import { SerialClient } from './serial';
@@ -164,12 +165,23 @@ function tekenPlot(canvas: HTMLCanvasElement, samples: number[][]): void {
   }
 }
 
-// Tab en Enter staan bij het palet (paletEditor.ts): die springen naar het gat
-// van een bouwsteen, en anders springt Tab in.
-const pythonExtensions = [
+const pythonTabExtensions = [
   python(),
   indentUnit.of('    '),
   EditorView.contentAttributes.of({ 'data-indent-with-tab': 'true' }),
+  Prec.highest(
+    keymap.of([
+      {
+        key: 'Tab',
+        run: (view) => {
+          if (completionStatus(view.state) === 'active') {
+            return acceptCompletion(view);
+          }
+          return indentMore(view);
+        },
+      },
+    ]),
+  ),
 ];
 
 const LEAPHY_REPO_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.leaphyRepo');
@@ -247,13 +259,13 @@ export default function WebMicroEditor(): React.JSX.Element {
     if (bewaard !== null) return bewaard === 'open';
     return !window.matchMedia?.('(max-width: 1100px)').matches;
   });
-  const viewRef = useRef<EditorView | null>(null);
-  // Een pin die al in het programma staat bij een ander onderdeel.
-  const [paletMelding, setPaletMelding] = useState<string | null>(null);
-  const paletExtensie = useMemo(
-    () => paletUitbreiding((uit: Invoeging) => setPaletMelding(uit.melding)),
-    [],
-  );
+  // De bouwsteen waarvan het voorbeeld is gekozen, en of het voorbeeld of de
+  // shell nu te zien is: ze delen de kolom rechts van de code.
+  const [voorbeeld, setVoorbeeld] = useState<Bouwsteen | null>(null);
+  const [toonVoorbeeld, setToonVoorbeeld] = useState<boolean>(false);
+  // De uitvoer die de leerling al zag; komt er meer bij terwijl het voorbeeld
+  // open staat, dan krijgt het tabblad Shell een stip.
+  const [gezieneUitvoer, setGezieneUitvoer] = useState<string>(() => sessie.replText);
   const samplesRef = useRef<number[][]>([]);
   const lineBufRef = useRef<string>('');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -581,12 +593,12 @@ export default function WebMicroEditor(): React.JSX.Element {
     (fout?.bron === 'main.py' && currentFile === '/main.py');
 
   const editorExtensions = useMemo(() => {
-    const ext: Extension[] = [...pythonExtensions, paletExtensie, sneltoetsen];
+    const ext: Extension[] = [...pythonTabExtensions, sneltoetsen];
     if (foutZichtbaar && fout?.regel && foutRegelInEditor) {
       ext.push(foutRegelExtension(fout.regel, styles.foutRegel));
     }
     return ext;
-  }, [paletExtensie, sneltoetsen, fout, foutZichtbaar, foutRegelInEditor]);
+  }, [sneltoetsen, fout, foutZichtbaar, foutRegelInEditor]);
 
   const installLib = useCallback(async () => {
     const c = sessie.client;
@@ -770,9 +782,24 @@ export default function WebMicroEditor(): React.JSX.Element {
     setIdle(operatie);
   }, [schrijf, setBusy, setIdle]);
 
-  const kiesBouwsteen = useCallback((bouwsteen: Bouwsteen) => {
-    if (viewRef.current) setPaletMelding(zetBouwsteen(viewRef.current, bouwsteen).melding);
-  }, []);
+  // Een klik op een bouwsteen toont zijn voorbeeld; nog een klik sluit het.
+  const kiesBouwsteen = useCallback(
+    (bouwsteen: Bouwsteen) => {
+      const sluit = toonVoorbeeld && voorbeeld?.id === bouwsteen.id;
+      setVoorbeeld(sluit ? null : bouwsteen);
+      setToonVoorbeeld(!sluit);
+    },
+    [toonVoorbeeld, voorbeeld],
+  );
+
+  // Wie zijn code draait, wil de uitvoer zien: terug naar de shell.
+  useEffect(() => {
+    if (status === 'busy') setToonVoorbeeld(false);
+  }, [status]);
+
+  useEffect(() => {
+    if (!toonVoorbeeld) setGezieneUitvoer(replText);
+  }, [toonVoorbeeld, replText]);
 
   // Bouwstenen en Bestanden op board delen de kolom links van de code: wie
   // de ene opent, sluit de andere.
@@ -963,7 +990,7 @@ export default function WebMicroEditor(): React.JSX.Element {
           className={clsx(styles.btn, paletZichtbaar && styles.btnActief)}
           onClick={wisselPalet}
           aria-pressed={paletZichtbaar}
-          title="Onderdelen en Python-stappen die je met een klik in je code zet"
+          title="Onderdelen en Python-stappen, elk met een voorbeeld en links naar de uitleg"
         >
           <Blocks aria-hidden="true" size={15} />
           Bouwstenen
@@ -1169,20 +1196,6 @@ export default function WebMicroEditor(): React.JSX.Element {
         </div>
       )}
 
-      {paletMelding && (
-        <div className={styles.paletMelding}>
-          <output>{paletMelding}</output>
-          <button
-            type="button"
-            className={styles.fileDelete}
-            onClick={() => setPaletMelding(null)}
-            title="Sluiten"
-          >
-            ✕
-          </button>
-        </div>
-      )}
-
       <div className={styles.workArea}>
         {files !== null && (
           <div className={styles.workPaneNarrow}>
@@ -1235,10 +1248,12 @@ export default function WebMicroEditor(): React.JSX.Element {
         {paletZichtbaar && (
           <div className={clsx(styles.workPaneNarrow, styles.workPanePalet)}>
             <div className={styles.fileLabel}>
-              <span className={styles.alleenBreed}>Klik of sleep een bouwsteen</span>
-              <span className={styles.alleenSmal}>Tik op een bouwsteen</span>
+              <span>Kies een voorbeeld</span>
             </div>
-            <Palet onKies={kiesBouwsteen} />
+            <Palet
+              onKies={kiesBouwsteen}
+              gekozen={toonVoorbeeld ? (voorbeeld?.id ?? null) : null}
+            />
           </div>
         )}
 
@@ -1255,31 +1270,10 @@ export default function WebMicroEditor(): React.JSX.Element {
             </span>
           </div>
 
-          {/* Een bouwsteen die boven de regelnummers of de rand wordt
-              losgelaten: CodeMirror vangt alleen de tekst zelf op. */}
-          <div
-            className={styles.editorWrap}
-            style={{ fontSize }}
-            onDragOver={(e) => {
-              if (viewRef.current && !e.defaultPrevented) sleepOver(viewRef.current, e);
-            }}
-            onDragLeave={(e) => {
-              const naar = e.relatedTarget;
-              if (viewRef.current && !(naar instanceof Node && e.currentTarget.contains(naar)))
-                sleepWeg(viewRef.current);
-            }}
-            onDrop={(e) => {
-              if (!viewRef.current || e.defaultPrevented) return;
-              const uit = sleepLos(viewRef.current, e);
-              if (uit) setPaletMelding(uit.melding);
-            }}
-          >
+          <div className={styles.editorWrap} style={{ fontSize }}>
             <CodeMirror
               value={code}
               onChange={(nieuw) => sessie.zet({ code: nieuw })}
-              onCreateEditor={(view) => {
-                viewRef.current = view;
-              }}
               extensions={editorExtensions}
               theme={colorMode === 'dark' ? 'dark' : 'light'}
               height="380px"
@@ -1294,61 +1288,111 @@ export default function WebMicroEditor(): React.JSX.Element {
           </div>
         </div>
 
-        <div className={styles.workPane}>
+        {/* De shell en het voorbeeld van een bouwsteen delen deze kolom. Het
+            voorbeeld staat zo naast de code terwijl de leerling typt; de shell
+            blijft gemount, want uitvoer komt ook binnen als hij dicht is. */}
+        <div className={clsx(styles.workPane, toonVoorbeeld && styles.workPaneVoorbeeld)}>
           <div className={styles.replWrap}>
             <div className={styles.replHeader}>
-              <span className={styles.replLabel} title="ook wel REPL-output genoemd">
-                Shell
-              </span>
-              <button
-                type="button"
-                className={clsx(styles.btn, styles.btnKlein)}
-                onClick={clearRepl}
-              >
-                Wis
-              </button>
-              <button
-                type="button"
-                className={clsx(styles.btn, styles.btnKlein, plotterAan && styles.btnActief)}
-                onClick={() => setPlotterAan((v) => !v)}
-                title="Tekent getallen uit de uitvoer als grafiek — handig bij het kalibreren van je sensoren"
-              >
-                Plotter
-              </button>
+              {voorbeeld ? (
+                <fieldset className={styles.knopGroep} aria-label="Shell of voorbeeld">
+                  <button
+                    type="button"
+                    className={clsx(
+                      styles.btn,
+                      styles.btnKlein,
+                      !toonVoorbeeld && styles.btnActief,
+                    )}
+                    aria-pressed={!toonVoorbeeld}
+                    onClick={() => setToonVoorbeeld(false)}
+                  >
+                    Shell
+                    {toonVoorbeeld && replText !== gezieneUitvoer && (
+                      <span className={styles.dirtyMark} title="nieuwe uitvoer">
+                        {' '}
+                        •
+                      </span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className={clsx(styles.btn, styles.btnKlein, toonVoorbeeld && styles.btnActief)}
+                    aria-pressed={toonVoorbeeld}
+                    onClick={() => setToonVoorbeeld(true)}
+                  >
+                    Voorbeeld
+                  </button>
+                </fieldset>
+              ) : (
+                <span className={styles.replLabel} title="ook wel REPL-output genoemd">
+                  Shell
+                </span>
+              )}
+              {!toonVoorbeeld && (
+                <>
+                  <button
+                    type="button"
+                    className={clsx(styles.btn, styles.btnKlein)}
+                    onClick={clearRepl}
+                  >
+                    Wis
+                  </button>
+                  <button
+                    type="button"
+                    className={clsx(styles.btn, styles.btnKlein, plotterAan && styles.btnActief)}
+                    onClick={() => setPlotterAan((v) => !v)}
+                    title="Tekent getallen uit de uitvoer als grafiek — handig bij het kalibreren van je sensoren"
+                  >
+                    Plotter
+                  </button>
+                </>
+              )}
             </div>
-            {plotterAan && (
-              <canvas ref={canvasRef} className={styles.plot} width={600} height={160} />
+            {toonVoorbeeld && voorbeeld && (
+              <Voorbeeld
+                bouwsteen={voorbeeld}
+                donker={colorMode === 'dark'}
+                onSluit={() => {
+                  setVoorbeeld(null);
+                  setToonVoorbeeld(false);
+                }}
+              />
             )}
-            <div className={styles.repl} ref={replRef} style={{ fontSize }}>
-              {replText
-                ? (() => {
-                    let positie = 0;
-                    return splitsFoutSegmenten(replText).map((segment) => {
-                      const key = positie;
-                      positie += segment.tekst.length;
-                      return segment.fout ? (
-                        <span key={key} className={styles.replFout}>
-                          {segment.tekst}
-                        </span>
-                      ) : (
-                        <span key={key}>{segment.tekst}</span>
-                      );
-                    });
-                  })()
-                : '(geen output)'}
+            <div className={styles.shellDeel} hidden={toonVoorbeeld}>
+              {plotterAan && (
+                <canvas ref={canvasRef} className={styles.plot} width={600} height={160} />
+              )}
+              <div className={styles.repl} ref={replRef} style={{ fontSize }}>
+                {replText
+                  ? (() => {
+                      let positie = 0;
+                      return splitsFoutSegmenten(replText).map((segment) => {
+                        const key = positie;
+                        positie += segment.tekst.length;
+                        return segment.fout ? (
+                          <span key={key} className={styles.replFout}>
+                            {segment.tekst}
+                          </span>
+                        ) : (
+                          <span key={key}>{segment.tekst}</span>
+                        );
+                      });
+                    })()
+                  : '(geen output)'}
+              </div>
+              <input
+                type="text"
+                className={styles.replInput}
+                style={{ fontSize }}
+                value={replInput}
+                onChange={(e) => setReplInput(e.target.value)}
+                onKeyDown={handleReplKeyDown}
+                disabled={status !== 'connected'}
+                placeholder=">>> voer een regel in"
+                spellCheck={false}
+                autoComplete="off"
+              />
             </div>
-            <input
-              type="text"
-              className={styles.replInput}
-              style={{ fontSize }}
-              value={replInput}
-              onChange={(e) => setReplInput(e.target.value)}
-              onKeyDown={handleReplKeyDown}
-              disabled={status !== 'connected'}
-              placeholder=">>> voer een regel in"
-              spellCheck={false}
-              autoComplete="off"
-            />
           </div>
         </div>
       </div>

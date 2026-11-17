@@ -1,90 +1,70 @@
-// De bouwstenen van het palet links in de editor: per onderdeel en per
-// Python-stap het stukje code dat een klik in het programma zet. Zoals de
-// blokken in een blokkeneditor, maar dan als Python.
+// De bouwstenen van het palet links in de editor: de onderdelen van de robot
+// en de stappen van Python, zoals de blokken in een blokkeneditor.
 //
-// Een bouwsteen bestaat uit drie delen, en invoegen.ts zet elk op zijn plek:
-// - `imports`: bovenaan het programma, één keer;
-// - `opzet`: het onderdeel aanmaken (`tof = TimeOfFlight(…)`), één keer en
-//   vóór de rest. Een blok in een blokkeneditor doet dat ongezien; hier staat
-//   het in de code, zodat de leerling ziet welke pinnen bezet zijn;
-// - `code`: op de regel van de cursor, met de inspringing van die plek.
+// Een bouwsteen zet niets in de code van de leerling. Een klik toont een
+// voorbeeld naast de code, met de regels waar het om gaat gemarkeerd, een zin
+// uitleg en links naar de lessen. De leerling typt zelf: wie een regel
+// overneemt en aanpast, weet daarna wat hij doet (de opdrachtgever wilde geen
+// code die vanzelf verschijnt).
 //
-// De code volgt de lessen (zie CLAUDE.md van robotica): pinnen als naam, de
-// pinnen van DCMotors, het scherm en de TOF voluit, en de namen van de
-// Lego-auto, of van de onderdeelpagina als de Lego-auto het onderdeel niet
-// heeft. Wie lescode in de editor heeft en een bouwsteen aanklikt, krijgt zo
-// geen tweede onderdeel op dezelfde pin. invoegen.test.ts eist dat elke opzet
-// letterlijk in een les staat; leaphy-api.test.ts toetst elke bouwsteen tegen
-// de bibliotheek, en CI compileert en draait ze (src/lego-tests/schrijf.ts).
+// - `voorbeeld` is een heel programma dat op het bord draait: de import, het
+//   aanmaken van het onderdeel en een paar regels die het gebruiken. CI
+//   compileert en draait elk voorbeeld (src/lego-tests/schrijf.ts) en
+//   leaphy-api.test.ts toetst het tegen de bibliotheek, net als een les.
+// - `kern` zijn de regels van het voorbeeld waar de bouwsteen om gaat.
+// - `links` wijzen naar de les waar je het leert en naar de naslag.
+//
+// De code volgt de lessen (zie CLAUDE.md van robotica): de namen en pinnen
+// van de Lego-auto, of van de onderdeelpagina als de Lego-auto het onderdeel
+// niet heeft. bouwstenen.test.ts eist dat elke regel die een onderdeel
+// aanmaakt letterlijk in een les staat.
 //
 // Een label zegt wat de bouwsteen doet ("Onthoud iets"), niet hoe het in
 // Python heet ("Variabele").
 
-export type Import = { uit: string; namen: string[] };
+export type Verwijzing = {
+  label: string;
+  /** Een andere cursus uit de registry (`python`); zonder: robotica zelf. */
+  site?: string;
+  /** Het pad op die cursus, zoals in de adresbalk na de naam van de cursus. */
+  naar: string;
+};
 
 export type Bouwsteen = {
   id: string;
   label: string;
-  imports?: Import[];
-  opzet?: string;
-  /**
-   * Tussen ⟦ en ⟧ staat wat na het invoegen geselecteerd is: een voorwaarde
-   * die de leerling nog invult. ⟦⟧ is alleen de cursor: het gat in een lus.
-   * Zonder teken staat de cursor achter de code.
-   */
-  code: string;
-  /**
-   * Namen die de code zelf maakt en die per keer anders moeten heten: de
-   * teller van een lus. Bestaat `teller` al, dan wordt het `teller_2`.
-   */
-  namen?: string[];
-  /** De onderdeelpagina met de uitleg en het aansluitschema. */
-  les?: string;
+  /** Een heel programma dat op het bord draait. */
+  voorbeeld: string;
+  /** De regels van het voorbeeld waar het om gaat, letterlijk. */
+  kern: string[];
+  /** Eén of twee zinnen bij het voorbeeld; tussen backticks staat code. */
+  uitleg: string;
+  links: Verwijzing[];
 };
 
 export type Groep = { id: string; label: string; bouwstenen: Bouwsteen[] };
 
-/** Het soort gegevens dat een gesleepte bouwsteen meedraagt: zijn id. */
-export const SLEEP_TYPE = 'application/x-coderius-bouwsteen';
-
 /** De code waarmee een nieuwe editor begint. */
 export const STARTCODE = "# Schrijf hier je code.\nprint('Hallo Lego-auto!')\n";
 
-const PIN: Import = { uit: 'machine', namen: ['Pin'] };
-const ADC: Import = { uit: 'machine', namen: ['ADC'] };
-const SLEEP: Import = { uit: 'time', namen: ['sleep'] };
+const programma = (...regels: string[]) => `${regels.join('\n')}\n`;
 
-const MOTOREN = {
-  imports: [{ uit: 'leaphymicropython.actuators.dcmotor', namen: ['DCMotors'] }],
-  opzet: [
-    'motoren = DCMotors(',
-    '    dir_pin_motor_a="D2",',
-    '    pwm_pin_motor_a="D3",',
-    '    dir_pin_motor_b="D4",',
-    '    pwm_pin_motor_b="D11",',
-    ')',
-    'motor_a = motoren.motor_a',
-    'motor_b = motoren.motor_b',
-  ].join('\n'),
-  les: 'dc-motor',
-};
+const onderdeel = (pagina: string, label: string): Verwijzing => ({
+  label,
+  naar: `/docs/onderdelen/${pagina}`,
+});
+const legoAuto = (slug: string, label: string): Verwijzing => ({
+  label,
+  naar: `/lego_auto/${slug}`,
+});
+const python = (pad: string, label: string): Verwijzing => ({
+  label,
+  site: 'python',
+  naar: `/docs/${pad}`,
+});
 
-const LAMPJE = {
-  imports: [PIN],
-  opzet: "lampje = Pin('LED', Pin.OUT)",
-  les: 'ingebouwd-lampje',
-};
-
-const BUZZER = {
-  imports: [{ uit: 'machine', namen: ['Pin', 'PWM'] }],
-  opzet: 'buzzer = PWM(Pin("D6"))',
-  les: 'buzzer',
-};
-
-const LIJNSENSOR = {
-  imports: [{ uit: 'leaphymicropython.sensors.linesensor', namen: ['AnalogIR'] }],
-  les: 'ir-analoog',
-};
+const WHILE_LOOP = python('herhalen/while-loop', 'De while-loop');
+const CODE_BEGRIJPEN = legoAuto('lijnsensor/code-begrijpen', 'Code beter begrijpen: loops');
 
 export const GROEPEN: Groep[] = [
   {
@@ -92,72 +72,173 @@ export const GROEPEN: Groep[] = [
     label: 'Sensoren',
     bouwstenen: [
       {
-        id: 'lijn-links',
-        label: 'Lijnsensor links',
-        ...LIJNSENSOR,
-        opzet: 'links = AnalogIR("A0", 2500)',
-        code: 'kleur_links = links.black_or_white()',
+        id: 'lijnsensor',
+        label: 'Lijnsensor',
+        voorbeeld: programma(
+          'from leaphymicropython.sensors.linesensor import AnalogIR',
+          'from time import sleep',
+          '',
+          'links = AnalogIR("A0", 2500)',
+          '',
+          'while True:',
+          '    kleur_links = links.black_or_white()',
+          '    print(f"Links: {kleur_links}")',
+          '    sleep(0.2)',
+        ),
+        kern: ['links = AnalogIR("A0", 2500)', '    kleur_links = links.black_or_white()'],
+        uitleg:
+          'De sensor kijkt naar de vloer onder de auto. `kleur_links` is `"black"` boven de lijn en `"white"` ernaast.',
+        links: [
+          legoAuto('lijnsensor/een-sensor', 'Deel 3: Eén sensor uitlezen'),
+          onderdeel('ir-analoog', 'Analoge IR-sensor: aansluiten en afstellen'),
+        ],
       },
       {
-        id: 'lijn-rechts',
-        label: 'Lijnsensor rechts',
-        ...LIJNSENSOR,
-        opzet: 'rechts = AnalogIR("A1", 2500)',
-        code: 'kleur_rechts = rechts.black_or_white()',
+        id: 'twee-lijnsensoren',
+        label: 'Twee lijnsensoren',
+        voorbeeld: programma(
+          'from leaphymicropython.sensors.linesensor import AnalogIR',
+          'from time import sleep',
+          '',
+          'links = AnalogIR("A0", 2500)',
+          'rechts = AnalogIR("A1", 2500)',
+          '',
+          'while True:',
+          '    kleur_links = links.black_or_white()',
+          '    kleur_rechts = rechts.black_or_white()',
+          '    print(f"Links: {kleur_links}")',
+          '    print(f"Rechts: {kleur_rechts}")',
+          '    sleep(0.2)',
+        ),
+        kern: ['rechts = AnalogIR("A1", 2500)', '    kleur_rechts = rechts.black_or_white()'],
+        uitleg:
+          'Elke sensor heeft een eigen pin en een eigen naam. Met twee sensoren weet de auto aan welke kant de lijn ligt.',
+        links: [
+          legoAuto('lijnsensor/twee-sensoren', 'Deel 4: Twee sensoren'),
+          onderdeel('lijnvolgen', 'Lijnvolgen'),
+        ],
       },
       {
         id: 'lijn-digitaal',
         label: 'Lijnsensor (digitaal)',
-        imports: [PIN],
-        opzet: 'sensor = Pin("D14", Pin.IN)',
-        code: 'waarde = sensor.value()',
-        les: 'ir-digitaal',
+        voorbeeld: programma(
+          'from machine import Pin',
+          'from time import sleep',
+          '',
+          'sensor = Pin("D14", Pin.IN)',
+          '',
+          'while True:',
+          '    print(sensor.value())',
+          '    sleep(0.5)',
+        ),
+        kern: ['sensor = Pin("D14", Pin.IN)', '    print(sensor.value())'],
+        uitleg:
+          'Een digitale sensor geeft alleen 0 of 1. Welke van de twee zwart is, zie je door hem boven de lijn te houden.',
+        links: [onderdeel('ir-digitaal', 'Digitale IR-sensor: aansluiten en uitlezen')],
       },
       {
         id: 'afstand-tof',
         label: 'Afstand in mm (TOF)',
-        imports: [{ uit: 'leaphymicropython.sensors.tof', namen: ['TimeOfFlight'] }],
-        // Kanaal 0 van de multiplexer, zoals op de Lego-auto. Zonder
-        // multiplexer slaat de bibliotheek het kanaal over.
-        opzet: [
+        voorbeeld: programma(
+          'from leaphymicropython.sensors.tof import TimeOfFlight',
+          'from time import sleep',
+          '',
           'tof = TimeOfFlight(',
           '    channel=0,',
           '    sda_gpio_pin="SDA", scl_gpio_pin="SCL",',
           ')',
-        ].join('\n'),
-        code: 'afstand = tof.get_distance()',
-        les: 'tof',
+          '',
+          'while True:',
+          '    afstand = tof.get_distance()',
+          '    print(afstand)',
+          '    sleep(1)',
+        ),
+        kern: [
+          'tof = TimeOfFlight(',
+          '    channel=0,',
+          '    sda_gpio_pin="SDA", scl_gpio_pin="SCL",',
+          ')',
+          '    afstand = tof.get_distance()',
+        ],
+        uitleg:
+          '`afstand` is de afstand in millimeters. Ziet de sensor niets, dan krijg je 8191. `channel=0` is het kanaal op de multiplexer.',
+        links: [
+          legoAuto('afstand/uitlezen', 'De afstand uitlezen'),
+          legoAuto('afstand/stoppen', 'Deel 10: Stoppen voor een obstakel'),
+          onderdeel('tof', 'Time of Flight-sensor: aansluiten'),
+        ],
       },
       {
         id: 'afstand-ultrasoon',
         label: 'Afstand in cm (ultrasoon)',
-        imports: [{ uit: 'leaphymicropython.sensors.sonar', namen: ['read_distance'] }],
-        code: 'afstand_cm = read_distance("D7", "D8")',
-        les: 'afstandssensor',
+        voorbeeld: programma(
+          'from time import sleep',
+          'from leaphymicropython.sensors.sonar import read_distance',
+          '',
+          'while True:',
+          '    afstand_cm = read_distance("D7", "D8")',
+          '    print(afstand_cm)',
+          '    sleep(1)',
+        ),
+        kern: ['    afstand_cm = read_distance("D7", "D8")'],
+        uitleg:
+          '`read_distance` meet met geluid en geeft de afstand in centimeters. De eerste pin is Trig, de tweede Echo.',
+        links: [onderdeel('afstandssensor', 'Afstandssensor: aansluiten en uitlezen')],
       },
       {
         id: 'drukknop',
         label: 'Drukknop',
-        imports: [PIN],
-        opzet: 'knop = Pin("D7", Pin.IN, Pin.PULL_UP)',
-        code: 'ingedrukt = knop.value() == 0',
-        les: 'drukknop',
+        voorbeeld: programma(
+          'from machine import Pin',
+          'from time import sleep',
+          '',
+          'knop = Pin("D7", Pin.IN, Pin.PULL_UP)',
+          '',
+          'while True:',
+          '    print(knop.value())',
+          '    sleep(0.2)',
+        ),
+        kern: ['knop = Pin("D7", Pin.IN, Pin.PULL_UP)', '    print(knop.value())'],
+        uitleg:
+          'Let op de omgekeerde waarde: `knop.value()` is 1 als je de knop loslaat en 0 als je hem indrukt.',
+        links: [onderdeel('drukknop', 'Drukknop: aansluiten en uitlezen')],
       },
       {
         id: 'potmeter',
         label: 'Draaiknop (potmeter)',
-        imports: [ADC],
-        opzet: 'pot = ADC("A0")',
-        code: 'stand = pot.read_u16()',
-        les: 'potmeter',
+        voorbeeld: programma(
+          'from machine import ADC',
+          'from time import sleep',
+          '',
+          'pot = ADC("A0")',
+          '',
+          'while True:',
+          '    print(pot.read_u16())',
+          '    sleep(0.2)',
+        ),
+        kern: ['pot = ADC("A0")', '    print(pot.read_u16())'],
+        uitleg:
+          '`read_u16()` geeft een getal van 0 tot en met 65535: 0 met de knop helemaal dicht, 65535 helemaal open.',
+        links: [onderdeel('potmeter', 'Potmeter: aansluiten en uitlezen')],
       },
       {
         id: 'joystick',
         label: 'Joystick',
-        imports: [ADC],
-        opzet: 'x = ADC("A2")\ny = ADC("A1")',
-        code: 'links_rechts = x.read_u16()\nvoor_achter = y.read_u16()',
-        les: 'joystick',
+        voorbeeld: programma(
+          'from machine import ADC',
+          'from time import sleep',
+          '',
+          'x = ADC("A2")',
+          'y = ADC("A1")',
+          '',
+          'while True:',
+          '    print(x.read_u16(), y.read_u16())',
+          '    sleep(0.2)',
+        ),
+        kern: ['x = ADC("A2")', 'y = ADC("A1")', '    print(x.read_u16(), y.read_u16())'],
+        uitleg:
+          'Een joystick is twee draaiknoppen in één: `x` voor links en rechts, `y` voor voor en achter. In het midden geven ze ongeveer 32000.',
+        links: [onderdeel('joystick', 'Joystick: aansluiten en uitlezen')],
       },
     ],
   },
@@ -166,59 +247,143 @@ export const GROEPEN: Groep[] = [
     label: 'Actuatoren',
     bouwstenen: [
       {
-        id: 'rijd-vooruit',
-        label: 'Rijd vooruit',
-        ...MOTOREN,
-        code: 'motor_a.forward(255)\nmotor_b.forward(255)',
-      },
-      {
-        id: 'rijd-achteruit',
-        label: 'Rijd achteruit',
-        ...MOTOREN,
-        code: 'motor_a.backward(255)\nmotor_b.backward(255)',
-      },
-      {
-        id: 'motoren-stop',
-        label: 'Stop met rijden',
-        ...MOTOREN,
-        code: 'motor_a.forward(0)\nmotor_b.forward(0)',
+        id: 'rijden',
+        label: 'Rijden en stoppen',
+        voorbeeld: programma(
+          'from leaphymicropython.actuators.dcmotor import DCMotors',
+          'from time import sleep',
+          '',
+          'motoren = DCMotors(',
+          '    dir_pin_motor_a="D2",',
+          '    pwm_pin_motor_a="D3",',
+          '    dir_pin_motor_b="D4",',
+          '    pwm_pin_motor_b="D11",',
+          ')',
+          'motor_a = motoren.motor_a',
+          'motor_b = motoren.motor_b',
+          '',
+          'motor_a.forward(255)',
+          'motor_b.forward(255)',
+          'sleep(2)',
+          'motor_a.forward(0)',
+          'motor_b.forward(0)',
+        ),
+        kern: [
+          'motor_a.forward(255)',
+          'motor_b.forward(255)',
+          'motor_a.forward(0)',
+          'motor_b.forward(0)',
+        ],
+        uitleg:
+          'Het getal is de snelheid, van 0 (stil) tot en met 255. Met `backward(255)` rijd je achteruit; twee verschillende snelheden geven een bocht.',
+        links: [
+          legoAuto('motoren/draaien', 'Deel 6: De motoren wakker maken'),
+          legoAuto('lijnvolgen/rechtdoor', 'Deel 7: Rechtdoor rijden'),
+          onderdeel('dc-motor', 'DC-motor: de vier pinnen'),
+        ],
       },
       {
         id: 'servo',
         label: 'Servo draaien',
-        imports: [{ uit: 'leaphymicropython.actuators.servo', namen: ['set_servo_angle'] }],
-        code: 'set_servo_angle("D6", 90)',
-        les: 'servo',
+        voorbeeld: programma(
+          'from leaphymicropython.actuators.servo import set_servo_angle',
+          'from time import sleep',
+          '',
+          'set_servo_angle("D6", 0)',
+          'sleep(1)',
+          'set_servo_angle("D6", 90)',
+          'sleep(1)',
+          'set_servo_angle("D6", 180)',
+        ),
+        kern: ['set_servo_angle("D6", 90)'],
+        uitleg:
+          'Een servo draait naar een hoek en blijft daar staan. De hoek is een getal van 0 tot en met 180 graden.',
+        links: [onderdeel('servo', 'Servo: aansluiten en aansturen')],
       },
-      { id: 'lampje-aan', label: 'Lampje aan', ...LAMPJE, code: 'lampje.on()' },
-      { id: 'lampje-uit', label: 'Lampje uit', ...LAMPJE, code: 'lampje.off()' },
+      {
+        id: 'lampje',
+        label: 'Lampje aan en uit',
+        voorbeeld: programma(
+          'from machine import Pin',
+          'from time import sleep',
+          '',
+          "lampje = Pin('LED', Pin.OUT)",
+          '',
+          'while True:',
+          '    lampje.on()',
+          '    sleep(0.5)',
+          '    lampje.off()',
+          '    sleep(0.5)',
+        ),
+        kern: ["lampje = Pin('LED', Pin.OUT)", '    lampje.on()', '    lampje.off()'],
+        uitleg:
+          "`'LED'` is het oranje lampje op de Arduino zelf. Voor een eigen lampje op het shield zet je daar de naam van zijn pin.",
+        links: [
+          legoAuto('eerste-programma/lampje', 'Deel 1: Een lampje aan'),
+          legoAuto('eerste-programma/knipperen', 'Deel 2: Knipperen met een loop'),
+          onderdeel('led', 'LED: een eigen lampje aansluiten'),
+        ],
+      },
       {
         id: 'rgb-led',
-        label: 'RGB-led rood',
-        imports: [{ uit: 'leaphymicropython.actuators.rgbled', namen: ['RGBLed'] }],
-        opzet: 'led = RGBLed("D10", "D9", "D6")',
-        code: 'led.set_color(255, 0, 0)',
-        les: 'rgb-led',
+        label: 'RGB-led: een kleur',
+        voorbeeld: programma(
+          'from time import sleep',
+          'from leaphymicropython.actuators.rgbled import RGBLed',
+          '',
+          'led = RGBLed("D10", "D9", "D6")',
+          '',
+          'while True:',
+          '    led.set_color(255, 0, 0)  # rood',
+          '    sleep(1)',
+          '    led.set_color(0, 0, 0)    # uit',
+          '    sleep(1)',
+        ),
+        kern: ['led = RGBLed("D10", "D9", "D6")', '    led.set_color(255, 0, 0)  # rood'],
+        uitleg:
+          'De drie getallen zijn rood, groen en blauw, elk van 0 tot en met 255. Samen mengen ze elke kleur.',
+        links: [onderdeel('rgb-led', 'RGB-LED: aansluiten en kleuren mengen')],
       },
       {
-        id: 'buzzer-aan',
-        label: 'Buzzer aan',
-        ...BUZZER,
-        code: 'buzzer.freq(440)\nbuzzer.duty_u16(32768)',
+        id: 'buzzer',
+        label: 'Buzzer: een toon',
+        voorbeeld: programma(
+          'from machine import Pin, PWM',
+          'from time import sleep',
+          '',
+          'buzzer = PWM(Pin("D6"))',
+          'buzzer.freq(440)',
+          'buzzer.duty_u16(32768)',
+          'sleep(1)',
+          'buzzer.duty_u16(0)',
+        ),
+        kern: ['buzzer.freq(440)', 'buzzer.duty_u16(32768)', 'buzzer.duty_u16(0)'],
+        uitleg:
+          '`freq` is de toonhoogte: een hoger getal klinkt hoger. `duty_u16(32768)` zet het geluid aan, `duty_u16(0)` uit.',
+        links: [onderdeel('buzzer', 'Buzzer: aansluiten en tonen maken')],
       },
-      { id: 'buzzer-uit', label: 'Buzzer uit', ...BUZZER, code: 'buzzer.duty_u16(0)' },
       {
         id: 'oled',
         label: 'Tekst op het scherm',
-        imports: [{ uit: 'leaphymicropython.actuators.oled_screen', namen: ['OLEDSH1106'] }],
-        opzet: [
+        voorbeeld: programma(
+          'from leaphymicropython.actuators.oled_screen import OLEDSH1106',
+          '',
           'oled = OLEDSH1106(',
           '    width=128, height=64, channel=7,',
           '    sda_gpio_pin="SDA", scl_gpio_pin="SCL",',
           ')',
-        ].join('\n'),
-        code: "oled.fill('white')\noled.text('Hallo', x=0, y=0)\noled.show()",
-        les: 'oled-scherm',
+          '',
+          "oled.fill('white')",
+          "oled.text('Hallo!', x=0, y=0)",
+          'oled.show()',
+        ),
+        kern: ["oled.fill('white')", "oled.text('Hallo!', x=0, y=0)", 'oled.show()'],
+        uitleg:
+          '`fill` maakt het scherm leeg, `text` zet er tekst op en pas `show()` laat het zien. `x` en `y` zijn de plek, geteld vanaf linksboven.',
+        links: [
+          legoAuto('scherm/waardes-op-scherm', 'Deel 5: Waardes op het scherm'),
+          onderdeel('oled-scherm', 'OLED-scherm: aansluiten en grotere tekst'),
+        ],
       },
     ],
   },
@@ -226,19 +391,135 @@ export const GROEPEN: Groep[] = [
     id: 'python',
     label: 'Python',
     bouwstenen: [
-      { id: 'herhaal-altijd', label: 'Herhaal voor altijd', code: 'while True:\n    ⟦⟧' },
+      {
+        id: 'herhaal-altijd',
+        label: 'Herhaal voor altijd',
+        voorbeeld: programma(
+          'from time import sleep',
+          '',
+          'while True:',
+          '    print("Hallo")',
+          '    sleep(1)',
+        ),
+        kern: ['while True:'],
+        uitleg:
+          'Alles wat onder `while True:` is ingesprongen, herhaalt de robot tot je op Stop klikt. Vier spaties of één keer Tab.',
+        links: [
+          legoAuto('eerste-programma/knipperen', 'Deel 2: Knipperen met een loop'),
+          WHILE_LOOP,
+        ],
+      },
       {
         id: 'herhaal-keer',
         label: 'Herhaal 3 keer',
-        code: 'teller = 0\nwhile teller < 3:\n    ⟦⟧\n    teller = teller + 1',
-        namen: ['teller'],
+        voorbeeld: programma(
+          'teller = 0',
+          'while teller < 3:',
+          '    print("Hallo")',
+          '    teller = teller + 1',
+        ),
+        kern: ['teller = 0', 'while teller < 3:', '    teller = teller + 1'],
+        uitleg:
+          'De teller begint op 0 en gaat elke ronde 1 omhoog. Bij 3 klopt `teller < 3` niet meer en stopt de loop.',
+        links: [CODE_BEGRIJPEN, WHILE_LOOP],
       },
-      { id: 'herhaal-zolang', label: 'Herhaal zolang', code: 'while ⟦voorwaarde⟧:\n    ' },
-      { id: 'als', label: 'Als', code: 'if ⟦voorwaarde⟧:\n    ' },
-      { id: 'als-anders', label: 'Als, anders', code: 'if ⟦voorwaarde⟧:\n    \nelse:\n    ' },
-      { id: 'wacht', label: 'Wacht', imports: [SLEEP], code: 'sleep(1)' },
-      { id: 'toon', label: 'Toon in de shell', code: 'print("Hallo")' },
-      { id: 'onthoud', label: 'Onthoud iets', code: '⟦naam⟧ = 0' },
+      {
+        id: 'herhaal-zolang',
+        label: 'Herhaal zolang',
+        voorbeeld: programma(
+          'afstand = 100',
+          'while afstand > 10:',
+          '    print(afstand)',
+          '    afstand = afstand - 30',
+          'print("gestopt")',
+        ),
+        kern: ['while afstand > 10:'],
+        uitleg:
+          'De loop gaat door zolang de voorwaarde klopt. Wat niet meer is ingesprongen, komt pas daarna aan de beurt.',
+        links: [
+          CODE_BEGRIJPEN,
+          WHILE_LOOP,
+          python('beslissen/05a-booleans-en-vergelijken', 'Vergelijken met < en =='),
+        ],
+      },
+      {
+        id: 'als',
+        label: 'Als',
+        voorbeeld: programma('afstand = 8', '', 'if afstand < 10:', '    print("dichtbij")'),
+        kern: ['if afstand < 10:'],
+        uitleg:
+          'De ingesprongen regels draaien alleen als de voorwaarde klopt. Verander 8 in 50 en er gebeurt niets.',
+        links: [
+          legoAuto('afstand/stoppen', 'Deel 10: Stoppen voor een obstakel'),
+          python('beslissen/05b-if-else', 'If en else'),
+        ],
+      },
+      {
+        id: 'als-anders',
+        label: 'Als, anders',
+        voorbeeld: programma(
+          'afstand = 8',
+          '',
+          'if afstand < 10:',
+          '    print("dichtbij")',
+          'else:',
+          '    print("ver weg")',
+        ),
+        kern: ['if afstand < 10:', 'else:'],
+        uitleg:
+          'Klopt de voorwaarde, dan draait het eerste blok, en anders het blok onder `else:`. Nooit allebei.',
+        links: [
+          legoAuto('lijnvolgen/rechtdoor', 'Deel 7: Rechtdoor rijden'),
+          python('beslissen/05b-if-else', 'If en else'),
+          python('beslissen/05c-and-or-elif', 'and, or en elif'),
+        ],
+      },
+      {
+        id: 'wacht',
+        label: 'Wacht',
+        voorbeeld: programma(
+          'from time import sleep',
+          '',
+          'print("een")',
+          'sleep(1)',
+          'print("twee")',
+          'sleep(0.5)',
+          'print("drie")',
+        ),
+        kern: ['from time import sleep', 'sleep(1)', 'sleep(0.5)'],
+        uitleg:
+          'Het getal is de tijd in seconden; `sleep(0.5)` is een halve seconde. De import bovenaan heb je één keer nodig.',
+        links: [legoAuto('eerste-programma/knipperen', 'Deel 2: Knipperen met een loop')],
+      },
+      {
+        id: 'toon',
+        label: 'Toon in de shell',
+        voorbeeld: programma('afstand = 25', '', 'print("Hallo")', 'print(f"Afstand: {afstand}")'),
+        kern: ['print("Hallo")', 'print(f"Afstand: {afstand}")'],
+        uitleg:
+          'Tekst staat tussen aanhalingstekens. Met een `f` ervoor en accolades zet je de waarde van een naam in de tekst.',
+        links: [
+          python('basis/jouw-naam-op-het-scherm', 'Tekst tonen met print'),
+          python('tekst/04a-f-strings', 'Tekst en getallen combineren met f-strings'),
+        ],
+      },
+      {
+        id: 'onthoud',
+        label: 'Onthoud iets',
+        voorbeeld: programma(
+          'lijnen = 0',
+          'lijnen = lijnen + 1',
+          'lijnen = lijnen + 1',
+          'print(lijnen)',
+        ),
+        kern: ['lijnen = 0', 'lijnen = lijnen + 1'],
+        uitleg:
+          'Met `=` bewaar je een waarde onder een naam die je zelf kiest. Later gebruik je die naam om de waarde te lezen of te veranderen.',
+        links: [
+          python('basis/jij-als-variabele', 'Variabelen'),
+          python('basis/rekenmachine', 'Rekenen met variabelen'),
+        ],
+      },
     ],
   },
 ];
@@ -247,4 +528,10 @@ export const BOUWSTENEN: Bouwsteen[] = GROEPEN.flatMap((g) => g.bouwstenen);
 
 export function bouwsteenMetId(id: string): Bouwsteen | undefined {
   return BOUWSTENEN.find((b) => b.id === id);
+}
+
+/** De regelnummers (vanaf 1) van het voorbeeld waar de bouwsteen om gaat. */
+export function kernRegels(bouwsteen: Bouwsteen): number[] {
+  const kern = new Set(bouwsteen.kern);
+  return bouwsteen.voorbeeld.split('\n').flatMap((regel, i) => (kern.has(regel) ? [i + 1] : []));
 }

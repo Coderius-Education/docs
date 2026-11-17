@@ -214,7 +214,7 @@ describe('plan', () => {
     expect(p.vitest.bestanden).toContain('packages/shared/codeblokken.js');
   });
 
-  it('een bouwsteen van de editor draait als alleen bouwstenen.ts wijzigt', () => {
+  it('een voorbeeld van de editor draait als alleen bouwstenen.ts wijzigt', () => {
     const pad = `${MAP.robotica}/src/components/WebMicroEditor/bouwstenen.ts`;
     const p = planVoor({ [pad]: [[40, 40]] }, [MAP.robotica]);
     expect(p.runners.robotica.draaien).toBe(true);
@@ -228,8 +228,6 @@ describe('plan', () => {
       'scripts/leaphy_nep/machine.py',
       'scripts/leaphy_nep/vooraf.py',
       `${MAP.robotica}/src/lego-tests/leaphy-api.json`,
-      // Maakt het programma van elke bouwsteen; zie de opmerking in wijzigingen.js.
-      `${MAP.robotica}/src/components/WebMicroEditor/invoegen.ts`,
     ]) {
       // Een bestand in de site raakt volgens pnpm ook het package van robotica.
       const geraakt = pad.startsWith('sites/') ? [MAP.robotica] : [];

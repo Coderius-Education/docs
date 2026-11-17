@@ -1,15 +1,15 @@
 import { storageKey } from '@coderius/shared/opslag';
-import { useBaseUrlUtils } from '@docusaurus/useBaseUrl';
-import { BookOpen, ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
-import { type Bouwsteen, GROEPEN, SLEEP_TYPE } from './bouwstenen';
-import { bovenaan, leesbaar } from './invoegen';
+import { type Bouwsteen, GROEPEN } from './bouwstenen';
 import styles from './styles.module.css';
 
 type Props = {
-  /** Een klik op een bouwsteen: zet hem op de regel van de cursor. */
+  /** Een klik op een bouwsteen: toon zijn voorbeeld naast de code. */
   onKies: (bouwsteen: Bouwsteen) => void;
+  /** De bouwsteen waarvan het voorbeeld nu open staat. */
+  gekozen: string | null;
 };
 
 const GROEP_KEY = storageKey('robotica', 'webMicroEditor.bouwstenenGroep');
@@ -24,25 +24,17 @@ function bewaardeGroep(): string | null {
   }
 }
 
-/** Wat een bouwsteen in de code zet, voor de tooltip. */
-function uitleg(b: Bouwsteen): string {
-  const boven = bovenaan(b);
-  return `Zet in je code:\n${leesbaar(b)}${boven ? `\n\nBovenaan, één keer:\n${boven}` : ''}`;
-}
-
 /**
  * Het palet links van de code: de onderdelen van de robot en de stappen van
- * Python, per groep. Een klik zet de bouwsteen op de regel van de cursor; je
- * kunt hem ook naar een regel slepen (de editor vangt dat op, zie
- * paletEditor.ts). Eén groep tegelijk open, zodat de lijst zonder schuiven in
- * het paneel past; welke groep open stond, blijft bewaard.
+ * Python, per groep. Een klik toont het voorbeeld van de bouwsteen naast de
+ * code (Voorbeeld.tsx); er komt niets in de code van de leerling. Eén groep
+ * tegelijk open, zodat de lijst zonder schuiven in het paneel past; welke
+ * groep open stond, blijft bewaard.
  *
  * Voor het toetsenbord is het palet één stop in de Tab-volgorde, met de
- * pijltjes erbinnen. Na een bouwsteen staat de cursor in de code; Shift+Tab
- * brengt je terug naar de bouwsteen van net, niet naar het eind van de lijst.
+ * pijltjes erbinnen: Tab gaat van het palet door naar de code.
  */
-export default function Palet({ onKies }: Props): React.JSX.Element {
-  const { withBaseUrl } = useBaseUrlUtils();
+export default function Palet({ onKies, gekozen }: Props): React.JSX.Element {
   const [open, setOpen] = useState<string | null>(bewaardeGroep);
   const [actief, setActief] = useState<string>(`groep:${GROEPEN[0].id}`);
 
@@ -110,30 +102,12 @@ export default function Palet({ onKies }: Props): React.JSX.Element {
                     type="button"
                     className={styles.steenKnop}
                     data-bouwsteen={b.id}
-                    draggable
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData(SLEEP_TYPE, b.id);
-                      e.dataTransfer.effectAllowed = 'copy';
-                    }}
                     onClick={() => onKies(b)}
-                    title={uitleg(b)}
+                    aria-pressed={gekozen === b.id}
                     {...item(`steen:${b.id}`)}
                   >
                     {b.label}
                   </button>
-                  {b.les && (
-                    <a
-                      className={styles.steenLes}
-                      href={withBaseUrl(`/docs/onderdelen/${b.les}`)}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={`Uitleg bij ${b.label} (opent in een nieuw tabblad)`}
-                      title="Uitleg en aansluitschema"
-                      {...item(`les:${b.id}`)}
-                    >
-                      <BookOpen aria-hidden="true" size={14} />
-                    </a>
-                  )}
                 </li>
               ))}
             </ul>

@@ -6,7 +6,6 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BOUWSTENEN, STARTCODE } from '../components/WebMicroEditor/bouwstenen';
-import { alsProgramma } from '../components/WebMicroEditor/invoegen';
 import { verzamel } from './extract';
 
 const HIER = dirname(fileURLToPath(import.meta.url));
@@ -26,13 +25,12 @@ for (const f of fragmenten) {
   writeFileSync(join(UIT, `${f.naam}.py`), f.code);
 }
 
-// De bouwstenen van het palet in de editor zijn een tweede codebron naast de
-// docs; die compileren en draaien mee, elk als het programma dat een klik in
-// een leeg bestand geeft. Zo valt een kapotte bouwsteen net zo hard op als een
-// kapotte les.
+// De voorbeelden van het palet in de editor zijn een tweede codebron naast de
+// docs; die compileren en draaien mee. Zo valt een kapot voorbeeld net zo hard
+// op als een kapotte les.
 const uitDeEditor = [
   { id: 'startcode', label: 'De startcode van de editor', code: STARTCODE },
-  ...BOUWSTENEN.map((b) => ({ id: b.id, label: b.label, code: alsProgramma(b) })),
+  ...BOUWSTENEN.map((b) => ({ id: b.id, label: b.label, code: b.voorbeeld })),
 ];
 for (const t of uitDeEditor) {
   const naam = `bouwsteen_${t.id.replace(/[^a-z0-9]+/gi, '_')}`;

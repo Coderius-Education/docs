@@ -667,8 +667,7 @@
 }
 
 .paletKopKnop:focus-visible,
-.steenKnop:focus-visible,
-.steenLes:focus-visible {
+.steenKnop:focus-visible {
   outline: 2px solid var(--ifm-color-primary);
   outline-offset: -2px;
 }
@@ -692,8 +691,7 @@
   gap: 2px;
 }
 
-/* Een bouwsteen is een knop en een handvat tegelijk: klikken zet hem op de
-   regel van de cursor, slepen op de regel waar je hem loslaat. */
+/* Een klik toont het voorbeeld van de bouwsteen naast de code. */
 .steenKnop {
   flex: 1;
   min-width: 0;
@@ -705,7 +703,7 @@
   color: var(--ifm-color-emphasis-800);
   font: inherit;
   text-align: left;
-  cursor: grab;
+  cursor: pointer;
 }
 
 .steenKnop:hover {
@@ -713,60 +711,124 @@
   background: var(--ifm-color-emphasis-100);
 }
 
-.steenKnop:active {
-  cursor: grabbing;
-}
-
-.steenLes {
-  display: inline-flex;
-  flex-shrink: 0;
-  padding: 4px;
-  border-radius: 4px;
-  color: var(--ifm-color-emphasis-600);
-}
-
-.steenLes:hover {
-  background: var(--ifm-color-emphasis-100);
-  color: var(--ifm-color-primary);
-}
-
 /* Op een telefoon tik je met een vinger: daar is een bouwsteen hoger. */
 @media (max-width: 900px) {
   .steenKnop {
     padding: 8px 10px;
   }
-
-  .steenLes {
-    padding: 9px;
-  }
 }
 
-.alleenSmal {
+/* De shell onder zijn kop: dicht terwijl het voorbeeld open staat. */
+.shellDeel {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shellDeel[hidden] {
   display: none;
 }
 
+/* Met een voorbeeld open is de kolom even breed als de code: de langste
+   import van de bibliotheek (62 tekens) past er dan op één regel in. */
+.workPaneVoorbeeld {
+  flex: 1.6 1 0;
+}
+
+/* Het voorbeeld van een bouwsteen: code om over te typen, een zin uitleg en
+   links naar de lessen. Even hoog als de shell die het vervangt. */
+.voorbeeld {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 426px;
+  padding: 10px 6px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  font-size: 14px;
+}
+
+.voorbeeldKop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 600;
+}
+
+/* Een lang voorbeeld (de motoren, zeventien regels) schuift in zijn eigen
+   vak: de uitleg en de links eronder blijven in beeld. 11,8 pixels is de
+   kleinste letter van de codeblokken in de lessen; daarmee passen er 62
+   tekens naast de code, de langste import van de bibliotheek. */
+.voorbeeldCode {
+  flex: 0 1 auto;
+  min-height: 90px;
+  overflow-y: auto;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  font-size: 11.8px;
+}
+
+/* Een regel die doorloopt, springt in: zo zie je dat het één regel is. */
+.voorbeeldCode :global(.cm-line) {
+  padding: 0 0 0 calc(6px + 2ch);
+  text-indent: -2ch;
+}
+
+/* Op een telefoon schuift de pagina; het voorbeeld is zo hoog als het is. */
 @media (max-width: 900px) {
-  .alleenBreed {
-    display: none;
+  .voorbeeld {
+    height: auto;
   }
 
-  .alleenSmal {
-    display: inline;
+  .voorbeeldCode {
+    overflow-y: visible;
   }
 }
 
-/* Een pin die al bezet is: geen fout, wel iets om te doen voor je verder
-   bouwt. */
-.paletMelding {
+/* De regels waar de bouwsteen om gaat. */
+.voorbeeldCode :global(.cm-kern) {
+  background: color-mix(in srgb, var(--ifm-color-primary) 16%, transparent);
+  box-shadow: inset 3px 0 0 var(--ifm-color-primary);
+}
+
+.voorbeeldUitleg {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.voorbeeldLinks {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 12px;
-  border: 1px solid var(--ifm-color-warning-dark);
-  border-left-width: 4px;
-  border-radius: 8px;
-  background: var(--ifm-color-warning-contrast-background);
-  color: var(--ifm-color-warning-contrast-foreground);
-  font-size: 14px;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  line-height: 1.35;
+}
+
+.voorbeeldLinks li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.voorbeeldBron {
+  flex: 0 0 5.2rem;
+  font-size: 12px;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.voorbeeldMeer {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.steenKnop[aria-pressed="true"] {
+  border-color: var(--groep);
+  background: color-mix(in srgb, var(--groep) 18%, var(--ifm-background-color));
+  font-weight: 600;
 }
