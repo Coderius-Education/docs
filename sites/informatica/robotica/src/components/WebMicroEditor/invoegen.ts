@@ -204,6 +204,13 @@ export function voegIn(doc: string, regel: number, bouwsteen: Bouwsteen): Invoeg
   if (opzet) {
     const plek = Math.min(kop, op);
     const nieuw = opzet.split('\n');
+    // Twee onderdelen van één regel staan onder elkaar, zoals in de lessen.
+    // Loopt een van de twee over meer regels (`DCMotors(` tot `)`), dan komt
+    // er een witregel tussen: anders lees je ze als één blok.
+    const ervoor = regels[plek - 1] ?? '';
+    const overMeerRegels = nieuw.length > 1 || (plek >= 2 && diepte[plek - 2] > 0);
+    if (overMeerRegels && !isLeeg(ervoor) && !isImport(ervoor) && !ervoor.startsWith('#'))
+      nieuw.unshift('');
     if (!isLeeg(regels[plek] ?? '')) nieuw.push('');
     regels.splice(plek, 0, ...nieuw);
     codeBegin += nieuw.length;

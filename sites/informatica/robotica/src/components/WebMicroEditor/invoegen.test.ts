@@ -126,6 +126,30 @@ describe('een bouwsteen invoegen', () => {
     expect(lampje).toBeLessThan(regels.indexOf('while True:'));
   });
 
+  it('zet een witregel tussen twee onderdelen als er een over meer regels loopt', () => {
+    const { doc } = klik('', 'herhaal-altijd', 'afstand-tof', 'rijd-vooruit', 'lampje-aan');
+    const regels = doc.split('\n');
+    const motoren = regels.indexOf('motoren = DCMotors(');
+    expect(regels.slice(motoren - 2, motoren)).toEqual([')', '']);
+    const lampje = regels.indexOf("lampje = Pin('LED', Pin.OUT)");
+    // Het lampje is één regel en volgt op één regel: direct eronder.
+    expect(regels.slice(lampje - 1, lampje + 3)).toEqual([
+      'motor_b = motoren.motor_b',
+      "lampje = Pin('LED', Pin.OUT)",
+      '',
+      'while True:',
+    ]);
+    // Nergens twee witregels achter elkaar.
+    expect(doc).not.toMatch(/\n\n\n/);
+  });
+
+  it('zet twee onderdelen van één regel direct onder elkaar', () => {
+    const { doc } = klik('', 'lampje-aan', 'drukknop');
+    expect(doc).toContain(
+      'lampje = Pin(\'LED\', Pin.OUT)\nknop = Pin("D7", Pin.IN, Pin.PULL_UP)\n',
+    );
+  });
+
   it('vult een import aan in plaats van hem te herhalen', () => {
     const { doc } = klik('', 'lampje-aan', 'buzzer-aan', 'potmeter');
     expect(doc.split('\n')[0]).toBe('from machine import Pin, PWM, ADC');
