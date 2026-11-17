@@ -82,7 +82,7 @@ De code binnen de `if` draait alleen als wat erachter staat `true` is. Dus: alle
 
 #### Meet het verschil
 
-Aan je spel zie je de `if` niet; het verschil zit in de getallen. Zet tijdelijk `print(velocity)` boven `move_and_slide()`:
+Aan je spel zie je de `if` niet, aan de getallen wel. Zet tijdelijk `print(velocity)` boven `move_and_slide()`:
 
 - **Zonder** de `if` staat er op de vloer `(0, 16.33)`, elke frame opnieuw.
 - **Met** de `if` staat er `(0, 0)`.

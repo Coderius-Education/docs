@@ -3528,3 +3528,50 @@ describe('een staptabblad heet naar zijn inhoud (stapNaam)', () => {
     expect(css).toMatch(/\.paneel h4 \{\s*margin: 1rem 0 0\.4rem;/);
   });
 });
+
+describe('een inleiding met een leerdoel opent het tabblad erna (volScherm)', () => {
+  // De zeven delen van het bewegingsscript van Godot beginnen met één alinea,
+  // `## Wat je nu gaat toevoegen` en een voorspelvraag. Als eigen tabblad
+  // Uitleg was de opening een scherm van 73 tot 152 pixels: de opdrachtgever
+  // noemde de cursus versplinterd. Met `lesTabs: { volScherm: true }` staan
+  // de inleiding en het leerdoel bovenaan het tabblad erna, als dat past.
+  const les = (vraag: Knoop[]) => [
+    titel,
+    alinea('Je functie draait, maar je karakter staat stil.'),
+    kop(2, 'Wat je nu gaat toevoegen'),
+    alinea('Eén regel, met twee nieuwe begrippen.'),
+    kop(2, 'Voorspel: waar bewaart Godot de snelheid?'),
+    ...vraag,
+    kop(2, 'Stap 1: Snelheid opbouwen'),
+    alinea('Zet deze regel erbij.'),
+    kop(2, 'Er gaat iets mis'),
+    alinea('Een fout.'),
+  ];
+  const kort = [alinea('Waar denk je dat die snelheid staat?')];
+  const lang = Array.from({ length: 12 }, (_, i) => alinea(`Alinea ${i} `.repeat(30)));
+
+  it('past het, dan is er geen tabblad Uitleg', () => {
+    const uit = groepeer(les(kort), { stapNaam: true, volScherm: true });
+    expect(tabs(uit).map((t) => t.label)).toEqual([
+      'Voorspel',
+      'Snelheid opbouwen',
+      'Er gaat iets mis',
+    ]);
+    const voorspel = uit.find((n: Knoop) => n.name === 'LesTabs')?.children?.[0];
+    const tekst = JSON.stringify(voorspel);
+    // De inleiding en het leerdoel staan op het tabblad, vóór de vraag.
+    expect(tekst.indexOf('Je functie draait')).toBeGreaterThan(-1);
+    expect(tekst.indexOf('LesLeerdoel')).toBeGreaterThan(tekst.indexOf('Je functie draait'));
+    expect(tekst.indexOf('Waar denk je')).toBeGreaterThan(tekst.indexOf('LesLeerdoel'));
+  });
+
+  it('past het niet, dan blijft de opening een eigen tabblad', () => {
+    const uit = groepeer(les(lang), { stapNaam: true, volScherm: true });
+    expect(tabs(uit).map((t) => t.label)[0]).toBe('Uitleg');
+  });
+
+  it('zonder de keuze blijft de opening een eigen tabblad, zoals bij de Lego-auto', () => {
+    // Daar was het eerste scherm met de stap erbij tot 270 pixels te lang.
+    expect(tabs(groepeer(les(kort))).map((t) => t.label)[0]).toBe('Uitleg');
+  });
+});

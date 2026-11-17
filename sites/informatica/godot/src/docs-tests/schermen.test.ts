@@ -49,7 +49,7 @@ const parse = await mdxParser();
 
 const perLes = lessen.map((les) => ({
   ...les,
-  schermen: schermenVan(les.bron, parse, { velden: [], stapNaam: true }).map(
+  schermen: schermenVan(les.bron, parse, { velden: [], stapNaam: true, volScherm: true }).map(
     (s: Omit<Scherm, 'les'>) => ({
       les: les.naam,
       ...s,
@@ -75,9 +75,10 @@ describe('elk scherm van een les staat op zichzelf', () => {
   });
 
   it('de cursus heeft tabbladen aan staan', () => {
-    // Met `stapNaam`: een staptabblad heet naar zijn inhoud.
+    // Met `stapNaam`: een staptabblad heet naar zijn inhoud. Met `volScherm`:
+    // de inleiding en het leerdoel openen het tabblad erna als dat past.
     expect(readFileSync(join(SITE, 'docusaurus.config.ts'), 'utf8')).toMatch(
-      /lesTabs: \{ stapNaam: true \}/,
+      /lesTabs: \{ stapNaam: true, volScherm: true \}/,
     );
   });
 

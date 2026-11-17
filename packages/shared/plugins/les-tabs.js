@@ -1600,7 +1600,7 @@ function standTab(node, naam, bezet) {
  * @param {{kop: object, kinderen: object[]}[]} secties
  * @param {number} [aantal] het aantal secties in de bron
  */
-function openingVan(uitleg, secties, aantal = secties.length) {
+function openingVan(uitleg, secties, aantal = secties.length, { volScherm = false } = {}) {
   // Uitleg van één alinea, of van een blok als "Deze stap gebruikt …" met een
   // of twee alinea's, is geen eigen scherm: hij opent het eerste tabblad. Maar
   // alleen als er daarna nog twee tabbladen zijn; anders bleef er één over en
@@ -1638,8 +1638,22 @@ function openingVan(uitleg, secties, aantal = secties.length) {
   // pixels te lang.
   // `aantal`: de secties van de bron. Een afsluiter die bij het scherm
   // ervoor is gezet (sluitAan), verandert niet hoe de les opent.
-  const opening = uitleg.length > 0 && aantal >= 3 && isLeerdoelSectie(secties[0], 0);
-  const korteUitleg = !opening && kort;
+  const metLeerdoel = uitleg.length > 0 && aantal >= 3 && isLeerdoelSectie(secties[0], 0);
+  // Past de inleiding met het leerdoel op het scherm erna (in Godot een
+  // voorspelvraag van een paar regels), dan staan ze daar (`lesTabs: {
+  // volScherm: true }`). Als eigen tabblad Uitleg was het in de zeven delen
+  // van het bewegingsscript een scherm van 73 tot 152 pixels: één alinea, het
+  // leerdoel en een knop Volgende.
+  const samen =
+    volScherm &&
+    metLeerdoel &&
+    uitleg.every((node) => isAlinea(node) || isVoorkennis(node) || zetNietsNeer(node)) &&
+    hoogteScherm(uitleg) +
+      hoogteScherm(secties[0].kinderen) +
+      hoogteScherm(eersteScherm(secties[1].kinderen)) <=
+      SCHERM;
+  const opening = metLeerdoel && !samen;
+  const korteUitleg = !opening && (kort || samen);
   return { opening, korteUitleg, isLeerdoelSectie };
 }
 
@@ -1669,8 +1683,8 @@ function verdeel(kinderen) {
 }
 
 /** Hoeveel tabbladen er van deze uitleg en secties komen. */
-function openingVanTabs({ uitleg, secties }, aantal) {
-  const { korteUitleg, isLeerdoelSectie } = openingVan(uitleg, secties, aantal);
+function openingVanTabs({ uitleg, secties }, aantal, opties) {
+  const { korteUitleg, isLeerdoelSectie } = openingVan(uitleg, secties, aantal, opties);
   return (
     secties.filter((sectie, i) => !isLeerdoelSectie(sectie, i)).length +
     (uitleg.length && !korteUitleg ? 1 : 0)
@@ -1700,7 +1714,7 @@ function openingVanTabs({ uitleg, secties }, aantal) {
  *
  * @param {object[]} kinderen de kinderen van de mdast-root
  */
-function groepeer(alles, { eenScherm = false, stapNaam = false } = {}) {
+function groepeer(alles, { eenScherm = false, stapNaam = false, volScherm = false } = {}) {
   // De stand van een bestand gaat er eerst uit: naast een vraag of onder een
   // fout hoort hij niet (zie standTab).
   const vanaf = alles.findIndex(isH2);
@@ -1724,11 +1738,13 @@ function groepeer(alles, { eenScherm = false, stapNaam = false } = {}) {
   // Een korte afsluiter (Wat je nu ziet) hoort bij het scherm ervoor, als de
   // pagina dan nog tabbladen heeft.
   const metSlot = sluitAan(uitleg, secties);
-  if (metSlot && openingVanTabs(metSlot, aantal) >= 2) {
+  if (metSlot && openingVanTabs(metSlot, aantal, { volScherm }) >= 2) {
     uitleg = metSlot.uitleg;
     secties = metSlot.secties;
   }
-  const { opening, korteUitleg, isLeerdoelSectie } = openingVan(uitleg, secties, aantal);
+  const { opening, korteUitleg, isLeerdoelSectie } = openingVan(uitleg, secties, aantal, {
+    volScherm,
+  });
   // Wat bij het eerstvolgende tabblad komt te staan.
   let vooraf = korteUitleg ? [...uitleg] : [];
   const tabs = [];
@@ -1899,10 +1915,11 @@ function titelBijTabs(kinderen) {
 /**
  * De remark-stap.
  *
- * @param {{ eenScherm?: boolean, stapNaam?: boolean }} [opties] `eenScherm`:
+ * @param {{ eenScherm?: boolean, stapNaam?: boolean, volScherm?: boolean }} [opties] `eenScherm`:
  *   een pagina die in haar geheel op één scherm past, krijgt geen tabbladen
  *   (pastOpEenScherm). `stapNaam`: een tabblad `## Stap 2: Camera instellen`
- *   heet "Camera instellen" (stappenBijNaam).
+ *   heet "Camera instellen" (stappenBijNaam). `volScherm`: een inleiding
+ *   met een leerdoel opent het tabblad erna als dat past (openingVan).
  */
 function remarkLesTabs(opties = {}) {
   return (tree, file) => {

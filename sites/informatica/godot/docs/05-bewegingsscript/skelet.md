@@ -16,7 +16,7 @@ Programmeren leer je door het te doen, maar in je eigen game oefenen is lastig: 
 
 Daarom loopt er vanaf hier een tweede spoor mee. **Hier** bouw je je game: elke les brengt het script dat je zelf typt een stap verder, en aan het eind draait je spel weer. **Bij GDQuest** oefen je elk concept los, in je browser, zonder Godot erbij — gaat het daar mis, dan ligt het aan de code, meer kan het niet zijn.
 
-Elk van de zeven delen van het bewegingsscript heeft een blok van GDQuest. Het staat onder je script, op het tabblad Je script tot nu toe, en zegt welke GDQuest-les bij dat deel hoort.
+Elk van de zeven delen van het bewegingsscript heeft een blok van GDQuest. Het staat onder de code van dat deel, meestal op het tabblad Je script tot nu toe, en zegt welke GDQuest-les erbij hoort.
 
 <details>
 <summary>Welke GDQuest-les hoort bij welke les hier?</summary>

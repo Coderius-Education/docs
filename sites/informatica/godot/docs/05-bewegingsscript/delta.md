@@ -75,7 +75,7 @@ Zet deze regel bovenin je functie en start met `F5`:
 
 In **Uitvoer** loopt een stroom van steeds hetzelfde getal: `0.01666666666667`. Haal de `print` daarna weer weg.
 
-## Waarom `* delta` werkt
+## Waarom `* delta`?
 
 In je valregel staat `get_gravity() * delta`. Dat is `980 * 0.0167`, ongeveer `16`. Elke frame komt er dus zo'n 16 bij de snelheid, en na zestig frames — één seconde — zit je op ongeveer 980. Precies wat de bedoeling was.
 

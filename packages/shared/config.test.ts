@@ -266,19 +266,18 @@ describe('createConfig — les-tabbladen', () => {
   });
 
   it('geeft ook de keuze voor de namen van staptabbladen door', () => {
-    // `lesTabs: { stapNaam: true }` (de Godot-cursus): `## Stap 2: Camera
-    // instellen` heet in de rij "Camera instellen". De werkvormen krijgen
+    // `lesTabs: { stapNaam: true, volScherm: true }` (de Godot-cursus):
+    // `## Stap 2: Camera instellen` heet in de rij "Camera instellen", en een
+    // inleiding met een leerdoel opent het tabblad erna. De werkvormen krijgen
     // dezelfde keuze, zodat de handleiding dezelfde les leest als de build.
     const require = createRequire(import.meta.url);
     const werkvormenPlugin = require('./plugins/werkvormen.js');
-    const config = createConfig({ ...basis, lesTabs: { stapNaam: true } });
-    expect(docsVan(config).at(-1)).toEqual([remarkLesTabs, { stapNaam: true }]);
-    expect((config as { plugins: unknown[] }).plugins).toContainEqual([
-      werkvormenPlugin,
-      { stapNaam: true },
-    ]);
+    const keuzes = { stapNaam: true, volScherm: true };
+    const config = createConfig({ ...basis, lesTabs: keuzes });
+    expect(docsVan(config).at(-1)).toEqual([remarkLesTabs, keuzes]);
+    expect((config as { plugins: unknown[] }).plugins).toContainEqual([werkvormenPlugin, keuzes]);
     const godot = readFileSync(join(ROOT, 'sites/informatica/godot/docusaurus.config.ts'), 'utf8');
-    expect(godot).toMatch(/lesTabs: \{ stapNaam: true \}/);
+    expect(godot).toMatch(/lesTabs: \{ stapNaam: true, volScherm: true \}/);
   });
 
   it('staat aan bij de cursussen die zijn omgezet, en alleen daar', () => {

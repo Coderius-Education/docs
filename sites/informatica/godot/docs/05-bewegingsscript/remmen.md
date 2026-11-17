@@ -46,7 +46,7 @@ Start met `F5`. Lopen en stoppen werken als voorheen. Dat klopt: je hebt nog nie
 
 #### Wat `direction == 0` vraagt
 
-`==` betekent "is gelijk aan". Met `if direction == 0:` vraagt je script precies wat je in de voorspelling bedacht: drukt de speler niets in?
+`==` betekent "is gelijk aan". Je `if` vraagt dus precies wat je in de voorspelling bedacht: drukt de speler niets in?
 
 - `direction` is `0` → de `if` is waar → je remt af.
 - `direction` is `-1` of `1` → de `if` is onwaar → de `else` draait, je loopt.
