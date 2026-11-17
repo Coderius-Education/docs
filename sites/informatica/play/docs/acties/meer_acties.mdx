@@ -68,6 +68,9 @@ In deze opdracht gebruik je `@play.when_key_pressed` (zie [4.1 Toetsenbord](site
 
 Maak een programma waarbij elke keer als je op spatie drukt, er een kopie van een cirkel wordt gemaakt op een willekeurige positie.
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -110,10 +113,10 @@ def stop():
 In deze opdracht gebruik je het `global` keyword. Ken je dat nog niet? Kijk dan bij [4.5 Een score bijhouden](site:play/docs/gebeurtenissen/score_bijhouden).
 :::
 
-Maak een programma waarbij:
-1. Een score begint op 5
-2. Elke keer als je op spatie drukt, gaat de score met 1 omlaag
-3. Als de score op 0 staat, stopt het programma
+Maak een programma met een score die op 5 begint. Elke keer als je op spatie drukt, gaat de score met 1 omlaag. Staat de score op 0, dan stopt het programma.
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -165,6 +168,9 @@ def toon():
 
 Maak een programma met een cirkel die verdwijnt als je op 'h' drukt en weer verschijnt als je op 's' drukt.
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -202,6 +208,11 @@ cirkel.remove()
 
 play.new_text(words=f"cirkel.alive(): {cirkel.alive()}", font_size=30)`} height={300} />
 
+:::info[Waar kom je dit later weer tegen?]
+- `clone()` is handig zodra je meer van hetzelfde nodig hebt: rijen blokken in [9.2 Levels met andere vormen](site:play/docs/levels/andere-vormen), of extra ballen in [het klikspelletje](site:play/docs/jouw_project/klikspelletje).
+- `hide()` en `show()` gebruik je in [Een startmenu maken](site:play/docs/jouw_project/startmenu) om tussen twee schermen te wisselen.
+:::
+
 ### Opdracht 3.4.e: Eén voor één verdwijnen
 
 :::info
@@ -209,6 +220,9 @@ In deze opdracht gebruik je het `global` keyword. Ken je dat nog niet? Kijk dan 
 :::
 
 Maak een programma met 3 cirkels op verschillende posities. Elke keer als je op spatie drukt, verdwijnt er eentje (met `remove()`). Na 3 keer drukken zijn ze allemaal weg.
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -237,8 +251,3 @@ def verwijder():
         teller = teller + 1`} height={300} />
 
 </details>
-
-:::info[Waar kom je dit later weer tegen?]
-- `clone()` is handig zodra je meer van hetzelfde nodig hebt: rijen blokken in [9.2 Levels met andere vormen](site:play/docs/levels/andere-vormen), of extra ballen in [het klikspelletje](site:play/docs/jouw_project/klikspelletje).
-- `hide()` en `show()` gebruik je in [Een startmenu maken](site:play/docs/jouw_project/startmenu) om tussen twee schermen te wisselen.
-:::

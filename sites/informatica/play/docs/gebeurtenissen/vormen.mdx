@@ -28,6 +28,9 @@ Voor meer voorbeelden kun je altijd de [cheatsheet](site:play/docs/cheatsheet) r
 - Maak eerst zelf een blauwe bal, met als naam van de variabele `bal`.
 - Maak daarna een batje met de naam `batje` en plaats het aan de rechterkant van het scherm.
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
@@ -38,11 +41,19 @@ batje = play.new_box(x=300)`} height={300} />
 
 </details>
 
-Laat ze daarna botsen:
+### Laat ze botsen
+
+De bal en het batje staan al in de code. Laat ze botsen:
+
 - Laat de bal automatisch naar rechts bewegen
 - Zorg dat de bal niet naar beneden valt
 - Pas het batje aan zodat die ook niet valt en niet kan bewegen.
 - Lukt het om de bal en het batje te laten botsen?
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(color="blue", radius=50)
+batje = play.new_box(x=300)`} height={300} />
 
 <details>
     <summary>Klik hier voor een tip.</summary>

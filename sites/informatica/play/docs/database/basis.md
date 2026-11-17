@@ -108,6 +108,9 @@ Maak een programma dat:
 3. Je naam ophaalt met `get_data('naam')`
 4. Je naam op het scherm toont
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -149,6 +152,9 @@ Je kunt meerdere gegevens opslaan in dezelfde database. Maak een programma dat:
 2. Je leeftijd opslaat
 3. Je favoriete kleur opslaat
 4. Alle drie de gegevens ophaalt en op het scherm toont
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -204,6 +210,9 @@ Maak een programma dat:
 3. Het level op het scherm toont
 
 Draai het programma twee keer. De eerste keer zou je `1` moeten zien (de default waarde). Voeg daarna een `set_data('level', 5)` toe en draai opnieuw. Wat zie je nu?
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>

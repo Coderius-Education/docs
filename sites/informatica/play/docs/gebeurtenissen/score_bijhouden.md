@@ -100,6 +100,11 @@ def spatie_ingedrukt():
     score = score + 1
     score_tekst.words = str(score)`} height={300} />
 
+:::info[Waar kom je dit later weer tegen?]
+- In [6.2 Een high score bijhouden](site:play/docs/database/highscore) blijft die score bewaard nadat je het spel afsluit.
+- In [9.3 Wanneer ga je naar het volgende level?](site:play/docs/levels/wanneer-volgende) is `global` de manier waarop je level-variabele buiten je functies blijft bestaan.
+:::
+
 ## Opdracht 4.5.a: Score met twee toetsen
 
 Maak een programma waarbij:
@@ -107,6 +112,9 @@ Maak een programma waarbij:
 2. Met spatie gaat de score omhoog
 3. Met `r` wordt de score teruggezet naar 0
 4. De score wordt op het scherm getoond
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -192,6 +200,9 @@ Maak een programma waarbij:
 2. Met spatie gaat de score +1
 3. Als de score 10 bereikt, verandert de tekst in 'Je hebt gewonnen.' en stopt het programma
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -233,8 +244,3 @@ def punt():
         play.stop_program()`} height={300} />
 
 </details>
-
-:::info[Waar kom je dit later weer tegen?]
-- In [6.2 Een high score bijhouden](site:play/docs/database/highscore) blijft die score bewaard nadat je het spel afsluit.
-- In [9.3 Wanneer ga je naar het volgende level?](site:play/docs/levels/wanneer-volgende) is `global` de manier waarop je level-variabele buiten je functies blijft bestaan.
-:::

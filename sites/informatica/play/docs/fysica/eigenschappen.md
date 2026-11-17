@@ -47,6 +47,9 @@ De bal stuitert bijna eindeloos op en neer (maar verliest heel langzaam energie)
 
 Maak drie ballen naast elkaar met verschillende `bounciness` waarden: `0.2`, `0.6` en `1.0`. Laat ze allemaal vanaf dezelfde hoogte vallen op een vloer. Welke bal stuitert het hoogst?
 
+<PygbagRunner code={`import play
+`} height={300} />
+
 <details>
 <summary>Klik hier voor een tip.</summary>
 
@@ -122,6 +125,9 @@ Maak twee ballen die naar elkaar toe bewegen:
 2. Eén bal met `mass=1`
 
 Wat gebeurt er? Verander daarna de massa van één bal naar `mass=20`. Wat is het verschil?
+
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -271,14 +277,22 @@ zone.start_physics(sensor=True)
 zone.start_physics(can_move=False, sensor=True)
 ```
 
+:::info[Waar kom je dit later weer tegen?]
+- `when_touching` zie je terug bij [4.2 Gebeurtenissen bij een vorm](site:play/docs/gebeurtenissen/vormen) om botsingen af te handelen.
+- `bounciness` is essentieel bij [Pong (eindproject)](site:play/docs/jouw_project/pong): zonder stuiterende bal is er geen spel.
+- Sensors zijn handig voor scorezones en triggers — denk aan een onzichtbaar vakje waar je een punt scoort.
+:::
+
 ### Opdracht 2.3.c: Scorezone
 
 Maak een spel met:
 1. Een vloer onderaan het scherm
 2. Een doorzichtige scorezone (gebruik `sensor=True`, `can_move=False` en `transparency=50`) in het midden van het scherm
 3. Een bal die van boven valt
+4. Een tekst "Punt." zodra de bal door de scorezone valt
 
-Als de bal door de scorezone valt, laat een tekst zien: "Punt."
+<PygbagRunner code={`import play
+`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -327,9 +341,3 @@ def punt():
 De bal valt door de groene zone en landt op de vloer. Zodra de bal de zone raakt, verschijnt "Punt.".
 
 </details>
-
-:::info[Waar kom je dit later weer tegen?]
-- `when_touching` zie je terug bij [4.2 Gebeurtenissen bij een vorm](site:play/docs/gebeurtenissen/vormen) om botsingen af te handelen.
-- `bounciness` is essentieel bij [Pong (eindproject)](site:play/docs/jouw_project/pong): zonder stuiterende bal is er geen spel.
-- Sensors zijn handig voor scorezones en triggers — denk aan een onzichtbaar vakje waar je een punt scoort.
-:::

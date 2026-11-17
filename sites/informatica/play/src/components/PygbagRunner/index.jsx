@@ -394,7 +394,12 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
                   <HulpVak soort="antwoord" open={weergave === 'antwoord'}>
                     {hulp.antwoord}
                     {hulp.code && (
-                      <button type="button" onClick={speelOplossing} className={styles.playButton}>
+                      <button
+                        type="button"
+                        onClick={speelOplossing}
+                        className={styles.oplossingKnop}
+                        title="Je eigen code blijft staan"
+                      >
                         &#x25B6; Speel de {hulp.naam ?? 'oplossing'}
                       </button>
                     )}

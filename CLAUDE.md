@@ -1344,7 +1344,7 @@ reden in `GEEN_UI_LABEL` (`src/godot-tests/labels.ts`). Die controle en het
 compileren van de blokken draaien alleen in CI, en CI draait pas bij een
 PR: open die dus voordat je een omzetting klaar noemt.
 
-**Wat play erbij bracht** (november 2026; alle 292 schermen passen op
+**Wat play erbij bracht** (november 2026; alle 293 schermen passen op
 1280×720 en 1366×768, na eerst 242 van de 315). De cursus heeft een eigen
 oefenveld, de speeltuin (`PygbagRunner`): code in een editor en een spel dat
 in een los spelvenster draait, één per pagina (`SharedRunner`, een iframe met
@@ -1405,9 +1405,17 @@ deelvraag, de code waar een opdracht over gaat op het scherm van de opdracht
 (een eigen speeltuin met die code) in plaats van "pas de code hierboven aan",
 en losse fragmenten met uitleg in hoofdstuk 10 als `<CodeUitleg>`. De
 cheatsheet, de veelgemaakte fouten en de pagina's voor de docent hebben
-`les_tabs: false`. Met een gewone oplossing open (een opdracht zonder eigen
-veld) passen 32 van de 212 metingen niet: daar schuift de oplossing in haar
-vak, of de pagina. `src/docs-tests/schermen.test.ts` van play bewaakt de
+`les_tabs: false`. Elke opdracht waarvan de oplossing in de browser speelt,
+heeft een eigen speeltuin vóór de tip (vanaf nul: alleen `import play`),
+zodat de tip en de oplossing overal in het veld staan, zoals bij python
+(`opdrachten.test.ts`); eerst was dat bij 13 van de 47 zo. Een opdracht
+zonder speeltuin (pygame-ce, geluid en video, een controller, een antwoord
+in woorden) houdt zijn uitklapblokken: met zo'n blok open passen 14 van de
+144 metingen niet, en daar schuift de oplossing in haar vak, of de pagina.
+Past een opdracht met zijn veld niet, dan staat de slotnotitie "Waar kom je
+dit later weer tegen?" op het laatste scherm van de uitleg in plaats van
+onder het veld.
+`src/docs-tests/schermen.test.ts` van play bewaakt de
 verwijzingen per scherm, en dat een scherm dat de speeltuin noemt er een
 heeft.
 
