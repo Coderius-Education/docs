@@ -22,10 +22,10 @@
 // tweede tab niet om de poort gaat vechten.
 
 import { storageKey } from '@coderius/shared/opslag';
+import { STARTCODE } from './bouwstenen';
 import { friendlyError } from './errorMessages';
 import type { InstallProgress } from './leaphyInstaller';
 import { SerialClient, type SerialPort, type SerialStatus } from './serial';
-import { TEMPLATES } from './templates';
 
 /** Zelfde plafond als de shell zelf: meer dan dit ziet niemand terug. */
 const MAX_SHELL = 20000;
@@ -90,7 +90,7 @@ export class EditorSessie {
     /** Blijvend (localStorage): de code en het geopende bestand. */
     blijvend: Opslag | null,
   ) {
-    const code = blijvend?.getItem(CODE_KEY) ?? TEMPLATES[0].code;
+    const code = blijvend?.getItem(CODE_KEY) ?? STARTCODE;
     this.stand = {
       code,
       loadedCode: code,

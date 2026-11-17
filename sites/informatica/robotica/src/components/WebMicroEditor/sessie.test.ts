@@ -1,9 +1,9 @@
 import { storageKey } from '@coderius/shared/opslag';
 import { describe, expect, it } from 'vitest';
+import { STARTCODE } from './bouwstenen';
 import type { SerialPort } from './serial';
 import { SerialClient } from './serial';
 import { EditorSessie, type Luisteraar, WAS_VERBONDEN_KEY } from './sessie';
-import { TEMPLATES } from './templates';
 
 // De verbinding hoort een paginawissel te overleven. Vroeger zat de client in
 // een useRef van de component; wie naar een les navigeerde en terugkwam had
@@ -220,11 +220,11 @@ describe('EditorSessie: de verbinding overleeft een paginawissel', () => {
 });
 
 describe('EditorSessie.stand: wat een operatie na een await verandert', () => {
-  it('begint met de bewaarde code en het bewaarde bestand, of anders de eerste template', () => {
+  it('begint met de bewaarde code en het bewaarde bestand, of anders de startcode', () => {
     const leeg = new EditorSessie(nepOpslag(), nepOpslag());
     expect(leeg.stand).toEqual({
-      code: TEMPLATES[0].code,
-      loadedCode: TEMPLATES[0].code,
+      code: STARTCODE,
+      loadedCode: STARTCODE,
       currentFile: null,
       progress: null,
     });

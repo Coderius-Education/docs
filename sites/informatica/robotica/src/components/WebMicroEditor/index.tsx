@@ -11,7 +11,7 @@ import clsx from 'clsx';
 import {
   AArrowDown,
   AArrowUp,
-  BookOpen,
+  Blocks,
   FilePlus,
   FlaskConical,
   FolderOpen,
@@ -55,12 +55,14 @@ function useColorMode(): { colorMode: 'light' | 'dark' } {
   return { colorMode };
 }
 
-import Keuzelijst from '@coderius/shared/components/Keuzelijst';
 import { bevestig, vraag } from '@coderius/shared/dialoog';
 import { storageKey } from '@coderius/shared/opslag';
+import Palet from './Palet';
+import { type Bouwsteen, SLEEP_TYPE, bouwsteenMetId } from './bouwstenen';
 import { leesEditorHash } from './codeLink';
 import { friendlyError } from './errorMessages';
 import { BoardFS } from './filesystem';
+import { verschil, voegIn } from './invoegen';
 import {
   DEFAULT_LEAPHY_BRANCH,
   DEFAULT_LEAPHY_REPO,
@@ -73,7 +75,6 @@ import { type PythonFout, splitsFoutSegmenten, vindLaatsteFout } from './pythonE
 import { SerialClient } from './serial';
 import { type SessieStatus, type Stand, sessie } from './sessie';
 import styles from './styles.module.css';
-import { TEMPLATES } from './templates';
 
 // Opnieuw kijken na een dialoog: terwijl de leerling nadacht kan er een
 // andere actie begonnen zijn. Als functie, want TypeScript houdt de stand van
@@ -83,7 +84,7 @@ function nuBezig(ref: { current: string }): boolean {
 }
 
 // Eén vraag voor alle plekken waar nieuwe code over niet-opgeslagen werk heen
-// komt: een bestand openen, een nieuw bestand, een sjabloon.
+// komt: een bestand openen of een nieuw bestand.
 function overschrijvenGoed(): Promise<boolean> {
   return bevestig('Je niet-opgeslagen wijzigingen in de editor gaan verloren.', {
     titel: 'Wijzigingen overschrijven?',
@@ -164,7 +165,45 @@ function tekenPlot(canvas: HTMLCanvasElement, samples: number[][]): void {
   }
 }
 
+/**
+ * Zet een bouwsteen uit het palet in de code: op `regel` (vanaf 0), of op de
+ * regel van de cursor. Alleen het stuk dat verandert gaat naar de editor, in
+ * één stap, zodat Ctrl+Z de hele bouwsteen weer weghaalt.
+ */
+function zetBouwsteen(view: EditorView, bouwsteen: Bouwsteen, regel?: number): void {
+  const oud = view.state.doc.toString();
+  const op = regel ?? view.state.doc.lineAt(view.state.selection.main.head).number - 1;
+  const uit = voegIn(oud, op, bouwsteen);
+  const { van, tot, tekst } = verschil(oud, uit.doc);
+  view.dispatch({
+    changes: { from: van, to: tot, insert: tekst },
+    selection: { anchor: uit.van, head: uit.tot },
+    scrollIntoView: true,
+    userEvent: 'input.bouwsteen',
+  });
+  view.focus();
+}
+
+/** Een bouwsteen die uit het palet naar een regel gesleept wordt. */
+const sleepDoel = EditorView.domEventHandlers({
+  dragover(event) {
+    if (!event.dataTransfer?.types.includes(SLEEP_TYPE)) return false;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+    return true;
+  },
+  drop(event, view) {
+    const bouwsteen = bouwsteenMetId(event.dataTransfer?.getData(SLEEP_TYPE) ?? '');
+    if (!bouwsteen) return false;
+    event.preventDefault();
+    const plek = view.posAtCoords({ x: event.clientX, y: event.clientY }, false);
+    zetBouwsteen(view, bouwsteen, view.state.doc.lineAt(plek).number - 1);
+    return true;
+  },
+});
+
 const pythonTabExtensions = [
+  sleepDoel,
   python(),
   indentUnit.of('    '),
   EditorView.contentAttributes.of({ 'data-indent-with-tab': 'true' }),
@@ -186,6 +225,7 @@ const pythonTabExtensions = [
 const LEAPHY_REPO_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.leaphyRepo');
 const LEAPHY_BRANCH_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.leaphyBranch');
 const FONT_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.fontSize');
+const PALET_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.bouwstenen');
 
 // Officiële MicroPython-firmware voor de Arduino Nano RP2040 Connect.
 // Nieuwe versie? Pak de laatste .uf2 van de download-pagina hieronder en werk
@@ -247,6 +287,15 @@ export default function WebMicroEditor(): React.JSX.Element {
     const bewaard = Number(localStorage.getItem(FONT_STORAGE_KEY));
     return bewaard >= 12 && bewaard <= 24 ? bewaard : 14;
   });
+  // Het palet met bouwstenen links van de code. Op een smal scherm staat het
+  // boven de code en begint het dicht; wie het open of dicht zet, houdt dat.
+  const [paletOpen, setPaletOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    const bewaard = localStorage.getItem(PALET_STORAGE_KEY);
+    if (bewaard !== null) return bewaard === 'open';
+    return !window.matchMedia?.('(max-width: 900px)').matches;
+  });
+  const viewRef = useRef<EditorView | null>(null);
   const samplesRef = useRef<number[][]>([]);
   const lineBufRef = useRef<string>('');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -260,6 +309,7 @@ export default function WebMicroEditor(): React.JSX.Element {
   }, [status]);
 
   const isDirty = code !== loadedCode;
+  const paletZichtbaar = paletOpen && files === null;
 
   // De laatste Python-fout uit de REPL-stroom, voor de banner en de
   // regelmarkering. Wissen van de REPL (bij elke Run) reset dit vanzelf.
@@ -762,16 +812,18 @@ export default function WebMicroEditor(): React.JSX.Element {
     setIdle(operatie);
   }, [schrijf, setBusy, setIdle]);
 
-  const applyTemplate = useCallback(
-    async (id: string) => {
-      if (!id) return;
-      const t = TEMPLATES.find((x) => x.id === id);
-      if (!t) return;
-      if (isDirty && !(await overschrijvenGoed())) return;
-      sessie.zet({ code: t.code, loadedCode: t.code, currentFile: null });
-    },
-    [isDirty],
-  );
+  const kiesBouwsteen = useCallback((bouwsteen: Bouwsteen) => {
+    if (viewRef.current) zetBouwsteen(viewRef.current, bouwsteen);
+  }, []);
+
+  // Bouwstenen en Bestanden op board delen de kolom links van de code: wie
+  // de ene opent, sluit de andere.
+  const wisselPalet = useCallback(() => {
+    const open = files !== null ? true : !paletOpen;
+    setFiles(null);
+    setPaletOpen(open);
+    localStorage.setItem(PALET_STORAGE_KEY, open ? 'open' : 'dicht');
+  }, [files, paletOpen]);
 
   const downloadFirmware = useCallback(() => {
     // micropython.org levert het bestand als octet-stream, dus de browser
@@ -948,17 +1000,16 @@ export default function WebMicroEditor(): React.JSX.Element {
             {files === null ? 'Bestanden op board' : 'Verberg bestanden'}
           </button>
         </fieldset>
-        <Keuzelijst
-          className={styles.select}
-          label="Voorbeeld laden"
-          placeholder="Voorbeeld laden..."
-          // Geen vaste keuze: na het laden staat er weer "Voorbeeld laden...",
-          // zodat je hetzelfde voorbeeld nog eens kunt kiezen.
-          waarde={null}
-          opties={TEMPLATES.map((t) => ({ waarde: t.id, label: t.label }))}
-          onKies={(id) => void applyTemplate(id)}
-          voor={<BookOpen aria-hidden="true" size={15} className={styles.selectIcoon} />}
-        />
+        <button
+          type="button"
+          className={clsx(styles.btn, paletZichtbaar && styles.btnActief)}
+          onClick={wisselPalet}
+          aria-pressed={paletZichtbaar}
+          title="Onderdelen en Python-stappen die je met een klik in je code zet"
+        >
+          <Blocks aria-hidden="true" size={15} />
+          Bouwstenen
+        </button>
 
         <span className={styles.spacer} />
 
@@ -1209,6 +1260,15 @@ export default function WebMicroEditor(): React.JSX.Element {
           </div>
         )}
 
+        {paletZichtbaar && (
+          <div className={clsx(styles.workPaneNarrow, styles.workPanePalet)}>
+            <div className={styles.fileLabel}>
+              <span>Klik of sleep een bouwsteen</span>
+            </div>
+            <Palet onKies={kiesBouwsteen} />
+          </div>
+        )}
+
         <div className={styles.workPaneWide}>
           <div className={styles.fileLabel}>
             <span>
@@ -1226,6 +1286,9 @@ export default function WebMicroEditor(): React.JSX.Element {
             <CodeMirror
               value={code}
               onChange={(nieuw) => sessie.zet({ code: nieuw })}
+              onCreateEditor={(view) => {
+                viewRef.current = view;
+              }}
               extensions={editorExtensions}
               theme={colorMode === 'dark' ? 'dark' : 'light'}
               height="380px"

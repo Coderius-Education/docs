@@ -2,6 +2,8 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { BOUWSTENEN } from '../components/WebMicroEditor/bouwstenen';
+import { alsProgramma } from '../components/WebMicroEditor/invoegen';
 import api from './leaphy-api.json';
 
 // De codeblokken van robotica draaien op het bord met de leaphymicropython die
@@ -108,6 +110,11 @@ const loop = (map: string) => {
 };
 for (const map of ['docs', 'lego_auto', 'src/pages']) loop(join(SITE, map));
 
+// De bouwstenen van het palet in de editor zijn ook code die op het bord
+// draait: elk als het programma dat een klik in een leeg bestand geeft.
+for (const b of BOUWSTENEN)
+  blokken.push({ waar: `palet van de editor: ${b.id}`, code: alsProgramma(b), nietDraaien: false });
+
 // Hoeveel argumenten van een aanroep een pin zijn.
 const PIN_ARGUMENTEN: Record<string, number> = {
   Pin: 1,
@@ -127,6 +134,12 @@ const argumenten = (code: string, functie: string) =>
 describe('de codeblokken passen bij leaphymicropython', () => {
   it('er zijn blokken om te toetsen', () => {
     expect(blokken.length).toBeGreaterThan(50);
+  });
+
+  it('de bouwstenen van de editor doen mee', () => {
+    const palet = blokken.filter(({ waar }) => waar.startsWith('palet van de editor'));
+    expect(palet.length).toBe(BOUWSTENEN.length);
+    expect(palet.some(({ code }) => /DCMotors\(/.test(code))).toBe(true);
   });
 
   it('elke import uit leaphymicropython bestaat', () => {

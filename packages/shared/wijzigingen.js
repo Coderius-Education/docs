@@ -161,7 +161,8 @@ const RUNNERS = {
       '{site}/docs/',
       '{site}/src/pages/',
       '{site}/lego_auto/',
-      '{site}/src/components/WebMicroEditor/templates.ts',
+      '{site}/src/components/WebMicroEditor/bouwstenen.ts',
+      '{site}/src/components/WebMicroEditor/invoegen.ts',
     ],
     // Naast compileren draait elk blok met de echte leaphymicropython
     // (scripts/draai-leaphy-blokken.py); de commit staat in leaphy-api.json.

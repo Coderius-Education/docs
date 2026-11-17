@@ -11,8 +11,8 @@ Aanroep vanuit de repo-root, met de map waar de extractie in schrijft:
 
 Met `--alleen changed.json` (uit de plan-job, zie scripts/alleen.py) alleen de
 blokken waarvan een regel gewijzigd is (`begin`/`eind` uit index.json, de
-marker erboven meegerekend). Een item zonder `eind`, zoals een editor-template
-van robotica, hangt af van zijn hele bronbestand. Blokken staan op zichzelf:
+marker erboven meegerekend). Een item zonder `eind`, zoals een bouwsteen van
+de editor van robotica, hangt af van zijn hele bronbestand. Blokken staan op zichzelf:
 er is geen keten. Verandert deze runner of de extractie, dan beslist de
 planner dat alles draait.
 

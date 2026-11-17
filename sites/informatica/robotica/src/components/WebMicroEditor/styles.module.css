@@ -27,8 +27,7 @@
   align-items: center;
 }
 
-.toolbarSecundair .btn,
-.toolbarSecundair .select {
+.toolbarSecundair .btn {
   height: 32px;
   padding: 0 10px;
   font-size: 13px;
@@ -202,21 +201,6 @@
   flex: 1;
 }
 
-.select {
-  height: 36px;
-  padding: 0 10px;
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 8px;
-  background: var(--ifm-background-color);
-  color: var(--ifm-color-emphasis-800);
-  font-size: 14px;
-}
-
-.selectIcoon {
-  flex-shrink: 0;
-  color: var(--ifm-color-emphasis-600);
-}
-
 .workArea {
   display: flex;
   flex-direction: row;
@@ -245,6 +229,12 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+/* Het palet met bouwstenen is smaller dan de lijst met bestanden: elke
+   pixel hier gaat van de code af. */
+.workPanePalet {
+  flex-basis: 212px;
 }
 
 @media (max-width: 900px) {
@@ -619,4 +609,133 @@
 
 .fileUp {
   margin-left: 10px;
+}
+
+/* Het palet met bouwstenen, links van de code. Elke groep heeft een eigen
+   kleur aan de linkerrand, zoals de categorieën van een blokkeneditor. */
+.palet {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+  height: 380px;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+@media (max-width: 900px) {
+  .palet {
+    height: auto;
+    max-height: 260px;
+  }
+}
+
+.paletGroep {
+  --groep: var(--ifm-color-info-dark);
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.paletGroep[data-groep="actuatoren"] {
+  --groep: var(--ifm-color-success-dark);
+}
+
+.paletGroep[data-groep="python"] {
+  --groep: var(--ifm-color-warning-dark);
+}
+
+.paletKopKnop {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 10px 6px 8px;
+  border: none;
+  border-left: 4px solid var(--groep);
+  background: none;
+  color: var(--ifm-color-emphasis-800);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.paletKopKnop:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.paletKopKnop:focus-visible,
+.steenKnop:focus-visible,
+.steenLes:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: -2px;
+}
+
+.paletLijst {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0;
+  padding: 2px 8px 8px;
+  list-style: none;
+}
+
+.paletLijst[hidden] {
+  display: none;
+}
+
+.steen {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Een bouwsteen is een knop en een handvat tegelijk: klikken zet hem op de
+   regel van de cursor, slepen op de regel waar je hem loslaat. */
+.steenKnop {
+  flex: 1;
+  min-width: 0;
+  padding: 3px 8px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-left: 4px solid var(--groep);
+  border-radius: 6px;
+  background: var(--ifm-background-color);
+  color: var(--ifm-color-emphasis-800);
+  font: inherit;
+  text-align: left;
+  cursor: grab;
+}
+
+.steenKnop:hover {
+  border-color: var(--groep);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.steenKnop:active {
+  cursor: grabbing;
+}
+
+.steenLes {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.steenLes:hover {
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-primary);
+}
+
+/* Op een telefoon tik je met een vinger: daar is een bouwsteen hoger. */
+@media (max-width: 900px) {
+  .steenKnop {
+    padding: 8px 10px;
+  }
+
+  .steenLes {
+    padding: 9px;
+  }
 }
