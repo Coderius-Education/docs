@@ -265,6 +265,22 @@ describe('createConfig — les-tabbladen', () => {
     expect(config).not.toHaveProperty('lesTabs');
   });
 
+  it('geeft ook de keuze voor de namen van staptabbladen door', () => {
+    // `lesTabs: { stapNaam: true }` (de Godot-cursus): `## Stap 2: Camera
+    // instellen` heet in de rij "Camera instellen". De werkvormen krijgen
+    // dezelfde keuze, zodat de handleiding dezelfde les leest als de build.
+    const require = createRequire(import.meta.url);
+    const werkvormenPlugin = require('./plugins/werkvormen.js');
+    const config = createConfig({ ...basis, lesTabs: { stapNaam: true } });
+    expect(docsVan(config).at(-1)).toEqual([remarkLesTabs, { stapNaam: true }]);
+    expect((config as { plugins: unknown[] }).plugins).toContainEqual([
+      werkvormenPlugin,
+      { stapNaam: true },
+    ]);
+    const godot = readFileSync(join(ROOT, 'sites/informatica/godot/docusaurus.config.ts'), 'utf8');
+    expect(godot).toMatch(/lesTabs: \{ stapNaam: true \}/);
+  });
+
   it('staat aan bij de cursussen die zijn omgezet, en alleen daar', () => {
     // Aanzetten is de eerste van vijf stappen (root-CLAUDE.md, Les-tabbladen):
     // zonder meten en inkorten staat een cursus vol schermen die niet passen.

@@ -3424,3 +3424,107 @@ describe('de tip en de oplossing staan in het oefenveld', () => {
     expect(uit).not.toContain('details');
   });
 });
+
+describe('een staptabblad heet naar zijn inhoud (stapNaam)', () => {
+  // De opdrachtgever over Godot: "de namen van de tabjes moeten echt nuttig
+  // zijn, zodat leerlingen weten waar ze moeten klikken". Daar heette de rij
+  // "Voorspel | Stap 1 | Stap 2 | Stap 3 | Stap 4 | Stap 5", en in een lange
+  // rij "Stap 1 | 2 | 3 | 4 | 5". Met `lesTabs: { stapNaam: true }` heet
+  // `## Stap 2: Camera instellen` in de rij "Camera instellen".
+  const les = [
+    titel,
+    kop(2, 'Voorspel: waar hangt de camera?'),
+    alinea('Een vraag.'),
+    kop(2, 'Stap 1: Camera toevoegen'),
+    alinea('Voeg de node toe.'),
+    kop(2, 'Stap 2: Camera instellen'),
+    alinea('Zet de zoom.'),
+    kop(2, 'Opdracht 5.9.a: stel Limit in'),
+    alinea('Doe het.'),
+    kop(2, 'Er gaat iets mis'),
+    alinea('Een fout.'),
+  ];
+  const kopie = () => JSON.parse(JSON.stringify(les)) as Knoop[];
+
+  it('de naam staat op het tabblad, het nummer niet', () => {
+    expect(tabs(groepeer(kopie(), { stapNaam: true })).map((t) => t.label)).toEqual([
+      'Voorspel',
+      'Camera toevoegen',
+      'Camera instellen',
+      'Opdracht 5.9.a',
+      'Er gaat iets mis',
+    ]);
+  });
+
+  it('de kop staat niet nog eens boven het scherm', () => {
+    // Het onderdeel verbergt de kop als label en titel gelijk zijn: het
+    // tabblad zegt hem al, en het scherm wint 45 pixels.
+    const stap = tabs(groepeer(kopie(), { stapNaam: true }))[1];
+    expect(stap.titel).toBe(stap.label);
+  });
+
+  it('het tabblad houdt de werkvorm van een stap', () => {
+    // Aan "Stap N" herkent de stap de werkvorm; daarom blijft het nummer in
+    // de bron. Zonder die naam kreeg het tabblad het icoon van uitleg.
+    const vormen = tabs(groepeer(kopie(), { stapNaam: true })).map((t) => t.werkvorm);
+    expect(vormen).toEqual(['voorspellen', 'stap', 'stap', 'aanpassen', 'fouten']);
+  });
+
+  it('een lange rij stappen wordt geen rij nummers', () => {
+    const lang = [
+      titel,
+      ...['Node toevoegen', 'Vorm kiezen', 'Script koppelen', 'Signal koppelen', 'Testen'].flatMap(
+        (naam, i) => [kop(2, `Stap ${i + 1}: ${naam}`), alinea('Doe dit.')],
+      ),
+      ...['a', 'b', 'c', 'd'].flatMap((x) => [kop(2, `Opdracht 7.1.${x}: iets`), alinea('Doe.')]),
+    ];
+    const uit = tabs(groepeer(lang, { stapNaam: true }));
+    expect(uit.slice(0, 5).map((t) => t.kort ?? t.label)).toEqual([
+      'Node toevoegen',
+      'Vorm kiezen',
+      'Script koppelen',
+      'Signal koppelen',
+      'Testen',
+    ]);
+  });
+
+  it('zonder de keuze heet een staptabblad Stap 1, zoals bij de Lego-auto', () => {
+    // De lestekst van de Lego-auto verwijst naar "stap 2".
+    expect(tabs(groepeer(kopie())).map((t) => t.label)).toEqual([
+      'Voorspel',
+      'Stap 1',
+      'Stap 2',
+      'Opdracht 5.9.a',
+      'Er gaat iets mis',
+    ]);
+  });
+
+  it('een tussenkop (####) begint geen nieuw scherm', () => {
+    // Twee korte handelingen die samen op het scherm passen, staan er samen
+    // op, elk onder zijn eigen kop. Alleen een ### maakt een stap.
+    const uit = groepeer(
+      [
+        titel,
+        kop(2, 'Stap 1: Camera toevoegen'),
+        kop(4, 'Voeg de node toe'),
+        alinea('Klik.'),
+        kop(4, 'Check Enabled'),
+        alinea('Kijk.'),
+        kop(2, 'Er gaat iets mis'),
+        alinea('Een fout.'),
+      ],
+      { stapNaam: true },
+    );
+    const stap = uit.find((n: Knoop) => n.name === 'LesTabs')?.children?.[0];
+    expect(JSON.stringify(stap)).not.toContain('LesStappen');
+    expect((stap?.children ?? []).filter((k: Knoop) => k.type === 'heading')).toHaveLength(3);
+  });
+
+  it('de opmaak geeft een tussenkop in een paneel weinig lucht', () => {
+    const css = readFileSync(
+      fileURLToPath(new URL('./components/LesTabs/styles.module.css', import.meta.url)),
+      'utf8',
+    );
+    expect(css).toMatch(/\.paneel h4 \{\s*margin: 1rem 0 0\.4rem;/);
+  });
+});

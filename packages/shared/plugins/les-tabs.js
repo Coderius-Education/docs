@@ -1700,7 +1700,7 @@ function openingVanTabs({ uitleg, secties }, aantal) {
  *
  * @param {object[]} kinderen de kinderen van de mdast-root
  */
-function groepeer(alles, { eenScherm = false } = {}) {
+function groepeer(alles, { eenScherm = false, stapNaam = false } = {}) {
   // De stand van een bestand gaat er eerst uit: naast een vraag of onder een
   // fout hoort hij niet (zie standTab).
   const vanaf = alles.findIndex(isH2);
@@ -1780,6 +1780,7 @@ function groepeer(alles, { eenScherm = false } = {}) {
     tab.attributes.push(attribuut('werkvorm', werkvormenVan([eigenschap(tab, 'titel')])[0]));
     geordend.tabs.push(tab);
   }
+  if (stapNaam) stappenBijNaam(geordend.tabs);
   korteOpdrachten(geordend.tabs);
   nummerVragen(geordend.tabs);
   return [
@@ -1787,6 +1788,30 @@ function groepeer(alles, { eenScherm = false } = {}) {
     { type: 'mdxJsxFlowElement', name: 'LesTabs', attributes: [], children: geordend.tabs },
     ...esm,
   ];
+}
+
+const STAP_MET_NAAM = /^Stap \d+[a-z]?: (.+)$/;
+
+/**
+ * Een tabblad `## Stap 2: Camera instellen` heet in de rij "Camera instellen"
+ * (`lesTabs: { stapNaam: true }`, de Godot-cursus). Met "Stap 1" tot en met
+ * "Stap 5" op een rij wist een leerling niet waar hij moest klikken om de
+ * zoom terug te vinden, en in een lange rij stond er alleen nog "2", "3",
+ * "4". Het nummer blijft in de bron: daaraan herkent de stap de werkvorm, en
+ * de auteur de volgorde. De kop staat niet nog eens boven het scherm: het
+ * tabblad zegt hem al.
+ *
+ * Een keuze van de cursus, niet de standaard: de lestekst van de Lego-auto
+ * verwijst naar "stap 2", en met de titels past zijn rij niet op één regel.
+ *
+ * @param {object[]} tabs
+ */
+function stappenBijNaam(tabs) {
+  for (const tab of tabs) {
+    const naam = STAP_MET_NAAM.exec(eigenschap(tab, 'titel') ?? '')?.[1];
+    if (!naam) continue;
+    for (const a of tab.attributes) if (a.name === 'titel' || a.name === 'label') a.value = naam;
+  }
 }
 
 /** En zoveel opdrachten of stappen achter elkaar zijn een reeks. */
@@ -1874,8 +1899,10 @@ function titelBijTabs(kinderen) {
 /**
  * De remark-stap.
  *
- * @param {{ eenScherm?: boolean }} [opties] `eenScherm`: een pagina die in
- *   haar geheel op één scherm past, krijgt geen tabbladen (pastOpEenScherm).
+ * @param {{ eenScherm?: boolean, stapNaam?: boolean }} [opties] `eenScherm`:
+ *   een pagina die in haar geheel op één scherm past, krijgt geen tabbladen
+ *   (pastOpEenScherm). `stapNaam`: een tabblad `## Stap 2: Camera instellen`
+ *   heet "Camera instellen" (stappenBijNaam).
  */
 function remarkLesTabs(opties = {}) {
   return (tree, file) => {

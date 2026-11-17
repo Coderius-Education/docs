@@ -277,6 +277,21 @@
   margin-bottom: 0.5rem;
 }
 
+/* Een tussenkop binnen één scherm (`####`): twee korte handelingen die samen
+   op het scherm passen, staan er samen op, elk onder zijn eigen kop. Een
+   `###` begint een nieuw scherm; deze niet. Infima geeft een kop anderhalve
+   regel lucht erboven en eronder: met drie tussenkoppen was dat honderd
+   pixels van het scherm. */
+.paneel h4 {
+  margin: 1rem 0 0.4rem;
+}
+
+.paneel > h4:first-child,
+.kopOpTab > h2 + h4,
+.kopOpStap > h3 + h4 {
+  margin-top: 0;
+}
+
 /* Een korte afsluiter die bij dit scherm is gezet (Wat je nu ziet, Aan de
    slag; zie sluitAan in plugins/les-tabs.js): zijn kop is een tussenkop. */
 .paneel [data-les-afsluiter] > h2 {

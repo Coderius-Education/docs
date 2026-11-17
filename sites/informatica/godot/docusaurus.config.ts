@@ -11,7 +11,7 @@ export default createConfig({
 
   // Elke ##-sectie van een les is een tabblad (zie de root-CLAUDE.md,
   // Les-tabbladen); de inhoudsopgave rechts vervalt.
-  lesTabs: true,
+  lesTabs: { stapNaam: true },
 
   // De conceptenkaart is in november 2026 weggehaald. Het oude adres stond in
   // de navbar; wie het bewaard heeft, komt uit bij de leerdoelen: daar staat

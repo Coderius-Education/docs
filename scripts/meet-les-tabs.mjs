@@ -99,9 +99,11 @@ const require = createRequire(import.meta.url);
 const { SITES_BY_ID, siteDir } = require('../packages/shared/sites.js');
 const {
   EDITOR_VAN_VELD,
+  VOLLE_SCHERMEN,
   deelVan,
   lesVan: lesVanInBuild,
   pastNiet,
+  versplinterd,
 } = require('../packages/shared/meet-selectie.js');
 
 const argumenten = process.argv.slice(2);
@@ -938,8 +940,30 @@ async function meetLes(les) {
                 n && n.height > 0 && n.left >= r.right - 1
                   ? Math.max(r.bottom, n.bottom)
                   : r.bottom;
+              // Wat het scherm zelf inneemt: het paneel zonder de rij Vorige
+              // en Volgende en zonder de rij stappen. Daarmee rekent
+              // `versplinterd` uit of twee schermen samen passen.
+              const metMarge = (el) => {
+                if (!el || el.getClientRects().length === 0) return 0;
+                const stijl = getComputedStyle(el);
+                return (
+                  el.getBoundingClientRect().height +
+                  Number.parseFloat(stijl.marginTop) +
+                  Number.parseFloat(stijl.marginBottom)
+                );
+              };
+              const verder = [...paneel.children].find((k) => k.hasAttribute('data-les-verder'));
+              const stappenrij = [...paneel.querySelectorAll('[data-les-stappen] > [role=tablist]')]
+                .filter((rij) => !rij.closest('details:not([open])'))
+                .find((rij) => rij.getClientRects().length > 0);
               return {
                 over: Math.round(onder - document.documentElement.clientHeight),
+                inhoud: Math.round(r.height - metMarge(verder) - metMarge(stappenrij)),
+                werkvorm:
+                  document
+                    .getElementById(`tab-${id}`)
+                    ?.querySelector('[data-werkvorm]')
+                    ?.getAttribute('data-werkvorm') ?? '',
                 naast: !!n && n.height > 0,
                 boven: Math.round(r.top),
                 pagina:
@@ -1119,8 +1143,21 @@ if (PROFIEL)
       .map(([wat, ms]) => `${wat} ${Math.round(ms / 1000)}`)
       .join(', ')}`,
   );
+// Versplinterd: twee schermen na elkaar die samen op het kleinste scherm
+// passen (zie versplinterd in meet-selectie.js).
+const kleinste = SCHERMEN.find((s) => !s.telefoon);
+const splinters = [];
+{
+  const perLes = new Map();
+  for (const r of rijen.filter((r) => r.scherm === `${kleinste.width}x${kleinste.height}`))
+    perLes.set(r.les, [...(perLes.get(r.les) ?? []), r]);
+  for (const [les, schermen] of perLes)
+    for (const v of versplinterd(schermen)) splinters.push({ les, ...v });
+}
 if (ALS_JSON) {
-  console.log(JSON.stringify({ kolomBreedte, rijen, tabrijen, dubbeleIds, zonderTabs }, null, 2));
+  console.log(
+    JSON.stringify({ kolomBreedte, rijen, tabrijen, dubbeleIds, zonderTabs, splinters }, null, 2),
+  );
 } else {
   for (const { width, height } of SCHERMEN.filter((s) => !s.telefoon)) {
     const scherm = `${width}x${height}`;
@@ -1244,6 +1281,21 @@ if (ALS_JSON) {
     console.log(
       `- ${naam(r.les)}: ${r.afgebroken} blokken${r.afgebrokenCode ? `, waarvan ${r.afgebrokenCode} met een taal` : ''}`,
     );
+  console.log(
+    `\n## Schermen die samen op één scherm passen: ${splinters.length}${VOLLE_SCHERMEN.includes(SITE) ? '' : ' (in deze cursus geen fout)'}\n`,
+  );
+  for (const v of splinters)
+    console.log(`- ${naam(v.les)}: ${v.eerste} en ${v.tweede} (dan nog ${v.over} px vrij)`);
+  const gevuld = rijen
+    .filter((r) => r.scherm === `${eerste.width}x${eerste.height}` && typeof r.inhoud === 'number')
+    .map((r) => {
+      const ruimte = r.inhoud - r.over;
+      return ruimte > 0 ? Math.min(1, r.inhoud / ruimte) : 1;
+    });
+  if (gevuld.length)
+    console.log(
+      `\nGemiddeld is een scherm voor ${Math.round((gevuld.reduce((a, b) => a + b, 0) / gevuld.length) * 100)}% gevuld; ${gevuld.filter((g) => g < 0.5).length} van de ${gevuld.length} voor minder dan de helft.`,
+    );
   console.log(`\n## Dubbele id's: ${dubbeleIds.length} pagina's\n`);
   for (const d of dubbeleIds) console.log(`- ${naam(d.les)}: ${d.dubbel.join(', ')}`);
   console.log(`\nDe les gebruikt ${kolomBreedte}% van de breedte naast de lessenlijst.`);
@@ -1298,6 +1350,12 @@ if (STRENG) {
   }
   for (const d of dubbeleIds)
     if (!bewust(d.les)) fouten.push(`${d.les}: dubbele id's ${d.dubbel.join(', ')}`);
+  if (VOLLE_SCHERMEN.includes(SITE))
+    for (const v of splinters)
+      if (!bewust(v.les, v.eerste) && !bewust(v.les, v.tweede))
+        fouten.push(
+          `${v.les} | ${v.eerste} en ${v.tweede}: passen samen op één scherm (dan nog ${v.over} px vrij); zet ze bij elkaar`,
+        );
   if (fouten.length) {
     console.error(`\n${fouten.length} schermen passen niet (zie de schrijfgids, §2):`);
     for (const f of fouten) console.error(`- ${f}`);
