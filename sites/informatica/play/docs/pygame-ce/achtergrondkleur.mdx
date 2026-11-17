@@ -4,13 +4,13 @@ sidebar_position: 2
 
 # 10.2 Achtergrondkleur
 
-:::warning[Online speeltuin]
-De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](site:play/docs/installatie).
-:::
-
 Je venster is nu zwart. Dat verander je met één regel in de game-loop.
 
 ## Kleuren met RGB
+
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](site:play/docs/installatie).
+:::
 
 In pygame-ce geef je kleuren als **RGB-waarden**: drie getallen voor **(rood, groen, blauw)**, elk van 0 tot 255.
 
@@ -24,8 +24,12 @@ Enkele voorbeelden:
 
 ## De achtergrond vullen
 
+Het programma heeft twee nieuwe regels:
+
+<CodeUitleg>
+
 {/* draaien: compleet programma, alleen zonder speeltuin */}
-```python
+```python showLineNumbers
 import pygame
 
 pygame.init()
@@ -46,21 +50,14 @@ while actief:
 pygame.quit()
 ```
 
-Twee nieuwe regels:
+<Regel n={15}>Vult het scherm met een donkergrijze kleur.</Regel>
+<Regel n={16}>Werkt het scherm bij. Zonder deze regel zie je niets.</Regel>
 
-```python
-scherm.fill((30, 30, 30))
-```
-Vult het scherm met een donkergrijze kleur.
-
-```python
-pygame.display.flip()
-```
-Hiermee wordt het scherm bijgewerkt. Zonder deze regel zie je niets.
+</CodeUitleg>
 
 ## Opdracht 10.2.a: Kleuren uitproberen
 
-Verander de achtergrondkleur naar:
+Verander in het programma uit de stap De achtergrond vullen de achtergrondkleur naar:
 1. Rood
 2. Blauw
 3. Een kleur naar keuze

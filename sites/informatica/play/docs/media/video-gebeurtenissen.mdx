@@ -10,11 +10,9 @@ sidebar_position: 3
   ]}
 />
 
-:::warning[Online speeltuin]
-Video werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code) met coderius-play versie 3.4 of nieuwer. Zie [installatie](site:play/docs/installatie).
-:::
+Een intro-filmpje is pas nuttig als het spel weet wanneer het is afgelopen. Daarvoor zijn er video-gebeurtenissen, en de belangrijkste is **`@play.when_video_ends`**.
 
-Een intro-filmpje is pas nuttig als het spel weet wanneer het is afgelopen. Daarvoor zijn er video-gebeurtenissen, en de belangrijkste is **`@play.when_video_ends`**:
+## Het einde van de video
 
 ```python
 import play
@@ -30,8 +28,6 @@ def intro_klaar():
 
 Zodra de video het einde bereikt, wordt `intro_klaar` aangeroepen: de video verdwijnt en het spel neemt het over. Let op de vorm — je geeft de video tussen haakjes mee aan de decorator, net als bij `@play.when_key_pressed('space')`.
 
-**Let op:** staat `loop=True` op de video, dan komt er nooit een einde en gaat `when_video_ends` dus nooit af.
-
 ## Alle video-gebeurtenissen
 
 | Decorator | Gaat af... |
@@ -46,9 +42,15 @@ De laatste gaat tientallen keren per seconde af — gebruik die alleen als het e
 
 Je kunt ook meerdere video's aan één functie koppelen: `@play.when_video_ends(video1, video2)` gaat af zodra een van beide klaar is.
 
+**Let op:** staat `loop=True` op de video, dan komt er nooit een einde en gaat `when_video_ends` dus nooit af.
+
 ## Opdracht 8.3.a: Van intro naar spel
 
 Speel een intro-video af. Zodra hij is afgelopen: haal de video weg en laat een cirkel verschijnen die met de pijltjestoetsen te besturen is.
+
+:::warning[Online speeltuin]
+Video werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code) met coderius-play versie 3.4 of nieuwer. Zie [installatie](site:play/docs/installatie).
+:::
 
 <details>
 <summary>Klik hier voor een tip.</summary>

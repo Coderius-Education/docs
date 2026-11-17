@@ -13,7 +13,7 @@ sidebar_position: 2
 
 Bij 9.1 bleef de bal een bal. Soms wil je meer: level 1 is één stuiterende bal, level 2 is een rij blokken, level 3 is een bal die op een vloer valt. Dan moet je de oude vormen wegdoen en nieuwe maken.
 
-Wegdoen gaat met **`remove()`**, en dat is de hele truc. Je houdt in een lijst bij wat er bij het huidige level hoort, en bij een wissel ruim je die lijst op.
+## Drie levels, drie schermen
 
 ```python showLineNumbers
 import play
@@ -103,6 +103,8 @@ Druk een paar keer op spatie. Elk level is een ander scherm, en na level 3 begin
 
 ## De administratie
 
+Oude vormen wegdoen gaat met **`remove()`**, en dat is de hele truc. Je houdt in een lijst bij wat er bij het huidige level hoort, en bij een wissel ruim je die lijst op.
+
 <CodeUitleg>
 
 ```python showLineNumbers
@@ -143,9 +145,8 @@ def bouw_level():
         volgende_level()
 ```
 
-**Oorzaak:** elke keer dat je een level bouwt, komt er een luisteraar bij. Na drie levels reageren er drie functies op spatie, dus één druk laat je drie levels vooruit springen.
-
-**Oplossing:** toetsen en muis registreer je **één keer**, buiten de bouwfunctie. In `bouw_level()` horen alleen vormen thuis.
+- **Oorzaak:** elke keer dat je een level bouwt, komt er een luisteraar bij. Na drie levels reageren er drie functies op spatie, dus één druk laat je drie levels vooruit springen.
+- **Oplossing:** toetsen en muis registreer je **één keer**, buiten de bouwfunctie. In `bouw_level()` horen alleen vormen thuis.
 
 ```python
 # GOED

@@ -11,7 +11,9 @@ sidebar_position: 1
   ]}
 />
 
-Een spel met levels hoeft geen drie spellen te zijn. Meestal is het één spel dat per level anders is ingesteld: de bal gaat sneller, de vijand wordt groter, je krijgt minder tijd. De vormen blijven dezelfde, alleen hun getallen veranderen.
+Een spel met levels hoeft geen drie spellen te zijn. Meestal is het één spel dat per level anders is ingesteld: de bal gaat sneller, de vijand wordt groter, je krijgt minder tijd. De vormen blijven, alleen hun getallen veranderen.
+
+## Sneller per level
 
 ```python showLineNumbers
 import play
@@ -79,7 +81,7 @@ Waar de speler nu is. Let op dat de eerste plek in een lijst nummer 0 is, dus `l
 
 </CodeUitleg>
 
-**Let op:** `len(snelheden) - 1` in de `if` zorgt dat je niet voorbij het laatste level telt. Zonder die controle krijg je een `IndexError` zodra de speler één keer te vaak op spatie drukt.
+**Let op:** `len(snelheden) - 1` in de `if` van `volgende_level()` zorgt dat je niet voorbij het laatste level telt. Zonder die controle krijg je een `IndexError` zodra de speler één keer te vaak op spatie drukt.
 
 ## Meer dan één ding tegelijk
 
@@ -151,7 +153,37 @@ def volgende():
 
 ## Opdracht 9.1.a: Een vierde level
 
-Voeg aan het voorbeeld hierboven een vierde level toe: snelheid 400, straal 10, kleur `'purple'`.
+Voeg aan het voorbeeld hieronder een vierde level toe: snelheid 400, straal 10, kleur `'purple'`.
+
+<PygbagRunner code={`import play
+
+levels = [
+    {'snelheid': 100, 'straal': 60, 'kleur': 'green'},
+    {'snelheid': 200, 'straal': 40, 'kleur': 'orange'},
+    {'snelheid': 300, 'straal': 20, 'kleur': 'red'},
+]
+
+level = 0
+
+bal = play.new_circle()
+bal.start_physics(obeys_gravity=False)
+tekst = play.new_text(words="", y=200, font_size=40)
+
+def start_level():
+    instelling = levels[level]
+    bal.radius = instelling['straal']
+    bal.color = instelling['kleur']
+    bal.physics.x_speed = instelling['snelheid']
+    tekst.words = f"Level {level + 1}"
+
+start_level()
+
+@play.when_key_pressed('space')
+def volgende():
+    global level
+    if level < len(levels) - 1:
+        level = level + 1
+        start_level()`} height={320} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -195,7 +227,7 @@ import play
 
 levels = [
     {'snelheid': 100, 'straal': 60, 'kleur': 'green', 'achtergrond': 'white'},
-    {'snelheid': 200, 'straal': 40, 'kleur': 'orange', 'achtergrond': 'lightyellow'},
+    {'snelheid': 200, 'straal': 40, 'kleur': 'orange', 'achtergrond': 'khaki'},
     {'snelheid': 300, 'straal': 20, 'kleur': 'red', 'achtergrond': 'lightgray'},
 ]
 
@@ -227,7 +259,7 @@ def volgende():
 
 levels = [
     {'snelheid': 100, 'straal': 60, 'kleur': 'green', 'achtergrond': 'white'},
-    {'snelheid': 200, 'straal': 40, 'kleur': 'orange', 'achtergrond': 'lightyellow'},
+    {'snelheid': 200, 'straal': 40, 'kleur': 'orange', 'achtergrond': 'khaki'},
     {'snelheid': 300, 'straal': 20, 'kleur': 'red', 'achtergrond': 'lightgray'},
 ]
 

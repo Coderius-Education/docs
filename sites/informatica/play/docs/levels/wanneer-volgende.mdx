@@ -13,7 +13,9 @@ sidebar_position: 3
 
 In de vorige twee lessen ging je met de spatiebalk verder. Dat is handig om te testen, maar een spel bepaalt zelf wanneer een level gehaald is: de bal raakt de finish, alle blokken zijn weg, de score is hoog genoeg.
 
-Hieronder is de finish een groene zone. Zodra de bal hem raakt, begint het volgende level — en dat gaat elke keer wat sneller.
+## De finish als zone
+
+Hieronder is de finish een groene zone. Raakt de bal hem, dan begint het volgende level, elke keer wat sneller.
 
 ```python showLineNumbers
 import play
@@ -135,7 +137,37 @@ Draai je dit in de browser, dan is het opgeslagen level weg zodra je de pagina s
 
 ## Opdracht 9.3.a: Gewonnen
 
-Het spel hierboven gaat eindeloos door. Laat het na level 3 stoppen met de tekst "Gewonnen" in beeld, zonder dat er een nieuw level wordt gebouwd.
+Het spel hieronder gaat eindeloos door. Laat het na level 3 stoppen met de tekst "Gewonnen" in beeld, zonder dat er een nieuw level wordt gebouwd.
+
+<PygbagRunner code={`import play
+
+level = 1
+vormen = []
+tekst = play.new_text(words="", y=220, font_size=40)
+
+def bouw_level():
+    for vorm in vormen:
+        vorm.remove()
+    vormen.clear()
+    tekst.words = f"Level {level}"
+
+    doel = play.new_box(x=250, width=60, height=200, color='green', transparency=50)
+    doel.start_physics(sensor=True, can_move=False, stable=True)
+    bal = play.new_circle(x=-250, radius=25, color='red')
+    bal.start_physics(obeys_gravity=False, x_speed=60 * level)
+    vormen.append(doel)
+    vormen.append(bal)
+
+    @bal.when_touching(doel)
+    def gehaald():
+        volgende_level()
+
+def volgende_level():
+    global level
+    level = level + 1
+    bouw_level()
+
+bouw_level()`} height={340} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>

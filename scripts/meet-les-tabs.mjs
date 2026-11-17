@@ -368,6 +368,16 @@ function binnenHetScherm(wortel) {
       const regels = t.value.split('\n').length;
       return { regels, zichtbaar: Math.min(regels, Math.floor((t.clientHeight - 28) / regel)) };
     });
+  // De speeltuin van play: de code staat in een CodeMirror naast het spel, en
+  // schuift in haar kolom. De hoogte van die kolom volgt het spel; een spel
+  // op zijn kleinst mag de code niet tot een paar regels terugbrengen.
+  for (const vak of wortel.querySelectorAll('[data-play-veld] [class*="codeSection"]')) {
+    const eerste = vak.querySelector('.cm-line');
+    if (!teZien(vak) || !eerste) continue;
+    const regel = Number.parseFloat(getComputedStyle(eerste).lineHeight) || 21;
+    const regels = Math.round(vak.scrollHeight / regel);
+    editors.push({ regels, zichtbaar: Math.min(regels, Math.floor(vak.clientHeight / regel)) });
+  }
   return {
     editors,
     afgesneden: afgesneden > 6 ? afgesneden : 0,
@@ -416,6 +426,17 @@ const binnen = (belofte, ms) =>
  * antwoord zou wachten.
  */
 async function meetNaKlik(pagina, paneel, id) {
+  // De speeltuin van play: het spel komt naast de code. Het start in een
+  // iframe en meldt niet dat het klaar is; het veld hoort zijn maat meteen
+  // te hebben, en te houden als de console zijn eerste regel krijgt.
+  const speel = paneel.locator(KNOP, { hasText: 'Speel in browser' }).first();
+  if ((await speel.count()) > 0) {
+    await speel.click();
+    await pagina.waitForTimeout(1500);
+    const naUitvoeren = await binnen(over(pagina, id), 15_000);
+    await paneel.locator(KNOP, { hasText: 'Stop' }).first().click();
+    return { naUitvoeren };
+  }
   // "Uitvoeren" bij de CodeExercise, "Voer uit" bij de PyRunner van algoritmes.
   const uitvoeren = paneel.locator(KNOP, { hasText: /Uitvoeren|Voer uit|Laden/ }).first();
   if ((await uitvoeren.count()) === 0) return {};
@@ -465,6 +486,15 @@ async function meetNaHulp(pagina, paneel, id) {
   for (let i = 1; i < (await knoppen.count()); i++) {
     await knoppen.nth(i).click();
     await meet();
+    // De speeltuin van play speelt de oplossing af in zijn eigen vak.
+    const speelAf = paneel.locator(KNOP, { hasText: /^▶ Speel (de oplossing|het antwoord)$/ });
+    if ((await speelAf.count()) > 0) {
+      await speelAf.first().click();
+      await pagina.waitForTimeout(1500);
+      await meet();
+      await paneel.locator(KNOP, { hasText: 'Stop' }).first().click();
+      continue;
+    }
     const voerUit = paneel.locator(KNOP, { hasText: /^▶ Voer (de oplossing|het antwoord) uit$/ });
     if ((await voerUit.count()) === 0) continue;
     // Een oplossing met input() wacht op een antwoord.
@@ -735,7 +765,7 @@ async function meetLes(les) {
                   0,
                   document.documentElement.scrollWidth - document.documentElement.clientWidth,
                 ),
-                velden: paneel.querySelectorAll('[data-zaad]').length,
+                velden: paneel.querySelectorAll('[data-zaad], [data-play-veld]').length,
                 volgendeLes: volgendeLesInBeeld(paneel),
                 // Op hoeveel regels de rij stappen staat: een tweede regel kost
                 // elk scherm van dat tabblad veertig pixels.

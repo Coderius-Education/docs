@@ -6,6 +6,8 @@ sidebar_position: 1
 
 Tijd voor beweging. Met **start_physics()** kun je een vorm laten bewegen.
 
+### Voorspel
+
 Bekijk de code hieronder. Wat denk je dat er gebeurt?
 
 <PygbagRunner code={`import play
@@ -23,7 +25,9 @@ De bal beweegt naar rechts en stuitert tegen de muur.
 :::
 </details>
 
-Wat gebeurt hier?
+### Wat de code doet
+
+De bal uit de voorspelvraag beweegt door twee regels code:
 
 <CodeUitleg>
 
@@ -49,9 +53,14 @@ Zet de fysica aan. Twee dingen stel je hier in:
 
 ### Onderzoek
 
-Probeer eens de volgende aanpassingen en kijk wat er verandert:
+Probeer in de code hieronder de volgende aanpassingen en kijk wat er verandert:
 - Wat gebeurt er als je `x_speed` op `0` zet?
 - Wat als je `obeys_gravity=False` weghaalt (of op `True` zet)?
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle()
+cirkel.start_physics(obeys_gravity=False, x_speed=60)`} height={300} />
 
 <details>
 <summary>Klik hier voor het antwoord.</summary>
@@ -63,7 +72,14 @@ Probeer eens de volgende aanpassingen en kijk wat er verandert:
 
 ## Opdracht 2.1.a: De andere kant op
 
-a) Laat de bal met snelheid 100 naar **links** bewegen.
+### Naar links
+
+Laat de bal met snelheid 100 naar **links** bewegen.
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle()
+cirkel.start_physics(obeys_gravity=False, x_speed=60)`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -88,7 +104,14 @@ cirkel.start_physics(obeys_gravity=False, x_speed=-100)`} height={300} />
 
 </details>
 
-b) Laat de bal schuin naar de rechterboven hoek bewegen.
+### Schuin omhoog
+
+Laat de bal schuin naar de rechterbovenhoek bewegen.
+
+<PygbagRunner code={`import play
+
+cirkel = play.new_circle()
+cirkel.start_physics(obeys_gravity=False, x_speed=60)`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>

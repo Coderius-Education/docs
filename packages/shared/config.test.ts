@@ -281,6 +281,7 @@ describe('createConfig — les-tabbladen', () => {
       'editor',
       'python',
       'web',
+      'play',
       'algorithms',
       'fullstack',
       'robotica',

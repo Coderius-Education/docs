@@ -12,6 +12,8 @@ sidebar_position: 4
 
 Wil je de naam van de speler weten, of een antwoord op een vraag? Met **`play.new_text_input`** maak je een invoerveld waar de speler in kan typen.
 
+## Een invoerveld
+
 <PygbagRunner code={`import play
 
 welkom = play.new_text(words="Hoe heet je?", y=100)
@@ -20,6 +22,10 @@ veld = play.new_text_input(placeholder="Typ je naam en druk op Enter")
 @veld.when_submit
 def naam_ingevuld(naam):
     welkom.words = f"Welkom, {naam}"`} height={300} />
+
+Klik op het veld en typ maar.
+
+## Regel voor regel
 
 <CodeUitleg>
 
@@ -51,8 +57,6 @@ Plakt de naam achter "Welkom, " en zet dat op het scherm.
 </Regel>
 
 </CodeUitleg>
-
-Klik op het veld en typ maar.
 
 ## Elke toetsaanslag volgen
 

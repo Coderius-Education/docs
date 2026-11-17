@@ -28,7 +28,8 @@ type Knoop = {
   depth?: number;
   value?: string;
   children?: Knoop[];
-  attributes?: { name: string; value: string }[];
+  // Een waarde is tekst, of een expressie: `code={\`…\`}` van de speeltuin.
+  attributes?: { type?: string; name: string; value: string | { type: string; value: string } }[];
   data?: { id?: string };
   ordered?: boolean;
   start?: number;
@@ -1300,6 +1301,81 @@ describe('groepeer', () => {
       'paragraph',
     ]);
     expect(blokken[3].children[0].value).toBe('Druk op Uitvoeren en kijk wat er gebeurt.');
+  });
+
+  it('ook de speeltuin van play laat zijn code zelf zien', () => {
+    // In play staat volgens de afspraak van die cursus het codeblok om te
+    // lezen met direct eronder de runner met dezelfde code. In een tabblad
+    // staat de code van de runner altijd in beeld, ook terwijl het spel
+    // draait: het blok erboven was dezelfde code een tweede keer.
+    const code = (value: string): Knoop => ({ type: 'code', value });
+    const runner = (start: string): Knoop => ({
+      type: 'mdxJsxFlowElement',
+      name: 'PygbagRunner',
+      attributes: [
+        {
+          type: 'mdxJsxAttribute',
+          name: 'code',
+          value: { type: 'mdxJsxAttributeValueExpression', value: `\`${start}\`` },
+        },
+        { type: 'mdxJsxAttribute', name: 'height', value: '300' },
+      ],
+      children: [],
+    });
+    const uit = groepeer([
+      titel,
+      kop(2, 'Een cirkel'),
+      code('import play\n\ncirkel = play.new_circle()'),
+      runner('import play\n\ncirkel = play.new_circle()'),
+      alinea('Je ziet een cirkel.'),
+      code('cirkel.x = 100'),
+      runner('import play\n\ncirkel = play.new_circle()\ncirkel.x = 100'),
+      kop(2, 'Opdracht 1: Twee cirkels'),
+      alinea('Maak er twee.'),
+    ]);
+    expect(uit[1].children[0].children.map((n: Knoop) => n.name ?? n.type)).toEqual([
+      'heading',
+      'PygbagRunner',
+      'paragraph',
+      'code',
+      'PygbagRunner',
+    ]);
+
+    // Ook in een oplossing: het codeblok met dezelfde speeltuin eronder was
+    // open twee keer zo lang als het scherm. Alleen bij de speeltuin: bij de
+    // andere velden gaat de oplossing het veld in.
+    const blok = (...inhoud: Knoop[]): Knoop => ({
+      type: 'mdxJsxFlowElement',
+      name: 'details',
+      children: [
+        { type: 'mdxJsxFlowElement', name: 'summary', children: [alinea('De oplossing.')] },
+        ...inhoud,
+      ],
+    });
+    const python: Knoop = {
+      type: 'mdxJsxFlowElement',
+      name: 'CodeExercise',
+      children: [{ type: 'mdxFlowExpression', value: '`print(1)`' }],
+    };
+    const opdracht = groepeer([
+      titel,
+      kop(2, 'Een cirkel'),
+      alinea('Uitleg.'),
+      kop(2, 'Opdracht 1: Een cirkel'),
+      alinea('Teken een cirkel.'),
+      blok(code('import play\n\nplay.new_circle()'), runner('import play\n\nplay.new_circle()')),
+      blok(code('print(1)'), python),
+    ]);
+    const [, , speeltuin, ander] = opdracht[1].children[1].children;
+    expect(speeltuin.children.map((n: Knoop) => n.name ?? n.type)).toEqual([
+      'summary',
+      'PygbagRunner',
+    ]);
+    expect(ander.children.map((n: Knoop) => n.name ?? n.type)).toEqual([
+      'summary',
+      'code',
+      'CodeExercise',
+    ]);
   });
 
   describe('de volgorde en het icoon van de opdrachten', () => {
@@ -3215,6 +3291,50 @@ describe('de tip en de oplossing staan in het oefenveld', () => {
       ),
     ]);
     expect(attr(turtle[0].children[1], 'code')).toBe(antwoord);
+  });
+
+  it('in play is de oplossing zelf een speeltuin: zijn code wordt het codeblok', () => {
+    // Een opdracht met een eigen veld en een oplossing met een tweede veld:
+    // twee speeltuinen op één scherm, en dat paste op geen van de twintig
+    // schermen. De code van de oplossing staat nu naast de code van de
+    // leerling, en het veld speelt hem af.
+    const speeltuin = (start: string): Knoop => ({
+      type: 'mdxJsxFlowElement',
+      name: 'PygbagRunner',
+      attributes: [
+        {
+          type: 'mdxJsxAttribute',
+          name: 'code',
+          value: { type: 'mdxJsxAttributeValueExpression', value: `\`${start}\`` },
+        },
+      ],
+      children: [],
+    });
+    const oplossing = "import play\n\nplay.new_circle(color='red')";
+    const uit = hulpInVeld([
+      alinea('Maak de cirkel rood.'),
+      speeltuin('import play\n\n# SCHRIJF HIER JE CODE'),
+      blok('Klik hier voor een tip.', alinea('Gebruik color.')),
+      blok('Klik hier voor de oplossing.', speeltuin(oplossing), alinea('Een rode cirkel.')),
+    ]);
+    expect(namen(uit)).toEqual(['paragraph', 'LesVeld']);
+    const [, , hulp] = uit[1].children;
+    expect(attr(hulp, 'code')).toBe(oplossing);
+    expect(namen(hulp.children)).toEqual(['code', 'paragraph']);
+    expect(hulp.children[0]).toMatchObject({ lang: 'python', value: oplossing });
+    expect(attr(hulp, 'tekens')).toBe('28');
+
+    // Met twee speeltuinen in de oplossing (deelvraag a en b) blijft het een
+    // uitklapblok: welke moet het veld afspelen?
+    const twee = hulpInVeld([
+      speeltuin('import play'),
+      blok('Klik hier voor de oplossing.', speeltuin(oplossing), speeltuin(oplossing)),
+    ]);
+    expect(namen(twee)).toEqual(['PygbagRunner', 'details']);
+    // En bij een ander veld verandert er niets: een oplossing met alleen een
+    // oefenveld erin blijft daar een uitklapblok.
+    const python = hulpInVeld([veld(), blok('Klik hier voor de oplossing.', veld(antwoord))]);
+    expect(namen(python)).toEqual(['CodeExercise', 'details']);
   });
 
   it('een oplossing met een ander oefenveld blijft een uitklapblok', () => {

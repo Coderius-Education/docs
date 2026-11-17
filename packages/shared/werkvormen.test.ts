@@ -305,6 +305,37 @@ describe('de werkvormen van een les (plugins/werkvormen.js)', () => {
     expect(werkvormenVanLes(zonder, parse)).not.toContain('voorspellen');
   });
 
+  it('telt een genummerde opdracht en de fouten ook als ze een stap zijn', async () => {
+    // Play: een opdracht staat als stap in het tabblad van zijn onderwerp
+    // ("Kopiëren › Opdracht 3.4.a"), en de fouten als stap in de uitleg. Het
+    // tabblad heeft het icoon van uitleg, en de handleiding noemde in zo'n
+    // les geen opdracht en geen fouten.
+    const parse = await mdxParser();
+    const les = [
+      '# 3.4 Meer acties',
+      '## Kopiëren',
+      '### Een vorm kopiëren',
+      'Met clone maak je een kopie.',
+      '```python\nkopie = cirkel.clone()\n```',
+      '### Opdracht 3.4.a: Kloonleger',
+      'Maak drie kopieën.',
+      '### Er gaat iets mis?',
+      'De kopie staat op het origineel.',
+      '## Verbergen',
+      '### Een vorm verbergen',
+      'Met hide verdwijnt een vorm.',
+      '### Onderzoek de volgorde',
+      'Draai de regels om.',
+    ].join('\n\n');
+    const vormen = werkvormenVanLes(les, parse) ?? [];
+    expect(vormen).toContain('aanpassen');
+    expect(vormen).toContain('fouten');
+    // Alleen wat zelf een onderdeel van de les is: een stap die toevallig
+    // met een woord uit de lijst begint, blijft uitleg.
+    expect(vormen).not.toContain('onderzoeken');
+    expect(vormen.filter((v: string) => v === 'uitleg')).toHaveLength(2);
+  });
+
   it('leest een info-blok als blok, zoals de build', async () => {
     // Zonder remark-directive is een `:::info` voor de parser een rij
     // alinea's. De build maakt van uitleg met alleen zo'n blok geen tabblad

@@ -4,13 +4,13 @@ sidebar_position: 9
 
 # 10.9 Pymunk: een vloer toevoegen
 
-:::warning[Online speeltuin]
-De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](site:play/docs/installatie).
-:::
-
 In de vorige les viel de bal naar beneden en verdween van het scherm. Met een vloer eronder kan hij stuiteren.
 
 ## Een static body
+
+:::warning[Online speeltuin]
+De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-ce-programma schrijft zijn eigen game-loop, en die is in de browser niet meer te stoppen. Draai ze op je eigen computer, in Thonny of VS Code — zie [installatie](site:play/docs/installatie).
+:::
 
 Een vloer is een vorm die **niet beweegt**. In pymunk maak je die met een **static body**:
 
@@ -95,7 +95,7 @@ De bal stuitert nu op de vloer.
 
 ## Opdracht 10.9.a: Elasticity uitproberen
 
-Verander de `elasticity` van de bal en de vloer. Probeer:
+Verander in het programma uit de stap Het volledige programma de `elasticity` van de bal en de vloer. Probeer:
 1. `elasticity = 1.0` op beide. Wat gebeurt er?
 2. `elasticity = 0.0` op beide. Wat gebeurt er?
 3. `elasticity = 1.0` op de bal en `0.0` op de vloer. Wat gebeurt er?

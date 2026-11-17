@@ -25,6 +25,9 @@ const PRIMM = {
   Make: 'maken',
 };
 
+/** Een stap die zelf een onderdeel van de les is: een genummerde opdracht of de fouten. */
+const STAP_MET_VORM = /^(Opdracht \d+\.\d+\.[a-z]\b|Er gaat iets mis\??$)/;
+
 /**
  * De MDX-parser van Docusaurus zelf. Hij is geen eigen dependency van dit
  * package; we vinden hem langs de weg waarlangs de build hem ook laadt
@@ -102,6 +105,14 @@ function werkvormenVanLes(bron, parse, opties = {}) {
       const titel = node.attributes?.find((a) => a.name === 'titel')?.value ?? '';
       const soort = /^Opdracht \d+: (Predict|Run|Investigate|Modify|Make)\b/.exec(titel)?.[1];
       if (soort) uit.push(PRIMM[soort]);
+      // In play staat een opdracht als stap in het tabblad van zijn
+      // onderwerp ("Kopiëren › Opdracht 3.4.a"), en een fout als stap in de
+      // uitleg ("Er gaat iets mis?"). Het tabblad heeft het icoon van uitleg;
+      // voor de docent doet de leerling daar een opdracht.
+      else if (STAP_MET_VORM.test(titel)) {
+        const vorm = werkvormenVan([titel.replace(/\?$/, '')])[0];
+        if (vorm && vorm !== 'uitleg') uit.push(vorm === 'maken' ? 'aanpassen' : vorm);
+      }
     }
     for (const kind of node.children ?? []) stappen(kind, uit);
     return uit;

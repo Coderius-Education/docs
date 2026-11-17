@@ -10,10 +10,17 @@ De voorbeelden in dit hoofdstuk draaien niet in de online speeltuin. Een pygame-
 
 In pygame-ce teken je vormen met `pygame.draw`. Elke vorm heeft een **scherm**, een **kleur** en een **positie** nodig.
 
+:::info
+Let op: in pygame-ce begint **(0, 0) linksboven**, niet in het midden zoals bij coderius-play.
+De y-as gaat **naar beneden** in plaats van naar boven.
+:::
+
 ## Een cirkel tekenen
 
+<CodeUitleg>
+
 {/* draaien: compleet programma, alleen zonder speeltuin */}
-```python
+```python showLineNumbers
 import pygame
 
 pygame.init()
@@ -36,18 +43,18 @@ while actief:
 pygame.quit()
 ```
 
-```python
-pygame.draw.circle(scherm, (255, 0, 0), (400, 300), 50)
-```
+<Regel n={16}>
+
+Tekent de cirkel. Tussen de haakjes staat:
+
 - `scherm` - waar je tekent
 - `(255, 0, 0)` - de kleur (rood)
 - `(400, 300)` - het middelpunt (x, y)
 - `50` - de straal
 
-:::info
-Let op: in pygame-ce begint **(0, 0) linksboven**, niet in het midden zoals bij coderius-play.
-De y-as gaat **naar beneden** in plaats van naar boven.
-:::
+</Regel>
+
+</CodeUitleg>
 
 ## Een rechthoek tekenen
 

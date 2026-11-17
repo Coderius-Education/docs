@@ -12,8 +12,12 @@ In coderius-play kon je een vorm laten bewegen met `start_physics()`. In pygame-
 
 ## Een cirkel besturen met toetsen
 
+Nieuw in het programma zijn de klok en het uitlezen van de toetsen:
+
+<CodeUitleg>
+
 {/* draaien: compleet programma, alleen zonder speeltuin */}
-```python
+```python showLineNumbers
 import pygame
 
 pygame.init()
@@ -52,32 +56,16 @@ while actief:
 pygame.quit()
 ```
 
-Wat is er nieuw?
+<Regel n={6}>Een klok die bijhoudt hoe snel het spel draait.</Regel>
+<Regel n={19}>Geeft een lijst van alle toetsen. Als een toets ingedrukt is, is de waarde `True`.</Regel>
+<Regel n={21} tot={22}>Als de linker pijltoets ingedrukt is, wordt `x` kleiner (de cirkel beweegt naar links).</Regel>
+<Regel n={34}>Zorgt ervoor dat de game loop maximaal 60 keer per seconde draait. Zonder dit zou het spel veel te snel gaan.</Regel>
 
-```python
-clock = pygame.time.Clock()
-```
-Een klok die bijhoudt hoe snel het spel draait.
-
-```python
-toetsen = pygame.key.get_pressed()
-```
-Geeft een lijst van alle toetsen. Als een toets ingedrukt is, is de waarde `True`.
-
-```python
-if toetsen[pygame.K_LEFT]:
-    x = x - snelheid
-```
-Als de linker pijltoets ingedrukt is, wordt `x` kleiner (de cirkel beweegt naar links).
-
-```python
-clock.tick(60)
-```
-Zorgt ervoor dat de game loop maximaal 60 keer per seconde draait. Zonder dit zou het spel veel te snel gaan.
+</CodeUitleg>
 
 ## Opdracht 10.4.a: Snelheid aanpassen
 
-Verander het programma zodat:
+Verander het programma uit de uitleg zodat:
 1. De cirkel sneller beweegt als je `shift` ingedrukt houdt
 2. De normale snelheid is 5, de snelle snelheid is 15
 

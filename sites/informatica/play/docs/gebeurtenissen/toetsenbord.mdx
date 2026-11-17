@@ -4,6 +4,8 @@ sidebar_position: 1
 
 # 4.1 Gebeurtenissen
 
+### Een toets indrukken
+
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
@@ -22,7 +24,9 @@ blok = play.new_box()
 def spatie_ingedrukt():
     blok.x = blok.x + 10`} height={300} />
 
-Wat gebeurt hier allemaal?
+### De gebeurtenis en de functie
+
+Het voorbeeld met de spatiebalk bestaat uit twee delen: een gebeurtenis en een functie.
 
 ```python
 @play.when_key_pressed("space")
@@ -41,9 +45,17 @@ Deze functie wordt uitgevoerd zodra de gebeurtenis gebeurt, in dit geval het ind
 
 ### Onderzoek
 
-Probeer eens de volgende aanpassingen:
+Probeer in de code hieronder de volgende aanpassingen:
 - Wat gebeurt er als je `"space"` verandert in `"a"`?
 - Wat als je `blok.x = blok.x + 10` verandert in `blok.x = blok.x + 100`?
+
+<PygbagRunner code={`import play
+
+blok = play.new_box()
+
+@play.when_key_pressed("space")
+def spatie_ingedrukt():
+    blok.x = blok.x + 10`} height={300} />
 
 <details>
 <summary>Klik hier voor het antwoord.</summary>
@@ -54,7 +66,10 @@ Probeer eens de volgende aanpassingen:
 </details>
 
 ## Opdracht 4.1.a: Ook links en rechts
-a) Voer het onderstaand code fragment uit. Wat gebeurt er als je op pijltje omhoog drukt?
+
+### Omhoog en omlaag
+
+Voer het onderstaande codefragment uit. Wat gebeurt er als je op pijltje omhoog drukt?
 
 <PygbagRunner code={`import play
 
@@ -75,7 +90,21 @@ def omlaag():
 
 </details>
 
-b) Pas het aan zodat als je op pijltje naar rechts klikt, de rechthoek naar rechts gaat
+### Naar rechts en naar links
+
+Pas de code hieronder aan zodat de rechthoek naar rechts gaat als je op pijltje naar rechts drukt.
+
+<PygbagRunner code={`import play
+
+blok = play.new_box()
+
+@play.when_key_pressed("up")
+def omhoog():
+    blok.y = blok.y + 10
+
+@play.when_key_pressed('down')
+def omlaag():
+    blok.y = blok.y - 10`} height={300} />
 
 <details>
   <summary>Klik hier voor de oplossing.</summary>
@@ -98,7 +127,7 @@ def omlaag():
 
 </details>
 
-c) Voeg nu code toe zodat het reageert op pijltje naar links en het blok dan ook naar links beweegt
+Voeg daarna code toe zodat het ook reageert op pijltje naar links en het blok dan naar links beweegt.
 
 <details>
   <summary>Klik hier voor de oplossing.</summary>
@@ -127,6 +156,8 @@ def naar_rechts():
 
 ## Zolang een toets ingedrukt is
 
+### Ingedrukt houden
+
 Met `@play.when_key_pressed` reageer je op het moment dat een toets wordt ingedrukt — de actie gebeurt dan maar **één keer**. Maar soms wil je dat iets **continu** gebeurt zolang je een toets ingedrukt houdt, bijvoorbeeld voor vloeiende beweging. Hiervoor gebruik je `@play.while_key_pressed`:
 
 <PygbagRunner code={`import play
@@ -145,10 +176,6 @@ def beweeg(key):
         blok.x = blok.x + 2`} height={300} />
 
 Het verschil? Met `when_key_pressed` gebeurt de actie één keer bij het indrukken. Met `while_key_pressed` gebeurt de actie **elk frame** zolang je de toets inhoudt. Dat voelt veel vloeiender.
-
-:::info
-Je kunt ook `play.key_is_pressed()` in combinatie met `@play.repeat_forever` gebruiken voor hetzelfde effect. Maar `@play.while_key_pressed` is korter en duidelijker.
-:::
 
 ### Opdracht 4.1.b: Vloeiende besturing
 
@@ -180,6 +207,10 @@ def beweeg(key):
         cirkel.x = cirkel.x + 3`} height={300} />
 
 </details>
+
+:::info
+Je kunt ook `play.key_is_pressed()` in combinatie met `@play.repeat_forever` gebruiken voor hetzelfde effect. Maar `@play.while_key_pressed` is korter en duidelijker.
+:::
 
 ## Opdracht 4.1.c: Klikken
 

@@ -158,3 +158,165 @@
 .errLine {
   color: #f88;
 }
+
+/* In een les-tabblad (zie index.js). Op een smal scherm staat de code er, of
+   het spel: zoals buiten een tabblad. */
+.inTab {
+  margin: 0.75rem 0;
+}
+
+.inTab .spelKolom {
+  display: none;
+}
+
+.inTab .actions {
+  flex-wrap: wrap;
+}
+
+.inTab .actions button {
+  white-space: nowrap;
+}
+
+.inTab.loopt .spelKolom {
+  display: block;
+}
+
+.inTab.loopt .codeKolom {
+  display: none;
+}
+
+.wacht {
+  margin: 0;
+  padding: 1rem;
+  color: #9a9ab5;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* Een veld met een tip of oplossing: de rij Spel, Tip en Oplossing staat er
+   altijd, ook op een smal scherm voordat het spel draait. Daar staat de tip
+   of de oplossing onder de knoppen, zo hoog als hij is. */
+.inTab.metHulp .spelKolom {
+  display: block;
+}
+
+.inTab.metHulp:not(.loopt) .canvasArea,
+.inTab.metHulp:not(.loopt) .consolePanel,
+.wegVoorHulp {
+  display: none;
+}
+
+.hulpLaag .playButton {
+  margin-top: 0.75rem;
+}
+
+/* Vanaf de breedte waar de lessenlijst links staat: code links, spel rechts,
+   en de knoppen onder de code. De kolom met het spel bepaalt de hoogte, en
+   de code schuift in haar vak; anders rekt een lang programma het veld op tot
+   onder de rand van het scherm. */
+@media (min-width: 997px) {
+  .inTab .werkvlak {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .inTab .spelKolom,
+  .inTab.loopt .spelKolom {
+    display: block;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    border-left: 1px solid var(--ifm-color-emphasis-200);
+  }
+
+  .inTab .codeKolom,
+  .inTab.loopt .codeKolom {
+    position: relative;
+    display: block;
+    grid-column: 1;
+    grid-row: 1;
+    min-height: 0;
+  }
+
+  .inTab .codeBinnen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .inTab .codeSection {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    border-bottom: 0;
+  }
+
+  /* De letters van de code, als de langste regel anders niet past (maat.js). */
+  .inTab .codeSection > * {
+    font-size: calc(0.875rem * var(--play-code-schaal, 1));
+  }
+
+  .inTab .actions {
+    grid-column: 1;
+    grid-row: 2;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .inTab .header {
+    padding: 0.35rem 0.75rem;
+  }
+
+  .inTab .playButton,
+  .inTab .copyButton,
+  .inTab .stopButton {
+    padding: 0.3rem 0.9rem;
+  }
+
+  /* Het spel en zijn console houden hun plek als de tip of de oplossing
+     ervoor staat: het veld blijft even hoog, wat de leerling ook kiest. Het
+     spel is dan niet te zien, en het zwevende spelvenster (SharedRunner)
+     verbergt zich mee. */
+  .inTab .spelVlak {
+    position: relative;
+  }
+
+  .inTab.metHulp:not(.loopt) .canvasArea,
+  .inTab.metHulp:not(.loopt) .consolePanel {
+    display: flex;
+  }
+
+  .inTab.metHulp:not(.loopt) .consolePanel {
+    display: block;
+  }
+
+  .inTab .wegVoorHulp {
+    display: block;
+    visibility: hidden;
+  }
+
+  .inTab .hulpLaag {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+    background: var(--ifm-background-color);
+  }
+
+  /* De console is er al voordat het spel iets schrijft, op een vaste
+     hoogte: anders verspringt het veld bij de eerste print(). */
+  .inTab .consolePanel {
+    height: 3.4em;
+    max-height: none;
+  }
+}
+
+/* De code zoals hij er staat voordat de pagina in de browser draait. */
+.wachtCode {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  max-height: 400px;
+  overflow: auto;
+  border-radius: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  background: var(--ifm-background-color);
+}

@@ -4,6 +4,10 @@ sidebar_position: 5
 
 # 4.5 Een score bijhouden met `global`
 
+## Een veelgemaakte fout
+
+### Zonder global
+
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/basis/jij-als-variabele', label: 'Jij als variabele'},
@@ -14,9 +18,7 @@ sidebar_position: 5
 
 Hoe houd je een score bij in een spel? Als je een variabele, zoals `score`, wilt aanpassen *binnen* een functie, heb je het speciale sleutelwoord `global` nodig.
 
-## Een veelgemaakte fout
-
-Draai het programma en druk een paar keer op de spatiebalk:
+Draai het programma en druk een paar keer op de spatiebalk. Als het goed is verandert er **niets**.
 
 ```python
 import play
@@ -41,7 +43,9 @@ def spatie_ingedrukt():
     score = score + 1
     score_tekst.words = str(score)`} height={300} />
 
-Druk maar eens op spatie. Als het goed is verandert er **niets** en zie je het volgende in je console (de eerste regel kan er bij jou anders uitzien):
+### De foutmelding
+
+Druk je in het programma zonder `global` op de spatiebalk, dan zie je het volgende in je console (de eerste regel kan er bij jou anders uitzien):
 
 ```
 UnboundLocalError: cannot access local variable 'score' where it is not associated with a value
@@ -52,6 +56,8 @@ Daardoor kent hij de `score` van buiten de functie (score = 0) niet.
 Met `global score` geef je aan dat de score die buiten de functie is gemaakt, binnen de functie gebruikt en aangepast moet worden.
 
 ## De oplossing: `global`
+
+### Met global
 
 Met `global score` vertel je Python dat je de variabele van *buiten* de functie wilt gebruiken:
 
@@ -78,6 +84,10 @@ def spatie_ingedrukt():
 <Regel n={10}>Zet de nieuwe stand op het scherm. De tekst verandert niet vanzelf mee als `score` verandert; dat moet je zelf doen.</Regel>
 
 </CodeUitleg>
+
+### De score telt
+
+Draai het programma met `global` en druk een paar keer op de spatiebalk. De score gaat nu omhoog.
 
 <PygbagRunner code={`import play
 
@@ -148,7 +158,7 @@ def reset():
 
 ## Handige Python-kennis: `if`-statements
 
-Nu je een score kunt bijhouden, wil je misschien ook iets laten gebeuren op basis van die score. Daarvoor gebruik je een `if`-statement:
+Met een score wil je vaak ook iets laten gebeuren zodra hij een bepaalde waarde heeft. Daarvoor gebruik je een `if`-statement:
 
 ```python
 if score == 10:

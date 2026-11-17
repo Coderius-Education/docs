@@ -10,13 +10,19 @@ sidebar_position: 2
   ]}
 />
 
+Met **`play.new_video`** speel je een videobestand (`.mp4`) af in je spel — als intro, als uitleg of als filmpje tussen twee levels. Een video is een gewone sprite: hij heeft een `x`, een `y` en een grootte, net als een cirkel of afbeelding.
+
+## Een video klaarzetten
+
 :::warning[Online speeltuin]
 Video werkt **niet** in de online speeltuin. Je hebt hiervoor een lokale installatie nodig (Thonny of VS Code) met coderius-play versie 3.4 of nieuwer. Zie [installatie](site:play/docs/installatie).
 :::
 
-Met **`play.new_video`** speel je een videobestand (`.mp4`) af in je spel — als intro, als uitleg of als filmpje tussen twee levels. Een video is een gewone sprite: hij heeft een `x`, een `y` en een grootte, net als een cirkel of afbeelding.
+Zet een videobestand in dezelfde map als je Python-bestand.
 
-Zet een videobestand in dezelfde map als je Python-bestand en probeer:
+## De video afspelen
+
+Staat het bestand in de map, probeer dan:
 
 ```python
 import play
@@ -26,7 +32,7 @@ video = play.new_video("intro.mp4", autoplay=True)
 
 De video verschijnt in het midden van het scherm en begint meteen te spelen. Onderaan zie je afspeelknoppen: pauzeren, doorspoelen en het geluid dempen. Die krijg je standaard; wil je ze niet, geef dan `controls=False` mee.
 
-## De video besturen vanuit je code
+## De video besturen
 
 Alles wat de afspeelknoppen kunnen, kan je code ook:
 
@@ -40,7 +46,9 @@ video.restart()     # terug naar het begin en afspelen
 video.seek(10)      # spring naar seconde 10
 ```
 
-En er valt van alles uit te lezen of in te stellen:
+## Uitlezen en instellen
+
+Aan een video valt van alles uit te lezen of in te stellen:
 
 | Eigenschap | Betekenis |
 |:---:|:---|
@@ -52,7 +60,7 @@ En er valt van alles uit te lezen of in te stellen:
 | `video.speed` | afspeelsnelheid, `2.0` is dubbel zo snel |
 | `video.loop` | `True` = opnieuw beginnen bij het einde |
 
-## Groot of klein op het scherm
+## Groot of klein
 
 Omdat een video een sprite is, gelden de bekende eigenschappen:
 
@@ -62,7 +70,7 @@ video = play.new_video("intro.mp4", x=0, y=100, size=50, autoplay=True)
 
 `size=50` maakt hem half zo groot. Je kunt ook `width=` of `height=` meegeven; geef je er één, dan rekent play de andere zelf uit zodat het beeld niet uitrekt.
 
-## Er gaat iets mis?
+## Er gaat iets mis
 
 ```
 ImportError: Playing videos needs the 'av' package

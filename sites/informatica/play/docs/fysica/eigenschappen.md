@@ -14,10 +14,16 @@ Je hebt al geleerd hoe je vormen kunt laten bewegen en welke soorten fysica er z
 
 ## Bounciness (stuiteren)
 
+### Terugkaatsen
+
 `bounciness` bepaalt hoe hard een vorm terugkaatst na een botsing.
 
 - `1.0` = de vorm kaatst net zo hard terug als dat deze aankwam (dit is het maximum)
 - `0.0` = de vorm kaatst helemaal niet terug
+
+### Een stuiterende bal
+
+De bal in dit voorbeeld heeft `bounciness=1.0` en valt op een vloer:
 
 ```python
 import play
@@ -85,6 +91,8 @@ De groene bal (`bounciness=1.0`) stuitert het hoogst.
 
 ## Mass (massa)
 
+### Zwaar tegen licht
+
 `mass` bepaalt hoe "zwaar" een vorm is. Dit merk je bij botsingen: een zware vorm duwt een lichte vorm makkelijker weg.
 
 ```python
@@ -149,6 +157,8 @@ Bij gelijke massa kaatsen de ballen gelijk terug. Met ongelijke massa wordt de l
 
 ## Sensor
 
+### Wat een sensor doet
+
 In [2.1](site:play/docs/fysica/links_en_rechts#een-tekst-in-de-weg) stuiterde de
 bal terug tegen een tekst. Elke vorm houdt andere vormen tegen, ook als je er
 zelf geen `start_physics()` op aanroept: een vierkant, een tekst, en ook een
@@ -163,6 +173,10 @@ scorezone, een finish, of een tekst waar de bal overheen vliegt.
 
 Geef een sensor ook `can_move=False` mee. `start_physics()` zet anders de
 zwaartekracht aan, en dan valt je zone van het scherm.
+
+### Een zone als sensor
+
+De groene zone in dit programma is een sensor. Raakt de bal hem, dan verschijnt er een tekst:
 
 <CodeUitleg>
 
@@ -213,6 +227,8 @@ Zet de melding op het scherm.
 </Regel>
 
 </CodeUitleg>
+
+### De zone uitproberen
 
 <PygbagRunner code={`import play
 

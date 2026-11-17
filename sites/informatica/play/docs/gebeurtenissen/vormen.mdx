@@ -23,9 +23,10 @@ Voor meer voorbeelden kun je altijd de [cheatsheet](site:play/docs/cheatsheet) r
 
 ## Opdracht 4.2.a: Reageren op een botsing
 
-a) de basis
+### De bal en het batje
+
 - Maak eerst zelf een blauwe bal, met als naam van de variabele `bal`.
-- Maak daarna een batje met de naam `batje` en plaatst deze aan de rechterkant van het scherm.
+- Maak daarna een batje met de naam `batje` en plaats het aan de rechterkant van het scherm.
 
 <details>
 <summary>Klik hier voor de oplossing.</summary>
@@ -37,7 +38,7 @@ batje = play.new_box(x=300)`} height={300} />
 
 </details>
 
-b) Probeer nu het volgende:
+Laat ze daarna botsen:
 - Laat de bal automatisch naar rechts bewegen
 - Zorg dat de bal niet naar beneden valt
 - Pas het batje aan zodat die ook niet valt en niet kan bewegen.
@@ -62,8 +63,9 @@ batje = play.new_box(x=300)
 ```
 </details>
 
-c) reageren op de botsing
-Voeg nu het volgende codefragment aan je code toe:
+### De botsing opmerken
+
+Voeg het volgende codefragment aan je code met de bal en het batje toe:
 
 ```python
 text = play.new_text('batje is niet aangeraakt', y=200, font_size=50)
@@ -73,9 +75,13 @@ def weggekaatst():
     text.words = 'bal is weggekaatst van batje'
 ```
 
-### De event-decorator
+Start je programma en kijk wat er met de tekst gebeurt als de bal tegen het batje botst. Wat de regel met de `@` doet, lees je in het tabblad De event-decorator.
 
-Wat is die regel met de `@` ervoor?
+## De event-decorator
+
+### De algemene vorm
+
+In opdracht 4.2.a heb je een regel met een `@` ervoor aan je code toegevoegd. Wat is dat voor regel?
 
 De `@...` regel heet een **event-decorator**. Deze laat de functie die er direct onder staat één keer afgaan als de specifieke gebeurtenis plaatsvindt.
 
@@ -86,7 +92,10 @@ def doe_iets():
     # reactie op gebeurtenis
 ```
 
-In ons voorbeeld:
+### In het voorbeeld
+
+In het codefragment uit opdracht 4.2.a:
+
 ```python
 @bal.when_stopped_touching(batje)
 def weggekaatst():
@@ -102,6 +111,8 @@ Let op:
 Als onze bal dus botst tegen ons batje en weer terugkaatst, vindt deze gebeurtenis plaats.
 
 ## Een vorm raakt een muur
+
+### De rand van het scherm
 
 Niet alleen botsingen tussen vormen kun je detecteren — ook het raken van de **rand van het scherm**. Daarvoor gebruik je `@vorm.when_touching_wall`.
 
@@ -137,9 +148,22 @@ De bal wordt rood bij de linkermuur en groen bij de rechtermuur. Boven- en onder
 
 ### Opdracht 4.2.b: Tel hoe vaak de bal stuitert
 
-Pas de code hierboven aan zodat:
+Pas de code hieronder aan zodat:
 1. Een tekst op het scherm bijhoudt hoe vaak de bal de **bovenmuur** raakt.
 2. Andere muren niet meetellen.
+
+<PygbagRunner code={`import play
+
+bal = play.new_circle(color='blue', radius=30)
+bal.start_physics(obeys_gravity=False, x_speed=15, y_speed=8)
+
+@bal.when_touching_wall(wall=play.WallSide.LEFT)
+def raakt_linker_muur():
+    bal.color = 'red'
+
+@bal.when_touching_wall(wall=play.WallSide.RIGHT)
+def raakt_rechter_muur():
+    bal.color = 'green'`} height={300} />
 
 <details>
 <summary>Klik hier voor een tip.</summary>

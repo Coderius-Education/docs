@@ -21,7 +21,10 @@ bal = play.new_circle(color='black')
 bal.start_physics(obeys_gravity=False, x_speed=10)`} height={300} />
 
 ## Wachten met time.sleep
-We gaan nu proberen om de bal tijdelijk sneller te laten bewegen bij een muisklik.
+
+### De bal versnellen
+
+De bal moet bij een muisklik tijdelijk sneller bewegen.
 Je meest logische gedachte is misschien om **time.sleep** te gebruiken:
 
 <PygbagRunner code={`import play
@@ -38,6 +41,8 @@ def tijdelijk_sneller():
 
 Gaat de bal sneller bewegen? Wat gebeurt er eigenlijk?
 
+### Wat de code doet
+
 ```python
 @play.when_mouse_clicked
 def tijdelijk_sneller():
@@ -53,7 +58,19 @@ Het probleem is dat **time.sleep** het hele spel op pauze zet. Dat werkt dus nie
 
 ### Opdracht 5.1.a: Zelf ervaren
 
-Voer de code met `time.sleep()` hierboven uit. Klik met je muis in het scherm.
+Voer de code met `time.sleep()` uit. Klik met je muis in het scherm.
+
+<PygbagRunner code={`import play
+import time
+
+bal = play.new_circle(color='black')
+bal.start_physics(obeys_gravity=False, x_speed=10)
+
+@play.when_mouse_clicked
+def tijdelijk_sneller():
+    bal.physics.x_speed = 1000
+    time.sleep(1)
+    bal.physics.x_speed = 10`} height={300} />
 
 Wat merk je op?
 

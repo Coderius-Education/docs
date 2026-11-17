@@ -732,6 +732,7 @@ describe('cursussen met tabbladen', () => {
         'fullstack',
         'godot',
         'linux',
+        'play',
         'python',
         'robotica',
         'web',

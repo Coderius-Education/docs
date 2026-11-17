@@ -20,10 +20,9 @@ Thonny 5 werkt op Windows 10 en 11, en heeft Python al ingebouwd. Python apart i
 
 ## Stap 2: coderius-play installeren
 
-Klik bovenaan op `Tools` en daarna op `Open system shell`
-
 ![system shell](@site/static/img/thonny_system_shell.png)
 
+Klik bovenaan op `Tools` en daarna op `Open system shell`
 
 Kopieer het volgende commando in het zwarte scherm dat zich net geopend heeft:
 
@@ -37,22 +36,21 @@ Mocht je meldingen krijgen zoals `Toegang geweigerd` kan het helpen om `--user` 
 pip install --upgrade --user coderius-play
 ```
 Je gaat een hele lap tekst zien verschijnen. Dat is ok, want de software wordt nu geïnstalleerd.
-
 Als je geen tekst meer ziet verschijnen, is waarschijnlijk de installatie gelukt.
-We kunnen dit controleren door eerst het zwarte venter weg te klikken (klik op kruisje rechtsboven) en terug te gaan naar Thonny.
 
-Kopieer de onderstaande code in je editor:
+## Stap 3: Testen of het gelukt is
+
+Klik eerst het zwarte venster weg (klik op kruisje rechtsboven) en ga terug naar Thonny. Kopieer de onderstaande code in je editor:
+
 ```python
 import play
 
 play.new_circle()
 ```
 
-Klik op de groene knop (`Run current script`) om de code te draaien
-
 ![run](@site/static/img/thonny_run_current_script.png)
 
-Als er een zwarte bal verschijnt, dan is de installatie gelukt.
+Klik op de groene knop (`Run current script`) om de code te draaien.
 
-## Stap 3: En beginnen maar
+Als er een zwarte bal verschijnt, dan is de installatie gelukt.
 Je kan nu beginnen [met het lesmateriaal](site:play/docs/vormen/je_eerste_programma).

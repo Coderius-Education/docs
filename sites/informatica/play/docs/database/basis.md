@@ -23,9 +23,7 @@ database = play.new_database()`} height={300} />
 
 In dezelfde map als je Python bestand verschijnt nu het bestand **database.json**. Hierin worden je gegevens opgeslagen.
 
-:::note[In de speeltuin]
-Draai je dit hierboven in de browser, dan bestaat `database.json` alleen daar: je vindt het bestand niet op je computer terug en het is weg zodra je de pagina sluit. Op je eigen computer blijft het gewoon staan, naast je Python-bestand.
-:::
+**In de speeltuin:** draai je dit hierboven in de browser, dan bestaat `database.json` alleen daar: je vindt het bestand niet op je computer terug en het is weg zodra je de pagina sluit. Op je eigen computer blijft het gewoon staan, naast je Python-bestand.
 
 ## Gegevens opslaan met set_data
 
@@ -85,7 +83,7 @@ mijn_punten = database.get_data('punten', 0)
 
 Als `'punten'` nog niet in de database staat, krijg je nu `0` terug in plaats van `None`. Dit is handig bij de eerste keer dat je programma start, wanneer de database nog leeg is.
 
-### Er gaat iets mis?
+## Er gaat iets mis
 
 Een veelgemaakte fout is `get_data` aanroepen zonder default waarde wanneer de sleutel nog niet bestaat:
 
