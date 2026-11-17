@@ -184,6 +184,12 @@
   display: block;
 }
 
+.bewaart {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+}
+
 .wacht {
   margin: 0;
   padding: 1rem;

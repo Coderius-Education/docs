@@ -5,6 +5,9 @@ import {
   useInLesTab,
   useLesHulp,
 } from '@coderius/shared/components/LesTabs/paneel';
+import { merkVeld } from '@coderius/shared/components/LesTabs/pasHoogte';
+import { bevestig } from '@coderius/shared/dialoog';
+import { useOpslag } from '@coderius/shared/oefenveld/useOpslag';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { useCallback, useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import CodeEditor from '../CodeRunner/CodeEditor';
@@ -19,6 +22,7 @@ import {
   veldGrenzen,
   veldInScherm,
 } from './maat';
+import { opslag } from './opslag';
 import styles from './styles.module.css';
 
 let nextOwnerId = 1;
@@ -67,6 +71,24 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
   // het spel (zie hulpInVeld in packages/shared/plugins/les-tabs.js): de
   // knoppen Spel, Tip en Oplossing kiezen wat er naast de code staat.
   const hulp = useLesHulp();
+  // De code van de leerling blijft bewaard in deze browser, zoals in de
+  // oefenvelden van web en python. Eerst was hij weg bij herladen en bij de
+  // volgende les; nu elke opdracht een eigen veld heeft, is dat het werk van
+  // een hele les.
+  const huidig = useMemo(() => ({ code: editableCode }), [editableCode]);
+  const bewaard = useOpslag({
+    opslag: canRunInBrowser ? opslag : null,
+    start: { code: String(code ?? '') },
+    huidig,
+    containerRef: veldRef,
+    onHerstel: (werk) => setEditableCode(werk.code),
+  });
+  const nietBewaard = bewaard.stand === 'vol' || bewaard.stand === 'geweigerd';
+  const overOpslag = !nietBewaard
+    ? 'Je code blijft bewaard in deze browser.'
+    : bewaard.stand === 'vol'
+      ? 'Niet bewaard: de opslag van je browser is vol. Kopieer je code als je hem wilt houden.'
+      : 'Niet bewaard: deze browser slaat hier niets op (privévenster?). Kopieer je code als je hem wilt houden.';
   const [weergave, setWeergave] = useState('uitvoer');
   const weergaveRef = useRef(weergave);
   weergaveRef.current = weergave;
@@ -99,8 +121,7 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
       const velden = Array.from(stap.querySelectorAll('[data-play-veld]')).filter(teZien);
       // Het paneel met een veld dat zichzelf passend maakt: de vrije ruimte
       // is van het veld, niet van een codevak ernaast (speling.ts in LesTabs).
-      paneel.setAttribute('data-heeft-veld', '');
-      veld.setAttribute('data-les-veld', '');
+      merkVeld(veld, paneel);
       // Een open tip of oplossing die te lang is, schuift in een eigen vak
       // (openBlokInVak in LesTabs). Wat daar buiten beeld staat, telt mee:
       // de uitkomst mag niet veranderen door wat dat vak al heeft gedaan.
@@ -186,6 +207,18 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
         })
         .catch(() => {});
     }
+  }
+
+  // Terug naar de startcode. Dat gooit ook weg wat er bewaard is, en dat komt
+  // niet terug: dan eerst vragen.
+  async function handleReset() {
+    const zeker = await bevestig(
+      'Je code in dit veld gaat verloren, ook de versie die in deze browser bewaard is.',
+      { titel: 'Terug naar de startcode?', bevestigLabel: 'Reset', gevaarlijk: true },
+    );
+    if (!zeker) return;
+    bewaard.wis();
+    setEditableCode(code);
   }
 
   /** Speelt code af in het vak van dit veld: die van de leerling, of de oplossing. */
@@ -305,7 +338,14 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
   );
   const editor = (
     <div className={styles.codeSection}>
-      <CodeEditor value={editableCode} onChange={setEditableCode} height="auto" />
+      {/* Tot de bewaarde code er is, valt er niet te typen: wat de leerling
+          dan typte, zou verdwijnen op het moment dat zijn werk terugkomt. */}
+      <CodeEditor
+        value={editableCode}
+        onChange={setEditableCode}
+        readOnly={!bewaard.geladen}
+        height="auto"
+      />
     </div>
   );
   const acties = (
@@ -323,6 +363,12 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
       <button type="button" onClick={handleCopy} className={styles.copyButton}>
         {copied ? '✓ Gekopieerd' : 'Kopieer code'}
       </button>
+      {/* Alleen als er iets terug te zetten valt: de rij blijft kort. */}
+      {editableCode !== code && (
+        <button type="button" onClick={handleReset} className={styles.copyButton}>
+          Reset
+        </button>
+      )}
     </div>
   );
   const console_ = (
@@ -364,6 +410,7 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
       <div
         ref={veldRef}
         data-play-veld=""
+        data-zaad={bewaard.zaad || undefined}
         className={`${styles.runner} ${styles.inTab}${isRunning ? ` ${styles.loopt}` : ''}${hulp ? ` ${styles.metHulp}` : ''}`}
         style={{ '--play-code-schaal': kolomMaat.schaal }}
       >
@@ -386,6 +433,8 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
                   {!isRunning && canRunInBrowser && (
                     <p className={styles.wacht}>
                       Klik op Speel in browser. Het spel verschijnt hier.
+                      {/* Wat nodig is om het veld te gebruiken, zegt het veld zelf. */}
+                      <span className={styles.bewaart}>{overOpslag}</span>
                     </p>
                   )}
                 </div>
@@ -423,7 +472,7 @@ function PygbagRunnerInner({ code, title, width, height, mode }) {
   }
 
   return (
-    <div className={styles.runner}>
+    <div ref={veldRef} className={styles.runner} data-zaad={bewaard.zaad || undefined}>
       {kop}
       {isRunning ? (
         <>

@@ -1436,11 +1436,12 @@ verandert.
 
 ## Oefenvelden bewaren hun code
 
-Het oefenveld van web (`CodeEditor`) en dat van python (`CodeExercise`)
-bewaren de code van de leerling in de IndexedDB van zijn browser. De opslag
+Het oefenveld van web (`CodeEditor`), dat van python (`CodeExercise`) en
+de speeltuin van play (`PygbagRunner`, sinds elke opdracht daar een eigen
+veld heeft) bewaren de code van de leerling in de IndexedDB van zijn browser. De opslag
 en de hook staan in `packages/shared/oefenveld` (`maakOpslag`, `useOpslag`);
 een veld zegt welke site het is en uit welke delen zijn code bestaat (web:
-html, css en js; python: code). Elke site heeft een eigen database
+html, css en js; python en play: code). Elke site heeft een eigen database
 (`coderius:<site>:oefenvelden`, store `velden`), en een veld vindt zijn werk
 met het pad van de les, de vingerafdruk van zijn startcode (het zaad) en het
 hoeveelste veld met die startcode het is. Een andere startcode is dus een

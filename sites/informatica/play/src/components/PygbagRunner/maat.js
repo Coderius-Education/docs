@@ -1,5 +1,7 @@
-// De maten van het spel in een les-tabblad (zie index.js). Los van React,
+// De maten van het spel in een les-tabblad (zie index.jsx). Los van React,
 // zodat een test ze kan narekenen.
+
+import { MARGE, pasHoogte } from '@coderius/shared/components/LesTabs/pasHoogte';
 
 /** Het venster van play is 800 bij 600. */
 export const VERHOUDING = 0.75;
@@ -59,9 +61,6 @@ export function codeKolom(tekens, breedte) {
   return { deel: CODE_MAX, schaal: Math.max(KLEINSTE_LETTER, Math.floor(schaal * 100) / 100) };
 }
 
-/** Wat er onder het paneel vrij blijft (MARGE in LesTabs/pasHoogte.ts). */
-const MARGE = 12;
-
 /**
  * De hoogte van het spel in een open oplossing: wat er op het scherm over is
  * als de rest van het paneel staat, tussen een speelbaar spel en wat de les
@@ -78,8 +77,8 @@ export function spelInBlok({ scherm, zonderVeld, rond, eigen }) {
  * wat een veld in een open oplossing op dat scherm minstens nodig heeft.
  */
 export function veldInScherm({ scherm, zonderVeld, nodigVoorAnderen = 0, min, max }) {
-  const vrij = scherm - MARGE - zonderVeld - nodigVoorAnderen;
-  return Math.round(Math.max(min, Math.min(vrij, max)));
+  // Dezelfde rekenregel als elk ander oefenveld in een tabblad (pasHoogte).
+  return pasHoogte({ scherm, boven: zonderVeld + nodigVoorAnderen, onder: 0, max }, min);
 }
 
 /**

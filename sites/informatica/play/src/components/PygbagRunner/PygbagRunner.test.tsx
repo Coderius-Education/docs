@@ -29,6 +29,29 @@ vi.mock('../SharedRunner', () => ({
     gestopt.push(ownerId);
   },
 }));
+// De opslag van de velden (packages/shared/oefenveld), hier in het geheugen:
+// dezelfde vorm, zonder IndexedDB.
+type Werk = { code: string };
+const geheugen = new Map<string, Werk>();
+vi.mock('./opslag', () => ({
+  opslag: {
+    zaadVan: (c: Werk) => `zaad-${c.code.length}`,
+    gelijk: (a: Werk, b: Werk) => a.code === b.code,
+    laad: async (sleutel: string) => geheugen.get(sleutel),
+    bewaar: async (sleutel: string, code: Werk, start: Werk) => {
+      if (code.code === start.code) geheugen.delete(sleutel);
+      else geheugen.set(sleutel, code);
+    },
+    wis: async (sleutel: string) => {
+      geheugen.delete(sleutel);
+    },
+    zetNood: () => null,
+    leesNood: () => undefined,
+    wisNood: () => {},
+  },
+}));
+let zeker = true;
+vi.mock('@coderius/shared/dialoog', () => ({ bevestig: async () => zeker }));
 vi.mock('../CodeRunner/CodeEditor', () => ({
   default: ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
     <textarea aria-label="code" value={value} onChange={(e) => onChange(e.target.value)} />
@@ -45,6 +68,8 @@ const CODE = 'import play\n\nplay.new_circle()';
 beforeEach(() => {
   gestart.length = 0;
   gestopt.length = 0;
+  geheugen.clear();
+  zeker = true;
 });
 afterEach(cleanup);
 
@@ -137,6 +162,62 @@ describe('in een tabblad', () => {
     });
     expect(gestopt).toEqual([gestart[0].ownerId]);
     expect(knop(container, /Stop/)).toBeUndefined();
+  });
+});
+
+describe('de code van de leerling', () => {
+  // De speeltuin bewaarde niets: wie herlaadde of naar de volgende les ging,
+  // was zijn werk kwijt. Nu elke opdracht een eigen veld heeft, is dat het
+  // werk van een hele les. Of een schrijfactie bij herladen aankomt, ziet
+  // alleen een browser (zie de commit); hier staat de aansluiting op de
+  // gedeelde opslag vast.
+  const geladen = () => act(async () => {});
+  const typ = (container: HTMLElement, code: string) =>
+    fireEvent.change(container.querySelector('textarea') as HTMLTextAreaElement, {
+      target: { value: code },
+    });
+
+  it('blijft bewaard, en staat er weer als het veld opnieuw opent', async () => {
+    const eerste = render(<InTab />);
+    await geladen();
+    typ(eerste.container, `${CODE}\nplay.new_box()`);
+    // De les verlaten: wat nog in de wacht stond, gaat meteen weg.
+    eerste.unmount();
+    await geladen();
+    expect([...geheugen.values()]).toEqual([{ code: `${CODE}\nplay.new_box()` }]);
+
+    const tweede = render(<InTab />);
+    await geladen();
+    expect((tweede.container.querySelector('textarea') as HTMLTextAreaElement).value).toBe(
+      `${CODE}\nplay.new_box()`,
+    );
+  });
+
+  it('het veld draagt zijn zaad en zegt dat de code bewaard blijft', async () => {
+    // Aan `data-zaad` vindt het veld zijn werk terug, en wacht het meetscript
+    // op de editor (EDITOR_VAN_VELD in meet-selectie.js).
+    const { container } = render(<InTab />);
+    await geladen();
+    const veld = container.querySelector('[data-play-veld]') as HTMLElement;
+    expect(veld.getAttribute('data-zaad')).toBe(`zaad-${CODE.length}`);
+    expect(container.textContent).toContain('Je code blijft bewaard in deze browser.');
+  });
+
+  it('Reset staat er alleen als er iets terug te zetten valt, en vraagt het eerst', async () => {
+    const { container } = render(<InTab />);
+    await geladen();
+    expect(knop(container, /^Reset$/)).toBeUndefined();
+
+    typ(container, `${CODE}\nplay.new_box()`);
+    zeker = false;
+    await act(async () => fireEvent.click(knop(container, /^Reset$/) as HTMLButtonElement));
+    expect((container.querySelector('textarea') as HTMLTextAreaElement).value).toContain('new_box');
+
+    zeker = true;
+    await act(async () => fireEvent.click(knop(container, /^Reset$/) as HTMLButtonElement));
+    expect((container.querySelector('textarea') as HTMLTextAreaElement).value).toBe(CODE);
+    expect(knop(container, /^Reset$/)).toBeUndefined();
+    expect(geheugen.size).toBe(0);
   });
 });
 

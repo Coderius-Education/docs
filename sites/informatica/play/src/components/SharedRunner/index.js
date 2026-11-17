@@ -93,20 +93,39 @@ function handleMessage(e) {
 }
 
 /**
+ * De vakken om het spel die zelf schuiven (een open oplossing in een
+ * les-tabblad), en de navbar. Welke dat zijn, verandert zelden; het venster
+ * volgt zijn vak elk beeld. Daarom zoekt het ze niet elk beeld opnieuw op
+ * (dat was de stijl van elke voorouder van het vak, zestig keer per seconde
+ * naast het spel), maar bij het begin en daarna twee keer per seconde.
+ */
+let klemmen = { slot: null, vakken: [], navbar: null, beeld: 0 };
+const KLEMMEN_OM_DE = 30;
+function klemmenVan(slotEl) {
+  const vers = klemmen.slot !== slotEl || klemmen.beeld % KLEMMEN_OM_DE === 0;
+  if (vers) {
+    const vakken = [];
+    for (let el = slotEl.parentElement; el && el !== document.body; el = el.parentElement) {
+      const { overflowX, overflowY } = getComputedStyle(el);
+      if (overflowX !== 'visible' || overflowY !== 'visible') vakken.push(el);
+    }
+    klemmen = { slot: slotEl, vakken, navbar: document.querySelector('.navbar'), beeld: 0 };
+  }
+  klemmen.beeld += 1;
+  return klemmen;
+}
+
+/**
  * Waar het vak van het spel binnen moet blijven: elk vak eromheen dat zelf
- * schuift (een open oplossing in een les-tabblad), en het scherm onder de
- * navbar.
+ * schuift, en het scherm onder de navbar.
  */
 function vakkenOm(slotEl) {
-  const vakken = [];
-  for (let el = slotEl.parentElement; el && el !== document.body; el = el.parentElement) {
-    const { overflowX, overflowY } = getComputedStyle(el);
-    if (overflowX !== 'visible' || overflowY !== 'visible') vakken.push(el.getBoundingClientRect());
-  }
-  const navbar = document.querySelector('.navbar');
+  const { vakken, navbar } = klemmenVan(slotEl);
   const top = navbar ? Math.max(0, navbar.getBoundingClientRect().bottom) : 0;
-  vakken.push({ top, bottom: window.innerHeight, left: 0, right: window.innerWidth });
-  return vakken;
+  return [
+    ...vakken.map((el) => el.getBoundingClientRect()),
+    { top, bottom: window.innerHeight, left: 0, right: window.innerWidth },
+  ];
 }
 
 /**
@@ -154,12 +173,12 @@ function hideIframe() {
 // die opengaat, een veld dat zich in een les-tabblad aan het scherm aanpast,
 // een console die een regel krijgt. Alleen naar scroll en resize luisteren
 // liet het spel dan op de oude plek staan, over de tekst eronder heen.
-// Daarom kijkt het elk beeld waar zijn vak staat, zolang er een spel draait.
+// Daarom kijkt het elk beeld waar zijn vak staat, zolang er een spel draait;
+// scrollen en een andere maat van het venster ziet het daarmee ook.
 function startTracking(slotEl) {
   stopTracking();
+  klemmen = { slot: null, vakken: [], navbar: null, beeld: 0 };
   trackingHandler = () => positionOverSlot(slotEl);
-  window.addEventListener('scroll', trackingHandler, true);
-  window.addEventListener('resize', trackingHandler);
   const volg = () => {
     if (!trackingHandler) return;
     trackingHandler();
@@ -169,8 +188,6 @@ function startTracking(slotEl) {
 }
 function stopTracking() {
   if (!trackingHandler) return;
-  window.removeEventListener('scroll', trackingHandler, true);
-  window.removeEventListener('resize', trackingHandler);
   cancelAnimationFrame(trackingFrame);
   trackingHandler = null;
 }
