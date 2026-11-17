@@ -262,6 +262,10 @@ describe('comprimeren na elke site-build', () => {
       expect(start, naam).toBeGreaterThan(-1);
       // Dezelfde Chromium als het meetscript start.
       expect(regels[start], naam).toContain("channel: 'chromium'");
+      // En een lettertype voor de losse tekens uit de lessen (▶): zonder
+      // wordt zo'n teken een blokje van een andere breedte, en dan meet de
+      // job iets anders dan er op een schoolcomputer staat.
+      expect(regels[start], naam).toContain("fc-list ':charset=25b6'");
       expect(regels[start], naam).toMatch(/\|\|$/);
       expect(regels[start + 1], naam).toMatch(
         /^\s+timeout \d+ pnpm exec playwright install-deps chromium$/,

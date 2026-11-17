@@ -189,8 +189,10 @@ zeven cursussen):
 - **Een job met Chromium installeert alleen de root** (`map: .` van
   `node-pnpm`) en haalt Chromium zonder `--with-deps`: de bibliotheken staan
   op het image, en apt haalde er in dertig seconden alleen lettertypen bij
-  die de lessen niet gebruiken. Start Chromium niet, dan komen de pakketten
-  er alsnog bij (`ci-setup.test.ts`).
+  die de lessen niet gebruiken: de tekst komt uit de lettertypen van de
+  site, en de losse tekens daarbuiten (▶ ✓ →) dekt DejaVu Sans, dat op het
+  image staat. Start Chromium niet, of heeft het image geen lettertype met
+  ▶ meer, dan komen de pakketten er alsnog bij (`ci-setup.test.ts`).
 
 Lokaal, vier lessen tegelijk: een derde van algoritmes 399 → 143 seconden,
 python 735 → 243, robotica 324 → 186, play 199 → 120, godot 167 → 88, web
