@@ -9,10 +9,16 @@
 //   het in de code, zodat de leerling ziet welke pinnen bezet zijn;
 // - `code`: op de regel van de cursor, met de inspringing van die plek.
 //
-// De code volgt de lessen (zie CLAUDE.md van robotica): pinnen als naam,
-// de pinnen van DCMotors, het scherm en de TOF voluit, en dezelfde namen als
-// de onderdeelpagina's. leaphy-api.test.ts toetst elke bouwsteen tegen de
-// bibliotheek, en CI compileert en draait ze (src/lego-tests/schrijf.ts).
+// De code volgt de lessen (zie CLAUDE.md van robotica): pinnen als naam, de
+// pinnen van DCMotors, het scherm en de TOF voluit, en de namen van de
+// Lego-auto, of van de onderdeelpagina als de Lego-auto het onderdeel niet
+// heeft. Wie lescode in de editor heeft en een bouwsteen aanklikt, krijgt zo
+// geen tweede onderdeel op dezelfde pin. invoegen.test.ts eist dat elke opzet
+// letterlijk in een les staat; leaphy-api.test.ts toetst elke bouwsteen tegen
+// de bibliotheek, en CI compileert en draait ze (src/lego-tests/schrijf.ts).
+//
+// Een label zegt wat de bouwsteen doet ("Onthoud iets"), niet hoe het in
+// Python heet ("Variabele").
 
 export type Import = { uit: string; namen: string[] };
 
@@ -27,6 +33,11 @@ export type Bouwsteen = {
    * Zonder teken staat de cursor achter de code.
    */
   code: string;
+  /**
+   * Namen die de code zelf maakt en die per keer anders moeten heten: de
+   * teller van een lus. Bestaat `teller` al, dan wordt het `teller_2`.
+   */
+  namen?: string[];
   /** De onderdeelpagina met de uitleg en het aansluitschema. */
   les?: string;
 };
@@ -70,46 +81,59 @@ const BUZZER = {
   les: 'buzzer',
 };
 
+const LIJNSENSOR = {
+  imports: [{ uit: 'leaphymicropython.sensors.linesensor', namen: ['AnalogIR'] }],
+  les: 'ir-analoog',
+};
+
 export const GROEPEN: Groep[] = [
   {
     id: 'sensoren',
     label: 'Sensoren',
     bouwstenen: [
       {
-        id: 'lijn-analoog',
-        label: 'Lijnsensor (analoog)',
-        imports: [{ uit: 'leaphymicropython.sensors.linesensor', namen: ['AnalogIR'] }],
-        opzet: 'lijnsensor = AnalogIR("A0", 2500)',
-        code: 'kleur = lijnsensor.black_or_white()',
-        les: 'ir-analoog',
+        id: 'lijn-links',
+        label: 'Lijnsensor links',
+        ...LIJNSENSOR,
+        opzet: 'links = AnalogIR("A0", 2500)',
+        code: 'kleur_links = links.black_or_white()',
+      },
+      {
+        id: 'lijn-rechts',
+        label: 'Lijnsensor rechts',
+        ...LIJNSENSOR,
+        opzet: 'rechts = AnalogIR("A1", 2500)',
+        code: 'kleur_rechts = rechts.black_or_white()',
       },
       {
         id: 'lijn-digitaal',
         label: 'Lijnsensor (digitaal)',
         imports: [PIN],
-        opzet: 'ir_sensor = Pin("D14", Pin.IN)',
-        code: 'waarde = ir_sensor.value()',
+        opzet: 'sensor = Pin("D14", Pin.IN)',
+        code: 'waarde = sensor.value()',
         les: 'ir-digitaal',
       },
       {
-        id: 'afstand-ultrasoon',
-        label: 'Afstand (ultrasoon)',
-        imports: [{ uit: 'leaphymicropython.sensors.sonar', namen: ['read_distance'] }],
-        code: 'afstand = read_distance("D7", "D8")',
-        les: 'afstandssensor',
-      },
-      {
         id: 'afstand-tof',
-        label: 'Afstand (TOF)',
+        label: 'Afstand in mm (TOF)',
         imports: [{ uit: 'leaphymicropython.sensors.tof', namen: ['TimeOfFlight'] }],
+        // Kanaal 0 van de multiplexer, zoals op de Lego-auto. Zonder
+        // multiplexer slaat de bibliotheek het kanaal over.
         opzet: [
           'tof = TimeOfFlight(',
-          '    sda_gpio_pin="SDA",',
-          '    scl_gpio_pin="SCL",',
+          '    channel=0,',
+          '    sda_gpio_pin="SDA", scl_gpio_pin="SCL",',
           ')',
         ].join('\n'),
         code: 'afstand = tof.get_distance()',
         les: 'tof',
+      },
+      {
+        id: 'afstand-ultrasoon',
+        label: 'Afstand in cm (ultrasoon)',
+        imports: [{ uit: 'leaphymicropython.sensors.sonar', namen: ['read_distance'] }],
+        code: 'afstand_cm = read_distance("D7", "D8")',
+        les: 'afstandssensor',
       },
       {
         id: 'drukknop',
@@ -121,7 +145,7 @@ export const GROEPEN: Groep[] = [
       },
       {
         id: 'potmeter',
-        label: 'Potmeter',
+        label: 'Draaiknop (potmeter)',
         imports: [ADC],
         opzet: 'pot = ADC("A0")',
         code: 'stand = pot.read_u16()',
@@ -131,8 +155,8 @@ export const GROEPEN: Groep[] = [
         id: 'joystick',
         label: 'Joystick',
         imports: [ADC],
-        opzet: 'joystick_x = ADC("A2")\njoystick_y = ADC("A1")',
-        code: 'links_rechts = joystick_x.read_u16()\nvoor_achter = joystick_y.read_u16()',
+        opzet: 'x = ADC("A2")\ny = ADC("A1")',
+        code: 'links_rechts = x.read_u16()\nvoor_achter = y.read_u16()',
         les: 'joystick',
       },
     ],
@@ -155,7 +179,7 @@ export const GROEPEN: Groep[] = [
       },
       {
         id: 'motoren-stop',
-        label: 'Stop de motoren',
+        label: 'Stop met rijden',
         ...MOTOREN,
         code: 'motor_a.forward(0)\nmotor_b.forward(0)',
       },
@@ -170,10 +194,10 @@ export const GROEPEN: Groep[] = [
       { id: 'lampje-uit', label: 'Lampje uit', ...LAMPJE, code: 'lampje.off()' },
       {
         id: 'rgb-led',
-        label: 'RGB-led kleur',
+        label: 'RGB-led rood',
         imports: [{ uit: 'leaphymicropython.actuators.rgbled', namen: ['RGBLed'] }],
-        opzet: 'rgb_led = RGBLed("D10", "D9", "D6")',
-        code: 'rgb_led.set_color(255, 0, 0)',
+        opzet: 'led = RGBLed("D10", "D9", "D6")',
+        code: 'led.set_color(255, 0, 0)',
         les: 'rgb-led',
       },
       {
@@ -207,13 +231,14 @@ export const GROEPEN: Groep[] = [
         id: 'herhaal-keer',
         label: 'Herhaal 3 keer',
         code: 'teller = 0\nwhile teller < 3:\n    ⟦⟧\n    teller = teller + 1',
+        namen: ['teller'],
       },
-      { id: 'herhaal-als', label: 'Herhaal als', code: 'while ⟦voorwaarde⟧:\n    ' },
+      { id: 'herhaal-zolang', label: 'Herhaal zolang', code: 'while ⟦voorwaarde⟧:\n    ' },
       { id: 'als', label: 'Als', code: 'if ⟦voorwaarde⟧:\n    ' },
       { id: 'als-anders', label: 'Als, anders', code: 'if ⟦voorwaarde⟧:\n    \nelse:\n    ' },
       { id: 'wacht', label: 'Wacht', imports: [SLEEP], code: 'sleep(1)' },
-      { id: 'print', label: 'Print in de shell', code: 'print("Hallo")' },
-      { id: 'variabele', label: 'Variabele', code: 'teller = 0' },
+      { id: 'toon', label: 'Toon in de shell', code: 'print("Hallo")' },
+      { id: 'onthoud', label: 'Onthoud iets', code: '⟦naam⟧ = 0' },
     ],
   },
 ];

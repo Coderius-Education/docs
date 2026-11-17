@@ -162,7 +162,6 @@ const RUNNERS = {
       '{site}/src/pages/',
       '{site}/lego_auto/',
       '{site}/src/components/WebMicroEditor/bouwstenen.ts',
-      '{site}/src/components/WebMicroEditor/invoegen.ts',
     ],
     // Naast compileren draait elk blok met de echte leaphymicropython
     // (scripts/draai-leaphy-blokken.py); de commit staat in leaphy-api.json.
@@ -171,6 +170,11 @@ const RUNNERS = {
       '{site}/src/lego-tests/schrijf.ts',
       '{site}/src/lego-tests/extract.ts',
       '{site}/src/lego-tests/leaphy-api.json',
+      // invoegen.ts maakt van elke bouwsteen van de editor het programma dat
+      // CI draait (alsProgramma). In index.json staat bij een bouwsteen
+      // bouwstenen.ts als bron: met invoegen.ts onder `leest` startte de job
+      // wel, en koos hij daarna nul bouwstenen.
+      '{site}/src/components/WebMicroEditor/invoegen.ts',
       'scripts/draai-leaphy-blokken.py',
       'scripts/leaphy_nep/',
     ],

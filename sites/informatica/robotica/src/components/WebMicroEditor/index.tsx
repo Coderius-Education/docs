@@ -1,5 +1,3 @@
-import { acceptCompletion, completionStatus } from '@codemirror/autocomplete';
-import { indentMore } from '@codemirror/commands';
 import { python } from '@codemirror/lang-python';
 import { indentUnit } from '@codemirror/language';
 import { type Extension, Prec } from '@codemirror/state';
@@ -58,11 +56,11 @@ function useColorMode(): { colorMode: 'light' | 'dark' } {
 import { bevestig, vraag } from '@coderius/shared/dialoog';
 import { storageKey } from '@coderius/shared/opslag';
 import Palet from './Palet';
-import { type Bouwsteen, SLEEP_TYPE, bouwsteenMetId } from './bouwstenen';
+import type { Bouwsteen } from './bouwstenen';
 import { leesEditorHash } from './codeLink';
 import { friendlyError } from './errorMessages';
 import { BoardFS } from './filesystem';
-import { verschil, voegIn } from './invoegen';
+import type { Invoeging } from './invoegen';
 import {
   DEFAULT_LEAPHY_BRANCH,
   DEFAULT_LEAPHY_REPO,
@@ -70,6 +68,7 @@ import {
   type LeaphyMeta,
   installLeaphyLibrary,
 } from './leaphyInstaller';
+import { paletUitbreiding, sleepLos, sleepOver, sleepWeg, zetBouwsteen } from './paletEditor';
 import { MAX_REEKSEN, voegSample } from './plotter';
 import { type PythonFout, splitsFoutSegmenten, vindLaatsteFout } from './pythonErrors';
 import { SerialClient } from './serial';
@@ -165,61 +164,12 @@ function tekenPlot(canvas: HTMLCanvasElement, samples: number[][]): void {
   }
 }
 
-/**
- * Zet een bouwsteen uit het palet in de code: op `regel` (vanaf 0), of op de
- * regel van de cursor. Alleen het stuk dat verandert gaat naar de editor, in
- * één stap, zodat Ctrl+Z de hele bouwsteen weer weghaalt.
- */
-function zetBouwsteen(view: EditorView, bouwsteen: Bouwsteen, regel?: number): void {
-  const oud = view.state.doc.toString();
-  const op = regel ?? view.state.doc.lineAt(view.state.selection.main.head).number - 1;
-  const uit = voegIn(oud, op, bouwsteen);
-  const { van, tot, tekst } = verschil(oud, uit.doc);
-  view.dispatch({
-    changes: { from: van, to: tot, insert: tekst },
-    selection: { anchor: uit.van, head: uit.tot },
-    scrollIntoView: true,
-    userEvent: 'input.bouwsteen',
-  });
-  view.focus();
-}
-
-/** Een bouwsteen die uit het palet naar een regel gesleept wordt. */
-const sleepDoel = EditorView.domEventHandlers({
-  dragover(event) {
-    if (!event.dataTransfer?.types.includes(SLEEP_TYPE)) return false;
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
-    return true;
-  },
-  drop(event, view) {
-    const bouwsteen = bouwsteenMetId(event.dataTransfer?.getData(SLEEP_TYPE) ?? '');
-    if (!bouwsteen) return false;
-    event.preventDefault();
-    const plek = view.posAtCoords({ x: event.clientX, y: event.clientY }, false);
-    zetBouwsteen(view, bouwsteen, view.state.doc.lineAt(plek).number - 1);
-    return true;
-  },
-});
-
-const pythonTabExtensions = [
-  sleepDoel,
+// Tab en Enter staan bij het palet (paletEditor.ts): die springen naar het gat
+// van een bouwsteen, en anders springt Tab in.
+const pythonExtensions = [
   python(),
   indentUnit.of('    '),
   EditorView.contentAttributes.of({ 'data-indent-with-tab': 'true' }),
-  Prec.highest(
-    keymap.of([
-      {
-        key: 'Tab',
-        run: (view) => {
-          if (completionStatus(view.state) === 'active') {
-            return acceptCompletion(view);
-          }
-          return indentMore(view);
-        },
-      },
-    ]),
-  ),
 ];
 
 const LEAPHY_REPO_STORAGE_KEY = storageKey('robotica', 'webMicroEditor.leaphyRepo');
@@ -287,15 +237,23 @@ export default function WebMicroEditor(): React.JSX.Element {
     const bewaard = Number(localStorage.getItem(FONT_STORAGE_KEY));
     return bewaard >= 12 && bewaard <= 24 ? bewaard : 14;
   });
-  // Het palet met bouwstenen links van de code. Op een smal scherm staat het
-  // boven de code en begint het dicht; wie het open of dicht zet, houdt dat.
+  // Het palet met bouwstenen links van de code. Onder de 1100 pixels begint
+  // het dicht: op 1024 breed bleven er naast het palet 49 tekens code over, en
+  // op een telefoon staat het boven de code. Wie het open of dicht zet, houdt
+  // dat.
   const [paletOpen, setPaletOpen] = useState<boolean>(() => {
     if (typeof window === 'undefined') return true;
     const bewaard = localStorage.getItem(PALET_STORAGE_KEY);
     if (bewaard !== null) return bewaard === 'open';
-    return !window.matchMedia?.('(max-width: 900px)').matches;
+    return !window.matchMedia?.('(max-width: 1100px)').matches;
   });
   const viewRef = useRef<EditorView | null>(null);
+  // Een pin die al in het programma staat bij een ander onderdeel.
+  const [paletMelding, setPaletMelding] = useState<string | null>(null);
+  const paletExtensie = useMemo(
+    () => paletUitbreiding((uit: Invoeging) => setPaletMelding(uit.melding)),
+    [],
+  );
   const samplesRef = useRef<number[][]>([]);
   const lineBufRef = useRef<string>('');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -623,12 +581,12 @@ export default function WebMicroEditor(): React.JSX.Element {
     (fout?.bron === 'main.py' && currentFile === '/main.py');
 
   const editorExtensions = useMemo(() => {
-    const ext: Extension[] = [...pythonTabExtensions, sneltoetsen];
+    const ext: Extension[] = [...pythonExtensions, paletExtensie, sneltoetsen];
     if (foutZichtbaar && fout?.regel && foutRegelInEditor) {
       ext.push(foutRegelExtension(fout.regel, styles.foutRegel));
     }
     return ext;
-  }, [sneltoetsen, fout, foutZichtbaar, foutRegelInEditor]);
+  }, [paletExtensie, sneltoetsen, fout, foutZichtbaar, foutRegelInEditor]);
 
   const installLib = useCallback(async () => {
     const c = sessie.client;
@@ -813,7 +771,7 @@ export default function WebMicroEditor(): React.JSX.Element {
   }, [schrijf, setBusy, setIdle]);
 
   const kiesBouwsteen = useCallback((bouwsteen: Bouwsteen) => {
-    if (viewRef.current) zetBouwsteen(viewRef.current, bouwsteen);
+    if (viewRef.current) setPaletMelding(zetBouwsteen(viewRef.current, bouwsteen).melding);
   }, []);
 
   // Bouwstenen en Bestanden op board delen de kolom links van de code: wie
@@ -1211,6 +1169,20 @@ export default function WebMicroEditor(): React.JSX.Element {
         </div>
       )}
 
+      {paletMelding && (
+        <div className={styles.paletMelding}>
+          <output>{paletMelding}</output>
+          <button
+            type="button"
+            className={styles.fileDelete}
+            onClick={() => setPaletMelding(null)}
+            title="Sluiten"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       <div className={styles.workArea}>
         {files !== null && (
           <div className={styles.workPaneNarrow}>
@@ -1263,7 +1235,8 @@ export default function WebMicroEditor(): React.JSX.Element {
         {paletZichtbaar && (
           <div className={clsx(styles.workPaneNarrow, styles.workPanePalet)}>
             <div className={styles.fileLabel}>
-              <span>Klik of sleep een bouwsteen</span>
+              <span className={styles.alleenBreed}>Klik of sleep een bouwsteen</span>
+              <span className={styles.alleenSmal}>Tik op een bouwsteen</span>
             </div>
             <Palet onKies={kiesBouwsteen} />
           </div>
@@ -1282,7 +1255,25 @@ export default function WebMicroEditor(): React.JSX.Element {
             </span>
           </div>
 
-          <div className={styles.editorWrap} style={{ fontSize }}>
+          {/* Een bouwsteen die boven de regelnummers of de rand wordt
+              losgelaten: CodeMirror vangt alleen de tekst zelf op. */}
+          <div
+            className={styles.editorWrap}
+            style={{ fontSize }}
+            onDragOver={(e) => {
+              if (viewRef.current && !e.defaultPrevented) sleepOver(viewRef.current, e);
+            }}
+            onDragLeave={(e) => {
+              const naar = e.relatedTarget;
+              if (viewRef.current && !(naar instanceof Node && e.currentTarget.contains(naar)))
+                sleepWeg(viewRef.current);
+            }}
+            onDrop={(e) => {
+              if (!viewRef.current || e.defaultPrevented) return;
+              const uit = sleepLos(viewRef.current, e);
+              if (uit) setPaletMelding(uit.melding);
+            }}
+          >
             <CodeMirror
               value={code}
               onChange={(nieuw) => sessie.zet({ code: nieuw })}

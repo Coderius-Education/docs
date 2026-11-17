@@ -625,10 +625,11 @@
   line-height: 1.3;
 }
 
+/* Op een telefoon schuift de pagina al; een tweede schuifvak erin verborg
+   de koppen van de andere groepen. */
 @media (max-width: 900px) {
   .palet {
     height: auto;
-    max-height: 260px;
   }
 }
 
@@ -738,4 +739,34 @@
   .steenLes {
     padding: 9px;
   }
+}
+
+.alleenSmal {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .alleenBreed {
+    display: none;
+  }
+
+  .alleenSmal {
+    display: inline;
+  }
+}
+
+/* Een pin die al bezet is: geen fout, wel iets om te doen voor je verder
+   bouwt. */
+.paletMelding {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--ifm-color-warning-dark);
+  border-left-width: 4px;
+  border-radius: 8px;
+  background: var(--ifm-color-warning-contrast-background);
+  color: var(--ifm-color-warning-contrast-foreground);
+  font-size: 14px;
 }
