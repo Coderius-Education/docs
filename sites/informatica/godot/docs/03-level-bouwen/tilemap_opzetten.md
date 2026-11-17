@@ -11,7 +11,7 @@ Een tile-gebaseerd level is een rooster van kleine afbeeldingen (**tiles**) die 
 `TileMapLayer` is geïntroduceerd in **Godot 4.3**. In oudere versies heet de node `TileMap` en werkt de workflow iets anders.
 :::
 
-## Stap 1: Een `TileMapLayer` toevoegen \{#tilemaplayer}
+## Stap 1: TileMapLayer toevoegen \{#tilemaplayer}
 
 1. Open je scène `world.tscn`.
 2. Klik met rechts op de root-node (`Node2D`) → **Add Child Node**.
@@ -21,7 +21,9 @@ Een tile-gebaseerd level is een rooster van kleine afbeeldingen (**tiles**) die 
 
 De `TileMapLayer` staat met alle stappen ook in de [Nodes cheatsheet](site:godot/cheatsheet#level-wereld).
 
-## Stap 2: De TileSet instellen
+## Stap 2: TileSet en tekenen
+
+#### Stel de TileSet in
 
 Een `TileSet` is de verzameling afbeeldingen die je als tegels gebruikt — je palet, als het ware.
 
@@ -30,20 +32,15 @@ Een `TileSet` is de verzameling afbeeldingen die je als tegels gebruikt — je p
 3. Klik op `<empty>` — Godot maakt direct een nieuwe TileSet aan.
 4. Klik vervolgens *op* de nieuw aangemaakte TileSet om de instellingen open te klappen.
 5. Kijk helemaal onderin het Godot-scherm en klik op het tabblad **TileSet** (naast Uitvoer).
-6. Zoek in het FileSystem-paneel, in je `assets`-map, de afbeelding met de tegels: één plaatje waarop alle grond- en muurtegels in een raster naast en onder elkaar staan. Sleep dat rechtstreeks in het grote lege vak onderin het scherm. Staan er in `assets` alleen achtergronden, kopieer dan eerst de rest van het pack, zoals in [Bestanden downloaden](site:godot/docs/bestanden-downloaden#projectmap).
+6. Zoek in het FileSystem-paneel, in je `assets`-map, de afbeelding met de tegels: één plaatje waarop alle grond- en muurtegels in een raster naast en onder elkaar staan. Sleep dat rechtstreeks in het grote lege vak onderin het scherm.
 7. Godot vraagt of hij automatisch tiles moet aanmaken ("Automatically create tiles?"). Klik op **Yes**.
 
-## Stap 3: Je level tekenen
+#### Teken je level
 
-1. Klik onderin op het tabblad **TileMap** (naast TileSet).
-2. Rechts in dit paneel zie je je tegels.
-3. Klik bovenaan op de **teken-tool** (het potlood-icoontje).
-4. Selecteer een tegel (of sleep om meerdere tegels te selecteren).
-5. Klik in de viewport om je level te tekenen.
-
-:::tip
-Met de **rechtermuisknop** gum je een tegel weer weg.
-:::
+1. Klik onderin op het tabblad **TileMap** (naast TileSet). Rechts in dit paneel zie je je tegels.
+2. Klik bovenaan op de **teken-tool** (het potlood-icoontje).
+3. Selecteer een tegel (of sleep om meerdere tegels te selecteren).
+4. Klik in de viewport om je level te tekenen. Met de **rechtermuisknop** gum je een tegel weer weg.
 
 ## Voorspel: wat gebeurt er straks als je een karakter toevoegt?
 
@@ -90,7 +87,16 @@ Testen of de sprongen écht haalbaar zijn kan nog niet: daarvoor heb je het spri
 
 **Oorzaak:** Je sleept de afbeelding naar het verkeerde veld.
 
-**Oplossing:** Zorg dat je in Stap 2 echt onderin op het tabblad **TileSet** hebt geklikt voordat je sleept.
+**Oplossing:** Zorg dat je bij TileSet en tekenen echt onderin op het tabblad **TileSet** hebt geklikt voordat je sleept.
+
+</details>
+
+<details>
+<summary>Ik vind de afbeelding met de tegels niet in mijn assets-map</summary>
+
+**Oorzaak:** In je `assets`-map staan alleen de achtergronden. De rest van het pack is nog niet naar je project gekopieerd.
+
+**Oplossing:** Kopieer eerst de rest van het pack naar je `assets`-map, zoals in [Bestanden downloaden](site:godot/docs/bestanden-downloaden#projectmap).
 
 </details>
 

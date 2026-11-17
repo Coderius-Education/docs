@@ -33,7 +33,9 @@ Een scène in Godot is één "bouwsteen" van je game: een level, een speler, een
 
 Wij maken een **2D platformer**, dus we kiezen 2D. De hoofdnode van onze scène wordt daarom een `Node2D`.
 
-## Stap 1: Een 2D-scène aanmaken \{#node2d}
+## Stap 1: Scène maken en opslaan
+
+#### Maak een 2D-scène \{#node2d}
 
 1. Klik bovenaan op **Scene** → **New Scene** (of op het `+`-tabblad boven de viewport).
 2. Kies **2D Scene** als soort scène.
@@ -42,7 +44,7 @@ Godot maakt automatisch een `Node2D` aan als root-node. Dit is de basis van je 2
 
 Wat een `Node2D` allemaal kan staat in de [Nodes cheatsheet](site:godot/cheatsheet#level-wereld).
 
-## Stap 2: Opslaan als `world.tscn` \{#opslaan}
+#### Sla op als `world.tscn` \{#opslaan}
 
 Druk op `Ctrl + S` en geef de scène de naam `world.tscn`.
 

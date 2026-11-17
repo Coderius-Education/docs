@@ -5,13 +5,11 @@ slug: /background_image
 
 # Achtergrond
 
-Tijd om je lege scène iets minder grijs te maken. In deze les zet je een achtergrondafbeelding op je scherm.
+Tijd om je lege scène iets minder grijs te maken. In deze les zet je een achtergrondafbeelding op je scherm. Heb je de assets nog niet gedownload? Volg dan eerst de stappen op [Bestanden downloaden](site:godot/docs/bestanden-downloaden).
 
-:::note
-Heb je de assets nog niet gedownload? Volg eerst de stappen op [Bestanden downloaden](site:godot/docs/bestanden-downloaden).
-:::
+## Stap 1: Achtergrond toevoegen
 
-## Stap 1: Voeg een `TextureRect` toe \{#texturerect}
+#### Voeg een `TextureRect` toe \{#texturerect}
 
 Een `TextureRect` is een node die een afbeelding toont. Voor een achtergrond is dat precies wat je nodig hebt.
 
@@ -21,12 +19,12 @@ Een `TextureRect` is een node die een afbeelding toont. Voor een achtergrond is 
 
 De `TextureRect`-instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#level-wereld).
 
-## Stap 2: Zet de afbeelding erin
+#### Zet de afbeelding erin
 
 1. Selecteer de `TextureRect`.
 2. Sleep `Green.png` (of een andere achtergrond uit je `Background`-map) naar de eigenschap **Texture** in de Inspector.
 
-De afbeelding verschijnt in de viewport, meestal klein in een hoek. In de volgende stappen plaats je hem zelf goed.
+De afbeelding verschijnt in de viewport, meestal klein in een hoek. Bij Het scherm vullen maak je hem groot genoeg.
 
 ## Bewegen in de viewport
 
@@ -40,7 +38,9 @@ Voordat je de afbeelding gaat plaatsen: leer rondkijken in de editor-viewport.
 Raak je je `TextureRect` kwijt buiten beeld? Selecteer hem in de Scene Tree en druk `F` — Godot springt terug naar de juiste plek.
 :::
 
-## Stap 3: Plaats de afbeelding handmatig in de viewport
+## Stap 2: Het scherm vullen
+
+#### Maak de afbeelding zo groot als het canvas
 
 Selecteer de `TextureRect` in de viewport. Je ziet een blauwe rechthoek met **handgrepen** op de hoeken en zijkanten.
 
@@ -50,15 +50,14 @@ De **roze stippelrand** is de rand van je canvas — je zichtbare game-scherm. W
 2. Sleep aan het midden om hem te verschuiven.
 3. Maak hem zo groot dat hij de hele roze stippelrand bedekt.
 
-## Stap 4: Zet Stretch Mode op `Tile`
+#### Zet Stretch Mode op `Tile`
 
 Je afbeelding is nu waarschijnlijk uitgerekt of bedekt maar een deel van het vlak. Met **Tile** herhaalt Godot de afbeelding als tegels, zodat het hele vlak gevuld wordt zonder vervorming.
 
-1. Selecteer de `TextureRect`.
-2. Zoek in de Inspector de eigenschap **Stretch Mode**.
-3. Zet die op `Tile`.
+1. Selecteer de `TextureRect` en zoek in de Inspector de eigenschap **Stretch Mode**.
+2. Zet die op `Tile`.
 
-De afbeelding wordt nu herhaald binnen de `TextureRect`. Pas zo nodig de grootte uit Stap 3 nog wat aan tot het er goed uitziet.
+De afbeelding wordt nu herhaald binnen de `TextureRect`. Pas zo nodig de grootte nog wat aan tot het er goed uitziet.
 
 ## Opdracht 3.1.a: wissel van achtergrond
 

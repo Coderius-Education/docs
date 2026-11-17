@@ -25,7 +25,7 @@ In GDScript zijn dat drie functies: `preload()`, `instantiate()` en `add_child()
 
 ## Spawnen in code
 
-Lees deze twee stukjes GDScript eerst. Typen doe je vanaf Stap 1.
+Lees deze twee stukjes GDScript eerst. Typen doe je vanaf het tabblad Level-script.
 
 ### De scène inladen met `preload()` \{#preload}
 
@@ -53,16 +53,11 @@ add_child(nieuw_muntje)
 
 Zonder de laatste regel bestaat het muntje wel in het geheugen, maar hangt het nergens — en wat niet in de Scene Tree hangt, wordt niet getekend.
 
-## Stap 1: Een script op je level-root
+## Stap 1: Level-script
 
-1. Open `level1.tscn`.
-2. Selecteer de root-node en klik op het script-icoontje → **Attach Script** → **Create**. Sla op als `level1.gd`.
-
-Dit is het eerste script op een level-root. Muntjes, vlaggen en je karakter hebben elk hun eigen script; het level-script is de plek voor code die over het level als geheel gaat — zoals spawnen.
-
-## Stap 2: Spawn een muntje bij de start
-
-Zet dit in `level1.gd`:
+1. Open `level1.tscn` en selecteer de root-node.
+2. Klik op het script-icoontje → **Attach Script** → **Create** en sla op als `level1.gd`.
+3. Zet dit in het nieuwe script. Code over het level als geheel, zoals spawnen, hoort op de level-root.
 
 ```gdscript
 extends Node2D
@@ -75,11 +70,11 @@ func _ready() -> void:
     add_child(nieuw_muntje)
 ```
 
-**`_ready()`** is, net als `_physics_process()`, een functie die Godot zelf aanroept — maar dan één keer, zodra de node in de Scene Tree verschijnt. Alles wat bij de start van een level moet gebeuren, hoort daar.
+**`_ready()`** roept Godot zelf aan, één keer: zodra het level in de Scene Tree verschijnt.
 
 Start met `F5`. Er hangt nu een muntje op `(200, 100)` dat je nooit in de editor hebt gesleept. Oppakken werkt meteen: het exemplaar heeft dezelfde children en hetzelfde script als de scène waaruit het gemaakt is.
 
-## Stap 3: Maak er een eigen functie van
+## Stap 2: Eigen functie
 
 Straks wil je vanaf meerdere plekken kunnen spawnen. Verplaats de drie regels uit `_ready()` daarom naar een eigen functie met de positie als parameters:
 
@@ -97,7 +92,7 @@ func spawn_muntje(x: float, y: float) -> void:
     add_child(nieuw_muntje)
 ```
 
-Het spel doet exact hetzelfde als in Stap 2, maar een extra muntje spawnen is nu één regel. In [Automatisch spawnen met een Timer](site:godot/docs/spawn_timer) laat je een Timer deze functie aanroepen.
+Het spel doet exact hetzelfde als eerst, maar een extra muntje spawnen is nu één regel. In [Automatisch spawnen met een Timer](site:godot/docs/spawn_timer) laat je een Timer deze functie aanroepen.
 
 Deze drie functies staan ook kort bij elkaar in de [GDScript-tips](site:godot/gdscript-tips#nodes-scenes).
 

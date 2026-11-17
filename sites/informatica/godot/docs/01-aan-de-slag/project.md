@@ -7,7 +7,7 @@ slug: /project
 
 Nu Godot geïnstalleerd is, maak je een nieuw, leeg project aan. Een project is gewoon een map op je computer waarin Godot al je scènes, scripts en afbeeldingen bewaart.
 
-## Stap 1: Maak een nieuw project
+## Stap 1: Project aanmaken
 
 Open Godot. Je ziet het **Project Manager**-venster: de lijst van projecten die je tot nu toe hebt gemaakt. Bij een verse installatie is die lijst nog leeg.
 
@@ -20,7 +20,7 @@ De editor opent nu met je lege project. In hoofdstuk 2 leer je hoe je de editor 
 
 ## Opdracht 1.2.a: vind je projectmap terug
 
-Een project is een map op je computer — dat kun je zelf controleren. Zoek in de Verkenner de map op die je bij Stap 1 hebt gekozen en bekijk welke bestanden Godot daar heeft neergezet.
+Een project is een map op je computer — dat kun je zelf controleren. Zoek in de Verkenner de map op die je bij Project aanmaken hebt gekozen en bekijk welke bestanden Godot daar heeft neergezet.
 
 <details>
 <summary>Klik hier voor een tip.</summary>

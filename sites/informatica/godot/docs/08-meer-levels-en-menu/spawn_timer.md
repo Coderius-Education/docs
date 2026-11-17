@@ -21,7 +21,7 @@ Na twee seconden spawnt er één muntje, en daarna niets meer: die stopwatch loo
 
 </details>
 
-## Stap 1: Een `Timer` toevoegen \{#timer}
+## Stap 1: Timer toevoegen \{#timer}
 
 1. Open `level1.tscn`.
 2. Klik met rechts op de root-node → **Add Child Node** → `Timer`.
@@ -33,9 +33,9 @@ Na twee seconden spawnt er één muntje, en daarna niets meer: die stopwatch loo
 | **One Shot** | uit | Uit = telkens opnieuw aftellen; aan = maar één keer |
 | **Autostart** | aan | Begin met aftellen zodra het level start |
 
-De `Timer` is onzichtbaar in het spel — het is puur een stopwatch, geen afbeelding.
+De `Timer` is onzichtbaar in het spel: het is een stopwatch, geen afbeelding. Zijn instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#spawnen).
 
-## Stap 2: Koppel het `timeout`-signal
+## Stap 2: Signaal koppelen
 
 1. Selecteer de `Timer` in de Scene Tree.
 2. Ga naar het **Node**-tabblad rechts naast de Inspector.
@@ -50,7 +50,7 @@ func _on_timer_timeout() -> void:
 
 Deze functie wordt vanaf nu elke 2 seconden aangeroepen.
 
-## Stap 3: Een willekeurige plek met `randf_range()` \{#willekeurig}
+## Stap 3: Willekeurige plek \{#willekeurig}
 
 Elke keer op exact dezelfde plek spawnen is saai. **`randf_range()`** geeft een willekeurig getal tussen twee grenzen:
 
@@ -67,7 +67,7 @@ func _on_timer_timeout() -> void:
 
 Vervang `1000` door de breedte van jouw level, en `100` door een hoogte boven je vloer.
 
-## Stap 4: Test
+## Stap 4: Testen
 
 Je hele `level1.gd` ziet er nu zo uit:
 
@@ -89,8 +89,6 @@ func _on_timer_timeout() -> void:
 ```
 
 Start met `F5` en blijf even kijken: elke 2 seconden verschijnt er ergens een nieuw muntje. Je score kan nu eindeloos oplopen.
-
-De `Timer`-instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#spawnen).
 
 ## Opdracht 8.4.a: spawn ook vijanden
 
