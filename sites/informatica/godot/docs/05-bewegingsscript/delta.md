@@ -8,8 +8,6 @@ sidebar_label: "Deel 3: Delta"
 
 In je valregel staat een stukje dat je hebt overgetypt zonder uitleg: `* delta`. In deze korte les kom je erachter wat het doet, door het weg te halen.
 
-<GDQuestLes slug="movement-delta" />
-
 ## Wat ga je leren?
 
 Twee dingen die bij elkaar horen: wat een **parameter** is, en wat **`delta`** doet. Je schrijft geen nieuwe regels; je onderzoekt de regel die er al staat.
@@ -55,7 +53,7 @@ Waarom die twee woorden het verschil maken, zoek je in de rest van deze les uit.
 
 </details>
 
-## Parameter: wat `delta` is
+## Wat `delta` is
 
 Kijk naar de eerste regel van je functie:
 
@@ -67,9 +65,7 @@ Tussen de haakjes staat `delta`. Dat is een **parameter**: informatie die Godot 
 
 Wat er in zit, is de tijd in seconden sinds de vorige keer dat de functie draaide. `_physics_process` draait zestig keer per seconde, dus dat is een zestigste: ongeveer `0.0167`.
 
-## Onderzoek: kijk zelf wat er in `delta` zit
-
-### Print `delta`
+#### Kijk zelf wat er in `delta` zit
 
 Zet deze regel bovenin je functie en start met `F5`:
 
@@ -77,13 +73,13 @@ Zet deze regel bovenin je functie en start met `F5`:
     print(delta)
 ```
 
-In **Uitvoer** loopt een stroom van steeds hetzelfde getal: `0.01666666666667`. Dat is geen toeval. Voor `_physics_process` houdt Godot een vaste klok aan van zestig keer per seconde, ook als je computer het even druk heeft. In `_process`, dat bij elk beeld op je scherm draait, wisselt `delta` wél.
+In **Uitvoer** loopt een stroom van steeds hetzelfde getal: `0.01666666666667`. Haal de `print` daarna weer weg.
 
-Haal de `print` daarna weer weg.
+## Waarom `* delta` werkt
 
-### Waarom `* delta` het probleem oplost
+In je valregel staat `get_gravity() * delta`. Dat is `980 * 0.0167`, ongeveer `16`. Elke frame komt er dus zo'n 16 bij de snelheid, en na zestig frames — één seconde — zit je op ongeveer 980. Precies wat de bedoeling was.
 
-`980 * 0.0167` is ongeveer `16`. Elke frame komt er dus zo'n 16 bij de snelheid, en na zestig frames — één seconde — zit je op ongeveer 980. Precies wat de bedoeling was.
+Dat `delta` steeds hetzelfde getal is, is geen toeval. Voor `_physics_process` houdt Godot een vaste klok aan van zestig keer per seconde, ook als je computer het even druk heeft. In `_process`, dat bij elk beeld op je scherm draait, wisselt `delta` wél.
 
 Zet je de klok van `_physics_process` in **Project Settings → Physics → Common → Physics Ticks per Second** op 120, dan is `delta` half zo groot en telt elke frame half zoveel mee. Het resultaat na één seconde blijft hetzelfde. Zie je de instelling niet, zet dan rechtsboven **Advanced Settings** aan.
 
@@ -103,6 +99,10 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 ```
+
+Los oefenen wat je hier gebruikte kan bij GDQuest:
+
+<GDQuestLes slug="movement-delta" />
 
 ## Er gaat iets mis
 

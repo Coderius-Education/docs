@@ -11,7 +11,7 @@ Een vogel die tegen de zwaartekracht in moet vechten. Eén toets indrukken = eve
 
 Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpassen op het moment dat de speler een toets indrukt. Maar nu zonder grond — alleen jij houdt de vogel in de lucht.
 
-## Wat ga je leren?
+#### Wat ga je leren?
 
 - Een spawner bouwen die met een `Timer` periodiek nieuwe obstakels aanmaakt — de techniek uit [Automatisch spawnen met een Timer](site:godot/docs/spawn_timer).
 - Scenes "instantiëren" met `preload()` + `instantiate()` (zie [Spawnen: nodes maken in code](site:godot/docs/spawnen)).
@@ -44,7 +44,9 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 | `body_entered` (signal) | Gaat af als de vogel een buis raakt, of door het gat vliegt. |
 | `get_tree().reload_current_scene()` | Laadt de scène opnieuw: het level begint van voren af aan. |
 
-## Eerste stappen: bouw de kern
+## Zo begin je
+
+### Bouw de kern
 
 1. Begin met een lege `Node2D` als wereld-root.
 2. Bouw de vogel als losse scène (`vogel.tscn`) met `CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D`.

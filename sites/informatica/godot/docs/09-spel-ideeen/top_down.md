@@ -11,7 +11,7 @@ Een Zelda-achtig spel: je kijkt van bovenaf op de wereld, loopt in vier of acht 
 
 De grootste verandering ten opzichte van de platformer: je gebruikt **beide** assen van `velocity`, en zwaartekracht laat je weg.
 
-## Wat ga je leren?
+#### Wat ga je leren?
 
 - Bewegen in twee dimensies tegelijk met `Input.get_vector(...)`.
 - Een dungeon bouwen met `TileMapLayer`: een vloer, en muren waar je tegenaan botst.
@@ -41,7 +41,9 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 | `body_entered` (signal op `Area2D`) | Detecteert dat de speler een deur, item of vijand-zone raakt. |
 | `get_tree().change_scene_to_file(...)` | Wissel naar de volgende kamer/dungeon. |
 
-## Eerste stappen: bouw de kern
+## Zo begin je
+
+### Bouw de kern
 
 1. Maak een nieuwe scène met een `Node2D` als root.
 2. Voeg een `TileMapLayer` toe en teken een eerste kamer (vloer + muren). Vergeet de **Physics Layer** niet op de muren.

@@ -11,7 +11,7 @@ Een eindeloze platform-loop, zoals Geometry Dash of Subway Surfers. De speler be
 
 De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aangemaakt — je hoeft niet vooraf een level te bouwen.
 
-## Wat ga je leren?
+#### Wat ga je leren?
 
 - Scenes "instantiëren" tijdens het spel met `preload()` + `instantiate()` — dat ken je uit [Spawnen: nodes maken in code](site:godot/docs/spawnen).
 - Een `Timer` gebruiken als spawn-klok, zoals in [Automatisch spawnen met een Timer](site:godot/docs/spawn_timer).
@@ -44,11 +44,15 @@ De kern hier is **procedureel spawnen**: obstakels worden tijdens het spelen aan
 | `randf_range(0.5, 1.5)` | Variatie in spawn-interval voor minder voorspelbaarheid. |
 | `get_tree().reload_current_scene()` | Laadt de scène opnieuw: het spel begint van voren af aan. |
 
-## Eerste stappen: bouw de kern
+## Zo begin je
+
+### Bouw de kern
 
 1. Bouw je speler als losse scène (`speler.tscn`), zoals `karakter.tscn` in [Een tweede level toevoegen](site:godot/docs/tweede_level). Hij hoeft niet vooruit te bewegen: de obstakels komen naar hem toe.
 2. Maak een `obstakel.tscn`: een `Area2D` met een `Sprite2D` en een `CollisionShape2D`, zoals het muntje. Koppel `body_entered` aan een functie die `get_tree().reload_current_scene()` aanroept: game over.
-### De obstakels laten komen
+3. Laat het obstakel in zijn eigen script naar links schuiven: `position.x -= 300 * delta` in `_process(delta)`. Roep `queue_free()` aan zodra `position.x` links van je scherm ligt.
+
+### De spawner
 
 In je wereld-script maakt een Timer steeds een nieuw obstakel:
 
@@ -63,8 +67,7 @@ func _on_spawn_timer_timeout() -> void:
 
 Dit is de spawner uit [Spawnen: nodes maken in code](site:godot/docs/spawnen) en [Automatisch spawnen met een Timer](site:godot/docs/spawn_timer), met een `$Spawner`-node als spawn-positie in plaats van losse coördinaten.
 
-1. Laat het obstakel in zijn eigen script naar links schuiven: `position.x -= 300 * delta` in `_process(delta)`. Roep `queue_free()` aan zodra `position.x` links van je scherm ligt.
-2. Voeg een `ParallaxBackground` toe met één of meer `ParallaxLayer`-children voor de schuivende achtergrond.
+Voeg als laatste een `ParallaxBackground` toe met één of meer `ParallaxLayer`-children voor de schuivende achtergrond.
 
 ### Mogelijke uitbreidingen
 

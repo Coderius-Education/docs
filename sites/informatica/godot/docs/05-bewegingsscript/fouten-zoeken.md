@@ -5,11 +5,7 @@ slug: /fouten-zoeken
 
 # Fouten zoeken
 
-Je hebt net een script van nul opgebouwd. Grote kans dat er onderweg iets misging: een regel die niet insprong, een naam met een hoofdletter te veel, of een spel dat startte maar niets deed.
-
-Dat hoort erbij. Wat je nu leert is niet hoe je fouten voorkomt, maar hoe je ze **zelf terugvindt** — want vanaf hier ga je dingen bouwen waarvan het antwoord niet in deze cursus staat.
-
-<GDQuestLes slug="fouten-zoeken" />
+Je hebt net een script van nul opgebouwd, en grote kans dat er onderweg iets misging: een regel die niet insprong, een naam met een hoofdletter te veel, of een spel dat startte maar niets deed. Dat hoort erbij. Wat je nu leert is niet hoe je fouten voorkomt, maar hoe je ze **zelf terugvindt**: vanaf hier ga je dingen bouwen waarvan het antwoord niet in deze cursus staat.
 
 ## Drie soorten \{#drie-soorten}
 
@@ -22,6 +18,10 @@ Er zijn drie soorten fouten. Ze zien er anders uit en vragen een andere eerste s
 | Spel doet iets, maar iets anders dan je wilde | Je code klopt, je denkwerk niet | Halveren |
 
 De derde is de lastigste, want er is niets kapot. Alleen jij weet dat het niet klopt.
+
+Een foutmelding lezen kun je los oefenen bij GDQuest:
+
+<GDQuestLes slug="fouten-zoeken" />
 
 ## Meldingen
 
@@ -41,9 +41,7 @@ Lees hem in drie stukken:
 
 De laatste zin is vaak Engels en klinkt technischer dan hij is. Zoek de woorden die je herkent: een naam die je zelf hebt getypt, of een node-type uit je scène.
 
-:::tip
-Krijg je meerdere meldingen tegelijk? Los alleen de **bovenste** op en start opnieuw. De rest is vaak gevolgschade en verdwijnt vanzelf.
-:::
+**Tip:** krijg je meerdere meldingen tegelijk, los dan alleen de bovenste op en start opnieuw. De rest is vaak gevolgschade en verdwijnt vanzelf.
 
 ### Tijdens het spelen \{#runtime-meldingen}
 
@@ -126,20 +124,20 @@ Herhaal dit met de helft die overblijft. Na een paar keer heb je nog twee of dri
 
 Dit werkt ook buiten je code: zet een node tijdelijk op onzichtbaar, of haal een tegel weg. De vraag is steeds dezelfde — verandert het probleem als ik dit wegneem?
 
-### Vergelijk met iets dat wél werkt \{#vergelijken}
+### Vergelijken en vier vragen \{#vergelijken}
 
 In Godot zit een fout vaak niet in je code maar in de editor: een signal dat niet verbonden is, een `Shape` die leeg is, een node die net anders heet.
 
 Heb je twee dingen die op elkaar lijken en werkt er één? Zet ze dan naast elkaar en schrijf de verschillen op. Klik beide nodes aan en vergelijk de Inspector regel voor regel. Meestal vind je hem binnen een minuut, en meestal is het iets kleins dat je nooit had bedacht.
 
-### De vier vragen \{#vier-vragen}
+#### De vier vragen \{#vier-vragen}
 
 Als je echt vastzit, beantwoord deze vier vragen op papier of hardop. Ze dwingen je van "het werkt niet" naar iets dat je kunt onderzoeken.
 
 1. **Wat verwacht ik precies?** Niet "hij moet springen", maar "als ik spatie druk moet `velocity.y` op `-400` staan".
 2. **Wat gebeurt er precies?** Niet "niets", maar "de print binnen de `if` verschijnt nooit".
 3. **Waar lopen die twee voor het eerst uit elkaar?** Dat is de plek waar je moet zoeken.
-4. **Wat is mijn eerstvolgende test?** Eén concrete handeling, waarvan je van tevoren weet wat het betekent als hij lukt of mislukt.
+4. **Wat is mijn eerstvolgende test?** Eén handeling waarvan je vooraf weet wat het betekent als hij lukt of mislukt.
 
 Kom je er met een klasgenoot of docent niet uit, dan zijn dit ook precies de vier dingen die je moet kunnen vertellen.
 

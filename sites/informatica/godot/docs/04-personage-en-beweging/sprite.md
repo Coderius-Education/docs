@@ -18,7 +18,9 @@ Elke node doet één ding goed. `CharacterBody2D` regelt beweging en physics; `S
 
 </details>
 
-## Stap 1: Karakter met sprite \{#characterbody2d}
+## Stap 1: Karakter met sprite
+
+#### Voeg een `CharacterBody2D` toe \{#characterbody2d}
 
 `CharacterBody2D` is de basis van een speelbaar 2D-karakter. Hij ondersteunt beweging, zwaartekracht en botsingen met andere physics-objecten (zoals je tegels).
 
@@ -36,7 +38,9 @@ Een `Sprite2D` is een platte 2D-afbeelding. We hangen hem onder de `CharacterBod
 
 Vind je alleen brede bestanden met een rij figuurtjes, zoals `Idle (32x32).png`? Dat zijn de sprite-sheets uit [Opdracht 2.3.a](site:godot/docs/bestanden-downloaden#opdracht-23a-verken-het-asset-pack). Neem er dan een van: je ziet een rij figuurtjes in plaats van één, en dat blijft zo tot je de frames in hoofdstuk 6 van elkaar knipt.
 
-## Stap 2: Collision toevoegen \{#collisionshape2d}
+## Stap 2: Collision toevoegen
+
+#### Voeg een `CollisionShape2D` toe \{#collisionshape2d}
 
 Zonder collision-vorm weet Godot niet waar je karakter eindigt en zakt hij door alles heen.
 

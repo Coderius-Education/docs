@@ -5,7 +5,7 @@ slug: /dictionaries
 
 # Dictionaries: muntjes van brons, zilver en goud
 
-Elk muntje is nu één punt waard. Een gouden muntje van tien punten maakt je level spannender, maar drie muntje-scènes geven drie bijna gelijke scripts. Met een **dictionary** zet je de waarde van elke soort in één tabel.
+Elk muntje is nu één punt waard. Met een **dictionary** zet je de waarde van elke soort in één tabel.
 
 <Voorkennis
   items={[
@@ -26,7 +26,7 @@ func _ready() -> void:
     print(waardes["brons"] + waardes["zilver"])
 ```
 
-**Welke twee getallen verschijnen er in Uitvoer?** Proberen kan met een lege `Node` in een nieuwe scène en `F6`.
+**Welke twee getallen verschijnen er in Uitvoer?** Proberen kan net als bij de lijsten: hang het script aan een lege `Node` in een nieuwe scène en start die met `F6`.
 
 <details>
 <summary>Antwoord</summary>
@@ -40,7 +40,7 @@ func _ready() -> void:
 
 </details>
 
-## Wat is een dictionary? \{#dictionary}
+## Een dictionary \{#dictionary}
 
 Een lijst zoek je op met een plek: `levels[0]`. Een dictionary zoek je op met een **sleutel**: een woord dat je zelf kiest. Je schrijft hem met accolades, en elke sleutel krijgt met een dubbele punt zijn waarde:
 
@@ -86,7 +86,7 @@ Start je spel en pak een muntje. In **Uitvoer** gaat de score met tien omhoog.
 
 ## Stap 2: Soort per muntje \{#export}
 
-Elk muntje is goud, want `soort` staat vast in het script. Je wilt per muntje in je level kunnen kiezen welke soort het is. Zet daarvoor `@export` voor de variabele:
+Elk muntje is goud, want `soort` staat vast in het script. Drie muntje-scènes maken kan, maar dan heb je drie scripts die bijna gelijk zijn. Je kiest liever per muntje in je level welke soort het is. Zet daarvoor `@export` voor de variabele:
 
 ```gdscript
 @export var soort = "brons"
@@ -94,7 +94,7 @@ Elk muntje is goud, want `soort` staat vast in het script. Je wilt per muntje in
 
 Sla op en selecteer een muntje in je level. In de Inspector staat nu een veld Soort, met `brons` erin. Dat veld komt van `@export`: het zet een variabele uit je script in de Inspector, zodat je hem per node kunt invullen zonder het script te veranderen.
 
-Zet bij een paar muntjes `zilver` of `goud` in het veld, en speel je level. Elk muntje telt nu zijn eigen waarde.
+Zet bij een paar muntjes `zilver` of `goud` in het veld, en speel je level. Elk muntje telt nu zijn eigen waarde. Leg een gouden muntje op een lastige plek: daar springt een speler een extra keer voor.
 
 Wil je er later een soort bij, platina voor 25 punten? Dan zet je één sleutel in de tabel, en verder hoeft er niets te veranderen.
 

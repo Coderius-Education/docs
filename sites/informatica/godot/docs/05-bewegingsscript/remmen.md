@@ -8,8 +8,6 @@ sidebar_label: "Deel 6: Stoppen"
 
 Je karakter loopt, en staat meteen stil zodra je de toets loslaat. Dat werkt, maar het voelt hard. In deze les geef je hem een echte rem.
 
-<GDQuestLes slug="movement-remmen" />
-
 ## Wat je nu gaat toevoegen
 
 Twee begrippen: **`else`** om iets te doen als de voorwaarde níét klopt, en **`move_toward()`** om een waarde stapsgewijs ergens naartoe te brengen.
@@ -29,7 +27,7 @@ Voor precies dat soort tweedeling bestaat `else`: het blok dat draait wanneer de
 
 </details>
 
-## Stap 1: Twee gevallen met `if` en `else`
+## Stap 1: If en else
 
 Vervang je regel `velocity.x = direction * SPEED` door dit:
 
@@ -44,16 +42,18 @@ De `else` hoort op hetzelfde niveau als de `if` erboven; de regels eronder sprin
 
 Start met `F5`. Lopen en stoppen werken als voorheen. Dat klopt: je hebt nog niets aan het gedrag veranderd, maar je hebt wel een plek waar je het afremmen kunt bijstellen.
 
-## Stap 2: Wat `direction == 0` vraagt
+## Stap 2: == en move_toward
 
-`==` betekent "is gelijk aan". De `if` vraagt dus precies wat je in de voorspelling bedacht: drukt de speler niets in?
+#### Wat `direction == 0` vraagt
+
+`==` betekent "is gelijk aan". Met `if direction == 0:` vraagt je script precies wat je in de voorspelling bedacht: drukt de speler niets in?
 
 - `direction` is `0` → de `if` is waar → je remt af.
 - `direction` is `-1` of `1` → de `if` is onwaar → de `else` draait, je loopt.
 
 In tutorials en in het sjabloon van Godot zie je vaak `if direction:`, met de twee takken andersom: eerst lopen, en remmen in de `else`. Dat doet hetzelfde, omdat GDScript het getal `0` als onwaar behandelt en elk ander getal als waar. In deze cursus stel je de vraag rechtstreeks: is `direction` nul?
 
-## Stap 3: Wat `move_toward()` doet
+#### Wat `move_toward()` doet
 
 `move_toward(huidige, doel, stap)` geeft een waarde terug die dichter bij het doel ligt, en hoogstens `stap` groot.
 
@@ -87,6 +87,10 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 ```
+
+Los oefenen wat je hier gebruikte kan bij GDQuest:
+
+<GDQuestLes slug="movement-remmen" />
 
 ## Opdracht 5.6.a: laat je karakter uitglijden
 

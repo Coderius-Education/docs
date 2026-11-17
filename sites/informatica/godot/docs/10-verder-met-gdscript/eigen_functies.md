@@ -5,7 +5,7 @@ slug: /eigen_functies
 
 # Eigen functies: je script opknippen
 
-Je karakter-script werkt, maar `_physics_process` is een lang blok geworden: vallen, springen, lopen en animaties staan allemaal onder elkaar. Wil je iets aan het springen veranderen, dan zoek je eerst tussen twintig regels. Je knipt het blok op in functies met een eigen naam, zodat elke naam zegt wat dat stuk doet. Waar je knipt en hoe de stukken heten, bepaal je zelf.
+Je karakter-script werkt, maar `_physics_process` is een lang blok geworden: vallen, springen, lopen en animaties staan allemaal onder elkaar. Wil je iets aan het springen veranderen, dan zoek je eerst tussen twintig regels. Je knipt het blok op in functies met een eigen naam, zodat elke naam zegt wat dat stuk doet.
 
 <Voorkennis
   items={[
@@ -102,7 +102,7 @@ Namen met een `_` ervoor laat je aan Godot: `_ready` en `_physics_process` roept
 
 ## Stap 1: De functie val
 
-Het eerste stuk doe je samen. Bovenaan `_physics_process` staan de regels voor de zwaartekracht:
+Het eerste stuk, de zwaartekracht, doe je samen. Bovenaan `_physics_process` staan de regels ervoor:
 
 ```gdscript
     if not is_on_floor():

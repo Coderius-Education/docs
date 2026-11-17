@@ -9,7 +9,7 @@ Pak je nu een muntje, dan is het in één frame weg. Met een **tween** springt h
 
 ## Voorspel: wat zie je?
 
-Je werkt in `_on_body_entered` van je muntje; zonder [Dictionaries: muntjes van brons, zilver en goud](site:godot/docs/dictionaries) staat bij jou `Global.score += 1`, en dat werkt net zo. Hier staat de functie met twee nieuwe regels en zonder `queue_free()`. De controle op winnen uit opdracht 7.5.a laat je er even uit; die komt terug bij Eén keer tellen.
+Je werkt in `_on_body_entered` van je muntje. Sloeg je [Dictionaries: muntjes van brons, zilver en goud](site:godot/docs/dictionaries) over, dan staat bij jou `Global.score += 1`; dat werkt net zo. De functie heeft hier twee nieuwe regels en geen `queue_free()` meer. De controle op winnen uit opdracht 7.5.a laat je er even uit; die komt terug bij Eén keer tellen.
 
 ```gdscript
 func _on_body_entered(body: Node2D) -> void:

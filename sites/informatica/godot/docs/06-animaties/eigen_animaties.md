@@ -22,11 +22,11 @@ Een witte rechthoek. Een afbeelding is altijd een rechthoek, en wit is ook een k
 
 </details>
 
-## Stap 1: Verzamel je frames
-
-Er zijn drie manieren om aan frames te komen, elk in een eigen stap van dit tabblad: Screenshots uit een sprite-sheet, Zelf tekenen in een pixel-art tool en Frames knippen uit een GIF. Je hebt er één nodig. Kies er een, sla de andere twee over, en ga daarna naar het tabblad Stap 2.
+## Stap 1: Frames verzamelen
 
 ### Screenshots uit een sprite-sheet
+
+Er zijn drie manieren om aan frames te komen, en je hebt er één nodig: screenshots uit een sprite-sheet (deze stap), zelf tekenen, of frames knippen uit een GIF (allebei in de stap Tekenen of een GIF knippen). Kies er een en ga daarna naar het tabblad Transparant maken.
 
 Heb je een sprite-sheet (één afbeelding met meerdere poses naast elkaar) maar Godot herkent de frames niet automatisch? Knip ze handmatig:
 
@@ -36,7 +36,9 @@ Heb je een sprite-sheet (één afbeelding met meerdere poses naast elkaar) maar 
 4. Plak het screenshot in een nieuwe afbeelding (Paint, Photopea, Piskel…) en sla op als `frame_01.png`.
 5. Herhaal voor elke frame, op een canvas van steeds hetzelfde formaat (bijvoorbeeld 32×32 of 64×64 pixels). Met frames van verschillende grootte springt je animatie.
 
-### Zelf tekenen in een pixel-art tool
+### Tekenen of een GIF knippen
+
+#### Zelf tekenen in een pixel-art tool
 
 Wil je een volledig eigen karakter tekenen?
 
@@ -45,7 +47,7 @@ Wil je een volledig eigen karakter tekenen?
 3. Teken je idle-pose. Klik op **Add Frame** en teken de volgende fase. Herhaal tot je 4-8 frames hebt.
 4. Exporteer als losse PNG's **of** als sprite-sheet — beide werkt in Godot.
 
-### Frames knippen uit een GIF
+#### Frames knippen uit een GIF
 
 Heb je een animatie als GIF (bijvoorbeeld uit een tutorial of YouTube)?
 
@@ -54,19 +56,17 @@ Heb je een animatie als GIF (bijvoorbeeld uit een tutorial of YouTube)?
 3. Klik op **Split to frames.** en daarna op **Download frames as ZIP**.
 4. Je krijgt elke frame als losse PNG.
 
-## Stap 2: Maak de achtergrond transparant
+## Stap 2: Transparant maken
 
-### Test eerst of het nodig is
+### Eerst testen, dan Piskel
 
 Zonder transparantie zit er straks een witte (of een andere) rechthoek achter je karakter in Godot. **Een PNG kan transparantie bevatten via het zogeheten alpha-kanaal** — pixels zijn dan letterlijk doorzichtig.
 
-:::tip
-Sommige downloads (vooral van itch.io of opengameart.org) hebben **al** een transparante achtergrond. Test eerst: sleep je PNG in Godot en kijk of er een rechthoek omheen zit. Geen rechthoek? Dan is hij al transparant: sla de rest van dit tabblad over en ga naar het tabblad Stap 3.
-:::
+Sommige downloads (vooral van itch.io of opengameart.org) hebben **al** een transparante achtergrond. Test eerst: sleep je PNG in Godot en kijk of er een rechthoek omheen zit. Geen rechthoek? Dan is hij al transparant: sla de rest van dit tabblad over en ga naar het tabblad Importeren en tools.
 
-Zit er wel een rechthoek omheen? Dan zijn er drie manieren om hem weg te halen, elk in een eigen stap van dit tabblad: Met Piskel of LibreSprite, Met Photopea en Met GIMP. Kies er één en sla de andere twee over.
+Zit er wel een rechthoek omheen? Dan zijn er drie manieren om hem weg te halen: met Piskel of LibreSprite (op dit scherm), of met Photopea of GIMP (in de stap Met Photopea of GIMP). Kies er één.
 
-### Met Piskel of LibreSprite
+#### Met Piskel of LibreSprite
 
 Aanbevolen voor pixel-art.
 
@@ -74,7 +74,9 @@ Aanbevolen voor pixel-art.
 - Bij het importeren wordt de witte achtergrond standaard transparant gemaakt zodra je hem aanklikt.
 - Exporteer terug als PNG via **Export → PNG**.
 
-### Met Photopea
+### Met Photopea of GIMP
+
+#### Met Photopea
 
 Photopea werkt in je browser en lijkt op Photoshop.
 
@@ -83,7 +85,7 @@ Photopea werkt in je browser en lijkt op Photoshop.
 3. Druk op **Delete** — de witte achtergrond verdwijnt, je ziet een schaakbord (= transparant).
 4. **File → Export As → PNG**.
 
-### Met GIMP
+#### Met GIMP
 
 GIMP installeer je op je eigen computer.
 
@@ -92,7 +94,7 @@ GIMP installeer je op je eigen computer.
 3. Druk **Delete**.
 4. **File → Export As → `.png`**.
 
-## Stap 3: Importeer in Godot
+## Stap 3: Importeren en tools
 
 1. Sleep je losse PNG's naar de `assets/`-map in je FileSystem-paneel.
 2. Open de SpriteFrames-editor (zie [Animaties aanmaken](site:godot/docs/animaties) voor de stappen).
@@ -100,7 +102,7 @@ GIMP installeer je op je eigen computer.
 4. Zet de **FPS** op 8 of 10, zet **Loop** aan voor doorlopende animaties (idle, run) of uit voor eenmalige (jump).
 5. Speel af via je script (zie [Animaties in code](site:godot/docs/animaties_code)).
 
-## Gratis tools
+#### Gratis tools
 
 | Tool | Wat doet het? | Waar? |
 |---|---|---|
@@ -127,7 +129,7 @@ GIMP installeer je op je eigen computer.
 
 **Oorzaak:** De PNG heeft geen alpha-kanaal (transparantie).
 
-**Oplossing:** Doorloop het tabblad Stap 2, met de stap Met Photopea of Met GIMP. Test daarna opnieuw door de PNG in Godot te slepen — geen rechthoek meer = klaar.
+**Oplossing:** Doorloop in het tabblad Transparant maken de stap Met Photopea of GIMP. Test daarna opnieuw door de PNG in Godot te slepen — geen rechthoek meer = klaar.
 
 </details>
 
