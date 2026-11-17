@@ -92,6 +92,10 @@ export declare const LESSEN_PER_DEEL: number;
 export declare const MAX_DELEN: number;
 /** Zoveel delen van de job `schermen` hoogstens samen. */
 export declare const MAX_SCHERMEN: number;
+/** Zoveel telt een pagina zonder tabbladen bij het verdelen over de runners. */
+export declare const GEWICHT_ZONDER_TABS: number;
+/** Hoe zwaar een lespagina telt: 1 met tabbladen, anders GEWICHT_ZONDER_TABS. */
+export declare function lesGewicht(bron: string): number;
 /** De sites waarvan de job `voorraad` de build in de cache zet. */
 export declare function voorraadSites(p: Plan): string[];
 /** De matrix van de job `schermen`: een hele cursus in meer delen. */

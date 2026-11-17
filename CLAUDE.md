@@ -124,8 +124,9 @@ Een test, de tests van de lessen (`docs-tests/`), de notities van de cursus
 en een `_category_.json` raken geen scherm en tellen niet mee
 (`raaktGeenScherm`). Een cursus die helemaal gemeten wordt, verdeelt het plan
 over meer runners (`schermenMatrix` in `wijzigingen.js`: veertig
-lespagina's per runner, hoogstens zes per cursus en achttien samen, de
-grootste vooraan; `--deel=2/6` meet elke zesde les, `deelVan` in
+lespagina's per runner, hoogstens zes per cursus en twintig samen, de
+grootste vooraan; een pagina zonder tabbladen telt voor een kwart,
+`lesGewicht`; `--deel=2/6` meet elke zesde les, `deelVan` in
 `meet-selectie.js`); op één runner kostte algoritmes zestien minuten,
 terwijl de rest van CI na drie minuten klaar was, en met 23 delen wachtte
 een deel op een vrije runner. Of een cursus helemaal gemeten wordt, beslist
@@ -158,8 +159,45 @@ in de runs ervoor en lokaal paste. Past het de tweede keer wel, dan staat
 het als waarschuwing in het verslag; past het dan nog niet, dan is de job
 rood.
 
+**De meting wacht niet langer dan nodig** (november 2026). Een brede run
+duurde ruim zeven minuten, waarvan de job `schermen` er vijf nam; de rest
+was na drie minuten klaar. Wat er sindsdien anders is, elk met dezelfde
+uitkomst per scherm als ervoor (nagemeten op alle cursussen):
+
+- **Het script wacht tot het scherm stilstaat** (`wachtOpRust`), in plaats
+  van een vaste 550 ms na elke klik: 150 ms lang dezelfde maten, geen beeld
+  dat op zich liet wachten, elk lettertype en plaatje binnen, geen aanvraag
+  meer onderweg, en geen onderdeel dat zegt dat het nog laadt
+  (`data-status="laden"`, het blokprogramma van robotica; dat krijgt acht
+  seconden). Met de vaste wachttijd mat het script twee schermen van
+  robotica voordat de blokken er stonden. Een onderdeel dat later op zijn
+  scherm komt, zet dus `data-status="laden"` tot het er is.
+- **Een klik op een tabblad of stap gebeurt in de pagina** (`klikIn`): een
+  klik van Playwright wacht een kwart seconde tot de knop stilstaat.
+- **Zonder `--klik` laadt de runtime van Python niet**: elke les opent drie
+  keer in een verse context en haalde en compileerde Pyodide elke keer. Een
+  veld staat er dan zoals in de eerste seconden van een les, en moet dus
+  even hoog zijn terwijl Python laadt en erna. Het veld van de python-cursus
+  was dat niet (op een telefoon 35 pixels lager tijdens het laden; 45 van de
+  2181 metingen hingen af van hoe ver het laden was); het vak van de uitvoer
+  staat er nu al tijdens het laden, en de rooktest van de speeltuin meet in
+  Chromium dat de hoogte gelijk blijft. Een nieuw veld met Python: houd het
+  even hoog, en laat de rooktest het meten. `--met-python` laadt de runtime
+  wel.
+- **Een job met Chromium installeert alleen de root** (`map: .` van
+  `node-pnpm`) en haalt Chromium zonder `--with-deps`: de bibliotheken staan
+  op het image, en apt haalde er in dertig seconden alleen lettertypen bij
+  die de lessen niet gebruiken. Start Chromium niet, dan komen de pakketten
+  er alsnog bij (`ci-setup.test.ts`).
+
+Lokaal, vier lessen tegelijk: een derde van algoritmes 399 → 143 seconden,
+python 735 → 243, robotica 324 → 186, play 199 → 120, godot 167 → 88, web
+154 → 97, linux 108 → 58. `--vaste-wacht` meet zoals eerst, `--profiel` zegt waar de
+tijd blijft (laden, klikken, wachten, meten). Meer dan vier lessen tegelijk
+helpt niet: de meting is dan niet meer stabiel.
+
 **Een job die Chromium installeert, heeft een grens.** `playwright install`
-duurt twintig seconden, en bleef op één runner een half uur staan; zonder
+duurt zeven seconden, en bleef op één runner een half uur staan; zonder
 grens wacht de workflow zes uur, en de check `build` wacht mee. De stap
 stopt na drie minuten en probeert het één keer opnieuw, en de jobs
 `browser`, `terminal` en `schermen` hebben `timeout-minutes`

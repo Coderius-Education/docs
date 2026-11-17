@@ -927,13 +927,23 @@ jobs:
           node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
 
       - name: Chromium
-        # Twintig seconden op een gewone dag. Op één runner bleef de stap een
+        # Zeven seconden op een gewone dag. Op één runner bleef de stap een
         # half uur staan, en zonder grens had de job zes uur gehangen: de
         # check `build` wacht erop. Dus na drie minuten nog één keer, en dan
         # rood (ci-setup.test.ts).
+        #
+        # Zonder `--with-deps`: elke bibliotheek die Chromium nodig heeft,
+        # staat al op het image van ubuntu-24.04. `--with-deps` haalde er met
+        # apt alleen negen pakketten lettertypen bij (CJK, Thai, Unifont), en
+        # dat kostte dertig van de zevenendertig seconden, in elke job die
+        # Chromium gebruikt. De lessen brengen hun eigen lettertypen mee
+        # (fontsource). Start Chromium toch niet, omdat het image een
+        # bibliotheek kwijt is, dan komen de pakketten er alsnog bij.
         run: |
-          timeout 180 pnpm exec playwright install --with-deps chromium ||
-            timeout 180 pnpm exec playwright install --with-deps chromium
+          timeout 180 pnpm exec playwright install chromium ||
+            timeout 180 pnpm exec playwright install chromium
+          node -e "require('playwright').chromium.launch({ channel: 'chromium' }).then((b) => b.close())" ||
+            timeout 180 pnpm exec playwright install-deps chromium
 
       - name: De speeltuin in Chromium
         run: node scripts/rooktest-speeltuin.mjs "${{ steps.map.outputs.dir }}/build" --eis-compressie
@@ -991,10 +1001,13 @@ jobs:
           node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
 
       - name: Chromium
-        # Met een grens en één herkansing, zoals in `browser`.
+        # Met een grens en één herkansing, en zonder de lettertypen van apt,
+        # zoals in `browser`.
         run: |
-          timeout 180 pnpm exec playwright install --with-deps chromium ||
-            timeout 180 pnpm exec playwright install --with-deps chromium
+          timeout 180 pnpm exec playwright install chromium ||
+            timeout 180 pnpm exec playwright install chromium
+          node -e "require('playwright').chromium.launch({ channel: 'chromium' }).then((b) => b.close())" ||
+            timeout 180 pnpm exec playwright install-deps chromium
 
       - name: De oefenterminal in Chromium
         run: node scripts/rooktest-linux.mjs "${{ steps.map.outputs.dir }}/build"
@@ -1075,10 +1088,13 @@ jobs:
           name: wijzigingen
 
       - name: Chromium
-        # Met een grens en één herkansing, zoals in `browser`.
+        # Met een grens en één herkansing, en zonder de lettertypen van apt,
+        # zoals in `browser`.
         run: |
-          timeout 180 pnpm exec playwright install --with-deps chromium ||
-            timeout 180 pnpm exec playwright install --with-deps chromium
+          timeout 180 pnpm exec playwright install chromium ||
+            timeout 180 pnpm exec playwright install chromium
+          node -e "require('playwright').chromium.launch({ channel: 'chromium' }).then((b) => b.close())" ||
+            timeout 180 pnpm exec playwright install-deps chromium
 
       - name: De schermen van ${{ matrix.site }} meten
         run: node scripts/meet-les-tabs.mjs ${{ matrix.site }} --bronnen=changed.json --deel=${{ matrix.deel }}/${{ matrix.delen }} --streng

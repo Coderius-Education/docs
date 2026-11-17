@@ -230,12 +230,42 @@ describe('comprimeren na elke site-build', () => {
     ]);
     for (const blok of jobs) {
       const naam = blok.slice(0, blok.indexOf(':'));
-      const regels = blok.split('\n').filter((r) => r.includes('playwright install'));
+      const regels = blok.split('\n').filter((r) => r.includes('playwright install '));
       expect(regels, naam).toHaveLength(2);
       for (const regel of regels)
         expect(regel, naam).toMatch(/^\s+timeout \d+ pnpm exec playwright/);
       expect(regels[0], naam).toMatch(/\|\|$/);
       expect(blok, naam).toMatch(/^ {4}timeout-minutes: \d+$/m);
+    }
+  });
+
+  it('Chromium komt zonder de pakketten van apt, tenzij hij zonder niet start', () => {
+    // `--with-deps` draaide in elke job met Chromium dertig seconden apt, en
+    // installeerde alleen negen pakketten lettertypen: de bibliotheken staan
+    // al op het image van ubuntu-24.04, en de lessen hebben hun eigen
+    // lettertypen. In een brede run zijn dat twintig jobs waar de check
+    // `build` op wacht. Het image kan veranderen zonder aankondiging (zoals
+    // de git van de runner deed): start Chromium niet, dan komen de
+    // pakketten er alsnog bij, ook met een grens.
+    const jobs = workflow
+      .split(/\n {2}(?=[a-z-]+:\n)/)
+      .slice(1)
+      .filter((blok) => blok.includes('playwright install'));
+    for (const blok of jobs) {
+      const naam = blok.slice(0, blok.indexOf(':'));
+      const stap = blok.slice(blok.indexOf('- name: Chromium'));
+      const regels = stap.slice(0, stap.indexOf('\n\n')).split('\n');
+      expect(regels.filter((r) => /^\s+(timeout|node) /.test(r)).join('\n'), naam).not.toContain(
+        '--with-deps',
+      );
+      const start = regels.findIndex((r) => /^\s+node -e .*chromium\.launch\(/.test(r));
+      expect(start, naam).toBeGreaterThan(-1);
+      // Dezelfde Chromium als het meetscript start.
+      expect(regels[start], naam).toContain("channel: 'chromium'");
+      expect(regels[start], naam).toMatch(/\|\|$/);
+      expect(regels[start + 1], naam).toMatch(
+        /^\s+timeout \d+ pnpm exec playwright install-deps chromium$/,
+      );
     }
   });
 });
