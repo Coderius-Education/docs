@@ -282,6 +282,36 @@ describe('een site in de browser: artifact, cache of zelf bouwen', () => {
   });
 });
 
+// De jobs die een site in Chromium openen, hebben Playwright nodig en de
+// gebouwde site: niets uit de node_modules van de sites. Eerst installeerden
+// ze de hele workspace, 14 tot 22 seconden per job, en op de delen van
+// `schermen` wacht de check `build`. Bouwt zo'n job de site zelf (geen
+// artifact en niets in de cache), dan installeert hij die site eerst.
+describe('een job met Chromium installeert alleen de root', () => {
+  it.each(['browser', 'terminal', 'schermen'])('%s', (job) => {
+    const v = stappen(job);
+    const setup = v.find((stap) => stap.uses === './.github/actions/node-pnpm');
+    expect(setup?.tekst, job).toMatch(/^ {10}map: \.$/m);
+    const build = v.find((stap) => /pnpm --filter "[^"]+" build/.test(stap.tekst));
+    expect(build?.tekst, job).toMatch(
+      /pnpm install --frozen-lockfile --filter "\{\.\/\$\{\{ steps\.map\.outputs\.dir \}\}\}\.\.\."\n\s+pnpm --filter "[^"]+" build/,
+    );
+  });
+
+  it('de root is alleen de root, met Playwright erin', () => {
+    // `map: .` wordt in de actie --filter "{./.}...".
+    const gekozen = JSON.parse(
+      execFileSync('pnpm', ['list', '--json', '--depth', '-1', '--filter', '{./.}...'], {
+        cwd: ROOT,
+        encoding: 'utf8',
+      }),
+    ).map((p: { name: string }) => p.name);
+    expect(gekozen).toEqual(['coderius-docs']);
+    const root = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
+    expect({ ...root.dependencies, ...root.devDependencies }).toHaveProperty('playwright');
+  }, 30_000);
+});
+
 // De git waartegen de git-simulator wordt gelegd (echte-git.test.ts). Zijn
 // cache kende het image niet: na de overstap van ubuntu-latest naar een
 // nieuwe Ubuntu kwam er een git uit die tegen de bibliotheken van de oude

@@ -893,8 +893,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # Alleen de root, zoals in `schermen`.
       - name: Node, pnpm en dependencies
         uses: ./.github/actions/node-pnpm
+        with:
+          map: .
 
       - name: Map en cache-sleutel van python
         id: map
@@ -919,6 +922,7 @@ jobs:
       - name: Build python (niet gebouwd en niet in de cache)
         if: env.GEBOUWD != 'true' && steps.cache.outputs.cache-hit != 'true'
         run: |
+          pnpm install --frozen-lockfile --filter "{./${{ steps.map.outputs.dir }}}..."
           pnpm --filter "./${{ steps.map.outputs.dir }}" build
           node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
 
@@ -953,8 +957,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # Alleen de root, zoals in `schermen`.
       - name: Node, pnpm en dependencies
         uses: ./.github/actions/node-pnpm
+        with:
+          map: .
 
       - name: Map en cache-sleutel van linux
         id: map
@@ -979,6 +986,7 @@ jobs:
       - name: Build linux (niet gebouwd en niet in de cache)
         if: env.GEBOUWD != 'true' && steps.cache.outputs.cache-hit != 'true'
         run: |
+          pnpm install --frozen-lockfile --filter "{./${{ steps.map.outputs.dir }}}..."
           pnpm --filter "./${{ steps.map.outputs.dir }}" build
           node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
 
@@ -1026,8 +1034,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # Alleen de root: het script heeft Playwright nodig en de gebouwde site,
+      # niets uit de node_modules van de sites. De hele workspace installeren
+      # kostte hier 14 tot 22 seconden, in een job waar de check `build` op
+      # wacht.
       - name: Node, pnpm en dependencies
         uses: ./.github/actions/node-pnpm
+        with:
+          map: .
 
       - name: Map en cache-sleutel van ${{ matrix.site }}
         id: map
@@ -1052,6 +1066,7 @@ jobs:
       - name: Build ${{ matrix.site }} (niet gebouwd en niet in de cache)
         if: env.GEBOUWD != 'true' && steps.cache.outputs.cache-hit != 'true'
         run: |
+          pnpm install --frozen-lockfile --filter "{./${{ steps.map.outputs.dir }}}..."
           pnpm --filter "./${{ steps.map.outputs.dir }}" build
           node scripts/comprimeer.mjs "${{ steps.map.outputs.dir }}/build"
 

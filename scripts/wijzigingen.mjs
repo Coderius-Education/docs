@@ -37,6 +37,7 @@ const {
   blokkenNodig,
   cursussenMetTabbladen,
   workspaceAfhankelijkheden,
+  lesGewicht,
   schermenMatrix,
   voorraadSites,
 } = require('../packages/shared/wijzigingen.js');
@@ -186,7 +187,11 @@ function workspacePakketten(mappen) {
   return uit;
 }
 
-/** Het aantal lespagina's (.md en .mdx) in de docs-mappen van een site. */
+/**
+ * Het aantal lespagina's (.md en .mdx) in de docs-mappen van een site, elk
+ * gewogen naar wat het meten kost (lesGewicht): een pagina zonder tabbladen
+ * telt voor een kwart.
+ */
 function lesAantal(dir) {
   const config = join(ROOT, dir, 'docusaurus.config.ts');
   const mappen = existsSync(config) ? docsMappen(readFileSync(config, 'utf8')) : ['docs'];
@@ -200,11 +205,12 @@ function lesAantal(dir) {
     }
     for (const item of items) {
       if (item.isDirectory()) n += tel(join(map, item.name));
-      else if (/\.mdx?$/.test(item.name)) n += 1;
+      else if (/\.mdx?$/.test(item.name))
+        n += lesGewicht(readFileSync(join(map, item.name), 'utf8'));
     }
     return n;
   };
-  return mappen.reduce((som, m) => som + tel(join(ROOT, dir, m)), 0);
+  return Math.ceil(mappen.reduce((som, m) => som + tel(join(ROOT, dir, m)), 0));
 }
 
 /** De matrix van de job `schermen` (schermenMatrix in wijzigingen.js). */

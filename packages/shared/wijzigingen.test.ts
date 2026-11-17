@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { alleSiteMappen } from '@coderius/shared/sites';
 import { controleer } from '@coderius/shared/stijl';
 import {
+  GEWICHT_ZONDER_TABS,
   HEEL_BESTAND,
   LESSEN_PER_DEEL,
   MAX_BESTANDEN,
@@ -13,6 +14,7 @@ import {
   cursussenMetTabbladen,
   heeftLesTabs,
   isGlobaal,
+  lesGewicht,
   opGewijzigdeRegels,
   overlapt,
   parseDiff,
@@ -377,6 +379,27 @@ describe('plan', () => {
     });
     expect(groot.filter((r) => r.site === 'web')).toHaveLength(MAX_DELEN);
     expect(delen(groot.filter((r) => r.site === 'linux'))).toEqual(['linux 1/1']);
+  });
+
+  // De editor-cursus kreeg met 78 pagina's twee runners die elk veertig
+  // seconden maten, en algoritmes kwam er één tekort: het was ruim zes
+  // minuten bezig, terwijl de rest van de run na drie minuten klaar was.
+  it('de schermen: een pagina zonder tabbladen telt voor een kwart', () => {
+    const les = '# Les\n\nUitleg.\n\n## Theorie\n\nTekst.\n\n## Opdracht\n\nDoe iets.\n';
+    expect(lesGewicht(les)).toBe(1);
+    // Eén sectie, of geen: de pagina is één scherm.
+    expect(lesGewicht('# Stap 3\n\nKlik op de knop.\n\n## Wat je nu ziet\n\nEen venster.\n')).toBe(
+      GEWICHT_ZONDER_TABS,
+    );
+    // Een pagina die tabbladen uitzet (de cheatsheet, een hand-out).
+    expect(lesGewicht(`---\nsidebar_position: 99\nles_tabs: false\n---\n\n${les}`)).toBe(
+      GEWICHT_ZONDER_TABS,
+    );
+    // Een `##` in een codeblok is commentaar, geen sectie.
+    expect(lesGewicht('# Les\n\n## Uitleg\n\n```python\n## geen kop\nprint(1)\n```\n')).toBe(
+      GEWICHT_ZONDER_TABS,
+    );
+    expect(GEWICHT_ZONDER_TABS).toBeLessThan(1);
   });
 
   // Een volledige meting startte 23 delen naast cross-links, browser en de
