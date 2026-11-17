@@ -162,6 +162,8 @@ module.exports = function werkvormenPlugin(context, opties = {}) {
         const bestand = path.join(context.siteDir, doc.source.replace(/^@site\//, ''));
         const werkvormen = werkvormenVanLes(fs.readFileSync(bestand, 'utf8'), parse, {
           eenScherm: Boolean(opties.eenScherm),
+          stapNaam: Boolean(opties.stapNaam),
+          volScherm: Boolean(opties.volScherm),
         });
         if (werkvormen) lessen[doc.id] = { titel: doc.title, pad: doc.permalink, werkvormen };
       }

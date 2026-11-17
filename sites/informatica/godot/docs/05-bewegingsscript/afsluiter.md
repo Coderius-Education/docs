@@ -8,8 +8,6 @@ sidebar_label: "Deel 7: Springen"
 
 Je karakter loopt en valt. Er ontbreekt één ding: omhoog. In deze les maak je het bewegingsscript af.
 
-<GDQuestLes slug="movement-afsluiter" />
-
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/beslissen/05c-and-or-elif', label: 'And, or en elif'},
@@ -41,7 +39,7 @@ Een sprong is beweging naar boven, dus `velocity.y` moet negatief worden.
 
 ## Stap 1: De sprong
 
-### De sprongkracht
+### Sprongkracht en sprong
 
 Zet deze regel onder je bestaande `const SPEED`:
 
@@ -50,8 +48,6 @@ const JUMP_VELOCITY = -400.0
 ```
 
 Een negatief getal, precies zoals je voorspelde. Hoe verder van nul, hoe hoger de sprong.
-
-### De sprong zelf
 
 Zet dit binnen de functie, ónder het zwaartekracht-blok en bóven de regels voor lopen:
 
@@ -104,6 +100,10 @@ Je kunt in de lucht springen. Tijdens een sprong nog eens drukken geeft opnieuw 
 
 </details>
 
+Los oefenen wat je hier gebruikte kan bij GDQuest:
+
+<GDQuestLes slug="movement-afsluiter" />
+
 ### `=` en niet `+=`
 
 Bij de zwaartekracht schreef je `velocity += get_gravity() * delta`, bij de sprong `velocity.y = JUMP_VELOCITY`. De ene keer `+=`, de andere keer `=`: dat is bewust.
@@ -145,7 +145,7 @@ func _physics_process(delta: float) -> void:
     move_and_slide()
 ```
 
-## Extra: WASD en een video
+## WASD en video
 
 ### De Input Map openen
 
@@ -221,7 +221,7 @@ Beantwoord deze vragen voor jezelf voordat je gaat typen. Ze wijzen allebei de w
 **Bij sprinten:**
 
 - Welke waarde moet er anders zijn als shift ingedrukt is? En welke regel zet die waarde nu?
-- Je script kijkt naar een actie, niet naar een toets. Kies in de lijst van de Input Map een actie die je nog niet gebruikt en hang daar shift aan, zoals je bij WASD een toets toevoegde (het tabblad Extra van deze les). Welke functie uit Stap 1 kijkt of een actie ingedrukt blijft?
+- Je script kijkt naar een actie, niet naar een toets. Kies in de lijst van de Input Map een actie die je nog niet gebruikt en hang daar shift aan, zoals je bij WASD een toets toevoegde (het tabblad WASD en video van deze les). Welke functie uit het tabblad De sprong kijkt of een actie ingedrukt blijft?
 
 **Bij dubbel springen:**
 
@@ -258,7 +258,7 @@ Zo weet je bij een fout meteen aan welke kant je moet zoeken: bij het uitlezen v
 
 **Oorzaak:** Er staat `is_action_pressed` in plaats van `is_action_just_pressed`. Elke keer dat je karakter landt, is de toets nog ingedrukt, dus springt hij meteen weer.
 
-**Oplossing:** Vergelijk je regel letterlijk met die bij De sprong zelf, in Stap 1. Het verschil tussen de twee staat daar ook, bij `just_pressed` of `pressed`.
+**Oplossing:** Vergelijk je regel letterlijk met die in het tabblad De sprong. Het verschil tussen de twee staat daar ook, in de stap `just_pressed` of `pressed`.
 
 </details>
 
@@ -267,6 +267,6 @@ Zo weet je bij een fout meteen aan welke kant je moet zoeken: bij het uitlezen v
 
 **Oorzaak:** De `and is_on_floor()` ontbreekt. Dan geeft elke druk op de spatie de volle sprongkracht, ook midden in een sprong.
 
-**Oplossing:** Zet `and is_on_floor()` achter de check op de toets, zoals bij De sprong zelf in Stap 1.
+**Oplossing:** Zet `and is_on_floor()` achter de check op de toets, zoals in het tabblad De sprong.
 
 </details>

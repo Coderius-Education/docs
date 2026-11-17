@@ -11,14 +11,14 @@ Een vogel die tegen de zwaartekracht in moet vechten. Eén toets indrukken = eve
 
 Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpassen op het moment dat de speler een toets indrukt. Maar nu zonder grond — alleen jij houdt de vogel in de lucht.
 
-## Wat ga je leren?
+#### Wat ga je leren?
 
 - Een spawner bouwen die met een `Timer` periodiek nieuwe obstakels aanmaakt — de techniek uit [Automatisch spawnen met een Timer](site:godot/docs/spawn_timer).
 - Scenes "instantiëren" met `preload()` + `instantiate()` (zie [Spawnen: nodes maken in code](site:godot/docs/spawnen)).
 - Een `Area2D` gebruiken voor game over: raakt de vogel een buis, dan begint het level opnieuw.
 - De score ophogen met een `Area2D` in het gat tussen de buizen.
 
-## Nodes die je nodig hebt
+## Nodes: wat je nodig hebt
 
 | Node | Waarvoor? |
 |---|---|
@@ -29,7 +29,7 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 | `Timer` | Spawnt periodiek nieuwe buizen. |
 | `CanvasLayer` + `Label` | Score bovenin het scherm. |
 
-## Handige GDScript-functies
+## GDScript-functies: handig voor dit spel
 
 | Functie / property | Wat doet het? |
 |---|---|
@@ -44,7 +44,9 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 | `body_entered` (signal) | Gaat af als de vogel een buis raakt, of door het gat vliegt. |
 | `get_tree().reload_current_scene()` | Laadt de scène opnieuw: het level begint van voren af aan. |
 
-## Eerste stappen: bouw de kern
+## Zo begin je
+
+### Bouw de kern
 
 1. Begin met een lege `Node2D` als wereld-root.
 2. Bouw de vogel als losse scène (`vogel.tscn`) met `CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D`.
@@ -54,7 +56,7 @@ Het hart van het spel is hetzelfde als in jouw platformer: `velocity.y` aanpasse
 6. Geef `buis.tscn` een script dat de buis in `_process(delta)` naar links schuift (`position.x -= 200 * delta`) en `queue_free()` aanroept zodra `position.x` links van je scherm ligt.
 7. Voeg een `Timer` toe aan de wereld. Koppel `timeout` aan een functie die een buis spawnt, rechts buiten beeld en op een willekeurige hoogte (`randf_range`).
 
-### Mogelijke uitbreidingen
+## Uitbreidingen
 
 - Een achtergrond, en geluid bij een flap en bij een punt. Een node voor geluid zoek je op zoals in [Wat nu?](site:godot/docs/meer-leren), onder Zelf een nieuwe node ontdekken.
 - Een game-over-scherm met je score, gebouwd zoals [Een startmenu](site:godot/docs/start_menu).

@@ -6,49 +6,7 @@ sidebar_label: "Deel 1: Een script dat draait"
 
 # Het bewegingsscript bouwen — Deel 1: Een script dat draait
 
-## In deze les
-
 Je script bestaat uit één regel: `extends CharacterBody2D`. In deze les voeg je de functie toe waar de rest van je spel in komt te staan.
-
-<Voorkennis
-  items={[
-    {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
-    {site: 'python', to: '/docs/functies/09a-parameters', label: 'Parameters'},
-  ]}
-/>
-
-## Een oefenspoor ernaast \{#gdquest}
-
-### Een tweede spoor
-
-Programmeren leer je door het te doen, maar in je eigen game oefenen is lastig: als er iets niet werkt, weet je niet of het aan je code ligt of aan je scène.
-
-Daarom loopt er vanaf hier een tweede spoor mee. **Hier** bouw je je game: elke les brengt het script dat je zelf typt een stap verder, en aan het eind draait je spel weer. **Bij GDQuest** oefen je elk concept los, in je browser, zonder Godot erbij — gaat het daar mis, dan ligt het aan de code, meer kan het niet zijn.
-
-### Learn GDScript From Zero
-
-Ga naar [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/). Je werkt direct in je browser en hoeft niets te installeren.
-
-![GDQuest learn-gdscript lessenoverzicht met de relevante lessen gemarkeerd](../images/gdscript.png)
-
-Begin met les 1 en 2. Die kosten samen een kwartier en leggen uit wat code is en hoe je een foutmelding leest. Les 3 gaat over `extends` — de regel die al in je script staat.
-
-### Het blok in elke les
-
-Elk van de zeven delen van het bewegingsscript begint met zo'n blok. Het zegt welke GDQuest-les bij dat deel hoort:
-
-<GDQuestLes slug="basis_movement_begrijpen" />
-
-Je hoeft de GDQuest-cursus niet uitgespeeld te hebben; je loopt hem ernaast door, in je eigen tempo.
-
-<details>
-<summary>Welke GDQuest-les hoort bij welke les hier?</summary>
-
-<GDQuestTabel />
-
-Alles hieruit staat kort bij elkaar in de [GDScript-tips](site:godot/gdscript-tips), de naslag bij alle lessen.
-
-</details>
 
 ## Wat je nu gaat toevoegen
 
@@ -67,7 +25,14 @@ Dat is de reden dat een spel beweegt: zestig keer per seconde rekent Godot een n
 
 </details>
 
-## Stap 1: De functie die vanzelf draait \{#physics-process}
+## Stap 1: Functie typen \{#physics-process}
+
+<Voorkennis
+  items={[
+    {site: 'python', to: '/docs/functies/functies', label: 'Functies'},
+    {site: 'python', to: '/docs/functies/09a-parameters', label: 'Parameters'},
+  ]}
+/>
 
 Typ dit onder `extends CharacterBody2D`, met één lege regel ertussen:
 
@@ -82,7 +47,11 @@ Let op het inspringen: `move_and_slide()` staat één tab naar rechts. Daaraan z
 Zet Godot een gele waarschuwing bij `delta` dat de parameter niet gebruikt wordt? Dat klopt, en het mag. Vanaf Deel 2 gebruik je hem wel en verdwijnt de waarschuwing.
 :::
 
-## Stap 2: Wat je functie zegt
+#### Test het
+
+Start met `F5`. Je karakter staat nog steeds stil, en er is geen foutmelding. Dat is precies goed: de functie draait, hij doet alleen nog niets zinnigs.
+
+## Stap 2: Functie lezen
 
 ### Woord voor woord
 
@@ -112,13 +81,9 @@ Godot heeft twee functies die elke frame draaien. Welke je kiest hangt af van of
 
 Wij bouwen beweging met botsingen, dus `_physics_process`. Deze tabel staat ook in de [GDScript-tips](site:godot/gdscript-tips#functies).
 
-## Stap 3: Test het
+## Stap 3: Kijken met print
 
-Start met `F5`.
-
-Je karakter staat nog steeds stil, en er is geen foutmelding. Dat is precies goed: de functie draait, hij doet alleen nog niets zinnigs.
-
-Wil je zien dát hij draait? Zet er tijdelijk een `print()` in:
+Je karakter staat stil, dus aan je spel zie je niet dat de functie draait. Zet er tijdelijk een `print()` in:
 
 ```gdscript
 func _physics_process(delta: float) -> void:
@@ -126,7 +91,9 @@ func _physics_process(delta: float) -> void:
     move_and_slide()
 ```
 
-In het paneel **Uitvoer** onderin verschijnt nu een eindeloze stroom regels. Haal die `print` daarna weer weg — zestig regels per seconde maakt Uitvoer onbruikbaar.
+Start opnieuw met `F5`. In het paneel **Uitvoer** onderin verschijnt een eindeloze stroom regels. Haal die `print` daarna weer weg — zestig regels per seconde maakt Uitvoer onbruikbaar.
+
+#### En met `_ready`?
 
 **Wat zou er gebeuren als je `_physics_process` vervangt door `_ready`?**
 
@@ -139,6 +106,35 @@ Beide functies bestaan naast elkaar: `_ready` voor wat één keer moet gebeuren,
 
 </details>
 
+## GDQuest: een oefenspoor ernaast \{#gdquest}
+
+### Twee sporen
+
+Programmeren leer je door het te doen, maar in je eigen game oefenen is lastig: als er iets niet werkt, weet je niet of het aan je code ligt of aan je scène.
+
+Daarom loopt er vanaf hier een tweede spoor mee. **Hier** bouw je je game: elke les brengt het script dat je zelf typt een stap verder, en aan het eind draait je spel weer. **Bij GDQuest** oefen je elk concept los, in je browser, zonder Godot erbij — gaat het daar mis, dan ligt het aan de code, meer kan het niet zijn.
+
+Elk van de zeven delen van het bewegingsscript eindigt met een regel van GDQuest: welke les daar bij dat deel hoort. De eerste staat op het tabblad Je script tot nu toe van deze les; in Deel 7 staat hij op het tabblad De sprong.
+
+<details>
+<summary>Welke GDQuest-les hoort bij welke les hier?</summary>
+
+<GDQuestTabel />
+
+Alles hieruit staat kort bij elkaar in de [GDScript-tips](site:godot/gdscript-tips), de naslag bij alle lessen.
+
+</details>
+
+### Learn GDScript From Zero
+
+Ga naar [Learn GDScript From Zero](https://gdquest.github.io/learn-gdscript/). Je werkt direct in je browser en hoeft niets te installeren.
+
+![GDQuest learn-gdscript lessenoverzicht met de relevante lessen gemarkeerd](../images/gdscript.png)
+
+Begin met les 1 en 2. Die kosten samen een kwartier en leggen uit wat code is en hoe je een foutmelding leest. Les 3 gaat over `extends` — de regel die al in je script staat.
+
+Je hoeft de GDQuest-cursus niet uitgespeeld te hebben; je loopt hem ernaast door, in je eigen tempo.
+
 ## Je script tot nu toe
 
 ```gdscript
@@ -147,6 +143,10 @@ extends CharacterBody2D
 func _physics_process(delta: float) -> void:
     move_and_slide()
 ```
+
+Los oefenen wat je hier gebruikte kan bij GDQuest:
+
+<GDQuestLes slug="basis_movement_begrijpen" />
 
 ## Er gaat iets mis
 
@@ -177,7 +177,7 @@ Meldt Godot daarna `Used space character for indentation instead of tab as used 
 <details>
 <summary>Foutmelding: <code>Unexpected identifier "move_and_slide" in class body.</code></summary>
 
-**Oorzaak:** De functie heeft al een ingesprongen regel, zoals de `print` uit Stap 3, maar `move_and_slide()` staat daaronder helemaal links. Dan hoort hij niet meer bij de functie, en los in je script mag zo'n regel niet staan.
+**Oorzaak:** De functie heeft al een ingesprongen regel, zoals de `print` uit Kijken met print, maar `move_and_slide()` staat daaronder helemaal links. Dan hoort hij niet meer bij de functie, en los in je script mag zo'n regel niet staan.
 
 {/* verwacht-fout: Unexpected identifier "move_and_slide" in class body. */}
 

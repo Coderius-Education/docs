@@ -25,18 +25,11 @@ Je zou elk muntje met de hand kunnen opzoeken via `get_node(...)` en ze tellen. 
 
 </details>
 
-## Een group \{#group}
+## Stap 1: Group maken \{#group}
 
-Een group is een **label** dat je op een node plakt. Meerdere nodes mogen hetzelfde label dragen. Daarna kun je in één regel:
+Een group is een **label** dat je op een node plakt, en meerdere nodes mogen hetzelfde label dragen. Daarna kun je in één regel alle nodes met dat label **ophalen**, of op allemaal tegelijk een **functie aanroepen**.
 
-- alle nodes met dat label **ophalen** (en bijvoorbeeld tellen);
-- op alle nodes met dat label tegelijk een **functie aanroepen**.
-
-Het mooie: de nodes hoeven niets van elkaar te weten — net als bij signals is het lekker ontkoppeld.
-
-## Stap 1: Zet je muntjes in een group
-
-Een node in een group zetten kan op twee manieren. Kies er één.
+Je muntjes in een group zetten kan op twee manieren. Kies er één.
 
 **In de editor:**
 
@@ -55,7 +48,7 @@ func _ready() -> void:
 
 Doe hetzelfde voor je vijanden met het label `vijanden`.
 
-## Stap 2: Alle muntjes ophalen en tellen \{#lijst}
+## Stap 2: Muntjes tellen \{#lijst}
 
 Met `get_tree().get_nodes_in_group("muntjes")` krijg je een **lijst** van alle nodes in de group. De lengte daarvan is het aantal muntjes. Probeer het: zet deze twee regels in `_on_body_entered` van je muntje, boven `queue_free()`, even ver ingesprongen.
 
@@ -72,11 +65,13 @@ print("Er zijn nog ", aantal, " muntjes.")
 
 Pak een muntje: in **Uitvoer** staat hoeveel muntjes er waren. Haal de twee regels daarna weer weg. De lijst is dezelfde soort als in Python; `len(lijst)` heet hier `lijst.size()`.
 
-## Stap 3: Iets doen met elk item in de lijst \{#for-lus}
+## Group aanroepen
 
-Tellen is één ding, maar meestal wil je *iets doen* met elke node in de lijst. Daarvoor loop je er met een `for` doorheen — precies zoals je in Python door een lijst loopt.
+### Met een for-lus \{#for-lus}
 
-Stel dat je vijand-script een functie `stop()` heeft. Die schrijf je pas in Opdracht 7.5.b, dus deze stap en Stap 4 lees je alleen. Zo roep je hem op elke vijand aan:
+Vaak wil je meer dan tellen: je wilt *iets doen* met elke node in de lijst van een group. Daarvoor loop je er met een `for` doorheen, precies zoals je in Python door een lijst loopt.
+
+Stel dat je vijand-script een functie `stop()` heeft. Die schrijf je pas in Opdracht 7.5.b, dus dit tabblad lees je alleen. Zo roep je hem op elke vijand aan:
 
 ```gdscript
 for vijand in get_tree().get_nodes_in_group("vijanden"):
@@ -87,7 +82,7 @@ Lees het als: "pak elke node uit die lijst, noem hem even `vijand`, en roep daar
 
 Het inspringen doet hier hetzelfde werk als bij een `if`: alles wat inspringt hoort bij de lus en gebeurt dus per node.
 
-## Stap 4: `call_group` als afkorting
+### Met `call_group`
 
 Omdat "roep dezelfde functie aan op elke node in een group" zó vaak voorkomt, heeft Godot er een afkorting voor:
 
@@ -95,7 +90,7 @@ Omdat "roep dezelfde functie aan op elke node in een group" zó vaak voorkomt, h
 get_tree().call_group("vijanden", "stop")
 ```
 
-Deze regel roept `stop()` aan op elke vijand, net als de lus uit Stap 3. Handig als je alleen een functie wilt aanroepen — maar zodra je per node iets anders wilt doen (bijvoorbeeld alleen de vijanden links van je speler), heb je de lus nodig.
+Deze regel roept `stop()` aan op elke vijand, net als de lus uit de stap Met een for-lus. Handig als je alleen een functie wilt aanroepen — maar zodra je per node iets anders wilt doen (bijvoorbeeld alleen de vijanden links van je speler), heb je de lus nodig.
 
 **Wat denk je dat er gebeurt als één vijand geen functie `stop()` heeft?**
 
@@ -148,7 +143,7 @@ Het laatste muntje wordt wel `queue_free()`'d, maar telt in dit frame nog mee �
 
 ## Opdracht 7.5.b: roep alle vijanden tegelijk aan
 
-Geef je vijand-script een functie `stop()`, en roep die op alle vijanden tegelijk aan zodra de speler wint. Je vijanden bewegen nog niet, dus laat `stop()` voor nu een bericht printen: zo zie je in **Uitvoer** dat elke vijand de aanroep kreeg. Zitten je vijanden nog niet in de group `vijanden`, doe dat dan eerst, zoals in Stap 1.
+Geef je vijand-script een functie `stop()`, en roep die op alle vijanden tegelijk aan zodra de speler wint. Je vijanden bewegen nog niet, dus laat `stop()` voor nu een bericht printen: zo zie je in **Uitvoer** dat elke vijand de aanroep kreeg. Zitten je vijanden nog niet in de group `vijanden`, doe dat dan eerst, zoals bij Group maken.
 
 <details>
 <summary>Klik hier voor een tip.</summary>
@@ -162,7 +157,7 @@ Geef je vijand-script een functie `stop()`, en roep die op alle vijanden tegelij
 <details>
 <summary>Klik hier voor de oplossing.</summary>
 
-**In je vijand-script** komen deze twee functies erbij. De `_on_body_entered` uit opdracht 7.3.a blijft staan. Zette je de vijand in Stap 1 in de editor in de group, dan heb je `_ready()` niet nodig.
+**In je vijand-script** komen deze twee functies erbij. De `_on_body_entered` uit opdracht 7.3.a blijft staan. Zette je de vijand bij Group maken in de editor in de group, dan heb je `_ready()` niet nodig.
 
 {/* compileer-als: extends Area2D */}
 

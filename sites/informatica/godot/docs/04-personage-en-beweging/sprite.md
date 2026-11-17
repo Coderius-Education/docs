@@ -18,14 +18,16 @@ Elke node doet één ding goed. `CharacterBody2D` regelt beweging en physics; `S
 
 </details>
 
-## Stap 1: Voeg een `CharacterBody2D` toe \{#characterbody2d}
+## Stap 1: Karakter met sprite
+
+#### Voeg een `CharacterBody2D` toe \{#characterbody2d}
 
 `CharacterBody2D` is de basis van een speelbaar 2D-karakter. Hij ondersteunt beweging, zwaartekracht en botsingen met andere physics-objecten (zoals je tegels).
 
 1. Klik in de Scene Tree met rechts op je root-node (`Node2D`) → **Add Child Node**.
 2. Zoek naar `CharacterBody2D` en voeg hem toe.
 
-## Stap 2: Voeg een `Sprite2D` toe als child \{#sprite2d}
+#### Hang er een `Sprite2D` onder \{#sprite2d}
 
 Een `Sprite2D` is een platte 2D-afbeelding. We hangen hem onder de `CharacterBody2D` zodat hij mee beweegt.
 
@@ -36,7 +38,9 @@ Een `Sprite2D` is een platte 2D-afbeelding. We hangen hem onder de `CharacterBod
 
 Vind je alleen brede bestanden met een rij figuurtjes, zoals `Idle (32x32).png`? Dat zijn de sprite-sheets uit [Opdracht 2.3.a](site:godot/docs/bestanden-downloaden#opdracht-23a-verken-het-asset-pack). Neem er dan een van: je ziet een rij figuurtjes in plaats van één, en dat blijft zo tot je de frames in hoofdstuk 6 van elkaar knipt.
 
-## Stap 3: Voeg een `CollisionShape2D` toe als child \{#collisionshape2d}
+## Stap 2: Collision toevoegen
+
+#### Voeg een `CollisionShape2D` toe \{#collisionshape2d}
 
 Zonder collision-vorm weet Godot niet waar je karakter eindigt en zakt hij door alles heen.
 
@@ -53,7 +57,9 @@ CharacterBody2D
 └── CollisionShape2D
 ```
 
-Selecteer tot slot de `CharacterBody2D` in de Scene Tree en sleep hem in de viewport naar een plek een stukje boven je vloer. Deze drie nodes vormen samen je speler; hun instellingen staan in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
+#### Zet je karakter boven de vloer
+
+Selecteer de `CharacterBody2D` in de Scene Tree en sleep hem in de viewport naar een plek een stukje boven je vloer. Deze drie nodes vormen samen je speler; hun instellingen staan in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
 
 ## Opdracht 4.1.a: geef je karakter een ander uiterlijk
 

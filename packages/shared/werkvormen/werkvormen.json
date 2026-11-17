@@ -197,6 +197,7 @@
       "^Zo ziet je .+ er nu uit$",
       "^Je script tot nu toe$",
       "^Je complete script$",
+      "^Je \\S+\\.gd$",
       "^Wat je nu ziet$"
     ],
     "tips": [

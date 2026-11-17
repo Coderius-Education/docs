@@ -18,7 +18,7 @@ Het simpelst is om de tekst **elke frame** opnieuw te zetten. Dan staat hij alti
 
 </details>
 
-## Stap 1: Voeg een `CanvasLayer` met een `Label` toe \{#canvaslayer-label}
+## Stap 1: Label toevoegen \{#canvaslayer-label}
 
 Een score hoort altijd op dezelfde plek op het scherm te blijven — ook als je camera de speler volgt. Daarom zet je de Label op een **`CanvasLayer`**: die tekent bovenop je spel en beweegt **niet** mee met de camera.
 
@@ -40,7 +40,7 @@ Node2D (de root van je level)
 
 De `CanvasLayer` en `Label` staan met hun instellingen in de [Nodes cheatsheet](site:godot/cheatsheet#ui-menu).
 
-## Stap 2: Een script dat de tekst bijwerkt
+## Stap 2: Tekst bijwerken
 
 1. Selecteer `ScoreLabel`.
 2. Klik op het script-icoontje of klik met rechts → **Attach Script** → **Create**.
@@ -61,16 +61,16 @@ func _process(delta: float) -> void:
 
 Start het spel met `F5` en pak een muntje op. De Label telt live mee.
 
-### `_process` vs `_physics_process`
+## `_process`: het verschil met `_physics_process`
 
-Je hebt eerder `_physics_process(delta)` gebruikt in je karakter-script. Wat is het verschil?
+Je Label-script gebruikt `_process(delta)`. In je karakter-script gebruikte je eerder `_physics_process(delta)`. Wat is het verschil?
 
 |         Functie          | Wanneer gebruiken?                                                  |
 | :----------------------: | :------------------------------------------------------------------ |
 | `_physics_process(delta)` | Voor beweging, zwaartekracht, botsingen — alles met physics        |
 | `_process(delta)`         | Voor algemene updates — UI, timers, animatie-logica zonder physics |
 
-Voor een Label die alleen tekst toont is `_process` perfect.
+Een Label die alleen tekst toont heeft geen physics nodig: daar gebruik je `_process`.
 
 ## Opdracht 7.4.a: een levens-Label
 

@@ -26,9 +26,9 @@ get_tree().change_scene_to_file("res://level2.tscn")
 
 </details>
 
-## Stap 1: Maak `level2.tscn`
+## Stap 1: Level 2 maken
 
-### Je karakter als eigen scène
+### Karakter als eigen scène
 
 Level 2 heeft hetzelfde karakter nodig als level 1, met zijn script, zijn animaties en zijn camera. Dat karakter zit nu in je eerste level, `world.tscn`. Bewaar het als eigen scène, dan kun je het in elk level zetten, net als `muntje.tscn`:
 
@@ -40,7 +40,9 @@ In het FileSystem staat nu `karakter.tscn`, met je karakter en alles wat eronder
 
 Doe hetzelfde met de `CanvasLayer` waar je score in staat, en sla die op als `scorebord.tscn`. Zonder scorebord zie je in level 2 geen score.
 
-### Van `world.tscn` naar `level1.tscn`
+### Hernoemen en bouwen
+
+#### Hernoem `world.tscn`
 
 Je eerste level heet nog `world.tscn`. Vanaf deze les heet het `level1.tscn`: de lessen hierna gaan van die naam uit.
 
@@ -49,14 +51,14 @@ Je eerste level heet nog `world.tscn`. Vanaf deze les heet het `level1.tscn`: de
 
 De Main Scene is de scène die start als je op `F5` drukt. Die stelde je in bij [Je eerste 2D-scène](site:godot/docs/scene).
 
-### Het nieuwe level
+#### Bouw level 2
 
 1. Klik op **Scene** → **New Scene** en kies **2D Scene**. Godot maakt een `Node2D` als root.
 2. Bouw een nieuw level op zoals je in [Level tekenen met een TileMap](site:godot/docs/tilemap_opzetten) en [Collision op je tegels](site:godot/docs/tilemap_collision) hebt geleerd. Maak het iets anders dan level 1, bijvoorbeeld moeilijker of met een ander decor.
 3. Sleep `karakter.tscn` en `scorebord.tscn` vanuit het FileSystem naar je level, zoals je dat met `muntje.tscn` deed.
 4. Sla op via `Ctrl + S` als `level2.tscn`.
 
-## Stap 2: Voeg een vlag toe aan level 1
+## Stap 2: De vlag
 
 Aan het einde van level 1 plaats je een "vlag" die de overgang triggert. De opzet lijkt op het muntje uit [Signals & een muntje oppakken](site:godot/docs/signals_muntje).
 
@@ -77,7 +79,9 @@ Node2D (de root van level 1)
     └── CollisionShape2D
 ```
 
-## Stap 3: Koppel het `body_entered`-signaal
+## Stap 3: `body_entered` koppelen
+
+De vlag krijgt een script, en het `body_entered`-signaal dat je van het muntje kent.
 
 1. Selecteer de `Vlag`-node.
 2. Klik op het script-icoontje of klik met rechts → **Attach Script** → **Create**. Sla op als `vlag.gd`.
@@ -91,7 +95,9 @@ func _on_body_entered(body: Node2D) -> void:
     pass # hier komt je code
 ```
 
-## Stap 4: Vervang `pass` door de scene-switch \{#change-scene}
+## Stap 4: Naar level 2 \{#change-scene}
+
+Vervang in `vlag.gd` de regel met `pass` door de scene-switch:
 
 ```gdscript
 extends Area2D
@@ -106,15 +112,7 @@ func _on_body_entered(body: Node2D) -> void:
 | `change_scene_to_file("res://level2.tscn")`       | Vervangt de huidige scène door `level2.tscn`                      |
 | `res://`                                          | Verwijst naar je projectmap — `level2.tscn` zit in de hoofdmap    |
 
-:::tip
-Heb je `level2.tscn` in een submap opgeslagen? Pas het pad dan aan: `res://levels/level2.tscn` voor een bestand in een `levels`-map.
-:::
-
-## Stap 5: Test
-
-Start het spel met `F5` vanaf level 1. Loop je speler naar de vlag — zodra je hem raakt, opent level 2.
-
-Je `Global.score` blijft staan tijdens de overgang (dankzij [Global variables (Autoload)](site:godot/docs/global_variables)), en het scorebord in level 2 laat hem zien. Wil je per level opnieuw beginnen? Roep `Global.reset()` aan in `_on_body_entered` vóór de scene-switch.
+Start het spel met `F5` vanaf level 1 en loop naar de vlag: zodra je hem raakt, opent level 2. Je `Global.score` blijft staan tijdens de overgang (dankzij [Global variables (Autoload)](site:godot/docs/global_variables)), en het scorebord in level 2 laat hem zien. Wil je per level opnieuw beginnen? Roep `Global.reset()` aan in `_on_body_entered` vóór de scene-switch.
 
 ## Opdracht 8.1.a: voeg een derde level toe
 
@@ -174,6 +172,7 @@ func _ready() -> void:
 1. Open het **FileSystem**-paneel linksonder en zoek `level2.tscn`.
 2. Klik met rechts op het bestand → **Copy Path**. Plak dat exact in je script.
 3. Let op hoofdletters: `Level2.tscn` is niet hetzelfde als `level2.tscn`.
+4. Staat het bestand in een submap, dan hoort die in het pad: `res://levels/level2.tscn` voor een bestand in een `levels`-map.
 
 </details>
 
@@ -182,7 +181,7 @@ func _ready() -> void:
 
 **Oorzaak:** `level2.tscn` bevat geen `CharacterBody2D` — elke scène heeft zijn eigen nodes, de speler uit level 1 verdwijnt mee.
 
-**Oplossing:** Sleep `karakter.tscn` in `level2.tscn`, zoals in het tabblad Stap 1, onder Het nieuwe level. Geavanceerder is om de speler als Autoload te draaien zodat hij blijft bestaan over scènes heen — maar dat valt buiten deze les.
+**Oplossing:** Sleep `karakter.tscn` in `level2.tscn`, zoals in het tabblad Level 2 maken, stap Hernoemen en bouwen. Geavanceerder is om de speler als Autoload te draaien zodat hij blijft bestaan over scènes heen — maar dat valt buiten deze les.
 
 </details>
 

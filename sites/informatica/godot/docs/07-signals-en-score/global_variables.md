@@ -20,7 +20,7 @@ Je maakt een apart script (bijvoorbeeld `global.gd`) dat *niet* aan een node han
 
 </details>
 
-## Stap 1: Maak een script met je variabelen
+## Stap 1: Global-script
 
 Variabelen die je in een node-script zet, leven alleen zolang die node bestaat. `Global` lost dat op door buiten de Scene Tree te leven.
 
@@ -40,9 +40,9 @@ var levens = 3
 
 Dat is alles. Dit script bevat variabelen die je overal wilt gebruiken.
 
-## Stap 2: Stel het in als Autoload \{#autoload-instellen}
+## Stap 2: Autoload \{#autoload-instellen}
 
-Dit is de belangrijkste stap. Door het script als **Autoload** te registreren, laadt Godot het automatisch bij het opstarten en is het overal beschikbaar.
+Registreer je `global.gd` als **Autoload**, dan laadt Godot het bij het opstarten en is het overal beschikbaar.
 
 1. Ga naar **Project** → **Project Settings**.
 2. Klik bovenin op het tabblad **Globals**, en daarbinnen op Autoload. Het tabblad Globals staat naast **General**; is het venster smal, scroll dan even door de rij.
@@ -50,13 +50,11 @@ Dit is de belangrijkste stap. Door het script als **Autoload** te registreren, l
 4. Bij **Node Name** vul je `Global` in (met hoofdletter).
 5. Klik op **Add**.
 
-`Global` is nu overal beschikbaar in je project.
+`Global` is nu overal beschikbaar in je project. De instelling staat ook in de [Nodes cheatsheet](site:godot/cheatsheet#autoload).
 
-De Autoload-instelling staat ook in de [Nodes cheatsheet](site:godot/cheatsheet#autoload).
+#### Zonder Autoload
 
-### Zonder Autoload
-
-**Wat denk je dat er gebeurt als je het instellen als Autoload overslaat en meteen `Global.score += 1` in je muntje-script zet?**
+**Wat gebeurt er als je dit overslaat en meteen `Global.score += 1` in je muntje-script zet?**
 
 <details>
 <summary>Antwoord</summary>
@@ -65,7 +63,7 @@ Je krijgt de melding `Identifier "Global" not declared in the current scope`, en
 
 </details>
 
-## Stap 3: Gebruik `Global.score` in je muntje \{#global-score}
+## Stap 3: Score in Global \{#global-score}
 
 In [Score bijhouden in je karakter](site:godot/docs/score_in_karakter) hoogde je de score op via `body.score += 1`. Met `Global` hoeft het muntje het karakter daar niet meer voor te kennen.
 
@@ -86,7 +84,9 @@ Overal dezelfde syntax: `Global.variabelnaam`. Geen `get_node(...)`, geen kapott
 
 Global variables gebruik je voor wat je in meer scènes nodig hebt: score, levens, instellingen. Wat bij één node hoort, blijft een gewone `var` in het script van die node.
 
-## Functies: ook in je global script
+## Functies in Global
+
+### Twee functies toevoegen
 
 Een global script mag ook **functies** hebben. Zet deze twee onder je variabelen:
 
@@ -117,11 +117,9 @@ Global.reset()
 
 `reset()` roep je aan in [Een startmenu](site:godot/docs/start_menu), als een nieuw potje begint. `verlies_leven()` laat zien dat zo'n functie ook een `if` mag hebben. In deze cursus trekt je vijand het leven er zelf af.
 
-## Return: een functie die antwoord geeft \{#return}
+### Een waarde teruggeven \{#return}
 
-### Een waarde teruggeven
-
-De functies `reset()` en `verlies_leven()` **doen** iets: ze zetten waarden goed of printen iets. Daarom staat er `-> void` achter zodra je het type opschrijft. Dat pijltje betekent: deze functie geeft niets terug.
+De functies `reset()` en `verlies_leven()` uit de stap Twee functies toevoegen **doen** iets: ze zetten waarden goed of printen iets. Schrijf je het type erbij, dan staat er `-> void` achter: `func reset() -> void:`. Dat pijltje betekent: deze functie geeft niets terug.
 
 Vaak wil je een functie juist iets laten **teruggeven**, zodat je het antwoord kunt gebruiken. Zet daarnaast in je global script:
 
@@ -130,12 +128,27 @@ func is_game_over() -> bool:
     return levens <= 0
 ```
 
-`-> bool` zegt: deze functie geeft een `true` of een `false` terug. Met `return` stuur je die waarde naar de plek waar de functie werd aangeroepen. Vanaf dan kun je hem gebruiken alsof je die vergelijking ter plekke had opgeschreven:
+`-> bool` zegt: deze functie geeft een `true` of een `false` terug. Met `return` stuur je die waarde naar de plek waar de functie werd aangeroepen.
+
+### Het antwoord gebruiken
+
+`Global.is_game_over()` gebruik je alsof je de vergelijking `levens <= 0` ter plekke had opgeschreven:
 
 ```gdscript
 if Global.is_game_over():
     print("Je hebt geen levens meer")
 ```
+
+**Waarom zou je `is_game_over()` maken in plaats van overal `if Global.levens <= 0:` te schrijven?**
+
+<details>
+<summary>Antwoord</summary>
+
+Omdat je dan één plek hebt waar staat wat "game over" betekent. Wil je later dat het spel al eindigt bij één leven over, of dat je ook game over bent als de tijd op is, dan pas je die ene functie aan in plaats van vijf verspreide `if`-regels.
+
+De naam helpt bovendien mee: `if Global.is_game_over():` lees je als een zin, `if Global.levens <= 0:` moet je ontcijferen.
+
+</details>
 
 ### Vergelijken met Python
 
@@ -153,26 +166,13 @@ In Python levert een functie zonder `return` de waarde `None` op. GDScript noemt
 | `func is_game_over() -> bool:` | `true` of `false` | `return levens <= 0` |
 | `func aantal_levens() -> int:` | een heel getal | `return levens` |
 
-### Waarom een aparte functie?
-
-**Waarom zou je `is_game_over()` maken in plaats van overal `if Global.levens <= 0:` te schrijven?**
-
-<details>
-<summary>Antwoord</summary>
-
-Omdat je dan één plek hebt waar staat wat "game over" betekent. Wil je later dat het spel al eindigt bij één leven over, of dat je ook game over bent als de tijd op is, dan pas je die ene functie aan in plaats van vijf verspreide `if`-regels.
-
-De naam helpt bovendien mee: `if Global.is_game_over():` lees je als een zin, `if Global.levens <= 0:` moet je ontcijferen.
-
-</details>
-
 ## Opdracht 7.3.a: laat je vijand `Global.levens` gebruiken
 
-In opdracht 7.2.a hield je karakter de levens bij, en trok je vijand er met `body.levens -= 1` één af. Je `global.gd` heeft sinds Stap 1 ook `levens`. Laat je vijand die gebruiken:
+In opdracht 7.2.a hield je karakter de levens bij, en trok je vijand er met `body.levens -= 1` één af. Je `global.gd` heeft sinds het tabblad Global-script ook `levens`. Laat je vijand die gebruiken:
 
 1. Vervang in je vijand-script elke `body.levens` door `Global.levens`: bij het aftrekken, in de `print` en in de `if` die `"GAME OVER"` print.
 2. Gebruik in die `if` de functie `Global.is_game_over()`, in plaats van zelf te vergelijken.
-3. Haal `var levens = 3` weg uit je karakter-script, zoals je dat in Stap 3 met `score` deed.
+3. Haal `var levens = 3` weg uit je karakter-script, zoals je dat bij Score in Global met `score` deed.
 
 <details>
 <summary>Klik hier voor een tip.</summary>

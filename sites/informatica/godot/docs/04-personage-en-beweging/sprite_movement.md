@@ -5,13 +5,9 @@ slug: /sprite_movement
 
 # Je eerste eigen script
 
-Je karakter staat op het scherm, maar doet niets. Vanaf hier ga je hem zelf laten bewegen — regel voor regel, in een script dat je van nul opbouwt. In deze les maak je het script aan en schrijf je de eerste regel.
+Je karakter staat op het scherm, maar doet niets. Vanaf hier laat je hem zelf bewegen, in een script dat je regel voor regel opbouwt. Godot kan zo'n script voor je invullen, maar dan lees je iets wat je niet zelf hebt bedacht, en bij de eerste foutmelding weet je niet waar je moet kijken. Je begint daarom leeg: elke regel die erbij komt, komt erbij omdat jij hem nodig hebt. In deze les maak je het script aan, met één regel erin.
 
-Godot kan een startscript voor je invullen. Handig, maar dan lees je iets wat je niet zelf hebt bedacht, en bij de eerste foutmelding weet je niet waar je moet kijken.
-
-In deze cursus begin je daarom leeg. Elke regel die erbij komt, komt erbij omdat jij hem nodig hebt. Na elke les draait je spel weer, en doet het net iets meer dan daarvoor.
-
-## Stap 1: Koppel een leeg script
+## Stap 1: Leeg script koppelen
 
 1. Selecteer je `CharacterBody2D` in de Scene Tree.
 2. Klik op het script-icoontje bovenaan de Inspector (of klik met rechts → **Attach Script**).
@@ -26,9 +22,9 @@ extends CharacterBody2D
 
 Meer niet. Dat is precies de bedoeling.
 
-## Stap 2: Wat die ene regel doet
+## Stap 2: extends en testen
 
-**Wat denk je dat er gebeurt als je de regel `extends CharacterBody2D` weghaalt?**
+In je script staat één regel: `extends CharacterBody2D`. **Wat denk je dat er gebeurt als je die regel weghaalt?**
 
 <details>
 <summary>Antwoord</summary>
@@ -39,7 +35,7 @@ Vergelijk het met een basisrecept. Met `extends` zeg je: ik bak hetzelfde recept
 
 </details>
 
-## Stap 3: Test dat er niets kapot is
+#### Test dat er niets kapot is
 
 Start het spel met `F5`. Je karakter staat stil en er verschijnt geen foutmelding.
 
@@ -74,7 +70,7 @@ Onder `res://` staat een bestand dat op `.gd` eindigt: dat is je script. Het sta
 
 **Oorzaak:** Bij **Attach Script** stond **Template** nog op `CharacterBody2D: Basic Movement`. Dat is de keuze die Godot zelf voorstelt voor dit node-type, en die vult een compleet bewegingsscript in — precies het script dat je in de volgende lessen zelf gaat schrijven.
 
-**Oplossing:** Selecteer alles in het script (`Ctrl + A`) en verwijder het, op de regel `extends CharacterBody2D` na. Je kunt ook het script losmaken (rechtermuisknop op de node → **Detach Script**) en Stap 1 opnieuw doen met de juiste template.
+**Oplossing:** Selecteer alles in het script (`Ctrl + A`) en verwijder het, op de regel `extends CharacterBody2D` na. Je kunt ook het script losmaken (rechtermuisknop op de node → **Detach Script**) en het opnieuw koppelen zoals bij Leeg script koppelen, met de juiste template.
 
 </details>
 
@@ -83,7 +79,7 @@ Onder `res://` staat een bestand dat op `.gd` eindigt: dat is je script. Het sta
 
 **Oorzaak:** Het script is niet gekoppeld, of je hebt de verkeerde node geselecteerd.
 
-**Oplossing:** Klik in de Scene Tree op je `CharacterBody2D` (niet op de `Sprite2D` of `CollisionShape2D` eronder) en herhaal Stap 1. Een gekoppeld script laat een klein icoontje rechts van de nodenaam zien.
+**Oplossing:** Klik in de Scene Tree op je `CharacterBody2D` (niet op de `Sprite2D` of `CollisionShape2D` eronder) en herhaal de handelingen uit Leeg script koppelen. Een gekoppeld script laat een klein icoontje rechts van de nodenaam zien.
 
 </details>
 
@@ -92,6 +88,6 @@ Onder `res://` staat een bestand dat op `.gd` eindigt: dat is je script. Het sta
 
 **Oorzaak:** Het script hangt aan de verkeerde node. In de eerste regel staat `extends CharacterBody2D`, maar je hebt het script aan de `Sprite2D` gekoppeld (of aan een andere node: die naam staat achteraan de melding).
 
-**Oplossing:** Klik met rechts op die node → **Detach Script**. Selecteer daarna je `CharacterBody2D` en doe Stap 1 opnieuw.
+**Oplossing:** Klik met rechts op die node → **Detach Script**. Selecteer daarna je `CharacterBody2D` en koppel het script opnieuw, zoals bij Leeg script koppelen.
 
 </details>

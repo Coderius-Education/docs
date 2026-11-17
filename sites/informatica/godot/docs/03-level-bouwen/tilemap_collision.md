@@ -23,32 +23,27 @@ In deze les doe je beide.
 
 </details>
 
-## Stap 1: Physics Layer aanmaken \{#physics-layer}
+## Stap 1: Collision verven
 
-Voordat je collision kunt verven, moet er een **Physics Layer** bestaan op je TileSet. Zie het als een "kanaal" waarop botsingen worden geregistreerd.
+#### Maak een Physics Layer aan \{#physics-layer}
+
+Collision verf je op een **Physics Layer** van je TileSet: een "kanaal" waarop Godot botsingen registreert.
 
 1. Selecteer je `TileMapLayer` in de Scene Tree.
 2. Klik in de **Inspector** op je TileSet zodat de instellingen openklappen.
-3. Zoek het kopje **Physics Layers** en klap het open.
-4. Klik op **Add Element**.
+3. Zoek het kopje **Physics Layers**, klap het open en klik op **Add Element**.
 
 Er staat nu een `Layer 0`. De standaard-instellingen zijn prima — die hoef je niet aan te passen.
 
-## Stap 2: Collision verven met de Paint-tool
+#### Verf de massieve tegels
 
-Met de Paint-tool vertel je per tegel of die massief is of niet.
-
-1. Zorg dat je onderin in het tabblad **TileSet** zit (niet TileMap: daar tekende je je level mee, hier definieer je tegels).
+1. Zorg dat je onderin in het tabblad **TileSet** zit, niet in TileMap: daar tekende je je level mee.
 2. Klik bovenaan in dat paneel op de knop **Paint** (het verfroller- of kwastje-icoontje).
 3. Naast die knop verschijnt een dropdown-menu. Klik hierop en kies **Physics Layer 0**.
-4. Klik en sleep over alle tegels in je afbeelding die massief moeten zijn: de grond en de muren.
+4. Klik en sleep over alle tegels die massief moeten zijn: de grond en de muren. Een tegel die alleen versiering is, laat je leeg.
 5. De geverfde tegels krijgen een **lichtblauw vierkantje**. Alles wat lichtblauw is, is vanaf nu massief.
 
-:::tip
-Je hoeft niet elke tile collision te geven. Een tegel die je alleen als versiering gebruikt, laat je leeg: een karakter kan daar straks doorheen lopen.
-:::
-
-De lichtblauwe vakjes zijn jouw bewijs dat collision actief is op die tegels. Echt **testen** kun je dit pas als je karakter kan vallen, in [Deel 2 — Vallen](site:godot/docs/movement-motor). Daar blijft het bij `F5` op de gekleurde tegels staan in plaats van erdoorheen te zakken.
+Echt **testen** kun je dit pas als je karakter kan vallen, in [Deel 2 — Vallen](site:godot/docs/movement-motor). Daar blijft het bij `F5` op de gekleurde tegels staan in plaats van erdoorheen te zakken.
 
 ## Opdracht 3.3.a: laat één tegel bewust open
 
@@ -80,6 +75,6 @@ Het resultaat zie je in hoofdstuk 5: je karakter loopt dwars door die tegel heen
 **Oplossing:**
 
 1. Check of je echt in het **TileSet**-tabblad bent (onderin, naast TileMap).
-2. Klap in de Inspector je TileSet open en controleer of er onder **Physics Layers** een `Layer 0` staat — anders eerst Stap 1 doen.
+2. Klap in de Inspector je TileSet open en controleer of er onder **Physics Layers** een `Layer 0` staat — anders eerst de Physics Layer aanmaken, zoals bij Collision verven.
 
 </details>

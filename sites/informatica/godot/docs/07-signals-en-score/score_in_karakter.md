@@ -26,7 +26,7 @@ Het **karakter** is een logische plek: de speler "draagt" zijn eigen score. Zola
 
 </details>
 
-## Stap 1: Voeg `score` toe aan je karakter
+## Stap 1: Score in je karakter
 
 Open het script van je `CharacterBody2D` en voeg bovenaan een variabele toe:
 
@@ -41,7 +41,7 @@ var score = 0
 # ... rest van je script
 ```
 
-## Stap 2: Hoog de score op vanuit het muntje
+## Stap 2: Ophogen bij een muntje
 
 Open het script van je muntje. In `_on_body_entered` heb je al een parameter `body` — dat is de node die het muntje aanraakt (jouw karakter). Vanuit het muntje kun je dus rechtstreeks bij `body.score`.
 
@@ -60,7 +60,7 @@ func _on_body_entered(body: Node2D) -> void:
 | `body.score`        | De `score`-variabele van die node            |
 | `body.score += 1`   | Verhoog de score met 1                       |
 
-### Test het
+## Stap 3: Score in Uitvoer
 
 Start het spel met `F5` en pak een paar muntjes op. Kijk in **Uitvoer** onderaan:
 

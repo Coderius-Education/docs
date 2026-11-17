@@ -8,8 +8,6 @@ sidebar_label: "Deel 4: Je eerste if"
 
 Je karakter valt, ook als hij allang op de vloer ligt. Dat zie je niet, maar het gaat straks wel wringen. In deze les schrijf je je eerste voorwaarde.
 
-<GDQuestLes slug="movement-grond" />
-
 <Voorkennis
   items={[
     {site: 'python', to: '/docs/beslissen/05b-if-else', label: 'If en else'},
@@ -35,7 +33,7 @@ Dat is precies één frame zwaartekracht. Jouw regel telt er elke frame `16` bij
 
 </details>
 
-## Stap 1: Alleen vallen als je in de lucht bent \{#if-elif}
+## Stap 1: Vallen met een if \{#if-elif}
 
 Zet je valregel binnen een `if`:
 
@@ -51,7 +49,11 @@ Let op het inspringen: de valregel staat nu **twee** niveaus in. Eén niveau omd
 
 En let op de dubbele punt aan het eind van de `if`-regel. Die hoort er altijd.
 
-## Stap 2: Wat `is_on_floor()` teruggeeft
+#### Test het
+
+Start met `F5`. Aan de buitenkant is er niets veranderd: je karakter valt nog steeds en blijft op de vloer liggen. Wat de `if` wel verandert, meet je bij Wat not doet.
+
+## Stap 2: Wat is_on_floor geeft
 
 `is_on_floor()` geeft `true` als je karakter de vloer raakt en `false` als hij in de lucht hangt. Zulke ja-of-nee-waarden heten **booleans**.
 
@@ -67,7 +69,7 @@ In **Uitvoer** zie je `true` zolang je op de vloer staat, en `false` tijdens een
 
 Haal de `print` daarna weer weg.
 
-## Stap 3: Wat `not` doet
+## Stap 3: Wat not doet
 
 `is_on_floor()` zegt "ik sta op de grond". Jij wilt juist het omgekeerde: alleen vallen als je er **niet** op staat. Met `not` draai je een boolean om:
 
@@ -78,18 +80,14 @@ Haal de `print` daarna weer weg.
 
 De code binnen de `if` draait alleen als wat erachter staat `true` is. Dus: alleen in de lucht.
 
-## Stap 4: Test het
+#### Meet het verschil
 
-Start met `F5`. Aan de buitenkant is er niets veranderd: je karakter valt nog steeds en blijft op de vloer liggen.
-
-Het verschil zit in de getallen. Zet tijdelijk `print(velocity)` boven `move_and_slide()`:
+Aan je spel zie je de `if` niet, aan de getallen wel. Zet tijdelijk `print(velocity)` boven `move_and_slide()`, start met `F5` en kijk in **Uitvoer**:
 
 - **Zonder** de `if` staat er op de vloer `(0, 16.33)`, elke frame opnieuw.
 - **Met** de `if` staat er `(0, 0)`.
 
 Haal de `print` daarna weer weg. Je code zegt nu wat je bedoelt: trek hem alleen naar beneden als hij in de lucht hangt. Dit is ook precies wat Godot zelf doet in het sjabloon dat je in [Je eerste eigen script](site:godot/docs/sprite_movement) hebt overgeslagen.
-
-Deze les repareerde dus iets wat je niet kón zien zonder `print` — en dat is bij programmeren vaker het geval dan je zou denken.
 
 ## Je script tot nu toe
 
@@ -102,6 +100,12 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 ```
+
+Deze les repareerde iets wat je niet kón zien zonder `print` — en dat is bij programmeren vaker het geval dan je zou denken.
+
+Los oefenen wat je hier gebruikte kan bij GDQuest:
+
+<GDQuestLes slug="movement-grond" />
 
 ## Er gaat iets mis
 

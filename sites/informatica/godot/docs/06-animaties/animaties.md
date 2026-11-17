@@ -18,26 +18,24 @@ Een animatie is een serie afbeeldingen (frames) die snel achter elkaar worden ge
 
 </details>
 
-## Stap 1: Vervang `Sprite2D` door `AnimatedSprite2D` \{#animatedsprite2d}
+## Stap 1: AnimatedSprite2D maken \{#animatedsprite2d}
+
+#### Vervang `Sprite2D` door `AnimatedSprite2D`
 
 1. Klik met rechts op je bestaande `Sprite2D` → **Delete Node**.
 2. Klik met rechts op `CharacterBody2D` → **Add Child Node**.
 3. Voeg `AnimatedSprite2D` toe.
 
-`AnimatedSprite2D` lijkt op `Sprite2D`, maar kan meerdere animaties bevatten die je vanuit code afspeelt.
+`AnimatedSprite2D` lijkt op `Sprite2D`, maar kan meerdere animaties bevatten die je vanuit code afspeelt. De instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
 
-De `AnimatedSprite2D`-instellingen staan ook in de [Nodes cheatsheet](site:godot/cheatsheet#hoofdpersoon).
-
-## Stap 2: Maak een `SpriteFrames`-resource
+#### Maak een `SpriteFrames`-resource
 
 1. Selecteer de `AnimatedSprite2D`.
 2. Klik in de Inspector op **SpriteFrames** → **New SpriteFrames**.
 3. Klik op de net aangemaakte SpriteFrames-resource om hem te openen.
 4. Onderin het scherm verschijnt het **SpriteFrames**-paneel.
 
-## Stap 3: Maak drie animaties: `idle`, `run`, `jump`
-
-### De `idle`-animatie
+## Stap 2: De idle-animatie
 
 In het SpriteFrames-paneel zie je linksboven een lijst met animaties. Standaard staat er één animatie genaamd `default`.
 
@@ -48,10 +46,10 @@ In het SpriteFrames-paneel zie je linksboven een lijst met animaties. Standaard 
 
 Kom je er niet uit? Op het tabblad Video van deze les zie je de stappen in beeld.
 
-### De `run`- en `jump`-animatie
+## Stap 3: Run en jump
 
 1. Klik linksboven in het SpriteFrames-paneel op het `+`-icoontje om een nieuwe animatie toe te voegen en noem deze `run`.
-2. Voeg de frames toe zoals bij `idle`, met het sprite-sheet voor rennen (bijv. `Run (32x32).png`).
+2. Klik op **Add Frames from Sprite Sheet**, kies het sprite-sheet voor rennen (bijv. `Run (32x32).png`), zet **Horizontal** op het aantal frames, selecteer ze en klik op de knop rechtsonder. De uitgebreide stappen staan op het tabblad De idle-animatie.
 3. Doe hetzelfde voor `jump`.
 
 Je drie animaties staan klaar, maar in je spel zie je ze nog niet: een animatie speelt pas als je script hem start. Dat schrijf je in [Animaties in code](site:godot/docs/animaties_code).

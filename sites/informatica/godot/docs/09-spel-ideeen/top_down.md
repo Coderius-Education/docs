@@ -11,14 +11,14 @@ Een Zelda-achtig spel: je kijkt van bovenaf op de wereld, loopt in vier of acht 
 
 De grootste verandering ten opzichte van de platformer: je gebruikt **beide** assen van `velocity`, en zwaartekracht laat je weg.
 
-## Wat ga je leren?
+#### Wat ga je leren?
 
 - Bewegen in twee dimensies tegelijk met `Input.get_vector(...)`.
 - Een dungeon bouwen met `TileMapLayer`: een vloer, en muren waar je tegenaan botst.
 - De camera laten meebewegen met de speler in beide richtingen.
 - Per richting de juiste loop-animatie afspelen.
 
-## Nodes die je nodig hebt
+## Nodes: wat je nodig hebt
 
 | Node | Waarvoor? |
 |---|---|
@@ -29,7 +29,7 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 | `Camera2D` | Volgt de speler — `Enabled` aan laten staan (standaard). |
 | `Area2D` | Voor deuren, items, schakelaars of vijand-zones. |
 
-## Handige GDScript-functies
+## GDScript-functies: handig voor dit spel
 
 | Functie / property | Wat doet het? |
 |---|---|
@@ -41,7 +41,9 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 | `body_entered` (signal op `Area2D`) | Detecteert dat de speler een deur, item of vijand-zone raakt. |
 | `get_tree().change_scene_to_file(...)` | Wissel naar de volgende kamer/dungeon. |
 
-## Eerste stappen: bouw de kern
+## Zo begin je
+
+### Bouw de kern
 
 1. Maak een nieuwe scène met een `Node2D` als root.
 2. Voeg een `TileMapLayer` toe en teken een eerste kamer (vloer + muren). Vergeet de **Physics Layer** niet op de muren.
@@ -56,7 +58,7 @@ De grootste verandering ten opzichte van de platformer: je gebruikt **beide** as
 
 5. Voeg een `Area2D` toe als deur en koppel `body_entered` aan `get_tree().change_scene_to_file("res://kamer2.tscn")`, zoals de vlag in [Een tweede level toevoegen](site:godot/docs/tweede_level).
 
-### Mogelijke uitbreidingen
+## Uitbreidingen
 
 - Vijanden als `Area2D`: raak je er een, dan is het game over.
 - Vijanden die je achterna lopen, met een `NavigationAgent2D` (zie [Wat nu?](site:godot/docs/meer-leren), onder Tegenstanders laten volgen).

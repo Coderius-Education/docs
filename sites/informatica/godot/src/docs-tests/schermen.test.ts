@@ -49,10 +49,12 @@ const parse = await mdxParser();
 
 const perLes = lessen.map((les) => ({
   ...les,
-  schermen: schermenVan(les.bron, parse, { velden: [] }).map((s: Omit<Scherm, 'les'>) => ({
-    les: les.naam,
-    ...s,
-  })) as Scherm[],
+  schermen: schermenVan(les.bron, parse, { velden: [], stapNaam: true, volScherm: true }).map(
+    (s: Omit<Scherm, 'les'>) => ({
+      les: les.naam,
+      ...s,
+    }),
+  ) as Scherm[],
 }));
 const schermen = perLes.flatMap((les) => les.schermen);
 const isTeZien = (b: Blok) => b.soort !== 'tekst' && b.soort !== 'antwoord';
@@ -66,12 +68,18 @@ const tabsVan = (rij: Scherm[]) => rij.map((s) => s.tab).filter((tab, i, a) => t
 
 describe('elk scherm van een les staat op zichzelf', () => {
   it('de lessen zijn in schermen verdeeld', () => {
-    // Zonder schermen slagen de tests hieronder op niets.
-    expect(schermen.length).toBeGreaterThan(300);
+    // Zonder schermen slagen de tests hieronder op niets. Het waren er 346,
+    // gemiddeld voor de helft gevuld; sinds de stappen bij elkaar staan zijn
+    // het er minder.
+    expect(schermen.length).toBeGreaterThan(150);
   });
 
   it('de cursus heeft tabbladen aan staan', () => {
-    expect(readFileSync(join(SITE, 'docusaurus.config.ts'), 'utf8')).toMatch(/lesTabs: true/);
+    // Met `stapNaam`: een staptabblad heet naar zijn inhoud. Met `volScherm`:
+    // de inleiding en het leerdoel openen het tabblad erna als dat past.
+    expect(readFileSync(join(SITE, 'docusaurus.config.ts'), 'utf8')).toMatch(
+      /lesTabs: \{ stapNaam: true, volScherm: true \}/,
+    );
   });
 
   it('"hieronder" wijst naar iets dat in hetzelfde scherm volgt', () => {
@@ -119,12 +127,12 @@ describe('elk scherm van een les staat op zichzelf', () => {
     expect(fout).toEqual([]);
   });
 
-  it('een les heeft hooguit tien tabbladen, en een stap heet niet De basis', () => {
-    // Met meer past de rij niet op één regel, ook niet met korte nummers
-    // voor de stappen. En een stap die De basis heet, zegt niet wat erin staat.
+  it('een les heeft hooguit acht tabbladen, en een stap heet niet De basis', () => {
+    // Met meer past de rij niet op één regel nu elk tabblad zijn naam voluit
+    // heeft. En een stap die De basis heet, zegt niet wat erin staat.
     const fout = perLes
       .map((les) => ({ naam: les.naam, tabs: tabsVan(les.schermen).length }))
-      .filter((les) => les.tabs > 10)
+      .filter((les) => les.tabs > 8)
       .map((les) => `${les.naam}: ${les.tabs} tabbladen`);
     expect(fout).toEqual([]);
     expect(
@@ -163,29 +171,39 @@ describe('elk scherm van een les staat op zichzelf', () => {
     expect(fout).toEqual([]);
   });
 
-  it('een stap waar de tekst naar verwijst, bestaat', () => {
-    // Bij het omzetten zijn stappen samengevoegd en opgeschoven: "Stap 6
-    // hierboven" werd Stap 4. Een nummer in de lestekst hoort bij een
-    // `## Stap N` van de les zelf, of van de les waar de regel naar linkt.
-    const stappenVan = (bron: string) =>
-      new Set([...bron.matchAll(/^## Stap (\d+)\b/gm)].map((m) => Number(m[1])));
-    const perSlug = new Map(
-      lessen.map((les) => [/^slug:\s*\/?(\S+)/m.exec(les.bron)?.[1] ?? '', stappenVan(les.bron)]),
-    );
+  it('een staptabblad heet naar wat de leerling er doet, kort en zonder nummer', () => {
+    // De opdrachtgever: "de namen van de tabjes moeten echt nuttig zijn,
+    // zodat leerlingen weten waar ze moeten klikken". De rij was
+    // "Stap 1 | Stap 2 | Stap 3 | Stap 4 | Stap 5", of "Stap 1 | 2 | 3 | 4".
+    // Een staptabblad is `## Stap N: <naam>`; in de rij staat de naam.
     const fout: string[] = [];
     for (const les of lessen) {
-      const eigen = stappenVan(les.bron);
+      const koppen = [...les.bron.matchAll(/^## (Stap\b[^\n]*)$/gm)].map((m) =>
+        m[1].replace(/\s*\\\{#[\w-]+\}\s*$/, ''),
+      );
+      koppen.forEach((kop, i) => {
+        const m = /^Stap (\d+): (.+)$/.exec(kop);
+        if (!m) return fout.push(`${les.naam}: "${kop}" heeft geen naam na de dubbele punt`);
+        if (Number(m[1]) !== i + 1) fout.push(`${les.naam}: "${kop}" is stap ${i + 1} van de les`);
+        const naam = m[2].replace(/`/g, '');
+        if (naam.length > 22) fout.push(`${les.naam}: "${naam}" is langer dan 22 tekens`);
+      });
+    }
+    expect(fout).toEqual([]);
+    expect(schermen.filter((s) => /^(Stap \d+|\d+)$/.test(s.tab)).map((s) => s.les)).toEqual([]);
+  });
+
+  it('de lestekst noemt geen stapnummer', () => {
+    // Het nummer van een stap staat alleen nog in de bron. "Begin met de
+    // waarden uit Stap 5" wijst dus naar iets dat de leerling niet ziet:
+    // noem het tabblad bij zijn naam ("uit Camera instellen").
+    const fout: string[] = [];
+    for (const les of lessen) {
       let inCode = false;
       for (const regel of les.bron.split('\n')) {
         if (regel.startsWith('```')) inCode = !inCode;
         if (inCode || regel.startsWith('#')) continue;
-        const doel = /\]\(site:godot\/docs\/([\w-]+)/.exec(regel)?.[1];
-        const stappen = doel && doel !== '' ? (perSlug.get(doel) ?? eigen) : eigen;
-        for (const m of regel.matchAll(/\bStap (\d+)\b/g)) {
-          const n = Number(m[1]);
-          if (!stappen.has(n) && !eigen.has(n))
-            fout.push(`${les.naam}: Stap ${n} in "${regel.trim().slice(0, 70)}"`);
-        }
+        if (/\b[Ss]tap \d+\b/.test(regel)) fout.push(`${les.naam}: ${regel.trim().slice(0, 80)}`);
       }
     }
     expect(fout).toEqual([]);

@@ -284,8 +284,66 @@ function pastNiet(maat, telefoon) {
   return (maat.over ?? 0) > 0 || (maat.afgesneden ?? 0) > 0;
 }
 
+/**
+ * De cursussen waar een versplinterde les een fout is (`--streng`): twee
+ * schermen na elkaar die samen op één scherm passen. De opdrachtgever over
+ * Godot: "Er mag niet gescrold worden, maar dat betekent niet dat het scherm
+ * niet gevuld mag worden." Elke stap van een paar regels was daar een eigen
+ * tabblad: 346 schermen, gemiddeld voor 47 procent gevuld. Voor de andere
+ * cursussen staat het in het verslag, als lijst om na te lopen.
+ */
+const VOLLE_SCHERMEN = ['godot'];
+
+/** Onder deze werkvormen hoort wat samen past ook samen te staan. */
+const SAMEN_PER_TAB = new Set(['stap', 'bouwen', 'uitleg']);
+/** In een tabblad met deze werkvorm is elke stap bewust een eigen scherm:
+ * een fout, een vraag met zijn antwoord, het script om naast te leggen. */
+const EIGEN_SCHERM = new Set(['fouten', 'voorspellen', 'controle', 'hints']);
+/** De tussenkop van het tweede deel, met zijn witruimte. */
+const TUSSENKOP = 50;
+
+/**
+ * Welke schermen van een les zijn versplinterd: twee na elkaar die samen op
+ * één scherm passen. Twee stappen van hetzelfde tabblad, of twee tabbladen
+ * zonder stappen met dezelfde werkvorm (stap na stap, uitleg na uitleg).
+ * Een voorspelvraag, een opdracht, een fout en een controle blijven elk een
+ * eigen scherm: daar is de wissel de bedoeling. Een scherm met een oefenveld
+ * telt niet (het veld neemt de ruimte zelf), een scherm dat al te lang is
+ * ook niet.
+ *
+ * @param {{ tab: string, over: number, inhoud?: number, werkvorm?: string,
+ *   velden?: number, naast?: boolean }[]} rijen de schermen van één les op
+ *   één schermmaat, in de volgorde van de les
+ * @returns {{ eerste: string, tweede: string, over: number }[]} `over`: de
+ *   pixels die er dan nog vrij zijn
+ */
+function versplinterd(rijen) {
+  const uit = [];
+  const delen = (r) => r.tab.split(' › ');
+  const telt = (r) => typeof r.inhoud === 'number' && r.over <= 0 && !(r.velden > 0) && !r.naast;
+  for (let i = 0; i + 1 < rijen.length; i++) {
+    const [a, b] = [rijen[i], rijen[i + 1]];
+    if (!telt(a) || !telt(b)) continue;
+    const [tabA, stapA] = delen(a);
+    const [tabB, stapB] = delen(b);
+    const zelfdeTab = tabA === tabB && stapA && stapB && !EIGEN_SCHERM.has(a.werkvorm);
+    const zelfdeVorm =
+      tabA !== tabB &&
+      !stapA &&
+      !stapB &&
+      a.werkvorm === b.werkvorm &&
+      SAMEN_PER_TAB.has(a.werkvorm);
+    if (!zelfdeTab && !zelfdeVorm) continue;
+    const vrij = -a.over - b.inhoud - TUSSENKOP;
+    if (vrij >= 0) uit.push({ eerste: a.tab, tweede: b.tab, over: vrij });
+  }
+  return uit;
+}
+
 module.exports = {
   EDITOR_VAN_VELD,
+  VOLLE_SCHERMEN,
+  versplinterd,
   pastNiet,
   adresVanBron,
   deelVan,

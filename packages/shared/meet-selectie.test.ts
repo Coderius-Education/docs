@@ -15,6 +15,8 @@ const {
   moetGemetenWorden,
   houdtNummers,
   pastNiet,
+  versplinterd,
+  VOLLE_SCHERMEN,
 } = require('./meet-selectie.js');
 const { alleSiteMappen, siteDir } = require('./sites.js');
 const { plan: maakPlan } = require('./wijzigingen.js');
@@ -422,5 +424,104 @@ describe('een scherm dat niet past, meet het script nog één keer', () => {
     );
     expect(script).toMatch(/teVroeg\.push/);
     expect(script).toMatch(/::warning::.*paste pas bij de tweede meting/);
+  });
+});
+
+describe('schermen die samen op één scherm passen', () => {
+  // De opdrachtgever over Godot: "Er mag niet gescrold worden, maar dat
+  // betekent niet dat het scherm niet gevuld mag worden." Elke stap van een
+  // paar regels was daar een eigen tabblad: 346 schermen, gemiddeld voor de
+  // helft gevuld, en "elk scherm past" zag dat niet. `versplinterd` noemt
+  // twee schermen na elkaar die samen passen; in Godot is dat met --streng
+  // een fout.
+  const scherm = (tab: string, inhoud: number, werkvorm: string, extra = {}) => ({
+    tab,
+    inhoud,
+    // Een scherm heeft 500 pixels: wat de inhoud niet gebruikt, is vrij.
+    over: inhoud - 500,
+    werkvorm,
+    velden: 0,
+    naast: false,
+    ...extra,
+  });
+
+  it('twee staptabbladen die samen passen', () => {
+    const uit = versplinterd([
+      scherm('Voorspel', 220, 'voorspellen'),
+      scherm('Node toevoegen', 180, 'stap'),
+      scherm('Afbeelding kiezen', 120, 'stap'),
+      scherm('Opdracht 3.1.a', 260, 'aanpassen'),
+    ]);
+    expect(uit).toEqual([{ eerste: 'Node toevoegen', tweede: 'Afbeelding kiezen', over: 150 }]);
+  });
+
+  it('twee stappen van hetzelfde tabblad die samen passen', () => {
+    const uit = versplinterd([
+      scherm('Zoeken › 1 Print op drie plekken', 200, 'uitleg'),
+      scherm('Zoeken › 2 Halveer je probleem', 210, 'uitleg'),
+    ]);
+    expect(uit.map((v: { tweede: string }) => v.tweede)).toEqual([
+      'Zoeken › 2 Halveer je probleem',
+    ]);
+  });
+
+  it('de tussenkop van het tweede deel telt mee', () => {
+    // 260 + 200 = 460 past in 500, maar met de kop erbij (50) niet.
+    expect(versplinterd([scherm('A', 260, 'stap'), scherm('B', 200, 'stap')])).toEqual([]);
+    expect(versplinterd([scherm('A', 250, 'stap'), scherm('B', 200, 'stap')])).toHaveLength(1);
+  });
+
+  it('een vraag, een opdracht, een fout en een controle blijven een eigen scherm', () => {
+    // Daar is de wissel de bedoeling: het antwoord staat op het volgende
+    // scherm, en elke opdracht heeft een eigen nummer.
+    expect(
+      versplinterd([
+        scherm('Voorspel', 100, 'voorspellen'),
+        scherm('Node toevoegen', 100, 'stap'),
+        scherm('Opdracht 1.1.a', 100, 'aanpassen'),
+        scherm('Opdracht 1.1.b', 100, 'aanpassen'),
+        scherm('Je script tot nu toe', 100, 'controle'),
+        scherm('Er gaat iets mis › 1 Niets beweegt', 100, 'fouten'),
+        scherm('Er gaat iets mis › 2 Alles valt', 100, 'fouten'),
+      ]),
+    ).toEqual([]);
+  });
+
+  it('een stap van het ene tabblad en een van het volgende horen niet samen', () => {
+    expect(
+      versplinterd([
+        scherm('De sprong › 2 De sprong zelf', 100, 'stap'),
+        scherm('Toetsen › 1 De Input Map', 100, 'stap'),
+      ]),
+    ).toEqual([]);
+  });
+
+  it('een scherm met een oefenveld, een veld ernaast of te veel inhoud telt niet', () => {
+    expect(
+      versplinterd([scherm('A', 100, 'stap', { velden: 1 }), scherm('B', 100, 'stap')]),
+    ).toEqual([]);
+    expect(
+      versplinterd([scherm('A', 100, 'stap'), scherm('B', 100, 'stap', { naast: true })]),
+    ).toEqual([]);
+    expect(versplinterd([scherm('A', 100, 'stap'), scherm('B', 520, 'stap')])).toEqual([]);
+    // Een meting van voor deze controle heeft geen inhoud.
+    expect(
+      versplinterd([
+        { tab: 'A', over: -400, werkvorm: 'stap' },
+        { tab: 'B', over: -400, werkvorm: 'stap' },
+      ]),
+    ).toEqual([]);
+  });
+
+  it('het meetscript meet de inhoud, meldt de paren en keurt ze in Godot af', () => {
+    const script = readFileSync(join(ROOT, 'scripts/meet-les-tabs.mjs'), 'utf8');
+    expect(script).toMatch(
+      /inhoud: Math\.round\(r\.height - metMarge\(verder\) - metMarge\(stappenrij\)\)/,
+    );
+    expect(script).toMatch(/for \(const v of versplinterd\(schermen\)\) splinters\.push/);
+    expect(script).toMatch(
+      /if \(VOLLE_SCHERMEN\.includes\(SITE\)\)\s+for \(const v of splinters\)/,
+    );
+    expect(VOLLE_SCHERMEN).toEqual(['godot']);
   });
 });

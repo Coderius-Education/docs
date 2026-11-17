@@ -30,7 +30,21 @@ Voor de eerste en de derde maak je een variabele. De tweede staat al in je scrip
 
 </details>
 
-## Stap 1: Variabelen voor de toestand
+## Het dollarteken: `$` pakt een node uit je scène \{#dollar-teken}
+
+Om een animatie te starten heb je één nieuw teken nodig. In deze les gebruik je voor het eerst regels als deze:
+
+```gdscript
+$AnimatedSprite2D.play('run')
+```
+
+Het `$`-teken pakt een **child-node** uit je Scene Tree, op naam. `$AnimatedSprite2D` betekent: zoek de child die `AnimatedSprite2D` heet, en daarvan roep je vervolgens `.play('run')` aan. Het is een korte schrijfwijze voor `get_node("AnimatedSprite2D")`.
+
+**Let op:** de naam achter `$` moet précies overeenkomen met de naam in je Scene Tree, inclusief hoofdletters. Heb je jouw node `Speler` of `Animaties` genoemd, dan schrijf je dus `$Animaties.play('run')` — of je hernoemt de node terug naar `AnimatedSprite2D`, zodat je code gelijk blijft aan die van deze les.
+
+Meer hierover staat in de [GDScript-tips](site:godot/gdscript-tips#nodes-scenes).
+
+## Stap 1: Variabelen en jump
 
 Plaats deze twee variabelen bovenaan je script (onder `JUMP_VELOCITY`, boven `_physics_process`):
 
@@ -39,7 +53,7 @@ var op_de_grond
 var staat_stil
 ```
 
-Dit is een `var` zónder `=`, en dat is nieuw. Zo'n regel maakt de variabele alvast aan, maar geeft hem nog geen waarde. Dat is hier precies de bedoeling: de echte waarde verandert elk frame, dus die vullen we straks pas in binnen `_physics_process`. Waar variabelen in je script horen te staan lees je terug in de [GDScript-tips](site:godot/gdscript-tips#variabelen).
+Dit is een `var` zónder `=`, en dat is nieuw: de variabele bestaat alvast, maar heeft nog geen waarde. Die vul je straks elk frame in binnen `_physics_process`. Waar variabelen in je script horen, staat in de [GDScript-tips](site:godot/gdscript-tips#variabelen).
 
 <details>
 <summary>Hoe ziet je hele script er nu uit?</summary>
@@ -71,26 +85,12 @@ func _physics_process(delta: float) -> void:
 
 </details>
 
-## Het dollarteken: `$` pakt een node uit je scène \{#dollar-teken}
-
-In deze les gebruik je voor het eerst regels als deze:
-
-```gdscript
-$AnimatedSprite2D.play('run')
-```
-
-Het `$`-teken pakt een **child-node** uit je Scene Tree, op naam. `$AnimatedSprite2D` betekent: zoek de child die `AnimatedSprite2D` heet, en daarvan roep je vervolgens `.play('run')` aan. Het is een korte schrijfwijze voor `get_node("AnimatedSprite2D")`.
-
-**Let op:** de naam achter `$` moet précies overeenkomen met de naam in je Scene Tree, inclusief hoofdletters. Heb je jouw node `Speler` of `Animaties` genoemd, dan schrijf je dus `$Animaties.play('run')` — of je hernoemt de node terug naar `AnimatedSprite2D`, zodat je code gelijk blijft aan die van deze les.
-
-Meer hierover staat in de [GDScript-tips](site:godot/gdscript-tips#nodes-scenes).
-
-## Stap 2: `op_de_grond` invullen en de jump-animatie
+#### `op_de_grond` invullen en de jump-animatie
 
 Welke functie kun je gebruiken om te checken of je hoofdpersoon op de grond staat?
 
 - Geef `op_de_grond` de waarde van die functie.
-- Speel de `jump`-animatie af als de hoofdpersoon **niet** op de grond staat.
+- Speel de `jump`-animatie af als de hoofdpersoon **niet** op de grond staat. Hoe je een animatie start, staat bij Het dollarteken.
 
 <details>
 <summary>Bekijk het antwoord</summary>

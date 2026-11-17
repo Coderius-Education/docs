@@ -8,8 +8,6 @@ sidebar_label: "Deel 5: Lopen"
 
 Je karakter valt, maar je kunt hem nog niet besturen. In deze les leest je script de pijltjestoetsen uit.
 
-<GDQuestLes slug="movement-krachten" />
-
 ## Wat je nu gaat toevoegen
 
 Twee begrippen: een **`const`** voor je loopsnelheid, en **`Input.get_axis()`** om de toetsen uit te lezen.
@@ -25,7 +23,9 @@ Drie: links, rechts, en niets. Je zou dat met losse checks kunnen doen, maar God
 
 </details>
 
-## Stap 1: Je loopsnelheid als constante \{#const}
+## Stap 1: Code voor lopen
+
+#### Je loopsnelheid als constante \{#const}
 
 Zet deze regel bovenaan je script, ónder `extends` en bóven de functie:
 
@@ -35,7 +35,7 @@ const SPEED = 300.0
 
 Een **constante** is een waarde met een naam die nooit verandert terwijl je spel draait. Schrijf ze in hoofdletters, zodat je in één oogopslag ziet dat er niet aan gesleuteld wordt.
 
-**Wat verwacht je dat er gebeurt als je `SPEED` binnen de functie probeert te veranderen, bijvoorbeeld met `SPEED = 500.0`?**
+**Wat verwacht je dat er gebeurt als je binnen de functie `SPEED = 500.0` schrijft?**
 
 <details>
 <summary>Antwoord</summary>
@@ -44,32 +44,32 @@ Godot weigert het met een foutmelding. Een `const` staat vast. Waarden die tijde
 
 </details>
 
-## Stap 2: De toets uitlezen \{#get-axis}
+#### De toets uitlezen \{#get-axis}
 
-Zet deze twee regels binnen de functie, ónder het valblok en bóven `move_and_slide()`:
+Zet deze twee regels binnen de functie, ónder het valblok en bóven `move_and_slide()`. Wat ze doen, lees je bij Test en get_axis.
 
 ```gdscript
     var direction := Input.get_axis("ui_left", "ui_right")
     velocity.x = direction * SPEED
 ```
 
-`"ui_left"` en `"ui_right"` zijn **acties**: namen die Godot standaard aan de pijltjestoetsen links en rechts heeft gekoppeld. `Input.get_axis()` kijkt naar allebei en geeft één getal terug:
+## Stap 2: Test en get_axis
+
+Start met `F5`. Je karakter loopt naar links en rechts met de pijltjestoetsen, en valt nog steeds van platforms af.
+
+#### Wat `get_axis` teruggeeft
+
+In `Input.get_axis("ui_left", "ui_right")` zijn `"ui_left"` en `"ui_right"` **acties**: namen die Godot standaard aan de pijltjestoetsen links en rechts heeft gekoppeld. `get_axis` kijkt naar allebei en geeft één getal terug:
 
 - niets ingedrukt → `direction` is `0`
 - links ingedrukt → `direction` is `-1`
 - rechts ingedrukt → `direction` is `1`
 
-Dat getal vermenigvuldig je met je snelheid: `-1 * 300` is 300 naar links, `1 * 300` is 300 naar rechts, en `0 * 300` is stilstaan. Eén regel, drie gevallen.
-
-De dubbele punt in `:=` laat Godot zelf het type van je variabele bepalen. Je mag ook `=` schrijven; het verschil staat in de [GDScript-tips](site:godot/gdscript-tips#variabelen).
-
-## Stap 3: Test het
-
-Start met `F5`. Je karakter loopt naar links en rechts met de pijltjestoetsen, en valt nog steeds van platforms af.
-
-Laat je de toets los, dan staat hij meteen stil. Dat komt doordat `direction` dan `0` is. In Deel 6 maak je dat stoppen wat netter.
+In `velocity.x = direction * SPEED` vermenigvuldig je dat getal met je snelheid: `-1 * 300` is 300 naar links, `1 * 300` is 300 naar rechts, en `0 * 300` is stilstaan. Laat je de toets los, dan staat je karakter dus meteen stil. In Deel 6 maak je dat stoppen wat netter.
 
 Wil je het getal zelf zien? Zet tijdelijk `print(direction)` onder de regel met `get_axis` en kijk in **Uitvoer** terwijl je de pijltjes indrukt: er staat `-1`, `0` of `1`. Haal de `print` daarna weer weg.
+
+De dubbele punt in `var direction :=` laat Godot zelf het type van je variabele bepalen. Je mag ook `=` schrijven; het verschil staat in de [GDScript-tips](site:godot/gdscript-tips#variabelen).
 
 ## Je script tot nu toe
 
@@ -87,6 +87,10 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 ```
+
+Los oefenen wat je hier gebruikte kan bij GDQuest:
+
+<GDQuestLes slug="movement-krachten" />
 
 ## Opdracht 5.5.a: kies je eigen loopsnelheid
 

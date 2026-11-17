@@ -3424,3 +3424,154 @@ describe('de tip en de oplossing staan in het oefenveld', () => {
     expect(uit).not.toContain('details');
   });
 });
+
+describe('een staptabblad heet naar zijn inhoud (stapNaam)', () => {
+  // De opdrachtgever over Godot: "de namen van de tabjes moeten echt nuttig
+  // zijn, zodat leerlingen weten waar ze moeten klikken". Daar heette de rij
+  // "Voorspel | Stap 1 | Stap 2 | Stap 3 | Stap 4 | Stap 5", en in een lange
+  // rij "Stap 1 | 2 | 3 | 4 | 5". Met `lesTabs: { stapNaam: true }` heet
+  // `## Stap 2: Camera instellen` in de rij "Camera instellen".
+  const les = [
+    titel,
+    kop(2, 'Voorspel: waar hangt de camera?'),
+    alinea('Een vraag.'),
+    kop(2, 'Stap 1: Camera toevoegen'),
+    alinea('Voeg de node toe.'),
+    kop(2, 'Stap 2: Camera instellen'),
+    alinea('Zet de zoom.'),
+    kop(2, 'Opdracht 5.9.a: stel Limit in'),
+    alinea('Doe het.'),
+    kop(2, 'Er gaat iets mis'),
+    alinea('Een fout.'),
+  ];
+  const kopie = () => JSON.parse(JSON.stringify(les)) as Knoop[];
+
+  it('de naam staat op het tabblad, het nummer niet', () => {
+    expect(tabs(groepeer(kopie(), { stapNaam: true })).map((t) => t.label)).toEqual([
+      'Voorspel',
+      'Camera toevoegen',
+      'Camera instellen',
+      'Opdracht 5.9.a',
+      'Er gaat iets mis',
+    ]);
+  });
+
+  it('de kop staat niet nog eens boven het scherm', () => {
+    // Het onderdeel verbergt de kop als label en titel gelijk zijn: het
+    // tabblad zegt hem al, en het scherm wint 45 pixels.
+    const stap = tabs(groepeer(kopie(), { stapNaam: true }))[1];
+    expect(stap.titel).toBe(stap.label);
+  });
+
+  it('het tabblad houdt de werkvorm van een stap', () => {
+    // Aan "Stap N" herkent de stap de werkvorm; daarom blijft het nummer in
+    // de bron. Zonder die naam kreeg het tabblad het icoon van uitleg.
+    const vormen = tabs(groepeer(kopie(), { stapNaam: true })).map((t) => t.werkvorm);
+    expect(vormen).toEqual(['voorspellen', 'stap', 'stap', 'aanpassen', 'fouten']);
+  });
+
+  it('een lange rij stappen wordt geen rij nummers', () => {
+    const lang = [
+      titel,
+      ...['Node toevoegen', 'Vorm kiezen', 'Script koppelen', 'Signal koppelen', 'Testen'].flatMap(
+        (naam, i) => [kop(2, `Stap ${i + 1}: ${naam}`), alinea('Doe dit.')],
+      ),
+      ...['a', 'b', 'c', 'd'].flatMap((x) => [kop(2, `Opdracht 7.1.${x}: iets`), alinea('Doe.')]),
+    ];
+    const uit = tabs(groepeer(lang, { stapNaam: true }));
+    expect(uit.slice(0, 5).map((t) => t.kort ?? t.label)).toEqual([
+      'Node toevoegen',
+      'Vorm kiezen',
+      'Script koppelen',
+      'Signal koppelen',
+      'Testen',
+    ]);
+  });
+
+  it('zonder de keuze heet een staptabblad Stap 1, zoals bij de Lego-auto', () => {
+    // De lestekst van de Lego-auto verwijst naar "stap 2".
+    expect(tabs(groepeer(kopie())).map((t) => t.label)).toEqual([
+      'Voorspel',
+      'Stap 1',
+      'Stap 2',
+      'Opdracht 5.9.a',
+      'Er gaat iets mis',
+    ]);
+  });
+
+  it('een tussenkop (####) begint geen nieuw scherm', () => {
+    // Twee korte handelingen die samen op het scherm passen, staan er samen
+    // op, elk onder zijn eigen kop. Alleen een ### maakt een stap.
+    const uit = groepeer(
+      [
+        titel,
+        kop(2, 'Stap 1: Camera toevoegen'),
+        kop(4, 'Voeg de node toe'),
+        alinea('Klik.'),
+        kop(4, 'Check Enabled'),
+        alinea('Kijk.'),
+        kop(2, 'Er gaat iets mis'),
+        alinea('Een fout.'),
+      ],
+      { stapNaam: true },
+    );
+    const stap = uit.find((n: Knoop) => n.name === 'LesTabs')?.children?.[0];
+    expect(JSON.stringify(stap)).not.toContain('LesStappen');
+    expect((stap?.children ?? []).filter((k: Knoop) => k.type === 'heading')).toHaveLength(3);
+  });
+
+  it('de opmaak geeft een tussenkop in een paneel weinig lucht', () => {
+    const css = readFileSync(
+      fileURLToPath(new URL('./components/LesTabs/styles.module.css', import.meta.url)),
+      'utf8',
+    );
+    expect(css).toMatch(/\.paneel h4 \{\s*margin: 1rem 0 0\.4rem;/);
+  });
+});
+
+describe('een inleiding met een leerdoel opent het tabblad erna (volScherm)', () => {
+  // De zeven delen van het bewegingsscript van Godot beginnen met één alinea,
+  // `## Wat je nu gaat toevoegen` en een voorspelvraag. Als eigen tabblad
+  // Uitleg was de opening een scherm van 73 tot 152 pixels: de opdrachtgever
+  // noemde de cursus versplinterd. Met `lesTabs: { volScherm: true }` staan
+  // de inleiding en het leerdoel bovenaan het tabblad erna, als dat past.
+  const les = (vraag: Knoop[]) => [
+    titel,
+    alinea('Je functie draait, maar je karakter staat stil.'),
+    kop(2, 'Wat je nu gaat toevoegen'),
+    alinea('Eén regel, met twee nieuwe begrippen.'),
+    kop(2, 'Voorspel: waar bewaart Godot de snelheid?'),
+    ...vraag,
+    kop(2, 'Stap 1: Snelheid opbouwen'),
+    alinea('Zet deze regel erbij.'),
+    kop(2, 'Er gaat iets mis'),
+    alinea('Een fout.'),
+  ];
+  const kort = [alinea('Waar denk je dat die snelheid staat?')];
+  const lang = Array.from({ length: 12 }, (_, i) => alinea(`Alinea ${i} `.repeat(30)));
+
+  it('past het, dan is er geen tabblad Uitleg', () => {
+    const uit = groepeer(les(kort), { stapNaam: true, volScherm: true });
+    expect(tabs(uit).map((t) => t.label)).toEqual([
+      'Voorspel',
+      'Snelheid opbouwen',
+      'Er gaat iets mis',
+    ]);
+    const voorspel = uit.find((n: Knoop) => n.name === 'LesTabs')?.children?.[0];
+    const tekst = JSON.stringify(voorspel);
+    // De inleiding en het leerdoel staan op het tabblad, vóór de vraag.
+    expect(tekst.indexOf('Je functie draait')).toBeGreaterThan(-1);
+    expect(tekst.indexOf('LesLeerdoel')).toBeGreaterThan(tekst.indexOf('Je functie draait'));
+    expect(tekst.indexOf('Waar denk je')).toBeGreaterThan(tekst.indexOf('LesLeerdoel'));
+  });
+
+  it('past het niet, dan blijft de opening een eigen tabblad', () => {
+    const uit = groepeer(les(lang), { stapNaam: true, volScherm: true });
+    expect(tabs(uit).map((t) => t.label)[0]).toBe('Uitleg');
+  });
+
+  it('zonder de keuze blijft de opening een eigen tabblad, zoals bij de Lego-auto', () => {
+    // Daar was het eerste scherm met de stap erbij tot 270 pixels te lang.
+    expect(tabs(groepeer(les(kort))).map((t) => t.label)[0]).toBe('Uitleg');
+  });
+});

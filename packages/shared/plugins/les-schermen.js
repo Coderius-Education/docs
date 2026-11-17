@@ -108,11 +108,15 @@ const DOORGAAND = new RegExp(
  *
  * @param {string} bron de inhoud van het bestand
  * @param {(bron: string) => {children: object[]}} parse de MDX-parser (plugins/werkvormen.js, mdxParser)
- * @param {{ velden?: string[], eenScherm?: boolean }} [opties] `eenScherm` zoals de cursus hem in
+ * @param {{ velden?: string[], eenScherm?: boolean, stapNaam?: boolean, volScherm?: boolean }} [opties] `eenScherm`, `stapNaam` en `volScherm` zoals de cursus ze in
  *   `lesTabs` heeft staan (plugins/les-tabs.js)
  * @returns {{ tab: string, opTab: string, naam: string, blokken: { soort: string, tekst: string }[] }[]}
  */
-function schermenVan(bron, parse, { velden = ['CodeEditor'], eenScherm = false } = {}) {
+function schermenVan(
+  bron,
+  parse,
+  { velden = ['CodeEditor'], eenScherm = false, stapNaam = false, volScherm = false } = {},
+) {
   const voorwerk = /^---\r?\n(?:([\s\S]*?)\r?\n)?---\r?\n/.exec(bron);
   if (voorwerk && /^les_tabs:\s*false\s*$/m.test(voorwerk[1] ?? '')) return [];
   const tree = parse(voorwerk ? bron.slice(voorwerk[0].length) : bron);
@@ -123,7 +127,9 @@ function schermenVan(bron, parse, { velden = ['CodeEditor'], eenScherm = false }
     for (const kind of node.children ?? []) geefId(kind);
   };
   geefId(tree);
-  const tabs = (groepeer(tree.children, { eenScherm }) ?? []).find((k) => k.name === 'LesTabs');
+  const tabs = (groepeer(tree.children, { eenScherm, stapNaam, volScherm }) ?? []).find(
+    (k) => k.name === 'LesTabs',
+  );
   return (tabs?.children ?? []).flatMap((tab) => {
     // Een vast id achter de kop (`## Lussen \{#lussen}`) haalt de build weg.
     const zonderId = (tekst) => (tekst ?? '').replace(/\s*\\?\{#[\w-]+\}\s*$/, '');

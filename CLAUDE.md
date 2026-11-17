@@ -1293,8 +1293,10 @@ Daarvoor is dit gekomen:
   opdrachten zijn elk een eigen reeks. Alleen als de rij met de volle namen
   niet past (`rijPast`): een tabblad dat "2" heet is 42 pixels breed, en
   dezelfde vier stappen heetten in de ene les "Stap 2" en in de andere "2".
-  De stappen zijn hier tabbladen, net als bij de Lego-auto: de lestekst
-  verwijst ernaar ("in Stap 3").
+  De stappen zijn hier tabbladen, net als bij de Lego-auto. In Godot zelf
+  heet een staptabblad sindsdien naar zijn inhoud en komt dit niet meer voor
+  (zie Godot was te versplinterd); de regel geldt nog voor een cursus zonder
+  `stapNaam`.
 - **Je script tot nu toe en Je complete script hebben de werkvorm
   controleren.** Het script staat er direct, niet in een uitklapblok
   "Klik hier om te vergelijken": het tabblad is zelf al de klik.
@@ -1357,6 +1359,54 @@ editor: zet de naam van een extern programma niet vet, of zet hem met een
 reden in `GEEN_UI_LABEL` (`src/godot-tests/labels.ts`). Die controle en het
 compileren van de blokken draaien alleen in CI, en CI draait pas bij een
 PR: open die dus voordat je een omzetting klaar noemt.
+
+**Godot was te versplinterd** (november 2026; 284 schermen in plaats van
+346, alle op 1280×720 en 1366×768). De opdrachtgever: "Er mag niet gescrold
+worden, maar dat betekent niet dat het scherm niet gevuld mag worden", en de
+namen van de tabbladen moeten zeggen waar een leerling moet klikken. Elk
+scherm paste, en toch klikte een leerling meer dan hij las: een scherm was
+gemiddeld voor 47 procent gevuld, 199 van de 346 voor minder dan de helft, en
+bijna elke les had de rij "Voorspel | Stap 1 | Stap 2 | Stap 3 | Stap 4".
+Passen is niet genoeg, en leeg is ook niet goed. Sindsdien:
+
+- **Een staptabblad heet naar zijn inhoud** (`lesTabs: { stapNaam: true }`,
+  `stappenBijNaam` in `les-tabs.js`). `## Stap 2: Camera instellen` heet in
+  de rij "Camera instellen"; de kop staat niet nog eens boven het scherm.
+  Het nummer blijft in de bron: daaraan herkent de stap de werkvorm. Een
+  keuze van de cursus: de lestekst van de Lego-auto verwijst naar "stap 2".
+- **Een tussenkop `####` begint geen nieuw scherm.** Twee of drie korte
+  handelingen staan samen op één scherm, elk onder een `####`; alleen een
+  `###` maakt een stap. In een paneel heeft een `####` weinig lucht.
+- **Een inleiding met een leerdoel opent het tabblad erna, als dat past**
+  (`lesTabs: { volScherm: true }`, `openingVan`). Als eigen tabblad Uitleg
+  was dat in de zeven delen van het bewegingsscript een scherm van 73 tot
+  152 pixels. Zonder de keuze blijft het een eigen tabblad: bij de Lego-auto
+  was het scherm met de eerste stap erbij te lang.
+- **Het meetscript noemt de schermen die samen op één scherm passen**
+  (`versplinterd` in `meet-selectie.js`): twee stappen van hetzelfde tabblad,
+  of twee tabbladen zonder stappen met dezelfde werkvorm (stap na stap,
+  uitleg na uitleg). Een vraag, een opdracht, een fout en een controle
+  blijven een eigen scherm. Het meet daarvoor de inhoud van elk scherm
+  (`inhoud`: het paneel zonder de rij Vorige en Volgende en de rij stappen)
+  en zegt hoe vol een scherm gemiddeld is. In de cursussen in
+  `VOLLE_SCHERMEN` (nu Godot) is zo'n paar met `--streng` een fout; voor de
+  andere staat het in het verslag.
+- **In de lessen**: de stappen zijn per les samengevoegd tot twee à vier
+  tabbladen met een naam van hooguit 22 tekens ("Collision verven", "Signal
+  koppelen"), gemiddeld 5,8 tabbladen per les en hooguit acht. Een `:::tip`
+  die één zin kan zijn, is één zin; een stap "Test het" van twee regels staat
+  onder de handeling die hij test. Het blok van GDQuest staat onder het
+  script in plaats van boven de les. De lestekst noemt geen stapnummer meer
+  ("bij Camera instellen", niet "in Stap 3"). Code, plaatjes, links, vaste
+  id's en opdrachten zijn niet veranderd.
+- **Wat er nog leeg is, hoort bij de vorm**: een voorspelvraag (gemiddeld
+  half vol), een opdracht met dichte tip en oplossing (40 procent) en Er
+  gaat iets mis met dichte blokken (23 procent). De stappen en de uitleg
+  zijn voor 73 procent gevuld.
+
+`src/docs-tests/schermen.test.ts` van godot bewaakt: elk staptabblad is
+`## Stap N: <naam>` met een naam van hooguit 22 tekens, genummerd vanaf 1;
+geen "Stap N" in lopende tekst; hooguit acht tabbladen per les.
 
 **Wat play erbij bracht** (november 2026; alle 293 schermen passen op
 1280×720 en 1366×768, na eerst 242 van de 315). De cursus heeft een eigen

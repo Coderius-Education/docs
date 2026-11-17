@@ -8,8 +8,6 @@ sidebar_label: "Deel 2: Vallen"
 
 Je functie draait, maar je karakter staat stil. In deze les geef je hem snelheid, zodat hij valt.
 
-<GDQuestLes slug="movement-motor" />
-
 ## Wat je nu gaat toevoegen
 
 Eén regel, met twee nieuwe begrippen: **`velocity`** en **`+=`**. Na deze les valt je karakter naar beneden.
@@ -27,7 +25,7 @@ Zulke kant-en-klare eigenschappen van een node heten member variables.
 
 </details>
 
-## Stap 1: Snelheid opbouwen \{#velocity}
+## Stap 1: Valregel toevoegen \{#velocity}
 
 Zet deze regel **boven** `move_and_slide()`, binnen de functie:
 
@@ -42,17 +40,13 @@ func _physics_process(delta: float) -> void:
 
 Het stukje `* delta` laat je even voor wat het is — dat is Deel 3.
 
-## Stap 2: Test het
-
-Zet je karakter in de editor een stuk boven de vloer en start met `F5`.
-
-Hij valt en blijft op de vloer liggen. Besturing komt vanaf Deel 5.
-
-:::caution
 Let op de volgorde: `move_and_slide()` blijft de **laatste** regel in de functie. Eerst reken je de snelheid uit, dan pas laat je Godot verplaatsen. Andersom loopt alles één frame achter.
-:::
 
-## Stap 3: Wat `velocity` is
+#### Test het
+
+Zet je karakter in de editor een stuk boven de vloer en start met `F5`. Hij valt en blijft op de vloer liggen. Besturing komt vanaf Deel 5.
+
+## Stap 2: Velocity en +=
 
 `velocity` is de snelheid van je karakter: een X en een Y in één waarde. Zet tijdelijk `print(velocity)` boven `move_and_slide()`, start opnieuw en kijk in **Uitvoer** terwijl je karakter valt:
 
@@ -64,11 +58,9 @@ Let op de volgorde: `move_and_slide()` blijft de **laatste** regel in de functie
 
 De X blijft `0`, want je beweegt niet zijwaarts. De Y wordt elke frame `16.33` groter: dat is de 980 van de zwaartekracht, verdeeld over zestig frames. Steeds hetzelfde stukje erbij, en juist daardoor val je steeds sneller.
 
-Je kunt `.x` en `.y` los aanspreken, bijvoorbeeld `velocity.y = 0`. Dat gebruik je vanaf Deel 5.
+Je kunt `.x` en `.y` los aanspreken, zoals `velocity.y = 0`; dat gebruik je vanaf Deel 5. Haal de `print` nu weer weg.
 
-Haal de `print` daarna weer weg.
-
-## Stap 4: Waarom `+=` en niet `=`
+#### Waarom `+=` en niet `=`
 
 `velocity += iets` is de korte schrijfwijze van `velocity = velocity + iets`. De zwaartekracht wordt dus **opgeteld bij de snelheid die er al was**, frame na frame. Zo bouwt valsnelheid zich op: na één seconde val je hard, na twee seconden harder.
 
@@ -91,6 +83,10 @@ func _physics_process(delta: float) -> void:
 
     move_and_slide()
 ```
+
+Los oefenen wat je hier gebruikte kan bij GDQuest:
+
+<GDQuestLes slug="movement-motor" />
 
 ## Er gaat iets mis
 

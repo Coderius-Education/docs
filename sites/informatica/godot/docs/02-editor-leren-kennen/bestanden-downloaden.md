@@ -18,7 +18,9 @@ Open je project in Godot en kijk naar het FileSystem-paneel (linksonder). Bovena
 
 </details>
 
-## Stap 1: Download het asset-pack
+## Stap 1: Asset-pack downloaden
+
+#### Download het pack
 
 1. Open [pixelfrog-assets.itch.io/pixel-adventure-1](https://pixelfrog-assets.itch.io/pixel-adventure-1).
 2. Klik op **Download Now**.
@@ -27,20 +29,16 @@ Open je project in Godot en kijk naar het FileSystem-paneel (linksonder). Bovena
 
 Een `.zip`-bestand wordt nu naar je `Downloads`-map gedownload.
 
-## Stap 2: Uitpakken
+#### Pak het zip-bestand uit
 
 1. Ga in de Verkenner naar je `Downloads`-map.
 2. Dubbelklik op het `.zip`-bestand.
 3. Klik bovenaan op **Alles uitpakken**.
 4. Kies een locatie en klik op **Uitpakken**.
 
-:::note
-Op Windows 11 kun je bestanden direct uit een zip slepen zonder eerst uit te pakken. Dat werkt ook.
-:::
+Je hebt nu een map met alle afbeeldingen uit het pack. Op Windows 11 kun je de bestanden ook direct uit de zip slepen, zonder eerst uit te pakken.
 
-Je hebt nu een map met alle afbeeldingen uit het pack.
-
-## Stap 3: Kopieer naar je projectmap \{#projectmap}
+## Stap 2: Naar je projectmap \{#projectmap}
 
 ### De projectmap openen
 
@@ -53,6 +51,8 @@ Godot ziet alleen bestanden die **in je projectmap** staan. Vanuit de editor kun
 3. Kies **Open in File Manager** (heet **Openen in Bestandsbeheer** als je editor Nederlands is) — Verkenner opent nu je projectmap.
 
 ### De assets kopiëren
+
+De Verkenner staat nu open op je projectmap.
 
 1. Open in een tweede Verkenner-venster de uitgepakte asset-map.
 2. Maak in je projectmap een nieuwe map `assets` en sleep alle mappen uit het pack daarin. De lessen verwijzen naar deze `assets`-map.

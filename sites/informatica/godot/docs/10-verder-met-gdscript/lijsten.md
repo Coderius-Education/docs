@@ -5,7 +5,7 @@ slug: /lijsten
 
 # Lijsten: één vlag voor al je levels
 
-In [Een tweede level toevoegen](site:godot/docs/tweede_level) kreeg elk level een eigen vlag met een eigen script. Die scripts verschillen maar in één woord: de naam van het volgende level. Bij tien levels heb je tien bijna gelijke scripts, en wil je de volgorde veranderen, dan pas je er een paar aan. Met een **lijst** zet je de volgorde op één plek, en werkt dezelfde vlag in elk level.
+Elke vlag heeft nu een eigen script, met het volgende level erin. Met een **lijst** in `vlag.gd` zet je de volgorde van je levels op één plek, en werkt dezelfde vlag in elk level.
 
 <Voorkennis
   items={[
@@ -50,7 +50,11 @@ Een lijst (in Godot heet hij een `Array`) schrijf je met blokhaken, en de items 
 | `levels.find("res://level2.tscn")` | Op welke plek dat item staat, of `-1` als het er niet in staat | – (nieuw) |
 | `levels.append("res://level4.tscn")` | Zet een item achteraan erbij                  | hetzelfde      |
 
-## Stap 1: Zet de volgorde in een lijst
+## Stap 1: Lijst in je vlag
+
+### De volgorde in een lijst
+
+In [Een tweede level toevoegen](site:godot/docs/tweede_level) kreeg elk level een eigen vlag met een eigen script. Die scripts verschillen maar in één woord: de naam van het volgende level. Bij tien levels heb je tien bijna gelijke scripts, en wil je de volgorde veranderen, dan pas je er een paar aan.
 
 Open `vlag.gd`, het script van de vlag in level 1. Zet bovenaan, onder `extends Area2D`, een lijst met al je levels in de volgorde waarin je ze speelt. Hier zijn dat er drie, zoals na opdracht 8.1.a; heb je er twee, zet er dan twee in.
 
@@ -62,7 +66,7 @@ var levels = ["res://level1.tscn", "res://level2.tscn", "res://level3.tscn"]
 
 Heten jouw levels anders, of staan ze in een map? Gebruik dan dezelfde paden als in je `change_scene_to_file`.
 
-## Stap 2: Waar ben je nu?
+### Waar ben je nu?
 
 De vlag moet weten in welk level hij staat. Dat vraag je aan Godot:
 
@@ -80,7 +84,9 @@ func _on_body_entered(body: Node2D) -> void:
 
 Start je spel en loop naar de vlag. In **Uitvoer** zie je `0`: je staat in het eerste level van de lijst.
 
-## Stap 3: Naar het volgende level
+## Stap 2: Het volgende level
+
+### Eén plek verder
 
 Het volgende level staat één plek verder in de lijst. Maar na het laatste level is er geen volgende, dus dat controleer je eerst:
 
@@ -100,9 +106,9 @@ func _on_body_entered(body: Node2D) -> void:
 
 Na het laatste level ga je terug naar het menu uit [Een startmenu](site:godot/docs/start_menu).
 
-## Stap 4: Dezelfde vlag in elk level
+### Dezelfde vlag in elk level
 
-Elk level heeft een vlag nodig, ook het laatste: daar brengt hij je terug naar het menu. Heeft een level er nog geen, bouw hem dan zoals in [Een tweede level toevoegen](site:godot/docs/tweede_level), Stap 2 en 3. Maak daarbij geen nieuw script: sleep `vlag.gd` vanuit **FileSystem** op de `Vlag`-node.
+Elk level heeft een vlag nodig, ook het laatste: daar brengt hij je terug naar het menu. Heeft een level er nog geen, bouw hem dan zoals in [Een tweede level toevoegen](site:godot/docs/tweede_level), in de tabbladen De vlag en `body_entered` koppelen. Maak daarbij geen nieuw script: sleep `vlag.gd` vanuit **FileSystem** op de `Vlag`-node.
 
 Heeft een level al een vlag met een eigen script, open dan dat level en sleep `vlag.gd` op dezelfde manier op de `Vlag`-node. De koppeling met `body_entered` blijft staan, want de functie heet in elk script `_on_body_entered`.
 
@@ -185,7 +191,7 @@ func _ready() -> void:
     print(levels[volgende])
 ```
 
-**Oplossing:** controleer eerst of `volgende < levels.size()`, zoals in Stap 3. Let op het `<`: met `<=` zit je er precies één naast.
+**Oplossing:** controleer eerst of `volgende < levels.size()`, zoals bij Het volgende level. Let op het `<`: met `<=` zit je er precies één naast.
 
 </details>
 

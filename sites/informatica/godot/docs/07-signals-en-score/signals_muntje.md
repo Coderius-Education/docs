@@ -7,8 +7,6 @@ slug: /signals_muntje
 
 Tijd om iets te kunnen verzamelen in je level. In deze les bouw je een muntje als losse scène en laat je het verdwijnen zodra je karakter het aanraakt. Daarvoor gebruik je **signals** — Godot's manier om nodes met elkaar te laten praten zonder dat ze elkaar hoeven op te zoeken.
 
-<GDQuestLes slug="signals_muntje" />
-
 ## Voorspel: zonder signals?
 
 Stel je hebt twee losse scripts: één voor je muntje, één voor je karakter. Het muntje moet verdwijnen als het karakter het raakt.
@@ -30,7 +28,7 @@ Maar dan moet het karakter weten dát het muntje bestaat, hoe het heet en waar h
 
 </details>
 
-## Wat zijn signals?
+## Signals: een bericht tussen nodes
 
 Een signal is een bericht dat een node verstuurt zodra er iets gebeurt. Andere nodes (of de node zelf) kunnen naar dat bericht **luisteren** en daarop reageren. Denk aan een deurbel:
 
@@ -39,26 +37,13 @@ Een signal is een bericht dat een node verstuurt zodra er iets gebeurt. Andere n
 
 In Godot is het precies zo: een node *stuurt* een signal, een andere node *vangt* het op en voert code uit. De `Area2D`-node die je zo gebruikt staat in de [Nodes cheatsheet](site:godot/cheatsheet#collectibles-vijanden); de signal-code vind je terug in de [GDScript-tips](site:godot/gdscript-tips#signals).
 
-## Stap 1: Maak een muntje-scène met een sprite \{#area2d}
+## Stap 1: Muntje \{#area2d}
 
-1. Ga naar **Scene** → **New Scene**.
-2. Kies **Other Node** en zoek naar `Area2D`. `Area2D` is een node die botsingen kan detecteren zonder zelf physics te krijgen (geen zwaartekracht, niet wegrollen).
-3. Hernoem de `Area2D` naar `Muntje`.
-
-Voeg een sprite toe:
-
-1. Klik met rechts op `Muntje` → **Add Child Node**.
-2. Voeg een `Sprite2D` toe.
-3. Sleep je muntje-afbeelding naar **Texture** in de Inspector.
-
-## Stap 2: Voeg een collision shape toe
-
-Zonder collision shape kan Godot geen botsing detecteren.
-
-1. Klik met rechts op `Muntje` → **Add Child Node**.
-2. Voeg een `CollisionShape2D` toe.
-3. Kies in de Inspector bij **Shape** een vorm (bijvoorbeeld `CircleShape2D`).
-4. Pas de grootte aan zodat de cirkel netjes om het muntje past.
+1. Ga naar **Scene** → **New Scene**, kies **Other Node** en zoek naar `Area2D`. Een `Area2D` detecteert botsingen zonder zelf physics te krijgen (geen zwaartekracht, niet wegrollen).
+2. Hernoem de `Area2D` naar `Muntje`.
+3. Klik met rechts op `Muntje` → **Add Child Node** en voeg een `Sprite2D` toe. Sleep je muntje-afbeelding naar **Texture** in de Inspector.
+4. Klik weer met rechts op `Muntje` (niet op de `Sprite2D`) → **Add Child Node** en voeg een `CollisionShape2D` toe. Zonder collision shape kan Godot geen botsing detecteren.
+5. Kies in de Inspector bij **Shape** een vorm (bijvoorbeeld `CircleShape2D`) en pas de grootte aan zodat de cirkel netjes om het muntje past.
 
 Je Scene Tree ziet er nu zo uit:
 
@@ -70,7 +55,7 @@ Muntje (Area2D)
 
 Sla de scène op als `muntje.tscn` (`Ctrl + S`).
 
-## Stap 3: Koppel een script en het signal \{#signal-koppelen}
+## Stap 2: `body_entered` koppelen \{#signal-koppelen}
 
 1. Selecteer de `Muntje`-node.
 2. Klik op het script-icoontje of klik met rechts → **Attach Script**. Zet **Template** op **`Object: Empty`** en klik op **Create**.
@@ -91,7 +76,9 @@ Dit is een gewone functie, zoals je er zelf ook een schrijft. Het enige verschil
 
 De parameter `body` is de node die het muntje raakte. Die krijg je meegeleverd, net zoals `delta` bij `_physics_process`.
 
-## Stap 4: Laat het muntje verdwijnen \{#signal-functie}
+## Stap 3: Verdwijnen en testen \{#signal-functie}
+
+### De functie invullen
 
 Vervang de `pass` in `_on_body_entered` door je eigen code:
 
@@ -109,7 +96,7 @@ func _on_body_entered(body: Node2D) -> void:
 | `body`                        | De node die het muntje raakt (jouw karakter)       |
 | `queue_free()`                | Verwijdert deze node (het muntje) uit het spel     |
 
-## Stap 5: Plaats het muntje in je level
+### In je level zetten
 
 1. Open je level/world-scène.
 2. Sleep `muntje.tscn` vanuit het FileSystem-paneel naar je level.
@@ -117,6 +104,10 @@ func _on_body_entered(body: Node2D) -> void:
 4. Sleep meerdere keren om meerdere muntjes neer te zetten.
 
 Start het spel met `F5`, loop tegen een muntje aan en kijk in **Uitvoer**: het muntje verdwijnt en je ziet "Muntje opgepakt".
+
+Een functie met een parameter, zoals `_on_body_entered(body)`, los oefenen kan bij GDQuest:
+
+<GDQuestLes slug="signals_muntje" />
 
 ## Opdracht 7.1.a: voeg een vijand toe
 
