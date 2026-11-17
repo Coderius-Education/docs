@@ -1,4 +1,29 @@
+import { type Plugin, transformWithEsbuild } from 'vite';
 import { defineConfig } from 'vitest/config';
+
+// Een site schrijft JSX ook in een `.js` (24 bestanden: de editor van play, de
+// terminal van linux): Docusaurus vertaalt die bij de build. Vite leest een
+// `.js` als gewone JavaScript. In een gewone run viel dat niet op, want de
+// test die zo'n bestand importeert, vervangt het met vi.mock. `vitest related`
+// (de job test in CI, bij een wijziging die niet alles draait) loopt de
+// imports van elke test af zonder mocks, en stopte op het eerste `.js` met
+// JSX: "Failed to parse source for import analysis". Dat was zo bij elke PR
+// sinds PygbagRunner.test.tsx de CodeEditor van play importeert.
+// vitest-js-met-jsx.test.ts legt elk `.js` in de repo langs deze stap.
+export const JS_VAN_EEN_SITE = /\/sites\/(?:[^/?]+\/)+src\/[^?]+\.js$/;
+
+export function jsMetJsx(): Plugin {
+  return {
+    name: 'coderius:js-met-jsx',
+    enforce: 'pre',
+    async transform(code, id) {
+      const pad = id.split('?')[0];
+      if (!JS_VAN_EEN_SITE.test(pad) || pad.includes('/node_modules/')) return null;
+      const uit = await transformWithEsbuild(code, pad, { loader: 'jsx', jsx: 'automatic' });
+      return { code: uit.code, map: uit.map };
+    },
+  };
+}
 
 // Bewust een brede include: elk *.test.ts in packages/ of sites/ telt mee. Een
 // smalle lijst met mappen zou een nieuwe test buiten die mappen stilzwijgend
@@ -11,6 +36,7 @@ import { defineConfig } from 'vitest/config';
 // en zet bovenaan `// @vitest-environment jsdom`; de rest draait in node. De
 // Docusaurus-pagina's zelf worden niet getest — die dekt `pnpm build` af.
 export default defineConfig({
+  plugins: [jsMetJsx()],
   // Docusaurus lost `@docusaurus/BrowserOnly` en co. op in zijn eigen bundler.
   // Een componenttest (*.test.tsx) heeft het pad nodig om hem te kunnen mocken.
   resolve: {
