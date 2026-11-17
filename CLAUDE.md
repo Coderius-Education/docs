@@ -161,8 +161,10 @@ rood.
 
 **De meting wacht niet langer dan nodig** (november 2026). Een brede run
 duurde ruim zeven minuten, waarvan de job `schermen` er vijf nam; de rest
-was na drie minuten klaar. Wat er sindsdien anders is, elk met dezelfde
-uitkomst per scherm als ervoor (nagemeten op alle cursussen):
+was na krap drie minuten klaar. Nu duurt hij 3:53: een deel van `schermen` meet
+in een tot anderhalve minuut, en het laatste is klaar na 228 seconden. Wat
+er anders is, elk met dezelfde uitkomst per scherm als ervoor (nagemeten op
+zeven cursussen):
 
 - **Het script wacht tot het scherm stilstaat** (`wachtOpRust`), in plaats
   van een vaste 550 ms na elke klik: 150 ms lang dezelfde maten, geen beeld
@@ -194,7 +196,11 @@ Lokaal, vier lessen tegelijk: een derde van algoritmes 399 → 143 seconden,
 python 735 → 243, robotica 324 → 186, play 199 → 120, godot 167 → 88, web
 154 → 97, linux 108 → 58. `--vaste-wacht` meet zoals eerst, `--profiel` zegt waar de
 tijd blijft (laden, klikken, wachten, meten). Meer dan vier lessen tegelijk
-helpt niet: de meting is dan niet meer stabiel.
+helpt niet: de meting is dan niet meer stabiel. Wat een brede run nu nog
+ophoudt, zijn de runners: bij de start van `schermen` lopen er naast de
+twintig delen nog zeven jobs, dus zes of zeven delen wachten een halve
+minuut. Minder delen maakt elk deel langer; dat wint hooguit twintig
+seconden.
 
 **Een job die Chromium installeert, heeft een grens.** `playwright install`
 duurt zeven seconden, en bleef op één runner een half uur staan; zonder

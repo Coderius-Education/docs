@@ -1032,7 +1032,8 @@ jobs:
     # Vast op 24.04, zoals `browser`: Playwright 1.56.1 installeert op 26.04
     # geen Chromium (ci-setup.test.ts).
     runs-on: ubuntu-24.04
-    # Een deel meet in vijf tot zes minuten; wat een half uur duurt, hangt.
+    # Een deel is in anderhalf tot twee minuten klaar; wat een half uur
+    # duurt, hangt.
     timeout-minutes: 30
     strategy:
       fail-fast: false
