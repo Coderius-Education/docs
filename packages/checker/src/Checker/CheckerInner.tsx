@@ -26,7 +26,7 @@ import { Samenhang } from './Samenhang';
 import { TeacherGate } from './TeacherGate';
 import { UploadZone } from './UploadZone';
 import { Vragen } from './Vragen';
-import { exportReportToPdf } from './exportPdf';
+import { type Bewaard, exportReportToPdf, meldingNaBewaren, meldingVan } from './exportPdf';
 import { idbOpslag } from './idbOpslag';
 import { type OpenInIdeResult, openInIde, pickEntry } from './openInIde';
 import styles from './styles.module.css';
@@ -79,7 +79,11 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
   const [naamVeld, setNaamVeld] = useState('');
   // Voor welke beoordeling de laatste PDF is gemaakt; alleen daar hoort de
   // knop "Verwijder deze beoordeling" bij.
-  const [pdfKlaarVoor, setPdfKlaarVoor] = useState<string | null>(null);
+  // Waar de laatste PDF staat, en van welke beoordeling (alleen als die sinds
+  // de export niet veranderde: dan mag hij weg).
+  const [pdfKlaarVoor, setPdfKlaarVoor] = useState<{ id: string | null; bewaard: Bewaard } | null>(
+    null,
+  );
 
   // Vinkjes, opmerkingen en leerroute staan in de beoordeling zelf (de
   // Bewaarder), niet in een eigen kopie hier: één bron, dus wat je ziet is
@@ -400,14 +404,14 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
       // iets, dan staat dat niet in de PDF; dan geen "Verwijder deze
       // beoordeling", want daarmee zou die wijziging verdwijnen.
       const versie = id ? bewaarderRef.current?.get(id)?.bijgewerkt : undefined;
-      const gelukt = await exportReportToPdf(el, styles.exporting, bestand);
+      const bewaard = await exportReportToPdf(el, styles.exporting, bestand);
       const ongewijzigd = id && bewaarderRef.current?.get(id)?.bijgewerkt === versie;
-      if (gelukt && id && id === actiefIdRef.current && ongewijzigd) setPdfKlaarVoor(id);
+      const magWeg = id && id === actiefIdRef.current && ongewijzigd ? id : null;
+      if (bewaard) setPdfKlaarVoor({ id: magWeg, bewaard });
     } catch (err) {
-      // De melding zegt niet waarom; in de console staat de oorzaak, voor wie
-      // een fout meldt.
+      // De reden staat erbij, en in de console de hele fout, voor wie hem meldt.
       console.error('PDF maken mislukt:', err);
-      setPdfError('Het opslaan als PDF is mislukt. Probeer het opnieuw.');
+      setPdfError(`Het opslaan als PDF is mislukt (${meldingVan(err)}). Probeer het opnieuw.`);
     } finally {
       exporterendRef.current = false;
       setExporting(false);
@@ -598,17 +602,23 @@ export function CheckerInner({ config, variant }: CheckerInnerProps) {
                 {pdfError}
               </p>
             )}
-            {actief && pdfKlaarVoor === actief.id && (
-              <p className={`${styles.pdfKlaar} ${styles.noPrint}`}>
-                PDF opgeslagen. Klaar met {actief.naam}?{' '}
-                <button
-                  type="button"
-                  className={styles.linkKnop}
-                  onClick={() => verwijderBeoordeling(actief)}
-                >
-                  Verwijder deze beoordeling
-                </button>
-              </p>
+            {pdfKlaarVoor && (
+              <output className={`${styles.pdfKlaar} ${styles.noPrint}`}>
+                {meldingNaBewaren(pdfKlaarVoor.bewaard).melding}
+                {actief && pdfKlaarVoor.id === actief.id && (
+                  <>
+                    {' '}
+                    {meldingNaBewaren(pdfKlaarVoor.bewaard).klaar} {actief.naam}?{' '}
+                    <button
+                      type="button"
+                      className={styles.linkKnop}
+                      onClick={() => verwijderBeoordeling(actief)}
+                    >
+                      Verwijder deze beoordeling
+                    </button>
+                  </>
+                )}
+              </output>
             )}
           </section>
         </div>
