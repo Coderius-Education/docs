@@ -12,14 +12,15 @@ import { describe, expect, it } from 'vitest';
 // Dat createConfig en de editor deze thema's gebruiken, staat in config.test.ts.
 
 const require = createRequire(import.meta.url);
-const { GETAL_KLEUR, licht, donker } = require('./prism-thema') as {
+const { GETAL_KLEUR, INGEBOUWD_LICHT, licht, donker } = require('./prism-thema') as {
   GETAL_KLEUR: string;
+  INGEBOUWD_LICHT: string;
   licht: PrismTheme;
   donker: PrismTheme;
 };
 
-/** De kleur van elk stukje code met de tekst `stuk`, zoals Prism het tekent. */
-function kleurVan(thema: PrismTheme, code: string, stuk: string): string | undefined {
+/** Het stukje code met de tekst `stuk`, zoals Prism het tekent. */
+function spanVan(thema: PrismTheme, code: string, stuk: string): HTMLElement | undefined {
   const { container } = render(
     <Highlight theme={thema} code={code} language="python">
       {({ tokens, getTokenProps }) => (
@@ -37,9 +38,12 @@ function kleurVan(thema: PrismTheme, code: string, stuk: string): string | undef
       )}
     </Highlight>,
   );
-  const span = [...container.querySelectorAll('span')].find((s) => s.textContent === stuk);
-  return span?.style.color || undefined;
+  return [...container.querySelectorAll('span')].find((s) => s.textContent === stuk);
 }
+
+/** De kleur van het stukje code met de tekst `stuk`. */
+const kleurVan = (thema: PrismTheme, code: string, stuk: string) =>
+  spanVan(thema, code, stuk)?.style.color || undefined;
 
 const hex = (kleur: string) => {
   const m = kleur.match(/\d+/g);
@@ -83,6 +87,64 @@ describe('de kleuren van Python-code in licht en donker', () => {
   it('de rest van donker blijft dracula', () => {
     expect(kleurVan(donker, CODE, '"tekst"')).toBe(kleurVan(themes.dracula, CODE, '"tekst"'));
     expect(kleurVan(donker, CODE, 'print')).toBe(kleurVan(themes.dracula, CODE, 'print'));
+  });
+
+  it('elke soort code heeft in beide standen een kleur, of in geen van beide', () => {
+    // range was in donker paars en in licht zwart (issue #223): github
+    // kleurde `builtin` niet. Zo ook de waarde van een HTML-attribuut, een
+    // CSS-eigenschap en de doctype, in de andere richting.
+    const stijl = (thema: PrismTheme, soort: string) =>
+      thema.styles
+        .filter((r) => r.types.includes(soort))
+        .reduce<Record<string, unknown>>((s, r) => Object.assign(s, r.style), {});
+    const gekleurd = (thema: PrismTheme, soort: string) => {
+      const s = stijl(thema, soort);
+      const kleur = s.color as string | undefined;
+      return (
+        (!!kleur && hex(kleur) !== hex(thema.plain.color as string)) || s.opacity !== undefined
+      );
+    };
+    const soorten = [...new Set([...licht.styles, ...donker.styles].flatMap((r) => r.types))];
+    expect(soorten.length).toBeGreaterThan(20);
+    const anders = soorten.filter((s) => gekleurd(licht, s) !== gekleurd(donker, s));
+    expect(anders).toEqual([]);
+  });
+
+  it('alleen commentaar is cursief, in beide standen', () => {
+    // for, in en print waren in donker cursief en in licht recht (issue
+    // #224): dracula zet keyword en variable cursief.
+    const cursief = (thema: PrismTheme) =>
+      [...new Set(thema.styles.flatMap((r) => r.types))]
+        .filter((soort) => {
+          const regels = thema.styles.filter((r) => r.types.includes(soort));
+          return (
+            regels.reduce<string | undefined>((f, r) => r.style.fontStyle ?? f, undefined) ===
+            'italic'
+          );
+        })
+        .sort();
+    expect(cursief(licht)).toEqual(['cdata', 'comment', 'doctype', 'prolog']);
+    expect(cursief(donker)).toEqual(['cdata', 'comment', 'doctype', 'prolog']);
+    const code = 'for i in range(3):\n    print(i)  # tel';
+    for (const thema of [licht, donker]) {
+      for (const stuk of ['for', 'in', 'print'])
+        expect(spanVan(thema, code, stuk)?.style.fontStyle ?? '', stuk).not.toBe('italic');
+      expect(spanVan(thema, code, '# tel')?.style.fontStyle).toBe('italic');
+    }
+  });
+
+  it('range heeft in licht een kleur, net als in donker', () => {
+    const code = 'for i in range(3):\n    print(len(i))';
+    expect(hex(kleurVan(licht, code, 'range') ?? '')).toBe(INGEBOUWD_LICHT);
+    expect(hex(kleurVan(licht, code, 'len') ?? '')).toBe(INGEBOUWD_LICHT);
+    expect(kleurVan(donker, code, 'range')).toBe(kleurVan(themes.dracula, code, 'range'));
+    expect(kleurVan(themes.github, code, 'range')).toBeUndefined();
+  });
+
+  it('een ingebouwde functie is goed leesbaar op de lichte achtergrond', () => {
+    expect(
+      contrast(INGEBOUWD_LICHT, hex(licht.plain.backgroundColor as string)),
+    ).toBeGreaterThanOrEqual(4.5);
   });
 
   it('een getal is goed leesbaar op de donkere achtergrond', () => {
