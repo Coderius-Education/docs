@@ -63,6 +63,7 @@ import type { Bouwsteen } from './bouwstenen';
 import { leesEditorHash } from './codeLink';
 import { friendlyError } from './errorMessages';
 import { BoardFS } from './filesystem';
+import { editorThema } from './kleuren';
 import {
   DEFAULT_LEAPHY_BRANCH,
   DEFAULT_LEAPHY_REPO,
@@ -1275,7 +1276,7 @@ export default function WebMicroEditor(): React.JSX.Element {
               value={code}
               onChange={(nieuw) => sessie.zet({ code: nieuw })}
               extensions={editorExtensions}
-              theme={colorMode === 'dark' ? 'dark' : 'light'}
+              theme={editorThema(colorMode === 'dark')}
               height="380px"
               basicSetup={{
                 lineNumbers: true,

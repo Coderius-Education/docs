@@ -47,7 +47,7 @@ function CodeEditorInner({ value, onChange, readOnly = false, height = '300px' }
         highlightActiveLineGutter,
         EditorState,
         python,
-        oneDark,
+        oneDarkTheme,
         defaultKeymap,
         history,
         historyKeymap,
@@ -56,8 +56,7 @@ function CodeEditorInner({ value, onChange, readOnly = false, height = '300px' }
         indentUnit,
         bracketMatching,
         syntaxHighlighting,
-        defaultHighlightStyle,
-        getallenDonker,
+        kleuren,
         closeBrackets,
       } = await import('./codemirror');
 
@@ -84,11 +83,11 @@ function CodeEditorInner({ value, onChange, readOnly = false, height = '300px' }
         EditorView.lineWrapping,
       ];
 
+      // De kleuren van de code: in licht en donker dezelfde soorten (codemirror.js).
       if (colorMode === 'dark') {
-        // Getallen in dezelfde kleur als in licht en in de codeblokken (codemirror.js).
-        extensions.push(oneDark, getallenDonker);
+        extensions.push(oneDarkTheme, syntaxHighlighting(kleuren.donker));
       } else {
-        extensions.push(syntaxHighlighting(defaultHighlightStyle));
+        extensions.push(syntaxHighlighting(kleuren.licht));
         extensions.push(
           EditorView.theme({
             '&': { backgroundColor: '#fafafa' },

@@ -369,6 +369,22 @@ pixels: op 1280×720 staat de footer zo in beeld op 171 van de 186 schermen
 zonder oefenveld in web en 444 van de 475 in python. Een oefenveld neemt de
 ruimte tot de rand zelf, en daar staat hij eronder.
 
+## Kleuren van code
+
+Code heeft in licht en donker dezelfde vorm: een soort code (een getal,
+`range`, een sleutelwoord) heeft in beide standen een kleur of in geen van
+beide, en cursief is alleen commentaar. Licht was github en donker dracula, en
+die kleurden niet hetzelfde: `range` was in donker paars en in licht zwart
+(issue 223), `for`, `in` en `print` waren in donker cursief (issue 224), en
+getallen in donker wit (158). De thema's staan in `packages/shared/prism-thema.js`
+(de codeblokken van elke cursus en de editor van python-runner); de
+CodeMirror-editors van play en robotica halen er hun lichte en donkere stijl
+uit met `codeMirrorStijlen` (lijst `CODEMIRROR`), in plaats van de standaard
+van CodeMirror in licht en oneDark in donker. `prism-thema.test.tsx` en
+`codemirror-kleuren.test.ts` leggen de regel vast; een nieuw thema of een
+nieuwe editor gaat langs dezelfde tests. De IDE (Monaco, `vs` en `vs-dark`) en
+web (één donker thema) hadden het verschil niet.
+
 ## Les-tabbladen
 
 De opdrachtgever wil dat een leerling in een les niet meer hoeft te scrollen.
@@ -1629,9 +1645,21 @@ seconden na de klik, en de docent zag alleen "Het opslaan als PDF is mislukt".
 Nu komt het venster binnen 30 ms. Weigert de browser het venster toch, of lukt
 het schrijven niet, dan komt de PDF als gewone download. Zet dus niets dat
 tijd kost (een import, een render) tussen de klik en `bewaarPdf`. De oorzaak
-van een mislukte export staat in de console (`PDF maken mislukt:`).
-`exportPdf.test.ts` pint de volgorde en de terugval vast; dat een echte browser
-het venster weigert, speelt node niet na.
+van een mislukte export staat in de melding en in de console (`PDF maken
+mislukt:`). `exportPdf.test.ts` pint de volgorde en de terugval vast; dat een
+echte browser het venster weigert, speelt node niet na.
+
+**De melding zegt waar de PDF staat** (issue 225, "werkt voor alle stappen
+behalve het opslaan van het bestand"). Eerst stond er "PDF opgeslagen" ook na
+een download, en dan zocht de docent hem waar hij het bestand had gekozen.
+`bewaarPdf` geeft nu `{ plek: 'gekozen' }` of `{ plek: 'downloads', reden }`
+terug, en `meldingNaBewaren` maakt er de zin van: bij een download de map
+Downloads, waarom het gekozen bestand niet lukte, en dat de browser downloads
+kan tegenhouden (een beheerde schoolcomputer). Of een download aankomt, ziet
+de pagina niet. Het adres van de download blijft een minuut geldig
+(`DOWNLOAD_BEWAREN_MS`): Firefox en Safari halen hem soms pas na de klik op.
+Op Linux in Chromium, met het echte venster Opslaan als onder Xvfb, schreef de
+nakijker een PDF van 471 KB; de fout van het issue kwam daar niet terug.
 
 ## Begrippen
 

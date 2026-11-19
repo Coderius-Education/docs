@@ -26,7 +26,20 @@ export type Omgeving = {
   download: (blob: Blob, filename: string) => void;
 };
 
-function download(blob: Blob, filename: string): void {
+/**
+ * Hoe lang het adres van een download blijft bestaan. Firefox en Safari
+ * halen een blob pas op nadat de klik is afgehandeld; trok de nakijker het
+ * adres meteen na de klik in, dan kon de download stil mislukken (issue 225).
+ * FileSaver.js wacht om die reden veertig seconden.
+ */
+export const DOWNLOAD_BEWAREN_MS = 60_000;
+
+/** Een gewone download, met het adres van de blob nog even geldig. */
+export function download(
+  blob: Blob,
+  filename: string,
+  wacht: (ga: () => void, ms: number) => unknown = setTimeout,
+): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -34,8 +47,36 @@ function download(blob: Blob, filename: string): void {
   document.body.appendChild(a);
   a.click();
   a.remove();
-  URL.revokeObjectURL(url);
+  wacht(() => URL.revokeObjectURL(url), DOWNLOAD_BEWAREN_MS);
 }
+
+/**
+ * Waar de PDF terechtkwam: in het bestand dat de docent koos, of als gewone
+ * download in de map Downloads. Bij een download zegt `reden` waarom het
+ * gekozen bestand niet lukte (de melding van de browser); zonder venster
+ * (Firefox, Safari) is er geen reden.
+ */
+export type Bewaard = { plek: 'gekozen' } | { plek: 'downloads'; reden: string | null };
+
+/**
+ * Wat de nakijker na het bewaren zegt. "PDF opgeslagen" alleen als hij in het
+ * gekozen bestand staat: eerst stond die zin er ook na een download die de
+ * browser tegenhield, en zocht de docent een bestand dat er niet was (issue
+ * 225). Bij een download staat erbij waar hij hoort te staan, en waarom niet
+ * op de gekozen plek.
+ */
+export function meldingNaBewaren(bewaard: Bewaard): { melding: string; klaar: string } {
+  if (bewaard.plek === 'gekozen') return { melding: 'PDF opgeslagen.', klaar: 'Klaar met' };
+  const waarom = bewaard.reden ? ` De plek die je koos, lukte niet (${bewaard.reden}).` : '';
+  return {
+    melding: `De PDF staat in je map Downloads.${waarom} Zie je hem daar niet, dan houdt de browser downloads tegen.`,
+    klaar: 'Staat hij daar, en ben je klaar met',
+  };
+}
+
+/** De melding van een fout, zoals de browser hem gaf. */
+export const meldingVan = (err: unknown): string =>
+  err instanceof Error ? err.message || err.name : String(err);
 
 const vanDeBrowser = (): Omgeving => ({
   kiezer: (
@@ -45,8 +86,8 @@ const vanDeBrowser = (): Omgeving => ({
 });
 
 /**
- * Bewaart de PDF die `maak` oplevert. Geeft false terug als de docent het
- * opslaan-venster wegklikte.
+ * Bewaart de PDF die `maak` oplevert, en zegt waar hij staat. Geeft null
+ * terug als de docent het opslaan-venster wegklikte.
  *
  * Het venster komt eerst, direct op de klik, en pas daarna wordt de PDF
  * gemaakt. Chrome en Edge openen "Opslaan als" alleen binnen een paar
@@ -64,8 +105,9 @@ export async function bewaarPdf(
   maak: () => Promise<Blob>,
   filename: string,
   omgeving: Omgeving = vanDeBrowser(),
-): Promise<boolean> {
+): Promise<Bewaard | null> {
   let handle: SaveFileHandle | null = null;
+  let reden: string | null = null;
   if (omgeving.kiezer) {
     try {
       handle = await omgeving.kiezer({
@@ -73,8 +115,9 @@ export async function bewaarPdf(
         types: [{ description: 'PDF-bestand', accept: { 'application/pdf': ['.pdf'] } }],
       });
     } catch (err) {
-      if (err instanceof DOMException && err.name === 'AbortError') return false;
+      if (err instanceof DOMException && err.name === 'AbortError') return null;
       console.warn('Het venster Opslaan als kon niet open; de PDF komt in Downloads.', err);
+      reden = meldingVan(err);
     }
   }
 
@@ -92,14 +135,18 @@ export async function bewaarPdf(
       const writable = await handle.createWritable();
       await writable.write(blob);
       await writable.close();
-      return true;
+      return { plek: 'gekozen' };
     } catch (err) {
+      // Een school die downloads tegenhoudt, houdt in Chrome ook dit tegen;
+      // dan mislukt de download hieronder net zo. Daarom zegt de nakijker
+      // waar de PDF zou moeten staan, en waarom niet op de gekozen plek.
       console.warn('Schrijven naar het gekozen bestand lukte niet; de PDF komt in Downloads.', err);
+      reden = meldingVan(err);
       await handle.remove?.().catch(() => {});
     }
   }
   omgeving.download(blob, filename);
-  return true;
+  return { plek: 'downloads', reden };
 }
 
 /**
@@ -134,7 +181,7 @@ export function exportReportToPdf(
   element: HTMLElement,
   exportingClass: string,
   filename: string,
-): Promise<boolean> {
+): Promise<Bewaard | null> {
   return bewaarPdf(() => maakPdf(element, exportingClass), filename);
 }
 

@@ -1,5 +1,5 @@
-import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
-import { Prec } from '@codemirror/state';
+import { HighlightStyle } from '@codemirror/language';
+import { CODEMIRROR, codeMirrorStijlen } from '@coderius/shared/prism-thema';
 // Eén toegangspunt voor alle CodeMirror-onderdelen. CodeEditor laadt dit met één
 // dynamische import, zodat webpack alles in één async chunk stopt. Zeven losse
 // `import('@codemirror/...')`-aanroepen lieten de dev-bundler @codemirror/state
@@ -16,7 +16,7 @@ export {
 } from '@codemirror/view';
 export { EditorState } from '@codemirror/state';
 export { python } from '@codemirror/lang-python';
-export { oneDark } from '@codemirror/theme-one-dark';
+export { oneDarkTheme } from '@codemirror/theme-one-dark';
 export {
   defaultKeymap,
   history,
@@ -28,14 +28,14 @@ export {
   indentUnit,
   bracketMatching,
   syntaxHighlighting,
-  defaultHighlightStyle,
 } from '@codemirror/language';
 export { closeBrackets } from '@codemirror/autocomplete';
 
-// oneDark kleurt getallen oranje, terwijl ze in licht groen zijn (#164 van
-// defaultHighlightStyle): een leerling zag zijn getallen van kleur verspringen
-// (issue #158). In donker krijgen ze hetzelfde groen, lichter gemaakt zodat het
-// op de donkere achtergrond leesbaar is. Prec.highest gaat voor oneDark.
-export const GETAL_DONKER = '#3ecf8e';
-export const getallenStijl = HighlightStyle.define([{ tag: tags.number, color: GETAL_DONKER }]);
-export const getallenDonker = Prec.highest(syntaxHighlighting(getallenStijl));
+// De kleuren van de code, in licht en donker uit één lijst (CODEMIRROR in
+// packages/shared/prism-thema.js): een soort code heeft in beide standen een
+// kleur of in geen van beide. oneDark kleurde getallen oranje terwijl ze in
+// licht groen zijn (issue #158), en `range(`, `print(` en elke variabele
+// blauw en rood terwijl ze in licht zwart waren (#223). In donker komt van
+// oneDark alleen nog het uiterlijk van de editor (oneDarkTheme).
+export const kleuren = codeMirrorStijlen({ HighlightStyle, tags });
+export const GETAL_DONKER = CODEMIRROR.find((r) => r.soorten.some((s) => s[0] === 'number')).donker;

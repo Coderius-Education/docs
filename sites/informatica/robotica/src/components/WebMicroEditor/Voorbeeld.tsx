@@ -6,6 +6,7 @@ import CodeMirror from '@uiw/react-codemirror';
 import type React from 'react';
 import { useEffect, useMemo, useRef } from 'react';
 import { type Bouwsteen, type Verwijzing, kernRegels } from './bouwstenen';
+import { editorThema } from './kleuren';
 import styles from './styles.module.css';
 
 type Props = {
@@ -96,7 +97,7 @@ export default function Voorbeeld({ bouwsteen, donker, onSluit }: Props): React.
         <CodeMirror
           value={bouwsteen.voorbeeld.replace(/\n$/, '')}
           extensions={uitbreidingen}
-          theme={donker ? 'dark' : 'light'}
+          theme={editorThema(donker)}
           editable={false}
           readOnly
           basicSetup={{
