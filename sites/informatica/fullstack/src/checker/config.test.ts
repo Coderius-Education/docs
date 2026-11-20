@@ -923,17 +923,23 @@ describe('fullstackConfig — niveau 3', () => {
     const basis1 = ['fastapi-app', 'fastapi-routes', 'html-css-link', 'db-write'];
     expect(voorstel('1', basis1)).toBe('basis');
     expect(voorstel('1', [...basis1, 'fastapi-path-param'])).toBe('basis');
-    // Gevorderd vraagt iets gevorderds in elke groep die het heeft.
-    const gevorderd1 = [
-      ...basis1,
-      'fastapi-templates',
-      'fastapi-redirect',
-      'account-inloggen',
-      'fastapi-path-param',
-      'htmx-verzoek',
-    ];
+    // Gevorderd vraagt iets gevorderds in elke groep die gevorderde concepten
+    // heeft: Templates, Gegevens opslaan en Accounts. Pagina's en routes en
+    // Uitbreidingen hebben op niveau 1 alleen expert; die tellen pas voor
+    // expert. Eerst telden ze ook voor gevorderd, en vroeg gevorderd zo een
+    // path parameter en een htmx-verzoek: gevorderd en expert vielen samen.
+    const gevorderd1 = [...basis1, 'fastapi-templates', 'fastapi-redirect', 'account-inloggen'];
     expect(voorstel('1', gevorderd1)).toBe('gevorderd');
-    expect(voorstel('1', [...gevorderd1, 'db-dictionary'])).toBe('expert');
+    expect(
+      voorstel(
+        '1',
+        gevorderd1.filter((id) => id !== 'account-inloggen'),
+      ),
+    ).toBe('basis');
+    // Expert vraagt een expertconcept in elke groep die er een heeft.
+    const expert1 = [...gevorderd1, 'fastapi-path-param', 'db-dictionary'];
+    expect(voorstel('1', expert1)).toBe('gevorderd');
+    expect(voorstel('1', [...expert1, 'htmx-verzoek'])).toBe('expert');
   });
 
   it('herkent de bestanden van een project dat online staat aan hun naam', () => {

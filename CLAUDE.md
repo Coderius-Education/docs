@@ -1620,9 +1620,11 @@ Krathwohl (2002).
 Hoe je een rij of een niveau toevoegt: `packages/shared/leerdoelen/README.md`.
 Het voorstel kijkt naar de onderwerpen, en als een leerroute er maar één
 heeft naar de groepen daarin (`voorstelOnderdelen` in `packages/checker`;
-fullstack niveau 1 en 2). Voor basis telt een onderdeel met
-basisconcepten, voor gevorderd en expert een onderdeel met concepten op die
-moeilijkheid of hoger. Is een moeilijkheid ergens alleen met een vinkje te
+fullstack niveau 1 en 2). Voor elke moeilijkheid telt een onderdeel
+met concepten op precies die moeilijkheid; toegepast mag ook een moeilijker
+concept zijn. Een groep met alleen expert telt voor gevorderd dus niet mee:
+eerst wel, en dan vroeg gevorderd op fullstack niveau 1 een htmx-verzoek en
+een path parameter, en vielen gevorderd en expert samen. Is een moeilijkheid ergens alleen met een vinkje te
 halen, dan zegt het voorstel dat. Een gekozen moeilijkheid geldt alleen op de
 leerroute waarvoor de docent hem koos (`moeilijkheidRoute`), en de PDF noemt
 niveau, voorstel en reden.
