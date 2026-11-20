@@ -64,14 +64,23 @@ function gd(pattern: RegExp, minCount?: number): ConceptDetect {
 
 /**
  * De ingebouwde scripts uit een .tscn, als GDScript zonder commentaar; de rest
- * van het bestand wordt spaties. `\"` in de string wordt ` "`, zodat het weer
- * gewone code is, even lang.
+ * van het bestand wordt spaties. `\"` in de string wordt `"`, zodat het weer
+ * gewone code is; elke regel krijgt aan het eind spaties tot zijn oude lengte.
+ * Eerst werd `\"` een spatie en `"`: dan stond er `play( "run ")`, en telde
+ * `run ` niet als de animatie uit de cursus (issue 227).
  */
 export function ingebouwdeScripts(tscn: string): string {
   let uit = tscn.replace(/[^\n]/g, ' ');
   for (const m of tscn.matchAll(/script\/source = "((?:\\.|[^"\\])*)"/g)) {
     const start = (m.index ?? 0) + m[0].indexOf('"') + 1;
-    const code = zonderCommentaar(m[1].replace(/\\(["\\])/g, ' $1'), 'gdscript');
+    const ontsnapt = m[1]
+      .split('\n')
+      .map((regel) => {
+        const kaal = regel.replace(/\\(["\\])/g, '$1');
+        return kaal + ' '.repeat(regel.length - kaal.length);
+      })
+      .join('\n');
+    const code = zonderCommentaar(ontsnapt, 'gdscript');
     uit = uit.slice(0, start) + code + uit.slice(start + code.length);
   }
   return uit;
@@ -150,25 +159,48 @@ const toekenning = (namen: string) => `\\b(?:${namen})\\s*(?::\\s*\\w+\\s*)?(?::
 // Een eigen animatie in code: een naam die niet uit de cursus komt, op elke
 // manier waarop een script een animatie kiest (issue 227). Eerst telde alleen
 // `play("lopen")` met de naam er letterlijk in. Een leerling die zijn spel van
-// zichzelf maakte, schrijft vaak iets anders:
-// - de naam in een variabele: `naam = "lopen"` en dan `play(naam)`, in welke
-//   volgorde ook in het script;
-// - de naam ergens in de aanroep: `play("idle" if stil else "lopen")`;
-// - `play_backwards("lopen")`, of `animation = "lopen"` met `play()` erna.
-// Een tekst in de aanroep wordt als geheel overgeslagen: anders las het
-// patroon `" if stil else "` als een naam.
-const NAAM = `&?["'](?!(?:${CURSUS_ANIMATIES.join('|')})["'])[^"'\\n]+["']`;
-const AFSPELEN = '\\b(?:play|play_backwards|set_animation)\\s*\\(\\s*';
-const IN_AANROEP = `(?:[^()"'\\n]|"[^"\\n]*"|'[^'\\n]*')*?`;
-const KRIJGT = '\\s*(?::\\s*\\w+\\s*)?:?=\\s*';
+// zichzelf maakte, schrijft vaak iets anders, en dat telt nu ook:
+// - de naam ergens in de aanroep: `play("idle" if is_on_floor() else "vallen")`,
+//   ook als `StringName("lopen")`;
+// - `play_backwards`, `travel` en `queue` (AnimationTree, AnimationPlayer), of
+//   `animation = "lopen"` en `current_animation = "aanval"`;
+// - de naam in een variabele: `naam = "lopen"` en dan `play(naam)` of
+//   `animation = naam`, in welke volgorde ook in het script;
+// - de naam in een lijst of de waarde in een dictionary, en dan
+//   `play(animaties[richting])`;
+// - de naam als argument van een eigen functie: `speel("lopen")` met
+//   `func speel(naam):` en daarin `play(naam)`.
+// Een tekst of een aanroep in de aanroep wordt als geheel overgeslagen:
+// anders las het patroon `" if stil else "` als een naam. `default` heeft
+// elke AnimatedSprite2D vanzelf; die telt niet als eigen naam.
+// Een variabele kijkt niet naar zijn bereik: `var naam = "Sam"` voor een Label
+// en een parameter `naam` die naar `play(naam)` gaat, tellen samen ook.
+const NIET_EIGEN = [...CURSUS_ANIMATIES, 'default'];
+const NAAM = `(?:StringName\\s*\\(\\s*)?&?["'](?!(?:${NIET_EIGEN.join('|')})["'])[^"'\\n]+["']`;
+const AFSPELEN = '\\b(?:play|play_backwards|set_animation|travel|queue)\\s*\\(\\s*';
+const ZETTEN = '\\b(?:current_)?animation\\s*=\\s*';
+const KIEZEN = `(?:${AFSPELEN}|${ZETTEN})`;
+const TEKST = `"[^"\\n]*"|'[^'\\n]*'`;
+const BINNEN = `\\((?:[^()"'\\n]|${TEKST})*\\)`;
+const IN_AANROEP = `(?:[^()"'\\n]|${TEKST}|${BINNEN})*?`;
+// Na de naam van een variabele: het eind van de aanroep, of van de regel.
+const EINDE = '\\s*(?:[,)]|$)';
+const KRIJGT = '\\s*(?::\\s*[\\w\\[\\]]+\\s*)?:?=\\s*';
+// Een lijst met een eigen naam erin, of een dictionary met een eigen naam als waarde.
+const LIJST = `(?:\\[[^\\]]*?|\\{[^}]*?:\\s*)${NAAM}`;
+const ERNA = '(?=[\\s\\S]*?';
 const ANIMATIE = new RegExp(
   [
     `${AFSPELEN}${IN_AANROEP}${NAAM}`,
-    `\\banimation\\s*=\\s*${NAAM}`,
-    `\\b(\\w+)${KRIJGT}${NAAM}(?=[\\s\\S]*?${AFSPELEN}\\1\\s*[,)])`,
-    `${AFSPELEN}(\\w+)\\s*[,)](?=[\\s\\S]*?\\b\\2${KRIJGT}${NAAM})`,
+    `${ZETTEN}${NAAM}`,
+    `\\b(\\w+)${KRIJGT}${NAAM}${ERNA}${KIEZEN}\\1${EINDE})`,
+    `${KIEZEN}(\\w+)${EINDE}${ERNA}\\b\\2${KRIJGT}${NAAM})`,
+    `\\b(\\w+)${KRIJGT}${LIJST}${ERNA}${KIEZEN}\\3\\s*\\[)`,
+    `${KIEZEN}(\\w+)\\s*\\[${ERNA}\\b\\4${KRIJGT}${LIJST})`,
+    `\\b(\\w+)\\s*\\(\\s*${NAAM}${ERNA}\\bfunc\\s+\\5\\s*\\(\\s*(\\w+)[^)]*\\)[\\s\\S]*?${KIEZEN}\\6${EINDE})`,
+    `\\bfunc\\s+(\\w+)\\s*\\(\\s*(\\w+)[^)]*\\)${ERNA}${KIEZEN}\\8${EINDE})${ERNA}\\b\\7\\s*\\(\\s*${NAAM})`,
   ].join('|'),
-  'g',
+  'gm',
 );
 
 // De callbacks die Godot zelf aanroept. Een eigen functie met een _ ervoor

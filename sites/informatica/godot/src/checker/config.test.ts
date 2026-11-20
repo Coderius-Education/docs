@@ -456,6 +456,45 @@ describe('godotConfig — patronen die er net naast zitten', () => {
       ],
       play_backwards: ['func _ready():', '\t$AnimatedSprite2D.play_backwards("lopen")'],
       AnimationPlayer: ['func _ready():', '\t$AnimationPlayer.play("aanval")'],
+      // De vorm die een leerling met is_on_floor() het vaakst schrijft.
+      'if-expressie met een aanroep': [
+        'func _physics_process(delta):',
+        '\t$AnimatedSprite2D.play("idle" if is_on_floor() else "vallen")',
+      ],
+      StringName: ['func _ready():', '\t$AnimatedSprite2D.play(StringName("lopen"))'],
+      'animation = variabele': [
+        'var naam = "lopen"',
+        'func _ready():',
+        '\t$AnimatedSprite2D.animation = naam',
+      ],
+      current_animation: ['func _ready():', '\t$AnimationPlayer.current_animation = "aanval"'],
+      'AnimationTree travel': [
+        '@onready var staat = $AnimationTree.get("parameters/playback")',
+        'func _ready():',
+        '\tstaat.travel("aanval")',
+      ],
+      'eigen functie': [
+        'func _ready():',
+        '\tspeel("lopen")',
+        'func speel(naam: String):',
+        '\t$AnimatedSprite2D.play(naam)',
+      ],
+      'eigen functie, aanroep erna': [
+        'func speel(naam):',
+        '\t$AnimatedSprite2D.play(naam)',
+        'func _ready():',
+        '\tspeel("lopen")',
+      ],
+      dictionary: [
+        'const ANIMATIES = {"links": "lopen_links", "rechts": "lopen_rechts"}',
+        'func _ready():',
+        '\t$AnimatedSprite2D.play(ANIMATIES[richting])',
+      ],
+      lijst: [
+        'func _ready():',
+        '\t$AnimatedSprite2D.play(namen[0])',
+        'var namen: Array[String] = ["zwemmen", "duiken"]',
+      ],
     };
     for (const [naam, regels] of Object.entries(gevallen))
       expect(animatie(...regels), naam).toBe(true);
@@ -489,6 +528,28 @@ describe('godotConfig — patronen die er net naast zitten', () => {
         '\t$AnimatedSprite2D.play("run")',
         '\tprint("klaar")',
       ],
+      // Een tekst in een aanroep binnen de aanroep is geen animatienaam.
+      'aanroep met een tekst erin': [
+        'func _ready():',
+        '\t$AnimatedSprite2D.play("run" if Input.is_action_pressed("rennen") else "idle")',
+      ],
+      'default heeft elke AnimatedSprite2D': [
+        'func _ready():',
+        '\t$AnimatedSprite2D.play("default")',
+      ],
+      'dictionary met alleen cursusnamen als waarde': [
+        'const ANIMATIES = {"links": "run", "stil": "idle"}',
+        'func _ready():',
+        '\t$AnimatedSprite2D.play(ANIMATIES[richting])',
+      ],
+      'eigen functie zonder animatie': [
+        'func _ready():',
+        '\tzeg("hallo")',
+        'func zeg(tekst):',
+        '\tprint(tekst)',
+        '\t$AnimatedSprite2D.play("run")',
+      ],
+      'geluid zonder naam': ['func _ready():', '\t$Geluid.play()', '\t$Geluid.play(1.5)'],
     };
     for (const [naam, regels] of Object.entries(gevallen))
       expect(animatie(...regels), naam).toBe(false);
@@ -813,6 +874,28 @@ describe('godotConfig — wat niet van de leerling is, en wat er net naast ligt'
     expect(perId.get('gd-tweens')).toBe(true);
     // Het commentaar in het ingebouwde script telt niet.
     expect(perId.get('gd-timers')).toBe(false);
+  });
+
+  it('leest de namen in een ingebouwd script zoals in een .gd', () => {
+    // Een `\"` werd eerst een spatie en een aanhalingsteken: `play( "run ")`,
+    // en dan telde `run ` als eigen animatie (issue 227).
+    const animatieIn = (...regels: string[]) =>
+      gebruikt({
+        'speler.tscn': [
+          '[gd_scene format=3]',
+          '[sub_resource type="GDScript" id="1"]',
+          'script/source = "extends CharacterBody2D',
+          '',
+          'func _ready():',
+          ...regels.map((r) => `\t${r}`),
+          '"',
+          '[node name="Speler" type="CharacterBody2D"]',
+        ].join('\n'),
+      }).get('gd-animatie');
+    expect(animatieIn('$AnimatedSprite2D.play(\\"run\\")')).toBe(false);
+    expect(animatieIn('$AnimatedSprite2D.play(&\\"jump\\")')).toBe(false);
+    expect(animatieIn('var a = \\"idle\\"', '$AnimatedSprite2D.play(a)')).toBe(false);
+    expect(animatieIn('$AnimatedSprite2D.play(\\"zwemmen\\")')).toBe(true);
   });
 
   it('telt een lijst of dictionary pas als je hem ook gebruikt', () => {
